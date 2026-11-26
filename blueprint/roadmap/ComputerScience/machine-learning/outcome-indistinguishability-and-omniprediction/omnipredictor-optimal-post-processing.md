@@ -9,12 +9,7 @@ Properness is exactly the statement that reporting the true probability minimize
 ## Depends on
 
 - [Omnipredictors](omnipredictor.md)
-- [Characterization of proper scoring rules](../../../GameTheory/mechanism-design/characterization-of-proper-scoring-rules.md)
-
-## Proof depends on
-
-- [Omnipredictors](omnipredictor.md)
-- [Characterization of proper scoring rules](../../../GameTheory/mechanism-design/characterization-of-proper-scoring-rules.md)
+- [Scoring rules and properness for finite outcomes](../../../GameTheory/mechanism-design/remaining-clauses-of-scoring-rules-and-properness.md)
 
 ## Sources
 

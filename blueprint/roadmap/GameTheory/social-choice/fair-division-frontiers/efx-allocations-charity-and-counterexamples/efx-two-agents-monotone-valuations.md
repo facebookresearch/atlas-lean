@@ -10,10 +10,6 @@ For identical valuations, take a complete allocation that is leximin-optimal wit
 
 - [Partial EFX allocation with an unallocated pool](partial-efx-allocation-with-pool.md)
 
-## Proof depends on
-
-- [Partial EFX allocation with an unallocated pool](partial-efx-allocation-with-pool.md)
-
 ## Sources
 
 - B. Plaut, T. Roughgarden, "Almost Envy-Freeness with General Valuations", SODA 2018; SIAM Journal on Discrete Mathematics 34(2) (2020).

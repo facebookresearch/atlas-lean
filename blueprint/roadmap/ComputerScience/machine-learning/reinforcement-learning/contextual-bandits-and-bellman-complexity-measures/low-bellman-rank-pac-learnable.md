@@ -9,12 +9,6 @@ OLIVE maintains a version space of value functions consistent with all average B
 ## Depends on
 
 - [Contextual decision processes and Bellman rank](bellman-rank.md)
-- [Generative-model sample bound (restricted, non-minimax)](../generative-model-sample-bound.md)
-
-## Proof depends on
-
-- [Contextual decision processes and Bellman rank](bellman-rank.md)
-- [Generative-model sample bound (restricted, non-minimax)](../generative-model-sample-bound.md)
 
 ## Sources
 

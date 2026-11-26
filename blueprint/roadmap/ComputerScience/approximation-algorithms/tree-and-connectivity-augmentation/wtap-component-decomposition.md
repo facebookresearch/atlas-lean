@@ -12,10 +12,7 @@ Thin components are link sets whose induced structure along the tree is covered 
 
 ## Depends on
 
-- [Relative greedy algorithms for weighted tree augmentation](relative-greedy-augmentation.md)
-
-## Proof depends on
-
+- [Weighted tree augmentation problem (WTAP)](weighted-tree-augmentation.md)
 - [Relative greedy algorithms for weighted tree augmentation](relative-greedy-augmentation.md)
 
 ## Sources

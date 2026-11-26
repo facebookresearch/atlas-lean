@@ -9,13 +9,10 @@ Ko introduces a $2.5$-round *multiphase communication game* that augments the us
 ## Depends on
 
 - [Pătraşcu's multiphase problem](multiphase-problem.md)
-- [Larsen–Weinstein–Yu: super-logarithmic lower bound for range parity](boolean-range-parity-lower-bound.md)
-- [Distributional communication complexity](../../../TheoryOfComputation/communication-complexity/randomized-communication-protocols/dist-complexity.md)
+- [Amortized update and query cost of a dynamic cell-probe structure](../dynamic-information-transfer-lower-bounds/amortized-cell-probe-costs.md)
 
 ## Proof depends on
 
-- [Pătraşcu's multiphase problem](multiphase-problem.md)
-- [Larsen–Weinstein–Yu: super-logarithmic lower bound for range parity](boolean-range-parity-lower-bound.md)
 - [Distributional communication complexity](../../../TheoryOfComputation/communication-complexity/randomized-communication-protocols/dist-complexity.md)
 
 ## Sources

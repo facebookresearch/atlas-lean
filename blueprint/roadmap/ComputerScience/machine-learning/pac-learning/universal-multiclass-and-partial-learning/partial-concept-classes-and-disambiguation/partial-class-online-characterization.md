@@ -9,12 +9,10 @@ The Standard Optimal Algorithm predicts the label whose version space has larger
 ## Depends on
 
 - [Partial concept classes and their VC and Littlestone dimensions](partial-concept-class.md)
-- [The Littlestone dimension is the optimal mistake bound](../../../online-learning-and-boosting/the-littlestone-dimension-is-the-optimal-mistake-bound.md)
-- [Agnostic online learnability is characterized by the Littlestone dimension](../../../online-learning-and-boosting/agnostic-online-learnability-is-characterized-by-the-littlestone-dimension.md)
+- [Online classification protocol, mistakes and regret](../../../online-learning-and-boosting/online-classification-protocol-mistakes-and-regret.md)
 
 ## Proof depends on
 
-- [Partial concept classes and their VC and Littlestone dimensions](partial-concept-class.md)
 - [The Littlestone dimension is the optimal mistake bound](../../../online-learning-and-boosting/the-littlestone-dimension-is-the-optimal-mistake-bound.md)
 - [Agnostic online learnability is characterized by the Littlestone dimension](../../../online-learning-and-boosting/agnostic-online-learnability-is-characterized-by-the-littlestone-dimension.md)
 

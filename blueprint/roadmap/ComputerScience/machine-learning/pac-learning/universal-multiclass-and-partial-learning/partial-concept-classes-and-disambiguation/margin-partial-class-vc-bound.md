@@ -10,10 +10,6 @@ If $d$ points are shattered by $H_{R,\gamma}$, then for every sign vector the co
 
 - [Partial concept classes and their VC and Littlestone dimensions](partial-concept-class.md)
 
-## Proof depends on
-
-- [Partial concept classes and their VC and Littlestone dimensions](partial-concept-class.md)
-
 ## Sources
 
 - N. Alon, S. Hanneke, R. Holzman, S. Moran, "A Theory of PAC Learnability of Partial Concept Classes", FOCS (2021), arXiv:2107.08444.

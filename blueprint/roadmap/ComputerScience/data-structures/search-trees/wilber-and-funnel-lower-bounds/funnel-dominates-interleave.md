@@ -8,13 +8,12 @@ Using the symmetric characterization, each alternation counted at a node $v$ of 
 
 ## Depends on
 
-- [Rotation invariance of the funnel bound](funnel-bound-rotation-invariance.md)
 - [Wilber's interleave (alternation) bound](interleave-bound.md)
+- [Wilber's funnel bound](funnel-bound.md)
 
 ## Proof depends on
 
 - [Rotation invariance of the funnel bound](funnel-bound-rotation-invariance.md)
-- [Wilber's interleave (alternation) bound](interleave-bound.md)
 
 ## Sources
 

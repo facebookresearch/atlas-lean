@@ -10,10 +10,6 @@ $\mathbb{E}[T] = \sum_{\ell \ge 0} \Pr[T > \ell] \le C \sum_{\ell \ge 0} \rho^{\
 
 - [Random-walk insertion for d-ary cuckoo hashing](random-walk-cuckoo-insertion.md)
 
-## Proof depends on
-
-- [Random-walk insertion for d-ary cuckoo hashing](random-walk-cuckoo-insertion.md)
-
 ## Sources
 
 - Tolson Bell, Alan Frieze, "O(1) Insertion for Random Walk d-ary Cuckoo Hashing up to the Load Threshold", FOCS (2024), arXiv:2401.14394.

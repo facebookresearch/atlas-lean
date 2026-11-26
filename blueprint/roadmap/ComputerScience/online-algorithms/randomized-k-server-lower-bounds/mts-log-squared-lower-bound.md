@@ -8,9 +8,7 @@ Apply the $(k+1)$-point $k$-server lower bound with $n = k + 1$ and use the equi
 
 ## Depends on
 
-- [Some $(k+1)$-point metrics force $\Omega(\log^2 k)$ randomized k-server ratio](k-server-log-squared-lower-bound.md)
-- [k-server on $k+1$ points is a metrical task system](k-server-on-k-plus-one-points.md)
-- [Randomized MTS is $O(\log^2 n)$-competitive on every metric](../metrical-task-systems-and-hst-embeddings/mts-log-squared-upper-bound.md)
+- [Metrical task systems](../metrical-task-systems-and-hst-embeddings/metrical-task-system.md)
 
 ## Proof depends on
 

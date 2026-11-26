@@ -10,10 +10,7 @@ Reduce from a PLS-complete circuit local search problem (Flip for Boolean circui
 
 - [PLS reduction and tight PLS reduction](pls-reduction-and-tight-reduction.md)
 - [MAX-CUT as an optimization problem](../../../../TheoryOfComputation/pcp-and-inapproximability/inapproximability-of-max-cut/max-cut.md)
-
-## Proof depends on
-
-- [PLS reduction and tight PLS reduction](pls-reduction-and-tight-reduction.md)
+- [The class PLS of polynomial local search problems](../../../../TheoryOfComputation/complexity-classes/total-search-problems/the-class-pls-of-polynomial-local-search.md)
 
 ## Sources
 

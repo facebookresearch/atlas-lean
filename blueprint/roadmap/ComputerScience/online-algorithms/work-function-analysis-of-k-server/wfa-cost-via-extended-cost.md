@@ -9,10 +9,7 @@ Since $A_t \ni r_t$, the work function satisfies $w_t(A_t) = w_{t-1}(A_t)$, and 
 ## Depends on
 
 - [Extended cost of a request](extended-cost.md)
-
-## Proof depends on
-
-- [Extended cost of a request](extended-cost.md)
+- [Work functions and the work function algorithm](../paging-and-k-server/work-functions-and-the-work-function-algorithm.md)
 
 ## Sources
 

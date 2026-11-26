@@ -9,12 +9,9 @@ When the dual Helly number is $k$, a proper learner can output a concept consist
 ## Depends on
 
 - [Dual Helly number of a concept class](dual-helly-number.md)
-- [Optimal sample complexity of realizable PAC learning](../../optimal-sample-complexity-of-realizable-pac-learning.md)
-- [Bagging with logarithmically many bootstrap samples is an optimal PAC learner](bagging-optimal-pac-learner.md)
 
 ## Proof depends on
 
-- [Dual Helly number of a concept class](dual-helly-number.md)
 - [Optimal sample complexity of realizable PAC learning](../../optimal-sample-complexity-of-realizable-pac-learning.md)
 - [Bagging with logarithmically many bootstrap samples is an optimal PAC learner](bagging-optimal-pac-learner.md)
 

@@ -14,7 +14,6 @@ For $S \subseteq V$, $G[S]$ is the induced subgraph, and $G\{S\}$ is obtained fr
 
 - [Volume of a vertex set](../../algebraic-graph-theory/part-02/conductance-and-cheeger-s-inequality/volume.md)
 - [Weighted degree](../../algebraic-graph-theory/part-02/conductance-and-cheeger-s-inequality/weighted-degree.md)
-- [C-expander](../expander-graphs/is-cexpander.md)
 
 ## Sources
 

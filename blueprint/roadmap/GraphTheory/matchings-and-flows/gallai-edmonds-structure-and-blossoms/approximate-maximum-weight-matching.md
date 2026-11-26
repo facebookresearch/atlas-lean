@@ -8,11 +8,6 @@ $$
 
 In the unweighted case a matching $M$ is a *$(1 + \varepsilon)$-approximate maximum matching* if $(1 + \varepsilon)|M| \ge \nu(G)$. If all weights are integers in $\{0, 1, \dots, N\}$ then the optimum is at most $nN/2$, so any $(1 - \varepsilon)$-approximation with $\varepsilon < 2/(nN)$ is optimal.
 
-## Depends on
-
-- [Berge's lemma for matching subgraphs](../berge-s-lemma/berge-general.md)
-- [Edmonds' perfect matching polytope theorem](../matching-polytope/perfect-matching-polytope-eq.md)
-
 ## Sources
 
 - R. Duan, S. Pettie, "Linear-Time Approximation for Maximum Weight Matching", Journal of the ACM 61 (2014).

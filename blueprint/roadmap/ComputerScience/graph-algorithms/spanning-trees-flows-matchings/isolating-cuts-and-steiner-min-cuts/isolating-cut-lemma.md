@@ -17,9 +17,8 @@ Compute the cuts $X_i$ of the bit-cut construction with one oracle call each and
 
 ## Depends on
 
-- [Minimal minimum isolating cuts lie in disjoint bit-cut regions](bit-cut-region-containment.md)
 - [Maximum-flow oracles and the max-flow call model for cut problems](max-flow-oracle-call-model.md)
-- [Max-flow min-cut theorem](../../../../GraphTheory/matchings-and-flows/max-flow-min-cut-theorem/max-flow-min-cut.md)
+- [Minimum isolating cuts of a terminal set](minimum-isolating-cuts.md)
 
 ## Proof depends on
 

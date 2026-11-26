@@ -13,10 +13,9 @@ Maintain an approximate directed vertex-expander decomposition with $\phi=n^{-1/
 
 ## Depends on
 
-- [Every directed graph has a phi-expander decomposition whose backward edges number O(phi m log m)](directed-expander-decomposition-existence.md)
-- [Embedding an expander with low vertex congestion certifies directed vertex expansion](vertex-expansion-by-low-congestion-embedding.md)
 - [Dynamic graph problems](../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/dynamic-graph-problems.md)
 - [Amortized cost of an operation](../../../ComputerScience/data-structures/amortized-analysis/amortized-cost.md)
+- [Strongly connected vertices](../../../ComputerScience/graph-algorithms/traversal-and-connectivity/strongly-connected-components/strongly-connected.md)
 
 ## Proof depends on
 

@@ -14,9 +14,7 @@ By the Hopcroft-Karp inequality $|q| \ge |p| + |E(p) \cap E(q)|$ for successive 
 
 ## Depends on
 
-- [Augmenting after a shortest augmentation (Hopcroft–Karp, Theorem 2)](../berge-s-lemma/length-add-card-inter-le.md)
-- [A short augmenting path exists (Hopcroft–Karp, Corollary 2)](../berge-s-lemma/exists-is-augmenting-walk-length-le.md)
-- [Hopcroft and Karp's bound on the number of phases](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/maximum-bipartite-matching/card-le-hopcroft-karp-aux-sqrt.md)
+- [Augmenting path](../berge-s-lemma/is-augmenting-walk.md)
 
 ## Proof depends on
 

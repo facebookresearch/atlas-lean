@@ -8,7 +8,7 @@ By Hall's condition, validity is the orientability of a random $d$-uniform hyper
 
 ## Depends on
 
-- [Hall's condition for valid cuckoo assignments](hall-condition-for-cuckoo-assignments.md)
+- [d-ary cuckoo hashing and its hashing graph](d-ary-cuckoo-hashing.md)
 
 ## Proof depends on
 

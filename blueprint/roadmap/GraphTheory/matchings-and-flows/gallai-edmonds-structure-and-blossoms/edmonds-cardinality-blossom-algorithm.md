@@ -14,10 +14,11 @@ By the shrinking lemma, maximality is preserved under shrinking, and augmenting 
 
 ## Depends on
 
-- [Edmonds' blossom shrinking lemma](edmonds-blossom-shrinking-lemma.md)
-- [Tutte-Berge min-max formula for the maximum matching size](tutte-berge-min-max-formula.md)
-- [Gallai-Edmonds structure theorem for maximum matchings](gallai-edmonds-structure-theorem.md)
-- [General matching is in P (Edmonds' blossom algorithm)](../../../TheoryOfComputation/polynomial-time-problems/matching-in-general-graphs/matching-in-p.md)
+- [Alternating forests, flowers and blossoms of a matching](alternating-forests-and-blossoms.md)
+- [Augmenting path](../berge-s-lemma/is-augmenting-walk.md)
+- [Odd components and the Tutte deficiency of a vertex set](odd-components-and-tutte-deficiency.md)
+- [The Gallai-Edmonds partition D(G), A(G), C(G)](gallai-edmonds-partition.md)
+- [General matching decision problem](../../../TheoryOfComputation/polynomial-time-problems/matching-in-general-graphs/matching-dec.md)
 
 ## Proof depends on
 
@@ -25,6 +26,7 @@ By the shrinking lemma, maximality is preserved under shrinking, and augmenting 
 - [Every vertex set bounds the matching number through its odd components](odd-components-bound-matching-number.md)
 - [Gallai-Edmonds structure theorem for maximum matchings](gallai-edmonds-structure-theorem.md)
 - [Berge's lemma for matching subgraphs](../berge-s-lemma/berge-general.md)
+- [Tutte-Berge min-max formula for the maximum matching size](tutte-berge-min-max-formula.md)
 
 ## Sources
 

@@ -10,6 +10,8 @@ Start from the tight reduction from Local Max-Cut to congestion games with arbit
 
 - [Congestion game](../../potential-games/congestion-game.md)
 - [PLS reduction and tight PLS reduction](pls-reduction-and-tight-reduction.md)
+- [Pure Nash equilibrium](../../potential-games/is-pure-nash.md)
+- [The class PLS of polynomial local search problems](../../../../TheoryOfComputation/complexity-classes/total-search-problems/the-class-pls-of-polynomial-local-search.md)
 
 ## Proof depends on
 

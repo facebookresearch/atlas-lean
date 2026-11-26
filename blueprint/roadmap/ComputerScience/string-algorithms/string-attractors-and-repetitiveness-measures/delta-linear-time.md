@@ -9,11 +9,10 @@ The distinct substrings of length $k$ correspond to the suffixes of length at le
 ## Depends on
 
 - [Substring complexity $\delta$](substring-complexity.md)
-- [The LCP array](../../data-structures/tries-and-integer-dictionaries/suffix-array/lcp-array.md)
 
 ## Proof depends on
 
-- [Substring complexity $\delta$](substring-complexity.md)
+- [Suffix array](../../data-structures/tries-and-integer-dictionaries/suffix-array/suffix-array.md)
 - [The LCP array](../../data-structures/tries-and-integer-dictionaries/suffix-array/lcp-array.md)
 
 ## Sources

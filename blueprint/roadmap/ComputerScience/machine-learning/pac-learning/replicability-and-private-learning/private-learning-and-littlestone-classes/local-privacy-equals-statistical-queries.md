@@ -9,12 +9,10 @@ To answer a query $\psi$ locally, each individual reports randomized response on
 ## Depends on
 
 - [Private PAC learners and their sample complexity](private-pac-learner.md)
-- [Statistical-query learning implies noise-tolerant PAC learning](../../statistical-query-learning-implies-noise-tolerant-pac-learni.md)
-- [Every statistical query algorithm has a replicable implementation](../global-stability-and-list-replicability/statistical-query-algorithms-are-replicable.md)
+- [Differential privacy](../../../../cryptography/differential-privacy/differentially-private.md)
 
 ## Proof depends on
 
-- [Private PAC learners and their sample complexity](private-pac-learner.md)
 - [Statistical-query learning implies noise-tolerant PAC learning](../../statistical-query-learning-implies-noise-tolerant-pac-learni.md)
 - [Every statistical query algorithm has a replicable implementation](../global-stability-and-list-replicability/statistical-query-algorithms-are-replicable.md)
 

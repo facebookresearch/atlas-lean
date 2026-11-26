@@ -1,6 +1,6 @@
 # Metric distortion of plurality, Borda and Copeland
 
-In metric elections with $m$ candidates, plurality has distortion exactly $2m - 1$, the Borda count has distortion exactly $2m - 1$, and every rule that always selects a member of the uncovered set (in particular Copeland) has distortion at most $5$; Copeland's distortion is exactly $5$.
+In metric elections with $m$ candidates, plurality has distortion exactly $2m - 1$, the Borda count has distortion exactly $2m - 1$, and every rule that always selects a member of the uncovered set, the candidates $b$ for which no candidate beats $b$ in pairwise majority together with every candidate that $b$ beats (in particular Copeland), has distortion at most $5$; Copeland's distortion is exactly $5$.
 
 ## Proof sketch
 
@@ -10,10 +10,11 @@ For Copeland, a winner $w$ either beats the optimum $o$ in pairwise majority, wh
 
 - [Metric election and distortion of a voting rule](metric-election-and-distortion.md)
 - [Copeland score](../../../not-yet-classified/part-02/voting-rules/copeland-score.md)
+- [Scoring Score](../../../not-yet-classified/part-02/voting-rules/scoring-score.md)
 
 ## Proof depends on
 
-- [No deterministic voting rule has metric distortion below three](deterministic-distortion-lower-bound-three.md)
+- [The uncovered set is nonempty and contains every Copeland winner](uncovered-set-contains-copeland-winners.md)
 
 ## Sources
 

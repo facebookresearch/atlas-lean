@@ -1,6 +1,6 @@
 # Distinct elements needs Omega(1/eps^2 + log n) bits with constant failure probability
 
-There is an absolute constant $c > 0$ such that for all $n$ and all $\varepsilon$ with $c/\sqrt{n} \le \varepsilon \le c$, every randomized one-pass streaming algorithm solving the $(\varepsilon, 1/3)$-distinct elements problem on insertion-only streams over $[n]$ uses
+There is an absolute constant $c > 0$ such that for all $n$ and all $\varepsilon$ with $c/\sqrt{n} \le \varepsilon \le c$, every randomized one-pass streaming algorithm solving the $(\varepsilon, 1/3)$-distinct elements problem (output an estimate $\widetilde{F}_0$ of the number $F_0$ of distinct elements with $\Pr[\,|\widetilde{F}_0 - F_0| \le \varepsilon F_0\,] \ge 2/3$) on insertion-only streams over $[n]$ uses
 
 $$
 \Omega\big(\varepsilon^{-2} + \log n\big)
@@ -14,13 +14,13 @@ The $\Omega(\log n)$ term holds already for constant-factor approximation and fo
 
 ## Depends on
 
-- [Kane-Nelson-Woodruff distinct-elements algorithm with O(1/eps^2 + log n) bits](optimal-space-distinct-elements-algorithm.md)
+- [Turnstile streams, support size and linear sketches of a frequency vector](turnstile-streams-and-support-size.md)
 
 ## Proof depends on
 
-- [Turnstile streams, support size and linear sketches of a frequency vector](turnstile-streams-and-support-size.md)
 - [Yao's minimax principle for communication complexity](../../../TheoryOfComputation/communication-complexity/randomized-communication-protocols/rand-complexity-eq-i-sup-dist-complexity.md)
 - [Polynomial space for approximating $F_k$, $k \ge 6$](../frequency-moments-of-data-streams/space-lower-bound-freq-moment.md)
+- [Kane-Nelson-Woodruff distinct-elements algorithm with O(1/eps^2 + log n) bits](optimal-space-distinct-elements-algorithm.md)
 
 ## Sources
 

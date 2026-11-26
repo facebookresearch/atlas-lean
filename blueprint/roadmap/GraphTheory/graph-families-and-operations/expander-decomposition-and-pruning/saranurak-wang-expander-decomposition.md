@@ -15,12 +15,13 @@ Apply the cut-matching step to the current piece. In case 1 output it; in case 2
 ## Depends on
 
 - [(phi, epsilon)-expander decompositions of an undirected graph](phi-epsilon-expander-decomposition.md)
-- [Cut-matching step: certify expansion, find a balanced sparse cut, or isolate a nearly expanding side](cut-matching-step-trichotomy.md)
-- [Trimming a nearly expanding set into a degree-preserving phi/6-expander](trimming-lemma.md)
+- [Cut conductance, phi-expanders and degree-preserving induced subgraphs](conductance-and-phi-expanders.md)
 
 ## Proof depends on
 
 - [Every graph has a phi-expander decomposition with O(phi m log m) crossing edges](existence-of-expander-decompositions.md)
+- [Cut-matching step: certify expansion, find a balanced sparse cut, or isolate a nearly expanding side](cut-matching-step-trichotomy.md)
+- [Trimming a nearly expanding set into a degree-preserving phi/6-expander](trimming-lemma.md)
 
 ## Sources
 

@@ -8,8 +8,7 @@ The randomized ingredients of the almost-linear algorithm are terminal sampling 
 
 ## Depends on
 
-- [Gomory-Hu trees in almost-linear time: all-pairs max-flow reduces to single-pair max-flow](gomory-hu-trees-almost-linear-time.md)
-- [Deterministic Steiner minimum cut in maximum-flow time (Ding-Li)](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/isolating-cuts-and-steiner-min-cuts/ding-li-steiner-cut-in-max-flow-time.md)
+- [Flow-equivalent and cut-equivalent trees of weighted graphs](flow-equivalent-and-cut-equivalent-trees.md)
 
 ## Proof depends on
 

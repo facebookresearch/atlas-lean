@@ -8,13 +8,13 @@ Immediate from the funnel-hashing bound, since $\log^2 \delta^{-1} / \delta^{-1}
 
 ## Depends on
 
-- [Funnel hashing: squared-logarithmic worst-case probes for a greedy table](funnel-hashing-bounds.md)
 - [Yao's worst-case conjecture for greedy open addressing](yao-worst-case-conjecture.md)
+- [Funnel hashing layout](funnel-hashing-layout.md)
+- [Greedy open addressing and uniform probing](greedy-open-addressing-and-uniform-probing.md)
 
 ## Proof depends on
 
 - [Funnel hashing: squared-logarithmic worst-case probes for a greedy table](funnel-hashing-bounds.md)
-- [Yao's worst-case conjecture for greedy open addressing](yao-worst-case-conjecture.md)
 
 ## Sources
 

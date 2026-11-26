@@ -15,15 +15,13 @@ The strict vector coloring program minimizes $\alpha$ subject to a positive semi
 ## Depends on
 
 - [Vector colorings and the vector chromatic number](vector-colorings-and-vector-chromatic-number.md)
-- [Vector chromatic numbers lie between the clique number and the chromatic number](vector-chromatic-number-bounds.md)
 - [Lovász theta function](../theta-function-of-a-graph/lovasz-theta.md)
-- [Lovász's sandwich theorem](../theta-function-of-a-graph/sandwich.md)
 
 ## Proof depends on
 
-- [Vector colorings and the vector chromatic number](vector-colorings-and-vector-chromatic-number.md)
-- [Lovász theta function](../theta-function-of-a-graph/lovasz-theta.md)
 - [Orthogonal labeling of a graph](../theta-function-of-a-graph/is-orthogonal-labeling.md)
+- [Vector chromatic numbers lie between the clique number and the chromatic number](vector-chromatic-number-bounds.md)
+- [Lovász's sandwich theorem](../theta-function-of-a-graph/sandwich.md)
 
 ## Sources
 

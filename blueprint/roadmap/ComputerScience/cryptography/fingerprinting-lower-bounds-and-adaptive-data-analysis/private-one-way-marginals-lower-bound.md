@@ -14,8 +14,7 @@ Draw the dataset from a product distribution with column biases from a smooth pr
 
 ## Depends on
 
-- [Robust tracing turns accurate private marginals into a contradiction](fingerprinting-tracing-privacy-reduction.md)
-- [The Gaussian mechanism](../differential-privacy/gaussian-mechanism-differentially-privat.md)
+- [Differential privacy](../differential-privacy/differentially-private.md)
 
 ## Proof depends on
 

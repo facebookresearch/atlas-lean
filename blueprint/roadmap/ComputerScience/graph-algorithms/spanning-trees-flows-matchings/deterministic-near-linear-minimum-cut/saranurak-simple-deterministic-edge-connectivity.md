@@ -13,7 +13,6 @@ Compute a $(\phi, \epsilon)$-expander decomposition with $\phi = m^{-o(1)}$-scal
 
 ## Proof depends on
 
-- [Weighted expander decompositions with volumes measured in the host graph](expander-decomposition.md)
 - [Kawarabayashi-Thorup contraction to O(m/delta) edges preserving non-trivial minimum cuts](kawarabayashi-thorup-contraction.md)
 
 ## Sources

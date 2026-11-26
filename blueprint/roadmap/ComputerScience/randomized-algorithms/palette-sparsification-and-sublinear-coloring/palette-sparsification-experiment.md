@@ -11,8 +11,6 @@ Since an edge whose endpoints share no sampled color is never monochromatic unde
 ## Depends on
 
 - [The LIST COLORING decision problem](../../../TheoryOfComputation/np-completeness/graph-coloring-and-partitioning/list-coloring/list-coloring-dec.md)
-- [$k$-degenerate graphs are $(k + 1)$-colorable](../../../GraphTheory/graph-coloring/part-01/degeneracy-and-greedy-coloring/colorable.md)
-- [Bounded maximum degree implies degeneracy](../../../GraphTheory/graph-coloring/part-01/degeneracy-and-greedy-coloring/of-forall-degree-le.md)
 
 ## Sources
 

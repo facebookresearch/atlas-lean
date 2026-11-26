@@ -10,10 +10,6 @@ Before any I/O, all $N + 1$ predecessor answers are possible. Reading a block of
 
 - [The external-memory model](../external-memory-algorithms/the-external-memory-model.md)
 
-## Proof depends on
-
-- [The external-memory model](../external-memory-algorithms/the-external-memory-model.md)
-
 ## Sources
 
 - Alok Aggarwal, Jeffrey Scott Vitter, "The Input/Output Complexity of Sorting and Related Problems", Communications of the ACM 31(9) (1988).

@@ -8,13 +8,13 @@ For each $t$-subset of the sample, run the out-degree-$d$ orientation of the one
 
 ## Depends on
 
-- [Pseudo-cubes force out-degree at least half their dimension](pseudo-cube-outdegree-lower-bound.md)
 - [List PAC learners and list learnability](list-pac-learner.md)
+- [k-pseudo-cubes and the k-DS dimension](k-pseudo-cube.md)
 
 ## Proof depends on
 
 - [Pseudo-cubes force out-degree at least half their dimension](pseudo-cube-outdegree-lower-bound.md)
-- [List PAC learners and list learnability](list-pac-learner.md)
+- [One-inclusion hypergraphs, orientations and out-degree](one-inclusion-hypergraph.md)
 
 ## Sources
 

@@ -8,8 +8,7 @@ Compute Karger's skeleton family of $O(\log n)$ spanning trees, so that with hig
 
 ## Depends on
 
-- [Karger's skeleton: logarithmically many trees one of which 2-respects the minimum cut](karger-skeleton-tree-family.md)
-- [Minimum 2-respecting cut of a spanning tree in O(m log n) deterministic time](minimum-two-respecting-cut-algorithm.md)
+- [Steiner minimum cuts of a terminal set](../isolating-cuts-and-steiner-min-cuts/steiner-minimum-cut.md)
 
 ## Proof depends on
 

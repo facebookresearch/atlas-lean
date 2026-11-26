@@ -8,13 +8,14 @@ Bubeck, Cohen, J. R. Lee and Y. T. Lee run continuous-time mirror descent on the
 
 ## Depends on
 
-- [Competitive ratios transfer through dominating tree embeddings](embedding-transfer.md)
-- [Rate of entropic mirror descent on the simplex](../../../Analysis/convex-analysis-and-variations/mirror-descent/entropic-mirror-descent-exists-le.md)
+- [Metrical task systems](metrical-task-system.md)
 
 ## Proof depends on
 
 - [Competitive ratios transfer through dominating tree embeddings](embedding-transfer.md)
-- [Rate of entropic mirror descent on the simplex](../../../Analysis/convex-analysis-and-variations/mirror-descent/entropic-mirror-descent-exists-le.md)
+- [Hierarchically separated trees](hierarchically-separated-tree.md)
+- [Continuous-time mirror descent for online covering](../randomized-k-server-by-mirror-descent/continuous-mirror-descent-dynamics.md)
+- [Fakcharoenphol-Rao-Talwar O(log n) expected-stretch tree embeddings](../../randomized-algorithms/johnson-lindenstrauss-optimality-and-metric-embeddings/frt-logarithmic-stretch-tree-embedding.md)
 
 ## Sources
 

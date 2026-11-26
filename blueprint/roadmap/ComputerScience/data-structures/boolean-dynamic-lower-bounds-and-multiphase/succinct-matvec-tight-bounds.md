@@ -9,14 +9,10 @@ For the upper bound, precompute products of $M$ with a random family of vectors 
 ## Depends on
 
 - [Succinct Boolean matrix-vector multiplication](succinct-boolean-matvec-problem.md)
-- [Cell-sampling lemma](../cell-sampling-and-range-counting-lower-bounds/cell-sampling-lemma.md)
-- [Larsen–Williams cell-probe and word-RAM algorithms for online matrix-vector multiplication](online-matvec-cell-probe-upper-bound.md)
 
 ## Proof depends on
 
-- [Succinct Boolean matrix-vector multiplication](succinct-boolean-matvec-problem.md)
 - [Cell-sampling lemma](../cell-sampling-and-range-counting-lower-bounds/cell-sampling-lemma.md)
-- [Larsen–Williams cell-probe and word-RAM algorithms for online matrix-vector multiplication](online-matvec-cell-probe-upper-bound.md)
 
 ## Sources
 

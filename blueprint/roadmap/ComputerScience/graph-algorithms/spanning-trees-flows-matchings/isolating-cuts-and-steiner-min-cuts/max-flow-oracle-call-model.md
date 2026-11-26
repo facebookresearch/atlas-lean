@@ -12,7 +12,6 @@ An algorithm *uses $k$ max-flow calls* if it makes oracle calls on graphs $H_1, 
 
 ## Depends on
 
-- [Max-flow min-cut theorem](../../../../GraphTheory/matchings-and-flows/max-flow-min-cut-theorem/max-flow-min-cut.md)
 - [Source–sink cut](../../../../GraphTheory/matchings-and-flows/max-flow-min-cut-theorem/is-stcut.md)
 - [Cut capacity](../../../../GraphTheory/matchings-and-flows/max-flow-min-cut-theorem/cut-capacity.md)
 

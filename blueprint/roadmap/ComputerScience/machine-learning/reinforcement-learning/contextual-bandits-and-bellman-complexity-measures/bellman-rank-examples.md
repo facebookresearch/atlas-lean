@@ -8,10 +8,7 @@ In each case the average Bellman error $\mathcal{E}_h(f', f)$ is an expectation,
 
 ## Depends on
 
-- [Contextual decision processes and Bellman rank](bellman-rank.md)
-
-## Proof depends on
-
+- [Markov decision process](../../../heuristic-search-and-planning/value-iteration/mdp.md)
 - [Contextual decision processes and Bellman rank](bellman-rank.md)
 
 ## Sources

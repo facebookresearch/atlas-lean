@@ -14,9 +14,9 @@ Run the Standard Optimal Algorithm on samples augmented with fictitious mistakes
 
 ## Depends on
 
-- [Globally stable learners yield private learners via stable histograms](global-stability-to-private-learning.md)
-- [Private learning requires log-star of the Littlestone dimension samples](private-learning-requires-log-star-littlestone.md)
-- [The Littlestone dimension is the optimal mistake bound](../../../online-learning-and-boosting/the-littlestone-dimension-is-the-optimal-mistake-bound.md)
+- [Global stability and list replicability of learning rules](../global-stability-and-list-replicability/global-stability-and-list-replicability.md)
+- [Private PAC learners and their sample complexity](private-pac-learner.md)
+- [Online classification protocol, mistakes and regret](../../../online-learning-and-boosting/online-classification-protocol-mistakes-and-regret.md)
 
 ## Proof depends on
 

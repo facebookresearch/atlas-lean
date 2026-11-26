@@ -10,7 +10,6 @@ with $a_h = \pi_f(x_h)$. The **Bellman rank** is the smallest $M$ such that for 
 
 ## Depends on
 
-- [Bellman values are expected discounted returns](../bellman-values-are-expected-discounted-returns.md)
 - [Stochastic policy](../stochastic-policies-and-discounted-occupancy/stochastic-policy.md)
 
 ## Sources

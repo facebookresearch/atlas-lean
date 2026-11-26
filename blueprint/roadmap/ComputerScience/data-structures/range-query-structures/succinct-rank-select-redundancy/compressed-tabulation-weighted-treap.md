@@ -8,12 +8,6 @@ Treap priorities are derived from the keys by a tabulation-based weighting, so t
 
 ## Depends on
 
-- [The tree-structure bottleneck for succinct dynamic dictionaries](tree-structure-bottleneck.md)
-- [Information-theoretic space bound and redundancy of a dictionary](../../hashing/stable-and-tiny-pointer-hash-tables/information-theoretic-space-and-redundancy.md)
-
-## Proof depends on
-
-- [The tree-structure bottleneck for succinct dynamic dictionaries](tree-structure-bottleneck.md)
 - [Information-theoretic space bound and redundancy of a dictionary](../../hashing/stable-and-tiny-pointer-hash-tables/information-theoretic-space-and-redundancy.md)
 
 ## Sources

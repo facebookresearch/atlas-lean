@@ -15,13 +15,11 @@ The empirical error has sensitivity $1/n$, so the exponential mechanism with par
 ## Depends on
 
 - [Private PAC learners and their sample complexity](private-pac-learner.md)
-- [Utility of the exponential mechanism](../../../../cryptography/laplace-and-exponential-mechanisms/exp-mechanism-utility.md)
-- [The exponential mechanism is differentially private](../../../../cryptography/laplace-and-exponential-mechanisms/exp-mechanism-differentially-private.md)
-- [Uniform convergence implies ERM is an agnostic PAC learner](../../agnostic-pac-learning-and-uniform-convergence/uniform-convergence-implies-erm-is-an-agnostic-pac-learner.md)
+- [Exponential mechanism](../../../../cryptography/laplace-and-exponential-mechanisms/exp-mechanism.md)
+- [Learners and agnostic PAC learnability](../../agnostic-pac-learning-and-uniform-convergence/learners-and-agnostic-pac-learnability.md)
 
 ## Proof depends on
 
-- [Private PAC learners and their sample complexity](private-pac-learner.md)
 - [Utility of the exponential mechanism](../../../../cryptography/laplace-and-exponential-mechanisms/exp-mechanism-utility.md)
 - [The exponential mechanism is differentially private](../../../../cryptography/laplace-and-exponential-mechanisms/exp-mechanism-differentially-private.md)
 - [Uniform convergence implies ERM is an agnostic PAC learner](../../agnostic-pac-learning-and-uniform-convergence/uniform-convergence-implies-erm-is-an-agnostic-pac-learner.md)

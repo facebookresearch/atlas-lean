@@ -8,13 +8,13 @@ By Gale–Stewart determinacy the learner has a winning strategy in the learning
 
 ## Depends on
 
-- [Open Gale–Stewart games are determined](gale-stewart-determinacy.md)
 - [Online classification protocol, mistakes and regret](../../../online-learning-and-boosting/online-classification-protocol-mistakes-and-regret.md)
+- [Infinite Littlestone trees](infinite-littlestone-tree.md)
 
 ## Proof depends on
 
 - [Open Gale–Stewart games are determined](gale-stewart-determinacy.md)
-- [Online classification protocol, mistakes and regret](../../../online-learning-and-boosting/online-classification-protocol-mistakes-and-regret.md)
+- [Gale–Stewart games for learning](gale-stewart-games.md)
 
 ## Sources
 

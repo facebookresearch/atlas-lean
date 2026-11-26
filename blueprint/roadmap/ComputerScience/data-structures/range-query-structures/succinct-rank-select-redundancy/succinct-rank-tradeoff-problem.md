@@ -4,7 +4,6 @@ Given a bit array $A[1..n]$, a *succinct rank structure with redundancy $r$* sto
 
 ## Depends on
 
-- [Succinct rank and select](../advanced-data-structures/succinct-rank-and-select.md)
 - [The cell-probe model](../advanced-data-structures/the-cell-probe-model.md)
 
 ## Sources

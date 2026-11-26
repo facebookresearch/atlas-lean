@@ -9,11 +9,11 @@ Agreement on the order follows because a leader committed by one correct process
 ## Depends on
 
 - [Round-based DAG of reliably broadcast vertices](round-based-byzantine-dag.md)
+- [Asynchronous binary Byzantine agreement and common coins](asynchronous-binary-byzantine-agreement.md)
 
 ## Proof depends on
 
 - [Quorums of size n - f intersect in a correct replica when n is at least 3f + 1](../linear-view-change-bft-state-machine-replication/byzantine-quorum-intersection.md)
-- [Binary-value broadcast filters values proposed only by Byzantine processes](binary-value-broadcast.md)
 
 ## Sources
 

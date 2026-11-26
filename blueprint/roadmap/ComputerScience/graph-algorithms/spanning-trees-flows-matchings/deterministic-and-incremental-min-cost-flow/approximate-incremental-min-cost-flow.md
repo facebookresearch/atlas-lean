@@ -8,14 +8,12 @@ Run one instance of *Incremental thresholded minimum-cost flow in almost-linear 
 
 ## Depends on
 
-- [Incremental thresholded minimum-cost flow in almost-linear total time](incremental-thresholded-mcf-almost-linear.md)
 - [The online matrix-vector multiplication conjecture](../../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-online-matrix-vector-multiplication.md)
 - [Matching in a bipartite graph](../maximum-bipartite-matching/is-matching.md)
 
 ## Proof depends on
 
 - [Incremental thresholded minimum-cost flow in almost-linear total time](incremental-thresholded-mcf-almost-linear.md)
-- [The online matrix-vector multiplication conjecture](../../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-online-matrix-vector-multiplication.md)
 
 ## Sources
 

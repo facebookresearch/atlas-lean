@@ -9,11 +9,9 @@ After shuffling, the analyzer sees only the number of ones, which is the true co
 ## Depends on
 
 - [Local randomizers and the shuffle model](shuffle-model.md)
-- [Local differential privacy is equivalent to statistical query learning](../../machine-learning/pac-learning/replicability-and-private-learning/private-learning-and-littlestone-classes/local-privacy-equals-statistical-queries.md)
 
 ## Proof depends on
 
-- [Local randomizers and the shuffle model](shuffle-model.md)
 - [Local differential privacy is equivalent to statistical query learning](../../machine-learning/pac-learning/replicability-and-private-learning/private-learning-and-littlestone-classes/local-privacy-equals-statistical-queries.md)
 
 ## Sources

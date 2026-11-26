@@ -15,13 +15,11 @@ Add a new vertex joined to every vertex by a pair of high-capacity, very expensi
 ## Depends on
 
 - [Potential function of the l1 interior point method for minimum-cost flow](l1-ipm-potential-function.md)
-- [Flows with bounds and supplies by maximum flow](../circulations-with-bounds-by-maximum-flow.md)
+- [Integral minimum-cost flow instances with polynomially bounded data](integral-min-cost-flow-instance.md)
 
 ## Proof depends on
 
-- [Potential function of the l1 interior point method for minimum-cost flow](l1-ipm-potential-function.md)
 - [Hoffman's circulation theorem](../hoffman-circulation-theorem.md)
-- [Flows with bounds and supplies by maximum flow](../circulations-with-bounds-by-maximum-flow.md)
 
 ## Sources
 

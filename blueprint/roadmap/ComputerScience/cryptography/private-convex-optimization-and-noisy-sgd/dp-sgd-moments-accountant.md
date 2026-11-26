@@ -15,12 +15,9 @@ Track the log moment generating function of the privacy loss, $\alpha_M(\lambda)
 ## Depends on
 
 - [Differentially private stochastic gradient descent](dp-sgd.md)
-- [Conversion from zCDP to approximate differential privacy](../zero-concentrated-differential-privacy/zcdp-to-approximate-dp.md)
-- [Tight privacy amplification by subsampling](../shuffle-model-and-privacy-amplification/privacy-amplification-by-subsampling.md)
 
 ## Proof depends on
 
-- [Differentially private stochastic gradient descent](dp-sgd.md)
 - [Conversion from zCDP to approximate differential privacy](../zero-concentrated-differential-privacy/zcdp-to-approximate-dp.md)
 - [Tight privacy amplification by subsampling](../shuffle-model-and-privacy-amplification/privacy-amplification-by-subsampling.md)
 

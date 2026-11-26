@@ -10,6 +10,7 @@ Interpret $\sqrt{c_i}$-scaled quantities as prices and use (approximate) demand 
 
 - [Multi-agent binary-action contract with a team reward function](multi-agent-binary-action-contract.md)
 - [Submodular set function](../../../ComputerScience/approximation-algorithms/maximum-n-times-coverage/is-submodular.md)
+- [XOS set functions, demand queries and value queries](xos-functions-demand-and-value-queries.md)
 
 ## Proof depends on
 

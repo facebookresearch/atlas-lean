@@ -8,8 +8,8 @@ For the deterministic bound, consider the prediction $y = \infty$: consistency f
 
 ## Depends on
 
-- [Deterministic ski rental with a prediction](ski-rental-deterministic-with-prediction.md)
-- [Randomized ski rental with a prediction](ski-rental-randomized-with-prediction.md)
+- [Ski rental with a predicted number of days](ski-rental-with-prediction.md)
+- [Consistency and robustness of learning-augmented online algorithms](../learning-augmented-caching/consistency-and-robustness.md)
 
 ## Proof depends on
 

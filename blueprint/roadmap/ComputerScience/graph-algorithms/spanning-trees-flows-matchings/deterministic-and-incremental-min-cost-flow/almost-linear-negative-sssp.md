@@ -8,9 +8,7 @@ For shortest paths, set lower capacities $0$, upper capacities $n$, costs equal 
 
 ## Depends on
 
-- [Deterministic minimum-cost flow in almost-linear time](deterministic-almost-linear-min-cost-flow.md)
-- [Bellman-Ford succeeds exactly when no negative cycle is reachable](../../shortest-paths/bellman-ford-algorithm/bellman-ford-returns-distances-iff.md)
-- [Reduced-cost optimality certificate for minimum-cost flow](../potential-certificate-for-minimum-cost-flow.md)
+- [Negative-weight single-source shortest paths with integer weights bounded below by -W](../../shortest-paths/near-linear-negative-weight-sssp/negative-weight-sssp-integer-weights.md)
 
 ## Proof depends on
 

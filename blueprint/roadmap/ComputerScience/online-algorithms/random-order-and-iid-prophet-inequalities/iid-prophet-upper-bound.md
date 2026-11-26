@@ -9,10 +9,7 @@ Hill and Kertz reduce the worst case to distributions for which the optimal dyna
 ## Depends on
 
 - [The Hill–Kertz constant $\beta \approx 0.745$](hill-kertz-constant.md)
-
-## Proof depends on
-
-- [The Hill–Kertz constant $\beta \approx 0.745$](hill-kertz-constant.md)
+- [Gambler-to-prophet ratios under different arrival models](prophet-ratio-by-arrival-model.md)
 
 ## Sources
 

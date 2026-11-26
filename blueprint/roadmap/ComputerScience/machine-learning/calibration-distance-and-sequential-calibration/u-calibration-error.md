@@ -10,8 +10,7 @@ where the supremum ranges over proper scoring rules (losses) $S$ with values in 
 
 ## Depends on
 
-- [Characterization of proper scoring rules](../../../GameTheory/mechanism-design/characterization-of-proper-scoring-rules.md)
-- [Distance to calibration and its upper and lower variants](distance-to-calibration.md)
+- [Scoring rules and properness for finite outcomes](../../../GameTheory/mechanism-design/remaining-clauses-of-scoring-rules-and-properness.md)
 
 ## Sources
 

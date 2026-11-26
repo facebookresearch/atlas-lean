@@ -8,8 +8,8 @@ Each vertex maintains a desire level $p_t(v)$, starts at $1/2$, halves it when t
 
 ## Depends on
 
-- [Luby's maximal independent set algorithm](../luby-s-maximal-independent-set-algorithm.md)
-- [Locally checkable labeling problem](../lcl-problems-and-the-locality-landscape/locally-checkable-labeling-problem.md)
+- [The LOCAL model](../../distributed-execution-models/the-local-model.md)
+- [Network decomposition with weak or strong diameter](../deterministic-network-decomposition/network-decomposition-weak-strong-diameter.md)
 
 ## Proof depends on
 

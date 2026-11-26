@@ -8,7 +8,7 @@ Allocate the values in a dereference table at load factor $1 - \delta$ with $\de
 
 ## Depends on
 
-- [Optimal sizes of tiny pointers](tiny-pointer-optimal-size.md)
+- [Tiny pointers and dereference tables](tiny-pointer.md)
 
 ## Proof depends on
 

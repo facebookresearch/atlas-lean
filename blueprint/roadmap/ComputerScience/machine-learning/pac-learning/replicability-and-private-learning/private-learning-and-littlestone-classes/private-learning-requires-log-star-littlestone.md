@@ -9,12 +9,9 @@ By the threshold lemma it suffices to show that privately learning thresholds on
 ## Depends on
 
 - [Private PAC learners and their sample complexity](private-pac-learner.md)
-- [Large Littlestone dimension forces large threshold subclasses](littlestone-dimension-contains-thresholds.md)
-- [Packing lower bound for pure differential privacy](../../../../cryptography/differential-privacy/packing-lower-bound-for-pure-differential.md)
 
 ## Proof depends on
 
-- [Private PAC learners and their sample complexity](private-pac-learner.md)
 - [Large Littlestone dimension forces large threshold subclasses](littlestone-dimension-contains-thresholds.md)
 - [Packing lower bound for pure differential privacy](../../../../cryptography/differential-privacy/packing-lower-bound-for-pure-differential.md)
 

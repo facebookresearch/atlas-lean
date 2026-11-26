@@ -6,7 +6,7 @@ A learner $A : (X \times \{0,1\})^n \to \{0,1\}^X$ is **$(\varepsilon,\delta)$-d
 
 - [Differential privacy](../../../../cryptography/differential-privacy/differentially-private.md)
 - [Neighbouring row databases](../../../../cryptography/differential-privacy/hamming-adj.md)
-- [The fundamental theorem of PAC learning](../../is-paclearnable-realizable-family-iff-ha.md)
+- [The realizable distribution family](../../occam-bound-for-consistent-learners/realizable-family.md)
 
 ## Sources
 

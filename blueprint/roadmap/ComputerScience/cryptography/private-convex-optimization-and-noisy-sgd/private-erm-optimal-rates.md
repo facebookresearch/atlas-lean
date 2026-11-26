@@ -15,13 +15,9 @@ For $(\varepsilon,\delta)$-DP, noisy (stochastic) gradient descent with Gaussian
 ## Depends on
 
 - [Private empirical risk minimization and private stochastic convex optimization](private-erm-and-sco.md)
-- [Sample complexity of privately answering one-way marginals](../fingerprinting-lower-bounds-and-adaptive-data-analysis/private-one-way-marginals-lower-bound.md)
-- [The exponential mechanism is differentially private](../laplace-and-exponential-mechanisms/exp-mechanism-differentially-private.md)
-- [Packing lower bound for pure differential privacy](../differential-privacy/packing-lower-bound-for-pure-differential.md)
 
 ## Proof depends on
 
-- [Private empirical risk minimization and private stochastic convex optimization](private-erm-and-sco.md)
 - [Sample complexity of privately answering one-way marginals](../fingerprinting-lower-bounds-and-adaptive-data-analysis/private-one-way-marginals-lower-bound.md)
 - [The exponential mechanism is differentially private](../laplace-and-exponential-mechanisms/exp-mechanism-differentially-private.md)
 - [Packing lower bound for pure differential privacy](../differential-privacy/packing-lower-bound-for-pure-differential.md)

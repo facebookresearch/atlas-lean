@@ -8,8 +8,8 @@ By the minimax theorem, $\mathrm{dec}_\gamma(\mathrm{co}(\mathcal{M}), \bar M)$ 
 
 ## Depends on
 
-- [The DEC of the convex hull characterizes adversarial decision making](dec-convex-hull-adversarial.md)
-- [Von Neumann's minimax theorem](../../../../GameTheory/noncooperative-games/von-neumann-s-minimax-theorem/matrix-game-minimax.md)
+- [Decision-estimation coefficient](decision-estimation-coefficient.md)
+- [Hellinger distance](../../../../Probability/convergence-of-measures/hellinger-distance/hellinger-dist.md)
 
 ## Proof depends on
 

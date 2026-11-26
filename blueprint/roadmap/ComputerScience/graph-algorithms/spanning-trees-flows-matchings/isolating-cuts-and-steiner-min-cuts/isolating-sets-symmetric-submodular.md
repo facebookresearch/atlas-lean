@@ -14,14 +14,11 @@ The bit-cut argument for graph cuts only uses symmetric submodularity of the cut
 
 ## Depends on
 
-- [Minimal minimum isolating cuts lie in disjoint bit-cut regions](bit-cut-region-containment.md)
 - [Submodular set function](../../../approximation-algorithms/maximum-n-times-coverage/is-submodular.md)
-- [Decision version of hypergraph $k$-cut](../../../../TheoryOfComputation/polynomial-time-problems/hypergraph-k-cut-for-fixed-k/hypergraph-kcut-dec.md)
 
 ## Proof depends on
 
 - [Minimal minimum isolating cuts lie in disjoint bit-cut regions](bit-cut-region-containment.md)
-- [Submodular set function](../../../approximation-algorithms/maximum-n-times-coverage/is-submodular.md)
 
 ## Sources
 

@@ -14,8 +14,7 @@ The framework of neutralizing remote sets and sandwiches is kept, but the layere
 
 ## Depends on
 
-- [Real-weighted SSSP in O(m n^{4/5} log^{2/5} n + n^{9/5} log^{7/5} n) randomized time via proper hop distances](hjq-mn-four-fifths.md)
-- [r-hop reductions and the layered hop-reducing auxiliary graph](r-hop-reduction-auxiliary-graph.md)
+- [Real-weighted negative SSSP in the real RAM and strongly polynomial running time](real-weighted-sssp-strongly-polynomial.md)
 
 ## Proof depends on
 

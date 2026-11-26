@@ -14,7 +14,8 @@ The obstacle for D1LC is that low-degree vertices have small lists, so there is 
 ## Depends on
 
 - [The (deg + 1)-list-coloring problem (D1LC)](degree-plus-one-list-coloring.md)
-- [Assadi-Chen-Khanna palette sparsification theorem for (Delta + 1)-coloring](palette-sparsification-theorem-delta-plus-one.md)
+- [Semi-streaming graph model with insertion-only, dynamic and random-order edge streams](../semi-streaming-matching-and-vertex-cover/semi-streaming-graph-model.md)
+- [The massively parallel computation model](../../parallel-algorithms/massively-parallel-computation-graph-algorithms/massively-parallel-computation-model.md)
 
 ## Proof depends on
 

@@ -14,7 +14,7 @@ For the $M\sqrt{pn}$ term take $g_i$ depending only on $Z_i$, which reduces to s
 
 ## Depends on
 
-- [Moment inequality for sums of weakly correlated functions](weakly-correlated-sum-moment-inequality.md)
+- [Uniform stability](../algorithmic-stability/is-uniformly-stable.md)
 
 ## Proof depends on
 

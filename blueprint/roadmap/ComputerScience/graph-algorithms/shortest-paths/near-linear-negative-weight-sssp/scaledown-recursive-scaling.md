@@ -10,10 +10,9 @@ Correctness is immediate: Phase 3 returns $\phi$ making $w^B_\phi\ge 0$, and $w^
 
 ## Depends on
 
-- [FixDAGEdges: a linear-time price function for graphs whose negative edges join parts of an acyclic condensation](fix-dag-edges.md)
-- [ElimNeg: the Dijkstra-Bellman-Ford hybrid runs in time proportional to the negative-edge counts of shortest paths](elimneg-dijkstra-bellman-ford-hybrid.md)
-- [A directed LDD hits eta-bounded shortest paths O(log^2 n) times in expectation](ldd-sparse-hitting-eta-bounded-paths.md)
-- [Inside components of small weak diameter the B-shifted negative-edge count halves](scc-halving-of-eta.md)
+- [The negative-edge count eta of shortest paths and the B-shifted graph](negative-edge-count-eta.md)
+- [Price functions, reduced edge weights, and valid reweightings of a directed graph](price-functions-and-reduced-weights.md)
+- [Weak and strong directed low-diameter decompositions with overhead rho](directed-low-diameter-decomposition.md)
 
 ## Proof depends on
 

@@ -12,10 +12,6 @@ Priceability: the payments made in each step define $\pi_i$, all equal to $p = 1
 - [Priceable committee in an approval election](priceable-committee.md)
 - [Extended justified representation](../extended-and-proportional-justified-representation/extended-justified-representation.md)
 
-## Proof depends on
-
-- [Method of Equal Shares for approval committees](method-of-equal-shares-approval.md)
-
 ## Sources
 
 - D. Peters, P. Skowron, "Proportionality and the Limits of Welfarism", EC 2020, arXiv:1911.11747.

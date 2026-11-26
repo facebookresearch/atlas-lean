@@ -9,10 +9,7 @@ Let $I^*$ be the prophet's optimal set and set $x_e = \Pr[e \in I^*]$, so $x \in
 ## Depends on
 
 - [Online contention resolution schemes](online-contention-resolution.md)
-
-## Proof depends on
-
-- [Online contention resolution schemes](online-contention-resolution.md)
+- [Matroid prophet inequality](matroid-prophet-problem.md)
 
 ## Sources
 

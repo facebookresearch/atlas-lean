@@ -8,13 +8,11 @@ Run the realizable one-inclusion-graph learner as a compression procedure: every
 
 ## Depends on
 
+- [Partial concept classes and their VC and Littlestone dimensions](partial-concept-class.md)
 - [Disambiguations of partial concept classes](disambiguation.md)
-- [VC dimension characterizes PAC learnability of partial concept classes](partial-class-pac-characterization.md)
-- [Sauer bound for the growth function](../../../../not-yet-classified/growth-function/growth-function-le-sum.md)
 
 ## Proof depends on
 
-- [Disambiguations of partial concept classes](disambiguation.md)
 - [VC dimension characterizes PAC learnability of partial concept classes](partial-class-pac-characterization.md)
 - [Sauer bound for the growth function](../../../../not-yet-classified/growth-function/growth-function-le-sum.md)
 

@@ -8,8 +8,10 @@ Reduce from set disjointness through a communication variant of End-of-Line, in 
 
 ## Depends on
 
-- [Computing a Nash equilibrium of a two-player game is PPAD-complete](two-player-nash-ppad-complete.md)
+- [Mixed Nash equilibrium](../is-mixed-nash.md)
+- [Nash equilibrium of a bimatrix game](../../bimatrix-games-and-the-lemke-howson-algorithm/is-bimatrix-nash.md)
 - [Correlated equilibrium](../../correlated-equilibria/is-correlated-eq.md)
+- [Randomized communication complexity](../../../../TheoryOfComputation/communication-complexity/randomized-communication-protocols/rand-complexity.md)
 
 ## Proof depends on
 

@@ -9,14 +9,13 @@ First replace $G$ by a cut sparsifier-type reduction that does not change minimu
 ## Depends on
 
 - [Flow-equivalent and cut-equivalent trees of weighted graphs](flow-equivalent-and-cut-equivalent-trees.md)
-- [Single-source minimum cut values](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/isolating-cuts-and-steiner-min-cuts/single-source-minimum-cut-values.md)
-- [Isolating cut lemma with logarithmically many max-flow calls](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/isolating-cuts-and-steiner-min-cuts/isolating-cut-lemma.md)
 
 ## Proof depends on
 
 - [Isolating cut lemma with logarithmically many max-flow calls](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/isolating-cuts-and-steiner-min-cuts/isolating-cut-lemma.md)
 - [Gomory-Hu trees of unweighted graphs with polylogarithmically many max-flows](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/isolating-cuts-and-steiner-min-cuts/unweighted-gomory-hu-polylog-max-flows.md)
 - [A near-maximum tree packing has many trees that 2-respect a minimum cut](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/deterministic-near-linear-minimum-cut/tree-packing-two-respects-minimum-cut.md)
+- [Single-source minimum cut values](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/isolating-cuts-and-steiner-min-cuts/single-source-minimum-cut-values.md)
 
 ## Sources
 

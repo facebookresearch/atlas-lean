@@ -8,7 +8,8 @@ In round $j$, Alice needs the contents of the $j$-th probed cell of each of her 
 
 ## Depends on
 
-- [Static cell-probe structures yield asymmetric protocols](cell-probe-to-asymmetric-protocol.md)
+- [Static cell-probe structure with space $S$ and query time $t$](../../../ComputerScience/data-structures/cell-sampling-and-range-counting-lower-bounds/static-cell-probe-structure.md)
+- [Asymmetric $[a, b]$-protocols](asymmetric-protocol.md)
 
 ## Proof depends on
 

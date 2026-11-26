@@ -9,10 +9,10 @@ Sparsify the LOCAL desire-level MIS algorithm: run it in phases of $R = O(\sqrt{
 ## Depends on
 
 - [The massively parallel computation model](massively-parallel-computation-model.md)
-- [Luby's maximal independent set algorithm](../../concurrent-systems-and-protocols/local-distributed-algorithms/luby-s-maximal-independent-set-algorithm.md)
 
 ## Proof depends on
 
+- [The LOCAL model](../../concurrent-systems-and-protocols/distributed-execution-models/the-local-model.md)
 - [Randomized MIS in O(log Delta) + polylog-size deterministic time](../../concurrent-systems-and-protocols/local-distributed-algorithms/deterministic-colouring-and-mis-in-local-and-congest/randomized-mis-log-delta-shattering.md)
 - [Graph shattering after a randomized pre-shattering phase](../../concurrent-systems-and-protocols/local-distributed-algorithms/deterministic-colouring-and-mis-in-local-and-congest/graph-shattering-lemma.md)
 

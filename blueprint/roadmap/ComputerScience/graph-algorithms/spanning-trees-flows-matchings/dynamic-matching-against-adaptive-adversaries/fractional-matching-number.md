@@ -4,7 +4,6 @@ A *fractional matching* of a graph $G = (V, E)$ is a vector $x \in \mathbb{R}_{\
 
 ## Depends on
 
-- [Kőnig's theorem for finite bipartite graphs](../../../../GraphTheory/matchings-and-flows/k-nig-s-theorem/konig-matching-cover.md)
 - [Fully dynamic alpha-approximate maximum matching and its value version](dynamic-approximate-matching-problem.md)
 
 ## Sources

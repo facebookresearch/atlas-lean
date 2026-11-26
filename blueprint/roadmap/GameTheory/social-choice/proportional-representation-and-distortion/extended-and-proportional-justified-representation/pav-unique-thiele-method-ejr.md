@@ -10,6 +10,7 @@ PAV satisfies EJR by the swap argument. Conversely, if $w_j \ne 1/j$ for some sm
 
 - [Thiele methods for approval committee elections](thiele-methods.md)
 - [Extended justified representation](extended-justified-representation.md)
+- [Proportional justified representation](proportional-justified-representation.md)
 
 ## Proof depends on
 

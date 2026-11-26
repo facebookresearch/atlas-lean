@@ -9,12 +9,10 @@ The booster maintains multiplicative weights over the sample and in each round r
 ## Depends on
 
 - [Multiclass weak learnability relative to random guessing on lists](multiclass-weak-learning-condition.md)
-- [Weak learnability implies PAC learnability via boosting](../../../generalization-bounds-and-concentration/weak-learnability-implies-pac-learnability-via-boosting.md)
-- [The k-DS dimension characterizes k-list learnability](k-ds-dimension-characterizes-list-learnability.md)
+- [The realizable distribution family](../../occam-bound-for-consistent-learners/realizable-family.md)
 
 ## Proof depends on
 
-- [Multiclass weak learnability relative to random guessing on lists](multiclass-weak-learning-condition.md)
 - [Weak learnability implies PAC learnability via boosting](../../../generalization-bounds-and-concentration/weak-learnability-implies-pac-learnability-via-boosting.md)
 - [The k-DS dimension characterizes k-list learnability](k-ds-dimension-characterizes-list-learnability.md)
 

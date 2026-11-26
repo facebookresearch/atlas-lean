@@ -8,10 +8,6 @@ $$
 
 with $0/0 := 1$; for a randomized rule returning a distribution on $C$, the numerator is the expected social cost.
 
-## Depends on
-
-- [Scoring Score](../../../not-yet-classified/part-02/voting-rules/scoring-score.md)
-
 ## Sources
 
 - E. Anshelevich, O. Bhardwaj, E. Elkind, J. Postl, P. Skowron, "Approximating optimal social choice under metric preferences", Artificial Intelligence 264 (2018); AAAI 2015.

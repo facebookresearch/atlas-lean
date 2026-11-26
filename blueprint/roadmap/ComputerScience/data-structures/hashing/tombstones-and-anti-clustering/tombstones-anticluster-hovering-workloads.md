@@ -9,11 +9,10 @@ Deletions leave tombstones at hash-random positions, so between rebuilds the tom
 ## Depends on
 
 - [Ordered linear probing](ordered-linear-probing.md)
-- [Primary clustering: insertion-only linear probing costs $\Theta(x^2)$](primary-clustering-quadratic-cost.md)
+- [Linear probing with tombstones and periodic rebuilds](linear-probing-with-tombstones.md)
 
 ## Proof depends on
 
-- [Ordered linear probing](ordered-linear-probing.md)
 - [Primary clustering: insertion-only linear probing costs $\Theta(x^2)$](primary-clustering-quadratic-cost.md)
 
 ## Sources

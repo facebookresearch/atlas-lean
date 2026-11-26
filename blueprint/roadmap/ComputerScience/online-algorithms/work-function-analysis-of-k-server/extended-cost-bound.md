@@ -8,13 +8,11 @@ Koutsoupias and Papadimitriou use quasiconvexity to prove the *duality lemma*: t
 
 ## Depends on
 
-- [Quasiconvexity of work functions](work-function-quasiconvexity.md)
 - [Extended cost of a request](extended-cost.md)
 
 ## Proof depends on
 
 - [Quasiconvexity of work functions](work-function-quasiconvexity.md)
-- [Extended cost of a request](extended-cost.md)
 
 ## Sources
 

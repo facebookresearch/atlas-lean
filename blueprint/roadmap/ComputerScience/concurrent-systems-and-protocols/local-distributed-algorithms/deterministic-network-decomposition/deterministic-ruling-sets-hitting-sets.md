@@ -8,12 +8,12 @@ The ruling set algorithm repeatedly halves the identifier space bit by bit: in e
 
 ## Depends on
 
-- [Network decomposition with weak or strong diameter](network-decomposition-weak-strong-diameter.md)
 - [The CONGEST model of distributed computing](the-congest-model.md)
 
 ## Proof depends on
 
 - [Faster deterministic network decomposition in O(log^5 n) rounds](faster-deterministic-network-decomposition.md)
+- [Network decomposition with weak or strong diameter](network-decomposition-weak-strong-diameter.md)
 
 ## Sources
 

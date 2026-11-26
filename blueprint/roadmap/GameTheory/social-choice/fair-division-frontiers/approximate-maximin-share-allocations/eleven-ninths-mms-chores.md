@@ -6,10 +6,6 @@ Let $n$ agents have additive cost functions $c_i(S) = \sum_{e \in S} c_i(e)$ wit
 
 After reduction to ordered instances, the algorithm builds bundles one at a time with a first-fit-decreasing procedure: the next bundle is filled with the largest chores that fit within $\tfrac{11}{9}$ of some agent's maximin share, and that agent takes it. The analysis mirrors the classical $\tfrac{11}{9}$ bound for first-fit-decreasing bin packing, comparing with each agent's own maximin partition. The lower bound adapts the matrix constructions used for goods.
 
-## Depends on
-
-- [Alpha-maximin share allocation](alpha-maximin-share-allocation.md)
-
 ## Proof depends on
 
 - [Reduction to ordered instances for maximin share approximation](ordered-instance-reduction-mms.md)

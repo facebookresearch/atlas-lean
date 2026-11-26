@@ -20,9 +20,8 @@ By the polar section lemma it suffices to count edges of the random polygon $Q \
 
 ## Depends on
 
-- [Shadow vertices are bounded by edges of the polar section](shadow-vertices-and-polar-section.md)
+- [Gaussian-smoothed linear programs and smoothed pivot complexity](gaussian-smoothed-linear-programs.md)
 - [The shadow vertex pivot rule and the smoothed shadow bound](shadow-vertex-rule-and-shadow-bound.md)
-- [Largest singular value of a standard Gaussian matrix](../../../Probability/high-dimensional-probability/measure-real-sigma-max-ge-le.md)
 
 ## Proof depends on
 

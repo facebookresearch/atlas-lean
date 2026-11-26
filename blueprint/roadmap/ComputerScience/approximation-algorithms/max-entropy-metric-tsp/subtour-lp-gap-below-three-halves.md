@@ -14,8 +14,8 @@ Re-run the analysis of the approximation theorem with every comparison made agai
 
 ## Depends on
 
-- [Karlin-Klein-Oveis Gharan: max-entropy rounding beats 3/2 for metric TSP](kko-three-halves-minus-epsilon.md)
 - [Subtour elimination LP of a metric TSP instance](subtour-elimination-lp.md)
+- [Max-entropy rounding algorithm for metric TSP](max-entropy-tsp-algorithm.md)
 - [Integrality gaps of linear programming relaxations](../lp-based-approximation/integrality-gaps-of-linear-programming.md)
 
 ## Proof depends on

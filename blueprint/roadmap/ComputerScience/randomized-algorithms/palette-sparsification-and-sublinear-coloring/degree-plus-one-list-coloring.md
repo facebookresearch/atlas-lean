@@ -5,7 +5,6 @@ An instance of *$(\deg + 1)$-list-coloring* (D1LC) is a simple graph $G = (V, E)
 ## Depends on
 
 - [The LIST COLORING decision problem](../../../TheoryOfComputation/np-completeness/graph-coloring-and-partitioning/list-coloring/list-coloring-dec.md)
-- [Palette sparsification experiment, sampled lists and the conflict graph](palette-sparsification-experiment.md)
 
 ## Sources
 

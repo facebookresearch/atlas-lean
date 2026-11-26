@@ -8,16 +8,14 @@ Goldberg's bit-scaling framework reduces the problem to $O(\log W)$ instances wi
 
 ## Depends on
 
-- [ScaleDown: halving the most negative weight in expected O(m log^3 n log Delta) time](scaledown-recursive-scaling.md)
-- [A feasible price function exists exactly when the graph has no negative cycle](feasible-potential-iff-no-negative-cycle.md)
 - [Negative-weight single-source shortest paths with integer weights bounded below by -W](negative-weight-sssp-integer-weights.md)
-- [Cost bound for Johnson's algorithm](../johnson-s-algorithm/johnson-time-le.md)
-- [Bellman-Ford reports a negative cycle exactly when one is reachable](../bellman-ford-algorithm/bellman-ford-returns-negative-cycle-iff.md)
+- [Weak and strong directed low-diameter decompositions with overhead rho](directed-low-diameter-decomposition.md)
 
 ## Proof depends on
 
 - [ScaleDown: halving the most negative weight in expected O(m log^3 n log Delta) time](scaledown-recursive-scaling.md)
 - [A feasible price function exists exactly when the graph has no negative cycle](feasible-potential-iff-no-negative-cycle.md)
+- [ElimNeg: the Dijkstra-Bellman-Ford hybrid runs in time proportional to the negative-edge counts of shortest paths](elimneg-dijkstra-bellman-ford-hybrid.md)
 
 ## Sources
 

@@ -9,11 +9,10 @@ Correa, Foncea, Hoeksma, Oosterwijk and Vredeveld choose the acceptance probabil
 ## Depends on
 
 - [Quantile threshold rules for i.i.d. prophets](quantile-threshold-rules.md)
-- [No stopping rule beats $\beta$ for i.i.d. values](iid-prophet-upper-bound.md)
+- [The Hill–Kertz constant $\beta \approx 0.745$](hill-kertz-constant.md)
 
 ## Proof depends on
 
-- [Quantile threshold rules for i.i.d. prophets](quantile-threshold-rules.md)
 - [No stopping rule beats $\beta$ for i.i.d. values](iid-prophet-upper-bound.md)
 
 ## Sources

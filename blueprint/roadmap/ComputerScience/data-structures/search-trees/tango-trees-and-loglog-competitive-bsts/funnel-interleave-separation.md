@@ -8,13 +8,11 @@ The upper side follows by chaining $\mathrm{W2}(X) = O(\mathrm{OPT}(X) + n)$ fro
 
 ## Depends on
 
-- [The funnel bound dominates the interleave bound](../wilber-and-funnel-lower-bounds/funnel-dominates-interleave.md)
-- [Tango trees are $O(\log\log n)$-competitive](tango-competitiveness.md)
-- [Wilber's second lower bound](../wilber-and-funnel-lower-bounds/wilber-second-bound.md)
+- [Wilber's funnel bound](../wilber-and-funnel-lower-bounds/funnel-bound.md)
+- [Wilber's interleave (alternation) bound](../wilber-and-funnel-lower-bounds/interleave-bound.md)
 
 ## Proof depends on
 
-- [The funnel bound dominates the interleave bound](../wilber-and-funnel-lower-bounds/funnel-dominates-interleave.md)
 - [Tango trees are $O(\log\log n)$-competitive](tango-competitiveness.md)
 - [Wilber's second lower bound](../wilber-and-funnel-lower-bounds/wilber-second-bound.md)
 

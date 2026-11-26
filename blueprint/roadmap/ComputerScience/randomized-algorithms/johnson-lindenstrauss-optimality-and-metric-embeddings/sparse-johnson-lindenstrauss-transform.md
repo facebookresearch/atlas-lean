@@ -18,16 +18,10 @@ Thus $\Pi x$ is computed in time $O(s\,\|x\|_0)$, where $\|x\|_0$ is the number 
 
 Write $\|\Pi x\|_2^2 - \|x\|_2^2 = \frac{1}{s}\sum_{r}\sum_{i \ne j} \eta_{r,i}\eta_{r,j}\sigma_{r,i}\sigma_{r,j}x_i x_j$, a quadratic form in the random signs $\sigma$ whose coefficients depend on the random positions $\eta$. Bound its $\ell = \Theta(\log(1/\delta))$-th moment: conditioned on positions, a Hanson–Wright or Khintchine-type moment inequality controls the form by the Frobenius and operator norms of its coefficient matrix, and a combinatorial count of position collisions bounds the moments of these norms. Markov's inequality on the $\ell$-th moment gives failure probability $\delta$.
 
-## Depends on
-
-- [Johnson-Lindenstrauss lemma for n-point subsets of Euclidean space](johnson-lindenstrauss-lemma-for-finite-point-sets.md)
-- [Distributional Johnson–Lindenstrauss lemma](../probabilistic-analysis-tools/distributional-johnsonlindenstrauss-lemma.md)
-
 ## Proof depends on
 
 - [Khintchine inequality](../../../Probability/concentration-inequalities/khintchine-inequality.md)
 - [Pairwise-independent hashing by affine maps over GF(2)](../../../TheoryOfComputation/counting-complexity/counting-and-the-polynomial-hierarchy/pairwise-independent-hashing-by-affine-maps.md)
-- [Johnson-Lindenstrauss lemma for n-point subsets of Euclidean space](johnson-lindenstrauss-lemma-for-finite-point-sets.md)
 
 ## Sources
 

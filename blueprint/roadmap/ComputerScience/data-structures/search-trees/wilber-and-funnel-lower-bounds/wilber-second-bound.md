@@ -9,11 +9,10 @@ The funnel keys of $x_t$ are exactly the keys whose last-access points are visib
 ## Depends on
 
 - [Wilber's funnel bound](funnel-bound.md)
-- [The independent rectangle bound lower-bounds OPT](../geometric-view-of-bst-access/independent-rectangle-lower-bound.md)
+- [The binary search tree access model](../dynamic-optimality/the-binary-search-tree-access-model.md)
 
 ## Proof depends on
 
-- [Wilber's funnel bound](funnel-bound.md)
 - [The independent rectangle bound lower-bounds OPT](../geometric-view-of-bst-access/independent-rectangle-lower-bound.md)
 
 ## Sources

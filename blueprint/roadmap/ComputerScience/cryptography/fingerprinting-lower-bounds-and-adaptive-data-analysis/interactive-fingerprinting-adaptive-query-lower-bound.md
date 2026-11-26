@@ -8,8 +8,7 @@ The analyst runs an **interactive fingerprinting code**: it adaptively issues qu
 
 ## Depends on
 
-- [Tardos codes: optimal fully collusion-resilient fingerprinting](tardos-fingerprinting-code.md)
-- [Differential privacy answers quadratically many adaptive statistical queries efficiently](adaptive-statistical-queries-via-privacy.md)
+- [One-way functions exist](../../../TheoryOfComputation/pseudorandomness-and-one-way-functions/impagliazzo-s-five-worlds/owfexists.md)
 
 ## Proof depends on
 

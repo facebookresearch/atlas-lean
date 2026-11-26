@@ -8,13 +8,11 @@ Christiansen, Ettienne, Kociumaka, Navarro and Prezza build a run-length grammar
 
 ## Depends on
 
-- [Universal compressed representations from string attractors](../string-attractors-and-repetitiveness-measures/attractor-universal-index.md)
 - [String attractors](../string-attractors-and-repetitiveness-measures/string-attractor.md)
 
 ## Proof depends on
 
 - [Universal compressed representations from string attractors](../string-attractors-and-repetitiveness-measures/attractor-universal-index.md)
-- [String attractors](../string-attractors-and-repetitiveness-measures/string-attractor.md)
 
 ## Sources
 

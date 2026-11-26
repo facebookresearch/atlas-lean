@@ -9,7 +9,6 @@ Simulate the desire-level MIS dynamics of Ghaffari's LOCAL algorithm in compress
 ## Depends on
 
 - [The congested clique model](the-congested-clique-model.md)
-- [Luby's maximal independent set algorithm](../../local-distributed-algorithms/luby-s-maximal-independent-set-algorithm.md)
 
 ## Proof depends on
 

@@ -16,14 +16,12 @@ The static core is a deterministic sparsifier: decompose the graph into $\phi$-e
 ## Depends on
 
 - [Sparsified core graphs with short low-congestion embeddings](sparsified-core-graph-embedding.md)
-- [C-expander](../../../../GraphTheory/graph-families-and-operations/expander-graphs/is-cexpander.md)
 - [Dynamic graph problems](../../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/dynamic-graph-problems.md)
+- [Amortized cost of an operation](../../../data-structures/amortized-analysis/amortized-cost.md)
 
 ## Proof depends on
 
-- [Sparsified core graphs with short low-congestion embeddings](sparsified-core-graph-embedding.md)
 - [C-expander](../../../../GraphTheory/graph-families-and-operations/expander-graphs/is-cexpander.md)
-- [Amortized cost of an operation](../../../data-structures/amortized-analysis/amortized-cost.md)
 
 ## Sources
 

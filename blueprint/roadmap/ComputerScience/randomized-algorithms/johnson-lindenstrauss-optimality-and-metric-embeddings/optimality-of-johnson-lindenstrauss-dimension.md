@@ -16,13 +16,12 @@ Part 1 is an encoding argument: consider a large family of point sets, each cons
 
 ## Depends on
 
-- [Johnson-Lindenstrauss lemma for n-point subsets of Euclidean space](johnson-lindenstrauss-lemma-for-finite-point-sets.md)
-- [Rank lower bound for perturbed identity matrices](rank-of-perturbed-identity-matrices.md)
+- [Distortion of a metric embedding and the Euclidean dimension-reduction function](bi-lipschitz-distortion-of-metric-embeddings.md)
 
 ## Proof depends on
 
-- [Johnson-Lindenstrauss lemma for n-point subsets of Euclidean space](johnson-lindenstrauss-lemma-for-finite-point-sets.md)
 - [Rank lower bound for perturbed identity matrices](rank-of-perturbed-identity-matrices.md)
+- [Johnson–Lindenstrauss lemma](../../../Geometry/metric-geometry/johnson-lindenstrauss.md)
 
 ## Sources
 

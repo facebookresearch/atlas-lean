@@ -5,7 +5,6 @@ In *non-clairvoyant single-machine scheduling*, $n$ jobs are available at time $
 ## Depends on
 
 - [Consistency and robustness of learning-augmented online algorithms](../learning-augmented-caching/consistency-and-robustness.md)
-- [Shortest processing time first minimizes total completion time](../../greedy-algorithms-and-matroids/single-machine-scheduling/shortest-processing-time-first-minimizes-total.md)
 
 ## Sources
 

@@ -10,10 +10,6 @@ Repeatedly expand each vertex's known neighbourhood by graph exponentiation whil
 
 - [The massively parallel computation model](massively-parallel-computation-model.md)
 
-## Proof depends on
-
-- [The massively parallel computation model](massively-parallel-computation-model.md)
-
 ## Sources
 
 - A. Andoni, Z. Song, C. Stein, Z. Wang, P. Zhong, "Parallel Graph Connectivity in Log Diameter Rounds", FOCS 2018, arXiv:1805.03055.

@@ -14,12 +14,12 @@ Split the sample recursively into halves; on each level, use uniform stability t
 
 ## Depends on
 
-- [Uniform stability implies high-probability generalization](../algorithmic-stability/uniform-stability-implies-high-probability-generalization.md)
-- [Moment form of the bounded differences inequality](bounded-differences-moment-inequality.md)
+- [Uniform stability](../algorithmic-stability/is-uniformly-stable.md)
+- [Expected risk](../risk.md)
+- [Empirical risk](../empirical-risk.md)
 
 ## Proof depends on
 
-- [Uniform stability implies high-probability generalization](../algorithmic-stability/uniform-stability-implies-high-probability-generalization.md)
 - [Moment form of the bounded differences inequality](bounded-differences-moment-inequality.md)
 
 ## Sources

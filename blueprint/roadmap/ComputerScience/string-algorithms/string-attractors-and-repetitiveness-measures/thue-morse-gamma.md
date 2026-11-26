@@ -11,11 +11,6 @@ Kutsukake, Matsumoto, Nakashima, Inenaga, Bannai and Takeda exhibit four explici
 - [String attractors](string-attractor.md)
 - [Number $r$ of runs in the Burrows–Wheeler transform](bwt-run-count.md)
 
-## Proof depends on
-
-- [String attractors](string-attractor.md)
-- [Number $r$ of runs in the Burrows–Wheeler transform](bwt-run-count.md)
-
 ## Sources
 
 - Kanaru Kutsukake, Takuya Matsumoto, Yuto Nakashima, Shunsuke Inenaga, Hideo Bannai, Masayuki Takeda, "On Repetitiveness Measures of Thue-Morse Words", SPIRE (2020).

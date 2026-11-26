@@ -8,15 +8,7 @@ Unbiasedness conditioned on the event "decision maker $i$ best-responds with act
 
 ## Depends on
 
-- [Oracle-efficient online multicalibration and omniprediction](online-multicalibration-omniprediction.md)
 - [Swap regret](../../../GameTheory/not-yet-classified/part-02/regret/swap-regret.md)
-- [No-swap-regret dynamics converge to correlated equilibria](../../../GameTheory/noncooperative-games/no-regret-dynamics/no-swap-regret-dynamics-converge-to-correlated-equilibria.md)
-
-## Proof depends on
-
-- [Oracle-efficient online multicalibration and omniprediction](online-multicalibration-omniprediction.md)
-- [Swap regret](../../../GameTheory/not-yet-classified/part-02/regret/swap-regret.md)
-- [No-swap-regret dynamics converge to correlated equilibria](../../../GameTheory/noncooperative-games/no-regret-dynamics/no-swap-regret-dynamics-converge-to-correlated-equilibria.md)
 
 ## Sources
 

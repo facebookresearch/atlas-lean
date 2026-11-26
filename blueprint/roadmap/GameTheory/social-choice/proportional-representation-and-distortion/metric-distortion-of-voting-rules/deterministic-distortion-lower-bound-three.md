@@ -10,10 +10,6 @@ Take candidates $a, b$ and an even number of voters split equally between $a \su
 
 - [Metric election and distortion of a voting rule](metric-election-and-distortion.md)
 
-## Proof depends on
-
-- [Metric election and distortion of a voting rule](metric-election-and-distortion.md)
-
 ## Sources
 
 - E. Anshelevich, O. Bhardwaj, E. Elkind, J. Postl, P. Skowron, "Approximating optimal social choice under metric preferences", Artificial Intelligence 264 (2018); AAAI 2015.

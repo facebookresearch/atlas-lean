@@ -6,10 +6,6 @@ Let $H \subseteq \{0,1\}^X$ have Littlestone dimension at least $d$. Then $H$ co
 
 Given a Littlestone tree of depth $d$, follow a branch and use a Ramsey-type halving argument: at each step, either the subtree on the left or on the right contains a Littlestone tree of half the depth that is consistent with a threshold pattern relative to the points already chosen, so one obtains $\log_2 d$ points and concepts realizing a threshold order. The converse is binary search over the ordered points, which builds a Littlestone tree of depth $\lfloor \log_2 k \rfloor$.
 
-## Depends on
-
-- [The Littlestone dimension is the optimal mistake bound](../../../online-learning-and-boosting/the-littlestone-dimension-is-the-optimal-mistake-bound.md)
-
 ## Proof depends on
 
 - [The Littlestone dimension is the optimal mistake bound](../../../online-learning-and-boosting/the-littlestone-dimension-is-the-optimal-mistake-bound.md)

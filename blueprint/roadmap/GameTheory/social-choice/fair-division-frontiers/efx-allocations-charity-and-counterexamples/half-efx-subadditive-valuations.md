@@ -9,11 +9,11 @@ Run envy-cycle elimination, but whenever an unallocated good is added to the bun
 ## Depends on
 
 - [Partial EFX allocation with an unallocated pool](partial-efx-allocation-with-pool.md)
-- [Envy-cycle rotation preserves EFX and weakly improves every agent](envy-cycle-rotation-preserves-efx.md)
 
 ## Proof depends on
 
 - [Envy-cycle rotation preserves EFX and weakly improves every agent](envy-cycle-rotation-preserves-efx.md)
+- [Envy graph and most envious agent of a partial allocation](envy-graph-most-envious-agent.md)
 
 ## Sources
 

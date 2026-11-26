@@ -9,10 +9,7 @@ Differentiate $D_\Phi(y\|x) = \Phi(y) - \Phi(x) - \langle \nabla\Phi(x), y - x\r
 ## Depends on
 
 - [Continuous-time mirror descent for online covering](continuous-mirror-descent-dynamics.md)
-
-## Proof depends on
-
-- [Continuous-time mirror descent for online covering](continuous-mirror-descent-dynamics.md)
+- [Bregman divergence (prox-function) of a distance-generating function](../../../Analysis/convex-analysis-and-variations/mirror-descent/bregman.md)
 
 ## Sources
 

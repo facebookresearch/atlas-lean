@@ -8,15 +8,13 @@ Combine the two lemmas: $\mathrm{cost}_{\mathrm{WFA}} \le \sum_t \mathrm{ext}_t 
 
 ## Depends on
 
-- [Online cost of the work function algorithm via extended costs](wfa-cost-via-extended-cost.md)
-- [Total extended cost is at most $2k \cdot \mathrm{OPT}$](extended-cost-bound.md)
-- [The deterministic k-server conjecture](k-server-conjecture.md)
+- [The k-server problem](../paging-and-k-server/the-k-server-problem.md)
+- [Work functions and the work function algorithm](../paging-and-k-server/work-functions-and-the-work-function-algorithm.md)
 
 ## Proof depends on
 
 - [Online cost of the work function algorithm via extended costs](wfa-cost-via-extended-cost.md)
 - [Total extended cost is at most $2k \cdot \mathrm{OPT}$](extended-cost-bound.md)
-- [The deterministic k-server conjecture](k-server-conjecture.md)
 
 ## Sources
 

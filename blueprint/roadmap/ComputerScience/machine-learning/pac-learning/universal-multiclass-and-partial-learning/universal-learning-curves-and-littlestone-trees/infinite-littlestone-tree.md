@@ -8,10 +8,6 @@ $$
 
 The class has an **infinite Littlestone tree** if such a family exists with $d = \infty$, that is, every finite branch of an infinite complete binary tree is realized by some concept. The Littlestone dimension is the supremum of the depths of finite Littlestone trees; an infinite Littlestone tree forces infinite Littlestone dimension, but the converse fails in general (a class may have Littlestone trees of every finite depth and no infinite one).
 
-## Depends on
-
-- [The Littlestone dimension is the optimal mistake bound](../../../online-learning-and-boosting/the-littlestone-dimension-is-the-optimal-mistake-bound.md)
-
 ## Sources
 
 - O. Bousquet, S. Hanneke, S. Moran, R. van Handel, A. Yehudayoff, "A Theory of Universal Learning", STOC (2021), arXiv:2011.04483.

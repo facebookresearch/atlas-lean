@@ -10,13 +10,9 @@ The absence of an infinite VCL tree makes a second Gale–Stewart game, in which
 
 - [Realizable distributions, learning curves and universal rates](universal-rate.md)
 - [VCL trees and the VCL dimension](vcl-tree.md)
-- [Open Gale–Stewart games are determined](gale-stewart-determinacy.md)
-- [Optimal sample complexity of realizable PAC learning](../../optimal-sample-complexity-of-realizable-pac-learning.md)
 
 ## Proof depends on
 
-- [Realizable distributions, learning curves and universal rates](universal-rate.md)
-- [VCL trees and the VCL dimension](vcl-tree.md)
 - [Open Gale–Stewart games are determined](gale-stewart-determinacy.md)
 - [Optimal sample complexity of realizable PAC learning](../../optimal-sample-complexity-of-realizable-pac-learning.md)
 

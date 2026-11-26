@@ -13,7 +13,7 @@ With $\varepsilon\Delta$ spare colors, sparse vertices have slack from the start
 
 ## Depends on
 
-- [Assadi-Chen-Khanna palette sparsification theorem for (Delta + 1)-coloring](palette-sparsification-theorem-delta-plus-one.md)
+- [Palette sparsification experiment, sampled lists and the conflict graph](palette-sparsification-experiment.md)
 
 ## Proof depends on
 

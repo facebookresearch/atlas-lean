@@ -16,12 +16,7 @@ The cost part of the gradient contributes exactly $20m\,\mathbf{c}^{\top}(\mathb
 
 - [Lengths and gradients induced by the l1 IPM potential](ipm-lengths-and-gradients.md)
 - [Undirected minimum-ratio cycle problem with gradients and lengths](undirected-min-ratio-cycle-problem.md)
-
-## Proof depends on
-
-- [Lengths and gradients induced by the l1 IPM potential](ipm-lengths-and-gradients.md)
-- [Undirected minimum-ratio cycle problem with gradients and lengths](undirected-min-ratio-cycle-problem.md)
-- [Optimality conditions for minimum-cost flows](../../linear-programming-and-flows/optimality-conditions-for-minimum-cost-flows.md)
+- [Potential function of the l1 interior point method for minimum-cost flow](l1-ipm-potential-function.md)
 
 ## Sources
 

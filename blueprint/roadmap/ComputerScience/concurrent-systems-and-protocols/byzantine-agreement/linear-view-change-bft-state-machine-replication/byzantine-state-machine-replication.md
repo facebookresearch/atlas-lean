@@ -6,7 +6,6 @@ A system has $n$ replicas, at most $f$ of which are Byzantine, communicating ove
 
 - [Partial synchrony](../../distributed-execution-models/partial-synchrony.md)
 - [Fail-stop, omission and Byzantine faults](../../distributed-execution-models/fail-stop-omission-and-byzantine-faults.md)
-- [Consensus under partial synchrony needs a majority](../../consensus-and-agreement/consensus-under-partial-synchrony-needs-a.md)
 
 ## Sources
 

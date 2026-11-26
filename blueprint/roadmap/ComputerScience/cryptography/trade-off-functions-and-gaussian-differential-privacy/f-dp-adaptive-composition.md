@@ -9,11 +9,9 @@ For two mechanisms, fix a neighbouring pair; conditionally on the first output $
 ## Depends on
 
 - [Tensor product of trade-off functions](tensor-product-of-trade-off-functions.md)
-- [Characterization of trade-off functions](trade-off-function-characterization.md)
 
 ## Proof depends on
 
-- [Tensor product of trade-off functions](tensor-product-of-trade-off-functions.md)
 - [Characterization of trade-off functions](trade-off-function-characterization.md)
 
 ## Sources

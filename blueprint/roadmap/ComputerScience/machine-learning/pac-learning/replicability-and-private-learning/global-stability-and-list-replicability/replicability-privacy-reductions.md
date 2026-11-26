@@ -14,14 +14,13 @@ Replicability to privacy: run the replicable algorithm on many disjoint subsampl
 
 ## Depends on
 
-- [TV indistinguishability, replicability and approximate privacy are equivalent for PAC learning](tv-indistinguishability-replicability-privacy-equivalence.md)
 - [Differential privacy](../../../../cryptography/differential-privacy/differentially-private.md)
-- [Transfer theorem for adaptive data analysis](../../../../cryptography/differential-privacy/differentially-private-transfer.md)
+- [Public-key encryption scheme](../../../../cryptography/security-games/generic-security-games/pkescheme.md)
+- [One-way function families](../../../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/is-one-way-function.md)
 
 ## Proof depends on
 
 - [TV indistinguishability, replicability and approximate privacy are equivalent for PAC learning](tv-indistinguishability-replicability-privacy-equivalence.md)
-- [Differential privacy](../../../../cryptography/differential-privacy/differentially-private.md)
 - [Transfer theorem for adaptive data analysis](../../../../cryptography/differential-privacy/differentially-private-transfer.md)
 
 ## Sources

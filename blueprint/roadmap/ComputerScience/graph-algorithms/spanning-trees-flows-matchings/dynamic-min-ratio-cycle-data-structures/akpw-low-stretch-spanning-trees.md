@@ -16,10 +16,6 @@ Group edges into length classes that are powers of a parameter $x = \exp(\Theta(
 
 - [Edge stretch with respect to a spanning tree and edge lengths](edge-stretch-wrt-spanning-tree.md)
 
-## Proof depends on
-
-- [Edge stretch with respect to a spanning tree and edge lengths](edge-stretch-wrt-spanning-tree.md)
-
 ## Sources
 
 - Noga Alon, Richard M. Karp, David Peleg, Douglas West, "A Graph-Theoretic Game and Its Application to the k-Server Problem", SIAM J. Comput. 24(1) (1995).

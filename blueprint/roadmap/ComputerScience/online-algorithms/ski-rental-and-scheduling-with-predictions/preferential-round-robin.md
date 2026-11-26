@@ -8,11 +8,13 @@ Running two algorithms in parallel at rates $\lambda$ and $1 - \lambda$ makes ea
 
 ## Depends on
 
-- [Round robin is 2-competitive for total completion time](round-robin-two-competitive.md)
+- [Non-clairvoyant scheduling with predicted job sizes](nonclairvoyant-scheduling-with-predictions.md)
+- [Consistency and robustness of learning-augmented online algorithms](../learning-augmented-caching/consistency-and-robustness.md)
 
 ## Proof depends on
 
 - [Round robin is 2-competitive for total completion time](round-robin-two-competitive.md)
+- [Shortest processing time first minimizes total completion time](../../greedy-algorithms-and-matroids/single-machine-scheduling/shortest-processing-time-first-minimizes-total.md)
 
 ## Sources
 

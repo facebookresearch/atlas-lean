@@ -9,6 +9,7 @@ Recursively cluster the graph: compute a ruling set of the current cluster graph
 ## Depends on
 
 - [Network decomposition with weak or strong diameter](network-decomposition-weak-strong-diameter.md)
+- [The LOCAL model](../../distributed-execution-models/the-local-model.md)
 
 ## Proof depends on
 

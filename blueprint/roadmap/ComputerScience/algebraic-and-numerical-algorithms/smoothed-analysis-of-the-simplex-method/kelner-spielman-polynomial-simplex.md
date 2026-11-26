@@ -8,15 +8,12 @@ The program is reduced to a related program whose boundedness and optimal vertex
 
 ## Depends on
 
-- [The shadow vertex pivot rule and the smoothed shadow bound](shadow-vertex-rule-and-shadow-bound.md)
-- [Shadow vertices are bounded by edges of the polar section](shadow-vertices-and-polar-section.md)
-- [Linear programming is in P (Khachiyan)](../../../TheoryOfComputation/polynomial-time-problems/linear-programming-feasibility/lp-in-p.md)
 - [Strongly polynomial linear programming](../../../TheoryOfComputation/polynomial-time-problems/strongly-polynomial-linear-programming.md)
 
 ## Proof depends on
 
-- [Shadow vertices are bounded by edges of the polar section](shadow-vertices-and-polar-section.md)
 - [The shadow vertex pivot rule and the smoothed shadow bound](shadow-vertex-rule-and-shadow-bound.md)
+- [Shadow vertices are bounded by edges of the polar section](shadow-vertices-and-polar-section.md)
 
 ## Sources
 

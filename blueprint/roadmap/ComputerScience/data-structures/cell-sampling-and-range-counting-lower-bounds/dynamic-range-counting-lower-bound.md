@@ -8,13 +8,12 @@ There are $\Theta(\log_\beta n)$ epochs, and by the epoch-wise lemma a random qu
 
 ## Depends on
 
-- [Epoch-wise cell sampling for weighted range counting](epochwise-cell-sampling.md)
-- [Larsen's static lower bound for polynomial evaluation](polynomial-evaluation-lower-bound.md)
+- [Dynamic weighted orthogonal range counting](weighted-dominance-range-counting.md)
+- [Amortized update and query cost of a dynamic cell-probe structure](../dynamic-information-transfer-lower-bounds/amortized-cell-probe-costs.md)
 
 ## Proof depends on
 
 - [Epoch-wise cell sampling for weighted range counting](epochwise-cell-sampling.md)
-- [Larsen's static lower bound for polynomial evaluation](polynomial-evaluation-lower-bound.md)
 
 ## Sources
 

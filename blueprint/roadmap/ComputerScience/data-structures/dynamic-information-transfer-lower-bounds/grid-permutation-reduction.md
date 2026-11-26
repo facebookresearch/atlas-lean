@@ -9,12 +9,7 @@ The graph is a union of $k$ vertex-disjoint paths through the columns, and follo
 ## Depends on
 
 - [Dynamic partial sums over a group](dynamic-partial-sums-problem.md)
-- [Dynamic graph connectivity](dynamic-connectivity-problem.md)
-
-## Proof depends on
-
-- [Dynamic partial sums over a group](dynamic-partial-sums-problem.md)
-- [Dynamic graph connectivity](dynamic-connectivity-problem.md)
+- [Fully dynamic connectivity, spanning forest and minimum spanning forest problems](../disjoint-sets-and-dynamic-trees/fully-dynamic-connectivity-and-spanning-forests/fully-dynamic-connectivity-problems.md)
 
 ## Sources
 

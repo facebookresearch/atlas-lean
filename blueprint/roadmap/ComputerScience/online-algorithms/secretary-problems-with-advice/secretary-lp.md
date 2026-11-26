@@ -10,10 +10,6 @@ Any policy induces such $x$: the $i$-th candidate is the best so far with probab
 
 - [Secretary problems with advice](secretary-with-advice-model.md)
 
-## Proof depends on
-
-- [Secretary problems with advice](secretary-with-advice-model.md)
-
 ## Sources
 
 - Niv Buchbinder, Kamal Jain, Mohit Singh, "Secretary Problems via Linear Programming", Mathematics of Operations Research 39(1) (2014); IPCO (2010).

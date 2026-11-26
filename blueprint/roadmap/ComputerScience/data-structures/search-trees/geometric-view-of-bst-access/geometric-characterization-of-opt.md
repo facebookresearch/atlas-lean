@@ -8,8 +8,9 @@ The touched set of an optimal execution is an arborally satisfied superset by th
 
 ## Depends on
 
-- [Touched sets of BST executions are arborally satisfied](touched-sets-are-arborally-satisfied.md)
-- [Arborally satisfied supersets are realized by offline BST executions](arborally-satisfied-sets-are-executions.md)
+- [Arborally satisfied point sets](arborally-satisfied-set.md)
+- [Point set of an access sequence and touched set of a BST execution](access-point-set.md)
+- [The binary search tree access model](../dynamic-optimality/the-binary-search-tree-access-model.md)
 
 ## Proof depends on
 

@@ -9,6 +9,7 @@ Pair each voter $v_t$ with a voter whose plurality point she removes: when $v_t$
 ## Depends on
 
 - [Domination graph of a candidate](domination-graph-of-a-candidate.md)
+- [Metric election and distortion of a voting rule](metric-election-and-distortion.md)
 
 ## Proof depends on
 

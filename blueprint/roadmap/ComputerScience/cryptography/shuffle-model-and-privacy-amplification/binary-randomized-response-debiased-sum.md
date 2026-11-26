@@ -9,11 +9,9 @@ The ratio of report probabilities under inputs $0$ and $1$ is $e^{\pm\varepsilon
 ## Depends on
 
 - [Local randomizers and the shuffle model](shuffle-model.md)
-- [Every local randomizer is a mixture of a common component and two clones](local-randomizer-mixture-decomposition.md)
 
 ## Proof depends on
 
-- [Local randomizers and the shuffle model](shuffle-model.md)
 - [Every local randomizer is a mixture of a common component and two clones](local-randomizer-mixture-decomposition.md)
 
 ## Sources

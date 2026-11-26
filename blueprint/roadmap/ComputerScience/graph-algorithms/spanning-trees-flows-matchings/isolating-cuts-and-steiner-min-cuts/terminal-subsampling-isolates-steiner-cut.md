@@ -15,11 +15,6 @@ If $k = 1$ then $p = 1$ and the event holds surely. Otherwise $p \in [1/(2k), 1/
 - [Minimum isolating cuts of a terminal set](minimum-isolating-cuts.md)
 - [Steiner minimum cuts of a terminal set](steiner-minimum-cut.md)
 
-## Proof depends on
-
-- [Minimum isolating cuts of a terminal set](minimum-isolating-cuts.md)
-- [Each minimum cut survives with probability at least $2/(n(n-1))$](../../../randomized-algorithms/karger-s-algorithm/survive-prob-ge.md)
-
 ## Sources
 
 - Jason Li, Debmalya Panigrahi, "Deterministic Min-cut in Poly-logarithmic Max-flows", FOCS (2020), arXiv:2111.02008.

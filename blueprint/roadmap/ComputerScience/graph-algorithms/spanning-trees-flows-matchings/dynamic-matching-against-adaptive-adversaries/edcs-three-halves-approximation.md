@@ -14,11 +14,11 @@ In the bipartite case take a witness set $A$ of the extended Hall theorem for $H
 ## Depends on
 
 - [Edge-degree constrained subgraphs (EDCS)](edge-degree-constrained-subgraph.md)
-- [Every graph contains a (beta, beta^-)-EDCS, and it has O(n beta) edges](edcs-existence-and-sparsity.md)
 
 ## Proof depends on
 
 - [Kőnig's theorem for finite bipartite graphs](../../../../GraphTheory/matchings-and-flows/k-nig-s-theorem/konig-matching-cover.md)
+- [Every graph contains a (beta, beta^-)-EDCS, and it has O(n beta) edges](edcs-existence-and-sparsity.md)
 
 ## Sources
 

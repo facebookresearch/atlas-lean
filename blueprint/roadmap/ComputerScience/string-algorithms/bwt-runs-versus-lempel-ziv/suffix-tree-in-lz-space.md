@@ -8,9 +8,9 @@ Substitute $r = O(z\log^2 n)$ into the $O(r\log(n/r))$-word suffix tree and the 
 
 ## Depends on
 
-- [Resolution of the BWT-runs conjecture](r-bounded-by-z.md)
-- [Fully functional suffix trees in BWT-runs space](../run-length-bwt-indexing/r-index-suffix-tree.md)
-- [The r-index locates in BWT-runs bounded space](../run-length-bwt-indexing/r-index-locate.md)
+- [Suffix tree](../../data-structures/tries-and-integer-dictionaries/suffix-tree/suffix-tree.md)
+- [Size $z$ of the greedy LZ77 factorization](../string-attractors-and-repetitiveness-measures/lz77-factorization-size.md)
+- [Number $r$ of runs in the Burrows–Wheeler transform](../string-attractors-and-repetitiveness-measures/bwt-run-count.md)
 
 ## Proof depends on
 

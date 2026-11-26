@@ -15,11 +15,9 @@ Let $P_0, P_1$ be the output laws on $x^0, x^1$. The pair $(P_0, P_1)$ is $\vare
 ## Depends on
 
 - [Local randomizers and the shuffle model](shuffle-model.md)
-- [Approximate differential privacy as f-differential privacy](../trade-off-functions-and-gaussian-differential-privacy/epsilon-delta-dp-as-f-dp.md)
 
 ## Proof depends on
 
-- [Local randomizers and the shuffle model](shuffle-model.md)
 - [Approximate differential privacy as f-differential privacy](../trade-off-functions-and-gaussian-differential-privacy/epsilon-delta-dp-as-f-dp.md)
 
 ## Sources

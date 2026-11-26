@@ -8,9 +8,7 @@ The class is built from the disambiguation lower bound: if some total class of f
 
 ## Depends on
 
-- [VC dimension characterizes PAC learnability of partial concept classes](partial-class-pac-characterization.md)
-- [A partial class of VC dimension one with no finite-VC disambiguation](vc-one-partial-class-without-disambiguation.md)
-- [Uniform convergence implies ERM is an agnostic PAC learner](../../agnostic-pac-learning-and-uniform-convergence/uniform-convergence-implies-erm-is-an-agnostic-pac-learner.md)
+- [Partial concept classes and their VC and Littlestone dimensions](partial-concept-class.md)
 
 ## Proof depends on
 

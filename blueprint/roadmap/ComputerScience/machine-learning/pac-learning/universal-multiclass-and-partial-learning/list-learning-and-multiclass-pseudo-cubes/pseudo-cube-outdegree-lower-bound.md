@@ -8,10 +8,7 @@ In a pseudo-cube $B$ every vertex lies in a hyperedge of size at least $2$ in ea
 
 ## Depends on
 
-- [One-inclusion hypergraphs, orientations and out-degree](one-inclusion-hypergraph.md)
-
-## Proof depends on
-
+- [k-pseudo-cubes and the k-DS dimension](k-pseudo-cube.md)
 - [One-inclusion hypergraphs, orientations and out-degree](one-inclusion-hypergraph.md)
 
 ## Sources

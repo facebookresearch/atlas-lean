@@ -10,12 +10,11 @@ A one-sided primitive, run with $\rho=\lceil k^{1/3}\rceil$, either finds a $1$-
 
 - [beta-betweenness of vertex pairs and negative sandwiches of negative vertices](beta-betweenness-and-negative-sandwiches.md)
 - [r-remote sets and 1-hop independent sets of negative vertices](remote-and-independent-negative-sets.md)
-- [Computing h-hop distances by alternating Dijkstra and Bellman-Ford rounds in O(h(m + n log n)) time](hop-limited-distances-hybrid.md)
+- [Negative vertices, h-hop distances and the negative h-hop reach](negative-vertices-and-hop-distances.md)
+- [Price functions, reduced edge weights, and valid reweightings of a directed graph](../near-linear-negative-weight-sssp/price-functions-and-reduced-weights.md)
 
 ## Proof depends on
 
-- [beta-betweenness of vertex pairs and negative sandwiches of negative vertices](beta-betweenness-and-negative-sandwiches.md)
-- [r-remote sets and 1-hop independent sets of negative vertices](remote-and-independent-negative-sets.md)
 - [Computing h-hop distances by alternating Dijkstra and Bellman-Ford rounds in O(h(m + n log n)) time](hop-limited-distances-hybrid.md)
 
 ## Sources

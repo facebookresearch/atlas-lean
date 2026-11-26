@@ -10,10 +10,6 @@ Set for each arriving element a *balanced threshold* equal to half the expected 
 
 - [Matroid prophet inequality](matroid-prophet-problem.md)
 
-## Proof depends on
-
-- [Matroid prophet inequality](matroid-prophet-problem.md)
-
 ## Sources
 
 - Robert Kleinberg, S. Matthew Weinberg, "Matroid Prophet Inequalities", STOC (2012); Games and Economic Behavior 113 (2019), arXiv:1201.4764.

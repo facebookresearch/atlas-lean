@@ -15,8 +15,6 @@ $$
 ## Depends on
 
 - [Spanning tree polytope of a connected graph](spanning-tree-polytope.md)
-- [Kirchhoff's matrix-tree theorem](../../../GraphTheory/algebraic-graph-theory/part-01/kirchhoff-s-matrix-tree-theorem/kirchhoff-matrix-tree.md)
-- [The Bregman divergence of the entropy is the Kullback–Leibler divergence](../../../Analysis/convex-analysis-and-variations/mirror-descent/bregman-entropy-eq.md)
 
 ## Sources
 

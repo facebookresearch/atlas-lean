@@ -9,7 +9,6 @@ The log-barrier regularizer makes the iterates multiplicatively stable, which yi
 ## Depends on
 
 - [Internal and swap regret minimization via stationary distributions](swap-regret-stationary-distribution-dynamics.md)
-- [Regret bounded by variation in utilities for optimistic algorithms](rvu-property-optimistic-algorithms.md)
 
 ## Proof depends on
 

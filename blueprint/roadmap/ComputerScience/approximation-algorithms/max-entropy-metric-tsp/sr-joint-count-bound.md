@@ -21,11 +21,11 @@ Project $\mu$ onto the sets and symmetrize to a strongly Rayleigh measure on $n$
 ## Depends on
 
 - [Strongly Rayleigh probability measures on subsets of a ground set](strongly-rayleigh-measure.md)
-- [Negative dependence and Poisson-binomial counts under strongly Rayleigh measures](strongly-rayleigh-negative-dependence.md)
 
 ## Proof depends on
 
 - [Negative dependence and Poisson-binomial counts under strongly Rayleigh measures](strongly-rayleigh-negative-dependence.md)
+- [Real stable polynomials](../../../Algebra/zeros-of-polynomials/stable-polynomials/is-real-stable.md)
 
 ## Sources
 

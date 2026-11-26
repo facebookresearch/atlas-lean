@@ -6,10 +6,6 @@ In online binary forecasting with $\ell_1$ calibration error $\sum_p |m_p - p\, 
 
 A general reduction translates lower bounds on the value of the sign-preservation game into calibration lower bounds. The adversary uses two techniques: early stopping, which halts the sequence once the forecaster has committed to forecasts whose counters cannot be repaired, and sidestepping, which steers the outcomes so that the forecaster's natural corrections move counters across zero in the wrong direction. Their combination forces a super-square-root accumulation of discrepancy.
 
-## Depends on
-
-- [The sign-preservation game](sign-preservation-game.md)
-
 ## Proof depends on
 
 - [The sign-preservation game](sign-preservation-game.md)

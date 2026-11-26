@@ -16,12 +16,10 @@ The worst-case leave-one-out bound controls not only the mean of the risk but th
 
 - [Permutation-invariant learners and leave-one-out error](permutation-invariant-learner-leave-one-out.md)
 - [One-inclusion hypergraphs, orientations and out-degree](../list-learning-and-multiclass-pseudo-cubes/one-inclusion-hypergraph.md)
-- [Optimal sample complexity of realizable PAC learning](../../optimal-sample-complexity-of-realizable-pac-learning.md)
+- [The realizable distribution family](../../occam-bound-for-consistent-learners/realizable-family.md)
 
 ## Proof depends on
 
-- [Permutation-invariant learners and leave-one-out error](permutation-invariant-learner-leave-one-out.md)
-- [One-inclusion hypergraphs, orientations and out-degree](../list-learning-and-multiclass-pseudo-cubes/one-inclusion-hypergraph.md)
 - [Optimal sample complexity of realizable PAC learning](../../optimal-sample-complexity-of-realizable-pac-learning.md)
 
 ## Sources

@@ -10,9 +10,7 @@ The problem is undirected: coordinates of $\mathbf{\Delta}$ may have either sign
 
 ## Depends on
 
-- [Integral minimum-cost flow instances with polynomially bounded data](integral-min-cost-flow-instance.md)
-- [Minimum cycle mean of a weighted edge list](../../shortest-paths/minimum-cycle-mean/is-min-cycle-mean.md)
-- [Karp's minimum cycle mean theorem](../../shortest-paths/minimum-cycle-mean/karp-min-cycle-mean.md)
+- [Oriented incidence matrix of a multigraph](../../../../GraphTheory/algebraic-graph-theory/part-01/oriented-incidence-matrices/oriented-incidence.md)
 
 ## Sources
 

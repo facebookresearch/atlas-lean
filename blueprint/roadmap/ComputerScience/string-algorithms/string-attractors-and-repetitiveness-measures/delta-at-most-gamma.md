@@ -9,10 +9,7 @@ Every distinct substring of length $k$ has an occurrence crossing some $p \in \G
 ## Depends on
 
 - [Substring complexity $\delta$](substring-complexity.md)
-
-## Proof depends on
-
-- [Substring complexity $\delta$](substring-complexity.md)
+- [String attractors](string-attractor.md)
 
 ## Sources
 

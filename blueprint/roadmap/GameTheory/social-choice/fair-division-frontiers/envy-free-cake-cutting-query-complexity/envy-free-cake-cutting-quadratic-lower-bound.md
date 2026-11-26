@@ -9,11 +9,10 @@ For the envy-free bound, an adversary answers queries so that each agent's valua
 ## Depends on
 
 - [Cake cutting in the Robertson-Webb query model](../../cake-cutting-in-the-robertson-webb-query-model.md)
-- [Even-Paz proportional protocol](../../even-paz-proportional-protocol.md)
 
 ## Proof depends on
 
-- [Cake cutting in the Robertson-Webb query model](../../cake-cutting-in-the-robertson-webb-query-model.md)
+- [Even-Paz proportional protocol](../../even-paz-proportional-protocol.md)
 
 ## Sources
 

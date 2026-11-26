@@ -8,8 +8,7 @@ Define a family of relaxed matching problems parametrized by two integers $(x, y
 
 ## Depends on
 
-- [Locally checkable labeling problem](locally-checkable-labeling-problem.md)
-- [Luby's maximal independent set algorithm](../luby-s-maximal-independent-set-algorithm.md)
+- [The LOCAL model](../../distributed-execution-models/the-local-model.md)
 
 ## Proof depends on
 

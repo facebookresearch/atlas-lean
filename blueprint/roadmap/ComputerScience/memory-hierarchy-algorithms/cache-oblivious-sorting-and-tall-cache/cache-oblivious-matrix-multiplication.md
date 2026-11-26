@@ -8,14 +8,12 @@ Once the three submatrices of a recursive subproblem fit in cache together, whic
 
 ## Depends on
 
-- [Cache-oblivious scanning and matrix transposition](../cache-oblivious-algorithms/cache-oblivious-scanning-and-matrix.md)
 - [Tall-cache assumptions](tall-cache-assumption.md)
-- [Communication lower bound for classical matrix multiplication](../../algebraic-and-numerical-algorithms/communication-lower-bounds/matmul-card-div-sub-le-words.md)
+- [The ideal-cache model](../cache-oblivious-algorithms/the-ideal-cache-model.md)
 
 ## Proof depends on
 
 - [Cache-oblivious scanning and matrix transposition](../cache-oblivious-algorithms/cache-oblivious-scanning-and-matrix.md)
-- [Tall-cache assumptions](tall-cache-assumption.md)
 - [Communication lower bound for classical matrix multiplication](../../algebraic-and-numerical-algorithms/communication-lower-bounds/matmul-card-div-sub-le-words.md)
 
 ## Sources

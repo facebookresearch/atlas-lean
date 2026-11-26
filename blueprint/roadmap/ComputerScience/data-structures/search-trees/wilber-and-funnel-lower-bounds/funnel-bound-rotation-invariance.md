@@ -9,10 +9,7 @@ Lecomte and Weinstein express $\kappa_t$ as the number of alternations along the
 ## Depends on
 
 - [Wilber's funnel bound](funnel-bound.md)
-
-## Proof depends on
-
-- [Wilber's funnel bound](funnel-bound.md)
+- [Point set of an access sequence and touched set of a BST execution](../geometric-view-of-bst-access/access-point-set.md)
 
 ## Sources
 

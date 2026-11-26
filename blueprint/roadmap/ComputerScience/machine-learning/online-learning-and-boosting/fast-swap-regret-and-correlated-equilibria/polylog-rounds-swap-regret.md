@@ -20,15 +20,14 @@ Multiplicative weights has average external regret at most $\varepsilon/2$ after
 
 ## Depends on
 
-- [Swap regret of the path mixture is controlled by external regret of the levels](treeswap-path-mixture-lemma.md)
-- [The $\sqrt{T}$ regret bound of Hedge](../hedge-algorithm/regret-le-two-sqrt.md)
-- [Black-box reduction from swap to external regret](../../../../GameTheory/not-yet-classified/part-02/regret-blum-mansour-bound/exists-stationary-play-swap-regret-le-ca.md)
+- [Swap regret](../../../../GameTheory/not-yet-classified/part-02/regret/swap-regret.md)
+- [TreeSwap: swap regret from external regret on a tree of restarts](treeswap-algorithm.md)
+- [Multi-scale multiplicative weights for swap regret](multiscale-multiplicative-weights.md)
 
 ## Proof depends on
 
 - [Swap regret of the path mixture is controlled by external regret of the levels](treeswap-path-mixture-lemma.md)
 - [The $\sqrt{T}$ regret bound of Hedge](../hedge-algorithm/regret-le-two-sqrt.md)
-- [Black-box reduction from swap to external regret](../../../../GameTheory/not-yet-classified/part-02/regret-blum-mansour-bound/exists-stationary-play-swap-regret-le-ca.md)
 
 ## Sources
 

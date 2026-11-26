@@ -8,8 +8,9 @@ Reduce End-of-Line to finding a Brouwer fixed point of a piecewise-linear functi
 
 ## Depends on
 
-- [Nash's theorem](../exists-is-mixed-nash.md)
 - [Mixed Nash equilibrium](../is-mixed-nash.md)
+- [Nash equilibrium of a bimatrix game](../../bimatrix-games-and-the-lemke-howson-algorithm/is-bimatrix-nash.md)
+- [Search problems: FNP, FP and TFNP](../../../../TheoryOfComputation/complexity-classes/total-search-problems/search-problems-fnp-fp-and-tfnp.md)
 
 ## Proof depends on
 

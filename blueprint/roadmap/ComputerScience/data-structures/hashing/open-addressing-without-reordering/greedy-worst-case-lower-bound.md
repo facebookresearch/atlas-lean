@@ -8,14 +8,14 @@ For greedy tables the probe complexity equals the number of occupied probes befo
 
 ## Depends on
 
-- [Funnel hashing: squared-logarithmic worst-case probes for a greedy table](funnel-hashing-bounds.md)
-- [Logarithmic lower bound for worst-case probes without reordering](reordering-free-worst-case-lower-bound.md)
-- [Maximum load of balls into bins](../../../randomized-algorithms/maximum-load-of-balls-into-bins.md)
+- [Open-addressing insertion without reordering](oa-without-reordering-model.md)
+- [Greedy open addressing and uniform probing](greedy-open-addressing-and-uniform-probing.md)
+- [Amortized, worst-case and high-probability probe complexity](amortized-and-worst-case-probe-complexity.md)
+- [Funnel hashing layout](funnel-hashing-layout.md)
 
 ## Proof depends on
 
 - [Funnel hashing: squared-logarithmic worst-case probes for a greedy table](funnel-hashing-bounds.md)
-- [Logarithmic lower bound for worst-case probes without reordering](reordering-free-worst-case-lower-bound.md)
 - [Maximum load of balls into bins](../../../randomized-algorithms/maximum-load-of-balls-into-bins.md)
 
 ## Sources

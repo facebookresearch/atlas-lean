@@ -9,13 +9,11 @@ A side $S$ of a non-trivial cut with $|\partial S| \le \delta$ has $|S| \ge \del
 ## Depends on
 
 - [Contractions preserving all non-trivial minimum cuts of a simple graph](nontrivial-mincut-preserving-contraction.md)
-- [Volume of a vertex set](../../../../GraphTheory/algebraic-graph-theory/part-02/conductance-and-cheeger-s-inequality/volume.md)
 
 ## Proof depends on
 
-- [Contractions preserving all non-trivial minimum cuts of a simple graph](nontrivial-mincut-preserving-contraction.md)
-- [Easy direction of Cheeger's inequality for conductance](../../../../GraphTheory/algebraic-graph-theory/part-02/conductance-and-cheeger-s-inequality/mul-volume-mul-volume-compl-le-of-forall.md)
 - [At most $n(n-1)/2$ minimum cuts](../../../randomized-algorithms/karger-s-algorithm/two-mul-length-min-cuts-le.md)
+- [Volume of a vertex set](../../../../GraphTheory/algebraic-graph-theory/part-02/conductance-and-cheeger-s-inequality/volume.md)
 
 ## Sources
 

@@ -18,13 +18,11 @@ Real stability is preserved by specialization $z_i \mapsto 0$, by $\partial_{z_i
 
 - [Strongly Rayleigh probability measures on subsets of a ground set](strongly-rayleigh-measure.md)
 - [Negatively correlated events](../../../Probability/correlation-inequalities/reimer-inequality/special-cases-of-reimer-s-inequality/negatively-correlated.md)
-- [Real-rootedness of univariate specializations of real stable polynomials](../../../Algebra/zeros-of-polynomials/stable-polynomials/is-real-rooted-univariate-specialization.md)
 
 ## Proof depends on
 
-- [Strongly Rayleigh probability measures on subsets of a ground set](strongly-rayleigh-measure.md)
-- [Negatively correlated events](../../../Probability/correlation-inequalities/reimer-inequality/special-cases-of-reimer-s-inequality/negatively-correlated.md)
 - [Real-rootedness of univariate specializations of real stable polynomials](../../../Algebra/zeros-of-polynomials/stable-polynomials/is-real-rooted-univariate-specialization.md)
+- [Real stable polynomials](../../../Algebra/zeros-of-polynomials/stable-polynomials/is-real-stable.md)
 
 ## Sources
 

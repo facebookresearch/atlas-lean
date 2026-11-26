@@ -8,12 +8,14 @@ Maintain a spanning forest in Euler-tour trees together with, for each of $O(\lo
 
 ## Depends on
 
-- [XOR sketches recover a single edge of a vertex cut](xor-cutset-sketch-lemma.md)
 - [Oblivious and adaptive adversaries; amortized and worst-case update time](adversary-and-update-time-models.md)
+- [Fully dynamic connectivity, spanning forest and minimum spanning forest problems](fully-dynamic-connectivity-problems.md)
 
 ## Proof depends on
 
 - [Replacement edges after deleting a spanning-forest edge](replacement-edge-lemma.md)
+- [XOR sketches recover a single edge of a vertex cut](xor-cutset-sketch-lemma.md)
+- [Euler tour](../euler-tour-tree/tour.md)
 
 ## Sources
 

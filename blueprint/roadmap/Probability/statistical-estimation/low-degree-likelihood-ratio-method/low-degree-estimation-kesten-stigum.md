@@ -9,11 +9,9 @@ Self-avoiding walk counts between two vertices are unbiased low-degree estimator
 ## Depends on
 
 - [Low-degree likelihood ratio and low-degree advantage](low-degree-likelihood-ratio.md)
-- [Low-degree conjecture](low-degree-conjecture.md)
 
 ## Proof depends on
 
-- [Low-degree likelihood ratio and low-degree advantage](low-degree-likelihood-ratio.md)
 - [Low-degree conjecture](low-degree-conjecture.md)
 
 ## Sources

@@ -15,12 +15,9 @@ Solve the semidefinite program for a vector $(k + \varepsilon)$-coloring. Pick a
 ## Depends on
 
 - [Vector colorings and the vector chromatic number](vector-colorings-and-vector-chromatic-number.md)
-- [Vector chromatic numbers lie between the clique number and the chromatic number](vector-chromatic-number-bounds.md)
-- [A random hyperplane separates two unit vectors with probability angle over π](../../../Probability/distributions/continuous/multivariate-normal-distribution/sheppard-formula/std-gaussian-sign-ne.md)
 
 ## Proof depends on
 
-- [Vector colorings and the vector chromatic number](vector-colorings-and-vector-chromatic-number.md)
 - [A random hyperplane separates two unit vectors with probability angle over π](../../../Probability/distributions/continuous/multivariate-normal-distribution/sheppard-formula/std-gaussian-sign-ne.md)
 
 ## Sources

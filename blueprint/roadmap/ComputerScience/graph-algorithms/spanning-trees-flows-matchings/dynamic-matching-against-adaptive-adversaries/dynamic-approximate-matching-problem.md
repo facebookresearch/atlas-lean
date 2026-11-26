@@ -10,8 +10,6 @@ Guarantees are stated for a fixed adversary model (oblivious or adaptive) and wi
 ## Depends on
 
 - [The augmenting-path maximum matching](../maximum-bipartite-matching/max-matching.md)
-- [Berge's lemma for matching subgraphs](../../../../GraphTheory/matchings-and-flows/berge-s-lemma/berge-general.md)
-- [The greedy matching is maximal](../../../online-algorithms/online-bipartite-matching/greedy-all-maximal.md)
 - [Approximation algorithms and approximation ratios](../../../approximation-algorithms/approximation-algorithms-and-approximation-ratios.md)
 - [Oblivious and adaptive adversaries; amortized and worst-case update time](../../../data-structures/disjoint-sets-and-dynamic-trees/fully-dynamic-connectivity-and-spanning-forests/adversary-and-update-time-models.md)
 

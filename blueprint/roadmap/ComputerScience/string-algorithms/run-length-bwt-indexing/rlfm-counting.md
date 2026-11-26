@@ -9,11 +9,10 @@ Backward search updates $sp \leftarrow C[c] + \mathrm{rank}_c(\mathrm{BWT}, sp -
 ## Depends on
 
 - [Run-length FM-index](run-length-fm-index.md)
-- [Predecessor in doubly logarithmic time](../../data-structures/tries-and-integer-dictionaries/van-emde-boas-tree/predecessor-in-doubly-logarithmic-time.md)
+- [FM-index backward search](../burrows-wheeler-transform-and-fm-index/backward-search.md)
 
 ## Proof depends on
 
-- [Run-length FM-index](run-length-fm-index.md)
 - [Predecessor in doubly logarithmic time](../../data-structures/tries-and-integer-dictionaries/van-emde-boas-tree/predecessor-in-doubly-logarithmic-time.md)
 
 ## Sources

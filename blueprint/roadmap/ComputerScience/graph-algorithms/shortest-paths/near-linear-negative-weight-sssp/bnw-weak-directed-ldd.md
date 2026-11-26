@@ -16,10 +16,6 @@ Estimate, by sampling $O(\log n)$ random vertices and running Dijkstra from and 
 
 - [Weak and strong directed low-diameter decompositions with overhead rho](directed-low-diameter-decomposition.md)
 
-## Proof depends on
-
-- [Weak and strong directed low-diameter decompositions with overhead rho](directed-low-diameter-decomposition.md)
-
 ## Sources
 
 - Aaron Bernstein, Danupon Nanongkai, Christian Wulff-Nilsen, "Negative-Weight Single-Source Shortest Paths in Near-linear Time", FOCS (2022), arXiv:2203.03456.

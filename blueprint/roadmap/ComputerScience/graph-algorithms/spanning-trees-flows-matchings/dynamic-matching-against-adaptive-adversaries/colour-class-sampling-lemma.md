@@ -16,9 +16,6 @@ A colour class is a matching, so each edge of $G_i$ lies in exactly one class, a
 
 - [Fractional matchings and the fractional matching number](fractional-matching-number.md)
 - [Randomized (c, d, epsilon)-kernels for maximum matching](randomized-matching-kernels.md)
-
-## Proof depends on
-
 - [Proper edge coloring](../../../../GraphTheory/graph-coloring/part-01/edge-coloring/is-proper-edge-coloring.md)
 
 ## Sources

@@ -15,6 +15,7 @@ Start from a maximum Nash welfare allocation and, for each agent $j$ whose bundl
 
 - [Local swap inequality at a maximum Nash welfare allocation](mnw-local-swap-inequality.md)
 - [Envy-cycle rotation preserves EFX and weakly improves every agent](../efx-allocations-charity-and-counterexamples/envy-cycle-rotation-preserves-efx.md)
+- [Envy graph and most envious agent of a partial allocation](../efx-allocations-charity-and-counterexamples/envy-graph-most-envious-agent.md)
 
 ## Sources
 

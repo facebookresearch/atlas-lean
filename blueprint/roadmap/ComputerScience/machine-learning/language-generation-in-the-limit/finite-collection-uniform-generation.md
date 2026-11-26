@@ -8,11 +8,7 @@ For every subfamily $\mathcal{F} \subseteq \mathcal{C}$ whose intersection $\big
 
 ## Depends on
 
-- [Every countable collection of languages is generatable in the limit](kleinberg-mullainathan-generation-theorem.md)
-
-## Proof depends on
-
-- [Every countable collection of languages is generatable in the limit](kleinberg-mullainathan-generation-theorem.md)
+- [Generation in the limit](generation-in-the-limit.md)
 
 ## Sources
 

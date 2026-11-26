@@ -9,12 +9,12 @@ Kempa and Kociumaka bound $r$ via substring complexity: they show that the numbe
 ## Depends on
 
 - [The BWT-runs conjecture](bwt-runs-conjecture.md)
-- [Substring complexity is at most the attractor size](../string-attractors-and-repetitiveness-measures/delta-at-most-gamma.md)
-- [Dictionary compressors induce string attractors](../string-attractors-and-repetitiveness-measures/compressors-induce-attractors.md)
+- [Number $r$ of runs in the Burrows–Wheeler transform](../string-attractors-and-repetitiveness-measures/bwt-run-count.md)
+- [Size $z$ of the greedy LZ77 factorization](../string-attractors-and-repetitiveness-measures/lz77-factorization-size.md)
+- [String attractors](../string-attractors-and-repetitiveness-measures/string-attractor.md)
 
 ## Proof depends on
 
-- [The BWT-runs conjecture](bwt-runs-conjecture.md)
 - [Substring complexity is at most the attractor size](../string-attractors-and-repetitiveness-measures/delta-at-most-gamma.md)
 - [Dictionary compressors induce string attractors](../string-attractors-and-repetitiveness-measures/compressors-induce-attractors.md)
 

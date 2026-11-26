@@ -9,11 +9,9 @@ Bansal, Coester, Kumar, Purohit and Vee study the structure of Belady's rule res
 ## Depends on
 
 - [Next-arrival predictions for paging](next-arrival-predictions.md)
-- [Combining online algorithms for metrical task systems](combining-online-algorithms.md)
 
 ## Proof depends on
 
-- [Next-arrival predictions for paging](next-arrival-predictions.md)
 - [Combining online algorithms for metrical task systems](combining-online-algorithms.md)
 
 ## Sources

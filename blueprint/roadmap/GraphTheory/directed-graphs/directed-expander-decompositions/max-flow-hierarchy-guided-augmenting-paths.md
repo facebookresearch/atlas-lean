@@ -8,9 +8,9 @@ Given a hierarchy, every feasible integral flow can be rerouted, with small cong
 
 ## Depends on
 
-- [Directed expander hierarchies of logarithmic height exist and can be constructed in n^{2+o(1)} time](directed-expander-hierarchy-existence-construction.md)
-- [Directed phi-expanders are strongly connected and route terminal demands with congestion O(log n / phi)](directed-expander-connectivity-and-routing.md)
-- [Edmonds-Karp computes a maximum flow and a minimum cut](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/edmonds-karp-algorithm/edmonds-karp-max-flow-min-cut.md)
+- [Directed phi-expander hierarchies of a directed graph](directed-phi-expander-hierarchy.md)
+- [Feasible flow](../../matchings-and-flows/max-flow-min-cut-theorem/is-feasible-flow.md)
+- [Flow value](../../matchings-and-flows/max-flow-min-cut-theorem/flow-value.md)
 
 ## Proof depends on
 

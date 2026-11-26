@@ -8,10 +8,6 @@ One iteration performs betweenness reduction with $\beta=r+1,\tau=r$ in $\tilde 
 
 ## Depends on
 
-- [Eliminating r-remote negative edges by hop reduction in O~((k/r)m + rm) time](remote-edge-elimination.md)
-- [Betweenness reduction: one reweighting makes every pair have beta-betweenness at most n/tau](betweenness-reduction-by-sampling.md)
-- [A negative sandwich with low-betweenness endpoints becomes r-remote after one valid reweighting](negative-sandwich-becomes-remote.md)
-- [Finding a negative sandwich or a 1-hop independent set of size Omega(k^{1/3}) in O(m log^2 n) time](sandwich-or-independent-set-sampling.md)
 - [Real-weighted negative SSSP in the real RAM and strongly polynomial running time](real-weighted-sssp-strongly-polynomial.md)
 
 ## Proof depends on

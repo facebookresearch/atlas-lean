@@ -10,10 +10,7 @@ Paying $t_0$ in both outcomes is a constant transfer that does not change the ag
 
 - [Combinatorial-actions contract with a binary outcome](combinatorial-actions-binary-outcome-contract.md)
 - [Hidden-action principal-agent instance and contract](../hidden-action-principal-agent-contracts/hidden-action-principal-agent-instance.md)
-
-## Proof depends on
-
-- [Hidden-action principal-agent instance and contract](../hidden-action-principal-agent-contracts/hidden-action-principal-agent-instance.md)
+- [Linear contract and its critical values](../hidden-action-principal-agent-contracts/linear-contract-critical-values.md)
 
 ## Sources
 

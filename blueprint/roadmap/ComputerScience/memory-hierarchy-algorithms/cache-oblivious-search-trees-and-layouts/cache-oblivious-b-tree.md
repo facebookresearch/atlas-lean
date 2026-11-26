@@ -8,17 +8,14 @@ Store the keys in a packed memory array and build over its segments a static com
 
 ## Depends on
 
-- [Root-to-leaf paths in the recursive layout touch $O(\log_L N)$ lines](recursive-layout-search-cost.md)
-- [Amortized cost of packed memory arrays](packed-memory-array-cost.md)
-- [Comparison-based search needs $\Omega(\log_B N)$ I/Os](external-search-lower-bound.md)
-- [Raw B-trees](../../data-structures/search-trees/b-tree/btree.md)
+- [The ideal-cache model](../cache-oblivious-algorithms/the-ideal-cache-model.md)
 
 ## Proof depends on
 
 - [Root-to-leaf paths in the recursive layout touch $O(\log_L N)$ lines](recursive-layout-search-cost.md)
 - [Amortized cost of packed memory arrays](packed-memory-array-cost.md)
-- [Comparison-based search needs $\Omega(\log_B N)$ I/Os](external-search-lower-bound.md)
-- [Raw B-trees](../../data-structures/search-trees/b-tree/btree.md)
+- [Packed memory arrays](packed-memory-array.md)
+- [Prokop's recursive layout of a complete binary tree](recursive-tree-layout.md)
 
 ## Sources
 

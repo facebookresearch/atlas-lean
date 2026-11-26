@@ -10,6 +10,8 @@ For gross substitutes, enumerate the polynomially many critical values, compute 
 
 - [Combinatorial-actions contract with a binary outcome](combinatorial-actions-binary-outcome-contract.md)
 - [Gross-substitutes success-probability function](gross-substitutes-success-probability.md)
+- [Submodular set function](../../../ComputerScience/approximation-algorithms/maximum-n-times-coverage/is-submodular.md)
+- [Linear contract and its critical values](../hidden-action-principal-agent-contracts/linear-contract-critical-values.md)
 
 ## Proof depends on
 

@@ -10,10 +10,6 @@ Induct on the protocol tree. If Alice speaks, she partitions $X$ into two parts,
 
 - [Asymmetric $[a, b]$-protocols](asymmetric-protocol.md)
 
-## Proof depends on
-
-- [Asymmetric $[a, b]$-protocols](asymmetric-protocol.md)
-
 ## Sources
 
 - Peter Bro Miltersen, Noam Nisan, Shmuel Safra, Avi Wigderson, "On Data Structures and Asymmetric Communication Complexity", Journal of Computer and System Sciences 57(1) (1998).

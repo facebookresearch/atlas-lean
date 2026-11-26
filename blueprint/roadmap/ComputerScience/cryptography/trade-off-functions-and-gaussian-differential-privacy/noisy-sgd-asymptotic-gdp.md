@@ -14,9 +14,8 @@ Each iteration is a subsampled Gaussian mechanism with sensitivity one and noise
 
 ## Depends on
 
-- [Central limit theorem for the composition of trade-off functions](f-dp-composition-central-limit-theorem.md)
-- [Subsampling theorem for f-differential privacy](f-dp-subsampling-theorem.md)
-- [The Gaussian mechanism is exactly Gaussian differentially private](gaussian-mechanism-gdp.md)
+- [Gaussian differential privacy](gaussian-differential-privacy.md)
+- [Differentially private stochastic gradient descent](../private-convex-optimization-and-noisy-sgd/dp-sgd.md)
 
 ## Proof depends on
 

@@ -8,8 +8,8 @@ Every probabilistic estimate in the Karlin-Klein-Oveis Gharan analysis that depe
 
 ## Depends on
 
-- [Simply exponential joint count bound for strongly Rayleigh measures (Gurvits-Klein-Leake)](gkl-simply-exponential-bound.md)
-- [Karlin-Klein-Oveis Gharan: max-entropy rounding beats 3/2 for metric TSP](kko-three-halves-minus-epsilon.md)
+- [Max-entropy rounding algorithm for metric TSP](max-entropy-tsp-algorithm.md)
+- [Approximation algorithms and approximation ratios](../approximation-algorithms-and-approximation-ratios.md)
 
 ## Proof depends on
 

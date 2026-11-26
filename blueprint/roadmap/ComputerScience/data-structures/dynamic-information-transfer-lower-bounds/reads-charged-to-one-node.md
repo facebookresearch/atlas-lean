@@ -10,10 +10,6 @@ A read at time $t$ of a cell last written at time $s < t$ contributes to $\mathr
 
 - [Information transfer and the information-transfer tree](information-transfer-tree.md)
 
-## Proof depends on
-
-- [Information transfer and the information-transfer tree](information-transfer-tree.md)
-
 ## Sources
 
 - Mihai Pătraşcu, Erik D. Demaine, "Logarithmic Lower Bounds in the Cell-Probe Model", SIAM Journal on Computing 35(4) (2006), arXiv:cs/0502041.

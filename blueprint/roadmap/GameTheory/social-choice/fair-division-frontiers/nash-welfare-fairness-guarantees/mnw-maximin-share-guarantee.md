@@ -16,7 +16,6 @@ Fix $i$ and a partition witnessing $\mu_i$. Using the local swap inequality for 
 
 - [Maximum Nash welfare allocation](../../../not-yet-classified/part-01/max-nash-welfare/is-max-nash-welfare.md)
 - [Maximin share](../../../not-yet-classified/part-01/indivisible/maximin-share.md)
-- [Local swap inequality at a maximum Nash welfare allocation](mnw-local-swap-inequality.md)
 
 ## Proof depends on
 

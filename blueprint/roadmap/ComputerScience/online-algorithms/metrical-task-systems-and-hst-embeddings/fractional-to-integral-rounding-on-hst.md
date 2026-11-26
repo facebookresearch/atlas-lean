@@ -11,11 +11,6 @@ Maintain a distribution over integral configurations whose marginals at each sub
 - [Hierarchically separated trees](hierarchically-separated-tree.md)
 - [The k-server problem](../paging-and-k-server/the-k-server-problem.md)
 
-## Proof depends on
-
-- [Hierarchically separated trees](hierarchically-separated-tree.md)
-- [The k-server problem](../paging-and-k-server/the-k-server-problem.md)
-
 ## Sources
 
 - Nikhil Bansal, Niv Buchbinder, Aleksander Mądry, Joseph Naor, "A Polylogarithmic-Competitive Algorithm for the k-Server Problem", Journal of the ACM 62(5) (2015); FOCS (2011).

@@ -13,11 +13,6 @@ For PCSA-type and LogLog-type sketches the state is a vector of independent geom
 ## Depends on
 
 - [Turnstile streams, support size and linear sketches of a frequency vector](turnstile-streams-and-support-size.md)
-- [Kane-Nelson-Woodruff distinct-elements algorithm with O(1/eps^2 + log n) bits](optimal-space-distinct-elements-algorithm.md)
-
-## Proof depends on
-
-- [Kane-Nelson-Woodruff distinct-elements algorithm with O(1/eps^2 + log n) bits](optimal-space-distinct-elements-algorithm.md)
 
 ## Sources
 

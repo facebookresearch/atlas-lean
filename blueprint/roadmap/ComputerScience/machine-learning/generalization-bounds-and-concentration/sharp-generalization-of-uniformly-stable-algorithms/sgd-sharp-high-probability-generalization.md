@@ -6,7 +6,7 @@ $$
 \big| R(w_T) - R_{\mathrm{emp}}(w_T) \big| \lesssim \frac{L^2 \sum_{t \le T} \eta_t}{n} \log n \log\frac{1}{\delta} + B\sqrt{\frac{\log(1/\delta)}{n}} .
 $$
 
-With $\eta_t = \eta$ and $T = n$ passes this is $O\big((L^2 \eta \log n \log(1/\delta)) + B\sqrt{\log(1/\delta)/n}\big)$.
+With $\eta_t = \eta$ and $T = n$ steps (one pass) this is $O\big((L^2 \eta \log n \log(1/\delta)) + B\sqrt{\log(1/\delta)/n}\big)$.
 
 ## Proof sketch
 
@@ -14,8 +14,9 @@ Run the two SGD trajectories on neighbouring samples with the same index sequenc
 
 ## Depends on
 
-- [High-probability generalization of uniformly stable algorithms with a single logarithmic factor](uniform-stability-sharp-high-probability-bound.md)
-- [SGM is uniformly stable](../algorithmic-stability/is-uniformly-stable-sgm.md)
+- [Uniform stability](../algorithmic-stability/is-uniformly-stable.md)
+- [Expected risk](../risk.md)
+- [Empirical risk](../empirical-risk.md)
 
 ## Proof depends on
 

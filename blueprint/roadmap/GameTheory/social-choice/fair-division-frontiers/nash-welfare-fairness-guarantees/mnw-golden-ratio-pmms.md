@@ -15,7 +15,6 @@ Fix $i, j$ and restrict attention to the two-agent subinstance on $X_i \cup X_j$
 ## Depends on
 
 - [Maximum Nash welfare allocation](../../../not-yet-classified/part-01/max-nash-welfare/is-max-nash-welfare.md)
-- [Local swap inequality at a maximum Nash welfare allocation](mnw-local-swap-inequality.md)
 
 ## Proof depends on
 

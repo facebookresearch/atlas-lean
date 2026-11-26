@@ -10,10 +10,6 @@ Sort $p_1 \le \dots \le p_n$. Under processor sharing, job $j$ completes at $C_j
 
 - [Non-clairvoyant scheduling with predicted job sizes](nonclairvoyant-scheduling-with-predictions.md)
 
-## Proof depends on
-
-- [Non-clairvoyant scheduling with predicted job sizes](nonclairvoyant-scheduling-with-predictions.md)
-
 ## Sources
 
 - Rajeev Motwani, Steven Phillips, Eric Torng, "Nonclairvoyant Scheduling", Theoretical Computer Science 130(1) (1994).

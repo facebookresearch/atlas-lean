@@ -8,10 +8,11 @@ Maintain a solution consisting of chosen components together with the up-links t
 
 ## Depends on
 
-- [Traub-Zenklusen: weighted tree augmentation is (1 + ln 2 + eps)-approximable](tz-one-plus-ln-two.md)
-- [Approximate decomposition of WTAP solutions into thin components (Traub-Zenklusen)](wtap-component-decomposition.md)
+- [Weighted tree augmentation problem (WTAP)](weighted-tree-augmentation.md)
+- [Relative greedy algorithms for weighted tree augmentation](relative-greedy-augmentation.md)
 - [Steiner tree instances](../../../TheoryOfComputation/np-completeness/paths-cycles-and-subgraphs/steiner-tree/steiner-tree-instance.md)
-- [STEINER TREE is NP-complete](../../../TheoryOfComputation/np-completeness/paths-cycles-and-subgraphs/steiner-tree/steiner-tree-np-complete.md)
+- [Integrality gaps of linear programming relaxations](../lp-based-approximation/integrality-gaps-of-linear-programming.md)
+- [Approximation algorithms and approximation ratios](../approximation-algorithms-and-approximation-ratios.md)
 
 ## Proof depends on
 

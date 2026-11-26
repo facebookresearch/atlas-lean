@@ -9,13 +9,13 @@ The key technique treats low-diameter subgraphs like expanders: a covering of th
 ## Depends on
 
 - [Decremental (1+eps)-approximate single-source shortest paths](decremental-approximate-sssp-problem.md)
-- [Even-Shiloach: exact decremental BFS trees in O(mD) total update time](even-shiloach-total-time.md)
 - [Oblivious and adaptive adversaries; amortized and worst-case update time](../../../data-structures/disjoint-sets-and-dynamic-trees/fully-dynamic-connectivity-and-spanning-forests/adversary-and-update-time-models.md)
 
 ## Proof depends on
 
 - [Saranurak-Wang expander pruning under online edge deletions](../../../../GraphTheory/graph-families-and-operations/expander-decomposition-and-pruning/expander-pruning-theorem.md)
 - [Saranurak-Wang near-linear-time strong expander decomposition](../../../../GraphTheory/graph-families-and-operations/expander-decomposition-and-pruning/saranurak-wang-expander-decomposition.md)
+- [Even-Shiloach: exact decremental BFS trees in O(mD) total update time](even-shiloach-total-time.md)
 
 ## Sources
 

@@ -9,6 +9,7 @@ Given any contract $t$, an adversary can choose distributions consistent with th
 ## Depends on
 
 - [Linear contract and its critical values](linear-contract-critical-values.md)
+- [Hidden-action principal-agent instance and contract](hidden-action-principal-agent-instance.md)
 
 ## Proof depends on
 

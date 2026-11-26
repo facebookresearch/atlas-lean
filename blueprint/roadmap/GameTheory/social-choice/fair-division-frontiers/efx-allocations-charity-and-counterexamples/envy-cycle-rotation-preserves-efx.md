@@ -8,10 +8,7 @@ EFX is a condition comparing each agent's own value with her values of the other
 
 ## Depends on
 
-- [Envy graph and most envious agent of a partial allocation](envy-graph-most-envious-agent.md)
-
-## Proof depends on
-
+- [Partial EFX allocation with an unallocated pool](partial-efx-allocation-with-pool.md)
 - [Envy graph and most envious agent of a partial allocation](envy-graph-most-envious-agent.md)
 
 ## Sources

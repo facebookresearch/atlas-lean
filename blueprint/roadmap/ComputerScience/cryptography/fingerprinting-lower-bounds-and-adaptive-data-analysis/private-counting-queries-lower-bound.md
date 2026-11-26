@@ -14,8 +14,7 @@ Compose the one-way marginal lower bound with a query-composition technique: enc
 
 ## Depends on
 
-- [Sample complexity of privately answering one-way marginals](private-one-way-marginals-lower-bound.md)
-- [Private multiplicative weights answers exponentially many counting queries](private-multiplicative-weights.md)
+- [Differential privacy](../differential-privacy/differentially-private.md)
 
 ## Proof depends on
 

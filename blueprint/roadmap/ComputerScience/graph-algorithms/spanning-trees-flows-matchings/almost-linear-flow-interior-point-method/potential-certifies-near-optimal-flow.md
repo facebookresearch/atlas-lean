@@ -16,10 +16,6 @@ Both barrier terms $(\mathbf{u}^+_e - \mathbf{f}_e)^{-\alpha}$ and $(\mathbf{f}_
 
 - [Potential function of the l1 interior point method for minimum-cost flow](l1-ipm-potential-function.md)
 
-## Proof depends on
-
-- [Potential function of the l1 interior point method for minimum-cost flow](l1-ipm-potential-function.md)
-
 ## Sources
 
 - Li Chen, Rasmus Kyng, Yang P. Liu, Richard Peng, Maximilian Probst Gutenberg, Sushant Sachdeva, "Maximum Flow and Minimum-Cost Flow in Almost-Linear Time", FOCS (2022), arXiv:2203.00671.

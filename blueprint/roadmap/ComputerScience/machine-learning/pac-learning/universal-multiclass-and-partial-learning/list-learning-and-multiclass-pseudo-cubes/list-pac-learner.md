@@ -4,8 +4,8 @@ Let $H \subseteq Y^X$ and $k \ge 1$. A **$k$-list predictor** (a $k$-menu) is a 
 
 ## Depends on
 
-- [DS dimension characterizes multiclass PAC learnability](../../ds-dimension-characterizes-multiclass-pac-learnability.md)
 - [Learners and agnostic PAC learnability](../../agnostic-pac-learning-and-uniform-convergence/learners-and-agnostic-pac-learnability.md)
+- [The realizable distribution family](../../occam-bound-for-consistent-learners/realizable-family.md)
 
 ## Sources
 

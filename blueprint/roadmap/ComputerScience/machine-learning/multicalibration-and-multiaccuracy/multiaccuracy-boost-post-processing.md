@@ -8,7 +8,7 @@ Each update is a step along $c$ that decreases a convex potential (the expected 
 
 ## Depends on
 
-- [Each multiaccuracy correction decreases the squared distance to the Bayes predictor](multiaccuracy-correction-potential-decrease.md)
+- [Multiaccurate predictors](multiaccurate-predictor.md)
 
 ## Proof depends on
 

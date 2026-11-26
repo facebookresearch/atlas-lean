@@ -14,10 +14,6 @@ The middle inequality is immediate since a strict vector coloring is a vector co
 
 - [Vector colorings and the vector chromatic number](vector-colorings-and-vector-chromatic-number.md)
 
-## Proof depends on
-
-- [Vector colorings and the vector chromatic number](vector-colorings-and-vector-chromatic-number.md)
-
 ## Sources
 
 - D. Karger, R. Motwani, M. Sudan, "Approximate Graph Coloring by Semidefinite Programming", Journal of the ACM 45 (1998), arXiv:cs/9812008.

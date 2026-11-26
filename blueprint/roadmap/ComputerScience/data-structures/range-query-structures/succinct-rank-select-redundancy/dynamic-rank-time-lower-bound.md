@@ -11,11 +11,6 @@ A dynamic rank structure solves dynamic prefix parity over a bit array of length
 - [Dynamic ordered dictionary with rank and select](dynamic-ordered-dictionary-with-rank.md)
 - [The cell-probe model](../advanced-data-structures/the-cell-probe-model.md)
 
-## Proof depends on
-
-- [Dynamic ordered dictionary with rank and select](dynamic-ordered-dictionary-with-rank.md)
-- [The cell-probe model](../advanced-data-structures/the-cell-probe-model.md)
-
 ## Sources
 
 - Michael L. Fredman, Michael E. Saks, "The Cell Probe Complexity of Dynamic Data Structures", STOC (1989).

@@ -8,17 +8,14 @@ By the minimax theorem, a $\gamma$-realizable sample is labelled correctly by a 
 
 ## Depends on
 
+- [Partial concept classes and their VC and Littlestone dimensions](partial-concept-class.md)
 - [Disambiguations of partial concept classes](disambiguation.md)
-- [VC dimension characterizes PAC learnability of partial concept classes](partial-class-pac-characterization.md)
-- [Von Neumann's minimax theorem](../../../../../GameTheory/noncooperative-games/von-neumann-s-minimax-theorem/matrix-game-minimax.md)
 - [The weighted majority vote](../../../online-learning-and-boosting/boosting-and-the-minimax-theorem/weighted-vote.md)
 
 ## Proof depends on
 
-- [Disambiguations of partial concept classes](disambiguation.md)
 - [VC dimension characterizes PAC learnability of partial concept classes](partial-class-pac-characterization.md)
 - [Von Neumann's minimax theorem](../../../../../GameTheory/noncooperative-games/von-neumann-s-minimax-theorem/matrix-game-minimax.md)
-- [The weighted majority vote](../../../online-learning-and-boosting/boosting-and-the-minimax-theorem/weighted-vote.md)
 
 ## Sources
 

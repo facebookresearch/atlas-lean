@@ -15,11 +15,6 @@ Write the cost of the parity correction as the cost of a fractional point $y$ in
 ## Depends on
 
 - [Max-entropy rounding algorithm for metric TSP](max-entropy-tsp-algorithm.md)
-- [Wolsey's bound: tree plus minimum T-join costs at most 3/2 of the subtour LP](wolsey-three-halves-subtour.md)
-- [Lambda-uniform spanning tree measures are strongly Rayleigh](lambda-uniform-trees-strongly-rayleigh.md)
-- [Negative dependence and Poisson-binomial counts under strongly Rayleigh measures](strongly-rayleigh-negative-dependence.md)
-- [Joint count probabilities for strongly Rayleigh measures (Karlin-Klein-Oveis Gharan)](sr-joint-count-bound.md)
-- [Polygons of near-minimum cuts crossed on one side (Karlin-Klein-Oveis Gharan)](one-sided-polygon-structure.md)
 - [Approximation algorithms and approximation ratios](../approximation-algorithms-and-approximation-ratios.md)
 
 ## Proof depends on
@@ -29,6 +24,9 @@ Write the cost of the parity correction as the cost of a fractional point $y$ in
 - [Negative dependence and Poisson-binomial counts under strongly Rayleigh measures](strongly-rayleigh-negative-dependence.md)
 - [Joint count probabilities for strongly Rayleigh measures (Karlin-Klein-Oveis Gharan)](sr-joint-count-bound.md)
 - [Polygons of near-minimum cuts crossed on one side (Karlin-Klein-Oveis Gharan)](one-sided-polygon-structure.md)
+- [T-joins and the T-join dominant polyhedron](t-join-dominant.md)
+- [Near-minimum cuts, atoms and polygon representations of a Held-Karp point](near-min-cuts-polygon.md)
+- [Strongly Rayleigh probability measures on subsets of a ground set](strongly-rayleigh-measure.md)
 
 ## Sources
 

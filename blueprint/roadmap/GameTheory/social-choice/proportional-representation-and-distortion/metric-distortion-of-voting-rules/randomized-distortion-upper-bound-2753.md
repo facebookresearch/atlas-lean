@@ -9,8 +9,8 @@ Neither component alone beats distortion $3$, but their bad instances are comple
 ## Depends on
 
 - [Metric election and distortion of a voting rule](metric-election-and-distortion.md)
-- [Von Neumann's minimax theorem](../../../noncooperative-games/von-neumann-s-minimax-theorem/matrix-game-minimax.md)
 - [Optimal metric distortion of randomized voting](../../optimal-metric-distortion-of-randomized-voting.md)
+- [Maximal lotteries](maximal-lotteries.md)
 
 ## Proof depends on
 

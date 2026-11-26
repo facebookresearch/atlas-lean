@@ -8,8 +8,7 @@ A class is **irreducible** if every restriction by a single labelled example tha
 
 ## Depends on
 
-- [Finite Littlestone dimension implies private learnability](littlestone-classes-are-privately-learnable.md)
-- [The exponential mechanism is differentially private](../../../../cryptography/laplace-and-exponential-mechanisms/exp-mechanism-differentially-private.md)
+- [Private PAC learners and their sample complexity](private-pac-learner.md)
 
 ## Proof depends on
 

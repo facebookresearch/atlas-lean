@@ -9,11 +9,11 @@ Multiaccuracy follows from the triangle inequality: $|\mathbb{E}[c(x)(y - p(x))]
 ## Depends on
 
 - [Multicalibrated predictors](multicalibrated-predictor.md)
-- [Kleinberg–Mullainathan–Raghavan trade-off theorem](../algorithmic-fairness/kleinbergmullainathanraghavan-trade-off-theorem.md)
+- [Multiaccurate predictors](multiaccurate-predictor.md)
+- [Group fairness criteria for scores and classifiers](../algorithmic-fairness/group-fairness-criteria-for-scores-and-classifiers.md)
 
 ## Proof depends on
 
-- [Multicalibrated predictors](multicalibrated-predictor.md)
 - [Kleinberg–Mullainathan–Raghavan trade-off theorem](../algorithmic-fairness/kleinbergmullainathanraghavan-trade-off-theorem.md)
 
 ## Sources

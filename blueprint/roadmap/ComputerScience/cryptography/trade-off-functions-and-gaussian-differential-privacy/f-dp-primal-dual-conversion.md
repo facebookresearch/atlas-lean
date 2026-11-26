@@ -18,13 +18,11 @@ A convex nonincreasing function is the pointwise supremum of its supporting line
 
 ## Depends on
 
-- [Approximate differential privacy as f-differential privacy](epsilon-delta-dp-as-f-dp.md)
 - [Gaussian differential privacy](gaussian-differential-privacy.md)
 
 ## Proof depends on
 
 - [Approximate differential privacy as f-differential privacy](epsilon-delta-dp-as-f-dp.md)
-- [Gaussian differential privacy](gaussian-differential-privacy.md)
 
 ## Sources
 

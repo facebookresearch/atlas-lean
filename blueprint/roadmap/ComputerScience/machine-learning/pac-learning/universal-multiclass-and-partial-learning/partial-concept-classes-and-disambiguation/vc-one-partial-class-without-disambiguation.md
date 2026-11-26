@@ -8,12 +8,11 @@ Encode a graph $G$ on $n$ vertices by the partial class whose concepts are the c
 
 ## Depends on
 
+- [Partial concept classes and their VC and Littlestone dimensions](partial-concept-class.md)
 - [Disambiguations of partial concept classes](disambiguation.md)
-- [Sauer bound for the growth function](../../../../not-yet-classified/growth-function/growth-function-le-sum.md)
 
 ## Proof depends on
 
-- [Disambiguations of partial concept classes](disambiguation.md)
 - [Sauer bound for the growth function](../../../../not-yet-classified/growth-function/growth-function-le-sum.md)
 
 ## Sources

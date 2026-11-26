@@ -8,7 +8,7 @@ Blum's framework reduces coloring with few colors to repeatedly making progress:
 
 ## Depends on
 
-- [Karger-Motwani-Sudan coloring of 3-colorable graphs by rounding vector colorings](karger-motwani-sudan-vector-coloring-rounding.md)
+- [Vector colorings and the vector chromatic number](vector-colorings-and-vector-chromatic-number.md)
 
 ## Proof depends on
 

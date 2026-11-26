@@ -11,12 +11,10 @@ Order the parts topologically in the contracted acyclic graph. Process them in t
 - [Price functions, reduced edge weights, and valid reweightings of a directed graph](price-functions-and-reduced-weights.md)
 - [SCC partition](../../traversal-and-connectivity/strongly-connected-components/is-sccpartition.md)
 - [Acyclic condensation](../../traversal-and-connectivity/strongly-connected-components/condensation-acyclic.md)
-- [Shortest paths in a DAG with a topology check](../shortest-paths-in-directed-acyclic-graphs/dag-shortest-paths.md)
 
 ## Proof depends on
 
-- [Price functions, reduced edge weights, and valid reweightings of a directed graph](price-functions-and-reduced-weights.md)
-- [Acyclic condensation](../../traversal-and-connectivity/strongly-connected-components/condensation-acyclic.md)
+- [Shortest paths in a DAG with a topology check](../shortest-paths-in-directed-acyclic-graphs/dag-shortest-paths.md)
 
 ## Sources
 

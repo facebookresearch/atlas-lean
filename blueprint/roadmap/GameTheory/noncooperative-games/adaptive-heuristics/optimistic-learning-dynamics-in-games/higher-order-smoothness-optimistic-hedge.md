@@ -16,10 +16,6 @@ Write each player's strategy as a softmax of a linear combination of past loss v
 
 - [Optimistic Hedge in a repeated normal-form game](optimistic-hedge-in-games.md)
 
-## Proof depends on
-
-- [Regret bounded by variation in utilities for optimistic algorithms](rvu-property-optimistic-algorithms.md)
-
 ## Sources
 
 - C. Daskalakis, M. Fishelson, N. Golowich, "Near-Optimal No-Regret Learning in General Games", NeurIPS 2021, arXiv:2108.06924.

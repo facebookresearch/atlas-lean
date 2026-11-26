@@ -9,12 +9,6 @@ Esfandiari, Hajiaghayi, Liaghat and Monemizadeh use a decreasing sequence of thr
 ## Depends on
 
 - [Gambler-to-prophet ratios under different arrival models](prophet-ratio-by-arrival-model.md)
-- [Optimal prophet-secretary ratio](../../../GameTheory/mechanism-design/optimal-prophet-secretary-ratio.md)
-
-## Proof depends on
-
-- [Gambler-to-prophet ratios under different arrival models](prophet-ratio-by-arrival-model.md)
-- [Optimal prophet-secretary ratio](../../../GameTheory/mechanism-design/optimal-prophet-secretary-ratio.md)
 
 ## Sources
 

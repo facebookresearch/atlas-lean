@@ -10,10 +10,6 @@ Embed a fine-grained hard problem into the outcome distribution so that oracle a
 
 - [Outcome indistinguishability and its access hierarchy](outcome-indistinguishability.md)
 
-## Proof depends on
-
-- [Outcome indistinguishability and its access hierarchy](outcome-indistinguishability.md)
-
 ## Sources
 
 - C. Dwork, M. P. Kim, O. Reingold, G. N. Rothblum, G. Yona, "Outcome Indistinguishability", STOC (2021), arXiv:2011.13426.

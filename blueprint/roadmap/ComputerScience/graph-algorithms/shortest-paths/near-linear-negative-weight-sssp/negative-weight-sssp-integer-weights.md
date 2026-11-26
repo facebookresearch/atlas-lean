@@ -12,7 +12,6 @@ Algorithms are analysed on the word RAM with words of $\Theta(\log(nW))$ bits. B
 ## Depends on
 
 - [Bellman–Ford algorithm](../bellman-ford-algorithm/bellman-ford.md)
-- [Bellman-Ford makes at most $4 n |E|$ counted steps](../bellman-ford-algorithm/bellman-ford-total-le.md)
 - [Existence of a reachable negative cycle](../bellman-ford-algorithm/has-reachable-negative-cycle.md)
 - [Negative cycles](../floyd-warshall-algorithm/is-negative-cycle.md)
 - [The word-RAM model](../../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-word-ram-model.md)

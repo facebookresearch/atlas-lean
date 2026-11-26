@@ -11,10 +11,6 @@ First assign to each agent at most one good via a maximum-weight matching in whi
 - [Approximation ratio for the Nash social welfare objective](nash-social-welfare-approximation-ratio.md)
 - [Submodular set function](../../../../ComputerScience/approximation-algorithms/maximum-n-times-coverage/is-submodular.md)
 
-## Proof depends on
-
-- [Approximation ratio for the Nash social welfare objective](nash-social-welfare-approximation-ratio.md)
-
 ## Sources
 
 - W. Li, J. Vondrák, "A constant-factor approximation algorithm for Nash social welfare with submodular valuations", FOCS 2021.

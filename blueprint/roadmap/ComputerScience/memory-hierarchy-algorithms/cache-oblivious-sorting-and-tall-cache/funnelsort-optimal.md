@@ -9,12 +9,11 @@ The recurrence $Q(N) = N^{1/3} Q(N^{2/3}) + Q_{\mathrm{merge}}(N^{1/3})$, with t
 ## Depends on
 
 - [Funnelsort](funnelsort.md)
-- [Space and cache complexity of a k-merger](k-merger-cost.md)
-- [Aggarwal–Vitter bound for external sorting](external-sorting-bound.md)
+- [Tall-cache assumptions](tall-cache-assumption.md)
+- [The ideal-cache model](../cache-oblivious-algorithms/the-ideal-cache-model.md)
 
 ## Proof depends on
 
-- [Funnelsort](funnelsort.md)
 - [Space and cache complexity of a k-merger](k-merger-cost.md)
 - [Aggarwal–Vitter bound for external sorting](external-sorting-bound.md)
 

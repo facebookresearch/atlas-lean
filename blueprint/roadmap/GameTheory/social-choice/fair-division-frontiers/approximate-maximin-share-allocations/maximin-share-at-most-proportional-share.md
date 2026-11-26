@@ -10,10 +10,6 @@ In any partition the smallest bundle is worth at most the average $v_i(M)/n$. Fo
 
 - [Alpha-maximin share allocation](alpha-maximin-share-allocation.md)
 
-## Proof depends on
-
-- [Alpha-maximin share allocation](alpha-maximin-share-allocation.md)
-
 ## Sources
 
 - D. Kurokawa, A. D. Procaccia, J. Wang, "Fair Enough: Guaranteeing Approximate Maximin Shares", Journal of the ACM 65(2) (2018); EC 2016.

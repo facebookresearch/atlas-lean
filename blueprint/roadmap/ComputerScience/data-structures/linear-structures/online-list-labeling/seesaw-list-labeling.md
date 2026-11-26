@@ -8,7 +8,8 @@ The See-Saw algorithm maintains the windows of a hierarchical scheme but, instea
 
 ## Depends on
 
-- [Breaking the $\log^2 n$ barrier for list labeling](list-labeling-three-halves.md)
+- [The online list-labeling problem](online-list-labeling.md)
+- [History-independent list labeling](history-independent-list-labeling.md)
 
 ## Proof depends on
 

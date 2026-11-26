@@ -10,10 +10,6 @@ Let $U$ be a countable set of strings and $\mathcal{C} = \{L_1, L_2, \dots\}$ a 
 
 - [Critical languages at a step](critical-language.md)
 
-## Proof depends on
-
-- [Critical languages at a step](critical-language.md)
-
 ## Sources
 
 - J. Kleinberg, S. Mullainathan, "Language Generation in the Limit", NeurIPS (2024), arXiv:2404.06757.

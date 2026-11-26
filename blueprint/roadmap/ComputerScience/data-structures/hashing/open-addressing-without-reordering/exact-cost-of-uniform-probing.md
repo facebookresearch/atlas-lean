@@ -10,13 +10,6 @@ The first $j-1$ entries of a uniformly random permutation hit occupied slots wit
 
 - [Greedy open addressing and uniform probing](greedy-open-addressing-and-uniform-probing.md)
 - [Amortized, worst-case and high-probability probe complexity](amortized-and-worst-case-probe-complexity.md)
-- [Expected probes in open addressing](../hashing-analysis/expected-probes-in-open-addressing.md)
-
-## Proof depends on
-
-- [Greedy open addressing and uniform probing](greedy-open-addressing-and-uniform-probing.md)
-- [Amortized, worst-case and high-probability probe complexity](amortized-and-worst-case-probe-complexity.md)
-- [Expected probes in open addressing](../hashing-analysis/expected-probes-in-open-addressing.md)
 
 ## Sources
 

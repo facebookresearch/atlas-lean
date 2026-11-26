@@ -8,15 +8,13 @@ The front yard uses bins of size $h = \Theta(\log n)$ whose contents are stored 
 
 ## Depends on
 
-- [Chernoff bound on front-yard overflow](front-yard-overflow-bound.md)
 - [Information-theoretic space bound and redundancy of a dictionary](information-theoretic-space-and-redundancy.md)
 - [Stable hash tables](stable-hash-table.md)
 
 ## Proof depends on
 
 - [Chernoff bound on front-yard overflow](front-yard-overflow-bound.md)
-- [Information-theoretic space bound and redundancy of a dictionary](information-theoretic-space-and-redundancy.md)
-- [Stable hash tables](stable-hash-table.md)
+- [Front-yard and back-yard hash table design](front-yard-back-yard-paradigm.md)
 
 ## Sources
 

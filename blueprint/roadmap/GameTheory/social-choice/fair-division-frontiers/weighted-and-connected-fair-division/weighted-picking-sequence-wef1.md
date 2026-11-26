@@ -9,6 +9,7 @@ Fix agents $i, j$. Up to the moment when $i$ makes her $k$-th pick, $j$ has made
 ## Depends on
 
 - [Weighted envy-freeness up to one good](weighted-envy-freeness-up-to-one-good.md)
+- [Pareto-optimal allocation](../../../not-yet-classified/part-01/indivisible/is-pareto-optimal.md)
 
 ## Proof depends on
 

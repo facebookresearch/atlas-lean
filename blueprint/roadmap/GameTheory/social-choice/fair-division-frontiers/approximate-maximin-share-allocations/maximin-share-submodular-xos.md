@@ -10,6 +10,7 @@ Reduce to instances in which no single good is worth a large fraction of any age
 
 - [Alpha-maximin share allocation](alpha-maximin-share-allocation.md)
 - [Submodular set function](../../../../ComputerScience/approximation-algorithms/maximum-n-times-coverage/is-submodular.md)
+- [XOS set functions, demand queries and value queries](../../../mechanism-design/combinatorial-and-multi-agent-contracts/xos-functions-demand-and-value-queries.md)
 
 ## Proof depends on
 

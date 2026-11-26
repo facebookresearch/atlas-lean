@@ -21,11 +21,10 @@ Encode the counts by the real stable polynomial $p(t_1,\dots,t_n)=\mathbb{E}[\pr
 ## Depends on
 
 - [Strongly Rayleigh probability measures on subsets of a ground set](strongly-rayleigh-measure.md)
-- [Joint count probabilities for strongly Rayleigh measures (Karlin-Klein-Oveis Gharan)](sr-joint-count-bound.md)
 
 ## Proof depends on
 
-- [Strongly Rayleigh probability measures on subsets of a ground set](strongly-rayleigh-measure.md)
+- [Real stable polynomials](../../../Algebra/zeros-of-polynomials/stable-polynomials/is-real-stable.md)
 
 ## Sources
 

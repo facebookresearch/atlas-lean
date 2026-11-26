@@ -8,15 +8,16 @@ Run continuous-time mirror descent with the multiscale entropy on the fractional
 
 ## Depends on
 
-- [Multiscale entropy regularizer](multiscale-entropy.md)
-- [Bregman-divergence potential for mirror descent](bregman-potential-inequality.md)
-- [Online rounding of fractional k-server on HSTs](../metrical-task-systems-and-hst-embeddings/fractional-to-integral-rounding-on-hst.md)
+- [Hierarchically separated trees](../metrical-task-systems-and-hst-embeddings/hierarchically-separated-tree.md)
+- [The k-server problem](../paging-and-k-server/the-k-server-problem.md)
 
 ## Proof depends on
 
-- [Multiscale entropy regularizer](multiscale-entropy.md)
 - [Bregman-divergence potential for mirror descent](bregman-potential-inequality.md)
 - [Online rounding of fractional k-server on HSTs](../metrical-task-systems-and-hst-embeddings/fractional-to-integral-rounding-on-hst.md)
+- [Multiscale entropy regularizer](multiscale-entropy.md)
+- [Continuous-time mirror descent for online covering](continuous-mirror-descent-dynamics.md)
+- [Fractional k-server on a tree](fractional-k-server-polytope.md)
 
 ## Sources
 

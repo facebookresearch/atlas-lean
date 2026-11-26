@@ -9,7 +9,7 @@ Consider the actions on the upper envelope ordered by critical values $\alpha_1 
 ## Depends on
 
 - [Linear contract and its critical values](linear-contract-critical-values.md)
-- [Optimal contracts via one linear program per action](optimal-contract-min-pay-linear-programs.md)
+- [Hidden-action principal-agent instance and contract](hidden-action-principal-agent-instance.md)
 
 ## Proof depends on
 

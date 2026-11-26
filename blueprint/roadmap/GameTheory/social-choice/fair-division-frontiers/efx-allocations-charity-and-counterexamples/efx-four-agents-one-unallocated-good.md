@@ -9,7 +9,6 @@ Introduce a refined potential combining the lexicographic valuation vector with 
 ## Depends on
 
 - [Partial EFX allocation with an unallocated pool](partial-efx-allocation-with-pool.md)
-- [EFX with bounded charity: fewer than n goods left unallocated](efx-with-bounded-charity.md)
 
 ## Proof depends on
 

@@ -5,7 +5,6 @@ For a string $T$ with an appended unique smallest sentinel, let $\mathrm{BWT}(T)
 ## Depends on
 
 - [Burrows–Wheeler transform](../burrows-wheeler-transform-and-fm-index/bwt.md)
-- [String attractors](string-attractor.md)
 
 ## Sources
 

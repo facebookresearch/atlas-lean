@@ -14,10 +14,8 @@ If $G$ has no negative cycle, every vertex of $G_s$ has a finite distance from $
 
 ## Depends on
 
-- [Reweighting by a price function shifts every distance by the endpoint prices and preserves cycle weights](price-function-distance-shift.md)
 - [Johnson's algorithm](../johnson-s-algorithm/johnson.md)
-- [Bellman-Ford succeeds exactly when no negative cycle is reachable](../bellman-ford-algorithm/bellman-ford-returns-distances-iff.md)
-- [Dijkstra's algorithm with a binary heap](../../graph-algorithm-bounds/dijkstra-s-algorithm-with-a-binary-heap.md)
+- [Price functions, reduced edge weights, and valid reweightings of a directed graph](price-functions-and-reduced-weights.md)
 
 ## Proof depends on
 

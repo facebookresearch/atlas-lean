@@ -8,12 +8,11 @@ Larsen, Weinstein and Yu simulate the dynamic structure *weakly*: from a small s
 
 ## Depends on
 
-- [The logarithmic barrier for Boolean dynamic problems](boolean-logarithmic-barrier.md)
-- [Cell-sampling lemma](../cell-sampling-and-range-counting-lower-bounds/cell-sampling-lemma.md)
+- [Dynamic two-dimensional range parity](range-parity-problem.md)
+- [Amortized update and query cost of a dynamic cell-probe structure](../dynamic-information-transfer-lower-bounds/amortized-cell-probe-costs.md)
 
 ## Proof depends on
 
-- [The logarithmic barrier for Boolean dynamic problems](boolean-logarithmic-barrier.md)
 - [Cell-sampling lemma](../cell-sampling-and-range-counting-lower-bounds/cell-sampling-lemma.md)
 
 ## Sources

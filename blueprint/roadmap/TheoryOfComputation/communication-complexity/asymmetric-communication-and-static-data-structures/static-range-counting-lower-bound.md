@@ -8,8 +8,7 @@ Reduce lopsided set disjointness, through reachability oracles in butterfly grap
 
 ## Depends on
 
-- [Communication lower bound for lopsided set disjointness](lsd-tradeoff.md)
-- [Direct-sum simulation of many parallel queries](direct-sum-simulation.md)
+- [Static cell-probe structure with space $S$ and query time $t$](../../../ComputerScience/data-structures/cell-sampling-and-range-counting-lower-bounds/static-cell-probe-structure.md)
 
 ## Proof depends on
 

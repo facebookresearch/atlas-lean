@@ -14,8 +14,8 @@ Parts (a) and (b) hold because distinct labels differ in some coordinate $i$, wh
 
 ## Depends on
 
-- [Minimum isolating cuts are closed under intersection and union](isolating-cuts-lattice.md)
 - [Maximum-flow oracles and the max-flow call model for cut problems](max-flow-oracle-call-model.md)
+- [Minimum isolating cuts of a terminal set](minimum-isolating-cuts.md)
 
 ## Proof depends on
 

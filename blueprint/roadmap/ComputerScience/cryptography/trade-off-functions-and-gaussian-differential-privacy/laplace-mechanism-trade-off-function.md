@@ -15,11 +15,10 @@ The likelihood ratio of $\mathrm{Lap}(\Delta,b)$ to $\mathrm{Lap}(0,b)$ is monot
 ## Depends on
 
 - [f-differential privacy](f-differential-privacy.md)
-- [The Laplace mechanism is differentially private](../laplace-and-exponential-mechanisms/laplace-mechanism-differentially-private.md)
+- [Laplace mechanism](../laplace-and-exponential-mechanisms/laplace-mechanism.md)
 
 ## Proof depends on
 
-- [f-differential privacy](f-differential-privacy.md)
 - [The Laplace mechanism is differentially private](../laplace-and-exponential-mechanisms/laplace-mechanism-differentially-private.md)
 
 ## Sources

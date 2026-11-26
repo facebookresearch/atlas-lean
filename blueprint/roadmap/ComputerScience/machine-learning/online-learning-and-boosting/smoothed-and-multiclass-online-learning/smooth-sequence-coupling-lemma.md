@@ -10,10 +10,6 @@ At each round, realize $x_t \sim D_t$ by rejection sampling from $\mu$: draw $z_
 
 - [Smoothed adversaries in online learning](smoothed-adversary.md)
 
-## Proof depends on
-
-- [Smoothed adversaries in online learning](smoothed-adversary.md)
-
 ## Sources
 
 - A. Block, Y. Dagan, N. Golowich, A. Rakhlin, "Smoothed Online Learning is as Easy as Statistical Learning", COLT (2022), arXiv:2202.04690.

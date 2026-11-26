@@ -8,9 +8,8 @@ The forecaster plays a game against an adversary choosing a pair (benchmark func
 
 ## Depends on
 
-- [Multicalibration implies omniprediction for convex Lipschitz losses](multicalibration-implies-omniprediction.md)
-- [Regularized Follow-the-Leader / Online Mirror Descent regret](../online-learning-and-boosting/regularized-follow-the-leader-online-mirror-descent-regret.md)
-- [Multicalibration as multi-objective learning via game dynamics](../multicalibration-and-multiaccuracy/multicalibration-game-dynamics.md)
+- [Omnipredictors](omnipredictor.md)
+- [Swap agnostic learning and swap omniprediction](swap-agnostic-learning.md)
 
 ## Proof depends on
 

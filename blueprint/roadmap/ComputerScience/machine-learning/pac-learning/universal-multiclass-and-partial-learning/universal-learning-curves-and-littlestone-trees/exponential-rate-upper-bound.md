@@ -13,12 +13,10 @@ Feed i.i.d. examples to the eventually-correct online learner; with probability 
 ## Depends on
 
 - [Realizable distributions, learning curves and universal rates](universal-rate.md)
-- [No infinite Littlestone tree gives an online learner with finitely many mistakes](eventually-correct-online-learner.md)
-- [Hoeffding's inequality for averages of bounded variables](../../../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-avg-sub-ge-le.md)
+- [Infinite Littlestone trees](infinite-littlestone-tree.md)
 
 ## Proof depends on
 
-- [Realizable distributions, learning curves and universal rates](universal-rate.md)
 - [No infinite Littlestone tree gives an online learner with finitely many mistakes](eventually-correct-online-learner.md)
 - [Hoeffding's inequality for averages of bounded variables](../../../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-avg-sub-ge-le.md)
 

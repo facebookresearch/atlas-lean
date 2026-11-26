@@ -8,8 +8,7 @@ Knuth's limits for linear probing give unsuccessful-search cost $\frac12\left(1 
 
 ## Depends on
 
-- [Expected cost of an unsuccessful linear-probing search at a fixed load factor](../analysis-of-linear-probing/tendsto-insertion-cost.md)
-- [Expected cost of a successful linear-probing search at a fixed load factor](../analysis-of-linear-probing/tendsto-successful-search-cost.md)
+- [Linear-probing probe sequence](../open-addressing/linear-probe.md)
 
 ## Proof depends on
 

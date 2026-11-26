@@ -10,12 +10,6 @@ If some $i \in N'$ has $\lvert A_i \cap W\rvert \ge \ell$ then $\lvert W \cap \b
 
 - [Extended justified representation](extended-justified-representation.md)
 - [Proportional justified representation](proportional-justified-representation.md)
-- [Justified representation for AV, SAV and MAV](../../computational-social-choice/remaining-clauses-of-justified-representation.md)
-
-## Proof depends on
-
-- [Extended justified representation](extended-justified-representation.md)
-- [Proportional justified representation](proportional-justified-representation.md)
 
 ## Sources
 

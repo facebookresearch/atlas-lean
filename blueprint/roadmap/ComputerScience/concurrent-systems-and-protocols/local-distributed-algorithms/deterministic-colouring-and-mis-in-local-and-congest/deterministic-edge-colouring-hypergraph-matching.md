@@ -8,7 +8,9 @@ Compute a fractional hypergraph matching of large weight by a deterministic roun
 
 ## Depends on
 
-- [Locally checkable labeling problem](../lcl-problems-and-the-locality-landscape/locally-checkable-labeling-problem.md)
+- [The LOCAL model](../../distributed-execution-models/the-local-model.md)
+- [Hypergraph](../../../../Combinatorics/extremal-set-theory/hypergraph-colouring-matching/erd-s-faber-lov-sz-conjecture/hypergraph.md)
+- [Proper edge coloring](../../../../GraphTheory/graph-coloring/part-01/edge-coloring/is-proper-edge-coloring.md)
 
 ## Proof depends on
 

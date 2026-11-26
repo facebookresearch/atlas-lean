@@ -14,13 +14,11 @@ By group privacy, $D_\alpha(M(S_i) \| M(S_j)) \le \ell^2\rho\alpha$ for all pair
 
 ## Depends on
 
-- [Group privacy for zCDP scales quadratically](zcdp-group-privacy.md)
-- [Packing lower bound for pure differential privacy](../differential-privacy/packing-lower-bound-for-pure-differential.md)
+- [Zero-concentrated differential privacy](zero-concentrated-dp.md)
 
 ## Proof depends on
 
 - [Group privacy for zCDP scales quadratically](zcdp-group-privacy.md)
-- [Packing lower bound for pure differential privacy](../differential-privacy/packing-lower-bound-for-pure-differential.md)
 
 ## Sources
 

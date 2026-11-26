@@ -8,12 +8,12 @@ Build a moderated gradecast primitive from signatures that lets parties detect a
 
 ## Depends on
 
-- [Byzantine fault-tolerant state machine replication under partial synchrony](byzantine-state-machine-replication.md)
 - [Reaching Byzantine agreement](../solves.md)
+- [Fail-stop, omission and Byzantine faults](../../distributed-execution-models/fail-stop-omission-and-byzantine-faults.md)
 
 ## Proof depends on
 
-- [Quorums of size n - f intersect in a correct replica when n is at least 3f + 1](byzantine-quorum-intersection.md)
+- [Asynchronous binary Byzantine agreement and common coins](../asynchronous-byzantine-agreement-and-dag-protocols/asynchronous-binary-byzantine-agreement.md)
 
 ## Sources
 

@@ -10,12 +10,15 @@ Membership in PLS uses Rosenthal's potential as the local search objective. For 
 
 - [Congestion game](../../potential-games/congestion-game.md)
 - [PLS reduction and tight PLS reduction](pls-reduction-and-tight-reduction.md)
+- [Pure Nash equilibrium](../../potential-games/is-pure-nash.md)
+- [The class PLS of polynomial local search problems](../../../../TheoryOfComputation/complexity-classes/total-search-problems/the-class-pls-of-polynomial-local-search.md)
 
 ## Proof depends on
 
 - [Local Max-Cut under the flip neighbourhood is PLS-complete](local-max-cut-flip-pls-complete.md)
 - [Rosenthal's theorem](../../potential-games/is-exact-potential-potential.md)
 - [Pure equilibria of potential games as local search](../../potential-games/pure-equilibria-of-potential-games-as-local-search.md)
+- [Rosenthal's potential](../../potential-games/potential.md)
 
 ## Sources
 

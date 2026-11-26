@@ -16,10 +16,6 @@ Revenue is subadditive across the partition of the type space according to which
 
 - [Single additive buyer with independent item values: SREV, BREV and REV](additive-buyer-srev-brev-rev.md)
 
-## Proof depends on
-
-- [Single additive buyer with independent item values: SREV, BREV and REV](additive-buyer-srev-brev-rev.md)
-
 ## Sources
 
 - M. Babaioff, N. Immorlica, B. Lucier, S. M. Weinberg, "A Simple and Approximately Optimal Mechanism for an Additive Buyer", FOCS 2014; Journal of the ACM 67(4) (2020), arXiv:1405.6146.

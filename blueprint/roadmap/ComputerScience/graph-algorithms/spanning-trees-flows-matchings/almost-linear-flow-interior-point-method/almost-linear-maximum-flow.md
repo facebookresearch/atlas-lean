@@ -8,8 +8,6 @@ Apply *Minimum-cost flow in almost-linear time with high probability* to the cir
 
 ## Depends on
 
-- [Minimum-cost flow in almost-linear time with high probability](almost-linear-min-cost-flow.md)
-- [Max-flow min-cut theorem](../../../../GraphTheory/matchings-and-flows/max-flow-min-cut-theorem/max-flow-min-cut.md)
 - [Flow value](../../../../GraphTheory/matchings-and-flows/max-flow-min-cut-theorem/flow-value.md)
 - [Cut capacity](../edmonds-karp-algorithm/cut-capacity.md)
 
@@ -18,7 +16,7 @@ Apply *Minimum-cost flow in almost-linear time with high probability* to the cir
 - [Minimum-cost flow in almost-linear time with high probability](almost-linear-min-cost-flow.md)
 - [Max-flow min-cut theorem](../../../../GraphTheory/matchings-and-flows/max-flow-min-cut-theorem/max-flow-min-cut.md)
 - [Edmonds-Karp computes a maximum flow and a minimum cut](../edmonds-karp-algorithm/edmonds-karp-max-flow-min-cut.md)
-- [Max flow is in P (Edmonds-Karp)](../../../../TheoryOfComputation/polynomial-time-problems/maximum-flow/max-flow-in-p.md)
+- [Integral minimum-cost flow instances with polynomially bounded data](integral-min-cost-flow-instance.md)
 
 ## Sources
 

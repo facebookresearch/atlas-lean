@@ -12,7 +12,6 @@ where $D_H^2$ is the squared Hellinger distance, and $\mathrm{dec}_\gamma(\mathc
 
 - [Decision making with structured observations](decision-making-structured-observations.md)
 - [Hellinger distance](../../../../Probability/convergence-of-measures/hellinger-distance/hellinger-dist.md)
-- [Von Neumann's minimax theorem](../../../../GameTheory/noncooperative-games/von-neumann-s-minimax-theorem/matrix-game-minimax.md)
 
 ## Sources
 

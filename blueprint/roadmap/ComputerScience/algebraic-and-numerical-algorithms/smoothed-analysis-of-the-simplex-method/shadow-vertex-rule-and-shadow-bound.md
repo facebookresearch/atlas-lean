@@ -5,8 +5,6 @@ For a polyhedron $P = \{x \in \mathbb{R}^d : Ax \le b\}$ and linearly independen
 ## Depends on
 
 - [Gaussian-smoothed linear programs and smoothed pivot complexity](gaussian-smoothed-linear-programs.md)
-- [Termination and correctness of the simplex method with Bland's rule](../../graph-algorithms/linear-programming-and-flows/termination-and-correctness-of-the-simplex.md)
-- [Basic feasible points are the extreme points](../../../Analysis/not-yet-classified/linear-programming-basic/is-basic-pt-iff-mem-extreme-points.md)
 
 ## Sources
 

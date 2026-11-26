@@ -8,7 +8,8 @@ If correct parties send $o(f^2)$ messages in expectation, some party receives fe
 
 ## Depends on
 
-- [Byzantine fault-tolerant state machine replication under partial synchrony](byzantine-state-machine-replication.md)
+- [Reaching Byzantine agreement](../solves.md)
+- [Fail-stop, omission and Byzantine faults](../../distributed-execution-models/fail-stop-omission-and-byzantine-faults.md)
 
 ## Proof depends on
 

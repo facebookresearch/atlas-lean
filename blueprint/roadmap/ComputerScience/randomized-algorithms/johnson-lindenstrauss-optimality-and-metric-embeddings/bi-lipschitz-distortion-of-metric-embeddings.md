@@ -14,10 +14,6 @@ $$
 
 and $m(n, d, \varepsilon) = \max\{m(X, \varepsilon) : X \subset \mathbb{R}^d, |X| = n\}$.
 
-## Depends on
-
-- [Distributional Johnson–Lindenstrauss lemma](../probabilistic-analysis-tools/distributional-johnsonlindenstrauss-lemma.md)
-
 ## Sources
 
 - William B. Johnson, Joram Lindenstrauss, "Extensions of Lipschitz mappings into a Hilbert space", Contemp. Math. 26 (1984).

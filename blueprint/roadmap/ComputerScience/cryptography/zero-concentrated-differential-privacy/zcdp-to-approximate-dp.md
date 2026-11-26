@@ -14,15 +14,13 @@ For neighbours, the privacy loss $L$ satisfies $\mathbb{E}_P[e^{(\alpha - 1)L}] 
 
 ## Depends on
 
-- [Adaptive composition and post-processing of zCDP](zcdp-composition-and-post-processing.md)
-- [Pure differential privacy implies zCDP with half the squared parameter](pure-dp-implies-zcdp.md)
-- [Advanced composition](../differential-privacy/differentially-private-pi-advanced.md)
+- [Zero-concentrated differential privacy](zero-concentrated-dp.md)
+- [Differential privacy](../differential-privacy/differentially-private.md)
 
 ## Proof depends on
 
 - [Adaptive composition and post-processing of zCDP](zcdp-composition-and-post-processing.md)
 - [Pure differential privacy implies zCDP with half the squared parameter](pure-dp-implies-zcdp.md)
-- [Advanced composition](../differential-privacy/differentially-private-pi-advanced.md)
 
 ## Sources
 

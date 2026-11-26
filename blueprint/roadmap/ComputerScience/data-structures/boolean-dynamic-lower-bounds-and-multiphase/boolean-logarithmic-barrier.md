@@ -5,9 +5,7 @@ Before 2018 the strongest cell-probe lower bound for any explicit dynamic Boolea
 ## Depends on
 
 - [Dynamic two-dimensional range parity](range-parity-problem.md)
-- [Partial sums over permutation groups reduce to connectivity of disjoint paths](../dynamic-information-transfer-lower-bounds/grid-permutation-reduction.md)
-- [Pătraşcu–Demaine tradeoff for dynamic partial sums](../dynamic-information-transfer-lower-bounds/partial-sums-tradeoff.md)
-- [Larsen's lower bound for dynamic range counting](../cell-sampling-and-range-counting-lower-bounds/dynamic-range-counting-lower-bound.md)
+- [Amortized update and query cost of a dynamic cell-probe structure](../dynamic-information-transfer-lower-bounds/amortized-cell-probe-costs.md)
 
 ## Sources
 

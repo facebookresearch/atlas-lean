@@ -8,8 +8,6 @@ Use one tree chain built from dynamic low-stretch forests and the deterministic 
 
 ## Depends on
 
-- [Tree chains with shifts and rebuilds over recursive sparsified core graphs](../dynamic-min-ratio-cycle-data-structures/shifted-tree-chain.md)
-- [Deterministic dynamic spanners with low-recourse short embeddings under deletions and vertex splits](../dynamic-min-ratio-cycle-data-structures/deterministic-dynamic-spanner-embedding.md)
 - [Edge stretch with respect to a spanning tree and edge lengths](../dynamic-min-ratio-cycle-data-structures/edge-stretch-wrt-spanning-tree.md)
 
 ## Proof depends on

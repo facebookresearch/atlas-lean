@@ -12,7 +12,6 @@ In the l1 IPM one takes $\mathbf{c}^{(t)} = \mathbf{f}^* - \mathbf{f}^{(t)}$ and
 ## Depends on
 
 - [Undirected minimum-ratio cycle problem with gradients and lengths](../almost-linear-flow-interior-point-method/undirected-min-ratio-cycle-problem.md)
-- [The direction to an optimal flow is a good minimum-ratio witness](../almost-linear-flow-interior-point-method/optimal-direction-min-ratio-witness.md)
 - [Dynamic graph problems](../../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/dynamic-graph-problems.md)
 
 ## Sources

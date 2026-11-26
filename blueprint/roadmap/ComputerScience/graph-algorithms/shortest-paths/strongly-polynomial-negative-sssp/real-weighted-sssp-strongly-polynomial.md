@@ -4,10 +4,6 @@ Let $G=(V,E,\ell)$ be a directed graph with $n$ vertices, $m\ge n$ edges and rea
 
 ## Depends on
 
-- [Negative-weight single-source shortest paths with integer weights bounded below by -W](../near-linear-negative-weight-sssp/negative-weight-sssp-integer-weights.md)
-- [Price functions, reduced edge weights, and valid reweightings of a directed graph](../near-linear-negative-weight-sssp/price-functions-and-reduced-weights.md)
-- [Bellman–Ford algorithm](../bellman-ford-algorithm/bellman-ford.md)
-- [Bellman-Ford makes at most $4 n |E|$ counted steps](../bellman-ford-algorithm/bellman-ford-total-le.md)
 - [The word-RAM model](../../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-word-ram-model.md)
 
 ## Sources

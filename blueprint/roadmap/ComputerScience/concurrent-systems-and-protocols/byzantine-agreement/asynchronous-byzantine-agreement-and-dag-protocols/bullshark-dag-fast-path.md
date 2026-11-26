@@ -10,10 +10,12 @@ In synchronous periods, $f + 1$ references to a leader from the next round guara
 
 - [Round-based DAG of reliably broadcast vertices](round-based-byzantine-dag.md)
 - [Partial synchrony](../../distributed-execution-models/partial-synchrony.md)
+- [Asynchronous binary Byzantine agreement and common coins](asynchronous-binary-byzantine-agreement.md)
 
 ## Proof depends on
 
 - [DAG-Rider: asynchronous Byzantine atomic broadcast with zero extra communication for ordering](dag-rider-asynchronous-atomic-broadcast.md)
+- [Quorums of size n - f intersect in a correct replica when n is at least 3f + 1](../linear-view-change-bft-state-machine-replication/byzantine-quorum-intersection.md)
 
 ## Sources
 

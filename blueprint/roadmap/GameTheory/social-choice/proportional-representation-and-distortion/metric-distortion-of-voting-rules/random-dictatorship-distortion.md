@@ -10,10 +10,6 @@ For the upper bound, $\mathbb{E}[\mathrm{SC}(\mathrm{top}(u))] = \frac{1}{n} \su
 
 - [Metric election and distortion of a voting rule](metric-election-and-distortion.md)
 
-## Proof depends on
-
-- [Metric election and distortion of a voting rule](metric-election-and-distortion.md)
-
 ## Sources
 
 - E. Anshelevich, J. Postl, "Randomized Social Choice Functions Under Metric Preferences", Journal of Artificial Intelligence Research 58 (2017); IJCAI 2016.

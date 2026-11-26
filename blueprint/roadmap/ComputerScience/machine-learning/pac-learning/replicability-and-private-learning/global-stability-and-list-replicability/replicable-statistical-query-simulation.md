@@ -12,11 +12,6 @@ i.i.d. samples, outputs $v$ with $|v - \mathbb{E}_{x \sim D}[\psi(x)]| \le \tau$
 
 Estimate $\mathbb{E}[\psi]$ empirically to accuracy $\tau' \approx \tau\rho$, then round to the nearest point of a grid of spacing $\Theta(\tau)$ whose offset is drawn from the shared randomness $r$. Two runs on independent samples produce empirical means within $2\tau'$ of each other, and they round to different grid points only if a grid boundary falls between them, which happens with probability $O(\tau'/\tau) = O(\rho)$ over the random offset.
 
-## Depends on
-
-- [Statistical-query learning implies noise-tolerant PAC learning](../../statistical-query-learning-implies-noise-tolerant-pac-learni.md)
-- [Hoeffding's inequality for averages of bounded variables](../../../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-avg-sub-ge-le.md)
-
 ## Proof depends on
 
 - [Statistical-query learning implies noise-tolerant PAC learning](../../statistical-query-learning-implies-noise-tolerant-pac-learni.md)

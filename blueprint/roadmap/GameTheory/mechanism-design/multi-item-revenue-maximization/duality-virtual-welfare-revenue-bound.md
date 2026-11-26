@@ -14,8 +14,8 @@ Write revenue maximization as a linear program over allocations and payments sub
 
 ## Depends on
 
+- [Bayesian incentive compatibility](../revelation-principle/is-bayes-incentive-compatible.md)
 - [Virtual valuation](../optimal-auctions-and-virtual-valuations/virtual-value.md)
-- [Revelation principle (Bayesian, pure strategies)](../revelation-principle/revelation-principle-bayes-nash.md)
 
 ## Proof depends on
 

@@ -10,13 +10,13 @@ For (i), choose two nested languages $L_1 \supsetneq L_2$ with infinite differen
 
 ## Depends on
 
-- [Consistent generation with breadth requires identifiability](breadth-requires-identifiability.md)
-- [Every countable collection is non-uniformly generatable but not with membership queries alone](nonuniform-generation-countable-collections.md)
+- [Generation in the limit](generation-in-the-limit.md)
+- [Generation with breadth and the membership oracle problem](generation-with-breadth.md)
+- [Identification in the limit from positive examples](identification-in-the-limit.md)
 
 ## Proof depends on
 
 - [Consistent generation with breadth requires identifiability](breadth-requires-identifiability.md)
-- [Every countable collection is non-uniformly generatable but not with membership queries alone](nonuniform-generation-countable-collections.md)
 
 ## Sources
 

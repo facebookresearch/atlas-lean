@@ -15,11 +15,9 @@ With probability $1-p$ the differing record is not sampled and the two output di
 ## Depends on
 
 - [f-differential privacy](f-differential-privacy.md)
-- [Primal–dual conversion between f-DP and families of approximate DP guarantees](f-dp-primal-dual-conversion.md)
 
 ## Proof depends on
 
-- [f-differential privacy](f-differential-privacy.md)
 - [Primal–dual conversion between f-DP and families of approximate DP guarantees](f-dp-primal-dual-conversion.md)
 
 ## Sources

@@ -14,12 +14,9 @@ Run multiplicative weights over a finite cover of $H$. Against non-adaptive smoo
 ## Depends on
 
 - [Smoothed adversaries in online learning](smoothed-adversary.md)
-- [The $\sqrt{T}$ regret bound of Hedge](../hedge-algorithm/regret-le-two-sqrt.md)
-- [Sauer bound for the growth function](../../../not-yet-classified/growth-function/growth-function-le-sum.md)
 
 ## Proof depends on
 
-- [Smoothed adversaries in online learning](smoothed-adversary.md)
 - [The $\sqrt{T}$ regret bound of Hedge](../hedge-algorithm/regret-le-two-sqrt.md)
 - [Sauer bound for the growth function](../../../not-yet-classified/growth-function/growth-function-le-sum.md)
 

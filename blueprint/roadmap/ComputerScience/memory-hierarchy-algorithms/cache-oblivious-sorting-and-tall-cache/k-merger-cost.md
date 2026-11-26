@@ -10,11 +10,7 @@ The space satisfies $S(k) = (\sqrt{k} + 1) S(\sqrt{k}) + O(k^2)$, which solves t
 
 - [The k-merger (funnel)](k-merger.md)
 - [Tall-cache assumptions](tall-cache-assumption.md)
-
-## Proof depends on
-
-- [The k-merger (funnel)](k-merger.md)
-- [Tall-cache assumptions](tall-cache-assumption.md)
+- [The ideal-cache model](../cache-oblivious-algorithms/the-ideal-cache-model.md)
 
 ## Sources
 

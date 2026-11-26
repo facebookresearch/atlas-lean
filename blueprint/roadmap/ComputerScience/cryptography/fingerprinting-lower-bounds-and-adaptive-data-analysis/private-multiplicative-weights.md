@@ -14,8 +14,7 @@ Each update decreases the relative entropy between the true data distribution an
 
 ## Depends on
 
-- [Advanced composition](../differential-privacy/differentially-private-pi-advanced.md)
-- [The Laplace mechanism is differentially private](../laplace-and-exponential-mechanisms/laplace-mechanism-differentially-private.md)
+- [Differential privacy](../differential-privacy/differentially-private.md)
 
 ## Proof depends on
 

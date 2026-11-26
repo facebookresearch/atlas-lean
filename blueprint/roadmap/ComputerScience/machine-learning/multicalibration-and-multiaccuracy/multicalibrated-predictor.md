@@ -11,7 +11,6 @@ that is, $p$ is multiaccurate with respect to $\mathcal{C}$ on every level set o
 ## Depends on
 
 - [Multiaccurate predictors](multiaccurate-predictor.md)
-- [Calibration of predictors and the calibrated-LM hallucination lower bound](../transformers-and-language-models/calibration-of-predictors-and-the-calibrated-lm-hallucinatio.md)
 
 ## Sources
 

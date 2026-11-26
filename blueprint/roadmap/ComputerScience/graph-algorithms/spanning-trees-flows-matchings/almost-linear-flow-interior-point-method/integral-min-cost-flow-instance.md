@@ -14,8 +14,6 @@ and a minimum-cost flow is a feasible flow attaining it. The maximum $s$-$t$ flo
 
 - [Feasible flow](../../../../GraphTheory/matchings-and-flows/max-flow-min-cut-theorem/is-feasible-flow.md)
 - [Oriented incidence matrix of a multigraph](../../../../GraphTheory/algebraic-graph-theory/part-01/oriented-incidence-matrices/oriented-incidence.md)
-- [Hoffman's circulation theorem](../hoffman-circulation-theorem.md)
-- [Optimality conditions for minimum-cost flows](../../linear-programming-and-flows/optimality-conditions-for-minimum-cost-flows.md)
 
 ## Sources
 

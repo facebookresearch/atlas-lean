@@ -1,6 +1,6 @@
 # Thue–Morse words separate $\gamma$ from $b$
 
-For the Thue–Morse words $t_n$ of length $2^n$, the smallest bidirectional macro scheme has size $b(t_n) = \Theta(n)$, while $\gamma(t_n) = 4$. Therefore there are infinite families of strings with $\gamma = O(1)$ and $b = \Theta(\log N)$ for length $N$, so $\gamma$ and $b$ are not equivalent up to constant factors.
+For the Thue–Morse words $t_n$ of length $2^n$, defined by $t_0 = \mathtt{a}$ and $t_{n+1} = t_n \overline{t_n}$, where the bar exchanges $\mathtt{a}$ and $\mathtt{b}$, the smallest bidirectional macro scheme has size $b(t_n) = \Theta(n)$, while $\gamma(t_n) = 4$. Therefore there are infinite families of strings with $\gamma = O(1)$ and $b = \Theta(\log N)$ for length $N$, so $\gamma$ and $b$ are not equivalent up to constant factors.
 
 ## Proof sketch
 
@@ -8,8 +8,8 @@ The upper bound uses the recursive structure $t_{n+1} = t_n\overline{t_n}$ to bu
 
 ## Depends on
 
-- [Thue–Morse words have smallest attractors of size four](thue-morse-gamma.md)
-- [Dictionary compressors induce string attractors](compressors-induce-attractors.md)
+- [String attractors](string-attractor.md)
+- [Grammar size $g$ and bidirectional macro scheme size $b$](grammar-and-macro-measures.md)
 
 ## Proof depends on
 

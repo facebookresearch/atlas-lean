@@ -5,7 +5,7 @@ Let a learner choose distributions $x^t \in \Delta_n$ against losses $\ell^t \in
 ## Depends on
 
 - [Swap regret](../../../not-yet-classified/part-02/regret/swap-regret.md)
-- [Black-box reduction from swap to external regret](../../../not-yet-classified/part-02/regret-blum-mansour-bound/exists-stationary-play-swap-regret-le-ca.md)
+- [External regret](../../../not-yet-classified/part-02/regret/external-regret.md)
 
 ## Sources
 

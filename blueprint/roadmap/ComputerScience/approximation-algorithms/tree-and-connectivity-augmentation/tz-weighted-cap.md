@@ -9,13 +9,13 @@ Weaken WCAP to a directed covering problem on the cactus of minimum cuts, and sh
 ## Depends on
 
 - [Weighted connectivity augmentation problem (WCAP)](connectivity-augmentation.md)
-- [Augmenting odd edge-connectivity reduces to tree augmentation](odd-cap-reduces-to-tap.md)
-- [Traub-Zenklusen local search: weighted tree augmentation is (1.5 + eps)-approximable](tz-local-search-wtap.md)
+- [Approximation algorithms and approximation ratios](../approximation-algorithms-and-approximation-ratios.md)
 
 ## Proof depends on
 
 - [Augmenting odd edge-connectivity reduces to tree augmentation](odd-cap-reduces-to-tap.md)
 - [Traub-Zenklusen local search: weighted tree augmentation is (1.5 + eps)-approximable](tz-local-search-wtap.md)
+- [Cactus representations of all minimum cuts](../../../GraphTheory/paths-cycles-connectivity/cactus-representation-and-sparse-certificates/cactus-representation-of-minimum-cuts.md)
 
 ## Sources
 

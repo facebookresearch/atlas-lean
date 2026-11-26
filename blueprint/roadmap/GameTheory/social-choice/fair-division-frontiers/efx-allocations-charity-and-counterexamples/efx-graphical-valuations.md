@@ -11,10 +11,6 @@ Build the allocation in two phases: first compute a partial orientation in which
 - [Partial EFX allocation with an unallocated pool](partial-efx-allocation-with-pool.md)
 - [Envy-freeness up to any good](../../../not-yet-classified/part-01/indivisible/is-efx.md)
 
-## Proof depends on
-
-- [Partial EFX allocation with an unallocated pool](partial-efx-allocation-with-pool.md)
-
 ## Sources
 
 - G. Christodoulou, A. Fiat, E. Koutsoupias, A. Sgouritsa, "Fair allocation in graphs", EC 2023.

@@ -9,7 +9,6 @@ Construct a correlated distribution supported on value vectors of geometrically 
 ## Depends on
 
 - [Single additive buyer with independent item values: SREV, BREV and REV](additive-buyer-srev-brev-rev.md)
-- [Menu-size complexity of revenue approximation](../menu-size-complexity-of-revenue-approximation.md)
 
 ## Proof depends on
 

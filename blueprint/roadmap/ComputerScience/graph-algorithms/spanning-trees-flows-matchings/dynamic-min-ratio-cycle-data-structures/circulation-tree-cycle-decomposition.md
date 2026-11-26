@@ -16,7 +16,6 @@ The difference $\mathbf{\Delta} - \sum_{e \notin T}\mathbf{\Delta}_e\boldsymbol{
 
 ## Proof depends on
 
-- [Fundamental tree cycles as circulations](fundamental-tree-cycle-circulation.md)
 - [Oriented incidence matrix of a multigraph](../../../../GraphTheory/algebraic-graph-theory/part-01/oriented-incidence-matrices/oriented-incidence.md)
 
 ## Sources

@@ -16,12 +16,9 @@ For a $[0,1]$-valued function $f$, $\mathbb{E}[f(A(S))] = \int_0^1 \Pr[f(A(S)) >
 
 - [Differential privacy](../../../cryptography/differential-privacy/differentially-private.md)
 - [Uniform stability](../algorithmic-stability/is-uniformly-stable.md)
-- [High-probability generalization of uniformly stable algorithms with a single logarithmic factor](uniform-stability-sharp-high-probability-bound.md)
 
 ## Proof depends on
 
-- [Differential privacy](../../../cryptography/differential-privacy/differentially-private.md)
-- [Uniform stability](../algorithmic-stability/is-uniformly-stable.md)
 - [High-probability generalization of uniformly stable algorithms with a single logarithmic factor](uniform-stability-sharp-high-probability-bound.md)
 
 ## Sources

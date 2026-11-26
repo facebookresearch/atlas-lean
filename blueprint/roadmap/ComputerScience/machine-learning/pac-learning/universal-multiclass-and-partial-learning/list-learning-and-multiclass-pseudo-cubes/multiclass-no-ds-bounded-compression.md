@@ -8,7 +8,7 @@ The construction uses the classes of Natarajan dimension one with large pseudo-c
 
 ## Depends on
 
-- [Quantitative multiclass PAC bounds from the DS dimension](ds-dimension-sample-complexity.md)
+- [k-pseudo-cubes and the k-DS dimension](k-pseudo-cube.md)
 
 ## Proof depends on
 

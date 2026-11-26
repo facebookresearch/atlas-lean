@@ -5,7 +5,6 @@ A seller has $n$ heterogeneous items and faces one buyer whose value for item $j
 ## Depends on
 
 - [Posted-price allocation](../optimal-auctions-and-virtual-valuations/posted-price-alloc.md)
-- [Revelation principle (Bayesian, pure strategies)](../revelation-principle/revelation-principle-bayes-nash.md)
 
 ## Sources
 

@@ -10,10 +10,6 @@ Route in two phases via intermediate processors as in Valiant's scheme, but choo
 
 - [The congested clique model](the-congested-clique-model.md)
 
-## Proof depends on
-
-- [The congested clique model](the-congested-clique-model.md)
-
 ## Sources
 
 - C. Lenzen, "Optimal Deterministic Routing and Sorting on the Congested Clique", PODC 2013, arXiv:1207.1852.

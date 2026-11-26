@@ -8,15 +8,15 @@ With finitely many labels, Natarajan dimension controls the one-inclusion graph 
 
 ## Depends on
 
-- [VC dimension characterizes PAC learnability of partial concept classes](partial-class-pac-characterization.md)
-- [Universal rates trichotomy for countable label spaces](../universal-learning-curves-and-littlestone-trees/multiclass-universal-trichotomy.md)
+- [Partial concept classes and their VC and Littlestone dimensions](partial-concept-class.md)
 - [N-shattering](../../../../not-yet-classified/natarajan/nshatters.md)
+- [Realizable distributions, learning curves and universal rates](../universal-learning-curves-and-littlestone-trees/universal-rate.md)
+- [Pseudo-cube trees for multiclass universal rates](../universal-learning-curves-and-littlestone-trees/dsl-tree.md)
 
 ## Proof depends on
 
 - [VC dimension characterizes PAC learnability of partial concept classes](partial-class-pac-characterization.md)
 - [Universal rates trichotomy for countable label spaces](../universal-learning-curves-and-littlestone-trees/multiclass-universal-trichotomy.md)
-- [N-shattering](../../../../not-yet-classified/natarajan/nshatters.md)
 
 ## Sources
 

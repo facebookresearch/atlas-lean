@@ -9,11 +9,11 @@ Maintain a split tree, a BST variant that supports the operations needed to real
 ## Depends on
 
 - [Geometric Greedy (Greedy Future)](geometric-greedy.md)
-- [Geometric characterization of the optimal offline BST cost](geometric-characterization-of-opt.md)
+- [Online arborally satisfying algorithms](online-geometric-algorithm.md)
+- [The binary search tree access model](../dynamic-optimality/the-binary-search-tree-access-model.md)
 
 ## Proof depends on
 
-- [Geometric Greedy (Greedy Future)](geometric-greedy.md)
 - [Geometric characterization of the optimal offline BST cost](geometric-characterization-of-opt.md)
 
 ## Sources

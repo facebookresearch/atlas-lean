@@ -10,10 +10,6 @@ By Hall's theorem it suffices to find $a$ such that for every set $S$ of candida
 
 - [Domination graph of a candidate](domination-graph-of-a-candidate.md)
 
-## Proof depends on
-
-- [Domination graph of a candidate](domination-graph-of-a-candidate.md)
-
 ## Sources
 
 - V. Gkatzelis, D. Halpern, N. Shah, "Resolving the Optimal Metric Distortion Conjecture", FOCS 2020, arXiv:2004.07447.

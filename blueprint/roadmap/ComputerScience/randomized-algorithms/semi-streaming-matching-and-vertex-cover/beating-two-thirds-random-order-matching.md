@@ -14,7 +14,9 @@ Run the EDCS-based random-order algorithm and analyze the instances on which it 
 
 ## Depends on
 
-- [Bernstein's (2/3 - eps)-approximate matching in random-order semi-streams](random-order-streaming-two-thirds-matching.md)
+- [Approximate maximum matching and vertex cover in a graph stream](approximate-matching-in-graph-streams.md)
+- [Semi-streaming graph model with insertion-only, dynamic and random-order edge streams](semi-streaming-graph-model.md)
+- [Edge-degree constrained subgraphs (EDCS)](../../graph-algorithms/spanning-trees-flows-matchings/dynamic-matching-against-adaptive-adversaries/edge-degree-constrained-subgraph.md)
 
 ## Proof depends on
 

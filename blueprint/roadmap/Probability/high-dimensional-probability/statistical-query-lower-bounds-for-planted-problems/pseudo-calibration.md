@@ -10,7 +10,7 @@ the truncation to low-degree characters $\chi_\alpha$ (with respect to $\mathbb{
 
 ## Depends on
 
-- [Low-degree advantage for planted problems over the hypercube](../../statistical-estimation/low-degree-likelihood-ratio-method/boolean-low-degree-advantage.md)
+- [The Lasserre / sum-of-squares hierarchy for Boolean polynomial optimization](../../../Logic/proof-theory/sum-of-squares-lower-bounds-and-pseudocalibration/lasserre-hierarchy.md)
 
 ## Sources
 

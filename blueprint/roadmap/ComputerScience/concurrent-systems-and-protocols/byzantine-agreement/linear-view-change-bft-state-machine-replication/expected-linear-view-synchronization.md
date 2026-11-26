@@ -9,11 +9,12 @@ Rather than broadcasting at every view advance, replicas send view-advance messa
 ## Depends on
 
 - [Byzantine fault-tolerant state machine replication under partial synchrony](byzantine-state-machine-replication.md)
-- [Quorum certificate from threshold signatures](quorum-certificate-threshold-signatures.md)
+- [Chained HotStuff with locking and three-phase commit](hotstuff-protocol-three-phase.md)
 
 ## Proof depends on
 
 - [HotStuff achieves optimistic responsiveness and linear view change](hotstuff-linear-view-change-responsiveness.md)
+- [Quorum certificate from threshold signatures](quorum-certificate-threshold-signatures.md)
 
 ## Sources
 

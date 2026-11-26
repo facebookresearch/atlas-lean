@@ -14,7 +14,6 @@ It suffices to show that every maximum matching misses exactly one vertex, since
 ## Proof depends on
 
 - [Augmenting along a path (Hopcroft–Karp, Lemma 1)](../berge-s-lemma/symm-diff-is-matching.md)
-- [Factor-critical graphs and near-perfect matchings](factor-critical-graphs.md)
 
 ## Sources
 

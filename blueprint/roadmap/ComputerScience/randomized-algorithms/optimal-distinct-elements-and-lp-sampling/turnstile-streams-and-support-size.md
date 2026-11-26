@@ -13,7 +13,6 @@ so that in the insertion-only case $\|x\|_0 = F_0$ is the number of distinct ele
 - [Frequency of an element in a stream](../frequency-moments-of-data-streams/freq.md)
 - [Frequency moment of a stream](../frequency-moments-of-data-streams/freq-moment.md)
 - [Randomized streaming algorithm with $s$ bits of memory](../frequency-moments-of-data-streams/streaming-algorithm.md)
-- [The one-pass sketch is linear in the frequencies](../frequency-moments-of-data-streams/sketch-eq-sum-count-mul.md)
 
 ## Sources
 

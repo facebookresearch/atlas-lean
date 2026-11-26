@@ -14,12 +14,13 @@ A sampler with small memory solves universal relation: Alice inserts $x$, sends 
 
 ## Depends on
 
-- [Jowhari-Sağlam-Tardos samplers: zero-relative-error L0 sampling in O(log^2 n) bits](l0-sampler-with-log-squared-bits.md)
+- [Turnstile streams, support size and linear sketches of a frequency vector](turnstile-streams-and-support-size.md)
+- [Approximate and perfect Lp samplers for turnstile streams](lp-samplers-in-turnstile-streams.md)
 
 ## Proof depends on
 
-- [Approximate and perfect Lp samplers for turnstile streams](lp-samplers-in-turnstile-streams.md)
 - [Yao's minimax principle for communication complexity](../../../TheoryOfComputation/communication-complexity/randomized-communication-protocols/rand-complexity-eq-i-sup-dist-complexity.md)
+- [Jowhari-Sağlam-Tardos samplers: zero-relative-error L0 sampling in O(log^2 n) bits](l0-sampler-with-log-squared-bits.md)
 
 ## Sources
 

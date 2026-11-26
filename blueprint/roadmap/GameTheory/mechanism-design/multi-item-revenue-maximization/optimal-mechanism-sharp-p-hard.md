@@ -9,6 +9,7 @@ Use the duality between optimal mechanisms and optimal transport: for two-point 
 ## Depends on
 
 - [Single additive buyer with independent item values: SREV, BREV and REV](additive-buyer-srev-brev-rev.md)
+- [$\#P$-complete functions](../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/sharp-pcomplete.md)
 
 ## Proof depends on
 

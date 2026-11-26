@@ -9,12 +9,11 @@ Rohatgi embeds the classical randomized paging lower bound on $k+1$ pages into i
 ## Depends on
 
 - [Next-arrival predictions for paging](next-arrival-predictions.md)
-- [Yao's minimax principle](../../../TheoryOfComputation/randomized-and-quantum-complexity/yao-s-minimax-principle/yao-minimax.md)
 
 ## Proof depends on
 
-- [Next-arrival predictions for paging](next-arrival-predictions.md)
 - [Yao's minimax principle](../../../TheoryOfComputation/randomized-and-quantum-complexity/yao-s-minimax-principle/yao-minimax.md)
+- [The randomized marking algorithm and the harmonic lower bound for paging](../competitive-paging/randomized-marking-algorithm-and-the-harmonic-lower-bound.md)
 
 ## Sources
 

@@ -9,11 +9,9 @@ Simulate all algorithms and follow one of them, switching to another (at cost at
 ## Depends on
 
 - [Metrical task systems](../metrical-task-systems-and-hst-embeddings/metrical-task-system.md)
-- [Regret of Hedge for losses in the unit interval](../../machine-learning/online-learning-and-boosting/hedge-algorithm/regret-le.md)
 
 ## Proof depends on
 
-- [Metrical task systems](../metrical-task-systems-and-hst-embeddings/metrical-task-system.md)
 - [Regret of Hedge for losses in the unit interval](../../machine-learning/online-learning-and-boosting/hedge-algorithm/regret-le.md)
 
 ## Sources

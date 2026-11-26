@@ -16,10 +16,6 @@ Use the generating function $\exp(xy - x^2/2) = \sum_{k \ge 0} h_k(y)x^k/k!$ in 
 
 - [Low-degree likelihood ratio and low-degree advantage](low-degree-likelihood-ratio.md)
 
-## Proof depends on
-
-- [Low-degree likelihood ratio and low-degree advantage](low-degree-likelihood-ratio.md)
-
 ## Sources
 
 - D. Kunisky, A. S. Wein, A. S. Bandeira, "Notes on Computational Hardness of Hypothesis Testing: Predictions Using the Low-Degree Likelihood Ratio", Mathematical Analysis, its Applications and Computation, Springer (2022), arXiv:1907.11636.

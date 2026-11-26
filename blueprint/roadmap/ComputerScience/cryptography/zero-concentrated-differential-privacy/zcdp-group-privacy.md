@@ -9,11 +9,9 @@ Use the weak triangle inequality for Rényi divergence: for $P, Q, R$ and conjug
 ## Depends on
 
 - [Zero-concentrated differential privacy](zero-concentrated-dp.md)
-- [The Gaussian mechanism satisfies zCDP with parameter sensitivity squared over twice the variance](gaussian-mechanism-zcdp.md)
 
 ## Proof depends on
 
-- [Zero-concentrated differential privacy](zero-concentrated-dp.md)
 - [The Gaussian mechanism satisfies zCDP with parameter sensitivity squared over twice the variance](gaussian-mechanism-zcdp.md)
 
 ## Sources

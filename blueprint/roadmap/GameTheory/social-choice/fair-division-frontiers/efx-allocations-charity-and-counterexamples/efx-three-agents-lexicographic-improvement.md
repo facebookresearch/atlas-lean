@@ -14,7 +14,6 @@ Pick an unallocated good $g$. If some agent is envied by nobody, give $g$ to her
 ## Proof depends on
 
 - [Envy-cycle rotation preserves EFX and weakly improves every agent](envy-cycle-rotation-preserves-efx.md)
-- [Envy graph and most envious agent of a partial allocation](envy-graph-most-envious-agent.md)
 
 ## Sources
 

@@ -13,7 +13,6 @@ The incremental variant of the l1 IPM keeps a feasible flow on the current graph
 ## Depends on
 
 - [Incremental thresholded minimum-cost flow problem](incremental-thresholded-min-cost-flow.md)
-- [Deterministic fully dynamic approximate min-ratio cycles against any adversary](fully-dynamic-min-ratio-cycle-adaptive.md)
 
 ## Proof depends on
 

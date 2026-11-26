@@ -10,10 +10,6 @@ Three distinct concepts give two concepts $h_0 \ne h_1$ and a point $x_0$ where 
 
 - [Realizable distributions, learning curves and universal rates](universal-rate.md)
 
-## Proof depends on
-
-- [Realizable distributions, learning curves and universal rates](universal-rate.md)
-
 ## Sources
 
 - O. Bousquet, S. Hanneke, S. Moran, R. van Handel, A. Yehudayoff, "A Theory of Universal Learning", STOC (2021), arXiv:2011.04483.

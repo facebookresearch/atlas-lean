@@ -14,8 +14,7 @@ Plug the faster loss-$O(\log n\log\log n)$ directed LDD into the recursive scali
 
 ## Depends on
 
-- [Directed low-diameter decompositions with loss O(log n log log n)](near-optimal-directed-ldd-loss.md)
-- [Negative-weight SSSP, minimum cycle mean and strong directed LDD in O((m + n log log n) log^2 n log(nW)) time](bcf-faster-negative-sssp.md)
+- [Negative-weight single-source shortest paths with integer weights bounded below by -W](negative-weight-sssp-integer-weights.md)
 
 ## Proof depends on
 

@@ -12,8 +12,6 @@ The cut constraint for $S=\{u,v\}$ implies $x_{uv} \le 1$. The indicator vector 
 
 - [Symmetric TSP instances](../../../TheoryOfComputation/np-completeness/paths-cycles-and-subgraphs/traveling-salesperson-problem/tsp-instance.md)
 - [Length of a tour in the symmetric TSP](../../../TheoryOfComputation/np-completeness/paths-cycles-and-subgraphs/traveling-salesperson-problem/tour-length.md)
-- [Integrality gaps of linear programming relaxations](../lp-based-approximation/integrality-gaps-of-linear-programming.md)
-- [The ellipsoid method finds a point](../../../Analysis/convex-analysis-and-variations/ellipsoid-method/ellipsoid-run-finds-point.md)
 - [Cut capacity](../../../GraphTheory/matchings-and-flows/max-flow-min-cut-theorem/cut-capacity.md)
 
 ## Sources

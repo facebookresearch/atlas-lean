@@ -9,10 +9,6 @@ Let an $n$-vertex graph of maximum degree $\Delta$ be accessible through degree 
 
 If $\Delta \le \sqrt{n}$, read the whole graph with $O(n\Delta) = O(n\sqrt{n})$ neighbor queries and color greedily. Otherwise sample lists of $k = O(\log n)$ colors; for each color $c$ the set $S_c$ of vertices that sampled $c$ has expected size $nk/(\Delta + 1)$, and pair queries inside every $S_c$ reveal the conflict graph using about $\sum_c |S_c|^2 = O(n^2 k^2/\Delta) = O(n\sqrt{n}\log^2 n)$ queries; the palette sparsification theorem then supplies the coloring. The lower bound uses Yao's principle on a distribution of graphs with hidden edges whose discovery requires $\Omega(n\sqrt{n})$ queries in either access mode.
 
-## Depends on
-
-- [Assadi-Chen-Khanna palette sparsification theorem for (Delta + 1)-coloring](palette-sparsification-theorem-delta-plus-one.md)
-
 ## Proof depends on
 
 - [Assadi-Chen-Khanna palette sparsification theorem for (Delta + 1)-coloring](palette-sparsification-theorem-delta-plus-one.md)

@@ -10,7 +10,7 @@ Start by letting agents pick goods in a round-robin fashion for a preprocessing 
 
 - [Partial EFX allocation with an unallocated pool](partial-efx-allocation-with-pool.md)
 - [Is EF1](../../../not-yet-classified/part-01/indivisible/is-ef1.md)
-- [Envy-cycle rotation preserves EFX and weakly improves every agent](envy-cycle-rotation-preserves-efx.md)
+- [Groupwise maximin share fairness](../approximate-maximin-share-allocations/groupwise-maximin-share-fairness.md)
 
 ## Proof depends on
 

@@ -11,11 +11,6 @@ Group the array into blocks and encode each block's popcount together with the b
 - [Succinct rank with a probe budget](succinct-rank-tradeoff-problem.md)
 - [The word-RAM model](../../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-word-ram-model.md)
 
-## Proof depends on
-
-- [Succinct rank with a probe budget](succinct-rank-tradeoff-problem.md)
-- [The word-RAM model](../../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-word-ram-model.md)
-
 ## Sources
 
 - Mihai Pătraşcu, "Succincter", FOCS (2008).

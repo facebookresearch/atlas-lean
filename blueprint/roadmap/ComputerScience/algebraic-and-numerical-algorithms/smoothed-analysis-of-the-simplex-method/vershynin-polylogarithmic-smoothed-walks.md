@@ -14,13 +14,13 @@ Instead of finding a feasible vertex of the smoothed program, Phase I adds $d$ r
 
 ## Depends on
 
-- [Spielman-Teng polynomial smoothed complexity of a shadow vertex simplex method](spielman-teng-smoothed-simplex.md)
-- [Shadow vertices are bounded by edges of the polar section](shadow-vertices-and-polar-section.md)
+- [Gaussian-smoothed linear programs and smoothed pivot complexity](gaussian-smoothed-linear-programs.md)
+- [The shadow vertex pivot rule and the smoothed shadow bound](shadow-vertex-rule-and-shadow-bound.md)
 
 ## Proof depends on
 
 - [Shadow vertices are bounded by edges of the polar section](shadow-vertices-and-polar-section.md)
-- [The shadow vertex pivot rule and the smoothed shadow bound](shadow-vertex-rule-and-shadow-bound.md)
+- [Spielman-Teng polynomial smoothed complexity of a shadow vertex simplex method](spielman-teng-smoothed-simplex.md)
 
 ## Sources
 

@@ -15,11 +15,6 @@ Write $P=(x_0=u,x_1,\dots,x_\ell=v)$. Summing $w_\phi(x_{i-1},x_i)=w(x_{i-1},x_i
 ## Depends on
 
 - [Price functions, reduced edge weights, and valid reweightings of a directed graph](price-functions-and-reduced-weights.md)
-- [Correctness of Johnson's algorithm](../johnson-s-algorithm/johnson-distance-spec.md)
-
-## Proof depends on
-
-- [Price functions, reduced edge weights, and valid reweightings of a directed graph](price-functions-and-reduced-weights.md)
 
 ## Sources
 

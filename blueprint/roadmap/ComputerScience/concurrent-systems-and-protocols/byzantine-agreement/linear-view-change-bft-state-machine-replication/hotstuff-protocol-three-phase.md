@@ -5,7 +5,7 @@ In HotStuff, time is divided into views with a deterministic leader rotation. In
 ## Depends on
 
 - [Quorum certificate from threshold signatures](quorum-certificate-threshold-signatures.md)
-- [Quorums of size n - f intersect in a correct replica when n is at least 3f + 1](byzantine-quorum-intersection.md)
+- [Byzantine fault-tolerant state machine replication under partial synchrony](byzantine-state-machine-replication.md)
 
 ## Sources
 

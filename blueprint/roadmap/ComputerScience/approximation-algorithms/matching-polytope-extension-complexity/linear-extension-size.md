@@ -5,8 +5,6 @@ Let $P \subseteq \mathbb{R}^d$ be a polytope of dimension at least $1$. A linear
 ## Depends on
 
 - [Faces of a convex polytope](../../../Combinatorics/polytopes-simplicial-complexes/faces-of-convex-polytopes/faces.md)
-- [Basic feasible points are the extreme points](../../../Analysis/not-yet-classified/linear-programming-basic/is-basic-pt-iff-mem-extreme-points.md)
-- [Linear programming is in P (Khachiyan)](../../../TheoryOfComputation/polynomial-time-problems/linear-programming-feasibility/lp-in-p.md)
 
 ## Sources
 

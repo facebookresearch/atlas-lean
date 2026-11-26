@@ -11,10 +11,6 @@ Existence follows from a fixed-point argument (or a convex program generalizing 
 - [Participatory budgeting with approval ballots and project costs](participatory-budgeting-approval-costs.md)
 - [Core of an approval-based committee election](core-of-approval-committee-election.md)
 
-## Proof depends on
-
-- [Core of an approval-based committee election](core-of-approval-committee-election.md)
-
 ## Sources
 
 - B. Fain, K. Munagala, N. Shah, "Fair Allocation of Indivisible Public Goods", EC 2018, arXiv:1805.03164.

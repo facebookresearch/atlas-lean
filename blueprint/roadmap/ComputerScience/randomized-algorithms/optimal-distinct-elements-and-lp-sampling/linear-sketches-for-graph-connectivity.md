@@ -8,9 +8,8 @@ For each vertex $v$ keep $O(\log n)$ independent $L_0$-sampler sketches of $a_v$
 
 ## Depends on
 
-- [Signed vertex-incidence vectors sum to the indicator of a cut](signed-incidence-vectors-cancel-inside-cuts.md)
-- [Jowhari-Sağlam-Tardos samplers: zero-relative-error L0 sampling in O(log^2 n) bits](l0-sampler-with-log-squared-bits.md)
 - [Semi-streaming graph model with insertion-only, dynamic and random-order edge streams](../semi-streaming-matching-and-vertex-cover/semi-streaming-graph-model.md)
+- [Turnstile streams, support size and linear sketches of a frequency vector](turnstile-streams-and-support-size.md)
 - [Spanning forest of an input graph](../../graph-algorithms/spanning-trees-flows-matchings/kruskal-s-algorithm/is-spanning-forest.md)
 
 ## Proof depends on

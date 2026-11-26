@@ -9,11 +9,9 @@ Connect two datasets at distance $k$ by a chain of $k$ neighbouring steps. Testi
 ## Depends on
 
 - [Gaussian differential privacy](gaussian-differential-privacy.md)
-- [Group privacy, approximate case](../differential-privacy/group-approx.md)
 
 ## Proof depends on
 
-- [Gaussian differential privacy](gaussian-differential-privacy.md)
 - [Group privacy, approximate case](../differential-privacy/group-approx.md)
 
 ## Sources

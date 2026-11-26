@@ -9,11 +9,9 @@ The equivalence is bidirectional: a forecaster induces a strategy in the game by
 ## Depends on
 
 - [The sign-preservation game](sign-preservation-game.md)
-- [Calibration error must exceed T to the power 0.528 against adaptive adversaries](calibration-lower-bound-sidestepping.md)
 
 ## Proof depends on
 
-- [The sign-preservation game](sign-preservation-game.md)
 - [Calibration error must exceed T to the power 0.528 against adaptive adversaries](calibration-lower-bound-sidestepping.md)
 
 ## Sources

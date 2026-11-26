@@ -8,13 +8,11 @@ Let $p$ be a low-complexity predictor multicalibrated with respect to circuits o
 
 ## Depends on
 
-- [Multiaccuracy is the Trevisan–Tulsiani–Vadhan regularity lemma](multiaccuracy-regularity-lemma.md)
 - [Multicalibrated predictors](multicalibrated-predictor.md)
 
 ## Proof depends on
 
 - [Multiaccuracy is the Trevisan–Tulsiani–Vadhan regularity lemma](multiaccuracy-regularity-lemma.md)
-- [Multicalibrated predictors](multicalibrated-predictor.md)
 
 ## Sources
 

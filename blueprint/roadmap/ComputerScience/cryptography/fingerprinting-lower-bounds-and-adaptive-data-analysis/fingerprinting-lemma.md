@@ -12,10 +12,6 @@ Thus any estimator of the bias that is accurate on average must be correlated wi
 
 Write $g(p) = \mathbb{E}_x[f(x) \mid p]$; differentiating under the product measure gives $g'(p) = \frac{1}{1-p^2}\mathbb{E}_x\big[f(x)\sum_i (x_i - p) \mid p\big]$. Integrating by parts against the uniform prior (with the weight $1-p^2$ chosen so that boundary terms vanish) rewrites $\mathbb{E}[f(x)\sum_i (x_i - p)]$ as $\mathbb{E}[(1-p^2)g'(p)] = \mathbb{E}[2p\,g(p)]$, and an accurate $g(p) \approx p$ forces this to be a positive constant, with the error term controlled by $\mathbb{E}|f - p|$.
 
-## Depends on
-
-- [Tardos codes: optimal fully collusion-resilient fingerprinting](tardos-fingerprinting-code.md)
-
 ## Proof depends on
 
 - [Tardos codes: optimal fully collusion-resilient fingerprinting](tardos-fingerprinting-code.md)

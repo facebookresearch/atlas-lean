@@ -8,8 +8,8 @@ Choose a canonical flow that, for each buyer, routes from types with high value 
 
 ## Depends on
 
-- [Lagrangian duality upper bounds revenue by virtual welfare under flows](duality-virtual-welfare-revenue-bound.md)
 - [Single additive buyer with independent item values: SREV, BREV and REV](additive-buyer-srev-brev-rev.md)
+- [Optimal auctions for regular distributions](../optimal-auctions-and-virtual-valuations/remaining-clauses-of-optimal-auctions-for-regular-distributi.md)
 
 ## Proof depends on
 

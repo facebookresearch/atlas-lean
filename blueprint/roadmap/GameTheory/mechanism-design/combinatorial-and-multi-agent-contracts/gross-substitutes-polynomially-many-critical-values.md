@@ -8,6 +8,7 @@ The agent's demand at $\alpha$ maximizes $\alpha f(S) - c(S)$, equivalently $f(S
 
 ## Depends on
 
+- [Combinatorial-actions contract with a binary outcome](combinatorial-actions-binary-outcome-contract.md)
 - [Gross-substitutes success-probability function](gross-substitutes-success-probability.md)
 
 ## Proof depends on

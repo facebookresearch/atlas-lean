@@ -20,11 +20,7 @@ The adversary builds a hierarchical loss sequence: at each scale it hides a good
 
 ## Depends on
 
-- [Swap regret polylogarithmic in the number of actions](polylog-rounds-swap-regret.md)
-
-## Proof depends on
-
-- [Swap regret polylogarithmic in the number of actions](polylog-rounds-swap-regret.md)
+- [Swap regret](../../../../GameTheory/not-yet-classified/part-02/regret/swap-regret.md)
 
 ## Sources
 

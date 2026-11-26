@@ -10,7 +10,7 @@ This is well defined: the right side depends only on $f$ and $g$, not on the rep
 
 ## Depends on
 
-- [Characterization of trade-off functions](trade-off-function-characterization.md)
+- [Trade-off functions of pairs of distributions](trade-off-function.md)
 - [Gaussian differential privacy](gaussian-differential-privacy.md)
 
 ## Sources

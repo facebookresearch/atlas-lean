@@ -20,8 +20,9 @@ By *Every circulation is a combination of fundamental tree cycles*, $\mathbf{g}^
 
 ## Depends on
 
-- [Every circulation is a combination of fundamental tree cycles](circulation-tree-cycle-decomposition.md)
 - [Edge stretch with respect to a spanning tree and edge lengths](edge-stretch-wrt-spanning-tree.md)
+- [Fundamental tree cycles as circulations](fundamental-tree-cycle-circulation.md)
+- [Undirected minimum-ratio cycle problem with gradients and lengths](../almost-linear-flow-interior-point-method/undirected-min-ratio-cycle-problem.md)
 
 ## Proof depends on
 

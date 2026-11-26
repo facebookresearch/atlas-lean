@@ -16,10 +16,6 @@ Each of the $k$ colors of $L(u)$ lies in $L(v)$ with probability $k/(\Delta + 1)
 
 - [Palette sparsification experiment, sampled lists and the conflict graph](palette-sparsification-experiment.md)
 
-## Proof depends on
-
-- [Palette sparsification experiment, sampled lists and the conflict graph](palette-sparsification-experiment.md)
-
 ## Sources
 
 - Sepehr Assadi, Yu Chen, Sanjeev Khanna, "Sublinear Algorithms for (Delta + 1) Vertex Coloring", SODA (2019), arXiv:1807.08886.

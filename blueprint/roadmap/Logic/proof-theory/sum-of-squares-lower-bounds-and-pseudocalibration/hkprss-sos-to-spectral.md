@@ -8,13 +8,8 @@ Write the SoS certificate on the null distribution as a polynomial identity and 
 
 ## Depends on
 
-- [Low-degree conjecture](../../../Probability/statistical-estimation/low-degree-likelihood-ratio-method/low-degree-conjecture.md)
 - [The Lasserre / sum-of-squares hierarchy for Boolean polynomial optimization](lasserre-hierarchy.md)
-
-## Proof depends on
-
-- [Low-degree conjecture](../../../Probability/statistical-estimation/low-degree-likelihood-ratio-method/low-degree-conjecture.md)
-- [The Lasserre / sum-of-squares hierarchy for Boolean polynomial optimization](lasserre-hierarchy.md)
+- [Low-degree likelihood ratio and low-degree advantage](../../../Probability/statistical-estimation/low-degree-likelihood-ratio-method/low-degree-likelihood-ratio.md)
 
 ## Sources
 

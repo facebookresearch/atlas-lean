@@ -9,16 +9,10 @@ Fox defines a potential on the geometric Greedy execution analogous to the splay
 ## Depends on
 
 - [Geometric Greedy (Greedy Future)](geometric-greedy.md)
-- [Online arborally satisfying algorithms yield online BSTs](online-geometry-to-online-bst.md)
-- [Access lemma for splay trees](../splay-tree/access-lemma-weighted.md)
-- [Static optimality of splay trees](../splay-tree/static-optimality.md)
 
 ## Proof depends on
 
-- [Geometric Greedy (Greedy Future)](geometric-greedy.md)
-- [Online arborally satisfying algorithms yield online BSTs](online-geometry-to-online-bst.md)
 - [Access lemma for splay trees](../splay-tree/access-lemma-weighted.md)
-- [Static optimality of splay trees](../splay-tree/static-optimality.md)
 
 ## Sources
 

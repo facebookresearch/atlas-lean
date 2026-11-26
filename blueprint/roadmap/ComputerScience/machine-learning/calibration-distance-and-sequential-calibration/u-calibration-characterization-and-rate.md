@@ -9,12 +9,12 @@ Every bounded proper scoring rule is a mixture of V-shaped elementary scoring ru
 ## Depends on
 
 - [U-calibration error](u-calibration-error.md)
-- [Best responding to calibrated forecasts gives no swap regret](calibrated-forecasts-best-response-swap-regret.md)
+- [External regret](../../../GameTheory/not-yet-classified/part-02/regret/external-regret.md)
 
 ## Proof depends on
 
-- [U-calibration error](u-calibration-error.md)
 - [Best responding to calibrated forecasts gives no swap regret](calibrated-forecasts-best-response-swap-regret.md)
+- [Bounded proper scoring rules are mixtures of V-shaped elementary scoring rules](v-shaped-elementary-scoring-rules.md)
 
 ## Sources
 

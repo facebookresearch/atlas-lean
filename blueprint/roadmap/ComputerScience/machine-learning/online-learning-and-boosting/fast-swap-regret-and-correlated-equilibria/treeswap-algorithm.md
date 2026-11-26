@@ -11,7 +11,7 @@ and the learner achieves **$\varepsilon$-swap regret** after $T$ rounds if $\mat
 ## Depends on
 
 - [Swap regret](../../../../GameTheory/not-yet-classified/part-02/regret/swap-regret.md)
-- [Black-box reduction from swap to external regret](../../../../GameTheory/not-yet-classified/part-02/regret-blum-mansour-bound/exists-stationary-play-swap-regret-le-ca.md)
+- [External regret](../../../../GameTheory/not-yet-classified/part-02/regret/external-regret.md)
 
 ## Sources
 

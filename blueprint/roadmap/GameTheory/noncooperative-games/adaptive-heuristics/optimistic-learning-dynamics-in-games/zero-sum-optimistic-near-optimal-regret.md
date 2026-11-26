@@ -9,12 +9,13 @@ Simulate Nesterov's excessive gap technique for the bilinear saddle point proble
 ## Depends on
 
 - [Optimistic Hedge in a repeated normal-form game](optimistic-hedge-in-games.md)
-- [Von Neumann's minimax theorem](../../von-neumann-s-minimax-theorem/matrix-game-minimax.md)
+- [Nash equilibrium of a bimatrix game](../../bimatrix-games-and-the-lemke-howson-algorithm/is-bimatrix-nash.md)
 
 ## Proof depends on
 
 - [Regret bounded by variation in utilities for optimistic algorithms](rvu-property-optimistic-algorithms.md)
 - [Optimistic dynamics give O(T^(1/4)) individual and O(1) total regret](optimistic-dynamics-fast-regret.md)
+- [Von Neumann's minimax theorem](../../von-neumann-s-minimax-theorem/matrix-game-minimax.md)
 
 ## Sources
 

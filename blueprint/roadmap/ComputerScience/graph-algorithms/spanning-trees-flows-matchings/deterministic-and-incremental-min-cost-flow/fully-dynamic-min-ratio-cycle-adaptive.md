@@ -16,8 +16,8 @@ Dynamize the $\ell_1$-oblivious routing built from sparse neighborhood covers at
 
 ## Depends on
 
-- [An l1 oblivious routing yields an approximate minimum-ratio circulation edge by edge](l1-oblivious-routing-min-ratio.md)
 - [Dynamic graph problems](../../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/dynamic-graph-problems.md)
+- [Undirected minimum-ratio cycle problem with gradients and lengths](../almost-linear-flow-interior-point-method/undirected-min-ratio-cycle-problem.md)
 
 ## Proof depends on
 

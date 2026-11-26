@@ -11,7 +11,6 @@ Then for every weight vector $w \in \mathbb{R}_{\ge 0}^{E}$, $\max_{x \in P_{\ma
 ## Depends on
 
 - [Matching polytope](../../../GraphTheory/matchings-and-flows/matching-polytope/matching-polytope.md)
-- [Edmonds' matching polytope theorem](../../../GraphTheory/matchings-and-flows/matching-polytope/matching-polytope-eq.md)
 - [Linear extensions of a polytope and their inequality count](linear-extension-size.md)
 
 ## Sources

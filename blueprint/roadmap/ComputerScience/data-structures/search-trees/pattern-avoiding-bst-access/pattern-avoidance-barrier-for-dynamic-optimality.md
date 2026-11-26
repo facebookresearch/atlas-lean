@@ -8,13 +8,12 @@ Combine $\mathrm{cost}_{\mathcal{A}}(X) \le c\,\mathrm{OPT}(X)$ with $\mathrm{OP
 
 ## Depends on
 
-- [Pattern-avoiding inputs have linear optimal BST cost](optimal-bst-cost-on-pattern-avoiding-inputs.md)
 - [Dynamic optimality](../dynamic-optimality/dynamic-optimality.md)
+- [Pattern-avoiding access sequences](pattern-avoiding-access-sequence.md)
 
 ## Proof depends on
 
 - [Pattern-avoiding inputs have linear optimal BST cost](optimal-bst-cost-on-pattern-avoiding-inputs.md)
-- [Dynamic optimality](../dynamic-optimality/dynamic-optimality.md)
 
 ## Sources
 

@@ -7,7 +7,6 @@ The class has an **infinite VCL tree** if there is such a tree with $d = \infty$
 ## Depends on
 
 - [Infinite Littlestone trees](infinite-littlestone-tree.md)
-- [Shattering lower bound for PAC learning](../../../generalization-bounds-and-concentration/shattering-lower-bound-for-pac-learning.md)
 
 ## Sources
 

@@ -14,8 +14,8 @@ The lower bound is a two-point argument with the reference model as the null: if
 
 ## Depends on
 
-- [The localized DEC lower bounds the regret of every algorithm](dec-regret-lower-bound.md)
-- [Estimation-to-decisions regret is bounded by the DEC plus the estimation error](e2d-regret-upper-bound.md)
+- [Decision making with structured observations](decision-making-structured-observations.md)
+- [Hellinger distance](../../../../Probability/convergence-of-measures/hellinger-distance/hellinger-dist.md)
 
 ## Proof depends on
 

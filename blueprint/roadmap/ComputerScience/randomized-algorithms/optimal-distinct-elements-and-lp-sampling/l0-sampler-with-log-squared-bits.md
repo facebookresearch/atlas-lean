@@ -13,11 +13,11 @@ For $L_0$, subsample the coordinates at $\log n$ geometric levels with a hash fu
 
 ## Depends on
 
+- [Turnstile streams, support size and linear sketches of a frequency vector](turnstile-streams-and-support-size.md)
 - [Approximate and perfect Lp samplers for turnstile streams](lp-samplers-in-turnstile-streams.md)
 
 ## Proof depends on
 
-- [Approximate and perfect Lp samplers for turnstile streams](lp-samplers-in-turnstile-streams.md)
 - [Exact 1-sparse recovery and detection with three linear counters](one-sparse-recovery-by-fingerprints.md)
 - [Pairwise-independent hashing by affine maps over GF(2)](../../../TheoryOfComputation/counting-complexity/counting-and-the-polynomial-hierarchy/pairwise-independent-hashing-by-affine-maps.md)
 

@@ -13,10 +13,7 @@ Let $\pi$ be the matching. For each voter $v$, consistency and $a \succeq_v \mat
 ## Depends on
 
 - [Domination graph of a candidate](domination-graph-of-a-candidate.md)
-
-## Proof depends on
-
-- [Domination graph of a candidate](domination-graph-of-a-candidate.md)
+- [Metric election and distortion of a voting rule](metric-election-and-distortion.md)
 
 ## Sources
 

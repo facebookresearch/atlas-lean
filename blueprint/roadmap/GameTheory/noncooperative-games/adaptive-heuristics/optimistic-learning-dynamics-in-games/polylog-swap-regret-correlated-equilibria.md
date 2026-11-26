@@ -9,13 +9,14 @@ The stationary distribution $x^t$ is a fixed point of the matrix $Q^t$ built fro
 ## Depends on
 
 - [Internal and swap regret minimization via stationary distributions](swap-regret-stationary-distribution-dynamics.md)
-- [Optimistic Hedge achieves polylogarithmic individual regret in general-sum games](optimistic-hedge-polylog-regret.md)
 - [Correlated equilibrium](../../correlated-equilibria/is-correlated-eq.md)
+- [Optimistic Hedge in a repeated normal-form game](optimistic-hedge-in-games.md)
 
 ## Proof depends on
 
 - [Optimistic Hedge achieves polylogarithmic individual regret in general-sum games](optimistic-hedge-polylog-regret.md)
 - [No-swap-regret dynamics converge to correlated equilibria](../../no-regret-dynamics/no-swap-regret-dynamics-converge-to-correlated-equilibria.md)
+- [Higher-order smoothness of Optimistic Hedge iterates](higher-order-smoothness-optimistic-hedge.md)
 
 ## Sources
 

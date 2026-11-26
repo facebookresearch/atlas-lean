@@ -9,14 +9,13 @@ Swap multicalibration implies swap omniprediction by applying the omniprediction
 ## Depends on
 
 - [Swap agnostic learning and swap omniprediction](swap-agnostic-learning.md)
-- [Multicalibration implies omniprediction for convex Lipschitz losses](multicalibration-implies-omniprediction.md)
-- [Loss OI decomposes into calibration plus multiaccuracy and yields omnipredictors for GLM losses](loss-oi-decomposition-glm-losses.md)
+- [Omnipredictors](omnipredictor.md)
+- [Multicalibrated predictors](../multicalibration-and-multiaccuracy/multicalibrated-predictor.md)
+- [Outcome indistinguishability and its access hierarchy](outcome-indistinguishability.md)
 
 ## Proof depends on
 
-- [Swap agnostic learning and swap omniprediction](swap-agnostic-learning.md)
 - [Multicalibration implies omniprediction for convex Lipschitz losses](multicalibration-implies-omniprediction.md)
-- [Loss OI decomposes into calibration plus multiaccuracy and yields omnipredictors for GLM losses](loss-oi-decomposition-glm-losses.md)
 
 ## Sources
 

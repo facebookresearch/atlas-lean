@@ -5,7 +5,7 @@ Let $H \subseteq Y^X$ with $Y$ countable. A **Daniely–Shalev-Shwartz–Littles
 ## Depends on
 
 - [VCL trees and the VCL dimension](vcl-tree.md)
-- [DS dimension characterizes multiclass PAC learnability](../../ds-dimension-characterizes-multiclass-pac-learnability.md)
+- [k-pseudo-cubes and the k-DS dimension](../list-learning-and-multiclass-pseudo-cubes/k-pseudo-cube.md)
 - [N-shattering](../../../../not-yet-classified/natarajan/nshatters.md)
 
 ## Sources

@@ -14,11 +14,9 @@ Compute a low-stretch spanning tree $T$ for weights $\mathbf{v}$ by *Abraham-Nei
 ## Depends on
 
 - [Stretch of an edge with respect to a rooted spanning forest](rooted-forest-edge-stretch.md)
-- [Abraham-Neiman low-stretch spanning trees via petal decompositions](abraham-neiman-petal-lsst.md)
 
 ## Proof depends on
 
-- [Stretch of an edge with respect to a rooted spanning forest](rooted-forest-edge-stretch.md)
 - [Abraham-Neiman low-stretch spanning trees via petal decompositions](abraham-neiman-petal-lsst.md)
 
 ## Sources

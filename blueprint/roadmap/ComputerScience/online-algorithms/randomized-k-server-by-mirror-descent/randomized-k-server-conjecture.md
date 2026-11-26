@@ -4,8 +4,7 @@ The *randomized $k$-server conjecture* asserts that on every metric space with m
 
 ## Depends on
 
-- [The deterministic k-server conjecture](../work-function-analysis-of-k-server/k-server-conjecture.md)
-- [The randomized marking algorithm and the harmonic lower bound for paging](../competitive-paging/randomized-marking-algorithm-and-the-harmonic-lower-bound.md)
+- [The k-server problem](../paging-and-k-server/the-k-server-problem.md)
 
 ## Sources
 

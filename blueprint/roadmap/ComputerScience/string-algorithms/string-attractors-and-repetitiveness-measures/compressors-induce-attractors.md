@@ -8,14 +8,13 @@ For a macro scheme, any substring either contains a phrase start or lies inside 
 
 ## Depends on
 
+- [String attractors](string-attractor.md)
 - [Grammar size $g$ and bidirectional macro scheme size $b$](grammar-and-macro-measures.md)
+- [Size $z$ of the greedy LZ77 factorization](lz77-factorization-size.md)
 - [Number $r$ of runs in the Burrows–Wheeler transform](bwt-run-count.md)
-- [LF-mapping from the last column](../burrows-wheeler-transform-and-fm-index/lf.md)
 
 ## Proof depends on
 
-- [Grammar size $g$ and bidirectional macro scheme size $b$](grammar-and-macro-measures.md)
-- [Number $r$ of runs in the Burrows–Wheeler transform](bwt-run-count.md)
 - [LF-mapping from the last column](../burrows-wheeler-transform-and-fm-index/lf.md)
 
 ## Sources

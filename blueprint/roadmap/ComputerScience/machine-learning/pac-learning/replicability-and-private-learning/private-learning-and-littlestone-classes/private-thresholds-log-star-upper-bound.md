@@ -8,13 +8,11 @@ The Reorder-Slice-Compute paradigm repeatedly reorders the domain according to a
 
 ## Depends on
 
-- [Private learning requires log-star of the Littlestone dimension samples](private-learning-requires-log-star-littlestone.md)
 - [Private PAC learners and their sample complexity](private-pac-learner.md)
 
 ## Proof depends on
 
 - [Private learning requires log-star of the Littlestone dimension samples](private-learning-requires-log-star-littlestone.md)
-- [Private PAC learners and their sample complexity](private-pac-learner.md)
 
 ## Sources
 

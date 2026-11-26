@@ -8,7 +8,7 @@ Encode $D$ by the addresses and contents of the cells of $C$, using $\Delta(w + 
 
 ## Depends on
 
-- [Cell-sampling lemma](cell-sampling-lemma.md)
+- [Static cell-probe structure with space $S$ and query time $t$](static-cell-probe-structure.md)
 
 ## Proof depends on
 

@@ -8,11 +8,12 @@ Bubeck, Coester and Rabani design, for an arbitrary metric, a randomized adversa
 
 ## Depends on
 
-- [Some $(k+1)$-point metrics force $\Omega(\log^2 k)$ randomized k-server ratio](k-server-log-squared-lower-bound.md)
+- [The k-server problem](../paging-and-k-server/the-k-server-problem.md)
+- [Metrical task systems](../metrical-task-systems-and-hst-embeddings/metrical-task-system.md)
 
 ## Proof depends on
 
-- [Some $(k+1)$-point metrics force $\Omega(\log^2 k)$ randomized k-server ratio](k-server-log-squared-lower-bound.md)
+- [Yao's minimax principle](../../../TheoryOfComputation/randomized-and-quantum-complexity/yao-s-minimax-principle/yao-minimax.md)
 
 ## Sources
 

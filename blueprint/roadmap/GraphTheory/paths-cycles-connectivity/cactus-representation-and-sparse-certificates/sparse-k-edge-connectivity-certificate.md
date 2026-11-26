@@ -10,7 +10,6 @@ equivalently (by Menger's theorem) $|\partial_H S| \ge \min\{|\partial_G S|, k\}
 
 ## Depends on
 
-- [Menger's theorem for edge cuts and edge-disjoint paths](../menger-s-theorem/menger-edge-max-min.md)
 - [Spanning forest of an input graph](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/kruskal-s-algorithm/is-spanning-forest.md)
 - [Edge cuts separating two vertices](../menger-s-theorem/is-stedge-cut.md)
 

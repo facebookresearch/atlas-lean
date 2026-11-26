@@ -8,13 +8,15 @@ The framework common to Wulff-Nilsen and to Nanongkai and Saranurak is: decompos
 
 ## Depends on
 
-- [Nanongkai-Saranurak: adaptive Las Vegas dynamic spanning forest in O(n^0.49306) worst-case time](ns-adaptive-spanning-forest.md)
-- [Saranurak-Wang expander pruning under online edge deletions](../../../../GraphTheory/graph-families-and-operations/expander-decomposition-and-pruning/expander-pruning-theorem.md)
-- [Saranurak-Wang near-linear-time strong expander decomposition](../../../../GraphTheory/graph-families-and-operations/expander-decomposition-and-pruning/saranurak-wang-expander-decomposition.md)
+- [Oblivious and adaptive adversaries; amortized and worst-case update time](adversary-and-update-time-models.md)
+- [Fully dynamic connectivity, spanning forest and minimum spanning forest problems](fully-dynamic-connectivity-problems.md)
 
 ## Proof depends on
 
 - [Holm-de Lichtenberg-Thorup: deterministic polylogarithmic amortized connectivity and MSF](hdt-amortized-connectivity.md)
+- [Nanongkai-Saranurak: adaptive Las Vegas dynamic spanning forest in O(n^0.49306) worst-case time](ns-adaptive-spanning-forest.md)
+- [Saranurak-Wang expander pruning under online edge deletions](../../../../GraphTheory/graph-families-and-operations/expander-decomposition-and-pruning/expander-pruning-theorem.md)
+- [Saranurak-Wang near-linear-time strong expander decomposition](../../../../GraphTheory/graph-families-and-operations/expander-decomposition-and-pruning/saranurak-wang-expander-decomposition.md)
 
 ## Sources
 

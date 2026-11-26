@@ -4,7 +4,8 @@ For $f : X \times Y \to \{0, 1\}$, an *$[a, b]$-protocol* is a (deterministic or
 
 ## Depends on
 
-- [Deterministic communication complexity](../deterministic-communication-protocols/comm-complexity.md)
+- [Deterministic two-party protocol](../deterministic-communication-protocols/protocol.md)
+- [Public-coin randomized protocol](../randomized-communication-protocols/public-coin-protocol.md)
 
 ## Sources
 

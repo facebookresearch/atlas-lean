@@ -15,7 +15,6 @@ Let $\mathbf{\Delta}^*$ be an optimal circulation; since $\sum_e\mathbf{\Delta}^
 ## Depends on
 
 - [Undirected minimum-ratio cycle problem with gradients and lengths](../almost-linear-flow-interior-point-method/undirected-min-ratio-cycle-problem.md)
-- [Low stretch preserves a minimum-ratio cycle among fundamental tree cycles](../dynamic-min-ratio-cycle-data-structures/tree-cycles-approximate-min-ratio.md)
 
 ## Proof depends on
 

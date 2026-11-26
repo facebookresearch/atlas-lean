@@ -16,11 +16,9 @@ Edmonds' theorem gives $P_{\mathrm{M}}(n) \subseteq K_\varepsilon$. For $x \in K
 
 - [Multiplicatively approximate relaxations of the matching polytope](approximate-polytope-relaxation.md)
 - [Matching polytope](../../../GraphTheory/matchings-and-flows/matching-polytope/matching-polytope.md)
-- [Edmonds' matching polytope theorem](../../../GraphTheory/matchings-and-flows/matching-polytope/matching-polytope-eq.md)
 
 ## Proof depends on
 
-- [Multiplicatively approximate relaxations of the matching polytope](approximate-polytope-relaxation.md)
 - [Edmonds' matching polytope theorem](../../../GraphTheory/matchings-and-flows/matching-polytope/matching-polytope-eq.md)
 
 ## Sources

@@ -8,13 +8,12 @@ Each phase of the multiphase problem is a batch of operations of a dynamic probl
 
 ## Depends on
 
-- [Ko's $\Omega((\log n / \log\log n)^2)$ lower bound for the multiphase problem](multiphase-inner-product-lower-bound.md)
-- [The logarithmic barrier for Boolean dynamic problems](boolean-logarithmic-barrier.md)
+- [Pătraşcu's multiphase problem](multiphase-problem.md)
+- [Amortized update and query cost of a dynamic cell-probe structure](../dynamic-information-transfer-lower-bounds/amortized-cell-probe-costs.md)
 
 ## Proof depends on
 
 - [Ko's $\Omega((\log n / \log\log n)^2)$ lower bound for the multiphase problem](multiphase-inner-product-lower-bound.md)
-- [The logarithmic barrier for Boolean dynamic problems](boolean-logarithmic-barrier.md)
 
 ## Sources
 

@@ -8,11 +8,13 @@ At step $t$, compute the critical languages among $L_1, \dots, L_t$ and output a
 
 ## Depends on
 
-- [The target becomes critical forever and critical languages are nested](critical-languages-nested-and-target-eventually-critical.md)
+- [Generation in the limit](generation-in-the-limit.md)
+- [Identification in the limit from positive examples](identification-in-the-limit.md)
 
 ## Proof depends on
 
 - [The target becomes critical forever and critical languages are nested](critical-languages-nested-and-target-eventually-critical.md)
+- [Critical languages at a step](critical-language.md)
 
 ## Sources
 

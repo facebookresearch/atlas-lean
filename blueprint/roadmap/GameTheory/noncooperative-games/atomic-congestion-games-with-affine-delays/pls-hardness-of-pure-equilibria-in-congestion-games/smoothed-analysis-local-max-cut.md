@@ -9,7 +9,7 @@ Show that long improving sequences must contain short subsequences, of length $O
 ## Depends on
 
 - [MAX-CUT as an optimization problem](../../../../TheoryOfComputation/pcp-and-inapproximability/inapproximability-of-max-cut/max-cut.md)
-- [PLS reduction and tight PLS reduction](pls-reduction-and-tight-reduction.md)
+- [Smoothed complexity](../../../../ComputerScience/sorting-and-searching/algorithm-analysis-models/smoothed-complexity.md)
 
 ## Proof depends on
 

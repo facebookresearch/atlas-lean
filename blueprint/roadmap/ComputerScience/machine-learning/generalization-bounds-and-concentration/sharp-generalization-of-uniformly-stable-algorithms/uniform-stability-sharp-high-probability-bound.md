@@ -14,15 +14,13 @@ Up to an additive $O(n\gamma)$ term, write $n(R(A_S) - R_{\mathrm{emp}}(A_S)) = 
 
 ## Depends on
 
-- [Moment inequality for sums of weakly correlated functions](weakly-correlated-sum-moment-inequality.md)
 - [Uniform stability](../algorithmic-stability/is-uniformly-stable.md)
-- [Uniform stability implies high-probability generalization](../algorithmic-stability/uniform-stability-implies-high-probability-generalization.md)
+- [Expected risk](../risk.md)
+- [Empirical risk](../empirical-risk.md)
 
 ## Proof depends on
 
 - [Moment inequality for sums of weakly correlated functions](weakly-correlated-sum-moment-inequality.md)
-- [Uniform stability](../algorithmic-stability/is-uniformly-stable.md)
-- [Uniform stability implies high-probability generalization](../algorithmic-stability/uniform-stability-implies-high-probability-generalization.md)
 
 ## Sources
 

@@ -15,10 +15,10 @@ Eliminating one non-terminal vertex $v$ by Gaussian elimination replaces its sta
 ## Depends on
 
 - [Schur complements of graph Laplacians onto terminal sets and spectral vertex sparsifiers](laplacian-schur-complement-onto-terminals.md)
+- [Effective resistance](../../../../GraphTheory/algebraic-graph-theory/part-01/effective-resistance-and-electrical-networks/effective-resistance.md)
 
 ## Proof depends on
 
-- [Effective resistance](../../../../GraphTheory/algebraic-graph-theory/part-01/effective-resistance-and-electrical-networks/effective-resistance.md)
 - [Schur complement of a positive-definite block matrix is positive definite](../../../../LinearAlgebra/not-yet-classified/schur-strict-positivity/schur-complement-pos-def.md)
 
 ## Sources

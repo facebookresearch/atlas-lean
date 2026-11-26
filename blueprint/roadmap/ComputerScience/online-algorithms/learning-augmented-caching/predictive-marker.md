@@ -9,11 +9,10 @@ Within a phase, a marking algorithm suffers a miss on a page evicted by mistake 
 ## Depends on
 
 - [Next-arrival predictions for paging](next-arrival-predictions.md)
-- [The randomized marking algorithm and the harmonic lower bound for paging](../competitive-paging/randomized-marking-algorithm-and-the-harmonic-lower-bound.md)
+- [Consistency and robustness of learning-augmented online algorithms](consistency-and-robustness.md)
 
 ## Proof depends on
 
-- [Next-arrival predictions for paging](next-arrival-predictions.md)
 - [The randomized marking algorithm and the harmonic lower bound for paging](../competitive-paging/randomized-marking-algorithm-and-the-harmonic-lower-bound.md)
 
 ## Sources

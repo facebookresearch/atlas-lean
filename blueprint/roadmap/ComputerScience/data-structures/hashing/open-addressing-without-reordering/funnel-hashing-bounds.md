@@ -10,11 +10,7 @@ A key reaches level $i+1$ only if its bucket in level $i$ is full; since bucket 
 
 - [Funnel hashing layout](funnel-hashing-layout.md)
 - [Amortized, worst-case and high-probability probe complexity](amortized-and-worst-case-probe-complexity.md)
-
-## Proof depends on
-
-- [Funnel hashing layout](funnel-hashing-layout.md)
-- [Amortized, worst-case and high-probability probe complexity](amortized-and-worst-case-probe-complexity.md)
+- [Greedy open addressing and uniform probing](greedy-open-addressing-and-uniform-probing.md)
 
 ## Sources
 

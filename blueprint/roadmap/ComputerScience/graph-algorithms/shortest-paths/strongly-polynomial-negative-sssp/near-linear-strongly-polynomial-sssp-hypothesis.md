@@ -7,8 +7,6 @@ Status: the best proved strongly polynomial bound is $\tilde O(mn^{3/4}+m^{4/5}n
 ## Depends on
 
 - [Real-weighted negative SSSP in the real RAM and strongly polynomial running time](real-weighted-sssp-strongly-polynomial.md)
-- [Negative-weight SSSP in O(m log^8 n log W) time by a combinatorial Las Vegas algorithm](../near-linear-negative-weight-sssp/bnw-near-linear-negative-sssp.md)
-- [Bootstrapped hop reducers: real-weighted SSSP in O~(m n^{3/4} + m^{4/5} n) randomized time](bootstrapped-hop-reducers.md)
 
 ## Sources
 

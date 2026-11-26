@@ -15,11 +15,9 @@ The regret of optimism is at most the sum of confidence widths $w_t(a_t)$ at the
 ## Depends on
 
 - [Eluder dimension](eluder-dimension.md)
-- [Stochastic linear bandits and LinUCB regret](../multi-armed-bandits/stochastic-linear-bandits-and-linucb-regret.md)
 
 ## Proof depends on
 
-- [Eluder dimension](eluder-dimension.md)
 - [Stochastic linear bandits and LinUCB regret](../multi-armed-bandits/stochastic-linear-bandits-and-linucb-regret.md)
 
 ## Sources

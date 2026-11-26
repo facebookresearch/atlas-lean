@@ -11,13 +11,14 @@ The Schur complement equals the expected sum of terminal-to-terminal random-walk
 
 ## Depends on
 
-- [Laplacian Schur complements are Laplacians and preserve terminal effective resistances](schur-complement-preserves-resistances.md)
 - [Oblivious and adaptive adversaries; amortized and worst-case update time](../../../data-structures/disjoint-sets-and-dynamic-trees/fully-dynamic-connectivity-and-spanning-forests/adversary-and-update-time-models.md)
+- [Effective resistance](../../../../GraphTheory/algebraic-graph-theory/part-01/effective-resistance-and-electrical-networks/effective-resistance.md)
+- [Schur complements of graph Laplacians onto terminal sets and spectral vertex sparsifiers](laplacian-schur-complement-onto-terminals.md)
 
 ## Proof depends on
 
 - [Spectral sparsification by effective-resistance sampling](../../graph-algorithm-bounds/spectral-sparsification-by-effective-resistance.md)
-- [Effective resistance](../../../../GraphTheory/algebraic-graph-theory/part-01/effective-resistance-and-electrical-networks/effective-resistance.md)
+- [Laplacian Schur complements are Laplacians and preserve terminal effective resistances](schur-complement-preserves-resistances.md)
 
 ## Sources
 

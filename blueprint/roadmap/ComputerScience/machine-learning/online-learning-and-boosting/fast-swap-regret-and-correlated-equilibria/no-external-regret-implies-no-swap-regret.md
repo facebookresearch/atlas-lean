@@ -8,17 +8,15 @@ Apply the tree lemma to the given external-regret learner: it needs only an exte
 
 ## Depends on
 
-- [Swap regret of the path mixture is controlled by external regret of the levels](treeswap-path-mixture-lemma.md)
-- [Agnostic online learnability is characterized by the Littlestone dimension](../agnostic-online-learnability-is-characterized-by-the-littlestone-dimension.md)
-- [No-swap-regret dynamics converge to correlated equilibria](../../../../GameTheory/noncooperative-games/no-regret-dynamics/no-swap-regret-dynamics-converge-to-correlated-equilibria.md)
 - [Correlated equilibrium](../../../../GameTheory/noncooperative-games/correlated-equilibria/is-correlated-eq.md)
+- [Swap regret](../../../../GameTheory/not-yet-classified/part-02/regret/swap-regret.md)
+- [External regret](../../../../GameTheory/not-yet-classified/part-02/regret/external-regret.md)
 
 ## Proof depends on
 
 - [Swap regret of the path mixture is controlled by external regret of the levels](treeswap-path-mixture-lemma.md)
 - [Agnostic online learnability is characterized by the Littlestone dimension](../agnostic-online-learnability-is-characterized-by-the-littlestone-dimension.md)
 - [No-swap-regret dynamics converge to correlated equilibria](../../../../GameTheory/noncooperative-games/no-regret-dynamics/no-swap-regret-dynamics-converge-to-correlated-equilibria.md)
-- [Correlated equilibrium](../../../../GameTheory/noncooperative-games/correlated-equilibria/is-correlated-eq.md)
 
 ## Sources
 

@@ -10,10 +10,6 @@ If $q$ probes $t' \le t$ distinct cells, the probability that a random $\Delta$-
 
 - [Static cell-probe structure with space $S$ and query time $t$](static-cell-probe-structure.md)
 
-## Proof depends on
-
-- [Static cell-probe structure with space $S$ and query time $t$](static-cell-probe-structure.md)
-
 ## Sources
 
 - Rina Panigrahy, Kunal Talwar, Udi Wieder, "Lower Bounds on Near Neighbor Search via Metric Expansion", FOCS (2010), arXiv:1005.0418.

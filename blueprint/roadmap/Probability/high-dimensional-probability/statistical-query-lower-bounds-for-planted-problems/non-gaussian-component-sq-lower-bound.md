@@ -1,6 +1,6 @@
 # Statistical query lower bounds for non-Gaussian component analysis and robust estimation
 
-In the setting of the moment-matching lemma, every statistical query algorithm that distinguishes $\mathcal{N}(0, I_n)$ from $P_v$ for an unknown direction $v$ (or finds $v$) requires, for every $c < 1/2$, either $2^{\Omega(n^c)}$ queries or at least one query of tolerance at most $n^{-(m+1)(1/4 - c/2)}\sqrt{\chi^2(A, \mathcal{N}(0,1))}$. As consequences: learning mixtures of $k$ Gaussians requires $n^{\Omega(k)}$ statistical query complexity; robustly learning the mean of $\mathcal{N}(\mu, I_n)$ under an $\varepsilon$-fraction of corruptions to error $o(\varepsilon\sqrt{\log(1/\varepsilon)})$ requires super-polynomial statistical query complexity, so known efficient robust estimators are optimal among statistical query algorithms; robust covariance estimation in spectral norm and robust sparse mean estimation exhibit quadratic statistical-computational trade-offs; and robust mean testing needs a number of samples linear in $n$.
+Let $A$ be a distribution on $\mathbb{R}$ whose first $m$ moments agree with those of $\mathcal{N}(0,1)$ and with $\chi^2(A, \mathcal{N}(0,1)) < \infty$, and for a unit vector $v \in \mathbb{R}^n$ let $P_v$ be the distribution on $\mathbb{R}^n$ that is $A$ in direction $v$ and standard Gaussian in the orthogonal complement. Every statistical query algorithm that distinguishes $\mathcal{N}(0, I_n)$ from $P_v$ for an unknown direction $v$ (or finds $v$) requires, for every $c < 1/2$, either $2^{\Omega(n^c)}$ queries or at least one query of tolerance at most $n^{-(m+1)(1/4 - c/2)}\sqrt{\chi^2(A, \mathcal{N}(0,1))}$. As consequences: learning mixtures of $k$ Gaussians requires $n^{\Omega(k)}$ statistical query complexity; robustly learning the mean of $\mathcal{N}(\mu, I_n)$ under an $\varepsilon$-fraction of corruptions to error $o(\varepsilon\sqrt{\log(1/\varepsilon)})$ requires super-polynomial statistical query complexity, so known efficient robust estimators are optimal among statistical query algorithms; robust covariance estimation in spectral norm and robust sparse mean estimation exhibit quadratic statistical-computational trade-offs; and robust mean testing needs a number of samples linear in $n$.
 
 ## Proof sketch
 
@@ -8,8 +8,7 @@ Packing arguments give $2^{\Omega(n^c)}$ unit vectors with pairwise inner produc
 
 ## Depends on
 
-- [Hidden-direction distributions matching m moments have tiny pairwise correlations](hidden-direction-correlation-bound.md)
-- [Statistical dimension lower bounds statistical query complexity](statistical-dimension-query-lower-bound.md)
+- [VSTAT oracle and statistical dimension with average correlation](vstat-oracle-statistical-dimension.md)
 
 ## Proof depends on
 

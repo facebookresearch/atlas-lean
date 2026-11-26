@@ -23,7 +23,6 @@ For the cut function $f(X) = w(\partial X)$ one has the identity $f(S \cap T) + 
 
 ## Proof depends on
 
-- [Crossing pairs of vertex bipartitions](crossing-vertex-bipartitions.md)
 - [Submodular set function](../../../ComputerScience/approximation-algorithms/maximum-n-times-coverage/is-submodular.md)
 
 ## Sources

@@ -8,8 +8,7 @@ For thresholds, estimate the threshold location by an empirical quantile and rou
 
 ## Depends on
 
-- [The list replicability number of the d-dimensional cube is d and dominates the VC dimension](list-replicability-of-cube-and-vc-lower-bound.md)
-- [Large Littlestone dimension forces large threshold subclasses](../private-learning-and-littlestone-classes/littlestone-dimension-contains-thresholds.md)
+- [Global stability and list replicability of learning rules](global-stability-and-list-replicability.md)
 
 ## Proof depends on
 

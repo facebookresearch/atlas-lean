@@ -15,9 +15,6 @@ Recursively: if the current piece $H$ has $\Phi_H \ge \varphi$, output it; other
 ## Depends on
 
 - [(phi, epsilon)-expander decompositions of an undirected graph](phi-epsilon-expander-decomposition.md)
-
-## Proof depends on
-
 - [Cut conductance, phi-expanders and degree-preserving induced subgraphs](conductance-and-phi-expanders.md)
 
 ## Sources

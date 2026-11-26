@@ -8,8 +8,9 @@ Nishimoto and Tabei's *move structure* represents a permutation that is piecewis
 
 ## Depends on
 
-- [$\varphi$ is determined by $O(r)$ samples](phi-from-run-samples.md)
-- [The r-index locates in BWT-runs bounded space](r-index-locate.md)
+- [Number $r$ of runs in the Burrows–Wheeler transform](../string-attractors-and-repetitiveness-measures/bwt-run-count.md)
+- [LF-mapping from the last column](../burrows-wheeler-transform-and-fm-index/lf.md)
+- [The function $\varphi$ on text positions](phi-function.md)
 
 ## Proof depends on
 

@@ -8,13 +8,12 @@ Partition the key space into blocks of $(\log n)^{\Theta(1)}$ elements, each sto
 
 ## Depends on
 
-- [The compressed tabulation-weighted treap](compressed-tabulation-weighted-treap.md)
-- [Fredman–Saks lower bound for dynamic rank](dynamic-rank-time-lower-bound.md)
+- [Dynamic ordered dictionary with rank and select](dynamic-ordered-dictionary-with-rank.md)
+- [The tree-structure bottleneck for succinct dynamic dictionaries](tree-structure-bottleneck.md)
 
 ## Proof depends on
 
 - [The compressed tabulation-weighted treap](compressed-tabulation-weighted-treap.md)
-- [Fredman–Saks lower bound for dynamic rank](dynamic-rank-time-lower-bound.md)
 
 ## Sources
 

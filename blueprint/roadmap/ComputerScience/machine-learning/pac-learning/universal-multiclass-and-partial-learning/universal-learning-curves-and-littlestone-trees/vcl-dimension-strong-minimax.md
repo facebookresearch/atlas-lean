@@ -8,13 +8,11 @@ The lower bound embeds the random-branch construction of the linear lower bound 
 
 ## Depends on
 
+- [Realizable distributions, learning curves and universal rates](universal-rate.md)
 - [VCL trees and the VCL dimension](vcl-tree.md)
-- [Classes with no infinite VCL tree are learnable at linear rate](linear-rate-upper-bound.md)
-- [An infinite Littlestone tree forbids rates faster than linear](infinite-littlestone-tree-linear-lower-bound.md)
 
 ## Proof depends on
 
-- [VCL trees and the VCL dimension](vcl-tree.md)
 - [Classes with no infinite VCL tree are learnable at linear rate](linear-rate-upper-bound.md)
 - [An infinite Littlestone tree forbids rates faster than linear](infinite-littlestone-tree-linear-lower-bound.md)
 

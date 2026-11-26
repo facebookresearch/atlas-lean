@@ -8,17 +8,13 @@ The geometric Greedy output on a $\pi$-avoiding input avoids a related forbidden
 
 ## Depends on
 
-- [Pattern-avoidance conjecture for binary search trees](pattern-avoidance-conjecture.md)
-- [Marcus–Tardos theorem on excluded permutation matrices](marcus-tardos-theorem.md)
 - [Geometric Greedy (Greedy Future)](../geometric-view-of-bst-access/geometric-greedy.md)
 - [Inverse Ackermann function of Tarjan and van Leeuwen](../../disjoint-sets-and-dynamic-trees/disjoint-set-data-structure/inverse-ackermann-tv-l.md)
+- [Pattern-avoiding access sequences](pattern-avoiding-access-sequence.md)
 
 ## Proof depends on
 
-- [Pattern-avoidance conjecture for binary search trees](pattern-avoidance-conjecture.md)
 - [Marcus–Tardos theorem on excluded permutation matrices](marcus-tardos-theorem.md)
-- [Geometric Greedy (Greedy Future)](../geometric-view-of-bst-access/geometric-greedy.md)
-- [Inverse Ackermann function of Tarjan and van Leeuwen](../../disjoint-sets-and-dynamic-trees/disjoint-set-data-structure/inverse-ackermann-tv-l.md)
 
 ## Sources
 

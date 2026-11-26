@@ -15,13 +15,10 @@ The method follows Vaidya's volumetric center scheme and Lee-Sidford-Wong's hybr
 ## Depends on
 
 - [Well-described polyhedra, centered convex bodies and the strong and weak oracle problems](well-described-polyhedra-and-oracle-problems.md)
-- [Weak membership yields weak optimization for centered convex bodies](weak-membership-yields-weak-optimization.md)
-- [Volume reduction of the ellipsoid method](../../../Analysis/convex-analysis-and-variations/ellipsoid-method/volume-ratio-lt-exp.md)
 
 ## Proof depends on
 
 - [Volume reduction of the ellipsoid method](../../../Analysis/convex-analysis-and-variations/ellipsoid-method/volume-ratio-lt-exp.md)
-- [Well-described polyhedra, centered convex bodies and the strong and weak oracle problems](well-described-polyhedra-and-oracle-problems.md)
 
 ## Sources
 

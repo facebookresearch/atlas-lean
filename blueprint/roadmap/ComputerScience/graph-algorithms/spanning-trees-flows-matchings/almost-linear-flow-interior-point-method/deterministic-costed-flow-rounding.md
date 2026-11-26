@@ -9,13 +9,10 @@ Consider the fractional parts of $\mathbf{f}$; they form a circulation plus inte
 ## Depends on
 
 - [Integral minimum-cost flow instances with polynomially bounded data](integral-min-cost-flow-instance.md)
-- [Link-cut trees take logarithmic amortized time](../../../data-structures/disjoint-sets-and-dynamic-trees/link-cut-tree/link-cut-trees-take-logarithmic-amortized-time.md)
 
 ## Proof depends on
 
-- [Integral minimum-cost flow instances with polynomially bounded data](integral-min-cost-flow-instance.md)
 - [Link-cut trees take logarithmic amortized time](../../../data-structures/disjoint-sets-and-dynamic-trees/link-cut-tree/link-cut-trees-take-logarithmic-amortized-time.md)
-- [Integral flow theorem](../edmonds-karp-algorithm/exists-nat-max-flow.md)
 
 ## Sources
 

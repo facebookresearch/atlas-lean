@@ -5,7 +5,6 @@ Let $G = (V, E)$ be an unweighted undirected graph undergoing edge deletions, $s
 ## Depends on
 
 - [Breadth-first search](../../traversal-and-connectivity/breadth-first-search/bfs.md)
-- [Reconstructed BFS paths are shortest paths](../../traversal-and-connectivity/breadth-first-search/path-to-spec.md)
 - [Decremental (1+eps)-approximate single-source shortest paths](decremental-approximate-sssp-problem.md)
 
 ## Sources

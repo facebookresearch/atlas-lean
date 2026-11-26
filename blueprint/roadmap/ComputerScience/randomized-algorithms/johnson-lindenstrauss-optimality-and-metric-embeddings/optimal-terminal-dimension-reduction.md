@@ -6,21 +6,16 @@ $$
 \|x - y\|_2 \le \|f(x) - f(y)\|_2 \le (1 + \varepsilon)\|x - y\|_2 \quad \text{for all } x \in X \text{ and all } y \in \mathbb{R}^d .
 $$
 
-So distances from the terminals $X$ to every point of space are preserved with the same optimal dimension as in the Johnson–Lindenstrauss lemma, improving the earlier terminal bound $O(\varepsilon^{-4}\log n)$; the map is necessarily nonlinear.
+So distances from the terminals $X$ to every point of space are preserved with the same dimension bound $O(\varepsilon^{-2}\log n)$ as in the Johnson–Lindenstrauss lemma, improving the earlier terminal bound $O(\varepsilon^{-4}\log n)$; the map is necessarily nonlinear.
 
 ## Proof sketch
 
 Start from a Johnson–Lindenstrauss map $\Pi$ of dimension $O(\varepsilon^{-2}\log n)$ that, in addition to preserving the norms of the differences $x - x'$, preserves inner products between normalized differences up to an additive $O(\varepsilon)$, a property of Gaussian matrices that holds with the same dimension by a sharper chaining analysis. For a non-terminal point $y$, let $x$ be its nearest terminal and set $f(y) = (\Pi x + u, \, c)$ with one extra coordinate $c$, where $u$ solves a small convex program enforcing the inner-product constraints with all terminals; feasibility of the program is shown by a von Neumann minimax argument together with the inner-product preservation of $\Pi$.
 
-## Depends on
-
-- [Johnson-Lindenstrauss lemma for n-point subsets of Euclidean space](johnson-lindenstrauss-lemma-for-finite-point-sets.md)
-- [Larsen-Nelson optimality of the Johnson-Lindenstrauss dimension](optimality-of-johnson-lindenstrauss-dimension.md)
-
 ## Proof depends on
 
-- [Johnson-Lindenstrauss lemma for n-point subsets of Euclidean space](johnson-lindenstrauss-lemma-for-finite-point-sets.md)
 - [Distributional Johnson–Lindenstrauss lemma](../probabilistic-analysis-tools/distributional-johnsonlindenstrauss-lemma.md)
+- [Von Neumann's minimax theorem](../../../GameTheory/noncooperative-games/von-neumann-s-minimax-theorem/matrix-game-minimax.md)
 
 ## Sources
 

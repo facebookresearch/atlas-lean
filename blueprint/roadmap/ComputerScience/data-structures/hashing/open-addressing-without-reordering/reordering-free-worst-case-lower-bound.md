@@ -9,10 +9,12 @@ Consider the last $\Theta(\delta n)$ insertions, made when only $O(\delta n)$ sl
 ## Depends on
 
 - [Amortized, worst-case and high-probability probe complexity](amortized-and-worst-case-probe-complexity.md)
+- [Open-addressing insertion without reordering](oa-without-reordering-model.md)
+- [Elastic hashing layout and batch insertion rule](elastic-hashing-layout.md)
 
 ## Proof depends on
 
-- [Amortized, worst-case and high-probability probe complexity](amortized-and-worst-case-probe-complexity.md)
+- [Elastic hashing: constant amortized and logarithmic worst-case probe complexity](elastic-hashing-bounds.md)
 
 ## Sources
 

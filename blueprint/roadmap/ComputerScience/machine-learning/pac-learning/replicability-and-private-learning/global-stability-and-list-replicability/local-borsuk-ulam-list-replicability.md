@@ -12,15 +12,13 @@ Map distributions to points of a sphere so that complementary labelings of the s
 
 ## Depends on
 
-- [Global stability parameter equals the reciprocal list replicability number](global-stability-equals-reciprocal-list-replicability.md)
-- [The list replicability number of the d-dimensional cube is d and dominates the VC dimension](list-replicability-of-cube-and-vc-lower-bound.md)
 - [Learners and agnostic PAC learnability](../../agnostic-pac-learning-and-uniform-convergence/learners-and-agnostic-pac-learnability.md)
+- [Global stability and list replicability of learning rules](global-stability-and-list-replicability.md)
 
 ## Proof depends on
 
 - [Global stability parameter equals the reciprocal list replicability number](global-stability-equals-reciprocal-list-replicability.md)
 - [The list replicability number of the d-dimensional cube is d and dominates the VC dimension](list-replicability-of-cube-and-vc-lower-bound.md)
-- [Learners and agnostic PAC learnability](../../agnostic-pac-learning-and-uniform-convergence/learners-and-agnostic-pac-learnability.md)
 
 ## Sources
 

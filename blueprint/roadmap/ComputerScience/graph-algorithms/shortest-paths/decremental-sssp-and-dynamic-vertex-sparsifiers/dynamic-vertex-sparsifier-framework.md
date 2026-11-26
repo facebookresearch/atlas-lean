@@ -12,14 +12,15 @@ Any problem admitting vertex sparsifiers, small graphs on a terminal set that pr
 
 ## Depends on
 
-- [Durfee-Gao-Goranci-Peng: fully dynamic spectral vertex sparsifiers and all-pairs effective resistances](dynamic-spectral-vertex-sparsifiers.md)
 - [Schur complements of graph Laplacians onto terminal sets and spectral vertex sparsifiers](laplacian-schur-complement-onto-terminals.md)
 - [Oblivious and adaptive adversaries; amortized and worst-case update time](../../../data-structures/disjoint-sets-and-dynamic-trees/fully-dynamic-connectivity-and-spanning-forests/adversary-and-update-time-models.md)
+- [Minimum cut size](../../../randomized-algorithms/karger-s-algorithm/is-min-cut.md)
+- [Effective resistance](../../../../GraphTheory/algebraic-graph-theory/part-01/effective-resistance-and-electrical-networks/effective-resistance.md)
 
 ## Proof depends on
 
-- [Minimum cut size](../../../randomized-algorithms/karger-s-algorithm/is-min-cut.md)
 - [Max-flow min-cut theorem](../../../../GraphTheory/matchings-and-flows/max-flow-min-cut-theorem/max-flow-min-cut.md)
+- [Durfee-Gao-Goranci-Peng: fully dynamic spectral vertex sparsifiers and all-pairs effective resistances](dynamic-spectral-vertex-sparsifiers.md)
 
 ## Sources
 

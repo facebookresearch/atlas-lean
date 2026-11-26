@@ -10,7 +10,6 @@ Suppose agent $i$ violates EFX towards $j$ for some $g \in X_j$. Because values 
 
 - [Maximum Nash welfare allocation](../../../not-yet-classified/part-01/max-nash-welfare/is-max-nash-welfare.md)
 - [Envy-freeness up to any good](../../../not-yet-classified/part-01/indivisible/is-efx.md)
-- [Local swap inequality at a maximum Nash welfare allocation](mnw-local-swap-inequality.md)
 
 ## Proof depends on
 

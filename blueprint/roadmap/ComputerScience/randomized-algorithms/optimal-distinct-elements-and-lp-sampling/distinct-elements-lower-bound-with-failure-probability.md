@@ -2,7 +2,7 @@
 
 There are absolute constants $c, C > 0$ such that the following hold whenever $0 < \varepsilon, \delta < c$ and the universe size $n$ (respectively the dimension $d$) is at least $(\varepsilon^{-2}\log(1/\delta))^{C}$.
 
-1. Every randomized one-pass algorithm solving the $(\varepsilon, \delta)$-distinct elements problem on insertion-only streams over $[n]$ uses $\Omega(\varepsilon^{-2}\log(1/\delta) + \log n)$ bits.
+1. Every randomized one-pass algorithm solving the $(\varepsilon, \delta)$-distinct elements problem (output an estimate $\widetilde{F}_0$ of the number $F_0$ of distinct elements with $\Pr[\,|\widetilde{F}_0 - F_0| \le \varepsilon F_0\,] \ge 1 - \delta$) on insertion-only streams over $[n]$ uses $\Omega(\varepsilon^{-2}\log(1/\delta) + \log n)$ bits.
 2. Every probability distribution over linear maps $\Pi : \mathbb{R}^d \to \mathbb{R}^k$ such that $\Pr[\,|\|\Pi x\|_2^2 - \|x\|_2^2| \le \varepsilon\|x\|_2^2\,] \ge 1 - \delta$ for every fixed $x \in \mathbb{R}^d$ has $k = \Omega(\varepsilon^{-2}\log(1/\delta))$.
 
 In particular the median of $O(\log(1/\delta))$ independent constant-error repetitions is optimal in its $\varepsilon$ and $\delta$ dependence, but the multiplicative blow-up of the $\log n$ term is not forced.
@@ -13,8 +13,7 @@ Both bounds come from a one-way communication problem: an augmented version of a
 
 ## Depends on
 
-- [Distinct elements needs Omega(1/eps^2 + log n) bits with constant failure probability](distinct-elements-space-lower-bound.md)
-- [Distributional Johnson–Lindenstrauss lemma](../probabilistic-analysis-tools/distributional-johnsonlindenstrauss-lemma.md)
+- [Turnstile streams, support size and linear sketches of a frequency vector](turnstile-streams-and-support-size.md)
 
 ## Proof depends on
 

@@ -8,7 +8,7 @@ The infinite language $L_\infty$ has no tell-tale: every finite $T \subseteq L_\
 
 ## Depends on
 
-- [Angluin's tell-tale characterization of identifiability in the limit](angluin-tell-tale-characterization.md)
+- [Identification in the limit from positive examples](identification-in-the-limit.md)
 
 ## Proof depends on
 

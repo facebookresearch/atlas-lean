@@ -15,7 +15,7 @@ Online preemptive lower bounds string together several copies of a Karp–Vazira
 ## Depends on
 
 - [Approximate maximum matching and vertex cover in a graph stream](approximate-matching-in-graph-streams.md)
-- [No single-pass semi-streaming algorithm beats 1 - 1/e for bipartite matching under vertex arrivals](one-minus-inverse-e-barrier-for-streaming-matching.md)
+- [Semi-streaming graph model with insertion-only, dynamic and random-order edge streams](semi-streaming-graph-model.md)
 
 ## Proof depends on
 

@@ -10,10 +10,6 @@ Assign to each vertex a random-like signature from the parts it receives arcs fr
 
 - [Rainbow cycle number](rainbow-cycle-number.md)
 
-## Proof depends on
-
-- [Rainbow cycle number](rainbow-cycle-number.md)
-
 ## Sources
 
 - B. R. Chaudhury, J. Garg, K. Mehlhorn, R. Mehta, P. Misra, "Improving EFX Guarantees through Rainbow Cycle Number", EC 2021, arXiv:2103.01628.

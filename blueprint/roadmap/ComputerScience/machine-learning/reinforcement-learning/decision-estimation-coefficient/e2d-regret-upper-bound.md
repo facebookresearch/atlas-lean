@@ -21,10 +21,11 @@ At round $t$, by the choice of $p_t$ and since $M^\star \in \mathcal{M}$, the in
 ## Depends on
 
 - [Estimation-to-decisions meta-algorithm](estimation-to-decisions.md)
+- [Decision-estimation coefficient](decision-estimation-coefficient.md)
 
 ## Proof depends on
 
-- [Estimation-to-decisions meta-algorithm](estimation-to-decisions.md)
+- [Online Hellinger estimation for finite model classes by tempered aggregation](tempered-aggregation-hellinger-estimation.md)
 
 ## Sources
 

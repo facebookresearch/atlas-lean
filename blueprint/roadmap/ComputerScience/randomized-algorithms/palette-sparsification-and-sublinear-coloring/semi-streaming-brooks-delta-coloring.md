@@ -8,9 +8,7 @@ Brooks' theorem guarantees existence. The algorithm samples small palettes as in
 
 ## Depends on
 
-- [Brooks' theorem](../../../GraphTheory/graph-coloring/part-01/brooks.md)
 - [Semi-streaming graph model with insertion-only, dynamic and random-order edge streams](../semi-streaming-matching-and-vertex-cover/semi-streaming-graph-model.md)
-- [Assadi-Chen-Khanna palette sparsification theorem for (Delta + 1)-coloring](palette-sparsification-theorem-delta-plus-one.md)
 
 ## Proof depends on
 

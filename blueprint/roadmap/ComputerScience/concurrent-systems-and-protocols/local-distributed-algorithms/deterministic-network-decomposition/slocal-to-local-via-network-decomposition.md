@@ -10,10 +10,7 @@ Process the colour classes one after another. Within a colour class, clusters ar
 
 - [The SLOCAL model and its polylogarithmic class](the-slocal-model.md)
 - [Network decomposition with weak or strong diameter](network-decomposition-weak-strong-diameter.md)
-
-## Proof depends on
-
-- [Network decomposition with weak or strong diameter](network-decomposition-weak-strong-diameter.md)
+- [The LOCAL model](../../distributed-execution-models/the-local-model.md)
 
 ## Sources
 

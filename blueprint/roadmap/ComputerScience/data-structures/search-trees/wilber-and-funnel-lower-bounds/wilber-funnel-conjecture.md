@@ -4,8 +4,8 @@
 
 ## Depends on
 
-- [Wilber's second lower bound](wilber-second-bound.md)
 - [Dynamic optimality](../dynamic-optimality/dynamic-optimality.md)
+- [Wilber's funnel bound](funnel-bound.md)
 
 ## Sources
 

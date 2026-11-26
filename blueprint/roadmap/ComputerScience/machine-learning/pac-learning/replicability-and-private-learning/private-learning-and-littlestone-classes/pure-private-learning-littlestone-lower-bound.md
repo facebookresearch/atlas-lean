@@ -9,12 +9,9 @@ A pure private learner is a distribution over hypotheses with the property that 
 ## Depends on
 
 - [Private PAC learners and their sample complexity](private-pac-learner.md)
-- [Utility of the exponential mechanism](../../../../cryptography/laplace-and-exponential-mechanisms/exp-mechanism-utility.md)
-- [The Littlestone dimension is the optimal mistake bound](../../../online-learning-and-boosting/the-littlestone-dimension-is-the-optimal-mistake-bound.md)
 
 ## Proof depends on
 
-- [Private PAC learners and their sample complexity](private-pac-learner.md)
 - [Utility of the exponential mechanism](../../../../cryptography/laplace-and-exponential-mechanisms/exp-mechanism-utility.md)
 - [The Littlestone dimension is the optimal mistake bound](../../../online-learning-and-boosting/the-littlestone-dimension-is-the-optimal-mistake-bound.md)
 

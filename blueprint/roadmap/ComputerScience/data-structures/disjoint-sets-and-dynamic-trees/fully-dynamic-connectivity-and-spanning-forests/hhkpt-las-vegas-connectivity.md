@@ -8,12 +8,13 @@ The level hierarchy of Holm, de Lichtenberg and Thorup is kept, but replacement 
 
 ## Depends on
 
-- [Holm-de Lichtenberg-Thorup: deterministic polylogarithmic amortized connectivity and MSF](hdt-amortized-connectivity.md)
 - [Oblivious and adaptive adversaries; amortized and worst-case update time](adversary-and-update-time-models.md)
+- [Fully dynamic connectivity, spanning forest and minimum spanning forest problems](fully-dynamic-connectivity-problems.md)
 
 ## Proof depends on
 
 - [Replacement edges after deleting a spanning-forest edge](replacement-edge-lemma.md)
+- [Holm-de Lichtenberg-Thorup: deterministic polylogarithmic amortized connectivity and MSF](hdt-amortized-connectivity.md)
 
 ## Sources
 

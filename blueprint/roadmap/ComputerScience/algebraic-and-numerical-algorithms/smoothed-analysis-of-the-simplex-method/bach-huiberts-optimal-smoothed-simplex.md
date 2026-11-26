@@ -20,13 +20,13 @@ The upper bound designs the pivot path more carefully than a single shadow path,
 
 ## Depends on
 
-- [Huiberts-Lee-Zhang smoothed complexity O(sigma^{-3/2} d^{13/4} log^{7/4} n)](huiberts-lee-zhang-upper-bound.md)
-- [Smoothed lower bound for the shadow vertex simplex method](shadow-vertex-smoothed-lower-bound.md)
+- [Gaussian-smoothed linear programs and smoothed pivot complexity](gaussian-smoothed-linear-programs.md)
 
 ## Proof depends on
 
 - [Huiberts-Lee-Zhang smoothed complexity O(sigma^{-3/2} d^{13/4} log^{7/4} n)](huiberts-lee-zhang-upper-bound.md)
 - [Shadow vertices are bounded by edges of the polar section](shadow-vertices-and-polar-section.md)
+- [The shadow vertex pivot rule and the smoothed shadow bound](shadow-vertex-rule-and-shadow-bound.md)
 
 ## Sources
 

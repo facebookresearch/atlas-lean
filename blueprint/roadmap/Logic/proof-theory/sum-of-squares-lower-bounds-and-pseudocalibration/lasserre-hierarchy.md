@@ -8,11 +8,6 @@ $$
 
 over all polynomials $r$ and $s$ of degrees making the arguments have degree at most $d$. Its value is at least the true maximum, decreases with $d$, equals it at $d = 2n$, and can be computed to additive precision $\eta$ in time $n^{O(d)} \operatorname{polylog}(1/\eta)$ under bit-complexity conditions. By duality, $\mathrm{SoS}_d \le c$ certifies $p \le c$ on the feasible Boolean points via a degree-$d$ sum-of-squares identity.
 
-## Depends on
-
-- [Pebble games with counting and the Sherali–Adams hierarchy](../../../TheoryOfComputation/descriptive-complexity/pebble-games-with-counting.md)
-- [Objective of the MAX CUT semidefinite program](../../../ComputerScience/approximation-algorithms/goemans-williamson-max-cut-algorithm/sdp-objective.md)
-
 ## Sources
 
 - J. B. Lasserre, "Global optimization with polynomials and the problem of moments", SIAM Journal on Optimization 11 (2001) 796-817.

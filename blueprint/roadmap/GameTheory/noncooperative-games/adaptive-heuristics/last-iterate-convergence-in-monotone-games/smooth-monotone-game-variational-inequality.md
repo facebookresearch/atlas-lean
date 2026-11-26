@@ -5,7 +5,6 @@ A continuous game has players $i = 1, \dots, m$ with nonempty compact convex act
 ## Depends on
 
 - [Mixed Nash equilibrium](../../nash-s-theorem/is-mixed-nash.md)
-- [Von Neumann's minimax theorem](../../von-neumann-s-minimax-theorem/matrix-game-minimax.md)
 
 ## Sources
 

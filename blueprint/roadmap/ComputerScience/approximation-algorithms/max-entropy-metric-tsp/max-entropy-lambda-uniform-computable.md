@@ -15,14 +15,11 @@ Slater's condition holds in the relative interior, so strong duality applies to 
 ## Depends on
 
 - [Maximum-entropy and lambda-uniform distributions over spanning trees](max-entropy-spanning-tree-distribution.md)
-- [Kirchhoff's matrix-tree theorem](../../../GraphTheory/algebraic-graph-theory/part-01/kirchhoff-s-matrix-tree-theorem/kirchhoff-matrix-tree.md)
-- [Kirchhoff's effective resistance formula, weighted](../../../GraphTheory/algebraic-graph-theory/part-01/effective-resistance-and-electrical-networks/kirchhoff-effective-resistance-formula-weighted.md)
-- [Strong duality under Slater's condition](../../../Analysis/convex-analysis-and-variations/lagrange-duality/dual-value-eq-primal-value-of-slater.md)
-- [The ellipsoid method finds a point](../../../Analysis/convex-analysis-and-variations/ellipsoid-method/ellipsoid-run-finds-point.md)
+- [Spanning tree polytope of a connected graph](spanning-tree-polytope.md)
+- [Effective resistance](../../../GraphTheory/algebraic-graph-theory/part-01/effective-resistance-and-electrical-networks/effective-resistance.md)
 
 ## Proof depends on
 
-- [Maximum-entropy and lambda-uniform distributions over spanning trees](max-entropy-spanning-tree-distribution.md)
 - [Kirchhoff's matrix-tree theorem](../../../GraphTheory/algebraic-graph-theory/part-01/kirchhoff-s-matrix-tree-theorem/kirchhoff-matrix-tree.md)
 - [Kirchhoff's effective resistance formula, weighted](../../../GraphTheory/algebraic-graph-theory/part-01/effective-resistance-and-electrical-networks/kirchhoff-effective-resistance-formula-weighted.md)
 - [Strong duality under Slater's condition](../../../Analysis/convex-analysis-and-variations/lagrange-duality/dual-value-eq-primal-value-of-slater.md)

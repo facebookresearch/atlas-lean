@@ -8,8 +8,8 @@ Associate to each colour $c \in \{1, \dots, k\}$ a set $S_c \subseteq \{1, \dots
 
 ## Depends on
 
-- [Degree-plus-one list colouring instance](degree-plus-one-list-colouring.md)
-- [Linial's lower bound for coloring a ring](../linial-s-lower-bound-for-coloring-a-ring.md)
+- [The LOCAL model](../../distributed-execution-models/the-local-model.md)
+- [The CONGEST model of distributed computing](../deterministic-network-decomposition/the-congest-model.md)
 
 ## Proof depends on
 

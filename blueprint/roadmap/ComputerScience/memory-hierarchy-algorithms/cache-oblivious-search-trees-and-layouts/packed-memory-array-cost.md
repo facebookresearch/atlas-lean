@@ -9,10 +9,7 @@ After a window at height $d$ is rebalanced, its density is strictly inside the t
 ## Depends on
 
 - [Packed memory arrays](packed-memory-array.md)
-
-## Proof depends on
-
-- [Packed memory arrays](packed-memory-array.md)
+- [The ideal-cache model](../cache-oblivious-algorithms/the-ideal-cache-model.md)
 
 ## Sources
 

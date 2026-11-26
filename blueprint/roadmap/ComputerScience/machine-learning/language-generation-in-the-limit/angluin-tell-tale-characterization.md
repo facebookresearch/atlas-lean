@@ -10,10 +10,6 @@ Given tell-tales, at step $t$ output the least index $i \le t$ such that $T_i \s
 
 - [Identification in the limit from positive examples](identification-in-the-limit.md)
 
-## Proof depends on
-
-- [Identification in the limit from positive examples](identification-in-the-limit.md)
-
 ## Sources
 
 - D. Angluin, "Inductive Inference of Formal Languages from Positive Data", Information and Control 45 (1980).

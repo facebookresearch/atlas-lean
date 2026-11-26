@@ -8,7 +8,7 @@ Scan vertices in an order that always picks an unscanned vertex with the largest
 
 ## Depends on
 
-- [Unions of the first k forests are k-edge-connectivity certificates](forest-union-certificate.md)
+- [Sparse k-edge-connectivity certificates and forest decompositions](sparse-k-edge-connectivity-certificate.md)
 - [$k$-vertex-connected graph](../vertex-connectivity/is-vertex-connected.md)
 
 ## Proof depends on

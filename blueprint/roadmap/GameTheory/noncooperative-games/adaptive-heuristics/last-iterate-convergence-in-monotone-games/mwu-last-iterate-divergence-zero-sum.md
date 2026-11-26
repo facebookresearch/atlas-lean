@@ -8,8 +8,9 @@ Compute the change of the divergence in one step: it equals a first-order term t
 
 ## Depends on
 
-- [Von Neumann's minimax theorem](../../von-neumann-s-minimax-theorem/matrix-game-minimax.md)
 - [Loss of the Hedge algorithm](../../../../ComputerScience/machine-learning/online-learning-and-boosting/hedge-algorithm/alg-loss.md)
+- [Nash equilibrium of a bimatrix game](../../bimatrix-games-and-the-lemke-howson-algorithm/is-bimatrix-nash.md)
+- [Optimistic Hedge in a repeated normal-form game](../optimistic-learning-dynamics-in-games/optimistic-hedge-in-games.md)
 
 ## Proof depends on
 

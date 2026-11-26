@@ -14,7 +14,8 @@ Construct the pseudo-expectation by planting: for each constraint, sample locall
 
 ## Depends on
 
-- [Grigoriev–Schoenebeck: linear-degree SoS lower bounds for random 3-XOR and 3-SAT](schoenebeck-random-xor-sat.md)
+- [Refutation of random constraint satisfaction problems](random-csp-refutation.md)
+- [The Lasserre / sum-of-squares hierarchy for Boolean polynomial optimization](lasserre-hierarchy.md)
 
 ## Proof depends on
 

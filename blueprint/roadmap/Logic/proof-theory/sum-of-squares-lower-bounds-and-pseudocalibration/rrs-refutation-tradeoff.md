@@ -15,10 +15,7 @@ Reduce strong refutation to bounding the injective norm of the random $k$-tensor
 ## Depends on
 
 - [Refutation of random constraint satisfaction problems](random-csp-refutation.md)
-
-## Proof depends on
-
-- [Refutation of random constraint satisfaction problems](random-csp-refutation.md)
+- [The Lasserre / sum-of-squares hierarchy for Boolean polynomial optimization](lasserre-hierarchy.md)
 
 ## Sources
 

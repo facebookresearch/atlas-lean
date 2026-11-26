@@ -8,7 +8,6 @@ If $\delta$ is at most polylogarithmic, Gabow's $\tilde O(\lambda m)$ algorithm 
 
 ## Depends on
 
-- [Kawarabayashi-Thorup contraction to O(m/delta) edges preserving non-trivial minimum cuts](kawarabayashi-thorup-contraction.md)
 - [Steiner minimum cuts of a terminal set](../isolating-cuts-and-steiner-min-cuts/steiner-minimum-cut.md)
 
 ## Proof depends on

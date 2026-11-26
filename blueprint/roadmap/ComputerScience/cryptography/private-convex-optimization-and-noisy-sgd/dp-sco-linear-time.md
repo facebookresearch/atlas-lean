@@ -8,7 +8,7 @@ For iterative localization, phase $k$ uses a fresh batch of size $n_k = n/2^k$, 
 
 ## Depends on
 
-- [Private stochastic convex optimization has the non-private rate in the common regime](dp-sco-optimal-rate.md)
+- [Private empirical risk minimization and private stochastic convex optimization](private-erm-and-sco.md)
 
 ## Proof depends on
 

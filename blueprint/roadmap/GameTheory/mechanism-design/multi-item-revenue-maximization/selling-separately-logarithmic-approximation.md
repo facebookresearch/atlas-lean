@@ -10,10 +10,6 @@ Decompose the buyer's value into a core, where each item's value is below a thre
 
 - [Single additive buyer with independent item values: SREV, BREV and REV](additive-buyer-srev-brev-rev.md)
 
-## Proof depends on
-
-- [Single additive buyer with independent item values: SREV, BREV and REV](additive-buyer-srev-brev-rev.md)
-
 ## Sources
 
 - X. Li, A. C.-C. Yao, "On revenue maximization for selling multiple independently distributed items", Proceedings of the National Academy of Sciences 110(28) (2013).

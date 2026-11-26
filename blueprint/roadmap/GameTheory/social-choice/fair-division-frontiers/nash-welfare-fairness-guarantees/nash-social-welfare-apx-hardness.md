@@ -10,10 +10,6 @@ Reduce from a bounded-occurrence gap version of a constraint satisfaction proble
 
 - [Approximation ratio for the Nash social welfare objective](nash-social-welfare-approximation-ratio.md)
 
-## Proof depends on
-
-- [Approximation ratio for the Nash social welfare objective](nash-social-welfare-approximation-ratio.md)
-
 ## Sources
 
 - E. Lee, "APX-hardness of maximizing Nash social welfare with indivisible items", Information Processing Letters 122 (2017).

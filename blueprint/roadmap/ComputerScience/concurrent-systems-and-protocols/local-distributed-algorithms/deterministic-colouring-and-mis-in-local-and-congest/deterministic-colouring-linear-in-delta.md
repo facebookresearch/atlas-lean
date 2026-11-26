@@ -9,6 +9,7 @@ Compute an $O(\Delta^2)$-colouring by Linial's colour reduction, then compute a 
 ## Depends on
 
 - [Degree-plus-one list colouring instance](degree-plus-one-list-colouring.md)
+- [The LOCAL model](../../distributed-execution-models/the-local-model.md)
 
 ## Proof depends on
 

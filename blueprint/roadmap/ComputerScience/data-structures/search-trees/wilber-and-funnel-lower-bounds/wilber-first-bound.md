@@ -9,10 +9,7 @@ For each node $v$ of $T$, consider the *transition point* of $v$ in the optimal 
 ## Depends on
 
 - [Wilber's interleave (alternation) bound](interleave-bound.md)
-
-## Proof depends on
-
-- [Wilber's interleave (alternation) bound](interleave-bound.md)
+- [The binary search tree access model](../dynamic-optimality/the-binary-search-tree-access-model.md)
 
 ## Sources
 

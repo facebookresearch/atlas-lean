@@ -9,10 +9,7 @@ Compare with the optimal solution $o_t$: by the choice of $x_t$, $\ell_t(x_t) + 
 ## Depends on
 
 - [Metrical task systems with predicted states](mts-with-state-predictions.md)
-
-## Proof depends on
-
-- [Metrical task systems with predicted states](mts-with-state-predictions.md)
+- [Consistency and robustness of learning-augmented online algorithms](../learning-augmented-caching/consistency-and-robustness.md)
 
 ## Sources
 

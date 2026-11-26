@@ -14,15 +14,12 @@ Each edge is lifted to the epigraph variable $(x, y)$ with the barrier for $\{y 
 
 ## Depends on
 
-- [Potential-reduction l1 IPM: min-cost flow from m^(1+o(1)) approximate min-ratio cycles](l1-potential-reduction-ipm.md)
 - [Self-concordant barrier](../../../../Analysis/convex-analysis-and-variations/self-concordant-functions-and-barriers/is-self-concordant-barrier.md)
-- [Sinkhorn's scaling theorem](../../../../LinearAlgebra/special-matrices/matrix-scaling-to-doubly-stochastic-form/sinkhorn-scaling.md)
-- [The l1 IPM reduces min-cost flow to an approximate dynamic min-ratio cycle problem](ipm-reduces-to-dynamic-min-ratio-cycle.md)
+- [Oriented incidence matrix of a multigraph](../../../../GraphTheory/algebraic-graph-theory/part-01/oriented-incidence-matrices/oriented-incidence.md)
 
 ## Proof depends on
 
 - [Potential-reduction l1 IPM: min-cost flow from m^(1+o(1)) approximate min-ratio cycles](l1-potential-reduction-ipm.md)
-- [Self-concordant barrier](../../../../Analysis/convex-analysis-and-variations/self-concordant-functions-and-barriers/is-self-concordant-barrier.md)
 - [The l1 IPM reduces min-cost flow to an approximate dynamic min-ratio cycle problem](ipm-reduces-to-dynamic-min-ratio-cycle.md)
 - [Randomized dynamic min-ratio cycle data structure under hidden stable flow chasing](../dynamic-min-ratio-cycle-data-structures/randomized-dynamic-min-ratio-cycle.md)
 

@@ -11,11 +11,6 @@ The cut function $f(X) = w(\partial X)$ of an undirected graph with nonnegative 
 - [Minimum isolating cuts of a terminal set](minimum-isolating-cuts.md)
 - [Submodular set function](../../../approximation-algorithms/maximum-n-times-coverage/is-submodular.md)
 
-## Proof depends on
-
-- [Minimum isolating cuts of a terminal set](minimum-isolating-cuts.md)
-- [Submodular set function](../../../approximation-algorithms/maximum-n-times-coverage/is-submodular.md)
-
 ## Sources
 
 - Jason Li, Debmalya Panigrahi, "Deterministic Min-cut in Poly-logarithmic Max-flows", FOCS (2020), arXiv:2111.02008.

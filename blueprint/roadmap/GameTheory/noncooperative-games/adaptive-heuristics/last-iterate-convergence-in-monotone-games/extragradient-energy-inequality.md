@@ -17,10 +17,6 @@ The projection inequalities for $z_{t+1/2}$ and $z_{t+1}$ give $\lVert z_{t+1} -
 - [Extragradient and optimistic gradient descent-ascent](extragradient-and-optimistic-gradient.md)
 - [Smooth monotone game and monotone variational inequality](smooth-monotone-game-variational-inequality.md)
 
-## Proof depends on
-
-- [Smooth monotone game and monotone variational inequality](smooth-monotone-game-variational-inequality.md)
-
 ## Sources
 
 - G. M. Korpelevich, "The extragradient method for finding saddle points and other problems", Ekonomika i Matematicheskie Metody 12 (1976).

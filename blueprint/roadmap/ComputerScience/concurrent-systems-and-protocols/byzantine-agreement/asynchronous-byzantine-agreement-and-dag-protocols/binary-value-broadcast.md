@@ -10,10 +10,6 @@ A bit received from $t + 1$ processes was sent by at least one correct process, 
 
 - [Asynchronous binary Byzantine agreement and common coins](asynchronous-binary-byzantine-agreement.md)
 
-## Proof depends on
-
-- [Asynchronous binary Byzantine agreement and common coins](asynchronous-binary-byzantine-agreement.md)
-
 ## Sources
 
 - A. Mostéfaoui, H. Moumen, M. Raynal, "Signature-Free Asynchronous Binary Byzantine Consensus with t < n/3, O(n^2) Messages, and O(1) Expected Time", Journal of the ACM 62(4) (2015); PODC 2014.

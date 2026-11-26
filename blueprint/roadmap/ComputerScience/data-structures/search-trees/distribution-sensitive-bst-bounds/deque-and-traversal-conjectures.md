@@ -4,8 +4,8 @@ The *deque conjecture* (Tarjan 1985) asserts that any sequence of $m$ deque oper
 
 ## Depends on
 
-- [Sequential access in splay trees takes linear time](splay-sequential-access.md)
 - [Dynamic optimality](../dynamic-optimality/dynamic-optimality.md)
+- [Splay operation](../splay-tree/splay.md)
 
 ## Sources
 

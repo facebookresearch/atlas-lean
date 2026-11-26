@@ -9,11 +9,10 @@ The array is recursively divided into windows whose boundaries are chosen by a r
 ## Depends on
 
 - [History-independent list labeling](history-independent-list-labeling.md)
-- [Tight lower bounds for deterministic list labeling](deterministic-list-labeling-lower-bound.md)
+- [The online list-labeling problem](online-list-labeling.md)
 
 ## Proof depends on
 
-- [History-independent list labeling](history-independent-list-labeling.md)
 - [Tight lower bounds for deterministic list labeling](deterministic-list-labeling-lower-bound.md)
 
 ## Sources

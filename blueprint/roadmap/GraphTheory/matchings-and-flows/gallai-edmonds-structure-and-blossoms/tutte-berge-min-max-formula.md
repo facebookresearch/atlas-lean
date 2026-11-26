@@ -14,15 +14,13 @@ The inequality $\le$ is the odd-component bound. For $\ge$ (Anderson's method as
 
 ## Depends on
 
-- [Every vertex set bounds the matching number through its odd components](odd-components-bound-matching-number.md)
-- [Factor-critical graphs and near-perfect matchings](factor-critical-graphs.md)
-- [Berge's lemma for matching subgraphs](../berge-s-lemma/berge-general.md)
+- [Odd components and the Tutte deficiency of a vertex set](odd-components-and-tutte-deficiency.md)
 
 ## Proof depends on
 
 - [Every vertex set bounds the matching number through its odd components](odd-components-bound-matching-number.md)
-- [Factor-critical graphs and near-perfect matchings](factor-critical-graphs.md)
 - [Kőnig's theorem for finite bipartite graphs](../k-nig-s-theorem/konig-matching-cover.md)
+- [Factor-critical graphs and near-perfect matchings](factor-critical-graphs.md)
 
 ## Sources
 

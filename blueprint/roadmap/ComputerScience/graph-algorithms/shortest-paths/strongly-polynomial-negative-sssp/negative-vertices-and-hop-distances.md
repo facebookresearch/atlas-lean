@@ -13,7 +13,7 @@ The *negative $h$-hop reach* of $X\subseteq N$ is $R^h(X)=\{v\in V: d^h(X,v)<0\}
 ## Depends on
 
 - [Real-weighted negative SSSP in the real RAM and strongly polynomial running time](real-weighted-sssp-strongly-polynomial.md)
-- [Reweighting by a price function shifts every distance by the endpoint prices and preserves cycle weights](../near-linear-negative-weight-sssp/price-function-distance-shift.md)
+- [Price functions, reduced edge weights, and valid reweightings of a directed graph](../near-linear-negative-weight-sssp/price-functions-and-reduced-weights.md)
 
 ## Sources
 

@@ -9,7 +9,6 @@ Starting from the empty allocation, repeatedly apply the lexicographic improveme
 ## Depends on
 
 - [Partial EFX allocation with an unallocated pool](partial-efx-allocation-with-pool.md)
-- [Existence of complete EFX allocations](../../existence-of-complete-efx-allocations.md)
 
 ## Proof depends on
 

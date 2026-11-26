@@ -1,12 +1,12 @@
 # Lazy maintenance of IPM lengths and gradients with few coordinate changes
 
-Run the steps of *One approximate minimum-ratio step decreases the IPM potential by a constant times kappa squared* for $\tau = \widetilde{O}(m\kappa^{-2})$ iterations, producing flows $\mathbf{f}^{(0)}, \mathbf{f}^{(1)}, \ldots$ with steps $\mathbf{\Delta}^{(t)} = \mathbf{f}^{(t)} - \mathbf{f}^{(t-1)}$. Maintain $\widetilde{\mathbf{g}}$ and $\widetilde{\boldsymbol{\ell}}$ lazily: coordinate $e$ is recomputed exactly at iteration $t$ only when
+Run the l1 IPM steps $\mathbf{f} \leftarrow \mathbf{f} + \eta\mathbf{\Delta}$, where $\mathbf{\Delta}$ is a circulation with $\widetilde{\mathbf{g}}^{\top}\mathbf{\Delta}/\|\widetilde{\mathbf{L}}\mathbf{\Delta}\|_1 \le -\kappa$ and $\eta = \kappa^2/(50|\widetilde{\mathbf{g}}^{\top}\mathbf{\Delta}|)$ for the current approximations $\widetilde{\mathbf{g}}, \widetilde{\boldsymbol{\ell}}$ maintained below and $\widetilde{\mathbf{L}} = \mathrm{diag}(\widetilde{\boldsymbol{\ell}})$, for $\tau = \widetilde{O}(m\kappa^{-2})$ iterations, producing flows $\mathbf{f}^{(0)}, \mathbf{f}^{(1)}, \ldots$ with steps $\mathbf{\Delta}^{(t)} = \mathbf{f}^{(t)} - \mathbf{f}^{(t-1)}$. Maintain $\widetilde{\mathbf{g}}$ and $\widetilde{\boldsymbol{\ell}}$ lazily: coordinate $e$ is recomputed exactly at iteration $t$ only when
 
 $$
 \boldsymbol{\ell}_e(\mathbf{f}^{(\mathrm{last}_e)}) \sum_{t' = \mathrm{last}_e + 1}^{t} |\mathbf{\Delta}^{(t')}_e| \ge \varepsilon
 $$
 
-for a threshold $\varepsilon = \Theta(\kappa)$, where $\mathrm{last}_e$ is its previous recomputation. Then at every iteration the approximation hypotheses of *The direction to an optimal flow is a good minimum-ratio witness* hold, and the total number of coordinate recomputations over the run is $\widetilde{O}(m\kappa^{-2})$.
+for a threshold $\varepsilon = \Theta(\kappa)$, where $\mathrm{last}_e$ is its previous recomputation. Then at every iteration $t$ the approximations satisfy $\|\mathbf{L}(\mathbf{f}^{(t)})^{-1}(\widetilde{\mathbf{g}} - \mathbf{g}(\mathbf{f}^{(t)}))\|_\infty \le \kappa/8$ and $\widetilde{\boldsymbol{\ell}} \approx_2 \boldsymbol{\ell}(\mathbf{f}^{(t)})$, and the total number of coordinate recomputations over the run is $\widetilde{O}(m\kappa^{-2})$.
 
 ## Proof sketch
 
@@ -14,13 +14,11 @@ Between recomputations the $\boldsymbol{\ell}$-weighted movement of coordinate $
 
 ## Depends on
 
-- [One approximate minimum-ratio step decreases the IPM potential by a constant times kappa squared](one-step-potential-decrease.md)
-- [Amortized cost of an operation](../../../data-structures/amortized-analysis/amortized-cost.md)
+- [Lengths and gradients induced by the l1 IPM potential](ipm-lengths-and-gradients.md)
 
 ## Proof depends on
 
 - [One approximate minimum-ratio step decreases the IPM potential by a constant times kappa squared](one-step-potential-decrease.md)
-- [The direction to an optimal flow is a good minimum-ratio witness](optimal-direction-min-ratio-witness.md)
 
 ## Sources
 

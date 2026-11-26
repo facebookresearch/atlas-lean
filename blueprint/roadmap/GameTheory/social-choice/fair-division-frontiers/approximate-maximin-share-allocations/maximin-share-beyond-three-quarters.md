@@ -9,7 +9,6 @@ Apply new reduction rules (including bundles of four goods and asymmetric pairs)
 ## Depends on
 
 - [Alpha-maximin share allocation](alpha-maximin-share-allocation.md)
-- [Optimal maximin-share approximation](../../optimal-maximin-share-approximation.md)
 
 ## Proof depends on
 

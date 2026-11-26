@@ -11,10 +11,6 @@ Suppose a fractional $y$ Pareto-dominates $X$. For each agent, $v_i(y_i) \le \al
 - [Maximum bang-per-buck allocation supported by prices](maximum-bang-per-buck-allocation.md)
 - [Fractional Pareto optimality](fractional-pareto-optimality.md)
 
-## Proof depends on
-
-- [Maximum bang-per-buck allocation supported by prices](maximum-bang-per-buck-allocation.md)
-
 ## Sources
 
 - S. Barman, S. K. Krishnamurthy, R. Vaish, "Finding Fair and Efficient Allocations", EC 2018, arXiv:1707.04731.

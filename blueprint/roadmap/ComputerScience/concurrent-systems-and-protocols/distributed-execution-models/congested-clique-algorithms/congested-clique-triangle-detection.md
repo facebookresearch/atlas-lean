@@ -9,6 +9,7 @@ Partition the vertex set into $n^{1/3}$ parts and assign each of the $n$ triples
 ## Depends on
 
 - [The congested clique model](the-congested-clique-model.md)
+- [Matrix multiplication exponent](../../../../TheoryOfComputation/algebraic-complexity/matrix-multiplication-exponent/matrix-multiplication-exponent.md)
 
 ## Proof depends on
 

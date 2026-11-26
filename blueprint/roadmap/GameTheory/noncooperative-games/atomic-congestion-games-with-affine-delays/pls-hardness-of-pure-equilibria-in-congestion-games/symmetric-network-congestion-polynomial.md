@@ -10,6 +10,7 @@ Rosenthal's potential of a profile equals $\sum_e \sum_{j=1}^{x_e} d_e(j)$, whic
 
 - [Congestion game](../../potential-games/congestion-game.md)
 - [Rosenthal's potential](../../potential-games/potential.md)
+- [Pure Nash equilibrium](../../potential-games/is-pure-nash.md)
 
 ## Proof depends on
 

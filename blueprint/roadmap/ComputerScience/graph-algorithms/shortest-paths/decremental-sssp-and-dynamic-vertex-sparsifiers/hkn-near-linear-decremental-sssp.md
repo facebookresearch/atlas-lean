@@ -14,12 +14,11 @@ On $G \cup F$, distances are realized by paths with few hops, so a weighted, rou
 
 ## Depends on
 
-- [Even-Shiloach: exact decremental BFS trees in O(mD) total update time](even-shiloach-total-time.md)
 - [Decremental (1+eps)-approximate single-source shortest paths](decremental-approximate-sssp-problem.md)
 
 ## Proof depends on
 
-- [Dense Dijkstra's algorithm](../dijkstra-s-algorithm/dijkstra.md)
+- [Even-Shiloach: exact decremental BFS trees in O(mD) total update time](even-shiloach-total-time.md)
 
 ## Sources
 

@@ -9,7 +9,6 @@ Simulate the randomized greedy MIS process (processing vertices in a random orde
 ## Depends on
 
 - [The massively parallel computation model](massively-parallel-computation-model.md)
-- [Luby's maximal independent set algorithm](../../concurrent-systems-and-protocols/local-distributed-algorithms/luby-s-maximal-independent-set-algorithm.md)
 
 ## Proof depends on
 

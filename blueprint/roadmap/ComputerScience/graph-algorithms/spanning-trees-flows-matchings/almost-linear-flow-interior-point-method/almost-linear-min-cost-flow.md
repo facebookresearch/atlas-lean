@@ -14,8 +14,6 @@ By capacity and cost scaling it suffices to treat $U, C \le \mathrm{poly}(m)$, a
 
 ## Depends on
 
-- [The l1 IPM reduces min-cost flow to an approximate dynamic min-ratio cycle problem](ipm-reduces-to-dynamic-min-ratio-cycle.md)
-- [Randomized dynamic min-ratio cycle data structure under hidden stable flow chasing](../dynamic-min-ratio-cycle-data-structures/randomized-dynamic-min-ratio-cycle.md)
 - [Integral minimum-cost flow instances with polynomially bounded data](integral-min-cost-flow-instance.md)
 
 ## Proof depends on

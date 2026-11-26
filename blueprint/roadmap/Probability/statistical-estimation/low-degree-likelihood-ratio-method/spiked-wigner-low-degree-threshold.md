@@ -8,7 +8,7 @@ By the additive Gaussian lemma (after rescaling), $\|L_n^{\le D}\|^2 = \sum_{d \
 
 ## Depends on
 
-- [Low-degree advantage of the additive Gaussian model](additive-gaussian-low-degree-advantage.md)
+- [Low-degree likelihood ratio and low-degree advantage](low-degree-likelihood-ratio.md)
 
 ## Proof depends on
 

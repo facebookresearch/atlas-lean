@@ -1,6 +1,6 @@
 # Implementable actions are exactly those not replicated more cheaply by a mixture
 
-In a principal-agent instance, action $i$ is implementable (the min-pay program for $i$ is feasible) if and only if there is no probability distribution $\lambda$ over the actions $k \ne i$ such that
+In a principal-agent instance, action $i$ is implementable (some contract $t \ge 0$ satisfies $T_i(t) - c_i \ge T_k(t) - c_k$ for all actions $k$) if and only if there is no probability distribution $\lambda$ over the actions $k \ne i$ such that
 
 $$
 \sum_{k \ne i} \lambda_k F_k = F_i \qquad \text{and} \qquad \sum_{k \ne i} \lambda_k c_k < c_i .
@@ -12,11 +12,7 @@ Write the incentive constraints as $(F_i - F_k) \cdot t \ge c_i - c_k$ with $t \
 
 ## Depends on
 
-- [Optimal contracts via one linear program per action](optimal-contract-min-pay-linear-programs.md)
-
-## Proof depends on
-
-- [Optimal contracts via one linear program per action](optimal-contract-min-pay-linear-programs.md)
+- [Hidden-action principal-agent instance and contract](hidden-action-principal-agent-instance.md)
 
 ## Sources
 

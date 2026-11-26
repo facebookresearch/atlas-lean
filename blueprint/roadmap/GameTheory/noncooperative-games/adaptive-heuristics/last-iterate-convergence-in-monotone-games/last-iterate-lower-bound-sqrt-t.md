@@ -10,10 +10,7 @@ Restrict to bilinear games $\min_x \max_y x^\top A y$, on which such methods act
 
 - [Extragradient and optimistic gradient descent-ascent](extragradient-and-optimistic-gradient.md)
 - [Gap function and tangent residual for monotone variational inequalities](gap-function-and-tangent-residual.md)
-
-## Proof depends on
-
-- [Gap function and tangent residual for monotone variational inequalities](gap-function-and-tangent-residual.md)
+- [Smooth monotone game and monotone variational inequality](smooth-monotone-game-variational-inequality.md)
 
 ## Sources
 

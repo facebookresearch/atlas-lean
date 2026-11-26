@@ -14,10 +14,6 @@ Both use approximate topological orders: the vertices are partitioned into low-d
 - [Decremental (1+eps)-approximate single-source shortest paths](decremental-approximate-sssp-problem.md)
 - [Oblivious and adaptive adversaries; amortized and worst-case update time](../../../data-structures/disjoint-sets-and-dynamic-trees/fully-dynamic-connectivity-and-spanning-forests/adversary-and-update-time-models.md)
 
-## Proof depends on
-
-- [Even-Shiloach: exact decremental BFS trees in O(mD) total update time](even-shiloach-total-time.md)
-
 ## Sources
 
 - Maximilian Probst Gutenberg, Christian Wulff-Nilsen, "Decremental SSSP in Weighted Digraphs: Faster and Against an Adaptive Adversary", SODA (2020), arXiv:2001.10821.

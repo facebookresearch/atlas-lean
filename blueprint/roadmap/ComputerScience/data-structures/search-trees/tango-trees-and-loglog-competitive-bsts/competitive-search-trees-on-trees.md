@@ -9,11 +9,9 @@ Decompose $G$ by a heavy-path style centroid decomposition into a structure of d
 ## Depends on
 
 - [Search trees on trees](search-trees-on-trees.md)
-- [Tango trees are $O(\log\log n)$-competitive](tango-competitiveness.md)
 
 ## Proof depends on
 
-- [Search trees on trees](search-trees-on-trees.md)
 - [Tango trees are $O(\log\log n)$-competitive](tango-competitiveness.md)
 
 ## Sources

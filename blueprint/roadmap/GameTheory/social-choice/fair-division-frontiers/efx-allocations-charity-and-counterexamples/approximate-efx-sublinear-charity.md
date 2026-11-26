@@ -16,6 +16,7 @@ Group the agents' bundles by value scale into $O(1/\varepsilon)$-granular classe
 
 - [Partial EFX allocation with an unallocated pool](partial-efx-allocation-with-pool.md)
 - [Rainbow cycle number](rainbow-cycle-number.md)
+- [Nash Welfare](../../../not-yet-classified/part-01/indivisible/nash-welfare.md)
 
 ## Proof depends on
 

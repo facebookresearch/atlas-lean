@@ -10,13 +10,7 @@ A binary distinguisher $A(x, y)$ has advantage $\mathbb{E}[(A(x,1) - A(x,0))(y -
 
 - [Outcome indistinguishability and its access hierarchy](outcome-indistinguishability.md)
 - [Multiaccurate predictors](../multicalibration-and-multiaccuracy/multiaccurate-predictor.md)
-- [Multicalibration implies multiaccuracy and calibration on every group](../multicalibration-and-multiaccuracy/multicalibration-implies-multiaccuracy.md)
-
-## Proof depends on
-
-- [Outcome indistinguishability and its access hierarchy](outcome-indistinguishability.md)
-- [Multiaccurate predictors](../multicalibration-and-multiaccuracy/multiaccurate-predictor.md)
-- [Multicalibration implies multiaccuracy and calibration on every group](../multicalibration-and-multiaccuracy/multicalibration-implies-multiaccuracy.md)
+- [Multicalibrated predictors](../multicalibration-and-multiaccuracy/multicalibrated-predictor.md)
 
 ## Sources
 

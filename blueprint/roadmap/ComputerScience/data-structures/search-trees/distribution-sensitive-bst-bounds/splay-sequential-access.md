@@ -10,10 +10,6 @@ Tarjan bounds the number of rotations by tracking the right spine of the tree: e
 
 - [Splay operation](../splay-tree/splay.md)
 
-## Proof depends on
-
-- [Splay operation](../splay-tree/splay.md)
-
 ## Sources
 
 - Robert E. Tarjan, "Sequential Access in Splay Trees Takes Linear Time", Combinatorica 5(4) (1985).

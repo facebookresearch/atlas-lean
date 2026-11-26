@@ -8,12 +8,8 @@ For perfect $G$ the stable set polytope equals the theta body, so $\vartheta(G, 
 
 ## Depends on
 
-- [Polynomial-time computability of the weighted Lovasz theta function](polynomial-time-computability-of-theta.md)
-- [Theta equals the independence number on perfect graphs](../theta-function-of-a-graph/lovasz-theta-eq-indep-num-of-is-perfect.md)
-- [Perfect graphs are those with STAB = QSTAB](../theta-function-of-a-graph/is-perfect-iff-stab-eq-qstab.md)
-- [Weak perfect graph theorem](../../graph-coloring/part-01/perfect-graphs/lovasz-weak-perfect-graph-general.md)
 - [Perfect graph](../../graph-coloring/part-01/perfect-graphs/is-perfect.md)
-- [Lovász's sandwich theorem](../theta-function-of-a-graph/sandwich.md)
+- [Lovász theta function](../theta-function-of-a-graph/lovasz-theta.md)
 
 ## Proof depends on
 
@@ -21,6 +17,8 @@ For perfect $G$ the stable set polytope equals the theta body, so $\vartheta(G, 
 - [Theta equals the independence number on perfect graphs](../theta-function-of-a-graph/lovasz-theta-eq-indep-num-of-is-perfect.md)
 - [Perfect graphs are those with STAB = QSTAB](../theta-function-of-a-graph/is-perfect-iff-stab-eq-qstab.md)
 - [Weak perfect graph theorem](../../graph-coloring/part-01/perfect-graphs/lovasz-weak-perfect-graph-general.md)
+- [Stable set polytope](../theta-function-of-a-graph/stab.md)
+- [Theta body](../theta-function-of-a-graph/th.md)
 
 ## Sources
 

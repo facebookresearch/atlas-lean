@@ -5,7 +5,6 @@ A randomized map $R : \mathcal{X} \to \mathcal{Y}$ is an **$\varepsilon_0$-diffe
 ## Depends on
 
 - [Differential privacy](../differential-privacy/differentially-private.md)
-- [The Laplace mechanism is differentially private](../laplace-and-exponential-mechanisms/laplace-mechanism-differentially-private.md)
 
 ## Sources
 

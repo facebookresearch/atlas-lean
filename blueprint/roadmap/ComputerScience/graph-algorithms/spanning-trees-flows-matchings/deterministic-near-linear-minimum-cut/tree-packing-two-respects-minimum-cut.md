@@ -16,10 +16,7 @@ Let $x$ be the fraction of packing weight on trees crossing $S$ at most twice; a
 
 - [Fractional spanning tree packings and the packing value](fractional-spanning-tree-packing.md)
 - [Cuts that k-respect a spanning tree](cuts-k-respecting-a-spanning-tree.md)
-
-## Proof depends on
-
-- [Spanning tree packings of value at least half the edge connectivity](tree-packing-half-edge-connectivity.md)
+- [Steiner minimum cuts of a terminal set](../isolating-cuts-and-steiner-min-cuts/steiner-minimum-cut.md)
 
 ## Sources
 

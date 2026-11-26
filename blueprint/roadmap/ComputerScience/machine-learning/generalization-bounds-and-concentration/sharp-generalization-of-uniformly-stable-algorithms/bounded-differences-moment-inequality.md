@@ -10,10 +10,6 @@ $$
 
 By McDiarmid's inequality, $f - \mathbb{E}f$ is sub-Gaussian with variance proxy $n\beta^2/4$, so $\Pr[|f - \mathbb{E}f| \ge t] \le 2e^{-2t^2/(n\beta^2)}$. Integrating the tail, $\mathbb{E}|f - \mathbb{E}f|^p = \int_0^\infty p t^{p-1}\Pr[|f - \mathbb{E}f| \ge t]\,dt \le 2\Gamma(p/2+1)(n\beta^2/2)^{p/2}$, and Stirling's bound $\Gamma(p/2+1)^{1/p} \le \sqrt{p}$ gives the claim.
 
-## Depends on
-
-- [McDiarmid's bounded-differences inequality, finite i.i.d. case](../../../../Probability/concentration-inequalities/mcdiarmid-s-inequality/mcdiarmid-one-sided-finite-iid.md)
-
 ## Proof depends on
 
 - [McDiarmid's bounded-differences inequality, finite i.i.d. case](../../../../Probability/concentration-inequalities/mcdiarmid-s-inequality/mcdiarmid-one-sided-finite-iid.md)

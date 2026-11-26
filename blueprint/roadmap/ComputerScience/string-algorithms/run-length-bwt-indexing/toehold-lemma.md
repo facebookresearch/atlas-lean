@@ -8,13 +8,15 @@ Maintain $q = \mathrm{SA}[ep]$ for the current interval. When extending by $c$: 
 
 ## Depends on
 
-- [Counting in BWT-runs space](rlfm-counting.md)
 - [Suffix array](../../data-structures/tries-and-integer-dictionaries/suffix-array/suffix-array.md)
+- [Burrows–Wheeler transform](../burrows-wheeler-transform-and-fm-index/bwt.md)
+- [Number $r$ of runs in the Burrows–Wheeler transform](../string-attractors-and-repetitiveness-measures/bwt-run-count.md)
+- [FM-index backward search](../burrows-wheeler-transform-and-fm-index/backward-search.md)
 
 ## Proof depends on
 
+- [LF-mapping from the last column](../burrows-wheeler-transform-and-fm-index/lf.md)
 - [Counting in BWT-runs space](rlfm-counting.md)
-- [Suffix array](../../data-structures/tries-and-integer-dictionaries/suffix-array/suffix-array.md)
 
 ## Sources
 

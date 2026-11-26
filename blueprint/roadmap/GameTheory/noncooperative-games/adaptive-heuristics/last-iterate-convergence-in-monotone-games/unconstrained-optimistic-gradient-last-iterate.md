@@ -10,6 +10,7 @@ Track the potential $\lVert F(z_t)\rVert^2$ plus a correction involving the diff
 
 - [Extragradient and optimistic gradient descent-ascent](extragradient-and-optimistic-gradient.md)
 - [Smooth monotone game and monotone variational inequality](smooth-monotone-game-variational-inequality.md)
+- [Gap function and tangent residual for monotone variational inequalities](gap-function-and-tangent-residual.md)
 
 ## Proof depends on
 

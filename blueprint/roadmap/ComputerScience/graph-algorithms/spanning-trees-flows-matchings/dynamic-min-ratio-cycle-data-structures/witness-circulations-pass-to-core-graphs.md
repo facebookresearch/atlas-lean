@@ -16,10 +16,10 @@ Contracting the components of $F$ maps a circulation to a circulation, and $|\bo
 
 - [Sparsified core graphs with short low-congestion embeddings](sparsified-core-graph-embedding.md)
 - [Hidden stable flow chasing property of a dynamic min-ratio cycle instance](hidden-stable-flow-chasing.md)
+- [Core graph of a low-stretch forest with stretched lengths and tree-shifted gradients](core-graph-of-low-stretch-forest.md)
 
 ## Proof depends on
 
-- [Sparsified core graphs with short low-congestion embeddings](sparsified-core-graph-embedding.md)
 - [Every circulation is a combination of fundamental tree cycles](circulation-tree-cycle-decomposition.md)
 
 ## Sources

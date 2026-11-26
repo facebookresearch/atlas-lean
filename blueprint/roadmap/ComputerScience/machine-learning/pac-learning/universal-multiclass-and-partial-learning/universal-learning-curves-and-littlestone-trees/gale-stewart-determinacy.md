@@ -9,10 +9,7 @@ Determinacy of open games is the Gale–Stewart theorem: if the open player has 
 ## Depends on
 
 - [Gale–Stewart games for learning](gale-stewart-games.md)
-
-## Proof depends on
-
-- [Gale–Stewart games for learning](gale-stewart-games.md)
+- [Infinite Littlestone trees](infinite-littlestone-tree.md)
 
 ## Sources
 

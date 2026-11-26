@@ -8,8 +8,7 @@ Differential privacy bounds how much the transcript can shift the posterior on a
 
 ## Depends on
 
-- [Transfer theorem for adaptive data analysis](../differential-privacy/differentially-private-transfer.md)
-- [Differential privacy answers quadratically many adaptive statistical queries efficiently](adaptive-statistical-queries-via-privacy.md)
+- [Differential privacy](../differential-privacy/differentially-private.md)
 
 ## Proof depends on
 

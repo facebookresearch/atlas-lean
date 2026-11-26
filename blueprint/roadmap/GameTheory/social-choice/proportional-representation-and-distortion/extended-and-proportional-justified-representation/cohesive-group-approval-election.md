@@ -11,7 +11,6 @@ A $1$-cohesive group is a group of at least $n/k$ voters sharing an approved can
 ## Depends on
 
 - [Approval-based committee elections](../../computational-social-choice/approval-based-committee-elections.md)
-- [Justified representation for AV, SAV and MAV](../../computational-social-choice/remaining-clauses-of-justified-representation.md)
 
 ## Sources
 

@@ -11,7 +11,6 @@ Its *value* is $\sum_{T} y_T$, and the *packing number* $\tau(G)$ is the maximum
 ## Depends on
 
 - [Spanning tree](../../../../GraphTheory/algebraic-graph-theory/part-01/kirchhoff-s-matrix-tree-theorem/is-spanning-tree.md)
-- [Nash–Williams arboricity theorem](../../../../GraphTheory/graph-invariants-and-labelings/nash-williams-arboricity-theorem/nash-williams-arboricity.md)
 
 ## Sources
 

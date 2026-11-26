@@ -9,12 +9,9 @@ The multicalibration violation is linear in the adversary's mixed strategy, so t
 ## Depends on
 
 - [Multicalibrated predictors](multicalibrated-predictor.md)
-- [The $\sqrt{T}$ regret bound of Hedge](../online-learning-and-boosting/hedge-algorithm/regret-le-two-sqrt.md)
-- [Von Neumann's minimax theorem](../../../GameTheory/noncooperative-games/von-neumann-s-minimax-theorem/matrix-game-minimax.md)
 
 ## Proof depends on
 
-- [Multicalibrated predictors](multicalibrated-predictor.md)
 - [The $\sqrt{T}$ regret bound of Hedge](../online-learning-and-boosting/hedge-algorithm/regret-le-two-sqrt.md)
 - [Von Neumann's minimax theorem](../../../GameTheory/noncooperative-games/von-neumann-s-minimax-theorem/matrix-game-minimax.md)
 

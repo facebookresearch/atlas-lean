@@ -8,14 +8,11 @@ By the coupling lemma, each smooth instance is one of $k = O(\log(T)/\sigma)$ i.
 
 ## Depends on
 
-- [Coupling smooth sequences with independent samples](smooth-sequence-coupling-lemma.md)
-- [Smoothed regret bounds depending on VC dimension and bracketing numbers](smoothed-online-regret-bounds.md)
-- [Regularized Follow-the-Leader / Online Mirror Descent regret](../regularized-follow-the-leader-online-mirror-descent-regret.md)
+- [Smoothed adversaries in online learning](smoothed-adversary.md)
 
 ## Proof depends on
 
 - [Coupling smooth sequences with independent samples](smooth-sequence-coupling-lemma.md)
-- [Smoothed regret bounds depending on VC dimension and bracketing numbers](smoothed-online-regret-bounds.md)
 - [Regularized Follow-the-Leader / Online Mirror Descent regret](../regularized-follow-the-leader-online-mirror-descent-regret.md)
 
 ## Sources

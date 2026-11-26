@@ -11,10 +11,6 @@ Consider an execution in which a set $B$ of $f/2$ processes is Byzantine and ign
 - [Reaching Byzantine agreement](../solves.md)
 - [Fail-stop, omission and Byzantine faults](../../distributed-execution-models/fail-stop-omission-and-byzantine-faults.md)
 
-## Proof depends on
-
-- [No synchronous protocol reaches Byzantine agreement when $2 \le n \le 3m$](../not-solves-of-two-le-card.md)
-
 ## Sources
 
 - D. Dolev, R. Reischuk, "Bounds on Information Exchange for Byzantine Agreement", Journal of the ACM 32(1) (1985).

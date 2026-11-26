@@ -8,15 +8,14 @@ Fix a minimum vertex cut $N$ splitting $V \setminus N$ into $L$ and the rest. If
 
 ## Depends on
 
-- [Isolating cut lemma with logarithmically many max-flow calls](isolating-cut-lemma.md)
 - [Maximum-flow oracles and the max-flow call model for cut problems](max-flow-oracle-call-model.md)
 - [$k$-vertex-connected graph](../../../../GraphTheory/paths-cycles-connectivity/vertex-connectivity/is-vertex-connected.md)
-- [Vertex cuts separating two vertices](../../../../GraphTheory/paths-cycles-connectivity/menger-s-theorem/is-stvertex-cut.md)
 
 ## Proof depends on
 
 - [Isolating cut lemma with logarithmically many max-flow calls](isolating-cut-lemma.md)
 - [Menger's theorem for vertex cuts and internally disjoint paths](../../../../GraphTheory/paths-cycles-connectivity/menger-s-theorem/menger-vertex-max-min.md)
+- [Vertex cuts separating two vertices](../../../../GraphTheory/paths-cycles-connectivity/menger-s-theorem/is-stvertex-cut.md)
 
 ## Sources
 

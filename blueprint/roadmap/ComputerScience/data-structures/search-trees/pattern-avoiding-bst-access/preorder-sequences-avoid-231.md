@@ -10,11 +10,7 @@ If $X$ is a preorder sequence with root $x_1$, all keys smaller than $x_1$ prece
 
 - [Pattern-avoiding access sequences](pattern-avoiding-access-sequence.md)
 - [The pattern $231$](../../../../Combinatorics/permutations/permutation-patterns/permutations-counted-by-odd-indexed-fibonacci-nu/pat231.md)
-
-## Proof depends on
-
-- [Pattern-avoiding access sequences](pattern-avoiding-access-sequence.md)
-- [The pattern $231$](../../../../Combinatorics/permutations/permutation-patterns/permutations-counted-by-odd-indexed-fibonacci-nu/pat231.md)
+- [Deque and traversal conjectures for splay trees](../distribution-sensitive-bst-bounds/deque-and-traversal-conjectures.md)
 
 ## Sources
 

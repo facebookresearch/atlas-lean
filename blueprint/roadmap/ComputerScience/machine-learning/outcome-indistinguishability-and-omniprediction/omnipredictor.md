@@ -8,12 +8,6 @@ $$
 
 A single predictor thus serves as an agnostic learner for every loss in $\mathcal{L}$ simultaneously, the loss being chosen only after learning.
 
-## Depends on
-
-- [Multicalibrated predictors](../multicalibration-and-multiaccuracy/multicalibrated-predictor.md)
-- [Learners and agnostic PAC learnability](../pac-learning/agnostic-pac-learning-and-uniform-convergence/learners-and-agnostic-pac-learnability.md)
-- [Characterization of proper scoring rules](../../../GameTheory/mechanism-design/characterization-of-proper-scoring-rules.md)
-
 ## Sources
 
 - P. Gopalan, A. T. Kalai, O. Reingold, V. Sharan, U. Wieder, "Omnipredictors", ITCS (2022), arXiv:2109.05389.

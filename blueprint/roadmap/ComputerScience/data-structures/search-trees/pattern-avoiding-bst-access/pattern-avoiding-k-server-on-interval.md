@@ -9,14 +9,11 @@ The pattern-avoidance structure theorem decomposes the request sequence into a b
 ## Depends on
 
 - [Pattern-avoiding access sequences](pattern-avoiding-access-sequence.md)
-- [Marcus–Tardos theorem on excluded permutation matrices](marcus-tardos-theorem.md)
 - [The k-server problem](../../../online-algorithms/paging-and-k-server/the-k-server-problem.md)
 
 ## Proof depends on
 
-- [Pattern-avoiding access sequences](pattern-avoiding-access-sequence.md)
 - [Marcus–Tardos theorem on excluded permutation matrices](marcus-tardos-theorem.md)
-- [The k-server problem](../../../online-algorithms/paging-and-k-server/the-k-server-problem.md)
 
 ## Sources
 

@@ -9,6 +9,7 @@ Termination: at least $n - t$ correct broadcasts are eventually delivered by eve
 ## Depends on
 
 - [Asynchronous common subset](asynchronous-common-subset.md)
+- [Asynchronous binary Byzantine agreement and common coins](asynchronous-binary-byzantine-agreement.md)
 
 ## Proof depends on
 

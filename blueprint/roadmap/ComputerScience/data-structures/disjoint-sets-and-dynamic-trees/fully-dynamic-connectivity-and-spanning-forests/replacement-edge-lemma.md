@@ -15,6 +15,7 @@ Any spanning forest of $G - e$ restricted to the tree of $F$ containing $e$ must
 ## Depends on
 
 - [Fully dynamic connectivity, spanning forest and minimum spanning forest problems](fully-dynamic-connectivity-problems.md)
+- [Spanning forest of an input graph](../../../graph-algorithms/spanning-trees-flows-matchings/kruskal-s-algorithm/is-spanning-forest.md)
 
 ## Proof depends on
 

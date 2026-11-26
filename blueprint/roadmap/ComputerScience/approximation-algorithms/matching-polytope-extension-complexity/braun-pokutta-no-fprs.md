@@ -14,16 +14,18 @@ For (i), work with the nested slack matrix of the pair $(P_{\mathrm{M}}(n),(1+\t
 
 ## Depends on
 
-- [Rothvoss: the perfect matching polytope of K_n has extension complexity 2^Omega(n)](rothvoss-perfect-matching-xc.md)
 - [Multiplicatively approximate relaxations of the matching polytope](approximate-polytope-relaxation.md)
-- [Nonnegative factorizations of nested-pair slack matrices and sandwiched extensions](nested-pair-factorization.md)
-- [Fiorini's hyperplane separation lower bound on nonnegative rank](hyperplane-separation-bound.md)
+- [Linear extensions of a polytope and their inequality count](linear-extension-size.md)
+- [Matching polytope](../../../GraphTheory/matchings-and-flows/matching-polytope/matching-polytope.md)
 
 ## Proof depends on
 
 - [Rothvoss: the perfect matching polytope of K_n has extension complexity 2^Omega(n)](rothvoss-perfect-matching-xc.md)
 - [Nonnegative factorizations of nested-pair slack matrices and sandwiched extensions](nested-pair-factorization.md)
 - [Fiorini's hyperplane separation lower bound on nonnegative rank](hyperplane-separation-bound.md)
+- [Slack matrix of a nested pair of polytopes](slack-matrix-nested-pair.md)
+- [Odd-cut slack matrix of the perfect matching polytope](odd-cut-matching-slack.md)
+- [Nonnegative rank of a matrix](../../machine-learning/unsupervised-learning/non-negative-matrix-factorization/nonneg-rank.md)
 
 ## Sources
 

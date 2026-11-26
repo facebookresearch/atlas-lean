@@ -1,7 +1,6 @@
 # Information-Transfer Lower Bounds for Dynamic Problems
 
 - [Amortized update and query cost of a dynamic cell-probe structure](amortized-cell-probe-costs.md)
-- [Dynamic graph connectivity](dynamic-connectivity-problem.md)
 - [Dynamic partial sums over a group](dynamic-partial-sums-problem.md)
 - [Information transfer and the information-transfer tree](information-transfer-tree.md)
 - [Partial sums over permutation groups reduce to connectivity of disjoint paths](grid-permutation-reduction.md)

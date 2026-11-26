@@ -15,15 +15,13 @@ Maintain distance estimates $d(\cdot)$ and alternate a Dijkstra phase, which rel
 ## Depends on
 
 - [The negative-edge count eta of shortest paths and the B-shifted graph](negative-edge-count-eta.md)
-- [A feasible price function exists exactly when the graph has no negative cycle](feasible-potential-iff-no-negative-cycle.md)
-- [Dense Dijkstra's algorithm](../dijkstra-s-algorithm/dijkstra.md)
-- [Dijkstra's algorithm with a binary heap](../../graph-algorithm-bounds/dijkstra-s-algorithm-with-a-binary-heap.md)
-- [Bellman–Ford algorithm](../bellman-ford-algorithm/bellman-ford.md)
+- [Price functions, reduced edge weights, and valid reweightings of a directed graph](price-functions-and-reduced-weights.md)
 
 ## Proof depends on
 
-- [The negative-edge count eta of shortest paths and the B-shifted graph](negative-edge-count-eta.md)
 - [Dijkstra's algorithm with a binary heap](../../graph-algorithm-bounds/dijkstra-s-algorithm-with-a-binary-heap.md)
+- [A feasible price function exists exactly when the graph has no negative cycle](feasible-potential-iff-no-negative-cycle.md)
+- [Dense Dijkstra's algorithm](../dijkstra-s-algorithm/dijkstra.md)
 - [Bellman–Ford algorithm](../bellman-ford-algorithm/bellman-ford.md)
 
 ## Sources

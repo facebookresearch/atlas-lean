@@ -8,13 +8,14 @@ Extend the Lagrangian duality framework to subadditive buyers by relaxing to an 
 
 ## Depends on
 
-- [Lagrangian duality upper bounds revenue by virtual welfare under flows](duality-virtual-welfare-revenue-bound.md)
 - [XOS set functions, demand queries and value queries](../combinatorial-and-multi-agent-contracts/xos-functions-demand-and-value-queries.md)
+- [Bayesian incentive compatibility](../revelation-principle/is-bayes-incentive-compatible.md)
 
 ## Proof depends on
 
 - [Simple mechanisms approximate optimal revenue for many additive and unit-demand buyers](simple-mechanisms-many-buyers-duality.md)
 - [Simple mechanisms are constant-factor optimal for a subadditive buyer over independent items](simple-mechanisms-subadditive-buyer.md)
+- [Lagrangian duality upper bounds revenue by virtual welfare under flows](duality-virtual-welfare-revenue-bound.md)
 
 ## Sources
 

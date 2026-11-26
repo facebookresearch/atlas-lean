@@ -12,14 +12,6 @@ such that every vertex of $V^{\mathrm{sparse}}$ is $\varepsilon$-sparse, and eve
 
 Call an edge $\{u, v\}$ a *friend edge* if $|N(u) \cap N(v)| \ge (1 - \varepsilon)\Delta$, and a vertex *dense* if it has at least $(1 - \varepsilon)\Delta$ friends; a vertex that is not dense is $\Omega(\varepsilon)$-sparse by counting missing edges among its neighbors. The almost-cliques are the connected components of the friend graph on dense vertices; a transitivity-type estimate shows that friends of friends share most of their neighborhoods, which gives the size and boundary bounds after rescaling $\varepsilon$ by a constant.
 
-## Depends on
-
-- [Palette sparsification experiment, sampled lists and the conflict graph](palette-sparsification-experiment.md)
-
-## Proof depends on
-
-- [Bounded maximum degree implies degeneracy](../../../GraphTheory/graph-coloring/part-01/degeneracy-and-greedy-coloring/of-forall-degree-le.md)
-
 ## Sources
 
 - David G. Harris, Johannes Schneider, Hsin-Hao Su, "Distributed (Delta+1)-Coloring in Sublogarithmic Rounds", STOC (2016); J. ACM 65 (2018).

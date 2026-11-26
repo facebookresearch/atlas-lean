@@ -16,10 +16,6 @@ Removing $w$ lowers voter $i$'s term by $1/\lvert A_i \cap W\rvert$ exactly when
 
 - [Approval-based committee elections](../../computational-social-choice/approval-based-committee-elections.md)
 
-## Proof depends on
-
-- [Approval-based committee elections](../../computational-social-choice/approval-based-committee-elections.md)
-
 ## Sources
 
 - H. Aziz, M. Brill, V. Conitzer, E. Elkind, R. Freeman, T. Walsh, "Justified Representation in Approval-Based Committee Voting", Social Choice and Welfare 48(2) (2017), arXiv:1407.8269.

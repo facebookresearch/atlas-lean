@@ -10,10 +10,6 @@ Define $I'$ by giving agent $i$ value $v_i'(g_k)$ equal to the $k$-th largest of
 
 - [Alpha-maximin share allocation](alpha-maximin-share-allocation.md)
 
-## Proof depends on
-
-- [Alpha-maximin share allocation](alpha-maximin-share-allocation.md)
-
 ## Sources
 
 - S. Bouveret, M. Lemaître, "Characterizing conflicts in fair division of indivisible goods using a scale of criteria", Autonomous Agents and Multi-Agent Systems 30 (2016).

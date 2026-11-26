@@ -14,10 +14,9 @@ Restricted SSSP is solved in $O((m+n\log\log n)\log^2 n)$ by recursive decomposi
 
 ## Depends on
 
-- [Decomposition of restricted graphs: progress in size or kappa with O(log n) expected hits per shortest path](bcf-restricted-graph-decomposition.md)
-- [Negative-weight SSSP in O(m log^8 n log W) time by a combinatorial Las Vegas algorithm](bnw-near-linear-negative-sssp.md)
-- [Karp's minimum cycle mean theorem](../minimum-cycle-mean/karp-min-cycle-mean.md)
 - [Minimum cycle mean of a weighted edge list](../minimum-cycle-mean/is-min-cycle-mean.md)
+- [Negative-weight single-source shortest paths with integer weights bounded below by -W](negative-weight-sssp-integer-weights.md)
+- [Weak and strong directed low-diameter decompositions with overhead rho](directed-low-diameter-decomposition.md)
 
 ## Proof depends on
 

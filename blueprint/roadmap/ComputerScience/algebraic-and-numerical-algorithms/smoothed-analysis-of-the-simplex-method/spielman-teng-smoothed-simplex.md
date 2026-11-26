@@ -15,7 +15,6 @@ Phase I constructs an auxiliary program with a known starting vertex whose shado
 ## Proof depends on
 
 - [Shadow vertices are bounded by edges of the polar section](shadow-vertices-and-polar-section.md)
-- [The shadow vertex pivot rule and the smoothed shadow bound](shadow-vertex-rule-and-shadow-bound.md)
 
 ## Sources
 

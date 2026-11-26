@@ -15,10 +15,7 @@ Agent $i \in S$ is willing to work iff $\alpha_i f(i \mid S \setminus \{i\}) \ge
 ## Depends on
 
 - [Multi-agent binary-action contract with a team reward function](multi-agent-binary-action-contract.md)
-
-## Proof depends on
-
-- [Multi-agent binary-action contract with a team reward function](multi-agent-binary-action-contract.md)
+- [Submodular set function](../../../ComputerScience/approximation-algorithms/maximum-n-times-coverage/is-submodular.md)
 
 ## Sources
 

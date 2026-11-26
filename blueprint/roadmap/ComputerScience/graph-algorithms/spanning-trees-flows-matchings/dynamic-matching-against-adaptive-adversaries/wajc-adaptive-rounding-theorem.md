@@ -14,13 +14,14 @@ Maintain a fractional matching $x$ deterministically, so its evolution does not 
 
 ## Depends on
 
-- [Sampling colour classes of edge-coloured fractional matchings with negative association](colour-class-sampling-lemma.md)
-- [Deterministic (c, d, 0)-kernels preserve maximum matching within 2c(1+1/d)](kernel-approximation-lemma.md)
 - [Oblivious and adaptive adversaries; amortized and worst-case update time](../../../data-structures/disjoint-sets-and-dynamic-trees/fully-dynamic-connectivity-and-spanning-forests/adversary-and-update-time-models.md)
+- [Fully dynamic alpha-approximate maximum matching and its value version](dynamic-approximate-matching-problem.md)
 
 ## Proof depends on
 
 - [The augmenting-path maximum matching](../maximum-bipartite-matching/max-matching.md)
+- [Sampling colour classes of edge-coloured fractional matchings with negative association](colour-class-sampling-lemma.md)
+- [Deterministic (c, d, 0)-kernels preserve maximum matching within 2c(1+1/d)](kernel-approximation-lemma.md)
 
 ## Sources
 

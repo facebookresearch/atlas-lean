@@ -8,13 +8,12 @@ By the additive Gaussian lemma, $\|L^{\le D}\|^2 = \sum_{d \le D}\frac{\lambda^{
 
 ## Depends on
 
-- [Low-degree advantage of the additive Gaussian model](additive-gaussian-low-degree-advantage.md)
+- [Low-degree likelihood ratio and low-degree advantage](low-degree-likelihood-ratio.md)
 - [Low-degree conjecture](low-degree-conjecture.md)
 
 ## Proof depends on
 
 - [Low-degree advantage of the additive Gaussian model](additive-gaussian-low-degree-advantage.md)
-- [Low-degree conjecture](low-degree-conjecture.md)
 
 ## Sources
 

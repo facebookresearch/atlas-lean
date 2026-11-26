@@ -9,14 +9,12 @@ A generator with breadth and a decidable membership oracle problem can be turned
 ## Depends on
 
 - [Generation with breadth and the membership oracle problem](generation-with-breadth.md)
-- [Angluin's tell-tale characterization of identifiability in the limit](angluin-tell-tale-characterization.md)
-- [Every countable collection of languages is generatable in the limit](kleinberg-mullainathan-generation-theorem.md)
-- [Classes with no infinite Littlestone tree are learnable at exponential rate](../pac-learning/universal-multiclass-and-partial-learning/universal-learning-curves-and-littlestone-trees/exponential-rate-upper-bound.md)
+- [Generation in the limit](generation-in-the-limit.md)
+- [Identification in the limit from positive examples](identification-in-the-limit.md)
+- [Realizable distributions, learning curves and universal rates](../pac-learning/universal-multiclass-and-partial-learning/universal-learning-curves-and-littlestone-trees/universal-rate.md)
 
 ## Proof depends on
 
-- [Generation with breadth and the membership oracle problem](generation-with-breadth.md)
-- [Angluin's tell-tale characterization of identifiability in the limit](angluin-tell-tale-characterization.md)
 - [Every countable collection of languages is generatable in the limit](kleinberg-mullainathan-generation-theorem.md)
 - [Classes with no infinite Littlestone tree are learnable at exponential rate](../pac-learning/universal-multiclass-and-partial-learning/universal-learning-curves-and-littlestone-trees/exponential-rate-upper-bound.md)
 

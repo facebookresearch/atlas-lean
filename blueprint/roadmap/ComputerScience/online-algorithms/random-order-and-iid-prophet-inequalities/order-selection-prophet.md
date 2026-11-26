@@ -8,14 +8,8 @@ Peng and Tang reduce order design to choosing an *arrival time* in $[0,1]$ for e
 
 ## Depends on
 
-- [Blind strategies beat $1 - 1/e$ for prophet secretary](blind-strategies-prophet-secretary.md)
-- [Tight $0.745$ prophet inequality for i.i.d. values](iid-prophet-tight-bound.md)
-
-## Proof depends on
-
-- [Blind strategies beat $1 - 1/e$ for prophet secretary](blind-strategies-prophet-secretary.md)
-- [Tight $0.745$ prophet inequality for i.i.d. values](iid-prophet-tight-bound.md)
+- [Gambler-to-prophet ratios under different arrival models](prophet-ratio-by-arrival-model.md)
 
 ## Sources
 
-- Bo Peng, Zhihao Gavin Tang, "Order Selection Prophet Inequality: From Threshold Optimization to Arrival Time Design", FOCS (2022); SIAM Journal on Computing (2025), arXiv:2204.06614.
+- Bo Peng, Zhihao Gavin Tang, "Order Selection Prophet Inequality: From Threshold Optimization to Arrival Time Design", FOCS (2022); SIAM Journal on Computing (2025), arXiv:2204.01425.

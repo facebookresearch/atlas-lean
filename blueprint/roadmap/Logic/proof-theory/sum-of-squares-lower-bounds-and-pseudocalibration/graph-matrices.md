@@ -8,10 +8,6 @@ $$
 
 summed over injective embeddings $\sigma$ of the vertices of $\alpha$ into $[n]$ mapping $U_\alpha$ to $I$ and $V_\alpha$ to $J$. With high probability $\|M_\alpha\| \le \widetilde{O}\bigl(n^{(|V(\alpha)| - |S_{\min}|)/2}\bigr)$, where $S_{\min}$ is a minimum-size vertex separator of $U_\alpha$ and $V_\alpha$ in $\alpha$.
 
-## Depends on
-
-- [Pseudocalibration of pseudo-expectations](pseudocalibration.md)
-
 ## Sources
 
 - K. Ahn, D. Medarametla, A. Potechin, "Graph matrices: norm bounds and applications", arXiv:1604.03423 (2016).

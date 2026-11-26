@@ -14,9 +14,8 @@ Maintain $\widetilde{O}(1)^d$ branching tree chains whose levels are dynamic low
 
 ## Depends on
 
-- [Tree chains with shifts and rebuilds over recursive sparsified core graphs](shifted-tree-chain.md)
 - [Approximate dynamic min-ratio cycle problem with hidden stability](dynamic-min-ratio-cycle-hidden-stability.md)
-- [Deterministic dynamic spanners with low-recourse short embeddings under deletions and vertex splits](deterministic-dynamic-spanner-embedding.md)
+- [Hidden stable flow chasing property of a dynamic min-ratio cycle instance](hidden-stable-flow-chasing.md)
 
 ## Proof depends on
 
@@ -25,6 +24,7 @@ Maintain $\widetilde{O}(1)^d$ branching tree chains whose levels are dynamic low
 - [Low stretch preserves a minimum-ratio cycle among fundamental tree cycles](tree-cycles-approximate-min-ratio.md)
 - [Deterministic dynamic spanners with low-recourse short embeddings under deletions and vertex splits](deterministic-dynamic-spanner-embedding.md)
 - [Link-cut trees take logarithmic amortized time](../../../data-structures/disjoint-sets-and-dynamic-trees/link-cut-tree/link-cut-trees-take-logarithmic-amortized-time.md)
+- [Tree chains with shifts and rebuilds over recursive sparsified core graphs](shifted-tree-chain.md)
 
 ## Sources
 

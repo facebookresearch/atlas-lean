@@ -21,12 +21,13 @@ Write $S=\sum_{t=1}^{r}R_t$ with nonnegative rank-one $R_t$, so $\|R_t\|_\infty 
 ## Depends on
 
 - [Nonnegative rank of a matrix](../../machine-learning/unsupervised-learning/non-negative-matrix-factorization/nonneg-rank.md)
-- [A nonnegative factorization bounds the nonnegative rank](../../machine-learning/unsupervised-learning/non-negative-matrix-factorization/nonneg-rank-le-of-mul-eq.md)
-- [Communication matrix](../../../TheoryOfComputation/communication-complexity/deterministic-communication-protocols/comm-matrix.md)
+- [Linear extensions of a polytope and their inequality count](linear-extension-size.md)
+- [Slack matrix of a nested pair of polytopes](slack-matrix-nested-pair.md)
 
 ## Proof depends on
 
 - [A nonnegative factorization bounds the nonnegative rank](../../machine-learning/unsupervised-learning/non-negative-matrix-factorization/nonneg-rank-le-of-mul-eq.md)
+- [Nonnegative factorizations of nested-pair slack matrices and sandwiched extensions](nested-pair-factorization.md)
 
 ## Sources
 

@@ -9,11 +9,10 @@ For an $\varepsilon$-DP pair the privacy loss $L$ takes values in $[-\varepsilon
 ## Depends on
 
 - [Zero-concentrated differential privacy](zero-concentrated-dp.md)
-- [The Gaussian mechanism satisfies zCDP with parameter sensitivity squared over twice the variance](gaussian-mechanism-zcdp.md)
+- [Differential privacy](../differential-privacy/differentially-private.md)
 
 ## Proof depends on
 
-- [Zero-concentrated differential privacy](zero-concentrated-dp.md)
 - [The Gaussian mechanism satisfies zCDP with parameter sensitivity squared over twice the variance](gaussian-mechanism-zcdp.md)
 
 ## Sources

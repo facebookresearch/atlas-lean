@@ -10,11 +10,9 @@ Existence iterates directed expander decomposition: decompose $G$ into $\phi$-ex
 ## Depends on
 
 - [Directed phi-expander hierarchies of a directed graph](directed-phi-expander-hierarchy.md)
-- [Every directed graph has a phi-expander decomposition whose backward edges number O(phi m log m)](directed-expander-decomposition-existence.md)
 
 ## Proof depends on
 
-- [Directed phi-expander hierarchies of a directed graph](directed-phi-expander-hierarchy.md)
 - [Every directed graph has a phi-expander decomposition whose backward edges number O(phi m log m)](directed-expander-decomposition-existence.md)
 
 ## Sources

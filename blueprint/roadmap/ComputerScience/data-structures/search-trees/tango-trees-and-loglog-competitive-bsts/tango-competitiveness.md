@@ -8,8 +8,8 @@ Summing the per-access bound gives cost $O((\sum_t k_t + m)(1 + \log\log n)) = O
 
 ## Depends on
 
-- [Cost of a tango-tree access](tango-access-cost.md)
-- [Wilber's first lower bound](../wilber-and-funnel-lower-bounds/wilber-first-bound.md)
+- [Tango trees](tango-tree.md)
+- [The binary search tree access model](../dynamic-optimality/the-binary-search-tree-access-model.md)
 
 ## Proof depends on
 

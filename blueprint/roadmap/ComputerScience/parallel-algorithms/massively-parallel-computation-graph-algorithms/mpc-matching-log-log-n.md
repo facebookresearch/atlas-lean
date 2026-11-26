@@ -10,10 +10,6 @@ Compress rounds of a centralized or LOCAL fractional matching process: randomly 
 
 - [The massively parallel computation model](massively-parallel-computation-model.md)
 
-## Proof depends on
-
-- [The massively parallel computation model](massively-parallel-computation-model.md)
-
 ## Sources
 
 - A. Czumaj, J. Łącki, A. Mądry, S. Mitrović, K. Onak, P. Sankowski, "Round Compression for Parallel Matching Algorithms", STOC 2018; SIAM Journal on Computing 49(5) (2020), arXiv:1707.03478.

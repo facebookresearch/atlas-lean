@@ -14,9 +14,7 @@ Following Hanneke's analysis of recursive subsample majorities, it suffices to s
 
 ## Depends on
 
-- [Optimal sample complexity of realizable PAC learning](../../optimal-sample-complexity-of-realizable-pac-learning.md)
-- [Fundamental theorem of statistical learning (binary, 0-1 loss)](../../../generalization-bounds-and-concentration/vc-and-natarajan-classes/fundamental-theorem-of-statistical-learning.md)
-- [Leave-one-out bounds give optimal high-probability risk bounds for aggregated learners](leave-one-out-to-high-probability.md)
+- [The realizable distribution family](../../occam-bound-for-consistent-learners/realizable-family.md)
 
 ## Proof depends on
 

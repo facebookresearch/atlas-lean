@@ -8,7 +8,7 @@ Bulánek, Koucký and Saks construct an adversary that repeatedly inserts into t
 
 ## Depends on
 
-- [Classical $O(\log^2 n)$ list labeling](list-labeling-log-squared-upper.md)
+- [The online list-labeling problem](online-list-labeling.md)
 
 ## Proof depends on
 

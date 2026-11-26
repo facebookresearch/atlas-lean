@@ -9,12 +9,7 @@ Fix $\ell$ and $c \in \mathcal{C}$. On a level set $\{p = v\}$, multicalibration
 ## Depends on
 
 - [Omnipredictors](omnipredictor.md)
-- [No-access OI is multiaccuracy and sample-access OI is multicalibration](outcome-indistinguishability-equivalences.md)
-
-## Proof depends on
-
-- [Omnipredictors](omnipredictor.md)
-- [No-access OI is multiaccuracy and sample-access OI is multicalibration](outcome-indistinguishability-equivalences.md)
+- [Multicalibrated predictors](../multicalibration-and-multiaccuracy/multicalibrated-predictor.md)
 
 ## Sources
 

@@ -14,9 +14,9 @@ Estimate each transition and reward to accuracy $\varepsilon(1-\gamma)^2$ with r
 
 ## Depends on
 
-- [Replicability costs a quadratic factor in the replicability parameter](replicable-coin-problem-lower-bound.md)
-- [Generative-model sample bound (restricted, non-minimax)](../../../reinforcement-learning/generative-model-sample-bound.md)
-- [TV indistinguishability, replicability and approximate privacy are equivalent for PAC learning](tv-indistinguishability-replicability-privacy-equivalence.md)
+- [Markov decision process](../../../../heuristic-search-and-planning/value-iteration/mdp.md)
+- [Optimal value of a discounted Markov decision process](../../../../heuristic-search-and-planning/value-iteration/optimal-value.md)
+- [Total-variation indistinguishable learning rules](tv-indistinguishable-learning-rule.md)
 
 ## Proof depends on
 

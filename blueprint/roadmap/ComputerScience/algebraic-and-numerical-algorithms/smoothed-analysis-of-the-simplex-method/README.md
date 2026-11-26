@@ -11,4 +11,3 @@
 - [Vershynin's smoothed simplex walks of length polylogarithmic in the number of constraints](vershynin-polylogarithmic-smoothed-walks.md)
 - [Smoothed lower bound for the shadow vertex simplex method](shadow-vertex-smoothed-lower-bound.md)
 - [Bach-Huiberts optimal noise dependence for the smoothed simplex method](bach-huiberts-optimal-smoothed-simplex.md)
-- [Polynomial Hirsch conjecture for polyhedral diameters (hypothesis)](polynomial-hirsch-conjecture.md)

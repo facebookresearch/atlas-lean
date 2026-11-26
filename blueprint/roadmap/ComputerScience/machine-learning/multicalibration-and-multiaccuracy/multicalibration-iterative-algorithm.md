@@ -8,14 +8,11 @@ By the potential lemma each correction decreases $\mathbb{E}[(p - p^*)^2] \le 1$
 
 ## Depends on
 
-- [Each multiaccuracy correction decreases the squared distance to the Bayes predictor](multiaccuracy-correction-potential-decrease.md)
 - [Multicalibrated predictors](multicalibrated-predictor.md)
-- [Uniform convergence implies ERM is an agnostic PAC learner](../pac-learning/agnostic-pac-learning-and-uniform-convergence/uniform-convergence-implies-erm-is-an-agnostic-pac-learner.md)
 
 ## Proof depends on
 
 - [Each multiaccuracy correction decreases the squared distance to the Bayes predictor](multiaccuracy-correction-potential-decrease.md)
-- [Multicalibrated predictors](multicalibrated-predictor.md)
 - [Uniform convergence implies ERM is an agnostic PAC learner](../pac-learning/agnostic-pac-learning-and-uniform-convergence/uniform-convergence-implies-erm-is-an-agnostic-pac-learner.md)
 
 ## Sources

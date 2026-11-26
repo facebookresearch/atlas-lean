@@ -9,11 +9,12 @@ Let $t$ be a text position whose row $j = \mathrm{ISA}[t]$ is not a run start an
 ## Depends on
 
 - [The function $\varphi$ on text positions](phi-function.md)
-- [LF-mapping from the last column](../burrows-wheeler-transform-and-fm-index/lf.md)
+- [Suffix array](../../data-structures/tries-and-integer-dictionaries/suffix-array/suffix-array.md)
+- [Burrows–Wheeler transform](../burrows-wheeler-transform-and-fm-index/bwt.md)
+- [Number $r$ of runs in the Burrows–Wheeler transform](../string-attractors-and-repetitiveness-measures/bwt-run-count.md)
 
 ## Proof depends on
 
-- [The function $\varphi$ on text positions](phi-function.md)
 - [LF-mapping from the last column](../burrows-wheeler-transform-and-fm-index/lf.md)
 
 ## Sources

@@ -10,9 +10,7 @@ where the guarantee only needs to beat uniform guessing among $k$ candidate labe
 
 ## Depends on
 
-- [List PAC learners and list learnability](list-pac-learner.md)
-- [The weak-learning assumption](../../../online-learning-and-boosting/adaboost/weak-learner.md)
-- [Weak PAC learnability](../../weak-learnability/is-weak-paclearnable.md)
+- [The realizable distribution family](../../occam-bound-for-consistent-learners/realizable-family.md)
 
 ## Sources
 

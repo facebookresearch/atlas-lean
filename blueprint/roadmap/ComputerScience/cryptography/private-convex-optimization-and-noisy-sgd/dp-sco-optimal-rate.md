@@ -14,15 +14,13 @@ For smooth losses, noisy SGD (one or a few passes) is uniformly stable with para
 
 ## Depends on
 
-- [Optimal excess empirical risk for private convex empirical risk minimization](private-erm-optimal-rates.md)
-- [Uniform stability](../../machine-learning/generalization-bounds-and-concentration/algorithmic-stability/is-uniformly-stable.md)
-- [SGM is uniformly stable](../../machine-learning/generalization-bounds-and-concentration/algorithmic-stability/is-uniformly-stable-sgm.md)
+- [Private empirical risk minimization and private stochastic convex optimization](private-erm-and-sco.md)
 
 ## Proof depends on
 
 - [Optimal excess empirical risk for private convex empirical risk minimization](private-erm-optimal-rates.md)
-- [Uniform stability](../../machine-learning/generalization-bounds-and-concentration/algorithmic-stability/is-uniformly-stable.md)
 - [SGM is uniformly stable](../../machine-learning/generalization-bounds-and-concentration/algorithmic-stability/is-uniformly-stable-sgm.md)
+- [Uniform stability](../../machine-learning/generalization-bounds-and-concentration/algorithmic-stability/is-uniformly-stable.md)
 
 ## Sources
 

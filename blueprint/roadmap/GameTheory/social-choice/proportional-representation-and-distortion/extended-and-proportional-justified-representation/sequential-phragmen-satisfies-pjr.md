@@ -10,10 +10,6 @@ Let $N'$ be $\ell$-cohesive and suppose fewer than $\ell$ members of $W$ are app
 
 - [Proportional justified representation](proportional-justified-representation.md)
 
-## Proof depends on
-
-- [Proportional justified representation](proportional-justified-representation.md)
-
 ## Sources
 
 - M. Brill, R. Freeman, S. Janson, M. Lackner, "Phragmén's Voting Methods and Justified Representation", AAAI 2017; Mathematical Programming 203 (2024).

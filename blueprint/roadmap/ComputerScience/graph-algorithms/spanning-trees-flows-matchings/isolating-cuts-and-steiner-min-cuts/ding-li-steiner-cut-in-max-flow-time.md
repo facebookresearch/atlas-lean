@@ -8,8 +8,8 @@ The proof replaces the $O(m^{1+\varepsilon})$-time terminal decomposition of the
 
 ## Depends on
 
-- [Deterministic global and Steiner minimum cut via isolating cuts (Li-Panigrahi)](li-panigrahi-deterministic-steiner-mincut.md)
-- [Isolating cut lemma with logarithmically many max-flow calls](isolating-cut-lemma.md)
+- [Steiner minimum cuts of a terminal set](steiner-minimum-cut.md)
+- [Maximum-flow oracles and the max-flow call model for cut problems](max-flow-oracle-call-model.md)
 
 ## Proof depends on
 

@@ -2,11 +2,6 @@
 
 A *well-described polyhedron* $(P; n, \varphi)$ is a polyhedron $P \subseteq \mathbb{R}^n$ with an integer $\varphi \ge n + 1$ such that $P$ is the solution set of a finite system of linear inequalities with rational coefficients each of encoding length at most $\varphi$. The *strong separation problem* asks, for $y \in \mathbb{Q}^n$, to decide $y \in P$ or find $c \in \mathbb{Q}^n$ with $c^\top x < c^\top y$ for all $x \in P$; the *strong optimization problem* asks, for $c \in \mathbb{Q}^n$, to assert $P = \emptyset$, or find $x^\ast \in P$ maximizing $c^\top x$, or find a direction $z$ of the recession cone with $c^\top z > 0$. For a convex body $K \subseteq \mathbb{R}^n$ and $\delta > 0$ let $S(K, \delta)$ be the points within distance $\delta$ of $K$ and $S(K, -\delta)$ the points whose $\delta$-ball lies in $K$. A *centered convex body* $(K; n, R, r, a_0)$ satisfies $B(a_0, r) \subseteq K \subseteq B(0, R)$. *Weak membership* asks, for rational $y$ and $\delta > 0$, to assert $y \in S(K, \delta)$ or $y \notin S(K, -\delta)$; *weak optimization* asks, for rational $c$ and $\delta > 0$, to find $y \in S(K, \delta)$ with $c^\top x \le c^\top y + \delta$ for all $x \in S(K, -\delta)$. An algorithm is *oracle-polynomial* if its number of oracle calls and elementary steps is polynomial in the encoding lengths of $n, \varphi$ (or $R, r, a_0$) and of the query.
 
-## Depends on
-
-- [Ellipsoid with centre $a$ and matrix $A$](../../../Analysis/convex-analysis-and-variations/ellipsoid-method/ellipsoid.md)
-- [Linear programming is in P (Khachiyan)](../../../TheoryOfComputation/polynomial-time-problems/linear-programming-feasibility/lp-in-p.md)
-
 ## Sources
 
 - M. Grotschel, L. Lovasz, A. Schrijver, "The ellipsoid method and its consequences in combinatorial optimization", Combinatorica 1 (1981).

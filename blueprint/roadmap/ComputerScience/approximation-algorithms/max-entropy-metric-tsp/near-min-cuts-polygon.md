@@ -6,7 +6,6 @@ Let $G=(V,E,x)$ be a graph with weights $x \ge 0$ and a distinguished edge $e_0=
 
 - [Subtour elimination LP of a metric TSP instance](subtour-elimination-lp.md)
 - [Cut capacity](../../../GraphTheory/matchings-and-flows/max-flow-min-cut-theorem/cut-capacity.md)
-- [At most $n(n-1)/2$ minimum cuts](../../randomized-algorithms/karger-s-algorithm/two-mul-length-min-cuts-le.md)
 
 ## Sources
 

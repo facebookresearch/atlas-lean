@@ -8,7 +8,7 @@ Alaei's $\gamma$-conservative magician accepts an element only if it is active u
 
 ## Depends on
 
-- [An OCRS yields a prophet inequality](ocrs-implies-prophet-inequality.md)
+- [Matroid prophet inequality](matroid-prophet-problem.md)
 
 ## Proof depends on
 

@@ -9,7 +9,7 @@ Simulate a parallel bilinear algorithm: a fast matrix multiplication with $n^{\o
 ## Depends on
 
 - [The congested clique model](the-congested-clique-model.md)
-- [Dual matrix multiplication exponent](../../../../TheoryOfComputation/algebraic-complexity/matrix-multiplication-exponent/dual-matrix-multiplication-exponent.md)
+- [Matrix multiplication exponent](../../../../TheoryOfComputation/algebraic-complexity/matrix-multiplication-exponent/matrix-multiplication-exponent.md)
 
 ## Proof depends on
 

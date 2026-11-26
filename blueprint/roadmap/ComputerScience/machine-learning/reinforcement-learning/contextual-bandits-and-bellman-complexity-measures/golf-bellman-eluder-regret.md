@@ -15,12 +15,10 @@ GOLF keeps the confidence set of value functions whose empirical squared Bellman
 ## Depends on
 
 - [Bellman eluder dimension](bellman-eluder-dimension.md)
-- [Regret of optimism and posterior sampling in terms of the eluder dimension](eluder-dimension-regret-bound.md)
-- [Contextual decision processes with low Bellman rank are PAC learnable](low-bellman-rank-pac-learnable.md)
+- [Markov decision process](../../../heuristic-search-and-planning/value-iteration/mdp.md)
 
 ## Proof depends on
 
-- [Bellman eluder dimension](bellman-eluder-dimension.md)
 - [Regret of optimism and posterior sampling in terms of the eluder dimension](eluder-dimension-regret-bound.md)
 - [Contextual decision processes with low Bellman rank are PAC learnable](low-bellman-rank-pac-learnable.md)
 

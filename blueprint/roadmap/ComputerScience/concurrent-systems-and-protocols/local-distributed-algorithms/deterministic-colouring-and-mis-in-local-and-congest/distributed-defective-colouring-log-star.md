@@ -9,6 +9,8 @@ Generalize Linial's colour reduction with set systems that are cover-free in a d
 ## Depends on
 
 - [Defective colouring](defective-colouring.md)
+- [The LOCAL model](../../distributed-execution-models/the-local-model.md)
+- [The CONGEST model of distributed computing](../deterministic-network-decomposition/the-congest-model.md)
 
 ## Proof depends on
 

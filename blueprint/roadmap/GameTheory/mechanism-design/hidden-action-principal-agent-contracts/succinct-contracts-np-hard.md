@@ -8,7 +8,7 @@ Reduce from a gap version of a covering problem: coordinates encode elements, ac
 
 ## Depends on
 
-- [Optimal contracts via one linear program per action](optimal-contract-min-pay-linear-programs.md)
+- [Hidden-action principal-agent instance and contract](hidden-action-principal-agent-instance.md)
 - [Linear contract and its critical values](linear-contract-critical-values.md)
 
 ## Proof depends on

@@ -9,10 +9,7 @@ By inclusion-exclusion $\lvert Q_1 \cap Q_2 \rvert \ge 2(n - f) - n = n - 2f \ge
 ## Depends on
 
 - [Byzantine fault-tolerant state machine replication under partial synchrony](byzantine-state-machine-replication.md)
-
-## Proof depends on
-
-- [Byzantine fault-tolerant state machine replication under partial synchrony](byzantine-state-machine-replication.md)
+- [Quorum certificate from threshold signatures](quorum-certificate-threshold-signatures.md)
 
 ## Sources
 

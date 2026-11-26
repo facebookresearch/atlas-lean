@@ -9,11 +9,11 @@ Updates after epoch $i$ write at most $t_u \sum_{j < i} \beta^j = O(t_u \beta^{i
 ## Depends on
 
 - [Dynamic weighted orthogonal range counting](weighted-dominance-range-counting.md)
-- [Encoding bound for cell samples](cell-sample-encoding-bound.md)
+- [Amortized update and query cost of a dynamic cell-probe structure](../dynamic-information-transfer-lower-bounds/amortized-cell-probe-costs.md)
 
 ## Proof depends on
 
-- [Dynamic weighted orthogonal range counting](weighted-dominance-range-counting.md)
+- [Cell-sampling lemma](cell-sampling-lemma.md)
 - [Encoding bound for cell samples](cell-sample-encoding-bound.md)
 
 ## Sources

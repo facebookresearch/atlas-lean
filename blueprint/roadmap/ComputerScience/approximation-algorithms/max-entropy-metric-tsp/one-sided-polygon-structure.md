@@ -14,10 +14,6 @@ Charge each atom to the near minimum cuts formed by consecutive intervals around
 
 - [Near-minimum cuts, atoms and polygon representations of a Held-Karp point](near-min-cuts-polygon.md)
 
-## Proof depends on
-
-- [Near-minimum cuts, atoms and polygon representations of a Held-Karp point](near-min-cuts-polygon.md)
-
 ## Sources
 
 - Anna R. Karlin, Nathan Klein, Shayan Oveis Gharan, "A (Slightly) Improved Approximation Algorithm for Metric TSP", STOC (2021), arXiv:2007.01409.

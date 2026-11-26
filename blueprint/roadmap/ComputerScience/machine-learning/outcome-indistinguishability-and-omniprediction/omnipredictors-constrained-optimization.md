@@ -8,7 +8,9 @@ Lagrangian duality turns the constrained problem into an unconstrained one with 
 
 ## Depends on
 
-- [Multicalibration implies omniprediction for convex Lipschitz losses](multicalibration-implies-omniprediction.md)
+- [Omnipredictors](omnipredictor.md)
+- [Multicalibrated predictors](../multicalibration-and-multiaccuracy/multicalibrated-predictor.md)
+- [Group fairness criteria for scores and classifiers](../algorithmic-fairness/group-fairness-criteria-for-scores-and-classifiers.md)
 
 ## Proof depends on
 

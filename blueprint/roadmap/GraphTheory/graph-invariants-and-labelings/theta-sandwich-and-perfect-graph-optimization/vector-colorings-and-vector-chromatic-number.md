@@ -11,7 +11,6 @@ it is *strict* if equality holds on every edge. The *vector chromatic number* $\
 ## Depends on
 
 - [Feasible matrices of the MAX CUT semidefinite program](../../../ComputerScience/approximation-algorithms/goemans-williamson-max-cut-algorithm/sdpfeasible.md)
-- [Orthogonal labeling of a graph](../theta-function-of-a-graph/is-orthogonal-labeling.md)
 
 ## Sources
 

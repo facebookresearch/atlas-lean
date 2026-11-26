@@ -8,15 +8,12 @@ Take the reference model with all means equal to $\tfrac12$ and alternatives rai
 
 ## Depends on
 
-- [The localized DEC lower bounds the regret of every algorithm](dec-regret-lower-bound.md)
-- [DEC of multi-armed and linear bandits via inverse gap weighting](dec-bandits-inverse-gap-weighting.md)
-- [Minimax regret lower bound for Gaussian bandits](../multi-armed-bandits/minimax-regret-lower-bound-for-gaussian-bandits.md)
+- [Decision-estimation coefficient](decision-estimation-coefficient.md)
+- [Stochastic k-armed bandits: canonical history law and regret](../multi-armed-bandits/stochastic-k-armed-bandits-canonical-history-law-and-regret.md)
 
 ## Proof depends on
 
 - [The localized DEC lower bounds the regret of every algorithm](dec-regret-lower-bound.md)
-- [DEC of multi-armed and linear bandits via inverse gap weighting](dec-bandits-inverse-gap-weighting.md)
-- [Minimax regret lower bound for Gaussian bandits](../multi-armed-bandits/minimax-regret-lower-bound-for-gaussian-bandits.md)
 
 ## Sources
 

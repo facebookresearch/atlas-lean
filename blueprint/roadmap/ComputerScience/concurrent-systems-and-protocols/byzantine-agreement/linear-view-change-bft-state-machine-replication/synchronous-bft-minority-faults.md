@@ -9,10 +9,7 @@ Each replica votes for the leader's proposal immediately and starts a $2\Delta$ 
 ## Depends on
 
 - [Byzantine fault-tolerant state machine replication under partial synchrony](byzantine-state-machine-replication.md)
-
-## Proof depends on
-
-- [Quorums of size n - f intersect in a correct replica when n is at least 3f + 1](byzantine-quorum-intersection.md)
+- [Reaching Byzantine agreement](../solves.md)
 
 ## Sources
 

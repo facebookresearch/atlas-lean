@@ -9,6 +9,7 @@ Availability is quorum intersection: a certificate carries $2f + 1$ storage ackn
 ## Depends on
 
 - [Round-based DAG of reliably broadcast vertices](round-based-byzantine-dag.md)
+- [Asynchronous binary Byzantine agreement and common coins](asynchronous-binary-byzantine-agreement.md)
 
 ## Proof depends on
 

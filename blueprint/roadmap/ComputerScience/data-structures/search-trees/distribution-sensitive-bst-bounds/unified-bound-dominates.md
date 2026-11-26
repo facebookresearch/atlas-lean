@@ -11,11 +11,6 @@ For the first inequality choose $t' = t - 1$, for which $w(t-1, t) = 0$. For the
 - [Iacono's unified bound](unified-bound.md)
 - [Dynamic finger bound](dynamic-finger-bound.md)
 
-## Proof depends on
-
-- [Iacono's unified bound](unified-bound.md)
-- [Dynamic finger bound](dynamic-finger-bound.md)
-
 ## Sources
 
 - Mihai Bădoiu, Richard Cole, Erik D. Demaine, John Iacono, "A Unified Access Bound on Comparison-Based Dynamic Dictionaries", Theoretical Computer Science 382(2) (2007).

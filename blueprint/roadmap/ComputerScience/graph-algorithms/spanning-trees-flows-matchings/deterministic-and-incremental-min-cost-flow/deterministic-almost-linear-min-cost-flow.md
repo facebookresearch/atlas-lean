@@ -14,9 +14,7 @@ Combine the deterministic reduction *The l1 IPM reduces min-cost flow to an appr
 
 ## Depends on
 
-- [Deterministic dynamic min-ratio cycle data structure with hidden stability](deterministic-dynamic-min-ratio-cycle.md)
-- [The l1 IPM reduces min-cost flow to an approximate dynamic min-ratio cycle problem](../almost-linear-flow-interior-point-method/ipm-reduces-to-dynamic-min-ratio-cycle.md)
-- [Deterministic flow rounding without increasing the cost](../almost-linear-flow-interior-point-method/deterministic-costed-flow-rounding.md)
+- [Integral minimum-cost flow instances with polynomially bounded data](../almost-linear-flow-interior-point-method/integral-min-cost-flow-instance.md)
 
 ## Proof depends on
 

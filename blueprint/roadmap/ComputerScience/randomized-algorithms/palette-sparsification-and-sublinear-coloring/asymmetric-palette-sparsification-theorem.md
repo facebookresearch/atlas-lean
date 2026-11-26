@@ -1,6 +1,6 @@
 # Asymmetric palette sparsification: greedy coloring from random lists of average size O(log^2 n)
 
-Let $(G, S)$ be a D1LC instance on $n$ vertices, and let $\pi$ and $\ell$ be as in the asymmetric list-size lemma (the distribution of $\ell$ depends only on $V$ and the degrees). If every vertex $v$ independently samples a uniformly random subset $L(v) \subseteq S(v)$ of size $\ell(v)$, then with high probability over $\pi$ and the samples, the greedy algorithm that processes the vertices in decreasing order of $\pi(v)$ and gives each vertex any color of $L(v)$ not used by its already colored neighbors finds a proper list coloring of $G$ from the lists $L(v)$.
+Let $(G, S)$ be a D1LC instance on $n$ vertices, let $\pi : V \to \{1, \dots, n\}$ be a uniformly random bijection, and set $\ell(v) = \min\big(\deg(v) + 1, \lceil 40\, n \ln n / \pi(v) \rceil\big)$ (the distribution of $\ell$ depends only on $V$ and the degrees). If every vertex $v$ independently samples a uniformly random subset $L(v) \subseteq S(v)$ of size $\ell(v)$, then with high probability over $\pi$ and the samples, the greedy algorithm that processes the vertices in decreasing order of $\pi(v)$ and gives each vertex any color of $L(v)$ not used by its already colored neighbors finds a proper list coloring of $G$ from the lists $L(v)$.
 
 Since $\sum_v \ell(v) = O(n\log^2 n)$ deterministically, this yields semi-streaming, sublinear-time and massively parallel $(\Delta + 1)$-coloring algorithms of the same quality as the symmetric theorem up to polylogarithmic factors, with greedy post-processing.
 
@@ -10,7 +10,6 @@ When $v$ is processed, only its already processed neighbors, those with larger $
 
 ## Depends on
 
-- [List sizes inversely proportional to a random rank have average O(log^2 n)](asymmetric-list-sizes-from-random-ranks.md)
 - [The (deg + 1)-list-coloring problem (D1LC)](degree-plus-one-list-coloring.md)
 
 ## Proof depends on

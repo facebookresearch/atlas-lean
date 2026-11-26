@@ -9,12 +9,10 @@ By Ramsey's theorem, an algorithm with locality $t$ restricted to identifiers fr
 ## Depends on
 
 - [Deterministic and randomized LOCAL complexity of an LCL problem](lcl-deterministic-randomized-complexity.md)
-- [Cole–Vishkin coloring in O(log* n) rounds](../colevishkin-coloring-in-o-log-n-rounds.md)
-- [Linial's lower bound for coloring a ring](../linial-s-lower-bound-for-coloring-a-ring.md)
 
 ## Proof depends on
 
-- [Deterministic and randomized LOCAL complexity of an LCL problem](lcl-deterministic-randomized-complexity.md)
+- [Cole–Vishkin coloring in O(log* n) rounds](../colevishkin-coloring-in-o-log-n-rounds.md)
 
 ## Sources
 

@@ -12,12 +12,10 @@ The recurrence for $d^{h+1}$ is evaluated by one Dijkstra computation on an auxi
 ## Depends on
 
 - [Negative vertices, h-hop distances and the negative h-hop reach](negative-vertices-and-hop-distances.md)
-- [ElimNeg: the Dijkstra-Bellman-Ford hybrid runs in time proportional to the negative-edge counts of shortest paths](../near-linear-negative-weight-sssp/elimneg-dijkstra-bellman-ford-hybrid.md)
-- [Dijkstra's algorithm with a binary heap](../../graph-algorithm-bounds/dijkstra-s-algorithm-with-a-binary-heap.md)
+- [Price functions, reduced edge weights, and valid reweightings of a directed graph](../near-linear-negative-weight-sssp/price-functions-and-reduced-weights.md)
 
 ## Proof depends on
 
-- [Negative vertices, h-hop distances and the negative h-hop reach](negative-vertices-and-hop-distances.md)
 - [Dijkstra's algorithm with a binary heap](../../graph-algorithm-bounds/dijkstra-s-algorithm-with-a-binary-heap.md)
 
 ## Sources

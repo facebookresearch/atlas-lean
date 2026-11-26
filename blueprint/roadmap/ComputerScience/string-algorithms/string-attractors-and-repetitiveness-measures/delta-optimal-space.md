@@ -8,8 +8,7 @@ Kociumaka, Navarro and Prezza construct a block tree whose levels are adapted to
 
 ## Depends on
 
-- [Substring complexity is at most the attractor size](delta-at-most-gamma.md)
-- [Universal compressed representations from string attractors](attractor-universal-index.md)
+- [Substring complexity $\delta$](substring-complexity.md)
 
 ## Proof depends on
 

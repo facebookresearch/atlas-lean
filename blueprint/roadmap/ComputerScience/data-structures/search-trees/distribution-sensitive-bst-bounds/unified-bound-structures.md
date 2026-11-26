@@ -8,11 +8,7 @@ Bădoiu, Cole, Demaine and Iacono maintain the keys in a sequence of working-set
 
 ## Depends on
 
-- [The unified bound implies the working-set and dynamic finger bounds](unified-bound-dominates.md)
-
-## Proof depends on
-
-- [The unified bound implies the working-set and dynamic finger bounds](unified-bound-dominates.md)
+- [Iacono's unified bound](unified-bound.md)
 
 ## Sources
 

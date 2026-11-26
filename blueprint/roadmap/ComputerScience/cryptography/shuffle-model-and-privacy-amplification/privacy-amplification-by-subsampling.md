@@ -15,11 +15,9 @@ Express the subsampled output distribution on each of two neighbouring datasets 
 ## Depends on
 
 - [Differential privacy](../differential-privacy/differentially-private.md)
-- [Subsampling theorem for f-differential privacy](../trade-off-functions-and-gaussian-differential-privacy/f-dp-subsampling-theorem.md)
 
 ## Proof depends on
 
-- [Differential privacy](../differential-privacy/differentially-private.md)
 - [Subsampling theorem for f-differential privacy](../trade-off-functions-and-gaussian-differential-privacy/f-dp-subsampling-theorem.md)
 
 ## Sources

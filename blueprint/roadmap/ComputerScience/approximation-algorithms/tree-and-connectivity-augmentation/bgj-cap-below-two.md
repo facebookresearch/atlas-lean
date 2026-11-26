@@ -9,8 +9,8 @@ Reduce to augmenting a cactus, and from there to a node-weighted Steiner tree pr
 ## Depends on
 
 - [Weighted connectivity augmentation problem (WCAP)](connectivity-augmentation.md)
-- [Augmenting odd edge-connectivity reduces to tree augmentation](odd-cap-reduces-to-tap.md)
-- [Steiner tree instances](../../../TheoryOfComputation/np-completeness/paths-cycles-and-subgraphs/steiner-tree/steiner-tree-instance.md)
+- [Approximation algorithms and approximation ratios](../approximation-algorithms-and-approximation-ratios.md)
+- [Cactus representations of all minimum cuts](../../../GraphTheory/paths-cycles-connectivity/cactus-representation-and-sparse-certificates/cactus-representation-of-minimum-cuts.md)
 
 ## Proof depends on
 

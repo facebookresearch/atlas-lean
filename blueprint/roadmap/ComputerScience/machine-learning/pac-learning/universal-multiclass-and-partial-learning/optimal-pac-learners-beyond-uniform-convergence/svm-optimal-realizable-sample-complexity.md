@@ -14,9 +14,7 @@ The support vector machine is a stable compression scheme: its output is determi
 
 ## Depends on
 
-- [Proper learners attain the optimal PAC rate exactly when the dual Helly number is bounded](proper-learning-dual-helly-characterization.md)
-- [Generalization bound for sample compression schemes](../../../generalization-bounds-and-concentration/generalization-bound-for-sample-compression-schemes.md)
-- [Leave-one-out bounds give optimal high-probability risk bounds for aggregated learners](leave-one-out-to-high-probability.md)
+- [Hard-margin SVM and margin-based sample complexity](../../../supervised-learning/logistic-regression-and-support-vector-machines/hard-margin-svm-and-margin-based-sample-complexity.md)
 
 ## Proof depends on
 

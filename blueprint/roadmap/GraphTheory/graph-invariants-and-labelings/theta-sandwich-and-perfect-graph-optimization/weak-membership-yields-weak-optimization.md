@@ -9,13 +9,11 @@ Following Yudin and Nemirovski, the inner ball $B(a_0, r)$ allows a weak separat
 ## Depends on
 
 - [Well-described polyhedra, centered convex bodies and the strong and weak oracle problems](well-described-polyhedra-and-oracle-problems.md)
-- [The ellipsoid method finds a point](../../../Analysis/convex-analysis-and-variations/ellipsoid-method/ellipsoid-run-finds-point.md)
 
 ## Proof depends on
 
 - [Volume reduction of the ellipsoid method](../../../Analysis/convex-analysis-and-variations/ellipsoid-method/volume-ratio-lt-exp.md)
 - [The ellipsoid method finds a point](../../../Analysis/convex-analysis-and-variations/ellipsoid-method/ellipsoid-run-finds-point.md)
-- [Well-described polyhedra, centered convex bodies and the strong and weak oracle problems](well-described-polyhedra-and-oracle-problems.md)
 
 ## Sources
 

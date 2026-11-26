@@ -8,10 +8,6 @@ $$
 
 The *deficiency* of $G$ is $\operatorname{def}(G) = \max_{X \subseteq V} \operatorname{def}_G(X)$. Taking $X = \emptyset$ shows $\operatorname{def}(G) \ge o(G) \ge 0$, and $\operatorname{def}_G(X) \equiv |V| \pmod 2$ for every $X$.
 
-## Depends on
-
-- [Berge's lemma for matching subgraphs](../berge-s-lemma/berge-general.md)
-
 ## Sources
 
 - W. T. Tutte, "The factorization of linear graphs", Journal of the London Mathematical Society 22 (1947).

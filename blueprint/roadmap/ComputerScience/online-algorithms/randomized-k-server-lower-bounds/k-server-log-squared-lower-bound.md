@@ -8,14 +8,11 @@ Bubeck, Coester and Rabani construct a recursive family of metrics, in which eac
 
 ## Depends on
 
-- [k-server on $k+1$ points is a metrical task system](k-server-on-k-plus-one-points.md)
-- [The randomized k-server conjecture](../randomized-k-server-by-mirror-descent/randomized-k-server-conjecture.md)
-- [Yao's minimax principle](../../../TheoryOfComputation/randomized-and-quantum-complexity/yao-s-minimax-principle/yao-minimax.md)
+- [The k-server problem](../paging-and-k-server/the-k-server-problem.md)
 
 ## Proof depends on
 
 - [k-server on $k+1$ points is a metrical task system](k-server-on-k-plus-one-points.md)
-- [The randomized k-server conjecture](../randomized-k-server-by-mirror-descent/randomized-k-server-conjecture.md)
 - [Yao's minimax principle](../../../TheoryOfComputation/randomized-and-quantum-complexity/yao-s-minimax-principle/yao-minimax.md)
 
 ## Sources

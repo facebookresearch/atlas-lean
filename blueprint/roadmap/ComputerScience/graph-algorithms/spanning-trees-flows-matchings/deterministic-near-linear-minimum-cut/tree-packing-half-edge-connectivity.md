@@ -13,7 +13,6 @@ By the Nash-Williams-Tutte theorem (and its fractional form via matroid base pac
 
 ## Proof depends on
 
-- [Fractional spanning tree packings and the packing value](fractional-spanning-tree-packing.md)
 - [Nash–Williams arboricity theorem](../../../../GraphTheory/graph-invariants-and-labelings/nash-williams-arboricity-theorem/nash-williams-arboricity.md)
 
 ## Sources

@@ -8,11 +8,14 @@ By the entropy lemma, a node at depth $d$ whose left interval contains $k = \The
 
 ## Depends on
 
-- [Information transfer must carry the entropy of the interleaved updates](transfer-entropy-bound.md)
+- [Dynamic partial sums over a group](dynamic-partial-sums-problem.md)
+- [Amortized update and query cost of a dynamic cell-probe structure](amortized-cell-probe-costs.md)
 
 ## Proof depends on
 
 - [Information transfer must carry the entropy of the interleaved updates](transfer-entropy-bound.md)
+- [Each cell read is charged to at most one tree node](reads-charged-to-one-node.md)
+- [Information transfer and the information-transfer tree](information-transfer-tree.md)
 
 ## Sources
 

@@ -9,12 +9,10 @@ The approximate-privacy transformation runs the item-level algorithm on many ran
 ## Depends on
 
 - [Private PAC learners and their sample complexity](private-pac-learner.md)
-- [Sample-efficient reductions between replicability and approximate differential privacy](../global-stability-and-list-replicability/replicability-privacy-reductions.md)
-- [The exponential mechanism is differentially private](../../../../cryptography/laplace-and-exponential-mechanisms/exp-mechanism-differentially-private.md)
+- [Differential privacy](../../../../cryptography/differential-privacy/differentially-private.md)
 
 ## Proof depends on
 
-- [Private PAC learners and their sample complexity](private-pac-learner.md)
 - [Sample-efficient reductions between replicability and approximate differential privacy](../global-stability-and-list-replicability/replicability-privacy-reductions.md)
 - [The exponential mechanism is differentially private](../../../../cryptography/laplace-and-exponential-mechanisms/exp-mechanism-differentially-private.md)
 

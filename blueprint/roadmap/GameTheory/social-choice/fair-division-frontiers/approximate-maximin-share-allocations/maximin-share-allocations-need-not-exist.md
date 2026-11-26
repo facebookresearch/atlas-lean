@@ -9,11 +9,6 @@ The constructions use valuations of the form $v_i(g_{rc}) = B + E_{rc} + \vareps
 ## Depends on
 
 - [Alpha-maximin share allocation](alpha-maximin-share-allocation.md)
-- [Optimal maximin-share approximation](../../optimal-maximin-share-approximation.md)
-
-## Proof depends on
-
-- [Alpha-maximin share allocation](alpha-maximin-share-allocation.md)
 
 ## Sources
 

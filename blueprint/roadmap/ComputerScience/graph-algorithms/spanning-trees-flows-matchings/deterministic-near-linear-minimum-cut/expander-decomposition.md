@@ -12,7 +12,6 @@ with volumes measured in $G$. A *$(\phi, \epsilon)$-expander decomposition* is a
 
 - [Volume of a vertex set](../../../../GraphTheory/algebraic-graph-theory/part-02/conductance-and-cheeger-s-inequality/volume.md)
 - [Edge expansion of a vertex set](../../../../GraphTheory/algebraic-graph-theory/part-01/grassmann-graphs/untitled.md)
-- [Easy direction of Cheeger's inequality for conductance](../../../../GraphTheory/algebraic-graph-theory/part-02/conductance-and-cheeger-s-inequality/mul-volume-mul-volume-compl-le-of-forall.md)
 - [(phi, epsilon)-expander decompositions of an undirected graph](../../../../GraphTheory/graph-families-and-operations/expander-decomposition-and-pruning/phi-epsilon-expander-decomposition.md)
 
 ## Sources

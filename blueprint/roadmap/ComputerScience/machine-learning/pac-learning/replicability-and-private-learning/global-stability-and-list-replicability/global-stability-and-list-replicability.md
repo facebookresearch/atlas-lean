@@ -7,10 +7,6 @@ Let $H \subseteq \{0,1\}^X$ and let $A$ map samples of size $n$ to hypotheses.
 
 Unlike $\rho$-replicability, neither notion lets the two runs share internal randomness. Every finite class satisfies $\rho(H) \ge 1/|H|$ and $\mathrm{LR}(H) \le |H|$; agnostic variants $\rho_{\mathrm{agn}}$ and $\mathrm{LR}_{\mathrm{agn}}$ are defined with excess error in place of error.
 
-## Depends on
-
-- [The fundamental theorem of PAC learning](../../is-paclearnable-realizable-family-iff-ha.md)
-
 ## Sources
 
 - M. Bun, R. Livni, S. Moran, "An Equivalence Between Private Classification and Online Prediction", FOCS (2020), arXiv:2003.00563.

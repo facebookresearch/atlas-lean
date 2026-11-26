@@ -1,6 +1,6 @@
 # Many-fold composition of pure differential privacy converges to Gaussian differential privacy
 
-For the trade-off function $f_{\varepsilon,0}$ of $(\varepsilon,0)$-differential privacy,
+For the trade-off function $f_{\varepsilon,0}(\alpha) = \max\{0,\, 1 - e^{\varepsilon}\alpha,\, e^{-\varepsilon}(1 - \alpha)\}$ of $(\varepsilon,0)$-differential privacy and the functionals $\mathrm{kl}(f) = -\int_0^1 \log|f'(x)|\,dx$, $\kappa_2(f) = \int_0^1 \log^2|f'(x)|\,dx$, $\kappa_3(f) = \int_0^1 \big|\log|f'(x)|\big|^3\,dx$,
 
 $$
 \mathrm{kl}(f_{\varepsilon,0}) = \varepsilon\,\frac{e^{\varepsilon} - 1}{e^{\varepsilon} + 1}, \qquad \kappa_2(f_{\varepsilon,0}) = \varepsilon^2, \qquad \kappa_3(f_{\varepsilon,0}) = \varepsilon^3 .
@@ -14,8 +14,9 @@ $f_{\varepsilon,0}$ has slope $-e^{\varepsilon}$ on $[0, 1/(1+e^{\varepsilon})]$
 
 ## Depends on
 
-- [Central limit theorem for the composition of trade-off functions](f-dp-composition-central-limit-theorem.md)
-- [Approximate differential privacy as f-differential privacy](epsilon-delta-dp-as-f-dp.md)
+- [Differential privacy](../differential-privacy/differentially-private.md)
+- [Gaussian differential privacy](gaussian-differential-privacy.md)
+- [Tensor product of trade-off functions](tensor-product-of-trade-off-functions.md)
 
 ## Proof depends on
 

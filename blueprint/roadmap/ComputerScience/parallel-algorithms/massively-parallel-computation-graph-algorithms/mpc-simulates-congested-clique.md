@@ -11,10 +11,6 @@ Assign each congested clique processor, together with its incident edges, to mac
 - [The massively parallel computation model](massively-parallel-computation-model.md)
 - [The congested clique model](../../concurrent-systems-and-protocols/distributed-execution-models/congested-clique-algorithms/the-congested-clique-model.md)
 
-## Proof depends on
-
-- [The massively parallel computation model](massively-parallel-computation-model.md)
-
 ## Sources
 
 - S. Behnezhad, M. Derakhshan, M. T. Hajiaghayi, "Brief Announcement: Semi-MapReduce Meets Congested Clique", arXiv:1802.10297 (2018).

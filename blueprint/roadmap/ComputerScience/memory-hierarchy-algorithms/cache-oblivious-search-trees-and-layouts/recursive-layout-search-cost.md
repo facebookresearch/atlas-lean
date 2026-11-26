@@ -9,10 +9,7 @@ Consider the coarsest level of the recursion at which the subtrees have height $
 ## Depends on
 
 - [Prokop's recursive layout of a complete binary tree](recursive-tree-layout.md)
-
-## Proof depends on
-
-- [Prokop's recursive layout of a complete binary tree](recursive-tree-layout.md)
+- [The ideal-cache model](../cache-oblivious-algorithms/the-ideal-cache-model.md)
 
 ## Sources
 

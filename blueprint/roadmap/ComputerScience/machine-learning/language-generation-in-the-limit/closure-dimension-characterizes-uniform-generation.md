@@ -9,12 +9,10 @@ If $\mathrm{C}(H) = d$, after $d+1$ distinct examples the closure of the seen se
 ## Depends on
 
 - [Closure dimension and uniform and non-uniform generatability](closure-dimension.md)
-- [The fundamental theorem of PAC learning](../pac-learning/is-paclearnable-realizable-family-iff-ha.md)
-- [The Littlestone dimension is the optimal mistake bound](../online-learning-and-boosting/the-littlestone-dimension-is-the-optimal-mistake-bound.md)
+- [Generation in the limit](generation-in-the-limit.md)
 
 ## Proof depends on
 
-- [Closure dimension and uniform and non-uniform generatability](closure-dimension.md)
 - [The fundamental theorem of PAC learning](../pac-learning/is-paclearnable-realizable-family-iff-ha.md)
 - [The Littlestone dimension is the optimal mistake bound](../online-learning-and-boosting/the-littlestone-dimension-is-the-optimal-mistake-bound.md)
 

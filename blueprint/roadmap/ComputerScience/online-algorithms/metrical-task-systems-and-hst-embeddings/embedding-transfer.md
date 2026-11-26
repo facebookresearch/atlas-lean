@@ -8,11 +8,8 @@ The algorithm's cost under $d$ is at most its cost under $d_T$ by domination, he
 
 ## Depends on
 
-- [Fakcharoenphol-Rao-Talwar O(log n) expected-stretch tree embeddings](../../randomized-algorithms/johnson-lindenstrauss-optimality-and-metric-embeddings/frt-logarithmic-stretch-tree-embedding.md)
-
-## Proof depends on
-
-- [Fakcharoenphol-Rao-Talwar O(log n) expected-stretch tree embeddings](../../randomized-algorithms/johnson-lindenstrauss-optimality-and-metric-embeddings/frt-logarithmic-stretch-tree-embedding.md)
+- [Metrical task systems](metrical-task-system.md)
+- [The k-server problem](../paging-and-k-server/the-k-server-problem.md)
 
 ## Sources
 

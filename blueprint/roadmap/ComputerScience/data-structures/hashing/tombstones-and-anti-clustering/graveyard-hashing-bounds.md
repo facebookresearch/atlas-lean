@@ -9,12 +9,9 @@ Planted tombstones guarantee that every window of $\Theta(x)$ hash positions con
 ## Depends on
 
 - [Graveyard hashing](graveyard-hashing.md)
-- [Tombstones defeat primary clustering under hovering workloads](tombstones-anticluster-hovering-workloads.md)
-- [Even perfectly spread free slots force $\Omega(x)$ scan length](spread-free-slots-force-linear-cost.md)
 
 ## Proof depends on
 
-- [Graveyard hashing](graveyard-hashing.md)
 - [Tombstones defeat primary clustering under hovering workloads](tombstones-anticluster-hovering-workloads.md)
 - [Even perfectly spread free slots force $\Omega(x)$ scan length](spread-free-slots-force-linear-cost.md)
 

@@ -14,7 +14,6 @@ In one direction, OMv instances are encoded as bipartite graphs whose approximat
 ## Proof depends on
 
 - [Kőnig's theorem for finite bipartite graphs](../../../../GraphTheory/matchings-and-flows/k-nig-s-theorem/konig-matching-cover.md)
-- [OMv-hardness of dynamic subgraph connectivity](../../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/omv-hardness-of-dynamic-subgraph-connectivity.md)
 
 ## Sources
 

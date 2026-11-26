@@ -15,11 +15,9 @@ By the isolation lemma applied to the perturbation $\mathbf{z}$, with probabilit
 ## Depends on
 
 - [Integral minimum-cost flow instances with polynomially bounded data](integral-min-cost-flow-instance.md)
-- [Integral flow theorem](../edmonds-karp-algorithm/exists-nat-max-flow.md)
 
 ## Proof depends on
 
-- [Integral minimum-cost flow instances with polynomially bounded data](integral-min-cost-flow-instance.md)
 - [Integral flow theorem](../edmonds-karp-algorithm/exists-nat-max-flow.md)
 
 ## Sources

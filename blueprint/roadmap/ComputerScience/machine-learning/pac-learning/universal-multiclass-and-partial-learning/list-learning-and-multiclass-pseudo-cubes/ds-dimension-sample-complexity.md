@@ -14,9 +14,8 @@ The list learner of the previous lemma is boosted to a list learner with small e
 
 ## Depends on
 
-- [Finite DS dimension gives a list PAC learner from one-inclusion orientations](finite-ds-dimension-list-learner.md)
-- [Generalization bound for sample compression schemes](../../../generalization-bounds-and-concentration/generalization-bound-for-sample-compression-schemes.md)
-- [DS dimension characterizes multiclass PAC learnability](../../ds-dimension-characterizes-multiclass-pac-learnability.md)
+- [k-pseudo-cubes and the k-DS dimension](k-pseudo-cube.md)
+- [The realizable distribution family](../../occam-bound-for-consistent-learners/realizable-family.md)
 
 ## Proof depends on
 

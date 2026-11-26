@@ -10,11 +10,7 @@ Below the peeling threshold the hashing graph peels completely, and the peeling 
 
 - [Peeling threshold of random hypergraphs](peeling-threshold.md)
 - [Random-walk insertion for d-ary cuckoo hashing](random-walk-cuckoo-insertion.md)
-
-## Proof depends on
-
-- [Peeling threshold of random hypergraphs](peeling-threshold.md)
-- [Random-walk insertion for d-ary cuckoo hashing](random-walk-cuckoo-insertion.md)
+- [d-ary cuckoo hashing and its hashing graph](d-ary-cuckoo-hashing.md)
 
 ## Sources
 

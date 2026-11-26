@@ -10,10 +10,6 @@ Set thresholds so that each variable is accepted with probability equal to its p
 
 - [Gambler-to-prophet ratios under different arrival models](prophet-ratio-by-arrival-model.md)
 
-## Proof depends on
-
-- [Gambler-to-prophet ratios under different arrival models](prophet-ratio-by-arrival-model.md)
-
 ## Sources
 
 - José Correa, Patricio Foncea, Ruben Hoeksma, Tim Oosterwijk, Tjark Vredeveld, "Posted Price Mechanisms and Optimal Threshold Strategies for Random Arrivals", Mathematics of Operations Research 46(4) (2021); EC (2017).

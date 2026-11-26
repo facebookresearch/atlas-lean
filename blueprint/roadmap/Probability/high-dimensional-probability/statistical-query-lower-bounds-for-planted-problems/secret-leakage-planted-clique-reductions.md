@@ -8,12 +8,10 @@ Leaked partial information about the clique (its partition structure) enables re
 
 ## Depends on
 
-- [Statistical dimension lower bounds statistical query complexity](statistical-dimension-query-lower-bound.md)
-- [Total variation distance between finite measures](../../convergence-of-measures/total-variation-distance/total-variation-dist.md)
+- [Hardness of the planted clique problem](../../../TheoryOfComputation/randomized-and-quantum-complexity/hardness-of-the-planted-clique-problem.md)
 
 ## Proof depends on
 
-- [Statistical dimension lower bounds statistical query complexity](statistical-dimension-query-lower-bound.md)
 - [Total variation distance between finite measures](../../convergence-of-measures/total-variation-distance/total-variation-dist.md)
 
 ## Sources

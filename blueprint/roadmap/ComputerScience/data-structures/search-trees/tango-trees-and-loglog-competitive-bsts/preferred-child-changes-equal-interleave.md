@@ -11,11 +11,6 @@ The preferred child of $v$ switches exactly when two consecutive accesses within
 - [Preferred children and preferred paths](preferred-paths.md)
 - [Wilber's interleave (alternation) bound](../wilber-and-funnel-lower-bounds/interleave-bound.md)
 
-## Proof depends on
-
-- [Preferred children and preferred paths](preferred-paths.md)
-- [Wilber's interleave (alternation) bound](../wilber-and-funnel-lower-bounds/interleave-bound.md)
-
 ## Sources
 
 - Erik D. Demaine, Dion Harmon, John Iacono, Mihai Pătraşcu, "Dynamic Optimality—Almost", SIAM Journal on Computing 37(1) (2007); FOCS (2004).

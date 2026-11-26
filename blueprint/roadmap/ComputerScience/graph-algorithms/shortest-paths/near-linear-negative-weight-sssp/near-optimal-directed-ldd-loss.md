@@ -13,12 +13,6 @@ The construction exploits a connection between directed LDDs and directed expand
 ## Depends on
 
 - [Weak and strong directed low-diameter decompositions with overhead rho](directed-low-diameter-decomposition.md)
-- [A weak directed low-diameter decomposition with overhead O(log^2 n) in near-linear time](bnw-weak-directed-ldd.md)
-
-## Proof depends on
-
-- [Weak and strong directed low-diameter decompositions with overhead rho](directed-low-diameter-decomposition.md)
-- [A weak directed low-diameter decomposition with overhead O(log^2 n) in near-linear time](bnw-weak-directed-ldd.md)
 
 ## Sources
 

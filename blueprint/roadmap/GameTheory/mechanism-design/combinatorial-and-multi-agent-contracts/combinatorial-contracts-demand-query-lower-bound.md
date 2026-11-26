@@ -9,6 +9,8 @@ Build equal-revenue instances: families of success functions for which the princ
 ## Depends on
 
 - [Combinatorial-actions contract with a binary outcome](combinatorial-actions-binary-outcome-contract.md)
+- [Submodular set function](../../../ComputerScience/approximation-algorithms/maximum-n-times-coverage/is-submodular.md)
+- [Gross-substitutes success-probability function](gross-substitutes-success-probability.md)
 - [XOS set functions, demand queries and value queries](xos-functions-demand-and-value-queries.md)
 
 ## Proof depends on

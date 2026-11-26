@@ -9,11 +9,9 @@ Since $p(1-p) \le 1/4$, the VSTAT tolerance $\max\{1/t, \sqrt{p(1-p)/t}\}$ is at
 ## Depends on
 
 - [VSTAT oracle and statistical dimension with average correlation](vstat-oracle-statistical-dimension.md)
-- [Hoeffding's inequality for averages of bounded variables](../../concentration-inequalities/hoeffding-s-inequality/measure-real-avg-sub-ge-le.md)
 
 ## Proof depends on
 
-- [VSTAT oracle and statistical dimension with average correlation](vstat-oracle-statistical-dimension.md)
 - [Hoeffding's inequality for averages of bounded variables](../../concentration-inequalities/hoeffding-s-inequality/measure-real-avg-sub-ge-le.md)
 
 ## Sources

@@ -10,11 +10,6 @@ and $G_\phi=(V,E,w_\phi)$ is the *reweighted graph*; note $(G_\phi)_\psi=G_{\phi
 
 Write $E=E^{+}\cup E^{-}$, where $E^{+}=\{e: w(e)\ge 0\}$ and $E^{-}=\{e:w(e)<0\}$. A price function $\phi$ is *valid* if $w_\phi(e)\ge 0$ for every $e\in E^{+}$ (it creates no new negative edge), and $\phi$ *neutralizes* $e\in E^{-}$ if $w_\phi(e)\ge 0$. Two weightings $w,w'$ of the same edge set are *equivalent* if they have exactly the same shortest paths and assign the same total weight to every cycle.
 
-## Depends on
-
-- [Reduced-cost optimality certificate for minimum-cost flow](../../spanning-trees-flows-matchings/potential-certificate-for-minimum-cost-flow.md)
-- [Optimality conditions for minimum-cost flows](../../linear-programming-and-flows/optimality-conditions-for-minimum-cost-flows.md)
-
 ## Sources
 
 - Aaron Bernstein, Danupon Nanongkai, Christian Wulff-Nilsen, "Negative-Weight Single-Source Shortest Paths in Near-linear Time", FOCS (2022), arXiv:2203.03456.

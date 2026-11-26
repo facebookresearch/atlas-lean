@@ -9,10 +9,7 @@ Colour a constant fraction of the remaining vertices per phase, so $O(\log n)$ p
 ## Depends on
 
 - [Degree-plus-one list colouring instance](degree-plus-one-list-colouring.md)
-
-## Proof depends on
-
-- [Degree-plus-one list colouring instance](degree-plus-one-list-colouring.md)
+- [The CONGEST model of distributed computing](../deterministic-network-decomposition/the-congest-model.md)
 
 ## Sources
 

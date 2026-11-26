@@ -16,10 +16,7 @@ The three-point inequality for the two projections gives, for every $z$, $\eta \
 
 - [Extragradient and optimistic gradient descent-ascent](extragradient-and-optimistic-gradient.md)
 - [Gap function and tangent residual for monotone variational inequalities](gap-function-and-tangent-residual.md)
-
-## Proof depends on
-
-- [Gap function and tangent residual for monotone variational inequalities](gap-function-and-tangent-residual.md)
+- [Smooth monotone game and monotone variational inequality](smooth-monotone-game-variational-inequality.md)
 
 ## Sources
 

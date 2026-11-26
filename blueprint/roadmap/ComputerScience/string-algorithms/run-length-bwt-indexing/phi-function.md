@@ -5,7 +5,6 @@ For a text $T$ with suffix array $\mathrm{SA}$ and inverse suffix array $\mathrm
 ## Depends on
 
 - [Suffix array](../../data-structures/tries-and-integer-dictionaries/suffix-array/suffix-array.md)
-- [Toehold lemma](toehold-lemma.md)
 
 ## Sources
 

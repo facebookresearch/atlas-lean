@@ -8,11 +8,6 @@ $$
 
 the smallest type II error achievable at type I error at most $\alpha$. By the Neyman–Pearson lemma the infimum is attained by likelihood ratio tests. For functions $f, g$ on $[0,1]$ write $f \ge g$ if $f(\alpha) \ge g(\alpha)$ for all $\alpha$; larger trade-off functions mean the two distributions are harder to distinguish, and $T(P, P)(\alpha) = 1 - \alpha$.
 
-## Depends on
-
-- [Neyman–Pearson lemma](../../../Probability/hypothesis-testing/neyman-pearson-dominated-two-simple.md)
-- [Total variation distance between finite measures](../../../Probability/convergence-of-measures/total-variation-distance/total-variation-dist.md)
-
 ## Sources
 
 - J. Dong, A. Roth, W. J. Su, "Gaussian Differential Privacy", Journal of the Royal Statistical Society Series B 84 (2022), arXiv:1905.02383.

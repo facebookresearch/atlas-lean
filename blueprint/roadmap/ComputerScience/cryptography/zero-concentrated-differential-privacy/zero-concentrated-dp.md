@@ -11,7 +11,6 @@ Equivalently, the privacy loss random variable is sub-Gaussian with mean at most
 ## Depends on
 
 - [Differential privacy](../differential-privacy/differentially-private.md)
-- [Rényi differential privacy of the Gaussian mechanism](../differential-privacy/renyi-differential-privacy-of-the-gaussian.md)
 
 ## Sources
 

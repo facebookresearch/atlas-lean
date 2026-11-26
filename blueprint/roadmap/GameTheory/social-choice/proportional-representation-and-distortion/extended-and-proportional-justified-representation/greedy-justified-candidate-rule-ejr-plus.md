@@ -9,6 +9,7 @@ When the rule stops at level $\ell$, no witness for an EJR+ violation at level $
 ## Depends on
 
 - [EJR+ and PJR+ proportionality axioms](ejr-plus-and-pjr-plus.md)
+- [Extended justified representation](extended-justified-representation.md)
 
 ## Proof depends on
 

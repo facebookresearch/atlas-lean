@@ -9,11 +9,13 @@ Combine a HotStuff-style linear protocol for each view with a view-synchronizati
 ## Depends on
 
 - [Byzantine fault-tolerant state machine replication under partial synchrony](byzantine-state-machine-replication.md)
+- [Quorum certificate from threshold signatures](quorum-certificate-threshold-signatures.md)
 
 ## Proof depends on
 
 - [Byzantine agreement requires quadratic communication](dolev-reischuk-quadratic-lower-bound.md)
 - [Expected linear communication for Byzantine view synchronization](expected-linear-view-synchronization.md)
+- [Chained HotStuff with locking and three-phase commit](hotstuff-protocol-three-phase.md)
 
 ## Sources
 

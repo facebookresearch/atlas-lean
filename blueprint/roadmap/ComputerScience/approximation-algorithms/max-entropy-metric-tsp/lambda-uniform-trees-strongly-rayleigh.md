@@ -10,15 +10,13 @@ By the matrix-tree theorem $g_{\mu_\lambda}(z)$ is proportional to $\det\big(\su
 
 - [Maximum-entropy and lambda-uniform distributions over spanning trees](max-entropy-spanning-tree-distribution.md)
 - [Strongly Rayleigh probability measures on subsets of a ground set](strongly-rayleigh-measure.md)
-- [Kirchhoff's matrix-tree theorem](../../../GraphTheory/algebraic-graph-theory/part-01/kirchhoff-s-matrix-tree-theorem/kirchhoff-matrix-tree.md)
-- [Real stable polynomials](../../../Algebra/zeros-of-polynomials/stable-polynomials/is-real-stable.md)
-- [Stable polynomials are Lorentzian](../../../Combinatorics/matroid-theory/lorentzian-polynomials/stable-mem-l.md)
+- [The set of Lorentzian polynomials](../../../Combinatorics/matroid-theory/lorentzian-polynomials/l.md)
 
 ## Proof depends on
 
-- [Strongly Rayleigh probability measures on subsets of a ground set](strongly-rayleigh-measure.md)
 - [Kirchhoff's matrix-tree theorem](../../../GraphTheory/algebraic-graph-theory/part-01/kirchhoff-s-matrix-tree-theorem/kirchhoff-matrix-tree.md)
 - [Stable polynomials are Lorentzian](../../../Combinatorics/matroid-theory/lorentzian-polynomials/stable-mem-l.md)
+- [Real stable polynomials](../../../Algebra/zeros-of-polynomials/stable-polynomials/is-real-stable.md)
 
 ## Sources
 

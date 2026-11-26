@@ -8,9 +8,8 @@ Each player runs the fast swap-regret algorithm on estimated losses; the empiric
 
 ## Depends on
 
-- [Swap regret polylogarithmic in the number of actions](polylog-rounds-swap-regret.md)
-- [No external regret implies no swap regret, and Littlestone games have correlated equilibria](no-external-regret-implies-no-swap-regret.md)
-- [No-swap-regret dynamics converge to correlated equilibria](../../../../GameTheory/noncooperative-games/no-regret-dynamics/no-swap-regret-dynamics-converge-to-correlated-equilibria.md)
+- [Correlated equilibrium](../../../../GameTheory/noncooperative-games/correlated-equilibria/is-correlated-eq.md)
+- [Swap regret](../../../../GameTheory/not-yet-classified/part-02/regret/swap-regret.md)
 
 ## Proof depends on
 

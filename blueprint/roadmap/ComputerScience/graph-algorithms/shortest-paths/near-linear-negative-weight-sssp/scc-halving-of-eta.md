@@ -8,13 +8,10 @@ Suppose a shortest path from the dummy source in $H^B_s$ to $v\in V_i$ attaining
 
 ## Depends on
 
-- [A directed LDD hits eta-bounded shortest paths O(log^2 n) times in expectation](ldd-sparse-hitting-eta-bounded-paths.md)
 - [The negative-edge count eta of shortest paths and the B-shifted graph](negative-edge-count-eta.md)
-- [Reweighting by a price function shifts every distance by the endpoint prices and preserves cycle weights](price-function-distance-shift.md)
 
 ## Proof depends on
 
-- [The negative-edge count eta of shortest paths and the B-shifted graph](negative-edge-count-eta.md)
 - [Reweighting by a price function shifts every distance by the endpoint prices and preserves cycle weights](price-function-distance-shift.md)
 
 ## Sources

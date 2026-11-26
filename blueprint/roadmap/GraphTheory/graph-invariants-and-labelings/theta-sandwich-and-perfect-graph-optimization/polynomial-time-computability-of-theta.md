@@ -14,16 +14,15 @@ The theta body $\mathrm{TH}(G)$ lies in $[0, 1]^V$ and contains the indicator ve
 
 ## Depends on
 
-- [Weak membership yields weak optimization for centered convex bodies](weak-membership-yields-weak-optimization.md)
 - [Lovász theta function](../theta-function-of-a-graph/lovasz-theta.md)
 - [Theta body](../theta-function-of-a-graph/th.md)
-- [Theta is the maximum of the coordinate sum over the theta body](../theta-function-of-a-graph/lovasz-theta-eq-s-sup-th.md)
 
 ## Proof depends on
 
 - [Weak membership yields weak optimization for centered convex bodies](weak-membership-yields-weak-optimization.md)
-- [Theta body](../theta-function-of-a-graph/th.md)
 - [Theta is the maximum of the coordinate sum over the theta body](../theta-function-of-a-graph/lovasz-theta-eq-s-sup-th.md)
+- [Well-described polyhedra, centered convex bodies and the strong and weak oracle problems](well-described-polyhedra-and-oracle-problems.md)
+- [Orthogonal labeling of a graph](../theta-function-of-a-graph/is-orthogonal-labeling.md)
 
 ## Sources
 

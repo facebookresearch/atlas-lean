@@ -9,14 +9,14 @@ First transfer TAP techniques to cactus augmentation by showing that, after a su
 ## Depends on
 
 - [Weighted connectivity augmentation problem (WCAP)](connectivity-augmentation.md)
-- [Augmenting odd edge-connectivity reduces to tree augmentation](odd-cap-reduces-to-tap.md)
-- [Relative greedy algorithms for weighted tree augmentation](relative-greedy-augmentation.md)
-- [Byrka-Grandoni-Jabal Ameli: unweighted connectivity augmentation is 1.91-approximable](bgj-cap-below-two.md)
+- [Weighted tree augmentation problem (WTAP)](weighted-tree-augmentation.md)
+- [Approximation algorithms and approximation ratios](../approximation-algorithms-and-approximation-ratios.md)
 
 ## Proof depends on
 
 - [Augmenting odd edge-connectivity reduces to tree augmentation](odd-cap-reduces-to-tap.md)
 - [Relative greedy algorithms for weighted tree augmentation](relative-greedy-augmentation.md)
+- [Cactus representations of all minimum cuts](../../../GraphTheory/paths-cycles-connectivity/cactus-representation-and-sparse-certificates/cactus-representation-of-minimum-cuts.md)
 
 ## Sources
 

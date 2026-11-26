@@ -1,6 +1,6 @@
 # Randomized (Delta+1)-colouring in CONGEST in O(log^3 log n) rounds
 
-Let $G = (V, E)$ be a simple connected graph with $n$ vertices and maximum degree $\Delta$, whose vertices carry distinct identifiers from $\{1, \dots, n^{O(1)}\}$. There is a randomized CONGEST algorithm that computes a $(\Delta + 1)$-colouring (and solves $(\deg+1)$-list colouring) with high probability in $O(\log^3 \log n)$ rounds, matching the best known LOCAL complexity of the problem.
+Let $G = (V, E)$ be a simple connected graph with $n$ vertices and maximum degree $\Delta$, whose vertices carry distinct identifiers from $\{1, \dots, n^{O(1)}\}$. There is a randomized CONGEST algorithm that computes a $(\Delta + 1)$-colouring (and solves $(\deg+1)$-list colouring) with high probability in $O(\log^3 \log n)$ rounds.
 
 ## Proof sketch
 

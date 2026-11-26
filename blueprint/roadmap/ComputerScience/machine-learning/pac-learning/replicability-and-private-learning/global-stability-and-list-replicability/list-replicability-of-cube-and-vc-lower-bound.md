@@ -8,8 +8,7 @@ The lower bound is topological: identify distributions on the $d$ points labelle
 
 ## Depends on
 
-- [Global stability parameter equals the reciprocal list replicability number](global-stability-equals-reciprocal-list-replicability.md)
-- [Shattering lower bound for PAC learning](../../../generalization-bounds-and-concentration/shattering-lower-bound-for-pac-learning.md)
+- [Global stability and list replicability of learning rules](global-stability-and-list-replicability.md)
 
 ## Proof depends on
 

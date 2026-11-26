@@ -11,7 +11,6 @@ where $S_{-i}$ deletes $z_i$. For i.i.d. $S \sim D^{n+1}$, $\mathbb{E}[\mathrm{L
 ## Depends on
 
 - [Expected risk](../../../generalization-bounds-and-concentration/risk.md)
-- [Expected generalization gap equals replace-one stability term](../../../generalization-bounds-and-concentration/algorithmic-stability/expected-generalization-gap-equals-replace-one-stability-ter.md)
 
 ## Sources
 

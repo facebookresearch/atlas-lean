@@ -5,7 +5,6 @@ The *Greedy conjecture* asserts that there is an absolute constant $c$ such that
 ## Depends on
 
 - [Geometric Greedy (Greedy Future)](geometric-greedy.md)
-- [Online arborally satisfying algorithms yield online BSTs](online-geometry-to-online-bst.md)
 - [Dynamic optimality](../dynamic-optimality/dynamic-optimality.md)
 
 ## Sources

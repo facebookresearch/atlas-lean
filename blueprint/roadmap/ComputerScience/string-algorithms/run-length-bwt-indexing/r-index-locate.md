@@ -8,15 +8,13 @@ Run backward search with the toehold lemma to obtain the interval and $\mathrm{S
 
 ## Depends on
 
-- [Toehold lemma](toehold-lemma.md)
-- [$\varphi$ is determined by $O(r)$ samples](phi-from-run-samples.md)
-- [Sampled-suffix-array locate](../burrows-wheeler-transform-and-fm-index/locate.md)
+- [Number $r$ of runs in the Burrows–Wheeler transform](../string-attractors-and-repetitiveness-measures/bwt-run-count.md)
 
 ## Proof depends on
 
+- [FM-index backward search](../burrows-wheeler-transform-and-fm-index/backward-search.md)
 - [Toehold lemma](toehold-lemma.md)
 - [$\varphi$ is determined by $O(r)$ samples](phi-from-run-samples.md)
-- [Sampled-suffix-array locate](../burrows-wheeler-transform-and-fm-index/locate.md)
 
 ## Sources
 

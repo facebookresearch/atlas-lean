@@ -15,10 +15,7 @@ Fix $k=501$ and the parameters of the measure-increase lemma, and choose $W_{U,M
 ## Depends on
 
 - [Linear extensions of a polytope and their inequality count](linear-extension-size.md)
-- [Nonnegative factorizations of nested-pair slack matrices and sandwiched extensions](nested-pair-factorization.md)
-- [Fiorini's hyperplane separation lower bound on nonnegative rank](hyperplane-separation-bound.md)
-- [Odd-cut slack matrix of the perfect matching polytope](odd-cut-matching-slack.md)
-- [Rothvoss' quadratic measure increase for cut-matching rectangles](rothvoss-quadratic-measure-increase.md)
+- [Perfect matching polytope](../../../GraphTheory/matchings-and-flows/matching-polytope/perfect-matching-polytope.md)
 - [Matching polytope](../../../GraphTheory/matchings-and-flows/matching-polytope/matching-polytope.md)
 
 ## Proof depends on
@@ -26,6 +23,7 @@ Fix $k=501$ and the parameters of the measure-increase lemma, and choose $W_{U,M
 - [Nonnegative factorizations of nested-pair slack matrices and sandwiched extensions](nested-pair-factorization.md)
 - [Fiorini's hyperplane separation lower bound on nonnegative rank](hyperplane-separation-bound.md)
 - [Rothvoss' quadratic measure increase for cut-matching rectangles](rothvoss-quadratic-measure-increase.md)
+- [Odd-cut slack matrix of the perfect matching polytope](odd-cut-matching-slack.md)
 
 ## Sources
 

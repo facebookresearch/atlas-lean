@@ -4,7 +4,6 @@ For a convex body $K$, a strictly convex regularizer $\Phi$ and a time-varying c
 
 ## Depends on
 
-- [One-step inequality of mirror descent](../../../Analysis/convex-analysis-and-variations/mirror-descent/bregman-prox-step-le.md)
 - [Bregman divergence (prox-function) of a distance-generating function](../../../Analysis/convex-analysis-and-variations/mirror-descent/bregman.md)
 
 ## Sources

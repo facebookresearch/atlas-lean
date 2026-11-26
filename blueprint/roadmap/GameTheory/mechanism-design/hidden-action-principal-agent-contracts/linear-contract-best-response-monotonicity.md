@@ -10,10 +10,6 @@ The agent's utility $\alpha R_i - c_i$ is affine in $\alpha$ with slope $R_i$; t
 
 - [Linear contract and its critical values](linear-contract-critical-values.md)
 
-## Proof depends on
-
-- [Linear contract and its critical values](linear-contract-critical-values.md)
-
 ## Sources
 
 - P. Dütting, T. Roughgarden, I. Talgam-Cohen, "Simple versus Optimal Contracts", EC 2019, arXiv:1808.03713.

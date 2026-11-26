@@ -14,10 +14,7 @@ Answer each query with the Gaussian mechanism at noise level about $\sqrt{k}/(\a
 
 ## Depends on
 
-- [Transfer theorem for adaptive data analysis](../differential-privacy/differentially-private-transfer.md)
-- [Advanced composition](../differential-privacy/differentially-private-pi-advanced.md)
-- [The Gaussian mechanism](../differential-privacy/gaussian-mechanism-differentially-privat.md)
-- [Private multiplicative weights answers exponentially many counting queries](private-multiplicative-weights.md)
+- [Differential privacy](../differential-privacy/differentially-private.md)
 
 ## Proof depends on
 

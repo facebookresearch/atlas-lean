@@ -8,8 +8,8 @@ For each of the $\lceil \log_2 |R| \rceil + 1$ sampling rates $p = 2^{-j}$ repea
 
 ## Depends on
 
-- [Terminal subsampling isolates one side of a Steiner minimum cut](terminal-subsampling-isolates-steiner-cut.md)
-- [Isolating cut lemma with logarithmically many max-flow calls](isolating-cut-lemma.md)
+- [Steiner minimum cuts of a terminal set](steiner-minimum-cut.md)
+- [Maximum-flow oracles and the max-flow call model for cut problems](max-flow-oracle-call-model.md)
 
 ## Proof depends on
 

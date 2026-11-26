@@ -8,13 +8,14 @@ Gagie, Navarro and Prezza show that the differential suffix array $\mathrm{SA}[j
 
 ## Depends on
 
-- [The r-index locates in BWT-runs bounded space](r-index-locate.md)
-- [The LCP array](../../data-structures/tries-and-integer-dictionaries/suffix-array/lcp-array.md)
+- [Number $r$ of runs in the Burrows–Wheeler transform](../string-attractors-and-repetitiveness-measures/bwt-run-count.md)
+- [Suffix tree](../../data-structures/tries-and-integer-dictionaries/suffix-tree/suffix-tree.md)
+- [Suffix array](../../data-structures/tries-and-integer-dictionaries/suffix-array/suffix-array.md)
 
 ## Proof depends on
 
-- [The r-index locates in BWT-runs bounded space](r-index-locate.md)
 - [The LCP array](../../data-structures/tries-and-integer-dictionaries/suffix-array/lcp-array.md)
+- [The r-index locates in BWT-runs bounded space](r-index-locate.md)
 
 ## Sources
 

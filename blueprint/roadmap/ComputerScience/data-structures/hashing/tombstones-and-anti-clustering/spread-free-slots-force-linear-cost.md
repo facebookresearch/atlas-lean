@@ -10,10 +10,6 @@ A start inside a gap of length $g$ at distance $t \in \{0,\dots,g\}$ from its en
 
 - [Linear probing with tombstones and periodic rebuilds](linear-probing-with-tombstones.md)
 
-## Proof depends on
-
-- [Linear probing with tombstones and periodic rebuilds](linear-probing-with-tombstones.md)
-
 ## Sources
 
 - Michael A. Bender, Bradley C. Kuszmaul, William Kuszmaul, "Linear Probing Revisited: Tombstones Mark the Demise of Primary Clustering", FOCS (2021), arXiv:2107.01250.

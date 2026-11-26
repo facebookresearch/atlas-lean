@@ -8,10 +8,7 @@ Induct on the number of requests. The initial work function $w_0(X) = d(A_0, X)$
 
 ## Depends on
 
-- [Work functions and the work function algorithm](../paging-and-k-server/work-functions-and-the-work-function-algorithm.md)
-
-## Proof depends on
-
+- [The k-server problem](../paging-and-k-server/the-k-server-problem.md)
 - [Work functions and the work function algorithm](../paging-and-k-server/work-functions-and-the-work-function-algorithm.md)
 
 ## Sources

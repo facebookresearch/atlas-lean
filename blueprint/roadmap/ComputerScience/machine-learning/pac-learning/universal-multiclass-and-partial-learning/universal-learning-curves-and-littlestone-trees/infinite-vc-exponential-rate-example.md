@@ -8,14 +8,12 @@ Each block $X_d$ is shattered, so the VC dimension is infinite. In a Littlestone
 
 ## Depends on
 
-- [Classes with no infinite Littlestone tree are learnable at exponential rate](exponential-rate-upper-bound.md)
 - [Infinite Littlestone trees](infinite-littlestone-tree.md)
-- [The fundamental theorem of PAC learning](../../is-paclearnable-realizable-family-iff-ha.md)
+- [Realizable distributions, learning curves and universal rates](universal-rate.md)
 
 ## Proof depends on
 
 - [Classes with no infinite Littlestone tree are learnable at exponential rate](exponential-rate-upper-bound.md)
-- [Infinite Littlestone trees](infinite-littlestone-tree.md)
 - [The fundamental theorem of PAC learning](../../is-paclearnable-realizable-family-iff-ha.md)
 
 ## Sources

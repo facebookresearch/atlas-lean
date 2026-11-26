@@ -9,11 +9,11 @@ Take $P$ uniformly random, so $H(P) = (n+1)\log_2|\mathbb{F}|$. A cell sample of
 ## Depends on
 
 - [Static polynomial evaluation problem](static-polynomial-evaluation.md)
-- [Encoding bound for cell samples](cell-sample-encoding-bound.md)
+- [Static cell-probe structure with space $S$ and query time $t$](static-cell-probe-structure.md)
 
 ## Proof depends on
 
-- [Static polynomial evaluation problem](static-polynomial-evaluation.md)
+- [Cell-sampling lemma](cell-sampling-lemma.md)
 - [Encoding bound for cell samples](cell-sample-encoding-bound.md)
 
 ## Sources

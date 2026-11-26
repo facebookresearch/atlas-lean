@@ -16,10 +16,6 @@ $(\varepsilon,\delta)$-DP says $\mathbb{E}_{M(S)}[\phi] \le e^{\varepsilon}\math
 
 - [f-differential privacy](f-differential-privacy.md)
 
-## Proof depends on
-
-- [f-differential privacy](f-differential-privacy.md)
-
 ## Sources
 
 - J. Dong, A. Roth, W. J. Su, "Gaussian Differential Privacy", Journal of the Royal Statistical Society Series B 84 (2022), arXiv:1905.02383.

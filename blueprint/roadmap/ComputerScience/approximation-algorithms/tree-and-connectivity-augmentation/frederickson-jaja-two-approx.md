@@ -10,13 +10,11 @@ Every link of an optimal solution yields two up-links covering exactly the same 
 
 - [Weighted tree augmentation problem (WTAP)](weighted-tree-augmentation.md)
 - [Approximation algorithms and approximation ratios](../approximation-algorithms-and-approximation-ratios.md)
-- [Classical approximation guarantees](../lp-based-approximation/classical-approximation-guarantees.md)
 - [Integrality gaps of linear programming relaxations](../lp-based-approximation/integrality-gaps-of-linear-programming.md)
 
 ## Proof depends on
 
-- [Weighted tree augmentation problem (WTAP)](weighted-tree-augmentation.md)
-- [Integrality gaps of linear programming relaxations](../lp-based-approximation/integrality-gaps-of-linear-programming.md)
+- [Totally unimodular systems have integer solutions](../../../LinearAlgebra/not-yet-classified/exists-int-vec.md)
 
 ## Sources
 

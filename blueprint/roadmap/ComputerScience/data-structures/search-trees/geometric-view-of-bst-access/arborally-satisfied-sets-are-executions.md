@@ -8,11 +8,8 @@ At time $t$, maintain the tree as a treap keyed by the keys with priority equal 
 
 ## Depends on
 
-- [Touched sets of BST executions are arborally satisfied](touched-sets-are-arborally-satisfied.md)
-
-## Proof depends on
-
-- [Touched sets of BST executions are arborally satisfied](touched-sets-are-arborally-satisfied.md)
+- [Arborally satisfied point sets](arborally-satisfied-set.md)
+- [Point set of an access sequence and touched set of a BST execution](access-point-set.md)
 
 ## Sources
 

@@ -12,10 +12,6 @@ In particular, if $|E(S, V \setminus S)| = 1$, the XOR over $S$ equals the name 
 
 An edge with both endpoints in $S$ contributes its name twice to the XOR and cancels; an edge with one endpoint in $S$ contributes once. For the sampling claim, if the cut has $c$ edges choose $j$ with $2^{j-1} < c \le 2^{j}$; the number of survivors at level $j$ is $1$ with probability $c \, 2^{-j}(1 - 2^{-j})^{c-1} \ge \frac{1}{2} e^{-1} \cdot (1 - o(1))$. Tree sums of the sketches over Euler-tour trees make the XOR over a tree available in $O(\log n)$ time.
 
-## Depends on
-
-- [Replacement edges after deleting a spanning-forest edge](replacement-edge-lemma.md)
-
 ## Proof depends on
 
 - [Euler tour](../euler-tour-tree/tour.md)

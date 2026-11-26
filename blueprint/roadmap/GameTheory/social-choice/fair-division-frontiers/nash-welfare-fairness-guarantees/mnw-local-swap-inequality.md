@@ -17,10 +17,6 @@ Moving $g$ from $X_j$ to $X_i$ produces another allocation; its Nash product dif
 - [Maximum Nash welfare allocation](../../../not-yet-classified/part-01/max-nash-welfare/is-max-nash-welfare.md)
 - [Nash Welfare](../../../not-yet-classified/part-01/indivisible/nash-welfare.md)
 
-## Proof depends on
-
-- [Maximum Nash welfare allocation](../../../not-yet-classified/part-01/max-nash-welfare/is-max-nash-welfare.md)
-
 ## Sources
 
 - I. Caragiannis, D. Kurokawa, H. Moulin, A. D. Procaccia, N. Shah, J. Wang, "The Unreasonable Fairness of Maximum Nash Welfare", ACM Transactions on Economics and Computation 7(3) (2019); EC 2016.

@@ -9,12 +9,7 @@ Robustness: buying on day $\lceil\lambda b\rceil$ costs at most $\lambda b + b$ 
 ## Depends on
 
 - [Ski rental with a predicted number of days](ski-rental-with-prediction.md)
-- [The break-even strategy pays at most twice the optimum](../ski-rental-problem/cost-break-even-le-two-mul.md)
-
-## Proof depends on
-
-- [Ski rental with a predicted number of days](ski-rental-with-prediction.md)
-- [The break-even strategy pays at most twice the optimum](../ski-rental-problem/cost-break-even-le-two-mul.md)
+- [Consistency and robustness of learning-augmented online algorithms](../learning-augmented-caching/consistency-and-robustness.md)
 
 ## Sources
 

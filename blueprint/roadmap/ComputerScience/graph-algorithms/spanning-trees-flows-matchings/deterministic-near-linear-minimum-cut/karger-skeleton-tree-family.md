@@ -8,8 +8,8 @@ Sample edges (with weights treated as multiplicities) at a rate making the minim
 
 ## Depends on
 
-- [A near-maximum tree packing has many trees that 2-respect a minimum cut](tree-packing-two-respects-minimum-cut.md)
 - [Cuts that k-respect a spanning tree](cuts-k-respecting-a-spanning-tree.md)
+- [Steiner minimum cuts of a terminal set](../isolating-cuts-and-steiner-min-cuts/steiner-minimum-cut.md)
 
 ## Proof depends on
 

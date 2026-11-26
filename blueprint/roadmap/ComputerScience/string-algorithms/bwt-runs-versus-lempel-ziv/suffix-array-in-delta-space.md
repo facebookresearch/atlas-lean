@@ -8,15 +8,13 @@ Kempa and Kociumaka combine string synchronizing sets, which select $O(n/\tau)$ 
 
 ## Depends on
 
-- [Random access in $\delta$-optimal compressed space](delta-optimal-random-access.md)
-- [Resolution of the BWT-runs conjecture](r-bounded-by-z.md)
 - [Suffix array](../../data-structures/tries-and-integer-dictionaries/suffix-array/suffix-array.md)
+- [Substring complexity $\delta$](../string-attractors-and-repetitiveness-measures/substring-complexity.md)
 
 ## Proof depends on
 
 - [Random access in $\delta$-optimal compressed space](delta-optimal-random-access.md)
 - [Resolution of the BWT-runs conjecture](r-bounded-by-z.md)
-- [Suffix array](../../data-structures/tries-and-integer-dictionaries/suffix-array/suffix-array.md)
 
 ## Sources
 

@@ -14,15 +14,15 @@ Run TreeSwap with a bandit external-regret learner (such as Exp3) at each level,
 
 ## Depends on
 
-- [Swap regret of the path mixture is controlled by external regret of the levels](treeswap-path-mixture-lemma.md)
-- [Regret of Exp3 for adversarial bandits](../../reinforcement-learning/multi-armed-bandits/regret-of-exp3-for-adversarial-bandits.md)
 - [Oblivious adversarial bandits](../../reinforcement-learning/multi-armed-bandits/oblivious-adversarial-bandits.md)
+- [Swap regret](../../../../GameTheory/not-yet-classified/part-02/regret/swap-regret.md)
+- [External regret](../../../../GameTheory/not-yet-classified/part-02/regret/external-regret.md)
 
 ## Proof depends on
 
 - [Swap regret of the path mixture is controlled by external regret of the levels](treeswap-path-mixture-lemma.md)
+- [TreeSwap: swap regret from external regret on a tree of restarts](treeswap-algorithm.md)
 - [Regret of Exp3 for adversarial bandits](../../reinforcement-learning/multi-armed-bandits/regret-of-exp3-for-adversarial-bandits.md)
-- [Oblivious adversarial bandits](../../reinforcement-learning/multi-armed-bandits/oblivious-adversarial-bandits.md)
 
 ## Sources
 

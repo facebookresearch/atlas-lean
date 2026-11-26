@@ -8,11 +8,6 @@ $$
 
 For $c = \mathbf{1}_S$ this says that the average prediction on the subpopulation $S$ is within $\alpha$ of its average outcome, in the unnormalized sense weighted by $\Pr[x \in S]$.
 
-## Depends on
-
-- [Group fairness criteria for scores and classifiers](../algorithmic-fairness/group-fairness-criteria-for-scores-and-classifiers.md)
-- [Expected risk](../generalization-bounds-and-concentration/risk.md)
-
 ## Sources
 
 - U. Hebert-Johnson, M. P. Kim, O. Reingold, G. N. Rothblum, "Multicalibration: Calibration for the (Computationally-Identifiable) Masses", ICML (2018), arXiv:1711.08513.

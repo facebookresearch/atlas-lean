@@ -10,9 +10,7 @@ where $P_T(s,t)$ is the path from $s$ to $t$ in $T$. It is *cut-equivalent* (a c
 
 ## Depends on
 
-- [Max-flow min-cut theorem](../../matchings-and-flows/max-flow-min-cut-theorem/max-flow-min-cut.md)
 - [Edge cuts separating two vertices](../menger-s-theorem/is-stedge-cut.md)
-- [Spanning tree](../../algebraic-graph-theory/part-01/kirchhoff-s-matrix-tree-theorem/is-spanning-tree.md)
 
 ## Sources
 

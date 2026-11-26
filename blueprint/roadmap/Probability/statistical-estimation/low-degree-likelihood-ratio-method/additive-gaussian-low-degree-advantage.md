@@ -18,7 +18,7 @@ Expand $L_n(Y) = \mathbb{E}_X[\exp(\langle X, Y\rangle - \|X\|^2/2)]$ in the ort
 
 ## Proof depends on
 
-- [Low-degree likelihood ratio and low-degree advantage](low-degree-likelihood-ratio.md)
+- [Hermite expansion of the Gaussian likelihood ratio](hermite-expansion-of-likelihood-ratio.md)
 
 ## Sources
 

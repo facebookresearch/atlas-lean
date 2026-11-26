@@ -1,6 +1,6 @@
 # Relative greedy algorithms for weighted tree augmentation
 
-Fix a WTAP instance, which may be assumed shadow-complete: for every link $\ell$ and distinct $v_1,v_2$ on $P_\ell$, the link $v_1v_2$ is present with weight $w(\ell)$. Let $U$ be an optimal up-link solution. For $C \subseteq L$ let $\mathrm{Drop}_U(C)=\{u \in U : P_u \subseteq \bigcup_{\ell \in C}P_\ell\}$ be the up-links made redundant by $C$. Given a family $\mathcal{K}$ of candidate link sets (components), a relative greedy algorithm repeats: choose $C \in \mathcal{K}$ minimizing
+Fix a WTAP instance, which may be assumed shadow-complete: for every link $\ell$ and distinct $v_1,v_2$ on $P_\ell$, the link $v_1v_2$ is present with weight $w(\ell)$. Root the tree at a vertex $r$; splitting a link $\ell=uv$ gives the two up-links $u\,\mathrm{lca}(u,v)$ and $v\,\mathrm{lca}(u,v)$ of weight $w(\ell)$, where $\mathrm{lca}$ is the lowest common ancestor. Let $U$ be an optimal up-link solution, a minimum-weight set of such up-links covering $E$. For $C \subseteq L$ let $\mathrm{Drop}_U(C)=\{u \in U : P_u \subseteq \bigcup_{\ell \in C}P_\ell\}$ be the up-links made redundant by $C$. Given a family $\mathcal{K}$ of candidate link sets (components), a relative greedy algorithm repeats: choose $C \in \mathcal{K}$ minimizing
 
 $$
 \frac{w(C)}{w(\mathrm{Drop}_U(C))},
@@ -11,7 +11,6 @@ add $C$ to the solution, delete $\mathrm{Drop}_U(C)$ from $U$ and contract the c
 ## Depends on
 
 - [Weighted tree augmentation problem (WTAP)](weighted-tree-augmentation.md)
-- [Frederickson-JaJa: weighted tree augmentation is 2-approximable by splitting links](frederickson-jaja-two-approx.md)
 
 ## Sources
 

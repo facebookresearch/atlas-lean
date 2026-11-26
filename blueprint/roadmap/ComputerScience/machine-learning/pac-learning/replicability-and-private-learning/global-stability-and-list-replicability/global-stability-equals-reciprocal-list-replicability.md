@@ -16,10 +16,6 @@ A list replicable learner with list size $L$ outputs one of $L$ hypotheses with 
 
 - [Global stability and list replicability of learning rules](global-stability-and-list-replicability.md)
 
-## Proof depends on
-
-- [Global stability and list replicability of learning rules](global-stability-and-list-replicability.md)
-
 ## Sources
 
 - Z. Chase, S. Moran, A. Yehudayoff, "Replicability and Stability in Learning", FOCS (2023), arXiv:2304.03757.

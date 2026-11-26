@@ -8,8 +8,7 @@ Moser–Tardos resamples, in each round, a maximal independent set (in the depen
 
 ## Depends on
 
-- [Symmetric Lovász Local Lemma](../../../../Combinatorics/probabilistic-combinatorics/lovasz-local-lemma-symmetric-finite.md)
-- [Locally checkable labeling problem](../lcl-problems-and-the-locality-landscape/locally-checkable-labeling-problem.md)
+- [The LOCAL model](../../distributed-execution-models/the-local-model.md)
 
 ## Proof depends on
 

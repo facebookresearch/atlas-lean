@@ -14,14 +14,12 @@ $HD$ is an isometry computed by the fast Walsh–Hadamard transform in $O(d\log 
 
 ## Depends on
 
-- [Johnson-Lindenstrauss lemma for n-point subsets of Euclidean space](johnson-lindenstrauss-lemma-for-finite-point-sets.md)
+- [Distortion of a metric embedding and the Euclidean dimension-reduction function](bi-lipschitz-distortion-of-metric-embeddings.md)
 - [Hadamard matrix](../../../LinearAlgebra/special-matrices/hadamard-matrices/is-hadamard-matrix.md)
 
 ## Proof depends on
 
-- [Hadamard matrix](../../../LinearAlgebra/special-matrices/hadamard-matrices/is-hadamard-matrix.md)
 - [Hoeffding's inequality for averages of bounded variables](../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-avg-sub-ge-le.md)
-- [Johnson-Lindenstrauss lemma for n-point subsets of Euclidean space](johnson-lindenstrauss-lemma-for-finite-point-sets.md)
 
 ## Sources
 

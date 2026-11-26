@@ -6,11 +6,6 @@ A randomized algorithm $A(S; r)$ taking an i.i.d. sample $S$ from a distribution
 
 Answer the $j$-th query with the replicable rounding procedure at replicability level $\rho/q$ using shared randomness $r_j$ and fresh samples. If two runs agree on the answers to the first $j-1$ queries, they ask the same $j$-th query, and the answers agree except with probability $\rho/q$; a union bound over the $q$ queries gives $\rho$-replicability, and each query costs $\tilde O(q^2/(\tau^2\rho^2))$ samples.
 
-## Depends on
-
-- [Replicable simulation of a statistical query by randomized rounding](replicable-statistical-query-simulation.md)
-- [Statistical-query learning implies noise-tolerant PAC learning](../../statistical-query-learning-implies-noise-tolerant-pac-learni.md)
-
 ## Proof depends on
 
 - [Replicable simulation of a statistical query by randomized rounding](replicable-statistical-query-simulation.md)

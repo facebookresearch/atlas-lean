@@ -10,6 +10,7 @@ Membership in coNP: a violating $\ell$-cohesive group is a short certificate. Ha
 
 - [Extended justified representation](extended-justified-representation.md)
 - [Proportional justified representation](proportional-justified-representation.md)
+- [Thiele methods for approval committee elections](thiele-methods.md)
 
 ## Proof depends on
 

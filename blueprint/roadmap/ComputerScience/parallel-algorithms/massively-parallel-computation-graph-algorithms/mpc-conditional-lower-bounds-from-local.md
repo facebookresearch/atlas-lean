@@ -8,7 +8,9 @@ Given a fast MPC algorithm, distinguish one cycle from two cycles by building, i
 
 ## Depends on
 
+- [The massively parallel computation model](massively-parallel-computation-model.md)
 - [The one-cycle versus two-cycle conjecture](one-cycle-versus-two-cycle-conjecture.md)
+- [The LOCAL model](../../concurrent-systems-and-protocols/distributed-execution-models/the-local-model.md)
 - [Deterministic and randomized LOCAL complexity of an LCL problem](../../concurrent-systems-and-protocols/local-distributed-algorithms/lcl-problems-and-the-locality-landscape/lcl-deterministic-randomized-complexity.md)
 
 ## Proof depends on

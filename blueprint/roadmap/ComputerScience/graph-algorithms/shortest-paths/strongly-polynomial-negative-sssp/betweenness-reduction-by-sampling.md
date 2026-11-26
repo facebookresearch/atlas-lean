@@ -9,13 +9,12 @@ Sample $\Theta(\tau\log n)$ vertices and compute a valid reweighting under which
 ## Depends on
 
 - [beta-betweenness of vertex pairs and negative sandwiches of negative vertices](beta-betweenness-and-negative-sandwiches.md)
-- [Computing h-hop distances by alternating Dijkstra and Bellman-Ford rounds in O(h(m + n log n)) time](hop-limited-distances-hybrid.md)
-- [Reweighting by a price function shifts every distance by the endpoint prices and preserves cycle weights](../near-linear-negative-weight-sssp/price-function-distance-shift.md)
+- [Price functions, reduced edge weights, and valid reweightings of a directed graph](../near-linear-negative-weight-sssp/price-functions-and-reduced-weights.md)
 
 ## Proof depends on
 
-- [beta-betweenness of vertex pairs and negative sandwiches of negative vertices](beta-betweenness-and-negative-sandwiches.md)
 - [Computing h-hop distances by alternating Dijkstra and Bellman-Ford rounds in O(h(m + n log n)) time](hop-limited-distances-hybrid.md)
+- [Reweighting by a price function shifts every distance by the endpoint prices and preserves cycle weights](../near-linear-negative-weight-sssp/price-function-distance-shift.md)
 
 ## Sources
 

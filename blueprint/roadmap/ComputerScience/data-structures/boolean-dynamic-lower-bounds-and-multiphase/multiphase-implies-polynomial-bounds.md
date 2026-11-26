@@ -9,12 +9,9 @@ Encode $x_1, \dots, x_k$ in Phase I as $k$ gadgets of a graph, insert the edges 
 ## Depends on
 
 - [Multiphase conjecture](multiphase-conjecture.md)
+- [Pătraşcu's multiphase problem](multiphase-problem.md)
 - [Dynamic graph problems](../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/dynamic-graph-problems.md)
-
-## Proof depends on
-
-- [Multiphase conjecture](multiphase-conjecture.md)
-- [Dynamic graph problems](../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/dynamic-graph-problems.md)
+- [The 3SUM, APSP and Orthogonal Vectors hypotheses](../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-3sum-apsp-and-orthogonal-vectors-hypotheses.md)
 
 ## Sources
 

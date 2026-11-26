@@ -11,11 +11,6 @@ The upper bound uses the spectral norm $\|A - \frac{1}{2}J\| = O(\sqrt{n})$ of t
 - [The degree-d SoS relaxation of the clique number](planted-clique-sos-value.md)
 - [Lovász theta function](../../../GraphTheory/graph-invariants-and-labelings/theta-function-of-a-graph/lovasz-theta.md)
 
-## Proof depends on
-
-- [The degree-d SoS relaxation of the clique number](planted-clique-sos-value.md)
-- [Lovász theta function](../../../GraphTheory/graph-invariants-and-labelings/theta-function-of-a-graph/lovasz-theta.md)
-
 ## Sources
 
 - F. Juhász, "The asymptotic behaviour of Lovász theta function for random graphs", Combinatorica 2 (1982) 153-155.

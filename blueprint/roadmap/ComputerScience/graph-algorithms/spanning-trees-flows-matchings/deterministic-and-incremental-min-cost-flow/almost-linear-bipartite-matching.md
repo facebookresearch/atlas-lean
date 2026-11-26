@@ -8,10 +8,7 @@ Orient edges from the left side $V_1$ to the right side $V_2$ with capacity $1$,
 
 ## Depends on
 
-- [Deterministic minimum-cost flow in almost-linear time](deterministic-almost-linear-min-cost-flow.md)
 - [Matching in a bipartite graph](../maximum-bipartite-matching/is-matching.md)
-- [Kőnig's theorem for finite bipartite graphs](../../../../GraphTheory/matchings-and-flows/k-nig-s-theorem/konig-matching-cover.md)
-- [Dual certificate for the assignment problem](../dual-certificate-for-the-assignment-problem.md)
 
 ## Proof depends on
 

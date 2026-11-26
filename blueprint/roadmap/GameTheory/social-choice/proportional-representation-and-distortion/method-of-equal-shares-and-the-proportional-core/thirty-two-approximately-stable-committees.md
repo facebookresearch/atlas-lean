@@ -10,10 +10,6 @@ First consider a fractional relaxation: Lindahl-type equilibria give a fractiona
 
 - [Approximately stable committee](approximately-stable-committee.md)
 
-## Proof depends on
-
-- [Approximately stable committee](approximately-stable-committee.md)
-
 ## Sources
 
 - Z. Jiang, K. Munagala, K. Wang, "Approximately Stable Committee Selection", STOC 2020, arXiv:1910.14008.

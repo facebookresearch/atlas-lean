@@ -8,15 +8,15 @@ The only randomized step of Karger's algorithm is the sampled skeleton. Li deran
 
 ## Depends on
 
-- [Weighted expander decompositions with volumes measured in the host graph](expander-decomposition.md)
-- [A near-maximum tree packing has many trees that 2-respect a minimum cut](tree-packing-two-respects-minimum-cut.md)
-- [Minimum 2-respecting cut of a spanning tree in O(m log n) deterministic time](minimum-two-respecting-cut-algorithm.md)
+- [Cuts that k-respect a spanning tree](cuts-k-respecting-a-spanning-tree.md)
+- [Steiner minimum cuts of a terminal set](../isolating-cuts-and-steiner-min-cuts/steiner-minimum-cut.md)
 
 ## Proof depends on
 
 - [Karger's skeleton: logarithmically many trees one of which 2-respects the minimum cut](karger-skeleton-tree-family.md)
 - [Minimum 2-respecting cut of a spanning tree in O(m log n) deterministic time](minimum-two-respecting-cut-algorithm.md)
-- [Spectral sparsification by effective-resistance sampling](../../graph-algorithm-bounds/spectral-sparsification-by-effective-resistance.md)
+- [A near-maximum tree packing has many trees that 2-respect a minimum cut](tree-packing-two-respects-minimum-cut.md)
+- [Weighted expander decompositions with volumes measured in the host graph](expander-decomposition.md)
 
 ## Sources
 

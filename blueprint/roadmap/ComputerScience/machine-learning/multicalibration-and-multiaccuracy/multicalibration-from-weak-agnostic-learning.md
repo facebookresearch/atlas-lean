@@ -8,13 +8,13 @@ The residual $y - v$ on the level set $\{p = v\}$ is a labelled distribution on 
 
 ## Depends on
 
-- [Multicalibration by iterated level-set corrections terminates quickly](multicalibration-iterative-algorithm.md)
 - [Learners and agnostic PAC learnability](../pac-learning/agnostic-pac-learning-and-uniform-convergence/learners-and-agnostic-pac-learnability.md)
+- [Multicalibrated predictors](multicalibrated-predictor.md)
+- [Multiaccurate predictors](multiaccurate-predictor.md)
 
 ## Proof depends on
 
 - [Multicalibration by iterated level-set corrections terminates quickly](multicalibration-iterative-algorithm.md)
-- [Learners and agnostic PAC learnability](../pac-learning/agnostic-pac-learning-and-uniform-convergence/learners-and-agnostic-pac-learnability.md)
 
 ## Sources
 

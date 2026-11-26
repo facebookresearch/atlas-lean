@@ -1,6 +1,6 @@
 # Tree chains with shifts and rebuilds over recursive sparsified core graphs
 
-Let $d \ge 1$ and $k = m^{1/d}$. A $d$-level tree chain of $G$ is a sequence $\mathcal{G} = \{G_0 = G, G_1, \ldots, G_d\}$ where for each $i < d$ the graph $G_i$ carries a family of $k$ low-stretch forests $\{(T_j, F_j, \widetilde{\mathrm{str}}^j)\}_{j=0}^{k-1}$ as in *Multiplicative weights give k low-stretch forests that are good on average for every edge*, a shift index $\mathrm{shift}_i \in \{0, \ldots, k-1\}$, a $(\gamma_\ell, \gamma_c)$-sparsified core graph $\mathcal{S}(G_i, F_j)$ for each $j$, and
+Let $d \ge 1$ and $k = m^{1/d}$. A $d$-level tree chain of $G$ is a sequence $\mathcal{G} = \{G_0 = G, G_1, \ldots, G_d\}$ where for each $i < d$ the graph $G_i$ carries a family of $k$ low-stretch forests $\{(T_j, F_j, \widetilde{\mathrm{str}}^j)\}_{j=0}^{k-1}$ that are good on average for every edge, $\frac{1}{k}\sum_{j}\widetilde{\mathrm{str}}^j_e \le O(\log^7 n)$ for all $e$, a shift index $\mathrm{shift}_i \in \{0, \ldots, k-1\}$, a $(\gamma_\ell, \gamma_c)$-sparsified core graph $\mathcal{S}(G_i, F_j)$ for each $j$, and
 
 $$
 G_{i+1} = \mathcal{S}(G_i, F_{\mathrm{shift}_i}),
@@ -10,8 +10,8 @@ while $G_d$ carries $\widetilde{O}(|E(G_d)|)$ low-stretch trees. The chain deter
 
 ## Depends on
 
-- [Multiplicative weights give k low-stretch forests that are good on average for every edge](mwu-low-stretch-forest-family.md)
 - [Sparsified core graphs with short low-congestion embeddings](sparsified-core-graph-embedding.md)
+- [Stretch of an edge with respect to a rooted spanning forest](rooted-forest-edge-stretch.md)
 
 ## Sources
 

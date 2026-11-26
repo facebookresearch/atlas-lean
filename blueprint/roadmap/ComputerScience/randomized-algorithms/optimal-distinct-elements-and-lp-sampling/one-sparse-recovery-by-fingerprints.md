@@ -18,7 +18,6 @@ The first claim is direct substitution. In the second case the polynomial $g(Z) 
 
 ## Proof depends on
 
-- [Turnstile streams, support size and linear sketches of a frequency vector](turnstile-streams-and-support-size.md)
 - [Pairwise-independent hashing by affine maps over GF(2)](../../../TheoryOfComputation/counting-complexity/counting-and-the-polynomial-hierarchy/pairwise-independent-hashing-by-affine-maps.md)
 - [Universal hash family](../../data-structures/hashing/universal-hashing/is-universal.md)
 

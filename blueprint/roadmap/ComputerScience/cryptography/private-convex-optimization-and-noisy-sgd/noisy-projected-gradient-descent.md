@@ -15,13 +15,9 @@ Privacy: each step is $2L^2/(n^2\sigma^2)$-zCDP, so $T$ steps are $2TL^2/(n^2\si
 ## Depends on
 
 - [Private empirical risk minimization and private stochastic convex optimization](private-erm-and-sco.md)
-- [Conversion from zCDP to approximate differential privacy](../zero-concentrated-differential-privacy/zcdp-to-approximate-dp.md)
-- [The Gaussian mechanism satisfies zCDP with parameter sensitivity squared over twice the variance](../zero-concentrated-differential-privacy/gaussian-mechanism-zcdp.md)
-- [Regularized Follow-the-Leader / Online Mirror Descent regret](../../machine-learning/online-learning-and-boosting/regularized-follow-the-leader-online-mirror-descent-regret.md)
 
 ## Proof depends on
 
-- [Private empirical risk minimization and private stochastic convex optimization](private-erm-and-sco.md)
 - [Conversion from zCDP to approximate differential privacy](../zero-concentrated-differential-privacy/zcdp-to-approximate-dp.md)
 - [The Gaussian mechanism satisfies zCDP with parameter sensitivity squared over twice the variance](../zero-concentrated-differential-privacy/gaussian-mechanism-zcdp.md)
 - [Regularized Follow-the-Leader / Online Mirror Descent regret](../../machine-learning/online-learning-and-boosting/regularized-follow-the-leader-online-mirror-descent-regret.md)

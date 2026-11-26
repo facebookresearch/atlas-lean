@@ -13,11 +13,6 @@ A petal decomposition splits a ball of radius $\Delta$ around a center into peta
 ## Depends on
 
 - [Edge stretch with respect to a spanning tree and edge lengths](edge-stretch-wrt-spanning-tree.md)
-- [Alon-Karp-Peleg-West spanning trees of subpolynomial average stretch](akpw-low-stretch-spanning-trees.md)
-
-## Proof depends on
-
-- [Edge stretch with respect to a spanning tree and edge lengths](edge-stretch-wrt-spanning-tree.md)
 
 ## Sources
 

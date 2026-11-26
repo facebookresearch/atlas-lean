@@ -8,12 +8,14 @@ The randomized ingredient of the subpolynomial MSF framework is the expander dec
 
 ## Depends on
 
-- [Deterministic almost-linear-time balanced cut with high-conductance certificates](../../../../GraphTheory/graph-families-and-operations/expander-decomposition-and-pruning/deterministic-balanced-cut-theorem.md)
-- [Las Vegas dynamic minimum spanning forest with n^{o(1)} worst-case update time](nsw-subpolynomial-msf.md)
+- [Fully dynamic connectivity, spanning forest and minimum spanning forest problems](fully-dynamic-connectivity-problems.md)
+- [Oblivious and adaptive adversaries; amortized and worst-case update time](adversary-and-update-time-models.md)
 
 ## Proof depends on
 
 - [Saranurak-Wang expander pruning under online edge deletions](../../../../GraphTheory/graph-families-and-operations/expander-decomposition-and-pruning/expander-pruning-theorem.md)
+- [Deterministic almost-linear-time balanced cut with high-conductance certificates](../../../../GraphTheory/graph-families-and-operations/expander-decomposition-and-pruning/deterministic-balanced-cut-theorem.md)
+- [Las Vegas dynamic minimum spanning forest with n^{o(1)} worst-case update time](nsw-subpolynomial-msf.md)
 
 ## Sources
 

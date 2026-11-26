@@ -9,8 +9,8 @@ The key tool is a maximal version of the isolating cut lemma: for a terminal set
 ## Depends on
 
 - [Cactus representations of all minimum cuts](cactus-representation-of-minimum-cuts.md)
-- [Isolating cut lemma with logarithmically many max-flow calls](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/isolating-cuts-and-steiner-min-cuts/isolating-cut-lemma.md)
-- [Isolating sets for symmetric submodular functions and hypergraph cuts (Chekuri-Quanrud)](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/isolating-cuts-and-steiner-min-cuts/isolating-sets-symmetric-submodular.md)
+- [Steiner minimum cuts of a terminal set](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/isolating-cuts-and-steiner-min-cuts/steiner-minimum-cut.md)
+- [Maximum-flow oracles and the max-flow call model for cut problems](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/isolating-cuts-and-steiner-min-cuts/max-flow-oracle-call-model.md)
 
 ## Proof depends on
 

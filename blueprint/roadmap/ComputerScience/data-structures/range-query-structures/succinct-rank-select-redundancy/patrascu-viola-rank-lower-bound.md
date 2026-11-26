@@ -9,10 +9,11 @@ Choose the input uniformly at random; a structure with tiny redundancy must stor
 ## Depends on
 
 - [Succinct rank with a probe budget](succinct-rank-tradeoff-problem.md)
+- [The cell-probe model](../advanced-data-structures/the-cell-probe-model.md)
 
 ## Proof depends on
 
-- [Succinct rank with a probe budget](succinct-rank-tradeoff-problem.md)
+- [Pătraşcu's succincter rank and select](succincter-rank-upper-bound.md)
 
 ## Sources
 

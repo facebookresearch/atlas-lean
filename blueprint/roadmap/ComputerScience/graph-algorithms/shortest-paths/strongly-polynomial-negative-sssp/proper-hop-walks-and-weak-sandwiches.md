@@ -12,10 +12,10 @@ For item 1 compute $d^{h-1}(S,\cdot)$ and $d^h(S,\cdot)$; if they agree on $S$ t
 
 ## Depends on
 
-- [A negative sandwich with low-betweenness endpoints becomes r-remote after one valid reweighting](negative-sandwich-becomes-remote.md)
-- [Computing h-hop distances by alternating Dijkstra and Bellman-Ford rounds in O(h(m + n log n)) time](hop-limited-distances-hybrid.md)
 - [beta-betweenness of vertex pairs and negative sandwiches of negative vertices](beta-betweenness-and-negative-sandwiches.md)
 - [r-remote sets and 1-hop independent sets of negative vertices](remote-and-independent-negative-sets.md)
+- [Negative vertices, h-hop distances and the negative h-hop reach](negative-vertices-and-hop-distances.md)
+- [Price functions, reduced edge weights, and valid reweightings of a directed graph](../near-linear-negative-weight-sssp/price-functions-and-reduced-weights.md)
 
 ## Proof depends on
 

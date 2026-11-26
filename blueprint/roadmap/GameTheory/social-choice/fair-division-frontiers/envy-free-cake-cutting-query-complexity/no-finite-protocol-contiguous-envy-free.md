@@ -10,10 +10,6 @@ Assume a finite protocol exists. An adversary maintains a family of valuations c
 
 - [Cake cutting in the Robertson-Webb query model](../../cake-cutting-in-the-robertson-webb-query-model.md)
 
-## Proof depends on
-
-- [Cake cutting in the Robertson-Webb query model](../../cake-cutting-in-the-robertson-webb-query-model.md)
-
 ## Sources
 
 - W. Stromquist, "Envy-free cake divisions cannot be found by finite protocols", Electronic Journal of Combinatorics 15 (2008), R11.

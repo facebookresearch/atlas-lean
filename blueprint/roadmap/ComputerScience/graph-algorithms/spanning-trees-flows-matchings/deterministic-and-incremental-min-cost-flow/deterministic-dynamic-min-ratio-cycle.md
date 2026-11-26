@@ -14,18 +14,17 @@ Maintain one shifted tree chain with $d = O(\log^{1/18} m)$ levels, using the de
 
 ## Depends on
 
-- [The shift-and-rebuild game for deterministic tree chains](shift-and-rebuild-game.md)
 - [Approximate dynamic min-ratio cycle problem with hidden stability](../dynamic-min-ratio-cycle-data-structures/dynamic-min-ratio-cycle-hidden-stability.md)
-- [Tree chains with shifts and rebuilds over recursive sparsified core graphs](../dynamic-min-ratio-cycle-data-structures/shifted-tree-chain.md)
 
 ## Proof depends on
 
-- [The shift-and-rebuild game for deterministic tree chains](shift-and-rebuild-game.md)
 - [Hidden witnesses pass to core graphs and sparsified core graphs with bounded loss](../dynamic-min-ratio-cycle-data-structures/witness-circulations-pass-to-core-graphs.md)
 - [Multiplicative weights give k low-stretch forests that are good on average for every edge](../dynamic-min-ratio-cycle-data-structures/mwu-low-stretch-forest-family.md)
 - [Deterministic dynamic spanners with low-recourse short embeddings under deletions and vertex splits](../dynamic-min-ratio-cycle-data-structures/deterministic-dynamic-spanner-embedding.md)
 - [Dynamic low-stretch forests with stable stretch overestimates](../dynamic-min-ratio-cycle-data-structures/dynamic-low-stretch-forest.md)
 - [Link-cut trees take logarithmic amortized time](../../../data-structures/disjoint-sets-and-dynamic-trees/link-cut-tree/link-cut-trees-take-logarithmic-amortized-time.md)
+- [The shift-and-rebuild game for deterministic tree chains](shift-and-rebuild-game.md)
+- [Tree chains with shifts and rebuilds over recursive sparsified core graphs](../dynamic-min-ratio-cycle-data-structures/shifted-tree-chain.md)
 
 ## Sources
 

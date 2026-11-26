@@ -10,10 +10,6 @@ Convexity follows by randomizing between two rejection rules, monotonicity and c
 
 - [Trade-off functions of pairs of distributions](trade-off-function.md)
 
-## Proof depends on
-
-- [Trade-off functions of pairs of distributions](trade-off-function.md)
-
 ## Sources
 
 - J. Dong, A. Roth, W. J. Su, "Gaussian Differential Privacy", Journal of the Royal Statistical Society Series B 84 (2022), arXiv:1905.02383.

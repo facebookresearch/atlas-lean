@@ -16,6 +16,12 @@ The proof introduces the information-transfer technique: fix a random sequence o
 
 - [The cell-probe model](../../range-query-structures/advanced-data-structures/the-cell-probe-model.md)
 - [Fully dynamic connectivity, spanning forest and minimum spanning forest problems](fully-dynamic-connectivity-problems.md)
+- [Amortized update and query cost of a dynamic cell-probe structure](../../dynamic-information-transfer-lower-bounds/amortized-cell-probe-costs.md)
+
+## Proof depends on
+
+- [Information transfer must carry the entropy of the interleaved updates](../../dynamic-information-transfer-lower-bounds/transfer-entropy-bound.md)
+- [Partial sums over permutation groups reduce to connectivity of disjoint paths](../../dynamic-information-transfer-lower-bounds/grid-permutation-reduction.md)
 
 ## Sources
 

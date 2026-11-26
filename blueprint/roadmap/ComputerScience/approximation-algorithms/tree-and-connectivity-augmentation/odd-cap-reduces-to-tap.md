@@ -10,13 +10,11 @@ Suppose minimum cuts $S,S'$ cross, with corners $A=S \cap S'$, $B=S \setminus S'
 
 - [Weighted tree augmentation problem (WTAP)](weighted-tree-augmentation.md)
 - [Weighted connectivity augmentation problem (WCAP)](connectivity-augmentation.md)
-- [At most $n(n-1)/2$ minimum cuts](../../randomized-algorithms/karger-s-algorithm/two-mul-length-min-cuts-le.md)
 - [Minimum cut size](../../randomized-algorithms/karger-s-algorithm/is-min-cut.md)
-- [Menger's theorem for edge cuts and edge-disjoint paths](../../../GraphTheory/paths-cycles-connectivity/menger-s-theorem/menger-edge-max-min.md)
+- [Cactus representations of all minimum cuts](../../../GraphTheory/paths-cycles-connectivity/cactus-representation-and-sparse-certificates/cactus-representation-of-minimum-cuts.md)
 
 ## Proof depends on
 
-- [Weighted connectivity augmentation problem (WCAP)](connectivity-augmentation.md)
 - [At most $n(n-1)/2$ minimum cuts](../../randomized-algorithms/karger-s-algorithm/two-mul-length-min-cuts-le.md)
 
 ## Sources

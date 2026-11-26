@@ -4,7 +4,6 @@ Let $G = (V, E, w)$ be a connected undirected graph with positive weights and le
 
 ## Depends on
 
-- [Max-flow min-cut theorem](../../../../GraphTheory/matchings-and-flows/max-flow-min-cut-theorem/max-flow-min-cut.md)
 - [Edge cuts separating two vertices](../../../../GraphTheory/paths-cycles-connectivity/menger-s-theorem/is-stedge-cut.md)
 - [Flow-equivalent and cut-equivalent trees of weighted graphs](../../../../GraphTheory/paths-cycles-connectivity/cactus-representation-and-sparse-certificates/flow-equivalent-and-cut-equivalent-trees.md)
 

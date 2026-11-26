@@ -1,6 +1,6 @@
 # Hiding among the clones: nearly optimal amplification by shuffling
 
-In the setting of the clone reduction, for every $\delta \in [0,1]$ with $\varepsilon_0 \le \log\big(\frac{n}{16\log(2/\delta)}\big)$, the shuffled output $A_s$ is $(\varepsilon,\delta)$-differentially private with
+Let $A_s$ apply local randomizers $R^{(1)}, \dots, R^{(n)}$, each $\varepsilon_0$-differentially private for every value of the earlier reports, to the $n$ records taken in uniformly random order. For every $\delta \in [0,1]$ with $\varepsilon_0 \le \log\big(\frac{n}{16\log(2/\delta)}\big)$, the shuffled output $A_s$ is $(\varepsilon,\delta)$-differentially private with
 
 $$
 \varepsilon \le \log\left(1 + \frac{e^{\varepsilon_0} - 1}{e^{\varepsilon_0} + 1}\left(\frac{8\sqrt{e^{\varepsilon_0}\log(4/\delta)}}{\sqrt{n}} + \frac{8 e^{\varepsilon_0}}{n}\right)\right) = O\!\left((1 - e^{-\varepsilon_0})\sqrt{\frac{e^{\varepsilon_0}\log(1/\delta)}{n}}\right),
@@ -14,8 +14,7 @@ By the clone reduction and post-processing it suffices to bound the privacy of t
 
 ## Depends on
 
-- [Shuffled local reports reduce to a binomial clone-counting problem](shuffle-clone-reduction.md)
-- [Hoeffding's inequality for averages of bounded variables](../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-avg-sub-ge-le.md)
+- [Local randomizers and the shuffle model](shuffle-model.md)
 
 ## Proof depends on
 

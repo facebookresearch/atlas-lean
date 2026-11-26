@@ -12,7 +12,6 @@ The edge bound holds because each forest has at most $n - 1$ edges. For the cert
 
 ## Proof depends on
 
-- [Sparse k-edge-connectivity certificates and forest decompositions](sparse-k-edge-connectivity-certificate.md)
 - [Menger's theorem for edge cuts and edge-disjoint paths](../menger-s-theorem/menger-edge-max-min.md)
 
 ## Sources

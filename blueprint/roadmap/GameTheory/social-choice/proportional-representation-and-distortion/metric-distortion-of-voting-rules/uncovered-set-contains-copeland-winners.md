@@ -9,11 +9,6 @@ If $a$ covers $b$ then $a$ beats strictly more candidates than $b$ (all those be
 ## Depends on
 
 - [Copeland score](../../../not-yet-classified/part-02/voting-rules/copeland-score.md)
-- [Condorcet profile](../../../not-yet-classified/part-01/condorcet-cycle/condorcet-profile.md)
-
-## Proof depends on
-
-- [Copeland score](../../../not-yet-classified/part-02/voting-rules/copeland-score.md)
 
 ## Sources
 

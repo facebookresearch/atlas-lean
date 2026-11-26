@@ -18,7 +18,6 @@ The information-theoretic part converts a sketch into a statement about one-way 
 
 ## Proof depends on
 
-- [Stable distribution of a given index](../../../Probability/infinite-divisibility-regular-variation/stable-distributions-and-domains-of-attraction/is-stable.md)
 - [Yao's minimax principle](../../../TheoryOfComputation/randomized-and-quantum-complexity/yao-s-minimax-principle/yao-minimax.md)
 
 ## Sources

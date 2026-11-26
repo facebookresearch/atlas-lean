@@ -9,11 +9,9 @@ Decompose the output law as a common part plus a data-dependent remainder; condi
 ## Depends on
 
 - [Local randomizers and the shuffle model](shuffle-model.md)
-- [Amplification by shuffling from local to central privacy](amplification-by-shuffling-local-to-central.md)
 
 ## Proof depends on
 
-- [Local randomizers and the shuffle model](shuffle-model.md)
 - [Amplification by shuffling from local to central privacy](amplification-by-shuffling-local-to-central.md)
 
 ## Sources

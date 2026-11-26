@@ -15,10 +15,7 @@ Construct a Lyapunov function of the form $a_t \lVert F(z_t)\rVert^2 + b_t \lang
 ## Depends on
 
 - [Extragradient and optimistic gradient descent-ascent](extragradient-and-optimistic-gradient.md)
-
-## Proof depends on
-
-- [Last iterates of p-SCLI methods converge no faster than 1/sqrt(T)](last-iterate-lower-bound-sqrt-t.md)
+- [Smooth monotone game and monotone variational inequality](smooth-monotone-game-variational-inequality.md)
 
 ## Sources
 

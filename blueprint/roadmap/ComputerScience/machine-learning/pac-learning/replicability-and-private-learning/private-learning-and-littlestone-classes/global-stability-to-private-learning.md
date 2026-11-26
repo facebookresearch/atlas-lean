@@ -16,12 +16,9 @@ With high probability $h_D$ appears in at least an $\eta/2$ fraction of the $k$ 
 
 - [Global stability and list replicability of learning rules](../global-stability-and-list-replicability/global-stability-and-list-replicability.md)
 - [Private PAC learners and their sample complexity](private-pac-learner.md)
-- [The Laplace mechanism is differentially private](../../../../cryptography/laplace-and-exponential-mechanisms/laplace-mechanism-differentially-private.md)
 
 ## Proof depends on
 
-- [Global stability and list replicability of learning rules](../global-stability-and-list-replicability/global-stability-and-list-replicability.md)
-- [Private PAC learners and their sample complexity](private-pac-learner.md)
 - [The Laplace mechanism is differentially private](../../../../cryptography/laplace-and-exponential-mechanisms/laplace-mechanism-differentially-private.md)
 
 ## Sources

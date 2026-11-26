@@ -20,7 +20,8 @@ Bound the variation of each player's loss sequence through the higher-order smoo
 ## Proof depends on
 
 - [Regret bounded by variation in utilities for optimistic algorithms](rvu-property-optimistic-algorithms.md)
-- [Optimistic dynamics give O(T^(1/4)) individual and O(1) total regret](optimistic-dynamics-fast-regret.md)
+- [Higher-order smoothness of Optimistic Hedge iterates](higher-order-smoothness-optimistic-hedge.md)
+- [No-regret dynamics converge to coarse correlated equilibria](../../no-regret-dynamics/is-coarse-correlated-eq-empirical.md)
 
 ## Sources
 

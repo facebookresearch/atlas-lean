@@ -14,13 +14,12 @@ The regularity lemma is proved by the same energy increment as multiaccuracy: st
 
 ## Depends on
 
-- [Each multiaccuracy correction decreases the squared distance to the Bayes predictor](multiaccuracy-correction-potential-decrease.md)
 - [Multicalibrated predictors](multicalibrated-predictor.md)
+- [Multiaccurate predictors](multiaccurate-predictor.md)
 
 ## Proof depends on
 
 - [Each multiaccuracy correction decreases the squared distance to the Bayes predictor](multiaccuracy-correction-potential-decrease.md)
-- [Multicalibrated predictors](multicalibrated-predictor.md)
 
 ## Sources
 

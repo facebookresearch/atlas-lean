@@ -15,16 +15,14 @@ Replicability implies TV indistinguishability because for fixed samples the prob
 ## Depends on
 
 - [Total-variation indistinguishable learning rules](tv-indistinguishable-learning-rule.md)
-- [Replicable heavy hitters with domain-independent sample complexity](replicable-heavy-hitters.md)
-- [Private learning requires log-star of the Littlestone dimension samples](../private-learning-and-littlestone-classes/private-learning-requires-log-star-littlestone.md)
-- [Finite Littlestone dimension implies private learnability](../private-learning-and-littlestone-classes/littlestone-classes-are-privately-learnable.md)
+- [Private PAC learners and their sample complexity](../private-learning-and-littlestone-classes/private-pac-learner.md)
 
 ## Proof depends on
 
-- [Total-variation indistinguishable learning rules](tv-indistinguishable-learning-rule.md)
 - [Replicable heavy hitters with domain-independent sample complexity](replicable-heavy-hitters.md)
 - [Private learning requires log-star of the Littlestone dimension samples](../private-learning-and-littlestone-classes/private-learning-requires-log-star-littlestone.md)
 - [Finite Littlestone dimension implies private learnability](../private-learning-and-littlestone-classes/littlestone-classes-are-privately-learnable.md)
+- [Global stability and list replicability of learning rules](global-stability-and-list-replicability.md)
 
 ## Sources
 

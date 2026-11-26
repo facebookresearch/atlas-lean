@@ -15,11 +15,9 @@ The procedure classifies vertices by the sizes of their out- and in-balls of rad
 
 - [Restricted graphs and the parameter kappa counting negative edges on nonpositive paths](restricted-graphs-and-kappa.md)
 - [Weak and strong directed low-diameter decompositions with overhead rho](directed-low-diameter-decomposition.md)
-- [ElimNeg: the Dijkstra-Bellman-Ford hybrid runs in time proportional to the negative-edge counts of shortest paths](elimneg-dijkstra-bellman-ford-hybrid.md)
 
 ## Proof depends on
 
-- [Restricted graphs and the parameter kappa counting negative edges on nonpositive paths](restricted-graphs-and-kappa.md)
 - [ElimNeg: the Dijkstra-Bellman-Ford hybrid runs in time proportional to the negative-edge counts of shortest paths](elimneg-dijkstra-bellman-ford-hybrid.md)
 
 ## Sources

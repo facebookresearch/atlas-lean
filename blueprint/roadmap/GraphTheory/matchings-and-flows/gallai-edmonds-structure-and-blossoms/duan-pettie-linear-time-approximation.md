@@ -6,7 +6,7 @@ $$
 O\!\left(m \, \varepsilon^{-1} \log \varepsilon^{-1}\right)
 $$
 
-time in a model with unit-cost comparisons and additions of weights. For each fixed $\varepsilon$ this is linear time, bypassing the $\widetilde{O}(m \sqrt{n})$ bound of the best known exact algorithms for maximum cardinality and maximum weight matching.
+time in a model with unit-cost comparisons and additions of weights. For each fixed $\varepsilon$ this is linear time, bypassing the $\widetilde{O}(m \sqrt{n})$ running time of the classical exact combinatorial algorithms for maximum cardinality and maximum weight matching.
 
 ## Proof sketch
 
@@ -15,14 +15,14 @@ The algorithm is a scaling primal-dual method for Edmonds' linear program with o
 ## Depends on
 
 - [Approximate maximum weight matchings in general graphs](approximate-maximum-weight-matching.md)
-- [Correctness and running time of Edmonds' cardinality blossom algorithm](edmonds-cardinality-blossom-algorithm.md)
-- [Edmonds' perfect matching polytope theorem](../matching-polytope/perfect-matching-polytope-eq.md)
 
 ## Proof depends on
 
-- [Approximate maximum weight matchings in general graphs](approximate-maximum-weight-matching.md)
 - [Edmonds' perfect matching polytope theorem](../matching-polytope/perfect-matching-polytope-eq.md)
 - [Edmonds' blossom shrinking lemma](edmonds-blossom-shrinking-lemma.md)
+- [Correctness and running time of Edmonds' cardinality blossom algorithm](edmonds-cardinality-blossom-algorithm.md)
+- [Alternating forests, flowers and blossoms of a matching](alternating-forests-and-blossoms.md)
+- [Matching polytope](../matching-polytope/matching-polytope.md)
 
 ## Sources
 

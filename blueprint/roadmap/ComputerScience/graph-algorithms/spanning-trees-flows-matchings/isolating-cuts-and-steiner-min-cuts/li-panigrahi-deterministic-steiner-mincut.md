@@ -8,13 +8,12 @@ The random terminal sampling of the Monte Carlo algorithm is replaced by a deter
 
 ## Depends on
 
-- [Isolating cut lemma with logarithmically many max-flow calls](isolating-cut-lemma.md)
 - [Steiner minimum cuts of a terminal set](steiner-minimum-cut.md)
+- [Maximum-flow oracles and the max-flow call model for cut problems](max-flow-oracle-call-model.md)
 
 ## Proof depends on
 
 - [Isolating cut lemma with logarithmically many max-flow calls](isolating-cut-lemma.md)
-- [Edmonds-Karp computes a maximum flow and a minimum cut](../edmonds-karp-algorithm/edmonds-karp-max-flow-min-cut.md)
 
 ## Sources
 

@@ -9,12 +9,7 @@ Suppose $G[X]$ has an edge and fix a topological order of $G[X]$. Let $v$ be the
 ## Depends on
 
 - [Directed phi-expanders, phi-sparse directed cuts, and phi-expanding terminal edge sets](directed-phi-expanders.md)
-- [Directed phi-expanders are strongly connected and route terminal demands with congestion O(log n / phi)](directed-expander-connectivity-and-routing.md)
 - [Acyclic condensation](../../../ComputerScience/graph-algorithms/traversal-and-connectivity/strongly-connected-components/condensation-acyclic.md)
-
-## Proof depends on
-
-- [Directed phi-expanders, phi-sparse directed cuts, and phi-expanding terminal edge sets](directed-phi-expanders.md)
 
 ## Sources
 

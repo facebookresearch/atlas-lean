@@ -10,10 +10,6 @@ Goldfarb's cube is a combinatorial cube obtained by repeatedly deforming a produ
 
 - [The shadow vertex pivot rule and the smoothed shadow bound](shadow-vertex-rule-and-shadow-bound.md)
 
-## Proof depends on
-
-- [The shadow vertex pivot rule and the smoothed shadow bound](shadow-vertex-rule-and-shadow-bound.md)
-
 ## Sources
 
 - D. Goldfarb, "On the complexity of the simplex method", in Advances in Optimization and Numerical Analysis, Kluwer (1994).

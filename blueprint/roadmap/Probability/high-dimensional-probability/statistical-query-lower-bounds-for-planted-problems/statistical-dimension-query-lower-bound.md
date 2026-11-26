@@ -10,10 +10,6 @@ Each query $h$ can be answered with the null value $\mathbb{E}_D[h]$ for all but
 
 - [VSTAT oracle and statistical dimension with average correlation](vstat-oracle-statistical-dimension.md)
 
-## Proof depends on
-
-- [VSTAT oracle and statistical dimension with average correlation](vstat-oracle-statistical-dimension.md)
-
 ## Sources
 
 - V. Feldman, E. Grigorescu, L. Reyzin, S. Vempala, Y. Xiao, "Statistical Algorithms and a Lower Bound for Detecting Planted Cliques", Journal of the ACM 64 (2017), arXiv:1201.1214.

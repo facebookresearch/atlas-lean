@@ -9,10 +9,8 @@ The cell-probe structure stores products of $M$ with a carefully chosen family o
 ## Depends on
 
 - [Succinct Boolean matrix-vector multiplication](succinct-boolean-matvec-problem.md)
-
-## Proof depends on
-
-- [Succinct Boolean matrix-vector multiplication](succinct-boolean-matvec-problem.md)
+- [The online matrix-vector multiplication conjecture](../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-online-matrix-vector-multiplication.md)
+- [The cell-probe model](../range-query-structures/advanced-data-structures/the-cell-probe-model.md)
 
 ## Sources
 

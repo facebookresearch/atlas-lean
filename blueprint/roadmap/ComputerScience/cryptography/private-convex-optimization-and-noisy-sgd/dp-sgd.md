@@ -11,7 +11,6 @@ Each step is a subsampled Gaussian mechanism with $\ell_2$-sensitivity $C$ for t
 ## Depends on
 
 - [Private empirical risk minimization and private stochastic convex optimization](private-erm-and-sco.md)
-- [The Gaussian mechanism](../differential-privacy/gaussian-mechanism-differentially-privat.md)
 
 ## Sources
 

@@ -8,12 +8,8 @@ Correct processes jointly generate shared random coins by a scalable variant of 
 
 ## Depends on
 
-- [Byzantine fault-tolerant state machine replication under partial synchrony](byzantine-state-machine-replication.md)
 - [Reaching Byzantine agreement](../solves.md)
-
-## Proof depends on
-
-- [Byzantine agreement requires quadratic communication](dolev-reischuk-quadratic-lower-bound.md)
+- [Fail-stop, omission and Byzantine faults](../../distributed-execution-models/fail-stop-omission-and-byzantine-faults.md)
 
 ## Sources
 

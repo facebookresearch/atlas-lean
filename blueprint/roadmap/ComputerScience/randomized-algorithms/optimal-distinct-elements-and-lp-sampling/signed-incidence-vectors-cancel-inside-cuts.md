@@ -15,11 +15,9 @@ An edge $\{i, j\}$ with both endpoints in $S$ contributes $+1$ through $a_i$ and
 ## Depends on
 
 - [Turnstile streams, support size and linear sketches of a frequency vector](turnstile-streams-and-support-size.md)
-- [Cut capacity](../../graph-algorithms/spanning-trees-flows-matchings/edmonds-karp-algorithm/cut-capacity.md)
 
 ## Proof depends on
 
-- [Turnstile streams, support size and linear sketches of a frequency vector](turnstile-streams-and-support-size.md)
 - [The one-pass sketch is linear in the frequencies](../frequency-moments-of-data-streams/sketch-eq-sum-count-mul.md)
 
 ## Sources

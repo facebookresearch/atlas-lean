@@ -8,13 +8,13 @@ Wei runs the *blind oracle* algorithm, which evicts the page with the furthest p
 
 ## Depends on
 
-- [The predictive marker algorithm](predictive-marker.md)
-- [Lower bound for caching with next-arrival predictions](rohatgi-caching-lower-bound.md)
+- [Next-arrival predictions for paging](next-arrival-predictions.md)
+- [Consistency and robustness of learning-augmented online algorithms](consistency-and-robustness.md)
 
 ## Proof depends on
 
-- [The predictive marker algorithm](predictive-marker.md)
-- [Lower bound for caching with next-arrival predictions](rohatgi-caching-lower-bound.md)
+- [Combining online algorithms for metrical task systems](combining-online-algorithms.md)
+- [The randomized marking algorithm and the harmonic lower bound for paging](../competitive-paging/randomized-marking-algorithm-and-the-harmonic-lower-bound.md)
 
 ## Sources
 

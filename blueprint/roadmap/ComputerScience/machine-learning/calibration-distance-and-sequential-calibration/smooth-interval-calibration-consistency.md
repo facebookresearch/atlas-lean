@@ -15,12 +15,7 @@ The smooth calibration error is the value of a linear program whose dual is a tr
 ## Depends on
 
 - [Smooth calibration error and interval calibration error](smooth-calibration-error.md)
-- [The expected calibration error is discontinuous and not robustly complete](ece-discontinuity.md)
-
-## Proof depends on
-
-- [Smooth calibration error and interval calibration error](smooth-calibration-error.md)
-- [The expected calibration error is discontinuous and not robustly complete](ece-discontinuity.md)
+- [Distance to calibration and its upper and lower variants](distance-to-calibration.md)
 
 ## Sources
 

@@ -9,12 +9,11 @@ Berendsohn, Kozma and Opler construct an explicit offline arborally satisfied su
 ## Depends on
 
 - [Pattern-avoidance conjecture for binary search trees](pattern-avoidance-conjecture.md)
-- [Marcus–Tardos theorem on excluded permutation matrices](marcus-tardos-theorem.md)
-- [Geometric characterization of the optimal offline BST cost](../geometric-view-of-bst-access/geometric-characterization-of-opt.md)
+- [Pattern-avoiding access sequences](pattern-avoiding-access-sequence.md)
+- [The binary search tree access model](../dynamic-optimality/the-binary-search-tree-access-model.md)
 
 ## Proof depends on
 
-- [Pattern-avoidance conjecture for binary search trees](pattern-avoidance-conjecture.md)
 - [Marcus–Tardos theorem on excluded permutation matrices](marcus-tardos-theorem.md)
 - [Geometric characterization of the optimal offline BST cost](../geometric-view-of-bst-access/geometric-characterization-of-opt.md)
 

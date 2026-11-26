@@ -10,6 +10,7 @@ Ball carving is a sequential local procedure with polylogarithmic locality, givi
 
 - [The SLOCAL model and its polylogarithmic class](the-slocal-model.md)
 - [Network decomposition with weak or strong diameter](network-decomposition-weak-strong-diameter.md)
+- [The LOCAL model](../../distributed-execution-models/the-local-model.md)
 
 ## Proof depends on
 

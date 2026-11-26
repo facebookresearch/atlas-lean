@@ -11,7 +11,6 @@ equivalently, a minimum-weight $F$ such that $(V,E \cup F)$ is 2-edge-connected,
 ## Depends on
 
 - [Edge cuts separating two vertices](../../../GraphTheory/paths-cycles-connectivity/menger-s-theorem/is-stedge-cut.md)
-- [Menger's theorem for edge cuts and edge-disjoint paths](../../../GraphTheory/paths-cycles-connectivity/menger-s-theorem/menger-edge-max-min.md)
 - [Approximation algorithms and approximation ratios](../approximation-algorithms-and-approximation-ratios.md)
 
 ## Sources

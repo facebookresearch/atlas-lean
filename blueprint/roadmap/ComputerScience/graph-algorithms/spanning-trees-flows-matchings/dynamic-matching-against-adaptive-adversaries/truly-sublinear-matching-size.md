@@ -9,11 +9,11 @@ Recomputing a near-maximum matching every $\varepsilon\mu$ updates handles the r
 ## Depends on
 
 - [Fully dynamic alpha-approximate maximum matching and its value version](dynamic-approximate-matching-problem.md)
-- [Gupta-Peng: (1+eps)-approximate dynamic matching in O(sqrt(m) eps^{-2}) worst-case update time](gupta-peng-dynamic-matching.md)
+- [Oblivious and adaptive adversaries; amortized and worst-case update time](../../../data-structures/disjoint-sets-and-dynamic-trees/fully-dynamic-connectivity-and-spanning-forests/adversary-and-update-time-models.md)
 
 ## Proof depends on
 
-- [Oblivious and adaptive adversaries; amortized and worst-case update time](../../../data-structures/disjoint-sets-and-dynamic-trees/fully-dynamic-connectivity-and-spanning-forests/adversary-and-update-time-models.md)
+- [Gupta-Peng: (1+eps)-approximate dynamic matching in O(sqrt(m) eps^{-2}) worst-case update time](gupta-peng-dynamic-matching.md)
 
 ## Sources
 

@@ -10,10 +10,11 @@ The summability bound follows from the standard extragradient energy inequality 
 
 - [Gap function and tangent residual for monotone variational inequalities](gap-function-and-tangent-residual.md)
 - [Extragradient and optimistic gradient descent-ascent](extragradient-and-optimistic-gradient.md)
+- [Smooth monotone game and monotone variational inequality](smooth-monotone-game-variational-inequality.md)
 
 ## Proof depends on
 
-- [Gap function and tangent residual for monotone variational inequalities](gap-function-and-tangent-residual.md)
+- [Energy inequality for the extragradient method](extragradient-energy-inequality.md)
 
 ## Sources
 

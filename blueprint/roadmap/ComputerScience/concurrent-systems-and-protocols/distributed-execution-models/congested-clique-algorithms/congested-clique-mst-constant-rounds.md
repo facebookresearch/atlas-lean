@@ -9,7 +9,6 @@ Reduce the number of components quickly by Borůvka-style contraction until the 
 ## Depends on
 
 - [The congested clique model](the-congested-clique-model.md)
-- [Prim's algorithm returns a minimum spanning tree](../../../graph-algorithms/spanning-trees-flows-matchings/prim-s-algorithm/prim-minimum-spanning-tree.md)
 
 ## Proof depends on
 

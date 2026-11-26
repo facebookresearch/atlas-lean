@@ -8,8 +8,7 @@ The privacy profile of a pair is the hockey-stick divergence $\sup_E (P(E) - e^{
 
 ## Depends on
 
-- [Lossless adaptive composition of f-differential privacy](f-dp-adaptive-composition.md)
-- [Primal–dual conversion between f-DP and families of approximate DP guarantees](f-dp-primal-dual-conversion.md)
+- [f-differential privacy](f-differential-privacy.md)
 
 ## Proof depends on
 

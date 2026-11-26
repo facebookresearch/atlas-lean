@@ -8,8 +8,9 @@ Replace the red-black auxiliary trees by splay trees, charge the $O(\log\log n)$
 
 ## Depends on
 
-- [Tango trees are $O(\log\log n)$-competitive](tango-competitiveness.md)
-- [Access lemma for splay trees](../splay-tree/access-lemma-weighted.md)
+- [Preferred children and preferred paths](preferred-paths.md)
+- [Tango trees](tango-tree.md)
+- [Splay operation](../splay-tree/splay.md)
 
 ## Proof depends on
 

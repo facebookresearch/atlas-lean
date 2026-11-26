@@ -14,13 +14,11 @@ Use a local randomizer with large $\varepsilon_0$ (such as $k$-ary randomized re
 
 ## Depends on
 
-- [Hiding among the clones: nearly optimal amplification by shuffling](amplification-by-shuffling-clones-bound.md)
 - [Local randomizers and the shuffle model](shuffle-model.md)
 
 ## Proof depends on
 
 - [Hiding among the clones: nearly optimal amplification by shuffling](amplification-by-shuffling-clones-bound.md)
-- [Local randomizers and the shuffle model](shuffle-model.md)
 
 ## Sources
 

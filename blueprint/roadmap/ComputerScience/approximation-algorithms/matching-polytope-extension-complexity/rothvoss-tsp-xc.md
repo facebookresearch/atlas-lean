@@ -14,15 +14,13 @@ Yannakakis constructed, for every even $n'$, a face of $P_{\mathrm{TSP}}(n)$ wit
 
 ## Depends on
 
-- [Rothvoss: the perfect matching polytope of K_n has extension complexity 2^Omega(n)](rothvoss-perfect-matching-xc.md)
 - [Linear extensions of a polytope and their inequality count](linear-extension-size.md)
-- [Faces of a convex polytope](../../../Combinatorics/polytopes-simplicial-complexes/faces-of-convex-polytopes/faces.md)
-- [Symmetric TSP instances](../../../TheoryOfComputation/np-completeness/paths-cycles-and-subgraphs/traveling-salesperson-problem/tsp-instance.md)
 
 ## Proof depends on
 
 - [Rothvoss: the perfect matching polytope of K_n has extension complexity 2^Omega(n)](rothvoss-perfect-matching-xc.md)
-- [Linear extensions of a polytope and their inequality count](linear-extension-size.md)
+- [Faces of a convex polytope](../../../Combinatorics/polytopes-simplicial-complexes/faces-of-convex-polytopes/faces.md)
+- [Perfect matching polytope](../../../GraphTheory/matchings-and-flows/matching-polytope/perfect-matching-polytope.md)
 
 ## Sources
 

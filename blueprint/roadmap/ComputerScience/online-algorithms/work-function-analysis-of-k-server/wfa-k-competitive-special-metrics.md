@@ -8,7 +8,9 @@ For $k = 2$ Chrobak and Larmore give a potential tailored to two servers. Bartal
 
 ## Depends on
 
-- [The work function algorithm is $(2k-1)$-competitive](wfa-is-2k-minus-1-competitive.md)
+- [The k-server problem](../paging-and-k-server/the-k-server-problem.md)
+- [Work functions and the work function algorithm](../paging-and-k-server/work-functions-and-the-work-function-algorithm.md)
+- [The deterministic k-server conjecture](k-server-conjecture.md)
 
 ## Proof depends on
 

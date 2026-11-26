@@ -15,12 +15,9 @@ Fix a reference model $\bar M$ and run the algorithm on it; let $p$ be its avera
 ## Depends on
 
 - [Decision-estimation coefficient](decision-estimation-coefficient.md)
-- [Le Cam's two-point lower bound](../../../../Probability/statistical-estimation/minimax-lower-bounds/mul-one-sub-total-variation-dist-le-mini.md)
-- [Hellinger distance](../../../../Probability/convergence-of-measures/hellinger-distance/hellinger-dist.md)
 
 ## Proof depends on
 
-- [Decision-estimation coefficient](decision-estimation-coefficient.md)
 - [Le Cam's two-point lower bound](../../../../Probability/statistical-estimation/minimax-lower-bounds/mul-one-sub-total-variation-dist-le-mini.md)
 - [Hellinger distance](../../../../Probability/convergence-of-measures/hellinger-distance/hellinger-dist.md)
 

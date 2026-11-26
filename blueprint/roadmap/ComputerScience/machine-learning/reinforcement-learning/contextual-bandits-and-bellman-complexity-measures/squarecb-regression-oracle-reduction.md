@@ -14,8 +14,7 @@ At each round, inverse gap weighting gives instantaneous regret at most $K/\gamm
 
 ## Depends on
 
-- [DEC of multi-armed and linear bandits via inverse gap weighting](../decision-estimation-coefficient/dec-bandits-inverse-gap-weighting.md)
-- [Estimation-to-decisions regret is bounded by the DEC plus the estimation error](../decision-estimation-coefficient/e2d-regret-upper-bound.md)
+- [Contextual bandits with online regression oracles](contextual-bandit-regression-oracle.md)
 
 ## Proof depends on
 

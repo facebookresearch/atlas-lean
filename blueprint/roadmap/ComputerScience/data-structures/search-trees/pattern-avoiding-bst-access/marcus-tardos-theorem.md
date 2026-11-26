@@ -4,7 +4,11 @@ For every $k \times k$ permutation matrix $P$ there is a constant $c_P$ such tha
 
 ## Proof sketch
 
-Partition the matrix into $(n/k^2) \times (n/k^2)$ blocks of size $k^2 \times k^2$. A block is *wide* if it has ones in at least $k$ columns and *tall* if it has ones in at least $k$ rows; a block row containing too many wide blocks would yield a copy of $P$ by the pigeonhole principle, so wide and tall blocks are $O(n/k^2)$ per block row and column. Applying induction to the contracted $(n/k^2)\times(n/k^2)$ matrix of nonzero blocks gives the recurrence $f(n) \le (k-1)^2 f(n/k^2) + O(n)$, hence $f(n) = O(n)$.
+Partition the matrix into $(n/k^2) \times (n/k^2)$ blocks of size $k^2 \times k^2$. A block is *wide* if it has ones in at least $k$ columns and *tall* if it has ones in at least $k$ rows; a block row containing $k\binom{k^2}{k}$ or more wide blocks would yield a copy of $P$ by the pigeonhole principle, so each block row has fewer than $k\binom{k^2}{k}$ wide blocks, a constant, and likewise each block column has fewer than $k\binom{k^2}{k}$ tall blocks; over all $n/k^2$ block rows and columns there are $O(n/k^2)$ wide and tall blocks in total. Applying induction to the contracted $(n/k^2)\times(n/k^2)$ matrix of nonzero blocks gives the recurrence $f(n) \le (k-1)^2 f(n/k^2) + O(n)$, hence $f(n) = O(n)$.
+
+## Depends on
+
+- [Pattern-avoiding access sequences](pattern-avoiding-access-sequence.md)
 
 ## Sources
 

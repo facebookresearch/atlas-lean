@@ -13,9 +13,10 @@ Item 1 is *The direction to an optimal flow is a good minimum-ratio witness*. By
 
 ## Depends on
 
-- [One approximate minimum-ratio step decreases the IPM potential by a constant times kappa squared](one-step-potential-decrease.md)
-- [A very negative IPM potential certifies a near-optimal flow](potential-certifies-near-optimal-flow.md)
-- [An initial IPM point with polynomially bounded potential](ipm-initial-point-construction.md)
+- [Integral minimum-cost flow instances with polynomially bounded data](integral-min-cost-flow-instance.md)
+- [Potential function of the l1 interior point method for minimum-cost flow](l1-ipm-potential-function.md)
+- [Lengths and gradients induced by the l1 IPM potential](ipm-lengths-and-gradients.md)
+- [Undirected minimum-ratio cycle problem with gradients and lengths](undirected-min-ratio-cycle-problem.md)
 
 ## Proof depends on
 

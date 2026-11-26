@@ -9,12 +9,7 @@ Each auxiliary tree stores at most $O(\log n)$ keys, so searching, splitting and
 ## Depends on
 
 - [Tango trees](tango-tree.md)
-- [Preferred-child changes are counted by the interleave bound](preferred-child-changes-equal-interleave.md)
-
-## Proof depends on
-
-- [Tango trees](tango-tree.md)
-- [Preferred-child changes are counted by the interleave bound](preferred-child-changes-equal-interleave.md)
+- [Preferred children and preferred paths](preferred-paths.md)
 
 ## Sources
 

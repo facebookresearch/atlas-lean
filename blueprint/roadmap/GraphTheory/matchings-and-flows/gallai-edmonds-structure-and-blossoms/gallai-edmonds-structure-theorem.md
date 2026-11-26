@@ -15,7 +15,8 @@ The stability lemma shows that deleting a vertex $a \in A$ lowers $\nu$ by exact
 ## Depends on
 
 - [The Gallai-Edmonds partition D(G), A(G), C(G)](gallai-edmonds-partition.md)
-- [Tutte-Berge min-max formula for the maximum matching size](tutte-berge-min-max-formula.md)
+- [Factor-critical graphs and near-perfect matchings](factor-critical-graphs.md)
+- [Odd components and the Tutte deficiency of a vertex set](odd-components-and-tutte-deficiency.md)
 
 ## Proof depends on
 

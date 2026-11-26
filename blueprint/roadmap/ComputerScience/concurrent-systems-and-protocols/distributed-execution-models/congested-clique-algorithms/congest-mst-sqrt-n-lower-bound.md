@@ -9,11 +9,11 @@ Build a network of $\sqrt n$ long paths of length $\sqrt n$ joined by a shallow 
 ## Depends on
 
 - [The CONGEST model of distributed computing](../../local-distributed-algorithms/deterministic-network-decomposition/the-congest-model.md)
-- [Prim's algorithm returns a minimum spanning tree](../../../graph-algorithms/spanning-trees-flows-matchings/prim-s-algorithm/prim-minimum-spanning-tree.md)
+- [The congested clique model](the-congested-clique-model.md)
 
 ## Proof depends on
 
-- [The CONGEST model of distributed computing](../../local-distributed-algorithms/deterministic-network-decomposition/the-congest-model.md)
+- [Randomized communication complexity of disjointness](../../../../TheoryOfComputation/communication-complexity/randomized-communication-protocols/rand-complexity-disj-fn-ge.md)
 
 ## Sources
 

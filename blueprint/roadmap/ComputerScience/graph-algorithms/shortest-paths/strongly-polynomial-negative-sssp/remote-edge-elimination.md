@@ -9,14 +9,12 @@ Vertices outside the negative $r$-hop reach have $\delta_i(u)=0$ for all $i\le r
 ## Depends on
 
 - [r-remote sets and 1-hop independent sets of negative vertices](remote-and-independent-negative-sets.md)
-- [r-hop reductions and the layered hop-reducing auxiliary graph](r-hop-reduction-auxiliary-graph.md)
-- [Computing h-hop distances by alternating Dijkstra and Bellman-Ford rounds in O(h(m + n log n)) time](hop-limited-distances-hybrid.md)
+- [Price functions, reduced edge weights, and valid reweightings of a directed graph](../near-linear-negative-weight-sssp/price-functions-and-reduced-weights.md)
 
 ## Proof depends on
 
-- [r-remote sets and 1-hop independent sets of negative vertices](remote-and-independent-negative-sets.md)
-- [r-hop reductions and the layered hop-reducing auxiliary graph](r-hop-reduction-auxiliary-graph.md)
 - [Computing h-hop distances by alternating Dijkstra and Bellman-Ford rounds in O(h(m + n log n)) time](hop-limited-distances-hybrid.md)
+- [r-hop reductions and the layered hop-reducing auxiliary graph](r-hop-reduction-auxiliary-graph.md)
 
 ## Sources
 

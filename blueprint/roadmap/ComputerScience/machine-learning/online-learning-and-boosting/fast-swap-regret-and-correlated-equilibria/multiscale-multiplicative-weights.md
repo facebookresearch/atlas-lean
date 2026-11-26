@@ -4,8 +4,7 @@ Fix $n$ actions, a target $\varepsilon$, $S = \log_2(1/\varepsilon) + 1$ and blo
 
 ## Depends on
 
-- [The $\sqrt{T}$ regret bound of Hedge](../hedge-algorithm/regret-le-two-sqrt.md)
-- [TreeSwap: swap regret from external regret on a tree of restarts](treeswap-algorithm.md)
+- [Hedge weight update](../hedge-algorithm/update.md)
 
 ## Sources
 

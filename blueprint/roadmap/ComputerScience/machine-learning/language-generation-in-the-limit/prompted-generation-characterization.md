@@ -8,7 +8,7 @@ The proofs follow the unprompted case: for each prompt, the prompted closure of 
 
 ## Depends on
 
-- [The closure dimension characterizes uniform generatability](closure-dimension-characterizes-uniform-generation.md)
+- [Closure dimension and uniform and non-uniform generatability](closure-dimension.md)
 
 ## Proof depends on
 

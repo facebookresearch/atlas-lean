@@ -15,11 +15,10 @@ Stability gives a uniform leave-one-out bound: an example outside $\kappa(S \cup
 ## Depends on
 
 - [Stable sample compression schemes](stable-sample-compression-scheme.md)
-- [Leave-one-out bounds give optimal high-probability risk bounds for aggregated learners](leave-one-out-to-high-probability.md)
+- [The realizable distribution family](../../occam-bound-for-consistent-learners/realizable-family.md)
 
 ## Proof depends on
 
-- [Stable sample compression schemes](stable-sample-compression-scheme.md)
 - [Leave-one-out bounds give optimal high-probability risk bounds for aggregated learners](leave-one-out-to-high-probability.md)
 
 ## Sources

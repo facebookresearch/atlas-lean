@@ -9,6 +9,7 @@ In each round, all remaining vertices with at most $(2 + \varepsilon) a$ remaini
 ## Depends on
 
 - [Arboricity and H-partitions](arboricity-and-h-partitions.md)
+- [The LOCAL model](../../distributed-execution-models/the-local-model.md)
 
 ## Proof depends on
 

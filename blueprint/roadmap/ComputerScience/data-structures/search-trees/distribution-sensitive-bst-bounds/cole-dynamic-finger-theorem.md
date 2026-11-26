@@ -13,8 +13,7 @@ Cole's proof partitions the accesses by the scale $\lceil \log_2 |x_t - x_{t-1}|
 
 ## Proof depends on
 
-- [Dynamic finger bound](dynamic-finger-bound.md)
-- [Splay operation](../splay-tree/splay.md)
+- [Sequential access in splay trees takes linear time](splay-sequential-access.md)
 
 ## Sources
 

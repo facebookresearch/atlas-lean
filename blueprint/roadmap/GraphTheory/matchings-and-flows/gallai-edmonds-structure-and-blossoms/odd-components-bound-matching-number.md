@@ -14,10 +14,6 @@ Let $M$ be a matching and $K$ an odd component of $G - X$. Since $|K|$ is odd, $
 
 - [Odd components and the Tutte deficiency of a vertex set](odd-components-and-tutte-deficiency.md)
 
-## Proof depends on
-
-- [Odd components and the Tutte deficiency of a vertex set](odd-components-and-tutte-deficiency.md)
-
 ## Sources
 
 - C. Berge, "Sur le couplage maximum d'un graphe", Comptes Rendus de l'Academie des Sciences Paris 247 (1958).

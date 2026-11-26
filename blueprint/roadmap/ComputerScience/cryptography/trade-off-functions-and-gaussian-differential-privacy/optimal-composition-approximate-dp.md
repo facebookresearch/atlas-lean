@@ -12,7 +12,7 @@ $$
 \delta_i = \frac{\sum_{\ell=0}^{i-1} \binom{k}{\ell}\big(e^{(k-\ell)\varepsilon} - e^{(k-2i+\ell)\varepsilon}\big)}{(1 + e^{\varepsilon})^k},
 $$
 
-and this family of guarantees is exactly optimal: for each $i$ there are $(\varepsilon,\delta)$-DP mechanisms whose $k$-fold composition is not $((k-2i)\varepsilon, \delta')$-DP for any $\delta' < 1 - (1-\delta)^k(1-\delta_i)$. In trade-off-function language, the composition is exactly $f_{\varepsilon,\delta}^{\otimes k}$-DP.
+and this family of guarantees is exactly optimal: for each $i$ there are $(\varepsilon,\delta)$-DP mechanisms whose $k$-fold composition is not $((k-2i)\varepsilon, \delta')$-DP for any $\delta' < 1 - (1-\delta)^k(1-\delta_i)$. In trade-off-function language, with $f_{\varepsilon,\delta}(\alpha) = \max\{0,\, 1 - \delta - e^{\varepsilon}\alpha,\, e^{-\varepsilon}(1 - \delta - \alpha)\}$ the trade-off function of $(\varepsilon,\delta)$-DP, the composition is exactly $f_{\varepsilon,\delta}^{\otimes k}$-DP.
 
 ## Proof sketch
 
@@ -20,15 +20,14 @@ Every $(\varepsilon,\delta)$-DP mechanism is a post-processing of the canonical 
 
 ## Depends on
 
-- [Approximate differential privacy as f-differential privacy](epsilon-delta-dp-as-f-dp.md)
-- [Lossless adaptive composition of f-differential privacy](f-dp-adaptive-composition.md)
-- [Advanced composition](../differential-privacy/differentially-private-pi-advanced.md)
+- [Differential privacy](../differential-privacy/differentially-private.md)
+- [f-differential privacy](f-differential-privacy.md)
+- [Tensor product of trade-off functions](tensor-product-of-trade-off-functions.md)
 
 ## Proof depends on
 
 - [Approximate differential privacy as f-differential privacy](epsilon-delta-dp-as-f-dp.md)
 - [Lossless adaptive composition of f-differential privacy](f-dp-adaptive-composition.md)
-- [Advanced composition](../differential-privacy/differentially-private-pi-advanced.md)
 
 ## Sources
 

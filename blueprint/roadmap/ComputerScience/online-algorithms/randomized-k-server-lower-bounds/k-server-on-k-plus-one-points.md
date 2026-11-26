@@ -9,10 +9,7 @@ Configurations of $k$ servers on $k+1$ points correspond bijectively to their co
 ## Depends on
 
 - [Metrical task systems](../metrical-task-systems-and-hst-embeddings/metrical-task-system.md)
-
-## Proof depends on
-
-- [Metrical task systems](../metrical-task-systems-and-hst-embeddings/metrical-task-system.md)
+- [The k-server problem](../paging-and-k-server/the-k-server-problem.md)
 
 ## Sources
 

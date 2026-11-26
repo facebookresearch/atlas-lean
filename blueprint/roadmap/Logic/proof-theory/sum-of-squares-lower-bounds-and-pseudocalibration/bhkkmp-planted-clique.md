@@ -14,12 +14,12 @@ Define the pseudo-expectation by pseudocalibration with respect to the planted c
 
 ## Depends on
 
-- [Graph matrices and their norm bounds](graph-matrices.md)
-- [Juhász / Feige–Krauthgamer: degree-2 SoS fails for cliques of size o(sqrt n)](theta-random-graph.md)
+- [The degree-d SoS relaxation of the clique number](planted-clique-sos-value.md)
 
 ## Proof depends on
 
 - [Graph matrices and their norm bounds](graph-matrices.md)
+- [Pseudocalibration of pseudo-expectations](pseudocalibration.md)
 - [Juhász / Feige–Krauthgamer: degree-2 SoS fails for cliques of size o(sqrt n)](theta-random-graph.md)
 
 ## Sources

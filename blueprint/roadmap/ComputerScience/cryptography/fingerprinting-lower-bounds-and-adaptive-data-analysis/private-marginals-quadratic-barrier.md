@@ -8,8 +8,7 @@ Set $\varepsilon = 1$ and $\alpha = c$ in the one-way marginal lower bound $n \g
 
 ## Depends on
 
-- [Sample complexity of privately answering one-way marginals](private-one-way-marginals-lower-bound.md)
-- [The Gaussian mechanism](../differential-privacy/gaussian-mechanism-differentially-privat.md)
+- [Differential privacy](../differential-privacy/differentially-private.md)
 
 ## Proof depends on
 

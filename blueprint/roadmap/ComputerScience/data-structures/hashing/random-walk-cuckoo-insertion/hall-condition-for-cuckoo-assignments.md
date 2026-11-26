@@ -10,10 +10,6 @@ This is Hall's marriage theorem applied to the bipartite hashing graph: a matchi
 
 - [d-ary cuckoo hashing and its hashing graph](d-ary-cuckoo-hashing.md)
 
-## Proof depends on
-
-- [d-ary cuckoo hashing and its hashing graph](d-ary-cuckoo-hashing.md)
-
 ## Sources
 
 - Tolson Bell, Alan Frieze, "O(1) Insertion for Random Walk d-ary Cuckoo Hashing up to the Load Threshold", FOCS (2024), arXiv:2401.14394.

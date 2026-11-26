@@ -1,6 +1,6 @@
 # One approximate minimum-ratio step decreases the IPM potential by a constant times kappa squared
 
-Let $\mathbf{f}$, $\kappa \in (0, 1)$, $\widetilde{\mathbf{g}}$ and $\widetilde{\boldsymbol{\ell}}$ be as in *The direction to an optimal flow is a good minimum-ratio witness*. Let $\mathbf{\Delta}$ be a circulation with $\widetilde{\mathbf{g}}^{\top}\mathbf{\Delta}/\|\widetilde{\mathbf{L}}\mathbf{\Delta}\|_1 \le -\kappa$, and set $\eta = \kappa^2/(50\,|\widetilde{\mathbf{g}}^{\top}\mathbf{\Delta}|)$ and $\mathbf{f}' = \mathbf{f} + \eta\mathbf{\Delta}$. Then for every edge $e$
+Let $\mathbf{f}$ lie in the domain of the potential with $\Phi(\mathbf{f}) \le 200m\log(mU)$, let $\kappa \in (0, 1)$, and let $\widetilde{\mathbf{g}} \in \mathbb{R}^E$ and $\widetilde{\boldsymbol{\ell}} \in \mathbb{R}^E_{>0}$ satisfy $\|\mathbf{L}(\mathbf{f})^{-1}(\widetilde{\mathbf{g}} - \mathbf{g}(\mathbf{f}))\|_\infty \le \kappa/8$ and $\widetilde{\boldsymbol{\ell}} \approx_2 \boldsymbol{\ell}(\mathbf{f})$, with $\widetilde{\mathbf{L}} = \mathrm{diag}(\widetilde{\boldsymbol{\ell}})$. Let $\mathbf{\Delta}$ be a circulation with $\widetilde{\mathbf{g}}^{\top}\mathbf{\Delta}/\|\widetilde{\mathbf{L}}\mathbf{\Delta}\|_1 \le -\kappa$, and set $\eta = \kappa^2/(50\,|\widetilde{\mathbf{g}}^{\top}\mathbf{\Delta}|)$ and $\mathbf{f}' = \mathbf{f} + \eta\mathbf{\Delta}$. Then for every edge $e$
 
 $$
 \eta|\mathbf{\Delta}_e| \le \frac{\kappa}{10}\min\{\mathbf{u}^+_e - \mathbf{f}_e,\ \mathbf{f}_e - \mathbf{u}^-_e\},
@@ -14,12 +14,8 @@ First $\|\mathbf{L}(\mathbf{f})\eta\mathbf{\Delta}\|_1 \le 2\|\widetilde{\mathbf
 
 ## Depends on
 
-- [The direction to an optimal flow is a good minimum-ratio witness](optimal-direction-min-ratio-witness.md)
-
-## Proof depends on
-
 - [Lengths and gradients induced by the l1 IPM potential](ipm-lengths-and-gradients.md)
-- [The direction to an optimal flow is a good minimum-ratio witness](optimal-direction-min-ratio-witness.md)
+- [Potential function of the l1 interior point method for minimum-cost flow](l1-ipm-potential-function.md)
 
 ## Sources
 

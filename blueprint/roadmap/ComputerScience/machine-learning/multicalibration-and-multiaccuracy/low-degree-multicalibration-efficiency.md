@@ -9,11 +9,12 @@ Degree-$k$ multicalibration is multiaccuracy with respect to the product class $
 ## Depends on
 
 - [Low-degree multicalibration](low-degree-multicalibration.md)
-- [Multicalibration by iterated level-set corrections terminates quickly](multicalibration-iterative-algorithm.md)
+- [Multiaccurate predictors](multiaccurate-predictor.md)
+- [Multicalibrated predictors](multicalibrated-predictor.md)
+- [Omnipredictors](../outcome-indistinguishability-and-omniprediction/omnipredictor.md)
 
 ## Proof depends on
 
-- [Low-degree multicalibration](low-degree-multicalibration.md)
 - [Multicalibration by iterated level-set corrections terminates quickly](multicalibration-iterative-algorithm.md)
 
 ## Sources

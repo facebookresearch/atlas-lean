@@ -9,13 +9,11 @@ A vertex of $\pi_W(P)$ is the image of a vertex $x$ of $P$ that maximizes some o
 ## Depends on
 
 - [The shadow vertex pivot rule and the smoothed shadow bound](shadow-vertex-rule-and-shadow-bound.md)
-- [Polar of a set](../../../Analysis/convex-analysis-and-variations/polar-sets/polar-set.md)
 
 ## Proof depends on
 
 - [Polar of a set](../../../Analysis/convex-analysis-and-variations/polar-sets/polar-set.md)
 - [Strong linear programming duality](../../../Geometry/convex-geometry/linear-programming/strong-linear-programming-duality.md)
-- [The shadow vertex pivot rule and the smoothed shadow bound](shadow-vertex-rule-and-shadow-bound.md)
 
 ## Sources
 

@@ -8,8 +8,7 @@ Combine Follow-the-Prediction, whose cost is $\mathrm{OPT} + O(\eta)$, with the 
 
 ## Depends on
 
-- [Following the predictions costs $\mathrm{OPT} + O(\eta)$](follow-the-prediction.md)
-- [Combining online algorithms for metrical task systems](../learning-augmented-caching/combining-online-algorithms.md)
+- [Metrical task systems with predicted states](mts-with-state-predictions.md)
 
 ## Proof depends on
 

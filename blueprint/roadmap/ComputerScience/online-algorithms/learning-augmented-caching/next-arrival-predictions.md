@@ -5,7 +5,7 @@ In *paging with next-arrival predictions*, when page $\sigma_t$ is requested at 
 ## Depends on
 
 - [Consistency and robustness of learning-augmented online algorithms](consistency-and-robustness.md)
-- [Optimality of furthest-in-future caching](../../greedy-algorithms-and-matroids/furthest-in-future-caching/furthest-in-future-min-misses.md)
+- [Deterministic online paging algorithm](../competitive-paging/deterministic-online-paging-algorithm.md)
 
 ## Sources
 

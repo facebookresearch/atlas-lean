@@ -5,7 +5,6 @@ Let $\mathcal{M} = (E, \mathcal{I})$ be a matroid and let $(X_e)_{e \in E}$ be i
 ## Depends on
 
 - [Gambler-to-prophet ratios under different arrival models](../random-order-and-iid-prophet-inequalities/prophet-ratio-by-arrival-model.md)
-- [Edmonds' matroid partition theorem, arbitrary ground set](../../../Combinatorics/matroid-theory/matroid-partition-theorem/edmonds-matroid-partition.md)
 
 ## Sources
 

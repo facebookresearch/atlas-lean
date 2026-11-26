@@ -16,11 +16,11 @@ Start from the empty allocation and repeatedly apply two update rules while main
 
 - [Partial EFX allocation with an unallocated pool](partial-efx-allocation-with-pool.md)
 - [Envy graph and most envious agent of a partial allocation](envy-graph-most-envious-agent.md)
+- [Nash Welfare](../../../not-yet-classified/part-01/indivisible/nash-welfare.md)
 
 ## Proof depends on
 
 - [Envy-cycle rotation preserves EFX and weakly improves every agent](envy-cycle-rotation-preserves-efx.md)
-- [Envy graph and most envious agent of a partial allocation](envy-graph-most-envious-agent.md)
 
 ## Sources
 

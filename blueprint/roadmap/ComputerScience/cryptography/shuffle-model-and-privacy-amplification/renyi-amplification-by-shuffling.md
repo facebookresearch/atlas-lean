@@ -14,13 +14,12 @@ By the clone reduction, it suffices to bound the Rényi divergence between two b
 
 ## Depends on
 
-- [Shuffled local reports reduce to a binomial clone-counting problem](shuffle-clone-reduction.md)
 - [Zero-concentrated differential privacy](../zero-concentrated-differential-privacy/zero-concentrated-dp.md)
+- [Local randomizers and the shuffle model](shuffle-model.md)
 
 ## Proof depends on
 
 - [Shuffled local reports reduce to a binomial clone-counting problem](shuffle-clone-reduction.md)
-- [Zero-concentrated differential privacy](../zero-concentrated-differential-privacy/zero-concentrated-dp.md)
 
 ## Sources
 

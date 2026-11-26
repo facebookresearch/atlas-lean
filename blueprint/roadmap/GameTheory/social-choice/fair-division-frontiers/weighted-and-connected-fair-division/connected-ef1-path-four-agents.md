@@ -9,11 +9,11 @@ Discretize a moving-knife procedure. For $n \le 3$, a discrete version of Stromq
 ## Depends on
 
 - [Is EF1](../../../not-yet-classified/part-01/indivisible/is-ef1.md)
-- [Cake cutting in the Robertson-Webb query model](../../cake-cutting-in-the-robertson-webb-query-model.md)
 
 ## Proof depends on
 
 - [Cut-and-choose and Dubins-Spanier](../../cut-and-choose-and-dubins-spanier.md)
+- [Cake cutting in the Robertson-Webb query model](../../cake-cutting-in-the-robertson-webb-query-model.md)
 
 ## Sources
 

@@ -9,10 +9,7 @@ Random sparse $3$-uniform hypergraphs are boundary expanders: every set of $s \l
 ## Depends on
 
 - [Refutation of random constraint satisfaction problems](random-csp-refutation.md)
-
-## Proof depends on
-
-- [Refutation of random constraint satisfaction problems](random-csp-refutation.md)
+- [The Lasserre / sum-of-squares hierarchy for Boolean polynomial optimization](lasserre-hierarchy.md)
 
 ## Sources
 

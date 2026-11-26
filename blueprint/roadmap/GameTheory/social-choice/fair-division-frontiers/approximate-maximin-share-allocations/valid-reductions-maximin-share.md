@@ -8,7 +8,7 @@ Fix a remaining agent $j$ and an optimal $n$-partition for $j$. For $\{g_1\}$: r
 
 ## Depends on
 
-- [Reduction to ordered instances for maximin share approximation](ordered-instance-reduction-mms.md)
+- [Alpha-maximin share allocation](alpha-maximin-share-allocation.md)
 
 ## Proof depends on
 

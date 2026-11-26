@@ -8,10 +8,9 @@ On a half-integral point every vertex has $x(\delta(v))=2$ with half-edges, and 
 
 ## Depends on
 
-- [Max-entropy rounding algorithm for metric TSP](max-entropy-tsp-algorithm.md)
 - [Subtour elimination LP of a metric TSP instance](subtour-elimination-lp.md)
-- [Negative dependence and Poisson-binomial counts under strongly Rayleigh measures](strongly-rayleigh-negative-dependence.md)
 - [Approximation algorithms and approximation ratios](../approximation-algorithms-and-approximation-ratios.md)
+- [Integrality gaps of linear programming relaxations](../lp-based-approximation/integrality-gaps-of-linear-programming.md)
 
 ## Proof depends on
 

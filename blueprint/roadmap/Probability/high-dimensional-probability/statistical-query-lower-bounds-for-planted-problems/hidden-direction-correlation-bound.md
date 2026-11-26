@@ -13,12 +13,6 @@ Expand the density ratio $\frac{dA}{d\mathcal{N}}$ in normalized Hermite polynom
 ## Depends on
 
 - [VSTAT oracle and statistical dimension with average correlation](vstat-oracle-statistical-dimension.md)
-- [Low-degree advantage of the additive Gaussian model](../../statistical-estimation/low-degree-likelihood-ratio-method/additive-gaussian-low-degree-advantage.md)
-
-## Proof depends on
-
-- [VSTAT oracle and statistical dimension with average correlation](vstat-oracle-statistical-dimension.md)
-- [Low-degree advantage of the additive Gaussian model](../../statistical-estimation/low-degree-likelihood-ratio-method/additive-gaussian-low-degree-advantage.md)
 
 ## Sources
 

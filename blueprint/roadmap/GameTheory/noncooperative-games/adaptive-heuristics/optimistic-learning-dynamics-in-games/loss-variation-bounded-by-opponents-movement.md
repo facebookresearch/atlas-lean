@@ -15,11 +15,7 @@ The map $x_{-i} \mapsto \ell_i(x_{-i})(a)$ is multilinear in the opponents' stra
 ## Depends on
 
 - [Optimistic Hedge in a repeated normal-form game](optimistic-hedge-in-games.md)
-- [Mixed Nash equilibrium](../../nash-s-theorem/is-mixed-nash.md)
-
-## Proof depends on
-
-- [Mixed Nash equilibrium](../../nash-s-theorem/is-mixed-nash.md)
+- [Expected payoff of a mixed profile](../../nash-s-theorem/expected-payoff.md)
 
 ## Sources
 

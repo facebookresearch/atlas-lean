@@ -15,11 +15,10 @@ The neighbouring relation is symmetric, so $T(M(S'), M(S)) \ge f$ also holds; fo
 ## Depends on
 
 - [f-differential privacy](f-differential-privacy.md)
-- [Characterization of trade-off functions](trade-off-function-characterization.md)
+- [Gaussian differential privacy](gaussian-differential-privacy.md)
 
 ## Proof depends on
 
-- [f-differential privacy](f-differential-privacy.md)
 - [Characterization of trade-off functions](trade-off-function-characterization.md)
 
 ## Sources

@@ -9,13 +9,9 @@ The upper bound merges $\Theta(M/B)$ sorted runs at a time, so each of the $O(\l
 ## Depends on
 
 - [The external-memory model](../external-memory-algorithms/the-external-memory-model.md)
-- [I/O complexity of permuting](../external-memory-algorithms/i-o-complexity-of-permuting.md)
-- [A binary tree with n! leaves has height at least log n!](../../sorting-and-searching/lower-bound-for-comparison-sorting/factorial-le-two-pow-height.md)
 
 ## Proof depends on
 
-- [The external-memory model](../external-memory-algorithms/the-external-memory-model.md)
-- [I/O complexity of permuting](../external-memory-algorithms/i-o-complexity-of-permuting.md)
 - [A binary tree with n! leaves has height at least log n!](../../sorting-and-searching/lower-bound-for-comparison-sorting/factorial-le-two-pow-height.md)
 
 ## Sources

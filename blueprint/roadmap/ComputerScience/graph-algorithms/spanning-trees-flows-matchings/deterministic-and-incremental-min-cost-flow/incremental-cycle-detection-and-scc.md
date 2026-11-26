@@ -8,15 +8,12 @@ Give every edge capacity $1$ and cost $-1$, take $\mathbf{d} = \mathbf{0}$ and t
 
 ## Depends on
 
-- [Incremental thresholded minimum-cost flow in almost-linear total time](incremental-thresholded-mcf-almost-linear.md)
 - [Acyclic directed graph](../../traversal-and-connectivity/topological-sorting/is-acyclic.md)
 - [Strongly connected vertices](../../traversal-and-connectivity/strongly-connected-components/strongly-connected.md)
 
 ## Proof depends on
 
 - [Incremental thresholded minimum-cost flow in almost-linear total time](incremental-thresholded-mcf-almost-linear.md)
-- [Acyclic directed graph](../../traversal-and-connectivity/topological-sorting/is-acyclic.md)
-- [Strongly connected vertices](../../traversal-and-connectivity/strongly-connected-components/strongly-connected.md)
 
 ## Sources
 

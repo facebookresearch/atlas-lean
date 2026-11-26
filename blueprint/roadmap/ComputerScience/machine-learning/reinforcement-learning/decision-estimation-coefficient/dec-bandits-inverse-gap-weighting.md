@@ -9,14 +9,11 @@ For inverse gap weighting and any alternative mean vector $f$, split the regret 
 ## Depends on
 
 - [Decision-estimation coefficient](decision-estimation-coefficient.md)
-- [Minimax regret lower bound for Gaussian bandits](../multi-armed-bandits/minimax-regret-lower-bound-for-gaussian-bandits.md)
-- [Stochastic linear bandits and LinUCB regret](../multi-armed-bandits/stochastic-linear-bandits-and-linucb-regret.md)
+- [Stochastic k-armed bandits: canonical history law and regret](../multi-armed-bandits/stochastic-k-armed-bandits-canonical-history-law-and-regret.md)
 
 ## Proof depends on
 
-- [Decision-estimation coefficient](decision-estimation-coefficient.md)
-- [Minimax regret lower bound for Gaussian bandits](../multi-armed-bandits/minimax-regret-lower-bound-for-gaussian-bandits.md)
-- [Stochastic linear bandits and LinUCB regret](../multi-armed-bandits/stochastic-linear-bandits-and-linucb-regret.md)
+- [Estimation-to-decisions regret is bounded by the DEC plus the estimation error](e2d-regret-upper-bound.md)
 
 ## Sources
 

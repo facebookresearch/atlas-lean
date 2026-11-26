@@ -9,6 +9,7 @@ Each phase consists of one leader broadcast carrying a constant-size QC and $n$ 
 ## Depends on
 
 - [Chained HotStuff with locking and three-phase commit](hotstuff-protocol-three-phase.md)
+- [Byzantine fault-tolerant state machine replication under partial synchrony](byzantine-state-machine-replication.md)
 
 ## Proof depends on
 

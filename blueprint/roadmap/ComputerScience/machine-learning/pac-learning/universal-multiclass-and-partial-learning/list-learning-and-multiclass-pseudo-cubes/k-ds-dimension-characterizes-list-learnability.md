@@ -9,11 +9,10 @@ Necessity: a $k$-pseudo-cube of dimension $d$ forces every $k$-list orientation 
 ## Depends on
 
 - [k-pseudo-cubes and the k-DS dimension](k-pseudo-cube.md)
-- [Quantitative multiclass PAC bounds from the DS dimension](ds-dimension-sample-complexity.md)
+- [List PAC learners and list learnability](list-pac-learner.md)
 
 ## Proof depends on
 
-- [k-pseudo-cubes and the k-DS dimension](k-pseudo-cube.md)
 - [Quantitative multiclass PAC bounds from the DS dimension](ds-dimension-sample-complexity.md)
 
 ## Sources

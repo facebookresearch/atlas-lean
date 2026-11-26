@@ -9,11 +9,8 @@ Scale so that distances lie in $[1, 2^{\delta}]$, pick a uniformly random permut
 ## Depends on
 
 - [Probabilistic embedding of a metric into dominating tree metrics](probabilistic-embeddings-into-dominating-trees.md)
-
-## Proof depends on
-
-- [Probabilistic embedding of a metric into dominating tree metrics](probabilistic-embeddings-into-dominating-trees.md)
 - [Tree metric](../../../GraphTheory/graph-families-and-operations/tree-metrics-and-the-four-point-condition/is-tree-metric.md)
+- [Hierarchically separated trees](../../online-algorithms/metrical-task-systems-and-hst-embeddings/hierarchically-separated-tree.md)
 
 ## Sources
 

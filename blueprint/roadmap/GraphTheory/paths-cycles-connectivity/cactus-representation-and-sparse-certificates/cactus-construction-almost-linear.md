@@ -11,9 +11,7 @@ Every minimum cut $2$-respects some tree of a small tree family (Karger's skelet
 
 ## Depends on
 
-- [Dinits-Karzanov-Lomonosov theorem: every graph has a linear-size cactus of its minimum cuts](dinits-karzanov-lomonosov-cactus-theorem.md)
-- [Deterministic almost-linear minimum cut in weighted graphs (Li)](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/deterministic-near-linear-minimum-cut/li-deterministic-almost-linear-weighted-mincut.md)
-- [Karger's skeleton: logarithmically many trees one of which 2-respects the minimum cut](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/deterministic-near-linear-minimum-cut/karger-skeleton-tree-family.md)
+- [Cactus representations of all minimum cuts](cactus-representation-of-minimum-cuts.md)
 
 ## Proof depends on
 

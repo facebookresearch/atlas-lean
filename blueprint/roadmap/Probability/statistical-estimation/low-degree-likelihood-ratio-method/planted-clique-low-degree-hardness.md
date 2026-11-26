@@ -8,11 +8,15 @@ In the $\pm 1$ basis of edge indicators, $L_n$ has Fourier coefficients $\mathbb
 
 ## Depends on
 
-- [Second moment method: bounded likelihood ratio norm rules out detection](likelihood-ratio-second-moment-method.md)
+- [Low-degree likelihood ratio and low-degree advantage](low-degree-likelihood-ratio.md)
+- [The degree-d SoS relaxation of the clique number](../../../Logic/proof-theory/sum-of-squares-lower-bounds-and-pseudocalibration/planted-clique-sos-value.md)
 
 ## Proof depends on
 
 - [Second moment method: bounded likelihood ratio norm rules out detection](likelihood-ratio-second-moment-method.md)
+- [Low-degree advantage for planted problems over the hypercube](boolean-low-degree-advantage.md)
+- [Pseudo-calibration for sum-of-squares lower bounds](../../high-dimensional-probability/statistical-query-lower-bounds-for-planted-problems/pseudo-calibration.md)
+- [Graph matrices and their norm bounds](../../../Logic/proof-theory/sum-of-squares-lower-bounds-and-pseudocalibration/graph-matrices.md)
 
 ## Sources
 

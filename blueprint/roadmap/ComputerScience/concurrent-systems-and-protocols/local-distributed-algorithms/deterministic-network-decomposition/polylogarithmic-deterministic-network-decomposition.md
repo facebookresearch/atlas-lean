@@ -16,6 +16,7 @@ Construct each colour class in $O(\log n)$ phases indexed by the bits of the ide
 
 - [Network decomposition with weak or strong diameter](network-decomposition-weak-strong-diameter.md)
 - [The CONGEST model of distributed computing](the-congest-model.md)
+- [The SLOCAL model and its polylogarithmic class](the-slocal-model.md)
 
 ## Proof depends on
 

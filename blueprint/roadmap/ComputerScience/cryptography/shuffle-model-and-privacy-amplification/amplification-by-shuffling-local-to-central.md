@@ -15,11 +15,9 @@ Consider the reports in the order in which a random permutation assigns them; th
 ## Depends on
 
 - [Local randomizers and the shuffle model](shuffle-model.md)
-- [Hiding among the clones: nearly optimal amplification by shuffling](amplification-by-shuffling-clones-bound.md)
 
 ## Proof depends on
 
-- [Local randomizers and the shuffle model](shuffle-model.md)
 - [Hiding among the clones: nearly optimal amplification by shuffling](amplification-by-shuffling-clones-bound.md)
 
 ## Sources

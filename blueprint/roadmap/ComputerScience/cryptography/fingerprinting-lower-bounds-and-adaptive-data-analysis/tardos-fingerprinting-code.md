@@ -10,10 +10,6 @@ Under the marking assumption the pirate's word agrees with the coalition whereve
 
 - [Fingerprinting codes](../differential-privacy/fingerprinting-codes.md)
 
-## Proof depends on
-
-- [Fingerprinting codes](../differential-privacy/fingerprinting-codes.md)
-
 ## Sources
 
 - G. Tardos, "Optimal Probabilistic Fingerprint Codes", STOC (2003); Journal of the ACM 55 (2008).

@@ -1,6 +1,6 @@
 # Asynchronous atomic broadcast from validated agreement
 
-With $n \ge 3t + 1$ processes, a trusted threshold setup and secure threshold signatures, asynchronous Byzantine atomic broadcast (total-order broadcast of client requests with agreement, validity, total order and liveness) can be implemented by running a sequence of validated asynchronous Byzantine agreement instances, the $k$-th instance deciding a batch proposed by some process together with a proof that the batch contains requests seen by at least $t + 1$ correct processes. With an expected-constant-round, expected-$O(n^2)$-word validated agreement, each delivered batch costs expected $O(n^2)$ words plus the batch dissemination cost.
+With $n \ge 3t + 1$ processes, a trusted threshold setup and secure threshold signatures, asynchronous Byzantine atomic broadcast (total-order broadcast of client requests with agreement, validity, total order and liveness) can be implemented by running a sequence of validated asynchronous Byzantine agreement instances (agreement on a value from an arbitrary domain that satisfies an externally checkable validity predicate), the $k$-th instance deciding a batch proposed by some process together with a proof that the batch contains requests seen by at least $t + 1$ correct processes. With an expected-constant-round, expected-$O(n^2)$-word validated agreement, each delivered batch costs expected $O(n^2)$ words plus the batch dissemination cost.
 
 ## Proof sketch
 

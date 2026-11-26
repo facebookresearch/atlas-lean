@@ -8,12 +8,13 @@ Lower bounds come from round elimination on high-girth regular graphs: a $t$-rou
 
 ## Depends on
 
-- [Locally checkable labeling problem](locally-checkable-labeling-problem.md)
-- [Symmetric Lovász Local Lemma](../../../../Combinatorics/probabilistic-combinatorics/lovasz-local-lemma-symmetric-finite.md)
+- [Deterministic and randomized LOCAL complexity of an LCL problem](lcl-deterministic-randomized-complexity.md)
 
 ## Proof depends on
 
 - [Deterministic LCL complexities between log-star and log n collapse](lcl-deterministic-gap-log-star-log-n.md)
+- [Automatic speedup theorem for round elimination](automatic-speedup-theorem.md)
+- [Graph shattering after a randomized pre-shattering phase](../deterministic-colouring-and-mis-in-local-and-congest/graph-shattering-lemma.md)
 
 ## Sources
 

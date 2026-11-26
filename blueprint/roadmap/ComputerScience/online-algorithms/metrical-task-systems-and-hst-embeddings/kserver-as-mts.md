@@ -9,10 +9,7 @@ Serving $r$ requires a configuration containing $r$, which is exactly finite ser
 ## Depends on
 
 - [Metrical task systems](metrical-task-system.md)
-
-## Proof depends on
-
-- [Metrical task systems](metrical-task-system.md)
+- [The k-server problem](../paging-and-k-server/the-k-server-problem.md)
 
 ## Sources
 

@@ -9,12 +9,11 @@ Pătraşcu proves the randomized bound by a direct-sum style information argumen
 ## Depends on
 
 - [Lopsided set disjointness](lopsided-set-disjointness.md)
-- [Richness lemma](richness-lemma.md)
-- [Distributional communication complexity](../randomized-communication-protocols/dist-complexity.md)
+- [Asymmetric $[a, b]$-protocols](asymmetric-protocol.md)
+- [Randomized protocol](../randomized-communication-protocols/randomized-protocol.md)
 
 ## Proof depends on
 
-- [Lopsided set disjointness](lopsided-set-disjointness.md)
 - [Richness lemma](richness-lemma.md)
 - [Distributional communication complexity](../randomized-communication-protocols/dist-complexity.md)
 

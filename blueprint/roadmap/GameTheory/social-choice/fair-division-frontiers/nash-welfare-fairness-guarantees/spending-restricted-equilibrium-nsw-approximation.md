@@ -10,10 +10,6 @@ Spending restriction caps each good's price at one, so a good is never worth mor
 
 - [Approximation ratio for the Nash social welfare objective](nash-social-welfare-approximation-ratio.md)
 
-## Proof depends on
-
-- [Approximation ratio for the Nash social welfare objective](nash-social-welfare-approximation-ratio.md)
-
 ## Sources
 
 - R. Cole, V. Gkatzelis, "Approximating the Nash Social Welfare with Indivisible Items", STOC 2015; SIAM Journal on Computing 47(3) (2018).

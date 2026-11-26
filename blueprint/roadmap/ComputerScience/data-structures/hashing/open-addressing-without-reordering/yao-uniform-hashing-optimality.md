@@ -8,7 +8,8 @@ For a greedy scheme the probe complexity of a key equals the number of probes ne
 
 ## Depends on
 
-- [Exact expected probe complexity of uniform probing](exact-cost-of-uniform-probing.md)
+- [Greedy open addressing and uniform probing](greedy-open-addressing-and-uniform-probing.md)
+- [Amortized, worst-case and high-probability probe complexity](amortized-and-worst-case-probe-complexity.md)
 
 ## Proof depends on
 

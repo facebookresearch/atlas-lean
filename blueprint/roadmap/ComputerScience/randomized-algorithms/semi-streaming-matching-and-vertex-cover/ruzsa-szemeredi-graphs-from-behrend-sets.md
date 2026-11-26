@@ -15,11 +15,9 @@ Each $M_x$ is a matching since $a \mapsto x + a$ and $a \mapsto x + 2a$ are inje
 ## Depends on
 
 - [Ruzsa-Szemerédi graphs: edge sets partitioned into large induced matchings](ruzsa-szemeredi-graphs.md)
-- [Sets of naturals without three-term progressions](../../../Combinatorics/additive-combinatorics/progressions-dense-sets/arithmetic-progressions-and-progression-free-set/is-apof-length-free-three.md)
 
 ## Proof depends on
 
-- [Ruzsa-Szemerédi graphs: edge sets partitioned into large induced matchings](ruzsa-szemeredi-graphs.md)
 - [Sets of naturals without three-term progressions](../../../Combinatorics/additive-combinatorics/progressions-dense-sets/arithmetic-progressions-and-progression-free-set/is-apof-length-free-three.md)
 - [Behrend's lemma: some sphere contains many lattice points of a cube](../../../Combinatorics/additive-combinatorics/progressions-dense-sets/bounds-for-roth-numbers/behrend-large-sphere.md)
 

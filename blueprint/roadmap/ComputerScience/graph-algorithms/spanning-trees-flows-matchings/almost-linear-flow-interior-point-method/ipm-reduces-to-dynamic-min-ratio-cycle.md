@@ -8,9 +8,9 @@ Run the potential reduction method of *Potential-reduction l1 IPM: min-cost flow
 
 ## Depends on
 
-- [Potential-reduction l1 IPM: min-cost flow from m^(1+o(1)) approximate min-ratio cycles](l1-potential-reduction-ipm.md)
-- [Lazy maintenance of IPM lengths and gradients with few coordinate changes](lazy-length-gradient-maintenance.md)
 - [Approximate dynamic min-ratio cycle problem with hidden stability](../dynamic-min-ratio-cycle-data-structures/dynamic-min-ratio-cycle-hidden-stability.md)
+- [Hidden stable flow chasing property of a dynamic min-ratio cycle instance](../dynamic-min-ratio-cycle-data-structures/hidden-stable-flow-chasing.md)
+- [Integral minimum-cost flow instances with polynomially bounded data](integral-min-cost-flow-instance.md)
 
 ## Proof depends on
 
@@ -18,7 +18,6 @@ Run the potential reduction method of *Potential-reduction l1 IPM: min-cost flow
 - [Lazy maintenance of IPM lengths and gradients with few coordinate changes](lazy-length-gradient-maintenance.md)
 - [An initial IPM point with polynomially bounded potential](ipm-initial-point-construction.md)
 - [The direction to an optimal flow is a good minimum-ratio witness](optimal-direction-min-ratio-witness.md)
-- [Hidden stable flow chasing property of a dynamic min-ratio cycle instance](../dynamic-min-ratio-cycle-data-structures/hidden-stable-flow-chasing.md)
 
 ## Sources
 

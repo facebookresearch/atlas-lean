@@ -8,12 +8,7 @@ The classical bound constructs graphs that are locally tree-like and indistingui
 
 ## Depends on
 
-- [Locally checkable labeling problem](locally-checkable-labeling-problem.md)
-- [Luby's maximal independent set algorithm](../luby-s-maximal-independent-set-algorithm.md)
-
-## Proof depends on
-
-- [Deterministic and randomized LOCAL complexity of an LCL problem](lcl-deterministic-randomized-complexity.md)
+- [The LOCAL model](../../distributed-execution-models/the-local-model.md)
 
 ## Sources
 

@@ -9,11 +9,12 @@ Compute an allocation that is MBB-supported and approximately pEF1 with respect 
 ## Depends on
 
 - [Approximation ratio for the Nash social welfare objective](../nash-welfare-fairness-guarantees/nash-social-welfare-approximation-ratio.md)
-- [Price envy-freeness up to one good](price-envy-freeness-up-to-one-good.md)
 
 ## Proof depends on
 
 - [MBB-supported price envy-freeness up to one good implies EF1](mbb-pef1-implies-ef1.md)
+- [Price envy-freeness up to one good](price-envy-freeness-up-to-one-good.md)
+- [Maximum bang-per-buck allocation supported by prices](maximum-bang-per-buck-allocation.md)
 
 ## Sources
 

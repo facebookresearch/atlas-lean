@@ -8,13 +8,7 @@ Order the collection; for the target $L_z$, the finitely many earlier languages 
 
 ## Depends on
 
-- [The closure dimension characterizes uniform generatability](closure-dimension-characterizes-uniform-generation.md)
-- [Every countable collection of languages is generatable in the limit](kleinberg-mullainathan-generation-theorem.md)
-
-## Proof depends on
-
-- [The closure dimension characterizes uniform generatability](closure-dimension-characterizes-uniform-generation.md)
-- [Every countable collection of languages is generatable in the limit](kleinberg-mullainathan-generation-theorem.md)
+- [Closure dimension and uniform and non-uniform generatability](closure-dimension.md)
 
 ## Sources
 

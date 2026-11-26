@@ -8,12 +8,15 @@ Maintain an integral MBB-supported allocation with prices, and perform local tra
 
 ## Depends on
 
-- [Price envy-freeness up to one good](price-envy-freeness-up-to-one-good.md)
 - [Fractional Pareto optimality](fractional-pareto-optimality.md)
+- [Is EF1](../../../not-yet-classified/part-01/indivisible/is-ef1.md)
+- [Pareto-optimal allocation](../../../not-yet-classified/part-01/indivisible/is-pareto-optimal.md)
 
 ## Proof depends on
 
 - [MBB-supported price envy-freeness up to one good implies EF1](mbb-pef1-implies-ef1.md)
+- [Price envy-freeness up to one good](price-envy-freeness-up-to-one-good.md)
+- [Maximum bang-per-buck allocation supported by prices](maximum-bang-per-buck-allocation.md)
 
 ## Sources
 

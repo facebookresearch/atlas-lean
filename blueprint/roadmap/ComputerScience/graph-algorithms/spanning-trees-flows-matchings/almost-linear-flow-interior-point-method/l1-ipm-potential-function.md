@@ -11,8 +11,6 @@ The first term rewards progress in cost and the second is a barrier for the box 
 ## Depends on
 
 - [Integral minimum-cost flow instances with polynomially bounded data](integral-min-cost-flow-instance.md)
-- [Self-concordant barrier](../../../../Analysis/convex-analysis-and-variations/self-concordant-functions-and-barriers/is-self-concordant-barrier.md)
-- [Duality gap of central points in the barrier method](../../../../Analysis/convex-analysis-and-variations/lagrange-duality/central-point-duality-gap.md)
 
 ## Sources
 

@@ -8,12 +8,8 @@ Construct cluster-tree graphs in which two classes of vertices, $C_0$ and $C_1$,
 
 ## Depends on
 
-- [Deterministic and randomized LOCAL complexity of an LCL problem](../lcl-problems-and-the-locality-landscape/lcl-deterministic-randomized-complexity.md)
-- [Luby's maximal independent set algorithm](../luby-s-maximal-independent-set-algorithm.md)
-
-## Proof depends on
-
-- [Deterministic and randomized LOCAL complexity of an LCL problem](../lcl-problems-and-the-locality-landscape/lcl-deterministic-randomized-complexity.md)
+- [The LOCAL model](../../distributed-execution-models/the-local-model.md)
+- [Dominating set](../../../../GraphTheory/independence-and-domination/dominating-sets/is-dominating.md)
 
 ## Sources
 

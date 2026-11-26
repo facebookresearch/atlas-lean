@@ -16,10 +16,6 @@ Any contract induces some best-response action $i$ and satisfies that action's i
 
 - [Hidden-action principal-agent instance and contract](hidden-action-principal-agent-instance.md)
 
-## Proof depends on
-
-- [Hidden-action principal-agent instance and contract](hidden-action-principal-agent-instance.md)
-
 ## Sources
 
 - S. J. Grossman, O. D. Hart, "An Analysis of the Principal-Agent Problem", Econometrica 51(1) (1983).

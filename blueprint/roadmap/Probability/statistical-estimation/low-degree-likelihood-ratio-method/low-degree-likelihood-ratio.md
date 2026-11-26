@@ -8,11 +8,6 @@ $$
 
 so $\|L_n^{\le D}\|$ measures how well any degree-$D$ polynomial statistic separates the planted from the null distribution in mean relative to its null standard deviation.
 
-## Depends on
-
-- [Neyman–Pearson lemma](../../hypothesis-testing/neyman-pearson-dominated-two-simple.md)
-- [Le Cam's first lemma](../contiguity-and-le-cam-s-lemmas/is-contiguous-with-density-exp.md)
-
 ## Sources
 
 - D. Kunisky, A. S. Wein, A. S. Bandeira, "Notes on Computational Hardness of Hypothesis Testing: Predictions Using the Low-Degree Likelihood Ratio", Mathematical Analysis, its Applications and Computation, Springer (2022), arXiv:1907.11636.

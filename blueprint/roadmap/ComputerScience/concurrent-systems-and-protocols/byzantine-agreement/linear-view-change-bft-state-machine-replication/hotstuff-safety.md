@@ -9,6 +9,7 @@ Suppose block $B$ is committed via a three-chain with QCs in views $v, v+1, v+2$
 ## Depends on
 
 - [Chained HotStuff with locking and three-phase commit](hotstuff-protocol-three-phase.md)
+- [Quorum certificate from threshold signatures](quorum-certificate-threshold-signatures.md)
 
 ## Proof depends on
 

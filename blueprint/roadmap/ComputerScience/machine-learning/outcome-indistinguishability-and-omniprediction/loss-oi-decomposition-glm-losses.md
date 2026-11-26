@@ -9,12 +9,8 @@ Loss OI implies omniprediction because under simulated outcomes the action $k_\e
 ## Depends on
 
 - [Loss outcome indistinguishability and calibrated multiaccuracy](loss-oi-and-calibrated-multiaccuracy.md)
-- [Multicalibration implies omniprediction for convex Lipschitz losses](multicalibration-implies-omniprediction.md)
-
-## Proof depends on
-
-- [Loss outcome indistinguishability and calibrated multiaccuracy](loss-oi-and-calibrated-multiaccuracy.md)
-- [Multicalibration implies omniprediction for convex Lipschitz losses](multicalibration-implies-omniprediction.md)
+- [Omnipredictors](omnipredictor.md)
+- [Multiaccurate predictors](../multicalibration-and-multiaccuracy/multiaccurate-predictor.md)
 
 ## Sources
 

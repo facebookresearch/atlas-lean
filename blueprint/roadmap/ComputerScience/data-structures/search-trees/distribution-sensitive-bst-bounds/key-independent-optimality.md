@@ -9,11 +9,11 @@ The upper bound holds since the working-set bound is invariant under relabeling 
 ## Depends on
 
 - [Dynamic finger bound](dynamic-finger-bound.md)
-- [Wilber's first lower bound](../wilber-and-funnel-lower-bounds/wilber-first-bound.md)
+- [The binary search tree access model](../dynamic-optimality/the-binary-search-tree-access-model.md)
+- [Splay operation](../splay-tree/splay.md)
 
 ## Proof depends on
 
-- [Dynamic finger bound](dynamic-finger-bound.md)
 - [Wilber's first lower bound](../wilber-and-funnel-lower-bounds/wilber-first-bound.md)
 
 ## Sources

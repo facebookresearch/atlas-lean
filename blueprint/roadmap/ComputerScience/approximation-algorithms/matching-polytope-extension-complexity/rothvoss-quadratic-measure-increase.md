@@ -10,14 +10,8 @@ $$
 
 Following Razborov's corruption argument for disjointness, sample a random partition of $V$ into blocks $A_1,\dots,A_m$ of size $k-3$, two $k$-sets $C,D$, and blocks $B_1,\dots,B_m$ of size $2(k-3)$, and restrict to cuts made of whole $A$-blocks plus part of $C$ and matchings inside the blocks and $C \cup D$. Conditioned on the partition, cuts and matchings become nearly independent product structures, and the absence of $Q_1$ entries forces the rectangle's matchings on $C \cup D$ to be spread. Comparing how many ways a pair in $Q_3$ versus $Q_k$ can arise across $C \cup D$ yields the quadratic factor $k^2$, while partitions where the estimate fails have total measure $2^{-\delta m}$.
 
-## Depends on
-
-- [Odd-cut slack matrix of the perfect matching polytope](odd-cut-matching-slack.md)
-- [Randomized communication complexity of disjointness](../../../TheoryOfComputation/communication-complexity/randomized-communication-protocols/rand-complexity-disj-fn-ge.md)
-
 ## Proof depends on
 
-- [Odd-cut slack matrix of the perfect matching polytope](odd-cut-matching-slack.md)
 - [Randomized communication complexity of disjointness](../../../TheoryOfComputation/communication-complexity/randomized-communication-protocols/rand-complexity-disj-fn-ge.md)
 
 ## Sources

@@ -8,8 +8,8 @@ The upper bound samples $O(\log n/\varepsilon^2)$ pure strategies from each play
 
 ## Depends on
 
-- [Computing a Nash equilibrium of a two-player game is PPAD-complete](two-player-nash-ppad-complete.md)
 - [Mixed Nash equilibrium](../is-mixed-nash.md)
+- [Nash equilibrium of a bimatrix game](../../bimatrix-games-and-the-lemke-howson-algorithm/is-bimatrix-nash.md)
 
 ## Proof depends on
 

@@ -15,7 +15,7 @@ Both algorithms pick a source (pivot) and compute, with isolating-cut calls appl
 
 - [Single-source minimum cut values](single-source-minimum-cut-values.md)
 - [Flow-equivalent and cut-equivalent trees of weighted graphs](../../../../GraphTheory/paths-cycles-connectivity/cactus-representation-and-sparse-certificates/flow-equivalent-and-cut-equivalent-trees.md)
-- [Isolating cut lemma with logarithmically many max-flow calls](isolating-cut-lemma.md)
+- [Maximum-flow oracles and the max-flow call model for cut problems](max-flow-oracle-call-model.md)
 
 ## Proof depends on
 

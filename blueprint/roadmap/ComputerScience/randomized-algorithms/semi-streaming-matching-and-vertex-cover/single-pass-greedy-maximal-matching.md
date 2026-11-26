@@ -12,10 +12,10 @@ Matched vertices stay matched, so an edge rejected at its arrival has an endpoin
 ## Depends on
 
 - [Approximate maximum matching and vertex cover in a graph stream](approximate-matching-in-graph-streams.md)
+- [Semi-streaming graph model with insertion-only, dynamic and random-order edge streams](semi-streaming-graph-model.md)
 
 ## Proof depends on
 
-- [Approximate maximum matching and vertex cover in a graph stream](approximate-matching-in-graph-streams.md)
 - [The greedy matching is maximal](../../online-algorithms/online-bipartite-matching/greedy-all-maximal.md)
 - [Greedy online matching is within a factor $2$ of the maximum](../../online-algorithms/online-bipartite-matching/card-max-matching-le.md)
 - [The edges APPROX-VERTEX-COVER takes form a maximal matching of the listed pairs](../../approximation-algorithms/vertex-cover-2-approximation/approx-vertex-cover-matching.md)

@@ -10,6 +10,8 @@ For agents $i, j$ choose $g$ as in pEF1. Then $v_i(X_i) = \alpha_i\, p(X_i) \ge 
 
 - [Price envy-freeness up to one good](price-envy-freeness-up-to-one-good.md)
 - [Maximum bang-per-buck allocation supported by prices](maximum-bang-per-buck-allocation.md)
+- [Is EF1](../../../not-yet-classified/part-01/indivisible/is-ef1.md)
+- [Fractional Pareto optimality](fractional-pareto-optimality.md)
 
 ## Proof depends on
 

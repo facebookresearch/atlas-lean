@@ -19,18 +19,12 @@ For (i), $x(E(S))=\tfrac12(2|S|-x(\delta(S))) \le |S|-1$ for every proper nonemp
 - [Spanning tree polytope of a connected graph](spanning-tree-polytope.md)
 - [Subtour elimination LP of a metric TSP instance](subtour-elimination-lp.md)
 - [T-joins and the T-join dominant polyhedron](t-join-dominant.md)
-- [Handshake lemma for edge-indexed multigraphs](../../../GraphTheory/paths-cycles-connectivity/eulerian-circuits/even-sum-degree.md)
-- [Characterization of Eulerian indexed walks](../../../GraphTheory/paths-cycles-connectivity/eulerian-circuits/is-eulerian-iff.md)
-- [APPROX-TSP-TOUR on a given minimum spanning tree costs at most twice any tour](../double-tree-approximation-for-metric-tsp/approx-tsptour-two-approx.md)
-- [A minimum spanning tree costs at most any tour](../double-tree-approximation-for-metric-tsp/weight-le-tour-cost.md)
 
 ## Proof depends on
 
-- [Spanning tree polytope of a connected graph](spanning-tree-polytope.md)
-- [Subtour elimination LP of a metric TSP instance](subtour-elimination-lp.md)
-- [T-joins and the T-join dominant polyhedron](t-join-dominant.md)
 - [Characterization of Eulerian indexed walks](../../../GraphTheory/paths-cycles-connectivity/eulerian-circuits/is-eulerian-iff.md)
 - [APPROX-TSP-TOUR on a given minimum spanning tree costs at most twice any tour](../double-tree-approximation-for-metric-tsp/approx-tsptour-two-approx.md)
+- [Handshake lemma for edge-indexed multigraphs](../../../GraphTheory/paths-cycles-connectivity/eulerian-circuits/even-sum-degree.md)
 
 ## Sources
 

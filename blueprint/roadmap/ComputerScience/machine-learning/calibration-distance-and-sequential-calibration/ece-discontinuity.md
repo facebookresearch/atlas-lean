@@ -10,10 +10,6 @@ For $f_\varepsilon$ the level sets are singletons with outcomes $0$ and $1$, so 
 
 - [Distance to calibration and its upper and lower variants](distance-to-calibration.md)
 
-## Proof depends on
-
-- [Distance to calibration and its upper and lower variants](distance-to-calibration.md)
-
 ## Sources
 
 - J. Blasiok, P. Gopalan, L. Hu, P. Nakkiran, "A Unifying Theory of Distance from Calibration", STOC (2023), arXiv:2211.16886.

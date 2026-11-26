@@ -8,15 +8,12 @@ Accuracy within $\alpha < 1/2$ on a column where all rows agree forces the round
 
 ## Depends on
 
-- [Tardos codes: optimal fully collusion-resilient fingerprinting](tardos-fingerprinting-code.md)
 - [Differential privacy](../differential-privacy/differentially-private.md)
 - [Fingerprinting codes](../differential-privacy/fingerprinting-codes.md)
 
 ## Proof depends on
 
 - [Tardos codes: optimal fully collusion-resilient fingerprinting](tardos-fingerprinting-code.md)
-- [Differential privacy](../differential-privacy/differentially-private.md)
-- [Fingerprinting codes](../differential-privacy/fingerprinting-codes.md)
 
 ## Sources
 

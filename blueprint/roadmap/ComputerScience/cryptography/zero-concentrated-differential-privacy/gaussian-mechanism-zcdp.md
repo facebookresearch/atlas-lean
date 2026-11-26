@@ -9,12 +9,6 @@ Compute $\int \big(\frac{dP}{dQ}\big)^{\alpha}dQ$ for two Gaussians with equal c
 ## Depends on
 
 - [Zero-concentrated differential privacy](zero-concentrated-dp.md)
-- [The Gaussian mechanism](../differential-privacy/gaussian-mechanism-differentially-privat.md)
-
-## Proof depends on
-
-- [Zero-concentrated differential privacy](zero-concentrated-dp.md)
-- [The Gaussian mechanism](../differential-privacy/gaussian-mechanism-differentially-privat.md)
 
 ## Sources
 

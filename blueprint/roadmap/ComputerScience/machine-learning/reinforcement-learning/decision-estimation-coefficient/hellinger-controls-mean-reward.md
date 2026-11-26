@@ -18,12 +18,6 @@ The first inequality holds because $r$ takes values in $[0,1]$. For the second, 
 - [Total variation distance between finite measures](../../../../Probability/convergence-of-measures/total-variation-distance/total-variation-dist.md)
 - [Decision making with structured observations](decision-making-structured-observations.md)
 
-## Proof depends on
-
-- [Hellinger distance](../../../../Probability/convergence-of-measures/hellinger-distance/hellinger-dist.md)
-- [Total variation distance between finite measures](../../../../Probability/convergence-of-measures/total-variation-distance/total-variation-dist.md)
-- [Decision making with structured observations](decision-making-structured-observations.md)
-
 ## Sources
 
 - D. J. Foster, S. M. Kakade, J. Qian, A. Rakhlin, "The Statistical Complexity of Interactive Decision Making", arXiv:2112.13487 (2021).

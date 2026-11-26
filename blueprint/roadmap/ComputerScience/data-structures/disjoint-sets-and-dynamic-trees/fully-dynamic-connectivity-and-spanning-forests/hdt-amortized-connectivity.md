@@ -13,14 +13,15 @@ Each edge carries a level $\ell(e) \in \{0, \dots, \lfloor \log_2 n \rfloor\}$ t
 
 ## Depends on
 
-- [Replacement edges after deleting a spanning-forest edge](replacement-edge-lemma.md)
 - [Oblivious and adaptive adversaries; amortized and worst-case update time](adversary-and-update-time-models.md)
+- [Fully dynamic connectivity, spanning forest and minimum spanning forest problems](fully-dynamic-connectivity-problems.md)
 
 ## Proof depends on
 
 - [Euler tour](../euler-tour-tree/tour.md)
 - [Amortized cost of an operation](../../amortized-analysis/amortized-cost.md)
 - [Kruskal's algorithm gives a minimum spanning forest](../../../graph-algorithms/spanning-trees-flows-matchings/kruskal-s-algorithm/kruskal-minimal.md)
+- [Replacement edges after deleting a spanning-forest edge](replacement-edge-lemma.md)
 
 ## Sources
 

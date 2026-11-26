@@ -8,7 +8,7 @@ Alon, Gravin, Pollner, Rubinstein, Wang, Weinberg and Zhang construct a matroid 
 
 ## Depends on
 
-- [Kleinberg–Weinberg: every matroid admits a $1/2$ prophet inequality](matroid-prophet-half.md)
+- [Matroid prophet inequality](matroid-prophet-problem.md)
 
 ## Proof depends on
 

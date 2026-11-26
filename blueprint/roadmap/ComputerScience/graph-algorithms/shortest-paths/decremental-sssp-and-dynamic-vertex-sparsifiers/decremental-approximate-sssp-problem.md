@@ -10,8 +10,6 @@ after every deletion. *Distance queries* return $\tilde d(v)$; *path queries* re
 
 ## Depends on
 
-- [Dense Dijkstra's algorithm](../dijkstra-s-algorithm/dijkstra.md)
-- [Breadth-first search](../../traversal-and-connectivity/breadth-first-search/bfs.md)
 - [Dynamic graph problems](../../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/dynamic-graph-problems.md)
 - [Oblivious and adaptive adversaries; amortized and worst-case update time](../../../data-structures/disjoint-sets-and-dynamic-trees/fully-dynamic-connectivity-and-spanning-forests/adversary-and-update-time-models.md)
 

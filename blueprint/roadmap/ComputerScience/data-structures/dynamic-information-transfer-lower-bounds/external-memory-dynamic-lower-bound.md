@@ -8,15 +8,17 @@ Run the information-transfer argument with cell size $w' = B w$: the encoding of
 
 ## Depends on
 
-- [Pătraşcu–Demaine tradeoff for dynamic partial sums](partial-sums-tradeoff.md)
+- [Dynamic partial sums over a group](dynamic-partial-sums-problem.md)
+- [Fully dynamic connectivity, spanning forest and minimum spanning forest problems](../disjoint-sets-and-dynamic-trees/fully-dynamic-connectivity-and-spanning-forests/fully-dynamic-connectivity-problems.md)
 - [The external-memory model](../../memory-hierarchy-algorithms/external-memory-algorithms/the-external-memory-model.md)
-- [Raw B-trees](../search-trees/b-tree/btree.md)
+- [The cell-probe model](../range-query-structures/advanced-data-structures/the-cell-probe-model.md)
+- [Amortized update and query cost of a dynamic cell-probe structure](amortized-cell-probe-costs.md)
 
 ## Proof depends on
 
 - [Pătraşcu–Demaine tradeoff for dynamic partial sums](partial-sums-tradeoff.md)
-- [The external-memory model](../../memory-hierarchy-algorithms/external-memory-algorithms/the-external-memory-model.md)
-- [Raw B-trees](../search-trees/b-tree/btree.md)
+- [Information transfer must carry the entropy of the interleaved updates](transfer-entropy-bound.md)
+- [Partial sums over permutation groups reduce to connectivity of disjoint paths](grid-permutation-reduction.md)
 
 ## Sources
 

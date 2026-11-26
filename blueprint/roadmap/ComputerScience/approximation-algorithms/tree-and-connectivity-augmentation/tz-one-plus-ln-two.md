@@ -8,13 +8,12 @@ Run the relative greedy algorithm with components $\mathcal{K}_\varepsilon$, sta
 
 ## Depends on
 
-- [Relative greedy algorithms for weighted tree augmentation](relative-greedy-augmentation.md)
-- [Approximate decomposition of WTAP solutions into thin components (Traub-Zenklusen)](wtap-component-decomposition.md)
-- [Frederickson-JaJa: weighted tree augmentation is 2-approximable by splitting links](frederickson-jaja-two-approx.md)
+- [Weighted tree augmentation problem (WTAP)](weighted-tree-augmentation.md)
 - [Approximation algorithms and approximation ratios](../approximation-algorithms-and-approximation-ratios.md)
 
 ## Proof depends on
 
+- [Relative greedy algorithms for weighted tree augmentation](relative-greedy-augmentation.md)
 - [Approximate decomposition of WTAP solutions into thin components (Traub-Zenklusen)](wtap-component-decomposition.md)
 - [Frederickson-JaJa: weighted tree augmentation is 2-approximable by splitting links](frederickson-jaja-two-approx.md)
 

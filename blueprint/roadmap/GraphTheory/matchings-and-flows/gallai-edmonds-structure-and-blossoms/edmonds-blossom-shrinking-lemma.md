@@ -9,13 +9,12 @@ Replacing $M$ by its symmetric difference with the stem keeps $|M|$, keeps $B$ a
 ## Depends on
 
 - [Alternating forests, flowers and blossoms of a matching](alternating-forests-and-blossoms.md)
-- [Berge's lemma for matching subgraphs](../berge-s-lemma/berge-general.md)
+- [Augmenting path](../berge-s-lemma/is-augmenting-walk.md)
 
 ## Proof depends on
 
 - [Berge's lemma for matching subgraphs](../berge-s-lemma/berge-general.md)
 - [Augmenting along a path (Hopcroft–Karp, Lemma 1)](../berge-s-lemma/symm-diff-is-matching.md)
-- [Alternating forests, flowers and blossoms of a matching](alternating-forests-and-blossoms.md)
 
 ## Sources
 

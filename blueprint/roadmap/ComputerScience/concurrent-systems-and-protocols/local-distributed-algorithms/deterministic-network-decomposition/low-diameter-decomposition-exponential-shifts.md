@@ -11,10 +11,6 @@ The cluster of $v$ is determined by the maximum of $\delta_u - \mathrm{dist}(u, 
 - [Network decomposition with weak or strong diameter](network-decomposition-weak-strong-diameter.md)
 - [The CONGEST model of distributed computing](the-congest-model.md)
 
-## Proof depends on
-
-- [Network decomposition with weak or strong diameter](network-decomposition-weak-strong-diameter.md)
-
 ## Sources
 
 - G. L. Miller, R. Peng, S. C. Xu, "Parallel graph decompositions using random shifts", SPAA 2013, arXiv:1307.3692.

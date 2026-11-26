@@ -15,12 +15,8 @@ Fix a swap function $\phi$. Decompose the rounds into the nested blocks of the t
 ## Depends on
 
 - [TreeSwap: swap regret from external regret on a tree of restarts](treeswap-algorithm.md)
-- [External regret is at most swap regret](../../../../GameTheory/not-yet-classified/part-02/regret/external-regret-le-swap-regret.md)
-
-## Proof depends on
-
-- [TreeSwap: swap regret from external regret on a tree of restarts](treeswap-algorithm.md)
-- [External regret is at most swap regret](../../../../GameTheory/not-yet-classified/part-02/regret/external-regret-le-swap-regret.md)
+- [Swap regret](../../../../GameTheory/not-yet-classified/part-02/regret/swap-regret.md)
+- [External regret](../../../../GameTheory/not-yet-classified/part-02/regret/external-regret.md)
 
 ## Sources
 

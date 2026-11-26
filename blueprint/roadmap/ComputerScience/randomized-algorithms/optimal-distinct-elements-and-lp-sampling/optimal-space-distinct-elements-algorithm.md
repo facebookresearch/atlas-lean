@@ -15,7 +15,6 @@ A constant-factor estimator run in parallel selects a subsampling level at which
 ## Depends on
 
 - [Turnstile streams, support size and linear sketches of a frequency vector](turnstile-streams-and-support-size.md)
-- [Constant-factor estimation of the number of distinct elements](../streaming-and-memory-hierarchy-models/constant-factor-estimation-of-the-number-of.md)
 
 ## Proof depends on
 

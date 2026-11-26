@@ -17,11 +17,6 @@ With $\eta = 1/2$, the tempered log-likelihood ratio of $\hat M_t$ against $M^\s
 - [Estimation-to-decisions meta-algorithm](estimation-to-decisions.md)
 - [Hellinger distance](../../../../Probability/convergence-of-measures/hellinger-distance/hellinger-dist.md)
 
-## Proof depends on
-
-- [Estimation-to-decisions meta-algorithm](estimation-to-decisions.md)
-- [Hellinger distance](../../../../Probability/convergence-of-measures/hellinger-distance/hellinger-dist.md)
-
 ## Sources
 
 - D. J. Foster, S. M. Kakade, J. Qian, A. Rakhlin, "The Statistical Complexity of Interactive Decision Making", arXiv:2112.13487 (2021).

@@ -1,6 +1,6 @@
 # Random-walk cuckoo insertion takes constant expected time up to the load threshold
 
-Let $d \ge 3$, $c < c_d^*$ and $n = cm$. With probability $1 - o(1)$ over the random hash functions, the expected insertion time of random-walk insertion into a $d$-ary cuckoo table holding $n$ keys in $m$ slots is $O(1)$, a constant depending only on $c$ and $d$ but not on $m$. The bound is robust to $n^{\beta}$ oblivious insertions and deletions for a suitable constant $\beta > 0$.
+Let $d \ge 3$, let $c_d^* = \xi_d / \big(d\,(1 - e^{-\xi_d})^{d-1}\big)$, where $\xi_d > 0$ is the unique solution of $d = \frac{\xi(e^{\xi} - 1)}{e^{\xi} - 1 - \xi}$, and let $c < c_d^*$ and $n = cm$. With probability $1 - o(1)$ over the random hash functions, the expected insertion time of random-walk insertion into a $d$-ary cuckoo table holding $n$ keys in $m$ slots is $O(1)$, a constant depending only on $c$ and $d$ but not on $m$. The bound is robust to $n^{\beta}$ oblivious insertions and deletions for a suitable constant $\beta > 0$.
 
 ## Proof sketch
 
@@ -8,14 +8,12 @@ Building on expansion properties of the bipartite hashing graph established by F
 
 ## Depends on
 
-- [Sharp load thresholds for d-ary cuckoo hashing](cuckoo-load-threshold.md)
 - [Random-walk insertion for d-ary cuckoo hashing](random-walk-cuckoo-insertion.md)
-- [A geometric tail bound gives constant expected walk length](geometric-tail-gives-constant-mean.md)
+- [d-ary cuckoo hashing and its hashing graph](d-ary-cuckoo-hashing.md)
 
 ## Proof depends on
 
 - [Sharp load thresholds for d-ary cuckoo hashing](cuckoo-load-threshold.md)
-- [Random-walk insertion for d-ary cuckoo hashing](random-walk-cuckoo-insertion.md)
 - [A geometric tail bound gives constant expected walk length](geometric-tail-gives-constant-mean.md)
 
 ## Sources

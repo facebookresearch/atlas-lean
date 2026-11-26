@@ -12,8 +12,8 @@ This is a variant of the algorithm of Oveis Gharan, Saberi and Singh for graphic
 ## Depends on
 
 - [Subtour elimination LP of a metric TSP instance](subtour-elimination-lp.md)
+- [Spanning tree polytope of a connected graph](spanning-tree-polytope.md)
 - [Maximum-entropy and lambda-uniform distributions over spanning trees](max-entropy-spanning-tree-distribution.md)
-- [Max-entropy spanning tree distributions are lambda-uniform and approximately computable](max-entropy-lambda-uniform-computable.md)
 - [T-joins and the T-join dominant polyhedron](t-join-dominant.md)
 
 ## Sources

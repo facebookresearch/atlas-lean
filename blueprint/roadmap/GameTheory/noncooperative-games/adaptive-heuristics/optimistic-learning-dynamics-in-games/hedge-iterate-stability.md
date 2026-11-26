@@ -14,10 +14,6 @@ Since normalization cancels any additive shift of $m^t$, assume its coordinates 
 
 - [Optimistic Hedge in a repeated normal-form game](optimistic-hedge-in-games.md)
 
-## Proof depends on
-
-- [Optimistic Hedge in a repeated normal-form game](optimistic-hedge-in-games.md)
-
 ## Sources
 
 - V. Syrgkanis, A. Agarwal, H. Luo, R. E. Schapire, "Fast Convergence of Regularized Learning in Games", NeurIPS 2015, arXiv:1507.00407.

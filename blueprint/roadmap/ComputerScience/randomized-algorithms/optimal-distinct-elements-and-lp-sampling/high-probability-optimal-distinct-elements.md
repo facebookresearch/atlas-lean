@@ -1,6 +1,6 @@
 # Optimal distinct elements with failure probability delta in O(eps^-2 log(1/delta) + log n) bits
 
-For all $0 < \varepsilon, \delta < 1$ there is a one-pass randomized streaming algorithm solving the $(\varepsilon, \delta)$-distinct elements problem on insertion-only streams over $[n]$ with
+For all $0 < \varepsilon, \delta < 1$ there is a one-pass randomized streaming algorithm solving the $(\varepsilon, \delta)$-distinct elements problem (output an estimate $\widetilde{F}_0$ of the number $F_0$ of distinct elements with $\Pr[\,|\widetilde{F}_0 - F_0| \le \varepsilon F_0\,] \ge 1 - \delta$) on insertion-only streams over $[n]$ with
 
 $$
 O\Big(\frac{\log(1/\delta)}{\varepsilon^{2}} + \log n\Big)
@@ -14,7 +14,7 @@ Instead of taking the median of $\log(1/\delta)$ independent copies, which multi
 
 ## Depends on
 
-- [Kane-Nelson-Woodruff distinct-elements algorithm with O(1/eps^2 + log n) bits](optimal-space-distinct-elements-algorithm.md)
+- [Turnstile streams, support size and linear sketches of a frequency vector](turnstile-streams-and-support-size.md)
 
 ## Proof depends on
 

@@ -14,13 +14,11 @@ The exponential case reruns the Gale–Stewart argument with multiclass online l
 
 ## Depends on
 
+- [Realizable distributions, learning curves and universal rates](universal-rate.md)
 - [Pseudo-cube trees for multiclass universal rates](dsl-tree.md)
-- [Combinatorial characterization of the three universal rates](universal-rate-characterization.md)
-- [DS dimension characterizes multiclass PAC learnability](../../ds-dimension-characterizes-multiclass-pac-learnability.md)
 
 ## Proof depends on
 
-- [Pseudo-cube trees for multiclass universal rates](dsl-tree.md)
 - [Combinatorial characterization of the three universal rates](universal-rate-characterization.md)
 - [DS dimension characterizes multiclass PAC learnability](../../ds-dimension-characterizes-multiclass-pac-learnability.md)
 

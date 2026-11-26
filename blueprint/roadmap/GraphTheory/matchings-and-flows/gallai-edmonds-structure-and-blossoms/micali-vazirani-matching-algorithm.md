@@ -9,12 +9,10 @@ Inner vertices receive their maxlevel only through blossoms: when a bridge of te
 ## Depends on
 
 - [Even and odd levels, tenacity and bridges for minimum-length alternating paths](levels-tenacity-and-bridges.md)
-- [Phase bound for shortest-augmenting-path matching algorithms in general graphs](phase-bound-shortest-augmenting-paths.md)
-- [Edmonds' blossom shrinking lemma](edmonds-blossom-shrinking-lemma.md)
+- [Augmenting path](../berge-s-lemma/is-augmenting-walk.md)
 
 ## Proof depends on
 
-- [Even and odd levels, tenacity and bridges for minimum-length alternating paths](levels-tenacity-and-bridges.md)
 - [Phase bound for shortest-augmenting-path matching algorithms in general graphs](phase-bound-shortest-augmenting-paths.md)
 
 ## Sources

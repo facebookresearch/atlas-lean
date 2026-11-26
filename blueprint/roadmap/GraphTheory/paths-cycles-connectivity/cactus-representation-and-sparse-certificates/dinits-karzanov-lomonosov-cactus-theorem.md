@@ -9,14 +9,13 @@ Group the minimum cuts into classes of pairwise crossing cuts; by the corner lem
 ## Depends on
 
 - [Cactus representations of all minimum cuts](cactus-representation-of-minimum-cuts.md)
-- [Corner structure of two crossing minimum cuts](crossing-minimum-cuts-corners.md)
-- [At most $n(n-1)/2$ minimum cuts](../../../ComputerScience/randomized-algorithms/karger-s-algorithm/two-mul-length-min-cuts-le.md)
 
 ## Proof depends on
 
 - [Corner structure of two crossing minimum cuts](crossing-minimum-cuts-corners.md)
 - [Minimum cuts of a weighted cactus are tree edges or pairs of edges on one cycle](cactus-minimum-cuts-classification.md)
 - [At most $n(n-1)/2$ minimum cuts](../../../ComputerScience/randomized-algorithms/karger-s-algorithm/two-mul-length-min-cuts-le.md)
+- [Crossing pairs of vertex bipartitions](crossing-vertex-bipartitions.md)
 
 ## Sources
 

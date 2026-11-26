@@ -9,10 +9,7 @@ In a tree-like neighbourhood of radius $t$, the output of a node depends on its 
 ## Depends on
 
 - [Round elimination operators on node-edge-checkable problems](round-elimination-operators.md)
-
-## Proof depends on
-
-- [Round elimination operators on node-edge-checkable problems](round-elimination-operators.md)
+- [The LOCAL model](../../distributed-execution-models/the-local-model.md)
 
 ## Sources
 

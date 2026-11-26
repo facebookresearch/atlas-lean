@@ -16,10 +16,6 @@ The characters form an orthonormal basis of $L^2(\mathbb{Q})$, and the coefficie
 
 - [Low-degree likelihood ratio and low-degree advantage](low-degree-likelihood-ratio.md)
 
-## Proof depends on
-
-- [Low-degree likelihood ratio and low-degree advantage](low-degree-likelihood-ratio.md)
-
 ## Sources
 
 - S. B. Hopkins, "Statistical Inference and the Sum of Squares Method", PhD thesis, Cornell University (2018).

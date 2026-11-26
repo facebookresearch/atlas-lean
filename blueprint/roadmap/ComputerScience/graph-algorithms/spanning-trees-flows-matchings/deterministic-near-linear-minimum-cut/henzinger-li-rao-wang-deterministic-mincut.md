@@ -8,14 +8,14 @@ The main structural result is that every weighted graph has a sparse clustering 
 
 ## Depends on
 
-- [Deterministic almost-linear minimum cut in weighted graphs (Li)](li-deterministic-almost-linear-weighted-mincut.md)
-- [Kawarabayashi-Thorup contraction to O(m/delta) edges preserving non-trivial minimum cuts](kawarabayashi-thorup-contraction.md)
+- [Steiner minimum cuts of a terminal set](../isolating-cuts-and-steiner-min-cuts/steiner-minimum-cut.md)
 
 ## Proof depends on
 
 - [Deterministic almost-linear minimum cut in weighted graphs (Li)](li-deterministic-almost-linear-weighted-mincut.md)
 - [Deterministic near-linear edge connectivity of simple graphs](deterministic-edge-connectivity-simple-graphs.md)
 - [Minimum 2-respecting cut of a spanning tree in O(m log n) deterministic time](minimum-two-respecting-cut-algorithm.md)
+- [Kawarabayashi-Thorup contraction to O(m/delta) edges preserving non-trivial minimum cuts](kawarabayashi-thorup-contraction.md)
 
 ## Sources
 

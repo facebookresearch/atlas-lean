@@ -8,7 +8,7 @@ Refine the $\delta$-adapted block tree by stopping the recursion once blocks hav
 
 ## Depends on
 
-- [Strings are representable in $O(\delta\log(n/\delta))$ space, optimally](../string-attractors-and-repetitiveness-measures/delta-optimal-space.md)
+- [Substring complexity $\delta$](../string-attractors-and-repetitiveness-measures/substring-complexity.md)
 
 ## Proof depends on
 

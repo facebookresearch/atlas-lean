@@ -10,6 +10,7 @@ In a matroid, a best response can be reached from the current basis by a sequenc
 
 - [Congestion game](../../potential-games/congestion-game.md)
 - [Improving move](../../potential-games/improving-move.md)
+- [Pure Nash equilibrium](../../potential-games/is-pure-nash.md)
 
 ## Proof depends on
 

@@ -9,12 +9,13 @@ Ambiguity allows the principal to deter deviations to action $k$ with one contra
 ## Depends on
 
 - [Ambiguous contract and max-min agent](ambiguous-contract.md)
-- [Optimal contracts via one linear program per action](optimal-contract-min-pay-linear-programs.md)
+- [Hidden-action principal-agent instance and contract](hidden-action-principal-agent-instance.md)
 
 ## Proof depends on
 
 - [Optimal contracts via one linear program per action](optimal-contract-min-pay-linear-programs.md)
 - [Implementable actions are exactly those not replicated more cheaply by a mixture](implementable-action-characterization.md)
+- [Von Neumann's minimax theorem](../../noncooperative-games/von-neumann-s-minimax-theorem/matrix-game-minimax.md)
 
 ## Sources
 

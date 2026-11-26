@@ -4,7 +4,7 @@ A **testing problem** is a sequence of pairs of distributions $(\mathbb{Q}_n, \m
 
 ## Depends on
 
-- [Second moment method: bounded likelihood ratio norm rules out detection](likelihood-ratio-second-moment-method.md)
+- [Low-degree likelihood ratio and low-degree advantage](low-degree-likelihood-ratio.md)
 
 ## Sources
 

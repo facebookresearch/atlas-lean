@@ -12,13 +12,10 @@ where $\|Y\|_p = (\mathbb{E}|Y|^p)^{1/p}$.
 
 Assume $n = 2^k$ and consider the dyadic partitions $B_0, \dots, B_k$ of $[n]$. Telescope $g_i$ through conditional expectations given the blocks of successive partitions; at each of the $\log_2 n$ levels the block-conditional terms form sums of functions of disjoint blocks to which the moment version of McDiarmid's inequality $\|f - \mathbb{E}f\|_p \le 2\sqrt{np}\beta$ applies, contributing $O(p n\beta)$ per level, while the final term is a sum of independent centred variables bounded via Marcinkiewicz–Zygmund by $O(M\sqrt{pn})$.
 
-## Depends on
-
-- [McDiarmid's bounded-differences inequality, finite i.i.d. case](../../../../Probability/concentration-inequalities/mcdiarmid-s-inequality/mcdiarmid-one-sided-finite-iid.md)
-
 ## Proof depends on
 
 - [McDiarmid's bounded-differences inequality, finite i.i.d. case](../../../../Probability/concentration-inequalities/mcdiarmid-s-inequality/mcdiarmid-one-sided-finite-iid.md)
+- [Moment form of the bounded differences inequality](bounded-differences-moment-inequality.md)
 
 ## Sources
 

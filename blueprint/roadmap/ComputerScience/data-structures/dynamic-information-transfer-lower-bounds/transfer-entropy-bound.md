@@ -9,12 +9,7 @@ Encode the random values $g_t$ written during $L_v$ given everything outside $L_
 ## Depends on
 
 - [Bit-reversal interleaved operation sequence](bit-reversal-hard-sequence.md)
-- [Each cell read is charged to at most one tree node](reads-charged-to-one-node.md)
-
-## Proof depends on
-
-- [Bit-reversal interleaved operation sequence](bit-reversal-hard-sequence.md)
-- [Each cell read is charged to at most one tree node](reads-charged-to-one-node.md)
+- [Information transfer and the information-transfer tree](information-transfer-tree.md)
 
 ## Sources
 

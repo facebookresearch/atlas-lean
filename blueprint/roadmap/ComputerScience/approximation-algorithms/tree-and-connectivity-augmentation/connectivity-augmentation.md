@@ -11,7 +11,6 @@ Equivalently $F$ must contain a link crossing every minimum cut $\delta_G(S)$ wi
 ## Depends on
 
 - [Weighted tree augmentation problem (WTAP)](weighted-tree-augmentation.md)
-- [Menger's theorem for edge cuts and edge-disjoint paths](../../../GraphTheory/paths-cycles-connectivity/menger-s-theorem/menger-edge-max-min.md)
 - [Minimum cut size](../../randomized-algorithms/karger-s-algorithm/is-min-cut.md)
 
 ## Sources

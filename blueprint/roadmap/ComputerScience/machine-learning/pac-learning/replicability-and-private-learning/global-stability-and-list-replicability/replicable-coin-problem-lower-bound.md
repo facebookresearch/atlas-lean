@@ -6,10 +6,6 @@ A randomized algorithm $A(S; r)$ taking an i.i.d. sample $S$ from a distribution
 
 Fix the shared randomness $r$ and consider $f_r(p) = \Pr_S[A(S; r) = 1]$ as $p$ moves from $\tfrac12 - \tau$ to $\tfrac12 + \tau$: it moves from at most $\delta$ to at least $1 - \delta$ and is a polynomial of degree $n$ with derivative bounded by $O(\sqrt{n})$ in the relevant range. Hence for a random bias in the middle range, $f_r(p)$ lies in $[1/3, 2/3]$ with probability $\Omega(1/(\tau\sqrt{n}))$ over $p$ and $r$, and there two independent runs disagree with constant probability; averaging over $p$ gives non-replicability $\Omega(1/(\tau\sqrt{n}))$, so $\rho$-replicability forces $n = \Omega(1/(\tau^2\rho^2))$.
 
-## Depends on
-
-- [Replicable simulation of a statistical query by randomized rounding](replicable-statistical-query-simulation.md)
-
 ## Proof depends on
 
 - [Replicable simulation of a statistical query by randomized rounding](replicable-statistical-query-simulation.md)

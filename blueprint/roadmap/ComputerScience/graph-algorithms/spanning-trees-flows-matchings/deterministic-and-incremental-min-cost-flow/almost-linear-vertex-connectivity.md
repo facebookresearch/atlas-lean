@@ -6,12 +6,6 @@ There is a randomized algorithm that, given an undirected graph with $n$ vertice
 
 Vertex connectivity reduces to $\mathrm{polylog}(n)$ maximum flow computations on graphs with $O(m)$ edges in total plus $\widetilde{O}(m)$ additional work, so any $m^{a}$-time maximum flow algorithm with $a \ge 1$ gives an $\widetilde{O}(m^{a})$-time algorithm; each vertex-capacitated flow instance is turned into an edge-capacitated one by vertex splitting, and Menger's theorem identifies its value with a minimum vertex separator. Plugging in *Maximum flow in almost-linear time with a logarithmic dependence on capacities*, or its deterministic counterpart for the flow calls, yields $m^{1+o(1)}$; the randomness lies in the reduction's sampling of terminal sets.
 
-## Depends on
-
-- [Maximum flow in almost-linear time with a logarithmic dependence on capacities](../almost-linear-flow-interior-point-method/almost-linear-maximum-flow.md)
-- [$k$-vertex-connected graph](../../../../GraphTheory/paths-cycles-connectivity/vertex-connectivity/is-vertex-connected.md)
-- [Menger's theorem, vertex form](../../../../GraphTheory/paths-cycles-connectivity/menger-s-theorem/menger-vertex.md)
-
 ## Proof depends on
 
 - [Maximum flow in almost-linear time with a logarithmic dependence on capacities](../almost-linear-flow-interior-point-method/almost-linear-maximum-flow.md)

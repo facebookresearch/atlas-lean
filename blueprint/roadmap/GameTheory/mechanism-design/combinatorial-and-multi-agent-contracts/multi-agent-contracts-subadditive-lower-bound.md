@@ -9,6 +9,8 @@ Hide a special set of about $\sqrt n$ agents whose joint reward is high, while e
 ## Depends on
 
 - [Multi-agent binary-action contract with a team reward function](multi-agent-binary-action-contract.md)
+- [XOS set functions, demand queries and value queries](xos-functions-demand-and-value-queries.md)
+- [Submodular set function](../../../ComputerScience/approximation-algorithms/maximum-n-times-coverage/is-submodular.md)
 
 ## Proof depends on
 

@@ -12,10 +12,6 @@ samples. Replicable approximate medians are the key subroutine for replicable le
 
 Recursively reduce the domain: replicably locate the median of the distribution of the leading bits of samples using a domain of size $\log |X|$, then recurse inside the identified prefix; the recursion depth is $\log^* |X|$, and each level loses a factor $O(1/\tau^2)$ in samples and a constant factor in accuracy. Replicability of each level comes from randomized rounding of empirical quantiles with shared offsets.
 
-## Depends on
-
-- [Replicable simulation of a statistical query by randomized rounding](replicable-statistical-query-simulation.md)
-
 ## Proof depends on
 
 - [Replicable simulation of a statistical query by randomized rounding](replicable-statistical-query-simulation.md)

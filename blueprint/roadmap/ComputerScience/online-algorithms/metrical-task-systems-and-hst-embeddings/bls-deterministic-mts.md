@@ -10,10 +10,6 @@ The upper bound is a work-function algorithm that stays in its state until the a
 
 - [Metrical task systems](metrical-task-system.md)
 
-## Proof depends on
-
-- [Metrical task systems](metrical-task-system.md)
-
 ## Sources
 
 - Allan Borodin, Nathan Linial, Michael E. Saks, "An Optimal On-Line Algorithm for Metrical Task System", Journal of the ACM 39(4) (1992).

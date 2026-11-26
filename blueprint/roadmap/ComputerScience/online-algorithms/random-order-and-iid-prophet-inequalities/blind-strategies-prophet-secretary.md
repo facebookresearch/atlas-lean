@@ -8,11 +8,7 @@ Correa, Saona and Ziliotto lower-bound the performance of every blind strategy b
 
 ## Depends on
 
-- [Prophet secretary: adaptive thresholds achieve $1 - 1/e$](prophet-secretary-one-minus-inverse-e.md)
-
-## Proof depends on
-
-- [Prophet secretary: adaptive thresholds achieve $1 - 1/e$](prophet-secretary-one-minus-inverse-e.md)
+- [Gambler-to-prophet ratios under different arrival models](prophet-ratio-by-arrival-model.md)
 
 ## Sources
 

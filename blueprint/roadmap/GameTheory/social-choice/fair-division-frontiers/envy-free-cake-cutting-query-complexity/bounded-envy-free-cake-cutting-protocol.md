@@ -9,11 +9,6 @@ The protocol repeatedly runs a core subprotocol in which a cutter divides the re
 ## Depends on
 
 - [Cake cutting in the Robertson-Webb query model](../../cake-cutting-in-the-robertson-webb-query-model.md)
-- [Cut-and-choose and Dubins-Spanier](../../cut-and-choose-and-dubins-spanier.md)
-
-## Proof depends on
-
-- [Cake cutting in the Robertson-Webb query model](../../cake-cutting-in-the-robertson-webb-query-model.md)
 
 ## Sources
 

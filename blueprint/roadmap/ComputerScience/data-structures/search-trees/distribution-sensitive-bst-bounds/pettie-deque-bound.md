@@ -10,11 +10,7 @@ Pettie encodes the sequence of rotations as a sequence avoiding a fixed forbidde
 
 - [Deque and traversal conjectures for splay trees](deque-and-traversal-conjectures.md)
 - [Inverse Ackermann function of Tarjan and van Leeuwen](../../disjoint-sets-and-dynamic-trees/disjoint-set-data-structure/inverse-ackermann-tv-l.md)
-
-## Proof depends on
-
-- [Deque and traversal conjectures for splay trees](deque-and-traversal-conjectures.md)
-- [Inverse Ackermann function of Tarjan and van Leeuwen](../../disjoint-sets-and-dynamic-trees/disjoint-set-data-structure/inverse-ackermann-tv-l.md)
+- [Splay operation](../splay-tree/splay.md)
 
 ## Sources
 

@@ -16,10 +16,6 @@ Since $\mathbb{E}[c(x)(y - p(x))] = \mathbb{E}[c(x)(p^*(x) - p(x))]$, expanding 
 
 - [Multiaccurate predictors](multiaccurate-predictor.md)
 
-## Proof depends on
-
-- [Multiaccurate predictors](multiaccurate-predictor.md)
-
 ## Sources
 
 - U. Hebert-Johnson, M. P. Kim, O. Reingold, G. N. Rothblum, "Multicalibration: Calibration for the (Computationally-Identifiable) Masses", ICML (2018), arXiv:1711.08513.

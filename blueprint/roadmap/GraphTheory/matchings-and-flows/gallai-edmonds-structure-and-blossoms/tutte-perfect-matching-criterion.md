@@ -14,7 +14,8 @@ A perfect matching misses no vertex, so the odd-component bound gives $\operator
 
 ## Depends on
 
-- [Tutte-Berge min-max formula for the maximum matching size](tutte-berge-min-max-formula.md)
+- [Odd components and the Tutte deficiency of a vertex set](odd-components-and-tutte-deficiency.md)
+- [Factor-critical graphs and near-perfect matchings](factor-critical-graphs.md)
 
 ## Proof depends on
 

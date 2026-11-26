@@ -13,12 +13,12 @@ The graph is decomposed into expanders plus few inter-cluster edges. Inside an e
 
 ## Depends on
 
-- [Deterministic O(sqrt n) worst-case dynamic minimum spanning forest via sparsification](sqrt-n-worst-case-msf.md)
 - [Oblivious and adaptive adversaries; amortized and worst-case update time](adversary-and-update-time-models.md)
-- [(phi, epsilon)-expander decompositions of an undirected graph](../../../../GraphTheory/graph-families-and-operations/expander-decomposition-and-pruning/phi-epsilon-expander-decomposition.md)
+- [Fully dynamic connectivity, spanning forest and minimum spanning forest problems](fully-dynamic-connectivity-problems.md)
 
 ## Proof depends on
 
+- [(phi, epsilon)-expander decompositions of an undirected graph](../../../../GraphTheory/graph-families-and-operations/expander-decomposition-and-pruning/phi-epsilon-expander-decomposition.md)
 - [Replacement edges after deleting a spanning-forest edge](replacement-edge-lemma.md)
 
 ## Sources

@@ -14,7 +14,7 @@ By the mixture decomposition, each of the other $n-1$ users independently, with 
 
 ## Depends on
 
-- [Every local randomizer is a mixture of a common component and two clones](local-randomizer-mixture-decomposition.md)
+- [Local randomizers and the shuffle model](shuffle-model.md)
 
 ## Proof depends on
 

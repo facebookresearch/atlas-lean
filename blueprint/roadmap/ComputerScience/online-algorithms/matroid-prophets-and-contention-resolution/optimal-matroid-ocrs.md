@@ -8,12 +8,10 @@ Lee and Singla reduce the design of an OCRS to a matroid prophet inequality agai
 
 ## Depends on
 
-- [An OCRS yields a prophet inequality](ocrs-implies-prophet-inequality.md)
-- [Kleinberg–Weinberg: every matroid admits a $1/2$ prophet inequality](matroid-prophet-half.md)
+- [Online contention resolution schemes](online-contention-resolution.md)
 
 ## Proof depends on
 
-- [An OCRS yields a prophet inequality](ocrs-implies-prophet-inequality.md)
 - [Kleinberg–Weinberg: every matroid admits a $1/2$ prophet inequality](matroid-prophet-half.md)
 
 ## Sources

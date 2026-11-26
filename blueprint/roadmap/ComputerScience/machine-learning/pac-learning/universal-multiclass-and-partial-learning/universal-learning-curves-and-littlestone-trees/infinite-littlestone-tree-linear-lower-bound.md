@@ -11,11 +11,6 @@ Choose a random branch $y \in \{0,1\}^{\mathbb{N}}$ of the infinite tree uniform
 - [Realizable distributions, learning curves and universal rates](universal-rate.md)
 - [Infinite Littlestone trees](infinite-littlestone-tree.md)
 
-## Proof depends on
-
-- [Realizable distributions, learning curves and universal rates](universal-rate.md)
-- [Infinite Littlestone trees](infinite-littlestone-tree.md)
-
 ## Sources
 
 - O. Bousquet, S. Hanneke, S. Moran, R. van Handel, A. Yehudayoff, "A Theory of Universal Learning", STOC (2021), arXiv:2011.04483.

@@ -8,8 +8,8 @@ Combine the upper bound with the Fredman–Saks bound $\Omega(\log n / \log(t_u 
 
 ## Depends on
 
-- [Succinct dynamic rank/select with sub-linear redundancy](succinct-dynamic-rank-select.md)
-- [Fredman–Saks lower bound for dynamic rank](dynamic-rank-time-lower-bound.md)
+- [Dynamic ordered dictionary with rank and select](dynamic-ordered-dictionary-with-rank.md)
+- [The cell-probe model](../advanced-data-structures/the-cell-probe-model.md)
 
 ## Proof depends on
 

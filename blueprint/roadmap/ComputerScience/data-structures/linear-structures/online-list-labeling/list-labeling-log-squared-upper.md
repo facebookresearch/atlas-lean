@@ -9,11 +9,9 @@ The packed-memory-array density-threshold scheme of Itai, Konheim and Rodeh achi
 ## Depends on
 
 - [The online list-labeling problem](online-list-labeling.md)
-- [Amortized cost of packed memory arrays](../../../memory-hierarchy-algorithms/cache-oblivious-search-trees-and-layouts/packed-memory-array-cost.md)
 
 ## Proof depends on
 
-- [The online list-labeling problem](online-list-labeling.md)
 - [Amortized cost of packed memory arrays](../../../memory-hierarchy-algorithms/cache-oblivious-search-trees-and-layouts/packed-memory-array-cost.md)
 
 ## Sources

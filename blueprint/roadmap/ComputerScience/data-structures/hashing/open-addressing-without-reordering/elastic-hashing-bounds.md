@@ -9,14 +9,13 @@ Keys placed in $A_i$ while its free fraction is $\varepsilon$ succeed within $O(
 ## Depends on
 
 - [Elastic hashing layout and batch insertion rule](elastic-hashing-layout.md)
-- [Failure probability of a bounded number of uniform probes](bounded-probe-failure.md)
 - [Amortized, worst-case and high-probability probe complexity](amortized-and-worst-case-probe-complexity.md)
+- [Open-addressing insertion without reordering](oa-without-reordering-model.md)
 
 ## Proof depends on
 
-- [Elastic hashing layout and batch insertion rule](elastic-hashing-layout.md)
 - [Failure probability of a bounded number of uniform probes](bounded-probe-failure.md)
-- [Amortized, worst-case and high-probability probe complexity](amortized-and-worst-case-probe-complexity.md)
+- [An injection of index pairs with cost $O(i j^2)$](pairing-injection-with-quadratic-weight.md)
 
 ## Sources
 

@@ -8,8 +8,7 @@ Halfspaces contain thresholds (restrict to a line), and thresholds on an infinit
 
 ## Depends on
 
-- [Private learning requires log-star of the Littlestone dimension samples](private-learning-requires-log-star-littlestone.md)
-- [Large Littlestone dimension forces large threshold subclasses](littlestone-dimension-contains-thresholds.md)
+- [Private PAC learners and their sample complexity](private-pac-learner.md)
 
 ## Proof depends on
 

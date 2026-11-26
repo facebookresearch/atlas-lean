@@ -8,7 +8,8 @@ Choose the buying day from a truncated exponential density on $[1, \lambda b]$ i
 
 ## Depends on
 
-- [Deterministic ski rental with a prediction](ski-rental-deterministic-with-prediction.md)
+- [Ski rental with a predicted number of days](ski-rental-with-prediction.md)
+- [Consistency and robustness of learning-augmented online algorithms](../learning-augmented-caching/consistency-and-robustness.md)
 
 ## Proof depends on
 

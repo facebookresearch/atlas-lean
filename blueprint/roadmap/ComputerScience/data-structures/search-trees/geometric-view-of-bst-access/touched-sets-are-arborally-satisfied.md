@@ -9,10 +9,7 @@ Take touched points $(a, s)$ and $(b, t)$ with $a < b$ and $s < t$. If no key in
 ## Depends on
 
 - [Arborally satisfied point sets](arborally-satisfied-set.md)
-
-## Proof depends on
-
-- [Arborally satisfied point sets](arborally-satisfied-set.md)
+- [Point set of an access sequence and touched set of a BST execution](access-point-set.md)
 
 ## Sources
 

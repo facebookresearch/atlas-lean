@@ -15,8 +15,6 @@ $$
 ## Depends on
 
 - [Weighted Laplacian of a multigraph](../../../../GraphTheory/algebraic-graph-theory/part-01/graph-laplacians-and-cheeger-s-inequality/laplacian.md)
-- [Schur complement of a positive-definite block matrix is positive definite](../../../../LinearAlgebra/not-yet-classified/schur-strict-positivity/schur-complement-pos-def.md)
-- [Effective resistance](../../../../GraphTheory/algebraic-graph-theory/part-01/effective-resistance-and-electrical-networks/effective-resistance.md)
 
 ## Sources
 

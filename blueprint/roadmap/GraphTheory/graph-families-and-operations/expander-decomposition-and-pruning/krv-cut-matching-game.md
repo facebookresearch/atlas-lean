@@ -8,11 +8,6 @@ Fix an even $n$ and a vertex set $V$ with $|V| = n$. The *cut-matching game* is 
 
 The *edge expansion* of a multigraph $H$ on $V$ is $h(H) = \min_{\emptyset \ne S \subseteq V, \, |S| \le n/2} |E_H(S, V \setminus S)| / |S|$. The cut player wins after $T$ rounds with expansion target $\gamma > 0$ if $h(H_T) \ge \gamma$, whatever the matching player does. In the algorithmic use, each matching is routed by a single-commodity flow in the input graph, so that $H_T$ embeds into the input graph with bounded congestion.
 
-## Depends on
-
-- [Spectral expanders have edge expansion, from the mixing lemma](../expander-graphs/spectral-edge-expansion.md)
-- [Max-flow min-cut theorem](../../matchings-and-flows/max-flow-min-cut-theorem/max-flow-min-cut.md)
-
 ## Sources
 
 - Rohit Khandekar, Satish Rao, Umesh Vazirani, "Graph Partitioning using Single Commodity Flows", STOC (2006); J. ACM 56(4) (2009).

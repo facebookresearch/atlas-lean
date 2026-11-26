@@ -8,9 +8,9 @@ The conditional statement is the OMv-to-dynamic-problem reduction of Henzinger, 
 
 ## Depends on
 
-- [Larsen–Williams cell-probe and word-RAM algorithms for online matrix-vector multiplication](online-matvec-cell-probe-upper-bound.md)
-- [Boolean dynamic lower bounds reach the weighted $\log^2$ bound](boolean-matches-weighted-barrier.md)
-- [OMv-hardness of dynamic subgraph connectivity](../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/omv-hardness-of-dynamic-subgraph-connectivity.md)
+- [The online matrix-vector multiplication conjecture](../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-online-matrix-vector-multiplication.md)
+- [Dynamic graph problems](../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/dynamic-graph-problems.md)
+- [The cell-probe model](../range-query-structures/advanced-data-structures/the-cell-probe-model.md)
 
 ## Proof depends on
 

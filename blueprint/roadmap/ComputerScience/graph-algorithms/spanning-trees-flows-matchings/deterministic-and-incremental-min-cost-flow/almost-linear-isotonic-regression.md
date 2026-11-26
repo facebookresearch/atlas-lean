@@ -14,7 +14,6 @@ By minimax duality, $\min_{\mathbf{B}\mathbf{x} \ge 0}\|\mathbf{W}(\mathbf{x} - 
 
 ## Depends on
 
-- [Almost-linear time high-accuracy flows for separable convex costs](../almost-linear-flow-interior-point-method/almost-linear-separable-convex-flows.md)
 - [Acyclic directed graph](../../traversal-and-connectivity/topological-sorting/is-acyclic.md)
 
 ## Proof depends on

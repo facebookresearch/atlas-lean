@@ -8,7 +8,8 @@ Take a string that combines $\delta$ independent blocks, each built from a Fibon
 
 ## Depends on
 
-- [Substring complexity is at most the attractor size](delta-at-most-gamma.md)
+- [Substring complexity $\delta$](substring-complexity.md)
+- [String attractors](string-attractor.md)
 
 ## Proof depends on
 

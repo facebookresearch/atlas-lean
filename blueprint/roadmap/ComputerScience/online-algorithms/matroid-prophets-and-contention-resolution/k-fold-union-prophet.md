@@ -9,14 +9,12 @@ The OCRS selects an active element if it can be added while every element of the
 ## Depends on
 
 - [k-fold matroid unions](k-fold-matroid-union.md)
-- [An OCRS yields a prophet inequality](ocrs-implies-prophet-inequality.md)
-- [Prophet inequality for k-uniform matroids](k-uniform-prophet.md)
+- [Matroid prophet inequality](matroid-prophet-problem.md)
+- [Online contention resolution schemes](online-contention-resolution.md)
 
 ## Proof depends on
 
-- [k-fold matroid unions](k-fold-matroid-union.md)
 - [An OCRS yields a prophet inequality](ocrs-implies-prophet-inequality.md)
-- [Prophet inequality for k-uniform matroids](k-uniform-prophet.md)
 
 ## Sources
 

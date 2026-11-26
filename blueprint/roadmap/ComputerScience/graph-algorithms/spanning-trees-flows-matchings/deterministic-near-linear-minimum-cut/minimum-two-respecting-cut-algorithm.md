@@ -9,11 +9,10 @@ Root $T$ and let $T_v$ be the vertex set of the subtree below $v$ and $C(v) = w(
 ## Depends on
 
 - [Cuts that k-respect a spanning tree](cuts-k-respecting-a-spanning-tree.md)
-- [Lowest common ancestors via range minimum queries](../../../data-structures/range-query-structures/advanced-data-structures/lowest-common-ancestors-via-range-minimum.md)
+- [The word-RAM model](../../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-word-ram-model.md)
 
 ## Proof depends on
 
-- [Cuts that k-respect a spanning tree](cuts-k-respecting-a-spanning-tree.md)
 - [Lowest common ancestors via range minimum queries](../../../data-structures/range-query-structures/advanced-data-structures/lowest-common-ancestors-via-range-minimum.md)
 
 ## Sources

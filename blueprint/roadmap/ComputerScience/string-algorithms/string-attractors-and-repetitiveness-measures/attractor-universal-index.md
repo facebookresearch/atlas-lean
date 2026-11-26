@@ -8,7 +8,10 @@ Build a hierarchy of blocks: at level $i$ the text is cut into blocks of length 
 
 ## Depends on
 
-- [Dictionary compressors induce string attractors](compressors-induce-attractors.md)
+- [String attractors](string-attractor.md)
+- [Size $z$ of the greedy LZ77 factorization](lz77-factorization-size.md)
+- [Grammar size $g$ and bidirectional macro scheme size $b$](grammar-and-macro-measures.md)
+- [Number $r$ of runs in the Burrows–Wheeler transform](bwt-run-count.md)
 
 ## Proof depends on
 

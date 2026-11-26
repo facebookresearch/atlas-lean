@@ -1,6 +1,6 @@
 # Leximax Phragmén satisfies PJR and sequential Phragmén is committee monotone
 
-An approval election consists of a finite set $N$ of $n$ voters, a finite set $C$ of candidates, approval ballots $A_i \subseteq C$ for $i \in N$, and a committee size $k$ with $1 \le k \le \lvert C \rvert$; a committee is a set $W \subseteq C$ with $\lvert W \rvert = k$. In Phragmén's load distribution framework, each elected candidate carries one unit of load distributed among voters approving it, and the leximax-Phragmén rule selects a committee together with a load distribution minimizing the vector of voter loads sorted in non-increasing order lexicographically. Leximax-Phragmén satisfies PJR. Sequential Phragmén is committee monotone: the committee it selects for size $k$ is contained in the committee it selects for size $k + 1$ (with consistent tie-breaking), whereas no committee-monotone rule satisfies EJR for all committee sizes.
+An approval election consists of a finite set $N$ of $n$ voters, a finite set $C$ of candidates, approval ballots $A_i \subseteq C$ for $i \in N$, and a committee size $k$ with $1 \le k \le \lvert C \rvert$; a committee is a set $W \subseteq C$ with $\lvert W \rvert = k$. In Phragmén's load distribution framework, each elected candidate carries one unit of load distributed among voters approving it, and the leximax-Phragmén rule selects a committee together with a load distribution minimizing the vector of voter loads sorted in non-increasing order lexicographically. Leximax-Phragmén satisfies PJR. Sequential Phragmén, which starts from zero voter loads and in each round adds an unchosen candidate $c$ minimizing $s_c = (1 + \sum_{i \in N_c} \ell_i)/\lvert N_c \rvert$, where $N_c = \{ i : c \in A_i \}$, and sets $\ell_i := s_c$ for every $i \in N_c$, is committee monotone: the committee it selects for size $k$ is contained in the committee it selects for size $k + 1$ (with consistent tie-breaking), whereas no committee-monotone rule satisfies EJR for all committee sizes.
 
 ## Proof sketch
 
@@ -9,11 +9,7 @@ For PJR, an underrepresented $\ell$-cohesive group would allow shifting load fro
 ## Depends on
 
 - [Proportional justified representation](proportional-justified-representation.md)
-- [Sequential Phragmén satisfies proportional justified representation](sequential-phragmen-satisfies-pjr.md)
-
-## Proof depends on
-
-- [Sequential Phragmén satisfies proportional justified representation](sequential-phragmen-satisfies-pjr.md)
+- [Extended justified representation](extended-justified-representation.md)
 
 ## Sources
 

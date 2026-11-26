@@ -13,9 +13,7 @@ A random guess predicting $+1$ with probability $q$ has loss at most $\max(w_+ (
 
 ## Depends on
 
-- [Von Neumann's minimax theorem](../../../../../GameTheory/noncooperative-games/von-neumann-s-minimax-theorem/matrix-game-minimax.md)
-- [Weak learnability implies PAC learnability via boosting](../../../generalization-bounds-and-concentration/weak-learnability-implies-pac-learnability-via-boosting.md)
-- [The weak-learning assumption](../../../online-learning-and-boosting/adaboost/weak-learner.md)
+- [The realizable distribution family](../../occam-bound-for-consistent-learners/realizable-family.md)
 
 ## Proof depends on
 

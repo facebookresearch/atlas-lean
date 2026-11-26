@@ -9,11 +9,10 @@ By the Savage–Schervish characterization, the expected score of a proper scori
 ## Depends on
 
 - [U-calibration error](u-calibration-error.md)
-- [Characterization of proper scoring rules](../../../GameTheory/mechanism-design/characterization-of-proper-scoring-rules.md)
+- [Scoring rules and properness for finite outcomes](../../../GameTheory/mechanism-design/remaining-clauses-of-scoring-rules-and-properness.md)
 
 ## Proof depends on
 
-- [U-calibration error](u-calibration-error.md)
 - [Characterization of proper scoring rules](../../../GameTheory/mechanism-design/characterization-of-proper-scoring-rules.md)
 
 ## Sources

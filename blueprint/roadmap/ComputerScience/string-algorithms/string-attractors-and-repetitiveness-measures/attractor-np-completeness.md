@@ -10,10 +10,6 @@ Membership in NP is clear since a candidate set can be verified in polynomial ti
 
 - [String attractors](string-attractor.md)
 
-## Proof depends on
-
-- [String attractors](string-attractor.md)
-
 ## Sources
 
 - Dominik Kempa, Nicola Prezza, "At the Roots of Dictionary Compression: String Attractors", STOC (2018), arXiv:1710.10964.

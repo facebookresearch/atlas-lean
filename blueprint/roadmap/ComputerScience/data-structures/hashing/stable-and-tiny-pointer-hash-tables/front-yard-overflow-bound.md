@@ -9,12 +9,6 @@ Fix a key; the number of other keys in its bin is binomial with $n - 1$ trials a
 ## Depends on
 
 - [Front-yard and back-yard hash table design](front-yard-back-yard-paradigm.md)
-- [Maximum load of balls into bins](../../../randomized-algorithms/maximum-load-of-balls-into-bins.md)
-
-## Proof depends on
-
-- [Front-yard and back-yard hash table design](front-yard-back-yard-paradigm.md)
-- [Maximum load of balls into bins](../../../randomized-algorithms/maximum-load-of-balls-into-bins.md)
 
 ## Sources
 

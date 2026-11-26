@@ -6,10 +6,6 @@ For $\epsilon > 0$ and a measure $\mu$, an $\epsilon$-bracket is a pair of funct
 
 Halfspaces: discretize normal vectors and offsets so that the symmetric difference of nearby halfspaces has small $\mu$-mass, which needs a measure-adapted grid built from a VC-type argument (Braverman et al.); the bracket of a halfspace is the pair of the intersection and union of the halfspaces in a small neighbourhood. Embedding transports brackets through $\psi$ since $\psi$ pushes $\nu$ forward to a measure on $\mathbb{R}^m$. For intersections, intersect the lower and upper bracket functions coordinatewise; the gap of the intersection is at most the sum of the gaps.
 
-## Depends on
-
-- [Smoothed regret bounds depending on VC dimension and bracketing numbers](smoothed-online-regret-bounds.md)
-
 ## Proof depends on
 
 - [Smoothed regret bounds depending on VC dimension and bracketing numbers](smoothed-online-regret-bounds.md)

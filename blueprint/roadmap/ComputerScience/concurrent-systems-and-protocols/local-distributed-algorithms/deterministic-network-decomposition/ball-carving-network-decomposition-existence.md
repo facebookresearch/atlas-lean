@@ -9,10 +9,7 @@ Build one colour class at a time on the remaining graph. For a vertex $v$, grow 
 ## Depends on
 
 - [Network decomposition with weak or strong diameter](network-decomposition-weak-strong-diameter.md)
-
-## Proof depends on
-
-- [Network decomposition with weak or strong diameter](network-decomposition-weak-strong-diameter.md)
+- [The LOCAL model](../../distributed-execution-models/the-local-model.md)
 
 ## Sources
 

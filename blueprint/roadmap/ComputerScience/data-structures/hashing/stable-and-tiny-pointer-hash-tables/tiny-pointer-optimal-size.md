@@ -9,11 +9,9 @@ For the variable-size case, a key hashes to a sequence of geometrically growing 
 ## Depends on
 
 - [Tiny pointers and dereference tables](tiny-pointer.md)
-- [Maximum load of balls into bins](../../../randomized-algorithms/maximum-load-of-balls-into-bins.md)
 
 ## Proof depends on
 
-- [Tiny pointers and dereference tables](tiny-pointer.md)
 - [Maximum load of balls into bins](../../../randomized-algorithms/maximum-load-of-balls-into-bins.md)
 
 ## Sources

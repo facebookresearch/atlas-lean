@@ -20,8 +20,7 @@ Represent $f_{n,i}$ by a pair of distributions and consider the log-likelihood r
 
 ## Depends on
 
-- [Lossless adaptive composition of f-differential privacy](f-dp-adaptive-composition.md)
-- [Approximate differential privacy as f-differential privacy](epsilon-delta-dp-as-f-dp.md)
+- [Tensor product of trade-off functions](tensor-product-of-trade-off-functions.md)
 
 ## Proof depends on
 

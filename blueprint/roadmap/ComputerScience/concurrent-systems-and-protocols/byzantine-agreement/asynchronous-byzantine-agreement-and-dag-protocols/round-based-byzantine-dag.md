@@ -5,7 +5,6 @@ In DAG-based atomic broadcast with $n \ge 3f + 1$ processes, each process procee
 ## Depends on
 
 - [Reliable broadcast](../../replication-and-consistency/reliable-broadcast.md)
-- [Bracha's Byzantine reliable broadcast](../../replication-and-consistency/bracha-s-byzantine-reliable-broadcast.md)
 - [Asynchronous binary Byzantine agreement and common coins](asynchronous-binary-byzantine-agreement.md)
 
 ## Sources

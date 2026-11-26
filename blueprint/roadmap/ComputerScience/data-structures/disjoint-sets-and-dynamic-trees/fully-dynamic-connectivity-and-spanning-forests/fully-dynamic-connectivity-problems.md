@@ -1,6 +1,6 @@
 # Fully dynamic connectivity, spanning forest and minimum spanning forest problems
 
-Fix a vertex set $V$ with $|V| = n$ and start from the edgeless graph $G_0 = (V, \emptyset)$. An online sequence of operations is processed: $\mathrm{Insert}(u, v)$ adds an edge, $\mathrm{Delete}(u, v)$ removes an existing edge, and $\mathrm{Connected}(u, v)$ asks whether $u$ and $v$ lie in the same connected component of the current graph $G_t$.
+Fix a vertex set $V$ with $|V| = n$ and start from the edgeless graph $G_0 = (V, \emptyset)$. An online sequence of operations is processed: $\mathrm{Insert}(u, v)$ adds an edge, $\mathrm{Delete}(u, v)$ removes an existing edge, and $\mathrm{Connected}(u, v)$ asks whether $u$ and $v$ lie in the same connected component of the current graph $G_t$. Restricted versions require the graph to remain a forest, or a disjoint union of paths, at all times.
 
 1. *Fully dynamic connectivity* answers all $\mathrm{Connected}$ queries.
 2. *Dynamic spanning forest* must, after every update, store explicitly a spanning forest $F_t$ of $G_t$ (a forest with the same connected components as $G_t$) and report the edges entering or leaving $F_t$; the change per update is $O(1)$ edges.
@@ -12,7 +12,6 @@ Costs are measured on the word RAM with words of $\Theta(\log n)$ bits, per oper
 
 - [Dynamic graph problems](../../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/dynamic-graph-problems.md)
 - [Spanning forest of an input graph](../../../graph-algorithms/spanning-trees-flows-matchings/kruskal-s-algorithm/is-spanning-forest.md)
-- [Kruskal's algorithm gives a minimum spanning forest](../../../graph-algorithms/spanning-trees-flows-matchings/kruskal-s-algorithm/kruskal-minimal.md)
 - [Connected components via union-find](../disjoint-set-data-structure/connected-components.md)
 - [The word-RAM model](../../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-word-ram-model.md)
 

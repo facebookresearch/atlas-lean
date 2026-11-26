@@ -15,12 +15,10 @@ Necessity follows from the usual shattering lower bound applied to a shattered s
 ## Depends on
 
 - [Partial concept classes and their VC and Littlestone dimensions](partial-concept-class.md)
-- [Shattering lower bound for PAC learning](../../../generalization-bounds-and-concentration/shattering-lower-bound-for-pac-learning.md)
-- [Optimal sample complexity of realizable PAC learning](../../optimal-sample-complexity-of-realizable-pac-learning.md)
+- [Learners and agnostic PAC learnability](../../agnostic-pac-learning-and-uniform-convergence/learners-and-agnostic-pac-learnability.md)
 
 ## Proof depends on
 
-- [Partial concept classes and their VC and Littlestone dimensions](partial-concept-class.md)
 - [Shattering lower bound for PAC learning](../../../generalization-bounds-and-concentration/shattering-lower-bound-for-pac-learning.md)
 - [Optimal sample complexity of realizable PAC learning](../../optimal-sample-complexity-of-realizable-pac-learning.md)
 

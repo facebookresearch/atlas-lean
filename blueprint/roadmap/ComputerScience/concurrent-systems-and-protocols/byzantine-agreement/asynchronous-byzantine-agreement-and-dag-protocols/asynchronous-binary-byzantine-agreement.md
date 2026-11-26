@@ -5,7 +5,6 @@ In the asynchronous model, $n$ processes communicate over reliable authenticated
 ## Depends on
 
 - [Asynchronous message-passing systems](../../distributed-execution-models/asynchronous-message-passing-systems.md)
-- [FLP impossibility of asynchronous consensus with agreement, validity and termination](../../flp-impossibility/flp-impossibility.md)
 - [Fail-stop, omission and Byzantine faults](../../distributed-execution-models/fail-stop-omission-and-byzantine-faults.md)
 
 ## Sources

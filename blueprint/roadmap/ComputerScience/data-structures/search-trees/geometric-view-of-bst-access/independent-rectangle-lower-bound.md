@@ -9,14 +9,14 @@ Every arborally satisfied superset must place, for every unsatisfied rectangle o
 ## Depends on
 
 - [Independent rectangle bound](independent-rectangle-bound.md)
-- [Geometric characterization of the optimal offline BST cost](geometric-characterization-of-opt.md)
 - [Geometric Greedy (Greedy Future)](geometric-greedy.md)
+- [The binary search tree access model](../dynamic-optimality/the-binary-search-tree-access-model.md)
+- [Wilber's interleave (alternation) bound](../wilber-and-funnel-lower-bounds/interleave-bound.md)
+- [Wilber's funnel bound](../wilber-and-funnel-lower-bounds/funnel-bound.md)
 
 ## Proof depends on
 
-- [Independent rectangle bound](independent-rectangle-bound.md)
 - [Geometric characterization of the optimal offline BST cost](geometric-characterization-of-opt.md)
-- [Geometric Greedy (Greedy Future)](geometric-greedy.md)
 
 ## Sources
 

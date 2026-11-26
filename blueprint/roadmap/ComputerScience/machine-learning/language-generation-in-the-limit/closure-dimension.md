@@ -5,7 +5,6 @@ View a collection of languages as a class $H \subseteq \{0,1\}^U$ of indicator f
 ## Depends on
 
 - [Generation in the limit](generation-in-the-limit.md)
-- [Finite collections admit uniform generation after a bounded number of distinct strings](finite-collection-uniform-generation.md)
 
 ## Sources
 

@@ -12,12 +12,6 @@ Take a vertex cut $(L,S,R)$ with $|L|\le|R|$ and, say, $E(L,R)=\emptyset$ (the o
 
 - [Directed phi-expanders, phi-sparse directed cuts, and phi-expanding terminal edge sets](directed-phi-expanders.md)
 - [Directed paths](../connectivity-of-directed-graphs/is-directed-path.md)
-- [Internally disjoint directed paths](../connectivity-of-directed-graphs/has-internally-disjoint-paths.md)
-
-## Proof depends on
-
-- [Directed phi-expanders, phi-sparse directed cuts, and phi-expanding terminal edge sets](directed-phi-expanders.md)
-- [Directed paths](../connectivity-of-directed-graphs/is-directed-path.md)
 
 ## Sources
 

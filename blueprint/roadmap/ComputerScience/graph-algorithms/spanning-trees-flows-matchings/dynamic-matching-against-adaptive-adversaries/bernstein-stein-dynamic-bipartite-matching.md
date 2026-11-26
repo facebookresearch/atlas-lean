@@ -8,12 +8,13 @@ Maintain an EDCS $H$ with $\beta$ chosen as a function of $m$ and $\varepsilon$:
 
 ## Depends on
 
-- [An EDCS contains an almost 3/2-approximate maximum matching](edcs-three-halves-approximation.md)
 - [Oblivious and adaptive adversaries; amortized and worst-case update time](../../../data-structures/disjoint-sets-and-dynamic-trees/fully-dynamic-connectivity-and-spanning-forests/adversary-and-update-time-models.md)
+- [Fully dynamic alpha-approximate maximum matching and its value version](dynamic-approximate-matching-problem.md)
 
 ## Proof depends on
 
 - [Every graph contains a (beta, beta^-)-EDCS, and it has O(n beta) edges](edcs-existence-and-sparsity.md)
+- [An EDCS contains an almost 3/2-approximate maximum matching](edcs-three-halves-approximation.md)
 
 ## Sources
 

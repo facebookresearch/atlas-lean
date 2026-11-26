@@ -14,9 +14,8 @@ Each query has $\ell_2$-sensitivity $1/n$, so each answer is $\frac{1}{2n^2\sigm
 
 ## Depends on
 
-- [The Gaussian mechanism satisfies zCDP with parameter sensitivity squared over twice the variance](gaussian-mechanism-zcdp.md)
-- [Adaptive composition and post-processing of zCDP](zcdp-composition-and-post-processing.md)
-- [Conversion from zCDP to approximate differential privacy](zcdp-to-approximate-dp.md)
+- [Zero-concentrated differential privacy](zero-concentrated-dp.md)
+- [Differential privacy](../differential-privacy/differentially-private.md)
 
 ## Proof depends on
 

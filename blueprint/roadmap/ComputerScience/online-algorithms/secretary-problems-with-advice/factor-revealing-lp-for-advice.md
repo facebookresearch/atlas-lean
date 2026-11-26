@@ -8,7 +8,7 @@ Exchangeability makes the event "the current candidate is best so far with signa
 
 ## Depends on
 
-- [Linear-programming characterization of the classical secretary problem](secretary-lp.md)
+- [Secretary problems with advice](secretary-with-advice-model.md)
 
 ## Proof depends on
 

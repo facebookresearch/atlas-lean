@@ -9,11 +9,8 @@ Construct two elections with identical utility vectors for every committee pair 
 ## Depends on
 
 - [Priceable committee in an approval election](priceable-committee.md)
-- [Marginal contributions of a committee under proportional approval voting sum to the number of represented voters](../extended-and-proportional-justified-representation/pav-marginal-contribution-identity.md)
-
-## Proof depends on
-
-- [Priceable committee in an approval election](priceable-committee.md)
+- [Core of an approval-based committee election](core-of-approval-committee-election.md)
+- [Thiele methods for approval committee elections](../extended-and-proportional-justified-representation/thiele-methods.md)
 
 ## Sources
 
