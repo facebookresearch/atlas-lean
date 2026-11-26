@@ -6,13 +6,13 @@ $$\mathbb E[\pi_i]=\frac{\theta_{\mathrm{neutral}}}{e^{G_i}+\alpha\,fd_i/r_i},\q
 
 where $\theta_{\mathrm{neutral}}$ is diversity without linked selection, $V$ the genome-wide rate of sweeps and $J_{2,2}$ the probability that a sweep forces two linked lineages to coalesce, as defined by Coop and Ralph. The special cases $\alpha=0$ (BGS only, $\mathbb E[\pi_i]=\theta_{\mathrm{neutral}}e^{-G_i}$), $G_i=0$ (hitchhiking only) and $\alpha=G_i=0$ (neutrality) are nested models.
 
-## Depends on
-
-- [Background selection reduces the effective size to the mutation-free class](background-selection-deterministic-reduction-fac.md)
-
-## Expansion
+## Remarks
 
 Pairwise diversity is $\theta$ times the expected pairwise coalescence time relative to the neutral one. BGS rescales the drift coalescence rate $1/(2N)$ to $e^{G}/(2N)$, while sweeps add an extra coalescence rate proportional to the sweep rate and inversely proportional to recombination; adding the two rates and inverting gives the denominator. The model predicts the positive correlation between recombination rate and diversity, and its strength measures how much linked selection removes neutral variation. Fitted across species, this removal is stronger in species with large census sizes, which helps explain why neutral diversity varies far less across species than census size.
+
+## Depends on
+
+- [Background selection on a uniformly recombining chromosome](background-selection-on-a-uniformly-recombining-chromosome.md)
 
 ## Sources
 

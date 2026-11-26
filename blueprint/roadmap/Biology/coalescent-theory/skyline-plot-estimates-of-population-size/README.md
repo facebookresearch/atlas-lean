@@ -20,3 +20,4 @@
 
 - [Canonical probability space for the skyline model](skyline-pi-measure.md)
 - [Coordinate projections form a skyline model](of-pi.md)
+- [IBD-based estimation of recent effective population size](ibd-based-estimation-of-recent-effective-size/README.md)

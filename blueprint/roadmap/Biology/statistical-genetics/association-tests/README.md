@@ -14,3 +14,7 @@ Probability.
 - [Testing Hardy–Weinberg equilibrium](testing-hardy-weinberg-equilibrium/README.md)
 - [FarmCPU: alternating fixed- and random-effect models for association testing](farmcpu-alternating-fixed-and-random-effect-models.md)
 - [Penalized quasi-likelihood fitting of a logistic mixed model with a sparse relationship matrix](penalized-quasi-likelihood-glmm-with-a-sparse-relationship-matrix.md)
+- [Beta approximation of permutation p-values in cis-QTL mapping](beta-approximation-of-permutation-p-values-in-cis-qtl-mapping.md)
+- [Genome-wide association meta-analysis](genome-wide-association-meta-analysis/README.md)
+- [Maternal and fetal genetic effects](maternal-and-fetal-genetic-effects/README.md)
+- [Multiple testing and false discovery rate](multiple-testing-and-false-discovery-rate/README.md)

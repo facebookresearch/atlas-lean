@@ -61,3 +61,7 @@
 - [Two-locus Hudson simulator samples the two-locus ancestral process](two-locus-hudson-simulator-samples-the-two-locus.md)
 - [Two-locus coalescence times of a pair: a diagonal atom and an absolutely continuous part](two-locus-n-2-joint-law-of-t-a-t-b-is-diagonal-a.md)
 - [Wiuf–Hein algorithm reproduces the joint law of local trees](wiuf-hein-algorithm-reproduces-the-joint-law-of.md)
+- [IBS tract length spectrum](ibs-tract-length-spectrum/README.md)
+- [Multiple sequentially markovian coalescent](multiple-sequentially-markovian-coalescent/README.md)
+- [Tree-sequence inference by ancestral haplotype copying](tree-sequence-inference-by-ancestral-haplotype-copying/README.md)
+- [Wright–Fisher versus coalescent genealogies of long genomes](wright-fisher-versus-coalescent-genealogies-of-long-genomes/README.md)

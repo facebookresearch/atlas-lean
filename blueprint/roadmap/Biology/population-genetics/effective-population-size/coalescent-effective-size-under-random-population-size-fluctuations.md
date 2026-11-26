@@ -15,19 +15,21 @@ $$Y_t = \int_0^t \frac{ds}{X(s)},$$
 which is not linear in $t$ and depends on the initial size. No coalescent effective size exists.
 3. *Slow fluctuations.* If size changes are rarer than coalescences on the $N$ scale, all coalescences occur before the first change, and the genealogy is that of a constant population at the initial size.
 
-## Depends on
-
-- [Effective population size under fluctuating population size](effective-size-under-fluctuating-population-size.md)
-- [Inbreeding, variance and eigenvalue effective population sizes](effective-population-size-definitions.md)
-- [Holding times of Kingman's coalescent](../../coalescent-theory/kingman-s-coalescent-and-watterson-s-estimator/kingman-times.md)
-
-## Expansion
+## Proof sketch
 
 In the i.i.d. case two lineages fail to coalesce in one generation with probability $1 - 1/M_N(\tau)$, so conditioning on the sizes and averaging,
 
 $$P(\text{no coalescence in } \lfloor Nt\rfloor \text{ generations}) = \Bigl(\sum_i p_i\bigl(1 - \tfrac{1}{x_i N}\bigr)\Bigr)^{\lfloor Nt\rfloor} \to \exp\Bigl(-t\sum_i \frac{p_i}{x_i}\Bigr),$$
 
 a pairwise rate $c = \sum_i p_i/x_i$ and $N_e = N/c$. For a Markov size chain the same averaging happens between coalescences with $\pi$ in place of $p$. In the intermediate regime the conditional non-coalescence probability is $\prod_\tau (1 - 1/M_N(\tau)) \approx \exp(-\int_0^t ds/X_N(s))$, giving the cumulative intensity $Y_t$; with $k$ lineages the intensity is $\binom k2 Y_t$. Conditioning on a coalescence biases the size towards small values, so starting the size chain at stationarity does not restore a linear clock. In simulations of a two-state chain ($N_1 < N_2$, symmetric switching probability $q$), Sjödin et al. found that Fu and Li's $F$ detects departures from the constant-size model only for $q$ roughly between $1/(10N_2)$ and $10/N_1$; outside that window an effective size can be assumed.
+
+## Depends on
+
+- [Holding times of Kingman's coalescent](../../coalescent-theory/kingman-s-coalescent-and-watterson-s-estimator/kingman-times.md)
+
+## Proof depends on
+
+- [Effective population size under fluctuating population size](effective-size-under-fluctuating-population-size.md)
 
 ## Sources
 

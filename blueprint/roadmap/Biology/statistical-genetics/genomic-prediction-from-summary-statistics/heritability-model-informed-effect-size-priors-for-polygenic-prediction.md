@@ -9,7 +9,7 @@
 
 For the individual-level ridge, Bolt and BayesR priors $\mathbb{E}[\beta_j^2] = e_j$ (the normalizing constants $p$, $1-p$ and $s$ are chosen for this), so the prior variance of each effect matches its expected heritability; in all families the relative shrinkage of SNPs follows $e_j$, and the GCTA Model ($e_j$ constant) recovers the standard tools (lasso, BLUP, Bolt-LMM, BayesR). The remaining hyperparameters ($\lambda$, $v$, $p$, $f^2$, $\pi$) are chosen by cross-validation, and effects are fitted by coordinate descent (lasso) or variational Bayes with conditional posterior means (other priors), from individual-level data or from summary statistics and a reference LD panel.
 
-## Expansion
+## Remarks
 
 For the Bolt prior, $p\cdot\frac{1-f^2}{p}e_j + (1-p)\cdot\frac{f^2}{1-p}e_j = e_j$; for BayesR, $s(\pi_2/100 + \pi_3/10 + \pi_4)e_j = e_j$. The ridge case is the Bolt prior at $p = f^2 = 1/2$. Standard tools implicitly assume every SNP contributes equal heritability; letting the prior variance follow $e_j$ shrinks SNPs in low-heritability classes (for example low-frequency or high-LD SNPs under the LDAK-type models) more strongly. In the source, replacing the GCTA Model by the BLD-LDAK Model raised the prediction $R^2$ for all eight tools: by about 14% on average for the Bolt prior with individual-level data (equivalent to roughly 24% more training samples), and the summary-statistic BayesR variant outperformed the existing summary-statistic tools for 223 of 225 UK Biobank phenotypes.
 

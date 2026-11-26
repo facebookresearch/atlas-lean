@@ -16,17 +16,13 @@ the denominator running over all configurations, including the empty one. A locu
 
 **Fast likelihood.** Evaluating $P(S \mid C)$ directly costs $O(m^3)$. Writing $\Sigma\Sigma_C\Sigma$ through its rank-$k$ factor (with $k = |C|$ causal indices $\alpha_1, \dots, \alpha_k$), set $U \in \mathbb R^{m \times k}$ with $U_{\alpha_i, i} = \sigma$ and zeros elsewhere, and $V \in \mathbb R^{k \times m}$ with $V_{i, j} = \sigma\, r_{\alpha_i, j}$, so that $\Sigma_C \Sigma = U V$ and
 
-$$S^\top(\Sigma + \Sigma\Sigma_C\Sigma)^{-1} S = S^\top \Sigma^{-1} (I_m + U V)^{-1} S,$$
+$$S^\top(\Sigma + \Sigma\Sigma_C\Sigma)^{-1} S = S^\top (I_m + U V)^{-1} \Sigma^{-1} S,$$
 
 $$(I_m + UV)^{-1} = I_m - U (I_k + V U)^{-1} V$$
 
-by the Woodbury identity, and $\det(\Sigma + \Sigma\Sigma_C\Sigma) = \det\Sigma \cdot \det(I_k + VU)$ by the matrix determinant lemma. Since $S^\top\Sigma^{-1}$ and $\det\Sigma$ do not depend on $C$, each configuration costs $O(m^2 k)$ rather than $O(m^3)$.
+by the Woodbury identity, and $\det(\Sigma + \Sigma\Sigma_C\Sigma) = \det\Sigma \cdot \det(I_k + VU)$ by the matrix determinant lemma. Since $\Sigma^{-1}S$ and $\det\Sigma$ do not depend on $C$, each configuration costs $O(m^2 k)$ rather than $O(m^3)$.
 
-## Depends on
-
-- [Wakefield's approximate Bayes factor](wakefield-abf.md)
-
-## Expansion
+## Remarks
 
 Conditional on $\Lambda$, $S$ is Gaussian with mean $\Sigma\Lambda$ (each marginal statistic sums the causal effects through LD) and covariance $\Sigma$; a Gaussian prior on $\Lambda$ makes the marginal law Gaussian with covariance $\Sigma + \Sigma\Sigma_C\Sigma$. The posterior on $N_c$ is Bayes' rule summed over configurations of each size; in practice the sum is restricted to configurations with at most a few causal variants. Writing $\Sigma + \Sigma\Sigma_C\Sigma = \Sigma(I_m + \Sigma_C\Sigma)$ gives both the quadratic-form identity and the determinant factorization. Applied to GWAS summary statistics, the method was assessed in simulations and found that many genome-wide significant loci for complex traits are likely to carry two or more causal variants.
 

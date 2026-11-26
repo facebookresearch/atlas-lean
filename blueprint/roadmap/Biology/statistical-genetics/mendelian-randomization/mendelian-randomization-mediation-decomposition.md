@@ -10,13 +10,13 @@ The first is the [inverse-variance-weighted estimator](ivw.md) of $\theta_T$ and
 
 The direct effect is identified only if the vectors $(\beta_{Xj})_j$ and $(\beta_{Mj})_j$ are not proportional. If every variant affects $M$ only through $X$ with a common effect, then $\beta_{Mj} = \theta_1 \beta_{Xj}$ for all $j$, the two regressors are collinear, and $\theta_D$ is not identified even with infinite sample size. Heterogeneity in the $X \to M$ effect across variants, $M_i = \alpha_0 + (\alpha_X + \sum_j \psi_j g_{ij}) X_i + \eta_i$ with zero-mean $\psi_j$, restores identification of $\theta_D$; it attenuates but does not invalidate inference on $\theta_T$.
 
+## Remarks
+
+Under the linear model the true associations satisfy $\beta_{Mj} = \theta_1\beta_{Xj}$ (plus any variant-specific deviation) and $\beta_{Yj} = \theta_2\beta_{Xj} + \theta_3\beta_{Mj}$. Substituting the first into the second gives $\beta_{Yj} = (\theta_2 + \theta_1\theta_3)\beta_{Xj} = \theta_T\beta_{Xj}$, so the univariable regression recovers $\theta_T$. The multivariable regression solves the normal equations in the two regressors and recovers $(\theta_2, \theta_3)$ whenever the weighted Gram matrix of $(\hat\beta_{Xj}, \hat\beta_{Mj})$ is nonsingular, which fails exactly in the proportional case. The weighted regression with outcome-scale weights is the summary-data form of two-stage least squares.
+
 ## Depends on
 
 - [Inverse-variance-weighted estimator](ivw.md)
-
-## Expansion
-
-Under the linear model the true associations satisfy $\beta_{Mj} = \theta_1\beta_{Xj}$ (plus any variant-specific deviation) and $\beta_{Yj} = \theta_2\beta_{Xj} + \theta_3\beta_{Mj}$. Substituting the first into the second gives $\beta_{Yj} = (\theta_2 + \theta_1\theta_3)\beta_{Xj} = \theta_T\beta_{Xj}$, so the univariable regression recovers $\theta_T$. The multivariable regression solves the normal equations in the two regressors and recovers $(\theta_2, \theta_3)$ whenever the weighted Gram matrix of $(\hat\beta_{Xj}, \hat\beta_{Mj})$ is nonsingular, which fails exactly in the proportional case. The weighted regression with outcome-scale weights is the summary-data form of two-stage least squares.
 
 ## Sources
 

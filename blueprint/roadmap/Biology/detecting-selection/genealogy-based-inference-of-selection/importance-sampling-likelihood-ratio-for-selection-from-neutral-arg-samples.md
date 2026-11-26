@@ -14,13 +14,13 @@ converges almost surely (by the ergodic theorem for the sampler) to an approxima
 
 $$\hat\pi(x_i \mid D, s) = \frac{\sum_m P(X_i = x_i \mid C_k^{(m)}, s)\,\Omega^{(m)}(s)}{\sum_m \Omega^{(m)}(s)} .$$
 
+## Proof sketch
+
+For the identity, $E_{G\mid D,0}[P(D,G\mid s)/P(D,G\mid 0)] = \sum_G P(D, G \mid s)/P(D \mid 0) = L(s)/L(0)$, and the conditional independence of $D$ and $s$ given $G$ cancels $P(D \mid G)$ from the ratio. The ratio form is far more stable than estimating $L(s)$ itself, and one set of neutral posterior samples serves every value of $s$ (and richer selection models, such as an onset time), so the expensive graph sampling is done once. The approximation discards the information that selection leaves in the rest of the graph beyond the local tree; the weights $\Omega^{(m)}$ are ratios of the hidden-Markov likelihoods computed with and without selection.
+
 ## Depends on
 
 - [Structured-coalescent hidden Markov model for a local tree under selection](structured-coalescent-hmm-for-a-local-tree-under-selection.md)
-
-## Expansion
-
-For the identity, $E_{G\mid D,0}[P(D,G\mid s)/P(D,G\mid 0)] = \sum_G P(D, G \mid s)/P(D \mid 0) = L(s)/L(0)$, and the conditional independence of $D$ and $s$ given $G$ cancels $P(D \mid G)$ from the ratio. The ratio form is far more stable than estimating $L(s)$ itself, and one set of neutral posterior samples serves every value of $s$ (and richer selection models, such as an onset time), so the expensive graph sampling is done once. The approximation discards the information that selection leaves in the rest of the graph beyond the local tree; the weights $\Omega^{(m)}$ are ratios of the hidden-Markov likelihoods computed with and without selection.
 
 ## Sources
 

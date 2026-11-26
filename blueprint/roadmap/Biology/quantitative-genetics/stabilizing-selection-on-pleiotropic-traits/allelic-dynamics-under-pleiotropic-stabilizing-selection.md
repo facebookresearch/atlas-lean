@@ -14,11 +14,7 @@ $$s=\frac{a^2}{w^2}=\frac1{w^2}\sum_{i=1}^n a_i^2,\qquad S=2Ns,$$
 
 so selection on an allele is proportional to the squared length of its effect in trait space, and acts to remove the allele's contribution $2a^2pq$ to the phenotypic variance by pushing rare alleles to loss.
 
-## Depends on
-
-- [Log-fitness under Gaussian stabilizing selection](../continuum-of-alleles-model-of-mutation-and-stabi/log-fitness.md)
-
-## Expansion
+## Proof sketch
 
 The background contribution $\vec R$ from all other sites is Gaussian, centred at $-2q\vec a$ so that the population mean sits at the optimum. Averaging the fitnesses of the three genotypes at the focal site over this background and expanding to first order in $a^2/w^2$ and $\sigma^2/w^2$ gives the first moment; drift supplies the second. With the mean at the optimum, sites decouple, and only the curvature of the fitness surface at the optimum matters, so the result does not depend on the Gaussian form of $W$. Pleiotropy enters only through the geometry: all mutations with the same $s$ lie on a sphere of radius $w\sqrt s$.
 

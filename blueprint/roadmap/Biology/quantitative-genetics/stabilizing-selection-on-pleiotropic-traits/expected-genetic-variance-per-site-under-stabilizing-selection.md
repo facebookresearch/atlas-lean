@@ -10,13 +10,14 @@ $$v_S=\frac{2w^2}{nN},$$
 
 independent of $S$; for effectively neutral sites ($S\lesssim1$) it is $\tfrac12 S\,v_S$. In between, the underdominant dynamics make the contribution reach $v_S$ near $S\approx3$, peak about $30\%$ above $v_S$ near $S\approx10$, and decline slowly to $v_S$.
 
-## Depends on
-
-- [Effect sizes given selection in Fisher's geometric model](effect-sizes-given-selection-in-fisher-s-geometric-model.md)
-
-## Expansion
+## Proof sketch
 
 Given $S$, the allele's effect direction and its frequency trajectory are independent, which gives the factorisation, and $\mathbb E(a_1^2\mid s)=w^2s/n$ with $s=S/(2N)$ gives the prefactor. The strong-selection plateau is equivalent to $\mathbb E(2pq\mid S)\approx 4/S$: selection holds a strongly selected allele near loss, so its expected heterozygosity is of order $1/S$ and its variance $a_1^2\cdot 2pq$ is of order $(w^2S/(2Nn))\cdot(4/S)$. Hence intermediate and strongly selected sites contribute similar variance per site but at very different allele frequencies, from common to extremely rare, while nearly neutral sites contribute little. This explains why GWAS discoveries capture a small fraction of heritability and why the architecture is dominated by many sites with small per-site variance.
+
+## Depends on
+
+- [Allelic dynamics under pleiotropic stabilizing selection](allelic-dynamics-under-pleiotropic-stabilizing-selection.md)
+- [Effect sizes given selection in Fisher's geometric model](effect-sizes-given-selection-in-fisher-s-geometric-model.md)
 
 ## Sources
 

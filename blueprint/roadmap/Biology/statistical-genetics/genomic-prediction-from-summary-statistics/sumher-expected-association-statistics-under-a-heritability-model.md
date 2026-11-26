@@ -12,13 +12,9 @@ $$\mathbb{E}[S_j] \approx 1 + n\sum_{l} c_{jl}^2\big(a_{l1}\tau_1 + a_{l2}\tau_2
 
 where the sum runs over SNPs near $j$ (for example within 1 cM). SumHer estimates $\tau$ by regressing the observed $S_j$ on $\mathbb{E}[S_j]$ and reports per-SNP estimates $e_j$ of $\mathbb{E}[h_j^2]$ by plugging $\hat\tau$ into the model; total SNP heritability is $\sum_j e_j$.
 
-## Expansion
+## Proof sketch
 
-Under a linear model with effects $\beta_l$ of variance $\mathbb{E}[h_l^2]$ (standardized genotypes and phenotype), the marginal regression coefficient of SNP $j$ is $\sum_l r_{jl}\beta_l + $ noise of variance $1/n$, so $\mathbb{E}[S_j] = n\,\mathbb{E}[\hat\beta_j^2] \approx 1 + n\sum_l r_{jl}^2\,\mathbb{E}[h_l^2]$. With constant $\mathbb{E}[h_l^2] = h^2/m$ this is [LD-score regression](../ld-score-regression/model.md), where $\sum_l r_{jl}^2$ is the LD score; the annotation model replaces the constant by a linear predictor, which makes $\mathbb{E}[S_j]$ linear in $\tau$. Alternative models are compared by the Akaike information criterion $2K - 2\log l$ of the approximate likelihood. An optional extra parameter can absorb inflation from population structure, but the source no longer recommends it when the estimates are used to build prediction models.
-
-## Depends on
-
-- [Random-effects model of LD-score regression](../ld-score-regression/model.md)
+Under a linear model with effects $\beta_l$ of variance $\mathbb{E}[h_l^2]$ (standardized genotypes and phenotype), the marginal regression coefficient of SNP $j$ is $\sum_l r_{jl}\beta_l$ plus noise of variance $1/n$, so $\mathbb{E}[S_j] = n\,\mathbb{E}[\hat\beta_j^2] \approx 1 + n\sum_l r_{jl}^2\,\mathbb{E}[h_l^2]$. With constant $\mathbb{E}[h_l^2] = h^2/m$ this is [LD-score regression](../ld-score-regression/model.md), where $\sum_l r_{jl}^2$ is the LD score; the annotation model replaces the constant by a linear predictor, which makes $\mathbb{E}[S_j]$ linear in $\tau$. Alternative models are compared by the Akaike information criterion $2K - 2\log l$ of the approximate likelihood. An optional extra parameter can absorb inflation from population structure, but the source no longer recommends it when the estimates are used to build prediction models.
 
 ## Sources
 

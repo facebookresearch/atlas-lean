@@ -16,7 +16,7 @@ $$W \mid k, m, q, \sigma^2 \sim \mathcal{W}_{n-1}\!\left(k,\ -\frac{\sigma^2}{k}
 
 with mean $\mathbb{E}W = -\sigma^2 L\Delta L^\top$ and the degrees of freedom $k$ a free parameter. For microsatellites, each locus $l$ gets its own rank-one statistic $W^{(l)} = -LD^{(l)}L^\top$, a scale $\sigma_l^2$, and a singular Wishart law $\mathcal{W}_{n-1}(1, -\sigma_l^2 L\Delta L^\top)$, independent across loci.
 
-## Expansion
+## Remarks
 
 The dissimilarities are not independent and $D$ itself is not positive definite, but projecting onto contrasts gives a positive-definite matrix that is a scaled sum of outer products of $p$ (correlated) vectors, which the Wishart family models with an effective number of degrees of freedom $k$ standing in for the number of independent loci. Contrasts also remove any additive constant common to all dissimilarities, so only differences in coalescence times matter. The factor $4$ in the diploid case comes from averaging the four lineage pairs between two diploid individuals, while each individual's own two lineages contribute the within-deme terms. Combined with the Voronoi prior on $m$, MCMC over $(m, q, \sigma^2, k)$ gives the posterior mean migration surface, plotted on a $\log_{10}$ scale relative to the overall mean.
 

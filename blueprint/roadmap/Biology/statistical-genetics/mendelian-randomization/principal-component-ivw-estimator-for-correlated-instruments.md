@@ -22,15 +22,15 @@ $$\hat\theta_{\mathrm{PCA}} = \big(\tilde\beta_X^{\top}\tilde\Omega^{-1}\tilde\b
 
 It uses information from every variant, while $\tilde\Omega$ is a $k\times k$ matrix whose conditioning is controlled by discarding the directions of smallest weighted variance.
 
-## Depends on
-
-- [Inverse-variance weighted estimator](ivw.md)
-
-## Expansion
+## Remarks
 
 *2SLS equality.* Regressing $Y$ and $X$ on $Z$ gives $\hat\beta_Y = (Z^{\top}Z)^{-1}Z^{\top}Y$ and $\hat\beta_X = (Z^{\top}Z)^{-1}Z^{\top}X$, with $\operatorname{Cov}(\hat\beta_Y) = \sigma^2 (Z^{\top}Z)^{-1}$. Weighted regression of $\hat\beta_Y$ on $\hat\beta_X$ with weight matrix $\sigma^{-2}Z^{\top}Z$ gives $[X^{\top}Z(Z^{\top}Z)^{-1}Z^{\top}X]^{-1}X^{\top}Z(Z^{\top}Z)^{-1}Z^{\top}Y$ after cancelling $(Z^{\top}Z)^{-1}(Z^{\top}Z)$. For uncorrelated variants the univariable and multivariable coefficients coincide and the weights are diagonal, recovering the usual IVW formula; for correlated variants the weights carry the correlation matrix, which is what $\Omega^{-1}$ encodes.
 
 *Why weight before PCA.* If variants were uncorrelated, $\Psi$ would be diagonal and the first principal component would be the single variant with the largest inverse-variance weight, i.e. (at equal sample sizes) the one explaining the most variance in the risk factor. With correlation, the leading components are the linear combinations of variants explaining the most variance in the risk factor; with a single causal variant one component carries all of it. Unweighted PCA of $\rho$ would instead favour directions of high linkage disequilibrium regardless of their relevance to the exposure.
+
+## Depends on
+
+- [Inverse-variance-weighted estimator](ivw.md)
 
 ## Sources
 

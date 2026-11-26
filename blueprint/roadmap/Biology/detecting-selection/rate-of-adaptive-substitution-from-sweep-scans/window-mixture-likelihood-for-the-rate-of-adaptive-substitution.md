@@ -6,7 +6,7 @@ $$L(\delta,f)=\prod_{w=1}^W P(M_w\mid\delta,f),\qquad P(M_w\mid\delta,f)=(1-\del
 
 where $Q(M_w\mid\text{neutral})$ and $Q(M_w\mid s)$ are the probabilities of the test outcome vector under the demographic null and under a sweep of strength $s$ (at a random position in the window and a uniformly distributed time within the detectable window), estimated by simulation and rejection sampling. Binning selection coefficients into intervals $[s_j,s_{j+1})$ with $\delta_{s_j,s_{j+1}}=\delta\int_{s_j}^{s_{j+1}}f(s)\,ds$ turns the problem into maximising $L$ over the nonnegative bin rates, with $\delta=\sum_j\delta_{s_j,s_{j+1}}$; no parametric form for $f$ is assumed.
 
-## Expansion
+## Remarks
 
 Counting significant windows overestimates sweeps (false positives under a misspecified null) and underestimates them (low power for weak or old sweeps); the mixture likelihood instead uses the full pattern of rejections across a ladder of assigned selection coefficients, which carries information about the true $s$, and corrects for power and false positives through $Q$. Using the fitted demographic history, rather than the standard neutral model, as the null is what keeps demography-induced spectrum distortions from being read as selection. For a derived population, the window outcome is further mixed over sweeps before and after the population split.
 

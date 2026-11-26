@@ -11,13 +11,13 @@ so $V_G$ is finite if and only if $\mathbb{E}_m[Z^2/S] < \infty$. Two consequenc
 
 The divergence of $V_G$ found for some parametric choices of $m$ as the population size grows therefore comes from the behaviour of $m$ near $s = 0$, not from the pure-pleiotropy model itself.
 
+## Proof sketch
+
+With zero mean, $V_G = \mathbb{E}[(Z + Z')^2] = 2\mathbb{E}_f[Z^2] = 2\kappa_{0,2}$, and the cumulant formula with $(a, b) = (0, 2)$ gives the main identity. Independence factorizes $\mathbb{E}_m[Z^2/S] = \mathbb{E}_m[Z^2]\, \mathbb{E}_m[1/S]$. Under the bound, $Z^2/S \le k^2 U^2$. To localize, split $\mathbb{E}_m[Z^2/S]$ over $\{S < \epsilon\}$ and $\{S \ge \epsilon\}$; the second part is at most $\mathbb{E}_m[Z^2]/\epsilon$.
+
 ## Depends on
 
 - [Stationary cumulants of trait and log-fitness under pure pleiotropy](stationary-cumulants-under-pure-pleiotropy.md)
-
-## Expansion
-
-With zero mean, $V_G = \mathbb{E}[(Z + Z')^2] = 2\mathbb{E}_f[Z^2] = 2\kappa_{0,2}$, and the cumulant formula with $(a, b) = (0, 2)$ gives the main identity. Independence factorizes $\mathbb{E}_m[Z^2/S] = \mathbb{E}_m[Z^2]\, \mathbb{E}_m[1/S]$. Under the bound, $Z^2/S \le k^2 U^2$. To localize, split $\mathbb{E}_m[Z^2/S]$ over $\{S < \epsilon\}$ and $\{S \ge \epsilon\}$; the second part is at most $\mathbb{E}_m[Z^2]/\epsilon$.
 
 ## Sources
 

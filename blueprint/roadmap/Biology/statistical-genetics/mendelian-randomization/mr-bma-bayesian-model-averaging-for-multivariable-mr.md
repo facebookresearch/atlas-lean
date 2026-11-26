@@ -16,13 +16,9 @@ $$\mathrm{PP}(M_\gamma \mid \beta_Y, \beta_X) = \frac{p(M_\gamma)\mathrm{BF}(M_\
 
 The model-averaged causal effect is $\hat\theta_{\mathrm{MACE}}(j) = \sum_{\gamma:\,\gamma_j=1}\mathrm{PP}(M_\gamma)\,\hat\theta_\gamma(j)$ with the posterior-mean (ridge-type) estimate $\hat\theta_\gamma = \Omega\beta_{X_\gamma}^\top\beta_Y$.
 
-## Expansion
+## Remarks
 
 Standardizing by $\operatorname{se}(\beta^\star_{Y_i})$ turns the inverse-variance-weighted regression of [IVW Mendelian randomization](ivw.md) into an ordinary regression with unit error variance, so a standard conjugate normal–gamma variable-selection model applies and its marginal likelihood is available in closed form. Ranking risk factors by marginal inclusion probability rather than by a single best model handles strongly correlated candidates (for example lipid subfractions): when two correlated risk factors explain the same signal, models containing both get little evidence, and the MIP splits between them. The posterior is computed exactly by enumeration for small $d$ and by a shotgun stochastic search over high-probability models otherwise. Outlying or influential variants, which signal pleiotropy not mediated by the measured risk factors, are flagged by each variant's contribution $q_i$ to Cochran's $Q$ and by Cook's distance in the best models.
-
-## Depends on
-
-- [Inverse-variance-weighted estimator](ivw.md)
 
 ## Sources
 

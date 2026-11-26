@@ -18,9 +18,13 @@ $$\operatorname{cor}(\Delta p_s, \Delta p_t) = \frac{\mathbb{E}_{A\ne B}\operato
 
 measures the part of the response shared across replicates.
 
-## Expansion
+## Remarks
 
 The decomposition is the variance of a sum. The martingale property of neutral Wright–Fisher drift gives uncorrelated increments: for $s < t$, conditioning on the history up to generation $t$ kills $\mathbb{E}[\Delta p_s\Delta p_t]$. In practice covariances are estimated between blocks of generations at the sampling times, corrected for the bias that binomial sampling of reads and individuals adds to the variances and to covariances between adjacent intervals (which share an endpoint), and standardized by heterozygosity; uncertainty comes from a block bootstrap over genomic windows. Covariances between adjacent generations that fall inside one sampling interval do not enter the numerator, which makes $G(t)$ more conservative. Reanalysis of three selection experiments gave lower bounds of about 17–37% of allele frequency change caused by selection, and $G(t)$ grows and then plateaus as older covariances decay. Negative covariances signal reversals in the direction of selection.
+
+## Depends on
+
+- [One-step martingale property of the Wright–Fisher allele count](../../population-genetics/wright-fisher-markov-chain/sum-prob-mul-wright-fisher.md)
 
 ## Sources
 

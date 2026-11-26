@@ -14,14 +14,14 @@ $$\beta_j \mid \pi, \sigma_\beta^2 \sim \sum_{c=1}^{C}\pi_c\, N(0, \gamma_c\sigm
 
 a finite mixture with a point mass at zero and prespecified variance multipliers (default $\gamma = (0, 0.01, 0.1, 1)$), with scaled inverse-$\chi^2$ priors on $\sigma_\beta^2$ and $\sigma_\varepsilon^2$. Inference targets $p(\beta \mid b, D, B) \propto p(b \mid \beta, D, B)\,p(\beta)$ by Gibbs sampling; SNP heritability is tracked as $h^2_{\mathrm{SNP}} = \sigma_g^2/(\sigma_g^2 + \sigma_\varepsilon^2)$ with $\sigma_g^2$ the sample variance of $X\beta$ at each iteration.
 
+## Remarks
+
+The likelihood is exact under the individual-level model: $D^{-1}X^\top X = D^{-1/2}BD^{1/2}$ and $\operatorname{Var}(D^{-1}X^\top\varepsilon) = \sigma_\varepsilon^2 D^{-1}X^\top X D^{-1} = \sigma_\varepsilon^2 D^{-1/2}BD^{-1/2}$. The reconstruction of $\hat D$ uses that, for a centred marker, the residual variance of the simple regression is about $x_j^\top x_j\,\hat\sigma^2(b_j)$ and the phenotypic variance about $x_j^\top x_j(\hat\sigma^2(b_j) + b_j^2/n_j)$, which is one after standardizing the phenotype. The mixture prior lets most markers have zero effect while a few carry large effects, a sparser and heavier-tailed architecture than the single normal prior of summary-statistic BLUP.
+
 ## Depends on
 
 - [Marginal least-squares estimate of a marker effect](marginal-estimate.md)
 - [In-sample LD matrix](ld-matrix.md)
-
-## Expansion
-
-The likelihood is exact under the individual-level model: $D^{-1}X^\top X = D^{-1/2}BD^{1/2}$ and $\operatorname{Var}(D^{-1}X^\top\varepsilon) = \sigma_\varepsilon^2 D^{-1}X^\top X D^{-1} = \sigma_\varepsilon^2 D^{-1/2}BD^{-1/2}$. The reconstruction of $\hat D$ uses that, for a centred marker, the residual variance of the simple regression is about $x_j^\top x_j\,\hat\sigma^2(b_j)$ and the phenotypic variance about $x_j^\top x_j(\hat\sigma^2(b_j) + b_j^2/n_j)$, which is one after standardizing the phenotype. The mixture prior lets most markers have zero effect while a few carry large effects, a sparser and heavier-tailed architecture than the single normal prior of summary-statistic BLUP.
 
 ## Sources
 

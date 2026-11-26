@@ -12,13 +12,13 @@ $$d(n_{ij}, \hat\mu_{ij}) = n_{ij} \ln \frac{n_{ij}}{\hat\mu_{ij}} + (2 - n_{ij}
 
 with $0 \ln 0 = 0$. The number of ancestral populations is chosen as the $K$ minimizing the estimated prediction error over a grid of values.
 
+## Remarks
+
+Withholding entries rather than individuals keeps every individual and every SNP in each training fit, so $\tilde q_{i\cdot}$ and $\tilde f_{\cdot j}$ exist for every masked entry; this is the matrix analogue of Wold's cross-validation for principal components. Adding populations always raises the in-sample likelihood, but beyond the true structure the extra components fit noise and predict withheld genotypes worse, so the deviance error is minimized near the true $K$. The deviance residual is the binomial log-likelihood ratio between the saturated fit $\mu = n_{ij}$ and the prediction, so the criterion is a held-out likelihood. It replaces the model-evidence integral used by Bayesian programs, which an optimization method cannot evaluate. Its power depends on population differentiation: populations separated by very small $F_{ST}$ cannot be resolved with a given number of SNPs.
+
 ## Depends on
 
 - [Admixture log-likelihood](admixture-log-lik.md)
-
-## Expansion
-
-Withholding entries rather than individuals keeps every individual and every SNP in each training fit, so $\tilde q_{i\cdot}$ and $\tilde f_{\cdot j}$ exist for every masked entry; this is the matrix analogue of Wold's cross-validation for principal components. Adding populations always raises the in-sample likelihood, but beyond the true structure the extra components fit noise and predict withheld genotypes worse, so the deviance error is minimized near the true $K$. The deviance residual is the binomial log-likelihood ratio between the saturated fit $\mu = n_{ij}$ and the prediction, so the criterion is a held-out likelihood. It replaces the model-evidence integral used by Bayesian programs, which an optimization method cannot evaluate. Its power depends on population differentiation: populations separated by very small $F_{ST}$ cannot be resolved with a given number of SNPs.
 
 ## Sources
 

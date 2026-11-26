@@ -18,14 +18,14 @@ $$\mathbb{E}[D_{\mathrm{neut}} \mid \lambda] = \lambda, \qquad \mathbb{E}[D_{\ma
 
 to which the expected count of ingroup polymorphisms misattributed as fixed, $\theta r_n / n$ and $\theta r_n \int_0^1 B(n, n, x) H(S, x)\, dx$ respectively, is added. The DFE used is a mixture: with probability $1 - p_b$ a reflected gamma with mean $S_d < 0$ and shape $b$, and with probability $p_b$ an exponential with mean $S_b > 0$. Mutation-rate variation across fragments is a gamma law on $\theta$, which turns the Poisson counts into negative binomial counts.
 
+## Remarks
+
+$\tfrac12 H(S, x)\,dx$ is the expected time a new semidominant mutation with scaled coefficient $S$ spends at frequency in $[x, x + dx]$ (Wright's sojourn density), so integrating it against binomial sampling gives the Poisson-random-field spectrum; $S/(1 - e^{-S}) = \lim_{x \to 1} H(S, x)$ is the fixation rate of a selected mutation relative to a neutral one. Because the nuisance factors $r_i$ multiply neutral and selected classes equally, only the *shape difference* between the selected and neutral spectra informs $\varphi$, which makes the inference robust to demography when selection is weak. Beneficial mutations sit at high derived frequencies in the unfolded spectrum, so they leave a signal in polymorphism data; ignoring them (fitting only a deleterious DFE) biases both the deleterious DFE and the estimated adaptive proportion. For very large $S_b$, $H(S, x) \to 1/(x(1-x))$ and polymorphism counts lose the information to separate $p_b$ from $S_b$, although the adaptive proportion, which depends mainly on their product, stays well estimated.
+
 ## Depends on
 
 - [Site-frequency spectrum under a distribution of fitness effects](dfe-sfs.md)
 - [Gamma distribution of fitness effects](gamma-dfe.md)
-
-## Expansion
-
-$\tfrac12 H(S, x)\,dx$ is the expected time a new semidominant mutation with scaled coefficient $S$ spends at frequency in $[x, x + dx]$ (Wright's sojourn density), so integrating it against binomial sampling gives the Poisson-random-field spectrum; $S/(1 - e^{-S}) = \lim_{x \to 1} H(S, x)$ is the fixation rate of a selected mutation relative to a neutral one. Because the nuisance factors $r_i$ multiply neutral and selected classes equally, only the *shape difference* between the selected and neutral spectra informs $\varphi$, which makes the inference robust to demography when selection is weak. Beneficial mutations sit at high derived frequencies in the unfolded spectrum, so they leave a signal in polymorphism data; ignoring them (fitting only a deleterious DFE) biases both the deleterious DFE and the estimated adaptive proportion. For very large $S_b$, $H(S, x) \to 1/(x(1-x))$ and polymorphism counts lose the information to separate $p_b$ from $S_b$, although the adaptive proportion, which depends mainly on their product, stays well estimated.
 
 ## Sources
 

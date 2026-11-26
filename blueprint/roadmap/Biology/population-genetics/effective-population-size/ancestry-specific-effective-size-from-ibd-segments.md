@@ -14,13 +14,13 @@ $$\sum_{i=1}^{n-1}\sum_{j=i+1}^n 4\,p_ip_j,$$
 
 where $p_i$ is individual $i$'s genome-wide proportion of that ancestry. Assigning each IBD segment to an ancestry at random with probabilities equal to its local-ancestry proportions gives an unbiased estimate of the total IBD length of that ancestry.
 
-## Depends on
-
-- [Inbreeding, variance and eigenvalue effective population sizes](effective-population-size-definitions.md)
-
-## Expansion
+## Remarks
 
 In a Wright–Fisher population of $N$ diploids two lineages coalesce with probability $1/(2N)$ per generation, which motivates $N_g=1/(2q_g)$. Expected total IBD from generation $g$ is proportional to the number of haplotype pairs that could produce it; two haplotypes can be IBD for a given ancestry only where both carry it, and with independent local ancestry in unrelated individuals a random haplotype pair from individuals $i$ and $j$ is jointly of that ancestry on a fraction $p_ip_j$ of the genome, with four haplotype pairs per individual pair. The segment's full length, not its ancestry-restricted pieces, must be used for dating, since length measures time to the common ancestor. Close relatives inflate recent IBD and must be removed using genome-wide IBD before the ancestry-specific analysis.
+
+## Depends on
+
+- [Expected IBD per generation and the IBDNe moment update](../../coalescent-theory/skyline-plot-estimates-of-population-size/ibd-based-estimation-of-recent-effective-size/expected-ibd-per-generation-and-the-ibdne-update.md)
 
 ## Sources
 

@@ -18,11 +18,7 @@ where the kinship $K$ is computed from the candidate pseudo QTNs only, so the on
 
 **Complexity.** For a fixed number of iterations and pseudo QTNs, the FEM scan costs $O(nm)$ and the REM, solved through a low-rank decomposition of the pseudo-QTN genotype matrix, costs $O(n)$, so FarmCPU runs in $O(nm)$ time with $O(nt)$ memory.
 
-## Depends on
-
-- [Mixed-model association chi-squared statistic](../proximal-contamination-in-mixed-model-associatio/mm-chi-sq.md)
-
-## Expansion
+## Remarks
 
 In a standard mixed-model scan the kinship is built from all markers, including the tested marker and markers in linkage disequilibrium with it, so the random effect partly absorbs the very signal under test ("proximal contamination"). FarmCPU separates the two roles: the population-structure and polygenic background controls in the FEM are fixed-effect pseudo QTNs, while the kinship in the REM is used only to select those pseudo QTNs and never enters the marker test. Because every marker is tested with the pseudo QTNs as covariates, markers whose association is explained by a pseudo QTN do not show inflated $P$ values, while a pseudo QTN cannot be tested against itself, which is why substitution assigns it the best $P$ value over all fits. Restricting the kinship to $t \ll n$ pseudo QTNs makes the REM a two-parameter problem whose likelihood can be evaluated from the singular value decomposition of an $n \times t$ matrix, avoiding the $O(n^2)$ kinship and $O(n^3)$ eigendecomposition of a full genomic relationship matrix.
 

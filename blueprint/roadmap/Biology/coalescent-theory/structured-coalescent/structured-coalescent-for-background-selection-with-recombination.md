@@ -16,15 +16,14 @@ and the sampled chromosomes start with independent $\mathrm{Poisson}(\lambda_k)$
 
 **Special case (one type, no recombination).** Backgrounds are then just counts $d$, and two lineages in class $d$ coalesce at rate $1/f(d)$ while each moves to class $d - 1$ at rate $d\gamma$. When $\gamma \to \infty$ lineages reach the mutation-free class almost immediately and coalesce there at rate $1/f(0) = e^{\lambda}$, which recovers the classical reduction $N_e/N = e^{-U/s}$ of neutral diversity.
 
+## Remarks
+
+The deleterious-mutation classes play the role of demes: a lineage "migrates" from class $d$ to class $d - 1$ backwards in time when its ancestor did not yet carry one of its mutations, and coalescence is confined to a class whose size is $Nf(d)$, so the pairwise rate in a class of size $Nf(d)$ is $1/f(d)$ on the $N$ time scale. Recombination makes backgrounds piecewise, so the model records, for every lineage, how many mutations of each type sit in each ancestral interval; compatibility of two backgrounds and the frequency of their joint ancestor determine $p_c$. Neutral sites can be interleaved freely; they change only how breakpoints split the selected backgrounds, and variability at selected and neutral sites can be generated jointly along the reconstructed genealogy. Zeng checks the model against forward simulations, including variable selection coefficients and recent population growth.
+
 ## Depends on
 
 - [Poisson equilibrium of multiplicative mutation–selection balance](../../population-genetics/mutation-selection-balance/multilocus-multiplicative-mutation-selection-poi.md)
 - [Background selection reduces the effective size to the mutation-free class](../../population-genetics/mutation-selection-balance/background-selection-deterministic-reduction-fac.md)
-- [Structured coalescent for n lineages with a general migration matrix](structured-coalescent-for-n-lineages-with-a-gene.md)
-
-## Expansion
-
-The deleterious-mutation classes play the role of demes: a lineage "migrates" from class $d$ to class $d - 1$ backwards in time when its ancestor did not yet carry one of its mutations, and coalescence is confined to a class whose size is $Nf(d)$, so the pairwise rate in a class of size $Nf(d)$ is $1/f(d)$ on the $N$ time scale. Recombination makes backgrounds piecewise, so the model records, for every lineage, how many mutations of each type sit in each ancestral interval; compatibility of two backgrounds and the frequency of their joint ancestor determine $p_c$. Neutral sites can be interleaved freely; they change only how breakpoints split the selected backgrounds, and variability at selected and neutral sites can be generated jointly along the reconstructed genealogy. Zeng checks the model against forward simulations, including variable selection coefficients and recent population growth.
 
 ## Sources
 

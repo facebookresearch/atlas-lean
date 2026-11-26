@@ -18,13 +18,13 @@ $$C \approx C^* = \sum_{\boldsymbol\gamma \in \Omega}\Pr(\boldsymbol\gamma\mid\b
 
 with $\Omega$ the explicitly explored models. As $\lambda, \kappa \to 0$ the procedure enumerates every model and is exact.
 
+## Remarks
+
+Among size-$s$ models, those containing $m$ of the $K$ true signals number $\binom{p-K}{s-m}\binom{K}{m}$; under saturation each class contributes about its count times an average prior times an average Bayes factor $\overline{\mathrm{BF}}_{\{m\}}$ that does not depend on $s$. Passing from $s$ to $s+1$ multiplies the count by $\frac{p-K-(s-m)}{s+1-m}$, which lies between $\frac{p-s-K}{s+1}$ and $\frac{p-s}{s+1-K}$, and multiplies the prior by about $\omega$; summing over $m$ gives the bounds. The conditional screen $\mathrm{PIP}^*$ is a Bayesian stepwise conditional analysis that accounts for LD, and any SNP whose conditional probabilities stay below $\lambda$ at every size has overall PIP below $\lambda$. The annotation coefficients $\boldsymbol\alpha$ are estimated by an EM algorithm whose E-step computes PIPs (with the single-signal variant DAP-1) and whose M-step is a logistic regression of PIPs on annotations.
+
 ## Depends on
 
 - [Posterior inclusion probability](pip.md)
-
-## Expansion
-
-Among size-$s$ models, those containing $m$ of the $K$ true signals number $\binom{p-K}{s-m}\binom{K}{m}$; under saturation each class contributes about its count times an average prior times an average Bayes factor $\overline{\mathrm{BF}}_{\{m\}}$ that does not depend on $s$. Passing from $s$ to $s+1$ multiplies the count by $\frac{p-K-(s-m)}{s+1-m}$, which lies between $\frac{p-s-K}{s+1}$ and $\frac{p-s}{s+1-K}$, and multiplies the prior by about $\omega$; summing over $m$ gives the bounds. The conditional screen $\mathrm{PIP}^*$ is a Bayesian stepwise conditional analysis that accounts for LD, and any SNP whose conditional probabilities stay below $\lambda$ at every size has overall PIP below $\lambda$. The annotation coefficients $\boldsymbol\alpha$ are estimated by an EM algorithm whose E-step computes PIPs (with the single-signal variant DAP-1) and whose M-step is a logistic regression of PIPs on annotations.
 
 ## Sources
 

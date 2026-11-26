@@ -14,13 +14,13 @@ $$a_1\mid s\;\approx\;\mathcal N\!\Big(0,\frac{w^2}{n}\,s\Big),$$
 
 already a good approximation for $n\approx10$. The same normal limit holds without isotropy, provided the focal trait is a small part of the selected trait space.
 
+## Proof sketch
+
+The density of a coordinate of a uniform point on the sphere $S^{n-1}$ of radius $a$ is proportional to $(1-a_1^2/a^2)^{(n-3)/2}$, the volume of the $(n-2)$-dimensional cross-section; normalising gives $\varphi_n$. Writing $a_1^2/a^2=x^2/n$ and using $(1-x^2/n)^{(n-3)/2}\to e^{-x^2/2}$ gives the Gaussian limit (Poincaré's observation). Symmetry among coordinates gives the second moment. The consequence for association studies is that, given its selection coefficient, an allele's effect on any one trait is random and typically much smaller than its total effect, so strongly selected alleles need not have large effects on the trait under study.
+
 ## Depends on
 
 - [Allelic dynamics under pleiotropic stabilizing selection](allelic-dynamics-under-pleiotropic-stabilizing-selection.md)
-
-## Expansion
-
-The density of a coordinate of a uniform point on the sphere $S^{n-1}$ of radius $a$ is proportional to $(1-a_1^2/a^2)^{(n-3)/2}$, the volume of the $(n-2)$-dimensional cross-section; normalising gives $\varphi_n$. Writing $a_1^2/a^2=x^2/n$ and using $(1-x^2/n)^{(n-3)/2}\to e^{-x^2/2}$ gives the Gaussian limit (Poincaré's observation). Symmetry among coordinates gives the second moment. The consequence for association studies is that, given its selection coefficient, an allele's effect on any one trait is random and typically much smaller than its total effect, so strongly selected alleles need not have large effects on the trait under study.
 
 ## Sources
 

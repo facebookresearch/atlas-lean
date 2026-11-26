@@ -14,13 +14,13 @@ $$p_R' = p_R - \frac{s_A}{\bar w}\, D^*, \qquad \bar w = 1 - p_A^* s_A .$$
 
 **Consequences.** (i) Distortion never changes the frequency of resistance directly; it acts on resistance only by creating negative disequilibrium, through the term $-p_R H_{rr}/2$ in $D^*$, which recombination halves every generation. (ii) Costless resistance increases exactly when $D^* < 0$, that is, when it is associated with the drive-susceptible allele $a$, which enjoys the fitness advantage $s_A$ over $A$: nonallelic resistance spreads only by genetic hitchhiking with $a$. (iii) The same holds for a recessive lethal drive (zygotes $AA$ die before meiosis, $\bar w = 1 - p_A^2$): the survivors have $p_R^{\#} = p_R - D p_A / \bar w$, and with perfect dominant resistance transmission leaves this unchanged, $p_R^* = p_R^{\#}$.
 
+## Proof sketch
+
+With $\delta_{rr} = \tfrac12$ every $Aa\,rr$ gamete carries $A$, so the $a$ allele loses $H_{rr}/2$, and none of these gametes carry $R$, which is why $p_R$ is untouched while the haplotype $aR$ becomes relatively more common, producing $D^* = D/2 - p_R H_{rr}/2$ (the $D/2$ is free recombination). Under gametic selection the $R$ frequency among survivors is $(x_{aR}^* + (1 - s_A) x_{AR}^*)/\bar w$ when $s_R = 0$; substituting $x_{AR}^* = p_A^* p_R^* + D^*$ gives $p_R^* - s_A D^*/\bar w$. For the lethal drive the dead $AA$ zygotes carry $R$ at frequency $p_A x_{AR}$ of all genes, so $p_R^{\#} = (p_R - p_A x_{AR})/(1 - p_A^2) = p_R - p_A D/(1 - p_A^2)$. Gomulkiewicz, Thies and Bull use this to argue that drives whose resistance is loosely linked can evade resistance evolution, and that dominant resistance is the worst case for the engineer.
+
 ## Depends on
 
 - [Transmission identities for a drive locus with a resistance modifier](transmission-identities-for-a-drive-locus-with-a-resistance-modifier.md)
-
-## Expansion
-
-With $\delta_{rr} = \tfrac12$ every $Aa\,rr$ gamete carries $A$, so the $a$ allele loses $H_{rr}/2$, and none of these gametes carry $R$, which is why $p_R$ is untouched while the haplotype $aR$ becomes relatively more common, producing $D^* = D/2 - p_R H_{rr}/2$ (the $D/2$ is free recombination). Under gametic selection the $R$ frequency among survivors is $(x_{aR}^* + (1 - s_A) x_{AR}^*)/\bar w$ when $s_R = 0$; substituting $x_{AR}^* = p_A^* p_R^* + D^*$ gives $p_R^* - s_A D^*/\bar w$. For the lethal drive the dead $AA$ zygotes carry $R$ at frequency $p_A x_{AR}$ of all genes, so $p_R^{\#} = (p_R - p_A x_{AR})/(1 - p_A^2) = p_R - p_A D/(1 - p_A^2)$. Gomulkiewicz, Thies and Bull use this to argue that drives whose resistance is loosely linked can evade resistance evolution, and that dominant resistance is the worst case for the engineer.
 
 ## Sources
 

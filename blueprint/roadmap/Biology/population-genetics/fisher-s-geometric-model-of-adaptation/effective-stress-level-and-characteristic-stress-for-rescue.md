@@ -16,13 +16,13 @@ $$\alpha_c = g^{-1}\!\Big(\frac{\log 2}{N_0 U}\Big) \approx 0.9\,\log(N_0 U) - 2
 
 Since $\alpha_c \propto (r_D^{c})^2$, the decay rate $r_D^{c}$ that a population survives half of the time grows only like $\sqrt{\log(N_0 U)}$ for large $N_0 U$, whereas a context-independent model with a fixed proportion $q_R$ of rescue mutations gives $r_D^{c} = q_R N_0 U/\log 2$, linear in $N_0 U$. Rescue probability therefore drops sharply over a narrow window of stress.
 
+## Proof sketch
+
+A mutant of $z_A$ is resistant when it lands inside the ball $\lVert z\rVert^2 < 2r_{\max}$. The shortest jump that does so has length $\lVert z_A\rVert - \sqrt{2r_{\max}} = \sqrt{2r_{\max}}\big(\sqrt{1 + r_D/r_{\max}} - 1\big) = \sqrt{2r_{\max}}\,\psi_D/2$, and its Gaussian log-density per unit $\lambda$ is $-(\text{length})^2/(2\lambda) = -\alpha$. In the limit $\lambda/r_{\max} \to 0$ resistant mutants lie in the far tail of the mutation kernel, just inside the ball, so a Laplace-type expansion of $\int_0^1 \pi(y) f_y(y)\,dy$ around that boundary point gives the factor $g(\alpha)$, with the dimension-dependent prefactor accounting for the curvature of the ball and of the Gaussian shells. Inverting $N_0 U g(\alpha_c) = \log 2$ with the asymptotic form of $g$ yields the log-linear growth of $\alpha_c$.
+
 ## Depends on
 
 - [Evolutionary rescue rates in Fisher's geometric model](evolutionary-rescue-rates-in-fisher-s-geometric-model.md)
-
-## Expansion
-
-A mutant of $z_A$ is resistant when it lands inside the ball $\lVert z\rVert^2 < 2r_{\max}$. The shortest jump that does so has length $\lVert z_A\rVert - \sqrt{2r_{\max}} = \sqrt{2r_{\max}}\big(\sqrt{1 + r_D/r_{\max}} - 1\big) = \sqrt{2r_{\max}}\,\psi_D/2$, and its Gaussian log-density per unit $\lambda$ is $-(\text{length})^2/(2\lambda) = -\alpha$. In the limit $\lambda/r_{\max} \to 0$ resistant mutants lie in the far tail of the mutation kernel, just inside the ball, so a Laplace-type expansion of $\int_0^1 \pi(y) f_y(y)\,dy$ around that boundary point gives the factor $g(\alpha)$, with the dimension-dependent prefactor accounting for the curvature of the ball and of the Gaussian shells. Inverting $N_0 U g(\alpha_c) = \log 2$ with the asymptotic form of $g$ yields the log-linear growth of $\alpha_c$.
 
 ## Sources
 

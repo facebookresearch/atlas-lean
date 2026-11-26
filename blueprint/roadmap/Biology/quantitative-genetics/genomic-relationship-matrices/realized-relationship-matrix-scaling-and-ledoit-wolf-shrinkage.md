@@ -18,13 +18,9 @@ $$\delta = \frac{m^{-2}\sum_{k=1}^{m}\big\|Z_{\bullet k}Z_{\bullet k}^\top - S\b
 
 truncated to $[0,1]$. Shrinkage is negligible when $n/m \ll \mathrm{CV}^2$, the squared coefficient of variation of the eigenvalues of $S$.
 
-## Expansion
+## Remarks
 
 Writing $\operatorname{tr}G = \sigma^2 n(1+f)$ and expanding $\operatorname{tr}(\tilde W\tilde W^\top)$ locus by locus with per-locus inbreeding $f_k$ gives $\sigma^2 = 2\sigma_u^2\langle p_kq_k\rangle$ and $f = \sum_k\beta_kf_k$ with weights $\beta_k \propto p_kq_k$, which yields the denominator $2\sum_k p_kq_k$; the result needs no identity-by-descent argument and holds for inbred lines, consistent with an identity-by-state view of genetic covariance. The target $\langle S_{ii}\rangle I$ keeps the trace, so $\mathbb{E}\operatorname{tr}\hat\Sigma = \operatorname{tr}\Sigma$, and the mean-vector term is left unshrunk, so the inbreeding level is preserved. The numerator of $\delta$ estimates the sampling variance of $S$ and the denominator the distance of $S$ from the target; with few markers (for example a few hundred) relative to lines, the shrunk matrix improved the accuracy of genomic breeding-value prediction by BLUP in the source.
-
-## Depends on
-
-- [Genetic relationship matrix entry](grm.md)
 
 ## Sources
 

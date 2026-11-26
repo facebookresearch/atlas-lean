@@ -22,11 +22,7 @@ where $c_H(y) = 1/\mathbb{E}(1/c \mid y)$ is the harmonic mean, over mutants of 
 
 Unlike context-independent rescue models, where the proportion $q_R$ of rescue mutations and their cost are fixed, here both depend on the stress through $r_D$, because a larger shift of the optimum leaves fewer and weaker mutants with positive growth.
 
-## Depends on
-
-- [Probability that a random mutation is beneficial](beneficial-prob.md)
-
-## Expansion
+## Proof sketch
 
 The number of declining wild-type individuals is $N_0 e^{-r_D t}$, so the expected total number of de novo mutants is $N_0 U/r_D$; each is resistant and establishes with probability $\int_0^1 \pi f_y$, and the number of successful rescuers is Poisson, giving $P_R = 1 - e^{-N_0\omega_{DN}}$. Under the house-of-cards approximation, the standing number of mutants in class $[y, y+dy]$ is Poisson with mean $N_0 U f_y(y)\,dy / c_H(y)$ (mutation input divided by the rate of purging), and each establishes with probability $\pi(y)$, giving $\omega_{SV}$. The density $f_y$ follows from the noncentral chi-square law of $\lVert z_A + dz\rVert^2/\lambda$ with $n$ degrees of freedom and noncentrality $\lVert z_A\rVert^2/\lambda$, transformed through $y = 1 - \lVert z\rVert^2/(2 r_{\max})$.
 

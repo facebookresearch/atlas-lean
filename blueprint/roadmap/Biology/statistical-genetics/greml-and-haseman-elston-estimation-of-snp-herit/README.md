@@ -76,3 +76,4 @@
 - [Hutchinson's randomized trace estimator](hutchinson-randomized-trace-estimator.md)
 - [MINQUE variance components from summary statistics](minque-variance-components-from-summary-statistics.md)
 - [RHE-reg: randomized Haseman–Elston regression](rhe-reg-randomized-haseman-elston-regression.md)
+- [Local SNP heritability from summary statistics](local-snp-heritability-from-summary-statistics/README.md)

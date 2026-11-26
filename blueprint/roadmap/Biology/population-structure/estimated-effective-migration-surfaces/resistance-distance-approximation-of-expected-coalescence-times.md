@@ -14,13 +14,9 @@ The relation is exact when migration is isotropic (all demes equivalent with res
 
 **Voronoi prior.** Migration rates are parametrized by a Voronoi tessellation of the habitat into cells $c$ with rates $\log_{10} m_c = \mu + e_c$; an edge between demes $\alpha$ and $\beta$ gets $m_{\alpha\beta} = (m_{c_\alpha} + m_{c_\beta})/2$, where $c_\alpha$ is the cell containing $\alpha$. The number and positions of cells are sampled by reversible-jump MCMC, and averaging the posterior over tessellations yields a smooth effective migration surface.
 
-## Expansion
+## Remarks
 
 Effective resistance integrates over all paths between two demes, weighting parallel routes like parallel resistors, which is the circuit-theory counterpart of averaging over all migration histories of the two lineages; this "isolation by resistance" is what lets local barriers lower gene flow over large distances. The combination $T_{\alpha\beta} - (T_{\alpha\alpha} + T_{\beta\beta})/2$ is the expected excess of between-deme over within-deme coalescence time, which in the [island model](../../coalescent-theory/structured-coalescent/mean-coalescence-time.md) depends on the number of demes and the migration rate but not on the deme size; the approximation keeps that structure on a general graph. Treating $q$ as free parameters decouples local diversity (which is sensitive to ascertainment) from the migration surface.
-
-## Depends on
-
-- [Closed-form mean coalescence times in the island model](../../coalescent-theory/structured-coalescent/mean-coalescence-time.md)
 
 ## Sources
 

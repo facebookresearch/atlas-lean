@@ -28,5 +28,5 @@
 - [H12 and H2/H1 haplotype homozygosity statistics for hard and soft sweeps](h12-and-h2-h1-haplotype-homozygosity-statistics.md)
 - [Neutral diversity under background selection and recurrent sweeps](neutral-diversity-under-background-selection-and-recurrent-sweeps.md)
 - [Equilibrium neutral diversity under recurrent selective sweeps](recurrent-hitchhiking-equilibrium-diversity.md)
-- [Recurrent hitchhiking reduction of neutral diversity](recurrent-hitchhiking-reduction-of-neutral-diversity.md)
+- [Recurrent hitchhiking and the protein divergence of a gene](recurrent-hitchhiking-reduction-of-neutral-diversity.md)
 - [Spatially normalized feature vector for soft and hard sweep classification](spatially-normalized-feature-vector-for-soft-and-hard-sweep-classification.md)

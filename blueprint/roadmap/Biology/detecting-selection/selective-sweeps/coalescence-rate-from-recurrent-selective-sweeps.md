@@ -10,13 +10,13 @@ $$\tau(s, N_e) = \frac{2\bigl(\ln(4N_e s) + \gamma - (4N_e s)^{-1}\bigr)}{s},$$
 
 with $\gamma$ the Euler–Mascheroni constant.
 
-## Depends on
-
-- [Probability that a neutral lineage stays linked during a deterministic sweep](hitchhiking-deterministic-escape-probability.md)
-
-## Expansion
+## Proof sketch
 
 Each beneficial substitution at $y$ is a sweep lasting about $\tau$ generations. A neutral lineage at distance $r$ escapes the sweeping haplotype by recombination with probability about $1 - e^{-r\tau}$. Two sampled lineages that both stay linked trace back to the single founding beneficial haplotype and coalesce, which happens with probability about $e^{-r\tau}$. Spreading the expected number of beneficial substitutions in a class over the $T$ generations of the lineage turns these per-sweep probabilities into a rate. The sum over classes and positions assumes sweeps do not overlap in time. The fixation-time formula is the diffusion expectation for a new semidominant mutation with $4N_es \gg 1$.
+
+## Proof depends on
+
+- [Probability that a neutral lineage stays linked during a deterministic sweep](hitchhiking-deterministic-escape-probability.md)
 
 ## Sources
 

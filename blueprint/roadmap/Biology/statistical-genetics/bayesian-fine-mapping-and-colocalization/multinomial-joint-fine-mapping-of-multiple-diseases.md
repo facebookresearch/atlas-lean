@@ -9,7 +9,7 @@ so configurations sharing at least one causal variant are upweighted by $\kappa\
 1. the log Bayes factor of a configuration under the multinomial model is approximately the sum of the per-disease logistic log Bayes factors plus an offset determined by sample and model sizes; when diseases do not share controls the joint log Bayes factor is exactly that sum;
 2. the marginal posterior of each disease's model, $P(M_j\mid\text{data})$, can be computed from these quantities without storing the Bayes factors of all configurations, whose number is the product of the per-disease model counts.
 
-## Expansion
+## Remarks
 
 Sharing controls between case series correlates the per-disease logistic regressions; the multinomial likelihood accounts for this exactly, and the additive approximation recovers most of its information at the cost of per-disease fits. The coupling prior plays the role of the colocalization prior: shared causal variants pool evidence across diseases, which acts like a larger sample when sharing is real, while with strong disease-specific signals or no signal in one disease the joint analysis neither gains nor misleads, as the simulations in the paper show. Stochastic search over models, rather than stepwise selection, matters because stepwise search can first select a SNP that tags two correlated causal variants and then miss both.
 

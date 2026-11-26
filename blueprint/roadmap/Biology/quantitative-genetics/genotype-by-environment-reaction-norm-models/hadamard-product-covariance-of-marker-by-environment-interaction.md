@@ -14,13 +14,13 @@ $$y_{ijk} = \mu + w_{ij} + g_j + gw_{ij} + \varepsilon_{ijk}, \quad \mathbf w \s
 
 with i.i.d. $N(0,\sigma_\varepsilon^2)$ errors. Replacing $\Omega$ by $Z_E Z_E^{\top}$, the incidence kernel of environments, gives the marker-by-environment term $\mathbf{gE} \sim N\bigl(0, [Z_gGZ_g^{\top}]\circ[Z_EZ_E^{\top}]\,\sigma_{gE}^2\bigr)$.
 
+## Proof sketch
+
+Since both scores have mean zero and are independent, $\mathbb{E}[\tilde g_j\tilde w_{ij}] = 0$ and $\mathbb{E}[\tilde g_j\tilde w_{ij}\tilde g_{j'}\tilde w_{i'j'}] = \mathbb{E}[\tilde g_j\tilde g_{j'}]\,\mathbb{E}[\tilde w_{ij}\tilde w_{i'j'}]$. Each factor is a quadratic form in the fixed covariates: $\sigma_b^2\sum_m x_{jm}x_{j'm}$ and $\sigma_\gamma^2\sum_q W_{ijq}W_{i'j'q}$. After centering and scaling these are proportional to $G_{jj'}$ and $\Omega_{ij,i'j'}$. By the Schur product theorem the Hadamard product of two positive semidefinite kernels is positive semidefinite, so the interaction kernel is a valid covariance. Two records are correlated through the interaction only when they are similar both genetically and environmentally. The model needs only the two kernels, not $pQ$ explicit marker-by-covariate contrasts. The same algebra gives the Cockerham–Kempthorne epistatic covariances between relatives.
+
 ## Depends on
 
 - [Genetic relationship matrix entry](../genomic-relationship-matrices/grm.md)
-
-## Expansion
-
-Since both scores have mean zero and are independent, $\mathbb{E}[\tilde g_j\tilde w_{ij}] = 0$ and $\mathbb{E}[\tilde g_j\tilde w_{ij}\tilde g_{j'}\tilde w_{i'j'}] = \mathbb{E}[\tilde g_j\tilde g_{j'}]\,\mathbb{E}[\tilde w_{ij}\tilde w_{i'j'}]$. Each factor is a quadratic form in the fixed covariates: $\sigma_b^2\sum_m x_{jm}x_{j'm}$ and $\sigma_\gamma^2\sum_q W_{ijq}W_{i'j'q}$. After centering and scaling these are proportional to $G_{jj'}$ and $\Omega_{ij,i'j'}$. By the Schur product theorem the Hadamard product of two positive semidefinite kernels is positive semidefinite, so the interaction kernel is a valid covariance. Two records are correlated through the interaction only when they are similar both genetically and environmentally. The model needs only the two kernels, not $pQ$ explicit marker-by-covariate contrasts. The same algebra gives the Cockerham–Kempthorne epistatic covariances between relatives.
 
 ## Sources
 

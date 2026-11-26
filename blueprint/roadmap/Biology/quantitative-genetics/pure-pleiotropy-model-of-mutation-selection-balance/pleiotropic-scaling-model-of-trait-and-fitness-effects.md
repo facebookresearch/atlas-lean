@@ -14,13 +14,13 @@ and the total variance $V_T = \int_0^1 V(x)\, dx$ carries the same factor $1 + \
 2. For $\tau = 0$ the trait effects are independent of selection, and the frequency distribution of trait variance is that of the neutral and nearly neutral mutations, which segregate at high frequency.
 3. For $\tau = 1$, when the mean of $S$ is large most trait variance is contributed by rare, strongly selected mutations, which is invisible to association studies of common variants.
 
-## Depends on
-
-- [Variance in fitness from deleterious mutations at mutation–selection balance](fitness-variance-from-deleterious-mutations-at-mutation-selection-balance.md)
-
-## Expansion
+## Remarks
 
 A mutation of trait effect $z$ at frequency $x$ contributes $2x(1-x)z^2$ to the additive variance. Integrating over the sojourn density of new mutations, over $g$, and over the conditional law of $z$ given $S$ replaces $z^2$ by $\mathbb{E}[z^2 \mid S] = S^{2\tau}\mathbb{E}[(1+\epsilon)^2] = (1+\sigma^2) S^{2\tau}$, since $\delta^2 = 1$. The factor $1 + \sigma^2$ cancels in $V(x)/V_T$. The weight $S^{2\tau}$ tilts the variance towards strongly selected mutations, which selection holds at low frequency; at $\tau = 0$ the weight is flat. With a gamma distribution for $g$ the integrals have closed forms involving the Hurwitz zeta function. A unimodal alternative, in which the trait effect has standard deviation proportional to $S^\tau$ without the factor $1 + \epsilon$, gives the same conclusions without the factor $1 + \sigma^2$.
+
+## Depends on
+
+- [Sojourn density of the Wright–Fisher diffusion with selection](../../population-genetics/diffusion-theory/allele-age-and-the-maruyama-effect/selection-green.md)
 
 ## Sources
 

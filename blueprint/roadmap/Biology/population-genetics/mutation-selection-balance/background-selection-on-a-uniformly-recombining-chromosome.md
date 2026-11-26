@@ -10,17 +10,17 @@ $$E = \frac{U\,[\,t + 2PQM(1-t)\,]}{2\,[\,t + QM(1-t)\,]\,[\,t + PM(1-t)\,]}. \t
 
 **Regimes.** If $M \ll t$ then $E \approx U/(2t)$, the non-recombining value $\pi/\pi_0 = e^{-U/(2t)}$. If $M \gg t$ and the neutral site is away from the ends ($PQM \gg t$), then $E \approx U/M$, independent of $P$: the reduction depends only on the density of new mutations per map unit. At the end of the chromosome ($P = 0$), $E = U/\{2[t + M(1-t)]\} \approx U/(2M)$, about half the central value $E = U/(2t + M(1-t)) \approx U/M$.
 
-## Depends on
-
-- [Background selection reduces the effective size to the mutation-free class](background-selection-deterministic-reduction-fac.md)
-
-## Expansion
+## Proof sketch
 
 Replacing the sum in (4) by an integral over a continuum of selected sites with mutation density $U/(2M)$ per Morgan gives
 
 $$E = \frac{U}{2Mt}\Bigl(\int_0^{PM}\frac{dz}{(1 + z(1-t)/t)^2} + \int_0^{QM}\frac{dz}{(1 + z(1-t)/t)^2}\Bigr).$$
 
 Since $\int_0^{a} dz/(1 + cz)^2 = a/(1 + ca)$ with $c = (1-t)/t$, the two terms are $U P/(2[t + PM(1-t)])$ and $U Q/(2[t + QM(1-t)])$. Putting them over a common denominator and using $P(t + QM(1-t)) + Q(t + PM(1-t)) = t + 2PQM(1-t)$ gives (9). The limits follow by inspection. With no recombination, (4) reduces to $\pi = f_0\pi_0$, the classical fraction of mutation-free gametes. Each selected locus removes linked neutral variants in proportion to how long a mutant lineage survives in heterozygous carriers ($\approx 1/t$) before recombination separates it ($\approx 1/r$), which produces the factor $(t + r(1-t))^{-2}$.
+
+## Proof depends on
+
+- [Background selection reduces the effective size to the mutation-free class](background-selection-deterministic-reduction-fac.md)
 
 ## Sources
 

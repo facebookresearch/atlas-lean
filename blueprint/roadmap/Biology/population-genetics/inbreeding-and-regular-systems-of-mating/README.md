@@ -6,3 +6,4 @@
 - [Viability selection in an inbred population](selection-under-inbreeding.md)
 - [Mean fitness is linear in the inbreeding coefficient](mean-fitness-under-inbreeding.md)
 - [Lethal equivalents and the inbreeding load](lethal-equivalents-and-the-inbreeding-load.md)
+- [Runs of homozygosity](runs-of-homozygosity/README.md)

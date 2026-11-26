@@ -24,14 +24,13 @@ $$P(X_i = x_i \mid C, s) = \frac{b_i(x_i) f_i(x_i)}{\sum_{x'} b_i(x') f_i(x')}$$
 
 with $b_i$, $f_i$ the backward and forward messages.
 
+## Remarks
+
+Exchangeability within each allelic class means only the lineage counts, not the topology, enter the likelihood given the waiting times. The hidden layer is the trajectory; the "emissions" are the coalescence counts, which depend on the current frequency and on the current lineage numbers, so the chain is time-inhomogeneous but has the usual hidden-Markov dependence structure. At the mutation epoch the derived class has collapsed to a single lineage, which joins the ancestral class and makes $C^{\mathrm{mix}}$ exceed $C^{\mathrm{anc}}$ by one. For very large $z$ or short epochs the alternating series is numerically unstable and is replaced by its normal approximation. Sharp coalescence bursts in the derived class point to a recent rapid frequency rise, which is how the model extracts information on $s$ and on the trajectory.
+
 ## Depends on
 
 - [Tavaré's formula for the number of ancestral lineages](../../coalescent-theory/ancestral-lineage-counting-and-tavar-s-formula/tavare-prob.md)
-- [Hidden Markov likelihood for allele-frequency time series](../selection-from-allele-frequency-time-series/hmm-likelihood-for-allele-frequency-time-series.md)
-
-## Expansion
-
-Exchangeability within each allelic class means only the lineage counts, not the topology, enter the likelihood given the waiting times. The hidden layer is the trajectory; the "emissions" are the coalescence counts, which depend on the current frequency and on the current lineage numbers, so the chain is time-inhomogeneous but has the usual hidden-Markov dependence structure. At the mutation epoch the derived class has collapsed to a single lineage, which joins the ancestral class and makes $C^{\mathrm{mix}}$ exceed $C^{\mathrm{anc}}$ by one. For very large $z$ or short epochs the alternating series is numerically unstable and is replaced by its normal approximation. Sharp coalescence bursts in the derived class point to a recent rapid frequency rise, which is how the model extracts information on $s$ and on the trajectory.
 
 ## Sources
 

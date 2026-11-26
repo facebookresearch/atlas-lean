@@ -10,7 +10,7 @@ $$\kappa_{a,b} = n\mu\, \mathbb{E}_m\!\left[\frac{X^a Z^b}{S}\right].$$
 
 Thus every cumulant of the distribution over individuals is a moment of the distribution over new mutations, weighted by the expected persistence $1/S$ of a mutation.
 
-## Expansion
+## Proof sketch
 
 Selection maps $M_f(u, v)$ to $M_f(u-1, v)/M_f(-1, 0)$ and Poisson mutation multiplies it by $\exp(n\mu (M_m(u,v) - 1))$. Iterating from $M_f \equiv 1$ for $\tau$ generations gives $\exp\left(n\mu \sum_{i=0}^{\tau-1} [M_m(u-i, v) - M_m(-i, 0)]\right)$, and letting $\tau \to \infty$ gives the stationary form. Differentiating $e^{-ix}(e^{ux+vz} - 1)$ at $u = v = 0$ gives $e^{-ix} x^a z^b$ for $(a, b) \ne (0,0)$, and $\sum_{i \ge 0} e^{-ix} = 1/(1 - e^{-x}) = 1/S$ for $x > 0$. Because effects on fitness are multiplicative and the trait is neutral, linkage equilibrium is maintained and following asexual haplotypes suffices. For diploids the result applies with additive effects, or in the rare-alleles approximation with heterozygous effects.
 

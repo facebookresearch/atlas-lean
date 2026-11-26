@@ -18,14 +18,13 @@ $$\hat b_{xy} = (\mathbf 1^\top V^{-1}\mathbf 1)^{-1}\,\mathbf 1^\top V^{-1}\hat
 
 and causality is tested with $T_{\mathrm{GSMR}} = \hat b_{xy}^2/\operatorname{var}(\hat b_{xy})$, which is $\chi^2_1$ under $b_{xy} = 0$.
 
+## Remarks
+
+Under $\hat{\boldsymbol b}_{xy} \sim N(\mathbf 1 b_{xy}, V)$ the log-likelihood in $b_{xy}$ is $-\tfrac12(\hat{\boldsymbol b}_{xy} - \mathbf 1 b_{xy})^\top V^{-1}(\hat{\boldsymbol b}_{xy} - \mathbf 1 b_{xy})$; setting its derivative to zero gives the displayed estimator, and its variance is the inverse Fisher information $(\mathbf 1^\top V^{-1}\mathbf 1)^{-1}$. When $V$ is diagonal and the exposure-side variance terms are dropped, $V_{ii} = \operatorname{var}(\hat b_{zy(i)})/b_{zx(i)}^2$ and $\hat b_{xy}$ reduces to the inverse-variance-weighted estimate. Because log odds ratios are free of ascertainment bias, the method applies to case–control outcomes and the estimate refers to the general population.
+
 ## Depends on
 
 - [Ratio estimate of a single SNP](ratio-estimate.md)
-- [Inverse-variance-weighted estimator](ivw.md)
-
-## Expansion
-
-Under $\hat{\boldsymbol b}_{xy} \sim N(\mathbf 1 b_{xy}, V)$ the log-likelihood in $b_{xy}$ is $-\tfrac12(\hat{\boldsymbol b}_{xy} - \mathbf 1 b_{xy})^\top V^{-1}(\hat{\boldsymbol b}_{xy} - \mathbf 1 b_{xy})$; setting its derivative to zero gives the displayed estimator, and its variance is the inverse Fisher information $(\mathbf 1^\top V^{-1}\mathbf 1)^{-1}$. When $V$ is diagonal and the exposure-side variance terms are dropped, $V_{ii} = \operatorname{var}(\hat b_{zy(i)})/b_{zx(i)}^2$ and $\hat b_{xy}$ reduces to the inverse-variance-weighted estimate. Because log odds ratios are free of ascertainment bias, the method applies to case–control outcomes and the estimate refers to the general population.
 
 ## Sources
 

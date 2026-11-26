@@ -10,7 +10,7 @@ $$\mathbb{E}\Big[\sum_i f_i\Big] = \mu L_r P, \qquad \text{so} \qquad \mathbb{E}
 
 Selection biases $M_a$: positively selected mutations raise it above $\mu$ and purifying selection lowers it, which is why $M_a$ is compared between synonymous and non-synonymous sites. Detection thresholds on frequency or read support remove low-frequency mutations and bias $M_a$ downwards.
 
-## Expansion
+## Remarks
 
 The summed frequency $\sum_i f_i$ equals the mean, over genomes in the population, of the number of derived mutations in $r$ that each genome carries. Under neutral reproduction the frequency of every existing mutation is a martingale: sampling and bottlenecks change it randomly but not in expectation. Each passage, mutation adds on average $\mu L_r$ new derived sites per genome, so the expected mean number of derived mutations per genome increases by exactly $\mu L_r$ per passage, giving $\mu L_r P$ after $P$ passages. Infinite sites ensures that new mutations do not overwrite existing ones. The neutral expectation of the full site frequency spectrum, by contrast, depends on demography, and is obtained by forward simulation of growth, mutation and bottleneck cycles at the estimated rate.
 

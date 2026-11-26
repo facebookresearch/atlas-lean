@@ -52,3 +52,4 @@
 - [Background selection on a uniformly recombining chromosome](background-selection-on-a-uniformly-recombining-chromosome.md)
 - [Joint background selection and hitchhiking model of neutral diversity](joint-background-selection-and-hitchhiking-model-of-neutral-diversity.md)
 - [Recombination fraction with crossing over and gene conversion](recombination-fraction-with-crossing-over-and-gene-conversion.md)
+- [Forward-time theory of strong background selection](forward-time-theory-of-strong-background-selection/README.md)

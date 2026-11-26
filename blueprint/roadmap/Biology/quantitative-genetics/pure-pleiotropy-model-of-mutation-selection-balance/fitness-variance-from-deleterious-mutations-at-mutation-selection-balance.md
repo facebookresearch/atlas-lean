@@ -6,13 +6,13 @@ $$V \approx 2 q^* s^2 \approx 2us.$$
 
 Summing over independent sites $i$ with mutation rates $u_i$ and selection coefficients $s_i$, the additive variance in fitness is $\sum_i 2u_i s_i = 2U\bar s$, where $U = \sum_i u_i$ is the total mutation rate of the class and $\bar s = \sum_i u_i s_i / U$ is its mutation-weighted mean selection coefficient. A class of mutations therefore contributes variance in proportion to its total mutation rate times its mean strength of selection: strongly selected mutations, though rare, contribute more variance per mutation than weakly selected ones.
 
+## Proof sketch
+
+With additive (semidominant) effects, the average effect of the allele on fitness is $-s$, so the additive variance at frequency $x$ is $2x(1-x)s^2$. Because $q^* \ll 1$, $2q^*(1-q^*)s^2 \approx 2q^* s^2$, and substituting $q^* \approx u/s$ gives $2us$. With drift the frequency fluctuates, but for $4N_e s \gg 1$ the mean frequency is still approximately $u/s$ and the variance is approximately linear in the frequency, so the same expression holds on average. Additivity across freely recombining sites gives the sum.
+
 ## Depends on
 
 - [The frequency $U/s$ is an equilibrium](../../population-genetics/mutation-selection-balance/diploid-step-mult-fixed.md)
-
-## Expansion
-
-With additive (semidominant) effects, the average effect of the allele on fitness is $-s$, so the additive variance at frequency $x$ is $2x(1-x)s^2$. Because $q^* \ll 1$, $2q^*(1-q^*)s^2 \approx 2q^* s^2$, and substituting $q^* \approx u/s$ gives $2us$. With drift the frequency fluctuates, but for $4N_e s \gg 1$ the mean frequency is still approximately $u/s$ and the variance is approximately linear in the frequency, so the same expression holds on average. Additivity across freely recombining sites gives the sum.
 
 ## Sources
 

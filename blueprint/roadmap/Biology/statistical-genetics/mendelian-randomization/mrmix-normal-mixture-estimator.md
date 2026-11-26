@@ -23,11 +23,7 @@ in the unknowns $(\pi_0, \sigma^2)$, and set
 
 $$\hat\theta = \arg\max_{\tilde\theta} \hat\pi_0(\tilde\theta).$$
 
-## Depends on
-
-- [Ratio estimate of a single SNP](ratio-estimate.md)
-
-## Expansion
+## Remarks
 
 The residual $\hat\beta_y - \tilde\theta\hat\beta_x$ of a valid instrument is pure estimation noise exactly when $\tilde\theta = \theta$; for any other value it carries the term $(\theta - \tilde\theta) u_x$, which spreads it out. Thus the probability mass concentrated at the null component is largest, $\pi_1 + \pi_4$ instead of $\pi_4$, at the true causal effect, and maximizing the fitted null weight solves a spike-detection problem rather than a full mixture likelihood in all of $(\pi_1, \pi_2, \pi_3, \sigma_x^2, \sigma_y^2, \sigma_{xy})$. The two-component working model is correct only at $\tilde\theta = \theta$, which is all the argmax needs. Like the mode-based estimator it tolerates a majority of invalid instruments as long as the valid ones form the largest concentration, and it permits correlated pleiotropy because class-2 SNPs never collapse onto the null component.
 

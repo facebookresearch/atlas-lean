@@ -4,3 +4,4 @@ A stepping-stone model on a dense spatial grid whose migration and diversity rat
 
 - [EEMS Wishart likelihood for genetic dissimilarities](eems-wishart-likelihood-for-genetic-dissimilarities.md)
 - [Resistance-distance approximation of expected coalescence times](resistance-distance-approximation-of-expected-coalescence-times.md)
+- [Spatial demography from shared coalescence segments](spatial-demography-from-shared-coalescence-segments/README.md)

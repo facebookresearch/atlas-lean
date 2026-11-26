@@ -1,6 +1,6 @@
 # Delta-method and Fieller intervals for the instrumental-variable ratio estimate
 
-Let $\hat\beta_{Y|Z}$ and $\hat\beta_{X|Z}$ be the estimated associations of a single instrument $Z$ with the outcome $Y$ and the exposure $X$, jointly approximately normal with means $\beta_{Y|Z}, \beta_{X|Z}$, variances $v_{YY} = \mathrm{se}(\hat\beta_{Y|Z})^2$, $v_{XX} = \mathrm{se}(\hat\beta_{X|Z})^2$ and covariance $v_{XY}$. The causal effect is the ratio $\theta = \beta_{Y|Z}/\beta_{X|Z}$ (assuming $\beta_{X|Z} \neq 0$) and $\hat\theta = \hat\beta_{Y|Z}/\hat\beta_{X|Z}$ is the ratio estimate.
+Let $\hat\beta_{Y|Z}$ and $\hat\beta_{X|Z}$ be the estimated associations of a single instrument $Z$ with the outcome $Y$ and the exposure $X$, jointly (approximately) normal with means $\beta_{Y|Z}, \beta_{X|Z}$, variances $v_{YY} = \mathrm{se}(\hat\beta_{Y|Z})^2$, $v_{XX} = \mathrm{se}(\hat\beta_{X|Z})^2$ and covariance $v_{XY}$. The causal effect is the ratio $\theta = \beta_{Y|Z}/\beta_{X|Z}$ (assuming $\beta_{X|Z} \neq 0$) and $\hat\theta = \hat\beta_{Y|Z}/\hat\beta_{X|Z}$ is the ratio estimate.
 
 **Delta method (Eq. 4).** To first order,
 
@@ -8,24 +8,31 @@ $$\mathrm{se}(\hat\theta)^2 \approx \frac{v_{YY}}{\hat\beta_{X|Z}^2} + \frac{\ha
 
 and the last term vanishes when the two associations come from independent samples.
 
-**Fieller's theorem.** For every fixed $\theta$ the pivot $\hat\beta_{Y|Z} - \theta\hat\beta_{X|Z}$ is normal with mean $0$ and variance $v_{YY} - 2\theta v_{XY} + \theta^2 v_{XX}$. Hence, with $z = z_{1-\alpha/2}$, the set
+**Fieller's interval.** With $z = z_{1-\alpha/2}$, Fieller's set is [Fieller's confidence set](../../../Probability/not-yet-classified/part-17/fieller-ratio/fieller-set.md) with $a = \hat\beta_{Y|Z}$, $b = \hat\beta_{X|Z}$, $v_{aa} = v_{YY}$, $v_{bb} = v_{XX}$, $v_{ab} = v_{XY}$:
 
-$$\mathcal C = \bigl\{\theta \in \mathbb R : (\hat\beta_{Y|Z} - \theta\hat\beta_{X|Z})^2 \le z^2 (v_{YY} - 2\theta v_{XY} + \theta^2 v_{XX})\bigr\}$$
+$$\mathcal C = \bigl\{\theta \in \mathbb R : (\hat\beta_{Y|Z} - \theta\hat\beta_{X|Z})^2 \le z^2 (v_{YY} - 2\theta v_{XY} + \theta^2 v_{XX})\bigr\}.$$
 
-has exact coverage $1 - \alpha$ under the normal model. It is the solution set of the quadratic inequality $A\theta^2 - 2B\theta + D \le 0$ with $A = \hat\beta_{X|Z}^2 - z^2 v_{XX}$, $B = \hat\beta_{Y|Z}\hat\beta_{X|Z} - z^2 v_{XY}$, $D = \hat\beta_{Y|Z}^2 - z^2 v_{YY}$. So $\mathcal C$ is:
+It inverts, for each candidate $\theta$, the test of $H_0(\theta) : \beta_{Y|Z} - \theta\beta_{X|Z} = 0$ based on $\hat\beta_{Y|Z} - \theta\hat\beta_{X|Z}$, whose mean $\beta_{Y|Z} - \theta\beta_{X|Z}$ is zero only under $H_0(\theta)$. If the two estimates are jointly Gaussian with the stated means and known variances and covariance, and $v_{YY} - 2\theta v_{XY} + \theta^2 v_{XX} > 0$ at the true ratio $\theta$, then $\mathcal C$ contains the true $\theta$ with probability exactly $1 - \alpha$ ([exact coverage of Fieller's set](../../../Probability/not-yet-classified/part-17/fieller-ratio/measure-real-mem-fieller-set.md)); when the estimates are only approximately normal, or their variances are estimated, the coverage is approximately $1 - \alpha$.
 
-- a bounded interval $[\,(B - \sqrt{B^2 - AD})/A,\ (B + \sqrt{B^2 - AD})/A\,]$ if $A > 0$, i.e. the instrument–exposure association is significant at level $\alpha$;
-- the complement of a bounded interval (two half-lines) if $A < 0$ and $B^2 - AD > 0$;
-- the whole real line if $A < 0$ and $B^2 - AD \le 0$.
+**Shape.** $\mathcal C$ is the solution set of $A\theta^2 - 2B\theta + D \le 0$ with $A = \hat\beta_{X|Z}^2 - z^2 v_{XX}$, $B = \hat\beta_{Y|Z}\hat\beta_{X|Z} - z^2 v_{XY}$, $D = \hat\beta_{Y|Z}^2 - z^2 v_{YY}$, and for a positive semidefinite covariance:
+
+- if $A > 0$ (the instrument–exposure association is significant at level $\alpha$), a bounded closed interval $[\,(B - \sqrt{B^2 - AD})/A,\ (B + \sqrt{B^2 - AD})/A\,]$ containing $\hat\theta$;
+- if $A < 0$, the complement of a bounded open interval (two half-lines) when $B^2 - AD > 0$, and the whole real line when $B^2 - AD \le 0$ ([shape of Fieller's set](../../../Probability/not-yet-classified/part-17/fieller-ratio/fieller-set-shape.md));
+- if $A = 0$, the solution set of the linear inequality $-2B\theta + D \le 0$: the half-line $[D/(2B), \infty)$ if $B > 0$, the half-line $(-\infty, D/(2B)]$ if $B < 0$, and, if $B = 0$, the whole line when $D \le 0$ and the empty set when $D > 0$ (which for a positive semidefinite covariance requires $\hat\beta_{X|Z} = 0$ and $v_{XX} = 0$).
+
+## Proof sketch
+
+The delta formula is the gradient $(1/\beta_{X|Z}, -\beta_{Y|Z}/\beta_{X|Z}^2)$ of $(\beta_Y, \beta_X) \mapsto \beta_Y/\beta_X$ applied to the covariance matrix of the two estimates. Since the ratio estimator has no finite mean ([the ratio of independent normal variables is not integrable](not-integrable-div-gaussian.md)), Wald intervals built on this standard error are too narrow when $\hat\beta_{X|Z}$ is close to zero relative to its standard error, i.e. for a weak instrument. Fieller's construction avoids the ratio's distribution altogether. At the true ratio the pivot $(\hat\beta_{Y|Z} - \theta\hat\beta_{X|Z})^2/(v_{YY} - 2\theta v_{XY} + \theta^2 v_{XX})$ is $\chi^2_1$ under joint normality, which gives the coverage. The test statistic is a quadratic in $\theta$, and the sign of its leading coefficient $A$ separates the shapes; at $A = 0$ the quadratic term vanishes and the inequality is linear. An unbounded set is the honest answer when the data cannot exclude $\beta_{X|Z} = 0$. Bootstrap, Anderson–Rubin and conditional likelihood ratio intervals give alternatives, and the last two extend to several instruments.
 
 ## Depends on
 
 - [Ratio estimate of a single SNP](ratio-estimate.md)
-- [Ratio of independent normal variables is not integrable](not-integrable-div-gaussian.md)
+- [Fieller's confidence set](../../../Probability/not-yet-classified/part-17/fieller-ratio/fieller-set.md)
 
-## Expansion
+## Proof depends on
 
-The delta formula is the gradient $(1/\beta_{X|Z}, -\beta_{Y|Z}/\beta_{X|Z}^2)$ of $(\beta_Y, \beta_X) \mapsto \beta_Y/\beta_X$ applied to the covariance matrix of the two estimates. Since the ratio estimator has no finite mean, Wald intervals built on this standard error are too narrow when $\hat\beta_{X|Z}$ is close to zero relative to its standard error, i.e. for a weak instrument. Fieller's construction avoids the ratio's distribution altogether. It inverts the exact normal test of $H_0: \beta_{Y|Z} - \theta\beta_{X|Z} = 0$ for each $\theta$. The test statistic is a quadratic in $\theta$, and the sign of its leading coefficient $A$ separates the three shapes. An unbounded set is the honest answer when the data cannot exclude $\beta_{X|Z} = 0$. Bootstrap, Anderson–Rubin and conditional likelihood ratio intervals give alternatives, and the last two extend to several instruments.
+- [Exact coverage of Fieller's set](../../../Probability/not-yet-classified/part-17/fieller-ratio/measure-real-mem-fieller-set.md)
+- [Shape of Fieller's set](../../../Probability/not-yet-classified/part-17/fieller-ratio/fieller-set-shape.md)
 
 ## Sources
 

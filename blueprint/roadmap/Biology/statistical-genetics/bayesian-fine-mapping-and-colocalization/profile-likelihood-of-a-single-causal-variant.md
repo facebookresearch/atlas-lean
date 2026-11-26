@@ -12,11 +12,7 @@ $$\log L(Z; c, \hat\lambda_c) = \tfrac12\left(-Z^\top\Sigma^{-1}Z + z_c^2\right)
 
 Consequently, for two candidate causal SNPs $i$ and $j$, $\log L(Z; i, \hat\lambda_i) - \log L(Z; j, \hat\lambda_j) = \tfrac12(z_i^2 - z_j^2)$: under the single-causal-variant model, candidates are ranked by their marginal $\chi^2$ statistics.
 
-## Depends on
-
-- [Wakefield's approximate Bayes factor](wakefield-abf.md)
-
-## Expansion
+## Proof sketch
 
 Expanding the Gaussian exponent, $(Z - \lambda\Sigma e_c)^\top\Sigma^{-1}(Z - \lambda\Sigma e_c) = Z^\top\Sigma^{-1}Z - 2\lambda e_c^\top Z + \lambda^2\Sigma_{cc} = Z^\top\Sigma^{-1}Z - 2\lambda z_c + \lambda^2$. This is a quadratic in $\lambda$ minimized at $\lambda = z_c$ with minimum $Z^\top\Sigma^{-1}Z - z_c^2$; inserting it into the normal log-density gives the claim. The terms not involving $c$ cancel in likelihood ratios, which is why colocalization and fine-mapping statistics built on this model reduce to functions of $z_c^2$.
 

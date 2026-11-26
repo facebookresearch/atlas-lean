@@ -20,11 +20,7 @@ $$\mathrm{ql}(\beta_c, \sigma_g^2) = \mathrm{const} - \tfrac12\log|V| - \tfrac12
 
 **Iteration (fastGWA-GLMM).** Start from the logistic-regression estimate $\hat\beta_{c(0)}$ with $\hat\sigma^2_{g(0)} = 0$ and $\hat g_0 = 0$; then repeat: form $\hat\mu_i$, $\tilde Y_i$, $W_i$; maximize the REML quasi-likelihood over $\sigma_g^2$; set $V_{i+1} = W_i^{-1} + \hat\sigma^2_{g(i+1)}\pi$ and update $\hat\beta_{c(i+1)}$, $\hat g_{i+1}$ by the two displayed formulas; stop when the relative changes of $\hat\beta_c$ and $\hat\sigma_g^2$ fall below a tolerance. Sparsity of $\pi$ makes $V$ sparse, so $|V|$ and $V^{-1}$ terms are computed by a sparse Cholesky decomposition, and $\sigma_g^2$ can be maximized by a nested grid search instead of average-information REML, which often fails to converge at extreme case-control ratios.
 
-## Depends on
-
-- [Conditional law of the response given the random effects](../../quantitative-genetics/linear-mixed-models-and-blup/cond-distrib-mixed-model-response.md)
-
-## Expansion
+## Remarks
 
 The working vector is the first-order Taylor expansion of the link at the current mean: $\mathrm{logit}(y) \approx \mathrm{logit}(\mu) + (y - \mu)/(\mu(1-\mu))$, so $\tilde Y$ behaves like a Gaussian response with heteroscedastic residual variance $W^{-1}$ and random effect $g$, hence total variance $V = W^{-1} + \pi\sigma_g^2$. The two update formulas are then the generalized-least-squares estimate of $\beta_c$ and the BLUP of $g$ in that linear mixed model, and the REML expression is the usual restricted log-likelihood of $\tilde Y$. Iterating this linearization is Breslow–Clayton penalized quasi-likelihood. It is known to bias $\hat\sigma_g^2$ for binary traits, so the fitted variance component is a nuisance quantity for controlling relatedness rather than an estimate of heritability. Once the null model is fitted, each variant is tested with the score statistic $T = x_s^\top(y - \hat\mu)$, whose variance $x_s^\top P x_s$ is approximated by a per-variant-free ratio estimated from a sample of variants, and small $p$-values are recalibrated by a saddlepoint approximation.
 

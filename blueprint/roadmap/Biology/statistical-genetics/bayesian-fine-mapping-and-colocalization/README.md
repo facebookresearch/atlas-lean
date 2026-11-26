@@ -66,3 +66,4 @@
 - [Multinomial joint fine-mapping of multiple diseases](multinomial-joint-fine-mapping-of-multiple-diseases.md)
 - [Posterior number of causal variants at a locus](posterior-number-of-causal-variants-at-a-locus.md)
 - [Profile likelihood of a single causal variant from association z-scores](profile-likelihood-of-a-single-causal-variant.md)
+- [Multivariate adaptive shrinkage](multivariate-adaptive-shrinkage/README.md)

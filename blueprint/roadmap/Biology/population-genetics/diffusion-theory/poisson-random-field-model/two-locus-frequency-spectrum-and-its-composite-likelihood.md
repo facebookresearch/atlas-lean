@@ -18,13 +18,9 @@ $$\mathcal{L}(\Theta \mid D) = \prod_j\prod_i \frac{e^{-M_{\rho_j,i}}M_{\rho_j,i
 
 If $\tilde M$ is the model spectrum at $\theta = 1$, the maximum-likelihood mutation rate of a bin is $\hat\theta = \big(\sum_i D_i/\sum_i\tilde M_i\big)^{1/2}$.
 
-## Expansion
+## Remarks
 
 The diffusion is the forward equation of the two-locus Wright–Fisher model: multinomial resampling gives the second-order drift terms with covariance $x_i\delta_{ij} - x_ix_j$, and recombination moves haplotype frequencies deterministically toward linkage equilibrium with drift $-\rho D/2$ on $x_1$ and $+\rho D/2$ on $x_2, x_3$, removing $\rho D/2$ per unit time from $AB$ (and from $ab$) and adding it to $Ab$ and $aB$. The square root in $\hat\theta$ arises because $M$ scales as $\theta^2$: one mutation must already be segregating (rate $\propto\theta$) when the second arises (rate $\propto\theta$), and maximizing $\sum_i(-\theta^2\tilde M_i + D_i\log\theta^2)$ gives $\theta^2 = \sum D_i/\sum\tilde M_i$. Because pairs of loci are not independent, parameter uncertainty is estimated with the Godambe information matrix and a genomic block bootstrap. Two-locus statistics carry information on recent demography through linkage disequilibrium that the single-locus spectrum lacks; for unphased data the same approach is applied to two-locus genotype counts.
-
-## Depends on
-
-- [Expected site frequency spectrum under the Poisson random field](expected-sfs.md)
 
 ## Sources
 

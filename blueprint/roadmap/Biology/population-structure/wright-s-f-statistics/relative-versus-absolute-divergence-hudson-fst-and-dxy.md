@@ -10,14 +10,13 @@ $$F_{ST} = 1 - \frac{\pi_W}{\pi_B} = \frac{d_{XY} - \pi_W}{d_{XY}}.$$
 
 **Consequence.** $F_{ST}$ is a *relative* measure: for fixed $d_{XY} > 0$ it is strictly decreasing in $\pi_W$. Any process that lowers within-population diversity in a region (background selection or a selective sweep acting in both populations, or low recombination) raises $F_{ST}$ there without any change in between-population divergence. Reduced gene flow at a locus, by contrast, lengthens the time to the most recent common ancestor of sequences from the two populations and therefore raises the absolute measure $d_{XY}$. A region of elevated $F_{ST}$ is evidence of a barrier to gene flow only if $d_{XY}$ is also elevated.
 
-## Depends on
-
-- [Wright's hierarchical F-statistics identity](hierarchical-f-statistics.md)
-- [Segregating sites and pairwise differences](../../coalescent-theory/segregating-sites-and-pairwise-differences/README.md)
-
-## Expansion
+## Remarks
 
 Under the infinite-sites model, expected pairwise differences are proportional to expected coalescence times, $E[\pi_W] = 2\mu\,E[T_W]$ and $E[d_{XY}] = 2\mu\,E[T_B]$, so $F_{ST} \approx 1 - E[T_W]/E[T_B]$. Linked selection shortens within-population coalescence times $T_W$ but, after the populations have split, adds little to the between-population time $T_B$, which is dominated by the split time and ancestral diversity; hence it inflates $F_{ST}$ while leaving $d_{XY}$ roughly unchanged or even slightly lower (through reduced ancestral diversity). Loci resistant to introgression instead keep $T_B$ at its full divergence value, increasing $d_{XY}$ relative to the genomic background. Reanalyses of "genomic islands of speciation" found high-$F_{ST}$ windows without elevated $d_{XY}$, consistent with reduced diversity rather than reduced gene flow.
+
+## Depends on
+
+- [Mean number of pairwise differences](../../coalescent-theory/segregating-sites-and-pairwise-differences/mean-pair-diff.md)
 
 ## Sources
 

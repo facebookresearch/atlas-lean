@@ -20,13 +20,13 @@ $$H_{h(kk')} = \alpha_{ij} + \beta_{i'j'} + (\alpha\beta)_{ij,i'j'} + u^{*}_{F,k
 
 with fixed population and population-interaction effects and within-population GCA and SCA variances $\sigma_F^{*2}, \sigma_D^{*2}, \sigma_S^{*2}$.
 
+## Remarks
+
+The covariance formula follows by bilinearity from independence of the three random effects: $u_{F,k}$ is shared exactly when the F parents coincide, $u_{D,k'}$ when the D parents coincide, and $s_{kk'}$ only for the same pair. Under a biallelic additive–dominance model with loci in linkage equilibrium, the GCA of an F line is its expected hybrid value over random D partners (centred), which involves additive effects and the dominance deviations against the allele frequencies of the other group; the SCA collects the residual dominance (and epistatic) interaction between the two specific parental genotypes. Each variance component is estimated by REML, and the significance of $\sigma_F^2$, $\sigma_D^2$ or $\sigma_S^2$ is assessed by a likelihood-ratio test of the nested model with that component removed. In a sparse factorial design where most lines enter a single hybrid, GCA and SCA are only weakly separable, which trades variance-component precision for more distinct genotypes.
+
 ## Depends on
 
 - [Marginal covariance of the mixed-model response](../linear-mixed-models-and-blup/covariance-mixed-model-response.md)
-
-## Expansion
-
-The covariance formula follows by bilinearity from independence of the three random effects: $u_{F,k}$ is shared exactly when the F parents coincide, $u_{D,k'}$ when the D parents coincide, and $s_{kk'}$ only for the same pair. Under a biallelic additive–dominance model with loci in linkage equilibrium, the GCA of an F line is its expected hybrid value over random D partners (centred), which involves additive effects and the dominance deviations against the allele frequencies of the other group; the SCA collects the residual dominance (and epistatic) interaction between the two specific parental genotypes. Each variance component is estimated by REML, and the significance of $\sigma_F^2$, $\sigma_D^2$ or $\sigma_S^2$ is assessed by a likelihood-ratio test of the nested model with that component removed. In a sparse factorial design where most lines enter a single hybrid, GCA and SCA are only weakly separable, which trades variance-component precision for more distinct genotypes.
 
 ## Sources
 

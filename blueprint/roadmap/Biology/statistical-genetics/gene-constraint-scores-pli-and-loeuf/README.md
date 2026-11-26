@@ -27,3 +27,4 @@
 - [The M-step maximizes the EM objective](em-q-le-em-step.md)
 - [EM does not decrease the likelihood](log-lik-le-log-lik-em-step.md)
 - [Monotonicity of the log-likelihood along the class-weight EM iterates](log-lik-iterate-em-step-monotone.md)
+- [Maximum credible population allele frequency for a Mendelian variant](maximum-credible-population-allele-frequency.md)

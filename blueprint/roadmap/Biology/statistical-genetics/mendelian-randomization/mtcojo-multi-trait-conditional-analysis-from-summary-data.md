@@ -16,15 +16,13 @@ $$\operatorname{var}(\hat b_{zy\mid\boldsymbol b_{xy}}) = \operatorname{var}(\ha
 
 where $V_{zx} = \operatorname{var}(\hat{\boldsymbol b}_{zx})$ has entries $\rho_{x_ix_j} r_p(x_i,x_j)\sqrt{\operatorname{var}(\hat b_{zx_i})\operatorname{var}(\hat b_{zx_j})}$ and $\operatorname{cov}(\hat b_{zy},\hat b_{zx_i}) = \rho_{x_iy} r_p(x_i,y)\sqrt{\operatorname{var}(\hat b_{zx_i})\operatorname{var}(\hat b_{zy})}$, with $\rho$ the proportion of sample overlap and $r_p$ the phenotypic correlation (the products $\rho r_p$ are approximated by bivariate LD-score-regression intercepts). With no sample overlap the variance is $\operatorname{var}(\hat b_{zy}) + \hat{\boldsymbol b}_{xy}^\top V_{zx}\hat{\boldsymbol b}_{xy}$. The conditional test statistic is $T_{\mathrm{cond}} = \hat b_{zy\mid\boldsymbol b_{xy}}^2/\operatorname{var}(\hat b_{zy\mid\boldsymbol b_{xy}})$.
 
+## Remarks
+
+Fitting $y = x_0 b_0 + \boldsymbol x^\top \boldsymbol b_{xy} + e$ is equivalent to regressing $y$ adjusted for $\boldsymbol x$ on $x_0$ adjusted for $\boldsymbol x$, so a GSMR analysis on conditional SNP effects estimates the effect of $x_0$ given the covariates. The joint-from-marginal transformation is the COJO identity with the LD matrix replaced by the genetic correlation matrix of the covariates and the per-marker scaling by their SNP heritabilities. The variance formula is the variance of a linear combination $\hat b_{zy} - \hat{\boldsymbol b}_{zx}^\top\boldsymbol b_{xy}$ treating $\boldsymbol b_{xy}$ as fixed. Because $\boldsymbol\beta_{xy}$ comes from Mendelian randomization rather than observational regression, the conditional effect avoids the collider bias that arises when conditioning GWAS on a heritable covariate.
+
 ## Depends on
 
 - [Generalized summary-data-based Mendelian randomization (GSMR)](gsmr-generalized-summary-data-mendelian-randomization.md)
-- [COJO joint estimate](../genomic-prediction-from-summary-statistics/cojo-joint.md)
-- [Conditional estimate of second-block effects (COJO)](../genomic-prediction-from-summary-statistics/conditional-estimate.md)
-
-## Expansion
-
-Fitting $y = x_0 b_0 + \boldsymbol x^\top \boldsymbol b_{xy} + e$ is equivalent to regressing $y$ adjusted for $\boldsymbol x$ on $x_0$ adjusted for $\boldsymbol x$, so a GSMR analysis on conditional SNP effects estimates the effect of $x_0$ given the covariates. The joint-from-marginal transformation is the COJO identity with the LD matrix replaced by the genetic correlation matrix of the covariates and the per-marker scaling by their SNP heritabilities. The variance formula is the variance of a linear combination $\hat b_{zy} - \hat{\boldsymbol b}_{zx}^\top\boldsymbol b_{xy}$ treating $\boldsymbol b_{xy}$ as fixed. Because $\boldsymbol\beta_{xy}$ comes from Mendelian randomization rather than observational regression, the conditional effect avoids the collider bias that arises when conditioning GWAS on a heritable covariate.
 
 ## Sources
 

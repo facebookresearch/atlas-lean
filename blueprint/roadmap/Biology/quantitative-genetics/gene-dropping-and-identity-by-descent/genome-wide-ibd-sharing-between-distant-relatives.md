@@ -17,14 +17,14 @@ $$\beta(t) = 1 - \prod_{s=1}^{t}\left(1 - \frac{1}{2 N_e(s)}\right),$$
 
 which increases with $t$ while the segments get shorter, so deeper reference times mean many more, shorter segments.
 
+## Proof sketch
+
+Item 1: each relative receives a given one of the ancestor's two genes with probability $2^{-m}$, independently, and either gene can be shared. Item 2: moving away from an IBD point, sharing is broken by the first crossover in any of the $2m$ meioses, a Poisson process of rate $2m$, so the distance to the segment end is $\mathrm{Exp}(2m)$ on each side; conditioning on covering a point size-biases the length (Cox's inspection paradox). Item 3 uses the Poisson approximation for rare, short segments (Donnelly 1983); a second-order effect is clumping, since a later crossover can restore IBD with probability of order $1/m$, and the Poisson clumping heuristic and exact methods refine the approximation. Item 4 is the second moment of an integral of indicators (Guo 1995). The product formula for $\beta(t)$ follows because two lineages fail to coalesce in generation $s$ with probability $1 - 1/(2N_e(s))$ under Wright–Fisher sampling. Thompson's review also stresses the large variance of segment length for a given number of meioses: for a $2$ cM segment the number of separating meioses has median about $35$ but ranges from about $6$ to $115$ between the $10\%$ and $90\%$ points.
+
 ## Depends on
 
 - [Kinship in the gene-dropping model](ibd-model-kinship.md)
 - [Haldane's map function](../../population-genetics/linkage-disequilibrium-and-haldane-s-map-functio/haldane.md)
-
-## Expansion
-
-Item 1: each relative receives a given one of the ancestor's two genes with probability $2^{-m}$, independently, and either gene can be shared. Item 2: moving away from an IBD point, sharing is broken by the first crossover in any of the $2m$ meioses, a Poisson process of rate $2m$, so the distance to the segment end is $\mathrm{Exp}(2m)$ on each side; conditioning on covering a point size-biases the length (Cox's inspection paradox). Item 3 uses the Poisson approximation for rare, short segments (Donnelly 1983); a second-order effect is clumping, since a later crossover can restore IBD with probability of order $1/m$, and the Poisson clumping heuristic and exact methods refine the approximation. Item 4 is the second moment of an integral of indicators (Guo 1995). The product formula for $\beta(t)$ follows because two lineages fail to coalesce in generation $s$ with probability $1 - 1/(2N_e(s))$ under Wright–Fisher sampling. Thompson's review also stresses the large variance of segment length for a given number of meioses: for a $2$ cM segment the number of separating meioses has median about $35$ but ranges from about $6$ to $115$ between the $10\%$ and $90\%$ points.
 
 ## Sources
 

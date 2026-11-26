@@ -14,13 +14,13 @@ $$T_i=\sum_{k=i}^n\frac{\theta_k}{k(k-1)},\qquad \theta(T)=\theta_{i-1}\ \text{ 
 
 with time measured in mutations per base pair (divide by $\mu$ for generations and $\theta$ by $4\mu$ for individuals).
 
+## Remarks
+
+A mutation on a branch subtending $i$ of $n$ leaves arises during epoch $k$ on one of the $k$ branches, and $P(k,i\mid n)$ is the probability under Kingman's coalescent that a given branch in the $k$-lineage epoch has exactly $i$ descendants; multiplying by $\mu\,\mathbb E(t_k)$ and summing over epochs gives $p_i$, linear in the $\theta_k$. Because the size changes only at coalescent events of the sample, the model is nonparametric yet has at most $n-1$ parameters, and the greedy break-point search trades fit against parsimony. Since the SFS of unlinked sites is used, the method needs no phasing or recombination model and scales to hundreds of samples, with best resolution for recent history where many lineages remain.
+
 ## Depends on
 
 - [Expected site frequency spectrum under variable population size](variable-sfs.md)
-
-## Expansion
-
-A mutation on a branch subtending $i$ of $n$ leaves arises during epoch $k$ on one of the $k$ branches, and $P(k,i\mid n)$ is the probability under Kingman's coalescent that a given branch in the $k$-lineage epoch has exactly $i$ descendants; multiplying by $\mu\,\mathbb E(t_k)$ and summing over epochs gives $p_i$, linear in the $\theta_k$. Because the size changes only at coalescent events of the sample, the model is nonparametric yet has at most $n-1$ parameters, and the greedy break-point search trades fit against parsimony. Since the SFS of unlinked sites is used, the method needs no phasing or recombination model and scales to hundreds of samples, with best resolution for recent history where many lineages remain.
 
 ## Sources
 

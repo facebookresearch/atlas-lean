@@ -20,11 +20,7 @@ $$p_1 \approx s \prod_{j=1}^{K-1} \frac{\mu_j}{\delta_j}.$$
 
 The formulas assume the population is large enough that a $k$-mutant lineage does not drift to a high frequency before succeeding.
 
-## Depends on
-
-- [Fitness-valley crossing and stochastic tunneling](fitness-valley-crossing-and-stochastic-tunneling.md)
-
-## Expansion
+## Proof sketch
 
 First-step analysis on one $k$-mutant. The four possible first events occur at total rate $2 - \delta_k + \mu_k$: death (rate $1$, success probability $0$), division (rate $1-\delta_k$, success probability $1-(1-p_k)^2$), production of a successful $(k+1)$-mutant (rate $\mu_k p_{k+1}$, success probability $1$), and production of an unsuccessful one (rate $\mu_k(1-p_{k+1})$, after which the original individual still has success probability $p_k$). Equating gives the quadratic $(1-\delta_k)p_k^2 + (\delta_k + \mu_k p_{k+1})p_k - \mu_k p_{k+1} = 0$, whose nonnegative root is the displayed formula, using $(\delta+\mu p)^2 + 4(1-\delta)\mu p = (\delta-\mu p)^2 + 4\mu p$. The neutral limit says a successful neutral lineage must drift to size about $1/\sqrt{\mu_k p_{k+1}}$, which a critical branching process does with probability of that order; the deleterious limit says a lineage survives about $1/\delta_k$ generations and must produce a successful mutant in that time.
 

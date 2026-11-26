@@ -106,3 +106,5 @@
 - [Right-hand-side updating Gibbs sampler from summary statistics](right-hand-side-updating-gibbs-sampler-from-summary-statistics.md)
 - [SBayesR: multiple-regression likelihood on summary statistics with a BayesR mixture prior](sbayesr-summary-statistic-likelihood-with-bayesr-mixture-prior.md)
 - [SumHer: expected association statistics under an annotation-based heritability model](sumher-expected-association-statistics-under-a-heritability-model.md)
+- [Absolute risk models with polygenic scores](absolute-risk-models-with-polygenic-scores/README.md)
+- [Cross-population genetic correlation of causal effects](cross-population-genetic-correlation-of-causal-effects/README.md)

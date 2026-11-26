@@ -14,13 +14,13 @@ $$N_{\mathrm{fix}}(i)=2N\mu\,f_i\,\frac{1}{s_{d2}-s_{d1}}\int_{s_{d1}}^{s_{d2}}P
 
 where $\mu$ is the mutation rate per site per generation, and, treating fixations across $L$ functional sites as a Poisson process, the mean waiting time between deleterious fixations is $t_w=1/(L\,N_{\mathrm{fix}})$.
 
-## Depends on
-
-- [Kimura's fixation probability is below $x$ for deleterious alleles](../selection-and-dominance-in-kimura-s-fixation-pro/kimura-fixation-lt.md)
-
-## Expansion
+## Proof sketch
 
 For semidominance the heterozygote has advantage $s/2$, and Kimura's $u(p)=(1-e^{-4N(s/2)p})/(1-e^{-4N(s/2)})$ at $p=1/(2N)$ gives the formula. The factor $e^{2Ns_d}$ makes fixation exponentially unlikely once $2Ns_d\gg1$, so only the weakly deleterious class $0<2Ns_d\le 1$ (and partly $1<2Ns_d\le10$) contributes substitutions. The large mutational input of deleterious mutations relative to beneficial ones can nevertheless make deleterious fixations a non-negligible source of sweep-like signals, especially in between-population statistics such as $F_{ST}$. Background selection enters only through the rescaling $N\mapsto BN$, which raises the fixation probability of weakly deleterious mutations.
+
+## Depends on
+
+- [Kimura's fixation probability](../wright-fisher-diffusion/kimura-fixation.md)
 
 ## Sources
 

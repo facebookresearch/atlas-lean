@@ -16,14 +16,13 @@ $$M(t) = 1 - \exp\Bigl(-\int_0^t m(t')\,dt'\Bigr)$$
 
 is nondecreasing from $0$ to at most $1$, constant on intervals of isolation ($m = 0$). It is read as the fraction of ancestry already merged by time $t$. A clean split at time $T$ appears as a single pulse of $m$ near $T$. Admixture of a fraction $\alpha$ from a lineage that diverged at $T_a > T$ gives a plateau of $M$ at about $1 - \alpha$ between $T$ and $T_a$.
 
-## Depends on
-
-- [State of two lineages in the island model](pair-state.md)
-- [A two-lineage isolation-with-migration law across a population split](isolation-and-isolation-with-migration-two-linea.md)
-
-## Expansion
+## Remarks
 
 From $S_{11}$ either lineage may migrate (rate $m$ each, total $2m$) or the pair may coalesce at rate $c_1$. From $S_{12}$ either lineage may move into the other's population, and no coalescence is possible. Solving the Kolmogorov forward equations along the segments gives $P_{\mathrm{IM}}$. The re-parametrization is over-specified once the populations are fully mixed: any large $m$ then gives the same rates, which is why the $\beta_1$ and $\beta_2$ penalties are needed and why $m$ is reported only while $M(t) < 0.999$. A population split corresponds in this parametrization to an instantaneous transfer of lineages, hence a migration pulse. A deep archaic branch merges into the extant trunk only at its own divergence, which leaves $M$ flat at $1 - \alpha$ in between. Numerically $M(t)$ tracks the relative cross-coalescence rate $2\lambda_{12}/(\lambda_{11} + \lambda_{22})$, while giving it a migration-based interpretation.
+
+## Depends on
+
+- [MSMC2: pairwise composite likelihood under the sequentially Markovian coalescent](../two-locus-coalescent/multiple-sequentially-markovian-coalescent/msmc2-pairwise-composite-likelihood.md)
 
 ## Sources
 

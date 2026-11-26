@@ -22,14 +22,14 @@ which is approximately $1/\sqrt{\mu_1 s}$ for effectively neutral intermediates.
 
 $$\tau_{\mathrm{seq}} \approx \frac{1}{N\mu_0\rho_1} + \frac{1}{N\mu_1(s+\delta_1)}.$$
 
+## Proof sketch
+
+With $p_2 = s$ the recursion for $p_1$ is the $K=2$ case of the general formula. Successful single mutants arise as a Poisson process of rate $N\mu_0 p_1$, so the waiting time for the first is exponential with mean $1/(N\mu_0 p_1)$; when $N\mu_0 \ll 1$ this dominates the drift time of the successful lineage and the establishment time of the double mutant. The fixation probability $\rho_1$ is Kimura's haploid formula for selection coefficient $-\delta_1$. Comparing $p_1$ with $\rho_1$ locates the crossover: a neutral single mutant fixes with probability $1/N$, which exceeds $\sqrt{\mu_1 s}$ exactly when $N < 1/\sqrt{\mu_1 s}$. Below $N_\times$, the crossing time is the time to produce a single mutant destined to fix plus the time for that fixed background to produce an established double mutant, whose establishment probability is about $s + \delta_1$ relative to the fixed single-mutant background. The strongly deleterious case recovers the result of Weinreich and Chao for a haploid population when $\mu_0 = \mu_1$.
+
 ## Depends on
 
 - [Success probability of a mutant lineage in a fitness valley](success-probability-of-a-mutant-lineage-in-a-fitness-valley.md)
-- [Fitness-valley crossing and stochastic tunneling](fitness-valley-crossing-and-stochastic-tunneling.md)
-
-## Expansion
-
-With $p_2 = s$ the recursion for $p_1$ is the $K=2$ case of the general formula. Successful single mutants arise as a Poisson process of rate $N\mu_0 p_1$, so the waiting time for the first is exponential with mean $1/(N\mu_0 p_1)$; when $N\mu_0 \ll 1$ this dominates the drift time of the successful lineage and the establishment time of the double mutant. The fixation probability $\rho_1$ is Kimura's haploid formula for selection coefficient $-\delta_1$. Comparing $p_1$ with $\rho_1$ locates the crossover: a neutral single mutant fixes with probability $1/N$, which exceeds $\sqrt{\mu_1 s}$ exactly when $N < 1/\sqrt{\mu_1 s}$. Below $N_\times$, the crossing time is the time to produce a single mutant destined to fix plus the time for that fixed background to produce an established double mutant, whose establishment probability is about $s + \delta_1$ relative to the fixed single-mutant background. The strongly deleterious case recovers the result of Weinreich and Chao for a haploid population when $\mu_0 = \mu_1$.
+- [Kimura's fixation probability](../../diffusion-theory/wright-fisher-diffusion/kimura-fixation.md)
 
 ## Sources
 

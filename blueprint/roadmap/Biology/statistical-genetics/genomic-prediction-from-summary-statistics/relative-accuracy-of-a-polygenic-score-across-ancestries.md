@@ -6,11 +6,7 @@ $$\frac{R_2^2}{R_1^2} \approx \frac{\rho_b^2 h_2^2}{h_1^2} \times \left(\frac{\s
 
 The four factors are the squared cross-ancestry correlation of causal effects, the heritability ratio, the ratio of squared PGS–trait covariances, which depends on LD and allele-frequency differences, and the ratio of PGS variances. When causal variants are unknown, the inner sums over $j$ are replaced by averages over candidate causal SNPs near each PGS-SNP.
 
-## Depends on
-
-- [Squared accuracy of a polygenic score](accuracy-sq.md)
-
-## Expansion
+## Proof sketch
 
 Write $R_l^2 = \operatorname{cov}(\mathrm{PGS}_l, y_l)^2 / (\operatorname{var}(\mathrm{PGS}_l)\operatorname{var}(y_l))$. The PGS weights are the same in both populations. The covariance of the score with the genetic value is a sum over PGS-SNPs of the estimated weight times the causal effects tagged through LD. On the standardized scale, moving from population $1$ to population $2$ rescales each SNP by the ratio of genotype standard deviations, which is the square-root MAF factor, and replaces the tagging $\sum_j r_{jk,1}^2$ by $\sum_j r_{jk,1}r_{jk,2}$. Correlated rather than identical causal effects contribute $\rho_b$, and normalizing by the trait variance contributes $h_2^2/h_1^2$. Squaring the covariance ratio and dividing by the PGS variance ratio gives the formula. With identical populations every factor is $1$.
 

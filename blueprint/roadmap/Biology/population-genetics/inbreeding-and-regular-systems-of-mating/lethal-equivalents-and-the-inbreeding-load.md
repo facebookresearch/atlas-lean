@@ -14,13 +14,17 @@ Since each $F \mapsto \ln(1 - Fb_l)$ is concave, $\ln W$ is concave in $F$ and t
 
 The slope $B$ is the **number of lethal equivalents** (per gamete): the total inbreeding load, expressed as the number of recessive lethals that would cause the same decline of log fitness. For rare fully recessive lethals ($s_l = 1$, $h_l = 0$, $q_l \to 0$), $b_l = p_l q_l/(1 - q_l^2) \approx q_l$, so $B$ is the expected number of lethal alleles carried by a gamete. Detrimental alleles of small effect contribute $b_l \approx s_l q_l(1 - 2h_l)$ each, and many of them add up to lethal equivalents. Completely inbred individuals ($F = 1$) have log fitness lower than outbred ones by approximately $B$.
 
-## Depends on
-
-- [Mean fitness is linear in the inbreeding coefficient](mean-fitness-under-inbreeding.md)
-
-## Expansion
+## Proof sketch
 
 By the single-locus result, $\bar w_l(F) = \bar w_l(0) - F p_l q_l s_l(1 - 2h_l) = \bar w_l(0)(1 - F b_l)$. Multiplicativity and independence across loci turn the product of means into a sum of logarithms, and $\ln(1 - x) \le -x$ with near equality for small $x$ gives both the linear approximation and the bound. This is the Morton–Crow–Muller regression of log survival on $F$: $A$ measures the load expressed in the outbred population, $B$ the load concealed in heterozygotes that inbreeding exposes. Because only partially recessive alleles ($h < \tfrac12$) contribute positively, the size of $B$ is evidence about dominance. Selection against homozygotes exposed by inbreeding can remove these alleles (purging), which lowers $B$ over generations of inbreeding; Hedrick and García-Dorado review estimates of lethal equivalents, purging, and genetic rescue in this framework.
+
+## Depends on
+
+- [Genotype frequencies of an inbred individual](genotype-frequencies-under-inbreeding.md)
+
+## Proof depends on
+
+- [Mean fitness is linear in the inbreeding coefficient](mean-fitness-under-inbreeding.md)
 
 ## Sources
 

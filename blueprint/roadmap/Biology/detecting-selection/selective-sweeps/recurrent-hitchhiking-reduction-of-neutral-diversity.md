@@ -1,8 +1,6 @@
-# Recurrent hitchhiking reduction of neutral diversity
+# Recurrent hitchhiking and the protein divergence of a gene
 
-Let beneficial substitutions sweep to fixation near a neutral site at rate $\lambda$ per site per generation, each with selection coefficient $s$ and intensity $\gamma = 2N_es$, and let $\rho$ be the recombination rate per site per generation and $\theta$ the neutral population mutation rate. In the Wiehe–Stephan approximation the expected neutral diversity is
-
-$$E(\pi) = \frac{\theta\rho}{\rho + k\gamma\lambda}, \qquad k \approx 0.075.$$
+Assume the setting of [equilibrium neutral diversity under recurrent selective sweeps](recurrent-hitchhiking-equilibrium-diversity.md), written with neutral diversity $\theta$ in place of $\pi_0$, sweep rate $\lambda$ in place of $\nu$, intensity $\gamma = 2N_es$ in place of $\alpha$ and $k$ in place of $\kappa$, so that $E(\pi) = \theta\rho/(\rho + k\gamma\lambda)$ with $k \approx 0.075$.
 
 **Linking sweeps to protein divergence.** If a constant fraction $\alpha$ of amino acid substitutions at gene $i$ was fixed by positive selection, $K_{a,i}$ is its amino acid divergence and $T$ is the divergence time in generations to the outgroup, the local sweep rate is $\lambda_i = \alpha K_{a,i}/2T$, so
 
@@ -10,14 +8,13 @@ $$E(\pi_i) = \frac{\theta\rho_i}{\rho_i + k\,2N_e s\,(\alpha K_{a,i}/2T)} = \fra
 
 with $\rho_i$ the local recombination rate. Because $N_e/T$ depends only on scaled quantities ($N_e = \theta/3\mu$ and $T = (\bar K_s - \theta)/2\mu$ for X-linked loci, so the neutral mutation rate $\mu$ cancels), $E(\pi_i)/\theta$ depends on the selection parameters only through the product $\alpha s$. Synonymous diversity therefore declines with the protein divergence of the gene, and $\alpha$ and $s$ cannot be separated from diversity data alone.
 
+## Proof sketch
+
+Substituting the local sweep rate $\lambda_i$ and $\gamma = 2N_es$ into the equilibrium law gives the displayed form. Fitting this relation by simulation-based maximum likelihood to 137 X-linked Drosophila coding regions estimated $\alpha s \approx 6\times10^{-6}$; combined with McDonald–Kreitman estimates of $\alpha$, adaptive amino acid substitutions are inferred to be weakly selected ($s$ of order $10^{-5}$).
+
 ## Depends on
 
-- [Probability that a neutral lineage stays linked during a deterministic sweep](hitchhiking-deterministic-escape-probability.md)
-- [Sweep duration](sweep-duration.md)
-
-## Expansion
-
-Each sweep reduces diversity at a linked site by an amount that grows with $s$ and shrinks with recombination distance; integrating over sweeps occurring at rate $\lambda$ per site along the chromosome gives an effective coalescence rate inflated by a term proportional to $\gamma\lambda/\rho$, and diversity is $\theta$ divided by $1 + k\gamma\lambda/\rho$. Substituting $\lambda_i$ and $\gamma = 2N_es$ gives the second form. Fitting this relation by simulation-based maximum likelihood to 137 X-linked Drosophila coding regions estimated $\alpha s \approx 6\times10^{-6}$; combined with McDonald–Kreitman estimates of $\alpha$, adaptive amino acid substitutions are inferred to be weakly selected ($s$ of order $10^{-5}$).
+- [Equilibrium neutral diversity under recurrent selective sweeps](recurrent-hitchhiking-equilibrium-diversity.md)
 
 ## Sources
 

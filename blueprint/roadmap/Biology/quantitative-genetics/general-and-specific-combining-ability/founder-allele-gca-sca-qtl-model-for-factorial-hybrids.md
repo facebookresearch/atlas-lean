@@ -8,13 +8,13 @@ where $A, B, C$ code fixed effects of the parental populations and their interac
 
 **Degrees of freedom.** Because each row of $X_{FA_D}$ and $X_{FA_F}$ sums to $1$, the QTL GCA effects carry $3$ degrees of freedom in each group and the SCA interactions $3 \times 3 = 9$, for $15$ in total; GCA and SCA QTL effects are tested by Wald tests on these contrasts.
 
+## Remarks
+
+Row sums equal to one make the columns of $X_{FA_D}$ collinear with the intercept, so only $4 - 1 = 3$ contrasts of $\gamma_{FA_D}$ are identifiable, and likewise for $\theta_{FA_F}$. The products satisfy $\sum_{b} (X_{FA_{DF}})_{\cdot,(a,b)} = (X_{FA_D})_{\cdot,a}$ and $\sum_a (X_{FA_{DF}})_{\cdot,(a,b)} = (X_{FA_F})_{\cdot,b}$, so the span of the $16$ interaction columns contains the main-effect columns; after removing them, an interaction table of size $4\times 4$ has $(4-1)(4-1) = 9$ free parameters, exactly as in a two-way ANOVA. Founder-allele probabilities at each marker are imputed from the parental lines' genotypes at flanking informative markers. Fixed population effects absorb the mean differences between biparental families so that QTL effects are estimated within families, and the random parental effects absorb background polygenic GCA for lines used in several hybrids.
+
 ## Depends on
 
 - [GCA–SCA mixed model of hybrid values](gca-sca-mixed-model-of-hybrid-values.md)
-
-## Expansion
-
-Row sums equal to one make the columns of $X_{FA_D}$ collinear with the intercept, so only $4 - 1 = 3$ contrasts of $\gamma_{FA_D}$ are identifiable, and likewise for $\theta_{FA_F}$. The products satisfy $\sum_{b} (X_{FA_{DF}})_{\cdot,(a,b)} = (X_{FA_D})_{\cdot,a}$ and $\sum_a (X_{FA_{DF}})_{\cdot,(a,b)} = (X_{FA_F})_{\cdot,b}$, so the span of the $16$ interaction columns contains the main-effect columns; after removing them, an interaction table of size $4\times 4$ has $(4-1)(4-1) = 9$ free parameters, exactly as in a two-way ANOVA. Founder-allele probabilities at each marker are imputed from the parental lines' genotypes at flanking informative markers. Fixed population effects absorb the mean differences between biparental families so that QTL effects are estimated within families, and the random parental effects absorb background polygenic GCA for lines used in several hybrids.
 
 ## Sources
 

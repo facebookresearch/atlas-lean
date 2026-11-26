@@ -16,14 +16,14 @@ $$-2 \log \ell(\alpha, \beta_j, \sigma_g^2, \sigma_e^2) = (y - X\alpha - h_j\bet
 
 Hence maximum-likelihood and REML estimates, likelihood-ratio and Wald tests and their p-values are identical on the transformed data. The same holds for ridge regression, LASSO and Henderson's mixed-model equations.
 
-## Depends on
-
-- [Marginal log-likelihood of the mean](../bolt-lmm-mixed-model-association/log-lik.md)
-- [Marginal phenotypic covariance matrix](../bolt-lmm-mixed-model-association/v.md)
-
-## Expansion
+## Proof sketch
 
 Item 1 is $F^\top F = H^\top P^\top P H$. For item 3, the residual transforms as $z - W\alpha - f_j\beta_j = P(y - X\alpha - h_j\beta_j)$ and $(P V P^\top)^{-1} = P V^{-1} P^\top$, so the quadratic form is unchanged; $\lvert P V P^\top \rvert = \lvert P \rvert^2 \lvert V \rvert = \lvert V \rvert$ because $\lvert P \rvert = \pm 1$. With $A = V^{1/2}$, the decorrelating map $B = PAP^\top$ (for example) satisfies $\mathrm{Var}(B^{-1} z) = I$, so the transformed model reduces to ordinary least squares exactly as the original does. For ridge regression, $((PX)^\top PX + \lambda I)^{-1} (PX)^\top Py = (X^\top X + \lambda I)^{-1} X^\top y$. Geometrically, standardized SNP and phenotype columns are points on a sphere in $\mathbb{R}^n$ and associations are angles between them, which rotations preserve. A random orthogonal $P$ therefore acts as an encryption key: the rows of the transformed data no longer correspond to individuals, yet every likelihood-based quantitative-genetic analysis can be run on them unchanged.
+
+## Depends on
+
+- [Marginal log-likelihood of the mean](log-lik.md)
+- [Marginal phenotypic covariance matrix](v.md)
 
 ## Sources
 

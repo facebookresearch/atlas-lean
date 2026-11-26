@@ -8,13 +8,13 @@ $$\hat d_i = \hat b_{xy(i)} - \hat b_{xy(\text{top})}, \qquad \operatorname{var}
 
 and $T_i = \hat d_i^2/\operatorname{var}(\hat d_i)$. Under a causal model with no pleiotropy, $E[\hat b_{xy(i)}] = b_{xy}$ for every valid instrument, so $E[\hat d_i] = 0$ and $T_i$ is approximately $\chi^2_1$. Instruments with $P(\chi^2_1 > T_i) < 0.01$ are removed as pleiotropic outliers before the GSMR estimate is computed.
 
+## Remarks
+
+A pleiotropic SNP $i$ has $\hat b_{zy(i)} = b_{xy}\hat b_{zx(i)} + \delta_i + \text{noise}$, so its ratio estimate is shifted by $\delta_i / b_{zx(i)}$ and $\hat d_i$ acquires a non-zero mean. The power of each test grows with the exposure association of the reference SNP, which argues for a strong target; taking the single strongest SNP is fragile because extreme exposure effects are themselves often pleiotropic. The lenient threshold $0.01$ is deliberate: discarding a valid instrument costs only power, not calibration of the subsequent GSMR test, and with no outliers about $1\%$ of instruments are removed by chance.
+
 ## Depends on
 
 - [Generalized summary-data-based Mendelian randomization (GSMR)](gsmr-generalized-summary-data-mendelian-randomization.md)
-
-## Expansion
-
-A pleiotropic SNP $i$ has $\hat b_{zy(i)} = b_{xy}\hat b_{zx(i)} + \delta_i + \text{noise}$, so its ratio estimate is shifted by $\delta_i / b_{zx(i)}$ and $\hat d_i$ acquires a non-zero mean. The power of each test grows with the exposure association of the reference SNP, which argues for a strong target; taking the single strongest SNP is fragile because extreme exposure effects are themselves often pleiotropic. The lenient threshold $0.01$ is deliberate: discarding a valid instrument costs only power, not calibration of the subsequent GSMR test, and with no outliers about $1\%$ of instruments are removed by chance.
 
 ## Sources
 

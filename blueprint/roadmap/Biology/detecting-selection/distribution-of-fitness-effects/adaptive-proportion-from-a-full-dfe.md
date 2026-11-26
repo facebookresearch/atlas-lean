@@ -12,14 +12,13 @@ $$\alpha \approx \frac{d_{\mathrm{sel}} - \dfrac{l^d_{\mathrm{sel}}}{l^d_{\mathr
 
 after first removing from $d_{\mathrm{sel}}$ and $d_{\mathrm{neut}}$ the expected number of ingroup polymorphisms counted as fixed differences (the divergence expectations at $\lambda = 0$). This version assumes the ingroup and outgroup lineages share the same scaled DFE; the polymorphism-only version does not.
 
+## Remarks
+
+Each new mutation with coefficient $S$ fixes at rate proportional to $S/(1 - e^{-S})$ relative to a neutral mutation, so the expected number of substitutions contributed by each part of the DFE is its weight times this factor. Splitting the integral at $S = 0$ separates adaptive from neutral and slightly deleterious substitutions. In the divergence-based version the neutral divergence calibrates $\lambda$, and the deleterious integral predicts how many selected-site substitutions would occur without adaptation; the excess is attributed to positive selection, as in the McDonald–Kreitman logic. Fitting a deleterious-only DFE to data that contain beneficial polymorphisms biases this subtraction. In simulations the polymorphism-only estimate recovered $\alpha$ accurately even when the individual parameters $p_b$ and $S_b$ were poorly identified, because $\alpha$ depends mainly on their product.
+
 ## Depends on
 
 - [Full-DFE model of polymorphism and divergence counts](full-dfe-model-of-polymorphism-and-divergence-counts.md)
-- [Proportion of adaptive nonsynonymous substitutions](../mcdonald-kreitman-test/alpha.md)
-
-## Expansion
-
-Each new mutation with coefficient $S$ fixes at rate proportional to $S/(1 - e^{-S})$ relative to a neutral mutation, so the expected number of substitutions contributed by each part of the DFE is its weight times this factor. Splitting the integral at $S = 0$ separates adaptive from neutral and slightly deleterious substitutions. In the divergence-based version the neutral divergence calibrates $\lambda$, and the deleterious integral predicts how many selected-site substitutions would occur without adaptation; the excess is attributed to positive selection, as in the McDonald–Kreitman logic. Fitting a deleterious-only DFE to data that contain beneficial polymorphisms biases this subtraction. In simulations the polymorphism-only estimate recovered $\alpha$ accurately even when the individual parameters $p_b$ and $S_b$ were poorly identified, because $\alpha$ depends mainly on their product.
 
 ## Sources
 

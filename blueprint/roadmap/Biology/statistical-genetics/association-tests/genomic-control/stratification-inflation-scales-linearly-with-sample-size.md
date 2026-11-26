@@ -14,14 +14,14 @@ In particular, for a trait with no heritability at the markers ($h^2 = 0$), such
 
 $$\lambda(N_2) = \frac{N_2}{N_1}\bigl(\lambda(N_1) - 1\bigr) + 1.$$
 
+## Proof sketch
+
+Both the polygenic signal and the stratification bias enter the expected $\chi^2$ through terms proportional to $N$, because each is a squared mean shift whose estimate sharpens with sample size, while the null contribution $1 - h^2$ does not grow. Subtracting the constant and taking the ratio at two sample sizes gives the proposition. The rescaling is used to calibrate simulations to a biobank: an inflation $\lambda \approx 12$ on birthplace coordinates in a sample of $300{,}000$ corresponds to $\lambda \approx (9{,}000/300{,}000)(12 - 1) + 1 = 1.33$ in a simulated sample of $9{,}000$, which fixes the migration rate of the simulated spatial population. The same linearity explains why stratification that is invisible in small samples becomes the dominant inflation in very large ones, and why residual stratification in effect sizes propagates into polygenic scores even after standard corrections.
+
 ## Depends on
 
 - [Mean association statistic with constant stratification](../../ld-score-regression/mean-integral-chi-sq-strat-of-const.md)
 - [Population genomic-control factor of the LD-score model](lambda-gc.md)
-
-## Expansion
-
-Both the polygenic signal and the stratification bias enter the expected $\chi^2$ through terms proportional to $N$, because each is a squared mean shift whose estimate sharpens with sample size, while the null contribution $1 - h^2$ does not grow. Subtracting the constant and taking the ratio at two sample sizes gives the proposition. The rescaling is used to calibrate simulations to a biobank: an inflation $\lambda \approx 12$ on birthplace coordinates in a sample of $300{,}000$ corresponds to $\lambda \approx (9{,}000/300{,}000)(12 - 1) + 1 \approx 1.36$ in a simulated sample of $9{,}000$, which fixes the migration rate of the simulated spatial population. The same linearity explains why stratification that is invisible in small samples becomes the dominant inflation in very large ones, and why residual stratification in effect sizes propagates into polygenic scores even after standard corrections.
 
 ## Sources
 

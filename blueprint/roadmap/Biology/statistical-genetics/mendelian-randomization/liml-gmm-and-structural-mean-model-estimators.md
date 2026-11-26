@@ -24,14 +24,13 @@ $$\sum_i (z_{ik} - \bar z_k)(y_i - \beta_1 x_i) = 0, \qquad k = 1, \dots, K.$$
 
 **Single instrument.** With $K = 1$ the linear GMM, linear SMM, LIML and two-stage least squares estimates all equal the ratio estimate $\hat\beta_{Y|Z}/\hat\beta_{X|Z}$.
 
-## Depends on
-
-- [Linear moment model for instrumental variables](linear-moment-model.md)
-- [Ratio estimate of a single SNP](ratio-estimate.md)
-
-## Expansion
+## Remarks
 
 With one instrument the moment conditions $\sum_i(y_i - \beta_0 - \beta_1 x_i) = 0$ and $\sum_i z_i(y_i - \beta_0 - \beta_1 x_i) = 0$ give $\sum_i (z_i - \bar z)(y_i - \beta_1 x_i) = 0$, so $\hat\beta_1 = \widehat{\mathrm{cov}}(z, y)/\widehat{\mathrm{cov}}(z, x)$, which is the ratio of the two regression slopes on $z$. This is literally the g-estimating equation, so the linear GMM and SMM estimates agree. LIML is exactly identified in this case: $\kappa(\beta) \ge 1$, and $\kappa = 1$ exactly when $y - \beta x$ is uncorrelated with $z$, which again gives the ratio. With several instruments the estimators differ in finite samples. 2SLS is biased toward the confounded association with weak instruments, while LIML has no finite moments but is close to median-unbiased. For a binary outcome the multiplicative (log-linear) GMM and SMM use the same equations with $f = \exp(\beta_0 + \beta_1 x)$ and multiplicative residuals $y_i/f - 1$. A logistic SMM cannot be estimated this way because of the non-collapsibility of the odds ratio.
+
+## Depends on
+
+- [Ratio estimate of a single SNP](ratio-estimate.md)
 
 ## Sources
 

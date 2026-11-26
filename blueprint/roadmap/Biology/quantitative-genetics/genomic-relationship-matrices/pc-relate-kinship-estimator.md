@@ -10,15 +10,14 @@ $$\hat\phi_{ij} = \frac{\sum_{s=1}^S (g_{is} - 2\hat\mu_{is})(g_{js} - 2\hat\mu_
 
 The estimator is the ratio of the summed ancestry-adjusted genotype covariances to their summed scale, under the moment model $E[(g_{is} - 2\mu_{is})(g_{js} - 2\mu_{js})] = 4\phi_{ij}\sqrt{\mu_{is}(1-\mu_{is})\mu_{js}(1-\mu_{js})}$, which reduces to the usual $\operatorname{Cov}(g_{is}, g_{js}) = 4\phi_{ij}\,p_s(1-p_s)$ when all individuals share the frequency $p_s$. The principal components are computed in a way that is robust to the relatives in the sample, so that ancestry and recent relatedness are not confounded.
 
+## Remarks
+
+In a homogeneous population, $\operatorname{Cov}(g_{is}, g_{js}) = 4\phi_{ij}p_s(1-p_s)$ because each of the four allele pairs between $i$ and $j$ is identical by descent with probability $\phi_{ij}$, and the standard method-of-moments estimator divides centred cross-products by $4p_s(1-p_s)$. Under structure, centring at a common frequency inflates cross-products between individuals of similar ancestry, which conventional estimators read as relatedness. Centring each genotype at its own ancestry-predicted mean removes the ancestry component, leaving the covariance due to recent common ancestors; the geometric-mean denominator is the natural scale when the two individuals have different expected frequencies. No ancestral reference populations or explicit admixture model are needed.
+
 ## Depends on
 
 - [Kinship coefficient](kinship.md)
-- [Expected genotype equals $2p$](integral-genotype.md)
-- [Genetic relationship matrix entry](grm.md)
-
-## Expansion
-
-In a homogeneous population, $\operatorname{Cov}(g_{is}, g_{js}) = 4\phi_{ij}p_s(1-p_s)$ because each of the four allele pairs between $i$ and $j$ is identical by descent with probability $\phi_{ij}$, and the standard method-of-moments estimator divides centred cross-products by $4p_s(1-p_s)$. Under structure, centring at a common frequency inflates cross-products between individuals of similar ancestry, which conventional estimators read as relatedness. Centring each genotype at its own ancestry-predicted mean removes the ancestry component, leaving the covariance due to recent common ancestors; the geometric-mean denominator is the natural scale when the two individuals have different expected frequencies. No ancestral reference populations or explicit admixture model are needed.
+- [The genetic relationship covariance](integral-centered-mul.md)
 
 ## Sources
 

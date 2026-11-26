@@ -12,13 +12,13 @@ $$\Lambda \;\propto\; \sum_{i \in N^1_\theta(m^*)} e^{\frac12(z_i^2 - z_{m^*}^2)
 
 **Testing.** The p-value is computed by permuting secondary-trait phenotypes, i.e. under $H_0$: no causal variant for the secondary trait. Under $H_2$: distinct causal variants, the paper shows that, as the non-centrality of the causal variants grows, $P_{\mathrm{JLIM}} = P(\Lambda \ge l \mid H_0) \ge P(\Lambda \ge l \mid H_2)$, so a test calibrated under $H_0$ is asymptotically conservative against $H_2$.
 
+## Remarks
+
+Each summand compares the best secondary-trait fit at a primary candidate $i$ with the best secondary-trait fit anywhere outside the LD neighbourhood of $i$; it is positive when the secondary signal peaks within resolution $\theta$ of $i$ and negative when it peaks elsewhere. Weighting by $L_1(i)$ integrates over uncertainty in the primary causal variant, and normalizing by $L_1(m^*)$ only rescales $\Lambda$. The asymmetric design needs only summary statistics for the primary trait (reference-panel LD) but genotypes for the secondary trait, which makes phenotype permutation possible.
+
 ## Depends on
 
 - [Profile likelihood of a single causal variant from association z-scores](profile-likelihood-of-a-single-causal-variant.md)
-
-## Expansion
-
-Each summand compares the best secondary-trait fit at a primary candidate $i$ with the best secondary-trait fit anywhere outside the LD neighbourhood of $i$; it is positive when the secondary signal peaks within resolution $\theta$ of $i$ and negative when it peaks elsewhere. Weighting by $L_1(i)$ integrates over uncertainty in the primary causal variant, and normalizing by $L_1(m^*)$ only rescales $\Lambda$. The asymmetric design needs only summary statistics for the primary trait (reference-panel LD) but genotypes for the secondary trait, which makes phenotype permutation possible.
 
 ## Sources
 

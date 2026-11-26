@@ -22,16 +22,15 @@ $$\operatorname{Var}(\tilde\sigma_g^2) \approx \operatorname{Var}(\hat\sigma_g^2
 
 SNP heritability is reported as $\tilde\sigma_g^2/s_y^2$ with $s_y^2 = y^\top y/(N-1)$.
 
+## Remarks
+
+The Frobenius objective is a least-squares regression of the $N^2$ entries of $yy^\top$ on those of $K$ and $I$; its Gram matrix has entries $\langle K,K\rangle_F = \operatorname{tr}(K^2)$, $\langle K, I\rangle_F = \operatorname{tr}(K)$, $\langle I,I\rangle_F = N$, and right-hand sides $\langle yy^\top, K\rangle_F = y^\top K y$, $\langle yy^\top, I\rangle_F = y^\top y$. Eliminating $\hat\sigma_e^2$ with $\operatorname{tr}(K) = N$ gives the closed form. Forming $K$ is the $O(MN^2)$ bottleneck of exact Haseman–Elston regression; only $\operatorname{tr}(K^2)$ needs it, and the randomized trace removes that need. Because each genotype entry lies in $\{0,1,2\}$, the products $X^\top z_b$ can be accelerated further with the Mailman algorithm. The estimator uses only the second moment of the SNP effects, so it remains valid beyond the infinitesimal model.
+
 ## Depends on
 
 - [Hutchinson's randomized trace estimator](hutchinson-randomized-trace-estimator.md)
 - [Genetic relationship matrix](grm.md)
-- [GREML covariance matrix](greml-cov.md)
-- [Haseman–Elston estimator](he-estimate.md)
-
-## Expansion
-
-The Frobenius objective is a least-squares regression of the $N^2$ entries of $yy^\top$ on those of $K$ and $I$; its Gram matrix has entries $\langle K,K\rangle_F = \operatorname{tr}(K^2)$, $\langle K, I\rangle_F = \operatorname{tr}(K)$, $\langle I,I\rangle_F = N$, and right-hand sides $\langle yy^\top, K\rangle_F = y^\top K y$, $\langle yy^\top, I\rangle_F = y^\top y$. Eliminating $\hat\sigma_e^2$ with $\operatorname{tr}(K) = N$ gives the closed form. Forming $K$ is the $O(MN^2)$ bottleneck of exact Haseman–Elston regression; only $\operatorname{tr}(K^2)$ needs it, and the randomized trace removes that need. Because each genotype entry lies in $\{0,1,2\}$, the products $X^\top z_b$ can be accelerated further with the Mailman algorithm. The estimator uses only the second moment of the SNP effects, so it remains valid beyond the infinitesimal model.
+- [GREML covariance matrix $\sigma_g^2 K + \sigma_e^2 I$](greml-cov.md)
 
 ## Sources
 

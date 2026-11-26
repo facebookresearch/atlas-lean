@@ -9,3 +9,7 @@ These topics distinguish one-locus deterministic recurrences, spatial selection,
 - [Fitness landscapes](fitness-landscapes/README.md)
 - [Hybrid incompatibilities](hybrid-incompatibilities/README.md)
 - [Sexual selection and genetic conflict](sexual-selection-and-genetic-conflict/README.md)
+- [Selection against introgressed ancestry](selection-against-introgressed-ancestry/README.md)
+- [Selection on microbial growth traits under serial dilution](selection-on-microbial-growth-traits-under-serial-dilution/README.md)
+- [Sweeps and shifts in polygenic adaptation](sweeps-and-shifts-in-polygenic-adaptation/README.md)
+- [Resistance to gene drives](resistance-to-gene-drives/README.md)
