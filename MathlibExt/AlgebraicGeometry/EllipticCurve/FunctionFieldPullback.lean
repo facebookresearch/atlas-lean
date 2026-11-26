@@ -16,7 +16,6 @@ and the proof files
 `P2M/Sol/S_WeierstrassCurve_natDegree_Phi_sub_C_mul_PsiSq.lean`,
 `P2M/Sol/S_WeierstrassCurve_Psi2Sq_ne_zero_of_isElliptic.lean`,
 `P2M/Sol/S_WeierstrassCurve_Affine_Point_zsmul_some_eq_some_div.lean`,
-`P2M/Sol/S_WeierstrassCurve_Affine_Point_two_smul_some_eq_zero_iff.lean`,
 `P2M/Sol/S_WeierstrassCurve_Affine_FunctionField_adjoin_X_Y_eq_top.lean`,
 `P2M/Sol/S_IsDedekindDomain_HeightOneSpectrum_exists_eq_span_singleton_of_map_eq.lean`,
 `P2M/Sol/S_WeierstrassCurve_Affine_Point_exists_zsmul_eq_of_isAlgClosed.lean`,
@@ -64,6 +63,7 @@ public import Mathlib.Tactic.FieldSimp
 public import Mathlib.Tactic.LinearCombination
 public import Mathlib.Tactic.Ring
 
+import MathlibExt.AlgebraicGeometry.EllipticCurve.DivisionPolynomialMulFormula
 import MathlibExt.AlgebraicGeometry.EllipticCurve.DivisionPolynomialZSMul
 import MathlibExt.AlgebraicGeometry.EllipticCurve.XYIdeal
 import MathlibExt.AlgebraicGeometry.EllipticCurve.TorsionCardinality
@@ -402,7 +402,8 @@ variable {S : Type*} [CommRing S] {V : Affine S}
 
 /-- **`x`-coordinate of a point.** For a Weierstrass curve `V` over a commutative ring, a point
 of `V` is the point at infinity or a nonsingular affine point `(x, y)`; this is `x` at `(x, y)`
-and `0` at the point at infinity. -/
+and `0` at the point at infinity. Over a field it agrees with
+`WeierstrassCurve.Affine.Point.xCoordOrZero`, which is stated only for curves over a field. -/
 def xc : V.Point → S
   | 0 => 0
   | some x _ _ => x
@@ -1577,23 +1578,6 @@ namespace FunctionFieldPullback.Psi2
 
 open Polynomial
 
-private theorem PortCard.sub_negY_sq_eq_eval_Ψ₂Sq {R : Type*} [CommRing R] (W : WeierstrassCurve R)
-    {x y : R} (e : W.toAffine.Equation x y) :
-    (y - W.toAffine.negY x y) ^ 2 = W.Ψ₂Sq.eval x := by
-  rw [WeierstrassCurve.Affine.equation_iff] at e
-  simp only [WeierstrassCurve.Affine.negY, WeierstrassCurve.Ψ₂Sq, WeierstrassCurve.b₂,
-    WeierstrassCurve.b₄, WeierstrassCurve.b₆, eval_add, eval_mul, eval_pow, eval_C, eval_X]
-  linear_combination 4 * e
-
-private theorem PortCard.two_smul_some_eq_zero_iff {F : Type*} [Field F] [DecidableEq F]
-    (W : WeierstrassCurve F) {x y : F} (h : W.toAffine.Nonsingular x y) :
-    2 • WeierstrassCurve.Affine.Point.some x y h = 0 ↔ W.Ψ₂Sq.eval x = 0 := by
-  have key : 2 • WeierstrassCurve.Affine.Point.some x y h = 0 ↔ y = W.toAffine.negY x y := by
-    rw [two_nsmul, add_eq_zero_iff_eq_neg, WeierstrassCurve.Affine.Point.neg_some,
-      WeierstrassCurve.Affine.Point.some.injEq]
-    simp
-  rw [key, ← PortCard.sub_negY_sq_eq_eval_Ψ₂Sq W h.left, pow_eq_zero_iff two_ne_zero, sub_eq_zero]
-
 private theorem PortCard.Ψ₂Sq_ne_zero_of_isElliptic {F : Type*} [Field F] (W : WeierstrassCurve F)
     [W.IsElliptic] : W.Ψ₂Sq ≠ 0 := by
   intro h0
@@ -1714,22 +1698,6 @@ theorem WeierstrassCurve.Affine.Point.zsmul_some_eq_some_div {F : Type*} [Field 
       n • WeierstrassCurve.Affine.Point.some x y h =
         WeierstrassCurve.Affine.Point.some ((W.Φ n).eval x / (W.ΨSq n).eval x) y' h' :=
   FunctionFieldPullback.ZsmulDiv.solution W h hψ
-
-namespace FunctionFieldPullback.TwoSmul
-
-private theorem solution {F : Type*} [Field F] [DecidableEq F] (W : WeierstrassCurve F) {x y : F}
-    (h : W.toAffine.Nonsingular x y) : 2 • WeierstrassCurve.Affine.Point.some x y h = 0 ↔
-    W.Ψ₂Sq.eval x = 0 :=
-  FunctionFieldPullback.Psi2.PortCard.two_smul_some_eq_zero_iff W h
-end FunctionFieldPullback.TwoSmul
-
-
-/-- **Points of order two.** A nonsingular point `(x, y)` of a Weierstrass curve `W` over a field
-satisfies `2 • (x, y) = 0` exactly when `Ψ₂Sq(x) = 0`. -/
-theorem WeierstrassCurve.Affine.Point.two_smul_some_eq_zero_iff {F : Type*} [Field F]
-    [DecidableEq F] (W : WeierstrassCurve F) {x y : F} (h : W.toAffine.Nonsingular x y) :
-    2 • WeierstrassCurve.Affine.Point.some x y h = 0 ↔ W.Ψ₂Sq.eval x = 0 :=
-  FunctionFieldPullback.TwoSmul.solution W h
 
 namespace FunctionFieldPullback.AdjoinTop
 
@@ -2233,7 +2201,7 @@ private theorem solution {F K : Type*} [Field F] [Field K] [Algebra F K] [Decida
       conv_lhs => rw [hP]
       congr 1
       exact heq.symm
-    rw [hP, WeierstrassCurve.Affine.Point.two_smul_some_eq_zero_iff (W⁄L), hΨ₂Sq,
+    rw [hP, (WeierstrassCurve.Affine.Ψ₂Sq_eval_eq_zero_iff_two_smul _).symm, hΨ₂Sq,
       eval_map_algebraMap] at h2
     apply not_isIntegral_xc_of_ne_baseChange (n • genericPoint W K) hgood.1 hgood.2
     exact IsAlgebraic.isIntegral
