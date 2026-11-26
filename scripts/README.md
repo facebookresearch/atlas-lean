@@ -67,8 +67,15 @@ five production libraries once (`scripts/lean_changes.py build --base <ref>`), t
 
 - `scripts/check_syntax_linters.py`: the warnings of Mathlib's standard linter set, which
   `lakefile.toml` turns on, on added lines, read from the build with `lake lint`;
-- `scripts/check_env_linters.py`: the findings of `#lint`'s environment linters (`runLinter`) on
-  the declarations the change adds. A declaration counts as added when the change adds the line
+- `scripts/check_env_linters.py`: environment-linter findings on the declarations the change adds,
+  from `scripts/lint_declarations.lean`. That script runs the default linters of `#lint`, as
+  `runLinter` does, and four more: `docBlameThm` (a public theorem without a docstring),
+  `explicitVarsOfIff` (variables on both sides of an `↔` that should be implicit),
+  `duplicateStatement` (a theorem whose statement another theorem of Atlas, Mathlib or their
+  dependencies already proves, up to binder and universe names) and `rootNamespace` (a public
+  declaration outside any namespace, which a later Mathlib name could collide with).
+  `@[nolint <linter>]` turns one off for a declaration. A declaration counts as added when the
+  change adds the line
   that declares it, below its docstring and attributes, and no declaration of that name is in
   the changed files at the base, so documenting, tagging, editing or moving an existing
   declaration does not report it;

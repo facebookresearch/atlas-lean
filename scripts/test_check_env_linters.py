@@ -23,11 +23,9 @@ from lean_changes import ROOT, AggregatorError, ChangedFile
 A = f"{ROOT}/MathlibExt/A.lean"
 B = f"{ROOT}/MathlibExt/B.lean"
 
-# What `lake exe runLinter` prints for a module with findings.
+# What scripts/lint_declarations.lean prints, in `runLinter`'s format, for modules with findings.
 OUTPUT = f"""\
-Running linter on specified modules: [MathlibExt.LintChanged]
-[MathlibExt.LintChanged] --only-modules: 4 local linters lint the 11 declarations of 1 listed modules; the other 11 lint all 56 declarations.
--- Found 5 errors in 24 declarations (plus 32 automatically generated ones) in MathlibExt.LintChanged with 15 linters
+-- Found 9 errors in 24 declarations (plus 32 automatically generated ones) in [MathlibExt.A, MathlibExt.B] with 19 linters
 
 /- The `docBlame` linter reports:
 DEFINITIONS ARE MISSING DOCUMENTATION STRINGS:
@@ -45,6 +43,14 @@ This linter can be disabled with `@[nolint unusedArguments]`. -/
   argument 1: (m : ℕ)
 {A}:9:1: error: @X.fresh✝ 1 unused argument:
   argument 1: (m : ℕ)
+
+/- The `duplicateStatement` linter reports:
+THEOREMS WHOSE STATEMENT ANOTHER THEOREM ALREADY PROVES:
+This linter can be disabled with `@[nolint duplicateStatement]`. -/
+-- MathlibExt.A
+{A}:6:1: error: X.keep has the same statement as `trivial` (in `Init.Core`)
+-- MathlibExt.B
+{B}:10:1: error: Y.old has the same statement as private `Z.old` (in `MathlibExt.C`)
 
 /- The `simpNF` linter reports:
 SIMP LEMMAS ARE NOT IN SIMP-NORMAL FORM.
@@ -102,12 +108,16 @@ class ParseTests(unittest.TestCase):
             ("Y.old", "docBlame", "MathlibExt.B", "MathlibExt/B.lean", 10),
             ("X.old", "unusedArguments", "MathlibExt.A", "MathlibExt/A.lean", 3),
             ("X.fresh", "unusedArguments", "MathlibExt.A", "MathlibExt/A.lean", 9),
+            ("X.keep", "duplicateStatement", "MathlibExt.A", "MathlibExt/A.lean", 6),
+            ("Y.old", "duplicateStatement", "MathlibExt.B", "MathlibExt/B.lean", 10),
             ("X.Pt.mk.injEq", "simpNF", "MathlibExt.A", None, None),
             ("X.Gone.aux", "simpNF", "MathlibExt.A", None, None),
             ("Z.Q.mk.injEq", "simpNF", "MathlibExt.Unchanged", None, None),
         ])
         self.assertEqual(findings[3].message, "1 unused argument:\n  argument 1: (m : ℕ)")
         self.assertEqual(findings[4].message,
+                         "has the same statement as `trivial` (in `Init.Core`)")
+        self.assertEqual(findings[6].message,
                          "LINTER FAILED:\nmaximum recursion depth has been reached")
 
     def test_declaration_names(self):
@@ -286,8 +296,9 @@ def run_main(outputs: list[tuple[int, str]], files=FILES, build_code: int = 0, e
         code = check.main()
     if files and build_code == 0 and not aggregator_error and outputs:
         lint = run.call_args_list[1].args[0]
-        assert lint[:4] == ["lake", "exe", "runLinter", "--no-build"], lint
-        assert lint[4].startswith("--only-modules=") and lint[5] == "MathlibExt.LintChanged", lint
+        assert lint[:4] == ["lake", "env", "lean", "--run"], lint
+        assert lint[4].endswith("scripts/lint_declarations.lean"), lint
+        assert lint[5:] == ["MathlibExt.LintChanged", "MathlibExt.A", "MathlibExt.B"], lint
     return code, out.getvalue(), err.getvalue()
 
 
@@ -301,7 +312,7 @@ class MainTests(unittest.TestCase):
                       "LINTER FAILED", out)
         self.assertNotIn("line=3,", out)
         self.assertNotIn("B.lean", out)
-        self.assertIn("3 on declarations the change adds, 2 on declarations it keeps, "
+        self.assertIn("3 on declarations the change adds, 4 on declarations it keeps, "
                       "1 in modules it does not change, 1 without a position", out)
         self.assertIn("not placed: simpNF: X.Gone.aux", out)
 
@@ -317,7 +328,7 @@ class MainTests(unittest.TestCase):
     def test_fails_when_the_files_do_not_build(self):
         self.assertEqual(run_main([], build_code=1, extra=["--report-only"])[0], 2)
 
-    def test_fails_when_run_linter_does_not_finish(self):
+    def test_fails_when_the_linters_do_not_finish(self):
         self.assertEqual(run_main([(1, "uncaught exception: unknown module\n")],
                                   extra=["--report-only"])[0], 2)
 

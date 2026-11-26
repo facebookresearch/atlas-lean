@@ -4,8 +4,10 @@ name: Mathlib linters
 # existing code never shows up:
 # - the standard linter set, which lakefile.toml turns on for the production
 #   libraries, so every build already runs it (scripts/check_syntax_linters.py);
-# - the environment linters of `#lint` on the declarations the pull request
-#   adds (scripts/check_env_linters.py);
+# - on the declarations the pull request adds, the environment linters of
+#   `#lint`, theorem docstrings, explicit variables of `↔` lemmas, statements
+#   that another theorem already proves, and public declarations outside any
+#   namespace (scripts/check_env_linters.py, scripts/lint_declarations.lean);
 # - the text-based `lint-style` linters (scripts/check_text_linters.py).
 # The job is advisory: a finding annotates its line and the job summary, and
 # only a check that cannot run fails it. It builds the changed files once, on
@@ -26,6 +28,7 @@ on:
       - ".github/workflows/linters.yml"
       - "scripts/lean_changes.py"
       - "scripts/check_*_linters.py"
+      - "scripts/lint_declarations.lean"
       - "scripts/linters_self_test.py"
       - "scripts/test_lean_changes.py"
       - "scripts/test_check_*_linters.py"
@@ -77,7 +80,8 @@ jobs:
           fi
           self_test=false
           if ! git diff --quiet HEAD^1 HEAD -- .github/workflows/linters.yml scripts/lean_changes.py \
-              'scripts/check_*_linters.py' scripts/linters_self_test.py scripts/bump/pinned_bump.py; then
+              'scripts/check_*_linters.py' scripts/lint_declarations.lean scripts/linters_self_test.py \
+              scripts/bump/pinned_bump.py; then
             self_test=true
           fi
           setup=false

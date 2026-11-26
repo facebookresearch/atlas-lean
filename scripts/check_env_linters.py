@@ -1,12 +1,19 @@
 #!/usr/bin/env python3
-"""Report Mathlib's environment-linter findings on the declarations a change adds.
+"""Report environment-linter findings on the declarations a change adds.
 
-The environment linters of Batteries' `#lint`, with the ones Mathlib adds
-(`docBlame`, `simpNF`, `unusedArguments`, `defsWithUnderscore`, ...), check
-declarations after they are built. This script builds the Lean files that
-`BASE...HEAD` adds or modifies (through one temporary aggregator module per
-library), runs `lake exe runLinter` on each aggregator, and keeps the findings
-on the declarations that the change adds.
+Environment linters check declarations after they are built. This script builds
+the Lean files that `BASE...HEAD` adds or modifies (through one temporary
+aggregator module per library), runs scripts/lint_declarations.lean on the
+declarations of those files, and keeps the findings on the declarations that
+the change adds. That script runs:
+
+- the default linters of Batteries' `#lint`, with the ones Mathlib adds
+  (`docBlame`, `simpNF`, `unusedArguments`, `defsWithUnderscore`, ...), as
+  `lake exe runLinter` does;
+- `docBlameThm` and `explicitVarsOfIff`, which Batteries turns off by default;
+- `duplicateStatement`, a theorem whose statement another theorem of the
+  environment already proves, in Atlas, Mathlib or their dependencies;
+- `rootNamespace`, a public declaration outside any namespace.
 
 A declaration counts as added when the change adds the line that declares it
 (the line with its keyword and name, below any docstring, attribute or
@@ -14,11 +21,11 @@ modifier; for a structure field or a constructor, its own line), and no
 declaration of that name is in the files the change modifies, renames or
 deletes, as they are at the base. So a change that only documents, tags or
 edits an existing declaration does not report it, nor does one that moves it
-between those files. A finding that `runLinter` prints without a position (a
+between those files. A finding that the linters print without a position (a
 declaration without a source range, such as a structure's `mk.injEq`) is placed
 on the nearest enclosing declaration of the changed files that has one, under
-the same rule. `runLinter` imports the modules with their private declarations,
-so it lints those as well.
+the same rule. Like `runLinter`, the linters see the private declarations of
+the modules too.
 
     python3 scripts/check_env_linters.py --base origin/main [--report-only]
 
@@ -34,7 +41,6 @@ import bisect
 import re
 import subprocess
 import sys
-import tempfile
 from collections import Counter
 from collections.abc import Iterable
 from dataclasses import dataclass, field
@@ -51,7 +57,7 @@ ENTRY = re.compile(r"^(?P<file>\S.*?\.lean):(?P<line>\d+):(?P<col>\d+): error: (
 UNPLACED = re.compile(r"^#check (?P<text>.*)$")
 HEADER = re.compile(r"^/- The `(?P<linter>[^`]+)` linter reports:")
 MODULE = re.compile(r"^-- (?P<module>[^\s]+)$")
-# `runLinter` prints one of these when it has linted its module.
+# The linters print one of these when they have linted the modules.
 FINISHED = re.compile(r"^-- (?:Found \d+ errors? in|Linting passed for) ")
 
 
@@ -81,7 +87,7 @@ def declaration_name(text: str) -> tuple[str, str]:
 
 
 def parse_run_linter(text: str, cwd: Path = ROOT) -> list[Finding]:
-    """The findings that `runLinter` prints, with their linter and module."""
+    """The findings that the linters print in `runLinter`'s format, with their linter and module."""
     findings: list[Finding] = []
     linter = "environment linter"
     module: str | None = None
@@ -306,6 +312,9 @@ def place(finding: Finding, files: dict[str, ChangedFile], indexes: dict[str, So
     return None
 
 
+DRIVER = ROOT / "scripts" / "lint_declarations.lean"
+
+
 def read_source(path: str) -> str:
     return (ROOT / path).read_text(encoding="utf-8")
 
@@ -321,10 +330,11 @@ def main() -> int:
         print("No Lean file of the production libraries is added or modified.")
         return 0
     files = {file.path: file for file in changed}
-    print(f"Checking the declarations of {len(changed)} changed Lean file(s) with runLinter.")
+    print(f"Checking the declarations of {len(changed)} changed Lean file(s) with the "
+          "environment linters.")
     outputs = []
     try:
-        with aggregators(changed) as targets, tempfile.TemporaryDirectory() as tmp:
+        with aggregators(changed) as targets:
             build = subprocess.run(["lake", "build", *targets], cwd=ROOT, capture_output=True,
                                    text=True)
             if build.returncode != 0:
@@ -333,20 +343,17 @@ def main() -> int:
                 return 2
             for target in targets:
                 library = target.split(".", 1)[0]
-                # Batteries' local linters then lint only the changed modules. The others,
-                # docBlame and simpNF among them, lint every module of the package that the
-                # aggregator imports; their findings elsewhere are dropped below.
-                only = Path(tmp, f"{library}.txt")
-                only.write_text("".join(f"{file.module}\n" for file in changed
-                                        if file.library == library))
+                # The linters lint only the declarations of the changed modules, in the
+                # environment of the aggregator, which imports them.
+                modules = [file.module for file in changed if file.library == library]
                 result = subprocess.run(
-                    ["lake", "exe", "runLinter", "--no-build", f"--only-modules={only}", target],
+                    ["lake", "env", "lean", "--run", str(DRIVER), target, *modules],
                     cwd=ROOT, capture_output=True, text=True)
                 output = result.stdout + result.stderr
                 if result.returncode not in (0, 1) or not any(
                         FINISHED.match(line) for line in output.splitlines()):
                     print(output, file=sys.stderr)
-                    print(f"runLinter did not run on {target}.", file=sys.stderr)
+                    print(f"The environment linters did not run on {target}.", file=sys.stderr)
                     return 2
                 outputs.append(output)
     except AggregatorError as error:
@@ -376,7 +383,7 @@ def main() -> int:
             kept.append((finding, placement))
         else:
             existing += 1
-    print(f"runLinter reported {len(findings)} finding(s): {len(kept)} on declarations the "
+    print(f"The linters reported {len(findings)} finding(s): {len(kept)} on declarations the "
           f"change adds, {existing} on declarations it keeps, {elsewhere} in modules it does "
           f"not change, {len(unplaced)} without a position in a changed module that could not "
           "be placed.")

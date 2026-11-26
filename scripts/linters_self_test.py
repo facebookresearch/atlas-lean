@@ -45,6 +45,10 @@ theorem lintersProbeSemicolon : True := by trivial ; done
 def lintersProbeNoDoc (n : Nat) (m : Nat) : Nat := n + 1
 
 def lintersProbeUnused (n : Nat) (m : Nat) : Nat := n + 1
+
+theorem lintersProbeAddComm (a b : Nat) : a + b = b + a := Nat.add_comm a b
+
+theorem lintersProbeIff (a b : Nat) : a + 0 = b ↔ a = b := by simp
 """
 # Only documents an existing declaration, whose unused argument stays.
 DOCUMENTED = PROBE_TEXT.replace("def lintersProbeUnused",
@@ -59,7 +63,12 @@ EXPECTED = {
     # The second commit's docstring starts the range of `lintersProbeUnused`, whose unused
     # argument runLinter still reports there; the check keeps it out.
     "check_env_linters.py": ([r"docBlame: lintersProbeNoDoc", r"unusedArguments: lintersProbeNoDoc",
-                              r"unusedArguments: lintersProbeUnused"],
+                              r"unusedArguments: lintersProbeUnused",
+                              r"docBlameThm: lintersProbeLong theorem missing documentation",
+                              r"explicitVarsOfIff: lintersProbeIff should be made implicit",
+                              r"duplicateStatement: lintersProbeAddComm has the same statement as "
+                              r"`Nat\.add_comm`",
+                              r"rootNamespace: lintersProbeNoDoc is in the root namespace"],
                              [r" 0 on declarations the change adds, [1-9]\d* on declarations it "
                               r"keeps", r"No environment-linter finding on the added declarations"]),
 }
