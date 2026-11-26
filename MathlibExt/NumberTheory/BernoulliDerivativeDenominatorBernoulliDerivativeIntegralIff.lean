@@ -46,33 +46,6 @@ namespace MetaMathlibExt
 
 open Polynomial UniqueFactorizationMonoid
 
-private theorem scaled_coeff_integral_iff (q : ℚ) (n : ℕ) :
-    ((n : ℚ) * q).den = 1 ↔ q.den ∣ n := by
-  have h := Rat.den_mul_den_eq_den_mul_gcd (n : ℚ) q
-  simp only [Rat.den_natCast, one_mul, Rat.num_natCast, Int.natAbs_mul,
-    Int.natAbs_natCast, Nat.gcd_comm (n * _) _,
-    q.reduced.gcd_mul_right_cancel_right] at h
-  constructor
-  · intro h₁
-    rw [h₁, one_mul] at h
-    exact (dvd_of_eq h).trans (Nat.gcd_dvd_right _ _)
-  · intro hd
-    rw [Nat.gcd_eq_left hd] at h
-    exact Nat.eq_of_mul_eq_mul_right q.den_pos (by simpa using h.symm)
-
-private theorem mem_integral_iff_dvd (n : ℕ) (hn : 1 ≤ n) :
-    n ∈ bernoulliIntegralDerivativeIndices 1 ↔
-      polynomialDenominator (Polynomial.bernoulli (n - 1)) ∣ n := by
-  simp only [bernoulliIntegralDerivativeIndices, Set.mem_ofPred_eq,
-    Function.iterate_one, polynomialDenominator_eq_one_iff,
-    Polynomial.derivative_bernoulli, Polynomial.coeff_natCast_mul,
-    scaled_coeff_integral_iff]
-  constructor
-  · rintro ⟨-, h⟩
-    exact Finset.lcm_dvd fun i _ => h i
-  · intro h
-    exact ⟨hn, fun i => (coeff_den_dvd_polynomialDenominator _ i).trans h⟩
-
 private theorem prod_dvd_merge (n : ℕ) :
     (∏ p ∈ (Finset.range (n + 1)).filter
         (fun p => Nat.Prime p ∧ p ∣ n ∧ p ≤ (Nat.digits p n).sum), p) *
@@ -198,8 +171,9 @@ public theorem bernoulli_derivative_integral_iff (n : ℕ) (hn : 1 ≤ n) :
   · have hn2 : 2 ≤ n := by omega
     have hfact := denom_bernoulli_eq_coprime_mul_radical n hn2
     have hmem_iff : (n ∈ bernoulliIntegralDerivativeIndices 1 ↔
-        polynomialDenominator (Polynomial.bernoulli (n - 1)) ∣ n) :=
-      mem_integral_iff_dvd n hn
+        polynomialDenominator (Polynomial.bernoulli (n - 1)) ∣ n) := by
+      have h := succ_mem_bernoulliIntegralDerivativeIndices_one_iff (n - 1)
+      rwa [Nat.sub_add_cancel hn] at h
     have hpart1 : (n ∈ bernoulliIntegralDerivativeIndices 1 ↔
         bernoulliDiffDenominatorCoprimePart n = 1) := by
       rw [hmem_iff]
