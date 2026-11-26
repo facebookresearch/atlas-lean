@@ -5,7 +5,9 @@ of the execution, and let $\approx_\zeta$ relate configurations that a low obser
 [security levels, policies and low equivalence](security-levels-policies-and-low-equivalence.md)). For traces, $T \approx_\zeta T'$ holds if for every memory location $L$
 the sequences $T(L) = [M_0(L), M_1(L), \dots]$ and $T'(L)$ of its contents are equal up to stuttering and up to one being a prefix of the other, comparing values by $\approx_\zeta$. A program is
 *observationally deterministic* for $\zeta$ if
+
 $$m \approx_\zeta m' \wedge m \Downarrow T \wedge m' \Downarrow T' \implies T \approx_\zeta T'$$
+
 for all initial configurations: every execution looks the same to the low observer, however the scheduler resolves nondeterminism. Unlike possibilistic definitions, the
 condition is preserved by refinement of the scheduler. The relation $\approx_\zeta$ on traces is not transitive.
 

@@ -5,7 +5,9 @@ offset). A *state* $s = (l, m)$ is a local store $l$, a finite partial map from 
 outcomes are states and $\mathrm{error}$. Expressions are variables, constants, $\mathrm{nil}$, arithmetic, comparisons, boolean connectives and $\mathrm{offset}(e)$, and
 evaluate totally: a variable not in $\mathrm{dom}(l)$ and an ill-typed operation give $\mathrm{nil}$, adding or subtracting an integer to a pointer changes only its offset,
 equality of pointers compares block and offset, and $\mathrm{offset}((i, n)) = n$. Commands are
+
 $$c ::= x \leftarrow e \mid x \leftarrow [e] \mid [e_1] \leftarrow e_2 \mid x \leftarrow \mathrm{alloc}(e) \mid \mathrm{free}(e) \mid \mathrm{skip} \mid \mathbf{if}\ e\ \mathbf{then}\ c_1\ \mathbf{else}\ c_2 \mid \mathbf{while}\ e\ \mathbf{do}\ c\ \mathbf{end} \mid c_1; c_2,$$
+
 with denotation $[\![c]\!](s)$ a state, $\mathrm{error}$, or $\bot$ for nontermination. Reading, writing or freeing through a pointer $p$ with $m(p)$ undefined gives $\mathrm{error}$;
 $x \leftarrow \mathrm{alloc}(e)$ with $e$ evaluating to $n$ picks an identifier $i$ fresh for the whole state, sets $x$ to $(i, 0)$ and defines $(i, k) \mapsto 0$ for $0 \le k < n$; and
 $\mathrm{free}(e)$, for $e$ evaluating to a pointer $(i, 0)$ into a live block, makes every cell of block $i$ undefined (otherwise it gives $\mathrm{error}$).

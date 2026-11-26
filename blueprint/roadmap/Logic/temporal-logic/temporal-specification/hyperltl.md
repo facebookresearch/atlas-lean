@@ -1,7 +1,9 @@
 # HyperLTL
 
 A *trace* over a set $AP$ of atomic propositions is an infinite sequence $t \in (2^{AP})^\omega$. *HyperLTL* formulas, over an infinite set of trace variables $\pi$, are
+
 $$\psi ::= \exists \pi.\ \psi \mid \forall \pi.\ \psi \mid \varphi, \qquad \varphi ::= a_\pi \mid \neg\varphi \mid \varphi \vee \varphi \mid \mathbf X\varphi \mid \varphi\ \mathbf U\ \varphi,$$
+
 [linear temporal logic](../linear-temporal-logic/formula.md) with each atomic proposition indexed by a trace variable and a prefix of trace quantifiers. For a set $T$ of traces and a
 partial assignment $\Pi$ of traces to variables: $\Pi \models_T \exists\pi.\psi$ iff $\Pi[\pi \mapsto t] \models_T \psi$ for some $t \in T$, dually for $\forall$; $\Pi \models_T a_\pi$ iff $a \in \Pi(\pi)[0]$;
 $\Pi \models_T \mathbf X\varphi$ iff $\Pi[1, \infty] \models_T \varphi$; and $\Pi \models_T \varphi_1 \mathbf U \varphi_2$ iff some $i \ge 0$ has $\Pi[i, \infty] \models_T \varphi_2$ and $\Pi[j, \infty] \models_T \varphi_1$ for all $j < i$,

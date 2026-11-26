@@ -3,7 +3,9 @@
 Fix a many-sorted first-order *signature*: sorts, function symbols with argument and result sorts (constants have no arguments) and predicate symbols with
 argument sorts. *Terms* are well-sorted applications of function symbols to variables and terms, and a *fact* is a ground atomic formula $P(t_1, \dots, t_n)$.
 A *state* is a finite multiset of facts. A *rule* has the form
+
 $$F_1, \dots, F_k \longrightarrow \exists x_1 \cdots \exists x_j.\ G_1, \dots, G_n$$
+
 for atomic formulas $F_i, G_i$, its other variables being universally quantified. If a state $S$ contains $\sigma F_1, \dots, \sigma F_k$ for a ground substitution $\sigma$, the
 rule rewrites $S$ to the state obtained by removing these facts (as a multiset) and adding $\sigma' G_1, \dots, \sigma' G_n$, where $\sigma'$ extends $\sigma$ by mapping
 $x_1, \dots, x_j$ to new constant symbols that occur nowhere in $S$ or in the rules. An *MSR theory* is a signature with a set of rules; its traces are the

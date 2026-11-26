@@ -3,10 +3,14 @@
 Fix a *signature* $\Sigma$, a finite set of function symbols each with an arity (constants have arity $0$), an infinite set of *names* $a, b, c, \dots, k, n, s$
 and an infinite set of *variables* $x, y, z$, each name and variable having a sort (among them a sort $\mathrm{Channel}$). *Terms* $M, N$ are names, variables
 and applications $f(M_1, \dots, M_l)$ with $l$ the arity of $f$, well sorted; a term is *ground* if it has no variables. *Plain processes* are
+
 $$P, Q ::= 0 \mid P \mid Q \mid\ !P \mid \nu n.P \mid \mathbf{if}\ M = N\ \mathbf{then}\ P\ \mathbf{else}\ Q \mid N(x).P \mid \overline{N}\langle M\rangle.P,$$
+
 the null process, parallel composition, replication, name restriction, a conditional on equality in the equational theory, input of $x$ on the channel $N$
 and output of $M$ on $N$. *Extended processes* add variable restriction and *active substitutions* $\{M/x\}$:
+
 $$A, B ::= P \mid A \mid B \mid \nu n.A \mid \nu x.A \mid \{M/x\}.$$
+
 Names are bound by $\nu n$ and variables by $\nu x$ and by input; $\mathrm{fn}(A)$ and $\mathrm{fv}(A)$ are the free names and variables, and the *domain*
 $\mathrm{dom}(A)$ is the set of variables $x$ for which $A$ contains $\{M/x\}$ not under a restriction on $x$. Processes are identified up to renaming of bound
 names and variables. Substitutions are cycle-free, each variable has at most one active substitution, $\mathrm{dom}(A) \cap \mathrm{dom}(B) = \emptyset$ in every $A \mid B$,

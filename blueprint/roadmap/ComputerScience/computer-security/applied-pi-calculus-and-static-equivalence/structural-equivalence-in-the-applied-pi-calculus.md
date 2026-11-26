@@ -3,11 +3,13 @@
 Fix a signature with an equational theory, a congruence on terms closed under substitution of terms for variables and names that respects sorts, written
 $\Sigma \vdash M = N$ (see [equational theories](equational-theories-and-convergent-subterm-theories.md)). *Structural equivalence* $\equiv$ is the smallest
 equivalence relation on the [extended processes](applied-pi-calculus.md) that is closed under application of evaluation contexts and satisfies
+
 $$\begin{aligned}
 &A \mid 0 \equiv A, \quad (A \mid B) \mid C \equiv A \mid (B \mid C), \quad A \mid B \equiv B \mid A, \quad !P \equiv P \mid\ !P, \quad \nu n.0 \equiv 0, \quad \nu u.\nu v.A \equiv \nu v.\nu u.A,\\
 &A \mid \nu u.B \equiv \nu u.(A \mid B) \text{ when } u \notin \mathrm{fv}(A) \cup \mathrm{fn}(A), \quad \nu x.\{M/x\} \equiv 0, \quad \{M/x\} \mid A \equiv \{M/x\} \mid A\{M/x\},\\
 &\{M/x\} \equiv \{N/x\} \text{ when } \Sigma \vdash M = N
 \end{aligned}$$
+
 (the rules Par-0, Par-A, Par-C, Repl, New-0, New-C, New-Par, Alias, Subst and Rewrite). Every closed extended process is structurally equivalent to
 $\nu\tilde n.(\{\tilde M/\tilde x\} \mid P)$ with $P$ a closed plain process, and every closed frame to $\nu\tilde n.\{\tilde M/\tilde x\}$.
 
