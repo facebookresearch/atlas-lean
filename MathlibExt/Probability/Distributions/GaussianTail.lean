@@ -22,8 +22,10 @@ This module proves an upper-tail bound for the standard normal law: for `0 ≤ u
 * `ProbabilityTheory.gaussianReal_Ioi_le_half_exp`: the standard-normal upper-tail bound.
 
 The proof compares densities after shifting the mean by `u`: on `(u, ∞)` the standard density is
-pointwise at most `Real.exp (-u ^ 2 / 2)` times the shifted density, so the tail is bounded by the
-half-line mass at zero, which is `1 / 2` by symmetry.
+pointwise at most `Real.exp (-u ^ 2 / 2)` times the density of `gaussianReal u 1`, so the tail is
+at most `Real.exp (-u ^ 2 / 2)` times the mass of `(u, ∞)` under `gaussianReal u 1`. By
+translation that mass is the half-line mass of `gaussianReal 0 1` at zero, which is `1 / 2` by
+symmetry.
 -/
 
 @[expose] public section
@@ -113,8 +115,9 @@ private lemma half_eq : gaussianReal 0 1 (Set.Ioi 0) = ENNReal.ofReal (1 / 2 : �
   simp
 
 /-- **Standard-normal upper-tail bound.** For `0 ≤ u`, the mass of `(u, ∞)` under the
-standard normal law `gaussianReal 0 1` is at most `Real.exp (-u ^ 2 / 2) / 2`. The proof compares
-densities after shifting by `u`, then uses the half-line mass `1 / 2` at zero. -/
+standard normal law `gaussianReal 0 1` is at most `Real.exp (-u ^ 2 / 2) / 2`. On `(u, ∞)` the
+standard density is at most `Real.exp (-u ^ 2 / 2)` times the density of `gaussianReal u 1`, which
+gives `(u, ∞)` mass `1 / 2`. -/
 theorem gaussianReal_Ioi_le_half_exp {u : ℝ} (hu : 0 ≤ u) :
     gaussianReal 0 1 (Set.Ioi u) ≤ ENNReal.ofReal (Real.exp (-u ^ 2 / 2) / 2) := by
   have hE : (0 : ℝ) ≤ Real.exp (-u ^ 2 / 2) := Real.exp_nonneg _
@@ -129,3 +132,5 @@ theorem gaussianReal_Ioi_le_half_exp {u : ℝ} (hu : 0 ≤ u) :
         rw [← ENNReal.ofReal_mul hE]
         congr 1
         ring
+
+end ProbabilityTheory

@@ -26,13 +26,12 @@ The proof follows the notes. The event `A = ⋂_n {∃ m ≥ n, B (1/(m+1)) > 0}
 germ σ-algebra `⋂_{t > 0} σ(B_u : u ≤ t)`, so it has probability `0` or `1` by the repository's
 zero–one law for continuous processes with independent increments
 (`MathlibExt.Probability.BlumenthalZeroOne.zero_one_naturalGerm`). It is the decreasing limit of
-events of probability at least `P(B_{1/(n+1)} > 0) = 1/2`, so `P(A) ≥ 1/2`, hence `P(A) = 1`.
-The same argument applied to `-B` gives the negative values.
+events of probability at least `P(B_{1/(n+1)} > 0) = 1/2` (the half-line mass
+`ProbabilityTheory.gaussianReal_Ioi_zero` from `MathlibExt.Probability.Distributions.GaussianTail`),
+so `P(A) ≥ 1/2`, hence `P(A) = 1`. The same argument applied to `-B` gives the negative values.
 
 ## Main results
 
-* `ProbabilityTheory.gaussianReal_Ioi_zero`: a centered Gaussian law with positive variance gives
-  mass `1/2` to `(0, ∞)`.
 * `ProbabilityTheory.IsBrownianReal.ae_exists_pos_and_neg`: **immediate oscillation of Brownian
   motion at time `0`**.
 
@@ -50,7 +49,6 @@ open MeasureTheory Filter
 open scoped NNReal ENNReal
 
 namespace ProbabilityTheory
-
 
 /-- For a Brownian motion with measurable coordinates, the event "for every `n`, `B` is
 strictly positive at some time `1/(m+1)` with `m ≥ n`" has probability one. -/
