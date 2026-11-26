@@ -17,8 +17,8 @@ public import MathlibExt.Combinatorics.SimpleGraph.Lattice.ExteriorConnected
   loop.
 * The refutation `exc_oldExteriorConnected_false` is restated.
 * `exc_exterior_reaches_farLeft` is applied with `F = box 2 0` at the exterior site `(5, 0)`.
-* Not covered: `exc_OffSupportReachesExterior` for a concrete set (needs explicit lattice paths
-  around the loop; more than the test budget).
+* `exc_OffSupportReachesExterior` for the unit cell, by explicit lattice paths around its loop, is
+  proved in the tests of `ExteriorWindingWitness`.
 -/
 
 @[expose] public section
