@@ -9,11 +9,8 @@ LICENSE file in the root directory of this source tree.
 /-
 Portions of this file are adapted from:
 
-`Definitions/Def_ModularForm_HeckeOperator.lean`,
 `Theorems/Thm_ModularForm_coeffHeckeT_comm.lean`,
 `P2M/Sol/S_ModularForm_coeffHeckeT_comm.lean`,
-`Theorems/Thm_ModularForm_coeffHeckeU_comm.lean`,
-`P2M/Sol/S_ModularForm_coeffHeckeU_comm.lean`,
 `Theorems/Thm_ModularForm_coeffHeckeT_coeffHeckeU_comm.lean`
 and
 `P2M/Sol/S_ModularForm_coeffHeckeT_coeffHeckeU_comm.lean`
@@ -30,10 +27,6 @@ Released under the Apache License, Version 2.0.
 The source is machine-generated proof code built around a proof-extraction
 framework; the statements and proofs are reused here with that machinery
 removed and the names restated in Mathlib style.
-The `U`-type Hecke sum `ModularForm.heckeU`, the matrices
-`ModularForm.heckeUpperMatrix` and `ModularForm.heckeDiagMatrix`, and their
-basic lemmas are reused from existing files in this repository, where they are
-definitionally the corresponding source carriers.
 -/
 
 module
@@ -41,33 +34,30 @@ module
 public import MathlibExt.NumberTheory.ModularForms.HeckeOperator
 
 /-!
-# Commutation of the Hecke operators on coefficient sequences
+# Commutation of the Hecke operators on coefficient sequences at coprime indices
 
 The Hecke operators `ModularForm.coeffHeckeT` and `ModularForm.coeffHeckeU` on
 `q`-expansion coefficient sequences, defined in
 `MathlibExt.NumberTheory.ModularForms.HeckeOperator`, commute at coprime indices:
 `coeffHeckeU p a n = a (n * p)` and
 `coeffHeckeT k p a n = a (n * p) + [p ∣ n] p ^ (k - 1) a (n / p)`.
+`MathlibExt.NumberTheory.ModularForms.HeckeAlgebra` has the commutation of `U`-type operators
+(`ModularForm.coeffHeckeU_comm`) and the versions of the two results below at prime indices.
 
 ## Main results
 
-* `ModularForm.coeffHeckeU_comm`: `U`-type operators commute.
-* `ModularForm.coeffHeckeT_coeffHeckeU_comm`: `T p` and `U q` commute for coprime `p`, `q`.
-* `ModularForm.coeffHeckeT_comm`: `T p` and `T q` commute for coprime `p`, `q`.
+* `ModularForm.coeffHeckeT_coeffHeckeU_comm_of_coprime`: `T p` and `U q` commute for coprime
+  `p`, `q`.
+* `ModularForm.coeffHeckeT_comm_of_coprime`: `T p` and `T q` commute for coprime `p`, `q`.
 -/
 
 @[expose] public section
 
 namespace ModularForm
 
-/-- `U`-type coefficient operators commute. -/
-public theorem coeffHeckeU_comm (p q : ℕ) (a : ℕ → ℂ) :
-    coeffHeckeU p (coeffHeckeU q a) = coeffHeckeU q (coeffHeckeU p a) := by
-  funext n
-  simp only [coeffHeckeU_apply, Nat.mul_right_comm]
-
-/-- `T`- and `U`-type coefficient operators at coprime indices commute. -/
-public theorem coeffHeckeT_coeffHeckeU_comm (k : ℤ) {p q : ℕ} (hpq : Nat.Coprime p q)
+/-- `T`- and `U`-type coefficient operators at coprime indices commute. The indices need only be
+coprime: `ModularForm.coeffHeckeT_coeffHeckeU_comm` takes a prime `p ∤ q`. -/
+public theorem coeffHeckeT_coeffHeckeU_comm_of_coprime (k : ℤ) {p q : ℕ} (hpq : Nat.Coprime p q)
     (a : ℕ → ℂ) :
     coeffHeckeT k p (coeffHeckeU q a) = coeffHeckeU q (coeffHeckeT k p a) := by
   funext n
@@ -77,8 +67,9 @@ public theorem coeffHeckeT_coeffHeckeU_comm (k : ℤ) {p q : ℕ} (hpq : Nat.Cop
   · rw [ite_eq_left hpn, ite_eq_left (hiff.mpr hpn), Nat.mul_right_comm, Nat.div_mul_right_comm hpn]
   · rw [ite_eq_right hpn, ite_eq_right (fun h => hpn (hiff.mp h)), Nat.mul_right_comm]
 
-/-- `T`-type coefficient operators at coprime indices commute. -/
-public theorem coeffHeckeT_comm (k : ℤ) {p q : ℕ} (hpq : Nat.Coprime p q) (a : ℕ → ℂ) :
+/-- `T`-type coefficient operators at coprime indices commute. The indices need only be coprime:
+`ModularForm.coeffHeckeT_comm` takes two primes. -/
+public theorem coeffHeckeT_comm_of_coprime (k : ℤ) {p q : ℕ} (hpq : Nat.Coprime p q) (a : ℕ → ℂ) :
     coeffHeckeT k p (coeffHeckeT k q a) = coeffHeckeT k q (coeffHeckeT k p a) := by
   funext n
   simp only [coeffHeckeT_apply]

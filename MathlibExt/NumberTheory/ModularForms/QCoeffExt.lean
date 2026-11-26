@@ -9,14 +9,6 @@ LICENSE file in the root directory of this source tree.
 /-
 Portions of this file are adapted from:
 
-`Theorems/Thm_ModularForm_mdifferentiable_heckeT.lean`,
-`P2M/Sol/S_ModularForm_mdifferentiable_heckeT.lean`,
-`Theorems/Thm_ModularForm_mdifferentiable_heckeU.lean`,
-`P2M/Sol/S_ModularForm_mdifferentiable_heckeU.lean`,
-`Theorems/Thm_ModularFormClass_qCoeff_heckeT.lean`,
-`P2M/Sol/S_ModularFormClass_qCoeff_heckeT.lean`,
-`Theorems/Thm_ModularFormClass_qCoeff_heckeU.lean`,
-`P2M/Sol/S_ModularFormClass_qCoeff_heckeU.lean`,
 `Theorems/Thm_ModularFormClass_eq_of_forall_qCoeff_eq.lean`
 and
 `P2M/Sol/S_ModularFormClass_eq_of_forall_qCoeff_eq.lean`

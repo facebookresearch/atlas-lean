@@ -48,6 +48,7 @@ public import MathlibExt.NumberTheory.ModularForms.HeckeOperator
 import Mathlib.Analysis.Complex.Polynomial.Basic
 import Mathlib.NumberTheory.ModularForms.CuspFormSubmodule
 import MathlibExt.LinearAlgebra.Eigenspace.CommonEigenvector
+import MathlibExt.NumberTheory.ModularForms.HeckeAlgebra
 import MathlibExt.NumberTheory.ModularForms.HeckeOperator.CoeffCommute
 import MathlibExt.NumberTheory.ModularForms.QCoeffExt
 import MathlibExt.NumberTheory.ModularForms.StrictPeriodsGamma0
@@ -56,21 +57,22 @@ import MathlibExt.NumberTheory.ModularForms.SturmBoundGamma0
 /-!
 # Existence of normalized eigenforms of weight two
 
-A nonzero space `S_2(Γ₀(N))` of weight-two cusp forms contains a normalized
+For `N ≠ 0`, a nonzero space `S_2(Γ₀(N))` of weight-two cusp forms contains a normalized
 eigenform: a cusp form whose `q`-expansion coefficients satisfy `a 1 = 1`,
 multiplicativity at coprime indices and the Hecke recurrences at prime powers.
 
-The space is finite-dimensional (by the Sturm bound) and the Hecke operators
-`CuspForm.heckeTLin` (`T p` for primes `p ∤ N`) and `CuspForm.heckeULin`
-(`U p` for primes `p ∣ N`) act on it as pairwise commuting endomorphisms, so
-they have a common eigenvector `f₀`. The Hecke eigen-relations force `a 1 ≠ 0`
-for its coefficients `a`, and after dividing by `a 1` the eigenvalue of the
-operator at `p` is `a p`. The eigen-relations with these eigenvalues are
-equivalent to the defining coefficient identities of a normalized eigenform.
+For `N ≠ 0` the space is finite-dimensional (by the Sturm bound), and the Hecke operators
+`CuspForm.heckeTLin` (`T p` for primes `p ∤ N`) and `CuspForm.heckeULin` (`U p` for primes `p ∣ N`)
+act on it as pairwise commuting endomorphisms, so they have a common eigenvector `f₀`
+(`Module.End.exists_common_eigenvector_of_commute`). The Hecke eigen-relations force `a 1 ≠ 0` for
+its coefficients `a`, and after dividing by `a 1` the eigenvalue of the operator at `p` is `a p`.
+The eigen-relations with these eigenvalues are equivalent to the defining coefficient identities of
+a normalized eigenform.
 
 ## Main results
 
-* `CuspForm.finiteDimensional_Gamma0`: `S_k(Γ₀(N))` is finite-dimensional (an instance).
+* `CuspForm.finiteDimensional_Gamma0`: for `N ≠ 0`, `S_k(Γ₀(N))` is finite-dimensional (an
+  instance).
 * `CuspForm.isNormalizedEigenform_iff_coeffHecke`: normalized eigenforms are
   characterized by the Hecke eigen-relations on their coefficients.
 * `CuspForm.exists_isNormalizedEigenform`: the main theorem.
@@ -169,7 +171,7 @@ private theorem qCoeff_add {N : ℕ} {k : ℤ} (f g : CuspForm (CongruenceSubgro
   rw [FunLike.coe_add, ModularForm.qExpansion_add one_pos
     (CongruenceSubgroup.one_mem_strictPeriods_Gamma0 N) f g, map_add]
 
-/-- The space `S_k(Γ₀(N))` of cusp forms of weight `k` on `Γ₀(N)` is
+/-- For `N ≠ 0`, the space `S_k(Γ₀(N))` of cusp forms of weight `k` on `Γ₀(N)` is
 finite-dimensional. -/
 public instance finiteDimensional_Gamma0 (N : ℕ) [NeZero N] (k : ℤ) :
     FiniteDimensional ℂ (CuspForm (CongruenceSubgroup.Gamma0 N) k) := by
@@ -385,9 +387,9 @@ private theorem ck_comm (N : ℕ) {p q : ℕ} (hp : p.Prime) (hq : q.Prime) (hpq
   have hco : Nat.Coprime p q := (Nat.coprime_primes hp hq).mpr hpq
   unfold ck; split_ifs with h1 h2
   · exact coeffHeckeU_comm p q a
-  · exact (coeffHeckeT_coeffHeckeU_comm 2 hco.symm a).symm
-  · exact coeffHeckeT_coeffHeckeU_comm 2 hco a
-  · exact coeffHeckeT_comm 2 hco a
+  · exact (coeffHeckeT_coeffHeckeU_comm_of_coprime 2 hco.symm a).symm
+  · exact coeffHeckeT_coeffHeckeU_comm_of_coprime 2 hco a
+  · exact coeffHeckeT_comm_of_coprime 2 hco a
 
 private theorem qCoeff_zero' {N : ℕ} (n : ℕ) :
     qCoeff ⇑(0 : CuspForm (CongruenceSubgroup.Gamma0 N) 2) n = 0 := by
@@ -445,9 +447,8 @@ public theorem exists_isNormalizedEigenform {N : ℕ} [NeZero N]
   classical
   obtain ⟨g, hg⟩ := h
   have : Nontrivial (CuspForm (CongruenceSubgroup.Gamma0 N) 2) := nontrivial_of_ne g 0 hg
-  obtain ⟨f₀, hf₀, heig⟩ := Module.End.exists_forall_apply_eq_smul_of_pairwise_commute (op N)
-    (fun p q _ => op_commute p q)
-  choose c hc using heig
+  obtain ⟨c, f₀, hf₀, hc⟩ := Module.End.exists_common_eigenvector_of_commute (op N)
+    fun p q => op_commute p q
   set a : ℕ → ℂ := qCoeff ⇑f₀ with ha
   have hck : ∀ p : ℕ, p.Prime → ∀ n, ck N p a n = c p * a n := by
     intro p hp n
