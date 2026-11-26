@@ -45,9 +45,8 @@ most `1` means normal subgroups `N ≤ M` with `N` a `p'`-group, `M / N` a `p`-g
 `p'`-group.
 
 The three targets in this module state that every non-abelian simple group occurs in (a) and that
-the rank is unbounded and the `p`-length is at most `1` in (b). `IsChiefFactor`,
-`IsCompositionFactor` and `FittingHeightLE` are shared definitions. The latter is defined in
-`MathlibExt/GroupTheory/FittingHeight.lean`.
+the rank is unbounded and the `p`-length is at most `1` in (b). They use the shared definitions
+`IsChiefFactor` and `IsCompositionFactor`.
 -/
 
 open MathlibExt.GroupTheory.KourovkaNotebookShared
