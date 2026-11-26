@@ -16,6 +16,7 @@
 - [Partial Total Horizontal Signed Row Map comp signed Row Iso](partial-total-horizontal-signed-row-map-2.md)
 - [Partial Total Horizontal Row Homology total Row Homology Iso](partial-total-horizontal-row-homology-to.md)
 - [Partial Total First Page Row Restriction Homology Iso](partial-total-first-page-row-restriction.md)
+- [Partial Total First Page Signed Vertical Homology Component Iso](partial-total-first-page-signed-vertical-4.md)
 - [Partial Total First Page Signed Vertical Homology Iso](partial-total-first-page-signed-vertical.md)
 - [Partial Total First Page Signed Vertical Homology Iso hom f](partial-total-first-page-signed-vertical-2.md)
 - [Partial Total First Page Signed Vertical Homology Iso inv f](partial-total-first-page-signed-vertical-3.md)

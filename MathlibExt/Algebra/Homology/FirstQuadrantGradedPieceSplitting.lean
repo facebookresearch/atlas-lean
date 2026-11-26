@@ -15,13 +15,14 @@ public import MathlibExt.Algebra.Homology.FirstQuadrantGradedPieceCokernelMap
 /-!
 # Splitting data for consecutive horizontal filtration stages
 
-In total degree `p+1+q`, the inclusion from horizontal stage `p` to stage
-`p+1` has an explicit retraction, while projection onto the new top-column
-summand has its canonical section.  These are the two structural halves of
-the split short complex used to identify the graded-piece cokernel.
+For an ℕ-indexed downward bicomplex in a preadditive category with a zero
+object and finite coproducts, the inclusion from horizontal stage `p` to
+stage `p+1` has a retraction in each total degree. In total degree `p+1+q`,
+the top-column projection has its canonical section.
 
-The complementary-idempotent identity, and hence the bundled splitting,
-remain the next gate.
+The lower-coordinate and top-coordinate projectors sum to the identity.
+Consequently, the consecutive-stage short complex is split and exact, and
+the top-column projection is a cokernel of the preceding-stage inclusion.
 -/
 
 @[expose] public section
@@ -29,9 +30,6 @@ remain the next gate.
 open CategoryTheory Limits
 
 noncomputable section
-
-set_option backward.isDefEq.respectTransparency false
-set_option backward.isDefEq.respectTransparency.types false
 
 universe v u
 
@@ -99,7 +97,10 @@ theorem horizontalFilteredTotalι_succRetraction
       (Category.assoc _ _ _).symm
     _ = K.ιTotal (ComplexShape.down ℕ) idx.val.val.1 idx.val.val.2 n
           idx.val.property ≫ totalToHorizontalFilteredTotal K p n :=
-      congrArg (fun z => z ≫ totalToHorizontalFilteredTotal K p n) hto
+      congrArg
+        (fun z : (K.X idx.val.val.1).X idx.val.val.2 ⟶
+            (K.total (ComplexShape.down ℕ)).X n =>
+          z ≫ totalToHorizontalFilteredTotal K p n) hto
     _ = _ := ιTotal_totalToHorizontalFilteredTotal K p n _ _ _
 
 omit [HasZeroObject C] in
@@ -111,8 +112,20 @@ theorem horizontalFilteredSucc_complementary_id (p q : ℕ) :
         horizontalFilteredTopProjection K (p + 1) q ≫
           horizontalFilteredTopSection K p q =
       𝟙 _ := by
+  let F : DownNatHorizontalFilteredFiber (p + 1 + q) (p + 1) → C :=
+    fun idx => (K.X idx.val.val.1).X idx.val.val.2
+  change horizontalFilteredSuccRetraction K p (p + 1 + q) ≫
+        horizontalFilteredTotalMap K (Nat.le_succ p) (p + 1 + q) +
+      horizontalFilteredTopProjection K (p + 1) q ≫
+        horizontalFilteredTopSection K p q = 𝟙 (∐ F)
   apply Sigma.hom_ext
   intro idx
+  change horizontalFilteredTotalι K (p + 1) (p + 1 + q) idx ≫
+        (horizontalFilteredSuccRetraction K p (p + 1 + q) ≫
+            horizontalFilteredTotalMap K (Nat.le_succ p) (p + 1 + q) +
+          horizontalFilteredTopProjection K (p + 1) q ≫
+            horizontalFilteredTopSection K p q) =
+      horizontalFilteredTotalι K (p + 1) (p + 1 + q) idx ≫ 𝟙 _
   simp only [Preadditive.comp_add]
   by_cases ha : idx.val.val.1 ≤ p
   · let idxLow : DownNatHorizontalFilteredFiber (p + 1 + q) p :=
@@ -129,7 +142,9 @@ theorem horizontalFilteredSucc_complementary_id (p q : ℕ) :
           horizontalFilteredTotalι K (p + 1) (p + 1 + q) idx :=
       (Category.assoc _ _ _).symm.trans
         ((congrArg
-          (fun z => z ≫ horizontalFilteredTotalMap K (Nat.le_succ p) (p + 1 + q))
+          (fun z : (K.X idx.val.val.1).X idx.val.val.2 ⟶
+              horizontalFilteredTotalObj K p (p + 1 + q) =>
+            z ≫ horizontalFilteredTotalMap K (Nat.le_succ p) (p + 1 + q))
           hret).trans hmap)
     have hproj := horizontalFilteredTotalι_topProjection_of_lt
       K (p + 1) q idx (Nat.lt_succ_of_le ha)
@@ -138,7 +153,9 @@ theorem horizontalFilteredSucc_complementary_id (p q : ℕ) :
             (horizontalFilteredTopProjection K (p + 1) q ≫
               horizontalFilteredTopSection K p q) = 0 :=
       (Category.assoc _ _ _).symm.trans
-        ((congrArg (fun z => z ≫ horizontalFilteredTopSection K p q) hproj).trans
+        ((congrArg
+          (fun z : (K.X idx.val.val.1).X idx.val.val.2 ⟶ (K.X (p + 1)).X q =>
+            z ≫ horizontalFilteredTopSection K p q) hproj).trans
           zero_comp)
     have hsum := congrArg₂ (· + ·) hfirst hsecond
     exact hsum.trans ((add_zero _).trans (Category.comp_id _).symm)
@@ -163,7 +180,8 @@ theorem horizontalFilteredSucc_complementary_id (p q : ℕ) :
               horizontalFilteredTotalMap K (Nat.le_succ p) (p + 1 + q)) = 0 :=
       (Category.assoc _ _ _).symm.trans
         ((congrArg
-          (fun z => z ≫ horizontalFilteredTotalMap K (Nat.le_succ p) (p + 1 + q))
+          (fun z : (K.X (p + 1)).X q ⟶ horizontalFilteredTotalObj K p (p + 1 + q) =>
+            z ≫ horizontalFilteredTotalMap K (Nat.le_succ p) (p + 1 + q))
           hret).trans zero_comp)
     have hidx : idx' = horizontalFilteredTopIndex (p + 1) q := by
       apply Subtype.ext
@@ -177,19 +195,24 @@ theorem horizontalFilteredSucc_complementary_id (p q : ℕ) :
               horizontalFilteredTopSection K p q) =
           horizontalFilteredTopSection K p q :=
       (Category.assoc _ _ _).symm.trans
-        ((congrArg (fun z => z ≫ horizontalFilteredTopSection K p q) hproj).trans
+        ((congrArg
+          (fun z : (K.X (p + 1)).X q ⟶ (K.X (p + 1)).X q =>
+            z ≫ horizontalFilteredTopSection K p q) hproj).trans
           (Category.id_comp _))
     have hsum := congrArg₂ (· + ·) hfirst hsecond
     exact hsum.trans ((zero_add _).trans (Category.comp_id _).symm)
 
 /-- The consecutive-stage short complex is split. -/
 noncomputable def horizontalFilteredSuccSplitting (p q : ℕ) :
-    (horizontalFilteredSuccShortComplex K p q).Splitting where
-  r := horizontalFilteredSuccRetraction K p (p + 1 + q)
-  s := horizontalFilteredTopSection K p q
-  f_r := horizontalFilteredTotalMap_succ_retraction K p (p + 1 + q)
-  s_g := horizontalFilteredTopSection_projection K p q
-  id := horizontalFilteredSucc_complementary_id K p q
+    (horizontalFilteredSuccShortComplex K p q).Splitting := by
+  let S : ShortComplex C := horizontalFilteredSuccShortComplex K p q
+  let r : S.X₂ ⟶ S.X₁ := horizontalFilteredSuccRetraction K p (p + 1 + q)
+  let s : S.X₃ ⟶ S.X₂ := horizontalFilteredTopSection K p q
+  have hfr : S.f ≫ r = 𝟙 S.X₁ :=
+    horizontalFilteredTotalMap_succ_retraction K p (p + 1 + q)
+  have hsg : s ≫ S.g = 𝟙 S.X₃ := horizontalFilteredTopSection_projection K p q
+  have hid : r ≫ S.f + S.g ≫ s = 𝟙 S.X₂ := horizontalFilteredSucc_complementary_id K p q
+  exact { r := r, s := s, f_r := hfr, s_g := hsg, id := hid }
 
 theorem horizontalFilteredSuccShortComplex_exact (p q : ℕ) :
     (horizontalFilteredSuccShortComplex K p q).Exact :=

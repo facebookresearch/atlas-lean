@@ -29,9 +29,6 @@ open CategoryTheory Limits
 
 noncomputable section
 
-set_option backward.isDefEq.respectTransparency false
-set_option backward.isDefEq.respectTransparency.types false
-
 universe v u
 
 namespace HomologicalComplex₂
@@ -102,19 +99,24 @@ theorem horizontalTotalHomologyFiltrationStepMap_naturality_of_pos
       horizontalPositivePrevTotalHomologyFiltrationMapOfBicomplex f p q hp ≫
         horizontalTotalHomologyFiltrationStepMap L p q := by
   let a : (p - 1 : ℕ) ⟶ p := homOfLE (Nat.sub_le p 1)
-  let eKPrev := horizontalPositivePrevCompleteFiniteHomologyFiltrationIso
-    K (p + q) p hp
-  let eLPrev := horizontalPositivePrevCompleteFiniteHomologyFiltrationIso
-    L (p + q) p hp
-  let eKCurr :=
+  let DK : ℕ ⥤ C := (horizontalFiniteTotalHomologyFiltration K (p + q)).diagram
+  let DL : ℕ ⥤ C := (horizontalFiniteTotalHomologyFiltration L (p + q)).diagram
+  let eKPrev : (horizontalTotalHomologyFiltration K (p + q)).obj
+      ((((p : ℤ) - 1 : ℤ) : EInt)) ≅ DK.obj (p - 1) :=
+    horizontalPositivePrevCompleteFiniteHomologyFiltrationIso K (p + q) p hp
+  let eLPrev : (horizontalTotalHomologyFiltration L (p + q)).obj
+      ((((p : ℤ) - 1 : ℤ) : EInt)) ≅ DL.obj (p - 1) :=
+    horizontalPositivePrevCompleteFiniteHomologyFiltrationIso L (p + q) p hp
+  let eKCurr : (horizontalTotalHomologyFiltration K (p + q)).obj
+      (((p : ℤ) : EInt)) ≅ DK.obj p :=
     (horizontalCompleteFiniteHomologyFiltrationDiagramIso K (p + q)).app p
-  let eLCurr :=
+  let eLCurr : (horizontalTotalHomologyFiltration L (p + q)).obj
+      (((p : ℤ) : EInt)) ≅ DL.obj p :=
     (horizontalCompleteFiniteHomologyFiltrationDiagramIso L (p + q)).app p
-  let m := (horizontalFiniteTotalHomologyFilteredObjectFunctor (p + q)).map f
-  let dK := (horizontalFiniteTotalHomologyFiltration K
-    (p + q)).diagram.map a
-  let dL := (horizontalFiniteTotalHomologyFiltration L
-    (p + q)).diagram.map a
+  let τ : DK ⟶ DL :=
+    ((horizontalFiniteTotalHomologyFilteredObjectFunctor (p + q)).map f).natTrans
+  let dK : DK.obj (p - 1) ⟶ DK.obj p := DK.map a
+  let dL : DL.obj (p - 1) ⟶ DL.obj p := DL.map a
   have hK :
       horizontalTotalHomologyFiltrationStepMap K p q ≫ eKCurr.hom =
         eKPrev.hom ≫ dK :=
@@ -125,32 +127,34 @@ theorem horizontalTotalHomologyFiltrationStepMap_naturality_of_pos
         eLPrev.inv ≫ horizontalTotalHomologyFiltrationStepMap L p q :=
     horizontalFiniteTotalHomologyFiltrationStepMap_comp_positiveComparison_inv
       L p q hp
-  have hm : dK ≫ m.natTrans.app p = m.natTrans.app (p - 1) ≫ dL :=
-    m.natTrans.naturality a
+  have hm : dK ≫ τ.app p = τ.app (p - 1) ≫ dL :=
+    τ.naturality a
+  rw [horizontalPositiveCurrentTotalHomologyFiltrationMapOfBicomplex_eq,
+    horizontalPositivePrevTotalHomologyFiltrationMapOfBicomplex_eq]
   change
     horizontalTotalHomologyFiltrationStepMap K p q ≫
-        (eKCurr.hom ≫ m.natTrans.app p ≫ eLCurr.inv) =
-      (eKPrev.hom ≫ m.natTrans.app (p - 1) ≫ eLPrev.inv) ≫
+        (eKCurr.hom ≫ τ.app p ≫ eLCurr.inv) =
+      (eKPrev.hom ≫ τ.app (p - 1) ≫ eLPrev.inv) ≫
         horizontalTotalHomologyFiltrationStepMap L p q
   calc
     horizontalTotalHomologyFiltrationStepMap K p q ≫
-          (eKCurr.hom ≫ m.natTrans.app p ≫ eLCurr.inv) =
+          (eKCurr.hom ≫ τ.app p ≫ eLCurr.inv) =
         (horizontalTotalHomologyFiltrationStepMap K p q ≫ eKCurr.hom) ≫
-          m.natTrans.app p ≫ eLCurr.inv := by
+          τ.app p ≫ eLCurr.inv := by
       simp only [Category.assoc]
-    _ = (eKPrev.hom ≫ dK) ≫ m.natTrans.app p ≫ eLCurr.inv := by
+    _ = (eKPrev.hom ≫ dK) ≫ τ.app p ≫ eLCurr.inv := by
       rw [hK]
-    _ = eKPrev.hom ≫ (dK ≫ m.natTrans.app p) ≫ eLCurr.inv := by
+    _ = eKPrev.hom ≫ (dK ≫ τ.app p) ≫ eLCurr.inv := by
       simp only [Category.assoc]
-    _ = eKPrev.hom ≫ (m.natTrans.app (p - 1) ≫ dL) ≫ eLCurr.inv := by
+    _ = eKPrev.hom ≫ (τ.app (p - 1) ≫ dL) ≫ eLCurr.inv := by
       rw [hm]
-    _ = (eKPrev.hom ≫ m.natTrans.app (p - 1)) ≫
+    _ = (eKPrev.hom ≫ τ.app (p - 1)) ≫
         (dL ≫ eLCurr.inv) := by
       simp only [Category.assoc]
-    _ = (eKPrev.hom ≫ m.natTrans.app (p - 1)) ≫
+    _ = (eKPrev.hom ≫ τ.app (p - 1)) ≫
         (eLPrev.inv ≫ horizontalTotalHomologyFiltrationStepMap L p q) := by
       rw [hL]
-    _ = (eKPrev.hom ≫ m.natTrans.app (p - 1) ≫ eLPrev.inv) ≫
+    _ = (eKPrev.hom ≫ τ.app (p - 1) ≫ eLPrev.inv) ≫
         horizontalTotalHomologyFiltrationStepMap L p q := by
       simp only [Category.assoc]
 

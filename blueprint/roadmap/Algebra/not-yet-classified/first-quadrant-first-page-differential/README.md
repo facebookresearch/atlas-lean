@@ -20,6 +20,7 @@
 - [Horizontal First Page Coherent Relative Homology Direct Column Iso](horizontal-first-page-coherent-relative-2.md)
 - [Horizontal First Page Coherent Relative Homology Direct Column Iso hom](horizontal-first-page-coherent-relative-3.md)
 - [Horizontal First Page Coherent Direct Column Iso](horizontal-first-page-coherent-direct-co.md)
+- [Cokernel Precomp Short Complex Iso Data](cokernel-precomp-short-complex-iso-data.md)
 - [Horizontal First Page Coherent Adjacent Short Complex Iso](horizontal-first-page-coherent-adjacent.md)
 - [Horizontal First Page Adjacent Short Complex Iso endpoint](horizontal-first-page-adjacent-short-com.md)
 - [Horizontal First Page Coherent Adjacent Short Complex Iso endpoint coherence](horizontal-first-page-coherent-adjacent-2.md)

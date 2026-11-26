@@ -29,9 +29,6 @@ open CategoryTheory.ComposableArrows
 
 noncomputable section
 
-set_option backward.isDefEq.respectTransparency false
-set_option backward.isDefEq.respectTransparency.types false
-
 universe v u
 
 namespace HomologicalComplex₂
@@ -83,10 +80,15 @@ theorem horizontalBottomToNegativeRelativeHomologyIsZero (p q : ℕ) :
 noncomputable def horizontalFiniteToCanonicalAbutmentIso (p q : ℕ) :
     horizontalFirstQuadrantAbutmentTerm K p q ≅
       horizontalFirstQuadrantCanonicalAbutmentTerm K p q := by
-  let X := horizontalCompleteFiltrationSpectralObject K
+  let X : CategoryTheory.Abelian.SpectralObject C EInt :=
+    horizontalCompleteFiltrationSpectralObject K
   let n₀ : ℤ := -((p + q + 1 : ℕ) : ℤ)
   let n₁ : ℤ := -((p + q : ℕ) : ℤ)
   let n₂ : ℤ := -((p + q : ℕ) : ℤ) + 1
+  have hn₁ : n₀ + 1 = n₁ := by
+    dsimp only [n₀, n₁]
+    omega
+  have hn₂ : n₁ + 1 = n₂ := rfl
   exact (X.isoMapFourδ₁Toδ₀'
     (⊥ : EInt)
     horizontalAbutmentLowerIndex
@@ -98,7 +100,7 @@ noncomputable def horizontalFiniteToCanonicalAbutmentIso (p q : ℕ) :
     (horizontalFirstPageIndex_le p)
     (horizontalAbutmentIndices_le p q).2
     n₀ n₁ n₂
-    (horizontalBottomToNegativeRelativeHomologyIsZero K p q)).symm
+    (horizontalBottomToNegativeRelativeHomologyIsZero K p q) hn₁ hn₂).symm
 
 /-- Every sufficiently late page is canonically isomorphic to the
 bottom-indexed finite abutment term. -/
@@ -256,15 +258,26 @@ noncomputable def horizontalCanonicalAbutmentCokernelIso (p q : ℕ) :
       (horizontalCanonicalAbutmentPreviousHomologyMap K p q)
       (horizontalCanonicalAbutmentBoundaryMap K p q)) ≅
       horizontalFirstQuadrantCanonicalAbutmentTerm K p q := by
-  let S := horizontalCanonicalAbutmentCokernelSequence K p q
+  let S : ShortComplex C := horizontalCanonicalAbutmentCokernelSequence K p q
   have hS : S.Exact :=
     horizontalCanonicalAbutmentCokernelSequence_exact K p q
-  have hg : Epi S.g := by
-    dsimp [S, horizontalCanonicalAbutmentCokernelSequence]
-    infer_instance
-  let _ := hg
+  letI : Epi S.g := by
+    exact inferInstanceAs
+      (Epi ((horizontalCompleteFiltrationSpectralObject K).cokernelSequenceE
+        (horizontalCanonicalAbutmentLowerMap p)
+        (horizontalCanonicalAbutmentMiddleMap p)
+        (horizontalCanonicalAbutmentUpperMap p q)
+        (horizontalCanonicalAbutmentLowerCompositeMap p)
+        (horizontalCanonicalAbutmentLower_comp_middle p)
+        (-((p + q + 1 : ℕ) : ℤ)) (-((p + q : ℕ) : ℤ))
+        (-((p + q : ℕ) : ℤ) + 1)).g)
+  let canonical : CokernelCofork S.f := CokernelCofork.ofπ S.g S.zero
+  let standard : CokernelCofork S.f :=
+    CokernelCofork.ofπ (cokernel.π S.f) (cokernel.condition S.f)
+  have hCanonical : IsColimit canonical := hS.gIsCokernel
+  have hStandard : IsColimit standard := cokernelIsCokernel S.f
   exact IsColimit.coconePointUniqueUpToIso
-    (cokernelIsCokernel S.f) hS.gIsCokernel
+    hStandard hCanonical
 
 /-- Quotient of the stage-`p` image by the stage-`p-1` image inside finite
 upper-stage homology. -/

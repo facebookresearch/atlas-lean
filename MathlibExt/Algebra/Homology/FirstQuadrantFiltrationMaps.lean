@@ -17,11 +17,8 @@ public import MathlibExt.Algebra.Homology.FirstQuadrantFilteredComplex
 
 An inequality of horizontal stages induces a chain map between the
 corresponding filtered total complexes, compatible with both inclusions into
-the full total.  In total degree `n`, every stage `k ≥ n` is canonically
+the full total. In total degree `n`, every stage `k ≥ n` is canonically
 isomorphic to the full total degree.
-
-Functorial packaging of all stages and construction of the associated
-spectral object remain separate gates.
 -/
 
 @[expose] public section
@@ -215,4 +212,3 @@ noncomputable def horizontalFilteredTotalIsoOfLE
 end HomologicalComplex₂
 
 end
-

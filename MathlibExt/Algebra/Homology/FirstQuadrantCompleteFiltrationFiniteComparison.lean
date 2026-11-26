@@ -28,9 +28,6 @@ open CategoryTheory Limits
 
 noncomputable section
 
-set_option backward.isDefEq.respectTransparency false
-set_option backward.isDefEq.respectTransparency.types false
-
 universe v u
 
 namespace HomologicalComplex₂
@@ -58,30 +55,25 @@ theorem horizontalCompleteFilteredTotalComplexFiniteIso_hom_toTotal
     (horizontalCompleteFilteredTotalComplexFiniteIso K a ha).hom ≫
         horizontalFilteredTotalComplexToTotal K a.toNat =
       horizontalCompleteFilteredTotalToTotal K (a : EInt) := by
-  let U := horizontalCompleteFilteredTotalMonoOver K (a : EInt)
-  let V := (horizontalTotalFiltration K).toMonoOver.obj a.toNat
-  have hMono : U = V := by
-    dsimp only [U, V, horizontalCompleteFilteredTotalMonoOver,
-      WithBotTop.rec_coe]
-    rw [ite_eq_left ha]
-  let hObj : U.obj.left = V.obj.left :=
-    congrArg (fun Z => Z.obj.left) hMono
-  have arrow_transport : ∀ (X Y : MonoOver
-      (K.total (ComplexShape.down ℕ))) (h : X = Y),
-      eqToHom (congrArg (fun Z => Z.obj.left) h) ≫ Y.arrow = X.arrow := by
-    intro X Y h
+  have hmono : horizontalCompleteFilteredTotalMonoOver K (a : EInt) =
+      (horizontalTotalFiltration K).toMonoOver.obj a.toNat := by
+    simp only [horizontalCompleteFilteredTotalMonoOver, WithBotTop.rec_coe,
+      ite_eq_left ha]
+  have harrow (S T : MonoOver (K.total (ComplexShape.down ℕ))) (h : S = T) :
+      HEq S.arrow T.arrow := by
     cases h
-    simp
-  have hArrow : eqToHom hObj ≫ V.arrow = U.arrow :=
-    arrow_transport U V hMono
-  change eqToHom
-      (horizontalCompleteFilteredTotalComplex_coe_of_nonneg K a ha) ≫
-        horizontalFilteredTotalComplexToTotal K a.toNat = U.arrow
-  have hEq :
-      horizontalCompleteFilteredTotalComplex_coe_of_nonneg K a ha = hObj :=
-    Subsingleton.elim _ _
-  rw [hEq]
-  exact hArrow
+    rfl
+  have hstage : HEq (horizontalCompleteFilteredTotalToTotal K (a : EInt))
+      ((horizontalTotalFiltration K).ι.app a.toNat) := by
+    simpa only [horizontalCompleteFilteredTotalToTotal, Filtration.ι_app,
+      MonoOver.arrow] using harrow _ _ hmono
+  have hincl : HEq (horizontalCompleteFilteredTotalToTotal K (a : EInt))
+      (horizontalFilteredTotalComplexToTotal K a.toNat) :=
+    hstage.trans (heq_of_eq (horizontalTotalFiltration_ι_app K a.toNat))
+  apply eq_of_heq
+  rw [horizontalCompleteFilteredTotalComplexFiniteIso, eqToIso.hom,
+    eqToHom_comp_heq_iff]
+  exact hincl.symm
 
 /-- The complete-to-finite stage isomorphisms are natural in the
 bicomplex. -/

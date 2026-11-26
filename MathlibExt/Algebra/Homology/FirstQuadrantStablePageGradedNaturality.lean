@@ -16,14 +16,13 @@ public import
 /-!
 # Naturality of the stable-page associated-graded comparison
 
-At the first page satisfying the two first-quadrant stability bounds, the
-page map induced by a bicomplex morphism commutes with the canonical
-identification of the stable term with the associated graded of total
-homology.  The proof composes the reviewed stable-to-canonical and
-canonical-to-graded squares.
+For ℕ-indexed downward bicomplexes in an abelian category, at the first page
+satisfying the two first-quadrant stability bounds, the page map induced by a
+bicomplex morphism commutes with the canonical identification of the stable
+term with the associated graded of total homology. The comparison composes
+the stable-to-canonical and canonical-to-graded commutative squares.
 
-The stable map is the fixed `pageXIso`-conjugated `EMap`; no successor-page or
-full spectral-sequence morphism API is used.
+The stable map is the fixed `pageXIso`-conjugated `EMap`.
 -/
 
 @[expose] public section

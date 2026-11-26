@@ -15,12 +15,10 @@ public import MathlibExt.Algebra.Homology.FirstQuadrantFiltration
 /-!
 # Filtered complexes of first-quadrant totals
 
-The degreewise horizontal filtration of a first-quadrant total is stable
-under the total differential.  This file defines the filtered differential,
-proves its compatibility with the split-monomorphic inclusion into the total,
-and packages every stage as a chain complex.
-
-Maps between stages and spectral-object packaging remain separate gates.
+The degreewise horizontal filtration of a first-quadrant total is preserved
+by the total differential. The restricted differentials make every stage a
+chain complex. The stage inclusions commute with the differentials and are
+split monomorphisms in each degree.
 -/
 
 @[expose] public section
@@ -213,4 +211,3 @@ noncomputable def horizontalFilteredTotalComplex (k : ℕ) :
 end HomologicalComplex₂
 
 end
-

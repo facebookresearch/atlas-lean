@@ -155,4 +155,3 @@ noncomputable def firstQuadrantTotalXIso
 end HomologicalComplex₂
 
 end
-

@@ -15,12 +15,10 @@ public import MathlibExt.Algebra.Homology.FirstQuadrantTotal
 /-!
 # Degreewise horizontal filtration of a first-quadrant total
 
-For a first-quadrant bicomplex, this file constructs in each total degree
-the finite coproduct of summands whose horizontal coordinate is at most a
-chosen stage.  It provides the inclusion into the full total degree, an
-explicit coordinate projection, and a split-monomorphism witness.
-
-The differential and filtered-complex packaging are separate gates.
+In total degree `n`, horizontal filtration stage `k` is the finite coproduct
+of bicomplex terms with coordinates `i, j` satisfying `i+j=n` and `i≤k`.
+Its inclusion into the full total degree has an explicit coordinate
+projection and is a split monomorphism.
 -/
 
 @[expose] public section
@@ -147,4 +145,3 @@ noncomputable def horizontalFilteredTotalToTotalSplitMono (k n : ℕ) :
 end HomologicalComplex₂
 
 end
-

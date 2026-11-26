@@ -11,6 +11,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Algebra.Homology.FirstQuadrantHomologyGradedMap
+public import Mathlib.CategoryTheory.HomCongr
 
 /-!
 # Functoriality of the current total-homology filtration-stage map
@@ -28,9 +29,6 @@ This file proves no predecessor-map, arrow-functor, or cokernel-functor law.
 open CategoryTheory Limits
 
 noncomputable section
-
-set_option backward.isDefEq.respectTransparency false
-set_option backward.isDefEq.respectTransparency.types false
 
 universe v u
 
@@ -50,29 +48,24 @@ theorem
     (p q : ℕ) :
     horizontalPositiveCurrentTotalHomologyFiltrationMapOfBicomplex
         (𝟙 K) p q = 𝟙 _ := by
-  let F := horizontalFiniteTotalHomologyFilteredObjectFunctor
-    (C := C) (p + q)
-  let e := (horizontalCompleteFiniteHomologyFiltrationDiagramIso
-    K (p + q)).app p
-  have hId := congrArg CategoryTheory.FilteredObject.Hom.natTrans
-    (F.map_id K)
-  have hIdApp :
-      ((horizontalFiniteTotalHomologyFilteredObjectFunctor
-        (C := C) (p + q)).map (𝟙 K)).natTrans.app p =
-        𝟙 ((horizontalFiniteTotalHomologyFiltration K
-          (p + q)).diagram.obj p) := by
-    have hIdApp := NatTrans.congr_app hId p
-    change ((horizontalFiniteTotalHomologyFilteredObjectFunctor
-      (C := C) (p + q)).map (𝟙 K)).natTrans.app p =
-        𝟙 ((horizontalFiniteTotalHomologyFiltration K
-          (p + q)).diagram.obj p) at hIdApp
-    exact hIdApp
-  change e.hom ≫
-    ((horizontalFiniteTotalHomologyFilteredObjectFunctor
-      (C := C) (p + q)).map (𝟙 K)).natTrans.app p ≫ e.inv = 𝟙 _
-  rw [hIdApp]
-  rw [Category.id_comp]
-  exact e.hom_inv_id
+  let F := horizontalFiniteTotalHomologyFilteredObjectFunctor (C := C) (p + q)
+  let eK : (horizontalTotalHomologyFiltration K (p + q)).obj (((p : ℤ) : EInt)) ≅
+      ((F.obj K).filtration.diagram).obj p :=
+    ((evaluation ℕ C).obj p).mapIso
+      (horizontalCompleteFiniteHomologyFiltrationDiagramIso K (p + q))
+  let θ : (F.obj K ⟶ F.obj K) →
+      ((horizontalTotalHomologyFiltration K (p + q)).obj (((p : ℤ) : EInt)) ⟶
+        (horizontalTotalHomologyFiltration K (p + q)).obj (((p : ℤ) : EInt))) :=
+    fun h => eK.hom ≫ h.natTrans.app p ≫ eK.inv
+  change θ (F.map (𝟙 K)) = 𝟙 _
+  calc
+    θ (F.map (𝟙 K)) = θ (𝟙 (F.obj K)) := congrArg θ (F.map_id K)
+    _ = 𝟙 _ := by
+      change eK.hom ≫ 𝟙 _ ≫ eK.inv = 𝟙 _
+      calc
+        eK.hom ≫ 𝟙 _ ≫ eK.inv = eK.hom ≫ eK.inv :=
+          congrArg (fun h => eK.hom ≫ h) (Category.id_comp eK.inv)
+        _ = 𝟙 _ := eK.hom_inv_id
 
 /-- Transported current-stage maps preserve composition of bicomplex
 morphisms. -/
@@ -84,24 +77,33 @@ theorem
         (f ≫ g) p q =
       horizontalPositiveCurrentTotalHomologyFiltrationMapOfBicomplex f p q ≫
         horizontalPositiveCurrentTotalHomologyFiltrationMapOfBicomplex g p q := by
-  let F := horizontalFiniteTotalHomologyFilteredObjectFunctor
-    (C := C) (p + q)
-  let eK := (horizontalCompleteFiniteHomologyFiltrationDiagramIso
-    K (p + q)).app p
-  let eL := (horizontalCompleteFiniteHomologyFiltrationDiagramIso
-    L (p + q)).app p
-  let eM := (horizontalCompleteFiniteHomologyFiltrationDiagramIso
-    M (p + q)).app p
-  have hComp := congrArg CategoryTheory.FilteredObject.Hom.natTrans
-    (F.map_comp f g)
-  have hCompApp := NatTrans.congr_app hComp p
-  change (F.map (f ≫ g)).natTrans.app p =
-    (F.map f).natTrans.app p ≫ (F.map g).natTrans.app p at hCompApp
-  change eK.hom ≫ (F.map (f ≫ g)).natTrans.app p ≫ eM.inv =
+  let F := horizontalFiniteTotalHomologyFilteredObjectFunctor (C := C) (p + q)
+  let eK : (horizontalTotalHomologyFiltration K (p + q)).obj (((p : ℤ) : EInt)) ≅
+      ((F.obj K).filtration.diagram).obj p :=
+    ((evaluation ℕ C).obj p).mapIso
+      (horizontalCompleteFiniteHomologyFiltrationDiagramIso K (p + q))
+  let eL : (horizontalTotalHomologyFiltration L (p + q)).obj (((p : ℤ) : EInt)) ≅
+      ((F.obj L).filtration.diagram).obj p :=
+    ((evaluation ℕ C).obj p).mapIso
+      (horizontalCompleteFiniteHomologyFiltrationDiagramIso L (p + q))
+  let eM : (horizontalTotalHomologyFiltration M (p + q)).obj (((p : ℤ) : EInt)) ≅
+      ((F.obj M).filtration.diagram).obj p :=
+    ((evaluation ℕ C).obj p).mapIso
+      (horizontalCompleteFiniteHomologyFiltrationDiagramIso M (p + q))
+  let θ : (F.obj K ⟶ F.obj M) →
+      ((horizontalTotalHomologyFiltration K (p + q)).obj (((p : ℤ) : EInt)) ⟶
+        (horizontalTotalHomologyFiltration M (p + q)).obj (((p : ℤ) : EInt))) :=
+    fun h => eK.hom ≫ h.natTrans.app p ≫ eM.inv
+  change θ (F.map (f ≫ g)) =
     (eK.hom ≫ (F.map f).natTrans.app p ≫ eL.inv) ≫
       (eL.hom ≫ (F.map g).natTrans.app p ≫ eM.inv)
-  rw [hCompApp]
-  simp only [Category.assoc, Iso.inv_hom_id_assoc]
+  calc
+    θ (F.map (f ≫ g)) = θ (F.map f ≫ F.map g) := congrArg θ (F.map_comp f g)
+    _ = (eK.hom ≫ (F.map f).natTrans.app p ≫ eL.inv) ≫
+        (eL.hom ≫ (F.map g).natTrans.app p ≫ eM.inv) := by
+      change eK.hom ≫ ((F.map f).natTrans.app p ≫ (F.map g).natTrans.app p) ≫ eM.inv = _
+      exact Iso.homCongr_comp eK.symm eL.symm eM.symm
+        ((F.map f).natTrans.app p) ((F.map g).natTrans.app p)
 
 end HomologicalComplex₂
 

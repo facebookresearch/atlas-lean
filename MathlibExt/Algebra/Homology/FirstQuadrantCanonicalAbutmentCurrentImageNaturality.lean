@@ -95,7 +95,7 @@ theorem horizontalCompleteHomologyImageMapOfBicomplex_ι
     exact image.map_ι sq
 
 /-- At the first-page upper index, the generic complete-stage image map is
-the reviewed current total-homology filtration map. -/
+the current total-homology filtration map. -/
 @[simp]
 theorem horizontalCompleteHomologyImageMapOfBicomplex_eq_current
     (f : K ⟶ L) (p q : ℕ) :

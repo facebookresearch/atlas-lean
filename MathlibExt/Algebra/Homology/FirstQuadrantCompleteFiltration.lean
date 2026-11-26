@@ -18,13 +18,11 @@ public import MathlibExt.Algebra.Homology.MappingConeCokernelConnecting
 # Complete indexing of a first-quadrant filtration
 
 The horizontal filtration of a first-quadrant total complex extends from
-natural stages to the extended integers.  The bottom and every negative
+natural stages to the extended integers. The bottom and every negative
 finite stage are zero, a nonnegative finite stage is the corresponding
 horizontal filtration stage, and the top stage is the full total complex.
 
-This gives a canonical `EInt`-indexed mapping-cone spectral object.  The
-choice of page data and the identification of its first pages remain
-separate gates.
+This filtration defines a canonical `EInt`-indexed mapping-cone spectral object.
 -/
 
 @[expose] public section

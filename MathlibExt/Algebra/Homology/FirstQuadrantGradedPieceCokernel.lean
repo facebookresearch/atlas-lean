@@ -15,11 +15,13 @@ public import MathlibExt.Algebra.Homology.FirstQuadrantGradedPieceMap
 /-!
 # Consecutive filtration stages and the graded-piece cokernel
 
-This file isolates the consecutive-stage map whose cokernel is the horizontal
-graded piece.  The zeroth lower stage is proved zero, and for positive stages
-the comparison square is proved first in `MonoOver`, where its morphism is
-unique.  Factoring the column projection through the cokernel and proving the
-factor is an isomorphism remain the next gate.
+For an ℕ-indexed downward bicomplex in a preadditive category with a zero
+object and finite coproducts, consecutive horizontal filtration stages are
+linked by their filtration morphism.
+
+The lower stage in column zero is zero, so the column-projection composite
+vanishes. At positive stages, the natural-stage comparison square commutes
+in `MonoOver` and remains commutative after chain-to-cochain extension.
 -/
 
 @[expose] public section
@@ -27,9 +29,6 @@ factor is an isomorphism remain the next gate.
 open CategoryTheory Limits CategoryTheory.Pretriangulated
 
 noncomputable section
-
-set_option backward.isDefEq.respectTransparency false
-set_option backward.isDefEq.respectTransparency.types false
 
 universe v u
 
@@ -54,14 +53,14 @@ its composite with the graded-piece projection is zero. -/
 theorem horizontalFirstPageFiltrationMap_zero_projection :
     horizontalFirstPageFiltrationMap K 0 ≫
       horizontalDirectColumnProjectionMap K 0 = 0 := by
+  let E : ChainComplex C ℕ ⥤ CochainComplex C ℤ :=
+    ComplexShape.embeddingDownNat.extendFunctor C
   have hsource : IsZero
       ((horizontalCompleteFiltrationCochainDiagram K).obj
         (horizontalFirstPageLowerIndex 0)) := by
-    change IsZero ((ComplexShape.embeddingDownNat.extendFunctor C).obj
-      (horizontalCompleteFilteredTotalComplex K (-1 : ℤ)))
+    change IsZero (E.obj (horizontalCompleteFilteredTotalComplex K (-1 : ℤ)))
     rw [horizontalCompleteFilteredTotalComplex_coe_of_neg K (-1) (by omega)]
-    exact (ComplexShape.embeddingDownNat.extendFunctor C).map_isZero
-      HomologicalComplex.isZero_zero
+    exact E.map_isZero HomologicalComplex.isZero_zero
   exact hsource.eq_of_src _ _
 
 theorem horizontalCompleteFilteredTotalMonoOver_lower_succ (p : ℕ) :
@@ -114,7 +113,8 @@ noncomputable def horizontalCompleteFiltrationCochainMonoLowerSuccIso (p : ℕ) 
       (ComplexShape.embeddingDownNat.extendFunctor C).obj
         ((horizontalTotalFiltration K).toMonoOver.obj p).obj.left :=
   (ComplexShape.embeddingDownNat.extendFunctor C).mapIso
-    ((MonoOver.forget _ ⋙ Over.forget _).mapIso
+    ((MonoOver.forget (K.total (ComplexShape.down ℕ)) ⋙
+      Over.forget (K.total (ComplexShape.down ℕ))).mapIso
       (horizontalCompleteFilteredTotalMonoOverLowerSuccIso K p))
 
 /-- Canonical cochain identification of a positive upper stage with its
@@ -125,7 +125,8 @@ noncomputable def horizontalCompleteFiltrationCochainMonoUpperSuccIso (p : ℕ) 
       (ComplexShape.embeddingDownNat.extendFunctor C).obj
         ((horizontalTotalFiltration K).toMonoOver.obj (p + 1)).obj.left :=
   (ComplexShape.embeddingDownNat.extendFunctor C).mapIso
-    ((MonoOver.forget _ ⋙ Over.forget _).mapIso
+    ((MonoOver.forget (K.total (ComplexShape.down ℕ)) ⋙
+      Over.forget (K.total (ComplexShape.down ℕ))).mapIso
       (horizontalCompleteFilteredTotalMonoOverUpperSuccIso K p))
 
 /-- The positive consecutive-stage comparison square after chain-to-cochain
@@ -137,24 +138,45 @@ theorem horizontalFirstPageFiltrationMap_succ_monoIso (p : ℕ) :
         (ComplexShape.embeddingDownNat.extendFunctor C).map
           ((horizontalTotalFiltration K).toMonoOver.map
             (homOfLE (Nat.le_succ p))).hom.left := by
-  let f₁ := horizontalCompleteFilteredTotalMonoOverMap K
+  let T : ChainComplex C ℕ := K.total (ComplexShape.down ℕ)
+  let A : MonoOver T := horizontalCompleteFilteredTotalMonoOver K
+    (horizontalFirstPageLowerIndex (p + 1))
+  let B : MonoOver T := (horizontalTotalFiltration K).toMonoOver.obj (p + 1)
+  let G : MonoOver T ⥤ ChainComplex C ℕ := MonoOver.forget T ⋙ Over.forget T
+  let E : ChainComplex C ℕ ⥤ CochainComplex C ℤ :=
+    ComplexShape.embeddingDownNat.extendFunctor C
+  let H : MonoOver T ⥤ CochainComplex C ℤ := G ⋙ E
+  let f₁ : A ⟶ B := horizontalCompleteFilteredTotalMonoOverMap K
       (horizontalFirstPageIndex_le (p + 1)) ≫
     (horizontalCompleteFilteredTotalMonoOverUpperSuccIso K p).hom
-  let f₂ := (horizontalCompleteFilteredTotalMonoOverLowerSuccIso K p).hom ≫
+  let f₂ : A ⟶ B := (horizontalCompleteFilteredTotalMonoOverLowerSuccIso K p).hom ≫
     (horizontalTotalFiltration K).toMonoOver.map (homOfLE (Nat.le_succ p))
-  have hf : f₁ = f₂ := Subsingleton.elim _ _
-  calc
-    _ = (ComplexShape.embeddingDownNat.extendFunctor C).map f₁.hom.left := by
-      dsimp [f₁, horizontalFirstPageFiltrationMap,
-        horizontalCompleteFiltrationCochainDiagram,
-        horizontalCompleteTotalFiltration,
-        horizontalCompleteFiltrationCochainMonoUpperSuccIso]
-      rw [← Functor.map_comp]
-    _ = (ComplexShape.embeddingDownNat.extendFunctor C).map f₂.hom.left :=
-      congrArg (fun f => (ComplexShape.embeddingDownNat.extendFunctor C).map f.hom.left) hf
-    _ = _ := by
-      dsimp [f₂, horizontalCompleteFiltrationCochainMonoLowerSuccIso]
-      rw [Functor.map_comp]
+  have hf : f₁ = f₂ := horizontalCompleteFilteredTotalMonoOverMap_succ K p
+  have hmap :
+      H.map (horizontalCompleteFilteredTotalMonoOverMap K
+          (horizontalFirstPageIndex_le (p + 1))) ≫
+        H.map (horizontalCompleteFilteredTotalMonoOverUpperSuccIso K p).hom =
+      H.map (horizontalCompleteFilteredTotalMonoOverLowerSuccIso K p).hom ≫
+        H.map ((horizontalTotalFiltration K).toMonoOver.map
+          (homOfLE (Nat.le_succ p))) := by
+    calc
+      _ = H.map f₁ := (H.map_comp
+        (horizontalCompleteFilteredTotalMonoOverMap K
+          (horizontalFirstPageIndex_le (p + 1)))
+        (horizontalCompleteFilteredTotalMonoOverUpperSuccIso K p).hom).symm
+      _ = H.map f₂ := congrArg (fun f : A ⟶ B => H.map f) hf
+      _ = _ := H.map_comp
+        (horizontalCompleteFilteredTotalMonoOverLowerSuccIso K p).hom
+        ((horizontalTotalFiltration K).toMonoOver.map (homOfLE (Nat.le_succ p)))
+  simpa only [H, G, E, Functor.comp_map, Functor.comp_obj, Functor.mapIso_hom,
+    horizontalFirstPageFiltrationMap, horizontalCompleteFiltrationCochainDiagram,
+    horizontalCompleteTotalFiltration,
+    horizontalCompleteFiltrationCochainMonoUpperSuccIso,
+    horizontalCompleteFiltrationCochainMonoLowerSuccIso,
+    horizontalCompleteTotalFiltration_diagram_map,
+    horizontalCompleteTotalFiltration_diagram_obj, horizontalCompleteFilteredTotalComplex,
+    horizontalCompleteFilteredTotalMap, MonoOver.forget, ObjectProperty.ι_obj,
+    ObjectProperty.ι_map, Over.forget_obj, Over.forget_map] using hmap
 
 end HomologicalComplex₂
 

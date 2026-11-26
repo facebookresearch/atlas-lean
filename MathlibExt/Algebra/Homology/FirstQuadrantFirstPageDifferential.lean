@@ -258,6 +258,40 @@ noncomputable def horizontalFirstPageCoherentDirectColumnIso (p q : ℕ) :
   horizontalFirstPageCoherentXIso K p q ≪≫
     horizontalFirstPageCoherentRelativeHomologyDirectColumnIso K p q
 
+/-- The native precomposition composite with directly computed endpoint maps
+and an earned equality to the canonical composite. -/
+noncomputable def cokernelPrecompShortComplexIsoData
+    {X Y Z X' : CochainComplex C ℤ} (f : X ⟶ Y) (g : Y ⟶ Z)
+    (e : X' ≅ X) (f' : X' ⟶ Y) (h : f' = e.hom ≫ f)
+    {T : ShortComplex (CochainComplex C ℤ)}
+    (E : CategoryTheory.cokernelCompShortComplex f g ≅ T) :
+    { I : CategoryTheory.cokernelCompShortComplex f' g ≅ T //
+      I = CategoryTheory.cokernelCompShortComplexPrecompIsoOfEq f g e f' h ≪≫ E } := by
+  let P := CategoryTheory.cokernelCompShortComplexPrecompIsoOfEq f g e f' h
+  let full := P ≪≫ E
+  have hP : P.hom.τ₃ = 𝟙 _ :=
+    CategoryTheory.cokernelCompShortComplexPrecompIsoOfEq_hom_τ₃ f g e f' h
+  let I : CategoryTheory.cokernelCompShortComplex f' g ≅ T :=
+    ShortComplex.isoMk
+      ((ShortComplex.π₁.mapIso P) ≪≫ (ShortComplex.π₁.mapIso E))
+      ((ShortComplex.π₂.mapIso P) ≪≫ (ShortComplex.π₂.mapIso E))
+      (ShortComplex.π₃.mapIso E)
+      (by exact full.hom.comm₁₂)
+      (by
+        have hComm := full.hom.comm₂₃
+        change (P.hom.τ₂ ≫ E.hom.τ₂) ≫ T.g =
+          (CategoryTheory.cokernelCompShortComplex f' g).g ≫
+            (P.hom.τ₃ ≫ E.hom.τ₃) at hComm
+        rw [hP, Category.id_comp] at hComm
+        exact hComm)
+  refine ⟨I, ?_⟩
+  apply Iso.ext
+  apply ShortComplex.Hom.ext
+  · rfl
+  · rfl
+  · change E.hom.τ₃ = P.hom.τ₃ ≫ E.hom.τ₃
+    rw [hP, Category.id_comp]
+
 /-- The cokernel-composition sequence for a coherent filtration window,
 identified with the adjacent direct-column short exact sequence. -/
 noncomputable def horizontalFirstPageCoherentAdjacentShortComplexIso :
@@ -269,13 +303,13 @@ noncomputable def horizontalFirstPageCoherentAdjacentShortComplexIso :
   | 0 => by
       exact horizontalFirstPageAdjacentShortComplexIso K 0
   | p + 1 => by
-      exact CategoryTheory.cokernelCompShortComplexPrecompIsoOfEq
+      exact (cokernelPrecompShortComplexIsoData
           (horizontalFirstPageFiltrationMap K (p + 1))
           (horizontalFirstPageNextFiltrationMap K (p + 1))
           (horizontalFirstPageMiddleStageIso K p)
           (horizontalFirstPageNextFiltrationMap K p)
-          (horizontalFirstPageNextFiltrationMap_eq_middle K p) ≪≫
-        horizontalFirstPageAdjacentShortComplexIso K (p + 1)
+          (horizontalFirstPageNextFiltrationMap_eq_middle K p)
+          (horizontalFirstPageAdjacentShortComplexIso K (p + 1))).1
 
 /-- The right endpoint of one adjacent-column comparison agrees, through the
 canonical cokernel identification, with the next comparison's left endpoint. -/
@@ -287,47 +321,6 @@ theorem horizontalFirstPageAdjacentShortComplexIso_endpoint (p : ℕ) :
     horizontalFirstPageAdjacentLeftIso,
     horizontalFirstPageAdjacentRightIso]
 
-set_option maxHeartbeats 500000 in
--- Normalizing both branches of the recursively defined comparison is expensive.
-/-- Consecutive coherent adjacent-column comparisons use literally the same
-map at their common endpoint. -/
-theorem horizontalFirstPageCoherentAdjacentShortComplexIso_endpoint_coherence
-    (p : ℕ) :
-    (horizontalFirstPageCoherentAdjacentShortComplexIso K p).hom.τ₃ =
-      (horizontalFirstPageCoherentAdjacentShortComplexIso K (p + 1)).hom.τ₁ := by
-  cases p with
-  | zero =>
-      change (horizontalFirstPageAdjacentShortComplexIso K 0).hom.τ₃ =
-        ((CategoryTheory.cokernelCompShortComplexPrecompIsoOfEq
-            (horizontalFirstPageFiltrationMap K 1)
-            (horizontalFirstPageNextFiltrationMap K 1)
-            (horizontalFirstPageMiddleStageIso K 0)
-            (horizontalFirstPageNextFiltrationMap K 0)
-            (horizontalFirstPageNextFiltrationMap_eq_middle K 0) ≪≫
-          horizontalFirstPageAdjacentShortComplexIso K 1).hom.τ₁)
-      rw [CategoryTheory.cokernelCompShortComplexPrecompIsoOfEq_trans_hom_τ₁]
-      exact horizontalFirstPageAdjacentShortComplexIso_endpoint K 0
-  | succ p =>
-      change ((CategoryTheory.cokernelCompShortComplexPrecompIsoOfEq
-            (horizontalFirstPageFiltrationMap K (p + 1))
-            (horizontalFirstPageNextFiltrationMap K (p + 1))
-            (horizontalFirstPageMiddleStageIso K p)
-            (horizontalFirstPageNextFiltrationMap K p)
-            (horizontalFirstPageNextFiltrationMap_eq_middle K p) ≪≫
-          horizontalFirstPageAdjacentShortComplexIso K (p + 1)).hom.τ₃) =
-        ((CategoryTheory.cokernelCompShortComplexPrecompIsoOfEq
-            (horizontalFirstPageFiltrationMap K (p + 2))
-            (horizontalFirstPageNextFiltrationMap K (p + 2))
-            (horizontalFirstPageMiddleStageIso K (p + 1))
-            (horizontalFirstPageNextFiltrationMap K (p + 1))
-            (horizontalFirstPageNextFiltrationMap_eq_middle K (p + 1)) ≪≫
-          horizontalFirstPageAdjacentShortComplexIso K (p + 2)).hom.τ₁)
-      rw [CategoryTheory.cokernelCompShortComplexPrecompIsoOfEq_trans_hom_τ₃,
-        CategoryTheory.cokernelCompShortComplexPrecompIsoOfEq_trans_hom_τ₁]
-      exact horizontalFirstPageAdjacentShortComplexIso_endpoint K (p + 1)
-
-set_option maxHeartbeats 500000 in
--- Normalizing the positive-column branch of the recursive comparison is expensive.
 /-- The left endpoint of the coherent adjacent-column comparison is the
 chosen coherent cokernel comparison. -/
 theorem horizontalFirstPageCoherentAdjacentShortComplexIso_hom_τ₁
@@ -337,16 +330,32 @@ theorem horizontalFirstPageCoherentAdjacentShortComplexIso_hom_τ₁
   cases p with
   | zero => rfl
   | succ p =>
-      change ((CategoryTheory.cokernelCompShortComplexPrecompIsoOfEq
-            (horizontalFirstPageFiltrationMap K (p + 1))
-            (horizontalFirstPageNextFiltrationMap K (p + 1))
-            (horizontalFirstPageMiddleStageIso K p)
-            (horizontalFirstPageNextFiltrationMap K p)
-            (horizontalFirstPageNextFiltrationMap_eq_middle K p) ≪≫
-          horizontalFirstPageAdjacentShortComplexIso K (p + 1)).hom.τ₁) =
-        (horizontalFirstPageAdjacentRightIso K p).hom
-      rw [CategoryTheory.cokernelCompShortComplexPrecompIsoOfEq_trans_hom_τ₁]
-      rfl
+      have hComponent :
+          (horizontalFirstPageCoherentAdjacentShortComplexIso K (p + 1)).hom.τ₁ =
+            (horizontalFirstPageNextCokernelIso K p).hom ≫
+              (horizontalFirstPageAdjacentShortComplexIso K (p + 1)).hom.τ₁ :=
+        CategoryTheory.cokernelCompShortComplexPrecompIsoOfEq_trans_hom_τ₁
+          (horizontalFirstPageFiltrationMap K (p + 1))
+          (horizontalFirstPageNextFiltrationMap K (p + 1))
+          (horizontalFirstPageMiddleStageIso K p)
+          (horizontalFirstPageNextFiltrationMap K p)
+          (horizontalFirstPageNextFiltrationMap_eq_middle K p)
+          (horizontalFirstPageAdjacentShortComplexIso K (p + 1))
+      exact hComponent.trans (show
+        (horizontalFirstPageNextCokernelIso K p).hom ≫
+            (horizontalFirstPageAdjacentShortComplexIso K (p + 1)).hom.τ₁ =
+          (horizontalFirstPageCoherentCokernelIso K (p + 1)).hom from rfl)
+
+/-- Consecutive coherent adjacent-column comparisons use literally the same
+map at their common endpoint. -/
+theorem horizontalFirstPageCoherentAdjacentShortComplexIso_endpoint_coherence
+    (p : ℕ) :
+    (horizontalFirstPageCoherentAdjacentShortComplexIso K p).hom.τ₃ =
+      (horizontalFirstPageCoherentAdjacentShortComplexIso K (p + 1)).hom.τ₁ := by
+  rw [horizontalFirstPageCoherentAdjacentShortComplexIso_hom_τ₁ K (p + 1)]
+  cases p with
+  | zero => rfl
+  | succ p => rfl
 
 /-- The right endpoint of the coherent adjacent-column comparison is the
 chosen coherent cokernel comparison for the next column. -/
@@ -421,7 +430,6 @@ theorem horizontalFirstPageCoherentConnectingMap_eq_adjacent (p q : ℕ) :
   rw [← HomologicalComplex.homologyMap_comp_assoc, he,
     HomologicalComplex.homologyMap_id, Category.id_comp]
 
-set_option maxRecDepth 3000 in
 /-- Under the coherent direct-column identifications, the actual differential
 on the spectral sequence's first page is the coherent connecting map. -/
 theorem horizontalFirstPage_d_coherentDirectColumn (p q : ℕ) :
@@ -473,48 +481,60 @@ theorem horizontalFirstPage_d_coherentDirectColumn (p q : ℕ) :
     dsimp [X, data]
     unfold horizontalFirstPageCoherentXIso
     congr 1
+  let n : ℤ := -((p + 1 : ℕ) : ℤ) - q
+  let j : ℤ := -(p : ℤ) - q
+  let f : horizontalFirstPageCoherentLowerIndex p ⟶ horizontalFirstPageUpperIndex p :=
+    homOfLE (horizontalFirstPageCoherentIndex_le p)
+  let g : horizontalFirstPageUpperIndex p ⟶ horizontalFirstPageUpperIndex (p + 1) :=
+    homOfLE (horizontalFirstPageUpperIndex_le_succ p)
+  let eS := horizontalFirstPageCoherentRelativeHomologyDirectColumnIso K (p + 1) q
+  let eT := horizontalFirstPageCoherentRelativeHomologyDirectColumnIso K p q
+  have hn : n + 1 = j := by dsimp [n, j]; omega
+  have hRelative : X.δ f g n j hn ≫ eT.hom =
+      eS.hom ≫ horizontalFirstPageCoherentConnectingMap K p q := by
+    dsimp only [X, f, g, n, j, eS, eT]
+    rw [horizontalFirstPageCoherentRelativeHomologyDirectColumnIso_hom
+        (K := K) p q,
+      horizontalFirstPageCoherentRelativeHomologyDirectColumnIso_hom
+        (K := K) (p + 1) q]
+    have hm : Mono (horizontalFirstPageCoherentSuccessorMap K p) := by
+      unfold horizontalFirstPageCoherentSuccessorMap
+      infer_instance
+    let _ := hm
+    have hδ := CochainComplex.mappingCone.homologySequenceδ_cokernelComp
+      (horizontalFirstPageCoherentMap K p)
+      (horizontalFirstPageCoherentSuccessorMap K p)
+      (-((p + 1 : ℕ) : ℤ) - q) (-(p : ℤ) - q)
+      (by push_cast; omega)
+    rw [horizontalCompleteFiltrationSpectralObject_δ K]
+    dsimp [horizontalFirstPageCoherentMappingConeToDirectColumn,
+      horizontalFirstPageCoherentConnectingMap]
+    simp only [Category.assoc, HomologicalComplex.homologyMap_comp]
+    dsimp [horizontalFirstPageCoherentMap,
+      horizontalFirstPageCoherentSuccessorMap] at hδ
+    rw [reassoc_of% hδ]
+    dsimp [horizontalFirstPageCoherentMap]
+    have hcancel :
+        HomologicalComplex.homologyMap
+            (horizontalFirstPageCoherentCokernelIso K (p + 1)).hom
+            (-((p + 1 : ℕ) : ℤ) - q) ≫
+          HomologicalComplex.homologyMap
+            (horizontalFirstPageCoherentCokernelIso K (p + 1)).inv
+            (-((p + 1 : ℕ) : ℤ) - q) = 𝟙 _ := by
+      rw [← HomologicalComplex.homologyMap_comp,
+        (horizontalFirstPageCoherentCokernelIso K (p + 1)).hom_inv_id,
+        HomologicalComplex.homologyMap_id]
+    dsimp [horizontalFirstPageCoherentMap,
+      horizontalFirstPageCoherentSuccessorMap] at hcancel
+    rw [horizontalFirstPageCoherentAdjacentShortComplexIso_inv_τ₃,
+      horizontalFirstPageCoherentAdjacentShortComplexIso_hom_τ₁]
+    rw [reassoc_of% hcancel]
   unfold horizontalFirstQuadrantSpectralSequence
   rw [hpage, htarget, hsource]
-  dsimp [horizontalFirstPageCoherentDirectColumnIso]
-  simp only [Category.assoc, Iso.inv_hom_id_assoc]
-  apply (cancel_epi
-    (horizontalFirstPageCoherentXIso K (p + 1) q).hom).2
-  rw [horizontalFirstPageCoherentRelativeHomologyDirectColumnIso_hom
-      (K := K) p q,
-    horizontalFirstPageCoherentRelativeHomologyDirectColumnIso_hom
-      (K := K) (p + 1) q]
-  have hm : Mono (horizontalFirstPageCoherentSuccessorMap K p) := by
-    unfold horizontalFirstPageCoherentSuccessorMap
-    infer_instance
-  let _ := hm
-  have hδ := CochainComplex.mappingCone.homologySequenceδ_cokernelComp
-    (horizontalFirstPageCoherentMap K p)
-    (horizontalFirstPageCoherentSuccessorMap K p)
-    (-((p + 1 : ℕ) : ℤ) - q) (-(p : ℤ) - q)
-    (by push_cast; omega)
-  rw [horizontalCompleteFiltrationSpectralObject_δ K]
-  dsimp [horizontalFirstPageCoherentMappingConeToDirectColumn,
-    horizontalFirstPageCoherentConnectingMap]
-  simp only [Category.assoc, HomologicalComplex.homologyMap_comp]
-  dsimp [horizontalFirstPageCoherentMap,
-    horizontalFirstPageCoherentSuccessorMap] at hδ
-  rw [reassoc_of% hδ]
-  dsimp [horizontalFirstPageCoherentMap]
-  have hcancel :
-      HomologicalComplex.homologyMap
-          (horizontalFirstPageCoherentCokernelIso K (p + 1)).hom
-          (-((p + 1 : ℕ) : ℤ) - q) ≫
-        HomologicalComplex.homologyMap
-          (horizontalFirstPageCoherentCokernelIso K (p + 1)).inv
-          (-((p + 1 : ℕ) : ℤ) - q) = 𝟙 _ := by
-    rw [← HomologicalComplex.homologyMap_comp,
-      (horizontalFirstPageCoherentCokernelIso K (p + 1)).hom_inv_id,
-      HomologicalComplex.homologyMap_id]
-  dsimp [horizontalFirstPageCoherentMap,
-    horizontalFirstPageCoherentSuccessorMap] at hcancel
-  rw [horizontalFirstPageCoherentAdjacentShortComplexIso_inv_τ₃,
-    horizontalFirstPageCoherentAdjacentShortComplexIso_hom_τ₁]
-  rw [reassoc_of% hcancel]
+  simp only [horizontalFirstPageCoherentDirectColumnIso, Iso.trans_hom,
+    Category.assoc, Iso.inv_hom_id_assoc]
+  simpa only [X, f, g, n, j, eS, eT, Category.assoc] using
+    congrArg (fun z => (horizontalFirstPageCoherentXIso K (p + 1) q).hom ≫ z) hRelative
 
 /-- Under the coherent direct-column identifications, the first-page
 differential is the adjacent-column connecting map. -/
