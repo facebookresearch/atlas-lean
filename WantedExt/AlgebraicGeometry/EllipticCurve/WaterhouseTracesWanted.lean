@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.AlgebraicGeometry.EllipticCurve.IsWeilNumberOfRamanujan
 public import MathlibExt.AlgebraicGeometry.EllipticCurve.PointCount
 public import Mathlib.Analysis.SpecialFunctions.Pow.Complex
 public import Mathlib.FieldTheory.Minpoly.Basic
@@ -65,28 +66,6 @@ public theorem_wanted ramanujan_iff_nontrivial_zeros_re_eq_half {n q : ℕ} (hq 
     (∀ μ ∈ A.charpoly.aroots ℂ, μ ≠ (q : ℂ) + 1 → ‖μ‖ ≤ 2 * Real.sqrt q) ↔
       ∀ μ ∈ A.charpoly.aroots ℂ, μ ≠ (q : ℂ) + 1 → ∀ s : ℂ,
         1 - μ * (q : ℂ) ^ (-s) + (q : ℂ) ^ (1 - 2 * s) = 0 → s.re = 1 / 2
-
-/-- **Ramanujan graphs give Weil numbers.** Let $q$ be a natural number and let $A$ be a symmetric
-$n \times n$ matrix with integer entries such that every complex root $\mu \ne q + 1$ of its
-characteristic polynomial satisfies $|\mu| \le 2\sqrt{q}$. Let $\mu \ne q + 1$ be a complex root
-of the characteristic polynomial of $A$ and let $\alpha \in \mathbb{C}$ satisfy
-$\alpha^2 - \mu\alpha + q = 0$. Then $\alpha$ is an algebraic integer, and every complex root of
-the minimal polynomial of $\alpha$ over $\mathbb{Q}$ has absolute value $\sqrt{q}$; that is,
-$\alpha$ is a Weil $q$-number.
-
-When $A$ is the adjacency matrix of a $(q + 1)$-regular graph $X$, the hypothesis says that $X$ is
-Ramanujan, and the numbers $\alpha$ are the inverse roots of
-$P_X(u) = \prod_{\mu \ne q + 1} (1 - \mu u + q u^2)$. The paper takes $q = p^a$ and $X$
-connected; neither assumption is needed.
-
-Source: Daniel Vallières, *Elliptic Curves over Finite Fields and Ramanujan Graphs on Two
-Vertices*, INTEGERS 24 (2024), Article A8, Proposition 1 (`integers-2024-A8-prop-1`). -/
-public theorem_wanted isWeilNumber_of_ramanujan {n q : ℕ} (A : Matrix (Fin n) (Fin n) ℤ)
-    (hA : A.IsSymm)
-    (hram : ∀ μ ∈ A.charpoly.aroots ℂ, μ ≠ (q : ℂ) + 1 → ‖μ‖ ≤ 2 * Real.sqrt q)
-    {μ α : ℂ} (hμ : μ ∈ A.charpoly.aroots ℂ) (hμq : μ ≠ (q : ℂ) + 1)
-    (hα : α ^ 2 - μ * α + q = 0) :
-    IsIntegral ℤ α ∧ ∀ β ∈ (minpoly ℚ α).aroots ℂ, ‖β‖ = Real.sqrt q
 
 /-- **Elliptic curves with point count divisible by 4 and Ramanujan graphs on two vertices.** Let
 $p$ be an odd prime, let $a \in \{1, 2\}$, and let $F$ be a finite field with $q = p^a$ elements. A
