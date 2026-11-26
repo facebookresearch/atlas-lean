@@ -10,9 +10,7 @@ $$\sum_i \frac{z_i (K_i - 1)}{1 + \beta (K_i - 1)} = 0 .$$
 Components with $z_i = 0$ are allowed. The K-values are given numbers; how they arise from a thermodynamic model is outside this
 result, and so are negative flashes with $\beta \notin [0, 1]$.
 
-## Depends on
-
-## Proof depends on
+For a finite component set, the objective equals $\sum_i y_i - \sum_i x_i$. The feed balance gives $(1-\beta)\sum_i x_i+\beta\sum_i y_i=1$, so if the sums coincide, both are one. This argument uses neither $\beta>0$ nor $\beta<1$.
 
 ## Sources
 
