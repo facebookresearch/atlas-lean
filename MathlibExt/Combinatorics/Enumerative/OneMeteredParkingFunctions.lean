@@ -396,4 +396,27 @@ public theorem meteredParkingCount_one_binet {m n : ℕ} (hm : m ≤ n + 1) (hn 
         n * meteredParkingCount 1 (k + 1) n := by exact_mod_cast h
     linarith
 
+/-- **1-metered parking functions with three cars.** For every natural number $n \ge 2$, the
+number of $1$-metered $(3, n)$-parking functions is $\mathrm{mpf}_{3,n}(1) = n^3 - 2n$.
+
+Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
+Functions*, INTEGERS 25 (2025), Article A73, Proposition 7 (`integers-2025-A73-prop-7`). -/
+public theorem meteredParkingCount_one_three {n : ℕ} (hn : 2 ≤ n) :
+    meteredParkingCount 1 3 n = n ^ 3 - 2 * n := by
+  have hone := meteredParkingCount_one_binet.count_one (by omega : 0 < n)
+  have htwo : meteredParkingCount 1 2 n + 1 = n ^ 2 := by
+    have h := meteredParkingCount_one_binet.count_recursion (m := 1) (n := n) (by decide)
+      (by omega)
+    change meteredParkingCount 1 2 n + meteredParkingCount 1 0 n =
+      n * meteredParkingCount 1 1 n at h
+    simpa only [meteredParkingCount_one_binet.count_zero, hone, pow_two] using h
+  have hthree : meteredParkingCount 1 3 n + n = n * meteredParkingCount 1 2 n := by
+    have h := meteredParkingCount_one_binet.count_recursion (m := 2) (n := n) (by decide) hn
+    change meteredParkingCount 1 3 n + meteredParkingCount 1 1 n =
+      n * meteredParkingCount 1 2 n at h
+    simpa only [hone] using h
+  have hscaled : n * meteredParkingCount 1 2 n + n = n ^ 3 := by
+    simpa only [Nat.mul_add, Nat.mul_one, pow_succ' n 2] using congrArg (n * ·) htwo
+  omega
+
 end MetaMathlibExt
