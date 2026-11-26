@@ -1,6 +1,6 @@
 # The $h^*$-polynomial of a weighted projective space simplex
 
-Let $q = (q_1, \dots, q_n)$
+**The $h^*$-polynomial of a weighted projective space simplex.** Let $q = (q_1, \dots, q_n)$
 be a list of positive integers, let $\Delta_{(1,q)} \subset \mathbb{R}^n$ be the weighted
 projective space simplex, and let $L(t)$ be the number of lattice points in its $t$-th dilate
 $t \Delta_{(1,q)}$. Then, as formal power series over $\mathbb{Z}$,
@@ -12,5 +12,4 @@ weight statistic.
 
 ## Sources
 
-- Benjamin Braun, Robert Davis, and Liam Solus, *Detecting the integer decomposition property and Ehrhart unimodality in reflexive simplices*, Adv. in Appl. Math. 100 (2018), 122–142, Theorem 2.2.
-- Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article A60, Theorem 5 (restatement).
+- Benjamin Braun, Robert Davis, and Liam Solus, *Detecting the integer decomposition property and Ehrhart unimodality in reflexive simplices*, Adv. in Appl. Math. 100 (2018), 122–142, Theorem 2.2; restated by Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article A60, Theorem 5.
