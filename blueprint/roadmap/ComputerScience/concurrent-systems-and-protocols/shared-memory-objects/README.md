@@ -24,7 +24,7 @@
 - [Local Status](local-status.md)
 - [Configuration](configuration.md)
 - [Initial](initial.md)
-- [Event](event.md)
+- [Scheduled shared-memory events](shared-memory-scheduled-event.md)
 - [Step](step.md)
 - [Stopped preserved](stopped-preserved.md)
 - [Lts](lts.md)
