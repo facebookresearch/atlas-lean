@@ -16,16 +16,21 @@ import Mathlib.Data.Nat.Cast.Field
 import Mathlib.Data.Nat.Factorization.Basic
 import Mathlib.Tactic.FieldSimp
 public import MathlibExt.NumberTheory.SZumkeller
+import MathlibExt.NumberTheory.UnitaryDivisorCount
 
 /-!
 # Lower bounds for unitary s-Zumkeller numbers
 
-The main result is `isUnitarySZumkeller_bounds`: a unitary s-Zumkeller number satisfies
-three lower bounds in terms of its least unitary divisor above `1`, proved from the
-product formula for the sum of the squares of the unitary divisors.
+## Main statements
+
+* `sum_sq_unitaryDivisors`: the sum of the squares of the unitary divisors of `n ≠ 0` is
+  `∏ p ∈ n.primeFactors, (1 + p ^ (2 * n.factorization p))` (Lemma 3(i)).
+* `isUnitarySZumkeller_bounds`: a unitary s-Zumkeller number satisfies three lower bounds in
+  terms of its least unitary divisor above `1`, proved from the product formula
+  (Proposition 11).
 
 Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
-Numbers*, INTEGERS 24 (2024), Article A95, Proposition 11.
+Numbers*, INTEGERS 24 (2024), Article A95.
 -/
 
 namespace MetaMathlibExt
@@ -63,89 +68,28 @@ private theorem sum_comp_div_unitaryDivisors (n : ℕ) (hn : n ≠ 0) (f : ℕ �
   · intro a _
     rfl
 
-/-- Sum of squares of unitary divisors as a product over the prime factors. -/
-private theorem sum_sq_unitaryDivisors_aux (n : ℕ) (hn : n ≠ 0) :
+/-- **Sum of squares of unitary divisors.** For every positive integer $n$, the sum of the
+squares of the unitary divisors of $n$ equals $\prod_{p} \left(1 + p^{2k_p}\right)$, where $p$
+ranges over the distinct prime factors of $n$ and $k_p$ is the exponent of $p$ in $n$.
+
+Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
+Numbers*, INTEGERS 24 (2024), Article A95, Lemma 3(i) (quoting Subbarao and
+Warren). -/
+public theorem sum_sq_unitaryDivisors (n : ℕ) (hn : n ≠ 0) :
     ∑ d ∈ Nat.unitaryDivisors n, d ^ 2 =
       ∏ p ∈ n.primeFactors, (1 + p ^ (2 * n.factorization p)) := by
-  let exponents (s : Finset ℕ) := n.factorization.filter (· ∈ s)
-  let fromSubset (s : Finset ℕ) := (exponents s).prod (· ^ ·)
-  have hle (s : Finset ℕ) : exponents s ≤ n.factorization := by
-    rw [Finsupp.le_def]
-    intro p
-    by_cases hp : p ∈ s <;> simp [exponents, hp]
-  have hfac (s : Finset ℕ) : (fromSubset s).factorization = exponents s :=
-    Nat.factorization_prod_pow_eq_self_of_le_factorization (hle s)
-  have hprimes (s : Finset ℕ) :
-      (fromSubset s).primeFactors = n.primeFactors.filter (· ∈ s) := by
-    rw [← Nat.support_factorization, hfac]
-    simp [exponents]
-  have hprod (s : Finset ℕ) : fromSubset s = ∏ p ∈ s, p ^ n.factorization p := by
-    have hsupp : (exponents s).support ⊆ s := by
-      intro p hp
-      simp only [exponents, Finsupp.support_filter, Finset.mem_filter] at hp
-      exact hp.2
-    have h := Finsupp.prod_of_support_subset (exponents s) hsupp (fun p k => p ^ k)
-      (fun p _ => pow_zero p)
-    simp only [fromSubset] at h ⊢
-    rw [h]
-    refine Finset.prod_congr rfl fun p hp => ?_
-    congr 1
-    simp only [exponents]
-    exact Finsupp.filter_apply_pos _ _ hp
-  have hsq (s : Finset ℕ) :
-      (fromSubset s) ^ 2 = ∏ p ∈ s, p ^ (2 * n.factorization p) := by
-    rw [hprod s, ← Finset.prod_pow]
-    refine Finset.prod_congr rfl fun p _ => ?_
-    rw [← pow_mul]
-    congr 1
-    ring
-  have hsum : ∑ s ∈ n.primeFactors.powerset, ∏ p ∈ s, p ^ (2 * n.factorization p) =
-      ∑ d ∈ Nat.unitaryDivisors n, d ^ 2 := by
-    refine Finset.sum_bij' (fun s _ => fromSubset s) (fun d _ => d.primeFactors) ?_ ?_ ?_ ?_ ?_
-    · intro s _
-      have hdvd : fromSubset s ∣ n := Nat.prod_pow_dvd_of_le_factorization (hle s)
-      have hd0 : fromSubset s ≠ 0 := ne_zero_of_dvd_ne_zero hn hdvd
-      have hq0 : n / fromSubset s ≠ 0 :=
-        (Nat.div_pos (Nat.le_of_dvd (Nat.pos_of_ne_zero hn) hdvd)
-          (Nat.pos_of_ne_zero hd0)).ne'
-      refine Nat.mem_unitaryDivisors.mpr ⟨hdvd, hn, (Nat.disjoint_primeFactors hd0 hq0).mp ?_⟩
-      rw [Finset.disjoint_left]
-      intro p hp hq
-      rw [hprimes, Finset.mem_filter] at hp
-      have hz : (n / fromSubset s).factorization p = 0 := by
-        rw [Nat.factorization_div hdvd, Finsupp.tsub_apply, hfac]
-        simp [exponents, hp.2]
-      exact (Finsupp.notMem_support_iff.mpr hz) hq
-    · intro d hd
-      exact Finset.mem_powerset.mpr
-        (Nat.primeFactors_mono (Nat.dvd_of_mem_unitaryDivisors hd) hn)
-    · intro s hs
-      rw [hprimes]
-      ext p
-      rw [Finset.mem_filter]
-      exact ⟨And.right, fun hp => ⟨Finset.mem_powerset.mp hs hp, hp⟩⟩
-    · intro d hd
-      obtain ⟨hdvd, _, hcop⟩ := Nat.mem_unitaryDivisors.mp hd
-      change (exponents d.primeFactors).prod (· ^ ·) = d
-      suffices exponents d.primeFactors = d.factorization by
-        rw [this, Nat.prod_factorization_pow_eq_self (ne_zero_of_dvd_ne_zero hn hdvd)]
-      ext p
-      dsimp only [exponents]
-      by_cases hp : p ∈ d.primeFactors
-      · rw [Finsupp.filter_apply_pos _ _ hp, ← Nat.div_mul_cancel hdvd,
-          Nat.factorization_eq_of_coprime_right hcop.symm
-            (Nat.mem_primeFactors_iff_mem_primeFactorsList.mp hp)]
-      · rw [Finsupp.filter_apply_neg _ _ hp, Finsupp.notMem_support_iff.mp hp]
-    · intro s _
-      exact (hsq s).symm
-  rw [Finset.prod_one_add]
-  exact hsum.symm
+  rw [sum_unitaryDivisors_eq_sum_powerset n hn (fun d => d ^ 2), Finset.prod_one_add]
+  refine Finset.sum_congr rfl fun s _ => ?_
+  show (∏ p ∈ s, p ^ n.factorization p) ^ 2 = _
+  rw [← Finset.prod_pow]
+  refine Finset.prod_congr rfl fun p _ => ?_
+  rw [← pow_mul, mul_comm (n.factorization p) 2]
 
 /-- The product formula for the sum of squared unitary divisors, over `ℚ`. -/
 private theorem sum_sq_unitaryDivisors_rat (n : ℕ) (hn : n ≠ 0) :
     ∑ d ∈ Nat.unitaryDivisors n, (d : ℚ) ^ 2 =
       ∏ p ∈ n.primeFactors, (1 + ((p : ℚ) ^ n.factorization p) ^ 2) := by
-  have h := sum_sq_unitaryDivisors_aux n hn
+  have h := sum_sq_unitaryDivisors n hn
   have hcast : ((∑ d ∈ Nat.unitaryDivisors n, d ^ 2 : ℕ) : ℚ) =
       ∑ d ∈ Nat.unitaryDivisors n, (d : ℚ) ^ 2 := by
     rw [Nat.cast_sum]

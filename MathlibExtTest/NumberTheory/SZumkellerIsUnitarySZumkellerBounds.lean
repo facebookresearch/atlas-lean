@@ -51,4 +51,11 @@ example : (11 / 9 : ℚ) ≤ ∏ p ∈ (60 : ℕ).primeFactors,
   rw [show (2 : ℚ) / (((3 : ℕ) : ℚ)) ^ 2 + 1 = 11 / 9 by norm_num] at h
   exact h
 
+-- The unitary divisors of `12` are `1, 3, 4, 12`, so the product formula evaluates to
+-- `1 + 9 + 16 + 144 = 170 = (1 + 2 ^ 4) * (1 + 3 ^ 2)`.
+example : ∏ p ∈ (12 : ℕ).primeFactors, (1 + p ^ (2 * (12 : ℕ).factorization p)) = 170 := by
+  have h12 : Nat.unitaryDivisors 12 = {1, 3, 4, 12} := by decide
+  rw [← sum_sq_unitaryDivisors 12 (by decide), h12]
+  decide
+
 end MathlibExtTest.NumberTheory.SZumkellerIsUnitarySZumkellerBounds
