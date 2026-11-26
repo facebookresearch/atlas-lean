@@ -33,7 +33,7 @@ The statements already proved, such as the oddness of every positive `n` with
 `MathlibExt/NumberTheory/CollatzArithmeticDerivativeBounds.lean`, and
 `arithmeticDerivative_bounds`, which lives in
 `MathlibExt/NumberTheory/CollatzArithmeticDerivativeArithmeticDerivativeBounds.lean`; this
-module imports all four, the first three publicly.
+module imports all four publicly.
 -/
 module
 

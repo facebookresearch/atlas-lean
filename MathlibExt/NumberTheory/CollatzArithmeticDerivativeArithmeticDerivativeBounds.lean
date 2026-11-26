@@ -14,7 +14,6 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Topology.Algebra.InfiniteSum.Defs
 public import MathlibExt.NumberTheory.ArithmeticDerivative
-public import MathlibExt.NumberTheory.CollatzArithmeticDerivative
 import Mathlib.Analysis.MeanInequalities
 import Mathlib.Data.Nat.Factorization.PrimePow
 import Mathlib.Tactic.FieldSimp
