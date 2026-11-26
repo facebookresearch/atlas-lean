@@ -2,7 +2,6 @@
 
 Topics added since this subject's fields were last revised.
 
-- [Finite Transport](finite-transport/README.md)
 - [Probability distributions on a finite set](is-dist.md)
 - [Confounding Bounds](confounding-bounds/README.md)
 - [Confounding EValue](confounding-evalue/README.md)
@@ -147,5 +146,6 @@ Topics added since this subject's fields were last revised.
 
 ## [Part 17 of 17](part-17/README.md)
 
+- [Finite Transport](part-17/finite-transport/README.md)
 - [Standardized Selection](part-17/standardized-selection/README.md)
 - [Spearman-Brown formula for the reliability of a sum](part-17/reliability-sum-spearman-brown.md)
