@@ -155,11 +155,7 @@ def IsNearFPerfect (n : ℕ) : Prop :=
 
 private theorem sigma_two_prime_pow (p a : ℕ) (hp : p.Prime) :
     (∑ e ∈ (p ^ a).divisors, e ^ 2) = ∑ i ∈ Finset.range (a + 1), p ^ (i * 2) := by
-  have h := Nat.sum_divisors_prime_pow (f := fun e => e ^ 2) hp (k := a)
-  rw [h]
-  apply Finset.sum_congr rfl
-  intro i _
-  rw [← pow_mul]
+  rw [← ArithmeticFunction.sigma_apply, ArithmeticFunction.sigma_apply_prime_pow hp]
 
 private theorem sum_range_modEq_one (p a : ℕ) (ha : 1 ≤ a) :
     (∑ i ∈ Finset.range a, p ^ (i * 2)) ≡ 1 [MOD p] := by
