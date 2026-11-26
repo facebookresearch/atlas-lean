@@ -43,29 +43,15 @@ public import MathlibExt.NumberTheory.Digits.ReverseDivisor
 public import MathlibExt.NumberTheory.Digits.ReverseDivisorCoprime
 public import MathlibExt.NumberTheory.Digits.ReverseDivisorFourDigits
 public import MathlibExt.NumberTheory.Digits.ReverseDivisorQuotientFour
+public import MathlibExt.NumberTheory.Digits.ReverseDivisorHasPropertyPStarIffDvd
+public import MathlibExt.NumberTheory.Digits.ReverseDivisorHasPropertyPStarOfDvd
+public import MathlibExt.NumberTheory.Digits.ReverseDivisorExistsDvdReverseDigitsMul
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.Digits.ReverseDivisorWanted
-
-/-- **The positive integers with property $P^*$ are the divisors of $99$.** A natural number
-$n \ge 1$ has property $P^*$ if and only if $n$ divides $99$.
-
-Source: Mohamed Ayad and Rachid Bouchenna, "Which
-Integer Divides the Reverse of Any of Its Multiples?",
-Theorem 3. -/
-theorem_wanted hasPropertyPStar_iff_dvd (n : ℕ) (hn : 1 ≤ n) :
-    HasPropertyPStar n ↔ n ∣ 99
-
-/-- **Divisors of $99$ have property $P^*$.** Every divisor of $99$ has property $P^*$.
-
-Source: Mohamed Ayad and Rachid Bouchenna, "Which
-Integer Divides the Reverse of Any of Its Multiples?",
-Proposition 1. -/
-theorem_wanted hasPropertyPStar_of_dvd (n : ℕ) (hn : n ∣ 99) :
-    HasPropertyPStar n
 
 /-- **Palindromes with property $P^*$.** Let $n \ge 1$ be a natural number that is a decimal
 palindrome, that is, whose decimal reversal equals $n$. If $n$ has the property $P^*$, then $n$
@@ -139,19 +125,6 @@ theorem_wanted infinite_dvd_reverseDigits_mul (n : ℕ)
     (h : ∃ k₀ : ℕ, 1 ≤ k₀ ∧ n ∣ Nat.reverseDigits 10 (k₀ * n)) :
     Set.Infinite
       {k : ℕ | 1 ≤ k ∧ n ∣ Nat.reverseDigits 10 (k * n)}
-
-/-- **Sufficient conditions for a multiple with divisible reversal.** Let $n$ be a natural
-number such that $\gcd(n, 10) = 1$, or $n$ equals its decimal reversal, or $n$ is a reverse
-divisor. Then there is a natural number $k_0 \ge 1$ such that $n$ divides the decimal reversal
-of $k_0 n$.
-
-Source: Mohamed Ayad and Rachid Bouchenna, "Which
-Integer Divides the Reverse of Any of Its Multiples?",
-Proposition 6. -/
-theorem_wanted exists_dvd_reverseDigits_mul (n : ℕ)
-    (h : Nat.Coprime n 10 ∨ Nat.reverseDigits 10 n = n ∨
-      IsReverseDivisor n) :
-    ∃ k₀ : ℕ, 1 ≤ k₀ ∧ n ∣ Nat.reverseDigits 10 (k₀ * n)
 
 /-- **Lemma 3**: a non-basic reverse divisor `n` with
 quotient `9` begins and ends with the same block
