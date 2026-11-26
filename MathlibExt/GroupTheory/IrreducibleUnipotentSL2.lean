@@ -1,26 +1,17 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
+Copyright (c) 2026 Anthropic, PBC. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 -/
 
 /-
-Portions of this file are adapted from:
+Adapted from:
 
 `Theorems/Thm_ModularCurve_SerreImage_contains_SL2.lean`,
-`P2M/Sol/S_ModularCurve_SerreImage_contains_SL2.lean`,
-`Definitions/Def_ModularCurve_SL2Elementary.lean`,
-`Theorems/Thm_ModularCurve_closure_elemSet_eq_top.lean`,
-`P2M/Sol/S_ModularCurve_closure_elemSet_eq_top.lean`,
-`Theorems/Thm_ModularCurve_surjective_specialLinearGroup_map_zmod.lean`, and
-`P2M/Sol/S_ModularCurve_surjective_specialLinearGroup_map_zmod.lean`
+`P2M/Sol/S_ModularCurve_SerreImage_contains_SL2.lean`, and
+`Definitions/Def_ModularCurve_SL2Elementary.lean`
 (https://github.com/anthropics/fermats-last-theorem):
 Compared with the source files at commit
 `6e837e75355538c7f80bab5b956861e86c4eacc2`.
-Copyright (c) 2026 Anthropic, PBC. All rights reserved.
-Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 The upstream NOTICE also credits:
 Mathlib — https://github.com/leanprover-community/mathlib4
 Copyright (c) the respective Mathlib authors, as recorded in the headers of the
@@ -28,21 +19,21 @@ Mathlib source files.
 Released under the Apache License, Version 2.0.
 The source is machine-generated proof code built around a proof-extraction
 framework; the statements and proofs are reused here with that machinery
-removed and the names restated in Mathlib style.
+removed and the names restated in Mathlib style. The source's elementary
+matrices and its generation lemma for `SL(2, ZMod N)` are replaced by Mathlib's
+`Matrix.SpecialLinearGroup.transvection` and `Matrix.SL2.transvection_induction`.
+Adaptations copyright (c) Meta Platforms, Inc. and affiliates, under the
+license in the root LICENSE file.
 -/
 
 module
 
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.FieldTheory.Finite.Basic
-public import Mathlib.LinearAlgebra.Matrix.FixedDetMatrices
 public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
 public import Mathlib.LinearAlgebra.Matrix.SpecialLinearGroup
-import Mathlib.NumberTheory.Modular
-import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
 import Mathlib.Tactic.Group
 import Mathlib.Tactic.NoncommRing
-import MathlibExt.NumberTheory.ModularForms.FrickeFunctions.SLTwoZModSurjective
 
 @[expose] public section
 
@@ -50,97 +41,29 @@ open Matrix MatrixGroups Subgroup
 
 namespace SL2
 
-variable {R : Type*} [CommRing R]
-
-/-- The upper elementary matrix with entry `c` in `SL(2, R)`. -/
-def upperElem (c : R) : SL(2, R) :=
-  ⟨!![1, c; 0, 1], by simp [Matrix.det_fin_two_of]⟩
-
-/-- The lower elementary matrix with entry `c` in `SL(2, R)`. -/
-def lowerElem (c : R) : SL(2, R) :=
-  ⟨!![1, 0; c, 1], by simp [Matrix.det_fin_two_of]⟩
-
-@[simp] lemma upperElem_coe (c : R) :
-    (upperElem c : Matrix (Fin 2) (Fin 2) R) = !![1, c; 0, 1] := rfl
-
-@[simp] lemma lowerElem_coe (c : R) :
-    (lowerElem c : Matrix (Fin 2) (Fin 2) R) = !![1, 0; c, 1] := rfl
-
-lemma upperElem_mul (a b : R) : upperElem a * upperElem b = upperElem (a + b) := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> simp [Matrix.mul_apply, Fin.sum_univ_two]
-  ring
-
-lemma lowerElem_mul (a b : R) : lowerElem a * lowerElem b = lowerElem (a + b) := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> simp [Matrix.mul_apply, Fin.sum_univ_two]
-
-@[simp] lemma upperElem_zero : upperElem (0 : R) = 1 := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> simp
-
-@[simp] lemma lowerElem_zero : lowerElem (0 : R) = 1 := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> simp
-
-lemma upperElem_pow (a : R) (n : ℕ) : upperElem a ^ n = upperElem ((n : R) * a) := by
+private lemma transvection_pow {R : Type*} [CommRing R] {i j : Fin 2} (hij : i ≠ j) (a : R)
+    (n : ℕ) :
+    SpecialLinearGroup.transvection hij a ^ n =
+      SpecialLinearGroup.transvection hij ((n : R) * a) := by
   induction n with
   | zero => simp
   | succ n ih =>
-    rw [pow_succ, ih, upperElem_mul]
+    rw [pow_succ, ih, ← SpecialLinearGroup.transvection_add]
     congr 1
     push_cast
     ring
 
-lemma lowerElem_pow (a : R) (n : ℕ) : lowerElem a ^ n = lowerElem ((n : R) * a) := by
-  induction n with
-  | zero => simp
-  | succ n ih =>
-    rw [pow_succ, ih, lowerElem_mul]
-    congr 1
-    push_cast
-    ring
+private lemma transvection_zero_one_coe {R : Type*} [CommRing R] (b : R) :
+    ((SpecialLinearGroup.transvection (zero_ne_one : (0 : Fin 2) ≠ 1) b : SL(2, R)) :
+      Matrix (Fin 2) (Fin 2) R) = !![1, b; 0, 1] := by
+  ext i j
+  fin_cases i <;> fin_cases j <;> simp [SpecialLinearGroup.transvection_coe]
 
-/-- The set of upper and lower elementary matrices in `SL(2, R)`. -/
-def elemSet (R : Type*) [CommRing R] : Set SL(2, R) :=
-  Set.range upperElem ∪ Set.range lowerElem
-
-private lemma upperElem_mem_closure_elemSet {R : Type*} [CommRing R] (c : R) :
-    upperElem c ∈ closure (elemSet R) :=
-  subset_closure (Or.inl ⟨c, rfl⟩)
-
-private lemma lowerElem_mem_closure_elemSet {R : Type*} [CommRing R] (c : R) :
-    lowerElem c ∈ closure (elemSet R) :=
-  subset_closure (Or.inr ⟨c, rfl⟩)
-
-section ClosureElemSet
-
-private theorem closure_elemSet_eq_top (N : ℕ) [NeZero N] :
-    Subgroup.closure (elemSet (ZMod N)) = ⊤ := by
-  set φ : SL(2, ℤ) →* SL(2, ZMod N) :=
-    Matrix.SpecialLinearGroup.map (Int.castRingHom (ZMod N)) with hφ
-  have hT : φ ModularGroup.T = upperElem (1 : ZMod N) := by
-    ext i j
-    fin_cases i <;> fin_cases j <;> simp [hφ, ModularGroup.coe_T]
-  have hS : φ ModularGroup.S =
-      upperElem (-1 : ZMod N) * lowerElem 1 * upperElem (-1) := by
-    ext i j
-    fin_cases i <;> fin_cases j <;>
-      simp [hφ, ModularGroup.coe_S, Matrix.mul_apply, Fin.sum_univ_two]
-  have hsurj : Function.Surjective φ :=
-    Matrix.SpecialLinearGroup.map_intCastRingHom_zmod_surjective N
-  rw [eq_top_iff, ← Subgroup.map_top_of_surjective φ hsurj,
-    ← SpecialLinearGroup.SL2Z_generators, MonoidHom.map_closure]
-  refine (closure_le _).mpr ?_
-  rintro x ⟨y, hy, rfl⟩
-  rcases hy with rfl | rfl
-  · rw [hS]
-    exact mul_mem (mul_mem (upperElem_mem_closure_elemSet _)
-      (lowerElem_mem_closure_elemSet _)) (upperElem_mem_closure_elemSet _)
-  · rw [hT]
-    exact upperElem_mem_closure_elemSet (1 : ZMod N)
-
-end ClosureElemSet
+private lemma transvection_one_zero_coe {R : Type*} [CommRing R] (b : R) :
+    ((SpecialLinearGroup.transvection (one_ne_zero : (1 : Fin 2) ≠ 0) b : SL(2, R)) :
+      Matrix (Fin 2) (Fin 2) R) = !![1, 0; b, 1] := by
+  ext i j
+  fin_cases i <;> fin_cases j <;> simp [SpecialLinearGroup.transvection_coe]
 
 section Generation
 
@@ -153,56 +76,41 @@ private lemma exists_natCast_mul_eq {a : ZMod p} (ha : a ≠ 0) (c : ZMod p) :
   refine ⟨n, ?_⟩
   rw [hn, mul_assoc, ZMod.inv_mul_of_unit a (isUnit_iff_ne_zero.mpr ha), mul_one]
 
-private lemma mem_range_toGL_of_det_eq_one {n : Type*} [DecidableEq n] [Fintype n] {R : Type*}
-    [CommRing R] {g : GL n R} (hg : Matrix.det (g : Matrix n n R) = 1) :
-    g ∈ (Matrix.SpecialLinearGroup.toGL (n := n) (R := R)).range :=
-  ⟨⟨(g : Matrix n n R), hg⟩, Units.ext rfl⟩
-
-private theorem range_toGL_le_of_conj_elem (H : Subgroup (GL (Fin 2) (ZMod p)))
+private theorem range_toGL_le_of_conj_transvection (H : Subgroup (GL (Fin 2) (ZMod p)))
     (P : GL (Fin 2) (ZMod p)) {a b : ZMod p} (ha : a ≠ 0) (hb : b ≠ 0)
-    (hu : P * Matrix.SpecialLinearGroup.toGL (upperElem a) * P⁻¹ ∈ H)
-    (hl : P * Matrix.SpecialLinearGroup.toGL (lowerElem b) * P⁻¹ ∈ H) :
+    (hu : P * Matrix.SpecialLinearGroup.toGL
+      (SpecialLinearGroup.transvection zero_ne_one a) * P⁻¹ ∈ H)
+    (hl : P * Matrix.SpecialLinearGroup.toGL
+      (SpecialLinearGroup.transvection one_ne_zero b) * P⁻¹ ∈ H) :
     (Matrix.SpecialLinearGroup.toGL (n := Fin 2) (R := ZMod p)).range ≤ H := by
   set φ : SL(2, ZMod p) →* GL (Fin 2) (ZMod p) :=
     ((MulAut.conj P).toMonoidHom).comp (Matrix.SpecialLinearGroup.toGL) with hφdef
   have hφ : ∀ M : SL(2, ZMod p),
       φ M = P * Matrix.SpecialLinearGroup.toGL M * P⁻¹ := fun M => rfl
-  have hupper : ∀ c : ZMod p, φ (upperElem c) ∈ H := by
-    intro c
-    obtain ⟨n, hn⟩ := exists_natCast_mul_eq ha c
-    rw [show upperElem c = (upperElem a) ^ n by rw [upperElem_pow, hn], map_pow]
-    exact pow_mem (by rw [hφ]; exact hu) n
-  have hlower : ∀ c : ZMod p, φ (lowerElem c) ∈ H := by
-    intro c
-    obtain ⟨n, hn⟩ := exists_natCast_mul_eq hb c
-    rw [show lowerElem c = (lowerElem b) ^ n by rw [lowerElem_pow, hn], map_pow]
-    exact pow_mem (by rw [hφ]; exact hl) n
+  have htrans : ∀ {i j : Fin 2} (hij : i ≠ j) {x : ZMod p}, x ≠ 0 →
+      φ (SpecialLinearGroup.transvection hij x) ∈ H →
+        ∀ c, φ (SpecialLinearGroup.transvection hij c) ∈ H := by
+    intro i j hij x hx hmem c
+    obtain ⟨n, hn⟩ := exists_natCast_mul_eq hx c
+    rw [← hn, ← transvection_pow, map_pow]
+    exact pow_mem hmem n
   have hrange : φ.range ≤ H := by
-    rw [MonoidHom.range_eq_map, ← closure_elemSet_eq_top p, MonoidHom.map_closure,
-      closure_le]
-    rintro x ⟨y, hy, rfl⟩
-    rcases hy with ⟨c, rfl⟩ | ⟨c, rfl⟩
-    · exact hupper c
-    · exact hlower c
+    rintro _ ⟨A, rfl⟩
+    refine Matrix.SL2.transvection_induction (fun A => φ A ∈ H) (fun i j hij c => ?_)
+      (fun A B hA hB => by rw [map_mul]; exact mul_mem hA hB) A
+    have hi : i = 0 ∨ i = 1 := by omega
+    have hj : j = 0 ∨ j = 1 := by omega
+    rcases hi with rfl | rfl <;> rcases hj with rfl | rfl
+    · exact (hij rfl).elim
+    · exact htrans hij ha (by rw [hφ]; exact hu) c
+    · exact htrans hij hb (by rw [hφ]; exact hl) c
+    · exact (hij rfl).elim
   intro g hg
   obtain ⟨M, rfl⟩ := MonoidHom.mem_range.mp hg
-  have hdet : Matrix.det ((P⁻¹ * Matrix.SpecialLinearGroup.toGL M * P :
-      GL (Fin 2) (ZMod p)) : Matrix (Fin 2) (Fin 2) (ZMod p)) = 1 := by
-    have h1 : ((P⁻¹ * Matrix.SpecialLinearGroup.toGL M * P : GL (Fin 2) (ZMod p)) :
-        Matrix (Fin 2) (Fin 2) (ZMod p)) =
-        ((P⁻¹ : GL (Fin 2) (ZMod p)) : Matrix (Fin 2) (Fin 2) (ZMod p)) *
-          ((Matrix.SpecialLinearGroup.toGL M : GL (Fin 2) (ZMod p)) :
-            Matrix (Fin 2) (Fin 2) (ZMod p)) *
-          ((P : GL (Fin 2) (ZMod p)) : Matrix (Fin 2) (Fin 2) (ZMod p)) := by
-      rw [Units.val_mul, Units.val_mul]
-    have h2 : Matrix.det ((P⁻¹ : GL (Fin 2) (ZMod p)) : Matrix (Fin 2) (Fin 2) (ZMod p)) *
-        Matrix.det ((P : GL (Fin 2) (ZMod p)) : Matrix (Fin 2) (Fin 2) (ZMod p)) = 1 := by
-      rw [← Matrix.det_mul, ← Units.val_mul, inv_mul_cancel P, Units.val_one,
-        Matrix.det_one]
-    have h3 : Matrix.det ((Matrix.SpecialLinearGroup.toGL M : GL (Fin 2) (ZMod p)) :
-        Matrix (Fin 2) (Fin 2) (ZMod p)) = 1 := M.2
-    rw [h1, Matrix.det_mul, Matrix.det_mul, h3, mul_one, h2]
-  obtain ⟨N, hN⟩ := mem_range_toGL_of_det_eq_one hdet
+  have hker : P⁻¹ * Matrix.SpecialLinearGroup.toGL M * P ∈
+      (Matrix.GeneralLinearGroup.det : GL (Fin 2) (ZMod p) →* (ZMod p)ˣ).ker := by
+    simp
+  obtain ⟨N, hN⟩ := Matrix.SpecialLinearGroup.range_toGL_eq_ker_det.ge hker
   have hgoal : Matrix.SpecialLinearGroup.toGL M = φ N := by
     rw [hφ, hN]
     group
@@ -306,7 +214,7 @@ private lemma exists_smul_eq_of_cross_eq_zero {v w : Fin 2 → F} (hv : v ≠ 0)
       rw [div_mul_eq_mul_div, eq_div_iff h0]
       linear_combination hkey
 
-private lemma eq_upperElem_of_fixes_e0 {Q : Matrix (Fin 2) (Fin 2) F} (hQ : (Q - 1) ^ 2 = 0)
+private lemma eq_upper_of_fixes_e0 {Q : Matrix (Fin 2) (Fin 2) F} (hQ : (Q - 1) ^ 2 = 0)
     (hfix : Q.mulVec ![1, 0] = ![1, 0]) : Q = !![1, Q 0 1; 0, 1] := by
   rw [mulVec_e0] at hfix
   have e00 : Q 0 0 = 1 := congrFun hfix 0
@@ -322,7 +230,7 @@ private lemma eq_upperElem_of_fixes_e0 {Q : Matrix (Fin 2) (Fin 2) F} (hQ : (Q -
   conv_lhs => rw [Matrix.eta_fin_two Q]
   rw [e00, e10, e11]
 
-private lemma eq_lowerElem_of_fixes_e1 {Q : Matrix (Fin 2) (Fin 2) F} (hQ : (Q - 1) ^ 2 = 0)
+private lemma eq_lower_of_fixes_e1 {Q : Matrix (Fin 2) (Fin 2) F} (hQ : (Q - 1) ^ 2 = 0)
     (hfix : Q.mulVec ![0, 1] = ![0, 1]) : Q = !![1, 0; Q 1 0, 1] := by
   rw [mulVec_e1] at hfix
   have e01 : Q 0 1 = 0 := congrFun hfix 0
@@ -348,10 +256,8 @@ local notation "𝕄" => Matrix (Fin 2) (Fin 2) (ZMod p)
 private lemma conj_unipotent {g : GL (Fin 2) (ZMod p)} (h : GL (Fin 2) (ZMod p))
     (hg : ((g : 𝕄) - 1) ^ 2 = 0) :
     (((h * g * h⁻¹ : GL (Fin 2) (ZMod p)) : 𝕄) - 1) ^ 2 = 0 := by
-  have hinv : (h : 𝕄) * ((h⁻¹ : GL (Fin 2) (ZMod p)) : 𝕄) = 1 := by
-    rw [← Units.val_mul, mul_inv_cancel h, Units.val_one]
-  have hinv' : ((h⁻¹ : GL (Fin 2) (ZMod p)) : 𝕄) * (h : 𝕄) = 1 := by
-    rw [← Units.val_mul, inv_mul_cancel h, Units.val_one]
+  have hinv : (h : 𝕄) * ((h⁻¹ : GL (Fin 2) (ZMod p)) : 𝕄) = 1 := Units.mul_inv h
+  have hinv' : ((h⁻¹ : GL (Fin 2) (ZMod p)) : 𝕄) * (h : 𝕄) = 1 := Units.inv_mul h
   have key : ((h * g * h⁻¹ : GL (Fin 2) (ZMod p)) : 𝕄) - 1 =
       (h : 𝕄) * ((g : 𝕄) - 1) * ((h⁻¹ : GL (Fin 2) (ZMod p)) : 𝕄) := by
     have hexpand : (h : 𝕄) * ((g : 𝕄) - 1) * ((h⁻¹ : GL (Fin 2) (ZMod p)) : 𝕄) =
@@ -381,8 +287,7 @@ theorem range_toGL_le_of_irreducible_of_exists_unipotent (H : Subgroup (GL (Fin 
   have hu'2 : (((h * u * h⁻¹ : GL (Fin 2) (ZMod p)) : 𝕄) - 1) ^ 2 = 0 :=
     conj_unipotent h hu2
   set w : Fin 2 → ZMod p := ((h : GL (Fin 2) (ZMod p)) : 𝕄).mulVec v with hwdef
-  have hinvh : ((h⁻¹ : GL (Fin 2) (ZMod p)) : 𝕄) * (h : 𝕄) = 1 := by
-    rw [← Units.val_mul, inv_mul_cancel h, Units.val_one]
+  have hinvh : ((h⁻¹ : GL (Fin 2) (ZMod p)) : 𝕄) * (h : 𝕄) = 1 := Units.inv_mul h
   have hw : ((h * u * h⁻¹ : GL (Fin 2) (ZMod p)) : 𝕄).mulVec w = w := by
     rw [hwdef, Units.val_mul, Units.val_mul, Matrix.mulVec_mulVec,
       mul_assoc ((h : 𝕄) * (u : 𝕄)), hinvh, mul_one, ← Matrix.mulVec_mulVec, hv]
@@ -397,10 +302,8 @@ theorem range_toGL_le_of_irreducible_of_exists_unipotent (H : Subgroup (GL (Fin 
     linear_combination hc
   set P : GL (Fin 2) (ZMod p) := Matrix.GeneralLinearGroup.mkOfDetNeZero _ hdetP with hPdef
   have hPcoe : (P : 𝕄) = !![v 0, w 0; v 1, w 1] := rfl
-  have hPinv : ((P⁻¹ : GL (Fin 2) (ZMod p)) : 𝕄) * (P : 𝕄) = 1 := by
-    rw [← Units.val_mul, inv_mul_cancel P, Units.val_one]
-  have hPinv' : (P : 𝕄) * ((P⁻¹ : GL (Fin 2) (ZMod p)) : 𝕄) = 1 := by
-    rw [← Units.val_mul, mul_inv_cancel P, Units.val_one]
+  have hPinv : ((P⁻¹ : GL (Fin 2) (ZMod p)) : 𝕄) * (P : 𝕄) = 1 := Units.inv_mul P
+  have hPinv' : (P : 𝕄) * ((P⁻¹ : GL (Fin 2) (ZMod p)) : 𝕄) = 1 := Units.mul_inv P
   have hPe0 : (P : 𝕄).mulVec ![1, 0] = v := by
     rw [hPcoe, mulVec_e0]
     funext i
@@ -430,7 +333,7 @@ theorem range_toGL_le_of_irreducible_of_exists_unipotent (H : Subgroup (GL (Fin 
     rwa [hPiv] at hc
   have hQform : ((P⁻¹ * u * P : GL (Fin 2) (ZMod p)) : 𝕄) =
       !![1, ((P⁻¹ * u * P : GL (Fin 2) (ZMod p)) : 𝕄) 0 1; 0, 1] :=
-    eq_upperElem_of_fixes_e0 hQ2 hQfix
+    eq_upper_of_fixes_e0 hQ2 hQfix
   have hQ'2 : (((P⁻¹ * (h * u * h⁻¹) * P : GL (Fin 2) (ZMod p)) : 𝕄) - 1) ^ 2 = 0 := by
     have hc := conj_unipotent (g := h * u * h⁻¹) P⁻¹ hu'2
     rwa [inv_inv] at hc
@@ -440,20 +343,22 @@ theorem range_toGL_le_of_irreducible_of_exists_unipotent (H : Subgroup (GL (Fin 
     rwa [hPiw] at hc
   have hQ'form : ((P⁻¹ * (h * u * h⁻¹) * P : GL (Fin 2) (ZMod p)) : 𝕄) =
       !![1, 0; ((P⁻¹ * (h * u * h⁻¹) * P : GL (Fin 2) (ZMod p)) : 𝕄) 1 0, 1] :=
-    eq_lowerElem_of_fixes_e1 hQ'2 hQ'fix
+    eq_lower_of_fixes_e1 hQ'2 hQ'fix
   have hQeq : P⁻¹ * u * P = Matrix.SpecialLinearGroup.toGL
-      (upperElem (((P⁻¹ * u * P : GL (Fin 2) (ZMod p)) : 𝕄) 0 1)) := by
+      (SpecialLinearGroup.transvection zero_ne_one
+        (((P⁻¹ * u * P : GL (Fin 2) (ZMod p)) : 𝕄) 0 1)) := by
     apply Units.ext
-    exact hQform
+    exact hQform.trans (transvection_zero_one_coe _).symm
   have hQ'eq : P⁻¹ * (h * u * h⁻¹) * P = Matrix.SpecialLinearGroup.toGL
-      (lowerElem (((P⁻¹ * (h * u * h⁻¹) * P : GL (Fin 2) (ZMod p)) : 𝕄) 1 0)) := by
+      (SpecialLinearGroup.transvection one_ne_zero
+        (((P⁻¹ * (h * u * h⁻¹) * P : GL (Fin 2) (ZMod p)) : 𝕄) 1 0)) := by
     apply Units.ext
-    exact hQ'form
+    exact hQ'form.trans (transvection_one_zero_coe _).symm
   have ha : ((P⁻¹ * u * P : GL (Fin 2) (ZMod p)) : 𝕄) 0 1 ≠ 0 := by
     intro ha0
     apply hu1
     have h1 : P⁻¹ * u * P = 1 := by
-      rw [hQeq, ha0, upperElem_zero]
+      rw [hQeq, ha0, SpecialLinearGroup.transvection_coeff_zero]
       exact map_one _
     calc u = P * (P⁻¹ * u * P) * P⁻¹ := by group
     _ = P * 1 * P⁻¹ := by rw [h1]
@@ -462,7 +367,7 @@ theorem range_toGL_le_of_irreducible_of_exists_unipotent (H : Subgroup (GL (Fin 
     intro hb0
     have hu'1 : h * u * h⁻¹ = 1 := by
       have h1 : P⁻¹ * (h * u * h⁻¹) * P = 1 := by
-        rw [hQ'eq, hb0, lowerElem_zero]
+        rw [hQ'eq, hb0, SpecialLinearGroup.transvection_coeff_zero]
         exact map_one _
       calc h * u * h⁻¹ = P * (P⁻¹ * (h * u * h⁻¹) * P) * P⁻¹ := by group
       _ = P * 1 * P⁻¹ := by rw [h1]
@@ -471,7 +376,7 @@ theorem range_toGL_le_of_irreducible_of_exists_unipotent (H : Subgroup (GL (Fin 
     calc u = h⁻¹ * (h * u * h⁻¹) * h := by group
     _ = h⁻¹ * 1 * h := by rw [hu'1]
     _ = 1 := by group
-  refine range_toGL_le_of_conj_elem H P ha hb ?_ ?_
+  refine range_toGL_le_of_conj_transvection H P ha hb ?_ ?_
   · rw [← hQeq]
     have hPQ : P * (P⁻¹ * u * P) * P⁻¹ = u := by group
     rw [hPQ]

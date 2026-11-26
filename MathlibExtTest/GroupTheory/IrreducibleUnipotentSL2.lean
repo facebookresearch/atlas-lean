@@ -6,6 +6,15 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+The exact-source consumer reproduces the theorem type from
+`Theorems/Thm_ModularCurve_SerreImage_contains_SL2.lean`
+in https://github.com/anthropics/fermats-last-theorem at commit
+6e837e75355538c7f80bab5b956861e86c4eacc2.
+Copyright (c) 2026 Anthropic, PBC. Licensed under the Apache License, Version 2.0.
+The upstream NOTICE also credits Mathlib and its respective authors under Apache 2.0.
+-/
+
 module
 
 import MathlibExt.GroupTheory.IrreducibleUnipotentSL2
@@ -34,28 +43,19 @@ theorem bot_has_no_nontrivial_unipotent {p : ℕ} [Fact p.Prime] :
   rintro ⟨u, hu, -, hu1⟩
   exact hu1 (Subgroup.mem_bot.mp hu)
 
-/-- The elementary matrices multiply by adding their entries, and the
-zero elementary matrix is the identity. -/
-theorem upperElem_add_example (a b : ZMod 5) :
-    SL2.upperElem a * SL2.upperElem b = SL2.upperElem (a + b) :=
-  SL2.upperElem_mul a b
-
-theorem upperElem_zero_example :
-    SL2.upperElem (0 : ZMod 5) = 1 :=
-  SL2.upperElem_zero
-
-/-- In characteristic five, the upper elementary matrix with entry `1`
-is a nontrivial square-zero unipotent in `SL(2, ZMod 5)`. -/
-theorem upperElem_one_unipotent_example :
-    (((SL2.upperElem (1 : ZMod 5) : SL(2, ZMod 5)) :
-        Matrix (Fin 2) (Fin 2) (ZMod 5)) - 1) ^ 2 = 0 ∧
-      SL2.upperElem (1 : ZMod 5) ≠ 1 := by
-  constructor
+/-- In characteristic five, Mathlib's transvection with entry `1` is a nontrivial
+square-zero unipotent of `GL(2, ZMod 5)`, so the unipotent hypothesis can hold. -/
+theorem top_has_nontrivial_unipotent_example :
+    ∃ u ∈ (⊤ : Subgroup (GL (Fin 2) (ZMod 5))),
+      ((u : Matrix (Fin 2) (Fin 2) (ZMod 5)) - 1) ^ 2 = 0 ∧ u ≠ 1 := by
+  refine ⟨Matrix.SpecialLinearGroup.toGL
+    (SpecialLinearGroup.transvection zero_ne_one (1 : ZMod 5)), Subgroup.mem_top _, ?_, ?_⟩
   · ext i j
     fin_cases i <;> fin_cases j <;> decide
   · intro h
-    have h01 := congrArg (fun M : SL(2, ZMod 5) => (M : Matrix (Fin 2) (Fin 2) (ZMod 5)) 0 1) h
-    simp only [SL2.upperElem_coe] at h01
+    have h01 := congrArg (fun M : GL (Fin 2) (ZMod 5) =>
+      (M : Matrix (Fin 2) (Fin 2) (ZMod 5)) 0 1) h
+    simp [SpecialLinearGroup.transvection_coe] at h01
     exact (by decide : (1 : ZMod 5) ≠ 0) h01
 
 end IrreducibleUnipotentSL2Test
