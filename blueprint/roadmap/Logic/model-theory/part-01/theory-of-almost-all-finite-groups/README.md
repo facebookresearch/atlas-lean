@@ -1,7 +1,7 @@
 # Theory of almost all finite groups
 
-- [Group words in countably many variables](word.md)
-- [Value of a group word under an assignment](eval-word.md)
+Group words and their values are the [signed-index words](../../../../GroupTheory/varieties-and-equations/elementary-theory-of-torsion-free-hyperbolic-gro/word.md) and [their evaluation in a group](../../../../GroupTheory/varieties-and-equations/elementary-theory-of-torsion-free-hyperbolic-gro/eval-word.md).
+
 - [Prenex CNF codes for sentences of group theory](sentence-code.md)
 - [Truth of a CNF matrix under an assignment](matrix-holds.md)
 - [Truth of a quantifier prefix followed by a matrix](holds-from.md)

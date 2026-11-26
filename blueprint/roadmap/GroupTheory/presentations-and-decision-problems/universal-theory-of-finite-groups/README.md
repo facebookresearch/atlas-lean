@@ -1,4 +1,4 @@
 # Universal theory of finite groups
 
-- [Group words in countably many variables](word.md)
-- [Value of a group word under an assignment](eval-word.md)
+Group words and their values are the [signed-index words](../../varieties-and-equations/elementary-theory-of-torsion-free-hyperbolic-gro/word.md) and [their evaluation in a group](../../varieties-and-equations/elementary-theory-of-torsion-free-hyperbolic-gro/eval-word.md).
+
