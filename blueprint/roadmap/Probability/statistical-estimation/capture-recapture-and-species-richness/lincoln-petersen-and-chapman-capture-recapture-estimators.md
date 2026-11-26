@@ -10,6 +10,10 @@ $$E\Bigl[\frac{(n_1+1)(n_2+1)}{m+1}\Bigr] = (N + 1) - (n_2 + 1)\, \frac{\binom{N
 
 and the last binomial coefficient vanishes exactly when $n_1 + n_2 \ge N$, while for $n_1 + n_2 < N$ the displayed term is the (negative) bias of $\hat N_C$. The Lincoln–Petersen estimator is infinite on $\{m = 0\}$, which has positive probability exactly when $n_1 + n_2 \le N$, so it then has infinite mean.
 
+## Depends on
+
+- [Hypergeometric distribution](../../../Probability/distributions/discrete/hypergeometric-distribution/hypergeometric.md)
+
 ## Expansion
 
 1. The model: the hypergeometric law of $m$ and the two estimators.

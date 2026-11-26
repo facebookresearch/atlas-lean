@@ -4,7 +4,7 @@ In the random-effects model $y_i = \mu + \delta_i + e_i$, $i = 1, \dots, k$, wit
 
 $$\hat\Delta^2 = \max\Bigl\{0,\ \frac{Q - (k - 1)}{\sum_i w_i - \sum_i w_i^2 / \sum_i w_i}\Bigr\},$$
 
-and estimate $\mu$ by $\hat\mu = \sum_i w_i^* y_i/\sum_i w_i^*$ with $w_i^* = (w_i^{-1} + \hat\Delta^2)^{-1}$ and asymptotic standard error $(\sum_i w_i^*)^{-1/2}$. The moment equation is exact: from the first two moments alone, without normality,
+and estimate $\mu$ by $\hat\mu = \sum_i \hat w_i^* y_i/\sum_i \hat w_i^*$ with $\hat w_i^* = (w_i^{-1} + \hat\Delta^2)^{-1}$ and the plug-in standard error $(\sum_i \hat w_i^*)^{-1/2}$. When $\Delta^2$ is known, the weighted mean with weights $w_i^* = (w_i^{-1} + \Delta^2)^{-1}$ has mean $\mu$ and exact standard deviation $(\sum_i w_i^*)^{-1/2}$; the plug-in standard error substitutes $\hat\Delta^2$, and its approximate validity requires an asymptotic regime with a large number $k$ of studies. The moment equation is exact: from the first two moments alone, without normality,
 
 $$E[Q] = (k - 1) + \Delta^2 \Bigl(S_1 - \frac{S_2}{S_1}\Bigr), \qquad S_r = \sum_i w_i^r,$$
 
@@ -20,7 +20,7 @@ since $E[Q] = \sum_i w_i \operatorname{Var}(y_i) - S_1 \operatorname{Var}(\bar y
 1. The random-effects model and Cochran's $Q$ with known sampling variances.
 2. The computation of $E[Q]$ from the first two moments.
 3. The moment estimator, unbiasedness before truncation, and the upward bias of the truncated estimator.
-4. The pooled estimator of $\mu$ and its variance when $\Delta^2$ is known; the plug-in version as a separate, approximate statement.
+4. The pooled estimator of $\mu$ and its exact variance when $\Delta^2$ is known; the plug-in standard error as a separate statement, in a large-$k$ asymptotic regime.
 5. The equal-variance special case $\hat\Delta^2 = \max\{0, \sum_i (y_i - \bar y)^2/(k - 1) - \bar{s^2}\}$.
 
 ## Sources

@@ -27,7 +27,7 @@
 - [Probability of a count vector under independent Poisson laws](pi-poisson-measure-real-singleton.md)
 - [The Poisson-random-field log-likelihood](log-pi-poisson-measure-real-singleton.md)
 
-## Incidental parameters
+## Incidental parameters and latent structure
 
 - [Neyman–Scott inconsistency with incidental parameters](neyman-scott-incidental-parameter-inconsistency.md)
 - [Hidden Markov and latent structure models](hidden-markov-and-latent-structure-models/README.md)

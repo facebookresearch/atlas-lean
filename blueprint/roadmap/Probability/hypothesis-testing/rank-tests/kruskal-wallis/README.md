@@ -4,7 +4,7 @@ The Kruskal–Wallis test compares $g \ge 2$ groups through the joint ranks of t
 
 $$H = \frac{12}{N(N+1)} \sum_{i=1}^g n_i \Bigl(\bar r_i - \frac{N+1}{2}\Bigr)^2 = \frac{12}{N(N+1)} \sum_{i=1}^g n_i \bar r_i^2 - 3(N+1)$$
 
-(Kruskal–Wallis test, Wikipedia). Under the null hypothesis the ranks form a uniformly random permutation of $\{1, \dots, N\}$, which holds when the observations are i.i.d. with a continuous law, so the test is distribution-free.
+(Kruskal–Wallis test, Wikipedia). Under the null hypothesis the ranks form a uniformly random permutation of $\{1, \dots, N\}$, which holds when the observations are i.i.d. with a continuous law ([ranks of a sample from an atomless law are uniform](../../../nonparametric-survival/distribution-freeness-of-ranks/sample-rank-uniform-of-nonatomic.md)), so the test is distribution-free.
 
 - [Null distribution of the Kruskal–Wallis statistic](null-distribution-of-the-kruskal-wallis-statistic.md)
 
