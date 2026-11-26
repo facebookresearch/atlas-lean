@@ -121,18 +121,6 @@ public theorem_wanted IsSmoothCoconut.eq_euclideanChainLength_sub_one {p s : ℕ
     (hp : 0 < p) {d r : Fin p ⊕ Fin s → ℕ} (h : IsSmoothCoconut p s d r) :
     p = euclideanChainLength (∑ j, r (.inr j)) (r (.inl ⟨p - 1, by omega⟩)) - 1
 
-/-- **Smooth coconut structures with central label above one.** Let $p \ge 1$ and let $(d, r)$ be
-a smooth arithmetical structure on the coconut tree $\mathrm{CT}(p, s)$, with central vertex $v_p$
-and leaves $\ell_1, \ldots, \ell_s$. Then $d_{v_p} > 1$ if and only if
-$r_{v_p} < \sum_{j=1}^{s} r_{\ell_j}$.
-
-Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
-Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Proposition 8
-(`integers-2025-A82-prop-8`). -/
-public theorem_wanted IsSmoothCoconut.one_lt_center_iff {p s : ℕ} (hp : 0 < p)
-    {d r : Fin p ⊕ Fin s → ℕ} (h : IsSmoothCoconut p s d r) :
-    1 < d (.inl ⟨p - 1, by omega⟩) ↔ r (.inl ⟨p - 1, by omega⟩) < ∑ j, r (.inr j)
-
 /-- **Smoothing at a leaf of a coconut tree.** Let the coconut tree $CT(p, s + 1)$ have path
 vertices $v_1, \dots, v_p$, central vertex $v_p$ and leaves $\ell_1, \dots, \ell_{s+1}$, let $d$
 and $r$ be labelings of its vertices by natural numbers, and let $1 \le k \le s + 1$. Smoothing

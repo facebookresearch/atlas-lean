@@ -24,6 +24,7 @@ public import Mathlib.RingTheory.PowerSeries.Derivative
 public import Mathlib.RingTheory.PowerSeries.Exp
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import Mathlib.RingTheory.PowerSeries.Substitution
+public import MathlibExt.GroupTheory.Perm.ConjClassesPartition
 public import MathlibExt.NumberTheory.MultipleZeta.CyclicSumFormula
 public import MathlibExt.NumberTheory.MultipleZeta.OOZDuality
 public import MathlibExt.NumberTheory.QMultipleZetaValuesCardConjClassesPermEqCardPartition
@@ -119,18 +120,6 @@ Article A6, Theorem 5 (SZ duality, Zhao) (`integers-2024-A6-thm-5`). -/
 public theorem_wanted szQMZV_szBlockIndex_dual (kd : List (ℕ × ℕ))
     (hkd : ∀ p ∈ kd, 1 ≤ p.1 ∧ 1 ≤ p.2) :
     szQMZV (szBlockIndex kd) = szQMZV (szBlockIndex (kd.reverse.map Prod.swap))
-
-/-- **Cycle type classifies conjugacy classes of permutations.** For every natural number $n$,
-there is a bijection from the set of conjugacy classes of the symmetric group $S_n$ to the set
-of partitions of $n$ that sends the class of each permutation $\sigma$ to the cycle type of
-$\sigma$: the partition of $n$ formed by the lengths of the cycles of $\sigma$, fixed points
-counting as cycles of length $1$.
-
-Source: Benjamin Brindle, *A Unified Approach to qMZVs*, INTEGERS 24 (2024),
-Article A6, Lemma 4 (`integers-2024-A6-lem-4`). -/
-public theorem_wanted exists_conjClasses_perm_equiv_partition (n : ℕ) :
-    ∃ e : ConjClasses (Equiv.Perm (Fin n)) ≃ (Fintype.card (Fin n)).Partition,
-      ∀ σ : Equiv.Perm (Fin n), e (ConjClasses.mk σ) = σ.partition
 
 /-- **Class numbers of finite general linear groups via OOZ-qMZVs.** Let $K$ be a finite field
 with $c$ elements and, for $n \ge 0$, let $a_{n,K}$ be the number of conjugacy classes of
@@ -666,7 +655,6 @@ public theorem_wanted bzQMZV_mul_eq_sum_quasiShuffle (u v : List ℕ)
     bzQMZV u * bzQMZV v =
       ((quasiShuffle (fun a b => [a + b, a + b - 1]) u v).map bzQMZV).sum
 
-
 /-- **Analytic properties of general qMZVs.** Let $(k_1, Q_1), \dots, (k_r, Q_r)$ be pairs of an
 integer $k_j \ge 1$ and a polynomial $Q_j \in \mathbb{Q}[X]$ with $\deg Q_j \le k_j$ for every
 $j$ and $Q_1(0) = 0$, and write the general qMZV as
@@ -694,7 +682,6 @@ public theorem_wanted qMZV_summable_differentiableOn_tendsto (kQ : List (ℕ × 
         (nhdsWithin 1 (Set.Iio 1))
         (nhds (multipleZetaValue (kQ.map Prod.fst) *
           ((kQ.map fun p => ((p.2.eval 1 : ℚ) : ℝ)).prod))))
-
 
 /-- **Letters of the Takeyama–Bradley–Zhao model as qMZV data.** The letters of the TBZ model
 are the symbol $\bar 1$ and the natural numbers $k \ge 1$. The letter $\bar 1$, with summand
