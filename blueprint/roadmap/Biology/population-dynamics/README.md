@@ -24,3 +24,4 @@ Differential-equation and matrix models of population growth, structure, species
 - [Stability of evolutionarily stable states](stability-of-evolutionarily-stable-states/README.md)
 - [Zero-determinant strategies in iterated games](zero-determinant-strategies-in-iterated-games/README.md)
 - [Life tables](life-tables/README.md)
+- [Community diversity and dissimilarity indices](community-diversity-and-dissimilarity-indices/README.md)
