@@ -11,3 +11,24 @@
 - [Security of Yao's garbled-circuit protocol against semi-honest adversaries](security-of-yao-s-garbled-circuit-protocol.md)
 - [UC emulation](uc-emulation.md)
 - [Universal composition theorem](universal-composition-theorem.md)
+
+## One-exchange model
+
+Here there is one main party, each message is a bit and the order of the messages is fixed.
+
+- [Program](program.md)
+- [Clock](clock.md)
+- [Scan Prefix](scan-prefix.md)
+- [Eval](eval.md)
+- [Plan](plan.md)
+- [One-exchange execution law](exec.md)
+- [Close](close.md)
+- [Close iff](close-iff.md)
+- [Qualitative one-exchange emulation](emulates.md)
+- [Quantitative one-exchange emulation](emulates-within.md)
+- [One-exchange quantitative transitivity](trans.md)
+- [One-exchange ideal protocol](ideal-protocol.md)
+- [Exec ideal Protocol](exec-ideal-protocol.md)
+- [One-exchange realization](realizes.md)
+- [Dummy](dummy.md)
+- [Dummy sufficiency for one exchange](emulates-iff-dummy.md)
