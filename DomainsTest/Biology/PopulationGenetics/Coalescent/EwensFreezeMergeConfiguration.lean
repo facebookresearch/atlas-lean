@@ -22,7 +22,7 @@ Ewens sampling formula for allele block sizes.
 
 namespace Domains.Biology.PopulationGenetics.Coalescent.EwensFreezeMerge
 
-/-- The terminal freeze-merge law has the native Ewens block-size distribution. -/
+/-- For `θ > 0`, the terminal freeze-merge law has the native Ewens block-size distribution. -/
 theorem terminalLaw_map_blockSizes (θ : ℝ) (hθ : 0 < θ) (n : ℕ) (p : n.Partition) :
     ((terminalLaw θ hθ n).map
       MathlibExt.Biology.PopulationGenetics.ChineseRestaurant.blockSizes) p =

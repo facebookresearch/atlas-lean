@@ -24,16 +24,17 @@ import Mathlib.Tactic.Tauto
 # Neutral freeze-and-merge jumps
 
 `State` records a partition of the labeled sample and its active blocks. `Event` uses
-two-element subsets for unordered mergers. `eventLaw` assigns the specified neutral
-jump probabilities; `step` applies those events, and `run` iterates them from active
-singletons. The process stutters after all blocks freeze. These are embedded discrete
+two-element subsets for unordered mergers. For a mutation parameter `θ > 0`, `eventLaw` assigns
+the specified neutral jump probabilities; `step` applies those events, and `run` iterates them
+from active singletons. The process stutters after all blocks freeze. These are embedded discrete
 jumps; no continuous-time genealogy coupling is asserted.
 
 This is the embedded jump chain of the coalescent of Donnelly and Tavaré (1986, §2), with the
 age order of the new classes forgotten as in Watterson (1984). Active blocks are their old
-equivalence classes, frozen blocks are their new classes, and a freeze is a mutation. From `k`
-active blocks, given that a jump occurs, a specified pair merges with probability
-`2 / (k (θ + k - 1))` and a specified block freezes with probability `θ / (k (θ + k - 1))`:
+equivalence classes, frozen blocks are their new classes, and a freeze is a mutation. For
+`θ > 0` and `k ≥ 1` active blocks, given that a jump occurs, a specified pair merges with
+probability `2 / (k (θ + k - 1))` and a specified block freezes with probability
+`θ / (k (θ + k - 1))`:
 Donnelly and Tavaré (1986), (2.9)–(2.11) and cases (a′), (b′), pp. 4–5. The terminal formula
 `terminalLaw_apply` is their Theorem 2.2 (p. 6) at `k = 0`, the labeled Ewens sampling formula
 (Ewens 1972).
@@ -335,10 +336,12 @@ theorem applyEvent_injective (n : ℕ) (s : State n) :
       rw [removed_merge_pair, removed_merge_pair] at heq
       exact congrArg Sum.inr (Subtype.ext heq)
 
-/-- **Neutral jump weights.** Each freeze has weight `θ / [k(θ+k-1)]`; each specified
-unordered merger has weight `2 / [k(θ+k-1)]`, matching pair rate one and mutation rate `θ/2`.
-These are the embedded jump probabilities of Donnelly and Tavaré (1986), p. 5, cases (a′) and
-(b′). -/
+/-- **Neutral jump weights.** The raw weight of an event at active count `k`: `θ / [k(θ+k-1)]`
+for each freeze and `2 / [k(θ+k-1)]` for each specified unordered merger, matching pair rate one
+and mutation rate `θ/2`. They are probabilities only for `θ > 0` and `k ≥ 1`, where they sum to
+one (`sum_eventWeight`) and are the embedded jump probabilities of Donnelly and Tavaré (1986),
+p. 5, cases (a′) and (b′). Otherwise they are raw values: at `θ = 0` and `k = 1` the only event,
+a freeze, has weight `0 / 0 = 0`. -/
 def eventWeight (θ : ℝ) (n : ℕ) (s : State n) : Event n s → ℝ
   | Sum.inl _ => θ / denominator θ s.active.card
   | Sum.inr _ => 2 / denominator θ s.active.card
@@ -359,8 +362,8 @@ private lemma twice_choose_two (k : ℕ) : (2 : ℝ) * k.choose 2 = k * (k - 1 :
       exact_mod_cast h
     simpa [mul_comm] using hr.symm
 
-/-- **The jump weights sum to one.** At positive active count the actual finite collection of
-event weights sums to one. -/
+/-- **The jump weights sum to one.** For `θ > 0` and positive active count, the actual finite
+collection of event weights sums to one. -/
 theorem sum_eventWeight (θ : ℝ) (hθ : 0 < θ) (n : ℕ)
     (s : State n) (hk : 0 < s.active.card) : ∑ e : Event n s, eventWeight θ n s e = 1 := by
   classical
@@ -379,8 +382,8 @@ theorem sum_eventWeight (θ : ℝ) (hθ : 0 < θ) (n : ℕ)
     nlinarith
   rw [hnum, div_self hd]
 
-/-- **Neutral jump law.** The neutral event PMF, constructed from the nonnegative normalized
-finite weights. -/
+/-- **Neutral jump law.** For `θ > 0` and positive active count, the neutral event PMF,
+constructed from the nonnegative normalized finite weights. -/
 def eventLaw (θ : ℝ) (hθ : 0 < θ) (n : ℕ) (s : State n)
     (hk : 0 < s.active.card) : PMF (Event n s) := by
   classical
@@ -389,21 +392,21 @@ def eventLaw (θ : ℝ) (hθ : 0 < θ) (n : ℕ) (s : State n)
       (fun e _ ↦ eventWeight_nonneg θ hθ n s hk e),
       sum_eventWeight θ hθ n s hk, ENNReal.ofReal_one])
 
-/-- **Values of the jump law.** The event PMF evaluates to the specified finite real weight
-converted to `ENNReal`. -/
+/-- **Values of the jump law.** For `θ > 0` and positive active count, the event PMF evaluates
+to the specified finite real weight converted to `ENNReal`. -/
 theorem eventLaw_apply (θ : ℝ) (hθ : 0 < θ) (n : ℕ) (s : State n)
     (hk : 0 < s.active.card) (e : Event n s) :
     eventLaw θ hθ n s hk e = ENNReal.ofReal (eventWeight θ n s e) := rfl
 
-/-- **Freeze-and-merge transition law.** The actual finite transition PMF: apply the event law
-while active, and stutter when every block is frozen. -/
+/-- **Freeze-and-merge transition law.** For `θ > 0`, the actual finite transition PMF: apply
+the event law while active, and stutter when every block is frozen. -/
 def step (θ : ℝ) (hθ : 0 < θ) (n : ℕ) (s : State n) : PMF (State n) :=
   if hk : 0 < s.active.card then (eventLaw θ hθ n s hk).map (applyEvent n s)
   else PMF.pure s
 
-/-- **Transition probability of a jump.** The transition probability of each specified legal
-event is exactly its neutral weight; injectivity ensures no other event contributes to this
-successor. -/
+/-- **Transition probability of a jump.** For `θ > 0` and positive active count, the transition
+probability of each specified legal event is exactly its neutral weight; injectivity ensures no
+other event contributes to this successor. -/
 theorem step_applyEvent (θ : ℝ) (hθ : 0 < θ) (n : ℕ) (s : State n)
     (hk : 0 < s.active.card) (e : Event n s) :
     step θ hθ n s (applyEvent n s e) = ENNReal.ofReal (eventWeight θ n s e) := by
@@ -417,8 +420,8 @@ theorem step_applyEvent (θ : ℝ) (hθ : 0 < θ) (n : ℕ) (s : State n)
     simp [hne]
   · simp
 
-/-- **The last jump keeps the partition.** With one active block, the last jump freezes it and
-leaves the partition fixed. -/
+/-- **The last jump keeps the partition.** For `θ > 0`, with one active block, the last jump
+freezes it and leaves the partition fixed. -/
 theorem step_partition_one (θ : ℝ) (hθ : 0 < θ) (n : ℕ) (s : State n)
     (hk : s.active.card = 1) :
     (step θ hθ n s).map State.partition = PMF.pure s.partition := by
@@ -442,19 +445,20 @@ def initial (n : ℕ) : State n where
   active := (⊥ : Finpartition (univ : Finset (Fin n))).parts
   active_subset := Subset.refl _
 
-/-- **Freeze-and-merge chain.** Iterate the transition PMF independently of any terminal
-formula. -/
+/-- **Freeze-and-merge chain.** For `θ > 0`, iterate the transition PMF independently of any
+terminal formula. -/
 def run (θ : ℝ) (hθ : 0 < θ) (n : ℕ) : ℕ → PMF (State n)
   | 0 => PMF.pure (initial n)
   | t + 1 => (run θ hθ n t).bind (step θ hθ n)
 
-/-- **Terminal partition law.** Project the result after `n` jumps to the native labeled
-partition type. -/
+/-- **Terminal partition law.** For `θ > 0`, project the result after `n` jumps to the native
+labeled partition type. -/
 def terminalLaw (θ : ℝ) (hθ : 0 < θ) (n : ℕ) :
     PMF (Finpartition (univ : Finset (Fin n))) :=
   (run θ hθ n n).map State.partition
 
-/-- **The chain stutters once absorbed.** At zero active count the chain stutters. -/
+/-- **The chain stutters once absorbed.** For `θ > 0`, at zero active count the chain
+stutters. -/
 theorem step_stutter (θ : ℝ) (hθ : 0 < θ) (n : ℕ) (s : State n)
     (hk : s.active.card = 0) : step θ hθ n s = PMF.pure s := by
   simp [step, hk]
@@ -477,8 +481,8 @@ private lemma step_active_card (θ : ℝ) (hθ : 0 < θ) (n : ℕ)
 theorem initial_active_card (n : ℕ) : (initial n).active.card = n := by
   simp [initial]
 
-/-- **Active count after `t` jumps.** The support after `t` jumps has exactly `n-t` active
-blocks, using truncated subtraction to include stuttering after absorption. -/
+/-- **Active count after `t` jumps.** For `θ > 0`, the support after `t` jumps has exactly
+`n-t` active blocks, using truncated subtraction to include stuttering after absorption. -/
 theorem run_active_card (θ : ℝ) (hθ : 0 < θ) (n t : ℕ) (s : State n)
     (hs : s ∈ (run θ hθ n t).support) : s.active.card = n - t := by
   induction t generalizing s with
@@ -492,8 +496,8 @@ theorem run_active_card (θ : ℝ) (hθ : 0 < θ) (n t : ℕ) (s : State n)
     rw [step_active_card θ hθ n r s hs, ih r hr]
     omega
 
-/-- **Absorption after `n` jumps.** After `n` jumps all blocks are frozen; this follows from
-the actual chain's support and is independent of the terminal partition formula. -/
+/-- **Absorption after `n` jumps.** For `θ > 0`, after `n` jumps all blocks are frozen; this
+follows from the actual chain's support and is independent of the terminal partition formula. -/
 theorem run_all_frozen (θ : ℝ) (hθ : 0 < θ) (n : ℕ) (s : State n)
     (hs : s ∈ (run θ hθ n n).support) : s.active = ∅ := by
   apply card_eq_zero.mp
@@ -1261,17 +1265,17 @@ private lemma terminal_of_harmonic (θ : ℝ) (hθ : 0 < θ) (n : ℕ)
     · simp [hp]
     · simp [hp,Ne.symm hp]
 
-/-- **The terminal law is the Chinese restaurant process.** The terminal law of the neutral
-embedded jumps equals the native Chinese restaurant partition law. -/
+/-- **The terminal law is the Chinese restaurant process.** For `θ > 0`, the terminal law of
+the neutral embedded jumps equals the native Chinese restaurant partition law. -/
 theorem terminalLaw_eq_crp (θ : ℝ) (hθ : 0 < θ) (n : ℕ) :
     terminalLaw θ hθ n =
       MathlibExt.Biology.PopulationGenetics.ChineseRestaurant.crp θ hθ n := by
   exact terminal_of_harmonic θ hθ n (potential_harmonic θ hθ n)
 
-/-- **Ewens sampling formula for the freeze-and-merge chain.** Each particular labeled
-partition has the full Ewens probability, obtained from the terminal-law equality and the native
-`crp_apply` and `crpProb` declarations. This is Theorem 2.2 of Donnelly and Tavaré (1986), p. 6,
-at `k = 0`. -/
+/-- **Ewens sampling formula for the freeze-and-merge chain.** For `θ > 0`, each particular
+labeled partition has the full Ewens probability, obtained from the terminal-law equality and the
+native `crp_apply` and `crpProb` declarations. This is Theorem 2.2 of Donnelly and Tavaré (1986),
+p. 6, at `k = 0`. -/
 theorem terminalLaw_apply (θ : ℝ) (hθ : 0 < θ) (n : ℕ)
     (π : Finpartition (univ : Finset (Fin n))) :
     terminalLaw θ hθ n π = ENNReal.ofReal

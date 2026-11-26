@@ -21,7 +21,7 @@ Transport the native block-size law of the Chinese restaurant process
 
 namespace Domains.Biology.PopulationGenetics.Coalescent.EwensFreezeMerge
 
-/-- A partition law equal to CRP has the native Ewens block-size distribution. -/
+/-- For `θ > 0`, a partition law equal to CRP has the native Ewens block-size distribution. -/
 theorem map_blockSizes_of_eq_crp (θ : ℝ) (hθ : 0 < θ) (n : ℕ)
     (law : PMF (Finpartition (Finset.univ : Finset (Fin n))))
     (heq : law = MathlibExt.Biology.PopulationGenetics.ChineseRestaurant.crp θ hθ n)

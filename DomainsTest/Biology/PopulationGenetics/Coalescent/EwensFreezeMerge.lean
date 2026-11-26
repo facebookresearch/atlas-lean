@@ -13,8 +13,8 @@ public import Domains.Biology.PopulationGenetics.Coalescent.EwensFreezeMerge
 /-!
 # Boundary checks for neutral freeze-and-merge jumps
 
-The empty and singleton samples have unique terminal partitions. For two labels,
-the terminal probabilities are computed directly from the transition law.
+The empty and singleton samples have unique terminal partitions. For `θ > 0` and two
+labels, the terminal probabilities are computed directly from the transition law.
 -/
 
 @[expose] public section
@@ -39,12 +39,13 @@ theorem singleton_partition_unique (π : Finpartition (univ : Finset (Fin 1))) :
   have hpos := π.one_le_card_parts_of_nonempty (by simp)
   simpa using Nat.le_antisymm (by simpa using hle) hpos
 
-/-- The empty sample starts and stops at its unique empty partition. -/
+/-- For `θ > 0`, the empty sample starts and stops at its unique empty partition. -/
 theorem terminal_zero (θ : ℝ) (hθ : 0 < θ) :
     terminalLaw θ hθ 0 = PMF.pure ⊥ := by
   simp [terminalLaw, run, PMF.pure_map, initial]
 
-/-- The singleton sample freezes on its first jump, retaining its unique partition. -/
+/-- For `θ > 0`, the singleton sample freezes on its first jump, retaining its unique
+partition. -/
 theorem terminal_one (θ : ℝ) (hθ : 0 < θ) :
     terminalLaw θ hθ 1 = PMF.pure ⊥ := by
   simpa [terminalLaw, run, PMF.pure_bind, initial] using
@@ -92,7 +93,7 @@ private lemma two_top_ne_bot :
 private lemma two_freeze_partition (B : (initial 2).active) :
     (applyEvent 2 (initial 2) (Sum.inl B)).partition = ⊥ := rfl
 
-/-- For two labels, the merged partition has probability `1/(θ+1)`. -/
+/-- For `θ > 0` and two labels, the merged partition has probability `1/(θ+1)`. -/
 theorem terminal_two_merged (θ : ℝ) (hθ : 0 < θ) :
     terminalLaw θ hθ 2 ⊤ = ENNReal.ofReal (1 / (θ + 1)) := by
   classical
@@ -112,7 +113,8 @@ theorem terminal_two_merged (θ : ℝ) (hθ : 0 < θ) :
   rw [heq]
   field_simp
 
-/-- For two labels, the separate singleton partition has probability `θ/(θ+1)`. -/
+/-- For `θ > 0` and two labels, the separate singleton partition has probability
+`θ/(θ+1)`. -/
 theorem terminal_two_separate (θ : ℝ) (hθ : 0 < θ) :
     terminalLaw θ hθ 2 ⊥ = ENNReal.ofReal (θ / (θ + 1)) := by
   classical
@@ -137,8 +139,8 @@ theorem terminal_two_separate (θ : ℝ) (hθ : 0 < θ) :
   field_simp
   ring
 
-/-- A concrete transition: with two active singletons, the specified singleton freezes
-with probability `θ/[2(θ+1)]`. -/
+/-- A concrete transition for `θ > 0`: with two active singletons, the specified singleton
+freezes with probability `θ/[2(θ+1)]`. -/
 theorem two_singleton_freeze (θ : ℝ) (hθ : 0 < θ) :
     step θ hθ 2 (initial 2)
       (freeze 2 (initial 2) ⟨{0}, by simp [initial, Finpartition.parts_bot]⟩) =
