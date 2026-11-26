@@ -19,7 +19,7 @@ In a short window, small Hamming distance is a proxy for recent shared ancestry,
 
 ## Depends on
 
-- [The Li–Stephens copying model](../../population-structure/li-stephens-haplotype-copying-model/hmm.md)
+- [The Li–Stephens copying model](../../../population-structure/li-stephens-haplotype-copying-model/hmm.md)
 
 ## Sources
 

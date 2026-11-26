@@ -16,7 +16,7 @@ $$h^2_{\mathrm{med;causal}} = \operatorname{Var}(XB\alpha) = \mathbb E_{B,\alpha
 
 $$h^2_{\mathrm{nonmed;causal}} = \operatorname{Var}(X\gamma) = M\,\mathbb E[\gamma^2],$$
 
-where $\mathbb E[\alpha^2]$ is the average squared per-gene effect and $\mathbb E[h^2_{\mathrm{cis}}]$ the average cis-heritability of expression. For disjoint gene categories $D_d$, if in addition $\mathbb E[\alpha_i^2 \mid B] = \mathbb E[\alpha_i^2 \mid i \in D_d]$ is constant within each category (the cross moments still vanishing), then $h^2_{\mathrm{med;causal}}(D_d) = |D_d|\,\mathbb E[\alpha_i^2 \mid i \in D_d]\,\mathbb E[h^2_{i,\mathrm{cis}} \mid i \in D_d]$, where the last factor is the average cis-heritability over genes in $D_d$.
+where $\mathbb E[\alpha^2]$ is the average squared per-gene effect and $\mathbb E[h^2_{\mathrm{cis}}]$ the average cis-heritability of expression. For disjoint gene categories $D_d$, if instead of a single common second moment $\mathbb E[\alpha_i^2 \mid B] = \mathbb E[\alpha_i^2 \mid i \in D_d]$ is constant within each category (the cross moments still vanishing), then $h^2_{\mathrm{med;causal}}(D_d) = |D_d|\,\mathbb E[\alpha_i^2 \mid i \in D_d]\,\mathbb E[h^2_{i,\mathrm{cis}} \mid i \in D_d]$, where the last factor is the average cis-heritability over genes in $D_d$.
 
 **Assayed tissues.** If expression is measured in tissues $\mathcal T$ rather than the causal contexts, the estimable quantity is $h^2_{\mathrm{med;assayed}}(\mathcal T) = r_g^2(\mathcal T)\,h^2_{\mathrm{med;causal}}$, where $r_g^2(\mathcal T)$ is the average squared genetic correlation of cis-expression between $\mathcal T$ and the causal contexts; the remainder $(1 - r_g^2(\mathcal T))\,h^2_{\mathrm{med;causal}}$ is counted as non-mediated.
 
