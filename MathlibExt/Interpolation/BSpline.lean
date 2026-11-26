@@ -19,25 +19,30 @@ doi:10.1016/0021-9045(72)90080-9, Section 1, recurrence (10).
 `B t i k` uses degree `k` where de Boor's `N_{i,k}` uses order `k`
 (degree `k-1`), so `B t i k = N_{i,k+1}` with knots `t_j = t j`;
 (10) is then the successor case of `B`. The half-open
-`t i ≤ x < t (i+1)` span is de Boor's right-continuity rule; a zero
-denominator gives `0` by Lean real division, the `0/0 = 0` rule at
-repeated knots. `B_partition_of_unity` sums `B t i k`, `i < m-k`,
-over `[t k, t (m-k))` for knots `t 0, …, t m`.
+`t i ≤ x < t (i+1)` span is de Boor's right-continuity rule. A
+recursion term whose knot-span denominator is zero, as at repeated
+knots, contributes `0` regardless of its numerator, because Lean's
+real division gives `a / 0 = 0`. `B_partition_of_unity` sums
+`B t i k`, `i < m-k`, over `[t k, t (m-k))` for knots `t 0, …, t m`.
 -/
 
 @[expose] public section
 
 namespace MathlibExt.Interpolation.BSpline
 
-/-- B-spline basis by Cox-de Boor. Real division by zero is zero in Lean,
-which is exactly the 0/0 := 0 convention for repeated knots. -/
+/-- B-spline basis by Cox-de Boor: `B t i k` is the degree-`k` basis
+function on the knots `t` (de Boor's `N_{i,k+1}`), and degree `0` is the
+indicator of `[t i, t (i + 1))`. A recursion term whose knot-span
+denominator is zero, as at repeated knots, contributes zero regardless of
+its numerator, because Lean's real division gives `a / 0 = 0`. -/
 noncomputable def B (t : ℕ → ℝ) (i : ℕ) : ℕ → ℝ → ℝ
   | 0, x => if t i ≤ x ∧ x < t (i + 1) then 1 else 0
   | k + 1, x =>
     (x - t i) / (t (i + k + 1) - t i) * B t i k x +
       (t (i + k + 2) - x) / (t (i + k + 2) - t (i + 1)) * B t (i + 1) k x
 
-/-- L1. Local support: nonzero only on `[t i, t (i + k + 1))`. -/
+/-- L1. Local support: for nondecreasing knots `t`, `B t i k x ≠ 0` forces
+`x ∈ [t i, t (i + k + 1))`. -/
 theorem B_local_support {t : ℕ → ℝ} {i k : ℕ} {x : ℝ}
     (ht : Monotone t) (h : B t i k x ≠ 0) :
     t i ≤ x ∧ x < t (i + k + 1) := by
@@ -73,7 +78,8 @@ theorem B_local_support {t : ℕ → ℝ} {i k : ℕ} {x : ℝ}
       refine ⟨le_trans (ht (by omega)) hlo, ?_⟩
       rwa [show i + 1 + k + 1 = i + (k + 1) + 1 by omega] at hhi
 
-/-- N1. Nonnegativity: basis functions are non-negative. -/
+/-- N1. Nonnegativity: for nondecreasing knots `t`, every basis function is
+nonnegative. -/
 theorem B_nonneg {t : ℕ → ℝ} {i k : ℕ} {x : ℝ}
     (ht : Monotone t) : 0 ≤ B t i k x := by
   revert i
@@ -109,7 +115,8 @@ theorem B_nonneg {t : ℕ → ℝ} {i k : ℕ} {x : ℝ}
           · exact sub_nonneg.mpr (ht (by omega))
         · exact le_of_lt hpos
 
-/-- P1. Partition of unity on `[t k, t (m - k))`. -/
+/-- P1. Partition of unity: for nondecreasing knots `t` and `k < m - k`, the
+basis functions `B t i k`, `i < m - k`, sum to `1` on `[t k, t (m - k))`. -/
 theorem B_partition_of_unity {t : ℕ → ℝ} {m k : ℕ} {x : ℝ}
     (ht : Monotone t) (hk : k < m - k)
     (hlo : t k ≤ x) (hhi : x < t (m - k)) :
@@ -220,7 +227,8 @@ theorem B_partition_of_unity {t : ℕ → ℝ} {m k : ℕ} {x : ℝ}
     rw [Finset.sum_add_distrib]
     exact hIH
 
-/-- Z1a. Repeated knot gives vanishing degree-0 basis. -/
+/-- Z1a. A repeated knot `t i = t (i + 1)` makes the degree-0 basis function
+`B t i 0` zero. -/
 theorem B_zero_of_repeated {t : ℕ → ℝ} {i : ℕ}
     (h : t i = t (i + 1)) : B t i 0 = 0 := by
   funext x
@@ -229,7 +237,8 @@ theorem B_zero_of_repeated {t : ℕ → ℝ} {i : ℕ}
     exact fun p => lt_irrefl _ (lt_of_le_of_lt p.1 p.2)
   simp only [B, Pi.zero_apply, ite_eq_right hfalse]
 
-/-- Z1b. Empty denominator contributes zero in the recursion. -/
+/-- Z1b. The left recursion term is zero when its knot-span denominator
+`t (i + k + 1) - t i` is zero, regardless of its numerator. -/
 theorem B_empty_denom_left {t : ℕ → ℝ} {i k : ℕ} {x : ℝ}
     (h : t i = t (i + k + 1)) :
     (x - t i) / (t (i + k + 1) - t i) * B t i k x = 0 := by
