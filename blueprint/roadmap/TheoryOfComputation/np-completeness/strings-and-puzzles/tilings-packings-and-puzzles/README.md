@@ -360,3 +360,5 @@
 - [Feasible instances of ZHED](zhed-feasible.md)
 - [Instances of ZHED](zhed-instance.md)
 - [ZHED is NP-complete](zhed-np-complete.md)
+- [Feasibility for optimal delete-free planning](optimal-delete-free-planning-feasible.md)
+- [OPTIMAL DELETE-FREE PLANNING is NP-complete](optimal-delete-free-planning-np-complete.md)
