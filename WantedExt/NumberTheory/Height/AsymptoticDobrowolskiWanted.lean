@@ -10,13 +10,15 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.Height.AsymptoticDobrowolski
+public import MathlibExt.NumberTheory.Height.StewartDegreeBound
 
 /-!
 # Known Dobrowolski and earlier Mahler-measure bounds
 
-These five literature results are private requests, not completed proofs. The actual polynomial,
+These four literature results are private requests, not completed proofs. The actual polynomial,
 height and optimization model, including the strict/non-strict equivalence, are implemented
-upstream.
+upstream. Stewart's degree bound `stewart_degreeBound`, formerly the fifth request here, is proved
+in `MathlibExt/NumberTheory/Height/StewartDegreeBound.lean`, which this module imports.
 Sources: catalogue C40b and Voutier, arXiv:1211.3110v1, Introduction, lines 68–87 and 104–117.
 -/
 
@@ -58,18 +60,6 @@ theorem_wanted blanksbyMontgomery_degreeBound (α : ℂ)
     (hα : IsAlgebraic ℚ α) (hα0 : α ≠ 0) (hroot : ¬IsOfFinOrder α)
     (hd : 2 ≤ (minpoly ℚ α).natDegree) :
     1 + 1 / (52 * (minpoly ℚ α).natDegree * Real.log (6 * (minpoly ℚ α).natDegree)) <
-      algebraicMahlerMeasure α
-
-/-- **Stewart's lower bound for the Mahler measure.** Let $\alpha$ be a nonzero complex number
-that is algebraic over $\mathbb{Q}$ and is not a root of unity, and let $d$ be the degree of its
-minimal polynomial over $\mathbb{Q}$. If $d \ge 2$, then the algebraic Mahler measure $M(\alpha)$
-satisfies $M(\alpha) > 1 + \frac{1}{10000\, d \log d}$, with $\log$ the natural logarithm.
-
-Source: Stewart (1978), the strict degree-dependent bound quoted by Voutier. -/
-theorem_wanted stewart_degreeBound (α : ℂ)
-    (hα : IsAlgebraic ℚ α) (hα0 : α ≠ 0) (hroot : ¬IsOfFinOrder α)
-    (hd : 2 ≤ (minpoly ℚ α).natDegree) :
-    1 + 1 / (10000 * (minpoly ℚ α).natDegree * Real.log (minpoly ℚ α).natDegree) <
       algebraicMahlerMeasure α
 
 end MathlibExt.NumberTheory.AsymptoticDobrowolski
