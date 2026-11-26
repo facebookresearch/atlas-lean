@@ -192,21 +192,6 @@ public theorem_wanted minus_mod_four_of_mersenneEtaCondition_all (s₁ : ℤ) (h
       Nat.totient (mersenneOmega (sm * sp))) :
     sm % 4 = 1 ∧ sp % 4 = 3
 
-/-- **Condition (etar) fails for some reduced residue when the seed is odd.** Let $s_1 \ge 3$ be
-an odd integer, let $s_1^-$ and $s_1^+$ be the odd squarefree parts of $s_1 - 2$ and $s_1 + 2$,
-and let $\Omega = \Omega(s_1^- s_1^+)$. Then the number of integers $n$ with $1 \le n < \Omega$
-and $\gcd(n, \Omega) = 1$ for which condition (etar) holds for $s_1^-$, $s_1^+$ and $n$ is not
-equal to $\varphi(\Omega)$.
-
-Source: E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality
-Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Corollary 16. -/
-public theorem_wanted mersenneEtaCondition_not_all_of_odd (s₁ : ℤ) (hs₁ : 3 ≤ s₁)
-    (hodd : Odd s₁) (sm sp : ℕ) (hsm : IsOddSquarefreePart (s₁ - 2) sm)
-    (hsp : IsOddSquarefreePart (s₁ + 2) sp) :
-    {n | n ∈ Finset.Ico 1 (mersenneOmega (sm * sp)) ∧
-        n.Coprime (mersenneOmega (sm * sp)) ∧ MersenneEtaCondition sm sp n}.ncard ≠
-      Nat.totient (mersenneOmega (sm * sp))
-
 end
 
 end MetaMathlibExt
