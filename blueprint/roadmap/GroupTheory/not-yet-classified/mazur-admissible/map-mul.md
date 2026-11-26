@@ -1,3 +1,4 @@
-# Map mul
+# The action respects multiplication
 
-The action respects multiplication in the Galois group.
+The action of `σ * τ` is the composite of the actions
+of `σ` and `τ`, which is their sum in the additive group `AddAut M`.

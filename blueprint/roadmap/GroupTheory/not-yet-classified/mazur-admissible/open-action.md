@@ -1,4 +1,4 @@
-# Open Action
+# Open Galois action
 
 An open action of the absolute Galois group of `ℚ` on an additive
 commutative group `M`, given by a monoid homomorphism into `AddAut M`

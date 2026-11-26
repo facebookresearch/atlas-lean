@@ -1,3 +1,3 @@
-# Filt Length
+# Length of an admissible chain
 
-The length of an admissible chain.
+The number `n` of steps of an admissible chain.
