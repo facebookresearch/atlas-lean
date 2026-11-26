@@ -27,6 +27,7 @@ Proposition 5.2.7.
 - [The difference lemma](advantage-le-win-prob-of-eq-of-not-bad.md)
 - [Advantage as statistical distance](advantage-eq-dist.md)
 - [Statistical distance bounds advantage](advantage-map-le-dist.md)
+- [Monotonicity of a two-stage experiment](win-prob-bind-map-mono.md)
 - [Success probability of an average](win-prob-bind.md)
 - [Averaging a pointwise bound](win-prob-bind-le.md)
 - [Averaging an affine identity](win-prob-bind-affine.md)
