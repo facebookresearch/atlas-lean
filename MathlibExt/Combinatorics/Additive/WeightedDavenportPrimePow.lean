@@ -19,9 +19,10 @@ import Mathlib.RingTheory.Ideal.Quotient.Operations
 /-!
 # Weighted Davenport constants of abelian prime-power groups
 
-When the weight bound divides the smallest cyclic order,
-`weightedDavenport_pi_zmod_prime_pow_of_dvd` computes the weighted Davenport constant.
-The upper bound uses the group algebra over the prime field.
+The theorems `weightedDavenport_pi_zmod_prime_pow_of_dvd` and
+`weightedDavenport_pi_zmod_prime_pow_of_not_dvd` compute the weighted Davenport constant
+in the divisible and non-divisible cases of Molla's formula. Both upper bounds use the group
+algebra over the prime field.
 -/
 
 namespace MetaMathlibExt
@@ -134,6 +135,50 @@ private theorem bound_eq_weight {q d β : ℕ} (hq : 1 < q) (hd : 0 < d)
 
 end weightedDavenport_pi_zmod_prime_pow_of_dvd
 
+namespace weightedDavenport_pi_zmod_prime_pow_of_not_dvd
+
+-- Scaling by the distinguished weight gives the upper bound. Blocks of coordinate
+-- generators attain the matching lower bound when the ceilings are the scaled orders.
+private theorem weightedDavenport_eq_of_ceilDiv {p r t β : ℕ} [Fact p.Prime]
+    (e : Fin r → ℕ) (ht : ∀ i, t ≤ e i) {A : Finset ℕ} (hmem : p ^ t ∈ A)
+    (hsub : A ⊆ Finset.Icc 1 β) (hceil : ∀ i, p ^ e i ⌈/⌉ β = p ^ (e i - t)) :
+    weightedDavenport A ((i : Fin r) → ZMod (p ^ e i)) =
+      ((1 + ∑ i, (p ^ e i ⌈/⌉ β - 1) : ℕ) : ℕ∞) := by
+  apply le_antisymm
+  · apply weightedDavenport_le
+    intro s hs hfree
+    obtain ⟨I, hI, hzero⟩ := weightedDavenport_pi_zmod_prime_pow_of_dvd.exists_scaled_zero_sum
+      e t ht s.get (by simp [hs, hceil])
+    exact hfree I hI (fun _ => p ^ t) (fun _ _ => hmem) hzero
+  · obtain ⟨s, hs, hfree⟩ :=
+      exists_weightedZeroSumFree_pi_zmod_prime_pow.exists_weightedZeroSumFree_pi_zmod
+        (fun i => p ^ e i) β
+    have hA : IsWeightedZeroSumFree A s :=
+      fun I hI a ha => hfree I hI a fun i hi => hsub (ha i hi)
+    rw [Nat.add_comm, ← hs, Nat.cast_add_one]
+    exact ENat.natCast_add_one_le_iff.mpr (lt_weightedDavenport hA)
+
+-- If the scaled remainder lies in ((k - 1)β, kβ], it contributes k to the ceiling.
+private theorem ceilDiv_mul_of_remainder {n β k : ℕ} (hβ : 0 < β) (hk : 0 < k)
+    (h : (k - 1) * β < n % β * k) :
+    n * k ⌈/⌉ β = (n / β + 1) * k := by
+  have hsplit : n * k = β * (n / β * k) + n % β * k := by
+    rw [← Nat.mul_assoc, ← Nat.add_mul, Nat.div_add_mod]
+  have hupper := Nat.mul_le_mul_right k (Nat.mod_lt n hβ).le
+  obtain ⟨l, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hk.ne'
+  simp only [Nat.succ_sub_one, Nat.mul_comm l β] at h
+  rw [Nat.add_mul, Nat.one_mul, Nat.add_succ]
+  apply le_antisymm
+  · apply (ceilDiv_le_iff_le_mul hβ).mpr
+    rw [← Nat.add_succ, Nat.mul_add, hsplit]
+    exact Nat.add_le_add_left hupper _
+  · apply Nat.succ_le_of_lt
+    apply (gc_mul_ceilDiv hβ).lt_iff_lt.mpr
+    rw [Nat.mul_add, hsplit]
+    exact Nat.add_lt_add_left h _
+
+end weightedDavenport_pi_zmod_prime_pow_of_not_dvd
+
 open weightedDavenport_pi_zmod_prime_pow_of_dvd in
 /-- **Weighted Davenport constant of abelian $p$-groups, divisible case.** Let $p$ be a prime,
 let $r \ge 1$, let $e_1 \le e_2 \le \dots \le e_r$ be natural numbers and let
@@ -176,17 +221,64 @@ public theorem weightedDavenport_pi_zmod_prime_pow_of_dvd (p r c : ℕ) (hp : p.
       rw [← pow_add, Nat.add_sub_of_le (ht i)]
     rw [hi, hβeq]
     exact smul_ceilDiv hd _
-  change weightedDavenport A _ = ((1 + ∑ i, (p ^ e i ⌈/⌉ β - 1) : ℕ) : ℕ∞)
-  apply le_antisymm
-  · apply weightedDavenport_le
-    intro s hs hfree
-    have : Fact p.Prime := ⟨hp⟩
-    obtain ⟨I, hI, hzero⟩ := exists_scaled_zero_sum e t ht s.get (by simp [hs, hceil])
-    exact hfree I hI (fun _ => d) (fun _ _ => hmem) hzero
-  · obtain ⟨s, hs, hfree⟩ := exists_weightedZeroSumFree_pi_zmod_prime_pow p r c hp hr e hmono hc hce
-    have hA : IsWeightedZeroSumFree A s :=
-      fun I hI a ha => hfree I hI a fun i hi => hsub (ha i hi)
-    rw [Nat.add_comm, ← hs, Nat.cast_add_one]
-    exact ENat.natCast_add_one_le_iff.mpr (lt_weightedDavenport hA)
+  have : Fact p.Prime := ⟨hp⟩
+  exact weightedDavenport_pi_zmod_prime_pow_of_not_dvd.weightedDavenport_eq_of_ceilDiv
+    e ht hmem hsub hceil
+
+open weightedDavenport_pi_zmod_prime_pow_of_not_dvd in
+/-- **Weighted Davenport constant of abelian $p$-groups, non-divisible case.** Let $p$ be a
+prime, let $r \ge 1$, let $e_1 \le e_2 \le \dots \le e_r$ be natural numbers and let
+$G = \mathbb{Z}/p^{e_1}\mathbb{Z} \oplus \dots \oplus \mathbb{Z}/p^{e_r}\mathbb{Z}$. Let $c$ be a
+natural number with $1 \le c \le e_1$, put $\beta = \lceil p^{e_1}/(p^c - 1) \rceil - 1$ and let
+$A$ be a finite set of natural numbers with $p^{e_1 - c} \in A \subseteq \{1, \dots, \beta\}$.
+Suppose that $\beta \nmid p^{e_1}$ and let $s$ be the remainder of $p^{e_1}$ modulo $\beta$, so
+that $1 \le s < \beta$. If $(p^{e_j - e_1} - 1)\beta < s\,p^{e_j - e_1}$ for every
+$j \in \{2, \dots, r\}$, then the $A$-weighted Davenport constant of $G$ is
+$D_A(G) = 1 + \sum_{i=1}^{r} (\lceil p^{e_i}/\beta \rceil - 1)$.
+
+Source: Md Ibrahim Molla, *New Families of Weight Sets Yielding Prescribed Weighted Zero-Sum
+Constants*, INTEGERS 26 (2026), Article A89, Theorem 7(ii) (`integers-2026-A89-thm-7`). -/
+public theorem weightedDavenport_pi_zmod_prime_pow_of_not_dvd (p r c : ℕ)
+    (hp : p.Prime) (hr : 0 < r) (e : Fin r → ℕ) (hmono : Monotone e) (hc : 1 ≤ c)
+    (hce : c ≤ e ⟨0, hr⟩) (A : Finset ℕ) (hmem : p ^ (e ⟨0, hr⟩ - c) ∈ A)
+    (hsub : A ⊆ Finset.Icc 1 (p ^ e ⟨0, hr⟩ ⌈/⌉ (p ^ c - 1) - 1))
+    (hs : 0 < p ^ e ⟨0, hr⟩ % (p ^ e ⟨0, hr⟩ ⌈/⌉ (p ^ c - 1) - 1))
+    (hineq : ∀ j : Fin r, 0 < j.val →
+      (p ^ (e j - e ⟨0, hr⟩) - 1) * (p ^ e ⟨0, hr⟩ ⌈/⌉ (p ^ c - 1) - 1) <
+        p ^ e ⟨0, hr⟩ % (p ^ e ⟨0, hr⟩ ⌈/⌉ (p ^ c - 1) - 1) * p ^ (e j - e ⟨0, hr⟩)) :
+    weightedDavenport A ((i : Fin r) → ZMod (p ^ e i)) =
+      ((1 + ∑ i, (p ^ e i ⌈/⌉ (p ^ e ⟨0, hr⟩ ⌈/⌉ (p ^ c - 1) - 1) - 1) : ℕ) : ℕ∞) := by
+  let i₀ : Fin r := ⟨0, hr⟩
+  let n := p ^ e i₀
+  let t := e i₀ - c
+  let β := n ⌈/⌉ (p ^ c - 1) - 1
+  have hβ : 0 < β := (pow_pos hp.pos t).trans_le (Finset.mem_Icc.mp (hsub hmem)).2
+  have hq : 2 ≤ p ^ c := Nat.one_lt_pow (by omega) hp.one_lt
+  have hdiv : n / β + 1 = p ^ c := calc
+    n / β + 1 = n ⌈/⌉ β := by
+      have h := ceilDiv_mul_of_remainder (n := n) (k := 1) hβ Nat.one_pos (by simpa using hs)
+      simpa using h.symm
+    _ = p ^ c := ceilDiv_ceilDiv_sub_one_sub_one_of_dvd _ _ hq
+      (hq.trans (Nat.pow_le_pow_right hp.pos hce)) (pow_dvd_pow p hce)
+  have hmin (i : Fin r) : e i₀ ≤ e i := hmono (show i₀ ≤ i from Nat.zero_le _)
+  have : Fact p.Prime := ⟨hp⟩
+  apply weightedDavenport_eq_of_ceilDiv e (fun i => (Nat.sub_le ..).trans (hmin i)) hmem hsub
+  intro i
+  let k := p ^ (e i - e i₀)
+  have hk : (k - 1) * β < n % β * k := by
+    by_cases hi : i = i₀
+    · subst i
+      simpa [k] using hs
+    · exact hineq i (Nat.pos_of_ne_zero fun h => hi (Fin.ext h))
+  have hi : p ^ e i = n * k := by
+    dsimp only [n, k]
+    rw [← pow_add, Nat.add_sub_of_le (hmin i)]
+  change p ^ e i ⌈/⌉ β = p ^ (e i - t)
+  rw [hi, ceilDiv_mul_of_remainder hβ (pow_pos hp.pos _) hk, hdiv, ← pow_add]
+  congr 1
+  have := hmin i
+  change c ≤ e i₀ at hce
+  dsimp only [t]
+  omega
 
 end MetaMathlibExt

@@ -7,8 +7,9 @@ LICENSE file in the root directory of this source tree.
 -/
 
 -- Author: @toskua
-import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentHomOpenBox
+import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentHomOpenBoxGeometry
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentCubeCoordinates
+import MathlibExt.AlgebraicTopology.CategoricalSource.HornBasic
 
 /-!
 # Actual coherent Hom-box word conditions
@@ -121,3 +122,77 @@ theorem coordinate_zero_iff {J : Type u} [LinearOrder J] {i j : J} (hij : i ≤ 
     exact bit_zero_of_ne_one _ h
 
 end CategoryTheory.CoherentRealization.HomBoxWords
+
+namespace CategoryTheory.CoherentRealization.HomOpenBox
+open IntervalHom HomBoxWords CubeCoordinates
+variable {J : Type u} [LinearOrder J] {i j : J}
+
+/-- The geometric coherent Hom box consists of chains retaining the distinguished vertex,
+or wholly omitting or retaining another interior vertex. -/
+theorem mem_iff (hij : i ≤ j) (k : Interior i j) {q : SimplexCategoryᵒᵖ}
+    (p : (nerve (SimplicialThickening.Path i j)).obj q) :
+    p ∈ (subcomplex hij k).obj q ↔
+      (∀ a, k.val ∈ (p.obj a).I) ∨
+        ∃ t : CubeBoxes.Remaining k,
+          (∀ a, t.val.val ∉ (p.obj a).I) ∨ (∀ a, t.val.val ∈ (p.obj a).I) := by
+  rw [mem_homBox_iff, CubeBoundary.mem_upperBox_iff]
+  rw [upper_word_iff]
+  constructor
+  · rintro (h | ⟨t, ht⟩)
+    · left
+      intro a
+      exact (interval_coordinate_one_iff hij p k a).mp (h a)
+    · right
+      refine ⟨t, ?_⟩
+      rcases (boundary_word_iff _).mp ht with ht | ht
+      · left
+        intro a
+        exact (coordinate_zero_iff hij p t.val a).mp (ht a)
+      · right
+        intro a
+        exact (interval_coordinate_one_iff hij p t.val a).mp (ht a)
+  · rintro (h | ⟨t, ht⟩)
+    · left
+      intro a
+      exact (interval_coordinate_one_iff hij p k a).mpr (h a)
+    · right
+      refine ⟨t, (boundary_word_iff _).mpr ?_⟩
+      rcases ht with ht | ht
+      · left
+        intro a
+        exact (coordinate_zero_iff hij p t.val a).mpr (ht a)
+      · right
+        intro a
+        exact (interval_coordinate_one_iff hij p t.val a).mpr (ht a)
+
+/-- The range of the geometric coherent Hom box is the intrinsic horn-path subcomplex.
+Monotonicity reduces whole-chain omission to the last path and retention to the first. -/
+theorem subcomplex_eq_hornPaths (hij : i ≤ j) (k : Interior i j) :
+    subcomplex hij k = MathlibExt.CategoricalSource.hornPaths i j k.val := by
+  apply Subfunctor.ext
+  funext q
+  ext p
+  rw [mem_iff, MathlibExt.CategoricalSource.mem_hornPaths_iff]
+  constructor
+  · rintro (h | ⟨t, h | h⟩)
+    · exact Or.inr ⟨k.val, k.property.1, k.property.2, h 0⟩
+    · refine Or.inl ⟨t.val.val, t.val.property.1, t.val.property.2, ?_, h (Fin.last _)⟩
+      intro e
+      exact t.property (Subtype.ext e)
+    · exact Or.inr ⟨t.val.val, t.val.property.1, t.val.property.2, h 0⟩
+  · rintro (⟨t, hti, htj, htk, h⟩ | ⟨t, hti, htj, h⟩)
+    · refine Or.inr ⟨⟨⟨t, hti, htj⟩, ?_⟩, Or.inl ?_⟩
+      · intro e
+        exact htk (congrArg Subtype.val e)
+      · intro a ha
+        exact h (SimplicialThickening.monotone_chain p (Fin.le_last a) ha)
+    · by_cases htk : t = k.val
+      · subst t
+        exact Or.inl (fun a => SimplicialThickening.monotone_chain p (Fin.zero_le a) h)
+      · refine Or.inr ⟨⟨⟨t, hti, htj⟩, ?_⟩, Or.inr ?_⟩
+        · intro e
+          exact htk (congrArg Subtype.val e)
+        · intro a
+          exact SimplicialThickening.monotone_chain p (Fin.zero_le a) h
+
+end CategoryTheory.CoherentRealization.HomOpenBox

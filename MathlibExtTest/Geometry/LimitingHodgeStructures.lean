@@ -71,7 +71,7 @@ include hN
 
 private theorem range_le_ker : LinearMap.range N ≤ LinearMap.ker N := by
   rintro _ ⟨v, rfl⟩
-  rw [LinearMap.mem_ker, ← Module.End.mul_apply, ← pow_two, hN, LinearMap.zero_apply]
+  rw [LinearMap.mem_ker, ← mul_apply_eq_comp, ← pow_two, hN, LinearMap.zero_apply]
 
 private theorem ker_sq : LinearMap.ker (N ^ 2) = ⊤ := by
   rw [hN, LinearMap.ker_zero]

@@ -14,6 +14,8 @@ public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Nat.Factorization.Defs
 public import Mathlib.NumberTheory.Divisors
 public import MathlibExt.NumberTheory.ArithmeticFunction.HBCCalibrating
+public import MathlibExt.NumberTheory.ArithmeticFunction.HBCFirstElementBounds
+public import MathlibExt.NumberTheory.ArithmeticFunction.HBCHalfPrimeProductBounds
 public import MathlibExt.NumberTheory.ArithmeticFunction.OddPerfectMinFac
 
 namespace MetaMathlibExt
@@ -34,22 +36,6 @@ public theorem_wanted prod_one_sub_inv_le_of_prefix_prod_le (k : ℕ) (z y : Fin
       ∏ i ∈ Finset.univ.filter (fun i : Fin k => (i : ℕ) < l), y i) :
     ∏ i, (1 - 1 / z i) ≤ ∏ i, (1 - 1 / y i) ∧
       (∏ i, (1 - 1 / z i) = ∏ i, (1 - 1 / y i) ↔ z = y)
-
-/-- **First-element bounds for HBC-admissible tuples at $1/2$.** Let $k \ge 1$ and let
-$y_1 < y_2 < \dots < y_k$ be positive integers with
-$\prod_{i=1}^{k} (1 - 1/y_i) \le 1/2 < \prod_{i=1}^{k-1} (1 - 1/y_i)$. Then $y_1 \le k + 1$; if
-every $y_i$ is odd, then $y_1 < 2(k + 3)/3$; and if every $y_i$ is prime, then $y_1 < 3k/7 + 3$.
-
-Source: Andrew Stone, *Improved Upper Bounds for Odd Perfect Numbers -- Part I*, INTEGERS 24
-(2024), Article A114, Lemma 5 (`integers-2024-A114-lem-5`). -/
-public theorem_wanted hbcAdmissible_half_first_le (k : ℕ) (hk : 0 < k) (y : Fin k → ℕ)
-    (hmono : StrictMono y) (hpos : ∀ i, 0 < y i)
-    (hle : ∏ i, (1 - 1 / (y i : ℚ)) ≤ 1 / 2)
-    (hlt : 1 / 2 < ∏ i ∈ Finset.univ.filter (fun i : Fin k => (i : ℕ) < k - 1),
-      (1 - 1 / (y i : ℚ))) :
-    y ⟨0, hk⟩ ≤ k + 1 ∧
-      ((∀ i, Odd (y i)) → (y ⟨0, hk⟩ : ℚ) < 2 * (k + 3) / 3) ∧
-      ((∀ i, (y i).Prime) → (y ⟨0, hk⟩ : ℚ) < 3 * k / 7 + 3)
 
 /-- **Sylvester's bound on the number of prime divisors of an odd perfect number.** Every odd
 perfect number has at least five distinct prime divisors.
@@ -203,31 +189,6 @@ public theorem_wanted hbcAdmissible_seven_tenths_prod_le (k : ℕ) (hk : 3 ≤ k
     (hlt : 7 / 10 < ∏ i ∈ Finset.Icc 1 (k - 1), (1 - 1 / (y i : ℝ))) :
     ∏ i ∈ Finset.Icc 1 k, (y i : ℝ) ≤
       2 / 7 * (Real.sqrt 15 ^ 2 ^ k - Real.sqrt 15 ^ 2 ^ (k - 1))
-
-/-- **Product bounds for prime tuples at $1/2$ by size of the first prime.** Let
-$p_1 < p_2 < \dots < p_k$ be primes with
-$\prod_{i=1}^{k} (1 - 1/p_i) \le 1/2 < \prod_{i=1}^{k-1} (1 - 1/p_i)$ and $p_1 \ge 5$, and let
-$F_k(x) = x^{2^k} - x^{2^{k-1}}$ and $P = \prod_{i=1}^{k} p_i$. Then $P \le F_k(\sqrt{8/3^{7/8}})$.
-Moreover, if $6 \le p_1 < 18$, then $P \le F_k(\sqrt{12/5^{15/16}})$; if $18 \le p_1 < 258$, then
-$P \le F_k(\sqrt{512/255^{31/32}})$; and if $p_1 \ge 258$, then
-$P \le F_k\bigl(\sqrt{2^{5/4} (2^{16} + 1)/2^{16}}\bigr)$.
-
-Source: Andrew Stone, *Improved Upper Bounds for Odd Perfect Numbers -- Part I*, INTEGERS 24
-(2024), Article A114, Lemma 7. -/
-public theorem_wanted hbcAdmissible_half_prime_prod_le_of_five_le (k : ℕ) (y : ℕ → ℕ) (hmono : ∀ i, 1 ≤ i → i < k → y i < y (i + 1))
-    (hprime : ∀ i ∈ Finset.Icc 1 k, (y i).Prime)
-    (hle : ∏ i ∈ Finset.Icc 1 k, (1 - 1 / (y i : ℝ)) ≤ 1 / 2)
-    (hlt : 1 / 2 < ∏ i ∈ Finset.Icc 1 (k - 1), (1 - 1 / (y i : ℝ)))
-    (h5 : 5 ≤ y 1) :
-    let F : ℝ → ℝ := fun x => x ^ 2 ^ k - x ^ 2 ^ (k - 1)
-    ∏ i ∈ Finset.Icc 1 k, (y i : ℝ) ≤ F (Real.sqrt (8 / (3 : ℝ) ^ ((7 : ℝ) / 8))) ∧
-      (6 ≤ y 1 → y 1 < 18 →
-        ∏ i ∈ Finset.Icc 1 k, (y i : ℝ) ≤ F (Real.sqrt (12 / (5 : ℝ) ^ ((15 : ℝ) / 16)))) ∧
-      (18 ≤ y 1 → y 1 < 258 →
-        ∏ i ∈ Finset.Icc 1 k, (y i : ℝ) ≤ F (Real.sqrt (512 / (255 : ℝ) ^ ((31 : ℝ) / 32)))) ∧
-      (258 ≤ y 1 →
-        ∏ i ∈ Finset.Icc 1 k, (y i : ℝ) ≤
-          F (Real.sqrt ((2 : ℝ) ^ ((5 : ℝ) / 4) * (2 ^ 16 + 1) / 2 ^ 16)))
 
 /-- **Product bound for prime tuples at $1/2$ starting at $5$.** Let $p_1 < p_2 < \dots < p_k$ be
 primes with $\prod_{i=1}^{k} (1 - 1/p_i) \le 1/2 < \prod_{i=1}^{k-1} (1 - 1/p_i)$ and $p_1 = 5$.

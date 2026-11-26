@@ -29,7 +29,7 @@ open SimplicialQuiver
 variable {O : Type u} (Q : Data O) (R : Relations Q)
 
 /-- The actual presented enrichment with the unchanged original object labels. -/
-abbrev object : FixedObjects O := ⟨⟨presented R⟩, rfl⟩
+abbrev object : FixedObjects O := ⟨presented R, rfl⟩
 
 /-- The whole original generating Hom map into the actual presented enrichment. -/
 def generator (x y : O) : Q.Hom x y ⟶ hom (object Q R) x y :=

@@ -16,6 +16,8 @@ public import Mathlib.Algebra.Polynomial.Roots
 public import MathlibExt.NumberTheory.GeneralizedPadovanPerrinCompanion
 public import MathlibExt.NumberTheory.GeneralizedPadovanPerrinExpansion
 public import MathlibExt.NumberTheory.GeneralizedPadovanPerrinModel
+public import MathlibExt.NumberTheory.PadovanPerrinFundamentalProduct
+public import MathlibExt.NumberTheory.PadovanPerrinShiftWindow
 
 namespace MetaMathlibExt
 
@@ -239,22 +241,6 @@ Source: Elen Viviani Pereira Spreafico, Mustapha Rachidi, and Paula Maria Machad
 theorem padovanPerrinRho_one_one_one_two_twelve : padovanPerrinRho (1 : ℤ) 1 1 2 12 = 5 := by
   decide
 
-/-- **Solutions agreeing on a window agree afterwards.** Let $R$ be a commutative ring, let
-$k_1, k_2 \in R$, let $p, s$ be natural numbers and let $v, w \colon \mathbb{N} \to R$ be solutions
-of the Padovan–Perrin recurrence with parameters $k_1, k_2, p, s$. Let $n_0, m_0, N$ be natural
-numbers such that $v(j + n_0) = w(j + m_0)$ for every $j$ with $N \le j < N + s + p$. Then
-$v(n + n_0) = w(n + m_0)$ for every $n \ge N$.
-
-Source: Elen Viviani Pereira Spreafico, Mustapha Rachidi, and Paula Maria Machado Cruz Catarino,
-*On a Model of (k;p;s)-Generalized Padovan-Perrin and Fibonacci Fundamental System*, INTEGERS 24
-(2024), Article A49, Lemma 1 (`integers-2024-A49-lem-1`). -/
-public theorem_wanted padovanPerrin_shift_eq_of_window [CommRing R] (k₁ k₂ : R) (p s : ℕ)
-    {v w : ℕ → R}
-    (hv : (padovanPerrinRecurrence k₁ k₂ p s).IsSolution v)
-    (hw : (padovanPerrinRecurrence k₁ k₂ p s).IsSolution w) (n₀ m₀ N : ℕ)
-    (h : ∀ j, N ≤ j → j < N + (s + p) → v (j + n₀) = w (j + m₀)) :
-    ∀ n, N ≤ n → v (n + n₀) = w (n + m₀)
-
 /-- **The Fibonacci fundamental system spans the solutions.** Let $R$ be a commutative ring, let
 $k_1, k_2 \in R$ and let $p, s$ be natural numbers. For $1 \le j \le s + p$ let $v^{(j)}$ be the
 solution of the Padovan–Perrin recurrence with parameters $k_1, k_2, p, s$ whose initial values
@@ -292,24 +278,6 @@ public theorem_wanted padovanPerrinFundamental_eq_shift [CommRing R] (k₁ k₂ 
       ∀ n, j ≤ n → padovanPerrinFundamental k₁ k₂ p s j n =
         k₁ * padovanPerrinFundamental k₁ k₂ p s (s + p) (n - j + p) +
           k₂ * padovanPerrinFundamental k₁ k₂ p s (s + p) (n - j)
-
-/-- **Product identity for the generalized Padovan–Perrin fundamental system.** Let $R$ be a
-commutative ring, $k_1, k_2 \in R$, and $p, s \ge 1$. Write $r = s + p$ and $v^{(\ell)}$ for the
-$\ell$-th sequence of the Fibonacci fundamental system of the $([k]; p; s)$-Padovan–Perrin
-recurrence. Then for all $m, n \ge 0$ and all $1 \le i, j \le r$,
-
-$$v^{(r-j+1)}_{n+m+r-i} = \sum_{k=1}^{r} v^{(r-k+1)}_{m+r-i} \, v^{(r-j+1)}_{n+r-k}.$$
-
-Source: Elen Viviani Pereira Spreafico, Mustapha Rachidi, and Paula Maria Machado Cruz Catarino,
-*On a Model of (k;p;s)-Generalized Padovan-Perrin and Fibonacci Fundamental System*, INTEGERS 24
-(2024), Article A49, Proposition 3, equation (10) (`integers-2024-A49-prop-3`). -/
-public theorem_wanted padovanPerrinFundamental_mul_sum [CommRing R] (k₁ k₂ : R) (p s : ℕ)
-    (hp : 0 < p) (hs : 0 < s) (m n i j : ℕ) (hi : 1 ≤ i) (hi' : i ≤ s + p) (hj : 1 ≤ j)
-    (hj' : j ≤ s + p) :
-    padovanPerrinFundamental k₁ k₂ p s (s + p - j + 1) (n + m + (s + p) - i) =
-      ∑ k ∈ Finset.Icc 1 (s + p),
-        padovanPerrinFundamental k₁ k₂ p s (s + p - k + 1) (m + (s + p) - i) *
-          padovanPerrinFundamental k₁ k₂ p s (s + p - j + 1) (n + (s + p) - k)
 
 /-- **Combinatorial expression of the Padovan–Perrin sequences.** Let $R$ be a commutative ring,
 let $k_1, k_2 \in R$, let $p, s$ be positive integers, and let $v \colon \mathbb{N} \to R$ satisfy

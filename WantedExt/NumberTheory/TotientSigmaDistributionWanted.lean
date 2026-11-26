@@ -14,6 +14,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.Data.Nat.Totient
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
+public import MathlibExt.NumberTheory.PollackPomeranceSieve
 
 namespace MetaMathlibExt
 
@@ -24,25 +25,12 @@ namespace MetaMathlibExt
 Statements from Dixit and Bhattacharjee on how often `φ(σ(n))` is large compared with `n`.
 `log_k` is the `k`-fold iterated natural logarithm, written out with `Real.log`. Counts run
 over positive integers `n ≤ x`, i.e. `n ∈ Finset.Icc 1 ⌊x⌋₊`. The paper's Lemma 2
-(Siegel–Walfisz in prime-counting form) is already stated as
-`MathlibExt.NumberTheory.PrimeCounting.UniformPrimeCountingWanted.uniform_prime_counting_arithmetic_progression`.
+(Siegel–Walfisz in prime-counting form) is stated in the namespace
+`MathlibExt.NumberTheory.PrimeCounting.UniformPrimeCountingWanted` as
+`uniform_prime_counting_arithmetic_progression`.
 -/
 
 open Filter Asymptotics
-
-open Classical in
-/-- **Pollack–Pomerance sieve bound.** There is an absolute constant $C > 0$ such that for every
-set $P$ of primes and every real $x > 1$, the number of integers $n$ with $1 \le n \le x$ that
-are divisible by no prime in $P$ is at most $C x \exp(-A_P(x))$, where
-$A_P(x) = \sum_{p \in P,\ p \le x} 1/p$.
-
-Source: Anup B. Dixit and Saunak Bhattacharjee, *On the Distribution of φ(σ(n))*,
-INTEGERS 24 (2024), Article A65, Lemma 1 (`integers-2024-A65-lem-1`), quoting Pollack and
-Pomerance, Lemma 3. -/
-public theorem_wanted card_free_of_prime_set_le_exp_neg_sum_inv :
-    ∃ C : ℝ, 0 < C ∧ ∀ (P : Set ℕ), (∀ p ∈ P, p.Prime) → ∀ x : ℝ, 1 < x →
-      ((((Finset.Icc 1 ⌊x⌋₊).filter fun n => ∀ p ∈ P, ¬ p ∣ n).card : ℕ) : ℝ) ≤
-        C * x * Real.exp (-∑ p ∈ (Finset.Iic ⌊x⌋₊).filter (· ∈ P), (1 : ℝ) / p)
 
 /-- **Integers whose sum of divisors is not divisible by $p$.** There is an absolute constant
 $C > 0$ such that for every prime $p$ and every real $x \ge e^p$, the number of integers $n$ with

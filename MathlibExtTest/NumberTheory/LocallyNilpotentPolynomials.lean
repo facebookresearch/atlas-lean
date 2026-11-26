@@ -71,3 +71,24 @@ example :
       (fun x => u.eval x)^[2] (-1) = -3 ∧ (fun x => u.eval x)^[3] (-1) = 0 := by
   dsimp only
   norm_num [Function.iterate_succ_apply']
+
+-- A polynomial with a nonconstant factor in the third family first reaches zero at step three.
+example :
+    let u : ℤ[X] := -2 * X ^ 2 + 7 * X - 3 + (X + 1) * (X - 1) * (X - 2) * (X - 3)
+    (0 < u.natDegree ∧ IsWeaklyLocallyNilpotentAt u 1 ∅) ∧
+      (fun x => u.eval x)^[1] 1 = 2 ∧ (fun x => u.eval x)^[2] 1 = 3 ∧
+      (fun x => u.eval x)^[3] 1 = 0 := by
+  intro u
+  constructor
+  · show u ∈ {v : ℤ[X] | 0 < v.natDegree ∧ IsWeaklyLocallyNilpotentAt v 1 ∅}
+    rw [locallyNilpotentAt_one_classification]
+    exact Or.inl (Or.inr ⟨X + 1, rfl⟩)
+  · norm_num [u, Function.iterate_succ_apply']
+
+-- The translation in the last family is locally nilpotent even though it never reaches zero.
+example : IsWeaklyLocallyNilpotentAt (X + 1) 1 ∅ ∧ ¬ IsNilpotentAt (X + 1) 1 := by
+  have h : (X + 1 : ℤ[X]) ∈
+      {u : ℤ[X] | 0 < u.natDegree ∧ IsWeaklyLocallyNilpotentAt u 1 ∅} := by
+    rw [locallyNilpotentAt_one_classification]
+    exact Or.inr rfl
+  exact ⟨h.2, not_isNilpotentAt_X_add_one⟩

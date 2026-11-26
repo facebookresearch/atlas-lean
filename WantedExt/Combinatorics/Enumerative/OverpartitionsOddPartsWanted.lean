@@ -11,8 +11,10 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.Int.Interval
 public import Mathlib.SetTheory.Cardinal.Finite
-public import MathlibExt.Combinatorics.Enumerative.Partition.Overpartition
+public import MathlibExt.Combinatorics.Enumerative.Partition.DistinctOddPartsTriangularParity
+public import MathlibExt.Combinatorics.Enumerative.Partition.OverpartitionOddSquareRecurrence
 public import MathlibExt.Combinatorics.Enumerative.Partition.OddDistinctsPentagonalRecurrence
+public import MathlibExt.Combinatorics.Enumerative.Partition.PentagonalRecurrenceParity
 
 /-!
 # Linear relations for overpartitions into odd parts (statements)
@@ -26,6 +28,8 @@ sums over the `k` whose shifted argument is nonnegative. The paper's `p̄(m)` (o
 `(Nat.Partition.distincts m).card` and `(Nat.Partition.oddDistincts m).card`. Statements of
 Theorems 1-2, 6, 8-14 and Corollaries 1, 3-5 were checked against the arXiv version
 (arXiv:2403.05866v1, numbered Theorems 1.1-1.2 and 3.1-3.9, Corollaries 3.1-3.5).
+Theorem 5 is proved in
+`MathlibExt.Combinatorics.Enumerative.Partition.OverpartitionOddSquareRecurrence`, and
 Corollary 4 is proved in
 `MathlibExt.Combinatorics.Enumerative.Partition.OddDistinctsPentagonalRecurrence`.
 -/
@@ -33,27 +37,6 @@ Corollary 4 is proved in
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Overpartitions into odd parts.** For a natural number $n$, $\mathrm{po}(n)$ is the
-number of overpartitions of $n$ all of whose parts are odd.
-
-Source: Deepthi G. and S. Chandankumar, *Linear Relations for Overpartitions into Odd
-Parts*, INTEGERS 26 (2026), Article A60, title and Section 1 (values `po(0), …, po(10)`
-listed after Theorem 5). -/
-public noncomputable def overpartitionOddPartsCount (n : ℕ) : ℕ :=
-  Nat.card {O : Nat.Overpartition n // ∀ a ∈ O.toPartition.parts, Odd a}
-
-/-- **Overpartitions of zero into odd parts.** The number $\mathrm{po}(0)$ of overpartitions
-of $0$ into odd parts equals $1$: the empty overpartition is the only one.
-
-Source: Deepthi G. and S. Chandankumar, *Linear Relations for Overpartitions into Odd
-Parts*, INTEGERS 26 (2026), Article A60, value `po(0) = 1` listed after Theorem 5. -/
-public theorem overpartitionOddPartsCount_zero : overpartitionOddPartsCount 0 = 1 := by
-  unfold overpartitionOddPartsCount
-  rw [Nat.card_eq_one_iff_exists]
-  refine ⟨⟨Nat.Overpartition.ofPartition default, fun a ha => ?_⟩, fun y => ?_⟩
-  · simp [Nat.Overpartition.ofPartition_toPartition, Nat.Partition.partition_zero_parts] at ha
-  · exact Subtype.ext (Nat.Overpartition.eq_of_zero _ _)
 
 /-- **Pentagonal recurrence for overpartitions into odd parts.** Let $\mathrm{po}(j)$ be the
 number of overpartitions of $j$ into odd parts. For every natural number $n$, the sum
@@ -83,19 +66,6 @@ public theorem_wanted overpartitionOdd_triangular_recurrence (n : ℕ) :
         (-1 : ℤ) ^ ((k + 1) / 2) * (overpartitionOddPartsCount (n - k * (k + 1) / 2) : ℤ)
       = if n ∈ (Finset.range (n + 1)).image (fun m => m * (m + 1) / 2) then 1 else 0
 
-/-- **Square recurrence for overpartitions into odd parts.** Write $\mathrm{po}(m)$ for the
-number of overpartitions of $m$ into odd parts. For every natural number $n$, the sum
-$\mathrm{po}(n) + 2 \sum_{k \ge 1,\ 2k^2 \le n} (-1)^k \, \mathrm{po}(n - 2k^2)$ equals $1$ if
-$n = 0$, equals $2$ if $n = m^2$ for some integer $m \ge 1$, and equals $0$ otherwise.
-
-Source: Deepthi G. and S. Chandankumar, *Linear Relations for Overpartitions into Odd
-Parts*, INTEGERS 26 (2026), Article A60, Theorem 5 (`integers-2026-A60-thm-5`). -/
-public theorem_wanted overpartitionOdd_square_recurrence (n : ℕ) :
-    (overpartitionOddPartsCount n : ℤ)
-        + 2 * ∑ k ∈ (Finset.Icc 1 n).filter (fun k => 2 * k ^ 2 ≤ n),
-          (-1 : ℤ) ^ k * (overpartitionOddPartsCount (n - 2 * k ^ 2) : ℤ)
-      = if n = 0 then 1 else if n ∈ (Finset.Icc 1 n).image (fun m => m ^ 2) then 2 else 0
-
 /-- **Overpartitions into odd parts from partitions and pentagonal numbers.** Let
 $\mathrm{po}(m)$ be the number of overpartitions of $m$ into odd parts and $p(m)$ the number
 of partitions of $m$. For every natural number $n$,
@@ -110,16 +80,6 @@ public theorem_wanted overpartitionOdd_eq_sum_partition_pentagonal (n : ℕ) :
           (-1 : ℤ) ^ ((k + 1) / 2).natAbs
             * (Fintype.card (Nat.Partition (n - (k * (3 * k + 1) / 2).toNat)) : ℤ)
 
-/-- **Parity form of Euler's pentagonal recurrence.** Write $p(m)$ for the number of partitions
-of $m$. For every positive integer $n$, the sum
-$\sum_{k \in \mathbb{Z},\ k(3k+1)/2 \le n} p(n - k(3k+1)/2)$ is even.
-
-Source: Deepthi G. and S. Chandankumar, *Linear Relations for Overpartitions into Odd
-Parts*, INTEGERS 26 (2026), Article A60, Corollary 2 (`integers-2026-A60-cor-2`). -/
-public theorem_wanted partition_pentagonal_sum_even (n : ℕ) (hn : 0 < n) :
-    Even (∑ k ∈ (Finset.Icc (-(n : ℤ)) n).filter (fun k : ℤ => k * (3 * k + 1) / 2 ≤ (n : ℤ)),
-      Fintype.card (Nat.Partition (n - (k * (3 * k + 1) / 2).toNat)))
-
 /-- **Partitions whose even parts are distinct.** For a natural number $n$, $\mathrm{ped}(n)$ is
 the number of partitions of $n$ in which every even part occurs exactly once; the odd parts are
 unrestricted.
@@ -131,19 +91,6 @@ Parts*, INTEGERS 26 (2026), Article A60, Section 1 (definition of `ped(n)` befor
 public def distinctEvenPartsCount (n : ℕ) : ℕ :=
   ((Finset.univ : Finset n.Partition).filter
     fun p => ∀ i ∈ p.parts, Even i → p.parts.count i = 1).card
-
-/-- **Partitions whose odd parts are distinct.** For a natural number $n$, $\mathrm{pod}(n)$ is
-the number of partitions of $n$ in which every odd part occurs exactly once; the even parts are
-unrestricted.
-
-Its generating function is
-$\sum_{n \ge 0} \mathrm{pod}(n) q^n = (-q; q^2)_\infty / (q^2; q^2)_\infty$.
-
-Source: Deepthi G. and S. Chandankumar, *Linear Relations for Overpartitions into Odd
-Parts*, INTEGERS 26 (2026), Article A60, Section 3 (definition of `pod(n)` before Theorem 6). -/
-public def distinctOddPartsCount (n : ℕ) : ℕ :=
-  ((Finset.univ : Finset n.Partition).filter
-    fun p => ∀ i ∈ p.parts, Odd i → p.parts.count i = 1).card
 
 /-- **Partitions with no part congruent to 2 modulo 4.** For a natural number $n$, $P_2(n)$ is
 the number of partitions of $n$ none of whose parts is congruent to $2$ modulo $4$.
@@ -223,17 +170,6 @@ public theorem_wanted overpartitionOdd_eq_sum_distinctOddParts_triangular (n : �
     overpartitionOddPartsCount n =
       ∑ k ∈ (Finset.range (n + 1)).filter (fun k => k * (k + 1) / 2 ≤ n),
         distinctOddPartsCount (n - k * (k + 1) / 2)
-
-/-- **Evenness of a triangular sum of partition counts with distinct odd parts.** Let
-$\operatorname{pod}(m)$ be the number of partitions of $m$ in which no odd part is repeated. For
-every $n > 0$, the sum $\sum_{k \ge 0} \operatorname{pod}(n - k(k+1)/2)$ over the $k$ with
-$k(k+1)/2 \le n$ is even.
-
-Source: Deepthi G. and S. Chandankumar, *Linear Relations for Overpartitions into Odd
-Parts*, INTEGERS 26 (2026), Article A60, Corollary 1 (`integers-2026-A60-cor-1`). -/
-public theorem_wanted distinctOddParts_triangular_sum_even (n : ℕ) (hn : 0 < n) :
-    Even (∑ k ∈ (Finset.range (n + 1)).filter (fun k => k * (k + 1) / 2 ≤ n),
-      distinctOddPartsCount (n - k * (k + 1) / 2))
 
 /-- **Overpartitions into odd parts from overpartitions and squares.** Let $\mathrm{po}(m)$
 be the number of overpartitions of $m$ into odd parts and $\overline{p}(m)$ the number of

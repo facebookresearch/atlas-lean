@@ -3,6 +3,7 @@
 - [Last Map](last-map.md)
 - [Last Map apply](last-map-apply.md)
 - [Last Map compose](last-map-compose.md)
+- [Family](family.md)
 - [Object](object.md)
 - [Object front](object-front.md)
 - [Object last](object-last.md)

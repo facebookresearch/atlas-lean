@@ -40,6 +40,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.DucciSequence
+public import MathlibExt.NumberTheory.DucciCoefficientReduction
 
 set_option autoImplicit false
 
@@ -62,36 +63,6 @@ theorem_wanted ducciCoeff_vanish_mod (p k n1 c s : ℕ)
     (hs1 : 1 ≤ s) (hs2 : s ≤ p ^ k * n1)
     (hs : ¬ ∃ b : ℕ, b < n1 ∧ s = b * p ^ k + 1) :
     ((ducciCoeff (p ^ k * n1) (c * p ^ k) s : ℤ) : ZMod p) = 0
-
-/-- **Reduction of Ducci coefficients modulo $p$.** For integers $N \ge 1$, $r \ge 0$ and $s \ge 1$
-write $a^{(N)}_{r,s} = \sum_{0 \le j \le r,\ j \equiv s - 1 \ (\mathrm{mod}\ N)} \binom{r}{j}$ for
-the Ducci coefficients of length $N$. Let $p$ be a prime, let $k \ge 0$ and $n_1 \ge 2$ be
-integers, and let $n = p^k n_1$. Then for every integer $c \ge 1$ and every integer $b$ with
-$0 \le b < n_1$,
-$a^{(n)}_{c p^k,\, b p^k + 1} \equiv a^{(n_1)}_{c,\, b + 1} \pmod{p}$.
-
-Source: Mark L. Lewis and Shannon M. Tefft, "The Maximum
-Length for Ducci Sequences on `ℤ_m^n` when `n` is Even",
-Lemma 4. -/
-theorem_wanted ducciCoeff_reduce_mod (p k n1 c b : ℕ)
-    (hp : p.Prime) (hn1 : 2 ≤ n1) (hc : 1 ≤ c) (hb : b < n1) :
-    ((ducciCoeff (p ^ k * n1) (c * p ^ k) (b * p ^ k + 1) : ℤ) :
-      ZMod p) =
-      ((ducciCoeff n1 c (b + 1) : ℤ) : ZMod p)
-
-/-- **Ducci predecessor criterion for even length.** Let $m \ge 0$ be an integer, let $n \ge 2$ be
-even, and write $\mathbb{Z}_m = \mathbb{Z}/m\mathbb{Z}$ (so $\mathbb{Z}_0 = \mathbb{Z}$). A tuple
-$x = (x_1, \dots, x_n) \in \mathbb{Z}_m^n$ has a Ducci predecessor, that is, a tuple
-$y \in \mathbb{Z}_m^n$ with $y_i + y_{i+1} = x_i$ for all $i$ (indices taken cyclically, so
-$y_{n+1} = y_1$), if and only if $x_1 - x_2 + x_3 - \cdots + x_{n-1} - x_n = 0$ in $\mathbb{Z}_m$.
-
-Source: Mark L. Lewis and Shannon M. Tefft, "The Maximum
-Length for Ducci Sequences on `ℤ_m^n` when `n` is Even",
-Theorem 2. -/
-theorem_wanted ducci_pred_iff (m n : ℕ) [NeZero n]
-    (hn : Even n) (x : Fin n → ZMod m) :
-    (∃ y : Fin n → ZMod m, ∀ i : Fin n, y i + y (i + 1) = x i) ↔
-      ∑ i : Fin n, (-1 : ZMod m) ^ i.val * x i = 0
 
 /-- **Theorem 1 (1)**: for even `n` and `m ≥ 2` with
 `gcd(n, m) = 1`, `L_m(n) = 1`.

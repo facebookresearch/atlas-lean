@@ -42,8 +42,8 @@ def arrowQuiver : Data ArrowLabels.{u} where
 def loopQuiver : Data LoopLabels.{u} where
   Hom _ _ := (Functor.const SimplexCategoryᵒᵖ).obj PUnit.{u + 1}
 
-def arrow : FixedObjects ArrowLabels.{u} := ⟨⟨free arrowQuiver⟩, rfl⟩
-def loop : FixedObjects LoopLabels.{u} := ⟨⟨free loopQuiver⟩, rfl⟩
+def arrow : FixedObjects ArrowLabels.{u} := ⟨free arrowQuiver, rfl⟩
+def loop : FixedObjects LoopLabels.{u} := ⟨free loopQuiver, rfl⟩
 
 def originalGenerator (q : SimplexCategoryᵒᵖ) :
     (hom arrow.{u} start finish).obj q :=

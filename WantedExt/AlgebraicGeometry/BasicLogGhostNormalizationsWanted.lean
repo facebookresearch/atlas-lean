@@ -45,9 +45,18 @@ public def_wanted fieldExtensionGhostComparison [InverseImageTheory.{0}]
     (f : K →+* L) (x : Spec (.of K) ⟶ Y.scheme) (y : Spec (.of L) ⟶ Y.scheme)
     (h : Spec.map (CommRingCat.ofHom f) ≫ x = y) : FieldGhostComparison Y f x y h
 
-/-- The basic family, every geometric fibre and its actual ghost quotient
-are construction output. The field is arbitrary of characteristic zero;
-no embedding into C, target smoothness or SNC restriction is added. -/
+/-- Basicization of stable log maps (Gross–Siebert, arXiv:1102.4322, Construction 1.16 and
+Proposition 1.24): let $k$ be a field of characteristic zero, $X \to S$ a morphism of fine saturated
+log schemes with Zariski fine saturated charts whose underlying morphism is of finite type, with $S$
+of finite type over $k$, and $M$ a stable log map of genus $g$ with $n$ marked points over a
+Noetherian scheme $W$ of finite type over $S$ (log structures being on small étale sites, where
+sheaves of commutative monoids are assumed to have inverse images along every morphism of
+schemes, `InverseImageTheory`). Then $M$ has a basicization: a log enhancement of the same
+underlying stable map that is initial among enhancements and universally minimal
+(`Basicization`); and at every geometric point $t : \operatorname{Spec} K \to W$, with $K$
+algebraically closed, there are a fibre type $H$ of $M$ at $t$ and an identification of the ghost
+stalk of the basicization at $t$ with the basic monoid of the contact diagram of $H$
+(`BasicGhostModel`). -/
 public def_wanted geometricBasicization [InverseImageTheory.{0}]
     (k : Type) [Field k] [CharZero k]
     (X S : LogScheme.{0}) (hX : X.IsFineSaturated) (hS : S.IsFineSaturated)
@@ -61,9 +70,17 @@ public def_wanted geometricBasicization [InverseImageTheory.{0}]
       ∀ (K : Type) [Field K] [IsAlgClosed K] (t : Spec (.of K) ⟶ W),
         Σ H : FibreType M t, BasicGhostModel M B t H
 
-/-- Every actual G3/I1 Cartesian log-family base change fixes the resulting
-basic comparison maps. Strictness, projection/target/base squares and the
-two original-log comparison equations are part of construction output. -/
+/-- Base change of basicizations: for a morphism $h : W' \to W$ of schemes over $S$, stable log maps
+$M$ over $W$ and $M'$ over $W'$ of genus $g$ with $n$ marked points to $q : X \to S$ (log
+structures being on small étale sites, where sheaves of commutative monoids are assumed to have
+inverse images along every morphism of schemes, `InverseImageTheory`), a Cartesian square $C$
+exhibiting the marked curve of $M'$, with its map to $X$, as the pullback of that of $M$ along $h$,
+a log base change $A$ from $M'$ to $M$ over $C$ (`LogBaseChange`: strict log morphisms of the
+bases and of the curves over $h$ and $C$, compatible with the projections and with the log maps to
+$X$ and to $S$), and basicizations $B$ and $B'$ of $M$ and $M'$: a log base change from the
+basicization $B'$ to $B$ over the same square $C$ (`change`), compatible with $A$ through the
+comparison maps from the basic log structures to those of $M$ and $M'$, on the bases
+(`base_comparison`) and on the curves (`curve_comparison`). -/
 public def_wanted basicizationBaseChange [InverseImageTheory.{0}]
     (X S : LogScheme.{0}) (q : EtaleLogSchemes.Hom X S)
     (n g : ℕ) (W W' : Scheme.{0}) (b : W ⟶ S.scheme) (h : W' ⟶ W)

@@ -12,6 +12,9 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Data.Finset.Max
 public import Mathlib.Order.Interval.Finset.Nat
 public import MathlibExt.GameTheory.SlowANim
+public import MathlibExt.GameTheory.SlowANimGeneralReduction
+public import MathlibExt.GameTheory.SlowANimParity
+public import MathlibExt.GameTheory.SlowANimThreeStacks
 
 /-!
 # P-positions of Slow`A`-Nim
@@ -44,16 +47,6 @@ public theorem_wanted slowANim_partialStructure (n : ℕ) (A : Finset ℕ)
       ((Finset.univ.filter fun i => Odd (p i)).card ∈ A →
         ¬ SpragueGrundy.IsP (slowANimGame n A) p)
 
-/-- **P-positions of Slow A-Nim with A = {1, k}, k odd.** Let $k$ be odd with $1 \le k \le n$
-and let $A = \{1, k\}$. A position $p = (p_1, \dots, p_n)$ of Slow$A$-Nim on $n$ stacks is a
-P-position if and only if its total number of tokens $p_1 + \dots + p_n$ is even.
-
-Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
-Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Theorem 2. -/
-public theorem_wanted slowANim_one_odd_isP_iff (n k : ℕ) (hA : ({1, k} : Finset ℕ) ⊆ Finset.Icc 1 n)
-    (hk : Odd k) (p : Fin n → ℕ) :
-    SpragueGrundy.IsP (slowANimGame n {1, k}) p ↔ Even (∑ i, p i)
-
 /-- **P-positions of Slow A-Nim with A = {1, n}, n even.** Let $n \ge 1$ be even and let
 $A = \{1, n\}$. A position $p = (p_1, \dots, p_n)$ of Slow$A$-Nim on $n$ stacks is a P-position
 if and only if its total number of tokens $p_1 + \dots + p_n$ and its smallest stack
@@ -65,15 +58,6 @@ public theorem_wanted slowANim_one_n_even_isP_iff (n : ℕ) (hn : 0 < n) (hne : 
     (p : Fin n → ℕ) :
     SpragueGrundy.IsP (slowANimGame n {1, n}) p ↔
       Even (∑ i, p i) ∧ ∃ i, (∀ j, p i ≤ p j) ∧ Even (p i)
-
-/-- **P-positions of Slow $\{1,2\}$-Nim on three stacks.** In Slow $A$-Nim with $A = \{1, 2\}$
-on three stacks, let $p = (p_0, p_1, p_2)$ be a position with $p_0 \le p_1 \le p_2$. Then $p$
-is a P-position if and only if its three stack heights are all even or all odd.
-
-Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
-Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Theorem 3. -/
-public theorem_wanted slowANim_one_two_three_isP_iff (p : Fin 3 → ℕ) (hp : Monotone p) :
-    SpragueGrundy.IsP (slowANimGame 3 {1, 2}) p ↔ (∀ i, Even (p i)) ∨ ∀ i, Odd (p i)
 
 /-- **P-positions of Slow $\{1,2\}$-Nim on four stacks.** In Slow $A$-Nim with $A = \{1, 2\}$
 on four stacks, let $p = (p_0, p_1, p_2, p_3)$ be a position with
@@ -161,29 +145,6 @@ public theorem_wanted slowANimReduction_eq_min (n : ℕ) (A : Finset ℕ) (hA : 
     (hred : SlowANimReduced A fun i => min (p i) m)
     (hmax : ∀ m', m < m' → m' ≤ Finset.univ.sup p → ¬ SlowANimReduced A fun i => min (p i) m') :
     slowANimReduction A p = fun i => min (p i) m
-
-/-- **General reduction lemma.** Let $A \subseteq \{1, \dots, n\}$ be nonempty with least element
-$a$, and let $p$ be a reduced position of Slow$A$-Nim $\mathrm{SN}(n, A)$ with largest stack
-height $M$ and total $\Sigma(p) = \sum_i p_i$. Let $S$ be a set of $\ell \in A$ stacks, each
-holding at least one token, and suppose that the position obtained from $p$ by removing one token
-from each stack of $S$ is not reduced. Then $a M \le \Sigma(p)$ and, writing
-$r = \Sigma(p) - a M$, either (R1) $\ell > a$, every stack of height $M$ lies in $S$, and
-$r < \ell - a$; or (R2) some stack of height $M$ is not in $S$, and $r < \ell$.
-
-The hypothesis that $p$ is reduced is implicit in the source, whose proof uses $r \ge 0$.
-
-Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
-Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Lemma 4. -/
-public theorem_wanted slowANim_generalReduction (n : ℕ) (A : Finset ℕ)
-    (hA : A ⊆ Finset.Icc 1 n) (hAne : A.Nonempty) (p : Fin n → ℕ) (hp : SlowANimReduced A p)
-    (S : Finset (Fin n)) (hS : S.card ∈ A) (hSp : ∀ i ∈ S, 1 ≤ p i)
-    (hnot : ¬ SlowANimReduced A (slowANimAfter p S)) :
-    (A.min' hAne < S.card ∧ (∀ i, p i = Finset.univ.sup p → i ∈ S) ∧
-        A.min' hAne * Finset.univ.sup p ≤ ∑ i, p i ∧
-        ∑ i, p i < A.min' hAne * Finset.univ.sup p + (S.card - A.min' hAne)) ∨
-      ((∃ i, p i = Finset.univ.sup p ∧ i ∉ S) ∧
-        A.min' hAne * Finset.univ.sup p ≤ ∑ i, p i ∧
-        ∑ i, p i < A.min' hAne * Finset.univ.sup p + S.card)
 
 /-- **P-positions after adding moves.** Let $M$ and $E$ be move relations on a type of positions,
 let $P$ be a set of P-positions for $M$, and let $Q \subseteq P$. Suppose that (1) no element of
