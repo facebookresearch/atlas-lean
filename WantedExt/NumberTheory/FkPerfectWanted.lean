@@ -42,29 +42,13 @@ public import Mathlib.NumberTheory.Divisors
 public import MathlibExt.NumberTheory.NearPerfectTwoPrimePower
 public import MathlibExt.NumberTheory.OddPrimeDeficientPerfect
 public import MathlibExt.NumberTheory.FkPerfect
+public import MathlibExt.NumberTheory.FkPerfectNotIsDeficientFPerfectOfPrime
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.FkPerfectWanted
-
-/-- **Deficient $F$-perfect numbers.** For a natural number $n$, write
-$\sigma_2(n) = \sum_{e \mid n} e^2$. The number $n$ is deficient $F$-perfect when it is
-$[2,3]$-deficient-perfect, that is, when there is a divisor $d$ of $n$ with $d < n$ such that
-$\sigma_2(n) + d^2 = n^2 + 3n$. -/
-def IsDeficientFPerfect (n : ℕ) : Prop :=
-  IsKLDeficientPerfect 2 3 n
-
-/-- **No prime is deficient $F$-perfect.** If $p$ is a prime, then $p$ is not deficient
-$F$-perfect.
-
-Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
-and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
-`F_k`-Perfect Numbers", Corollary 2. -/
-theorem_wanted not_isDeficientFPerfect_of_prime (p : ℕ)
-    (hp : p.Prime) :
-    ¬ IsDeficientFPerfect p
 
 /-- **No prime power is deficient $F$-perfect or near $F$-perfect.** For every prime $p$ and
 every natural number $a$, the number $n = p^a$ is neither deficient $F$-perfect nor near
