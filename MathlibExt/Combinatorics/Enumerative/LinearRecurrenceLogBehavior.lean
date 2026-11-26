@@ -29,6 +29,12 @@ Lemma 1 of Zhao's paper states that, for every `n ≥ 0`, `x n ≤ φ n` and
 at `n = 2`, where `x 2 = 5 / 2 = φ 2` and `x 3 / x 2 = 26 / 25`. The ratio bounds also give
 log-convexity of `(n * A n) ^ n` for indices starting at one.
 
+Forward differences are written out: `ΔA n = A (n + 1) - A n`,
+`Δ²A n = A (n + 2) - 2 A (n + 1) + A n`,
+`Δ³A n = A (n + 3) - 3 A (n + 2) + 3 A (n + 1) - A n`. A sequence `(z n)_{n ≥ m}` is
+log-convex (log-concave) if `z n ^ 2 ≤ z (n - 1) z (n + 1)` (`≥`) for every `n ≥ m + 1`, and
+log-balanced (Došlić) if it is log-convex and `(z n / n!)_{n ≥ m}` is log-concave.
+
 ## Proof
 
 Every `A n` is positive, by induction along the recurrence. Divided by `(n + 2) A (n + 1)`, the
@@ -46,6 +52,7 @@ whose first factor is nonnegative by `x n ≤ φ n` and whose second factor is p
 * `MetaMathlibExt.a005773Recurrence_ratio_bounds`: both bounds, for every `n`.
 * `MetaMathlibExt.a005773Recurrence_thirdDiff_logConvex_logBalanced`: log-behavior of Δ³A.
 * `MetaMathlibExt.a005773Recurrence_weighted_logConcave`: log-concavity of four weighted sequences.
+* `MetaMathlibExt.a005773Recurrence_diff_logBalanced`: log-behavior of ΔA and Δ²A.
 * `MetaMathlibExt.a005773Recurrence_pow_logConvex`: log-convexity of `(n * A n) ^ n`.
 
 ## References
@@ -255,6 +262,59 @@ public theorem a005773Recurrence_weighted_logConcave (A : ℕ → ℝ) (h0 : A 0
   rw [show k + 2 - 1 = k + 1 by omega, step (k + 3), step (k + 2), step (k + 1), ha, hb]
   push_cast
   refine ⟨?_, ?_, ?_, ?_⟩ <;> apply sub_nonneg.mp <;> field_simp <;> ring_nf <;> positivity
+
+/-- **The first and second differences of A005773 are log-balanced.**
+Let $(A_n)_{n \ge 0}$ be a sequence of real numbers with $A_0 = A_1 = 1$ and
+$(n+1) A_{n+1} = 2(n+1) A_n + 3(n-1) A_{n-1}$ for every $n \ge 1$, and write
+$\Delta A_n = A_{n+1} - A_n$ and $\Delta^2 A_n = A_{n+2} - 2A_{n+1} + A_n$. Then for every
+$n \ge 4$, each of the sequences $z = \Delta A$ and $z = \Delta^2 A$ satisfies
+$z_n^2 \le z_{n-1} z_{n+1}$ and
+$$\frac{z_{n-1}}{(n-1)!} \cdot \frac{z_{n+1}}{(n+1)!} \le \left(\frac{z_n}{n!}\right)^2.$$
+That is, $(\Delta A_n)_{n \ge 3}$ and $(\Delta^2 A_n)_{n \ge 3}$ are log-balanced: log-convex, with
+$(z_n / n!)_{n \ge 3}$ log-concave.
+
+Source: Feng-Zhen Zhao, *The Log-Behavior of Some Sequences Related to a Linear Recurrence
+Sequence*, INTEGERS 25 (2025), Article A100, Theorem 1. -/
+public theorem a005773Recurrence_diff_logBalanced (A : ℕ → ℝ) (h0 : A 0 = 1)
+    (h1 : A 1 = 1)
+    (hrec : ∀ n : ℕ, 1 ≤ n →
+      ((n : ℝ) + 1) * A (n + 1) = 2 * ((n : ℝ) + 1) * A n + 3 * ((n : ℝ) - 1) * A (n - 1))
+    (n : ℕ) (hn : 4 ≤ n) :
+    let D₁ : ℕ → ℝ := fun m => A (m + 1) - A m
+    let D₂ : ℕ → ℝ := fun m => A (m + 2) - 2 * A (m + 1) + A m
+    (D₁ n ^ 2 ≤ D₁ (n - 1) * D₁ (n + 1) ∧
+        D₁ (n - 1) / (n - 1).factorial * (D₁ (n + 1) / (n + 1).factorial) ≤
+          (D₁ n / n.factorial) ^ 2) ∧
+      D₂ n ^ 2 ≤ D₂ (n - 1) * D₂ (n + 1) ∧
+        D₂ (n - 1) / (n - 1).factorial * (D₂ (n + 1) / (n + 1).factorial) ≤
+          (D₂ n / n.factorial) ^ 2 := by
+  intro D₁ D₂
+  have step := a005773Recurrence_next hrec
+  have bounds (k : ℕ) :
+      D₁ (k + 4) ^ 2 ≤ D₁ (k + 3) * D₁ (k + 5) ∧
+        ((k : ℝ) + 4) * (D₁ (k + 3) * D₁ (k + 5)) ≤ ((k : ℝ) + 5) * D₁ (k + 4) ^ 2 ∧
+        D₂ (k + 4) ^ 2 ≤ D₂ (k + 3) * D₂ (k + 5) ∧
+        ((k : ℝ) + 4) * (D₂ (k + 3) * D₂ (k + 5)) ≤ ((k : ℝ) + 5) * D₂ (k + 4) ^ 2 := by
+    obtain ⟨l, u, hl, hu, ha, hb⟩ := a005773Recurrence_coordinates h0 h1 hrec (k + 2)
+    dsimp only [D₁, D₂]
+    rw [step (k + 5), step (k + 4), step (k + 3), step (k + 2), ha, hb]
+    push_cast
+    refine ⟨?_, ?_, ?_, ?_⟩ <;> apply sub_nonneg.mp <;> field_simp <;> ring_nf <;> positivity
+  obtain ⟨k, rfl⟩ : ∃ k, n = k + 4 := ⟨n - 4, by omega⟩
+  have hf : (0 : ℝ) < (k + 3).factorial := by exact_mod_cast Nat.factorial_pos _
+  refine ⟨⟨(bounds k).1, ?_⟩, (bounds k).2.2.1, ?_⟩
+  · change D₁ (k + 3) / (k + 3).factorial * (D₁ (k + 5) / (k + 5).factorial) ≤
+      (D₁ (k + 4) / (k + 4).factorial) ^ 2
+    rw [Nat.factorial_succ (k + 4), Nat.factorial_succ (k + 3)]
+    push_cast
+    field_simp
+    linarith only [(bounds k).2.1]
+  · change D₂ (k + 3) / (k + 3).factorial * (D₂ (k + 5) / (k + 5).factorial) ≤
+      (D₂ (k + 4) / (k + 4).factorial) ^ 2
+    rw [Nat.factorial_succ (k + 4), Nat.factorial_succ (k + 3)]
+    push_cast
+    field_simp
+    linarith only [(bounds k).2.2.2]
 
 /-- **Log-convexity of $(n A_n)^n$ for A005773.**
 Let $(A_n)_{n \ge 0}$ be a sequence of real numbers with $A_0 = A_1 = 1$ and
