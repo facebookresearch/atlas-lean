@@ -34,7 +34,6 @@ open scoped Classical
 
 namespace AutomorphicFormArchFlowChartTest
 
-set_option maxHeartbeats 1600000 in
 /-- Consumer with the original `Type` binders. -/
 private theorem exactSource (K : Type) [Field K] [NumberField K]
     (L₀ : List ((Σ' w : InfinitePlace K, Σ' _ : w.IsReal, ArchDir) ⊕
@@ -62,7 +61,6 @@ private theorem exactSource (K : Type) [Field K] [NumberField K]
           ((tailMatC d.1)⁻¹ * archFlowMatrixComplex d.2.2 s * tailMatC d.1) :=
   flowChart_add_single_eq_mul_conj K L₀ j t s
 
-set_option maxHeartbeats 1600000 in
 /-- Higher-universe consumer. -/
 private theorem exactSource_univ (K : Type 1) [Field K] [NumberField K]
     (L₀ : List ((Σ' w : InfinitePlace K, Σ' _ : w.IsReal, ArchDir) ⊕

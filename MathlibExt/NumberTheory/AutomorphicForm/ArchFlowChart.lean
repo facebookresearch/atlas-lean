@@ -7,8 +7,6 @@ Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/
 Adapted from
 `Definitions/Def_AutomorphicForm_ArchDerivCasimir.lean`,
 `Definitions/Def_AutomorphicForm_ArchDerivCasimirComplex.lean`,
-`Definitions/Def_AutomorphicForm_ArchType.lean`,
-`Definitions/Def_AutomorphicForm_ConstantTerm.lean`,
 `Theorems/Thm_AutomorphicForm_flowChart_add_single_eq_mul_conj.lean`
 and
 `P2M/Sol/S_AutomorphicForm_flowChart_add_single_eq_mul_conj.lean`
@@ -41,7 +39,6 @@ import Mathlib.Tactic.Group
 noncomputable section
 
 open NumberField IsDedekindDomain
-open scoped Classical
 
 namespace AutomorphicForm
 
@@ -98,6 +95,7 @@ def splitTorusGL2 (t : ℝ) : GL (Fin 2) ℝ where
     ext i j; fin_cases i <;> fin_cases j <;>
       simp [Matrix.mul_apply, Fin.sum_univ_two, ← Real.exp_add]
 
+@[simp]
 theorem splitTorusGL2_zero : splitTorusGL2 0 = 1 := by
   ext i j; fin_cases i <;> fin_cases j <;> simp [splitTorusGL2]
 
@@ -119,6 +117,7 @@ def splitTorusGL2Complex (z : ℂ) : GL (Fin 2) ℂ where
     ext i j; fin_cases i <;> fin_cases j <;>
       simp [Matrix.mul_apply, Fin.sum_univ_two, ← Complex.exp_add]
 
+@[simp]
 theorem splitTorusGL2Complex_zero : splitTorusGL2Complex 0 = 1 := by
   ext i j; fin_cases i <;> fin_cases j <;> simp [splitTorusGL2Complex]
 
@@ -271,6 +270,7 @@ private theorem conj_list_prod {G M : Type*} [Group G] [Group M] (φ : M →* G)
       _ = φ ((L.map Prod.snd).prod⁻¹ * p.2⁻¹ * a * (p.2 * (L.map Prod.snd).prod)) := by
           congr 1; group
 
+open Classical in
 /-- **Single-coordinate increment of an archimedean flow chart.** For a word `L₀` of real and
 complex flow letters, the chart at times `t` is the product, in word order, of the flows of the
 letters `L₀[i]` at the times `t i`. Adding `s` to the time of the letter `j` multiplies the chart
@@ -316,13 +316,13 @@ public theorem flowChart_add_single_eq_mul_conj
     intro c hc
     exact prod_ofFn_update L₀.length (fun i => flow (L₀.get i) (t i))
       (fun i => flow (L₀.get i) ((t + s • (Pi.single j (1 : ℝ) : Fin L₀.length → ℝ)) i)) j c hfac
-      (by show flow (L₀.get j) ((t + s • (Pi.single j (1 : ℝ) : Fin L₀.length → ℝ)) j)
+      (by change flow (L₀.get j) ((t + s • (Pi.single j (1 : ℝ) : Fin L₀.length → ℝ)) j)
           = flow (L₀.get j) (t j) * c; rw [hj', hc])
   rcases hj : L₀.get j with ⟨w, hw, dj⟩ | ⟨w, hw, dj⟩
   · simp only
     have hsplit : flow (Sum.inl ⟨w, hw, dj⟩) (t j + s)
         = flow (Sum.inl ⟨w, hw, dj⟩) (t j) * archFlowAt K hw dj s := by
-      show archFlowAt K hw dj (t j + s) = archFlowAt K hw dj (t j) * archFlowAt K hw dj s
+      change archFlowAt K hw dj (t j + s) = archFlowAt K hw dj (t j) * archFlowAt K hw dj s
       exact archFlowAt_add K hw dj (t j) s
     rw [hj] at hprod
     rw [hprod (archFlowAt K hw dj s) hsplit]
@@ -339,16 +339,16 @@ public theorem flowChart_add_single_eq_mul_conj
       · simp only
         by_cases hww : w' = w
         · subst hww
-          rw [if_pos rfl]
+          rw [ite_eq_left rfl]
           exact conjR K hw _ _
-        · rw [if_neg hww, inv_one, one_mul, mul_one]
-          show (adelicArchGLInclAt K w' _)⁻¹ * adelicArchGLInclAt K w _ * adelicArchGLInclAt K w' _
-            = adelicArchGLInclAt K w _
+        · rw [ite_eq_right hww, inv_one, one_mul, mul_one]
+          change (adelicArchGLInclAt K w' _)⁻¹ * adelicArchGLInclAt K w _ *
+            adelicArchGLInclAt K w' _ = adelicArchGLInclAt K w _
           exact (adelicArchGLInclAt_commute K hww _ _).inv_mul_cancel
       · simp only [inv_one, one_mul, mul_one]
         have hww : w ≠ w' := fun h => by
           subst h; exact (NumberField.InfinitePlace.not_isReal_iff_isComplex.mpr hw') hw
-        show (adelicArchGLInclAt K w' _)⁻¹ * adelicArchGLInclAt K w _ * adelicArchGLInclAt K w' _
+        change (adelicArchGLInclAt K w' _)⁻¹ * adelicArchGLInclAt K w _ * adelicArchGLInclAt K w' _
           = adelicArchGLInclAt K w _
         exact (adelicArchGLInclAt_commute K (Ne.symm hww) _ _).inv_mul_cancel
     have hL := conj_list_prod (archRealGLAt K hw)
@@ -362,7 +362,7 @@ public theorem flowChart_add_single_eq_mul_conj
   · simp only
     have hsplit : flow (Sum.inr ⟨w, hw, dj⟩) (t j + s)
         = flow (Sum.inr ⟨w, hw, dj⟩) (t j) * archFlowAtComplex K hw dj s := by
-      show archFlowAtComplex K hw dj (t j + s)
+      change archFlowAtComplex K hw dj (t j + s)
         = archFlowAtComplex K hw dj (t j) * archFlowAtComplex K hw dj s
       exact archFlowAtComplex_add K hw dj (t j) s
     rw [hj] at hprod
@@ -380,17 +380,17 @@ public theorem flowChart_add_single_eq_mul_conj
       · simp only [inv_one, one_mul, mul_one]
         have hww : w ≠ w' := fun h => by
           subst h; exact (NumberField.InfinitePlace.not_isReal_iff_isComplex.mpr hw) hw'
-        show (adelicArchGLInclAt K w' _)⁻¹ * adelicArchGLInclAt K w _ * adelicArchGLInclAt K w' _
+        change (adelicArchGLInclAt K w' _)⁻¹ * adelicArchGLInclAt K w _ * adelicArchGLInclAt K w' _
           = adelicArchGLInclAt K w _
         exact (adelicArchGLInclAt_commute K (Ne.symm hww) _ _).inv_mul_cancel
       · simp only
         by_cases hww : w' = w
         · subst hww
-          rw [if_pos rfl]
+          rw [ite_eq_left rfl]
           exact conjC K hw _ _
-        · rw [if_neg hww, inv_one, one_mul, mul_one]
-          show (adelicArchGLInclAt K w' _)⁻¹ * adelicArchGLInclAt K w _ * adelicArchGLInclAt K w' _
-            = adelicArchGLInclAt K w _
+        · rw [ite_eq_right hww, inv_one, one_mul, mul_one]
+          change (adelicArchGLInclAt K w' _)⁻¹ * adelicArchGLInclAt K w _ *
+            adelicArchGLInclAt K w' _ = adelicArchGLInclAt K w _
           exact (adelicArchGLInclAt_commute K hww _ _).inv_mul_cancel
     have hL := conj_list_prod (archComplexGLAt K hw)
       (((List.ofFn fun i : Fin L₀.length => (flow (L₀.get i) (t i), μ i))).drop (j.val + 1))
