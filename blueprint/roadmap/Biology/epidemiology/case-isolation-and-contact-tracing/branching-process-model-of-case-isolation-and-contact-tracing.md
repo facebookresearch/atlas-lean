@@ -8,10 +8,13 @@
 - an isolation time $\tau_i$: if $i$ was traced (probability $\rho$, independently, and only when its infector is detectable), then $\tau_i = t_i + T_i$; otherwise $\tau_i = t_i + T_i + D_i$ with $D_i \sim D$. A subclinical case is never isolated ($\tau_i = \infty$) and its infectees cannot be traced.
 
 Isolation is perfect, so the realized offspring of $i$ is
+
 $$M_i = \#\{\, j \le N_i : S_{ij} < \tau_i - t_i \,\}.$$
 
 **Proposition (thinned offspring law).** Condition on $T_i = s$ and $\tau_i - t_i = u$, and put $q(s,u) = \Pr(S < u \mid T = s)$. Then $M_i \sim \mathrm{NB}\big(R_0\, q(s,u),\, k\big)$. Consequently the effective reproduction number of the controlled process is
+
 $$R_{\mathrm{eff}} = \mathbb{E}[M_i] = R_0\, \mathbb{E}\big[q(T_i, \tau_i - t_i)\big] \le R_0 ,$$
+
 and the dispersion $k$ is unchanged by isolation.
 
 An outbreak is called *controlled* when no new infections occur between weeks 12 and 16 after the initial cases; outbreaks reaching 5000 cumulative cases are classed as uncontrolled.

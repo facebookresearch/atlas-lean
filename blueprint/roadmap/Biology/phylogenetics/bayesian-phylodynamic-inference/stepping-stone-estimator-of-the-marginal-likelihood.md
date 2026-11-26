@@ -1,8 +1,11 @@
 # Stepping-stone estimator of the marginal likelihood
 
 Let $L(\theta) = p(D \mid \theta) \ge 0$ be a likelihood and $\pi$ a **proper** prior density on the parameter space (for a phylogenetic model, $\theta$ includes the tree). For $\beta \in [0,1]$ define the **power posterior** and its normalizing constant
+
 $$p_\beta(\theta) = \frac{L(\theta)^\beta\, \pi(\theta)}{Z_\beta}, \qquad Z_\beta = \int L(\theta)^\beta\, \pi(\theta)\, d\theta,$$
+
 so that $Z_0 = 1$ and $Z_1 = p(D)$ is the marginal likelihood. Fix a schedule $0 = \beta_0 < \beta_1 < \dots < \beta_K = 1$, and for each $k = 1,\dots,K$ let $\theta_{k-1,1},\dots,\theta_{k-1,n}$ be draws from $p_{\beta_{k-1}}$. The **stepping-stone estimator** is
+
 $$\widehat{Z}_1 = \prod_{k=1}^{K} \frac{1}{n}\sum_{m=1}^{n} L(\theta_{k-1,m})^{\beta_k - \beta_{k-1}} .$$
 
 **Proposition.**

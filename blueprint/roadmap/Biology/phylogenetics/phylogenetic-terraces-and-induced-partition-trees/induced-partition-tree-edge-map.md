@@ -5,7 +5,9 @@ Let $X$ be a finite set of species, $|X| = n$, and let $Y_1, \dots, Y_k \subsete
 **Definition (induced partition tree).** For a partition $Y_i$ with $|Y_i| \ge 2$, the **induced partition tree** $T|_{Y_i}$ is the tree on leaf set $Y_i$ obtained from $T$ by deleting every leaf in $X \setminus Y_i$ and suppressing resulting vertices of degree two.
 
 **Definition (edge map).** Identify every edge $e$ of $T$ with the split $e = A \mid B$ it induces, $A, B \neq \emptyset$, $A \cap B = \emptyset$, $A \cup B = X$. Write $E$ for the edge set of $T$, $E_i$ for the edge set of $T|_{Y_i}$ and $\epsilon$ for a formal symbol "no edge". The edge map $f_i : E \to E_i \cup \{\epsilon\}$ is
+
 $$f_i(e) \;=\; \begin{cases} (A \cap Y_i) \mid (B \cap Y_i), & A \cap Y_i \neq \emptyset \text{ and } B \cap Y_i \neq \emptyset,\\[2pt] \epsilon, & \text{otherwise.}\end{cases}$$
+
 The definition is well posed: when both intersections are nonempty, $(A \cap Y_i) \mid (B \cap Y_i)$ is a split of $Y_i$ displayed by $T|_{Y_i}$, hence an edge of $T|_{Y_i}$; and $f_i(e) = \epsilon$ exactly when the restriction of the split to $Y_i$ is trivial, i.e. when $e$ is one of the edges destroyed by pruning and suppression.
 
 **Definition (partial terrace).** Two species trees $T_1, T_2$ on $X$ lie on one **partial terrace** if $T_1|_{Y_j} = T_2|_{Y_j}$ for every $j$ in some nonempty $J \subseteq \{1, \dots, k\}$, and on one **full terrace** if this holds with $J = \{1, \dots, k\}$.

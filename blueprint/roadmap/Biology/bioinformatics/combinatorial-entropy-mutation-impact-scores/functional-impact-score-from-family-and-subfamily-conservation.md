@@ -1,8 +1,11 @@
 # Functional impact score from family and subfamily conservation
 
 Let the sequences of a protein family alignment be partitioned into subfamilies (in the source, by combinatorial-entropy clustering that maximizes the difference of residue distributions between subfamilies at a set of specificity positions), and let $p$ be the subfamily containing the mutated protein. Write $n_{i,p}(\alpha)$ for the number of residues of type $\alpha$ at alignment position $i$ within subfamily $p$. For a substitution $\alpha \to \beta$ at position $i$, define the family [conservation score](combinatorial-entropy-conservation-score.md) $\Delta S_i^{\mathrm c}(\alpha \to \beta) = \ln\big(n_i(\alpha)/(n_i(\beta)+1)\big)$, the **specificity score**
+
 $$\Delta S_i^{\mathrm s}(\alpha \to \beta) = \ln \frac{n_{i,p}(\alpha)}{n_{i,p}(\beta) + 1},$$
+
 and the **functional impact score**
+
 $$\mathrm{FIS}_i(\alpha \to \beta) = \tfrac12\Big(\Delta S_i^{\mathrm c}(\alpha \to \beta) + \Delta S_i^{\mathrm s}(\alpha \to \beta)\Big).$$
 
 **Properties.** If the family consists of a single subfamily, $\mathrm{FIS} = \Delta S^{\mathrm c}$. If $N_p$ is the size of subfamily $p$ and $N$ the family size, then $-\tfrac12(\ln N + \ln N_p) \le \mathrm{FIS} \le \tfrac12(\ln N + \ln N_p)$. A substitution at a position conserved within subfamily $p$ but variable across the family (a specificity residue) receives a high specificity score even when its family conservation score is moderate.

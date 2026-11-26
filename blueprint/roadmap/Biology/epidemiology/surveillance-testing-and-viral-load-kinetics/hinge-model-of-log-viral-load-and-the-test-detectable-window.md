@@ -9,9 +9,12 @@ rising linearly from $t_0$ to the peak $t_p$ and decaying linearly afterwards (c
 For a test with limit of detection $10^{\ell}$, $3 \le \ell < v_p$, the following hold.
 
 1. The detectable window $\{t \ge t_0 : v(t) \ge \ell\}$ is the interval $[a_\ell, b_\ell]$ with
+
 $$a_\ell = t_0 + \frac{(\ell - 3)(t_p - t_0)}{v_p - 3}, \qquad b_\ell = t_p + \frac{(v_p - \ell)(t_f - t_p)}{v_p - 6}.$$
+
 2. The infectious window is $(a_6, t_f)$, and it is contained in $[a_\ell, b_\ell]$ if and only if $\ell \le 6$. Every test with limit of detection at most $10^6$ can therefore detect the infection on every infectious day, and becomes positive $(6 - \ell)(t_p - t_0)/(v_p - 3)$ days before infectiousness begins.
 3. The total log-proportional infectiousness is the area of a triangle:
+
 $$\int (v(t) - 6)_+\, dt = \frac{v_p - 6}{2} \Big(\frac{(v_p - 6)(t_p - t_0)}{v_p - 3} + (t_f - t_p)\Big).$$
 
 Alternative infectiousness functions, proportional to $V(t) \cdot 10^{-6}$ above the threshold or constant above it, were used as sensitivity analyses.

@@ -3,7 +3,9 @@
 **Setting.** For each candidate $k$ in a finite set $K$ (ten values spanning 20–95% of the read length, capped at 127, in the source), a de Bruijn assembly graph $G_k$ is built. Let $c_k \ge 1$ be its number of contigs and $d_k \ge 0$ its number of dead ends (contig ends with no outgoing connection).
 
 **Definition.** The graph score is
+
 $$\mathrm{score}(G_k) = \frac{1}{c_k\,(d_k + 1)^2},$$
+
 and the selected graph is $G_{k^\ast}$ with $k^\ast \in \operatorname*{arg\,max}_{k \in K} \mathrm{score}(G_k)$.
 
 **Proposition.** The score is strictly decreasing in $c_k$ for fixed $d_k$ and in $d_k$ for fixed $c_k$. One additional dead end, from $d$ to $d + 1$, is offset only by reducing the contig count by the factor $\big((d+1)/(d+2)\big)^2$; in particular a graph with no dead ends beats a graph with one dead end unless the latter has fewer than a quarter as many contigs.

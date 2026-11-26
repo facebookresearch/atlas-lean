@@ -1,9 +1,13 @@
 # Cumulative hazard model of infection prevalence by age
 
 Let $\lambda : \mathbb{R} \to [0,\infty)$ be a locally integrable **annual hazard of infection** (the force of infection, per person-year) acting on every uninfected individual in a population at calendar time $u$. Assume that (i) everyone is uninfected at birth, (ii) infection is lifelong (no clearance), and (iii) mortality and migration do not depend on infection status. Write
+
 $$H(s,t) = \int_s^t \lambda(u)\,du$$
+
 for the cumulative hazard over $[s,t]$. For a person of age $a \ge 0$ at time $T$ (born at $T-a$), the probability of having ever been infected is
+
 $$P(a,T) = 1 - \exp\big(-H(T-a,\,T)\big).$$
+
 If $N(a,T)$ is the population of age $a$ at time $T$, the population prevalence is $\pi(T) = \int P(a,T)\,N(a,T)\,da \big/ \int N(a,T)\,da$ (a sum over single-year age groups in practice).
 
 **Proposition.**

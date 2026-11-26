@@ -1,6 +1,7 @@
 # EASE score
 
 In the setting of the [hypergeometric over-representation test](hypergeometric-over-representation-test.md), with population size $N$, category size $M$, list size $n \ge 1$ and $k \ge 1$ category genes on the list, the **EASE score** is the one-tailed Fisher exact probability recomputed after removing one category gene from the list:
+
 $$p_{\mathrm{EASE}}(k; N, M, n) = p_{\mathrm F}(k-1; N, M, n-1) = \Pr(X' \ge k-1), \qquad X' \sim \mathrm{Hypergeometric}(N, M, n-1).$$
 
 **Proposition.**

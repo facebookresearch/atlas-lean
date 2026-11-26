@@ -11,6 +11,7 @@ $$\log p(x \mid s) \;\ge\; \mathbb{E}_{q}\big[\log p(x \mid z, \ell, s)\big] - D
 and the gap equals $D_{\mathrm{KL}}\big(q(z, \ell \mid x, s) \,\|\, p(z, \ell \mid x, s)\big) \ge 0$. Both divergences are explicit:
 
 $$D_{\mathrm{KL}}\big(\mathcal{N}(m, \mathrm{diag}\, v) \,\|\, \mathcal{N}(0, I_d)\big) = \frac12 \sum_{j=1}^d \big(v_j + m_j^2 - 1 - \log v_j\big),$$
+
 $$D_{\mathrm{KL}}\big(\mathrm{LogNormal}(a, b) \,\|\, \mathrm{LogNormal}(\ell_\mu, \ell_\sigma^2)\big) = \log\frac{\ell_\sigma}{\sqrt{b}} + \frac{b + (a - \ell_\mu)^2}{2 \ell_\sigma^2} - \frac12.$$
 
 Summed over cells, the bound is maximized jointly over decoder and encoder parameters by stochastic gradients on minibatches, with the expectation estimated through the reparameterization $z = m + \sqrt{v} \odot \varepsilon$, $\log \ell = a + \sqrt{b}\, \eta$, $\varepsilon \sim \mathcal{N}(0, I_d)$, $\eta \sim \mathcal{N}(0, 1)$.

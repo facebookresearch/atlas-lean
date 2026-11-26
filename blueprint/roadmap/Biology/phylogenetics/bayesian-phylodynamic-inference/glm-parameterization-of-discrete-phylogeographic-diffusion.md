@@ -1,7 +1,9 @@
 # GLM parameterization of discrete phylogeographic diffusion
 
 Let a discrete trait (for example, sampling location) take values in $\{1,\dots,L\}$ and evolve along the branches of a time-scaled phylogeny as a continuous-time Markov chain with overall rate $\mu > 0$ and relative rate matrix $\Lambda$. Given $P$ predictors, each an $L \times L$ array $x_{\cdot\cdot p}$ of real values for ordered pairs $i \ne j$ (typically log-transformed and standardized, for example origin population, destination population or geographic distance), the **generalized linear model (GLM)** parameterization sets
+
 $$\Lambda_{ij} = \exp\Big(\sum_{p=1}^{P} \delta_p\, \beta_p\, x_{ijp}\Big) \quad (i \ne j), \qquad \Lambda_{ii} = -\sum_{j \ne i} \Lambda_{ij},$$
+
 with coefficients $\beta_p \in \mathbb{R}$ and inclusion indicators $\delta_p \in \{0,1\}$, given independent priors $\delta_p \sim \mathrm{Bernoulli}(q)$ (Bayesian stochastic search variable selection).
 
 **Properties.**
@@ -9,6 +11,7 @@ with coefficients $\beta_p \in \mathbb{R}$ and inclusion indicators $\delta_p \i
 1. For every $\beta \in \mathbb{R}^P$ and $\delta \in \{0,1\}^P$, $\mu\Lambda$ is a valid rate matrix: off-diagonal entries are positive and rows sum to $0$.
 2. Holding other predictors fixed, a unit increase of an included predictor $x_{ijp}$ multiplies the transition rate $i \to j$ by $e^{\beta_p}$.
 3. The Bayes factor for including predictor $p$ is the ratio of posterior to prior inclusion odds,
+
 $$\mathrm{BF}_p = \frac{\Pr(\delta_p = 1 \mid D)\,/\,\Pr(\delta_p = 0 \mid D)}{q/(1-q)} .$$
 
 ## Depends on

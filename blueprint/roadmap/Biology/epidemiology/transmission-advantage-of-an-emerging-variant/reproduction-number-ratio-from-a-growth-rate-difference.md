@@ -1,13 +1,16 @@
 # Reproduction-number ratio from a growth-rate difference
 
 Let a resident variant and a new variant grow exponentially at rates $r_1$ and $r_2 = r_1 + \Delta r$, and assume both share the same generation-interval distribution $g$. By the Euler–Lotka relation each reproduction number is $R_v = 1 / M_g(-r_v)$ with $M_g(-r) = \int e^{-ra}\, g(da)$, so the multiplicative transmission advantage is
+
 $$\frac{R_2}{R_1} = \frac{M_g(-r_1)}{M_g(-r_2)} .$$
 
 Special cases:
 
 - **Fixed generation interval** $g = \delta_T$: $R_2 / R_1 = e^{\Delta r\, T}$, independent of $r_1$.
 - **Gamma generation interval** with shape $\alpha > 0$ and rate $\beta > 0$ (mean $T = \alpha/\beta$), for $r_1, r_2 > -\beta$:
+
 $$\frac{R_2}{R_1} = \left(\frac{1 + r_2/\beta}{1 + r_1/\beta}\right)^{\alpha} = \exp\!\left(\alpha \log\frac{\beta + r_2}{\beta + r_1}\right),$$
+
 whose exponent is $\alpha \log\frac{\beta + r_2}{\beta + r_1} = \Delta r\, T\,\bigl(1 + O((|r_1| + |\Delta r|)/\beta)\bigr)$ as $(|r_1| + |\Delta r|)/\beta \to 0$; the fixed-interval formula is therefore a good approximation when growth rates are small compared with $\beta$.
 
 Under the shared-generation-interval assumption the ratio is driven only by the growth-rate difference; if the new variant instead had a shorter generation interval, the same $\Delta r$ would be compatible with a smaller (or no) increase in $R$.

@@ -3,7 +3,9 @@
 **Setting.** As in [closest network proximity](closest-network-proximity-and-its-degree-matched-z-score.md), $G$ is a connected interactome with shortest-path distance $d$. For target sets $A, B \subseteq V$ of two drugs, write $\langle d_{AB}\rangle$ for the mean over all elements of $A \cup B$ (counted as in the closest measure) of the distance to the nearest element of the other set, and for a set $A$ with $|A| \ge 2$ write $\langle d_{AA}\rangle$ for the mean over $a \in A$ of $\min_{a' \in A \setminus\{a\}} d(a,a')$.
 
 **Definition (separation).**
+
 $$s_{AB} = \langle d_{AB}\rangle - \frac{\langle d_{AA}\rangle + \langle d_{BB}\rangle}{2}.$$
+
 Negative $s_{AB}$ means the two target modules overlap or interleave; $s_{AB} \ge 0$ means they occupy topologically separate neighbourhoods.
 
 **Definition (complementary exposure).** Given a disease module $C$, a drug pair $(A,B)$ shows the *complementary exposure* pattern when both drugs are proximal to the module, $Z_{CA} < 0$ and $Z_{CB} < 0$ (each significant), and their targets are separated, $s_{AB} \ge 0$. The working hypothesis of the source is that a drug combination is therapeutically effective only if it follows this pattern.

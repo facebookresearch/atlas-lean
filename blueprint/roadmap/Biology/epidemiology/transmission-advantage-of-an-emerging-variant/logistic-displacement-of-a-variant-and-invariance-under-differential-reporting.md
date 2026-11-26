@@ -1,13 +1,19 @@
 # Logistic displacement of a variant and invariance under differential reporting
 
 Let two variants have incidences $b_1(t) = a_1 e^{r_1 t}$ and $b_2(t) = a_2 e^{r_2 t}$ with $a_1, a_2 > 0$ and real growth rates $r_1, r_2$. The frequency of variant 2 among new infections is
+
 $$p(t) = \frac{a_2 e^{r_2 t}}{a_1 e^{r_1 t} + a_2 e^{r_2 t}},$$
+
 and its log-odds are linear in time:
+
 $$\operatorname{logit} p(t) = \log\frac{a_2}{a_1} + (r_2 - r_1)\, t .$$
+
 Hence $p$ is a logistic curve with slope $\Delta r = r_2 - r_1$; for $\Delta r > 0$, $p(t) \to 1$ as $t \to \infty$.
 
 **Differential reporting.** Suppose each infection with variant $v$ is reported independently with a constant probability $x_v \in (0, 1]$. The expected reported frequency of variant 2 is
+
 $$q(t) = \frac{a_2 x_2 e^{r_2 t}}{a_1 x_1 e^{r_1 t} + a_2 x_2 e^{r_2 t}}, \qquad \operatorname{logit} q(t) = \log\frac{a_2 x_2}{a_1 x_1} + \Delta r\, t .$$
+
 Constant differential reporting shifts only the intercept and leaves the slope $\Delta r$ unchanged. In particular, if $r_1 = r_2$, the reported frequency is constant in time whatever $x_1, x_2$ are, so a sustained rise in a variant's observed share cannot be produced by a time-invariant reporting bias alone.
 
 ## Expansion

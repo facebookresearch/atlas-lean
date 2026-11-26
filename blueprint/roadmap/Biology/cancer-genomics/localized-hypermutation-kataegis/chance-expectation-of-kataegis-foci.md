@@ -5,7 +5,9 @@ Let a cancer genome of length $g$ base pairs carry $n$ somatic substitutions, an
 **Model.** Assume the $n$ mutations fall independently and uniformly along the genome, so that the number falling in any window of length $w$ is approximately Poisson with mean $wn/g$.
 
 **Proposition.** Under this model the probability that a given mutation is followed by five further mutations within $5000$ bp, which triggers a call of a focus of six mutations averaging at most $1000$ bp apart, is
+
 $$p \;=\; \Pr\bigl(\mathrm{Pois}(5000\,n/g) \ge 5\bigr) \;=\; 1 - e^{-\mu}\sum_{j=0}^{4} \frac{\mu^{j}}{j!}, \qquad \mu = \frac{5000\,n}{g},$$
+
 and the expected number of chance foci in the genome is $np$. The expectation is strictly increasing and, for small $\mu$, of order $n\mu^{5}/120 \propto n^{6}$, so chance foci are negligible at low burdens and dominate at high ones: with $g \approx 3 \times 10^{9}$ bp, a genome carrying $n = 2 \times 10^{5}$ substitutions is expected to yield about $0.16$ foci by chance, whereas burdens of several hundred thousand substitutions yield many.
 
 ## Depends on

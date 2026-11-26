@@ -1,6 +1,7 @@
 # Population attributable fraction
 
 **Setting.** A binary exposure has prevalence $p \in [0,1]$ in a population. Unexposed individuals have outcome risk $r_0 > 0$ and exposed individuals have risk $\mathrm{RR}\cdot r_0$, with relative risk $\mathrm{RR} > 0$ interpreted causally. The population attributable fraction (PAF) is the proportional reduction in outcomes if exposure were removed (counterfactual: everyone unexposed):
+
 $$\mathrm{PAF} = \frac{r_{\mathrm{pop}} - r_0}{r_{\mathrm{pop}}}, \qquad r_{\mathrm{pop}} = (1-p)\,r_0 + p\,\mathrm{RR}\,r_0 .$$
 
 **Proposition.**

@@ -5,9 +5,13 @@ Let $T$ be an unrooted binary tree on $X$ and $Y_i \subseteq X$ a partition spec
 **Theorem.** The edge map satisfies the following recursion, which determines it from the pendant edges inwards.
 
 1. (External edges.) For a pendant edge $e = \{x\} \mid X \setminus \{x\}$,
+
 $$f_i(e) = \begin{cases} \{x\} \mid Y_i \setminus \{x\}, & x \in Y_i,\\ \epsilon, & x \notin Y_i.\end{cases}$$
+
 2. (Internal edges.) Let $e$ be an internal edge with two adjacent edges $e_1, e_2$ on one side, so that $e_1 = A \mid (B \cup C)$, $e_2 = B \mid (A \cup C)$ and $e = (A \cup B) \mid C$ for a partition $X = A \sqcup B \sqcup C$ into nonempty sets. Then
+
 $$f_i(e) = \begin{cases} \epsilon, & f_i(e_1) = f_i(e_2),\\ f_i(e_1), & f_i(e_1) \neq \epsilon,\ f_i(e_2) = \epsilon,\\ f_i(e_2), & f_i(e_1) = \epsilon,\ f_i(e_2) \neq \epsilon,\\ e_i^{*}, & f_i(e_1) \neq f_i(e_2),\ \text{both} \neq \epsilon,\end{cases}$$
+
 where $e_i^{*}$ is the unique edge of $T|_{Y_i}$ incident to both $f_i(e_1)$ and $f_i(e_2)$.
 
 Consequently a single post-order traversal computes $f_i$ in time linear in $n$, the whole collection $F = \{f_1, \dots, f_k\}$ in time $O(nk)$, and the value $f_i(e)$ computed from either side of $e$ is the same.

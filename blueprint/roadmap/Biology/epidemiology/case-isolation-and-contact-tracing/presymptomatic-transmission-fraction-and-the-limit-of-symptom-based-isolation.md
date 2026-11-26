@@ -1,15 +1,21 @@
 # Presymptomatic transmission fraction and the limit of symptom-based isolation
 
 **Setting.** In the [branching-process model of case isolation and contact tracing](branching-process-model-of-case-isolation-and-contact-tracing.md), let the incubation period $T > 0$ have any law (a Weibull law in the source) and, given $T$, let the serial interval be skew-normal with location $T$, scale $\omega > 0$ and shape $\alpha \in \mathbb{R}$:
+
 $$S \mid T \sim \mathrm{SN}(\xi = T,\ \omega,\ \alpha).$$
+
 The *presymptomatic transmission fraction* is $\theta = \Pr(S < T)$.
 
 **Proposition 1 (closed form).** $\theta$ does not depend on the law of $T$ or on $\omega$:
+
 $$\theta = \frac12 - \frac{1}{\pi}\arctan \alpha, \qquad \text{equivalently} \qquad \alpha = \cot(\pi \theta) \quad (0 < \theta < 1).$$
+
 For $\theta = 0.15$ and $\theta = 0.30$ this gives $\alpha \approx 1.96$ and $\alpha \approx 0.73$; $\theta < 0.01$ requires $\alpha > \cot(0.01\pi) \approx 31.8$.
 
 **Proposition 2 (isolation floor).** Suppose every case is symptomatic and there is no quarantine of asymptomatic contacts, so that $\tau_i - t_i \ge T_i$ for every case, whatever $\rho$ and $D$. Then
+
 $$R_{\mathrm{eff}} \ge R_0\, \theta .$$
+
 In particular, if $R_0 \theta > 1$, no combination of tracing probability and isolation delay makes the controlled branching process subcritical.
 
 ## Depends on

@@ -5,9 +5,13 @@ Work in the setting of the [cumulative hazard model](cumulative-hazard-model-of-
 **Proposition.**
 
 1. The probability of a first infection within the last $w$ years is
+
 $$P_{\mathrm{first}}(a,T) = e^{-H(T-a,\,T-w)}\Big(1 - e^{-H(T-w,\,T)}\Big).$$
+
 2. The probability of being infected or reinfected within the last $w$ years is
+
 $$P_{\mathrm{recent}}(a,T) = P_{\mathrm{first}}(a,T) + \Big(1 - e^{-H(T-a,\,T-w)}\Big)\Big(1 - e^{-(1-\rho)H(T-w,\,T)}\Big).$$
+
 3. $P_{\mathrm{first}} \le P_{\mathrm{recent}} \le 1 - e^{-H(T-w,T)}$; the left equality holds when $\rho = 1$ and the right one when $\rho = 0$.
 4. If after time $T$ there is no further transmission and infected people develop disease at a constant remote activation rate $\kappa$, the disease incidence produced by the latent pool at a later time is $\kappa$ times the prevalence of infection at that time.
 

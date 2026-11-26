@@ -14,7 +14,9 @@ Then:
 2. $r$ is nonincreasing in the limit of detection $L$: a less sensitive test can never remove more infectiousness for the same testing days.
 3. If $\Delta_L$ contains $D$ consecutive days starting at $t_d = \min \Delta_L$, then every phase detects and $\tau_\varphi \le t_d + D - 1$; with daily testing, $\tau_\varphi = t_d$.
 4. In a population of independent infected individuals whose expected number of secondary infections is proportional to the infectiousness emitted before isolation, the reproduction number under screening is
+
 $$R = R_{\mathrm{sym}} \cdot \frac{\mathbb{E}\big[\sum_{t < t_{\mathrm{iso}}} F(t)\big]}{\mathbb{E}\big[\sum_{t < t_s} F(t)\big]},$$
+
 where $R_{\mathrm{sym}}$ is the reproduction number with symptom-driven self-isolation only and expectations are over individuals and phases; it is a ratio of expectations, not the mean of individual ratios.
 
 In simulations with a hinge viral load model, 35% of infected people isolating within 3 days of peak viral load, and limits of detection $10^3$ and $10^5$, weekly screening removed 62–66% of individuals' total infectiousness and testing every two weeks removed 45–47%, with little difference between the two tests; in population models, faster turnaround and more frequent testing reduced $R$ and outbreak size far more than higher analytical sensitivity.

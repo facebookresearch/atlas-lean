@@ -1,13 +1,16 @@
 # Invariant-subspace coarse-graining of a transition matrix
 
 Let $P \in \mathbb{R}^{N \times N}$ be a row-stochastic matrix, let $D$ be a positive definite diagonal matrix, and let $\chi \in \mathbb{R}^{N \times n}$ have full column rank $n$. Define the projected matrix
+
 $$P_c = (\chi^{\top} D \chi)^{-1} \chi^{\top} D P \chi \in \mathbb{R}^{n \times n}.$$
 
 **Theorem.** Suppose the column space of $\chi$ is invariant under $P$, i.e. $P\chi = \chi \Lambda$ for some $\Lambda \in \mathbb{R}^{n \times n}$. Then:
 
 1. $P_c = \Lambda$; in particular $P_c$ does not depend on the choice of $D$.
 2. **Projection commutes with propagation:** for every row vector $\rho \in \mathbb{R}^{1 \times N}$ and every integer $t \ge 0$,
+
 $$(\rho P^{t})\, \chi = (\rho\, \chi)\, P_c^{\,t},$$
+
 so propagating a cell density with $P$ and then projecting onto macrostates equals projecting first and propagating with $P_c$.
 3. The spectrum of $P_c$ is the part of the spectrum of $P$ carried by the invariant subspace.
 4. If in addition $\chi$ is a partition of unity, $\chi \mathbf{1}_n = \mathbf{1}_N$, then every row of $P_c$ sums to $1$. If moreover $P_c \ge 0$ entrywise, $P_c$ is the transition matrix of a Markov chain on the $n$ macrostates.

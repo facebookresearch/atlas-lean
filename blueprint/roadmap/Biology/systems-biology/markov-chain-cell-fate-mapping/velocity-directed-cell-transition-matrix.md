@@ -1,8 +1,11 @@
 # Velocity-directed cell transition matrix
 
 Let $N$ cells have expression profiles $x_i \in \mathbb{R}^{G}$ and RNA velocity vectors $v_i \in \mathbb{R}^{G}$, and let $\mathcal{G}$ be a symmetric $k$-nearest-neighbour graph on the cells with adjacency matrix $A \ge 0$ and neighbour sets $\mathcal{N}(i) = \{j : A_{ij} > 0\}$, each nonempty. For $j \in \mathcal{N}(i)$ let $c_{ij}$ be the Pearson correlation between $v_i$ and the state-change vector $x_j - x_i$. For $\sigma > 0$ define
+
 $$(P_v)_{ij} = \frac{e^{\sigma c_{ij}}}{\sum_{l \in \mathcal{N}(i)} e^{\sigma c_{il}}} \quad (j \in \mathcal{N}(i)), \qquad (P_v)_{ij} = 0 \text{ otherwise},$$
+
 let $P_s$ be the row-normalized adjacency, $(P_s)_{ij} = A_{ij} / \sum_l A_{il}$, and for $\lambda \in [0, 1]$ set
+
 $$P = (1 - \lambda)\, P_v + \lambda\, P_s .$$
 
 Properties:

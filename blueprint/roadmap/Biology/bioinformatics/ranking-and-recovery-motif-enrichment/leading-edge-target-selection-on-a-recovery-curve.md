@@ -3,7 +3,9 @@
 **Setting.** Use the rankings $\pi_1, \dots, \pi_N$, the query set $Q$ and the recovery curves $\mathrm{rec}_m$ of [the recovery-curve AUC](recovery-curve-auc-and-normalized-enrichment-score.md). For each rank $x$ let $\bar r(x)$ and $s_r(x)$ be the mean and standard deviation of $\mathrm{rec}_1(x), \dots, \mathrm{rec}_N(x)$, and define the background curve $b(x) = \bar r(x) + 2\,s_r(x)$. Fix a rank threshold $X_{\max} \le G$.
 
 **Definition.** For an enriched motif $m$, the leading edge is
+
 $$x_m^\ast = \operatorname*{arg\,max}_{1 \le x \le X_{\max}} \big(\mathrm{rec}_m(x) - b(x)\big)$$
+
 (the smallest maximizer, by convention), and the predicted direct targets of $m$ are $\{\, g \in Q : \pi_m(g) \le x_m^\ast \,\}$, a set of size $\mathrm{rec}_m(x_m^\ast)$.
 
 **Proposition.** The maximum is attained at a rank where $\mathrm{rec}_m$ has just increased: either $x_m^\ast = 1$ or $\mathrm{rec}_m(x_m^\ast) > \mathrm{rec}_m(x_m^\ast - 1)$, provided $b$ is nondecreasing on $[1, X_{\max}]$.

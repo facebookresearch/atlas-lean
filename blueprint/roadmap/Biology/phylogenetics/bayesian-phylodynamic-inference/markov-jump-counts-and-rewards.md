@@ -3,8 +3,11 @@
 Let $(X_s)_{s \ge 0}$ be a continuous-time Markov chain on a finite state set $S$ with rate matrix $Q = (q_{ab})$ (off-diagonal entries nonnegative, rows summing to zero) and transition matrix $P(t) = e^{Qt}$. For distinct states $a \ne b$ let $N_{ab}(t)$ be the number of jumps from $a$ to $b$ during $[0,t]$ (a **Markov jump** count), and for a state $a$ let $R_a(t) = \int_0^t \mathbf 1[X_s = a]\,ds$ be the time spent in $a$ (a **Markov reward**).
 
 **Theorem.** For all $i, j \in S$ and $t \ge 0$,
+
 $$\mathbb{E}\big[N_{ab}(t)\,\mathbf 1[X_t = j] \mid X_0 = i\big] = q_{ab} \int_0^t P_{ia}(s)\, P_{bj}(t-s)\, ds,$$
+
 $$\mathbb{E}\big[R_a(t)\,\mathbf 1[X_t = j] \mid X_0 = i\big] = \int_0^t P_{ia}(s)\, P_{aj}(t-s)\, ds .$$
+
 Dividing by $P_{ij}(t)$ (when positive) gives the expected number of $a \to b$ jumps, and the expected time in $a$, along a branch of length $t$ conditional on its end states. In matrix form, the first quantity is the $(i,j)$ entry of $q_{ab}\int_0^t e^{Qs} E_{ab}\, e^{Q(t-s)}\, ds$, where $E_{ab}$ is the matrix unit.
 
 ## Depends on

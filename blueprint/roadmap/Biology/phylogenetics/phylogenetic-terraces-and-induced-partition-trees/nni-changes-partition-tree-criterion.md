@@ -3,7 +3,9 @@
 Let $T$ be an unrooted binary tree on $X$, let $e$ be an internal edge of $T$ and let $e_1, e_2, e_3, e_4$ be the four edges adjacent to $e$, with $A, B, C, D$ the species sets of the four subtrees hanging from them, so $X = A \sqcup B \sqcup C \sqcup D$ and $e = (A \cup B) \mid (C \cup D)$. Let $T_{\mathrm{NNI}}$ be either tree obtained from $T$ by a nearest-neighbour interchange around $e$, and let $Y \subseteq X$ be a partition species set with [edge map](induced-partition-tree-edge-map.md) $f$.
 
 **Theorem.** The topologies of $T|_{Y}$ and $T_{\mathrm{NNI}}|_{Y}$ differ if and only if
+
 $$A \cap Y \neq \emptyset,\quad B \cap Y \neq \emptyset,\quad C \cap Y \neq \emptyset,\quad D \cap Y \neq \emptyset,$$
+
 equivalently if and only if $f(e_1), f(e_2), f(e_3), f(e_4)$ are all different from $\epsilon$. When the condition holds, $T_{\mathrm{NNI}}|_{Y}$ is obtained from $T|_{Y}$ by the corresponding interchange of the images (swapping $f(e_1)$ with $f(e_3)$ when $e_1$ and $e_3$ are swapped on $T$). When it fails, $T_{\mathrm{NNI}}|_{Y} = T|_{Y}$, so $T$ and $T_{\mathrm{NNI}}$ lie on one partial terrace; if it fails for every partition they lie on one full terrace and no partitioned score needs recomputation.
 
 ## Depends on

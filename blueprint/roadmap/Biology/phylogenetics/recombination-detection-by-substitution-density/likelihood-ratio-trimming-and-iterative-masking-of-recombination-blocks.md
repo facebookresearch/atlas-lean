@@ -4,7 +4,9 @@ Let $r$ be a candidate recombination block on branch $B$ (a run of significant w
 
 1. **Trim.** Shrink $r$ so that its ends are its outermost substitutions, then alternately move the left and right ends inward to the next substitution while doing so increases the likelihood of the block under $H_{1,B,r}$ relative to $H_{0,B}$.
 2. **Genome-wide test.** With final length $l_f$ and $s_f$ substitutions, keep the block only if
+
 $$1 - \sum_{i = 0}^{s_f - 1} \binom{l_f}{i}\, d_{0,B}^{\,i}\, (1 - d_{0,B})^{\,l_f - i} \;<\; \frac{0.05}{g / l_f},$$
+
 a Bonferroni correction for the $g / l_f$ non-overlapping windows of that length in the genome.
 3. **Mask and iterate.** Among surviving blocks on $B$, take the one with the smallest likelihood ratio $\Pr(r \mid H_{0,B}) / \Pr(r \mid H_{1,B,r})$, convert its span to missing data on $B$ and all descendant nodes, recompute $d_{0,B}$ from the substitutions outside the masked regions, and rescan. Stop when no window rejects $H_{0,B}$ or the minimum number of substitutions needed for significance falls below a set threshold.
 

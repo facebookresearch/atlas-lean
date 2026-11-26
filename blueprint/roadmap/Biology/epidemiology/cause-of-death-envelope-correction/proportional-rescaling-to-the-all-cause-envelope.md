@@ -1,6 +1,7 @@
 # Proportional rescaling to the all-cause envelope
 
 Fix a stratum (location, year, age group and sex) and a set of mutually exclusive, collectively exhaustive causes $c = 1,\dots,J$. Let $d_c^{(s)} \ge 0$ be the $s$-th posterior draw of deaths from cause $c$ produced by cause-specific models, with $\sum_c d_c^{(s)} > 0$, and let $E^{(s)} \ge 0$ be the $s$-th draw of all-cause deaths (the **envelope**). The proportionally corrected draws are
+
 $$\tilde d_c^{(s)} = d_c^{(s)}\, \frac{E^{(s)}}{\sum_{c'=1}^{J} d_{c'}^{(s)}} .$$
 
 **Proposition.**

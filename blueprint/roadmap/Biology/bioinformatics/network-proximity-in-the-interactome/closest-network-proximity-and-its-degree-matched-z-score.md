@@ -3,10 +3,13 @@
 **Setting.** Let $G = (V, E)$ be a connected undirected graph (the human interactome) with shortest-path distance $d : V \times V \to \mathbb{Z}_{\ge 0}$. Let $C \subseteq V$ be a nonempty disease module (host genes associated with a disease) and $T \subseteq V$ a nonempty drug-target set.
 
 **Definition (closest proximity).**
+
 $$\langle d_{CT} \rangle = \frac{1}{|C| + |T|}\left( \sum_{c \in C} \min_{t \in T} d(c,t) + \sum_{t \in T} \min_{c \in C} d(c,t) \right).$$
 
 **Definition (z-score).** Draw $B$ random pairs $(C_b, T_b)$ of vertex sets whose degree distributions match those of $C$ and $T$, and let $\bar d_r$ and $\sigma_r$ be the mean and standard deviation of $\langle d_{C_b T_b}\rangle$ over $b = 1, \dots, B$. Then
+
 $$Z_{d_{CT}} = \frac{\langle d_{CT}\rangle - \bar d_r}{\sigma_r}.$$
+
 A drug is called proximal to the module when $Z < -1.5$ and the empirical permutation $p$-value is below $0.05$ (with $B = 1000$ in the source).
 
 **Basic properties.** $\langle d_{CT}\rangle$ is symmetric in $C$ and $T$; it is $0$ if and only if $C = T$; and it is at most the diameter of $G$.

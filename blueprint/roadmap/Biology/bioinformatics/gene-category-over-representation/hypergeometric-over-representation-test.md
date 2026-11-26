@@ -1,8 +1,11 @@
 # Hypergeometric over-representation test
 
 Let a **population** of $N$ annotated genes contain $M$ members of a category $C$ ($0 \le M \le N$). An experiment selects a **list** of $n \le N$ genes, of which $k$ belong to $C$. Under the null hypothesis that the list is a uniformly random $n$-subset of the population, the number $X$ of category members on the list is hypergeometric:
+
 $$\Pr(X = x) = \frac{\binom{M}{x}\binom{N-M}{n-x}}{\binom{N}{n}}, \qquad \max(0, n-N+M) \le x \le \min(M,n).$$
+
 The one-tailed Fisher exact probability of over-representation is
+
 $$p_{\mathrm F}(k; N, M, n) = \Pr(X \ge k) = \sum_{x \ge k} \frac{\binom{M}{x}\binom{N-M}{n-x}}{\binom{N}{n}} .$$
 
 **Properties.** $p_{\mathrm F}$ is nonincreasing in $k$, equals $1$ at $k = 0$, and is a valid p-value: $\Pr(p_{\mathrm F}(X) \le \alpha) \le \alpha$ under the null for every $\alpha \in [0,1]$. It is the one-sided Fisher exact test on the $2 \times 2$ table (on list or not) $\times$ (in $C$ or not), conditional on its margins.

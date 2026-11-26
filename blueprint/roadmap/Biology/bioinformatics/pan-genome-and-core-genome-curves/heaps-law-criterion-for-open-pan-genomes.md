@@ -1,6 +1,7 @@
 # Heaps-law criterion for open pan-genomes
 
 Consider an infinite sequence of genomes of a species and the expected [pan-genome curve](pan-and-core-genome-size-curves.md) $P(k)$, the expected number of gene families in the first $k$ genomes, with increments $\Delta(k) = P(k) - P(k-1) \ge 0$, the expected number of new families contributed by the $k$-th genome. The pan-genome is **closed** if $P(k)$ is bounded and **open** otherwise. Suppose the new-family counts follow a Heaps-type power law
+
 $$\Delta(k) = \kappa\, k^{-\alpha}, \qquad \kappa > 0,\ \alpha \in \mathbb{R}.$$
 
 **Proposition.**

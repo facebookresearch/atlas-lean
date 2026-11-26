@@ -5,7 +5,9 @@ Let $\vartheta = (R_0, k, D, n)$ collect the basic reproduction number, the nega
 Rejection approximate Bayesian computation draws $\vartheta \sim \pi$, simulates $C(t^*)$ under $P_\vartheta$, and keeps $\vartheta$ if $C(t^*) \in A$. Then:
 
 1. The accepted values are exact draws from the posterior given the interval observation,
+
 $$\pi(\vartheta \mid C(t^*) \in A) = \frac{\pi(\vartheta)\, P_\vartheta(C(t^*) \in A)}{\sum_{\vartheta'} \pi(\vartheta')\, P_{\vartheta'}(C(t^*) \in A)}.$$
+
 2. Equivalently, with $M$ simulations at each grid point, the acceptance proportion at $\vartheta$ is an unbiased and consistent estimator of the likelihood $P_\vartheta(C(t^*) \in A)$, and normalizing these proportions times the prior estimates the posterior on the grid.
 3. Marginal posteriors of $R_0$ and $k$ follow by summing over the other coordinates.
 

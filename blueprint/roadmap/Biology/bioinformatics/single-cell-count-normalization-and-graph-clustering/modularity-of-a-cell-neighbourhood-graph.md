@@ -3,7 +3,9 @@
 Let cells be embedded as points $v_1, \dots, v_n$ in a reduced expression space (typically the leading principal components of the [normalized and log-transformed](size-factor-scaling-and-log-transform.md) matrix) and fix $K \in \mathbb{N}$. The $K$-nearest-neighbour graph $G$ has vertex set $\{1, \dots, n\}$ and an edge between $i$ and $i'$ whenever one of the two is among the $K$ nearest of the other in the chosen metric; let $A = (A_{ii'})$ be its adjacency matrix with weights $A_{ii'} \ge 0$, $k_i = \sum_{i'} A_{ii'}$ the degree of $i$ and $2m = \sum_{i, i'} A_{ii'}$.
 
 **Definition (modularity with resolution).** For a partition of the cells into clusters, with $c_i$ the cluster of cell $i$, and a resolution parameter $\gamma > 0$,
+
 $$Q_\gamma \;=\; \frac{1}{2m} \sum_{i, i'} \left( A_{ii'} - \gamma \frac{k_i k_{i'}}{2m} \right) \delta(c_i, c_{i'}),$$
+
 where $\delta$ is the Kronecker delta. Clustering by modularity optimization returns a partition maximizing $Q_\gamma$; at $\gamma = 1$ this is the Newman–Girvan modularity, and increasing $\gamma$ penalizes within-cluster edges more heavily and yields finer partitions.
 
 **Properties.** $Q_\gamma$ compares the observed within-cluster edge weight with its expectation $\gamma k_i k_{i'} / 2m$ under the configuration null model, which preserves the degree sequence; the trivial partition into one cluster gives $Q_\gamma = (1 - \gamma)$ at $\gamma \le 1$ and the partition into singletons gives $Q_\gamma = \frac{1}{2m}\sum_i (A_{ii} - \gamma k_i^2 / 2m)$, so neither extreme is favoured for intermediate $\gamma$. Maximization is NP-hard in general, so greedy multilevel heuristics are used; a cluster may be refined by rerunning the optimization on the induced subgraph.

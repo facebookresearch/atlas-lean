@@ -1,7 +1,9 @@
 # Absorption probabilities as cell-fate probabilities
 
 Let a finite Markov chain on cells have its states split into a set $\mathcal{R}$ made absorbing (all outgoing transitions of terminal-state cells removed) and a transient set $\mathcal{T}$, with transition matrix in block form
+
 $$P = \begin{pmatrix} \tilde P & 0 \\ S & Q \end{pmatrix},$$
+
 where $Q$ is the restriction to $\mathcal{T}$ and $S$ holds transitions from $\mathcal{T}$ to $\mathcal{R}$. Assume every transient state reaches $\mathcal{R}$ with positive probability.
 
 **Theorem.** $I - Q$ is invertible, and for the fundamental matrix $M = (I - Q)^{-1}$:
@@ -10,7 +12,9 @@ where $Q$ is the restriction to $\mathcal{T}$ and $S$ holds transitions from $\m
 2. $B = (I - Q)^{-1} S = MS$ has entries $B_{ir} = \Pr(\text{the first state of } \mathcal{R} \text{ reached is } r \mid X_0 = i)$, and each row of $B$ sums to $1$.
 
 **Fate probabilities.** If $\mathcal{R}$ is partitioned into terminal index sets $R_1, \dots, R_{n_t}$, the fate probability of transient cell $i$ towards terminal state $t$ is
+
 $$F_{it} = \sum_{r \in R_t} B_{ir}, \qquad F_{it} \ge 0, \quad \sum_{t=1}^{n_t} F_{it} = 1,$$
+
 the limit of the fraction of random walks from $i$ that are first absorbed in $R_t$. Equivalently, the column $F_{\cdot t}$ is the unique solution of the linear system $(I - Q)\, F_{\cdot t} = S\, \mathbf{1}_{R_t}$.
 
 ## Depends on

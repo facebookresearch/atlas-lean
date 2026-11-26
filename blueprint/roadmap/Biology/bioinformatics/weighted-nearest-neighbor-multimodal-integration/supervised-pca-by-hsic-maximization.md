@@ -1,13 +1,17 @@
 # Supervised principal component analysis by HSIC maximization
 
 Let $X \in \mathbb{R}^{p \times n}$ hold $p$ features (genes) for $n$ cells, let $L \in \mathbb{R}^{n \times n}$ be a symmetric cell–cell kernel encoding a response (for example similarities from a multimodal neighbour graph), and let $H = I_n - \frac{1}{n} e e^{\top}$ be the centring matrix, $e = (1, \dots, 1)^{\top}$. The Hilbert–Schmidt Independence Criterion of two $n \times n$ kernels is
+
 $$\mathrm{HSIC}(K, L) = \frac{1}{(n-1)^2} \operatorname{tr}(K H L H).$$
 
 For a projection $U \in \mathbb{R}^{p \times d}$ with $U^{\top} U = I_d$, the linear kernel of the projected data is $K = (U^{\top} X)^{\top} U^{\top} X$, and
+
 $$\mathrm{HSIC}(K, L) = \frac{1}{(n-1)^2} \operatorname{tr}\!\left(U^{\top} X H L H X^{\top} U\right).$$
 
 **Theorem.** Let $\lambda_1 \ge \dots \ge \lambda_p$ be the eigenvalues of the symmetric matrix $Q = X H L H X^{\top}$ with orthonormal eigenvectors $u_1, \dots, u_p$. Then
+
 $$\max_{U^{\top} U = I_d} \operatorname{tr}(U^{\top} Q U) = \sum_{j=1}^{d} \lambda_j,$$
+
 attained at $U = [u_1, \dots, u_d]$. The maximizer is unique up to right multiplication by an orthogonal $d \times d$ matrix when $\lambda_d > \lambda_{d+1}$. If $L$ is positive semidefinite, so is $Q$, and all $\lambda_j \ge 0$.
 
 The columns of $U$ are gene loadings of components that maximally depend, in the HSIC sense, on the structure in $L$.

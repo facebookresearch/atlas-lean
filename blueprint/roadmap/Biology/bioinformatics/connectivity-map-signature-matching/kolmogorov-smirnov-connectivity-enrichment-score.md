@@ -3,7 +3,9 @@
 **Setting.** A drug profile ranks $r$ genes, $1$ (most up-regulated) to $r$. A query signature is a set of $s$ genes from this ranking; sort them by their rank in the drug profile and let $V(j)$, $1 \le V(1) < \dots < V(s) \le r$, be the rank of the $j$-th signature gene.
 
 **Definition.**
+
 $$a = \max_{1 \le j \le s}\left( \frac{j}{s} - \frac{V(j)}{r} \right), \qquad b = \max_{1 \le j \le s}\left( \frac{V(j)}{r} - \frac{j - 1}{s} \right),$$
+
 and the enrichment score is $\mathrm{ES} = a$ if $a > b$, and $\mathrm{ES} = -b$ otherwise. It is computed separately for the up- and down-regulated parts of a disease signature, giving $\mathrm{ES}_{\mathrm{up}}$ and $\mathrm{ES}_{\mathrm{down}}$; significance is assessed by recomputing ES for random signatures of the same sizes.
 
 **Proposition.** $a \in [0, 1)$, $b \in (0, 1]$ and $a + b \ge 1/s$. If the signature occupies the top $s$ ranks then $a = 1 - s/r$; if it occupies the bottom $s$ ranks then $b = 1 - (s-1)/r$.

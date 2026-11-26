@@ -5,9 +5,13 @@ Let samples $i = 1, \dots, N$ have chronological ages $t_i > 0$ and methylation 
 **Calibration.** Fix a strictly increasing calibration $F : (0, \infty) \to \mathbb{R}$ of the age scale, logarithmic up to adulthood and affine afterwards, and regress $y_i = F(t_i)$ rather than $t_i$ itself.
 
 **Definition (predictor).** For a mixing parameter $\alpha \in [0, 1]$ and penalty $\lambda > 0$, the elastic-net estimate is
+
 $$(\hat b_0, \hat b) \;=\; \arg\min_{b_0 \in \mathbb{R},\, b \in \mathbb{R}^{P}} \; \frac{1}{2N} \sum_{i=1}^{N} \Bigl( y_i - b_0 - \sum_{j=1}^{P} b_j x_{ij} \Bigr)^{2} \;+\; \lambda \Bigl[ \tfrac{1 - \alpha}{2} \lVert b \rVert_2^{2} + \alpha \lVert b \rVert_1 \Bigr],$$
+
 and the methylation age of a sample with profile $x$ is
+
 $$\mathrm{DNAmAge}(x) \;=\; F^{-1}\Bigl( \hat b_0 + \sum_{j=1}^{P} \hat b_j x_j \Bigr).$$
+
 With $\alpha = 0.5$ and $\lambda = 0.0226$ chosen by cross-validation on the training data, the fit selects $353$ sites with $\hat b_j \neq 0$, the clock CpGs. **Age acceleration** of a sample is the residual $\mathrm{DNAmAge}(x) - t$.
 
 **Properties.** For $\alpha > 0$ the penalty is nondifferentiable at the origin and the solution is sparse; for $\alpha < 1$ the objective is strictly convex in $b$, so the fitted coefficient vector is unique even when $P \gg N$ and sites are strongly correlated, and correlated clock sites share weight instead of one of them taking all of it. Because $F$ is strictly increasing it is invertible, so the predictor is a monotone reparameterization of a linear predictor and the clock reads out a single linear combination of methylation levels. The predictor is defined on any tissue whose profile is measured on the same platform; calibration quality, not availability, is what varies between tissues.

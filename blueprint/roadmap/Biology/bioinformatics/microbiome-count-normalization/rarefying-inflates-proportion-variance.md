@@ -1,14 +1,18 @@
 # Rarefying inflates the variance of proportion estimates
 
 Fix a library of $n$ reads in which each read independently belongs to a given taxon with probability $p \in [0,1]$, so the taxon count is $K \sim \mathrm{Binomial}(n, p)$. **Rarefying** to depth $m \in \{1,\dots,n\}$ draws $m$ of the $n$ reads uniformly without replacement and records the taxon count $X$ among them, so that
+
 $$X \mid K \sim \mathrm{Hypergeometric}(n \text{ reads},\ K \text{ of the taxon},\ m \text{ drawn}).$$
+
 Compare the full-data proportion $\hat p = K/n$ with the rarefied proportion $\tilde p = X/m$.
 
 **Theorem.**
 
 1. $X \sim \mathrm{Binomial}(m, p)$, so $\tilde p$ is unbiased with $\operatorname{Var}(\tilde p) = p(1-p)/m$.
 2. $\mathbb{E}[\tilde p \mid K] = \hat p$, and
+
 $$\operatorname{Var}(\tilde p) = \operatorname{Var}(\hat p) + \frac{(n-m)\,p(1-p)}{m\,n} = \frac{n}{m}\,\operatorname{Var}(\hat p).$$
+
 3. For every convex loss $\ell$, $\mathbb{E}\,\ell(\hat p, p) \le \mathbb{E}\,\ell(\tilde p, p)$. Under squared-error loss the inequality is strict whenever $m < n$ and $0 < p < 1$, so the rarefied estimator is dominated by the full-data estimator and is inadmissible.
 
 ## Depends on

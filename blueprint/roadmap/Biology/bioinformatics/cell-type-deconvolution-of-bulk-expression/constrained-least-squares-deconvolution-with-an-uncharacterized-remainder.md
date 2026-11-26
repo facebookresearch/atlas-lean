@@ -1,14 +1,19 @@
 # Constrained least-squares deconvolution with an uncharacterized remainder
 
 Let $S \in \mathbb{R}_{\ge 0}^{G \times C}$ be a signature matrix of $C$ cell types over the $G$ signature genes present in a sample, and let $m \in \mathbb{R}^{G}$ be the sample's expression on those genes. The deconvolution estimate is any solution of
+
 $$\hat F \in \operatorname*{arg\,min}_{F \in \Delta} \|S F - m\|_2^2, \qquad \Delta = \Bigl\{F \in \mathbb{R}^{C} : F_c \ge 0 \ (c = 1, \dots, C),\ \sum_{c=1}^{C} F_c \le 1\Bigr\}.$$
 
 1. **Existence and uniqueness.** $\Delta$ is a nonempty compact convex polytope and the objective is a convex quadratic, so a minimizer exists. If $S$ has full column rank $C$, the objective is strictly convex and $\hat F$ is unique.
 2. **Remainder.** $f = \sum_c \hat F_c \in [0, 1]$ is the fraction of the signal explained by the modelled cell types, and $1 - f$ is the estimated fraction of uncharacterized ("other") cells.
 3. **mRNA-content correction.** Given cell-type mRNA contents $n_c > 0$, set $F'_c = \hat F_c / n_c$ and, when $f' = \sum_c F'_c > 0$,
+
 $$F''_c = \frac{F'_c\, f}{f'} .$$
+
 Then $F''_c \ge 0$, $\sum_c F''_c = f$, so the uncharacterized fraction $1 - f$ is unchanged, and for any two types with $\hat F_d > 0$,
+
 $$\frac{F''_c}{F''_d} = \frac{\hat F_c / n_c}{\hat F_d / n_d},$$
+
 i.e. relative abundances among modelled types are mRNA-fraction ratios divided by mRNA-content ratios.
 
 ## Expansion
