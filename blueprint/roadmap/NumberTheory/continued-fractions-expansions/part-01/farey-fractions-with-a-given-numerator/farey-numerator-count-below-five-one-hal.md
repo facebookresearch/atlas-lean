@@ -4,4 +4,4 @@ In the Farey sequence of order $5$ the fractions with numerator $1$ and value be
 
 ## Sources
 
-Rogelio Tomás García, "Farey Fractions with Equal Numerators and the Rank of Unit Fractions", INTEGERS 24 (2024), Article A63, Section 1.
+Rogelio Tomás García, "Farey Fractions with Equal Numerators and the Rank of Unit Fractions", INTEGERS 24 (2024), Article A63, Section 1 (definitions) and Section 2, p. 6 (the listing of the Farey sequence of order 5).

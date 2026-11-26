@@ -16,7 +16,7 @@
 - [Feasible instances of THREE-MACHINE UNIT-TIME OPEN SHOP WITH CHAINS, WEIGHTED COMPLETION TIME](o3-unit-chains-weighted-completion-feasi.md)
 - [THREE-MACHINE UNIT-TIME OPEN SHOP WITH CHAINS, WEIGHTED COMPLETION TIME as a decision problem](o3-unit-chains-weighted-completion-dec.md)
 - [THREE-MACHINE UNIT-TIME OPEN SHOP WITH CHAINS, WEIGHTED COMPLETION TIME is NP-complete](o3-unit-chains-weighted-completion-np-co.md)
-- [Instances of two-machine unit-time shops with chains](two-processor-unit-flow-shop-chains-tard.md)
+- [Due dates, chain arcs and bound for unit-time shops](two-processor-unit-flow-shop-chains-tard.md)
 - [Jobs of a two-machine unit-time shop with chains](job.md)
 - [Due date of a job in a two-machine unit-time shop with chains](due-date.md)
 - [Chain arcs of a two-machine unit-time shop with chains](arc.md)
