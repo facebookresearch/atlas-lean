@@ -12589,6 +12589,7 @@
   "MathlibExt/NumberTheory/BNomialNumberType3": {"to": "Combinatorics/binomial-coefficients/generalized-binomial-coefficients", "title": "b-nomial coefficients"},
   "MathlibExt/NumberTheory/BangZsigmondy": {"to": "NumberTheory/linear-recurrences/lucas-sequences-primitive-divisors", "title": "Zsigmondy's theorem"},
   "MathlibExt/NumberTheory/BaseRecognizable": {"to": "NumberTheory/digits-numeration/numeration-automatic", "title": "Cobham's theorems on recognizable sets"},
+  "MathlibExt/NumberTheory/Beatty/ComplBetween": {"to": "NumberTheory/diophantine-approximation/uniform-distribution-metric", "title": "Beatty sequences"},
   "MathlibExt/NumberTheory/Beatty/CountIncrement": {"to": "NumberTheory/diophantine-approximation/uniform-distribution-metric", "title": "Beatty sequences"},
   "MathlibExt/NumberTheory/Beatty/FloorFiber": {"to": "NumberTheory/diophantine-approximation/uniform-distribution-metric", "title": "Beatty sequences"},
   "MathlibExt/NumberTheory/Beatty/FloorFiberIndicator": {"to": "NumberTheory/diophantine-approximation/uniform-distribution-metric", "title": "Beatty sequences"},
