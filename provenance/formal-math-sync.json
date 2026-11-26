@@ -9,7 +9,7 @@
   ],
   "schema_version": 2,
   "upstream": {
-    "commit": "290ce6981c6a215c5892666d549a63ed130bd178",
+    "commit": "99b6337f39fc42429e985c8b3fb7a6f810f155ef",
     "repository": "fairinternal/formal-math"
   }
 }

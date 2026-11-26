@@ -39,7 +39,8 @@ namespace HomologicalComplex₂
 variable {C : Type u} [Category.{v} C] [Preadditive C]
   [HasFiniteCoproducts C]
 
-local instance : HasFiniteBiproducts C :=
+/-- The finite-biproduct instance used locally in this partial-total construction. -/
+local instance partialTotalEIntFiltrationFiniteBiproducts : HasFiniteBiproducts C :=
   HasFiniteBiproducts.of_hasFiniteCoproducts
 
 variable (B : HomologicalComplex₂ C (ComplexShape.down ℕ)
