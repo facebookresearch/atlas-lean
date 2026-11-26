@@ -15508,6 +15508,7 @@
 "Cslib.Algorithms.Lean.Scheduling.lpt_step_le": "e00aa38e1d1f1812",
 "Cslib.Algorithms.Lean.Scheduling.lpt_time_le": "fb218ba877cf6a86",
 "Cslib.Algorithms.Lean.Scheduling.makespan": "3b25bb33be98872c",
+"Cslib.Algorithms.Lean.Scheduling.makespan_rounding_to_ticks_bounds": "02bc9a6bc1318968",
 "Cslib.Algorithms.Lean.Scheduling.mul_leastLoaded_le": "73339b8214d59f88",
 "Cslib.Algorithms.Lean.Scheduling.two_mul_le_of_loads_gt": "031e441dde036186",
 "Cslib.Algorithms.Lean.SegmentTree": "3a4b06536bf967fb",
