@@ -16,6 +16,7 @@ public import MathlibExt.Combinatorics.Enumerative.ZagierNumber
 public import MathlibExt.NumberTheory.ArithmeticFunction.BinomialPowerRealizability
 public import MathlibExt.NumberTheory.ArithmeticFunction.MoebiusGeometricGrowth
 public import MathlibExt.NumberTheory.DoldPrimePowerCongruences
+public import MathlibExt.NumberTheory.HelouTerjanianLargePrime
 public import MathlibExt.NumberTheory.HelouTerjanianTwo
 public import Mathlib.NumberTheory.ArithmeticFunction.Moebius
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
@@ -81,19 +82,6 @@ Sequences 27 (2024), Article 24.3.3, Theorem 21 (`jis-2024-24.3.3-thm-21`). -/
 public theorem_wanted not_isAlmostRealizableSeq_catalan_motzkin_schroder :
     ¬ IsAlmostRealizableSeq catalan ∧ ¬ IsAlmostRealizableSeq motzkinNumber ∧
       ¬ IsAlmostRealizableSeq Nat.largeSchroder
-
-/-- **Helou–Terjanian congruence for primes $p \ge 5$.** Let $p \ge 5$ be a prime and let $m$ and
-$n$ be integers with $0 < m < n$. Then $\binom{np}{mp} \equiv \binom{n}{m} \pmod{p^e}$, where
-$e = 3 + \max(\nu_p(m), \nu_p(n - m)) + \nu_p\big(\binom{n}{m}\big)$ and $\nu_p$ is the $p$-adic
-valuation.
-
-Source: Geng-Rui Zhang, *Realizability of Some Combinatorial Sequences*, Journal of Integer
-Sequences 27 (2024), Article 24.3.3, Lemma 26 (1) (`jis-2024-24.3.3-lem-26`). -/
-public theorem_wanted choose_mul_prime_modEq_of_five_le (p n m : ℕ) (hp : p.Prime) (hp5 : 5 ≤ p)
-    (hm : 0 < m) (hmn : m < n) :
-    (n * p).choose (m * p) ≡ n.choose m
-      [MOD p ^ (3 + max (padicValNat p m) (padicValNat p (n - m)) +
-        padicValNat p (n.choose m))]
 
 /-- **Helou–Terjanian congruence for $p = 3$.** Let $m$ and $n$ be integers with $0 < m < n$.
 Then $\binom{3n}{3m} \equiv \binom{n}{m} \pmod{3^e}$, where

@@ -16,6 +16,8 @@ public import Mathlib.NumberTheory.LegendreSymbol.Basic
 public import MathlibExt.Algebra.BigOperators.PrefixSumReordering
 public import MathlibExt.NumberTheory.CohenLcmGcd
 public import MathlibExt.NumberTheory.DivisorsShortInterval
+public import MathlibExt.NumberTheory.DivisorsShortIntervalCardUnsolvableSqAddPrimePow
+public import MathlibExt.NumberTheory.DivisorsShortIntervalExistsShortIntervalDivisorCountLeOfWindowThetaSq
 
 namespace MetaMathlibExt
 
@@ -49,36 +51,6 @@ public theorem_wanted card_le_of_avoids_residues_primePow (M : Finset ℤ) (N : 
       ∑ q ∈ Finset.Icc 1 ⌊Q⌋₊, ∏ p ∈ q.primeFactors,
         (if p ∈ S ∧ q.factorization p = β p then
           ((Ω p).card : ℝ) / ((p : ℝ) ^ β p - (Ω p).card) else 0)
-
-open scoped Classical in
-/-- **Counting $x$ with $x^2 + p^v u$ not a square modulo $p^{v+1}$.** Let $p \ge 3$ be a prime
-and let $u$ be an integer not divisible by $p$. For $v \ge 0$ let $S_v$ be the number of integers
-$0 \le x < p^{v+1}$ for which there is no integer $y$ with
-$x^2 + p^v u \equiv y^2 \pmod{p^{v+1}}$. Then $2 S_0 = p - \left(\frac{-u}{p}\right)$, where
-$\left(\frac{-u}{p}\right)$ is the Legendre symbol, $S_1 = p$, and $S_v = p S_{v-2}$ for every
-$v \ge 2$.
-
-Source: Patrick Letendre, *Divisors of an Integer in a Short Interval*, INTEGERS 26 (2026),
-Article A115, Lemma 4 (`integers-2026-A115-lem-4`). -/
-public theorem_wanted card_unsolvable_sq_add_primePow {p : ℕ} [Fact p.Prime] (hp : 3 ≤ p)
-    (u : ℤ) (hu : ¬ (p : ℤ) ∣ u) :
-    let S : ℕ → ℕ := fun v => ((Finset.range (p ^ (v + 1))).filter fun x : ℕ =>
-      ¬ ∃ y : ℤ, (x : ℤ) ^ 2 + (p : ℤ) ^ v * u ≡ y ^ 2 [ZMOD (p : ℤ) ^ (v + 1)]).card
-    2 * (S 0 : ℤ) = p - legendreSym p (-u) ∧ S 1 = p ∧ ∀ v ≥ 2, S v = p * S (v - 2)
-
-/-- **Divisors in windows of length $n^{\theta^2 - \varepsilon}$.** For a natural number $n$ and
-real numbers $X$, $Y$, let $D_n(X, Y)$ be the number of divisors $d$ of $n$ with
-$X \le d \le X + Y$. There is an absolute constant $C$ such that for every integer $n \ge 1$ and
-all real numbers $\theta$, $\varepsilon$ with $0 < \theta < 1$ and $0 < \varepsilon < \theta^2$,
-$D_n(n^\theta, n^{\theta^2 - \varepsilon}) \le
-C \left(\theta(1 - \theta)/\varepsilon + 1/(\theta(1 - \theta))\right)$.
-
-Source: Patrick Letendre, *Divisors of an Integer in a Short Interval*, INTEGERS 26 (2026),
-Article A115, Proposition 1 (`integers-2026-A115-prop-1`). -/
-public theorem_wanted exists_shortIntervalDivisorCount_le_of_window_theta_sq :
-    ∃ C : ℝ, ∀ n : ℕ, 1 ≤ n → ∀ θ ε : ℝ, 0 < θ → θ < 1 → 0 < ε → ε < θ ^ 2 →
-      (shortIntervalDivisorCount n ((n : ℝ) ^ θ) ((n : ℝ) ^ (θ ^ 2 - ε)) : ℝ) ≤
-        C * (θ * (1 - θ) / ε + 1 / (θ * (1 - θ)))
 
 /-- **Letendre's bound for divisors in short intervals.** For a natural number $n$ and real numbers
 $X$, $Y$, let $D_n(X, Y)$ be the number of divisors $d$ of $n$ with $X \le d \le X + Y$, let
