@@ -13288,7 +13288,6 @@
   "MathlibExt/NumberTheory/HighlyComposite": {"to": "NumberTheory/arithmetic-functions/special-integer-classes", "title": "Highly composite numbers"},
   "MathlibExt/NumberTheory/HilbertWaring": {"to": "NumberTheory/quadratic-forms-sums-of-squares/waring-figurate", "title": "Hilbert–Waring theorem"},
   "MathlibExt/NumberTheory/HurwitzContinuedFractionFourSquares": {"to": "NumberTheory/quadratic-forms-sums-of-squares/sums-of-squares", "title": "Sums of four squares via Hurwitz continued fractions"},
-  "MathlibExt/NumberTheory/HurwitzGeometricProgressionFreeQuaternionGreedyNeNormPreimage": {"to": "NumberTheory/additive-number-theory", "title": "Geometric-progression-free sets of Hurwitz quaternions"},
   "MathlibExt/NumberTheory/HurwitzQuaternionGreedy": {"to": "NumberTheory/additive-number-theory", "title": "Geometric-progression-free sets of Hurwitz quaternions"},
   "MathlibExt/NumberTheory/HurwitzQuaternionWaring": {"to": "NumberTheory/quadratic-forms-sums-of-squares/waring-figurate", "title": "Waring's problem for Hurwitz quaternions"},
   "MathlibExt/NumberTheory/HybridPrimeDivisorBoundsHybridBoundPrimeDivisors": {"to": "NumberTheory/algebraic-number-theory/cyclotomic-fields", "title": "Prime divisor bounds for cyclotomic values"},

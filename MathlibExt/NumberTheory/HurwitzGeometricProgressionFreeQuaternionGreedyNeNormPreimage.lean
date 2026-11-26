@@ -126,20 +126,7 @@ private theorem seven_not_unit_mul_sq :
       exact_mod_cast hq
     omega
 
-private theorem normSq_nat (q : Quaternion ℚ) (hq : q ∈ 𝐇) :
-    ∃ n : ℕ, Quaternion.normSq q = (n : ℚ) := by
-  have hInt : ∃ z : ℤ, Quaternion.normSq q = (z : ℚ) := by
-    rcases hq with ⟨a, b, c, d, ha, hb, hc, hd⟩ | ⟨a, b, c, d, ha, hb, hc, hd⟩
-    · exact ⟨a ^ 2 + b ^ 2 + c ^ 2 + d ^ 2, by
-        simp [Quaternion.normSq_def', ha, hb, hc, hd]⟩
-    · refine ⟨a ^ 2 + a + (b ^ 2 + b) + (c ^ 2 + c) + (d ^ 2 + d) + 1, ?_⟩
-      push_cast
-      rw [Quaternion.normSq_def', ha, hb, hc, hd]
-      ring
-  obtain ⟨z, hz⟩ := hInt
-  have hz0 : 0 ≤ z := by exact_mod_cast hz ▸ Quaternion.normSq_nonneg (a := q)
-  exact ⟨z.toNat, by rw [hz, ← Int.cast_natCast, Int.toNat_of_nonneg hz0]⟩
-
+open quaternionGreedy_mem_of_not_unit_mul_sq in
 private theorem mem_of_squarefree_norm (Gq : Set (Quaternion ℚ)) (hGq : IsQuaternionGreedy Gq)
     (q : Quaternion ℚ) (hq : q ∈ 𝐇) (n : ℕ) (hn : Squarefree n)
     (hqn : Quaternion.normSq q = (n : ℚ)) : q ∈ Gq := by
@@ -148,11 +135,7 @@ private theorem mem_of_squarefree_norm (Gq : Set (Quaternion ℚ)) (hGq : IsQuat
     rw [hqn]
     exact_mod_cast hn.ne_zero
   · rintro ⟨a, ha, r, hr, _, hr1, _, heq⟩
-    obtain ⟨m, hm⟩ := normSq_nat a ((hGq a).1 ha).1
-    obtain ⟨k, hk⟩ := normSq_nat r hr
-    have hnk : n = m * k ^ 2 := by
-      rw [heq, map_mul, map_pow, hm, hk] at hqn
-      exact_mod_cast hqn.symm
+    obtain ⟨m, k, -, hk, hnk⟩ := normSq_eq_mul_sq heq hqn ((hGq a).1 ha).1 hr
     have hdvd : k * k ∣ n := ⟨m, by simpa [pow_two, mul_comm] using hnk⟩
     have hk1 : k = 1 := Nat.isUnit_iff.mp (hn k hdvd)
     exact hr1 (by simpa [hk1] using hk)

@@ -57,7 +57,10 @@ local notation "IsUnitMulSq" Q:max r:max => ∃ U ∈ 𝐇, Quaternion.normSq U 
 
 namespace quaternionGreedy_mem_of_not_unit_mul_sq
 
-private theorem normSq_nat {q : Quaternion ℚ} (hq : q ∈ 𝐇) :
+/-- **The norm of a Hurwitz quaternion is a natural number.** If the four rational coordinates of a
+quaternion $q$ are either all integers or all halves of odd integers, then its norm
+$\mathrm{Nm}(q)$, the sum of the squares of its coordinates, equals some natural number $n$. -/
+public theorem normSq_nat {q : Quaternion ℚ} (hq : q ∈ 𝐇) :
     ∃ n : ℕ, Quaternion.normSq q = (n : ℚ) := by
   have hInt : ∃ z : ℤ, Quaternion.normSq q = (z : ℚ) := by
     rcases hq with ⟨a, b, c, d, ha, hb, hc, hd⟩ | ⟨a, b, c, d, ha, hb, hc, hd⟩
@@ -85,7 +88,12 @@ private theorem sq_mem {q : Quaternion ℚ} (hq : q ∈ 𝐇) : q ^ 2 ∈ 𝐇 :
         Int.cast_ofNat] <;>
       ring
 
-private theorem normSq_eq_mul_sq {q a r : Quaternion ℚ} {k : ℕ}
+/-- **The norm of $ar^2$ factors as $\mathrm{Nm}(a)\,\mathrm{Nm}(r)^2$ in the natural numbers.** Let
+$a$ and $r$ be Hurwitz quaternions (quaternions whose four rational coordinates are either all
+integers or all halves of odd integers), and let $q = ar^2$ have norm $\mathrm{Nm}(q) = k$ for a
+natural number $k$. Then there are natural numbers $m$ and $n$ with $\mathrm{Nm}(a) = m$,
+$\mathrm{Nm}(r) = n$ and $k = mn^2$. -/
+public theorem normSq_eq_mul_sq {q a r : Quaternion ℚ} {k : ℕ}
     (hq : q = a * r ^ 2) (hqk : Quaternion.normSq q = (k : ℚ)) (ha : a ∈ 𝐇) (hr : r ∈ 𝐇) :
     ∃ m n : ℕ, Quaternion.normSq a = (m : ℚ) ∧ Quaternion.normSq r = (n : ℚ) ∧
       k = m * n ^ 2 := by
