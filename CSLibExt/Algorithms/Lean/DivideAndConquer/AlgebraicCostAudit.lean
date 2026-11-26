@@ -24,7 +24,7 @@ Value and cost results for Karatsuba multiplication, the radix-two FFT and Stras
 accumulator, each in its provider's charged model. Every cost here is a total charge, summed over
 all recursive calls.
 
-The Karatsuba and FFT results are cited from the imported modules, not restated:
+The Karatsuba, FFT and Strassen results are cited from the imported modules, not restated:
 
 * `karatsuba_ret` gives Karatsuba's value `x * y`, and `karatsuba_time_le_rpow` bounds its
   declared total charge by `9 * n ^ logb 2 3` for `n ≥ 1`. That charge, `karatsubaCost n`, adds
@@ -33,11 +33,13 @@ The Karatsuba and FFT results are cited from the imported modules, not restated:
 * `fft_time_add_one` gives the FFT's exact total charge,
   `(fft d omega xs).time + 1 = (7 * d + 1) * 2 ^ d`; the charge counts scalar ring operations and
   array element reads and writes.
+* `strassenMatrixAccumulate_time` gives the exact counts of Strassen's accumulator on `n × n`
+  matrices with `n = 2 ^ k`: `7 ^ k = n ^ logb 2 7` scalar multiplications and
+  `(25 * 7 ^ k - 22 * 4 ^ k) / 3` scalar additions and subtractions. `strassenMatrixAccumulate_ret`
+  gives its value `C + A * B` as Mathlib matrices.
 
-This module adds the Strassen results for the dimension `n = 2 ^ k`: the multiplication count is
-exactly `n ^ logb 2 7`, all scalar multiplications, additions and subtractions together number at
-most `(28 / 3) * n ^ logb 2 7`, and from a zero accumulator the value is the Mathlib matrix
-product.
+This module adds one bound, `strassen_ops_le`: those scalar multiplications, additions and
+subtractions together number at most `(28 / 3) * n ^ logb 2 7`.
 
 Not supplied here: a bound on Karatsuba's digit operations, and an FFT count of ring operations
 alone.
@@ -53,7 +55,7 @@ open Cslib.Algorithms.Lean.Matrix
 addition, a subtraction and a multiplication. For every $k \ge 0$ and all $n \times n$ matrices
 $A$, $B$, $C$ over $R$ with $n = 2^k$, Strassen's accumulator on $A$, $B$, $C$ performs exactly
 $n^{\log_2 7}$ scalar multiplications, summed over all its recursive calls. -/
-theorem strassen_mul_count {R : Type u} [Zero R] [Add R] [Sub R] [Mul R]
+private theorem strassen_mul_count {R : Type u} [Zero R] [Add R] [Sub R] [Mul R]
     (k : ℕ) (A B C : Vector (Vector R (2 ^ k)) (2 ^ k)) :
     ((strassenMatrixAccumulate k A B C).time.1 : ℝ) =
       ((2 ^ k : ℕ) : ℝ) ^ Real.logb 2 7 := by
@@ -99,19 +101,5 @@ theorem strassen_ops_le {R : Type u} [Zero R] [Add R] [Sub R] [Mul R]
       25 / 3 * (((2 ^ k : ℕ) : ℝ) ^ Real.logb 2 7) := by
     linarith [hdiv, hsub]
   linarith [h3]
-
-theorem strassen_value {R : Type u} [NonUnitalNonAssocRing R]
-    (k : ℕ) (A B : Vector (Vector R (2 ^ k)) (2 ^ k)) :
-    (Matrix.of fun i j =>
-      (((strassenMatrixAccumulate k A B 0).ret.get i).get j)) =
-      (Matrix.of fun i j => (A.get i).get j) *
-        (Matrix.of fun i j => (B.get i).get j) := by
-  have h := strassenMatrixAccumulate_ret k A B 0
-  have hz : (Matrix.of fun i j =>
-      (((0 : Vector (Vector R (2 ^ k)) (2 ^ k)).get i).get j)) = 0 := by
-    ext i j
-    change (((0 : Vector (Vector R (2 ^ k)) (2 ^ k))[i.1]'(i.2))[j.1]'(j.2) = (0 : R))
-    rw [Vector.getElem_zero, Vector.getElem_zero]
-  simpa [hz] using h
 
 end Cslib.Algorithms.Lean.AlgebraicCostAudit
