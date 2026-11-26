@@ -9,5 +9,6 @@ Fix integers $w$ (number of chunks) and $m$ (chunk size), so words have length $
 
 ## Sources
 
-- C. Aguilar Melchor, S. Bettaieb, L. Bidoux, T. Feneuil, et al., "The Syndrome Decoding in the Head (SD-in-the-Head) Signature Scheme: Algorithm Specifications", version 3.0, 2026.
-- P. Gaborit, C. Aguilar-Melchor, N. Aragon, S. Bettaieb, L. Bidoux, O. Blazy, et al., "Hamming Quasi-Cyclic (HQC)", specification, version 5.1, 2026.
+- D. Augot, M. Finiasz and N. Sendrier, "A Family of Fast Syndrome Based Cryptographic Hash Functions", Mycrypt 2005, Lecture Notes in Computer Science 3715, 2005.
+- T. Feneuil, A. Joux and M. Rivain, "Syndrome Decoding in the Head: Shorter Signatures from Zero-Knowledge Proofs", Advances in Cryptology (CRYPTO 2022), 2022.
+- E. Carozza, G. Couteau and A. Joux, "Short Signatures from Regular Syndrome Decoding in the Head", Advances in Cryptology (EUROCRYPT 2023), 2023.

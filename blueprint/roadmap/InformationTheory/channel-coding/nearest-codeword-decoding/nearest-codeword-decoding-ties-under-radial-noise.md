@@ -12,5 +12,5 @@ The joint mass of $(y, m')$ is $|M|^{-1}\Pr[N = y + E(m')]$, which depends only 
 
 ## Sources
 
-- P. Gaborit, C. Aguilar-Melchor, N. Aragon, S. Bettaieb, L. Bidoux, O. Blazy, et al., "Hamming Quasi-Cyclic (HQC)", specification, version 5.1, 2026.
+- C. Aguilar-Melchor, O. Blazy, J.-C. Deneuville, P. Gaborit and G. Zémor, "Efficient Encryption From Random Quasi-Cyclic Codes", IEEE Transactions on Information Theory 64(5), 2018.
 - C. E. Shannon, "A Mathematical Theory of Communication", Bell System Technical Journal, 1948.
