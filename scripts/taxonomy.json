@@ -1304,6 +1304,7 @@
   "CSLibExt/Bioinformatics/StatisticalGenetics/PoissonClassEM": {"to": "Biology/statistical-genetics", "title": "Gene constraint scores (pLI and LOEUF)"},
   "CSLibExt/Coding/BitFlipCode": {"to": "QuantumInformation/quantum-error-correction", "title": "Bit-flip and Shor codes"},
   "CSLibExt/Coding/CRC": {"to": "InformationTheory/error-correcting-codes", "title": "Cyclic redundancy checks"},
+  "CSLibExt/Coding/UnreflectedSerialCRC": {"to": "InformationTheory/error-correcting-codes", "title": "Cyclic redundancy checks"},
   "CSLibExt/Coding/CSSCode": {"to": "QuantumInformation/quantum-error-correction", "title": "CSS codes"},
   "CSLibExt/Coding/CSSCodeCorrection": {"to": "QuantumInformation/quantum-error-correction", "title": "CSS codes"},
   "CSLibExt/Coding/GilbertVarshamovLinear": {"to": "InformationTheory/error-correcting-codes", "title": "Bounds on code size"},
