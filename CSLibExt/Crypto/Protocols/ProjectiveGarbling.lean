@@ -19,9 +19,24 @@ public import Cslib.Probability.PMF
 clear and garbled circuits use the same `Circuit.eval` with different signatures and
 interpretations. Unlike the De Morgan `Boolean.signature` (which has unary NOT and nullary
 constants) and `fullSignature 2 Bool` (which also has nullary constants), all our gate symbols
-have arity exactly two. A public gate contains four ciphertexts, not a function of secret data; the
-wires of each line reference only inputs or earlier gates. `trace_garbleProgram` identifies the
-active label at *every* wire, including one read many times or designated directly as an output.
+have arity exactly two. Each public gate stores four ciphertexts in place of the clear gate
+function. The garbler computes these ciphertexts from the function and the wire labels; each
+line refers only to inputs or earlier gates. `trace_garbleProgram` identifies the active label at
+*every* wire, including one read many times or designated directly as an output.
+
+Bellare, Hoang and Rogaway, *Foundations of Garbled Circuits* (ACM CCS 2012, pp. 784–796),
+separate garbling, encoding, decoding, garbled evaluation and clear evaluation. In the
+[full version of 1 October 2012](https://eprint.iacr.org/2012/265), §3.1 requires correctness
+for every supported garbling and every input; §3.2 describes projective encoding: for fixed
+encoding data the label at each position depends only on the bit at that position. `select` and
+`Scheme.Correct` express these functional conditions with typed data and fixed input and output
+counts, without the paper's requirements on string encodings.
+
+The same full version introduces tweakable dual-key ciphers in §5. In Garble1 (§5.1, Fig. 7),
+the two incoming token types select the row, and an output token's type is its semantic bit,
+so the decoding data is empty. Here `RowCipher` takes no tweak and requires only right-key
+decryption. Output wires, like other wires, have random pointer masks; the decoder cancels the
+mask at each designated output.
 
 Pass and shelat, *A Course in Cryptography* (2010), §§6.2.1–6.2.3, describe the wire keys,
 fan-in two with unbounded fan-out, and four encrypted rows; they shuffle and try the rows.
