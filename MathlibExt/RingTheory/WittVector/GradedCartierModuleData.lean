@@ -32,6 +32,8 @@ public import Mathlib.RingTheory.WittVector.Verschiebung
 public import Mathlib.RingTheory.WittVector.Teichmuller
 public import Mathlib.RingTheory.WittVector.Basic
 public import Mathlib.FieldTheory.Finite.GaloisField
+public import Mathlib.LinearAlgebra.Projection
+public import MathlibExt.AlgebraicGeometry.CerednikDrinfeld.SpecialFormalFunctor
 
 /-!
 # Graded Cartier module data
@@ -40,7 +42,9 @@ A graded Cartier module datum over a ring `B` consists of a module `M` over
 the Witt vectors of `B`, equipped with Frobenius, Verschiebung, and a
 uniformizer operator `varpi`, together with a decomposition of `M` into two
 complementary graded pieces. We also record homogeneous `V`-bases, `V`-adic
-completeness, structure constants for `varpi`, and base change.
+completeness, structure constants for `varpi`, base change, and the action of
+the Teichmüller representatives of `Zp2 p` that the pieces and the
+coefficient map `j` determine.
 -/
 
 @[expose] public section
@@ -49,12 +53,11 @@ universe u v
 
 namespace CerednikDrinfeld
 
-/-- The ring of Witt vectors over the field with `p ^ 2` elements. -/
-abbrev Zp2 (p : ℕ) [Fact p.Prime] : Type :=
-  WittVector p (GaloisField p 2)
-
 /-- Graded Cartier module data: a Witt-vector module with Frobenius,
-Verschiebung, and uniformizer operators and two complementary pieces. -/
+Verschiebung, and uniformizer operators and two complementary pieces.
+No field involves the coefficient map `j`: with the pieces it determines how
+the Teichmüller representatives of `Zp2 p` act (`teichmullerAct`), and base
+change carries it along (`IsBaseChangeAlong`). -/
 structure GradedCartierModuleData (p : ℕ) [Fact p.Prime] {B : Type u} [CommRing B]
     (j : Zp2 p →+* B) : Type (max u (v + 1)) where
   /-- The underlying module. -/
@@ -111,6 +114,31 @@ noncomputable def homothety (D : GradedCartierModuleData p j) (b : B) : D.M →+
     D.homothety b x = WittVector.teichmuller p b • x :=
   rfl
 
+/-- The action of the Teichmüller representative `[c]` of `Zp2 p`, for `c` in
+the field with `p ^ 2` elements, that the pieces and `j` determine: the
+homothety by `j [c]` on piece `0` and by `j [c] ^ p` on piece `1`. -/
+noncomputable def teichmullerAct (D : GradedCartierModuleData p j) (c : GaloisField p 2) :
+    D.M →+ D.M :=
+  (D.homothety (j (WittVector.teichmuller p c))).comp
+      ((D.piece 0).projection (D.piece 1) D.isCompl_piece).toAddMonoidHom +
+    (D.homothety (j (WittVector.teichmuller p c) ^ p)).comp
+      ((D.piece 1).projection (D.piece 0) D.isCompl_piece.symm).toAddMonoidHom
+
+theorem teichmullerAct_of_mem (D : GradedCartierModuleData p j) (c : GaloisField p 2)
+    {i : Fin 2} {x : D.M} (hx : x ∈ D.piece i) :
+    D.teichmullerAct c x = D.homothety (j (WittVector.teichmuller p c) ^ p ^ (i : ℕ)) x := by
+  fin_cases i
+  · simp only [teichmullerAct, AddMonoidHom.add_apply, AddMonoidHom.coe_comp,
+      LinearMap.toAddMonoidHom_coe, Function.comp_apply,
+      Submodule.projection_apply_of_mem_left D.isCompl_piece hx,
+      Submodule.projection_apply_of_mem_right D.isCompl_piece.symm hx, map_zero, add_zero]
+    simp
+  · simp only [teichmullerAct, AddMonoidHom.add_apply, AddMonoidHom.coe_comp,
+      LinearMap.toAddMonoidHom_coe, Function.comp_apply,
+      Submodule.projection_apply_of_mem_right D.isCompl_piece hx,
+      Submodule.projection_apply_of_mem_left D.isCompl_piece.symm hx, map_zero, zero_add]
+    simp
+
 /-- The graded piece reached from piece `i` after `m + 1` shifts. -/
 def piIndex (m : ℕ) (i : Fin 2) : Fin 2 :=
   ⟨(m + i + 1) % 2, Nat.mod_lt _ two_pos⟩
@@ -148,7 +176,9 @@ def HasStructureConstants (D : GradedCartierModuleData p j) (γ : Fin 2 → D.M)
         (⇑D.verschiebung)^[N] h
 
 /-- Base change of graded Cartier module data along a ring homomorphism,
-witnessed by an additive map `f` compatible with all structure. -/
+witnessed by an additive map `f` compatible with all structure. The target is
+indexed by `φ.comp j`, so `f` intertwines the Teichmüller actions
+(`IsBaseChangeAlong.map_teichmullerAct`). -/
 def IsBaseChangeAlong {B' : Type u} [CommRing B'] (φ : B →+* B')
     (D : GradedCartierModuleData p j) (D' : GradedCartierModuleData p (φ.comp j))
     (f : D.M →+ D'.M) : Prop :=

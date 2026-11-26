@@ -39,8 +39,13 @@ import Mathlib.RingTheory.WittVector.Identities
 
 The lift ring of two elements `u v` of a ring `B` over a coefficient ring
 `R` is the polynomial ring in variables indexed by `B`, modulo the relation
-`X u * X v = p`. Structure constants valued in `B` lift to this ring, and a
-homomorphism out of it is determined by a factorization of `p` in `B`.
+`X u * X v = p`. Structure constants valued in `B` lift to this ring. Given a
+factorization `u * v = p` in `B` and a ring map `j : R →+* B`, the evaluation
+that is `j` on coefficients and sends every variable `X b` to `b` descends to
+the lift ring (`liftHom`). The factorization alone fixes only the images of
+`X u` and `X v`; a homomorphism out of the lift ring is determined by its
+values on the coefficients and on every variable (`ringHom_ext`,
+`eq_liftHom`).
 -/
 
 @[expose] public section
@@ -128,8 +133,9 @@ theorem liftVar_mul_liftVar (u v : B) :
   refine (Ideal.Quotient.eq).mpr (Ideal.subset_span ?_)
   simp [liftRel]
 
-/-- The homomorphism from the lift ring determined by a factorization
-`u * v = p` in `B`. -/
+/-- The homomorphism from the lift ring that is `j` on coefficients and
+sends every variable `X b` to `b`; the factorization `u * v = p` makes this
+evaluation vanish on the relation. -/
 noncomputable def liftHom [CommRing B] (j : R →+* B) (u v : B) (huv : u * v = p) :
     LiftRing p R u v →+* B :=
   Ideal.Quotient.lift _ (eval₂Hom j id) (fun a ha => by
@@ -157,6 +163,20 @@ theorem liftHom_surjective [CommRing B] (j : R →+* B) (u v : B)
     (huv : u * v = p) :
     Function.Surjective (liftHom j u v huv) :=
   fun b => ⟨liftVar u v b, liftHom_liftVar j u v huv b⟩
+
+theorem ringHom_ext {S : Type*} [CommRing S] {u v : B}
+    {f g : LiftRing p R u v →+* S}
+    (hC : f.comp (algebraMap R (LiftRing p R u v)) =
+      g.comp (algebraMap R (LiftRing p R u v)))
+    (hX : ∀ b : B, f (liftVar u v b) = g (liftVar u v b)) : f = g :=
+  Ideal.Quotient.ringHom_ext (MvPolynomial.ringHom_ext (RingHom.congr_fun hC) hX)
+
+theorem eq_liftHom [CommRing B] (j : R →+* B) (u v : B) (huv : u * v = p)
+    (f : LiftRing p R u v →+* B)
+    (hC : f.comp (algebraMap R (LiftRing p R u v)) = j)
+    (hX : ∀ b : B, f (liftVar u v b) = b) : f = liftHom j u v huv :=
+  ringHom_ext (hC.trans (liftHom_comp_algebraMap j u v huv).symm)
+    fun b => (hX b).trans (liftHom_liftVar j u v huv b).symm
 
 /-- Multiplication by `p` is injective in the lift ring when it is
 injective on coefficients. -/

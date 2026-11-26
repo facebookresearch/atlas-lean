@@ -232,7 +232,10 @@ theorem nMap_nMk {B' : Type u} [CommRing B'] {j' : Zp2 p →+* B'}
 
 /-- Base change of graded Cartier module data along `φ` into a target over
 an arbitrary coefficient map `j'`: the first clause requires
-`j' = φ.comp j`, and the others are the clauses of `IsBaseChangeAlong`. -/
+`j' = φ.comp j`, and the others are the clauses of `IsBaseChangeAlong`. The
+equation is about the coefficient maps alone; with the clause on pieces it
+makes `f` intertwine the Teichmüller actions
+(`IsBaseChangeAlong'.map_teichmullerAct`). -/
 def IsBaseChangeAlong' {B' : Type u} [CommRing B'] {j' : Zp2 p →+* B'}
     (φ : B →+* B') (D : GradedCartierModuleData p j)
     (D' : GradedCartierModuleData p j') (f : D.M →+ D'.M) : Prop :=
@@ -250,6 +253,32 @@ theorem isBaseChangeAlong'_iff {B' : Type u} [CommRing B'] (φ : B →+* B')
     (D' : GradedCartierModuleData p (φ.comp j)) (f : D.M →+ D'.M) :
     IsBaseChangeAlong' φ D D' f ↔ IsBaseChangeAlong φ D D' f :=
   ⟨fun h => h.2, fun h => ⟨rfl, h⟩⟩
+
+/-- A base change intertwines the actions of the Teichmüller representatives
+of `Zp2 p` that the pieces and the coefficient maps `j` and `j' = φ.comp j`
+determine. -/
+theorem IsBaseChangeAlong'.map_teichmullerAct {B' : Type u} [CommRing B']
+    {j' : Zp2 p →+* B'} {φ : B →+* B'} {D : GradedCartierModuleData p j}
+    {D' : GradedCartierModuleData p j'} {f : D.M →+ D'.M}
+    (h : IsBaseChangeAlong' φ D D' f) (c : GaloisField p 2) (x : D.M) :
+    f (D.teichmullerAct c x) = D'.teichmullerAct c (f x) := by
+  obtain ⟨rfl, hsmul, -, -, -, hpiece, -⟩ := h
+  have key : ∀ (i : Fin 2) (y : D.M), y ∈ D.piece i →
+      f (D.teichmullerAct c y) = D'.teichmullerAct c (f y) := by
+    intro i y hy
+    rw [D.teichmullerAct_of_mem c hy, D'.teichmullerAct_of_mem c (hpiece i y hy),
+      homothety_apply, homothety_apply, hsmul, WittVector.map_teichmuller, map_pow,
+      RingHom.comp_apply]
+  rw [← Submodule.projection_add_projection_eq_self D.isCompl_piece x, map_add, map_add,
+    map_add, map_add, key 0 _ (Submodule.projection_apply_mem _ _),
+    key 1 _ (Submodule.projection_apply_mem _ _)]
+
+theorem IsBaseChangeAlong.map_teichmullerAct {B' : Type u} [CommRing B']
+    {φ : B →+* B'} {D : GradedCartierModuleData p j}
+    {D' : GradedCartierModuleData p (φ.comp j)} {f : D.M →+ D'.M}
+    (h : IsBaseChangeAlong φ D D' f) (c : GaloisField p 2) (x : D.M) :
+    f (D.teichmullerAct c x) = D'.teichmullerAct c (f x) :=
+  ((isBaseChangeAlong'_iff φ D D' f).mpr h).map_teichmullerAct c x
 
 /-- A Cartier `L`-map: a Frobenius-semilinear map to the `N`-module that
 sends Verschiebung to the uniformizer and lifts Frobenius through

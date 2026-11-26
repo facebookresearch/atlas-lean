@@ -442,6 +442,142 @@ example :
   ⟨unconstrainedBaseChange_seqData _ _,
     fun h => frobenius_comp_constantCoeff_ne (h.1.trans (RingHom.id_comp _))⟩
 
+private theorem seqData_teichmullerAct_inl (j : Zp2 p →+* GaloisField p 2)
+    (c : GaloisField p 2) (s : ℕ → GaloisField p 2) :
+    (seqData j).teichmullerAct c (s, 0) = (j (WittVector.teichmuller p c) • s, 0) := by
+  have hx : ((s, 0) : (seqData j).M) ∈ (seqData j).piece 0 := ⟨s, rfl⟩
+  rw [teichmullerAct_of_mem _ c hx, homothety_apply]
+  ext n
+  · change WittVector.constantCoeff (WittVector.teichmuller p _) * s n = _
+    simp only [WittVector.constantCoeff_apply, WittVector.teichmuller_coeff_zero,
+      Fin.isValue, Fin.val_zero, pow_zero, pow_one, Pi.smul_apply, smul_eq_mul]
+  · change (WittVector.teichmuller p _ : Zp2 p) • (0 : GaloisField p 2) = 0
+    exact smul_zero _
+
+private theorem seqData_teichmullerAct_inr (j : Zp2 p →+* GaloisField p 2)
+    (c : GaloisField p 2) (s : ℕ → GaloisField p 2) :
+    (seqData j).teichmullerAct c (0, s) =
+      (0, j (WittVector.teichmuller p c) ^ p • s) := by
+  have hx : ((0, s) : (seqData j).M) ∈ (seqData j).piece 1 := ⟨s, rfl⟩
+  rw [teichmullerAct_of_mem _ c hx, homothety_apply]
+  ext n
+  · change (WittVector.teichmuller p _ : Zp2 p) • (0 : GaloisField p 2) = 0
+    exact smul_zero _
+  · change WittVector.constantCoeff (WittVector.teichmuller p _) * s n = _
+    simp only [WittVector.constantCoeff_apply, WittVector.teichmuller_coeff_zero,
+      Fin.isValue, Fin.val_one, pow_one, Pi.smul_apply, smul_eq_mul]
+
+/-- The coefficient map changes the Teichmüller action: over the constant
+coefficient, `[c]` scales piece `0` by `c` and piece `1` by `c ^ p`. -/
+example (c : GaloisField p 2) (s : ℕ → GaloisField p 2) :
+    (seqData (p := p) WittVector.constantCoeff).teichmullerAct c (s, 0) = (c • s, 0) ∧
+      (seqData (p := p) WittVector.constantCoeff).teichmullerAct c (0, s) =
+        (0, c ^ p • s) := by
+  rw [seqData_teichmullerAct_inl, seqData_teichmullerAct_inr,
+    WittVector.constantCoeff_apply, WittVector.teichmuller_coeff_zero]
+  exact ⟨rfl, rfl⟩
+
+/-- Raise every entry of both sequences to the `p`-th power. -/
+private noncomputable def frobSeq :
+    ((ℕ → GaloisField p 2) × (ℕ → GaloisField p 2)) →+
+      ((ℕ → GaloisField p 2) × (ℕ → GaloisField p 2)) where
+  toFun x := (fun n => x.1 n ^ p, fun n => x.2 n ^ p)
+  map_zero' := by ext n <;> simp [zero_pow (Fact.out : p.Prime).ne_zero]
+  map_add' x y := by ext n <;> simp [add_pow_char]
+
+/-- Base change along the Frobenius `σ` of the field with `p ^ 2` elements:
+the target's coefficient map is `σ.comp j`, and the module map raises entries
+to the `p`-th power. -/
+private theorem isBaseChangeAlong'_frobSeq :
+    IsBaseChangeAlong' (frobenius (GaloisField p 2) p)
+      (seqData (p := p) WittVector.constantCoeff)
+      (seqData ((frobenius (GaloisField p 2) p).comp WittVector.constantCoeff))
+      frobSeq := by
+  have hp0 : p ≠ 0 := (Fact.out : p.Prime).ne_zero
+  refine ⟨rfl, fun w x => ?_, fun x => ?_, fun x => ?_, fun x => ?_, fun i x hx => ?_,
+    seqBasis _, seqData_isHomogeneousVBasis _, ?_⟩
+  · ext n <;> simp [frobSeq, smul_eq_constantCoeff_mul, WittVector.constantCoeff_apply,
+      WittVector.map_coeff, frobenius_def, mul_pow]
+  · ext n <;> simp [frobSeq, zero_pow hp0]
+  · ext n <;> cases n <;> simp [frobSeq, seqV, shiftFrobHom, shiftFrob, zero_pow hp0]
+  · ext n <;> simp [frobSeq, zero_pow hp0]
+  · fin_cases i
+    · obtain ⟨s, rfl⟩ := hx
+      exact ⟨fun n => s n ^ p, by ext n <;> simp [frobSeq, zero_pow hp0]⟩
+    · obtain ⟨s, rfl⟩ := hx
+      exact ⟨fun n => s n ^ p, by ext n <;> simp [frobSeq, zero_pow hp0]⟩
+  · have h : (fun i => frobSeq (seqBasis (p := p) WittVector.constantCoeff i)) =
+        seqBasis ((frobenius (GaloisField p 2) p).comp WittVector.constantCoeff) := by
+      funext i
+      fin_cases i <;> ext n <;> cases n <;> simp [frobSeq, seqBasis, seqOne, zero_pow hp0]
+    rw [h]
+    exact seqData_isHomogeneousVBasis _
+
+/-- With the constraint, the base change intertwines the Teichmüller actions
+although the coefficient maps differ: on piece `0`, `[c]` acts by `c` on the
+source and by `c ^ p` on the target, and `frobSeq` turns one into the other. -/
+example (c : GaloisField p 2)
+    (x : (seqData (p := p) WittVector.constantCoeff).M) :
+    frobSeq ((seqData (p := p) WittVector.constantCoeff).teichmullerAct c x) =
+      (seqData ((frobenius (GaloisField p 2) p).comp WittVector.constantCoeff)).teichmullerAct
+        c (frobSeq x) :=
+  isBaseChangeAlong'_frobSeq.map_teichmullerAct c x
+
+/-- Boundary: the identity from `seqData j` to `seqData (σ.comp j)` satisfies
+every unconstrained clause (the boundary example above), yet it does not
+intertwine the Teichmüller actions: on piece `0`, `[c]` acts by `c` on the
+source and by `c ^ p` on the target. -/
+example : ¬ ∀ (c : GaloisField p 2)
+    (x : (seqData (p := p) WittVector.constantCoeff).M),
+    AddMonoidHom.id _ ((seqData (p := p) WittVector.constantCoeff).teichmullerAct c x) =
+      (seqData ((frobenius (GaloisField p 2) p).comp WittVector.constantCoeff)).teichmullerAct
+        c (AddMonoidHom.id _ x) := by
+  intro h
+  obtain ⟨c, hc⟩ := exists_pow_ne_self (p := p)
+  have h1 := h c (seqOne, 0)
+  rw [AddMonoidHom.id_apply, AddMonoidHom.id_apply, seqData_teichmullerAct_inl,
+    seqData_teichmullerAct_inl] at h1
+  have h0 := congrArg (fun y => y.1 0) h1
+  simp only [Pi.smul_apply, smul_eq_mul, seqOne, mul_one, RingHom.comp_apply,
+    WittVector.constantCoeff_apply, WittVector.teichmuller_coeff_zero, frobenius_def] at h0
+  exact hc h0.symm
+
 end SeqExample
+
+section LiftExample
+
+/-- The factorization does not fix a map out of the lift ring: over `ℤ` with
+`u = 1` and `v = p`, a homomorphism that is the identity on coefficients and
+agrees with `liftHom` on `X 1` and `X p` can still send `X 0` to `1`. -/
+example : ∃ g : CartierLift.LiftRing p ℤ (1 : ℤ) (p : ℤ) →+* ℤ,
+    g.comp (algebraMap ℤ _) = RingHom.id ℤ ∧
+      g (CartierLift.liftVar (p := p) (R := ℤ) (1 : ℤ) (p : ℤ) 1) = 1 ∧
+      g (CartierLift.liftVar (p := p) (R := ℤ) (1 : ℤ) (p : ℤ) p) = p ∧
+      g ≠ CartierLift.liftHom (RingHom.id ℤ) (1 : ℤ) (p : ℤ) (one_mul _) := by
+  have hp : p ≠ 0 := (Fact.out : p.Prime).ne_zero
+  have hp0 : (p : ℤ) ≠ 0 := by exact_mod_cast hp
+  let e : ℤ → ℤ := fun b => if b = 0 then 1 else b
+  let g : CartierLift.LiftRing p ℤ (1 : ℤ) (p : ℤ) →+* ℤ :=
+    Ideal.Quotient.lift _ (MvPolynomial.eval₂Hom (RingHom.id ℤ) e) fun a ha => by
+      obtain ⟨q, rfl⟩ := Ideal.mem_span_singleton'.mp ha
+      simp [CartierLift.liftRel, e, hp]
+  refine ⟨g, RingHom.ext fun r => ?_, ?_, ?_, fun h => ?_⟩
+  · simp [g]
+  · simp [g, CartierLift.liftVar, e]
+  · simp [g, CartierLift.liftVar, e, hp]
+  · have h0 := RingHom.congr_fun h (CartierLift.liftVar (p := p) (R := ℤ) (1 : ℤ) (p : ℤ) 0)
+    rw [CartierLift.liftHom_liftVar] at h0
+    simp [g, CartierLift.liftVar, e] at h0
+
+/-- Its values on the coefficients and on every variable do fix a map out of
+the lift ring. -/
+example {B : Type} [CommRing B] (j : Zp2 p →+* B) (u v : B) (huv : u * v = p)
+    (f : CartierLift.LiftRing p (Zp2 p) u v →+* B)
+    (hC : f.comp (algebraMap (Zp2 p) _) = j)
+    (hX : ∀ b : B, f (CartierLift.liftVar u v b) = b) :
+    f = CartierLift.liftHom j u v huv :=
+  CartierLift.eq_liftHom j u v huv f hC hX
+
+end LiftExample
 
 end CerednikDrinfeld
