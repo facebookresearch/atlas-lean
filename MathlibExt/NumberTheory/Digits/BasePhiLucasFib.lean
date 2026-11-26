@@ -20,15 +20,10 @@ Source: F. Michel Dekking, *The Structure of Base Phi Expansions*, INTEGERS 24
 (2024), Article A24, Lemma 9 (`integers-2024-A24-lem-9`). -/
 public theorem fib_add_three_mul_fib_succ_eq_lucasNumber (n : ℕ) :
     Nat.fib n + 3 * Nat.fib (n + 1) = lucasNumber (n + 2) := by
-  induction n using Nat.twoStepInduction with
-  | zero => rfl
-  | one => rfl
-  | more n ih₀ ih₁ =>
-    have hf₀ : Nat.fib (n + 2) = Nat.fib n + Nat.fib (n + 1) := Nat.fib_add_two
-    have hf₁ : Nat.fib (n + 3) = Nat.fib (n + 1) + Nat.fib (n + 2) := Nat.fib_add_two
-    have hL : lucasNumber (n + 4) = lucasNumber (n + 3) + lucasNumber (n + 2) := rfl
-    change Nat.fib (n + 2) + 3 * Nat.fib (n + 3) = lucasNumber (n + 4)
-    rw [hL, ← ih₁, ← ih₀, hf₁, hf₀]
-    omega
+  rw [lucasNumber_add_one_eq_fib_add_fib (n + 1)]
+  change Nat.fib n + 3 * Nat.fib (n + 1) = Nat.fib (n + 1) + Nat.fib (n + 3)
+  have hf₀ : Nat.fib (n + 2) = Nat.fib n + Nat.fib (n + 1) := Nat.fib_add_two
+  have hf₁ : Nat.fib (n + 3) = Nat.fib (n + 1) + Nat.fib (n + 2) := Nat.fib_add_two
+  omega
 
 end MetaMathlibExt

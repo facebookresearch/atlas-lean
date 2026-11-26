@@ -83,6 +83,22 @@ def lucasNumber : ℕ → ℕ
   | 1 => 1
   | n + 2 => lucasNumber (n + 1) + lucasNumber n
 
+/-- **Lucas numbers from neighboring Fibonacci numbers.** For every natural number $m$,
+$L_{m+1} = F_m + F_{m+2}$, with $L_0 = 2$, $L_1 = 1$, $F_0 = 0$, and $F_1 = 1$. -/
+theorem lucasNumber_add_one_eq_fib_add_fib (m : ℕ) :
+    lucasNumber (m + 1) = Nat.fib m + Nat.fib (m + 2) := by
+  induction m using Nat.twoStepInduction with
+  | zero => rfl
+  | one => rfl
+  | more m ih1 ih2 =>
+    have l3 : lucasNumber (m + 3) = lucasNumber (m + 2) + lucasNumber (m + 1) := rfl
+    have l2 : lucasNumber (m + 2) = Nat.fib (m + 1) + Nat.fib (m + 3) := ih2
+    have f2 : Nat.fib (m + 2) = Nat.fib m + Nat.fib (m + 1) := Nat.fib_add_two
+    have f3 : Nat.fib (m + 3) = Nat.fib (m + 1) + Nat.fib (m + 2) := Nat.fib_add_two
+    have f4 : Nat.fib (m + 4) = Nat.fib (m + 2) + Nat.fib (m + 3) := Nat.fib_add_two
+    change lucasNumber (m + 3) = Nat.fib (m + 2) + Nat.fib (m + 4)
+    omega
+
 /-- **The Lucas sequence $U(1, -1)$ is the Fibonacci sequence.** For every natural number $n$,
 the $n$-th term of the Lucas sequence $U(1, -1)$ equals the Fibonacci number $F_n$, where
 $F_0 = 0$, $F_1 = 1$ and $F_{n+2} = F_{n+1} + F_n$. -/
@@ -117,7 +133,7 @@ theorem lucasU_cassini (params : LucasSequenceParams) (n : ℕ) :
   | succ n ih =>
     have r1 := lucasU_add_two params n
     have r2 := lucasU_add_two params (n + 1)
-    show lucasU params (n + 2) ^ 2 -
+    change lucasU params (n + 2) ^ 2 -
         lucasU params (n + 1) * lucasU params (n + 3) = params.q ^ (n + 1)
     linear_combination
       lucasU params (n + 2) * r1 + params.q * ih - lucasU params (n + 1) * r2
