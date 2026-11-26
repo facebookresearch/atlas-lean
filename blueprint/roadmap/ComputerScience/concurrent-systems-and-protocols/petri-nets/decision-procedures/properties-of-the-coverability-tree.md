@@ -1,8 +1,8 @@
 # Properties of the coverability tree
 
-For every [Petri net](place-transition-petri-nets.md) $(N, M_0)$ the construction of the [coverability tree](coverability-tree.md) terminates, and the finite tree $T$ it produces satisfies:
+For every [Petri net](../place-transition-petri-nets.md) $(N, M_0)$ the construction of the [coverability tree](coverability-tree.md) terminates, and the finite tree $T$ it produces satisfies:
 
-1. $(N, M_0)$ is [bounded](boundedness-and-safeness.md), so that $R(M_0)$ is finite, if and only if $\omega$ appears in no node label of $T$;
+1. $(N, M_0)$ is [bounded](../boundedness-and-safeness.md), so that $R(M_0)$ is finite, if and only if $\omega$ appears in no node label of $T$;
 2. $(N, M_0)$ is safe if and only if only $0$'s and $1$'s appear in node labels of $T$;
 3. a transition is dead if and only if it labels no arc of $T$;
 4. if $M$ is reachable from $M_0$, then some node of $T$ is labelled $M'$ with $M \le M'$.
@@ -12,17 +12,20 @@ Because $\omega$ forgets how a place grows, the coverability tree does not decid
 ## Depends on
 
 - [The coverability tree](coverability-tree.md)
-- [Boundedness and safeness of Petri nets](boundedness-and-safeness.md)
-- [Liveness and deadlock-freedom of Petri nets](liveness-and-deadlock-freedom.md)
-- [Place/transition Petri nets](place-transition-petri-nets.md)
+- [Boundedness and safeness of Petri nets](../boundedness-and-safeness.md)
+- [Liveness and deadlock-freedom of Petri nets](../liveness-and-deadlock-freedom.md)
+- [Place/transition Petri nets](../place-transition-petri-nets.md)
+
+## Proof depends on
+
+- [König's lemma for finitely branching graphs](konig-s-lemma-for-finitely-branching-graphs.md)
+- [Dickson's lemma for finite products of well-quasi-orders](dickson-s-lemma.md)
 
 ## Expansion
 
 This page becomes ready once:
 
-- Dickson's lemma, that $\mathbb{N}^k$ with the placewise order is a well-quasi-order, stated on a page crediting Mathlib's `Pi.wellQuasiOrderedLE` (proof prerequisite of termination; not yet stated)
-- König's lemma for finitely branching trees (proof prerequisite of termination; not yet stated)
-- A checked locator for the termination proof in R. M. Karp and R. E. Miller, "Parallel program schemata", *Journal of Computer and System Sciences*, 1969 (source check)
+- A checked locator for the termination proof in R. M. Karp and R. E. Miller, "Parallel program schemata", *Journal of Computer and System Sciences*, 1969 (source check). The same argument, by König's lemma and Dickson's lemma, proves that the [coverability graph construction terminates](coverability-graph-construction-terminates.md).
 
 ## Sources
 

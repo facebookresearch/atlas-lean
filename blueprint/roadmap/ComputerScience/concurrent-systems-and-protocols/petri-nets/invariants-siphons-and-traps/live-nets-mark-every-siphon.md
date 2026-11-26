@@ -1,0 +1,16 @@
+# Live Petri nets mark every siphon initially
+
+Let $N$ be an ordinary [Petri net](../place-transition-petri-nets.md) that is connected. If $(N, M_0)$ is [live](../liveness-and-deadlock-freedom.md), then $M_0$ puts a token on some place of every [siphon](../siphons-and-traps.md) of $N$.
+
+## Depends on
+
+- [Liveness and deadlock-freedom of Petri nets](../liveness-and-deadlock-freedom.md)
+- [Siphons and traps](../siphons-and-traps.md)
+
+## Proof depends on
+
+- [Unmarked siphons stay unmarked](unmarked-siphons-stay-unmarked.md)
+
+## Sources
+
+- J. Esparza, *Petri Nets*, lecture notes, Technical University of Munich, version of 18 June 2019, <https://archive.model.in.tum.de/um/courses/petri/SS2019/PNSkript.pdf>, Proposition 4.4.4 with its proof (using connectedness, Definition 1.3.8), p. 92.

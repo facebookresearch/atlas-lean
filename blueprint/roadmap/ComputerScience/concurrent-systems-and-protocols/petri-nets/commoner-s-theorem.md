@@ -8,11 +8,11 @@ A connected [free-choice net](subclasses-of-petri-nets.md) $(N, M_0)$ is [live](
 - [Siphons and traps](siphons-and-traps.md)
 - [Liveness and deadlock-freedom of Petri nets](liveness-and-deadlock-freedom.md)
 
-## Expansion
+## Proof depends on
 
-This page becomes ready once:
-
-- A checked locator for a complete proof of the theorem, which the survey cited here states without proof (source check)
+- [Extended free-choice nets](state-machines-marked-graphs-and-free-choice-nets/extended-free-choice-nets.md)
+- [The siphon–trap property implies liveness for free-choice nets](state-machines-marked-graphs-and-free-choice-nets/siphon-trap-property-implies-liveness-for-free-choice-nets.md)
+- [Live free-choice nets have the siphon–trap property](state-machines-marked-graphs-and-free-choice-nets/live-free-choice-nets-have-the-siphon-trap-property.md)
 
 ## Sources
 

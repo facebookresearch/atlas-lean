@@ -8,6 +8,7 @@ Algebraic models of concurrent processes: labelled transition systems and their 
 - [Hennessy–Milner logic](hennessy-milner-logic/README.md)
 - [Calculus of communicating systems](calculus-of-communicating-systems/README.md)
 - [CSP semantic models](csp-semantic-models/README.md)
+- [Deadlock analysis of CSP networks](csp-deadlock-analysis/README.md)
 - [Input/output automata](input-output-automata/README.md)
 - [Labelled transition systems](labelled-transition-systems/README.md)
 - [Observational congruence](observational-congruence/README.md)

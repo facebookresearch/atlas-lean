@@ -4,7 +4,9 @@ The denotational semantics of CSP maps each CSP term $P$, in an environment $\xi
 
 ## Expansion
 
-This page is a family. A good expansion states, each on its own page, the clause of every CSP operator over $\mathcal{T}$ (Sections 1.3.1 and 8.2 of the source), over $\mathcal{N}$ (Section 8.3.2) and over $\mathcal{F}$ (Section 8.4), and the fixed-point clause for recursion in each model.
+This page is a family. The clauses over $\mathcal{T}$ and $\mathcal{F}$ are stated in the [trace semantics](trace-semantics-of-the-csp-operators.md) and the [stable failures semantics](stable-failures-semantics-of-the-csp-operators.md) of the CSP operators. It becomes ready once:
+
+- The clauses of every CSP operator over $\mathcal{N}$, with the fixed-point clause for recursion with respect to failures-divergences refinement (Section 8.3.2 of the source), stated on a page of their own (statement prerequisite; not yet stated)
 
 ## Depends on
 
@@ -12,6 +14,8 @@ This page is a family. A good expansion states, each on its own page, the clause
 - [The traces model of CSP](the-traces-model.md)
 - [The stable failures model of CSP](the-stable-failures-model.md)
 - [The failures-divergences model of CSP](the-failures-divergences-model.md)
+- [Trace semantics of the CSP operators](trace-semantics-of-the-csp-operators.md)
+- [Stable failures semantics of the CSP operators](stable-failures-semantics-of-the-csp-operators.md)
 
 ## Sources
 
