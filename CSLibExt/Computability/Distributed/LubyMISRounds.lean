@@ -44,9 +44,9 @@ uniformly random order of the vertices. The rounds use independent permutations:
 
 * `lubyRun_maximal`: for any priorities, once no vertex remains the output is a maximal
   independent set and later rounds change nothing, and after `n` rounds no vertex remains.
-* `inv_le_uniformOn_smallest`: the key estimate: for an edge `uv` among the remaining vertices,
-  `u` has the smallest value among the remaining neighbors of `u` and of `v` with probability at
-  least `1 / (d(u) + d(v))`, the degrees taken among the remaining vertices.
+* `inv_le_uniformOn_smallest`: the key estimate: for an edge `uv` with `u` remaining, `u` has
+  the smallest value among the remaining neighbors of `u` and of `v` with probability at least
+  `1 / (d(u) + d(v))`, the degrees taken among the remaining vertices.
 * `expected_removed_edges_ge`: in a round, the expected number of removed edges is at least half
   the number of remaining edges.
 * `prob_lubyRun_nonempty_le`: some vertex remains after `T + 1` rounds with probability at most
