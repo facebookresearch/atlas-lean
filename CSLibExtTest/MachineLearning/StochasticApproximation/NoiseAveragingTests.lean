@@ -29,8 +29,9 @@ hypothesis cannot be removed even in the source's setting:
 The positive control `ae_tendsto_zero_hypotheses_satisfiable` shows that the hypotheses of
 `ae_tendsto_zero` hold together for noise that is not almost surely zero, and
 `restart_coin_tendsto_zero` applies the lemma to that model. `isCenteredNoise_neg_one_iff` pins
-how the contract reads a negative envelope. The remaining examples apply the bridges and the
-lemmas in the shapes their consumers use.
+how the contract reads a negative envelope, and two examples show that every `w` satisfies it
+outside the setting it is meant for. The remaining examples apply the bridges and the lemmas in
+the shapes their consumers use.
 -/
 
 @[expose] public section
@@ -566,6 +567,23 @@ theorem isCenteredNoise_neg_one_iff {Ω : Type*} {m0 : MeasurableSpace Ω} {μ :
     exact ⟨by simpa only [h] using h1, h2⟩
   · rintro ⟨h1, h2⟩
     exact ⟨by simpa only [h] using h1, h2⟩
+
+/-- Outside the setting the contract is meant for, `μ⁻[· | m]` is `0`, so every `w` satisfies
+the contract: here `m` is not a sub-σ-algebra of `m0`. -/
+example {Ω : Type*} {m0 m : MeasurableSpace Ω} (hm : ¬ m ≤ m0) (μ : Measure[m0] Ω)
+    (w B : Ω → ℝ) : IsCenteredNoise m μ w B := by
+  refine ⟨?_, by simp [condLExp_of_not_le hm]⟩
+  rw [condLExp_of_not_le hm]
+  filter_upwards with ω
+  simp
+
+/-- The same holds when `μ.trim` is not σ-finite. -/
+example {Ω : Type*} {m0 m : MeasurableSpace Ω} (hm : m ≤ m0) (μ : Measure[m0] Ω)
+    (hσ : ¬ SigmaFinite (μ.trim hm)) (w B : Ω → ℝ) : IsCenteredNoise m μ w B := by
+  refine ⟨?_, by simp [condLExp_of_not_sigmaFinite hm hσ]⟩
+  rw [condLExp_of_not_sigmaFinite hm hσ]
+  filter_upwards with ω
+  simp
 
 section Interface
 

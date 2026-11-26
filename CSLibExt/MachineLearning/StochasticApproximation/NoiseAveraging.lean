@@ -54,10 +54,11 @@ is, equal conditional expectations of the positive and negative parts of `w`. Si
 `ENNReal.ofReal` sends negative numbers to `0`, the first condition bounds the conditional second
 moment by `max B 0`: for a nonnegative envelope it is (b) itself, and where `B < 0` it asks the
 conditional second moment to vanish. Both sides of the centering equality are finite
-(`IsCenteredNoise.condLExp_abs_lt_top`), so it is a genuine centering condition and not an
-equality `∞ = ∞`. The Bochner conditional expectation `μ[· | m]` is `0` for a non-integrable
-function, and a real `tsum` is `0` for a divergent series, so neither is used to state (a), (b),
-(d) or (e).
+(`IsCenteredNoise.condLExp_abs_lt_top`), so, when `m ≤ m0` and `μ.trim` is σ-finite, as for every
+`ℱ t` under a finite measure, it is a genuine centering condition and not an equality `∞ = ∞`.
+Otherwise `μ⁻[· | m]` is `0` and every `w` satisfies the contract. The Bochner conditional
+expectation `μ[· | m]` is `0` for a non-integrable function, and a real `tsum` is `0` for a
+divergent series, so neither is used to state (a), (b), (d) or (e).
 
 ## Main definitions
 
@@ -124,8 +125,9 @@ agree. The bound is `μ⁻[ofReal (w ^ 2) | m] ≤ ofReal B`, and `ENNReal.ofRea
 `B` to `0`: for a nonnegative envelope `B` it is the bound by `B` itself, while where `B < 0` it
 asks the conditional second moment to vanish, not to be at most `B`. The contract is meant for a
 sub-σ-algebra `m ≤ m0` such that `μ.trim` is σ-finite, which holds for every σ-algebra of a
-filtration under a finite measure. Square-integrable noise with the usual conditions
-`μ[w | m] = 0` and `μ[w ^ 2 | m] ≤ B` satisfies it (`IsCenteredNoise.of_memLp`). -/
+filtration under a finite measure; otherwise `μ⁻[· | m]` is `0` and every `w` satisfies it.
+Square-integrable noise with the usual conditions `μ[w | m] = 0` and `μ[w ^ 2 | m] ≤ B` satisfies
+it (`IsCenteredNoise.of_memLp`). -/
 structure IsCenteredNoise (m : MeasurableSpace Ω) (μ : Measure[m0] Ω) (w B : Ω → ℝ) : Prop where
   /-- Condition (b): the conditional second moment of `w` given `m` is at most `ofReal B`, that
   is, at most `B` where `B ≥ 0` and `0` where `B < 0`. -/
@@ -149,8 +151,9 @@ private theorem abs_le_one_add_sq (x : ℝ) : |x| ≤ 1 + x ^ 2 := by
 
 /-- **Finite conditional first moments.** If `w` satisfies the contract, then
 `μ⁻[ofReal |w| | m] < ∞` almost surely. Hence both sides of
-`IsCenteredNoise.condLExp_pos_eq_neg` are finite almost surely, and that equality is a genuine
-centering condition. -/
+`IsCenteredNoise.condLExp_pos_eq_neg` are finite almost surely. When `m ≤ m0` and `μ.trim` is
+σ-finite, that equality is therefore a genuine centering condition; otherwise `μ⁻[· | m]` is `0`
+and every `w` satisfies the contract. -/
 theorem IsCenteredNoise.condLExp_abs_lt_top {m : MeasurableSpace Ω} {w B : Ω → ℝ}
     (hw : IsCenteredNoise m μ w B) :
     ∀ᵐ ω ∂μ, μ⁻[fun ω => ENNReal.ofReal |w ω| | m] ω < ∞ := by
