@@ -1,6 +1,6 @@
 # Gate bootstrapping: FHE for Boolean circuits with one bootstrap per gate
 
-Encode bits as TLWE messages in $\{\pm 1/8\}$. For any binary gate among NAND, AND, OR, XOR (and their negations), the sum of the two input samples plus a public constant has phase in $(-1/4,1/4)$ or its complement depending on the gate output; one programmable bootstrapping with the sign function $x\mapsto\pm 1/8$ (negacyclic) refreshes the output to a fresh encoding. Assuming LWE-type hardness of TLWE/TRLWE and circular security of the bootstrapping keys, this yields a fully homomorphic encryption scheme for Boolean circuits of unbounded depth, with one bootstrapping per gate whose parameters are independent of circuit depth.
+Encode bits as TLWE messages in $\{\pm 1/8\}$. For any binary gate among NAND, AND, OR, XOR (and their negations), a public linear combination of the two input samples (for NAND, $(\mathbf{0},1/8)$ minus their sum; for XOR, twice their sum plus $(\mathbf{0},1/4)$) has phase in $(0,1/2)$ or in $(-1/2,0)$ according to the gate output; one programmable bootstrapping with the sign function $x\mapsto\pm 1/8$ (negacyclic) refreshes the output to a fresh encoding. Assuming LWE-type hardness of TLWE/TRLWE and circular security of the bootstrapping keys, this yields a fully homomorphic encryption scheme for Boolean circuits of unbounded depth, with one bootstrapping per gate whose parameters are independent of circuit depth.
 
 ## Proof sketch
 

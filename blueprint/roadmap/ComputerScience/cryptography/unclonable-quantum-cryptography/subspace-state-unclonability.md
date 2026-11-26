@@ -1,6 +1,6 @@
 # Query lower bound for duplicating subspace states
 
-Let $A\subseteq\mathbb{F}_2^{n}$ be a uniformly random subspace of dimension $n/2$ and $|A\rangle=|A|^{-1/2}\sum_{a\in A}|a\rangle$. Given one copy of $|A\rangle$ and quantum oracle access to membership oracles for $A$ and for its dual $A^{\perp}$, every algorithm that outputs a state on two registers both of which pass the projective test onto $|A\rangle$ (implemented with the two membership oracles via $\Pi_A$ and the Hadamard-conjugated $\Pi_{A^\perp}$) with probability $\epsilon$ must make $\Omega(\epsilon\cdot 2^{n/4})$ queries.
+Let $A\subseteq\mathbb{F}_2^{n}$ be a uniformly random subspace of dimension $n/2$ and $|A\rangle=|A|^{-1/2}\sum_{a\in A}|a\rangle$. Given one copy of $|A\rangle$ and quantum oracle access to membership oracles for $A$ and for its dual $A^{\perp}$, every algorithm that outputs a state on two registers both of which pass the projective test onto $|A\rangle$ (implemented with the two membership oracles via $\Pi_A$ and the Hadamard-conjugated $\Pi_{A^\perp}$) with probability at least $\epsilon$, where $1/\epsilon=o(2^{n/2})$, must make $\Omega(\sqrt{\epsilon}\cdot 2^{n/4})$ queries.
 
 ## Proof sketch
 

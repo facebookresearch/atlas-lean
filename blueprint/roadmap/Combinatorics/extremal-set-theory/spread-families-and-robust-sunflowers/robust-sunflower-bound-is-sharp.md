@@ -1,10 +1,10 @@
 # The robust sunflower bound is sharp up to lower-order terms
 
-For all $\alpha, \beta \in (0, 1/2)$ and $\ell \ge 1$ there are $\ell$-uniform families of size $\big(c\log(1/\beta)/\alpha\big)^{\ell}$, for an absolute constant $c > 0$, containing no $(\alpha, \beta)$-robust sunflower. Hence the Alweiss-Lovett-Wu-Zhang bound $(C\log(\ell/\beta)/\alpha)^{\ell}$ for robust sunflowers is optimal up to the dependence on $\log\ell$, and further progress toward the Erdős-Rado conjecture must exploit genuine sunflowers rather than robustness alone.
+For every sufficiently large $\ell$ there is an $\ell$-uniform family of at least $\big((\log_2 \ell)/8\big)^{\ell - \sqrt{\ell}} = (\log \ell)^{\ell(1 - o(1))}$ sets that contains no $(1/2, 1/2)$-robust sunflower. Hence, for fixed $\alpha, \beta$, the threshold $(C\log(\ell/\beta)/\alpha)^{\ell} = (\log \ell)^{\ell(1 + o(1))}$ above which every $\ell$-uniform family contains an $(\alpha, \beta)$-robust sunflower cannot be lowered to $(\log \ell)^{\ell(1 - \eta)}$ for any constant $\eta > 0$.
 
 ## Proof sketch
 
-Take the $\ell$-fold product of a family of $m$ disjoint blocks: sets choosing one element from each of $\ell$ blocks, each block of size $s = c\log(1/\beta)/\alpha$. A random set $W$ of density $\alpha$ contains a member if and only if it meets every block, and it misses a fixed block with probability $(1-\alpha)^{s} \ge \beta^{c'}$ for a constant $c' < 1$ when $c$ is small. Hence $W$ contains no member with probability at least $\beta^{c'} > \beta$, and the same computation applies to every subfamily after removing its kernel, so no subfamily is an $(\alpha, \beta)$-robust sunflower.
+Let $\varepsilon = 1/\sqrt{\ell}$, take pairwise disjoint blocks $X_1, \dots, X_\ell$ of size $m = \log_2(\varepsilon \ell)$, and let $\hat{\mathcal{F}}$ be the family of sets with exactly one element in each block. Greedily choose $\mathcal{F} \subseteq \hat{\mathcal{F}}$ with $|S \cap S'| \le (1 - \varepsilon)\ell$ for all distinct $S, S' \in \mathcal{F}$; this keeps $|\mathcal{F}| \ge 2^{-\ell} m^{(1-\varepsilon)\ell} \ge \big((\log_2 \ell)/8\big)^{\ell - \sqrt{\ell}}$. A robust sunflower in $\mathcal{F}$ with kernel $K$ has two distinct members containing $K$, so $|K| \le (1 - \varepsilon)\ell$ and at least $\varepsilon\ell$ blocks are disjoint from $K$. A random set $W$ of density $1/2$ misses one of these blocks with probability at least $1 - (1 - 2^{-m})^{\varepsilon\ell} \ge 1 - 1/e > 1/2$, and then $W$ contains no $S \setminus K$ with $S \in \mathcal{F}$.
 
 ## Depends on
 
@@ -13,4 +13,4 @@ Take the $\ell$-fold product of a family of $m$ disjoint blocks: sets choosing o
 
 ## Sources
 
-- Ryan Alweiss, Shachar Lovett, Kewen Wu, Jiapeng Zhang, "Improved bounds for the sunflower lemma", Annals of Mathematics 194(3) (2021), STOC (2020); arXiv:1908.08483.
+- Ryan Alweiss, Shachar Lovett, Kewen Wu, Jiapeng Zhang, "Improved bounds for the sunflower lemma", Annals of Mathematics 194(3) (2021), STOC (2020); arXiv:1908.08483, Lemma 3.1.

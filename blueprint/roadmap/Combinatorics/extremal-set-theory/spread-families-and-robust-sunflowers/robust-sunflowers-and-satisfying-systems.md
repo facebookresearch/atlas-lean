@@ -6,8 +6,6 @@ $$
 \Pr_W\big[\exists F \in \mathcal{F} : F \setminus K \subseteq W\big] > 1 - \beta .
 $$
 
-Every $(1/r, 1/r)$-robust sunflower contains an $r$-sunflower (with the same kernel structure up to passing to a subfamily).
-
 ## Depends on
 
 - [Sunflower](../intersecting-families/sunflower-lemma/is-sunflower.md)

@@ -1,6 +1,6 @@
 # Dikstein–Dinur–Lubotzky: linear-size low-acceptance agreement tests
 
-For every $\varepsilon > 0$ there exist $k$ and a family $\mathcal{F}_n$ of $k$-subsets of $[n]$ with $|\mathcal{F}_n| = O(n)$ and an agreement test on $\mathcal{F}_n$ (pairs intersecting in about $\sqrt{k}$ elements) such that for every alphabet $\Sigma$ and every ensemble $\{f_s\}$,
+For every $\varepsilon > 0$ there exist $k$ and a family $\mathcal{F}_n$ of $k$-subsets of $[n]$ with $|\mathcal{F}_n| = O(n)$ and an agreement test on $\mathcal{F}_n$ (a uniformly random pair $s_1, s_2 \in \mathcal{F}_n$ with $|s_1 \cap s_2| = \sqrt{k}$, accepting iff $f_{s_1}, f_{s_2}$ agree on $s_1 \cap s_2$) such that for every alphabet $\Sigma$ and every ensemble $\{f_s\}$,
 
 $$
 \operatorname{Agr}(\{f_s\}) > \varepsilon \implies \exists\, G : [n] \to \Sigma,\quad \Pr_{s \in \mathcal{F}_n}\bigl[f_s \overset{0.99}{\approx} G|_s\bigr] \ge \operatorname{poly}(\varepsilon),

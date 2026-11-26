@@ -1,6 +1,6 @@
 # Hall-Puder-Sawin: Ramanujan coverings of every degree
 
-For every connected graph $G$ and every $r \ge 2$, $G$ has an $r$-sheeted covering $\hat G$ whose new eigenvalues (those not coming from $G$) are bounded in absolute value by the spectral radius $\rho$ of the universal cover of $G$; in particular every $d$-regular bipartite Ramanujan graph has Ramanujan $r$-coverings for all $r$, generalizing the case $r = 2$ of Marcus-Spielman-Srivastava.
+For every connected graph $G$ and every $r \ge 2$, $G$ has an $r$-sheeted covering $\hat G$ whose new eigenvalues (those not coming from $G$) are all at most the spectral radius $\rho$ of the universal cover of $G$; in particular, since bipartite spectra are symmetric, every $d$-regular bipartite Ramanujan graph has Ramanujan $r$-coverings for all $r$, generalizing the case $r = 2$ of Marcus-Spielman-Srivastava.
 
 ## Proof sketch
 

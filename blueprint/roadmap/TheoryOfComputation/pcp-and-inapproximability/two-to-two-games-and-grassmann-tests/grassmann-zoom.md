@@ -9,7 +9,6 @@ $$
 ## Depends on
 
 - [Grassmann graph over $\mathbb{F}_2$](../../../GraphTheory/algebraic-graph-theory/part-01/grassmann-graphs/gr.md)
-- [Edge expansion of a vertex set](../../../GraphTheory/algebraic-graph-theory/part-01/grassmann-graphs/untitled.md)
 
 ## Sources
 

@@ -1,6 +1,6 @@
 # Explicit Ramanujan complexes and their local spectral expansion
 
-For every $d \ge 2$ and prime power $q$ there is an explicit infinite family of $(d-1)$-dimensional Ramanujan complexes of type $A_{d-1}$ with all vertex degrees bounded by a function of $q$ and $d$. Every link of a $(d-3)$-face is the incidence graph of points and lines of a projective plane over $\mathbb{F}_q$, with second eigenvalue $\sqrt{q}/(q+1)$; hence these complexes are one-sided $\lambda$-local spectral expanders with $\lambda = O_d(1/\sqrt{q})$, which tends to $0$ as $q \to \infty$.
+For every $d \ge 3$ and prime power $q$ there is an explicit infinite family of $(d-1)$-dimensional Ramanujan complexes of type $A_{d-1}$ with all vertex degrees bounded by a function of $q$ and $d$. Every link of a $(d-3)$-face is either the point-line incidence graph of the projective plane over $\mathbb{F}_q$ (second eigenvalue $\sqrt{q}/(q+1)$), when the two missing vertex types are adjacent in the cyclic $\tilde A_{d-1}$ diagram, or the complete bipartite graph $K_{q+1,q+1}$ (second eigenvalue $0$), when they are not; hence these complexes are one-sided $\lambda$-local spectral expanders with $\lambda = O_d(1/\sqrt{q})$, which tends to $0$ as $q \to \infty$.
 
 ## Proof sketch
 

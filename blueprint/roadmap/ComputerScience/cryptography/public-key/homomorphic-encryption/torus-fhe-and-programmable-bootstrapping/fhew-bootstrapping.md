@@ -1,6 +1,6 @@
 # FHEW: bootstrapping LWE ciphertexts with a ring-GSW accumulator
 
-There is an LWE-based fully homomorphic encryption scheme (FHEW) evaluating a homomorphic NAND followed by bootstrapping in which the accumulator is a ring-GSW ciphertext over $\mathbb{Z}_Q[X]/(X^{N}+1)$ updated by homomorphic multiplications by encrypted monomials $X^{a_is_i}$ (or by additions in the exponent), followed by extraction and key and modulus switching; with appropriate parameters each refresh takes under a second on a single core (as reported in 2015). Its security relies on Ring-LWE/LWE and circular security of the bootstrapping keys, and its error growth during bootstrapping is additive (quasi-linear) in the number of accumulator updates.
+There is an LWE-based fully homomorphic encryption scheme (FHEW) evaluating a homomorphic NAND followed by bootstrapping in which the accumulator is a ring-GSW ciphertext over $\mathbb{Z}_Q[X]/(X^{N}+1)$ updated by homomorphic multiplications by encrypted monomials $X^{a_is_i}$ (or by additions in the exponent), followed by extraction and key and modulus switching. Its security relies on Ring-LWE/LWE and circular security of the bootstrapping keys, and its error growth during bootstrapping is additive (quasi-linear) in the number of accumulator updates.
 
 ## Proof sketch
 

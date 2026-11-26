@@ -1,6 +1,6 @@
 # NEEXP has two-prover entangled interactive proofs
 
-$\mathrm{NEEXP} \subseteq \mathrm{MIP}^*$, where $\mathrm{NEEXP} = \bigcup_k \mathrm{NTIME}(2^{2^{n^k}})$. Earlier, for every computable tower height, non-deterministic iterated exponential time classes admit $\mathrm{MIP}^*$ protocols with soundness gaps that shrink with the height (Fitzsimons-Ji-Vidick-Yuen); in particular $\mathrm{MIP}^* \ne \mathrm{MIP}$ since $\mathrm{MIP} = \mathrm{NEXP}$.
+$\mathrm{NEEXP} \subseteq \mathrm{MIP}^*$, where $\mathrm{NEEXP} = \bigcup_k \mathrm{NTIME}(2^{2^{n^k}})$. Consequently $\mathrm{MIP}^* \ne \mathrm{MIP}$, since $\mathrm{MIP} = \mathrm{NEXP} \subsetneq \mathrm{NEEXP}$ by the nondeterministic time hierarchy. Earlier, Fitzsimons-Ji-Vidick-Yuen showed that for every time-constructible $R$, nondeterministic time $\exp(\exp(\cdots\exp(n)))$ with $R(n)$ exponentials has entangled multiprover protocols with a constant number of provers, completeness $1$ and soundness $1 - \exp(-C\exp(\cdots\exp(n)))$ with $R(n)-1$ exponentials, for a universal constant $C > 0$.
 
 ## Proof sketch
 

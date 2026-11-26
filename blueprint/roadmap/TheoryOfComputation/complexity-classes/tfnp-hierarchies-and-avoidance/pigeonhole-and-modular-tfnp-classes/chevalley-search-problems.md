@@ -16,7 +16,6 @@ These problems are natural: no circuit or machine appears in the input.
 
 ## Depends on
 
-- [The modular classes PPA_q via BIPARTITE_q and the Buss–Johnson operator & combining two classes](ppa-q-and-the-and-operator.md)
 - [Chevalley–Warning theorem, existence form](../../../../Combinatorics/additive-combinatorics/combinatorial-nullstellensatz/exists-ne-common-zero.md)
 
 ## Sources

@@ -1,6 +1,6 @@
 # Bootstrapping with polynomial error and FHE from LWE with polynomial approximation factors
 
-Assuming LWE with a polynomial modulus-to-noise ratio (equivalently, worst-case lattice problems with polynomial approximation factors), there is a bootstrappable homomorphic encryption scheme whose bootstrapping procedure, implemented by GSW-style accumulators performing the decryption arithmetic in a cyclic group (permutation matrices or monomials), incurs only polynomial (in fact quasi-linear in the security parameter) error growth. Consequently, assuming in addition circular security, fully homomorphic encryption exists based on LWE with polynomial approximation factors.
+Assuming LWE with a polynomial modulus-to-noise ratio (implied, via Regev's quantum reduction, by the worst-case hardness of lattice problems with polynomial approximation factors), there is a bootstrappable homomorphic encryption scheme whose bootstrapping procedure, implemented by GSW-style accumulators performing the decryption arithmetic in a cyclic group (permutation matrices or monomials), incurs only polynomial (in fact quasi-linear in the security parameter) error growth. Consequently, assuming in addition circular security, fully homomorphic encryption exists based on LWE with polynomial approximation factors.
 
 ## Proof sketch
 

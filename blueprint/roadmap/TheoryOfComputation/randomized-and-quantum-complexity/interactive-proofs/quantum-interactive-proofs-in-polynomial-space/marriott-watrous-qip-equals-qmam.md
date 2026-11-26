@@ -1,6 +1,6 @@
 # Marriott-Watrous: QIP equals QMAM
 
-$\mathrm{QIP}(3) = \mathrm{QMAM}$, and hence $\mathrm{QIP} = \mathrm{QMAM}$. Moreover the QMAM protocol can be taken with completeness $1$ and soundness $1/2 + \varepsilon$, amplifiable by parallel repetition.
+$\mathrm{QIP}(3) = \mathrm{QMAM}$, and hence $\mathrm{QIP} = \mathrm{QMAM}$. Moreover, for every polynomial $r$, every problem in $\mathrm{QIP}$ has a QMAM protocol with completeness $1$ and soundness $1/2 + 2^{-r(n)}$, and parallel repetition reduces the soundness to $2^{-r(n)}$.
 
 ## Proof sketch
 

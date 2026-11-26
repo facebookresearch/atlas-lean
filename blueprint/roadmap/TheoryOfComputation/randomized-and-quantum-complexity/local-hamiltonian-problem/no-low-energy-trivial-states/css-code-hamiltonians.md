@@ -6,7 +6,7 @@ $$
 H = \sum_{r \text{ row of } H_X} \frac{I - X^{r}}{2} + \sum_{s \text{ row of } H_Z} \frac{I - Z^{s}}{2},
 $$
 
-where $X^r = \bigotimes_i X^{r_i}$. It is a commuting frustration-free $(w, w)$-local Hamiltonian whose ground space is the CSS code space; the energy of a computational-basis string $x$ under the $Z$-part equals the syndrome weight $|H_Z x|$.
+where $X^r = \bigotimes_i X^{r_i}$. It is a commuting frustration-free $(w, 2w)$-local Hamiltonian whose ground space is the CSS code space; the energy of a computational-basis string $x$ under the $Z$-part equals the syndrome weight $|H_Z x|$.
 
 ## Depends on
 

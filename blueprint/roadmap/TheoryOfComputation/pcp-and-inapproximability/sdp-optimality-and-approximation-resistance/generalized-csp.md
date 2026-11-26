@@ -8,11 +8,6 @@ $$
 
 and $\operatorname{opt}(\Im) = \max_x \operatorname{val}_\Im(x)$. The **Max-$P$** problem for a predicate $P \subseteq [q]^k$ is the special case $\Lambda = \{1_P\}$ with arbitrary literal patterns (all shifts of $P$).
 
-## Depends on
-
-- [MAX-CUT as an optimization problem](../inapproximability-of-max-cut/max-cut.md)
-- [Approximation algorithms and approximation ratios](../../../ComputerScience/approximation-algorithms/approximation-algorithms-and-approximation-ratios.md)
-
 ## Sources
 
 - P. Raghavendra, "Optimal algorithms and inapproximability results for every CSP?", STOC (2008).

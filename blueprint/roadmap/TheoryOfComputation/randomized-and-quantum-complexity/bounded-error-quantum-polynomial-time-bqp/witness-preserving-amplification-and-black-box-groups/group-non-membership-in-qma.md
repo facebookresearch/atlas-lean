@@ -1,6 +1,6 @@
 # Watrous: Group Non-Membership is in QMA
 
-Group Non-Membership for black-box groups is in $\mathrm{QMA}$ (relative to the group oracle). The honest witness is the uniform superposition $|H\rangle = |H|^{-1/2}\sum_{h \in H}|h\rangle$ over the subgroup, and the verifier tests $g \notin H$ by checking that $|H\rangle$ and $|gH\rangle$ are orthogonal through a controlled multiplication by $g$ followed by a Hadamard test.
+Group Non-Membership for black-box groups with unique encoding is in $\mathrm{QMA}$ (relative to the group oracle). The honest witness is the uniform superposition $|H\rangle = |H|^{-1/2}\sum_{h \in H}|h\rangle$ over the subgroup, and the verifier tests $g \notin H$ by checking that $|H\rangle$ and $|gH\rangle$ are orthogonal through a controlled multiplication by $g$ followed by a Hadamard test.
 
 ## Proof sketch
 

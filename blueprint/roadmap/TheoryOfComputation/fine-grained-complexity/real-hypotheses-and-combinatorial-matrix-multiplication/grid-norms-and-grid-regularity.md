@@ -8,10 +8,6 @@ $$
 
 For a Boolean matrix (bipartite graph) $A$ of density $\delta=\mathbb{E}[A]$ one always has $\|A\|_{U(k,\ell)}\ge\delta$, with near-equality for random-like matrices. A matrix is **grid-regular** (with parameters $k,\ell,\varepsilon$) if $\|A\|_{U(k,\ell)}\le(1+\varepsilon)\delta$, i.e. it has no dense "combinatorial rectangle" structure detectable by $k\times\ell$ grids. This weak pseudorandomness notion, introduced by Kelley, Lovett and Meka in communication complexity and related to the spreadness notions behind the Kelley–Meka bound for 3-term progressions, has the key property that the product of two grid-regular matrices is close to uniform: in a three-layer graph whose two edge sets are grid-regular, the number of 2-paths between most left-right pairs is close to its expectation.
 
-## Depends on
-
-- [Kelley–Meka: Roth numbers are below every power of the logarithm](../../../Combinatorics/additive-combinatorics/progressions-dense-sets/bounds-for-roth-numbers/roth-number-log-power-decay-holds.md)
-
 ## Sources
 
 - Zander Kelley, Shachar Lovett and Raghu Meka, "Explicit separations between randomized and deterministic Number-on-Forehead communication", ECCC TR23-124 (2023), arXiv:2308.12451.

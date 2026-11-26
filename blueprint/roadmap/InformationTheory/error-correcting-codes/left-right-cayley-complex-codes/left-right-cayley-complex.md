@@ -1,12 +1,12 @@
 # Left-right Cayley complexes
 
-Let $G$ be a finite group and $A, B \subseteq G$ symmetric generating sets ($A = A^{-1}$, $B = B^{-1}$), with $|A| = |B| = \Delta$. The **left-right Cayley complex** $\mathrm{Cay}^2(A, G, B)$ is the square complex with
+Let $G$ be a finite group and $A, B \subseteq G \setminus \{1\}$ symmetric generating sets ($A = A^{-1}$, $B = B^{-1}$), with $|A| = |B| = \Delta$, satisfying the total no-conjugacy condition $ag \ne gb$ for all $g \in G$, $a \in A$, $b \in B$. The **left-right Cayley complex** $\mathrm{Cay}^2(A, G, B)$ is the square complex with
 
 - vertex set $G$;
 - **$A$-edges** $\{g, ag\}$ and **$B$-edges** $\{g, gb\}$ for $g \in G$, $a \in A$, $b \in B$;
 - **squares** $\{g, ag, gb, agb\}$ for $g \in G$, $a \in A$, $b \in B$.
 
-Because left and right multiplications commute, every vertex lies in exactly $\Delta^2$ squares (under the non-degeneracy condition $ag \ne gb$ for all $g, a, b$), and the link of each vertex is the complete bipartite graph $K_{\Delta, \Delta}$ with sides $A$ and $B$. The $A$-edges form the Cayley graph $\mathrm{Cay}(G, A)$ acting on the left and the $B$-edges form $\mathrm{Cay}(G, B)$ acting on the right.
+Because left and right multiplications commute, and by the total no-conjugacy condition, every square has four distinct vertices and every vertex lies in exactly $\Delta^2$ squares, and the link of each vertex is the complete bipartite graph $K_{\Delta, \Delta}$ with sides $A$ and $B$. The $A$-edges form the Cayley graph $\mathrm{Cay}(G, A)$ acting on the left and the $B$-edges form $\mathrm{Cay}(G, B)$ acting on the right.
 
 ## Depends on
 

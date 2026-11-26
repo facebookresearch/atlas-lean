@@ -1,6 +1,6 @@
 # Shangguan-Tamo: Reed-Solomon codes list-decode beyond the Johnson radius for lists of size two and three
 
-For $L \in \{2, 3\}$ and every rate $R \in (0,1)$, there exist Reed-Solomon codes of rate $R$ (over sufficiently large fields, with suitably chosen evaluation points) that are $\big(\frac{L}{L+1}(1 - R), L\big)$-list decodable, exceeding the Johnson radius $1 - \sqrt R$ for $R$ in a range of rates; also there are RS codes not list decodable beyond the Johnson radius with list size polynomial in $n$ for certain parameters, showing the evaluation points matter.
+For $L \in \{2, 3\}$ and every rate $R \in (0,1)$, there exist Reed-Solomon codes of rate $R$ (over sufficiently large fields, with suitably chosen evaluation points) that are $\big(\frac{L}{L+1}(1 - R), L\big)$-list decodable; this radius exceeds the Johnson radius $1 - \sqrt R$ for the rates $R$ with $\frac{L}{L+1}(1 - R) > 1 - \sqrt{R}$.
 
 ## Proof sketch
 

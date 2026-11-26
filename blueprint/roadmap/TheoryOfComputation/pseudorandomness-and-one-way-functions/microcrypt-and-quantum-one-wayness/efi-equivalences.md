@@ -16,7 +16,6 @@ Commitments to EFI: the two committed states form an EFI pair (statistical bindi
 ## Proof depends on
 
 - [Hiding–binding duality for canonical quantum commitments](commitment-flavor-switching.md)
-- [Oblivious transfer from the decisional Diffie–Hellman assumption](../../../ComputerScience/cryptography/signatures-and-protocols/secure-multiparty-computation/oblivious-transfer-from-the-decisional.md)
 - [Oblivious transfer and secure computation from quantum commitments](quantum-ot-from-commitments.md)
 
 ## Sources

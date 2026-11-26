@@ -8,10 +8,6 @@ $$
 
 More generally a probability measure $\nu$ on $2^X$ is $\kappa$-spread if $\nu(\{F : F \supseteq S\}) \le \kappa^{-|S|}$ for all $S$. A family is *$\ell$-bounded* if all members have size at most $\ell$.
 
-## Depends on
-
-- [Sunflower](../intersecting-families/sunflower-lemma/is-sunflower.md)
-
 ## Sources
 
 - Ryan Alweiss, Shachar Lovett, Kewen Wu, Jiapeng Zhang, "Improved bounds for the sunflower lemma", Annals of Mathematics 194(3) (2021), STOC (2020); arXiv:1908.08483.

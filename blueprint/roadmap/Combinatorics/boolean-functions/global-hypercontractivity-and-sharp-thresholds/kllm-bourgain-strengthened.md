@@ -1,12 +1,10 @@
 # Bourgain's sharp-threshold theorem with global hypercontractivity
 
-For every $K > 0$ there are $r = r(K)$ and $\eta = \eta(K) > 0$ such that the following holds for every $0 < p \le 1/2$ and every monotone $\mathcal{A} \subseteq \{0,1\}^n$ with $\mu_p(\mathcal{A}) \in [\eta, 1 - \eta]$: if the total influence satisfies $p\, I_p[\mathcal{A}] \le K$, then there is $S \subseteq [n]$ with $|S| \le r$ such that
+For every $K, \alpha > 0$ there are $r = r(K, \alpha)$ and $\eta = \eta(K, \alpha) > 0$ such that the following holds for every $0 < p \le 1/2$ and every monotone $\mathcal{A} \subseteq \{0,1\}^n$ with $\mu_p(\mathcal{A}) \in [\alpha, 1 - \alpha]$: if the total influence satisfies $p\, I_p[\mathcal{A}] \le K$, then there is $S \subseteq [n]$ with $|S| \le r$ such that
 
 $$
 \mu_p\bigl(\mathcal{A}_{S \to \mathbf{1}}\bigr) \ge \mu_p(\mathcal{A}) + \eta.
 $$
-
-Global hypercontractivity yields this with explicit $r(K)$ and $\eta(K)$ and extends it to sets of small measure, i.e. functions with a coarse threshold are boosted by a bounded-size set of coordinates.
 
 ## Proof sketch
 

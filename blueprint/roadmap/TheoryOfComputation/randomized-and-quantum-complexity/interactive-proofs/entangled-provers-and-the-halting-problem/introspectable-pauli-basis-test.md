@@ -3,7 +3,7 @@
 For every $n$ there is a synchronous game $\mathrm{PB}_n$ with conditionally linear question distribution, questions of length $\mathrm{polylog}(n)$ and answers of length $\mathrm{poly}(n)$, sampled and decided in time $\mathrm{poly}(n)$, such that
 
 - (completeness) the honest strategy that shares $n$ EPR pairs and answers question type $W \in \{X, Z\}$ by measuring all $n$ qubits in the corresponding Pauli basis wins with probability $1$;
-- (soundness) every strategy winning with probability $1 - \varepsilon$ is, up to a local isometry on each prover, $\delta$-close in the state-dependent norm to the honest strategy tensored with an auxiliary state, where $\delta = \mathrm{poly}(\varepsilon)$ with polynomial dependence independent of $n$.
+- (soundness) every strategy winning with probability $1 - \varepsilon$ is, up to a local isometry on each prover, $\delta$-close in the state-dependent norm to the honest strategy tensored with an auxiliary state, where $\delta \le a\,(\log(n)^{a}\,\varepsilon^{b} + \log(n)^{-b})$ for universal constants $a \ge 1$ and $0 < b \le 1$.
 
 ## Proof sketch
 

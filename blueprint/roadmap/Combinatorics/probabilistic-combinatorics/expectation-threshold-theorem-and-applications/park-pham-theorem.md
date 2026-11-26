@@ -1,6 +1,6 @@
 # Park-Pham theorem: thresholds are within a logarithmic factor of expectation thresholds
 
-There is a universal constant $K$ such that for every finite set $X$ and every nontrivial increasing family $\mathcal{F} \subseteq 2^X$,
+There is a universal constant $K$ such that for every finite set $X$ and every nontrivial increasing family $\mathcal{F} \subseteq 2^X$ with $\ell(\mathcal{F}) \ge 2$,
 
 $$
 p_c(\mathcal{F}) \le K\, q(\mathcal{F}) \log \ell(\mathcal{F}) .

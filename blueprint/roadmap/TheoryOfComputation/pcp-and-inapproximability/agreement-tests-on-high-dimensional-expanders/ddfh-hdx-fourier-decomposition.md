@@ -6,7 +6,7 @@ $$
 \Bigl\| N_k^{\wedge} U^{k-i}h_i - \Bigl(1 - \frac{i+1}{k+2}\Bigr) U^{k-i}h_i \Bigr\| \le O_k(\lambda)\, \|U^{k-i} h_i\|.
 $$
 
-For the complete complex this recovers the Johnson-scheme eigenspace decomposition, and for $\lambda = O(1/d)$ it yields a Friedgut-type junta theorem for functions with low total influence on $X(k)$.
+For the complete complex this recovers the Johnson-scheme eigenspace decomposition, and for $\lambda < 1/d$ and $4k^2 < d$ it yields a Friedgut–Kalai–Naor theorem on $X(k)$: if $F : X(k) \to \{0,1\}$ satisfies $\mathbb{E}[(F - f)^2] < \varepsilon$ for some $f = U^{k+1} h_{-1} + U^{k} h_0$ of degree $1$, then $F$ agrees with a degree-$1$ function $g(s) = \sum_{v \in s} d_v$, $d_v \in \{0, 1, \tfrac{1}{k+1}, \tfrac{1}{k+1} - 1\}$, on all but an $O_\lambda(\varepsilon)$-fraction of $X(k)$.
 
 ## Proof sketch
 
@@ -20,7 +20,7 @@ Construct $h_i$ by inverting the up operators on the orthogonal complements of l
 ## Proof depends on
 
 - [Spectral gap of high-order walks on local spectral expanders](../../../Combinatorics/polytopes-simplicial-complexes/local-spectral-high-dimensional-expanders/kaufman-oppenheim-walk-gap.md)
-- [Friedgut's Junta Theorem](../../../Combinatorics/boolean-functions/structure-theorems-for-boolean-functions/friedgut-junta-theorem.md)
+- [Friedgut–Kalai–Naor (FKN) Theorem](../../../Combinatorics/boolean-functions/structure-theorems-for-boolean-functions/fkn-theorem.md)
 
 ## Sources
 

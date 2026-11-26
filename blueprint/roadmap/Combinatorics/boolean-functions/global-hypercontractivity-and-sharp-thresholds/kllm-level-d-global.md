@@ -8,7 +8,7 @@ $$
 
 ## Proof sketch
 
-Apply global hypercontractivity to the low-degree projection $g = 1_{\mathcal{A}}^{\le d}$: the Hölder inequality $\|g\|_2^2 = \langle g, 1_{\mathcal{A}} \rangle \le \|g\|_4 \alpha^{3/4}$ combined with $\|g\|_4^4 \le C^d \delta \|g\|_2^2$, where globalness of $\mathcal{A}$ bounds the generalized influences $\delta$ of $g$, yields the level-$d$ bound after optimizing the noise parameter.
+Apply global hypercontractivity in $L^q$ to the low-degree projection $g = 1_{\mathcal{A}}^{\le d}$: Hölder gives $\|g\|_2^2 = \langle g, 1_{\mathcal{A}} \rangle \le \|g\|_q\, \alpha^{1 - 1/q}$, the global $(2, q)$-hypercontractive inequality bounds $\|g\|_q$ by $q^{O(d)}$ times a quantity controlled by the globalness of $\mathcal{A}$, and choosing $q \approx \log(1/\alpha)$ yields $C_d\, \alpha^2 \log^d(1/\alpha)$.
 
 ## Depends on
 

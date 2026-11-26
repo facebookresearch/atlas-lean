@@ -10,7 +10,7 @@ YES instances are injective on all but a $\delta$ fraction of inputs; NO instanc
 
 ## Proof sketch
 
-Hardness is shown by reducing Entropy Approximation to $\mathrm{AI}_\delta$: after flattening, the entropy of a circuit's output determines the typical number of preimages of a sample, and composing the circuit with a many-wise independent hash of appropriate output length makes it nearly injective when the entropy is high and highly non-injective when it is low. Membership: the common random string is an image candidate and the prover reveals a preimage, as in the permutation-testing protocol, with soundness obtained by checking random images and simulation from sampling inputs.
+Hardness is shown by reducing Entropy Approximation to $\mathrm{AI}_\delta$: after flattening, the entropy of a circuit's output determines the typical number of preimages of a sample, and composing the circuit with a many-wise independent hash of appropriate output length makes it nearly injective when the entropy is high and highly non-injective when it is low. Membership: $\mathrm{AI}_\delta$ Karp-reduces back to Entropy Approximation, which is in $\mathsf{NISZK}$.
 
 ## Depends on
 

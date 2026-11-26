@@ -5,7 +5,7 @@ There is a computable map $\mathcal{V} \mapsto \mathcal{V}' = \mathrm{Compress}(
 1. the sampler and decider of $\mathcal{V}'_n$ run in time $p(n, |\mathcal{V}|)$;
 2. if $\omega^*_s(\mathcal{V}_{2^n}) = 1$ then $\omega^*_s(\mathcal{V}'_n) = 1$;
 3. if $\omega^*(\mathcal{V}_{2^n}) \le 1/2$ then $\omega^*(\mathcal{V}'_n) \le 1/2$;
-4. the minimal dimension of a strategy for $\mathcal{V}'_n$ with value above $1/2$ is at least that for $\mathcal{V}_{2^n}$.
+4. the minimal local dimension $\mathcal{E}(\mathcal{V}'_n, 1/2)$ of a strategy for $\mathcal{V}'_n$ with value at least $1/2$ satisfies $\mathcal{E}(\mathcal{V}'_n, 1/2) \ge \max\{\mathcal{E}(\mathcal{V}_{2^n}, 1/2),\, 2^{2^{\Omega(n)}}\}$.
 
 ## Proof sketch
 

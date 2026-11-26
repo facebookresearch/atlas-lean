@@ -1,6 +1,6 @@
 # Li: S2E is not in i.o.-SIZE[2^n/n], giving almost-everywhere bounds for Σ2E ∩ Π2E and ZPE^NP
 
-$\mathrm{S}_2\mathrm{E}\not\subseteq\text{i.o.-}\mathrm{SIZE}[2^n/n]$, where $L\in\text{i.o.-}\mathrm{SIZE}[s(n)]$ means that $L$ has circuits of size $O(s(n))$ for infinitely many $n$. That is, some $\mathrm{S}_2\mathrm{E}$ language needs circuits of size $\Omega(2^n/n)$ on all large input lengths, with no advice. Consequently $\mathrm{ZPE}^{\mathrm{NP}}\not\subseteq\text{i.o.-}\mathrm{SIZE}[2^n/n]$ and $\Sigma_2\mathrm{E}\cap\Pi_2\mathrm{E}\not\subseteq\text{i.o.-}\mathrm{SIZE}[2^n/n]$. All three statements hold in every relativized world.
+$\mathrm{S}_2\mathrm{E}\not\subseteq\text{i.o.-}\mathrm{SIZE}[2^n/n]$, where $L\in\text{i.o.-}\mathrm{SIZE}[s(n)]$ means that for infinitely many $n$, $L\cap\{0,1\}^n$ is computed by a circuit of size at most $s(n)$. That is, some $\mathrm{S}_2\mathrm{E}$ language has, for all sufficiently large $n$, no circuit of size $2^n/n$ on inputs of length $n$, with no advice. Consequently $\mathrm{ZPE}^{\mathrm{NP}}\not\subseteq\text{i.o.-}\mathrm{SIZE}[2^n/n]$ and $\Sigma_2\mathrm{E}\cap\Pi_2\mathrm{E}\not\subseteq\text{i.o.-}\mathrm{SIZE}[2^n/n]$. All three statements hold in every relativized world.
 
 ## Proof sketch
 

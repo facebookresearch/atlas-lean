@@ -6,11 +6,11 @@ $$
 \mathrm{pK}^{p(n)}(x)\ \le\ \log\frac{1}{D_n(x)}+O(\log n).
 $$
 
-This matches the classical coding theorem $K(x)\le\log(1/D(x))+O(1)$ for computable measures up to the additive $O(\log n)$ term, and it holds unconditionally. By contrast, for the randomized measure $\mathrm{rK}^t$ the best efficient coding theorem known gives $(2+o(1))\log(1/D_n(x))+O(\log n)$, and under a hypothesis on the security of cryptographic pseudorandom generators no efficient coding theorem for $\mathrm{rK}^t$ can achieve $(2-o(1))\log(1/D_n(x))+\mathrm{poly}(\log n)$.
+This matches the classical coding theorem $K(x)\le\log(1/D(x))+O(1)$ for computable measures up to the additive $O(\log n)$ term, and it holds unconditionally. By contrast, for $\mathrm{rKt}$, the randomized (private-coin) analogue of Levin's $\mathrm{Kt}$, which charges program length plus the logarithm of the running time, Lu, Oliveira and Zimand prove an efficient coding theorem $\mathrm{rKt}(x)\le(2+o(1))\log(1/D_n(x))+O(\log n)$, and show that, under a hypothesis on the security of cryptographic pseudorandom generators, no efficient coding theorem can achieve $\mathrm{rKt}(x)\le(2-o(1))\log(1/D_n(x))+\mathrm{poly}(\log n)$.
 
 ## Proof sketch
 
-Write $\delta=D_n(x)$; the strings of probability at least $\delta/2$ form a set of size at most $2/\delta$. The public random string $w$ supplies the shared randomness that both the encoder and the time-bounded decoder need: it fixes a hash function isolating $x$ inside this heavy set and the randomness for an efficient reconstruction procedure, so a description of length $\log(1/\delta)+O(\log n)$ suffices for most $w$. Because the description length is measured relative to a fixed public $w$, the factor-$2$ loss forced in the private-randomness measure $\mathrm{rK}^t$ disappears.
+Write $\delta=D_n(x)$; the strings of probability at least $\delta/2$ form a set of size at most $2/\delta$. The public random string $w$ supplies the shared randomness that both the encoder and the time-bounded decoder need: it fixes a hash function isolating $x$ inside this heavy set and the randomness for an efficient reconstruction procedure, so a description of length $\log(1/\delta)+O(\log n)$ suffices for most $w$. Because the description length is measured relative to a fixed public $w$, the conditional factor-$2$ barrier for efficient coding theorems for the private-randomness measure $\mathrm{rKt}$ does not arise.
 
 ## Depends on
 

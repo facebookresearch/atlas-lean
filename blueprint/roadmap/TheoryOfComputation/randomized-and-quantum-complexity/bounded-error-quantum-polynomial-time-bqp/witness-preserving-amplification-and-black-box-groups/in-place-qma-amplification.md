@@ -1,6 +1,6 @@
 # Marriott-Watrous in-place amplification of QMA
 
-Let $a, b : \mathbb{N} \to [0,1]$ with $a(n) - b(n) \ge 1/q(n)$ for a polynomial $q$, and let $r$ be any polynomial. Every promise problem with a QMA verifier of completeness $a$, soundness $b$ and witness length $m(n)$ also has a QMA verifier with completeness $1 - 2^{-r(n)}$, soundness $2^{-r(n)}$ and the *same* witness length $m(n)$, running in time $\mathrm{poly}(n)\cdot r(n) q(n)^2$.
+Let $a, b : \mathbb{N} \to [0,1]$ be polynomial-time computable with $a(n) - b(n) \ge 1/q(n)$ for a polynomial $q$, and let $r$ be any polynomial. Every promise problem with a QMA verifier of completeness $a$, soundness $b$ and witness length $m(n)$ also has a QMA verifier with completeness $1 - 2^{-r(n)}$, soundness $2^{-r(n)}$ and the *same* witness length $m(n)$, running in time $\mathrm{poly}(n)\cdot r(n) q(n)^2$.
 
 ## Proof sketch
 

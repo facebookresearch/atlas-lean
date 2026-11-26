@@ -1,10 +1,16 @@
 # Approximate correctness of CKKS homomorphic evaluation
 
-Let $f$ be an arithmetic circuit over $\mathbb{C}$ of multiplicative depth $L'\le L$, applied slotwise to vectors $\mathbf{z}_1,\dots,\mathbf{z}_k\in\mathbb{C}^{N/2}$ with $\|\mathbf{z}_i\|_\infty\le 1$, in which each multiplication is followed by rescaling. Assuming Ring-LWE and circular security of the relinearization and rotation keys, CKKS evaluation yields a ciphertext at level $L-L'$ whose decryption $\mathbf{w}$ satisfies $\|\mathbf{w}-f(\mathbf{z}_1,\dots,\mathbf{z}_k)\|_\infty\le\epsilon$, where $\epsilon$ is bounded by a sum over gates of the per-gate error terms (encoding error $N/(2\Delta)$, fresh error, key-switching and rescaling errors divided by $\Delta$), each amplified by the Lipschitz constant of the subsequent computation. In particular, for bounded-degree polynomial evaluation the output has about $\log_2\Delta-O(\log N+L')$ bits of precision.
+Let $f$ be an arithmetic circuit over $\mathbb{C}$ of multiplicative depth $L'\le L$ with addition, multiplication and slot-rotation gates, applied slotwise to $\mathbf{z}_1,\dots,\mathbf{z}_k\in\mathbb{C}^{N/2}$, and evaluate it with CKKS using scale $\Delta$, rescaling by $p=\Delta$ after every multiplication. For each gate $g$ let $M_g$ bound the absolute values of the exact slot values at $g$, and define error bounds $B_g$ recursively: $B_g=B_{\mathrm{fresh}}+N/2$ at an input, $B_g=B_{g_1}+B_{g_2}$ at an addition, $B_g=B_{g_1}+B_{\mathrm{ks}}$ at a rotation, and
+
+$$
+B_g=\frac{\Delta M_{g_1}B_{g_2}+\Delta M_{g_2}B_{g_1}+B_{g_1}B_{g_2}+B_{\mathrm{ks}}}{\Delta}+B_{\mathrm{rs}}
+$$
+
+at a multiplication, where $B_{\mathrm{fresh}}$, $B_{\mathrm{ks}}$, $B_{\mathrm{rs}}$ bound the canonical norms of fresh-encryption, key-switching and rescaling errors. Then every gate's ciphertext encrypts $\Delta\,\tau^{-1}(\text{exact slot values})$ with error bound $B_g$, provided no reduction modulo the current $q_\ell$ wraps around; in particular the decoded output $\mathbf{w}$ at level $L-L'$ satisfies $\|\mathbf{w}-f(\mathbf{z}_1,\dots,\mathbf{z}_k)\|_\infty\le B_{\mathrm{out}}/\Delta$. This correctness statement is unconditional; IND-CPA security of the scheme rests on Ring-LWE together with circular security of the relinearization and rotation keys.
 
 ## Proof sketch
 
-Induct over the circuit using the multiplication-error lemma and the analogous additive bounds for additions, scalar multiplications and rotations (key switching for Galois automorphisms). Security is IND-CPA from Ring-LWE as for BGV, with the usual circular security requirement for evaluation keys.
+Induct over the circuit. An encryption of $\mathrm{Ecd}(\mathbf{z})$ is an encryption of $\Delta\tau^{-1}(\mathbf{z})$ whose error absorbs the encoding rounding, of canonical norm at most $N/2$; additions add errors; rotations add a key-switching error; and the multiplication-error lemma with $\nu_i=\Delta M_{g_i}$ and $p=\Delta$ gives the multiplication rule. Decoding divides by $\Delta$.
 
 ## Depends on
 

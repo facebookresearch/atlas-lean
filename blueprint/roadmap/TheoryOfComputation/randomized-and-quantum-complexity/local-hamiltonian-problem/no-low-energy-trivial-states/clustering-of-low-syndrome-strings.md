@@ -1,10 +1,10 @@
 # Clustering of low-syndrome strings for codes with small-set boundary expansion
 
-Let $(H_X, H_Z)$ define a CSS code with minimum distance $\delta n$ such that $H_Z$ has *small-set boundary expansion*: there are constants $\gamma, c > 0$ with $|H_Z x| \ge c\, |x|_{\mathrm{red}}$ whenever $|x|_{\mathrm{red}} \le \gamma n$, where $|x|_{\mathrm{red}} = \min_{y \in \mathrm{im} H_X^{T}} |x + y|$. Then for $\eta < c\gamma$, the set $\{x : |H_Z x| \le \eta n\}$ is contained in the union over cosets $L$ of $\mathrm{im} H_X^{T}$ inside $\ker H_Z$ of the Hamming neighbourhoods $N_L = \{x : \mathrm{dist}(x, L) \le (\eta/c) n\}$, and distinct neighbourhoods $N_L, N_{L'}$ are at Hamming distance at least $\delta n - 2(\eta/c)n$.
+Let $(H_X, H_Z)$ define a CSS code such that $H_Z$ has *small-set boundary expansion*: there are constants $\gamma, c > 0$ with $|H_Z x| \ge c\, |x|_{\mathrm{red}}$ whenever $|x|_{\mathrm{red}} \le \gamma n$, where $|x|_{\mathrm{red}} = \min_{y \in \mathrm{im} H_X^{T}} |x + y|$. Then for every $\eta$ with $0 \le \eta < c\gamma$, every $x$ with $|H_Z x| \le \eta n$ satisfies either $|x|_{\mathrm{red}} \le (\eta/c) n$ or $|x|_{\mathrm{red}} > \gamma n$. Consequently, for $0 \le \eta \le c\gamma/4$ the relation $x \sim y \iff |x + y|_{\mathrm{red}} \le (2\eta/c) n$ is an equivalence relation on $G_\eta = \{x : |H_Z x| \le \eta n\}$, and strings in distinct classes are at Hamming distance more than $\gamma n$.
 
 ## Proof sketch
 
-Given $x$ with small syndrome, a greedy decoding argument using expansion shows that the reduced weight of $x$ relative to some codeword $z \in \ker H_Z$ is at most $|H_Z x|/c$, provided the starting reduced weight is at most $\gamma n$; iterating from the trivial bound and using that syndrome weight bounds the number of unsatisfied checks yields $\mathrm{dist}(x, z + \mathrm{im} H_X^T) \le (\eta/c) n$. Distinct logical cosets differ by a nontrivial logical operator of weight at least $\delta n$, so the triangle inequality separates the neighbourhoods.
+If $|x|_{\mathrm{red}} \le \gamma n$, expansion gives $|x|_{\mathrm{red}} \le |H_Z x|/c \le (\eta/c) n$. For $x, y \in G_\eta$, every check violated by $x + y$ is violated by $x$ or by $y$, so $|H_Z(x+y)| \le 2\eta n$ and the dichotomy at $2\eta < c\gamma$ applies to $x + y$. If $x \sim y$ and $y \sim z$, then $|x + z|_{\mathrm{red}} \le (4\eta/c) n \le \gamma n$, so the dichotomy forces $|x + z|_{\mathrm{red}} \le (2\eta/c) n$. Strings in distinct classes satisfy $|x + y| \ge |x + y|_{\mathrm{red}} > \gamma n$.
 
 ## Depends on
 

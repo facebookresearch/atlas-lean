@@ -1,6 +1,6 @@
 # Unclonable encryption from BB84 states via monogamy
 
-The scheme that encrypts $m\in\{0,1\}^{\ell}$ with key $(\theta,r)$ as $|x\rangle_\theta$ for uniform $x$ together with the classical value $m\oplus H(x)$ (with $H$ a random oracle, or $m\oplus x$ with $\ell=n$ for the one-time version) is unclonable in the search sense: two non-communicating parties holding a split ciphertext, both given the key, recover $m$ simultaneously with probability at most $0.854^{n}$ (information-theoretic, one-time-pad version) or negligible in the random oracle model.
+The scheme that encrypts $m\in\{0,1\}^{\ell}$ with key $\theta\in\{0,1\}^{n}$ as $|x\rangle_\theta$ for a fresh uniform $x\in\{0,1\}^{n}$ together with the classical value $m\oplus H(x)$ (with $H$ a random oracle, or $m\oplus x$ with $\ell=n$ for the one-time version) is unclonable in the search sense: two non-communicating parties holding a split ciphertext, both given the key, recover $m$ simultaneously with probability at most $0.854^{n}$ (information-theoretic, one-time-pad version) or negligible in the random oracle model.
 
 ## Proof sketch
 

@@ -1,6 +1,6 @@
 # Pseudorandom states can exist even if BQP = QMA
 
-There is a quantum oracle relative to which $\mathsf{BQP}=\mathsf{QMA}$ yet pseudorandom state generators (and pseudorandom unitaries) exist. Conversely, pseudorandom states do not exist if $\mathsf{BQP}=\mathsf{PP}$ (relative to all oracles), so some complexity assumption is necessary. Since quantum-secure one-way functions would collapse under $\mathsf{BQP}=\mathsf{QMA}$-type assumptions in many settings, this shows that PRS, and the primitives built from them, may exist in worlds without classical cryptography.
+There is a quantum oracle relative to which $\mathsf{BQP}=\mathsf{QMA}$ yet pseudorandom state generators (and pseudorandom unitaries) exist. Conversely, pseudorandom states do not exist if $\mathsf{BQP}=\mathsf{PP}$ (relative to all oracles), so some complexity assumption is necessary. Since $\mathsf{NP}\subseteq\mathsf{QMA}=\mathsf{BQP}$ relative to this oracle, every one-way function candidate can be inverted in quantum polynomial time relative to it, so this shows that PRS, and the primitives built from them, may exist in worlds without classical cryptography.
 
 ## Proof sketch
 

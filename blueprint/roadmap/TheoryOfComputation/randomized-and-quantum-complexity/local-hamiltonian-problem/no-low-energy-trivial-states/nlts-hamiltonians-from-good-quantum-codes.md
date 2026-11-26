@@ -4,7 +4,7 @@ There is a family of commuting frustration-free $(k, \ell)$-local Hamiltonians $
 
 ## Proof sketch
 
-Take a low-energy state $\rho$ and measure it in the $Z$ basis: by Markov's inequality most mass sits on strings with small $Z$-syndrome, which by clustering lie in neighbourhoods of logical cosets separated by distance $\Omega(n)$. If $\rho$ had depth $o(\log n)$, the spread lemma with $D = \Omega(n)$ forces almost all of this mass into a single cluster; the same holds in the $X$ basis. But then both logical labels are nearly deterministic, contradicting the uncertainty relation since the code has $k = \Theta(n)$ logical qubits. The argument needs constant rate, linear distance and the expansion property simultaneously, supplied by good quantum LDPC codes.
+Take a low-energy state $\rho$ and measure it in the $Z$ basis: by Markov's inequality most mass sits on strings with small $Z$-syndrome, which by clustering fall into classes at pairwise Hamming distance $\Omega(n)$. If $\rho$ had depth $o(\log n)$, the spread lemma with $D = \Omega(n)$ forces almost all of this mass into a single cluster; the same holds in the $X$ basis. But then both logical labels are nearly deterministic, contradicting the uncertainty relation since the code has $k = \Theta(n)$ logical qubits. The argument needs constant rate, linear distance and the expansion property simultaneously, supplied by good quantum LDPC codes.
 
 ## Depends on
 

@@ -1,14 +1,14 @@
 # Evra-Kaufman-Zemor: decodable quantum LDPC codes with distance above the square root
 
-There is an explicit family of quantum LDPC codes with $k$ growing (polylogarithmically) and distance $d = \Omega(\sqrt{n}\log n)$, together with an efficient decoder correcting $\Omega(\sqrt n \log n)$ adversarial errors in one of the two error types, constructed from Ramanujan complexes that are cosystolic expanders.
+Ramanujan complexes, which are cosystolic expanders, yield explicit families of quantum LDPC codes of length $n$ with (i) dimension $k = \Omega(\sqrt{n/\log n})$ and distance $d = \Omega(\sqrt{n\log n})$, from $2$-dimensional complexes, together with a polynomial-time decoder correcting every adversarial error pattern of weight up to a constant fraction of $d$; and (ii) dimension $k = \Omega(\sqrt{n}/\log n)$ and distance $d = \Omega(\sqrt{n}\log n)$, from $3$-dimensional complexes.
 
 ## Proof sketch
 
-Bounded-degree Ramanujan complexes of dimension at least $3$ are cosystolic expanders in dimension $1$ (Kaufman-Kazhdan-Lubotzky, Evra-Kaufman). Their $1$-cochain code has linear cosystolic distance in one direction but small distance in the other; a distance-balancing product with a classical code (in the style of Hastings) equalizes the two distances to $\Omega(\sqrt n \log n)$, and cosystolic expansion yields a greedy small-set-flip decoder.
+The quantum code of a $2$-dimensional Ramanujan complex has $Z$-distance $\Omega(n)$ (a cosystole bound from cosystolic expansion) and $X$-distance $\Omega(\log n)$ (a systole bound); for $3$-dimensional complexes the $2$-systole is $\Omega(\log^{2} n)$. A distance-balancing product with an asymptotically good classical LDPC code, generalizing constructions of Hastings and of Tillich-Zemor, equalizes the two distances. For family (i), $X$-errors of the component code are decoded by minimum-weight matching and $Z$-errors by a local flip decoder whose correctness follows from coboundary expansion of the complex.
 
 ## Depends on
 
-- [Cosystolic expansion of a cochain complex](cosystolic-expansion-of-cochain-complexes.md)
+- [Cosystolic expansion and cosystolic distance](../../../Combinatorics/polytopes-simplicial-complexes/coboundary-and-cosystolic-expansion/cosystolic-expansion.md)
 - [The CSS code of a chain complex](css-code-of-a-chain-complex.md)
 - [Quantum LDPC code families and asymptotically good quantum codes](quantum-ldpc-code-families-and-good-codes.md)
 

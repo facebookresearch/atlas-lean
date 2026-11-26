@@ -1,6 +1,6 @@
 # Navon-Samorodnitsky: LP bounds from eigenvalues of subsets of the cube
 
-Let $\lambda(B)$ denote the largest eigenvalue of the adjacency matrix of the hypercube $\{0,1\}^n$ restricted to a set $B$. If $\lambda(B) \ge n - 2d + 1$, then every binary code $C$ of minimum distance $d$ satisfies $|C| \le \mathrm{poly}(n)\cdot |B|$. Taking $B$ a Hamming ball of radius $r$, with $\lambda(B) \approx n - 2r + 2\sqrt{r(n - r)}$, recovers the first MRRW bound.
+Let $\lambda(B)$ denote the largest eigenvalue of the adjacency matrix of the hypercube $\{0,1\}^n$ restricted to a set $B$. If $\lambda(B) \ge n - 2d + 1$, then every binary code $C$ of minimum distance $d$ satisfies $|C| \le \mathrm{poly}(n)\cdot |B|$. Taking $B$ a Hamming ball of radius $r<n/2$, with $\lambda(B) = (2+o(1))\sqrt{r(n - r)}$ as $n \to \infty$ with $r/n$ fixed, recovers the first MRRW bound.
 
 ## Proof sketch
 

@@ -1,6 +1,6 @@
 # Maróti–McKenzie: finite Taylor algebras have weak near-unanimity terms
 
-A locally finite variety omits the unary type (equivalently, has a Taylor term) if and only if it has a weak near-unanimity term of some arity $n\ge 2$. Moreover, a locally finite variety omits types 1 and 2 (is congruence meet-semidistributive) if and only if it has WNU terms of all but finitely many arities. Consequently, for a finite core $\mathbb{C}$: $\mathbb{C}^c$ has a Taylor polymorphism iff $\mathbb{C}$ has a WNU polymorphism.
+A locally finite variety omits the unary type (equivalently, has a Taylor term) if and only if it has an idempotent weak near-unanimity term of some arity $n\ge 2$. Moreover, a locally finite variety omits types 1 and 2 (is congruence meet-semidistributive) if and only if it has idempotent WNU terms of all but finitely many arities. Consequently, for a finite core $\mathbb{C}$: $\mathbb{C}^c$ has a Taylor polymorphism iff $\mathbb{C}$ has a WNU polymorphism.
 
 ## Proof sketch
 

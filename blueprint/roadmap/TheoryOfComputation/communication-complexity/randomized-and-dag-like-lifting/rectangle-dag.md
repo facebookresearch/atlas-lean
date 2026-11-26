@@ -4,7 +4,6 @@ Let $S \subseteq \mathcal{X} \times \mathcal{Y} \times \mathcal{O}$ be a total t
 
 ## Depends on
 
-- [Composed functions, gadgets and lifting theorems](composed-function-lifting.md)
 - [Communication cost of a protocol](../deterministic-communication-protocols/depth.md)
 
 ## Sources

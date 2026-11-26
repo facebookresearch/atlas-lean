@@ -1,6 +1,6 @@
 # Inverse-free Solovay-Kitaev compilation
 
-Let $\mathcal{G} \subset \mathrm{SU}(d)$ be a finite set generating a dense subgroup, not necessarily closed under inverses, and containing an irreducible representation of a non-abelian finite group (up to phases) or more generally satisfying the hypothesis of Bouland and Giurgica-Tiron. Then every $U \in \mathrm{SU}(d)$ is approximated within $\varepsilon$ by a product of $O(\log^{c}(1/\varepsilon))$ elements of $\mathcal{G}$ for an absolute constant $c$ (about $8.62$), computable in polylogarithmic time.
+Let $\mathcal{G} \subset \mathrm{SU}(d)$ be a finite set generating a dense subgroup, not necessarily closed under inverses. Then every $U \in \mathrm{SU}(d)$ is approximated within $\varepsilon$ by a product of $O(\log^{c_d}(1/\varepsilon))$ elements of $\mathcal{G}$, computable in time polylogarithmic in $1/\varepsilon$, where the exponent $c_d$ depends only on $d$.
 
 ## Proof sketch
 

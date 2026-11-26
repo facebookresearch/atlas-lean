@@ -7,7 +7,6 @@ For a class $\mathcal{C}$ of multi-output circuits, **$\mathcal{C}$-Avoid** rest
 ## Depends on
 
 - [Search problems: FNP, FP and TFNP](../../total-search-problems/search-problems-fnp-fp-and-tfnp.md)
-- [Shannon: most Boolean functions need exponential circuits](../../../circuit-complexity/shannon-s-circuit-size-lower-bound/shannon-hard-function.md)
 
 ## Sources
 

@@ -4,7 +4,7 @@ $\mathrm{ED}$ has a public-coin honest-verifier statistical zero-knowledge proof
 
 ## Proof sketch
 
-Using flattening (taking many independent copies makes each distribution close to flat, so Shannon entropy governs min-entropy and max-entropy up to small loss) and hashing, an instance $(X,Y)$ of ED is converted into a pair of circuits whose statistical distance is large when $H(X)\ge H(Y)+1$ and small otherwise; the polarized statistical-difference instance then has a public-coin protocol in which the verifier sends random coins and the prover answers which of two samplers produced a hashed value. The simulator reproduces the transcript by sampling the circuits itself, giving statistical zero knowledge for the honest verifier.
+Using flattening (taking many independent copies makes each distribution close to flat, so Shannon entropy governs min-entropy and max-entropy up to small loss) and hashing, Goldreich and Vadhan give a direct public-coin protocol for $\mathrm{ED}$: every verifier message is a uniformly random hash function or target value, and the prover answers with preimages under the flattened samplers, so that, as in the Goldwasser–Sipser set lower-bound protocol, the verifier compares the sizes of typical preimage sets, which flatness ties to the entropies. The simulator reproduces the transcript by sampling the circuits itself, giving statistical zero knowledge for the honest verifier.
 
 ## Depends on
 

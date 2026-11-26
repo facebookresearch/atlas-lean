@@ -4,7 +4,6 @@ Let $F$ be a nonarchimedean local field with residue field $\mathbb{F}_q$ and $\
 
 ## Depends on
 
-- [Bipartite Ramanujan graphs of every degree](../../../GraphTheory/graph-families-and-operations/expander-graphs/exists-bipartite-ramanujan.md)
 - [Local spectral expanders (one-sided and two-sided)](local-spectral-expander.md)
 
 ## Sources

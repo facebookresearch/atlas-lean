@@ -1,6 +1,6 @@
 # Chen: NQP is average-case hard for ACC0
 
-For every depth $d$ and modulus $m$ there is a language $L \in \mathrm{NQP}$ such that for all sufficiently large $n$, every $\mathrm{AC}^0[m]$ circuit of depth $d$ and polynomial size agrees with $L$ on at most a $\frac{1}{2} + \frac{1}{\operatorname{polylog}(n)}$ fraction of inputs of length $n$ (on infinitely many input lengths). Later work (Chen-Ren) improves the advantage to $2^{-n^{\Omega(1)}}$-type bounds under the same algorithmic hypotheses.
+For every constant $c$, depth $d$ and modulus $m$ there is a language $L \in \mathrm{NQP}$ such that for infinitely many $n$, every polynomial-size $\mathrm{AC}^0[m]$ circuit of depth $d$ agrees with $L$ on at most a $\frac{1}{2} + \frac{1}{\log^{c} n}$ fraction of inputs of length $n$. Chen-Ren strengthen this: for every constant $a$, $\mathrm{NQP}$ cannot be $(\frac{1}{2} + 2^{-\log^{a} n})$-approximated by $\mathrm{ACC}^0 \circ \mathrm{THR}$ circuits of size $2^{\log^{a} n}$.
 
 ## Proof sketch
 

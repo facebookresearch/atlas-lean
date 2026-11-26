@@ -1,6 +1,6 @@
 # The integral expectation-threshold theorem implies the fractional one
 
-For every nontrivial increasing family $\mathcal{F}$, $q(\mathcal{F}) \le q_f(\mathcal{F})$. Consequently the Park-Pham bound $p_c(\mathcal{F}) \le K q(\mathcal{F})\log\ell(\mathcal{F})$ implies the Frankston-Kahn-Narayanan-Park bound $p_c(\mathcal{F}) \le K q_f(\mathcal{F})\log\ell(\mathcal{F})$, and every application obtained from spread measures (which certify upper bounds on $q_f$) also follows from the Park-Pham theorem.
+For every nontrivial increasing family $\mathcal{F}$, $q(\mathcal{F}) \le q_f(\mathcal{F})$. Consequently, for families with $\ell(\mathcal{F}) \ge 2$, the Park-Pham bound $p_c(\mathcal{F}) \le K q(\mathcal{F})\log\ell(\mathcal{F})$ implies the Frankston-Kahn-Narayanan-Park bound $p_c(\mathcal{F}) \le K q_f(\mathcal{F})\log\ell(\mathcal{F})$, and every application obtained from spread measures (which certify upper bounds on $q_f$) also follows from the Park-Pham theorem.
 
 ## Proof sketch
 

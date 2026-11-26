@@ -6,7 +6,7 @@ $$
 D^{cc}\bigl(S \circ \mathrm{IND}_m^n\bigr) = \Omega\bigl(D^{dt}(S) \cdot \log m\bigr).
 $$
 
-The proof replaces the blockwise min-entropy density-restoring argument by spread (robust sunflower) lemmas from the recent improvements of the Erdős-Rado sunflower bound.
+The proof replaces the blockwise min-entropy density-restoring argument by spread (robust sunflower) lemmas from the Alweiss–Lovett–Wu–Zhang improvement of the Erdős–Rado sunflower bound.
 
 ## Proof sketch
 

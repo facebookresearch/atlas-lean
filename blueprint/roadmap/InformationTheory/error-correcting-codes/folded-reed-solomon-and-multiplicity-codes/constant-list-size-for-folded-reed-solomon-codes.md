@@ -1,6 +1,6 @@
 # Kopparty-Ron-Zewi-Saraf-Wootters: constant list size up to capacity
 
-For every $\varepsilon > 0$ and $R \in (0,1)$, folded Reed-Solomon codes and univariate multiplicity codes of rate $R$ with folding parameter $s = \mathrm{poly}(1/\varepsilon)$ are $\big(1 - R - \varepsilon, (1/\varepsilon)^{O(1/\varepsilon)}\big)$-list decodable, with a randomized polynomial-time list decoding algorithm whose running time is $\mathrm{poly}(n)$ for fixed $\varepsilon$, and are list recoverable with similar constant list sizes.
+For every $\varepsilon > 0$ and $R \in (0,1)$, folded Reed-Solomon codes and univariate multiplicity codes of rate $R$ with folding parameter $s = \mathrm{poly}(1/\varepsilon)$ are $\big(1 - R - \varepsilon, (1/\varepsilon)^{O(\varepsilon^{-1}\log(1/R))}\big)$-list decodable, with a randomized polynomial-time list decoding algorithm whose running time is $\mathrm{poly}(n)$ for fixed $\varepsilon$; folded Reed-Solomon codes are moreover $\big(1 - R - \varepsilon, \ell, (\ell/\varepsilon)^{O(\varepsilon^{-1}\log(\ell/R))}\big)$-list recoverable.
 
 ## Proof sketch
 

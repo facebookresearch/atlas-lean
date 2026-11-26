@@ -1,6 +1,6 @@
 # Siggers: a finite algebra is Taylor iff it has a 6-ary Siggers term
 
-A finite algebra $\mathbf{A}$ admits a Taylor term operation if and only if it admits a 6-ary term operation $s$ satisfying $s(x,y,x,z,y,z)\approx s(y,x,z,x,z,y)$. Consequently, the class of locally finite varieties omitting the unary type (type 1 of tame congruence theory) is characterized by a single strong Mal'cev condition. For a finite core structure $\mathbb{C}$ this gives: $\mathbb{C}^c$ has a Taylor polymorphism iff $\mathbb{C}$ has a 6-ary Siggers polymorphism, a condition checkable by a finite search over the $|C|^{|C|^6}$ six-ary operations.
+A finite algebra $\mathbf{A}$ admits a Taylor term operation if and only if it admits an idempotent 6-ary term operation $s$ satisfying $s(x,y,x,z,y,z)\approx s(y,x,z,x,z,y)$. Consequently, the class of locally finite varieties omitting the unary type (type 1 of tame congruence theory) is characterized by a single strong Mal'cev condition. For a finite core structure $\mathbb{C}$ this gives: $\mathbb{C}^c$ has a Taylor polymorphism iff $\mathbb{C}$ has a 6-ary Siggers polymorphism, a condition checkable by a finite search over the $|C|^{|C|^6}$ six-ary operations.
 
 ## Proof sketch
 

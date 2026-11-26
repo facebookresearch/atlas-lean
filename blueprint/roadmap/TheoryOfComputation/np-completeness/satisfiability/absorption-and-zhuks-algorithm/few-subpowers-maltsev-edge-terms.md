@@ -14,5 +14,6 @@ A Mal'tsev operation yields a 2-edge operation, and a $k$-ary near-unanimity ope
 
 ## Sources
 
+- Joel Berman, Paweł Idziak, Petar Marković, Ralph McKenzie, Matthew Valeriote and Ross Willard, "Varieties with few subalgebras of powers", Transactions of the American Mathematical Society 362(3) (2010).
 - Paweł Idziak, Petar Marković, Ralph McKenzie, Matthew Valeriote and Ross Willard, "Tractability and learnability arising from algebras with few subpowers", SIAM Journal on Computing 39(7) (2010).
 - Andrei Bulatov and Víctor Dalmau, "A simple algorithm for Mal'tsev constraints", SIAM Journal on Computing 36(1) (2006).

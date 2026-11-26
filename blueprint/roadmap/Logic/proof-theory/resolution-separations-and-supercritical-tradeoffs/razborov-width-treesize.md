@@ -1,6 +1,6 @@
 # Razborov: supercritical trade-off between width and tree-like size
 
-For every constant $k \ge 1$ there are unsatisfiable $O(1)$-CNF formulas $F_n$ on $n$ variables that have resolution refutations of width $w = o(n)$, such that every tree-like resolution refutation of $F_n$ whose width is at most a constant factor above $w$ has size $2^{\omega(n)}$, exceeding the trivial $2^{O(n)}$ upper bound for tree-like refutations without width restriction. Thus restricting to near-minimal width forces tree-like size beyond the worst case.
+Let $k = k(n) \ge 4$ and let $\varepsilon > 0$ be a constant. There are unsatisfiable $k$-CNF formulas $\tau_n$ on $n$ variables that have resolution refutations of width $O(k)$, such that every tree-like resolution refutation of $\tau_n$ of width at most $n^{1-\varepsilon}/k$ has size $\exp(n^{\Omega(k)})$. For constant $k$ large enough this exceeds $2^{n+1}$, a size within which every unsatisfiable CNF on $n$ variables has a tree-like refutation, although the width allowed is far above the minimum.
 
 ## Proof sketch
 

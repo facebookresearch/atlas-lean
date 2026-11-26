@@ -1,6 +1,6 @@
 # Communication-based depth lower bounds for stabbing planes
 
-Every stabbing planes refutation of depth $d$ of a CNF formula $F$ with a variable partition $X \cup Y$ yields a randomized communication protocol of cost $O(d \log n)$ for the falsified-clause search problem of $F$ under that partition (each linear query is evaluated by a public-coin protocol for comparing $a_X \cdot x$ with $b - a_Y \cdot y$). Consequently, lifted formulas whose search problems have randomized communication complexity $n^{\Omega(1)}$ require stabbing planes depth $n^{\Omega(1)}/\log n$, and Tseitin formulas on bounded-degree expanders require stabbing planes rank $\Omega(n)$.
+Every stabbing planes refutation of depth $d$ of a CNF formula $F$ with a variable partition $X \cup Y$ yields a randomized communication protocol of cost $O(d \log n)$ for the falsified-clause search problem of $F$ under that partition (each linear query is evaluated by a public-coin protocol for comparing $a_X \cdot x$ with $b - a_Y \cdot y$). Consequently, lifted formulas whose search problems have randomized communication complexity $n^{\Omega(1)}$ require stabbing planes depth $n^{\Omega(1)}/\log n$.
 
 ## Proof sketch
 

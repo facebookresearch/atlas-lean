@@ -1,6 +1,6 @@
 # Equivalence of the isogeny path and endomorphism ring problems
 
-Assuming the generalized Riemann hypothesis, the supersingular $\ell$-isogeny path problem and the endomorphism ring problem are equivalent under probabilistic polynomial-time reductions (in $\log p$). Moreover, both are equivalent to the problem of computing, given $E$, an efficient representation of $\mathrm{End}(E)$ via the maximal order $\mathcal{O}\subseteq B_{p,\infty}$ isomorphic to it, and they are polynomially equivalent to the one-endomorphism problem in a suitable sense (subsequent work). Consequently the security of isogeny path based schemes rests on the hardness of computing endomorphism rings.
+Assuming the generalized Riemann hypothesis, the supersingular $\ell$-isogeny path problem and the endomorphism ring problem are equivalent under probabilistic polynomial-time reductions (in $\log p$). Moreover, both are equivalent to the problem of computing, given $E$, an efficient representation of $\mathrm{End}(E)$ via the maximal order $\mathcal{O}\subseteq B_{p,\infty}$ isomorphic to it, and the endomorphism ring problem is equivalent, under probabilistic polynomial-time reductions, to the one-endomorphism problem (Page–Wesolowski). Consequently the security of isogeny path based schemes rests on the hardness of computing endomorphism rings.
 
 ## Proof sketch
 
@@ -19,3 +19,4 @@ From an endomorphism ring of both curves, find the connecting ideal and convert 
 ## Sources
 
 - Benjamin Wesolowski, "The Supersingular Isogeny Path and Endomorphism Ring Problems are Equivalent", FOCS (2021), arXiv:2111.01481.
+- Aurel Page, Benjamin Wesolowski, "The Supersingular Endomorphism Ring and One Endomorphism Problems are Equivalent", EUROCRYPT (2024), arXiv:2309.10432.

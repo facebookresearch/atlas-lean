@@ -10,7 +10,7 @@ For a full-rank basis $B\in\mathbb Z^{n\times n}$ let $\mathcal L=B\mathbb Z^n$.
 
 ## Depends on
 
-- [Minkowski's convex body theorem](../../../../NumberTheory/diophantine-approximation/uniform-distribution-metric/minkowski-convex-body-theorem.md)
+- [Search problems: FNP, FP and TFNP](../../total-search-problems/search-problems-fnp-fp-and-tfnp.md)
 
 ## Sources
 

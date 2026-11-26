@@ -1,6 +1,11 @@
 # Truly supercritical depth trade-offs for monotone circuits
 
-There are explicit monotone functions $f_N$ on $N$ variables computable by monotone circuits of size $N^{O(1)}$ such that every monotone circuit computing $f_N$ with size below a superpolynomial threshold has depth superlinear in $N$, and in some parameter ranges superpolynomial in $N$, far exceeding the worst-case linear depth needed by any monotone function with unbounded size. Analogous truly supercritical size-depth trade-offs hold for cutting planes and resolution refutations, measured in terms of formula size.
+There are $N$-variate monotone functions $f_N$ with either of the following properties:
+
+1. $f_N$ has monotone circuits of size $s = \operatorname{poly}(N)$, but every monotone real circuit of size at most $s^{1.4}$ computing $f_N$ has depth at least $N^{2.4}$;
+2. $f_N$ has monotone circuits of size $s = \operatorname{quasipoly}(N)$, but every monotone real circuit of size at most $s \cdot \exp\bigl((\log N)^{1.9}\bigr)$ computing $f_N$ has depth superpolynomial in $N$.
+
+Every monotone function on $N$ variables has a monotone circuit of depth $O(N)$, so these depths exceed the worst case. The same work proves size-depth trade-offs for cutting planes and resolution refutations that are supercritical in the size of the refuted formula, not only in its number of variables.
 
 ## Proof sketch
 

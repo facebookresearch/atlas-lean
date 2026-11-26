@@ -8,7 +8,6 @@ A **Sherali–Adams (SA)** refutation is an identity $\sum_ip_i\overline{C_i}=1+
 
 ## Depends on
 
-- [The false-clause search problem S(F) of an unsatisfiable CNF and its universality for TFNP^dt](false-clause-search-problem.md)
 - [Pebble games with counting and the Sherali–Adams hierarchy](../../../descriptive-complexity/pebble-games-with-counting.md)
 
 ## Sources

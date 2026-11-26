@@ -1,6 +1,6 @@
 # Polynomial-time key recovery attacks on SIDH
 
-Given SIDH public data $(E_A,\varphi_A(P_B),\varphi_A(Q_B))$ with $3^{b}>2^{a}$, Alice's secret isogeny $\varphi_A$ can be recovered efficiently: (i) when $\mathrm{End}(E_0)$ contains a known small non-scalar endomorphism (as for the standard SIKE starting curves), in heuristic polynomial time by embedding $\varphi_A$ into a $(3^{b},3^{b})$-isogeny of abelian surfaces via Kani's lemma and testing digits of the secret (Castryck–Decru; Maino–Martindale–Panny–Pope–Wesolowski), breaking SIKEp434 in about an hour on one core; and (ii) for an arbitrary starting curve, in polynomial time by embedding into an isogeny of abelian varieties of dimension $4$ or $8$ using Zarhin's trick (Robert). Consequently SIDH and SIKE are broken.
+Given SIDH public data $(E_A,\varphi_A(P_B),\varphi_A(Q_B))$ with $3^{b}>2^{a}$, Alice's secret isogeny $\varphi_A$ can be recovered efficiently: (i) when $\mathrm{End}(E_0)$ contains a known small non-scalar endomorphism (as for the standard SIKE starting curves), in heuristic polynomial time by embedding $\varphi_A$ into a $(3^{b},3^{b})$-isogeny of abelian surfaces via Kani's lemma and testing digits of the secret (Castryck–Decru; Maino–Martindale–Panny–Pope–Wesolowski); and (ii) for an arbitrary starting curve, in polynomial time by embedding into an isogeny of abelian varieties of dimension $4$ or $8$ using Zarhin's trick (Robert). Consequently SIDH and SIKE are broken.
 
 ## Proof sketch
 

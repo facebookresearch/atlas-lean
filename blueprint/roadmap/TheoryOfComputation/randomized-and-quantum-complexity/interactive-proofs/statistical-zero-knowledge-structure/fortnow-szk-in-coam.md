@@ -4,7 +4,7 @@ Every promise problem in $\mathsf{SZK}$ (indeed in $\mathsf{HVSZK}$) has a const
 
 ## Proof sketch
 
-Fortnow's original proof analyzes the simulator directly: on NO instances the simulated conversations must deviate from any real interaction, which is detectable by approximate lower bounds on set sizes in the style of Goldwasser–Sipser. Via completeness of statistical difference one obtains a direct protocol: to show that two circuits sample statistically close distributions, Arthur picks a random bit $b$ and an input, sends $C_b$'s output, and Merlin must guess $b$; Merlin can guess with advantage only when the distributions are far, so this is an $\mathsf{AM}$ protocol for the complement of statistical difference, and closure under complement handles the rest.
+Fortnow's original proof analyzes the simulator directly: on NO instances the simulated conversations must deviate from any real interaction, which is detectable by approximate lower bounds on set sizes in the style of Goldwasser–Sipser. Via completeness of statistical difference one obtains a direct proof: the two-message private-coin protocol in which Arthur picks a hidden bit $b$, sends a sample of $C_b$, and Merlin must guess $b$ proves that two circuits are far apart, so $\mathrm{SD} \in \mathsf{IP}(2) \subseteq \mathsf{AM}$ by Goldwasser–Sipser. Since $\mathsf{SZK}$ is closed under complement, $\overline{\mathrm{SD}}$ Karp-reduces to $\mathrm{SD}$, so $\overline{\mathrm{SD}} \in \mathsf{AM}$, i.e. $\mathrm{SD} \in \mathsf{coAM}$, and completeness of $\mathrm{SD}$ gives $\mathsf{SZK} \subseteq \mathsf{coAM}$.
 
 ## Depends on
 
@@ -15,6 +15,7 @@ Fortnow's original proof analyzes the simulator directly: on NO instances the si
 ## Proof depends on
 
 - [Okamoto: public-coin HVSZK equals HVSZK](okamoto-public-coin-hvszk-equals-hvszk.md)
+- [Okamoto: SZK is closed under complement](okamoto-szk-closed-under-complement.md)
 - [Goldwasser-Sipser: private coins add no power to interactive proofs](../../goldwasser-sipser-theorem/goldwasser-sipser.md)
 - [Total variation distance between finite measures](../../../../Probability/convergence-of-measures/total-variation-distance/total-variation-dist.md)
 

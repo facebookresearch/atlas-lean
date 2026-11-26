@@ -4,7 +4,7 @@ There is a quantum oracle (a family of unitaries $U_\psi$ reflecting about an un
 
 ## Proof sketch
 
-A classical witness of $m$ bits partitions the space of candidate states into $2^m$ cells; within a typical cell the verifier must still search for $|\psi\rangle$ among a set of states of large measure, and a hybrid argument generalizing the BBBV lower bound for search shows that each query changes the final state by $O(\sqrt{2^{m}/2^{n}})$ on average, so $\Omega(\sqrt{2^n/2^m})$ queries are needed.
+A classical witness of $m$ bits partitions the space of candidate states into $2^m$ cells, so some witness $w^*$ has a cell of Haar measure at least $2^{-m}$; fix it. A concentration-of-measure lemma shows that for any fixed query state $\phi$, the average of $|\langle \phi|\psi\rangle|^2$ over $|\psi\rangle$ in a set of measure at least $2^{-m}$ is $O((m+1)/2^n)$. A hybrid argument generalizing the BBBV lower bound for search then shows that each query changes the final state by $O(\sqrt{(m+1)/2^n})$ on average, so $\Omega(\sqrt{2^n/(m+1)})$ queries are needed.
 
 ## Depends on
 

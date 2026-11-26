@@ -1,6 +1,6 @@
 # Higher-dimensional representations of isogenies of arbitrary degree
 
-Let $\varphi:E\to E'$ be an isogeny of degree $d$ and $N> d$ an integer such that $N-d$ is a sum of at most four squares, and suppose the action of $\varphi$ on $E[N]$ is known. Then there is an $N$-isogeny $F$ between products of at most $8$ elliptic curves (dimension $\le 8$, often $2$ or $4$) having $\varphi$ as a block, whose kernel is computable from $\varphi|_{E[N]}$; for $N=2^{e}$, $F$ is a chain of $(2,\dots,2)$-isogenies computable in time polynomial in $e$. Hence $\varphi$ can be represented by $(E,E',\varphi|_{E[2^{e}]})$ and evaluated on any point in polynomial time, regardless of the factorization of $d$.
+Let $\varphi:E\to E'$ be an isogeny of degree $d$ and $N> d$ an integer with $\gcd(N,d)=1$, and suppose the action of $\varphi$ on $E[N]$ is known. Then there is an $N$-isogeny $F$ between products of $8$ elliptic curves ($E^{4}\times E'^{4}$; $E^{2}\times E'^{2}$ suffices when $N-d$ is a sum of two squares) having $\varphi$ as a block, whose kernel is computable from $\varphi|_{E[N]}$; for $N=2^{e}$, $F$ is a chain of $(2,\dots,2)$-isogenies computable in time polynomial in $e$. Hence, for odd $d$, $\varphi$ can be represented by $(E,E',\varphi|_{E[2^{e}]})$ and evaluated on any point in polynomial time, regardless of the factorization of $d$.
 
 ## Proof sketch
 

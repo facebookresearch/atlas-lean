@@ -13,5 +13,3 @@
 - [Ambainis–Filmus–Le Gall: limitations of the Coppersmith–Winograd analysis](aflg-barrier.md)
 - [Alman–Vassilevska Williams: refined laser method and omega < 2.37286](avw-refined-laser.md)
 - [Duan–Wu–Zhou asymmetric hashing and the combination loss](dwz-asymmetric-hashing.md)
-- [Duan–Wu–Zhou: omega < 2.371866, breaking the Coppersmith–Winograd barrier](dwz-omega.md)
-- [Vassilevska Williams–Xu–Xu–Zhou: omega <= 2.371552 and alpha >= 0.321334](vwxxz-omega-alpha.md)

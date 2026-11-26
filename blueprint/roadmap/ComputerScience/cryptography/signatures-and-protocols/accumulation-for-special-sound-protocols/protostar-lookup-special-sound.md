@@ -1,6 +1,6 @@
 # Logarithmic-derivative lookups as a degree-two special-sound protocol
 
-For a lookup of $\mathbf{w}\in\mathbb{F}^{n}$ into a table $\mathbf{t}\in\mathbb{F}^{T}$ with distinct entries, the following 3-move protocol is special sound with an algebraic verifier of degree $2$: the prover sends multiplicities $\mathbf{m}\in\mathbb{F}^{T}$; the verifier sends $r$; the prover sends $h_i=1/(w_i+r)$ and $g_j=m_j/(t_j+r)$; the verifier checks $h_i(w_i+r)=1$ for all $i$, $g_j(t_j+r)=m_j$ for all $j$, and $\sum_ih_i=\sum_jg_j$. The prover's work is linear in $n$ plus the number of nonzero multiplicities, independent of $T$ for entries with $m_j=0$, which is what makes lookups cheap inside ProtoStar's accumulation.
+For a lookup of $\mathbf{w}\in\mathbb{F}^{n}$ into a table $\mathbf{t}\in\mathbb{F}^{T}$ with distinct entries, over a field with $\operatorname{char}\mathbb{F}>\max(n,T)$, the following 3-move protocol is $(n+T)$-special sound with an algebraic verifier of degree $2$: the prover sends multiplicities $\mathbf{m}\in\mathbb{F}^{T}$; the verifier sends $r$; the prover sends $h_i=1/(w_i+r)$ and $g_j=m_j/(t_j+r)$; the verifier checks $h_i(w_i+r)=1$ for all $i$, $g_j(t_j+r)=m_j$ for all $j$, and $\sum_ih_i=\sum_jg_j$. The prover's work is linear in $n$ plus the number of nonzero multiplicities, independent of $T$ for entries with $m_j=0$, which is what makes lookups cheap inside ProtoStar's accumulation.
 
 ## Proof sketch
 

@@ -4,7 +4,6 @@ For partitions $\lambda$ of $nD$ and integers $n, D$, the **plethysm coefficient
 
 ## Depends on
 
-- [Kronecker coefficients of the symmetric group](kronecker-coefficients.md)
 - [Orbit closures and border complexity of polynomials](orbit-closure-border.md)
 
 ## Sources

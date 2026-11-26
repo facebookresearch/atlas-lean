@@ -1,6 +1,6 @@
 # Sotiraki–Zampetakis–Zirdelis: BLICHFELDT and constrained SIS are PPP-complete
 
-BLICHFELDT and cSIS are PPP-complete; cSIS is the first PPP-complete problem whose input contains no circuit or Turing machine, answering a question of Papadimitriou. Consequently the family $\mathcal H_{\mathrm{cSIS}}$ of maps $x\mapsto Ax$ restricted to $\{x\in\{0,1\}^m:Gx\equiv b\}$ is a natural hash family that is universal in the worst case: no efficient algorithm finds collisions in every member of the family unless worst-case collision-resistant hash functions fail to exist (the corresponding worst-case assumption is $\mathsf{FP}\ne\mathsf{PWPP}$), and it yields a natural candidate collision-resistant family that is universal in an average-case sense. Most approximate lattice problems reduce to BLICHFELDT and cSIS.
+BLICHFELDT and cSIS are PPP-complete; cSIS is the first PPP-complete problem whose input contains no circuit or Turing machine, answering a question of Papadimitriou. Its variant weak-cSIS (no vector $b$, constraint $Gx\equiv0\pmod q$, and $m>(n+d)\ell$, so that a collision always exists) is PWPP-complete. Consequently the family $\mathcal H_{\mathrm{cSIS}}$ keyed by pairs $(A,G)$ with $G$ binary invertible, mapping a binary $x$ to the binary decomposition of $Au\bmod q$ for the binary $u$ extending $x$ with $Gu\equiv0\pmod q$, is a natural hash family that is universal in the worst case: no efficient algorithm finds collisions in every member of the family unless worst-case collision-resistant hash functions fail to exist (the corresponding worst-case assumption is $\mathsf{FP}\ne\mathsf{PWPP}$), and it is a natural candidate collision-resistant family that is universal in an average-case sense. In particular, $n$-SVP and $n^{2.5}$-CVP are Cook-reducible to BLICHFELDT, and $\tilde O(n)$-SIVP reduces to weak-cSIS and so lies in $\mathsf{PWPP}$.
 
 ## Proof sketch
 
@@ -9,10 +9,6 @@ BLICHFELDT in PPP: reduce each $s\in S$ modulo the fundamental parallelepiped $B
 ## Depends on
 
 - [BLICHFELDT and constrained SIS: lattice-flavoured pigeonhole search problems](blichfeldt-and-constrained-sis.md)
-
-## Proof depends on
-
-- [Minkowski's convex body theorem](../../../../NumberTheory/diophantine-approximation/uniform-distribution-metric/minkowski-convex-body-theorem.md)
 
 ## Sources
 

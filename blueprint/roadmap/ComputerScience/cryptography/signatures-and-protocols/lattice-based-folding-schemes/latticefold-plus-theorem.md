@@ -1,6 +1,6 @@
 # LatticeFold+: algebraic range proofs and double commitments for lattice folding
 
-Assuming Module-SIS over a power-of-two cyclotomic ring, there is a lattice-based folding scheme for linear and rank-1/CCS relations with Ajtai commitments in which norm control is achieved by a purely algebraic range proof (encoding small integers as monomials and certifying monomiality, with values recovered by constant-term extraction) instead of bit decomposition, and in which proofs are shortened by double commitments folded via a sum-check-based transformation. Compared with LatticeFold, the prover is faster, the verification circuit simpler and the folding proofs shorter, with knowledge soundness under Module-SIS and plausible post-quantum security.
+Assuming Module-SIS over a power-of-two cyclotomic ring, there is a lattice-based folding scheme for linear and rank-1/CCS relations with Ajtai commitments in which norm control is achieved by a purely algebraic range proof (encoding small integers as monomials and certifying monomiality, with values recovered by constant-term extraction) instead of bit decomposition, and in which proofs are shortened by double commitments folded via a sum-check-based transformation. The scheme is complete and knowledge sound under Module-SIS.
 
 ## Proof sketch
 

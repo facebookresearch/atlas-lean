@@ -11,4 +11,3 @@
 - [The local tester of a left-right Cayley complex code](lr-local-tester.md)
 - [Soundness of the vertex tester for left-right Cayley complex codes](dellm-soundness.md)
 - [Dinur–Evra–Livne–Lubotzky–Mozes: explicit c3-LTCs from left-right Cayley complexes](dellm-c3-ltc-theorem.md)
-- [c3-LTCs of every rate below one](ltc-rate-arbitrarily-close-one.md)

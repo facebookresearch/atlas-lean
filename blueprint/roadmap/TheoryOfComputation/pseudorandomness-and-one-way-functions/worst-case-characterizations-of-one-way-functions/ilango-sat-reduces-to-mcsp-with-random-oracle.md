@@ -15,11 +15,8 @@ The reduction uses parameter $\lambda=\Theta(\log n)$ and oracles $O_n:[n]\times
 ## Depends on
 
 - [The random oracle model](../../../ComputerScience/cryptography/public-key/random-oracle-constructions/the-random-oracle-model.md)
-- [Distributional Kolmogorov complexity dK^t_λ(x|D) and its probabilistic variant](distributional-kolmogorov-complexity.md)
-
-## Proof depends on
-
-- [Polynomial-time symmetry of information hypothesis for K^t and pK^t](../../kolmogorov-complexity/probabilistic-kolmogorov-and-symmetry-of-information/polynomial-time-symmetry-of-information-hypothesis.md)
+- [GapMCSP[s,c], GapK[s,c] and weak versus strong average-case hardness on a distribution](gap-meta-complexity-and-weak-strong-average-case-hardness.md)
+- [Kolmogorov complexity](../../kolmogorov-complexity/k.md)
 
 ## Sources
 

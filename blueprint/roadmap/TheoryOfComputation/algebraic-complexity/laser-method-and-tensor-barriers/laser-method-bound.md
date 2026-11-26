@@ -6,7 +6,7 @@ $$
 \log V_\tau(\mathrm{CW}_q) \ge \min\bigl(H(\alpha_X), H(\alpha_Y), H(\alpha_Z)\bigr) + \tau \sum_{c} \alpha(c) \log \mathrm{vol}(c),
 $$
 
-where $\mathrm{vol}(c) = nmk$ for a constituent $c \cong \langle n, m, k\rangle$, under the condition that the marginals determine $\alpha$ (otherwise a penalty term appears). Optimizing over $q$ and $\alpha$ gives $\omega < 2.3755$, the Coppersmith-Winograd bound.
+where $\mathrm{vol}(c) = nmk$ for a constituent $c \cong \langle n, m, k\rangle$, provided $\alpha$ is the only distribution on the constituents with its three marginals; in general the right side decreases by $\max_\beta H(\beta) - H(\alpha)$, the maximum over distributions $\beta$ with the same marginals as $\alpha$. Optimizing over $q$ and $\alpha$ gives $\omega < 2.38719$ (at $q = 6$); the second-level analysis of $\mathrm{CW}_q^{\otimes 2}$ gives the Coppersmith-Winograd bound $\omega < 2.375477$.
 
 ## Proof sketch
 

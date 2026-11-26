@@ -12,10 +12,6 @@ $$
 
 Regimes: **trivial** if $\delta<\varepsilon/G$ (every feasible point qualifies); **local** if $\delta<\sqrt{2\varepsilon/L}$, where such equilibria always exist and are computationally equivalent to approximate fixed points of the projected gradient descent-ascent map $(x,y)\mapsto(\Pi(x-\nabla_xf),\Pi(y+\nabla_yf))$; **global** if $\delta$ is comparable to the diameter of the feasible set, where existence is not guaranteed.
 
-## Depends on
-
-- [Karush–Kuhn–Tucker conditions for inequality constraints](../../../../Analysis/convex-analysis-and-variations/karush-kuhn-tucker-inequality.md)
-
 ## Sources
 
 - Constantinos Daskalakis, Stratis Skoulakis and Manolis Zampetakis, "The Complexity of Constrained Min-Max Optimization", STOC (2021), arXiv:2009.09623.

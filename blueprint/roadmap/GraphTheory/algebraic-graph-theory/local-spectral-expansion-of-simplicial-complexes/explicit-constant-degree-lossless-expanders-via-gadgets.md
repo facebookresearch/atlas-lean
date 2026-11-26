@@ -1,6 +1,6 @@
 # Golowich: explicit constant-degree lossless expanders via gadget products
 
-For every $\varepsilon > 0$ and every constant ratio $\beta > 0$ there are explicit infinite families of one-sided bipartite graphs with left degree $D = O_{\varepsilon, \beta}(1)$ and right-to-left size ratio $\beta$ such that every left set $S$ of size at most $\gamma n$ has at least $(1 - \varepsilon)D|S|$ neighbours (lossless expansion), constructed by placing a constant-size lossless expander gadget inside the neighbourhoods of a large bipartite spectral expander.
+For every $\varepsilon > 0$ and every constant ratio $\beta > 0$ there are explicit infinite families of one-sided bipartite graphs with left degree $D = O_{\varepsilon, \beta}(1)$ and right-to-left size ratio $\beta$ and a constant $\gamma=\gamma(\varepsilon,\beta)>0$ such that, with $n$ the number of left vertices, every left set $S$ of size at most $\gamma n$ has at least $(1 - \varepsilon)D|S|$ neighbours (lossless expansion), constructed by placing a constant-size lossless expander gadget inside the neighbourhoods of a large bipartite spectral expander.
 
 ## Proof sketch
 

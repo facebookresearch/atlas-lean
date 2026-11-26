@@ -1,6 +1,6 @@
 # Raghavendra–Steurer: small-set expansion hypothesis implies the Unique Games Conjecture
 
-The small-set expansion hypothesis implies the Unique Games Conjecture. More precisely, for every $\varepsilon > 0$ there are $\eta, \delta > 0$ and a polynomial-time reduction from $\mathrm{SSE}(\eta, \delta)$ to unique games with value either at least $1 - \varepsilon$ or at most $\varepsilon$, and the unique-games instances produced are themselves small-set expanders in the NO case; hence the hypothesis also implies Unique Games hardness on instances whose constraint graphs are small-set expanders.
+The small-set expansion hypothesis implies the Unique Games Conjecture. More precisely, for every $\varepsilon > 0$ there are $\eta, \delta > 0$ and a polynomial-time reduction from $\mathrm{SSE}(\eta, \delta)$ to unique games with value either at least $1 - \varepsilon$ or at most $\varepsilon$. Moreover (Raghavendra–Steurer–Tulsiani), the hypothesis is equivalent to the following strengthening of the Unique Games Conjecture: for every $\varepsilon, \eta > 0$ and $M \in \mathbb{N}$ there are $\delta > 0$ and an alphabet size $q$ such that it is NP-hard to distinguish unique-games instances of value at least $1 - \varepsilon$ from instances of value less than $\eta$ whose constraint graph $G$ moreover satisfies $\Phi_G(S) > 1 - \varepsilon$ for every vertex set $S$ of measure $\mu(S) = |S|/|V(G)|$ with $\delta \le \mu(S) \le M\delta$.
 
 ## Proof sketch
 
@@ -18,3 +18,4 @@ Given a graph $G$, build a unique game whose vertices are $R$-tuples of vertices
 ## Sources
 
 - P. Raghavendra, D. Steurer, "Graph expansion and the unique games conjecture", STOC (2010).
+- P. Raghavendra, D. Steurer, M. Tulsiani, "Reductions between expansion problems", CCC (2012), ECCC TR10-172.

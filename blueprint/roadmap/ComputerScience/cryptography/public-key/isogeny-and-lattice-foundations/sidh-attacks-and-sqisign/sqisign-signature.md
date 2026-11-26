@@ -1,6 +1,6 @@
 # SQIsign: compact signatures from the SQIsign identification protocol
 
-Applying the Fiat–Shamir transform to the SQIsign identification protocol, with the challenge $\varphi$ derived by hashing the commitment $E_1$ and the message, yields a digital signature scheme (SQIsign) whose public keys and signatures consist of a constant number of elements of $\mathbb{F}_{p^{2}}$ plus short integers, i.e., $O(\lambda)$ bits each, the most compact among post-quantum signature candidates. The protocol is complete, and it is special sound with respect to the endomorphism ring problem: two accepting responses for the same commitment and distinct challenges give a non-trivial endomorphism of $E_A$.
+Applying the Fiat–Shamir transform to the SQIsign identification protocol, with the challenge $\varphi$ derived by hashing the commitment $E_1$ and the message, yields a digital signature scheme (SQIsign) whose public keys and signatures consist of a constant number of elements of $\mathbb{F}_{p^{2}}$ plus short integers, i.e., $O(\lambda)$ bits each. The protocol is complete, and it is special sound with respect to the endomorphism ring problem: two accepting responses for the same commitment and distinct challenges give a non-trivial endomorphism of $E_A$.
 
 ## Proof sketch
 

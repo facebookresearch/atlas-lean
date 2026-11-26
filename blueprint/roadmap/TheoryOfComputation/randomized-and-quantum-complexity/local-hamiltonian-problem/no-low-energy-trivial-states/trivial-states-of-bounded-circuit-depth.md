@@ -2,10 +2,6 @@
 
 The *circuit depth* of an $n$-qubit state $\rho$ is the least $d$ such that $\rho = \mathrm{Tr}_{\mathsf{anc}}\big(U (|0\rangle\langle 0|^{\otimes (n + a)}) U^\dagger\big)$ for some number $a$ of ancilla qubits and a circuit $U$ of depth $d$ consisting of arbitrary two-qubit gates (no geometric locality assumed). A family of states is *trivial* if its circuit depth is bounded by a constant independent of $n$.
 
-## Depends on
-
-- [Bounded-degree local Hamiltonian families and relative energy](normalized-local-hamiltonian-families-and-relative-energy.md)
-
 ## Sources
 
 - Anurag Anshu, Nikolas P. Breuckmann, Chinmay Nirkhe, "NLTS Hamiltonians from good quantum codes", STOC (2023); arXiv:2206.13228.

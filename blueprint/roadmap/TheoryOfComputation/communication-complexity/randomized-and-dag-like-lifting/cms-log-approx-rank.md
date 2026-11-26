@@ -1,10 +1,10 @@
 # Chattopadhyay–Mande–Sherif: the log-approximate-rank conjecture is false
 
-There is an explicit family of total Boolean functions $F_n : \{0,1\}^n \times \{0,1\}^n \to \{\pm 1\}$ whose sign matrices have small approximate rank, $\log \operatorname{rank}_{1/3}(F_n) = O(\log^{c} n)$ for an absolute constant $c$, while their randomized communication complexity is $R^{cc}_{1/3}(F_n) = \Omega(\sqrt{n})$. Hence randomized communication complexity is not bounded by a polynomial in the logarithm of approximate rank. The same family also refutes the quantum version of the conjecture: its quantum communication complexity is polynomial in $n$ (Anshu–Boddu–Touchette; Sinha–de Wolf, independently).
+There is an explicit family of total Boolean functions $F_n : \{0,1\}^n \times \{0,1\}^n \to \{\pm 1\}$ whose sign matrices have small approximate rank, $\operatorname{rank}_{1/3}(F_n) = O(n^2)$, so $\log \operatorname{rank}_{1/3}(F_n) = O(\log n)$, while their randomized communication complexity is $R^{cc}_{1/3}(F_n) = \Omega(\sqrt{n})$. Hence randomized communication complexity is not bounded by a polynomial in the logarithm of approximate rank. The same family also refutes the quantum version of the conjecture: its quantum communication complexity is polynomial in $n$ (Anshu–Boddu–Touchette; Sinha–de Wolf, independently).
 
 ## Proof sketch
 
-Compose the XOR function of a sink-finding query problem on tournaments with an XOR gadget: the outer query function has low approximate spectral norm (it is a sum of few characters with small coefficients), which bounds the approximate rank of the composed matrix, while its randomized query complexity is $\Omega(n)$; a lifting argument for XOR gadgets transfers the query lower bound to randomized communication.
+Take $F = \mathrm{SINK} \circ \mathrm{XOR}^n$, where $\mathrm{SINK}$ reads the $n = \binom{m}{2}$ edge orientations of a tournament on $m$ vertices and outputs whether the tournament has a sink. A tournament has at most one sink, so $\mathrm{SINK}$ is the sum over the $m$ vertices of the conjunction saying that the vertex is a sink; each conjunction has spectral norm $1$, so $\mathrm{SINK}$ has spectral norm at most $m = O(\sqrt{n})$, which bounds $\operatorname{rank}_{1/3}(F)$ by $O(n^2)$. The lower bound $R^{cc}_{1/3}(F) = \Omega(\sqrt{n})$ is proved by Chattopadhyay–Mande–Sherif for this composed function; it does not come from a general lifting theorem for the XOR gadget, since none holds ($\mathrm{PARITY}_n \circ \mathrm{XOR}^n$ has communication complexity $O(1)$ while $\mathrm{PARITY}_n$ has query complexity $n$), and $\mathrm{SINK}$ itself has deterministic query complexity $O(m) = O(\sqrt{n})$.
 
 ## Depends on
 
@@ -14,7 +14,6 @@ Compose the XOR function of a sink-finding query problem on tournaments with an 
 ## Proof depends on
 
 - [Composed functions, gadgets and lifting theorems](composed-function-lifting.md)
-- [Göös–Pitassi–Watson: query-to-communication lifting for BPP](gpw-bpp-lifting.md)
 
 ## Sources
 

@@ -1,6 +1,6 @@
 # The supersingular isogeny path and endomorphism ring problems
 
-The *$\ell$-isogeny path problem* is: given $p$ and two supersingular curves $E,E'$ over $\mathbb{F}_{p^{2}}$, find a path in $\mathcal{G}_\ell(p)$ from $j(E)$ to $j(E')$ (of length polynomial in $\log p$), represented by a sequence of $\ell$-isogenies. The *endomorphism ring problem* ($\mathrm{EndRing}$) is: given $E$, output four endomorphisms (in an efficient representation) forming a $\mathbb{Z}$-basis of $\mathrm{End}(E)$. The *one-endomorphism problem* asks for a single non-scalar endomorphism of $E$. These are the core hardness assumptions of isogeny-based cryptography; quantumly, no subexponential algorithm is known for them in general.
+The *$\ell$-isogeny path problem* is: given $p$ and two supersingular curves $E,E'$ over $\mathbb{F}_{p^{2}}$, find a path in $\mathcal{G}_\ell(p)$ from $j(E)$ to $j(E')$ (of length polynomial in $\log p$), represented by a sequence of $\ell$-isogenies. The *endomorphism ring problem* ($\mathrm{EndRing}$) is: given $E$, output four endomorphisms (in an efficient representation) forming a $\mathbb{Z}$-basis of $\mathrm{End}(E)$. The *one-endomorphism problem* asks for a single non-scalar endomorphism of $E$.
 
 ## Depends on
 

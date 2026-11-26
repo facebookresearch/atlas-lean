@@ -4,7 +4,6 @@ For a $d$-regular graph $G = (V, E)$ and $S \subseteq V$, the **edge expansion**
 
 ## Depends on
 
-- [The Unique Games Conjecture](../pcp-constructions/the-unique-games-conjecture.md)
 - [Edge expansion of a vertex set](../../../GraphTheory/algebraic-graph-theory/part-01/grassmann-graphs/untitled.md)
 
 ## Sources

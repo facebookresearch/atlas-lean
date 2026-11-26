@@ -4,7 +4,7 @@ For all $L \ge 1$, generic Reed-Solomon codes of rate $R$ are $\big(\frac{L}{L+1
 
 ## Proof sketch
 
-Generic RS codes are $\mathrm{MDS}(L+1)$, hence $\mathrm{LD}$-$\mathrm{MDS}(L)$. Choosing $L = \lceil (1 - R - \varepsilon)/\varepsilon \rceil$ gives radius $\frac{L}{L+1}(1-R) \ge 1 - R - \varepsilon$. For each of the at most $2^{O(n)}$ agreement configurations, the bad evaluation tuples lie on the zero set of a nonzero polynomial of degree $\mathrm{poly}(n)$, so by the Schwartz-Zippel lemma and a union bound a random tuple over a field of size $2^{O(n)}$ avoids all of them.
+Generic RS codes are $\mathrm{MDS}(L+1)$, and so are their duals (up to column scaling, generator matrices of generic Reed-Solomon codes), hence they are $\mathrm{LD}$-$\mathrm{MDS}(\le L)$. Choosing $L = \lceil (1 - R - \varepsilon)/\varepsilon \rceil$ gives radius $\frac{L}{L+1}(1-R) \ge 1 - R - \varepsilon$. For each of the at most $2^{O(n)}$ agreement configurations, the bad evaluation tuples lie on the zero set of a nonzero polynomial of degree $\mathrm{poly}(n)$, so by the Schwartz-Zippel lemma and a union bound a random tuple over a field of size $2^{O(n)}$ avoids all of them.
 
 ## Depends on
 

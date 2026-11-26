@@ -4,7 +4,7 @@ Consider the laser method applied to tensor powers $\mathrm{CW}_q^{\otimes 2^m}$
 
 ## Proof sketch
 
-The value bounds obtained in the framework are upper bounded by a convex program expressing the method's estimate of $V_\tau(\mathrm{CW}_q^{\otimes 2^m})$ in terms of entropies of distributions on block triples with constraints coming from the marginals. One shows the program's optimum converges as $m \to \infty$ and evaluates the limit, which leaves $\omega \ge 2.3725$ as the best obtainable value; a relaxation in which constituents are arbitrary gives the weaker universal bound.
+The value bounds obtained in the framework are upper bounded by a convex program expressing the method's estimate of $V_\tau(\mathrm{CW}_q^{\otimes 2^m})$ in terms of entropies of distributions on block triples with constraints coming from the marginals. One shows the program's optimum converges as $m \to \infty$ and evaluates the limit, which shows that every upper bound on $\omega$ obtainable in the framework is at least $2.3725$; a relaxation in which constituents are arbitrary gives the weaker universal bound.
 
 ## Depends on
 

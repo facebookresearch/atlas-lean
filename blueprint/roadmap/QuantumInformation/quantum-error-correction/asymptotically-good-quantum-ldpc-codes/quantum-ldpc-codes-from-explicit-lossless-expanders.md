@@ -1,6 +1,6 @@
 # Explicit lossless vertex expanders yield linear-time decodable quantum LDPC codes
 
-For every $\varepsilon > 0$ and sufficiently large $d$, there are explicit $d$-regular graphs in which every vertex set $S$ of size at most $\gamma |V|$ has at least $(1 - \varepsilon) d |S|$ neighbours (hence at least $(1 - 2\varepsilon) d |S|$ unique neighbours), admitting a free group action. Plugged into the Lin-Hsieh construction, which requires two-sided lossless expansion with a free group action, they give explicit quantum LDPC codes of constant rate and linear distance with a linear-time decoder.
+For every $\varepsilon > 0$ and sufficiently large $d$, there are $\gamma=\gamma(\varepsilon,d)>0$ and explicit $d$-regular graphs in which every vertex set $S$ of size at most $\gamma |V|$ has at least $(1 - \varepsilon) d |S|$ neighbours (hence at least $(1 - 2\varepsilon) d |S|$ unique neighbours), admitting a free group action. Plugged into the Lin-Hsieh construction, which requires two-sided lossless expansion with a free group action, they give explicit quantum LDPC codes of constant rate and linear distance with a linear-time decoder.
 
 ## Proof sketch
 

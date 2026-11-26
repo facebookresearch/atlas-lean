@@ -7,7 +7,6 @@ The game is **$d$-to-$d$** if $L = R$ and every $\Phi_e$ has all left and right 
 ## Depends on
 
 - [The Unique Games Conjecture](../pcp-constructions/the-unique-games-conjecture.md)
-- [The PCP theorem: NP = PCP(O(log n), O(1))](../pcp-theorem.md)
 
 ## Sources
 

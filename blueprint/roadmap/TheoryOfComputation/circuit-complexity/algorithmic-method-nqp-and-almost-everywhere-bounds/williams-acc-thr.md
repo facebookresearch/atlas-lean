@@ -1,6 +1,6 @@
 # Williams: NEXP is not computed by ACC0 circuits with a layer of threshold gates
 
-For every $d, m$ there is $\varepsilon > 0$ such that $\mathrm{NEXP}$ is not contained in the class of $\mathrm{ACC}^0 \circ \mathrm{THR}$ circuits of depth $d$, modulus $m$ and size $2^{n^{\varepsilon}}$, i.e. $\mathrm{AC}^0[m]$ circuits whose bottom layer consists of arbitrary linear threshold gates. The underlying algorithm counts satisfying assignments of such circuits with $n^{2 - \varepsilon'}$ threshold gates in time $2^{n - n^{\varepsilon'}}$.
+For every $d, m$ and every constant $k$, $\mathrm{NEXP}$ is not contained in the class of $\mathrm{ACC}^0 \circ \mathrm{THR}$ circuits of depth $d$, modulus $m$ and size $2^{\log^{k} n}$, i.e. $\mathrm{AC}^0[m]$ circuits whose bottom layer consists of arbitrary linear threshold gates. The underlying algorithm counts satisfying assignments of such circuits of size $2^{n^{o(1)}}$ in time $2^{n - n^{\varepsilon}}$, where $\varepsilon > 0$ depends on $d$ and $m$.
 
 ## Proof sketch
 

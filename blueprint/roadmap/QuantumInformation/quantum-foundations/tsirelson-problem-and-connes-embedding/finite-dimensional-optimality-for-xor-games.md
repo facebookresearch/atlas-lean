@@ -1,6 +1,6 @@
 # For XOR games the entangled and commuting-operator values coincide and are attained
 
-For every two-player XOR game $G$ (answers in $\{0,1\}$ and $V$ depending only on $a \oplus b$), $\omega^*(G) = \omega^{co}(G)$, the value is attained by a strategy of dimension $2^{\lceil |\mathcal{X}|/2 \rceil}$, and it equals the optimum of an explicit semidefinite program. In particular no XOR game separates $C_{qa}$ from $C_{qc}$; the separating games of the negative answer to Tsirelson's problem necessarily have non-binary answer structure.
+For every two-player XOR game $G$ (answers in $\{0,1\}$ and $V$ depending only on $a \oplus b$), $\omega^*(G) = \omega^{co}(G)$, the value is attained by a strategy of dimension $2^{\lceil |\mathcal{X}|/2 \rceil}$, and it equals the optimum of an explicit semidefinite program. In particular no XOR game separates $C_{qa}$ from $C_{qc}$; the separating games of the negative answer to Tsirelson's problem are necessarily not XOR games.
 
 ## Proof sketch
 

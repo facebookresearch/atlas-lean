@@ -8,10 +8,6 @@ $$
 
 Thus a message $(m_0,m_1)$ of length $k_{i+1}$ encodes to $(m_0G_i+m_1G_iT_i,\;m_0G_i+m_1G_iT'_i)$, and from any two coordinates $j$, $j+n_i$ of a codeword of $C_{i+1}$ one recovers the $j$-th coordinates of $m_0G_i$ and $m_1G_i$.
 
-## Depends on
-
-- [Reed-Solomon code](../../../../InformationTheory/error-correcting-codes/reed-solomon-codes/code.md)
-
 ## Sources
 
 - Hadas Zeilberger, Binyi Chen, Ben Fisch, "BaseFold: Efficient Field-Agnostic Polynomial Commitment Schemes from Foldable Codes", CRYPTO (2024), IACR ePrint 2023/1705.

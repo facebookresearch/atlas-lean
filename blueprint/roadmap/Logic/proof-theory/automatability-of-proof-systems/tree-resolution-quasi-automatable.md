@@ -4,7 +4,7 @@ There is an algorithm that, given an unsatisfiable CNF $F$ on $n$ variables that
 
 ## Proof sketch
 
-A tree-like refutation of size $s$ has a root-adjacent subtree of size at most $s/2$ on one side of the first branching variable; recursively search both restrictions $F|_{x = 0}$ and $F|_{x = 1}$ with the size budget halved on one side, trying all variables, which gives the recurrence $T(s) \le 2n\, T(s/2) + \operatorname{poly}$ and time $n^{O(\log s)}$. For general resolution, Ben-Sasson-Wigderson bounds the minimum width by $O(\sqrt{n \log s})$, and width-$w$ refutations are found in time $n^{O(w)}$ by saturation.
+A tree-like refutation of size $s$ has a root-adjacent subtree of size at most $s/2$ on one side of the first branching variable; for each variable $x$, search $F|_{x=0}$ and $F|_{x=1}$ with size budget $s/2$; one of them succeeds, and the other restriction is then searched with the full budget $s$. This gives $T(n, s) \le 2n\, T(n - 1, s/2) + T(n - 1, s) + \operatorname{poly}(n)$, hence $T = n^{O(\log s)}$. For general resolution, Ben-Sasson-Wigderson bounds the minimum width by $O(\sqrt{n \log s})$, and width-$w$ refutations are found in time $n^{O(w)}$ by saturation.
 
 ## Depends on
 

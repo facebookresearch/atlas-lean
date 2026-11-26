@@ -1,6 +1,6 @@
 # Thresholds for perfect matchings and F-factors via spreadness
 
-For fixed $k \ge 2$, the threshold for the random $k$-uniform hypergraph $H_k(n, p)$ (with $k \mid n$) to contain a perfect matching is $\Theta(n^{1-k}\log n)$ (Johansson-Kahn-Vu); more generally for every fixed strictly balanced $k$-graph $F$ the threshold for an $F$-factor is $\Theta(n^{-1/d_1(F)}(\log n)^{1/e(F)})$. These follow in a few lines from the fractional expectation-threshold theorem by exhibiting a spread measure on perfect matchings (respectively factors).
+For fixed $k \ge 2$, the threshold for the random $k$-uniform hypergraph $H_k(n, p)$ (with $k \mid n$) to contain a perfect matching is $\Theta(n^{1-k}\log n)$ (Johansson-Kahn-Vu), and this follows in a few lines from the fractional expectation-threshold theorem by exhibiting a spread measure on perfect matchings. For a fixed strictly $1$-balanced graph $F$, the same argument applied to a spread measure on $F$-factors gives the upper bound $O(n^{-1/d_1(F)}\log n)$ for the $F$-factor threshold; the exact threshold $\Theta(n^{-1/d_1(F)}(\log n)^{1/e(F)})$ is the theorem of Johansson, Kahn and Vu.
 
 ## Proof sketch
 

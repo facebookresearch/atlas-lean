@@ -1,6 +1,6 @@
 # Goldreich–Sahai–Vadhan: honest-verifier SZK equals general SZK
 
-$\mathsf{HVSZK}=\mathsf{SZK}$: every promise problem with a statistical zero-knowledge proof against the honest verifier has one that is statistically zero knowledge against every probabilistic polynomial-time verifier strategy. The transformation is efficient on the prover side relative to the original prover, but incurs a polynomial overhead in communication and rounds.
+$\mathsf{HVSZK}=\mathsf{SZK}$: every promise problem with a statistical zero-knowledge proof against the honest verifier has one that is statistically zero knowledge against every probabilistic polynomial-time verifier strategy. The transformation incurs a polynomial overhead in communication and rounds.
 
 ## Proof sketch
 

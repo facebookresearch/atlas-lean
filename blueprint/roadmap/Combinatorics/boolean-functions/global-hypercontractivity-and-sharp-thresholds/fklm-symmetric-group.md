@@ -1,12 +1,18 @@
 # Hypercontractivity for global functions on the symmetric group
 
-Let $S_n$ carry the uniform measure, and call $f : S_n \to \mathbb{R}$ **$(d, \varepsilon)$-global** if for every set of $d$ pairs $(i_1, j_1), \dots, (i_d, j_d)$ the restriction of $f$ to $\{\pi : \pi(i_t) = j_t\ \forall t\}$ has $L^2$-norm at most $\varepsilon$. Then there are absolute constants $C, c > 0$ such that for every $d \le c\, n$ and every $(d, \varepsilon)$-global $f$ of degree at most $d$,
+Let $S_n$ carry the uniform measure. A set $T$ of pairs $(i, j) \in [n]^2$ is *consistent* if no two of its pairs share a first or a second coordinate, and $f_{\to T}$ denotes the restriction of $f : S_n \to \mathbb{R}$ to $\{\pi : \pi(i) = j \text{ for all } (i,j) \in T\}$ with its uniform measure. Call $f$ **$(d, \varepsilon)$-global** if $\|f_{\to T}\|_2 \le \varepsilon$ for every consistent $T$ with $|T| \le d$. There is an absolute constant $K > 0$ such that for every even $q \in \mathbb{N}$ and every $n > q^{K d^2}$, every $(2d, \varepsilon)$-global $f$ of degree at most $d$ satisfies
 
 $$
-\|f\|_4^4 \le C^{d}\, \varepsilon^2\, \|f\|_2^2.
+\|f\|_q \le q^{O(d^3)}\, \varepsilon^{(q-2)/q}\, \|f\|_2^{2/q}.
 $$
 
-Consequently, global subsets of $S_n$ of density $\alpha$ have level-$d$ Fourier weight $O_d(\alpha^2 \log^d(1/\alpha))$, giving strong bounds for $t$-intersecting families of permutations and for product-free sets.
+Moreover (level-$d$ inequality), there is an absolute constant $C > 0$ such that for every $(2d, \varepsilon)$-global $f : S_n \to \mathbb{Z}$ with $n > 2^{C d^3} \log(1/\varepsilon)^{C d}$,
+
+$$
+\|f^{\le d}\|_2^2 \le 2^{C d^4}\, \varepsilon^4 \log^{C d}(1/\varepsilon),
+$$
+
+which bounds the density of global product-free subsets of the alternating group $A_n$.
 
 ## Proof sketch
 

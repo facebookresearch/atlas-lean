@@ -1,6 +1,6 @@
 # Pseudorandom unitaries from the PFC ensemble and one-way functions
 
-Assuming quantum-secure one-way functions, the ensemble $U=P\,F\,C$, where $P$ is a pseudorandom permutation of computational basis states, $F$ a pseudorandom binary phase function (diagonal $\pm 1$ unitary), and $C$ a random Clifford (or other 2-design), is a pseudorandom unitary family secure against adaptive adversaries; with a symmetrized variant it is a strong PRU (secure even given inverse queries). Moreover, replacing the pseudorandom permutation and phase by $t$-wise independent ones yields $\epsilon$-approximate unitary $t$-designs of circuit depth linear in $n$ (and polylogarithmic in $t/\epsilon$ factors). Hence PRUs exist if and only if (up to the classical-to-quantum gap) quantum-secure one-way functions exist in the black-box sense, and Haar-random unitaries can be efficiently simulated.
+Assuming quantum-secure one-way functions, the ensemble $U=P\,F\,C$, where $P$ is a pseudorandom permutation of computational basis states, $F$ a pseudorandom binary phase function (diagonal $\pm 1$ unitary), and $C$ a random Clifford (or other 2-design), is a pseudorandom unitary family secure against adaptive adversaries; with a symmetrized variant it is a strong PRU (secure even given inverse queries). Moreover, replacing the pseudorandom permutation and phase by $2t$-wise independent ones yields approximate unitary $t$-designs (in diamond distance) of circuit depth linear in $t$. Hence quantum-secure one-way functions imply PRUs; the converse fails relative to an oracle (Kretschmer: PRUs exist relative to a quantum oracle with $\mathsf{BQP}=\mathsf{QMA}$). In addition, any algorithm that makes queries to a Haar-random unitary can be simulated efficiently on a quantum computer up to inverse-exponential trace distance.
 
 ## Proof sketch
 
@@ -19,3 +19,4 @@ First show non-adaptive security: after the Clifford twirl, $t$ parallel copies 
 
 - Tony Metger, Alexander Poremba, Makrand Sinha, Henry Yuen, "Simple Constructions of Linear-Depth t-Designs and Pseudorandom Unitaries", FOCS (2024), arXiv:2404.12647.
 - Fermi Ma, Hsin-Yuan Huang, "How to Construct Random Unitaries", STOC (2025), IACR ePrint 2024/1652.
+- William Kretschmer, "Quantum Pseudorandomness and Classical Complexity", TQC (2021), arXiv:2103.09320.

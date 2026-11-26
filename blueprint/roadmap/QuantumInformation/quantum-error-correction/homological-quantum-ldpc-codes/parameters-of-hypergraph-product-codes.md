@@ -1,6 +1,6 @@
 # Parameters of hypergraph product codes
 
-Let $C_i = \ker H_i$ and $C_i^{T} = \ker H_i^{T}$ have dimensions $k_i, k_i^{T}$ and minimum distances $d_i, d_i^{T}$ (with the convention $d = \infty$ for the zero code). Then the hypergraph product satisfies $H_X H_Z^{T} = 0$, has dimension $k = k_1 k_2 + k_1^{T} k_2^{T}$, and minimum distance $d = \min(d_1, d_2, d_1^{T}, d_2^{T})$. If $H_1 = H_2$ is the check matrix of a $(\Delta_V, \Delta_C)$-regular classical LDPC code of rate $R > 0$ and relative distance $\delta > 0$, the hypergraph product is a quantum LDPC family with $k = \Theta(n)$ and $d = \Theta(\sqrt n)$.
+Let $C_i = \ker H_i$ and $C_i^{T} = \ker H_i^{T}$ have dimensions $k_i, k_i^{T}$ and minimum distances $d_i, d_i^{T}$ (with the convention $d = \infty$ for the zero code). Then the hypergraph product satisfies $H_X H_Z^{T} = 0$, has dimension $k = k_1 k_2 + k_1^{T} k_2^{T}$, and minimum distance $d = \min(d_1, d_2, d_1^{T}, d_2^{T})$. If $H_1 = H_2$ is a full-row-rank check matrix (so that $\ker H_1^{T} = 0$) of a $(\Delta_V, \Delta_C)$-regular classical LDPC code of rate $R > 0$ and relative distance $\delta > 0$, the hypergraph product is a quantum LDPC family with $k = \Theta(n)$ and $d = \Theta(\sqrt n)$.
 
 ## Proof sketch
 

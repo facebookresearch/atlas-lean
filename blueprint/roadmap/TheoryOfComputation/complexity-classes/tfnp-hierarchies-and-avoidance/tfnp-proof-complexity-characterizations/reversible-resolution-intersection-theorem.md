@@ -10,7 +10,7 @@ Thus $F$ has a short, narrow Reversible Resolution refutation if and only if it 
 
 ## Proof sketch
 
-Recall the black-box collapses $\mathsf{SOPL}=\mathsf{PLS}\cap\mathsf{PPADS}$ and $\mathsf{EOPL}=\mathsf{PLS}\cap\mathsf{PPAD}$ (which hold for decision-tree formulations with polynomial loss). Convert a Resolution proof into a $\mathsf{PLS}^{dt}$ formulation of $S(F)$ and a uSA proof into a $\mathsf{PPADS}^{dt}$ formulation, apply the collapse to obtain a $\mathsf{SOPL}^{dt}$ formulation, and convert it back into a RevRes proof by the characterization; the other direction is immediate since RevRes is simulated by both systems. No direct proof-theoretic argument is known.
+Recall the black-box collapses $\mathsf{SOPL}=\mathsf{PLS}\cap\mathsf{PPADS}$ and $\mathsf{EOPL}=\mathsf{PLS}\cap\mathsf{PPAD}$ (which hold for decision-tree formulations with polynomial loss). Convert a Resolution proof into a $\mathsf{PLS}^{dt}$ formulation of $S(F)$ and a uSA proof into a $\mathsf{PPADS}^{dt}$ formulation, apply the collapse to obtain a $\mathsf{SOPL}^{dt}$ formulation, and convert it back into a RevRes proof by the characterization; the other direction is immediate since RevRes is simulated by both systems. Göös et al. note that they see no direct proof-theoretic argument.
 
 ## Depends on
 

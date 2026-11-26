@@ -1,6 +1,6 @@
 # Hassani-Alishahi-Urbanke and Mondelli-Hassani-Urbanke: bounds on the polar scaling exponent
 
-For polar codes with Arikan's kernel under successive cancellation decoding, the scaling exponent $\mu$ satisfies $3.579 \le \mu \le 6$ universally over BMS channels (Hassani-Alishahi-Urbanke), and the upper bound improves to $\mu \le 4.714$ for every BMS channel (Mondelli-Hassani-Urbanke). For the binary erasure channel, numerics place $\mu \approx 3.627$.
+For polar codes with Arikan's kernel under successive cancellation decoding, the scaling exponent $\mu$ satisfies $3.579 \le \mu \le 6$ universally over BMS channels (Hassani-Alishahi-Urbanke), and the upper bound improves to $\mu \le 4.714$ for every BMS channel (Mondelli-Hassani-Urbanke).
 
 ## Proof sketch
 

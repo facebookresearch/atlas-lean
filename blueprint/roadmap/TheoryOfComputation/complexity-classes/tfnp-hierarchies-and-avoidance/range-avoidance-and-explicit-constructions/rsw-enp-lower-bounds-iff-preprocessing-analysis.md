@@ -1,6 +1,6 @@
 # Ren–Santhanam–Wang: E^NP circuit lower bounds are equivalent to circuit analysis with E^NP preprocessing
 
-For typical circuit classes and size bounds, circuit lower bounds for $\mathrm{E}^{\mathrm{NP}}$ are equivalent to circuit-analysis algorithms that are allowed an $\mathrm{E}^{\mathrm{NP}}$ preprocessing phase. The equivalence holds in both the infinitely-often and the almost-everywhere settings and extends to larger, for instance subexponential, size bounds.
+For $\mathcal{C}\in\{\mathrm{TC}^0,\mathrm{NC}^1,\mathrm{P/poly}\}$ the following are equivalent: $\mathrm{E}^{\mathrm{NP}}$ cannot be computed by polynomial-size $\mathcal{C}$ circuits on almost every input length; there is a non-trivial GapUNSAT algorithm for $\mathcal{C}$ circuits with an $\mathrm{E}^{\mathrm{NP}}$ preprocessing phase. For classes $\mathcal{C}$ that may not compute MAJORITY (under mild closure properties), $\mathrm{E}^{\mathrm{NP}}$ cannot be $(1/2+1/\mathrm{poly}(n))$-approximated by $\mathcal{C}$ circuits on almost every input length if and only if there is a non-trivial CAPP algorithm for $\mathcal{C}$ circuits with inverse-circuit-size error and $\mathrm{E}^{\mathrm{NP}}$ preprocessing.
 
 ## Proof sketch
 

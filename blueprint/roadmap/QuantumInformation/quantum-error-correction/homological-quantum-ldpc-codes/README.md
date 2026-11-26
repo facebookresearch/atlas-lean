@@ -2,7 +2,6 @@
 
 - [Binary chain complexes of length two and their homology](binary-chain-complexes-of-length-two.md)
 - [Balanced products of chain complexes over a group](balanced-product-of-chain-complexes.md)
-- [Cosystolic expansion of a cochain complex](cosystolic-expansion-of-cochain-complexes.md)
 - [The CSS code of a chain complex](css-code-of-a-chain-complex.md)
 - [Evra-Kaufman-Zemor: decodable quantum LDPC codes with distance above the square root](quantum-ldpc-codes-from-cosystolic-expansion-of-ramanujan-complexes.md)
 - [Quantum LDPC code families and asymptotically good quantum codes](quantum-ldpc-code-families-and-good-codes.md)

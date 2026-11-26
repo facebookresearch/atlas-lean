@@ -1,6 +1,6 @@
 # Unbounded norm growth obstructs naive lattice folding
 
-Let witnesses satisfy $\|w_1\|_\infty,\|w_2\|_\infty\le B$ and fold as $w=w_1+rw_2$ with $r\in\mathcal{C}$, $\|r\|_{\mathrm{op}}\le\gamma$. Then $\|w\|_\infty\le(1+\gamma)B$, and after $k$ successive folds without norm reduction the bound becomes $(1+\gamma)^{k}B$. Since knowledge soundness of Ajtai commitments requires the extracted witness norm to stay below the Module-SIS bound $\beta< q$, folding with a fixed modulus supports only $O(\log_{1+\gamma}(q/B))$ rounds unless each fold is preceded by a norm-reducing step, such as base-$b$ decomposition together with a range proof.
+Let witnesses satisfy $\|w_1\|_\infty,\|w_2\|_\infty\le B$ and fold as $w=w_1+rw_2$ with $r\in\mathcal{C}$, $\|r\|_{\mathrm{op}}\le\gamma$. Then $\|w\|_\infty\le(1+\gamma)B$. Without norm reduction, folding two previously folded witnesses at each of $k$ levels gives the bound $(1+\gamma)^{k}B$, and folding a running witness with fresh witnesses of norm $B$ for $k$ steps gives $(1+k\gamma)B$. Binding of Ajtai commitments, and hence knowledge soundness, holds only for openings of norm below the Module-SIS bound $\beta<q$, so the folded witnesses must stay below $\beta$: with a fixed modulus this allows at most $\log_{1+\gamma}(\beta/B)$ levels of the first kind and $(\beta/B-1)/\gamma$ steps of the second, unless each fold is preceded by a norm-reducing step such as base-$b$ decomposition together with a range proof.
 
 ## Proof sketch
 

@@ -1,10 +1,10 @@
 # Dikstein–Dinur–Lubotzky: bounded-degree complexes without small connected covers
 
-For every $\varepsilon > 0$ there exist $d$ and an explicit infinite family $\{X_n\}$ of $d$-dimensional complexes of bounded degree, with $|X_n(0)| \to \infty$ and $|X_n(d)| = O(|X_n(0)|)$, such that each $X_n$ is a $\lambda$-local spectral expander with $\lambda \le \varepsilon$, has no connected cover with fewer than $\exp(\Omega(|X_n(0)|^{c}))$ sheets for a constant $c > 0$, and has swap cocycle expansion with constant depending only on $\varepsilon$. The complexes are obtained as quotients of buildings of symplectic groups.
+For every $m \ge 2$, every $g \ge 100\sqrt{m \log m}$ and every prime $p$, there is an infinite family of connected finite quotients $X$ of the affine Bruhat–Tits building $\tilde C_g(\mathbb{Q}_p)$ of $\mathrm{Sp}(2g, \mathbb{Q}_p)$ (bounded-degree complexes, the degree depending only on $g$ and $p$) such that no $X$ has a connected $m'$-sheeted cover for any $1 < m' \le m$. Moreover, for every integer $d$ there is $p_0(d)$ such that for every prime $p > p_0(d)$ and every $g \ge d^5$, every quotient of $\tilde C_g(\mathbb{Q}_p)$ is a $(d, \exp(-O(\sqrt{d})))$-swap cocycle expander.
 
 ## Proof sketch
 
-Covers with few sheets correspond to small-index subgroups of the fundamental group; for the chosen arithmetic quotients of symplectic buildings the fundamental group is a congruence quotient with property (T)-type rigidity, and strong approximation shows that its finite quotients of small index do not exist. Swap cocycle expansion is reduced via a local-to-global argument to coboundary expansion of links, which are spherical symplectic buildings handled by cone constructions.
+Connected $m'$-sheeted covers of a quotient $\Gamma \backslash \tilde C_g$ correspond to subgroups of index $m'$ of its fundamental group; for suitable arithmetic lattices $\Gamma$ in $\mathrm{Sp}(2g)$, the congruence subgroup property shows that these lattices have no subgroups of small index, so the quotients have no small connected covers. Swap cocycle expansion is reduced via a local-to-global argument to coboundary expansion of links, which are spherical symplectic buildings handled by cone constructions.
 
 ## Depends on
 

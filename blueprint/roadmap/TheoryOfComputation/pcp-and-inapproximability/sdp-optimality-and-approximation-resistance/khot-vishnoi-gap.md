@@ -17,4 +17,4 @@ The instance lives on the Boolean cube modulo the Hadamard code: vertices are co
 
 ## Sources
 
-- S. Khot, N. K. Vishnoi, "The unique games conjecture, integrability gap for cut problems and embeddability of negative-type metrics into l1", Journal of the ACM 62 (2015), FOCS (2005).
+- S. Khot, N. K. Vishnoi, "The Unique Games Conjecture, integrality gap for cut problems and embeddability of negative-type metrics into $\ell_1$", Journal of the ACM 62(1) (2015), FOCS (2005).

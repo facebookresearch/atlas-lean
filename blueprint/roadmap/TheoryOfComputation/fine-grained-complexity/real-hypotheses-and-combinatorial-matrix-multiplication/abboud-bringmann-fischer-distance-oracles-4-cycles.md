@@ -13,7 +13,6 @@ The structure-versus-randomness argument is applied to the numbers of the 3SUM i
 ## Proof depends on
 
 - [Fine-grained reductions](../fine-grained-hypotheses/fine-grained-reductions.md)
-- [Jin–Xu: 3SUM remains n^{2-o(1)}-hard on Sidon sets](jin-xu-3sum-hard-on-sidon-sets.md)
 
 ## Sources
 

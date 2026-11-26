@@ -5,7 +5,6 @@ Let $(\mathbb{G}_1,\mathbb{G}_2,\mathbb{G}_T,e,g_1,g_2,p)$ be an asymmetric bili
 ## Depends on
 
 - [Bilinear groups](../../advanced-encryption-and-pairings/bilinear-groups.md)
-- [Pairing-based assumptions: BDH and t-SDH](../../advanced-encryption-and-pairings/pairing-based-assumptions-bdh-and-t-sdh.md)
 
 ## Sources
 

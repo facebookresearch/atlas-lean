@@ -4,7 +4,7 @@ There is a function $f \in \mathrm{E}^{\mathrm{NP}} = \mathrm{DTIME}^{\mathrm{NP
 
 ## Proof sketch
 
-Replace diagonalization against nondeterministic time by a refuter-style argument: construct $f$ in $\mathrm{E}^{\mathrm{NP}}$ by using the $\mathrm{NP}$ oracle to find, at each input length, the lexicographically first truth table that defeats all small $\mathcal{C}$-circuits relative to a PCP-of-proximity encoding. Non-trivial derandomization makes the property ``this truth table is not computed by a small circuit'' checkable in a way that composes at every input length, which is what makes the lower bound almost-everywhere.
+Replace diagonalization against nondeterministic time by a constructive version of the Fortnow-Santhanam nondeterministic time hierarchy: for every weak nondeterministic algorithm (with smaller running time and short witnesses), a refuter algorithm constructs, at every large input length, inputs on which it fails to decide the hard language. Combining this refuter with the non-trivial derandomization (to check guessed succinct witnesses) yields an almost-everywhere worst-case hard function in $\mathrm{E}^{\mathrm{NP}}$; an XOR lemma based on approximate linear sums, together with PCPs of proximity, extends the bound to the average case.
 
 ## Depends on
 
@@ -20,3 +20,4 @@ Replace diagonalization against nondeterministic time by a refuter-style argumen
 - L. Chen, X. Lyu, R. Williams, "Almost-everywhere circuit lower bounds from non-trivial derandomization", FOCS (2020), ECCC TR20-150.
 - L. Chen, R. Williams, "Stronger connections between circuit analysis and circuit lower bounds, via PCPs of proximity", CCC (2019).
 - L. Chen, H. Ren, "Strong average-case circuit lower bounds from non-trivial derandomization", STOC (2020); SIAM Journal on Computing 51 (2022).
+- L. Fortnow, R. Santhanam, "New non-uniform lower bounds for uniform classes", CCC (2016).

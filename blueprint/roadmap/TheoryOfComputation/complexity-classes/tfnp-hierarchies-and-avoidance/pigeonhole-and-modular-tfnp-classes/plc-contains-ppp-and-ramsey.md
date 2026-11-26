@@ -1,6 +1,6 @@
 # LONG CHOICE is total and PPP-hard, PWPP reduces to UNARY LONG CHOICE, and multi-colour Ramsey lies in PLC
 
-(i) LONG CHOICE is total and in TFNP, and remains total when $a_0$ is prescribed. (ii) LONG CHOICE is PPP-hard, so $\mathsf{PPP}\subseteq\mathsf{PLC}$. (iii) WEAK-PIGEON reduces to UNARY LONG CHOICE. (iv) For all $r,n$, $(r,n)$-RAMSEY (given a circuit $r$-colouring the edges of an exponentially large complete graph, find a monochromatic $n$-clique) reduces to BINARY LONG CHOICE, hence lies in PLC. (v) NAIVE SUNFLOWER (given a circuit describing $2^{k^3\log k}$ distinct $k$-sets, find a duplicated element or set, or a sunflower of size $k^2$) reduces to multi-colour Ramsey. Whether RAMSEY or the sunflower problem is PLC-complete is open.
+(i) LONG CHOICE is total and in TFNP, and remains total when $a_0$ is prescribed. (ii) LONG CHOICE is PPP-hard, so $\mathsf{PPP}\subseteq\mathsf{PLC}$. (iii) WEAK-PIGEON reduces to UNARY LONG CHOICE. (iv) For all $r,n$, $(r,n)$-RAMSEY (given a circuit $r$-colouring the edges of the complete graph on $r^{rn}$ vertices, each an $rn\lceil\log r\rceil$-bit string, find a monochromatic $n$-clique) reduces to BINARY LONG CHOICE, hence lies in PLC. (v) NAIVE SUNFLOWER (given a circuit describing $2^{k^3\log k}$ distinct $k$-sets, find a duplicated element or set, or a sunflower of size $k^2$) reduces to multi-colour Ramsey. Pasarkar, Papadimitriou and Yannakakis leave open whether RAMSEY or the sunflower problem is PLC-complete.
 
 ## Proof sketch
 

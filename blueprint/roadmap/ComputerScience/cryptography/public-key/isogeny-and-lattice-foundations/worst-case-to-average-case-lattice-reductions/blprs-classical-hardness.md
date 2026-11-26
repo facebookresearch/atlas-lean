@@ -1,6 +1,6 @@
 # Classical hardness of LWE with polynomial modulus
 
-There is a classical polynomial-time reduction from $\mathrm{GapSVP}_\gamma$ in dimension $\sqrt{n}$ (for $\gamma$ polynomial in $n$) to decision LWE in dimension $n$ with a polynomial modulus $q$ and Gaussian error rate $\alpha$ such that $\gamma=\widetilde{O}(n^{2}/\alpha)$ up to polynomial factors. The key ingredients are a modulus-switching reduction from LWE with modulus $q$ in dimension $n$ to LWE with modulus $q'$ in dimension $n\log q/\log q'$ (with a small increase in error), and the classical reduction for exponential moduli.
+There are a polynomial modulus $q=q(n)$, a Gaussian error rate $\alpha=\alpha(n)$ with $1/\alpha$ polynomial in $n$, an approximation factor $\gamma=\mathrm{poly}(n)$ and a classical polynomial-time reduction from worst-case $\mathrm{GapSVP}_\gamma$ in dimension $\sqrt{n}$ to decision LWE in dimension $n$ with modulus $q$ and error rate $\alpha$. The key ingredients are a modulus-switching reduction from LWE with modulus $q$ in dimension $n$ to LWE with modulus $q'$ in dimension $n\log q/\log q'$ (with a small increase in error), and the classical reduction for exponential moduli.
 
 ## Proof sketch
 

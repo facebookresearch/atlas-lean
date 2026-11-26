@@ -11,7 +11,6 @@ $X$ is an **$\varepsilon$-coboundary expander** in dimension $i$ if $h^i(X) \ge 
 ## Depends on
 
 - [Cochains and the coboundary operator over F_2](cochains-coboundary.md)
-- [Cheeger's inequality, hard direction](../../../GraphTheory/algebraic-graph-theory/part-02/conductance-and-cheeger-s-inequality/exists-threshold-cut-le-sqrt.md)
 
 ## Sources
 

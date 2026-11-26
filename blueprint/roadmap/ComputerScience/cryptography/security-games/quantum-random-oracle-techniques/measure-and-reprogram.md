@@ -6,7 +6,7 @@ $$
 \Pr_{\Theta}\bigl[\mathcal{S}\text{ outputs }(x_0,z)\text{ with }V(x_0,\Theta,z)\bigr]\ge\frac{1}{(2q+1)^{2}}\Pr_H\bigl[\mathcal{A}^{H}\text{ outputs }(x_0,z)\text{ with }V(x_0,H(x_0),z)\bigr].
 $$
 
-For multi-round protocols with $k$ reprogramming points the loss is $O(q^{2k})$-type, which yields Fiat–Shamir security in the QROM.
+For $k$ reprogrammed points, Don–Fehr–Majenz prove the same inequality with $(2q+1)^2$ replaced by a factor $O(q^{2k})$ for fixed $k$, which yields Fiat–Shamir security of $(2k+1)$-move protocols in the QROM.
 
 ## Proof sketch
 
@@ -23,3 +23,4 @@ Write the adversary's final state as a sum over the query index $i$ at which $x_
 ## Sources
 
 - Jelle Don, Serge Fehr, Christian Majenz, Christian Schaffner, "Security of the Fiat-Shamir Transformation in the Quantum Random-Oracle Model", CRYPTO (2019), arXiv:1902.07556.
+- Jelle Don, Serge Fehr, Christian Majenz, "The Measure-and-Reprogram Technique 2.0: Multi-Round Fiat-Shamir and More", CRYPTO (2020), arXiv:2003.05207.

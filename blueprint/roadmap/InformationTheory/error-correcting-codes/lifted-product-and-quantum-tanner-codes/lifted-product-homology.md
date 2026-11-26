@@ -6,11 +6,11 @@ $$
 k = \dim_{\mathbb{F}_2} H_1(\mathcal{A} \otimes_R \mathcal{B}).
 $$
 
-When $G$ is trivial this reduces to the Künneth formula $k = \dim H_0(\mathcal{A})\dim H_1(\mathcal{B}) + \dim H_1(\mathcal{A})\dim H_0(\mathcal{B})$ of the hypergraph product; in general it is bounded below by $n - \operatorname{rank} H_X - \operatorname{rank} H_Z \ge |G|(n_A n_B + m_A m_B - n_A m_B - m_A n_B)$ via rank counting.
+When $G$ is trivial this reduces to the Künneth formula $k = \dim H_0(\mathcal{A})\dim H_1(\mathcal{B}) + \dim H_1(\mathcal{A})\dim H_0(\mathcal{B})$ of the hypergraph product; in general $k = n - \operatorname{rank} H_X - \operatorname{rank} H_Z \ge |G|(n_A m_B + m_A n_B - n_A n_B - m_A m_B)$, where $n = |G|(n_A m_B + m_A n_B)$ is the number of qubits.
 
 ## Proof sketch
 
-The lifted product is by definition the complex $\mathcal{A} \otimes_R \mathcal{B}$ with qubits in degree $1$, so its CSS code space has the stated dimension. The rank lower bound is the Euler characteristic of the three-term complex, since the ranks of the two boundary maps are at most the dimensions of their domains.
+The lifted product is by definition the complex $\mathcal{A} \otimes_R \mathcal{B}$ with qubits in degree $1$, so its CSS code space has the stated dimension. The rank lower bound is the Euler characteristic of the three-term complex, since the boundary map out of degree $2$ has rank at most $|G| n_A n_B$ and the boundary map into degree $0$ has rank at most $|G| m_A m_B$.
 
 ## Depends on
 
