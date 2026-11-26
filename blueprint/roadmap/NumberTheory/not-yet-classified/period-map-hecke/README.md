@@ -14,23 +14,15 @@
 - [Has Equivariant Primitive](has-equivariant-primitive.md)
 - [Period Map](period-map.md)
 
-## Modular Form
-
-- [Hecke T](hecke-t.md)
-- [Coeff Hecke T](coeff-hecke-t.md)
-- [Coeff Hecke U](coeff-hecke-u.md)
-
-## Modular Form Class
-
-- [Q Coeff hecke U](q-coeff-hecke-u.md)
-- [Q Coeff hecke T](q-coeff-hecke-t.md)
-
-## Modular Form
-
-- [Hecke TLin](hecke-tlin.md)
-- [Hecke ULin](hecke-ulin.md)
-
 ## Cusp Form
 
-- [Hecke TLin](hecke-tlin-2.md)
-- [Hecke ULin](hecke-ulin-2.md)
+- [Exists equivariant Primitive gamma0](exists-equivariant-primitive-gamma0.md)
+
+## Is Equivariant Primitive
+
+- [Period Hom eq of has Deriv At](period-hom-eq-of-has-deriv-at.md)
+
+## Modular Curve
+
+- [Period Map eq period Hom](period-map-eq-period-hom.md)
+- [Period Map hecke TLin](period-map-hecke-tlin.md)
