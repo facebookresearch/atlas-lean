@@ -155,7 +155,8 @@
     ]},
     {"slug": "cancer-genomics", "title": "Cancer genomics", "description": "Mathematical models for tumour sequencing data: purity and copy number, cancer cell fractions, mutation detection power, mutational signatures and the timing of genomic events.", "msc": ["92C50", "62P10"], "subfields": []},
     {"slug": "bioinformatics", "title": "Bioinformatics", "description": "Algorithms and statistical models on biological sequences and data: sequence alignment, genome assembly, motifs, RNA secondary structure, clustering and network reconstruction.", "msc": ["92D20", "68W32"], "subfields": [
-     {"slug": "sequence-alignment", "title": "Sequence alignment", "description": "Pairwise and multiple alignment of biological sequences: Needleman–Wunsch and Smith–Waterman, affine gaps, banded, linear-space, semi-global and wavefront algorithms."}
+     {"slug": "sequence-alignment", "title": "Sequence alignment", "description": "Pairwise and multiple alignment of biological sequences: Needleman–Wunsch and Smith–Waterman, affine gaps, banded, linear-space, semi-global and wavefront algorithms."},
+     {"slug": "genome-rearrangements", "title": "Genome rearrangements", "description": "Distances between genomes under rearrangement operations (signed and unsigned reversals, transpositions and double cut and join), the breakpoint, cycle and adjacency graphs that bound them, and algorithms that sort one genome into another."}
     ]},
     {"slug": "systems-biology", "title": "Systems biology", "description": "Dynamics of biochemical reaction networks and gene regulatory circuits: mass-action kinetics, enzyme kinetics, ultrasensitivity, feedback, metabolic flux analysis and gene expression noise.", "msc": ["92C42", "92C45", "80A30"], "subfields": []},
     {"slug": "pharmacokinetics", "title": "Pharmacokinetics and pharmacodynamics", "description": "Compartment models of drug absorption, distribution and elimination, linear and saturable, under bolus, infusion and repeated dosing; dose–response laws, reference models for drug combinations and models of concentration measurements. Enzyme kinetics as such is under Systems biology.", "msc": ["92C45", "92C50", "62P10"], "subfields": []},
@@ -15610,6 +15611,12 @@
   "WantedExt/Biology/Neuroscience/OjaRuleWanted": {"to": "Biology/mathematical-neuroscience", "title": "Convergence of Oja's principal-component rule"},
   "WantedExt/Biology/Neuroscience/SiegertFormulaWanted": {"to": "Biology/mathematical-neuroscience", "title": "Siegert mean first-passage formula"},
   "WantedExt/Biology/Neuroscience/SpikeTriggeredAverageWanted": {"to": "Biology/mathematical-neuroscience", "title": "Consistency of the spike-triggered average"},
+  "WantedExt/Biology/ComputationalBiology/DCJDistanceWanted": {"to": "Biology/bioinformatics/genome-rearrangements", "title": "Double-cut-and-join distance"},
+  "WantedExt/Biology/ComputationalBiology/GreedyReversalWanted": {"to": "Biology/bioinformatics/genome-rearrangements", "title": "Greedy sorting by reversals"},
+  "WantedExt/Biology/ComputationalBiology/HannenhalliPevznerWanted": {"to": "Biology/bioinformatics/genome-rearrangements", "title": "Signed reversal distance"},
+  "WantedExt/Biology/ComputationalBiology/TranspositionWanted": {"to": "Biology/bioinformatics/genome-rearrangements", "title": "Sorting by transpositions"},
+  "WantedExt/Biology/ComputationalBiology/MyersBitVectorWanted": {"to": "Biology/bioinformatics", "title": "Approximate string matching"},
+  "WantedExt/Biology/ComputationalBiology/KruskalIdentifiabilityWanted": {"to": "Biology/phylogenetics/inference-and-comparison", "title": "Identifiability of latent structure models"},
   "WantedExt/CategoryTheory/FundamentalToposWanted": {"to": "CategoryTheory/topos-theory", "title": "Elementary toposes"},
   "WantedExt/Combinatorics/AcceleratedZeckendorfGameWanted": {"to": "GameTheory/combinatorial-games", "title": "Accelerated Zeckendorf game"},
   "WantedExt/Combinatorics/AccessibleSetsWanted": {"to": "Combinatorics/ramsey-theory/van-der-waerden-theorems", "title": "Accessible sets and diffsequences"},
