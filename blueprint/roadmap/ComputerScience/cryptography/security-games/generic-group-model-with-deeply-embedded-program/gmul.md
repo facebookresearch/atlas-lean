@@ -1,3 +1,3 @@
 # Gmul
 
-Represented multiplication, through the oracle.
+Let `1 < q`. Represented multiplication, through the oracle.

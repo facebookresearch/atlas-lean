@@ -1,3 +1,3 @@
 # Ginv
 
-Represented inversion, through the oracle.
+Let `1 < q`. Represented inversion, through the oracle.

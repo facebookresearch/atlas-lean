@@ -6,6 +6,5 @@ real-algebra extension.
 `idf` is the already chosen nonnegative inverse-document-frequency weight;
 this definition does not use the raw Robertson IDF variant, which can be
 negative. `tf` is term frequency and `k1` is the BM25 saturation parameter.
-The displayed formula is the BM25 score on the standard domain described in
-the module documentation; at parameter values making a denominator zero it
-uses Lean's totalized division.
+Where its denominators are nonzero this is the usual BM25 term score; at
+parameter values making a denominator zero, division is total, with `a / 0 = 0`.
