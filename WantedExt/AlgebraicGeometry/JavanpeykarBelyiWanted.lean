@@ -83,27 +83,6 @@ abbrev overAlgebraicClosure (K : Type u) [Field K] (C : Over (Spec (CommRingCat.
     Over (Spec (CommRingCat.of (AlgebraicClosure K))) :=
   (Over.pullback (Spec.map (CommRingCat.ofHom (algebraMap K (AlgebraicClosure K))))).obj C
 
-/-- **Jacobian of a curve as an abelian variety.** For a field $k$ and a curve $C$ over $k$
-(proper, smooth of relative dimension $1$ and geometrically irreducible), the Jacobian $J(C)$
-of the Jacobian challenge, with its group scheme structure, as an abelian scheme over
-$\operatorname{Spec} k$: it is smooth (of relative dimension the genus), proper and geometrically
-irreducible, hence geometrically connected, and commutative. -/
-public def_wanted jacobian {k : Type u} [Field k] (C : Over (Spec (CommRingCat.of k)))
-    [IsProper C.hom] [SmoothOfRelativeDimension 1 C.hom] [GeometricallyIrreducible C.hom] :
-    AbelianScheme (Spec (CommRingCat.of k)) :=
-  letI : GrpObj (❰Jacobian❱ C) := ❰Jacobian.instGrpObj❱
-  haveI : IsProper (❰Jacobian❱ C).hom := ❰Jacobian.instIsProper❱
-  haveI : GeometricallyIrreducible (❰Jacobian❱ C).hom := ❰Jacobian.instGeometricallyIrreducible❱
-  haveI : SmoothOfRelativeDimension (❰genus❱ C) (❰Jacobian❱ C).hom :=
-    ❰Jacobian.smoothOfRelativeDimension_genus❱
-  haveI : IsCommMonObj (❰Jacobian❱ C) := ❰instIsCommMonObj❱
-  { model := ❰Jacobian❱ C
-    smooth := SmoothOfRelativeDimension.smooth (❰genus❱ C) _
-    connected := ⟨fun _ _ y _ fst snd h => by
-      have : IrreducibleSpace _ :=
-        GeometricallyIrreducible.geometrically_irreducibleSpace y fst snd h
-      infer_instance⟩ }
-
 /-- **Javanpeykar's bound for the Faltings height of a Belyi curve.** Let $X$ be a smooth
 projective connected curve of genus $g \ge 1$ over $\overline{\mathbb{Q}}$, and let
 $h_{\mathrm{Fal}}(X)$ be its Faltings height, the stable Faltings height of its Jacobian in
@@ -120,6 +99,16 @@ Belyi's theorem; it makes $\deg_B(X)$ the minimum of the degrees of Belyi maps. 
 bounds three further Arakelov invariants of $X$ (the self-intersection of the dualizing sheaf,
 the discriminant and Faltings' delta invariant); those bounds are not part of this statement.
 
+The Jacobian $J(C)$ of $C$ enters through its underlying $K$-scheme: the statement takes any
+abelian variety $J$ over $K$ whose underlying $K$-scheme is isomorphic to $J(C)$, and bounds
+$h_F(J)$. This does not depend on the choice of $J$: a morphism of abelian varieties is a
+homomorphism followed by a translation (J. S. Milne, *Abelian Varieties*, course notes, version
+2.00 (2008), Chapter I, Corollary 1.2, p. 9, <https://www.jmilne.org/math/CourseNotes/AV.pdf>),
+so an isomorphism of $K$-schemes between two abelian varieties, followed by the translation that
+takes the image of the origin back to the origin, is an isomorphism of abelian varieties. Hence
+the abelian variety structures on one $K$-scheme give isomorphic abelian varieties, every such
+$J$ is isomorphic to $J(C)$ with its group law, and $h_F(J) = h_F(J(C)) = h_{\mathrm{Fal}}(X)$.
+
 Source: A. Javanpeykar, *Polynomial bounds for Arakelov invariants of Belyi curves*, Algebra
 Number Theory 8 (2014), 89–140, Theorem 1.1.1, p. 90, with $h_{\mathrm{Fal}}$ defined in §2.3,
 where it is identified with the stable Faltings height of the Jacobian, and its normalization
@@ -128,10 +117,11 @@ compared with that of Gaudron and Rémond in Lemma 2.4.4, <https://doi.org/10.21
 public theorem_wanted javanpeykar_faltingsHeight_bound (K : Type u) [Field K] [NumberField K]
     (C : Over (Spec (CommRingCat.of K))) [IsProper C.hom] [SmoothOfRelativeDimension 1 C.hom]
     [GeometricallyIrreducible C.hom]
-    (hB : ∃ d, HasBelyiMapOfDegree (overAlgebraicClosure K C) d) :
-    1 ≤ ❰genus❱ C →
-    -(❰genus❱ C : ℝ) * Real.log (2 * Real.pi) ≤ ❰faltingsHeight❱ K (❰jacobian❱ C) ∧
-      ❰faltingsHeight❱ K (❰jacobian❱ C) ≤
+    (hB : ∃ d, HasBelyiMapOfDegree (overAlgebraicClosure K C) d)
+    (J : AbelianScheme (Spec (CommRingCat.of K))) :
+    Nonempty (J.model ≅ ❰Jacobian❱ C) → 1 ≤ ❰genus❱ C →
+    -(❰genus❱ C : ℝ) * Real.log (2 * Real.pi) ≤ ❰faltingsHeight❱ K J ∧
+      ❰faltingsHeight❱ K J ≤
         13 * 10 ^ 6 * (❰genus❱ C : ℝ) * (belyiDegree (overAlgebraicClosure K C) : ℝ) ^ 5
 
 end WantedExt.AlgebraicGeometry.JavanpeykarBelyi
