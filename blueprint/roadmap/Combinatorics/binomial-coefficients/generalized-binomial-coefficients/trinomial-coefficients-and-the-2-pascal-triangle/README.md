@@ -24,7 +24,6 @@
 - [Sun's generalized central trinomial coefficient](generalized-central-trinomial.md)
 - [Generalized central trinomial coefficient at n = 0](generalized-central-trinomial-zero.md)
 - [Generalized central trinomial coefficient at n = 1](generalized-central-trinomial-one.md)
-- [Unfolded binomial-sum formula for generalized central trinomial coefficients](generalized-central-trinomial-eq-sum-cho.md)
 - [Sun's binomial-sum formula for generalized central trinomial coefficients](generalized-central-trinomial-eq-sum.md)
 - [Weighted diagonal sums of trinomial coefficients by coefficient extraction](sum-trinomial-coefficient-diagonal-weigh.md)
 - [Alternating weighted diagonal sum of trinomial coefficients](sum-trinomial-coefficient-diagonal-alter.md)
