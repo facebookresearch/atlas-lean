@@ -58,23 +58,28 @@ def I {Var : Type u} : Term Var := .abs (.bvar 0)
 
 /-! ### Local closure -/
 
-/-- `ω` is locally closed. -/
+/-- When a fresh name can be chosen outside every finite set of names (`HasFresh Var`), `ω` is
+locally closed. -/
 theorem omega_lc {Var : Type u} [HasFresh Var] : (omega : Term Var).LC := by
   exact (lcAt_iff_LC _).mp rfl
 
-/-- `Ω` is locally closed. -/
+/-- When a fresh name can be chosen outside every finite set of names (`HasFresh Var`), `Ω` is
+locally closed. -/
 theorem Omega_lc {Var : Type u} [HasFresh Var] : (Omega : Term Var).LC := by
   exact .app omega_lc omega_lc
 
-/-- `K` is locally closed. -/
+/-- When a fresh name can be chosen outside every finite set of names (`HasFresh Var`), `K` is
+locally closed. -/
 theorem K_lc {Var : Type u} [HasFresh Var] : (K : Term Var).LC := by
   exact (lcAt_iff_LC _).mp rfl
 
-/-- `I` is locally closed. -/
+/-- When a fresh name can be chosen outside every finite set of names (`HasFresh Var`), `I` is
+locally closed. -/
 theorem I_lc {Var : Type u} [HasFresh Var] : (I : Term Var).LC := by
   exact (lcAt_iff_LC _).mp rfl
 
-/-- `K I Ω` is locally closed. -/
+/-- When a fresh name can be chosen outside every finite set of names (`HasFresh Var`), `K I Ω`
+is locally closed. -/
 theorem KIOmega_lc {Var : Type u} [HasFresh Var] : (app (app K I) Omega : Term Var).LC := by
   exact .app (.app K_lc I_lc) Omega_lc
 
@@ -104,11 +109,13 @@ private theorem not_fullBeta_omega {Var : Type u} [HasFresh Var] (N : Term Var) 
     obtain ⟨x, hx⟩ := fresh_exists xs
     exact not_fullBeta_app_fvar_fvar x x _ (h x hx)
 
-/-- `Ω` contracts to itself: `(λx. x x) ω ⭢βᶠ ω ω`. -/
+/-- When a fresh name can be chosen outside every finite set of names (`HasFresh Var`), `Ω`
+contracts to itself: `(λx. x x) ω ⭢βᶠ ω ω`. -/
 theorem Omega_step_self {Var : Type u} [HasFresh Var] : (Omega : Term Var) ⭢βᶠ Omega := by
   exact .base (.beta omega_lc omega_lc)
 
-/-- Every one-step full β-reduct of `Ω` is `Ω`. -/
+/-- When a fresh name can be chosen outside every finite set of names (`HasFresh Var`), every
+one-step full β-reduct of `Ω` is `Ω`. -/
 theorem eq_Omega_of_step {Var : Type u} [HasFresh Var] :
     ∀ N : Term Var, Omega ⭢βᶠ N → N = Omega := by
   intro N h
@@ -119,7 +126,8 @@ theorem eq_Omega_of_step {Var : Type u} [HasFresh Var] :
   | appL _ h => exact absurd h (not_fullBeta_omega _)
   | appR _ h => exact absurd h (not_fullBeta_omega _)
 
-/-- Every term that `Ω` reaches by full β-reduction is `Ω`. -/
+/-- When a fresh name can be chosen outside every finite set of names (`HasFresh Var`), every
+term that `Ω` reaches by full β-reduction is `Ω`. -/
 theorem eq_Omega_of_steps {Var : Type u} [HasFresh Var] :
     ∀ N : Term Var, Omega ↠βᶠ N → N = Omega := by
   intro N h
@@ -129,7 +137,8 @@ theorem eq_Omega_of_steps {Var : Type u} [HasFresh Var] :
     subst ih
     exact eq_Omega_of_step _ h
 
-/-- `Ω` has no normal form. -/
+/-- When a fresh name can be chosen outside every finite set of names (`HasFresh Var`), `Ω` has
+no normal form. -/
 theorem not_normalizable_Omega {Var : Type u} [HasFresh Var] :
     ¬ Relation.Normalizable FullBeta (Omega : Term Var) := by
   rintro ⟨N, hsteps, hnormal⟩
@@ -138,7 +147,8 @@ theorem not_normalizable_Omega {Var : Type u} [HasFresh Var] :
 
 /-! ### `K I Ω` normalizes by leftmost reduction -/
 
-/-- Leftmost reduction takes `K I Ω` to `I`, through `(λy. I) Ω`. -/
+/-- When a fresh name can be chosen outside every finite set of names (`HasFresh Var`),
+leftmost reduction takes `K I Ω` to `I`, through `(λy. I) Ω`. -/
 theorem KIOmega_leftmost_I {Var : Type u} [HasFresh Var] :
     (app (app K I) Omega : Term Var) ↠ℓ I := by
   have h₁ : (app (app K I) Omega : Term Var) ⭢ℓ app (abs I) Omega :=
@@ -147,7 +157,8 @@ theorem KIOmega_leftmost_I {Var : Type u} [HasFresh Var] :
     BetaAt.outer ((lcAt_iff_LC _).mp rfl) Omega_lc
   exact .tail (.single h₁) h₂
 
-/-- `I` is a normal form. -/
+/-- When a fresh name can be chosen outside every finite set of names (`HasFresh Var`), `I` is
+a normal form. -/
 theorem normal_I {Var : Type u} [HasFresh Var] : Relation.Normal FullBeta (I : Term Var) := by
   rintro ⟨N, h⟩
   cases h with

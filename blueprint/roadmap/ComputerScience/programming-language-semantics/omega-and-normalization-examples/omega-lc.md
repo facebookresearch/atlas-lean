@@ -1,3 +1,3 @@
 # Omega lc
 
-`ω` is locally closed.
+When a fresh name can be chosen outside every finite set of names, `ω` is locally closed.
