@@ -1,5 +1,7 @@
 # Erëmenko–Lempert bound on derivatives on connected lemniscates
 
+This settles [Erdős Problem 115 on derivatives on connected lemniscates](connected-lemniscate-derivative-bound.md) in the affirmative: its statement holds.
+
 Erëmenko and Lempert proved that for monic `p` of degree `n` with connected `\{|p| ≤
 1\}`, `|p'| ≤ 2^\{1/n - 1\} n²` on that set, the value attained by the Chebyshev polynomials; `2^\{1/n -
 1\} n² ≤ (1/2 + ε) n²` once `2^\{1/n\} ≤ 1 + 2ε`. erdosproblems.com/115 lists the problem as proved.

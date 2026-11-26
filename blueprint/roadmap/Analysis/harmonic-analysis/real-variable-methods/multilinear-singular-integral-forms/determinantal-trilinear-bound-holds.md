@@ -1,5 +1,7 @@
 # Gressman–He–Kovač–Street–Thiele–Yung bound for the determinantal form
 
+This settles [Lᵖ bounds for the determinantal trilinear form](determinantal-trilinear-bound.md) in the affirmative: its statement holds.
+
 Gressman, He, Kovač, Street, Thiele and Yung proved that the principal value of their
 determinantal form exists for Schwartz functions (Section 2.1) and is bounded by `C ‖f‖_p ‖g‖_q
 ‖h‖_r` exactly in the range `2 < p, q, r < ∞`, `1/p + 1/q + 1/r = 1` (Theorem 1, which also shows

@@ -1,5 +1,7 @@
 # Proof of Pommerenke's Hankel determinant bound
 
+This settles [Pommerenke's bound on Hankel determinants of univalent functions](hankel-determinant-bound.md) in the affirmative: its statement holds.
+
 Pommerenke proved that some constant `β > 1/4000` satisfies `A_n^\{(k)\} = O(n^\{3/2 -
 k/2 - kβ\})` for every `k ≥ 2` and `f ∈ S` (Hayman–Lingham Update 6.14), which gives `j_k < -1/2` for
 every `k > 3/(2β)`.

@@ -1,5 +1,7 @@
 # A non-split quasiconformal map preserving coordinate directions
 
+This settles [Quasiconformal maps preserving coordinate directions split](conjecture.md) in the negative: its statement is false.
+
 Refuted. Kleiner, Müller, Székelyhidi and Xie (Sobolev mappings of Euclidean
 space and product structure, arXiv:2603.05979, Theorem 1.3 and Corollary 1.4) construct a
 non-split bi-Lipschitz, area-preserving homeomorphism of R x R whose differential is diagonal or

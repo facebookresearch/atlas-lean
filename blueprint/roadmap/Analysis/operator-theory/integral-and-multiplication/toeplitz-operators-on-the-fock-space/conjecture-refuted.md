@@ -1,5 +1,7 @@
 # Looi's refutation of the Berger–Coburn conjecture
 
+This settles [Berger–Coburn conjecture](conjecture.md) in the negative: its statement is false.
+
 Refuted, in both directions of the equivalence. Looi (arXiv:2601.20859, Theorem
 1.2) constructs, in every complex dimension n >= 1 and in the Berger-Coburn normalization used
 here (dmu = (2 pi)^\{-n\} e^\{-|z|^2/2\} dv, heat transform (4 pi t)^\{-n\} integral g(w)

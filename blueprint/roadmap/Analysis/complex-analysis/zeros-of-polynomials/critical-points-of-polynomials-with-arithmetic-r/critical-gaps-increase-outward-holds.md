@@ -1,5 +1,7 @@
 # Bálint's theorem on gaps between critical points
 
+This settles [Erdős Problem 1114 on gaps between critical points](critical-gaps-increase-outward.md) in the affirmative: its statement holds.
+
 Bálint proved that the gaps between consecutive zeros of `f'` increase monotonically
 from the centre outward; erdosproblems.com/1114 lists the problem as proved (Lorch gave
 generalizations).

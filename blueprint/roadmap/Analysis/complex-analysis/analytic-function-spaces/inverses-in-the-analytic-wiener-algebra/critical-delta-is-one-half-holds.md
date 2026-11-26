@@ -1,5 +1,7 @@
 # Nikolski's critical constant 1/2 for the analytic Wiener algebra
 
+This settles [Shapiro's question on inverses in the analytic Wiener algebra](critical-delta-is-one-half.md) in the affirmative: its statement holds.
+
 Nikolski proved that for the analytic Wiener algebra `W₊` of absolutely convergent
 Taylor series the critical constant is `δ₁(W₊, 𝔻) = 1/2`: if `‖f‖_{W₊} ≤ 1` and `|f| ≥ δ` on the
 disc, then `‖f⁻¹‖_{W₊} ≤ 1/(2δ - 1)` for `δ > 1/2`, while no bound exists for `δ ≤ 1/2`, confirming

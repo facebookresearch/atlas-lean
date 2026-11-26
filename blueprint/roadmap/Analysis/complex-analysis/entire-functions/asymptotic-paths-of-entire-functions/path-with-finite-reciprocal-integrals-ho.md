@@ -1,5 +1,7 @@
 # Lewis–Rossi–Weitsman theorem on paths with finite reciprocal integrals
 
+This settles [Erdős Problem 515 on paths with finite reciprocal integrals](path-with-finite-reciprocal-integrals.md) in the affirmative: its statement holds.
+
 Lewis, Rossi and Weitsman proved it (for `e ^ u` with `u` subharmonic, so for `|f| =
 e ^ (log |f|)`); Huber had a path `C_λ` for each single `λ`, and Zhang the finite-order case.
 

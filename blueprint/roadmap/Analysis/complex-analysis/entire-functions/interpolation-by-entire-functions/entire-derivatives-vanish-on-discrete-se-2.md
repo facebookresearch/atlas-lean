@@ -1,5 +1,7 @@
 # Barth–Schneider theorem on derivatives vanishing on discrete sets
 
+This settles [Erdős Problem 229 on derivatives vanishing on discrete sets](entire-derivatives-vanish-on-discrete-se.md) in the affirmative: its statement holds.
+
 Barth and Schneider proved that for any sequence `(S_k)` of subsets of
 `ℂ` without finite limit points there are positive integers `n_k` and a transcendental entire
 function `f` with `f^{(n_k)}(z) = 0` for `z ∈ S_k`; erdosproblems.com/229 lists the problem as

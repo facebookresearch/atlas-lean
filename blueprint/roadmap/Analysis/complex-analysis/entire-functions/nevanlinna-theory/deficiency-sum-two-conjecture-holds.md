@@ -1,5 +1,7 @@
 # Drasin's proof of F. Nevanlinna's conjecture
 
+This settles [F. Nevanlinna's conjecture on maximal deficiency sum](deficiency-sum-two-conjecture.md) in the affirmative: its statement holds.
+
 Drasin proved F. Nevanlinna's conjecture: a meromorphic function of finite order `ρ`
 with deficiency sum `2` has `2ρ` an integer `≥ 2`, and each of its deficiencies is a positive
 integer multiple of `1/ρ` or `0`, hence rational (Hayman–Lingham Update 1.3).

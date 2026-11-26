@@ -1,5 +1,7 @@
 # Schmidt's theorem on intervals of unbounded discrepancy
 
+This settles [Erdős Problem 255 on intervals of unbounded discrepancy](unbounded-discrepancy-interval.md) in the affirmative: its statement holds.
+
 Schmidt proved that for every sequence in `[0, 1]` some interval has unbounded
 discrepancy, and later that all but countably many intervals `[0, x]` do. erdosproblems.com/255
 lists the problem as proved.

@@ -1,5 +1,7 @@
 # Positive point charges with more equilibrium points than Maxwell’s bound allows
 
+This settles [Maxwell's bound on the number of equilibrium points](maxwell-bound.md) in the negative: its statement is false.
+
 Resolved false (unrefereed, AI-assisted; recorded by the problem list): Arathoon, Ball and Kvalheim
 exhibit five positive point charges whose potential has a finite equilibrium set with at least 24
 points, while Maxwell's bound allows `(5 - 1)² = 16`.

@@ -1,5 +1,7 @@
 # Gompf's pseudoconvex domains homotopy equivalent to the 2-sphere
 
+This settles [Forstnerič's question on pseudoconvex domains homotopic to the 2-sphere](pseudoconvex-domain-homotopy-sphere-exis.md) in the affirmative: its statement holds.
+
 Gompf's Stein open subsets of ℂ² homeomorphic to S² × ℝ² are pseudoconvex domains
 homotopy equivalent to S², counterexamples to Forstnerič's conjecture that no Stein open subset of
 ℂ² is homotopy equivalent to S².

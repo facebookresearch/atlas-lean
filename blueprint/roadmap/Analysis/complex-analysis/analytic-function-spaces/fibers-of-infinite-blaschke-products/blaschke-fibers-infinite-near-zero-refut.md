@@ -1,6 +1,8 @@
 # Infinite Blaschke products with finite fibers arbitrarily close to zero
 
-Resolved false: Stephenson's inner function `f` has finite fibers `f⁻¹(w)` for a dense set of `|w| < 1`,
+This settles [Stephenson's question on fibers of infinite Blaschke products](blaschke-fibers-infinite-near-zero.md) in the negative: its statement is false.
+
+Stephenson's inner function `f` has finite fibers `f⁻¹(w)` for a dense set of `|w| < 1`,
 and its Frostman shifts `f_α = (f - α)/(1 - ᾱ f)` are Blaschke products for almost all `α`; such an
 `f_α` is an infinite Blaschke product with finite fibers over a dense set of `w`.
 

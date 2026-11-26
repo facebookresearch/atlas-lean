@@ -1,5 +1,7 @@
 # Clunie–Hayman theorem on the ratio of maximum term and maximum modulus
 
+This settles [Erdős Problem 227 on the ratio of maximum term and maximum modulus](maximum-term-ratio-limit-is-zero.md) in the negative: its statement is false.
+
 Clunie and Hayman showed that the limit of `μ(r) / M(r)` can take any value in `[0,
 1/2]` (Clunie had proved the answer yes when all `a_n ≥ 0`); erdosproblems.com/227 lists the problem
 as disproved.

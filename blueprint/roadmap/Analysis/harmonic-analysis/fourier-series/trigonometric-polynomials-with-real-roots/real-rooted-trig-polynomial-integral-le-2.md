@@ -1,5 +1,7 @@
 # Saff–Sheil-Small theorem on real-rooted trigonometric polynomials
 
+This settles [Erdős Problem 225 on the L¹ norm of real-rooted trigonometric polynomials](real-rooted-trig-polynomial-integral-le.md) in the affirmative: its statement holds.
+
 Saff and Sheil-Small proved the bound for complex coefficients (Kristiansen
 independently for real coefficients); equality holds for `f(θ) = (e^{iθ} - 1) / 2`.
 erdosproblems.com/225 lists the problem as proved.

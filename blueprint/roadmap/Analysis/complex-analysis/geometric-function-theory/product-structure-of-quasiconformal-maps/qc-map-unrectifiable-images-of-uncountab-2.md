@@ -1,5 +1,7 @@
 # Bishop–Hakobyan–Williams theorem on unrectifiable images of lines
 
+This settles [Quasiconformal images of uncountably many lines without rectifiable curves](qc-map-unrectifiable-images-of-uncountab.md) in the affirmative: its statement holds.
+
 Bishop, Hakobyan and Williams constructed a planar quasiconformal map and a set `S ⊆
 ℝ` of Hausdorff dimension arbitrarily close to 1, or equal to 1, such
 that the image of every line `ℝ × {y}`, `y ∈ S`, has no rectifiable subarc, and state that this

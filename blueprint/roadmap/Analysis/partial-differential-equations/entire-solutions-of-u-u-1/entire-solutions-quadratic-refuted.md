@@ -1,5 +1,7 @@
 # Mooney–Savin non-quadratic entire solutions of u₁₁u₂₂ = 1
 
+This settles [Are entire convex solutions of u₁₁u₂₂ = 1 quadratic?](entire-solutions-quadratic.md) in the negative: its statement is false.
+
 The growth condition cannot be removed. Mooney and Savin construct non-quadratic
 entire solutions of `u₁₁u₂₂ = 1` that are convex along coordinate lines (Theorem 1.7; smooth by
 their Corollary 1.5, and by their Corollary 1.2 they grow faster than quadratically, like `|x|² log

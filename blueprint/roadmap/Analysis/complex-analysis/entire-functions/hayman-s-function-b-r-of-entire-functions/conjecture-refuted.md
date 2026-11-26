@@ -1,5 +1,7 @@
 # Kjellberg's refutation of the sharp constant 1/4
 
+This settles [Hayman's sharp constant conjecture for b(r)](conjecture.md) in the negative: its statement is false.
+
 The conjecture that $1/4$ is the best constant in Hayman's bound $\limsup_{r\to\infty} (r\,d/dr)^2 \log M(r, f) \ge A$ for transcendental entire $f$ is false: Kjellberg showed that the best constant lies strictly between $0.24$ and $0.248$.
 
 ## Sources

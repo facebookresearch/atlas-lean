@@ -1,5 +1,7 @@
 # Optimal two-phase designs for the first Dirichlet eigenvalue do not always exist
 
+This settles [Existence of optimal two-phase designs for the first eigenvalue](two-phase-optimal-design-exists.md) in the negative: its statement is false.
+
 Casado-Díaz proved that for a smooth, simply connected bounded domain `Ω ⊆ ℝ^N` with
 connected boundary the problem has a solution if and only if `Ω` is a ball, so a smooth non-ball
 such domain, for instance an open ellipse in `ℝ²`, has no optimal `A` for any `0 < κ < |Ω|` and `0 <

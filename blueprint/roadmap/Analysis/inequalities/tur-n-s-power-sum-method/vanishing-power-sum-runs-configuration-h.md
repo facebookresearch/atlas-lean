@@ -1,5 +1,7 @@
 # Tijdeman's theorem on runs of vanishing power sums
 
+This settles [Erdős Problem 974 on runs of vanishing power sums](vanishing-power-sum-runs-configuration.md) in the affirmative: its statement holds.
+
 Already two runs of `n - 1` vanishing power sums force the configuration (the `n`-th
 roots of unity for odd `n`, two regular `(n/2)`-gons inscribed in the unit circle for even `n`), as
 proved by Tijdeman and, without assuming the `z_i` distinct, by Hu, Tang and Zhang;

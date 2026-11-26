@@ -1,5 +1,7 @@
 # Entire solutions of algebraic differential equations outside the class W
 
+This settles [Eremenko's question on entire solutions of higher-order algebraic equations](entire-solutions-in-class-w.md) in the negative: its statement is false.
+
 Eremenko, Liao and Ng note that `y‴ = y` (`n = 3`, `F = X₀ - X₁`) has solutions
 outside `W`, for instance `y(z) = e^z + e^{ωz}` with `ω = e^{2πi/3}`, an entire solution that is not
 rational, not doubly periodic, and not `R(e^{az})`; the list's Update 1.36 records the problem as

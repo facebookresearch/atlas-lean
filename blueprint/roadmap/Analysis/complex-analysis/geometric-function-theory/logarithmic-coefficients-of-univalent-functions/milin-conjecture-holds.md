@@ -1,5 +1,7 @@
 # De Branges's proof of Milin's conjecture
 
+This settles [Milin's conjecture](milin-conjecture.md) in the affirmative: its statement holds.
+
 De Branges proved Milin's conjecture for the whole class `S` (Hayman–Lingham Update
 6.1, referenced from Update 6.42), so the inequality holds in general and in particular for `f` with
 real coefficients and for close-to-convex `f`.

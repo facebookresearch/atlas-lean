@@ -1,5 +1,7 @@
 # Kashin's theorem on small values of sign polynomials
 
+This settles [Erdős Problem 525 on small values of sign polynomials on the circle](almost-all-sign-polynomials-small-on-cir.md) in the affirmative: its statement holds.
+
 Kashin proved that `min_{|z| = 1} |f(z)| → 0` in probability for random `±1`
 coefficients, so the proportion with `min |f| ≥ 1` tends to `0`; Konyagin sharpened this to `n ^
 (-1/2 + o(1))`.

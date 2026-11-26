@@ -5,3 +5,5 @@ answer by Gressman, He, Kovač, Street, Thiele and Yung: for `2 < p, q, r < ∞`
 `1/p + 1/q + 1/r = 1`, the principal value
 `Λ(f, g, h) = p.v. ∫ f(x) g(y) h(z) δ(x + y + z) / det[1 1 1; x y z]` exists for Schwartz functions
 on `ℝ²` and is bounded by `C ‖f‖_p ‖g‖_q ‖h‖_r`.
+
+Its resolution: [Gressman–He–Kovač–Street–Thiele–Yung bound for the determinantal form](determinantal-trilinear-bound-holds.md).

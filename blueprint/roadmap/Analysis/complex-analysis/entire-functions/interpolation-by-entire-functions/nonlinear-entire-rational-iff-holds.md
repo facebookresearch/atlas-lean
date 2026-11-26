@@ -1,5 +1,7 @@
 # A transcendental entire function preserving exactly the rationals
 
+This settles [Erdős Problem 226 on entire functions preserving the rationals](nonlinear-entire-rational-iff.md) in the affirmative: its statement holds.
+
 Barth and Schneider proved that for countable dense sets `A, B ⊆ ℝ` there is a
 transcendental entire function `f` with `f(z) ∈ B` exactly when `z ∈ A`; `A = B = ℚ` answers the
 question. erdosproblems.com/226 lists the problem as proved.

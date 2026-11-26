@@ -1,6 +1,8 @@
 # Eremenko's answer to Collingwood's problem
 
-Resolved affirmatively according to the list's own update: Hayman and Lingham
+This settles [Collingwood's problem on locally exceptional values](collingwood-local-exception-problem.md) in the affirmative: its statement holds.
+
+Hayman and Lingham
 (arXiv:1809.07200v2, Update 5.19) report that Eremenko gave a strongly positive answer
 (unpublished) by slightly modifying an example of Barth and Schneider, producing such a function
 whose zeros and poles accumulate only at z = 1.

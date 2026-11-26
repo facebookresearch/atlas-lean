@@ -1,5 +1,7 @@
 # Entire functions of finite order without asymptotic paths of linear length
 
+This settles [Erdős Problem 1115 on asymptotic paths of linear length](asymptotic-path-of-linear-length.md) in the negative: its statement is false.
+
 Gol'dberg and Erëmenko constructed entire functions of finite order (indeed with
 `log M(r) ≪ φ(r) (log r)²` for any `φ → ∞`) admitting no path `Γ` with `f → ∞` and `ℓ(r) ≪ r`,
 answering Hayman's question (which he proved has a positive answer when `log M(r) ≪ (log r)²`).

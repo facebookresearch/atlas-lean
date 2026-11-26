@@ -2,3 +2,5 @@
 
 Erdős Problem 226: there is an entire function `f`, not of the form `z ↦ a z + b`, such that
 for every real `x`, `x` is rational if and only if `f(x)` is rational.
+
+Its resolution: [A transcendental entire function preserving exactly the rationals](nonlinear-entire-rational-iff-holds.md).

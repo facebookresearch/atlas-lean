@@ -5,3 +5,5 @@ entire function of finite order tends to `∞` along a rectifiable path `Γ` who
 `|z| < r` is `O(r)`. Paths are parametrized by arc length, so `Γ` is a `1`-Lipschitz map `γ` on
 `[0, ∞)` and `ℓ(r)` is at most the measure of `{t ≥ 0 : |γ(t)| < r}`, with equality for unit
 speed.
+
+Its resolution: [Entire functions of finite order without asymptotic paths of linear length](asymptotic-path-of-linear-length-refuted.md).

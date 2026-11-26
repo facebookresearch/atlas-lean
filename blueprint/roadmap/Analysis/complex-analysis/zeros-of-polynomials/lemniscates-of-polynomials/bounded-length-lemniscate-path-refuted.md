@@ -1,5 +1,7 @@
 # MacLane's counterexample on paths in lemniscates
 
+This settles [Erdős Problem 1215 on short paths in lemniscates](bounded-length-lemniscate-path.md) in the negative: its statement is false.
+
 MacLane proved that for every simply connected compact `A ⊆ {|z| < 1}` with `0 ∉ A`
 and all large `d` there is such a `P` of degree `d` with `|P| > 2` on `A`; taking for `A` a
 labyrinth around which every path from `0` to the unit circle has length `> C` defeats every `C`

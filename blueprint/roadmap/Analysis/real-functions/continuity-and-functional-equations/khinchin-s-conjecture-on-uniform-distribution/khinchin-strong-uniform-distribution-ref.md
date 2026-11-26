@@ -1,5 +1,7 @@
 # Marstrand's refutation of Khinchin's conjecture
 
+This settles [Khinchin's conjecture on strong uniform distribution](khinchin-strong-uniform-distribution.md) in the negative: its statement is false.
+
 Marstrand disproved Khinchin's conjecture, giving a Borel set `E ⊆ (0, 1)` for which
 the averages `(1/n) #{k ≤ n : {kα} ∈ E}` fail to converge to `λ(E)` for almost every `α`;
 erdosproblems.com/994 lists the problem as disproved.

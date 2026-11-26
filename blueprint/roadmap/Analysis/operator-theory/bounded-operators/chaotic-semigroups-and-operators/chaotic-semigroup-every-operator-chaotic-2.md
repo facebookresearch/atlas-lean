@@ -1,5 +1,7 @@
 # Chaotic semigroups with non-chaotic operators
 
+This settles [Are all operators of a chaotic semigroup chaotic?](chaotic-semigroup-every-operator-chaotic.md) in the negative: its statement is false.
+
 Bayart and Bermúdez constructed chaotic `C₀`-semigroups that contain no chaotic
 operator, and chaotic `C₀`-semigroups with `T_{t₀}` not chaotic and `T_{t₁}` chaotic; either kind
 has an operator `T_t`, `t > 0`, that is not chaotic.

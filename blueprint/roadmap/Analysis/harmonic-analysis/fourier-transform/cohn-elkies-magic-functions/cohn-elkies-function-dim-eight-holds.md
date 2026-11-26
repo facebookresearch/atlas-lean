@@ -1,5 +1,7 @@
 # Viazovska's magic function in dimension 8
 
+This settles [A Cohn–Elkies function in dimension 8](cohn-elkies-function-dim-eight.md) in the affirmative: its statement holds.
+
 Viazovska constructed a radial Schwartz function `g` on `ℝ⁸` with `g(x) ≤
 0` for `|x| ≥ √2`, `ĝ ≥ 0` and `g(0) = ĝ(0) = 1`, proving that `E₈` gives the densest sphere packing
 in dimension 8.

@@ -1,5 +1,7 @@
 # Fornæss's short ℂ² refutes the trichotomy
 
+This settles [Complex surfaces exhausted by balls are the ball, Δ × ℂ or ℂ²](union-of-balls-trichotomy.md) in the negative: its statement is false.
+
 Fornæss's short ℂ² (Adv. Stud. Pure Math. 42, Theorem 1.4 with k = 2) is a domain of
 ℂ² that is an increasing union of open subsets biholomorphic to the unit ball, so every compact
 subset lies in one of them; its Kobayashi metric vanishes identically, unlike the Fornæss-Sibony

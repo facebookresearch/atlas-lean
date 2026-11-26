@@ -1,5 +1,7 @@
 # Chaotic semigroups containing no chaotic operator
 
+This settles [Does every chaotic semigroup contain a chaotic operator?](chaotic-semigroup-some-operator-chaotic.md) in the negative: its statement is false.
+
 Bayart and Bermúdez constructed a chaotic `C₀`-semigroup on a separable complex
 Banach space that contains no chaotic operator `T_t`, `t > 0`.
 

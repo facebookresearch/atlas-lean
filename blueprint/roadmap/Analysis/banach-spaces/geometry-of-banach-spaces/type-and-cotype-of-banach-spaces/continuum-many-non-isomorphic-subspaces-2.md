@@ -1,5 +1,7 @@
 # Separable Banach spaces failing type 2 − ε or cotype 2 + ε have continuum many non-isomorphic closed subspaces
 
+This settles [Dodos–Lopez-Abad question on continuum many non-isomorphic subspaces](continuum-many-non-isomorphic-subspaces.md) in the affirmative: its statement holds.
+
 Cuellar Carrera's Theorem 16 says that every separable Banach space that is not near
 Hilbert satisfies the Cantorized-Enflo criterion, and his Remark 7 that a space satisfying that
 criterion has a continuum of pairwise non-isomorphic subspaces. Near Hilbert means `p(X) = q(X) =

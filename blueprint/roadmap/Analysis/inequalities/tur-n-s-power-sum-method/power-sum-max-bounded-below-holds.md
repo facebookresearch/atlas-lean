@@ -1,5 +1,7 @@
 # Atkinson's lower bound for power sums
 
+This settles [Erdős Problem 519 on Turán's power sums](power-sum-max-bounded-below.md) in the affirmative: its statement holds.
+
 Atkinson proved that `c = 1/6` works; Biró improved this to `1/2` and then to an
 absolute constant above `1/2`.
 

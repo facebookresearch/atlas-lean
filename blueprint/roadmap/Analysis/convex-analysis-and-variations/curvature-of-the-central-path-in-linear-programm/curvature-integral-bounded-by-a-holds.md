@@ -1,5 +1,7 @@
 # The curvature integral of the central path is bounded in terms of the constraint matrix
 
+This settles [The curvature integral of the central path depends only on the constraint matrix](curvature-integral-bounded-by-a.md) in the affirmative: its statement holds.
+
 By Monteiro–Tsuchiya's Theorem 2.4, `F(∞, 0)` is bounded by `C n^\{3.5\} log(χ̄*_A +
 n)`, a quantity depending only on `A`.
 

@@ -1,5 +1,7 @@
 # Ruscheweyh–Sheil-Small proof of the Pólya–Schoenberg conjecture
 
+This settles [Pólya–Schoenberg conjecture](hadamard-product-of-convex-is-convex.md) in the affirmative: its statement holds.
+
 Ruscheweyh and Sheil-Small proved the Pólya–Schoenberg conjecture: the Hadamard
 product of two convex univalent functions normalized as in `S` is again convex univalent and in `S`
 (Hayman–Lingham Update 6.9).

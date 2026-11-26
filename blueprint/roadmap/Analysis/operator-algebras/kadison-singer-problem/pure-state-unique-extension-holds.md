@@ -1,5 +1,7 @@
 # Marcus–Spielman–Srivastava solution of the Kadison–Singer problem
 
+This settles [Kadison–Singer problem](pure-state-unique-extension.md) in the affirmative: its statement holds.
+
 Marcus, Spielman and Srivastava proved Weaver's `KS₂` conjecture and Anderson's
 paving conjecture, each known to imply that every pure state on the diagonal operators of `B(ℓ²)`
 has a unique extension to a state on `B(ℓ²)` (Kadison-Singer).

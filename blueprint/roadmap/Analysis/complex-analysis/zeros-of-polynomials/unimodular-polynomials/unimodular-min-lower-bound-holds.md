@@ -1,5 +1,7 @@
 # Kahane's unimodular polynomials with large minimum on the circle
 
+This settles [Erdős–Newman question on the minimum of unimodular polynomials](unimodular-min-lower-bound.md) in the affirmative: its statement holds.
+
 Kahane's ultraflat polynomials satisfy `|f(z)| = (1 + o(1)) n^{1/2}` uniformly on
 `|z| = 1`, so for every `ε > 0` and large `n` their minimum on the circle exceeds `(1 - ε) n^{1/2}`.
 

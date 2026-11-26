@@ -1,6 +1,5 @@
 # Erdős Problem 1153 on the Lebesgue function on subintervals
 
-Erdős Problem 1153: for all `-1 ≤ a < b ≤ 1` and `ε > 0`, for all large `n` and all distinct
-nodes `x₁, …, xₙ ∈ [-1, 1]`, some `t ∈ [a, b]` has `λ(t) > (2/π - ε) log n`, where
-`λ = Lagrange.lebesgueFunction x` is the Lebesgue function `∑ₖ |lₖ(t)|` of the Lagrange basis
-polynomials `lₖ` of the nodes.
+Erdős Problem 1153: for all real $a, b$ with $-1 \le a < b \le 1$ and every $\varepsilon > 0$, for all sufficiently large $n$ and every family of $n$ distinct nodes $x_1, \dots, x_n \in [-1, 1]$, some $t \in [a, b]$ satisfies $\lambda(t) > (2/\pi - \varepsilon) \log n$, where $\lambda(t) = \sum_k |\ell_k(t)|$ is the Lebesgue function of the Lagrange basis polynomials $\ell_k$ of the nodes.
+
+Its resolution: [Tao's lower bound for the Lebesgue function on subintervals](lebesgue-function-lower-bound-on-subinte-2.md).

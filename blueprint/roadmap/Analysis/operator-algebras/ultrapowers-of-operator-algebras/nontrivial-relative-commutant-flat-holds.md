@@ -1,5 +1,7 @@
 # Flatness of ultrafilters with nontrivial relative commutant
 
+This settles [Nontrivial relative commutants force flat ultrafilters](nontrivial-relative-commutant-flat.md) in the affirmative: its statement holds.
+
 For every nonprincipal ultrafilter `U` on `ℕ`, a nontrivial relative commutant
 `B(H)' ∩ B(H)^U` forces `U` to be flat. Chetcuti and Zamora-Aviles quote the question of Farah,
 Phillips and Steprāns ('If an ultrafilter α satisfies F_α(B(H)) ≠ ℂ, does it follow that α is

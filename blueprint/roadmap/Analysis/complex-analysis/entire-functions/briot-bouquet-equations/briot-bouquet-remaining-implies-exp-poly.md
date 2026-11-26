@@ -6,3 +6,5 @@ Briot–Bouquet type equations, remaining 2024 case): every entire solution of
 `F(y^{(k)}, y) = 0` with `F` irreducible of total degree `d` in the remaining
 normal form `(y^{(k)} - a * y) ^ d + Q_{d-1}(y^{(k)}, y) = 0`,
 `deg Q_{d-1} ≤ d - 1`, is an exponential polynomial.
+
+Its resolution: [Entire solutions of higher-order Briot–Bouquet equations are exponential polynomials](briot-bouquet-remaining-implies-exp-poly-2.md).

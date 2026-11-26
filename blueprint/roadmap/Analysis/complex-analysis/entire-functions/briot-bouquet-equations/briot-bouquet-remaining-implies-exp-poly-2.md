@@ -1,6 +1,8 @@
 # Entire solutions of higher-order Briot–Bouquet equations are exponential polynomials
 
-Resolved affirmatively: Eremenko, Ng and Zhang (Entire solutions of higher order
+This settles [Eremenko's question on entire solutions of higher-order Briot–Bouquet equations](briot-bouquet-remaining-implies-exp-poly.md) in the affirmative: its statement holds.
+
+Eremenko, Ng and Zhang (Entire solutions of higher order
 Briot-Bouquet equations, arXiv:2610.20438, October 2026, Theorem 1.1) prove that every
 transcendental entire solution of an irreducible equation F(y^\{(k)\}, y) = 0 is R(e^\{cz\}) with R
 rational, unless the equation is linear; entire such R(e^\{cz\}) are Laurent polynomials in

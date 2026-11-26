@@ -5,3 +5,5 @@ between consecutive zeros of `f'` do not decrease from the midpoint `(a₀ + a_m
 consecutive zeros `x < y < z` of `f'`, the gap `[x, y]` is at most `[y, z]` when the midpoint of
 `[x, y]` is at or right of the centre, and at least `[y, z]` when the midpoint of `[y, z]` is at or
 left of it.
+
+Its resolution: [Bálint's theorem on gaps between critical points](critical-gaps-increase-outward-holds.md).

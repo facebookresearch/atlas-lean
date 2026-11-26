@@ -1,5 +1,7 @@
 # Nitzan–Olevskii–Ulanovskii theorem on exponential frames
 
+This settles [Führ's question on exponential frames for open dense sets](open-dense-exponential-frame.md) in the affirmative: its statement holds.
+
 Nitzan, Olevskii and Ulanovskii prove that `L²(S)` has a frame of
 exponentials `{e^{iλt} : λ ∈ Λ}`, `Λ` discrete, for every set `S ⊆ ℝ` of finite measure, in
 particular for every open dense `A` of finite measure.

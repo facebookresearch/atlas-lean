@@ -1,5 +1,7 @@
 # Tolsa's theorem on the semiadditivity of analytic capacity
 
+This settles [Semiadditivity of analytic capacity](analytic-capacity-semiadditive.md) in the affirmative: its statement holds.
+
 Tolsa proves that analytic capacity is semiadditive, `γ(E ∪ F) ≤ C (γ(E) + γ(F))` for
 compact `E, F ⊆ ℂ` with an absolute constant `C`; Hayman and Lingham record (Update 7.39) that the
 problem has been proved by Tolsa.

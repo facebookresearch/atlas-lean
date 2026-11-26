@@ -1,5 +1,7 @@
 # Wold's non-Runge Fatou–Bieberbach domain
 
+This settles [Forstnerič's question on non-Runge Fatou–Bieberbach domains](non-runge-fatou-bieberbach-domain-exists.md) in the affirmative: its statement holds.
+
 Wold constructed a Fatou-Bieberbach domain in ℂ² which is not Runge (it contains a
 holomorphically convex union of two totally real discs but not its polynomial hull).
 

@@ -1,5 +1,7 @@
 # Koszmider's non-diagonalizable pure state
 
+This settles [Anderson's conjecture that every pure state is diagonalizable](every-pure-state-diagonalizable.md) in the negative: its statement is false.
+
 Resolved false in ZFC, so the statement is not consistent: Koszmider constructed, without extra
 set-theoretic axioms, a pure state on `B(ℓ²)` that is not of the form `T ↦ lim_{k → u} ⟨T eₖ, eₖ⟩`
 for any orthonormal basis `(eₖ)` and ultrafilter `u` on `ℕ`, a counterexample to

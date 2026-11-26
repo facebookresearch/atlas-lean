@@ -1,5 +1,7 @@
 # Hall–Hayman–Weitsman bound on capacity and asymmetry
 
+This settles [Fraenkel's question on capacity and asymmetry for convex sets](convex-asymmetric-capacity-bound.md) in the affirmative: its statement holds.
+
 Hall, Hayman and Weitsman obtain `cap E ≥ C (1 +
 k δ^\{N+1\})`, with `k > 0` depending only on the dimension, for every convex set `E` whose
 same-volume balls all have at least the proportion `δ` of their volume outside `E`.

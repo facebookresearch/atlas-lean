@@ -1,5 +1,7 @@
 # Frank–Lieb theorem: large-mass minimizers are balls
 
+This settles [Frank–Lieb question on minimizers of large mass](large-mass-minimizers-are-balls.md) in the affirmative: its statement holds.
+
 Frank and Lieb proved that for `0 < λ < N - 1` and `α > 0`, for all large
 masses `m` the only minimizers of `½ ∬ ρ(x)(|x - y|^α + |x - y|^{-λ}) ρ(y) dx dy` under `0 ≤ ρ ≤ 1`,
 `∫ ρ = m` on `ℝ^N` are characteristic functions of balls, up to null sets; here `N = 3`, `λ = 1`. Before, only `α = 2` and `2 < α ≤ 4` were known.

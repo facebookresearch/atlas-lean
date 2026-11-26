@@ -1,5 +1,7 @@
 # Linden's entire function permuting the integers
 
+This settles [Rubel's question on entire functions permuting the integers](integer-permutation-type-pi.md) in the negative: its statement is false.
+
 Linden's function `f(z) = z + 4 cos(π(z - 2)/3)`, recorded in the list's Update
 2.43, is transcendental entire, maps the integers injectively onto themselves, and has order `1`,
 type `π/3 < π`.

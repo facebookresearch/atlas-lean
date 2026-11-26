@@ -1,5 +1,7 @@
 # Kahane's ultraflat unimodular polynomials
 
+This settles [Erdős–Newman question on ultraflat unimodular polynomials](unimodular-ultraflat.md) in the affirmative: its statement holds.
+
 Kahane's ultraflat polynomials satisfy `(1 - ε) n^{1/2} < |f(z)| < (1 + ε) n^{1/2}`
 on `|z| = 1` for every `ε > 0` once `n` is large.
 

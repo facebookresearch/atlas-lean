@@ -1,5 +1,7 @@
 # The magic function in dimension 24
 
+This settles [A Cohn–Elkies function in dimension 24](cohn-elkies-function-dim-twenty-four.md) in the affirmative: its statement holds.
+
 Cohn, Kumar, Miller, Radchenko and Viazovska constructed the analogous radial
 Schwartz function on `ℝ²⁴` with `f(0) = f̂(0) = 1`, `f(x) ≤ 0` for `|x| ≥ 2` and `f̂ ≥ 0`, proving
 that the Leech lattice gives the densest sphere packing in dimension 24.

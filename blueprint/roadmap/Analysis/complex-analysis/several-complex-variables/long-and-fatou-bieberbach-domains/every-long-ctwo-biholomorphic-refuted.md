@@ -1,5 +1,7 @@
 # Wold's long ℂ² that is not biholomorphic to ℂ²
 
+This settles [Is every long ℂ² biholomorphic to ℂ²?](every-long-ctwo-biholomorphic.md) in the negative: its statement is false.
+
 Wold constructs a long ℂ² (an increasing union of proper subdomains biholomorphic to
 ℂ²) which is not Stein, hence not biholomorphic to ℂ².
 

@@ -1,5 +1,7 @@
 # Gol'dberg's counterexample on superlevel sets of finite measure
 
+This settles [Erdős Problem 1118 on superlevel sets of finite measure](finite-measure-superlevel-lowerable.md) in the negative: its statement is false.
+
 Gol'dberg proved that for every `m > 0` some entire `f` has `\{c > 0 : E(c) has
 finite measure\} = [m, ∞)`, so `E(m)` has finite measure while `E(c')` has infinite measure for every
 `c' < m`; erdosproblems.com/1118 records the negative answer.

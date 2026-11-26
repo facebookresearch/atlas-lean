@@ -1,5 +1,7 @@
 # Proof of Brannan's conjecture for odd coefficients
 
+This settles [Brannan's conjecture for odd coefficients](brannan-odd-coefficient-bound.md) in the affirmative: its statement holds.
+
 Brannan's conjecture for `β = 1` holds for every odd index (Barnard and Richards,
 after the aggregate proof of Jayatilake, Szász and Deniz–Çağlar–Szász), so `|A_\{2n+1\}(x)| ≤
 |A_\{2n+1\}(1)|` for `0 < α < 1`, `|x| = 1` and all `n ≥ 1`.

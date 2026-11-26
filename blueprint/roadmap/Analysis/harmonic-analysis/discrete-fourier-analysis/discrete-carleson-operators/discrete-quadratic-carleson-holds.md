@@ -1,5 +1,7 @@
 # Krause–Roos theorem on the discrete quadratic Carleson operator
 
+This settles [ℓ² boundedness of the discrete quadratic Carleson operator](discrete-quadratic-carleson.md) in the affirmative: its statement holds.
+
 Krause and Roos proved `ℓ²(ℤⁿ)` bounds for `sup_λ |∑_\{y ≠ 0\} f(x - y) e(λ|y|^\{2d\})
 K(y)|`; the case `n = d = 1`, `K(y) = 1/y` (`Ω = sign`, mean zero on `S⁰`) is this question, which
 they credit to Lillian Pierce at the 2015 AIM workshop.

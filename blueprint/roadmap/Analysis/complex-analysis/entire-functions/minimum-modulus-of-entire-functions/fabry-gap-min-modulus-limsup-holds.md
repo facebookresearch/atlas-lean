@@ -1,5 +1,7 @@
 # Fuchs's theorem on the minimum modulus of Fabry gap series
 
+This settles [Erdős Problem 516 on the minimum modulus of Fabry gap series](fabry-gap-min-modulus-limsup.md) in the affirmative: its statement holds.
+
 Fuchs proved that for every `ε > 0`, `log m(r) > (1 - ε) log M(r)` holds
 outside a set of `r` of logarithmic density `0`, so at arbitrarily large `r`.
 

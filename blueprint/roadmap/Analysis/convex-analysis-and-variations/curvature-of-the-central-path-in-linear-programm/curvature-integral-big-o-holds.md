@@ -1,5 +1,7 @@
 # Monteiro–Tsuchiya theorem on the curvature integral of the central path
 
+This settles [Monteiro–Tsuchiya bound on the curvature integral](curvature-integral-big-o.md) in the affirmative: its statement holds.
+
 Monteiro and Tsuchiya prove `F(∞, 0) = I(0, ∞) ≤ O(n^{3.5} log(χ̄*_A + n))`, the
 conjectured bound.
 
