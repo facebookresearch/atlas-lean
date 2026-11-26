@@ -21,11 +21,9 @@ then $T' \ge 1 - T$ gives the lower bound, and $T \le Z \le \max(Z(0), 1 + \beta
 existence theorem for the Arrhenius reactor with dilution rate $1$, feed concentration and temperature $1$,
 prefactor $e^a$, activation temperature $b$, heat-release coefficient $\beta$ and no cooling.
 
-## Depends on
-
-## Proof depends on
-
-- [Global forward existence of the Arrhenius reactor path](exists-arrhenius-path.md), for existence on $[0, \infty)$ with no cooling
+The algebra in parts 1 and 2 also holds for the total real-valued rate expression, with $b/0 = 0$;
+only the positive-temperature regime is physical. The path in part 3 has two-sided derivatives
+at each $t \ge 0$, including the initial point.
 
 ## Sources
 
