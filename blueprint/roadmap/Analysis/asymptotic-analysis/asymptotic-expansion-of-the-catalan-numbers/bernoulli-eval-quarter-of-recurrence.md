@@ -6,6 +6,9 @@ Then for every integer $m \ge 0$, the Bernoulli polynomial of degree $2m+1$ sati
 
 $$B_{2m+1}(1/4) = -\frac{(2m+1) E_{2m}}{4^{2m+1}}.$$
 
+The Bernoulli polynomial addition formula at $1/4 \pm 1/4$ gives the Euler recurrence for the
+scaled odd values.
+
 ## Sources
 
-- ATLAS, “Stirling-type asymptotic expansions of Catalan numbers.” The Bernoulli polynomial addition formula at $1/4 \pm 1/4$ gives the Euler recurrence for the scaled odd values.
+- Zhi-Hong Sun, *Super congruences involving Bernoulli and Euler polynomials*, proof of Theorem 3.2, [p. 16](https://arxiv.org/pdf/1407.0636v6#page=16).
