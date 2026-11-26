@@ -12,7 +12,8 @@ The *Knuth–Bendix ordering* $\succ_{\mathrm{kbo}}$ on $T_\Sigma(X)$ induced by
 
 ## Depends on
 
-- [Simplification ordering](simplification-ordering.md)
+- [Term rewriting systems](../automated-deduction/term-rewriting-systems.md)
+- [Unification of ranked terms through the curried encoding](../first-order-unification/unification-of-ranked-terms-through-the-curried-encoding.md)
 
 ## Sources
 

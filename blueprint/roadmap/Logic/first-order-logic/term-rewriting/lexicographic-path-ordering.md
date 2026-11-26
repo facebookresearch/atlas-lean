@@ -12,7 +12,8 @@ where $\succeq_{\mathrm{lpo}}$ is the reflexive closure and $(\succ_{\mathrm{lpo
 
 ## Depends on
 
-- [Simplification ordering](simplification-ordering.md)
+- [Term rewriting systems](../automated-deduction/term-rewriting-systems.md)
+- [Unification of ranked terms through the curried encoding](../first-order-unification/unification-of-ranked-terms-through-the-curried-encoding.md)
 
 ## Sources
 
