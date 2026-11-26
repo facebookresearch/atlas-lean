@@ -32,6 +32,14 @@ Agents with quasi-linear utilities report valuations over a set of alternatives.
 
 - [Efficiency and truthfulness do not imply budget balance](vcg-is-not-budget-balanced.md)
 
+## Second-price auction with least-index tie-break
+
+- [Winner of a second-price auction with least-index tie-break](vickrey-winner.md)
+- [Price in a second-price auction](vickrey-price.md)
+- [Utility in a second-price auction](vickrey-utility.md)
+- [Truthful bidding is weakly dominant in a second-price auction](vickrey-truthful-dominant.md)
+- [Truthful bidding in a second-price auction is individually rational](vickrey-ir.md)
+
 ## Related topics
 
 - [Revelation principle](../revelation-principle/README.md): dominant-strategy incentive compatibility of direct mechanisms.

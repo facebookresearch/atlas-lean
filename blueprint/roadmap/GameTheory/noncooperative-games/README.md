@@ -25,12 +25,10 @@ Every finite game has a mixed equilibrium ([Nash's theorem](nash-s-theorem/READM
 - [Polynomial-time verification of (approximate) equilibria](polynomial-time-verification-of-equilibria.md)
 - [Optimal mixed strategy to commit to (two-player normal form)](optimal-mixed-strategy-to-commit-to.md)
 - [Commitment is worth at least any Nash equilibrium](commitment-is-worth-at-least-any-nash-equilibrium.md)
-- [Yao's principle by averaging](yao-s-principle-by-averaging/README.md)
 - [Price of anarchy in singleton congestion games](price-of-anarchy-in-singleton-congestion-games/README.md)
 - [Pure best responses in finite zero-sum matrix games](pure-best-responses-in-finite-zero-sum-matrix-ga/README.md)
 - [Strategyproof facility location on the line](strategyproof-facility-location-on-the-line/README.md)
 - [Strictly dominant strategies and Nash equilibrium](strictly-dominant-strategies-and-nash-equilibriu/README.md)
-- [The Vickrey (second-price) auction](the-vickrey-second-price-auction/README.md)
 - [Backward induction and subgame perfection](backward-induction-and-subgame-perfection/README.md)
 - [Normal-form game adapters](normal-form-game-adapters/README.md)
 - [Optimal strategies of a zero-sum matrix game form a Nash equilibrium](optimal-strategies-of-a-zero-sum-matrix-game-for/README.md)
@@ -46,8 +44,6 @@ Every finite game has a mixed equilibrium ([Nash's theorem](nash-s-theorem/READM
 - [Maximum Nash welfare and Pareto optimality](maximum-nash-welfare-and-pareto-optimality/README.md)
 - [Blum-Mansour swap-regret bound](blum-mansour-swap-regret-bound/README.md)
 - [Blum-Mansour swap-regret decomposition](blum-mansour-swap-regret-decomposition/README.md)
-- [Myerson's lemma: monotonicity](myerson-s-lemma-monotonicity/README.md)
-- [Myerson's payment identity](myerson-s-payment-identity/README.md)
 
 ## Related topics
 

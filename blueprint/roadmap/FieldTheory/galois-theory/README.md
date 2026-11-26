@@ -17,7 +17,7 @@ Galois theory relates a field extension to its group of automorphisms, covering 
 - [Kummer theory for abelian extensions of exponent dividing n](kummer-theory.md)
 - [Norm in a tensor product with a Galois extension](algebra-map-norm-eq-prod-map-alg-equiv.md)
 - [Separable closed tensor field](is-field-of-is-separable-of-forall-is-se.md)
-- [Separable of frobenius finrank](of-finrank-field-range-frobenius-eq.md)
+- [Separability from the degree over the subfield of $p$-th powers](of-finrank-field-range-frobenius-eq.md)
 - [Normal basis theorem](normal-basis-theorem.md)
 - [The closure of a Galois subgroup is the fixing group of its fixed field](topological-closure-eq-fixing-subgroup-f.md)
 - [Four equivalent characterizations of finite Galois extensions](galois-extension-characterization.md)

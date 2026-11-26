@@ -8,6 +8,7 @@ Minimum spanning trees (Kruskal, Prim), maximum flow and minimum cut (Edmonds-Ka
 - [Maximum bipartite matching](maximum-bipartite-matching/README.md)
 - [Prim's algorithm](prim-s-algorithm/README.md)
 
+- [Component halving in Borůvka's algorithm](boruvka-halving.md)
 - [Hoffman's circulation theorem](hoffman-circulation-theorem.md)
 - [Gale's feasibility condition for transportation problems](gale-feasibility-for-transportation-problems.md)
 - [Reduced-cost optimality certificate for minimum-cost flow](potential-certificate-for-minimum-cost-flow.md)
