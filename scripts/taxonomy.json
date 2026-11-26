@@ -1659,6 +1659,7 @@
   "CSLibExt/Languages/CCS/Parallel": {"to": "ComputerScience/process-calculi", "title": "Calculus of communicating systems"},
   "CSLibExt/Languages/CCS/Recursion": {"to": "ComputerScience/process-calculi", "title": "Calculus of communicating systems"},
   "CSLibExt/Languages/CCS/StaticOperators": {"to": "ComputerScience/process-calculi", "title": "Calculus of communicating systems"},
+  "CSLibExt/Languages/FeatherweightJava/Soundness": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Featherweight Java type soundness"},
   "CSLibExt/Languages/IMP/BigStep": {"to": "ComputerScience/programming-language-semantics", "title": "Operational semantics of IMP"},
   "CSLibExt/Languages/IMP/Denotational": {"to": "ComputerScience/programming-language-semantics", "title": "Denotational semantics of IMP"},
   "CSLibExt/Languages/IMP/Equivalence": {"to": "ComputerScience/programming-language-semantics", "title": "Operational semantics of IMP"},
