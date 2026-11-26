@@ -3,7 +3,7 @@
 For [simple type assignment à la Curry](simple-type-assignment-a-la-curry.md):
 
 1. **Reduction to unification.** From a pure term $M$ one computes in logarithmic space a system $E_M$ of first-order equations between types and a
-   type $\tau_M$, using a fresh type variable $\alpha_x$ for each variable $x$ of $M$, such that $M$ is typable exactly when $E_M$ has a solution. With
+   type $\tau_M$, using a fresh type variable $\alpha_x$ for each variable $x$ of $M$ (after renaming bound variables apart from each other and from the free ones, so that each variable is bound at most once), such that $M$ is typable exactly when $E_M$ has a solution. With
    $\Gamma_M = \{x : \alpha_x \mid x \in \mathrm{FV}(M)\}$, each solution $S$ yields the typing $S(\Gamma_M) \vdash M : S(\tau_M)$, and every typing $\Gamma \vdash M : \rho$ arises from a
    solution $S$ with $S(\alpha_x) = \Gamma(x)$ for $x \in \mathrm{FV}(M)$ and $\rho = S(\tau_M)$.
 2. **Principal types.** Every typable term has a principal pair, obtained from a most general solution of $E_M$.

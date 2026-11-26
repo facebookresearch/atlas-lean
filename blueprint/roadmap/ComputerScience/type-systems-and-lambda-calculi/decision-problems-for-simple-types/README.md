@@ -1,6 +1,6 @@
 # Decision problems for simple types
 
-Simple type assignment to pure λ-terms à la Curry and its decision problems: type reconstruction, inhabitation and equality of typed terms, with Schwichtenberg's characterization of the numeric functions simple types define.
+Simple type assignment to pure λ-terms à la Curry and its decision problems: type reconstruction, inhabitation and equality of typed terms.
 
 - [Simple type assignment à la Curry](simple-type-assignment-a-la-curry.md)
 - [Type reconstruction for simple types is P-complete](type-reconstruction-for-simple-types-is-p.md)

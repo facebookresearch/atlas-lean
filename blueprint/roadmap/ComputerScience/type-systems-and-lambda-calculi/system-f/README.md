@@ -10,3 +10,4 @@
 - [Relational parametricity for pure System F](relational-parametricity-for-pure-system-f/README.md)
 - [Call-by-value safety for pure System F](call-by-value-safety-for-pure-system-f/README.md)
 - [Erasure of call-by-value evaluation](the-call-by-value-erasure-bridge/README.md)
+- [Curry-style System F](curry-style-system-f/README.md)

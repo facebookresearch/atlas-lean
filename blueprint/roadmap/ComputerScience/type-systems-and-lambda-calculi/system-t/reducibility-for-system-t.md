@@ -17,7 +17,6 @@ $\mathrm{R}_A\, u\, v\, w$ reducible, and then $v\, w\, (\mathrm{R}_A\, u\, v\, 
 ## Depends on
 
 - [Gödel's System T](godel-s-system-t.md)
-- [Full reduction of System T](system-t-full-reduction/step.md)
 
 ## Sources
 

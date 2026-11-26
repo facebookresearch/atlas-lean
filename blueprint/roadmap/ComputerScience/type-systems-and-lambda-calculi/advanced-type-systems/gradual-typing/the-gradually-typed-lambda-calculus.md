@@ -4,7 +4,7 @@ The gradually typed λ-calculus (GTLC) extends the simply typed λ-calculus with
 
 $$T ::= B \mid T \to T \mid ?, \qquad B ::= \mathrm{int} \mid \mathrm{bool}, \qquad e ::= k \mid x \mid \lambda x{:}T.\, e \mid (e\, e)^\ell,$$
 
-with constants $k$ of given types, blame labels $\ell$ marking source positions (all distinct), and $\lambda x.\, e$ abbreviating $\lambda x{:}?.\, e$. A type is *static* if
+with constants $k$, each of a base type or of a type $B_1 \to B_2$ between base types (such as $\mathrm{inc} : \mathrm{int} \to \mathrm{int}$), every function constant $k : B_1 \to B_2$ coming with a total interpretation $\delta(k, \cdot)$ from the constants of type $B_1$ to those of type $B_2$ (for example $\delta(\mathrm{inc}, n) = n + 1$), blame labels $\ell$ marking source positions (all distinct), and $\lambda x.\, e$ abbreviating $\lambda x{:}?.\, e$. A type is *static* if
 $?$ does not occur in it.
 
 - **Consistency.** $T_1 \sim T_2$ is the least relation with $? \sim T$, $T \sim ?$, $B \sim B$, and $T_1 \to T_2 \sim T_3 \to T_4$ whenever $T_1 \sim T_3$ and $T_2 \sim T_4$. It is

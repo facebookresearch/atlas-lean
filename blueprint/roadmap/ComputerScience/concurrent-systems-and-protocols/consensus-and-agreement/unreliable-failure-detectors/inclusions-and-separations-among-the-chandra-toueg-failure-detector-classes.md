@@ -1,0 +1,15 @@
+# Inclusions and separations among the Chandra–Toueg failure detector classes
+
+Fix $n$ processes and consider failure patterns (monotone crash sets over discrete time) in which at least one process is correct, together with suspect-set histories. The eight classes of Chandra and Toueg (perfect $\mathcal P$, quasi-perfect $\mathcal Q$, strong $\mathcal S$, weak $\mathcal W$ and their eventual versions $\Diamond\mathcal P, \Diamond\mathcal Q, \Diamond\mathcal S, \Diamond\mathcal W$) are defined by strong or weak completeness combined with strong, weak, eventual strong or eventual weak accuracy. Class $X$ is contained in class $Y$ whenever the completeness and accuracy properties of $X$ imply those of $Y$: strong completeness implies weak completeness, strong accuracy implies weak accuracy and eventual strong accuracy, and each of these two implies eventual weak accuracy. This gives the twelve inclusions $\mathcal P \subseteq \mathcal Q$, $\mathcal S \subseteq \mathcal W$, $\Diamond\mathcal P \subseteq \Diamond\mathcal Q$ and $\Diamond\mathcal S \subseteq \Diamond\mathcal W$ (weakening completeness), and $\mathcal P \subseteq \mathcal S$, $\mathcal P \subseteq \Diamond\mathcal P$, $\mathcal S \subseteq \Diamond\mathcal S$, $\Diamond\mathcal P \subseteq \Diamond\mathcal S$, $\mathcal Q \subseteq \mathcal W$, $\mathcal Q \subseteq \Diamond\mathcal Q$, $\mathcal W \subseteq \Diamond\mathcal W$ and $\Diamond\mathcal Q \subseteq \Diamond\mathcal W$ (weakening accuracy), and their composites. For $n \ge 3$ all twelve are strict. For $n = 2$ weak and strong completeness coincide, so $\mathcal P = \mathcal Q$, $\mathcal S = \mathcal W$, $\Diamond\mathcal P = \Diamond\mathcal Q$ and $\Diamond\mathcal S = \Diamond\mathcal W$, while the eight accuracy inclusions stay strict. For $n = 1$ weak and strong accuracy coincide as well, and the classes collapse to $\mathcal P \subsetneq \Diamond\mathcal P$.
+
+## Proof sketch
+
+Inclusions follow by unfolding the completeness and accuracy properties; weak completeness and weak accuracy use the existence of a correct process. Separations are explicit histories in which no property of the larger class fails: suspecting a correct process only at time $0$ breaks perpetual accuracy but not eventual accuracy (any $n$); with two correct processes, one permanently suspecting the other and itself never suspected, weak accuracy holds but eventual strong accuracy fails ($n \ge 2$); with one crashed and two correct processes, permanent suspicion of the crashed process by only one of them gives weak but not strong completeness ($n \ge 3$). For $n \le 2$ a crash leaves exactly one correct process, so the two completeness properties coincide, and for $n = 1$ the only process is correct, so strong and weak accuracy coincide, perpetual and eventual alike.
+
+## Depends on
+
+- [Failure detector classes](../failure-detector-classes.md)
+
+## Sources
+
+- Tushar Deepak Chandra and Sam Toueg, "Unreliable Failure Detectors for Reliable Distributed Systems", Journal of the ACM, 1996.

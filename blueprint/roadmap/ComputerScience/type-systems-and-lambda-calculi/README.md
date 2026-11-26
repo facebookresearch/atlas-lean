@@ -18,7 +18,6 @@ Typed lambda calculi and type inference: the simply typed lambda calculus (synta
 - [Syntax with binders](syntax-with-binders/README.md)
 
 - [Gödel's System T](system-t/README.md)
-- [Curry-style System F](curry-style-system-f/README.md)
 - [Decision problems for simple types](decision-problems-for-simple-types/README.md)
 - [Type soundness](type-soundness/README.md)
 - [Normalization and logical relations](normalization-and-logical-relations/README.md)
@@ -28,3 +27,4 @@ Typed lambda calculi and type inference: the simply typed lambda calculus (synta
 - [Curry–Howard correspondence for implicational logic](curry-howard-correspondence-for-implicational-logic.md)
 - [Typed terms give natural-deduction derivations](typed-terms-give-natural-deduction-derivations.md)
 - [Uniqueness of normal forms in System F](uniqueness-of-normal-forms-in-system-f.md)
+- [Partial Combinatory Algebras and Kleene's Models](partial-combinatory-algebras/README.md)

@@ -5,8 +5,8 @@ For every well-typed term $t$ of the [blame calculus](the-blame-calculus-and-its
 1. (preservation) if $t$ is [safe for $p$](terms-safe-for-a-blame-label.md) and $t \longrightarrow t'$, then $t'$ is safe for $p$;
 2. (progress) if $t$ is safe for $p$, then $t \not\longrightarrow\ \Uparrow p$.
 
-Together they give [the blame theorem](well-typed-programs-can-t-be-blamed.md): a term whose only cast labeled $p$ is a positive subtyping is safe for $p$, so no reduction
-sequence from it ends in $\Uparrow p$.
+Together they give [the blame theorem](well-typed-programs-can-t-be-blamed.md): a term in which neither $p$ nor $\bar p$ labels any cast or subset test other than one cast $\langle T \Leftarrow S \rangle^p\, s$ with
+$S <:^+ T$ is safe for $p$, so no reduction sequence from it ends in $\Uparrow p$.
 
 ## Depends on
 
