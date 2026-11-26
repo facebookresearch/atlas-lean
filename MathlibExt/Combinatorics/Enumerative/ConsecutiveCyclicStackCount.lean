@@ -15,7 +15,8 @@ import Mathlib.Data.List.Permutation
 # Counting permutations sorted by the consecutive cyclic 321-stack
 
 The consecutive cyclic 321-stack sorts exactly `2 ^ (n - 2)` permutations of length `n ≥ 2`.
-We count the possible tails by successively choosing an endpoint of the remaining interval.
+Each such permutation starts with `n`. We count its possible tails by successively choosing
+an endpoint of the remaining interval, and show that each tail is a good sequence.
 -/
 
 namespace MetaMathlibExt
@@ -302,5 +303,54 @@ public theorem card_sortedPermutations_consecutiveCyclicStackSort_321 {n : ℕ}
     (sortedPermutations (consecutiveCyclicStackSort [3, 2, 1]) n).card = 2 ^ (n - 2) := by
   obtain ⟨k, rfl⟩ : ∃ k, n = k + 2 := ⟨n - 2, by omega⟩
   simp [sorted_eq_choices, card_choices]
+
+namespace head_tail_of_mem_sortedPermutations_consecutiveCyclicStackSort_321
+
+open card_sortedPermutations_consecutiveCyclicStackSort_321
+
+private theorem good_cons {a : ℕ} {t : List ℕ} (ht : IsGoodSeq t)
+    (ha : (∀ y ∈ t, a ≤ y) ∨ (∀ y ∈ t, y ≤ a)) : IsGoodSeq (a :: t) := by
+  intro i hi
+  cases i with
+  | zero => simpa using ha
+  | succ i => exact ht i (by simpa using hi)
+
+private theorem good_of_mem_choices {lo k : ℕ} {s : List ℕ} (hs : s ∈ choices lo k) :
+    IsGoodSeq s := by
+  induction k generalizing lo s with
+  | zero =>
+    obtain rfl : s = [lo] := by simpa [choices] using hs
+    simp [IsGoodSeq]
+  | succ k ih =>
+    rw [choices, Finset.mem_union] at hs
+    rcases hs with h | h <;> obtain ⟨t, ht, rfl⟩ := Finset.mem_map.mp h
+    · apply good_cons (ih ht) (Or.inl ?_)
+      intro y hy
+      exact (Nat.le_succ lo).trans (List.mem_range'_1.mp ((choices_perm ht).mem_iff.mp hy)).1
+    · apply good_cons (ih ht) (Or.inr ?_)
+      intro y hy
+      exact (List.mem_range'_1.mp ((choices_perm ht).mem_iff.mp hy)).2.le
+
+end head_tail_of_mem_sortedPermutations_consecutiveCyclicStackSort_321
+
+open card_sortedPermutations_consecutiveCyclicStackSort_321
+  head_tail_of_mem_sortedPermutations_consecutiveCyclicStackSort_321 in
+/-- **First entry and tail of permutations sorted by the consecutive $321$-cyclic stack.** Let
+$n \ge 2$ and let $\mathrm{Sort}_n(s^{[321]})$ be the set of permutations of
+$[n] = \{1, \ldots, n\}$ that the consecutive-cyclic-pattern-avoiding stack-sorting map
+$s^{[321]}$ sends to the identity $12 \cdots n$. Every $\pi = \pi_1 \pi_2 \cdots \pi_n$ in
+$\mathrm{Sort}_n(s^{[321]})$ has $\pi_1 = n$, and $\pi_2 \cdots \pi_n$ is good: each of its entries
+is the minimum or the maximum of itself and all entries after it.
+
+Source: Alex Zhan and Stella Bie, *Cyclic-Pattern-Avoiding Stacks*, INTEGERS 26 (2026),
+Article A15, Lemma 4 (`integers-2026-A15-lem-4`). -/
+public theorem head_tail_of_mem_sortedPermutations_consecutiveCyclicStackSort_321
+    {n : ℕ} (hn : 2 ≤ n) {π : List ℕ}
+    (hπ : π ∈ sortedPermutations (consecutiveCyclicStackSort [3, 2, 1]) n) :
+    π.head? = some n ∧ IsGoodSeq π.tail := by
+  obtain ⟨k, rfl⟩ : ∃ k, n = k + 2 := ⟨n - 2, by omega⟩
+  rw [sorted_eq_choices] at hπ
+  obtain ⟨t, ht, rfl⟩ := Finset.mem_map.mp hπ
+  exact ⟨rfl, good_of_mem_choices ht⟩
 
 end MetaMathlibExt
