@@ -1,0 +1,3 @@
+# Expected latent masses under the mixture posteriors
+
+Let $Z$ be a finite set, let $f(x, z)$ be real numbers indexed by observations $x$ and latent values $z \in Z$, and let $x_1, \dots, x_N$ be data. For strictly positive weights $w$ on $Z$ (with $w(z) > 0$ for every $z$ and $\sum_{z \in Z} w(z) = 1$) write $p_w(x, z) = w(z)\,f(x, z)$ for the weight-times-likelihood joint model and $p_w(z \mid x) = p_w(x, z) / \sum_{z' \in Z} p_w(x, z')$ for its posterior, read as $0$ when the denominator is $0$. The expected mass of the latent value $z$ at the weights $w$ is $m_w(z) = \sum_{n=1}^N p_w(z \mid x_n)$.

@@ -1,0 +1,3 @@
+# Expected latent masses are positive
+
+Let $Z$ be a nonempty finite set, let $f(x, z)$ be positive real numbers indexed by observations $x$ and latent values $z \in Z$, and let $x_1, \dots, x_N$ be data. For strictly positive weights $w$ on $Z$ (with $w(z) > 0$ for every $z$ and $\sum_{z \in Z} w(z) = 1$) write $p_w(x, z) = w(z)\,f(x, z)$ for the weight-times-likelihood joint model and $p_w(z \mid x) = p_w(x, z) / \sum_{z' \in Z} p_w(x, z')$ for its posterior. Write $m_w(z) = \sum_{n=1}^N p_w(z \mid x_n)$ for the expected mass of $z$ under the posteriors. If $N \ge 1$, then $m_w(z) > 0$ for all strictly positive weights $w$ and every $z \in Z$.
