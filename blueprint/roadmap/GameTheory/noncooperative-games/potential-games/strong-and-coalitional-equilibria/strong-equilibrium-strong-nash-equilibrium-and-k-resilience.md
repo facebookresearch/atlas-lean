@@ -1,0 +1,13 @@
+# Strong equilibrium, strong Nash equilibrium and k-resilience
+
+Let $G$ be a cost-minimization game. A pure profile $s$ is a *strong equilibrium* if no nonempty coalition $C$ has a joint deviation $s'_C$ under which every member of $C$ strictly lowers its cost. It is a *strong Nash equilibrium* if no nonempty coalition has a joint deviation under which no member's cost increases and some member's cost strictly decreases. It is *$k$-resilient* (coalition-proof up to $k$) if the strong Nash condition holds for all coalitions of size at most $k$. Every strong Nash equilibrium is a strong equilibrium, and both are pure Nash equilibria.
+
+## Depends on
+
+- [Pure Nash equilibrium of a finite game](../is-pure-nash-2.md)
+- [Strategic Game](../../../not-yet-classified/part-02/strategic-game/strategic-game.md)
+
+## Sources
+
+- Amir Epstein, Michal Feldman and Yishay Mansour, "Strong Equilibrium in Cost Sharing Connection Games", Games and Economic Behavior, 2009.
+- Tim Roughgarden, "CS364A: Algorithmic Game Theory, Lecture Notes", Stanford University, Fall 2013, 2013.
