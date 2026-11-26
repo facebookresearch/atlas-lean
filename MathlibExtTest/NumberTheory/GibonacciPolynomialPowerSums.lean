@@ -56,6 +56,30 @@ example {x : ℝ} (hx : 0 < x) {g : ℕ → ℤ[X]} (hg : g = 𝔣 ∨ g = 𝔩)
   simpa only [Nat.mul_zero, Nat.add_zero, Finset.Icc_eq_empty_of_lt (by decide : 0 < 1),
     Finset.sum_empty] using tsum_inv_pow_gibonacciPoly_sub_even hx hg (k := 0) (by decide) hlam
 
+-- At x = 1 the first two odd-index Fibonacci values are 1 and 2.
+example : ∑' n : ℕ, (1 / aeval (1 : ℝ) (𝔣 (2 * n + 1)) ^ 2 -
+    1 / aeval (1 : ℝ) (𝔣 (2 * n + 1 + 4)) ^ 2) = 5 / 4 := by
+  have h := tsum_inv_pow_gibonacciPoly_succ_sub_even (x := 1) (by norm_num) (g := 𝔣)
+    (Or.inl rfl) (k := 2) (by decide) (lam := 2) (by decide)
+  have hIcc : Finset.Icc 1 (2 : ℕ) = {1, 2} := by decide
+  exact h.trans (by norm_num [hIcc, generalizedFibonacciPolynomial])
+
+-- At x = 1/2 the first two odd-index Lucas values are 1/2 and 13/8.
+example : ∑' n : ℕ, (1 / aeval (1 / 2 : ℝ) (𝔩 (2 * n + 1)) -
+    1 / aeval (1 / 2 : ℝ) (𝔩 (2 * n + 1 + 4))) = 34 / 13 := by
+  have h := tsum_inv_pow_gibonacciPoly_succ_sub_even (x := 1 / 2) (by norm_num) (g := 𝔩)
+    (Or.inr rfl) (k := 2) (by decide) (lam := 1) (by decide)
+  have hIcc : Finset.Icc 1 (2 : ℕ) = {1, 2} := by decide
+  simp only [pow_one] at h
+  exact h.trans (by norm_num [hIcc, generalizedFibonacciPolynomial, map_ofNat])
+
+-- At shift zero the odd-index series has an empty initial block.
+example {x : ℝ} (hx : 0 < x) {g : ℕ → ℤ[X]} (hg : g = 𝔣 ∨ g = 𝔩)
+    {lam : ℕ} (hlam : 0 < lam) :
+    ∑' n : ℕ, (1 / aeval x (g (2 * n + 1)) ^ lam - 1 / aeval x (g (2 * n + 1)) ^ lam) = 0 := by
+  simpa only [Nat.mul_zero, Nat.add_zero, Finset.Icc_eq_empty_of_lt (by decide : 0 < 1),
+    Finset.sum_empty] using tsum_inv_pow_gibonacciPoly_succ_sub_even hx hg (k := 0) (by decide) hlam
+
 -- The zero shift gives zero at every index for both sequences.
 example (n : ℕ) : 𝔣 n * 𝔣 n - 𝔣 n ^ 2 = 0 ∧ 𝔩 n * 𝔩 n - 𝔩 n ^ 2 = 0 := by
   simpa using gibonacciPoly_mul_sub_sq (n := n) (k := 0) (Nat.zero_le n)

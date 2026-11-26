@@ -21,8 +21,15 @@ import MathlibExt.NumberTheory.Recurrences.HoradamGeneralizedCatalanIdentity
 The Fibonacci and Lucas polynomials satisfy Catalan-type identities.
 
 For the Fibonacci and Lucas polynomials at a positive real argument, the series of differences
-of reciprocal powers sums to its initial block for odd indices with an odd shift and for even
-indices with an even shift.
+of reciprocal powers sums to its initial block for odd indices with either shift parity and for
+even indices with an even shift.
+
+## References
+
+* Yinqi Lin and Bo Zhou, *Infinite Sums Involving Powers of Gibonacci Polynomials*,
+  The Fibonacci Quarterly 62 (2024), no. 2, 147–156, Lemmas 2.1–2.3 and 2.5.
+* Thomas Koshy, *Sums Involving Gibonacci Polynomial Squares*, The Fibonacci Quarterly
+  61 (2023), no. 2, 98–104, Lemma 4 (the even-shift identity at odd indices).
 -/
 
 namespace MetaMathlibExt
@@ -110,6 +117,28 @@ private theorem summable_odd_inv_pow {a : ℕ → ℝ} {x : ℝ} (hx : 0 < x)
   have hbase := mul_pos (show 0 < 1 + x ^ 2 by positivity) (hpos (2 * n)).2
   exact one_div_le_one_div_of_le (pow_pos hbase _) (pow_le_pow_left₀ hbase.le (hgrowth n) _)
 
+private theorem tsum_odd_inv_pow_sub_nat_add {x : ℝ} (hx : 0 < x)
+    {g : ℕ → ℤ[X]} (hg : g = 𝔣 ∨ g = 𝔩) (k : ℕ) {lam : ℕ} (hlam : 0 < lam) :
+    ∑' n : ℕ, (1 / aeval x (g (2 * n + 1)) ^ lam - 1 / aeval x (g (2 * n + 1 + 2 * k)) ^ lam) =
+      ∑ r ∈ Finset.Icc 1 k, 1 / aeval x (g (2 * r - 1)) ^ lam := by
+  let a (n : ℕ) : ℝ := aeval x (g n)
+  let f (n : ℕ) := 1 / a (2 * n + 1) ^ lam
+  have hs : Summable f := by
+    apply summable_odd_inv_pow (a := a) hx ?_ ?_ ?_ hlam
+    · rcases hg with rfl | rfl <;> norm_num [a, map_ofNat]
+    · rcases hg with rfl | rfl <;> simp [a, hx]
+    · intro n
+      rcases hg with rfl | rfl <;> simp [a]
+  calc
+    _ = ∑' n : ℕ, (f n - f (n + k)) := by
+      simp only [f, a, show ∀ n : ℕ, 2 * (n + k) + 1 = 2 * n + 1 + 2 * k by omega]
+    _ = ∑ n ∈ Finset.range k, f n := by
+      rw [hs.tsum_sub ((summable_nat_add_iff k).2 hs)]
+      exact sub_eq_of_eq_add (hs.sum_add_tsum_nat_add k).symm
+    _ = _ := by
+      rw [← Finset.Ico_add_one_right_eq_Icc, Finset.sum_Ico_eq_sum_range]
+      simp only [Nat.add_sub_cancel, f, a, show ∀ n : ℕ, 2 * (1 + n) - 1 = 2 * n + 1 by omega]
+
 end tsum_inv_pow_gibonacciPoly_sub_odd
 
 -- The telescoping identity holds for every shift `k`; the oddness hypothesis `hk` is kept, under
@@ -132,24 +161,31 @@ Lemma 2.2 (`fq-2024-linzhou02172024-lem-2.2`). -/
 public theorem tsum_inv_pow_gibonacciPoly_sub_odd {x : ℝ} (hx : 0 < x)
     {g : ℕ → ℤ[X]} (hg : g = 𝔣 ∨ g = 𝔩) {k lam : ℕ} (hk : Odd k) (hlam : 0 < lam) :
     ∑' n : ℕ, (1 / aeval x (g (2 * n + 1)) ^ lam - 1 / aeval x (g (2 * n + 1 + 2 * k)) ^ lam) =
-      ∑ r ∈ Finset.Icc 1 k, 1 / aeval x (g (2 * r - 1)) ^ lam := by
-  let a (n : ℕ) : ℝ := aeval x (g n)
-  let f (n : ℕ) := 1 / a (2 * n + 1) ^ lam
-  have hs : Summable f := by
-    apply tsum_inv_pow_gibonacciPoly_sub_odd.summable_odd_inv_pow (a := a) hx ?_ ?_ ?_ hlam
-    · rcases hg with rfl | rfl <;> norm_num [a, map_ofNat]
-    · rcases hg with rfl | rfl <;> simp [a, hx]
-    · intro n
-      rcases hg with rfl | rfl <;> simp [a]
-  calc
-    _ = ∑' n : ℕ, (f n - f (n + k)) := by
-      simp only [f, a, show ∀ n : ℕ, 2 * (n + k) + 1 = 2 * n + 1 + 2 * k by omega]
-    _ = ∑ n ∈ Finset.range k, f n := by
-      rw [hs.tsum_sub ((summable_nat_add_iff k).2 hs)]
-      exact sub_eq_of_eq_add (hs.sum_add_tsum_nat_add k).symm
-    _ = _ := by
-      rw [← Finset.Ico_add_one_right_eq_Icc, Finset.sum_Ico_eq_sum_range]
-      simp only [Nat.add_sub_cancel, f, a, show ∀ n : ℕ, 2 * (1 + n) - 1 = 2 * n + 1 by omega]
+      ∑ r ∈ Finset.Icc 1 k, 1 / aeval x (g (2 * r - 1)) ^ lam :=
+  tsum_inv_pow_gibonacciPoly_sub_odd.tsum_odd_inv_pow_sub_nat_add hx hg k hlam
+
+-- The evenness hypothesis matches the source's reindexing; telescoping does not need it.
+set_option linter.unusedVariables false in
+/-- **Telescoping inverse-power series of gibonacci polynomials at odd indices, even shift.**
+Let $x > 0$ be real, and let $g_n$ denote either the Fibonacci polynomials, given by $g_0 = 0$ and
+$g_1 = 1$, or the Lucas polynomials, given by $g_0 = 2$ and $g_1 = x$, both satisfying
+$g_{n+2} = x g_{n+1} + g_n$ and evaluated at $x$. Let $k$ be an even natural number and
+$\lambda$ a positive integer. Then
+$$\sum_{n=0}^{\infty} \left(\frac{1}{g_{2n+1}^{\lambda}} - \frac{1}{g_{2n+1+2k}^{\lambda}}\right) =
+\sum_{r=1}^{k} \frac{1}{g_{2r-1}^{\lambda}}.$$
+
+The source quotes this lemma from Koshy as the sum over $n \ge k/2$ of
+$1/g_{2n+1-k}^{\lambda} - 1/g_{2n+1+k}^{\lambda}$; here the summation index is shifted to start
+at $0$.
+
+Source: Yinqi Lin and Bo Zhou, *Infinite Sums Involving Powers of Gibonacci Polynomials*,
+The Fibonacci Quarterly 62 (2024), Article linzhou02172024,
+Lemma 2.5 (`fq-2024-linzhou02172024-lem-2.5`). -/
+public theorem tsum_inv_pow_gibonacciPoly_succ_sub_even {x : ℝ} (hx : 0 < x)
+    {g : ℕ → ℤ[X]} (hg : g = 𝔣 ∨ g = 𝔩) {k lam : ℕ} (hk : Even k) (hlam : 0 < lam) :
+    ∑' n : ℕ, (1 / aeval x (g (2 * n + 1)) ^ lam - 1 / aeval x (g (2 * n + 1 + 2 * k)) ^ lam) =
+      ∑ r ∈ Finset.Icc 1 k, 1 / aeval x (g (2 * r - 1)) ^ lam :=
+  tsum_inv_pow_gibonacciPoly_sub_odd.tsum_odd_inv_pow_sub_nat_add hx hg k hlam
 
 -- The source's reindexing uses evenness. The shifted identity holds for every `k`.
 set_option linter.unusedVariables false in
