@@ -1,0 +1,3 @@
+# Weight of a task in TWO-PROCESSOR SCHEDULING WITH TASK SIZES, WEIGHTED COMPLETION TIME
+
+An instance of TWO-PROCESSOR SCHEDULING WITH TASK SIZES, WEIGHTED COMPLETION TIME is a pair of an instance of TWO-PROCESSOR SCHEDULING WITH TASK SIZES, TOTAL COMPLETION TIME, whose tasks are the positions $0, \dots, n-1$ of its list of pairs $(p_i, \mathrm{size}_i)$, and a list $w$ of natural numbers. The weight $w_j$ of task $j$ is the entry of $w$ at position $j$, and $0$ when $w$ has no entry at that position. That $w$ has exactly one entry per task is a condition of a well-formed instance, not of this definition.
