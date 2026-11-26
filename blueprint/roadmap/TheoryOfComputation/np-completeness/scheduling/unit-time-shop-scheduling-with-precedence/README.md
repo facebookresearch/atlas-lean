@@ -1,8 +1,11 @@
 # Unit-time shop scheduling with precedence
 
+See also [Precedence relation of a list of job pairs](../multi-purpose-machine-shops-with-precedence/prec.md), shared with this topic.
+
 - [Feasible instances of THREE-MACHINE UNIT-TIME FLOW SHOP WITH CHAINS, TOTAL TARDINESS](f3-unit-chains-total-tardiness-feasible.md)
 - [THREE-MACHINE UNIT-TIME FLOW SHOP WITH CHAINS, TOTAL TARDINESS as a decision problem](f3-unit-chains-total-tardiness-dec.md)
 - [THREE-MACHINE UNIT-TIME FLOW SHOP WITH CHAINS, TOTAL TARDINESS is NP-complete](f3-unit-chains-total-tardiness-np-comple.md)
+- [Instances of THREE-MACHINE UNIT-TIME FLOW SHOP WITH CHAINS, WEIGHTED COMPLETION TIME](f3-unit-chains-weighted-completion-insta.md)
 - [Feasible instances of THREE-MACHINE UNIT-TIME FLOW SHOP WITH CHAINS, WEIGHTED COMPLETION TIME](f3-unit-chains-weighted-completion-feasi.md)
 - [THREE-MACHINE UNIT-TIME FLOW SHOP WITH CHAINS, WEIGHTED COMPLETION TIME as a decision problem](f3-unit-chains-weighted-completion-dec.md)
 - [THREE-MACHINE UNIT-TIME FLOW SHOP WITH CHAINS, WEIGHTED COMPLETION TIME is NP-complete](f3-unit-chains-weighted-completion-np-co.md)
@@ -15,7 +18,10 @@
 - [Feasible instances of THREE-MACHINE UNIT-TIME OPEN SHOP WITH CHAINS, WEIGHTED COMPLETION TIME](o3-unit-chains-weighted-completion-feasi.md)
 - [THREE-MACHINE UNIT-TIME OPEN SHOP WITH CHAINS, WEIGHTED COMPLETION TIME as a decision problem](o3-unit-chains-weighted-completion-dec.md)
 - [THREE-MACHINE UNIT-TIME OPEN SHOP WITH CHAINS, WEIGHTED COMPLETION TIME is NP-complete](o3-unit-chains-weighted-completion-np-co.md)
-- [Instances of two-machine unit-time shops with chains](two-processor-unit-flow-shop-chains-tard.md)
+- [Due dates, chain arcs and bound for unit-time shops](two-processor-unit-flow-shop-chains-tard.md)
+- [Jobs of a two-machine unit-time shop with chains](job.md)
+- [Due date of a job in a two-machine unit-time shop with chains](due-date.md)
+- [Chain arcs of a two-machine unit-time shop with chains](arc.md)
 - [Well-formed two-machine unit-time shops with chains](well-formed-3.md)
 - [Feasible instances of TWO-PROCESSOR UNIT-TIME FLOW-SHOP TOTAL TARDINESS WITH CHAINS](two-processor-unit-flow-shop-chains-tard-2.md)
 - [TWO-PROCESSOR UNIT-TIME FLOW-SHOP TOTAL TARDINESS WITH CHAINS as a decision problem](two-processor-unit-flow-shop-chains-tard-3.md)
@@ -23,6 +29,7 @@
 - [Feasible instances of TWO-MACHINE UNIT-TIME FLOW SHOP WITH CHAINS, LATE JOBS](unit-flow-shop-chains-late-jobs-feasible.md)
 - [TWO-MACHINE UNIT-TIME FLOW SHOP WITH CHAINS, LATE JOBS as a decision problem](unit-flow-shop-chains-late-jobs-dec.md)
 - [TWO-MACHINE UNIT-TIME FLOW SHOP WITH CHAINS, LATE JOBS is NP-complete](unit-flow-shop-chains-late-jobs-np-compl.md)
+- [Weight of a job in TWO-MACHINE UNIT-TIME FLOW SHOP WITH CHAINS, WEIGHTED COMPLETION TIME](weight.md)
 - [Feasible instances of TWO-MACHINE UNIT-TIME FLOW SHOP WITH CHAINS, WEIGHTED COMPLETION TIME](unit-flow-shop-chains-weighted-completio.md)
 - [TWO-MACHINE UNIT-TIME FLOW SHOP WITH CHAINS, WEIGHTED COMPLETION TIME as a decision problem](unit-flow-shop-chains-weighted-completio-2.md)
 - [TWO-MACHINE UNIT-TIME FLOW SHOP WITH CHAINS, WEIGHTED COMPLETION TIME is NP-complete](unit-flow-shop-chains-weighted-completio-3.md)
@@ -47,6 +54,8 @@
 - [UNIT-TIME OPEN SHOP WITH PRECEDENCE, MAKESPAN as a decision problem](unit-open-shop-precedence-makespan-dec.md)
 - [UNIT-TIME OPEN SHOP WITH PRECEDENCE, MAKESPAN is NP-complete](unit-open-shop-precedence-makespan-np-co.md)
 - [Instances of UNIT-TIME OPEN SHOP WITH RELEASE DATES, LATE JOBS](unit-open-shop-release-late-jobs-instanc.md)
+- [Release date of a job in UNIT-TIME OPEN SHOP WITH RELEASE DATES, LATE JOBS](release-date.md)
+- [Due date of a job in UNIT-TIME OPEN SHOP WITH RELEASE DATES, LATE JOBS](due-date-2.md)
 - [Well-formed instances of UNIT-TIME OPEN SHOP WITH RELEASE DATES, LATE JOBS](well-formed-5.md)
 - [Feasible instances of UNIT-TIME OPEN SHOP WITH RELEASE DATES, LATE JOBS](unit-open-shop-release-late-jobs-feasibl.md)
 - [UNIT-TIME OPEN SHOP WITH RELEASE DATES, LATE JOBS as a decision problem](unit-open-shop-release-late-jobs-dec.md)
