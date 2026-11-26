@@ -17,8 +17,8 @@ import Mathlib.Algebra.Ring.GeomSum
 The cyclotomic period generator satisfies the congruence modulo the successive
 Frobenius ideal products.
 
-References: Bhatt--Morrow--Scholze, *Integral p-adic Hodge theory II*,
-arXiv:1802.03261v2, Theorem 1.12(3)--(5), Proposition 6.5, Remark 6.6 and Section 7.4;
+References: Bhatt--Morrow--Scholze, *Topological Hochschild homology and integral p-adic Hodge
+theory*, arXiv:1802.03261v2, Theorem 1.12(3)--(5), Proposition 6.5, Remark 6.6 and Section 7.4;
 Bhatt--Morrow--Scholze, *Integral p-adic Hodge theory*, arXiv:1602.03148v3, Example 4.24;
 Bhatt--Scholze, *Prisms and prismatic cohomology*, arXiv:1905.08229v4, Theorems 1.12--1.14.
 -/
