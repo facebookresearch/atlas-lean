@@ -32,10 +32,10 @@ Galois extension over which it has semistable reduction at every extension of th
 Source: A. Silverberg and Yu. G. Zarhin, *Semistable reduction and torsion subgroups of abelian
 varieties*, Ann. Inst. Fourier 45 (1995), 403–420, §3, pp. 404–405 (the Néron model and
 Definition 3.1 (ii)) and Theorem 3.4, pp. 405–406, <https://doi.org/10.5802/aif.1459>. For the
-proof they cite Proposition 3.6 of A. Grothendieck, *Modèles de Néron et monodromie*, SGA 7 I,
-Exp. IX, Lecture Notes in Math. 288, Springer, 1972, 313–523. The same theorem, with a finite
-separable extension, is Theorem 4.2 of B. Conrad, *Semistable reduction for abelian varieties*,
-seminar notes, Stanford, 2011.
+proof they cite A. Grothendieck, *Modèles de Néron et monodromie*, SGA 7 I, Exp. IX, Lecture Notes
+in Math. 288, Springer, 1972, 313–523, Théorème 3.6, which they call Proposition 3.6. The same
+theorem, with a finite separable extension, is Theorem 4.2 of B. Conrad, *Semistable reduction for
+abelian varieties*, seminar notes, Stanford, 2011.
 -/
 
 @[expose] public noncomputable section
@@ -96,8 +96,9 @@ special fibre `Xᵥ = 𝒳 ⊗_R k` is an extension of an abelian variety by an 
 model is taken of finite type over `R`, as in Bosch–Lütkebohmert–Raynaud, *Néron Models*, §1.2,
 Definition 1; Néron models and their group laws are unique up to unique isomorphism, so this does
 not depend on the choice. -/
-def HasSemistableReduction (R : Type u) [CommRing R] [IsLocalRing R] (K : Type u) [Field K]
-    [Algebra R K] [IsFractionRing R K] (X : AbelianScheme (Spec (.of K))) : Prop :=
+def HasSemistableReduction (R : Type u) [CommRing R] [IsDomain R] [IsDiscreteValuationRing R]
+    (K : Type u) [Field K] [Algebra R K] [IsFractionRing R K] (X : AbelianScheme (Spec (.of K))) :
+    Prop :=
   ∃ (N : FiniteTypeNeronModel R K X.model) (_ : N.GroupStructure)
     (G₀ : Over (specialBase R)) (_ : GrpObj G₀)
     (j : G₀ ⟶ (specialFunctor R).obj N.model),
@@ -107,15 +108,17 @@ def HasSemistableReduction (R : Type u) [CommRing R] [IsLocalRing R] (K : Type u
 pp. 405–406). Let `X` be an abelian variety over a field `F` and `v` a discrete valuation on `F`,
 with valuation ring `O`. There is a finite Galois extension `L` of `F`, here inside an algebraic
 closure of `F`, such that `X_L` has semistable reduction at every extension of `v` to `L`: at
-every valuation ring `w` of `L` with `w ∩ F = O`.
+every valuation ring `w` of `L` with `w ∩ F = O`. Every such `w` is a discrete valuation ring, so
+taking its discrete-valuation-ring structure as an instance argument loses nothing.
 
 Source: A. Silverberg and Yu. G. Zarhin, *Semistable reduction and torsion subgroups of abelian
 varieties*, Ann. Inst. Fourier 45 (1995), 403–420, Theorem 3.4, pp. 405–406,
-<https://doi.org/10.5802/aif.1459>; for the proof they cite Proposition 3.6 of SGA 7 I, Exp. IX. -/
+<https://doi.org/10.5802/aif.1459>; for the proof they cite SGA 7 I, Exp. IX, Théorème 3.6, which
+they call Proposition 3.6. -/
 theorem_wanted semistable_reduction_theorem (F : Type u) [Field F] (O : ValuationSubring F)
     [IsDiscreteValuationRing O] (X : AbelianScheme (Spec (.of F))) :
     ∃ L : IntermediateField F (AlgebraicClosure F), FiniteDimensional F L ∧ IsGalois F L ∧
-      ∀ w : ValuationSubring L, w.comap (algebraMap F L) = O →
+      ∀ w : ValuationSubring L, w.comap (algebraMap F L) = O → ∀ [IsDiscreteValuationRing w],
         HasSemistableReduction w L
           (X.baseChange (Spec.map (CommRingCat.ofHom (algebraMap F L))))
 

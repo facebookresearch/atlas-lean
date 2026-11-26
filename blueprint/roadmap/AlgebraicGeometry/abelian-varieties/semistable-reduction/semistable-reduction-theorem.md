@@ -32,8 +32,9 @@ extension of $v$ to $L$: at every valuation ring $w$ of $L$ with $w \cap F = \ma
 Silverberg and Zarhin print the conclusion as "$X$ has semistable reduction at the extensions of $v$
 to $L$", with $X$ over $L$, that is $X_L$. Every finite extension of $F$ embeds in $\bar F$, so taking
 $L$ inside $\bar F$ loses nothing. The valuation rings of $L$ that meet $F$ in $\mathcal{O}$ are the
-extensions of $v$ to $L$, and they are discrete valuation rings; they are the localizations of the
-integral closure of $\mathcal{O}$ in $L$ at its maximal ideals.
+extensions of $v$ to $L$. They are the localizations of the integral closure of $\mathcal{O}$ in $L$ at
+its maximal ideals, hence discrete valuation rings, and the theorem takes each of them with that
+structure.
 
 Conrad states the theorem with a finite separable extension $K'/K$ such that $A_{K'}$ has semistable
 reduction over the integral closure $R'$ of $R$ in $K'$, that is, at the localization of $R'$ at each
@@ -44,8 +45,9 @@ rings, since the identity component of the Néron model then commutes with base 
 Corollary 4.5) and an extension of an abelian variety by a torus stays one after extending the
 residue field. Conrad's Proposition 6.5 gives such a Galois extension directly: for $N \ge 3$ prime to
 the residue characteristic, $A$ acquires semistable reduction at all places of $K(A[N])$. Conrad
-calls a group whose identity component is an extension of an abelian variety by a torus after
-extension to $\bar k$ semi-abelian; by his Theorem 3.1 the torus and the extension then descend to
+calls a smooth connected commutative $k$-group semi-abelian when its base change to $\bar k$ is an
+extension of an abelian variety by a torus, and says that $A$ has semistable reduction when
+$(\mathcal{A}_k)^0$ is semi-abelian; by his Theorem 3.1 the torus and the extension then descend to
 $k$, which is the form above.
 
 Conrad proves the theorem by reducing it to Jacobians of smooth proper geometrically connected
@@ -71,9 +73,9 @@ identity component of the Néron model of its generic fibre.
   varieties", *Ann. Inst. Fourier* 45 (1995), 403–420, <https://doi.org/10.5802/aif.1459>: §3,
   pp. 404–405, the Néron model and Definition 3.1 (ii) (semistable reduction: $X_v^0$ is an extension
   of an abelian variety by an affine torus); Theorem 3.4, pp. 405–406 (the theorem as stated here),
-  whose proof they cite as Proposition 3.6 of SGA 7 I, Exp. IX.
+  whose proof they cite as Proposition 3.6 of SGA 7 I, Exp. IX, where it is Théorème 3.6.
 - A. Grothendieck, "Modèles de Néron et monodromie", Exposé IX in *Groupes de monodromie en géométrie
-  algébrique* (SGA 7 I), Lecture Notes in Mathematics 288, Springer, 1972, 313–523: Proposition 3.6.
+  algébrique* (SGA 7 I), Lecture Notes in Mathematics 288, Springer, 1972, 313–523: Théorème 3.6.
 - B. Conrad, "Semistable reduction for abelian varieties", seminar notes, Stanford, 2011,
   <http://math.stanford.edu/~conrad/mordellsem/Notes/L13.pdf>: §2, Definition 2.10 (tori); §3, the
   definition of semi-abelian varieties and Theorem 3.1 (descent of the torus); §4, the definition of
