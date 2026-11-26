@@ -6,7 +6,7 @@ $$\frac{d\mu^*}{dt} = S(t,u^*)\mu^*, \qquad \frac{du^*}{dt} = -S(t,u^*)u^* + f(u
 
 Perturb $u = u^* + \varepsilon U$, $\mu = \mu^* + \varepsilon\nu$. To first order,
 
-$$\frac{\partial\nu}{\partial t} = S\nu + \nabla_uS\cdot U, \qquad \frac{\partial U}{\partial t} = \frac{D}{(\mu^*)^2}\frac{\partial^2U}{\partial X^2} + M(t)U, \qquad M = J - K - S(t,u^*)I,$$
+$$\frac{\partial\nu}{\partial t} = S\nu + \mu^*\,\nabla_uS\cdot U, \qquad \frac{\partial U}{\partial t} = \frac{D}{(\mu^*)^2}\frac{\partial^2U}{\partial X^2} + M(t)U, \qquad M = J - K - S(t,u^*)I,$$
 
 with $J_{ij} = \partial f_i/\partial u_j(u^*)$ and $K_{ij} = u_i^*\,\partial S/\partial u_j(t,u^*)$. The $U$-equation does not involve $\nu$, so perturbations of the domain do not affect the linear stability of homogeneous states. Expanding $U = \sum_k\psi_k(X)V_k(t)$ in Neumann eigenfunctions $\psi_k = \cos(k\pi X/L)$, $\rho_k = (k\pi/L)^2$, each mode obeys the non-autonomous system
 
@@ -21,7 +21,7 @@ A sufficient condition for exponential growth of mode $k$ on a time interval $I_
 
 ## Expansion
 
-Since $u^*$ is spatially homogeneous, every term multiplying $\nu$ carries a spatial derivative of $u^*$ and vanishes; linearizing $-uS(t,u)$ gives $-SU - (\nabla_uS\cdot U)u^* = -SU - KU$. The Laplace–Beltrami operator in Lagrangian coordinates is $(\mu^*)^{-2}\partial_X^2$ because the base metric is spatially uniform, so the time dependence factors out of the spatial eigenproblem and modes decouple.
+Differentiating $\mu_t = \mu S(t,u)$ at $(\mu^*, u^*)$ gives $\nu_t = S(t,u^*)\nu + \mu^*\nabla_uS(t,u^*)\cdot U$. Since $u^*$ is spatially homogeneous, every term multiplying $\nu$ carries a spatial derivative of $u^*$ and vanishes; linearizing $-uS(t,u)$ gives $-SU - (\nabla_uS\cdot U)u^* = -SU - KU$. The Laplace–Beltrami operator in Lagrangian coordinates is $(\mu^*)^{-2}\partial_X^2$ because the base metric is spatially uniform, so the time dependence factors out of the spatial eigenproblem and modes decouple.
 
 ## Sources
 

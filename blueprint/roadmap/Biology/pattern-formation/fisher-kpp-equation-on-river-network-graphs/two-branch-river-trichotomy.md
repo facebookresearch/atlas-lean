@@ -4,9 +4,9 @@
 
 $$\partial_tw_i - \partial_{xx}w_i + \beta_i\partial_xw_i = w_i - w_i^2 \quad (i = L,U), \qquad w_L(t,0) = w_U(t,0), \qquad a_U\partial_xw_U(t,0) = a_L\partial_xw_L(t,0),$$
 
-(the last line is the Kirchhoff law, equivalent to flux continuity given conservation of flow), with nonnegative compactly supported initial data $w_0 \not\equiv 0$.
+(the last line is the Kirchhoff law, equivalent to flux continuity given conservation of flow), with initial data $w_L(0,\cdot) = w_0|_{[0,\infty)}$, $w_U(0,\cdot) = w_0|_{(-\infty,0]}$ for a nonnegative continuous compactly supported $w_0 : \mathbb R \to \mathbb R$, $w_0 \not\equiv 0$ (so the two branches share the trace $w_0(0)$ at the vertex). For these data the problem has a unique nonnegative classical solution.
 
-**Theorem (steady states).** For the nonconstant steady states $0 < \varphi_L, \varphi_U < 1$ with junction value $\varphi_L(0) = \varphi_U(0) = \alpha \in (0,1)$:
+**Theorem (steady states).** For $\alpha \in (0,1)$, consider the steady-state problem $-\varphi_i'' + \beta_i\varphi_i' = \varphi_i - \varphi_i^2$, $0 < \varphi_i < 1$ ($i = L, U$), $\varphi_L(0) = \varphi_U(0) = \alpha$, $a_U\varphi_U'(0) = a_L\varphi_L'(0)$. Its solutions satisfy:
 
 1. if $0 < \beta_U < 2$ there is none;
 2. if $\beta_L, \beta_U \ge 2$ there is exactly one for every $\alpha \in (0,1)$;

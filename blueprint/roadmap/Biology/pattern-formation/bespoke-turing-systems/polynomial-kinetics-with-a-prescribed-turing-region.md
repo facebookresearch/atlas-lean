@@ -14,6 +14,10 @@ $$D > \sup_{p \in \Omega} \Bigl(\sqrt{S(p)} + \sqrt{S(p) + 2}\Bigr)^2.$$
 
 ## Depends on
 
+- [Diffusion-driven instability (Turing 1952)](../turing-patterns-and-diffusion-driven-instability/turing-instability.md)
+
+## Proof depends on
+
 - [Nondimensional Turing conditions and the critical diffusion ratio](nondimensional-turing-conditions-and-critical-diffusion-ratio.md)
 
 ## Expansion

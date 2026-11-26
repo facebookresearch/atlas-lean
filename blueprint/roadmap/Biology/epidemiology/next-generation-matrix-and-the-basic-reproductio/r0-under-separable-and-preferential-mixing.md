@@ -2,25 +2,25 @@
 
 Use the notation of the [next-generation operator](next-generation-operator-and-r0-in-heterogeneous-populations.md): h-states $\xi \in \Omega$, susceptible density $S \ge 0$, and integrated infectivity $\int_0^\infty A(\tau, \xi, \eta)\, d\tau$.
 
-**Separable mixing.** If $\int_0^\infty A(\tau, \xi, \eta)\, d\tau = a(\xi)\, b(\eta)$ with $a, b \ge 0$, then $K\phi = S a \int_\Omega b\,\phi$ has one-dimensional range spanned by $S a$, and
+**Separable mixing.** If $\int_0^\infty A(\tau, \xi, \eta)\, d\tau = a(\xi)\, b(\eta)$ with $a, b \ge 0$, $S a \in L^1(\Omega)$ and $b \in L^\infty(\Omega)$, then $K\phi = S a \int_\Omega b\,\phi$ has rank at most one (its range lies in the span of $S a$), and
 
-$$R_0 = \int_\Omega b(\eta)\, S(\eta)\, a(\eta)\, d\eta .$$
+$$R_0 = r(K) = \int_\Omega b(\eta)\, S(\eta)\, a(\eta)\, d\eta .$$
 
-With the normalization $\int_\Omega S a = 1$, $S a$ is the probability density of the h-state at infection, $b(\eta)$ is the expected number of secondary cases of an individual infected in state $\eta$, and $R_0$ is the mean of $b$ under that density. Proportionate mixing is the case $b = c\,a$ for a constant $c$.
+This value may be $0$, for instance if $b = 0$, or if $Sa$ and $b$ are nonzero with disjoint supports, when $K \ne 0$ but $K^2 = 0$. If $\int_\Omega S a = 1$, then $S a$ is the probability density of the h-state at infection, $b(\eta)$ is the expected number of secondary cases of an individual infected in state $\eta$, and $R_0$ is the mean of $b$ under that density. Proportionate mixing is the case $b = c\,a$ for a constant $c$.
 
 **Separable mixing with within-group enhancement.** If the h-state is constant over epidemiological time and
 
 $$(K\phi)(\xi) = S(\xi)\Bigl\{ a(\xi) \int_\Omega b(\eta)\phi(\eta)\, d\eta + c(\xi)\phi(\xi) \Bigr\},$$
 
-with $c \ge 0$, then a positive eigenvalue $\varrho$ with $\varrho > \operatorname{ess\,sup} cS$ satisfies the characteristic equation
+with $a, b$ as above and $c \ge 0$, $cS \in L^\infty(\Omega)$, put $\sigma = \operatorname{ess\,sup} cS$. Every eigenvalue $\varrho > \sigma$ of $K$ satisfies the characteristic equation $F(\varrho) = 1$, where
 
-$$\int_\Omega \frac{b(\xi) S(\xi) a(\xi)}{\varrho - c(\xi) S(\xi)}\, d\xi = 1 .$$
+$$F(\varrho) = \int_\Omega \frac{b(\xi) S(\xi) a(\xi)}{\varrho - c(\xi) S(\xi)}\, d\xi, \qquad \varrho > \sigma .$$
 
-The left side decreases in $\varrho$ to $0$. Hence $R_0 > 1$ if and only if either $\operatorname{ess\,sup}_\xi c(\xi)S(\xi) > 1$, or $cS \le 1$ and
+$F$ is nonincreasing and tends to $0$ as $\varrho \to \infty$; let $F(\sigma^+) = \lim_{\varrho \downarrow \sigma} F(\varrho) \in [0, \infty]$. Then $R_0 > 1$ if and only if either $\sigma > 1$, or $\sigma \le 1$ and
 
-$$\int_\Omega \frac{b(\xi) S(\xi) a(\xi)}{1 - c(\xi) S(\xi)}\, d\xi > 1 .$$
+$$F(1^+) = \lim_{\varrho \downarrow 1} \int_\Omega \frac{b(\xi) S(\xi) a(\xi)}{\varrho - c(\xi) S(\xi)}\, d\xi > 1 .$$
 
-The last integral is the expected number of cross-group infections produced by a "clan": the chain of infections a case in state $\xi$ starts within its own group, of mean total size $(1 - c(\xi)S(\xi))^{-1}$.
+When $\sigma < 1$, $F(1^+)$ is the integral of $bSa/(1 - cS)$. On the set where $c(\xi)S(\xi) < 1$, the factor $(1 - c(\xi)S(\xi))^{-1}$ is the mean total size of the "clan", the chain of infections a case in state $\xi$ starts within its own group, so for $\sigma < 1$ the integral $F(1)$ is the expected number of cross-group infections produced by a clan.
 
 ## Depends on
 
@@ -28,8 +28,8 @@ The last integral is the expected number of cross-group infections produced by a
 
 ## Expansion
 
-In the separable case $K(Sa) = (\int b S a)\, Sa$, and every eigenvector with a nonzero eigenvalue lies in the range of $K$, so $\int bSa$ is the only nonzero eigenvalue. In the enhanced case, $K\phi = \varrho\phi$ gives $\phi = (\varrho - cS)^{-1} S a \int b\phi$; multiplying by $b$ and integrating cancels $\int b\phi$ and leaves the characteristic equation. Monotonicity in $\varrho$ means the largest root exceeds $1$ exactly when the left side at $\varrho = 1$ exceeds $1$ (or blows up because $cS$ reaches $1$).
+In the separable case write $K = u \otimes \ell$ with $u = Sa$ and $\ell(\phi) = \int b\phi$. Then $K^2 = \ell(u) K$, so the spectrum of $K$ lies in $\{0, \ell(u)\}$ and $r(K) = \ell(u) = \int bSa \ge 0$; when $\ell(u) > 0$ it is the only nonzero eigenvalue, with eigenvector $u$. In the enhanced case, $K\phi = \varrho\phi$ with $\varrho > \sigma$ gives $\phi = (\varrho - cS)^{-1} S a \int b\phi$, and $\int b\phi \ne 0$ since otherwise $\phi = 0$; multiplying by $b$ and integrating cancels $\int b\phi$ and leaves $F(\varrho) = 1$. Since $0 \le M \le K$ for the multiplication operator $M\phi = cS\phi$, positivity gives $R_0 \ge r(M) = \sigma$. Outside the spectrum of $M$, $\varrho$ lies in the spectrum of $K$ exactly when $F(\varrho) = 1$, so $R_0 = \sigma$ if $F(\sigma^+) \le 1$ and otherwise $R_0$ is the unique root of $F = 1$ in $(\sigma, \infty)$. Monotonicity of $F$ then gives the criterion, with the one-sided limit $F(1^+)$ covering the boundary case $\sigma = 1$, where the integrand at $\varrho = 1$ can be $0/0$.
 
 ## Sources
 
-- O. Diekmann, J. A. P. Heesterbeek and J. A. J. Metz, *On the definition and the computation of the basic reproduction ratio $R_0$ in models for infectious diseases in heterogeneous populations*, J. Math. Biol. 28 (1990), 365–382, <https://doi.org/10.1007/BF00178324>, Section 3.1, Eqs. (3.1)–(3.6) (separable mixing), and Section 3.2, Eqs. (3.7)–(3.11) (separable mixing with enhanced infection within each group).
+- O. Diekmann, J. A. P. Heesterbeek and J. A. J. Metz, *On the definition and the computation of the basic reproduction ratio $R_0$ in models for infectious diseases in heterogeneous populations*, J. Math. Biol. 28 (1990), 365–382, <https://doi.org/10.1007/BF00178324>, Section 3.1, Eqs. (3.1)–(3.6) (separable mixing), and Section 3.2, Eqs. (3.7)–(3.11) (separable mixing with enhanced infection within each group; the clan-size interpretation follows (3.10)).

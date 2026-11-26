@@ -4,32 +4,38 @@ Let individuals carry a heterogeneity state ("h-state") $\xi$ in a measure space
 
 $$(K\phi)(\xi) = S(\xi) \int_\Omega \int_0^\infty A(\tau, \xi, \eta)\, d\tau\, \phi(\eta)\, d\eta ,$$
 
-and it is a positive operator (nonnegative densities go to nonnegative densities). Assume $K$ is bounded on $L^1(\Omega)$. Its spectral radius is
+and it is a positive operator (nonnegative densities go to nonnegative densities). Assume $K$ is bounded on $L^1(\Omega)$. Its spectral radius $r(K)$ (that of its complexification on complex $L^1(\Omega)$) is given by the [spectral radius formula](../../../Analysis/operator-algebras/spectral-radius-formula.md):
 
-$$r(K) = \inf_{m \ge 1} \|K^m\|^{1/m} = \lim_{m \to \infty} \|K^m\|^{1/m}.$$
+$$r(K) = \lim_{m \to \infty} \|K^m\|^{1/m} = \inf_{m \ge 1} \|K^m\|^{1/m}.$$
 
-**Definition.** The basic reproduction ratio is $R_0 = r(K)$. When $K$ is, for instance, compact, $r(K)$ is an eigenvalue of $K$ (the dominant eigenvalue) with a positive eigenvector $\phi_d$, and under mild extra conditions $K^m \phi \sim c(\phi)\, R_0^m \phi_d$ with $c(\phi) > 0$ for every nonnegative, nonzero $\phi$.
+**Definition.** The basic reproduction ratio is $R_0 = r(K)$. It may be $0$: for the zero kernel $A = 0$, $K = 0$ and $R_0 = 0$.
 
-**Threshold.** The generations $K^m\phi$ tend to $0$ when $R_0 < 1$ and can be made arbitrarily large when $R_0 > 1$. In real time, the linearized incidence $i(t,\xi)$ satisfies
+**Dominant eigenvalue.** If $K$ is compact and $r(K) > 0$, then $r(K)$ is an eigenvalue of $K$ with a nonnegative, nonzero eigenfunction $\phi_d$ (Krein–Rutman). If moreover $r(K)$ is an algebraically simple eigenvalue and every other point of the spectrum has modulus less than $r(K)$, then $R_0^{-m} K^m \phi \to P\phi$ for every $\phi \in L^1(\Omega)$, where $P$ is the spectral projection onto the span of $\phi_d$. Without $r(K) > 0$ there need be no such eigenvalue: the Volterra operator $(Kf)(x) = \int_0^x f(y)\,dy$ on $L^1[0, 1]$ is compact, positive and injective, and $r(K) = 0$.
+
+**Threshold.** If $R_0 < 1$, then $\|K^m\| \to 0$, so the generations $K^m\phi$ tend to $0$ for every $\phi$. If $R_0 > 1$, then $\|K^m\| \ge R_0^m \to \infty$, so generations started from suitable $\phi$ become arbitrarily large.
+
+**Real-time growth.** The linearized incidence $i(t,\xi)$ satisfies
 
 $$i(t, \xi) = S(\xi) \int_\Omega \int_0^\infty A(\tau, \xi, \eta)\, i(t - \tau, \eta)\, d\tau\, d\eta ,$$
 
-and $i(t,\xi) = e^{\lambda t}\psi(\xi)$ is a solution exactly when $\psi$ is an eigenvector with eigenvalue $1$ of
+and, for real $\lambda$ such that the operator below is bounded, $i(t,\xi) = e^{\lambda t}\psi(\xi)$ is a solution exactly when $\psi$ is an eigenfunction with eigenvalue $1$ of
 
 $$(K_\lambda \phi)(\xi) = S(\xi) \int_\Omega \int_0^\infty A(\tau, \xi, \eta)\, e^{-\lambda \tau}\, d\tau\, \phi(\eta)\, d\eta .$$
 
-The real root $\lambda_d$ with largest real part satisfies $\lambda_d > 0 \iff R_0 > 1$ and $\lambda_d < 0 \iff R_0 < 1$. The operator norm $\|K\|$ is only an upper bound for $R_0$: for a host–vector model with $K = \begin{pmatrix} 0 & a_{12} S_1 \\ a_{21} S_2 & 0 \end{pmatrix}$, $\|K\| = \max(a_{12}S_1, a_{21}S_2)$ while $R_0 = \sqrt{a_{12} S_1 a_{21} S_2}$, the geometric mean of the two one-generation factors.
+Assume there is $\lambda_* \in [-\infty, 0)$ such that $K_\lambda$ is bounded and compact for every real $\lambda > \lambda_*$, and that $\lambda \mapsto r(K_\lambda)$ is continuous and strictly decreasing on $(\lambda_*, \infty)$ with $\lim_{\lambda \to \infty} r(K_\lambda) < 1 < \lim_{\lambda \downarrow \lambda_*} r(K_\lambda)$. Then there is a unique real $\lambda_d > \lambda_*$ with $r(K_{\lambda_d}) = 1$; it gives an exponential solution $e^{\lambda_d t}\psi$ with $\psi \ge 0$ nonzero, and $\lambda_d > 0 \iff R_0 > 1$, $\lambda_d < 0 \iff R_0 < 1$. Without such hypotheses no real root need exist: for $A = 0$ every $K_\lambda$ is zero.
+
+The operator norm $\|K\|$ is only an upper bound for $R_0$: for a host–vector model with $K = \begin{pmatrix} 0 & a_{12} S_1 \\ a_{21} S_2 & 0 \end{pmatrix}$, $\|K\| = \max(a_{12}S_1, a_{21}S_2)$ while $R_0 = \sqrt{a_{12} S_1 a_{21} S_2}$, the geometric mean of the two one-generation factors.
 
 For finite $\Omega$, $K$ is a nonnegative matrix and $R_0$ is its spectral radius, the [next-generation matrix](r0.md) quantity.
 
 ## Depends on
 
-- [Basic reproduction number of the next-generation matrix](r0.md)
+- [Spectral radius formula in a complex Banach algebra](../../../Analysis/operator-algebras/spectral-radius-formula.md)
 
 ## Expansion
 
-The norm $\|K^m\phi\|$ is the size of generation $m$, so $\|K^m\|^{1/m}$ is the worst-case per-generation growth factor over $m$ generations; Gelfand's formula identifies its limit with the spectral radius. Positivity (Krein–Rutman / Perron–Frobenius) gives a positive dominant eigenvector, which is the "typical" infected individual of the verbal definition. For the real-time statement, $\lambda \mapsto r(K_\lambda)$ is decreasing on the reals with $r(K_0) = R_0$, so $r(K_{\lambda_d}) = 1$ has $\lambda_d > 0$ exactly when $R_0 > 1$.
+The norm $\|K^m\phi\|$ is the size of generation $m$, so $\|K^m\|^{1/m}$ is the worst-case per-generation growth factor over $m$ generations; Gelfand's formula identifies its limit with the spectral radius, and $r(K)^m = r(K^m) \le \|K^m\|$ gives the threshold statements. For a compact positive operator on $L^1$, whose cone of nonnegative functions is reproducing, the Krein–Rutman theorem gives a nonnegative eigenfunction for $r(K)$ only when $r(K) > 0$; the Volterra example shows the hypothesis is needed. Under the spectral-gap hypothesis, the spectral decomposition $K = r(K)P + K(I - P)$ with $r(K(I - P)) < r(K)$ gives the convergence $R_0^{-m}K^m \to P$. For the real-time statement, monotonicity and continuity of $\lambda \mapsto r(K_\lambda)$ with $r(K_0) = R_0$ give the unique crossing of the level $1$ and its sign; Krein–Rutman applied to $K_{\lambda_d}$ gives the eigenfunction $\psi$.
 
 ## Sources
 
-- O. Diekmann, J. A. P. Heesterbeek and J. A. J. Metz, *On the definition and the computation of the basic reproduction ratio $R_0$ in models for infectious diseases in heterogeneous populations*, J. Math. Biol. 28 (1990), 365–382, <https://doi.org/10.1007/BF00178324>, Section 2: Eq. (2.1) (next-generation operator), Eq. (2.2) (spectral radius), the Definition $R_0 = r(K(S))$, Eqs. (2.4)–(2.5) (real-time equation and $K_\lambda$), and the host–vector example.
+- O. Diekmann, J. A. P. Heesterbeek and J. A. J. Metz, *On the definition and the computation of the basic reproduction ratio $R_0$ in models for infectious diseases in heterogeneous populations*, J. Math. Biol. 28 (1990), 365–382, <https://doi.org/10.1007/BF00178324>, Section 2: Eq. (2.1) (next-generation operator), Eq. (2.2) (spectral radius), the Definition $R_0 = r(K(S))$, Eqs. (2.4)–(2.5) (real-time equation and $K_\lambda$), and the host–vector example. The hypotheses of the dominant-eigenvalue and real-time statements are stated here explicitly.

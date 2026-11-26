@@ -1,6 +1,6 @@
 # Smooth monotone travelling waves of a logistic equation with sign-changing aggregation diffusivity
 
-This page covers the main existence result of Li, van Heijster and Marangell (2020) for a reaction-diffusion equation whose diffusivity becomes negative at intermediate densities (forward-backward diffusion modelling aggregation of grouped cells).
+This page covers the main existence result of Li, van Heijster, Marangell and Simpson (2020) for a reaction-diffusion equation whose diffusivity becomes negative at intermediate densities (forward-backward diffusion modelling aggregation of grouped cells).
 
 **Model.** For $U = U(x,t)$ with $x \in \mathbb{R}$, $t \ge 0$, consider
 
@@ -36,6 +36,10 @@ The passage of the travelling-wave orbit through the singular lines $u = \alpha$
 - [Fronts of speed $c$ exist exactly for $c$ at or above the minimal speed](exists-is-front-iff.md)
 - [Every Fisher-KPP front speed is at least the minimal speed](two-mul-sqrt-le-of-is-front.md)
 
+## Proof depends on
+
+- [Poincaré–Bendixson theorem](../../../Dynamics/low-dimensional-dynamics/poincar-bendixson-theorem/poincare-bendixson.md)
+
 ## Expansion
 
 With $z = x - ct$ and $p = D(u)\, du/dz$ the wave equation becomes the singular system $D(u) u' = p$, $D(u) p' = -cp - D(u)R(u)$, singular on the lines $u = \alpha, \beta$. Rescaling the independent variable by $D(u)\, d\xi = dz$ gives the regular system
@@ -48,4 +52,4 @@ When instead $D_i < 4D_g$ (so $D > 0$ on $[0,1]$), the same method only brackets
 
 ## Sources
 
-- Y. Li, P. van Heijster and R. Marangell, Travelling wave solutions in a negative nonlinear diffusion-reaction model, *J. Math. Biol.* (2020), <https://doi.org/10.1007/s00285-020-01547-1>, PMCID PMC7717045.
+- Y. Li, P. van Heijster, R. Marangell and M. J. Simpson, Travelling wave solutions in a negative nonlinear diffusion-reaction model, *J. Math. Biol.* 81 (2020), 1495–1522, <https://doi.org/10.1007/s00285-020-01547-1>, PMCID PMC7717045.

@@ -13,7 +13,7 @@ Write the system in gradient-flow form $\partial_t u_i = \nabla\cdot\bigl[u_i \n
 $$E[u_1, \dots, u_N] = \int_{\mathbb T} \sum_{i=1}^N u_i \Bigl( D_i \ln u_i + \frac12 \sum_{j=1}^N \gamma_{ij}\, K * u_j \Bigr) dx .$$
 
 **Proposition.** Assume $\gamma_{ij} = \gamma_{ji}$ for all $i, j$ and that solutions with positive initial data stay positive.
-1. $E$ is continuous in $(u_1, \dots, u_N)$ (for any $K \in L^1$).
+1. For any symmetric $K \in L^1(\mathbb T)$, $E$ is continuous on the space of $N$-tuples of continuous positive functions on $\mathbb T$ with the uniform norm. (Continuity in the $L^1$ topology fails: with no interaction, $u_n = 1 - 1/n + e^n \mathbf 1_{[0, e^{-n}/n]}$ on the unit torus converges to $1$ in $L^1$, while $\int u_n \ln u_n \to 1 \ne 0$.)
 2. Along trajectories,
 
 $$\frac{dE}{dt} = -\int_{\mathbb T} \sum_{i=1}^N u_i \Bigl| \nabla \Bigl( D_i \ln u_i + \sum_{j=1}^N \gamma_{ij} K * u_j \Bigr) \Bigr|^2 dx \le 0,$$

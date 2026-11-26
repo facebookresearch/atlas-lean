@@ -4,7 +4,7 @@ In the [surrogate variable model](surrogate-variable-model-of-expression-heterog
 
 **Detection of unmodeled factors.**
 1. Fit $x_{ij} = \mu_i + f_i(y_j) + e_{ij}$ by least squares and form the residual matrix $R \in \mathbb{R}^{m\times n}$, $r_{ij} = x_{ij} - \hat\mu_i - \hat f_i(y_j)$.
-2. Compute the SVD $R = U D V^\top$ with singular values $d_1 \ge d_2 \ge \dots$. If the fit uses $\mathrm{df}$ degrees of freedom, the last $\mathrm{df}$
+2. Compute the [singular value decomposition](../../../LinearAlgebra/matrix-decompositions/singular-value-decomposition/singular-value-decomposition-theorem/real-singular-value-decomposition.md) $R = U D V^\top$ with singular values $d_1 \ge d_2 \ge \dots$. If the fit uses $\mathrm{df}$ degrees of freedom, the last $\mathrm{df}$
    singular values are zero; for $k = 1, \dots, n - \mathrm{df}$ let $T_k = d_k^2 / \sum_{\ell} d_\ell^2$, the variance fraction of the $k$-th eigengene.
 3. Permute each row of $R$ independently, refit the primary-variable model to the permuted matrix to get a null residual matrix $R^0$, and
    compute its statistics $T_k^0$. Repeat $B$ times to get $T_k^{0b}$, $b = 1, \dots, B$.
@@ -15,7 +15,11 @@ In the [surrogate variable model](surrogate-variable-model-of-expression-heterog
 1. Regress $e_k$ on each gene's expression $x_i$ and compute p-values for association; estimate the null proportion $\hat\pi_0$ and keep the
    $\hat m_k = \lfloor (1 - \hat\pi_0) m \rfloor$ genes with the smallest p-values.
 2. Form the reduced $\hat m_k \times n$ matrix $X_r$ of these genes' **original** expression and compute its eigengenes $e^r_1, \dots, e^r_n$.
-3. Set $\hat h_k = e^r_{j^*}$ with $j^* = \arg\max_j \operatorname{cor}(e^r_j, e_k)$.
+3. Set $\hat h_k = e^r_{j^*}$, where $j^*$ is the smallest index maximizing the **absolute** correlation $\lvert\operatorname{cor}(e^r_j, e_k)\rvert$
+   over the eigengenes $e^r_j$ with nonzero singular value. Singular vectors are determined only up to sign, and the absolute value makes
+   the choice of $j^*$, hence the span of $\hat h_k$, independent of those signs; the sign of $\hat h_k$ itself is immaterial, since only
+   its span enters the final fit. (The source's "most correlated" eigengene leaves orientation unspecified; with signed correlation,
+   reversing the target eigengene would change which eigengene is selected.)
 
 Finally fit $x_{ij} = \mu_i + f_i(y_j) + \sum_{k=1}^{\hat K} \lambda_{ki} \hat h_{kj} + e_{ij}$ with gene-specific coefficients $\lambda_{ki}$ and
 test the primary variable in this model.
@@ -23,6 +27,7 @@ test the primary variable in this model.
 ## Depends on
 
 - [Surrogate variable model of expression heterogeneity](surrogate-variable-model-of-expression-heterogeneity.md)
+- [Real singular value decomposition](../../../LinearAlgebra/matrix-decompositions/singular-value-decomposition/singular-value-decomposition-theorem/real-singular-value-decomposition.md)
 
 ## Expansion
 

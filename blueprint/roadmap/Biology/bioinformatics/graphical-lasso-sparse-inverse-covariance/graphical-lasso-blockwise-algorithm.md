@@ -14,7 +14,7 @@ and then $\theta_{12} = -\theta_{22}\beta$ with $\theta_{22} = 1/(w_{22} - w_{12
 
 $$\hat\beta_j \leftarrow \frac{\mathcal S\bigl(u_j - \sum_{k \ne j} V_{kj}\hat\beta_k,\ \rho\bigr)}{V_{jj}}, \qquad V = W_{11},\ u = s_{12},\ \mathcal S(x, t) = \operatorname{sign}(x)(|x| - t)_+,$$
 
-then set $w_{12} = W_{11}\hat\beta$; stop when $W$ stabilizes, and recover $\hat\Theta$ column by column from the stored $\beta$'s. If $W_{11}$ is replaced by $S_{11}$, the inner problem is the lasso regression of variable $p$ on the others (the Meinshausen–Bühlmann approximation); with $\rho = 0$ and $W = S$ one sweep computes $S^{-1}$ by partitioned inversion.
+then set $w_{12} = W_{11}\hat\beta$; stop when $W$ stabilizes, and recover $\hat\Theta$ column by column from the stored $\beta$'s. If $W_{11}$ is replaced by $S_{11}$, the inner problem is the lasso regression of variable $p$ on the others (the Meinshausen–Bühlmann approximation); with $\rho = 0$, if moreover $S \succ 0$ (which fails, for example, for a centred sample with $p \ge N$, whose rank is at most $N - 1$), then $W = S$ and one sweep computes $S^{-1}$ by partitioned inversion. The case $\rho > 0$ needs no such assumption: $W = S + \rho I$ is positive definite for every $S \succeq 0$.
 
 ## Expansion
 

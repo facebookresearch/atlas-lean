@@ -16,7 +16,7 @@ that is, posttest odds equal pretest odds times $\mathrm{LR}(X)$.
 - if $h_i$ is an ancestor of annotating terms: $\Pr(h_i \mid D) = \max\{ f_j^D : h_i \in \operatorname{anc}(h_j),\ h_j \in \operatorname{annot}(D) \}$, by the true-path rule;
 - if $h_i$ is a direct child of annotating terms: $\Pr(h_i \mid D) = |\operatorname{child}(h_j)|^{-1} \max\{ f_j^D : h_i \in \operatorname{child}(h_j),\ h_j \in \operatorname{annot}(D) \}$, a penalized partial match.
 
-The denominator is the background frequency of $h_i$ across all annotated diseases. Ranking candidate diagnoses by $\Pr(D \mid X)$ gives a calibrated probability, and the factor $\mathrm{LR}(h_i)$ shows how much each observed abnormality contributes.
+The exact denominator $\Pr(h_i \mid \neg D)$ averages over the diseases other than the candidate $D$; the source approximates it by the background frequency of $h_i$ across all annotated diseases, $D$ included, and combines the phenotype likelihood ratios by multiplication, which treats the terms as conditionally independent given $D$ and given $\neg D$ although ontology terms of one patient are typically dependent. The resulting $\Pr(D \mid X)$ is therefore a model-based score for ranking candidate diagnoses, not a calibrated probability; the Bayes identity above is exact only for the true $\Pr(X \mid D)$ and $\Pr(X \mid \neg D)$. The factor $\mathrm{LR}(h_i)$ shows how much each observed abnormality contributes to the score.
 
 ## Depends on
 
@@ -28,4 +28,4 @@ Bayes' theorem gives $\Pr(D \mid X)/\Pr(\neg D \mid X) = \{\Pr(D)/\Pr(\neg D)\} 
 
 ## Sources
 
-- P. N. Robinson, V. Ravanmehr, J. O. B. Jacobsen et al., *Interpretable clinical genomics with a likelihood ratio paradigm*, Am. J. Hum. Genet. 107 (2020), 403–417, <https://doi.org/10.1016/j.ajhg.2020.06.021>, PMCID PMC7477017, Material and Methods: Equations 1–4 (likelihood ratio, multiple tests, posttest probability), Equation 5 (phenotype LR), Equations 6–7 (ancestor and child cases).
+- P. N. Robinson, V. Ravanmehr, J. O. B. Jacobsen et al., *Interpretable clinical genomics with a likelihood ratio paradigm*, Am. J. Hum. Genet. 107 (2020), 403–417, <https://doi.org/10.1016/j.ajhg.2020.06.021>, PMCID PMC7477017, Material and Methods: Equations 1–4 (likelihood ratio, multiple tests, posttest probability), Equation 5 (phenotype LR), Equations 6–7 (ancestor and child cases), Equations 8–9 (background denominator and combination of likelihood ratios) and the Limitations section of the Discussion (both approximations).

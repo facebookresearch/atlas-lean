@@ -9,16 +9,15 @@ where $D_i > 0$, $\gamma_{ij} \in \mathbb{R}$ ($\gamma_{ij} > 0$: species $i$ mo
 detection kernel $K$ is symmetric ($K(x) = K(-x)$), non-negative, with $\|K\|_{L^1} = 1$. The masses $p_i = \int_{\mathbb T} u_i\,dx$ are
 conserved, so $\bar u = (\bar u_1, \dots, \bar u_N)$, $\bar u_i = p_i/|\mathbb T|$, is a homogeneous steady state.
 
-**Proposition (dispersion relation).** Perturbations $u - \bar u = u^{(0)} e^{\lambda t + i\kappa\cdot x}$ with wave vector
-$\kappa = (2\pi q_1/L_1, \dots, 2\pi q_n/L_n)$, $q_h \in \mathbb N$, satisfy to first order $\lambda(\kappa)\, w = |\kappa|^2 \mathcal L(\kappa)\, w$ with
+**Proposition (dispersion relation).** The admissible wave vectors are $\kappa = (2\pi q_1/L_1, \dots, 2\pi q_n/L_n)$ with $q = (q_1, \dots, q_n) \in \mathbb Z^n \setminus \{0\}$; the coordinates $q_h$ may have mixed signs, and $\kappa$ and $-\kappa$ give the same real modes, so it suffices to take one representative of each pair $\{q, -q\}$ (but not only $q \in \mathbb N^n$). Perturbations $u - \bar u = w\, e^{\lambda t + i\kappa\cdot x}$ satisfy to first order $\lambda(\kappa)\, w = |\kappa|^2 \mathcal L(\kappa)\, w$ with
 
 $$\mathcal L(\kappa)_{ii} = -D_i - \gamma_{ii}\bar u_i \hat K(\kappa), \qquad \mathcal L(\kappa)_{ij} = -\gamma_{ij}\bar u_i \hat K(\kappa) \quad (i \ne j),$$
 
-where $\hat K$ is the Fourier transform of $K$. The state $\bar u$ is linearly unstable iff some admissible $\kappa \ne 0$ gives
+where $\hat K(\kappa) = \int_{\mathbb T} K(x) e^{-i\kappa\cdot x}\,dx$ is the Fourier coefficient of $K$, real and even in $\kappa$ because $K$ is even. The state $\bar u$ is linearly unstable iff some admissible $\kappa \ne 0$ gives
 $\mathcal L(\kappa)$ an eigenvalue with positive real part. If $\gamma_{ij} = \gamma_{ji}$ and all $\bar u_i$ are equal, $\mathcal L(\kappa)$ is
 symmetric and its eigenvalues are real.
 
-**Two species.** For $N = 2$ the eigenvalues are
+**Two species.** For $N = 2$ the eigenvalues of $\mathcal L(\kappa)$ are
 
 $$\lambda^\pm = \tfrac12\Bigl[ -(\gamma_{11}\bar u_1 + \gamma_{22}\bar u_2)\hat K - (D_1 + D_2) \pm \sqrt{\Delta} \Bigr],$$
 
