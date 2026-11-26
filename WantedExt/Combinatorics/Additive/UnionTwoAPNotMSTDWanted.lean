@@ -16,6 +16,8 @@ public import MathlibExt.Combinatorics.Additive.HalfIntegerProgressions
 public import MathlibExt.Combinatorics.Additive.IrrationalStartProgressions
 public import MathlibExt.Combinatorics.Additive.IrrationalStepProgressions
 public import MathlibExt.Combinatorics.Additive.UnionTwoAPNotMSTD
+public import MathlibExt.Combinatorics.Additive.UnionTwoAPNotMSTDNotIsMSTDSetIntervalAPOverlapHalf
+public import MathlibExt.Combinatorics.Additive.UnionTwoAPNotMSTDNotIsMSTDSetIntervalAPOverlapLargeDiff
 
 /-!
 # The union of two arithmetic progressions is not an MSTD set
@@ -23,7 +25,7 @@ public import MathlibExt.Combinatorics.Additive.UnionTwoAPNotMSTD
 Statements from Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic
 Progressions with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026),
 Article A58. The statement `MetaMathlibExt.not_isMSTDSet_intervalAP_overlap_half` is in
-`MathlibExt.Combinatorics.Additive.UnionTwoAPNotMSTD`.
+`MathlibExt.Combinatorics.Additive.UnionTwoAPNotMSTDNotIsMSTDSetIntervalAPOverlapHalf`.
 
 A finite set `A ⊆ ℝ` is an MSTD (more sums than differences) set when `|A + A| > |A - A|`. The
 paper normalizes the first progression to `I_n = {0, 1, …, n - 1}` and the second to
@@ -53,19 +55,6 @@ public theorem_wanted not_isMSTDSet_union_two_ap (a b d₁ d₂ : ℝ) (m₁ m�
     (hd₂ : 0 < d₂)
     (hlt : a + m₁ * d₁ < b) :
     ¬ IsMSTDSet (realAPSet a m₁ d₁ ∪ realAPSet b m₂ d₂)
-
-/-- **Interval plus integer progression starting in $[n + 1, 2n - 2]$ is not MSTD.** Let
-$I_n = \{0, 1, \dots, n - 1\}$ and $J(x, m, d) = \{x + id : i = 0, 1, \dots, m\}$, as finite
-sets of reals. For natural numbers $n \ge 3$, $m \ge 2$, $d \ge 2$ and $x$ with
-$n + 1 \le x \le 2n - 2$, the set $I_n \cup J(x, m, d)$ is not an MSTD set.
-
-Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
-with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Lemma 1
-(`integers-2026-A58-lem-1`). -/
-public theorem_wanted not_isMSTDSet_intervalAP_nat_of_le_two_mul_sub_two (n m d x : ℕ) (hn : 3 ≤ n)
-    (hm : 2 ≤ m) (hd : 2 ≤ d)
-    (hx₁ : n + 1 ≤ x) (hx₂ : x ≤ 2 * n - 2) :
-    ¬ IsMSTDSet (realIntervalSet n ∪ realAPSet (x : ℝ) m (d : ℝ))
 
 /-- **Interval plus integer progression starting at $2n - 1$ or later is not MSTD.** Let
 $I_n = \{0, 1, \dots, n - 1\}$ and $J(x, m, d) = \{x + id : i = 0, 1, \dots, m\}$, as finite
@@ -238,19 +227,6 @@ public theorem_wanted not_isMSTDSet_intervalAP_overlap_of_den_ne_two (n m d : �
     (hxform : Irrational x ∨ ∃ s p q : ℕ, 0 < p ∧ p < q ∧ q ≠ 2 ∧ Nat.Coprime p q ∧
       x = s + (p : ℝ) / q)
     (hx₀ : 0 < x) (hx₁ : x < (n : ℝ) - 1) :
-    ¬ IsMSTDSet (realIntervalSet n ∪ realAPSet x m (d : ℝ))
-
-/-- **Interval plus progression with non-integer start and integer step at least $n$ is not MSTD.**
-Let $n \ge 3$, $m \ge 2$ and $d \ge n$ be natural numbers, and let $x$ be a real number with
-$0 < x < n - 1$ that is not a natural number. Write $I_n = \{0, 1, \dots, n - 1\}$ and
-$J(x, m, d) = \{x + id : i = 0, 1, \dots, m\}$. Then $I_n \cup J(x, m, d)$ is not an MSTD set.
-
-Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
-with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Lemma 17
-(`integers-2026-A58-lem-17`). -/
-public theorem_wanted not_isMSTDSet_intervalAP_overlap_large_diff (n m d : ℕ) (x : ℝ) (hn : 3 ≤ n)
-    (hm : 2 ≤ m) (hd : n ≤ d)
-    (hxN : x ∉ Set.range ((↑) : ℕ → ℝ)) (hx₀ : 0 < x) (hx₁ : x < (n : ℝ) - 1) :
     ¬ IsMSTDSet (realIntervalSet n ∪ realAPSet x m (d : ℝ))
 
 /-- **An interval and an overlapping progression with incompatible start and step are not MSTD.**

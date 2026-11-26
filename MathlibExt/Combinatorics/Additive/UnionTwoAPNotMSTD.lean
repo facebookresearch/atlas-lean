@@ -10,279 +10,363 @@ module
 
 public import MathlibExt.Combinatorics.Additive.IrrationalStepProgressions
 import Mathlib.Data.Int.Interval
-import Mathlib.Tactic.LinearCombination
-import Mathlib.Tactic.Linarith
 
 /-!
-# An integer interval and a half-integer arithmetic progression
+# The union of an interval and an integer progression is not MSTD
+
+Counting sums and differences of `I_n ∪ J(x, m, d)` in the integer lattice.
 -/
 
 namespace MetaMathlibExt
 
 open scoped Pointwise
 
-private theorem interval_coverage (N d : ℤ) (m : ℕ)
-    (hd : d ≤ N) (q : ℤ) (hq : 0 ≤ q ∧ q ≤ N + m * d) :
-    ∃ i j : ℤ, (0 ≤ i ∧ i ≤ N) ∧ (0 ≤ j ∧ j ≤ m) ∧ q = i + j * d := by
-  induction m generalizing q with
-  | zero =>
-    refine ⟨q, 0, ?_, ?_, ?_⟩ <;> simp_all
-  | succ m ih =>
-    by_cases hq' : q ≤ N + m * d
-    · obtain ⟨i, j, hi, hj, he⟩ := ih q ⟨hq.1, hq'⟩
-      exact ⟨i, j, hi, ⟨hj.1, by exact_mod_cast (show j ≤ (m : ℤ) + 1 by omega)⟩, he⟩
-    · refine ⟨q - (m + 1) * d, m + 1, ?_, ?_, ?_⟩
-      · push_cast at hq ⊢
-        rw [add_mul, one_mul] at hq ⊢
-        omega
-      · push_cast; omega
-      · ring
+private def latI (n : ℕ) : Finset ℤ := Finset.Icc 0 ((n : ℤ) - 1)
 
-private theorem shifted_union_card (N m d a : ℤ) :
-    let E := Finset.Icc (-N) N ∪ (Finset.Icc (-m) m).image (fun k => k * d)
-    let F := Finset.Icc 0 (2 * N) ∪
-      (Finset.Icc 0 (2 * m)).image (fun k => a + k * d)
-    (F.card : ℤ) ≤ E.card + |a + m * d - N| := by
-  classical
-  intro E F
-  let r := a + m * d - N
-  have hinj : Function.Injective (fun z : ℤ => z - (a + m * d)) := by
-    intro i j h; exact sub_left_inj.mp h
-  by_cases hr : 0 ≤ r
-  · let B := Finset.Icc (-N - r) (-N - 1)
-    have hsub : F.image (fun z => z - (a + m * d)) ⊆ E ∪ B := by
-      intro z hz
-      obtain ⟨k, hk, rfl⟩ := Finset.mem_image.mp hz
-      rcases Finset.mem_union.mp hk with hk | hk
-      · simp only [Finset.mem_Icc] at hk
-        simp only [E, B, Finset.mem_union, Finset.mem_Icc]
-        dsimp [r] at hr ⊢
-        by_cases h : -N ≤ k - (a + m * d)
-        · exact Or.inl (Or.inl ⟨h, by omega⟩)
-        · exact Or.inr ⟨by omega, by omega⟩
-      · obtain ⟨j, hj, rfl⟩ := Finset.mem_image.mp hk
-        apply Finset.mem_union_left
-        apply Finset.mem_union_right
-        refine Finset.mem_image.mpr ⟨j - m, ?_, ?_⟩
-        · simp only [Finset.mem_Icc] at hj ⊢; omega
-        · ring
-    have hc := Finset.card_le_card hsub
-    rw [Finset.card_image_of_injective _ hinj] at hc
-    have hu := Finset.card_union_le E B
-    have hb : (B.card : ℤ) = r := by
-      simp only [B, Int.card_Icc]
-      omega
-    rw [abs_of_nonneg hr]
-    exact_mod_cast (show (F.card : ℤ) ≤ E.card + r by omega)
-  · let B := Finset.Icc (N + 1) (N - r)
-    have hsub : F.image (fun z => z - (a + m * d)) ⊆ E ∪ B := by
-      intro z hz
-      obtain ⟨k, hk, rfl⟩ := Finset.mem_image.mp hz
-      rcases Finset.mem_union.mp hk with hk | hk
-      · simp only [Finset.mem_Icc] at hk
-        simp only [E, B, Finset.mem_union, Finset.mem_Icc]
-        dsimp [r] at hr ⊢
-        by_cases h : k - (a + m * d) ≤ N
-        · exact Or.inl (Or.inl ⟨by omega, h⟩)
-        · exact Or.inr ⟨by omega, by omega⟩
-      · obtain ⟨j, hj, rfl⟩ := Finset.mem_image.mp hk
-        apply Finset.mem_union_left
-        apply Finset.mem_union_right
-        refine Finset.mem_image.mpr ⟨j - m, ?_, ?_⟩
-        · simp only [Finset.mem_Icc] at hj ⊢; omega
-        · ring
-    have hc := Finset.card_le_card hsub
-    rw [Finset.card_image_of_injective _ hinj] at hc
-    have hu := Finset.card_union_le E B
-    have hb : (B.card : ℤ) = -r := by
-      simp only [B, Int.card_Icc]
-      omega
-    rw [abs_of_nonpos (show r ≤ 0 by omega)]
-    exact_mod_cast (show (F.card : ℤ) ≤ E.card - r by omega)
+private def latJ (m d x : ℕ) : Finset ℤ :=
+  (Finset.range (m + 1)).image fun i : ℕ => (x : ℤ) + (i : ℤ) * (d : ℤ)
 
-private def integerModel (N d s : ℤ) (m : ℕ) : Finset ℤ :=
-  (Finset.Icc 0 N).image (fun i => 2 * i) ∪
-    (Finset.Icc 0 (m : ℤ)).image (fun j => 2 * s + 1 + 2 * (j * d))
+private def latC (n : ℕ) : Finset ℤ := Finset.Icc 0 (2 * (n : ℤ) - 2)
 
-private theorem integerModel_card (N d s : ℤ) (m : ℕ) (hm : 0 ≤ (m : ℤ))
-    (hd : 0 ≤ d) (hdN : d ≤ N) (hs : 0 ≤ s) (hsN : s < N) :
-    let T := integerModel N d s m
-    (T + T).card ≤ (T - T).card := by
-  classical
-  let T := integerModel N d s m
-  change (T + T).card ≤ (T - T).card
-  let t := (m : ℤ) * d
-  let a := 2 * s + 1
-  let E := Finset.Icc (-N) N ∪
-    (Finset.Icc (-(m : ℤ)) (m : ℤ)).image (fun k => k * d)
-  let F := Finset.Icc 0 (2 * N) ∪
-    (Finset.Icc 0 (2 * (m : ℤ))).image (fun k => a + k * d)
-  let C := Finset.Icc s (s + N + t)
-  let h := max (s + t) (N - s - 1)
-  let H := Finset.Icc (-h - 1) h
-  have ht : 0 ≤ t := mul_nonneg hm hd
-  have hinj₀ : Function.Injective (fun k : ℤ => 2 * k) := by
-    intro i j hij; dsimp at hij; omega
-  have hinj₁ : Function.Injective (fun k : ℤ => 2 * k + 1) := by
-    intro i j hij; dsimp at hij; omega
-  have hsum : T + T ⊆ F.image (fun k => 2 * k) ∪ C.image (fun k => 2 * k + 1) := by
-    intro z hz
-    obtain ⟨u, hu, v, hv, rfl⟩ := Finset.mem_add.mp hz
-    simp only [T, integerModel, Finset.mem_union, Finset.mem_image,
-      Finset.mem_Icc] at hu hv
-    rcases hu with ⟨i, hi, rfl⟩ | ⟨i, hi, rfl⟩ <;>
-      rcases hv with ⟨j, hj, rfl⟩ | ⟨j, hj, rfl⟩
-    · apply Finset.mem_union_left
-      refine Finset.mem_image.mpr ⟨i + j, ?_, by ring⟩
-      exact Finset.mem_union_left _ (Finset.mem_Icc.mpr ⟨by omega, by omega⟩)
-    · apply Finset.mem_union_right
-      refine Finset.mem_image.mpr ⟨s + i + j * d, ?_, by ring⟩
-      have hj₀ := mul_nonneg hj.1 hd
-      have hj₁ := mul_le_mul_of_nonneg_right hj.2 hd
-      exact Finset.mem_Icc.mpr ⟨by omega, by dsimp [C, t]; omega⟩
-    · apply Finset.mem_union_right
-      refine Finset.mem_image.mpr ⟨s + j + i * d, ?_, by ring⟩
-      have hi₀ := mul_nonneg hi.1 hd
-      have hi₁ := mul_le_mul_of_nonneg_right hi.2 hd
-      exact Finset.mem_Icc.mpr ⟨by omega, by dsimp [C, t]; omega⟩
-    · apply Finset.mem_union_left
-      refine Finset.mem_image.mpr ⟨a + (i + j) * d, ?_, ?_⟩
-      · apply Finset.mem_union_right
-        refine Finset.mem_image.mpr ⟨i + j, Finset.mem_Icc.mpr ⟨by omega, by omega⟩, rfl⟩
-      · dsimp [a]; ring
-  have memI (i : ℤ) (hi : 0 ≤ i ∧ i ≤ N) : 2 * i ∈ T :=
-    Finset.mem_union_left _ (Finset.mem_image.mpr ⟨i, Finset.mem_Icc.mpr hi, rfl⟩)
-  have memP (j : ℤ) (hj : 0 ≤ j ∧ j ≤ m) : a + 2 * (j * d) ∈ T :=
-    Finset.mem_union_right _ (Finset.mem_image.mpr ⟨j, Finset.mem_Icc.mpr hj, rfl⟩)
-  have hdiff₀ : E.image (fun k => 2 * k) ⊆ T - T := by
-    intro z hz
-    obtain ⟨k, hk, rfl⟩ := Finset.mem_image.mp hz
-    rcases Finset.mem_union.mp hk with hk | hk
-    · have hk' := Finset.mem_Icc.mp hk
-      refine Finset.mem_sub.mpr ⟨_, memI (max k 0) ⟨by omega, by omega⟩,
-        _, memI (max (-k) 0) ⟨by omega, by omega⟩, ?_⟩
-      omega
-    · obtain ⟨j, hj, rfl⟩ := Finset.mem_image.mp hk
-      have hj' := Finset.mem_Icc.mp hj
-      refine Finset.mem_sub.mpr ⟨_, memP (max j 0) ⟨by omega, by omega⟩,
-        _, memP (max (-j) 0) ⟨by omega, by omega⟩, ?_⟩
-      have he : max j 0 - max (-j) 0 = j := by omega
-      linear_combination 2 * d * he
-  have cross (k : ℤ) (hk : s - N ≤ k ∧ k ≤ s + t) : 2 * k + 1 ∈ T - T := by
-    obtain ⟨i, j, hi, hj, he⟩ := interval_coverage N d m hdN
-      (k - s + N) ⟨by omega, by dsimp [t] at hk; omega⟩
-    refine Finset.mem_sub.mpr ⟨_, memP j hj, _, memI (N - i) ⟨by omega, by omega⟩, ?_⟩
-    dsimp [a]
-    linear_combination -2 * he
-  have hdiff₁ : H.image (fun k => 2 * k + 1) ⊆ T - T := by
-    intro z hz
-    obtain ⟨k, hk, rfl⟩ := Finset.mem_image.mp hz
-    have hk' := Finset.mem_Icc.mp hk
-    by_cases hc : s - N ≤ k ∧ k ≤ s + t
-    · exact cross k hc
-    · have hn : s - N ≤ -k - 1 ∧ -k - 1 ≤ s + t := by
-        dsimp [H, h] at hk'
-        omega
-      obtain ⟨u, hu, v, hv, he⟩ := Finset.mem_sub.mp (cross (-k - 1) hn)
-      exact Finset.mem_sub.mpr ⟨v, hv, u, hu, by omega⟩
-  have hdisj : Disjoint (E.image (fun k => 2 * k)) (H.image (fun k => 2 * k + 1)) := by
-    rw [Finset.disjoint_left]
-    intro z hz hz'
-    obtain ⟨i, _, hi⟩ := Finset.mem_image.mp hz
-    obtain ⟨j, _, hj⟩ := Finset.mem_image.mp hz'
+private def latE (n m d x : ℕ) : Finset ℤ :=
+  (Finset.range (m + 1)).biUnion fun i : ℕ =>
+    Finset.Icc ((x : ℤ) + (i : ℤ) * (d : ℤ)) ((x : ℤ) + (i : ℤ) * (d : ℤ) + (n : ℤ) - 1)
+
+private def latK (m d x : ℕ) : Finset ℤ :=
+  (Finset.range (2 * m + 1)).image fun k : ℕ => 2 * (x : ℤ) + (k : ℤ) * (d : ℤ)
+
+private def latF (n m d x : ℕ) : Finset ℤ :=
+  (Finset.range (m + 1)).biUnion fun i : ℕ =>
+    Finset.Icc ((x : ℤ) + (i : ℤ) * (d : ℤ) - (n : ℤ) + 1) ((x : ℤ) + (i : ℤ) * (d : ℤ))
+
+private def latG (n m d x : ℕ) : Finset ℤ :=
+  (latF n m d x).filter fun t => (n : ℤ) ≤ t
+
+private def latCp (n : ℕ) : Finset ℤ := Finset.Icc (-((n : ℤ) - 1)) ((n : ℤ) - 1)
+
+private def latP (m d x : ℕ) : Finset ℤ :=
+  (Finset.range (m + 1)).image fun i : ℕ => (x : ℤ) + (i : ℤ) * (d : ℤ) - 1
+
+private def latQ (m d x : ℕ) : Finset ℤ :=
+  (Finset.range (m + 1)).image fun i : ℕ => (x : ℤ) + (i : ℤ) * (d : ℤ)
+
+-- The interval `I_n` is the integer image of `Icc 0 (n - 1)`.
+private theorem image_latI (n : ℕ) :
+    (latI n).image ((↑) : ℤ → ℝ) = realIntervalSet n := by
+  ext z
+  simp only [latI, realIntervalSet, Finset.mem_image, Finset.mem_Icc, Finset.mem_range]
+  constructor
+  · rintro ⟨t, ⟨h0, h1⟩, rfl⟩
+    have htn : ((t.toNat : ℕ) : ℤ) = t := Int.toNat_of_nonneg h0
+    refine ⟨t.toNat, by omega, ?_⟩
+    rw [← Int.cast_natCast, htn]
+  · rintro ⟨i, himem, rfl⟩
+    exact ⟨(i : ℤ), ⟨by omega, by omega⟩, Int.cast_natCast i⟩
+
+-- The progression `J` is the integer image of its lattice points.
+private theorem image_latJ (m d x : ℕ) :
+    (latJ m d x).image ((↑) : ℤ → ℝ) = realAPSet (x : ℝ) m (d : ℝ) := by
+  ext z
+  simp only [latJ, realAPSet, Finset.mem_image, Finset.mem_range]
+  constructor
+  · rintro ⟨t, ⟨j, hjmem, rfl⟩, rfl⟩
+    exact ⟨j, hjmem, by push_cast; ring⟩
+  · rintro ⟨j, hjmem, rfl⟩
+    exact ⟨(x : ℤ) + (j : ℤ) * (d : ℤ), ⟨j, hjmem, rfl⟩, by push_cast; ring⟩
+
+private theorem image_sub_intCast (s t : Finset ℤ) :
+    (s - t).image ((↑) : ℤ → ℝ) = s.image ((↑) : ℤ → ℝ) - t.image ((↑) : ℤ → ℝ) := by
+  ext z
+  simp only [Finset.mem_image, Finset.mem_sub]
+  constructor
+  · rintro ⟨u, ⟨a, ha, b, hb, rfl⟩, rfl⟩
+    exact ⟨(a : ℝ), ⟨a, ha, rfl⟩, (b : ℝ), ⟨b, hb, rfl⟩, by push_cast; ring⟩
+  · rintro ⟨u, ⟨a, ha, rfl⟩, v, ⟨b, hb, rfl⟩, rfl⟩
+    exact ⟨a - b, ⟨a, ha, b, hb, rfl⟩, by push_cast; ring⟩
+
+-- Every sum lies in the initial interval, a cross block, or a pure `J + J` sum.
+private theorem sum_subset (n m d x : ℕ) :
+    (latI n ∪ latJ m d x) + (latI n ∪ latJ m d x)
+      ⊆ latC n ∪ latE n m d x ∪ latK m d x := by
+  intro s hs
+  simp only [Finset.mem_add, Finset.mem_union] at hs
+  obtain ⟨a, ha, b, hb, rfl⟩ := hs
+  simp only [latI, latJ, Finset.mem_Icc, Finset.mem_image, Finset.mem_range] at ha hb
+  rcases ha with ha | ⟨i, hi, rfl⟩ <;> rcases hb with hb | ⟨j, hj, rfl⟩
+  · simp only [Finset.mem_union, latC, Finset.mem_Icc]
+    exact Or.inl (Or.inl ⟨by omega, by omega⟩)
+  · simp only [Finset.mem_union, latE, Finset.mem_biUnion, Finset.mem_range,
+      Finset.mem_Icc]
+    exact Or.inl (Or.inr ⟨j, hj, by omega, by omega⟩)
+  · simp only [Finset.mem_union, latE, Finset.mem_biUnion, Finset.mem_range,
+      Finset.mem_Icc]
+    exact Or.inl (Or.inr ⟨i, hi, by omega, by omega⟩)
+  · simp only [Finset.mem_union, latK, Finset.mem_image, Finset.mem_range]
+    refine Or.inr ⟨i + j, by omega, ?_⟩
+    push_cast
+    ring
+
+private theorem card_latC (n : ℕ) (hn : 3 ≤ n) : (latC n).card = 2 * n - 1 := by
+  simp only [latC, Int.card_Icc]
+  omega
+
+private theorem card_latK_le (m d x : ℕ) : (latK m d x).card ≤ 2 * m + 1 := by
+  have h : (latK m d x).card ≤ (Finset.range (2 * m + 1)).card := by
+    simp only [latK]
+    exact Finset.card_image_le
+  rwa [Finset.card_range] at h
+
+-- Shifting the large cross differences by `n - 1` gives the large cross sums.
+private theorem image_latG (n m d x : ℕ) :
+    (latG n m d x).image (fun t : ℤ => t + ((n : ℤ) - 1))
+      = (latE n m d x).filter fun s => 2 * (n : ℤ) - 1 ≤ s := by
+  ext s
+  simp only [latG, latF, latE, Finset.mem_image, Finset.mem_filter, Finset.mem_biUnion,
+    Finset.mem_range, Finset.mem_Icc]
+  constructor
+  · rintro ⟨t, htmem, hts⟩
+    obtain ⟨⟨i, hi, h1, h2⟩, h3⟩ := htmem
+    subst s
+    exact ⟨⟨i, hi, by omega, by omega⟩, by omega⟩
+  · rintro ⟨⟨i, hi, h1, h2⟩, h3⟩
+    refine ⟨s - ((n : ℤ) - 1), ⟨⟨i, hi, by omega, by omega⟩, by omega⟩, ?_⟩
     omega
-  have hsCard := Finset.card_le_card hsum
-  have hsUnion := Finset.card_union_le (F.image (fun k => 2 * k))
-    (C.image (fun k => 2 * k + 1))
-  rw [Finset.card_image_of_injective _ hinj₀,
-    Finset.card_image_of_injective _ hinj₁] at hsUnion
-  have hdCard := Finset.card_le_card (Finset.union_subset hdiff₀ hdiff₁)
-  rw [Finset.card_union_of_disjoint hdisj, Finset.card_image_of_injective _ hinj₀,
-    Finset.card_image_of_injective _ hinj₁] at hdCard
-  have hF := shifted_union_card N (m : ℤ) d a
-  change (F.card : ℤ) ≤ E.card + |a + t - N| at hF
-  have hC : (C.card : ℤ) = N + t + 1 := by
-    simp only [C, Int.card_Icc]; omega
-  have hH : (H.card : ℤ) = N + t + 1 + |a + t - N| := by
-    simp only [H, Int.card_Icc]
-    dsimp [h, a]
-    rw [abs_eq_max_neg]
+
+private theorem sdiff_latE_subset (n m d x : ℕ) :
+    latE n m d x \ latC n ⊆ (latE n m d x).filter fun s => 2 * (n : ℤ) - 1 ≤ s := by
+  intro s hs
+  simp only [Finset.mem_sdiff, Finset.mem_filter] at hs ⊢
+  obtain ⟨hsE, hsC⟩ := hs
+  refine ⟨hsE, ?_⟩
+  simp only [latE, Finset.mem_biUnion, Finset.mem_range, Finset.mem_Icc] at hsE
+  simp only [latC, Finset.mem_Icc] at hsC
+  obtain ⟨i, hi, h1, h2⟩ := hsE
+  have hnn : (0 : ℤ) ≤ (x : ℤ) + (i : ℤ) * (d : ℤ) := by positivity
+  omega
+
+-- The central interval lies in `I - I`.
+private theorem central_subset (n m d x : ℕ) :
+    latCp n ⊆ (latI n ∪ latJ m d x) - (latI n ∪ latJ m d x) := by
+  intro t ht
+  simp only [latCp, Finset.mem_Icc] at ht
+  refine Finset.mem_sub.mpr ⟨max t 0, Finset.mem_union_left _ ?_, max (-t) 0,
+    Finset.mem_union_left _ ?_, by omega⟩
+  · simp only [latI, Finset.mem_Icc]
+    omega
+  · simp only [latI, Finset.mem_Icc]
+    omega
+
+-- Each cross block lies in `J - I`.
+private theorem latF_subset (n m d x : ℕ) :
+    latF n m d x ⊆ (latI n ∪ latJ m d x) - (latI n ∪ latJ m d x) := by
+  intro t ht
+  simp only [latF, Finset.mem_biUnion, Finset.mem_range, Finset.mem_Icc] at ht
+  obtain ⟨i, hi, h1, h2⟩ := ht
+  refine Finset.mem_sub.mpr ⟨(x : ℤ) + (i : ℤ) * (d : ℤ), Finset.mem_union_right _ ?_,
+    (x : ℤ) + (i : ℤ) * (d : ℤ) - t, Finset.mem_union_left _ ?_, by omega⟩
+  · simp only [latJ, Finset.mem_image, Finset.mem_range]
+    exact ⟨i, hi, rfl⟩
+  · simp only [latI, Finset.mem_Icc]
+    omega
+
+private theorem latG_subset (n m d x : ℕ) :
+    latG n m d x ⊆ (latI n ∪ latJ m d x) - (latI n ∪ latJ m d x) := by
+  intro t ht
+  simp only [latG, Finset.mem_filter] at ht
+  exact latF_subset n m d x ht.1
+
+private theorem neg_latG_subset (n m d x : ℕ) :
+    (latG n m d x).image Neg.neg
+      ⊆ (latI n ∪ latJ m d x) - (latI n ∪ latJ m d x) := by
+  intro s hs
+  simp only [Finset.mem_image] at hs
+  obtain ⟨t, ht, rfl⟩ := hs
+  obtain ⟨a, ha, b, hb, hab⟩ := Finset.mem_sub.mp (latG_subset n m d x ht)
+  exact Finset.mem_sub.mpr ⟨b, hb, a, ha, by omega⟩
+
+private theorem disjoint_central_latG (n m d x : ℕ) :
+    Disjoint (latCp n) (latG n m d x) := by
+  rw [Finset.disjoint_left]
+  intro t htC htG
+  simp only [latCp, Finset.mem_Icc] at htC
+  simp only [latG, Finset.mem_filter] at htG
+  omega
+
+private theorem disjoint_central_neg (n m d x : ℕ) :
+    Disjoint (latCp n) ((latG n m d x).image Neg.neg) := by
+  rw [Finset.disjoint_left]
+  intro t htC htG
+  simp only [latCp, Finset.mem_Icc] at htC
+  simp only [Finset.mem_image, latG, Finset.mem_filter] at htG
+  obtain ⟨u, ⟨huF, huN⟩, rfl⟩ := htG
+  omega
+
+private theorem disjoint_latG_neg (n m d x : ℕ) (hn : 3 ≤ n) :
+    Disjoint (latG n m d x) ((latG n m d x).image Neg.neg) := by
+  rw [Finset.disjoint_left]
+  intro t htG1 htG2
+  simp only [latG, Finset.mem_filter] at htG1
+  simp only [Finset.mem_image, latG, Finset.mem_filter] at htG2
+  obtain ⟨u, ⟨huF, huN⟩, rfl⟩ := htG2
+  omega
+
+private theorem card_latCp (n : ℕ) (hn : 3 ≤ n) : (latCp n).card = 2 * n - 1 := by
+  simp only [latCp, Int.card_Icc]
+  omega
+
+private theorem latP_subset (n m d x : ℕ) (hn : 3 ≤ n) (hx₁ : n + 1 ≤ x) :
+    latP m d x ⊆ latG n m d x := by
+  intro p hp
+  simp only [latP, Finset.mem_image, Finset.mem_range] at hp
+  obtain ⟨i, hi, rfl⟩ := hp
+  have hnn : (0 : ℤ) ≤ (i : ℤ) * (d : ℤ) := by positivity
+  simp only [latG, latF, Finset.mem_filter, Finset.mem_biUnion, Finset.mem_range,
+    Finset.mem_Icc]
+  refine ⟨⟨i, hi, by omega, by omega⟩, by omega⟩
+
+private theorem latQ_subset (n m d x : ℕ) (hn : 3 ≤ n) (hx₁ : n + 1 ≤ x) :
+    latQ m d x ⊆ latG n m d x := by
+  intro p hp
+  simp only [latQ, Finset.mem_image, Finset.mem_range] at hp
+  obtain ⟨i, hi, rfl⟩ := hp
+  have hnn : (0 : ℤ) ≤ (i : ℤ) * (d : ℤ) := by positivity
+  simp only [latG, latF, Finset.mem_filter, Finset.mem_biUnion, Finset.mem_range,
+    Finset.mem_Icc]
+  refine ⟨⟨i, hi, by omega, by omega⟩, by omega⟩
+
+private theorem card_latP (m d x : ℕ) (hd : 2 ≤ d) : (latP m d x).card = m + 1 := by
+  have hinj : Function.Injective
+      (fun i : ℕ => (x : ℤ) + (i : ℤ) * (d : ℤ) - 1) := by
+    intro i j h
+    dsimp only at h
+    have h2 : (i : ℤ) * (d : ℤ) = (j : ℤ) * (d : ℤ) := by omega
+    have hd0 : (d : ℤ) ≠ 0 := by exact_mod_cast (by omega : d ≠ 0)
+    have hij : (i : ℤ) = (j : ℤ) := mul_right_cancel₀ hd0 h2
+    exact_mod_cast hij
+  unfold latP
+  rw [Finset.card_image_of_injective _ hinj, Finset.card_range]
+
+private theorem card_latQ (m d x : ℕ) (hd : 2 ≤ d) : (latQ m d x).card = m + 1 := by
+  have hinj : Function.Injective
+      (fun i : ℕ => (x : ℤ) + (i : ℤ) * (d : ℤ)) := by
+    intro i j h
+    dsimp only at h
+    have h2 : (i : ℤ) * (d : ℤ) = (j : ℤ) * (d : ℤ) := by omega
+    have hd0 : (d : ℤ) ≠ 0 := by exact_mod_cast (by omega : d ≠ 0)
+    have hij : (i : ℤ) = (j : ℤ) := mul_right_cancel₀ hd0 h2
+    exact_mod_cast hij
+  unfold latQ
+  rw [Finset.card_image_of_injective _ hinj, Finset.card_range]
+
+private theorem disjoint_latP_latQ (m d x : ℕ) (hd : 2 ≤ d) :
+    Disjoint (latP m d x) (latQ m d x) := by
+  rw [Finset.disjoint_left]
+  intro t htP htQ
+  simp only [latP, Finset.mem_image, Finset.mem_range] at htP
+  simp only [latQ, Finset.mem_image, Finset.mem_range] at htQ
+  obtain ⟨i, hi, rfl⟩ := htP
+  obtain ⟨j, hj, hji⟩ := htQ
+  have h3 : (i : ℤ) * (d : ℤ) - (j : ℤ) * (d : ℤ) = 1 := by omega
+  have h2 : ((i : ℤ) - (j : ℤ)) * (d : ℤ) = 1 := by rw [sub_mul]; exact h3
+  have hdiv : (d : ℤ) ∣ 1 := ⟨(i : ℤ) - (j : ℤ), by rw [mul_comm]; exact h2.symm⟩
+  have hd1 : (d : ℤ) = 1 := Int.eq_one_of_dvd_one (by positivity) hdiv
+  have hdeq : d = 1 := by exact_mod_cast hd1
+  omega
+
+-- In the integer lattice, the sumset is no larger than the difference set.
+private theorem card_add_le_card_sub (n m d x : ℕ) (hn : 3 ≤ n) (hd : 2 ≤ d)
+    (hx₁ : n + 1 ≤ x) :
+    ((latI n ∪ latJ m d x) + (latI n ∪ latJ m d x)).card
+      ≤ ((latI n ∪ latJ m d x) - (latI n ∪ latJ m d x)).card := by
+  have hsub := sum_subset n m d x
+  have hcardUE : (latC n ∪ latE n m d x).card
+      = (latC n).card + (latE n m d x \ latC n).card := by
+    rw [Finset.union_comm, ← Finset.card_sdiff_add_card, add_comm]
+  have hC := card_latC n hn
+  have hK := card_latK_le m d x
+  have himg := image_latG n m d x
+  have hinj : Function.Injective (fun t : ℤ => t + ((n : ℤ) - 1)) := by
+    intro a b h
+    dsimp only at h
+    omega
+  have hcardG : ((latE n m d x).filter fun s => 2 * (n : ℤ) - 1 ≤ s).card
+      = (latG n m d x).card := by
+    rw [← himg, Finset.card_image_of_injective _ hinj]
+  have hsdiff := sdiff_latE_subset n m d x
+  have hle1 : ((latI n ∪ latJ m d x) + (latI n ∪ latJ m d x)).card
+      ≤ 2 * n - 1 + (latG n m d x).card + (2 * m + 1) := by
+    have h1 := Finset.card_le_card hsub
+    have h2 := Finset.card_union_le (latC n ∪ latE n m d x) (latK m d x)
+    have h3 := Finset.card_le_card hsdiff
+    omega
+  have hCp := card_latCp n hn
+  have hsubC := central_subset n m d x
+  have hsubG := latG_subset n m d x
+  have hsubGn := neg_latG_subset n m d x
+  have hdisj1 := disjoint_central_latG n m d x
+  have hdisj2 := disjoint_central_neg n m d x
+  have hdisj3 := disjoint_latG_neg n m d x hn
+  have hdisjU : Disjoint (latCp n ∪ latG n m d x) ((latG n m d x).image Neg.neg) :=
+    (Finset.disjoint_union_left).mpr ⟨hdisj2, hdisj3⟩
+  have hcardD : (latCp n ∪ latG n m d x ∪ (latG n m d x).image Neg.neg).card
+      = (2 * n - 1) + (latG n m d x).card + (latG n m d x).card := by
+    rw [Finset.card_union_of_disjoint hdisjU, Finset.card_union_of_disjoint hdisj1,
+      hCp, Finset.card_image_of_injective _ neg_injective]
+  have hsubD : latCp n ∪ latG n m d x ∪ (latG n m d x).image Neg.neg
+      ⊆ (latI n ∪ latJ m d x) - (latI n ∪ latJ m d x) := by
+    intro t ht
+    simp only [Finset.mem_union] at ht
+    rcases ht with (ht | ht) | ht
+    · exact hsubC ht
+    · exact hsubG ht
+    · exact hsubGn ht
+  have hle2 : 2 * n - 1 + (latG n m d x).card + (latG n m d x).card
+      ≤ ((latI n ∪ latJ m d x) - (latI n ∪ latJ m d x)).card := by
+    have h := Finset.card_le_card hsubD
+    omega
+  have hPQsub : latP m d x ∪ latQ m d x ⊆ latG n m d x :=
+    Finset.union_subset (latP_subset n m d x hn hx₁) (latQ_subset n m d x hn hx₁)
+  have hPQcard : (latP m d x ∪ latQ m d x).card = (m + 1) + (m + 1) := by
+    rw [Finset.card_union_of_disjoint (disjoint_latP_latQ m d x hd),
+      card_latP m d x hd, card_latQ m d x hd]
+  have hG : 2 * m + 1 ≤ (latG n m d x).card := by
+    have h := Finset.card_le_card hPQsub
     omega
   omega
 
-private theorem int_interval_nat (n : ℕ) :
-    Finset.Icc (0 : ℤ) ((n : ℤ) - 1) = (Finset.range n).image (fun i : ℕ => (i : ℤ)) := by
-  ext i
-  simp only [Finset.mem_Icc, Finset.mem_image, Finset.mem_range]
-  constructor
-  · intro hi
-    exact ⟨i.toNat, by omega, Int.toNat_of_nonneg hi.1⟩
-  · rintro ⟨j, hj, rfl⟩
-    omega
-
-private noncomputable def evalHalf : ℤ →+ ℝ where
-  toFun z := (z : ℝ) / 2
-  map_zero' := by simp
-  map_add' u v := by simp [Int.cast_add, add_div]
-
-private theorem evalHalf_injective : Function.Injective evalHalf := by
-  intro i j hij
-  change (i : ℝ) / 2 = (j : ℝ) / 2 at hij
-  have he : (i : ℝ) = j := by linarith
-  exact_mod_cast he
-
-private theorem image_integerModel (n m d s : ℕ) (x : ℝ) (hxs : x = s + 1 / 2) :
-    (integerModel ((n : ℤ) - 1) d s m).image evalHalf =
-      realIntervalSet n ∪ realAPSet x m (d : ℝ) := by
-  classical
-  have hmI : Finset.Icc (0 : ℤ) (m : ℤ) =
-      (Finset.range (m + 1)).image (fun i : ℕ => (i : ℤ)) := by
-    simpa using int_interval_nat (m + 1)
-  rw [integerModel, Finset.image_union, int_interval_nat, hmI]
-  simp only [Finset.image_image, Function.comp_def]
-  congr 1
-  · unfold realIntervalSet
-    apply Finset.image_congr
-    intro i hi
-    change ((2 * (i : ℤ) : ℤ) : ℝ) / 2 = (i : ℝ)
-    push_cast
-    ring
-  · unfold realAPSet
-    apply Finset.image_congr
-    intro i hi
-    change ((2 * (s : ℤ) + 1 + 2 * ((i : ℤ) * (d : ℤ)) : ℤ) : ℝ) / 2 =
-      x + (i : ℝ) * (d : ℝ)
-    rw [hxs]
-    push_cast
-    ring
-
-/-- **Interval plus integer-step progression with half-integer start is not MSTD.** Let
+-- Retain the named hypotheses of the source statement.
+set_option linter.unusedVariables false in
+/-- **Interval plus integer progression starting in $[n + 1, 2n - 2]$ is not MSTD.** Let
 $I_n = \{0, 1, \dots, n - 1\}$ and $J(x, m, d) = \{x + id : i = 0, 1, \dots, m\}$, as finite
-sets of reals. Let $n \ge 3$, $m \ge 2$, $s$ and $d$ be natural numbers with
-$2 \le d \le n - 1$, and let $x = s + 1/2$. If $x < n - 1$, then $I_n \cup J(x, m, d)$ is not an
-MSTD set.
+sets of reals. For natural numbers $n \ge 3$, $m \ge 2$, $d \ge 2$ and $x$ with
+$n + 1 \le x \le 2n - 2$, the set $I_n \cup J(x, m, d)$ is not an MSTD set.
 
 Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
-with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Lemma 16
-(`integers-2026-A58-lem-16`). -/
-public theorem not_isMSTDSet_intervalAP_overlap_half (n m d s : ℕ) (x : ℝ) (hn : 3 ≤ n)
-    (hm : 2 ≤ m) (hd₁ : 2 ≤ d)
-    (hd₂ : d ≤ n - 1) (hxs : x = s + 1 / 2) (hx : x < (n : ℝ) - 1) :
-    ¬ IsMSTDSet (realIntervalSet n ∪ realAPSet x m (d : ℝ)) := by
-  have hd : 0 ≤ (d : ℤ) := by omega
-  have hdN : (d : ℤ) ≤ (n : ℤ) - 1 := by omega
-  have hs : 0 ≤ (s : ℤ) := Int.natCast_nonneg s
-  have hsN : (s : ℤ) < (n : ℤ) - 1 := by
-    have hr : (s : ℝ) < (n : ℝ) - 1 := by rw [hxs] at hx; linarith
-    exact_mod_cast hr
-  have hbound := integerModel_card ((n : ℤ) - 1) d s m
-    (by exact_mod_cast le_trans (Nat.zero_le 2) hm) hd hdN hs hsN
-  have hSub (T : Finset ℤ) :
-      T.image evalHalf - T.image evalHalf = (T - T).image evalHalf := by
-    simp only [sub_eq_add_neg, Finset.image_add, Finset.image_neg]
-  rw [IsMSTDSet, ← image_integerModel n m d s x hxs, ← Finset.image_add evalHalf,
-    hSub, Finset.card_image_of_injective _ evalHalf_injective,
-    Finset.card_image_of_injective _ evalHalf_injective, not_lt]
-  exact hbound
+with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Lemma 1
+(`integers-2026-A58-lem-1`). -/
+public theorem not_isMSTDSet_intervalAP_nat_of_le_two_mul_sub_two (n m d x : ℕ) (hn : 3 ≤ n)
+    (hm : 2 ≤ m) (hd : 2 ≤ d)
+    (hx₁ : n + 1 ≤ x) (hx₂ : x ≤ 2 * n - 2) :
+    ¬ IsMSTDSet (realIntervalSet n ∪ realAPSet (x : ℝ) m (d : ℝ)) := by
+  have hI := image_latI n
+  have hJ := image_latJ m d x
+  have hA : (latI n ∪ latJ m d x).image ((↑) : ℤ → ℝ)
+      = realIntervalSet n ∪ realAPSet (x : ℝ) m (d : ℝ) := by
+    rw [Finset.image_union, hI, hJ]
+  have hadd : ((latI n ∪ latJ m d x) + (latI n ∪ latJ m d x)).image ((↑) : ℤ → ℝ)
+      = (realIntervalSet n ∪ realAPSet (x : ℝ) m (d : ℝ))
+        + (realIntervalSet n ∪ realAPSet (x : ℝ) m (d : ℝ)) := by
+    rw [← hA]
+    exact Finset.image_add (Int.castRingHom ℝ)
+  have hsub : ((latI n ∪ latJ m d x) - (latI n ∪ latJ m d x)).image ((↑) : ℤ → ℝ)
+      = (realIntervalSet n ∪ realAPSet (x : ℝ) m (d : ℝ))
+        - (realIntervalSet n ∪ realAPSet (x : ℝ) m (d : ℝ)) := by
+    rw [image_sub_intCast, hA]
+  have hle := card_add_le_card_sub n m d x hn hd hx₁
+  have hinjR : Function.Injective ((↑) : ℤ → ℝ) := Int.cast_injective
+  simp only [IsMSTDSet]
+  rw [← hadd, ← hsub, Finset.card_image_of_injective _ hinjR,
+    Finset.card_image_of_injective _ hinjR]
+  omega
 
 end MetaMathlibExt

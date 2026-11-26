@@ -9,25 +9,25 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.Combinatorics.Additive.UnionTwoAPNotMSTD
-import Mathlib.Tactic.NormNum
 
 namespace MathlibExtTest.Combinatorics.Additive.UnionTwoAPNotMSTD
 
 open MetaMathlibExt
 
-#check @not_isMSTDSet_intervalAP_overlap_half
-#print axioms MetaMathlibExt.not_isMSTDSet_intervalAP_overlap_half
+-- Smallest case: `I_3 ∪ {4, 6, 8}`.
+example : ¬ IsMSTDSet (realIntervalSet 3 ∪ realAPSet ((4 : ℕ) : ℝ) 2 ((2 : ℕ) : ℝ)) :=
+  not_isMSTDSet_intervalAP_nat_of_le_two_mul_sub_two 3 2 2 4
+    (by decide) (by decide) (by decide) (by decide) (by decide)
 
-example : ¬ IsMSTDSet (realIntervalSet 3 ∪ realAPSet (1 / 2) 2 2) := by
-  apply not_isMSTDSet_intervalAP_overlap_half 3 2 2 0 (1 / 2) <;> norm_num
+-- Larger gap and step: `I_5 ∪ {8, 12, 16, 20}`.
+example : ¬ IsMSTDSet (realIntervalSet 5 ∪ realAPSet ((8 : ℕ) : ℝ) 3 ((4 : ℕ) : ℝ)) :=
+  not_isMSTDSet_intervalAP_nat_of_le_two_mul_sub_two 5 3 4 8
+    (by decide) (by decide) (by decide) (by decide) (by decide)
 
-example : ¬ IsMSTDSet (realIntervalSet 10 ∪ realAPSet (1 / 2) 2 2) := by
-  apply not_isMSTDSet_intervalAP_overlap_half 10 2 2 0 (1 / 2) <;> norm_num
-
-example : ¬ IsMSTDSet (realIntervalSet 5 ∪ realAPSet (7 / 2) 3 4) := by
-  apply not_isMSTDSet_intervalAP_overlap_half 5 3 4 3 (7 / 2) <;> norm_num
-
-example : ¬ IsMSTDSet (realIntervalSet 8 ∪ realAPSet (1 / 2) 2 3) := by
-  apply not_isMSTDSet_intervalAP_overlap_half 8 2 3 0 (1 / 2) <;> norm_num
+-- Start strictly inside the window `[6, 8]`, with disjoint cross-sum blocks:
+-- `I_5 ∪ {7, 12, 17}`.
+example : ¬ IsMSTDSet (realIntervalSet 5 ∪ realAPSet ((7 : ℕ) : ℝ) 2 ((5 : ℕ) : ℝ)) :=
+  not_isMSTDSet_intervalAP_nat_of_le_two_mul_sub_two 5 2 5 7
+    (by decide) (by decide) (by decide) (by decide) (by decide)
 
 end MathlibExtTest.Combinatorics.Additive.UnionTwoAPNotMSTD
