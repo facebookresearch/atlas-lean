@@ -16,12 +16,15 @@ public import MathlibExt.NumberTheory.PrimitivePrimeDivisorPowSubOne
 public import MathlibExt.NumberTheory.ArithmeticFunction.BiunitaryFortyOne
 public import MathlibExt.NumberTheory.ArithmeticFunction.BiunitaryDivisorParity
 public import MathlibExt.NumberTheory.ArithmeticFunction.BiunitaryTriperfect
+public import MathlibExt.NumberTheory.ArithmeticFunction.BiunitaryTriperfectNotFiveDvdOfFactorizationTwoEqFour
 
 /-!
 # Biunitary triperfect numbers divisible by `27`
 
 Statements from Tomohiro Yamada, *Determining all Biunitary Triperfect Numbers of a Certain
 Form*, Journal of Integer Sequences 28 (2025), Article 25.4.5.
+`MetaMathlibExt.four_le_factorization_two_of_biunitaryTriperfect` is in
+`MathlibExt.NumberTheory.ArithmeticFunction.BiunitaryTriperfect`.
 
 Following Wall (as quoted in the paper's introduction), a divisor `d` of `n` is biunitary when
 `gcd₁(d, n / d) = 1`, where `gcd₁(a, b)` is the greatest common unitary divisor of `a` and `b`
@@ -140,16 +143,6 @@ public theorem_wanted exists_two_primes_dvd_sigmaBiunitary_thirteen_pow (g : ℕ
       q₂ ∣ sigmaBiunitary (13 ^ g) ∧ q₁ ∉ ({2, 3, 41, 547} : Finset ℕ) ∧
       q₂ ∉ ({2, 3, 41, 547} : Finset ℕ)
 
-/-- **Biunitary triperfect numbers divisible by $27$ are divisible by $16$.** Let $N$ be a
-biunitary triperfect number, that is, a positive integer with $\sigma^{**}(N) = 3N$, where
-$\sigma^{**}$ is the biunitary divisor sum. If $3^3$ divides $N$, then $2^4$ divides $N$.
-
-Source: Tomohiro Yamada, *Determining all Biunitary Triperfect Numbers of a Certain Form*,
-Journal of Integer Sequences 28 (2025), Article 25.4.5, Lemma 9 (`jis-2025-25.4.5-lem-9`). -/
-public theorem_wanted four_le_factorization_two_of_biunitaryTriperfect (N : ℕ) (hN : 0 < N)
-    (hσ : sigmaBiunitary N = 3 * N) (hf : 3 ≤ N.factorization 3) :
-    4 ≤ N.factorization 2
-
 /-- **No biunitary triperfect number divisible by $27$ is exactly divisible by $2^5$.** Let $N$
 be a biunitary triperfect number, that is, a positive integer with $\sigma^{**}(N) = 3N$, where
 $\sigma^{**}$ is the biunitary divisor sum. If $3^3$ divides $N$, then the exact power of $2$
@@ -204,17 +197,6 @@ Journal of Integer Sequences 28 (2025), Article 25.4.5, Lemma 14 (`jis-2025-25.4
 public theorem_wanted eq_2160_of_factorization_two_eq_four (N : ℕ) (hN : 0 < N)
     (hσ : sigmaBiunitary N = 3 * N) (hf : 3 ≤ N.factorization 3)
     (he : N.factorization 2 = 4) (hf4 : N.factorization 3 ≤ 4) : N = 2160
-
-/-- **Biunitary triperfect numbers exactly divisible by $2^4$ and divisible by $3^5$ are prime
-to $5$.** Let $N$ be a biunitary triperfect number, that is, a positive integer with
-$\sigma^{**}(N) = 3N$, where $\sigma^{**}$ is the biunitary divisor sum. If the exact power of $2$
-dividing $N$ is $2^4$ and $3^5$ divides $N$, then $5$ does not divide $N$.
-
-Source: Tomohiro Yamada, *Determining all Biunitary Triperfect Numbers of a Certain Form*,
-Journal of Integer Sequences 28 (2025), Article 25.4.5, Lemma 15 (`jis-2025-25.4.5-lem-15`). -/
-public theorem_wanted not_five_dvd_of_factorization_two_eq_four (N : ℕ) (hN : 0 < N)
-    (hσ : sigmaBiunitary N = 3 * N) (he : N.factorization 2 = 4)
-    (hf5 : 5 ≤ N.factorization 3) : ¬ 5 ∣ N
 
 end
 
