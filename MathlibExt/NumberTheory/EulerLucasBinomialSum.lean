@@ -13,6 +13,7 @@ public import Mathlib.Data.Nat.Choose.Basic
 public import MathlibExt.Analysis.Ramanujan.Part1Ch5Entry10bEuleriansymmetry
 public import MathlibExt.NumberTheory.LucasSequence
 import Mathlib.Data.Nat.Choose.Cast
+import Mathlib.Data.Nat.Choose.Sum
 import Mathlib.NumberTheory.Real.GoldenRatio
 import Mathlib.RingTheory.PowerSeries.Exp
 import MathlibExt.NumberTheory.ChurchBicknellFibonacciConvolution
@@ -169,5 +170,94 @@ theorem sum_choose_eulerSec_lucas (n : ℕ) :
     _ = _ := by
       rw [secantSeries_mul_lucasSeries, coeff_C_mul, coeff_expSeries, div_pow, one_pow]
       field_simp
+
+private theorem euler_lucas_expansion (m : ℕ) (x y : ℝ) :
+    (x + y / 2) ^ m = (1 / 2) * ∑ n ∈ range (m + 1), ∑ k ∈ range (n + 1),
+      (Real.sqrt 5 / 2) ^ k * (n.choose k : ℝ) * (m.choose n : ℝ) * x ^ (m - n) *
+        (eulerSecNumber k : ℝ) * (lucasNumber (n - k) : ℝ) * y ^ n := by
+  rw [add_comm x (y / 2), add_pow, Finset.mul_sum]
+  refine Finset.sum_congr rfl fun n _ => ?_
+  have h : (∑ k ∈ range (n + 1),
+      (Real.sqrt 5 / 2) ^ k * (n.choose k : ℝ) * (m.choose n : ℝ) * x ^ (m - n) *
+        (eulerSecNumber k : ℝ) * (lucasNumber (n - k) : ℝ) * y ^ n) =
+      ((m.choose n : ℝ) * x ^ (m - n) * y ^ n) * (2 / (2 : ℝ) ^ n) := by
+    rw [← sum_choose_eulerSec_lucas n, Finset.mul_sum]
+    exact Finset.sum_congr rfl fun k _ => by ring
+  rw [h, div_pow]
+  ring
+
+/-- **Euler–Lucas expansion of $(x + 1/2)^m$.** Let $E_k$ be the Euler (secant) numbers, which
+vanish at odd $k$ and begin $E_0 = 1$, $E_2 = -1$, $E_4 = 5$, and let $L_k$ be the Lucas numbers.
+Then for every natural number $m$ and every real number $x$,
+$$
+\left(x + \frac{1}{2}\right)^m = \frac{1}{2} \sum_{n=0}^{m} \sum_{k=0}^{n}
+\left(\frac{\sqrt{5}}{2}\right)^{k} \binom{n}{k} \binom{m}{n} x^{m-n} E_k L_{n-k}.
+$$
+
+Source: Fatima Zohra Bensaci, Rachid Boumahdi, and Laala
+Khaldi, "Finite Sums Involving Fibonacci and Lucas Numbers",
+Theorem 5. -/
+theorem add_half_pow_eq_sum (m : ℕ) (x : ℝ) :
+    (x + 1 / 2) ^ m =
+      (1 / 2) * ∑ n ∈ Finset.range (m + 1),
+        ∑ k ∈ Finset.range (n + 1),
+          ((Real.sqrt 5) / 2) ^ k * (Nat.choose n k : ℝ) *
+            (Nat.choose m n : ℝ) * x ^ (m - n) *
+            (eulerSecNumber k : ℝ) * (lucasNumber (n - k) : ℝ) := by
+  simpa only [one_pow, mul_one] using euler_lucas_expansion m x 1
+
+private theorem euler_lucas_double_sum (m : ℕ) (y : ℝ) :
+    (∑ n ∈ range (m + 1), ∑ k ∈ range (n + 1),
+      y ^ n * (Real.sqrt 5) ^ k / 2 ^ (k + m - n) * (n.choose k : ℝ) *
+        (m.choose n : ℝ) * (eulerSecNumber k : ℝ) * (lucasNumber (n - k) : ℝ)) =
+      2 * (1 / 2 + y / 2) ^ m := by
+  have h := euler_lucas_expansion m (1 / 2) y
+  rw [show (2 : ℝ) * (1 / 2 + y / 2) ^ m = 2 * ((1 / 2) * ∑ n ∈ range (m + 1),
+      ∑ k ∈ range (n + 1), (Real.sqrt 5 / 2) ^ k * (n.choose k : ℝ) * (m.choose n : ℝ) *
+        (1 / 2) ^ (m - n) * (eulerSecNumber k : ℝ) * (lucasNumber (n - k) : ℝ) * y ^ n) by rw [h],
+    ← mul_assoc, show (2 : ℝ) * (1 / 2) = 1 by norm_num, one_mul]
+  refine Finset.sum_congr rfl fun n hn => Finset.sum_congr rfl fun k _ => ?_
+  have hnm := Finset.mem_range_succ_iff.mp hn
+  rw [show k + m - n = k + (m - n) by omega, pow_add, div_pow, div_pow, one_pow]
+  field_simp
+
+/-- **The alternating Euler–Lucas double sum vanishes.** Let $E_k$ be the Euler (secant)
+numbers, with exponential generating function $2/(e^t + e^{-t})$, and let $L_k$ be the Lucas
+numbers ($L_0 = 2$, $L_1 = 1$, $L_{k+2} = L_{k+1} + L_k$). For every natural number $m \ge 1$,
+$$\sum_{n=0}^{m} \sum_{k=0}^{n} (-1)^n \frac{(\sqrt{5})^k}{2^{k+m-n}} \binom{n}{k} \binom{m}{n}
+E_k L_{n-k} = 0.$$
+
+The hypothesis $m \ge 1$ is needed: for $m = 0$ the sum is $2$.
+
+Source: Fatima Zohra Bensaci, Rachid Boumahdi, and Laala
+Khaldi, "Finite Sums Involving Fibonacci and Lucas Numbers",
+Corollary 6. -/
+theorem sum_neg_one_pow_eulerSec_lucas (m : ℕ)
+    (hm : 1 ≤ m) :
+    ∑ n ∈ Finset.range (m + 1), ∑ k ∈ Finset.range (n + 1),
+        (-1 : ℝ) ^ n * (Real.sqrt 5) ^ k / 2 ^ (k + m - n) *
+          (Nat.choose n k : ℝ) * (Nat.choose m n : ℝ) *
+          (eulerSecNumber k : ℝ) * (lucasNumber (n - k) : ℝ) = 0 := by
+  have h := euler_lucas_double_sum m (-1)
+  rw [show (1 / 2 : ℝ) + -1 / 2 = 0 by norm_num, zero_pow (by omega), mul_zero] at h
+  exact h
+
+/-- **A double sum of Euler and Lucas numbers equal to two.** Let $L_n$ be the Lucas numbers and
+let $E_k$ be the Euler (secant) numbers, given by $2/(e^t + e^{-t}) = \sum_{k \ge 0} E_k t^k / k!$.
+For every natural number $m$,
+$$\sum_{n=0}^{m} \sum_{k=0}^{n} \frac{\sqrt{5}^{\,k}}{2^{k+m-n}} \binom{n}{k} \binom{m}{n}
+E_k L_{n-k} = 2.$$
+
+Source: Fatima Zohra Bensaci, Rachid Boumahdi, and Laala
+Khaldi, "Finite Sums Involving Fibonacci and Lucas Numbers",
+Corollary 7. -/
+theorem sum_eulerSec_lucas (m : ℕ) :
+    ∑ n ∈ Finset.range (m + 1), ∑ k ∈ Finset.range (n + 1),
+        (Real.sqrt 5) ^ k / 2 ^ (k + m - n) *
+          (Nat.choose n k : ℝ) * (Nat.choose m n : ℝ) *
+          (eulerSecNumber k : ℝ) * (lucasNumber (n - k) : ℝ) = 2 := by
+  have h := euler_lucas_double_sum m 1
+  rw [show (1 / 2 : ℝ) + 1 / 2 = 1 by norm_num, one_pow, mul_one] at h
+  simpa only [one_pow, one_mul] using h
 
 end MathlibExt.NumberTheory.FiniteSumsFibLucasWanted

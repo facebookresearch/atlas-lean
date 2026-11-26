@@ -39,4 +39,23 @@ example :
   norm_num [sum_range_succ, he₀, he₁, secant_two, lucasNumber, div_pow,
     Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 5)]
 
+-- The general expansion at m = 1 and a nonzero x.
+example : ((3 : ℝ) + 1 / 2) ^ 1 =
+    (1 / 2) * ∑ n ∈ range (1 + 1), ∑ k ∈ range (n + 1),
+      (Real.sqrt 5 / 2) ^ k * (n.choose k : ℝ) * ((1 : ℕ).choose n : ℝ) * (3 : ℝ) ^ (1 - n) *
+        (eulerSecNumber k : ℝ) * (lucasNumber (n - k) : ℝ) :=
+  add_half_pow_eq_sum 1 3
+
+-- The alternating sum vanishes already at the first allowed degree.
+example : (∑ n ∈ range (1 + 1), ∑ k ∈ range (n + 1),
+    (-1 : ℝ) ^ n * (Real.sqrt 5) ^ k / 2 ^ (k + 1 - n) * (n.choose k : ℝ) *
+      ((1 : ℕ).choose n : ℝ) * (eulerSecNumber k : ℝ) * (lucasNumber (n - k) : ℝ)) = 0 :=
+  sum_neg_one_pow_eulerSec_lucas 1 (by decide)
+
+-- The unsigned sum includes degree zero.
+example : (∑ n ∈ range (0 + 1), ∑ k ∈ range (n + 1),
+    (Real.sqrt 5) ^ k / 2 ^ (k + 0 - n) * (n.choose k : ℝ) * ((0 : ℕ).choose n : ℝ) *
+      (eulerSecNumber k : ℝ) * (lucasNumber (n - k) : ℝ)) = 2 :=
+  sum_eulerSec_lucas 0
+
 end MathlibExt.NumberTheory.FiniteSumsFibLucasWanted
