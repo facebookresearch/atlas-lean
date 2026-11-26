@@ -1,0 +1,10 @@
+{
+  "groups": [
+    {
+      "directory": "provenance/functional-analysis/residual-analysis",
+      "source_revision": "f386092a56f2b7b2f57a83548b841f93c6addd31",
+      "file_count": 5,
+      "source_content_binding": "The original 56-file MathlibExt snapshot manifest and four chunks remain byte-exact historical source data. Five contour/grid/Riesz/holomorphic-calculus exports are installed. Three holomorphic-calculus records identify canonical proof-name replacements and preserve prior documentation-cleanup history; all original SHA and snapshot-file/line references are retained."
+    }
+  ]
+}
