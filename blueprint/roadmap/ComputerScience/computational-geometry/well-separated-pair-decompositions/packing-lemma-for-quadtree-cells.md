@@ -1,6 +1,7 @@
 # Packing lemma for quadtree cells
 
 Let $b$ be a ball of radius $r$ in $\mathbb{R}^d$ and let $X$ be a collection of pairwise interior-disjoint cells of a quadtree on $[0,1]^d$, each of side length at least $x$, that all meet $b$. Then
+
 $$|X| \le \Big(1 + \Big\lceil \frac{2r}{x} \Big\rceil\Big)^d = O\Big(\max\Big(2, \frac{r}{x}\Big)^d\Big).$$
 
 ## Sources

@@ -1,6 +1,7 @@
 # Distances within a well-separated pair
 
 Let $s > 0$, let $\{A, B\}$ be $s$-well separated, and let $x, x' \in A$ and $y, y' \in B$. Then
+
 $$\|x - x'\| \le \frac{2}{s} \|x - y\| \qquad\text{and}\qquad \|x' - y'\| \le \Big(1 + \frac{4}{s}\Big) \|x - y\|.$$
 
 ## Depends on

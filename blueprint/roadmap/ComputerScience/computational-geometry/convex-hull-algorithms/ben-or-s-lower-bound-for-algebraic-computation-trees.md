@@ -1,7 +1,9 @@
 # Ben-Or's lower bound for algebraic computation trees
 
 Let $W \subseteq \mathbb{R}^n$ and let $T$ be an algebraic computation tree of complexity $h$ that solves the membership problem for $W$. If $W$ has $N$ connected components then $2^h 3^{n + h} \ge N$. Applying this to $W$ and to its complement,
+
 $$C(W) \ge \frac{\log_2 N - n \log_2 3}{1 + \log_2 3}, \qquad N = \max\{\#W, \#(\mathbb{R}^n \setminus W)\},$$
+
 where $\#$ counts connected components; thus $C(W) = \Omega(\log N - n)$.
 
 ## Depends on

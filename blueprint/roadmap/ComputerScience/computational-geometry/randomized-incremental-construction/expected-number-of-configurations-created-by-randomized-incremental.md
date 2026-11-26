@@ -1,6 +1,7 @@
 # Expected number of configurations created by randomized incremental construction
 
 Let $S = (X, \Pi, D, K)$ be a configuration space of fixed dimension with $|X| = n$, and let $t_r$ be the expected number of active configurations with respect to a uniformly random $r$-element subset of $X$. Inserting the elements of $X$ in uniformly random order and maintaining $T(R)$, the expected total number of configurations created is
+
 $$O\Big(\sum_{r=1}^{n} \frac{t_r}{r}\Big).$$
 
 ## Depends on

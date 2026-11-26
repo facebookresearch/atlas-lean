@@ -1,7 +1,9 @@
 # Expected number of conflicts in randomized incremental construction
 
 Let $S = (X, \Pi, D, K)$ be a configuration space of fixed dimension $d$ with $|X| = n$, and let $t_r$ be as in the previous theorem. A *conflict* is a pair $(\Delta, s)$ with $\Delta \in T_r$ for some step $r$ of the random insertion order and $s \in K(\Delta)$. The expected number of conflicts during the randomized incremental construction of $T(X)$ is
+
 $$O\Big(n \sum_{r=1}^{n} \frac{t_r}{r^2}\Big).$$
+
 In the Delaunay and trapezoidal-map applications, the location cost of the algorithm is bounded by the number of conflicts.
 
 ## Depends on

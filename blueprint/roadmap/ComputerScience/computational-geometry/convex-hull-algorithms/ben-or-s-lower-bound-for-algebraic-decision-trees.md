@@ -1,7 +1,9 @@
 # Ben-Or's lower bound for algebraic decision trees
 
 Let $d \ge 1$, let $W \subseteq \mathbb{R}^N$ be a set with $M$ connected components, and let $T$ be a $d$-th order algebraic decision tree of height $h$ that decides $W$. Then
+
 $$3^h \, d\,(2d-1)^{N+h-1} \ge M, \qquad\text{so}\qquad h \ge \frac{\log_2 M - (N-1)\log_2(2d-1) - \log_2 d}{\log_2 3 + \log_2(2d-1)} .$$
+
 Indeed the inputs reaching a leaf satisfy at most $h$ polynomial sign conditions of degree at most $d$, so each leaf set has at most $d(2d-1)^{N+h-1}$ connected components, every component of $W$ contains a component of some leaf set, and there are at most $3^h$ leaves. Hence for fixed $d$ there are constants $c_d, c'_d > 0$ with $h \ge c_d \log_2 M - c'_d N$. This is often written $\Omega(\log M - N)$, but the coefficient of $N$ cannot be taken equal to that of $\log_2 M$: for $d = 2m \ge 6$, the set $\{x : \varepsilon - \sum_{i=1}^N \prod_{k=1}^m (x_i - k)^2 > 0\}$ with small $\varepsilon > 0$ has $m^N$ components and is decided by a single test.
 
 ## Depends on

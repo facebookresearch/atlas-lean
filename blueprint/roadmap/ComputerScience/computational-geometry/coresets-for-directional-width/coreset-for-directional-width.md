@@ -1,7 +1,9 @@
 # Coreset for directional width
 
 Let $P$ be a finite set of points in $\mathbb{R}^d$. For a unit vector $u$, the *directional width* of $P$ in direction $u$ is
+
 $$W_P(u) = \max_{p \in P} (p \cdot u) - \min_{p \in P} (p \cdot u),$$
+
 the distance between the two hyperplanes orthogonal to $u$ that sandwich $P$. For $0 < \varepsilon < 1$, a subset $C \subseteq P$ is an *$\varepsilon$-coreset for directional width* if $W_C(u) \ge (1 - \varepsilon) W_P(u)$ for every unit vector $u$.
 
 ## Sources

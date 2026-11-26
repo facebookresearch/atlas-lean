@@ -1,7 +1,9 @@
 # Fréchet distance of curves
 
 A *curve* in $\mathbb{R}^d$ is a continuous map $\pi : [0, 1] \to \mathbb{R}^d$; it is *polygonal* if it is a concatenation of finitely many segments, each traversed at constant speed. A *reparameterization* is a continuous bijection $f : [0, 1] \to [0, 1]$ with $f(0) = 0$ and $f(1) = 1$. The *Fréchet distance* between curves $\pi$ and $\sigma$ is
+
 $$d_F(\pi, \sigma) = \inf_{f, g} \max_{t \in [0,1]} \|\pi(f(t)) - \sigma(g(t))\|,$$
+
 the infimum over pairs of reparameterizations $f, g$.
 
 ## Sources

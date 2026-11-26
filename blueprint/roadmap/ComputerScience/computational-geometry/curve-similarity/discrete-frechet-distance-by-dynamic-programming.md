@@ -1,7 +1,9 @@
 # Discrete Fréchet distance by dynamic programming
 
 Let $\pi = (p_1, \dots, p_n)$ and $\sigma = (q_1, \dots, q_m)$ be sequences of points in $\mathbb{R}^d$, and let $f(x, y)$ be the discrete Fréchet distance between $(p_1, \dots, p_x)$ and $(q_1, \dots, q_y)$. Then $f(1,1) = \|p_1 - q_1\|$ and, for $(x, y) \ne (1, 1)$,
+
 $$f(x, y) = \max\big(\|p_x - q_y\|, \min(f(x-1, y), f(x, y-1))\big),$$
+
 with $f(0, y) = f(x, 0) = \infty$. Filling the table computes $d_F(\pi, \sigma) = f(n, m)$ and a walk realizing it in $O(nm)$ time.
 
 ## Depends on
