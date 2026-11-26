@@ -270,6 +270,23 @@ private theorem trace_zeta_pow (hp : p.Prime) (n : ℕ) :
 
 end cyclotomicTraceNormSq_eq_and_ge
 
+/-- **Trace of a point with rational coordinates.** Let $p$ be a prime, let $K$ be a $p$-th
+cyclotomic extension of $\mathbb{Q}$, let $\omega$ be the chosen primitive $p$-th root of unity in
+$K$, and let $\mathrm{Tr}$ be the trace from $K$ to $\mathbb{Q}$. For rational numbers
+$a_1, \dots, a_{p-1}$,
+$$\mathrm{Tr}(a_1 \omega + a_2 \omega^2 + \cdots + a_{p-1} \omega^{p-1}) =
+-(a_1 + a_2 + \cdots + a_{p-1}).$$ -/
+theorem trace_sum_mul_zeta_pow_succ (hp : p.Prime) (a : Fin (p - 1) → ℚ) :
+    Algebra.trace ℚ K (∑ i, (a i : K) * zeta p ℚ K ^ (i.val + 1)) = -∑ i, a i := by
+  rw [map_sum, ← Finset.sum_neg_distrib]
+  refine Finset.sum_congr rfl fun i _ => ?_
+  have hsmall : ¬p ∣ i.val + 1 := Nat.not_dvd_of_pos_of_lt (by omega) (by omega)
+  have hsmul := (Algebra.trace ℚ K).map_smul (a i) (zeta p ℚ K ^ (i.val + 1))
+  rw [Rat.smul_def, cyclotomicTraceNormSq_eq_and_ge.trace_zeta_pow (K := K) hp, ite_eq_right hsmall]
+    at hsmul
+  rw [hsmul, smul_eq_mul]
+  ring
+
 /-- **Squared trace norm in coordinates.** Let $p$ be a prime, let $K$ be a $p$-th cyclotomic
 extension of $\mathbb{Q}$, let $\omega$ be the chosen primitive $p$-th root of unity in $K$, and
 let $\mathrm{Tr}$ be the trace from $K$ to $\mathbb{Q}$. For rational numbers
@@ -303,10 +320,7 @@ theorem cyclotomicTraceNormSq_eq_and_ge (hp : p.Prime) (a : Fin (p - 1) → ℚ)
     intro i _
     rw [mul_assoc, ← pow_add, trace_term]
     split <;> ring
-  have hsmall (i : Fin (p - 1)) : ¬p ∣ i.val + 1 :=
-    Nat.not_dvd_of_pos_of_lt (by omega) (by omega)
-  have htrace : Algebra.trace ℚ K α = -S := by
-    simpa [hsmall] using trace_shift 0
+  have htrace : Algebra.trace ℚ K α = -S := trace_sum_mul_zeta_pow_succ hp a
   -- Index the shifts by the unique coordinate whose exponent becomes a multiple of p.
   have hnorm : cyclotomicTraceNormSq p α = ∑ i, ((p : ℚ) * a i - S) ^ 2 := by
     symm
