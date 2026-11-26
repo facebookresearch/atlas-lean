@@ -56,25 +56,9 @@ private theorem repunit_mul_sub {b t : ℕ} (hb2 : 2 ≤ b) :
 
 private theorem repunit_eq_sum {b t : ℕ} (hb2 : 2 ≤ b) :
     repstring b 1 0 t = ∑ i ∈ Finset.range t, b ^ i := by
-  have hS : ((∑ i ∈ Finset.range t, b ^ i : ℕ) : ℤ) * ((b : ℤ) - 1)
-      = ((b ^ t : ℕ) : ℤ) - 1 := by
-    have h := geom_sum_mul (b : ℤ) t
-    simpa only [← Nat.cast_sum, ← Nat.cast_pow] using h
-  have hNc : ((repstring b 1 0 t : ℕ) : ℤ) * ((b : ℤ) - 1)
-      = ((b ^ t : ℕ) : ℤ) - 1 := by
-    have h := repunit_mul_sub (b := b) (t := t) hb2
-    have h1b : (1 : ℕ) ≤ b := by omega
-    have h1bt : (1 : ℕ) ≤ b ^ t := Nat.one_le_pow t b (by omega)
-    have hc : (((repstring b 1 0 t * (b - 1) : ℕ)) : ℤ)
-        = (((b ^ t - 1 : ℕ)) : ℤ) := by rw [h]
-    rwa [Nat.cast_mul, Nat.cast_sub h1b, Nat.cast_sub h1bt, Nat.cast_one] at hc
-  have hcb : ((b : ℤ) - 1) ≠ 0 := by
-    have hb2z : (2 : ℤ) ≤ (b : ℤ) := by exact_mod_cast hb2
-    omega
-  have hcast : ((repstring b 1 0 t : ℕ) : ℤ)
-      = ((∑ i ∈ Finset.range t, b ^ i : ℕ) : ℤ) :=
-    mul_right_cancel₀ hcb (hNc.trans hS.symm)
-  exact_mod_cast hcast
+  simp only [repstring, Nat.digits_of_lt b 1 (by decide) (by omega),
+    List.length_singleton, zero_add, one_mul, pow_one]
+  exact (Nat.geomSum_eq hb2 t).symm
 
 private theorem repunit_ge_length {b t : ℕ} (hb2 : 2 ≤ b) :
     t ≤ repstring b 1 0 t := by

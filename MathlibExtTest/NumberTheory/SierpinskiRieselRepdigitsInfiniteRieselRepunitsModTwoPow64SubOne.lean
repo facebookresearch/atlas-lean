@@ -22,13 +22,10 @@ example : {N : ℕ | ∃ t : ℕ, 1 ≤ t ∧
     N = repstring 16518444216571 1 0 t ∧ IsRieselNumber N}.Infinite :=
   infinite_riesel_repunits_mod_two_pow_64_sub_one (b := 16518444216571) (by decide)
 
--- Hence there is a Riesel repunit above any bound; in particular above `10 ^ 6`.
-example : ∃ N t : ℕ, 10 ^ 6 < N ∧ 1 ≤ t ∧
-    N = repstring 16518444216571 1 0 t ∧ IsRieselNumber N := by
-  have hinf := infinite_riesel_repunits_mod_two_pow_64_sub_one (b := 16518444216571)
-    (by decide)
-  obtain ⟨N, hNmem, hNgt⟩ := hinf.exists_gt (10 ^ 6)
-  obtain ⟨t, ht1, hNeq, hR⟩ := hNmem
-  exact ⟨N, t, hNgt, ht1, hNeq, hR⟩
+-- The next admissible base `16518444216571 + (2 ^ 64 - 1)` is even, so it exercises the
+-- even-base parity branch; its repunits also contain infinitely many Riesel numbers.
+example : {N : ℕ | ∃ t : ℕ, 1 ≤ t ∧
+    N = repstring 18446760592153768186 1 0 t ∧ IsRieselNumber N}.Infinite :=
+  infinite_riesel_repunits_mod_two_pow_64_sub_one (b := 18446760592153768186) (by decide)
 
 end MathlibExtTest.NumberTheory.SierpinskiRieselRepdigitsInfiniteRieselRepunitsModTwoPow64SubOne
