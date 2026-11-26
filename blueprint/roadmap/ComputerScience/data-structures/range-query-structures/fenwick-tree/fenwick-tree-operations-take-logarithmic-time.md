@@ -1,21 +1,27 @@
-# Fenwick-tree operations take logarithmic time
+# Fenwick prefix queries and updates have logarithmically many probes
 
-In 0-indexed form, a [Fenwick tree](fenwick-tree.md) over an array $A[0..N-1]$ of elements of a commutative monoid stores $T_i = \sum_{j = g(i)}^{i} A_j$, where $g(i) = i \mathbin{\&} (i + 1)$ clears the trailing $1$ bits of $i$. The [one-indexed convention](fenwick-tree.md) uses $i - \mathrm{lowbit}(i) + 1$ instead, and is equivalent.
+A [Fenwick tree](fenwick-tree.md) for an array of length $n$ stores a block at each one-indexed endpoint $1 \le j \le n$. Write $\operatorname{lowbit}(j)$ for the largest power of two dividing $j$. The block consists of the zero-indexed array positions in $[j-\operatorname{lowbit}(j),j)$. The prefix walk starts at $\min(k,n)$ for a requested length $k$ and repeatedly subtracts the current endpoint's low bit, stopping before $0$. The point-update walk starts at the one-indexed position $i$ and repeatedly adds the current endpoint's low bit, visiting only endpoints in $[1,n]$.
 
-**Theorem.**
-1. The [prefix sum](prefix-sum.md) $A_0 + \cdots + A_r$ equals $T_r + T_{g(r)-1} + T_{g(g(r)-1)-1} + \cdots$, stopping when the index becomes negative. This sum has at most $\lfloor \log_2 N \rfloor + 1$ terms.
-2. A [point update](add.md) at position $i$ must change exactly the $T_j$ with $g(j) \le i \le j$. These are $j = i, h(i), h(h(i)), \dots < N$, where $h(j) = j \mathbin{|} (j + 1)$ sets the lowest $0$ bit, so there are at most $\lceil \log_2 N \rceil + 1$ of them.
+**Theorem.** For natural numbers $n,k,i$:
 
-So both operations take $O(\log N)$ time.
+1. Concatenating the prefix walk's blocks in reverse visit order gives the consecutive list of positions $0,\ldots,\min(k,n)-1$, without omissions or repetitions. The walk is empty for $n=0$ or $k=0$, and uses the full prefix for $k>n$.
+2. The update walk is strictly increasing. It visits exactly the endpoints $j\le n$ with $j-\operatorname{lowbit}(j)<i\le j$, so each visited block contains the updated position and no entry is visited twice. The walk is empty for $i=0$ or $i>n$.
+3. For $n>0$, each walk visits at most $\lfloor\log_2 n\rfloor+1$ entries. The same inequalities hold for $n=0$ with the convention $\operatorname{log2}(0)=0$.
 
-**Proof.** The ranges $[g(r), r], [g(g(r) - 1), g(r) - 1], \dots$ tile $[0, r]$. Each step $r \mapsto g(r) - 1$ turns the lowest $1$ bit of $r + 1$ into $0$, so the number of $1$ bits of $r + 1$ decreases by $1$. For updates, let $j$ have exactly $t$ trailing $1$ bits. Then $[g(j), j]$ is the set of numbers that agree with $j$ on all bits from position $t$ up. So $g(j) \le i \le j$ holds exactly when bit $t$ of $i$ is $0$ and $j = i \mathbin{|} (2^t - 1)$. Ordered by $t$, these $j$ are $i, h(i), h(h(i)), \dots$, because $h$ sets the lowest $0$ bit and the bits between consecutive $0$ bits of $i$ are already $1$. Since $j < N$ forces $2^t \le N$, there are at most $\lfloor \log_2 N \rfloor + 1$ of them.
+The [prefix query](prefix-sum-eq-sum-prefix-visits.md) reads the stored entries of the prefix
+walk. An [update](get-d-add-eq.md) at zero-indexed array position $p$ reads and writes once per
+visit of the update walk starting at $i=p+1$. These correspondences do not assume that the
+storage represents an underlying array.
 
-## Depends on
+After dividing a positive endpoint by its low bit, the quotient is odd. Adding or subtracting that low bit therefore makes the next endpoint a multiple of twice the previous low bit. At any nonzero next visit the exponent increases, and no visited endpoint exceeds $n$. This counts index visits, not the cost of arithmetic or of copying a persistent array.
 
-- [Fenwick tree](fenwick-tree.md)
+In zero-based stored indices $r=j-1$, subtracting or adding the low bit corresponds to the respective jumps $g(r)-1$ and $h(r)$, where $g(r)=r\mathbin{\&}(r+1)$ and $h(r)=r\mathbin{|}(r+1)$. The stopping index $-1$ for the zero-based prefix walk corresponds to the unvisited endpoint $0$.
+
+## Background
+
 - [Fenwick tree prefix sum](prefix-sum.md)
 - [Point update of a Fenwick tree](add.md)
 
 ## Sources
 
-- cp-algorithms, "Fenwick Tree", <https://cp-algorithms.com/data_structures/fenwick.html>: the definition $T_i = \sum_{j=g(i)}^{i} A_j$ with $g(i) = i \mathbin{\&} (i + 1)$, prefix-sum queries and updates in $O(\log N)$ time, and the enumeration of the indices $j$ with $g(j) \le i \le j$ by repeatedly setting the lowest unset bit. The bit-counting bound is written out here.
+- cp-algorithms, [Fenwick Tree](https://cp-algorithms.com/data_structures/fenwick.html), the zero-based prefix and point-update walks and the one-based indexing approach.
