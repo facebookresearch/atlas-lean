@@ -48,6 +48,12 @@ def disk : Mesh (Fin 3) := ⟨[[0, 1, 2]]⟩
 /-- A single two-vertex face: not a valid polygon, but it uses both directions of its edge. -/
 def digon : Mesh (Fin 2) := ⟨[[0, 1]]⟩
 
+/-- The raw face `[0, 1, 0]` repeats the vertex `0`, so its link at `1` is the loop `s(0, 0)`. -/
+def rawLoop : Mesh (Fin 2) := ⟨[[0, 1, 0]]⟩
+
+/-- The raw face `[0, 1, 0, 1]` traverses the edge `s(0, 1)` twice in each direction. -/
+def rawRepeat : Mesh (Fin 2) := ⟨[[0, 1, 0, 1]]⟩
+
 theorem tetra_vertices : (vertices tetra).card = 4 := by decide
 
 theorem tetra_edges : (edges tetra).card = 6 := by decide
@@ -161,8 +167,27 @@ theorem disk_edges_unpaired : ¬ EdgesPaired disk := by decide
 theorem disk_not_orientable_of_unpaired_edges : ¬ Orientable disk := fun h =>
   disk_edges_unpaired ((orientable_iff_edgesPaired_and_flipCompatible disk).mp h).1
 
-/-- The edge-parity reading on a raw mesh: the invalid face `[0, 1]` passes. -/
+/-- The edge-parity reading on a raw mesh: the invalid face `[0, 1]` passes, although its edge
+lies in one face only. -/
 theorem digon_orientable_not_valid : Orientable digon ∧ ¬ Valid digon := by decide
+
+theorem digon_edge_in_one_face : faceCount digon s(0, 1) = 1 := by decide
+
+/-- For a `Valid` mesh a boundary edge rules orientability out: the disk's edge `(0, 1)` lies in
+no other face. -/
+theorem disk_not_orientable_of_boundary_edge : ¬ Orientable disk := by
+  intro h
+  obtain ⟨j, hj, -⟩ := h.edge_shared_of_valid (by decide) (i := ⟨0, by decide⟩) (a := 0) (b := 1)
+    (by decide)
+  exact hj (Fin.ext (Nat.lt_one_iff.mp j.2))
+
+theorem rawLoop_linkEdgesList : linkEdgesList rawLoop 1 = [s(0, 0)] := by decide
+
+/-- `linkDegree` counts link entries: the loop `s(0, 0)` counts once, not twice. -/
+theorem rawLoop_linkDegree : linkDegree rawLoop 1 0 = 1 := by decide
+
+/-- `faceCount` counts faces: a face traversing `s(0, 1)` several times counts once. -/
+theorem rawRepeat_faceCount : faceCount rawRepeat s(0, 1) = 1 := by decide
 
 /-- An `n × n` grid triangulation of the torus (`twist = false`) or, with the last row glued back
 reversed, of the Klein bottle (`twist = true`). -/
