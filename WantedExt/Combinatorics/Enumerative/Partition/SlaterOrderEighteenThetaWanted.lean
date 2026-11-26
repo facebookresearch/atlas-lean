@@ -13,6 +13,7 @@ public import MathlibExt.Analysis.SpecialFunctions.QPochhammer
 public import MathlibExt.NumberTheory.ModularForms.JacobiTheta.NonicProduct
 public import MathlibExt.NumberTheory.ModularForms.JacobiTheta.RamanujanOneTwo
 public import MathlibExt.NumberTheory.ModularForms.JacobiTheta.RamanujanProductDifference
+public import MathlibExt.NumberTheory.ModularForms.JacobiTheta.RamanujanProductSum
 
 /-!
 # Theta-function lemmas for the order-eighteen Rogers-Ramanujan-Slater relations
@@ -36,23 +37,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open MetaMathlibExt.QPochhammer
-
-/-- **Ramanujan's theta function: sum of products when $ab = cd$.** Let
-$f(a,b) = \sum_{n \in \mathbb{Z}} a^{n(n+1)/2} b^{n(n-1)/2}$ be Ramanujan's theta function. For
-complex numbers $a, b, c, d$ with $ab = cd$ and $|ab| < 1$,
-$f(a,b) f(c,d) + f(-a,-b) f(-c,-d) = 2 f(ac,bd) f(ad,bc)$.
-
-This is Entry 29(i) of Berndt's *Ramanujan's Notebooks*; the hypothesis $|ab| < 1$ makes all
-the theta series converge.
-
-Source: A. Vanitha, M. P. Chaudhary, and Madiha Khanum, *Modular Relations for the
-Rogers-Ramanujan-Slater Type Functions of Order Eighteen with Applications to Partitions*,
-INTEGERS 24 (2024), Article A103, Lemma 2, Equation (6) (`integers-2024-A103-lem-2`). -/
-public theorem_wanted ramanujanTheta_mul_add_mul_neg {a b c d : ℂ} (habcd : a * b = c * d)
-    (hab : ‖a * b‖ < 1) :
-    ramanujanThetaRaw a b * ramanujanThetaRaw c d +
-        ramanujanThetaRaw (-a) (-b) * ramanujanThetaRaw (-c) (-d) =
-      2 * ramanujanThetaRaw (a * c) (b * d) * ramanujanThetaRaw (a * d) (b * c)
 
 /-- **Ramanujan's theta function at $(q, q^5)$.** Let
 $f(a,b) = \sum_{n \in \mathbb{Z}} a^{n(n+1)/2} b^{n(n-1)/2}$ be Ramanujan's theta function and
@@ -172,11 +156,13 @@ public theorem_wanted slaterOrderEighteen_modular_relations {q : ℂ} (hq : ‖q
           q ^ 2 * (f 3 * f 18 * f 36 ^ 2 / (f 6 * f 9 * f 12 ^ 2))) ∧
       (q ^ 5 * P 1 * Q 20 - q ^ 32 * Q 1 * R 20 + R 1 * P 20 =
         1 / (2 * q ^ 4 * f 6 * f 120) *
-            (f 9 ^ 2 * f 180 ^ 2 / (f 18 * f 360) - f 4 ^ 2 * f 10 ^ 5 / (f 5 ^ 2 * f 8 * f 20 ^ 2)) +
+            (f 9 ^ 2 * f 180 ^ 2 / (f 18 * f 360) -
+              f 4 ^ 2 * f 10 ^ 5 / (f 5 ^ 2 * f 8 * f 20 ^ 2)) +
           q ^ 17 * (f 3 * f 18 ^ 2 * f 60 * f 360 ^ 2 / (f 6 ^ 2 * f 9 * f 120 ^ 2 * f 180))) ∧
       (q ^ 23 * P 1 * R 14 + Q 1 * P 14 - q ^ 6 * R 1 * Q 14 =
         1 / (2 * q ^ 2 * f 6 * f 84) *
-            (f 9 ^ 2 * f 126 ^ 2 / (f 18 * f 252) - f 2 ^ 2 * f 14 ^ 5 / (f 4 * f 7 ^ 2 * f 28 ^ 2)) +
+            (f 9 ^ 2 * f 126 ^ 2 / (f 18 * f 252) -
+              f 2 ^ 2 * f 14 ^ 5 / (f 4 * f 7 ^ 2 * f 28 ^ 2)) +
           q ^ 13 * (f 3 * f 18 ^ 2 * f 42 * f 252 ^ 2 / (f 6 ^ 2 * f 9 * f 84 ^ 2 * f 126)))
 
 /-- **Relations between the order-eighteen and the nonic Rogers–Ramanujan functions.** Let $q$
