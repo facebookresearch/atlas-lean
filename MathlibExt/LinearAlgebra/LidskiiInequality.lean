@@ -15,7 +15,7 @@ Portions of this file are adapted from:
 Copyright 2026 Lean FRO, LLC.
 Authors: Kim Morrison
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use the adapted
-portion except in compliance with the License. You may obtain a copy of the License at
+portions except in compliance with the License. You may obtain a copy of the License at
 
     https://www.apache.org/licenses/LICENSE-2.0
 
@@ -24,9 +24,16 @@ License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF 
 either express or implied. See the License for the specific language governing permissions
 and limitations under the License. lean-eval ships no `NOTICE` file.
 
-The adapted portion is the statement of `lidskii_inequality`. ATLAS placed it in the
-`MathlibExt.LinearAlgebra.LidskiiInequalityWanted` namespace as a wanted declaration
-and subsequently moved it here with a proof.
+The adapted portions are the statement of `lidskii_inequality` and three parts of the module
+documentation, unchanged from the former wanted module
+`WantedExt/LinearAlgebra/LidskiiInequalityWanted.lean`: the title, the paragraph citing §99
+of Knill's *Some Fundamental Theorems in Mathematics*, and the informal statement with its
+displayed inequality.
+
+Modification notice (Apache License 2.0, Section 4). ATLAS placed the statement in the
+`MathlibExt.LinearAlgebra.LidskiiInequalityWanted` namespace as a wanted declaration and
+subsequently moved it here with a proof. ATLAS dropped the last paragraph of the source's
+module documentation, which described what mathlib and other proof assistants lacked.
 -/
 
 module
@@ -57,11 +64,6 @@ bounded by the `ℓ^p` norm of the eigenvalues of `C := B − A`, for every
 real `p ≥ 1`:
 
   `∑ⱼ |αⱼ − βⱼ|^p ≤ ∑ⱼ |γⱼ|^p`.
-
-mathlib has `Matrix.IsHermitian.eigenvalues₀` (the spectral-theorem
-eigenvalues) but none of the classical eigenvalue-perturbation bounds
-(Lidskii, Ky Fan, Hoffman–Wielandt). No formalization of Lidskii's
-inequality was found in any other proof assistant.
 -/
 
 namespace MathlibExt.LinearAlgebra.LidskiiInequalityWanted.LinearAlgebra
