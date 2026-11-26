@@ -10,12 +10,11 @@ module
 
 public import Mathlib.Data.Nat.Choose.Multinomial
 public import MathlibExt.NumberTheory.BinomialProductAsymptotics
-import MathlibExt.Analysis.Ramanujan.Part1Ch7Entry1Powersum
+import MathlibExt.NumberTheory.CentralBinomialProductAsymptotics
 import Mathlib.Analysis.SpecialFunctions.Stirling
 import Mathlib.Analysis.SpecialFunctions.Gamma.Beta
 import Mathlib.Analysis.SpecialFunctions.Log.Sum
-import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
-import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
+import Mathlib.NumberTheory.Harmonic.Bounds
 import Mathlib.NumberTheory.Harmonic.ZetaAsymp
 
 /-!
@@ -31,190 +30,7 @@ Revisited*, INTEGERS 24 (2024), Article A59, Theorem 5.
 namespace MetaMathlibExt
 
 open Filter Topology
-open MathlibExt.Analysis.Ramanujan.Part1Ch7.Entry1Powersum
-open MeasureTheory
-
-private theorem integrand_bound {C x : ℝ} {r : ℂ} {b : ℝ}
-    (hC : ‖bernoulliKernel 3 x‖ ≤ C) (hx : 1 ≤ x) (hr : r.re ≤ b) :
-    ‖(x : ℂ) ^ (r - 3) * (bernoulliKernel 3 x : ℂ)‖ ≤ C * x ^ (b - 3) := by
-  rw [norm_mul, Complex.norm_cpow_eq_rpow_re_of_pos (by linarith : 0 < x), Complex.norm_real,
-    mul_comm C]
-  apply mul_le_mul _ hC (norm_nonneg _) (Real.rpow_nonneg (by linarith) _)
-  apply Real.rpow_le_rpow_of_exponent_le hx
-  simpa using hr
-
-private theorem tail_continuous {n : ℕ} (hn : 1 < n) {a : ℂ} (ha : a.re < 3 / 2) :
-    ContinuousAt (fun r => powerSumTail 1 r n) a := by
-  obtain ⟨C, hC⟩ := bernoulliKernel_norm_le 1 (by decide)
-  have hn' : 1 ≤ (n : ℝ) := by exact_mod_cast hn.le
-  change Tendsto (fun r : ℂ => ∫ x : ℝ in Set.Ioi (n : ℝ),
-    (x : ℂ) ^ (r - 3) * (bernoulliKernel 3 x : ℂ)) _ _
-  apply tendsto_integral_filter_of_dominated_convergence (fun x : ℝ => C * x ^ (3 / 2 - 3 : ℝ))
-  · apply Eventually.of_forall
-    intro r
-    have hk := (bernoulliKernel_continuous (by decide : 3 ≠ 1)).measurable
-    exact (by fun_prop (disch := norm_num) :
-      Measurable (fun x : ℝ => (x : ℂ) ^ (r - 3) * (bernoulliKernel 3 x : ℂ))).aestronglyMeasurable
-  · filter_upwards [Complex.continuous_re.continuousAt.eventually_lt_const ha] with r hr
-    filter_upwards [ae_restrict_mem (μ := volume) (measurableSet_Ioi)] with x hx
-    exact integrand_bound (hC x) (hn'.trans hx.le) hr.le
-  · exact (integrableOn_Ioi_rpow_of_lt (by norm_num : (3 / 2 - 3 : ℝ) < -1)
-      (by positivity : 0 < (n : ℝ))).const_mul C
-  · filter_upwards [ae_restrict_mem (μ := volume) (measurableSet_Ioi)] with x hx
-    have hx' : (x : ℂ) ≠ 0 := by exact_mod_cast (show x ≠ 0 by linarith [hx.out])
-    apply ContinuousAt.tendsto
-    exact ((continuousAt_const_cpow hx').comp (continuousAt_id.sub_const _)).mul
-      continuousAt_const
-
-private theorem tail_bound {n : ℕ} (hn : 1 < n) {a : ℂ} (ha : a.re < 2)
-    {C : ℝ} (hC : ∀ x, ‖bernoulliKernel 3 x‖ ≤ C) :
-    ‖powerSumTail 1 a n‖ ≤ C * (-(n : ℝ) ^ (a.re - 2) / (a.re - 2)) := by
-  have hn' : 1 ≤ (n : ℝ) := by exact_mod_cast hn.le
-  have hp : 0 < (n : ℝ) := by positivity
-  have he : a.re - 3 < -1 := by linarith
-  have h := norm_integral_le_of_norm_le
-    ((integrableOn_Ioi_rpow_of_lt he hp).const_mul C)
-    ((ae_restrict_mem (μ := volume) measurableSet_Ioi).mono
-      (fun x hx => integrand_bound (hC x) (hn'.trans hx.le) (le_refl a.re)))
-  simpa only [powerSumTail_eq_integral, Nat.reduceMul, Nat.reduceAdd, Nat.cast_ofNat,
-    integral_const_mul, integral_Ioi_rpow_of_lt he hp,
-    show a.re - 3 + 1 = a.re - 2 by ring] using h
-
--- The tail coefficient vanishes at both exponents where we differentiate.
-private theorem deriv_mul_at_root {f g : ℂ → ℂ} {a d : ℂ} (hf : HasDerivAt f d a)
-    (hz : f a = 0) (hg : ContinuousAt g a) :
-    HasDerivAt (fun r => f r * g r) (d * g a) a := by
-  apply hasDerivAt_iff_tendsto_slope.mpr
-  refine (hf.tendsto_slope.mul (hg.tendsto.mono_left nhdsWithin_le_nhds)).congr ?_
-  intro r
-  simp [slope_def_field, hz, div_eq_mul_inv, mul_right_comm]
-
-private theorem power_sum_derivative (n : ℕ) (hn : 1 < n) (a : ℂ) (ha : a = 0 ∨ a = 1) :
-    ∑ k ∈ Finset.Icc 1 n, (k : ℂ) ^ a * Complex.log k =
-      -deriv riemannZeta (-a) +
-      ((n : ℂ) ^ (a + 1) * Complex.log n * (a + 1) - (n : ℂ) ^ (a + 1)) / (a + 1) ^ 2 +
-      (n : ℂ) ^ a * Complex.log n / 2 +
-      ((n : ℂ) ^ (a - 1) + a * ((n : ℂ) ^ (a - 1) * Complex.log n)) / 12 -
-      ((a - 1) * (a - 2) + a * (a - 2) + a * (a - 1)) / 6 * powerSumTail 1 a n := by
-  have hn0 : (n : ℂ) ≠ 0 := by exact_mod_cast (by omega : n ≠ 0)
-  have ha1 : a ≠ -1 := by rcases ha with rfl | rfl <;> norm_num
-  have ha2 : a.re < 3 / 2 := by rcases ha with rfl | rfl <;> norm_num
-  have heq : (fun r => chapter7PowerSum r n) =ᶠ[𝓝 a] fun r : ℂ =>
-      riemannZeta (-r) + (n : ℂ) ^ (r + 1) / (r + 1) + (n : ℂ) ^ r / 2 +
-        r * (n : ℂ) ^ (r - 1) / 12 -
-        (r * (r - 1) * (r - 2) / 6) * powerSumTail 1 r n := by
-    filter_upwards [eventually_ne_nhds ha1,
-      Complex.continuous_re.continuousAt.eventually_lt_const ha2] with r hr hr'
-    rw [chapter7PowerSum_exact_expansion r 1 n hr (by decide) (by norm_num; linarith) hn]
-    norm_num [chapter7Entry1Term, chapter7NatCpow, powerSumRemainderFactor,
-      chapter7FallingGammaRatio, Finset.prod_range_succ, bernoulli_two, Nat.factorial]
-    ring_nf
-  have hsum : HasDerivAt (fun r => chapter7PowerSum r n)
-      (∑ k ∈ Finset.Icc 1 n, (k : ℂ) ^ a * Complex.log k) a := by
-    apply HasDerivAt.fun_sum
-    intro k hk
-    have hk0 : (k : ℂ) ≠ 0 := by
-      exact_mod_cast (Nat.ne_of_gt (Finset.mem_Icc.mp hk).1)
-    unfold chapter7NatCpow
-    simpa using (hasDerivAt_id a).const_cpow (Or.inl hk0)
-  have hid := hasDerivAt_id a
-  have hz := (differentiableAt_riemannZeta
-    (show -a ≠ 1 by simpa [neg_eq_iff_eq_neg] using ha1)).hasDerivAt.comp a hid.neg
-  have hu := hid.add_const 1
-  have hv := hid.sub_const 1
-  have hw := hid.sub_const 2
-  have hpoly := ((hid.mul hv).mul hw).div_const 6
-  have htail := deriv_mul_at_root hpoly
-    (by rcases ha with rfl | rfl <;> norm_num) (tail_continuous hn ha2)
-  have hquot := (hu.const_cpow (.inl hn0)).div hu
-    (show a + 1 ≠ 0 by rcases ha with rfl | rfl <;> norm_num)
-  have h := (((hz.add hquot).add ((hid.const_cpow (.inl hn0)).div_const 2)).add
-    ((hid.mul (hv.const_cpow (.inl hn0))).div_const 12)).sub htail
-  have he := (hsum.congr_of_eventuallyEq heq.symm).unique h
-  dsimp at he
-  rw [he]
-  ring
-
-private noncomputable def weightedLog (n : ℕ) : ℝ :=
-  ∑ k ∈ Finset.Icc 1 n, (k : ℝ) * Real.log k
-
-private noncomputable def factorialMain (x : ℝ) : ℝ :=
-  (x + 1 / 2) * Real.log x - x + Real.log (2 * Real.pi) / 2 + 1 / (12 * x)
-
-private noncomputable def weightedMain (x : ℝ) : ℝ :=
-  (x ^ 2 / 2 + x / 2 + 1 / 12) * Real.log x - x ^ 2 / 4 + Real.log glaisherKinkelinConstant
-
-private theorem factorial_expansion {n : ℕ} (hn : 1 < n) :
-    Real.log n.factorial = factorialMain n - (powerSumTail 1 0 n).re / 3 := by
-  have h := power_sum_derivative n hn 0 (.inl rfl)
-  norm_num [deriv_riemannZeta_zero, Complex.cpow_neg_one] at h
-  have hd : (Real.log (n.factorial : ℝ) : ℂ) =
-      (factorialMain n : ℂ) - powerSumTail 1 0 n / 3 := by
-    rw [← Real.sum_log_eq_log_factorial, ← Finset.Icc_add_one_left_eq_Ioc]
-    unfold factorialMain
-    push_cast
-    simp only [Complex.ofReal_log (by positivity : 0 ≤ 2 * Real.pi),
-      Complex.ofReal_mul, Complex.ofReal_ofNat]
-    convert h using 1
-    ring
-  simpa only [Complex.sub_re, Complex.ofReal_re, Complex.div_ofNat_re] using congrArg Complex.re hd
-
-private theorem weighted_expansion {n : ℕ} (hn : 1 < n) :
-    weightedLog n = weightedMain n + (powerSumTail 1 1 n).re / 6 := by
-  have h := power_sum_derivative n hn 1 (.inr rfl)
-  norm_num [Complex.cpow_two] at h
-  have hd : (weightedLog n : ℂ) =
-      (((n : ℝ) ^ 2 / 2 + n / 2 + 1 / 12) * Real.log n - n ^ 2 / 4 + 1 / 12 : ℝ) -
-        deriv riemannZeta (-1) + powerSumTail 1 1 n / 6 := by
-    unfold weightedLog
-    push_cast
-    convert h using 1
-    ring
-  have hre := congrArg Complex.re hd
-  simp only [Complex.add_re, Complex.sub_re, Complex.ofReal_re, Complex.div_ofNat_re] at hre
-  unfold weightedMain
-  rw [log_glaisherKinkelinConstant]
-  linear_combination hre
-
-private noncomputable def factorialError (n : ℕ) : ℝ :=
-  Real.log n.factorial - factorialMain n
-
-private noncomputable def weightedError (n : ℕ) : ℝ :=
-  weightedLog n - weightedMain n
-
-private theorem error_limits :
-    Tendsto (fun n : ℕ => n * factorialError n) atTop (𝓝 0) ∧
-    Tendsto weightedError atTop (𝓝 0) := by
-  obtain ⟨C, hC⟩ := bernoulliKernel_norm_le 1 (by decide)
-  have hC0 : 0 ≤ C := (norm_nonneg _).trans (hC 0)
-  have hlim : Tendsto (fun n : ℕ => C * (n : ℝ)⁻¹) atTop (𝓝 0) := by
-    simpa using (tendsto_inv_atTop_zero.comp tendsto_natCast_atTop_atTop).const_mul C
-  constructor
-  · apply squeeze_zero_norm' _ hlim
-    filter_upwards [eventually_gt_atTop 1] with n hn
-    have hn0 : 0 < (n : ℝ) := by positivity
-    have hb := (Complex.abs_re_le_norm _).trans (tail_bound hn (a := 0) (by norm_num) hC)
-    norm_num [Real.rpow_neg hn0.le] at hb
-    simp [factorialError, factorial_expansion hn]
-    field_simp [hn0.ne'] at hb ⊢
-    nlinarith [abs_nonneg (powerSumTail 1 0 n).re]
-  · apply squeeze_zero_norm' _ hlim
-    filter_upwards [eventually_gt_atTop 1] with n hn
-    have hn0 : 0 < (n : ℝ) := by positivity
-    have hb := (Complex.abs_re_le_norm _).trans (tail_bound hn (a := 1) (by norm_num) hC)
-    norm_num [Real.rpow_neg hn0.le] at hb
-    simp [weightedError, weighted_expansion hn]
-    field_simp [hn0.ne'] at hb ⊢
-    linarith
-
-private theorem log_factorial_succ (n : ℕ) :
-    Real.log ((n + 1).factorial : ℝ) = Real.log n.factorial + Real.log (n + 1 : ℝ) := by
-  rw [Nat.factorial_succ, Nat.cast_mul, Nat.cast_add_one, Real.log_mul (by positivity)
-    (by positivity), add_comm]
-
-private theorem weightedLog_succ (n : ℕ) :
-    weightedLog (n + 1) = weightedLog n + (n + 1 : ℝ) * Real.log (n + 1 : ℝ) := by
-  simp [weightedLog, Finset.sum_Icc_succ_top (show 1 ≤ n + 1 by omega)]
+open LogFactorialExpansion
 
 private theorem log_factorial_add (n k : ℕ) :
     Real.log ((n + k).factorial : ℝ) = Real.log n.factorial +
@@ -335,14 +151,6 @@ private theorem sum_log_arithmetic (k n : ℕ) :
     rw [Finset.sum_add_distrib, ih, Nat.mul_add, Nat.mul_one, log_factorial_add]
     push_cast
     rfl
-
-private theorem factorialError_limit : Tendsto factorialError atTop (𝓝 0) := by
-  have h := (tendsto_inv_atTop_zero.comp tendsto_natCast_atTop_atTop).mul error_limits.1
-  simp only [zero_mul] at h
-  refine h.congr' ?_
-  filter_upwards [eventually_gt_atTop 0] with n hn
-  change (n : ℝ)⁻¹ * (n * factorialError n) = _
-  field_simp
 
 private theorem sum_log_gamma_fraction (k : ℕ) (hk : 0 < k) :
     (∑ j ∈ Finset.range k, Real.log (Real.Gamma ((j + 1 : ℝ) / k))) =
@@ -679,12 +487,8 @@ private theorem sum_Icc_cast (n : ℕ) :
 
 private theorem sum_Icc_log (n : ℕ) :
     (∑ ν ∈ Finset.Icc 1 n, Real.log ν) = Real.log (n.factorial : ℝ) := by
-  induction n with
-  | zero => simp
-  | succ n ih =>
-    rw [Finset.sum_Icc_succ_top (by omega), ih, log_factorial_succ]
-    push_cast
-    rfl
+  rw [← Real.sum_log_eq_log_factorial, ← Finset.Icc_add_one_left_eq_Ioc]
+  rfl
 
 private theorem sum_stirlingRemainder_identity (k n : ℕ) (hk : 0 < k) (hn : 0 < n) :
     normalizedFactorialLog k n - Real.log (2 * Real.pi) / 4 =
@@ -740,12 +544,9 @@ private theorem sum_stirlingRemainder_limit (k : ℕ) (hk : 0 < k) :
 
 private theorem sum_Icc_inv (n : ℕ) :
     (∑ ν ∈ Finset.Icc 1 n, (1 : ℝ) / ν) = harmonic n := by
-  induction n with
-  | zero => simp
-  | succ n ih =>
-    rw [Finset.sum_Icc_succ_top (by omega), ih, harmonic_succ]
-    push_cast
-    simp only [one_div]
+  rw [harmonic_eq_sum_Icc]
+  push_cast
+  simp only [one_div]
 
 private theorem sum_Icc_inv_sq_bound (n : ℕ) :
     (∑ ν ∈ Finset.Icc 1 n, (1 : ℝ) / (ν : ℝ) ^ 2) ≤ 2 := by
