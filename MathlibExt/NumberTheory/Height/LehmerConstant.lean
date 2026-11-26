@@ -34,9 +34,9 @@ measures strictly larger than `1` among integer polynomials:
 `L = inf {M(f) | f ∈ ℤ[X], 1 < M(f)}`. Lehmer's 1933 question asks whether
 Mahler measures accumulate at `1`, equivalently whether `L = 1`; this file
 proves that equivalence together with the elementary bounds `1 ≤ L ≤ 2`.
-This file also certifies the catalogue upper bound for the Mahler measure of
-Lehmer's example polynomial. The corresponding bound on the constant and Smyth's
-nonreciprocal lower bound are registered as proof requests in the wanted file.
+This file also certifies the Mahler measure bound for Lehmer's example polynomial and
+uses it to prove `L ≤ 1176281/1000000`. Smyth's nonreciprocal lower bound remains a
+proof request in the wanted file.
 
 Source: Optimization Problems, constants/40a.md, frozen at
 teorth/optimizationproblems commit
@@ -372,6 +372,16 @@ Source: Lehmer (1933), the Mahler measure of Lehmer's polynomial is
 theorem intMahlerMeasure_lehmerPolynomial_le :
     intMahlerMeasure lehmerPolynomial ≤ 1176281 / 1000000 :=
   intMahlerMeasure_lehmerPolynomial_mem_Ioo.2.le
+
+/-- **Lehmer's upper bound for Lehmer's constant.** Lehmer's constant is at most
+$1176281/1000000 = 1.176281$.
+
+Source: Lehmer (1933), catalogue upper bound `C₄₀ₐ ≤ 1.176280...`
+from the Mahler measure of Lehmer's polynomial, rounded up at the sixth
+decimal place. -/
+theorem lehmer1933UpperBound_wanted : lehmerConstant ≤ 1176281 / 1000000 :=
+  (lehmerConstant_le_intMahlerMeasure intMahlerMeasure_lehmerPolynomial_mem_Ioo.1).trans
+    intMahlerMeasure_lehmerPolynomial_le
 
 /-- **Smyth's polynomial.** Smyth's polynomial is $X^3 - X - 1 \in \mathbb{Z}[X]$.
 
