@@ -28,3 +28,14 @@ example {x : ℝ} (hx0 : 0 < x) (hx1 : x < 1) :
 example (x : ℝ) : zuritaT 3 x = -1 / 10 - 3 / 5 * x := by
   norm_num [zuritaT, zuritaTCoeff, zuritaTCoeffRev, zuritaSCoeff, zuritaC, Finset.sum_range_succ]
   ring
+
+-- At n = 1 the N sum is empty and M is the constant 2.
+example {x : ℝ} (hx0 : 0 < x) (hx1 : x < 1) :
+    HasDerivAt (fun y => Real.log y - Real.arcsin (Real.sqrt y) * Real.sqrt (y * (1 - y)) * 2 / y)
+      (x ^ (-(3 : ℝ) / 2) * Real.arcsin (Real.sqrt x) / Real.sqrt (1 - x)) x := by
+  have hM (y : ℝ) : zuritaM 1 y = 2 := by norm_num [zuritaM, zuritaMCoeff]
+  have hd : zuritaD 1 = 1 := by norm_num [zuritaD, zuritaMCoeff]
+  have hN (y : ℝ) : zuritaN 1 y = 0 := rfl
+  simpa only [hd, Rat.cast_one, one_mul, hM, pow_one, hN, zero_div, add_zero, Nat.cast_one,
+    show -(1 : ℝ) - 1 / 2 = -3 / 2 by norm_num] using
+    hasDerivAt_zurita_antiderivative_two (n := 1) le_rfl hx0 hx1
