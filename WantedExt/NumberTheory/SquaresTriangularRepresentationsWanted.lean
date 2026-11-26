@@ -48,20 +48,6 @@ public theorem sumOfTriangularRepCount_one (n : ℕ) :
     sumOfTriangularRepCount 1 n = PowerSeries.coeff n triangularThetaSeries := by
   simp [sumOfTriangularRepCount]
 
-/-- **Prime divisibility of triangular representation numbers persists under prime shifts.** For an
-integer $k$, let $t_k(n)$ be the coefficient of $q^n$ in $\psi(q)^k$, where
-$\psi(q) = \sum_{m \ge 0} q^{m(m+1)/2}$. Let $n \ge 1$ and $k \ge 1$ be natural numbers and let $p$
-be a prime with $p \ge n + 1$. If $p$ divides $t_k(n)$, then $p$ divides $t_{k+rp}(n)$ for every
-integer $r$.
-
-Source: Alegri and Christopher, *On Formulas, Recurrences, and Congruences for
-Representations of Integers as Sums of Squares and Triangular Numbers*, INTEGERS
-26 (2026), Article A93, Theorem 4 (`integers-2026-A93-thm-4`). -/
-public theorem_wanted sumOfTriangularRepCount_add_mul_prime {n k p : ℕ} (hn : 1 ≤ n)
-    (hk : 1 ≤ k) (hp : p.Prime) (hpn : n + 1 ≤ p)
-    (h : (p : ℤ) ∣ sumOfTriangularRepCount k n) (r : ℤ) :
-    (p : ℤ) ∣ sumOfTriangularRepCount (k + r * p) n
-
 /-- **Window congruence for sums of squares.** For an integer $k$, let $r_k(n)$ be the coefficient
 of $q^n$ in $\theta(q)^k$, where $\theta(q) = \sum_{m \in \mathbb{Z}} q^{m^2}$. Let $n \ge 1$, let
 $p$ be an odd prime with $p - 1 \ge n + 1$, and let $s \ge p$ be an integer. Then $p$ divides
