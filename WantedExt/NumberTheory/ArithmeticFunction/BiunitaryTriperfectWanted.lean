@@ -23,6 +23,8 @@ public import MathlibExt.NumberTheory.ArithmeticFunction.BiunitaryTriperfectNotF
 
 Statements from Tomohiro Yamada, *Determining all Biunitary Triperfect Numbers of a Certain
 Form*, Journal of Integer Sequences 28 (2025), Article 25.4.5.
+`MetaMathlibExt.four_le_factorization_two_of_biunitaryTriperfect` is in
+`MathlibExt.NumberTheory.ArithmeticFunction.BiunitaryTriperfect`.
 
 Following Wall (as quoted in the paper's introduction), a divisor `d` of `n` is biunitary when
 `gcd₁(d, n / d) = 1`, where `gcd₁(a, b)` is the greatest common unitary divisor of `a` and `b`
@@ -140,16 +142,6 @@ public theorem_wanted exists_two_primes_dvd_sigmaBiunitary_thirteen_pow (g : ℕ
     ∃ q₁ q₂, q₁ ≠ q₂ ∧ q₁.Prime ∧ q₂.Prime ∧ q₁ ∣ sigmaBiunitary (13 ^ g) ∧
       q₂ ∣ sigmaBiunitary (13 ^ g) ∧ q₁ ∉ ({2, 3, 41, 547} : Finset ℕ) ∧
       q₂ ∉ ({2, 3, 41, 547} : Finset ℕ)
-
-/-- **Biunitary triperfect numbers divisible by $27$ are divisible by $16$.** Let $N$ be a
-biunitary triperfect number, that is, a positive integer with $\sigma^{**}(N) = 3N$, where
-$\sigma^{**}$ is the biunitary divisor sum. If $3^3$ divides $N$, then $2^4$ divides $N$.
-
-Source: Tomohiro Yamada, *Determining all Biunitary Triperfect Numbers of a Certain Form*,
-Journal of Integer Sequences 28 (2025), Article 25.4.5, Lemma 9 (`jis-2025-25.4.5-lem-9`). -/
-public theorem_wanted four_le_factorization_two_of_biunitaryTriperfect (N : ℕ) (hN : 0 < N)
-    (hσ : sigmaBiunitary N = 3 * N) (hf : 3 ≤ N.factorization 3) :
-    4 ≤ N.factorization 2
 
 /-- **No biunitary triperfect number divisible by $27$ is exactly divisible by $2^5$.** Let $N$
 be a biunitary triperfect number, that is, a positive integer with $\sigma^{**}(N) = 3N$, where
