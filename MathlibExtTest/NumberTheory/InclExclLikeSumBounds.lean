@@ -35,4 +35,16 @@ example : inclExclLikeSum Int.floor (fun _ : Fin 3 => (7 / 18 : ℝ)) = 1 ∧
   norm_num at h
   omega
 
+-- At the minimum dimension, the ceiling sum lies between zero and one for every tuple.
+example (x : Fin 2 → ℝ) :
+    0 ≤ inclExclLikeSum Int.ceil x ∧ inclExclLikeSum Int.ceil x ≤ 1 := by
+  simpa using (inclExclLikeSum_ceil_extrema (n := 2) (by decide)).1 x
+
+-- The two constant tuples attain the lower and upper endpoints in dimension three.
+example : inclExclLikeSum Int.ceil (fun _ : Fin 3 => (11 / 18 : ℝ)) = -1 ∧
+    inclExclLikeSum Int.ceil (fun _ : Fin 3 => (1 / 2 : ℝ)) = 2 := by
+  have h := (inclExclLikeSum_ceil_extrema (n := 3) (by decide)).2
+  norm_num at h
+  exact h
+
 end MetaMathlibExt.inclExclLikeSum_bounds_summary
