@@ -481,6 +481,19 @@ class Batches(unittest.TestCase):
         self.assertEqual(result.returncode, 1, result.stdout)
         self.assertIn("leaves scripts/taxonomy.json unreadable", result.stderr)
 
+        # A newer main whose check stops before it writes a report, as on a git error: the batch's own check passed and
+        # wrote one, but that report is never read as the merge's.
+        def stop_the_check() -> None:
+            path = self.root / "scripts/sync_wiki.py"
+            path.write_text(path.read_text().replace(
+                'if __name__ == "__main__":', 'if __name__ == "__main__" and "--check" in sys.argv:\n    sys.exit(2)\n\n'
+                'if __name__ == "__main__":', 1))
+
+        main_merges(13, stop_the_check)
+        result = self.tool("verify", commit)
+        self.assertEqual(result.returncode, 1, result.stdout)
+        self.assertIn("the batch could not be checked: the scoped check stopped (exit 2)", result.stderr)
+
     def test_make_needs_a_clean_checkout_and_an_older_base(self) -> None:
         self.lean_only_merges()
         self.write("MathlibExt/Algebra/Fields.lean", "-- edited\n")

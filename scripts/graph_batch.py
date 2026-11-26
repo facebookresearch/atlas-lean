@@ -599,6 +599,22 @@ def run_sync(root: Path, base: str, report: Path, check: bool) -> tuple[int, str
     return result.returncode, result.stdout + result.stderr
 
 
+def checked_sync(root: Path, base: str, report: Path) -> tuple[dict, str]:
+    """Run *root*'s scoped check from *base* (run_sync) and return its report and output. The report must be this
+    run's: *report* is removed first, so a run that stops before writing one, as on a git error, is refused rather than
+    read from an earlier run; and the exit status must agree with it, 0 in step and 1 not. BatchError otherwise."""
+    report.unlink(missing_ok=True)
+    status, output = run_sync(root, base, report, check=True)
+    try:
+        data = json.loads(report.read_text()) if report.is_file() else None
+    except ValueError:
+        data = None
+    if not isinstance(data, dict) or status != (0 if data.get("in_step") is True else 1):
+        raise BatchError(f"the scoped check stopped (exit {status}) without a report that agrees with it. Its "
+                         "output:\n" + output)
+    return data, output
+
+
 def report_sections(output: str) -> dict[str, list[str]]:
     """The items the sync's printed report lists under each of its sections (sync_wiki.REPORT), by kind."""
     titles = {f"{title}: ": kind for kind, title in sync.REPORT}
@@ -746,19 +762,20 @@ def verify_commit(commit: str, bodies: dict[int, str], plan: PlacementPlan | Non
                              "new batch from a fresh main") from None
         merged = local_commit(tree, [onto, commit], f"The batch {commit} merged into {onto}")
     with tempfile.TemporaryDirectory(prefix="atlas-batch-verify-") as folder:
-        tree, report_path = Path(folder) / "tree", Path(folder) / "report.json"
+        tree = Path(folder) / "tree"
         git("worktree", "add", "-q", "--detach", str(tree), commit)
         try:
-            status, output = run_sync(tree, synthetic, report_path, check=True)
-            report = json.loads(report_path.read_text()) if report_path.is_file() else {}
+            report, output = checked_sync(tree, synthetic, Path(folder) / "batch-report.json")
             if report.get("in_step") is not True or report.get("wiki_changes") not in ("sync", "none"):
                 raise BatchError("the scoped check does not find the batch's wiki exactly the sync's, in step. Its "
                                  "output:\n" + output)
             if merged is not None:
                 subprocess.run(["git", "-C", str(tree), "checkout", "-q", "--detach", merged], check=True,
                                capture_output=True)
-                status, output = run_sync(tree, onto, report_path, check=True)
-                onto_report = json.loads(report_path.read_text()) if report_path.is_file() else {}
+                try:
+                    onto_report, output = checked_sync(tree, onto, Path(folder) / "merge-report.json")
+                except BatchError as error:
+                    raise BatchError(f"merged into {onto}, the batch could not be checked: {error}") from None
                 if onto_report.get("in_step") is not True:
                     raise BatchError(f"merged into {onto}, the batch breaks what the scoped check reads: make a new "
                                      "batch from a fresh main. Its output:\n" + output)

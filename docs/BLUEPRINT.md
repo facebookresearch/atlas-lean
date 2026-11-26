@@ -613,8 +613,9 @@ declaration merged without a page it adds the page and its annotation row and
 lists the page on its folder page; it writes the docstring digests the scoped
 sync writes; it places new modules in `scripts/taxonomy.json` and drops the
 places of modules that are gone. One batch is open at a time, made on a fresh
-`main` every one or two hours by whoever runs the batches. The site builds
-`main` once a day, so it is at most about one batch behind the Lean.
+`main` every one or two hours by whoever runs the batches. So `main`'s graph
+trails its Lean by about one batch, plus the batch's review and queue time;
+the site, built from `main` once a day, can trail `main` by up to a day more.
 
 ```sh
 git fetch https://github.com/facebookresearch/atlas-lean.git main
