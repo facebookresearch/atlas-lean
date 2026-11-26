@@ -1,16 +1,15 @@
 # Matching databases
 
-Fix $n \ge 1$ and a schema of relations of arities $r \ge 1$ over attributes with domain $[n] = \{1, \dots, n\}$.
-A relation of arity $r$ is a matching if it has exactly $n$ tuples and every value of $[n]$ occurs exactly
-once in each column, equivalently if it is the set $\{(i, \sigma_2(i), \dots, \sigma_r(i)) : i \in [n]\}$ for
-permutations $\sigma_2, \dots, \sigma_r$ of $[n]$. A matching database assigns a matching to every
-relation; the uniform distribution chooses these permutations independently and uniformly, which is the
-uniform distribution on the finite, nonempty set of matching databases. Nullary relations are excluded.
+Fix a common domain $[n]=\{1,\ldots,n\}$, where $n>0$. Each relation name $i$ has a prescribed arity $r_i\ge 1$. A **matching database** assigns to each name a set of $r_i$-tuples in which every value of $[n]$ occurs in exactly one tuple at each column. Equivalently, projection onto any column is a bijection from that relation's rows to $[n]$. Thus each relation has exactly $n$ rows. Row order and repeated listings of an identical tuple do not change the set.
+
+A unary matching contains every domain value. When $n=1$, each relation consists of the sole tuple of its arity. An empty set of names has one database, the empty assignment; this does not introduce a relation of arity zero.
 
 ## Related topics
 
+- [Permutation representation of a matching relation](permutation-equiv.md): fixing the first column as row index determines each other column's permutation uniquely.
+- [Uniform sampling of matching databases](map-independent-permutations.md): for finitely many names, independent uniform choices for all these permutations induce the uniform law on the actual databases.
 - [Query hypergraph and fractional vertex covering number](query-hypergraph-and-fractional-vertex-covering-number.md)
 
 ## Sources
 
-- Communication Steps for Parallel Query Processing (Beame, Koutris, Suciu, PODS 2013) — Beame, Koutris, Suciu; ACM PODS, authors' copy, Section 2.5 (input distribution). <https://homes.cs.washington.edu/~beame/papers/mpcpods.pdf>
+- P. Beame, P. Koutris and D. Suciu, *Communication Steps for Parallel Query Processing*, PODS 2013, [authors' copy, §2.5, “Input Distribution”](https://homes.cs.washington.edu/~beame/papers/mpcpods.pdf#page=5). The paper defines the matching condition, identifies the binary case with a permutation, and specifies uniform sampling at fixed $n$. The general first-column representation and the independent sampler are derived descriptions of that law.
