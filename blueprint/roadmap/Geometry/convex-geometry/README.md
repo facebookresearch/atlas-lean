@@ -22,6 +22,7 @@ Convex sets and convex bodies in Euclidean space: Helly-type and Radon-type theo
 - [Tverberg's theorem](tverberg.md)
 - [Ulam's flat-sections problem in dimension three](ulam-flat-sections-convex.md)
 - [Knaster–Kuratowski–Mazurkiewicz lemma](kkm-lemma.md)
+- [Convex set](convex-set.md)
 
 ## [Convex bodies with congruent hyperplane sections to Root bounds for Steiner polynomials](part-01/README.md)
 
