@@ -10,8 +10,7 @@ LICENSE file in the root directory of this source tree.
 # Global stability of SIR and SEIR models with concave nonlinear incidence
 
 Korobeinikov and Maini (2005, Section 4) consider the normalized models with incidence
-`h(S) g(I)`, birth and death rate `μ > 0`, disease-induced and recovery rate `δ ≥ 0` and
-latency rate `θ > 0`:
+`h(S) g(I)`, birth and death rate `μ > 0`, recovery rate `δ ≥ 0` and latency rate `θ > 0`:
 
   SIR (4.1):  `S' = μ - h(S) g(I) - μ S`,  `I' = h(S) g(I) - (δ + μ) I`;
   SEIR (4.2): `S' = μ - h(S) g(I) - μ S`,  `E' = h(S) g(I) - (θ + μ) E`,
@@ -21,29 +20,33 @@ The source asks that the incidence `f(S, I) = h(S) g(I)` vanish when `S = 0` or 
 have positive partial derivatives for `S, I > 0` (2.2) and satisfy `∂²f/∂I² ≤ 0` (2.3), and its
 proof takes `h` and `g` increasing. The statements below assume an adaptation of these
 conditions, `Incidence`: `h` and `g` are `C¹` on `[0, ∞)`, vanish at `0` and are strictly
-increasing, and `g` is concave. Read with `h` and `g` increasing, the source's conditions imply
-these but not conversely, since a strictly increasing `C¹` function may have a zero derivative at
-an interior point and concavity needs no second derivative; `Incidence` lists why the proof still
-goes through. With `B = 1` for SIR and `B = (θ + μ) / θ` for SEIR, the basic
-reproduction number is `R₀ = h(1) g'(0) / (B (δ + μ))`. Their Theorem 4.1: if `R₀ > 1` the
-endemic equilibrium is globally asymptotically stable, and if `R₀ ≤ 1` the disease-free
-equilibrium `(1, 0, 0)` is globally asymptotically stable; the proofs use Volterra-type
-Lyapunov functions and the inequality `g(I)/g(I*) ≷ I/I*` that concavity gives. Two points left
-implicit in the source are made precise here: the basin of the endemic equilibrium is the set of
-nonnegative states with `E + I > 0` (`I > 0` for SIR), and the existence and uniqueness of the
-endemic equilibrium are part of the statement.
+increasing, and `g` is concave. Neither set of conditions implies the other. The adaptation
+relaxes the interior conditions, since a strictly increasing `C¹` function `h` may have a zero
+derivative at an interior point and concavity of `g` needs no second derivative. It adds
+regularity at the boundary, where `h` and `g` must be `C¹` up to `0`, so that the slope `g'(0)` in
+`R₀` is a real number: (2.1)–(2.3) allow `h(S) = S` and `g(I) = √I`, whose slope at `0` is
+infinite, and the source keeps a finite slope at `0` as the separate assumption (2.4).
+`Incidence` lists why the proof still goes through. With `B = 1` for SIR and
+`B = (θ + μ) / θ` for SEIR, the basic reproduction number is `R₀ = h(1) g'(0) / (B (δ + μ))`.
+Their Theorem 4.1: if `R₀ > 1` the endemic equilibrium is globally asymptotically stable, and if
+`R₀ ≤ 1` the disease-free equilibrium `(1, 0, 0)` is globally asymptotically stable; the proofs
+use Volterra-type Lyapunov functions and the inequality `g(I)/g(I*) ≷ I/I*` that concavity gives.
+Two points left implicit in the source are made precise here: the basin of the endemic
+equilibrium is the set of nonnegative states with `E + I > 0` (`I > 0` for SIR), and the
+existence and uniqueness of the endemic equilibrium are part of the statement.
 
 The bilinear SEIR model with vital dynamics, `h(S) = β S / N` and `g(I) = I`, is proved in
 `Domains.Biology.Epidemiology.SEIRGlobalStability`.
 
 Sources: A. Korobeinikov and P. K. Maini, "Non-linear incidence and stability of infectious
-disease models", Math. Med. Biol. 22 (2005) 113–128, conditions (2.1)–(2.3), Eqs. (4.1)–(4.5)
+disease models", Math. Med. Biol. 22 (2005) 113–128, conditions (2.1)–(2.4), Eqs. (4.1)–(4.5)
 and Theorem 4.1.
 -/
 module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Calculus.Deriv.Basic
+public import Mathlib.Analysis.ODE.Basic
 public import Mathlib.Analysis.Calculus.ContDiff.Defs
 public import Mathlib.Analysis.Convex.Function
 public import Mathlib.Topology.MetricSpace.Pseudo.Defs
@@ -57,17 +60,20 @@ open Filter Topology
 /-- **Adapted incidence hypotheses.** An adaptation of conditions (2.1)–(2.3), not those
 conditions: `h` and `g` are `C¹` on `[0, ∞)`, vanish at `0` and are strictly increasing on
 `[0, ∞)`, and `g` is concave on `[0, ∞)`. For the incidence `h(S) g(I)` the source asks for
-positive partial derivatives when `S, I > 0` and for `∂²(h(S) g(I))/∂I² ≤ 0`; with `h` and `g`
-increasing, as its proof takes them, these imply the hypotheses here but not conversely, since a
-strictly increasing `C¹` function may have a zero derivative at an interior point and concavity
-needs no second derivative. The hypotheses still give what the proof of Theorem 4.1 uses: `h` and
+positive partial derivatives when `S, I > 0` and for `∂²(h(S) g(I))/∂I² ≤ 0`. Neither set of
+conditions implies the other. The hypotheses here relax those interior conditions, since a
+strictly increasing `C¹` function `h` may have a zero derivative at an interior point and
+concavity of `g` needs no second derivative. They add regularity at the boundary: `h` and `g` are
+`C¹` up to `0`, so the right slope `g'(0)` in `R₀` is a real number, whereas (2.1)–(2.3) allow
+`g(I) = √I`, whose slope at `0` is infinite (the source keeps a finite slope at `0` as the
+separate assumption (2.4)). The hypotheses still give what the proof of Theorem 4.1 uses: `h` and
 `g` are positive on `(0, ∞)`, so the Lyapunov functions are defined; `h(S) - h(S*)` has the sign
 of `S - S*`; `g(I) / I` is nonincreasing on `(0, ∞)`, which gives (4.5) and `g(I) ≤ g'(0) I`;
 the partial derivatives `∂V/∂S = 1 - h(S*) / h(S)` and `∂V/∂I = B (1 - g(I*) / g(I))` of the
 Lyapunov function (4.4) increase strictly, so `Q*` is its only extremum; and the equilibrium
 equations (4.3) have exactly one solution with `I* > 0` when `R₀ > 1` and none when `R₀ ≤ 1`.
 
-Source: Korobeinikov and Maini (2005), conditions (2.1)–(2.3), Eqs. (4.3)–(4.5) and Theorem 4.1. -/
+Source: Korobeinikov and Maini (2005), conditions (2.1)–(2.4), Eqs. (4.3)–(4.5) and Theorem 4.1. -/
 structure Incidence (h g : ℝ → ℝ) : Prop where
   contDiffOn_h : ContDiffOn ℝ 1 h (Set.Ici 0)
   contDiffOn_g : ContDiffOn ℝ 1 g (Set.Ici 0)
@@ -98,22 +104,18 @@ noncomputable def seirR0 (h g : ℝ → ℝ) (μ δ θ : ℝ) : ℝ :=
 noncomputable def sirR0 (h g : ℝ → ℝ) (μ δ : ℝ) : ℝ :=
   h 1 * slopeAtZero g / (δ + μ)
 
-/-- A forward solution of `x' = F x`: `x` has right derivative `F (x t)` at every `t ≥ 0`. -/
-def IsForwardSolution {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V] (F : V → V)
-    (x : ℝ → V) : Prop :=
-  ∀ t, 0 ≤ t → HasDerivWithinAt x (F (x t)) (Set.Ici 0) t
-
 /-- Stability of `e` within the state space `D` of the model: `e` is Lyapunov stable for the
-forward solutions of `x' = F x` that stay in `D`, and attracts every such solution that starts
-in `A`. (The incidence functions are only constrained on `[0, ∞)`, so the models live on the
+solutions of `x' = F x` on `[0, ∞)` (`IsIntegralCurveOn x (fun _ => F) (Set.Ici 0)`, with the
+derivative at `0` taken within `[0, ∞)`) that stay in `D`, and attracts every such solution that
+starts in `A`. (The incidence functions are only constrained on `[0, ∞)`, so the models live on the
 nonnegative orthant; it is forward invariant for every solution of a locally Lipschitz
 extension of the vector field.) -/
 def GloballyStable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V] (F : V → V)
     (D A : Set V) (e : V) : Prop :=
-  (∀ ε > 0, ∃ δ > 0, ∀ x : ℝ → V, IsForwardSolution F x → (∀ t, 0 ≤ t → x t ∈ D) →
-      dist (x 0) e < δ → ∀ t, 0 ≤ t → dist (x t) e < ε) ∧
-    ∀ x : ℝ → V, IsForwardSolution F x → (∀ t, 0 ≤ t → x t ∈ D) → x 0 ∈ A →
-      Tendsto x atTop (𝓝 e)
+  (∀ ε > 0, ∃ δ > 0, ∀ x : ℝ → V, IsIntegralCurveOn x (fun _ => F) (Set.Ici 0) →
+      (∀ t, 0 ≤ t → x t ∈ D) → dist (x 0) e < δ → ∀ t, 0 ≤ t → dist (x t) e < ε) ∧
+    ∀ x : ℝ → V, IsIntegralCurveOn x (fun _ => F) (Set.Ici 0) → (∀ t, 0 ≤ t → x t ∈ D) →
+      x 0 ∈ A → Tendsto x atTop (𝓝 e)
 
 /-- **Korobeinikov–Maini theorem, endemic case, SEIR.** Theorem 4.1(i) of Korobeinikov and Maini
 (2005), under the adapted incidence hypotheses `Incidence` in place of (2.1)–(2.3). With `μ > 0`,

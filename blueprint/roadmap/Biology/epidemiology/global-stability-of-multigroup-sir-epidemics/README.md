@@ -11,7 +11,6 @@
 - [Susceptible DFE](susceptible-dfe.md)
 - [Basic reproduction number](r0.md)
 - [Interior Feasible](interior-feasible.md)
-- [Is Solution](is-solution.md)
 
 ## Multigroup SIRGlobal Stability Wanted
 

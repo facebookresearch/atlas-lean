@@ -52,7 +52,7 @@ Eqs. (1.4)–(1.7) and Theorem 3.3.
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.Analysis.Calculus.Deriv.Basic
+public import Mathlib.Analysis.ODE.Basic
 public import Domains.Biology.Epidemiology.NextGenerationMatrix
 public import Mathlib.LinearAlgebra.Complex.Module
 public import Mathlib.LinearAlgebra.Matrix.Irreducible.Defs
@@ -135,10 +135,6 @@ def InteriorFeasible (P : Params ι) (x : (ι → ℝ) × (ι → ℝ)) : Prop :
     x.1 k + x.2 k < P.recruit k / min (P.deathS k) (min (P.deathI k + P.diseaseDeath k)
       (P.deathR k))
 
-/-- A forward solution: `x` has right derivative `field (x t)` at every `t ≥ 0`. -/
-def IsSolution (P : Params ι) (x : ℝ → (ι → ℝ) × (ι → ℝ)) : Prop :=
-  ∀ t, 0 ≤ t → HasDerivWithinAt x (P.field (x t)) (Set.Ici 0) t
-
 end Params
 
 open Params
@@ -146,22 +142,23 @@ open Params
 /-- **Guo–Li–Shuai theorem.** Let the index set `ι` of groups be finite and nonempty. For
 admissible parameters (in particular `p_k < 1` for every `k`) with `(β_kj)` irreducible and
 `R₀ > 1`, there is an endemic equilibrium `x*` (all `S_k*, I_k* > 0`; Corollary 3.2); it is the
-only equilibrium with all coordinates positive, it is Lyapunov stable for solutions starting in
-the interior of `Γ`, and every forward solution starting in the interior of `Γ` converges to it
-(Theorem 3.3). Only the positivity of `x*` is claimed, not that it lies in the interior of `Γ` as
-the source has it: `S_k* + I_k* = Λ_k / d*_k` exactly when `p_k = θ_k = γ_k = 0` and
-`dS_k = dI_k + ε_k ≤ dR_k`. For example, with two groups, `Λ_k = dS_k = dI_k = dR_k = 1`, all
-other parameters zero and every `β_kj = 1`, `R₀ = 2` and the equilibrium `S_k* = I_k* = 1/2` lies
-on that face of `Γ`.
+only equilibrium with all coordinates positive, it is Lyapunov stable for the solutions on
+`[0, ∞)` (integral curves of the field) starting in the interior of `Γ`, and every such solution
+converges to it (Theorem 3.3). Only the positivity of `x*` is claimed, not that it lies in the
+interior of `Γ` as the source has it: `S_k* + I_k* = Λ_k / d*_k` exactly when
+`p_k = θ_k = γ_k = 0` and `dS_k = dI_k + ε_k ≤ dR_k`. For example, with two groups,
+`Λ_k = dS_k = dI_k = dR_k = 1`, all other parameters zero and every `β_kj = 1`, `R₀ = 2` and the
+equilibrium `S_k* = I_k* = 1/2` lies on that face of `Γ`.
 
 Source: Guo, Li and Shuai (2006), Theorem 3.3. -/
 theorem_wanted exists_endemic_globallyStable [Nonempty ι] (P : Params ι) (hP : P.Admissible)
     (hirr : P.beta.IsIrreducible) (hR0 : 1 < P.R0) :
     ∃ e : (ι → ℝ) × (ι → ℝ), (∀ k, 0 < e.1 k ∧ 0 < e.2 k) ∧ P.field e = 0 ∧
       (∀ e' : (ι → ℝ) × (ι → ℝ), (∀ k, 0 < e'.1 k ∧ 0 < e'.2 k) → P.field e' = 0 → e' = e) ∧
-      (∀ ε > 0, ∃ δ > 0, ∀ x : ℝ → (ι → ℝ) × (ι → ℝ), P.IsSolution x →
-        P.InteriorFeasible (x 0) → dist (x 0) e < δ → ∀ t, 0 ≤ t → dist (x t) e < ε) ∧
-      ∀ x : ℝ → (ι → ℝ) × (ι → ℝ), P.IsSolution x → P.InteriorFeasible (x 0) →
-        Tendsto x atTop (𝓝 e)
+      (∀ ε > 0, ∃ δ > 0, ∀ x : ℝ → (ι → ℝ) × (ι → ℝ),
+        IsIntegralCurveOn x (fun _ => P.field) (Set.Ici 0) → P.InteriorFeasible (x 0) →
+          dist (x 0) e < δ → ∀ t, 0 ≤ t → dist (x t) e < ε) ∧
+      ∀ x : ℝ → (ι → ℝ) × (ι → ℝ), IsIntegralCurveOn x (fun _ => P.field) (Set.Ici 0) →
+        P.InteriorFeasible (x 0) → Tendsto x atTop (𝓝 e)
 
 end WantedExt.Biology.Epidemiology.MultigroupSIRGlobalStabilityWanted
