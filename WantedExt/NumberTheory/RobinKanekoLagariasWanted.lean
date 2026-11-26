@@ -19,7 +19,7 @@ public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import Mathlib.NumberTheory.Harmonic.Defs
 public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 public import Mathlib.NumberTheory.Primorial
-public import WantedExt.NumberTheory.PrimeCounting.DusartMertensReciprocalSumWanted
+public import MathlibExt.NumberTheory.PrimeCounting.DusartMertensReciprocalSumDefs
 public import MathlibExt.NumberTheory.RobinKanekoLagariasExpFiveDivLogBoundLt
 
 namespace MetaMathlibExt
