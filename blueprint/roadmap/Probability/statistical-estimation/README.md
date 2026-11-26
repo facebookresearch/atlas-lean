@@ -23,3 +23,4 @@ Point estimation theory and confidence sets: bias, risk and mean squared error, 
 - [Identifiability and gauge freedom](identifiability-and-gauge-freedom/README.md)
 - [Process quality and monitoring](process-quality-and-monitoring/README.md)
 - [Data assimilation](data-assimilation/README.md)
+- [Item response models](item-response-models/README.md)
