@@ -2,6 +2,7 @@
 
 The gamma, digamma and trigamma functions: series and integral representations, factorial series, growth bounds against exponentials, and Ramanujan's digamma identities.
 
+- [Beta integral for equal natural powers](beta-integral-for-equal-natural-powers/README.md)
 - [Beta integrals](beta-integrals/README.md)
 - [Digamma and trigamma functions](digamma-and-trigamma-functions/README.md)
 - [Iterated factorials and power towers](iterated-factorials-and-power-towers/README.md)

@@ -37,6 +37,7 @@ Convex functions and sets in analysis and optimization: first-order and second-o
 - [First-order condition for convexity](add-fderiv-sub-le.md)
 - [Karush–Kuhn–Tucker conditions with mixed constraints under LICQ](karush-kuhn-tucker-mixed.md)
 - [Convergence rate of the projected subgradient method](sgd-rate.md)
+- [Subdifferential calculus](subdifferential-calculus/README.md)
 
 ## Related topics
 
