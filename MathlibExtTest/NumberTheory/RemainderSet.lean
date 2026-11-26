@@ -25,6 +25,10 @@ example : remainderSet 11 = {0, 1, 2, 3} ∧ remainderSet 12 = {0, 2} := by
 example : remainderSet 0 = ∅ ∧ remainderSet 1 = ∅ ∧ remainderSet 2 = {0} := by
   decide
 
+-- The count can also increase by one: the next set is obtained by shifting and adjoining zero.
+example : remainderSet 13 = insert 0 ((remainderSet 12).image (· + 1)) := by
+  decide
+
 -- A drop of `3` from `n = 131`: `132 = 3 · 44 = 4 · 33 = 12 · 11 = 132 · 1` uses the primes
 -- `2, 3, 11, 131`, so four remainders of `131` are not shifted into `S(132)`.
 example : remainderCount 131 = 33 ∧ remainderCount 132 = 30 := by
