@@ -38,20 +38,12 @@ set_option autoImplicit false
 
 open TensorProduct
 
-universe u v w
+universe u v
 
 /-- Consumer at the original binder universes. -/
 private theorem exactSource
     {A : Type u} {B : Type v} [CommRing A] [CommRing B] [Algebra A B]
     [Module.FaithfullyFlat A B] {b : B}
-    (hb : b ⊗ₜ[A] (1 : B) = (1 : B) ⊗ₜ[A] b) :
-    ∃ a : A, algebraMap A B a = b :=
-  Module.FaithfullyFlat.exists_algebraMap_eq_of_tmul_one_eq_one_tmul hb
-
-/-- Consumer in a higher universe, exercising universe polymorphism. -/
-private theorem exactSource_higherUniverse
-    {A : Type u} {B : Type (max v w)} [CommRing A] [CommRing B]
-    [Algebra A B] [Module.FaithfullyFlat A B] {b : B}
     (hb : b ⊗ₜ[A] (1 : B) = (1 : B) ⊗ₜ[A] b) :
     ∃ a : A, algebraMap A B a = b :=
   Module.FaithfullyFlat.exists_algebraMap_eq_of_tmul_one_eq_one_tmul hb
@@ -69,6 +61,17 @@ private theorem self_example (b : ℤ) :
     ∃ a : ℤ, algebraMap ℤ ℤ a = b :=
   Module.FaithfullyFlat.exists_algebraMap_eq_of_tmul_one_eq_one_tmul
     (algebraMap_satisfies_identity b)
+
+/-- A faithfully flat algebra where the conclusion has content: `ℤ × ℤ` is free of rank two over
+`ℤ`, hence faithfully flat, and `(0, 1)` is not in the diagonal image of `ℤ`, so
+`(0, 1) ⊗ 1 ≠ 1 ⊗ (0, 1)` in `(ℤ × ℤ) ⊗[ℤ] (ℤ × ℤ)`. -/
+private theorem prod_tmul_one_ne_one_tmul :
+    ((0, 1) : ℤ × ℤ) ⊗ₜ[ℤ] (1 : ℤ × ℤ) ≠ (1 : ℤ × ℤ) ⊗ₜ[ℤ] ((0, 1) : ℤ × ℤ) := by
+  intro h
+  obtain ⟨a, ha⟩ := Module.FaithfullyFlat.exists_algebraMap_eq_of_tmul_one_eq_one_tmul h
+  have h0 : a = 0 := by simpa using congrArg Prod.fst ha
+  have h1 : a = 1 := by simpa using congrArg Prod.snd ha
+  omega
 
 /-! ### Boundary: flatness alone does not suffice -/
 
