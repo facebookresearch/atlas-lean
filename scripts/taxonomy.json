@@ -13123,6 +13123,7 @@
   "MathlibExt/NumberTheory/LaurentSeriesBoundedPartialQuotients": {"to": "NumberTheory/continued-fractions-expansions", "title": "Continued fractions of Laurent series"},
   "MathlibExt/NumberTheory/LaurentSeriesBoundedPartialQuotientsLaurentSubConvergentOrder": {"to": "NumberTheory/continued-fractions-expansions", "title": "Continued fractions of Laurent series"},
   "MathlibExt/NumberTheory/LaurentSeriesConvergentProperties": {"to": "NumberTheory/continued-fractions-expansions", "title": "Continued fractions of Laurent series"},
+  "MathlibExt/NumberTheory/LaurentSeriesFrobenius": {"to": "NumberTheory/continued-fractions-expansions", "title": "Continued fractions of Laurent series"},
   "MathlibExt/NumberTheory/LcmDenseSets": {"to": "NumberTheory/additive-number-theory", "title": "Reciprocal lcm sums of integer sets"},
   "MathlibExt/NumberTheory/LegendreSymbol/EisensteinJacobiSymbol": {"to": "NumberTheory/congruences/power-residues-reciprocity", "title": "Eisenstein's lemma"},
   "MathlibExt/NumberTheory/LegendreSymbol/LinearSum": {"to": "NumberTheory/congruences/power-residues-reciprocity", "title": "Sums of Legendre symbols"},
