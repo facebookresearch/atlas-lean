@@ -14146,6 +14146,7 @@
   "MathlibExt/Probability/Geometry/UniformBody": {"to": "Probability/high-dimensional-probability", "title": "Isotropic constant of log-concave laws"},
   "MathlibExt/Probability/Geometry/UniformInterval": {"to": "Probability/high-dimensional-probability", "title": "Isotropic constant of log-concave laws"},
   "MathlibExt/Probability/GiniSimpsonAsymptotics": {"to": "Combinatorics/integer-partitions/young-diagrams-statistics", "title": "Number of values of diversity indices"},
+  "MathlibExt/Probability/GiniSimpsonTriangular": {"to": "Combinatorics/integer-partitions/young-diagrams-statistics", "title": "Number of values of diversity indices"},
   "MathlibExt/Probability/HellingerDistance": {"to": "Probability/convergence-of-measures", "title": "Hellinger distance"},
   "MathlibExt/Probability/HellySelection": {"to": "Probability/convergence-of-measures", "title": "Helly's selection theorem"},
   "MathlibExt/Probability/HewittSavage": {"to": "Probability/foundations", "title": "Hewitt–Savage zero–one law"},
