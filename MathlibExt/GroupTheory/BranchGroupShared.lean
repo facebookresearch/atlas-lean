@@ -7,6 +7,21 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
+Portions of this file are adapted from:
+
+`WantedExt/GroupTheory/BranchGroupShared.lean` (ATLAS), for the rooted tree, group action and
+rigid stabilizer definitions originally shared with the OpenConjectures entry
+`OpenConjectures.GroupTheory.BranchGroupsBoundedlyAcyclic`.
+Copyright (c) Meta Platforms, Inc. and affiliates.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+The source credits no individual authors.
+-/
+
+module
+
+public import Mathlib.GroupTheory.Index
+
+/-!
 # Branch groups
 
 Shared definition of branch groups for the Kourovka Notebook entries (Problem 20.101): a group
@@ -15,12 +30,8 @@ at least two children, with every rigid level stabilizer of finite index (Garcia
 Maximal subgroups in torsion branch groups, arXiv:2410.06783, Section 2, for subgroups of
 `Aut(X*)`). The definitions repeat, with the same names and field docstrings added, those of the
 OpenConjectures entry `OpenConjectures.GroupTheory.BranchGroupsBoundedlyAcyclic` (Kourovka 21.116),
-which `WantedExt` cannot import.
+which the ATLAS project libraries cannot import.
 -/
-
-module
-
-public import Mathlib.GroupTheory.Index
 
 @[expose] public section
 
