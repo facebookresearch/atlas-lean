@@ -1,10 +1,12 @@
 # Weak-selection fixation probability in a competitive Lotka–Volterra diffusion
 
 **Model.** Two types $X$ (mutant) and $Y$ (resident) with common per-capita birth rate $\beta$ and death rate $\gamma$ ($\beta > \gamma$) compete; $a, b, c, d > 0$ are inverse competition strengths, so that an $X$ individual dies from competition at per-capita rate $x/a + y/b$ and a $Y$ individual at rate $x/c + y/d$. With rescaled densities $x = X/M$, $y = Y/M$ ($M$ a large system-size parameter), the diffusion approximation is
+
 $$\begin{aligned}
 dx &= x\Big(\beta - \gamma - \frac{x}{a} - \frac{y}{b}\Big)dt + \sqrt{\frac{x}{M}\Big(\beta + \gamma + \frac{x}{a} + \frac{y}{b}\Big)}\, dW_1, \\
 dy &= y\Big(\beta - \gamma - \frac{x}{c} - \frac{y}{d}\Big)dt + \sqrt{\frac{y}{M}\Big(\beta + \gamma + \frac{x}{c} + \frac{y}{d}\Big)}\, dW_2,
 \end{aligned}$$
+
 with independent Brownian motions $W_1, W_2$. $X$ *fixes* if $y(t) = 0$ while $x(t) > 0$ at some time $t$. In the coordinates $p = x/(x+y)$ (mutant frequency) and $z = x + y$ (population size), the deterministic interior equilibrium has frequency
 
 $$p^* = \frac{b - d}{(b-d) + \frac{bd}{ac}(c - a)}, \qquad \text{i.e.}\quad \frac{1}{p^*} = 1 + \frac{bd}{ac}\cdot\frac{c-a}{b-d}.$$
