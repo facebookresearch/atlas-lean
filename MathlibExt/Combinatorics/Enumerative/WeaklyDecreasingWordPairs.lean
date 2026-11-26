@@ -13,21 +13,25 @@ public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Order.Interval.Finset.Nat
+public import Mathlib.RingTheory.PowerSeries.Inverse
 import Mathlib.Data.Finset.Sym
 import Mathlib.Data.Fintype.Powerset
 import Mathlib.Data.List.Sort
 import Mathlib.Data.Multiset.Sort
 import Mathlib.Data.Nat.Choose.Sum
 import Mathlib.Data.Sym.Card
+import Mathlib.RingTheory.PowerSeries.WellKnown
 
 /-!
-# Non-intersecting pairs of weakly decreasing words
+# Intersections in pairs of weakly decreasing words
 
 A weakly decreasing word is determined by the multiset of its letters, and the set of letters it
 uses is the support of that multiset. Splitting pairs of multisets with disjoint supports by the
 support of the first one and counting each part by stars and bars gives the number of pairs of
 weakly decreasing words of equal length with no common letter
-(`weaklyDecreasingNonIntersectingPairs_sameLength_card`).
+(`weaklyDecreasingNonIntersectingPairs_sameLength_card`). Splitting the second multiset into
+letters inside and outside the first support gives the two coefficient formulas for the overlap
+statistic (`weaklyDecreasingPairs_overlap_sum_eq_coeff`).
 -/
 
 namespace MetaMathlibExt
@@ -236,6 +240,156 @@ private theorem card_eq_sum (k n r : ℕ) (hn : 1 ≤ n) (hr : 1 ≤ r) :
 
 end Counting
 
+section Overlap
+
+open PowerSeries
+
+/-- The coefficient counts multisets of size `m` on `d` letters, each weighted by `q ^ m`. -/
+private theorem coeff_inv_weighted (d m : ℕ) (q : ℚ) :
+    coeff m (((1 - C q * X) ^ d)⁻¹ : ℚ⟦X⟧) = (d.multichoose m : ℚ) * q ^ m := by
+  have hinv := (invOneSubPow ℚ d).val_inv
+  rw [invOneSubPow_inv_eq_one_sub_pow] at hinv
+  have h := congrArg (rescale q) hinv
+  simp only [map_mul, map_pow, map_sub, map_one, rescale_X] at h
+  rw [(inv_eq_iff_mul_eq_one (by simp)).2 h, coeff_rescale, mul_comm]
+  congr 1
+  cases d with
+  | zero => cases m <;> simp [invOneSubPow_zero, coeff_one]
+  | succ d =>
+    rw [invOneSubPow_val_succ_eq_mk_add_choose, coeff_mk, Nat.multichoose_eq,
+      show d + 1 + m - 1 = d + m by omega, Nat.choose_symm_of_eq_add rfl]
+
+private theorem coeff_inv_unweighted (d m : ℕ) :
+    coeff m (((1 - X) ^ d)⁻¹ : ℚ⟦X⟧) = d.multichoose m := by
+  simpa using coeff_inv_weighted d m 1
+
+/-- Requiring every letter of the support to occur contributes one factor of `X` per letter. -/
+private theorem coeff_first_word {n j : ℕ} (hn : 1 ≤ n) (hj : 1 ≤ j) :
+    coeff n (X ^ j * ((1 - X) ^ j)⁻¹ : ℚ⟦X⟧) = (n - 1).choose (j - 1) := by
+  rw [coeff_X_pow_mul']
+  split_ifs with h
+  · rw [coeff_inv_unweighted, Nat.multichoose_eq, show j + (n - j) - 1 = n - 1 by omega,
+      Nat.choose_symm_of_eq_add (show n - 1 = (n - j) + (j - 1) by omega)]
+  · rw [Nat.choose_eq_zero_of_lt (by omega), Nat.cast_zero]
+
+/-- Joining multisets on complementary alphabets counts the second words of each overlap. -/
+private theorem card_overlap_fiber {k r a b : ℕ} (S : Finset (Fin k)) (hab : a + b = r) :
+    (univ.filter fun B : Sym (Fin k) r =>
+      ((B : Multiset (Fin k)).filter (· ∈ S)).card = a).card =
+        (S.sym a).card * (Sᶜ.sym b).card := by
+  rw [← card_product]
+  symm
+  let join (p : Sym (Fin k) a × Sym (Fin k) b) : Sym (Fin k) r :=
+    Sym.mk ((p.1 : Multiset (Fin k)) + p.2) (by simpa using hab)
+  have inside (p : Sym (Fin k) a × Sym (Fin k) b) (hp : p ∈ S.sym a ×ˢ Sᶜ.sym b) :
+      ((join p : Multiset (Fin k)).filter (· ∈ S)) = p.1 := by
+    obtain ⟨h₁, h₂⟩ := mem_product.1 hp
+    have h₁' : (p.1 : Multiset (Fin k)).filter (· ∈ S) = p.1 :=
+      Multiset.filter_eq_self.2 fun x hx => mem_sym_iff.1 h₁ x hx
+    have h₂' : (p.2 : Multiset (Fin k)).filter (· ∈ S) = 0 :=
+      Multiset.filter_eq_nil.2 fun x hx => mem_compl.1 (mem_sym_iff.1 h₂ x hx)
+    rw [show (join p : Multiset (Fin k)) = (p.1 : Multiset (Fin k)) + p.2 from rfl,
+      Multiset.filter_add, h₁', h₂', add_zero]
+  apply card_bij (fun p _ => join p)
+  · intro p hp
+    simp [inside p hp]
+  · intro p hp t ht h
+    have he := congrArg (fun B : Sym (Fin k) r => (B : Multiset (Fin k)).filter (· ∈ S)) h
+    rw [inside p hp, inside t ht] at he
+    apply Prod.ext (Sym.ext he)
+    apply Sym.ext
+    have he' := congrArg (fun B : Sym (Fin k) r => (B : Multiset (Fin k))) h
+    change (p.1 : Multiset (Fin k)) + p.2 = (t.1 : Multiset (Fin k)) + t.2 at he'
+    exact add_left_cancel (he ▸ he')
+  · intro B hB
+    have splitB := Multiset.filter_add_not (· ∈ S) (B : Multiset (Fin k))
+    have hin := (mem_filter.1 hB).2
+    have hout := congrArg Multiset.card splitB
+    rw [Multiset.card_add, hin, Sym.card_coe] at hout
+    refine ⟨(Sym.mk ((B : Multiset (Fin k)).filter (· ∈ S)) hin,
+      Sym.mk ((B : Multiset (Fin k)).filter (· ∉ S)) (by omega)), ?_, Sym.ext splitB⟩
+    exact mem_product.2 ⟨mem_sym_iff.2 fun _ hx => (Multiset.mem_filter.1 hx).2,
+      mem_sym_iff.2 fun _ hx => mem_compl.2 (Multiset.mem_filter.1 hx).2⟩
+
+/-- For a fixed support, the two multiset counts form the Cauchy product. -/
+private theorem sum_second_word {k : ℕ} (S : Finset (Fin k)) (r : ℕ) (q : ℚ) :
+    ∑ B : Sym (Fin k) r, q ^ ((B : Multiset (Fin k)).filter (· ∈ S)).card =
+      coeff r ((((1 - X) ^ (k - S.card))⁻¹ * ((1 - C q * X) ^ S.card)⁻¹) : ℚ⟦X⟧) := by
+  have hmaps (B : Sym (Fin k) r) (_ : B ∈ univ) :
+      ((B : Multiset (Fin k)).filter (· ∈ S)).card ∈ range (r + 1) := by
+    rw [mem_range, Nat.lt_succ_iff]
+    exact (Multiset.card_le_card (Multiset.filter_le ..)).trans_eq (Sym.card_coe (s := B))
+  rw [← sum_fiberwise_of_maps_to' hmaps (fun m => q ^ m), mul_comm, coeff_mul,
+    Finset.Nat.sum_antidiagonal_eq_sum_range_succ_mk]
+  refine sum_congr rfl fun m hm => ?_
+  have hm' : m ≤ r := Nat.lt_succ_iff.mp (mem_range.1 hm)
+  rw [sum_const, card_overlap_fiber S (Nat.add_sub_of_le hm'), card_sym_finset, card_sym_finset,
+    card_compl, Fintype.card_fin, coeff_inv_weighted, coeff_inv_unweighted, nsmul_eq_mul,
+    Nat.cast_mul, mul_right_comm]
+
+/-- Replace decreasing words by multisets without changing the weight of any pair. -/
+private theorem sum_words_eq_sum_sym (k n r : ℕ) (q : ℚ) :
+    ∑ p ∈ ((univ : Finset ((Fin n → Fin k) × (Fin r → Fin k))).filter fun p =>
+        Antitone p.1 ∧ Antitone p.2), q ^ (univ.filter fun i => p.2 i ∈ univ.image p.1).card =
+      ∑ A : Sym (Fin k) n, ∑ B : Sym (Fin k) r,
+        q ^ ((B : Multiset (Fin k)).filter (· ∈ (A : Multiset (Fin k)).toFinset)).card := by
+  rw [← Fintype.sum_prod_type (fun p : Sym (Fin k) n × Sym (Fin k) r =>
+    q ^ ((p.2 : Multiset (Fin k)).filter (· ∈ (p.1 : Multiset (Fin k)).toFinset)).card)]
+  refine sum_nbij' (fun p => (toSym p.1, toSym p.2)) (fun p => (ofSym p.1, ofSym p.2))
+    (fun _ _ => mem_univ _) (fun _ _ => mem_filter.2
+      ⟨mem_univ _, antitone_ofSym _, antitone_ofSym _⟩) ?_ ?_ ?_
+  · rintro ⟨u, v⟩ h
+    obtain ⟨hu, hv⟩ := (mem_filter.1 h).2
+    exact Prod.ext (ofSym_toSym hu) (ofSym_toSym hv)
+  · exact fun _ _ => Prod.ext (toSym_ofSym _) (toSym_ofSym _)
+  · rintro ⟨u, v⟩ _
+    simp only [coe_toSym, ← Fin.univ_val_map, Multiset.filter_map, Multiset.card_map]
+    rfl
+
+/-- Group first words by their support, then group those supports by cardinality. -/
+private theorem sum_by_support_size (k n : ℕ) (hn : 1 ≤ n) (f : ℕ → ℚ) :
+    ∑ A : Sym (Fin k) n, f (A : Multiset (Fin k)).toFinset.card =
+      ∑ j ∈ Icc 1 k, (k.choose j : ℚ) * coeff n (X ^ j * ((1 - X) ^ j)⁻¹ : ℚ⟦X⟧) * f j := by
+  let term (j : ℕ) := coeff n (X ^ j * ((1 - X) ^ j)⁻¹ : ℚ⟦X⟧) * f j
+  have hzero : coeff n (X ^ 0 * ((1 - X) ^ 0)⁻¹ : ℚ⟦X⟧) = 0 := by
+    simp [coeff_one, show n ≠ 0 by omega]
+  have hmaps (A : Sym (Fin k) n) (_ : A ∈ univ) :
+      (A : Multiset (Fin k)).toFinset ∈ (univ : Finset (Fin k)).powerset :=
+    mem_powerset.2 (subset_univ _)
+  rw [← sum_fiberwise_of_maps_to' hmaps (fun S => f S.card)]
+  calc
+    _ = ∑ S ∈ (univ : Finset (Fin k)).powerset, term S.card := by
+      refine sum_congr rfl fun S _ => ?_
+      rw [sum_const, nsmul_eq_mul]
+      rcases S.eq_empty_or_nonempty with rfl | hS
+      · rw [card_toFinset_eq_empty k n hn]
+        simp only [term, card_empty, hzero, Nat.cast_zero, zero_mul]
+      · rw [card_toFinset_eq k n hn S hS]
+        simp only [term, coeff_first_word hn hS.card_pos]
+    _ = ∑ j ∈ range (k + 1), (k.choose j : ℚ) * term j := by
+      simp only [sum_powerset_apply_card term, card_univ, Fintype.card_fin, nsmul_eq_mul]
+    _ = _ := by
+      rw [← sum_subset (s₁ := Icc 1 k) (s₂ := range (k + 1))]
+      · simp only [term, mul_assoc]
+      · intro j hj
+        exact mem_range.2 (Nat.lt_succ_of_le (mem_Icc.1 hj).2)
+      · intro j hj hj'
+        have : j = 0 := by simpa [mem_Icc, Nat.lt_succ_iff.mp (mem_range.1 hj)] using hj'
+        subst j
+        simp only [term, hzero, zero_mul, mul_zero]
+
+/-- The positive-degree part of the weighted series gives the expanded coefficient formula. -/
+private theorem weighted_tail (j : ℕ) (q : ℚ) :
+    (PowerSeries.mk fun m => if m = 0 then 0 else ((m + j - 1).choose m : ℚ) * q ^ m) =
+      ((1 - C q * X) ^ j)⁻¹ - 1 := by
+  ext m
+  rw [coeff_mk, map_sub, coeff_inv_weighted, coeff_one]
+  by_cases hm : m = 0
+  · simp [hm]
+  · simp [hm, Nat.multichoose_eq, Nat.add_comm j m]
+
+end Overlap
+
 end WeaklyDecreasingWordPairs
 
 /-- **Non-intersecting pairs of weakly decreasing words of equal length.** For natural numbers $k$
@@ -250,5 +404,51 @@ public theorem weaklyDecreasingNonIntersectingPairs_sameLength_card (k n : ℕ) 
         Antitone p.2 ∧ Disjoint (Finset.univ.image p.1) (Finset.univ.image p.2)).card =
       ∑ j ∈ Finset.Icc 1 (k - 1), k.choose j * (n - 1).choose (j - 1) * (n + k - j - 1).choose n :=
   WeaklyDecreasingWordPairs.card_eq_sum k n n hn hn
+
+open WeaklyDecreasingWordPairs PowerSeries in
+/-- **Overlap statistic on pairs of weakly decreasing words.** Fix natural numbers $k$, $n \ge 1$,
+$r \ge 1$ and a rational number $q$, and order an alphabet of $k$ letters. For words $u$ and $v$
+over this alphabet, the overlap of $(u, v)$ is the number of positions of $v$ whose letter occurs
+in $u$. Write $[x^m] F$ for the coefficient of $x^m$ in a formal power series $F$ over
+$\mathbb{Q}$. Let $T$ be the sum of $q^{\text{overlap}}$ over all pairs $(u, v)$ of weakly
+decreasing words, $u$ of length $n$ and $v$ of length $r$. Then
+$T = \sum_{j=1}^{k} \binom{k}{j} \, [x^n]\bigl(x^j (1-x)^{-j}\bigr) \,
+[x^r]\Bigl((1-x)^{-(k-j)} - 1 + (1-x)^{-(k-j)} \sum_{m \ge 1} \binom{m+j-1}{m} q^m x^m\Bigr)$
+and
+$T = \sum_{j=1}^{k} \binom{k}{j} \, [x^n]\bigl(x^j (1-x)^{-j}\bigr) \,
+[x^r]\bigl(-1 + (1-x)^{-(k-j)} (1 - qx)^{-j}\bigr)$.
+
+The paper prints these sums over $j$ with upper limit $k - 1$, which omits the pairs whose first
+word uses all $k$ letters ($j = k$, which Theorem 2 includes): for $k = 1$ and $n = r = 1$ the
+only pair contributes $q$, while the printed sum is empty.
+
+Source: Aubrey Blecher and Arnold Knopfmacher, *Intersections in Pairs of Words*, INTEGERS 24
+(2024), Article A107, Theorem 4 (`integers-2024-A107-thm-4`). -/
+public theorem weaklyDecreasingPairs_overlap_sum_eq_coeff (k n r : ℕ) (hn : 1 ≤ n)
+    (hr : 1 ≤ r) (q : ℚ) :
+    ∑ p ∈ ((Finset.univ : Finset ((Fin n → Fin k) × (Fin r → Fin k))).filter fun p =>
+        Antitone p.1 ∧ Antitone p.2),
+        q ^ (Finset.univ.filter fun i => p.2 i ∈ Finset.univ.image p.1).card =
+        ∑ j ∈ Finset.Icc 1 k, (k.choose j : ℚ) * coeff n (X ^ j * ((1 - X) ^ j)⁻¹ : ℚ⟦X⟧) *
+          coeff r ((((1 - X) ^ (k - j))⁻¹ - 1 + ((1 - X) ^ (k - j))⁻¹ *
+            PowerSeries.mk fun m => if m = 0 then 0 else ((m + j - 1).choose m : ℚ) *
+                q ^ m : ℚ⟦X⟧)) ∧
+      ∑ p ∈ ((Finset.univ : Finset ((Fin n → Fin k) × (Fin r → Fin k))).filter fun p =>
+          Antitone p.1 ∧ Antitone p.2),
+          q ^ (Finset.univ.filter fun i => p.2 i ∈ Finset.univ.image p.1).card =
+        ∑ j ∈ Finset.Icc 1 k, (k.choose j : ℚ) * coeff n (X ^ j * ((1 - X) ^ j)⁻¹ : ℚ⟦X⟧) *
+          coeff r ((-1 + ((1 - X) ^ (k - j))⁻¹ * ((1 - PowerSeries.C q * X) ^ j)⁻¹ : ℚ⟦X⟧)) := by
+  have h := sum_by_support_size k n hn (fun j => coeff r
+    ((((1 - X) ^ (k - j))⁻¹ * ((1 - C q * X) ^ j)⁻¹) : ℚ⟦X⟧))
+  rw [sum_words_eq_sum_sym]
+  simp_rw [sum_second_word]
+  have h₁ : coeff r (1 : ℚ⟦X⟧) = 0 := by simp [coeff_one, show r ≠ 0 by omega]
+  constructor
+  · rw [h]
+    apply Finset.sum_congr rfl
+    intro j _
+    rw [weighted_tail, mul_sub, mul_one, add_comm (_ - 1), sub_add_sub_cancel,
+      map_sub, h₁, sub_zero]
+  · simpa only [map_add, map_neg, h₁, neg_zero, zero_add] using h
 
 end MetaMathlibExt
