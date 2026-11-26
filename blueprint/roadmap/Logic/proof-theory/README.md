@@ -19,3 +19,5 @@ Structural study of formal proofs and provability: sequent calculi, linear logic
 - [Herbrand's theorem](herbrand-s-theorem/README.md)
 - [Gödel's first incompleteness theorem](g-del-s-first-incompleteness-theorem/README.md)
 - [Gödel's second incompleteness theorem](g-del-s-second-incompleteness-theorem/README.md)
+- [Craig interpolation for first-order logic](craig-interpolation-for-first-order-logic.md)
+- [Cut elimination for the classical sequent calculus LK](cut-elimination-for-the-classical-sequent-calculus.md)

@@ -32,3 +32,7 @@ Relations between formal theories and their structures: first-order languages of
 - [Squarelike and discriminating groups](squarelike-and-discriminating-groups/README.md)
 - [Subsemigroup lattices of free groups](subsemigroup-lattices-of-free-groups/README.md)
 - [Elementary equivalence of wreath products](elementary-equivalence-of-wreath-products/README.md)
+
+- [Beth's definability theorem](beth-definability-theorem.md)
+- [Downward Löwenheim–Skolem theorem](downward-lowenheim-skolem-theorem.md)
+- [Quantifier elimination for Presburger arithmetic](quantifier-elimination-for-presburger-arithmetic.md)

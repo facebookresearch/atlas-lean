@@ -12,3 +12,5 @@ Specific undecidable problems and the reductions proving them undecidable: the P
 - [Undecidable problems for context-free grammars](undecidable-problems-for-context-free-grammars/README.md)
 - [Regularity problem for context-free languages](regularity-problem-for-context-free-languages/README.md)
 - [Church's theorem](church-s-theorem/README.md)
+
+- [Validity of first-order sentences is undecidable](validity-of-first-order-sentences-is-undecidable.md)
