@@ -13587,7 +13587,6 @@
   "MathlibExt/NumberTheory/PellNumberSequence": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Pell and Pell–Lucas numbers"},
   "MathlibExt/NumberTheory/PellPellLucasCompositionSumsSqrtTwo": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Toeplitz–Hessenberg determinants of recurrences"},
   "MathlibExt/NumberTheory/PellRotatedSquare": {"to": "NumberTheory/diophantine-equations/pell-quadratic-equations", "title": "Pell equation solutions in a rotated square"},
-  "MathlibExt/NumberTheory/PellRotatedSquarePellShiftedNormBijOnIci": {"to": "NumberTheory/diophantine-equations/pell-quadratic-equations", "title": "Pell equation solutions in a rotated square"},
   "MathlibExt/NumberTheory/PellShiftedIntercepts": {"to": "NumberTheory/diophantine-equations/pell-quadratic-equations", "title": "Pell equation solutions in a rotated square"},
   "MathlibExt/NumberTheory/PellShiftedQuadrants": {"to": "NumberTheory/diophantine-equations/pell-quadratic-equations", "title": "Pell equation solutions in a rotated square"},
   "MathlibExt/NumberTheory/PellSilverRatio": {"to": "NumberTheory/digits-numeration/numeration-automatic", "title": "Numeration by Fibonacci and Pell numbers"},
