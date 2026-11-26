@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Mathlib.Data.Nat.Prime.Defs
+import Mathlib.Tactic.NormNum
 import MathlibExt.NumberTheory.WilsonQuotientsExistsIntEqWilsonQuotientZPlusTwoMulAndModEq
 
 /-! # Tests for the sign-adjusted Wilson quotient sum at even arguments -/
@@ -16,6 +17,12 @@ import MathlibExt.NumberTheory.WilsonQuotientsExistsIntEqWilsonQuotientZPlusTwoM
 namespace MathlibExtTest.NumberTheory.WilsonQuotientsExistsIntEqWilsonQuotientZPlusTwoMulAndModEq
 
 open MathlibExt.NumberTheory.WilsonQuotientsWanted
+
+example : wilsonQuotientMPlus 1 4 = 1 / 4 := by
+  norm_num [wilsonQuotientMPlus, Nat.factorial]
+
+example : wilsonQuotientZPlus 3 = 2 := by
+  norm_num [wilsonQuotientZPlus, wilsonQuotientMPlus, Finset.sum_range_succ, Nat.factorial]
 
 example : ∃ z : ℤ, (z : ℚ) = wilsonQuotientZPlus 6 ∧ z ≡ 4 [ZMOD 6] := by
   obtain ⟨z, hz, _, hR⟩ :=
