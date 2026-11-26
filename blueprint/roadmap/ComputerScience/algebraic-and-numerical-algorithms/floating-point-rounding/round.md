@@ -15,4 +15,4 @@ in the mode to nearest and from the smallest normal number on, this is $\mathrm{
 
 ## Sources
 
-- Boldo, Jourdan, Leroy and Melquiond, *Verified compilation of floating-point computations*, Journal of Automated Reasoning, Section 5.2 (Flocq's rounding, with no upper bound on the exponent).
+- Boldo, Jourdan, Leroy and Melquiond, *Verified compilation of floating-point computations*, Journal of Automated Reasoning 54(2), 2015, Section 5.2 (Flocq's rounding, with no upper bound on the exponent).

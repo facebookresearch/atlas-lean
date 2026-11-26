@@ -6,4 +6,4 @@ reflexive, and hence not a partial order on the values of $F$.
 
 ## Sources
 
-- Goldberg, *What every computer scientist should know about floating-point arithmetic*, ACM Computing Surveys 23(1), 1991, Section 2.2 (NaNs).
+- Goldberg, *What every computer scientist should know about floating-point arithmetic*, ACM Computing Surveys 23(1), 1991, Sections 3.2.2 (NaNs are unordered) and 2.3.1 (comparisons with a NaN return false).

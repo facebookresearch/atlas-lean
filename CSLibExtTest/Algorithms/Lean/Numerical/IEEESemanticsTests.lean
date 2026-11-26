@@ -170,9 +170,9 @@ private noncomputable abbrev maxVal (F : BinaryFormat) (s : Bool) : Value F :=
 
 private theorem round_two_mul_max (F : BinaryFormat) (r : RoundingMode) (s : ℝ)
     (hs : s = 1 ∨ s = -1) :
-    r.round F.prec F.qmin (s * ((2 ^ F.prec - 1) * 2 ^ F.qmax) +
-      s * ((2 ^ F.prec - 1) * 2 ^ F.qmax)) =
-      s * ((2 ^ F.prec - 1) * 2 ^ F.qmax) + s * ((2 ^ F.prec - 1) * 2 ^ F.qmax) := by
+    r.round F.prec F.qmin (s * F.maxFinite + s * F.maxFinite) =
+      s * F.maxFinite + s * F.maxFinite := by
+  unfold BinaryFormat.maxFinite
   have h1 : (1 : ℤ) ≤ 2 ^ F.prec := one_le_pow₀ (by norm_num)
   have hq := F.qmin_le_qmax
   rcases hs with rfl | rfl
@@ -241,15 +241,10 @@ private theorem isFloatIn_min (F : BinaryFormat) :
     IsFloatIn F.prec F.qmin F.qmax ((2 : ℝ) ^ F.qmin) :=
   ⟨1, F.qmin, abs_one_lt F, le_rfl, F.qmin_le_qmax, by simp⟩
 
-private theorem min_le_maxFinite (F : BinaryFormat) :
-    (2 : ℝ) ^ F.qmin ≤ (2 ^ F.prec - 1) * 2 ^ F.qmax := by
-  have h1 : (1 : ℝ) ≤ 2 ^ F.prec - 1 := by
-    have : (2 : ℝ) ≤ 2 ^ F.prec := by
-      calc (2 : ℝ) = 2 ^ 1 := by norm_num
-        _ ≤ 2 ^ F.prec := pow_le_pow_right₀ (by norm_num) F.one_le_prec
-    linarith
-  calc (2 : ℝ) ^ F.qmin ≤ 2 ^ F.qmax := zpow_le_zpow_right₀ (by norm_num) F.qmin_le_qmax
-    _ ≤ (2 ^ F.prec - 1) * 2 ^ F.qmax := le_mul_of_one_le_left (two_zpow_pos _).le h1
+-- the smallest subnormal number is at most the largest finite number, as every number of the
+-- format is
+private theorem min_le_maxFinite (F : BinaryFormat) : (2 : ℝ) ^ F.qmin ≤ F.maxFinite := by
+  simpa [abs_of_pos (two_zpow_pos (K := ℝ) F.qmin)] using F.abs_le_maxFinite (isFloatIn_min F)
 
 private theorem round_half_min (F : BinaryFormat) (r : RoundingMode) :
     r.round F.prec F.qmin ((2 : ℝ) ^ (F.qmin - 1)) =

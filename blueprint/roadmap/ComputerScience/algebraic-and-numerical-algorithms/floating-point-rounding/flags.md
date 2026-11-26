@@ -2,7 +2,8 @@
 
 The five exception flags of IEEE 754 an operation can raise: invalid
 operation, division by zero, overflow, underflow and inexact. Each operation returns the flags it
-raises; IEEE's status flags are sticky, so a computation accumulates them by disjunction.
+raises. In IEEE 754 the status flags are sticky: once raised, a flag stays raised until it is
+cleared.
 
 ## Sources
 

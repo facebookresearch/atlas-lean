@@ -35,8 +35,8 @@ divide by zero, overflow, underflow and inexact.
       an exact result raises no flag.
 
 Subtraction $a - b$ is the addition of $a$ and $b$ with its sign bit flipped, so $(+\infty) - (-\infty) = +\infty$, and
-$x - x = +0$ for a finite $x$, or $-0$ when rounding toward $-\infty$. The status flags are sticky: a computation
-accumulates the flags its operations raise.
+$x - x = +0$ for a finite $x$, or $-0$ when rounding toward $-\infty$. In IEEE 754 the status flags are sticky; each
+operation here returns only the flags it raises.
 
 ## Related topics
 
@@ -53,5 +53,5 @@ accumulates the flags its operations raise.
 ## Sources
 
 - IEEE Standard for Floating-Point Arithmetic, IEEE Std 754-2019. <https://doi.org/10.1109/IEEESTD.2019.8766229>
-- What Every Computer Scientist Should Know About Floating-Point Arithmetic — D. Goldberg, ACM Computing Surveys 23(1), 1991, Sec. 2.2 Special Quantities, Sec. 2.3 Exceptions, Flags, and Trap Handlers, and Sec. 3.2.3 Optimizers. <https://www.cs.tufts.edu/comp/40/docs/WhatEveryComputerScientistShouldKnowAboutFloatingPointArithmetic.pdf>
-- Verified Compilation of Floating-Point Computations — S. Boldo, J.-H. Jourdan, X. Leroy, G. Melquiond, Journal of Automated Reasoning, Sec. 5.1 (formats, signed zeros, infinities and NaN) and Sec. 5.2 (special cases first, then rounding with an exponent unbounded above, and the overflow result by rounding mode). <https://xavierleroy.org/publi/floating-point-compcert.pdf>
+- What Every Computer Scientist Should Know About Floating-Point Arithmetic — D. Goldberg, ACM Computing Surveys 23(1), 1991, Sec. 2.2 Special Quantities, Sec. 2.3 Exceptions, Flags, and Trap Handlers, and Sec. 3.2.2 IEEE Standard ($x - x = +0$ and the negation of zero). <https://www.cs.tufts.edu/comp/40/docs/WhatEveryComputerScientistShouldKnowAboutFloatingPointArithmetic.pdf>
+- Verified Compilation of Floating-Point Computations — S. Boldo, J.-H. Jourdan, X. Leroy, G. Melquiond, Journal of Automated Reasoning 54(2), 2015, Sec. 5.1 (formats, signed zeros, infinities and NaN) and Sec. 5.2 (special cases first, then rounding with an exponent unbounded above, and the overflow result by rounding mode). <https://xavierleroy.org/publi/floating-point-compcert.pdf>

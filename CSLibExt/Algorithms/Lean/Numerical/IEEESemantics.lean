@@ -18,8 +18,9 @@ public import Mathlib.Data.EReal.Basic
 A model of IEEE 754 binary floating-point arithmetic with signed zeros, infinities, NaN and the
 five status flags (IEEE Std 754-2019; Goldberg, *What every computer scientist should know about
 floating-point arithmetic*, 1991, Sections 2.1–2.3 and 3.2; Boldo, Jourdan, Leroy and Melquiond,
-*Verified compilation of floating-point computations*, Sections 5.1, 5.2 and 6.3), built on the
-bounded format `IsFloatIn` of `CSLibExt.Algorithms.Lean.Numerical.FloatingPoint`.
+*Verified compilation of floating-point computations*, Journal of Automated Reasoning 54(2), 2015,
+Sections 5.1, 5.2 and 6.3), built on the bounded format `IsFloatIn` of
+`CSLibExt.Algorithms.Lean.Numerical.FloatingPoint`.
 
 * `BinaryFormat`: a precision `p ≥ 1` and last-place exponents in `[qmin, qmax]`, `qmin ≤ qmax`.
 * `RoundingMode`, `RoundingMode.roundInt`, `RoundingMode.round`: round to nearest, ties to even,
@@ -136,8 +137,8 @@ or zero. The exponent is not bounded above, so the result can exceed the largest
 in the mode to nearest and from the smallest normal number on, this is $\mathrm{fl}_p(x)$.
 
 Source: Boldo, Jourdan, Leroy and Melquiond, *Verified compilation of floating-point computations*,
-Journal of Automated Reasoning, Section 5.2 (Flocq's rounding, with no upper bound on the
-exponent). -/
+Journal of Automated Reasoning 54(2), 2015, Section 5.2 (Flocq's rounding, with no upper bound on
+the exponent). -/
 def round (r : RoundingMode) (p : ℕ) (qmin : ℤ) (x : K) : K :=
   r.roundInt (x / 2 ^ max (ulpExp p x) qmin) * 2 ^ max (ulpExp p x) qmin
 
@@ -301,20 +302,39 @@ variable (F : BinaryFormat)
 theorem isFloatIn_zero : IsFloatIn F.prec F.qmin F.qmax (0 : ℝ) :=
   ⟨0, F.qmin, by simp, le_rfl, F.qmin_le_qmax, by simp⟩
 
-theorem maxFinite_pos : (0 : ℝ) < (2 ^ F.prec - 1) * 2 ^ F.qmax := by
+/-- **Largest finite number.** The largest finite number of a binary format with precision $p$
+and greatest last-place exponent $q_{\max}$ is $M = (2^p - 1) \cdot 2^{q_{\max}}$: it is a number of
+the format, and every number of the format has absolute value at most $M$. -/
+noncomputable def maxFinite : ℝ := (2 ^ F.prec - 1) * 2 ^ F.qmax
+
+theorem maxFinite_pos : 0 < F.maxFinite := by
   have : (2 : ℝ) ≤ 2 ^ F.prec := by
     calc (2 : ℝ) = 2 ^ 1 := by norm_num
       _ ≤ 2 ^ F.prec := pow_le_pow_right₀ (by norm_num) F.one_le_prec
   exact mul_pos (by linarith) (two_zpow_pos _)
 
-theorem isFloatIn_maxFinite :
-    IsFloatIn F.prec F.qmin F.qmax ((2 ^ F.prec - 1) * 2 ^ F.qmax : ℝ) := by
+theorem isFloatIn_maxFinite : IsFloatIn F.prec F.qmin F.qmax F.maxFinite := by
   have h : (2 : ℤ) ≤ 2 ^ F.prec := by
     calc (2 : ℤ) = 2 ^ 1 := by norm_num
       _ ≤ 2 ^ F.prec := pow_le_pow_right₀ (by norm_num) F.one_le_prec
-  refine ⟨2 ^ F.prec - 1, F.qmax, ?_, F.qmin_le_qmax, le_rfl, by push_cast; ring⟩
+  refine ⟨2 ^ F.prec - 1, F.qmax, ?_, F.qmin_le_qmax, le_rfl, by rw [maxFinite]; push_cast; ring⟩
   rw [abs_of_pos (by omega)]
   omega
+
+theorem abs_le_maxFinite {x : ℝ} (h : IsFloatIn F.prec F.qmin F.qmax x) : |x| ≤ F.maxFinite := by
+  obtain ⟨m, e, hm, -, he, rfl⟩ := h
+  have h1 : (1 : ℤ) ≤ 2 ^ F.prec := one_le_pow₀ (by norm_num)
+  have hm' : |(m : ℝ)| ≤ 2 ^ F.prec - 1 := by
+    have : |m| ≤ 2 ^ F.prec - 1 := by omega
+    exact_mod_cast this
+  have h0 : (0 : ℝ) ≤ 2 ^ F.prec - 1 := by
+    have : (1 : ℝ) ≤ 2 ^ F.prec := by exact_mod_cast h1
+    linarith
+  rw [maxFinite, abs_mul, abs_of_pos (two_zpow_pos (K := ℝ) e)]
+  calc |(m : ℝ)| * 2 ^ e ≤ (2 ^ F.prec - 1) * 2 ^ e :=
+        mul_le_mul_of_nonneg_right hm' (two_zpow_pos e).le
+    _ ≤ (2 ^ F.prec - 1) * 2 ^ F.qmax :=
+        mul_le_mul_of_nonneg_left (zpow_le_zpow_right₀ (by norm_num) he) h0
 
 end BinaryFormat
 
@@ -328,8 +348,8 @@ format has the two zeros $+0$ and $-0$.
 
 Source: IEEE Std 754-2019; Goldberg, *What every computer scientist should know about floating-point
 arithmetic*, ACM Computing Surveys 23(1), 1991, Section 2.2; Boldo, Jourdan, Leroy and Melquiond,
-*Verified compilation of floating-point computations*, Journal of Automated Reasoning, Section
-5.1. -/
+*Verified compilation of floating-point computations*, Journal of Automated Reasoning 54(2), 2015,
+Section 5.1. -/
 inductive Value (F : BinaryFormat) where
   /-- The canonical NaN. -/
   | nan
@@ -340,7 +360,8 @@ inductive Value (F : BinaryFormat) where
 
 /-- **IEEE status flags.** The five exception flags of IEEE 754 an operation can raise: invalid
 operation, division by zero, overflow, underflow and inexact. Each operation returns the flags it
-raises; IEEE's status flags are sticky, so a computation accumulates them by disjunction.
+raises. In IEEE 754 the status flags are sticky: once raised, a flag stays raised until it is
+cleared.
 
 Source: IEEE Std 754-2019; Goldberg, *What every computer scientist should know about floating-point
 arithmetic*, ACM Computing Surveys 23(1), 1991, Section 2.3. -/
@@ -377,11 +398,11 @@ delivers, with the flags it raises, is:
 Source: IEEE Std 754-2019; Goldberg, *What every computer scientist should know about floating-point
 arithmetic*, ACM Computing Surveys 23(1), 1991, Section 2.3.2 (overflow by rounding mode); Boldo,
 Jourdan, Leroy and Melquiond, *Verified compilation of floating-point computations*, Journal of
-Automated Reasoning, Section 5.2. -/
+Automated Reasoning 54(2), 2015, Section 5.2. -/
 noncomputable def roundResult (F : BinaryFormat) (r : RoundingMode) (x : ℝ) (z : Bool) :
     Value F × Flags :=
   if x = 0 then (.finite z 0 le_rfl F.isFloatIn_zero, {})
-  else if h : (2 ^ F.prec - 1) * 2 ^ F.qmax < |r.round F.prec F.qmin x| then
+  else if h : F.maxFinite < |r.round F.prec F.qmin x| then
     (overflow (decide (x < 0)), { overflow := true, inexact := true })
   else
     (.finite
@@ -407,7 +428,7 @@ theorem roundResult_zero (F : BinaryFormat) (r : RoundingMode) (z : Bool) :
   simp [roundResult]
 
 theorem roundResult_of_lt (F : BinaryFormat) (r : RoundingMode) (z : Bool) {x : ℝ} (hx : x ≠ 0)
-    (h : (2 ^ F.prec - 1) * 2 ^ F.qmax < |r.round F.prec F.qmin x|) :
+    (h : F.maxFinite < |r.round F.prec F.qmin x|) :
     roundResult F r x z =
       (roundResult.overflow F r (decide (x < 0)), { overflow := true, inexact := true }) := by
   simp [roundResult, hx, h]
@@ -415,7 +436,7 @@ theorem roundResult_of_lt (F : BinaryFormat) (r : RoundingMode) (z : Bool) {x : 
 -- A nonzero result that rounds to itself and is at most the largest finite number is delivered
 -- exactly, with no flag.
 theorem roundResult_of_round_eq (F : BinaryFormat) (r : RoundingMode) (z : Bool) {x : ℝ}
-    (hx : x ≠ 0) (hr : r.round F.prec F.qmin x = x) (h : |x| ≤ (2 ^ F.prec - 1) * 2 ^ F.qmax)
+    (hx : x ≠ 0) (hr : r.round F.prec F.qmin x = x) (h : |x| ≤ F.maxFinite)
     (hf : IsFloatIn F.prec F.qmin F.qmax |x|) :
     roundResult F r x z = (.finite (decide (x < 0)) |x| (abs_nonneg x) hf, {}) := by
   simp [roundResult, hx, hr, not_lt.2 h]
@@ -548,8 +569,10 @@ exclusive outcomes: less (`some .lt`), equal (`some .eq`), greater (`some .gt`) 
 their values in the extended real line, with $-\infty$ below every finite number and $+\infty$
 above, so $+0$ and $-0$ are equal. This is IEEE's quiet comparison, which raises no flag.
 
-Source: IEEE Std 754-2019, Clause 5.11; Boldo, Jourdan, Leroy and Melquiond, *Verified compilation
-of floating-point computations*, Journal of Automated Reasoning, Section 6.3. -/
+Source: IEEE Std 754-2019, Clause 5.11; Goldberg, *What every computer scientist should know about
+floating-point arithmetic*, ACM Computing Surveys 23(1), 1991, Section 3.2.2; Boldo, Jourdan, Leroy
+and Melquiond, *Verified compilation of floating-point computations*, Journal of Automated Reasoning
+54(2), 2015, Section 6.3. -/
 protected noncomputable def Value.compare {F : BinaryFormat} (a b : Value F) : Option Ordering :=
   match extended a, extended b with
   | some u, some v => some (compareOfLessAndEq u v)
@@ -591,7 +614,8 @@ $a$ compares less than or equal to $b$. Then $\mathrm{NaN} \le \mathrm{NaN}$ fai
 reflexive, and hence not a partial order on the values of $F$.
 
 Source: Goldberg, *What every computer scientist should know about floating-point arithmetic*, ACM
-Computing Surveys 23(1), 1991, Section 2.2 (NaNs). -/
+Computing Surveys 23(1), 1991, Sections 3.2.2 (NaNs are unordered) and 2.3.1 (comparisons with a NaN
+return false). -/
 theorem not_le_nan_and_not_isPartialOrder (F : BinaryFormat) :
     ¬ (Value.nan : Value F) ≤ .nan ∧ ¬ IsPartialOrder (Value F) (· ≤ ·) := by
   have h : ¬ (Value.nan : Value F) ≤ .nan := by
@@ -633,9 +657,10 @@ theorem not_add_assoc (F : BinaryFormat) (r : RoundingMode) :
     ¬ ∀ a b c : Value F, ((Operation.add ((Operation.add a b).eval r).1 c).eval r).1 =
       ((Operation.add a ((Operation.add b c).eval r).1).eval r).1 := by
   intro hassoc
-  obtain ⟨M, hMdef, hM, hMf⟩ : ∃ M : ℝ, M = (2 ^ F.prec - 1) * 2 ^ F.qmax ∧ 0 < M ∧
+  obtain ⟨M, hMdef, hM, hMf⟩ : ∃ M : ℝ, M = F.maxFinite ∧ 0 < M ∧
       IsFloatIn F.prec F.qmin F.qmax M :=
     ⟨_, rfl, F.maxFinite_pos, F.isFloatIn_maxFinite⟩
+  have hMdef' : M = (2 ^ F.prec - 1) * 2 ^ F.qmax := hMdef
   have hp : |(2 : ℤ) ^ F.prec - 1| < 2 ^ F.prec := by
     have : (1 : ℤ) ≤ 2 ^ F.prec := one_le_pow₀ (by norm_num)
     rw [abs_of_nonneg (by omega)]
@@ -644,12 +669,12 @@ theorem not_add_assoc (F : BinaryFormat) (r : RoundingMode) :
   have hrM : r.round F.prec F.qmin M = M := by
     have := r.round_eq_self (K := ℝ) hp hq
     push_cast at this
-    rw [hMdef, this]
+    rw [hMdef', this]
   have hr2M : r.round F.prec F.qmin (M + M) = M + M := by
     have := r.round_eq_self (K := ℝ) hp (show F.qmin ≤ F.qmax + 1 by omega)
     push_cast at this
     rw [zpow_add_one₀ two_ne_zero] at this
-    rw [show M + M = (2 ^ F.prec - 1) * (2 ^ F.qmax * 2) by rw [hMdef]; ring, this]
+    rw [show M + M = (2 ^ F.prec - 1) * (2 ^ F.qmax * 2) by rw [hMdef']; ring, this]
   have hMM : (Operation.add (.finite false M hM.le hMf) (.finite false M hM.le hMf)).eval r =
       (roundResult.overflow F r false, { overflow := true, inexact := true }) := by
     rw [Operation.eval_add_finite]
@@ -686,9 +711,10 @@ theorem not_mul_assoc (F : BinaryFormat) (hmin : F.qmin ≤ -1) (hmax : 1 ≤ F.
     ¬ ∀ a b c : Value F, ((Operation.mul ((Operation.mul a b).eval r).1 c).eval r).1 =
       ((Operation.mul a ((Operation.mul b c).eval r).1).eval r).1 := by
   intro hassoc
-  obtain ⟨M, hMdef, hM, hMf⟩ : ∃ M : ℝ, M = (2 ^ F.prec - 1) * 2 ^ F.qmax ∧ 0 < M ∧
+  obtain ⟨M, hMdef, hM, hMf⟩ : ∃ M : ℝ, M = F.maxFinite ∧ 0 < M ∧
       IsFloatIn F.prec F.qmin F.qmax M :=
     ⟨_, rfl, F.maxFinite_pos, F.isFloatIn_maxFinite⟩
+  have hMdef' : M = (2 ^ F.prec - 1) * 2 ^ F.qmax := hMdef
   have hp : |(2 : ℤ) ^ F.prec - 1| < 2 ^ F.prec := by
     have : (1 : ℤ) ≤ 2 ^ F.prec := one_le_pow₀ (by norm_num)
     rw [abs_of_nonneg (by omega)]
@@ -711,16 +737,16 @@ theorem not_mul_assoc (F : BinaryFormat) (hmin : F.qmin ≤ -1) (hmax : 1 ≤ F.
     have := hround (2 ^ F.prec - 1) (F.qmax + 1) hp (by omega)
     push_cast at this
     rw [zpow_add_one₀ two_ne_zero] at this
-    rw [hMdef, mul_assoc, this]
+    rw [hMdef', mul_assoc, this]
   have hrM : r.round F.prec F.qmin M = M := by
     have := hround (2 ^ F.prec - 1) F.qmax hp hq
     push_cast at this
-    rw [hMdef, this]
+    rw [hMdef', this]
   have hrhM : r.round F.prec F.qmin (M * (1 / 2)) = M * (1 / 2) := by
     have := hround (2 ^ F.prec - 1) (F.qmax - 1) hp (by omega)
     push_cast at this
     rw [zpow_sub_one₀ two_ne_zero] at this
-    rw [hMdef, show (2 ^ F.prec - 1) * 2 ^ F.qmax * (1 / 2 : ℝ) =
+    rw [hMdef', show (2 ^ F.prec - 1) * 2 ^ F.qmax * (1 / 2 : ℝ) =
       (2 ^ F.prec - 1) * (2 ^ F.qmax * 2⁻¹) by ring, this]
   have hr1 : r.round F.prec F.qmin (2 * (1 / 2) : ℝ) = 2 * (1 / 2) := by
     have := hround 1 0 hp1 (by omega)
@@ -743,7 +769,7 @@ theorem not_mul_assoc (F : BinaryFormat) (hmin : F.qmin ≤ -1) (hmax : 1 ≤ F.
     simp only [Bool.false_eq_true, ↓reduceIte, Bool.xor_false]
     rw [roundResult_of_round_eq F r _ (by norm_num) hr1 (by
         rw [← hMdef]; norm_num; linarith [show (1 : ℝ) ≤ M from by
-          rw [hMdef]
+          rw [hMdef']
           have h1 : (1 : ℝ) ≤ 2 ^ F.prec - 1 := by
             have : (2 : ℝ) ≤ 2 ^ F.prec := by
               calc (2 : ℝ) = 2 ^ 1 := by norm_num
@@ -763,7 +789,7 @@ theorem not_mul_assoc (F : BinaryFormat) (hmin : F.qmin ≤ -1) (hmax : 1 ≤ F.
     simp [abs_of_pos hM, not_lt.2 hM.le]
   -- `M × 1/2 = M / 2` exactly
   have hhMf : IsFloatIn F.prec F.qmin F.qmax (M * (1 / 2)) := by
-    rw [hMdef]
+    rw [hMdef']
     exact ⟨2 ^ F.prec - 1, F.qmax - 1, hp, by omega, by omega, by
       push_cast; rw [zpow_sub_one₀ two_ne_zero]; ring⟩
   have hMh : (Operation.mul (.finite false M hM.le hMf)

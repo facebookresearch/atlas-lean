@@ -48,6 +48,7 @@
 - [Rounding modes](rounding-mode.md)
 - [Rounding to an integer in a rounding mode](round-int.md)
 - [Rounding in a bounded format](round.md)
+- [Largest finite number](max-finite.md)
 - [IEEE values of a binary format](value.md)
 - [IEEE status flags](flags.md)
 - [Rounding an exact result](round-result.md)
