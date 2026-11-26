@@ -3,10 +3,12 @@
 **Model.** Individuals of types $+$ and $-$ reproduce independently: at rate $\mu^\pm_K(i)$ an individual of type $\pm$ is replaced by $i \ge 0$ children. The mean net reproduction rates are $\sum_i (i-1)\mu^\pm_K(i) = \mathfrak m + \mathfrak s^\pm/K + o(1/K)$ with $\mathfrak m > 0$, and the offspring second moments converge, $\sum_i (i-1)^2\mu^\pm_K(i) \to \mathfrak v^\pm > 0$. Each individual also dies at rate $\mathfrak m/K$ times the total population size (logistic competition, carrying capacity $K$), and types mutate at rates $\theta^+/K$ ($+\to-$) and $\theta^-/K$ ($-\to+$). Let $W_K(t)$ be the fraction of type $-$ at time $Kt$ once the population has reached carrying capacity.
 
 **Theorem.** Assume $W_K(0) \Rightarrow W_0$ and $\sup_K\sum_i i^{2+\eta}\mu^\pm_K(i) < \infty$ for some $\eta > 0$. Then $W_K$ converges weakly to the unique strong solution of the Gillespie–Wright–Fisher SDE
+
 $$\begin{aligned}
 dW &= -\big[(\mathfrak s^+ - \mathfrak v^+) - (\mathfrak s^- - \mathfrak v^-)\big]W(1-W)\,dt + \big[\theta^+(1-W) - \theta^-W\big]dt\\
 &\quad + \sqrt{(\mathfrak m + \mathfrak v^-)W(1-W) - (\mathfrak v^+ - \mathfrak v^-)W^2(1-W)}\;dB_t.
 \end{aligned}$$
+
 If $\mathfrak v^+ = \mathfrak v^- = \mathfrak v$, $\mathfrak s^+ \ge \mathfrak s^-$ and $\theta^- = 0$, then $W$ is moment dual to the block-counting process $A$ of the ancestral selection graph,
 
 $$\mathbb E\big[W(t)^n \mid W(0) = w\big] = \mathbb E\big[w^{A(t)} \mid A(0) = n\big],$$

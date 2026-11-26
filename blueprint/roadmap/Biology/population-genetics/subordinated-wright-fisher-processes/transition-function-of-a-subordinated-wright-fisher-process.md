@@ -10,8 +10,10 @@ and transition function $p_t(x,du)$. Let $C$ be a non-decreasing Feller process 
 
 1. $\widetilde X$ is $\mathcal{D}_\theta$-stationary and $\mathcal{D}_\theta$-reversible, and $\widetilde p_t(x,dw)=\mathbb{E}[p_{C(t)}(x,dw)]$.
 2. For all $t\ge0$ and $x\in\Delta_K$,
+
 $$\widetilde p_t(x,du)=\sum_{n=0}^\infty\Phi_t(\lambda_n)\,Q_n(x,u)\,\mathcal{D}_\theta(du)
 =\sum_{m=0}^\infty\widetilde q_m^{|\theta|}(t)\sum_{|\mathbf{l}|=m}\mathcal{M}(\mathbf{l};m,x)\,\mathcal{D}_{\theta+\mathbf{l}}(du),$$
+
 with
 
 $$\widetilde q_m^{|\theta|}(t)=\sum_{j=m}^\infty(-1)^{j-m}\,\Phi_t(\lambda_j)\,\frac{(2j+|\theta|-1)\,(m+|\theta|)_{(j-1)}}{m!\,(j-m)!}\ \ge0 .$$
