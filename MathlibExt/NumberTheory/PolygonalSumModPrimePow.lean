@@ -23,8 +23,7 @@ For a natural number $s > 3$, there is a prime $p \equiv 1 \pmod{4}$ with
 $p \nmid s - 2$ such that every positive integer is congruent modulo every
 positive prime power $p^k$ to a sum of two positive $s$-gonal numbers. The main
 result is `MetaMathlibExt.exists_prime_polygonal_add_polygonal_modEq_prime_pow`,
-proved by completing the square and applying
-`MetaMathlibExt.exists_sq_add_sq_modEq_prime_pow`. -/
+proved by completing the square and lifting sums of two squares modulo prime powers. -/
 
 namespace MetaMathlibExt
 
@@ -35,7 +34,8 @@ $x^2 + y^2 \equiv n \pmod{p^k}$ and $p \nmid y$.
 Source: Sai Teja Somu and Duc Van Khanh Tran, *On Sums of Practical Numbers and Polygonal
 Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Lemma 8
 (arXiv Lemma 4.3; `jis-2024-24.5.1-lem-8`). -/
-public theorem exists_sq_add_sq_modEq_prime_pow (p n k : ℕ) (hp : p.Prime)
+private theorem exists_prime_polygonal_add_polygonal_modEq_prime_pow.lift_two_squares
+    (p n k : ℕ) (hp : p.Prime)
     (hp4 : p % 4 = 1) (hn : 0 < n) (hk : 0 < k) :
     ∃ x y : ℕ, 0 < x ∧ 0 < y ∧ x ^ 2 + y ^ 2 ≡ n [MOD p ^ k] ∧ ¬ p ∣ y := by
   have : Fact p.Prime := ⟨hp⟩
@@ -175,8 +175,9 @@ public theorem exists_prime_polygonal_add_polygonal_modEq_prime_pow (s : ℕ)
   have hmpos : 0 < m := pow_pos hp.pos k
   have : NeZero m := ⟨hmpos.ne'⟩
   have hs2 : 0 < s - 2 := by omega
-  obtain ⟨x0, y0, _, _, hxy0, _⟩ := exists_sq_add_sq_modEq_prime_pow p
-    (8 * (s - 2) * n + 2 * (s - 4) ^ 2) k hp hp4 (by positivity) hk
+  obtain ⟨x0, y0, _, _, hxy0, _⟩ :=
+    exists_prime_polygonal_add_polygonal_modEq_prime_pow.lift_two_squares p
+      (8 * (s - 2) * n + 2 * (s - 4) ^ 2) k hp hp4 (by positivity) hk
   have hcop2 : Nat.Coprime 2 p := ((Nat.Prime.coprime_iff_not_dvd hp).mpr hnot2).symm
   have hcopd : Nat.Coprime (s - 2) p := ((Nat.Prime.coprime_iff_not_dvd hp).mpr hpdvd).symm
   have hcop : Nat.Coprime (2 * (s - 2)) m :=

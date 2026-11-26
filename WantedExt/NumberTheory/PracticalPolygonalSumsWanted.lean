@@ -70,6 +70,17 @@ public theorem_wanted isPracticalNumber_mul_of_le_sigma_add_one (m n : ℕ)
     (hm : IsPracticalNumber m) (hn : 0 < n) (hnm : n ≤ sigma 1 m + 1) :
     IsPracticalNumber (m * n)
 
+/-- **Sums of two squares modulo prime powers.** Let $p$ be a prime with $p \equiv 1 \pmod{4}$.
+For all natural numbers $n > 0$ and $k > 0$ there are natural numbers $x, y > 0$ with
+$x^2 + y^2 \equiv n \pmod{p^k}$ and $p \nmid y$.
+
+Source: Sai Teja Somu and Duc Van Khanh Tran, *On Sums of Practical Numbers and Polygonal
+Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Lemma 8
+(arXiv Lemma 4.3; `jis-2024-24.5.1-lem-8`). -/
+public theorem_wanted exists_sq_add_sq_modEq_prime_pow (p n k : ℕ) (hp : p.Prime)
+    (hp4 : p % 4 = 1) (hn : 0 < n) (hk : 0 < k) :
+    ∃ x y : ℕ, 0 < x ∧ 0 < y ∧ x ^ 2 + y ^ 2 ≡ n [MOD p ^ k] ∧ ¬ p ∣ y
+
 end
 
 end MetaMathlibExt
