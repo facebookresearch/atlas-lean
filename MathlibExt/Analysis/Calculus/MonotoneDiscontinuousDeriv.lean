@@ -81,7 +81,7 @@ noncomputable section
 namespace MathlibExt.Analysis.Calculus.MonotoneDiscontinuousDeriv
 
 /-- The explicit function used in the construction. -/
-def monotoneDiscontinuousDerivFn (x : ℝ) : ℝ :=
+private def monotoneDiscontinuousDerivFn (x : ℝ) : ℝ :=
   if x = 0 then 0
   else
     3 * x +
@@ -93,12 +93,12 @@ private lemma apply_eq (x : ℝ) (hx : x ≠ 0) :
         (x ^ 2 / (1 + x ^ 2)) * Real.sin (1 / x) := by
   simp [monotoneDiscontinuousDerivFn, hx]
 /-- The derivative formula away from zero. -/
-def derivativeFormula (x : ℝ) : ℝ :=
+private def derivativeFormula (x : ℝ) : ℝ :=
   3 +
     (2 * x / (1 + x ^ 2) ^ 2) * Real.sin (1 / x) -
     (1 / (1 + x ^ 2)) * Real.cos (1 / x)
 /-- The function has derivative `3` at zero. -/
-theorem hasDerivAt_zero :
+private theorem hasDerivAt_zero :
     HasDerivAt monotoneDiscontinuousDerivFn 3 0 := by
   rw [hasDerivAt_iff_tendsto_slope]
   unfold slope
@@ -153,7 +153,7 @@ theorem hasDerivAt_zero :
   field_simp
 /-- Away from zero, the function has the derivative given by
 `derivativeFormula`. -/
-theorem hasDerivAt_ne_zero (x : ℝ) (hx : x ≠ 0) :
+private theorem hasDerivAt_ne_zero (x : ℝ) (hx : x ≠ 0) :
     HasDerivAt monotoneDiscontinuousDerivFn
       (derivativeFormula x) x := by
   have hpow : HasDerivAt (fun y : ℝ => y ^ 2) (2 * x) x := by
@@ -195,16 +195,16 @@ theorem hasDerivAt_ne_zero (x : ℝ) (hx : x ≠ 0) :
   filter_upwards [eventually_ne_nhds hx] with y hy
   exact apply_eq y hy
 /-- The derivative at zero is `3`. -/
-theorem deriv_zero :
+private theorem deriv_zero :
     deriv monotoneDiscontinuousDerivFn 0 = 3 := by
   exact hasDerivAt_zero.deriv
 /-- Away from zero, the derivative is given by the explicit formula. -/
-theorem deriv_ne_zero (x : ℝ) (hx : x ≠ 0) :
+private theorem deriv_ne_zero (x : ℝ) (hx : x ≠ 0) :
     deriv monotoneDiscontinuousDerivFn x =
       derivativeFormula x := by
   exact (hasDerivAt_ne_zero x hx).deriv
 /-- The derivative formula is bounded below by `1`. -/
-theorem derivativeFormula_ge_one (x : ℝ) :
+private theorem derivativeFormula_ge_one (x : ℝ) :
     1 ≤ derivativeFormula x := by
   unfold derivativeFormula
   have hs : |Real.sin (1 / x)| ≤ 1 :=
@@ -255,7 +255,7 @@ theorem derivativeFormula_ge_one (x : ℝ) :
     nlinarith [sq_nonneg x]
   linarith
 /-- The derivative is nonnegative everywhere. -/
-theorem deriv_nonneg (x : ℝ) :
+private theorem deriv_nonneg (x : ℝ) :
     0 ≤ deriv monotoneDiscontinuousDerivFn x := by
   by_cases hx : x = 0
   · subst x
@@ -265,21 +265,21 @@ theorem deriv_nonneg (x : ℝ) :
     have h := derivativeFormula_ge_one x
     linarith
 /-- The constructed function is differentiable at every real number. -/
-theorem differentiableAt_constructedFunction (x : ℝ) :
+private theorem differentiableAt_constructedFunction (x : ℝ) :
     DifferentiableAt ℝ monotoneDiscontinuousDerivFn x := by
   by_cases hx : x = 0
   · subst x
     exact hasDerivAt_zero.differentiableAt
   · exact (hasDerivAt_ne_zero x hx).differentiableAt
 /-- The constructed function is monotone. -/
-theorem monotone_constructedFunction :
+private theorem monotone_constructedFunction :
     Monotone monotoneDiscontinuousDerivFn := by
   apply monotone_of_deriv_nonneg
   · intro x
     exact differentiableAt_constructedFunction x
   · exact deriv_nonneg
 /-- The derivative of the constructed function is not continuous. -/
-theorem deriv_not_continuous :
+private theorem deriv_not_continuous :
     ¬ Continuous (deriv monotoneDiscontinuousDerivFn) := by
   intro hcont
   let x : ℕ → ℝ := fun n =>
