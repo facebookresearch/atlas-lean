@@ -10,12 +10,15 @@
 - [Unit profile solves the unit bar problem](unit-profile-is-classical-solution.md)
 - [Bar displacement is the amplitude times the unit profile](axial-displacement-eq-bar-amplitude-mul.md)
 - [P1 bar reconstruction is the scaled Galerkin solution](physical-p1-eq-galerkin.md)
+- [Pulled-back unit profile solves the fixed-fixed bar problem](is-fixed-fixed-solution-bar-amplitude-mu.md)
+- [Dirichlet values of the P1 bar reconstruction](physical-p1-zero-and-length.md)
 
 ## Inverse normalization and the zero load
 
 - [Bar amplitude vanishes exactly for zero load](bar-amplitude-ne-zero-iff.md)
 - [Unit profile recovered from the bar displacement](unit-profile-eq-inv-bar-amplitude-mul.md)
 - [Inverse amplitude map fails at zero load](zero-load-inverse-ne.md)
+- [Zero load of the fixed-fixed bar](zero-load.md)
 
 ## Scaling of the two error integrals
 
@@ -26,6 +29,7 @@
 ## The mesh estimates in physical form
 
 - [Mesh bound on the squared L² norm of the physical bar error](integral-sq-physical-error-le-mesh.md)
+- [Energy error of the P1 bar reconstruction](integral-energy-physical-error-le-mesh.md)
 
 ## Two uniform cells
 
@@ -46,6 +50,8 @@
 ## Ten Euler steps of size `τ / 10`
 
 - [Ten-step Euler error for bath cooling is nonzero](bath-euler-ten-step-error-pos.md)
+- [Euler recurrence for bath cooling at step $\tau/10$](bath-euler-closed-form.md)
+- [Ten Euler steps of bath cooling are within $|\Delta|/10$](bath-euler-ten-step-error.md)
 
 ## Time units and the unstable step
 
@@ -58,12 +64,15 @@
 - [Bath-cooling vector field](bath-field.md)
 - [RK4 step on the bath field does not depend on the start time](bath-field-rk4-time-indep.md)
 - [RK4 step on the bath field is a shifted linear-decay step](bath-field-rk4-shift.md)
+- [One-stage Runge–Kutta step on the bath field is the Euler step](bath-field-euler-step.md)
+- [RK4 step on the bath field via the stability polynomial](bath-field-rk4-step.md)
 
 ## Ten Runge–Kutta steps of size `τ / 10`
 
 - [Excess after ten RK4 steps of bath cooling](bath-rk4-ten-step-excess.md)
 - [Ten-step RK4 error bound for bath cooling](bath-rk4-ten-step-error.md)
 - [Ten-step RK4 error for bath cooling is nonzero](bath-rk4-ten-step-error-pos.md)
+- [RK4 recurrence for bath cooling at step $\tau/10$](bath-rk4-closed-form.md)
 
 ## The unstable Runge–Kutta step
 
@@ -75,3 +84,5 @@
 - [Bath Euler step of a tenth of the time constant contracts differences by 9/10](bath-euler-step-sub-tenth.md)
 - [Defect recurrence for a computed bath-cooling sequence](defect-recurrence.md)
 - [Ten-step error budget scales with the temperature unit](ten-step-error-budget-temp-unit.md)
+- [Ten-step Euler error budget](ten-step-error-budget.md)
+- [Three-term error budget for ten computed Euler steps](bath-euler-total-error.md)

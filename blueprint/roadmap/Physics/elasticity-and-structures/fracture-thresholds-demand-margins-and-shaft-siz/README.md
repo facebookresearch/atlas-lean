@@ -4,6 +4,10 @@
 - [Stress intensity vanishes at zero crack length](mode-istress-intensity-zero.md)
 - [Critical crack length is positive](critical-crack-length-pos.md)
 - [Subcritical stress intensity below the critical crack length](mode-istress-intensity-lt-iff-lt-critica.md)
+- [Mode-I stress intensity factor](mode-istress-intensity.md)
+- [Crack failure event](crack-failure.md)
+- [Stress intensity at the critical crack length](mode-istress-intensity-critical-crack-le.md)
+- [Crack failure from the critical crack length on](crack-failure-iff-critical-crack-length.md)
 
 ## Paris-law crack growth
 
@@ -20,6 +24,9 @@
 - [Logarithmic-branch crack starts at the initial length](paris-crack-exp-zero.md)
 - [Logarithmic-branch crack solves the Paris law](has-deriv-at-paris-crack-exp.md)
 - [Logarithmic-branch crack reaches the target length at the Paris life](paris-crack-exp-at-life.md)
+- [First crossing of the critical length, power Paris branch](paris-crack-pow-lt-iff.md)
+- [Positive Paris life, logarithmic branch](paris-life-exp-pos.md)
+- [First crossing of the critical length, logarithmic Paris branch](paris-crack-exp-lt-iff.md)
 
 ## Demand, allowable and margin
 
@@ -32,6 +39,9 @@
 - [Demand failure is a nonpositive margin of safety](demand-failure-iff-margin-of-safety-nonp.md)
 - [Ratio margin at zero demand gives a false failure signal](ratio-at-zero-demand-misreports.md)
 - [Crack failure as a demand failure](crack-failure-iff-demand-failure.md)
+- [Sign of the margin of safety](sign-margin-of-safety.md)
+- [Stress-unit change of the margin](margin-unit-change.md)
+- [Dimensional margin at zero demand](dimensional-margin-zero-demand.md)
 
 ## An axial load path with a supplied yield functional
 
@@ -39,6 +49,7 @@
 - [Axial stress of a uniformly loaded fixed-fixed bar](axial-stress.md)
 - [Axial stress formula for a uniformly loaded bar](axial-stress-eq.md)
 - [Failure of a uniformly loaded fixed-fixed bar](axial-bar-failure-iff.md)
+- [Axial demand of a fixed-fixed bar under uniform load](axial-demand-eq.md)
 
 ## Damage hitting times
 
@@ -54,15 +65,22 @@
 ## Measurability and monotone systems
 
 - [Measurability of the system lifetime under damage](measurable-system-lifetime-damage.md)
+- [Measurability of the damage lifetime](measurable-damage-lifetime.md)
+- [System lifetime with damage lifetimes](lt-system-lifetime-damage-iff.md)
 
 ## The saturated crack event path
 
 - [Saturated crack path is constant after the failure time](saturated-crack-path-of-le.md)
+- [Saturated crack event path](saturated-crack-path.md)
+- [The saturated crack path stays off the singularity](saturated-crack-path-pow-base-pos.md)
 
 ## The Paris lifetime: power branch
 
 - [Saturated power-branch crack path is continuous and nondecreasing](continuous-monotone-saturated-crack-path.md)
 - [Failure time precedes blow-up time, power branch](failure-time-lt-blowup-time.md)
+- [Saturated crack path before failure follows the Paris law in time](has-deriv-at-paris-crack-pow-time.md)
+- [Lifetime of the saturated Paris crack path, power branch](damage-lifetime-saturated-crack-path-pow.md)
+- [Unloaded crack path never fails, power branch](damage-lifetime-saturated-crack-path-pow-2.md)
 
 ## The Paris lifetime: logarithmic branch and initial failure
 
@@ -84,7 +102,11 @@
 - [Shaft demand under bending and torsion](shaft-demand-eq.md)
 - [Minimum shaft diameter](shaft-min-diameter.md)
 - [Shaft does not fail exactly above the minimum diameter](not-demand-failure-iff.md)
+- [Shaft bending stress](shaft-bending-stress.md)
+- [Shaft sizing inequality](shaft-demand-le-iff.md)
+- [Positivity of the minimum shaft diameter](shaft-min-diameter-pos.md)
 
 ## Shaft sizing: boundary examples
 
 - [Zero diameter gives zero shaft demand](zero-diameter-misreports.md)
+- [Stress concentration exceeds the allowable at the minimum diameter](stress-concentration-exceeds-at-min-diam.md)

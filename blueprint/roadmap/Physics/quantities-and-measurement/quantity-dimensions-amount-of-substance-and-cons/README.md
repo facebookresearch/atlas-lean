@@ -66,7 +66,6 @@
 
 ## Temperature and dimensionless arguments of log and exp
 
-- [Celsius to kelvin conversion](celsius-to-kelvin.md)
 - [Kelvin differences equal Celsius differences](celsius-to-kelvin-sub-celsius-to-kelvin.md)
 - [Scaling a Celsius reading does not scale its kelvin value](celsius-to-kelvin-mul-ne.md)
 - [Doubling 20 degrees Celsius does not double its kelvin value](celsius-to-kelvin-two-mul-twenty-ne.md)

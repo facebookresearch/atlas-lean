@@ -5,6 +5,8 @@
 - [Dimensioned strain from an affine gauge calibration](gauge-strain-qty.md)
 - [Base exponents of the electric-potential dimension](voltage-dim-exponent.md)
 - [Coordinate of the dimensioned gauge strain](gauge-strain-qty-val.md)
+- [Voltage dimension](voltage-dim.md)
+- [Gauge strain is invariant under a change of units](gauge-strain-coord-dim-scale.md)
 
 ## The calibration map and identifiability
 
@@ -12,6 +14,8 @@
 - [Gauge calibration as an affine map](gauge-strain-vec-eq-affine.md)
 - [Gauge voltage recovered from the strain](gauge-voltage-gauge-strain.md)
 - [Gauge strain recovered from the voltage](gauge-strain-gauge-voltage.md)
+- [Gauge strain from an affine calibration](gauge-strain.md)
+- [Identifiability of diagonal gains](identifiable-diagonal-iff.md)
 
 ## Finite-scenario mean and covariance
 
@@ -52,3 +56,4 @@
 - [Variance of the first-order part of a quadratic calibration](variance-quad-linear-part.md)
 - [Cross covariance of first-order part and remainder](covariance-quad-linear-part-quad-remaind.md)
 - [Measure-theoretic variance of a quadratic calibration](variance-quad-calibration-to-measure.md)
+- [Output variance of a quadratic calibration under a finite scenario law](variance-quad-calibration-of-scenario-la.md)

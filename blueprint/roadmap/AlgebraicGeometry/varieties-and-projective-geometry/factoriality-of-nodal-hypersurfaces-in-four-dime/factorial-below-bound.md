@@ -1,4 +1,4 @@
-# Nodal quartic-threefold bound for factoriality
+# Factoriality bound for nodal hypersurfaces in ℙ⁴
 
 The statement: for every natural number $d \ge 3$ and every homogeneous polynomial $f \in \mathbb{C}[x_0, \dots, x_4]$ of degree $d$ whose singular locus $\operatorname{Sing}(f) \subseteq \mathbb{P}^4(\mathbb{C})$ is finite with every singular point a node (the Hessian of $f$ at a representative has rank $4$), if
 

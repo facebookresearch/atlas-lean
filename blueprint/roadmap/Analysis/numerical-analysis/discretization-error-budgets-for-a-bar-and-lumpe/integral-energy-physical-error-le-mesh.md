@@ -5,3 +5,5 @@ Let $P$ be a partition of $[0,1]$ with mesh size $h$ (its largest cell length), 
 $$\int_0^L EA\, e'(x)^2 \, dx \;\le\; \frac{EA}{L}\, \alpha^2 \cdot 4 \left(\frac{h}{\pi}\right)^2,$$
 
 where $e'$ is the derivative of $e$, taken to be $0$ at the finitely many points where $e$ is not differentiable.
+
+Real division uses $x/0 = 0$, so the statement also covers $EA = 0$.

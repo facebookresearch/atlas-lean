@@ -1,10 +1,6 @@
 # Log canonical thresholds on smooth varieties satisfy ACC
 
-For every natural number $n$, there is no strictly increasing sequence of real numbers all lying in $T_n$, where $T_n$ is the set of analytic log canonical thresholds at the origin,
-
-$$\operatorname{lct}_0(f_1, \dots, f_r) = \sup\Big\{c \ge 0 : \Big(\sum_i |f_i|^2\Big)^{-c} \text{ is Lebesgue integrable on some ball around } 0 \in \mathbb{C}^n\Big\},$$
-
-of the families $f_1, \dots, f_r \in \mathbb{C}[x_1, \dots, x_n]$, not all zero, that all vanish at the origin.
+[Shokurov's ACC conjecture for log canonical thresholds on smooth varieties](lct-ascending-chain-condition.md) holds: for every natural number $n$, there is no strictly increasing sequence of real numbers all lying in $T_n$, the [set of log canonical thresholds](lct-set.md) $\operatorname{lct}_0(f_1, \dots, f_r)$ at the origin of the families $f_1, \dots, f_r \in \mathbb{C}[x_1, \dots, x_n]$, not all zero, that all vanish at the origin. The threshold is the [analytic log canonical threshold at the origin](lct-at-origin.md), a supremum taken in $\mathbb{R}$ with the real-power conventions stated there.
 
 ## Sources
 

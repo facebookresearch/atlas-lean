@@ -7,7 +7,6 @@ Topics added since this subject's fields were last revised.
 - [ACInjection Loss Balance](part-01/acinjection-loss-balance/README.md)
 - [ACVoltage Certificate](part-01/acvoltage-certificate/README.md)
 - [Adder Setup Certificate](part-01/adder-setup-certificate/README.md)
-- [Advection Error](part-01/advection-error/README.md)
 - [Aeroelastic Models](part-01/aeroelastic-models/README.md)
 - [Arc Port Signs](part-01/arc-port-signs/README.md)
 - [Balanced Fault Current](part-01/balanced-fault-current/README.md)
@@ -16,7 +15,6 @@ Topics added since this subject's fields were last revised.
 - [Beam Modes](part-01/beam-modes/README.md)
 - [Box Terminal Flux](part-01/box-terminal-flux/README.md)
 - [Building Envelope](part-01/building-envelope/README.md)
-- [Calibration Ports](part-01/calibration-ports/README.md)
 - [Canonical Diode Port](part-01/canonical-diode-port/README.md)
 - [Cell Transmission](part-01/cell-transmission/README.md)
 
@@ -24,7 +22,6 @@ Topics added since this subject's fields were last revised.
 
 - [Characteristic Speed](part-02/characteristic-speed/README.md)
 - [Column Buckling](part-02/column-buckling/README.md)
-- [Conditional Failure Events](part-02/conditional-failure-events/README.md)
 - [Conducting Plane Wave](part-02/conducting-plane-wave/README.md)
 - [Conduction Ports](part-02/conduction-ports/README.md)
 - [Contact And Lubrication](part-02/contact-and-lubrication/README.md)
@@ -41,14 +38,11 @@ Topics added since this subject's fields were last revised.
 ## [Part 3 of 10](part-03/README.md)
 
 - [Declared Friis Link](part-03/declared-friis-link/README.md)
-- [Design Sensitivity](part-03/design-sensitivity/README.md)
 - [Distributed Line Energy](part-03/distributed-line-energy/README.md)
 - [Drying](part-03/drying/README.md)
 - [Ebers Moll Terminal Balance](part-03/ebers-moll-terminal-balance/README.md)
-- [Electrical Dimensions](part-03/electrical-dimensions/README.md)
 - [Enclosure Radiation](part-03/enclosure-radiation/README.md)
 - [Energy Source Removal](part-03/energy-source-removal/README.md)
-- [Engineering Quantities](part-03/engineering-quantities/README.md)
 - [Ensemble Momentum](part-03/ensemble-momentum/README.md)
 
 ## [Part 4 of 10](part-04/README.md)
@@ -86,7 +80,6 @@ Topics added since this subject's fields were last revised.
 ## [Part 6 of 10](part-06/README.md)
 
 - [Lossless DCFlow Model](part-06/lossless-dcflow-model/README.md)
-- [Mechanical Integrators](part-06/mechanical-integrators/README.md)
 - [Miner Damage](part-06/miner-damage/README.md)
 - [Moving Front](part-06/moving-front/README.md)
 - [Network Plant Passivity](part-06/network-plant-passivity/README.md)
@@ -97,8 +90,6 @@ Topics added since this subject's fields were last revised.
 - [Perfect Gas Ports](part-06/perfect-gas-ports/README.md)
 - [Periodic Yee Maxwell Bridge](part-06/periodic-yee-maxwell-bridge/README.md)
 - [Phasor Element Laws](part-06/phasor-element-laws/README.md)
-- [Physical Error Budgets](part-06/physical-error-budgets/README.md)
-- [Physical Failure Events](part-06/physical-failure-events/README.md)
 - [Physical Galerkin Error](part-06/physical-galerkin-error/README.md)
 
 ## [Part 7 of 10](part-07/README.md)
@@ -130,14 +121,11 @@ Topics added since this subject's fields were last revised.
 - [Synchronizer Observation Budget](part-08/synchronizer-observation-budget/README.md)
 - [Synchronous Power Angle](part-08/synchronous-power-angle/README.md)
 - [Thermal Interfaces](part-08/thermal-interfaces/README.md)
-- [Thermal Power Ports](part-08/thermal-power-ports/README.md)
-- [Thermal Trace Certificate](part-08/thermal-trace-certificate/README.md)
 - [Thevenin Norton Port](part-08/thevenin-norton-port/README.md)
 
 ## [Part 9 of 10](part-09/README.md)
 
 - [Traveling Wave](part-09/traveling-wave/README.md)
-- [Uncertainty Propagation](part-09/uncertainty-propagation/README.md)
 - [Uniform Ohmic Bar](part-09/uniform-ohmic-bar/README.md)
 - [Vacuum TE10 Evanescent](part-09/vacuum-te10-evanescent/README.md)
 - [Vacuum TE10 Mode](part-09/vacuum-te10-mode/README.md)

@@ -6,5 +6,5 @@
 - [Bounded analytic functions without limits along all rotated arcs](conjecture.md)
 - [Negation of the rotated-arc limit statement](disproved-conjecture.md)
 - [Fatou obstruction for rotated non-tangential arcs](fatou-obstruction.md)
-- [Every arc admits a rotation with a limit for each bounded analytic function](conjecture-refuted.md)
+- [For some non-tangential arc, every bounded analytic function has a limit along a rotation of it](conjecture-refuted.md)
 - [Bounded analytic functions have limits along some rotated arc](fatou-obstruction-holds.md)

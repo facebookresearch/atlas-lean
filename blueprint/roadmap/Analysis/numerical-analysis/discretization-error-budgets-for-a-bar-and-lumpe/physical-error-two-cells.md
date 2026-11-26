@@ -7,3 +7,5 @@ For the two-cell partition $0 < \tfrac12 < 1$, $L > 0$ and real $EA$, $q$, with 
 - $\int_0^L e(x)^2\,dx = \dfrac{L\,\alpha^2}{480}$.
 
 Derivatives are pointwise, with value $0$ at the finitely many points where the derivative does not exist.
+
+Real division uses $x/0 = 0$, so the statement also covers $EA = 0$.

@@ -47,6 +47,9 @@
 - [Stress factor from metres to millimetres](dim-scale-si-mm-stress-dim.md)
 - [Force of 5 from metres to millimetres and back](force-fixture-round-trip.md)
 - [Stress of 2 from metres to millimetres and back](stress-fixture-round-trip.md)
+- [Force conversion round trip](force-dim-dim-scale-round-trip.md)
+- [Stress conversion round trip](stress-dim-dim-scale-round-trip.md)
+- [Typed force conversion round trip](force-with-dim-round-trip.md)
 
 ## Dimension identities of the three formulas
 
@@ -54,7 +57,7 @@
 - [Torque times angular velocity has the dimension of power](torque-mul-angular-velocity.md)
 - [Density times velocity times area is mass flow rate](density-mul-velocity-mul-area.md)
 
-## Rescaling of engineering quantities
+## Rescaling of the three formulas
 
 - [Stress factor is the force factor over the area factor](dim-scale-force-dim-mul-inv-area.md)
 - [Power factor is the torque factor times the angular velocity factor](dim-scale-torque-mul-angular-velocity.md)
@@ -62,6 +65,9 @@
 
 ## The real-coordinate formulas commute with a change of units
 
+- [Normal stress formula commutes with unit changes](normal-stress-coord-dim-scale.md)
+- [Shaft power formula commutes with unit changes](shaft-power-coord-dim-scale.md)
+- [Mass flow rate formula commutes with unit changes](mass-flow-rate-coord-dim-scale.md)
 
 ## Restoring the output quantity
 
@@ -73,6 +79,10 @@
 - [Coordinate of the mass flow rate](mass-flow-rate-val.md)
 - [Normal stress computed in new units and converted back](normal-stress-coord-round-trip.md)
 - [Shaft power computed in new units and converted back](shaft-power-coord-round-trip.md)
+- [Typed normal stress commutes with unit changes](normal-stress-dim-scale.md)
+- [Typed shaft power commutes with unit changes](shaft-power-dim-scale.md)
+- [Typed mass flow rate commutes with unit changes](mass-flow-rate-dim-scale.md)
+- [Mass flow rate conversion round trip](mass-flow-rate-coord-round-trip.md)
 
 ## Nonzero conversions
 

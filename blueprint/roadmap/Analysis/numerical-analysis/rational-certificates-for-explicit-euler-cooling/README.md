@@ -2,10 +2,12 @@
 
 ## The trace checker
 
+- [Thermal trace checker](check-thermal-trace.md)
 
 ## Soundness
 
 - [Terminal value of an accepted thermal trace](check-thermal-trace-terminal.md)
+- [Soundness of the thermal trace checker](check-thermal-trace-sound.md)
 
 ## The physical endpoint and its analytic bound
 
@@ -30,9 +32,14 @@
 - [Admissible thermal trace token](admissible.md)
 - [Value of a thermal trace token](value.md)
 - [Token decoding inverts admissible token encoding](decode-token-eq-some-iff.md)
+- [Bounded decimal decoding is exact](decode-decimal-eq-some-iff.md)
+- [Bounded thermal trace decoder](decode-trace.md)
+- [Trace decoding returns exactly the token values](decode-trace-eq-some-iff.md)
+- [Rejection by the trace decoder](decode-trace-eq-none-iff.md)
 
 ## Replaying checked traces
 
 - [Encoded thermal trace checker](check-encoded-trace.md)
 - [Encoded trace acceptance is decoding followed by the trace checker](check-encoded-trace-eq-true-iff.md)
 - [Accepted encoded traces decode to the powers of 9/10](check-encoded-trace-eq-true-iff-decode-t.md)
+- [Soundness of an accepted trace encoding](check-encoded-trace-sound.md)

@@ -6,6 +6,8 @@
 - [Coordinate of the finite mean vector](mean-vec-apply.md)
 - [Mean of an affine image of a random vector](mean-vec-affine.md)
 - [Variance of an uncorrelated two-input combination](variance-linear-two-uncorrelated.md)
+- [Exact covariance propagation for affine maps](cov-matrix-affine.md)
+- [Correlated two-input variance](cov-matrix-two-linear.md)
 
 ## Jacobian propagation as a first-order approximation
 
@@ -13,6 +15,7 @@
 - [Jacobian remainder](jacobian-remainder.md)
 - [Componentwise Jacobian remainder bound, unit step](jacobian-remainder-component-le.md)
 - [Componentwise Jacobian remainder bound, scaled step](jacobian-remainder-component-le-of-scale.md)
+- [Componentwise remainder bound from a Hessian bound](jacobian-remainder-component-le-of-hessi.md)
 
 ## Deterministic Lipschitz error propagation
 
@@ -33,3 +36,6 @@
 - [Identifiability in basis coordinates](identifiable-mul-basis-iff-trivial-ker.md)
 - [Affine identifiability through a basis of directions](identifiable-on-affine-mk-iff-identifiab.md)
 - [Kernel direction defeats unique recovery on an affine space](exists-distinct-on-affine-of-nontrivial.md)
+- [Identifiability of a linear calibration model](identifiable.md)
+- [Identifiability iff trivial kernel](identifiable-iff-trivial-ker.md)
+- [Affine identifiability and the kernel](identifiable-on-affine-mk-iff-trivial-ke.md)

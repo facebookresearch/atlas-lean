@@ -4,6 +4,7 @@
 
 - [Linear displacement solves the zero-load fixed-traction problem](is-fixed-traction-solution-zero-load.md)
 - [Uniqueness of the zero-load fixed-traction solution](eq-on-zero-load-of-is-fixed-traction-sol.md)
+- [Fixed-traction bar displacement at zero load](fixed-traction-displacement-zero-load.md)
 
 ## Spring stiffness, tip displacement, load work and the adjoint
 
@@ -19,6 +20,7 @@
 
 - [Adjoint sensitivity of the compliance](has-deriv-at-compliance.md)
 - [Adjoint expression for the compliance sensitivity](neg-adjoint-displacement-mul-tip-displac.md)
+- [Derivative of the compliance within the design interval](has-deriv-within-at-compliance-icc.md)
 
 ## Feasible directions
 
@@ -26,10 +28,12 @@
 - [Feasible directions at the upper endpoint](feasible-directions-right.md)
 - [Feasible directions at an interior design](feasible-directions-interior.md)
 - [Feasible directions in a degenerate interval](feasible-directions-self.md)
+- [Feasible directions in a design interval](feasible-directions.md)
 
 ## Endpoints: one-sided conditions, not stationarity
 
 - [Compliance has no stationary point](deriv-compliance-ne-zero.md)
+- [Compliance at the upper endpoint of the design interval](compliance-upper-endpoint.md)
 
 ## Units
 
@@ -47,6 +51,7 @@
 ## Compliance error: composition
 
 - [Compliance error between two admissible parameter points](abs-compliance-sub-compliance-le.md)
+- [Compliance error with supplied model, discretization, solver and arithmetic terms](abs-compliance-sub-computed-le.md)
 
 ## Residuals and the stability constant
 

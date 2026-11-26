@@ -64,3 +64,4 @@
 
 ## Correctness of the electrical dimensions
 
+- [Electrical dimension identities](electrical-dimensions-correct.md)
