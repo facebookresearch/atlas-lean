@@ -22,10 +22,18 @@ import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
 
 /-!
-# Two special values of Catalan series
+# Special values of Catalan series
 
 The odd-weighted Catalan series at two and a telescoping difference give the sums with
-denominators `4 ^ n * (n + 1)` and `4 ^ n * (n + 1) * (n + 2)`.
+numerator `catalan n` and denominators `4 ^ n * (n + 1)` and `4 ^ n * (n + 1) * (n + 2)`.
+The corresponding sums with numerator `(2 * n + 1) * catalan n` specialize the digamma
+identity at one and two.
+
+## References
+
+* Kunle Adegoke and Robert Frontczak, *Series Associated with a Forgotten Identity of Nörlund*,
+  INTEGERS 25 (2025), Article A18, pp. 1–12, Theorems 3 and 5 (in particular identity (11)).
+  https://math.colgate.edu/~integers/z18/z18.pdf
 -/
 
 open Filter Finset Topology
@@ -70,6 +78,15 @@ private lemma term_hasSum : HasSum term (2 / 3) := by
   simp_rw [term_eq_sub, ← mul_sum, sum_range_sub']
   simpa [coeff, catalan_zero] using
     ((tendsto_const_nhds (x := (1 : ℝ))).sub coeff_tendsto).const_mul (2 / 3)
+
+private lemma binom_one (n : ℕ) :
+    (∏ j ∈ Icc 1 n, (1 + j : ℂ) / j) = (n : ℂ) + 1 := by
+  induction n with
+  | zero => norm_num
+  | succ n ih =>
+    rw [prod_Icc_succ_top (by omega : 1 ≤ n + 1), ih, Nat.cast_succ]
+    have hn : (n : ℂ) + 1 ≠ 0 := by exact_mod_cast Nat.succ_ne_zero n
+    rw [mul_comm, div_mul_cancel₀ _ hn, add_comm 1]
 
 private lemma binom_two (n : ℕ) :
     (∏ j ∈ Icc 1 n, (2 + j : ℂ) / j) = (n + 1) * (n + 2) / 2 := by
@@ -147,5 +164,41 @@ public theorem tsum_catalan_div_four_pow_special :
       field_simp
       ring
     · ring
+
+/-- **Catalan series over powers of $4$ equal to $4\ln 2$ and $4\ln 2 - 2$.** Let $C_n$ be the
+$n$-th Catalan number. Then
+$$\sum_{n=0}^{\infty} \frac{2n+1}{n+1} \cdot \frac{C_n}{4^n} = 4\ln 2$$
+and
+$$\sum_{n=0}^{\infty} \frac{2n+1}{(n+1)(n+2)} \cdot \frac{C_n}{4^n} = 4\ln 2 - 2.$$
+
+Source: Kunle Adegoke and Robert Frontczak, *Series Associated with a Forgotten Identity of
+Nörlund*, INTEGERS 25 (2025), Article A18, Theorem 5, first two identities
+(`integers-2025-A18-thm-5`). -/
+public theorem tsum_odd_mul_catalan_div_four_pow_special :
+    ∑' n : ℕ, (2 * (n : ℝ) + 1) / ((n : ℝ) + 1) * catalan n / 4 ^ n = 4 * Real.log 2 ∧
+      ∑' n : ℕ, (2 * (n : ℝ) + 1) / (((n : ℝ) + 1) * ((n : ℝ) + 2)) * catalan n / 4 ^ n =
+        4 * Real.log 2 - 2 := by
+  constructor
+  · have h := tsum_odd_mul_catalan_div_four_pow_mul_binom (z := 1) (by norm_num)
+    have hterm (n : ℕ) :
+        (2 * (n : ℂ) + 1) * catalan n / (4 ^ n * ∏ j ∈ Icc 1 n, (1 + j : ℂ) / j) =
+          Complex.ofReal ((2 * (n : ℝ) + 1) / ((n : ℝ) + 1) * catalan n / 4 ^ n) := by
+      rw [binom_one]
+      push_cast
+      simp only [div_eq_mul_inv, mul_inv_rev]
+      ring
+    simp_rw [hterm] at h
+    rw [← Complex.ofReal_tsum] at h
+    have at_one := Complex.digamma_nat_add_one 0
+    norm_num [harmonic] at at_one
+    rw [at_one, show (1 - 1 / 2 : ℂ) = 1 / 2 by norm_num, Complex.digamma_one_half] at h
+    apply Complex.ofReal_injective
+    push_cast [-Complex.ofReal_tsum, Complex.ofReal_log (by norm_num : (0 : ℝ) ≤ 2)]
+    linear_combination h
+  · convert weighted_hasSum.tsum_eq using 1
+    apply tsum_congr
+    intro n
+    unfold weighted term coeff
+    field_simp
 
 end MetaMathlibExt
