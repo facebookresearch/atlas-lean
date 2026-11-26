@@ -2,6 +2,7 @@
 
 Topics added since this subject's fields were last revised.
 
+- [Center Star](center-star/README.md)
 - [Chao Lower Bound](chao-lower-bound/README.md)
 - [Cherry Distribution](cherry-distribution/README.md)
 - [Cohen Kappa](cohen-kappa/README.md)
@@ -12,13 +13,18 @@ Topics added since this subject's fields were last revised.
 - [Good Turing](good-turing/README.md)
 - [Gouy Chapman](gouy-chapman/README.md)
 - [Helfrich Sphere Stability](helfrich-sphere-stability/README.md)
+- [LCAReconciliation](lcareconciliation/README.md)
 - [Low Dimensional Persistence](low-dimensional-persistence/README.md)
 - [Multistationarity Degree Criterion](multistationarity-degree-criterion/README.md)
 - [Nicholson Bailey](nicholson-bailey/README.md)
 - [No Common Mechanism Parsimony](no-common-mechanism-parsimony/README.md)
 - [Phylogenetic Tree Space](phylogenetic-tree-space/README.md)
+- [QGram](qgram/README.md)
 - [Rooted SPRAgreement Forest](rooted-spragreement-forest/README.md)
 - [Siphon Prime Decomposition](siphon-prime-decomposition/README.md)
+- [Smith Hazel](smith-hazel/README.md)
+- [Smith Hazel Index](smith-hazel-index/README.md)
 - [Spearman Karber](spearman-karber/README.md)
+- [Split Decomposition](split-decomposition/README.md)
 - [TBRAgreement Forest](tbragreement-forest/README.md)
 - [String Overlap](string-overlap/README.md)

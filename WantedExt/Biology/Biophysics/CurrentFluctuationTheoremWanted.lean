@@ -83,7 +83,8 @@ structure SchnakenbergNetwork.Valid (M : SchnakenbergNetwork Ω ι) : Prop where
   chord_unique : ∀ ω ω', ω ≠ ω' → 0 < M.W ω ω' → ¬ M.T.Adj ω ω' →
     ∃! p : ι × Bool, M.chord p.1 = (if p.2 then (ω, ω') else (ω', ω))
 
-/-- The tree path from `v` to `w`. -/
+/-- Given `hT : M.T.IsTree`, the unique simple path (walk) in the spanning tree `M.T` from `v` to
+`w`. -/
 noncomputable def SchnakenbergNetwork.treePath (M : SchnakenbergNetwork Ω ι) (hT : M.T.IsTree)
     (v w : Ω) : M.T.Walk v w :=
   (hT.existsUnique_path v w).choose
