@@ -11904,6 +11904,7 @@
   "MathlibExt/Dynamics/MoebiusSingularDual": {"to": "Dynamics/low-dimensional-dynamics", "title": "Natural duals of Möbius maps"},
   "MathlibExt/Dynamics/MoranDimension": {"to": "MeasureTheory/geometric-measure-theory", "title": "Hausdorff dimension of self-similar sets"},
   "MathlibExt/Dynamics/NExpansionGaps": {"to": "Dynamics/low-dimensional-dynamics", "title": "N-continued fraction expansions"},
+  "MathlibExt/Dynamics/NExpansionGapsPointLtIff": {"to": "Dynamics/low-dimensional-dynamics", "title": "N-continued fraction expansions"},
   "MathlibExt/Dynamics/Periodic/BinaryRecurrenceRealizableDimension": {"to": "Dynamics/topological-symbolic-dynamics", "title": "Realizable sequences of periodic point counts"},
   "MathlibExt/Dynamics/Periodic/LiYorke": {"to": "Dynamics/low-dimensional-dynamics", "title": "Period three implies chaos"},
   "MathlibExt/Dynamics/PolynomialNetworks/Deficiency": {"to": "Dynamics/smooth-dynamics", "title": "Polynomial networks and deficiency"},
