@@ -54,8 +54,8 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, and the sequence
-`⟨d₁, ..., dₙ⟩` as a list. -/
+/-- An instance: vertex count `n` (vertices `Fin n`), edge list, and a list of degrees; its
+length and the edge list are checked by `WellFormed`. -/
 abbrev EliminationDegreeSequenceInstance := ℕ × List (ℕ × ℕ) × List ℕ
 
 /-- The graph of the instance as a `SimpleGraph (Fin n)`. -/

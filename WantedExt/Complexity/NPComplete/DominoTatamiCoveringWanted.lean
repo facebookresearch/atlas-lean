@@ -67,7 +67,8 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: the cells `(x, y)` of the region. -/
+/-- An instance: a list of cells `(x, y)` of the region, possibly with repeats; distinct cells
+forming a polyomino are checked by `WellFormed`. -/
 abbrev DominoTatamiCoveringInstance := List (ℕ × ℕ)
 
 /-- The grid graph on `ℕ × ℕ`: cells are adjacent when they share a side. -/
@@ -89,8 +90,8 @@ def dominoCells (d : (ℕ × ℕ) × Bool) : List (ℕ × ℕ) :=
 def blockCells (p : ℕ × ℕ) : List (ℕ × ℕ) :=
   [p, (p.1 + 1, p.2), (p.1, p.2 + 1), (p.1 + 1, p.2 + 1)]
 
-/-- The region has a domino tatami covering: some list of dominoes covers every cell of the
-region exactly once and nothing else, and every `2 × 2` block of cells of the region contains a
+/-- The region has a domino tatami covering: the flattened cells of some list of dominoes are a
+permutation of the instance list, and every `2 × 2` block of cells of the region contains a
 whole domino of the covering, so no four dominoes meet at a point. -/
 def DominoTatamiCoveringFeasible (i : DominoTatamiCoveringInstance) : Prop :=
   ∃ dominoes : List ((ℕ × ℕ) × Bool), (dominoes.flatMap dominoCells).Perm i ∧

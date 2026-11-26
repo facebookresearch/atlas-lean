@@ -57,7 +57,8 @@ reduction from every language in `NP`
 -/
 
 /-- An instance: `m`, `n`, the matrix `A` (rows of `(positive part, negative part)` pairs), the
-vector `b` (same encoding), the binary matrix `C` (rows of naturals), and the bound `K`. -/
+vector `b` (same encoding), the matrix `C` (rows of naturals, not necessarily bits), and the
+bound `K`. Dimensions and binary entries are checked by `WellFormed`. -/
 abbrev GeneralizedZeroOneAssignmentInstance :=
   ℕ × ℕ × List (List (ℕ × ℕ)) × List (ℕ × ℕ) × List (List ℕ) × ℕ
 
@@ -84,8 +85,8 @@ def WellFormed (i : GeneralizedZeroOneAssignmentInstance) : Prop :=
     i.2.2.2.2.1.length = i.1 ∧ (∀ row ∈ i.2.2.2.2.1, row.length = i.2.1 ∧ ∀ x ∈ row, x ≤ 1) ∧
     0 < i.2.2.2.2.2
 
-/-- A binary matrix `X` with exactly one `1` in each column, satisfying `A X ≤ b` row by row,
-with `∑ᵢ ∑ⱼ C_{i,j} X_{i,j} ≤ K`. -/
+/-- A binary `m × n` matrix `X` with exactly one `1` in each column, with `∑ⱼ A_{r,j} X_{r,j} ≤
+b_r` for every row `r` (entrywise, not a matrix product), and with `∑ᵢ ∑ⱼ C_{i,j} X_{i,j} ≤ K`. -/
 def GeneralizedZeroOneAssignmentFeasible (i : GeneralizedZeroOneAssignmentInstance) : Prop :=
   ∃ X : Fin i.1 → Fin i.2.1 → ℕ, (∀ r c, X r c ≤ 1) ∧ (∀ c, ∃! r, X r c = 1) ∧
     (∀ r, ∑ c, entryA i r c * (X r c : ℤ) ≤ entryB i r) ∧

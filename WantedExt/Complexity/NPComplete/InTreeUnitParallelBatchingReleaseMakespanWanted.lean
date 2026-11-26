@@ -84,7 +84,9 @@ def WellFormed (i : ParallelMachinesInTreeReleaseMakespanInstance) : Prop :=
   ParallelMachinesInTreeReleaseMakespan.WellFormed i ∧ i.1.2.1 < i.1.1.length
 
 open Classical in
-/-- `1|intree;p_i=1;p-batch;r_i;b<n|C_max` as a decision problem over bitstrings. -/
+/-- `1|intree;p_i=1;p-batch;r_i;b<n|C_max` as a decision problem over bitstrings: one batching
+machine with at most `b` jobs per unit-time batch, encoded by the parallel-machine schedule with
+`m = b`. -/
 noncomputable def inTreeUnitParallelBatchingReleaseMakespanDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode

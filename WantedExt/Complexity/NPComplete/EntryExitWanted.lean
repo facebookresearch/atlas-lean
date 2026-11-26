@@ -61,7 +61,8 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: the width `w` and the rows of region labels (`h` rows of `w` labels). -/
+/-- An instance: the width `w` and the rows of region labels; row lengths are checked by
+`WellFormed`. -/
 abbrev EntryExitInstance := ℕ × List (List ℕ)
 
 /-- A cell `(row, column)` of the grid. -/
@@ -94,7 +95,8 @@ noncomputable def entryExitDec : MetaMathlibExt.ComplexityTheory.DecisionProblem
   | some i => decide (WellFormed i ∧ EntryExitFeasible i)
   | none => false
 
-/-- **ENTRY EXIT is NP-complete.** Source: Kiatchaipipat and Ruangwises (2025), Section 2.2. -/
+/-- **ENTRY EXIT is NP-complete.** Source: Kiatchaipipat and Ruangwises (2025), Section 2.2, an
+unrefereed preprint. -/
 public theorem_wanted entryExit_npComplete :
     entryExitDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

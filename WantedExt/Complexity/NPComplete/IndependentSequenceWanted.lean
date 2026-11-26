@@ -96,7 +96,8 @@ noncomputable def independentSequenceDec :
   | none => false
 
 /-- **INDEPENDENT SEQUENCE is NP-complete.** Source: Halldórsson (2000), Section 2.1 and
-Proposition 2.3; Crescenzi and Kann, MAXIMUM INDEPENDENT SEQUENCE. -/
+Proposition 2.3 (its size-preservation claim fails; doubling the input and the threshold repairs
+the reduction); Crescenzi and Kann, MAXIMUM INDEPENDENT SEQUENCE. -/
 public theorem_wanted independentSequence_npComplete :
     independentSequenceDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

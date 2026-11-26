@@ -76,14 +76,14 @@ def l1Graph (i : GeometricConnectedDominatingSetInstance) : SimpleGraph (Fin i.1
 def lInfinityGraph (i : GeometricConnectedDominatingSetInstance) : SimpleGraph (Fin i.1.length) :=
   SimpleGraph.fromRel fun a b => chebyshevDist (point i.1[a]) (point i.1[b]) ≤ i.2.1
 
-/-- Under the `L₁` metric, some subset `P' ⊆ P` of at most `K` points dominates the
-distance-`B` graph, and the subgraph it induces is connected. -/
+/-- Under the `L₁` metric, some set of at most `K` positions of `P` dominates the distance-`B`
+graph on the positions, and the subgraph it induces is connected. -/
 def L1Feasible (i : GeometricConnectedDominatingSetInstance) : Prop :=
   ∃ P' : Finset (Fin i.1.length), P'.card ≤ i.2.2 ∧ (l1Graph i).IsDominating ↑P' ∧
     ((l1Graph i).induce (↑P' : Set (Fin i.1.length))).Connected
 
-/-- Under the `L∞` metric, some subset `P' ⊆ P` of at most `K` points dominates the
-distance-`B` graph, and the subgraph it induces is connected. -/
+/-- Under the `L∞` metric, some set of at most `K` positions of `P` dominates the distance-`B`
+graph on the positions, and the subgraph it induces is connected. -/
 def LInfinityFeasible (i : GeometricConnectedDominatingSetInstance) : Prop :=
   ∃ P' : Finset (Fin i.1.length), P'.card ≤ i.2.2 ∧ (lInfinityGraph i).IsDominating ↑P' ∧
     ((lInfinityGraph i).induce (↑P' : Set (Fin i.1.length))).Connected

@@ -62,12 +62,13 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: the points of `V` (each a pair of integer coordinates, each coordinate an
-integer `a - b` given as the pair `(a, b)`) and the bound `K`. -/
+/-- An instance: the list `V` of points (each a pair of integer coordinates, each coordinate an
+integer `a - b` given as the pair `(a, b)`) and the bound `K`. Vertices are positions in the
+list; distinct points are checked by `WellFormed`. -/
 abbrev DominatingSetGridGraphsInstance := GridGraphHamiltonianCircuitInstance × ℕ
 
-/-- The grid graph and the bound as a DOMINATING SET instance: `|V|` vertices, the grid edges,
-and `K`. -/
+/-- The grid graph and the bound as a DOMINATING SET instance: one vertex per position of `V`
+(repeated points counted separately), the grid edges, and `K`. -/
 def toDominatingSetInstance (i : DominatingSetGridGraphsInstance) :
     DominatingSet.DominatingSetInstance :=
   (i.1.length, gridEdges i.1, i.2)

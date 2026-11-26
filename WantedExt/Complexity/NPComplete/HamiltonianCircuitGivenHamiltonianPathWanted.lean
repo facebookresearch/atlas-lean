@@ -56,8 +56,8 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: vertex count `n` (vertices `0, …, n - 1`), edge list, and a Hamiltonian path
-as a list of vertices. -/
+/-- An instance: vertex count `n` (vertices `0, …, n - 1`), edge list, and a candidate path as a
+list of vertices; that it is a Hamiltonian path is checked by `WellFormed`. -/
 abbrev HamiltonianCircuitGivenHamiltonianPathInstance := ℕ × List (ℕ × ℕ) × List ℕ
 
 /-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
@@ -73,7 +73,8 @@ def WellFormed (i : HamiltonianCircuitGivenHamiltonianPathInstance) : Prop :=
     i.2.2.Nodup ∧ i.2.2.length = i.1 ∧ (∀ v ∈ i.2.2, v < i.1) ∧
     i.2.2.IsChain (fun a b => (a, b) ∈ i.2.1 ∨ (b, a) ∈ i.2.1)
 
-/-- `G` has a Hamiltonian circuit. -/
+/-- `G` has a Hamiltonian circuit: a simple cycle of length at least three containing every
+vertex. -/
 def HamiltonianCircuitGivenHamiltonianPathFeasible
     (i : HamiltonianCircuitGivenHamiltonianPathInstance) : Prop :=
   ∃ v : Fin i.1, ∃ p : (Graph i).Walk v v, p.IsHamiltonianCycle

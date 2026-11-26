@@ -109,10 +109,10 @@ def WellFormed (i : EumorphousTreeLayoutInstance) : Prop :=
     (∀ v : Fin i.1, ∃ r : Fin i.1, (r : ℕ) = i.2.1 ∧ IsDescendant i r v) ∧
     0 < i.2.2.2
 
-/-- `φ` maps the subtree rooted at `u` isomorphically onto the subtree rooted at `v`, as a
-binary tree: `φ u = v`, and for every descendant `w` of `u` and each side, the child of `w` on
-that side is sent to the child of `φ w` on the same side, and `φ w` has a child on that side
-only if `w` has one. -/
+/-- The subtree-matching test on raw data: `φ u = v`, and for every descendant `w` of `u` and
+each side, every child of `w` on that side goes to a child of `φ w` on the same side, and `φ w`
+has a child on that side only if `w` has one. It does not require a bijection; on a well-formed
+binary tree it describes the isomorphisms of the subtree at `u` onto the subtree at `v`. -/
 def IsSubtreeIso (i : EumorphousTreeLayoutInstance) (u v : Fin i.1)
     (φ : Fin i.1 → Fin i.1) : Prop :=
   φ u = v ∧ ∀ w, IsDescendant i u w → ∀ b,

@@ -94,8 +94,9 @@ noncomputable def generalRoutingDec :
   | some i => decide (WellFormed i ∧ GeneralRoutingFeasible i)
   | none => false
 
-/-- **GENERAL ROUTING is NP-complete.** Source: Lenstra and Rinnooy Kan (1976); Orloff (1974);
-Crescenzi and Kann, MINIMUM GENERAL ROUTING. -/
+/-- **GENERAL ROUTING is NP-complete.** Source: Lenstra and Rinnooy Kan (1976); Orloff (1974).
+Crescenzi and Kann's MINIMUM GENERAL ROUTING visits each required vertex exactly once, a
+different variant. -/
 public theorem_wanted generalRouting_npComplete :
     generalRoutingDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,
