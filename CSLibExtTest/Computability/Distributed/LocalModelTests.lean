@@ -1,0 +1,161 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import CSLibExt.Computability.Distributed.LocalModel
+public import Mathlib.Combinatorics.SimpleGraph.CycleGraph
+public import Mathlib.Combinatorics.SimpleGraph.Hasse
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Data.Fintype.EquivFin
+
+/-!
+# Tests for the LOCAL model
+
+* Identifier assignments exist for every finite set of nodes when `c ≥ 1`; with `c = 1` the
+  identifiers are a bijection onto `{1, …, n}`.
+* A `0`-round algorithm sees only its own identifier and input.
+* An example algorithm: in one round every node learns its degree, the number of messages it
+  receives (`degreeAlg_output`); `decide` evaluates it on the path `0 - 1 - 2`.
+* Flooding the largest identifier: on the path `0 - 1 - 2 - 3`, after two rounds node `0` holds
+  the largest identifier of the nodes `0, 1, 2` and after three rounds that of all four.
+* Locality: changing the identifier of a node at distance more than one does not change the
+  output of a one-round algorithm, and node `1` of the path `0 - 1 - 2 - 3` and of the
+  four-cycle gets the same output from any one-round algorithm, although the graphs differ.
+* Locality needs the neighbours of the centre: node `0` has different degrees on the path and on
+  the cycle.
+-/
+
+@[expose] public section
+
+namespace Cslib.Distributed.LocalModelTests
+
+open Cslib.Distributed.LocalModel SimpleGraph
+
+/-! ### Identifier assignments -/
+
+/-- The identifiers `v ↦ v + 1` on `Fin n`, a bijection onto `{1, …, n}`. -/
+def idFin (n : ℕ) : IdAssignment (Fin n) 1 where
+  toFun v := v.val + 1
+  injective a b h := Fin.ext (by simpa using h)
+  mem_Icc v := by
+    simp only [Fintype.card_fin, pow_one, Set.mem_Icc]
+    exact ⟨Nat.succ_pos _, v.isLt⟩
+
+/-- Identifier assignments exist for every finite set of nodes when `c ≥ 1`. -/
+example (V : Type) [Fintype V] (c : ℕ) (hc : 1 ≤ c) : Nonempty (IdAssignment V c) := by
+  refine ⟨⟨fun v => (Fintype.equivFin V v).val + 1, fun a b h => ?_, fun v => ?_⟩⟩
+  · exact (Fintype.equivFin V).injective (Fin.ext (by simpa using h))
+  · have hlt := (Fintype.equivFin V v).isLt
+    have hn : Fintype.card V ≤ Fintype.card V ^ c := Nat.le_self_pow (by omega) _
+    exact ⟨Nat.succ_pos _, by omega⟩
+
+/-- With `c = 1` the identifiers are a bijection onto `{1, …, n}`. -/
+example (V : Type) [Fintype V] (ids : IdAssignment V 1) :
+    Set.BijOn ids Set.univ (Set.Icc 1 (Fintype.card V)) := by
+  have hmem : ∀ v, ids v ∈ Set.Icc 1 (Fintype.card V) := by
+    simpa using ids.coe_mem_Icc
+  let f : V → Finset.Icc 1 (Fintype.card V) := fun v => ⟨ids v, by simpa using hmem v⟩
+  have hf : Function.Injective f := fun a b h =>
+    ids.coe_injective (congrArg Subtype.val h : ids a = ids b)
+  have hbij : Function.Bijective f :=
+    (Fintype.bijective_iff_injective_and_card f).mpr ⟨hf, by simp⟩
+  refine ⟨fun v _ => hmem v, fun a _ b _ h => ids.coe_injective h, fun m hm => ?_⟩
+  obtain ⟨v, hv⟩ := hbij.2 ⟨m, by simpa using hm⟩
+  exact ⟨v, trivial, congrArg Subtype.val hv⟩
+
+/-! ### Zero rounds -/
+
+/-- A node's output after `0` rounds is a function of its own identifier and input. -/
+example {I S M O V : Type} [Fintype V] (A : LocalAlgorithm I S M O) (G : SimpleGraph V)
+    [DecidableRel G.Adj] {c : ℕ} (ids : IdAssignment V c) (x : V → I) (v : V) :
+    A.output (fun _ => 0) G ids x v = A.out (A.init (ids v) (x v)) :=
+  rfl
+
+/-! ### Learning the degree in one round -/
+
+/-- Every node sends one message to each neighbour and keeps the number of messages it
+receives. -/
+def degreeAlg : LocalAlgorithm Unit ℕ Unit ℕ where
+  init _ _ := 0
+  send _ _ := ()
+  update _ m := Multiset.card m
+  out s := s
+
+/-- Run for one round, `degreeAlg` outputs the degree of each node. -/
+theorem degreeAlg_output {V : Type} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {c : ℕ} (ids : IdAssignment V c) (x : V → Unit) (v : V) :
+    degreeAlg.output (fun _ => 1) G ids x v = G.degree v := by
+  simp [LocalAlgorithm.output, LocalAlgorithm.stateAfter_succ, degreeAlg,
+    SimpleGraph.card_neighborFinset_eq_degree]
+
+/-- On the path `0 - 1 - 2` the degrees are `1, 2, 1`. -/
+example : (List.finRange 3).map (degreeAlg.output (fun _ => 1) (pathGraph 3) (idFin 3)
+    fun _ => ()) = [1, 2, 1] := by
+  decide
+
+/-! ### Flooding the largest identifier -/
+
+/-- Every node keeps the largest identifier it has heard of and sends it to its neighbours. -/
+def maxIdAlg : LocalAlgorithm Unit ℕ ℕ ℕ where
+  init i _ := i
+  send s _ := s
+  update s m := max s m.sup
+  out s := s
+
+/-- On the path `0 - 1 - 2 - 3` with identifiers `1, 2, 3, 4`, node `0` holds `3` after two
+rounds, the largest identifier at distance at most two, and `4` after three rounds. -/
+example : maxIdAlg.output (fun _ => 2) (pathGraph 4) (idFin 4) (fun _ => ()) 0 = 3 ∧
+    maxIdAlg.output (fun _ => 3) (pathGraph 4) (idFin 4) (fun _ => ()) 0 = 4 := by
+  decide
+
+/-! ### Locality -/
+
+/-- The identifiers `1, 2, 3, 4` on `Fin 4`, in the range `{1, …, 4 ^ 2}`. -/
+def ids4 : IdAssignment (Fin 4) 2 where
+  toFun := ![1, 2, 3, 4]
+  injective := by decide
+  mem_Icc v := by fin_cases v <;> simp
+
+/-- The identifiers `1, 2, 3, 5` on `Fin 4`: those of `ids4` with the last one changed. -/
+def ids4' : IdAssignment (Fin 4) 2 where
+  toFun := ![1, 2, 3, 5]
+  injective := by decide
+  mem_Icc v := by fin_cases v <;> simp
+
+/-- Changing the identifier of node `3`, at distance three from node `0` on the path
+`0 - 1 - 2 - 3`, does not change the output of a one-round algorithm at node `0`. -/
+example {S M O : Type} (A : LocalAlgorithm Unit S M O) :
+    A.output (fun _ => 1) (pathGraph 4) ids4 (fun _ => ()) 0 =
+      A.output (fun _ => 1) (pathGraph 4) ids4' (fun _ => ()) 0 := by
+  refine A.output_congr_ball _ 0 (fun _ _ _ => Iff.rfl) (fun u hu => ?_) (fun _ _ => rfl)
+  rw [Nat.cast_one, edist_le_one_iff_adj_or_eq] at hu
+  fin_cases u
+  · rfl
+  · rfl
+  · rfl
+  · exact absurd hu (by decide)
+
+/-- Node `1` has the same neighbours `0` and `2` on the path `0 - 1 - 2 - 3` and on the
+four-cycle, so any one-round algorithm outputs the same at node `1` on both graphs. -/
+example {I S M O : Type} (A : LocalAlgorithm I S M O) (ids : IdAssignment (Fin 4) 1)
+    (x : Fin 4 → I) :
+    A.output (fun _ => 1) (pathGraph 4) ids x 1 = A.output (fun _ => 1) (cycleGraph 4) ids x 1 := by
+  refine A.output_congr_ball _ 1 (fun u hu w => ?_) (fun _ _ => rfl) (fun _ _ => rfl)
+  rw [Nat.cast_one, Order.lt_one_iff, edist_eq_zero_iff] at hu
+  subst hu
+  revert w
+  decide
+
+/-- The neighbours of the centre matter: node `0` has degree `1` on the path `0 - 1 - 2 - 3`
+and degree `2` on the four-cycle. -/
+example : degreeAlg.output (fun _ => 1) (pathGraph 4) (idFin 4) (fun _ => ()) 0 = 1 ∧
+    degreeAlg.output (fun _ => 1) (cycleGraph 4) (idFin 4) (fun _ => ()) 0 = 2 := by
+  decide
+
+end Cslib.Distributed.LocalModelTests
