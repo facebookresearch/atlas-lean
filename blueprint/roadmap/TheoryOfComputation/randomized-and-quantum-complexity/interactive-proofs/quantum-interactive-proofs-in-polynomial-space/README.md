@@ -1,0 +1,15 @@
+# QIP = PSPACE via Matrix Multiplicative Weights
+
+- [Regret bound for the matrix multiplicative weights update](matrix-multiplicative-weights-regret-bound.md)
+- [Message-bounded quantum interactive proof classes QIP(m)](message-bounded-quantum-interactive-proof-classes.md)
+- [The class NC(poly) of polynomial-depth bounded fan-in circuit families](polynomial-depth-circuit-class-nc-poly.md)
+- [Kitaev-Watrous: quantum interactive proofs parallelize to three messages](kitaev-watrous-three-message-parallelization.md)
+- [Quantum Merlin-Arthur-Merlin games (QMAM)](quantum-merlin-arthur-merlin-games.md)
+- [Borodin: NC(poly) = PSPACE](borodin-polynomial-depth-equals-polynomial-space.md)
+- [Matrix exponentials of exponential-dimension matrices in polynomial depth](matrix-exponentials-in-polynomial-depth.md)
+- [Marriott-Watrous: QIP equals QMAM](marriott-watrous-qip-equals-qmam.md)
+- [Jain-Upadhyay-Watrous: QIP(2) is contained in PSPACE](two-message-quantum-proofs-in-polynomial-space.md)
+- [Optimal QMAM acceptance probability as an exponential-size semidefinite program](qmam-acceptance-as-exponential-semidefinite-program.md)
+- [QIP is contained in PSPACE (Jain-Ji-Upadhyay-Watrous)](qip-is-contained-in-pspace.md)
+- [QIP = PSPACE](qip-equals-pspace.md)
+- [Gutoski-Wu: two-turn quantum refereed games are in PSPACE](two-turn-quantum-refereed-games-in-pspace.md)

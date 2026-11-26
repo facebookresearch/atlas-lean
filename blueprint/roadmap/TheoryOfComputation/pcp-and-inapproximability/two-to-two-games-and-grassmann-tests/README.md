@@ -1,0 +1,15 @@
+# 2-to-2 Games and Grassmann Tests
+
+- [d-to-d games and 2-to-2 constraints](d-to-d-games.md)
+- [Zoom-in and zoom-out subgraphs of the Grassmann graph](grassmann-zoom.md)
+- [Bhangale–Khot–Minzer: satisfiable 3-CSPs and the role of linear structure](bkm-satisfiable-3csp.md)
+- [Khot's 2-to-1 games conjecture with perfect completeness](two-to-one-conjecture.md)
+- [The Grassmann linearity agreement test](grassmann-linearity-test.md)
+- [Equivalence of Grassmann, shortcode and bilinear small-set expansion](shortcode-equivalence.md)
+- [Zoom-local soundness structure of the Grassmann test](grassmann-test-completeness-local.md)
+- [Ellis–Kindler–Lifshitz: Bonami-type lemma on spaces of linear maps](ekl-bilinear-bonami.md)
+- [The 2-to-2 Games Theorem (imperfect completeness)](two-to-two-theorem.md)
+- [Khot–Minzer–Moshkovitz–Safra: small-set expansion in the Johnson graph](kmms-johnson-sse.md)
+- [Minzer–Zheng: near-optimal alphabet-soundness tradeoff for 2-query PCPs](minzer-zheng-tradeoff.md)
+- [Unique Games is NP-hard with completeness one half](unique-games-half-completeness.md)
+- [NP-hardness of approximating Vertex Cover within sqrt(2) - epsilon](vertex-cover-sqrt2.md)

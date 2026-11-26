@@ -1,0 +1,16 @@
+# Catalytic Space: Randomness, Time and Matching
+
+- [Polynomial-time catalytic logspace CLP and zero-error polynomial-time catalytic logspace CZPLP](polynomial-time-catalytic-logspace-classes.md)
+- [The lossy coding problem LossyCode and the classes LOSSY[C]](lossy-code-problem-and-classes.md)
+- [Agarwala–Mertz: isolating weights on the catalytic tape let CLP extend a maximum matching one edge at a time](isolating-weights-extend-matching-in-clp.md)
+- [Buhrman et al.: a random catalytic content gives expected running time 2^{O(s)}, hence CL is in ZPP](random-catalytic-content-expected-runtime.md)
+- [Cook–Li–Mertz–Pyne compress-or-compute: a long-running catalytic computation compresses its own tape](clmp-runtime-compress-or-compute.md)
+- [Pyne: randomized space S runs in catalytic space with S work and S^2 catalytic cells, with a tradeoff](pyne-bpspace-in-small-catalytic-space.md)
+- [Agarwala–Mertz: a non-isolated weight is redundant and can be erased from the catalytic tape](non-isolated-weight-is-redundant.md)
+- [Cook–Li–Mertz–Pyne: randomized catalytic logspace is derandomized unconditionally (CBPL = CL)](clmp-cbpl-equals-cl.md)
+- [Cook–Li–Mertz–Pyne: catalytic logspace and polynomial time are simultaneously achievable (CL ∩ P = CLP)](clmp-cl-cap-p-equals-clp.md)
+- [Agarwala–Mertz: bipartite maximum matching is in polynomial-time catalytic logspace (MATCH ∈ CLP)](agarwala-mertz-bipartite-matching-in-clp.md)
+- [Cook–Li–Mertz–Pyne: catalytic logspace equals zero-error polynomial-time catalytic logspace (CL = CZPLP)](clmp-cl-equals-czplp.md)
+- [CL ⊆ P iff CL = CLP, and ZPP = P implies CL = CLP](cl-in-p-iff-cl-equals-clp.md)
+- [Agarwala–Mertz: bipartite matching reduces to lossy coding for NC circuits and the isolation lemma is derandomized in CL](bipartite-matching-in-lossy-nc.md)
+- [Cook–Li–Mertz–Pyne: catalytic logspace reduces to lossy coding (CL ⊆ LOSSY), so LOSSY = P implies CL = CLP](clmp-cl-in-lossy.md)

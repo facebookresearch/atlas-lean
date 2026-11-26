@@ -1,0 +1,24 @@
+# WHIR: IOPP for constrained Reed–Solomon codes with super-fast verification
+
+There is a public-coin IOPP for constrained Reed–Solomon codes $\mathrm{CRS}[\mathbb{F},L,m,\hat{w},\sigma]$ that interleaves sum-check rounds on the constraint with STIR-style rate-shifting iterations (folding by partial evaluation, out-of-domain sampling, and adding the queried points as new constraints rather than quotienting). It is round-by-round sound up to the Johnson bound (and up to unique decoding unconditionally), its query complexity is comparable to STIR, and its verifier performs only a polylogarithmic number of field and hash operations, typically running in a few hundred microseconds in practice. Compiled with the BCS transform it gives hash-based multilinear and univariate polynomial commitment schemes and, with a compiler for multilinear PIOPs, a SNARG for generalized R1CS.
+
+## Proof sketch
+
+Each round runs a few sum-check rounds to reduce the constraint, folds the function by partial evaluation (binary-fold lemma), and commits to the folded polynomial on a smaller domain; queried and out-of-domain points become additional weight terms batched into the constraint with random coefficients. Distance preservation follows the STIR analysis with constraints in place of quotients.
+
+## Depends on
+
+- [Constrained Reed–Solomon codes with sum-check constraints](constrained-rs-code.md)
+- [Binary folding of multilinear-coefficient codewords as partial evaluation](whir-binary-fold.md)
+- [STIR: Reed–Solomon proximity testing with O(log d + λ·log log d) queries](stir-theorem.md)
+- [The sum-check protocol](../../../../TheoryOfComputation/randomized-and-quantum-complexity/interactive-proofs/the-sum-check-protocol.md)
+
+## Proof depends on
+
+- [Binary folding of multilinear-coefficient codewords as partial evaluation](whir-binary-fold.md)
+- [One STIR iteration: fold, shift to a smaller domain, quotient](stir-iteration.md)
+- [The sum-check protocol](../../../../TheoryOfComputation/randomized-and-quantum-complexity/interactive-proofs/the-sum-check-protocol.md)
+
+## Sources
+
+- Gal Arnon, Alessandro Chiesa, Giacomo Fenzi, Eylon Yogev, "WHIR: Reed–Solomon Proximity Testing with Super-Fast Verification", EUROCRYPT (2025), IACR ePrint 2024/1586.

@@ -8,3 +8,6 @@ The PCP theorem and Dinur's gap amplification, optimization classes (NPO, APX, M
 - [The PCP theorem: NP = PCP(O(log n), O(1))](pcp-theorem.md)
 - [Blum–Luby–Rubinfeld linearity test](blum-luby-rubinfeld-linearity-test/README.md)
 - [Pcp constructions](pcp-constructions/README.md)
+- [2-to-2 Games and Grassmann Tests](two-to-two-games-and-grassmann-tests/README.md)
+- [Agreement Tests on High-Dimensional Expanders](agreement-tests-on-high-dimensional-expanders/README.md)
+- [SDP Optimality and Approximation Resistance](sdp-optimality-and-approximation-resistance/README.md)

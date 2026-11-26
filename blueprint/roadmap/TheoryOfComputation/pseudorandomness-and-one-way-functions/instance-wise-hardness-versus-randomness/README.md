@@ -1,0 +1,16 @@
+# Instance-Wise Hardness versus Randomness
+
+- [Hardness of a multi-output function on almost all inputs for probabilistic time](almost-all-inputs-hardness.md)
+- [Conditional Levin–Kolmogorov complexity Kt(x | z) and the gap problem GapMcKtP](conditional-levin-kt-gap-problem.md)
+- [Refuters for a function against a class of probabilistic algorithms](refuter-for-a-function.md)
+- [Targeted pseudorandom generators and targeted hitting-set generators](targeted-prg-and-targeted-hsg.md)
+- [Chen–Tell: prBPP = prP forces polynomial-time functions hard on almost all inputs](derandomization-implies-almost-all-inputs-hardness.md)
+- [Doron–Pyne–Tell: BPL = L on average from hardness for log-space-advice-uniform TC0 with logspace oracles](bpl-in-average-l-from-deterministic-uniform-hardness.md)
+- [Liu–Pass: prBPP = prP iff conditional Kt gap problems are hard on every long auxiliary input](liu-pass-derandomization-iff-conditional-kt-hardness.md)
+- [Chen–Tell instance-wise reconstruction: a targeted HSG from a shallow logspace-uniform circuit](instance-wise-reconstruction-targeted-hsg.md)
+- [Chen–Tell: superfast heuristic derandomization BPTIME[T] in heur-DTIME[n^ε·T] from uniform assumptions](superfast-derandomization-over-samplable-distributions.md)
+- [Chen–Tell: prBPP = prP from almost-all-inputs hardness of depth-n² logspace-uniform circuits](prbpp-eq-prp-from-almost-all-inputs-hardness.md)
+- [van Melkebeek–Sdroievski: instance-wise hardness for Arthur–Merlin protocols gives AM ⊆ NP](instance-wise-hardness-gives-am-in-np.md)
+- [Chen–Tell–Williams: refuting low-space streaming algorithms is equivalent to prBPP = prP](refuting-streaming-algorithms-iff-prbpp-eq-prp.md)
+- [Chen–Tell general tradeoff: size-T depth-d hard functions give prDTIME simulations via T̄](chen-tell-size-depth-tradeoff.md)
+- [Chen–Tell–Williams: CAPP for TC0 in polynomial time iff Identity has an FP-refuter against TC0∘XOR](capp-for-tc0-iff-refuting-identity.md)

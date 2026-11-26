@@ -7,6 +7,12 @@ Complexity-theoretic foundations of cryptography and derandomization: one-way fu
 - [Yao's XOR lemma](yao-s-xor-lemma/README.md)
 - [Impagliazzo-Wigderson: exponential circuit hardness in E derandomizes BPP](nisan-wigderson.md)
 - [One-way functions imply P ≠ NP](owf-implies-p-ne-np.md)
+- [Instance-Wise Hardness versus Randomness](instance-wise-hardness-versus-randomness/README.md)
+- [Microcrypt and Quantum One-Wayness](microcrypt-and-quantum-one-wayness/README.md)
+- [Non-Malleable Extraction, Logarithmic Min-Entropy and Explicit Ramsey Graphs](non-malleable-extraction-and-explicit-ramsey-graphs/README.md)
+- [Pseudorandom Quantum States and Unitaries](pseudorandom-quantum-states-and-unitaries/README.md)
+- [Weighted PRGs and Derandomization of Small Space](weighted-prgs-and-space-derandomization/README.md)
+- [Worst-Case and Meta-Complexity Characterizations of One-Way Functions](worst-case-characterizations-of-one-way-functions/README.md)
 
 ## Related topics
 

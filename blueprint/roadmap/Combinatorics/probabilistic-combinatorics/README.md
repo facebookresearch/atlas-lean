@@ -16,6 +16,7 @@ Probabilistic methods and random discrete structures outside random graphs: the 
 - [Isolation lemma](isolation-lemma.md)
 - [Symmetric Lovász Local Lemma](lovasz-local-lemma-symmetric-finite.md)
 - [Lovász local lemma, general form](lovasz-local-lemma-general-finite.md)
+- [The Park-Pham Expectation-Threshold Theorem and Applications](expectation-threshold-theorem-and-applications/README.md)
 
 ## Related topics
 

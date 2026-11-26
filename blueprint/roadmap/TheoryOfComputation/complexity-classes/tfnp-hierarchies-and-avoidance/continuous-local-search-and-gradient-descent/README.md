@@ -1,0 +1,17 @@
+# Continuous Local Search and Gradient Descent
+
+- [ITER and the EITHER-SOLUTION combinator for building PPAD ∩ PLS-complete problems](iter-and-either-solution.md)
+- [Approximate local min-max equilibria of constrained smooth objectives and the trivial, local and global regimes](approximate-local-min-max-equilibrium.md)
+- [Well-behaved arithmetic circuits and Lipschitz violation witnesses for continuous total search problems](well-behaved-arithmetic-circuits.md)
+- [EITHER-SOLUTION(END-OF-LINE, ITER) is PPAD ∩ PLS-complete](either-solution-eol-iter-complete.md)
+- [Daskalakis–Skoulakis–Zampetakis: local min-max equilibria of smooth objectives are PPAD-complete in the local regime](local-min-max-ppad-complete.md)
+- [CONTINUOUS-LOCALOPT, GENERAL-CONTINUOUS-LOCALOPT and the class CLS of Daskalakis–Papadimitriou](continuous-localopt-and-cls.md)
+- [The KKT search problem for smooth objectives on bounded polytopes with Taylor-violation witnesses](kkt-search-problem.md)
+- [GENERAL-CONTINUOUS-LOCALOPT lies in PPAD ∩ PLS](general-continuous-localopt-in-ppad-and-pls.md)
+- [GD-LOCAL-SEARCH and GD-FIXPOINT: termination points of projected gradient descent with fixed step size](gd-local-search-and-gd-fixpoint.md)
+- [Staircase embedding of END-OF-LINE into a planar descent landscape with green descending and orange ascending paths](staircase-embedding-green-orange-paths.md)
+- [PLS-Labyrinth gadget with bicubic interpolation: unavoidable KKT points at colour changes encode ITER solutions](pls-labyrinth-gadget.md)
+- [Fearnley–Goldberg–Hollender–Savani: KKT on the unit square is PPAD ∩ PLS-hard, already for promise instances](kkt-unit-square-ppad-pls-hard.md)
+- [KKT, GD-LOCAL-SEARCH, GD-FIXPOINT and GENERAL-CONTINUOUS-LOCALOPT are PPAD ∩ PLS-complete on the unit square](gradient-descent-problems-ppad-pls-complete.md)
+- [CLS = PPAD ∩ PLS, with 2D-CLS, promise-CLS and Linear-CLS equal to CLS and Banach-type contraction problems complete](cls-equals-ppad-cap-pls.md)
+- [Babichenko–Rubinstein: mixed Nash equilibria of explicit congestion games are PPAD ∩ PLS-complete and CCLS = PPAD ∩ PLS](congestion-game-mixed-nash-ppad-pls-complete.md)

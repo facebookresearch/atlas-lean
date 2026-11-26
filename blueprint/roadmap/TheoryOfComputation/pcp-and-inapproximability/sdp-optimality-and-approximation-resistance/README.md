@@ -1,0 +1,18 @@
+# SDP Optimality and Approximation Resistance
+
+- [Generalized constraint satisfaction problems with payoff functions](generalized-csp.md)
+- [The small-set expansion hypothesis](small-set-expansion-hypothesis.md)
+- [Approximation-resistant predicates and balanced pairwise independence](approximation-resistance.md)
+- [The basic SDP relaxation of a generalized CSP](basic-sdp-relaxation.md)
+- [Dictatorship tests and their completeness and soundness](dictatorship-test.md)
+- [Chan: unconditional approximation resistance from pairwise-independent subgroups](chan-approximation-resistance.md)
+- [The integrality gap curve of the basic SDP](integrality-gap-curve.md)
+- [Dictatorship tests compose with Unique Games to give hardness](dictatorship-to-ug-hardness.md)
+- [From SDP integrality gaps to dictatorship tests](gap-instance-to-dictatorship.md)
+- [Khot–Vishnoi integrality gaps for unique games and cut problems](khot-vishnoi-gap.md)
+- [Raghavendra–Steurer: a generic rounding algorithm matching the gap curve](raghavendra-steurer-rounding.md)
+- [Austrin–Mossel: pairwise independence implies UG-approximation resistance](austrin-mossel.md)
+- [Khot–Kindler–Mossel–O'Donnell: Goemans–Williamson is optimal for Max-Cut under UGC](kkmo-maxcut.md)
+- [Raghavendra–Steurer: small-set expansion hypothesis implies the Unique Games Conjecture](sse-implies-ugc.md)
+- [Raghavendra's theorem: the basic SDP is UGC-optimal for every CSP](raghavendra-optimality.md)
+- [Khot–Tulsiani–Worah characterization of strong approximation resistance](strong-approximation-resistance-characterization.md)

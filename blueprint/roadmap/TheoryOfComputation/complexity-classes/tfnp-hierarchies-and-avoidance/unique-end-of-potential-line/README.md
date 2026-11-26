@@ -1,0 +1,15 @@
+# Unique End of Potential Line
+
+- [END-OF-METERED-LINE: an END-OF-LINE instance with an odometer circuit whose miscounts are solutions](end-of-metered-line.md)
+- [Hubáček–Yogev: END-OF-METERED-LINE lies in CLS via a staircase embedding into continuous local search](end-of-metered-line-in-cls.md)
+- [END-OF-METERED-LINE and END-OF-POTENTIAL-LINE are polynomial-time equivalent, so EOPL is contained in CLS](end-of-metered-line-equivalent-to-eopl.md)
+- [Hubáček–Yogev: exponential randomized query lower bound and obfuscation-based hardness for continuous local search](continuous-local-search-query-and-crypto-lower-bounds.md)
+- [UNIQUE-EOPL, the class UEOPL and PromiseUEOPL: one potential line certified by violation solutions](unique-eopl-and-ueopl.md)
+- [One-Permutation Discrete Contraction (OPDC): direction functions on a grid with unique fixpoints on i-slices](one-permutation-discrete-contraction.md)
+- [OPDC lies in UEOPL under promise-preserving reductions via a surface-walking line with a lexicographic potential](opdc-in-ueopl.md)
+- [OPDC is UEOPL-complete, even on the Boolean hypercube, and its promise version is PromiseUEOPL-complete](opdc-ueopl-complete.md)
+- [Unique Sink Orientations of cubes lie in UEOPL](unique-sink-orientation-in-ueopl.md)
+- [Piecewise-linear contraction fixpoints in any ℓp norm lie in UEOPL and are polynomial-time in fixed dimension](pl-contraction-in-ueopl.md)
+- [UEOPL ⊆ EOPL ⊆ CLS = PPAD ∩ PLS](ueopl-subset-eopl-subset-cls.md)
+- [The P-matrix linear complementarity problem lies in UEOPL, giving an expected 2^(n/2) poly(n)-time algorithm](p-matrix-lcp-in-ueopl.md)
+- [Parity, mean-payoff, discounted and simple stochastic games, and the ARRIVAL switch-graph problem, lie in UEOPL](games-and-arrival-in-ueopl.md)

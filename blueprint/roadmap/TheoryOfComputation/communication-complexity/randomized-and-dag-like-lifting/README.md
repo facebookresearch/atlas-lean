@@ -1,0 +1,15 @@
+# Randomized and DAG-like Lifting
+
+- [Approximate rank and the log-approximate-rank conjecture](approximate-rank.md)
+- [Composed functions, gadgets and lifting theorems](composed-function-lifting.md)
+- [Conical juntas and their degree](conical-junta.md)
+- [Randomized protocol for greater-than with logarithmic cost](greater-than-protocol.md)
+- [Partition number and unambiguous certificate complexity](partition-number.md)
+- [Lovett–Meka–Mertz–Pitassi–Zhang: lifting with sunflowers](lmmpz-sunflower-lifting.md)
+- [Rectangle-DAGs (dag-like communication protocols)](rectangle-dag.md)
+- [Göös–Lovett–Meka–Watson–Zuckerman: rectangles are nonnegative juntas](rectangles-are-juntas.md)
+- [Göös–Pitassi–Watson: deterministic communication versus partition number](gpw-partition-number.md)
+- [Monotone circuits are rectangle-DAGs for monotone Karchmer–Wigderson games](monotone-circuit-rectangle-dag.md)
+- [Göös–Pitassi–Watson: query-to-communication lifting for BPP](gpw-bpp-lifting.md)
+- [Garg–Göös–Kamath–Sokolov: dag-like lifting from resolution width](ggks-dag-lifting.md)
+- [Chattopadhyay–Mande–Sherif: the log-approximate-rank conjecture is false](cms-log-approx-rank.md)

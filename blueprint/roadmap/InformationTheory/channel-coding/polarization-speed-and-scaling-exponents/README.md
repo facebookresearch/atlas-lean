@@ -1,0 +1,16 @@
+# Polar Codes: Polarization Speed and Scaling Exponents
+
+- [Binary memoryless symmetric channels, symmetric capacity and the Bhattacharyya parameter](bhattacharyya-parameter-and-symmetric-capacity.md)
+- [Synthesized polar subchannels](synthesized-polar-subchannels.md)
+- [Bhattacharyya parameter versus symmetric capacity](bhattacharyya-parameter-versus-capacity.md)
+- [Polar codes and successive cancellation decoding](polar-codes-and-successive-cancellation-decoding.md)
+- [Bhattacharyya recursion under one polarization step](bhattacharyya-recursion-under-the-polar-transform.md)
+- [Scaling exponent of polar codes](scaling-exponent-of-a-code-family.md)
+- [The polarization martingale](polarization-martingale.md)
+- [Hassani-Alishahi-Urbanke and Mondelli-Hassani-Urbanke: bounds on the polar scaling exponent](finite-length-scaling-bounds-for-polar-codes.md)
+- [Arikan's channel polarization theorem](arikan-channel-polarization.md)
+- [Arikan-Telatar: rate of polarization](rate-of-channel-polarization.md)
+- [Fazeli-Hassani-Mondelli-Vardy: large kernels achieve the optimal scaling exponent on the erasure channel](polar-codes-with-large-kernels-achieve-optimal-scaling.md)
+- [Polar codes achieve the capacity of BMS channels](polar-codes-achieve-symmetric-capacity.md)
+- [Guruswami-Xia: polar codes have polynomial gap to capacity](polynomial-gap-to-capacity-for-polar-codes.md)
+- [Guruswami-Riazanov-Ye: polar codes with near-optimal convergence to capacity](polar-codes-with-near-optimal-convergence-to-capacity.md)

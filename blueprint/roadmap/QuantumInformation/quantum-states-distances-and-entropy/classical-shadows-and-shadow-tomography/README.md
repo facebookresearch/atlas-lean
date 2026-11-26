@@ -1,0 +1,15 @@
+# Shadow Tomography and Classical Shadows
+
+- [Gentle measurement lemma](gentle-measurement-lemma-for-shadow-tomography.md)
+- [The shadow tomography problem](shadow-tomography-problem.md)
+- [Aaronson: shadow tomography with polylogarithmically many copies](aaronson-shadow-tomography-theorem.md)
+- [Logarithmic dependence on the number of observables is necessary](information-theoretic-lower-bound-for-predicting-many-fidelities.md)
+- [Classical shadows from randomized measurements](randomized-measurement-classical-shadow.md)
+- [Quantum threshold search](quantum-threshold-search.md)
+- [Inverse measurement channels for Clifford and Pauli shadows](inverse-measurement-channels-for-clifford-and-pauli-shadows.md)
+- [The shadow norm of an observable](shadow-norm-of-an-observable.md)
+- [Bădescu-O'Donnell: shadow tomography with log-squared dependence on the number of observables](improved-shadow-tomography-sample-complexity.md)
+- [Variance bound for single-snapshot estimators](variance-of-classical-shadow-estimators.md)
+- [Chen-Cotler-Huang-Li: shadow tomography without quantum memory needs many samples](shadow-tomography-without-quantum-memory-lower-bound.md)
+- [Huang-Kueng-Preskill: classical shadows predict many properties from few measurements](classical-shadows-predict-many-observables.md)
+- [Dimension-free fidelity estimation and local observables from classical shadows](dimension-independent-fidelity-and-local-observable-estimation.md)

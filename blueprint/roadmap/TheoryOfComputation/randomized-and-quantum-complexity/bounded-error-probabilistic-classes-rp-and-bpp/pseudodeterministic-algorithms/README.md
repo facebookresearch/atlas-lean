@@ -1,0 +1,15 @@
+# Pseudodeterministic Algorithms and Constructions
+
+- [Pseudodeterministic algorithms for search problems (Gat–Goldwasser)](pseudodeterministic-algorithm-for-search-problem.md)
+- [Pseudodeterministic constructions for dense properties, everywhere and infinitely often](pseudodeterministic-construction-of-dense-property.md)
+- [Lu–Oliveira–Santhanam: worst-case pseudodeterministic CAPP in polynomial time gives BPP complete problems](pseudodeterministic-capp-implies-bpp-complete-problems.md)
+- [Lu–Oliveira–Santhanam: a polynomial-stretch PRG computable pseudodeterministically with one advice bit](lu-oliveira-santhanam-pseudodeterministic-prg.md)
+- [Goldwasser–Grossman–Mohanty–Woodruff: no pseudodeterministic low-memory turnstile algorithm finds a nonzero entry](pseudodeterministic-streaming-find-support-element.md)
+- [Chen–Lu–Oliveira–Ren–Santhanam: Chen–Tell hitting sets with a Shaltiel–Umans core are printable in time poly(T)](improved-chen-tell-hsg-shaltiel-umans.md)
+- [Oliveira–Santhanam: pseudodeterministic polynomial-time hitting sets or deterministic subexponential ones](oliveira-santhanam-hitting-set-dichotomy.md)
+- [The n-bit primes form a dense polynomial-time decidable property](primes-are-dense-and-easy.md)
+- [Bootstrapping win-win: recursive hitting sets over lengths n_{i+1} = n_i^β](bootstrapping-recursive-hitting-sets.md)
+- [Lu–Oliveira–Santhanam: infinitely many primes have representations of size O(|p|^ε)](succinct-representations-of-infinitely-many-primes.md)
+- [Oliveira–Santhanam: infinitely-often pseudodeterministic construction of primes in subexponential time](oliveira-santhanam-subexponential-primes.md)
+- [Chen–Lu–Oliveira–Ren–Santhanam: infinitely-often polynomial-time pseudodeterministic constructions for every dense easy property](polynomial-time-pseudodeterministic-construction-dense-properties.md)
+- [Chen–Lu–Oliveira–Ren–Santhanam: polynomial-time pseudodeterministic construction of n-bit primes for infinitely many n](polynomial-time-pseudodeterministic-primes.md)
