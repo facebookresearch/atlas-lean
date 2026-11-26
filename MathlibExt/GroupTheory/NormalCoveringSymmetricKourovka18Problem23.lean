@@ -124,16 +124,6 @@ private theorem stabilizer_initialSegment_ne_top {k n : ℕ} (hk : 0 < k) (hkn :
   rw [Equiv.swap_mem_stabilizer] at hxy
   exact (Nat.lt_irrefl k) ((mem_initialSegment _ y).1 (hxy.mp hx))
 
-private theorem mem_stabilizer_of_apply_iff {α : Type*} {σ : Perm α} {s : Set α}
-    (h : ∀ x, σ x ∈ s ↔ x ∈ s) : σ ∈ stabilizer (Perm α) s := by
-  rw [mem_stabilizer_iff]
-  ext y
-  constructor
-  · rintro ⟨x, hx, rfl⟩
-    exact (h x).2 hx
-  · intro hy
-    exact ⟨σ.symm y, (h (σ.symm y)).1 (by simpa using hy), σ.apply_symm_apply y⟩
-
 private theorem conjugate_mem_stabilizer_initialSegment {k n : ℕ} (hk : k ≤ n)
     (σ : Perm (Fin n)) (s : Finset (Fin n)) (hs : s.card = k)
     (hσ : σ ∈ stabilizer (Perm (Fin n)) (s : Set (Fin n))) :
@@ -335,7 +325,7 @@ private theorem normalCoveringNumber_le_coveringSizes {n m : ℕ} (hn : 3 ≤ n)
     rcases covering_cases hm hmn hn hsum hpos with ⟨k, hk, hks⟩ | ⟨p, hp, hd⟩
     · obtain ⟨c, τ, hστ, hct, _, hcard⟩ := mem_cycleType_iff.mp (Multiset.mem_toList.mp hk)
       apply hintrans ⟨k, hks⟩ c.support hcard
-      apply mem_stabilizer_of_apply_iff
+      apply mem_stabilizer_set.mpr
       exact mem_support_iff_of_commute (hστ ▸ ((Commute.refl c).mul_right hct.commute).symm)
     · let p' : m.primeFactors := ⟨p, hp⟩
       obtain ⟨τ, hτ, hc⟩ := conjugate_mem_centralizer_of_dvd_cycleType (hprime p') (hρ p')
@@ -344,7 +334,7 @@ private theorem normalCoveringNumber_le_coveringSizes {n m : ℕ} (hn : 3 ≤ n)
   · obtain ⟨x, hx⟩ : ∃ x, x ∉ σ.support := by
       simpa [eq_univ_iff_forall] using hσ
     apply hintrans ⟨1, mem_coveringSizes_of_small Nat.one_pos (by omega)⟩ {x} (by simp)
-    apply mem_stabilizer_of_apply_iff
+    apply mem_stabilizer_set.mpr
     have he := notMem_support.mp hx
     intro y
     simp only [coe_singleton, Set.mem_singleton_iff]
