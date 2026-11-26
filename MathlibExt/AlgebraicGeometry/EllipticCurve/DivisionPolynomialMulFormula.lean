@@ -45,7 +45,8 @@ For a nonsingular affine point `P = (x, y)`, `MFred W m h` says that the
 `x`-coordinate of `m • P` is `Φ m` evaluated at `x`, divided by `ΨSq m`
 evaluated at `x`, expressed without division as
 `xCoordOrZero (m • P) * (ΨSq m).eval x = (Φ m).eval x`, together with
-`(ΨSq m).eval x ≠ 0`. `LowTorsionFree W m h` says that no multiple
+`(ΨSq m).eval x ≠ 0`; `xCoordOrZero` is `0` at the point at infinity.
+`LowTorsionFree W m h` says that no multiple
 `k • P` with `1 ≤ k ≤ m` vanishes. `StarIdentity W j` is the equation
 in `R[X]` that drives the induction step, and `StarIdentity.eval`
 evaluates it at a point of `R`.
@@ -61,12 +62,19 @@ universe u v
 
 variable {R : Type u} [CommRing R] (W : WeierstrassCurve R)
 
-/-- The star identity for the division polynomials of `W` at index `j`:
-the equation in `R[X]` relating `Φ` and `ΨSq` at `j - 1`, `j`, and
-`j + 1` that drives the induction step of the multiplication formula.
-It is stated as an equality of polynomials, not of their values: over a
-finite ring, equal values at every point do not imply equal polynomials.
-`StarIdentity.eval` gives the values. -/
+/-- **Star identity.** Let $W$ be a Weierstrass curve over a commutative ring $R$, and for
+$i \in \mathbb{Z}$ let $\Phi_i$ and $\Psi_i^2$ be the polynomials `W.Φ i` and `W.ΨSq i` in $R[X]$.
+The star identity at $j \in \mathbb{Z}$ is the equation in $R[X]$
+
+$$2X\Phi_j\left(\Phi_j + X\Psi_j^2\right) + b_2X\Phi_j\Psi_j^2
++ b_4\left(\Phi_j + X\Psi_j^2\right)\Psi_j^2 + b_6\left(\Psi_j^2\right)^2
+= \Phi_{j+1}\Psi_{j-1}^2 + \Phi_{j-1}\Psi_{j+1}^2,$$
+
+where $b_2, b_4, b_6$ are the coefficients of $W$, read as constant polynomials. It drives the
+induction step of the multiplication formula. As an equality of polynomials it is stronger than the
+source's statement that the two sides have the same value at every $t \in R$: over a finite ring,
+two different polynomials can take the same value at every point. `StarIdentity.eval` gives the
+pointwise form. -/
 def StarIdentity (j : ℤ) : Prop :=
   2 * X * W.Φ j * (W.Φ j + X * W.ΨSq j) + C W.b₂ * X * (W.Φ j * W.ΨSq j) +
       C W.b₄ * ((W.Φ j + X * W.ΨSq j) * W.ΨSq j) + C W.b₆ * W.ΨSq j ^ 2 =
@@ -88,9 +96,10 @@ namespace Affine
 
 variable {F : Type v} [Field F] {W : WeierstrassCurve F}
 
-/-- The `x`-coordinate of an affine point, or `0` for the point at
-infinity. Unlike Mathlib's projective `Point.xRep`, it is a single field
-element, as in the source's multiplication-formula predicate. -/
+/-- **X-coordinate or zero.** For a point $P$ of a Weierstrass curve over a field $F$, the element
+of $F$ that is $x$ when $P = (x, y)$ is affine and $0$ when $P$ is the point at infinity. Unlike
+Mathlib's projective `Point.xRep`, it is a single element of $F$, as in the source's
+multiplication-formula predicate. -/
 def Point.xCoordOrZero (P : W.toAffine.Point) : F :=
   match P with
   | .zero => 0
@@ -105,17 +114,21 @@ lemma Point.xCoordOrZero_some {x y : F} (h : W.toAffine.Nonsingular x y) :
     (Point.some x y h).xCoordOrZero = x :=
   rfl
 
-/-- The multiplication-formula predicate at index `m` for the point
-`(x, y)`: `(ΨSq m).eval x` is nonzero and the `x`-coordinate of
-`m • (x, y)` times `(ΨSq m).eval x` equals `(Φ m).eval x`. -/
+/-- **Multiplication-formula predicate.** Let $P = (x, y)$ be a nonsingular affine point of a
+Weierstrass curve $W$ over a field and let $m \in \mathbb{N}$, and let $\Phi_m$ and $\Psi_m^2$ be
+the polynomials `W.Φ m` and `W.ΨSq m`. The predicate says that $\Psi_m^2(x) \ne 0$ and
+$\operatorname{xCoordOrZero}(m \cdot P) \cdot \Psi_m^2(x) = \Phi_m(x)$, where `Point.xCoordOrZero`
+is the $x$-coordinate of an affine point and $0$ at the point at infinity. It does not separately
+require $m \cdot P$ to be affine: if $m \cdot P$ is the point at infinity, the equation says
+$\Phi_m(x) = 0$. -/
 def MFred [DecidableEq F] (m : ℕ) {x y : F} (h : W.toAffine.Nonsingular x y) : Prop :=
   (W.ΨSq (m : ℤ)).eval x ≠ 0 ∧
     (m • (Point.some x y h : W.toAffine.Point)).xCoordOrZero *
         (W.ΨSq (m : ℤ)).eval x =
       (W.Φ (m : ℤ)).eval x
 
-/-- No multiple `k • (x, y)` with `1 ≤ k ≤ m` is the point at
-infinity. -/
+/-- **Low-torsion freeness.** For a nonsingular affine point $P$ of a Weierstrass curve over a field
+and $m \in \mathbb{N}$, no multiple $k \cdot P$ with $1 \le k \le m$ is the point at infinity. -/
 def LowTorsionFree [DecidableEq F] (m : ℕ) {x y : F} (h : W.toAffine.Nonsingular x y) :
     Prop :=
   ∀ k : ℕ, 1 ≤ k → k ≤ m → k • (Point.some x y h : W.toAffine.Point) ≠ 0
@@ -131,15 +144,19 @@ lemma eval_Φ_two (x : F) :
     (W.Φ 2).eval x = x ^ 4 - W.b₄ * x ^ 2 - 2 * W.b₆ * x - W.b₈ := by
   simp [Φ_two]
 
-/-- At a point `(x, y)` of `W`, `(y - negY x y) ^ 2 = (Ψ₂Sq).eval x`. This is
-Mathlib's `Affine.den_duplication_eq` stated with `Ψ₂Sq` and `negY`. -/
+/-- **Duplication denominator as a square.** If $(x, y)$ satisfies the Weierstrass equation of $W$,
+then $(y - \operatorname{negY}(x, y))^2 = \Psi_2^2(x)$, where
+$\operatorname{negY}(x, y) = -y - a_1x - a_3$ is the $y$-coordinate of the negative of $(x, y)$ and
+$\Psi_2^2$ is the polynomial `W.Ψ₂Sq`. This is Mathlib's `Affine.den_duplication_eq`, stated with
+`Ψ₂Sq` and `negY`. -/
 lemma sq_sub_negY_eq_eval_Ψ₂Sq {x y : F} (h : W.toAffine.Equation x y) :
     (y - W.toAffine.negY x y) ^ 2 = (W.Ψ₂Sq).eval x := by
   rw [Ψ₂Sq_eq, eval_toPoly_twoTorsionPolynomial, Affine.den_duplication_eq h, Affine.negY]
   ring
 
-/-- At a point `(x, y)` of `W` with `y ≠ negY x y`, `(Ψ₂Sq).eval x ≠ 0`. This is
-one direction of Mathlib's `Affine.den_duplication_eq_zero_iff`, stated with
+/-- **Duplication denominator is nonzero.** If $(x, y)$ satisfies the Weierstrass equation of $W$
+and $y \ne \operatorname{negY}(x, y)$, then $\Psi_2^2(x) \ne 0$, where $\Psi_2^2$ is the polynomial
+`W.Ψ₂Sq`. This is one direction of Mathlib's `Affine.den_duplication_eq_zero_iff`, stated with
 `Ψ₂Sq`. -/
 lemma Ψ₂Sq_eval_ne_zero {x y : F} (h : W.toAffine.Equation x y)
     (hy : y ≠ W.toAffine.negY x y) : (W.Ψ₂Sq).eval x ≠ 0 := by
@@ -245,11 +262,11 @@ theorem addX_mul_addX_negY_mul_sq {x₁ x₂ y₁ y₂ : F}
           ((x₁ * x₂) ^ 2 - W.b₄ * (x₁ * x₂) - W.b₆ * (x₁ + x₂) -
             W.b₈) := by ring
 
-/-- The doubling formula: at a point `(x₁, y₁)` of `W` with
-`y₁ ≠ negY x₁ y₁`, the `x`-coordinate of `(x₁, y₁) + (x₁, y₁)` times
-`(Ψ₂Sq).eval x₁` is `(Φ 2).eval x₁`. This is Mathlib's
-`Affine.addX_self_of_Y_ne` with the denominator cleared, stated with `Ψ₂Sq`
-and `Φ 2`. -/
+/-- **Doubling formula.** If $(x_1, y_1)$ satisfies the Weierstrass equation of $W$ and
+$y_1 \ne \operatorname{negY}(x_1, y_1)$, then the $x$-coordinate
+`addX x₁ x₁ (slope x₁ x₁ y₁ y₁)` of $(x_1, y_1) + (x_1, y_1)$, multiplied by $\Psi_2^2(x_1)$, is
+$\Phi_2(x_1)$, where $\Psi_2^2$ and $\Phi_2$ are the polynomials `W.Ψ₂Sq` and `W.Φ 2`. This is
+Mathlib's `Affine.addX_self_of_Y_ne` with the denominator cleared. -/
 theorem addX_self_mul_Ψ₂Sq {x₁ y₁ : F} (h₁ : W.toAffine.Equation x₁ y₁)
     (hy : y₁ ≠ W.toAffine.negY x₁ y₁) :
     W.toAffine.addX x₁ x₁ (W.toAffine.slope x₁ x₁ y₁ y₁) *
