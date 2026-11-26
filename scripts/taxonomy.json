@@ -949,6 +949,7 @@
   "CSLibExt/Algorithms/Lean/DataStructures/BinaryHeap/DecreaseKey": {"to": "ComputerScience/data-structures/heaps", "title": "Binary heap"},
   "CSLibExt/Algorithms/Lean/DataStructures/BinaryHeap/SiftDownCost": {"to": "ComputerScience/data-structures/heaps", "title": "Binary heap"},
   "CSLibExt/Algorithms/Lean/DataStructures/BinarySearchTree": {"to": "ComputerScience/data-structures/search-trees", "title": "Binary search tree"},
+  "CSLibExt/Algorithms/Lean/DataStructures/BinarySearchTree/AccessModel": {"to": "ComputerScience/data-structures/search-trees", "title": "Dynamic optimality"},
   "CSLibExt/Algorithms/Lean/DataStructures/BinarySearchTree/Delete": {"to": "ComputerScience/data-structures/search-trees", "title": "Binary search tree"},
   "CSLibExt/Algorithms/Lean/DataStructures/BinomialHeap": {"to": "ComputerScience/data-structures/heaps", "title": "Binomial heap"},
   "CSLibExt/Algorithms/Lean/DataStructures/BloomFilter": {"to": "ComputerScience/data-structures/hashing", "title": "Bloom filter"},
