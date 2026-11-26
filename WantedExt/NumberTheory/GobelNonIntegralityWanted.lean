@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Convex.Hull
+public import MathlibExt.NumberTheory.ArithmeticBilliardsRotatedRectangle
 public import MathlibExt.NumberTheory.GobelBSequence
 public import MathlibExt.NumberTheory.OddMultiplePrimeHalfSets
 public import WantedExt.NumberTheory.GobelSequenceWanted
@@ -175,37 +176,6 @@ public theorem_wanted gobel_boundaries_eq_iff_jacobi_symmetries
           jacobiSym (n : ℤ) p = -jacobiSym (l + 1 - n : ℤ) p) ∧
         (∀ n, 1 ≤ n → n ≤ p - l - 2 →
           jacobiSym (n : ℤ) p = jacobiSym (l + 1 + n : ℤ) p)
-
-/-- **Arithmetic billiards in a tilted rectangle.** Let $p$ be a prime with $p \equiv 1 \pmod 4$
-and let $l$ be an even natural number with $l + 3 \le p$. Put $m = l + 1$ if $2l + 5 \le p$ and
-$m = p - (l + 1)$ otherwise, and let $R \subseteq \mathbb{R}^2$ be the convex hull of the four
-points $(0, m)$, $(m, 0)$, $(p/2, p/2 - m)$ and $(p/2 - m, p/2)$. Let $L$ be the set of integer
-points on the boundary of $R$ other than $(0, m)$ and $(m, 0)$. Call a sequence $P_0, P_1, \ldots$
-of integer points a billiard path if $P_0 = (0, m)$ and, for every $i < p - 1$, the point
-$P_{i+1}$ lies on the boundary of $R$, differs from $P_i$, and has the same second coordinate as
-$P_i$ when $i$ is even and the same first coordinate as $P_i$ when $i$ is odd. Then a billiard
-path exists, and every billiard path $P$ maps $\{1, \ldots, p - 2\}$ bijectively onto $L$,
-satisfies $P_{p-1} = (m, 0)$, and satisfies $P_{p-1-i} = (y_i, x_i)$ for every $i \le p - 1$,
-where $P_i = (x_i, y_i)$.
-
-Source: Yuh Kobayashi and Shin-ichiro Seki, *A Note on Non-Integrality of the (k, l)-Göbel
-Sequences*, Journal of Integer Sequences 29 (2026), Article 26.3.8, Lemma 16
-(`lem:billiards`). -/
-public theorem_wanted arithmetic_billiards_rotated_rectangle (p l : ℕ) (hp : p.Prime)
-    (hp4 : p % 4 = 1) (hl : Even l) (hlp : l + 3 ≤ p) :
-    let m : ℕ := if 2 * l + 5 ≤ p then l + 1 else p - (l + 1)
-    let c : ℝ := if 2 * l + 5 ≤ p then (p : ℝ) / 2 - (l + 1) else (l + 1 : ℝ) - p / 2
-    let R : Set (ℝ × ℝ) :=
-      convexHull ℝ {((0 : ℝ), (m : ℝ)), ((m : ℝ), (0 : ℝ)), ((p : ℝ) / 2, c), (c, (p : ℝ) / 2)}
-    let L : Set (ℤ × ℤ) :=
-      {z | ((z.1 : ℝ), (z.2 : ℝ)) ∈ frontier R} \ {((0 : ℤ), (m : ℤ)), ((m : ℤ), (0 : ℤ))}
-    let IsPath : (ℕ → ℤ × ℤ) → Prop := fun P =>
-      P 0 = (0, (m : ℤ)) ∧ ∀ i < p - 1,
-        (((P (i + 1)).1 : ℝ), ((P (i + 1)).2 : ℝ)) ∈ frontier R ∧ P (i + 1) ≠ P i ∧
-          if Even i then (P (i + 1)).2 = (P i).2 else (P (i + 1)).1 = (P i).1
-    (∃ P, IsPath P) ∧ ∀ P, IsPath P →
-      Set.BijOn P (Set.Icc 1 (p - 2)) L ∧ P (p - 1) = ((m : ℤ), 0) ∧
-        ∀ i ≤ p - 1, P (p - 1 - i) = (P i).swap
 
 /-- **Existence and uniqueness of the sequence $a_{p,l}$.** Let $p$ be a prime with
 $p \equiv 1 \pmod 4$ and let $l$ be an even natural number with $l \le p - 3$. Then exactly one
