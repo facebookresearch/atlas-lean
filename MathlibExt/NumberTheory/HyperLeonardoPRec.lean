@@ -11,6 +11,7 @@ module
 public import MathlibExt.NumberTheory.LeonardoP
 public import MathlibExt.NumberTheory.LeonardoPTilings
 import MathlibExt.NumberTheory.Recurrences.SuperLeonardoPBinomial
+import Mathlib.Data.Nat.Choose.Sum
 import Mathlib.Tactic
 
 /-!
@@ -169,6 +170,39 @@ theorem hyperLeonardoP_rec (p : ℕ) (hp : 1 ≤ p) :
     ∀ n, hyperLeonardoP p n 0 = leonardoPK p p n := by
   refine ⟨fun n k hn hk => hyperLeonardoP_rec_step p n k hk hn, fun n => ?_⟩
   exact hyperLeonardoP_rec_zero p n hp
+
+private theorem hyperLeonardoP_add_aux (p m n k : ℕ) (hp : 1 ≤ p) (hn : 1 ≤ n) (hmk : m ≤ k) :
+    hyperLeonardoP p (n + m) k =
+      ∑ i ∈ Finset.range (m + 1), (m.choose i : ℤ) * hyperLeonardoP p (n + i) (k - i) := by
+  induction m generalizing n k with
+  | zero => simp
+  | succ r ih =>
+      have hrec := (hyperLeonardoP_rec p hp).1 (n + (r + 1)) k (by omega) (by omega)
+      rw [show n + (r + 1) - 1 = n + r by omega] at hrec
+      calc
+        hyperLeonardoP p (n + (r + 1)) k =
+            hyperLeonardoP p (n + r) k + hyperLeonardoP p ((n + 1) + r) (k - 1) := by
+          rw [hrec, show n + (r + 1) = (n + 1) + r by omega]
+        _ = _ := by
+          rw [ih n k hn (by omega), ih (n + 1) (k - 1) (by omega) (by omega),
+            Finset.sum_choose_succ_mul (fun i _ => hyperLeonardoP p (n + i) (k - i)) r]
+          congr 1
+          refine Finset.sum_congr rfl fun i _ => ?_
+          rw [show (n + 1) + i = n + (i + 1) by omega,
+            show k - 1 - i = k - (i + 1) by omega]
+
+set_option linter.unusedVariables false in
+/-- **Binomial addition formula for hyper Leonardo $p$-numbers.** For natural numbers $p \ge 1$,
+$n \ge 1$, $m \ge 1$ and $k \ge m$, the hyper Leonardo $p$-numbers satisfy
+$$\mathcal{L}^{(k)}_{p,n+m} = \sum_{i=0}^{m} \binom{m}{i} \mathcal{L}^{(k-i)}_{p,n+i}.$$
+
+Source: Amine Belkhir and Elif Tan, *Combinatorial Insights into Leonardo `p`-Numbers and
+Lucas-Leonardo `p`-Numbers*, INTEGERS 25 (2025), Article A57, Proposition 9. -/
+public theorem hyperLeonardoP_add (p n m k : ℕ) (hp : 1 ≤ p) (hn : 1 ≤ n)
+    (hm : 1 ≤ m) (hmk : m ≤ k) :
+    hyperLeonardoP p (n + m) k =
+      ∑ i ∈ Finset.range (m + 1), (m.choose i : ℤ) * hyperLeonardoP p (n + i) (k - i) :=
+  hyperLeonardoP_add_aux p m n k hp hn hmk
 
 end
 
