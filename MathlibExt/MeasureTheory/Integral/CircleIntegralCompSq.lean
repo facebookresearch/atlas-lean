@@ -13,7 +13,8 @@ public import Mathlib.MeasureTheory.Integral.CircleIntegral
 /-!
 # Circle integrals of functions of `z²`
 
-For every `f : ℂ → ℂ`, `∮_{|z| = R} f(z²) dz = 0` (`circleIntegral_comp_sq_eq_zero`). Since
+For every `f : ℂ → ℂ` and `R : ℝ`, the circle integral of `z ↦ f(z²)` along `z = R e^{iθ}`,
+`0 ≤ θ ≤ 2π`, is `0` (`circleIntegral_comp_sq_eq_zero`). Since
 `circleMap 0 R (θ + π) = -circleMap 0 R θ`, the integrand `θ ↦ (circleMap 0 R)′(θ) f((circleMap 0 R
 θ)²)` changes sign under `θ ↦ θ + π`, so the integrals over `[0, π]` and `[π, 2π]` cancel; if the
 integrand is not integrable both sides are `0` by convention. The book states this for rational
@@ -34,8 +35,10 @@ private lemma circleMap_zero_add_pi (R θ : ℝ) :
   simp only [circleMap_zero, ofReal_add, add_mul, Complex.exp_add, Complex.exp_pi_mul_I]
   ring
 
-/-- For every `f : ℂ → ℂ`, `∮_{|z| = R} f(z²) dz = 0`: the integrand is antiperiodic in the angle,
-with antiperiod `π`. -/
+/-- For every `f : ℂ → ℂ` and every `R : ℝ`, the circle integral of `z ↦ f(z²)` along the path
+`z = R e^{iθ}`, `0 ≤ θ ≤ 2π` (for `R < 0`, the circle of radius `|R|`), is `0`. The integral is `0`
+by convention when the integrand `θ ↦ i R e^{iθ} f(R² e^{2iθ})` is not integrable on `[0, 2π]`;
+otherwise the integrand is antiperiodic in the angle, with antiperiod `π`. -/
 public theorem circleIntegral_comp_sq_eq_zero (f : ℂ → ℂ) (R : ℝ) :
     (∮ z in C(0, R), f (z ^ 2)) = 0 := by
   simp only [circleIntegral]

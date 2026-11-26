@@ -49,13 +49,6 @@ set_option autoImplicit false
 
 namespace MathlibExt.NumberTheory.FkPerfectWanted
 
-/-- **Deficient $F_k$-perfect numbers.** For natural numbers $k$ and $n$, write
-$\sigma_k(n) = \sum_{e \mid n} e^k$. The number $n$ is deficient $F_k$-perfect when it is
-$[k,3]$-deficient-perfect, that is, when there is a divisor $d$ of $n$ with $d < n$ such that
-$\sigma_k(n) + d^k = n^k + 3n$. -/
-def IsDeficientFkPerfect (k n : ℕ) : Prop :=
-  IsKLDeficientPerfect k 3 n
-
 /-- **Deficient $F$-perfect numbers.** For a natural number $n$, write
 $\sigma_2(n) = \sum_{e \mid n} e^2$. The number $n$ is deficient $F$-perfect when it is
 $[2,3]$-deficient-perfect, that is, when there is a divisor $d$ of $n$ with $d < n$ such that
@@ -72,16 +65,6 @@ and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
 theorem_wanted not_isDeficientFPerfect_of_prime (p : ℕ)
     (hp : p.Prime) :
     ¬ IsDeficientFPerfect p
-
-/-- **Primes are not $[k,\ell]$-near-perfect.** Let $k$ and $\ell$ be natural numbers with
-$\ell \ge 1$ and let $p$ be a prime. Then $p$ is not $[k,\ell]$-near-perfect.
-
-Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
-and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
-`F_k`-Perfect Numbers", Proposition 2. -/
-theorem_wanted not_isKLNearPerfect_of_prime (k l p : ℕ)
-    (hl : 1 ≤ l) (hp : p.Prime) :
-    ¬ IsKLNearPerfect k l p
 
 /-- **No prime power is deficient $F$-perfect or near $F$-perfect.** For every prime $p$ and
 every natural number $a$, the number $n = p^a$ is neither deficient $F$-perfect nor near
@@ -108,21 +91,6 @@ theorem_wanted klNearPerfectWith_prime_pow_two_iff
     (p a l d : ℕ) (hp : p.Prime) (hl : 1 ≤ l) :
     KLNearPerfectWith 2 l (p ^ a) d ↔
       a = 2 ∧ l = 1 ∧ d = 1
-
-/-- **$[2,\ell]$-deficient-perfect prime powers (corrected).** Let $p$ be a prime and let $a$ and
-$\ell$ be natural numbers. If $p^a$ is $[2,\ell]$-deficient-perfect, then $\ell = 1$, and either
-$a = 2$, or $p = 2$ and $a = 1$.
-
-The printed statement allows only the exception $a = 2$, $\ell = 1$, and so omits the solution
-$p = 2$, $a = 1$, $\ell = 1$, $d = 1$ (the number $2$ of Corollary 1).
-
-Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
-and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
-`F_k`-Perfect Numbers", Theorem 3. -/
-theorem_wanted isKLDeficientPerfect_prime_pow_two_imp
-    (p a l : ℕ) (hp : p.Prime) :
-    IsKLDeficientPerfect 2 l (p ^ a) →
-      l = 1 ∧ (a = 2 ∨ (p = 2 ∧ a = 1))
 
 /-- **Prime powers that are $[k,\ell]$-near-perfect.** Let $p$ be a prime, let $a$, $k$, $\ell$
 and $d$ be natural numbers with $k \ge 1$ and $\ell \ge 1$, and write
@@ -325,17 +293,6 @@ theorem_wanted not_isNearFkPerfect_pow_mul_pow
     (hne : p₁ ≠ p₂) (ha : 1 ≤ a) (hb : 1 ≤ b)
     (hpar : Odd (a + b) ∨ (Odd a ∧ Odd b)) :
     ¬ IsNearFkPerfect k (p₁ ^ a * p₂ ^ b)
-
-/-- **No product of distinct odd primes is deficient $F_k$-perfect.** Let $k > 1$ and let $s$ be a
-finite set of odd primes. Then $\prod_{p \in s} p$ is not deficient $F_k$-perfect.
-
-Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
-and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
-`F_k`-Perfect Numbers", Theorem 21. -/
-theorem_wanted not_isDeficientFkPerfect_prod_primes
-    (k : ℕ) (hk : 1 < k) (s : Finset ℕ)
-    (hs : ∀ p ∈ s, p.Prime ∧ Odd p) :
-    ¬ IsDeficientFkPerfect k (∏ p ∈ s, p)
 
 /-- **No product of distinct odd primes is near $F_k$-perfect.** Let $k > 1$ and let $s$ be a
 finite set of odd primes. Then $\prod_{p \in s} p$ is not near $F_k$-perfect.
