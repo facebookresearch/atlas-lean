@@ -77,9 +77,10 @@ private lemma piecewiseLegal_of_constant {n : ℕ} {x : ZMod (n + 1) → ZMod (n
     (h : ∀ i, x i = x 0) : PiecewiseLegal x :=
   ⟨n, le_rfl, fun i => by simpa only [ite_eq_left (Nat.le_of_lt_succ (ZMod.val_lt i))] using h i⟩
 
-/-- A configuration has exactly one privileged machine if and only if it is constant or has
-one boundary between two constant blocks. No modular difference is imposed across the
-boundary: the two colors are those at machines `0` and `-1`. -/
+/-- On a ring of `n + 1` machines indexed `0` through `n` with `n + 2` colors, a configuration
+has exactly one privileged machine if and only if there is a cut `j` with `0 ≤ j ≤ n` such
+that machines `0` through `j` have the first machine's color and machines after `j` have the
+last machine's color. -/
 public theorem legit_iff_two_blocks {n : ℕ} (x : ZMod (n + 1) → ZMod (n + 2)) :
     Legit x ↔ ∃ j : ℕ, j ≤ n ∧ ∀ i, x i = if i.val ≤ j then x 0 else x (-1) := by
   classical
@@ -142,9 +143,10 @@ public theorem legit_iff_two_blocks {n : ℕ} (x : ZMod (n + 1) → ZMod (n + 2)
       have hval := (nonzero i hi0 hi).1.trans hp'.1.symm
       simpa only [ZMod.natCast_zmod_val] using congrArg (fun k : ℕ => (k : ZMod (n + 1))) hval
 
-/-- A configuration is in the consecutive-color legal form if and only if exactly one machine is
-privileged and the last machine's color equals either the first machine's color or that color
-minus one modulo the alphabet size. Unique privilege alone does not impose this disjunction. -/
+/-- On a ring of `n + 1` machines with `n + 2` colors, a configuration is in the consecutive-color
+legal form if and only if exactly one machine is privileged and the last machine's color equals
+either the first machine's color or that color minus one modulo `n + 2`.
+Unique privilege alone does not impose this disjunction. -/
 public theorem piecewiseLegal_iff {n : ℕ} {x : ZMod (n + 1) → ZMod (n + 2)} :
     PiecewiseLegal x ↔ Legit x ∧ (x (-1) = x 0 ∨ x (-1) = x 0 - 1) := by
   constructor
