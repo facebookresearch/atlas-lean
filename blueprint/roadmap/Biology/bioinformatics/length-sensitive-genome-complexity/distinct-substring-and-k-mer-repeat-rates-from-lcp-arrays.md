@@ -3,16 +3,21 @@
 **Setting.** Let $g = g_1 \cdots g_n$ be a string (a genome) of length $n$ over a finite alphabet. For a string $x$ let $f(x)$ be its number of (possibly overlapping) occurrences in $g$. Let $S$ be the suffix array of $g$, so the suffixes $g_{S[1]}\cdots g_n, g_{S[2]}\cdots g_n, \dots$ are in increasing lexicographic order, and let $\mathrm{LCP}[1] = 0$ and, for $2 \le i \le n$, $\mathrm{LCP}[i]$ be the length of the longest common prefix of the suffixes starting at $S[i-1]$ and $S[i]$.
 
 **Complexity measures.** The distinct-substring rate and, for a length $1 \le k \le n$, the length-sensitive distinct and repeat rates are
+
 $$D(g) = \frac{2\,\lvert\{x : f(x) > 0\}\rvert}{n(n+1)}, \qquad D_k(g) = \frac{\lvert\{x : f(x) > 0,\ |x| = k\}\rvert}{n-k+1}, \qquad R_k(g) = \frac{\sum_{|x| = k,\ f(x) > 1} f(x)}{n-k+1},$$
+
 where $x$ ranges over non-empty strings. $D_k$ is the fraction of the $n-k+1$ $k$-mer positions that are first copies of distinct $k$-mers; $R_k$ is the fraction of positions covered by $k$-mers that occur at least twice. If $C(k,r)$ is the number of distinct $k$-mers occurring exactly $r$ times, then $(n-k+1)R_k = \sum_{r > 1} r\,C(k,r)$.
 
 **Lemma 1 (distinct substrings).**
+
 $$\lvert\{x : f(x) > 0\}\rvert = \sum_{i=1}^{n} i - \sum_{i=1}^{n} \mathrm{LCP}[i] = \frac{n(n+1)}{2} - \sum_{i=1}^{n} \mathrm{LCP}[i].$$
 
 **Lemma 2 (distinct $k$-mers).**
+
 $$\lvert\{x : f(x) > 0,\ |x| = k\}\rvert = \lvert\{\, j : S[j] \le n-k+1 \text{ and } \mathrm{LCP}[j] < k \,\}\rvert.$$
 
 **Lemma 3 (repeated $k$-mer occurrences).** Let $I_k$ be the set of maximal index intervals $[i,j]$, $2 \le i \le j \le n$, with $\mathrm{LCP}[u] \ge k$ for all $i \le u \le j$ (maximal: $\mathrm{LCP}[i-1] < k$ and, if $j < n$, $\mathrm{LCP}[j+1] < k$). Then
+
 $$\sum_{|x| = k,\ f(x) > 1} f(x) = \sum_{[i,j] \in I_k} (j - i + 2).$$
 
 **Consequence.** Given $S$ and $\mathrm{LCP}$, which can be built in $O(n)$ time, each of $D(g)$, $D_k(g)$ and $R_k(g)$ is computed by a single linear scan, so in $O(n)$ time and space overall.

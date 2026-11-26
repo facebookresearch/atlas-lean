@@ -9,7 +9,9 @@ Let $p_\ell=e^{-\gamma\ell}(\gamma\ell)^{\ell-1}/\ell!$ be the asymptotic fracti
 **Corollary 2.** $\dfrac dn=1-\sum_{\ell\ge1}\dfrac{p_\ell}{\ell}+o_p(1)$.
 
 **Estimator.** Consequently
+
 $$\frac db\approx\frac{1-\sum_{\ell\ge1}\frac{e^{-\gamma\ell}(\gamma\ell)^{\ell-1}}{\ell\cdot\ell!}}{1-e^{-\gamma}},$$
+
 an increasing function of $\gamma$ taking each value in $[1/2,1)$ once. Solving it for $\gamma$ (e.g. by bisection) from the observed $d/b$ gives $\hat n=b/(1-e^{-\hat\gamma})$ and $\hat k=\hat\gamma\hat n/2$. The value $\gamma=1$ corresponds to $d/b\approx0.79$: below it the process is in the parsimony phase and $\hat k\approx d$. An alternative uses short cycles only: $b/\sum_{\ell=2}^{m}\ell c_\ell$ estimates $f_m(\gamma)=(1-e^{-\gamma})/\sum_{\ell=2}^{m}p_\ell$, which is also increasing in $\gamma$.
 
 ## Expansion

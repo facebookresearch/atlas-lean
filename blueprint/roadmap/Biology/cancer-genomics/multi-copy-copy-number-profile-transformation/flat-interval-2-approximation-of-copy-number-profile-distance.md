@@ -3,6 +3,7 @@
 **Setting.** For copy-number profiles $u,v\in\mathbb N^n$ with segmental events $(s,t,\delta)$ and a unit-cost function $f$ (every allowed event costs 1), let $d_f(u,v)$ be the minimum number of events transforming $u$ into $v$. Put $w=u-v$, extended by $w_0=w_{n+1}=0$. An interval $[a,b]\subseteq[0,n+1]$ is *flat* if $w$ is constant on it; let $F_w$ be the set of maximal flat intervals, which partitions $[0,n+1]$. The two intervals containing $0$ and $n+1$ are the extreme flat intervals (value $0$).
 
 **Lemma (flat-interval lower bound).** If $u\ne v$ and neither has a null position, then for every unit-cost $f$
+
 $$d_f(u,v)\ \ge\ \left\lceil\frac{|F_w|-1}{2}\right\rceil .$$
 
 **Theorem.** For the unconstrained cost function $f=\mathrm{any}$ and CNPs with no null positions, returning $|F_w|-2$ approximates $d_{\mathrm{any}}(u,v)$ within a factor 2, and $F_w$ is computed in one linear pass over $w$.

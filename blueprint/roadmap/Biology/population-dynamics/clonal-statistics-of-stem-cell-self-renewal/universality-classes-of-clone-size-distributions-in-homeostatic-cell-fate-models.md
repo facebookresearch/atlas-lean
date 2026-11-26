@@ -1,7 +1,9 @@
 # Universality classes of clone size distributions in homeostatic cell fate models
 
 **Generic cell fate model.** Cells occupy states $X_1,\dots,X_m$ and evolve as a continuous-time multi-type branching process with
+
 $$X_i \xrightarrow{\lambda_i r_{ijk}} X_j + X_k, \qquad X_i \xrightarrow{\omega_{ij}} X_j, \qquad X_i \xrightarrow{\gamma_i} \emptyset ,$$
+
 (division with outcome probabilities $r_{ijk}$, state change, loss). With $r_{ij} = \sum_k (r_{ijk} + r_{ikj})/2$, the mean numbers $\bar n = (\bar n_i)$ satisfy $\dot{\bar n} = A\bar n$ with off-diagonal entries $\kappa_{ji} = 2\lambda_j r_{ji} + \omega_{ji} \ge 0$ (rate of $X_j \to X_i$ transitions) and diagonal entries $\kappa_{ii} - \delta_i$, where $\delta_i = \lambda_i + \sum_j \omega_{ij} + \gamma_i$. $A$ is cooperative (Metzler).
 
 **Homeostasis and compartments.** View $A$ as the weighted adjacency matrix of the cell-state graph and decompose it into strongly connected components (SCCs); by Perron–Frobenius each SCC has a real dominant eigenvalue $\mu_k$. A non-trivial Lyapunov-stable steady state exists iff every SCC at the apex of a lineage has $\mu_k = 0$ and every SCC downstream of it has $\mu_k < 0$. The apex SCC is the **renewing compartment** $\mathcal{R}$; the downstream SCCs form the **committed compartment** $\mathcal{C}$.
@@ -9,7 +11,9 @@ $$X_i \xrightarrow{\lambda_i r_{ijk}} X_j + X_k, \qquad X_i \xrightarrow{\omega_
 **Two classes.** A model is **generalized invariant asymmetry (GIA)** if every division in $\mathcal{R}$ is of type $R \to R + C$, so the number of renewing cells per clone is conserved; otherwise (some $R \to R+R$ or $R \to C+C$ divisions) it is **generalized population asymmetry (GPA)** and no conservation law holds. Let $\bar n_s$ be the mean size of surviving clones.
 
 **GIA Markovian test case.** For $X_1 \xrightarrow{\lambda_1} X_1 + X_2$, $X_2 \xrightarrow{\lambda_2} 2X_2$, $X_2 \xrightarrow{\gamma} \emptyset$ with $\lambda_2 < \gamma$, the clone keeps one $X_1$ cell, the stationary mean is $\bar n_2 = \lambda_1/(\gamma - \lambda_2)$, and for large $\bar n_2$ the rescaled size $x_2 = n_2/\bar n_2$ has density
+
 $$P(x_2) = \frac{(1-\hat\lambda_2)^{\hat\lambda_1/\hat\lambda_2}\,\hat\lambda_2^{\hat\lambda_1 x_2/(1-\hat\lambda_2)}\,\Gamma\!\left(\frac{\hat\lambda_1}{\hat\lambda_2} + \frac{\hat\lambda_1 x_2}{1-\hat\lambda_2}\right)}{x_2\,\Gamma\!\left(\frac{\hat\lambda_1}{\hat\lambda_2}\right)\Gamma\!\left(\frac{\hat\lambda_1 x_2}{1-\hat\lambda_2}\right)}, \qquad \hat\lambda_i = \lambda_i/\gamma,$$
+
 which is peaked for large $\hat\lambda_1$ and tends to an exponential as $\hat\lambda_1, \hat\lambda_2 \to 1$.
 
 **Universality.**

@@ -1,17 +1,25 @@
 # Invasion reproduction number for latency evolution with first-stage superinfection
 
 **Resident model (SIIRS).** Fractions $S, I_1, I_2, R$ of a constant population satisfy
+
 $$\dot S = \delta - \alpha_1 S I_1 - \alpha_2 S I_2 - \delta S + \mu R,\quad \dot I_1 = \alpha_1 S I_1 + \alpha_2 S I_2 - (\nu_1+\delta) I_1,$$
+
 $$\dot I_2 = \nu_1 I_1 - (\nu_2+\delta) I_2,\quad \dot R = \nu_2 I_2 - (\mu+\delta) R,$$
+
 with birth = death rate $\delta$, stage transmission rates $\alpha_i$, progression rates $\nu_i$, and loss of immunity $\mu$. The first-stage rates depend on a latency trait $\lambda \ge 0$:
+
 $$\alpha_1[\lambda] = b_1 F[\lambda]^{-b_2} + \alpha_{1,\infty}, \qquad \nu_1[\lambda] = c_1 F[\lambda]^{-c_2} + \nu_{1,\infty},$$
+
 with $F[0] = 1$, $F[\infty] = \infty$, $F' > 0$ and non-negative constants. If the basic reproduction number exceeds $1$ there is a unique, locally stable endemic equilibrium $(\hat S, \hat I_1, \hat I_2, \hat R)$ with
+
 $$\hat S = \Bigl(\tfrac{\alpha_1}{\nu_1+\delta} + \tfrac{\nu_1}{\nu_1+\delta}\tfrac{\alpha_2}{\nu_2+\delta}\Bigr)^{-1}, \quad \hat I_1 = \frac{1 - \hat S}{1 + \frac{\nu_1}{\nu_2+\delta} + \frac{\nu_2}{\delta+\mu}\frac{\nu_1}{\nu_2+\delta}}, \quad \hat I_2 = \frac{\nu_1}{\nu_2+\delta}\hat I_1 .$$
 
 **Superinfection.** A mutant with latency $\lambda^*$ ($\alpha_1^* = \alpha_1[\lambda^*]$, $\nu_1^* = \nu_1[\lambda^*]$) infects susceptibles and also superinfects resident first-stage hosts with relative propensity $\sigma > 0$, immediately replacing the resident strain; mutant first-stage hosts are likewise superinfected by the resident. Second-stage and recovered hosts cannot be superinfected, and immunity is cross-protective.
 
 **Invasion reproduction number (Equation 2.3).** Linearizing the mutant equations at the resident equilibrium and applying the next-generation method gives
+
 $$\mathcal{R}_0[\lambda,\lambda^*] = \left( \frac{\alpha_1^*}{\nu_1^* + \delta + \sigma \Lambda} + \frac{\nu_1^*}{\nu_1^* + \delta + \sigma \Lambda}\cdot\frac{\alpha_2}{\nu_2+\delta} \right) \bigl(\hat S + \sigma \hat I_1\bigr), \qquad \Lambda = \alpha_1 \hat I_1 + \alpha_2 \hat I_2,$$
+
 with resident quantities evaluated at $\lambda$. The mutant invades iff $\mathcal{R}_0[\lambda,\lambda^*] > 1$.
 
 **Evolutionary outcomes (Section 3.1).** Assume $k = \alpha_2/(\nu_2+\delta) > 1$ and let $\tau = \frac{1}{\nu_2+\delta} + \frac{\nu_2}{\nu_2+\delta}\cdot\frac{1}{\mu+\delta}$ be the mean time a host spends immune to superinfection after leaving the first stage.

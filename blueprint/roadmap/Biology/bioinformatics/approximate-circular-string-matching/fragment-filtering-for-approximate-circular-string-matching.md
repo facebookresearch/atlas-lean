@@ -14,7 +14,9 @@
 **Lemma 3 ($k$-mismatch case).** Partition $x'$ into $2k+4$ fragments of lengths $\lfloor (2m-1)/(2k+4) \rfloor$ and $\lceil (2m-1)/(2k+4) \rceil$. Then at least $k+1$ of the fragments are contained in any length-$m$ factor of $x'$.
 
 **Theorem (average-case complexity).** Search the $2k+4$ fragments in $t$ with an Aho–Corasick automaton and verify each fragment hit by extending it left and right with at most $k$ mismatches (constant-time longest-common-extension queries on a suffix array, or direct character comparison). For a uniformly random text this algorithm runs in average time
+
 $$O\!\left(\left(1 + \frac{k\,m}{\sigma^{(2m-1)/(2k+4)}}\right) n\right)$$
+
 and space $O(n)$ (Theorem 2); the variant without suffix-array preprocessing uses space $O(m)$ (Theorem 3). In particular, if $k = O(m/\log_\sigma m)$ the average time is $O(n)$ (Corollaries 1 and 2); for $k = 0$ the exact algorithm runs in average time $O(n)$ (Theorem 1).
 
 ## Expansion

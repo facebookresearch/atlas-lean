@@ -1,7 +1,9 @@
 # Boundary equilibria of sensitive–resistant Darwinian dynamics
 
 **Model.** Sensitive cells $x_S$, resistant cells $x_R$ and the resistance strategy $u_R\ge 0$ of resistant cells (sensitive cells have $u_S=0$) evolve as
+
 $$\dot x_S=x_S\Big[r_{\max}\Big(1-\tfrac{\alpha_{SS}x_S+\alpha_{SR}x_R}{K}\Big)-d-\tfrac mk\Big],\qquad \dot x_R=x_R\,G(v,u,x,m)\big|_{v=u_R},\qquad \dot u_R=\sigma\,\partial_vG(v,u,x,m)\big|_{v=u_R},$$
+
 with fitness-generating function $G(v,u,x,m)=r_{\max}e^{-gv}\big(1-\tfrac{\alpha_{RS}x_S+\alpha_{RR}x_R}{K}\big)-d-\tfrac{m}{k+bv}$. Here $g>0$ is the cost of resistance, $b>0$ its benefit, $k\ge 1$ innate resistance, $m\ge 0$ the drug dose, $\sigma>0$ the evolutionary speed and $\alpha_{ij}>0$ competition coefficients. Write $c_S(m)=r_{\max}-d-m/k$, $c_R(u,m)=r_{\max}e^{-gu}-d-m/(k+bu)$, $c_{SS}=r_{\max}/K$, $c_{RR}(u)=r_{\max}e^{-gu}/K$ and $D=\alpha_{SS}\alpha_{RR}-\alpha_{SR}\alpha_{RS}$.
 
 Let $u_R^*(m)$ be the singular resistance level of [Interior equilibrium of sensitive–resistant Darwinian dynamics](interior-equilibrium-of-sensitive-resistant-darwinian-dynamics.md) and $\kappa(u,m)=\alpha_{SS}c_R(u,m)/c_{RR}(u)-\alpha_{RS}c_S(m)/c_{SS}$ (so $x_R^*=\kappa(u_R^*,m)/D$).

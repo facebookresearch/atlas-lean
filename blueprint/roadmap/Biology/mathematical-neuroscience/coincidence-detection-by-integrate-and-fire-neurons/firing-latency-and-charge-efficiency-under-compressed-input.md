@@ -7,11 +7,15 @@
 **Theorem (theta neuron).** $\lim_{\varepsilon\to0}\hat T_\varepsilon>0$ and $\lim_{\varepsilon\to\varepsilon_0}\hat T_\varepsilon=\infty$; hence $\hat R_\varepsilon\to\infty$ at both ends of $(0,\varepsilon_0)$ and is non-monotonic.
 
 **Charge consumed.** If the input stops when the target fires, the charge used is
+
 $$Q_\varepsilon=\int_0^{\hat T_\varepsilon}I_\varepsilon(t)\,dt=\int_0^{\hat R_\varepsilon}I(s)\,ds,$$
+
 which is monotone in $\varepsilon$ iff $\hat R_\varepsilon$ is. For the theta neuron an intermediate degree of synchrony minimizes the charge needed.
 
 **Linearly rising input.** For $v'=-v/\tau+(c/\Delta)\,t$, $v(0)=0$, $c>0$ (a synaptic current building up with pulse interval $\Delta$), the threshold time $\tilde T_\Delta$ solves $e^{-\tilde T_\Delta/\tau}-(1-\tilde T_\Delta/\tau)=\Delta/(c\tau^2)$, and the number of pulses delivered by then satisfies
+
 $$\tilde M_\Delta=\frac{\tilde T_\Delta}{\Delta}\sim\sqrt{2/c}\;\Delta^{-1/2}\quad(\Delta\to0),$$
+
 so perfectly synchronous volleys waste input.
 
 ## Expansion

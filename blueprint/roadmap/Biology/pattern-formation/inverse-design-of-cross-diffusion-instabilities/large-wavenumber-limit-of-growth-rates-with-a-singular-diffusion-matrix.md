@@ -1,6 +1,7 @@
 # Large-wavenumber limit of growth rates with a singular diagonalisable diffusion matrix
 
 **Setting.** Linearising a reaction–cross-diffusion system $\partial_t u = f(u) + \partial_x\big(D(u)\,\partial_x u\big)$, $u \in \mathbb{R}^n$, at a homogeneous steady state gives $\partial_t u_1 = J u_1 + \hat D\,\partial_{xx}u_1$ with constant $J, \hat D \in \mathbb{R}^{n \times n}$. Laplacian eigenmodes with eigenvalue $\mu = k^2 \ge 0$ grow like $e^{\lambda t}$ where
+
 $$\det\big(J - \mu\hat D - \lambda I\big) = 0 .$$
 
 **Lemma 1.** Let $\hat D$ be diagonalisable, $D = Q^{-1}\hat D Q$ diagonal, with exactly $\ell$ eigenvalues $\sigma_{i_1} = \dots = \sigma_{i_\ell} = 0$ and all other eigenvalues positive. As $\mu \to \infty$:

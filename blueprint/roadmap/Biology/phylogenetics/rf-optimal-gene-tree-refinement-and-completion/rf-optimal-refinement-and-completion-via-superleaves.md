@@ -3,6 +3,7 @@
 **Problem (RF-OTRC).** Given a binary reference (species) tree $T$ on $S$ and an unrooted singly-labelled gene tree $t$ on $R\subseteq S$, possibly non-binary and missing taxa, find a binary tree $T'$ on $S$ with $T'|_R$ refining $t$ that minimizes $\mathrm{RF}(T',T)$.
 
 **Superleaves.** The backbone of $T$ with respect to $t$ is the set of edges on paths between leaves of $R$. Deleting it splits $T$ into pieces; those containing taxa of $S\setminus R$ are superleaves. A superleaf is of **Type I** if the backbone edge it hangs from is shared by $T|_R$ and $t$, and of **Type II** otherwise. For binary $t$, the minimum RF distance achievable by adding the missing taxa is
+
 $$\mathrm{RF}(T,T')=\mathrm{RF}(T|_R,t)+2m,\qquad m=\#\text{Type II superleaves}\quad\text{(Equation 1)}.$$
 
 **Lemma 1 / Theorem 3 (TRACTION).** First refine $t$ to a binary $t^*$ containing every bipartition of $T|_R$ compatible with $t$ (RF-optimal refinement); then add the missing taxa with any exact RF-optimal completion method. The result solves RF-OTRC, in $O(n^{1.5}\log n)$ time with a linear-time completion step or $O(n^2)$ with the quadratic one, where $n=|S|$.

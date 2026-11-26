@@ -3,9 +3,13 @@
 **Setting.** Two species $A$ and $B$ form a complex $C=A{:}B$ by the reversible reaction $A+B\rightleftharpoons C$ with association and dissociation rates $k^+,k^->0$ and dissociation constant $K=k^-/k^+$. Mass conservation fixes the totals $A_T=A+C$ and $B_T=B+C$. In gene-expression models of cell-free transcription-translation this describes RNA polymerase binding a sigma factor (holoenzyme formation), the holoenzyme binding a constitutive promoter, or ribosomes binding a single mRNA species, all assumed fast compared with elongation.
 
 **Proposition (quasi-steady state).** At equilibrium, $AB=KC$, and the complex concentration is the unique root of
+
 $$C^2-(A_T+B_T+K)\,C+A_TB_T=0$$
+
 in $[0,\min(A_T,B_T)]$, namely
+
 $$C=\frac{A_T+B_T+K-\sqrt{(A_T+B_T+K)^2-4A_TB_T}}{2}.$$
+
 In the limits: if $B_T\ll A_T$ then $C\approx B_T\,\dfrac{A_T}{A_T+K}$ (hyperbolic saturation); if $K\ll A_T,B_T$ then $C\approx\min(A_T,B_T)$ (titration). When several species compete for the same partner (several DNA species for one holoenzyme, several mRNAs for ribosomes) no such closed form exists and the coupled binding equilibria must be solved jointly, which produces loading effects absent from the single-species formula.
 
 ## Expansion

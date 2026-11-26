@@ -1,16 +1,23 @@
 # Threshold dynamics of the SIRV model with logit vaccination decisions
 
 **Model.** Susceptible, infected, recovered and vaccinated numbers satisfy
+
 $$\dot S = A - \frac{\beta S I}{N^q} - dS - S\varphi, \quad \dot I = \frac{\beta S I}{N^q} - (r+d) I, \quad \dot R = rI - dR, \quad \dot V = S\varphi - dV,$$
+
 with $N = S+I+R+V$, recruitment $A > 0$, death rate $d > 0$, recovery rate $r$, and incidence exponent $q \in [0,1]$ ($q=0$ bilinear, $q=1$ standard incidence). Since $\dot N = A - dN$, the region $\Gamma = \{(S,I,R,V) \in \mathbb{R}^4_+ : N \le A/d\}$ is positively invariant and globally attracting. Immunity from recovery and vaccination is permanent.
 
 **Smoothed best-response vaccination.** A susceptible facing the decision weighs the benefit $W_p = \beta I/N^q$ (the force of infection avoided) against a constant perceived cost $W_n = \alpha > 0$ and vaccinates with probability
+
 $$s(W) = \frac{e^{kW_p}}{e^{kW_p} + e^{kW_n}} = \frac{1 + \tanh(kW/2)}{2}, \qquad W = W_p - W_n,$$
+
 where $k \ge 0$ is the degree of rationality. The per-capita vaccination rate is $\varphi = \phi\, s(W)$ with $\phi \in (0,1)$ the fraction of susceptibles facing the decision per unit time. As $k \to \infty$, $s$ tends to the best response ($1$ if $W>0$, $0$ if $W<0$, any value in $[0,1]$ if $W=0$); $k = 0$ gives $s \equiv 1/2$.
 
 **Disease-free equilibrium and $\mathcal{R}_0$.** At $I = 0$, $s = (1-\tanh(k\alpha/2))/2$, so the disease-free equilibrium is $E_0 = (S_0^*, 0, 0, V_0^*)$ with
+
 $$S_0^* = \frac{2A}{2d + \phi\,(1-\tanh(k\alpha/2))}, \qquad V_0^* = \frac{\phi A\,(1-\tanh(k\alpha/2))}{d\,\bigl(2d + \phi\,(1-\tanh(k\alpha/2))\bigr)},$$
+
 and the next-generation method gives
+
 $$\mathcal{R}_0 = \frac{2\beta A}{(A/d)^q\,(r+d)\,\bigl(2d + \phi\,(1-\tanh(k\alpha/2))\bigr)} .$$
 
 **Theorem 1.** If $\mathcal{R}_0 < 1$, $E_0$ is the only equilibrium in $\Gamma$ and it is locally asymptotically stable; if $\mathcal{R}_0 > 1$, $E_0$ is unstable.

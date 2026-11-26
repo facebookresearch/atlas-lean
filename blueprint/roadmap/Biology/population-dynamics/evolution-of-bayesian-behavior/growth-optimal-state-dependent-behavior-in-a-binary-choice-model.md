@@ -3,13 +3,19 @@
 **Model.** In each generation $t$ every individual observes information $S$ about the environment and chooses action $a$ with probability $f(S)\in[0,1]$ and action $b$ otherwise, then produces $x_a$ or $x_b$ offspring and dies; offspring inherit the behavior $f(\cdot)$. Conditioned on the state, the pair $(x_a,x_b)$ is i.i.d. over generations and identical for all individuals of a generation (systematic risk), and the state process is stationary. Let $n^f_T$ be the number of type-$f$ individuals at generation $T$.
 
 **Growth rate.** Almost surely
+
 $$\frac1T\log n^f_T\ \longrightarrow\ \alpha(f)=\mathbb E_{(x_a,x_b,S)}\Big[\log\big(f(S)x_a+(1-f(S))x_b\big)\Big],$$
+
 so the type with the largest $\alpha$ dominates the population.
 
 **Proposition (stationary environment, state-dependent behavior).** The growth-optimal behavior maximizes the conditional expected log fitness for each observed $S$,
+
 $$f^*(S)=\arg\max_{f\in[0,1]}\ \mathbb E\big[\log(fx_a+(1-f)x_b)\,\big|\,S\big],$$
+
 and explicitly
+
 $$f^*(S)=\begin{cases}1 & \text{if }\mathbb E[x_b/x_a\mid S]<1,\\ \text{the root of }\ \mathbb E\Big[\dfrac{x_a-x_b}{f x_a+(1-f)x_b}\,\Big|\,S\Big]=0 & \text{if }\mathbb E[x_a/x_b\mid S]\ge1\text{ and }\mathbb E[x_b/x_a\mid S]\ge1,\\ 0 & \text{if }\mathbb E[x_a/x_b\mid S]<1.\end{cases}$$
+
 With no information ($S$ trivial) this reduces to the constant growth-optimal (bet-hedging) behavior; if additionally one action leaves offspring only in one of two environmental states, $f^*$ equals the probability of that state (probability matching). If the environment is nonstationary but independent over time, the dominant constant behavior uses the time-averaged expectations.
 
 ## Expansion

@@ -7,7 +7,9 @@
 - $\mathcal C_{N,k,\ell}\subset\mathcal C_{N,k}$: segmentations with $k$ segments whose multiset of segment lengths $\ell$ equals that of $T$; these are the orderings of $T$'s segment lengths, so $|\mathcal C_{N,k,\ell}|\le k!$, with equality when all lengths differ (the **$\ell$-randomization test**).
 
 **Test.** Draw random segmentations $R$ from the chosen class, compute $H(T\mid R)$ and $H(R\mid T)$, and report the empirical fractions
+
 $$p_{T\mid\cdot}=\frac{\#\{R:\ H(T\mid R)<H(T\mid P)\}}{\#R},\qquad p_{\cdot\mid T}=\frac{\#\{R:\ H(R\mid T)<H(P\mid T)\}}{\#R}.$$
+
 $P$ is judged significantly close to $T$ when both fractions are small. The $k$-test asks whether knowing only the number of true segments suffices to match $P$; the $\ell$-test asks whether knowing the true segment-length distribution suffices. The procedure makes no assumption about what a good segmentation looks like and is best suited to candidates with about as many segments as $T$, because otherwise one of the two conditional entropies is large for every $R$.
 
 ## Depends on

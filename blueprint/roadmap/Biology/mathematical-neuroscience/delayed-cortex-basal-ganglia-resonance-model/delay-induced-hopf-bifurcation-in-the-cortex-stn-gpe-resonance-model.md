@@ -3,8 +3,11 @@
 Let $S, G, E, I$ be the firing rates of the subthalamic nucleus (STN), the external globus pallidus (GPe), and the excitatory and inhibitory cortical populations. With a common membrane time constant $\tau > 0$ and a common synaptic transmission delay $T \ge 0$, the resonance model is
 
 $$\tau S'(t) = F_S\big(w_{CS} E(t-T) - w_{GS} G(t-T)\big) - S(t),$$
+
 $$\tau G'(t) = F_G\big(w_{SG} S(t-T) - w_{GG} G(t-T) - Str\big) - G(t),$$
+
 $$\tau E'(t) = F_E\big(-w_{CC} I(t-T) + C\big) - E(t),$$
+
 $$\tau I'(t) = F_I\big(w_{CC} E(t-T)\big) - I(t),$$
 
 with positive weights $w_{ij}$, constant striatal inhibition $Str$, constant cortical drive $C$, and sigmoids $F_X(x) = M_X / \big(1 + \tfrac{M_X - B_X}{B_X} e^{-4x/M_X}\big)$ for $X \in \{S, G, E, I\}$, where $0 < B_X < M_X$.
@@ -16,6 +19,7 @@ $$a_{12} = -\tfrac{w_{GS}\kappa_S}{\tau},\quad a_{13} = \tfrac{w_{CS}\kappa_S}{\
 **Factorization.** The linearization $u' = -\tau^{-1} u(t) + B_2 u(t-T)$ has characteristic function $\Delta(\lambda) = \Delta_1(\lambda)\Delta_2(\lambda)$ with
 
 $$\Delta_1(\lambda) = (\lambda + 1/\tau)^2 - (\lambda + 1/\tau) a_{22} e^{-\lambda T} - a_{12} a_{21} e^{-2\lambda T},$$
+
 $$\Delta_2(\lambda) = (\lambda + 1/\tau)^2 - a_{34} a_{43} e^{-2\lambda T}.$$
 
 $\Delta_1$ is the STN-GPe loop and $\Delta_2$ the cortical excitatory-inhibitory loop; the cortex-to-STN term $a_{13}$ does not enter the spectrum, because the cortex drives the basal ganglia without feedback in this model.

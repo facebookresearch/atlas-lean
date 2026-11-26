@@ -1,12 +1,17 @@
 # Linear-time skewness of the mean pairwise distance
 
 **Setting.** Let $T$ be a rooted phylogenetic tree with edge set $E$, $n=|E|$, nonnegative edge weights $w_e$, and tip set $S$ with $s=|S|$. For tips $u,v$ let $\mathrm{cost}(u,v)$ be the total weight of the path between them. For $R\subseteq S$ with $|R|=r\ge 2$, the *mean pairwise distance* is
+
 $$\mathrm{MPD}(T,R)=\frac{2}{r(r-1)}\sum_{\{u,v\}\subseteq R,\ u\ne v}\mathrm{cost}(u,v).$$
+
 Let $R$ be drawn uniformly from the $\binom{s}{r}$ subsets of exactly $r$ tips, and write $\mu(T,r)$, $\sigma^2(T,r)$ for the mean and variance of $\mathrm{MPD}(T,R)$. The skewness is
+
 $$\mathrm{sk}(T,r)=\frac{\mathbb E[\mathrm{MPD}^3(T,R)]-3\mu(T,r)\sigma^2(T,r)-\mu(T,r)^3}{\sigma^3(T,r)}.$$
 
 **Mean.** Every unordered pair of distinct tips lies in $R$ with the same probability, so
+
 $$\mu(T,r)=\binom{s}{2}^{-1}\sum_{\{u,v\}\subseteq S}\mathrm{cost}(u,v),$$
+
 independent of $r$.
 
 **Theorem 3 (linear-time skewness).** For every $r\le s$, $\mathrm{sk}(T,r)$ can be computed in $\Theta(n)$ time.

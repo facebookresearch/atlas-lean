@@ -1,7 +1,9 @@
 # Guaranteed subsets and gapped bucketing functions
 
 **Setting.** Let $S_n = \Sigma^n$ with edit distance, $|\Sigma| = m > 1$, and $N^r_n(s) = \{t \in S_n : \operatorname{edit}(s,t) \le r\}$. For a set of bucket labels $B \subseteq S_n$ and an integer $r \ge 1$, define the bucketing function
+
 $$f^r_B(s) = N^r_n(s) \cap B .$$
+
 By the triangle inequality, $\operatorname{edit}(s,t) \ge 2r+1$ implies $f^r_B(s) \cap f^r_B(t) = \emptyset$. Call $B$ **$(d_1, r)$-guaranteed** if $N^r_n(s) \cap N^r_n(t) \cap B \neq \emptyset$ whenever $\operatorname{edit}(s,t) \le d_1$; equivalently, $f^r_B$ is $(d_1, 2r+1)$-sensitive (see the definition in the companion article).
 
 **Lemma 6 (all sequences as buckets).** $B = S_n$ is $(2r, r)$-guaranteed if $r$ is even and $(2r-1, r)$-guaranteed if $r$ is odd. Hence $f^r_{S_n}$ is $(2r, 2r+1)$-sensitive for even $r$ and $(2r-1, 2r+1)$-sensitive for odd $r$; for odd $r$ the gap at $2r$ is real.
@@ -11,7 +13,9 @@ By the triangle inequality, $\operatorname{edit}(s,t) \ge 2r+1$ implies $f^r_B(s
 **Lemma 9 (lower bounds).** If $B$ is $(1,1)$-guaranteed then $|N^1_n(s) \cap B| \ge 1$ for $s \in B$, $|N^1_n(s) \cap B| \ge n$ for $s \notin B$, and $|B| \ge m^{n-1}$.
 
 **Lemmas 10–11 (optimal construction).** Write $\Sigma = \{c_1, \dots, c_m\}$ and partition $S_1 = \{c_1\} \sqcup \dots \sqcup \{c_m\}$. Given a partition $S_{n-1} = B^1_{n-1} \sqcup \dots \sqcup B^m_{n-1}$, set, with upper indices taken cyclically modulo $m$,
+
 $$B^i_n = \bigsqcup_{k=1}^{m} c_k \circ B^{\,i+k-1}_{n-1}, \qquad 1 \le i \le m,$$
+
 where $c \circ X$ prepends $c$ to each word of $X$. Then $S_n = \bigsqcup_i B^i_n$, each $B^i_n$ is a minimum $(1,1)$-guaranteed subset ($|B^i_n| = m^{n-1}$), and $|f^1_{B^i_n}(s)| = 1$ if $s \in B^i_n$ and $= n$ otherwise, matching Lemma 9. Membership of $s$ in a fixed $B^i_n$ is decidable in $O(n)$ time without building the set.
 
 **Theorem 2.** If $B \subseteq S_n$ is $(1,1)$-guaranteed, then $f^2_B$ is $(3,5)$-sensitive.

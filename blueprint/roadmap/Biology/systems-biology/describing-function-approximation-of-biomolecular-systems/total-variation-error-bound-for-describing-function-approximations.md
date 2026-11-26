@@ -5,7 +5,9 @@
 **Total variation.** For $f:[a,b]\to\mathbb R$, $V_a^b(f)=\sup_M\sum_k|f(x_{k+1})-f(x_k)|$ over partitions $M$ of $[a,b]$; it is additive over adjacent intervals and $V(cf)=|c|V(f)$.
 
 **Theorem 1 (Fourier tail bound).** If $f$ is periodic with frequency $\omega_0$ and its total variation over one period is at most $V$, the mean-square error of the truncation to the first $m$ harmonics satisfies
+
 $$\epsilon_m^2=\|f-f_m\|_2^2\le\frac{V^2}{\pi\,\omega_0\,m}.$$
+
 In particular the describing-function (first-harmonic) error obeys $\epsilon_1^2\le V^2/(\pi\omega)$.
 
 **Consequences.**

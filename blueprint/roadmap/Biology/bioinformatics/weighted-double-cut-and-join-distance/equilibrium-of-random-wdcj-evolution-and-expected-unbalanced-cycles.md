@@ -4,6 +4,7 @@ Consider the Markov chain on weighted genomes (perfect matchings on $2n$ extremi
 
 1. The equilibrium distribution of this chain gives a genome $g$ probability proportional to $\prod_{e \in E(g)} w(e)$. Consequently, at equilibrium the weight vector follows a symmetric Dirichlet law with parameter $2$: an equilibrium genome is a uniformly random perfect matching with independent Gamma-distributed weights of shape $2$, rescaled to the total weight.
 2. If $k$ random wDCJ are applied to a weighted genome $g_1$ with $n$ edges to produce $g_2$, the expected number of unbalanced cycles in $BG(g_1, g_2)$ satisfies
+
    $$E(n_u) = O\!\left(\frac{k}{\sqrt n}\right).$$
 
 Since the exact wDCJ distance can be computed in $O^*(3^{n_u})$ time, this bound explains why the exact algorithms remain fast on genomes that evolved by moderately many rearrangements.

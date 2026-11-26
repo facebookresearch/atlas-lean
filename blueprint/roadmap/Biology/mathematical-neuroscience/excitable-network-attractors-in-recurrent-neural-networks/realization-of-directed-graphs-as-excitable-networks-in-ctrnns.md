@@ -1,11 +1,17 @@
 # Realization of directed graphs as excitable networks in CTRNNs
 
 **Model.** A continuous-time recurrent neural network (CTRNN) on $N$ cells is
+
 $$\dot y_i=-y_i+\sum_{j=1}^N w_{ij}\,\phi(y_j)+I_i(t),\qquad i=1,\dots,N,$$
+
 with a sigmoid activation $\phi$; it is *input-free* if $I\equiv0$. Take the piecewise affine activation with threshold $\theta$ and steepness $\epsilon>0$,
+
 $$\phi_P(y)=\begin{cases}0,& y-\theta<-2\epsilon,\\ \frac{y-\theta}{4\epsilon}+\frac12,& |y-\theta|\le2\epsilon,\\ 1,& y-\theta>2\epsilon.\end{cases}$$
+
 Given a directed graph $G$ with adjacency matrix $(a_{ij})$, define the weights
+
 $$w_{ij}=w_t+(w_s-w_t)\delta_{ij}+(w_p-w_t)a_{ji}+(w_m-w_t)a_{ij},$$
+
 so $w_{ii}=w_s$ (self-excitation), $w_{ij}=w_p$ if $G$ has an edge $j\to i$, $w_{ij}=w_m$ if $G$ has an edge $i\to j$, and $w_{ij}=w_t$ otherwise.
 
 **Excitable network attractor.** A set of stable equilibria $\xi_1,\dots,\xi_N$ together with *excitable connections*: there is a connection $\xi_k\to\xi_l$ with threshold $\delta$ if some trajectory starting within distance $\delta$ of $\xi_k$ converges to $\xi_l$. The network *realizes* $G$ if every edge $k\to l$ of $G$ is present as such a connection.

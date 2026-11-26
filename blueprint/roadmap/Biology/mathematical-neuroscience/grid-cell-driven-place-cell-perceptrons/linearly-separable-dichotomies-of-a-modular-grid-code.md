@@ -8,7 +8,9 @@
 3. The convex hull of $C_\lambda$ is the product of simplices $\Delta_{\lambda_1}\times\dots\times\Delta_{\lambda_M}$, a polytope of dimension $\sum_m\lambda_m-M$ whose vertices are exactly the patterns. For $M\ge2$ the patterns are not in general position, so Cover's count $2\sum_{k=0}^{N-1}\binom{P-1}{k}$ for $P$ points in general position does not apply.
 
 **Counting theorem ($M=2$).** For two modules the number of linearly separable dichotomies of $C_{(\lambda_1,\lambda_2)}$ is
+
 $$N_{\lambda_1,\lambda_2}=\sum_{k=0}^{\min(\lambda_1,\lambda_2)}(k!)^2\,S(\lambda_1+1,k+1)\,S(\lambda_2+1,k+1),$$
+
 where $S(n,k)$ are Stirling numbers of the second kind; this is a poly-Bernoulli number. On the diagonal $N_{\lambda,\lambda}$ grows like a constant multiple of $(2\lambda)!/(2\log 2)^{2\lambda}$, a vanishing fraction of all $2^{\lambda^2}$ dichotomies. For any $M$, the number of two-field arrangements is $\tfrac12\sum_{m=1}^M\lambda_m(\lambda_m-1)\prod_{n\ne m}\lambda_n$.
 
 ## Expansion

@@ -1,12 +1,17 @@
 # Coexistence equilibrium of the ratio-dependent predator-prey model
 
 **Model.** Let $P(t),Q(t)>0$ be prey and predator densities obeying the ratio-dependent (Michaelis-Menten in the ratio $P/Q$) kinetics
+
 $$\dot P=P(a-bP)-\frac{cPQ}{mQ+P},\qquad \dot Q=-dQ+\frac{fPQ}{mQ+P},$$
+
 with prey growth rate $a>0$, crowding coefficient $b>0$, capture rate $c>0$, half-saturation constant $m>0$, conversion rate $f>0$ and predator death rate $d>0$.
 
 **Statement.** Besides the predator-free state $(a/b,0)$, the system has an interior equilibrium if and only if
+
 $$f>d\qquad\text{and}\qquad amf-cf+cd>0,$$
+
 and it is then unique:
+
 $$P^*=\frac{(am-c)f+cd}{bmf},\qquad Q^*=\frac{(f-d)\,(amf-cf+cd)}{b\,d\,m^2 f}.$$
 
 ## Expansion

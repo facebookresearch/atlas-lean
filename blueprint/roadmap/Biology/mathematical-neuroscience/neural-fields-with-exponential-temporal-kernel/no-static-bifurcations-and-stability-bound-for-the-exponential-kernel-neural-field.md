@@ -1,10 +1,13 @@
 # No static bifurcations and a stability bound for the exponential-kernel neural field
 
 **Model.** On $\Omega=\mathbb R$, the membrane activity $v(x,t)$ satisfies
+
 $$v(x,t)=\int_{-\infty}^t\kappa(t-s)S(x,s)\,ds+\int_{-\infty}^t\Big(-\frac{v(x,s)}{\tau}+I_1(x,s)\Big)ds,\qquad S(x,t)=c\int_\Omega J(y-x)\,F\Big(v\big(y,t-\tfrac{|y-x|}{\nu}\big)\Big)dy+I_2(x,t),$$
+
 with exponential temporal kernel $\kappa(u)=\alpha e^{-\alpha u}$ for $u\ge0$ (and $0$ for $u<0$; normalized, $\alpha>0$), leak time constant $\tau>0$, transmission speed $\nu>0$, even connectivity kernel $J$, smooth transfer function $F$, coupling $c>0$, and inputs $I_1,I_2$. For constant inputs $I_1\equiv E$, $I_2\equiv I_0$ the spatially uniform equilibrium is $v_0=\tau E$.
 
 **Linearization.** Perturbations $w=e^{\lambda t}e^{ikx}$ of $v_0$ satisfy the dispersion relation
+
 $$\tau\lambda+1=\beta\,\frac{\lambda}{\alpha+\lambda}\int_{-\infty}^{\infty}J(z)\,e^{-\lambda|z|/\nu}e^{-ikz}\,dz,\qquad \beta=\alpha c\tau F'(v_0).$$
 
 **Theorem.**

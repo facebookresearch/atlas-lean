@@ -1,11 +1,15 @@
 # Amplification factor of the predictive-coding layer recurrence
 
 **Model.** With identity feedforward and feedback weights, the activity $e_j^n\in\mathbb R$ of layer $j$ at time step $n$ in a predictive-coding hierarchy evolves on an infinite-depth network by
+
 $$e_j^{n+1}=\beta e_{j-1}^{n+1}+\alpha e_{j-1}^{n}+(1-\beta-\lambda-\alpha)e_j^{n}+\lambda e_{j+1}^{n},\qquad j\in\mathbb Z,$$
+
 where $\beta$ weighs instantaneous feedforward drive, $\alpha$ feedforward prediction errors and $\lambda$ feedback predictions, with $0\le\beta<1$ and $0\le\alpha+\lambda\le1$.
 
 **Amplification factor.** Plane waves $\rho(\theta)^ne^{ij\theta}$ solve the recurrence with
+
 $$\rho(\theta)=\frac{\alpha(e^{-i\theta}-1)+1-\beta+\lambda(e^{i\theta}-1)}{1-\beta e^{-i\theta}},\qquad\theta\in[-\pi,\pi],$$
+
 and the fundamental solution from a unit impulse is $G_j^n=\frac1{2\pi}\int_{-\pi}^{\pi}e^{ij\theta}\rho(\theta)^n\,d\theta$, with every solution $e_j^n=\sum_\ell G_{j-\ell}^nh_\ell$. Since $\lim_n\|G^n\|_{\ell^1}^{1/n}=\max_\theta|\rho(\theta)|$, the recurrence is stable if $|\rho|<1$ everywhere and unstable if $|\rho(\theta_0)|>1$ somewhere.
 
 **Proposition.** For $0\le\beta<1$ and $\alpha,\lambda\ge0$: $\rho(0)=1$, and $|\rho(\theta)|\le1$ for all $\theta$ iff $\alpha+\lambda\le1$. If $\alpha+\lambda<1$, then $|\rho(\theta)|<1$ for $\theta\ne0$; if $\alpha+\lambda=1$, then also $\rho(\pm\pi)=-1$ and $|\rho|<1$ elsewhere. When the tangency points satisfy $\rho(\theta_k+\theta)/\rho(\theta_k)=\exp(-ic_k\theta-\sigma_k\theta^{2\mu_k}+O(|\theta|^{2\mu_k+1}))$ with $\operatorname{Re}\sigma_k>0$, the recurrence is marginally stable: $\sup_j|e_j^n|\le C\sup_j|h_j|$ for all $n$.

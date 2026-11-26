@@ -3,6 +3,7 @@
 Let $u_e(x,y,t)$ and $u_i(x,y,t)$ be excitatory and inhibitory membrane potentials at macroscopic position $x \in \mathbb{R}$ and microscopic position $y \in \mathbb{T} = \mathbb{R}/\mathbb{Z}$. The homogenized two-population neural field (the two-scale limit of a Hopfield-type field with periodically modulated connectivity) is
 
 $$\partial_t u_e = -u_e + \omega_{ee} \otimes\otimes P_e(u_e - \theta_e) - \omega_{ie} \otimes\otimes P_i(u_i - \theta_i),$$
+
 $$\tau\,\partial_t u_i = -u_i + \omega_{ei} \otimes\otimes P_e(u_e - \theta_e) - \omega_{ii} \otimes\otimes P_i(u_i - \theta_i),$$
 
 where $(\omega \otimes\otimes P)(x,y,t) = \int_{\mathbb{R}}\int_{\mathbb{T}} \omega(x - x', y - y') P(u(x',y',t))\,dy'\,dx'$ and $\tau > 0$ is the relative inhibition time. Hypotheses: $P_q(u) = S(\beta_q u)$ with $S : \mathbb{R} \to [0,1]$ nondecreasing and Lipschitz with constant $S'_{max}$; $\omega_{qp}(x,y) = \sigma_{qp}(y)^{-1}\,\Phi\big(x/\sigma_{qp}(y)\big)$ with $\Phi$ even, nonnegative, $\int\Phi = 1$, $\int |\xi|^r\Phi(\xi)\,d\xi < \infty$ for some $r \ge 1$, and $\sigma_{qp} > 0$ continuous, $1$-periodic and $C^r$ in $y$. The phase space is $B \times B$ with $B = BC(\mathbb{R} \times \mathbb{T})$ and the sup norm.

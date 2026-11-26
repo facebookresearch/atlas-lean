@@ -3,19 +3,29 @@
 **Setting.** Let $X$ be a totally ordered taxon set. A *clade* is a nonempty subset of $X$; a *subsplit* $s=\{V,Z\}$ of a clade $W$ is an unordered pair of disjoint clades with $V\cup Z=W$ (plus the leaf subsplits $\{\{x\},\emptyset\}$ and the root subsplit $\rho=\{X,\emptyset\}$). Write $\acute s$ and $\grave s$ for the left (lexicographically smaller) and right clades of $s$. A *subsplit DAG* $D$ for a collection $\mathcal T$ of rooted binary topologies has the subsplits of the topologies in $\mathcal T$ as nodes and an edge $t\to s$ whenever the taxon set of $s$ is one of the two clades of $t$.
 
 **Parameterization.** For each clade of each subsplit $t$ there is a probability distribution $P(s\mid t)$ over the child subsplits $s$ resolving that clade, so that a topology $\tau\in D$ has prior probability
+
 $$P(\tau)=\prod_{t\to s\in\tau}P(s\mid t).$$
+
 Each DAG edge $t\to s$ carries one branch length $\theta(t\to s)$ and the substitution model gives a transition matrix $P(\theta(t\to s))$. For a non-leaf subsplit $t$ let $\mathcal T_{\mathrm{leaf}}(t)$ be the set of rooted topologies on the taxa of $t$ with root bipartition $t$, and define the marginal partial likelihood vector
+
 $$p(t)=\sum_{\tau^{\downarrow}\in\mathcal T_{\mathrm{leaf}}(t)}p(\tau^{\downarrow})\,P(\tau^{\downarrow}\mid t),$$
+
 where $p(\tau^{\downarrow})$ is the Felsenstein partial likelihood at the root of $\tau^{\downarrow}$; at a leaf subsplit $p$ is the indicator vector of the observed state.
 
 **Lemma 1 (rootward pass).** For every non-leaf subsplit $t$,
+
 $$p(t)=\Big(\sum_{s_1:\acute t\to s_1}P(\theta(\acute t\to s_1))\,p(s_1)\,P(s_1\mid \acute t)\Big)\circ\Big(\sum_{s_2:\grave t\to s_2}P(\theta(\grave t\to s_2))\,p(s_2)\,P(s_2\mid \grave t)\Big),$$
+
 where $\circ$ is the entrywise product. Hence all $p(t)$ are computed by one postorder traversal of $D$.
 
 **Lemma 3 (per-edge marginal likelihood).** Let $P(t\to s)=\sum_{\tau\in D}P(\tau)\mathbf 1[t\to s\in\tau]$ and $P(\tau\mid t\to s)=P(\tau)\mathbf 1[t\to s\in\tau]/P(t\to s)$. With $r(\grave t)$ the analogous leafward (rootward-topology-marginalized) partial likelihood vector of the clade $\grave t$, the per-edge marginal likelihood
+
 $$\ell(\grave t\to s;\theta)=\sum_{\tau\ni \grave t\to s}P(Y\mid\tau,\theta)\,P(\tau\mid \grave t\to s)$$
+
 equals
+
 $$\ell(\grave t\to s;\theta)=\frac{r(\grave t)^{\top}P(\theta(\grave t\to s))\,p(s)}{P(\grave t)},$$
+
 and the same holds with $\acute t$ in place of $\grave t$. Multiplying over sites gives a composite likelihood for each branch length, optimizable one edge at a time.
 
 ## Depends on

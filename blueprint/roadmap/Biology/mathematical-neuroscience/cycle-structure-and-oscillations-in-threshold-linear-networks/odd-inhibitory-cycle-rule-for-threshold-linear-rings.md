@@ -1,10 +1,13 @@
 # Odd inhibitory cycle rule for threshold-linear rings
 
 **Threshold-linear network.** $\mathrm{TLN}(W,b)$ on nodes $[n]=\{1,\dots,n\}$ evolves by
+
 $$\dot x_i=-x_i+\Big[\sum_{j=1}^nW_{ij}x_j+b_i\Big]_+,\qquad i\in[n],$$
+
 with $[\cdot]_+=\max\{\cdot,0\}$ and constant inputs $b_i$. Each node is excitatory or inhibitory; $\delta_{j,I}=1$ if $j$ is inhibitory and $0$ otherwise, and an edge $i\leftarrow j$ of a directed graph $G$ carries weight $W_{ij}=w_{ij}(-1)^{\delta_{j,I}}$ with $w_{ij}>0$ ($W_{ij}=0$ off $G$).
 
 **Ring setting.** Let $G$ be the directed cycle $1\to2\to\dots\to n\to1$ with $n_I\ge1$ inhibitory and $n_E$ excitatory nodes, $n=n_I+n_E\ge2$ ($\ge3$ if $n_I=1$), and $W_{i,i-1}=w_{i-1}(-1)^{\delta_{i-1,I}}$ with $w_j>0$ (indices mod $n$). Let $a_1<\dots<a_{n_I}$ be the nodes whose predecessor is inhibitory (cyclically, $a_{n_I+1}=a_1$), with inputs $b_{a_k}>0$, and $b_i=0$ for the other nodes. Assume the initial state satisfies $x_j(0)\in[0,\;b_{a_k}\prod_{i=a_k}^{j-1}w_i]$ for $a_k\le j<a_{k+1}$ (empty products equal $1$). Consider
+
 $$\text{(4)}\ \ \prod_{i=a_k}^{a_{k+1}-1}w_i<\frac{b_{a_{k+1}}}{b_{a_k}}\ \ \forall k,\qquad \text{(5)}\ \ \prod_{i=a_k}^{a_{k+1}-1}w_i>\frac{b_{a_{k+1}}}{b_{a_k}}\ \ \forall k,\qquad \text{(6)}\ \ \Big(\prod_{i=1}^nw_i\Big)^{1/n}<\frac1{\cos(\pi/n)},\qquad \text{(7)}\ \ \Big(\prod_{i=1}^nw_i\Big)^{1/n}>\frac1{\cos(\pi/n)}.$$
 
 **Theorem 2.** Trajectories stay in the initial box for all $t\ge0$ (Lemma 1), and:

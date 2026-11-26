@@ -1,9 +1,13 @@
 # Ribosome flow model of extended objects with drop-off
 
 **Model (RFMEOD).** A chain of $n$ sites is traversed left to right by particles of size $\ell$, a particle being located at the site of its leftmost end (its *reader*). Let $x_i(t) \in [0,1]$ be the reader density at site $i$ and $y_i = x_{i-\ell+1} + \dots + x_i$ the coverage density (with $x_j = 0$ for $j \le 0$ and $y_i = 0$ for $i > n$). With hopping rates $\lambda_0,\dots,\lambda_n > 0$ and drop-off rates $\alpha_1,\dots,\alpha_n \ge 0$, set
+
 $$f_0 = \lambda_0(1 - y_\ell), \qquad f_i = \lambda_i x_i(1 - y_{i+\ell}) \;(1 \le i \le n-1), \qquad f_n = \lambda_n x_n, \qquad g_i = \alpha_i x_i,$$
+
 and
+
 $$\dot x_i = f_{i-1}(x) - f_i(x) - g_i(x_i), \qquad i = 1,\dots,n.$$
+
 The protein production (output) rate is $R(t) = (\lambda_n + \alpha_n)\,x_n(t)$. This is the interaction-free case $q = r = 1$ of the extended model EFEIOD, in which the factors $q$ and $r$ scale the rates of forming and breaking contacts with neighbouring particles.
 
 **State space.** Let $P$ be the $n \times n$ lower-triangular matrix with ones on the main diagonal and the $\ell - 1$ subdiagonals below it, so $(Px)_i = y_i$, and $H = \{x \in [0,1]^n : Px \in [0,1]^n\}$. $H$ is compact, convex and forward invariant, and trajectories from $\partial H$ enter the interior of $H$ immediately (Propositions 1–2).

@@ -1,11 +1,15 @@
 # Singular limit of the first Lyapunov coefficient
 
 **First Lyapunov coefficient.** For $x'=f(x;\mu)$ with a Hopf point at $x=0$, $\mu=\hat\mu$, write $f(x;\hat\mu)=Ax+\tfrac12B(x,x)+\tfrac16C(x,x,x)+O(\|x\|^4)$, let $Aq=i\omega q$, $A^{\mathsf T}p=-i\omega p$, $\langle p,q\rangle=1$. Then
+
 $$l_1=\frac1{2\omega}\operatorname{Re}\Big[\langle p,C(q,q,\bar q)\rangle-2\langle p,B(q,A^{-1}B(q,\bar q))\rangle+\langle p,B(\bar q,(2i\omega I-A)^{-1}B(q,q))\rangle\Big],$$
+
 and the Hopf bifurcation is supercritical if $l_1<0$ and subcritical if $l_1>0$.
 
 **Setting.** Take a slow-fast system with two fast variables and one slow variable,
+
 $$x'=f_1(x,y,z;\mu,\varepsilon),\qquad y'=f_2(x,y,z;\mu,\varepsilon),\qquad z'=\varepsilon g(x,y,z;\mu,\varepsilon),$$
+
 with a non-degenerate Hopf bifurcation of frequency $\omega=O(1)$ that persists as a Hopf bifurcation of the layer problem ($\varepsilon=0$, $z$ frozen). Let $l_1^c(\varepsilon)$ be the coefficient of the full system and $\hat l_1^a$ that of the layer problem.
 
 **Result.** In general $l_1^c(\varepsilon)-\hat l_1^a=O(1)$ as $\varepsilon\to0$: an $O(\varepsilon)$ slow equation can change the criticality, so the layer problem alone does not determine whether the onset of oscillations is sub- or supercritical. The discrepancy comes only from $\partial_xg,\ \partial_yg,\ \partial_x^2g,\ \partial_x\partial_yg,\ \partial_y^2g$ at the Hopf point; if these vanish, $l_1^c(\varepsilon)$ is an $O(\varepsilon)$ perturbation of $\hat l_1^a$ and the criticalities match. Likewise, a [quasi-steady-state elimination of fast gates](quasi-steady-state-elimination-of-fast-gating-variables.md) is not a centre-manifold reduction at a fast Hopf point and can flip criticality. A Hopf bifurcation of the slow reduced flow on a normally hyperbolic critical manifold is trouble free: $l_1(\varepsilon)$ is a regular perturbation of $l_1(0)$.

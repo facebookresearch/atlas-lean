@@ -1,11 +1,15 @@
 # Flux-based auxin transport model and finite-time PIN divergence
 
 **Model.** Cells $i\in V=\{1,\dots,M\}$ form a graph $\mathcal G=(V,E)$ with neighbours $i\sim j$. Let $a_i$ be the auxin concentration in cell $i$ and $p_{ij}$ the concentration of PIN carriers on the membrane of $i$ facing $j$. The net flux through membrane $ij$ is $J_{i\to j}=\gamma_D(a_i-a_j)+\gamma_A(a_ip_{ij}-a_jp_{ji})$ (diffusion plus active transport), and the flux model is
+
 $$\frac{da_i}{dt}=\alpha_{a_i}-\beta_{a_i}a_i-\frac1{V_i}\sum_{j\sim i}S_{ij}J_{i\to j},\qquad \frac{dp_{ij}}{dt}=h(J_{i\to j})+\rho_0-\mu p_{ij},$$
+
 with production and degradation rates $\alpha_{a_i},\beta_{a_i}$, membrane removal rate $\mu$, and a non-negative increasing response function $h$ with $h(J)=0$ for $J\le0$ (typically linear or quadratic in $J$).
 
 **Reduced system.** For regular cells ($S_{ij}/V_i\equiv W$), with PIN cycling and diffusion slow compared with active transport (rates of order $\varepsilon\to0$), unit transport efficiency and $\Phi(x)=h(x/W)$, the slow system is
+
 $$\frac{da_i}{dt}=\alpha_{a_i}-\beta_{a_i}a_i+\sum_{k\sim i}\big(a_kp_{ki}-a_ip_{ik}\big),\qquad \frac{dp_{ij}}{dt}=\lambda\frac{\alpha_p}{\beta_p}\Phi(J_{i\to j})-\mu p_{ij},$$
+
 with $J_{i\to j}=a_ip_{ij}-a_jp_{ji}$; trajectories of the full system with the same initial data stay close to those of the slow system for small $\varepsilon$ when the latter converge.
 
 **Proposition.** If $\alpha_{a_i},\beta_{a_i},\mu,\lambda,\alpha_p/\beta_p>0$ and $\Phi$ is bounded, the slow system has a unique solution defined for all $t\ge0$. If $\Phi$ is unbounded, the solution either exists for all $t\ge0$ or only on a bounded interval $[0,\delta)$, on which it diverges to $\infty$ as $t\to\delta$; finite-time divergence of PIN concentrations does occur for unbounded $\Phi$ (e.g. quadratic).

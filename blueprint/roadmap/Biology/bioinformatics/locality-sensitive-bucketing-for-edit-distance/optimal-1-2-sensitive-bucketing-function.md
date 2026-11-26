@@ -1,7 +1,9 @@
 # Optimal (1, 2)-sensitive bucketing function
 
 **Setting.** Fix an alphabet $\Sigma$ with $|\Sigma| > 1$ and $n \ge 1$, and let $S_n = \Sigma^n$ with the Levenshtein (edit) distance $\operatorname{edit}$. For a set $B$ of buckets, a bucketing function is a map $f : S_n \to \mathcal{P}(B)$. For integers $0 \le d_1 < d_2$, $f$ is **$(d_1, d_2)$-sensitive** if for all $s, t \in S_n$
+
 $$\operatorname{edit}(s,t) \le d_1 \Rightarrow f(s) \cap f(t) \neq \emptyset, \qquad \operatorname{edit}(s,t) \ge d_2 \Rightarrow f(s) \cap f(t) = \emptyset.$$
+
 Requiring $|f(s)| = 1$ for all $s$ recovers deterministic locality-sensitive hashing. Write $N^d_n(s) = \{t \in S_n : \operatorname{edit}(s,t) \le d\}$.
 
 **Lemma 1 (packing lower bound).** If $N^{d_1}_n(s)$ contains $x$ sequences with pairwise edit distance at least $d_2$, then every $(d_1,d_2)$-sensitive $f$ has $|f(s)| \ge x$.

@@ -3,6 +3,7 @@
 **Setting.** For the neural field with exponential temporal kernel $\kappa(u)=\alpha e^{-\alpha u}$, leak $\tau$, transmission speed $\nu$ and connectivity $J$, linearized at the uniform equilibrium $v_0=\tau E$, let $\beta=\alpha c\tau F'(v_0)$, $D=|\beta|\int_{-\infty}^\infty|J(z)|\,dz$ and $L(\lambda)=\tau\lambda+1$. A neutral mode is a solution $w(x,t)=e^{i\omega t}e^{ikx}$, $\omega,k\in\mathbb R$, of the linearized equation, i.e. $\lambda=i\omega$ solves the dispersion relation $L(\lambda)=\beta\frac{\lambda}{\alpha+\lambda}\int J(z)e^{-\lambda|z|/\nu}e^{-ikz}dz$.
 
 **Theorem.** Let $L$ be a polynomial whose roots have non-positive real parts. There is $B>0$, depending only on $L$ and $D$, such that every neutral mode has $|\omega|\le B$. If moreover $D<1$, there is $A>0$ depending on $L$ and $D$ with $0<A\le|\omega|$. For $L(\lambda)=\tau\lambda+1$,
+
 $$\tau^2\omega^2\le D^2-1 .$$
 
 ## Expansion

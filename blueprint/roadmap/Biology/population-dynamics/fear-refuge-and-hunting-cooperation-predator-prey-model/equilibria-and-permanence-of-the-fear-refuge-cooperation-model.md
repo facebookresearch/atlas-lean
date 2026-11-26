@@ -1,14 +1,18 @@
 # Equilibria and permanence of the fear–refuge–cooperation predator–prey model
 
 **Model.** Prey $N(t)\ge 0$ and predators $P(t)\ge 0$ satisfy
+
 $$\dot N=\frac{r_0N}{1+k_1P}-r_1N-r_2(1+k_2P)N^2-\frac{\alpha\,g(P)\,NP}{a+g(P)\,N},\qquad \dot P=\frac{\alpha_1\alpha\,g(P)\,NP}{a+g(P)\,N}-d_1P-\frac{qEP}{c_1E+c_2P},$$
+
 where $g(P)=(1-mP)(1+cP)$ combines a predator-dependent refuge ($m$) with hunting cooperation ($c$), $k_1,k_2$ measure fear, $\alpha_1\in(0,1)$ is the conversion efficiency and the last term is saturating (Michaelis–Menten) harvesting with effort $E$. All parameters are positive; the model is used on $0\le P<1/m$, where $g>0$.
 
 **Theorem (boundary equilibria).**
 1. The positive quadrant is invariant, and the extinction equilibrium $E_0=(0,0)$ always exists, with Jacobian eigenvalues $r_0-r_1$ and $-(d_1+q/c_1)$. It is stable if $r_0<r_1$ and unstable if $r_0>r_1$.
 2. The prey-only equilibrium $E_1=(N_1,0)$ with $N_1=(r_0-r_1)/r_2$ exists iff $r_0>r_1$; so $E_0$ and $E_1$ exchange stability through a transcritical bifurcation at $r_0=r_1$.
 3. At $E_1$ the eigenvalues are $-(r_0-r_1)$ and the predator invasion rate
+
 $$\lambda_P=\frac{\alpha_1\alpha N_1}{a+N_1}-d_1-\frac{q}{c_1}.$$
+
 Hence $E_1$ is locally asymptotically stable iff $\lambda_P<0$, i.e. iff $(r_0-r_1)\,[c_1(d_1-\alpha\alpha_1)+q]+a r_2\,(c_1d_1+q)>0$, and the predator can invade when this inequality is reversed.
 4. An interior equilibrium $E^*$, when it exists, is locally asymptotically stable iff $A_1=-\operatorname{tr}J(E^*)>0$ and $A_2=\det J(E^*)>0$; a Hopf bifurcation in a parameter $r_0$ occurs at $r_0^c$ with $A_1(r_0^c)=0$, $A_2(r_0^c)>0$ and transversality $\big(2v^2\,dA_1/dr_0+A_1\,dA_2/dr_0\big)|_{r_0^c}\ne 0$, $v^2=A_2(r_0^c)$.
 

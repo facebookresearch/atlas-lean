@@ -11,6 +11,7 @@ $$\Omega = \omega_0 + \frac{g}{N}\sum_{j=1}^N a_{ij}\sin(-\Omega\tau^E_{ij} + \D
 and again $\Omega \in [\omega_0 - g, \omega_0 + g]$. Put $C^0_{ij} = \cos\Delta_{ij}$, $C_{ij} = \cos(-\Omega\tau^E_{ij} + \Delta_{ij})$ and $H_{ij} = H(\tau^E_{ij})$. Linearizing with $\theta_i = \Omega t + \phi_i + \epsilon_i$ and $\tau_{ij} = \tau^E_{ij} + \eta_{ij}$, the modes $\epsilon_i = v_i e^{\lambda t}$, $\eta_{ij} = w_{ij}e^{\lambda t}$ ($\lambda \ne -1$) satisfy $w_{ij} = \kappa C^0_{ij}H_{ij}(v_j - v_i)/(\lambda + 1)$ and $M_\lambda v = 0$ with
 
 $$(M_\lambda)_{ii} = \lambda(\lambda+1) + \frac{g}{N}\sum_j a_{ij}C_{ij}\bigl(\lambda + 1 - \Omega\kappa C^0_{ij}H_{ij}\bigr),$$
+
 $$(M_\lambda)_{ij} = \frac{g}{N}\,a_{ij}C_{ij}\bigl[\Omega\kappa C^0_{ij}H_{ij} - (\lambda+1)e^{-\lambda\tau^E_{ij}}\bigr] \quad (i \ne j).$$
 
 The state is linearly stable when every non-neutral root of $\det M_\lambda = 0$ has negative real part. For $\kappa = 0$ the delays stay at $\tau^0_{ij}$, the offsets vanish, and the criterion reduces to the non-plastic one.

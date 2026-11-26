@@ -11,7 +11,9 @@ This is equivalent to minimum convex recoloring of the leaves (uncolor exactly t
 **Proposition 1.** Every compatible choice of legal allocations at all internal nodes (an implicit subcoloring) defines a convex subcoloring, and every convex subcoloring arises this way.
 
 **Theorem 1.** Maximizing over implicit subcolorings by recursion on questions $(c,X)$ at each node solves Problem 1 in time
+
 $$O\big(n\,d\,\beta^2\,2^{d+\beta}\,(d-1)^{d\beta/2}\big),$$
+
 which is favourable for nearly bifurcating trees with moderate badness. An admissible upper bound on subtree answers turns the recursion into an exact branch-and-bound (Algorithm 1).
 
 ## Expansion

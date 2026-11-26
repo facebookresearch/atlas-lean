@@ -3,6 +3,7 @@
 **Setting (fragile breakage model).** Genomes $P_n$ and $Q_n$ consist of $n$ solid regions separated by $n$ fragile regions (adjacencies; linear chromosomes are circularised by one artificial adjacency). $Q_n$ is obtained from $P_n$ by $k$ random double-cut-and-join operations (DCJs), each choosing two adjacencies uniformly at random and rejoining them in one of the two other ways. In the breakpoint graph $G(P_n,Q_n)$ (black adjacencies of $P$, red adjacencies of $Q$), an $\ell$-cycle is an alternating cycle with $\ell$ black edges, and $c_\ell$ counts them. Only non-trivial cycles ($\ell\ge 2$) are observable from the synteny blocks of $P,Q$: the observable quantities are $c_\ell$ for $\ell\ge2$, the number of broken fragile regions $b=\sum_{\ell\ge2}\ell c_\ell$ and the DCJ distance $d=b-\sum_{\ell\ge2}c_\ell$, while $n$, $c_1$ and the true distance $k$ are hidden.
 
 **Theorem 1.** If $k=\lfloor\gamma n/2\rfloor$ for fixed $\gamma>0$, then for every fixed $\ell\ge1$, as $n\to\infty$,
+
 $$\frac{\ell\,c_\ell}{n}=p_\ell+O_p\!\big(n^{-1/2}\big),\qquad p_\ell=\frac{e^{-\gamma\ell}(\gamma\ell)^{\ell-1}}{\ell!}.$$
 
 **Lemma 1.** The number $\tilde c_\ell$ of $\ell$-cycles produced entirely by $\ell-1$ merging DCJs has mean $\mathbb E\tilde c_\ell=\frac{n}{\ell}\,p_\ell+O(1)$. **Lemma 2.** $\operatorname{Var}\tilde c_\ell=O(n)$. **Lemma 3.** The numbers of DCJs that split or preserve cycles of bounded length are stochastically bounded, so $c_\ell-\tilde c_\ell=O_p(1)$.

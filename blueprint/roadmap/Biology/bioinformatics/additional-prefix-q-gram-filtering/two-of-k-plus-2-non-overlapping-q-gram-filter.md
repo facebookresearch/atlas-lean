@@ -5,7 +5,9 @@
 **Classical prefix filter.** If $g_1,\dots,g_{k+1}$ are non-overlapping $q$-grams of $r$, every mapping position lies in $\bigcup_{i=1}^{k+1}I_n(g_i)$.
 
 **Lemma (additional prefix).** If $g_1,\dots,g_{k+2}$ are non-overlapping $q$-grams of $r$, every mapping position of $r$ within Hamming distance $k$ lies in at least two of the lists $I_n(g_1),\dots,I_n(g_{k+2})$; equivalently, the candidate set can be taken as
+
 $$\bigcap_{\substack{S\subseteq\{1,\dots,k+2\}\\|S|=k+1}}\ \bigcup_{i\in S}I_n(g_i)\;=\;\bigcup_{1\le i<j\le k+2}\big(I_n(g_i)\cap I_n(g_j)\big),$$
+
 which is contained in the classical candidate set of any $k+1$ of the $q$-grams.
 
 ## Expansion

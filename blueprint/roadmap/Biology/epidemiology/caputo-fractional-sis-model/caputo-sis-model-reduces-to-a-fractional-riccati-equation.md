@@ -1,15 +1,20 @@
 # Caputo fractional SIS model reduces to a fractional Riccati equation
 
 **Model.** In a population of constant size $N$, with contact rate $\beta>0$, recovery rate $\gamma>0$ and infected death rate $e>0$ (deaths replaced by susceptible newborns), the Caputo fractional SIS model of order $\alpha\in(0,1)$ is
+
 $$D_{0,t}^{\alpha}S=-\frac{\beta}{N}SI+(e+\gamma)I,\qquad D_{0,t}^{\alpha}I=\frac{\beta}{N}SI-(e+\gamma)I,\qquad (S(0),I(0))=(N-I_0,I_0).$$
 
 **Statement.**
 
 1. *Reduction.* $D^\alpha_{0,t}(S+I)=0$, so $S+I\equiv N$, and the infected class solves the fractional Riccati (logistic) equation
+
 $$D_{0,t}^{\alpha}I=c\,I-\frac{\beta}{N}I^2,\qquad I(0)=I_0,\qquad c=\beta-(e+\gamma).$$
+
 2. *Well-posedness.* The right-hand side $f(I)=cI-\frac{\beta}{N}I^2$ is locally Lipschitz, so on a box $[0,b]\times[I_0-\delta,I_0+\delta]$ there is a unique solution on $[0,b^*]$ with $b^*=\min\{b,(\delta\,\Gamma(\alpha+1)/\|f\|_\infty)^{1/\alpha}\}$. The constant states $I\equiv0$ and, for $c\ne0$, $I\equiv cN/\beta$ are solutions, and by uniqueness the solution from $I_0=cN/\beta$ stays there.
 3. *Variational iteration.* With $d=-\beta/N$, the iteration $I_{n+1}=I_n-D_{0,t}^{-\alpha}\big(D_{0,t}^{\alpha}I_n-cI_n-dI_n^2\big)$, $I_0(t)\equiv I_0$, produces polynomials in $t^\alpha$; the first step is $I_1(t)=I_0+\frac{cI_0+dI_0^2}{\Gamma(\alpha+1)}t^\alpha$. For $\alpha\to1$ the iterates reproduce the Taylor expansion of the classical logistic solution
+
 $$I(t)=\frac{cI_0}{\frac{\beta}{N}I_0+\big(c-\frac{\beta}{N}I_0\big)e^{-ct}}\quad(c\ne0),\qquad I(t)=\frac{I_0}{1+\beta I_0t/N}\quad(c=0).$$
+
 4. *Isolated infecteds.* If $\beta=0$ the equation is linear, $D^\alpha_{0,t}I=-(e+\gamma)I$, and the iteration sums exactly to $I(t)=I_0\,E_{\alpha}\!\big(-(e+\gamma)t^{\alpha}\big)$, a Mittag-Leffler decay that is slower than exponential for $\alpha<1$ (memory delays eradication).
 
 ## Expansion

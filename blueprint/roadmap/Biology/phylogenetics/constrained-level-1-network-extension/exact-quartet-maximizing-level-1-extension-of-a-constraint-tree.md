@@ -11,9 +11,13 @@ Fix a rooted binary tree $T$ on $n$ taxa (the constraint tree) and a multiset $\
 **Lemma 2 (one edge per target).** In a level-1 extension of $T$, each node $v$ of $T$ is the target of at most one non-tree edge.
 
 **Dynamic program.** Let $s_e(u,w)$ be the number of quartets of $\mathcal{Q}$ satisfied by an edge added above $(u,w)$, and $M[v]$ the best score using only edges with targets in the subtree $T_v$. With $M[v] = 0$ at leaves,
+
 $$M[v] = \max\Bigl\{ M[l(v)] + M[r(v)],\ \max_{(u,w) \in \mathrm{Pairs}(v)} \bigl( s_e(u,w) + s_{dp}(v,u,w) \bigr) \Bigr\},$$
+
 where $\mathrm{Pairs}(v)$ are the ordered pairs with $\mathrm{lca}_T(u,w) = v$ (including $u = v$ with $w$ below $v$, which models a ghost lineage, except at the root) and, for $u \neq v$,
+
 $$s_{dp}(v,u,w) = M[u] + M[w] + \sum_{x \in \gamma(u,w) \cap V(T) \setminus \{v\}} \begin{cases} M[l(x)] & \text{if } l(x) \in \gamma(u,w), \\ M[r(x)] & \text{otherwise,}\end{cases}$$
+
 which collects the best scores of the subtrees hanging off the cycle (for $u = v$ drop the $M[u]$ term and sum over all tree nodes of the cycle).
 
 **Theorem 1.** $M[r]$ at the root $r$ of $T$ is the maximum number of quartets of $\mathcal{Q}$ satisfiable by a level-1 extension of $T$, and backtracking returns an optimal network. It runs in $O(n^2(|\mathcal{Q}| + n))$ time and $O(n^4)$ space, where $|\mathcal{Q}|$ counts distinct quartet topologies. Indexing the table also by the number $k \le m \le n-1$ of added edges returns, for every $k$, an optimal level-1 extension with exactly $k$ reticulations in $O(n^2(|\mathcal{Q}| + m^3 n))$ time.

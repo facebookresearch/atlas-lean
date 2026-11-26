@@ -11,8 +11,11 @@ with nonnegative, not identically zero initial data and homogeneous Neumann cond
 **Theorem 1 (positivity and boundedness).** Solutions stay nonnegative, and $N=S+I+R$ satisfies $\limsup_{t\to\infty}\sup_{x\in\Omega}N(t,x)\le\Lambda/\mu$.
 
 **Equilibria.** Set
+
 $$\mathcal R_0=\frac{\Lambda\beta\Theta}{\mu(\mu+\gamma)}.$$
+
 The disease-free equilibrium is $E_1=(\Lambda/\mu,0,0)$. If $\mathcal R_0>1$ there is a unique endemic equilibrium $E_2=(S^*,I^*,R^*)$ with
+
 $$S^*=\frac{\gamma+\mu}{\beta\Theta},\qquad I^*=\frac{\Lambda}{\gamma+\mu}-\frac{\mu}{\beta\Theta},\qquad R^*=\frac{\gamma}{\mu}I^*.$$
 
 **Theorems 2-5 (threshold dynamics).** If $\mathcal R_0<1$, $E_1$ is locally and globally asymptotically stable (and it is unstable if $\mathcal R_0>1$). If $\mathcal R_0>1$, $E_2$ is locally and globally asymptotically stable among positive solutions.

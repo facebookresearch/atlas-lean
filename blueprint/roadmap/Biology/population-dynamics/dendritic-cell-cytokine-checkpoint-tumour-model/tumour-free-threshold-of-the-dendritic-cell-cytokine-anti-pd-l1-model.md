@@ -8,11 +8,17 @@ $$\begin{aligned}
 Here $\alpha,\beta$ give logistic tumour growth, $\gamma$ and $\phi$ are killing by dendritic and T cells, $\mu$ is the dendritic-cell source, $\rho$ is T-cell expansion on contact with dendritic cells (which inactivates them), and $\kappa,\omega$ are natural death rates. IL-2 is produced from dendritic cells at rate $\lambda$, and the cascade $I_2\to I_{12}\to Z$ is linear.
 
 **Tumour-free equilibrium.** The model has the equilibrium with no tumour and no T cells
+
 $$E_0=\Big(0,\ 0,\ \tfrac{\mu}{\omega+\lambda},\ \tfrac{\lambda\mu}{d(\omega+\lambda)},\ \tfrac{\lambda\mu}{\psi(\omega+\lambda)},\ \tfrac{\lambda\mu}{a(\omega+\lambda)}\Big).$$
+
 Set
+
 $$R_0=\frac{\mu\rho}{\kappa(\lambda+\omega)} .$$
+
 **Proposition.** The Jacobian at $E_0$ is lower triangular with eigenvalues
+
 $$\alpha-\gamma,\quad \frac{\mu\rho}{\lambda+\omega}-\kappa=\kappa(R_0-1),\quad -(\lambda+\omega),\quad -d,\quad -\psi,\quad -a .$$
+
 So $E_0$ is locally asymptotically stable if $\alpha<\gamma$ and $R_0<1$, and unstable if $\alpha>\gamma$ or $R_0>1$.
 
 ## Expansion

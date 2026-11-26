@@ -1,7 +1,9 @@
 # Consistency of average internode distance species-tree estimation
 
 **Setting.** Let $\mathcal G$ be a collection of $k$ rooted or unrooted gene trees, each on a subset of $n$ species, generated independently under the multispecies coalescent (MSC) on a species tree $S$. For a gene tree $G$ and taxa $u,v$ of $G$, let $P_G(u,v)$ be the path between their leaves and $d_G(u,v)=|P_G(u,v)|$ its number of edges. Let $\mathcal G_{u,v}$ be the gene trees containing both $u$ and $v$. The *average intertaxon (internode) distance matrix* is
+
 $$\bar d(u,v)=\frac{1}{|\mathcal G_{u,v}|}\sum_{G\in\mathcal G_{u,v}}d_G(u,v).$$
+
 The ASTRID method returns the tree found by a balanced minimum evolution (BME) local search (greedy start, then NNI or SPR moves to a local optimum) on $\bar d$. Weighted variants replace each edge count by a per-edge weight $w(e)\ge 0$, namely branch support ($d_G(u,v)=\sum_{e\in P_G(u,v)}s(e)$) or branch length.
 
 **Theorem 1 (statistical consistency).** Under the MSC, as $k\to\infty$ with every pair of species co-occurring in a positive fraction of gene trees, $\bar d$ converges almost surely to a matrix that is additive on the unrooted topology of $S$. Because the BME local search has a positive safety radius (there is $\epsilon>0$ such that any input $d$ with $\|d-D\|_\infty<\epsilon$ for an additive $D$ on $T$ returns the unrooted topology of $T$), ASTRID run to a local optimum is statistically consistent for the unrooted species-tree topology.

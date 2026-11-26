@@ -1,11 +1,15 @@
 # Blockwise q-gram distance and optimal rotation
 
 **Setting.** Strings are arrays $x[0..m-1]$ over a fixed alphabet $\Sigma$ with $|\Sigma| = O(1)$. The $i$-th rotation of $x$ is $x^{(i)} = x[i..m-1]\,x[0..i-1]$. For $q > 0$ the **$q$-gram profile** $G_q(x)$ is the vector indexed by $v \in \Sigma^q$ whose entry is the number of occurrences of $v$ in $x$, and the **$q$-gram distance** is
+
 $$D_q(x,y) = \sum_{v \in \Sigma^q} \bigl| G_q(x)[v] - G_q(y)[v] \bigr| .$$
+
 It is a pseudometric: non-negative, symmetric and satisfies the triangle inequality, but distinct strings may have distance $0$.
 
 **Definition (blockwise $q$-gram distance).** Let $|x| = m \le n = |y|$ and $\beta \ge 1$, with $m$ and $n$ multiples of $\beta$. Cut $x$ into $\beta$ consecutive blocks of length $m/\beta$ and $y$ into $\beta$ blocks of length $n/\beta$, and set
+
 $$D_{\beta,q}(x,y) = \sum_{j=0}^{\beta-1} D_q\!\left(x\!\left[\tfrac{jm}{\beta} .. \tfrac{(j+1)m}{\beta}-1\right],\ y\!\left[\tfrac{jn}{\beta} .. \tfrac{(j+1)n}{\beta}-1\right]\right).$$
+
 $\beta = 1$ recovers $D_q$; larger $\beta$ forces $q$-grams to match in roughly the same region, restoring some of the locality an alignment would have.
 
 **Circular sequence comparison (CSC).** Given $x$, $y$ with $m \le n$, $\beta \ge 1$ and $q < m$, find a rotation index $i \in \{0,\dots,m-1\}$ minimizing $D_{\beta,q}(x^{(i)}, y)$.

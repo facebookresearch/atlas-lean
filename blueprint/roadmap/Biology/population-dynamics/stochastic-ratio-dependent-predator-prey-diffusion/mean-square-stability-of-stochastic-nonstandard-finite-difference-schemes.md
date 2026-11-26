@@ -1,17 +1,24 @@
 # Mean-square stability of explicit and nonstandard finite-difference schemes for a stochastic predator-prey diffusion
 
 **Setting.** On a grid $x_j=jh$, $t_k=k\Delta\tau$, approximate the stochastic ratio-dependent predator-prey reaction-diffusion system
+
 $$P_t=\sigma_1P_{xx}+P(a-bP)-\frac{cPQ}{mQ+P}+\eta_1P\dot B_1(t),\qquad Q_t=\sigma_2Q_{xx}-dQ+\frac{fPQ}{mQ+P}+\eta_2Q\dot B_2(t),$$
+
 with independent standard Wiener processes $B_1,B_2$, bounded noise strengths $\eta_1,\eta_2$, homogeneous Neumann boundary conditions and positive initial data. Put $D_i=\sigma_i\Delta\tau/h^2$ and $\Delta B_i^k=B_i((k+1)\Delta\tau)-B_i(k\Delta\tau)$, so $\mathbb E(\Delta B_i^k)^2=\Delta\tau$.
 
 - *Stochastic forward Euler (SFE):* $P^{k+1}_j=D_1(P^k_{j+1}+P^k_{j-1})+(1-2D_1)P^k_j+\Delta\tau\,P^k_j(a-bP^k_j)-\Delta\tau\,\frac{cP^k_jQ^k_j}{mQ^k_j+P^k_j}+\eta_1P^k_j\Delta B_1^k$, and analogously for $Q$.
 - *Stochastic nonstandard finite differences (Mickens type):* the diagonal and loss terms move to the new time level,
+
 $$P^{k+1}_j=\frac{D_1(P^k_{j+1}+P^k_{j-1})+(1+a\Delta\tau)P^k_j+\eta_1P^k_j\Delta B_1^k}{1+2D_1+b\Delta\tau P^k_j+c\Delta\tau\,Q^k_j/(mQ^k_j+P^k_j)},\quad Q^{k+1}_j=\frac{D_2(Q^k_{j+1}+Q^k_{j-1})+f\Delta\tau\,\frac{P^k_jQ^k_j}{mQ^k_j+P^k_j}+\eta_2Q^k_j\Delta B_2^k}{1+2D_2+d\Delta\tau}.$$
 
 **Statement (von Neumann analysis in mean square, linearized prey equation).** For a Fourier mode $e^{\iota j\theta}$, $\theta\in[-\pi,\pi]$, the amplification factors are
+
 $$g_{\rm SFE}=1+a\Delta\tau-4D_1\sin^2\tfrac{\theta}{2}+\eta_1\Delta B_1,\qquad g_{\rm NSFD}=\frac{1+a\Delta\tau+2D_1-4D_1\sin^2\frac{\theta}{2}+\eta_1\Delta B_1}{1+2D_1}.$$
+
 Hence
+
 $$\mathbb E|g_{\rm NSFD}|^2=\Big(\frac{1+2D_1\cos\theta+a\Delta\tau}{1+2D_1}\Big)^2+\frac{\eta_1^2\Delta\tau}{(1+2D_1)^2}\le 1+K\Delta\tau$$
+
 with $K$ depending only on $a$ and $\eta_1$, for every $D_1>0$: the nonstandard scheme is stable in mean square with no restriction linking $\Delta\tau$ and $h$. The explicit scheme requires the deterministic part $|1+a\Delta\tau-4D_1\sin^2(\theta/2)|\le 1+O(\Delta\tau)$ for all $\theta$, which forces the parabolic restriction $D_1\le 1/2+O(\Delta\tau)$; the predator equation gives the same picture with $a$ replaced by $-d$. Both schemes are consistent with the system in mean square, $\mathbb E|L(\phi)-L_h(\phi)|^2\to0$ for smooth $\phi$ as $h,\Delta\tau\to0$.
 
 ## Expansion

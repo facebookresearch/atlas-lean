@@ -1,13 +1,19 @@
 # Mean-field limit of density-suppressed random walks
 
 **Individual-based model.** Individuals at positions $x_i(t)\in\mathbb R^d$, $i=1,\dots,N$, sense the average density
+
 $$\vartheta_i=\frac1N\sum_{j\ne i}W(x_i-x_j),$$
+
 with $W(x)=w(|x|)$ bounded, nonnegative, nonincreasing and integrable (e.g. the indicator of a sampling radius $R$), and move by a density-dependent random walk
+
 $$dx_i=G(\vartheta_i)\,dB^i_t,$$
+
 with independent Brownian motions $B^i$ and $G:\mathbb R_+\to\mathbb R_+$ bounded, nonnegative and nonincreasing (degeneracy $G=0$ allowed). In a second-order variant velocities obey $dv_i=-H(\vartheta_i)v_i\,dt+G(\vartheta_i)\,dB^i_t$ with nondecreasing damping $H$.
 
 **Mean-field equation.** As $N\to\infty$ (formally, for $W\in C^1$) the density $\varrho(t,x)$ satisfies the nonlocal nonlinear diffusion
+
 $$\partial_t\varrho=\Delta\big(F(W*\varrho)\,\varrho\big),\qquad F=\tfrac12G^2,$$
+
 which is also the diffusive limit of the kinetic Fokker–Planck equation of the second-order model, with local temperature $T=G(W*\varrho)^2/(2H(W*\varrho))$.
 
 **Theorem.** Let $F$ be bounded, nonnegative, nonincreasing and $C^1$ with globally Lipschitz derivative, and $W$ sufficiently smooth.

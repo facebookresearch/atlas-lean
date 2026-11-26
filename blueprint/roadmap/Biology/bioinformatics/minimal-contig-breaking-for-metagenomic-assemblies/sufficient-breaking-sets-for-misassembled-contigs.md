@@ -5,7 +5,9 @@
 **Proposition 1.** $R$ makes $C\setminus R$ consistent with $g\setminus R$ for every $g\in\mathcal G_T$ iff $R$ is a sufficient breaking set; so sufficiency does not depend on which ground truth produced the contigs.
 
 **Algorithm (Eq. 2).** With a Boolean $b_e$ per edge, choose a minimum-cardinality set $R=\{e:b_e\}$ satisfying
+
 $$\Phi(b)=\bigwedge_{v:\ |\mathrm{Pred}(v)|\ge2,\ |\mathrm{Succ}(v)|\ge2}\Big(\bigwedge_{e\in\mathrm{In}(v)}b_e\ \vee\ \bigwedge_{e\in\mathrm{Out}(v)}b_e\Big),$$
+
 i.e. at every vertex with at least two distinct predecessors and two distinct successors, cut all incoming or all outgoing edges; the problem decomposes over connected components.
 
 **Proposition 3.** If $G$ is fully contracted, every $R$ satisfying $\Phi$ is a sufficient breaking set.

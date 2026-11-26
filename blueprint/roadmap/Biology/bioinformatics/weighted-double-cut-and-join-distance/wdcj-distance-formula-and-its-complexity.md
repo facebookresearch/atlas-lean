@@ -4,7 +4,9 @@ A weighted genome on a set $V$ of $2n$ gene extremities is a perfect matching on
 
 1. If all cycles of $BG(g_1, g_2)$ are balanced, $wDCJ(g_1, g_2) = n - n_b = n - c$, as for the unweighted DCJ distance.
 2. In general,
+
    $$wDCJ(g_1, g_2) = n - c + 2m,$$
+
    where $m$ is the minimum number of cycle merges needed to turn the unbalanced cycles into balanced ones; equivalently, $c - m$ is attained by partitioning the multiset of imbalances of the unbalanced cycles into the maximum number of zero-sum parts.
 3. Deciding the wDCJ distance is strongly NP-complete (by reduction from 3-Partition).
 4. It is $\frac{4}{3}$-approximable, by merging zero-sum pairs, then (approximately) zero-sum triples, then all remaining unbalanced cycles.

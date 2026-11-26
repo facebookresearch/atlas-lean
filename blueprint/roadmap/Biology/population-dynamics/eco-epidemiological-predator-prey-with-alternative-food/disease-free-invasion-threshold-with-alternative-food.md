@@ -13,7 +13,9 @@ with all parameters positive. Here $\gamma$ is the infection rate, predation on 
 1. All solutions starting in $\mathbb{R}^3_+$ are uniformly bounded (Theorem 1).
 2. The trivial equilibrium $(0,0,0)$ is always unstable, and the axial equilibrium $(1,0,0)$ is unstable if $\gamma > d$ (disease can invade the predator-free prey population) or $e < \epsilon(1 + c\xi)/(1 + \alpha\xi + b)$ (predators can invade) (Theorem 2).
 3. At a disease-free equilibrium $E_D = (\bar s, 0, \bar p)$ the Jacobian has $a_{21} = a_{23} = 0$, so one eigenvalue is
+
 $$a_{22} = \gamma \bar s - \frac{\beta \bar p}{1 + \alpha\xi} - d,$$
+
 and $E_D$ is locally stable iff $a_{22} < 0$ and the remaining $(s,p)$ block satisfies the Routh–Hurwitz conditions (Theorem 3).
 
 Condition 3 shows the mechanism of control: alternative food changes $(\bar s, \bar p)$ and the effective predation pressure $\beta/(1+\alpha\xi)$ on infected prey, so that $\gamma\bar s < d + \beta\bar p/(1+\alpha\xi)$ can hold at infection rates where it fails without alternative food; numerically there is a critical infection rate above which the system cannot become disease-free without alternative food but can with it.

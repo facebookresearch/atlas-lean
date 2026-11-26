@@ -9,7 +9,9 @@
 **SOR.** If $D$ is a DO through a flux $\hat v$ feasible for $D$, then $\mathrm{SOR}(\hat v) = \{r_j : \hat v_j > 0\}$ is a **set of organizational reactions**. A species $s_i$ is overproduced by $\hat v$ if $(N\hat v)_i > 0$.
 
 **Elementary reaction closure (ERC).** For $\hat r \in \mathcal{R}$,
+
 $$\mathrm{ERC}(\hat r) = \{ r \in \mathcal{R} : \operatorname{supp}(r) \subseteq \operatorname{clos}(\operatorname{supp}(\hat r)) \},$$
+
 the reactions switched on once $\hat r$ runs.
 
 **Lemma 3 (equivalent definition).** $R \subseteq \mathcal{R}$ is a SOR iff there is $\hat v \in \mathbb{R}^m_+$ with

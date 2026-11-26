@@ -5,13 +5,19 @@
 **Ligand-excess assumption.** The free ligand concentration $[L]$ is constant in time, equal to its initial value $l_0$.
 
 **Proposition.** Under ligand excess the vector of macrostate concentrations $\gamma=([\alpha_1],\dots,[\alpha_n],[\beta_1],\dots,[\beta_m])^{\top}$ satisfies the linear system
+
 $$\frac{d\gamma}{dt}=\mathbf R(l_0)\,\gamma,\qquad \mathbf R(l_0)=\begin{pmatrix}\mathbf A & \mathbf C\\ l_0\,\mathbf D & \mathbf B\end{pmatrix},$$
+
 where $a_{ij}=r(\alpha_j\to\alpha_i)$, $b_{ij}=r(\beta_j\to\beta_i)$, $c_{ij}=r(\beta_j\to\alpha_i)$, $d_{ij}=r(\alpha_j\to\beta_i)$ for $i\ne j$ (all entries of $\mathbf C,\mathbf D$), and the diagonals are
+
 $$a_{ii}=-\sum_{k\ne i}r(\alpha_i\to\alpha_k)-l_0\sum_{k}r(\alpha_i\to\beta_k),\qquad b_{jj}=-\sum_{k}r(\beta_j\to\alpha_k)-\sum_{k\ne j}r(\beta_j\to\beta_k).$$
+
 Every column of $\mathbf R(l_0)$ sums to zero, so total RNA is conserved, and the solution is $\gamma(t)=\exp(t\,\mathbf R(l_0))\,\gamma(0)$.
 
 **Effective dissociation constant.** If the binding energy is calibrated from the measured dissociation constant $K_d^{A}$ of the isolated aptamer at temperature $T_A$ as $\theta=RT_A\ln\!\big(K_d^{A}\,\Pr[\text{pocket}\mid A,T_A]\big)$, then a longer riboswitch $RS$ that contains the aptamer has effective dissociation constant at temperature $T_R$
+
 $$K_d^{RS}=\frac{\exp(\theta/(RT_R))}{\Pr[\text{pocket}\mid RS,T_R]}=\frac{\big(K_d^{A}\Pr[\text{pocket}\mid A,T_A]\big)^{T_A/T_R}}{\Pr[\text{pocket}\mid RS,T_R]},$$
+
 where $\Pr[\text{pocket}\mid\cdot]$ is the equilibrium probability of the binding-pocket structure.
 
 ## Expansion

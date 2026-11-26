@@ -3,9 +3,13 @@
 **Urn model.** On $N$ sites, species $A$ occupies a uniformly random set of $m_A$ sites. Species $B$ then occupies each site independently, with probability $p_1$ if $A$ is present and $p_2$ if not. Let $X$ be the number of sites occupied by both species.
 
 **Theorem (affinity parameter).** Conditional on $B$ occupying exactly $m_B$ sites, the law of $X$ depends on $(p_1,p_2)$ only through the log odds ratio
+
 $$\alpha=\log\frac{p_1(1-p_2)}{p_2(1-p_1)},$$
+
 and is the extended hypergeometric distribution
+
 $$\Pr(X=k)=\frac{\binom{m_A}{k}\binom{N-m_A}{m_B-k}e^{k\alpha}}{\sum_{j=L}^{U}\binom{m_A}{j}\binom{N-m_A}{m_B-j}e^{j\alpha}},\qquad L=\max(m_A+m_B-N,0)\le k\le U=\min(m_A,m_B).$$
+
 The distribution is unchanged if the roles of $A$ and $B$ are swapped; $\alpha=0$ gives the hypergeometric null of random assortment, and $\alpha$ is one quarter of the row–column interaction of the log-linear model of the $2\times2$ table.
 
 **Estimation and intervals.**

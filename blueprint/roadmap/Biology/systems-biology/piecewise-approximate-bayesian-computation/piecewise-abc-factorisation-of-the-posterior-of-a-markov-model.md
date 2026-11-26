@@ -1,17 +1,23 @@
 # Piecewise ABC factorisation of the posterior of a discretely observed Markov model
 
 **Setting.** Let $\theta \in \mathbb{R}^d$ have prior density $\pi(\theta)$ and let $x = (x_1,\dots,x_n)$, $x_i = x(t_i)$, be observations of a Markov process, so that (ignoring the contribution of $x_1$) the likelihood is
+
 $$\pi(x \mid \theta) = \prod_{i=2}^n \pi(x_i \mid x_{i-1}, \theta).$$
 
 **Factorisation (Eq. 2).** With
+
 $$\varphi_i(\theta) = \frac{\pi(x_i \mid x_{i-1},\theta)\,\pi(\theta)}{\int \pi(x_i \mid x_{i-1},\vartheta)\,\pi(\vartheta)\,d\vartheta},$$
+
 the posterior given one transition started at $x_{i-1}$, one has
+
 $$\pi(\theta \mid x) \;\propto\; \pi(\theta)^{2-n}\prod_{i=2}^n \varphi_i(\theta).$$
 
 **Piecewise ABC (PW-ABC).** For each $i$, draw $\theta^* \sim \pi$, simulate $y_i \sim \pi(\cdot \mid x_{i-1},\theta^*)$ and accept if $\|y_i - x_i\| \le \varepsilon$; the accepted draws sample an ABC approximation $\varphi_i^{\varepsilon}$ of $\varphi_i$, with no summary statistic needed because each factor involves a single data point. Estimate each factor density, multiply, multiply by $\pi(\theta)^{2-n}$, and normalise.
 
 **Gaussian product rule.** If each factor is approximated by $\mathcal N(\hat\mu_i, Q_i)$ (sample mean and covariance of its ABC sample), the product is proportional to $\mathcal N(a, B)$ with
+
 $$B^{-1} = \sum_{i=2}^n Q_i^{-1}, \qquad a = B\sum_{i=2}^n Q_i^{-1}\hat\mu_i.$$
+
 With a Gaussian prior $\mathcal N(\mu_{pri}, \Sigma_{pri})$ the PW-ABC posterior is Gaussian with precision $B^{-1} - (n-2)\Sigma_{pri}^{-1}$ and mean $\big(B^{-1} - (n-2)\Sigma_{pri}^{-1}\big)^{-1}\big(B^{-1}a - (n-2)\Sigma_{pri}^{-1}\mu_{pri}\big)$, provided that precision matrix is positive definite. If instead each factor is estimated by a Gaussian kernel density estimate with bandwidth proportional to $Q_i$ and shrinking at the standard rate, the product estimator is consistent for the PW-ABC target as the per-factor sample size $m \to \infty$ (with $n$ fixed).
 
 **Implied likelihood.** Standard ABC with an $L_p$ ball of radius $\varepsilon$ replaces the likelihood by its average over one ball in the joint data space, while PW-ABC replaces each transition density by its average over a ball around $x_i$; the PW-ABC likelihood is the product of these per-transition averages.

@@ -1,13 +1,19 @@
 # Invariance of transfer entropy and causal strength to deterministic perturbations
 
 **Time-inhomogeneous SVAR model.** Two signals (e.g. two brain regions) follow
+
 $$X^1_t=a_t^{\top}X^1_{p,t}+b_t^{\top}X^2_{p,t}+\eta^1_t,\qquad X^2_t=c_t^{\top}X^1_{p,t}+d_t^{\top}X^2_{p,t}+\eta^2_t,$$
+
 with $X^k_{p,t}=(X^k_{t-1},\dots,X^k_{t-p})^{\top}$ and independent Gaussian innovations $\eta^k_t\sim N(k^k_t,\sigma^2_{k,t})$ whose means and variances, like the coefficients, may vary with peri-event time $t$; peri-event trials are i.i.d. samples of this process.
 
 **Measures.** Time-varying transfer entropy is
+
 $$\mathrm{TE}_{X^2\to X^1}(t)=\mathbb E\Big[\log\frac{p(X^1_t\mid X^1_{p,t},X^2_{p,t})}{p(X^1_t\mid X^1_{p,t})}\Big].$$
+
 Dynamic causal strength (DCS) compares the mechanism with the post-intervention world in which the arrow $X^2_{p,t}\to X^1_t$ is cut by feeding an independent copy of $X^2_{p,t}$:
+
 $$p_{\mathrm{DCS}}(X^1_t\mid X^1_{p,t})=\int p(X^1_t\mid X^1_{p,t},X^2_{p,t})\,p(X^2_{p,t})\,dX^2_{p,t},\qquad \mathrm{DCS}_{X^2\to X^1}(t)=\mathbb E\,D_{KL}\big(p(X^1_t\mid X^1_{p,t},X^2_{p,t})\,\|\,p_{\mathrm{DCS}}(X^1_t\mid X^1_{p,t})\big).$$
+
 Relative DCS (rDCS) instead feeds an independent copy of the cause at a baseline reference time $t_{\mathrm{ref}}$, replacing $p(X^2_{p,t})$ by $p(X^2_{p,t_{\mathrm{ref}}})$ in the mixture.
 
 **Proposition 1.** In the linear SVAR model, TE and DCS are invariant to deterministic perturbations, i.e. to arbitrary changes of the innovation means $(k^1_t,k^2_t)$ at any times. rDCS is not invariant in general.

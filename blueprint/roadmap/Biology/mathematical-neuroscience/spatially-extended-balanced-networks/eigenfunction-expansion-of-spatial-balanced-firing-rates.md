@@ -3,13 +3,19 @@
 **Setting.** Consider the [balanced-rate integral equations](balanced-firing-rates-as-a-fredholm-equation-of-the-first-kind.md) $\mathcal W\boldsymbol r+\boldsymbol F=0$ (infinite network) and $\mathcal W\boldsymbol r+\boldsymbol F=\epsilon D\boldsymbol r$ (finite-$N$ correction). The block operator $\mathcal W=\begin{bmatrix}\mathcal W_{ee}&\mathcal W_{ei}\\\mathcal W_{ie}&\mathcal W_{ii}\end{bmatrix}$ is not Hermitian even for symmetric kernels, because $w_{ei}\ne w_{ie}$, so standard diagonalization does not apply directly.
 
 **Theorem.** Suppose each kernel is symmetric, $w_{ab}(x,y)=w_{ab}(y,x)$, $w_{ab}\in L^2(\Omega^2)$, and the four operators $\mathcal W_{ab}$ share an orthonormal eigenbasis $\{\phi_m\}$ of $L^2(\Omega)$ with eigenvalues $\mu_m^{ab}$. Let
+
 $$\widetilde W_m=\begin{bmatrix}\mu_m^{ee}&\mu_m^{ei}\\\mu_m^{ie}&\mu_m^{ii}\end{bmatrix},\qquad\widetilde{\boldsymbol F}_m=\begin{bmatrix}\langle F_e,\phi_m\rangle\\\langle F_i,\phi_m\rangle\end{bmatrix}.$$
+
 If $\epsilon\ne0$ and $\epsilon D-\widetilde W_m$ is nonsingular for all $m$, then
+
 $$\boldsymbol r(x)=\sum_m[\epsilon D-\widetilde W_m]^{-1}\widetilde{\boldsymbol F}_m\,\phi_m(x)$$
+
 converges in $L^2$ to a solution of the finite-$N$ equation. If the series converges at $\epsilon=0$, its sum solves the balance equation $\mathcal W\boldsymbol r+\boldsymbol F=0$.
 
 **Corollary (separable kernels and inputs).** If $w_{ab}(x,y)=\bar w_{ab}k(x,y)$ and $F_a(x)=\bar F_aF(x)$, with $\mu_m,\phi_m$ the eigenpairs of $(\mathcal Kr)(x)=\int_\Omega k(x,y)r(y)\,dy$ and $\tilde F_m=\langle F,\phi_m\rangle$, the balanced rates are
+
 $$\boldsymbol r(x)=-\overline W^{-1}\overline{\boldsymbol F}\sum_m\frac{\tilde F_m}{\mu_m}\phi_m(x)$$
+
 whenever the series converges, with $\overline W=(\bar w_{ab})$ and $\overline{\boldsymbol F}=(\bar F_e,\bar F_i)$; the excitatory–inhibitory and spatial parts separate. Terms with $\mu_m=0$ require $\tilde F_m=0$. At finite $N$, $\boldsymbol r(x)=\sum_m[\epsilon D-\overline W\mu_m]^{-1}\overline{\boldsymbol F}\tilde F_m\phi_m(x)$.
 
 ## Expansion

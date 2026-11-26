@@ -1,19 +1,27 @@
 # Performance sensitivity of powerstroke–recovery limit cycles
 
 **Setting.** Let $\dot z = F_\kappa(z)$, $z = (a, x)$ (neural and mechanical variables, coupled through motor output and sensory feedback), have for each parameter $\kappa$ in an interval $I$ an asymptotically stable limit cycle $\gamma_\kappa$ of period $T_\kappa$; $F_\kappa$ may be piecewise smooth across surfaces separating phases. Let $q_\kappa(\cdot)$ be the instantaneous rate of progress and define the progress per cycle and the task performance
+
 $$y_\kappa = \int_0^{T_\kappa} q_\kappa(\gamma_\kappa(t))\,dt, \qquad Q(\kappa) = \frac{y_\kappa}{T_\kappa}.$$
+
 In a **powerstroke–recovery** system, $t = 0$ is the start of the powerstroke of duration $T^{ps}_\kappa$, and $q_\kappa \equiv 0$ during the recovery of duration $T^{re}_\kappa = T_\kappa - T^{ps}_\kappa$. The **sensitivity** to a sustained perturbation $\kappa_0 \to \kappa_0 + \epsilon$ is $S = \partial Q/\partial\kappa(\kappa_0)$; $S = 0$ means first-order performance homeostasis.
 
 **Infinitesimal shape response curve (iSRC).** With a monotone time rescaling $\tau_\epsilon$ mapping $[0,T_0)$ onto $[0,T_\epsilon)$, write $\gamma_\epsilon(\tau_\epsilon(t)) = \gamma_0(t) + \epsilon\,\gamma_1(t) + O(\epsilon^2)$. Then $\gamma_1$ solves
+
 $$\dot\gamma_1 = DF_0(\gamma_0(t))\,\gamma_1 + \nu_1(t)\,F_0(\gamma_0(t)) + \partial_\kappa F_\kappa(\gamma_0(t))\big|_{\kappa_0}, \qquad \nu_1 = \partial_\epsilon\partial_t \tau_\epsilon\big|_{\epsilon=0},$$
+
 with $\gamma_1(0)$ the displacement of the cycle's crossing point on a transverse section. For rescaling that is linear within each phase, $\nu_1 = T_1^{i}/T_0^{i}$ on phase $i \in \{ps, re\}$.
 
 **Local timing response curve (lTRC).** The gradient $\eta_i$ of the time remaining in phase $i$ solves the adjoint equation $\dot\eta_i = -DF_0(\gamma_0(t))^{\mathsf T}\eta_i$ with $\eta_i(z^{out}_0) = -n^{out}/\bigl((n^{out})^{\mathsf T} F_0(z^{out}_0)\bigr)$, where $n^{out}$ is normal to the exit surface. The first-order change of the phase duration is
+
 $$T_1^{i} = \eta_i(z^{in}_0)\cdot\partial_\kappa z^{in}_\kappa - \eta_i(z^{out}_0)\cdot\partial_\kappa z^{out}_\kappa + \int_{t^{in}}^{t^{out}} \eta_i(\gamma_0(t))\cdot\partial_\kappa F_\kappa(\gamma_0(t))\,dt .$$
 
 **Sensitivity formulas.** With $\beta_0 = T_0^{ps}/T_0$ and $\beta_1 = (T_1^{ps}T_0 - T_0^{ps}T_1)/T_0^2$,
+
 $$\frac{\partial Q}{\partial\kappa}(\kappa_0) = \frac{1}{T_0^{ps}}\int_0^{T_0^{ps}} \Bigl[\beta_0\bigl(\nabla q_0(\gamma_0)\cdot\gamma_1 + \partial_\kappa q_\kappa(\gamma_0)\bigr) + \beta_1\, q_0(\gamma_0)\Bigr] dt,$$
+
 and equivalently, expanding $y_\epsilon = y_0 + \epsilon y_1 + O(\epsilon^2)$ and $T_\epsilon = T_0 + \epsilon T_1 + O(\epsilon^2)$ with $T_1 = T_1^{ps} + T_1^{re}$,
+
 $$\frac{\partial Q}{\partial\kappa}(\kappa_0) = Q_0\left(\frac{y_1}{y_0} - \frac{T_1}{T_0}\right).$$
 
 ## Expansion

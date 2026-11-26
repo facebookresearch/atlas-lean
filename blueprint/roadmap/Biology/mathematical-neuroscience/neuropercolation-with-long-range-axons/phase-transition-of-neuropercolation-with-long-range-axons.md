@@ -1,9 +1,13 @@
 # Phase transition of neuropercolation with long-range axons
 
 **Model.** The cortical neuropil is modelled as a random graph $G$ on the discrete torus $\mathbb Z_N^2$, an $(N+1)\times(N+1)$ grid with periodic boundary. It has two kinds of edges. Short edges join lattice neighbours. Long edges, which stand for long axons, are added independently: a pair of vertices at distance $d$ is joined with probability
+
 $$p_d=\frac{c}{N\,d^{\alpha}},$$
+
 for constants $c>0$ and $\alpha$ (for example $\alpha=1$). Each vertex $v$ carries a state $\chi_v(t)\in\{0,1\}$. Initially each vertex is active independently with probability $p_0$, and states then update synchronously by the threshold rule
+
 $$\chi_v(t+1)=\mathbf 1\Big(\sum_{u\in N(v)}\chi_u(t)\ge k\Big),$$
+
 where $N(v)$ is the neighbourhood of $v$ in $G$ and $k$ is the activation threshold. Let $\rho_t=|A(t)|/N^2$ be the active fraction.
 
 **Theorem (mean-field phase transition).** In the mean-field approximation for $\rho_t$ there is a critical initial activation probability $p_c=p_c(k,\lambda)$, where $\lambda$ scales linearly with the density of long edges. With high probability as $N\to\infty$, every vertex is eventually active if $p_0>p_c$, and every vertex is eventually inactive if $p_0<p_c$. The value $p_c$ is given implicitly through the solution of transcendental equations in $k$ and $\lambda$.

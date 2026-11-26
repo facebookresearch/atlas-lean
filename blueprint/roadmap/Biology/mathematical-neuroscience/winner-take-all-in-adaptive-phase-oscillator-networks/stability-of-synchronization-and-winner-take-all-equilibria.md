@@ -3,6 +3,7 @@
 A central oscillator (CO) with phase $\theta_0$ and adaptive natural frequency $\omega_0$ is coupled to $n$ peripheral oscillators (POs) with phases $\theta_i$, natural frequencies $\omega_i$ and adaptive connection strengths $a_i$:
 
 $$\dot\theta_0 = \omega_0 + \frac{1}{n}\sum_{j=1}^{n} a_j f(\theta_j - \theta_0), \qquad \dot\theta_i = \omega_i + b\,g(\theta_0 - \theta_i),$$
+
 $$\dot\omega_0 = \frac{\alpha}{n}\sum_{j=1}^{n} a_j f(\theta_j - \theta_0), \qquad \dot a_i = \beta\big(-a_i + c + \gamma\,h(\theta_i - \theta_0)\big),$$
 
 with $\alpha, \beta, \gamma, c > 0$ and $b \in \mathbb{R}$. The functions are $2\pi$-periodic; $f$ and $g$ are odd with $f'(0) > 0$, $f'(\pi) = 0$, $g'(0) > 0$, $g'(\pi) < 0$ and no zeros in $(0, \pi)$; $h$ is even, monotone on $[0, \pi]$, $0 \le h \le 1$, $h(0) = 1$, $h(\pi) = 0$, $h'(0) = h'(\pi) = 0$.

@@ -1,11 +1,15 @@
 # Mittag-Leffler solution of the linearized time-fractional calcium equation
 
 **Setting.** Free cytosolic calcium $C(x,t)$ diffuses along a neuronal process ($x\in\mathbb R$) and reacts with a buffer $B+\mathrm{Ca}^{2+}\rightleftharpoons \mathrm{CaB}$ (rates $k^+,k^-$), with ER fluxes ($J_{\rm IPR}$, $J_{\rm SERCA}$, $J_{\rm leak}$, $J_{\rm chan}$) as sources and sinks. Under the excess buffer approximation (buffer far above calcium, so free buffer stays near its background $[B]_\infty$) and with the pump and channel terms linearized in a regime $C\ll K_{\rm SERCA}$ or $C\gg K_{\rm SERCA}$, the dynamics with memory are modelled by the Caputo time-fractional reaction-diffusion equation of order $u\in(0,1]$,
+
 $$ {}^C D_t^{u}C=D\,\partial_x^2C-a\,C+b,\qquad C(x,0)=g(x),$$
+
 where $D>0$, $a>0$ collects the buffer binding rate $k^+[B]_\infty$ and the linearized flux coefficients, and $b\ge0$ collects the constant source terms (background calcium, ER release).
 
 **Statement.** For bounded integrable $g$, the bounded solution is
+
 $$C(x,t)=\int_{\mathbb R}G_u(x-y,t)\,g(y)\,dy\;+\;b\,t^{u}E_{u,u+1}\!\big(-a\,t^{u}\big),\qquad \widehat{G_u}(k,t)=E_u\!\big(-(Dk^2+a)\,t^{u}\big),$$
+
 that is, $G_u(x,t)=\frac1\pi\int_0^\infty E_u(-(Dk^2+a)t^u)\cos(kx)\,dk$, where $E_u(z)=\sum_{n\ge0}z^n/\Gamma(un+1)$ and $E_{u,v}(z)=\sum_{n\ge0}z^n/\Gamma(un+v)$ are the Mittag-Leffler functions. For $u=1$ this is the heat kernel times $e^{-at}$ plus $(b/a)(1-e^{-at})$. For every $u\in(0,1]$ the source-driven part tends to the steady level $b/a$ as $t\to\infty$, but only algebraically for $u<1$, since $E_u(-z)\sim z^{-1}/\Gamma(1-u)$ as $z\to\infty$; the order $u$ therefore controls how slowly calcium relaxes after a perturbation.
 
 ## Expansion

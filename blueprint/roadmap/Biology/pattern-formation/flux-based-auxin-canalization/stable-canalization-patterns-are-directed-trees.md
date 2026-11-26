@@ -1,7 +1,9 @@
 # Stable canalization patterns are directed trees
 
 **Setting.** Consider the slow flux-based auxin transport system on a graph of regular cells,
+
 $$\dot a_i=\alpha_{a_i}-\beta_{a_i}a_i+\sum_{k\sim i}(a_kp_{ki}-a_ip_{ik}),\qquad \dot p_{ij}=\lambda\frac{\alpha_p}{\beta_p}\Phi(a_ip_{ij}-a_jp_{ji})-\mu p_{ij},$$
+
 with quadratic response $\Phi(x)=x^2$ for $x>0$ and $\Phi(x)=0$ for $x\le0$. Put $c=\lambda\alpha_p/(\mu\beta_p)$. Each equilibrium $(a^*,P^*)$ defines an oriented subgraph $\mathcal G^*$ with an arc $i\to j$ iff $p^*_{ij}>0$. Let $E_0$ be the equilibrium with all $p_{ij}=0$ and $a_i=\alpha_{a_i}/\beta_{a_i}$ (all cells isolated). A sink is a cell of $\mathcal G^*$ with incoming but no outgoing arcs.
 
 **Theorem.** Assume $\alpha_{a_i}>0$, $\beta_{a_i}\ge0$ for all $i$, and $\mu,c>0$. Let $(a^*,P^*)\ne E_0$ be a bounded equilibrium with oriented subgraph $\mathcal G^*$. Then
@@ -9,7 +11,9 @@ with quadratic response $\Phi(x)=x^2$ for $x>0$ and $\Phi(x)=0$ for $x\le0$. Put
 2. if $(a^*,P^*)$ is stable, $\mathcal G^*$ is a forest of trees directed from leaves to roots in which every cell has out-degree at most 1.
 
 **Steady-state auxin along a tree (sink-driven systems).** On a stable rooted tree $\mathcal G^*$ with root (sink) $i_0$, let $\alpha_a(i)$ be the total auxin production of the subtree draining into $i$. Then
+
 $$a^*_i=\frac{1}{c\,\alpha_a(i)}\quad(i\ne i_0),\qquad a^*_{i_0}=\frac{\alpha_a(i_0)}{\beta_{a_{i_0}}},$$
+
 so auxin decreases along every path towards the sink, i.e. flux runs against the auxin gradient inside sink-driven trees.
 
 ## Expansion

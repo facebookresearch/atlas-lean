@@ -9,12 +9,17 @@ $$\begin{aligned}
 where $L_{ij}=A_{ij}-q\,\delta_{ij}\sum_k A_{ik}$ is a (generalized) network Laplacian with real eigenvalues $\Lambda_k$ and orthonormal eigenvectors $v^k$. A homogeneous equilibrium $(x_0,y_0,z_0)$ solves $y_0-ax_0^3+bx_0^2+I-z_0=0$, $y_0=c-dx_0^2$, $z_0=s(x_0-x_r)$.
 
 **Modal characteristic equation.** Writing perturbations as $\sum_k c_k e^{\lambda t}v^k$ decouples the linearization into one $3\times3$ problem per Laplacian eigenvalue. With $u_k=3ax_0^2-2bx_0-d_1\Lambda_k$ and $w_k=1-d_2\Lambda_k$, the characteristic equation of mode $k$ is
+
 $$(\lambda+u_k)(\lambda+w_k)(\lambda+r)+2dx_0(\lambda+r)+rs\,(\lambda+w_k)\,e^{-\lambda\tau}=0 .$$
 
 **Theorem 1 (Turing instability, $\tau=0$).** For $\tau=0$ write mode $k$'s equation as $\lambda^3+a_1\lambda^2+(a_2+a_3)\lambda+(a_4+a_5)=0$, with $a_3=rs$ and $a_5=rs\,w_k$. Suppose the uncoupled equilibrium ($\Lambda=0$) satisfies the Routh-Hurwitz conditions
+
 $$a_1>0,\qquad a_2+a_3>0,\qquad a_4+a_5>0,\qquad a_1(a_2+a_3)-(a_4+a_5)>0 .$$
+
 Then the network destabilizes the homogeneous state (network-driven Turing instability) iff for some Laplacian eigenvalue $\Lambda_k$ one of these fails, i.e. one of
+
 $$H_1:\ a_2+a_3<0,\qquad H_2:\ a_4+a_5<0,\qquad H_3:\ a_1(a_2+a_3)-(a_4+a_5)<0$$
+
 holds at $\Lambda=\Lambda_k$. Since $a_2+a_3$ and $a_4+a_5$ are quadratic in $\Lambda_k$, $H_1$ or $H_2$ holds for some admissible $\Lambda_k$ exactly when the corresponding quadratic is negative at its vertex (or at $\Lambda=0$ if the vertex is out of range). With delay, instability persists for $\tau$ in an interval $(\tau_0,\tau_c)$ determined by the purely imaginary roots $\lambda=\pm i\omega$ of the delayed equation, at which a Hopf bifurcation occurs.
 
 ## Depends on

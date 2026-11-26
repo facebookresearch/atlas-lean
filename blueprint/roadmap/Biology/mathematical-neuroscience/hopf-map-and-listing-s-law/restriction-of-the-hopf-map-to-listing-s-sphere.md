@@ -1,7 +1,9 @@
 # Restriction of the Hopf map to Listing's sphere
 
 **Setting.** Identify rotations of the eye with unit quaternions $a \in S^3 \subset \mathbb{H} = \mathrm{span}(1, i, j, k)$, acting on imaginary quaternions $x$ by $\mathrm{Ad}_a x = a x \bar a$. Let $i$ be the primary gaze direction and $S_E^2$ the unit sphere of imaginary quaternions (possible gaze directions). The *Hopf map* is
+
 $$\chi : S^3 \to S_E^2, \qquad \chi(a) = a\,i\,\bar a,$$
+
 the gaze direction after rotation $a$. *Listing's sphere* is the great 2-sphere $S_L^2 = S^3 \cap \mathrm{span}(1, j, k)$: orientations obtained from the primary position by rotations about axes orthogonal to $i$ (Listing's law). Its equator is $S_L^1 = S^3 \cap \mathrm{span}(j, k)$, and $S_L^+$ is the open hemisphere containing $1$. Every $a \in S_L^2 \setminus \{\pm 1\}$ can be written uniquely as $a = e^{tp} = \cos t + \sin t\,p$ with $p \in S_L^1$ and $0 < t < \pi$.
 
 **Theorem 1.** The restriction $\chi : S_L^2 \to S_E^2$ is a branched $\mathbb{Z}_2$-covering. Precisely:

@@ -9,12 +9,15 @@ $$\begin{aligned}
 where $\mathcal M_u=M_u/(M_u+M_w)$ is the probability that an uninfected female mates with an uninfected male (complete cytoplasmic incompatibility: uninfected females mated to infected males lay no viable eggs), $v_w\in(0,1]$ is the maternal transmission fraction, $v_u=1-v_w$, $b_f+b_m=1$, $\psi$ is the emergence rate, $\delta$ the hatching rate, $\phi_j$ egg-laying rates and $\mu$ death rates.
 
 **Next-generation numbers.**
+
 $$G_0^u=\frac{b_f\psi}{\psi+\mu_l}\cdot\frac{\delta}{\delta+\mu_{eu}}\cdot\frac{\phi_u}{\mu_{fu}},\qquad G_0^w=v_w\,\frac{b_f\psi}{\psi+\mu_l}\cdot\frac{\delta}{\delta+\mu_{ew}}\cdot\frac{\phi_w}{\mu_{fw}},$$
+
 the expected number of same-type female offspring per female per generation in a near-empty habitat.
 
 **Equilibria.** The infection-free equilibrium has $L_u^0=K_l(1-1/G_0^u)$ (exists iff $G_0^u>1$); the complete-infection equilibrium has $L_w^c=K_l(1-1/G_0^w)$ (exists iff $G_0^w>1$); the other compartments are proportional to $L$ (e.g. $F=b_f\psi L/\mu_f$).
 
 **Invasion number.** The next-generation matrix of the infected compartments at the infection-free equilibrium gives
+
 $$\mathcal R_0=\frac{G_0^w}{G_0^u}=\frac{v_w\,\mu_{fu}\,\phi_w\,(\delta+\mu_{eu})}{\mu_{fw}\,\phi_u\,(\delta+\mu_{ew})}.$$
 
 **Theorem.**

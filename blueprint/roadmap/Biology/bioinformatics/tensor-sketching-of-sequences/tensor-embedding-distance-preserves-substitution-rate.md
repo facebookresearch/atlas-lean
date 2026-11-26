@@ -1,10 +1,13 @@
 # Tensor embedding distance preserves substitution rate
 
 **Setting.** Let $\Sigma$ be a finite alphabet and $t\ge1$ a fixed subsequence length. The *tensor embedding* of a sequence $a\in\Sigma^n$ is the vector $T_a\in\mathbb Z_{\ge0}^{\Sigma^t}$ whose entry at $s=s_1\cdots s_t$ counts the index tuples $1\le i_1<\dots<i_t\le n$ with $a_{i_1}\cdots a_{i_t}=s$, i.e. the number of occurrences of $s$ as a (gapped) subsequence of $a$. The normalized tensor embedding distance is
+
 $$d_{te}(a,b)=\binom{n}{2t-1}^{-1}\,\|T_a-T_b\|_2^2 .$$
 
 **Lemma 1 (linear preservation of the mutation rate).** Let $a$ be uniform on $\Sigma^n$ and, for $r\in[0,1]$, let $b$ be obtained from $a$ by independently replacing each $a_i$, with probability $r$, by a character drawn uniformly from $\Sigma\setminus\{a_i\}$ (substitutions only). Then, for fixed $t$ and $n\to\infty$,
+
 $$\mathbb E_{a,b}\big[d_{te}(a,b)\big]=(1+o(1))\cdot 2^{2t-1}\cdot|\Sigma|^{-t+1}\cdot r .$$
+
 The expected embedding distance is thus linear in the per-site substitution rate (the normalized edit distance in this regime), with a constant that does not depend on the sequences.
 
 ## Expansion

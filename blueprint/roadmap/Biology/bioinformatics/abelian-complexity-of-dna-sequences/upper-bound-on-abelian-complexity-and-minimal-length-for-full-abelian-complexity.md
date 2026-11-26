@@ -11,8 +11,11 @@ $$\rho^{ab}_\omega(n) = \#\{\psi(\mu) : \mu \text{ a factor of } \omega,\ |\mu| 
 so $1 \le \rho^{ab}_\omega(n) \le p_\omega(n)$; unlike $p_\omega$, $\rho^{ab}_\omega$ need not be monotone (for $\omega = AAGCAGTCGG$, $\rho^{ab}_\omega(2) = 7 > 5 = \rho^{ab}_\omega(3)$).
 
 1. **Upper bound.** For every finite word $\omega$ and $1 \le n \le |\omega|$,
+
    $$1 \le \rho^{ab}_\omega(n) \le \binom{n+3}{3} = \frac{(n+3)(n+2)(n+1)}{6}.$$
+
 2. **Minimal length.** If $\rho^{ab}_\omega(i) = \binom{i+3}{3}$ for $i = 1, \dots, m$, then
+
    $$|\omega| \ge \binom{m+3}{3} + m - 1 .$$
 
 For a sequence of length $1000$ this gives $m_0 = 16$ as the largest window length at which full abelian complexity is possible, which motivates discarding the low-$n$ end of the profile when using abelian complexity values as features for predicting regulatory elements such as enhancers.

@@ -1,7 +1,9 @@
 # Spanning edge betweenness via the matrix-tree theorem
 
 **Setting.** Let $G=(V,E)$ be a connected, undirected, simple graph with $n=|V|$ vertices and edge weights $w:E\to\mathbb R$; in phylogenetic and epidemiological typing, vertices are isolates and $w$ is an allelic distance. Let $\tau_G$ be the number of minimum spanning trees (MSTs) of $G$ and $\tau_G(e)$ the number of MSTs that contain an edge $e$. The *spanning edge betweenness* of $e$ is
+
 $$\delta_G(e)=\frac{\tau_G(e)}{\tau_G}\in[0,1],$$
+
 the fraction of equally optimal MSTs in which $e$ appears, a support value for $e$ analogous to a bootstrap proportion.
 
 **Theorem 1 (matrix-tree theorem).** If $L$ is the Laplacian of $G$ (unweighted) and $L_{(i)}$ is $L$ with row and column $i$ deleted, the number of spanning trees of $G$ is $\det L_{(i)}$ for every $i$.

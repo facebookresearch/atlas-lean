@@ -8,7 +8,9 @@ I_2' &= (\alpha_2 S - \eta_2 I_{12} - \gamma_2 I_1 - \mu_2) I_2,\\
 I_{12}' &= (\alpha_3 S + \eta_1 I_1 + \eta_2 I_2 - \mu_3) I_{12} + \bar\gamma I_1 I_2 .
 \end{aligned}$$
 Put $\sigma_i = \mu_i/\alpha_i$ and assume $\sigma_1 < \sigma_2 < \sigma_3$ (strain 1 spreads most easily in a naive population; coinfection has the smallest reproduction number), and $\Delta_\alpha = \eta_1\alpha_2 - \eta_2\alpha_1 \ne 0$. Define
+
 $$A_1 = \frac{\alpha_1\alpha_3(\sigma_3 - \sigma_1)}{r}, \quad A_2 = \frac{\alpha_2\alpha_3(\sigma_3 - \sigma_2)}{r}, \qquad \eta_1^* = \frac{\eta_1}{A_1}, \quad \eta_2^* = \frac{\eta_2}{A_2}.$$
+
 Equilibria are written $G_{ijk}$, with $i,j,k \in \{0,1\}$ indicating whether $I_1, I_2, I_{12}$ are non-zero; $G_{000} = (K,0,0,0)$ is disease-free.
 
 **Single strain (Proposition 1).** With only $I_i$ present, $R_0(I_i) = K/\sigma_i$; the disease-free state is stable for $K < \sigma_i$ and the endemic state $\big(\sigma_i, \tfrac{r}{\alpha_i}(1 - \sigma_i/K)\big)$ for $K > \sigma_i$.
@@ -17,6 +19,7 @@ Equilibria are written $G_{ijk}$, with $i,j,k \in \{0,1\}$ indicating whether $I
 
 1. if $\eta_1^* < 1$: $G_{000} \to G_{100}$, with $G_{000}$ stable for $K < \sigma_1$ and $G_{100}$ stable for $K > \sigma_1$;
 2. if $1 < \eta_1^* < \eta_2^*$: $G_{000} \to G_{100} \to G_{101} \to G_{001}$, with $G_{000}$ stable for $K < \sigma_1$, $G_{100}$ for $\sigma_1 < K < K_1$, the coinfection state $G_{101}$ for $K_1 < K < K_2$ and the coinfection-only state $G_{001}$ for $K > K_2$, where
+
 $$K_1 = \frac{\sigma_1\eta_1^*}{\eta_1^* - 1}, \qquad K_2 = \frac{\sigma_3}{\sigma_1}K_1 .$$
 
 At each threshold the outgoing and incoming equilibria coincide (exchange of stability), and strain 2 alone never becomes the stable state in this regime.
