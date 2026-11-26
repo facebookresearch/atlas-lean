@@ -1,3 +1,3 @@
-# Bounded Distance bsc error eq zero of le
+# No block error when the radius covers the block
 
-If a decoder corrects every error of weight at most `t` and `t ≥ n`, then every error is corrected, so for every crossover probability `0 ≤ δ ≤ 1` the block-error probability over the binary symmetric channel is `0`.
+Let $n$ be the block length, $\mathrm{enc} : \mathbb{F}_2^k \to \mathbb{F}_2^n$ and $\mathrm{dec} : \mathbb{F}_2^n \to \mathbb{F}_2^n$ maps such that $\mathrm{dec}(\mathrm{enc}(x) + e) = \mathrm{enc}(x)$ for every message $x$ and every error word $e$ of Hamming weight at most $t$, as in the [bounded-distance error bound](bounded-distance-bsc-error-le-binom-tail.md). For a fixed message $m$, a block error is an error word $e$ with $\mathrm{dec}(\mathrm{enc}(m) + e) \ne \mathrm{enc}(m)$: the decoder returns an $n$-bit word, and the event compares words, not the recovered $k$-bit message (a constant-zero encoder and decoder satisfy the hypothesis for every $t$). If $t \ge n$, then for every crossover probability $0 \le \delta \le 1$ the probability of a block error for $m$ over the binary symmetric channel is $0$.

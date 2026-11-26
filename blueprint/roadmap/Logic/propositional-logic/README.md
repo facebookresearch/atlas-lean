@@ -15,7 +15,7 @@ Classical propositional logic: truth-table semantics, natural deduction and its 
 - [Resolution](resolution/README.md)
 - [Resolution size and width](resolution-size-and-width/README.md)
 - [Soundness of unit-propagation conflicts](soundness-of-unit-propagation-conflicts/README.md)
-- [Termination of CDCL without restarts or clause deletion](termination-of-cdcl-without-restarts-or-clause-d/README.md)
+- [CDCL termination within fixed finite variable and clause sets](termination-of-cdcl-without-restarts-or-clause-d/README.md)
 - [2-satisfiability](2-satisfiability/README.md)
 - [Davis–Putnam algorithm](davis-putnam-algorithm/README.md)
 - [Tseitin transformation](tseitin-transformation/README.md)

@@ -1258,7 +1258,7 @@
   "CSLibExt/Algorithms/Quantum/Shor/OrderToFactor": {"to": "ComputerScience/quantum-algorithms", "title": "Shor's reduction of factoring to order finding"},
   "CSLibExt/Algorithms/Quantum/Shor/OrderToFactorProbability": {"to": "ComputerScience/quantum-algorithms", "title": "Shor's reduction of factoring to order finding"},
   "CSLibExt/Algorithms/SAT/CDCL/Basic": {"to": "Logic/propositional-logic", "title": "Conflict-driven clause learning"},
-  "CSLibExt/Algorithms/SAT/CDCL/Termination": {"to": "Logic/propositional-logic", "title": "Termination of CDCL without restarts or clause deletion"},
+  "CSLibExt/Algorithms/SAT/CDCL/Termination": {"to": "Logic/propositional-logic", "title": "CDCL termination within fixed finite variable and clause sets"},
   "CSLibExt/Algorithms/SAT/DPLL": {"to": "Logic/propositional-logic", "title": "DPLL algorithm"},
   "CSLibExt/Algorithms/SAT/DavisPutnam/Basic": {"to": "Logic/propositional-logic", "title": "Davis–Putnam algorithm"},
   "CSLibExt/Algorithms/SAT/Horn/Basic": {"to": "Logic/propositional-logic", "title": "Horn satisfiability"},

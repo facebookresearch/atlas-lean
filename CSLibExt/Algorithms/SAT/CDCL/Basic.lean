@@ -62,7 +62,7 @@ correctness of satisfiable answers are out of scope.
 - `not_cnfSat_of_reachable_nil_mem`, `not_cnfSat_of_reachable_conflict_nil`: a reachable state
   that has learned the empty clause, or whose conflict clause is empty, refutes the input.
 - `not_cnfSat_of_reachable_conflict`: a reachable state in conflict whose trail has no
-  decision refutes the input; CDCL reports unsatisfiability on such a conflict.
+  decision refutes the input, so it is sound to report unsatisfiability in such a state.
 
 ## References
 

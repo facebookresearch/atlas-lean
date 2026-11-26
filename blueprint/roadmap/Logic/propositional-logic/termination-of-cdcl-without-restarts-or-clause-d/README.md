@@ -1,4 +1,4 @@
-# Termination of CDCL without restarts or clause deletion
+# CDCL termination within fixed finite variable and clause sets
 
 - [Implied By](implied-by.md)
 - [CDCL state without restarts](cdclstate.md)

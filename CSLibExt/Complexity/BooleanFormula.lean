@@ -28,8 +28,8 @@ latter, see `Cslib.Circuits.Circuit.comp` in `Cslib.Computability.Circuit.Compos
   most `D`, substitution adds at most `D` to the depth.
 * `Cslib.Complexity.BooleanFormula.size_subst_le_tight`: if every substituted formula has size at
   most `D`, then `(g.subst wiring).size ≤ g.size * (D + 1) + D`, that is,
-  `g.size + (g.size + 1) * D`: the gates of `g`, plus at most `g.size + 1` leaves, each replaced
-  by at most `D` gates.
+  `g.size + (g.size + 1) * D`: the gates of `g`, plus at most `g.size + 1` input leaves, each
+  replaced by at most `D` gates; constant leaves stay unchanged.
 * `Cslib.Complexity.BooleanFormula.size_subst_le`: the weaker bound
   `g.size * (D + 1) + (D + 1)`.
 -/
@@ -117,7 +117,8 @@ theorem BooleanFormula.depth_subst_le {n m : ℕ} (wiring : Fin n → BooleanFor
 
 /-- Size of a substitution, tight form: if every substituted formula has at most `D` gates, then
 `(g.subst wiring).size ≤ g.size * (D + 1) + D = g.size + (g.size + 1) * D`. The gates of `g`
-remain, and `g` has at most `g.size + 1` leaves, each replaced by at most `D` gates. -/
+remain, and at most `g.size + 1` input leaves are replaced, each by at most `D` gates; constant
+leaves stay unchanged. -/
 theorem BooleanFormula.size_subst_le_tight {n m : ℕ} (wiring : Fin n → BooleanFormula m)
     (g : BooleanFormula n) (D : ℕ) (hD : ∀ i, (wiring i).size ≤ D) :
     (g.subst wiring).size ≤ g.size * (D + 1) + D := by
