@@ -35,6 +35,8 @@ public import Mathlib.RingTheory.LocalRing.ResidueField.Basic
 public import Mathlib.RingTheory.Localization.AtPrime.Basic
 public import Mathlib.RingTheory.TensorProduct.Basic
 public import MathlibExt.NumberTheory.ModularForms.HeckeAlgebra
+import Mathlib.RingTheory.Flat.Localization
+import Mathlib.RingTheory.LocalRing.Module
 import Mathlib.RingTheory.Localization.Submodule
 import MathlibExt.RingTheory.AdicCompletion.ModuleFinite
 import MathlibExt.RingTheory.LocalRing.FiniteAlgebraDecomposition
@@ -65,7 +67,7 @@ algebra is a complete local ring.
 
 noncomputable section
 
-universe u v
+universe u
 
 open scoped TensorProduct
 
@@ -348,45 +350,6 @@ end Structure
 section TrioEngines
 
 
-private lemma trio_isTorsionFree_atPrime {R : Type u} [CommRing R] [IsLocalRing R]
-    [IsNoetherianRing R] [IsAdicComplete (IsLocalRing.maximalIdeal R) R]
-    (B : Type v) [CommRing B] [Algebra R B] [Module.Finite R B] [Module.Free R B]
-    (P : MaximalSpectrum B) :
-    Module.IsTorsionFree R (Localization.AtPrime P.asIdeal) := by
-  classical
-  obtain ⟨-, hbij, -, -⟩ :=
-    Algebra.finite_maximalSpectrum_and_bijective_localization_of_module_finite (𝒪 := R) B
-  set Φ : B →ₗ[R] ∀ Q : MaximalSpectrum B, Localization.AtPrime Q.asIdeal :=
-    { toFun := fun a Q => algebraMap B (Localization.AtPrime Q.asIdeal) a
-      map_add' := fun a b => funext fun Q => map_add _ a b
-      map_smul' := fun c a => funext fun Q => by
-        simp only [RingHom.id_apply, Pi.smul_apply, Algebra.smul_def, map_mul,
-          ← IsScalarTower.algebraMap_apply] } with hPhidef
-  have hPhibij : Function.Bijective Φ := hbij
-  have hsingle : Function.Injective
-      (Pi.single (M := fun Q : MaximalSpectrum B => Localization.AtPrime Q.asIdeal) P) := by
-    intro x y hxy
-    have h := congrFun hxy P
-    simpa using h
-  set e := LinearEquiv.ofBijective Φ hPhibij with hedef
-  set g : Localization.AtPrime P.asIdeal →ₗ[R] B :=
-    e.symm.toLinearMap ∘ₗ
-      LinearMap.single R (fun Q : MaximalSpectrum B => Localization.AtPrime Q.asIdeal) P
-    with hgdef
-  have hginj : Function.Injective g := e.symm.injective.comp hsingle
-  exact Function.Injective.moduleIsTorsionFree (⇑g) hginj fun r m => map_smul g r m
-
-private lemma trio_free_atPrime {R : Type u} [CommRing R] [IsDomain R] [IsLocalRing R]
-    [IsPrincipalIdealRing R] [IsNoetherianRing R]
-    [IsAdicComplete (IsLocalRing.maximalIdeal R) R]
-    (B : Type v) [CommRing B] [Algebra R B] [Module.Finite R B] [Module.Free R B]
-    (P : MaximalSpectrum B) : Module.Free R (Localization.AtPrime P.asIdeal) := by
-  obtain ⟨-, -, hfin, -⟩ :=
-    Algebra.finite_maximalSpectrum_and_bijective_localization_of_module_finite (𝒪 := R) B
-  have := hfin P
-  have := trio_isTorsionFree_atPrime (R := R) B P
-  exact Module.free_of_finite_type_torsion_free'
-
 omit [IsDomain 𝒪] [IsDiscreteValuationRing 𝒪] [IsAdicComplete (IsLocalRing.maximalIdeal 𝒪) 𝒪] in
 private lemma trio_moduleFinite_base : Module.Finite 𝒪 (heckeBaseAlgebra N S 𝒪) :=
   inferInstanceAs (Module.Finite 𝒪 (𝒪 ⊗[ℤ] ↥(heckeLatticeAlgebra N S)))
@@ -449,18 +412,10 @@ instance heckeLocal.instModuleFinite : Module.Finite 𝒪 (heckeLocal N S 𝒪 �
     exact Module.Finite.equiv (e.toLinearEquiv.restrictScalars 𝒪)
 
 instance heckeLocal.instModuleFree : Module.Free 𝒪 (heckeLocal N S 𝒪 θ) := by
-  rcases trio_subsingleton_or_ker_le N S 𝒪 θ with hsub | hker
-  · have := hsub
-    exact Module.Free.of_subsingleton 𝒪 (heckeLocal N S 𝒪 θ)
-  · have := trio_moduleFinite_base N S 𝒪
-    have := trio_moduleFree_base N S 𝒪
-    have hPmax : (heckeLocalIdeal N S 𝒪 θ).IsMaximal := heckeLocalIdeal_isMaximal N S 𝒪 θ hker
-    have hloc := trio_isLocalization_atPrime N S 𝒪 θ hker
-    have := trio_free_atPrime (R := 𝒪) (heckeBaseAlgebra N S 𝒪)
-      ⟨heckeLocalIdeal N S 𝒪 θ, hPmax⟩
-    have e := IsLocalization.algEquiv (heckeLocalIdeal N S 𝒪 θ).primeCompl
-      (Localization.AtPrime (heckeLocalIdeal N S 𝒪 θ)) (heckeLocal N S 𝒪 θ)
-    exact Module.Free.of_equiv (e.toLinearEquiv.restrictScalars 𝒪)
+  have := trio_moduleFree_base N S 𝒪
+  have : Module.Flat 𝒪 (heckeLocal N S 𝒪 θ) :=
+    inferInstanceAs (Module.Flat 𝒪 (Localization (heckeLocalSubmonoid N S 𝒪 θ)))
+  exact Module.free_of_flat_of_isLocalRing
 
 instance heckeLocal.instIsLocalRing [Fact (HasIntegralStructure N 2)] :
     IsLocalRing (heckeLocal N S 𝒪 θ) :=
