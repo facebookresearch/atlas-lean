@@ -1,7 +1,5 @@
 # Part 8 of 10
 
-- [Rotor Ports](rotor-ports/README.md)
-- [Scalar Shock Ports](scalar-shock-ports/README.md)
 - [Scaled Buck Averaging](scaled-buck-averaging/README.md)
 - [Separable Guide Potential](separable-guide-potential/README.md)
 - [Separable Vacuum Maxwell](separable-vacuum-maxwell/README.md)
