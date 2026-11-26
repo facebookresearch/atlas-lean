@@ -13,7 +13,6 @@ public import Mathlib.Algebra.Group.Even
 public import MathlibExt.NumberTheory.ContinuedFractions.Folding
 public import MathlibExt.NumberTheory.ContinuedFractions.Paperfolding
 public import MathlibExt.NumberTheory.ContinuedFractionFolding
-public import MathlibExt.NumberTheory.ContinuedFractionFoldingPaperfoldingSumContFracRecursion
 
 /-!
 # The folding lemma for finite continued fractions
@@ -25,10 +24,9 @@ fraction `[a₀; a₁, …, aₜ]` with arbitrary integer entries is `finiteCont
 Theorem 14, Corollary 15 and Theorem 17 of the same paper: the simple continued fraction of
 `S = ∑ sₖ` with `s₀ = 1`, `sₖ₊₁ = sₖ² / xₖ`, `x₀ = 2`, `xₖ ≥ 2` interleaves Cloitre's
 self-describing sequence (`cloitreApprox`, OEIS A157196) with the terms `xₖ - 1` in ruler order,
-and the digit `1` has density `2/3` in the Cloitre stages (proved in
-`MathlibExt.NumberTheory.ContinuedFractionFolding`, except the continued-fraction recursion
-`paperfoldingSum_contFrac_recursion`, which is proved in
-`MathlibExt.NumberTheory.ContinuedFractionFoldingPaperfoldingSumContFracRecursion`).
+and the digit `1` has density `2/3` in the Cloitre stages (Theorem 14 and Corollary 15 are
+proved in `MathlibExt.NumberTheory.ContinuedFractions.Paperfolding`, Theorem 17 in
+`MathlibExt.NumberTheory.ContinuedFractionFolding`).
 -/
 
 namespace MetaMathlibExt
