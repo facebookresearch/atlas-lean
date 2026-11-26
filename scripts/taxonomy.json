@@ -13903,6 +13903,7 @@
   "MathlibExt/Probability/ConvexDistanceFinite": {"to": "Probability/concentration-inequalities", "title": "Talagrand's concentration inequality"},
   "MathlibExt/Probability/ConvexDistanceInequality": {"to": "Probability/concentration-inequalities", "title": "Talagrand's concentration inequality"},
   "MathlibExt/Probability/ConvexSubGaussianComparison": {"to": "Probability/concentration-inequalities", "title": "Convex comparison under sub-Gaussian tails"},
+  "MathlibExt/Probability/ConvexSubGaussianComparisonDavisPowerSystemExistsUnique": {"to": "Probability/concentration-inequalities", "title": "Convex comparison under sub-Gaussian tails"},
   "MathlibExt/Probability/ConvexSubGaussianComparisonFiniteness": {"to": "Probability/concentration-inequalities", "title": "Convex comparison under sub-Gaussian tails"},
   "MathlibExt/Probability/ConvexSubmartingale": {"to": "Probability/martingales", "title": "Convex functions of martingales"},
   "MathlibExt/Probability/CorrelationInequalities/BK": {"to": "Probability/correlation-inequalities/harris-fkg-bk", "title": "Van den Berg–Kesten inequality"},
