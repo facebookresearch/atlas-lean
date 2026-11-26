@@ -9,8 +9,8 @@ on `[0, ∞)` with `r 0 = conj (α₀ (ω₀ - i))`, such that:
   `α(w, ·)' = ansatzField Ω w (K r(t) + Λ) α(w, ·)` on `[0, ∞)` (derivative within `[0, ∞)` at
   every `t ≥ 0`, one-sided at `0`) with `α(w, 0) = α₀ w`; and
 * every such family satisfies, for every `t ≥ 0`: `α(·, t)` is admissible, and
-  `conj (r t) = ∫ α(ω, t) g_L(ω) dω` for the Lorentzian density `g_L` with `Δ = 1` centred at
-  `ω₀` (self-consistency, Eq. (7)).
+  `conj (r t) = ∫ α(ω, t) g_L(ω) dω` for the Lorentzian density `g_L = cauchyPDFReal ω₀ 1`
+  with `Δ = 1` centred at `ω₀` (self-consistency, Eq. (7)).
 
 ## Sources
 

@@ -20,15 +20,16 @@ is (for `|α| < 1`) the Poisson kernels
 
   `f = (g(ω) / (2π)) (1 - |α|²) / |1 - α e^{iθ}|²`  (Eq. (8)),
 
-solve the continuity equation exactly when `α' = -(1/2)(F α² - F̄) - i (ω - Ω) α` (Eq. (6) in
-the rotating frame), that `|α| < 1` is preserved (Eq. (9)), and that for the Lorentzian
-frequency density `g_L(ω) = (Δ / π) / ((ω - ω₀)² + Δ²)` the self-consistency condition
-`r̄ = ∫ α g_L dω` closes at the pole `ω₀ - iΔ` when `α(·, t)` extends boundedly and
-holomorphically to the lower half-plane: then `r̄(t) = α(ω₀ - iΔ, t)` obeys the
-two-real-dimensional equation (14), which for `Λ = 0`, `Ω = ω₀` is Eq. (10),
-`ρ' = -(1 - K/2) ρ - (K/2) ρ³` for `ρ = |r|`. The printed closed-form solution Eq. (11) of the
-arXiv version is inconsistent with Eq. (10) and is not used. Attractivity of the manifold,
-non-Lorentzian frequency densities and finite-`N` statements are not claimed.
+solve the continuity equation exactly when `α' = -(1/2)(F α² - F̄) - i (ω - Ω) α` (Eq. (6) in the
+rotating frame), that `|α| < 1` is preserved (Eq. (9)), and that for the Lorentzian frequency
+density `g_L(ω) = (Δ / π) / ((ω - ω₀)² + Δ²)` the self-consistency condition `r̄ = ∫ α g_L dω`
+closes at the pole `ω₀ - iΔ` when `α(·, t)` extends boundedly and holomorphically to the lower
+half-plane: then `r̄(t) = α(ω₀ - iΔ, t)` obeys the two-real-dimensional equation (14), which for
+`Λ = 0`, `Ω = ω₀` is Eq. (10), `ρ' = -(1 - K/2) ρ - (K/2) ρ³` for `ρ = |r|`. The angular density is
+Mathlib's Poisson kernel `poissonKernel` of the unit disk, and the Lorentzian density is the Cauchy
+density `ProbabilityTheory.cauchyPDFReal`. The printed closed-form solution Eq. (11) of the arXiv
+version is inconsistent with Eq. (10) and is not used. Attractivity of the manifold, non-Lorentzian
+frequency densities and finite-`N` statements are not claimed.
 
 Sources: E. Ott and T. M. Antonsen, "Low dimensional behavior of large systems of globally
 coupled oscillators", Chaos 18 (2008) 037113, Eqs. (4)–(10), (13)–(14), Sections III and IV.b
@@ -43,18 +44,22 @@ public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.Analysis.Complex.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
+public import Mathlib.Analysis.Complex.Poisson
+public import Mathlib.Probability.Distributions.Cauchy
 
 @[expose] public section
 
 namespace WantedExt.Biology.Neuroscience.OttAntonsenWanted
 
-open Complex Filter Topology MeasureTheory
+open Complex Filter Topology MeasureTheory ProbabilityTheory
+open scoped NNReal
 
-/-- The Poisson-kernel density `(1 - |α|²) / (2π |1 - α e^{iθ}|²)` of Eq. (8) (the density
-`f / g` on the ansatz manifold; it equals
-`(1 - |α|²) / (2π ((1 - |α|)² + 4 |α| sin² ((θ - ψ)/2)))` for `α = |α| e^{-iψ}`). -/
+/-- The Poisson-kernel density of Eq. (8) (the density `f / g` on the ansatz manifold):
+Mathlib's Poisson kernel of the unit disk at the point `ᾱ`, evaluated at `e^{iθ}`, divided by
+`2π`. It equals `(1 - |α|²) / (2π |1 - α e^{iθ}|²)`, since `|e^{iθ} - ᾱ| = |1 - α e^{iθ}|`, and
+`(1 - |α|²) / (2π ((1 - |α|)² + 4 |α| sin² ((θ - ψ)/2)))` for `α = |α| e^{-iψ}`. -/
 noncomputable def poissonDensity (α : ℂ) (θ : ℝ) : ℝ :=
-  (1 - ‖α‖ ^ 2) / (2 * Real.pi * ‖1 - α * exp (θ * I)‖ ^ 2)
+  poissonKernel 0 ((starRingEnd ℂ) α) (exp (θ * I)) / (2 * Real.pi)
 
 /-- The phase velocity `(ω - Ω) + Im (F e^{-iθ})` of an oscillator with natural frequency `ω`
 in the frame rotating at `Ω`, under the mean-field forcing `F = K r + Λ` (Eq. (13)). -/
@@ -71,10 +76,6 @@ with `Δ = 1` centred at `ω₀`, with coupling `K` and drive `Λ` at frequency 
 `-(1/2)((K r + Λ)‾ r² - (K r + Λ)) - (1 + i (Ω - ω₀)) r`. -/
 noncomputable def orderField (K Λ Ω ω₀ : ℝ) (r : ℂ) : ℂ :=
   -(1 / 2) * ((starRingEnd ℂ) (K * r + Λ) * r ^ 2 - (K * r + Λ)) - (1 + I * (Ω - ω₀)) * r
-
-/-- The Lorentzian (Cauchy) frequency density `(Δ / π) / ((ω - ω₀)² + Δ²)`. -/
-noncomputable def lorentzian (ω₀ Δ ω : ℝ) : ℝ :=
-  Δ / Real.pi / ((ω - ω₀) ^ 2 + Δ ^ 2)
 
 /-- An admissible function in the sense of Ott and Antonsen (Section III): bounded by `1` and
 continuous on the closed lower half-plane, holomorphic on the open lower half-plane, of modulus
@@ -125,15 +126,16 @@ theorem_wanted exists_unique_ansatz_solution (K Λ Ω : ℝ) (r : ℝ → ℂ) (
         ∀ t, 0 ≤ t → β t = α t
 
 /-- **Lorentzian evaluation** (Ott and Antonsen 2008, Section III, the closure at the pole). Let
-`Δ > 0` and `ω₀` be real, and let `β` be bounded by `1` and continuous on the closed lower
+`ω₀` be real and `Δ > 0`, and let `β` be bounded by `1` and continuous on the closed lower
 half-plane and holomorphic on the open lower half-plane. Then
-`∫ β(ω) g_L(ω) dω = β(ω₀ - iΔ)`, where `g_L = lorentzian ω₀ Δ`.
+`∫ β(ω) g_L(ω) dω = β(ω₀ - iΔ)`, where `g_L(ω) = Δ / (π ((ω - ω₀)² + Δ²))` is the Lorentzian
+(Cauchy) density `cauchyPDFReal ω₀ Δ` of location `ω₀` and scale `Δ`.
 
 Source: Ott and Antonsen (2008), Section III. -/
-theorem_wanted integral_mul_lorentzian (ω₀ Δ : ℝ) (hΔ : 0 < Δ) (β : ℂ → ℂ)
+theorem_wanted integral_mul_lorentzian (ω₀ : ℝ) (Δ : ℝ≥0) (hΔ : 0 < Δ) (β : ℂ → ℂ)
     (hβ1 : ∀ w : ℂ, w.im ≤ 0 → ‖β w‖ ≤ 1) (hβc : ContinuousOn β {w | w.im ≤ 0})
     (hβd : DifferentiableOn ℂ β {w | w.im < 0}) :
-    ∫ ω : ℝ, β ω * (lorentzian ω₀ Δ ω : ℂ) = β (ω₀ - Δ * I)
+    ∫ ω : ℝ, β ω * (cauchyPDFReal ω₀ Δ ω : ℂ) = β (ω₀ - (Δ : ℝ) * I)
 
 /-- **The Lorentzian ansatz manifold is invariant and closes on the order parameter** (Ott and
 Antonsen 2008, Sections III and IV.b and Eq. (14)). Let `K, Λ, Ω, ω₀` be real and let `α₀` be
@@ -144,8 +146,8 @@ on `[0, ∞)` with `r 0 = conj (α₀ (ω₀ - i))`, such that:
   `α(w, ·)' = ansatzField Ω w (K r(t) + Λ) α(w, ·)` on `[0, ∞)` (derivative within `[0, ∞)` at
   every `t ≥ 0`, one-sided at `0`) with `α(w, 0) = α₀ w`; and
 * every such family satisfies, for every `t ≥ 0`: `α(·, t)` is admissible, and
-  `conj (r t) = ∫ α(ω, t) g_L(ω) dω` for the Lorentzian density `g_L` with `Δ = 1` centred at
-  `ω₀` (self-consistency, Eq. (7)).
+  `conj (r t) = ∫ α(ω, t) g_L(ω) dω` for the Lorentzian density `g_L = cauchyPDFReal ω₀ 1`
+  with `Δ = 1` centred at `ω₀` (self-consistency, Eq. (7)).
 
 Source: Ott and Antonsen (2008), Sections III and IV.b and Eq. (14). -/
 theorem_wanted exists_order_parameter_invariant (K Λ Ω ω₀ : ℝ) (α₀ : ℂ → ℂ)
@@ -157,7 +159,7 @@ theorem_wanted exists_order_parameter_invariant (K Λ Ω ω₀ : ℝ) (α₀ : �
       ∀ α : ℂ → ℝ → ℂ, (∀ w : ℂ, w.im ≤ 0 → α w 0 = α₀ w ∧ ∀ t, 0 ≤ t →
           HasDerivWithinAt (α w) (ansatzField Ω w (K * r t + Λ) (α w t)) (Set.Ici 0) t) →
         ∀ t, 0 ≤ t → Admissible (fun w => α w t) ∧
-          (starRingEnd ℂ) (r t) = ∫ ω : ℝ, α ω t * (lorentzian ω₀ 1 ω : ℂ)
+          (starRingEnd ℂ) (r t) = ∫ ω : ℝ, α ω t * (cauchyPDFReal ω₀ 1 ω : ℂ)
 
 /-- **The Kuramoto reduction** (Ott and Antonsen 2008, Eq. (10)). Let `K` and `ω₀` be real, and
 let `r` solve Eq. (14) without drive and in the frame rotating at `ω₀`

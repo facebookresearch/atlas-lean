@@ -18,7 +18,15 @@ threshold by a pulse are absorbed into the firing group (they reset with it and 
 pulse of their own at that event), and a group fires with a single pulse of nonnegative
 strength. Their main result (Section 3, Theorems 3.1–3.2): for every `N ≥ 2` and almost every
 initial configuration of phases (Lebesgue measure), the population becomes fully synchronized
-after finitely many firings. The pulse strength of a merged group need not be additive.
+after finitely many firings. The pulse strength of a merged group need not be additive. The
+proof first shows (Theorem 3.1, through the return map of the firing dynamics, whose Jacobian
+determinant exceeds `1`) that the set of initial configurations that never undergo an absorption
+has measure zero, and then (Theorem 3.2) inducts on the number of groups, a merged group acting
+as a single oscillator.
+
+This module states that measure-zero prerequisite, `volume_never_absorbed_eq_zero`. Full
+synchronization almost everywhere (`Synchronized` after finitely many firings, Theorem 3.2) is
+tracked as a planned result whose proof depends on it, and is not stated here as a `theorem_wanted`.
 
 Here the system is observed at firing events (`fire`): all phases advance until the largest
 reaches `1`, the oscillators at `1` (a group of size `k`) fire with strength `s k`, and each other
@@ -78,17 +86,24 @@ noncomputable def fire (f g : ℝ → ℝ) (s : ℕ → ℝ) (φ : Fin N → ℝ
 def Synchronized (φ : Fin N → ℝ) : Prop :=
   ∀ i j, φ i = φ j
 
-/-- **Mirollo–Strogatz theorem** (Mirollo and Strogatz 1990, Section 3, Theorems 3.1–3.2). Let
+/-- Some two oscillators share a phase: an absorption has merged them into one group (or they
+started together). -/
+def IsAbsorbed (φ : Fin N → ℝ) : Prop :=
+  ¬ Function.Injective φ
+
+/-- **Absorptions occur almost surely** (Mirollo and Strogatz 1990, Section 3, Theorem 3.1). Let
 `N ≥ 2`, let `f` and `g` satisfy the hypotheses of Section 2.1 (`StateFunction`: `f` smooth on
 `[0, 1]` with `f(0) = 0`, `f(1) = 1`, `f' > 0`, `f'' < 0`, and `g` its inverse), and let the
-group strengths satisfy `s k > 0` for every group size `k ≥ 1`. Then for almost every initial
-configuration `φ ∈ [0, 1)^N` (Lebesgue measure on the cube), some finite number `n` of firing
-events (`fire`) leads to a fully synchronized population: all phases of `fire^[n] φ` are equal.
+group strengths satisfy `s k > 0` for every group size `k ≥ 1` (before any absorption every group
+has size `1`, so only `s 1 = ε > 0` acts). Then the set of initial configurations
+`φ ∈ [0, 1)^N` whose phases stay pairwise distinct after every number `n` of firing events
+(`fire`), that is, that never undergo an absorption, has Lebesgue measure zero.
 
-Source: Mirollo and Strogatz (1990), Theorems 3.1–3.2. -/
-theorem_wanted ae_eventually_synchronized (hN : 2 ≤ N) (f g : ℝ → ℝ)
+Source: R. E. Mirollo and S. H. Strogatz, "Synchronization of pulse-coupled biological
+oscillators", SIAM J. Appl. Math. 50 (1990) 1645–1662, Sections 3.3–3.5, Theorem 3.1. -/
+theorem_wanted volume_never_absorbed_eq_zero (hN : 2 ≤ N) (f g : ℝ → ℝ)
     (hfg : StateFunction f g) (s : ℕ → ℝ) (hs : ∀ k, 1 ≤ k → 0 < s k) :
-    ∀ᵐ φ ∂(volume.restrict (Set.pi Set.univ fun _ : Fin N => Set.Ico (0 : ℝ) 1)),
-      ∃ n : ℕ, Synchronized ((fire f g s)^[n] φ)
+    volume {φ : Fin N → ℝ | (∀ i, φ i ∈ Set.Ico (0 : ℝ) 1) ∧
+      ∀ n : ℕ, ¬ IsAbsorbed ((fire f g s)^[n] φ)} = 0
 
 end WantedExt.Biology.Neuroscience.PulseCoupledSynchronyWanted
