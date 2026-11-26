@@ -1,0 +1,3 @@
+# Sum convolution as the discrete convolution on the natural numbers
+
+Let $R$ be a non-unital, non-associative semiring (multiplication distributes over addition; neither associativity nor a unit is assumed) carrying a topology, and let $f, g \colon \mathbb{N} \to R$. Then the sum convolution $(f * g)(n) = \sum_{a + b = n} f(a)\, g(b)$ equals the discrete convolution of $f$ and $g$ over the additive monoid $\mathbb{N}$, whose value at $n$ is the topological sum $\sum' f(a)\, g(b)$ over the set of pairs $(a, b) \in \mathbb{N} \times \mathbb{N}$ with $a + b = n$. The two functions agree at every $n \in \mathbb{N}$.
