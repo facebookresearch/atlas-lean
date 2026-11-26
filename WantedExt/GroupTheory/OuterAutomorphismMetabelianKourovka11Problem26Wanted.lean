@@ -45,7 +45,7 @@ statement (Kourovka Problem 11.26, Göbel) that there is a group $G$ such that f
 group $M$ (one whose second derived subgroup $M''$ is trivial) with trivial centre, the outer
 automorphism group $\operatorname{Out}(M)$ is not isomorphic to $G$. -/
 def groupNotOuterAutOfMetabelian : Prop :=
-  ∃ (G : Type) (_ : Group G), ∀ (M : Type) [Group M], derivedSeries M 2 = ⊥ →
+  ∃ (G : Type) (_ : Group G), ∀ (M : Type) [Group M], Subgroup.derivedSeries M 2 = ⊥ →
     Subgroup.center M = ⊥ → ¬ OutIsoTo M G
 
 /--
