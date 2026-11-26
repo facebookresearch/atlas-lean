@@ -19,6 +19,10 @@ import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 # NP-hardness of three-machine flow-shop scheduling
 
 We reduce PARTITION to flow-shop scheduling and implement the reduction on the binary encodings.
+Items $a_1, \ldots, a_n$ with sum $S$ become jobs with processing times $(0, 2a_i, 0)$, together
+with a separator job $(S, 0, S)$ and the deadline $2S$. The separator's zero-duration operation
+must start at time $S$, so it splits machine two into two windows of length $S$. The reduction
+therefore relies on zero-duration operations.
 -/
 
 @[expose] public section
@@ -746,8 +750,10 @@ private theorem isPolyTime_reducePartition : ComplexityTheory.IsPolyTime reduceP
 end Reframe
 
 /-- **Three-machine flow-shop scheduling is NP-hard.** Every language in NP has a polynomial-time
-many-one reduction to three-machine flow-shop scheduling with the ordered end/start condition,
-including for zero-duration operations. -/
+many-one reduction to three-machine flow-shop scheduling. Processing times are nonnegative
+integers, and on each machine a zero-duration operation may start at either endpoint of another
+operation but not strictly inside it. The reduction is from PARTITION, and the instances it
+produces contain zero-duration operations. -/
 theorem flowShop_hard :
     ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,
       L ∈ MetaMathlibExt.ComplexityTheory.NP → Cslib.CookLevin.PolyManyOneRed L flowShopDec :=

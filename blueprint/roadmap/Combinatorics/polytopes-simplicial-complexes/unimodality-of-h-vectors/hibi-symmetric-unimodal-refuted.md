@@ -11,8 +11,12 @@ as formal power series, such that $h^*_i = h^*_{d-i}$ for all $0 \le i \le d$ bu
 unimodal.
 
 Mustaţă and Payne (Example 1.1) give a reflexive $6$-dimensional lattice polytope with
-$h^*$-vector $(1, 6, 8, 6, 8, 6, 1)$, which is symmetric and not unimodal.
+$h^*$-vector $(1, 6, 8, 6, 8, 6, 1)$, which is symmetric and not unimodal. The simplex with
+vertices $0$, $e_2, \ldots, e_6$ and $(9, -1, -1, -1, -1, -1)$, which is lattice equivalent to the
+reflexive simplex of Payne's Example 4.2 with $(b, k, r) = (3, 2, 0)$, has the symmetric,
+non-unimodal $h^*$-vector $(1, 1, 2, 1, 2, 1, 1)$ and is also a witness.
 
 ## Sources
 
 - C. A. Athanasiadis, On the unimodality of h*-vectors, in Ehrhart Quasipolynomials: Algebra, Combinatorics, and Geometry, Oberwolfach Reports 1 (2004), no. 39, p. 2078, Conjecture 2, DOI 10.4171/OWR/2004/39; resolution: M. Mustaţă and S. Payne, Ehrhart polynomials and stringy Betti numbers, Math. Ann. 333 (2005), 787-795, DOI 10.1007/s00208-005-0691-x, arXiv:math/0504486, Example 1.1: for f = (e1 + ... + e6)/3, N = ℤ⁶ + ℤ f and P the polytope with vertices e1, ..., e6, e1 - f, ..., e6 - f, P is reflexive with δ_P = (1, 6, 8, 6, 8, 6, 1), a counterexample to Hibi's conjecture for d = 6 (abstract: 'counterexamples to Hibi's conjecture on the unimodality of delta-vectors of reflexive polytopes'), https://arxiv.org/abs/math/0504486.
+- S. Payne, Ehrhart series and lattice triangulations, Discrete Comput. Geom. 40 (2008), 365-376, arXiv:math/0702052, Example 4.2: for d = bk + r and f = (1/b)(1, ..., 1, b, ..., b) with bk ones, P = conv{e1, ..., ed, -f} is reflexive for the lattice ℤ^d + ℤ f, with h*-polynomial (1 + ... + t^d) + (1 + ... + t^r)(t^k + ... + t^((b-1)k)); (b, k, r) = (3, 2, 0) gives h* = (1, 1, 2, 1, 2, 1, 1), https://arxiv.org/abs/math/0702052.

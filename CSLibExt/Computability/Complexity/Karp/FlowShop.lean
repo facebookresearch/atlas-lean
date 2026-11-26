@@ -14,9 +14,9 @@ public import CSLibExt.Computability.Complexity.Karp.FlowShop.Verifier
 /-!
 # NP-completeness of three-machine flow-shop scheduling
 
-With operations ordered by their end and start times even when their duration is zero,
-three-machine flow-shop scheduling is in NP and every language in NP reduces to it in
-polynomial time.
+Three-machine flow-shop scheduling with nonnegative integer processing times is in NP, and
+every language in NP reduces to it in polynomial time. On each machine, a zero-duration
+operation may start at either endpoint of another operation but not strictly inside it.
 -/
 
 @[expose] public section
@@ -25,9 +25,10 @@ namespace MetaMathlibExt.Complexity.NPComplete.FlowShop
 
 /-- **3-MACHINE FLOW SHOP SCHEDULING is NP-complete.** The 3-machine flow shop scheduling
 decision problem belongs to NP, and every decision problem in NP reduces to it by a
-polynomial-time many-one reduction. This result uses the convention that a zero-duration
-operation may start at either endpoint of another operation on the same machine, but cannot
-start strictly inside it. Under the empty-interval convention that interior start is allowed.
+polynomial-time many-one reduction. Processing times are nonnegative integers, and on each
+machine a zero-duration operation may start at either endpoint of another operation but not
+strictly inside it. Since processing times may be zero, this does not by itself give NP-hardness
+for instances whose processing times are all positive.
 
 Source: M. R. Garey, D. S. Johnson, and
 R. Sethi, "The complexity of flowshop and jobshop scheduling", Mathematics of Operations

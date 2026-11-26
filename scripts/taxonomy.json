@@ -11955,7 +11955,6 @@
   "MathlibExt/GameTheory/SocialChoice/ArrowImpossibility": {"to": "GameTheory/social-choice", "title": "Arrow's impossibility theorem"},
   "MathlibExt/GameTheory/SocialChoice/GibbardSatterthwaite": {"to": "GameTheory/social-choice", "title": "Gibbard–Satterthwaite theorem"},
   "MathlibExt/GameTheory/SpragueGrundy": {"to": "GameTheory/combinatorial-games", "title": "Sprague–Grundy theorem"},
-  "MathlibExt/GameTheory/SpragueGrundyMex": {"to": "GameTheory/combinatorial-games", "title": "Mex rule for Sprague–Grundy values"},
   "MathlibExt/GameTheory/SpragueGrundyZero": {"to": "GameTheory/combinatorial-games", "title": "Princess and the Roses game"},
   "MathlibExt/GameTheory/UnconditionalRegretMatching": {"to": "GameTheory/noncooperative-games", "title": "No-regret dynamics"},
   "MathlibExt/GameTheory/UncoupledDynamics": {"to": "GameTheory/noncooperative-games", "title": "Adaptive heuristics"},

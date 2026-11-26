@@ -414,18 +414,11 @@ private lemma good_iff {s : ℕ} {g : Fin s → Fin d → ZMod 2} :
     · exact good_of_zero hi
     · exact good_of_repeat hij h
 
-private lemma descFactorial_eq_prod_range (n s : ℕ) :
-    n.descFactorial s = ∏ i ∈ Finset.range s, (n - i) := by
-  induction s with
-  | zero => simp
-  | succ k ih =>
-    rw [Nat.descFactorial_succ, ih, Finset.prod_range_succ, mul_comm]
-
 private lemma descFactorial_div_le {n s : ℕ} (hsn : s ≤ n) (hsq : 2 * n ≤ s ^ 2)
     (hn : 2 ≤ n) :
     ((n.descFactorial s : ℝ)) ≤ 3 / 4 * (n : ℝ) ^ s := by
   have hnR : (0 : ℝ) < n := by exact_mod_cast (lt_of_lt_of_le (by norm_num) hn)
-  rw [descFactorial_eq_prod_range]
+  rw [Nat.descFactorial_eq_prod_range]
   have hcast : ((∏ i ∈ Finset.range s, (n - i) : ℕ) : ℝ) =
       ∏ i ∈ Finset.range s, ((n : ℝ) - i) := by
     rw [Nat.cast_prod]

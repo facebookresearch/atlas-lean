@@ -19,6 +19,11 @@ import MathlibExt.GameTheory.MechanismDesign.SingleParameter
 is incompatible with Bayesian incentive compatibility and interim individual rationality.
 The single-parameter envelope formula bounds each trader's utility from below. Integrating
 these bounds over both types gives a sum strictly larger than the available gains from trade.
+
+## References
+
+* R. B. Myerson and M. A. Satterthwaite, "Efficient mechanisms for bilateral trading",
+  *J. Econom. Theory* 29 (1983), 265–281, §2, Theorem 1, §3 (equation (7)) and Corollary 1.
 -/
 
 namespace MathlibExt.GameTheory.MyersonSatterthwaiteWanted

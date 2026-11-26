@@ -2,9 +2,10 @@
 
 The 3-machine flow shop scheduling
 decision problem belongs to NP, and every decision problem in NP reduces to it by a
-polynomial-time many-one reduction. This result uses the convention that a zero-duration
-operation may start at either endpoint of another operation on the same machine, but cannot
-start strictly inside it. Under the empty-interval convention that interior start is allowed.
+polynomial-time many-one reduction. Processing times are nonnegative integers, and on each
+machine a zero-duration operation may start at either endpoint of another operation but not
+strictly inside it. Since processing times may be zero, this does not by itself give NP-hardness
+for instances whose processing times are all positive.
 
 ## Sources
 
