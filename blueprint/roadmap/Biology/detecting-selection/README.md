@@ -14,3 +14,5 @@ Statistical tests of neutrality and genome scans for selection based on polymorp
 - [Tajima's D](tajima-s-d/README.md)
 
 - [Selection from allele-frequency time series](selection-from-allele-frequency-time-series/README.md)
+- [Maximal perfect haplotype blocks](maximal-perfect-haplotype-blocks/README.md)
+- [Time-series selection inference under population size change](time-series-selection-inference-under-population-size-change/README.md)

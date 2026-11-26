@@ -43,3 +43,5 @@
 ## Potential outcomes and the local average treatment effect
 
 See [potential outcomes and the local average treatment effect](../../../Probability/nonparametric-survival/potential-outcomes-and-causal-identification/README.md#potential-outcomes-and-the-local-average-treatment-effect) in Probability.
+- [Median-initialized adaptive Lasso for some invalid instruments](median-initialized-adaptive-lasso-for-some-invalid-instruments.md)
+- [MR-SPLIT cross-fitted exposures for one-sample Mendelian randomization](mr-split-cross-fitted-exposures-for-one-sample-mendelian-randomization.md)

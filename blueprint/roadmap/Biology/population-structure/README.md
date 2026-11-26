@@ -29,3 +29,7 @@ f-statistics, admixture graphs, ancestry models and linkage-disequilibrium metho
 ## Related topics
 
 - [Chi-square law of Gaussian projection residuals](../../Probability/linear-models-multivariate/chi-square-law-of-gaussian-projection-residuals/README.md): the chi-square law of whitened projection residuals, which motivates qpAdm-style tests of admixture models.
+- [Asymptotic normality of the D-statistic](asymptotic-normality-of-the-d-statistic/README.md)
+- [$F_{ST}$ constraints from the most frequent allele](fst-constraints-from-the-most-frequent-allele/README.md)
+- [Latent subspace estimation of admixture](latent-subspace-estimation-of-admixture/README.md)
+- [Spectral analysis of local ancestry](spectral-analysis-of-local-ancestry/README.md)

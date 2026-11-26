@@ -28,3 +28,7 @@ Mathematical models of allele frequencies in populations under random mating, se
 - [Effective population size](effective-population-size/README.md)
 
 - [Bernstein's law for the ABO blood groups](bernstein-s-law-for-the-abo-blood-groups/README.md)
+- [Epistasis from fitness rank orders](epistasis-from-fitness-rank-orders/README.md)
+- [Estimators of Shannon genetic diversity](estimators-of-shannon-genetic-diversity/README.md)
+- [Gaussian-process approximation of multi-locus Wright–Fisher time series](gaussian-process-approximation-of-multi-locus-wright-fisher-time-series/README.md)
+- [Two-locus continent–island model](two-locus-continent-island-model/README.md)

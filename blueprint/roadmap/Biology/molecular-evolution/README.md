@@ -14,3 +14,7 @@
 
 - [Origination–fixation dynamics](origination-fixation-dynamics/README.md)
 - [Mutation-rate modifiers and the drift-barrier hypothesis](mutation-rate-modifiers-and-the-drift-barrier-hy.md)
+- [Drift analysis of adaptive walks](drift-analysis-of-adaptive-walks/README.md)
+- [Minimum epistasis interpolation](minimum-epistasis-interpolation/README.md)
+- [Rho statistic dating of lineages](rho-statistic-dating-of-lineages/README.md)
+- [Sparse Walsh approximation of fitness landscapes](sparse-walsh-approximation-of-fitness-landscapes/README.md)
