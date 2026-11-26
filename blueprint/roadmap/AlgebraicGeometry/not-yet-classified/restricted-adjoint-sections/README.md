@@ -1,0 +1,18 @@
+# Restricted Adjoint Sections
+
+- [Adjoint Power](adjoint-power.md)
+- [Restriction](restriction.md)
+- [Restricted Space](restricted-space.md)
+- [Model Sections](model-sections.md)
+- [Fixed Coefficient](fixed-coefficient.md)
+- [Model Section Space](model-section-space.md)
+- [Moving Coefficient](moving-coefficient.md)
+- [Model Refinement](model-refinement.md)
+- [Fixed Cartier Part](fixed-cartier-part.md)
+- [Pulled Fixed Coefficient](pulled-fixed-coefficient.md)
+- [Local Power Section](local-power-section.md)
+- [Section Product](section-product.md)
+- [Section Product](section-product-2.md)
+- [Local Power Pullback](local-power-pullback.md)
+- [Power Restriction](power-restriction.md)
+- [Restriction Algebra](restriction-algebra.md)

@@ -1,0 +1,3 @@
+# Feasible instances of UNIT-TIME OPEN SHOP WITH SYMMETRIC TRANSPORTATION DELAYS
+
+An instance is feasible when there is an open-shop schedule meeting the bound: start times $\sigma_p(j)$ of job $j$'s task on processor $p$, pairwise different on each processor, such that a task starting after another task $k$ on the same processor starts no earlier than $k$ finishes, the tasks of each job occupy pairwise disjoint time intervals, and every task finishes by $K$, respecting the delays: whenever job $j$'s task on machine $q \ne p$ starts no earlier than its task on machine $p$, it starts at least $t_{p,q}$ after that task finishes. A task length $l(t_p[j])$ missing from job $j$'s list, and a delay $t_{p,q}$ missing from the delay matrix, count as $0$.
