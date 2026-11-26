@@ -35,7 +35,9 @@ The proof writes the chain length as the sum, over the stored keys `y`, of the i
 `collisionCount H y x / #H`, each at most `1 / m` (or `2 / m`) for `y ≠ x`, and equal to `1`
 for `y = x`.
 
-Only chain lengths are bounded: no running time is modelled.
+This file bounds chain lengths only. For indexed universal families (`IsUniversalOn`),
+`HashTable.UniversalChain` bounds the scan events of the concrete hash table's lookups and
+erasures in multiplied-out form.
 
 ## Main statements
 
@@ -45,6 +47,8 @@ Only chain lengths are bounded: no running time is modelled.
 
 * J. Erickson, *Algorithms*, lecture notes, Lecture 5 "Hash Tables" (Spring 2017), Sections 5.3
   and 5.4.
+* MIT OpenCourseWare, 6.046J *Design and Analysis of Algorithms* (Spring 2015), Lecture 8 notes
+  "Hashing", section "Universal Hashing": the bound `1 + α` for a stored key.
 -/
 
 public section

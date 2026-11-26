@@ -19,7 +19,8 @@ Generic clients use each part of `expected_chain_length_le`. Two families of fun
 attains both universal bounds. The family of one constant function is near-universal but not
 universal: it attains both near-universal bounds and exceeds the universal absent-key bound, so
 the universality hypothesis cannot be weakened to near-universality there. An empty set of
-stored keys gives the bound `0`.
+stored keys gives the absent-key bound `0`, and with one slot every nonempty family is universal
+and attains the absent-key bound.
 -/
 
 set_option autoImplicit false
@@ -53,6 +54,12 @@ example {α : Type} {m : ℕ} {H : Finset (α → Fin m)} (hH : IsNearUniversal 
     𝔼 h ∈ H, (#{y ∈ S | h y = h x} : ℝ) ≤ 1 + 2 * (#S - 1) / m ∧
       𝔼 h ∈ H, (#{y ∈ S | h y = h x} : ℝ) < 1 + 2 * #S / m :=
   ((expected_chain_length_le H S x).2 hH).2 hx
+
+/-- With no stored keys, the absent-key bound `#S / m` is `0`. -/
+example {α : Type} {m : ℕ} {H : Finset (α → Fin m)} (hH : IsUniversal H) (x : α) :
+    𝔼 h ∈ H, (#{y ∈ (∅ : Finset α) | h y = h x} : ℝ) ≤ 0 := by
+  have bound := ((expected_chain_length_le H ∅ x).1 hH).1 (notMem_empty x)
+  rwa [card_empty, Nat.cast_zero, zero_div] at bound
 
 /-! ### One slot: every nonempty family is universal, and the absent-key bound is attained -/
 
