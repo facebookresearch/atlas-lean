@@ -4,5 +4,4 @@ For every fixed natural number $d \ge 2$, the decision problem SHELLABILITY OF d
 
 ## Sources
 
-- X. Goaoc, P. Paták, Z. Patáková, M. Tancer and U. Wagner, "Shellability is NP-complete", Journal of the ACM 66 (2019), Article 21, doi:10.1145/3314024 (conference version: SoCG 2018.
-- preprint arXiv:1711.08436).
+- X. Goaoc, P. Paták, Z. Patáková, M. Tancer and U. Wagner, "Shellability is NP-complete", Journal of the ACM 66 (2019), Article 21, doi:10.1145/3314024 (conference version: SoCG 2018; preprint arXiv:1711.08436).

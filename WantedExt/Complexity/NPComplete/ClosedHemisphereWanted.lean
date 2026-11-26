@@ -56,7 +56,8 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- A nonzero rational `m`-tuple `y` with `x · y ≥ 0` for at least `K` elements `x` of `X`. -/
+/-- A nonzero rational `m`-tuple `y` with `x · y ≥ 0` for at least `K` entries `x` of the list
+`X`, counted with repetition; a coordinate missing from an entry reads as `0`. -/
 def ClosedHemisphereFeasible (i : OpenHemisphereInstance) : Prop :=
   ∃ y : Fin i.1 → ℚ, y ≠ 0 ∧ i.2.2 ≤
     (i.2.1.filter fun x => 0 ≤ ∑ j : Fin i.1, (intOf (x.getD j (0, 0)) : ℚ) * y j).length
