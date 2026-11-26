@@ -18,6 +18,7 @@ public import MathlibExt.NumberTheory.ArithmeticFunction.OddPerfectPrimeProduct
 public import MathlibExt.NumberTheory.EulerPrime
 public import WantedExt.NumberTheory.PrimitiveNondeficientWanted
 public import MathlibExt.NumberTheory.ArithmeticFunction.OddPerfectPrimeReciprocalSum
+public import MathlibExt.NumberTheory.ArithmeticFunction.OddPerfectPrimeReciprocalSumNotIsEulerPrimeOfMod165Eq
 
 /-! # Prime reciprocal sums of odd perfect and primitive non-deficient numbers
 
@@ -220,17 +221,6 @@ Proposition 8 (`integers-2025-A59-prop-8`). -/
 public theorem_wanted exists_abundancySup_le_two_add_div_minFac :
     ∃ C : ℝ, ∀ n : ℕ, IsPrimitiveNondeficient n →
       (abundancySup n : ℝ) ≤ 2 + C / n.minFac
-
-/-- **Primes congruent to $-1$ modulo $165$ are not Euler primes.** For all natural numbers
-$q$ and $N$ with $q \equiv -1 \pmod{165}$, $q$ is not an Euler prime of $N$. In particular, no
-prime $q \equiv -1 \pmod{165}$ is the Euler prime of an odd perfect number.
-
-Source: Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd
-Perfect or Odd Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59,
-Proposition 9 (`integers-2025-A59-prop-9`). -/
-public theorem_wanted not_isEulerPrime_of_mod_165_eq
-    (n q : ℕ) (hq : q % 165 = 164) :
-    ¬ IsEulerPrime n q
 
 /-- **No odd prime $q$ lifts $H$ of the odd part of $q + 1$ across $2$.** For a positive integer
 $m$ write $H(m) = \prod_{p \mid m} p/(p-1)$, the product over the prime divisors of $m$, and
