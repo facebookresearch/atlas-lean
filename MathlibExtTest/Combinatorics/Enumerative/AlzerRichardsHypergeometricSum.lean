@@ -35,3 +35,23 @@ example :
     (by intro j hj h; interval_cases j <;> norm_num)
   norm_num [ascPochhammer_succ_eval] at h
   exact h
+
+-- At the even cutoff ν = m / 2, only k = ν survives and the ₂F₁ sum has one term.
+example :
+    ∑ k ∈ range 2, ((2 - k).choose k : ℂ) * ((2 - 1).choose (2 - k) : ℂ) /
+      (2 ^ (2 * k) * Ring.choose ((k : ℂ) + 1) k) = 1 / 8 := by
+  have h := sum_choose_mul_choose_div_choose_eq_hypergeometric2F1
+    (m := 2) (ν := 1) (by decide) (by decide) (p := 1)
+    (by intro j hj hmax; interval_cases j; norm_num)
+  convert h using 1
+  norm_num [sum_range_succ, ascPochhammer_succ_eval, Nat.factorial]
+
+-- For odd m = 7 and ν = 2, both surviving terms contribute at the admissible p = -4.
+example :
+    ∑ k ∈ range 4, ((7 - k).choose k : ℂ) * ((7 - 2).choose (7 - k) : ℂ) /
+      (2 ^ (2 * k) * Ring.choose ((k : ℂ) - 4) k) = -5 / 48 := by
+  have h := sum_choose_mul_choose_div_choose_eq_hypergeometric2F1
+    (m := 7) (ν := 2) (by decide) (by decide) (p := -4)
+    (by intro j hj hmax; interval_cases j <;> norm_num)
+  norm_num [sub_eq_add_neg, sum_range_succ, ascPochhammer_succ_eval, Nat.factorial] at h ⊢
+  exact h
