@@ -41,6 +41,11 @@ The file also records the weighted homogeneity of the Witt structure polynomials
 endomorphism families of the Witt law used to build operators: `WittLaw.IsEndo`, the
 Verschiebung family `WittLaw.verFam` and, in characteristic `p`, the Frobenius family
 `WittLaw.frobFam`.
+
+## References
+
+* Th. Zink, *Cartiertheorie kommutativer formaler Gruppen*, Teubner-Texte zur Mathematik 68,
+  Teubner, Leipzig, 1984.
 -/
 
 @[expose] public section
@@ -200,6 +205,12 @@ open MvPowerSeries WittLaw
 
 variable {p : ℕ} [hp : Fact p.Prime] {d d' d'' : ℕ} {R : Type u} [CommRing R]
 
+/-- **Cartier module of a formal group law.** Let `p` be a prime and `Φ` a `d`-dimensional
+formal group law over a commutative ring `R`. A point of `CartierModule p Φ` is a family of `d`
+power series `f j` in the variables `X 0, X 1, …`, with zero constant terms, such that
+substituting the `p`-typical Witt vector addition polynomials into each `f j` gives `Φ` applied
+to two copies of `f` in disjoint blocks of variables: `f` is a homomorphism from the
+`p`-typical Witt vector addition law to `Φ`. -/
 structure CartierModule (p : ℕ) [Fact p.Prime] {d : ℕ} {R : Type u} [CommRing R]
     (Φ : MvFormalGroup d R) where
 
@@ -382,6 +393,12 @@ variable (p)
 def pairFam (u : ℕ → MvPowerSeries ℕ R) : Fin 2 × ℕ → MvPowerSeries (Fin 2 × ℕ) R :=
   fun im => subst (blk im.1) (u im.2)
 
+/-- **Endomorphism of the Witt vector addition law.** Let `p` be a prime and `R` a commutative
+ring. A family `u` of power series over `R` in the variables `X 0, X 1, …`, indexed by `ℕ`, is an
+endomorphism of the `p`-typical Witt vector addition law when it can be substituted, its members
+have zero constant terms, and substituting the Witt vector addition polynomials into each `u n`
+agrees with substituting two copies of `u`, in disjoint blocks of variables, into the `n`-th Witt
+vector addition polynomial. -/
 structure IsEndo (u : ℕ → MvPowerSeries ℕ R) : Prop where
   hasSubst : HasSubst u
   constantCoeff : ∀ n, (u n).constantCoeff = 0

@@ -38,6 +38,12 @@ module `N` and its map `λ` for the pair `(V, Π)`, and `FormalODModule.NPiece` 
 compatibility with Verschiebung and the grading, and prescribed values in critical degrees.
 For such `L`, `IsLMap.phi`, `IsLMap.eta` and `IsLMap.u` are the induced operator, its fixed
 points and their image in the Lie algebra.
+
+## References
+
+* J.-F. Boutot and H. Carayol, *Uniformisation p-adique des courbes de Shimura : les théorèmes
+  de Čerednik et de Drinfeld*, in *Courbes modulaires et courbes de Shimura*, Astérisque
+  196–197 (1991), 45–158, for special formal `O_D`-modules and their Cartier modules.
 -/
 
 @[expose] public section
@@ -92,6 +98,13 @@ def IsPiBijective [CharP B p] (X : FormalODModule p B) (j : Zp2 p →+* B) (n : 
     ∀ h ∈ X.gradedPiece j (n + 1), ∃ f ∈ X.gradedPiece j n, ∃ g : CartierModule p X.F,
       h = X.piOp f + CartierModule.verschiebung g
 
+/-- **`L`-map.** Let `X` be a formal `O_D`-module over a commutative ring `B` of characteristic
+`p`, `j : Zp2 p →+* B` a ring homomorphism, `M` the Cartier module of `X`, `Π` the action of `ϖ`
+on `M`, `N` the quotient of `M × M` by the pairs `(V m, -Π m)`, and `λ : N → M` the map
+`(m, m') ↦ Π m + V m'`. An additive map `L : M → N` is an `L`-map when `λ ∘ L = F`, `L (V m)`
+is the class of `(Π m, 0)`, `L` maps the graded piece `n` of `M` into the classes of pairs of
+elements of the graded piece `n`, and, for every critical index `n`, `L f` is the class of
+`(g, 0)` whenever `f` lies in the graded piece `n` and `V g = Π f`. -/
 structure IsLMap [CharP B p] (X : FormalODModule p B) (j : Zp2 p →+* B)
     (L : CartierModule p X.F →+ X.NMod) : Prop where
 

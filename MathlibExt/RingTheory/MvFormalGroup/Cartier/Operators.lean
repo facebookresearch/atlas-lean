@@ -37,6 +37,11 @@ Precomposition with an endomorphism of the Witt law (`CartierModule.precomp`) gi
 groups act by `CartierModule.map`, and `CartierModule.endAct` is the ring homomorphism from
 `MvFormalGroup.End Φ` to the additive endomorphisms. The tangent map `CartierModule.tangent`
 and the associated curve `CartierModule.curve` connect Cartier modules with the Lie algebra.
+
+## References
+
+* Th. Zink, *Cartiertheorie kommutativer formaler Gruppen*, Teubner-Texte zur Mathematik 68,
+  Teubner, Leipzig, 1984.
 -/
 
 @[expose] public section
@@ -105,12 +110,19 @@ theorem precomp_precomp [Φ.IsComm] {u v : ℕ → MvPowerSeries ℕ R} (hu : Wi
   change subst v (subst u (f.toPowerSeries j)) = _
   rw [subst_comp_subst_apply hu.hasSubst hv.hasSubst]
 
+/-- **Frobenius of a Cartier module.** For a commutative formal group law `Φ` over a commutative
+ring, the Frobenius `F` precomposes each point of the Cartier module with the Witt vector
+Verschiebung, the substitution `X 0 ↦ 0`, `X (n + 1) ↦ X n`. -/
 def frobenius [Φ.IsComm] : CartierModule p Φ →+ CartierModule p Φ :=
   precomp WittLaw.isEndo_verFam
 
 @[simp] theorem toPowerSeries_frobenius [Φ.IsComm] (f : CartierModule p Φ) :
     (frobenius f).toPowerSeries = fun j => subst (WittLaw.verFam R) (f.toPowerSeries j) := rfl
 
+/-- **Verschiebung of a Cartier module.** For a commutative formal group law `Φ` over a
+commutative ring of characteristic `p`, the Verschiebung `V` precomposes each point of the
+Cartier module with the Witt vector Frobenius, the substitution `X n ↦ X n ^ p`. It satisfies
+`F (V x) = p • x`. -/
 def verschiebung [Φ.IsComm] [CharP R p] : CartierModule p Φ →+ CartierModule p Φ :=
   precomp WittLaw.isEndo_frobFam
 

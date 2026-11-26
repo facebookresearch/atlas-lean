@@ -34,6 +34,11 @@ public import MathlibExt.RingTheory.MvFormalGroup.Cartier.WittAction
 characteristic hypothesis. In characteristic `p` it agrees with `CartierModule.verschiebung`
 (`verschiebungInt_eq_verschiebung`), and in general `frobenius ∘ verschiebungInt` is
 multiplication by `p` (`frobenius_verschiebungInt`).
+
+## References
+
+* Th. Zink, *Cartiertheorie kommutativer formaler Gruppen*, Teubner-Texte zur Mathematik 68,
+  Teubner, Leipzig, 1984.
 -/
 
 @[expose] public section
@@ -354,6 +359,11 @@ namespace CartierModule
 variable {p : ℕ} [hp : Fact p.Prime] {d d' : ℕ} {R : Type u} [CommRing R]
 variable {Φ : MvFormalGroup d R} {Φ' : MvFormalGroup d' R}
 
+/-- **Verschiebung over any base.** For a commutative formal group law `Φ` over any commutative
+ring, `verschiebungInt` precomposes each point of the Cartier module with the Witt vector
+Frobenius, given by the integral Frobenius polynomials of the Witt vectors. Over a ring of
+characteristic `p` it agrees with `verschiebung`, and `F (verschiebungInt x) = p • x` over any
+base. -/
 def verschiebungInt [Φ.IsComm] : CartierModule p Φ →+ CartierModule p Φ :=
   precomp WittLaw.isEndo_frobPolyFam
 

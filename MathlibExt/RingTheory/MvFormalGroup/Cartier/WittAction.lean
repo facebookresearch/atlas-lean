@@ -33,8 +33,15 @@ public import MathlibExt.RingTheory.MvFormalGroup.Cartier.Homothety
 Multiplication by a Witt vector `w` acts on Cartier modules by precomposition with the family
 `WittLaw.mulFam w` of Witt multiplication polynomials. This gives
 `CartierModule.instModuleWittVector`, a `WittVector p R`-module structure in which Teichmüller
-representatives act by homotheties and Frobenius and Verschiebung are semilinear
-(`frobenius_smul`, `smul_verschiebung`, `verschiebung_smul`).
+representatives act by homotheties. Write `σ` for the Frobenius of the Witt vectors. Frobenius
+is `σ`-semilinear (`frobenius_smul`); in characteristic `p`, Verschiebung satisfies
+`w • V x = V (σ w • x)` (`smul_verschiebung`) and, over a perfect ring, is `σ⁻¹`-semilinear
+(`verschiebung_smul`).
+
+## References
+
+* Th. Zink, *Cartiertheorie kommutativer formaler Gruppen*, Teubner-Texte zur Mathematik 68,
+  Teubner, Leipzig, 1984.
 -/
 
 @[expose] public section
@@ -522,6 +529,9 @@ theorem wittSMul_add_left [Φ.IsComm] (w₁ w₂ : WittVector p R) (f : CartierM
     funext m
     exact subst_X hS ((1 : Fin 2), m)
 
+/-- For a commutative formal group law `Φ`, a Witt vector `w` acts on the Cartier module by
+precomposition with Witt vector multiplication by `w`; this makes the Cartier module a
+`WittVector p R`-module. -/
 instance instModuleWittVector [Φ.IsComm] : Module (WittVector p R) (CartierModule p Φ) where
   smul w f := wittSMul w f
   one_smul := wittSMul_one

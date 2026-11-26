@@ -35,6 +35,12 @@ For a formal `O_D`-module `X` over `B` and a ring homomorphism `j : Zp2 p →+* 
 Teichmüller representative `[c]` of `GaloisField p 2` acts as the homothety by
 `j [c] ^ p ^ n`. Because `c ^ p ^ 2 = c`, the grading has period two
 (`gradedPiece_add_two`, `gradedPiece_add_two_mul`).
+
+## References
+
+* J.-F. Boutot and H. Carayol, *Uniformisation p-adique des courbes de Shimura : les théorèmes
+  de Čerednik et de Drinfeld*, in *Courbes modulaires et courbes de Shimura*, Astérisque
+  196–197 (1991), 45–158, for special formal `O_D`-modules and their Cartier modules.
 -/
 
 @[expose] public section
@@ -53,6 +59,11 @@ open MvFormalGroup MvFormalGroup.CartierModule
 
 variable {p : ℕ} [hp : Fact p.Prime] {B : Type u} [CommRing B]
 
+/-- **Graded piece of the Cartier module.** For a formal `O_D`-module `X` over a commutative
+ring `B`, a ring homomorphism `j : Zp2 p →+* B`, where `Zp2 p` is the ring of Witt vectors of
+`GaloisField p 2`, and `n : ℕ`, the subgroup of the Cartier module of `X` on which, for every
+`c : GaloisField p 2`, the action of the Teichmüller representative `[c]` agrees with the
+homothety by `j [c] ^ p ^ n`. -/
 def gradedPiece (X : FormalODModule p B) (j : Zp2 p →+* B) (n : ℕ) :
     AddSubgroup (CartierModule p X.F) where
   carrier := {f | ∀ c : GaloisField p 2,

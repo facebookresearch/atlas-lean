@@ -35,6 +35,11 @@ Along a ring homomorphism `f : R →+* S`, a Cartier module of `Φ` maps to one 
 (`CartierModule.baseChangeEq`). Base change is functorial, injective along injective ring
 homomorphisms (`baseChangeEq_injective`) and compatible with Frobenius, Verschiebung,
 homotheties, the Witt-vector action and the tangent map.
+
+## References
+
+* Th. Zink, *Cartiertheorie kommutativer formaler Gruppen*, Teubner-Texte zur Mathematik 68,
+  Teubner, Leipzig, 1984.
 -/
 
 @[expose] public section
@@ -53,50 +58,8 @@ variable {p : ℕ} [hp : Fact p.Prime] {d d' : ℕ}
 variable {R : Type u} [CommRing R] {S : Type v} [CommRing S] {T : Type w} [CommRing T]
 
 omit hp in
-theorem isComm_map (F : MvFormalGroup d R) [F.IsComm] (f : R →+* S) : (F.map f).IsComm := by
-  constructor
-  intro i
-  have key := congrArg (MvPowerSeries.map f) (MvFormalGroup.IsComm.comm (F := F) i)
-  have hS : HasSubst (Sum.elim
-      (fun j => (X (Sum.inr j) : MvPowerSeries (Fin d ⊕ Fin d) R))
-      fun j => X (Sum.inl j)) := by
-    apply hasSubst_of_constantCoeff_zero
-    rintro (j | j) <;> exact constantCoeff_X _
-  rw [map_subst hS] at key
-  have hfam : (fun s => MvPowerSeries.map f (Sum.elim
-      (fun j => (X (Sum.inr j) : MvPowerSeries (Fin d ⊕ Fin d) R))
-      (fun j => X (Sum.inl j)) s))
-      = Sum.elim
-        (fun j => (X (Sum.inr j) : MvPowerSeries (Fin d ⊕ Fin d) S))
-        fun j => X (Sum.inl j) := by
-    funext s
-    rcases s with j | j <;> simp [map_X]
-  rw [hfam] at key
-  exact key
-
-instance instIsCommMapRingHom (F : MvFormalGroup d R) [F.IsComm] (f : R →+* S) :
-    (F.map f).IsComm :=
-  isComm_map F f
-
-omit hp in
 @[simp] theorem toPowerSeries_map_ringHom (F : MvFormalGroup d R) (f : R →+* S) (i : Fin d) :
     (F.map f).toPowerSeries i = MvPowerSeries.map f (F.toPowerSeries i) := rfl
-
-omit hp in
-theorem map_map_ringHom (F : MvFormalGroup d R) (f : R →+* S) (g : S →+* T) :
-    (F.map f).map g = F.map (g.comp f) := by
-  refine MvFormalGroup.ext (funext fun i => ?_)
-  change MvPowerSeries.map g (MvPowerSeries.map f (F.toPowerSeries i)) = MvPowerSeries.map
-      (g.comp f) _
-  rw [MvPowerSeries.map_comp]
-  rfl
-
-omit hp in
-theorem map_ringHom_id' (F : MvFormalGroup d R) : F.map (RingHom.id R) = F := by
-  refine MvFormalGroup.ext (funext fun i => ?_)
-  change MvPowerSeries.map (RingHom.id R) (F.toPowerSeries i) = _
-  rw [MvPowerSeries.map_id]
-  rfl
 
 namespace WittLaw
 

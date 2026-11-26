@@ -38,6 +38,12 @@ uniformizer on the Cartier module as a `WittVector p B`-linear map and
 `0` and `1` are complementary, `FormalODModule.toGradedCartierModuleData` is the resulting
 `GradedCartierModuleData`, with its fields computed by the `toGradedCartierModuleData_*`
 lemmas.
+
+## References
+
+* J.-F. Boutot and H. Carayol, *Uniformisation p-adique des courbes de Shimura : les théorèmes
+  de Čerednik et de Drinfeld*, in *Courbes modulaires et courbes de Shimura*, Astérisque
+  196–197 (1991), 45–158, for special formal `O_D`-modules and their Cartier modules.
 -/
 
 @[expose] public section
@@ -223,6 +229,11 @@ theorem endAct_varpiEnd_mem_gradedPiece_succ (X : FormalODModule p B) (j : Zp2 p
   rw [key, (mem_gradedPiece_iff X j n f).1 hf (c ^ p), endAct_homothety,
     map_pow (WittVector.teichmuller p) c p, map_pow j _ p, ← pow_mul, ← pow_succ']
 
+/-- **Graded Cartier module data of a formal `O_D`-module.** For a formal `O_D`-module `X` over a
+commutative ring `B` and a ring homomorphism `j : Zp2 p →+* B` such that the graded pieces `0`
+and `1` of the Cartier module are complementary, the Cartier module with its `WittVector p B`
+action, the Frobenius, the Verschiebung `verschiebungInt`, the action of `ϖ`, and the graded
+pieces `0` and `1`. -/
 def toGradedCartierModuleData {B : Type u} [CommRing B] (X : FormalODModule p B) (j : Zp2 p →+* B)
     (hc : IsCompl (X.gradedPiece j 0) (X.gradedPiece j 1)) : GradedCartierModuleData p B j where
   M := CartierModule p X.F

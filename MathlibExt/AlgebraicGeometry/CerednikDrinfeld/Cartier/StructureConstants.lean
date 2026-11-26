@@ -37,6 +37,12 @@ Base change compatibilities of the integral Verschiebung and of `V`-adic expansi
 for a formal `O_D`-module, homogeneous `V`-bases (`FormalODModule.IsHomogeneousVBasis`) and
 structure constants of `ϖ` in such a basis (`FormalODModule.HasStructureConstants`), with their
 behavior under base change.
+
+## References
+
+* J.-F. Boutot and H. Carayol, *Uniformisation p-adique des courbes de Shimura : les théorèmes
+  de Čerednik et de Drinfeld*, in *Courbes modulaires et courbes de Shimura*, Astérisque
+  196–197 (1991), 45–158, for special formal `O_D`-modules and their Cartier modules.
 -/
 
 @[expose] public section
@@ -156,23 +162,6 @@ namespace MvPolynomial
 
 variable {σ : Type*} {R : Type*} [CommRing R]
 
-theorem eq_zero_of_C_mul_eq_zero {π : R} (hπ : ∀ r : R, π * r = 0 → r = 0) {g : MvPolynomial σ R}
-    (h : C π * g = 0) : g = 0 := by
-  ext e
-  have he := congrArg (fun r => r.coeff e) h
-  simp only [coeff_C_mul, AddMonoidAlgebra.coeff_zero, Finsupp.coe_zero, Pi.zero_apply] at he ⊢
-  exact hπ _ he
-
-theorem exists_eq_C_mul_of_forall_dvd_coeff {π : R} {q : MvPolynomial σ R}
-    (h : ∀ e, π ∣ q.coeff e) : ∃ q₁ : MvPolynomial σ R, q = C π * q₁ := by
-  classical
-  choose c hc using h
-  refine ⟨∑ e ∈ q.support, monomial e (c e), ?_⟩
-  rw [Finset.mul_sum]
-  conv_lhs => rw [as_sum q]
-  refine Finset.sum_congr rfl fun e _ => ?_
-  rw [C_mul_monomial, ← hc e]
-
 theorem mem_span_of_C_mul_mem_span_X_mul_X_sub_C {π : R} (hπ : ∀ r : R, π * r = 0 → r = 0)
     (u v : σ) {g : MvPolynomial σ R}
     (h : C π * g ∈ Ideal.span {(X u * X v - C π : MvPolynomial σ R)}) :
@@ -187,12 +176,16 @@ theorem mem_span_of_C_mul_mem_span_X_mul_X_sub_C {π : R} (hπ : ∀ r : R, π *
     have hc := congrArg (fun r => r.coeff (e + Finsupp.single u 1 + Finsupp.single v 1)) hXq
     rw [coeff_mul_X, coeff_mul_X, coeff_C_mul] at hc
     exact ⟨_, hc⟩
-  obtain ⟨q₁, rfl⟩ := exists_eq_C_mul_of_forall_dvd_coeff hdvd
+  obtain ⟨q₁, rfl⟩ := (C_dvd_iff_dvd_coeff _ _).2 hdvd
+  have hreg : IsLeftRegular (C π : MvPolynomial σ R) := by
+    rw [C_apply]
+    exact (isLeftRegular_iff_isRegular.mp
+      (isLeftRegular_iff_right_eq_zero_of_mul.mpr hπ)).monomial.left
   have hcancel : g + C π * q₁ = q₁ * X u * X v := by
     have h0 : C π * (g + C π * q₁ - q₁ * X u * X v) = 0 := by
       have := hXq
       linear_combination (-1 : MvPolynomial σ R) * this
-    have := eq_zero_of_C_mul_eq_zero hπ h0
+    have := isLeftRegular_iff_right_eq_zero_of_mul.mp hreg _ h0
     linear_combination this
   refine Ideal.mem_span_singleton'.mpr ⟨q₁, ?_⟩
   linear_combination (-1 : MvPolynomial σ R) * hcancel

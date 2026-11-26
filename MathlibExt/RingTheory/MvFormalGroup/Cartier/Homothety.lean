@@ -32,7 +32,14 @@ public import MathlibExt.RingTheory.MvFormalGroup.Cartier.Operators
 
 For `a : R`, `CartierModule.homothety a` precomposes with the Teichmüller family
 `WittLaw.teichFam a`, i.e. the substitution `X n ↦ a ^ p ^ n • X n`. It is multiplicative in
-`a` and commutes with Frobenius, Verschiebung and the action of formal group homomorphisms.
+`a` (`homothety_mul`), satisfies `F ∘ [a] = [a ^ p] ∘ F` (`frobenius_homothety`) and, in
+characteristic `p`, `[a] ∘ V = V ∘ [a ^ p]` (`homothety_verschiebung`), and commutes with the
+action of formal group homomorphisms (`map_homothety`).
+
+## References
+
+* Th. Zink, *Cartiertheorie kommutativer formaler Gruppen*, Teubner-Texte zur Mathematik 68,
+  Teubner, Leipzig, 1984.
 -/
 
 @[expose] public section
@@ -147,6 +154,10 @@ namespace CartierModule
 variable {p : ℕ} [hp : Fact p.Prime] {d d' : ℕ} {R : Type u} [CommRing R]
 variable {Φ : MvFormalGroup d R} {Φ' : MvFormalGroup d' R}
 
+/-- **Homothety of a Cartier module.** For a commutative formal group law `Φ` over a commutative
+ring `R` and `a : R`, the homothety `[a]` precomposes each point of the Cartier module with
+multiplication by the Teichmüller representative of `a`, the substitution
+`X n ↦ a ^ p ^ n • X n`. -/
 def homothety [Φ.IsComm] (a : R) : CartierModule p Φ →+ CartierModule p Φ :=
   precomp (WittLaw.isEndo_teichFam a)
 

@@ -37,6 +37,12 @@ along compatible ring homomorphisms. An index `i` is critical (`CritChart.IsCrit
 `CritChart.invariants` (where `ϖ = V`), the elements `CritChart.preInvariants` where `ϖ = V`
 up to the image of `V ^ (2 * n + 1)`, their quotients `CritChart.truncInvariants` by the image
 of `V ^ (2 * n)`, and the functoriality of all of these in `B`-algebras.
+
+## References
+
+* J.-F. Boutot and H. Carayol, *Uniformisation p-adique des courbes de Shimura : les théorèmes
+  de Čerednik et de Drinfeld*, in *Courbes modulaires et courbes de Shimura*, Astérisque
+  196–197 (1991), 45–158, for special formal `O_D`-modules and their Cartier modules.
 -/
 
 @[expose] public section
@@ -60,11 +66,11 @@ variable {p : ℕ} [hp : Fact p.Prime] {B : Type u} [CommRing B] {B' : Type v} [
 
 theorem map_F_map (f : B →+* B') (g : B' →+* B'') (X : FormalODModule p B) :
     (X.map f).F.map g = (X.map (g.comp f)).F :=
-  MvFormalGroup.map_map_ringHom X.F f g
+  MvFormalGroup.map_map' f g X.F
 
 def cartierBaseChange (X : FormalODModule p B) {f : B →+* B'} {f' : B →+* B''} (g : B' →+* B'')
     (hg : g.comp f = f') : CartierModule p (X.map f).F →+ CartierModule p (X.map f').F :=
-  CartierModule.baseChangeEq g (by rw [map_F, map_F, MvFormalGroup.map_map_ringHom, hg])
+  CartierModule.baseChangeEq g (by rw [map_F, map_F, MvFormalGroup.map_map', hg])
 
 theorem toPowerSeries_cartierBaseChange (X : FormalODModule p B) {f : B →+* B'} {f' : B →+* B''}
     (g : B' →+* B'') (hg : g.comp f = f') (m : CartierModule p (X.map f).F) (l : Fin 2) :
@@ -156,9 +162,16 @@ section OneBase
 
 variable [CharP B p]
 
+/-- **Critical index.** For a formal `O_D`-module `X` over a commutative ring `B` of
+characteristic `p` and a ring homomorphism `j : Zp2 p →+* B`, an index `i` is critical when the
+action of `ϖ` maps the graded piece `i` of the Cartier module into the image of `V`: for every
+`m` in the piece there is `g` with `V g = ϖ m`. -/
 def IsCritical (X : FormalODModule p B) (j : Zp2 p →+* B) (i : ℕ) : Prop :=
   ∀ m ∈ X.gradedPiece j i, ∃ g : CartierModule p X.F, verschiebung g = endAct X.varpiEnd m
 
+/-- **Invariants in degree `i`.** For a formal `O_D`-module `X` over a commutative ring `B` of
+characteristic `p` and a ring homomorphism `j : Zp2 p →+* B`, the subgroup of the graded piece
+`i` of the Cartier module on which the action of `ϖ` agrees with `V`. -/
 def invariants (X : FormalODModule p B) (j : Zp2 p →+* B) (i : ℕ) : AddSubgroup
     (CartierModule p X.F) where
   carrier := {m | m ∈ X.gradedPiece j i ∧ endAct X.varpiEnd m = verschiebung m}
