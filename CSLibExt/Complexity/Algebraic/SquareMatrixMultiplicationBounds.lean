@@ -640,7 +640,7 @@ the square matrix multiplication exponent of $F$ defined by arithmetic-circuit s
 matrix multiplication exponent of $F$ defined by tensor rank.
 
 Source: C15a additional comments and [B2013]: the arithmetic-operation
-exponent agrees with the tensor-rank exponent. This bridge is not proved. -/
+exponent agrees with the tensor-rank exponent. -/
 theorem squareOperationRankBridge :
     ∀ (F : Type u) [Field F] [Infinite F],
       squareMatrixMultiplicationCircuitExponent F =

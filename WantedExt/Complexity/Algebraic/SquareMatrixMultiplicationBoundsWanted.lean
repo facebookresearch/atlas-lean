@@ -26,9 +26,7 @@ The output-cost lower bound `2 ≤ ω` is proved upstream as
 
 The catalogue rows are stated for every field; the invariance row below and the
 bridge row in `CSLibExt.Complexity.Algebraic.SquareMatrixMultiplicationBounds`
-are stated for infinite fields. Transfers from approximate or
-border-rank algorithms, recursive tensor constructions, division elimination,
-the operation/rank bridge and characteristic invariance are not proved here.
+are stated for infinite fields. Transfers from approximate or border-rank algorithms, recursive tensor constructions, division elimination and characteristic invariance are not proved here.
 The final sharpness proposition records the catalogue comment that `2` is
 conjectured sharp; it is a definition, not an asserted theorem.
 -/
