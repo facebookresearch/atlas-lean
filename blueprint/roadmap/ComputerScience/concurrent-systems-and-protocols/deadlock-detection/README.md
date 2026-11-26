@@ -7,6 +7,7 @@
 ## Reduction sequences and detection
 
 - [Reduction sequences](reduces.md)
+- [Erase of mem](erase-of-mem.md)
 - [Letting a process that fits finish first preserves reduction sequences](erase.md)
 - [A reduction sequence in which no process fits is empty](eq-nil.md)
 - [The detection algorithm with fuel](reduce-aux.md)

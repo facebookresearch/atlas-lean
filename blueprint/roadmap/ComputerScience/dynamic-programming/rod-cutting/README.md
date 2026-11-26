@@ -5,6 +5,7 @@
 - [Revenue of an uncut rod](composition-revenue-single.md)
 - [Revenue is additive under concatenation](composition-revenue-append.md)
 - [Bottom-up rod cutting](bottom-up-cut-rod.md)
+- [Composition Revenue cast](composition-revenue-cast.md)
 - [Correctness of bottom-up rod cutting](bottom-up-cut-rod-correct.md)
 - [Bottom-up rod cutting on the empty rod](bottom-up-cut-rod-zero.md)
 - [Cost of bottom-up rod cutting as a sum over rows](bottom-up-cut-rod-time-sum.md)

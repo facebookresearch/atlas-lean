@@ -20,7 +20,9 @@ suitable functions $f$.
 
 - [Probability that a literal is true](literal-prob.md)
 - [Satisfaction probability of a clause](clause-sat-prob.md)
+- [The closed form is the satisfaction probability](clause-sat-prob-eq-sum-assignments.md)
 - [Johnson's random assignment](clause-sat-prob-half.md)
+- [Johnson's probabilities are probabilities](half-mem-icc.md)
 - [Left-hand side of the clause constraint of the MAX SAT relaxation](lp-clause-bound.md)
 - [Feasible solutions of the MAX SAT linear relaxation](lpfeasible.md)
 - [The randomized-rounding factor](rounding-factor.md)
