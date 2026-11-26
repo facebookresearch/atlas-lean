@@ -74,8 +74,9 @@ theorem exactSourceType1 {J : Type 1} [AddCommGroup J] [Module HeckeAlg J]
 
 /-! ### The density predicate -/
 
-/-- Modulo the whole group, density is exactly the existence of one Frobenius
-element at a prime outside `S`: the power `n = 0` reaches every `σ`. -/
+/-- Modulo the whole group, density says exactly that there are a prime `ℓ ∉ S`, a valuation
+subring `A` lying over `ℓ` and an element that is Frobenius at `ℓ` for `A`: the power `n = 0`
+reaches every `σ`. -/
 theorem frobeniusPowerDense_top_iff (S : Finset ℕ) :
     FrobeniusPowerDense S ⊤ ↔
       ∃ (ℓ : ℕ) (A : ValuationSubring (AlgebraicClosure ℚ))
@@ -88,8 +89,9 @@ theorem frobeniusPowerDense_top_iff (S : Finset ℕ) :
   · rintro ⟨ℓ, A, τ, hℓ, hS, hA, hτ⟩ σ
     exact ⟨ℓ, A, τ, 1, 0, hℓ, hS, hA, hτ, Subgroup.mem_top _⟩
 
-/-- Modulo the trivial subgroup, density says that every element is a
-conjugate of a power of a Frobenius element at a prime outside `S`. -/
+/-- Modulo the trivial subgroup, density says that every `σ` equals `g * τ ^ n * g⁻¹` for some
+prime `ℓ ∉ S`, valuation subring `A` lying over `ℓ`, element `τ` that is Frobenius at `ℓ` for
+`A`, element `g` and exponent `n`. -/
 theorem frobeniusPowerDense_bot_iff (S : Finset ℕ) :
     FrobeniusPowerDense S ⊥ ↔
       ∀ σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ,
@@ -108,16 +110,16 @@ theorem frobeniusPowerDense_mono {S S' : Finset ℕ}
   obtain ⟨ℓ, A, τ, g, n, hℓ, hℓS, hA, hτ, hmem⟩ := h σ
   exact ⟨ℓ, A, τ, g, n, hℓ, fun h' => hℓS (hS h'), hA, hτ, hH hmem⟩
 
-/-- Modulo the whole group, density holds for every finite exceptional set: some prime
-lies outside `S`, and `ValuationSubring.exists_isFrobeniusAt_rat` gives a Frobenius
-element there. -/
+/-- Modulo the whole group, density holds for every finite exceptional set: some prime `ℓ`
+lies outside `S`, and `ValuationSubring.exists_isFrobeniusAt_rat` gives a valuation subring
+lying over `ℓ` and an element that is Frobenius at `ℓ` for it. -/
 theorem frobeniusPowerDense_top (S : Finset ℕ) : FrobeniusPowerDense S ⊤ := by
   obtain ⟨ℓ, hℓ, hℓS⟩ := Nat.infinite_setOfPred_prime.exists_notMem_finset S
   obtain ⟨A, hA, τ, hτ⟩ := ValuationSubring.exists_isFrobeniusAt_rat ℓ hℓ
   exact (frobeniusPowerDense_top_iff S).mpr ⟨ℓ, A, τ, hℓ, hℓS, hA, hτ⟩
 
-/-- Density is never vacuous: it produces a Frobenius element at a prime
-outside `S`. -/
+/-- Density is never vacuous: it produces a prime `ℓ ∉ S`, a valuation subring lying over `ℓ`
+and an element that is Frobenius at `ℓ` for it. -/
 theorem exists_isFrobeniusAt_of_frobeniusPowerDense {S : Finset ℕ}
     {H : Subgroup (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ)}
     (h : FrobeniusPowerDense S H) :
@@ -274,9 +276,10 @@ theorem frobeniusQuadratic_eisModel :
   rw [galois_smul_eq, galois_smul_eq, hecke_smul_eq, eisMod_heckeGen, nsmul_eq_mul]
   ring
 
-/-- On the model the density hypothesis is the existence of one Frobenius element
-at an odd prime. Every other hypothesis is checked below without using any
-Frobenius element, so density is the only one that asks for one. -/
+/-- On the model the density hypothesis says exactly that there are an odd prime `ℓ`, a
+valuation subring lying over `ℓ` and an element that is Frobenius at `ℓ` for it. Every other
+hypothesis is checked below without using any Frobenius element, so density is the only one
+that asks for one. -/
 theorem frobeniusPowerDense_eisModel_iff :
     FrobeniusPowerDense {2} (trivRep.ker ⊓ fixingSubgroup
       (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ)

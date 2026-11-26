@@ -44,12 +44,12 @@ import Mathlib.LinearAlgebra.Matrix.Charpoly.Coeff
 
 @[expose] public section
 
-/-- Every `σ` has the same image modulo `H` as a conjugate of a power of a Frobenius
-element at a prime outside `S`: there are a prime `ℓ ∉ S`, a valuation subring `A`
-lying over `ℓ`, a Frobenius element `τ` for `A` at `ℓ`, an element `g` and an exponent
-`n` with `g * τ ^ n * g⁻¹ * σ⁻¹ ∈ H`. For `H` the kernel of a representation, this says
-that every image `ρ σ` is the image of a conjugated Frobenius power. Despite the name,
-this is not topological density: no closure is taken. -/
+/-- **Conjugated Frobenius powers modulo a subgroup.** For every `σ` there are a prime `ℓ ∉ S`,
+a valuation subring `A` of `AlgebraicClosure ℚ` lying over `ℓ`, an element `τ` that is
+Frobenius at `ℓ` for `A`, an element `g` and an exponent `n` with `g * τ ^ n * g⁻¹ * σ⁻¹ ∈ H`,
+that is, `σ` lies in the coset `H * (g * τ ^ n * g⁻¹)`. For `H` the kernel of a
+representation `ρ`, this says that every image `ρ σ` is the image of a conjugated Frobenius
+power. Despite the name, this is not topological density: no closure is taken. -/
 def FrobeniusPowerDense (S : Finset ℕ)
     (H : Subgroup (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ)) : Prop :=
   ∀ σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ,
@@ -69,7 +69,8 @@ noncomputable def heckeGen (ℓ : Nat.Primes) : HeckeAlg := MvPolynomial.X ℓ
 variable {G : Type*} [Group G] (J : Type*) [AddCommGroup J] [Module HeckeAlg J]
   [DistribMulAction G J] [SMulCommClass G HeckeAlg J]
 
-/-- The submodule of elements annihilated by the ideal `𝔪`. -/
+/-- **Hecke torsion.** The submodule of the elements `x : J` with `t • x = 0` for every
+`t ∈ 𝔪`. -/
 noncomputable abbrev heckeTorsion (𝔪 : Ideal HeckeAlg) : Submodule HeckeAlg J :=
   Submodule.torsionBySet HeckeAlg J (𝔪 : Set HeckeAlg)
 
@@ -88,8 +89,11 @@ variable {K L : Type*} [Field K] [Field L] [Algebra K L]
 variable (N p : ℕ) (J : Type*) [AddCommGroup J] [Module HeckeAlg J]
   [DistribMulAction (L ≃ₐ[K] L) J] [SMulCommClass (L ≃ₐ[K] L) HeckeAlg J]
 
-/-- The quadratic Frobenius relation: at every prime outside `N * p`,
-Frobenius satisfies `σ² - T_ℓ σ + ℓ = 0` on `p`-power torsion. -/
+/-- **Quadratic Frobenius relation.** For every prime `ℓ` not dividing `N * p`, every valuation
+subring `A` of `L` lying over `ℓ`, every `σ : L ≃ₐ[K] L` that is Frobenius at `ℓ` for `A`, and
+every `x : J` with `p ^ n • x = 0` for some `n`, the relation
+`σ • σ • x - heckeGen ℓ • (σ • x) + ℓ • x = 0` holds: each such Frobenius element satisfies
+`σ² - T_ℓ σ + ℓ = 0` on the `p`-power torsion of `J`. -/
 def FrobeniusQuadratic : Prop :=
   ∀ ℓ : ℕ, (hℓ : ℓ.Prime) → ¬ ℓ ∣ N * p →
     ∀ A : ValuationSubring L, A.LiesOverPrime ℓ →
@@ -364,16 +368,22 @@ private theorem fixingSubgroup_heckeTorsion_eq_ker {G : Type*} [Group G]
       (LinearMap.congr_fun h (⟨y, hy⟩ : heckeTorsion J 𝔪))
     exact this
 
-/-- Cayley–Hamilton on Hecke torsion for every Galois element.
+/-- **Cayley–Hamilton on Hecke torsion.** Let `J` be a `HeckeAlg`-module with a commuting
+action of `AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ`, and let `ρ` be a homomorphism from
+that group to the `2 × 2` matrices over `HeckeAlg ⧸ 𝔪`. Assume:
 
-Assume that `p ∈ 𝔪`, that Frobenius elements satisfy the quadratic relation
-`FrobeniusQuadratic N p J` on `p`-power torsion, and that every prime outside `S`
-is prime to `N * p`. Assume separately that `ρ` matches the Hecke data at Frobenius
-elements: for every Frobenius element `σ` at a prime `ℓ ∉ S`, the trace and
-determinant of `ρ σ` are the images of `heckeGen ℓ` and `ℓ` in `HeckeAlg ⧸ 𝔪`.
-Finally assume `FrobeniusPowerDense S` modulo the kernel of `ρ` intersected with the
-subgroup fixing the `𝔪`-torsion. Then every `σ` satisfies `σ² - t σ + d = 0` on the
-`𝔪`-torsion, for all lifts `t` and `d` of the trace and determinant of `ρ σ`. -/
+* `p ∈ 𝔪`;
+* `FrobeniusQuadratic N p J`, over `ℚ` and in `AlgebraicClosure ℚ`;
+* no prime `ℓ ∉ S` divides `N * p`;
+* for every prime `ℓ ∉ S`, every valuation subring `A` of `AlgebraicClosure ℚ` lying over
+  `ℓ`, and every `σ` that is Frobenius at `ℓ` for `A`, the trace and determinant of `ρ σ`
+  are the images of `heckeGen ℓ` and `ℓ` in `HeckeAlg ⧸ 𝔪`;
+* `FrobeniusPowerDense S` modulo the intersection of the kernel of `ρ` with the subgroup
+  fixing the `𝔪`-torsion of `J`.
+
+Then for every `σ`, every `x` in the `𝔪`-torsion of `J`, and all `t d : HeckeAlg` whose
+images in `HeckeAlg ⧸ 𝔪` are the trace and determinant of `ρ σ`, we have
+`σ • σ • x - t • (σ • x) + d • x = 0`. -/
 public theorem cayleyHamilton_forall_of_frobeniusQuadratic_of_dense {J : Type*}
     [AddCommGroup J] [Module HeckeAlg J]
     [DistribMulAction (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) J]
