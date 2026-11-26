@@ -9,8 +9,7 @@ Every untyped λ-term $\tau$ can be written in exactly one way as $\lambda x_1 \
 - **Head reduction.** The *head reduction* of $\tau$ is the finite or infinite sequence $\tau_0 = \tau, \tau_1, \dots$ in which $\tau_{k+1}$ is obtained by
   contracting the head redex of $\tau_k$; it stops at the first head normal form.
 - **Solvable terms.** $\tau$ is *solvable* if for every term $u$ there are variables $x_1, \dots, x_k$ and terms $u_1, \dots, u_k, v_1, \dots, v_l$ ($k, l \ge 0$) with
-  $$\tau[u_1/x_1, \dots, u_k/x_k]\, v_1 \cdots v_l \simeq_\beta u.$$
-  Equivalently, the same holds for $u = I = \lambda x.\, x$. A closed term $\tau$ is solvable exactly when $\tau\, v_1 \cdots v_l \simeq_\beta I$ for some terms $v_1, \dots, v_l$, and
+  $\tau[u_1/x_1, \dots, u_k/x_k]\, v_1 \cdots v_l \simeq_\beta u$. Equivalently, the same holds for $u = I = \lambda x.\, x$. A closed term $\tau$ is solvable exactly when $\tau\, v_1 \cdots v_l \simeq_\beta I$ for some terms $v_1, \dots, v_l$, and
   a term is solvable exactly when its closure $\lambda x_1 \dots \lambda x_n.\, \tau$ over its free variables is. For example, $\Omega = (\lambda x.\, x\,x)(\lambda x.\, x\,x)$ is not
   solvable.
 
