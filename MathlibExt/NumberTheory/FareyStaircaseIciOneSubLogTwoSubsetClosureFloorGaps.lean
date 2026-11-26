@@ -27,8 +27,9 @@ import Mathlib.Topology.ContinuousMap.Basic
 For a rational number `t = p / q ≥ 1` with `m = ⌊t⌋₊`, the floor gap `⌊nx⌋ - n * A_n(x)` taken
 at `x = t / n` (so that `nx = t`) converges, along `n = pqM` as `M → ∞`, to the gap limit
 `m - ∑_{k=1}^m log (t / k)`. For each `m ≥ 1`, the gap limits at the rationals `t ∈ [m, m + 1)`
-are dense in the envelope interval between the gap limits at `t = m + 1` and `t = m`. These
-intervals cover `[1 - log 2, ∞)`, so the set of floor gaps is dense in `[1 - log 2, ∞)`.
+are dense in the envelope interval from the left-hand limit as `t` approaches `m + 1` to the
+value at `t = m`. These intervals cover `[1 - log 2, ∞)`, so the set of floor gaps is dense in
+`[1 - log 2, ∞)`.
 
 Statements from David Harry Richman, *Lower Rational Approximations and Farey Staircases*,
 INTEGERS 24 (2024), Article A37 (primary text: arXiv:2303.02935).
@@ -138,7 +139,8 @@ private theorem gapLimit_self {m : ℕ} (hm : 1 ≤ m) : gapLimit m m = gapUB m 
   rw [gapLimit, gapUB, sum_log_div hm0 m]
   ring
 
-/-- The gap limit at `t = m + 1` equals the lower envelope. -/
+/-- The endpoint of the fixed-`m` branch at `t = m + 1` (the left-hand limit of the gap limit as
+`t` approaches `m + 1`, with `m` held fixed) equals the lower envelope. -/
 private theorem gapLimit_succ {m : ℕ} (_hm : 1 ≤ m) :
     gapLimit m ((m : ℝ) + 1) = gapLB m := by
   have ht0 : (m : ℝ) + 1 ≠ 0 := ne_of_gt (by positivity)
@@ -155,7 +157,7 @@ private theorem gapUB_one : gapUB 1 = 1 := by
   rw [gapUB]
   norm_num [Nat.factorial_one, Real.log_one]
 
-/-- Successive upper envelope values differ by `δ`. -/
+/-- Successive upper envelope values differ by `1 - m log ((m + 1) / m)`. -/
 private theorem gapUB_sub {m : ℕ} (hm : 1 ≤ m) :
     gapUB (m + 1) - gapUB m = 1 - (m : ℝ) * Real.log (((m : ℝ) + 1) / m) := by
   have hm0 : (m : ℝ) ≠ 0 := by exact_mod_cast (by omega : m ≠ 0)
@@ -186,14 +188,7 @@ private theorem delta_lt_half {m : ℕ} (hm : 1 ≤ m) :
   have hlog : Real.log 2 ≤ (m : ℝ) * Real.log (((m : ℝ) + 1) / m) := by
     rw [heq, ← Real.log_pow]
     exact Real.log_le_log (by norm_num) hbern
-  have h4 : (1 : ℝ) < Real.log 4 := by
-    have h := Real.log_lt_log (Real.exp_pos 1)
-      (show Real.exp 1 < 4 by linarith [Real.exp_one_lt_d9])
-    rwa [Real.log_exp] at h
-  have hlog4 : Real.log 4 = 2 * Real.log 2 := by
-    rw [show (4 : ℝ) = 2 ^ 2 by norm_num, Real.log_pow]
-    norm_num
-  linarith
+  linarith [Real.log_two_gt_d9]
 
 /-- Consecutive envelope intervals overlap. -/
 private theorem gapLB_succ_lt {m : ℕ} (hm : 1 ≤ m) : gapLB (m + 1) < gapUB m := by
