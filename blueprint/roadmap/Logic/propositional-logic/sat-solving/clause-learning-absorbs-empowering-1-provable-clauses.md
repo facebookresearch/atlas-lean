@@ -9,4 +9,4 @@ Let $\Delta$ be a CNF formula with $n$ variables and $C$ a clause that is [1-emp
 
 ## Sources
 
-- K. Pipatsrisawat and A. Darwiche, "On the power of clause-learning SAT solvers as resolution engines", *Artificial Intelligence* 175(2):512–525, 2011, <http://reasoning.cs.ucla.edu/fetch.php?id=101&type=pdf>, Section 4, Proposition 2 and footnote 7 (the bound on the size of the derivation), with its proof in Section 5.
+- K. Pipatsrisawat and A. Darwiche, "On the power of clause-learning SAT solvers with restarts", revised version of the paper in *Principles and Practice of Constraint Programming (CP 2009)*, LNCS 5732, Springer, 2009, pp. 654–668, <http://reasoning.cs.ucla.edu/fetch.php?id=101&type=pdf>, Section 4, Proposition 2 and footnote 7 (the bound on the size of the derivation, which corrects the proceedings version), with its proof in Appendix A.

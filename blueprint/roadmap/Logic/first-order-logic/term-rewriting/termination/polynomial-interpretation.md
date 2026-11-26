@@ -6,4 +6,4 @@ For example, with $P_b = 3$, $P_f(X) = X^2$ and $P_g(X_1, X_2, X_3) = X_1 + X_2 
 
 ## Sources
 
-- U. Waldmann, *Automated Reasoning*, lecture notes, Max Planck Institute for Informatics, winter semester 2019/20, <https://rg1-teaching.mpi-inf.mpg.de/autrea-ws19/script.pdf>, Section 4.5, polynomial orderings, requirements 1 and 2 and the example, p. 116.
+- U. Waldmann, *Automated Reasoning*, lecture notes, Max Planck Institute for Informatics, winter semester 2019/20, <https://rg1-teaching.mpi-inf.mpg.de/autrea-ws19/script.pdf>, Section 4.5, polynomial orderings, requirements 1 and 2, p. 116, and the example, p. 117.

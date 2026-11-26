@@ -10,4 +10,4 @@ A *trivial resolution derivation* is a resolution derivation in which every step
 
 ## Sources
 
-- K. Pipatsrisawat and A. Darwiche, "On the power of clause-learning SAT solvers as resolution engines", *Artificial Intelligence* 175(2):512–525, 2011, <http://reasoning.cs.ucla.edu/fetch.php?id=101&type=pdf>, Section 3.1: Definition 3 (conflict clauses), the notion of trivial resolution derivation, and Definition 4 (asserting clauses and assertion level); Section 3.2 (learning schemes, asserting learning schemes, the first-UIP scheme).
+- K. Pipatsrisawat and A. Darwiche, "On the power of clause-learning SAT solvers with restarts", revised version of the paper in *Principles and Practice of Constraint Programming (CP 2009)*, LNCS 5732, Springer, 2009, pp. 654–668, <http://reasoning.cs.ucla.edu/fetch.php?id=101&type=pdf>, Section 3.1: Definition 3 (conflict clauses), the notion of trivial resolution derivation, and Definition 4 (asserting clauses and assertion level); Section 3.2 (learning schemes, asserting learning schemes, the first-UIP scheme).

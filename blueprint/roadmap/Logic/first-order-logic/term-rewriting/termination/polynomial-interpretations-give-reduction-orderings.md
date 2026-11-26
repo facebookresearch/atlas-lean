@@ -15,4 +15,4 @@ For a [polynomial interpretation](polynomial-interpretation.md), the ordering $s
 
 ## Sources
 
-- U. Waldmann, *Automated Reasoning*, lecture notes, Max Planck Institute for Informatics, winter semester 2019/20, <https://rg1-teaching.mpi-inf.mpg.de/autrea-ws19/script.pdf>, Section 4.5, polynomial orderings as an instance of the interpretation method (Theorem 4.22) and the remark $s \succ_{\mathcal A} t$ iff $P_s > P_t$, p. 116; Theorem 4.19 for termination via reduction orderings.
+- U. Waldmann, *Automated Reasoning*, lecture notes, Max Planck Institute for Informatics, winter semester 2019/20, <https://rg1-teaching.mpi-inf.mpg.de/autrea-ws19/script.pdf>, Section 4.5, polynomial orderings as an instance of the interpretation method (Theorem 4.22) and the remark $s \succ_{\mathcal A} t$ iff $P_s > P_t$, pp. 116–117; Theorem 4.19 for termination via reduction orderings.

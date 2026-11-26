@@ -12,4 +12,4 @@ Viewing each learned clause as derived by a resolution derivation from the input
 
 ## Sources
 
-- K. Pipatsrisawat and A. Darwiche, "On the power of clause-learning SAT solvers as resolution engines", *Artificial Intelligence* 175(2):512–525, 2011, <http://reasoning.cs.ucla.edu/fetch.php?id=101&type=pdf>, Section 2.1 (Definition 1, resolution proofs, and Definition 2, p-simulation), Section 3.1 (Algorithm 1), Section 3.3 (extended branching sequences) and Section 3.4 (Definition 5, the proof system $\mathrm{CLR}_{\mathrm{LS}}$).
+- K. Pipatsrisawat and A. Darwiche, "On the power of clause-learning SAT solvers with restarts", revised version of the paper in *Principles and Practice of Constraint Programming (CP 2009)*, LNCS 5732, Springer, 2009, pp. 654–668, <http://reasoning.cs.ucla.edu/fetch.php?id=101&type=pdf>, Section 2.1 (Definition 1, resolution proofs, and Definition 2, p-simulation), Section 3.1 (Algorithm 1), Section 3.3 (extended branching sequences) and Section 3.4 (Definition 5, the proof system $\mathrm{CLR}_{\mathrm{LS}}$).

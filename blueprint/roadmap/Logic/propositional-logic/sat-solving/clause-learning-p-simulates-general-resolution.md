@@ -16,4 +16,4 @@ For every asserting learning scheme LS, the [proof system](clause-learning-as-a-
 
 ## Sources
 
-- K. Pipatsrisawat and A. Darwiche, "On the power of clause-learning SAT solvers as resolution engines", *Artificial Intelligence* 175(2):512–525, 2011, <http://reasoning.cs.ucla.edu/fetch.php?id=101&type=pdf>, Section 4: Theorem 1, Corollary 1 (first UIP) and the proof sketch; Section 5 (the proof); Theorem 2 (polynomial-time construction of the branching sequence).
+- K. Pipatsrisawat and A. Darwiche, "On the power of clause-learning SAT solvers with restarts", revised version of the paper in *Principles and Practice of Constraint Programming (CP 2009)*, LNCS 5732, Springer, 2009, pp. 654–668, <http://reasoning.cs.ucla.edu/fetch.php?id=101&type=pdf>, Section 5: Theorem 1, Corollary 1 (first UIP), the proof sketch and the proof of Theorem 1, and Theorem 2 (polynomial-time construction of the branching sequence).

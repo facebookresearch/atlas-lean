@@ -6,4 +6,4 @@ A *decision sequence* is a sequence $D = \langle \ell_1, \dots, \ell_k \rangle$ 
 
 ## Sources
 
-- K. Pipatsrisawat and A. Darwiche, "On the power of clause-learning SAT solvers as resolution engines", *Artificial Intelligence* 175(2):512–525, 2011, <http://reasoning.cs.ucla.edu/fetch.php?id=101&type=pdf>, Section 3.1: the clause-learning algorithm, decision sequences, SAT states, 1-consistency, implication levels and normal states.
+- K. Pipatsrisawat and A. Darwiche, "On the power of clause-learning SAT solvers with restarts", revised version of the paper in *Principles and Practice of Constraint Programming (CP 2009)*, LNCS 5732, Springer, 2009, pp. 654–668, <http://reasoning.cs.ucla.edu/fetch.php?id=101&type=pdf>, Section 3.1: the clause-learning algorithm, decision sequences, SAT states, 1-consistency, implication levels and normal states.

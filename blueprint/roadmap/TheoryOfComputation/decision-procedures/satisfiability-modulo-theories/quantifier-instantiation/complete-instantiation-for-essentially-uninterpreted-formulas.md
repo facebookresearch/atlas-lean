@@ -5,7 +5,7 @@ Let $F$ be an [essentially uninterpreted](essentially-uninterpreted-formulas.md)
 1. The least solution of $\Delta_F$ is finite if and only if $\Delta_F$ is stratified.
 2. Hence, for $F$ in the finite essentially uninterpreted fragment, satisfiability modulo $T$ reduces to satisfiability of the finite ground set $F^*$, which a decision procedure for ground formulas modulo $T$ decides.
 
-The background must be a first-order theory $T$: the theorem fails when $T$ is replaced by the complete theory of the expansions of the integers by arbitrary functions, which restricts the interpretations of the uninterpreted symbols.
+The background must be a first-order theory $T$: the theorem fails when $T$ is replaced by the theory of the expansions of the integers by arbitrary functions, a first-order theory that is not complete but constrains the interpretations of the uninterpreted symbols.
 
 **Proof.** $F^*$ consists of ground instances of $F$. Conversely, if $M$ is a model of $F^*$ and some clause $C_k$ failed in its $\pi$-extension $M^\pi$ under $\vec v$, then by [the projection lemma](relevant-domain-instantiation-preserves-ground-terms.md) it fails in $M$ under $\pi_k(\vec v)$, whose components are values of terms $r$ in the sets $S_{k,i}$, so the instance $C_k[\vec r]$ of $F^*$ fails in $M$.
 
