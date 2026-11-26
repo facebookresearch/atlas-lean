@@ -12984,6 +12984,7 @@
   "MathlibExt/NumberTheory/IsobaricPolynomial": {"to": "NumberTheory/linear-recurrences/recurrence-theory", "title": "Isobaric polynomials"},
   "MathlibExt/NumberTheory/IteratedRemainderSet": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Sets of remainders"},
   "MathlibExt/NumberTheory/JacobiAgreementChineseRemainder": {"to": "Combinatorics/additive-combinatorics/zero-sum-subset-sums", "title": "Weighted Davenport constant"},
+  "MathlibExt/NumberTheory/JacobiAgreementUnitsLift": {"to": "Combinatorics/additive-combinatorics/zero-sum-subset-sums", "title": "Weighted Davenport constant"},
   "MathlibExt/NumberTheory/JacobiKernelLift": {"to": "Combinatorics/additive-combinatorics/zero-sum-subset-sums", "title": "Weighted Davenport constant"},
   "MathlibExt/NumberTheory/JacobiTwoSquareCount": {"to": "NumberTheory/quadratic-forms-sums-of-squares/sums-of-squares", "title": "Jacobi's two-square theorem"},
   "MathlibExt/NumberTheory/JacobsthalLucasNumber": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Jacobsthal and Jacobsthal–Lucas numbers"},
