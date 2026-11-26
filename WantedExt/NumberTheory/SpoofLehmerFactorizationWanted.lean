@@ -17,6 +17,8 @@ public import MathlibExt.NumberTheory.LehmerBoundsFormula
 public import MathlibExt.NumberTheory.LehmerBoundsMonotonicity
 public import MathlibExt.NumberTheory.SpoofLehmerFactorization
 public import MathlibExt.NumberTheory.SpoofLehmerResidues
+public import MathlibExt.NumberTheory.SpoofLehmerFactorizationSpoofLehmerBaseNotModEqOnePrime
+public import MathlibExt.NumberTheory.SpoofLehmerFactorizationLehmerEquationSolutionsFinite
 
 /-!
 # Spoof Lehmer factorizations (wanted statements)
@@ -51,21 +53,6 @@ public theorem_wanted spoofLehmer_base_not_modEq_one_base (x : Multiset ℕ) (k 
     (hnt : ¬ IsTrivialSpoof (spoofOfBases x)) :
     ∀ a ∈ x, ∀ b ∈ x, ¬ a ≡ 1 [MOD b]
 
-/-- **Primes dividing the evaluation of a spoof Lehmer factorization.** Let $x_1, \dots, x_r$ be
-natural numbers and let $F = x_1 \cdots x_r$ be the spoof factorization with these bases, all with
-exponent $1$. Suppose $F$ is a nontrivial spoof $k$-Lehmer factorization for some integer $k$. If
-$p$ is a prime dividing the spoof evaluation $\tilde e(F)$, then $x_i \not\equiv 1 \pmod p$ for
-every $i$. Moreover, if $F$ is even (not every base is odd), then every base $x_i$ is even.
-
-Source: Grant Molnar and Guntas Singh, *Spoof Lehmer Factorizations*, INTEGERS 26 (2026),
-Article A33, Corollary 2 (`integers-2026-A33-cor-2`). -/
-public theorem_wanted spoofLehmer_base_not_modEq_one_prime (x : Multiset ℕ) (k : ℤ)
-    (hL : IsSpoofLehmer k (spoofOfBases x))
-    (hnt : ¬ IsTrivialSpoof (spoofOfBases x)) :
-    (∀ p : ℕ, p.Prime → (p : ℤ) ∣ spoofEval (spoofOfBases x) →
-      ∀ a ∈ x, ¬ a ≡ 1 [MOD p]) ∧
-    (¬ IsOddSpoof (spoofOfBases x) → ∀ a ∈ x, Even a)
-
 /-- **Lehmer bounds at the initial segments of a spoof Lehmer factorization.** Let
 $x_1 \le \dots \le x_r$ be natural numbers and let $F = x_1 \cdots x_r$ be the spoof factorization
 with these bases, all with exponent $1$. Suppose $F$ is a nontrivial spoof $k$-Lehmer factorization
@@ -87,20 +74,6 @@ public theorem_wanted spoofLehmer_lower_le_le_upper (x : List ℕ) (hsorted : x.
       (k : ℝ) ≤ lehmerUpper ((x.take s).map (fun a : ℕ => (a : ℝ))) x.length ∧
       (lehmerLower ((x.take s).map (fun a : ℕ => (a : ℝ))) x.length = k ↔ s = x.length)) ∧
     1 < k ∧ k ≤ 2 ^ x.length - 1
-
-/-- **Finitely many solutions of the Lehmer equation in $r$ variables.** For every natural
-number $r \ge 2$, there are only finitely many pairs $(k, x)$ of an integer $k > 0$ and a tuple
-$x = (x_1, \dots, x_r)$ of natural numbers with $x_i \ge 2$ for every $i$ such that
-$k (x_1 - 1) \cdots (x_r - 1) = x_1 \cdots x_r - 1$.
-
-The source also claims that the solutions can be computed explicitly; that claim is not part of
-this statement.
-
-Source: Grant Molnar and Guntas Singh, *Spoof Lehmer Factorizations*, INTEGERS 26 (2026),
-Article A33, Theorem 1 (`integers-2026-A33-thm-1`). -/
-public theorem_wanted lehmerEquation_solutions_finite (r : ℕ) (hr : 2 ≤ r) :
-    {p : ℤ × (Fin r → ℕ) | 0 < p.1 ∧ (∀ i, 2 ≤ p.2 i) ∧
-      p.1 * ∏ i, ((p.2 i : ℤ) - 1) = ∏ i, (p.2 i : ℤ) - 1}.Finite
 
 /-- **Solutions of the Lehmer equation with at most six variables.** Call a finite multiset
 $\{x_1, \dots, x_r\}$ of natural numbers a solution of the Lehmer equation if $x_i \ge 2$ for
