@@ -15,6 +15,7 @@ Probability.
 - [Genomic control](genomic-control/README.md)
 - [SKAT variance-component test](skat-variance-component-test/README.md)
 - [Testing Hardy–Weinberg equilibrium](testing-hardy-weinberg-equilibrium/README.md)
+- [Phenome-wide association scans](phenome-wide-association-scans/README.md)
 - [Bayesian admixture scan scores](bayesian-admixture-scan-scores/README.md)
 - [Cell-fraction interaction QTLs](cell-fraction-interaction-qtls/README.md)
 - [Coordinated polygenic epistasis](coordinated-polygenic-epistasis/README.md)

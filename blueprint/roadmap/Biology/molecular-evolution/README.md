@@ -14,6 +14,7 @@
 
 - [Origination–fixation dynamics](origination-fixation-dynamics/README.md)
 - [Mutation-rate modifiers and the drift-barrier hypothesis](mutation-rate-modifiers-and-the-drift-barrier-hy.md)
+- [Antibody escape maps from deep mutational scanning](antibody-escape-maps-from-deep-mutational-scanning/README.md)
 - [Compositional diversity of prebiotic sequences](compositional-diversity-of-prebiotic-sequences/README.md)
 - [Context-dependent higher-order epistasis](context-dependent-higher-order-epistasis/README.md)
 - [Context-dependent mutation and selection](context-dependent-mutation-and-selection/README.md)
