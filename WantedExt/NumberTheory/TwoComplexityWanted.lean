@@ -34,8 +34,9 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Order.Interval.Finset.Nat
-public import MathlibExt.NumberTheory.TwoComplexityMax
+public import MathlibExt.NumberTheory.TwoComplexityLowerBound
 public import MathlibExt.NumberTheory.TwoComplexitySum
+public import MathlibExt.NumberTheory.TwoComplexityComplexityLDecomp
 
 set_option autoImplicit false
 
@@ -85,17 +86,6 @@ theorem_wanted logb_two_bounds (n : ℕ) (h2n : 2 ∣ n)
     (hn : 1 ≤ n) :
     Real.logb 2 n ≤ (complexityL 2 n : ℝ) ∧
       (complexityL 2 n : ℝ) ≤ 2 * Real.logb 2 n - 1
-
-/-- **Adding a small multiple of $l$ to a multiple of $l^2$.** Write $\|n\|_l$ for the
-$l$-complexity of $n$. Let $l > 1$, let $b \ge 1$ be a multiple of $l^2$, let $a$ be a natural
-number with $a \le l - 1$, and let $n = b + a l$. Then $\|n\|_l = \|b\|_l + a$.
-
-Source: Pengcheng Zhang, "The 2-Complexity of Even Positive
-Integers", Proposition 2. -/
-theorem_wanted complexityL_decomp (l n b a : ℕ) (hl : 1 < l)
-    (hn : n = b + a * l) (hb : l ^ 2 ∣ b) (hb0 : 1 ≤ b)
-    (ha : a ≤ l - 1) :
-    complexityL l n = complexityL l b + a
 
 /-- **Even $n$ with $2^m < n \le 2^{m+1}$ and 2-complexity $m + 1$.** Write $\|n\|_2$ for the
 2-complexity of $n$. Let $m \ge 1$ and let $n$ be an even natural number with
@@ -147,21 +137,6 @@ theorem_wanted complexityL_eq_add_two_iff (m n : ℕ)
     (hm : 3 ≤ m) (h2n : 2 ∣ n) (hn1 : 2 ^ m < n)
     (hn2 : n ≤ 2 ^ (m + 1)) :
     complexityL 2 n = m + 2 ↔ twoComplexityAddTwoForm m n
-
-/-- **Lower bound $\log_2 n + 2$ for the 2-complexity (Zhang's Corollary 4).** Write $\|n\|_2$
-for the 2-complexity of $n$: the least number of copies of $2$ from which $n$ can be built using
-addition and multiplication, and $0$ if $n$ cannot be built. Let $m$ and $n$ be natural numbers
-with $n$ even, $n \ge 1$ and $2^m < n \le 2^{m+1}$. Suppose that $n \ne 2^a + 2^b$ for all
-natural numbers $a \le b$, and that $n$ has none of Zhang's four exceptional forms for $m$.
-Then $\log_2 n + 2 \le \|n\|_2$, where $\log_2$ is the real base-2 logarithm.
-
-Source: Pengcheng Zhang, "The 2-Complexity of Even Positive
-Integers", Corollary 4. -/
-theorem_wanted logb_two_add_two_le (m n : ℕ) (h2n : 2 ∣ n)
-    (hn : 1 ≤ n) (hn1 : 2 ^ m < n) (hn2 : n ≤ 2 ^ (m + 1))
-    (hpow : ¬ ∃ a b : ℕ, a ≤ b ∧ n = 2 ^ a + 2 ^ b)
-    (hform : ¬ twoComplexityAddTwoForm m n) :
-    Real.logb 2 n + 2 ≤ (complexityL 2 n : ℝ)
 
 /-- **Lower bound for the 2-complexity of even sums of five or more distinct powers of two.**
 Write $\|n\|_2$ for the 2-complexity of $n$. Let $n \ge 1$ be an even natural number and let $S$

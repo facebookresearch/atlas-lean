@@ -193,6 +193,25 @@ public theorem isGibonacciGood_fib_div (a b : ℤ) (n : ℕ) :
     push_cast
     field_simp [hq]
 
+-- Reverse the recurrence to express both seeds in the current consecutive pair.
+private theorem gibonacci_seed_coefficients (G : ℕ → ℤ)
+    (hrec : ∀ n, G (n + 2) = G (n + 1) + G n) (n : ℕ) :
+    ∃ u v : ℤ, G 0 = u * G n + v * G (n + 1) ∧
+      G 1 = v * G n + (u + v) * G (n + 1) := by
+  induction n with
+  | zero => exact ⟨1, 0, by simp, by simp⟩
+  | succ n ih =>
+    obtain ⟨u, v, h₀, h₁⟩ := ih
+    refine ⟨v - u, u, ?_, ?_⟩
+    · rw [h₀, hrec n]
+      ring
+    · rw [h₁, hrec n]
+      ring
+
+private theorem gibonacci_denom_ne_zero (x : ℚ) : 1 - x - x ^ 2 ≠ 0 := by
+  intro h
+  exact (by norm_num : ¬ IsSquare (5 : ℚ)) ⟨2 * x + 1, by linear_combination 4 * h⟩
+
 /-- **Two standard families of good values.** Let $a$ and $b$ be integers and let $(G_n)_{n \ge 0}$
 be the Gibonacci sequence with $G_0 = a$ and $G_1 = b$. For every natural number $n$, the ratio
 $F_n / F_{n+1}$ of consecutive Fibonacci numbers is good for $(a, b)$, and if $G_n \ne 0$, then
@@ -210,30 +229,42 @@ public theorem isGibonacciGood_standard_values (a b : ℤ) :
         (-(gibonacciNumber a b (n + 1) : ℚ) / (gibonacciNumber a b n : ℚ))) := by
   refine ⟨isGibonacciGood_fib_div a b, ?_⟩
   let G := gibonacciNumber a b
-  have hrec (n : ℕ) : G (n + 2) = G (n + 1) + G n := rfl
-  -- Express the seeds in the current pair by reversing each recurrence step.
-  have seeds (n : ℕ) : ∃ u v : ℤ, a = u * G n + v * G (n + 1) ∧
-      b = v * G n + (u + v) * G (n + 1) := by
-    induction n with
-    | zero => exact ⟨1, 0, by simp [G, gibonacciNumber], by simp [G, gibonacciNumber]⟩
-    | succ n ih =>
-      obtain ⟨u, v, ha, hb⟩ := ih
-      refine ⟨v - u, u, ?_, ?_⟩
-      · rw [ha, hrec n]
-        ring
-      · rw [hb, hrec n]
-        ring
-  have den (x : ℚ) : 1 - x - x ^ 2 ≠ 0 := by
-    intro h
-    exact (by norm_num : ¬ IsSquare (5 : ℚ)) ⟨2 * x + 1, by linear_combination 4 * h⟩
   intro n hn
-  obtain ⟨u, v, ha, hb⟩ := seeds n
+  obtain ⟨u, v, ha, hb⟩ := gibonacci_seed_coefficients G (fun _ => rfl) n
+  change a = _ at ha
+  change b = _ at hb
   have hn' : (G n : ℚ) ≠ 0 := by exact_mod_cast hn
   change IsGibonacciGood a b (-(G (n + 1) : ℚ) / G n)
-  refine ⟨den _, u * G n, ?_⟩
-  rw [gibonacciGeneratingValue, div_eq_iff (den _), ha, hb]
+  refine ⟨gibonacci_denom_ne_zero _, u * G n, ?_⟩
+  rw [gibonacciGeneratingValue, div_eq_iff (gibonacci_denom_ne_zero _), ha, hb]
   push_cast
   field_simp [hn']
+  ring
+
+/-- **Consecutive ratios of a shifted Gibonacci sequence are good.** Let $a$ and $b$ be integers
+and let $(H_n)_{n \ge 0}$ be the Gibonacci sequence with $H_0 = -b$ and $H_1 = a$. For every
+natural number $n$ with $H_{n+1} \ne 0$, the ratio $H_n / H_{n+1}$ is good for $(a, b)$.
+
+The source indexes $H$ by all integers.
+
+Source: Knapp, *Fibonacci Generating Functions*, Journal of Integer
+Sequences 27 (2024), Article 24.3.1, Lemma 8
+(`jis-2024-24.3.1-lem-8`). -/
+public theorem isGibonacciGood_shifted_ratio (a b : ℤ) (n : ℕ)
+    (h : gibonacciNumber (-b) a (n + 1) ≠ 0) :
+    IsGibonacciGood a b
+      ((gibonacciNumber (-b) a n : ℚ) / (gibonacciNumber (-b) a (n + 1) : ℚ)) := by
+  let H := gibonacciNumber (-b) a
+  obtain ⟨u, v, hb, ha⟩ := gibonacci_seed_coefficients H (fun _ => rfl) n
+  change -b = _ at hb
+  change a = _ at ha
+  have hq : (H (n + 1) : ℚ) ≠ 0 := by exact_mod_cast h
+  change IsGibonacciGood a b ((H n : ℚ) / H (n + 1))
+  refine ⟨gibonacci_denom_ne_zero _, (u + v) * H (n + 1), ?_⟩
+  rw [gibonacciGeneratingValue, div_eq_iff (gibonacci_denom_ne_zero _), ha,
+    neg_eq_iff_eq_neg.mp hb]
+  push_cast
+  field_simp [hq]
   ring
 
 /-- One step along a two-sided sequence with the Fibonacci recurrence:
