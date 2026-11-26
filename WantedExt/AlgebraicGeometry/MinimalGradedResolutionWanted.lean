@@ -9,12 +9,15 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.RingTheory.MinimalGradedResolution
+public import MathlibExt.AlgebraicGeometry.MinimalGradedResolutionBettiEq
 
 /-!
 # Minimal graded resolutions and Betti invariance
 
-These requests add minimality, degree shifts and Betti invariance to the
-ordinary resolution scope already implemented in the audited libraries.
+These requests add minimality and degree shifts to the ordinary resolution
+scope already implemented in the audited libraries. Betti invariance
+(`betti_eq`) is proved in
+`MathlibExt.AlgebraicGeometry.MinimalGradedResolutionBettiEq`.
 They use actual polynomial-linear differentials and kernel/range exactness.
 
 References:
@@ -37,14 +40,5 @@ theorem_wanted exists_minimalResolution {k : Type*} [Field k] {n : ℕ} {M : Typ
     [Module k M] [IsScalarTower k (PolynomialRing k n) M]
     [Module.Finite (PolynomialRing k n) M]
     (G : Grading (k := k) (n := n) (M := M)) : Nonempty (MinimalResolution G)
-
-/-- The graded Betti table does not depend on the chosen minimal resolution. -/
-theorem_wanted betti_eq {k : Type*} [Field k] {n : ℕ} {M : Type*}
-    [AddCommGroup M] [Module (PolynomialRing k n) M]
-    [Module k M] [IsScalarTower k (PolynomialRing k n) M]
-    [Module.Finite (PolynomialRing k n) M]
-    (G : Grading (k := k) (n := n) (M := M))
-    (P Q : MinimalResolution G) (i : ℕ) (j : ℤ) :
-    betti G P i j = betti G Q i j
 
 end WantedExt.AlgebraicGeometry.MinimalGradedResolutionWanted
