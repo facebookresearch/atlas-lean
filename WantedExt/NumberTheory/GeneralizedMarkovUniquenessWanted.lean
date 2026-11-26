@@ -19,24 +19,13 @@ public import MathlibExt.NumberTheory.GeneralizedMarkovDiscriminant
 public import MathlibExt.NumberTheory.GeneralizedMarkovEquation
 public import MathlibExt.NumberTheory.GeneralizedMarkovVietaEq
 public import MathlibExt.NumberTheory.GeneralizedSecondMarkovVieta
+public import MathlibExt.NumberTheory.GeneralizedMarkovUniquenessStep
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
 open Finset
-
-/-- **Generalized Markov number.** Let $k$ be a natural number. A natural number $b$ is a
-$k$-generalized Markov number when there are natural numbers $a$ and $c$ such that
-$(a, b, c)$ is a $k$-generalized Markov triple.
-
-Since the $k$-generalized Markov equation is symmetric in its three variables, this is the same
-as $b$ being an entry, in any position, of some $k$-generalized Markov triple.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Section 1.2. -/
-public def IsGenMarkovNumber (k b : ℕ) : Prop :=
-  ∃ a c, IsGenMarkovTriple k a b c
 
 /-- **Unique maximal generalized Markov triple.** Let $k$ and $b$ be natural numbers. The number
 $b$ is the maximum of a unique $k$-generalized Markov triple up to order if there is a
@@ -319,18 +308,6 @@ public theorem_wanted genSecondMarkovTree_induced_and_once (k : ℕ) :
         (3 + 3 * k) * ((genMarkovTree k w).2.1 : ℤ) - k,
         (3 + 3 * k) * ((genMarkovTree k w).2.2 : ℤ) - k) = (a, b, c)
 
-/-- **The matrix $S$ of the generalized Cohn triple relation.** For a natural number $k$, $S$
-is the $2 \times 2$ integer matrix
-
-$$S = \begin{pmatrix} k & 0 \\ 3k^2 + 3k & k \end{pmatrix}.$$
-
-It is the matrix in the relation $Q = PR - S$ that defines $k$-generalized Cohn triples.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Definition 3.2. -/
-public def genCohnS (k : ℕ) : Matrix (Fin 2) (Fin 2) ℤ :=
-  !![(k : ℤ), 0; 3 * (k : ℤ) ^ 2 + 3 * k, k]
-
 /-- **The matrix $S$ vanishes for $k = 0$.** For $k = 0$, the matrix $S$ of the generalized
 Cohn triple relation is the zero $2 \times 2$ matrix, so the relation $Q = PR - S$ reduces to
 the classical Cohn relation $Q = PR$.
@@ -340,27 +317,6 @@ Are Prime Powers*, INTEGERS 26 (2026), Article A91, Section 1.3. -/
 public theorem genCohnS_zero : genCohnS 0 = 0 := by
   ext i j
   fin_cases i <;> fin_cases j <;> simp [genCohnS]
-
-/-- **Generalized Cohn matrices.** Let $k$ be a natural number. An integer $2 \times 2$ matrix
-$P = (p_{ij})$ is a $k$-generalized Cohn matrix if $\det P = 1$, its entry $p_{12}$ is a
-$k$-generalized Markov number, and its trace equals $(3 + 3k) p_{12} - k$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Definition 3.1. -/
-public def IsGenCohnMatrix (k : ℕ) (P : Matrix (Fin 2) (Fin 2) ℤ) : Prop :=
-  P.det = 1 ∧ ∃ n : ℕ, P 0 1 = n ∧ IsGenMarkovNumber k n ∧ P.trace = (3 + 3 * k) * n - k
-
-/-- **Generalized Cohn triple.** Let $k$ be a natural number and let $S$ be the integer matrix
-with rows $(k, 0)$ and $(3k^2 + 3k, k)$. A triple $(P, Q, R)$ of integer $2 \times 2$ matrices is
-a $k$-generalized Cohn triple associated with natural numbers $(a, b, c)$ when $P$, $Q$ and $R$
-are $k$-generalized Cohn matrices, $Q = PR - S$, the $(1, 2)$-entries of $P$, $Q$ and $R$ are
-$a$, $b$ and $c$ respectively, and $(a, b, c)$ is a $k$-generalized Markov triple.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Definition 3.2. -/
-public def IsGenCohnTriple (k : ℕ) (P Q R : Matrix (Fin 2) (Fin 2) ℤ) (a b c : ℕ) : Prop :=
-  IsGenCohnMatrix k P ∧ IsGenCohnMatrix k Q ∧ IsGenCohnMatrix k R ∧ Q = P * R - genCohnS k ∧
-    P 0 1 = a ∧ Q 0 1 = b ∧ R 0 1 = c ∧ IsGenMarkovTriple k a b c
 
 /-- **Generalized Cohn triples give generalized Markov triples.** Let $k$ be a natural number.
 If $(P, Q, R)$ is a $k$-generalized Cohn triple associated with $(a, b, c)$, then $(a, b, c)$ is
@@ -548,19 +504,6 @@ public theorem_wanted isGenCohnTriple_one_iff (k : ℕ) :
     (∀ ℓ, IsGenCohnTriple k (genCohnP1 k ℓ) (genCohnQ1 k ℓ) (genCohnR1 k ℓ) 1 1 1) ∧
     ∀ P Q R, IsGenCohnTriple k P Q R 1 1 1 →
       ∃ ℓ, P = genCohnP1 k ℓ ∧ Q = genCohnQ1 k ℓ ∧ R = genCohnR1 k ℓ
-
-/-- **Children of a generalized Cohn triple.** Let $k$ be a natural number, let $S$ be the integer
-matrix with rows $(k, 0)$ and $(3k^2 + 3k, k)$, and let $(P, Q, R)$ be a $k$-generalized Cohn
-triple associated with $(a, b, c)$. Then $(P, PQ - S, Q)$ is a $k$-generalized Cohn triple
-associated with $(a, \lfloor (a^2 + kab + b^2)/c \rfloor, b)$, and $(Q, QR - S, R)$ is a
-$k$-generalized Cohn triple associated with $(b, \lfloor (b^2 + kbc + c^2)/a \rfloor, c)$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Theorem 3.5. -/
-public theorem_wanted IsGenCohnTriple.step {k a b c : ℕ} {P Q R : Matrix (Fin 2) (Fin 2) ℤ}
-    (h : IsGenCohnTriple k P Q R a b c) :
-    IsGenCohnTriple k P (P * Q - genCohnS k) Q a ((a ^ 2 + k * a * b + b ^ 2) / c) b ∧
-      IsGenCohnTriple k Q (Q * R - genCohnS k) R b ((b ^ 2 + k * b * c + c ^ 2) / a) c
 
 /-- **A product identity for generalized Cohn matrices.** Let $k$ be a natural number, let $M$
 be a $k$-generalized Cohn matrix, and let $E$ be the $2 \times 2$ integer matrix whose only
