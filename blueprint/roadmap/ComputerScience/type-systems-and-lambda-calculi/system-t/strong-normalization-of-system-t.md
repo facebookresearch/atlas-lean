@@ -6,11 +6,9 @@ Every well-typed term of Gödel's System T is strongly normalizing, by Tait's re
 
 - [Gödel's System T](godel-s-system-t.md)
 
-## Expansion
+## Proof depends on
 
-This page becomes ready once:
-
-- Unresolved prerequisite named by review: System T recursor reducibility extension (proof prerequisite; not yet stated)
+- [Reducibility for System T](reducibility-for-system-t.md)
 
 ## Sources
 

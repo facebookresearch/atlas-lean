@@ -14,6 +14,11 @@ Removing type annotations therefore preserves typability and behaviour, and addi
 - [Precision of gradual types and terms](precision-of-gradual-types-and-terms.md)
 - [The cast calculus and cast insertion](cast-calculus-and-cast-insertion.md)
 
+## Proof depends on
+
+- [Cast insertion preserves precision](cast-insertion-preserves-precision.md)
+- [Simulation of more precise programs](simulation-of-more-precise-programs.md)
+
 ## Sources
 
 - J. G. Siek, M. M. Vitousek, M. Cimini and J. T. Boyland, "Refined criteria for gradual typing", *1st Summit on Advances in Programming Languages (SNAPL 2015)*, LIPIcs 32, pp. 274–293, 2015, <https://drops.dagstuhl.de/storage/00lipics/lipics-vol032-snapl2015/LIPIcs.SNAPL.2015.274/LIPIcs.SNAPL.2015.274.pdf>: Section 4.3, Theorem 5 (gradual guarantee), proved in Section 6 through Lemma 6 (cast insertion preserves precision) and Lemma 7 (simulation of more precise programs), with Lemmas 8–11.

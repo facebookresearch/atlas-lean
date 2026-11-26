@@ -11,16 +11,11 @@ The theorem is the main step in the proof of the standardization theorem.
 ## Depends on
 
 - [Residuals and developments](residuals-and-developments.md)
+- [β-reduction](../beta-reduction-and-confluence/beta-reduction.md)
 
 ## Proof depends on
 
 - [Strongly normalizing terms are the terms typable in system D](../intersection-types/strongly-normalizing-terms-are-typable-in-d.md)
-
-## Expansion
-
-This page becomes ready once:
-
-- One-step β-reduction of untyped λ-terms as a relation of its own, with its reflexive–transitive closure (statement prerequisite; not yet stated as a page)
 
 ## Sources
 

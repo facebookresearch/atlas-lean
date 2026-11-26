@@ -9,12 +9,13 @@ the lengths of all reduction paths of a strongly normalizing term, which is fini
 ## Depends on
 
 - [The intersection type system D](intersection-type-system-d.md)
+- [β-reduction](../beta-reduction-and-confluence/beta-reduction.md)
 
-## Expansion
+## Proof depends on
 
-This page becomes ready once:
-
-- One-step β-reduction of untyped λ-terms as a relation of its own, with its reflexive–transitive closure (statement prerequisite; not yet stated as a page)
+- [Adequacy lemma for system D](adequacy-lemma-for-system-d.md)
+- [β-normal terms are typable in system D](normal-terms-are-typable-in-system-d.md)
+- [Typing substituted terms with intersections](typing-substituted-terms-with-intersections.md)
 
 ## Sources
 

@@ -13,12 +13,11 @@ Let $\vdash$ be the typing judgment of [system D](intersection-type-system-d.md)
 - [Beta equivalence in the untyped term model](../../system-f/the-existing-untyped-beta-conversion-term-model/beta-eq.md)
 - [The intersection type system D](intersection-type-system-d.md)
 - [The intersection type system DΩ](intersection-type-system-d-omega.md)
+- [β-reduction](../beta-reduction-and-confluence/beta-reduction.md)
 
-## Expansion
+## Proof depends on
 
-This page becomes ready once:
-
-- One-step β-reduction of untyped λ-terms as a relation of its own, with its reflexive–transitive closure (statement prerequisite; not yet stated as a page)
+- [Typing substituted terms with intersections](typing-substituted-terms-with-intersections.md)
 
 ## Sources
 

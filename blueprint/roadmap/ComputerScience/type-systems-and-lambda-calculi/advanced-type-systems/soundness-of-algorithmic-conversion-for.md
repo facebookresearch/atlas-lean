@@ -5,12 +5,8 @@ For Martin-Löf type theory with dependent function types with $\eta$, natural n
 ## Depends on
 
 - [Pure type systems and the calculus of constructions](pure-type-systems-and-the-calculus-of.md)
-
-## Expansion
-
-This page becomes ready once:
-
-- Declarative typing and judgmental equality rules of Martin-Löf type theory with Π-types with η, natural numbers and one universe à la Russell, and the algorithmic conversion judgment (statement prerequisite; not yet stated)
+- [The type theory λΠUN](martin-lof-type-theory-with-one-universe/the-type-theory-lambda-pi-u-n.md)
+- [Algorithmic conversion for λΠUN](martin-lof-type-theory-with-one-universe/algorithmic-conversion-for-lambda-pi-u-n.md)
 
 ## Sources
 

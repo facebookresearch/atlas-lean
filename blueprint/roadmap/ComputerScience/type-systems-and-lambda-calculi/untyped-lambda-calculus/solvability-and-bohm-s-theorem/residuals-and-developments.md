@@ -15,12 +15,7 @@ subterm $(\lambda x.\, x)(\lambda x.\, x)$ both give $(\lambda x.\, x)\, x$, but
 ## Depends on
 
 - [Named, de Bruijn and locally nameless lambda terms](../../syntax-with-binders/named-de-bruijn-and-locally-nameless-lambda-terms.md)
-
-## Expansion
-
-This page becomes ready once:
-
-- One-step β-reduction of untyped λ-terms as a relation of its own, with its reflexive–transitive closure (statement prerequisite; not yet stated as a page)
+- [β-reduction](../beta-reduction-and-confluence/beta-reduction.md)
 
 ## Sources
 

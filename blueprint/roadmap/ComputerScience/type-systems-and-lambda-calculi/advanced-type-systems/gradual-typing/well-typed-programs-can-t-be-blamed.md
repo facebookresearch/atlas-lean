@@ -27,6 +27,7 @@ So fully static regions of a gradually typed program are never to blame.
 
 - [Type safety of the blame calculus](type-safety-of-the-blame-calculus.md)
 - [Factoring subtyping into positive and negative subtyping](factoring-subtyping-into-positive-and-negative.md)
+- [Safe terms are preserved and are not blamed](safe-terms-are-preserved-and-not-blamed.md)
 
 ## Sources
 

@@ -12,16 +12,13 @@ In particular leftmost reduction is a normalizing strategy: it reaches the β-no
 ## Depends on
 
 - [The intersection type system DΩ](intersection-type-system-d-omega.md)
+- [β-reduction](../beta-reduction-and-confluence/beta-reduction.md)
 
 ## Proof depends on
 
 - [Subject reduction and subject expansion for intersection types](subject-reduction-and-expansion-for.md)
-
-## Expansion
-
-This page becomes ready once:
-
-- One-step β-reduction of untyped λ-terms as a relation of its own, with its reflexive–transitive closure (statement prerequisite; not yet stated as a page)
+- [Saturated sets and the adequacy lemma for DΩ](saturated-sets-and-the-adequacy-lemma-for-d-omega.md)
+- [β-normal terms are typable in system D](normal-terms-are-typable-in-system-d.md)
 
 ## Sources
 

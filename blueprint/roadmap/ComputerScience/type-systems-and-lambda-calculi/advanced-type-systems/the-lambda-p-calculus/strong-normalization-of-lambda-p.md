@@ -12,6 +12,10 @@ simply typed λ-calculus.
 
 - [The calculus λP](the-calculus-lambda-p.md)
 
+## Proof depends on
+
+- [Translating λP into simple types](translating-lambda-p-into-simple-types.md)
+
 ## Expansion
 
 This page becomes ready once:

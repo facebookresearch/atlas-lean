@@ -1,0 +1,22 @@
+# Kreisel's theorem on provably total functions
+
+A recursive function is provably total in Peano arithmetic if and only if it is provably total in [Heyting arithmetic](heyting-arithmetic.md): for a primitive recursive
+$t_f$, $\mathrm{PA} \vdash \forall x\, \exists y\, t_f(x, y) = 0$ exactly when $\mathrm{HA} \vdash \forall x\, \exists y\, t_f(x, y) = 0$. The same holds for every sentence $\forall x\, \exists y\, R(x, y)$
+with $R$ primitive recursive, and in particular, taking $R$ to be $\bot$, HA is consistent if and only if PA is.
+
+The nontrivial direction applies the negative translation, which works for arithmetic, to obtain $\mathrm{HA} \vdash \neg\neg \exists y\, t_f(x, y) = 0$, and then Markov's principle for the
+decidable formula $t_f(x, y) = 0$.
+
+## Depends on
+
+- [Heyting arithmetic](heyting-arithmetic.md)
+- [Provably total functions of Peano arithmetic](../../../ComputerScience/type-systems-and-lambda-calculi/system-t/provably-total-functions-of-peano-arithmetic.md)
+
+## Proof depends on
+
+- [Basic properties of Heyting arithmetic](basic-properties-of-heyting-arithmetic.md)
+- [Gödel–Gentzen negative translation](../goedel-gentzen-negative-translation.md)
+
+## Sources
+
+- M. H. B. Sørensen and P. Urzyczyn, *Lectures on the Curry–Howard Isomorphism*, lecture notes, University of Copenhagen, May 1998: Theorem 11.4.2 (Kreisel, 1958) with its proof, the remark after it, and Corollary 11.4.3.

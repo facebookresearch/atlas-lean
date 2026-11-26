@@ -11,8 +11,7 @@ variables, by the rules
 Applied backwards from an initial goal, with the assumption rule taking priority, the rules generate an *execution tree*, which is always finite: its depth is
 bounded by the product of the sizes of the two systems. Write $\alpha \le_A \beta$ if the execution tree for $\emptyset, \varepsilon_\alpha \cup \varepsilon_\beta \supset \alpha^* \le \beta^*$ succeeds.
 
-**Theorem.** For all recursive types, $\alpha \le_A \beta$ if and only if $\alpha \le_T \beta$ in the [tree ordering](tree-ordering-on-recursive-types.md). Hence the tree ordering, and
-equality of tree expansions, are decidable.
+The algorithm is [sound and complete](correctness-of-the-amadio-cardelli-subtyping-algorithm.md) for the [tree ordering](tree-ordering-on-recursive-types.md).
 
 ## Depends on
 
@@ -20,4 +19,4 @@ equality of tree expansions, are decidable.
 
 ## Sources
 
-- R. M. Amadio and L. Cardelli, "Subtyping recursive types", *ACM Transactions on Programming Languages and Systems* 15(4):575–631, 1993, <http://lucacardelli.name/Papers/SRT.pdf>: Section 4.1 (canonical forms and systems of equations), Section 4.2 (the rules, the initiality condition, execution trees, 4.2.2 termination and 4.2.3 the algorithm ordering), Proposition 4.3.5 (soundness) and Proposition 4.3.7 (completeness).
+- R. M. Amadio and L. Cardelli, "Subtyping recursive types", *ACM Transactions on Programming Languages and Systems* 15(4):575–631, 1993, <http://lucacardelli.name/Papers/SRT.pdf>: Section 4.1 (canonical forms and systems of equations), Section 4.2 (the rules, the initiality condition, execution trees, 4.2.2 termination and 4.2.3 the algorithm ordering).
