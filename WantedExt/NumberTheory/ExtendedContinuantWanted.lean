@@ -16,6 +16,7 @@ public import MathlibExt.NumberTheory.ExtendedContinuant
 public import MathlibExt.NumberTheory.ExtendedContinuantExtendedContinuantEuler
 public import MathlibExt.NumberTheory.ExtendedContinuantOddSilentTerms
 public import MathlibExt.NumberTheory.ExtendedContinuantSilentTermsTableOneModSix
+public import MathlibExt.NumberTheory.ExtendedContinuantExtendedContinuantBennett
 public import MathlibExt.NumberTheory.ExtendedContinuantOneSilentTerms
 
 /-!
@@ -64,25 +65,6 @@ public theorem_wanted extendedContinuant_bennett_nat (x : ℤ → ℤ) (k ℓ m 
         extendedContinuant x ((k : ℤ) - m - 2) m +
       ((m + k : ℤ).negOnePow : ℤ) * extendedContinuant x ((n : ℤ) - m - 2) m *
         extendedContinuant x ((ℓ : ℤ) - k - 2) k = 0
-
-/-- **Bennett's continuant identity for all integer indices.** Let $x : \mathbb{Z} \to \mathbb{Z}$
-be an integer sequence and write $K_a(x)_b$ for its extended continuant of order $a$ with start
-index $b$. For all integers $k$, $\ell$, $m$, $n$,
-$$(-1)^{k+\ell} K_{n-k-2}(x)_k K_{m-\ell-2}(x)_\ell +
-(-1)^{\ell+m} K_{n-\ell-2}(x)_\ell K_{k-m-2}(x)_m +
-(-1)^{m+k} K_{n-m-2}(x)_m K_{\ell-k-2}(x)_k = 0.$$
-
-This extends Bennett's identity from nonnegative to arbitrary integer indices.
-
-Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
-INTEGERS 26 (2026), Article A73, Theorem 3. -/
-public theorem_wanted extendedContinuant_bennett (x : ℤ → ℤ) (k ℓ m n : ℤ) :
-    ((k + ℓ).negOnePow : ℤ) * extendedContinuant x (n - k - 2) k *
-        extendedContinuant x (m - ℓ - 2) ℓ +
-      ((ℓ + m).negOnePow : ℤ) * extendedContinuant x (n - ℓ - 2) ℓ *
-        extendedContinuant x (k - m - 2) m +
-      ((m + k).negOnePow : ℤ) * extendedContinuant x (n - m - 2) m *
-        extendedContinuant x (ℓ - k - 2) k = 0
 
 /-- **The conjugate continued fraction is not purely periodic.** Let $P$, $Q$ and $D$ be integers
 with $D > 0$ not a perfect square and $Q > 0$, and let $\bar\alpha = (P - \sqrt{D})/Q$. Then the
