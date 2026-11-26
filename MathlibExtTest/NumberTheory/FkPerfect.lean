@@ -38,4 +38,31 @@ example (l d : ℕ) : ¬ KLDeficientPerfectWith 1 l (2 ^ 0) d := by
   have h2 := (klDeficientPerfectWith_one_prime_pow_iff 2 0 l d Nat.prime_two).mp h
   exact absurd h2.2.2.2 (by decide)
 
+-- `18 = 2 ^ 1 * 3 ^ 2` is not near `F`-perfect.
+example : ¬ MathlibExt.NumberTheory.FkPerfectWanted.IsNearFPerfect 18 := by
+  simpa using MathlibExt.NumberTheory.FkPerfectWanted.not_isNearFPerfect_two_pow_mul_prime_pow
+    3 1 2 (by decide) (by decide)
+
+-- `2500 = 2 ^ 2 * 5 ^ 4` is not near `F`-perfect.
+example : ¬ MathlibExt.NumberTheory.FkPerfectWanted.IsNearFPerfect 2500 := by
+  simpa using MathlibExt.NumberTheory.FkPerfectWanted.not_isNearFPerfect_two_pow_mul_prime_pow
+    5 2 4 (by decide) (by decide)
+
+-- `8 = 2 ^ 3 * 11 ^ 0` is not near `F`-perfect.
+example : ¬ MathlibExt.NumberTheory.FkPerfectWanted.IsNearFPerfect 8 := by
+  simpa using MathlibExt.NumberTheory.FkPerfectWanted.not_isNearFPerfect_two_pow_mul_prime_pow
+    11 3 0 (by decide) (by decide)
+
+-- Primes are not `[k, ℓ]`-near-perfect for `1 ≤ ℓ`, at zero and positive exponents.
+example : ¬ IsKLNearPerfect 0 1 2 :=
+  not_isKLNearPerfect_of_prime 0 1 2 (by decide) (by decide)
+
+example : ¬ IsKLNearPerfect 2 3 5 :=
+  not_isKLNearPerfect_of_prime 2 3 5 (by decide) (by decide)
+
+-- At `ℓ = 0` every prime is `[k, 0]`-near-perfect with divisor `1`.
+example (k p : ℕ) (hp : p.Prime) : IsKLNearPerfect k 0 p := by
+  refine ⟨1, one_dvd p, hp.one_lt, ?_⟩
+  simp only [hp.sum_divisors, one_pow, zero_mul, add_zero]
+
 end MathlibExtTest.NumberTheory.FkPerfect
