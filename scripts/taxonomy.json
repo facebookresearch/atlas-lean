@@ -17121,7 +17121,7 @@
   "WantedExt/Probability/TalagrandTransportWanted": {"to": "Probability/concentration-inequalities", "title": "Transport-cost inequalities"},
   "WantedExt/Probability/ThinShellBoundsWanted": {"to": "Probability/high-dimensional-probability", "title": "Thin-shell conjecture"},
   "WantedExt/Probability/TracyWidomWanted": {"to": "Probability/high-dimensional-probability", "title": "Tracy–Widom limit for Wishart matrices"},
-  "WantedExt/Probability/TranslationInvariantCharacteristicKernelWanted": {"to": "Probability/convergence-of-measures", "title": "Kernel mean embeddings and maximum mean discrepancy"},
+  "MathlibExt/Probability/TranslationInvariantCharacteristicKernel": {"to": "Probability/convergence-of-measures", "title": "Kernel mean embeddings and maximum mean discrepancy"},
   "WantedExt/Probability/WignerMatrixMomentsWanted": {"to": "Probability/high-dimensional-probability", "title": "Wigner's semicircle law"},
   "WantedExt/Probability/WignerOperatorNormWanted": {"to": "Probability/high-dimensional-probability", "title": "Operator norm of random matrices"},
   "CSLibExt/Coding/StabilizerCode": {"to": "QuantumInformation/quantum-error-correction", "title": "Stabilizer codes"},
