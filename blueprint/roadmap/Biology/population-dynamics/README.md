@@ -2,13 +2,16 @@
 
 Differential-equation and matrix models of population growth, structure, species interaction and evolutionary change, such as logistic growth, predator–prey systems, metapopulations, replicator dynamics, quasispecies and Leslie matrices, and the life tables and direct standardization of demography.
 
+- [Classification of adaptive-dynamics singular strategies](classification-of-adaptive-dynamics-singular-str/README.md)
 - [Competitive exclusion in the chemostat](competitive-exclusion-in-the-chemostat/README.md)
 - [Competitive exclusion on fewer resources than species](competitive-exclusion-on-fewer-resources-than-sp/README.md)
 - [Eigen's quasispecies error threshold](eigen-s-quasispecies-error-threshold/README.md)
+- [Folk theorem of evolutionary game theory](folk-theorem-of-evolutionary-game-theory/README.md)
 - [Global stability of the Ricker map](global-stability-of-the-ricker-map/README.md)
 - [Goh's diagonal stability theorem for Lotka–Volterra systems](goh-s-diagonal-stability-theorem-for-lotka-volte/README.md)
 - [Hopf bifurcation of the delayed logistic equation](hopf-bifurcation-of-the-delayed-logistic-equatio/README.md)
 - [Hutchinson delayed logistic equation](hutchinson-delayed-logistic-equation/README.md)
+- [Isothermal theorem for evolutionary graph dynamics](isothermal-theorem-for-evolutionary-graph-dynami/README.md)
 - [Leslie matrix model](leslie-matrix-model/README.md)
 - [Levins metapopulation model](levins-metapopulation-model/README.md)
 - [Levins metapopulation on a patch network](levins-metapopulation-on-a-patch-network/README.md)
@@ -20,6 +23,7 @@ Differential-equation and matrix models of population growth, structure, species
 - [Permanence of replicator systems](permanence-of-replicator-systems/README.md)
 - [Replicator and Lotka–Volterra equivalence](replicator-and-lotka-volterra-equivalence/README.md)
 - [Replicator dynamics](replicator-dynamics/README.md)
+- [Stability of boundary evolutionarily stable strategies](stability-of-boundary-evolutionarily-stable-stra/README.md)
 
 - [Chemostat dynamics](chemostat/README.md)
 
@@ -28,4 +32,5 @@ Differential-equation and matrix models of population growth, structure, species
 - [Time averages of interior replicator orbits](time-averages-of-interior-replicator-orbits/README.md)
 - [Two-species Lotka–Volterra competition outcomes](two-species-lotka-volterra-competition-outcomes/README.md)
 - [Washout in the single-species chemostat](washout-in-the-single-species-chemostat/README.md)
+- [Zero-determinant strategies in iterated games](zero-determinant-strategies-in-iterated-games/README.md)
 - [Life tables](life-tables/README.md)

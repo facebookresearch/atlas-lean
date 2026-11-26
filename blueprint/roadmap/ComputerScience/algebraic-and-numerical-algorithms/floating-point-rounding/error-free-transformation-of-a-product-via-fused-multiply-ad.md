@@ -1,23 +1,26 @@
 # Error-free transformation of a product via fused multiply-add
 
-In a binary floating-point format with precision $p$, minimum normal exponent $e_{\min}$ (last-place exponents at least
-$q_{\min} = e_{\min} - p + 1$), subnormals and round-to-nearest, let $a$ and $b$ be nonzero numbers of the format,
-$\pi = \mathrm{fl}(ab)$ and $e = \mathrm{fma}(a, b, -\pi)$, the fused multiply-add rounding $ab - \pi$ once. Let
-$e_a = \lfloor \log_2 \lvert a \rvert \rfloor$ and $e_b = \lfloor \log_2 \lvert b \rvert \rfloor$. If $\pi$ is finite and
-$e_a + e_b \ge e_{\min} + p - 1$, then the exact residual $ab - \pi$ is a number of the format and $\pi + e = ab$ exactly. That the
-product does not underflow is not enough. Without a fused multiply-add, Dekker's TwoProduct with Veltkamp splitting
-gives the same identity when none of its operations underflows or overflows, as a separate page.
+In a binary floating-point format with precision $p \ge 1$ and bounded last-place exponents
+$[q_{\min},q_{\max}]$, set $e_{\min}=q_{\min}+p-1$. Let $a$ and $b$ be nonzero format numbers,
+let $\pi = \mathrm{fl}(ab)$ be the nearest-even rounded product, and let $e$ be the result of
+rounding the exact fused expression $ab-\pi$ once. Write $e_a = \lfloor \log_2 |a| \rfloor$
+and $e_b = \lfloor \log_2 |b| \rfloor$. If $\pi$ belongs to the bounded format and
+$e_a + e_b \ge e_{\min} + p - 1$, then $ab - \pi$ belongs to the format, possibly as a
+subnormal, and $\pi + e = ab$ exactly as values. The theorem uses the unbounded-exponent
+nearest-even function for rounding and separately checks bounded-format membership. It does not
+assume that the exact product is at most the largest finite value in magnitude, model IEEE status
+flags, or round the reconstruction sum. Dekker's TwoProduct without a fused multiply-add is a
+separate result.
 
 ## Proof
 
-Both $ab$ and $\pi$ are integer multiples of $2^{e_a + e_b - 2p + 2} \ge 2^{q_{\min}}$ and
-$\lvert ab - \pi \rvert \le 2^{e_a + e_b + 1 - p}$, so $ab - \pi$ is a number of the format, which the fused multiply-add returns
-unrounded.
-
-## Depends on
-
-- [Floating-point numbers of a bounded format](is-float-in.md)
-- [Round to nearest, ties to even](fl.md)
+With $g=e_a+e_b-2p+2$, both $ab$ and $\pi$ are integer multiples of $2^g$. The hypothesis gives
+$q_{\min}\le g$, and membership of $\pi$ in the bounded format supplies $g\le q_{\max}$. The rounding
+error is at most half a last-place unit of $ab$. Since the product's log exponent is either
+$e_a+e_b$ or $e_a+e_b+1$, the residual's magnitude is strictly less than $2^{g+p}$. Its integer
+coefficient on the grid $2^g$ therefore fits in $p$ bits. Rounding returns that residual unchanged.
+For example, at precision $3$ and last-place exponents $[0,3]$, the exact product $7\cdot7=49$
+rounds to $48$ and the residual $1$ is subnormal.
 
 ## Related topics
 
