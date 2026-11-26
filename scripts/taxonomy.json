@@ -982,6 +982,7 @@
   "CSLibExt/Algorithms/Lean/DataStructures/LinearProbingAnalysis": {"to": "ComputerScience/data-structures/hashing", "title": "Analysis of linear probing"},
   "CSLibExt/Algorithms/Lean/DataStructures/LinearProbingAsymptotics": {"to": "ComputerScience/data-structures/hashing", "title": "Analysis of linear probing"},
   "CSLibExt/Algorithms/Lean/DataStructures/LinearProbingInsertionCost": {"to": "ComputerScience/data-structures/hashing", "title": "Analysis of linear probing"},
+  "CSLibExt/Algorithms/Lean/DataStructures/LinearProbingSuccessfulSearchCost": {"to": "ComputerScience/data-structures/hashing", "title": "Analysis of linear probing"},
   "CSLibExt/Algorithms/Lean/DataStructures/LinkCutTree": {"to": "ComputerScience/data-structures/disjoint-sets-and-dynamic-trees", "title": "Link-cut tree"},
   "CSLibExt/Algorithms/Lean/DataStructures/LruCache": {"to": "ComputerScience/data-structures/linear-structures", "title": "Least-recently-used cache"},
   "CSLibExt/Algorithms/Lean/DataStructures/OpenAddressing": {"to": "ComputerScience/data-structures/hashing", "title": "Open addressing"},
