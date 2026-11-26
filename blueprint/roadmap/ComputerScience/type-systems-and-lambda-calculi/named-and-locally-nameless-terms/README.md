@@ -13,4 +13,4 @@
 - [Every locally closed term is a translation](exists-to-locally-nameless-eq.md)
 - [Adequacy of the locally nameless representation](to-locally-nameless-relational-bijection.md)
 
-The planned page [Named, de Bruijn and locally nameless λ-terms](../syntax-with-binders/named-de-bruijn-and-locally-nameless-lambda-terms.md) states a wider correspondence, including substitution, β-reduction and de Bruijn terms; the bijection proved here is its named and locally nameless part.
+[Named, de Bruijn and locally nameless λ-terms](../syntax-with-binders/named-de-bruijn-and-locally-nameless-lambda-terms.md) states a wider correspondence, including substitution, β-reduction and de Bruijn terms; the adequacy theorem listed above is its named and locally nameless part.

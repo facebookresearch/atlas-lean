@@ -91,7 +91,7 @@ theorem lcAt_succ_closeRec {Var : Type u} [DecidableEq Var] {x : Var} {k : ℕ}
   intro h
   induction t generalizing k <;> grind
 
-/-- **Renaming a free variable.** Renaming `x` to a name `y` that does not occur in `m`, free or
+/-- **Renaming a variable.** Renaming `x` to a name `y` that does not occur in `m`, free or
 bound, acts on the translation as substituting `fvar y` for `x`: the bound occurrences of `x`
 are indices there. -/
 theorem toLocallyNameless_rename {Var : Type u} [DecidableEq Var] {x y : Var} {m : Term Var} :
@@ -146,7 +146,7 @@ theorem toLocallyNameless_lc {Var : Type u} [DecidableEq Var] (m : Term Var) :
   | abs x m ih => exact lcAt_succ_closeRec ih
   | app m n ihm ihn => simp [toLocallyNameless, ihm, ihn]
 
-/-- **The translation respects α-equivalence.** α-equivalent named terms have equal
+/-- **The translation respects α-equivalence.** Any two α-equivalent named terms have equal
 translations: the translation is well defined on α-classes. It needs no fresh name. -/
 theorem toLocallyNameless_eq_of_alphaEquiv {Var : Type u} [DecidableEq Var] {m n : Term Var} :
     m =α n → toLocallyNameless m = toLocallyNameless n := by
