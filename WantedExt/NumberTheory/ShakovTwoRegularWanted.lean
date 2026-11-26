@@ -38,7 +38,7 @@ public import Mathlib.Data.Nat.Prime.Basic
 public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.NumberTheory.Divisors
 public import MathlibExt.NumberTheory.FibonacciSquareAddOne
-public import MathlibExt.NumberTheory.ShakovTwoRegular
+public import MathlibExt.NumberTheory.ShakovBlockAverage
 public import MathlibExt.NumberTheory.TripSternTree
 
 set_option autoImplicit false
@@ -61,23 +61,6 @@ def shakovA : ℕ → ℤ
       else if (n + 2) % 4 = 1 then shakovA (n + 1) + 1
       else if (n + 2) % 4 = 2 then 2 * shakovA (n + 1) + 1
       else shakovA (n + 1) - 1
-
-/-- **Block averages of Shakov's sequence.** Let $s$ be Shakov's $2$-regular sequence.
-For every natural number $n$,
-$$
-\frac{1}{2^n} \sum_{2^n \le t < 2^{n+1}} s(t) =
-\frac{(5 + \sqrt{17})^n - (5 - \sqrt{17})^n}{2^{2n-1} \sqrt{17}},
-$$
-where the exponent $2n - 1$ is read as $0$ when $n = 0$ (both sides are then $0$).
-
-Source: Anton Shakov, "A 2-Regular Sequence That
-Counts The Divisors of `n^2 + 1`", Proposition 7. -/
-theorem_wanted block_average (n : ℕ) :
-    (1 / (2 : ℝ) ^ n) *
-        (∑ t ∈ Finset.Ico (2 ^ n) (2 ^ (n + 1)),
-          (shakovSeq t : ℝ)) =
-      ((5 + Real.sqrt 17) ^ n - (5 - Real.sqrt 17) ^ n) /
-        ((2 : ℝ) ^ (2 * n - 1) * Real.sqrt 17)
 
 /-- **Primality of $n^2 + 1$ from the fibers of Shakov's sequence.** Let $s$ be Shakov's
 $2$-regular sequence. For every natural number $n \ge 1$, the number $n^2 + 1$ is prime if and
