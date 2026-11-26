@@ -104,3 +104,4 @@
 - [Riemann–Stieltjes convergence on a uniform grid](tendsto-grid-sum-integral.md)
 - [Mesh condition for a continuous hazard](eventually-grid-hazard-increment-le.md)
 - [Conditional square sums of the scaled Nelson–Aalen process converge to the variance function](tendsto-in-measure-predictable-quadratic-2.md)
+- [Kaplan-Meier Wald interval at a grid time](tendsto-coverage-km-survival-wald-interv.md)

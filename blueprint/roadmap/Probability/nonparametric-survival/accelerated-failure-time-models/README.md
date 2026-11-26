@@ -36,7 +36,7 @@
 - [Distribution-function transform of an accelerated failure time law](aft-measure-real-iic.md)
 - [Cumulative-hazard transform of an accelerated failure time law](neg-log-aft-measure-real-ioi.md)
 - [Hazard transform of an accelerated failure time law](has-deriv-at-neg-log-aft-measure-real-io.md)
-- [Quantiles scale by the acceleration factor](aft-measure-real-iic-exp-mul.md)
+- [Distribution function of the AFT law at a rescaled point](aft-measure-real-iic-exp-mul.md)
 - [Mass below a point under acceleration](aft-measure-iio.md)
 - [Accelerated Weibull laws](aft-measure-weibull-measure.md)
 - [Accelerated log-normal laws](aft-measure-log-normal-measure.md)

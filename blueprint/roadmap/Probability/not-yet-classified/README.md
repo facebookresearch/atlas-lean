@@ -57,7 +57,6 @@ Topics added since this subject's fields were last revised.
 - [Finite Probability](part-06/finite-probability/README.md)
 - [Finite Risk](part-06/finite-risk/README.md)
 - [Fisher Randomization](part-06/fisher-randomization/README.md)
-- [Fixed Grid Intervals](part-06/fixed-grid-intervals/README.md)
 - [Functional CLT](part-06/functional-clt/README.md)
 - [Gaussian Affine Failure](part-06/gaussian-affine-failure/README.md)
 - [Gaussian Selection](part-06/gaussian-selection/README.md)
