@@ -27,7 +27,7 @@ private noncomputable def mass (x : Fin 3 → ℤ) : ℝ := if x ∈ vertices th
 
 private lemma convolution_eq_vertices_sum (z : Fin 3 → ℤ) :
     selfConvolution mass z = ∑ x ∈ vertices, (1 / 4 : ℝ) * mass (z - x) := by
-  unfold selfConvolution
+  rw [selfConvolution_eq_tsum]
   rw [tsum_eq_sum (s := vertices) (fun x hx => by simp [mass, hx])]
   exact Finset.sum_congr rfl fun x hx => by simp [mass, hx]
 

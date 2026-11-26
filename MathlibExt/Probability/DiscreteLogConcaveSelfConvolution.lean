@@ -18,6 +18,7 @@ self-convolution preserve this property?
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Topology.Algebra.InfiniteSum.DiscreteConvolution
 import Mathlib.Data.Fin.VecNotation
 import Mathlib.Topology.Algebra.InfiniteSum.Real
 import Mathlib.Tactic.FinCases
@@ -62,7 +63,25 @@ def IsLogConcaveRestriction {d : ℕ} (p : (Fin d → ℤ) → ℝ) : Prop :=
 
 /-- The self-convolution `(p * p)(z) = ∑_x p(x) p(z - x)`. -/
 noncomputable def selfConvolution {d : ℕ} (p : (Fin d → ℤ) → ℝ) : (Fin d → ℤ) → ℝ :=
-  fun z => ∑' x, p x * p (z - x)
+  DiscreteConvolution.addRingConvolution p p
+
+/-- **Self-convolution as a sum over the lattice.** Reindex the additive convolution at `z`
+by its first summand `x`, with second summand `z - x`. This equality of totalized sums does
+not require summability. -/
+theorem selfConvolution_eq_tsum {d : ℕ} (p : (Fin d → ℤ) → ℝ) (z : Fin d → ℤ) :
+    selfConvolution p z = ∑' x, p x * p (z - x) := by
+  let e : (Fin d → ℤ) ≃ DiscreteConvolution.addFiber z :=
+    { toFun := fun x => ⟨(x, z - x), DiscreteConvolution.mem_addFiber.mpr (by simp)⟩
+      invFun := fun ab => ab.val.1
+      left_inv := fun _ => rfl
+      right_inv := by
+        rintro ⟨⟨a, b⟩, hab⟩
+        have h : a + b = z := DiscreteConvolution.mem_addFiber.mp hab
+        apply Subtype.ext
+        change (a, z - a) = (a, b)
+        rw [← h, add_comm a b, add_sub_cancel_right] }
+  rw [selfConvolution, DiscreteConvolution.addRingConvolution_apply]
+  exact (e.tsum_eq (fun ab => p ab.val.1 * p ab.val.2)).symm
 
 /-- The open question of Fradelizi's abstract (Oberwolfach Report 58/2024, p. 3360), positive
 answer: for every `d`, the self-convolution of a probability mass function on `ℤᵈ` that is the
@@ -165,7 +184,7 @@ private lemma reeveMass_isRestriction : IsLogConcaveRestriction reeveMass := by
 private lemma reeveConvolution_pos (x y : Fin 3 → ℤ)
     (hx : x ∈ reeveVertices) (hy : y ∈ reeveVertices) :
     0 < selfConvolution reeveMass (x + y) := by
-  unfold selfConvolution
+  rw [selfConvolution_eq_tsum]
   rw [tsum_eq_sum (s := reeveVertices) (fun v hv => by simp [reeveMass, hv])]
   refine lt_of_lt_of_le ?_ (Finset.single_le_sum
     (fun v _ => mul_nonneg (reeveMass_nonneg v) (reeveMass_nonneg (x + y - v))) hx)
@@ -177,7 +196,7 @@ private lemma reeveVertex_height (v : Fin 3 → ℤ) (hv : v ∈ reeveVertices) 
   rcases hv with rfl | rfl | rfl | rfl <;> decide
 
 private lemma reeveConvolution_midpoint_zero : selfConvolution reeveMass ![1, 1, 1] = 0 := by
-  unfold selfConvolution
+  rw [selfConvolution_eq_tsum]
   have hz (v : Fin 3 → ℤ) : reeveMass v * reeveMass (![1, 1, 1] - v) = 0 := by
     by_cases hv : v ∈ reeveVertices
     · have hn : ![1, 1, 1] - v ∉ reeveVertices := by
