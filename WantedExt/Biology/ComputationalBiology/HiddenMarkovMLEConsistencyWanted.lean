@@ -122,8 +122,9 @@ def HMMFamily.IsObsLaw {p r K : ℕ} (M : HMMFamily p r K) (θ : EuclideanSpace 
   ∀ (n : ℕ) (y : ℕ → Fin K),
     Q.real {ω | ∀ i : Fin (n + 1), ω i = y i} = likelihood (M.toHMM θ) y n
 
-/-- `θ` and `θ'` are **equivalent**: they give the same observation law, that is, the same
-likelihood `likelihood (M.toHMM θ) y n` for every `n` and every observation sequence `y`. -/
+/-- Raw likelihood equality: `likelihood (M.toHMM θ) y n = likelihood (M.toHMM θ') y n` for every
+`n` and every observation sequence `y`. When `M` is regular (`M.Regular`) and `θ, θ' ∈ M.Θ`, this
+expresses equality of the stationary observation laws of `θ` and `θ'`. -/
 def HMMFamily.Equiv {p r K : ℕ} (M : HMMFamily p r K) (θ θ' : EuclideanSpace ℝ (Fin p)) :
     Prop :=
   ∀ (n : ℕ) (y : ℕ → Fin K), likelihood (M.toHMM θ) y n = likelihood (M.toHMM θ') y n

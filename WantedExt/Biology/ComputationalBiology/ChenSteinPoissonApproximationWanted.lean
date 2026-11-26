@@ -21,7 +21,8 @@ assumed to lie in `(0, ∞)`. For each `α` choose a neighbourhood `B_α ∋ α`
 With `Z` Poisson of mean `λ` and `‖L(W) - L(Z)‖ = sup_{‖h‖ ≤ 1} |E h(W) - E h(Z)| =
 2 sup_A |P(W ∈ A) - P(Z ∈ A)|`, Theorem 1 gives
 `‖L(W) - L(Z)‖ ≤ 2[(b₁ + b₂)(1 - e^{-λ})/λ + b₃'(1 ∧ 1.4 λ^{-1/2})] ≤ 2(b₁ + b₂ + b₃)` and
-`|P(W = 0) - e^{-λ}| ≤ (b₁ + b₂ + b₃')(1 - e^{-λ})/λ < (1 ∧ λ^{-1})(b₁ + b₂ + b₃)`. The process
+`|P(W = 0) - e^{-λ}| ≤ (b₁ + b₂ + b₃')(1 - e^{-λ})/λ`, and when `b₁ + b₂ + b₃ < ∞` this bound is
+strictly `< (1 ∧ λ^{-1})(b₁ + b₂ + b₃)`. The process
 version (Theorem 2) compares the law of `(X_α)_α` with independent Poisson variables of means `p_α`
 and follows from the finite-dimensional bound (2) for a partition of `I` into `d` nonempty parts.
 Lemma 1 bounds the solution of the Stein equation: for `h : ℕ → [0, 1]` and
@@ -34,8 +35,9 @@ Here `I` is nonempty and countable (`W` is a countable sum of indicators, a rand
 The coefficients `b₁, b₂, b₃, b₃'` are taken in `[0, ∞]`, so infinite sums are allowed, and the
 total-variation norm `‖μ - ν‖` is Mathlib's `MeasureTheory.tvDist`, which for probability
 measures is twice the largest difference over measurable sets
-(`MathlibExt.InformationTheory.MeasurePinsker.tvDist_eq_two_mul_totalVariationDist`). The strict
-inequality of Theorem 1 holds as printed because `b₁ ≥ ∑ p_α² > 0`. Not recorded here: the
+(`MathlibExt.InformationTheory.MeasurePinsker.tvDist_eq_two_mul_totalVariationDist`). When
+`b₁ + b₂ + b₃ < ∞`, the strict inequality of Theorem 1 holds because `b₁ ≥ ∑ p_α² > 0` (without
+finiteness, `b₂` can diverge even when `λ < ∞`). Not recorded here: the
 Section 3 examples (Example 5 applies the theorems to the Erdős–Rényi law for sequence matching).
 
 Sources: R. Arratia, L. Goldstein and L. Gordon, "Two moments suffice for Poisson approximations:
