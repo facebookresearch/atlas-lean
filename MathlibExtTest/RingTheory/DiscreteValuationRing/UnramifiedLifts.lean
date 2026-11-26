@@ -18,7 +18,7 @@ universe u
 
 
 /-- `exactSource` consumer with the original binders. -/
-theorem exactSource_charP
+private theorem exactSource_charP
     {r : ℕ} [Fact r.Prime]
     (𝒪 : Type u) [CommRing 𝒪] [IsDomain 𝒪] [CharZero 𝒪] (hdvr : IsDiscreteValuationRing 𝒪)
     (π : 𝒪) (hπ : Irreducible π) (hcomplete : IsAdicComplete (Ideal.span {π}) 𝒪)
@@ -38,7 +38,7 @@ theorem exactSource_charP
     𝒪 hdvr π hπ hcomplete hres hunr Onr hOnr_complete hOnr_max hOnr_alg hOnr_closed
 
 /-- `exactSource` consumer with the original binders. -/
-theorem exactSource_ringHomExt
+private theorem exactSource_ringHomExt
     {r : ℕ} [Fact r.Prime]
     (𝒪 : Type u) [CommRing 𝒪] [IsDomain 𝒪] [CharZero 𝒪] (hdvr : IsDiscreteValuationRing 𝒪)
     (π : 𝒪) (hπ : Irreducible π) (hcomplete : IsAdicComplete (Ideal.span {π}) 𝒪)
@@ -49,7 +49,7 @@ theorem exactSource_ringHomExt
     𝒪 hdvr π hπ hcomplete hres hunr C hC f g
 
 /-- `exactSource` consumer with the original binders. -/
-theorem exactSource_existsRingHom
+private theorem exactSource_existsRingHom
     {r : ℕ} [Fact r.Prime]
     (𝒪 : Type u) [CommRing 𝒪] [IsDomain 𝒪] [CharZero 𝒪] (hdvr : IsDiscreteValuationRing 𝒪)
     (π : 𝒪) (hπ : Irreducible π) (hcomplete : IsAdicComplete (Ideal.span {π}) 𝒪)
@@ -77,7 +77,7 @@ theorem exactSource_existsRingHom
     k ρ₁ hρ₁ hker
 
 /-- `exactSource` consumer with the original binders. -/
-theorem exactSource_existsUniqueAlgHom
+private theorem exactSource_existsUniqueAlgHom
     {r : ℕ} [Fact r.Prime]
     (𝒪 : Type u) [CommRing 𝒪] [IsDomain 𝒪] [CharZero 𝒪] (hdvr : IsDiscreteValuationRing 𝒪)
     (π : 𝒪) (hπ : Irreducible π) (hcomplete : IsAdicComplete (Ideal.span {π}) 𝒪)
@@ -101,7 +101,7 @@ theorem exactSource_existsUniqueAlgHom
     B B₀ p hB hB₀ hp hsq ψ₀
 
 /-- Higher-universe consumer in `Type 1`. -/
-theorem exactSource_charP_type1
+private theorem exactSource_charP_type1
     {r : ℕ} [Fact r.Prime]
     (𝒪 : Type 1) [CommRing 𝒪] [IsDomain 𝒪] [CharZero 𝒪] (hdvr : IsDiscreteValuationRing 𝒪)
     (π : 𝒪) (hπ : Irreducible π) (hcomplete : IsAdicComplete (Ideal.span {π}) 𝒪)
