@@ -11,7 +11,7 @@ homogeneously linearly separable dichotomies (Eq. (5)). The proof is by inductio
 1. Definitions: homogeneous linear threshold functions, separable dichotomies and general position.
 2. The recursion $C(N + 1, d) = C(N, d) + C(N, d - 1)$ by projection onto the hyperplane orthogonal to the new point.
 3. The initial values and the solution of the recursion, giving Eq. (5).
-4. The separation probability $C(N, d)/2^N$, its value $1/2$ at $N = 2d$, and its limits $1$ and $0$ for $N/d$ below and above $2$ as $d \to \infty$ (the separating capacity of the source); compare the [perceptron](../../../../ComputerScience/machine-learning/online-learning-and-boosting/perceptron/README.md).
+4. The separation probability $C(N, d)/2^N$, its value $1/2$ at $N = 2d$, and its limits as $d \to \infty$: $1$ when $\limsup N/d < 2$ and $0$ when $\liminf N/d > 2$ (the limits following Eq. (24) of the source, for a fixed relative gap from the separating capacity; along $N = 2d - 1$ the probability tends to $1/2$); compare the [perceptron](../../../../ComputerScience/machine-learning/online-learning-and-boosting/perceptron/README.md).
 
 ## Sources
 

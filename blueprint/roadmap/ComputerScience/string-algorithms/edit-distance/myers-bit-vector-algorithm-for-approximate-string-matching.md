@@ -1,13 +1,14 @@
 # Myers' bit-vector algorithm for approximate string matching
 
-For a nonempty pattern $P$ of length $m \ge 1$ and a text $T$ of length $n$, let $C$ be the unit-cost dynamic-programming table for approximate matching with boundary condition $C[0, j] = 0$, so that the matches with at most $k$ differences end at the positions $j$ with $C[m, j] \le k$. All horizontal and vertical differences between adjacent entries of $C$ lie in $\{-1, 0, 1\}$ (Myers 1999, Lemma 1, attributed there to Masek–Paterson and Ukkonen), so a column is determined by its vertical deltas. Myers encodes these deltas by two bit-vectors and computes each new column with a constant number of word operations when $m$ is at most the word length $w$. This gives an $O(n\lceil m/w\rceil)$ algorithm, independent of $k$, for finding all text positions where $P$ matches with at most $k$ differences, and, by computing blocks inside Ukkonen's zone, an $O(kn/w)$ expected-time algorithm for long patterns.
+For a nonempty pattern $P$ of length $m \ge 1$ and a text $T$ of length $n$, let $C$ be the unit-cost dynamic-programming table for approximate matching with boundary condition $C[0, j] = 0$, so that the matches with at most $k$ differences end at the positions $j$ with $C[m, j] \le k$. All horizontal and vertical differences between adjacent entries of $C$ lie in $\{-1, 0, 1\}$ (Myers 1999, Lemma 1, attributed there to Masek–Paterson and Ukkonen), so a column is determined by its vertical deltas. Myers encodes these deltas by two bit-vectors and computes each new column with a constant number of word operations when $m$ is at most the word length $w$. This gives a deterministic $O(n\lceil m/w\rceil)$ worst-case algorithm, independent of $k$, for finding all text positions where $P$ matches with at most $k$ differences. Separately, Myers (Section 4) computes only the blocks of $w$ rows that meet Ukkonen's zone, the prefix of each column ending at its last entry at most $k$. The zone has no useful worst-case bound: for $P = a^m$ and $T = a^n$ with $n$ much larger than $m$, every late column is zero throughout, so the zone has depth $m$ even for $k = 1$. Its expected size is $O(kn)$ only for random text, whose letters are independent and uniformly distributed over the alphabet, by the bound of Chang and Lampe that Myers uses; counting at least one block per column, the blocked algorithm then runs in expected time $O(n + kn/w)$.
 
 ## Expansion
 
 1. The approximate matching table, its recurrence and boundary condition; compare the [edit distance cell transitions](../../../ComputerScience/string-algorithms/edit-distance/edit-distance-cell-transitions.md).
 2. Lemma 1: adjacent differences lie in $\{-1, 0, 1\}$.
 3. The bit-vector encoding of a column and the word-parallel scanning step, including the addition that resolves horizontal dependencies.
-4. The $O(n\lceil m/w\rceil)$ bound for long patterns by blocking, and the $O(kn/w)$ expected bound.
+4. The deterministic $O(n\lceil m/w\rceil)$ bound for long patterns by blocking.
+5. Separate target: for random text, the Chang–Lampe bound $O(kn)$ on the expected zone size and the resulting expected time $O(n + kn/w)$ of the block-based zone algorithm.
 
 ## Sources
 

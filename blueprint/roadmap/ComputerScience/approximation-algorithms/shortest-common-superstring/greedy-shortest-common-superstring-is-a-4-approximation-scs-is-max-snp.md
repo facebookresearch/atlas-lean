@@ -1,6 +1,11 @@
 # Greedy superstring approximation and hardness of the shortest superstring
 
-For a finite nonempty set $S$ of nonempty strings over a finite alphabet, no one a substring of another, let $\mathrm{OPT}(S)$ be the length of a shortest common superstring. Blum, Jiang, Li, Tromp and Yannakakis (1994) prove four statements: the greedy algorithm GREEDY, which repeatedly merges the two strings with maximum overlap, produces a superstring of length at most $4\,\mathrm{OPT}(S)$ (Theorem 12); the variant MGREEDY also achieves $4\,\mathrm{OPT}(S)$, because it constructs an optimal cycle cover of the overlap graph (Theorem 10) and concatenating the cycles of an optimal cover costs at most $4\,\mathrm{OPT}(S)$ (Theorem 8); TGREEDY produces a superstring of length at most $3\,\mathrm{OPT}(S)$ (Theorem 11); and the shortest superstring problem is MAX SNP-hard (Theorem 18), by reduction from the traveling salesman problem with distances $1$ and $2$.
+For a finite nonempty set $S$ of nonempty strings over a finite alphabet, no one a substring of another, let $\mathrm{OPT}(S)$ be the length of a shortest common superstring. Blum, Jiang, Li, Tromp and Yannakakis (1994) prove four statements: the greedy algorithm GREEDY, which repeatedly replaces the two strings with maximum [overlap](../../../Biology/not-yet-classified/string-overlap/overlap.md) (the length of the largest suffix of one that is a prefix of the other) by their [merge along the overlap](../../../Biology/not-yet-classified/string-overlap/merge.md), produces a superstring of length at most $4\,\mathrm{OPT}(S)$ (Theorem 12); the variant MGREEDY also achieves $4\,\mathrm{OPT}(S)$, because it constructs an optimal cycle cover of the overlap graph (Theorem 10) and concatenating the cycles of an optimal cover costs at most $4\,\mathrm{OPT}(S)$ (Theorem 8); TGREEDY produces a superstring of length at most $3\,\mathrm{OPT}(S)$ (Theorem 11); and the shortest superstring problem is MAX SNP-hard (Theorem 18), by reduction from the traveling salesman problem with distances $1$ and $2$.
+
+## Depends on
+
+- [Largest overlap of two lists](../../../Biology/not-yet-classified/string-overlap/overlap.md)
+- [Merge along the overlap](../../../Biology/not-yet-classified/string-overlap/merge.md)
 
 ## Expansion
 
