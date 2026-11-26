@@ -9,7 +9,6 @@
 - [Operating Point Linearization](operating-point-linearization/README.md)
 - [Passive Load Reflection](passive-load-reflection/README.md)
 - [Per Unit Bases](per-unit-bases/README.md)
-- [Perfect Gas Ports](perfect-gas-ports/README.md)
 - [Periodic Yee Maxwell Bridge](periodic-yee-maxwell-bridge/README.md)
 - [Phasor Element Laws](phasor-element-laws/README.md)
 - [Physical Error Budgets](physical-error-budgets/README.md)
