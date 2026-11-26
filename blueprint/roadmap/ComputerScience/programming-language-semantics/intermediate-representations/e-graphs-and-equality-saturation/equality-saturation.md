@@ -9,5 +9,5 @@ Given a term $t$ and a set $R$ of rewrite rules $\ell \to r$ between patterns, *
 
 ## Sources
 
-- M. Willsey, C. Nandi, Y. R. Wang, O. Flatt, Z. Tatlock and P. Panchekha, "egg: Fast and extensible equality saturation", arXiv:2004.03082, <https://arxiv.org/abs/2004.03082> (also *Proceedings of the ACM on Programming Languages* 5(POPL):23, 2021), Section 2.1.3 (applying rewrites, saturation) and Section 2.2 (the equality saturation workflow, Figure 3, extraction).
+- M. Willsey, C. Nandi, Y. R. Wang, O. Flatt, Z. Tatlock and P. Panchekha, "egg: Fast and extensible equality saturation", *Proceedings of the ACM on Programming Languages* 5(POPL), Article 23, 2021, doi:10.1145/3434304, author copy arXiv:2004.03082v3 <https://arxiv.org/abs/2004.03082>, Section 2.1.3 (applying rewrites, saturation) and Section 2.2 (the equality saturation workflow, Figure 3, extraction).
 - R. Tate, M. Stepp, Z. Tatlock and S. Lerner, "Equality saturation: a new approach to optimization", *POPL 2009*, ACM, 2009, cited by Willsey et al. as the origin of equality saturation.

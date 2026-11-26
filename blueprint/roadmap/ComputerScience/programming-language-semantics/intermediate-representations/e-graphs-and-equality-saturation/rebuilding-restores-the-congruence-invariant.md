@@ -11,4 +11,4 @@ Let an [e-graph](e-graphs.md) satisfy the congruence and hashcons invariants, an
 
 ## Sources
 
-- M. Willsey, C. Nandi, Y. R. Wang, O. Flatt, Z. Tatlock and P. Panchekha, "egg: Fast and extensible equality saturation", arXiv:2004.03082, <https://arxiv.org/abs/2004.03082> (also *Proceedings of the ACM on Programming Languages* 5(POPL):23, 2021), Section 3: upward merging (Section 3.1), the rebuild and repair procedures of Figure 4 (Section 3.2), and Theorem 3.1 with its proof, which appeals to G. Nelson's thesis, *Techniques for program verification*, Stanford University, 1980, Chapter 7, for the final step.
+- M. Willsey, C. Nandi, Y. R. Wang, O. Flatt, Z. Tatlock and P. Panchekha, "egg: Fast and extensible equality saturation", *Proceedings of the ACM on Programming Languages* 5(POPL), Article 23, 2021, doi:10.1145/3434304, author copy arXiv:2004.03082v3 <https://arxiv.org/abs/2004.03082>, Section 3: upward merging (Section 3.1), the rebuild and repair procedures of Figure 4 (Section 3.2), and Theorem 3.1 with its proof, which appeals to G. Nelson's thesis, *Techniques for program verification*, Stanford University, 1980, Chapter 7, for the final step.

@@ -13,4 +13,4 @@ The operation $\mathrm{add}(n)$ returns $\mathrm{lookup}(n)$ if it exists and ot
 
 ## Sources
 
-- M. Willsey, C. Nandi, Y. R. Wang, O. Flatt, Z. Tatlock and P. Panchekha, "egg: Fast and extensible equality saturation", arXiv:2004.03082, <https://arxiv.org/abs/2004.03082> (also *Proceedings of the ACM on Programming Languages* 5(POPL):23, 2021), Sections 2.1.2–2.1.3: Definitions 2.4 (equivalence), 2.5 (congruence), 2.6 (the congruence invariant) and 2.7 (the hashcons invariant), and the operations add, merge, find and ematch.
+- M. Willsey, C. Nandi, Y. R. Wang, O. Flatt, Z. Tatlock and P. Panchekha, "egg: Fast and extensible equality saturation", *Proceedings of the ACM on Programming Languages* 5(POPL), Article 23, 2021, doi:10.1145/3434304, author copy arXiv:2004.03082v3 <https://arxiv.org/abs/2004.03082>, Sections 2.1.2–2.1.3: Definitions 2.4 (equivalence), 2.5 (congruence), 2.6 (the congruence invariant) and 2.7 (the hashcons invariant), and the operations add, merge, find and ematch.

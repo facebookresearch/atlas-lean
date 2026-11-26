@@ -11,4 +11,4 @@ Ordinary reachability is the case $L = e^*$ with every edge labeled $e$. Recogni
 
 ## Sources
 
-- T. Reps, "Program analysis via graph reachability", technical report, University of Wisconsin, <https://research.cs.wisc.edu/wpis/papers/tr1386.pdf> (also *Information and Software Technology* 40(11–12):701–726, 1998), Section 2: Definition 2.1, the relationship with ordinary reachability and with context-free recognition, and the languages $L(\mathit{matched})$ and $L(\mathit{realizable})$ over a supergraph.
+- T. Reps, "Program analysis via graph reachability", *Information and Software Technology* 40(11–12):701–726, 1998, doi:10.1016/S0950-5849(98)00093-7, author copy <https://research.cs.wisc.edu/wpis/papers/tr1386.pdf>, Section 2: Definition 2.1, the relationship with ordinary reachability and with context-free recognition, and the languages $L(\mathit{matched})$ and $L(\mathit{realizable})$ over a supergraph.

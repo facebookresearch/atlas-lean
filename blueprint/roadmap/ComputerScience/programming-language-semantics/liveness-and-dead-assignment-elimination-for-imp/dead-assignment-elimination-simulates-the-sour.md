@@ -14,6 +14,7 @@ Let $L$ be [liveness](live-variables-of-an-imp-command.md) and $\mathrm{bury}$ [
 
 - [Coincidence for IMP expressions](coincidence-for-imp-expressions.md)
 - [Live variables of a loop are closed under its body](live-variables-of-a-loop-are-closed-under-its.md)
+- [Correctness of live-variables analysis for IMP](correctness-of-live-variables-analysis-for-imp.md)
 
 ## Sources
 
