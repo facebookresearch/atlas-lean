@@ -49,13 +49,7 @@ private def smoothSectionLocalPredicate {n : ℕ} {M : Type} [TopologicalSpace M
 
 /-- Native smooth bundle section kernels have their ordinary local sheaf condition. -/
 public theorem native_smooth_bundle_section_gluing {n : ℕ} {M : Type} [TopologicalSpace M]
-    [ChartedSpace (Coordinates n) M] [IsManifold 𝓘(ℝ, Coordinates n) ∞ M]
-    [IsManifold 𝓘(ℂ, Coordinates n) ∞ M]
-    [HolomorphicCoefficientSheaves.SheafCondition (Coordinates n) M]
-    [CotangentSectionCalculus (n := n) (M := M)] [CotangentSheafCondition (n := n) (M := M)]
-    [HasSheafify (Opens.grothendieckTopology M) AddCommGrpCat.{0}]
-    [(Opens.grothendieckTopology M).WEqualsLocallyBijective AddCommGrpCat.{0}]
-    {r : ℕ} (B : SmoothComplexBundle n M r)
+    [ChartedSpace (Coordinates n) M] {r : ℕ} (B : SmoothComplexBundle n M r)
     [SectionCalculus B 0] [SmoothSectionMultiplication B] : SmoothBundleSheafCondition B := by
   constructor
   rw [Presheaf.isSheaf_iff_isSheaf_forget _ _ (forget AddCommGrpCat)]
