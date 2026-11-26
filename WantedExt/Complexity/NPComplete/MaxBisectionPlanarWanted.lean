@@ -26,7 +26,7 @@ public import CSLibExt.Computability.Complexity.Karp.Color
 public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Combinatorics.SimpleGraph.Planarity
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MaxCutWanted
+public import CSLibExt.Complexity.NPComplete.MaxCutDefs
 
 @[expose] public section
 
@@ -51,7 +51,7 @@ the same result. Membership in NP: isolated vertices can go to either side, so a
 the non-isolated vertices with the side sizes checked arithmetically is a certificate.
 
 The instance, the simple-edge-list conditions and the crossing-edge count are those of MAXIMUM
-CUT (`WantedExt.Complexity.NPComplete.MaxCutWanted`); the question adds `|A| = ⌊|V| / 2⌋` for the
+CUT (`CSLibExt.Complexity.NPComplete.MaxCutDefs`); the question adds `|A| = ⌊|V| / 2⌋` for the
 side `A = S`, the bisection condition of `MinBisectionWanted`. Planarity is the repository's
 `SimpleGraph.IsPlanar` (a crossing-free straight-line drawing, which by Fáry's theorem exists
 exactly for planar graphs) of `Cslib.Complexity.Karp.edgeGraph`.

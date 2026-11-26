@@ -1,0 +1,16 @@
+# Gouy Chapman
+
+- [Gc Profile](gc-profile.md)
+- [Is Decaying PBSolution](is-decaying-pbsolution.md)
+- [Prescribed surface potential](exists-unique-potential.md)
+- [Prescribed surface charge](exists-unique-charge.md)
+- [The potential–`g`–charge bridge](potential-g-charge-bridge.md)
+- [Surface-potential identities](surface-potential-identities.md)
+- [Bjerrum](bjerrum.md)
+- [Debye](debye.md)
+- [Reduced Charge](reduced-charge.md)
+- [Charge Ratio](charge-ratio.md)
+- [Reduction to the dimensionless equation](reduced-equation-iff-debye.md)
+- [The printed branch for positive charge](g-eq-printed-of-pos.md)
+- [The corrected branch for negative charge](g-eq-corrected-of-neg.md)
+- [The uncharged surface](profile-eq-zero-of-uncharged.md)

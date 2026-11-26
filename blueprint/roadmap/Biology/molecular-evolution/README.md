@@ -14,6 +14,7 @@
 
 - [Origination–fixation dynamics](origination-fixation-dynamics/README.md)
 - [Mutation-rate modifiers and the drift-barrier hypothesis](mutation-rate-modifiers-and-the-drift-barrier-hy.md)
+- [Antibody escape maps from deep mutational scanning](antibody-escape-maps-from-deep-mutational-scanning/README.md)
 - [Accessibility percolation on trees](accessibility-percolation-on-trees/README.md)
 - [Limit laws for accessible path counts](limit-laws-for-accessible-path-counts/README.md)
 - [Open quasispecies systems](open-quasispecies-systems/README.md)

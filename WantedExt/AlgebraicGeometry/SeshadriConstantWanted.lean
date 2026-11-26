@@ -11,6 +11,7 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Real.Sqrt
 public import MathlibExt.AlgebraicGeometry.SeshadriConstant
+public import MathlibExt.AlgebraicGeometry.SeshadriConstantSubmaximalUpperBoundWanted
 
 @[expose] public section
 
@@ -22,7 +23,10 @@ open MathlibExt.AlgebraicGeometry.SeshadriConstant
 # Catalogue bounds for the ten-point Seshadri constant
 
 The frozen catalogue bounds for `C₇₄` as proof requests against
-`seshadriConstant10`. The Lean constant is the supremum over injective
+`seshadriConstant10`, except the upper bound `submaximalUpperBound_wanted`,
+which is proved in
+`MathlibExt.AlgebraicGeometry.SeshadriConstantSubmaximalUpperBoundWanted`.
+The Lean constant is the supremum over injective
 affine ten-point configurations of the infimum of degree over summed
 multiplicities. Harbourne--Roé define the generic constant by this
 supremum and identify it with the value at very general points; the
@@ -67,14 +71,5 @@ $117/370$.
 Source: Eckl (2011), improved catalogue lower bound `117/370`. -/
 theorem_wanted eckl2011LowerBound_wanted :
     (117 / 370 : ℝ) ≤ seshadriConstant10
-
-/-- **Submaximal upper bound for the ten-point Seshadri constant.**
-The generic ten-point Seshadri constant of $\mathbb{P}^2$, in the affine-chart model, is at most
-$1/\sqrt{10}$.
-
-Source: the general submaximal upper bound `ε ≤ √(D²/r)` for
-`D = 𝒪_{ℙ²}(1)` and `r = 10`. -/
-theorem_wanted submaximalUpperBound_wanted :
-    seshadriConstant10 ≤ 1 / Real.sqrt 10
 
 end MathlibExt.AlgebraicGeometry.SeshadriConstantWanted
