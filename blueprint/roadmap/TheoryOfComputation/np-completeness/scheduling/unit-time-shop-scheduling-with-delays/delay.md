@@ -1,0 +1,3 @@
+# Delay of a job in a unit-time shop with delays and release dates
+
+An instance of a unit-time shop with delays and release dates, as in TWO-MACHINE UNIT-TIME FLOW SHOP WITH DELAYS AND RELEASE DATES, TOTAL COMPLETION TIME, is a pair $(L, K)$ of a list $L$ of pairs $(r_j, t_j)$ of natural numbers, the release date and the delay of job $j$, and a bound $K$. The delay $t_j$ of job $j$, the least time between the completion of its earlier operation and the start of its later one (in a flow shop the operation on the first machine comes first; in an open shop either may), is the second component of the pair at position $j$ of $L$.
