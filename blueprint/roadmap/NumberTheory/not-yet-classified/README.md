@@ -5,6 +5,7 @@ Topics added since this subject's fields were last revised.
 - [Adelic Lift](adelic-lift/README.md)
 - [Finite Ramification Conductors](finite-ramification-conductors/README.md)
 - [Hecke Operator](hecke-operator/README.md)
+- [Hecke UGamma H](hecke-ugamma-h/README.md)
 - [Level NStructure](level-nstructure/README.md)
 - [Period Map Hecke](period-map-hecke/README.md)
 - [Projective Northcott](projective-northcott/README.md)
