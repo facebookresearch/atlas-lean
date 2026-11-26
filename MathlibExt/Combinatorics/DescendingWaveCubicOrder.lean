@@ -37,8 +37,7 @@ DISPROVED). UnsolvedMath record UM-30007031 (`EP-781`), dataset ulamai/UnsolvedM
 
 `ForcesMonochromaticWave k n` says `f(k) ≤ n`; it is monotone in `n`, so `f(k) = k² - k + 1` is
 'forced at `k² - k + 1` and not at `k² - k`', and `f(k) ≍ k³` is stated through the same predicate
-without `sInf`. Waves are strictly increasing; formal-conjectures' `IsDescendingWave` omits `x_1 < ⋯
-< x_k`, which lets constant sequences count as waves. Alon and Spencer work with ascending waves
+without `sInf`. Alon and Spencer work with ascending waves
 (`x_{i+1} - x_i ≤ x_{i+2} - x_{i+1}`); the reflection `x ↦ n + 1 - x` exchanges ascending and
 descending waves in `{1, …, n}`, so both define the same `f`, and Alon and Spencer quote Brown,
 Erdős and Freedman's bounds for it. Their asymptotic lower bound refutes the quadratic formula.
