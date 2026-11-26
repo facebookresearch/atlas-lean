@@ -10350,6 +10350,7 @@
   "Domains/Biology/PopulationGenetics/DiploidFundamentalTheorem": {"to": "Biology/population-genetics", "title": "Natural selection, Fisher's theorem and the Price equation"},
   "Domains/Biology/PopulationGenetics/DiploidSelection": {"to": "Biology/population-genetics", "title": "Baum–Eagon inequality for diploid selection"},
   "Domains/Biology/PopulationGenetics/DistributionOfFitnessEffects": {"to": "Biology/detecting-selection", "title": "Distribution of fitness effects"},
+  "Domains/Biology/PopulationGenetics/EffectiveSize/FamilySizeVariance": {"to": "Biology/population-genetics", "title": "Effective population size"},
   "Domains/Biology/PopulationGenetics/Ewens": {"to": "Biology/population-genetics", "title": "Ewens sampling formula and the Chinese restaurant process"},
   "Domains/Biology/PopulationGenetics/EwensWatterson": {"to": "Biology/detecting-selection", "title": "Ewens–Watterson test"},
   "Domains/Biology/PopulationGenetics/FStatistics": {"to": "Biology/population-structure", "title": "Patterson's f-statistics"},
