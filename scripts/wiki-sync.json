@@ -102742,6 +102742,7 @@
 "Representation.artinLocalFactorRaw": "b39969b57b52a1d6",
 "Representation.artinLocalFactorRaw_of_action_eq_id": "1a797e6013050508",
 "Representation.artinLocalFactorRaw_of_action_eq_id_general": "12cc2cb842bb23f7",
+"Representation.exists_ne_zero_forall_apply_eq_of_isPGroup": "7ff1c1b00d2c8c28",
 "ResProof": "3d094d0354347132",
 "ResidueFieldMaximalIdealPowQuotient": "98b9df67bfc80b3e",
 "RestrictedProduct.DirectLimitXS": "63ab9902deb5a2f0",
