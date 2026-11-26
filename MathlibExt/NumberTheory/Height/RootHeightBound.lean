@@ -1,13 +1,10 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
+Copyright (c) 2026 Anthropic, PBC. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 -/
 
 /-
-Portions of this file are adapted from:
+Adapted from:
 
 `Theorems/Thm_AlgebraicCurve_absLogHeight_root_le_coeff.lean`,
 `P2M/Sol/S_AlgebraicCurve_absLogHeight_root_le_coeff.lean`,
@@ -17,8 +14,6 @@ Portions of this file are adapted from:
 (https://github.com/anthropics/fermats-last-theorem):
 Compared with the source files at commit
 `6e837e75355538c7f80bab5b956861e86c4eacc2`.
-Copyright (c) 2026 Anthropic, PBC. All rights reserved.
-Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 The upstream NOTICE also credits:
 Mathlib — https://github.com/leanprover-community/mathlib4
 Copyright (c) the respective Mathlib authors, as recorded in the headers of the
@@ -27,6 +22,8 @@ Released under the Apache License, Version 2.0.
 The source is machine-generated proof code built around a proof-extraction
 framework; the statements and proofs are reused here with that machinery
 removed and the names restated in Mathlib style.
+Adaptations copyright (c) Meta Platforms, Inc. and affiliates, under the
+license in the root LICENSE file.
 -/
 
 module
@@ -50,8 +47,8 @@ private theorem finiteDimensional_adjoin_range {ι : Type*} [Finite ι]
   IntermediateField.finiteDimensional_adjoin fun y _ =>
     ((AlgebraicClosure.isAlgebraic ℚ).isAlgebraic y).isIntegral
 
-/-- The absolute logarithmic height of a tuple of algebraic numbers: the
-logarithmic height of the tuple in the field it generates, normalised by
+/-- **Absolute logarithmic height of a tuple.** The absolute logarithmic height of a tuple of
+algebraic numbers: the logarithmic height of the tuple in the field it generates, normalised by
 the degree of that field over `ℚ`. -/
 public noncomputable def absLogHeight {ι : Type*} [Fintype ι]
     (x : ι → AlgebraicClosure ℚ) : ℝ :=
@@ -434,10 +431,9 @@ private theorem mwb1_srh_abs {ι : Type*} (t : Finset ι) (α : ι → Algebraic
         ring
 
 
-/-- The logarithmic height of a root of a monic polynomial is bounded by
-the logarithmic height of its coefficient tuple plus
-`log (sqrt (degree + 1))`. -/
-public theorem absLogHeight_root_le_coeff {p : Polynomial (AlgebraicClosure ℚ)}
+/-- The source's form of the root height bound, through the pair height `absLogHeight ![z, 1]`;
+`absLogHeight₁_root_le_coeff` is its public statement. -/
+private theorem absLogHeight_root_le_coeff {p : Polynomial (AlgebraicClosure ℚ)}
     (hmonic : p.Monic) {z : AlgebraicClosure ℚ} (hroot : p.eval z = 0) :
     absLogHeight ![z, 1]
       ≤ absLogHeight (fun k : Fin (p.natDegree + 1) => p.coeff k)
@@ -478,8 +474,8 @@ public theorem absLogHeight_root_le_coeff {p : Polynomial (AlgebraicClosure ℚ)
     rw [← hfactor, ← hprod]
   rw [hpoly]
 
-/-- The absolute logarithmic height of the pair `![z, 1]` used above is the
-canonical absolute logarithmic height `NumberField.absLogHeight₁ z`. -/
+/-- **Pair height and the canonical height.** The absolute logarithmic height of the pair
+`![z, 1]` is the canonical absolute logarithmic height `NumberField.absLogHeight₁ z`. -/
 public theorem absLogHeight_pair_eq_absLogHeight₁ (z : AlgebraicClosure ℚ) :
     absLogHeight ![z, 1] = NumberField.absLogHeight₁ z := by
   classical
@@ -501,8 +497,13 @@ public theorem absLogHeight_pair_eq_absLogHeight₁ (z : AlgebraicClosure ℚ) :
   funext i
   fin_cases i <;> rfl
 
-/-- The root height bound stated through the canonical absolute logarithmic
-height `NumberField.absLogHeight₁`. -/
+/-- **Height of a root bounded by its coefficients.** Let $p$ be a monic polynomial of degree $d$
+over the algebraic closure of $\mathbb{Q}$, with coefficients $a_0, \dots, a_d$, and let $z$ be a
+root of $p$. Then the absolute logarithmic height of $z$ is at most the absolute logarithmic
+height of the coefficient tuple plus $\log \sqrt{d + 1}$:
+
+$$h(z) \le h(a_0, \dots, a_d) + \log \sqrt{d + 1}.$$
+-/
 public theorem absLogHeight₁_root_le_coeff {p : Polynomial (AlgebraicClosure ℚ)}
     (hmonic : p.Monic) {z : AlgebraicClosure ℚ} (hroot : p.eval z = 0) :
     NumberField.absLogHeight₁ z
