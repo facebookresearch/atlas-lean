@@ -1196,3 +1196,4 @@ Topics added since this subject's fields were last revised.
 - [Iter Cech](iter-cech/README.md)
 - [Drinfeld Basis Torsion](drinfeld-basis-torsion/README.md)
 - [Cassels Tate Pairing](cassels-tate-pairing/README.md)
+- [Drinfeld Upper Half Plane](drinfeld-upper-half-plane/README.md)
