@@ -199,18 +199,6 @@ public theorem_wanted odd_primitiveNondeficient_primeReciprocalSum_ge
         ((abundancySup n : ℝ) - 2) / 2 - ((abundancySup n : ℝ) - 2) ^ 2 / 4 ≤
       ∑ p ∈ n.primeFactors, (1 : ℝ) / p
 
-/-- **Bound on $H(n)$ for primitive non-deficient numbers by the least prime factor.** For a
-positive integer $n$ write $H(n) = \prod_{p \mid n} p/(p-1)$, the product over the prime
-divisors of $n$. There is a real constant $C$ such that every primitive non-deficient number
-$n$ with least prime factor $p_1$ satisfies $H(n) \le 2 + C/p_1$.
-
-Source: Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd
-Perfect or Odd Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59,
-Proposition 8 (`integers-2025-A59-prop-8`). -/
-public theorem_wanted exists_abundancySup_le_two_add_div_minFac :
-    ∃ C : ℝ, ∀ n : ℕ, IsPrimitiveNondeficient n →
-      (abundancySup n : ℝ) ≤ 2 + C / n.minFac
-
 /-- **No odd prime $q$ lifts $H$ of the odd part of $q + 1$ across $2$.** For a positive integer
 $m$ write $H(m) = \prod_{p \mid m} p/(p-1)$, the product over the prime divisors of $m$, and
 $\operatorname{odd}(m)$ for the largest odd divisor of $m$. There is no odd prime $q$ with
