@@ -1936,6 +1936,8 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/GraphTheory/social-networks/README.md"}], "id": "af_16748d1877d3bb734a066253"}
 {"subject": [{"type": "generic", "uri": "../roadmap/GraphTheory/social-networks/betweenness-centrality.md"}], "id": "af_27e2cf25ff02208bb844ceee", "extensions": {"org.atlas-wiki": {"kind": "def"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/GraphTheory/algebraic-graph-theory/part-01/effective-resistance-and-electrical-networks/terminal-currents-of-a-conducting-box-as-nodal-injections.md"}], "id": "af_de2450dee5c36d10c4e15873", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/GraphTheory/graph-ramsey-theory/multicolor-triangle-ramsey-numbers/README.md"}], "id": "af_269f0f47a8a8549b6f6ecc1b", "extensions": {"org.autoform": {"navigation": "module"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/GraphTheory/graph-ramsey-theory/multicolor-triangle-ramsey-numbers/multicolor-triangle-ramsey-number.md"}], "id": "af_3ac50e60c16111e7a9de2682", "object": [{"location": {"declaration": "SimpleGraph.multicolorTriangleRamseyNumber"}}], "extensions": {"org.atlas-wiki": {"from": "docstring"}, "org.autoform": {"origin": "cited"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/GraphTheory/directed-graphs/directed-expander-decompositions/README.md"}], "id": "af_83de3cf842610a41738199cd"}
 {"subject": [{"type": "generic", "uri": "../roadmap/GraphTheory/graph-families-and-operations/expander-decomposition-and-pruning/README.md"}], "id": "af_94258c49d8ad1999196fc2be"}
 {"subject": [{"type": "generic", "uri": "../roadmap/GraphTheory/graph-invariants-and-labelings/theta-sandwich-and-perfect-graph-optimization/README.md"}], "id": "af_9553a8aa61f32542953e355c"}

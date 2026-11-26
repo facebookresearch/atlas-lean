@@ -37,8 +37,9 @@ the definition of `h_r`, is explicit. Compared with the formal-conjectures state
 -/
 
 /-- `h_r(G)`: the least number of edges whose addition to `G` gives a triangle-free graph of
-diameter at most `r` (a disconnected graph has infinite diameter `SimpleGraph.ediam`). For
-connected triangle-free `G` and `r ≥ 2` a maximal triangle-free supergraph qualifies. -/
+diameter at most `r` (a disconnected graph has infinite diameter `SimpleGraph.ediam`, and the graph
+on the empty vertex type, `n = 0`, has extended diameter `0`). For connected triangle-free `G` and
+`r ≥ 2` a maximal triangle-free supergraph qualifies. -/
 noncomputable def diameterCompletionCost {n : ℕ} (r : ℕ) (G : SimpleGraph (Fin n)) : ℕ :=
   sInf {k | ∃ H : SimpleGraph (Fin n), G ≤ H ∧ H.CliqueFree 3 ∧ H.ediam ≤ r ∧
     (H \ G).edgeSet.ncard = k}
