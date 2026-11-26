@@ -1,5 +1,3 @@
 # Admissible block-model parameters exist
 
-Here $K$ is finite.
-
-The admissible parameter space is nonempty (uniform mixing).
+For a nonempty finite set of classes $K$, admissible block-model parameters exist, for example uniform class probabilities with any symmetric affinity matrix in $[0, 1]$.

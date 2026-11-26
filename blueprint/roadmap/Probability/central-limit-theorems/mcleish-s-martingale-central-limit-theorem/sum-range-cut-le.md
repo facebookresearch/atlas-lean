@@ -1,5 +1,3 @@
 # Predictable cut bound
 
-The terms `c k` kept while the running sum `∑_{j ≤ k} c j` stays
-`≤ K` add up to at most `K`. No sign condition on `c` is needed. With `c k = E[X k² | F k]` this
-is the pointwise core of a predictable truncation of the conditional variances.
+For real terms $c_0, c_1, \dots$, a bound $K \ge 0$ and $m \in \mathbb{N}$, the terms $c_k$, $k < m$, kept while the running sum $\sum_{j \le k} c_j$ stays at most $K$ add up to at most $K$. No sign condition on $c$ is needed. With $c_k = \mathbb{E}[X_k^2 \mid \mathcal F_k]$ this is the pointwise core of a predictable truncation of the conditional variances.

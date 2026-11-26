@@ -1,3 +1,3 @@
 # Formula for the compensated Bernoulli counting process
 
-Explicit formula: `(N ⌊n t⌋ - p ⌊n t⌋) / √n` with `N k = ∑_{i<k} ξ i`.
+For $n \in \mathbb{N}$, a real $p$, counting increments $\xi_i$, an outcome $\omega$ and $t \in [0, 1]$, the compensated Bernoulli counting process at $t$ is $\bigl(N_{\lfloor nt \rfloor} - p \lfloor nt \rfloor\bigr)/\sqrt n$, with $N_k = \sum_{i<k} \xi_i(\omega)$. For $n = 0$ it is $0$.

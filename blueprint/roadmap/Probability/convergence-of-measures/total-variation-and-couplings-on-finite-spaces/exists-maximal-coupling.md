@@ -1,6 +1,3 @@
 # A maximal coupling exists
 
-Here $\alpha$ is finite.
-
-A maximal coupling exists: some coupling attains equality in the
-coupling inequality.
+For probability mass functions $p$ and $q$ on a finite set $\alpha$, some coupling $r$ of $p$ and $q$ attains equality in the coupling inequality: $r(\{(a, b) : a \ne b\})$ equals the total variation distance $\tfrac12 \sum_a |p(a) - q(a)|$.

@@ -1,4 +1,3 @@
 # One more term of the truncated moving-average sum
 
-One more term: the length-`N+1` partial sum at `t` is the innovation at `t`
-plus `ρ` times the length-`N` partial sum at `t - 1`.
+For random variables $(\varepsilon_t)_{t \in \mathbb{Z}}$, a coefficient $\rho$, a time $t$ and $N \in \mathbb{N}$, the truncated moving-average sums $S_N(t) = \sum_{k<N} \rho^k \varepsilon_{t-k}$ satisfy $S_{N+1}(t) = \varepsilon_t + \rho\, S_N(t - 1)$.

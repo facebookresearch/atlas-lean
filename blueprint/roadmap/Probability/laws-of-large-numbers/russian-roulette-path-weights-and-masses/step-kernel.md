@@ -1,4 +1,3 @@
 # Continuation kernel of a stopped Markov chain
 
-Continuation (survival) kernel `Q i j = (1 - q i) * P i j`, where `q` is the
-stop probability and `P` the conditional next-state kernel.
+For stop probabilities $q$ and a next-state kernel $P$ on a set of states, the continuation (survival) kernel is $Q(i, j) = (1 - q(i))\, P(i, j)$.

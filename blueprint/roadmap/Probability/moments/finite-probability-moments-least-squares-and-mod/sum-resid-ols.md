@@ -1,5 +1,3 @@
 # Least-squares residuals sum to zero
 
-Here $\iota$ is finite.
-
-The least-squares residuals sum to zero (orthogonality to the constant vector).
+For data $x, y : \iota \to \mathbb{R}$ on a finite index set, the residuals of the least-squares line sum to zero: $\sum_i (y_i - \hat a - \hat b x_i) = 0$. This holds for all data, including $S_{xx} = 0$.

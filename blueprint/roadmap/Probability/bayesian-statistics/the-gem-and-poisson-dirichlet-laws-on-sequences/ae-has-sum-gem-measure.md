@@ -1,3 +1,3 @@
 # GEM weights are nonnegative and sum to 1 almost surely
 
-Under the GEM($\theta$) law, almost every sequence of weights is nonnegative and sums to $1$.
+For $\theta > 0$, under the GEM($\theta$) law of stick-breaking weights, almost every sequence of weights is nonnegative and sums to $1$.

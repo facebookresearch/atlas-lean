@@ -1,5 +1,3 @@
 # Inclusion probability under a pushforward design
 
-Here $\alpha$ and $\gamma$ are finite.
-
-Inclusion probability of a pushforward design, as a sum over preimages.
+For finite sets $\alpha$ and $\gamma$, a probability mass function $p$ on $\alpha$, a map $f$ from $\alpha$ to subsets of $\gamma$ and $M \in \gamma$, the inclusion probability of $M$ under the design $f_* p$ is $\sum_{a : M \in f(a)} p(a)$.

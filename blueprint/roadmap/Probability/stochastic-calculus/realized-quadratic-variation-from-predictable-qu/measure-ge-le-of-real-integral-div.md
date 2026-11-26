@@ -1,4 +1,3 @@
 # Markov's inequality
 
-For an almost everywhere nonnegative integrable function $f$ and $\delta > 0$,
-$\mu\{\delta \le f\} \le (\int f\, d\mu) / \delta$.
+On a finite measure space, for an almost everywhere nonnegative integrable function $f$ and $\delta > 0$, $\mu\{\delta \le f\} \le \bigl(\int f\, d\mu\bigr)/\delta$.

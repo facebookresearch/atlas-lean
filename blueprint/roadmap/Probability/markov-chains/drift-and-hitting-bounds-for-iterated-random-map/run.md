@@ -1,4 +1,3 @@
 # Iterating a step map along an input path
 
-Iteration of the step map `f` from `x₀` along the input path `ω`; mark `n + 1` is
-`f` applied to mark `n` and input `n`.
+For a step map $f : S \times D \to S$, a start $x_0$ and an input path $\omega : \mathbb{N} \to D$, the run is $x_0$ at mark $0$ and $x_{n+1} = f(x_n, \omega_n)$.

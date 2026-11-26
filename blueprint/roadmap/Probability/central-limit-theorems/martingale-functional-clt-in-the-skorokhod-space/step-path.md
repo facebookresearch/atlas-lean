@@ -1,3 +1,3 @@
 # Normalized partial-sum step path
 
-The normalized partial-sum step path in `D([0,1])` built from `n` increments.
+For $n \in \mathbb{N}$ and increments $y_0, \dots, y_{n-1}$, the normalized partial-sum step path is the path $t \mapsto n^{-1/2} \sum_{i<n} y_i\, \mathbf 1\{(i+1)/n \le t\}$ in the Skorokhod space $D([0, 1])$.

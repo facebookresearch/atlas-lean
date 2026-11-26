@@ -1,3 +1,3 @@
 # Group-mean recoding
 
-The `min` recoding `min (2 * t) ((t + 3) / 2)`, strictly increasing.
+The group-mean recoding is the strictly increasing function $t \mapsto \min(2t, (t + 3)/2)$ on $\mathbb{R}$.

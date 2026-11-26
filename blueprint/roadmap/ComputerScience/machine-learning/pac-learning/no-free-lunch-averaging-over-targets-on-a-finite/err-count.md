@@ -1,6 +1,3 @@
 # Errors of a hypothesis outside the sample
 
-Here $X$ is finite.
-
-The number of points outside the sample where the
-hypothesis `h` disagrees with the target `f`.
+For a finite set $X$, sample points $x_1, \dots, x_m \in X$, a target $f : X \to \{0, 1\}$ and a hypothesis $h : X \to \{0, 1\}$, the error count is the number of points $t \in X$ outside $\{x_1, \dots, x_m\}$ with $h(t) \ne f(t)$.

@@ -1,3 +1,3 @@
 # The polygonal process is measurable
 
-The polygon is a measurable `C([0,1])`-valued random variable.
+For a triangular array $(\xi_{n,i})$ on a measurable space whose row-$n$ entries are measurable, the polygonal process of row $n$ is a measurable random variable with values in $C([0, 1])$.

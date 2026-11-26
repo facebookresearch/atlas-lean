@@ -1,3 +1,3 @@
 # Second marginal of a finite joint probability mass function
 
-The second marginal of a finite joint PMF is the sum over the first coordinate.
+For a probability mass function $p$ on $\alpha \times \beta$ with $\alpha$ and $\beta$ finite and $b \in \beta$, the second marginal of $p$ at $b$ is $\sum_a p(a, b)$.

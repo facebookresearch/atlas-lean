@@ -1,4 +1,3 @@
-# The median trick (confidence amplification)
+# Median of finitely many reals
 
-The median of finitely many reals: the middle element of the sorted
-list of values (index `r / 2`), or `0` for the empty family.
+For reals $X_0, \dots, X_{r-1}$, the median is the entry at index $\lfloor r/2 \rfloor$ (counting from $0$) of the list of values sorted in nondecreasing order, and $0$ for the empty family ($r = 0$). For even $r$ this is the upper of the two middle values.

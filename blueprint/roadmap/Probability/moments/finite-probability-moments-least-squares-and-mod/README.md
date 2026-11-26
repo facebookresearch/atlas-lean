@@ -105,9 +105,9 @@
 ## J. Conditioning on an event of positive mass
 
 - [Weights conditioned on an event of positive probability](cond-weights.md)
-- [Normalization](cond-weights-is-distribution.md)
-- [Ratio identity](prob-cond-weights.md)
-- [Positive mass](prob-pos-iff-nonempty.md)
+- [Conditioned weights form a distribution](cond-weights-is-distribution.md)
+- [Probability of an event under conditioned weights](prob-cond-weights.md)
+- [Positive weights give every nonempty event positive mass](prob-pos-iff-nonempty.md)
 - [Cauchy-Schwarz for finite covariance](covariance-sq-le-variance-mul-variance.md)
 - [Covariance under a finite probability mass function](covariance-to-measure-eq.md)
 - [Normal equations, matrix form](gram-mul-vec-ols-estimator.md)
