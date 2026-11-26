@@ -17,4 +17,3 @@
 
 - [Complete positive assortative mating with equal genotype-class contribution](complete-positive-assortative-mating-by-genotype.md)
 - [Autotetraploid chromosome segregation approaches binomial proportions](autopolyploid-segregation.md)
-- [Snyder's ratios for a recessive trait](snyders-ratios-for-a-recessive-trait.md)

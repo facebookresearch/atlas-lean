@@ -67,5 +67,3 @@
 - [Wright's path formula for the inbreeding coefficient](inbreeding-eq-sum-paths.md)
 
 ## The inverse relationship matrix
-
-- [Henderson's rules for the inverse numerator relationship matrix](hendersons-rules-for-the-inverse-numerator-relationship-matrix.md)

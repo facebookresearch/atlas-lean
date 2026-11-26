@@ -9,6 +9,7 @@ The genetics of continuously varying traits: decomposition of genetic variance, 
 - [Gene dropping and identity by descent](gene-dropping-and-identity-by-descent/README.md)
 - [Covariance between relatives](covariance-between-relatives/README.md)
 - [Genomic relationship matrices](genomic-relationship-matrices/README.md)
+- [Henderson's rules for the inverse numerator relationship matrix](henderson-s-rules-for-the-inverse-numerator-rela/README.md)
 - [Lande's selection gradient](lande-s-selection-gradient/README.md)
 - [Linear mixed models and BLUP](linear-mixed-models-and-blup/README.md)
 - [Mendelian segregation and the infinitesimal model](mendelian-segregation-and-the-infinitesimal-mode/README.md)

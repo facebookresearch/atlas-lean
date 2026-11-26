@@ -1,14 +1,16 @@
-# The LCA reconciliation is optimal for duplication, loss and deep coalescence costs
+# The duplication-optimal reconciliations form an interval above the LCA reconciliation
 
-Let $G$ be a rooted binary gene tree and $S$ a rooted binary species tree, with each leaf of $G$ labelled by a leaf of $S$. A reconciliation is a map $f : V(G) \to V(S)$ that is leaf-preserving and order-preserving ($u \le v$ in $G$ implies $f(u) \le f(v)$ in $S$). Reconciliations are partially ordered by $f' \preceq f$ if $f'(v) \le f(v)$ for every vertex $v$, and the least-common-ancestor (LCA) reconciliation $M$ satisfies $M \preceq f$ for every reconciliation $f$. Wu and Zhang (2011, Theorem 2) prove that if $f' \preceq f$ are distinct, then the gene duplication cost does not increase from $f$ to $f'$, while the gene loss and deep coalescence costs strictly decrease. Hence (Corollary 4) $M$ has the minimum gene duplication cost and is the unique reconciliation with the minimum gene loss cost and the unique one with the minimum deep coalescence cost; the first two statements are earlier results that they cite. Duplication-optimal reconciliations need not be unique: there is a reconciliation $M^*$ such that $f$ has the minimum duplication cost if and only if $M \preceq f \preceq M^*$ (Theorem 5). They also give algorithms enumerating the reconciliations within a given margin of the optimum for each cost by traversing a tree structure on the space of reconciliations rooted at $M$.
+Let $G$ be a rooted binary gene tree and $S$ a rooted binary species tree, with each leaf of $G$ labelled by a leaf of $S$. A reconciliation is a map $f : V(G) \to V(S)$ that is leaf-preserving and order-preserving, and reconciliations are partially ordered by $f' \preceq f$ if $f'(v) \le f(v)$ for every vertex $v$; the LCA reconciliation $M$ is the least element. By [the optimality of the LCA reconciliation](../../not-yet-classified/lcareconciliation/lca-optimal.md) (Wu and Zhang 2011, Corollary 4), $M$ has the minimum gene duplication cost, but duplication-optimal reconciliations need not be unique. Wu and Zhang (2011, Theorem 5) prove that there is a reconciliation $M^*$ such that a reconciliation $f$ has the minimum gene duplication cost if and only if $M \preceq f \preceq M^*$.
+
+## Depends on
+
+- [Optimality of the LCA reconciliation](../../not-yet-classified/lcareconciliation/lca-optimal.md)
+- [Monotonicity of the costs](../../not-yet-classified/lcareconciliation/costs-lt-of-le.md)
 
 ## Expansion
 
-1. Definitions: binary gene and species trees, reconciliations as leaf- and order-preserving maps, the LCA map, and the duplication, loss and deep coalescence costs.
-2. The partial order on reconciliations and the LCA map as its minimum, by a bottom-up traversal.
-3. Theorem 2: comparison of the three costs along the partial order, with the vertexwise duplication indicators $\delta_f(u)$.
-4. Corollary 4, and the construction of $M^*$ with Theorem 5.
-5. The enumeration algorithms for nearly optimal reconciliations and their running times, as separate statements.
+1. The construction of $M^*$ and the proof of Theorem 5 from the monotonicity of the duplication cost along the partial order.
+2. The enumeration algorithms for nearly optimal reconciliations and their running times, as separate statements.
 
 ## Sources
 

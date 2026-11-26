@@ -9,7 +9,7 @@ These articles concern inference of evolutionary trees, networks and recorded ce
 - [NP-hardness of maximum parsimony and maximum likelihood tree reconstruction](np-hardness-of-maximum-parsimony-and-maximum-likelihood-tree.md)
 - [Consistency of maximum likelihood for the general Markov model on trees](identifiability-of-the-general-markov-model-on-trees.md)
 - [Short quartet methods reconstruct trees from polylogarithmically many sites](short-quartet-methods-reconstruct-trees-from-polynomially-many-sites.md)
-- [The LCA reconciliation is optimal for duplication, loss and deep coalescence costs](lca-reconciliation-minimizes-duplication-and-loss-costs-over-all-recon.md)
+- [The duplication-optimal reconciliations form an interval above the LCA reconciliation](lca-reconciliation-minimizes-duplication-and-loss-costs-over-all-recon.md)
 - [Steel's conjecture: logarithmic sequence length below the Kesten–Stigum threshold](steels-conjecture-o-log-n-sequence-length-suffices-below-the-kesten-st.md)
 
 ## Networks and recorded lineages

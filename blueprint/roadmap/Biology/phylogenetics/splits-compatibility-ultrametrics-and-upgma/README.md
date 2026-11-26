@@ -81,6 +81,6 @@
 
 ## Split decomposition, split networks and perfect phylogeny
 
-- [Canonical split decomposition of a metric](split-decomposition-of-a-metric-bandelt-dress-canonical-decomposition.md)
+- [Linear independence and characterization of the canonical split summands](split-decomposition-of-a-metric-bandelt-dress-canonical-decomposition.md)
 - [Consistency of Neighbor-Net on circular distances](consistency-of-neighbor-net-on-circular-distances.md)
 - [Perfect phylogeny is polynomial for a bounded number of states](perfect-phylogeny-is-polynomial-for-a-fixed-number-of-states.md)
