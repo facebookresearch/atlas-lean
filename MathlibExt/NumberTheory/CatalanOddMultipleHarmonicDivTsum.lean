@@ -269,6 +269,14 @@ lemma hasSum_one_div_nat_add_half_pow (s : ℕ) (hs1 : 1 < s) :
 
 namespace catalan_oddMultipleHarmonic_div_tsum
 
+/-- **Half-integer zeta sum.** For every integer $k > 0$,
+$\sum_{n \ge 0} (n + 1/2)^{-(k+1)} = (2^{k+1} - 1)\zeta(k+1)$.
+See Young, INTEGERS 26 (2026), Article A81, Corollaries 2 and 3. -/
+lemma half_shift_zeta_tsum (k : ℕ) (hk : 0 < k) :
+    (∑' n : ℕ, (1 : ℂ) / ((n : ℂ) + 1 / 2) ^ (k + 1)) =
+      (2 ^ (k + 1) - 1) * riemannZeta ((k + 1 : ℕ) : ℂ) := by
+  exact (hasSum_one_div_nat_add_half_pow (k + 1) (by omega)).tsum_eq
+
 private lemma eulerSum_zero_one_half (k : ℕ) (hk : 0 < k) :
     hyperharmonicEulerSum 0 (1 : ℂ) ((k : ℤ) + 1) (1 / 2) =
       (2 ^ (k + 1) - 1) * riemannZeta ((k + 1 : ℕ) : ℂ) := by
@@ -281,7 +289,7 @@ private lemma eulerSum_zero_one_half (k : ℕ) (hk : 0 < k) :
     have hz : ((k : ℤ) + 1) = ((k + 1 : ℕ) : ℤ) := by push_cast; ring
     rw [hz, zpow_natCast]
   rw [hyperharmonicEulerSum_eq_tsum, hcongr]
-  exact (hasSum_one_div_nat_add_half_pow (k + 1) (by omega)).tsum_eq
+  exact half_shift_zeta_tsum k hk
 
 private lemma eulerSum_zero_zero_half (k : ℕ) :
     hyperharmonicEulerSum 0 (0 : ℂ) ((k : ℤ) + 1) (1 / 2) = (2 : ℂ) ^ (k + 1) := by
