@@ -39,12 +39,18 @@ namespace CategoryTheory.Functor.BifunctorFold
 
 variable {C : Type uC} [Category.{vC} C] {D : Type uD} [Category.{vD} D]
 
-/-- Apply the factors successively to the prefix, in their listed order. -/
+/-- Let `C` and `D` be categories and `F : C ⥤ D ⥤ C` a bifunctor.
+For `P ∈ C` and an ordered list of factors in `D`, form their left fold:
+the empty list gives `P`, and folding `M :: Ms` continues from `F(P,M)`
+along `Ms`. Thus three factors give `F(F(F(P,M₁),M₂),M₃)`. -/
 def obj (F : C ⥤ D ⥤ C) : C → List D → C
   | P, [] => P
   | P, M :: Ms => obj F ((F.obj P).obj M) Ms
 
-/-- A prefix morphism acts through every factor of the fold. -/
+/-- For a bifunctor `F : C ⥤ D ⥤ C`, a morphism `f : P → Q` and an
+ordered list `Ms` in `D`, there is a morphism from the fold with prefix
+`P` to the fold with prefix `Q`. It is `f` for the empty list; each
+successive factor applies the morphism induced by `F` in its first variable. -/
 def map (F : C ⥤ D ⥤ C) {P Q : C} (f : P ⟶ Q) :
     ∀ Ms : List D, obj F P Ms ⟶ obj F Q Ms
   | [] => f
@@ -62,7 +68,9 @@ variable (F : C ⥤ D ⥤ C)
 @[simp] theorem map_cons {P Q : C} (f : P ⟶ Q) (M : D) (Ms : List D) :
     map F f (M :: Ms) = map F ((F.map f).app M) Ms := rfl
 
-/-- Folding a prefix identity gives the identity. -/
+/-- For categories `C`, `D`, a bifunctor `F : C ⥤ D ⥤ C`, an object
+`P ∈ C` and a finite ordered list `Ms` in `D`, folding the identity of
+`P` gives the identity of the folded object. -/
 @[simp] theorem map_id (P : C) (Ms : List D) :
     map F (𝟙 P) Ms = 𝟙 (obj F P Ms) := by
   induction Ms generalizing P with
@@ -72,7 +80,9 @@ variable (F : C ⥤ D ⥤ C)
       rw [F.map_id]
       exact ih ((F.obj P).obj M)
 
-/-- Folding preserves composition of prefix morphisms. -/
+/-- For a bifunctor `F : C ⥤ D ⥤ C`, composable morphisms `f : P → Q`
+and `g : Q → U`, and a fixed ordered list `Ms` in `D`, folding `f ≫ g`
+gives the composite of the two folded prefix morphisms, in the same order. -/
 theorem map_comp {P Q U : C} (f : P ⟶ Q) (g : Q ⟶ U) (Ms : List D) :
     map F (f ≫ g) Ms = map F f Ms ≫ map F g Ms := by
   induction Ms generalizing P Q U with
@@ -85,28 +95,42 @@ theorem map_comp {P Q U : C} (f : P ⟶ Q) (g : Q ⟶ U) (Ms : List D) :
       rw [h]
       exact ih _ _
 
-/-- The prefix-variable functor for a fixed list of factors. -/
+/-- Given categories `C`, `D`, a bifunctor `F : C ⥤ D ⥤ C` and a fixed
+finite ordered list `Ms` of objects of `D`, folding along `Ms` defines
+an endofunctor of `C`. Its object map is the left fold, and its morphism
+map applies each factor to the given prefix morphism. -/
 def functor (F : C ⥤ D ⥤ C) (Ms : List D) : C ⥤ C where
   obj P := obj F P Ms
   map f := map F f Ms
   map_id P := map_id F P Ms
   map_comp f g := map_comp F f g Ms
 
-/-- Appending a list continues the fold from the preceding fold object. -/
+/-- For a bifunctor `F : C ⥤ D ⥤ C`, a prefix `P ∈ C` and lists `Ms`,
+`Ns` in `D`, folding their concatenation is the same object as first
+folding `Ms` from `P` and then folding `Ns` from that result. Both orders
+within the lists and the order of the two lists are preserved. -/
 theorem obj_append (P : C) (Ms Ns : List D) :
     obj F P (Ms ++ Ns) = obj F (obj F P Ms) Ns := by
   induction Ms generalizing P with
   | nil => rfl
   | cons M Ms ih => exact ih ((F.obj P).obj M)
 
-/-- Prefix maps respect the same append decomposition. -/
+/-- For a bifunctor `F : C ⥤ D ⥤ C`, a morphism `f : P → Q` and lists
+`Ms`, `Ns` in `D`, the morphism obtained by folding along `Ms ++ Ns`
+agrees with first folding `f` along `Ms` and then folding that morphism
+along `Ns`, after the source and target objects are identified by the
+append formula for the fold. -/
 theorem map_append {P Q : C} (f : P ⟶ Q) (Ms Ns : List D) :
     HEq (map F f (Ms ++ Ns)) (map F (map F f Ms) Ns) := by
   induction Ms generalizing P Q with
   | nil => exact HEq.rfl
   | cons M Ms ih => exact ih ((F.map f).app M)
 
-/-- Isomorphisms of the prefix and each factor give an isomorphism of finite folds. -/
+/-- Let `F : C ⥤ D ⥤ C` be a bifunctor, `e : P ≅ Q` an isomorphism,
+and `M`, `N` ordered families in `D` indexed by `Fin n`. Isomorphisms
+`h(j) : M(j) ≅ N(j)` induce an isomorphism between the folds with
+prefixes `P`, `Q` and factors `M`, `N`, respectively. The factors retain
+their index order, and for `n = 0` the isomorphism is `e`. -/
 def iso (F : C ⥤ D ⥤ C) :
     ∀ {n : ℕ} {P Q : C} (_e : P ≅ Q) (M N : Fin n → D) (_h : ∀ j, M j ≅ N j),
       obj F P (List.ofFn M) ≅ obj F Q (List.ofFn N)
@@ -175,7 +199,12 @@ private theorem square_of_heq {P Q P' Q' R S R' S' : C}
     (eqToIso hQ.symm) (eqToIso hQ'.symm)
   simpa only [← hfConj, ← hgConj, ← heConj, ← heConj'] using transported.w
 
-/-- A prefix square is preserved by folding simultaneous factor isomorphisms. -/
+/-- For a bifunctor `F : C ⥤ D ⥤ C`, let `f : P → P′`, `g : Q → Q′`,
+`e : P ≅ Q` and `e′ : P′ ≅ Q′` satisfy `f ≫ e′.hom = e.hom ≫ g`.
+Fix ordered families `M`, `N : Fin n → D` and isomorphisms
+`h(j) : M(j) ≅ N(j)`. The corresponding square between the folds
+commutes: the folded map of `f` followed by the fold isomorphism from
+`e′` equals the fold isomorphism from `e` followed by the folded map of `g`. -/
 theorem iso_naturality {n : ℕ} {P Q P' Q' : C}
     (f : P ⟶ P') (g : Q ⟶ Q') (e : P ≅ Q) (e' : P' ≅ Q')
     (M N : Fin n → D) (h : ∀ j, M j ≅ N j)

@@ -38,14 +38,20 @@ section Product
 
 variable [∀ a b : I, HasProductsOfShape (a ⟶ b) C]
 
-/-- Assemble coordinate morphisms into a product of right adjoints of evaluation. -/
+/-- Let `I` and `C` be categories, with products in `C` indexed by each hom-set of `I`.
+For a diagram `F : I ⥤ C`, objects `A(k)` and morphisms `e(k) : F(k) → A(k)`, assume
+the product in the diagram category of the evaluation right-adjoint objects `R_k(A(k))`
+exists. The adjuncts of the `e(k)` assemble into a morphism `F → ∏_k R_k(A(k))`. -/
 def evaluationProductMap (F : I ⥤ C) (A : I → C) (e : ∀ k, F.obj k ⟶ A k)
     [HasProduct (fun k => (evaluationRightAdjoint C k).obj (A k))] :
     F ⟶ ∏ᶜ (fun k => (evaluationRightAdjoint C k).obj (A k)) :=
   Pi.lift (fun k => (evaluationAdjunctionLeft C k).unit.app F ≫
     (evaluationRightAdjoint C k).map (e k))
 
-/-- The projection of the assembled morphism is the adjunct of its coordinate. -/
+/-- For categories `I`, `C` with the hom-set-indexed products needed by evaluation
+right adjoints, let `F : I ⥤ C`, `A(k) ∈ C`, and `e(k) : F(k) → A(k)`. If
+`P = ∏_k R_k(A(k))` exists, the assembled map followed by the projection to
+`R_k(A(k))` equals the unit `F → R_k(F(k))` followed by `R_k(e(k))`. -/
 @[reassoc]
 theorem evaluationProductMap_π (F : I ⥤ C) (A : I → C) (e : ∀ k, F.obj k ⟶ A k)
     [HasProduct (fun k => (evaluationRightAdjoint C k).obj (A k))] (k : I) :
@@ -55,7 +61,10 @@ theorem evaluationProductMap_π (F : I ⥤ C) (A : I → C) (e : ∀ k, F.obj k 
         (evaluationRightAdjoint C k).map (e k) :=
   Pi.lift_comp_π _ k
 
-/-- Evaluate at a coordinate and apply the counit to recover the given morphism. -/
+/-- For a diagram `F : I ⥤ C` and maps `e(k) : F(k) → A(k)`, assume the evaluation
+right adjoints and their product `P = ∏_k R_k(A(k))` exist. Evaluating the assembled
+map `F → P` at `k`, projecting to `R_k(A(k))(k)`, and applying the evaluation
+adjunction counit gives exactly `e(k)`. The categories' universes are independent. -/
 @[reassoc]
 theorem evaluationProductMap_recover (F : I ⥤ C) (A : I → C)
     (e : ∀ k, F.obj k ⟶ A k)
@@ -80,7 +89,10 @@ theorem evaluationProductMap_recover (F : I ⥤ C) (A : I → C)
   rw [← Category.assoc, happ, Category.assoc, hnat, ← Category.assoc,
     htriangle, Category.id_comp]
 
-/-- Coordinate monomorphisms assemble into a monomorphism of diagrams. -/
+/-- Let `I`, `C` be categories with hom-set-indexed products in `C`, and let
+`e(k) : F(k) → A(k)` be monomorphisms for a diagram `F : I ⥤ C`. If the product
+of evaluation right-adjoint objects `∏_k R_k(A(k))` exists in the diagram category,
+the assembled morphism from `F` to that product is a monomorphism. -/
 theorem evaluationProductMap_mono (F : I ⥤ C) (A : I → C)
     (e : ∀ k, F.obj k ⟶ A k) (he : ∀ k, Mono (e k))
     [HasProduct (fun k => (evaluationRightAdjoint C k).obj (A k))] :
@@ -90,7 +102,11 @@ theorem evaluationProductMap_mono (F : I ⥤ C) (A : I → C)
     exact mono_of_mono_fac (evaluationProductMap_recover F A e k)
   exact NatTrans.mono_of_mono_app _
 
-/-- Assembly commutes with a morphism of diagrams and coordinate morphisms. -/
+/-- Suppose the evaluation right adjoints exist for categories `I`, `C`. Given
+diagrams `F`, `G`, maps `e(k) : F(k) → A(k)`, `e′(k) : G(k) → B(k)`, a diagram
+morphism `φ : F → G` and maps `a(k) : A(k) → B(k)`, assume
+`φ(k) ≫ e′(k) = e(k) ≫ a(k)` for every `k`. If both right-adjoint products exist,
+then `φ ≫ assemble(e′) = assemble(e) ≫ ∏_k R_k(a(k))`. -/
 theorem evaluationProductMap_naturality {F G : I ⥤ C} {A B : I → C}
     (e : ∀ k, F.obj k ⟶ A k) (e' : ∀ k, G.obj k ⟶ B k)
     (φ : F ⟶ G) (a : ∀ k, A k ⟶ B k)
@@ -133,14 +149,20 @@ section Coproduct
 
 variable [∀ a b : I, HasCoproductsOfShape (a ⟶ b) C]
 
-/-- Assemble coordinate morphisms from a coproduct of left adjoints of evaluation. -/
+/-- Let `I`, `C` be categories, with coproducts in `C` indexed by each hom-set of `I`.
+For a diagram `F : I ⥤ C`, objects `A(k)` and maps `e(k) : A(k) → F(k)`, assume
+the coproduct in the diagram category of the evaluation left-adjoint objects `L_k(A(k))`
+exists. The adjuncts of the `e(k)` assemble into a morphism `∐_k L_k(A(k)) → F`. -/
 def evaluationCoproductMap (F : I ⥤ C) (A : I → C) (e : ∀ k, A k ⟶ F.obj k)
     [HasCoproduct (fun k => (evaluationLeftAdjoint C k).obj (A k))] :
     (∐ fun k => (evaluationLeftAdjoint C k).obj (A k)) ⟶ F :=
   Sigma.desc (fun k => (evaluationLeftAdjoint C k).map (e k) ≫
     (evaluationAdjunctionRight C k).counit.app F)
 
-/-- The inclusion followed by assembly is the adjunct of its coordinate. -/
+/-- For categories `I`, `C` with the hom-set-indexed coproducts needed by evaluation
+left adjoints, let `F : I ⥤ C`, `A(k) ∈ C`, and `e(k) : A(k) → F(k)`. If
+`S = ∐_k L_k(A(k))` exists, its inclusion of `L_k(A(k))` followed by assembly
+equals `L_k(e(k))` followed by the evaluation adjunction counit `L_k(F(k)) → F`. -/
 @[reassoc]
 theorem evaluationCoproductMap_ι (F : I ⥤ C) (A : I → C)
     (e : ∀ k, A k ⟶ F.obj k)
@@ -151,7 +173,10 @@ theorem evaluationCoproductMap_ι (F : I ⥤ C) (A : I → C)
         (evaluationAdjunctionRight C k).counit.app F :=
   Sigma.ι_comp_desc _ k
 
-/-- Apply the unit and the coordinate inclusion to recover the given morphism. -/
+/-- For a diagram `F : I ⥤ C` and maps `e(k) : A(k) → F(k)`, assume the evaluation
+left adjoints and the coproduct `S = ∐_k L_k(A(k))` exist. The evaluation adjunction
+unit `A(k) → L_k(A(k))(k)`, followed by the coproduct inclusion evaluated at `k`
+and the assembled map evaluated at `k`, gives exactly `e(k)`. -/
 @[reassoc]
 theorem evaluationCoproductMap_recover (F : I ⥤ C) (A : I → C)
     (e : ∀ k, A k ⟶ F.obj k)
@@ -176,7 +201,10 @@ theorem evaluationCoproductMap_recover (F : I ⥤ C) (A : I → C)
   rw [Category.assoc, happ, ← Category.assoc, hnat, Category.assoc,
     htriangle, Category.comp_id]
 
-/-- Coordinate epimorphisms assemble into an epimorphism of diagrams. -/
+/-- Let `I`, `C` be categories with hom-set-indexed coproducts in `C`, and let
+`e(k) : A(k) → F(k)` be epimorphisms for a diagram `F : I ⥤ C`. If the coproduct
+of evaluation left-adjoint objects `∐_k L_k(A(k))` exists in the diagram category,
+the assembled morphism from that coproduct to `F` is an epimorphism. -/
 theorem evaluationCoproductMap_epi (F : I ⥤ C) (A : I → C)
     (e : ∀ k, A k ⟶ F.obj k) (he : ∀ k, Epi (e k))
     [HasCoproduct (fun k => (evaluationLeftAdjoint C k).obj (A k))] :
@@ -186,7 +214,11 @@ theorem evaluationCoproductMap_epi (F : I ⥤ C) (A : I → C)
     exact epi_of_epi_fac (evaluationCoproductMap_recover F A e k)
   exact NatTrans.epi_of_epi_app _
 
-/-- Assembly commutes with coordinate morphisms and a morphism of diagrams. -/
+/-- Suppose the evaluation left adjoints exist for categories `I`, `C`. Given
+diagrams `F`, `G`, maps `e(k) : A(k) → F(k)`, `e′(k) : B(k) → G(k)`, a diagram
+morphism `φ : F → G` and maps `a(k) : A(k) → B(k)`, assume
+`a(k) ≫ e′(k) = e(k) ≫ φ(k)` for every `k`. If both left-adjoint coproducts exist,
+then `∐_k L_k(a(k)) ≫ assemble(e′) = assemble(e) ≫ φ`. -/
 theorem evaluationCoproductMap_naturality {F G : I ⥤ C} {A B : I → C}
     (e : ∀ k, A k ⟶ F.obj k) (e' : ∀ k, B k ⟶ G.obj k)
     (φ : F ⟶ G) (a : ∀ k, A k ⟶ B k)
