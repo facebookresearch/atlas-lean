@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Probability.Process.EventJumpHold
+public import MathlibExt.Probability.Process.ContinuousTimeMarkovChain.EventJumpHold
 
 namespace MathlibExtTest.Probability.Process.EventJumpHold
 
@@ -78,6 +78,23 @@ private theorem duplicateSucc_mass :
   rw [h_group, h_total]
   congr 1
   norm_num
+
+/-- Holding rate times the duplicate-successor mass recovers the grouped rate `1 + 2`. -/
+private theorem duplicateSucc_rate :
+    holdRate dupRate (0 : Nat) *
+        (jumpPMF dupRate dupSucc dupNN (0 : Nat) (1 : Nat)).toReal = 3 := by
+  have h0 : (0 : Fin 3).val = 0 := by decide
+  have h1 : (1 : Fin 3).val = 1 := by decide
+  have h2 : (2 : Fin 3).val = 2 := by decide
+  have h_ne : totalRate dupRate (0 : Nat) ≠ 0 := by
+    unfold totalRate
+    norm_num [dupRate, Fin.sum_univ_three, h0, h1, h2]
+  have h_filter :
+      Finset.univ.filter (fun e : Fin 3 => dupSucc e (0 : Nat) = 1) = {0, 1} := by
+    decide
+  rw [holdRate_mul_jumpPMF_toReal_of_totalRate_ne_zero _ _ _ _ h_ne, h_filter,
+    Finset.sum_insert (by decide), Finset.sum_singleton]
+  norm_num [dupRate, h0, h1]
 
 /-- Self event of rate 5 plus an exit of rate 2. -/
 private def selfRate : Fin 2 → Nat → ℝ := fun e _ => if e.val = 0 then 5 else 2

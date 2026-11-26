@@ -29,7 +29,10 @@ the input law is `JumpHold.inputMeasure` applied to the jump PMF and the
 path is `JumpHold.path` applied to the holding rate, with no alias
 definitions. Observations are functions of that path and agree with the
 corresponding jump-chain values on each holding interval. All statements are
-about rates and jump distributions only.
+about rates and jump distributions only. A stochastic reaction network is the
+case whose events are its reactions and whose successors are its reaction
+jumps: `StochasticCRN.totalRate`, `holdRate`, `reactionPMF` and `jumpPMF` are
+these definitions applied to its propensities (they agree by `rfl`).
 -/
 
 /-- Total event rate at a state, self-events included. -/
