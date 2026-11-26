@@ -9,10 +9,12 @@ $$\det\big(\operatorname{diag}(\lambda^{M\alpha_1},\dots,\lambda^{M\alpha_n}) - 
 satisfies $|\arg\lambda| > \pi/(2M)$, then the zero solution is globally asymptotically stable. In the commensurate case $\alpha_i = \alpha$ this reduces to Matignon's condition $|\arg\lambda_i(A)| > \alpha\pi/2$ on the eigenvalues of $A$. Nonlinear systems are treated through the Jacobian at an equilibrium.
 
 **Model.** The generalized SEIR model with protection and quarantine,
+
 $$\begin{aligned}
 \dot S &= \Lambda - \beta_1 SE - \beta_2 SI - (\mu+\rho)S, & \dot E &= \beta_1 SE + \beta_2 SI - (\gamma+\rho)E, & \dot I &= \gamma E - (\delta+\rho)I,\\
 \dot Q &= \delta I - (\theta+\rho+\eta)Q, & \dot R &= \theta Q - \rho R, & \dot P &= \mu S - \rho P,
 \end{aligned}$$
+
 ($\Lambda$ inflow, $\beta_1,\beta_2$ transmission by exposed and infectious individuals, $\mu$ protection, $\rho$ natural death, $\gamma^{-1}$ latency, $\delta$ quarantine, $\theta$ recovery, $\eta$ disease death) has basic reproduction number
 
 $$R_0 = \frac{\Lambda\big(\beta_1(\delta+\rho) + \beta_2\gamma\big)}{(\gamma+\rho)(\delta+\rho)(\mu+\rho)} .$$

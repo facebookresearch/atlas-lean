@@ -1,11 +1,13 @@
 # Control reproduction number and critical coverage of a leaky vaccine
 
 The COVID-19-only sub-model of a COVID-19/tuberculosis co-infection model has susceptible $S$, vaccinated $V$, exposed $E$, asymptomatic $I_a$, symptomatic $I_s$ and recovered $R$ individuals, $N = S + V + E + I_a + I_s + R$, and force of infection $\lambda_c = \beta_c(\eta I_a + I_s)/N$:
+
 $$\begin{aligned}
 S' &= \pi + \omega V + \kappa_c R - (\nu + \mu + \lambda_c) S, & V' &= \nu S - (1-\varepsilon)\lambda_c V - (\omega + \mu) V,\\
 E' &= \lambda_c S + (1-\varepsilon)\lambda_c V - (\sigma_c + \mu) E, & I_a' &= \sigma_c (1-\psi) E - (\mu + \delta_c + \gamma_1) I_a,\\
 I_s' &= \sigma_c \psi E - (\mu + \delta_c + \gamma_2) I_s, & R' &= \gamma_1 I_a + \gamma_2 I_s - (\mu + \kappa_c) R.
 \end{aligned}$$
+
 Vaccination at rate $\nu$ with waning rate $\omega$ gives a **leaky** vaccine of efficacy $\varepsilon \in [0,1]$; $\psi$ is the symptomatic fraction and $\eta$ the relative infectiousness of asymptomatics. Write $k_3 = \mu + \sigma_c$, $k_4 = 1 - \psi$, $k_5 = \mu + \delta_c + \gamma_1$, $k_6 = \mu + \delta_c + \gamma_2$.
 
 **Theorem.** The COVID-free equilibrium is

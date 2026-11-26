@@ -1,12 +1,14 @@
 # Disease-free equilibrium and threshold of the multipatch dengue model
 
 On patches $i = 1, \dots, n$ humans are $S_i^h, E_i^h, I_i^h, R_i^h$ (total $N_i^h$) and mosquitoes $S_i^v, E_i^v, I_i^v$. Humans of class $C \in \{S, E, I, R\}$ move from patch $j$ to patch $i$ at rate $m_{ij}^C \ge 0$; mosquitoes do not move. With biting rate $b_i$, transmission probabilities $\beta_i^h$ (vector to host) and $\beta_i^v$ (host to vector), recruitment $A_i^h, A_i^v > 0$, death rates $d_i^h, d_i^v$, incubation rates $\nu_i^h, \nu_i^v$ and recovery rate $\gamma_i^h$:
+
 $$\begin{aligned}
 \dot S_i^h &= A_i^h - \frac{b_i \beta_i^h}{N_i^h} S_i^h I_i^v + \sum_{j} m_{ij}^S S_j^h - \sum_{j} m_{ji}^S S_i^h - d_i^h S_i^h,\\
 \dot E_i^h &= \frac{b_i \beta_i^h}{N_i^h} S_i^h I_i^v + \sum_{j} m_{ij}^E E_j^h - \sum_{j} m_{ji}^E E_i^h - (\nu_i^h + d_i^h) E_i^h,\\
 \dot I_i^h &= \nu_i^h E_i^h + \sum_{j} m_{ij}^I I_j^h - \sum_{j} m_{ji}^I I_i^h - (\gamma_i^h + d_i^h) I_i^h,\\
 \dot S_i^v &= A_i^v - \frac{b_i \beta_i^v}{N_i^h} S_i^v I_i^h - d_i^v S_i^v, \qquad \dot E_i^v = \frac{b_i \beta_i^v}{N_i^h} S_i^v I_i^h - (\nu_i^v + d_i^v) E_i^v, \qquad \dot I_i^v = \nu_i^v E_i^v - d_i^v I_i^v,
 \end{aligned}$$
+
 with $R_i^h$ fed by $\gamma_i^h I_i^h$. The vector parameters $b_i, \beta_i^h, \beta_i^v, d_i^v, \nu_i^v$ are functions of the patch temperature.
 
 **Theorem (unique disease-free equilibrium).** Let $X = \operatorname{diag}\big(d_i^h + \sum_{j \ne i} m_{ji}^S\big) - M^S$, where $M^S$ has off-diagonal entries $m_{ij}^S$ and zero diagonal. Then $X$ is a nonsingular M-matrix and the system has the unique disease-free equilibrium

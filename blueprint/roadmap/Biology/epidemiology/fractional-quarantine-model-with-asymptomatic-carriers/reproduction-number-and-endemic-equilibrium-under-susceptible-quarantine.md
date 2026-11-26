@@ -1,6 +1,7 @@
 # Reproduction number and endemic equilibrium under susceptible quarantine
 
 Let $0 < \alpha \le 1$ and let $D^\alpha$ be the Caputo derivative. The population is split into susceptible $S$, symptomatic infected $I$, asymptomatic infected $A$, quarantined susceptible $S_q$, quarantined exposed $E_q$, hospitalized (isolated infected) $H$ and recovered $R$. A fraction $q \in [0,1]$ of contacts is traced and quarantined, $c$ is the contact rate, $\beta$ the transmission probability per contact, $\theta$ the relative infectiousness of asymptomatics and $\rho$ the probability of developing symptoms. With every rate raised to the power $\alpha$ so that both sides have dimension $(\text{time})^{-\alpha}$,
+
 $$\begin{aligned}
 D^\alpha S &= \Lambda - \big(c^\alpha \beta^\alpha (1-q) + c^\alpha q\big)(I + \theta^\alpha A) S + \lambda^\alpha S_q - \mu^\alpha S,\\
 D^\alpha I &= \beta^\alpha c^\alpha \rho^\alpha (1-q) S (I + \theta^\alpha A) - \eta\, I,\\
@@ -10,6 +11,7 @@ D^\alpha E_q &= \beta^\alpha c^\alpha q\, S (I + \theta^\alpha A) - (\delta_q^\a
 D^\alpha H &= \delta_I^\alpha I + \delta_q^\alpha E_q - (\alpha_A^\alpha + \gamma_H^\alpha) H,\\
 D^\alpha R &= \gamma_I^\alpha I + \gamma_A^\alpha A + \gamma_H^\alpha H - \alpha_R^\alpha R,
 \end{aligned}$$
+
 with $\eta = \delta_I^\alpha + \gamma_I^\alpha + \alpha_I^\alpha$ and $\xi = \gamma_A^\alpha + \alpha_A^\alpha$ the exit rates of $I$ and $A$, and all parameters positive. The nonnegative orthant is positively invariant and solutions exist uniquely on $[0, \infty)$.
 
 **Theorem (threshold).** The disease-free equilibrium is $E_0 = (\Lambda/\mu^\alpha, 0, 0, 0, 0, 0, 0)$, and the next-generation matrix gives

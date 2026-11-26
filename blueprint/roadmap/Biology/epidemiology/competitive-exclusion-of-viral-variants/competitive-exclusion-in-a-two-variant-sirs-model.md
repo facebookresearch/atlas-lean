@@ -1,12 +1,14 @@
 # Competitive exclusion in a two-variant SIRS model
 
 **Model.** Let $S, I_1, I_2, R \ge 0$ be susceptible, variant-1 infected, variant-2 infected and recovered (immune) numbers, with recruitment $\Lambda > 0$, natural removal rates $d_S, d_{I_1}, d_{I_2}, d_R > 0$, transmission coefficients $\beta_1, \beta_2 > 0$, recovery rates $\gamma_1,\gamma_2 \ge 0$, detection-and-isolation rates $\rho_1, \rho_2 \ge 0$ and waning rate $\delta \ge 0$:
+
 $$\begin{aligned}
 S' &= \Lambda - \beta_1 S I_1 - \beta_2 S I_2 - d_S S + \delta R,\\
 I_1' &= \beta_1 S I_1 - (\gamma_1 + \rho_1 + d_{I_1}) I_1,\\
 I_2' &= \beta_2 S I_2 - (\gamma_2 + \rho_2 + d_{I_2}) I_2,\\
 R' &= (\gamma_1+\rho_1) I_1 + (\gamma_2+\rho_2) I_2 - (d_R + \delta) R .
 \end{aligned}$$
+
 Co-infection is ignored and both variants feed a single immune class. The disease-free equilibrium is $P_0 = (\Lambda/d_S, 0, 0, 0)$. Define the variant-specific reproduction numbers and $R_0$:
 
 $$R_{0i} = \frac{\beta_i}{\gamma_i + \rho_i + d_{I_i}}\cdot\frac{\Lambda}{d_S}\quad (i=1,2), \qquad R_0 = \max\{R_{01}, R_{02}\}.$$
