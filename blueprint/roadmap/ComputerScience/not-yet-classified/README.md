@@ -45,6 +45,7 @@ Topics added since this subject's fields were last revised.
 - [Likelihood Weighting](likelihood-weighting/README.md)
 - [Local Convex Shortening](local-convex-shortening/README.md)
 - [Lossless Codec](lossless-codec/README.md)
+- [LZ78](lz78/README.md)
 - [Markov Random Field](markov-random-field/README.md)
 - [Minkowski CObs](minkowski-cobs/README.md)
 - [Misra Gries](misra-gries/README.md)
