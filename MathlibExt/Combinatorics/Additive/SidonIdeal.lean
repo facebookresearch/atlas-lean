@@ -353,23 +353,23 @@ public theorem empty_mem_dFinIdeal : (∅ : Set ℕ) ∈ dFinIdeal := by
   · exact hsub ⟨a, by simp, b, by simp, h, rfl⟩
 
 /-- **Block sets.** For natural numbers $n$, $C$, $M$ and $K$, the block
-$\mathrm{Block}(n, C, M, K)$ is the set of natural numbers $M l + C \cdot 2^k$ with
+$\mathrm{Block}(n, C, M, K)$ is the set of natural numbers $M^l + C \cdot 2^k$ with
 $0 \le k < n$ and $1 \le l \le K$.
 
 Source: Andrzej Nowik, *On the Sidon Ideal*, INTEGERS 25 (2025), Article A91,
 Section 3 (definition of `Block` before Lemma 2). -/
 public def sidonBlock (n C M K : ℕ) : Set ℕ :=
-  {x | ∃ k < n, ∃ l, 1 ≤ l ∧ l ≤ K ∧ x = M * l + C * 2 ^ k}
+  {x | ∃ k < n, ∃ l, 1 ≤ l ∧ l ≤ K ∧ x = M ^ l + C * 2 ^ k}
 
 /-- **One-term blocks.** For all natural numbers $C$ and $M$, the block
-$\mathrm{Block}(1, C, M, 1) = \{M l + C \cdot 2^k : 0 \le k < 1,\ 1 \le l \le 1\}$ is the
+$\mathrm{Block}(1, C, M, 1) = \{M^l + C \cdot 2^k : 0 \le k < 1,\ 1 \le l \le 1\}$ is the
 singleton $\{M + C\}$.
 
 Source: Andrzej Nowik, *On the Sidon Ideal*, INTEGERS 25 (2025), Article A91,
 Section 3 (definition of `Block` before Lemma 2). -/
 public theorem sidonBlock_one_one (C M : ℕ) : sidonBlock 1 C M 1 = {M + C} := by
   ext x
-  change (∃ k < 1, ∃ l, 1 ≤ l ∧ l ≤ 1 ∧ x = M * l + C * 2 ^ k) ↔ x = M + C
+  change (∃ k < 1, ∃ l, 1 ≤ l ∧ l ≤ 1 ∧ x = M ^ l + C * 2 ^ k) ↔ x = M + C
   constructor
   · rintro ⟨k, hk, l, hl1, hl2, rfl⟩
     obtain rfl : k = 0 := by omega
