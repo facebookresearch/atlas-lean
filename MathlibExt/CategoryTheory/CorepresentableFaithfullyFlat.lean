@@ -44,8 +44,8 @@ public import Mathlib.Algebra.Category.Ring.Basic
 public import Mathlib.CategoryTheory.Limits.Constructions.Over.Basic
 public import Mathlib.RingTheory.RingHom.Flat
 public import Mathlib.RingTheory.Spectrum.Prime.Topology
+import Mathlib.RingTheory.TensorProduct.IncludeLeftSubRight
 import MathlibExt.RingTheory.Flat.FaithfullyFlat.AlgebraDescent
-import MathlibExt.RingTheory.Flat.FaithfullyFlat.Amitsur
 
 universe u v
 
@@ -833,7 +833,9 @@ private theorem descends_iff
       have := e1 (gPt e y (a : C₁))
       rw [h1, e2] at this
       exact this.symm
-    obtain ⟨b₀, hb₀⟩ := Module.FaithfullyFlat.exists_algebraMap_eq_of_tmul_one_eq_one_tmul h2
+    obtain ⟨b₀, hb₀⟩ :=
+      (Algebra.IsEffective.of_faithfullyFlat B (B ⊗[R] S₁) (gPt e y (a : C₁))).mp
+        (by rw [Algebra.TensorProduct.includeLeftSubRight_apply, h2, sub_self])
     exact ⟨b₀, hb₀⟩
   ·
     intro h
