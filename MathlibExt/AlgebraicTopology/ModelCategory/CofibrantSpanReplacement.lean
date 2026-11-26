@@ -39,7 +39,9 @@ variable {C : Type u} [Category.{v} C] [ModelCategory C]
 
 /-- A cofibrant replacement of a walking span. -/
 structure CofibrantSpanReplacement (D : WalkingSpan ⥤ C) where
+  /-- The complete replacement span. -/
   Q : WalkingSpan ⥤ C
+  /-- The full natural comparison to the original span. -/
   counit : Q ⟶ D
   isCofibrant_zero : IsCofibrant (Q.obj WalkingSpan.zero)
   cofibration_fst : Cofibration (Q.map WalkingSpan.Hom.fst)
@@ -90,7 +92,7 @@ noncomputable abbrev pushoutObj {D : WalkingSpan ⥤ C}
     (R : CofibrantSpanReplacement D) : C :=
   colimit R.Q
 
-/- Comparison from the replacement colimit to the original span colimit. -/
+/-- Comparison from the replacement colimit to the original span colimit. -/
 noncomputable def toPushout {D : WalkingSpan ⥤ C}
     (R : CofibrantSpanReplacement D) :
     R.pushoutObj ⟶ colimit D :=
