@@ -25,6 +25,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Group.Pointwise.Finset.Basic
 public import Mathlib.Data.Fin.VecNotation
 public import MathlibExt.Combinatorics.Additive.ChuMSTDFamilies
+public import MathlibExt.Combinatorics.Additive.ChuMSTDFamiliesChuFamilyDifferenceDominated
 public import MathlibExt.Combinatorics.Additive.ChuMSTDFamiliesChuFamilyMstdIncreasing
 
 namespace MetaMathlibExt
@@ -43,19 +44,6 @@ Family of MSTD Sets*, INTEGERS 24 (2024), Article A32, Theorem 1 (`integers-2024
 public theorem_wanted chu_family_balanced {k : ℕ} (hk : 0 < k) :
     let A := setOfConsecutiveDifferences 0 ([1, 1, 2] ++ chuBlock k ++ chuBlock (k + 1) ++ [1, 1])
     (A + A).card = (A - A).card
-
-/-- **A difference-dominated family of Chu et al.** Let $k$ be a positive integer and let
-$A = (0 \mid 1, 1, 2, M^k, M^{k+1}, M^{k+1}, 1, 1) \subseteq \mathbb{Z}$ be the set of partial
-sums, starting at $0$, of the difference sequence formed by $1, 1, 2$, the Chu difference blocks
-$M^k$, $M^{k+1}$ and $M^{k+1}$, and $1, 1$. Then $A$ is difference-dominated:
-$|A + A| < |A - A|$.
-
-Source: Manish Kumar, Mohan and Ram Krishna Pandey, *A Conjecture of Chu et al. and a New
-Family of MSTD Sets*, INTEGERS 24 (2024), Article A32, Theorem 2 (`integers-2024-A32-thm-2`). -/
-public theorem_wanted chu_family_difference_dominated {k : ℕ} (hk : 0 < k) :
-    let A := setOfConsecutiveDifferences 0
-      ([1, 1, 2] ++ chuBlock k ++ chuBlock (k + 1) ++ chuBlock (k + 1) ++ [1, 1])
-    (A + A).card < (A - A).card
 
 /-- **MSTD sets with $M^{k+1}$ before $M^k$ (Theorem 4).** Let $k$ be a positive integer, let
 $M^n$ denote the block $1, 4, \dots, 4, 3$ with $n$ fours, and let $M_1$ be one of the
