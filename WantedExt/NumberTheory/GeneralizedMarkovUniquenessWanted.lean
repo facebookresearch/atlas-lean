@@ -19,6 +19,7 @@ public import MathlibExt.NumberTheory.GeneralizedMarkovDiscriminant
 public import MathlibExt.NumberTheory.GeneralizedMarkovEquation
 public import MathlibExt.NumberTheory.GeneralizedMarkovVietaEq
 public import MathlibExt.NumberTheory.GeneralizedSecondMarkovVieta
+public import MathlibExt.NumberTheory.GeneralizedMarkovUniquenessMulEMul
 public import MathlibExt.NumberTheory.GeneralizedMarkovUniquenessParent
 
 namespace MetaMathlibExt
@@ -517,20 +518,6 @@ public theorem_wanted IsGenCohnTriple.step {k a b c : ℕ} {P Q R : Matrix (Fin 
     (h : IsGenCohnTriple k P Q R a b c) :
     IsGenCohnTriple k P (P * Q - genCohnS k) Q a ((a ^ 2 + k * a * b + b ^ 2) / c) b ∧
       IsGenCohnTriple k Q (Q * R - genCohnS k) R b ((b ^ 2 + k * b * c + c ^ 2) / a) c
-
-/-- **A product identity for generalized Cohn matrices.** Let $k$ be a natural number, let $M$
-be a $k$-generalized Cohn matrix, and let $E$ be the $2 \times 2$ integer matrix whose only
-nonzero entry is $3 + 3k$, in row $2$ and column $1$. Then $MEM = (\operatorname{tr} M + k)M + E$
-and $M^{-1} E M^{-1} = -(\operatorname{tr} M^{-1} + k)M^{-1} + E$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Lemma 3.7. -/
-public theorem_wanted IsGenCohnMatrix.mul_E_mul {k : ℕ} {M : Matrix (Fin 2) (Fin 2) ℤ}
-    (hM : IsGenCohnMatrix k M) :
-    M * !![0, 0; 3 + 3 * (k : ℤ), 0] * M =
-        (M.trace + (k : ℤ)) • M + !![0, 0; 3 + 3 * (k : ℤ), 0] ∧
-      M⁻¹ * !![0, 0; 3 + 3 * (k : ℤ), 0] * M⁻¹ =
-        (-(M⁻¹.trace + (k : ℤ))) • M⁻¹ + !![0, 0; 3 + 3 * (k : ℤ), 0]
 
 /-- **Vertices of the wide generalized Cohn tree are generalized Cohn triples.** Let $k$ be a
 natural number. For every integer $\ell$ and every path $w$, the vertex of the wide
