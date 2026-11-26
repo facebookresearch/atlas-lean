@@ -10676,6 +10676,7 @@
   "MathlibExt/Combinatorics/Additive/VanDerWaerdenAP": {"to": "Combinatorics/ramsey-theory/van-der-waerden-theorems", "title": "Van der Waerden's theorem"},
   "MathlibExt/Combinatorics/Additive/VanDerWaerdenSumProductClassification": {"to": "Combinatorics/ramsey-theory/van-der-waerden-theorems", "title": "Zero-sum van der Waerden theorems for symmetric functions"},
   "MathlibExt/Combinatorics/Additive/VanDerWaerdenSumProductFourEight": {"to": "Combinatorics/ramsey-theory/van-der-waerden-theorems", "title": "Zero-sum van der Waerden theorems for symmetric functions"},
+  "MathlibExt/Combinatorics/Additive/VanDerWaerdenSumProductThree": {"to": "Combinatorics/ramsey-theory/van-der-waerden-theorems", "title": "Zero-sum van der Waerden theorems for symmetric functions"},
   "MathlibExt/Combinatorics/Additive/VanDerWaerdenSymmetricFunctions": {"to": "Combinatorics/ramsey-theory/van-der-waerden-theorems", "title": "Zero-sum van der Waerden theorems for symmetric functions"},
   "MathlibExt/Combinatorics/Additive/VanDerWaerdenTransformationSums": {"to": "Combinatorics/ramsey-theory/van-der-waerden-theorems", "title": "Zero-sum van der Waerden theorems for symmetric functions"},
   "MathlibExt/Combinatorics/Additive/VosperTheorem": {"to": "Combinatorics/additive-combinatorics/sumsets-inverse-theorems", "title": "Vosper's theorem"},
