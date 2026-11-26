@@ -41,6 +41,7 @@ public import Mathlib.Data.Nat.Prime.Basic
 public import Mathlib.NumberTheory.Divisors
 public import MathlibExt.NumberTheory.NearPerfectTwoPrimePower
 public import MathlibExt.NumberTheory.OddPrimeDeficientPerfect
+public import MathlibExt.NumberTheory.FkPerfect
 
 set_option autoImplicit false
 
@@ -129,21 +130,6 @@ theorem_wanted klNearPerfectWith_prime_pow_two_iff
     (p a l d : ℕ) (hp : p.Prime) (hl : 1 ≤ l) :
     KLNearPerfectWith 2 l (p ^ a) d ↔
       a = 2 ∧ l = 1 ∧ d = 1
-
-/-- **$[2,\ell]$-deficient-perfect prime powers (corrected).** Let $p$ be a prime and let $a$ and
-$\ell$ be natural numbers. If $p^a$ is $[2,\ell]$-deficient-perfect, then $\ell = 1$, and either
-$a = 2$, or $p = 2$ and $a = 1$.
-
-The printed statement allows only the exception $a = 2$, $\ell = 1$, and so omits the solution
-$p = 2$, $a = 1$, $\ell = 1$, $d = 1$ (the number $2$ of Corollary 1).
-
-Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
-and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
-`F_k`-Perfect Numbers", Theorem 3. -/
-theorem_wanted isKLDeficientPerfect_prime_pow_two_imp
-    (p a l : ℕ) (hp : p.Prime) :
-    IsKLDeficientPerfect 2 l (p ^ a) →
-      l = 1 ∧ (a = 2 ∨ (p = 2 ∧ a = 1))
 
 /-- **Prime powers that are $[k,\ell]$-near-perfect.** Let $p$ be a prime, let $a$, $k$, $\ell$
 and $d$ be natural numbers with $k \ge 1$ and $\ell \ge 1$, and write
