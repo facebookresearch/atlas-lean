@@ -1,3 +1,6 @@
 # Gene regulatory network dynamics
 
-- [Secant criterion for diagonal stability of cyclic negative feedback](secant-criterion-diagonal-stability-of-cyclic-negative-feedback.md)
+- [Cyclic Matrix](cyclic-matrix.md)
+- [Is Diagonally Stable](is-diagonally-stable.md)
+- [Secant criterion](is-diagonally-stable-cyclic-matrix-iff.md)
+

@@ -7,4 +7,4 @@ subdiagonal entries `β_i` and corner entry `-β_{m-1}` is diagonally stable if 
 
 ## Sources
 
-- M. Arcak, E. D. Sontag, Automatica 42 (2006) 1531–1537, Theorem 1.
+- M. Arcak and E. D. Sontag, "Diagonal stability of a class of cyclic systems and its connection with the secant criterion", Automatica 42 (2006) 1531–1537, Theorem 1, doi:10.1016/j.automatica.2006.04.009.

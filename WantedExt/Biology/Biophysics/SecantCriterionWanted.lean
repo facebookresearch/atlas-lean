@@ -64,7 +64,9 @@ def IsDiagonallyStable {m : Type*} [Fintype m] [DecidableEq m] (A : Matrix m m �
 subdiagonal entries `β_i` and corner entry `-β_{m-1}` is diagonally stable if and only if
 `(∏_i β_i)/(∏_i α_i) < sec(π/m)^m`, written as `(∏_i β_i)/(∏_i α_i) < (1/cos(π/m))^m`.
 
-Source: M. Arcak, E. D. Sontag, Automatica 42 (2006) 1531–1537, Theorem 1. -/
+Source: M. Arcak and E. D. Sontag, "Diagonal stability of a class of cyclic systems and its
+connection with the secant criterion", Automatica 42 (2006) 1531–1537, Theorem 1,
+doi:10.1016/j.automatica.2006.04.009. -/
 theorem_wanted isDiagonallyStable_cyclicMatrix_iff {n : ℕ} (hn : 2 ≤ n)
     {α β : Fin (n + 1) → ℝ} (hα : ∀ i, 0 < α i) (hβ : ∀ i, 0 < β i) :
     IsDiagonallyStable (cyclicMatrix α β) ↔
