@@ -12314,6 +12314,7 @@
   "MathlibExt/LinearAlgebra/Matrix/ZagierMatrixInverse": {"to": "LinearAlgebra/special-matrices", "title": "Zagier's matrix and Bernoulli numbers"},
   "MathlibExt/LinearAlgebra/OrthogonalDescent": {"to": "Algebra/polynomials", "title": "Binomial convolutions of rational power series"},
   "MathlibExt/LinearAlgebra/PerfectPairing/DualBasis": {"to": "LinearAlgebra/linear-maps-and-duality", "title": "Dual bases of perfect pairings"},
+  "MathlibExt/LinearAlgebra/PowerSumMatrix": {"to": "LinearAlgebra/eigenvalues-and-canonical-forms", "title": "Newton's identities for traces of matrix powers"},
   "MathlibExt/LinearAlgebra/QuadraticForm/System": {"to": "LinearAlgebra/bilinear-and-quadratic-forms", "title": "Systems of quadratic forms"},
   "MathlibExt/LinearAlgebra/SmithNormalForm": {"to": "LinearAlgebra/eigenvalues-and-canonical-forms", "title": "Smith normal form"},
   "MathlibExt/LinearAlgebra/Submodule/PNeighbor": {"to": "LinearAlgebra/bilinear-and-quadratic-forms", "title": "Kneser p-neighbors"},
