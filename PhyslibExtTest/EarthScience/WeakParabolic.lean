@@ -8,7 +8,10 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.EarthScience.WeakParabolic
+import Mathlib.Analysis.Calculus.BumpFunction.InnerProduct
 import Mathlib.Analysis.Calculus.Deriv.Pow
+import Mathlib.Analysis.SpecialFunctions.NonIntegrable
+import Mathlib.Analysis.SpecialFunctions.SmoothTransition
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 import Mathlib.Tactic.NormNum
 
@@ -227,14 +230,17 @@ lemma spike_energy_ne {t0 ts : ℝ} (h0 : t0 < ts) (κ : ℝ → ℝ → ℝ) :
 /-- The time-continuity field of `IsWeakParabolicSolution` is what makes the energy-identity
 hypothesis of `weak_parabolic_unique` satisfiable. For every `κ`, the time spike `spikeW`
 meets every other field of the class for the homogeneous equation (`L²` slices, `H¹₀`
-profiles at every time, `L²` on the rectangle, the weak equation), but not the continuity
-field, and it violates the energy identity at `ts`. -/
+profiles at every time, `L²` on the rectangle, the forcing condition, the weak equation), but
+not the continuity field, and it violates the energy identity at `ts`. -/
 example {t0 t1 ts : ℝ} (h0 : t0 < ts) (h1 : ts < t1) (κ : ℝ → ℝ → ℝ) :
     (∀ t ∈ Set.Icc t0 t1, MemLp (fun x => spikeW ts t x) 2 (volume.restrict (Set.Icc 0 1)))
     ∧ (∀ᵐ t ∂(volume.restrict (Set.Icc t0 t1)),
         ∃ h : WeakH10, h.toFun = spikeW ts t ∧ h.weakDeriv = spikeWx ts t)
     ∧ MemLp (Function.uncurry (spikeW ts)) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1))
     ∧ MemLp (Function.uncurry (spikeWx ts)) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1))
+    ∧ (∀ φ : ℝ → ℝ → ℝ, ParabolicTest t0 t1 φ →
+        Integrable (fun p : ℝ × ℝ => (0 : ℝ → ℝ → ℝ) p.1 p.2 * φ p.1 p.2)
+          (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
     ∧ (∀ φ : ℝ → ℝ → ℝ, ParabolicTest t0 t1 φ →
         ∫ t in t0..t1, ∫ x in (0 : ℝ)..1,
             (-spikeW ts t x * deriv (fun s => φ s x) t
@@ -245,7 +251,8 @@ example {t0 t1 ts : ℝ} (h0 : t0 < ts) (h1 : ts < t1) (κ : ℝ → ℝ → ℝ
           + 2 * ∫ t in t0..ts, ∫ x in (0 : ℝ)..1, κ t x * (spikeWx ts t x) ^ 2
         ≠ (eLpNorm (fun x => spikeW ts t0 x) 2 (volume.restrict (Set.Icc 0 1))).toReal ^ 2 :=
   ⟨fun t _ => spike_slice_memLp ts t, Eventually.of_forall (spike_profile ts),
-    (spike_memLp t0 t1 ts).1, (spike_memLp t0 t1 ts).2, fun φ _ => spike_weak κ φ,
+    (spike_memLp t0 t1 ts).1, (spike_memLp t0 t1 ts).2, fun _ _ => by simp,
+    fun φ _ => spike_weak κ φ,
     fun h => spike_not_continuous h0.le h1 (h.continuous_slice ts ⟨h0.le, h1.le⟩),
     spike_energy_ne h0 κ⟩
 
@@ -259,6 +266,7 @@ lemma zero_isWeakParabolicSolution (t0 t1 : ℝ) (κ : ℝ → ℝ → ℝ) :
   profile := Eventually.of_forall fun _ => ⟨zeroWeak, rfl, rfl⟩
   memLp := MemLp.zero'
   memLp_deriv := MemLp.zero'
+  forcing_integrable _ _ := by simp
   weak_eq _ _ := by simp
 
 /-- With `κ = 1`, no forcing and zero initial value on `(0, 1) × (0, 1)`, every solution of
@@ -276,5 +284,148 @@ example
   weak_parabolic_unique (u0 := 0) zero_lt_one (kmin := 1) (kmax := 1) zero_lt_one
     aestronglyMeasurable_const (Eventually.of_forall fun _ => ⟨le_rfl, le_rfl⟩) hEnergyId
     (zero_isWeakParabolicSolution 0 1 _) hu (by simp) (by simpa using hinit)
+
+/-! ## Test functions are supported inside the open rectangle -/
+
+/-- A smooth function on `ℝ` that is nonzero exactly on `(0, 1)`. -/
+noncomputable def glue01 (s : ℝ) : ℝ := expNegInvGlue s * expNegInvGlue (1 - s)
+
+lemma glue01_ne_zero_iff (s : ℝ) : glue01 s ≠ 0 ↔ 0 < s ∧ s < 1 := by
+  simp only [glue01, ne_eq, mul_eq_zero, expNegInvGlue.zero_iff_nonpos, not_or, not_le, sub_pos]
+
+lemma contDiff_glue01 : ContDiff ℝ (((⊤ : ℕ∞)) : WithTop ℕ∞) glue01 :=
+  expNegInvGlue.contDiff.mul (expNegInvGlue.contDiff.comp (contDiff_const.sub contDiff_id))
+
+/-- Smooth on `ℝ × ℝ` and nonzero exactly on the open unit square, so its support is the
+closed square. -/
+noncomputable def boundaryBump (t x : ℝ) : ℝ := glue01 t * glue01 x
+
+/-- `ParabolicTest` asks for the support, the closure of the nonzero set, to lie inside the
+open rectangle: `boundaryBump` is smooth and nonzero only inside `(0, 1) × (0, 1)`, but its
+support touches the boundary, so it is not a test function. -/
+example :
+    ContDiff ℝ (((⊤ : ℕ∞)) : WithTop ℕ∞) (fun p : ℝ × ℝ => boundaryBump p.1 p.2)
+    ∧ (∀ t x, boundaryBump t x ≠ 0 → 0 < t ∧ t < 1 ∧ 0 < x ∧ x < 1)
+    ∧ ¬ ParabolicTest 0 1 boundaryBump := by
+  refine ⟨(contDiff_glue01.comp contDiff_fst).mul (contDiff_glue01.comp contDiff_snd),
+    fun t x h => ?_, fun ⟨_, hsupp⟩ => ?_⟩
+  · obtain ⟨ht, hx⟩ := mul_ne_zero_iff.mp h
+    exact ⟨((glue01_ne_zero_iff t).mp ht).1, ((glue01_ne_zero_iff t).mp ht).2,
+      ((glue01_ne_zero_iff x).mp hx).1, ((glue01_ne_zero_iff x).mp hx).2⟩
+  · have hmem : ((0 : ℝ), (1 / 2 : ℝ)) ∈ tsupport (fun p : ℝ × ℝ => boundaryBump p.1 p.2) := by
+      refine mem_closure_of_tendsto (b := nhdsWithin (0 : ℝ) (Set.Ioi 0))
+        (f := fun ε : ℝ => (ε, (1 / 2 : ℝ))) ?_ ?_
+      · exact ((continuous_id.prodMk continuous_const).tendsto (0 : ℝ)).mono_left
+          nhdsWithin_le_nhds
+      · filter_upwards [Ioo_mem_nhdsGT (show (0 : ℝ) < 1 by norm_num)] with ε hε
+        exact mul_ne_zero ((glue01_ne_zero_iff ε).mpr hε)
+          ((glue01_ne_zero_iff (1 / 2)).mpr (by norm_num))
+    exact lt_irrefl (0 : ℝ) (hsupp hmem).1.1
+
+/-! ## The forcing must be integrable against the test functions -/
+
+/-- A smooth bump on `ℝ`, equal to `1` on `[3/8, 5/8]` and supported in `[1/4, 3/4]`. -/
+noncomputable def midBump : ContDiffBump (1 / 2 : ℝ) := ⟨1 / 8, 1 / 4, by norm_num, by norm_num⟩
+
+lemma parabolicTest_midBump :
+    ParabolicTest 0 1 (fun t x => midBump t * midBump x) := by
+  refine ⟨(midBump.contDiff.comp contDiff_fst).mul (midBump.contDiff.comp contDiff_snd), ?_⟩
+  have hsub : Function.support (fun p : ℝ × ℝ => midBump p.1 * midBump p.2)
+      ⊆ Set.Icc (1 / 4 : ℝ) (3 / 4) ×ˢ Set.Icc (1 / 4 : ℝ) (3 / 4) := by
+    intro p hp
+    obtain ⟨h1, h2⟩ := mul_ne_zero_iff.mp hp
+    have hs : ∀ y : ℝ, midBump y ≠ 0 → y ∈ Set.Icc (1 / 4 : ℝ) (3 / 4) := fun y hy => by
+      have hy' : y ∈ Function.support midBump := hy
+      rw [midBump.support_eq, Real.ball_eq_Ioo] at hy'
+      obtain ⟨hlo, hhi⟩ := hy'
+      change 1 / 2 - 1 / 4 < y at hlo
+      change y < 1 / 2 + 1 / 4 at hhi
+      constructor <;> linarith
+    exact ⟨hs _ h1, hs _ h2⟩
+  refine (closure_minimal hsub (isClosed_Icc.prod isClosed_Icc)).trans ?_
+  rintro ⟨t, x⟩ ⟨⟨ht0, ht1⟩, hx0, hx1⟩
+  exact ⟨⟨by linarith, by linarith⟩, by linarith, by linarith⟩
+
+/-- The forcing of the review's example, `|x - 1/2|⁻¹`, not integrable near `x = 1/2`. -/
+noncomputable def singularForcing (_t x : ℝ) : ℝ := |x - 1 / 2|⁻¹
+
+/-- No pair is a solution with the forcing `|x - 1/2|⁻¹`, for any diffusivity: the forcing is
+not integrable against the test function `midBump t * midBump x`, which is `1` near the
+singular line. Without the forcing condition, Lean's integral of the non-integrable product
+would read as `0`. -/
+example (κ u ux : ℝ → ℝ → ℝ) : ¬ IsWeakParabolicSolution 0 1 κ singularForcing u ux := by
+  intro h
+  set A : Set ℝ := Set.Icc (3 / 8) (5 / 8) with hA
+  have hI := h.forcing_integrable _ parabolicTest_midBump
+  have hsub : A ×ˢ A ⊆ Set.Icc (0 : ℝ) 1 ×ˢ Set.Icc (0 : ℝ) 1 := by
+    rintro ⟨t, x⟩ ⟨⟨ht0, ht1⟩, hx0, hx1⟩
+    exact ⟨⟨by linarith, by linarith⟩, by linarith, by linarith⟩
+  have hone : ∀ y ∈ A, midBump y = 1 := fun y hy => midBump.one_of_mem_closedBall (by
+    rw [Real.closedBall_eq_Icc]
+    change y ∈ Set.Icc (1 / 2 - 1 / 8) (1 / 2 + 1 / 8)
+    obtain ⟨hlo, hhi⟩ := hy
+    constructor <;> linarith)
+  have hIA : Integrable (fun p : ℝ × ℝ => |p.2 - 1 / 2|⁻¹) (volume.restrict (A ×ˢ A)) := by
+    refine (hI.mono_measure (Measure.restrict_mono hsub le_rfl)).congr ?_
+    filter_upwards [ae_restrict_mem (measurableSet_Icc.prod measurableSet_Icc)] with p hp
+    simp only [singularForcing, hone _ hp.1, hone _ hp.2, mul_one]
+  rw [Measure.volume_eq_prod, ← Measure.prod_restrict] at hIA
+  have hslice := hIA.prod_right_ae
+  have : (ae (volume.restrict A)).NeBot := ae_restrict_neBot.mpr (by
+    rw [hA, Real.volume_Icc]
+    norm_num)
+  obtain ⟨_, hx⟩ := hslice.exists
+  have hx' : IntegrableOn (fun y : ℝ => |y - 1 / 2|⁻¹) A := hx
+  have hII : IntervalIntegrable (fun x : ℝ => (x - 1 / 2)⁻¹) volume (3 / 8) (5 / 8) := by
+    rw [intervalIntegrable_iff_integrableOn_Ioc_of_le (by norm_num)]
+    refine Integrable.mono (hx'.mono_set Set.Ioc_subset_Icc_self)
+      ((continuous_sub_right _).measurable.inv.aestronglyMeasurable) ?_
+    filter_upwards with x
+    simp
+  rcases intervalIntegrable_sub_inv_iff.mp hII with h' | h'
+  · norm_num at h'
+  · exact h' (by rw [Set.uIcc_of_le (by norm_num)]; constructor <;> norm_num)
+
+/-! ## The energy lemma needs `L²` time slices -/
+
+/-- The `L²(0,1)` hypothesis on the time slices of `weak_parabolic_unique_of_energy` is needed:
+`ENNReal.toReal` reads an infinite norm as `0`. Without it, `w t x = x⁻¹` for `t ≠ 0` and
+`w 0 = 0` (with `wx = 0`, `κ = 1`) satisfy the energy identity and the initial condition, but
+`w 1` does not vanish. -/
+example : ¬ ∀ w wx : ℝ → ℝ → ℝ,
+    (∀ τ : ℝ, τ ∈ Set.Icc (0 : ℝ) 1 →
+      (eLpNorm (fun x => w τ x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal ^ 2
+        + 2 * ∫ t in (0 : ℝ)..τ, ∫ x in (0 : ℝ)..1, (fun _ _ => (1 : ℝ)) t x * (wx t x) ^ 2
+        = (eLpNorm (fun x => w 0 x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal ^ 2) →
+    (fun x => w 0 x) =ᵐ[volume.restrict (Set.Icc 0 1)] 0 →
+    ∀ τ ∈ Set.Icc (0 : ℝ) 1, (fun x => w τ x) =ᵐ[volume.restrict (Set.Icc 0 1)] 0 := by
+  intro h
+  have hinf : eLpNorm (fun x : ℝ => x⁻¹) 2 (volume.restrict (Set.Icc (0 : ℝ) 1)) = ⊤ := by
+    by_contra hne
+    have hmem : MemLp (fun x : ℝ => x⁻¹) 2 (volume.restrict (Set.Icc (0 : ℝ) 1)) :=
+      memLp_iff.mpr (lt_top_iff_ne_top.mpr hne)
+    have hint : IntegrableOn (fun x : ℝ => x⁻¹) (Set.Icc (0 : ℝ) 1) :=
+      (hmem.mono_exponent (by norm_num : (1 : ENNReal) ≤ 2)).integrable le_rfl
+    have hII : IntervalIntegrable (fun x : ℝ => x⁻¹) volume 0 1 := by
+      rw [intervalIntegrable_iff_integrableOn_Ioc_of_le zero_le_one]
+      exact hint.mono_set Set.Ioc_subset_Icc_self
+    rcases intervalIntegrable_inv_iff.mp hII with h' | h'
+    · norm_num at h'
+    · exact h' (by rw [Set.uIcc_of_le zero_le_one]; exact ⟨le_rfl, zero_le_one⟩)
+  have h1 := h (fun t x => if t = 0 then 0 else x⁻¹) (fun _ _ => 0) (fun τ _ => by
+      by_cases hτ : τ = 0
+      · simp [hτ]
+      · simp [hτ, hinf]) (Filter.Eventually.of_forall fun _ => by simp) 1 ⟨zero_le_one, le_rfl⟩
+  simp only [one_ne_zero, ↓reduceIte] at h1
+  rw [Filter.EventuallyEq, ae_restrict_iff' measurableSet_Icc] at h1
+  have hpos : (0 : ENNReal) < volume (Set.Ioc (0 : ℝ) 1) := by simp
+  have hnull : volume (Set.Ioc (0 : ℝ) 1) = 0 := by
+    rw [← nonpos_iff_eq_zero]
+    refine (measure_mono_null (t := {x : ℝ | ¬ (x ∈ Set.Icc 0 1 → x⁻¹ = (0 : ℝ → ℝ) x)})
+      ?_ ?_).le
+    · intro x hx hcon
+      exact inv_ne_zero (ne_of_gt hx.1) (hcon ⟨hx.1.le, hx.2⟩)
+    · exact ae_iff.mp h1
+  exact hpos.ne' hnull
 
 end EarthScience

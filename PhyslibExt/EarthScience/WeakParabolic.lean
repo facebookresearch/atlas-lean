@@ -24,15 +24,15 @@ The equation describes one-dimensional diffusion with a diffusivity `κ (t, x)` 
 vary in time and in space, for example heat conduction across a layer whose boundary
 temperatures are held fixed (after the boundary values are subtracted). The diffusivity is
 a.e. strongly measurable with `0 < kmin ≤ κ ≤ kmax` a.e. Test functions (`ParabolicTest`)
-are C^∞ with compact support in the open rectangle, and weak forms are iterated integrals
-with time outside. Spatial profiles use `EarthScience.WeakH10`, the `H¹₀(0,1)` structure of
+are C^∞ with support inside the open rectangle, and weak forms are iterated integrals with
+time outside. Spatial profiles use `EarthScience.WeakH10`, the `H¹₀(0,1)` structure of
 `PhyslibExt.EarthScience.WeakDiffusion`.
 
 `IsWeakParabolicSolution` is the solution class
 `L²(t0, t1; H¹₀(0,1)) ∩ C([t0, t1]; L²(0,1))`, written with representatives: time slices
-in `L²(0,1)` that vary continuously, `H¹₀(0,1)` profiles at almost every time, and the weak
-equation. The initial value is an `L²(0,1)` trace, `u t0 = u0` in `L²(0,1)`, so it may be any
-function of `L²(0,1)`.
+in `L²(0,1)` that vary continuously, `H¹₀(0,1)` profiles at almost every time, a forcing
+integrable against every test function, and the weak equation. The initial value is an
+`L²(0,1)` trace, `u t0 = u0` in `L²(0,1)`, so it may be any function of `L²(0,1)`.
 
 `weak_parabolic_unique` proves that two solutions with the same forcing and the same
 initial value agree in `L²(0,1)` at every time. It takes the energy identity of the
@@ -50,7 +50,7 @@ solutions is not treated.
 - `EarthScience.weak_parabolic_sub`: two solutions with the same forcing differ by a
   solution of the homogeneous equation.
 - `EarthScience.weak_parabolic_unique_of_energy`: the energy identity with zero initial
-  value forces a solution to vanish.
+  value forces a solution with `L²(0,1)` time slices to vanish almost everywhere.
 - `EarthScience.weak_parabolic_unique`: uniqueness of weak solutions, given the energy
   identity.
 
@@ -81,14 +81,14 @@ namespace EarthScience
 
 /-! ## A. The weak formulation -/
 
-/-- Test functions for the parabolic weak formulation: smooth functions on
-time × space, compactly supported inside `(t0, t1) × (0, 1)`.
+/-- Test functions for the parabolic weak formulation: smooth functions on time × space whose
+support, the closure of the set where they do not vanish, lies inside the open rectangle
+`(t0, t1) × (0, 1)`. Such a support is closed and bounded, hence compact.
 Note: `ContDiff ℝ (((⊤ : ℕ∞)) : WithTop ℕ∞)` is C^∞. Under current Mathlib `ContDiff` is indexed
 by `ℕ∞ω`, where `⊤ = ω` means analytic, while `∞` means C^∞. -/
 def ParabolicTest (t0 t1 : ℝ) (φ : ℝ → ℝ → ℝ) : Prop :=
   ContDiff ℝ (((⊤ : ℕ∞)) : WithTop ℕ∞) (fun p : ℝ × ℝ => φ p.1 p.2)
-    ∧ HasCompactSupport (fun p : ℝ × ℝ => φ p.1 p.2)
-    ∧ ∀ t x, φ t x ≠ 0 → t0 < t ∧ t < t1 ∧ 0 < x ∧ x < 1
+    ∧ tsupport (fun p : ℝ × ℝ => φ p.1 p.2) ⊆ Set.Ioo t0 t1 ×ˢ Set.Ioo 0 1
 
 lemma parabolicTest_deriv_memLp
     {t0 t1 : ℝ}
@@ -99,10 +99,7 @@ lemma parabolicTest_deriv_memLp
           (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1))
       ∧ MemLp (Function.uncurry (fun t x => deriv (fun y => φ t y) x)) 2
           (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)) := by
-  have hφ' : ContDiff ℝ (((⊤ : ℕ∞)) : WithTop ℕ∞) (fun p : ℝ × ℝ => φ p.1 p.2)
-      ∧ HasCompactSupport (fun p : ℝ × ℝ => φ p.1 p.2)
-      ∧ ∀ t x, φ t x ≠ 0 → t0 < t ∧ t < t1 ∧ 0 < x ∧ x < 1 := hφ
-  obtain ⟨h_smooth, h_supp, h_sub⟩ := hφ'
+  obtain ⟨h_smooth, -⟩ := hφ
   have hn0 : (((⊤ : ℕ∞)) : WithTop ℕ∞) ≠ 0 := by simp
   have hdiff : Differentiable ℝ (fun p : ℝ × ℝ => φ p.1 p.2) :=
     h_smooth.differentiable hn0
@@ -218,7 +215,13 @@ the class `L²(t0, t1; H¹₀(0,1)) ∩ C([t0, t1]; L²(0,1))` of the standard t
 §5.9.2 and §7.1.1), written with representatives: every time slice is in `L²(0,1)` and
 the slices vary continuously in `L²(0,1)`, while the boundary values are imposed through
 `H¹₀(0,1)` profiles at almost every time only. In particular no profile is required at the
-initial time, so the initial value may be any function of `L²(0,1)`. -/
+initial time, so the initial value may be any function of `L²(0,1)`.
+
+Both sides of the weak equation are Lebesgue integrals, not Lean's default value `0` for a
+non-integrable function: the class requires the forcing to be integrable against every test
+function, and the left side is integrable for every test function once `κ` is a.e. bounded
+and a.e. strongly measurable (`weak_parabolic_integrand_integrable`), as in
+`weak_parabolic_unique`. -/
 structure IsWeakParabolicSolution (t0 t1 : ℝ) (κ F u ux : ℝ → ℝ → ℝ) : Prop where
   /-- Every time slice `u t`, `t ∈ [t0, t1]`, is in `L²(0,1)`. -/
   memLp_slice : ∀ t ∈ Set.Icc t0 t1, MemLp (fun x => u t x) 2 (volume.restrict (Set.Icc 0 1))
@@ -233,6 +236,10 @@ structure IsWeakParabolicSolution (t0 t1 : ℝ) (κ F u ux : ℝ → ℝ → ℝ
   memLp : MemLp (Function.uncurry u) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1))
   /-- The spatial derivative `ux` is in `L²` on the rectangle. -/
   memLp_deriv : MemLp (Function.uncurry ux) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1))
+  /-- The forcing is integrable against every test function on the rectangle. -/
+  forcing_integrable : ∀ φ : ℝ → ℝ → ℝ, ParabolicTest t0 t1 φ →
+    Integrable (fun p : ℝ × ℝ => F p.1 p.2 * φ p.1 p.2)
+      (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1))
   /-- The weak equation against every test function. -/
   weak_eq : ∀ φ : ℝ → ℝ → ℝ, ParabolicTest t0 t1 φ →
     ∫ t in t0..t1, ∫ x in (0 : ℝ)..1,
@@ -395,38 +402,41 @@ lemma weak_parabolic_sub
 
 /-! ## C. Uniqueness -/
 
-/-- If `w` satisfies the energy identity on `[t0, t1]` and vanishes at `t0` in `L²(0,1)`,
-then it vanishes in `L²(0,1)` at every time of `[t0, t1]`: the dissipation
-`∫∫ κ (∂ₓw)²` is nonnegative because `κ ≥ kmin > 0`. -/
+/-- Let the time slices `w τ`, `τ ∈ [t0, t1]`, be in `L²(0,1)`. If `w` satisfies the energy
+identity on `[t0, t1]` and `w t0 = 0` almost everywhere on `[0, 1]`, then `w τ = 0` almost
+everywhere on `[0, 1]` at every time `τ` of `[t0, t1]`: the dissipation `∫∫ κ (∂ₓw)²` is
+nonnegative because `κ ≥ kmin > 0`, so the energy identity forces `‖w τ‖ = 0`, and the norm
+is finite. -/
 lemma weak_parabolic_unique_of_energy
-    {t0 t1 : ℝ} {κ : ℝ → ℝ → ℝ} {kmin kmax : ℝ} (hkmin : 0 < kmin)
-    (hκ : ∀ᵐ p ∂(volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)),
-      kmin ≤ κ p.1 p.2 ∧ κ p.1 p.2 ≤ kmax)
+    {t0 t1 : ℝ} {κ : ℝ → ℝ → ℝ} {kmin : ℝ} (hkmin : 0 < kmin)
+    (hκ : ∀ᵐ p ∂(volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)), kmin ≤ κ p.1 p.2)
     (w wx : ℝ → ℝ → ℝ)
+    (hmem : ∀ τ ∈ Set.Icc t0 t1, MemLp (fun x => w τ x) 2 (volume.restrict (Set.Icc 0 1)))
     (hEnergy : ∀ τ : ℝ, τ ∈ Set.Icc t0 t1 →
       (eLpNorm (fun x => w τ x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal ^ 2
         + 2 * ∫ t in t0..τ, ∫ x in (0 : ℝ)..1, κ t x * (wx t x) ^ 2
         = (eLpNorm (fun x => w t0 x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal ^ 2)
-    (hInit : (eLpNorm (fun x => w t0 x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal = 0) :
-    ∀ τ : ℝ, τ ∈ Set.Icc t0 t1 →
-      (eLpNorm (fun x => w τ x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal = 0 := by
+    (hInit : (fun x => w t0 x) =ᵐ[volume.restrict (Set.Icc 0 1)] 0) :
+    ∀ τ ∈ Set.Icc t0 t1, (fun x => w τ x) =ᵐ[volume.restrict (Set.Icc 0 1)] 0 := by
   have hEq : (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1) : Measure (ℝ × ℝ))
       = (volume.restrict (Set.Icc t0 t1)).prod (volume.restrict (Set.Icc (0 : ℝ) 1)) := by
     rw [Measure.volume_eq_prod, ← Measure.prod_restrict]
   rw [hEq] at hκ
   have hκ_ae : ∀ᵐ t ∂(volume.restrict (Set.Icc t0 t1)),
-      ∀ᵐ x ∂(volume.restrict (Set.Icc (0 : ℝ) 1)), kmin ≤ κ t x ∧ κ t x ≤ kmax :=
+      ∀ᵐ x ∂(volume.restrict (Set.Icc (0 : ℝ) 1)), kmin ≤ κ t x :=
     Measure.ae_ae_of_ae_prod hκ
+  have hInit' : (eLpNorm (fun x => w t0 x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal = 0 := by
+    rw [eLpNorm_congr_ae hInit, eLpNorm_zero, ENNReal.toReal_zero]
   intro τ hτ
   obtain ⟨hτlo, hτhi⟩ := Set.mem_Icc.mp hτ
   have hE := hEnergy τ hτ
-  rw [hInit] at hE
+  rw [hInit'] at hE
   have hinner_ae : ∀ᵐ t ∂(volume.restrict (Set.Icc t0 t1)),
       0 ≤ ∫ x in (0 : ℝ)..1, κ t x * (wx t x) ^ 2 := by
     filter_upwards [hκ_ae] with t ht
     apply intervalIntegral.integral_nonneg_of_ae_restrict zero_le_one
     filter_upwards [ht] with x hx
-    exact mul_nonneg (le_trans hkmin.le hx.1) (sq_nonneg _)
+    exact mul_nonneg (le_trans hkmin.le hx) (sq_nonneg _)
   have hB : 0 ≤ ∫ t in t0..τ, ∫ x in (0 : ℝ)..1, κ t x * (wx t x) ^ 2 := by
     apply intervalIntegral.integral_nonneg_of_ae_restrict hτlo
     exact ae_restrict_of_ae_restrict_of_subset (Set.Icc_subset_Icc le_rfl hτhi) hinner_ae
@@ -435,7 +445,10 @@ lemma weak_parabolic_unique_of_energy
   have hsq : (eLpNorm (fun x => w τ x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal ^ 2
       = 0 := by
     nlinarith
-  exact (pow_eq_zero_iff two_ne_zero).mp hsq
+  have hnorm : eLpNorm (fun x => w τ x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1)) = 0 :=
+    ((ENNReal.toReal_eq_zero_iff _).mp ((pow_eq_zero_iff two_ne_zero).mp hsq)).resolve_right
+      (hmem τ hτ).eLpNorm_ne_top
+  exact (eLpNorm_eq_zero_iff two_ne_zero).mp hnorm
 
 /-- **Uniqueness of weak solutions of `∂ₜu = ∂ₓ(κ ∂ₓu) + F` on `(0, 1)`.**
 
@@ -473,7 +486,7 @@ theorem weak_parabolic_unique
   have hsol : IsWeakParabolicSolution t0 t1 κ 0
       (fun t x => u' t x - u t x) (fun t x => ux' t x - ux t x) := by
     refine ⟨fun t ht => (hu'.memLp_slice t ht).sub (hu.memLp_slice t ht), ?_, ?_,
-      hu'.memLp.sub hu.memLp, hu'.memLp_deriv.sub hu.memLp_deriv, ?_⟩
+      hu'.memLp.sub hu.memLp, hu'.memLp_deriv.sub hu.memLp_deriv, fun φ _ => by simp, ?_⟩
     · intro s hs
       have hsum := (hu'.continuous_slice s hs).add (hu.continuous_slice s hs)
       rw [add_zero] at hsum
@@ -503,21 +516,15 @@ theorem weak_parabolic_unique
         (fun _ hφ => weak_parabolic_integrand_integrable hκ_meas hκ hu'.memLp hu'.memLp_deriv hφ)
         (fun _ hφ => weak_parabolic_integrand_integrable hκ_meas hκ hu.memLp hu.memLp_deriv hφ)
         hu'.weak_eq hu.weak_eq φ hφ).trans (by simp)
-  have hW0 : (eLpNorm (fun x => u' t0 x - u t0 x) 2
-      (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal = 0 := by
-    have h1 := (eLpNorm_eq_zero_iff two_ne_zero).mp hinit
-    have h2 := (eLpNorm_eq_zero_iff two_ne_zero).mp hinit'
-    have h3 : (fun x => u' t0 x - u t0 x) =ᵐ[volume.restrict (Set.Icc (0 : ℝ) 1)] 0 := by
-      filter_upwards [h1, h2] with x hx hx'
-      simp only [Pi.zero_apply] at hx hx' ⊢
-      linarith
-    rw [eLpNorm_congr_ae h3, eLpNorm_zero, ENNReal.toReal_zero]
-  have hzero := weak_parabolic_unique_of_energy hkmin hκ (fun t x => u' t x - u t x)
-    (fun t x => ux' t x - ux t x) (hEnergyId _ _ hsol) hW0 τ hτ
-  have hnorm : eLpNorm (fun x => u' τ x - u τ x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1)) = 0 :=
-    ((ENNReal.toReal_eq_zero_iff _).mp hzero).resolve_right
-      ((hu'.memLp_slice τ hτ).sub (hu.memLp_slice τ hτ)).eLpNorm_ne_top
-  filter_upwards [(eLpNorm_eq_zero_iff two_ne_zero).mp hnorm] with x hx
+  have hW0 : (fun x => u' t0 x - u t0 x) =ᵐ[volume.restrict (Set.Icc (0 : ℝ) 1)] 0 := by
+    filter_upwards [(eLpNorm_eq_zero_iff two_ne_zero).mp hinit,
+      (eLpNorm_eq_zero_iff two_ne_zero).mp hinit'] with x hx hx'
+    simp only [Pi.zero_apply] at hx hx' ⊢
+    linarith
+  have hzero := weak_parabolic_unique_of_energy hkmin (hκ.mono fun _ hp => hp.1)
+    (fun t x => u' t x - u t x) (fun t x => ux' t x - ux t x) hsol.memLp_slice
+    (hEnergyId _ _ hsol) hW0 τ hτ
+  filter_upwards [hzero] with x hx
   simp only [Pi.zero_apply] at hx
   linarith
 
