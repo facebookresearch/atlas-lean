@@ -41,5 +41,4 @@
 - [Rudnev–Stevens lower bound for the real sum-product exponent](rudnev-stevens-lower-bound-holds.md)
 - [Bloom's lower bound for the real sum-product exponent](bloom-lower-bound-holds.md)
 - [Cushman's lower bound for the real sum-product exponent](cushman-current-lower-bound-holds.md)
-
-- [Sum-product problem over the reals](solymosi-sum-product.md)
+- [Solymosi's finite sum-product inequality](solymosi-sum-product.md)

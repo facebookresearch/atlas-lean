@@ -18,8 +18,8 @@ import Mathlib.RingTheory.PowerSeries.Expand
 /-!
 # Regular cubic partitions with overlined odd parts
 
-The generating function for these partitions yields two congruences modulo four on
-prime-power progressions for the 4-regular partition numbers. A dissection of the reciprocal
+The number $a_4(n)$ of 4-regular cubic partitions of $n$ with odd parts overlined satisfies
+two congruences modulo four on prime-power progressions. A dissection of the reciprocal
 fourth power of the Euler product identifies the coefficients at indices (4n+1) modulo four.
 Euler's pentagonal number theorem then expresses the remaining coefficient modulo two as the
 parity of a representation count for (x^2 + 8y^2).
