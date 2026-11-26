@@ -1189,3 +1189,4 @@ Topics added since this subject's fields were last revised.
 - [QMFake Elliptic Curve](qmfake-elliptic-curve/README.md)
 - [QMFormal Module](qmformal-module/README.md)
 - [Drinfeld Basis Torsion](drinfeld-basis-torsion/README.md)
+- [QMCoarse Moduli](qmcoarse-moduli/README.md)
