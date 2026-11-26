@@ -315,6 +315,7 @@
 "Algebra.FormallyUnramified.of_isUnit_aeval_derivative_of_adjoin_eq_top": "6f48816beec2cf71",
 "Algebra.IsInvariant.moduleFinite_and_finiteType_of_finiteType": "ae11f23b708d7281",
 "Algebra.IsResidueSeparableAt": "7718f255c94669f0",
+"Algebra.IsSeparable.of_finrank_fieldRange_frobenius_eq": "4cf5081be1b6c7ee",
 "Algebra.IsStandardSmoothOfRelativeDimension.isDiscreteValuationRing_localization_atPrime": "fc85a549515cff0f",
 "Algebra.IsTamelyRamifiedAt": "195813cf7ee49421",
 "Algebra.IsTamelyRamifiedAt.isSeparable": "28cf67a3631a1a10",
