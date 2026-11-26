@@ -75,3 +75,15 @@ example :
   have result := nthNonValue_eq_one_step f (by decide) hgap
   exact ⟨(result 1 (by decide)).trans (by decide), (result 3 (by decide)).trans (by decide),
     (result 4 (by decide)).trans (by decide)⟩
+
+-- Non-triangular numbers: 2, 4, 5, 7, ... At n = 4 the rounded root of 2n jumps from 2 to 3
+-- and the formula skips the triangular number 6.
+example : nthNonValue (fun j => j * (j + 1) / 2) 4 = 7 := by
+  rw [nthNonValue_triangular_eq_round 4 (by decide)]
+  have h : ⌊Real.sqrt (2 * (4 : ℕ)) + 1 / 2⌋₊ = 3 := by
+    rw [Nat.floor_eq_iff (by positivity)]
+    have hlo : (5 / 2 : ℝ) ≤ Real.sqrt (2 * (4 : ℕ)) :=
+      (Real.le_sqrt (by norm_num) (by norm_num)).mpr (by norm_num)
+    have hhi : Real.sqrt (2 * (4 : ℕ)) < 7 / 2 := (Real.sqrt_lt' (by norm_num)).mpr (by norm_num)
+    constructor <;> push_cast <;> linarith
+  rw [h]
