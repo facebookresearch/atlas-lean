@@ -2,7 +2,7 @@
 
 - [Expressions over minus](minus-expr.md)
 - [Values of minus expressions](eval.md)
-- [Tokens](tokens.md)
+- [Prefix token list of a minus expression](tokens.md)
 - [Instances of INEQUIVALENCE OF SIMPLE FUNCTIONS solely in terms of `minus`](inequivalence-of-simple-functions-minus.md)
 - [Is Expr](is-expr.md)
 - [Well-formed INEQUIVALENCE OF SIMPLE FUNCTIONS solely in terms of `minus` instances](well-formed.md)

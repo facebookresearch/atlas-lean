@@ -2,7 +2,7 @@
 
 - [Expressions over the simple functions](simple-expr.md)
 - [Values of simple-function expressions](eval.md)
-- [Tokens](tokens.md)
+- [Prefix token list of a simple-function expression](tokens.md)
 - [Instances of INEQUIVALENCE OF SIMPLE FUNCTIONS](inequivalence-of-simple-functions-instan.md)
 - [Is Expr](is-expr.md)
 - [Well-formed INEQUIVALENCE OF SIMPLE FUNCTIONS instances](well-formed.md)
