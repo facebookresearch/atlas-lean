@@ -12,11 +12,15 @@ public import MathlibExt.AlgebraicGeometry.OrdinaryConstantCoefficientModels
 /-!
 # Ordinary constant-coefficient module quasi-equivalence
 
-The native comparison from ordinary module complexes to DG modules over the
-shuffle normalization of a constant ring is a DG quasi-equivalence.
+Given two inputs, the normalization witness `C : ConstantRingSource A N` for the
+shuffle normalization of a constant ring and the comparison functor's compatibility
+data `J : OrdinaryModuleSource A N C`, the native comparison `J.functor` from
+ordinary module complexes to DG modules is a DG quasi-equivalence. Both inputs are
+hypotheses of the theorem; their constructions remain wanted.
 
-Sources: Keller Section2; Bhatt--Mathew1807.04725v4, Section5.4.
-Bernhard Keller, *Deriving DG categories*, Section 2;
+Source for the degree-zero DG comparison: Bernhard Keller, *Deriving DG categories*,
+Section 2.1.
+Motivation only, since it concerns arc-hyperdescent rather than this comparison:
 Bhargav Bhatt and Akhil Mathew, *The arc-topology*, Section 5.4.
 -/
 
