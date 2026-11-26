@@ -32,7 +32,7 @@ public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
 /-!
 # The Fricke involution on modular forms of level `Γ₀(N)`
 
-The Fricke matrix `W_N = !![0, -1; N, 0]` normalizes `Γ₀(N)`, so slashing by it
+For `N ≠ 0`, the Fricke matrix `W_N = !![0, -1; N, 0]` normalizes `Γ₀(N)`, so slashing by it
 maps modular forms of weight `k` and level `Γ₀(N)` to modular forms of the same
 weight and level. Its square is the scalar matrix `-N`, so applying the Fricke
 operator twice multiplies by `(-1) ^ k * N ^ (k - 2)`.
@@ -45,6 +45,12 @@ operator twice multiplies by `(-1) ^ k * N ^ (k - 2)`.
 * `ModularForm.fricke N k`: the Fricke operator as a linear map on
   `ModularForm (Gamma0 N) k`.
 * `ModularForm.slash_frickeGL_slash_frickeGL`: `f ∣ W_N ∣ W_N = (-1) ^ k N ^ (k - 2) f`.
+
+## References
+
+* A. O. L. Atkin and J. Lehner, *Hecke operators on `Γ₀(m)`*, Math. Ann. 185 (1970), 134–160.
+* B. Mazur, *Modular curves and the Eisenstein ideal*, Publ. Math. IHÉS 47 (1977), 33–186,
+  Chapter II, §6 (the involution `w` induced by `z ↦ -1/(Nz)`).
 -/
 
 @[expose] public section
@@ -56,7 +62,8 @@ noncomputable section
 
 namespace ModularForm
 
-/-- Slashing by the scalar matrix `N` (for `N ≠ 0`) multiplies by `N ^ (k - 2)`. -/
+/-- For `N ≠ 0`, slashing a function `g : ℍ → ℂ` in weight `k` by the scalar matrix `N`
+multiplies it by `N ^ (k - 2)`. -/
 theorem slash_scalar_natCast (k : ℤ) {N : ℕ} (hN : (N : ℝ) ≠ 0) (g : ℍ → ℂ) :
     g ∣[k] (GeneralLinearGroup.scalar (Fin 2) (Units.mk0 (N : ℝ) hN))
       = (N : ℂ) ^ (k - 2) • g := by
@@ -86,7 +93,8 @@ theorem slash_scalar_natCast (k : ℤ) {N : ℕ} (hN : (N : ℝ) ≠ 0) (g : ℍ
 
 variable (N : ℕ) [NeZero N]
 
-/-- The Fricke matrix `!![0, -1; N, 0]` in `GL (Fin 2) ℝ`. -/
+/-- For `N ≠ 0` (`[NeZero N]`), the Fricke matrix `W_N = !![0, -1; N, 0]` as an element of
+`GL (Fin 2) ℝ`. -/
 def frickeGL : GL (Fin 2) ℝ :=
   GeneralLinearGroup.mkOfDetNeZero !![0, -1; (N : ℝ), 0] (by
     rw [det_fin_two_of]
@@ -100,7 +108,8 @@ theorem det_frickeGL : ((frickeGL N).det : ℝ) = N := by
   rw [GeneralLinearGroup.val_det_apply, val_frickeGL, det_fin_two_of]
   ring
 
-/-- The square of the Fricke matrix is the scalar matrix `-N`. -/
+/-- For `N ≠ 0` (`[NeZero N]`), the square of the Fricke matrix `W_N` is the scalar matrix
+`-N`. -/
 theorem frickeGL_mul_frickeGL :
     frickeGL N * frickeGL N
       = -GeneralLinearGroup.scalar (Fin 2) (Units.mk0 (N : ℝ) (by exact_mod_cast NeZero.ne N)) := by
@@ -112,7 +121,8 @@ theorem frickeGL_mul_frickeGL :
   fin_cases i <;> fin_cases j <;>
     simp [Matrix.mul_apply, Fin.sum_univ_two, Matrix.natCast_apply]
 
-/-- Slashing twice by the Fricke matrix multiplies by `(-1) ^ k * N ^ (k - 2)`. -/
+/-- For `N ≠ 0` (`[NeZero N]`), slashing a function `f : ℍ → ℂ` twice in weight `k` by the
+Fricke matrix `W_N` multiplies it by `(-1) ^ k * N ^ (k - 2)`. -/
 theorem slash_frickeGL_slash_frickeGL (k : ℤ) (f : ℍ → ℂ) :
     (f ∣[k] frickeGL N) ∣[k] frickeGL N = ((-1 : ℂ) ^ k * (N : ℂ) ^ (k - 2)) • f := by
   rw [← SlashAction.slash_mul, frickeGL_mul_frickeGL, slash_neg, slash_scalar_natCast]
@@ -129,7 +139,8 @@ private theorem frickeGLQ_map : (frickeGLQ N).map (Rat.castHom ℝ) = frickeGL N
   ext i j
   fin_cases i <;> fin_cases j <;> simp [frickeGLQ, GeneralLinearGroup.mkOfDetNeZero]
 
-/-- The Fricke matrix normalizes `Γ₀(N)`: `W_N γ = γ' W_N` with `γ' ∈ Γ₀(N)`. -/
+/-- For `N ≠ 0` (`[NeZero N]`), the Fricke matrix `W_N` normalizes `Γ₀(N)`: for every
+`γ ∈ Γ₀(N)` there is `γ' ∈ Γ₀(N)` with `W_N γ = γ' W_N` in `GL (Fin 2) ℝ`. -/
 theorem exists_frickeGL_mul_eq {γ : SL(2, ℤ)} (hγ : γ ∈ Gamma0 N) :
     ∃ γ' ∈ Gamma0 N, frickeGL N * SpecialLinearGroup.mapGL ℝ γ
       = SpecialLinearGroup.mapGL ℝ γ' * frickeGL N := by
@@ -156,8 +167,8 @@ theorem exists_frickeGL_mul_eq {γ : SL(2, ℤ)} (hγ : γ ∈ Gamma0 N) :
     fin_cases i <;> fin_cases j <;>
       simp [γ', Matrix.mul_apply, Fin.sum_univ_two, h10] <;> ring
 
-/-- A modular form of level `Γ₀(N)` slashed by the Fricke matrix is again
-invariant under `Γ₀(N)`. -/
+/-- For `N ≠ 0` (`[NeZero N]`) and a modular form `f` of weight `k` on `Γ₀(N)`, the function
+`f ∣[k] W_N` is again invariant under the weight-`k` slash action of `Γ₀(N)`. -/
 theorem slash_frickeGL_slash_eq_self {k : ℤ} (f : ModularForm (Gamma0 N) k) {γ : GL (Fin 2) ℝ}
     (hγ : γ ∈ ((Gamma0 N : Subgroup SL(2, ℤ)) : Subgroup (GL (Fin 2) ℝ))) :
     (⇑f ∣[k] frickeGL N) ∣[k] γ = ⇑f ∣[k] frickeGL N := by
@@ -166,7 +177,8 @@ theorem slash_frickeGL_slash_eq_self {k : ℤ} (f : ModularForm (Gamma0 N) k) {�
   rw [← SlashAction.slash_mul, heq, SlashAction.slash_mul,
     SlashInvariantFormClass.slash_action_eq f _ (Subgroup.mem_map_of_mem _ hγ')]
 
-/-- The Fricke operator on modular forms of weight `k` and level `Γ₀(N)`. -/
+/-- For `N ≠ 0` (`[NeZero N]`), the Fricke operator `f ↦ f ∣[k] W_N`, a `ℂ`-linear map from
+the modular forms of weight `k` on `Γ₀(N)` to themselves. -/
 def fricke (k : ℤ) : ModularForm (Gamma0 N) k →ₗ[ℂ] ModularForm (Gamma0 N) k where
   toFun f :=
     { toFun := ⇑f ∣[k] frickeGL N
@@ -198,7 +210,8 @@ theorem coe_fricke (k : ℤ) (f : ModularForm (Gamma0 N) k) :
     ⇑(fricke N k f) = ⇑f ∣[k] frickeGL N :=
   rfl
 
-/-- Applying the Fricke operator twice multiplies by `(-1) ^ k * N ^ (k - 2)`. -/
+/-- For `N ≠ 0` (`[NeZero N]`) and a modular form `f` of weight `k` on `Γ₀(N)`, slashing the
+Fricke transform of `f` once more by `W_N` gives `(-1) ^ k * N ^ (k - 2)` times `f`. -/
 theorem coe_fricke_slash_frickeGL (k : ℤ) (f : ModularForm (Gamma0 N) k) :
     ⇑(fricke N k f) ∣[k] frickeGL N = ((-1 : ℂ) ^ k * (N : ℂ) ^ (k - 2)) • ⇑f :=
   slash_frickeGL_slash_frickeGL N k f

@@ -61,6 +61,13 @@ trace to level one, the level-one identities `a₁ = 240 a₀` (weight four) and
 
 When `a 1` is prime to `m`, these force `p ∤ m`
 (`CuspForm.not_prime_dvd_of_qCoeff_congr_sigmaPrimeTo`).
+
+## References
+
+* B. Mazur, *Modular curves and the Eisenstein ideal*, Publ. Math. IHÉS 47 (1977), 33–186,
+  Chapter II, §5: the Eisenstein series of (5.1) and (5.2), and Proposition (5.12), which shows
+  for primes `N ≥ 5`, with a different argument, that `∑ σ'(n) qⁿ` is not a holomorphic modular
+  form of weight two on `Γ₀(N)` modulo `N`.
 -/
 
 @[expose] public section
@@ -218,10 +225,11 @@ namespace CuspForm
 
 open ModularForm ModularForm.EisensteinCongruence
 
-/-- If the `q`-coefficients `a n` of a weight-two cusp form on `Γ₀(p)` satisfy
-`a n ≡ σ'_p(n) a 1 (mod m)` for `n ≥ 1`, then `a 1 • E - 24 f`, with `E` the weight-two
-Eisenstein form on `Γ₀(p)`, has integral coefficients, constant term `a 1 (p - 1)`, and
-all other coefficients divisible by `24 m`. -/
+/-- Let `p` be prime and `f` a weight-two cusp form on `Γ₀(p)` whose `q`-coefficients `a n` are
+integers. If `a n ≡ σ'_p(n) a 1 (mod m)` for all `n ≥ 1`, where `σ'_p(n)` is the sum of the
+divisors of `n` not divisible by `p`, then some weight-two modular form on `Γ₀(p)` has integral
+`q`-coefficients, constant term `a 1 (p - 1)`, and all other coefficients divisible by
+`24 m`. -/
 theorem exists_modularForm_qCoeff_eq_of_qCoeff_congr_sigmaPrimeTo (p m : ℕ) [Fact p.Prime]
     (f : CuspForm (Gamma0 p) 2) (af : ℕ → ℤ) (haf : ∀ n : ℕ, (af n : ℂ) = qCoeff f n)
     (hcongr : ∀ n : ℕ, n ≠ 0 → (m : ℤ) ∣ af n - (sigmaPrimeTo p n : ℤ) * af 1) :
@@ -274,8 +282,9 @@ private theorem intCoeffs_of_qCoeff_congr (p m : ℕ) [Fact p.Prime]
     exists_modularForm_qCoeff_eq_of_qCoeff_congr_sigmaPrimeTo p m f af haf hcongr
   exact ⟨F, aF, haF, h0, fun n hn => by exact_mod_cast hd n hn⟩
 
-/-- Under the Eisenstein congruence modulo `m`, `24 m` divides
-`240 (a 1)² (p - 1)² (p + 1)`. -/
+/-- Let `p` be prime, `m ≥ 2`, and `f` a weight-two cusp form on `Γ₀(p)` whose `q`-coefficients
+`a n` are integers. If `a n ≡ σ'_p(n) a 1 (mod m)` for all `n ≥ 1`, where `σ'_p(n)` is the sum of
+the divisors of `n` not divisible by `p`, then `24 m` divides `240 (a 1)² (p - 1)² (p + 1)`. -/
 theorem dvd_240_mul_qCoeff_one_sq_of_qCoeff_congr_sigmaPrimeTo (p m : ℕ) [Fact p.Prime]
     (hm : 2 ≤ m) (f : CuspForm (Gamma0 p) 2) (af : ℕ → ℤ)
     (haf : ∀ n : ℕ, (af n : ℂ) = qCoeff f n)
@@ -307,8 +316,9 @@ theorem dvd_240_mul_qCoeff_one_sq_of_qCoeff_congr_sigmaPrimeTo (p m : ℕ) [Fact
   rw [hT]
   exact dvd_neg.mpr (dvd_add (dvd_mul_of_dvd_right (hdH 1 one_ne_zero) _) (hdH p hp0))
 
-/-- Under the Eisenstein congruence modulo `m`, `24 m` divides
-`504 (a 1)³ (p - 1)³ (p² - 1)`. -/
+/-- Let `p` be prime, `m ≥ 2`, and `f` a weight-two cusp form on `Γ₀(p)` whose `q`-coefficients
+`a n` are integers. If `a n ≡ σ'_p(n) a 1 (mod m)` for all `n ≥ 1`, where `σ'_p(n)` is the sum of
+the divisors of `n` not divisible by `p`, then `24 m` divides `504 (a 1)³ (p - 1)³ (p² - 1)`. -/
 theorem dvd_504_mul_qCoeff_one_cube_of_qCoeff_congr_sigmaPrimeTo (p m : ℕ) [Fact p.Prime]
     (hm : 2 ≤ m) (f : CuspForm (Gamma0 p) 2) (af : ℕ → ℤ)
     (haf : ∀ n : ℕ, (af n : ℂ) = qCoeff f n)
@@ -383,8 +393,10 @@ private theorem false_of_isCoprime_of_prime_dvd (p : ℕ) (hp : p.Prime) (a1 : �
     · exact absurd h hsq
   exact hpz.not_isUnit (isUnit_of_dvd_one (by simpa using dvd_sub (dvd_sub h21 h10) h10))
 
-/-- A weight-two cusp form on `Γ₀(p)` with integral `q`-coefficients, first coefficient
-prime to `m ≥ 2`, and `a n ≡ σ'_p(n) a 1 (mod m)` for all `n ≥ 1` forces `p ∤ m`. -/
+/-- Let `p` be prime, `m ≥ 2`, and `f` a weight-two cusp form on `Γ₀(p)` whose `q`-coefficients
+`a n` are integers, with `a 1` prime to `m`. If `a n ≡ σ'_p(n) a 1 (mod m)` for all `n ≥ 1`, where
+`σ'_p(n)` is the sum of the divisors of `n` not divisible by `p`, then `p` does not divide
+`m`. -/
 theorem not_prime_dvd_of_qCoeff_congr_sigmaPrimeTo (p m : ℕ) [Fact p.Prime] (hm : 2 ≤ m)
     (f : CuspForm (Gamma0 p) 2) (af : ℕ → ℤ) (haf : ∀ n : ℕ, (af n : ℂ) = qCoeff f n)
     (h1 : IsCoprime (af 1) (m : ℤ))

@@ -35,10 +35,16 @@ import Mathlib.NumberTheory.ModularForms.LevelOne.Basic
 
 For a prime `p` and a modular form `X` of weight `k` and level `Γ₀(p)`, the sum
 of `X` and its slashes by the coset representatives `S T ^ j` (`0 ≤ j < p`) of
-`Γ₀(p)` in `SL(2, ℤ)` is a modular form of level one, `ModularForm.levelOneTrace`.
+`Γ₀(p)` in `SL(2, ℤ)` is a modular form of level one: the trace of `X` to level one, written
+with these coset representatives.
 Slashing `X` by the Fricke matrix `!![0, -1; p, 0]` and applying the Hecke
 operator `U_p` recovers `p ^ (k - 2)` times the non-identity part of that sum,
-so `p ^ (k - 2) X + U_p (X ∣ W_p)` is a modular form of level one.
+so `p ^ (k - 2) X + U_p (X ∣ W_p)` is a modular form of level one
+(`ModularForm.exists_levelOne_coe_eq_zpow_smul_add_heckeU_slash_fricke`).
+
+## References
+
+* A. O. L. Atkin and J. Lehner, *Hecke operators on `Γ₀(m)`*, Math. Ann. 185 (1970), 134–160.
 -/
 
 @[expose] public section
@@ -56,12 +62,15 @@ variable {p : ℕ} {k : ℤ} (X : ModularForm (CongruenceSubgroup.Gamma0 p) k)
 
 private lemma hp0 [Fact p.Prime] : p ≠ 0 := (Fact.out : p.Prime).ne_zero
 
-/-- The slash of `X` by the coset representative `S * T ^ j`. -/
-def cosetSlash (j : ℕ) : UpperHalfPlane → ℂ :=
+/-- The slash `X ∣[k] (S * T ^ j)` of a modular form `X` of weight `k` on `Γ₀(p)`. For prime
+`p`, the matrices `S * T ^ j` with `0 ≤ j < p`, together with `1`, are coset representatives of
+`Γ₀(p)` in `SL(2, ℤ)`. -/
+private def cosetSlash (j : ℕ) : UpperHalfPlane → ℂ :=
   ⇑X ∣[k] (ModularGroup.S * ModularGroup.T ^ j)
 
-/-- The underlying function of the trace of `X` to level one. -/
-def traceFun : UpperHalfPlane → ℂ :=
+/-- The function `X + ∑_{0 ≤ j < p} X ∣[k] (S * T ^ j)` for a modular form `X` of weight `k`
+on `Γ₀(p)`. For prime `p` it is the underlying function of the trace of `X` to level one. -/
+private def traceFun : UpperHalfPlane → ℂ :=
   (∑ j ∈ Finset.range p, cosetSlash X j) + ⇑X
 
 private theorem slash_eq_self_of_mem {A : SL(2, ℤ)} (hA : A ∈ CongruenceSubgroup.Gamma0 p) :
@@ -214,15 +223,15 @@ private theorem trace_slash_S [Fact p.Prime] :
   rw [e0, e1, v_zero_slash_S, hcong]
   abel
 
-theorem trace_slash_SL [Fact p.Prime] (A : SL(2, ℤ)) :
+private theorem trace_slash_SL [Fact p.Prime] (A : SL(2, ℤ)) :
     (traceFun X) ∣[k] A = traceFun X :=
   SlashInvariantForm.slash_action_generators_SL2Z (trace_slash_S X) (trace_slash_T X) A
 
-theorem trace_slash_GL [Fact p.Prime] (A : SL(2, ℤ)) :
+private theorem trace_slash_GL [Fact p.Prime] (A : SL(2, ℤ)) :
     (traceFun X) ∣[k] (Matrix.SpecialLinearGroup.mapGL ℝ A) = traceFun X :=
   trace_slash_SL X A
 
-theorem trace_holo : MDifferentiable 𝓘(ℂ) 𝓘(ℂ) (traceFun X) := by
+private theorem trace_holo : MDifferentiable 𝓘(ℂ) 𝓘(ℂ) (traceFun X) := by
   unfold traceFun
   have hsum : MDifferentiable 𝓘(ℂ) 𝓘(ℂ) (∑ j ∈ Finset.range p, cosetSlash X j) := by
     refine Finset.sum_induction _ (fun g : UpperHalfPlane → ℂ => MDifferentiable 𝓘(ℂ) 𝓘(ℂ) g)
@@ -232,7 +241,7 @@ theorem trace_holo : MDifferentiable 𝓘(ℂ) 𝓘(ℂ) (traceFun X) := by
       exact (ModularFormClass.holo X).slash _ _
   exact hsum.add (ModularFormClass.holo X)
 
-theorem trace_bdd [Fact p.Prime] : IsBoundedAtImInfty (traceFun X) := by
+private theorem trace_bdd [Fact p.Prime] : IsBoundedAtImInfty (traceFun X) := by
   have hsum : IsBoundedAtImInfty (∑ j ∈ Finset.range p, cosetSlash X j) := by
     refine Finset.sum_induction _ (fun g : UpperHalfPlane → ℂ => IsBoundedAtImInfty g)
       (fun a b ha hb => Filter.BoundedAtFilter.add ha hb) zero_form_isBoundedAtImInfty ?_
@@ -296,9 +305,9 @@ open LevelOneTrace
 
 variable {p : ℕ} [Fact p.Prime] {k : ℤ} (X : ModularForm (CongruenceSubgroup.Gamma0 p) k)
 
-/-- The trace of a modular form of level `Γ₀(p)` to level one: the sum of `X` and
-its slashes by `S * T ^ j` for `0 ≤ j < p`. -/
-def levelOneTrace : ModularForm 𝒮ℒ k where
+/-- For a prime `p` and a modular form `X` of weight `k` on `Γ₀(p)`, the trace of `X` to level
+one: the level-one modular form `X + ∑_{0 ≤ j < p} X ∣[k] (S * T ^ j)` of weight `k`. -/
+private def levelOneTrace : ModularForm 𝒮ℒ k where
   toFun := LevelOneTrace.traceFun X
   slash_action_eq' := by
     rintro γ ⟨A, rfl⟩
@@ -310,13 +319,15 @@ def levelOneTrace : ModularForm 𝒮ℒ k where
     rw [OnePoint.isBoundedAt_iff rfl, LevelOneTrace.trace_slash_GL X A]
     exact LevelOneTrace.trace_bdd X
 
-theorem coe_levelOneTrace :
+private theorem coe_levelOneTrace :
     ⇑(levelOneTrace X)
       = (∑ j ∈ Finset.range p, ⇑X ∣[k] (ModularGroup.S * ModularGroup.T ^ j)) + ⇑X :=
   rfl
 
-/-- For a prime `p` and `W` the Fricke matrix `!![0, -1; p, 0]`, the function
-`p ^ (k - 2) • X + U_p (X ∣[k] W)` is a modular form of level one. -/
+/-- Let `p` be prime, `X` a modular form of weight `k` on `Γ₀(p)`, and `W ∈ GL(2, ℝ)` the
+Fricke matrix `!![0, -1; p, 0]`. Then `p ^ (k - 2) • X + U_p (X ∣[k] W)` is a modular form of
+weight `k` and level one, where `U_p` is `heckeU k p`, the sum of the weight-`k` slashes by
+`!![1, j; 0, p]` for `0 ≤ j < p`. -/
 theorem exists_levelOne_coe_eq_zpow_smul_add_heckeU_slash_fricke (p : ℕ) [Fact p.Prime]
     (k : ℤ) (X : ModularForm (CongruenceSubgroup.Gamma0 p) k) (W : GL (Fin 2) ℝ)
     (hW : ((W : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) = !![0, -1; (p : ℝ), 0]) :

@@ -61,6 +61,12 @@ on `Γ₀(p)`. Its `q`-expansion has constant term `p - 1` and `n`-th coefficien
 
 * `ModularForm.qCoeff_eisensteinTwoGamma0`: its `q`-coefficients are `eisensteinTwoCoeff p`.
 * `ModularForm.exists_modularForm_qCoeff_eq_eisensteinTwoCoeff`.
+
+## References
+
+* B. Mazur, *Modular curves and the Eisenstein ideal*, Publ. Math. IHÉS 47 (1977), 33–186,
+  Chapter II, (5.1): the `q`-expansion `e'` of the weight-two Eisenstein series on `Γ₀(N)`,
+  which is `-1` times the form here.
 -/
 
 @[expose] public section
@@ -73,19 +79,22 @@ noncomputable section
 
 namespace ModularForm
 
-/-- The sum of the divisors of `n` that are not divisible by `p`. -/
+/-- The sum of the divisors of `n` that are not divisible by `p`; it is `0` for `n = 0`, which
+has no divisors in Mathlib's convention. -/
 def sigmaPrimeTo (p n : ℕ) : ℕ := ∑ d ∈ n.divisors.filter (fun d => ¬ p ∣ d), d
 
-/-- The `q`-coefficients of the weight-two Eisenstein form on `Γ₀(p)`: `p - 1` in degree
-zero and `24 σ'_p(n)` in degree `n ≥ 1`. -/
+/-- The integer `p - 1` for `n = 0` and `24 σ'_p(n)` for `n ≥ 1`, where `σ'_p(n)` is the sum of
+the divisors of `n` not divisible by `p`. For `p ≠ 0` these are the `q`-coefficients of the
+weight-two Eisenstein form `p E₂(pτ) - E₂(τ)` on `Γ₀(p)`. -/
 def eisensteinTwoCoeff (p n : ℕ) : ℤ :=
   if n = 0 then (p : ℤ) - 1 else 24 * (sigmaPrimeTo p n : ℤ)
 
-/-- The constant coefficient is `p - 1`. -/
+/-- For every `p`, the coefficient `eisensteinTwoCoeff p 0` is `p - 1`. -/
 theorem eisensteinTwoCoeff_zero (p : ℕ) : eisensteinTwoCoeff p 0 = (p : ℤ) - 1 := by
   simp [eisensteinTwoCoeff]
 
-/-- The coefficient in positive degree `n` is `24 σ'_p(n)`. -/
+/-- For every `p` and `n ≠ 0`, the coefficient `eisensteinTwoCoeff p n` is `24 σ'_p(n)`, where
+`σ'_p(n)` is the sum of the divisors of `n` not divisible by `p`. -/
 theorem eisensteinTwoCoeff_of_ne_zero (p : ℕ) {n : ℕ} (hn : n ≠ 0) :
     eisensteinTwoCoeff p n = 24 * (sigmaPrimeTo p n : ℤ) := by
   simp [eisensteinTwoCoeff, hn]
@@ -147,8 +156,8 @@ private theorem D2_slash_heckeDiag (p : ℕ) (hp : p ≠ 0) (γ γ' : SL(2, ℤ)
   congr 1
   linear_combination (2 * (π : ℂ) * I) * hdiv
 
-/-- The function `E₂ ∣[2] diag(p, 1) - E₂` is invariant under the weight-two slash action
-of `Γ₀(p)`. -/
+/-- For `p ≠ 0` (`[NeZero p]`), the function `E₂ ∣[2] diag(p, 1) - E₂`, that is
+`τ ↦ p E₂(pτ) - E₂(τ)`, is invariant under the weight-two slash action of `Γ₀(p)`. -/
 theorem eisensteinTwoSlash_slash_eq_self (p : ℕ) [NeZero p] :
     ∀ γ ∈ ((Gamma0 p : Subgroup SL(2, ℤ)) : Subgroup (GL (Fin 2) ℝ)),
       (EisensteinSeries.E2 ∣[(2 : ℤ)] heckeDiagMatrix p - EisensteinSeries.E2) ∣[(2 : ℤ)] γ
@@ -182,7 +191,8 @@ theorem eisensteinTwoSlash_slash_eq_self (p : ℕ) [NeZero p] :
 
 /-! ### Boundedness at the cusps -/
 
-/-- The correction term `D₂ γ` in the transformation law of `E₂` is bounded at `i∞`. -/
+/-- For every `γ ∈ SL(2, ℤ)`, the correction term `D₂ γ` in the transformation law of `E₂` is
+bounded at `i∞`. -/
 theorem _root_.EisensteinSeries.isBoundedAtImInfty_D2 (γ : SL(2, ℤ)) :
     IsBoundedAtImInfty (EisensteinSeries.D2 γ) := by
   rcases eq_or_ne (γ 1 0) 0 with hc | hc
@@ -210,7 +220,7 @@ theorem _root_.EisensteinSeries.isBoundedAtImInfty_D2 (γ : SL(2, ℤ)) :
     rw [norm_div]
     exact div_le_self (norm_nonneg _) hone
 
-/-- Every `SL(2, ℤ)`-translate of `E₂` is bounded at `i∞`. -/
+/-- For every `γ ∈ SL(2, ℤ)`, the weight-two slash `E₂ ∣[2] γ` is bounded at `i∞`. -/
 theorem _root_.EisensteinSeries.isBoundedAtImInfty_E2_slash (γ : SL(2, ℤ)) :
     IsBoundedAtImInfty (EisensteinSeries.E2 ∣[(2 : ℤ)] γ) := by
   rw [EisensteinSeries.E2_slash_action, sub_eq_add_neg]
@@ -257,7 +267,8 @@ private lemma exists_row_zero (p : ℕ) (hp : p ≠ 0) (γ : SL(2, ℤ)) :
     rw [hentry N, hN0, hN1]
     exact_mod_cast hz0
 
-/-- Every `SL(2, ℤ)`-translate of `E₂ ∣[2] diag(p, 1) - E₂` is bounded at `i∞`. -/
+/-- For `p ≠ 0` (`[NeZero p]`) and every `γ ∈ SL(2, ℤ)`, the weight-two slash by `γ` of
+`E₂ ∣[2] diag(p, 1) - E₂` is bounded at `i∞`. -/
 theorem isBoundedAtImInfty_eisensteinTwoSlash_slash (p : ℕ) [NeZero p] (γ : SL(2, ℤ)) :
     IsBoundedAtImInfty
       ((EisensteinSeries.E2 ∣[(2 : ℤ)] heckeDiagMatrix p - EisensteinSeries.E2) ∣[(2 : ℤ)] γ) := by
@@ -360,7 +371,8 @@ private lemma hasSum_zero_extension_of_dvd {p : ℕ} (hp : p ≠ 0) (c : ℕ →
   rw [hcomp]
   exact h
 
-/-- The `q`-expansion of `p E₂(pτ) - E₂(τ)`: its coefficients are `eisensteinTwoCoeff p`. -/
+/-- For `p ≠ 0` (`[NeZero p]`) and `τ` in the upper half-plane, the series
+`∑ n, eisensteinTwoCoeff p n * q ^ n` with `q = exp(2πiτ)` converges to `p E₂(pτ) - E₂(τ)`. -/
 theorem hasSum_eisensteinTwoCoeff_mul_cexp_pow (p : ℕ) [NeZero p] (τ : ℍ) :
     HasSum (fun n : ℕ => (eisensteinTwoCoeff p n : ℂ) * cexp (2 * π * I * τ) ^ n)
       ((p : ℂ) * EisensteinSeries.E2 (heckeDiagMatrix p • τ) - EisensteinSeries.E2 τ) := by
@@ -399,12 +411,14 @@ theorem hasSum_eisensteinTwoCoeff_mul_cexp_pow (p : ℕ) [NeZero p] (τ : ℍ) :
 
 /-! ### The modular form -/
 
-/-- The function `E₂ ∣[2] diag(p, 1) - E₂` is holomorphic on the upper half-plane. -/
+/-- For every `p`, the function `E₂ ∣[2] heckeDiagMatrix p - E₂` is holomorphic on the upper
+half-plane; `heckeDiagMatrix p` is `diag(p, 1)` for `p ≠ 0` and `1` for `p = 0`. -/
 theorem mdifferentiable_eisensteinTwoSlash (p : ℕ) :
     MDiff (EisensteinSeries.E2 ∣[(2 : ℤ)] heckeDiagMatrix p - EisensteinSeries.E2) :=
   (E2_mdifferentiable.slash 2 (heckeDiagMatrix p)).sub E2_mdifferentiable
 
-/-- The function `E₂ ∣[2] diag(p, 1) - E₂` is bounded at every cusp of `Γ₀(p)`. -/
+/-- For `p ≠ 0` (`[NeZero p]`), the function `E₂ ∣[2] diag(p, 1) - E₂` is bounded in weight
+two at every cusp of `Γ₀(p)`. -/
 theorem isBoundedAt_eisensteinTwoSlash (p : ℕ) [NeZero p] {c : OnePoint ℝ}
     (hc : IsCusp c (Gamma0 p)) :
     c.IsBoundedAt (EisensteinSeries.E2 ∣[(2 : ℤ)] heckeDiagMatrix p - EisensteinSeries.E2) 2 := by
@@ -413,28 +427,33 @@ theorem isBoundedAt_eisensteinTwoSlash (p : ℕ) [NeZero p] {c : OnePoint ℝ}
   intro γ _
   exact isBoundedAtImInfty_eisensteinTwoSlash_slash p γ
 
-/-- The weight-two Eisenstein form `p E₂(pτ) - E₂(τ)` on `Γ₀(p)`. -/
+/-- For `p ≠ 0` (`[NeZero p]`), the weight-two Eisenstein form `p E₂(pτ) - E₂(τ)` on
+`Γ₀(p)`. -/
 noncomputable def eisensteinTwoGamma0 (p : ℕ) [NeZero p] : ModularForm (Gamma0 p) 2 where
   toFun := EisensteinSeries.E2 ∣[(2 : ℤ)] heckeDiagMatrix p - EisensteinSeries.E2
   slash_action_eq' := eisensteinTwoSlash_slash_eq_self p
   holo' := mdifferentiable_eisensteinTwoSlash p
   bdd_at_cusps' hc := isBoundedAt_eisensteinTwoSlash p hc
 
-/-- The underlying function of `eisensteinTwoGamma0 p` is `E₂ ∣[2] diag(p, 1) - E₂`. -/
+/-- For `p ≠ 0` (`[NeZero p]`), the underlying function of `eisensteinTwoGamma0 p` is
+`E₂ ∣[2] diag(p, 1) - E₂`. -/
 @[simp]
 theorem coe_eisensteinTwoGamma0 (p : ℕ) [NeZero p] :
     ⇑(eisensteinTwoGamma0 p) =
       EisensteinSeries.E2 ∣[(2 : ℤ)] heckeDiagMatrix p - EisensteinSeries.E2 :=
   rfl
 
-/-- `eisensteinTwoGamma0 p τ = p E₂(pτ) - E₂(τ)`. -/
+/-- For `p ≠ 0` (`[NeZero p]`) and `τ` in the upper half-plane,
+`eisensteinTwoGamma0 p τ = p E₂(pτ) - E₂(τ)`. -/
 theorem eisensteinTwoGamma0_apply (p : ℕ) [NeZero p] (τ : ℍ) :
     eisensteinTwoGamma0 p τ =
       (p : ℂ) * EisensteinSeries.E2 (heckeDiagMatrix p • τ) - EisensteinSeries.E2 τ := by
   rw [coe_eisensteinTwoGamma0, Pi.sub_apply, slash_heckeDiagMatrix_apply 2 (NeZero.ne p)]
   norm_num
 
-/-- The `q`-coefficients of `eisensteinTwoGamma0 p` are `eisensteinTwoCoeff p`. -/
+/-- For `p ≠ 0` (`[NeZero p]`), the `q`-coefficients of `eisensteinTwoGamma0 p` are
+`eisensteinTwoCoeff p n`: `p - 1` for `n = 0` and `24 σ'_p(n)` for `n ≥ 1`, where `σ'_p(n)` is the
+sum of the divisors of `n` not divisible by `p`. -/
 theorem qCoeff_eisensteinTwoGamma0 (p : ℕ) [NeZero p] (n : ℕ) :
     ModularFormClass.qCoeff (eisensteinTwoGamma0 p) n = (eisensteinTwoCoeff p n : ℂ) := by
   rw [ModularFormClass.qCoeff_eq]
@@ -449,8 +468,9 @@ theorem qCoeff_eisensteinTwoGamma0 (p : ℕ) [NeZero p] (n : ℕ) :
     simp [Function.Periodic.qParam]
   simpa [hq, smul_eq_mul] using h
 
-/-- For a prime `p` there is a weight-two modular form on `Γ₀(p)` whose `q`-coefficients
-are `eisensteinTwoCoeff p`. -/
+/-- For a prime `p`, some weight-two modular form on `Γ₀(p)` has `q`-coefficients
+`eisensteinTwoCoeff p n`: `p - 1` for `n = 0` and `24 σ'_p(n)` for `n ≥ 1`, where `σ'_p(n)` is the
+sum of the divisors of `n` not divisible by `p`. -/
 theorem exists_modularForm_qCoeff_eq_eisensteinTwoCoeff (p : ℕ) [Fact p.Prime] :
     ∃ E : ModularForm (Gamma0 p) 2,
       ∀ n : ℕ, ModularFormClass.qCoeff E n = (eisensteinTwoCoeff p n : ℂ) :=
