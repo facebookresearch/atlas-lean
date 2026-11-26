@@ -21,6 +21,7 @@ public import Mathlib.RingTheory.PowerSeries.Inverse
 public import Mathlib.RingTheory.PowerSeries.Substitution
 public import Mathlib.RingTheory.Polynomial.Pochhammer
 public import Mathlib.Order.Interval.Finset.Nat
+import Mathlib.Algebra.Group.ForwardDiff
 import Mathlib.Algebra.Polynomial.Taylor
 import Mathlib.Data.Nat.Choose.Sum
 import Mathlib.NumberTheory.ZetaValues
@@ -88,37 +89,6 @@ private theorem eulerAlpha_rec (k : ℕ) :
   rw [eulerAlpha_succ_succ]
   ring
 
-/-- The average of the Euler polynomial at adjacent arguments recovers the monomial. -/
-private theorem eulerPoly_shift (n : ℕ) :
-    taylor 1 (eulerPoly n) + eulerPoly n = (2 : ℚ) • X ^ n := by
-  apply Polynomial.funext
-  intro x
-  have dup := bernoulliFun_mul (n + 1) (m := 2) (by decide) ((x : ℝ) / 2)
-  have cast_eval (y : ℚ) : bernoulliFun (n + 1) (y : ℝ) =
-      ((Polynomial.bernoulli (n + 1)).eval y : ℚ) := by
-    exact Polynomial.eval_map_apply (algebraMap ℚ ℝ) y
-  norm_num [sum_range_succ] at dup
-  rw [show 2 * ((x : ℝ) / 2) = x by ring,
-    show (x : ℝ) / 2 + 1 / 2 = ((x + 1 : ℚ) / 2 : ℚ) by push_cast; ring,
-    show (x : ℝ) / 2 = ((x / 2 : ℚ) : ℝ) by push_cast; rfl,
-    cast_eval, cast_eval, cast_eval] at dup
-  have hd : (Polynomial.bernoulli (n + 1)).eval x =
-      2 ^ n * ((Polynomial.bernoulli (n + 1)).eval (x / 2) +
-        (Polynomial.bernoulli (n + 1)).eval ((x + 1) / 2)) := by
-    apply Rat.cast_injective (α := ℝ)
-    push_cast
-    rw [pow_succ] at dup
-    linarith
-  have step := Polynomial.bernoulli_eval_one_add (n + 1) x
-  simp only [Nat.cast_add, Nat.cast_one, Nat.add_sub_cancel] at step
-  rw [add_comm 1 x] at step
-  simp only [eval_add, taylor_eval, eulerPoly, eval_smul, eval_sub, eval_comp, eval_mul,
-    eval_C, eval_X, eval_pow, smul_eq_mul]
-  simp only [one_div_mul_eq_div]
-  field_simp
-  rw [pow_succ]
-  linear_combination step + 2 * hd
-
 /-- The forward difference operator `Δ = T₁ - 1`. -/
 private noncomputable def fwdDiff : Module.End ℚ ℚ[X] :=
   (taylor (1 : ℚ) : Module.End ℚ ℚ[X]) - 1
@@ -127,47 +97,28 @@ private noncomputable def fwdDiff : Module.End ℚ ℚ[X] :=
 private noncomputable def Lop : Module.End ℚ ℚ[X] :=
   (taylor (2 : ℚ) : Module.End ℚ ℚ[X]) + 1
 
-private theorem taylor_one_pow (j : ℕ) (p : ℚ[X]) :
-    ((taylor (1 : ℚ) : Module.End ℚ ℚ[X]) ^ j) p = taylor (j : ℚ) p := by
-  induction j generalizing p with
+/-- Evaluating an iterate of the polynomial forward difference at `x` gives Mathlib's iterated
+forward difference, at step one, of the evaluation map of the polynomial at `x`. -/
+private theorem eval_fwdDiff_pow (k : ℕ) (p : ℚ[X]) (x : ℚ) :
+    ((fwdDiff ^ k) p).eval x = (_root_.fwdDiff (1 : ℚ))^[k] (fun y => p.eval y) x := by
+  induction k generalizing p with
   | zero => simp
-  | succ j ih =>
-    rw [pow_succ, mul_apply_eq_comp, ih, taylor_taylor, Nat.cast_add, Nat.cast_one]
-
-private theorem neg_one_pow_apply (m : ℕ) (p : ℚ[X]) :
-    ((-1 : Module.End ℚ ℚ[X]) ^ m) p = (-1 : ℚ) ^ m • p := by
-  induction m generalizing p with
-  | zero => simp
-  | succ m ih =>
-    rw [pow_succ, mul_apply_eq_comp, ih, pow_succ, ← smul_smul]
-    congr 1
-    simp
-
--- Evaluate the binomial theorem for commuting endomorphisms at a polynomial.
-private theorem binomial_apply (a b : Module.End ℚ ℚ[X]) (hab : Commute a b)
-    (k : ℕ) (p : ℚ[X]) :
-    ((a + b) ^ k) p = ∑ j ∈ range (k + 1),
-      (k.choose j : ℚ) • (a ^ j) ((b ^ (k - j)) p) := by
-  rw [hab.add_pow]
-  simp only [LinearMap.sum_apply, mul_apply_eq_comp, natCast_apply_eq_smul, map_nsmul,
-    Nat.cast_smul_eq_nsmul]
+  | succ k ih =>
+    have hstep : (fun y => (fwdDiff p).eval y) = _root_.fwdDiff (1 : ℚ) (fun y => p.eval y) := by
+      funext y
+      simp [fwdDiff, _root_.fwdDiff, taylor_eval]
+    rw [pow_succ, mul_apply_eq_comp, ih, Function.iterate_succ_apply, hstep]
 
 private theorem fwdDiff_pow_X_pow (k n : ℕ) :
     (fwdDiff ^ k) (X ^ n) =
       ∑ j ∈ Finset.range (k + 1),
         ((Nat.choose k j : ℚ) * (-1) ^ (k - j)) • (X + C (j : ℚ)) ^ n := by
-  have hcomm : Commute (taylor (1 : ℚ) : Module.End ℚ ℚ[X])
-      (-1 : Module.End ℚ ℚ[X]) := by
-    simp only [Commute, SemiconjBy]
-    apply LinearMap.ext
-    intro p
-    simp [mul_apply_eq_comp, map_neg]
-  have hdecomp : fwdDiff = (taylor (1 : ℚ) : Module.End ℚ ℚ[X]) + (-1) := by
-    simp [fwdDiff, sub_eq_add_neg]
-  rw [hdecomp, binomial_apply _ _ hcomm]
+  apply Polynomial.funext
+  intro x
+  rw [eval_fwdDiff_pow, fwdDiff_iter_eq_sum_shift, eval_finsetSum]
   apply sum_congr rfl
-  intro j hj
-  rw [taylor_one_pow, neg_one_pow_apply, map_smul, taylor_X_pow, ← smul_smul]
+  intro j _
+  simp [zsmul_eq_mul, mul_comm]
 
 private theorem genStirling_eq (n k : ℕ) :
     genStirlingPoly n k = (1 / (Nat.factorial k : ℚ)) • (fwdDiff ^ k) (X ^ n) := by
@@ -195,54 +146,13 @@ private theorem fwdDiff_C (a : ℚ) : fwdDiff (C a) = 0 := by
   intro x
   simp [fwdDiff]
 
-private theorem fwdDiff_degree_lt (p : ℚ[X]) (hp : p ≠ 0) :
-    (fwdDiff p).degree < p.degree := by
-  have hdeg : (taylor (1 : ℚ) p).degree = p.degree := degree_taylor p 1
-  have h0 : taylor (1 : ℚ) p ≠ 0 := by
-    intro h
-    rw [h, degree_zero] at hdeg
-    exact hp (Polynomial.degree_eq_bot.mp hdeg.symm)
-  have hlt := degree_sub_lt_left hdeg h0 (leadingCoeff_taylor (1 : ℚ) p)
-  rw [hdeg] at hlt
-  simpa [fwdDiff] using hlt
-
-private theorem natDegree_fwdDiff_pow (k n : ℕ) :
-    ((fwdDiff ^ k) (X ^ n)).natDegree ≤ n - k := by
-  induction k with
-  | zero => simp
-  | succ k ih =>
-    have hstep : (fwdDiff ^ (k + 1)) (X ^ n) = fwdDiff ((fwdDiff ^ k) (X ^ n)) := by
-      rw [pow_succ', mul_apply_eq_comp]
-    rw [hstep]
-    by_cases hq : (fwdDiff ^ k) (X ^ n) = 0
-    · rw [hq, map_zero, natDegree_zero]
-      omega
-    · have hlt := fwdDiff_degree_lt _ hq
-      have hle : (fwdDiff ((fwdDiff ^ k) (X ^ n))).natDegree ≤
-          ((fwdDiff ^ k) (X ^ n)).natDegree - 1 := by
-        by_cases h0 : fwdDiff ((fwdDiff ^ k) (X ^ n)) = 0
-        · rw [h0, natDegree_zero]
-          omega
-        · have hlt'' := (Polynomial.natDegree_lt_iff_degree_lt h0).mpr
-            (hlt.trans_eq (Polynomial.degree_eq_natDegree hq))
-          omega
-      omega
-
-private theorem fwdDiff_pow_succ_X_pow_eq_zero (n : ℕ) :
-    (fwdDiff ^ (n + 1)) (X ^ n) = 0 := by
-  have hstep : (fwdDiff ^ (n + 1)) (X ^ n) = fwdDiff ((fwdDiff ^ n) (X ^ n)) := by
-    rw [pow_succ', mul_apply_eq_comp]
-  rw [hstep]
-  have hle := natDegree_fwdDiff_pow n n
-  rw [Nat.sub_self] at hle
-  have hC : (fwdDiff ^ n) (X ^ n) = C (((fwdDiff ^ n) (X ^ n)).coeff 0) :=
-    Polynomial.eq_C_of_natDegree_eq_zero (Nat.le_zero.mp hle)
-  rw [hC, fwdDiff_C]
-
-private theorem fwdDiff_pow_succ_succ_X_pow_eq_zero (n : ℕ) :
-    (fwdDiff ^ (n + 2)) (X ^ n) = 0 := by
-  have h2 : n + 2 = (n + 1) + 1 := by omega
-  rw [h2, pow_succ', mul_apply_eq_comp, fwdDiff_pow_succ_X_pow_eq_zero, map_zero]
+private theorem fwdDiff_pow_X_pow_eq_zero_of_lt {m n : ℕ} (h : n < m) :
+    (fwdDiff ^ m) (X ^ n) = 0 := by
+  apply Polynomial.funext
+  intro x
+  rw [eval_fwdDiff_pow, eval_zero]
+  simp only [eval_pow, eval_X]
+  rw [fwdDiff_iter_pow_eq_zero_of_lt h, Pi.zero_apply]
 
 private theorem fwdDiff_apply (q : ℚ[X]) : fwdDiff q = taylor (1 : ℚ) q - q := by
   simp [fwdDiff]
@@ -344,9 +254,9 @@ private theorem Lop_Rhs_succ (M : ℕ) :
         eulerAlpha (M + 1) • (fwdDiff ^ (M + 1 + 1 + 1)) (X ^ (M + 1)) := htel
   rw [htel2]
   have hvan1 : (fwdDiff ^ (M + 1 + 1)) (X ^ (M + 1)) = 0 :=
-    fwdDiff_pow_succ_X_pow_eq_zero (M + 1)
-  have hvan2 : (fwdDiff ^ (M + 1 + 1 + 1)) (X ^ (M + 1)) = 0 := by
-    rw [pow_succ', mul_apply_eq_comp, hvan1, map_zero]
+    fwdDiff_pow_X_pow_eq_zero_of_lt (by omega)
+  have hvan2 : (fwdDiff ^ (M + 1 + 1 + 1)) (X ^ (M + 1)) = 0 :=
+    fwdDiff_pow_X_pow_eq_zero_of_lt (by omega)
   rw [pow_zero, one_apply_eq_self, pow_one, hvan1, hvan2]
   simp
 

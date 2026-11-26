@@ -37,8 +37,10 @@ noncomputable def eulerPoly (n : ℕ) : ℚ[X] :=
     (2 : ℚ) ^ (n + 1) •
       (Polynomial.bernoulli (n + 1)).comp (C (1 / 2) * X))
 
-/-- The average of the Euler polynomial at adjacent arguments recovers the monomial. -/
-private theorem eulerPoly_shift (n : ℕ) :
+/-- **Adjacent sum of an Euler polynomial.** Let $E_n(x)$ denote the Euler polynomial. For every
+natural number $n$, $E_n(x + 1) + E_n(x) = 2x^n$ as polynomials in $x$ with rational coefficients;
+here `taylor 1` is the shift $p(x) \mapsto p(x + 1)$. -/
+theorem eulerPoly_shift (n : ℕ) :
     taylor 1 (eulerPoly n) + eulerPoly n = (2 : ℚ) • X ^ n := by
   apply Polynomial.funext
   intro x
