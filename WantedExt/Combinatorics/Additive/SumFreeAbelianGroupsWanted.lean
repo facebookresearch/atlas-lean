@@ -24,8 +24,8 @@ public import MathlibExt.GroupTheory.FiniteAbelian.SubgroupCount
 Statements from Nathanaël Hassler and Andrew Treglown, *Notes on Sum-Free Sets in Abelian
 Groups*, INTEGERS 26 (2026), Article A97 (arXiv:2506.17401; definitions taken from the arXiv
 TeX source): counts of maximal (distinct) sum-free sets, the container and structure lemmas
-the paper quotes, subgroup-counting lemmas, and the quoted bounds on the number of maximal
-independent sets in graphs.
+the paper quotes, and subgroup-counting lemmas. The quoted bounds on the number of maximal
+independent sets in graphs are in `MathlibExt.Combinatorics.SimpleGraph.MaximalIndependentSets`.
 
 A *Schur triple* is `x + y = z`; it is *distinct* when `x, y, z` are pairwise distinct. The
 paper's decompositions `G = ℤ_{2^{α₁}} ⊕ … ⊕ K` are written as explicit products.
@@ -147,23 +147,6 @@ public theorem_wanted ncard_index_two_addSubgroup_rank (r₁ r₂ : ℕ) (hr : 1
         H.index = 2 ∧ AddGroup.rank H = r₁ + r₂}.ncard = 2 ^ r₁ - 1 ∧
       {H : AddSubgroup (((i : Fin r₁) → ZMod (2 ^ α i)) × (Fin r₂ → ZMod 2)) |
         H.index = 2 ∧ AddGroup.rank H = r₁ + r₂ - 1}.ncard = 2 ^ (r₁ + r₂) - 2 ^ r₁
-
-/-- **Almost triangle-free bound.** Let $\Gamma$ be a finite graph, let $T$ be a set of vertices
-of $\Gamma$, let $n \ge 1$ and $D \ge 1$ be integers, and let $k$ be a real number. Suppose
-that the graph $\Gamma'$ obtained from $\Gamma$ by deleting $T$ is triangle-free, has $n$
-vertices and has at least $n/2 + k$ edges, and that $\Gamma$ has maximum degree
-$\Delta(\Gamma) \le D$. Then the number $\mathrm{mis}(\Gamma)$ of maximal independent sets of
-$\Gamma$ satisfies $\mathrm{mis}(\Gamma) \le 2^{n/2 - k/(100D^2) + 2|T|}$.
-
-Source: Nathanaël Hassler and Andrew Treglown, *Notes on Sum-Free Sets in Abelian Groups*,
-INTEGERS 26 (2026), Article A97, Lemma 6 (`integers-2026-A97-lem-6`). -/
-public theorem_wanted maxIndepSetCount_le_of_almost_triangleFree {V : Type*} [Fintype V]
-    (Γ : SimpleGraph V) [DecidableRel Γ.Adj] (T : Finset V) {n D : ℕ} (hn : 1 ≤ n)
-    (hD : 1 ≤ D) (k : ℝ)
-    (htri : ∀ a b c : V, a ∉ T → b ∉ T → c ∉ T → ¬(Γ.Adj a b ∧ Γ.Adj b c ∧ Γ.Adj a c))
-    (hΔ : Γ.maxDegree ≤ D) (hv : Fintype.card V - T.card = n)
-    (he : (n : ℝ) / 2 + k ≤ {e ∈ Γ.edgeSet | ∀ v ∈ e, v ∉ T}.ncard) :
-    (maxIndepSetCount Γ : ℝ) ≤ (2 : ℝ) ^ ((n : ℝ) / 2 - k / (100 * (D : ℝ) ^ 2) + 2 * T.card)
 
 /-- **Random sum-free sets.** For a finite abelian group $G$ let $\mu(G)$ be the size of a
 largest sum-free subset of $G$. Let $(G_n)_{n \ge 0}$ be finite abelian groups with

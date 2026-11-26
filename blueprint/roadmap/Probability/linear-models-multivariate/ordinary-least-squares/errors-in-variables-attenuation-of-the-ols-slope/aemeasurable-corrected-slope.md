@@ -1,0 +1,3 @@
+# Measurability of the corrected slope
+
+Let $\mu$ be a measure and $\xi_i, u_i, \varepsilon_i$ ($i \ge 0$) real random variables satisfying the classical errors-in-variables hypotheses (pairwise independent, identically distributed, square-integrable, pairwise uncorrelated triples), let $\beta_0, \beta \in \mathbb{R}$, and let $s$ be an almost everywhere measurable real random variable. For every $n$, the corrected slope $S_{xy}/(S_{xx} - n\,s)$ of the first $n$ observations $x_i = \xi_i + u_i$, $y_i = \beta_0 + \beta\xi_i + \varepsilon_i$ (with a quotient by $0$ taken to be $0$) is almost everywhere measurable.
