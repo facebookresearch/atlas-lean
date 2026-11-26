@@ -14,8 +14,9 @@ import MathlibExt.AlgebraicGeometry.KahlerHiggsCorrespondenceNativeSmoothBundleS
 
 The multiplication theorem gives closure under successive smooth coefficients and their product.
 
-Source: Carlos Simpson, *The Hodge filtration on nonabelian cohomology*,
-alg-geom/9604005v1, section 2 and Theorem 2.3, pp. 7--11.
+Background: Carlos Simpson, *The Hodge filtration on nonabelian cohomology*,
+alg-geom/9604005v1, section 2 and Theorem 2.3, pp. 7--11. That theorem motivates the
+Kähler Higgs correspondence this lemma serves; it is not the source of this lemma.
 -/
 
 namespace MathlibExtTest.AlgebraicGeometry
@@ -30,11 +31,6 @@ open MathlibExt.AlgebraicGeometry.HolomorphicSmoothScalarModels
 open scoped Manifold ContDiff
 
 example {n : ℕ} {M : Type} [TopologicalSpace M] [ChartedSpace (Coordinates n) M]
-    [IsManifold 𝓘(ℝ, Coordinates n) ∞ M] [IsManifold 𝓘(ℂ, Coordinates n) ∞ M]
-    [MathlibExt.AlgebraicGeometry.HolomorphicCoefficientSheaves.SheafCondition (Coordinates n) M]
-    [CotangentSectionCalculus (n := n) (M := M)] [CotangentSheafCondition (n := n) (M := M)]
-    [HasSheafify (Opens.grothendieckTopology M) AddCommGrpCat.{0}]
-    [(Opens.grothendieckTopology M).WEqualsLocallyBijective AddCommGrpCat.{0}]
     {r : ℕ} (B : SmoothComplexBundle n M r) (U : Opens M)
     (f g : SmoothScalars (n := n) U) (s : RoughSection B U) (hs : IsSmoothSection B U s) :
     IsSmoothSection B U (f • (g • s)) := by
@@ -43,11 +39,6 @@ example {n : ℕ} {M : Type} [TopologicalSpace M] [ChartedSpace (Coordinates n) 
     (SmoothSectionMultiplication.smooth U g s hs)
 
 example {n : ℕ} {M : Type} [TopologicalSpace M] [ChartedSpace (Coordinates n) M]
-    [IsManifold 𝓘(ℝ, Coordinates n) ∞ M] [IsManifold 𝓘(ℂ, Coordinates n) ∞ M]
-    [MathlibExt.AlgebraicGeometry.HolomorphicCoefficientSheaves.SheafCondition (Coordinates n) M]
-    [CotangentSectionCalculus (n := n) (M := M)] [CotangentSheafCondition (n := n) (M := M)]
-    [HasSheafify (Opens.grothendieckTopology M) AddCommGrpCat.{0}]
-    [(Opens.grothendieckTopology M).WEqualsLocallyBijective AddCommGrpCat.{0}]
     {r : ℕ} (B : SmoothComplexBundle n M r) (U : Opens M)
     (f g : SmoothScalars (n := n) U) (s : RoughSection B U) (hs : IsSmoothSection B U s) :
     IsSmoothSection B U ((f * g) • s) := by

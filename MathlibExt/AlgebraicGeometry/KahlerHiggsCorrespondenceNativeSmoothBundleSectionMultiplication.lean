@@ -14,8 +14,9 @@ public import MathlibExt.AlgebraicGeometry.HolomorphicSmoothScalarModels
 
 Multiplication by native smooth complex functions preserves smooth sections of the same bundle.
 
-Source: Carlos Simpson, *The Hodge filtration on nonabelian cohomology*,
-alg-geom/9604005v1, section 2 and Theorem 2.3, pp. 7--11.
+Background: Carlos Simpson, *The Hodge filtration on nonabelian cohomology*,
+alg-geom/9604005v1, section 2 and Theorem 2.3, pp. 7--11. That theorem motivates the
+Kähler Higgs correspondence this lemma serves; it is not the source of this lemma.
 -/
 
 open CategoryTheory TopologicalSpace Set
@@ -28,12 +29,7 @@ open scoped Manifold ContDiff
 
 /-- Actual native smooth coefficient multiplication preserves the same bundle sections. -/
 public theorem native_smooth_bundle_section_multiplication {n : ℕ} {M : Type}
-    [TopologicalSpace M] [ChartedSpace (Coordinates n) M]
-    [IsManifold 𝓘(ℝ, Coordinates n) ∞ M] [IsManifold 𝓘(ℂ, Coordinates n) ∞ M]
-    [MathlibExt.AlgebraicGeometry.HolomorphicCoefficientSheaves.SheafCondition (Coordinates n) M]
-    [CotangentSectionCalculus (n := n) (M := M)] [CotangentSheafCondition (n := n) (M := M)]
-    [HasSheafify (Opens.grothendieckTopology M) AddCommGrpCat.{0}]
-    [(Opens.grothendieckTopology M).WEqualsLocallyBijective AddCommGrpCat.{0}] {r : ℕ}
+    [TopologicalSpace M] [ChartedSpace (Coordinates n) M] {r : ℕ}
     (B : SmoothComplexBundle n M r) : SmoothSectionMultiplication B := by
   classical
   refine ⟨fun U f s hs i => ?_⟩
