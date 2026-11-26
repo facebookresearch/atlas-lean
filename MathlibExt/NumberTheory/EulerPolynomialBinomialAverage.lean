@@ -37,8 +37,10 @@ noncomputable def eulerPoly (n : ℕ) : ℚ[X] :=
     (2 : ℚ) ^ (n + 1) •
       (Polynomial.bernoulli (n + 1)).comp (C (1 / 2) * X))
 
-/-- The average of the Euler polynomial at adjacent arguments recovers the monomial. -/
-private theorem eulerPoly_shift (n : ℕ) :
+/-- The average of the Euler polynomial at adjacent arguments recovers the monomial.
+
+Source: NIST Digital Library of Mathematical Functions, equation (24.4.2). -/
+theorem eulerPoly_shift (n : ℕ) :
     taylor 1 (eulerPoly n) + eulerPoly n = (2 : ℚ) • X ^ n := by
   apply Polynomial.funext
   intro x
