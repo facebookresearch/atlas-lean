@@ -27,11 +27,3 @@ Backward-in-time models of the genealogy of a sample of genes, from Kingman's co
 - [Site frequency spectrum under exponential growth](site-frequency-spectrum-under-exponential-growth/README.md)
 
 - [Recoverable demographic history from finite genomic samples](recoverable-demographic-history-from-finite-genomic-samples.md)
-- [Branch lengths of the seed-bank coalescent](branch-lengths-of-the-seed-bank-coalescent/README.md)
-- [Coalescence manifold and step-function moments](coalescence-manifold-and-step-function-moments/README.md)
-- [Coalescent trees of density-dependent branching processes](coalescent-trees-of-density-dependent-branching-processes/README.md)
-- [Enumeration of coalescent histories](enumeration-of-coalescent-histories/README.md)
-- [Λ-coalescents from seasonal dormancy](lambda-coalescents-from-seasonal-dormancy/README.md)
-- [Pareto-sampling coalescents](pareto-sampling-coalescents/README.md)
-- [Sampled Moran genealogy process](sampled-moran-genealogy-process/README.md)
-- [Site frequency spectrum of the Bolthausen–Sznitman coalescent](site-frequency-spectrum-of-the-bolthausen-sznitman-coalescent/README.md)

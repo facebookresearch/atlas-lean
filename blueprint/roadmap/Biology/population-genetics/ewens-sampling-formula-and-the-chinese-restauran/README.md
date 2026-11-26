@@ -25,3 +25,5 @@
 - [Blackwell–MacQueen urn](../../../Probability/bayesian-statistics/blackwell-macqueen-urn/README.md): the ties among draws from a Dirichlet process follow the Chinese restaurant process.
 - [Dirichlet process](../../../Probability/bayesian-statistics/dirichlet-process/README.md): the random measure whose draws, through their ties, produce the Chinese restaurant process.
 - [Indian buffet process](../../../Probability/bayesian-statistics/indian-buffet-process/README.md): the analogue for latent feature models.
+
+- [Occupancy sampling from Gibbs–Poisson abundance models](occupancy-sampling-from-gibbs-poisson-abundance-models/README.md)

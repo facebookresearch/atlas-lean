@@ -17,10 +17,12 @@ Let $P(n,\alpha)$ be the probability that the $\alpha$-HoC landscape has at leas
 
 - [Accessible mutational paths in the House-of-Cards landscape](../../population-genetics/selection-migration-and-transmission/fitness-landscapes/accessible-adaptive-paths.md)
 
+## Proof depends on
+
 ## Expansion
 
-Each of the $n!$ paths has interior fitnesses i.i.d. uniform, so it is accessible in $\alpha$-HoC with probability $(1-\alpha)^{n-1}/(n-1)!$, giving $\mathbb{E}[X] = n(1-\alpha)^{n-1}$, which crosses order $1$ at $\alpha = \ln n / n$. The first-moment method gives the upper half of the threshold. For the lower half, a second-moment computation (Proposition 3.15) shows $\mathbb{E}[X^2] \sim 4n^2(1-\alpha)^{2n}$, within a constant factor of $\mathbb{E}[X]^2$, controlled by counting pairs of paths by their shared interior vertices through the numbers $T(n,k)$ of permutations decomposing into $k$ indecomposable blocks; this second-moment control is then refined into the probability-one statement. In plain HoC the starting fitness is uniform, and the threshold result integrated over $f(\mathbf{v}^0)$ gives probability about $\ln n / n$. In RMF, any drift with $n\theta_n\to\infty$ eventually dominates the noise along enough paths.
+Each of the $n!$ paths has interior fitnesses i.i.d. uniform, so it is accessible in $\alpha$-HoC with probability $(1-\alpha)^{n-1}/(n-1)!$, giving $\mathbb{E}[X] = n(1-\alpha)^{n-1}$, which crosses order $1$ at $\alpha = \ln n / n$. The first-moment method gives the upper half of the threshold. For the lower half, a second-moment computation (Proposition 2.15) shows $\mathbb{E}[X^2] \sim 4n^2(1-\alpha)^{2n}$, within a constant factor of $\mathbb{E}[X]^2$, controlled by counting pairs of paths by their shared interior vertices through the numbers $T(n,k)$ of permutations decomposing into $k$ indecomposable blocks; this second-moment control is then refined into the probability-one statement. In plain HoC the starting fitness is uniform, and the threshold result integrated over $f(\mathbf{v}^0)$ gives probability about $\ln n / n$. In RMF, any drift with $n\theta_n\to\infty$ eventually dominates the noise along enough paths.
 
 ## Sources
 
-- Peter Hegarty and Anders Martinsson, "On the existence of accessible paths in various models of fitness landscapes", arXiv:1210.4798 (2012), Section 2, Theorems 2.1 and 2.4, Corollaries 2.2 and 2.3, Proposition 3.1, <https://doi.org/10.48550/arXiv.1210.4798>.
+- Peter Hegarty and Anders Martinsson, "On the existence of accessible paths in various models of fitness landscapes", arXiv:1210.4798 (2012), Section 1 (Definition 1.1 and the models), Theorem 1.2, Corollaries 1.3 and 1.4, Theorem 1.5, Propositions 2.1 and 2.15; published in *Annals of Applied Probability* 24(4) (2014) 1375–1395, <https://doi.org/10.1214/13-AAP949>.

@@ -18,14 +18,16 @@ $$G_{S\alpha\eta}=\Big(1+\frac{1}{p/n_s+n_s/p+2}\Big)^{-1/2}\varphi_{\alpha\eta}
 
 which is biased toward zero unless $p=o(n_s)$ or $n_s=o(p)$; the bias is largest when $p$ and $n_s$ are comparable.
 
-## Expansion
-
-Shared individuals contribute their own genotype-phenotype products to both the score and the target phenotype, which inflates the numerator by the factor involving $n_s p/h_{\alpha\eta}$; non-genetic error correlation ($h_{\alpha\eta}<1$) inflates it further, which is the usual overfitting and confounding concern. At the same time the polygenic noise in the score inflates the denominator. The net effect, even in the cleanest overlapping setting, is still attenuation toward zero, so overlap does not remove the bias of summary-statistic estimators and a consistent estimator requires $h_{\alpha\eta}$ to be estimable.
-
 ## Depends on
 
 - [Asymptotic attenuation of genetic correlation estimated from GWAS summary statistics](asymptotic-attenuation-of-summary-statistic-genetic-correlation.md)
 
+## Proof depends on
+
+## Expansion
+
+Shared individuals contribute their own genotype-phenotype products to both the score and the target phenotype, which inflates the numerator by the factor involving $n_s p/h_{\alpha\eta}$; non-genetic error correlation ($h_{\alpha\eta}<1$) inflates it further, which is the usual overfitting and confounding concern. At the same time the polygenic noise in the score inflates the denominator. The net effect, even in the cleanest overlapping setting, is still attenuation toward zero, so overlap does not remove the bias of summary-statistic estimators and a consistent estimator requires $h_{\alpha\eta}$ to be estimable.
+
 ## Sources
 
-- B. Zhao, H. Zhu, "On genetic correlation estimation with summary statistics from genome-wide association studies", arXiv:1903.01301 (2019), Section "Overlapping samples", Case i): Condition 3, Theorem 4, <https://doi.org/10.48550/arXiv.1903.01301>.
+- B. Zhao, H. Zhu, "On genetic correlation estimation with summary statistics from genome-wide association studies", arXiv:1903.01301 (2019), Section "Overlapping samples", Case i): Condition 3, Theorem 4, Remark 4, <https://doi.org/10.48550/arXiv.1903.01301>; published in *Journal of the American Statistical Association* 117(537) (2022) 1–11, <https://doi.org/10.1080/01621459.2021.1906684>. Locators follow arXiv v1.

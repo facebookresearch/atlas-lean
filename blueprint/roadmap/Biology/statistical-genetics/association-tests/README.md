@@ -12,3 +12,5 @@ Probability.
 - [Genomic control](genomic-control/README.md)
 - [SKAT variance-component test](skat-variance-component-test/README.md)
 - [Testing Hardy–Weinberg equilibrium](testing-hardy-weinberg-equilibrium/README.md)
+
+- [Distance-covariance tests for SNP data](distance-covariance-tests-for-snp-data/README.md)
