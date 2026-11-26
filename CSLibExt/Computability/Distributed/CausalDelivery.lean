@@ -31,13 +31,14 @@ other.
 
 * `CausalDelivery`: every replica delivers an update only after it has issued or delivered every
   update that happened before it.
-* `causalDelivery_of_consistent`: if every replica that delivers an update also issues or
-  delivers every update that happened before it, and does so in an order consistent with
-  happened-before, then the execution provides causal delivery.
 * `happensBefore_iff_transGen_delivered`: when every receipt names an earlier issue,
   happened-before between updates is the transitive closure of the replica-local order of issues
   and of the order from delivering an update to issuing a later one at the same replica, the
   order by which Shapiro et al. define happened-before.
+
+The executions need not be well formed. A receipt that names a position holding no issue
+delivers nothing but still adds a step to happened-before, and a receipt that names a later issue
+is a delivery but adds no step to happened-before; the tests give an example of each.
 -/
 
 @[expose] public section
@@ -61,7 +62,15 @@ every update $u_1$ that happened before $u_2$, where a replica counts the update
 delivered. That is, whenever the event at position $j$, of replica $r$, delivers the update $u_2$
 issued at position $i_2$, and the update $u_1$ issued at position $i_1$ happened before $u_2$,
 some position $k < j$ holds an event of $r$ that either issues $u_1$ ($k = i_1$) or delivers it.
--/
+
+This constrains only the order of deliveries within one finite execution: a replica may deliver
+an update more than once, or never. The execution need not be well formed, that is, a receipt
+need not name an earlier position, and happened-before is taken over all of its events. A receipt
+that names a position holding no issue, such as a receipt from a delivery, delivers no update but
+still adds a step to happened-before. Even on a well-formed execution, causal delivery can then
+demand more than it would if happened-before between updates were defined by delivery, as
+Shapiro et al. define it. A receipt that names a later issue delivers that update, and is
+constrained as a delivery, but adds no step to happened-before. -/
 def CausalDelivery (tr : List (Event R)) : Prop :=
   ∀ (j i₁ i₂ : ℕ) (ej e₁ e₂ : Event R), tr[j]? = some ej → ej.recvFrom = some i₂ →
     tr[i₂]? = some e₂ → e₂.recvFrom = none → tr[i₁]? = some e₁ → e₁.recvFrom = none →
@@ -69,39 +78,19 @@ def CausalDelivery (tr : List (Event R)) : Prop :=
     ∃ k < j, ∃ ek : Event R, tr[k]? = some ek ∧ ek.proc = ej.proc ∧
       (k = i₁ ∨ ek.recvFrom = some i₁)
 
-/- Delivery consistent with happened-before is causal. Say that the event at position `k`, of
-replica `r`, handles the update issued at position `i` when `k = i` or the event delivers that
-update. Suppose that whenever replica `r` delivers an update `u₂` and an update `u₁` happened
-before `u₂`, some event of `r` handles `u₁` (`hpast`), and every event of `r` that handles `u₁`
-comes before every event of `r` that delivers `u₂` (`horder`). Then the execution provides causal
-delivery. -/
-theorem causalDelivery_of_consistent {tr : List (Event R)}
-    (hpast : ∀ (j i₁ i₂ : ℕ) (ej e₁ e₂ : Event R), tr[j]? = some ej → ej.recvFrom = some i₂ →
-      tr[i₂]? = some e₂ → e₂.recvFrom = none → tr[i₁]? = some e₁ → e₁.recvFrom = none →
-      HappensBefore tr i₁ i₂ →
-      ∃ k, ∃ ek : Event R, tr[k]? = some ek ∧ ek.proc = ej.proc ∧
-        (k = i₁ ∨ ek.recvFrom = some i₁))
-    (horder : ∀ (j k i₁ i₂ : ℕ) (ej ek e₁ e₂ : Event R), tr[j]? = some ej →
-      ej.recvFrom = some i₂ → tr[i₂]? = some e₂ → e₂.recvFrom = none → tr[i₁]? = some e₁ →
-      e₁.recvFrom = none → HappensBefore tr i₁ i₂ → tr[k]? = some ek → ek.proc = ej.proc →
-      (k = i₁ ∨ ek.recvFrom = some i₁) → k < j) :
-    CausalDelivery tr := by
-  intro j i₁ i₂ ej e₁ e₂ hj hr h₂ hn₂ h₁ hn₁ hhb
-  obtain ⟨k, ek, hk, hp, hu⟩ := hpast j i₁ i₂ ej e₁ e₂ hj hr h₂ hn₂ h₁ hn₁ hhb
-  exact ⟨k, horder j k i₁ i₂ ej ek e₁ e₂ hj hr h₂ hn₂ h₁ hn₁ hhb hk hp hu, ek, hk, hp, hu⟩
-
-/-- **Happened-before between updates, by delivery.** Read a well-formed execution as an
-execution of a replicated system whose replicas are the processes: an event that receives no
-message issues a new update, identified with the position of that event, and an event that
-receives from position $i$ delivers the update issued at position $i$. Suppose that every receipt
-names a position that holds an issue. Say that an update $a$ precedes an update $b$ directly when
-the replica that issues $b$ has issued or delivered $a$ before it issues $b$: some position
-$k < b$ holds an event of that replica that either is the issue of $a$ ($k = a$) or delivers $a$.
-Then for any two updates $u_1$ and $u_2$, position $u_1$ happened before position $u_2$ in
-Lamport's sense if and only if there is a chain $u_1 = v_0, v_1, \dots, v_m = u_2$ of updates
-with $m \ge 1$ in which each $v_l$ precedes $v_{l+1}$ directly. So happened-before between
-updates is the transitive closure of the replica-local order of issues and of the order from
-delivering an update to issuing a later one at the same replica. -/
+/-- **Happened-before between updates, by delivery.** Read a well-formed execution, one in which
+every receipt names an earlier position, as an execution of a replicated system whose replicas
+are the processes: an event that receives no message issues a new update, identified with the
+position of that event, and an event that receives from position $i$ delivers the update issued
+at position $i$. Suppose that every receipt names a position that holds an issue. Say that an
+update $a$ precedes an update $b$ directly when the replica that issues $b$ has issued or
+delivered $a$ before it issues $b$: some position $k < b$ holds an event of that replica that
+either is the issue of $a$ ($k = a$) or delivers $a$. Then for any two updates $u_1$ and $u_2$,
+position $u_1$ happened before position $u_2$ in Lamport's sense if and only if there is a chain
+$u_1 = v_0, v_1, \dots, v_m = u_2$ of updates with $m \ge 1$ in which each $v_l$ precedes
+$v_{l+1}$ directly. So happened-before between updates is the transitive closure of the
+replica-local order of issues and of the order from delivering an update to issuing a later one
+at the same replica. -/
 theorem happensBefore_iff_transGen_delivered {tr : List (Event R)} (hwf : WellFormed tr)
     (hiss : ∀ (j i : ℕ) (ej : Event R), tr[j]? = some ej → ej.recvFrom = some i →
       ∃ ei : Event R, tr[i]? = some ei ∧ ei.recvFrom = none)
