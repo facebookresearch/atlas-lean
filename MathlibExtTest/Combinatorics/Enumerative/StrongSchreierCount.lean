@@ -22,3 +22,19 @@ example : strongSchreierCount 4 0 = 8 := by decide
 example : compositionMinPartCount 6 2 = 5 := by
   rw [← strongSchreierCount_eq 5 1 (by decide)]
   decide
+
+-- With one element, only the singleton {4} contributes, matching the one-part composition [6].
+example : compositionMinPartExactCount 6 3 1 = 1 := by
+  rw [← strongSchreierCardCount_eq 1 4 2 (by decide) (by decide)]
+  decide
+
+-- A 1-strong Schreier set with three elements has all of them at least 3, so none has maximum 4;
+-- likewise no composition of five has three parts that are all at least two.
+example : compositionMinPartExactCount 5 2 3 = 0 := by
+  rw [← strongSchreierCardCount_eq 3 4 1 (by decide) (by decide)]
+  decide
+
+-- The sets {2, 5}, {3, 5} and {4, 5} match the compositions [2, 4], [3, 3] and [4, 2] of six.
+example : compositionMinPartExactCount 6 2 2 = 3 := by
+  rw [← strongSchreierCardCount_eq 2 5 1 (by decide) (by decide)]
+  decide
