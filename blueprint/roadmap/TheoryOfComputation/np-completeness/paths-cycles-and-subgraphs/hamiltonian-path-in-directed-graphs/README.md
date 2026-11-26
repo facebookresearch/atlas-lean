@@ -246,3 +246,6 @@
 - [SAT ≤ HAMPATH is polynomial-time](part-11/is-poly-time-reduce-ham.md)
 - [HAMPATH is NP-hard](part-11/ham-path-dec-np-hard.md)
 - [HAMPATH is NP-complete](part-11/ham-path-dec-np-complete.md)
+- [Feasible DIRECTED HAMILTONIAN PATH instances](directed-hamiltonian-path-feasible.md)
+- [DIRECTED HAMILTONIAN PATH as a decision problem](directed-hamiltonian-path-dec.md)
+- [DIRECTED HAMILTONIAN PATH is NP-complete](directed-hamiltonian-path-np-complete.md)
