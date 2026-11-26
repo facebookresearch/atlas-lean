@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 /-
 Portions of this file are adapted from:
 
+`P2M/Sol/S_NumberField_AdelicLevel_exists_glFin_globalPoints_mul_mem_finiteLevelOne_rat.lean`,
 `Definitions/Def_NumberField_AdelicLevel.lean`
 and
 `Definitions/Def_AutomorphicForm_SmoothAutomorphicFnAt.lean`
@@ -144,6 +145,27 @@ theorem mul_mem_idealBall_right {x y : FiniteAdeleRing R K} (hx : x ∈ idealBal
     (hy : y ∈ AdelicBox.integralFiniteAdeles R K) : x * y ∈ idealBall R K N := by
   rw [mul_comm]
   exact mul_mem_idealBall_left hy hx
+
+theorem neg_mem_idealBall {x : FiniteAdeleRing R K} (hx : x ∈ idealBall R K N) :
+    -x ∈ idealBall R K N := fun v => by
+  rw [show (-x) v = -(x v) from rfl, Valuation.map_neg]; exact hx v
+
+theorem sub_mem_idealBall {x y : FiniteAdeleRing R K} (hx : x ∈ idealBall R K N)
+    (hy : y ∈ idealBall R K N) : x - y ∈ idealBall R K N := by
+  rw [sub_eq_add_neg]; exact add_mem_idealBall hx (neg_mem_idealBall hy)
+
+theorem idealBall_mono {M : Ideal R} (h : M ≤ N) :
+    idealBall R K M ⊆ idealBall R K N := fun x hx v => by
+  refine (hx v).trans ?_
+  by_cases hM : M = ⊥
+  · rw [idealBound, ite_eq_left hM]
+    exact zero_le
+  have hN : N ≠ ⊥ := fun hN => hM (le_bot_iff.mp (hN ▸ h))
+  rw [idealBound, ite_eq_right hM, idealBound, ite_eq_right hN, WithZero.exp_le_exp,
+    neg_le_neg_iff, Int.ofNat_le]
+  exact Associates.count_le_count_of_le (Associates.mk_ne_zero.mpr hM)
+    (Associates.irreducible_mk.mpr v.irreducible)
+    (Associates.mk_le_mk_iff_dvd.mpr (Ideal.dvd_iff_le.mpr h))
 
 variable (R K N)
 
