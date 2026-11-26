@@ -34,6 +34,8 @@
 - [Logistic regression score](logistic-cumulant-glm-score.md)
 - [Derivative of the logistic regression log-likelihood](has-fderiv-at-logistic-log-lik.md)
 - [Gradient of the logistic regression log-likelihood](has-gradient-at-logistic-log-lik.md)
+- [Hessian of the logistic GLM log-likelihood](logistic-cumulant-glm-hessian.md)
+- [The logistic Hessian](has-fderiv-at-logistic-score.md)
 - [Second derivative of the logistic log-likelihood along a line](deriv2-logistic-log-lik-line.md)
 - [Concavity of the logistic regression log-likelihood](concave-on-logistic-log-lik.md)
 - [Uniqueness of the logistic maximum-likelihood estimate](logistic-log-lik-maximizer-unique.md)

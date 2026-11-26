@@ -4,4 +4,4 @@ Let $T$ be a family of clusters with p-values $p_C$ and a level $q$. The sibling
 
 ## Sources
 
-- Yekutieli (2008); the sharper `2 δ* q` bound is not formalized.
+- Yekutieli (2008).

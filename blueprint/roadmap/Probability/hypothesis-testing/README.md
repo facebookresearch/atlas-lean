@@ -14,6 +14,10 @@ These methods keep testing valid when many hypotheses are tested at once, by con
 - [Benjamini–Hochberg procedure](benjamini-hochberg-procedure/README.md)
 - [Knockoff filter](knockoff-filter/README.md)
 - [Two-groups model and local false discovery rates](two-groups-model-and-local-false-discovery-rates/README.md)
+- [Multiple testing of treatment effects](multiple-testing-of-treatment-effects/README.md)
+- [False discovery rate control for discrete tests](false-discovery-rate-control-for-discrete-tests/README.md)
+- [Hierarchical multiple testing](hierarchical-multiple-testing/README.md)
+- [E-values and e-processes](e-values-and-e-processes/README.md)
 
 ## Neyman–Pearson and likelihood-based tests
 
@@ -21,7 +25,6 @@ These results compare hypotheses through their likelihoods: the Neyman–Pearson
 
 - [Neyman–Pearson lemma](neyman-pearson-dominated-two-simple.md)
 - [Monotone likelihood ratio](monotone-likelihood-ratio/README.md)
-- [Multiple testing of treatment effects](multiple-testing-of-treatment-effects/README.md)
 - [Score, Wald and likelihood-ratio tests](score-wald-and-likelihood-ratio-tests/README.md)
 - [Local power of the likelihood-ratio test](local-power-of-the-likelihood-ratio-test/README.md)
 - [Universal inference](universal-inference/README.md)
@@ -31,6 +34,7 @@ These results compare hypotheses through their likelihoods: the Neyman–Pearson
 These procedures observe data one at a time and decide when to stop: Wald's sequential probability ratio test and its optimality, and the detection of a change in distribution as quickly as possible under a false-alarm constraint.
 
 - [Sequential tests and quickest change detection](sequential-tests-and-quickest-change-detection/README.md)
+- [Group sequential designs and alpha spending](group-sequential-designs-and-alpha-spending/README.md)
 
 ## Exact, rank and randomisation inference
 
@@ -38,15 +42,11 @@ These procedures base inference on counts, ranks or random reassignments of the 
 
 - [Fisher's exact test](fisher-s-exact-test/README.md)
 - [Exact test for Hardy–Weinberg equilibrium](exact-test-for-hardy-weinberg-equilibrium/README.md)
-- [False discovery rate control for discrete tests](false-discovery-rate-control-for-discrete-tests/README.md)
 - [Mann–Whitney statistic and ROC area](mann-whitney-statistic-and-roc-area/README.md)
 - [Permutation tests](permutation-tests/README.md)
 - [Split conformal prediction](split-conformal-prediction/README.md)
 - [Full conformal prediction](full-conformal-prediction/README.md)
-- [Group sequential designs and alpha spending](group-sequential-designs-and-alpha-spending/README.md)
-- [Hierarchical multiple testing](hierarchical-multiple-testing/README.md)
 - [Conformalized quantile regression](conformalized-quantile-regression/README.md)
-- [E-values and e-processes](e-values-and-e-processes/README.md)
 - [Exact binomial tests and the Clopper–Pearson interval](exact-binomial-tests-and-the-clopper-pearson-int/README.md)
 - [Exact conditional tests for Poisson rates](exact-conditional-tests-for-poisson-rates/README.md)
 - [Conformal prediction under covariate shift](conformal-prediction-under-covariate-shift/README.md)
