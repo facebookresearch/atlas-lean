@@ -6,6 +6,7 @@ every finite automaton is simulated by a cascade of permutation automata and res
 
 ## Depends on
 
+- [Semidirect and wreath products of transformation semigroups](wreath-products-of-transformation-semigroups.md)
 - [Aperiodic finite monoids](aperiodic-finite-monoids.md)
 - [Varieties of finite monoids](varieties-of-finite-monoids.md)
 
@@ -13,7 +14,6 @@ every finite automaton is simulated by a cascade of permutation automata and res
 
 This page becomes ready once:
 
-- Transformation monoids and their wreath product, from Chapter XVIII of the cited notes (statement prerequisite; not yet stated)
 - A proof source: the cited notes state the theorem without proof; K. Krohn and J. Rhodes, "Algebraic theory of machines. I. Prime decomposition theorem for finite semigroups and machines", *Transactions of the American Mathematical Society* 116, 1965, needs a source check (source check)
 
 ## Sources

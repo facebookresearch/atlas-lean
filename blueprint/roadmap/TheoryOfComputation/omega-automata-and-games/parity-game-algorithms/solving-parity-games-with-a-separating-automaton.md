@@ -13,14 +13,9 @@ solved in time linear in their number of edges by an attractor computation.
 
 ## Proof depends on
 
+- [Reachability and safety games are positionally determined and solvable in linear time](../muller-rabin-and-streett-games/reachability-and-safety-games.md)
 - [Finite parity games are positionally determined](../parity-games/finite-parity-games-are-positionally-determined.md)
 - [Attractor](../parity-games/attractor.md)
-
-## Expansion
-
-This page becomes ready once:
-
-- Safety and reachability games on finite arenas are positionally determined and solvable in time linear in the number of edges (proof prerequisite; not yet stated)
 
 ## Sources
 

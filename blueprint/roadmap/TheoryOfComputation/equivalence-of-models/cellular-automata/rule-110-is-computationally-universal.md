@@ -17,13 +17,14 @@ then it moves on to the next appendant in the list.
 
 ## Proof depends on
 
+- [Cyclic tag systems emulate tag systems](../tag-systems/cyclic-tag-systems-emulate-tag-systems.md)
+- [Tag systems emulate Turing machines](../tag-systems/tag-systems-emulate-turing-machines.md)
 - [Halting is undecidable](../../computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
 
 ## Expansion
 
 This page becomes ready once:
 
-- Tag systems emulate Turing machines, and cyclic tag systems emulate tag systems (proof prerequisites; not yet stated)
 - Glider systems and the emulation of cyclic tag systems by gliders of rule 110 (proof prerequisite; not yet stated)
 
 ## Sources

@@ -14,14 +14,9 @@ $d = O(\log n)$, and in quasi-linear space, $O(n \log n \cdot \log d)$ (Jurdziń
 
 ## Proof depends on
 
+- [Progress measures over a universal tree characterize the winner](progress-measures-over-a-universal-tree.md)
 - [Quasipolynomial universal trees](quasipolynomial-universal-trees.md)
 - [Progress measures give winning strategies in parity games](../parity-games/progress-measures-give-winning-strategies-in.md)
-
-## Expansion
-
-This page becomes ready once:
-
-- Progress measures over an ordered tree, and the theorem that Eve wins from $v$ if and only if some progress measure over some tree is not the top element at $v$ (Theorem 2.8 and Corollary 2.2 of the cited survey) (proof prerequisite; not yet stated)
 
 ## Sources
 

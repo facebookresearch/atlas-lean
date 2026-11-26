@@ -1,0 +1,21 @@
+# Mean-payoff games and energy games are interreducible
+
+For a one-player graph $G$ with integer weights, $G$ satisfies $\mathrm{MeanPayoff}^- \ge 0$ (every infinite path from the given vertex has
+$\mathrm{MeanPayoff}^- \ge 0$) if and only if it satisfies $\mathrm{Energy} < \infty$, both being equivalent to every reachable cycle having
+non-negative total weight; for a single sequence the two properties are not equivalent. Consequently, for a finite
+[mean-payoff game](classical-quantitative-objectives.md) $\mathcal{G}$ and the energy game $\mathcal{G}'$ on the same arena, in which Max wants the needed budget
+small, $\mathrm{val}^{\mathcal{G}}(u) \ge 0$ if and only if $\mathrm{val}^{\mathcal{G}'}(u) < \infty$ for every vertex $u$. An algorithm computing energy values in time
+$T(n, m, W)$ thus solves mean-payoff games in the same time and computes mean-payoff values in time $O(\log(n^2 W) \cdot T(n, m, W))$.
+
+## Depends on
+
+- [Shortest-path, mean-payoff, total-payoff, energy and discounted-payoff objectives](classical-quantitative-objectives.md)
+
+## Proof depends on
+
+- [Shortest-path, energy, mean-payoff and total-payoff games are positionally determined](positional-determinacy-of-mean-payoff-and-energy-games.md)
+- [Mean-payoff values are rationals with small denominators](mean-payoff-values-are-rationals-with-small-denominators.md)
+
+## Sources
+
+- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, arXiv:2305.10546v2, 2025, Chapter 5 (N. Fijalkow and B. Monmege, "Games with payoffs"): Section 5.2, Lemma 5.3 (relating mean payoff and energy objectives) and Corollary 5.3 with their proofs.

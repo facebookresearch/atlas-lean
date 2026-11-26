@@ -8,13 +8,9 @@ extension (Reiterman). The same holds for varieties of finite semigroups and of 
 
 ## Depends on
 
+- [The profinite metric and the free profinite monoid](free-profinite-monoid.md)
+- [Universal property of the free profinite monoid](universal-property-of-the-free-profinite-monoid.md)
 - [Varieties of finite monoids](varieties-of-finite-monoids.md)
-
-## Expansion
-
-This page becomes ready once:
-
-- The free profinite monoid on a finite alphabet, the uniformly continuous extension of morphisms to finite monoids, and the $\omega$-power, from Chapter X of the cited notes (statement prerequisites; not yet stated)
 
 ## Sources
 

@@ -11,13 +11,8 @@ automaton.
 
 ## Proof depends on
 
+- [Curtis–Hedlund–Lyndon theorem on $\mathbb{Z}^d$](curtis-hedlund-lyndon-theorem-on-z-d.md)
 - [Curtis–Hedlund–Lyndon theorem](../../../Dynamics/topological-symbolic-dynamics/curtis-hedlund-lyndon-theorem/curtis-hedlund-lyndon.md)
-
-## Expansion
-
-This page becomes ready once:
-
-- Curtis–Hedlund–Lyndon theorem on $S^{\mathbb{Z}^d}$ for every $d \ge 1$: a map is a cellular automaton if and only if it is continuous and commutes with the shifts $\sigma_1, \dots, \sigma_d$ (proof prerequisite; the linked page covers $d = 1$)
 
 ## Sources
 

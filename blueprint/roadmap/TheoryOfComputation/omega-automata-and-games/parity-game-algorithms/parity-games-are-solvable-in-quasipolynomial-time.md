@@ -14,14 +14,9 @@ $(n, d)$-separating safety automaton with $n^{O(\log d)}$ states.
 
 ## Proof depends on
 
+- [The record automaton decides parity games](the-record-automaton-decides-parity-games.md)
 - [Solving parity games with a separating automaton](solving-parity-games-with-a-separating-automaton.md)
 - [Finite parity games are positionally determined](../parity-games/finite-parity-games-are-positionally-determined.md)
-
-## Expansion
-
-This page becomes ready once:
-
-- Play summaries ($i$-sequences) and the correctness of the separating automaton built from them, as in Lemmas 2.9–2.11 and Corollary 2.1 of the cited survey (proof prerequisites; not yet stated)
 
 ## Sources
 

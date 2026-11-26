@@ -15,15 +15,13 @@ automata under union, complementation and projection.
 
 ## Proof depends on
 
+- [MSO₀: monadic logic with set variables only](mso0-logic.md)
+- [Büchi automata for the atomic MSO₀ formulas](buchi-automata-for-atomic-mso0-formulas.md)
+- [Büchi automata are closed under projection](buchi-automata-are-closed-under-projection.md)
+- [Languages of Büchi automata are MSO-definable](buchi-automata-are-mso-definable.md)
 - [Büchi automata are closed under complementation](../boolean-closure-of-b-chi-automata/exists-buchi-compl.md)
 - [Büchi automata are closed under union](../boolean-closure-of-b-chi-automata/exists-buchi-sup.md)
 - [Büchi automata are closed under intersection](../boolean-closure-of-b-chi-automata/exists-buchi-inf.md)
-
-## Expansion
-
-This page becomes ready once:
-
-- Closure of the languages of Büchi automata under letter-to-letter projection, which handles existential set quantifiers (proof prerequisite; not yet stated)
 
 ## Sources
 
