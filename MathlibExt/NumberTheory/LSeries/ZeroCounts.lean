@@ -7,8 +7,15 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
+Portions of this file are adapted from:
+
+`zeta23/ChallengeDeps.lean` (§§1–2) and the same definitions in
+`zeta23/Challenge.lean` (anthropics/formal-math,
+https://github.com/anthropics/formal-math/tree/11b6c7e3c927df2658f513b6b68ea7f8929c62c5/zeta23):
 Copyright (c) 2026 Anthropic, PBC (adapted counting conventions and statement types).
-Released under the Apache License, Version 2.0, as described in the LICENSE file.
+Released under the Apache License, Version 2.0; see the upstream LICENSE:
+https://github.com/anthropics/formal-math/blob/11b6c7e3c927df2658f513b6b68ea7f8929c62c5/zeta23/LICENSE
+Authors: Claude (as credited in `zeta23/formalization.yaml`; no per-file author list).
 -/
 
 module
@@ -36,9 +43,9 @@ between zero and one. -/
 def openCriticalStrip : Set ℂ := {z | 0 < z.re ∧ z.re < 1}
 
 /-- **Zero count with multiplicity.** Sum the natural orders of vanishing of $f$ over $S$.
-This is a count when $S$ is a finite set of zeros and those orders are finite. The order
-is expressed as `analyticOrderAt`; its infinite value is sent to zero, and the finite
-sum is zero when its support is infinite. -/
+This counts zeros with multiplicity when $S$ is a finite set of zeros at which $f$ is analytic
+and has finite order. `analyticOrderAt` returns zero at nonanalytic points, and conversion to
+`ℕ` sends infinite order to zero. The finite sum is zero when its support is infinite. -/
 def countWithMultiplicity (f : ℂ → ℂ) (S : Set ℂ) : ℕ :=
   ∑ᶠ z ∈ S, (analyticOrderAt f z).toNat
 
