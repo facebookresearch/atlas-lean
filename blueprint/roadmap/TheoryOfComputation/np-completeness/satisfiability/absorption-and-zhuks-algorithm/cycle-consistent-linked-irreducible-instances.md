@@ -7,7 +7,7 @@ Consider a CSP instance $\Theta$ with variables $x_1,\dots,x_n$, domains $D_i\su
 - $\Theta$ is **fragmented** if its variable set splits into two disjoint parts, each containing a variable from the scope of some constraint, with every constraint scope inside one part.
 - $\Theta$ is **irreducible** if every instance $\Theta'$ whose variables form a subset of $\{x_1,\dots,x_n\}$, with the same domains $D_i$, and each of whose constraints is a projection of some constraint of $\Theta$ onto some set of variables, is fragmented, linked, or has a subdirect solution set.
 
-A constraint $((y_1,\dots,y_t);\rho_1)$ is **weaker** than $((z_1,\dots,z_s);\rho_2)$ if $\{y_i\}\subseteq\{z_j\}$, $\rho_2$ implies $\rho_1$, and $\rho_1$ does not imply $\rho_2$. Cycle-consistency and irreducibility can be enforced in polynomial time, shrinking domains, without losing solutions.
+A constraint $((y_1,\dots,y_t);\rho_1)$ is **weaker** than $((z_1,\dots,z_s);\rho_2)$ if $\{y_i\}\subseteq\{z_j\}$, $\rho_2$ implies $\rho_1$, and $\rho_1$ does not imply $\rho_2$. Within Zhuk's algorithm, for templates with a weak near-unanimity polymorphism, cycle-consistency and irreducibility are enforced in polynomial time, shrinking domains, without losing solutions.
 
 ## Depends on
 

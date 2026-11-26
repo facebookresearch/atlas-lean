@@ -10,6 +10,7 @@ Unitaries exactly representable over Clifford+T are the matrices over the ring $
 
 - [Dense inverse-closed gate sets and epsilon-nets in SU(d)](dense-gate-sets-and-epsilon-nets.md)
 - [Volume lower bound: logarithmic word length is necessary](volume-lower-bound-for-gate-approximation.md)
+- [Kliuchnikov-Maslov-Mosca: exact synthesis of single-qubit Clifford+T unitaries](exact-synthesis-of-clifford-t-unitaries.md)
 
 ## Sources
 
