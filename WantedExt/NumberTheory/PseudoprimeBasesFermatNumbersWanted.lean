@@ -18,6 +18,7 @@ public import Mathlib.RingTheory.Polynomial.Cyclotomic.Basic
 public import MathlibExt.Data.Set.Density
 public import MathlibExt.NumberTheory.FermatNumberStrongPseudoprimeAddSub
 public import MathlibExt.NumberTheory.FermatNumberStrongPseudoprimeTwoPow
+public import MathlibExt.NumberTheory.FermatPseudoprimeBaseCount
 public import MathlibExt.NumberTheory.StrongPseudoprime
 public import MathlibExt.NumberTheory.StrongPseudoprimeBaseCount
 public import MathlibExt.NumberTheory.StrongPseudoprimePrimitivePart
@@ -38,17 +39,6 @@ stated; see the source audit table.
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Number of Fermat pseudoprime bases (Monier; Baillie–Wagstaff).** Let $n > 1$ be a
-composite natural number. Then the number of integers $b$ with $1 \le b < n$ such that $n$ is a
-Fermat pseudoprime to the base $b$, that is, $b^{n-1} \equiv 1 \pmod{n}$, equals
-$\prod_p \gcd(n - 1, p - 1)$, where $p$ runs over the distinct prime divisors of $n$.
-
-Source: Samuel S. Wagstaff, Jr., *Pseudoprimes and Fermat Numbers*, INTEGERS 24 (2024),
-Article A23, Theorem 2 (`integers-2024-A23-thm-2`). -/
-public theorem_wanted card_fermatPsp_bases_eq_prod_gcd {n : ℕ} (hn : 1 < n) (hcomp : ¬n.Prime) :
-    {b : ℕ | 1 ≤ b ∧ b < n ∧ Nat.FermatPsp n b}.ncard =
-      ∏ p ∈ n.primeFactors, Nat.gcd (n - 1) (p - 1)
 
 /-- **Products of two distinct primes have a square number of Fermat pseudoprime bases.** Let
 $p$ and $q$ be distinct primes. Then the number of integers $b$ with $1 \le b < pq$ such that
