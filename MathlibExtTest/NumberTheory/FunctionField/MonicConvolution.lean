@@ -72,4 +72,61 @@ example :
   simpa only [MonoidHom.one_apply, mul_one, one_mul, Nat.cast_one] using
     (weightedMonicConvSum_eq_of_completelyMultiplicative weight 1 1 1).symm.trans weighted_at_X
 
+private theorem commonMonicDivisors_X (g : (ZMod 2)[X]) (hg : ¬ (X : (ZMod 2)[X]) ∣ g) :
+    {ℓ : (ZMod 2)[X] | ℓ.Monic ∧ ℓ ∣ X ∧ ℓ ∣ g} = {1} := by
+  ext ℓ
+  simp only [Set.mem_ofPred_eq, ← and_assoc]
+  change (ℓ ∈ {d : (ZMod 2)[X] | d.Monic ∧ d ∣ X} ∧ ℓ ∣ g) ↔ _
+  rw [monicDivisors_X]
+  simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+  constructor
+  · rintro ⟨rfl | rfl, h⟩
+    · rfl
+    · exact (hg h).elim
+  · rintro rfl
+    exact ⟨.inl rfl, one_dvd _⟩
+
+private theorem conv_one_X :
+    monicDirichletConv (1 : (ZMod 2)[X] →* ℂ) (1 : (ZMod 2)[X] →* ℂ) X = 2 := by
+  classical
+  have h : (1 : (ZMod 2)[X]) ∉ ({X} : Set (ZMod 2)[X]) := by
+    simp only [Set.mem_singleton_iff]
+    intro he
+    simpa using congrArg natDegree he
+  rw [monicDirichletConv, monicDivisors_X, finsum_mem_insert _ h (Set.finite_singleton _),
+    finsum_mem_singleton]
+  norm_num
+
+-- A unit gives one common divisor; the convolution at that unit is one.
+example : monicDirichletConv (1 : (ZMod 2)[X] →* ℂ) (1 : (ZMod 2)[X] →* ℂ) (X * 1) = 2 := by
+  have h : ¬ (X : (ZMod 2)[X]) ∣ 1 := fun h => irreducible_X.not_isUnit (isUnit_of_dvd_one h)
+  rw [monicDirichletConv_mul_of_completelyMultiplicative 1 1 monic_X monic_one,
+    commonMonicDivisors_X 1 h, finsum_mem_singleton]
+  simp [monicDirichletConv_one, conv_one_X]
+
+-- The two distinct linear factors over ZMod 2 have no nontrivial common divisor.
+example (α β : (ZMod 2)[X] →* ℂ) :
+    monicDirichletConv α β (X * (X + 1)) =
+      monicDirichletConv α β X * monicDirichletConv α β (X + 1) := by
+  have hm : (X + 1 : (ZMod 2)[X]).Monic := by simpa using monic_X_add_C (1 : ZMod 2)
+  have h : ¬ (X : (ZMod 2)[X]) ∣ X + 1 := by simp [X_dvd_iff]
+  rw [monicDirichletConv_mul_of_completelyMultiplicative α β monic_X hm,
+    commonMonicDivisors_X _ h, finsum_mem_singleton]
+  simp
+
+-- At X * X the two common divisors give 2 * 2 and −1, not the coprime value 4.
+example : monicDirichletConv (1 : (ZMod 2)[X] →* ℂ) (1 : (ZMod 2)[X] →* ℂ) (X * X) = 3 := by
+  classical
+  have hset : {ℓ : (ZMod 2)[X] | ℓ.Monic ∧ ℓ ∣ X ∧ ℓ ∣ X} = {1, X} := by
+    simpa only [and_self] using monicDivisors_X
+  have h : (1 : (ZMod 2)[X]) ∉ ({X} : Set (ZMod 2)[X]) := by
+    simp only [Set.mem_singleton_iff]
+    intro he
+    simpa using congrArg natDegree he
+  have hxx : (X /ₘ X : (ZMod 2)[X]) = 1 := by
+    simpa using mul_divByMonic_cancel_left (1 : (ZMod 2)[X]) monic_X
+  rw [monicDirichletConv_mul_of_completelyMultiplicative 1 1 monic_X monic_X, hset,
+    finsum_mem_insert _ h (Set.finite_singleton _), finsum_mem_singleton]
+  norm_num [conv_one_X, hxx, monicDirichletConv_one, irreducible_X.moebius_eq]
+
 end MonicConvolutionTest

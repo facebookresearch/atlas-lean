@@ -554,7 +554,179 @@ private theorem sum_weighted_pairs [Finite F] (γ α β : F[X] → ℂ) (k : ℤ
         simp only [Finset.mem_filter]
         tauto
 
+-- If A and B are a factorization of f * g with d | A and (f / d) * ℓ | B,
+-- cancelling f leaves a factorization of g in which ℓ is a factor.
+private theorem factor_quotient {f g d ℓ a : F[X]} (hf : f.Monic) (hd : d.Monic)
+    (hℓ : ℓ.Monic) (ha : a.Monic) (hdf : d ∣ f) (hafg : a ∣ f * g) (hda : d ∣ a)
+    (hb : (f /ₘ d) * ℓ ∣ (f * g) /ₘ a) :
+    ℓ * (a /ₘ d) * (((f * g) /ₘ a) /ₘ ((f /ₘ d) * ℓ)) = g := by
+  let c := f /ₘ d
+  let b := a /ₘ d
+  let e := ((f * g) /ₘ a) /ₘ (c * ℓ)
+  have he : (c * ℓ) * e = (f * g) /ₘ a := mul_quotient ((monic_quotient hd hf hdf).mul hℓ) hb
+  change ℓ * b * e = g
+  apply mul_left_cancel₀ hf.ne_zero
+  calc
+    f * (ℓ * b * e) = (d * c) * (ℓ * b * e) := by rw [mul_quotient hd hdf]
+    _ = (d * b) * ((c * ℓ) * e) := by ac_rfl
+    _ = f * g := by rw [show d * b = a from mul_quotient hd hda, he, mul_quotient ha hafg]
+
+-- For fixed d and ℓ, the factorization of g / ℓ determines the factorization of f * g:
+-- its first factor b is sent to d * b, and the second factor is multiplied by (f / d) * ℓ.
+open Classical in
+private theorem sum_conv_filter (α β : F[X] →* ℂ) {f g d ℓ : F[X]}
+    (hf : f.Monic) (hg : g.Monic) (hd : d.Monic) (hℓ : ℓ.Monic)
+    (hdf : d ∣ f) (hℓg : ℓ ∣ g) :
+    (α d * β ((f /ₘ d) * ℓ)) * monicDirichletConv α β (g /ₘ ℓ) =
+      ∑ a ∈ (divisors (f * g)).filter (fun a => d ∣ a ∧ (f /ₘ d) * ℓ ∣ (f * g) /ₘ a),
+        α a * β ((f * g) /ₘ a) := by
+  let c := f /ₘ d
+  let q := g /ₘ ℓ
+  have hq : q.Monic := monic_quotient hℓ hg hℓg
+  rw [conv_eq_sum _ _ hq, Finset.mul_sum]
+  have hfactor (b : F[X]) (hm : b.Monic) (hbd : b ∣ q) :
+      (d * b) * ((c * ℓ) * (q /ₘ b)) = f * g := by
+    calc
+      _ = (d * c) * (ℓ * (b * (q /ₘ b))) := by ac_rfl
+      _ = _ := by rw [mul_quotient hm hbd, show d * c = f from mul_quotient hd hdf,
+        show ℓ * q = g from mul_quotient hℓ hℓg]
+  apply Finset.sum_bij (fun b _ => d * b)
+  · intro b hb
+    obtain ⟨hbm, hbd⟩ := (mem_divisors hq.ne_zero).mp hb
+    have h := hfactor b hbm hbd
+    have hq' : (f * g) /ₘ (d * b) = (c * ℓ) * (q /ₘ b) := by
+      rw [← h, mul_divByMonic_cancel_left _ (hd.mul hbm)]
+    exact Finset.mem_filter.mpr ⟨(mem_divisors (hf.mul hg).ne_zero).mpr
+      ⟨hd.mul hbm, ⟨_, h.symm⟩⟩, dvd_mul_right _ _, hq'.symm ▸ dvd_mul_right _ _⟩
+  · exact fun _ _ _ _ h => mul_left_cancel₀ hd.ne_zero h
+  · intro a ha
+    obtain ⟨ha, hda, hcb⟩ := Finset.mem_filter.mp ha
+    obtain ⟨ham, hafg⟩ := (mem_divisors (hf.mul hg).ne_zero).mp ha
+    refine ⟨a /ₘ d, (mem_divisors hq.ne_zero).mpr ⟨monic_quotient hd ham hda, ?_⟩,
+      mul_quotient hd hda⟩
+    refine ⟨((f * g) /ₘ a) /ₘ (c * ℓ), mul_left_cancel₀ hℓ.ne_zero ?_⟩
+    rw [show ℓ * q = g from mul_quotient hℓ hℓg, ← mul_assoc,
+      factor_quotient hf hd hℓ ham hdf hafg hda hcb]
+  · intro b hb
+    obtain ⟨hbm, hbd⟩ := (mem_divisors hq.ne_zero).mp hb
+    have h : (f * g) /ₘ (d * b) = (c * ℓ) * (q /ₘ b) := by
+      rw [← hfactor b hbm hbd, mul_divByMonic_cancel_left _ (hd.mul hbm)]
+    rw [h]
+    simp only [map_mul]
+    ac_rfl
+
 end weightedMonicConvSum_eq_of_completelyMultiplicative
+
+open weightedMonicConvSum_eq_of_completelyMultiplicative in
+/-- **Dirichlet convolution of completely multiplicative functions at a product.** Let $F$ be a
+field and let $\alpha, \beta : F[T] \to \mathbb{C}$ be completely multiplicative, that is,
+monoid homomorphisms from the multiplicative monoid of $F[T]$ to $\mathbb{C}$. Write
+$\gamma = \alpha * \beta$ for their Dirichlet convolution over monic divisors and $\mu$ for the
+Möbius function. Then for all monic $f, g \in F[T]$,
+$$\gamma(fg) = \sum_{\ell} \mu(\ell) \alpha(\ell) \beta(\ell) \gamma(f/\ell) \gamma(g/\ell),$$
+where $\ell$ runs over the monic common divisors of $f$ and $g$.
+
+Every completely multiplicative function on monic polynomials extends to such a homomorphism (send
+nonzero constants to $1$ and $0$ to $0$), and only values at monic polynomials enter.
+
+Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
+Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Lemma 2
+(`integers-2026-A80-lem-2`). -/
+public theorem monicDirichletConv_mul_of_completelyMultiplicative {F : Type*} [Field F]
+    (α β : F[X] →* ℂ) {f g : F[X]} (hf : f.Monic) (hg : g.Monic) :
+    monicDirichletConv α β (f * g) =
+      ∑ᶠ ℓ ∈ {ℓ : F[X] | ℓ.Monic ∧ ℓ ∣ f ∧ ℓ ∣ g},
+        (moebius ℓ : ℂ) * α ℓ * β ℓ * monicDirichletConv α β (f /ₘ ℓ) *
+          monicDirichletConv α β (g /ₘ ℓ) := by
+  classical
+  let s := divisors f
+  let t := divisors (f * g)
+  let w (a : F[X]) := α a * β ((f * g) /ₘ a)
+  let P (d ℓ a : F[X]) := d ∣ a ∧ (f /ₘ d) * ℓ ∣ (f * g) /ₘ a
+  let L := s.filter (· ∣ g)
+  have hset : {ℓ : F[X] | ℓ.Monic ∧ ℓ ∣ f ∧ ℓ ∣ g} = ↑L := by
+    ext ℓ
+    simp only [Set.mem_ofPred_eq, L, s, Finset.mem_coe, Finset.mem_filter,
+      mem_divisors hf.ne_zero, and_assoc]
+  have hfinite := L.finite_toSet
+  rw [hset, finsum_mem_eq_finite_toFinset_sum _ hfinite]
+  have hfinset : hfinite.toFinset = L := by ext; simp
+  rw [hfinset]
+  symm
+  calc
+    _ = ∑ ℓ ∈ L, ∑ d ∈ s.filter (ℓ ∣ ·), (moebius ℓ : ℂ) *
+          ∑ a ∈ t.filter (P d ℓ), w a := by
+      apply Finset.sum_congr rfl
+      intro ℓ hℓ
+      obtain ⟨hℓ, hℓg⟩ := Finset.mem_filter.mp hℓ
+      obtain ⟨hℓm, hℓf⟩ := (mem_divisors hf.ne_zero).mp hℓ
+      rw [conv_eq_sum _ _ (monic_quotient hℓm hf hℓf), sum_divisors_mul hℓm hf hℓf,
+        Finset.mul_sum, Finset.sum_mul]
+      apply Finset.sum_congr rfl
+      intro d hd
+      obtain ⟨hd, hℓd⟩ := Finset.mem_filter.mp hd
+      obtain ⟨hdm, hdf⟩ := (mem_divisors hf.ne_zero).mp hd
+      have hquot : f /ₘ ℓ = (d /ₘ ℓ) * (f /ₘ d) := by
+        apply mul_left_cancel₀ hℓm.ne_zero
+        rw [mul_quotient hℓm hℓf, ← mul_assoc, mul_quotient hℓm hℓd, mul_quotient hdm hdf]
+      have hquot' : (f /ₘ ℓ) /ₘ (d /ₘ ℓ) = f /ₘ d := by
+        rw [hquot, mul_divByMonic_cancel_left _ (monic_quotient hℓm hdm hℓd)]
+      change _ = (moebius ℓ : ℂ) * (∑ a ∈ (divisors (f * g)).filter (P d ℓ), w a)
+      rw [← sum_conv_filter α β hf hg hdm hℓm hdf hℓg, hquot', map_mul β (f /ₘ d) ℓ]
+      calc
+        _ = (moebius ℓ : ℂ) * (α ℓ * α (d /ₘ ℓ)) * (β (f /ₘ d) * β ℓ) *
+            monicDirichletConv α β (g /ₘ ℓ) := by ac_rfl
+        _ = _ := by
+          rw [← map_mul α, mul_quotient hℓm hℓd]
+          ac_rfl
+    _ = ∑ d ∈ s, ∑ ℓ ∈ (divisors d).filter (· ∣ g), (moebius ℓ : ℂ) *
+          ∑ a ∈ t.filter (P d ℓ), w a := by
+      apply Finset.sum_comm'
+      intro ℓ d
+      simp only [L, Finset.mem_filter]
+      constructor
+      · rintro ⟨⟨hℓ, hℓg⟩, hd, hℓd⟩
+        have hdm := ((mem_divisors hf.ne_zero).mp hd).1
+        exact ⟨⟨(mem_divisors hdm.ne_zero).mpr ⟨((mem_divisors hf.ne_zero).mp hℓ).1,
+          hℓd⟩, hℓg⟩, hd⟩
+      · rintro ⟨⟨hℓ, hℓg⟩, hd⟩
+        obtain ⟨hdm, hdf⟩ := (mem_divisors hf.ne_zero).mp hd
+        obtain ⟨hℓm, hℓd⟩ := (mem_divisors hdm.ne_zero).mp hℓ
+        exact ⟨⟨(mem_divisors hf.ne_zero).mpr ⟨hℓm, hℓd.trans hdf⟩, hℓg⟩, hd, hℓd⟩
+    _ = ∑ d ∈ s, ∑ ℓ ∈ divisors d, (moebius ℓ : ℂ) *
+          ∑ a ∈ t.filter (P d ℓ), w a := by
+      apply Finset.sum_congr rfl
+      intro d hd
+      obtain ⟨hdm, hdf⟩ := (mem_divisors hf.ne_zero).mp hd
+      apply Finset.sum_filter_of_ne
+      intro ℓ hℓ hn
+      by_contra hℓg
+      have hz : ∑ a ∈ t.filter (P d ℓ), w a = 0 := by
+        apply Finset.sum_eq_zero
+        intro a ha
+        obtain ⟨ha, hda, hcb⟩ := Finset.mem_filter.mp ha
+        obtain ⟨ham, hafg⟩ := (mem_divisors (hf.mul hg).ne_zero).mp ha
+        have hℓm := ((mem_divisors hdm.ne_zero).mp hℓ).1
+        exact (hℓg ⟨_, (factor_quotient hf hdm hℓm ham hdf hafg hda hcb).symm.trans
+          (mul_assoc _ _ _)⟩).elim
+      exact hn (by rw [hz, mul_zero])
+    _ = ∑ d ∈ s, ∑ ℓ ∈ divisors d, ∑ a ∈ t,
+          (if P d ℓ a then (moebius ℓ : ℂ) else 0) * w a := by
+      simp only [Finset.sum_filter, Finset.mul_sum, mul_ite, ite_mul, mul_zero, zero_mul]
+    _ = ∑ a ∈ t, (∑ d ∈ s, ∑ ℓ ∈ divisors d,
+          if P d ℓ a then (moebius ℓ : ℂ) else 0) * w a := by
+      simp_rw [Finset.sum_mul]
+      symm
+      rw [Finset.sum_comm]
+      exact Finset.sum_congr rfl fun d _ => Finset.sum_comm
+    _ = _ := by
+      rw [conv_eq_sum _ _ (hf.mul hg)]
+      apply Finset.sum_congr rfl
+      intro a ha
+      obtain ⟨ham, hafg⟩ := (mem_divisors (hf.mul hg).ne_zero).mp ha
+      dsimp only [P, s]
+      rw [divisor_coefficient hf, mul_quotient ham hafg]
+      simp [w, show f ∣ f * g from dvd_mul_right f g]
 
 open weightedMonicConvSum_eq_of_completelyMultiplicative in
 /-- **Camargo's identity over $F[T]$.** Let $F$ be a finite field and let $\mu$ be the Möbius
