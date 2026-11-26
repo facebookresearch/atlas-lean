@@ -13108,6 +13108,7 @@
   "MathlibExt/NumberTheory/FunctionField/KappaPowMoebius": {"to": "NumberTheory/function-fields", "title": "Divisor problems for B-free polynomials"},
   "MathlibExt/NumberTheory/FunctionField/MonicConvolution": {"to": "NumberTheory/function-fields", "title": "Divisor problems for B-free polynomials"},
   "MathlibExt/NumberTheory/FunctionField/MonicCount": {"to": "NumberTheory/function-fields", "title": "Divisor problems for B-free polynomials"},
+  "MathlibExt/NumberTheory/FunctionFieldMultiplicityIteratedDerivSubIsBigOOfUniformApprox": {"to": "NumberTheory/function-fields", "title": "Prime factors of given multiplicity in h-free polynomials"},
   "MathlibExt/NumberTheory/FussCatalanNumber": {"to": "NumberTheory/special-numbers/catalan-numbers", "title": "Fuss–Catalan numbers"},
   "MathlibExt/NumberTheory/GPYMaynardSieveReduction": {"to": "NumberTheory/distribution-of-primes/sieve-methods", "title": "GPY–Maynard sieve"},
   "MathlibExt/NumberTheory/GaussKuzminCharacterization": {"to": "NumberTheory/continued-fractions-expansions", "title": "Gauss–Kuzmin masses of continued fraction strings"},
