@@ -8,7 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import CSLibExt.Computability.Complexity.EncodingConverters
 import CSLibExt.Crypto.Framework.AdmissiblePairing
+import MathlibExt.Computability.TuringMachine.Composition
+import MathlibExt.Computability.TuringMachine.Program
 
 /-! # Tests for admissible bilinear pairings -/
 
@@ -75,3 +78,103 @@ example (i : ι) (hi : (B i).q = 4) :
   exact (by decide : ¬ Nat.Prime 4) hp
 
 end
+
+namespace OrderTwoTest
+
+open Turing TM2Program
+
+-- The last four bits of a valid input are `true, x, false, y`, regardless of its parameter.
+-- Keep the last three bits in a shift register; the result is its first bit AND its last bit.
+private abbrev Window := Bool × Bool × Bool
+private def shift (s : Window) (b : Bool) : Window := (s.2.1, s.2.2, b)
+private def answer (s : Window) : List Bool := [s.1 && s.2.2]
+private def zeroWindow : Window := (false, false, false)
+private def evalWord (w : List Bool) := answer (w.foldl shift zeroWindow)
+
+private def scanTM : FinTM2 where
+  K := Unit
+  k₀ := ()
+  k₁ := ()
+  Γ _ := Bool
+  Λ := Unit
+  main := ()
+  σ := Bool × Window
+  initialState := (false, zeroWindow)
+  m _ := .pop () (fun s o ↦ match o with
+      | some b => (true, shift s.2 b)
+      | none => (false, s.2)) <|
+    .branch Prod.fst (.goto fun _ ↦ ()) <|
+    .push () (fun s ↦ s.2.1 && s.2.2.2) (.load (fun _ ↦ (false, zeroWindow)) .halt)
+
+private theorem scan_run (w : List Bool) (s : Bool × Window) :
+    Run scanTM.m (w.length + 1) ⟨some (), s, fun _ ↦ w⟩
+      ⟨none, scanTM.initialState, fun _ ↦ answer (w.foldl shift s.2)⟩ := by
+  induction w generalizing s with
+  | nil =>
+    apply Run.single
+    apply congrArg (TM2.Cfg.mk none scanTM.initialState)
+    funext k; cases k; rfl
+  | cons b w ih =>
+    apply Run.head _ (ih (true, shift s.2 b))
+    apply congrArg some
+    apply congrArg (TM2.Cfg.mk (some ()) (true, shift s.2 b))
+    funext k; cases k; rfl
+
+-- The machine code is finite and explicit; `noncomputable` is only for the polynomial bound.
+private noncomputable def scanComputable : TM2ComputableInPolyTime id id evalWord where
+  tm := scanTM
+  inputAlphabet := Equiv.refl Bool
+  outputAlphabet := Equiv.refl Bool
+  time := Polynomial.X + 1
+  outputsFun w := by
+    refine ⟨⟨w.length + 1, ?_⟩, by simp⟩
+    change Run scanTM.m _ (initList scanTM _) (haltList scanTM _)
+    erw [List.map_id, List.map_id]
+    have init : initList scanTM w = ⟨some (), (false, zeroWindow), fun _ ↦ w⟩ := by
+      apply congrArg (TM2.Cfg.mk _ _); funext k; cases k; rfl
+    have halt : haltList scanTM (evalWord w) = ⟨none, scanTM.initialState, fun _ ↦ evalWord w⟩ := by
+      apply congrArg (TM2.Cfg.mk _ _); funext k; cases k; rfl
+    rw [id_eq, id_eq, init, halt]
+    exact scan_run w (false, zeroWindow)
+
+private theorem evalWord_poly : ComplexityTheory.IsPolyTime evalWord := by
+  obtain ⟨m⟩ := tm2ComputableInPolyTime_comp DenseSAT.DecodeBits.computable scanComputable
+  exact tm2ComputableInPolyTime_comp (g := id) m DenseSAT.EncodeBits.computable
+
+private abbrev C₂ := Multiplicative (ZMod 2)
+
+private instance : BitstringEncoding C₂ where
+  encode x := [decide (x.toAdd = 1)]
+  decode
+    | [false] => some (Multiplicative.ofAdd 0)
+    | [true] => some (Multiplicative.ofAdd 1)
+    | _ => none
+  decode_encode := by decide
+
+private abbrev B := BilinearGroupData.toyModel 2 (by decide)
+
+private instance : BitstringEncoding B.G1 := (inferInstance : BitstringEncoding C₂)
+private instance : BitstringEncoding B.G2 := (inferInstance : BitstringEncoding C₂)
+private instance : BitstringEncoding B.GT := (inferInstance : BitstringEncoding C₂)
+
+private theorem evalWord_spec (i : List Bool) (x y : C₂) :
+    evalWord (delimit (bitEncode i) ++ bitEncode (x, y)) = bitEncode (B.e x y) := by
+  change answer ((delimit (bitEncode i) ++
+    [true, decide (x.toAdd = 1), false, decide (y.toAdd = 1)]).foldl shift zeroWindow) = _
+  rw [List.foldl_append]
+  change [decide (x.toAdd = 1) && decide (y.toAdd = 1)] = bitEncode (B.e x y)
+  revert x y
+  decide
+
+-- In exponent order (0,0), (0,1), (1,0), (1,1), only the last pair gives the generator.
+example : ([(0, 0), (0, 1), (1, 0), (1, 1)] : List (ZMod 2 × ZMod 2)).map
+    (fun (a, b) ↦ evalWord (delimit (bitEncode ([] : List Bool)) ++
+      bitEncode (Multiplicative.ofAdd a, Multiplicative.ofAdd b))) =
+      [[false], [false], [false], [true]] := by decide
+
+-- This is a nonempty family and the same evaluator accepts arbitrarily long public parameters.
+example : IsAdmissiblePairing (fun _ : List Bool ↦ 2) (fun _ ↦ B.pairingHom) :=
+  BilinearGroupData.isAdmissiblePairing (fun _ ↦ B) (fun _ ↦ by decide)
+    ⟨evalWord, evalWord_poly, evalWord_spec⟩
+
+end OrderTwoTest

@@ -1,14 +1,13 @@
 # Bilinear groups
 
-Let $\mathbb{G}$ and $\mathbb{G}_T$ be cyclic groups of the same prime order $p$, written multiplicatively. A *symmetric bilinear pairing* is a map $e : \mathbb{G} \times \mathbb{G} \to \mathbb{G}_T$ that is
+Let $\mathbb{G}$, $\hat{\mathbb{G}}$ and $\mathbb{G}_T$ be cyclic groups of the same prime order $p$, written multiplicatively. A *bilinear pairing* is a map $e : \mathbb{G} \times \hat{\mathbb{G}} \to \mathbb{G}_T$ with two algebraic properties:
 
-- *bilinear*: $e(g^a, h^b) = e(g, h)^{ab}$ for all $g, h \in \mathbb{G}$ and $a, b \in \mathbb{Z}_p$;
-- *non-degenerate*: $e$ does not send every pair to the identity of $\mathbb{G}_T$, so that $e(g, g)$ generates $\mathbb{G}_T$ whenever $g$ generates $\mathbb{G}$; and
-- *efficiently computable*.
+- *Bilinearity*: $e(g^a, h^b) = e(g, h)^{ab}$ for all $g \in \mathbb{G}$, $h \in \hat{\mathbb{G}}$ and $a,b \in \mathbb{Z}_p$.
+- *Non-degeneracy*: $e(g,h) \ne 1$ for at least one pair. In particular, if $g$ and $h$ generate their respective groups, then $e(g,h)$ generates $\mathbb{G}_T$. Otherwise $e(g,h)$ would be the identity (the target has prime order), and bilinearity would send every pair of powers of $g,h$ to the identity.
 
-A pairing with these three properties is *admissible*, and $(\mathbb{G}, \mathbb{G}_T, e)$ is a *symmetric bilinear group*. In the asymmetric variants the first argument ranges over a group $\mathbb{G}$ and the second over a second group $\hat{\mathbb{G}}$ of order $p$, with the same bilinearity and non-degeneracy conditions.
+In the *symmetric* case the two source groups coincide. Writing $x=g^a$ and $y=g^b$ for a common generator $g$ gives $e(x,y)=e(g,g)^{ab}=e(y,x)$. Moreover, $e(g,g)$ generates $\mathbb{G}_T$ for every generator $g$. In the asymmetric case the two source groups need not coincide, so swapping arguments need not even be defined.
 
-For a family of such groups with given bitstring representations, efficient computation means that **one** algorithm, given the encoded public group parameter and the two encoded elements, returns the encoded pairing value in time polynomial in the input length. Both the algorithm and its polynomial bound are independent of the parameter. A lookup table for each individual finite group does not establish this uniform bound.
+A pairing is *admissible* if, in addition, it is efficiently computable. With equal source groups, $(\mathbb{G}, \mathbb{G}_T,e)$ is then a *symmetric bilinear group*. For a family with given bitstring representations, efficient computation means that **one** algorithm, given the encoded public group parameter and the two encoded elements, returns the encoded pairing value in time polynomial in the input length. Both the algorithm and its polynomial bound are independent of the parameter. A separate lookup table for each finite group does not establish uniform polynomial-time evaluation.
 
 ## Sources
 
