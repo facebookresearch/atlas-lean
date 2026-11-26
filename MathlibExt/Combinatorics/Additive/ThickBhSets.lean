@@ -398,7 +398,7 @@ private theorem a_perm_of_vl_perm {F K : Type*} [Field F] [Fintype F] [Field K] 
   exact hperm.map _
 
 private theorem theta_pow_eq_aeval {F K : Type*} [Field F] [Fintype F] [Field K]
-    [Fintype K] [Algebra F K] {h : ℕ} {θ : K} {b : ℕ}
+    [Algebra F K] {h : ℕ} {θ : K} {b : ℕ}
     {l : List (ZMod (Fintype.card F ^ h - 1))}
     (hmem : ∀ x ∈ l, x ∈ boseSet F h θ b) :
     θ ^ (l.map ZMod.val).sum =
@@ -447,9 +447,11 @@ public theorem isBhSet_boseSet {F K : Type*} [Field F] [Fintype F] [Field K]
       (Polynomial.aeval (θ ^ b))
         (((l₂.map (boseChoice h θ b)).map fun v => Polynomial.X + Polynomial.C v).prod) :=
     haeval₁.symm.trans (hpow.trans haeval₂)
-  have hdeg₁ : (((l₁.map (boseChoice h θ b)).map fun v => Polynomial.X + Polynomial.C v).prod).natDegree = h := by
+  have hdeg₁ : (((l₁.map (boseChoice h θ b)).map fun v =>
+      Polynomial.X + Polynomial.C v).prod).natDegree = h := by
     rw [natDegree_prod, List.length_map, len₁]
-  have hdeg₂ : (((l₂.map (boseChoice h θ b)).map fun v => Polynomial.X + Polynomial.C v).prod).natDegree = h := by
+  have hdeg₂ : (((l₂.map (boseChoice h θ b)).map fun v =>
+      Polynomial.X + Polynomial.C v).prod).natDegree = h := by
     rw [natDegree_prod, List.length_map, len₂]
   have hPeq := poly_eq hh hb (monic_prod _) hdeg₁ (monic_prod _) hdeg₂ haeval
   have hvlPerm : (l₁.map (boseChoice h θ b)).Perm (l₂.map (boseChoice h θ b)) :=
