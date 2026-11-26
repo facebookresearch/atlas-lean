@@ -13792,6 +13792,7 @@
   "MathlibExt/NumberTheory/SumSquares/RepresentationCount": {"to": "NumberTheory/quadratic-forms-sums-of-squares/sums-of-squares", "title": "Representation numbers of sums of squares"},
   "MathlibExt/NumberTheory/SumSquaredDivisorsProduct": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Zumkeller numbers"},
   "MathlibExt/NumberTheory/SuperFibocatalan": {"to": "NumberTheory/special-numbers/catalan-numbers", "title": "FiboCatalan numbers"},
+  "MathlibExt/NumberTheory/SuperLeonardoPSuperLeonardoPEqAddMul": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Leonardo p-numbers"},
   "MathlibExt/NumberTheory/SuperMZumkeller": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Zumkeller numbers"},
   "MathlibExt/NumberTheory/SuperMZumkellerIsSuperMZumkellerOfIsKMPerfect": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Zumkeller numbers"},
   "MathlibExt/NumberTheory/SylvesterCoinDistinctOddPrimes": {"to": "NumberTheory/numerical-semigroups", "title": "Sylvester's coin theorem"},
