@@ -125,8 +125,9 @@ private lemma aux_neZero_R [NeZero M] (hdRM : d * R ∣ M) : NeZero R :=
   ⟨by rintro rfl; exact NeZero.ne M (Nat.eq_zero_of_zero_dvd (mul_zero d ▸ hdRM))⟩
 
 
-/-- If `d * R ∣ M` and `γ ∈ Γ₀(M)`, then `diag(d, 1) * γ = δ * diag(d, 1)`
-for some `δ ∈ Γ₀(R)`: rescaling by `diag(d, 1)` carries `Γ₀(M)` into
+/-- If `d * R ∣ M` and `γ ∈ Γ₀(M)`, then `diag(d, 1) * γ = δ * diag(d, 1)` as integer
+matrices for some `δ ∈ Γ₀(R)`. For `d ≠ 0`, `diag(d, 1)` is invertible over `ℚ` and
+`δ = diag(d, 1) * γ * diag(d, 1)⁻¹`, so conjugation by `diag(d, 1)` carries `Γ₀(M)` into
 `Γ₀(R)`. -/
 lemma exists_cocycle_rescale (hdRM : d * R ∣ M) {γ : SL(2, ℤ)}
     (hγ : γ ∈ Gamma0 M) :
