@@ -6,7 +6,7 @@ Error analysis of interpolation: divided differences and Newton's form of the in
 
 - [Divided differences](divided-differences.md)
 - [Explicit formula for divided differences](explicit-formula-for-divided-differences.md)
-- [Leading coefficient of a polynomial from its values at distinct nodes](leading-coefficient-of-a-polynomial-from-its-values.md): the Mathlib identity behind the explicit formula
+- [Coefficient of index m − 1 of a polynomial of degree below m from its values at m distinct nodes](coefficient-of-a-polynomial-from-its-values.md): the Mathlib identity behind the explicit formula
 - [Newton form of the interpolating polynomial](newton-form-of-the-interpolating-polynomial.md)
 - [Recursion for divided differences](recursion-for-divided-differences.md)
 - [Divided differences and derivatives](divided-differences-and-derivatives.md)

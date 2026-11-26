@@ -1,10 +1,10 @@
 # Order of accuracy and error constants of a linear multistep method
 
-Let a [linear $k$-step method](linear-multistep-method.md) with coefficients $\alpha_j, \beta_j$ have $\sigma(1) \ne 0$, and let $T_n$ be its [truncation error](truncation-error-and-consistency.md). The method has *order of accuracy* $p$ if $p$ is the largest positive integer such that, for every sufficiently smooth solution curve of the initial value problem in the rectangle $R$, there are constants $K$ and $h_0 > 0$ with
+Let a [linear $k$-step method](linear-multistep-method.md) with coefficients $\alpha_j, \beta_j$ have $\sigma(1) \ne 0$, and let $T_n$ be its [truncation error](truncation-error-and-consistency.md). The method has *order of accuracy* $p$ if $p$ is the largest positive integer such that, for every initial value problem $y' = f(x, y)$, $y(x_0) = y_0$ on $[x_0, X_M]$ whose right-hand side $f$ is continuous on $[x_0, X_M] \times \mathbb{R}$ and Lipschitz in $y$ whose solution $y$ has $p + 1$ continuous derivatives, there are constants $K$ and $h_0 > 0$, depending on the problem, with
 
 $$|T_n| \le K h^p \qquad \text{for } 0 < h \le h_0$$
 
-and every $k + 1$ consecutive mesh points $(x_n, y(x_n)), \dots, (x_{n+k}, y(x_{n+k}))$ on the curve.
+and every $n$ with $x_{n+k} \le X_M$. The order is a property of the method, not of one problem: on the problem $y' = 0$, $y(0) = 0$ the truncation error of Euler's explicit method vanishes, although its order is $1$ ($C_2 = \tfrac12$).
 
 Its *error coefficients* are the numbers
 
@@ -20,3 +20,4 @@ with $0^0 = 1$, so that $C_1 = \sum_j j\alpha_j - \sum_j \beta_j = \rho'(1) - \s
 ## Sources
 
 - E. Süli, *Numerical Solution of Ordinary Differential Equations*, lecture notes, Mathematical Institute, University of Oxford, version of 2 March 2022, Section 3.3, expansion (47) with the formulas for $C_0, C_1, \dots, C_q$, and Definition 6 with the paragraph after it. <https://people.maths.ox.ac.uk/suli/nsodes.pdf>
+- G. Dahlquist, "33 years of numerical instability, Part I", *BIT* 25 (1985), 188–204, Section 3, the order of consistency after (3.3) and the expansion (3.4), $L_h y(t) \sim c\, h^{p+1} y^{(p+1)}(t)$ for arbitrary functions $y$, with $c$ and $p$ independent of $y$. <https://doi.org/10.1007/BF01934997>

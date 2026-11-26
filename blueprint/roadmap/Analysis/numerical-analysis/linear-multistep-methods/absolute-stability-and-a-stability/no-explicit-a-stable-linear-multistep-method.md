@@ -1,4 +1,4 @@
-# No explicit linear multistep method is A-stable
+# No explicit consistent linear multistep method is A-stable
 
 No explicit [consistent](../truncation-error-and-consistency.md) [linear multistep method](../linear-multistep-method.md), that is, none with $\beta_k = 0$, $\rho(1) = 0$ and $\rho'(1) = \sigma(1) \ne 0$, is [A-stable](a-stability.md).
 

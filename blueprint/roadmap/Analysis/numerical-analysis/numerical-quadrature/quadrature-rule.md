@@ -4,7 +4,7 @@ Let $a < b$. A *weight function* on $[a, b]$ is a continuous function $w : (a, b
 
 $$\int_a^b f(x)\, w(x)\, dx \approx \sum_{i=0}^{n} A_i f(x_i)$$
 
-with nodes $x_0, \dots, x_n \in [a, b]$ and real coefficients (weights) $A_0, \dots, A_n$, for $f$ continuous on $[a, b]$, so that $f w$ is integrable. The rule is *exact* on the polynomials of degree at most $m$ if equality holds for every such polynomial $f$; since both sides are linear in $f$, it suffices that it holds for $f(x) = x^k$, $0 \le k \le m$. The case $w \equiv 1$ is the unweighted integral $\int_a^b f(x)\, dx$.
+with nodes $x_0, \dots, x_n \in [a, b]$ and real coefficients (weights) $A_0, \dots, A_n$, for $f$ bounded and defined at every point of $[a, b]$ with $f w$ integrable on $(a, b)$, for example $f$ continuous on $[a, b]$ or a step function. The rule is *exact* on the polynomials of degree at most $m$ if equality holds for every such polynomial $f$; since both sides are linear in $f$, it suffices that it holds for $f(x) = x^k$, $0 \le k \le m$. The case $w \equiv 1$ is the unweighted integral $\int_a^b f(x)\, dx$.
 
 ## Sources
 

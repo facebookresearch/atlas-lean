@@ -1,6 +1,6 @@
 # Linear multistep methods
 
-A linear $k$-step method $\sum_{j=0}^{k} \alpha_j y_{n+j} = h \sum_{j=0}^{k} \beta_j f(x_{n+j}, y_{n+j})$ uses $k$ previous values to advance the solution of $y' = f(x, y)$. Its first and second characteristic polynomials $\rho$ and $\sigma$ decide its accuracy and stability: consistency is $\rho(1) = 0$, $\rho'(1) = \sigma(1)$, zero-stability is the root condition on $\rho$, and Dahlquist's equivalence theorem makes the two together equivalent to convergence. Dahlquist's two barriers bound the order of zero-stable and of A-stable methods.
+A linear $k$-step method $\sum_{j=0}^{k} \alpha_j y_{n+j} = h \sum_{j=0}^{k} \beta_j f(x_{n+j}, y_{n+j})$ uses $k$ previous values to advance the solution of $y' = f(x, y)$. Its first and second characteristic polynomials $\rho$ and $\sigma$ decide its accuracy and stability: consistency is $\rho(1) = 0$, $\rho'(1) = \sigma(1) \ne 0$, zero-stability is the root condition on $\rho$, and Dahlquist's equivalence theorem makes the two together equivalent to convergence. Dahlquist's two barriers bound the order of zero-stable and of A-stable methods.
 
 - [Second-order convergence of the two-step Adams-Bashforth method](second-order-convergence-of-the-two-step-adams-bashforth-method.md)
 

@@ -18,3 +18,4 @@ For example, the trapezium rule $y_{n+1} - y_n = \tfrac{h}{2}(f_{n+1} + f_n)$ ha
 ## Sources
 
 - E. Süli, *Numerical Solution of Ordinary Differential Equations*, lecture notes, Mathematical Institute, University of Oxford, version of 2 March 2022, Section 3.3, expansion (47), Definition 6 and the characterization of the order that follows it. <https://people.maths.ox.ac.uk/suli/nsodes.pdf>
+- G. Dahlquist, "33 years of numerical instability, Part I", *BIT* 25 (1985), 188–204, Section 3, the definition of the order of consistency, which "leads to $p + 1$ homogeneous linear equations for the $2k + 2$ coefficients of the method", and the expansion (3.4). <https://doi.org/10.1007/BF01934997>
