@@ -9322,6 +9322,7 @@
   "MathlibExt/Algebra/TensorProduct/PointSeparation": {"to": "RingTheory/algebras-and-differentials", "title": "Algebra homomorphisms into an algebraically closed field"},
   "MathlibExt/Algebra/ZModPermutationPolynomial": {"to": "FieldTheory/finite-fields", "title": "Permutation polynomials"},
   "MathlibExt/Algebra/ZModPowerSum": {"to": "FieldTheory/finite-fields", "title": "Permutation polynomials"},
+  "MathlibExt/AlgebraicGeometry/AbelianDeRhamComparison": {"to": "NumberTheory/algebraic-number-theory/galois-representations", "title": "de Rham comparison for abelian varieties"},
   "MathlibExt/AlgebraicGeometry/Affine/DefinedOver": {"to": "AlgebraicGeometry/varieties-and-projective-geometry", "title": "Fields of definition of algebraic sets"},
   "MathlibExt/AlgebraicGeometry/ClosedImmersionIsIso": {"to": "AlgebraicGeometry/schemes-and-morphisms", "title": "Closed and open immersions"},
   "MathlibExt/AlgebraicGeometry/ClosedPoint": {"to": "AlgebraicGeometry/schemes-and-morphisms", "title": "Points and sections of schemes"},
