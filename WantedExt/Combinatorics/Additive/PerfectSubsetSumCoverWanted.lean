@@ -151,23 +151,6 @@ public theorem_wanted count_elementary_two_three_prod_zmod :
       (2 : ℚ) ^ (3 * (n : ℤ) - 3) * 2 ^ (n * (n - 1) / 2) *
         (28 * (n : ℚ) ^ 3 + 196 * n ^ 2 + 392 * n + 224)
 
-/-- **Shifting by multiples of the last element of a perfect $2^j$-cover.** Let $G$ be an
-abelian group, let $s = (x_1, \dots, x_{k+1})$ be a family in $G$ that is a perfect $2^j$-cover
-of $G$, and let $S_1 = (x_1, \dots, x_k)$. For every $b \in G$, if $S_1$ covers $b$ exactly $c$
-times, then for every integer $t$ it covers $b + 2t\,x_{k+1}$ exactly $c$ times and
-$b + (2t + 1)\,x_{k+1}$ exactly $2^j - c$ times.
-
-Source: John Greene and Clayton Higgins, *Maximal Subset Sums in a Group of Order a Power
-of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Corollary 9
-(`jis-2025-25.7.8-cor-9`). `t` ranges over `ℤ`. -/
-public theorem_wanted coverCount_init_add_zsmul_last {G : Type*} [AddCommGroup G]
-    [DecidableEq G] {j k : ℕ} {s : Fin (k + 1) → G} (hs : IsPerfectMCover (2 ^ j) s)
-    (b : G) (t : ℤ) :
-    coverCount (s ∘ Fin.castSucc) (b + (2 * t) • s (Fin.last k)) =
-        coverCount (s ∘ Fin.castSucc) b ∧
-      coverCount (s ∘ Fin.castSucc) (b + (2 * t + 1) • s (Fin.last k)) =
-        2 ^ j - coverCount (s ∘ Fin.castSucc) b
-
 /-- **Odd multiples and replacement in perfect covers.** Let $G$ be a finite abelian group of order
 $2^n$ and let $a, b \in G$ be nonzero. Then $b = (2j+1)a$ for some integer $j$ if and only if, for
 every perfect cover $S$ of $G$ with $a \in S$, the set $(S \setminus \{a\}) \cup \{b\}$ is again a

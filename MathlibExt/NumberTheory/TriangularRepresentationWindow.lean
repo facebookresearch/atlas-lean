@@ -79,6 +79,48 @@ public noncomputable def sumOfTriangularRepCount (k : ℤ) (n : ℕ) : ℤ :=
   PowerSeries.coeff n ((isUnit_triangularThetaSeries.unit ^ k : (PowerSeries ℤ)ˣ) : PowerSeries ℤ)
 
 set_option linter.unusedVariables false in
+/-- **Prime divisibility of triangular representation numbers persists under prime shifts.** For an
+integer $k$, let $t_k(n)$ be the coefficient of $q^n$ in $\psi(q)^k$, where
+$\psi(q) = \sum_{m \ge 0} q^{m(m+1)/2}$. Let $n \ge 1$ and $k \ge 1$ be natural numbers and let $p$
+be a prime with $p \ge n + 1$. If $p$ divides $t_k(n)$, then $p$ divides $t_{k+rp}(n)$ for every
+integer $r$.
+
+Source: Alegri and Christopher, *On Formulas, Recurrences, and Congruences for
+Representations of Integers as Sums of Squares and Triangular Numbers*, INTEGERS
+26 (2026), Article A93, Theorem 4 (`integers-2026-A93-thm-4`). -/
+public theorem sumOfTriangularRepCount_add_mul_prime {n k p : ℕ} (hn : 1 ≤ n)
+    (hk : 1 ≤ k) (hp : p.Prime) (hpn : n + 1 ≤ p)
+    (h : (p : ℤ) ∣ sumOfTriangularRepCount k n) (r : ℤ) :
+    (p : ℤ) ∣ sumOfTriangularRepCount (k + r * p) n := by
+  let _ : Fact p.Prime := ⟨hp⟩
+  let _ : CharP (PowerSeries (ZMod p)) p :=
+    charP_of_injective_ringHom (PowerSeries.C_injective (R := ZMod p)) p
+  let reduce := PowerSeries.map (Int.castRingHom (ZMod p))
+  let I : Ideal (PowerSeries (ZMod p)) := Ideal.span {PowerSeries.X ^ p}
+  let u := isUnit_triangularThetaSeries.unit
+  let v := Units.map ((Ideal.Quotient.mk I).comp reduce).toMonoidHom u
+  -- After reduction modulo p, Frobenius puts the nonconstant part in (X^p).
+  have hX : PowerSeries.X ∣ reduce triangularThetaSeries - 1 := by
+    rw [PowerSeries.X_dvd_iff, map_sub, map_one, ← PowerSeries.coeff_zero_eq_constantCoeff,
+      PowerSeries.coeff_map, coeff_triangularThetaSeries_small.1, map_one, sub_self]
+  have hv : v ^ p = 1 := by
+    apply Units.ext
+    change Ideal.Quotient.mk I (reduce triangularThetaSeries) ^ p = 1
+    rw [← map_pow, ← (Ideal.Quotient.mk I).map_one, Ideal.Quotient.eq, Ideal.mem_span_singleton]
+    simpa only [sub_pow_char, one_pow] using pow_dvd_pow_of_dvd hX p
+  -- Equality of the truncated powers applies to integer shifts, since v is a unit.
+  have hshift : v ^ ((k : ℤ) + r * p) = v ^ (k : ℤ) := by
+    rw [zpow_add, mul_comm r, zpow_mul, zpow_natCast v p, hv, one_zpow, mul_one]
+  simp only [v, ← map_zpow] at hshift
+  have hcoeff := Ideal.Quotient.eq.mp (congrArg Units.val hshift)
+  change reduce (↑(u ^ ((k : ℤ) + r * p))) - reduce (↑(u ^ (k : ℤ))) ∈ I at hcoeff
+  rw [Ideal.mem_span_singleton, PowerSeries.X_pow_dvd_iff] at hcoeff
+  have heq := hcoeff n (Nat.lt_of_succ_le hpn)
+  rw [map_sub, PowerSeries.coeff_map, PowerSeries.coeff_map, sub_eq_zero] at heq
+  apply (ZMod.intCast_zmod_eq_zero_iff_dvd _ p).mp
+  exact heq.trans ((ZMod.intCast_zmod_eq_zero_iff_dvd _ p).mpr h)
+
+set_option linter.unusedVariables false in
 /-- **Window congruence for sums of triangular numbers.** For an integer $k$, let $t_k(n)$ be the
 coefficient of $q^n$ in $\psi(q)^k$, where $\psi(q) = \sum_{m \ge 0} q^{m(m+1)/2}$. Let $n \ge 1$,
 let $p$ be an odd prime with $p - 1 \ge n + 1$, and let $s \ge p$ be an integer. Then $p$ divides
