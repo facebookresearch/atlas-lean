@@ -6,6 +6,7 @@ Topics added since this subject's fields were last revised.
 - [Chao Lower Bound](chao-lower-bound/README.md)
 - [Cherry Distribution](cherry-distribution/README.md)
 - [Cohen Kappa](cohen-kappa/README.md)
+- [Ewens Freeze Merge](ewens-freeze-merge/README.md)
 - [General Markov Flattening](general-markov-flattening/README.md)
 - [General Markov Identifiability](general-markov-identifiability/README.md)
 - [Good Turing](good-turing/README.md)
