@@ -41,6 +41,7 @@ Topics added since this subject's fields were last revised.
 - [Lossless Codec](lossless-codec/README.md)
 - [LZ78](lz78/README.md)
 - [Markov Random Field](markov-random-field/README.md)
+- [Mediation Formula](mediation-formula/README.md)
 - [Minkowski CObs](minkowski-cobs/README.md)
 - [Moralization](moralization/README.md)
 - [Natarajan](natarajan/README.md)
