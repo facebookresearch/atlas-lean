@@ -136,3 +136,62 @@ example :
   have ha0 : a ≠ 0 := fun e => by simpa [a] using congrFun e 0
   refine (linearIndepOn_pair_iff id hab ha0).mp hR √2 ?_
   funext i; fin_cases i <;> simp [a, b]
+
+/-! The scalar hypothesis of `Vertex.IsWithin.mono` is needed: `c = 1 / 2` over `ℤ ⊆ ℚ` maps no
+lattice homothetic to `ℤ²` into itself. -/
+
+/-- `1 / 2`, as a unit of `ℚ`. -/
+private def half : ℚˣ := Units.mk0 (1 / 2) (by norm_num)
+
+/-- `2`, as a unit of `ℚ`. -/
+private def two : ℚˣ := Units.mk0 2 two_ne_zero
+
+/-- No lattice homothetic to `ℤ²` contains its half-scaling. -/
+private theorem not_latticeMap_half_le {L : Submodule ℤ (Fin 2 → ℚ)}
+    (hL : Homothetic (stdLattice ℤ ℚ) L) : ¬ latticeMap (scalarGL half) L ≤ L := by
+  obtain ⟨e, rfl⟩ := hL
+  intro h
+  have hv : (half : ℚ) • ((e : ℚ) • (Pi.single 0 1 : Fin 2 → ℚ)) ∈
+      latticeMap (scalarGL e) (stdLattice ℤ ℚ) :=
+    h (mem_latticeMap_scalarGL.mpr ⟨_, mem_latticeMap_scalarGL.mpr
+      ⟨_, single_one_mem_stdLattice ℤ ℚ 0, rfl⟩, rfl⟩)
+  obtain ⟨w, hw, hwv⟩ := mem_latticeMap_scalarGL.mp hv
+  have h0 : (e : ℚ) * w 0 = (e : ℚ) * (1 / 2) := by
+    have := congrFun hwv 0
+    simp only [Pi.smul_apply, smul_eq_mul, Pi.single_eq_same, mul_one, half,
+      Units.val_mk0] at this
+    linear_combination this
+  have hw0 : w 0 = 1 / 2 := mul_left_cancel₀ e.ne_zero h0
+  obtain ⟨n, hn⟩ := hw 0
+  rw [hw0, eq_intCast] at hn
+  have h2 : (2 * n : ℚ) = 1 := by rw [hn]; norm_num
+  have h2' : 2 * n = 1 := by exact_mod_cast h2
+  omega
+
+/-- `c = 1 / 2` fails the hypothesis of `Vertex.IsWithin.mono`. -/
+example : ¬ ∀ L : Submodule ℤ (Fin 2 → ℚ), latticeMap (scalarGL half) L ≤ L :=
+  fun h => not_latticeMap_half_le (Homothetic.refl _) (h _)
+
+/-- Boundary: without that hypothesis depth is not monotone. For `c = 1 / 2` the standard vertex is
+within depth `0` of itself but not within depth `1`. -/
+example : Vertex.IsWithin half 0 (stdVertex ℤ ℚ) (stdVertex ℤ ℚ) ∧
+    ¬ Vertex.IsWithin half 1 (stdVertex ℤ ℚ) (stdVertex ℤ ℚ) := by
+  refine ⟨(Vertex.isWithin_zero_iff half _ _).mpr rfl, ?_⟩
+  rintro ⟨L, M, hL, hM, hLv, -, hLM⟩
+  unfold stdVertex at hLv
+  rw [Vertex.mk_eq_mk_iff] at hLv
+  obtain ⟨hle, hMle⟩ := hLM
+  rw [pow_one] at hle
+  exact not_latticeMap_half_le hLv.symm (hle.trans hMle)
+
+/-- `c = 2` maps every `ℤ`-submodule into itself. -/
+private theorem latticeMap_two_le (L : Submodule ℤ (Fin 2 → ℚ)) :
+    latticeMap (scalarGL two) L ≤ L := by
+  intro v hv
+  obtain ⟨w, hw, rfl⟩ := mem_latticeMap_scalarGL.mp hv
+  rw [two, Units.val_mk0, two_smul]
+  exact L.add_mem hw hw
+
+/-- With the hypothesis, depth is monotone: for `c = 2`, depth `0` gives depth `1`. -/
+example (v w : Vertex ℤ ℚ) (h : Vertex.IsWithin two 0 v w) : Vertex.IsWithin two 1 v w :=
+  h.mono latticeMap_two_le (Nat.zero_le 1)

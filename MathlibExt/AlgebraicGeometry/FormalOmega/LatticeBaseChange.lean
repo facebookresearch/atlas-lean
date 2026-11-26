@@ -232,7 +232,7 @@ theorem IsFullLattice.baseChange {L' : Submodule R' (Fin 2 → K')}
     exact Submodule.add_mem _ (Submodule.smul_mem _ _ (hbasis 0))
       (Submodule.smul_mem _ _ (hbasis 1))
 
-/-- Base change of vertices along an integral homomorphism. -/
+/-- Base change of vertices along an integral homomorphism, for `K` the fraction field of `R`. -/
 def Vertex.baseChange : Vertex R' K' → Vertex R K :=
   Quotient.map (fun L => ⟨latticeBaseChange ι L.1, IsFullLattice.baseChange ι L.2⟩)
     (by
@@ -409,7 +409,8 @@ theorem LatticeWithin.mono {c : Kˣ}
   rw [pow_add, scalarGL_mul, latticeMap_mul]
   exact latticeMap_mono _ (latticeMap_scalarGL_pow_le_of_le hc k L)
 
-/-- Being within depth `m` implies being within any depth `n ≥ m`. -/
+/-- If `c L ≤ L` for every `R`-submodule `L` of `K²`, being within depth `m` implies being within
+any depth `n ≥ m`. -/
 theorem Vertex.IsWithin.mono {c : Kˣ}
     (hc : ∀ L : Submodule R (Fin 2 → K), latticeMap (scalarGL c) L ≤ L)
     {m n : ℕ} (hmn : m ≤ n) {v w : Vertex R K} (h : Vertex.IsWithin c m v w) :

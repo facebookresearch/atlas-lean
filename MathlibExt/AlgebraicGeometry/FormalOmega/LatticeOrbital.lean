@@ -35,9 +35,10 @@ import Mathlib.Tactic.LinearCombination
 # Fixed vertices and orbital counts on the lattice graph
 
 For `g ∈ GL₂(K)`, `LT.LatticeTree.fixedVertexSet g` is the set of vertices fixed by `g` and
-`LT.LatticeTree.unitOrbitalCount R g` its cardinality (as `Nat.card`); both are conjugation
-invariant, and scalars fix every vertex. Let `M ∈ GL₂(R)`, let `ϖ` be prime and not divide both
-`c` and `d`, and write `(x, y) = M (c, d)ᵀ`. If `M` fixes the vertex of
+`LT.LatticeTree.unitOrbitalCount R g` its cardinality (as `Nat.card`). Conjugating `g` by `h`
+translates the fixed set by `h` and preserves its count, and scalars fix every vertex. Let `R` be a
+domain with fraction field `K`, let `M ∈ GL₂(R)`, let `ϖ` be prime and not divide both `c` and `d`,
+and write `(x, y) = M (c, d)ᵀ`. If `M` fixes the vertex of
 `LT.LatticeTree.interLattice R K ϖ c d`, then `ϖ ∣ d x - c y` (`dvd_of_isFixedVertex_interLattice`);
 if `(x, y) ≡ λ (c, d)` modulo `ϖ` for a unit `λ`, then `M` maps that lattice onto itself. For `σ`
 an integral automorphism of order two or three, the vertices fixed by the twisted action of
@@ -136,7 +137,8 @@ theorem fixedVertexSet_scalarGL (c : Kˣ) :
     fixedVertexSet (R := R) (scalarGL c) = Set.univ :=
   Set.eq_univ_of_forall (isFixedVertex_scalarGL c)
 
-/-- If `R` has an irreducible element, a scalar matrix fixes more than one vertex. -/
+/-- When `K` is the fraction field of `R` and `R` has an irreducible element, a scalar matrix fixes
+more than one vertex. -/
 theorem not_subsingleton_fixedVertexSet_scalarGL [IsFractionRing R K] {ϖ : R}
     (hϖ : Irreducible ϖ) (c : Kˣ) :
     ¬ (fixedVertexSet (R := R) (scalarGL c)).Subsingleton := by
@@ -144,7 +146,7 @@ theorem not_subsingleton_fixedVertexSet_scalarGL [IsFractionRing R K] {ϖ : R}
   exact stdVertex_ne_act_diagSnd (K := K) hϖ
     (hsub (isFixedVertex_scalarGL c _) (isFixedVertex_scalarGL c _)).symm
 
-/-- Every matrix in `GL₂(R)` fixes the standard vertex. -/
+/-- When `K` is the fraction field of `R`, every matrix in `GL₂(R)` fixes the standard vertex. -/
 theorem isFixedVertex_stdVertex_of_mem_range [IsFractionRing R K]
     {g : Matrix.GeneralLinearGroup (Fin 2) K}
     (hg : g ∈ (Matrix.GeneralLinearGroup.map (n := Fin 2) (algebraMap R K)).range) :
@@ -483,9 +485,9 @@ private theorem dvd_and_dvd_of_dvd_mulVecPair (M : Matrix.GeneralLinearGroup (Fi
   exact ⟨h0 ▸ dvd_add (dvd_mul_of_dvd_right h.1 _) (dvd_mul_of_dvd_right h.2 _),
     h1 ▸ dvd_add (dvd_mul_of_dvd_right h.1 _) (dvd_mul_of_dvd_right h.2 _)⟩
 
-/-- Let `M ∈ GL₂(R)`, let `ϖ` be prime and let `ϖ` not divide both `c` and `d`. If `M` fixes the
-vertex of `interLattice R K ϖ c d`, then `ϖ ∣ d x - c y` for `(x, y) = M (c, d)ᵀ`: the pairs
-`(c, d)` and `M (c, d)ᵀ` are linearly dependent modulo `ϖ`. -/
+/-- Let `R` be a domain with fraction field `K`, let `M ∈ GL₂(R)`, let `ϖ` be prime and let `ϖ` not
+divide both `c` and `d`. If `M` fixes the vertex of `interLattice R K ϖ c d`, then `ϖ ∣ d x - c y`
+for `(x, y) = M (c, d)ᵀ`: the pairs `(c, d)` and `M (c, d)ᵀ` are linearly dependent modulo `ϖ`. -/
 theorem dvd_of_isFixedVertex_interLattice [IsDomain R]
     (M : Matrix.GeneralLinearGroup (Fin 2) R)
     {ϖ c d : R} (hϖ : Prime ϖ) (hcd : ¬(ϖ ∣ c ∧ ϖ ∣ d))

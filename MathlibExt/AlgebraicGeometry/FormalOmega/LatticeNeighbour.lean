@@ -245,8 +245,8 @@ theorem dvd_of_vecPair_mem_latticeMap_scalarGL {ϖ : R} (hϖ : ϖ ≠ 0) {x y : 
   exact ⟨exists_isInteger_eq_algebraMap_mul_iff_dvd.mp ⟨w0, hw0, hw0'.symm⟩,
     exists_isInteger_eq_algebraMap_mul_iff_dvd.mp ⟨w1, hw1, hw1'.symm⟩⟩
 
-/-- If `(c, d)` is not divisible by `ϖ`, the lattice `interLattice ϖ c d` strictly contains `ϖ
-R²`. -/
+/-- When `K` is the fraction field of `R`, `ϖ ≠ 0` and `ϖ` does not divide both `c` and `d`, the
+lattice `interLattice ϖ c d` strictly contains `ϖ R²`. -/
 theorem latticeMap_scalarGL_lt_interLattice {ϖ : R} (hϖ : ϖ ≠ 0) {c d : R}
     (hcd : ¬(ϖ ∣ c ∧ ϖ ∣ d)) :
     latticeMap (scalarGL (unitOfNeZero (K := K) hϖ)) (stdLattice R K) <
@@ -255,8 +255,8 @@ theorem latticeMap_scalarGL_lt_interLattice {ϖ : R} (hϖ : ϖ ≠ 0) {c d : R}
   exact dvd_of_vecPair_mem_latticeMap_scalarGL hϖ
     (h ▸ vecPair_mem_interLattice (R := R) (K := K) ϖ c d)
 
-/-- If `(c, d)` is not divisible by `ϖ`, the lattice `interLattice ϖ c d` is a proper sublattice
-of `R²`. -/
+/-- When `K` is the fraction field of `R` and `ϖ` does not divide both `c` and `d`, the lattice
+`interLattice ϖ c d` is a proper sublattice of `R²`. -/
 theorem interLattice_lt_stdLattice {ϖ : R} {c d : R} (hcd : ¬(ϖ ∣ c ∧ ϖ ∣ d)) :
     interLattice R K ϖ c d < stdLattice R K := by
   rw [lt_iff_le_and_ne]
@@ -279,7 +279,8 @@ noncomputable def neighborOfOption (ϖ : R) (x : Option (R ⧸ Ideal.span {ϖ}))
     Submodule R (Fin 2 → K) :=
   x.elim (interLattice R K ϖ 0 1) (fun y => interLattice R K ϖ 1 y.out)
 
-/-- Each `neighborOfOption ϖ x` lies strictly between `ϖ R²` and `R²`. -/
+/-- When `K` is the fraction field of `R` and `ϖ` is irreducible, each `neighborOfOption ϖ x` lies
+strictly between `ϖ R²` and `R²`. -/
 theorem neighborOfOption_mem_interval {ϖ : R} (hϖ : Irreducible ϖ)
     (x : Option (R ⧸ Ideal.span {ϖ})) :
     latticeMap (scalarGL (unitOfNeZero (K := K) hϖ.ne_zero)) (stdLattice R K) <
@@ -295,8 +296,8 @@ theorem neighborOfOption_mem_interval {ϖ : R} (hϖ : Irreducible ϖ)
   | some y => exact ⟨latticeMap_scalarGL_lt_interLattice hϖ.ne_zero (hcd _),
       interLattice_lt_stdLattice (hcd _)⟩
 
-/-- For an irreducible `ϖ`, distinct elements of `Option (R ⧸ (ϖ))` give distinct lattices
-`neighborOfOption R K ϖ x`. -/
+/-- When `K` is the fraction field of `R` and `ϖ` is irreducible, distinct elements of
+`Option (R ⧸ (ϖ))` give distinct lattices `neighborOfOption R K ϖ x`. -/
 theorem neighborOfOption_injective {ϖ : R} (hϖ : Irreducible ϖ) :
     Function.Injective (neighborOfOption R K ϖ) := by
   have haff : ∀ (a : R), interLattice R K ϖ 0 1 ≠ interLattice R K ϖ 1 a := by
@@ -334,7 +335,7 @@ theorem interLattice_zero_zero (ϖ : R) : interLattice R K ϖ 0 0 = stdLattice R
 
 variable [IsFractionRing R K]
 
-/-- For `ϖ ≠ 0`, `interLattice ϖ 1 0` is `diag(1, ϖ) R²`. -/
+/-- When `K` is the fraction field of `R` and `ϖ ≠ 0`, `interLattice ϖ 1 0` is `diag(1, ϖ) R²`. -/
 theorem interLattice_one_zero {ϖ : R} (hϖ : ϖ ≠ 0) :
     interLattice R K ϖ 1 0 =
       latticeMap (diagSnd (unitOfNeZero (K := K) hϖ)) (stdLattice R K) := by

@@ -35,9 +35,10 @@ public import MathlibExt.AlgebraicGeometry.FormalOmega.LatticeStd
 For a commutative ring `R` with an `R`-algebra field `K`, the vertices of the lattice graph
 (`CerednikDrinfeld.BruhatTits.tree`) are the homothety classes of full `R`-lattices in `K²`
 (`LT.LatticeTree.Vertex`), with the induced action of `GL₂(K)`. When `K` is the fraction field of
-`R`, the stabilizer of the standard vertex is `Kˣ · GL₂(R)`. For an irreducible `ϖ`, the lattices
-`R²` and `diag(1, ϖ) R²` are adjacent (`LT.LatticeTree.AdjacentLattice`), as are `diag(1, ϖ) R²`
-and `diag(1, ϖ)² R²`, and neither `diag(1, ϖ)` nor `diag(1, ϖ)²` fixes the standard vertex.
+`R`, the stabilizer of the standard vertex is `Kˣ · GL₂(R)`, and for an irreducible `ϖ` the
+lattices `R²` and `diag(1, ϖ) R²` are adjacent (`LT.LatticeTree.AdjacentLattice`), as are
+`diag(1, ϖ) R²` and `diag(1, ϖ)² R²`, and neither `diag(1, ϖ)` nor `diag(1, ϖ)²` fixes the
+standard vertex.
 -/
 
 @[expose] public section
@@ -131,7 +132,8 @@ theorem eq_stdLattice_of_homothetic_of_le {L : Submodule R (Fin 2 → K)}
 
 variable [IsFractionRing R K]
 
-/-- The stabilizer of the standard vertex is `Kˣ · GL₂(R)`. -/
+/-- When `K` is the fraction field of `R`, the stabilizer of the standard vertex is `Kˣ · GL₂(R)`.
+-/
 theorem Vertex.act_stdVertex_eq_iff (g : Matrix.GeneralLinearGroup (Fin 2) K) :
     Vertex.act g (stdVertex R K) = stdVertex R K ↔
       ∃ c : Kˣ, scalarGL c * g ∈
@@ -186,7 +188,8 @@ theorem not_homothetic_stdLattice_diagSnd {ϖ : R} (hϖ : Irreducible ϖ) :
     (eq_stdLattice_of_homothetic_of_le hhom (latticeMap_diagSnd_le_stdLattice hϖ.ne_zero)
       (single_zero_one_mem_latticeMap_diagSnd _) (Pi.single_eq_same 0 1))
 
-/-- For an irreducible `ϖ`, `diag(1, ϖ)` moves the standard vertex. -/
+/-- When `K` is the fraction field of `R` and `ϖ` is irreducible, `diag(1, ϖ)` moves the standard
+vertex. -/
 theorem stdVertex_ne_act_diagSnd {ϖ : R} (hϖ : Irreducible ϖ) :
     Vertex.act (diagSnd (unitOfNeZero (K := K) hϖ.ne_zero)) (stdVertex R K) ≠
       stdVertex R K := by
@@ -236,7 +239,8 @@ theorem latticeMap_scalarGL_ne_latticeMap_diagSnd {ϖ : R} (hϖ : Irreducible ϖ
   rw [Pi.single_eq_same] at hweq
   exact hϖ.not_isUnit (isUnit_of_algebraMap_mul_eq_one hw hweq)
 
-/-- For an irreducible `ϖ`, the lattices `R²` and `diag(1, ϖ) R²` are adjacent. -/
+/-- When `K` is the fraction field of `R` and `ϖ` is irreducible, the lattices `R²` and
+`diag(1, ϖ) R²` are adjacent. -/
 theorem adjacentLattice_stdLattice_diagSnd {ϖ : R} (hϖ : Irreducible ϖ) :
     AdjacentLattice (stdLattice R K)
       (latticeMap (diagSnd (unitOfNeZero (K := K) hϖ.ne_zero)) (stdLattice R K)) :=
@@ -296,7 +300,8 @@ theorem not_homothetic_stdLattice_diagSnd_sq {ϖ : R} (hϖ : Irreducible ϖ) :
   exact single_one_one_notMem_latticeMap_diagSnd hϖ
     (latticeMap_mono _ (latticeMap_diagSnd_le_stdLattice hϖ.ne_zero) he1)
 
-/-- For an irreducible `ϖ`, `diag(1, ϖ)²` moves the standard vertex. -/
+/-- When `K` is the fraction field of `R` and `ϖ` is irreducible, `diag(1, ϖ)²` moves the standard
+vertex. -/
 theorem stdVertex_ne_act_diagSnd_sq {ϖ : R} (hϖ : Irreducible ϖ) :
     Vertex.act (diagSnd (unitOfNeZero (K := K) hϖ.ne_zero))
         (Vertex.act (diagSnd (unitOfNeZero (K := K) hϖ.ne_zero)) (stdVertex R K)) ≠

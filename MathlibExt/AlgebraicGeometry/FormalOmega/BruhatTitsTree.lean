@@ -101,7 +101,7 @@ instance instMulActionPGLVertex : MulAction (Matrix.ProjGenLinGroup (Fin 2) K) (
 
 variable [IsFractionRing R K]
 
-/-- `GL₂(K)` preserves adjacency of lattices. -/
+/-- When `K` is the fraction field of `R`, `GL₂(K)` preserves adjacency of lattices. -/
 theorem adjacentLattice_latticeMap (g : GL (Fin 2) K) {L L' : Submodule R (Fin 2 → K)}
     (h : AdjacentLattice L L') : AdjacentLattice (latticeMap g L) (latticeMap g L') := by
   obtain ⟨ϖ, hϖ, h₁, h₂⟩ := h
