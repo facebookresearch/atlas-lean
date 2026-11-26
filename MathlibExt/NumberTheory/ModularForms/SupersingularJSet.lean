@@ -128,13 +128,15 @@ makes `ZMod p` the field with `p` elements (`ZMod (p ^ n)` is not a field for `n
 These values are half the order of `Aut(E)`, the group of all automorphisms of an elliptic curve
 `E` over an algebraic closure of `ZMod p` with `j`-invariant `j`, that is, the order of
 `Aut(E) / {±1}`: `|Aut(E)|` is `24`, `12`, `6`, `4` and `2` in the five cases (J. H. Silverman,
-*The Arithmetic of Elliptic Curves*, 2nd ed., Theorem III.10.1). So `1 / autWeight p j` is the
-weight `2 / |Aut(E)|`, and the level-one mass formula `∑ 1 / |Aut(E)| = (p - 1) / 24`
-(J. Voight, *Quaternion Algebras*, (42.3.9)) reads `∑ 1 / autWeight p j = eichlerMass 1 p`, the
-sum running over the supersingular `j` (for `p ≤ 13` all of them lie in `ZMod p`; a supersingular
-`j` outside `ZMod p` is neither `0` nor `1728`, so its term is `1`). At a level `N > 1` the weights
-of `eichlerMass N p` use the automorphisms `Aut(E, C)` of `E` that preserve a cyclic subgroup `C`
-of order `N` instead. -/
+*The Arithmetic of Elliptic Curves*, 2nd ed., Theorem III.10.1). So for `j` in `ZMod p` the
+weight `2 / |Aut(E)|` is `1 / autWeight p j`. A supersingular `j` outside `ZMod p` is neither `0`
+nor `1728`, so its weight `2 / |Aut(E)|` is `1`. The level-one mass formula
+`∑ 1 / |Aut(E)| = (p - 1) / 24` (J. Voight, *Quaternion Algebras*, (42.3.9)) reads
+`∑ 2 / |Aut(E)| = eichlerMass 1 p`, the sum running over the supersingular `j` in an algebraic
+closure of `ZMod p`. For `p ≤ 13` all of them lie in `ZMod p`, so the sum is that of
+`1 / autWeight p j` over them. At a level `N > 1` not divisible by `p`, the weights of
+`eichlerMass N p` use the automorphisms `Aut(E, C)` of `E` that preserve a cyclic subgroup `C` of
+order `N` instead. -/
 public def autWeight (p : ℕ) [Fact p.Prime] (j : ZMod p) : ℕ :=
   if p = 2 then (if j = 0 then 12 else 1)
   else if p = 3 then (if j = 0 then 6 else 1)
@@ -294,11 +296,11 @@ public theorem affinePointCount_le (p : ℕ) [Fact p.Prime] (A B : ZMod p) :
   refine (Finset.card_filter_le _ _).trans_eq ?_
   simp [pow_two]
 
-/-- The supersingular `j`-invariants in characteristic `p`: the `j` in an algebraic closure of
-`ZMod p` such that every elliptic curve over that algebraic closure with `j`-invariant `j` is
-supersingular in the sense of `WeierstrassCurve.Affine.IsSupersingular`, that is, has no nonzero
-geometric point killed by `p`. Every `j` is the `j`-invariant of an elliptic curve, for example
-`WeierstrassCurve.ofJ j`, so the condition is not vacuous. -/
+/-- The supersingular `j`-invariants in characteristic `p`, for a prime `p`: the `j` in an
+algebraic closure of `ZMod p` such that every elliptic curve over that algebraic closure with
+`j`-invariant `j` is supersingular in the sense of `WeierstrassCurve.Affine.IsSupersingular`, that
+is, has no nonzero geometric point killed by `p`. Every `j` is the `j`-invariant of an elliptic
+curve, for example `WeierstrassCurve.ofJ j`, so the condition is not vacuous. -/
 public def ssJSet (p : ℕ) [Fact p.Prime] : Set (AlgebraicClosure (ZMod p)) :=
   {j | ∀ (W : WeierstrassCurve (AlgebraicClosure (ZMod p))) [W.IsElliptic], W.j = j →
     W.toAffine.IsSupersingular}
