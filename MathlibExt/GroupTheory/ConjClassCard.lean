@@ -41,6 +41,10 @@ The conjugacy class of an element `σ` of a group `G` is its orbit under conjuga
 centralizer is the stabilizer of that action, so the orbit-stabilizer bijection gives
 `#{τ | IsConj σ τ} * #(centralizer {σ}) = #G` as an identity of cardinals, for every group,
 finite or not.
+
+For finite groups, the same count follows from Mathlib's
+`MulAction.card_orbit_mul_card_stabilizer_eq_card_group` for the conjugation action and
+`Subgroup.nat_card_centralizer_nat_card_stabilizer`.
 -/
 
 @[expose] public section
@@ -49,14 +53,14 @@ namespace ConjClassCard
 
 variable {G : Type*} [Group G]
 
-theorem setOf_isConj_eq_orbit_conjAct (σ : G) :
+private theorem setOf_isConj_eq_orbit_conjAct (σ : G) :
     {τ : G | IsConj σ τ} = MulAction.orbit (ConjAct G) σ := by
   ext τ
   rw [ConjAct.orbit_eq_carrier_conjClasses, Set.mem_ofPred_eq, ConjClasses.mem_carrier_iff_mk_eq,
     ConjClasses.mk_eq_mk_iff_isConj]
   exact ⟨IsConj.symm, IsConj.symm⟩
 
-theorem mk_stabilizer_conjAct_eq_mk_centralizer (σ : G) :
+private theorem mk_stabilizer_conjAct_eq_mk_centralizer (σ : G) :
     Cardinal.mk (MulAction.stabilizer (ConjAct G) σ) =
       Cardinal.mk (Subgroup.centralizer ({σ} : Set G)) := by
   refine Cardinal.mk_congr (Equiv.subtypeEquiv ConjAct.ofConjAct.toEquiv fun g => ?_)
@@ -66,6 +70,10 @@ theorem mk_stabilizer_conjAct_eq_mk_centralizer (σ : G) :
   rw [mul_inv_eq_iff_eq_mul]
   exact Iff.rfl
 
+/-- **Class size times centralizer order, for every group.** For an element `σ` of a group `G`,
+the cardinal of the conjugacy class `{τ | IsConj σ τ}` times the cardinal of the centralizer of
+`σ` is the cardinal of `G`. For a finite group this is the orbit-stabilizer count
+`MulAction.card_orbit_mul_card_stabilizer_eq_card_group` for the conjugation action. -/
 theorem mk_setOf_isConj_mul_mk_centralizer (σ : G) :
     Cardinal.mk {τ : G | IsConj σ τ} * Cardinal.mk (Subgroup.centralizer ({σ} : Set G)) =
       Cardinal.mk G := by
