@@ -42,6 +42,9 @@ are arbitrary functions, so message size and local computation are unrestricted.
 * `Cslib.Distributed.LocalModel.LocalAlgorithm.stateAfter`,
   `Cslib.Distributed.LocalModel.LocalAlgorithm.output`.
 
+The parts of the model carry comments instead of docstrings (`nolint docBlame`): the docstring
+of `LocalAlgorithm.output` states the whole model.
+
 ## Main results
 
 * `Cslib.Distributed.LocalModel.LocalAlgorithm.stateAfter_congr_ball`: locality. After `k`
@@ -63,10 +66,9 @@ are arbitrary functions, so message size and local computation are unrestricted.
 
 namespace Cslib.Distributed.LocalModel
 
-/-- **Identifiers from a polynomial range.** An assignment of identifiers to the `n` nodes of a
-finite type `V`, with exponent `c ∈ ℕ`: an injective map from `V` to `{1, …, n ^ c}`.
-
-Source: J. Suomela, *Distributed Algorithms*, Aalto University, 2021, §5.1. -/
+/- Identifiers from a polynomial range: an assignment of identifiers to the `n` nodes of a finite
+type `V`, with exponent `c ∈ ℕ`, is an injective map from `V` to `{1, …, n ^ c}`. -/
+@[nolint docBlame]
 structure IdAssignment (V : Type*) [Fintype V] (c : ℕ) where
   /-- The identifier of each node. -/
   toFun : V → ℕ
@@ -99,14 +101,12 @@ theorem coe_mem_Icc (ids : IdAssignment V c) (v : V) :
 
 end IdAssignment
 
-/-- **Algorithm in the LOCAL model.** An algorithm with inputs in `I`, states in `S`, messages in
-`M` and outputs in `O`, the same at every node. A node with identifier `i` and input `x` starts in
-state `init i x`; in each round a node in state `s` sends the message `send s j` to its neighbour
-with identifier `j`, and then moves to the state `update s m`, where `m` is the multiset of
-messages its neighbours sent it; a node in state `s` outputs `out s`.
-
-Source: N. Linial, *Locality in distributed graph algorithms*, SIAM Journal on Computing
-21(1), 1992, 193–201, §1. -/
+/- An algorithm in the LOCAL model, with inputs in `I`, states in `S`, messages in `M` and outputs
+in `O`, the same at every node. A node with identifier `i` and input `x` starts in state
+`init i x`; in each round a node in state `s` sends the message `send s j` to its neighbour with
+identifier `j`, and then moves to the state `update s m`, where `m` is the multiset of messages
+its neighbours sent it; a node in state `s` outputs `out s`. -/
+@[nolint docBlame]
 structure LocalAlgorithm (I S M O : Type*) where
   /-- `init i x` is the initial state of a node with identifier `i` and input `x`. -/
   init : ℕ → I → S
@@ -123,15 +123,13 @@ namespace LocalAlgorithm
 
 variable {I S M O : Type*} {V : Type*} [Fintype V]
 
-/-- **Execution in the LOCAL model.** `A.stateAfter G ids x k v` is the state of the node `v`
-after `k` synchronous rounds of the algorithm `A` on the graph `G`, where the node `u` has
+/- Execution in the LOCAL model: `A.stateAfter G ids x k v` is the state of the node `v` after `k`
+synchronous rounds of the algorithm `A` on the graph `G`, where the node `u` has
 identifier `ids u` and input `x u`. After `0` rounds the node `v` is in state
 `A.init (ids v) (x v)`. If after `k` rounds every node `u` is in state `s u`, then after `k + 1`
 rounds the node `v` is in state `A.update (s v) m`, where `m` is the multiset of the messages
-`A.send (s u) (ids v)` over the neighbours `u` of `v`.
-
-Source: N. Linial, *Locality in distributed graph algorithms*, SIAM Journal on Computing
-21(1), 1992, 193–201, §1. -/
+`A.send (s u) (ids v)` over the neighbours `u` of `v`. -/
+@[nolint docBlame]
 def stateAfter (A : LocalAlgorithm I S M O) (G : SimpleGraph V) [DecidableRel G.Adj]
     (ids : V → ℕ) (x : V → I) : ℕ → V → S
   | 0 => fun v => A.init (ids v) (x v)
@@ -142,8 +140,11 @@ def stateAfter (A : LocalAlgorithm I S M O) (G : SimpleGraph V) [DecidableRel G.
 /-- **The LOCAL model.** The output at the node `v` of the algorithm `A` run as a `t`-round
 algorithm, for a function `t : ℕ → ℕ`, on the network formed by the simple graph `G` on the
 finite type `V` of `n` nodes, with the identifiers `ids` (distinct, in `{1, …, n ^ c}`) and the
-inputs `x`: the output `A.out s`, where `s` is the state of `v` after `t n` synchronous rounds.
-The complexity of the algorithm is `t`, a function of the number `n` of nodes. -/
+inputs `x`. Each node `u` starts in the state `A.init (ids u) (x u)`. In each synchronous round,
+every node in state `s` sends the message `A.send s (ids w)` to each neighbour `w`; then every
+node in state `s` receives the multiset `m` of the messages its neighbours sent it and moves to
+the state `A.update s m`. The output at `v` is `A.out s`, where `s` is the state of `v` after
+`t n` rounds. The complexity of the algorithm is `t`, a function of the number `n` of nodes. -/
 def output (A : LocalAlgorithm I S M O) (t : ℕ → ℕ) (G : SimpleGraph V) [DecidableRel G.Adj]
     {c : ℕ} (ids : IdAssignment V c) (x : V → I) (v : V) : O :=
   A.out (A.stateAfter G ids x (t (Fintype.card V)) v)
@@ -187,15 +188,12 @@ private theorem edist_le_succ_of_adj {G : SimpleGraph V} {v u w : V} {r : ℕ} (
   norm_cast at h ⊢
   omega
 
-/-- **Locality in the LOCAL model.** After `k` rounds, the state of a node `v` depends only on
-its radius-`k` ball. Let `G` and `G'` be simple graphs on the same finite set of nodes, and let
+/- Locality in the LOCAL model: after `k` rounds, the state of a node `v` depends only on its
+radius-`k` ball. Let `G` and `G'` be simple graphs on the same finite set of nodes, and let
 the identifiers `ids`, `ids'` and the inputs `x`, `x'` agree at every node at distance at most
 `k` from `v` in `G`, and the neighbours of every node at distance less than `k` from `v` be the
 same in `G` and `G'`. Then `v` is in the same state after `k` rounds of any algorithm `A` in
-both executions. Edges between two nodes at distance exactly `k` are not constrained.
-
-Source: N. Linial, *Locality in distributed graph algorithms*, SIAM Journal on Computing
-21(1), 1992, 193–201, §2. -/
+both executions. Edges between two nodes at distance exactly `k` are not constrained. -/
 theorem stateAfter_congr_ball (A : LocalAlgorithm I S M O) {G G' : SimpleGraph V}
     [DecidableRel G.Adj] [DecidableRel G'.Adj] {ids ids' : V → ℕ} {x x' : V → I} (k : ℕ)
     (v : V) (hadj : ∀ u, G.edist v u < k → ∀ w, G.Adj u w ↔ G'.Adj u w)
