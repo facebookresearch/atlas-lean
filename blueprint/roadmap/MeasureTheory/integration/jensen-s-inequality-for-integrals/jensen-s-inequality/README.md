@@ -15,7 +15,7 @@ $\nu$ and integrable $g$ with $\varphi \circ g$ integrable, with the inequality 
 ## Statements
 
 - [Jensen's inequality](jensen-inequality.md)
-- [Finite Jensen inequality for concave functions](finite-jensen-inequality-for-concave-functions.md)
+- [Finite Jensen inequality for concave functions](finite-jensen-inequality-for-concave-functions.md): the finite form for a concave function on a convex set, as used for the logarithm
 
 ## Background
 
