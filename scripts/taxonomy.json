@@ -11910,6 +11910,7 @@
   "MathlibExt/GameTheory/WardropExistence": {"to": "GameTheory/noncooperative-games", "title": "Selfish routing and the price of anarchy"},
   "MathlibExt/GameTheory/ZeroSumMinimax": {"to": "GameTheory/noncooperative-games", "title": "Von Neumann's minimax theorem"},
   "MathlibExt/Geometry/BilliardUnfolding": {"to": "Geometry/euclidean-geometry/circles-and-conics", "title": "Mathematical billiards"},
+  "MathlibExt/Geometry/BoseGases": {"to": "Analysis/operator-theory/spectral-theory", "title": "Ground-state energy of dilute Bose gases"},
   "MathlibExt/Geometry/CAT0": {"to": "Geometry/metric-geometry", "title": "CAT(0) spaces"},
   "MathlibExt/Geometry/Convex/ColorfulCaratheodory": {"to": "Geometry/convex-geometry", "title": "Colorful Carathéodory theorem"},
   "MathlibExt/Geometry/Convex/Covering": {"to": "Geometry/packings-and-coverings", "title": "Hadwiger covering and illumination problem"},
