@@ -51,22 +51,27 @@ namespace CerednikDrinfeld.QM
 
 namespace FakeEllipticCurve
 
-variable {a b : ℚ} {Λ : Submodule ℤ ℍ[ℚ, a, b]} {N : ℕ}
+variable {a b : ℚ} {Λ : Subring ℍ[ℚ, a, b]} {N : ℕ}
 
+-- `hP` and `hQ` are stated in `T ⟶ A`. Written as `P₁.left = P₂.left`, their
+-- type mentions both `Over.mk t₁` and `Over.mk t₂`, and at the use in
+-- `IsPullbackVia.comp` the kernel then compares the two base points by
+-- unfolding, which took minutes of type checking.
 /-- The group law only depends on the underlying morphisms of its
 arguments, and on the base point up to equality. -/
 private theorem mul_left_congr {R : Type u} [CommRing R] {A : Scheme.{u}}
     {f : A ⟶ Spec (CommRingCat.of R)} (L : RelativeGroupLaw R f)
     {T : Scheme.{u}} {t₁ t₂ : T ⟶ Spec (CommRingCat.of R)} (h : t₁ = t₂)
     (P₁ Q₁ : SchemeHomOver t₁ f) (P₂ Q₂ : SchemeHomOver t₂ f)
-    (hP : P₁.left = P₂.left) (hQ : Q₁.left = Q₂.left) :
+    (hP : @Eq (T ⟶ A) P₁.left P₂.left) (hQ : @Eq (T ⟶ A) Q₁.left Q₂.left) :
     (L.mul t₁ P₁ Q₁).left = (L.mul t₂ P₂ Q₂).left := by
   subst h
   obtain rfl : P₁ = P₂ := Over.OverMorphism.ext hP
   obtain rfl : Q₁ = Q₂ := Over.OverMorphism.ext hQ
   rfl
 
-private theorem comapPt_left {S S' : Type u} [CommRing S] [CommRing S']
+@[simp]
+theorem comapPt_left {S S' : Type u} [CommRing S] [CommRing S']
     {φ : S →+* S'} {E : FakeEllipticCurve Λ N S}
     {E' : FakeEllipticCurve Λ N S'} (g : E'.A ⟶ E.A)
     (hg : CategoryTheory.IsPullback g E'.f E.f (Spec.map (CommRingCat.ofHom φ)))
