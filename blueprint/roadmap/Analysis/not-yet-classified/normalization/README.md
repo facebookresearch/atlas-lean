@@ -1,6 +1,6 @@
-# Normalization
+# Zero normalization of an asymptotic morphism
 
-- [Normalize](normalize.md)
-- [Normalize apply](normalize-apply.md)
-- [Normalize zero](normalize-zero.md)
-- [Normalize strictly Equivalent](normalize-strictly-equivalent.md)
+- [Asymptotic morphism with its zero orbit subtracted](normalize.md)
+- [Value of the zero-normalized family](normalize-apply.md)
+- [Exact zero for the normalized family](normalize-zero.md)
+- [Strict equivalence of normalization and the initial family](normalize-strictly-equivalent.md)

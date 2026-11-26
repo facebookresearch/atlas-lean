@@ -1,3 +1,5 @@
-# Bijective compact Tensor Completion To Compacts
+# Bijective compact tensor completion map
 
-Actual isometry, completeness and dense image make the existing completed star hom bijective.
+The isometric completed map
+`compactTensorCompletionToCompacts H A` is bijective onto the amplification compact algebra,
+since its complete range is closed and its image is dense.

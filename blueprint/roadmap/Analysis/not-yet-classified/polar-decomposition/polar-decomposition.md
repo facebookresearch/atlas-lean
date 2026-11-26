@@ -1,3 +1,5 @@
-# Polar Decomposition
+# Dense-range polar decomposition
 
-Dense-range polar decomposition in source orientation `T = U |T|`.
+If `|T|` and `T` have dense ranges, `T =
+U.toAdjointable.comp T.absoluteValue` for the unitary `U = T.polarUnitary hAbsoluteDense
+hDense`.

@@ -1,9 +1,9 @@
-# GNSLeft Representation
+# Star representation by GNS left multiplication
 
-- [Gns Left Mul zero](gns-left-mul-zero.md)
-- [Gns Left Mul add](gns-left-mul-add.md)
-- [Gns Left Mul smul](gns-left-mul-smul.md)
-- [Gns Left Mul mul](gns-left-mul-mul.md)
-- [Gns Left Representation](gns-left-representation.md)
-- [Gns Left Representation apply](gns-left-representation-apply.md)
-- [Gns Left Representation gns Map](gns-left-representation-gns-map.md)
+- [Zero coefficient in the GNS left action](gns-left-mul-zero.md)
+- [Additivity of completed GNS left multiplication](gns-left-mul-add.md)
+- [Complex linearity of the completed GNS action](gns-left-mul-smul.md)
+- [Multiplication in the GNS left representation](gns-left-mul-mul.md)
+- [Nonunital star representation of a positive weight](gns-left-representation.md)
+- [Operator value of the GNS star representation](gns-left-representation-apply.md)
+- [GNS representation on its dense square domain](gns-left-representation-gns-map.md)

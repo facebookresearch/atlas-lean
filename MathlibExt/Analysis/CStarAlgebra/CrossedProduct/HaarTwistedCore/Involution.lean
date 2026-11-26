@@ -15,13 +15,13 @@ public import MathlibExt.Analysis.CStarAlgebra.CrossedProduct.HaarTwistedCore.Ba
 public import MathlibExt.MeasureTheory.Group.ModularCharacterContinuity
 
 /-!
-# The original Haar twisted involution
+# Modular involution of compact coefficients
 
-The coefficient at `s` is the positive-real modular weight times the action at `s`
-of the adjoint coefficient at `s⁻¹`. The positive-real weight is written through
-its canonical complex scalar image, using exactly the original complex module.
-Only the additive, involutive and conjugate-linear structures are installed here;
-the convolution multiplication has a separate owner.
+Let G be a locally compact topological group, A a nonunital complex C-star algebra and α a
+point-norm action of G on A. Writing δ(s)=Measure.modularCharacter s, define
+f⁎(s)=((δ(s):ℝ):ℂ)•α_s(star(f(s⁻¹))). For f∈C_c(G,A), this is again compactly supported and
+continuous, with tsupport(f⁎)⊆tsupport(f)⁻¹. It is additive, conjugate-linear and involutive:
+(f+h)⁎=f⁎+h⁎, (c•f)⁎=conj(c)•f⁎ and (f⁎)⁎=f.
 -/
 
 @[expose] public section
@@ -42,8 +42,13 @@ variable {G : Type uG} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
   [LocallyCompactSpace G] [MeasurableSpace G]
 variable {A : Type uA} [NonUnitalCStarAlgebra A]
 
-/-- The literal modularly weighted adjoint coefficient function, with its original
-compact support and continuous action. -/
+/-- **Modular adjoint of a compact coefficient.**
+
+Let G be a locally compact topological group, A a nonunital complex C-star algebra and α a
+point-norm action of G on A. Writing δ(s)=Measure.modularCharacter s, define
+f⁎(s)=((δ(s):ℝ):ℂ)•α_s(star(f(s⁻¹))). The compactly supported continuous function
+crossedStarCc α f is f⁎ for f∈C_c(G,A).
+-/
 def crossedStarCc (α : PointNormCStarAction G A) (f : C_c(G, A)) : C_c(G, A) where
   toFun s := ((Measure.modularCharacter s : ℝ) : ℂ) • α s (star (f s⁻¹))
   continuous_toFun := by
@@ -62,14 +67,25 @@ def crossedStarCc (α : PointNormCStarAction G A) (f : C_c(G, A)) : C_c(G, A) wh
     simp only [hzero, star_zero, PointNormCStarAction.apply_zero, smul_zero]
 
 omit [MeasurableSpace G] in
-/-- Evaluation of the original compact-support involution retains its Haar modular factor. -/
+/-- **Evaluation of the modular adjoint.**
+
+Let G be a locally compact topological group, A a nonunital complex C-star algebra and α a
+point-norm action of G on A. For f∈C_c(G,A) and s∈G, crossedStarCc α f
+s=((Measure.modularCharacter s:ℝ):ℂ)•α_s(star(f(s⁻¹))).
+-/
 @[simp]
 theorem crossedStarCc_apply (α : PointNormCStarAction G A) (f : C_c(G, A)) (s : G) :
     crossedStarCc α f s = ((Measure.modularCharacter s : ℝ) : ℂ) • α s (star (f s⁻¹)) :=
   rfl
 
 omit [MeasurableSpace G] in
-/-- Involuting a coefficient can only invert its original topological support. -/
+/-- **Support of the modular adjoint.**
+
+Let G be a locally compact topological group, A a nonunital complex C-star algebra and α a
+point-norm action of G on A. Writing δ(s)=Measure.modularCharacter s, define
+f⁎(s)=((δ(s):ℝ):ℂ)•α_s(star(f(s⁻¹))). For f∈C_c(G,A), tsupport(f⁎)⊆tsupport(f)⁻¹, where
+tsupport is the closure of the nonzero set.
+-/
 theorem tsupport_crossedStarCc_subset (α : PointNormCStarAction G A) (f : C_c(G, A)) :
     tsupport (crossedStarCc α f : G → A) ⊆ (tsupport (f : G → A))⁻¹ := by
   refine closure_minimal ?_ (isClosed_tsupport (f : G → A)).inv
@@ -83,17 +99,37 @@ theorem tsupport_crossedStarCc_subset (α : PointNormCStarAction G A) (f : C_c(G
 
 variable (μ : Measure G) (α : PointNormCStarAction G A)
 
-/-- The Haar twisted involution on the same measure- and action-indexed coefficient carrier. -/
+/-- **Modular involution on core coefficients.**
+
+Let G be a locally compact topological group, A a nonunital complex C-star algebra and α a
+point-norm action of G on A. Let μ be a measure on G with a measurable structure, and write
+Carrier μ α for the compactly supported continuous coefficient core. Writing
+δ(s)=Measure.modularCharacter s, define f⁎(s)=((δ(s):ℝ):ℂ)•α_s(star(f(s⁻¹))). The map
+crossedStar μ α:Carrier μ α→Carrier μ α sends each coefficient f to f⁎.
+-/
 def crossedStar (f : Carrier μ α) : Carrier μ α :=
   fromCc μ α (crossedStarCc α (toCc μ α f))
 
-/-- The indexed involution has the exact original modularly weighted coefficient value. -/
+/-- **Value of the core modular involution.**
+
+Let G be a locally compact topological group, A a nonunital complex C-star algebra and α a
+point-norm action of G on A. Let μ be a measure on G with a measurable structure, and write
+Carrier μ α for the compactly supported continuous coefficient core. For f∈Carrier μ α and
+s∈G, crossedStar μ α f s=((Measure.modularCharacter s:ℝ):ℂ)•α_s(star(f(s⁻¹))).
+-/
 @[simp]
 theorem crossedStar_apply (f : Carrier μ α) (s : G) :
     crossedStar μ α f s = ((Measure.modularCharacter s : ℝ) : ℂ) • α s (star (f s⁻¹)) :=
   rfl
 
-/-- The original twisted involution preserves addition of coefficient functions. -/
+/-- **Additivity of the modular involution.**
+
+Let G be a locally compact topological group, A a nonunital complex C-star algebra and α a
+point-norm action of G on A. Let μ be a measure on G with a measurable structure, and write
+Carrier μ α for the compactly supported continuous coefficient core. Writing
+δ(s)=Measure.modularCharacter s, define f⁎(s)=((δ(s):ℝ):ℂ)•α_s(star(f(s⁻¹))). For f,h∈Carrier
+μ α, (f+h)⁎=f⁎+h⁎.
+-/
 theorem crossedStar_add (f g : Carrier μ α) :
     crossedStar μ α (f + g) = crossedStar μ α f + crossedStar μ α g := by
   apply (equivCc μ α).injective
@@ -105,7 +141,14 @@ theorem crossedStar_add (f g : Carrier μ α) :
   simp only [crossedStar, toCc_fromCc, crossedStarCc_apply, toCc_add,
     CompactlySupportedContinuousMap.add_apply, star_add, PointNormCStarAction.apply_add, smul_add]
 
-/-- The original twisted involution is conjugate-linear for the original complex module. -/
+/-- **Conjugate-linearity of the modular involution.**
+
+Let G be a locally compact topological group, A a nonunital complex C-star algebra and α a
+point-norm action of G on A. Let μ be a measure on G with a measurable structure, and write
+Carrier μ α for the compactly supported continuous coefficient core. Writing
+δ(s)=Measure.modularCharacter s, define f⁎(s)=((δ(s):ℝ):ℂ)•α_s(star(f(s⁻¹))). For c∈ℂ and
+f∈Carrier μ α, (c•f)⁎=star(c)•f⁎=conj(c)•f⁎.
+-/
 theorem crossedStar_smul (c : ℂ) (f : Carrier μ α) :
     crossedStar μ α (c • f) = star c • crossedStar μ α f := by
   apply (equivCc μ α).injective
@@ -117,7 +160,14 @@ theorem crossedStar_smul (c : ℂ) (f : Carrier μ α) :
     CompactlySupportedContinuousMap.smul_apply, star_smul, PointNormCStarAction.apply_smul]
   exact smul_comm _ _ _
 
-/-- Applying the source involution twice restores the original coefficient function. -/
+/-- **The modular adjoint is involutive.**
+
+Let G be a locally compact topological group, A a nonunital complex C-star algebra and α a
+point-norm action of G on A. Let μ be a measure on G with a measurable structure, and write
+Carrier μ α for the compactly supported continuous coefficient core. Writing
+δ(s)=Measure.modularCharacter s, define f⁎(s)=((δ(s):ℝ):ℂ)•α_s(star(f(s⁻¹))). Every f∈Carrier
+μ α satisfies (f⁎)⁎=f.
+-/
 theorem crossedStar_crossedStar (f : Carrier μ α) :
     crossedStar μ α (crossedStar μ α f) = f := by
   apply (equivCc μ α).injective
@@ -139,19 +189,48 @@ theorem crossedStar_crossedStar (f : Carrier μ α) :
   rw [star_smul, hstarδ, ← PointNormCStarAction.apply_star, star_star,
     PointNormCStarAction.apply_smul, PointNormCStarAction.apply_apply_inv, ← mul_smul, hδ, one_smul]
 
-/-- The core's star is the original Haar twisted involution. -/
+/-- **Star operation on the compact coefficient core.**
+
+Let G be a locally compact topological group, A a nonunital complex C-star algebra and α a
+point-norm action of G on A. Let μ be a measure on G with a measurable structure, and write
+Carrier μ α for the compactly supported continuous coefficient core. Writing
+δ(s)=Measure.modularCharacter s, define f⁎(s)=((δ(s):ℝ):ℂ)•α_s(star(f(s⁻¹))). This modular
+adjoint is the star operation of Carrier μ α.
+-/
 instance instStarCarrier : Star (Carrier μ α) :=
   ⟨crossedStar μ α⟩
 
-/-- The original modular character and inverse action make the core's star involutive. -/
+/-- **Involutive star on core coefficients.**
+
+Let G be a locally compact topological group, A a nonunital complex C-star algebra and α a
+point-norm action of G on A. Let μ be a measure on G with a measurable structure, and write
+Carrier μ α for the compactly supported continuous coefficient core. Writing
+δ(s)=Measure.modularCharacter s, define f⁎(s)=((δ(s):ℝ):ℂ)•α_s(star(f(s⁻¹))). The star
+operation on Carrier μ α satisfies star(star(f))=f for every coefficient f.
+-/
 instance instInvolutiveStarCarrier : InvolutiveStar (Carrier μ α) where
   star_involutive := crossedStar_crossedStar μ α
 
-/-- The original additive coefficient group has its source twisted star structure. -/
+/-- **Additive star structure on core coefficients.**
+
+Let G be a locally compact topological group, A a nonunital complex C-star algebra and α a
+point-norm action of G on A. Let μ be a measure on G with a measurable structure, and write
+Carrier μ α for the compactly supported continuous coefficient core. Writing
+δ(s)=Measure.modularCharacter s, define f⁎(s)=((δ(s):ℝ):ℂ)•α_s(star(f(s⁻¹))). The pointwise
+additive group Carrier μ α has star(f+h)=star(f)+star(h).
+-/
 instance instStarAddMonoidCarrier : StarAddMonoid (Carrier μ α) where
   star_add := crossedStar_add μ α
 
-/-- The original complex module has its source conjugate-linear twisted star structure. -/
+/-- **Complex star module of core coefficients.**
+
+Let G be a locally compact topological group, A a nonunital complex C-star algebra and α a
+point-norm action of G on A. Let μ be a measure on G with a measurable structure, and write
+Carrier μ α for the compactly supported continuous coefficient core. Writing
+δ(s)=Measure.modularCharacter s, define f⁎(s)=((δ(s):ℝ):ℂ)•α_s(star(f(s⁻¹))). Complex scaling
+and the modular adjoint satisfy star(c•f)=star(c)•star(f), making Carrier μ α a complex star
+module.
+-/
 instance instStarModuleCarrier : StarModule ℂ (Carrier μ α) where
   star_smul := crossedStar_smul μ α
 

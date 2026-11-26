@@ -1,10 +1,10 @@
-# Filtration Unipotent
+# Determinant one from a filtration-unipotent basis condition
 
-## Basis
+## Bases adapted to filtrations
 
-- [Of Filtration apply eq of Filtration Stage](of-filtration-apply-eq-of-filtration-sta.md)
-- [Of Filtration stable](of-filtration-stable.md)
+- [Prefix stage basis equals the corresponding final ambient basis](of-filtration-apply-eq-of-filtration-sta.md)
+- [Basis-level lower-stage errors force stage invariance](of-filtration-stable.md)
 
-## Linear Map
+## Unipotent maps preserving filtrations
 
-- [Det eq one of sub mem of Filtration](det-eq-one-of-sub-mem-of-filtration.md)
+- [Filtration-unipotent endomorphism has determinant one](det-eq-one-of-sub-mem-of-filtration.md)

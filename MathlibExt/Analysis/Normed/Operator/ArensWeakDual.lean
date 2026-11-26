@@ -14,20 +14,15 @@ module
 public import MathlibExt.Analysis.Normed.Operator.ArensStar
 
 /-!
-# Original Arens maps and involution in the fixed weak-star views
+# Weak-star Arens maps and the continuous dual involution
 
-The first Arens extension with its second variable fixed is a continuous
-linear map on the original first weak-star bidual. The second extension
-with its first variable fixed has the corresponding continuous linear map
-on the second weak-star bidual. Their values are the existing extensions.
+For a bounded bilinear map `m : E×F → G` on seminormed spaces over a nontrivially normed field,
+fixing `q ∈ F**` gives the weak-star continuous linear map `p ↦ m₁(p,q)` from `E**` to `G**`.
+Fixing `p ∈ E**` gives `q ↦ m₂(p,q)` from `F**` to `G**`.
 
-The original dual involution is a conjugate-linear continuous equivalence
-on the weak-star view paired with the same coefficient space. Changing
-views preserves its values and the original continuous-dual norm.
-
-These data require only the original bounded bilinear map and isometric
-additive involution. No equality of the Arens products, C-star identity,
-unit, selected predual or representation model is used.
+For a coefficient space `A` with compatible isometric involution over a normed star field,
+`φ*(a)=star(φ(a*))` is a conjugate-linear weak-star continuous equivalence of `A*`. It preserves
+the operator norm. Completeness and equality of the two Arens extensions are not required.
 -/
 
 @[expose] public section
@@ -65,7 +60,11 @@ variable [SeminormedAddCommGroup E] [NormedSpace 𝕜 E]
 variable [SeminormedAddCommGroup F] [NormedSpace 𝕜 F]
 variable [SeminormedAddCommGroup G] [NormedSpace 𝕜 G]
 
-/-- The actual first Arens extension in its continuous first weak-star variable. -/
+/-- **Weak-star continuous first Arens map.** Let `𝕜` be a nontrivially normed field. Let
+`E,F,G` be seminormed `𝕜`-spaces in independent universes, and write `E*`, `E**` for the
+continuous dual and bidual, with their operator norms. Let `m : E →L[𝕜] F →L[𝕜] G` be a
+bounded bilinear map. for fixed `q ∈ F**`, `arensFirstWeakLeft m q` is the continuous
+linear map `p ↦ m.arensFirst p q` from `E**` with `σ(E**,E*)` to `G**` with `σ(G**,G*)`. -/
 def arensFirstWeakLeft (m : E →L[𝕜] F →L[𝕜] G)
     (q : StrongDual 𝕜 (StrongDual 𝕜 F)) :
     WeakDual 𝕜 (StrongDual 𝕜 E) →L[𝕜] WeakDual 𝕜 (StrongDual 𝕜 G) where
@@ -75,18 +74,31 @@ def arensFirstWeakLeft (m : E →L[𝕜] F →L[𝕜] G)
       (m.arensFirst.flip q).toLinearMap
   cont := continuous_arensFirst_weakDual_left m q
 
-/-- Changing views leaves the actual first Arens value unchanged. -/
+/-- **First Arens value in weak-star biduals.** Let `𝕜` be a nontrivially normed field. Let
+`E,F,G` be seminormed `𝕜`-spaces in independent universes, and write `E*`, `E**` for the
+continuous dual and bidual, with their operator norms. Let `m : E →L[𝕜] F →L[𝕜] G` be a
+bounded bilinear map. for `q ∈ F**` and `p` in the weak-star view of `E**`,
+`arensFirstWeakLeft m q p` is the weak-star view of `m.arensFirst p q`; evaluations are
+unchanged. -/
 @[simp] theorem arensFirstWeakLeft_apply (m : E →L[𝕜] F →L[𝕜] G)
     (q : StrongDual 𝕜 (StrongDual 𝕜 F)) (p : WeakDual 𝕜 (StrongDual 𝕜 E)) :
     m.arensFirstWeakLeft q p = StrongDual.toWeakDual (m.arensFirst p.toStrongDual q) := rfl
 
-/-- The first weak-star map evaluates at the original iterated dual action. -/
+/-- **Nested evaluation of the weak-star first Arens map.** Let `𝕜` be a nontrivially normed
+field. Let `E,F,G` be seminormed `𝕜`-spaces in independent universes, and write `E*`,
+`E**` for the continuous dual and bidual, with their operator norms. Let `m : E →L[𝕜] F
+→L[𝕜] G` be a bounded bilinear map. for `p ∈ E**`, `q ∈ F**` and `φ ∈ G*`,
+`(arensFirstWeakLeft m q p)(φ)=p(x ↦ q(y ↦ φ(m(x,y))))`. -/
 @[simp] theorem arensFirstWeakLeft_apply_apply (m : E →L[𝕜] F →L[𝕜] G)
     (q : StrongDual 𝕜 (StrongDual 𝕜 F)) (p : WeakDual 𝕜 (StrongDual 𝕜 E))
     (phi : StrongDual 𝕜 G) :
     m.arensFirstWeakLeft q p phi = p (m.dualBilinear.dualBilinear q phi) := rfl
 
-/-- The actual second Arens extension in its continuous second weak-star variable. -/
+/-- **Weak-star continuous second Arens map.** Let `𝕜` be a nontrivially normed field. Let
+`E,F,G` be seminormed `𝕜`-spaces in independent universes, and write `E*`, `E**` for the
+continuous dual and bidual, with their operator norms. Let `m : E →L[𝕜] F →L[𝕜] G` be a
+bounded bilinear map. for fixed `p ∈ E**`, `arensSecondWeakRight m p` is the continuous
+linear map `q ↦ m.arensSecond p q` from `F**` with `σ(F**,F*)` to `G**` with `σ(G**,G*)`. -/
 def arensSecondWeakRight (m : E →L[𝕜] F →L[𝕜] G)
     (p : StrongDual 𝕜 (StrongDual 𝕜 E)) :
     WeakDual 𝕜 (StrongDual 𝕜 F) →L[𝕜] WeakDual 𝕜 (StrongDual 𝕜 G) where
@@ -96,12 +108,20 @@ def arensSecondWeakRight (m : E →L[𝕜] F →L[𝕜] G)
       (m.arensSecond p).toLinearMap
   cont := continuous_arensSecond_weakDual_right m p
 
-/-- Changing views leaves the actual second Arens value unchanged. -/
+/-- **Second Arens value in weak-star biduals.** Let `𝕜` be a nontrivially normed field. Let
+`E,F,G` be seminormed `𝕜`-spaces in independent universes, and write `E*`, `E**` for the
+continuous dual and bidual, with their operator norms. Let `m : E →L[𝕜] F →L[𝕜] G` be a
+bounded bilinear map. for `p ∈ E**` and `q` in the weak-star view of `F**`,
+`arensSecondWeakRight m p q` is the weak-star view of `m.arensSecond p q`. -/
 @[simp] theorem arensSecondWeakRight_apply (m : E →L[𝕜] F →L[𝕜] G)
     (p : StrongDual 𝕜 (StrongDual 𝕜 E)) (q : WeakDual 𝕜 (StrongDual 𝕜 F)) :
     m.arensSecondWeakRight p q = StrongDual.toWeakDual (m.arensSecond p q.toStrongDual) := rfl
 
-/-- The second weak-star map retains the original second outer evaluation. -/
+/-- **Nested evaluation of the weak-star second Arens map.** Let `𝕜` be a nontrivially normed
+field. Let `E,F,G` be seminormed `𝕜`-spaces in independent universes, and write `E*`,
+`E**` for the continuous dual and bidual, with their operator norms. Let `m : E →L[𝕜] F
+→L[𝕜] G` be a bounded bilinear map. for `p ∈ E**`, `q ∈ F**` and `φ ∈ G*`,
+`(arensSecondWeakRight m p q)(φ)=q(y ↦ p(x ↦ φ(m(x,y))))`. -/
 @[simp] theorem arensSecondWeakRight_apply_apply (m : E →L[𝕜] F →L[𝕜] G)
     (p : StrongDual 𝕜 (StrongDual 𝕜 E)) (q : WeakDual 𝕜 (StrongDual 𝕜 F))
     (phi : StrongDual 𝕜 G) :
@@ -115,7 +135,12 @@ variable {𝕜 : Type u} [NontriviallyNormedField 𝕜] [StarRing 𝕜] [NormedS
 variable {A : Type v} [SeminormedAddCommGroup A] [StarAddMonoid A]
 variable [NormedSpace 𝕜 A] [StarModule 𝕜 A] [NormedStarGroup A]
 
-/-- The original conjugate-linear dual involution as a weak-star continuous equivalence. -/
+/-- **Weak-star continuous conjugate-linear dual involution.** Let `𝕜` be a nontrivially
+normed field with an isometric star-ring involution. Let `A` be a seminormed `𝕜`-space
+with an isometric additive involution satisfying `(c • a)*=c* • a*`. The bidual involution
+is `p*(φ)=star(p(φ*))`, where `φ*(a)=star(φ(a*))`. on `A*` with `σ(A*,A)`,
+`intrinsicStarContinuousLinearEquiv` is the conjugate-linear continuous equivalence `φ ↦
+φ*`, where `φ*(a)=star(φ(a*))`. -/
 def intrinsicStarContinuousLinearEquiv : WeakDual 𝕜 A ≃L⋆[𝕜] WeakDual 𝕜 A where
   toLinearEquiv :=
     ((toStrongDual (𝕜 := 𝕜) (E := A)).trans
@@ -132,16 +157,30 @@ def intrinsicStarContinuousLinearEquiv : WeakDual 𝕜 A ≃L⋆[𝕜] WeakDual 
     change Continuous (fun phi : WeakDual 𝕜 A => star (phi (star a)))
     exact (WeakDual.eval_continuous (star a)).star
 
-/-- Weak-star evaluation uses the original coefficient involution and scalar conjugation. -/
+/-- **Evaluation of the weak-star dual involution.** Let `𝕜` be a nontrivially normed field
+with an isometric star-ring involution. Let `A` be a seminormed `𝕜`-space with an
+isometric additive involution satisfying `(c • a)*=c* • a*`. The bidual involution is
+`p*(φ)=star(p(φ*))`, where `φ*(a)=star(φ(a*))`. for `φ ∈ A*` and `a ∈ A`,
+`(intrinsicStarContinuousLinearEquiv φ)(a)=star(φ(star a))`. -/
 @[simp] theorem intrinsicStarContinuousLinearEquiv_apply (phi : WeakDual 𝕜 A) (a : A) :
     intrinsicStarContinuousLinearEquiv phi a = star (phi (star a)) := rfl
 
-/-- The original normed view retains exactly the pre-existing dual involution. -/
+/-- **Dual involution in the operator-norm view.** Let `𝕜` be a nontrivially normed field with
+an isometric star-ring involution. Let `A` be a seminormed `𝕜`-space with an isometric
+additive involution satisfying `(c • a)*=c* • a*`. The bidual involution is
+`p*(φ)=star(p(φ*))`, where `φ*(a)=star(φ(a*))`. viewing
+`intrinsicStarContinuousLinearEquiv φ` as a normed continuous functional gives
+`StrongDual.intrinsicStarIsometry φ`, with evaluation `a ↦ star(φ(star a))`. -/
 @[simp] theorem intrinsicStarContinuousLinearEquiv_toStrongDual (phi : WeakDual 𝕜 A) :
     (intrinsicStarContinuousLinearEquiv phi).toStrongDual =
       StrongDual.intrinsicStarIsometry phi.toStrongDual := rfl
 
-/-- The same original continuous-dual norm is preserved after changing views. -/
+/-- **Operator norm preserved by the weak-star dual involution.** Let `𝕜` be a nontrivially
+normed field with an isometric star-ring involution. Let `A` be a seminormed `𝕜`-space
+with an isometric additive involution satisfying `(c • a)*=c* • a*`. The bidual involution
+is `p*(φ)=star(p(φ*))`, where `φ*(a)=star(φ(a*))`. for `φ ∈ A*`,
+`‖(intrinsicStarContinuousLinearEquiv φ).toStrongDual‖=‖φ.toStrongDual‖`, using the
+continuous-dual operator norm. -/
 theorem intrinsicStarContinuousLinearEquiv_norm (phi : WeakDual 𝕜 A) :
     ‖(intrinsicStarContinuousLinearEquiv phi).toStrongDual‖ = ‖phi.toStrongDual‖ :=
   (StrongDual.intrinsicStarIsometry (𝕜 := 𝕜) (A := A)).norm_map phi.toStrongDual

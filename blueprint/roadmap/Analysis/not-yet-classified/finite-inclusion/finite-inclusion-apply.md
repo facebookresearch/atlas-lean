@@ -1,4 +1,5 @@
-# Finite Inclusion apply
+# Vector formula for finite coordinate inclusion
 
-The inclusion has the literal finite sum of standard coefficient singles
-as its value.
+For nonunital complex C-star `B`, finite
+`I`, arbitrary `κ`, and an injection `η : I ↪ κ`, `finiteInclusion η x = ∑ i, single (η i) (x
+i)`.

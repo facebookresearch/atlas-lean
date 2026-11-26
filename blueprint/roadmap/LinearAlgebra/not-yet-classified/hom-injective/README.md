@@ -1,5 +1,5 @@
-# Hom Injective
+# Injectivity of algebraic tensor evaluation on linear maps
 
-- [L Tensor Hom To Hom LTensor injective](l-tensor-hom-to-hom-ltensor-injective.md)
-- [R Tensor Hom To Hom RTensor injective](r-tensor-hom-to-hom-rtensor-injective.md)
-- [Hom Tensor Hom Map injective](hom-tensor-hom-map-injective.md)
+- [Faithfulness of vector-first tensor evaluation](l-tensor-hom-to-hom-ltensor-injective.md)
+- [Faithfulness of map-first tensor evaluation](r-tensor-hom-to-hom-rtensor-injective.md)
+- [Faithfulness of the tensor product action of two linear-map spaces](hom-tensor-hom-map-injective.md)

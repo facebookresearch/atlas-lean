@@ -17,14 +17,13 @@ public import MathlibExt.Analysis.VonNeumannAlgebra.PositiveLUBLimit
 public import Mathlib.Order.Filter.AtTopBot.Finset
 
 /-!
-# The actual finite-cutoff positive supremum is a star projection
+# The supremum of maximal-family cutoffs is a projection
 
-The constructed positive supremum s lies between every original finite
-projection cutoff P and the identity. Positivity of 1-s below 1-P gives
-s*P=P. The actual nonbottom finite-set filter converges ultraweakly to s;
-fixed-left multiplication by s is continuous for that original topology.
-Limit uniqueness then gives s*s=s. Positivity gives its original star law.
-No projection or convergence certificate is supplied as an input.
+For a positive bounded functional `ψ`, let `s` be the constructed positive least upper bound of
+finite sums from its maximal local orthogonal projection family.
+
+This supremum satisfies `s²=s` and `s*=s`. The conclusion uses the bounded positive cutoff limit
+and does not assume the supremum is a projection.
 -/
 
 @[expose] public section
@@ -43,7 +42,12 @@ universe u
 
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- The internally constructed original positive finite-cutoff supremum is a genuine star projection. -/
+/-- **Star projection property of the maximal-family cutoff supremum.** Let `H` be a complete
+complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Let `ψ : M → ℂ` be a
+positive bounded complex-linear functional for the spectral orders. Let `S` be the
+constructed maximal set of pairwise orthogonal nonzero star projections, each admitting a
+vector `ξ` with `Re ψ(b)≤Re ⟨ξ,bξ⟩` for `0≤b≤p`. For finite `t ⊆ S`, put `P_t=Σ_p∈t p`.
+the supremum `s=maximalLocalCutoffSupremum M ψ` satisfies `s²=s` and `s*=s`. -/
 theorem maximalLocalCutoffSupremum_isStarProjection (M : VonNeumannAlgebra H) :
     letI : PartialOrder M := CStarAlgebra.spectralOrder M
     letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ

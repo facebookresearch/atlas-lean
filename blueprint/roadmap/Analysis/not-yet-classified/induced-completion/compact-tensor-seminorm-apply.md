@@ -1,3 +1,4 @@
-# Compact Tensor Seminorm apply
+# Value of the induced tensor seminorm
 
-Every induced seminorm value is exactly the original algebraic compact-action norm.
+For a complex Hilbert space `H` and a nonunital
+C-star algebra `A`, `compactTensorSeminorm H A z = ‖algebraicCompactTensorHom H A z‖`.

@@ -16,13 +16,13 @@ public import Mathlib.Algebra.Ring.Defs
 public import Mathlib.Algebra.Group.Action.Defs
 
 /-!
-# The actual nonunital Haar twisted convolution algebra
+# The nonunital Haar twisted convolution algebra
 
-The multiplication is the original Haar integral convolution on Carrier μ α.
-Its additive group and complex module are the original data from Basic.
-Associativity, distributivity, zero multiplication and scalar compatibility
-are constructed from the same literal convolution laws. These are the
-algebraic data needed by the original universal C-star gauge.
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For core coefficients
+f,h:G→A, twisted convolution is (f*h)(x)=∫ s:G, f(s)*α_s(h(s⁻¹*x)) ∂μ. The core Carrier μ α is
+a nonunital complex algebra with pointwise addition and scalar multiplication and the
+associative product *. Complex scaling satisfies (c•f)*h=c•(f*h)=f*(c•h).
 -/
 
 @[expose] public section
@@ -43,11 +43,24 @@ variable {G : Type uG} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
 variable {A : Type uA} [NonUnitalCStarAlgebra A]
 variable (μ : Measure G) [μ.IsHaarMeasure] [μ.Regular] (α : PointNormCStarAction G A)
 
-/-- Multiplication is exactly the original Haar twisted convolution. -/
+/-- **Haar twisted convolution multiplication.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For core coefficients
+f,h:G→A, twisted convolution is (f*h)(x)=∫ s:G, f(s)*α_s(h(s⁻¹*x)) ∂μ. This integral is the
+product on Carrier μ α.
+-/
 instance instMulCarrier : Mul (Carrier μ α) :=
   ⟨convolution μ α⟩
 
-/-- The original indexed compact-support carrier has its genuine nonunital convolution ring. -/
+/-- **Nonunital ring of twisted core coefficients.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For core coefficients
+f,h:G→A, twisted convolution is (f*h)(x)=∫ s:G, f(s)*α_s(h(s⁻¹*x)) ∂μ. The core Carrier μ α is
+a nonunital ring: its addition is pointwise, the product is associative and distributive, and
+convolution with the zero coefficient is zero.
+-/
 instance instNonUnitalRingCarrier : NonUnitalRing (Carrier μ α) where
   __ := instAddCommGroupCarrier μ α
   __ := instMulCarrier μ α
@@ -57,11 +70,23 @@ instance instNonUnitalRingCarrier : NonUnitalRing (Carrier μ α) where
   zero_mul := convolution_zero_left μ α
   mul_zero := convolution_zero_right μ α
 
-/-- Complex scaling of the first source function commutes with actual convolution multiplication. -/
+/-- **Scalar compatibility in the first convolution factor.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For core coefficients
+f,h:G→A, twisted convolution is (f*h)(x)=∫ s:G, f(s)*α_s(h(s⁻¹*x)) ∂μ. For c∈ℂ and core
+coefficients f,h, (c•f)*h=c•(f*h).
+-/
 instance instIsScalarTowerCarrier : IsScalarTower ℂ (Carrier μ α) (Carrier μ α) where
   smul_assoc c f g := convolution_smul_left μ α c f g
 
-/-- Complex scaling of the second source function commutes with actual convolution multiplication. -/
+/-- **Scalar compatibility in the second convolution factor.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For core coefficients
+f,h:G→A, twisted convolution is (f*h)(x)=∫ s:G, f(s)*α_s(h(s⁻¹*x)) ∂μ. For c∈ℂ and core
+coefficients f,h, f*(c•h)=c•(f*h).
+-/
 instance instSMulCommClassCarrier : SMulCommClass ℂ (Carrier μ α) (Carrier μ α) where
   smul_comm c f g := (convolution_smul_right μ α c f g).symm
 

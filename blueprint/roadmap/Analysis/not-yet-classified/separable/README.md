@@ -1,9 +1,9 @@
-# Separable
+# Separability of C-star quotients and extensions
 
-## Closed Star Ideal
+## Closed star ideals
 
-- [Separable quotient](separable-quotient.md)
+- [Separability of a closed-ideal quotient](separable-quotient.md)
 
-## CStar Extension
+## C-star algebra extensions
 
-- [Separable middle](separable-middle.md)
+- [Separability of an extension algebra](separable-middle.md)

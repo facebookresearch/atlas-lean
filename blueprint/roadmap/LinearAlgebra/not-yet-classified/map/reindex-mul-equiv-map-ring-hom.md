@@ -1,5 +1,7 @@
-# Reindex Mul Equiv map Ring Hom
+# Coefficient maps commute with index reindexing
 
-Coefficient-map naturality for reindexing as an equality of bundled
-`MonoidHom` values: reindexing after a coefficient map equals the coefficient
-map after reindexing, with source `GL n R` and target `GL m S`.
+Let R,S be semirings and n,m finite index types, with coefficient and index types allowed to
+lie in independent universes. Write GL(n,R) for the group of invertible n×n matrices over R.
+For e:n≃m, reindex_e(A)(i,j)=A(e⁻¹(i),e⁻¹(j)). For a semiring homomorphism f:R→S,
+f_*(A)(i,j)=f(A(i,j)). For e:n≃m and a semiring homomorphism f:R→S, reindex_e∘mapRingHom
+f=mapRingHom f∘reindex_e as group homomorphisms GL(n,R)→GL(m,S).

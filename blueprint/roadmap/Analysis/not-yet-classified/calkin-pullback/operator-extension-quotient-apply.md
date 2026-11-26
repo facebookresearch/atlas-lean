@@ -1,3 +1,4 @@
-# Operator Extension quotient apply
+# Quotient of the operator extension
 
-The normalized extension retains the same original coefficient quotient.
+`(operatorExtension φ).quotient p =
+operatorPullbackQuotient φ p`, the coefficient coordinate of the compatible pair.

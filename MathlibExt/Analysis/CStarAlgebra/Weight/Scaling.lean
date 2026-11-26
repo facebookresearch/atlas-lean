@@ -15,16 +15,15 @@ public import MathlibExt.Analysis.CStarAlgebra.Weight
 public import Mathlib.Algebra.Group.Action.Units
 
 /-!
-# Scalar multiplication of the original global weights
+# Nonnegative scalar action on positive weights
 
-Finite nonnegative scalars multiply the original extended-positive weight
-values. The weight carrier and its canonical positive cone belong to the
-same possibly nonunital C-star algebra. The constructor laws give the
-actual scalar monoid action; the standard unit-action API restricts it to
-the positive finite-real group.
+For a nonunital complex C-star algebra `A`, finite nonnegative real scalars act on extended
+positive weights by `(r • φ)(a)=r φ(a)` for `a ≥ 0`. The product is in `[0,∞]`, including its
+convention `0*∞=0`.
 
-No weight support, normal/semifinite restriction, equivalence quotient,
-continuous part, modular action or flow is selected or identified here.
+The identities `1 • φ=φ` and `(r*t) • φ=r • (t • φ)` give a multiplicative monoid action of
+`ℝ≥0`. Its unit group, the strictly positive finite real scalars, acts by the same formula. No
+faithfulness, trace or normality condition is imposed on the weights.
 -/
 
 @[expose] public section
@@ -40,7 +39,10 @@ universe u
 
 variable {A : Type u} [NonUnitalCStarAlgebra A]
 
-/-- The actual global weight obtained by multiplying every original positive value by `r`. -/
+/-- **Scaled extended positive weight.** Let `A` be a nonunital complex C-star algebra with its
+spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight vanishing
+at zero. for finite `r : ℝ≥0`, `scale r φ` is the weight `a ↦ r φ(a)` on the positive cone;
+when `r=0` it is zero even at infinite weight values. -/
 def Weight.scale (r : NNReal) (φ : Weight A) : Weight A where
   value a := (r : ENNReal) * φ.value a
   zero_value := by
@@ -51,32 +53,44 @@ def Weight.scale (r : NNReal) (φ : Weight A) : Weight A where
     rw [φ.smul_value]
     exact mul_left_comm (r : ENNReal) (t : ENNReal) (φ.value a)
 
-/-- Scalar multiplication keeps the literal original extended-positive values. -/
+/-- **Positive value of a scaled weight.** Let `A` be a nonunital complex C-star algebra with its
+spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight vanishing
+at zero. for `r : ℝ≥0` and positive `a : A`, `(scale r φ)(a)=(r : [0,∞])*φ(a)`. -/
 @[simp]
 theorem Weight.scale_value (r : NNReal) (φ : Weight A) (a : PositiveElement A) :
     (Weight.scale r φ).value a = (r : ENNReal) * φ.value a :=
   rfl
 
-/-- The scalar identity fixes the same original global weight. -/
+/-- **Identity scalar fixes a positive weight.** Let `A` be a nonunital complex C-star algebra
+with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. `scale 1 φ=φ`. -/
 theorem Weight.scale_one (φ : Weight A) : Weight.scale 1 φ = φ := by
   apply Weight.ext_value
   intro a
   rw [Weight.scale_value, ENNReal.coe_one, one_mul]
 
-/-- Multiplication of finite nonnegative parameters is composition of the actual weight maps. -/
+/-- **Composition of weight scalings.** Let `A` be a nonunital complex C-star algebra with its
+spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight vanishing
+at zero. for finite `r,t : ℝ≥0`, `scale (r*t) φ=scale r (scale t φ)`. -/
 theorem Weight.scale_mul (r t : NNReal) (φ : Weight A) :
     Weight.scale (r * t) φ = Weight.scale r (Weight.scale t φ) := by
   apply Weight.ext_value
   intro a
   rw [Weight.scale_value, Weight.scale_value, Weight.scale_value, ENNReal.coe_mul, mul_assoc]
 
-/-- The original scalar maps form their actual monoid action on global weights. -/
+/-- **Nonnegative scalar monoid action on weights.** Let `A` be a nonunital complex C-star algebra
+with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. finite nonnegative real scalars act on `Weight A` by `(r • φ)(a)=r φ(a)`,
+with `1 • φ=φ` and `(r*t) • φ=r • (t • φ)`. -/
 instance instMulActionWeight : MulAction NNReal (Weight A) where
   smul := Weight.scale
   one_smul := Weight.scale_one
   mul_smul := Weight.scale_mul
 
-/-- The standard positive-real unit action uses literal multiplication of original weight values. -/
+/-- **Positive scalar unit action on weights.** Let `A` be a nonunital complex C-star algebra with
+its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. for a unit `r : ℝ≥0ˣ`, hence a strictly positive finite real scalar, `(r •
+φ)(a)=r φ(a)` for every positive `a : A`. -/
 theorem Weight.units_smul_value (r : NNRealˣ) (φ : Weight A) (a : PositiveElement A) :
     (r • φ).value a = ((r : NNReal) : ENNReal) * φ.value a :=
   rfl

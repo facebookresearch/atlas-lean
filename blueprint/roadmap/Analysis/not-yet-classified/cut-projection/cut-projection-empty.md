@@ -1,3 +1,3 @@
-# Cut Projection empty
+# Cut on the empty set
 
-Selecting no coordinates gives the zero operator.
+Selecting no coordinates gives `cutProjection ∅ = 0`.

@@ -1,30 +1,30 @@
-# Arens Algebra
+# Associative Arens products on the normed bidual
 
-## Continuous Linear Map
+## Associative Arens extensions
 
-- [Arens First assoc](arens-first-assoc.md)
-- [Arens Second assoc](arens-second-assoc.md)
-- [Arens First add left](arens-first-add-left.md)
-- [Arens First add right](arens-first-add-right.md)
-- [Arens First zero left](arens-first-zero-left.md)
-- [Arens First zero right](arens-first-zero-right.md)
-- [Arens First smul left](arens-first-smul-left.md)
-- [Arens First smul right](arens-first-smul-right.md)
-- [Arens Second add left](arens-second-add-left.md)
-- [Arens Second add right](arens-second-add-right.md)
-- [Arens Second zero left](arens-second-zero-left.md)
-- [Arens Second zero right](arens-second-zero-right.md)
-- [Arens Second smul left](arens-second-smul-left.md)
-- [Arens Second smul right](arens-second-smul-right.md)
+- [Associativity of the first Arens extension](arens-first-assoc.md)
+- [Associativity of the second Arens extension](arens-second-assoc.md)
+- [First Arens extension distributes in its first factor](arens-first-add-left.md)
+- [First Arens extension distributes in its second factor](arens-first-add-right.md)
+- [Zero first argument of the first Arens extension](arens-first-zero-left.md)
+- [Zero second argument of the first Arens extension](arens-first-zero-right.md)
+- [Scalar action in the first Arens factor](arens-first-smul-left.md)
+- [Scalar action in the second first-Arens factor](arens-first-smul-right.md)
+- [Second Arens extension distributes in its first factor](arens-second-add-left.md)
+- [Second Arens extension distributes in its second factor](arens-second-add-right.md)
+- [Zero first argument of the second Arens extension](arens-second-zero-left.md)
+- [Zero second argument of the second Arens extension](arens-second-zero-right.md)
+- [Scalar action in the first second-Arens factor](arens-second-smul-left.md)
+- [Scalar action in the second Arens factor](arens-second-smul-right.md)
 
-## Normed Space
+## Norm bounds for Arens products
 
-- [First Arens mul norm le](first-arens-mul-norm-le.md)
-- [Second Arens mul norm le](second-arens-mul-norm-le.md)
-- [First Arens Non Unital Ring](first-arens-non-unital-ring.md)
-- [First Arens Non Unital Normed Ring](first-arens-non-unital-normed-ring.md)
-- [First Arens Non Unital Normed Ring mul](first-arens-non-unital-normed-ring-mul.md)
-- [First Arens Non Unital Normed Ring norm](first-arens-non-unital-normed-ring-norm.md)
-- [First Arens Is Scalar Tower](first-arens-is-scalar-tower.md)
-- [First Arens SMul Comm Class](first-arens-smul-comm-class.md)
-- [First Arens Complete Space](first-arens-complete-space.md)
+- [Submultiplicative bound for the first Arens product](first-arens-mul-norm-le.md)
+- [Submultiplicative bound for the second Arens product](second-arens-mul-norm-le.md)
+- [Nonunital bidual ring with the first Arens product](first-arens-non-unital-ring.md)
+- [Normed ring of the first Arens bidual](first-arens-non-unital-normed-ring.md)
+- [Multiplication in the first Arens normed ring](first-arens-non-unital-normed-ring-mul.md)
+- [Dual operator norm of the first Arens ring](first-arens-non-unital-normed-ring-norm.md)
+- [Scalar tower law for the first Arens product](first-arens-is-scalar-tower.md)
+- [Commuting scalar action in the second Arens factor](first-arens-smul-comm-class.md)
+- [Completeness of the continuous bidual](first-arens-complete-space.md)

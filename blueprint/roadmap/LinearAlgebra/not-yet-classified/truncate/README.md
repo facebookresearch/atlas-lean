@@ -1,4 +1,4 @@
-# Truncate
+# Truncation of stable coefficient matrices
 
-- [Truncate](truncate.md)
-- [Truncate of Finite](truncate-of-finite.md)
+- [The finite-square truncation map](truncate.md)
+- [Truncation retracts the finite-stage inclusion](truncate-of-finite.md)

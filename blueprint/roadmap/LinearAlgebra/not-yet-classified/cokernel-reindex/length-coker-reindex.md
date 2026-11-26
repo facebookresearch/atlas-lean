@@ -1,4 +1,5 @@
-# Length coker reindex
+# Cokernel length is invariant under row and column reindexing
 
-Independent row and column reindexing preserves the full cokernel
-length of the actual matrix map, including rectangular and empty matrices.
+Let R be a commutative ring, n,n′ finite column types, m,m′ arbitrary row types, er:m≃m′,
+ec:n≃n′ and A:Matrix m n R. Then length_R(R^m′/range((A.reindex er
+ec).mulVecLin))=length_R(R^m/range(A.mulVecLin)).

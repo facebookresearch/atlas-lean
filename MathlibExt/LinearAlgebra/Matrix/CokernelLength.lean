@@ -15,11 +15,13 @@ public import Mathlib.Logic.Equiv.Fin.Basic
 public import Mathlib.Logic.Equiv.Option
 
 /-!
-# Determinants and full cokernel length over one-dimensional domains
+# Matrix cokernel length and determinant order
 
-The proof uses division-free elimination and induction on the actual matrix
-size. It retains nonunit pivots and full quotient modules over singular
-Noetherian domains. No finite-length or determinant-length premise is needed.
+Let R be a commutative Noetherian domain of Krull dimension at most one, I a finite index type
+and A an I×I matrix over R. Its full cokernel is coker(A)=R^I/range(A.mulVecLin), and
+ord_R(a)=length_R(R/(a)) is the order of vanishing in ℕ∪{∞}. If det(A)≠0, then
+length_R(coker(A))=ord_R(det(A)) and this length is finite. The ring may be nonlocal or
+singular, and the empty square matrix is included.
 -/
 
 @[expose] public section
@@ -98,10 +100,13 @@ private theorem length_coker_fin_eq_ord_det (n : ℕ) (A : Matrix (Fin n) (Fin n
     exact (length_coker_reindex er ec A).symm.trans
       (hpivot.trans (ord_det_reindex er ec A))
 
-/-- The full cokernel of every square matrix with nonzero determinant over
-a one-dimensional Noetherian domain has length equal to the existing order
-of its determinant. The proof includes the empty matrix, singular domains,
-and all nonreduced principal quotients, with no finite-length premise. -/
+/-- **Full matrix cokernel length equals determinant order.**
+
+Let R be a commutative Noetherian domain of Krull dimension at most one, I a finite index type
+and A an I×I matrix over R. Its full cokernel is coker(A)=R^I/range(A.mulVecLin), and
+ord_R(a)=length_R(R/(a)) is the order of vanishing in ℕ∪{∞}. Under det(A)≠0,
+length_R(R^I/range(A.mulVecLin))=Ring.ord R det(A).
+-/
 theorem length_coker_eq_ord_det {ι : Type v} [Fintype ι] [DecidableEq ι]
     (A : Matrix ι ι R) (hA : A.det ≠ 0) :
     Module.length R ((ι → R) ⧸ A.mulVecLin.range) = Ring.ord R A.det := by
@@ -111,8 +116,13 @@ theorem length_coker_eq_ord_det {ι : Type v} [Fintype ι] [DecidableEq ι]
     ((length_coker_fin_eq_ord_det (Fintype.card ι) (A.reindex e e) hdet).trans
       (ord_det_reindex e e A))
 
-/-- Finite length of the full matrix cokernel is earned from its actual
-nonzero determinant and the one-dimensional Noetherian domain hypotheses. -/
+/-- **Nonzero determinant gives finite full cokernel length.**
+
+Let R be a commutative Noetherian domain of Krull dimension at most one, I a finite index type
+and A an I×I matrix over R. Its full cokernel is coker(A)=R^I/range(A.mulVecLin), and
+ord_R(a)=length_R(R/(a)) is the order of vanishing in ℕ∪{∞}. If det(A)≠0, then
+length_R(coker(A))≠∞.
+-/
 theorem length_coker_ne_top_of_det_ne_zero {ι : Type v} [Fintype ι] [DecidableEq ι]
     (A : Matrix ι ι R) (hA : A.det ≠ 0) :
     Module.length R ((ι → R) ⧸ A.mulVecLin.range) ≠ ⊤ := by

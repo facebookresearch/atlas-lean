@@ -1,4 +1,5 @@
-# Of le
+# Regular measure under domination by a finite regular measure
 
-A measure dominated by a finite regular measure is regular.  This applies
-on nonmetrizable compact Hausdorff Borel spaces as well as metric spaces.
+Let `X` be an R₁
+topological space with its Borel measurable structure. if `μ` is finite and regular and
+`ν≤μ`, then `ν` is regular.

@@ -1,23 +1,23 @@
-# Stable Class
+# Stable extension classes relative to coherent folds
 
-## CStar Extension
+## C-star algebra extensions
 
-- [Setoid](setoid.md)
-- [Stable Class](stable-class.md)
-- [Stably strong equivalent of strong](stably-strong-equivalent-of-strong.md)
-- [Sum interchange strong](sum-interchange-strong.md)
-- [Sum congr stable](sum-congr-stable.md)
-- [Sum zero stable](sum-zero-stable.md)
-- [Zero sum stable](zero-sum-stable.md)
-- [Trivial stably strong equivalent zero](trivial-stably-strong-equivalent-zero.md)
+- [Setoid of stable strong Busby equivalence](setoid.md)
+- [Stable Busby classes for coherent folds](stable-class.md)
+- [Strong equivalence implies stable strong equivalence](stably-strong-equivalent-of-strong.md)
+- [Interchange of coherent Busby sums](sum-interchange-strong.md)
+- [Stable equivalence respects coherent addition](sum-congr-stable.md)
+- [Right zero law after stable equivalence](sum-zero-stable.md)
+- [Left zero law after stable equivalence](zero-sum-stable.md)
+- [Liftable Busby map is stably zero](trivial-stably-strong-equivalent-zero.md)
 
-## Stable Class
+## Stable Busby classes
 
-- [Mk](mk.md)
-- [Mk eq mk iff](mk-eq-mk-iff.md)
-- [Zero](zero.md)
-- [Add](add.md)
+- [Class of a Busby homomorphism](mk.md)
+- [Equality of stable Busby classes](mk-eq-mk-iff.md)
+- [Zero stable class](zero.md)
+- [Addition of stable Busby classes](add.md)
 
-## CStar Extension
+## C-star algebra extensions
 
-- [Mk eq zero of trivial](mk-eq-zero-of-trivial.md)
+- [Zero class of a liftable Busby map](mk-eq-zero-of-trivial.md)

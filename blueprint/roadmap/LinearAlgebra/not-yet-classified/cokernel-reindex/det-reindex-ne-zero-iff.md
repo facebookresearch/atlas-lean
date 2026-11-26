@@ -1,4 +1,4 @@
-# Det reindex ne zero iff
+# Reindexing preserves determinant nonvanishing
 
-Independent row and column reindexing preserves nonvanishing of the
-original determinant, through the actual unit sign.
+Let R be a commutative ring, I,J finite index types, er,ec:I≃J and A:I×I→R. Then det(A.reindex
+er ec)≠0 if and only if det A≠0.

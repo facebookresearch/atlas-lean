@@ -16,10 +16,11 @@ public import Mathlib.Analysis.InnerProductSpace.TensorProduct
 public import Mathlib.Topology.Algebra.Module.Basic
 
 /-!
-# Dense coefficient tensor spans in the stock Hilbert completion
+# Dense spans of pure tensors from dense factor sets
 
-Two subsets with dense linear spans give a dense linear span of their
-actual pure tensors. No completeness of the algebraic tensor is assumed.
+Let H,K be inner product spaces over an RCLike field 𝕜, and s⊆H, t⊆K have dense 𝕜-linear
+spans. Then the completed pure tensors {x⊗y:x∈s,y∈t} have dense linear span in the Hilbert
+tensor completion H⊗̂K.
 -/
 
 @[expose] public section
@@ -40,7 +41,12 @@ variable {𝕜 : Type u𝕜} [RCLike 𝕜]
 variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace 𝕜 H]
 variable {K : Type uK} [NormedAddCommGroup K] [InnerProductSpace 𝕜 K]
 
-/-- Dense factor spans generate a dense span of their literal completed Hilbert tensors. -/
+/-- **Dense factor spans generate a dense completed tensor span.**
+
+Let H,K be inner product spaces over an RCLike field 𝕜 in independent universes. If span_𝕜(s)
+is dense in H and span_𝕜(t) dense in K, then span_𝕜{x⊗y:x∈s,y∈t} is dense in the completion
+H⊗̂K of the inner-product tensor norm.
+-/
 theorem dense_span_completed_tmul (s : Set H) (t : Set K)
     (hs : Dense (Submodule.span 𝕜 s : Set H))
     (ht : Dense (Submodule.span 𝕜 t : Set K)) :

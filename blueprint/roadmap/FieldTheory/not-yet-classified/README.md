@@ -2,4 +2,4 @@
 
 Topics added since this subject's fields were last revised.
 
-- [Tensor Product Decomposition](tensor-product-decomposition/README.md)
+- [Finite-Galois self-tensor decomposition](tensor-product-decomposition/README.md)

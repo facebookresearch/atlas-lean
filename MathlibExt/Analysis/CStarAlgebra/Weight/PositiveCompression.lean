@@ -15,17 +15,15 @@ public import MathlibExt.Analysis.CStarAlgebra.Weight.FiniteSquareSubmodule
 public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order
 
 /-!
-# Finite positive squares and positive compression values for scalar weights
+# Finite weight squares and positive compressions
 
-The original global weight on a possibly nonunital C-star algebra gives
-finite square values for its finite-positive elements. Their complex span
-lies in the exact finite-square module. Every positive compression by a
-finite-square element has finite weight, from the canonical conjugation
-norm bound and the original weight laws.
+For a nonunital complex C-star algebra and extended positive weight `φ`, each positive `a`
+satisfies `a² ≤ ‖a‖ • a`. Thus `φ(a) < ∞` implies `φ(a* a) < ∞`, and the complex span of
+finite-weight positive elements lies in `n_φ = {x : φ(x* x) < ∞}`.
 
-These generic APIs use only the original algebra, positive domain and
-scalar weight. Concrete von Neumann topology and representation suppliers
-consume them through this neutral owner.
+For `x ∈ n_φ` and every positive `a`, the compression `x* a x` has finite weight: `x* a x ≤ ‖a‖
+• (x* x)`. The algebra may be nonunital and the weight need not be faithful, densely defined or
+lower semicontinuous.
 -/
 
 @[expose] public section
@@ -43,7 +41,8 @@ variable {A : Type uA} [NonUnitalCStarAlgebra A]
 
 attribute [local instance] CStarAlgebra.spectralOrder CStarAlgebra.spectralOrderedRing
 
-/-- The original positive square is bounded by the original positive norm multiple. -/
+/-- **Norm bound on a positive square.** In a nonunital complex C-star algebra with its spectral
+order, every positive `a` satisfies `a*a ≤ ‖a‖ • a`. -/
 theorem positive_mul_self_le_norm_smul (a : PositiveElement A) :
     (a : A) * (a : A) ≤ ‖(a : A)‖ • (a : A) := by
   let r : A := CFC.sqrt (a : A)
@@ -59,7 +58,10 @@ theorem positive_mul_self_le_norm_smul (a : PositiveElement A) :
     _ ≤ ‖(a : A)‖ • (star r * r) := hconjugate
     _ = ‖(a : A)‖ • (a : A) := by rw [hstar, hsquare]
 
-/-- Original finite-positive elements belong to the same literal finite-square domain. -/
+/-- **Finite positive elements have finite squares.** Let `A` be a nonunital complex C-star
+algebra with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous
+weight vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. if `a ≥ 0` and `φ(a) < ∞`, then
+`a ∈ n_φ`; equivalently, `finitePositiveElements φ ⊆ finiteSquareDomain φ`. -/
 theorem Weight.finitePositiveElements_subset_finiteSquareDomain (φ : Weight A) :
     φ.finitePositiveElements ⊆ φ.finiteSquareDomain := by
   intro a ha
@@ -75,7 +77,11 @@ theorem Weight.finitePositiveElements_subset_finiteSquareDomain (φ : Weight A) 
     (positiveSmul (NNReal.mk ‖a‖ (norm_nonneg a)) p) hbound
     (φ.finite_positiveSmul (NNReal.mk ‖a‖ (norm_nonneg a)) p haFinite)
 
-/-- The original finite-positive integration span lies in the actual finite-square module. -/
+/-- **Finite integration span in the square domain.** Let `A` be a nonunital complex C-star
+algebra with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous
+weight vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. the complex span
+`finiteIntegrationDomain φ = span ℂ {a ≥ 0 : φ(a) < ∞}` is contained in the complex submodule
+`n_φ`. -/
 theorem Weight.finiteIntegrationDomain_le_finiteSquareSubmodule (φ : Weight A) :
     φ.finiteIntegrationDomain ≤ φ.finiteSquareSubmodule := by
   apply Submodule.span_le.mpr
@@ -83,7 +89,10 @@ theorem Weight.finiteIntegrationDomain_le_finiteSquareSubmodule (φ : Weight A) 
   exact φ.finitePositiveElements_subset_finiteSquareDomain ha
 
 
-/-- A literal finite-square element gives finite weight to every original positive compression. -/
+/-- **Finite weight of a positive compression.** Let `A` be a nonunital complex C-star algebra
+with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. for `x ∈ n_φ` and any positive `a :
+A`, `φ(x* a x) < ∞`, by `x* a x ≤ ‖a‖ • (x* x)`. -/
 theorem Weight.value_positiveConjugate_lt_top (φ : Weight A) (x : φ.finiteSquareSubmodule)
     (a : PositiveElement A) :
     φ.value ⟨star (x : A) * (a : A) * (x : A),

@@ -23,14 +23,16 @@ public import Mathlib.Topology.Homeomorph.Defs
 public import Mathlib.Topology.Maps.Strict.Basic
 
 /-!
-# Strong Fredholm transport along actual continuous linear equivalences
+# Fredholm transport through continuous linear equivalences
 
-The operator is the literal rectangular transport `c⁻¹ ∘ V ∘ d`.
-All four stages have independent universes and actual group/topology/module
-parents. The scalar remains a `NontriviallyNormedField`; this is not a
-wholly norm-free API. No stage norm, scalar/stage completeness, stage separation
-or supplied output equivalence/kernel model is required.
-All five strong fields are transported through genuine maps and retractions.
+Let `𝕜` be a nontrivially normed field and `D,E,C,F` additive groups with topologies and
+algebraic `𝕜`-module structures. For a continuous Fredholm map `V : E → F` and continuous linear
+equivalences `d : D ≃ E`, `c : C ≃ F`, the rectangular transport `c⁻¹ V d` is Fredholm from `D`
+to `C`.
+
+Strictness, closed finite-codimension range and finite-dimensional complemented kernel are all
+retained. No stage norms, completeness, separation or continuity of the module operations is
+assumed.
 -/
 
 @[expose] public section
@@ -48,8 +50,11 @@ variable [AddCommGroup E] [Module 𝕜 E] [TopologicalSpace E]
 variable [AddCommGroup C] [Module 𝕜 C] [TopologicalSpace C]
 variable [AddCommGroup F] [Module 𝕜 F] [TopologicalSpace F]
 
-/-- Transport a strong Fredholm map by actual source and target equivalences.
-The scalar is normed; no stage norm, scalar/stage completeness or stage `T2Space` is required. -/
+/-- **Fredholm transport through source and target equivalences.** Let `𝕜` be a nontrivially
+normed field and `D,E,C,F` have additive-group, algebraic `𝕜`-module and topological-space
+structures in independent universes. If `V : E →L[𝕜] F` is Fredholm and `d : D ≃L[𝕜] E`,
+`c : C ≃L[𝕜] F`, then `c⁻¹∘V∘d : D → C` is Fredholm. No stage norm, completeness or
+Hausdorff condition is imposed. -/
 theorem IsFredholm.transport {V : E →L[𝕜] F} (hV : V.IsFredholm)
     (d : D ≃L[𝕜] E) (c : C ≃L[𝕜] F) :
     (c.symm.toContinuousLinearMap.comp (V.comp d.toContinuousLinearMap)).IsFredholm := by

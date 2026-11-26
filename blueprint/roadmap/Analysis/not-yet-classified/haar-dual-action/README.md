@@ -1,9 +1,9 @@
-# Haar Dual Action
+# Dual character actions on full Haar crossed products
 
-- [Full Haar Dual Action](full-haar-dual-action.md)
-- [Full Haar Dual Action apply](full-haar-dual-action-apply.md)
-- [Double Full Haar Crossed Product](double-full-haar-crossed-product.md)
-- [Double Full Haar Crossed Product CStar Algebra](double-full-haar-crossed-product-cstar-a.md)
-- [To Double Full Haar Crossed Product](to-double-full-haar-crossed-product.md)
-- [Double Dual Haar Action](double-dual-haar-action.md)
-- [Double Dual Haar Action apply](double-dual-haar-action-apply.md)
+- [Point-norm dual character action](full-haar-dual-action.md)
+- [Dual action on completed core coefficients](full-haar-dual-action-apply.md)
+- [The second full Haar crossed product](double-full-haar-crossed-product.md)
+- [C-star algebra of the second full crossed product](double-full-haar-crossed-product-cstar-a.md)
+- [Dense coefficient map into the second crossed product](to-double-full-haar-crossed-product.md)
+- [Double dual action pulled back by group evaluation](double-dual-haar-action.md)
+- [Double dual action on the second dense core](double-dual-haar-action-apply.md)

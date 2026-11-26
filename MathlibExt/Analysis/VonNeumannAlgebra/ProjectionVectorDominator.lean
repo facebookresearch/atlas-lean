@@ -16,16 +16,14 @@ public import Mathlib.Analysis.Complex.Norm
 public import Mathlib.Analysis.Real.Sqrt
 
 /-!
-# An actual vector in a nonzero projection's range dominates the original functional value
+# Range vectors dominating a bounded functional on a projection
 
-A nonzero original projection acts nontrivially on some actual vector.
-Its projected vector lies in the projection range. Scaling its norm by
-sqrt(norm(phi(e))+1) gives a fixed vector whose exact diagonal projection
-coefficient strictly exceeds the original bounded functional value.
+Let `M ⊆ B(H)` be a concrete von Neumann algebra, `φ ∈ M*` any bounded complex-linear
+functional, and `e∈M` a nonzero star projection. There is `ξ∈H` with `eξ=ξ` and `Re φ(e)<Re
+⟨ξ,eξ⟩=‖ξ‖²`.
 
-This supplies the actual vector input for local positive comparison and
-localized-functional construction. No basis, chosen normal functional,
-normality certificate or source existence output is provided as data.
+This is a strict scalar comparison obtained by scaling a nonzero range vector. Positivity or
+normality of `φ` is not required.
 -/
 
 @[expose] public section
@@ -43,7 +41,11 @@ universe u
 
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- An original nonzero star projection has an actual range vector with strictly dominating value. -/
+/-- **Range vector with strictly dominating diagonal coefficient.** Let `H` be a complete
+complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. for any `φ ∈ M*` and
+nonzero star projection `e ∈ M`, `projectionVectorDominator M φ e` returns `ξ ∈ H` with
+`eξ=ξ` and `Re φ(e)<Re(vectorFunctional M ξ ξ e)=‖ξ‖²`. No positivity or normality of `φ`
+is assumed. -/
 def projectionVectorDominator (M : VonNeumannAlgebra H) (φ : StrongDual ℂ M)
     (e : M) (he : IsStarProjection e) (hne : e ≠ 0) :
     {ξ : H // (e : H →L[ℂ] H) ξ = ξ ∧ (φ e).re < (vectorFunctional M ξ ξ e).re} := by

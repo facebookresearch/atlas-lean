@@ -1,3 +1,4 @@
-# Degree One Lift
+# Back substitution at one neighbor
 
-Back substitution, linear in the original right-hand side and retained candidate.
+For a real matrix A on V, r ∈ V, u ∈ I = V ∖ {r}, p = Aᵣᵣ and c = Aᵣᵤ, define the linear map
+L(b,z) by L(b,z)ᵣ = (bᵣ − c zᵤ)/p and L(b,z)ᵢ = zᵢ for i ∈ I. It is linear jointly in b and z.

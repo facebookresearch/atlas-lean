@@ -1,4 +1,6 @@
-# Comap Functor
+# Preimage index functor from ambient normals to the open subgroup
 
-Preimage functor from the bounded ambient index to the full subgroup
-open-normal index.
+Let `G` be a group
+with a topology and `H` an open subgroup. `comapFunctor H : (BelowOpen H)ᵒᵖ ⥤
+OpenNormal(H)ᵒᵖ` sends an ambient `U≤H` to its preimage under the subgroup inclusion `H →
+G`.

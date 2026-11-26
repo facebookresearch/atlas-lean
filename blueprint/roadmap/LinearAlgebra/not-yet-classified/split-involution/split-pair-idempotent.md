@@ -1,3 +1,4 @@
-# Split Pair idempotent
+# Idempotence of the split-pair projection
 
-The complementary block comes from an actual idempotent.
+Let A be a ring, N and M finite index types, U ∈ Mat(N,M;A) and V ∈ Mat(M,N;A). If UV = I_N,
+then (VU)² = VU.

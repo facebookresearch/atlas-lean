@@ -1,14 +1,14 @@
-# Regular
+# Regular operators on right C-star modules
 
-## CStar Module
+## Right C-star modules
 
-- [Partial Operator](partial-operator.md)
-- [Is Maximal Adjoint](is-maximal-adjoint.md)
-- [Regular Operator](regular-operator.md)
+- [Complex-linear partial operator](partial-operator.md)
+- [Maximal adjoint of a dense partial operator](is-maximal-adjoint.md)
+- [Regular operator on a right module](regular-operator.md)
 
-## Regular Operator
+## Regular operators
 
-- [Mem domain right smul](mem-domain-right-smul.md)
-- [Map right smul](map-right-smul.md)
-- [Is Spectrally Nonnegative](is-spectrally-nonnegative.md)
-- [Bounded Transform Data](bounded-transform-data.md)
+- [Right invariance of a regular domain](mem-domain-right-smul.md)
+- [Right linearity of a regular operator](map-right-smul.md)
+- [Spectral positivity of an adjointable endomorphism](is-spectrally-nonnegative.md)
+- [Bounded-transform data for a regular operator](bounded-transform-data.md)

@@ -1,12 +1,12 @@
-# Diagonal Shear
+# Difference-coordinate shear of a topological group product
 
-## Homeomorph
+## Difference-coordinate homeomorphisms
 
-- [Diagonal Difference Shear](diagonal-difference-shear.md)
-- [Diagonal Difference Shear apply](diagonal-difference-shear-apply.md)
-- [Diagonal Difference Shear symm apply](diagonal-difference-shear-symm-apply.md)
+- [Difference-coordinate homeomorphism of a group square](diagonal-difference-shear.md)
+- [Forward value of the difference-coordinate shear](diagonal-difference-shear-apply.md)
+- [Inverse value of the difference-coordinate shear](diagonal-difference-shear-symm-apply.md)
 
-## Compactly Supported Continuous Map
+## Compact-support pullback under a shear
 
-- [Diagonal Shear Pullback](diagonal-shear-pullback.md)
-- [Diagonal Shear Pullback apply](diagonal-shear-pullback-apply.md)
+- [Inverse-shear pullback of compact-support vector functions](diagonal-shear-pullback.md)
+- [Pointwise value of inverse-shear pullback](diagonal-shear-pullback-apply.md)

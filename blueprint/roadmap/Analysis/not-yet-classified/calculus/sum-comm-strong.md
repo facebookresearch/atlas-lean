@@ -1,4 +1,5 @@
-# Sum comm strong
+# Strong commutativity of compatible Busby sums
 
-Any actual compatible matrix sum is strongly commutative via the finite multiplier swap.
-No associativity, standard stabilization, source norm or nontriviality is assumed.
+For any compatible matrix-fold datum `S`,
+`S.sum τ₁ τ₂` and `S.sum τ₂ τ₁` are strongly unitarily equivalent, using the folded multiplier
+swap unitary.

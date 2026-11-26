@@ -1,10 +1,10 @@
-# Haar
+# Left Haar invariance of a Borel Radon product
 
-## Invariance
+## Product Haar invariance
 
-- [Map mul Left radon Prod](map-mul-left-radon-prod.md)
-- [Measure Preserving mul Left radon Prod](measure-preserving-mul-left-radon-prod.md)
+- [Product left translation preserves the Borel Radon measure](map-mul-left-radon-prod.md)
+- [Measure-preserving product left translation](measure-preserving-mul-left-radon-prod.md)
 
-## Nonzero
+## Nonzero products of Haar measures
 
-- [Radon Prod ne zero](radon-prod-ne-zero.md)
+- [Nonzero Radon product of regular Haar measures](radon-prod-ne-zero.md)

@@ -1,4 +1,5 @@
-# Complex Dual Imag Restriction apply
+# Value of the imaginary continuous-dual restriction
 
-The imaginary restriction evaluates by taking the imaginary part of the functional on the
-complexified function.
+For a topological space `X`,
+continuous complex-linear `Λ` on `C(X,ℂ)` and real continuous `f`,
+`complexDualImagRestriction Λ f=Im Λ(realContinuousMapCLM f)`.

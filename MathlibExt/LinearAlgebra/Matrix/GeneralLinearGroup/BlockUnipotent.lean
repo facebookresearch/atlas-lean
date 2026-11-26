@@ -15,10 +15,12 @@ public import MathlibExt.LinearAlgebra.Matrix.GeneralLinearGroup.ElementarySubgr
 public import Mathlib.Data.Matrix.Block
 
 /-!
-# Block unipotent matrices
+# Rectangular block unipotents and their ordered products
 
-Rectangular upper and lower unitriangular block matrices in `GL (α ⊕ β)` and
-their membership in the elementary subgroup via `Matrix.induction_on'`.
+Let R be any ring and α,β finite index types. For rectangular A:Matrix α β R and C:Matrix β α
+R, put U(A)=[[I_α,A],[0,I_β]] and L(C)=[[I_α,0],[C,I_β]] in GL(α⊕β,R). Their inverses are
+U(-A) and L(-C). They lie in the elementary subgroup, as do their finite ordered products. The
+block dimensions may differ or be zero.
 -/
 
 @[expose] public section
@@ -32,7 +34,12 @@ open Matrix
 variable {α β : Type*} [DecidableEq α] [DecidableEq β] [Fintype α] [Fintype β]
 variable {R : Type*} [Ring R]
 
-/-- Upper unitriangular `[[1, A],[0,1]]`. -/
+/-- **Upper block unipotent matrix.**
+
+Let R be any ring and α,β finite index types. For rectangular A:Matrix α β R and C:Matrix β α
+R, put U(A)=[[I_α,A],[0,I_β]] and L(C)=[[I_α,0],[C,I_β]] in GL(α⊕β,R). The element upperUnit A
+is U(A), with inverse U(-A), for every rectangular A:Matrix α β R.
+-/
 def upperUnit (A : Matrix α β R) : GL (α ⊕ β) R where
   val := fromBlocks (1 : Matrix α α R) A (0 : Matrix β α R) (1 : Matrix β β R)
   inv := fromBlocks (1 : Matrix α α R) (-A) (0 : Matrix β α R) (1 : Matrix β β R)
@@ -126,7 +133,12 @@ theorem upperUnit_single (i : α) (j : β) (a : R) :
       _root_.Matrix.GeneralLinearGroup.coe_elementary, fromBlocks,
       Matrix.single, Matrix.one_apply, Matrix.add_apply]
 
-/-- Lower unitriangular `[[1,0],[A,1]]` with `A : Matrix β α R`. -/
+/-- **Lower block unipotent matrix.**
+
+Let R be any ring and α,β finite index types. For rectangular A:Matrix α β R and C:Matrix β α
+R, put U(A)=[[I_α,A],[0,I_β]] and L(C)=[[I_α,0],[C,I_β]] in GL(α⊕β,R). The element lowerUnit C
+is L(C), with inverse L(-C), for every rectangular C:Matrix β α R.
+-/
 def lowerUnit (A : Matrix β α R) : GL (α ⊕ β) R where
   val := fromBlocks (1 : Matrix α α R) (0 : Matrix α β R) A (1 : Matrix β β R)
   inv := fromBlocks (1 : Matrix α α R) (0 : Matrix α β R) (-A) (1 : Matrix β β R)
@@ -272,16 +284,15 @@ theorem lowerUnit_mem_elementarySubgroup (A : Matrix β α R) :
       _ _ _ _
   exact Matrix.induction_on' A h_zero h_add h_single
 
-/-- Alternating product of block unipotents in `GL (α ⊕ β) R`.
+/-- **Ordered product of upper and lower block unipotents.**
 
-Orientation: `Sum.inl A` uses `upperUnit` as `[[1, A],[0,1]]` and
-`Sum.inr C` uses `lowerUnit` as `[[1,0],[C,1]]`. Multiplication order is
-`List.prod` of the `Sum.elim`-image, so the head factor multiplies on the
-left: `blockAltProd (a :: L) = (Sum.elim upperUnit lowerUnit a) *
-blockAltProd L`. Works over any `[Ring R]` with `[Fintype α] [Fintype β]`;
-empty list is `1` and zero-dimensional `α` or `β` yields trivial blocks
-definitionally. This is a pure matrix recurrence; no elementary-subgroup,
-kernel, pivot, alternation, or C3 claim is made. -/
+Let R be any ring and α,β finite index types. For rectangular A:Matrix α β R and C:Matrix β α
+R, put U(A)=[[I_α,A],[0,I_β]] and L(C)=[[I_α,0],[C,I_β]] in GL(α⊕β,R). For a list ℒ of either
+α×β or β×α matrices, blockAltProd ℒ replaces a left-tagged A by U(A) and a right-tagged C by
+L(C), then multiplies in list order. Thus blockAltProd []=I and
+blockAltProd(a::ℒ)=E(a)*blockAltProd ℒ, where E selects U or L. Consecutive factors may have
+the same tag.
+-/
 noncomputable def blockAltProd
     (L : List (Matrix α β R ⊕ Matrix β α R)) : GL (α ⊕ β) R :=
   (L.map (Sum.elim upperUnit lowerUnit)).prod

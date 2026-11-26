@@ -1,3 +1,4 @@
-# Completion adjoint Operator
+# Completion commutes with adjoint operators
 
-Completion retains the actual adjoint operator in both directions.
+`(completion T).adjointOperator = completion
+T.adjointOperator`.

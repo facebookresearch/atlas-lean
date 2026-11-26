@@ -15,15 +15,15 @@ public import MathlibExt.Analysis.CStarAlgebra.Multiplier.IdealInvariant
 public import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.Quotient
 
 /-!
-# Actual multiplier descent to the original closed-ideal quotient
+# Multipliers on a closed-ideal quotient
 
-Both original continuous linear multiplier operators descend by the stock
-submodule quotient lift. Their kernel condition is the proved ideal
-invariance. The original centrality identity descends through the actual
-quotient projection and supplies a genuine DoubleCentralizer. Every
-zero/add/mul/star/unit/scalar law of the resulting map is computed on actual
-quotient representatives. No quotient model, extended multiplier map or
-nontriviality condition is an input; the zero quotient remains included.
+Let `I` be a closed two-sided star ideal of nonunital C-star `B` and `q : B → B/I` the quotient.
+Ideal invariance lets each multiplier `m = (L_m,R_m)` descend by `L̄_m([b]) = [L_m b]` and
+`R̄_m([b]) = [R_m b]`.
+
+These maps form a multiplier of `B/I`, and the assignment `m ↦ (L̄_m,R̄_m)` is a unital complex
+star-algebra homomorphism `M(B) → M(B/I)`. It uses the quotient C-star norm and includes the
+zero quotient.
 -/
 
 @[expose] public section
@@ -36,7 +36,9 @@ namespace DoubleCentralizer
 universe uB
 variable {B : Type uB} [NonUnitalCStarAlgebra B]
 
-/-- The descended first operator uses the actual quotient norm/topology and proved kernel condition. -/
+/-- **Left centralizer on the quotient.** For nonunital complex C-star `B`, a closed two-sided
+star ideal `I`, and `m : M(B)`, the continuous complex-linear map on `B/I` is `quotientFst I m
+[b] = [m.fst b]`. -/
 def quotientFst (I : ClosedStarIdeal B) (m : 𝓜(ℂ, B)) : I.Quotient →L[ℂ] I.Quotient :=
   (NonUnitalStarSubalgebra.quotientSubmodule I.carrier).liftQL
     ((NonUnitalStarSubalgebra.quotientSubmodule I.carrier).mkQL.comp m.fst) (by
@@ -45,7 +47,9 @@ def quotientFst (I : ClosedStarIdeal B) (m : 𝓜(ℂ, B)) : I.Quotient →L[ℂ
       exact (Submodule.Quotient.mk_eq_zero
         (NonUnitalStarSubalgebra.quotientSubmodule I.carrier)).2 (fst_mem_closedStarIdeal I m hx))
 
-/-- The descended second operator uses the same actual quotient structure and kernel condition. -/
+/-- **Right centralizer on the quotient.** For nonunital complex C-star `B`, a closed two-sided
+star ideal `I`, and `m : M(B)`, the continuous complex-linear map on `B/I` is `quotientSnd I m
+[b] = [m.snd b]`. -/
 def quotientSnd (I : ClosedStarIdeal B) (m : 𝓜(ℂ, B)) : I.Quotient →L[ℂ] I.Quotient :=
   (NonUnitalStarSubalgebra.quotientSubmodule I.carrier).liftQL
     ((NonUnitalStarSubalgebra.quotientSubmodule I.carrier).mkQL.comp m.snd) (by
@@ -54,15 +58,21 @@ def quotientSnd (I : ClosedStarIdeal B) (m : 𝓜(ℂ, B)) : I.Quotient →L[ℂ
       exact (Submodule.Quotient.mk_eq_zero
         (NonUnitalStarSubalgebra.quotientSubmodule I.carrier)).2 (snd_mem_closedStarIdeal I m hx))
 
-/-- The original first-component value is exactly preserved on every original quotient representative. -/
+/-- **Left quotient action on a representative.** For nonunital complex C-star `B`, a closed
+two-sided star ideal `I`, and `m : M(B)`, `quotientFst I m (Submodule.Quotient.mk b) =
+Submodule.Quotient.mk (m.fst b)`. -/
 theorem quotientFst_mk (I : ClosedStarIdeal B) (m : 𝓜(ℂ, B)) (b : B) :
     quotientFst I m (Submodule.Quotient.mk b) = (Submodule.Quotient.mk (m.fst b) : I.Quotient) := rfl
 
-/-- The original second-component value is exactly preserved on every original quotient representative. -/
+/-- **Right quotient action on a representative.** For nonunital complex C-star `B`, a closed
+two-sided star ideal `I`, and `m : M(B)`, `quotientSnd I m (Submodule.Quotient.mk b) =
+Submodule.Quotient.mk (m.snd b)`. -/
 theorem quotientSnd_mk (I : ClosedStarIdeal B) (m : 𝓜(ℂ, B)) (b : B) :
     quotientSnd I m (Submodule.Quotient.mk b) = (Submodule.Quotient.mk (m.snd b) : I.Quotient) := rfl
 
-/-- The actual descended pair satisfies the original centrality identity on the quotient. -/
+/-- **Multiplier induced on a coefficient quotient.** For nonunital complex C-star `B`, a closed
+two-sided star ideal `I`, and `m : M(B)`, the pair of descended centralizers defines
+`quotientMultiplier I m : M(B/I)`, with actions `[b] ↦ [m.fst b]` and `[b] ↦ [m.snd b]`. -/
 def quotientMultiplier (I : ClosedStarIdeal B) (m : 𝓜(ℂ, B)) :
     letI : I.carrier.IsTwoSided := I.isTwoSided;
     letI : NonUnitalCStarAlgebra I.Quotient := I.quotientCStarAlgebra;
@@ -80,19 +90,25 @@ def quotientMultiplier (I : ClosedStarIdeal B) (m : 𝓜(ℂ, B)) :
         change q (m.snd a) * q b = q a * q (m.fst b)
         exact (map_mul q _ _).symm.trans ((congrArg q (m.central a b)).trans (map_mul q _ _)) }
 
-/-- The descended multiplier retains the original first operator on the canonical quotient map. -/
+/-- **Left component of a quotient multiplier.** For nonunital complex C-star `B`, a closed
+two-sided star ideal `I`, and `m : M(B)`, for `q = I.quotientMap`, `(quotientMultiplier I
+m).fst (q b) = q (m.fst b)`. -/
 theorem quotientMultiplier_fst_quotientMap (I : ClosedStarIdeal B) (m : 𝓜(ℂ, B)) (b : B) :
     letI : I.carrier.IsTwoSided := I.isTwoSided;
     letI : NonUnitalCStarAlgebra I.Quotient := I.quotientCStarAlgebra;
     (quotientMultiplier I m).fst (I.quotientMap b) = I.quotientMap (m.fst b) := rfl
 
-/-- The descended multiplier retains the original second operator on the same quotient map. -/
+/-- **Right component of a quotient multiplier.** For nonunital complex C-star `B`, a closed
+two-sided star ideal `I`, and `m : M(B)`, for `q = I.quotientMap`, `(quotientMultiplier I
+m).snd (q b) = q (m.snd b)`. -/
 theorem quotientMultiplier_snd_quotientMap (I : ClosedStarIdeal B) (m : 𝓜(ℂ, B)) (b : B) :
     letI : I.carrier.IsTwoSided := I.isTwoSided;
     letI : NonUnitalCStarAlgebra I.Quotient := I.quotientCStarAlgebra;
     (quotientMultiplier I m).snd (I.quotientMap b) = I.quotientMap (m.snd b) := rfl
 
-/-- The actual closed-ideal multiplier quotient map is a unital star-algebra homomorphism. -/
+/-- **Star homomorphism of quotient multipliers.** For a closed two-sided star ideal `I` of
+nonunital C-star `B`, `quotientMultiplierHom I : M(B) → M(B/I)` is the unital complex
+star-algebra homomorphism determined by the two descended centralizer actions. -/
 def quotientMultiplierHom (I : ClosedStarIdeal B) :
     letI : I.carrier.IsTwoSided := I.isTwoSided;
     letI : NonUnitalCStarAlgebra I.Quotient := I.quotientCStarAlgebra;

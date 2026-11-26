@@ -1,3 +1,4 @@
-# Inner Pair
+# Pointwise complex inner pairing of compact-support functions
 
-The actual compact-support scalar inner-product function, linear in the second factor.
+For topological `X` and
+`f,g∈C_c(X,ℂ)`, `innerPair f g=conj(f)*g`, linear in the second argument.

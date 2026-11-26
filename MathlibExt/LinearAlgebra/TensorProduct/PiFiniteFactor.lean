@@ -18,9 +18,10 @@ public import MathlibExt.LinearAlgebra.LinearMap.RetractComparison
 /-!
 # Tensoring arbitrary products with a finite-projective factor
 
-The product index is arbitrary. Native finite-free tensor coordinates and the
-actual finite-free retraction of the tensor factor earn bijectivity of the
-original product comparison. No finite product-index hypothesis is used.
+Let R be a commutative ring, I an arbitrary index type and (N_i) an I-indexed family of
+R-modules. For an R-module U, let Π_U:U⊗_R(∏i N_i)→∏i(U⊗_R N_i) send u⊗x to (i↦u⊗x_i). If U is
+finitely generated projective over R, Π_U is an R-linear isomorphism. The index I and the
+product factors N_i are unrestricted.
 -/
 
 @[expose] public section
@@ -39,7 +40,11 @@ variable (R : Type uR) [CommRing R] {ι : Type uI}
 
 attribute [local ext high] TensorProduct.ext
 
-/-- Interchange of the actual finite-free coordinate and original product index. -/
+/-- **Finite coordinate and arbitrary product interchange.**
+
+Let R be a commutative ring, I any index type and N_i R-modules. For n∈ℕ, finitePiFlip n:(Fin
+n→∏i N_i)≃ₗ[R]∏i(Fin n→N_i) sends x to i↦(j↦x(j)(i)).
+-/
 def finitePiFlip (n : ℕ) : (Fin n → ∀ i, N i) ≃ₗ[R] ∀ i, Fin n → N i where
   toFun x i j := x j i
   invFun x j i := x i j
@@ -48,8 +53,12 @@ def finitePiFlip (n : ℕ) : (Fin n → ∀ i, N i) ≃ₗ[R] ∀ i, Fin n → N
   map_add' _ _ := rfl
   map_smul' _ _ := rfl
 
-/-- The original arbitrary-product tensor comparison respects every actual
-linear map in the tensor factor. -/
+/-- **Naturality of the product comparison in the tensor factor.**
+
+Let R be a commutative ring, I an arbitrary index type and (N_i) an I-indexed family of
+R-modules. For an R-module U, let Π_U:U⊗_R(∏i N_i)→∏i(U⊗_R N_i) send u⊗x to (i↦u⊗x_i). For
+R-modules U,V and an R-linear f:U→V, Π_V∘(f⊗id)=(∏i(f⊗id_(N_i)))∘Π_U.
+-/
 theorem piRightHom_factor_naturality
     {U : Type uU} {V : Type uV}
     [AddCommGroup U] [Module R U] [AddCommGroup V] [Module R V]
@@ -61,8 +70,12 @@ theorem piRightHom_factor_naturality
   funext i
   rfl
 
-/-- Native finite-free coordinates compute the original product comparison;
-the family and product index remain arbitrary. -/
+/-- **Product tensor comparison for a finite-free factor.**
+
+Let R be a commutative ring, I an arbitrary index type and (N_i) an I-indexed family of
+R-modules. For an R-module U, let Π_U:U⊗_R(∏i N_i)→∏i(U⊗_R N_i) send u⊗x to (i↦u⊗x_i). For n∈ℕ
+and U=R^(Fin n), the map Π_U is bijective.
+-/
 theorem piRightHom_finiteFree_bijective (n : ℕ) :
     Function.Bijective (piRightHom R R (Fin n → R) N) := by
   let eD : (Fin n → R) ⊗[R] (∀ i, N i) ≃ₗ[R] (∀ i, Fin n → N i) :=
@@ -90,8 +103,12 @@ theorem piRightHom_finiteFree_bijective (n : ℕ) :
     obtain ⟨x, hx⟩ := hb.surjective (eC y)
     exact ⟨x, eC.injective hx⟩
 
-/-- The actual finite-free projection/inclusion and original comparison squares
-earn the finite-projective case through the shared elementary retract provider. -/
+/-- **Product tensor comparison for a finite-projective factor.**
+
+Let R be a commutative ring, I an arbitrary index type and (N_i) an I-indexed family of
+R-modules. For an R-module U, let Π_U:U⊗_R(∏i N_i)→∏i(U⊗_R N_i) send u⊗x to (i↦u⊗x_i). If U is
+finitely generated projective over R, Π_U is bijective.
+-/
 theorem piRightHom_finiteFactor_bijective
     (U : Type uU) [AddCommGroup U] [Module R U]
     [Module.Finite R U] [Module.Projective R U] :
@@ -113,8 +130,13 @@ theorem piRightHom_finiteFactor_bijective
     dG dF cG cF hd hc (piRightHom_factor_naturality R N g)
       (piRightHom_factor_naturality R N f) (piRightHom_finiteFree_bijective R N n)
 
-/-- The actual product Iso has the native original product comparison as its
-forward map, even for infinite products. -/
+/-- **Finite-projective factor product tensor equivalence.**
+
+Let R be a commutative ring, I an arbitrary index type and (N_i) an I-indexed family of
+R-modules. For an R-module U, let Π_U:U⊗_R(∏i N_i)→∏i(U⊗_R N_i) send u⊗x to (i↦u⊗x_i). For U
+finitely generated projective over R, piRightFiniteFactor R N U:U⊗_R(∏iN_i)≃ₗ[R]∏i(U⊗_RN_i)
+has forward map Π_U.
+-/
 def piRightFiniteFactor
     (U : Type uU) [AddCommGroup U] [Module R U]
     [Module.Finite R U] [Module.Projective R U] :

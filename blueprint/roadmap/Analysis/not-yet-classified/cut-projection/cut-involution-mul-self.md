@@ -1,3 +1,4 @@
-# Cut Involution mul self
+# Square of a cut reflection
 
-The actual reflection squares to the identity on the completion.
+`cutInvolution s * cutInvolution s = 1` on the completed
+direct sum.

@@ -20,18 +20,15 @@ import Mathlib.Topology.Algebra.Star
 import Mathlib.Tactic.Abel
 
 /-!
-# Nonlinear asymptotic *-morphisms
+# Asymptotic star morphisms and their homotopies
 
-Only each fixed-coefficient time orbit is continuous. The slices are arbitrary
-functions, not necessarily linear or continuous in the coefficient. Boundedness
-and sharp asymptotic contractivity are the separate derived Proposition25.1.3,
-not fields or premises of this definition. This generic data is motivated by
-Blackadar's Definition25.1.1.
-
-The source's four norm-defect limits are equivalently vector limits to zero in
-the given normed topology. Homotopy data uses the ACTUAL compact continuous
-function algebra and its norm, with exact endpoint values. No homotopy quotient,
-E-group or KK object is defined before its own real prerequisites.
+Let A,B be nonunital complex C-star algebras and T=AsymptoticTime=[1,∞), with its real
+topology and order. An asymptotic star morphism is a family φ_t:A→B whose orbit t↦φ_t(a) is
+continuous for each a. For every a,b∈A and z∈ℂ, the four differences φ_t(a+b)-φ_t(a)-φ_t(b),
+φ_t(z•a)-z•φ_t(a), φ_t(a*b)-φ_t(a)*φ_t(b) and φ_t(star(a))-star(φ_t(a)) tend to 0 in the norm
+of B as t→∞. Its slices may be nonlinear. This is Blackadar's Definition25.1.1. A homotopy
+between φ0,φ1 is an asymptotic star morphism F:A→C([0,1],B) satisfying F_t(a)(0)=φ0_t(a) and
+F_t(a)(1)=φ1_t(a); its time continuity and defect limits use the supremum norm on C([0,1],B).
 -/
 
 @[expose] public section
@@ -43,14 +40,32 @@ open Filter
 
 universe uA uB
 
-/-- The half-line time domain, with its induced real topology and order. -/
+/-- **Half-line time for asymptotic morphisms.**
+
+AsymptoticTime is the real half-line T={t∈ℝ:1≤t}=[1,∞), equipped with its subspace topology
+and inherited order. The filter atTop describes t→∞.
+-/
 abbrev AsymptoticTime := Set.Ici (1 : ℝ)
 
-/-- An asymptotic *-morphism with arbitrary nonlinear slices and no boundedness premise. -/
+/-- **Family defining an asymptotic star morphism.**
+
+Let A,B be nonunital complex C-star algebras and T=AsymptoticTime=[1,∞), with its real
+topology and order. A family φ_t:A→B is an asymptotic star morphism when t↦φ_t(a) is
+continuous for every a and for every a,b∈A and z∈ℂ, the four differences
+φ_t(a+b)-φ_t(a)-φ_t(b), φ_t(z•a)-z•φ_t(a), φ_t(a*b)-φ_t(a)*φ_t(b) and
+φ_t(star(a))-star(φ_t(a)) tend to 0 in the norm of B as t→∞. The time slices are arbitrary
+functions subject to these conditions.
+-/
 structure AsymptoticMorphism
     (A : Type uA) (B : Type uB)
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B] where
-  /-- The raw time-indexed maps; individual slices need not be linear. -/
+  /-- **Time-indexed coefficient values of an asymptotic morphism.**
+
+Let A,B be nonunital complex C-star algebras and T=AsymptoticTime=[1,∞), with its real
+topology and order. Let φ be an asymptotic star morphism A→B, a family φ_t:A→B with continuous
+time orbits and vanishing additive, complex-scalar, multiplicative and star defects as t→∞.
+The field toFun is the function T→A→B, (t,a)↦φ_t(a).
+-/
   toFun : AsymptoticTime → A → B
   continuous_orbit : ∀ a : A, Continuous fun t => toFun t a
   add_defect_tendsto : ∀ a b : A,
@@ -81,19 +96,36 @@ instance instFunLike : FunLike (AsymptoticMorphism A B) AsymptoticTime (A → B)
     cases h
     rfl
 
-/-- The stored nonlinear time family is the actual public function coercion. -/
+/-- **Function values of an asymptotic morphism.**
+
+Let A,B be nonunital complex C-star algebras and T=AsymptoticTime=[1,∞), with its real
+topology and order. Let φ be an asymptotic star morphism A→B, a family φ_t:A→B with continuous
+time orbits and vanishing additive, complex-scalar, multiplicative and star defects as t→∞.
+The function φ.toFun:T→A→B equals the evaluation function (t,a)↦φ t a.
+-/
 @[simp]
 theorem toFun_eq_coe (φ : AsymptoticMorphism A B) :
     φ.toFun = (φ : AsymptoticTime → A → B) := by
   rfl
 
-/-- Asymptotic morphisms are determined by their values; their remaining fields are proofs. -/
+/-- **Equality of asymptotic morphisms from coefficient values.**
+
+Let A,B be nonunital complex C-star algebras and T=AsymptoticTime=[1,∞), with its real
+topology and order. If φ,ψ:A→B are asymptotic star morphisms with φ_t(a)=ψ_t(a) for every t∈T
+and a∈A, then φ=ψ.
+-/
 @[ext]
 theorem ext {φ ψ : AsymptoticMorphism A B}
     (h : ∀ (t : AsymptoticTime) (a : A), φ t a = ψ t a) : φ = ψ :=
   DFunLike.ext φ ψ (fun t => funext (h t))
 
-/-- The zero orbit tends to zero; exact zero at every finite time is NOT assumed. -/
+/-- **The zero coefficient orbit tends to zero.**
+
+Let A,B be nonunital complex C-star algebras and T=AsymptoticTime=[1,∞), with its real
+topology and order. Let φ be an asymptotic star morphism A→B, a family φ_t:A→B with continuous
+time orbits and vanishing additive, complex-scalar, multiplicative and star defects as t→∞.
+The orbit t↦φ_t(0) tends to 0 in B as t→∞.
+-/
 theorem zero_tendsto (φ : AsymptoticMorphism A B) :
     Filter.Tendsto (fun t => φ t 0) Filter.atTop (nhds 0) := by
   change Filter.Tendsto (fun t : AsymptoticTime => φ.toFun t (0 : A))
@@ -101,7 +133,12 @@ theorem zero_tendsto (φ : AsymptoticMorphism A B) :
   simpa only [zero_smul, sub_zero] using
     φ.smul_defect_tendsto (0 : ℂ) (0 : A)
 
-/-- Strict equivalence is the source's pointwise-in-coefficient vanishing difference. -/
+/-- **Strict equivalence of asymptotic morphisms.**
+
+Let A,B be nonunital complex C-star algebras and T=AsymptoticTime=[1,∞), with its real
+topology and order. Two asymptotic star morphisms φ,ψ:A→B are StrictlyEquivalent when
+φ_t(a)-ψ_t(a)→0 in B as t→∞ for every fixed a∈A.
+-/
 def StrictlyEquivalent (φ ψ : AsymptoticMorphism A B) : Prop :=
   ∀ a : A, Filter.Tendsto (fun t => φ t a - ψ t a) Filter.atTop (nhds 0)
 
@@ -136,7 +173,12 @@ theorem strictlyEquivalent_equivalence
     symm := strictlyEquivalent_symm
     trans := strictlyEquivalent_trans }
 
-/-- An actual strict-equivalence setoid, NOT the source's homotopy quotient [[A,B]]. -/
+/-- **Setoid of strict asymptotic equivalence.**
+
+Let A,B be nonunital complex C-star algebras and T=AsymptoticTime=[1,∞), with its real
+topology and order. The setoid strictSetoid A B on asymptotic star morphisms has relation φ∼ψ
+exactly when φ_t(a)-ψ_t(a) tends to 0 for every a∈A.
+-/
 def strictSetoid
     (A : Type uA) (B : Type uB)
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B] :
@@ -144,7 +186,13 @@ def strictSetoid
   r := StrictlyEquivalent
   iseqv := strictlyEquivalent_equivalence A B
 
-/-- A genuine homomorphism-valued time family with exactly its point-norm continuity. -/
+/-- **Asymptotic morphism from a point-norm homomorphism family.**
+
+Let A,B be nonunital complex C-star algebras and T=AsymptoticTime=[1,∞), with its real
+topology and order. Let f_t:A→B be nonunital complex star homomorphisms and assume t↦f_t(a) is
+continuous for every a. The asymptotic morphism ofHomFamily f hf has values φ_t(a)=f_t(a),
+with all four defects identically zero.
+-/
 def ofHomFamily (f : AsymptoticTime → A →⋆ₙₐ[ℂ] B)
     (hf : ∀ a : A, Continuous fun t => f t a) : AsymptoticMorphism A B where
   toFun t a := f t a
@@ -176,7 +224,12 @@ theorem ofHomFamily_apply (f : AsymptoticTime → A →⋆ₙₐ[ℂ] B)
     ofHomFamily f hf t a = f t a := by
   rfl
 
-/-- The actual constant family of an ordinary star homomorphism. -/
+/-- **Constant asymptotic morphism of a star homomorphism.**
+
+Let A,B be nonunital complex C-star algebras and T=AsymptoticTime=[1,∞), with its real
+topology and order. For a nonunital complex star homomorphism f:A→B, ofHom f is the asymptotic
+star morphism φ_t(a)=f(a) for every t∈T.
+-/
 def ofHom (f : A →⋆ₙₐ[ℂ] B) : AsymptoticMorphism A B :=
   ofHomFamily (fun _ => f) (fun _ => continuous_const)
 
@@ -185,7 +238,12 @@ theorem ofHom_apply (f : A →⋆ₙₐ[ℂ] B) (t : AsymptoticTime) (a : A) :
     ofHom f t a = f a := by
   rfl
 
-/-- The actual zero input family, without any additive structure on all families. -/
+/-- **Zero asymptotic morphism.**
+
+Let A,B be nonunital complex C-star algebras and T=AsymptoticTime=[1,∞), with its real
+topology and order. The asymptotic morphism zero:A→B has values zero t a=0 for all t∈T and
+a∈A.
+-/
 def zero : AsymptoticMorphism A B :=
   ofHom (0 : A →⋆ₙₐ[ℂ] B)
 
@@ -194,8 +252,14 @@ theorem zero_apply (t : AsymptoticTime) (a : A) :
     zero (A := A) (B := B) t a = 0 := by
   rw [zero, ofHom_apply, NonUnitalStarAlgHom.zero_apply]
 
-/-- Actual continuous proper-at-infinity reparametrization.
-Increasing is not an additional premise. -/
+/-- **Reparametrized asymptotic morphism.**
+
+Let A,B be nonunital complex C-star algebras and T=AsymptoticTime=[1,∞), with its real
+topology and order. Let φ be an asymptotic star morphism A→B, a family φ_t:A→B with continuous
+time orbits and vanishing additive, complex-scalar, multiplicative and star defects as t→∞.
+Let r:T→T be continuous and tend to infinity as t→∞. The asymptotic morphism reparam φ r hr
+hrTop has values (reparam φ r)_t(a)=φ_(r(t))(a).
+-/
 def reparam (φ : AsymptoticMorphism A B)
     (r : AsymptoticTime → AsymptoticTime) (hr : Continuous r)
     (hrTop : Filter.Tendsto r Filter.atTop Filter.atTop) :
@@ -214,17 +278,37 @@ theorem reparam_apply (φ : AsymptoticMorphism A B)
     (t : AsymptoticTime) (a : A) : reparam φ r hr hrTop t a = φ (r t) a := by
   rfl
 
-/-- An ACTUAL asymptotic family into C([0,1],B), with exact endpoint values.
-The family's limits/continuity use this algebra's SUP norm, not pointwise s-limits. -/
+/-- **Homotopy through interval-valued asymptotic morphisms.**
+
+Let A,B be nonunital complex C-star algebras and T=AsymptoticTime=[1,∞), with its real
+topology and order. For asymptotic star morphisms φ0,φ1:A→B, a homotopy between φ0,φ1 is an
+asymptotic star morphism F:A→C([0,1],B) satisfying F_t(a)(0)=φ0_t(a) and F_t(a)(1)=φ1_t(a);
+its time continuity and defect limits use the supremum norm on C([0,1],B). These families
+constitute Homotopy φ0 φ1.
+-/
 structure Homotopy (φ₀ φ₁ : AsymptoticMorphism A B) where
-  /-- The whole interval-valued asymptotic family defining this homotopy. -/
+  /-- **Interval-valued family of an asymptotic homotopy.**
+
+Let A,B be nonunital complex C-star algebras and T=AsymptoticTime=[1,∞), with its real
+topology and order. A homotopy between φ0,φ1 is an asymptotic star morphism F:A→C([0,1],B)
+satisfying F_t(a)(0)=φ0_t(a) and F_t(a)(1)=φ1_t(a); its time continuity and defect limits use
+the supremum norm on C([0,1],B). The field family of Homotopy φ0 φ1 is this interval-valued
+asymptotic morphism F.
+-/
   family : AsymptoticMorphism A C(unitInterval, B)
   start : ∀ (t : AsymptoticTime) (a : A), family t a 0 = φ₀ t a
   finish : ∀ (t : AsymptoticTime) (a : A), family t a 1 = φ₁ t a
 
 namespace Homotopy
 
-/-- A homotopy is determined by its actual family; endpoint fields are proofs. -/
+/-- **Equality of asymptotic homotopies from their families.**
+
+Let A,B be nonunital complex C-star algebras and T=AsymptoticTime=[1,∞), with its real
+topology and order. A homotopy between φ0,φ1 is an asymptotic star morphism F:A→C([0,1],B)
+satisfying F_t(a)(0)=φ0_t(a) and F_t(a)(1)=φ1_t(a); its time continuity and defect limits use
+the supremum norm on C([0,1],B). If homotopies H,K between φ0 and φ1 have equal
+interval-valued families, then H=K.
+-/
 @[ext]
 theorem ext {φ₀ φ₁ : AsymptoticMorphism A B} {H K : Homotopy φ₀ φ₁}
     (h : H.family = K.family) : H = K := by
@@ -235,7 +319,14 @@ theorem ext {φ₀ φ₁ : AsymptoticMorphism A B} {H K : Homotopy φ₀ φ₁}
 
 end Homotopy
 
-/-- Homotopy uses the actual family above, not an arbitrary supplied relation. -/
+/-- **Homotopy relation on asymptotic morphisms.**
+
+Let A,B be nonunital complex C-star algebras and T=AsymptoticTime=[1,∞), with its real
+topology and order. A homotopy between φ0,φ1 is an asymptotic star morphism F:A→C([0,1],B)
+satisfying F_t(a)(0)=φ0_t(a) and F_t(a)(1)=φ1_t(a); its time continuity and defect limits use
+the supremum norm on C([0,1],B). The proposition Homotopic φ0 φ1 means that such an
+interval-valued family F exists.
+-/
 def Homotopic (φ₀ φ₁ : AsymptoticMorphism A B) : Prop :=
   Nonempty (Homotopy φ₀ φ₁)
 

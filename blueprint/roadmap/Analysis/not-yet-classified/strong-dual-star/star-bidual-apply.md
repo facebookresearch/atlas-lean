@@ -1,3 +1,7 @@
-# Star bidual apply
+# Evaluation of the intrinsic bidual involution
 
-The literal double-dual evaluation uses the actual original first-dual star.
+Let `𝕜` be a nontrivially normed field
+with an isometric star-ring involution. Let `A` be a seminormed `𝕜`-space with an
+isometric additive involution satisfying `(c • a)*=c* • a*`. The bidual involution is
+`p*(φ)=star(p(φ*))`, where `φ*(a)=star(φ(a*))`. for `p ∈ A**` and `φ ∈ A*`,
+`p*(φ)=star(p(φ*))`.

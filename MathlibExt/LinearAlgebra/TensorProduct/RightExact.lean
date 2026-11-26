@@ -13,11 +13,11 @@ public import Mathlib.RingTheory.TensorProduct.IsBaseChangeRightExact
 public import Mathlib.Algebra.FiveLemma
 
 /-!
-# Right-exact base-change diagrams in tensor coordinates
+# Right-exact tensor-base-change comparison
 
-Apply the stock right-exact four lemma to the actual tensor-base-change
-maps. This formulation records the first two comparison equivalences and
-the two original commuting squares explicitly.
+Let R,S be commutative rings with R→S an algebra map. In a commuting diagram from the base
+change of a right-exact R-module row U→V→W→0 to a right-exact S-module row U′→V′→W′→0,
+isomorphisms on the first two terms make the third comparison bijective.
 -/
 
 @[expose] public section
@@ -34,8 +34,12 @@ variable {R : Type*} [CommRing R] (S : Type*) [CommRing S] [Algebra R S]
   [Module R U] [Module R V] [Module R W]
   [Module S U'] [Module S V'] [Module S W']
 
-/-- Two actual tensor comparison equivalences identify the third map in
-a commuting right-exact diagram. -/
+/-- **Bijectivity of the third map in a right-exact base-change diagram.**
+
+Let R,S be commutative rings with R→S, exact rows U→ᵃV→ᑫW→0 and U′→ᵃ′V′→ᑫ′W′→0, and both q,q′
+surjective. Suppose eU:S⊗_RU≃U′, eV:S⊗_RV≃V′ and v:S⊗_RW→W′ satisfy eV∘(id⊗a)=a′∘eU and
+v∘(id⊗q)=q′∘eV. Then v is bijective.
+-/
 theorem baseChange_rightExact_bijective
     (a : U →ₗ[R] V) (q : V →ₗ[R] W) (a' : U' →ₗ[S] V') (q' : V' →ₗ[S] W')
     (v : S ⊗[R] W →ₗ[S] W') (eU : S ⊗[R] U ≃ₗ[S] U') (eV : S ⊗[R] V ≃ₗ[S] V')

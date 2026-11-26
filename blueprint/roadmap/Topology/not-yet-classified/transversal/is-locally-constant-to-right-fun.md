@@ -1,3 +1,5 @@
-# Is Locally Constant to Right Fun
+# Locally constant representative of an open-subgroup right coset
 
-The existing right-coset representative of an open subgroup is locally constant.
+Let `G` be a
+topological group, `H≤G` open and `T` a right transversal with unique factorization
+`g=ht`, `h∈H`, `t∈T`. The function selecting `t` is locally constant.

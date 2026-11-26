@@ -1,4 +1,4 @@
-# Algebraic Generator single Linear
+# Algebraic grading on a one-coordinate vector
 
-Canonical simp-normal form of coordinatewise generation on an algebraic
-single-coordinate vector.
+`algebraicGenerator δ (singleLinear i x) =
+singleLinear i ((δ i).generator x)`.

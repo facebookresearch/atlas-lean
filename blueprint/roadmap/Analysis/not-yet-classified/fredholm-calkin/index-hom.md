@@ -1,3 +1,5 @@
-# Index Hom
+# Group homomorphism of Calkin indices
 
-The Calkin-unit index as a multiplicative-to-additive homomorphism.
+For a complex Hilbert space `H`, the index defines
+`Q(H)ˣ →* Multiplicative ℤ`, interpreting operator multiplication as addition of Fredholm
+indices.

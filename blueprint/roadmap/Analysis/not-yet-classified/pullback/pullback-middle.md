@@ -1,3 +1,4 @@
-# Pullback middle
+# Middle algebra of the precomposed extension
 
-The middle algebra is exactly the closed pullback of the precomposed map.
+`(pullback f τ).Middle = BusbyPullback
+(τ.comp f)`, the closed algebra of pairs satisfying `τ(f a) = q(m)`.

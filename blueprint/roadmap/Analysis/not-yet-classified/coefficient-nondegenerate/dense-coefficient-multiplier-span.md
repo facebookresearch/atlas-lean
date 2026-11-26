@@ -1,3 +1,10 @@
-# Dense coefficient Multiplier Span
+# Density of the coefficient multiplier range span
 
-The computed coefficient multiplier is nondegenerate on the same actual admissible completion.
+Let G be a locally compact Borel topological group with left Haar measure μ, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p on Carrier
+μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for its dense
+core map. Assume p(k)≤q(k)=∫ s, ‖k(s)‖ ∂μ for every compactly supported continuous core
+coefficient k. Write j_p(a)=coefficientMultiplierHom μ α p a and
+u_p(g)=groupUnitaryMultiplierHom μ α p g for the coefficient and group multipliers on Xp.
+Their dense left actions are ιp(f)↦ιp(s↦a*f(s)) and ιp(f)↦ιp(s↦α_g(f(g⁻¹*s))). The subspace
+coefficientMultiplierSpan μ α p=span_ℂ{j_p(a).fst(x):a∈A,x∈Xp} is dense in Xp.

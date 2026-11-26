@@ -12,15 +12,15 @@ module
 public import Mathlib.Analysis.Distribution.TestFunction
 
 /-!
-# Affine changes of variables for finite-order test functions
+# Affine pullbacks of compactly supported test functions
 
-Precomposition by an invertible continuous affine map preserves compact support
-and the order of differentiability. It is continuous for the canonical LF topology,
-because every derivative seminorm on a fixed support is bounded by the corresponding
-input seminorm times a power of the norm of the linear part.
-
-Multiplying this map by a scalar gives normalized translations and anisotropic
-rescalings, with no extra smoothness or finite-dimensionality assumption.
+Let E,F be normed real vector spaces and n ∈ ℕ ∪ {∞}. Let Dⁿ(E,F) be the space of compactly
+supported Cⁿ functions E → F with its canonical test-function topology. For a continuous
+linear equivalence L of E and b ∈ E, put h(x) = Lx + b. Pullback P_h f = f ∘ h is a continuous
+real-linear map on Dⁿ(E,F), and its support is h⁻¹(tsupport f). For functions supported in a
+fixed compact K, the i-th derivative seminorm satisfies pᵢ(P_h f) ≤ ‖L‖^i pᵢ(f) whenever i ≤
+n. Multiplying by c ∈ ℝ gives the continuous map f ↦ c f ∘ h, whose support is contained in
+h⁻¹(tsupport f), also when c = 0.
 -/
 
 @[expose] public section
@@ -33,7 +33,11 @@ variable {E F : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
 
 namespace TestFunction
 
-/-- The homeomorphism with value `L x + b`. -/
+/-- **The homeomorphism of an invertible affine map.**
+
+Let E be a normed real vector space, L : E ≃L[ℝ] E a continuous linear equivalence and b ∈ E.
+Put h(x) = Lx + b. The map h is a homeomorphism with inverse h⁻¹(x) = L⁻¹(x − b).
+-/
 def affineHomeomorph (L : E ≃L[ℝ] E) (b : E) : E ≃ₜ E where
   toFun x := L x + b
   invFun x := L.symm (x - b)
@@ -42,23 +46,39 @@ def affineHomeomorph (L : E ≃L[ℝ] E) (b : E) : E ≃ₜ E where
   continuous_toFun := L.continuous.add continuous_const
   continuous_invFun := L.symm.continuous.comp (continuous_id.sub continuous_const)
 
-/-- The affine homeomorphism evaluates as its linear part followed by translation. -/
+/-- **Evaluation of the affine homeomorphism.**
+
+Let E be a normed real vector space, L : E ≃L[ℝ] E a continuous linear equivalence and b ∈ E.
+Put h(x) = Lx + b. For every x ∈ E, the affine homeomorphism satisfies h(x) = Lx + b.
+-/
 @[simp]
 theorem affineHomeomorph_apply (L : E ≃L[ℝ] E) (b x : E) :
     affineHomeomorph L b x = L x + b := rfl
 
-/-- The inverse affine homeomorphism subtracts the translation and applies the inverse linear map. -/
+/-- **Evaluation of the inverse affine homeomorphism.**
+
+Let E be a normed real vector space, L : E ≃L[ℝ] E a continuous linear equivalence and b ∈ E.
+Put h(x) = Lx + b. For every x ∈ E, one has h⁻¹(x) = L⁻¹(x − b).
+-/
 @[simp]
 theorem affineHomeomorph_symm_apply (L : E ≃L[ℝ] E) (b x : E) :
     (affineHomeomorph L b).symm x = L.symm (x - b) := rfl
 
-/-- A support compact pulled back through `x ↦ L x + b`. -/
+/-- **A compact set pulled back by an affine homeomorphism.**
+
+Let E be a normed real vector space, L : E ≃L[ℝ] E a continuous linear equivalence and b ∈ E.
+Put h(x) = Lx + b. For compact K ⊆ E, the preimage K′ = {x : Lx + b ∈ K} is compact.
+-/
 def affinePullbackCompact (L : E ≃L[ℝ] E) (b : E) (K : Compacts E) : Compacts E :=
   ⟨(affineHomeomorph L b).symm '' (K : Set E),
     K.isCompact.image (affineHomeomorph L b).symm.continuous⟩
 
-/-- A point lies in the pulled-back compact support exactly when its affine image lies in the original
-support. -/
+/-- **Membership in the pulled-back compact set.**
+
+Let E be a normed real vector space, L : E ≃L[ℝ] E a continuous linear equivalence and b ∈ E.
+Put h(x) = Lx + b. For compact K ⊆ E and K′ = h⁻¹(K), one has x ∈ K′ if and only if Lx + b ∈
+K.
+-/
 @[simp]
 theorem mem_affinePullbackCompact (L : E ≃L[ℝ] E) (b : E) (K : Compacts E) (x : E) :
     x ∈ affinePullbackCompact L b K ↔ L x + b ∈ K := by
@@ -69,7 +89,13 @@ theorem mem_affinePullbackCompact (L : E ≃L[ℝ] E) (b : E) (K : Compacts E) (
   · intro hx
     exact ⟨L x + b, hx, by simp⟩
 
-/-- Affine precomposition on the underlying finite-order test functions. -/
+/-- **Affine precomposition of a test function.**
+
+Let E,F be normed real vector spaces and n ∈ ℕ ∪ {∞}. Let Dⁿ(E,F) be the space of compactly
+supported Cⁿ functions E → F with its canonical test-function topology. For a continuous
+linear equivalence L of E and b ∈ E, put h(x) = Lx + b. For f ∈ Dⁿ(E,F), define P_h f by (P_h
+f)(x) = f(Lx + b). This function is Cⁿ and compactly supported.
+-/
 def affinePrecomp (L : E ≃L[ℝ] E) (b : E) (f : TestFunction (⊤ : Opens E) F n) :
     TestFunction (⊤ : Opens E) F n where
   toFun x := f (L x + b)
@@ -77,7 +103,13 @@ def affinePrecomp (L : E ≃L[ℝ] E) (b : E) (f : TestFunction (⊤ : Opens E) 
   hasCompactSupport' := f.hasCompactSupport.comp_homeomorph (affineHomeomorph L b)
   tsupport_subset' := by intro x hx; trivial
 
-/-- Affine precomposition of a test function evaluates at the affine image of the point. -/
+/-- **Evaluation of affine precomposition.**
+
+Let E,F be normed real vector spaces and n ∈ ℕ ∪ {∞}. Let Dⁿ(E,F) be the space of compactly
+supported Cⁿ functions E → F with its canonical test-function topology. For a continuous
+linear equivalence L of E and b ∈ E, put h(x) = Lx + b. For f ∈ Dⁿ(E,F) and x ∈ E, one has
+(P_h f)(x) = f(Lx + b).
+-/
 @[simp]
 theorem affinePrecomp_apply (L : E ≃L[ℝ] E) (b x : E) (f : TestFunction (⊤ : Opens E) F n) :
     affinePrecomp L b f x = f (L x + b) := rfl
@@ -86,7 +118,13 @@ end TestFunction
 
 namespace ContDiffMapSupportedIn
 
-/-- The derivative bound for affine precomposition on a fixed compact support. -/
+/-- **Derivative bound for an affine pullback.**
+
+Let E,F be normed real vector spaces, n ∈ ℕ ∪ {∞}, K ⊆ E compact, L a continuous linear
+equivalence of E, and b ∈ E. Put h(x) = Lx + b and K′ = h⁻¹(K). Let f be Cⁿ and supported in
+K, let i ∈ ℕ with i ≤ n, and put pᵢ(f) = sup_y ‖Dⁱf(y)‖, the fixed-support derivative
+seminorm. Then for every x ∈ E, ‖Dⁱ(f ∘ h)(x)‖ ≤ ‖L‖^i pᵢ(f).
+-/
 theorem norm_iteratedFDeriv_affinePrecomp_le (L : E ≃L[ℝ] E) (b : E) {K : Compacts E}
     (f : ContDiffMapSupportedIn E F n K) (i : ℕ) (hi : i ≤ n) (x : E) :
     ‖iteratedFDeriv ℝ i (fun y => f (L y + b)) x‖ ≤
@@ -106,7 +144,13 @@ theorem norm_iteratedFDeriv_affinePrecomp_le (L : E ≃L[ℝ] E) (b : E) {K : Co
         (pow_nonneg (norm_nonneg _) _)
     _ = _ := mul_comm _ _
 
-/-- Affine precomposition as a continuous linear map between fixed-support spaces. -/
+/-- **Continuous affine pullback between fixed-support spaces.**
+
+Let E,F be normed real vector spaces, n ∈ ℕ ∪ {∞}, K ⊆ E compact, L a continuous linear
+equivalence of E, and b ∈ E. Put h(x) = Lx + b and K′ = h⁻¹(K). Precomposition f ↦ f ∘ h is a
+continuous real-linear map from the Cⁿ functions supported in K to those supported in K′, with
+their derivative-seminorm topologies.
+-/
 noncomputable def affinePrecompCLM (L : E ≃L[ℝ] E) (b : E) (K : Compacts E) :
     ContDiffMapSupportedIn E F n K →L[ℝ]
       ContDiffMapSupportedIn E F n (TestFunction.affinePullbackCompact L b K) :=
@@ -119,8 +163,13 @@ noncomputable def affinePrecompCLM (L : E ≃L[ℝ] E) (b : E) (K : Compacts E) 
     (fun i hi => ⟨{i}, ‖(L : E →L[ℝ] E)‖ ^ i, pow_nonneg (norm_nonneg _) _,
       fun f x _ => by simpa using norm_iteratedFDeriv_affinePrecomp_le L b f i hi x⟩)
 
-/-- The continuous affine pullback between fixed-support spaces preserves the expected pointwise
-formula. -/
+/-- **Evaluation of the fixed-support pullback.**
+
+Let E,F be normed real vector spaces, n ∈ ℕ ∪ {∞}, K ⊆ E compact, L a continuous linear
+equivalence of E, and b ∈ E. Put h(x) = Lx + b and K′ = h⁻¹(K). For the continuous real-linear
+pullback P_h between these fixed-support spaces and every f supported in K, one has (P_h f)(x)
+= f(Lx + b).
+-/
 @[simp]
 theorem affinePrecompCLM_apply (L : E ≃L[ℝ] E) (b : E) (K : Compacts E)
     (f : ContDiffMapSupportedIn E F n K) (x : E) :
@@ -130,7 +179,13 @@ end ContDiffMapSupportedIn
 
 namespace TestFunction
 
-/-- Affine precomposition is continuous for the canonical finite-order LF topology. -/
+/-- **Continuous affine pullback on the test-function space.**
+
+Let E,F be normed real vector spaces and n ∈ ℕ ∪ {∞}. Let Dⁿ(E,F) be the space of compactly
+supported Cⁿ functions E → F with its canonical test-function topology. For a continuous
+linear equivalence L of E and b ∈ E, put h(x) = Lx + b. Precomposition P_h : f ↦ f ∘ h is a
+continuous real-linear endomorphism of Dⁿ(E,F).
+-/
 noncomputable def affinePrecompCLM (L : E ≃L[ℝ] E) (b : E) :
     TestFunction (⊤ : Opens E) F n →L[ℝ] TestFunction (⊤ : Opens E) F n :=
   TestFunction.limitCLM ℝ (affinePrecomp L b)
@@ -138,42 +193,84 @@ noncomputable def affinePrecompCLM (L : E ≃L[ℝ] E) (b : E) :
       ContDiffMapSupportedIn.affinePrecompCLM L b K)
     (by intro K hK f; rfl)
 
-/-- The continuous affine pullback on the test-function LF space evaluates by affine precomposition. -/
+/-- **Evaluation of the continuous test-function pullback.**
+
+Let E,F be normed real vector spaces and n ∈ ℕ ∪ {∞}. Let Dⁿ(E,F) be the space of compactly
+supported Cⁿ functions E → F with its canonical test-function topology. For a continuous
+linear equivalence L of E and b ∈ E, put h(x) = Lx + b. For the continuous real-linear map P_h
+on Dⁿ(E,F), one has (P_h f)(x) = f(Lx + b) for all f and x.
+-/
 @[simp]
 theorem affinePrecompCLM_apply (L : E ≃L[ℝ] E) (b x : E) (f : TestFunction (⊤ : Opens E) F n) :
     affinePrecompCLM L b f x = f (L x + b) := rfl
 
-/-- The support moves by the inverse affine map, with equality. -/
+/-- **Support of an affine test-function pullback.**
+
+Let E,F be normed real vector spaces and n ∈ ℕ ∪ {∞}. Let Dⁿ(E,F) be the space of compactly
+supported Cⁿ functions E → F with its canonical test-function topology. For a continuous
+linear equivalence L of E and b ∈ E, put h(x) = Lx + b. For f ∈ Dⁿ(E,F), the topological
+support satisfies tsupport(P_h f) = h⁻¹(tsupport f), where P_h f = f ∘ h.
+-/
 theorem tsupport_affinePrecompCLM (L : E ≃L[ℝ] E) (b : E) (f : TestFunction (⊤ : Opens E) F n) :
     tsupport (affinePrecompCLM L b f) = (affineHomeomorph L b) ⁻¹' tsupport f := by
   exact tsupport_comp_eq_preimage f (affineHomeomorph L b)
 
-/-- A scalar normalization of affine precomposition, still continuous on finite-order tests. -/
+/-- **A scalar-normalized affine pullback.**
+
+Let E,F be normed real vector spaces and n ∈ ℕ ∪ {∞}. Let Dⁿ(E,F) be the space of compactly
+supported Cⁿ functions E → F with its canonical test-function topology. For a continuous
+linear equivalence L of E and b ∈ E, put h(x) = Lx + b. For any c ∈ ℝ, the map S_{c,h} : f ↦
+c(f ∘ h) is a continuous real-linear endomorphism of Dⁿ(E,F).
+-/
 noncomputable def affineScaleCLM (c : ℝ) (L : E ≃L[ℝ] E) (b : E) :
     TestFunction (⊤ : Opens E) F n →L[ℝ] TestFunction (⊤ : Opens E) F n :=
   c • affinePrecompCLM L b
 
-/-- Scalar-normalized affine pullback is the scalar times evaluation at the affine image. -/
+/-- **Evaluation of a scalar-normalized affine pullback.**
+
+Let E,F be normed real vector spaces and n ∈ ℕ ∪ {∞}. Let Dⁿ(E,F) be the space of compactly
+supported Cⁿ functions E → F with its canonical test-function topology. For a continuous
+linear equivalence L of E and b ∈ E, put h(x) = Lx + b. For c ∈ ℝ, S_{c,h} f = c(f ∘ h)
+satisfies (S_{c,h} f)(x) = c · f(Lx + b).
+-/
 @[simp]
 theorem affineScaleCLM_apply (c : ℝ) (L : E ≃L[ℝ] E) (b x : E)
     (f : TestFunction (⊤ : Opens E) F n) :
     affineScaleCLM c L b f x = c • f (L x + b) := rfl
 
-/-- Scalar normalization cannot enlarge the pulled-back support, including when `c = 0`. -/
+/-- **Support of a scalar-normalized affine pullback.**
+
+Let E,F be normed real vector spaces and n ∈ ℕ ∪ {∞}. Let Dⁿ(E,F) be the space of compactly
+supported Cⁿ functions E → F with its canonical test-function topology. For a continuous
+linear equivalence L of E and b ∈ E, put h(x) = Lx + b. For c ∈ ℝ and S_{c,h} f = c(f ∘ h),
+one has tsupport(S_{c,h} f) ⊆ h⁻¹(tsupport f). This includes c = 0, for which the support is
+empty.
+-/
 theorem tsupport_affineScaleCLM_subset (c : ℝ) (L : E ≃L[ℝ] E) (b : E)
     (f : TestFunction (⊤ : Opens E) F n) :
     tsupport (affineScaleCLM c L b f) ⊆ (affineHomeomorph L b) ⁻¹' tsupport f := by
   exact (tsupport_smul_subset_right (fun _ : E => c) (affinePrecompCLM L b f)).trans_eq
     (tsupport_affinePrecompCLM L b f)
 
-/-- Pullback through the identity affine map is the identity on test functions. -/
+/-- **The identity affine pullback.**
+
+Let E,F be normed real vector spaces and n ∈ ℕ ∪ {∞}. Let Dⁿ(E,F) be the space of compactly
+supported Cⁿ functions E → F with its canonical test-function topology. For h(x) = x, obtained
+from L = id and b = 0, the pullback satisfies P_h f = f for every f ∈ Dⁿ(E,F).
+-/
 @[simp]
 theorem affinePrecompCLM_refl (f : TestFunction (⊤ : Opens E) F n) :
     affinePrecompCLM (ContinuousLinearEquiv.refl ℝ E) 0 f = f := by
   ext x
   simp
 
-/-- Pulling a test back through the inverse affine map undoes affine precomposition. -/
+/-- **Inverse affine pullbacks.**
+
+Let E,F be normed real vector spaces and n ∈ ℕ ∪ {∞}. Let Dⁿ(E,F) be the space of compactly
+supported Cⁿ functions E → F with its canonical test-function topology. For a continuous
+linear equivalence L of E and b ∈ E, put h(x) = Lx + b. The inverse map is h⁻¹(x) = L⁻¹x −
+L⁻¹b. Its pullback satisfies P_{h⁻¹}(P_h f) = f for every f ∈ Dⁿ(E,F).
+-/
 theorem affinePrecompCLM_inverse (L : E ≃L[ℝ] E) (b : E)
     (f : TestFunction (⊤ : Opens E) F n) :
     affinePrecompCLM L.symm (-L.symm b) (affinePrecompCLM L b f) = f := by

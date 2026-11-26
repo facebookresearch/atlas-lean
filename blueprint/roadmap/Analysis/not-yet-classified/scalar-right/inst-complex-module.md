@@ -1,3 +1,4 @@
-# Inst Complex Module
+# Complex scalar multiplication
 
-The ordinary complex module is copied exactly as in the synonym's inherited instance.
+For a complex module `H`, the complex module structure on
+`ScalarRight H` satisfies `q (c • x) = c • q x`, where `q = WithCStarModule.equiv ℂᵐᵒᵖ H`.

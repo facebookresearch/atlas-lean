@@ -1,4 +1,5 @@
-# Coord right Matrix Standard Compact Hom apply
+# Selected coordinates of a matrix corner
 
-Every selected coordinate of the corner is the original matrix column
-action on the selected input coordinates.
+For nonunital complex C-star `B`, finite `I`,
+arbitrary `κ`, and an injection `η : I ↪ κ`, `coord (η i) (F_X y) = ∑ j, X i j * coord (η j)
+y`, with `F_X = rightMatrixStandardCompactHom η X`.

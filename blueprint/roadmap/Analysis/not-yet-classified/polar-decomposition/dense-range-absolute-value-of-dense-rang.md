@@ -1,3 +1,4 @@
-# Dense Range absolute Value of dense Range adjoint Square
+# Dense range of the absolute value
 
-Dense range of `T* T` implies dense range of its positive square root.
+If `T* T` has dense range on `E`, its positive square
+root `T.absoluteValue` has dense range.

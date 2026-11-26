@@ -1,3 +1,9 @@
-# Normal Weight GNSDiagonal Functional apply
+# Value of a normal diagonal GNS functional
 
-The actual normal diagonal member has its original completed GNS vector value.
+Let `H` be a complete complex Hilbert space
+and `M ⊆ B(H)` a concrete von Neumann algebra. Let `φ : M₊ → [0,∞]` be an extended
+positive weight: additive, homogeneous for finite nonnegative real scalars, and zero at
+zero. Put `n_φ={x : φ(x* x)<∞}`, and let `Λ : n_φ → H_φ` be the dense GNS map into the
+weight Hilbert completion. Its representation `π` satisfies `π(a)Λ(x)=Λ(a*x)`. Assume `φ`
+preserves least upper bounds of nonempty norm-bounded directed positive sets. for `x ∈
+n_φ` and `a ∈ M`, `(normalWeightGNSDiagonalFunctional M φ x)(a)=⟨Λ(x),π(a)Λ(x)⟩`.

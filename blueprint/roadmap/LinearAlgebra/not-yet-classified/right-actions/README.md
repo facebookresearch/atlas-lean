@@ -1,20 +1,20 @@
-# Right Actions
+# Right outer actions on a balanced tensor quotient
 
-## Action
+## Right actions on balanced tensors
 
-- [Right Operator equivariant](right-operator-equivariant.md)
-- [Right Operator map mk](right-operator-map-mk.md)
-- [Right Action](right-action.md)
-- [Right Module](right-module.md)
-- [Right SMul Comm Class](right-smul-comm-class.md)
-- [Right Action algebra Map](right-action-algebra-map.md)
-- [Right Scalar Tower](right-scalar-tower.md)
+- [Right outer operator preserves left balancing scalars](right-operator-equivariant.md)
+- [Balanced pure value of the right outer operator](right-operator-map-mk.md)
+- [Opposite-semiring representation on the balanced quotient](right-action.md)
+- [Right outer module on the balanced quotient](right-module.md)
+- [Right outer and ground scalars commute](right-smul-comm-class.md)
+- [Ground scalars in the opposite algebra act on the quotient](right-action-algebra-map.md)
+- [Scalar tower for the right outer quotient action](right-scalar-tower.md)
 
-## Maps
+## Maps intertwining right factor actions
 
-- [Map right Action](map-right-action.md)
-- [Map Right](map-right.md)
+- [Balanced factor maps intertwine right outer actions](map-right-action.md)
+- [Right outer-linear map induced on balanced quotients](map-right.md)
 
-## Commuting Factor Actions
+## Commuting actions on separate tensor factors
 
-- [Left Right SMul Comm Class of factor actions](left-right-smul-comm-class-of-factor-act.md)
+- [Actions on separate balanced factors commute](left-right-smul-comm-class-of-factor-act.md)

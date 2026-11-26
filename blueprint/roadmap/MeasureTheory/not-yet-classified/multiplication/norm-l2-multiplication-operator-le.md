@@ -1,3 +1,5 @@
-# Norm l2 Multiplication Operator le
+# Operator norm bound for L² multiplication
 
-The actual pointwise operator norm is bounded by the original given function's sup norm.
+Let X be a topological space with its Borel measurable structure, μ any measure on X and
+H=L²(X,μ;ℂ). For f∈C_b(X,ℂ), let M_f:H→H be multiplication by f, (M_f u)(x)=f(x)u(x) μ-almost
+everywhere. For f∈C_b(X,ℂ), ‖l2MultiplicationOperator μ f‖≤‖f‖∞.

@@ -1,4 +1,5 @@
-# Completed Diagonal norm le
+# Every common bound controls the completed diagonal
 
-EVERY legitimate nonnegative component bound bounds the completed operator,
-not merely one witness used internally to justify continuity.
+If `c ≥ 0` and `‖T_i‖ ≤ c` for all
+indices, then `‖completedDiagonal T hBound‖ ≤ c`, independently of the particular existence
+witness `hBound`.

@@ -14,15 +14,15 @@ module
 public import MathlibExt.Analysis.InnerProductSpace.Operator.CompactBasisEquivalence
 
 /-!
-# Values of the computed compact matrix completion equivalence
+# Forward and inverse values of the basis compact equivalence
 
-The basis equivalence has the original completed compact embedding as its
-forward function. Its two inverse equations are the ordinary inverse laws of
-that same equivalence, with the forward characteristic substituted.
+For a natural-number complex Hilbert basis `b`, let `C` be the completion of the matrix direct
+limit under top-left zero padding, with its matrix norm, and `Φ : C → K(H)` the completed corner
+map.
 
-The raw normed-ring, group, metric, scalar, completion and compact-ideal
-parents are unchanged. Ambient completeness comes from the genuine basis;
-no inverse, target model, density or raw completeness is an input.
+The star equivalence `e : C ≃ K(H)` has `e(x)=Φ(x)`, `e⁻¹(Φ(x))=x` and `Φ(e⁻¹(T))=T`. These are
+values and inverse identities on the completion and the compact ideal, with their respective
+C-star norms.
 -/
 
 @[expose] public section
@@ -33,8 +33,13 @@ namespace HilbertBasis
 
 universe uH
 
-/-- The computed basis equivalence has the original completed forward values
-and both inverse identities on the same completion and actual compact ideal. -/
+/-- **Values and inverse laws of the completed basis compact equivalence.** Let `H` be a
+complex normed inner-product space with a Hilbert basis `b : HilbertBasis ℕ ℂ H`; this
+basis implies completeness. Let `D=lim_n M_(n+1)(ℂ)` be the algebraic direct limit along
+top-left zero padding, with norm `‖[n,X]‖=‖X‖`. Put `C=Completion D`, with the extended
+C-star norm, and `Φ : C → K(H)` the extension of `[n,X] ↦ Σ_i,j<n+1 X_ij θ_(b_i,b_j)`,
+where `θ_(x,y)z=⟨y,z⟩x`. for `e=compactMatrixCompletionEquiv b`, all three identities
+hold: `e(x)=Φ(x)` and `e⁻¹(Φ(x))=x` for `x ∈ C`, and `Φ(e⁻¹(T))=T` for `T ∈ K(H)`. -/
 theorem compactMatrixCompletionEquiv_characteristics
     {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
     (b : HilbertBasis ℕ ℂ H) :

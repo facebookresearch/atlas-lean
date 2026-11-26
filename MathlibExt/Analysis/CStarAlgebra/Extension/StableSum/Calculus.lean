@@ -16,13 +16,16 @@ import Mathlib.LinearAlgebra.Matrix.ConjTranspose
 import Mathlib.Tactic.FinCases
 
 /-!
-# Strict calculus for supplied matrix sums
+# Unitary calculus for matrix-fold Busby sums
 
-The sum respects strong unitary equivalence and takes two actual multiplier
-lifts to an actual lift. The unitary/lift witnesses are constructed from the
-given matrix identifications; source-standard associativity is not assumed
-without an explicit hypothesis. The source algebra keeps the weak BusbyHom
-telescope, and all quotient structures are the existing explicit factories.
+For compatible matrix folds `S`, strong multiplier-unitary equivalence in each variable implies
+strong equivalence of the sums. Two liftable Busby maps have a liftable sum: fold the diagonal
+of their multiplier lifts.
+
+The two-by-two swap unitary gives strong commutativity for every such `S`. Consequently an
+associativity law up to strong equivalence suffices for `S.IsCoherent`. The domain retains only
+the algebraic Busby-homomorphism assumptions; norm and topology are required on the coefficient
+algebra `B`.
 -/
 
 @[expose] public section
@@ -46,7 +49,9 @@ section Diagonal
 
 variable (D : Type*) [CStarAlgebra D]
 
-/-- The two entries of a product as a function on `Fin 2`. -/
+/-- **Two-component function representation.** For a unital C-star algebra `D`, the star-algebra
+map from `D × D` to functions on `Fin 2` sends `(x,y)` to the function with values `x` and
+`y`. -/
 @[no_expose]
 private def pairToFinTwoStarAlgHom : D × D →⋆ₐ[ℂ] (Fin 2 → D) where
   toFun p := ![p.1, p.2]
@@ -69,7 +74,8 @@ private def pairToFinTwoStarAlgHom : D × D →⋆ₐ[ℂ] (Fin 2 → D) where
     ext i
     fin_cases i <;> rfl
 
-/-- The existing matrix diagonal algebra map, with its star law. -/
+/-- **Star homomorphism of diagonal matrices.** Send a function `f : Fin 2 → D` to the diagonal
+matrix with entries `f 0,f 1`. -/
 @[no_expose]
 private def diagonalStarAlgHom :
     (Fin 2 → D) →⋆ₐ[ℂ] CStarMatrix (Fin 2) (Fin 2) D :=
@@ -78,13 +84,15 @@ private def diagonalStarAlgHom :
       map_star' := fun x => (Matrix.diagonal_conjTranspose x).symm } :
       (Fin 2 → D) →⋆ₐ[ℂ] Matrix (Fin 2) (Fin 2) D)
 
-/-- The proof-private bundled two-entry diagonal map. -/
+/-- **Diagonal star map of a product algebra.** The star-algebra homomorphism `D × D → M₂(D)`
+sends `(x,y)` to `diag(x,y)`. -/
 @[no_expose]
 private def pairDiagonalStarAlgHom :
     D × D →⋆ₐ[ℂ] CStarMatrix (Fin 2) (Fin 2) D :=
   (diagonalStarAlgHom D).comp (pairToFinTwoStarAlgHom D)
 
-/-- The literal generic two-entry diagonal matrix. -/
+/-- **Diagonal pair in a C-star matrix algebra.** For `x,y : D`, this matrix is `diag(x,y)` in
+`M₂(D)`. -/
 @[no_expose]
 private def pairDiagonal (x y : D) : CStarMatrix (Fin 2) (Fin 2) D :=
   pairDiagonalStarAlgHom D (x, y)
@@ -107,12 +115,14 @@ private theorem pairDiagonal_map
   fin_cases i <;> fin_cases j <;>
     simp [CStarMatrix.map_apply, CStarMatrix.ofMatrix_apply]
 
-/-- The product unitary with the two prescribed components. -/
+/-- **Unitary pair in a product algebra.** For `u,v ∈ U(D)`, the pair `(u,v)` is a unitary of `D ×
+D`. -/
 @[no_expose]
 private def pairUnitary (u v : unitary D) : unitary (D × D) :=
   ⟨((u : D), (v : D)), Prod.mem_unitary_iff.2 ⟨u.property, v.property⟩⟩
 
-/-- The actual diagonal matrix unitary. -/
+/-- **Diagonal unitary matrix.** For `u,v ∈ U(D)`, `diag(u,v)` is a unitary of the C-star matrix
+algebra `M₂(D)`. -/
 @[no_expose]
 private def pairDiagonalUnitary (u v : unitary D) :
     unitary (CStarMatrix (Fin 2) (Fin 2) D) :=
@@ -152,8 +162,8 @@ private theorem pairDiagonal_eq_twoDiagonal (x y : OuterMultiplier B) :
   fin_cases i <;> fin_cases j <;>
     simp [twoDiagonal, CStarMatrix.ofMatrix_apply]
 
-/-- The supplied stable sum respects strong unitary equivalence in both
-variables. -/
+/-- **Strong equivalence respects Busby sums.** For compatible folds `S`, strong unitary
+equivalences `τ₁ ∼ τ₁'` and `τ₂ ∼ τ₂'` imply `S.sum τ₁ τ₂ ∼ S.sum τ₁' τ₂'`. -/
 theorem StableSumData.sum_congr_strong (S : StableSumData A B)
     {tau₁ tau₁' tau₂ tau₂' : BusbyHom A B}
     (h₁ : StronglyUnitaryEquivalent tau₁ tau₁')
@@ -221,7 +231,8 @@ theorem StableSumData.sum_congr_strong (S : StableSumData A B)
       rw [hw, S.sum_apply, ← pairDiagonal_eq_twoDiagonal, pairDiagonalUnitary_coe]
       simp only [qU₁, qU₂, Unitary.coe_map, StarMonoidHom.ofClass_coe]
 
-/-- The supplied stable sum of two trivial Busby maps is trivial. -/
+/-- **Sum of liftable Busby maps.** If `τ₁,τ₂` each lift to a star homomorphism into `M(B)`, their
+sum relative to compatible folds `S` also lifts, by folding the diagonal of the lifts. -/
 theorem StableSumData.sum_trivial (S : StableSumData A B)
     {tau₁ tau₂ : BusbyHom A B}
     (h₁ : IsTrivial tau₁) (h₂ : IsTrivial tau₂) :
@@ -265,7 +276,8 @@ section Swap
 
 variable (D : Type*) [CStarAlgebra D]
 
-/-- The literal multiplier-matrix swap used only inside the strong-equivalence proof. -/
+/-- **Two-by-two permutation matrix.** In `M₂(D)`, this is the self-adjoint matrix with zero
+diagonal and off-diagonal entries `1`. -/
 @[no_expose]
 private def swapMatrix : CStarMatrix (Fin 2) (Fin 2) D :=
   fun i j => if i = j then 0 else 1
@@ -284,7 +296,8 @@ private theorem swapMatrix_sq :
   unfold swapMatrix
   fin_cases i <;> fin_cases j <;> simp
 
-/-- A genuinely unitary swap, with both unitary equations proved. -/
+/-- **Unitary exchange of two matrix coordinates.** The swap matrix `[[0,1],[1,0]]` is a unitary
+of `M₂(D)`. -/
 @[no_expose]
 private def swapUnitary : unitary (CStarMatrix (Fin 2) (Fin 2) D) :=
   ⟨swapMatrix D, by
@@ -315,8 +328,9 @@ private theorem swapMatrix_conjugate (x y : D) :
 
 end Swap
 
-/-- Any actual compatible matrix sum is strongly commutative via the finite multiplier swap.
-No associativity, standard stabilization, source norm or nontriviality is assumed. -/
+/-- **Strong commutativity of compatible Busby sums.** For any compatible matrix-fold datum `S`,
+`S.sum τ₁ τ₂` and `S.sum τ₂ τ₁` are strongly unitarily equivalent, using the folded multiplier
+swap unitary. -/
 theorem StableSumData.sum_comm_strong (S : StableSumData A B)
     (tau₁ tau₂ : BusbyHom A B) :
     StronglyUnitaryEquivalent (S.sum tau₁ tau₂) (S.sum tau₂ tau₁) := by
@@ -350,8 +364,9 @@ theorem StableSumData.sum_comm_strong (S : StableSumData A B)
         star (q (w : 𝓜(ℂ, B))) := by
       rw [hw, S.sum_apply, pairDiagonal_eq_twoDiagonal]
 
-/-- The original coherence predicate needs only a supplied associativity law,
-because strong commutativity follows from the actual matrix data. -/
+/-- **Coherence from strong associativity.** If the two parenthesizations of every triple `S`-sum
+are strongly equivalent, then `S.IsCoherent`; strong commutativity follows from the compatible
+matrix folds. -/
 theorem StableSumData.coherent_of_associative (S : StableSumData A B)
     (hAssoc : ∀ tau₁ tau₂ tau₃ : BusbyHom A B,
       StronglyUnitaryEquivalent (S.sum (S.sum tau₁ tau₂) tau₃)

@@ -1,3 +1,4 @@
-# Hilbert Operator norm le
+# Norm bound for the first-factor action
 
-The actual completed Hilbert action retains the original Hilbert operator norm bound.
+For a bounded Hilbert-space operator `T`,
+`‖hilbertOperator H A T‖ ≤ ‖T‖`.

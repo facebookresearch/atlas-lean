@@ -1,4 +1,5 @@
-# Continuous Linear Map
+# Transport of a bounded complex-linear map
 
-Transport an ordinary bounded complex-linear map to the two explicitly
-factory-equipped scalar-right models.
+For complex normed spaces `H,K` and `T : H
+→L[ℂ] K`, define `qK.symm ∘ T ∘ qH : ScalarRight H →L[ℂ] ScalarRight K`, where `qH = equivL H`
+and `qK = equivL K`.

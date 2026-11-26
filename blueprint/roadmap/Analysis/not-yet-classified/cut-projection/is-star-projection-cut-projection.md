@@ -1,3 +1,4 @@
-# Is Star Projection cut Projection
+# Star projection of a coordinate set
 
-A coordinate cut is a star projection in the standard projection API.
+`cutProjection s` is an `IsStarProjection`, being
+self-adjoint and idempotent.

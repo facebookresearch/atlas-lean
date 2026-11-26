@@ -1,3 +1,5 @@
-# Integral continuous Riesz Measure
+# Continuous integral representation of a positive compact functional
 
-The compact Riesz measure represents the original functional on every continuous function.
+Let `X` be a
+compact Hausdorff space with its Borel measurable structure. for positive bounded `P` and
+`f∈C(X,ℝ)`, `∫ f d(continuousRieszMeasure P)=P(f)`.

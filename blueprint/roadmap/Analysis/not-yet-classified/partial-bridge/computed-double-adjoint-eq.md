@@ -1,3 +1,4 @@
-# Computed Double Adjoint eq
+# Double adjoint of a regular operator
 
-Canonical mutual maximality identifies the actual computed double adjoint.
+The adjoint of `T.toDenselyDefinedAdjoint` equals
+the full partial map `T.toPartial`, by mutual maximality.

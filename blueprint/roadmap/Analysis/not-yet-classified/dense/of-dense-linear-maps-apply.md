@@ -1,4 +1,4 @@
-# Of Dense Linear Maps apply
+# Unitary extension on the dense image
 
-The unitary extension agrees with the second realization on the common
-dense model.
+For dense linear maps with equal coefficient Gram
+forms, `ofDenseLinearMaps e f he hf hinner (e x) = f x`.

@@ -1,4 +1,7 @@
-# Continuous Equivariant Retraction
+# Chosen continuous equivariant closed-subgroup coordinate
 
-A chosen actual continuous left-equivariant retraction of a closed
-subgroup; the choice is made from the proved closed-coset section theorem.
+Let `G` be a compact
+Hausdorff totally disconnected topological group. Let `H≤G` be a closed subgroup, without
+a normality or finite-index condition. `continuousEquivariantRetraction H : C(G,H)` is a
+retraction with `r(hg)=h r(g)` and `r(h)=h`; it is not asserted to be a group
+homomorphism.

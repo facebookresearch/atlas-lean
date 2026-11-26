@@ -1,4 +1,4 @@
-# Is Unit class Star Map iff is Fredholm
+# Atkinson theorem in the Calkin algebra
 
-Atkinson's theorem: an operator on a complex Hilbert space is Fredholm
-exactly when its Calkin class is invertible.
+For a complex Hilbert space `H`, a bounded
+operator `T` has invertible Calkin class exactly when `T.IsFredholm`.

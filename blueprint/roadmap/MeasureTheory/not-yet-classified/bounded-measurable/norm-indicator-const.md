@@ -1,3 +1,6 @@
-# Norm indicator Const
+# Exact norm of a nonempty scalar indicator
 
-On a nonempty set, a constant-valued indicator has exactly the norm of its value.
+Let `X` be a measurable space. Bounded
+measurable complex functions have pointwise equality and norm `‖f‖∞=sup_x |f(x)|`, zero on
+an empty source. if measurable `s` is nonempty, `‖indicatorConst s c‖∞=|c|` for every
+`c∈ℂ`.

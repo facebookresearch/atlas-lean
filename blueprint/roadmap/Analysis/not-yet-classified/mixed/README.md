@@ -1,15 +1,15 @@
-# Mixed
+# Mixed scalar and Hilbert-valued Radon tensor models
 
-## Mixed Comparison
+## Tensor comparison for Radon products
 
-- [Radon Product Mixed Tensor Comparison](radon-product-mixed-tensor-comparison.md)
-- [Radon Product Mixed Tensor Comparison tmul](radon-product-mixed-tensor-comparison-tm.md)
+- [Isometric comparison of mixed L² tensor arrangements](radon-product-mixed-tensor-comparison.md)
+- [Pure scalar-vector value of the mixed tensor comparison](radon-product-mixed-tensor-comparison-tm.md)
 
-## Original Product
+## Unitary tensor identification of product L² spaces
 
-- [Radon Product Mixed Tensor Unitary](radon-product-mixed-tensor-unitary.md)
-- [Radon Product Mixed Tensor Unitary to Linear Map](radon-product-mixed-tensor-unitary-to-li.md)
-- [Radon Product Mixed Tensor Unitary tmul](radon-product-mixed-tensor-unitary-tmul.md)
-- [Radon Product Mixed Tensor Unitary compact tmul ae](radon-product-mixed-tensor-unitary-compa.md)
-- [Radon Product Mixed Completion Unitary](radon-product-mixed-completion-unitary.md)
-- [Radon Product Mixed Completion Unitary to Lp](radon-product-mixed-completion-unitary-t.md)
+- [Mixed L² tensor unitary onto Hilbert-valued Radon product functions](radon-product-mixed-tensor-unitary.md)
+- [Linear-map factorization of the mixed Radon unitary](radon-product-mixed-tensor-unitary-to-li.md)
+- [Full scalar-factor pure value of the mixed Radon unitary](radon-product-mixed-tensor-unitary-tmul.md)
+- [Compact-support mixed tensor value on the Radon product](radon-product-mixed-tensor-unitary-compa.md)
+- [Mixed tensor unitary into the product compact-support L² completion](radon-product-mixed-completion-unitary.md)
+- [L² value of the mixed compact-support completion unitary](radon-product-mixed-completion-unitary-t.md)

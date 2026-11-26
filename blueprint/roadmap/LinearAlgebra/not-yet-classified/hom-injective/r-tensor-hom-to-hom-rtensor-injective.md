@@ -1,3 +1,4 @@
-# R Tensor Hom To Hom RTensor injective
+# Faithfulness of map-first tensor evaluation
 
-Tensoring linear maps with vectors also gives a faithful tensor action.
+Let K be a field and P,M,N K-vector spaces. The linear map Hom_K(P,M)⊗_KN→Hom_K(P,M⊗_KN),
+f⊗n↦(p↦f(p)⊗n), is injective.

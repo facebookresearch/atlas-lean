@@ -1,4 +1,4 @@
-# Equiv Unitary symm apply
+# Inverse unitary transport on Calkin algebras
 
-The inverse of unitary transport is transport by the inverse module
-unitary, on every Calkin class.
+`(equivUnitary U).symm q = equivUnitary
+U.symm q` for every class `q : Calkin B F`.

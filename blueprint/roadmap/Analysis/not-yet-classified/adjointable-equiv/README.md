@@ -1,5 +1,5 @@
-# Adjointable Equiv
+# Hilbert-space operators and right scalar-module operators
 
-- [Of Continuous Linear Map](of-continuous-linear-map.md)
-- [To Continuous Linear Map](to-continuous-linear-map.md)
-- [Continuous Linear Map Equiv](continuous-linear-map-equiv.md)
+- [Hilbert operator as a right-module operator](of-continuous-linear-map.md)
+- [Bounded map underlying a scalar-module operator](to-continuous-linear-map.md)
+- [Hilbert-to-module operator correspondence](continuous-linear-map-equiv.md)

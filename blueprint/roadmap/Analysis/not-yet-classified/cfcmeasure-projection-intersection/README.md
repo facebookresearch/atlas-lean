@@ -1,8 +1,8 @@
-# CFCMeasure Projection Intersection
+# Projection and intersection laws of normal CFC set operators
 
-- [Normal CFCCoefficient Measure operator continuous Integral](normal-cfccoefficient-measure-operator-c.md)
-- [Normal CFCCoefficient Measure cfc set Integral](normal-cfccoefficient-measure-cfc-set-in.md)
-- [Normal CFCCoefficient Measure operator inter](normal-cfccoefficient-measure-operator-i.md)
-- [Normal CFCCoefficient Operator mul inter](normal-cfccoefficient-operator-mul-inter.md)
-- [Normal CFCCoefficient Operator idempotent](normal-cfccoefficient-operator-idempoten.md)
-- [Normal CFCCoefficient Operator is Star Projection](normal-cfccoefficient-operator-is-star-p.md)
+- [Continuous integral after a spectral set operator](normal-cfccoefficient-measure-operator-c.md)
+- [Indicator integral of a continuous CFC coefficient](normal-cfccoefficient-measure-cfc-set-in.md)
+- [Restriction of a coefficient measure by a spectral operator](normal-cfccoefficient-measure-operator-i.md)
+- [Intersection product of normal CFC set operators](normal-cfccoefficient-operator-mul-inter.md)
+- [Idempotence of every normal CFC set operator](normal-cfccoefficient-operator-idempoten.md)
+- [Orthogonal projection property of normal CFC set operators](normal-cfccoefficient-operator-is-star-p.md)

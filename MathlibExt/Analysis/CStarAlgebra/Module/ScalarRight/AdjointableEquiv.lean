@@ -15,12 +15,16 @@ public import MathlibExt.Analysis.CStarAlgebra.Module.ScalarRight.Adjointable
 public import Mathlib.Analysis.InnerProductSpace.Adjoint
 
 /-!
-# Ordinary Hilbert-space operators as scalar-right adjointable operators
+# Hilbert-space operators and right scalar-module operators
 
-On complete complex inner-product spaces, Mathlib supplies the canonical
-adjoint of every bounded complex-linear map. This module specializes the
-pair-based ScalarRight bridge and packages the resulting carrier
-correspondence. The noncomplete pair-based API remains the lower layer.
+For complex Hilbert spaces `H,K`, put `qH = equivL H` and `qK = equivL K`, identifying
+`ScalarRight H` with `H` and `ScalarRight K` with `K`. Every bounded complex-linear operator `T
+: H →L[ℂ] K` has a Hilbert adjoint; transporting this pair gives the adjointable operator
+`qK.symm ∘ T ∘ qH`.
+
+Conversely an adjointable operator `S` between these right scalar modules gives `qK ∘ S ∘
+qH.symm`. The two constructions are inverse. The latter construction is also defined for
+incomplete complex inner-product spaces.
 -/
 
 @[expose] public section
@@ -33,8 +37,9 @@ noncomputable section
 
 universe u v
 
-/-- The canonical ScalarRight adjointable operator attached to an ordinary
-bounded operator between complex Hilbert spaces. -/
+/-- **Hilbert operator as a right-module operator.** For complex Hilbert spaces `H,K` and `T : H
+→L[ℂ] K`, put `qH = equivL H : ScalarRight H ≃L[ℂ] H` and `qK = equivL K : ScalarRight K ≃L[ℂ]
+K`. Transporting `T` and its Hilbert adjoint gives the adjointable map `qK.symm ∘ T ∘ qH`. -/
 noncomputable def ofContinuousLinearMap
     (H : Type u) (K : Type v)
     [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
@@ -54,8 +59,10 @@ noncomputable def ofContinuousLinearMap
   ofOrdinaryAdjointPair H K T (ContinuousLinearMap.adjoint T) fun x y =>
     (ContinuousLinearMap.adjoint_inner_right T x y).symm
 
-/-- Forget the ScalarRight model by conjugating the forward action through the
-factory continuous-linear equivalences. -/
+/-- **Bounded map underlying a scalar-module operator.** For complex inner-product spaces `H,K`,
+let `qH = equivL H : ScalarRight H ≃L[ℂ] H` and `qK = equivL K : ScalarRight K ≃L[ℂ] K`. An
+adjointable map `S : ScalarRight H → ScalarRight K` gives `qK ∘ S ∘ qH.symm : H →L[ℂ] K`. This
+direction does not require completeness. -/
 noncomputable def toContinuousLinearMap
     (H : Type u) (K : Type v)
     [NormedAddCommGroup H] [InnerProductSpace ℂ H]
@@ -149,8 +156,10 @@ theorem toContinuousLinearMap_apply
       equivL K (T ((equivL H).symm x)) :=
   rfl
 
-/-- On complete complex Hilbert spaces, ordinary bounded operators correspond
-exactly to adjointable operators on the factory-equipped ScalarRight models. -/
+/-- **Hilbert-to-module operator correspondence.** For complex Hilbert spaces `H,K`, bounded
+complex-linear maps `H →L[ℂ] K` correspond bijectively to adjointable maps between
+`ScalarRight H` and `ScalarRight K`; the forward map is `ofContinuousLinearMap` and the
+inverse is `toContinuousLinearMap`. -/
 noncomputable def continuousLinearMapEquiv
     (H : Type u) (K : Type v)
     [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]

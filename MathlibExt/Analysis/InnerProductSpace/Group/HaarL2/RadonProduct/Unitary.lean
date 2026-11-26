@@ -15,16 +15,15 @@ public import MathlibExt.Analysis.InnerProductSpace.Group.HaarL2.RadonProduct.Co
 public import MathlibExt.Analysis.InnerProductSpace.Group.HaarL2.RadonProduct.Sections
 
 /-!
-# The actual full scalar L2 tensor unitary for the Borel Radon product
+# Full scalar L² tensor unitary for a Borel Radon product
 
-Compact-support product functions have actual norm-preserving representatives
-in the full stock factor tensor, obtained from their Lp-valued sections and
-the proved one-measure tensor unitary. Dense original compact-support product
-vectors extend these representatives isometrically to the entire product Lp.
-The original pure formulas and dense factor tensors prove the inverse law,
-so the computed forward embedding is genuinely surjective and gives the
-strict full scalar product L2 unitary. No countability, s-finiteness, product
-Borel equality, supplied norm identity or chosen output unitary is an input.
+For locally compact Hausdorff Borel spaces with regular measures, the isometric extension `E :
+Completion(L²(μ)⊗L²(ν)) → L²(R)` is surjective, where `R=radonProd μ ν`.
+
+Its inverse is the extension of the factor-tensor representatives of compact-support product
+functions. Thus the full scalar tensor unitary sends `i_μ f⊗i_ν g` to the class of `f(x)g(y)`.
+No countability, s-finiteness or equality of factor and product Borel measurable structures is
+assumed.
 -/
 
 @[expose] public section
@@ -47,12 +46,18 @@ variable {Y : Type uY} [TopologicalSpace Y] [T2Space Y] [LocallyCompactSpace Y]
   [MeasurableSpace Y] [BorelSpace Y]
 variable (μ : Measure X) (ν : Measure Y) [μ.Regular] [ν.Regular]
 
-/-- The Borel measurable space of the literal product used by the actual full scalar L2 unitary. -/
+/-- **Borel product structure for the scalar Radon tensor unitary.** For topological `X,Y`,
+the product carrier uses `borel(X×Y)`. -/
 local instance instUnitaryProductBorelMeasurableSpace : MeasurableSpace (X × Y) := borel (X × Y)
 local instance instUnitaryProductBorelSpace : BorelSpace (X × Y) := ⟨rfl⟩
 
 omit [LocallyCompactSpace X] [LocallyCompactSpace Y] in
-/-- The actual section representative of a compact-support pure product is the original full pure tensor. -/
+/-- **Factor-tensor representative of a compact-support pure product.** Let `X,Y` be locally
+compact Hausdorff Borel spaces and `μ,ν` regular measures. Write `R=radonProd μ ν` on
+`borel(X×Y)`, `i_μ,i_ν,i_R` for compact-support L² inclusions, `T=Completion(Lp ℂ 2 μ ⊗[ℂ]
+Lp ℂ 2 ν)`, `A(z)` for the algebraic factor tensor inclusion into `T`, and
+`F(f⊗g)=i_R((x,y) ↦ f(x)g(y))`. the representative `K(f⊠g)` obtained from the L²-valued
+sections equals the completed tensor `i_μ f⊗i_ν g`. -/
 theorem compactProductTensorRepresentative_mulProd (f : C_c(X, ℂ)) (g : C_c(Y, ℂ)) :
     compactProductTensorRepresentative μ ν (CompactlySupportedContinuousMap.mulProd f g) =
       (((compactSupportInclusion μ f) ⊗ₜ[ℂ] (compactSupportInclusion ν g) :
@@ -70,7 +75,12 @@ theorem compactProductTensorRepresentative_mulProd (f : C_c(X, ℂ)) (g : C_c(Y,
   rw [hleft, hright, hf]
   exact CompactlySupportedContinuousMap.sectionRightLp_mulProd ν f g x
 
-/-- The computed isometric reverse map from the entire original Borel product L2 into the full stock tensor. -/
+/-- **Reverse isometric extension from Radon L² to the factor tensor.** Let `X,Y` be locally
+compact Hausdorff Borel spaces and `μ,ν` regular measures. Write `R=radonProd μ ν` on
+`borel(X×Y)`, `i_μ,i_ν,i_R` for compact-support L² inclusions, `T=Completion(Lp ℂ 2 μ ⊗[ℂ]
+Lp ℂ 2 ν)`, `A(z)` for the algebraic factor tensor inclusion into `T`, and
+`F(f⊗g)=i_R((x,y) ↦ f(x)g(y))`. `radonProductTensorInverseEmbedding μ ν : Lp ℂ 2 R →ₗᵢ[ℂ]
+T` extends the compact product representative `i_R F ↦ K(F)`. -/
 def radonProductTensorInverseEmbedding :
     Lp ℂ 2 (Measure.radonProd μ ν) →ₗᵢ[ℂ]
       UniformSpace.Completion ((Lp ℂ 2 μ) ⊗[ℂ] (Lp ℂ 2 ν)) :=
@@ -79,14 +89,25 @@ def radonProductTensorInverseEmbedding :
     (denseRange_compactSupportInclusion (H := ℂ) (Measure.radonProd μ ν))
     (norm_compactProductTensorRepresentative μ ν)
 
-/-- The reverse extension retains every actual compact-support product L2 representative. -/
+/-- **Compact-support value of the inverse Radon tensor embedding.** Let `X,Y` be locally
+compact Hausdorff Borel spaces and `μ,ν` regular measures. Write `R=radonProd μ ν` on
+`borel(X×Y)`, `i_μ,i_ν,i_R` for compact-support L² inclusions, `T=Completion(Lp ℂ 2 μ ⊗[ℂ]
+Lp ℂ 2 ν)`, `A(z)` for the algebraic factor tensor inclusion into `T`, and
+`F(f⊗g)=i_R((x,y) ↦ f(x)g(y))`. for `F∈C_c(X×Y,ℂ)`, `radonProductTensorInverseEmbedding μ
+ν (i_R F)=K(F)`, where `K(F)` is the factor-tensor representative of its L²-valued
+sections. -/
 @[simp]
 theorem radonProductTensorInverseEmbedding_apply_cc (F : C_c(X × Y, ℂ)) :
     radonProductTensorInverseEmbedding μ ν (compactSupportInclusion (Measure.radonProd μ ν) F) =
       compactProductTensorRepresentative μ ν F := by
   simp only [radonProductTensorInverseEmbedding, LinearMap.extendOfIsometry_eq]
 
-/-- The computed reverse and forward isometries have their actual inverse law on the entire stock tensor. -/
+/-- **Inverse embedding recovers every completed factor tensor.** Let `X,Y` be locally compact
+Hausdorff Borel spaces and `μ,ν` regular measures. Write `R=radonProd μ ν` on
+`borel(X×Y)`, `i_μ,i_ν,i_R` for compact-support L² inclusions, `T=Completion(Lp ℂ 2 μ ⊗[ℂ]
+Lp ℂ 2 ν)`, `A(z)` for the algebraic factor tensor inclusion into `T`, and
+`F(f⊗g)=i_R((x,y) ↦ f(x)g(y))`. for `z∈T`, `radonProductTensorInverseEmbedding μ ν
+(radonProductTensorEmbedding μ ν z)=z`. -/
 theorem radonProductTensorInverseEmbedding_embedding
     (z : UniformSpace.Completion ((Lp ℂ 2 μ) ⊗[ℂ] (Lp ℂ 2 ν))) :
     radonProductTensorInverseEmbedding μ ν (radonProductTensorEmbedding μ ν z) = z := by
@@ -108,7 +129,12 @@ theorem radonProductTensorInverseEmbedding_embedding
       ((radonProductTensorInverseEmbedding μ ν).continuous.comp
         (radonProductTensorEmbedding μ ν).continuous) continuous_id) z
 
-/-- The computed full tensor embedding is genuinely onto the entire original Borel product L2 space. -/
+/-- **Surjectivity of the full Radon tensor embedding.** Let `X,Y` be locally compact
+Hausdorff Borel spaces and `μ,ν` regular measures. Write `R=radonProd μ ν` on
+`borel(X×Y)`, `i_μ,i_ν,i_R` for compact-support L² inclusions, `T=Completion(Lp ℂ 2 μ ⊗[ℂ]
+Lp ℂ 2 ν)`, `A(z)` for the algebraic factor tensor inclusion into `T`, and
+`F(f⊗g)=i_R((x,y) ↦ f(x)g(y))`. `radonProductTensorEmbedding μ ν : T → Lp ℂ 2 R` is
+surjective. -/
 theorem surjective_radonProductTensorEmbedding :
     Function.Surjective (radonProductTensorEmbedding μ ν) := by
   intro ξ
@@ -116,18 +142,33 @@ theorem surjective_radonProductTensorEmbedding :
   apply (radonProductTensorInverseEmbedding μ ν).injective
   exact radonProductTensorInverseEmbedding_embedding μ ν (radonProductTensorInverseEmbedding μ ν ξ)
 
-/-- The computed full tensor embedding has genuine dense range in the original product L2 space. -/
+/-- **Dense range of the full Radon tensor embedding.** Let `X,Y` be locally compact Hausdorff
+Borel spaces and `μ,ν` regular measures. Write `R=radonProd μ ν` on `borel(X×Y)`,
+`i_μ,i_ν,i_R` for compact-support L² inclusions, `T=Completion(Lp ℂ 2 μ ⊗[ℂ] Lp ℂ 2 ν)`,
+`A(z)` for the algebraic factor tensor inclusion into `T`, and `F(f⊗g)=i_R((x,y) ↦
+f(x)g(y))`. the range of `radonProductTensorEmbedding μ ν` is norm-dense in `Lp ℂ 2 R`. -/
 theorem denseRange_radonProductTensorEmbedding : DenseRange (radonProductTensorEmbedding μ ν) :=
   (surjective_radonProductTensorEmbedding μ ν).denseRange
 
-/-- The actual full scalar L2 tensor unitary for the original Borel Radon product. -/
+/-- **Linear isometric equivalence of full scalar tensor and Radon L².** Let `X,Y` be locally
+compact Hausdorff Borel spaces and `μ,ν` regular measures. Write `R=radonProd μ ν` on
+`borel(X×Y)`, `i_μ,i_ν,i_R` for compact-support L² inclusions, `T=Completion(Lp ℂ 2 μ ⊗[ℂ]
+Lp ℂ 2 ν)`, `A(z)` for the algebraic factor tensor inclusion into `T`, and
+`F(f⊗g)=i_R((x,y) ↦ f(x)g(y))`. `radonProductTensorUnitary μ ν : T ≃ₗᵢ[ℂ] Lp ℂ 2 R` has
+forward function the completed product embedding and inverse the section-representative
+extension. -/
 def radonProductTensorUnitary :
     UniformSpace.Completion ((Lp ℂ 2 μ) ⊗[ℂ] (Lp ℂ 2 ν)) ≃ₗᵢ[ℂ]
       Lp ℂ 2 (Measure.radonProd μ ν) :=
   LinearIsometryEquiv.ofSurjective (radonProductTensorEmbedding μ ν)
     (surjective_radonProductTensorEmbedding μ ν)
 
-/-- The actual product unitary retains the original compact-support pure values almost everywhere. -/
+/-- **Almost-everywhere pure product formula of the scalar tensor unitary.** Let `X,Y` be
+locally compact Hausdorff Borel spaces and `μ,ν` regular measures. Write `R=radonProd μ ν`
+on `borel(X×Y)`, `i_μ,i_ν,i_R` for compact-support L² inclusions, `T=Completion(Lp ℂ 2 μ
+⊗[ℂ] Lp ℂ 2 ν)`, `A(z)` for the algebraic factor tensor inclusion into `T`, and
+`F(f⊗g)=i_R((x,y) ↦ f(x)g(y))`. `radonProductTensorUnitary μ ν (i_μ f⊗i_ν
+g)(x,y)=f(x)g(y)` for `R`-almost every `(x,y)`. -/
 theorem radonProductTensorUnitary_tmul_ae (f : C_c(X, ℂ)) (g : C_c(Y, ℂ)) :
     radonProductTensorUnitary μ ν
         (((compactSupportInclusion μ f) ⊗ₜ[ℂ] (compactSupportInclusion ν g) :

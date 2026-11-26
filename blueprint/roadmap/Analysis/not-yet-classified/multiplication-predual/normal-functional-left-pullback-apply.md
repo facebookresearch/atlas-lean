@@ -1,3 +1,5 @@
-# Normal Functional Left Pullback apply
+# Value of fixed-left functional pullback
 
-The original bounded functional pullback has the literal original product value.
+Let `H` be a complete complex Hilbert space
+and `M ⊆ B(H)` a concrete von Neumann algebra. for `a,x ∈ M` and `ψ ∈ M*`,
+`normalFunctionalLeftPullback M a ψ x=ψ(a*x)`.

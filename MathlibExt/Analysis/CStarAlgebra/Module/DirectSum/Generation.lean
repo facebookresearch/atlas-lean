@@ -16,11 +16,12 @@ public import MathlibExt.Analysis.CStarAlgebra.Module.Generation
 public import Mathlib.Logic.Encodable.Basic
 
 /-!
-# Countable generation of completed Hilbert-module direct sums
+# Countable generation of completed module sums
 
-A countable direct sum of countably generated complete right modules is
-countably generated.  The proof enumerates component generators and uses the
-dense span of the literal completed coordinate inclusions.
+Let `I` be a countable index type and each `E_i` a complete countably generated right module
+over the nonunital C-star algebra `B`. The completed direct sum is countably generated: embed
+the component generating sequences and enumerate them by the countable set `I × ℕ`. Their
+right-coefficient span is norm-dense by density of the coordinate inclusions.
 -/
 
 @[expose] public section
@@ -41,8 +42,9 @@ variable [∀ i, NormedAddCommGroup (E i)] [∀ i, NormedSpace ℂ (E i)]
 variable [∀ i, SMul Bᵐᵒᵖ (E i)] [∀ i, CStarModule Bᵐᵒᵖ (E i)]
 variable [∀ i, CompleteSpace (E i)]
 
-/-- A countable completed direct sum of countably generated components is
-countably generated. -/
+/-- **Countable generation of a countable direct sum.** If the index type is countable and every
+complete component right module is countably generated, `Completed B E` is countably
+generated. -/
 theorem isCountablyGenerated_completed
     [Countable I]
     (hE : ∀ i, CStarModule.IsCountablyGenerated (B := B) (E := E i)) :

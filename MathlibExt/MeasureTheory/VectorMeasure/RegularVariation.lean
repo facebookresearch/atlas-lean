@@ -17,12 +17,15 @@ public import Mathlib.MeasureTheory.VectorMeasure.Decomposition.JordanSub
 public import Mathlib.MeasureTheory.VectorMeasure.Variation.SignedMeasure
 
 /-!
-# Vector measures with regular total variation
+# Regular total variation of vector, signed and complex measures
 
-This file records regularity of the total variation as a proposition, rather than a global
-instance, and proves its stability under the standard vector-measure operations.  It also relates
-regular variation of signed measures to regularity of their Jordan parts and regular variation of
-complex measures to that of their real and imaginary parts.
+A vector measure has regular variation when its positive variation measure is regular. Negation
+and scalar multiplication preserve this property without finiteness assumptions. On an R₁ Borel
+space, sums and differences preserve it when the variation measures are finite.
+
+For signed measures on an R₁ Borel space, regular variation is equivalent to regularity of both
+Jordan parts. For complex measures it is equivalent to regular variation of the real and
+imaginary signed parts. Their variations satisfy `|Re c|≤|c|`, `|Im c|≤|c|≤|Re c|+|Im c|`.
 -/
 
 @[expose] public section
@@ -42,24 +45,33 @@ variable {X : Type u} {V : Type v}
 variable [TopologicalSpace X] [MeasurableSpace X]
 variable [NormedAddCommGroup V]
 
-/-- A vector measure has regular variation when its total-variation measure is regular. -/
+/-- **Regularity predicate for vector-measure variation.** Let `X` have a topology and
+measurable structure and `V` be a normed additive commutative group. `HasRegularVariation
+μ` means the positive measure `μ.variation` is regular for `μ : VectorMeasure X V`. -/
 def HasRegularVariation (μ : VectorMeasure X V) : Prop :=
   μ.variation.Regular
 
 namespace HasRegularVariation
 
-/-- The zero vector measure has regular variation. -/
+/-- **Regular variation of the zero vector measure.** Let `X` have a topology and measurable
+structure and `V` be a normed additive commutative group. the zero vector measure has
+regular variation. -/
 theorem zero : HasRegularVariation (0 : VectorMeasure X V) := by
   rw [HasRegularVariation, variation_zero]
   infer_instance
 
-/-- Negating a vector measure preserves regularity of its variation. -/
+/-- **Regular variation preserved by vector-measure negation.** Let `X` have a topology and
+measurable structure and `V` be a normed additive commutative group. if `μ : VectorMeasure
+X V` has regular variation, then `-μ` does too. -/
 theorem neg {μ : VectorMeasure X V} (hμ : HasRegularVariation μ) :
     HasRegularVariation (-μ) := by
   rw [HasRegularVariation, variation_neg]
   exact hμ
 
-/-- Adding vector measures with finite regular variations preserves regular variation. -/
+/-- **Regular variation of a sum with finite variations.** Let `X` have a topology and
+measurable structure and `V` be a normed additive commutative group. Assume `X` is an R₁
+space and its measurable structure is Borel. if `μ,ν : VectorMeasure X V` have finite
+regular variations, then `μ+ν` has regular variation. -/
 theorem add [R1Space X] [BorelSpace X] {μ ν : VectorMeasure X V}
     (hμ : HasRegularVariation μ)
     (hν : HasRegularVariation ν) [IsFiniteMeasure μ.variation]
@@ -70,7 +82,10 @@ theorem add [R1Space X] [BorelSpace X] {μ ν : VectorMeasure X V}
     Measure.Regular.add_of_finite μ.variation ν.variation
   exact Measure.Regular.of_le variation_add_le
 
-/-- Subtracting vector measures with finite regular variations preserves regular variation. -/
+/-- **Regular variation of a difference with finite variations.** Let `X` have a topology and
+measurable structure and `V` be a normed additive commutative group. Assume `X` is an R₁
+space and its measurable structure is Borel. if `μ,ν : VectorMeasure X V` have finite
+regular variations, then `μ-ν` has regular variation. -/
 theorem sub [R1Space X] [BorelSpace X] {μ ν : VectorMeasure X V}
     (hμ : HasRegularVariation μ)
     (hν : HasRegularVariation ν) [IsFiniteMeasure μ.variation]
@@ -81,7 +96,10 @@ theorem sub [R1Space X] [BorelSpace X] {μ ν : VectorMeasure X V}
     Measure.Regular.add_of_finite μ.variation ν.variation
   exact Measure.Regular.of_le variation_sub_le
 
-/-- Scalar multiplication preserves regular variation of a vector measure. -/
+/-- **Regular variation under normed-field scalar multiplication.** Let `X` have a topology
+and measurable structure and `V` be a normed additive commutative group. if `V` is a
+normed space over a normed field `𝕜`, `μ` has regular variation and `z∈𝕜`, then `z • μ`
+has regular variation. Finite total variation is not assumed. -/
 theorem smul {𝕜 : Type*} [NormedField 𝕜] [NormedSpace 𝕜 V]
     {μ : VectorMeasure X V} (hμ : HasRegularVariation μ) (c : 𝕜) :
     HasRegularVariation (c • μ) := by
@@ -89,7 +107,10 @@ theorem smul {𝕜 : Type*} [NormedField 𝕜] [NormedSpace 𝕜 V]
   rw [HasRegularVariation, variation_smul]
   infer_instance
 
-/-- A finite sum of vector measures with finite regular variations has regular variation. -/
+/-- **Finite sum of vector measures with finite regular variations.** Let `X` have a topology
+and measurable structure and `V` be a normed additive commutative group. Assume `X` is an
+R₁ space and its measurable structure is Borel. for any finite index set `s`, if each
+`μ_i` with `i∈s` has finite regular variation, then `Σ_i∈s μ_i` has regular variation. -/
 theorem finsetSum [R1Space X] [BorelSpace X] {ι : Type*}
     (s : Finset ι) (μ : ι → VectorMeasure X V)
     (hfinite : ∀ i ∈ s, IsFiniteMeasure (μ i).variation)
@@ -140,14 +161,18 @@ private theorem isFiniteMeasure_variation (s : SignedMeasure X) :
   infer_instance
 
 omit [R1Space X] [BorelSpace X] in
-/-- Regularity of a signed measure's total variation is exactly regular variation in the generic
-vector-measure sense. -/
+/-- **Signed total-variation regularity equals vector regularity.** Let `X` have a topology
+and measurable structure, and `s : SignedMeasure X`. Its total variation is regular
+exactly when `VectorMeasure.HasRegularVariation s`; neither an R₁ nor a Borel assumption
+is required for this identification. -/
 theorem totalVariation_regular_iff_hasRegularVariation (s : SignedMeasure X) :
     s.totalVariation.Regular ↔ VectorMeasure.HasRegularVariation s := by
   rw [VectorMeasure.HasRegularVariation, s.totalVariation_eq_variation]
 
-/-- A signed measure has regular variation exactly when both measures in its Jordan decomposition
-are regular. -/
+/-- **Regular signed variation exactly when both Jordan parts are regular.** Let `X` be an R₁
+topological space with its Borel measurable structure. for `s : SignedMeasure X`,
+`HasRegularVariation s` is equivalent to regularity of both `s⁺` and `s⁻` in its Jordan
+decomposition. -/
 theorem hasRegularVariation_iff_jordanParts_regular (s : SignedMeasure X) :
     VectorMeasure.HasRegularVariation s ↔
       s.toJordanDecomposition.posPart.Regular ∧
@@ -173,13 +198,17 @@ theorem hasRegularVariation_iff_jordanParts_regular (s : SignedMeasure X) :
     exact htotal
 
 omit [R1Space X] [BorelSpace X] in
-/-- A finite regular positive measure has regular variation when regarded as a signed measure. -/
+/-- **Finite regular positive measure as a regular-variation signed measure.** Let `X` have a
+topology and measurable structure, and `μ` a finite regular positive measure. Then
+`μ.toSignedMeasure` has regular variation, without R₁ or Borel assumptions. -/
 theorem hasRegularVariation_toSignedMeasure (μ : Measure X) [μ.Regular] [IsFiniteMeasure μ] :
     VectorMeasure.HasRegularVariation μ.toSignedMeasure := by
   rw [VectorMeasure.HasRegularVariation, Measure.variation_toSignedMeasure]
   infer_instance
 
-/-- The difference of finite regular positive measures has regular variation as a signed measure. -/
+/-- **Regular signed variation of two finite positive measures' difference.** Let `X` be an R₁
+topological space with its Borel measurable structure. if `μ,ν` are finite regular
+positive measures, `μ.toSignedMeasure-ν.toSignedMeasure` has regular variation. -/
 theorem hasRegularVariation_toSignedMeasure_sub (μ ν : Measure X)
     [μ.Regular] [ν.Regular] [IsFiniteMeasure μ] [IsFiniteMeasure ν] :
     VectorMeasure.HasRegularVariation (μ.toSignedMeasure - ν.toSignedMeasure) := by
@@ -199,8 +228,9 @@ variable {X : Type u}
 variable [TopologicalSpace X] [R1Space X] [MeasurableSpace X] [BorelSpace X]
 
 omit [TopologicalSpace X] [R1Space X] [BorelSpace X] in
-/-- Total variation of a complex measure is bounded by the sum of the variations of its real and
-imaginary parts. -/
+/-- **Complex variation bounded by real and imaginary variations.** Let `X` be a measurable
+space and `c : ComplexMeasure X`. as positive measures, `|c|≤|Re c|+|Im c|`. No topology
+is required. -/
 theorem variation_le_re_add_im (c : ComplexMeasure X) :
     c.variation ≤ c.re.variation + c.im.variation := by
   apply VectorMeasure.variation_le_of_forall_enorm_le
@@ -217,7 +247,8 @@ theorem variation_le_re_add_im (c : ComplexMeasure X) :
         (VectorMeasure.enorm_measure_le_variation _ _)
 
 omit [TopologicalSpace X] [R1Space X] [BorelSpace X] in
-/-- The variation of the real part of a complex measure is bounded by its complex variation. -/
+/-- **Real-part variation bounded by complex variation.** Let `X` be a measurable space and `c
+: ComplexMeasure X`. `|Re c|≤|c|` as positive measures, without a topology assumption. -/
 theorem variation_re_le (c : ComplexMeasure X) : c.re.variation ≤ c.variation := by
   apply VectorMeasure.variation_le_of_forall_enorm_le
   intro s hs
@@ -228,7 +259,9 @@ theorem variation_re_le (c : ComplexMeasure X) : c.re.variation ≤ c.variation 
     _ ≤ c.variation s := VectorMeasure.enorm_measure_le_variation _ _
 
 omit [TopologicalSpace X] [R1Space X] [BorelSpace X] in
-/-- The variation of the imaginary part of a complex measure is bounded by its complex variation. -/
+/-- **Imaginary-part variation bounded by complex variation.** Let `X` be a measurable space
+and `c : ComplexMeasure X`. `|Im c|≤|c|` as positive measures, without a topology
+assumption. -/
 theorem variation_im_le (c : ComplexMeasure X) : c.im.variation ≤ c.variation := by
   apply VectorMeasure.variation_le_of_forall_enorm_le
   intro s hs
@@ -239,14 +272,17 @@ theorem variation_im_le (c : ComplexMeasure X) : c.im.variation ≤ c.variation 
     _ ≤ c.variation s := VectorMeasure.enorm_measure_le_variation _ _
 
 omit [TopologicalSpace X] [R1Space X] [BorelSpace X] in
-/-- Complex measures have finite total variation. -/
+/-- **Finite total variation of a complex measure.** Let `X` be a measurable space and `c :
+ComplexMeasure X`. the positive measure `|c|` is finite; this is independent of any
+topology on `X`. -/
 theorem isFiniteMeasure_variation (c : ComplexMeasure X) : IsFiniteMeasure c.variation := by
   let : IsFiniteMeasure c.re.variation := SignedMeasure.isFiniteMeasure_variation c.re
   let : IsFiniteMeasure c.im.variation := SignedMeasure.isFiniteMeasure_variation c.im
   exact isFiniteMeasure_of_le (c.re.variation + c.im.variation) (variation_le_re_add_im c)
 
-/-- A complex measure has regular variation exactly when its real and imaginary signed measures
-do. -/
+/-- **Regular complex variation exactly by the two signed coordinate parts.** Let `X` be an R₁
+topological space with its Borel measurable structure. for `c : ComplexMeasure X`,
+regularity of `|c|` is equivalent to regular variation of both `Re c` and `Im c`. -/
 theorem hasRegularVariation_iff_re_im (c : ComplexMeasure X) :
     VectorMeasure.HasRegularVariation c ↔
       VectorMeasure.HasRegularVariation c.re ∧ VectorMeasure.HasRegularVariation c.im := by
@@ -265,7 +301,9 @@ theorem hasRegularVariation_iff_re_im (c : ComplexMeasure X) :
       Measure.Regular.add_of_finite _ _
     exact Measure.Regular.of_le (variation_le_re_add_im c)
 
-/-- Combining signed measures with regular variation produces a complex measure with regular
+/-- **Regular complex measure from two regular-variation signed measures.** Let `X` be an R₁
+topological space with its Borel measurable structure. if signed measures `s,t` have
+regular variation, then `s+i t`, constructed as `s.toComplexMeasure t`, has regular
 variation. -/
 theorem hasRegularVariation_toComplexMeasure {s t : SignedMeasure X}
     (hs : VectorMeasure.HasRegularVariation s) (ht : VectorMeasure.HasRegularVariation t) :
@@ -274,7 +312,9 @@ theorem hasRegularVariation_toComplexMeasure {s t : SignedMeasure X}
   rw [SignedMeasure.re_toComplexMeasure, SignedMeasure.im_toComplexMeasure]
   exact ⟨hs, ht⟩
 
-/-- Regular variation is preserved by addition of complex measures. -/
+/-- **Addition of complex measures with regular variation.** Let `X` be an R₁ topological
+space with its Borel measurable structure. if complex measures `c,d` have regular
+variation, then `c+d` does too; their variations are automatically finite. -/
 theorem HasRegularVariation.add {c d : ComplexMeasure X}
     (hc : VectorMeasure.HasRegularVariation c) (hd : VectorMeasure.HasRegularVariation d) :
     VectorMeasure.HasRegularVariation (c + d) := by
@@ -282,7 +322,9 @@ theorem HasRegularVariation.add {c d : ComplexMeasure X}
   let : IsFiniteMeasure d.variation := isFiniteMeasure_variation d
   exact hc.add hd
 
-/-- Regular variation is preserved by subtraction of complex measures. -/
+/-- **Subtraction of complex measures with regular variation.** Let `X` be an R₁ topological
+space with its Borel measurable structure. if complex measures `c,d` have regular
+variation, then `c-d` has regular variation. -/
 theorem HasRegularVariation.sub {c d : ComplexMeasure X}
     (hc : VectorMeasure.HasRegularVariation c) (hd : VectorMeasure.HasRegularVariation d) :
     VectorMeasure.HasRegularVariation (c - d) := by
@@ -291,14 +333,18 @@ theorem HasRegularVariation.sub {c d : ComplexMeasure X}
   exact hc.sub hd
 
 omit [R1Space X] [BorelSpace X] in
-/-- Regular variation is preserved by negation of complex measures. -/
+/-- **Negation preserves regular complex variation.** Let `X` have a topology and measurable
+structure. If a complex measure `c` has regular variation, then `-c` does too; no R₁ or
+Borel premise is required. -/
 theorem HasRegularVariation.neg {c : ComplexMeasure X}
     (hc : VectorMeasure.HasRegularVariation c) :
     VectorMeasure.HasRegularVariation (-c) :=
   hc.neg
 
 omit [R1Space X] [BorelSpace X] in
-/-- Regular variation is preserved by complex scalar multiplication. -/
+/-- **Complex scaling preserves regular variation.** Let `X` have a topology and measurable
+structure. If a complex measure `c` has regular variation, then so does `z • c` for every
+`z∈ℂ`, without R₁ or Borel assumptions. -/
 theorem HasRegularVariation.smul {c : ComplexMeasure X}
     (hc : VectorMeasure.HasRegularVariation c) (z : ℂ) :
     VectorMeasure.HasRegularVariation (z • c) :=

@@ -1,3 +1,5 @@
-# Quotient Snd mk
+# Right quotient action on a representative
 
-The original second-component value is exactly preserved on every original quotient representative.
+For nonunital complex C-star `B`, a closed
+two-sided star ideal `I`, and `m : M(B)`, `quotientSnd I m (Submodule.Quotient.mk b) =
+Submodule.Quotient.mk (m.snd b)`.

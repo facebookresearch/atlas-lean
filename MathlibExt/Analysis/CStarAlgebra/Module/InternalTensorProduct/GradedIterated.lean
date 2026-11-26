@@ -16,16 +16,16 @@ public import MathlibExt.Analysis.CStarAlgebra.Module.InternalTensorProduct.Grad
 public import MathlibExt.Analysis.CStarAlgebra.Module.InternalTensorProduct.GradedLeft
 
 /-!
-# The actual graded induced coefficient action on an inner completed tensor
+# Graded coefficient actions on an internal tensor
 
-The underlying hom is the existing literal inducedCompletedLeftAction.
-The grading is the computed original completed tensor grading. The shared
-graded left constructor supplies covariance; a pure-action comparison retains
-the original ordinary operator DATA. No graded output map or action is supplied.
+Let graded nonunital C-star algebras `D₁,D₂,B` with star-compatible opposite orders act on
+complete graded right modules `E₂,E₃`, through graded star homomorphisms `φ : D₁ → End_(D₂)(E₂)`
+and `χ : D₂ → End_B(E₃)`. The tensor grading on `E₂ ⊗_χ E₃` is generated on pure vectors by
+`Γ(y⊗z) = δ₂(y)⊗δ₃(z)`.
 
-This is the strict constructor needed to state Blackadar18.3.4(f) and
-18.3.5 on the actual two reassociated completed tensor carriers. It has no
-countability, source connection or associator hypothesis.
+The induced coefficient action `η(b)(y⊗z) = φ(b)y⊗z` is graded: `Γ η(b) = η(γ_(D₁)(b)) Γ`. Its
+underlying nonunital star homomorphism is the induced completed left action, with the same
+pure-vector values.
 -/
 
 @[expose] public section
@@ -53,7 +53,11 @@ variable {E3 : Type uE3} [NormedAddCommGroup E3] [NormedSpace ℂ E3]
   [SMul Bᵐᵒᵖ E3] [CStarModule Bᵐᵒᵖ E3] [CompleteSpace E3]
 variable {gammaD1 : CStarGrading D1} {gammaD2 : CStarGrading D2} {gammaB : CStarGrading B}
 
-/-- Reuse the shared graded left map for the same computed induced coefficient action. -/
+/-- **Graded coefficient representation on the inner tensor.** Let `D₁,D₂,B` be graded nonunital
+C-star algebras with star-compatible opposite orders, and `E₂,E₃` complete graded right
+modules over `D₂,B`. For graded complex nonunital star homomorphisms `φ : D₁ → End_(D₂)(E₂)`
+and `χ : D₂ → End_B(E₃)`, the induced action on `E₂ ⊗_χ E₃` satisfies `η(b)(y⊗z) = φ(b)y⊗z`
+and intertwines the tensor grading with that of `D₁`. -/
 def inducedCompletedGradedLeftAction
     (delta2 : CStarModuleGrading gammaD2 E2) (delta3 : CStarModuleGrading gammaB E3)
     (phi : CStarGrading.Hom gammaD1 delta2.operatorGrading)
@@ -99,7 +103,9 @@ def inducedCompletedGradedLeftAction
   simpa only [hAction] using h
 
 omit [PartialOrder D1ᵐᵒᵖ] [StarOrderedRing D1ᵐᵒᵖ] in
-/-- Forgetting the grading returns exactly the existing computed coefficient action. -/
+/-- **Underlying star homomorphism of the graded action.** For the same graded actions `φ,χ`, the
+underlying homomorphism of `inducedCompletedGradedLeftAction` equals
+`inducedCompletedLeftAction φ.toNonUnitalStarAlgHom χ.toNonUnitalStarAlgHom`. -/
 @[simp]
 theorem inducedCompletedGradedLeftAction_toNonUnitalStarAlgHom
     (delta2 : CStarModuleGrading gammaD2 E2) (delta3 : CStarModuleGrading gammaB E3)
@@ -117,7 +123,8 @@ theorem inducedCompletedGradedLeftAction_toNonUnitalStarAlgHom
       inducedCompletedLeftAction phi.toNonUnitalStarAlgHom chi.toNonUnitalStarAlgHom := rfl
 
 omit [PartialOrder D1ᵐᵒᵖ] [StarOrderedRing D1ᵐᵒᵖ] in
-/-- The graded induced action has the original first-factor value on every actual pure tensor. -/
+/-- **Graded coefficient action on pure tensors.** The induced graded map sends `completedPure χ y
+z` to `completedPure χ (φ b y) z` for each coefficient `b : D₁`. -/
 @[simp]
 theorem inducedCompletedGradedLeftAction_pure
     (delta2 : CStarModuleGrading gammaD2 E2) (delta3 : CStarModuleGrading gammaB E3)

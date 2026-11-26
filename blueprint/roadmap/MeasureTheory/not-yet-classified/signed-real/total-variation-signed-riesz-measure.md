@@ -1,4 +1,5 @@
-# Total Variation signed Riesz Measure
+# Total variation mass of a signed representing measure
 
-The canonical total variation of the constructed signed measure has mass equal to the operator
-norm of the original functional.
+Let `X` be a compact Hausdorff
+space with its Borel measurable structure. Let `F∈C(X,ℝ)*` be a bounded real-linear
+functional. `|signedRieszMeasure F|.real(X)=‖F‖`.

@@ -15,14 +15,14 @@ public import MathlibExt.Analysis.InnerProductSpace.ProjectionValuedMeasure.CFCM
 public import MathlibExt.Analysis.InnerProductSpace.ProjectionValuedMeasure.CFCMeasureCoefficientBounds
 
 /-!
-# Actual coefficient operator: selfadjointness and empty/full normalization
+# Self-adjointness and normalization of CFC set operators
 
-These laws refer only to the exact computed normalCFCCoefficientOperator.
-Coefficient Hermitian symmetry supplies selfadjointness. Actual complex
-measure values at empty and one, together with CFCmap_one, identify the
-empty/full operator values. They serve three required canonical PVM fields
-and resolutionOfIdentity/BFC; no idempotence, intersection, strong additivity
-or completed PVM is claimed. Numbered textbook theorem proofs remain open.
+For a normal operator `T` on a complete complex Hilbert space, its CFC coefficient measure on
+`K=σ_ℂ(T)` has total value `μ_(g,h)(K)=⟨h,g⟩`.
+
+The set operators `P_s` with coefficients `⟨h,P_s g⟩=μ_(g,h)(s)` are self-adjoint. They satisfy
+`P_∅=0` and `P_K=I_H`; nonmeasurable sets have value zero. No projection-valued measure is a
+premise of these normalization laws.
 -/
 
 @[expose] public section
@@ -38,7 +38,10 @@ open MathlibExt.MeasureTheory.VectorMeasure
 universe uH
 variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- The original continuous unit evaluates the actual coefficient measure to inner h g. -/
+/-- **Total mass of a normal CFC coefficient measure.** Let `H` be a complete complex Hilbert
+space and `T : H →L[ℂ] H` a normal operator, so `T* T=T T*`. Put `K=σ_ℂ(T)` with its Borel
+measurable structure. Let `μ_(g,h)` be the regular complex measure on `K` characterized by
+`∫ f dμ_(g,h)=⟨h,f(T)g⟩` for `f ∈ C(K,ℂ)`. for `g,h ∈ H`, `μ_(g,h)(K)=⟨h,g⟩`. -/
 theorem normalCFCCoefficientMeasure_univ (T : H →L[ℂ] H) (hT : IsStarNormal T) (g h : H) :
     (normalCFCCoefficientMeasure T hT g h : ComplexMeasure (spectrum ℂ T)) univ = ⟪h, g⟫_ℂ := by
   let mu := normalCFCCoefficientMeasure T hT g h
@@ -57,7 +60,13 @@ theorem normalCFCCoefficientMeasure_univ (T : H →L[ℂ] H) (hT : IsStarNormal 
   rw [hi, map_one] at hr
   simpa only [one_apply_eq_self] using hr
 
-/-- Every actual coefficient operator is selfadjoint, also for nonmeasurable sets. -/
+/-- **Self-adjointness of every CFC set operator.** Let `H` be a complete complex Hilbert
+space and `T : H →L[ℂ] H` a normal operator, so `T* T=T T*`. Put `K=σ_ℂ(T)` with its Borel
+measurable structure. Let `μ_(g,h)` be the regular complex measure on `K` characterized by
+`∫ f dμ_(g,h)=⟨h,f(T)g⟩` for `f ∈ C(K,ℂ)`. For measurable `s ⊆ K`, let `P_s` be the
+bounded coefficient operator with `⟨h,P_s g⟩=μ_(g,h)(s)`, and set `P_s=0` for
+nonmeasurable `s`. for every set `s ⊆ K`, `P_s*=P_s`, including the zero value for
+nonmeasurable `s`. -/
 theorem normalCFCCoefficientOperator_isSelfAdjoint (T : H →L[ℂ] H) (hT : IsStarNormal T)
     (s : Set (spectrum ℂ T)) : IsSelfAdjoint (normalCFCCoefficientOperator T hT s) := by
   classical
@@ -77,7 +86,12 @@ theorem normalCFCCoefficientOperator_isSelfAdjoint (T : H →L[ℂ] H) (hT : IsS
   · rw [normalCFCCoefficientOperator_not_measurable T hT s hs]
     exact IsSelfAdjoint.zero (H →L[ℂ] H)
 
-/-- The actual empty measure gives the actual zero coefficient operator. -/
+/-- **Empty CFC set operator is zero.** Let `H` be a complete complex Hilbert space and `T : H
+→L[ℂ] H` a normal operator, so `T* T=T T*`. Put `K=σ_ℂ(T)` with its Borel measurable
+structure. Let `μ_(g,h)` be the regular complex measure on `K` characterized by `∫ f
+dμ_(g,h)=⟨h,f(T)g⟩` for `f ∈ C(K,ℂ)`. For measurable `s ⊆ K`, let `P_s` be the bounded
+coefficient operator with `⟨h,P_s g⟩=μ_(g,h)(s)`, and set `P_s=0` for nonmeasurable `s`.
+`P_∅=normalCFCCoefficientOperator T hT ∅=0`. -/
 theorem normalCFCCoefficientOperator_empty (T : H →L[ℂ] H) (hT : IsStarNormal T) :
     normalCFCCoefficientOperator T hT ∅ = 0 := by
   apply ContinuousLinearMap.ext
@@ -88,7 +102,13 @@ theorem normalCFCCoefficientOperator_empty (T : H →L[ℂ] H) (hT : IsStarNorma
     VectorMeasure.empty]
   simp
 
-/-- The actual continuous-one coefficient measure gives identity on the original H. -/
+/-- **Full-spectrum CFC set operator is the identity.** Let `H` be a complete complex Hilbert
+space and `T : H →L[ℂ] H` a normal operator, so `T* T=T T*`. Put `K=σ_ℂ(T)` with its Borel
+measurable structure. Let `μ_(g,h)` be the regular complex measure on `K` characterized by
+`∫ f dμ_(g,h)=⟨h,f(T)g⟩` for `f ∈ C(K,ℂ)`. For measurable `s ⊆ K`, let `P_s` be the
+bounded coefficient operator with `⟨h,P_s g⟩=μ_(g,h)(s)`, and set `P_s=0` for
+nonmeasurable `s`. `P_K=normalCFCCoefficientOperator T hT K=I_H`, including the zero
+Hilbert space. -/
 theorem normalCFCCoefficientOperator_univ (T : H →L[ℂ] H) (hT : IsStarNormal T) :
     normalCFCCoefficientOperator T hT univ = 1 := by
   apply ContinuousLinearMap.ext

@@ -1,3 +1,4 @@
-# Residue Periodic Target Equiv
+# Periodic target permutation
 
-Permutation of cyclic coordinates obtained by moving forward `m` times.
+For e,m∈ℕ, residuePeriodicTargetEquiv e m=(finRotate e)^m as a permutation of Fin e. For e>0
+it sends i to (i+m) mod e; Fin0 is empty.

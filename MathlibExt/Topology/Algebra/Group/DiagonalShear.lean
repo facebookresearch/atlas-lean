@@ -16,15 +16,13 @@ public import Mathlib.Topology.ContinuousMap.CompactlySupported
 public import Mathlib.Analysis.Complex.Basic
 
 /-!
-# The literal difference-coordinate shear
+# Difference-coordinate shear of a topological group product
 
-The original product coordinates transform by `(s,t) ↦ (s*t⁻¹,t)`, with
-inverse `(r,t) ↦ (r*t,t)`. This is an actual homeomorphism of the original
-topological product. Its inverse gives the literal linear pullback on
-compact-support vector functions.
+For any topological group `G`, the map `(s,t) ↦ (st⁻¹,t)` is a homeomorphism of `G×G`, with
+inverse `(r,t) ↦ (rt,t)`. Commutativity is not required.
 
-This geometric construction asserts no measure preservation or L2 norm
-identity. Those are distinct prerequisites for its Hilbert-space unitary.
+Pullback along this inverse gives the linear map `f(s,t) ↦ f(st,t)` on compact-support functions
+with values in a complex normed space. No measure preservation or L² norm statement is included.
 -/
 
 @[expose] public section
@@ -38,7 +36,9 @@ universe uG uH
 
 namespace Homeomorph
 
-/-- The actual difference-coordinate shear on the original product topological group. -/
+/-- **Difference-coordinate homeomorphism of a group square.** For a topological group `G`,
+`diagonalDifferenceShear G : G×G ≃ₜ G×G` has forward map `(s,t) ↦ (st⁻¹,t)` and inverse
+`(r,t) ↦ (rt,t)`. The group may be nonabelian. -/
 def diagonalDifferenceShear (G : Type uG) [Group G] [TopologicalSpace G]
     [IsTopologicalGroup G] : (G × G) ≃ₜ (G × G) where
   toFun z := (z.1 * z.2⁻¹, z.2)
@@ -56,14 +56,16 @@ def diagonalDifferenceShear (G : Type uG) [Group G] [TopologicalSpace G]
   continuous_toFun := (continuous_fst.mul continuous_snd.inv).prodMk continuous_snd
   continuous_invFun := (continuous_fst.mul continuous_snd).prodMk continuous_snd
 
-/-- The forward shear has its literal original difference-coordinate values. -/
+/-- **Forward value of the difference-coordinate shear.** For a topological group `G` and
+`(s,t)∈G×G`, `diagonalDifferenceShear G (s,t)=(st⁻¹,t)`. -/
 @[simp]
 theorem diagonalDifferenceShear_apply (G : Type uG) [Group G] [TopologicalSpace G]
     [IsTopologicalGroup G] (z : G × G) :
     diagonalDifferenceShear G z = (z.1 * z.2⁻¹, z.2) :=
   rfl
 
-/-- The inverse shear has its literal original multiplication-coordinate values. -/
+/-- **Inverse value of the difference-coordinate shear.** For a topological group `G` and
+`(r,t)∈G×G`, `(diagonalDifferenceShear G).symm (r,t)=(rt,t)`. -/
 @[simp]
 theorem diagonalDifferenceShear_symm_apply (G : Type uG) [Group G] [TopologicalSpace G]
     [IsTopologicalGroup G] (z : G × G) :
@@ -77,7 +79,9 @@ namespace CompactlySupportedContinuousMap
 variable {G : Type uG} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
 variable {H : Type uH} [NormedAddCommGroup H] [NormedSpace ℂ H]
 
-/-- The actual inverse-shear pullback on the original compact-support vector functions. -/
+/-- **Inverse-shear pullback of compact-support vector functions.** Let `G` be a topological
+group and `H` a complex normed space, possibly incomplete. `diagonalShearPullback :
+C_c(G×G,H) →ₗ[ℂ] C_c(G×G,H)` sends `f` to `(s,t) ↦ f(st,t)`. -/
 def diagonalShearPullback : C_c(G × G, H) →ₗ[ℂ] C_c(G × G, H) where
   toFun f :=
     ⟨⟨fun z => f ((Homeomorph.diagonalDifferenceShear G).symm z),
@@ -92,7 +96,8 @@ def diagonalShearPullback : C_c(G × G, H) →ₗ[ℂ] C_c(G × G, H) where
     intro z
     rfl
 
-/-- The compact-support pullback retains the exact original inverse-shear vector coordinates. -/
+/-- **Pointwise value of inverse-shear pullback.** Let `G` be a topological group, `H` a
+complex normed space and `f∈C_c(G×G,H)`. Then `diagonalShearPullback f (s,t)=f(st,t)`. -/
 @[simp]
 theorem diagonalShearPullback_apply (f : C_c(G × G, H)) (z : G × G) :
     diagonalShearPullback f z = f (z.1 * z.2, z.2) :=

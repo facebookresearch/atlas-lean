@@ -1,4 +1,4 @@
-# Comp Right
+# Precomposition of an automorphism homotopy
 
-Precompose every member of an automorphism homotopy by a fixed
-automorphism.
+For an automorphism δ of A, the path t ↦ hₜ ∘ δ joins α ∘ δ to β ∘ δ and is point-norm
+continuous.

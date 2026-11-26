@@ -18,17 +18,16 @@ import Mathlib.LinearAlgebra.TensorProduct.Basis
 import Mathlib.LinearAlgebra.Basis.VectorSpace
 
 /-!
-# Raw injectivity of the actual compact tensor action
+# Injectivity of the algebraic compact tensor action
 
-Actual tensor matrix entries separate the compact-operator coefficients of
-an internally chosen algebraic source basis. The stock tensor/Finsupp basis
-equivalence is an original raw vector-space normal form; no faithful Hilbert
-representation or tensor model is provided. Zero actual action forces every
-matrix entry zero, every compact coefficient zero and thus the raw tensor zero.
+For complex Hilbert `H` and nonunital C-star `A`, the coefficient maps `C_(ξ,η) : A ⊗_ℂ K(H) →
+A` separate algebraic tensors. A basis of the complex vector space `A` converts these entries
+into the Hilbert matrix entries of the compact coefficients.
 
-This supplies actual raw definiteness needed by genuine cross-norm DATA for
-the original minimum target. The least-cross-norm comparison and terminal
-Takai/equivariance theorem proofs remain separate source obligations.
+A zero operator action has zero matrix entries, so every compact coefficient and then the tensor
+itself is zero. Therefore the algebraic compact tensor representation is injective, and its
+induced C-star seminorm satisfies `p(z) = 0 ↔ z = 0`. No nonzero Hilbert-space hypothesis is
+needed.
 -/
 
 @[expose] public section
@@ -49,7 +48,10 @@ variable (H : Type uH) (A : Type uA)
 variable [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 variable [NonUnitalCStarAlgebra A]
 
-/-- Original coefficient basis coordinates commute with the actual Hilbert tensor matrix entries. -/
+/-- **Basis coordinates of tensor matrix entries.** For a complex Hilbert space `H` and a
+nonunital C-star algebra `A`, for a complex basis `B : Module.Basis I ℂ A`, `B.coord i
+(tensorMatrixCoefficient ξ η z)` equals the compact matrix entry of the `i`-th coefficient in
+the tensor-basis representation of `z`. -/
 theorem tensorMatrixCoefficient_basisCoordinate {I : Type uI} (B : Module.Basis I ℂ A) (i : I)
     (ξ η : H) (z : A ⊗[ℂ] (compactEndomorphismClosedStarIdeal (H := H)).carrier) :
     letI : DecidableEq I := Classical.decEq I;
@@ -66,7 +68,9 @@ theorem tensorMatrixCoefficient_basisCoordinate {I : Type uI} (B : Module.Basis 
   | add z w hz hw =>
     rw [map_add, map_add, map_add, Finsupp.add_apply, map_add, hz, hw]
 
-/-- Vanishing of every original tensor matrix entry forces the same raw algebraic tensor to be zero. -/
+/-- **Tensor determined by its Hilbert entries.** For a complex Hilbert space `H` and a nonunital
+C-star algebra `A`, if `tensorMatrixCoefficient H A ξ η z = 0` for every `ξ,η : H`, then the
+algebraic tensor `z` is zero. -/
 theorem eq_zero_of_tensorMatrixCoefficient_eq_zero (z : A ⊗[ℂ] (compactEndomorphismClosedStarIdeal (H := H)).carrier)
     (hz : ∀ ξ η : H, tensorMatrixCoefficient H A ξ η z = 0) : z = 0 := by
   classical
@@ -89,7 +93,9 @@ theorem eq_zero_of_tensorMatrixCoefficient_eq_zero (z : A ⊗[ℂ] (compactEndom
     map_zero e
   exact e.injective (he.trans he0.symm)
 
-/-- The original algebraic compact-action operator is injective on its actual raw tensor carrier. -/
+/-- **Injective algebraic operator representation.** For a complex Hilbert space `H` and a
+nonunital C-star algebra `A`, the map `algebraicTensorOperator H A : A ⊗_ℂ K(H) → End_A(Space
+H A)` is injective. -/
 theorem injective_algebraicTensorOperator :
     letI : PartialOrder Aᵐᵒᵖ := CStarAlgebra.spectralOrder Aᵐᵒᵖ;
     letI : StarOrderedRing Aᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Aᵐᵒᵖ;
@@ -127,7 +133,8 @@ theorem injective_algebraicTensorOperator :
     tensorMatrixCoefficient_eq_zero_of_algebraicTensorOperator_eq_zero H A (z - w) ξ η hzero
   exact sub_eq_zero.mp (eq_zero_of_tensorMatrixCoefficient_eq_zero H A (z - w) hm)
 
-/-- The actual algebraic A tensor K(full H) compact-module star hom is genuinely raw-injective. -/
+/-- **Injective algebraic compact representation.** For a complex Hilbert space `H` and a
+nonunital C-star algebra `A`, `algebraicCompactTensorHom H A` is injective on `A ⊗_ℂ K(H)`. -/
 theorem injective_algebraicCompactTensorHom : Function.Injective (algebraicCompactTensorHom H A) := by
   let : PartialOrder Aᵐᵒᵖ := CStarAlgebra.spectralOrder Aᵐᵒᵖ
   let : StarOrderedRing Aᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Aᵐᵒᵖ
@@ -156,7 +163,8 @@ theorem injective_algebraicCompactTensorHom : Function.Injective (algebraicCompa
   exact congrArg (fun T : CompactAlgebra H A =>
     (T : AdjointableOperator.End A (Space H A))) hzw
 
-/-- The actually induced C-star seminorm is definite on the original raw compact tensor. -/
+/-- **Definiteness of the induced compact tensor norm.** For a complex Hilbert space `H` and a
+nonunital C-star algebra `A`, `compactTensorSeminorm H A z = 0` if and only if `z = 0`. -/
 theorem compactTensorSeminorm_eq_zero_iff (z : A ⊗[ℂ] (compactEndomorphismClosedStarIdeal (H := H)).carrier) :
     compactTensorSeminorm H A z = 0 ↔ z = 0 := by
   let : NonUnitalCStarAlgebra (CompactAlgebra H A) := compactCStarAlgebra H A

@@ -1,3 +1,4 @@
-# Normed Space to Module
+# Scalar action underlying the normed space
 
-The complex module in the normed-space factory is the chosen complex module.
+`(instNormedSpace H).toModule =
+instComplexModule H`; both actions satisfy `q (c • x) = c • q x`.

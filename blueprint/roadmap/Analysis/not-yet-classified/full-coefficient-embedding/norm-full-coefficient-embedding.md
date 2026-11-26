@@ -1,3 +1,3 @@
-# Norm full Coefficient Embedding
+# Norm preservation by the coefficient embedding
 
-The original full coefficient embedding retains the source coefficient norm.
+For every a∈A, `‖fullCoefficientEmbedding μ α a‖ = ‖a‖` in the multiplier C-star norm.

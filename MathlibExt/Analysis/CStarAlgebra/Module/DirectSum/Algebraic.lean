@@ -16,17 +16,15 @@ public import Mathlib.Analysis.CStarAlgebra.Module.Synonym
 public import Mathlib.LinearAlgebra.DFinsupp
 
 /-!
-# Algebraic direct sums of right C-star modules
+# Finite-support direct sums of right modules
 
-For an arbitrary family `E i` of right pre-Hilbert modules over one
-coefficient C-star algebra `B`, this file equips the finite-support dependent
-sum with the coefficient inner product
+Let `(E_i)` be right pre-Hilbert modules over a nonunital C-star algebra `B`. The algebraic
+direct sum consists of finitely supported dependent vectors `x_i ∈ E_i`. Define `⟨x,y⟩_B = ∑ i,
+⟨x_i,y_i⟩_B` and `‖x‖ = sqrt ‖⟨x,x⟩_B‖`, with right action `(x <• b)_i = x_i <• b`.
 
-`<x,y> = ∑ i, <x i,y i>`.
-
-The norm is the norm induced by that inner product, not a pre-existing
-`DFinsupp` norm.  The construction needs neither component completeness nor a
-nonempty index type.  Completion is performed separately.
+The coordinate inclusion `j_i` is complex-linear and isometric. Its same-coordinate inner
+products are those of `E_i`, distinct coordinates are orthogonal, and the coordinate ranges span
+the algebraic sum. Neither completeness of the fibers nor a nonempty index type is required.
 -/
 
 @[expose] public section
@@ -48,14 +46,16 @@ variable {I : Type uI} {E : I → Type uE}
 variable [∀ i, NormedAddCommGroup (E i)] [∀ i, NormedSpace ℂ (E i)]
 variable [∀ i, SMul Bᵐᵒᵖ (E i)] [∀ i, CStarModule Bᵐᵒᵖ (E i)]
 
-/-- The finite-support algebraic direct sum, kept in a coefficient-indexed
-synonym so its inner-product norm cannot be confused with another `DFinsupp`
-norm. -/
+/-- **Finite-support dependent direct-sum carrier.** Let `B` be an arbitrary type, `I` an index
+type, and `E : I → Type` a family of normed additive groups. `Algebraic B E` is
+`WithCStarModule Bᵐᵒᵖ (Π₀ i, E i)`, the carrier of finitely supported vectors with entry `x_i
+: E i`. -/
 abbrev Algebraic (B : Type uB) {I : Type uI} (E : I → Type uE)
     [∀ i, NormedAddCommGroup (E i)] :=
   WithCStarModule Bᵐᵒᵖ (Π₀ i, E i)
 
-/-- The underlying dependent finite-support function. -/
+/-- **Coordinate representation of the algebraic sum.** This complex-linear equivalence identifies
+`Algebraic B E` with the finite-support dependent functions `Π₀ i, E i`. -/
 def toDFinsupp : Algebraic B E ≃ₗ[ℂ] (Π₀ i, E i) :=
   WithCStarModule.linearEquiv ℂ Bᵐᵒᵖ (Π₀ i, E i)
 
@@ -67,13 +67,14 @@ theorem toDFinsupp_apply (x : Algebraic B E) (i : I) :
     toDFinsupp x i = (WithCStarModule.equiv Bᵐᵒᵖ (Π₀ i, E i) x) i :=
   rfl
 
-/-- The underlying classical finite-support coordinate vector.  Classical
-decidable equality is an implementation detail, not an API hypothesis. -/
+/-- **One-coordinate dependent vector.** For `x : E i`, `rawSingle i x` is the finite-support
+vector with entry `x` at `i` and zero at every other coordinate. -/
 def rawSingle (i : I) (x : E i) : Π₀ i, E i := by
   classical
   exact DFinsupp.single i x
 
-/-- The finite support of an algebraic direct-sum vector. -/
+/-- **Support of an algebraic direct-sum vector.** `support x` is the finite set of indices where
+the coordinate `toDFinsupp x i` is nonzero. -/
 def support (x : Algebraic B E) : Finset I := by
   classical
   exact (toDFinsupp x).support
@@ -94,7 +95,8 @@ theorem not_mem_support_iff (x : Algebraic B E) (i : I) :
   rw [mem_support_iff]
   exact not_ne_iff
 
-/-- The algebraic coordinate inclusion as a complex-linear map. -/
+/-- **Linear inclusion of one component.** The map `singleLinear i : E i → Algebraic B E` puts its
+argument in coordinate `i` and zero elsewhere. -/
 def singleLinear (i : I) : E i →ₗ[ℂ] Algebraic B E := by
   classical
   exact
@@ -134,8 +136,9 @@ theorem singleLinear_apply_ne {i j : I} (h : j ≠ i) (x : E i) :
 omit [NonUnitalCStarAlgebra B] [PartialOrder Bᵐᵒᵖ]
   [(i : I) → SMul Bᵐᵒᵖ (E i)]
   [(i : I) → CStarModule Bᵐᵒᵖ (E i)] in
-/-- Induction on algebraic direct sums, expressed through the public
-coefficient-indexed carrier rather than exposing raw `DFinsupp`. -/
+/-- **Induction by adjoining nonzero coordinates.** A property of finite-support vectors follows
+from its value at zero and preservation under `j_i b + y` when `y_i = 0`, `b ≠ 0`, and the
+property holds for `y`. -/
 protected theorem induction {p : Algebraic B E → Prop} (x : Algebraic B E)
     (h0 : p 0)
     (ha : ∀ (i : I) (b : E i) (y : Algebraic B E),
@@ -159,8 +162,10 @@ protected theorem induction {p : Algebraic B E → Prop} (x : Algebraic B E)
   have hx := DFinsupp.induction (toDFinsupp x) hq0 hqa
   simpa [q] using hx
 
-/-- The coefficient-valued inner product, as a complex-linear map in its
-second variable. -/
+/-- **Linear second variable of the direct-sum inner product.** Let `I` be arbitrary, `B` a
+nonunital complex C-star algebra with a partial order on `Bᵐᵒᵖ`, and `E_i` complex normed
+right C-star modules. For a finite-support vector `x`, the complex-linear map sends `y` to `∑
+i, inner Bᵐᵒᵖ (toDFinsupp x i) (toDFinsupp y i)`. -/
 def algebraicInnerSL (x : Algebraic B E) : Algebraic B E →ₗ[ℂ] Bᵐᵒᵖ := by
   classical
   exact
@@ -168,7 +173,8 @@ def algebraicInnerSL (x : Algebraic B E) : Algebraic B E →ₗ[ℂ] Bᵐᵒᵖ 
         CStarModule.innerₛₗ (A := Bᵐᵒᵖ) (E := E i) (toDFinsupp x i)).comp
       (toDFinsupp (B := B) (E := E)).toLinearMap
 
-/-- The literal finite sum of component inner products. -/
+/-- **Finite-sum coefficient inner product.** `algebraicInner x y` is the sum of the component
+inner products in `Bᵐᵒᵖ`, finite because the two vectors have finite support. -/
 def algebraicInner (x y : Algebraic B E) : Bᵐᵒᵖ :=
   algebraicInnerSL x y
 
@@ -198,7 +204,10 @@ theorem algebraicInner_single_right (x : Algebraic B E) (i : I) (y : E i) :
   rw [toDFinsupp_singleLinear]
   simp [rawSingle, CStarModule.innerₛₗ_apply]
 
-/-- Evaluation as the finite sum over the support of the second vector. -/
+/-- **Inner product over the second support.** Let `I` be arbitrary, `B` a nonunital complex
+C-star algebra with a partial order on `Bᵐᵒᵖ`, and `E_i` complex normed right C-star modules.
+For finite-support `x,y`, write `x_i = toDFinsupp x i` and `y_i = toDFinsupp y i`. Then
+`algebraicInner x y = ∑ i ∈ support y, inner Bᵐᵒᵖ x_i y_i`. -/
 theorem algebraicInner_eq_sum (x y : Algebraic B E) :
     algebraicInner x y =
       ∑ i ∈ support y,
@@ -261,7 +270,8 @@ theorem algebraicInner_single_single (i : I) (x y : E i) :
         (singleLinear (B := B) (E := E) i y) = inner Bᵐᵒᵖ x y := by
   rw [algebraicInner_single_right, singleLinear_apply_same]
 
-/-- Conjugate symmetry of the finite-sum inner product. -/
+/-- **Conjugate symmetry of the direct-sum inner product.** `star (algebraicInner x y) =
+algebraicInner y x`. -/
 theorem star_algebraicInner (x y : Algebraic B E) :
     star (algebraicInner x y) = algebraicInner y x := by
   classical
@@ -272,8 +282,8 @@ theorem star_algebraicInner (x y : Algebraic B E) :
         algebraicInner_single_left, algebraicInner_single_right,
         CStarModule.star_inner]
 
-/-- Pointwise right multiplication as a complex-linear endomorphism of the
-algebraic direct sum. -/
+/-- **Componentwise right coefficient map.** For `b : B`, this complex-linear endomorphism sends
+the coordinate `x_i` to `x_i <• b`. -/
 def algebraicRightSMul (b : B) : Algebraic B E →ₗ[ℂ] Algebraic B E := by
   classical
   exact
@@ -292,7 +302,8 @@ theorem toDFinsupp_algebraicRightSMul (b : B) (x : Algebraic B E) (i : I) :
   have hz : e (e.symm z) = z := e.apply_symm_apply z
   exact DFunLike.congr_fun hz i
 
-/-- The exact pointwise right coefficient action. -/
+/-- **Right action on the finite-support sum.** Coefficients act componentwise: `(x <• b)_i = x_i
+<• b`, preserving finite support. -/
 instance algebraicSMul : SMul Bᵐᵒᵖ (Algebraic B E) where
   smul b x := algebraicRightSMul (E := E) b.unop x
 
@@ -314,7 +325,10 @@ theorem singleLinear_right_smul (i : I) (x : E i) (b : B) :
   · rw [singleLinear_apply_ne hji, toDFinsupp_right_smul,
       singleLinear_apply_ne hji, CStarModule.zero_right_smul]
 
-/-- The finite-sum inner product is right coefficient-linear. -/
+/-- **Coefficient linearity of the finite-sum inner product.** For an arbitrary indexed family of
+complex normed right C-star modules `E_i` over nonunital `B` with partial order on `Bᵐᵒᵖ`,
+finite-support vectors `x,y` and `b : Bᵐᵒᵖ` satisfy `algebraicInner x (b • y) = b *
+algebraicInner x y`. -/
 theorem algebraicInner_right_smul (x y : Algebraic B E) (b : Bᵐᵒᵖ) :
     algebraicInner x (b • y) = b * algebraicInner x y := by
   classical
@@ -341,14 +355,17 @@ theorem algebraicInner_right_smul (x y : Algebraic B E) (b : Bᵐᵒᵖ) :
         CStarModule.inner_op_smul_right]
       simp only [MulOpposite.op_unop]
 
-/-- The direct-sum norm before completion. -/
+/-- **Inner-product norm on the algebraic sum.** The norm is defined by `‖x‖ = Real.sqrt
+‖algebraicInner x x‖`. -/
 @[instance_reducible]
 def algebraicNorm : Norm (Algebraic B E) where
   norm x := Real.sqrt ‖algebraicInner x x‖
 
 variable [StarOrderedRing Bᵐᵒᵖ]
 
-/-- The literal finite-support pre-Hilbert module. -/
+/-- **Pre-Hilbert module structure on the finite-support sum.** The componentwise action,
+finite-sum coefficient inner product and induced norm make the algebraic direct sum a right
+C-star module. -/
 @[instance_reducible]
 def algebraicCStarModule :
     letI : Norm (Algebraic B E) := algebraicNorm (B := B) (E := E)
@@ -393,8 +410,9 @@ def algebraicCStarModule :
   · intro x
     rfl
 
-/-- The stock C-star-module core derives the normed group and complex normed
-space laws from the constructed inner product. -/
+/-- **Normed-space laws of the algebraic direct sum.** The norm `sqrt ‖algebraicInner x x‖`
+satisfies the complex normed-space core axioms, including the triangle inequality and scalar
+norm bound. -/
 theorem algebraicNormedSpaceCore :
     letI : Norm (Algebraic B E) := algebraicNorm (B := B) (E := E)
     NormedSpace.Core ℂ (Algebraic B E) := by
@@ -428,7 +446,8 @@ theorem norm_algebraic (x : Algebraic B E) :
     ‖x‖ = Real.sqrt ‖algebraicInner x x‖ :=
   rfl
 
-/-- Coordinate inclusion into the algebraic sum as a complex-linear isometry. -/
+/-- **Isometric coordinate inclusion.** `single i : E i →ₗᵢ[ℂ] Algebraic B E` is the
+one-coordinate inclusion and preserves the component norm. -/
 def single (i : I) : E i →ₗᵢ[ℂ] Algebraic B E where
   toLinearMap := singleLinear (B := B) (E := E) i
   norm_map' x := by
@@ -468,8 +487,8 @@ theorem inner_single_ne {i j : I} (h : i ≠ j) (x : E i) (y : E j) :
   rw [algebraicInner_single_right, singleLinear_apply_ne (Ne.symm h)]
   exact CStarModule.inner_zero_left
 
-/-- Every algebraic direct-sum vector belongs to the complex linear span of
-the coordinate singles. -/
+/-- **Coordinate ranges span the algebraic sum.** The complex linear span of all vectors `single i
+x`, over every `i` and `x : E i`, is the entire finite-support direct sum. -/
 theorem span_range_single_eq_top :
     Submodule.span ℂ
         (Set.range fun p : Σ i, E i ↦ single (B := B) (E := E) p.1 p.2) = ⊤ := by

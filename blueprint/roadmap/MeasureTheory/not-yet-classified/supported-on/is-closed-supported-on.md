@@ -1,3 +1,6 @@
-# Is Closed supported On
+# Norm-closed support subspace for a measurable set
 
-Support on a measurable set is a closed Lp subspace, proved by its actual restriction kernel.
+Let `X` be measurable, `μ` any
+measure, `𝕜` a normed field and `E` a normed `𝕜`-space. if `p≥1` and `s` is measurable,
+`Lp.supportedOn μ s` is closed in `Lp E p μ`. No completeness of `E` or finiteness of `μ`
+is assumed.

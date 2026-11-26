@@ -1,3 +1,4 @@
-# Character Modulation mul character
+# Composition of character modulations
 
-Character composition has the original scalar order on every coefficient.
+For unitary characters χ,η of G and a Haar-core coefficient f, Mχηf=Mχ(Mηf), where
+Mχf(s)=χ(s)•f(s).

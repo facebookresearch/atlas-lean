@@ -1,14 +1,14 @@
-# Right Submodule
+# Right submodules of C-star modules
 
-## CStar Module
+## Right C-star modules
 
-- [Right Submodule](right-submodule.md)
+- [Right submodule of a C-star module](right-submodule.md)
 
-## Right Submodule
+## Right submodules
 
-- [To Complex Submodule](to-complex-submodule.md)
-- [Is Closed](is-closed.md)
-- [Complete Space](complete-space.md)
-- [Subtype LIE](subtype-lie.md)
-- [Top](top.md)
-- [Bot](bot.md)
+- [Underlying complex submodule](to-complex-submodule.md)
+- [Closed right submodule](is-closed.md)
+- [Completeness of a closed right submodule](complete-space.md)
+- [Isometric inclusion of a right submodule](subtype-lie.md)
+- [Whole right module](top.md)
+- [Zero right submodule](bot.md)

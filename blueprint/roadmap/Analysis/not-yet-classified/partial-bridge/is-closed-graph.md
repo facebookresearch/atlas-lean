@@ -1,3 +1,4 @@
-# Is Closed graph
+# Closed graph of a regular operator
 
-The original canonical graph is closed because it is the full double-adjoint graph.
+For a regular operator on a complete right C-star
+module, `(T.toPartial.graph : Set (E × E))` is closed in the product norm topology.

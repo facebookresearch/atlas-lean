@@ -15,11 +15,15 @@ public import MathlibExt.Analysis.InnerProductSpace.Group.HaarL2.Completion
 public import MathlibExt.MeasureTheory.Function.L2Space.TensorProduct
 
 /-!
-# The original scalar Haar L2 completion tensor
+# Scalar compact-support L² completion tensored with a Hilbert space
 
-Tensor congruence extends the already proved scalar compact-support L2
-comparison through the literal completed Hilbert tensor. The result identifies
-this original tensor with actual Lp H 2, while retaining both source carriers.
+Let `G` be an R₁ locally compact Borel space, `μ` a regular measure and `H` a complete complex
+Hilbert space. The scalar separated L² completion `C_μ` of `C_c(G,ℂ)` identifies with `Lp ℂ 2
+μ`.
+
+The completed tensor with scalar factor first gives `Completion(C_μ ⊗[ℂ] H) ≃ Lp H 2 μ`, sending
+`f⊗ξ` to `s ↦ J_μ(f)(s) • ξ`. No group structure, Haar condition or nonzero-space hypothesis is
+required.
 -/
 
 @[expose] public section
@@ -41,7 +45,11 @@ variable {G : Type uG} [TopologicalSpace G] [R1Space G] [LocallyCompactSpace G]
 variable (μ : Measure G) [μ.Regular]
 variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- The stock completed tensor of the original scalar Haar L2 completion is the actual vector L2 space. -/
+/-- **Isometric scalar-completion-first tensor realization of L².** Let `G` be an R₁ locally
+compact Borel space, `μ` a regular measure and `H` a complete complex Hilbert space. Let
+`C_μ` be the separated L² completion of `C_c(G,ℂ)` and `J_μ : C_μ ≃ₗᵢ[ℂ] Lp ℂ 2 μ` its
+scalar comparison. `completionTensorToLp μ : Completion(C_μ ⊗[ℂ] H) ≃ₗᵢ[ℂ] Lp H 2 μ` sends
+`f⊗ξ` to `s ↦ J_μ(f)(s) • ξ`. -/
 def completionTensorToLp :
     UniformSpace.Completion ((CompletionCore (H := ℂ) μ) ⊗[ℂ] H) ≃ₗᵢ[ℂ] Lp H 2 μ := by
   let e := TensorProduct.congrIsometry (completionToLp (H := ℂ) μ) (LinearIsometryEquiv.refl ℂ H)
@@ -78,7 +86,11 @@ def completionTensorToLp :
   let E := LinearIsometryEquiv.ofLinearIsometry f g.toLinearMap hfg hgf
   exact E.trans (L2.tensorToLp (𝕜 := ℂ) (H := H) μ)
 
-/-- The original scalar square-integrable vector tensored with x has its exact pointwise formula. -/
+/-- **Almost-everywhere pure tensor formula of the scalar completion comparison.** Let `G` be
+an R₁ locally compact Borel space, `μ` a regular measure and `H` a complete complex
+Hilbert space. Let `C_μ` be the separated L² completion of `C_c(G,ℂ)` and `J_μ : C_μ
+≃ₗᵢ[ℂ] Lp ℂ 2 μ` its scalar comparison. for `f∈C_μ`, `ξ∈H`, the image of `f⊗ξ` is almost
+everywhere `s ↦ J_μ(f)(s) • ξ`. -/
 theorem completionTensorToLp_tmul_ae (f : CompletionCore (H := ℂ) μ) (x : H) :
     completionTensorToLp μ ((f ⊗ₜ[ℂ] x : (CompletionCore (H := ℂ) μ) ⊗[ℂ] H) :
         UniformSpace.Completion ((CompletionCore (H := ℂ) μ) ⊗[ℂ] H)) =ᵐ[μ]

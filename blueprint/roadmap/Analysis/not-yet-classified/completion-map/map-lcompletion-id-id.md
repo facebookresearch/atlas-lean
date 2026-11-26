@@ -1,3 +1,4 @@
-# Map LCompletion id id
+# Identity maps on the tensor completion
 
-Identity factor maps induce the identity on the completed tensor.
+Let E,F be inner product spaces over an RCLike field 𝕜, and let E⊗̂F be their Hilbert tensor
+completion. Then mapLCompletion id_E id_F=id_(E⊗̂F).

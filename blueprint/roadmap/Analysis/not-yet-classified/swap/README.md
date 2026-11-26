@@ -1,7 +1,7 @@
-# Swap
+# Coordinate-swap isometry of Hilbert-valued Radon L²
 
-- [Radon Product Swap Isometry](radon-product-swap-isometry.md)
-- [Radon Product Swap Isometry apply](radon-product-swap-isometry-apply.md)
-- [Radon Product Swap Isometry symm apply](radon-product-swap-isometry-symm-apply.md)
-- [Radon Product Swap Isometry ae eq](radon-product-swap-isometry-ae-eq.md)
-- [Radon Product Swap Isometry symm ae eq](radon-product-swap-isometry-symm-ae-eq.md)
+- [Linear isometric exchange of Radon L² coordinates](radon-product-swap-isometry.md)
+- [Forward Radon-swap map as measure-preserving pullback](radon-product-swap-isometry-apply.md)
+- [Inverse Radon-swap map as measure-preserving pullback](radon-product-swap-isometry-symm-apply.md)
+- [Almost-everywhere forward coordinate exchange in Radon L²](radon-product-swap-isometry-ae-eq.md)
+- [Almost-everywhere inverse coordinate exchange in Radon L²](radon-product-swap-isometry-symm-ae-eq.md)

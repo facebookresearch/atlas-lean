@@ -1,10 +1,10 @@
-# Maximal Local Finite Cutoffs
+# Finite projection cutoffs of a maximal local family
 
-- [Maximal Local Positive Finite Cutoffs](maximal-local-positive-finite-cutoffs.md)
-- [Maximal Local Positive Finite Cutoffs value](maximal-local-positive-finite-cutoffs-va.md)
-- [Maximal Local Positive Finite Cutoffs is Star Projection](maximal-local-positive-finite-cutoffs-is.md)
-- [Maximal Local Positive Finite Cutoffs le one](maximal-local-positive-finite-cutoffs-le.md)
-- [Maximal Local Positive Finite Cutoffs norm le one](maximal-local-positive-finite-cutoffs-no.md)
-- [Maximal Local Positive Finite Cutoffs monotone](maximal-local-positive-finite-cutoffs-mo.md)
-- [Maximal Local Positive Finite Cutoffs range nonempty](maximal-local-positive-finite-cutoffs-ra.md)
-- [Maximal Local Positive Finite Cutoffs directed On](maximal-local-positive-finite-cutoffs-di.md)
+- [Positive finite cutoffs with projection and order bounds](maximal-local-positive-finite-cutoffs.md)
+- [Finite sum formula for a maximal-family cutoff](maximal-local-positive-finite-cutoffs-va.md)
+- [Star projection property of each finite cutoff](maximal-local-positive-finite-cutoffs-is.md)
+- [Finite cutoff bounded by the identity](maximal-local-positive-finite-cutoffs-le.md)
+- [Operator-norm bound of a finite cutoff](maximal-local-positive-finite-cutoffs-no.md)
+- [Monotonicity of finite cutoff projections](maximal-local-positive-finite-cutoffs-mo.md)
+- [Nonempty finite-cutoff range including the empty cutoff](maximal-local-positive-finite-cutoffs-ra.md)
+- [Directed order of the finite-cutoff range](maximal-local-positive-finite-cutoffs-di.md)

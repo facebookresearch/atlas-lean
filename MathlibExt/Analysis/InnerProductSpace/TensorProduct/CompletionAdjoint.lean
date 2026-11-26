@@ -14,11 +14,11 @@ module
 public import MathlibExt.Analysis.InnerProductSpace.TensorProduct.CompletionMap
 
 /-!
-# Adjoints of maps on completed Hilbert tensors
+# Adjoints of completed Hilbert tensor maps
 
-The adjoint identity is proved using the original algebraic tensor inner
-product and its dense image in the stock completion. Factor Hilbert spaces
-are complete; the algebraic tensor has no completeness hypothesis.
+Let E₁,E₂,F₁,F₂ be complete inner product spaces over an RCLike field 𝕜 in independent
+universes. For bounded linear f:E₁→E₂ and g:F₁→F₂, the map f⊗̂g:E₁⊗̂F₁→E₂⊗̂F₂ satisfies
+(f⊗̂g)†=f†⊗̂g†, where † denotes the Hilbert-space adjoint.
 -/
 
 @[expose] public section
@@ -43,8 +43,12 @@ variable {F₂ : Type uF₂} [NormedAddCommGroup F₂] [InnerProductSpace 𝕜 F
 variable [CompleteSpace E₁] [CompleteSpace E₂]
 variable [CompleteSpace F₁] [CompleteSpace F₂]
 
-/-- The actual Hilbert-space adjoint on the completed tensor is the tensor
-map of the factor adjoints. -/
+/-- **Adjoint of a completed tensor operator.**
+
+Let E₁,E₂,F₁,F₂ be Hilbert spaces over an RCLike field 𝕜 in independent universes. For bounded
+linear maps f:E₁→E₂ and g:F₁→F₂, adjoint(mapLCompletion f g)=mapLCompletion f.adjoint
+g.adjoint, between the completed Hilbert tensors.
+-/
 @[simp]
 theorem adjoint_mapLCompletion (f : E₁ →L[𝕜] E₂) (g : F₁ →L[𝕜] F₂) :
     (mapLCompletion f g).adjoint = mapLCompletion f.adjoint g.adjoint := by
@@ -67,7 +71,12 @@ theorem adjoint_mapLCompletion (f : E₁ →L[𝕜] E₂) (g : F₁ →L[𝕜] F
   intro v₀ u₀
   simpa only [mapLCompletion_coe, Completion.inner_coe] using hAlg v₀ u₀
 
-/-- For factor endomorphisms, the completed map preserves the operator star. -/
+/-- **Operator star of a completed tensor endomorphism.**
+
+Let E,F be Hilbert spaces over an RCLike field 𝕜 and f:E→E, g:F→F bounded linear
+endomorphisms. On E⊗̂F, star(mapLCompletion f g)=mapLCompletion(star(f))(star(g)), with
+operator star given by the adjoint.
+-/
 @[simp]
 theorem star_mapLCompletion (f : E₁ →L[𝕜] E₁) (g : F₁ →L[𝕜] F₁) :
     star (mapLCompletion f g) = mapLCompletion (star f) (star g) := by

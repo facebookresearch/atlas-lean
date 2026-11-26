@@ -1,3 +1,4 @@
-# Support algebraic Diagonal subset
+# Support bound for an algebraic diagonal
 
-A diagonal creates no new support; kernels may make the support smaller.
+`support (algebraicDiagonal T x) ⊆ support x`; a
+component kernel can remove a coordinate.

@@ -1,4 +1,4 @@
-# Grading generator single Linear
+# Direct-sum grading on embedded coordinate vectors
 
-Canonical simp-normal form of the completed direct-sum grading on an
-embedded algebraic single-coordinate vector.
+The generator of `grading δ` sends the
+completed one-coordinate image of `x : E i` to that of `(δ i).generator x`.

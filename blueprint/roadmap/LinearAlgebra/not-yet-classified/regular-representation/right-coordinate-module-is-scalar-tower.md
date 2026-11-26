@@ -1,4 +1,5 @@
-# Right Coordinate Module is Scalar Tower
+# Coordinate opposite action agrees over the common base
 
-The transported opposite action on coordinates extends the common base field action.
-It is not assumed linear over the embedded subfield.
+Let F,L be commutative semirings,D an F-algebra,ι:L→ₐ[F]D and b a finite right-L basis. The
+transported right D-action on L^(n×κ) extends the same F-action, giving a scalar tower
+F→Dᵒᵖ→L^(n×κ).

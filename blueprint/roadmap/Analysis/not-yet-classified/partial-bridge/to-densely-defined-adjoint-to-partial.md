@@ -1,3 +1,4 @@
-# To Densely Defined Adjoint to Partial
+# Underlying partial map of the adjoint realization
 
-The dense adjoint adapter retains the canonical full adjoint.
+`T.toDenselyDefinedAdjoint.toPartial =
+T.adjoint` for a regular operator `T`.

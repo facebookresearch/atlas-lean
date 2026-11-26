@@ -1,9 +1,9 @@
-# Closed Range Projection
+# Orthogonal projection onto an operator's closed range span
 
-- [Closed Range Projection](closed-range-projection.md)
-- [Closed Range Projection eq star Projection](closed-range-projection-eq-star-projecti.md)
-- [Is Star Projection closed Range Projection](is-star-projection-closed-range-projecti.md)
-- [Range closed Range Projection](range-closed-range-projection.md)
-- [Closed Range Projection apply mem](closed-range-projection-apply-mem.md)
-- [Closed Range Projection mul self](closed-range-projection-mul-self.md)
-- [Comp closed Range Projection eq zero](comp-closed-range-projection-eq-zero.md)
+- [Orthogonal projection onto the range closure](closed-range-projection.md)
+- [Range-closure subspace projection](closed-range-projection-eq-star-projecti.md)
+- [Self-adjoint idempotence of the range-closure projection](is-star-projection-closed-range-projecti.md)
+- [Range of the range-closure projection](range-closed-range-projection.md)
+- [Projected vector belongs to the operator range closure](closed-range-projection-apply-mem.md)
+- [Range-closure projection fixes the operator image](closed-range-projection-mul-self.md)
+- [Annihilation passes to the range-closure projection](comp-closed-range-projection-eq-zero.md)

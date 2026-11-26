@@ -1,3 +1,6 @@
-# Dom Restrict
+# Restriction of a partial semilinear domain
 
-Restrict only the actual domain; no vector outside the original domain is assigned a value.
+Let R,S be semirings, σ:R→S a semiring homomorphism, E an R-semimodule and F an S-semimodule.
+A partial σ-semilinear map f consists of a submodule D_f⊆E and a σ-semilinear value map D_f→F,
+with f(x+y)=f(x)+f(y) and f(r•x)=σ(r)•f(x). For a submodule D⊆E, domRestrict f D has domain
+D∩D_f and retains f on that intersection.

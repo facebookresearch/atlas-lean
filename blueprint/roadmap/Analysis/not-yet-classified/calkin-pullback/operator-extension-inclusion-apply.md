@@ -1,3 +1,4 @@
-# Operator Extension inclusion apply
+# Inclusion of the operator extension
 
-The normalized extension retains the same original compact inclusion.
+`(operatorExtension φ).inclusion k =
+operatorPullbackInclusion φ k` for each compact operator `k`.

@@ -1,3 +1,6 @@
-# Character Multiplier
+# Bounded character multiplier on Hilbert-valued L²
 
-The actual original L2 operator multiplying by the continuous character at every coordinate.
+Let `G` be a group with its Borel
+topological structure, `μ` any measure and `H` a complex normed inner-product space,
+possibly incomplete. On `L=Lp H 2 μ`, put `U_χξ(s)=χ(s) • ξ(s)`. `characterMultiplier μ χ
+: L →L[ℂ] L` is `U_χ`, with no completeness requirement on `H`.

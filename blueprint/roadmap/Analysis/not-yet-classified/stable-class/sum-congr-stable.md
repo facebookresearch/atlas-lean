@@ -1,3 +1,4 @@
-# Sum congr stable
+# Stable equivalence respects coherent addition
 
-Stable strong equivalence is a congruence for the supplied sum.
+For coherent `S`, stable equivalence in
+each variable implies stable equivalence of the two resulting `S`-sums.

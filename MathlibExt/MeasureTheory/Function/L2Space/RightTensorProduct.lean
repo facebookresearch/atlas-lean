@@ -14,11 +14,12 @@ module
 public import MathlibExt.MeasureTheory.Function.L2Space.TensorProduct
 
 /-!
-# The actual H-first scalar L2 Hilbert tensor
+# Hilbert-first scalar L² tensor equivalence
 
-The stock tensor commutation isometry and its inverse extend through the
-literal completions. Composing with the computed scalar-first comparison
-gives the original H-first tensor its exact vector-valued L2 coordinates.
+Let X be a measurable space, μ any measure on X, 𝕜 an RCLike scalar field and H an inner
+product space over 𝕜. Write L²_𝕜=L²(X,μ;𝕜) and L²_H=L²(X,μ;H), with their L² norms. Assume H
+is complete. The completed Hilbert tensor H⊗̂L²_𝕜 is 𝕜-linearly isometrically equivalent to
+L²_H by x⊗f↦(s↦f(s)•x).
 -/
 
 @[expose] public section
@@ -40,7 +41,13 @@ variable {𝕜 : Type uK} [RCLike 𝕜]
 variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace 𝕜 H] [CompleteSpace H]
 variable (μ : Measure X)
 
-/-- The original H-first completed scalar L2 tensor has its actual vector L2 coordinates. -/
+/-- **Isometric equivalence from the Hilbert-first L² tensor.**
+
+Let X be a measurable space, μ any measure on X, 𝕜 an RCLike scalar field and H an inner
+product space over 𝕜. Write L²_𝕜=L²(X,μ;𝕜) and L²_H=L²(X,μ;H), with their L² norms. Assume H
+is complete. The map tensorToLpRight μ:H⊗̂L²_𝕜≃ₗᵢ[𝕜]L²_H sends x⊗f to the L² class of
+s↦f(s)•x.
+-/
 def tensorToLpRight : UniformSpace.Completion (H ⊗[𝕜] (Lp 𝕜 2 μ)) ≃ₗᵢ[𝕜] Lp H 2 μ := by
   let c := TensorProduct.commIsometry 𝕜 H (Lp 𝕜 2 μ)
   let f := c.toLinearIsometry.completion
@@ -76,7 +83,12 @@ def tensorToLpRight : UniformSpace.Completion (H ⊗[𝕜] (Lp 𝕜 2 μ)) ≃�
   let E := LinearIsometryEquiv.ofLinearIsometry f g.toLinearMap hfg hgf
   exact E.trans (tensorToLp (𝕜 := 𝕜) (H := H) μ)
 
-/-- Each original H-first pure tensor has the exact scalar-vector formula almost everywhere. -/
+/-- **Hilbert-first pure tensor formula almost everywhere.**
+
+Let X be a measurable space, μ any measure on X, 𝕜 an RCLike scalar field and H an inner
+product space over 𝕜. Write L²_𝕜=L²(X,μ;𝕜) and L²_H=L²(X,μ;H), with their L² norms. Assume H
+is complete. For x∈H and f∈L²_𝕜, tensorToLpRight μ (x⊗f) equals s↦f(s)•x μ-almost everywhere.
+-/
 theorem tensorToLpRight_tmul_ae (x : H) (f : Lp 𝕜 2 μ) :
     tensorToLpRight μ ((x ⊗ₜ[𝕜] f : H ⊗[𝕜] (Lp 𝕜 2 μ)) :
         UniformSpace.Completion (H ⊗[𝕜] (Lp 𝕜 2 μ))) =ᵐ[μ] fun s => f s • x := by

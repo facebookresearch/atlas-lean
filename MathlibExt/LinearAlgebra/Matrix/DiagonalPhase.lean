@@ -19,29 +19,12 @@ public import Mathlib.LinearAlgebra.Matrix.ConjTranspose
 public import Mathlib.LinearAlgebra.UnitaryGroup
 
 /-!
-# Diagonal phase matrix
+# Diagonal unitary phase matrices
 
-This module defines the diagonal unitary matrix whose diagonal entries are
-`exp (θ i * I)` (equivalently `exp (I * θ i)`), i.e. `diagonal (fun i => cexp (θ i * I))`.
-The definition is source-transparent, the matrix is unitary, and we expose both
-the matrix and the bundled `unitaryGroup` element together with foundational laws:
-entry description, star/conjugate-transpose as negation, addition as multiplication,
-zero as one, unitary membership, and bundled unitary laws.
-
-The sign convention is `exp (θ * I)`.
-
-## Main definitions
-
-* `Matrix.diagonalPhase` – the diagonal phase matrix.
-* `Matrix.diagonalPhaseU` – the same as a `unitaryGroup` element.
-
-## Main results
-
-* `diagonalPhase_apply` – entry description.
-* `diagonalPhase_conjTranspose_eq_neg` / `diagonalPhase_neg` – conjugate transpose is negation.
-* `diagonalPhase_add` / `diagonalPhase_zero` – multiplication laws.
-* `diagonalPhase_mem_unitary` – unitary membership.
-* `diagonalPhaseU` laws: `val`, `mul`, `zero`, `inv`.
+For an index type I and real angles θ:I→ℝ, let D(θ)=diagonalPhase θ be the complex diagonal
+matrix with D(θ)_(i,i)=exp(iθ_i) and zero off the diagonal. Negating angles gives D(-θ)=D(θ)ᴴ
+and zero angles give I. For finite I, D(θ) is unitary and D(θ+η)=D(θ)D(η). The phase
+convention is exp(iθ).
 -/
 
 @[expose] public section
@@ -52,8 +35,12 @@ namespace Matrix
 
 variable {n : Type*} [DecidableEq n]
 
-/-- Diagonal phase matrix: `diagonal (fun i => exp (θ i * I))`.
-Transparent: unfolds directly to `diagonal`. Preserves the exact `exp (θ * I)` convention. -/
+/-- **Diagonal phase matrix.**
+
+For an index type I and real angles θ:I→ℝ, let D(θ)=diagonalPhase θ be the complex diagonal
+matrix with D(θ)_(i,i)=exp(iθ_i) and zero off the diagonal. This defines diagonalPhase θ for
+any index type I.
+-/
 noncomputable def diagonalPhase (θ : n → ℝ) : Matrix n n ℂ :=
   diagonal (fun i => Complex.exp ((θ i : ℂ) * Complex.I))
 
@@ -106,7 +93,12 @@ private theorem diagonalPhase_conjTranspose_mul [Fintype n] (θ : n → ℝ) :
     exact h_mul
   · simp only [diagonal_apply_ne _ hij, one_apply_ne hij]
 
-/-- Entry description for the diagonal phase matrix. -/
+/-- **Entry formula for a diagonal phase matrix.**
+
+For an index type I and real angles θ:I→ℝ, let D(θ)=diagonalPhase θ be the complex diagonal
+matrix with D(θ)_(i,i)=exp(iθ_i) and zero off the diagonal. For i,j∈I, diagonalPhase θ i j is
+exp(iθ_i) when i=j and zero otherwise.
+-/
 theorem diagonalPhase_apply (θ : n → ℝ) (i j : n) :
     diagonalPhase θ i j =
       if i = j then Complex.exp ((θ i : ℂ) * Complex.I) else 0 := by
@@ -116,7 +108,12 @@ theorem diagonalPhase_apply (θ : n → ℝ) (i j : n) :
     simp
   · simp [hij]
 
-/-- Zero angles give the identity matrix. -/
+/-- **Zero angles give the identity.**
+
+For an index type I and real angles θ:I→ℝ, let D(θ)=diagonalPhase θ be the complex diagonal
+matrix with D(θ)_(i,i)=exp(iθ_i) and zero off the diagonal. The equality diagonalPhase(θ≡0)=I
+holds on any index type.
+-/
 theorem diagonalPhase_zero :
     diagonalPhase (n := n) (fun _ => (0 : ℝ)) = 1 := by
   ext i j
@@ -125,7 +122,12 @@ theorem diagonalPhase_zero :
     simp [diagonalPhase]
   · simp [diagonalPhase, hij]
 
-/-- Addition of angles corresponds to multiplication of diagonal phase matrices. -/
+/-- **Addition of angles gives multiplication of phase matrices.**
+
+For an index type I and real angles θ:I→ℝ, let D(θ)=diagonalPhase θ be the complex diagonal
+matrix with D(θ)_(i,i)=exp(iθ_i) and zero off the diagonal. For finite I and θ,η:I→ℝ,
+D(θ+η)=D(θ)*D(η).
+-/
 theorem diagonalPhase_add [Fintype n] (θ₁ θ₂ : n → ℝ) :
     diagonalPhase (fun i => θ₁ i + θ₂ i) =
       diagonalPhase θ₁ * diagonalPhase θ₂ := by
@@ -139,7 +141,11 @@ theorem diagonalPhase_add [Fintype n] (θ₁ θ₂ : n → ℝ) :
     ring
   rw [h, Complex.exp_add]
 
-/-- Negation of angles corresponds to conjugate transpose. -/
+/-- **Negated phase angles give the conjugate transpose.**
+
+For an index type I and real angles θ:I→ℝ, let D(θ)=diagonalPhase θ be the complex diagonal
+matrix with D(θ)_(i,i)=exp(iθ_i) and zero off the diagonal. For any I, D(-θ)=D(θ)ᴴ.
+-/
 theorem diagonalPhase_neg (θ : n → ℝ) :
     diagonalPhase (fun i => -θ i) = (diagonalPhase θ)ᴴ := by
   ext i j
@@ -155,18 +161,32 @@ theorem diagonalPhase_neg (θ : n → ℝ) :
   · have hij' : j ≠ i := Ne.symm hij
     simp [diagonalPhase_apply, hij, hij', conjTranspose_apply]
 
-/-- Conjugate transpose equals diagonal phase with negated angles. -/
+/-- **Conjugate transpose of a phase matrix.**
+
+For an index type I and real angles θ:I→ℝ, let D(θ)=diagonalPhase θ be the complex diagonal
+matrix with D(θ)_(i,i)=exp(iθ_i) and zero off the diagonal. For any I, D(θ)ᴴ=D(-θ).
+-/
 theorem diagonalPhase_conjTranspose_eq_neg (θ : n → ℝ) :
     (diagonalPhase θ)ᴴ = diagonalPhase (fun i => -θ i) :=
   (diagonalPhase_neg θ).symm
 
-/-- Diagonal phase matrices are unitary. -/
+/-- **Unitarity of finite phase matrices.**
+
+For an index type I and real angles θ:I→ℝ, let D(θ)=diagonalPhase θ be the complex diagonal
+matrix with D(θ)_(i,i)=exp(iθ_i) and zero off the diagonal. When I is finite, D(θ) belongs to
+the unitary group U(I,ℂ).
+-/
 theorem diagonalPhase_mem_unitary [Fintype n] (θ : n → ℝ) :
     diagonalPhase θ ∈ unitaryGroup n ℂ := by
   rw [Matrix.mem_unitaryGroup_iff]
   exact diagonalPhase_mul_conjTranspose θ
 
-/-- Diagonal phase as a unitary-group element. -/
+/-- **Phase angles as a unitary-group element.**
+
+For an index type I and real angles θ:I→ℝ, let D(θ)=diagonalPhase θ be the complex diagonal
+matrix with D(θ)_(i,i)=exp(iθ_i) and zero off the diagonal. For finite I, diagonalPhaseU
+θ∈U(I,ℂ) is the unitary with underlying matrix D(θ).
+-/
 noncomputable def diagonalPhaseU [Fintype n] (θ : n → ℝ) : unitaryGroup n ℂ :=
   ⟨diagonalPhase θ, diagonalPhase_mem_unitary θ⟩
 

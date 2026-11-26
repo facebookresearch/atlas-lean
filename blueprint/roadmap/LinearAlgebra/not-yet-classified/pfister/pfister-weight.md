@@ -1,4 +1,5 @@
-# Pfister Weight
+# The coefficient of a Pfister subset
 
-Diagonal coefficient indexed by a subset in the standard expansion of
-the `n`-fold Pfister form `⟨⟨a₀,…,aₙ₋₁⟩⟩`.
+Let F be a field, n ∈ ℕ and a₀,…,aₙ₋₁ ∈ Fˣ. For s ⊆ Fin n put wₐ(s) = ∏ᵢ∈s (−aᵢ), and let
+qₐ(x) = ∑ₛ wₐ(s)xₛ² on F^(Finset(Fin n)). The diagonal coefficient at s is wₐ(s), with the
+empty product equal to 1.

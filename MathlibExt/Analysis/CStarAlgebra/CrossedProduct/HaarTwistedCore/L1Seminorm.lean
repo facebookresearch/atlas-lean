@@ -20,13 +20,15 @@ public import Mathlib.MeasureTheory.Integral.Bochner.Set
 public import Mathlib.MeasureTheory.Group.Integral
 
 /-!
-# The original Haar-core L1 ring seminorm
+# L¹ ring seminorm for Haar twisted convolution
 
-Compact-support Fubini and individual left Haar translations give the literal
-coefficient-norm integral its convolution bound. The adopted weighted Haar
-inversion formula gives star isometry with the original modular factor.
-These are the auxiliary Banach star-algebra data used by the later completion;
-no C-star square identity or raw normed ring is imposed on this gauge.
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For core coefficients
+f,h:G→A, twisted convolution is (f*h)(x)=∫ s:G, f(s)*α_s(h(s⁻¹*x)) ∂μ. Writing
+δ(s)=Measure.modularCharacter s for the modular character, the involution is
+f⁎(s)=δ(s)•α_s(star(f(s⁻¹))). The coefficient integral q(f)=∫ s, ‖f(s)‖ ∂μ satisfies
+q(f*h)≤q(f)q(h) and q(f⁎)=q(f). Together with the additive and complex-scaling laws, it is the
+ring seminorm of the L¹ Banach star-algebra completion.
 -/
 
 @[expose] public section
@@ -49,7 +51,13 @@ variable {A : Type uA} [NonUnitalCStarAlgebra A]
 variable (μ : Measure G) [μ.IsHaarMeasure] [μ.Regular] (α : PointNormCStarAction G A)
 
 omit [LocallyCompactSpace G] [μ.Regular] in
-/-- The actual left-Haar twisted convolution is submultiplicative for the original L1 gauge. -/
+/-- **Submultiplicativity of the Haar L¹ gauge.**
+
+Let G be a Borel topological group with left Haar measure μ, A a nonunital complex C-star
+algebra and α a point-norm action. For core coefficients f,h:G→A, twisted convolution is
+(f*h)(x)=∫ s:G, f(s)*α_s(h(s⁻¹*x)) ∂μ. With q(k)=∫ s, ‖k(s)‖ ∂μ, every pair of compactly
+supported continuous coefficients satisfies q(f*h)≤q(f)q(h).
+-/
 theorem l1Gauge_convolution_le (f g : Carrier μ α) :
     l1Gauge μ α (convolution μ α f g) ≤ l1Gauge μ α f * l1Gauge μ α g := by
   let : NormedSpace ℝ A := NormedSpace.restrictScalars ℝ ℂ A
@@ -144,7 +152,14 @@ theorem l1Gauge_convolution_le (f g : Carrier μ α) :
       integral_mono hConvInt hJint hPoint
     _ = l1Gauge μ α f * l1Gauge μ α g := hJvalue
 
-/-- The original modular involution is isometric for the same auxiliary L1 gauge. -/
+/-- **The modular involution preserves the L¹ gauge.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Writing
+δ(s)=Measure.modularCharacter s for the modular character, the involution is
+f⁎(s)=δ(s)•α_s(star(f(s⁻¹))). For every compactly supported continuous coefficient f, ∫ s,
+‖f⁎(s)‖ ∂μ=∫ s, ‖f(s)‖ ∂μ.
+-/
 @[simp]
 theorem l1Gauge_star (f : Carrier μ α) : l1Gauge μ α (star f) = l1Gauge μ α f := by
   have hPoint (s : G) : ‖(star f) s‖ = (Measure.modularCharacter s : ℝ) * ‖f s⁻¹‖ := by
@@ -162,13 +177,25 @@ theorem l1Gauge_star (f : Carrier μ α) : l1Gauge μ α (star f) = l1Gauge μ �
     _ = l1Gauge μ α f :=
       integral_modularCharacter_smul_inv_of_hasCompactSupport μ hcont hcomp
 
-/-- The original coefficient-norm integral is an actual ring seminorm for Haar convolution. -/
+/-- **L¹ ring seminorm on the twisted convolution core.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For core coefficients
+f,h:G→A, twisted convolution is (f*h)(x)=∫ s:G, f(s)*α_s(h(s⁻¹*x)) ∂μ. The ring seminorm
+l1RingSeminorm μ α on Carrier μ α is q(f)=∫ s, ‖f(s)‖ ∂μ, with q(f*h)≤q(f)q(h).
+-/
 def l1RingSeminorm : RingSeminorm (Carrier μ α) where
   __ := (l1Seminorm μ α).toAddGroupSeminorm
   mul_le' := fun f g => l1Gauge_convolution_le μ α f g
 
 omit [LocallyCompactSpace G] [μ.Regular] in
-/-- The auxiliary ring seminorm retains every original coefficient-norm integral value. -/
+/-- **Value of the L¹ ring seminorm.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For each compactly
+supported continuous coefficient f∈Carrier μ α, l1RingSeminorm μ α f=l1Gauge μ α f=∫ s, ‖f(s)‖
+∂μ.
+-/
 @[simp]
 theorem l1RingSeminorm_apply (f : Carrier μ α) : l1RingSeminorm μ α f = l1Gauge μ α f :=
   rfl

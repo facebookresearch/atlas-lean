@@ -1,9 +1,9 @@
-# Pivot Elimination
+# Pivot elimination and determinant identities
 
-- [Pivot Block](pivot-block.md)
-- [Pivot Elimination](pivot-elimination.md)
-- [Pivot Schur](pivot-schur.md)
-- [Pivot Elimination mul](pivot-elimination-mul.md)
-- [Det pivot Elimination](det-pivot-elimination.md)
-- [Det pivot Schur relation](det-pivot-schur-relation.md)
-- [Det pivot Schur ne zero](det-pivot-schur-ne-zero.md)
+- [A matrix with a distinguished pivot](pivot-block.md)
+- [The pivot elimination matrix](pivot-elimination.md)
+- [The Schur numerator](pivot-schur.md)
+- [Upper block form after pivot elimination](pivot-elimination-mul.md)
+- [Determinant of the elimination matrix](det-pivot-elimination.md)
+- [The pivot and Schur determinant relation](det-pivot-schur-relation.md)
+- [A nonzero Schur determinant](det-pivot-schur-ne-zero.md)

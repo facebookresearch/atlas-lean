@@ -1,3 +1,4 @@
-# Coordinate Projection
+# Compact coordinate projection
 
-The original standard compact coordinate projection is a computed rank-one projection.
+`coordinateProjection i` is the one-dimensional star
+projection `rankOne (basisVector i) (basisVector i)`.

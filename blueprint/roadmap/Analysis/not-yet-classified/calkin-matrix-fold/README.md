@@ -1,9 +1,9 @@
-# Calkin Matrix Fold
+# Finite matrix folds of a Hilbert-space Calkin algebra
 
-- [Finite Class Family orthogonal](finite-class-family-orthogonal.md)
-- [Finite Class Family partition](finite-class-family-partition.md)
-- [Finite Matrix Fold](finite-matrix-fold.md)
-- [Finite Matrix Fold apply](finite-matrix-fold-apply.md)
-- [Finite Matrix Fold symm apply entry](finite-matrix-fold-symm-apply-entry.md)
-- [Finite Matrix Fold of Matrix classes](finite-matrix-fold-of-matrix-classes.md)
-- [Finite Matrix Fold isometry](finite-matrix-fold-isometry.md)
+- [Calkin Gram relations of the finite coordinate family](finite-class-family-orthogonal.md)
+- [Finite coordinate classes partition the Calkin unit](finite-class-family-partition.md)
+- [Finite matrix star equivalence of the Calkin algebra](finite-matrix-fold.md)
+- [Ordered sum of the finite Calkin matrix fold](finite-matrix-fold-apply.md)
+- [Inverse entry of the finite Calkin fold](finite-matrix-fold-symm-apply-entry.md)
+- [Calkin fold agrees with quotienting the operator matrix sum](finite-matrix-fold-of-matrix-classes.md)
+- [Metric preservation of the finite Calkin matrix fold](finite-matrix-fold-isometry.md)

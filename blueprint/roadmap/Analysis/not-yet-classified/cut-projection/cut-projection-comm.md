@@ -1,3 +1,4 @@
-# Cut Projection comm
+# Commutation of coordinate cuts
 
-All coordinate cuts commute.
+`cutProjection s * cutProjection t = cutProjection t *
+cutProjection s` for any `s,t`.

@@ -18,14 +18,10 @@ public import Mathlib.Analysis.InnerProductSpace.PiL2
 /-!
 # Rectangular adjoints of operator-valued matrices
 
-The adjoint of the public PiLp column action is the column action of the
-transpose of the entry adjoints, with the same finite-product inner
-products. The one-sided law requires completeness only of the source
-stage. The usual adjoint facade law is a separate both-complete corollary.
-
-No matrix-action copy, new matrix norm or infinite-square-summable carrier
-is introduced. Square complete-H specializations supply star compatibility;
-CStarMatrix norm/isometry and spatial identifications are separate results.
+Let 𝕜 be an RCLike field, E a complete inner product space, F an inner product space and m,n
+finite index types. For A_ij:E→F bounded linear, let T_A:E^n→F^m act by (T_A v)_i=∑j
+A_ij(v_j), with finite ℓ² product norms. The complete-source adjoint of T_A is T_(A♯), where
+(A♯)_ji=(A_ij)†. If F is also complete, this is the usual bounded-operator adjoint.
 -/
 
 @[expose] public section
@@ -44,8 +40,13 @@ variable [NormedAddCommGroup F] [InnerProductSpace 𝕜 F]
 
 namespace Matrix
 
-/-- The one-sided adjoint of the rectangular column action is the action of
-the transpose of its entry adjoints. The target need not be complete. -/
+/-- **One-sided adjoint of a rectangular Hilbert column action.**
+
+Let 𝕜 be an RCLike field, E a complete inner product space, F an inner product space and m,n
+finite index types. For A_ij:E→F bounded linear, let T_A:E^n→F^m act by (T_A v)_i=∑j
+A_ij(v_j), with finite ℓ² product norms. For A_ij†:F→E the complete-source adjoint of A_ij,
+(T_A)†=T_(A♯), with A♯ the transpose of the entry adjoints. F need not be complete.
+-/
 @[simp]
 theorem toPiLpContinuousLinearMap_adjointOfCompleteSource [Fintype m] [Fintype n]
     (M : Matrix m n (E →L[𝕜] F)) :
@@ -64,8 +65,13 @@ theorem toPiLpContinuousLinearMap_adjointOfCompleteSource [Fintype m] [Fintype n
 
 variable [CompleteSpace F]
 
-/-- The usual both-complete adjoint facade is the action of the transpose of
-the entry adjoints. No target-completeness weakening of that facade is made. -/
+/-- **Adjoint matrix of a rectangular operator action.**
+
+Let 𝕜 be an RCLike field, E a complete inner product space, F an inner product space and m,n
+finite index types. For A_ij:E→F bounded linear, let T_A:E^n→F^m act by (T_A v)_i=∑j
+A_ij(v_j), with finite ℓ² product norms. Assume also F is complete. Then
+adjoint(T_A)=T_(transpose(A_ij.adjoint)), between the finite Hilbert products.
+-/
 @[simp]
 theorem toPiLpContinuousLinearMap_adjoint [Fintype m] [Fintype n]
     (M : Matrix m n (E →L[𝕜] F)) :

@@ -1,4 +1,12 @@
-# To Asymptotic Homotopy
+# Underlying asymptotic homotopy of a CP-contractive homotopy
 
-Forget the CP-contraction evidence while retaining the actual homotopy
-family and endpoints.
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. For a completely positive family, each
+slice φ_t is a completely positive complex-linear map for the canonical C-star positive cones,
+including all matrix levels. For a completely positive contraction family, additionally
+‖φ_t(a)‖≤‖a‖ for all a∈A and t∈T. For completely positive contraction asymptotic families
+φ0,φ1:A→B, a homotopy F has slices A→C([0,1],B) that are completely positive contractions and
+endpoints F_t(a)(0)=φ0_t(a), F_t(a)(1)=φ1_t(a). Its asymptotic limits use the supremum norm
+over the interval. The map toAsymptoticHomotopy regards F as an ordinary interval-valued
+asymptotic homotopy with the same family and endpoint values.

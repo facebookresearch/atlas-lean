@@ -15,12 +15,15 @@ public import MathlibExt.Analysis.VonNeumannAlgebra.Ultraweak
 public import Mathlib.Analysis.LocallyConvex.WeakDual
 
 /-!
-# Continuous functionals on the actual ultraweak view
+# Ultraweak continuity characterizes normal functionals
 
-The proved weak representation theorem identifies every ultraweak-continuous
-linear functional with evaluation against an element of the original normal
-functional space. This membership certificate permits literal functional
-pullback along normal maps to land in the actual predual subtype.
+For a concrete von Neumann algebra `M`, let `M_*` be the norm-closed span of its vector
+functionals. Equip `M` with the ultraweak topology `σ(M,M_*)`, given by evaluation against these
+functionals.
+
+A norm-continuous complex-linear functional `ψ ∈ M*` that is also continuous for this ultraweak
+topology belongs to `M_*`. The Hilbert space is complete, and no separability or nonzero-space
+hypothesis is required.
 -/
 
 @[expose] public section
@@ -34,7 +37,12 @@ universe u
 
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- Ultraweak continuity certifies membership in the actual closed normal-functional space. -/
+/-- **Ultraweak continuous functional belongs to the predual space.** Let `H` be a complete
+complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write
+`ω_(ξ,η)(x)=⟨ξ,xη⟩` for its vector functionals. Let `M_*` be their norm-closed complex
+span in the continuous dual `M*`. Equip `M` with the ultraweak topology `σ(M,M_*)`,
+induced by `x ↦ φ(x)` for `φ ∈ M_*`. if `ψ ∈ M*` is continuous on `M` with its ultraweak
+topology, then `ψ∈M_* = normalFunctionalSpace M`. -/
 theorem mem_normalFunctionalSpace_of_ultraweak_continuous (M : VonNeumannAlgebra H)
     (ψ : StrongDual ℂ M)
     (hψ : Continuous fun x : Ultraweak M => ψ (ultraweakLinearEquiv M x)) :

@@ -1,4 +1,5 @@
-# Algebraic Normed Space Core
+# Normed-space laws of the algebraic direct sum
 
-The stock C-star-module core derives the normed group and complex normed
-space laws from the constructed inner product.
+The norm `sqrt ‖algebraicInner x x‖`
+satisfies the complex normed-space core axioms, including the triangle inequality and scalar
+norm bound.

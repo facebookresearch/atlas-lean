@@ -1,3 +1,4 @@
-# Diagonal Difference Shear symm apply
+# Inverse value of the difference-coordinate shear
 
-The inverse shear has its literal original multiplication-coordinate values.
+For a topological group `G` and
+`(r,t)∈G×G`, `(diagonalDifferenceShear G).symm (r,t)=(rt,t)`.

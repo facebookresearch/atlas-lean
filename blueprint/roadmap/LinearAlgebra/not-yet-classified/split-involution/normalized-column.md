@@ -1,3 +1,4 @@
-# Normalized Column
+# The column of a normalized family
 
-The actual one-column matrix, with no transposed product convention.
+Let A be a ring, J a finite index type, and u,v : J → A. The singleton column V ∈ Mat(J,1;A)
+is V(i,*) = vᵢ.

@@ -1,3 +1,5 @@
-# Compact Compression tendsto
+# Norm convergence of compact compressions
 
-Forward the existing compact-sandwich convergence along the diagonal finite-subset net.
+For a Hilbert basis with arbitrary index type
+and `k ∈ K(H)`, `s ↦ compactCompression b s k` tends to `k` in operator norm as the finite
+subsets increase along `atTop`.

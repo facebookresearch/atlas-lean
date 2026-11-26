@@ -1,4 +1,4 @@
-# Fin Two Hadamard
+# Normalized two-dimensional Hadamard matrix
 
-- [Fin Two Hadamard](fin-two-hadamard.md)
-- [Fin Two Hadamard Unitary](fin-two-hadamard-unitary.md)
+- [Normalized Hadamard matrix on two coordinates](fin-two-hadamard.md)
+- [Two-dimensional Hadamard unitary](fin-two-hadamard-unitary.md)

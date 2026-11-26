@@ -16,22 +16,15 @@ public import MathlibExt.Analysis.CStarAlgebra.AsymptoticMorphism.Homotopy
 public import MathlibExt.Analysis.CStarAlgebra.AsymptoticMorphism.ZeroAtInfty
 
 /-!
-# Suspension representatives of uniform asymptotic morphisms
+# Suspension of uniform asymptotic morphisms
 
-A given uniform asymptotic morphism acts on the canonical suspension by the
-already constructed full-norm `C₀` lift. Since a raw family need not preserve
-zero at finite time, the honest formula uses its literal zero normalization:
-
-`f ↦ fun x ↦ φ_t (f x) - φ_t 0`.
-
-A whole uniform homotopy suspends coherently. The construction first applies
-the same `C₀` lift to its interval-valued family and then uses the existing
-compact-interval/function-at-infinity flip. Thus the output is one genuine
-homotopy, not separately selected time or interval slices.
-
-This is reusable representative data motivated by Blackadar 25.2.2. It does
-not select a uniform replacement, descend to all homotopy classes, construct
-maximal tensor products or assert that the resulting class map is defined.
+Let A,B be nonunital complex C-star algebras, T=[1,∞) and φ:A→B an asymptotic star morphism.
+Assume a↦(t↦φ_t(a)) is continuous into C_b(T,B) with its supremum norm; this is IsUniform φ.
+Write SA=C₀(ℝ,A), SB=C₀(ℝ,B) with their supremum norms. Its normalized suspension family is
+(Sφ)_t(f)(x)=φ_t(f(x))-φ_t(0). The family Sφ:SA→SB is an asymptotic star morphism and remains
+uniform. A homotopy whose whole interval-valued family is uniform gives a homotopy of these
+normalized suspensions, with value H_t(f(x))(s)-H_t(0)(s). This construction is the suspension
+representative used in Blackadar25.2.2.
 -/
 
 @[expose] public section
@@ -50,14 +43,27 @@ universe uA uB
 variable {A : Type uA} {B : Type uB}
 variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
 
-/-- The normalized suspension representative attached to a given uniform
-asymptotic morphism. No uniform representative is selected here. -/
+/-- **Normalized suspension representative.**
+
+Let A,B be nonunital complex C-star algebras, T=[1,∞) and φ:A→B an asymptotic star morphism.
+Assume a↦(t↦φ_t(a)) is continuous into C_b(T,B) with its supremum norm; this is IsUniform φ.
+Write SA=C₀(ℝ,A), SB=C₀(ℝ,B) with their supremum norms. Its normalized suspension family is
+(Sφ)_t(f)(x)=φ_t(f(x))-φ_t(0). The asymptotic morphism normalizedUniformSuspension φ hφ:SA→SB
+has these values and uses the supremum norm of SB for its time continuity and defects.
+-/
 noncomputable def normalizedUniformSuspension
     (φ : AsymptoticMorphism A B) (hφ : IsUniform φ) :
     AsymptoticMorphism C₀(ℝ, A) C₀(ℝ, B) :=
   uniformC0Morphism (X := ℝ) φ hφ
 
-/-- Exact coefficient formula for the normalized suspension representative. -/
+/-- **Value of the normalized suspension family.**
+
+Let A,B be nonunital complex C-star algebras, T=[1,∞) and φ:A→B an asymptotic star morphism.
+Assume a↦(t↦φ_t(a)) is continuous into C_b(T,B) with its supremum norm; this is IsUniform φ.
+Write SA=C₀(ℝ,A), SB=C₀(ℝ,B) with their supremum norms. Its normalized suspension family is
+(Sφ)_t(f)(x)=φ_t(f(x))-φ_t(0). For t≥1, f∈SA and x∈ℝ, normalizedUniformSuspension φ hφ t f
+x=φ_t(f(x))-φ_t(0).
+-/
 @[simp]
 theorem normalizedUniformSuspension_apply
     (φ : AsymptoticMorphism A B) (hφ : IsUniform φ)
@@ -66,15 +72,28 @@ theorem normalizedUniformSuspension_apply
   change uniformC0Morphism (X := ℝ) φ hφ t f x = _
   rw [uniformC0Morphism_apply, normalize_apply]
 
-/-- Suspension preserves the supplied representative's genuine uniformity. -/
+/-- **Uniformity of the normalized suspension.**
+
+Let A,B be nonunital complex C-star algebras, T=[1,∞) and φ:A→B an asymptotic star morphism.
+Assume a↦(t↦φ_t(a)) is continuous into C_b(T,B) with its supremum norm; this is IsUniform φ.
+Write SA=C₀(ℝ,A), SB=C₀(ℝ,B) with their supremum norms. Its normalized suspension family is
+(Sφ)_t(f)(x)=φ_t(f(x))-φ_t(0). The family normalizedUniformSuspension φ hφ is uniform:
+f↦(t↦(Sφ)_t(f)) is continuous SA→C_b(T,SB) in the supremum norms.
+-/
 theorem isUniform_normalizedUniformSuspension
     (φ : AsymptoticMorphism A B) (hφ : IsUniform φ) :
     IsUniform (normalizedUniformSuspension φ hφ) := by
   simpa only [normalizedUniformSuspension] using
     (isUniform_uniformC0Morphism (X := ℝ) φ hφ)
 
-/-- For an exactly zero-preserving input, the normalized construction is the
-literal pointwise suspension formula. -/
+/-- **Suspension formula for a zero-preserving family.**
+
+Let A,B be nonunital complex C-star algebras, T=[1,∞) and φ:A→B an asymptotic star morphism.
+Assume a↦(t↦φ_t(a)) is continuous into C_b(T,B) with its supremum norm; this is IsUniform φ.
+Write SA=C₀(ℝ,A), SB=C₀(ℝ,B) with their supremum norms. Its normalized suspension family is
+(Sφ)_t(f)(x)=φ_t(f(x))-φ_t(0). If φ_t(0)=0 for every t≥1, then normalizedUniformSuspension φ
+hφ t f x=φ_t(f(x)).
+-/
 theorem normalizedUniformSuspension_apply_of_zero
     (φ : AsymptoticMorphism A B) (hφ : IsUniform φ)
     (hzero : ∀ t : AsymptoticTime, φ t 0 = 0)
@@ -82,8 +101,15 @@ theorem normalizedUniformSuspension_apply_of_zero
     normalizedUniformSuspension φ hφ t f x = φ t (f x) := by
   rw [normalizedUniformSuspension_apply, hzero, sub_zero]
 
-/-- Suspend one whole uniform interval-valued family and flip its interval and
-vanishing-at-infinity variables. -/
+/-- **Interval-valued normalized suspension homotopy family.**
+
+Let A,B be nonunital complex C-star algebras, T=[1,∞), φ,ψ:A→B asymptotic star morphisms and H
+a homotopy A→C([0,1],B) with endpoints φ,ψ. Assume H.family is uniform as a map
+A→C_b(T,C([0,1],B)). The normalized suspended family has values
+G_t(f)(s)(x)=H_t(f(x))(s)-H_t(0)(s), for f∈C₀(ℝ,A), s∈[0,1] and x∈ℝ. The family
+normalizedUniformSuspensionHomotopyFamily H hH is an asymptotic morphism
+C₀(ℝ,A)→C([0,1],C₀(ℝ,B)), with the supremum norm over both interval and real variables.
+-/
 noncomputable def normalizedUniformSuspensionHomotopyFamily
     {φ ψ : AsymptoticMorphism A B} (H : Homotopy φ ψ)
     (hH : IsUniform H.family) :
@@ -92,7 +118,15 @@ noncomputable def normalizedUniformSuspensionHomotopyFamily
     (ZeroAtInftyContinuousMap.continuousMapFlipStarAlgEquiv
       (X := ℝ) (Y := unitInterval) (B := B)).toNonUnitalStarAlgHom
 
-/-- The suspended whole family keeps the normalized pointwise values. -/
+/-- **Pointwise value of the suspended homotopy family.**
+
+Let A,B be nonunital complex C-star algebras, T=[1,∞), φ,ψ:A→B asymptotic star morphisms and H
+a homotopy A→C([0,1],B) with endpoints φ,ψ. Assume H.family is uniform as a map
+A→C_b(T,C([0,1],B)). The normalized suspended family has values
+G_t(f)(s)(x)=H_t(f(x))(s)-H_t(0)(s), for f∈C₀(ℝ,A), s∈[0,1] and x∈ℝ. For t≥1, f∈C₀(ℝ,A),
+s∈[0,1] and x∈ℝ, normalizedUniformSuspensionHomotopyFamily H hH t f s
+x=H_t(f(x))(s)-H_t(0)(s).
+-/
 @[simp]
 theorem normalizedUniformSuspensionHomotopyFamily_apply
     {φ ψ : AsymptoticMorphism A B} (H : Homotopy φ ψ)
@@ -111,9 +145,15 @@ theorem normalizedUniformSuspensionHomotopyFamily_apply
 
 namespace Homotopy
 
-/-- A whole uniform homotopy induces an actual homotopy of its normalized
-suspension representatives. Endpoint uniformity proofs determine only proof
-fields; the values are fixed by the public apply formula. -/
+/-- **Homotopy of normalized suspension representatives.**
+
+Let A,B be nonunital complex C-star algebras, T=[1,∞), φ,ψ:A→B asymptotic star morphisms and H
+a homotopy A→C([0,1],B) with endpoints φ,ψ. Assume H.family is uniform as a map
+A→C_b(T,C([0,1],B)). Assume also that φ and ψ are uniform. The normalized suspended family has
+values G_t(f)(s)(x)=H_t(f(x))(s)-H_t(0)(s), for f∈C₀(ℝ,A), s∈[0,1] and x∈ℝ. The homotopy
+Homotopy.normalizedUniformSuspension H hφ hψ hH joins normalizedUniformSuspension φ hφ to
+normalizedUniformSuspension ψ hψ through this interval-valued family.
+-/
 noncomputable def normalizedUniformSuspension
     {φ ψ : AsymptoticMorphism A B} (H : Homotopy φ ψ)
     (hφ : IsUniform φ) (hψ : IsUniform ψ)
@@ -142,7 +182,13 @@ noncomputable def normalizedUniformSuspension
 
 end Homotopy
 
-/-- The bundled construction gives the corresponding homotopy relation. -/
+/-- **Normalized suspensions of uniformly homotopic families are homotopic.**
+
+Let A,B be nonunital complex C-star algebras, T=[1,∞), φ,ψ:A→B asymptotic star morphisms and H
+a homotopy A→C([0,1],B) with endpoints φ,ψ. Assume H.family is uniform as a map
+A→C_b(T,C([0,1],B)). Assume φ and ψ are uniform. Then normalizedUniformSuspension φ hφ and
+normalizedUniformSuspension ψ hψ are homotopic as asymptotic morphisms C₀(ℝ,A)→C₀(ℝ,B).
+-/
 theorem homotopic_normalizedUniformSuspension
     {φ ψ : AsymptoticMorphism A B} (H : Homotopy φ ψ)
     (hφ : IsUniform φ) (hψ : IsUniform ψ)

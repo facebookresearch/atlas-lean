@@ -15,13 +15,14 @@ public import MathlibExt.Analysis.InnerProductSpace.ProjectionValuedMeasure.Basi
 public import Mathlib.Topology.Algebra.InfiniteSum.Module
 
 /-!
-# Strong orthogonal sums identified by original scalar coefficients
+# Strong orthogonal sums from scalar coefficient sums
 
-This strict helper serves the actual computed normal-CFC PVM strong
-countable-additivity field. Orthogonal star projections have a strong sum
-by the existing projection theorem; scalar coefficient HasSum uniqueness
-identifies its limit on the same original Hilbert space. No new norm,
-separability, nontriviality or PVM model is installed.
+Let `H` be a complete complex Hilbert space and `P_n` orthogonal projections with pairwise
+orthogonal ranges. If a bounded operator `L` satisfies `Σ_n ⟨h,P_n g⟩=⟨h,Lg⟩` for every `g,h ∈
+H`, then `Σ_n P_n g=Lg` in the Hilbert norm for every `g`.
+
+This identifies the strong sum by all its scalar coefficients. No separability,
+finite-dimensionality or nonzero-space condition is needed.
 -/
 
 @[expose] public section
@@ -33,8 +34,10 @@ namespace MathlibExt.Analysis.InnerProductSpace.ProjectionValuedMeasure
 universe uH
 variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- Actual orthogonal projection sums converge strongly to the bounded operator
-whose original inner coefficients have the same sums. -/
+/-- **Strong sum determined by orthogonal scalar coefficients.** Let `H` be a complete complex
+Hilbert space, `P_n` orthogonal projections with `P_i P_j=0` for `i≠j`, and `L : H →L[ℂ]
+H`. If the scalar series `Σ_n ⟨h,P_n g⟩` has sum `⟨h,Lg⟩` for every `g,h ∈ H`, then the
+vector series `Σ_n P_n g` has sum `Lg` in the Hilbert norm for every `g`. -/
 theorem hasSum_of_orthogonal_of_inner_hasSum
     (P : ℕ → H →L[ℂ] H) (hP : ∀ n, IsStarProjection (P n))
     (horth : Pairwise fun i j => P i * P j = 0) (L : H →L[ℂ] H)

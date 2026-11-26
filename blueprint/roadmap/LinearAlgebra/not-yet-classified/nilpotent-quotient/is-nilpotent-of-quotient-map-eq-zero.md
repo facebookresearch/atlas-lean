@@ -1,3 +1,4 @@
-# Is Nilpotent of quotient map eq zero
+# Matrix kernel of a nilpotent quotient consists of nilpotents
 
-Every actual matrix killed by the nilpotent quotient map is nilpotent.
+Let R be a ring, I a nilpotent two-sided ideal, n finite and A:Matrix n n R. If entrywise
+quotient reduction q_*(A)=0 in Matrix n n(R/I), then A is nilpotent.

@@ -1,3 +1,5 @@
-# Unilateral Shift isometry
+# Metric isometry of the unilateral shift
 
-The unilateral shift is an isometry.
+Let `𝕜` be real or complex and `G` a normed
+inner-product `𝕜`-space. On `L=lp (fun _ : ℕ => G) 2`, write `Sx=(0,x_0,x_1,…)`. `S` is an
+isometry for the square-summable norm metric.

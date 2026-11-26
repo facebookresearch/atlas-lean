@@ -15,42 +15,14 @@ public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
 public import Mathlib.LinearAlgebra.Matrix.Reindex
 
 /-!
-# Coefficient and reindex maps for `GL`
+# Coefficient and index maps for general linear groups
 
-This module provides the arbitrary-semiring, fully cross-universe
-`Matrix.GeneralLinearGroup.mapRingHom` and the cross-index-universe
-`Matrix.GeneralLinearGroup.reindexMulEquiv`.
-
-The API is intentionally minimal: one canonical underlying-matrix `simp`
-lemma, `id` and `comp` for the coefficient map, a non-`simp` equality to
-the existing commutative `Matrix.GeneralLinearGroup.map`, one canonical
-underlying-matrix `simp` lemma for reindexing, and coefficient-map
-naturality as an equality of bundled `MonoidHom` values with an
-element-level `simp` lemma derived from it. No commutativity or
-determinant API is assumed. Proofs use bundled extensionality and
-definitional reduction for robustness.
-
-## Main definitions
-
-* `Matrix.GeneralLinearGroup.mapRingHom` – arbitrary-semiring, fully
-  cross-universe coefficient map via `Units.map` and `RingHom.mapMatrix`.
-* `Matrix.GeneralLinearGroup.reindexMulEquiv` – cross-index-universe
-  reindexing equivalence via `Units.mapEquiv` of `Matrix.reindexRingEquiv`.
-
-## Main results
-
-* `Matrix.GeneralLinearGroup.coe_mapRingHom` – underlying-matrix `simp` lemma.
-* `Matrix.GeneralLinearGroup.mapRingHom_id` – `id` law.
-* `Matrix.GeneralLinearGroup.mapRingHom_comp` – `comp` law.
-* `Matrix.GeneralLinearGroup.mapRingHom_eq_map` – non-`simp` equality to the
-  existing commutative map.
-* `Matrix.GeneralLinearGroup.coe_reindexMulEquiv` – underlying-matrix `simp`
-  lemma for reindexing.
-* `Matrix.GeneralLinearGroup.reindexMulEquiv_mapRingHom` – coefficient-map
-  naturality as bundled `MonoidHom` equality.
-* `Matrix.GeneralLinearGroup.reindexMulEquiv_mapRingHom_apply` – element-level
-  `simp` lemma derived from the bundled equality.
-
+Let R,S be semirings and n,m finite index types, with coefficient and index types allowed to
+lie in independent universes. Write GL(n,R) for the group of invertible n×n matrices over R.
+For e:n≃m, reindex_e(A)(i,j)=A(e⁻¹(i),e⁻¹(j)). For a semiring homomorphism f:R→S,
+f_*(A)(i,j)=f(A(i,j)). Entrywise coefficient application gives mapRingHom f:GL(n,R)→GL(n,S),
+and reindexing gives reindexMulEquiv e:GL(n,R)≃*GL(m,R). These operations commute, including
+for noncommutative semirings and empty index sets.
 -/
 
 @[expose] public section
@@ -63,9 +35,13 @@ universe u v w uR vI wI
 variable {n : Type u} [DecidableEq n] [Fintype n]
 variable {R : Type v} {S : Type w} [Semiring R] [Semiring S]
 
-/-- Arbitrary-semiring, fully cross-universe coefficient map for `GL`.
+/-- **Entrywise coefficient homomorphism on invertible matrices.**
 
-Implemented as `Units.map` of `RingHom.mapMatrix`. -/
+Let R,S be semirings and n,m finite index types, with coefficient and index types allowed to
+lie in independent universes. Write GL(n,R) for the group of invertible n×n matrices over R.
+For a semiring homomorphism f:R→S, mapRingHom f:GL(n,R)→GL(n,S) sends an invertible matrix A
+to the matrix with entries f(A(i,j)). Its inverse matrix is the entrywise image of A⁻¹.
+-/
 def mapRingHom (f : R →+* S) : GL n R →* GL n S :=
   Units.map f.mapMatrix.toMonoidHom
 
@@ -84,10 +60,12 @@ theorem mapRingHom_comp {T : Type uR} [Semiring T] (f : R →+* S) (g : S →+* 
     mapRingHom (g.comp f) = (mapRingHom g).comp (mapRingHom (n := n) f) :=
   rfl
 
-/-- Non-`simp` equality to the existing commutative `GeneralLinearGroup.map`.
+/-- **Coefficient map agrees with the commutative general-linear map.**
 
-Both are definitionally `Units.map` of `RingHom.mapMatrix`; this lemma makes the
-connection explicit without entering the `simp` set. -/
+Let R,S be commutative rings, n a finite index type and f:R→+*S a ring homomorphism. The group
+homomorphism mapRingHom f:GL(n,R)→GL(n,S) equals Matrix.GeneralLinearGroup.map f; both send A
+to its entrywise image f(A(i,j)).
+-/
 theorem mapRingHom_eq_map {R' : Type v} {S' : Type w} [CommRing R'] [CommRing S']
     {n' : Type u} [DecidableEq n'] [Fintype n'] (f : R' →+* S') :
     (mapRingHom (n := n') f) = (Matrix.GeneralLinearGroup.map (n := n') f) :=
@@ -96,8 +74,12 @@ theorem mapRingHom_eq_map {R' : Type v} {S' : Type w} [CommRing R'] [CommRing S'
 variable {m : Type vI} [DecidableEq m] [Fintype m]
 variable {A : Type wI} [Semiring A]
 
-/-- Cross-index-universe reindexing equivalence for `GL` via
-`Units.mapEquiv` of `Matrix.reindexRingEquiv`. -/
+/-- **Reindexing equivalence of general linear groups.**
+
+Let A be a semiring, n,m finite index types in independent universes and e:n≃m an equivalence.
+The group equivalence reindexMulEquiv e:GL(n,A)≃*GL(m,A) sends M to the matrix with entry
+M(e⁻¹(i),e⁻¹(j)).
+-/
 def reindexMulEquiv (e : n ≃ m) : GL n A ≃* GL m A :=
   Units.mapEquiv (reindexRingEquiv A e).toMulEquiv
 
@@ -106,9 +88,14 @@ lemma coe_reindexMulEquiv (e : n ≃ m) (g : GL n A) :
     (↑(reindexMulEquiv e g) : Matrix m m A) = Matrix.reindex e e (↑g : Matrix n n A) :=
   rfl
 
-/-- Coefficient-map naturality for reindexing as an equality of bundled
-`MonoidHom` values: reindexing after a coefficient map equals the coefficient
-map after reindexing, with source `GL n R` and target `GL m S`. -/
+/-- **Coefficient maps commute with index reindexing.**
+
+Let R,S be semirings and n,m finite index types, with coefficient and index types allowed to
+lie in independent universes. Write GL(n,R) for the group of invertible n×n matrices over R.
+For e:n≃m, reindex_e(A)(i,j)=A(e⁻¹(i),e⁻¹(j)). For a semiring homomorphism f:R→S,
+f_*(A)(i,j)=f(A(i,j)). For e:n≃m and a semiring homomorphism f:R→S, reindex_e∘mapRingHom
+f=mapRingHom f∘reindex_e as group homomorphisms GL(n,R)→GL(m,S).
+-/
 theorem reindexMulEquiv_mapRingHom {R' : Type v} {S' : Type w}
     [Semiring R'] [Semiring S'] {n' : Type u} {m' : Type vI}
     [DecidableEq n'] [DecidableEq m'] [Fintype n'] [Fintype m']
@@ -120,7 +107,14 @@ theorem reindexMulEquiv_mapRingHom {R' : Type v} {S' : Type w}
   apply Units.ext
   rfl
 
-/-- Element-level naturality derived from the bundled `MonoidHom` equality. -/
+/-- **Reindexed coefficient image of an invertible matrix.**
+
+Let R,S be semirings and n,m finite index types, with coefficient and index types allowed to
+lie in independent universes. Write GL(n,R) for the group of invertible n×n matrices over R.
+For e:n≃m, reindex_e(A)(i,j)=A(e⁻¹(i),e⁻¹(j)). For a semiring homomorphism f:R→S,
+f_*(A)(i,j)=f(A(i,j)). For e:n≃m, a semiring homomorphism f:R→S and g∈GL(n,R), reindexMulEquiv
+e (mapRingHom f g)=mapRingHom f (reindexMulEquiv e g).
+-/
 @[simp]
 theorem reindexMulEquiv_mapRingHom_apply {R' : Type v} {S' : Type w}
     [Semiring R'] [Semiring S'] {n' : Type u} {m' : Type vI}

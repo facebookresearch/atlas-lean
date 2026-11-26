@@ -1,3 +1,5 @@
-# Mem kronecker Blowup iff
+# Block membership in a Kronecker blow-up
 
-Membership in a square blow-up is exactly membership of all its blocks in the base space.
+Let R be a commutative semiring. Let D be finite and B ⊆ Mat(I,J;R) an R-submodule. A matrix X
+on (I × D) × (J × D) belongs to B^[D] = span{A ⊗ T : A ∈ B, T ∈ Mat(D,D;R)} exactly when each
+block Xₐᵦ(i,j) = X((i,a),(j,b)) belongs to B.

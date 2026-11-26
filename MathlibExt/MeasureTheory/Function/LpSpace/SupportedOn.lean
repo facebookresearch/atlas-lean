@@ -15,11 +15,14 @@ public import Mathlib.MeasureTheory.Integral.Bochner.Set
 public import Mathlib.Topology.Algebra.Module.ClosedSubmodule
 
 /-!
-# Closed subspaces of Lp supported on a measurable set
+# Supported Lp subspaces and complement-restriction kernels
 
-The carrier is the literal almost everywhere vanishing condition off the
-set. Closedness follows from the kernel of the actual restriction map to
-its complement. No completeness or finite-measure hypothesis is needed.
+For a normed scalar field and normed vector space, define support on `s` by the condition that
+an `Lp` function vanishes almost everywhere outside `s`. This gives a linear subspace for any
+exponent `p∈[0,∞]`.
+
+For `p≥1` and measurable `s`, this subspace is the kernel of restriction to `sᶜ`, hence is
+closed. The coefficient space need not be complete, and the measure need not be finite.
 -/
 
 @[expose] public section
@@ -34,7 +37,10 @@ variable {𝕜 : Type v} [NormedField 𝕜]
 variable {E : Type w} [NormedAddCommGroup E] [NormedSpace 𝕜 E]
 variable {p : ℝ≥0∞} [Fact (1 ≤ p)]
 
-/-- The actual Lp subspace of functions that vanish almost everywhere off a set. -/
+/-- **Lp submodule of almost-everywhere supported functions.** Let `X` be measurable, `μ` any
+measure, `𝕜` a normed field and `E` a normed `𝕜`-space. for any exponent `p∈[0,∞]` and set
+`s⊆X`, `Lp.supportedOn μ s={f∈Lp E p μ : f(x)=0 almost everywhere outside s}`.
+Measurability of `s` is not required for the carrier. -/
 def Lp.supportedOn (mu : Measure X) (s : Set X) : Submodule 𝕜 (Lp E p mu) where
   carrier := {f | ∀ᵐ x ∂mu, x ∉ s → f x = 0}
   zero_mem' := by
@@ -53,12 +59,16 @@ def Lp.supportedOn (mu : Measure X) (s : Set X) : Submodule 𝕜 (Lp E p mu) whe
     exact hsmul.trans (by rw [Pi.smul_apply, hfx hx, smul_zero])
 
 omit [Fact (1 ≤ p)] in
-/-- The defining support condition retains the original ambient almost everywhere measure.
-This equivalence holds for every exponent `p : ℝ≥0∞`. -/
+/-- **Membership in an almost-everywhere supported Lp subspace.** Let `X` be measurable, `μ`
+any measure, `𝕜` a normed field and `E` a normed `𝕜`-space. for any exponent `p∈[0,∞]`,
+`f∈Lp.supportedOn μ s` exactly when `f(x)=0` for `μ`-almost every `x` outside `s`. -/
 theorem Lp.mem_supportedOn (mu : Measure X) (s : Set X) (f : Lp E p mu) :
     f ∈ Lp.supportedOn (𝕜 := 𝕜) mu s ↔ ∀ᵐ x ∂mu, x ∉ s → f x = 0 := Iff.rfl
 
-/-- Almost everywhere support is exactly zero under the actual complement restriction map. -/
+/-- **Supported Lp subspace as a complement-restriction kernel.** Let `X` be measurable, `μ`
+any measure, `𝕜` a normed field and `E` a normed `𝕜`-space. if `p≥1` and `s` is
+measurable, `Lp.supportedOn μ s` equals the kernel of the bounded restriction map to `sᶜ`,
+with measure `μ.restrict sᶜ`. -/
 theorem Lp.supportedOn_eq_ker_restrict (mu : Measure X) (s : Set X) (hs : MeasurableSet s) :
     Lp.supportedOn (𝕜 := 𝕜) (E := E) (p := p) mu s =
       (LpToLpRestrictCLM X E 𝕜 mu p sᶜ).ker := by
@@ -75,18 +85,27 @@ theorem Lp.supportedOn_eq_ker_restrict (mu : Measure X) (s : Set X) (hs : Measur
     have hf' : f =ᵐ[mu.restrict sᶜ] 0 := hrep.symm.trans hf
     exact (ae_restrict_iff' hs.compl).1 hf'
 
-/-- Support on a measurable set is a closed Lp subspace, proved by its actual restriction kernel. -/
+/-- **Norm-closed support subspace for a measurable set.** Let `X` be measurable, `μ` any
+measure, `𝕜` a normed field and `E` a normed `𝕜`-space. if `p≥1` and `s` is measurable,
+`Lp.supportedOn μ s` is closed in `Lp E p μ`. No completeness of `E` or finiteness of `μ`
+is assumed. -/
 theorem Lp.isClosed_supportedOn (mu : Measure X) (s : Set X) (hs : MeasurableSet s) :
     IsClosed (Lp.supportedOn (𝕜 := 𝕜) (E := E) (p := p) mu s : Set (Lp E p mu)) := by
   rw [Lp.supportedOn_eq_ker_restrict mu s hs]
   exact (LpToLpRestrictCLM X E 𝕜 mu p sᶜ).isClosed_ker
 
-/-- The actual closed support subspace, with the literal almost everywhere carrier. -/
+/-- **Closed Lp support carrier with its inherited norm.** Let `X` be measurable, `μ` any
+measure, `𝕜` a normed field and `E` a normed `𝕜`-space. for `p≥1` and measurable `s`,
+`Lp.closedSupportedOn μ s` bundles the submodule of functions vanishing almost everywhere
+off `s` as a closed submodule. -/
 def Lp.closedSupportedOn (mu : Measure X) (s : Set X) (hs : MeasurableSet s) :
     ClosedSubmodule 𝕜 (Lp E p mu) :=
   ⟨Lp.supportedOn mu s, Lp.isClosed_supportedOn mu s hs⟩
 
-/-- Values of the closed support space still satisfy the original vanishing condition. -/
+/-- **Values of the closed support carrier.** Let `X` be measurable, `μ` any measure, `𝕜` a
+normed field and `E` a normed `𝕜`-space. for `p≥1`, measurable `s` and `f∈Lp E p μ`,
+membership in `Lp.closedSupportedOn μ s` is equivalent to almost-everywhere vanishing
+outside `s`. -/
 theorem Lp.mem_closedSupportedOn (mu : Measure X) (s : Set X) (hs : MeasurableSet s)
     (f : Lp E p mu) :
     f ∈ Lp.closedSupportedOn (𝕜 := 𝕜) mu s hs ↔ ∀ᵐ x ∂mu, x ∉ s → f x = 0 := Iff.rfl

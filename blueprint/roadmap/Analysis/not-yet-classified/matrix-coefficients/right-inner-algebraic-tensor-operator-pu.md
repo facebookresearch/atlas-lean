@@ -1,3 +1,5 @@
-# Right Inner algebraic Tensor Operator pure
+# Pairing that recovers tensor coefficients
 
-The original module inner action recovers every actual coefficient-valued tensor matrix entry.
+For `z ∈ A ⊗_ℂ K(H)`, `ξ,η : H` and `c,b : A`,
+`⟨pure η c, algebraicTensorOperator z (pure ξ b)⟩_A = star c * (tensorMatrixCoefficient ξ η z
+* b)`.

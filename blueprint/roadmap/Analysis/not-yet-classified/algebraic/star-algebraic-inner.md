@@ -1,3 +1,4 @@
-# Star algebraic Inner
+# Conjugate symmetry of the direct-sum inner product
 
-Conjugate symmetry of the finite-sum inner product.
+`star (algebraicInner x y) =
+algebraicInner y x`.

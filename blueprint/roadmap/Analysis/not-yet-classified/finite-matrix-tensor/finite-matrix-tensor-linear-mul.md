@@ -1,3 +1,4 @@
-# Finite Matrix Tensor Linear mul
+# Multiplication of finite matrix tensors
 
-The raw finite tensor sum preserves the original matrix multiplication.
+For an orthonormal frame, `Φ_v(M*N) =
+Φ_v(M)*Φ_v(N)`.

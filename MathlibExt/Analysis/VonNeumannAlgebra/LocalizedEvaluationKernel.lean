@@ -15,14 +15,14 @@ public import MathlibExt.Analysis.VonNeumannAlgebra.PositiveFunctionalLocalizati
 public import Mathlib.LinearAlgebra.Isomorphisms
 
 /-!
-# The localized functional factors through its actual operator evaluation
+# Kernel factorization of a projection-localized functional
 
-The evaluation map sends a to (a*p)ξ. The original local positive comparison
-bounds the squared norm of ψ(a*p) by that vector's squared norm. Consequently
-an operator in the evaluation kernel also belongs to the localized
-functional's kernel. This is the kernel prerequisite for factorization
-through the actual evaluation range; no norm or normality certificate is
-supplied.
+For `p∈M` and `ξ∈H`, evaluation is the bounded map `E_(p,ξ)(a)=(ap)ξ`. For a bounded functional
+`ψ`, its right localization is `L_(ψ,p)(a)=ψ(ap)`.
+
+If `ψ` is positive, `p` a star projection and the vector coefficient of `ξ` dominates `Re ψ` on
+`0≤b≤p`, then `ker E_(p,ξ) ⊆ ker L_(ψ,p)`. The two map definitions themselves do not require
+positivity or the projection condition.
 -/
 
 @[expose] public section
@@ -40,7 +40,10 @@ universe u
 
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- The actual bounded operator-evaluation map a ↦ (a*p)ξ retains its continuity. -/
+/-- **Bounded evaluation after right multiplication.** Let `H` be a complete complex Hilbert
+space and `M ⊆ B(H)` a concrete von Neumann algebra. for any `p∈M`, `ξ∈H`,
+`localizedOperatorEvaluation M p ξ : M →L[ℂ] H` sends `a` to `(ap)ξ`; `p` need not be a
+projection. -/
 def localizedOperatorEvaluation (M : VonNeumannAlgebra H) (p : M) (ξ : H) : M →L[ℂ] H := by
   let A : M →ₗ[ℂ] H :=
     { toFun := fun a => ((a * p : M) : H →L[ℂ] H) ξ
@@ -66,12 +69,20 @@ def localizedOperatorEvaluation (M : VonNeumannAlgebra H) (p : M) (ξ : H) : M �
       _ = (‖p‖ * ‖ξ‖) * ‖a‖ := by ring
   exact A.mkContinuous (‖p‖ * ‖ξ‖) hbound
 
-/-- The original right-localized bounded functional retains its continuous linear map. -/
+/-- **Bounded right-localized functional.** Let `H` be a complete complex Hilbert space and `M
+⊆ B(H)` a concrete von Neumann algebra. for any `ψ∈M*` and `p∈M`,
+`localizedFunctionalLinearMap M ψ p : M →L[ℂ] ℂ` is `a ↦ ψ(ap)`, without positivity
+assumptions. -/
 def localizedFunctionalLinearMap (M : VonNeumannAlgebra H) (ψ : StrongDual ℂ M) (p : M) :
     M →L[ℂ] ℂ :=
   ψ.comp ((ContinuousLinearMap.mul ℂ M).flip p)
 
-/-- The original local vector comparison proves the actual evaluation-kernel inclusion. -/
+/-- **Local vector domination gives an evaluation-kernel inclusion.** Let `H` be a complete
+complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Let `ψ : M → ℂ` be a
+positive bounded complex-linear functional for the spectral orders. Let `p ∈ M` be a star
+projection and `ξ ∈ H` satisfy `Re ψ(b)≤Re ⟨ξ,bξ⟩` for every positive `b≤p`. if `(ap)ξ=0`,
+then `ψ(ap)=0` for `a∈M`; equivalently the kernel of `a ↦ (ap)ξ` is contained in the
+kernel of `a ↦ ψ(ap)`. -/
 theorem localizedOperatorEvaluation_ker_le (M : VonNeumannAlgebra H) :
     letI : PartialOrder M := CStarAlgebra.spectralOrder M
     letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ

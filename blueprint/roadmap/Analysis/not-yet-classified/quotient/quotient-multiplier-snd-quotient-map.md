@@ -1,3 +1,5 @@
-# Quotient Multiplier snd quotient Map
+# Right component of a quotient multiplier
 
-The descended multiplier retains the original second operator on the same quotient map.
+For nonunital complex C-star `B`, a closed
+two-sided star ideal `I`, and `m : M(B)`, for `q = I.quotientMap`, `(quotientMultiplier I
+m).snd (q b) = q (m.snd b)`.

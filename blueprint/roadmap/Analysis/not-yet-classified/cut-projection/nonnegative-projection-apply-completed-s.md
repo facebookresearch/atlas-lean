@@ -1,3 +1,4 @@
-# Nonnegative Projection apply completed Single
+# Coordinate action of the nonnegative cut
 
-Nonnegative degrees keep their values; strictly negative degrees are killed.
+`P_+ (j_n x) = j_n x` when `n ≥ 0` and equals
+zero when `n < 0`.

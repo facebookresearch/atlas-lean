@@ -1,4 +1,4 @@
-# Antiunitary Conjugation
+# Conjugate-linear isometric transport of bounded operators
 
-- [Conjugate Complex Operator](conjugate-complex-operator.md)
-- [Conjugate Complex Operator apply](conjugate-complex-operator-apply.md)
+- [Bounded complex operator transported by a conjugate isometry](conjugate-complex-operator.md)
+- [Value of a conjugate-isometry operator transport](conjugate-complex-operator-apply.md)

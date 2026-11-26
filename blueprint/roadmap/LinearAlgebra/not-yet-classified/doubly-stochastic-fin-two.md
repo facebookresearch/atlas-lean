@@ -1,4 +1,4 @@
-# Birkhoff Von Neumann
+# Convex-combination classification of a doubly stochastic two-by-two matrix
 
-Explicit 2×2 classification: every `2 × 2` doubly stochastic matrix is the convex
-combination `t • P(1) + (1 - t) • P(swap)` with `t = A 0 0`.
+Let A be a real 2×2 matrix with nonnegative entries and row and column sums 1. There exists
+t∈[0,1], namely A_(0,0), with A=tI+(1-t)[[0,1],[1,0]].

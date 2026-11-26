@@ -15,12 +15,12 @@ public import Mathlib.LinearAlgebra.Matrix.Adjugate
 public import Mathlib.LinearAlgebra.Matrix.ToLin
 
 /-!
-# Division-free pivot elimination for arbitrary matrix size
+# Pivot elimination and determinant identities
 
-The literal elimination matrix multiplies the original block matrix. Its
-determinant relation uses no invertible-pivot or normality premise, and the
-empty lower block is included. This is the matrix identity needed by the
-singular determinant/cokernel-length induction.
+Let R be a commutative ring, I a finite index type, a ∈ R, r ∈ Mat(1,I;R), c ∈ Mat(I,1;R), and
+B ∈ Mat(I,I;R). For P = [[a,r],[c,B]], the elimination matrix E = [[1,0],[−c,aI]] gives E P =
+[[a,r],[0,S]] with S = aB − cr. The identities det E = a^|I| and a det S = a^|I| det P hold
+for every a, including zero, and for the empty lower block.
 -/
 
 @[expose] public section
@@ -32,21 +32,38 @@ namespace Matrix
 
 variable {R : Type u} [CommRing R] {ι : Type v} [Fintype ι] [DecidableEq ι]
 
-/-- The original pivot matrix, including both full off-diagonal blocks. -/
+/-- **A matrix with a distinguished pivot.**
+
+Let R be a commutative ring, I a finite index type, a ∈ R, r ∈ Mat(1,I;R), c ∈ Mat(I,1;R), and
+B ∈ Mat(I,I;R). The matrix P on 1 ⊕ I is P = [[a,r],[c,B]], where its singleton diagonal block
+is multiplication by a.
+-/
 def pivotBlock (a : R) (r : Matrix Unit ι R) (c : Matrix ι Unit R) (B : Matrix ι ι R) :
     Matrix (Unit ⊕ ι) (Unit ⊕ ι) R :=
   Matrix.fromBlocks (a • (1 : Matrix Unit Unit R)) r c B
 
-/-- The actual lower elimination matrix, with no division by its pivot. -/
+/-- **The pivot elimination matrix.**
+
+For a commutative ring R, finite I, a ∈ R and c ∈ Mat(I,1;R), define E = [[1,0],[−c,aI]] on 1
+⊕ I. This formula uses multiplication and subtraction and is defined for every pivot a.
+-/
 def pivotElimination (a : R) (c : Matrix ι Unit R) : Matrix (Unit ⊕ ι) (Unit ⊕ ι) R :=
   Matrix.fromBlocks (1 : Matrix Unit Unit R) 0 (-c) (a • (1 : Matrix ι ι R))
 
-/-- The full Schur matrix produced by the literal elimination. -/
+/-- **The Schur numerator.**
+
+Let R be a commutative ring, I a finite index type, a ∈ R, r ∈ Mat(1,I;R), c ∈ Mat(I,1;R), and
+B ∈ Mat(I,I;R). Define S = aB − cr, a square matrix on I. Its entries are Sᵢⱼ = a Bᵢⱼ − cᵢ rⱼ.
+-/
 def pivotSchur (a : R) (r : Matrix Unit ι R) (c : Matrix ι Unit R) (B : Matrix ι ι R) :
     Matrix ι ι R := a • B - c * r
 
-/-- Multiplication by the actual elimination matrix earns the full upper
-block form, without a unit-pivot or nonzero-pivot hypothesis. -/
+/-- **Upper block form after pivot elimination.**
+
+Let R be a commutative ring, I a finite index type, a ∈ R, r ∈ Mat(1,I;R), c ∈ Mat(I,1;R), and
+B ∈ Mat(I,I;R). For P = [[a,r],[c,B]], E = [[1,0],[−c,aI]], and S = aB − cr, one has E P =
+[[a,r],[0,S]]. The equality holds for arbitrary a.
+-/
 theorem pivotElimination_mul (a : R) (r : Matrix Unit ι R)
     (c : Matrix ι Unit R) (B : Matrix ι ι R) :
     pivotElimination a c * pivotBlock a r c B =
@@ -64,16 +81,23 @@ theorem pivotElimination_mul (a : R) (r : Matrix Unit ι R)
   exact congrArg (fun D : Matrix ι ι R =>
     Matrix.fromBlocks (a • (1 : Matrix Unit Unit R)) r (0 : Matrix ι Unit R) D) hd
 
-/-- The original elimination determinant is the exact pivot power for
-every lower-block size, including the empty lower block. -/
+/-- **Determinant of the elimination matrix.**
+
+For a commutative ring R, finite I, a ∈ R and c ∈ Mat(I,1;R), the matrix E = [[1,0],[−c,aI]]
+satisfies det E = a^|I|. In particular, the empty lower block gives det E = 1.
+-/
 theorem det_pivotElimination (a : R) (c : Matrix ι Unit R) :
     (pivotElimination a c).det = a ^ Fintype.card ι := by
   unfold pivotElimination
   rw [Matrix.det_fromBlocks_zero₁₂, Matrix.det_one, one_mul,
     Matrix.det_smul, Matrix.det_one, mul_one]
 
-/-- The division-free determinant identity of the actual full pivot and
-Schur matrices, valid over singular rings and for every matrix size. -/
+/-- **The pivot and Schur determinant relation.**
+
+Let R be a commutative ring, I a finite index type, a ∈ R, r ∈ Mat(1,I;R), c ∈ Mat(I,1;R), and
+B ∈ Mat(I,I;R). For P = [[a,r],[c,B]] and S = aB − cr, the identity a det S = a^|I| det P
+holds over R, including zero or noninvertible pivots.
+-/
 theorem det_pivotSchur_relation (a : R) (r : Matrix Unit ι R)
     (c : Matrix ι Unit R) (B : Matrix ι ι R) :
     a * (pivotSchur a r c B).det =
@@ -83,8 +107,11 @@ theorem det_pivotSchur_relation (a : R) (r : Matrix Unit ι R)
     Fintype.card_unit, pow_one, mul_one, det_pivotElimination] at h
   exact h
 
-/-- The actual Schur determinant remains nonzero for a nonzero original
-determinant and pivot, through the division-free identity. -/
+/-- **A nonzero Schur determinant.**
+
+Let R be a commutative ring, I a finite index type, a ∈ R, r ∈ Mat(1,I;R), c ∈ Mat(I,1;R), and
+B ∈ Mat(I,I;R). Assume R is a domain, a ≠ 0, and det [[a,r],[c,B]] ≠ 0. Then det(aB − cr) ≠ 0.
+-/
 theorem det_pivotSchur_ne_zero [IsDomain R] (a : R) (ha : a ≠ 0)
     (r : Matrix Unit ι R) (c : Matrix ι Unit R) (B : Matrix ι ι R)
     (hA : (pivotBlock a r c B).det ≠ 0) : (pivotSchur a r c B).det ≠ 0 := by

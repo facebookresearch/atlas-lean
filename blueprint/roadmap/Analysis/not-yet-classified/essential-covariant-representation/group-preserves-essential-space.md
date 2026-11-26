@@ -1,3 +1,4 @@
-# Group preserves essential Space
+# Invariance of the coefficient essential space
 
-Covariance preserves the actual coefficient essential space under every group element.
+Each group unitary Ug preserves Eπ, the closed linear span of the coefficient-generated
+vectors π(a)ξ.

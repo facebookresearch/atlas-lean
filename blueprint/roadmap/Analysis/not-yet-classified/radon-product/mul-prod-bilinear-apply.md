@@ -1,3 +1,4 @@
-# Mul Prod Bilinear apply
+# Pure product value of the compact-support bilinear map
 
-The bilinear constructor retains the exact compact-support pure product.
+For Hausdorff `X,Y` and
+compact-support complex `f,g`, `mulProdBilinear f g=mulProd f g`.

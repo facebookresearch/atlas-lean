@@ -1,3 +1,4 @@
-# Scalar Right
+# Complex spaces as right scalar modules
 
-The existing coefficient-indexed carrier; this introduces no new synonym mechanism.
+`ScalarRight H` is `WithCStarModule ℂᵐᵒᵖ H`,
+identified with `H` by `WithCStarModule.equiv ℂᵐᵒᵖ H`.

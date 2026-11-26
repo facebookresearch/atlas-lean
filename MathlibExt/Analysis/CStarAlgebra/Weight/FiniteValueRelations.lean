@@ -18,18 +18,16 @@ public import Mathlib.Tactic.Linarith
 public import Mathlib.Tactic.Ring
 
 /-!
-# Finite-positive value relations for the actual weight pairing
+# Real weight values and complex polarization
 
-The real coordinates of finite-positive weight values respect equality,
-addition and real scaling of their original signed differences. Every
-relation below is proved from the global positive weight's own laws;
-no scalar extension or positive-inner certificate is supplied.
+For an extended positive weight `φ` on a nonunital complex C-star algebra, write `v(a) =
+(φ(a)).toReal`. On positive elements of finite weight, `v` preserves addition, and equal signed
+differences in the algebra have equal differences of their real weight values. The same holds
+for sums and real scalar multiples of these differences.
 
-The final definitions polarize the actual finite-square values on the
-literal complex domain. Their Hermitian and scalar laws are constructor
-obligations for the weight pre-inner-product structure, not assumed data.
-The imaginary coordinate uses the first argument multiplied by i, matching
-a complex inner product linear in its second argument.
+On `n_φ = {x : φ(x* x) < ∞}`, set `q(x)=v(x* x)` and `R(x,y)=(q(x+y)-q(x-y))/4`. The complex
+polarization is `P(x,y)=R(x,y)+i R(i • x,y)`, with the sign convention for an inner product
+linear in its second argument.
 -/
 
 @[expose] public section
@@ -49,18 +47,27 @@ variable {A : Type u} [NonUnitalCStarAlgebra A]
 
 attribute [local instance] CStarAlgebra.spectralOrder CStarAlgebra.spectralOrderedRing
 
-/-- Finite positive additivity is actual additivity of the original real values. -/
+/-- **Real additivity of finite positive values.** Let `A` be a nonunital complex C-star algebra
+with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. if `a,b ≥ 0` have finite weight, then `(φ(a+b)).toReal = (φ(a)).toReal +
+(φ(b)).toReal`. -/
 theorem Weight.finite_toReal_add (φ : Weight A) (a b : PositiveElement A)
     (ha : φ.value a < ⊤) (hb : φ.value b < ⊤) :
     (φ.value (positiveAdd a b)).toReal = (φ.value a).toReal + (φ.value b).toReal := by
   rw [φ.add_value, ENNReal.toReal_add ha.ne hb.ne]
 
-/-- Real coordinates of finite positive scaling obey the original scalar law. -/
+/-- **Real coordinate of a scaled positive value.** Let `A` be a nonunital complex C-star algebra
+with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. for every `r : ℝ≥0` and positive `a`, `(φ(r • a)).toReal = r *
+(φ(a)).toReal`. This equality also uses the convention `∞.toReal=0` when `φ(a)=∞`. -/
 theorem Weight.toReal_positiveSmul (φ : Weight A) (r : NNReal) (a : PositiveElement A) :
     (φ.value (positiveSmul r a)).toReal = (r : ℝ) * (φ.value a).toReal := by
   rw [φ.smul_value, ENNReal.toReal_mul, ENNReal.coe_toReal]
 
-/-- Equal original positive differences have equal differences of their finite weight values. -/
+/-- **Real values of equal positive differences.** Let `A` be a nonunital complex C-star algebra
+with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. write `v(t)=(φ(t)).toReal`. For positive `a,b,c,d` of finite weight,
+`a-b=c-d` implies `v(a)-v(b)=v(c)-v(d)`. -/
 theorem Weight.finite_toReal_sub_eq_sub (φ : Weight A) (a b c d : PositiveElement A)
     (ha : φ.value a < ⊤) (hb : φ.value b < ⊤)
     (hc : φ.value c < ⊤) (hd : φ.value d < ⊤)
@@ -76,7 +83,10 @@ theorem Weight.finite_toReal_sub_eq_sub (φ : Weight A) (a b c d : PositiveEleme
   rw [φ.finite_toReal_add a d ha hd, φ.finite_toReal_add c b hc hb] at hvalues
   linarith
 
-/-- The real values preserve addition of original finite-positive differences. -/
+/-- **Additivity for finite positive differences.** Let `A` be a nonunital complex C-star algebra
+with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. write `v(t)=(φ(t)).toReal`. If positive `a,b,c,d,e,f` all have finite
+weight and `a-b=(c-d)+(e-f)`, then `v(a)-v(b)=(v(c)-v(d))+(v(e)-v(f))`. -/
 theorem Weight.finite_toReal_sub_eq_add_sub
     (φ : Weight A) (a b c d e f : PositiveElement A)
     (ha : φ.value a < ⊤) (hb : φ.value b < ⊤)
@@ -96,7 +106,10 @@ theorem Weight.finite_toReal_sub_eq_add_sub
   rw [φ.finite_toReal_add c e hc he, φ.finite_toReal_add d f hd hf] at hvalues
   linarith
 
-/-- Original nonnegative-real scaling of finite-positive differences scales their real values. -/
+/-- **Nonnegative scaling of finite positive differences.** Let `A` be a nonunital complex C-star
+algebra with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous
+weight vanishing at zero. write `v(t)=(φ(t)).toReal`. For finite-weight positive `a,b,c,d` and
+`r : ℝ≥0`, `a-b=r • (c-d)` implies `v(a)-v(b)=r*(v(c)-v(d))`. -/
 theorem Weight.finite_toReal_sub_eq_nonneg_smul_sub
     (φ : Weight A) (r : NNReal) (a b c d : PositiveElement A)
     (ha : φ.value a < ⊤) (hb : φ.value b < ⊤)
@@ -117,7 +130,10 @@ theorem Weight.finite_toReal_sub_eq_nonneg_smul_sub
         (r : ℝ) * (φ.value c).toReal - (r : ℝ) * (φ.value d).toReal := hvalues
     _ = _ := by ring
 
-/-- Every real scaling of an original finite-positive difference scales its real value. -/
+/-- **Real scaling of finite positive differences.** Let `A` be a nonunital complex C-star algebra
+with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. write `v(t)=(φ(t)).toReal`. For finite-weight positive `a,b,c,d` and any `r
+: ℝ`, `a-b=r • (c-d)` implies `v(a)-v(b)=r*(v(c)-v(d))`, including negative and zero scalars. -/
 theorem Weight.finite_toReal_sub_eq_real_smul_sub
     (φ : Weight A) (r : ℝ) (a b c d : PositiveElement A)
     (ha : φ.value a < ⊤) (hb : φ.value b < ⊤)
@@ -141,15 +157,25 @@ theorem Weight.finite_toReal_sub_eq_real_smul_sub
           (-r) * ((φ.value d).toReal - (φ.value c).toReal) := hvalues
       _ = _ := by ring
 
-/-- The actual finite-square value, where the original ENNReal weight value is finite. -/
+/-- **Real value of a finite weight square.** Let `A` be a nonunital complex C-star algebra with
+its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. `finiteSquareValue φ x = (φ(x*
+x)).toReal` for `x ∈ n_φ`; this value is finite and nonnegative. -/
 def Weight.finiteSquareValue (φ : Weight A) (x : φ.finiteSquareSubmodule) : ℝ :=
   (φ.value (leftSquare (x : A))).toReal
 
-/-- The real polarization of actual finite-square values on the literal domain. -/
+/-- **Real polarization of the weight square.** Let `A` be a nonunital complex C-star algebra with
+its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal` for `x ∈
+n_φ`. for `x,y ∈ n_φ`, `finiteSquarePolarRe φ x y = (q(x+y)-q(x-y))/4`. -/
 def Weight.finiteSquarePolarRe (φ : Weight A) (x y : φ.finiteSquareSubmodule) : ℝ :=
   (φ.finiteSquareValue (x + y) - φ.finiteSquareValue (x - y)) / 4
 
-/-- The original scalar-weight polarization, with the second-variable-linear complex sign. -/
+/-- **Complex polarization of the weight square.** Let `A` be a nonunital complex C-star algebra
+with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal` for `x ∈
+n_φ`. put `R(x,y)=(q(x+y)-q(x-y))/4`. Then `finiteSquarePolarInner φ x y = R(x,y)+i R(i •
+x,y)` for `x,y ∈ n_φ`, the convention linear in the second argument. -/
 def Weight.finiteSquarePolarInner (φ : Weight A) (x y : φ.finiteSquareSubmodule) : ℂ :=
   ⟨φ.finiteSquarePolarRe x y, φ.finiteSquarePolarRe (Complex.I • x) y⟩
 

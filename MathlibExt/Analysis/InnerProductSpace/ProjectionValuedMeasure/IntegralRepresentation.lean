@@ -14,19 +14,17 @@ module
 public import MathlibExt.Analysis.InnerProductSpace.ProjectionValuedMeasure.Integral
 
 /-!
-# The spectral-integral representation
+# The unital star representation of bounded spectral integration
 
-Spectral integration sends bounded measurable functions to bounded operators as a unital complex
-star-algebra homomorphism.  Multiplication and star preservation are first proved for measurable
-simple functions by refining their measurable fibers, then extended through uniform simple-function
-density and continuity.  No regularity, separability, or nonemptiness hypothesis is required.
+For a PVM `E` on a measurable space `X`, acting on a complete complex Hilbert space `H`, bounded
+spectral integration is the unital complex star homomorphism `f ↦ I_E(f)=∫ f dE`. It satisfies
+`I_E(f k)=I_E(f)I_E(k)`, `I_E(conj f)=I_E(f)*` and `I_E(1)=I`.
 
-## Primary source
-
-John B. Conway, *A Course in Functional Analysis*, 2nd ed., Chapter IX, §1,
-Proposition 1.12. The domain is bounded measurable functions on an arbitrary
-measurable space. Reconstruction converses for continuous-function algebras,
-including noncompact `C₀(X)`, are outside this module.
+Thus all these spectral integrals commute, and each is a normal operator. Uniform convergence of
+functions along any filter implies operator-norm convergence of their integrals. No regularity,
+separability or nonempty space assumption is made. The result is Conway, A Course in Functional
+Analysis, Chapter IX, §1, Proposition 1.12, for bounded measurable functions on arbitrary
+measurable spaces.
 -/
 
 @[expose] public section
@@ -199,7 +197,12 @@ private theorem denseRange_ofSimpleFunc :
   refine ⟨f, ?_⟩
   simpa [Subtype.dist_eq, dist_eq_norm, norm_sub_rev] using hf
 
-/-- Spectral integration preserves the pointwise star operation. -/
+/-- **Adjoint preservation by spectral integration.** Let `X` be a measurable space and `H` a
+complete complex Hilbert space. Let `E : ProjectionValuedMeasure X H` be a strongly
+countably additive PVM. Write `μ_(g,h)(s)=⟨h,E(s)g⟩` for its scalar coefficient measures.
+For bounded measurable `f : X → ℂ`, let `I_E(f)=∫ f dE` be the bounded operator integral.
+`I_E(conj f)=I_E(f)*`, where the function star is pointwise complex conjugation and the
+operator star is the Hilbert adjoint. -/
 theorem spectralIntegral_star
     (E : ProjectionValuedMeasure X H) (phi : BoundedMeasurableFunction X) :
     spectralIntegral E (star phi) = star (spectralIntegral E phi) := by
@@ -220,7 +223,12 @@ theorem spectralIntegral_star
       exact spectralIntegral_star_ofSimpleFunc E f
   exact congrFun hEq phi
 
-/-- Spectral integration preserves multiplication. -/
+/-- **Product preservation by spectral integration.** Let `X` be a measurable space and `H` a
+complete complex Hilbert space. Let `E : ProjectionValuedMeasure X H` be a strongly
+countably additive PVM. Write `μ_(g,h)(s)=⟨h,E(s)g⟩` for its scalar coefficient measures.
+For bounded measurable `f : X → ℂ`, let `I_E(f)=∫ f dE` be the bounded operator integral.
+for bounded measurable `f,k`, `I_E(f*k)=I_E(f)*I_E(k)`; multiplication of functions is
+pointwise and of operators is composition. -/
 theorem spectralIntegral_mul
     (E : ProjectionValuedMeasure X H) (phi psi : BoundedMeasurableFunction X) :
     spectralIntegral E (phi * psi) = spectralIntegral E phi * spectralIntegral E psi := by
@@ -261,7 +269,9 @@ theorem spectralIntegral_mul
       exact hright g phi
   exact congrFun hEq psi
 
-/-- The spectral integral of the constant-one function is the identity operator. -/
+/-- **Spectral integral of the constant function one.** Let `X` be a measurable space and `H`
+a complete complex Hilbert space. Let `E : ProjectionValuedMeasure X H` be a strongly
+countably additive PVM. `I_E(1)=I_H`, since `E(X)=I_H`. -/
 @[simp]
 theorem spectralIntegral_one (E : ProjectionValuedMeasure X H) :
     spectralIntegral E (1 : BoundedMeasurableFunction X) = 1 := by
@@ -273,7 +283,12 @@ theorem spectralIntegral_one (E : ProjectionValuedMeasure X H) :
     _ = E Set.univ := spectralIntegral_indicator E Set.univ MeasurableSet.univ
     _ = 1 := E.univ
 
-/-- Bounded spectral integration as a unital complex star-algebra homomorphism. -/
+/-- **Unital star homomorphism of bounded spectral integration.** Let `X` be a measurable
+space and `H` a complete complex Hilbert space. Let `E : ProjectionValuedMeasure X H` be a
+strongly countably additive PVM. Write `μ_(g,h)(s)=⟨h,E(s)g⟩` for its scalar coefficient
+measures. For bounded measurable `f : X → ℂ`, let `I_E(f)=∫ f dE` be the bounded operator
+integral. `spectralIntegralStarAlgHom E` is the unital complex star homomorphism from
+bounded measurable functions on `X` to `B(H)`, with value `f ↦ I_E(f)`. -/
 @[no_expose]
 noncomputable def spectralIntegralStarAlgHom (E : ProjectionValuedMeasure X H) :
     BoundedMeasurableFunction X →⋆ₐ[ℂ] (H →L[ℂ] H) where
@@ -295,14 +310,22 @@ theorem spectralIntegralStarAlgHom_apply
     spectralIntegralStarAlgHom E phi = spectralIntegral E phi := by
   rfl
 
-/-- Spectral integrals of two bounded measurable functions commute. -/
+/-- **Commutation of two bounded spectral integrals.** Let `X` be a measurable space and `H` a
+complete complex Hilbert space. Let `E : ProjectionValuedMeasure X H` be a strongly
+countably additive PVM. Write `μ_(g,h)(s)=⟨h,E(s)g⟩` for its scalar coefficient measures.
+For bounded measurable `f : X → ℂ`, let `I_E(f)=∫ f dE` be the bounded operator integral.
+for bounded measurable `f,k`, `I_E(f)I_E(k)=I_E(k)I_E(f)`. -/
 theorem spectralIntegral_commute
     (E : ProjectionValuedMeasure X H) (phi psi : BoundedMeasurableFunction X) :
     Commute (spectralIntegral E phi) (spectralIntegral E psi) := by
   change Commute (spectralIntegralStarAlgHom E phi) (spectralIntegralStarAlgHom E psi)
   exact (Commute.all phi psi).map (spectralIntegralStarAlgHom E)
 
-/-- Every bounded spectral integral is a normal operator. -/
+/-- **Normality of bounded spectral integrals.** Let `X` be a measurable space and `H` a
+complete complex Hilbert space. Let `E : ProjectionValuedMeasure X H` be a strongly
+countably additive PVM. Write `μ_(g,h)(s)=⟨h,E(s)g⟩` for its scalar coefficient measures.
+For bounded measurable `f : X → ℂ`, let `I_E(f)=∫ f dE` be the bounded operator integral.
+the bounded operator `I_E(f)` is normal: `I_E(f)* I_E(f)=I_E(f) I_E(f)*`. -/
 theorem spectralIntegral_isStarNormal
     (E : ProjectionValuedMeasure X H) (phi : BoundedMeasurableFunction X) :
     IsStarNormal (spectralIntegral E phi) := by
@@ -310,8 +333,11 @@ theorem spectralIntegral_isStarNormal
   rw [← spectralIntegral_star E phi]
   exact spectralIntegral_commute E (star phi) phi
 
-/-- Uniform convergence of bounded measurable functions along any filter implies operator-norm
-convergence of their spectral integrals. -/
+/-- **Uniform limits give operator-norm spectral limits.** Let `X` be a measurable space and
+`H` a complete complex Hilbert space. Let `E : ProjectionValuedMeasure X H` be a strongly
+countably additive PVM. let `l` be any filter on an index type, `f_i` bounded measurable
+functions and `f` their limit in supremum norm along `l`. Then `I_E(f_i) → I_E(f)` in
+operator norm along the same filter. -/
 theorem tendsto_spectralIntegral {I : Type*} {l : Filter I}
     (E : ProjectionValuedMeasure X H) {phi : I → BoundedMeasurableFunction X}
     {psi : BoundedMeasurableFunction X} (hphi : Tendsto phi l (𝓝 psi)) :

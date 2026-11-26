@@ -1,10 +1,10 @@
-# Asymptotic Algebra Map
+# Functoriality of asymptotic quotient algebras
 
-- [Map](map.md)
-- [Map quotient Map](map-quotient-map.md)
-- [Map comp quotient Map](map-comp-quotient-map.md)
-- [Map comp](map-comp.md)
-- [Constant Hom](constant-hom.md)
-- [Map comp constant Hom](map-comp-constant-hom.md)
-- [Constant Hom eq zero iff](constant-hom-eq-zero-iff.md)
-- [Constant Hom injective](constant-hom-injective.md)
+- [Map induced on asymptotic quotient algebras](map.md)
+- [Induced map on a bounded-function representative](map-quotient-map.md)
+- [Induced maps intertwine the quotient projections](map-comp-quotient-map.md)
+- [Composition of asymptotic quotient maps](map-comp.md)
+- [Coefficient inclusion by constant asymptotic classes](constant-hom.md)
+- [Naturality of constant coefficient classes](map-comp-constant-hom.md)
+- [A constant asymptotic class is zero exactly for the zero coefficient](constant-hom-eq-zero-iff.md)
+- [Injectivity of the constant-class coefficient map](constant-hom-injective.md)

@@ -1,6 +1,6 @@
-# Completely Positive Homotopy
+# CP-contractive pairs of matching homotopy paths
 
-- [Pair Family is Completely Positive Contraction](pair-family-is-completely-positive-contr.md)
-- [Matching Pair Family](matching-pair-family.md)
-- [Matching Pair Family to Asymptotic Morphism](matching-pair-family-to-asymptotic-morph.md)
-- [Matching Pair Family val](matching-pair-family-val.md)
+- [Complete positivity and contraction of matching path pairs](pair-family-is-completely-positive-contr.md)
+- [CP-contractive asymptotic family in the matching-path algebra](matching-pair-family.md)
+- [Underlying asymptotic family of the CP matching pair](matching-pair-family-to-asymptotic-morph.md)
+- [Coordinates of the CP-contractive matching pair](matching-pair-family-val.md)

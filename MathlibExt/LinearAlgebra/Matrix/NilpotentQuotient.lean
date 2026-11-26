@@ -15,16 +15,13 @@ public import Mathlib.RingTheory.Ideal.Operations
 public import Mathlib.RingTheory.Ideal.Quotient.Defs
 
 /-!
-# Idempotent matrix lifting across a nilpotent quotient
+# Idempotent matrix lifting through a nilpotent ideal
 
-Ordered coefficient products place each matrix-power entry in the
-corresponding ideal power. A nilpotent ideal consequently makes the
-actual entrywise quotient matrix kernel elementwise nilpotent. The
-existing general-ring idempotent-lifting theorem then supplies an
-idempotent matrix with the caller's exact original quotient image.
+Let R be a ring, I a nilpotent two-sided ideal and n a finite matrix index. Every idempotent B
+over R/I lifts to an idempotent A over R with q_*(A)=B. A matrix killed by q_* is nilpotent.
+The entry estimate places A^k in the kth ideal power when all entries of A lie in I.
 
-Source: Weibel, *The K-book*, I.Exercise 2.2, the matrix step of
-projective nilpotent reduction.
+Source: Weibel, The K-book, I.Exercise 2.2, the matrix step of projective nilpotent reduction.
 -/
 
 @[expose] public section
@@ -41,7 +38,11 @@ section Semiring
 
 variable {R : Type u} [Semiring R] {n : Type v} [Fintype n] [DecidableEq n]
 
-/-- The entries of an actual matrix power lie in the same ordered ideal power. -/
+/-- **Entries of a matrix power lie in the corresponding ideal power.**
+
+Let R be a semiring, I an ideal, n a finite index type and A:Matrix n n R have every entry in
+I. For k∈ℕ and i,j∈n, (A^k)_(i,j) belongs to I^k.
+-/
 theorem pow_apply_mem_ideal_pow (I : Ideal R) (A : Matrix n n R)
     (hA : ∀ i j, A i j ∈ I) (k : ℕ) (i j : n) : (A ^ k) i j ∈ I ^ k := by
   induction k generalizing i j with
@@ -69,7 +70,11 @@ section Ring
 variable {R : Type u} [Ring R] {n : Type v} [Fintype n] [DecidableEq n]
 variable (I : Ideal R) [I.IsTwoSided]
 
-/-- Every actual matrix killed by the nilpotent quotient map is nilpotent. -/
+/-- **Matrix kernel of a nilpotent quotient consists of nilpotents.**
+
+Let R be a ring, I a nilpotent two-sided ideal, n finite and A:Matrix n n R. If entrywise
+quotient reduction q_*(A)=0 in Matrix n n(R/I), then A is nilpotent.
+-/
 theorem isNilpotent_of_quotient_map_eq_zero (hI : IsNilpotent I) (A : Matrix n n R)
     (hA : (Ideal.Quotient.mk I).mapMatrix A = 0) : IsNilpotent A := by
   apply isNilpotent_of_entries_mem_ideal I hI A
@@ -78,8 +83,11 @@ theorem isNilpotent_of_quotient_map_eq_zero (hI : IsNilpotent I) (A : Matrix n n
   change Ideal.Quotient.mk I (A i j) = 0 at h
   exact Ideal.Quotient.eq_zero_iff_mem.mp h
 
-/-- A target idempotent matrix lifts to an actual idempotent source matrix
-whose original entrywise quotient map has precisely the specified value. -/
+/-- **Lifting an idempotent matrix across a nilpotent quotient.**
+
+Let R be a ring, I a nilpotent two-sided ideal and n finite. For B∈Matrix n n(R/I) with B²=B,
+there exists A∈Matrix n n R with A²=A and entrywise quotient image q_*(A)=B.
+-/
 theorem exists_isIdempotentElem_quotient_lift
     (hI : IsNilpotent I) (B : Matrix n n (R ⧸ I)) (hB : IsIdempotentElem B) :
     ∃ A : Matrix n n R, IsIdempotentElem A ∧ (Ideal.Quotient.mk I).mapMatrix A = B := by

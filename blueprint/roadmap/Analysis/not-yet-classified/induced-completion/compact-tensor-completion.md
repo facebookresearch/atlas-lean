@@ -1,3 +1,5 @@
-# Compact Tensor Completion
+# Induced compact tensor completion
 
-The existing literal same-seminorm separation quotient followed by ordinary completion.
+For a complex Hilbert space `H` and a nonunital C-star
+algebra `A`, `CompactTensorCompletion H A` is the completion of `A ⊗_ℂ K(H)` after quotienting
+by the zero subspace of `p(z)=‖algebraicCompactTensorHom z‖`.

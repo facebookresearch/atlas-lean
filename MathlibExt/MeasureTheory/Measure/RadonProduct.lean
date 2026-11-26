@@ -14,18 +14,14 @@ module
 public import Mathlib.MeasureTheory.Integral.RieszMarkovKakutani.Real
 
 /-!
-# The Radon product on the Borel topological product
+# Radon product on a topological product's Borel structure
 
-Integrating a compactly supported continuous function in one coordinate
-gives a compactly supported continuous function in the other coordinate.
-The resulting positive iterated integral functional has an actual regular
-Riesz measure on the Borel sigma-algebra of the topological product.
+For locally compact Hausdorff Borel spaces `X,Y` and measures `μ,ν` finite on compact sets,
+define the positive functional on `C_c(X×Y,ℝ)` by `f ↦ ∫ x, ∫ y, f(x,y) dν dμ`.
 
-Both measures need only be finite on compact sets. There is no countability
-or s-finiteness assumption and no identification with the product of the
-factor sigma-algebras. The construction retains the literal product carrier.
-The reverse-order Fubini theorem and the completed L2 tensor comparison are
-separate obligations.
+Its regular Riesz measure is `radonProd μ ν` on `borel(X×Y)`. Integration against it recovers
+this iterated integral. The factor measures need not be regular, and no countability or
+s-finiteness assumption is made. Equality with a product of measurable spaces is not imposed.
 -/
 
 @[expose] public section
@@ -45,7 +41,9 @@ namespace CompactlySupportedContinuousMap
 variable {X : Type uX} [TopologicalSpace X]
 variable {Y : Type uY} [TopologicalSpace Y] [T2Space Y]
 
-/-- The literal section of a compact-support function in the second coordinate. -/
+/-- **Second-coordinate section of a compact-support real function.** Let `X` be topological,
+`Y` Hausdorff and `f∈C_c(X×Y,ℝ)`. For `x∈X`, `sectionRight f x∈C_c(Y,ℝ)` has value `y ↦
+f(x,y)`. No measure or local compactness is required. -/
 def sectionRight (f : C_c(X × Y, ℝ)) (x : X) : C_c(Y, ℝ) where
   toFun y := f (x, y)
   continuous_toFun := f.continuous.comp (continuous_const.prodMk continuous_id)
@@ -55,7 +53,8 @@ def sectionRight (f : C_c(X × Y, ℝ)) (x : X) : C_c(Y, ℝ) where
     exact image_eq_zero_of_notMem_tsupport
       (fun hxy => hy ⟨(x, y), hxy, rfl⟩)
 
-/-- A section retains its exact original pointwise values. -/
+/-- **Value of a compact-support section.** Let `X` be topological, `Y` Hausdorff,
+`f∈C_c(X×Y,ℝ)` and `x∈X`, `y∈Y`. Then `sectionRight f x y=f(x,y)`. -/
 @[simp]
 theorem sectionRight_apply (f : C_c(X × Y, ℝ)) (x : X) (y : Y) :
     sectionRight f x y = f (x, y) := rfl
@@ -63,7 +62,11 @@ theorem sectionRight_apply (f : C_c(X × Y, ℝ)) (x : X) (y : Y) :
 variable [T2Space X] [MeasurableSpace Y] [OpensMeasurableSpace Y]
 variable (ν : Measure Y) [IsFiniteMeasureOnCompacts ν]
 
-/-- Integrate the second coordinate, retaining the actual compact-support function. -/
+/-- **Compact-support function obtained by second-coordinate integration.** Let `X` be
+Hausdorff, `Y` a topological space with a measurable structure making open sets
+measurable, and `ν` finite on compact sets. for `f∈C_c(X×Y,ℝ)`, `integralRight ν
+f∈C_c(X,ℝ)` has value `x ↦ ∫ y, f(x,y) dν`. Hausdorffness of `Y` is not required for this
+value construction. -/
 def integralRight (f : C_c(X × Y, ℝ)) : C_c(X, ℝ) where
   toFun x := ∫ y : Y, f (x, y) ∂ν
   continuous_toFun := by
@@ -89,12 +92,17 @@ def integralRight (f : C_c(X × Y, ℝ)) : C_c(X, ℝ) where
     simp only [hzero, integral_zero]
 
 omit [T2Space Y] in
-/-- Coordinate integration has the original integral as every pointwise value. -/
+/-- **Pointwise value of a coordinate integral.** Let `X` be Hausdorff, `Y` a topological
+space with a measurable structure making open sets measurable, and `ν` finite on compact
+sets. for `f∈C_c(X×Y,ℝ)` and `x∈X`, `integralRight ν f x=∫ y, f(x,y) dν`. -/
 @[simp]
 theorem integralRight_apply (f : C_c(X × Y, ℝ)) (x : X) :
     integralRight ν f x = ∫ y : Y, f (x, y) ∂ν := rfl
 
-/-- Coordinate integration is an actual positive linear map on compact-support functions. -/
+/-- **Positive linear second-coordinate integral map.** Let `X` be Hausdorff, `Y` a
+topological space with a measurable structure making open sets measurable, and `ν` finite
+on compact sets. Assume also that `Y` is Hausdorff. `integralRightPositiveLinearMap ν`
+sends `f∈C_c(X×Y,ℝ)` to `integralRight ν f`, preserving addition, real scalars and order. -/
 def integralRightPositiveLinearMap : C_c(X × Y, ℝ) →ₚ[ℝ] C_c(X, ℝ) where
   toFun := integralRight ν
   map_add' f g := by
@@ -111,7 +119,10 @@ def integralRightPositiveLinearMap : C_c(X × Y, ℝ) →ₚ[ℝ] C_c(X, ℝ) wh
     exact integral_mono (sectionRight f x).integrable (sectionRight g x).integrable
       (fun y => hfg (x, y))
 
-/-- The positive coordinate map is the computed coordinate integral. -/
+/-- **Function value of the positive coordinate integral map.** Let `X` be Hausdorff, `Y` a
+topological space with a measurable structure making open sets measurable, and `ν` finite
+on compact sets. Assume `Y` is Hausdorff. for `f∈C_c(X×Y,ℝ)`,
+`integralRightPositiveLinearMap ν f=integralRight ν f`. -/
 @[simp]
 theorem integralRightPositiveLinearMap_apply (f : C_c(X × Y, ℝ)) :
     integralRightPositiveLinearMap ν f = integralRight ν f := rfl
@@ -127,22 +138,33 @@ variable {Y : Type uY} [TopologicalSpace Y] [T2Space Y] [LocallyCompactSpace Y]
 variable (μ : Measure X) (ν : Measure Y)
   [IsFiniteMeasureOnCompacts μ] [IsFiniteMeasureOnCompacts ν]
 
-/-- The Borel measurable space of the topological product used by the actual Radon product. -/
+/-- **Borel measurable structure of a topological product.** For topological spaces `X,Y`, use
+`borel(X×Y)` from the product topology as the measurable structure on `X×Y`. -/
 local instance instProductBorelMeasurableSpace : MeasurableSpace (X × Y) := borel (X × Y)
 local instance instProductBorelSpace : BorelSpace (X × Y) := ⟨rfl⟩
 
-/-- The actual Radon product, on the Borel sigma-algebra of the topological product. -/
+/-- **Regular Riesz measure of the iterated compact-support integral.** Let `X,Y` be locally
+compact Hausdorff spaces with their Borel measurable structures, and `μ,ν` measures finite
+on compact sets. Write `μ⊗_Rν=radonProd μ ν` on the Borel topological product `X×Y`.
+`radonProd μ ν` is the regular measure representing `f ↦ ∫ x, ∫ y, f(x,y) dν dμ` on
+`C_c(X×Y,ℝ)`. -/
 def radonProd : @Measure (X × Y) (borel (X × Y)) :=
   RealRMK.rieszMeasure
     ((CompactlySupportedContinuousMap.integralPositiveLinearMap μ).comp
       (CompactlySupportedContinuousMap.integralRightPositiveLinearMap ν))
 
-/-- The constructed product is an actual regular measure. -/
+/-- **Regularity of the Borel Radon product.** Let `X,Y` be locally compact Hausdorff spaces
+with their Borel measurable structures, and `μ,ν` measures finite on compact sets. Write
+`μ⊗_Rν=radonProd μ ν` on the Borel topological product `X×Y`. the measure `μ⊗_Rν` is
+regular, even without regularity assumptions on the factor measures. -/
 instance regular_radonProd : (radonProd μ ν).Regular := by
   unfold radonProd
   infer_instance
 
-/-- Compact-support integration against the product is the literal iterated integral. -/
+/-- **Defining iterated integral of the Borel Radon product.** Let `X,Y` be locally compact
+Hausdorff spaces with their Borel measurable structures, and `μ,ν` measures finite on
+compact sets. Write `μ⊗_Rν=radonProd μ ν` on the Borel topological product `X×Y`. for
+`f∈C_c(X×Y,ℝ)`, `∫ f d(μ⊗_Rν)=∫ x, ∫ y, f(x,y) dν dμ`. -/
 theorem integral_radonProd (f : C_c(X × Y, ℝ)) :
     ∫ z : X × Y, f z ∂(radonProd μ ν) =
       ∫ x : X, ∫ y : Y, f (x, y) ∂ν ∂μ :=

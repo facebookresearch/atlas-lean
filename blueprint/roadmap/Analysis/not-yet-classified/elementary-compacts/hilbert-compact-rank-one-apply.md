@@ -1,3 +1,4 @@
-# Hilbert Compact Rank One apply
+# Action of a compact rank-one operator
 
-The original compact rank-one subtype has its literal full-H vector action.
+`(hilbertCompactRankOne H ξ η) ζ = inner ℂ η ζ •
+ξ`.

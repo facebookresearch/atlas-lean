@@ -1,15 +1,15 @@
-# Pencil Rank
+# Rank increments from uniform matrix chains
 
-## Matrix
+## Polynomial chains for matrix pencils
 
-- [Pencil Chain Polynomial](pencil-chain-polynomial.md)
-- [Pencil Chain Polynomial spec](pencil-chain-polynomial-spec.md)
-- [Pencil Chain Polynomial eval spec](pencil-chain-polynomial-eval-spec.md)
+- [The polynomial vector of a uniform chain](pencil-chain-polynomial.md)
+- [The uniform-chain polynomial identity](pencil-chain-polynomial-spec.md)
+- [Specialization of the uniform-chain polynomial](pencil-chain-polynomial-eval-spec.md)
 
-## Polynomial
+## Degrees of determinant polynomials
 
-- [Nat Degree det X add C le of last column zero](nat-degree-det-x-add-c-le-of-last-column.md)
+- [A determinant degree bound with one constant column](nat-degree-det-x-add-c-le-of-last-column.md)
 
-## Matrix
+## Rank drop from uniform pencil chains
 
-- [Exists rank lt add smul of uniform chain](exists-rank-lt-add-smul-of-uniform-chain.md)
+- [A higher-rank pencil at a prescribed scalar](exists-rank-lt-add-smul-of-uniform-chain.md)

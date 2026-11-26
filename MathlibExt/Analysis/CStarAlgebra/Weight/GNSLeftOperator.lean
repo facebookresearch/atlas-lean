@@ -15,18 +15,15 @@ public import MathlibExt.Analysis.CStarAlgebra.Weight.GNSCompletion
 public import Mathlib.Topology.Algebra.LinearMapCompletion
 
 /-!
-# The original bounded left operator on the actual weight GNS carrier
+# Bounded left multiplication on the weight Hilbert space
 
-The literal finite-square left action is transported to the computed
-weight pre-GNS norm. The original positive-square weight estimate gives
-its genuine norm bound; this constructs the continuous linear left map.
-The stock completion of that map acts on the actual weight GNS carrier
-and preserves the original dense-domain multiplication values.
+For a nonunital complex C-star algebra and extended positive weight `φ`, left multiplication by
+`a` preserves `n_φ = {x : φ(x* x) < ∞}`. In the weight seminorm `‖x‖_φ=√((φ(x* x)).toReal)`, it
+obeys `‖a*x‖_φ ≤ ‖a‖ ‖x‖_φ`.
 
-No supplied norm/model certificate or source existence output is used.
-This module constructs bounded operators only. The kernel adjoint identity,
-star representation, faithful normal range and Tomita/modular/polar objects
-remain separate constructor obligations.
+This gives a bounded complex-linear operator on the seminormed domain and its extension `π(a)`
+to the Hilbert completion. For the dense GNS map `Λ`, `π(a)Λ(x)=Λ(a*x)`. No faithfulness,
+ambient-domain density or boundedness of the weight is assumed.
 -/
 
 @[expose] public section
@@ -42,19 +39,31 @@ universe u
 
 variable {A : Type u} [NonUnitalCStarAlgebra A]
 
-/-- Transport the literal original left action through the exact finite-square type-copy identity. -/
+/-- **Linear left action on the weight type copy.** Let `A` be a nonunital complex C-star algebra
+with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal` for `x ∈
+n_φ`. let `e : PreGNS φ ≃ₗ[ℂ] n_φ` be `preGNSLinearEquiv φ`. The linear operator is `L_a=e⁻¹ ∘
+(x ↦ a*x) ∘ e` for `a : A`. -/
 def Weight.preGNSLeftMulLinear (φ : Weight A) (a : A) : φ.PreGNS →ₗ[ℂ] φ.PreGNS :=
   φ.preGNSLinearEquiv.symm.toLinearMap.comp
     ((φ.finiteSquareLeftMul a).comp φ.preGNSLinearEquiv.toLinearMap)
 
-/-- The transported linear action retains the original finite-square left multiplication. -/
+/-- **Left multiplication under the domain identification.** Let `A` be a nonunital complex C-star
+algebra with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous
+weight vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal`
+for `x ∈ n_φ`. for `e=preGNSLinearEquiv φ`, `e(preGNSLeftMulLinear φ a x)=a*e(x)` as an
+element of `n_φ`, where `a*e(x)` denotes multiplication in `A`. -/
 theorem Weight.preGNSLeftMulLinear_apply (φ : Weight A) (a : A) (x : φ.PreGNS) :
     φ.preGNSLinearEquiv (φ.preGNSLeftMulLinear a x) = φ.finiteSquareLeftMul a (φ.preGNSLinearEquiv x) := by
   change φ.preGNSLinearEquiv
     (φ.preGNSLinearEquiv.symm (φ.finiteSquareLeftMul a (φ.preGNSLinearEquiv x))) = _
   exact φ.preGNSLinearEquiv.apply_symm_apply _
 
-/-- The original positive-square weight inequality gives the actual pre-GNS norm bound. -/
+/-- **Weight seminorm bound for left multiplication.** Let `A` be a nonunital complex C-star
+algebra with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous
+weight vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal`
+for `x ∈ n_φ`. for `a : A` and `x : PreGNS φ`, `‖preGNSLeftMulLinear φ a x‖_φ ≤ ‖a‖*‖x‖_φ`;
+the coefficient norm is the C-star norm of `A`. -/
 theorem Weight.preGNSLeftMulLinear_norm_le (φ : Weight A) (a : A) (x : φ.PreGNS) :
     ‖φ.preGNSLeftMulLinear a x‖ ≤ ‖a‖ * ‖x‖ := by
   let y : φ.finiteSquareSubmodule := φ.preGNSLinearEquiv x
@@ -73,32 +82,57 @@ theorem Weight.preGNSLeftMulLinear_norm_le (φ : Weight A) (a : A) (x : φ.PreGN
     ‖a‖ ^ 2 * (φ.value (leftSquare (y : A))).toReal
   exact hreal
 
-/-- The genuine weight-norm bound constructs the original continuous linear left map. -/
+/-- **Bounded pre-GNS left operator.** Let `A` be a nonunital complex C-star algebra with its
+spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight vanishing
+at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal` for `x ∈ n_φ`.
+`preGNSLeftMul φ a` is the continuous complex-linear map `x ↦ a*x` in the weight-seminormed
+type copy, with bound `‖L_a x‖_φ ≤ ‖a‖*‖x‖_φ`. -/
 def Weight.preGNSLeftMul (φ : Weight A) (a : A) : φ.PreGNS →L[ℂ] φ.PreGNS :=
   (φ.preGNSLeftMulLinear a).mkContinuous ‖a‖ (φ.preGNSLeftMulLinear_norm_le a)
 
-/-- The bounded pre-GNS operator is the same actual transported linear map. -/
+/-- **Value of the bounded pre-GNS left operator.** Let `A` be a nonunital complex C-star algebra
+with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal` for `x ∈
+n_φ`. `preGNSLeftMul φ a x = preGNSLeftMulLinear φ a x` for `a : A` and `x : PreGNS φ`. -/
 theorem Weight.preGNSLeftMul_apply (φ : Weight A) (a : A) (x : φ.PreGNS) :
     φ.preGNSLeftMul a x = φ.preGNSLeftMulLinear a x :=
   rfl
 
-/-- Forgetting the weight type copy gives exactly the original ambient left product. -/
+/-- **Algebra value of pre-GNS left multiplication.** Let `A` be a nonunital complex C-star
+algebra with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous
+weight vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal`
+for `x ∈ n_φ`. if `e=preGNSLinearEquiv φ`, then the element of `A` underlying `e(preGNSLeftMul
+φ a x)` is `a * (e(x) : A)` for `a : A` and `x : PreGNS φ`. -/
 theorem Weight.preGNSLeftMul_originalValue (φ : Weight A) (a : A) (x : φ.PreGNS) :
     (φ.preGNSLinearEquiv (φ.preGNSLeftMul a x) : A) = a * (φ.preGNSLinearEquiv x : A) := by
   rw [φ.preGNSLeftMul_apply, φ.preGNSLeftMulLinear_apply, φ.finiteSquareLeftMul_apply]
 
-/-- The original bounded left action extends to the literal completed weight GNS carrier. -/
+/-- **Completed GNS left operator.** Let `A` be a nonunital complex C-star algebra with its
+spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight vanishing
+at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal` for `x ∈ n_φ`. Let
+`H_φ` be the Hilbert completion for the seminorm `√q(x)`, with dense complex-linear map `Λ :
+n_φ → H_φ`. `gnsLeftMul φ a : H_φ →L[ℂ] H_φ` is the completion of the bounded pre-GNS operator
+`L_a`, so `π(a)Λ(x)=Λ(a*x)`. -/
 def Weight.gnsLeftMul (φ : Weight A) (a : A) : φ.GNS →L[ℂ] φ.GNS :=
   (φ.preGNSLeftMul a).completion
 
-/-- The completed left operator preserves the actual canonical dense-domain values. -/
+/-- **Completed left action on pre-GNS vectors.** Let `A` be a nonunital complex C-star algebra
+with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal` for `x ∈
+n_φ`. Let `H_φ` be the Hilbert completion for the seminorm `√q(x)`, with dense complex-linear
+map `Λ : n_φ → H_φ`. for `a : A` and `x : PreGNS φ`, `gnsLeftMul φ a (toGNS φ x)=toGNS φ
+(preGNSLeftMul φ a x)`. -/
 theorem Weight.gnsLeftMul_toGNS (φ : Weight A) (a : A) (x : φ.PreGNS) :
     φ.gnsLeftMul a (φ.toGNS x) = φ.toGNS (φ.preGNSLeftMul a x) := by
   change (φ.preGNSLeftMul a).completion (x : UniformSpace.Completion φ.PreGNS) =
     (φ.preGNSLeftMul a x : UniformSpace.Completion φ.PreGNS)
   exact ContinuousLinearMap.completion_apply_coe _ _
 
-/-- The completed original-domain left action has exactly the original finite-square product. -/
+/-- **Completed action on finite square elements.** Let `A` be a nonunital complex C-star algebra
+with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal` for `x ∈
+n_φ`. Let `H_φ` be the Hilbert completion for the seminorm `√q(x)`, with dense complex-linear
+map `Λ : n_φ → H_φ`. for `a : A` and `x ∈ n_φ`, `gnsLeftMul φ a (Λ x)=Λ(a*x)`. -/
 theorem Weight.gnsLeftMul_gnsMap (φ : Weight A) (a : A) (x : φ.finiteSquareSubmodule) :
     φ.gnsLeftMul a (φ.gnsMap x) = φ.gnsMap (φ.finiteSquareLeftMul a x) := by
   rw [φ.gnsMap_apply, φ.gnsLeftMul_toGNS, φ.gnsMap_apply]

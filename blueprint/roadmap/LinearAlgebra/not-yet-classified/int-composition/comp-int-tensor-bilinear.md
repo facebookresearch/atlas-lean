@@ -1,4 +1,4 @@
-# Comp Int Tensor Bilinear
+# Curried integer-bilinear composite through a tensor
 
-Compose actual additive tensor and coefficient maps, then curry the
-same function over the supplied integer module structures.
+Let A,B,C,D be additive commutative groups, g:A⊗_ℤB→C and f:C→D additive. The ℤ-bilinear map
+compIntTensorBilinear f g sends (x,y) to f(g(x⊗y)).

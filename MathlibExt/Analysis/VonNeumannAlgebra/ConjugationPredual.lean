@@ -16,18 +16,14 @@ public import Mathlib.Analysis.Normed.Operator.Mul
 public import Mathlib.Analysis.Normed.Operator.Bilinear
 
 /-!
-# The actual predual pullback of fixed star conjugation
+# Predual pullback and ultraweak continuity of star conjugation
 
-The stock bounded left/right multiplication map sends a to star x * a * x.
-Its functional pullback sends each original vector coefficient to the
-coefficient with both vectors multiplied by the same x. The actual closed
-normal-functional span is therefore invariant. Restricting the stock
-functional pullback constructs the continuous linear map on that predual.
+For a concrete von Neumann algebra `M` and fixed `x ∈ M`, the bounded linear conjugation map is
+`a ↦ x* a x`. Precomposition preserves the normal-functional Banach space `M_*` and gives the
+bounded map `ψ ↦ (a ↦ ψ(x* a x))` on `M_*`.
 
-This proves ultraweak continuity of the same literal conjugation map.
-It supplies the normal-conjugation prerequisite for the original bounded
-positive LUB/weight-normality construction. It does not identify positive
-LUBs with ultraweak limits or supply a normal weight/GNS representation.
+On vector functionals, both vectors are multiplied by `x`. Consequently the conjugation map on
+`M` is ultraweakly continuous. The coefficient `x` need not be unitary or invertible.
 -/
 
 @[expose] public section
@@ -45,7 +41,11 @@ universe u
 
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- Fixed literal star conjugation has its actual bounded pullback on the original normal predual. -/
+/-- **Predual pullback of a fixed star conjugation.** Let `H` be a complete complex Hilbert
+space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for its
+vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. for `x ∈ M`, `normalFunctionalConjugationPullback M x : M_* →L[ℂ] M_*` sends `ψ` to
+the functional `a ↦ ψ(x* a x)`. -/
 def normalFunctionalConjugationPullback (M : VonNeumannAlgebra H) (x : M) :
     normalFunctionalSpace M →L[ℂ] normalFunctionalSpace M := by
   let C : M →L[ℂ] M := ContinuousLinearMap.mulLeftRight ℂ M (star x) x
@@ -75,14 +75,23 @@ def normalFunctionalConjugationPullback (M : VonNeumannAlgebra H) (x : M) :
   let T := B.comp (normalFunctionalSpace M).subtypeL
   exact T.codRestrict (normalFunctionalSpace M) fun ψ => hle ψ.property
 
-/-- The constructed predual map has exactly the original star-conjugation functional values. -/
+/-- **Value of the star-conjugation predual pullback.** Let `H` be a complete complex Hilbert
+space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for its
+vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. for `x,a ∈ M` and `ψ ∈ M_*`, `(normalFunctionalConjugationPullback M x ψ)(a)=ψ(x* a
+x)`. -/
 theorem normalFunctionalConjugationPullback_apply (M : VonNeumannAlgebra H) (x : M)
     (ψ : normalFunctionalSpace M) (a : M) :
     (normalFunctionalConjugationPullback M x ψ : StrongDual ℂ M) a =
       (ψ : StrongDual ℂ M) (star x * a * x) :=
   rfl
 
-/-- The same literal fixed star conjugation is continuous for the actual ultraweak topology. -/
+/-- **Ultraweak continuity of fixed star conjugation.** Let `H` be a complete complex Hilbert
+space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for its
+vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. Equip `M` with the ultraweak topology `σ(M,M_*)`, induced by `x ↦ φ(x)` for `φ ∈
+M_*`. for any fixed `x ∈ M`, the map `a ↦ x* a x` is ultraweakly continuous on `M`,
+without unitarity or invertibility of `x`. -/
 theorem ultraweak_starConjugation_continuous (M : VonNeumannAlgebra H) (x : M) :
     Continuous (fun a : Ultraweak M =>
       (ultraweakLinearEquiv M).symm (star x * ultraweakLinearEquiv M a * x)) := by

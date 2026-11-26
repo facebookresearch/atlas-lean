@@ -1,5 +1,5 @@
-# Length coker upper block of injective
+# Cokernel length of an upper block map
 
-A genuine upper block map has the sum of its diagonal cokernel
-lengths when its lower diagonal map is injective. The full quotient modules
-and arbitrary off-diagonal map are retained; no finite length is assumed.
+Let R be a ring, M,N R-modules, f:M→M, r:N→M and injective g:N→N linear. The map
+T(x,y)=(f(x)+r(y),g(y)) has ℓ_R(coker T)=ℓ_R(coker f)+ℓ_R(coker g), with no finite-length
+hypothesis.

@@ -16,18 +16,18 @@ public import MathlibExt.Analysis.CStarAlgebra.CrossedProduct.HaarTwistedCore.Co
 public import Mathlib.MeasureTheory.Integral.Bochner.Set
 
 /-!
-# Actual coefficient nondegeneracy on the same-seminorm completion
+# Nondegeneracy of completed coefficient multipliers
 
-The original coefficient approximate-unit filter acts uniformly on the
-compact coefficient range of each actual Haar-core function. Its literal
-finite-on-compacts integral bound gives convergence in the original L1
-gauge, and then in every admissible seminorm completion. These actual
-coefficient images belong to the literal coefficient range span. The
-proved dense core gives density of that span on the same completed carrier.
-
-The computed strict multiplier pair therefore receives its actual
-coefficient-nondegeneracy field. No approximate-unit, norm, density,
-faithful embedding or desired pair is supplied as an output model.
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p
+on Carrier μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for
+its dense core map. Assume p(k)≤q(k)=∫ s, ‖k(s)‖ ∂μ for every compactly supported continuous
+core coefficient k. Write j_p(a)=coefficientMultiplierHom μ α p a and
+u_p(g)=groupUnitaryMultiplierHom μ α p g for the coefficient and group multipliers on Xp.
+Their dense left actions are ιp(f)↦ιp(s↦a*f(s)) and ιp(f)↦ιp(s↦α_g(f(g⁻¹*s))). Along the
+canonical approximate-unit filter of A, j_p(a).fst(ιp(f)) tends to ιp(f) for each core
+coefficient f. The complex span of {j_p(a).fst(x):a∈A,x∈Xp} is dense in Xp, so the canonical
+strictly continuous covariant multiplier pair is nondegenerate.
 -/
 
 @[expose] public section
@@ -51,7 +51,13 @@ section OriginalL1
 
 variable (μ : Measure G) [IsFiniteMeasureOnCompacts μ] (α : PointNormCStarAction G A)
 
-/-- A uniform original coefficient error on its compact support bounds its literal L1 integral. -/
+/-- **Uniform coefficient error bounds its L¹ integral.**
+
+Let G be a group with a Borel topology, μ a measure finite on compact sets, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For f∈Carrier μ α, a∈A and δ≥0,
+assume ‖a*f(s)-f(s)‖≤δ for every s in K=tsupport(f). Then ∫ s, ‖a*f(s)-f(s)‖ ∂μ≤μ.real(K)δ,
+where μ.real(K) is the finite real measure of K.
+-/
 theorem l1Gauge_coefficientLeft_sub_le (a : A) (f : Carrier μ α) (δ : ℝ) (hδ : 0 ≤ δ)
     (hBound : ∀ s ∈ tsupport (toCc μ α f), ‖a * f s - f s‖ ≤ δ) :
     l1Gauge μ α (coefficientLeft μ α a f - f) ≤ μ.real (tsupport (toCc μ α f)) * δ := by
@@ -79,7 +85,13 @@ theorem l1Gauge_coefficientLeft_sub_le (a : A) (f : Carrier μ α) (δ : ℝ) (h
       integral_mono hInt.integrableOn (integrableOn_const F.hasCompactSupport.measure_ne_top) hAll
     _ = μ.real K * δ := by rw [setIntegral_const, smul_eq_mul]
 
-/-- The computed original coefficient approximate unit converges in the literal Haar-core L1 gauge. -/
+/-- **Coefficient approximate units converge in L¹.**
+
+Let G be a group with a Borel topology, μ a measure finite on compact sets, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For f∈Carrier μ α, ∫ s,
+‖a*f(s)-f(s)‖ ∂μ tends to 0 along the canonical approximate-unit filter
+CStarAlgebra.canonicalApproximateUnit A.
+-/
 theorem tendsto_l1Gauge_coefficientLeft_sub (f : Carrier μ α) :
     Tendsto (fun a : A => l1Gauge μ α (coefficientLeft μ α a f - f))
       (CStarAlgebra.canonicalApproximateUnit A) (𝓝 0) := by
@@ -116,13 +128,31 @@ attribute [local instance] CStarSeminorm.nonUnitalCompletionCStarAlgebra
 
 variable (p : CStarSeminorm (Carrier μ α))
 
-/-- The literal complex span of the computed coefficient multiplier ranges on the actual completion. -/
+/-- **Span of coefficient multiplier ranges.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p
+on Carrier μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for
+its dense core map. Write j_p(a)=coefficientMultiplierHom μ α p a and
+u_p(g)=groupUnitaryMultiplierHom μ α p g for the coefficient and group multipliers on Xp.
+Their dense left actions are ιp(f)↦ιp(s↦a*f(s)) and ιp(f)↦ιp(s↦α_g(f(g⁻¹*s))). The submodule
+coefficientMultiplierSpan μ α p is span_ℂ{j_p(a).fst(x):a∈A,x∈Xp}.
+-/
 def coefficientMultiplierSpan : Submodule ℂ p.NonUnitalCompletion :=
   Submodule.span ℂ (Set.range fun z : A × p.NonUnitalCompletion =>
     (coefficientMultiplierHom μ α p z.1).fst z.2)
 
 omit [μ.Regular] in
-/-- Each actual completed coefficient value belongs to its original coefficient range span. -/
+/-- **Coefficient action values belong to their range span.**
+
+Let G be a locally compact Borel topological group with left Haar measure μ, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p on Carrier
+μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for its dense
+core map. Write j_p(a)=coefficientMultiplierHom μ α p a and u_p(g)=groupUnitaryMultiplierHom μ
+α p g for the coefficient and group multipliers on Xp. Their dense left actions are
+ιp(f)↦ιp(s↦a*f(s)) and ιp(f)↦ιp(s↦α_g(f(g⁻¹*s))). For a∈A and x∈Xp, j_p(a).fst(x) belongs to
+coefficientMultiplierSpan μ α p=span_ℂ{j_p(b).fst(y):b∈A,y∈Xp}.
+-/
 theorem coefficientMultiplier_fst_mem_span (a : A) (x : p.NonUnitalCompletion) :
     (coefficientMultiplierHom μ α p a).fst x ∈ coefficientMultiplierSpan μ α p :=
   Submodule.subset_span ⟨(a, x), rfl⟩
@@ -131,7 +161,15 @@ variable (hp : p ∈ admissibleCStarSeminorms μ α)
 include hp
 
 omit [μ.Regular] in
-/-- The computed coefficient approximate unit tends to the original source image in every admissible p. -/
+/-- **Approximate units converge on dense completed coefficients.**
+
+Let G be a locally compact Borel topological group with left Haar measure μ, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p on Carrier
+μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for its dense
+core map. Assume p(k)≤q(k)=∫ s, ‖k(s)‖ ∂μ for every compactly supported continuous core
+coefficient k. For f∈Carrier μ α, ιp(s↦a*f(s)) tends to ιp(f) along
+CStarAlgebra.canonicalApproximateUnit A.
+-/
 theorem tendsto_toNonUnitalCompletion_coefficientLeft (f : Carrier μ α) :
     Tendsto (fun a : A => p.toNonUnitalCompletion (coefficientLeft μ α a f))
       (CStarAlgebra.canonicalApproximateUnit A) (𝓝 (p.toNonUnitalCompletion f)) := by
@@ -145,7 +183,17 @@ theorem tendsto_toNonUnitalCompletion_coefficientLeft (f : Carrier μ α) :
   exact hBound.trans_lt ha
 
 omit [μ.Regular] in
-/-- Every original core image lies in the closure of the actual coefficient multiplier range span. -/
+/-- **Dense coefficients lie in the closure of multiplier ranges.**
+
+Let G be a locally compact Borel topological group with left Haar measure μ, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p on Carrier
+μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for its dense
+core map. Assume p(k)≤q(k)=∫ s, ‖k(s)‖ ∂μ for every compactly supported continuous core
+coefficient k. Write j_p(a)=coefficientMultiplierHom μ α p a and
+u_p(g)=groupUnitaryMultiplierHom μ α p g for the coefficient and group multipliers on Xp.
+Their dense left actions are ιp(f)↦ιp(s↦a*f(s)) and ιp(f)↦ιp(s↦α_g(f(g⁻¹*s))). For every
+f∈Carrier μ α, ιp(f) belongs to the closure of span_ℂ{j_p(a).fst(x):a∈A,x∈Xp}.
+-/
 theorem toNonUnitalCompletion_mem_coefficientMultiplierSpan_closure (f : Carrier μ α) :
     p.toNonUnitalCompletion f ∈ (coefficientMultiplierSpan μ α p).topologicalClosure := by
   let _ : (CStarAlgebra.canonicalApproximateUnit A).NeBot :=
@@ -158,7 +206,17 @@ theorem toNonUnitalCompletion_mem_coefficientMultiplierSpan_closure (f : Carrier
       coefficientMultiplier_fst_mem_span μ α p a (p.toNonUnitalCompletion f)
 
 omit [μ.Regular] in
-/-- The computed coefficient multiplier is nondegenerate on the same actual admissible completion. -/
+/-- **Density of the coefficient multiplier range span.**
+
+Let G be a locally compact Borel topological group with left Haar measure μ, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p on Carrier
+μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for its dense
+core map. Assume p(k)≤q(k)=∫ s, ‖k(s)‖ ∂μ for every compactly supported continuous core
+coefficient k. Write j_p(a)=coefficientMultiplierHom μ α p a and
+u_p(g)=groupUnitaryMultiplierHom μ α p g for the coefficient and group multipliers on Xp.
+Their dense left actions are ιp(f)↦ιp(s↦a*f(s)) and ιp(f)↦ιp(s↦α_g(f(g⁻¹*s))). The subspace
+coefficientMultiplierSpan μ α p=span_ℂ{j_p(a).fst(x):a∈A,x∈Xp} is dense in Xp.
+-/
 theorem dense_coefficientMultiplierSpan :
     Dense (coefficientMultiplierSpan μ α p : Set p.NonUnitalCompletion) := by
   apply Submodule.dense_iff_topologicalClosure_eq_top.mpr
@@ -169,7 +227,20 @@ theorem dense_coefficientMultiplierSpan :
   · intro f
     exact toNonUnitalCompletion_mem_coefficientMultiplierSpan_closure μ α p hp f
 
-/-- The original computed strict pair with its internally proved actual coefficient nondegeneracy. -/
+/-- **Nondegenerate strictly continuous covariant multiplier pair.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p
+on Carrier μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for
+its dense core map. Assume p(k)≤q(k)=∫ s, ‖k(s)‖ ∂μ for every compactly supported continuous
+core coefficient k. Write j_p(a)=coefficientMultiplierHom μ α p a and
+u_p(g)=groupUnitaryMultiplierHom μ α p g for the coefficient and group multipliers on Xp.
+Their dense left actions are ιp(f)↦ιp(s↦a*f(s)) and ιp(f)↦ιp(s↦α_g(f(g⁻¹*s))). The pair
+canonicalNondegenerateStrictMultiplierPair μ α p hp satisfies
+u_p(g)*j_p(a)*star(u_p(g))=j_p(α_g(a)), the group map is strictly continuous, and
+span_ℂ{j_p(a).fst(x):a∈A,x∈Xp} is dense. Strict continuity means norm continuity of both
+components on each x∈Xp.
+-/
 def canonicalNondegenerateStrictMultiplierPair :
     { pair : (A →⋆ₙₐ[ℂ] 𝓜(ℂ, p.NonUnitalCompletion)) ×
         (G →* unitary 𝓜(ℂ, p.NonUnitalCompletion)) //
@@ -185,26 +256,70 @@ def canonicalNondegenerateStrictMultiplierPair :
       change Dense (coefficientMultiplierSpan μ α p : Set p.NonUnitalCompletion)
       exact dense_coefficientMultiplierSpan μ α p hp⟩
 
-/-- The nondegenerate pair keeps the exact original coefficient and group multiplier maps. -/
+/-- **Underlying maps of the nondegenerate strict pair.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p
+on Carrier μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for
+its dense core map. Assume p(k)≤q(k)=∫ s, ‖k(s)‖ ∂μ for every compactly supported continuous
+core coefficient k. Write j_p(a)=coefficientMultiplierHom μ α p a and
+u_p(g)=groupUnitaryMultiplierHom μ α p g for the coefficient and group multipliers on Xp.
+Their dense left actions are ιp(f)↦ιp(s↦a*f(s)) and ιp(f)↦ιp(s↦α_g(f(g⁻¹*s))). The pair
+canonicalNondegenerateStrictMultiplierPair μ α p hp has the same coefficient and group maps as
+canonicalStrictMultiplierPair μ α p hp.
+-/
 @[simp]
 theorem canonicalNondegenerateStrictMultiplierPair_val :
     (canonicalNondegenerateStrictMultiplierPair μ α p hp).val =
       (canonicalStrictMultiplierPair μ α p hp).val := rfl
 
-/-- The actual pair carries the proved density of the original coefficient ranges. -/
+/-- **Nondegeneracy of the canonical strict multiplier pair.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p
+on Carrier μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for
+its dense core map. Assume p(k)≤q(k)=∫ s, ‖k(s)‖ ∂μ for every compactly supported continuous
+core coefficient k. Write j_p(a)=coefficientMultiplierHom μ α p a and
+u_p(g)=groupUnitaryMultiplierHom μ α p g for the coefficient and group multipliers on Xp.
+Their dense left actions are ιp(f)↦ιp(s↦a*f(s)) and ιp(f)↦ιp(s↦α_g(f(g⁻¹*s))). For j_p in
+canonicalNondegenerateStrictMultiplierPair μ α p hp, span_ℂ{j_p(a).fst(x):a∈A,x∈Xp} is dense
+in Xp.
+-/
 theorem canonicalNondegenerateStrictMultiplierPair_nondegenerate :
     Dense ((Submodule.span ℂ (Set.range fun z : A × p.NonUnitalCompletion =>
       ((canonicalNondegenerateStrictMultiplierPair μ α p hp).val.1 z.1).fst z.2)) :
         Set p.NonUnitalCompletion) :=
   (canonicalNondegenerateStrictMultiplierPair μ α p hp).property.2.2
 
-/-- The actual nondegenerate pair retains the original strict group continuity. -/
+/-- **Strict continuity of the nondegenerate group multiplier pair.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p
+on Carrier μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for
+its dense core map. Assume p(k)≤q(k)=∫ s, ‖k(s)‖ ∂μ for every compactly supported continuous
+core coefficient k. Write j_p(a)=coefficientMultiplierHom μ α p a and
+u_p(g)=groupUnitaryMultiplierHom μ α p g for the coefficient and group multipliers on Xp.
+Their dense left actions are ιp(f)↦ιp(s↦a*f(s)) and ιp(f)↦ιp(s↦α_g(f(g⁻¹*s))). For u_p in
+canonicalNondegenerateStrictMultiplierPair μ α p hp, both g↦u_p(g).fst(x) and g↦u_p(g).snd(x)
+are norm-continuous for every x∈Xp.
+-/
 theorem canonicalNondegenerateStrictMultiplierPair_strictContinuous :
     DoubleCentralizer.StrictContinuous (fun g : G =>
       ((canonicalNondegenerateStrictMultiplierPair μ α p hp).val.2 g : 𝓜(ℂ, p.NonUnitalCompletion))) :=
   (canonicalNondegenerateStrictMultiplierPair μ α p hp).property.2.1
 
-/-- The actual nondegenerate pair retains the original conjugation covariance. -/
+/-- **Covariance of the nondegenerate strict multiplier pair.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p
+on Carrier μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for
+its dense core map. Assume p(k)≤q(k)=∫ s, ‖k(s)‖ ∂μ for every compactly supported continuous
+core coefficient k. Write j_p(a)=coefficientMultiplierHom μ α p a and
+u_p(g)=groupUnitaryMultiplierHom μ α p g for the coefficient and group multipliers on Xp.
+Their dense left actions are ιp(f)↦ιp(s↦a*f(s)) and ιp(f)↦ιp(s↦α_g(f(g⁻¹*s))). The maps
+j_p,u_p in canonicalNondegenerateStrictMultiplierPair μ α p hp satisfy
+u_p(g)*j_p(a)*star(u_p(g))=j_p(α_g(a)) for g∈G and a∈A.
+-/
 theorem canonicalNondegenerateStrictMultiplierPair_covariance (g : G) (a : A) :
     ((canonicalNondegenerateStrictMultiplierPair μ α p hp).val.2 g : 𝓜(ℂ, p.NonUnitalCompletion)) *
         (canonicalNondegenerateStrictMultiplierPair μ α p hp).val.1 a *

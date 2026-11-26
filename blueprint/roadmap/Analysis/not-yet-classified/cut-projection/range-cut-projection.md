@@ -1,3 +1,4 @@
-# Range cut Projection
+# Range of a coordinate cut
 
-The actual range is exactly the closure of the selected coordinate span.
+`Set.range (cutProjection s)` equals the norm closure of
+`coordinateSpan s`.

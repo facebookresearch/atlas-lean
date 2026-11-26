@@ -17,14 +17,14 @@ public import Mathlib.Analysis.CStarAlgebra.Projection
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 /-!
-# Actual bounded positive finite cutoffs of the maximal local projection family
+# Finite projection cutoffs of a maximal local family
 
-Each cutoff is the literal sum of a finite set of members of the original
-constructed maximal family. Its star-projection law gives positivity and
-bounds it by the original identity. The original C-star norm gives norm≤1.
-Finite unions and positivity make the actual range directed; the empty
-finite set supplies nonemptiness. No cutoff family, positivity, norm bound,
-supremum, projection limit or normal member certificate is an input.
+For a positive bounded functional `ψ`, let `S` be the constructed maximal orthogonal family of
+locally vector-dominated projections. For finite `t⊆S`, its cutoff is `P_t=Σ_p∈t p`.
+
+Each cutoff is a positive star projection with `P_t≤I` and `‖P_t‖≤1`. Inclusion of finite
+subsets makes `P_t` monotone, and the cutoff range is directed and nonempty, containing `P_∅=0`.
+No nonempty-family assumption is required.
 -/
 
 @[expose] public section
@@ -43,7 +43,14 @@ universe u
 
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- Construct the actual positive finite-sum cutoffs and all prerequisites of their bounded supremum. -/
+/-- **Positive finite cutoffs with projection and order bounds.** Let `H` be a complete
+complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Let `ψ : M → ℂ` be a
+positive bounded complex-linear functional for the spectral orders. Let `S` be the
+constructed maximal set of pairwise orthogonal nonzero star projections, each admitting a
+vector `ξ` with `Re ψ(b)≤Re ⟨ξ,bξ⟩` for `0≤b≤p`. For finite `t ⊆ S`, put `P_t=Σ_p∈t p`.
+`maximalLocalPositiveFiniteCutoffs M ψ` returns `t ↦ P_t`, each a star projection
+satisfying `0≤P_t≤I`, `‖P_t‖≤1`; the map is monotone and its range is nonempty and
+directed. -/
 def maximalLocalPositiveFiniteCutoffs (M : VonNeumannAlgebra H) :
     letI : PartialOrder M := CStarAlgebra.spectralOrder M
     letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ
@@ -102,7 +109,12 @@ def maximalLocalPositiveFiniteCutoffs (M : VonNeumannAlgebra H) :
     · exact hmono Finset.subset_union_left
     · exact hmono Finset.subset_union_right
 
-/-- Every actual cutoff is the literal finite sum of its original family members. -/
+/-- **Finite sum formula for a maximal-family cutoff.** Let `H` be a complete complex Hilbert
+space and `M ⊆ B(H)` a concrete von Neumann algebra. Let `ψ : M → ℂ` be a positive bounded
+complex-linear functional for the spectral orders. Let `S` be the constructed maximal set
+of pairwise orthogonal nonzero star projections, each admitting a vector `ξ` with `Re
+ψ(b)≤Re ⟨ξ,bξ⟩` for `0≤b≤p`. For finite `t ⊆ S`, put `P_t=Σ_p∈t p`. for finite `t⊆S`, the
+element of `M` underlying its cutoff is `P_t=Σ_p∈t p`. -/
 theorem maximalLocalPositiveFiniteCutoffs_value (M : VonNeumannAlgebra H) :
     letI : PartialOrder M := CStarAlgebra.spectralOrder M
     letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ
@@ -114,7 +126,12 @@ theorem maximalLocalPositiveFiniteCutoffs_value (M : VonNeumannAlgebra H) :
   intro ψ t
   exact (maximalLocalPositiveFiniteCutoffs M ψ).property.1 t
 
-/-- Each constructed finite cutoff is a star projection. -/
+/-- **Star projection property of each finite cutoff.** Let `H` be a complete complex Hilbert
+space and `M ⊆ B(H)` a concrete von Neumann algebra. Let `ψ : M → ℂ` be a positive bounded
+complex-linear functional for the spectral orders. Let `S` be the constructed maximal set
+of pairwise orthogonal nonzero star projections, each admitting a vector `ξ` with `Re
+ψ(b)≤Re ⟨ξ,bξ⟩` for `0≤b≤p`. For finite `t ⊆ S`, put `P_t=Σ_p∈t p`. for every finite
+`t⊆S`, `P_t²=P_t` and `P_t*=P_t`. -/
 theorem maximalLocalPositiveFiniteCutoffs_isStarProjection (M : VonNeumannAlgebra H) :
     letI : PartialOrder M := CStarAlgebra.spectralOrder M
     letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ
@@ -126,7 +143,12 @@ theorem maximalLocalPositiveFiniteCutoffs_isStarProjection (M : VonNeumannAlgebr
   intro ψ t
   exact (maximalLocalPositiveFiniteCutoffs M ψ).property.2.1 t
 
-/-- Every actual finite cutoff is bounded above by the identity in the spectral order. -/
+/-- **Finite cutoff bounded by the identity.** Let `H` be a complete complex Hilbert space and
+`M ⊆ B(H)` a concrete von Neumann algebra. Let `ψ : M → ℂ` be a positive bounded
+complex-linear functional for the spectral orders. Let `S` be the constructed maximal set
+of pairwise orthogonal nonzero star projections, each admitting a vector `ξ` with `Re
+ψ(b)≤Re ⟨ξ,bξ⟩` for `0≤b≤p`. For finite `t ⊆ S`, put `P_t=Σ_p∈t p`. for every finite
+`t⊆S`, `P_t≤I_M` in the spectral order. -/
 theorem maximalLocalPositiveFiniteCutoffs_le_one (M : VonNeumannAlgebra H) :
     letI : PartialOrder M := CStarAlgebra.spectralOrder M
     letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ
@@ -139,7 +161,12 @@ theorem maximalLocalPositiveFiniteCutoffs_le_one (M : VonNeumannAlgebra H) :
   intro ψ t
   exact (maximalLocalPositiveFiniteCutoffs M ψ).property.2.2.1 t
 
-/-- Every actual finite cutoff has norm at most one. -/
+/-- **Operator-norm bound of a finite cutoff.** Let `H` be a complete complex Hilbert space
+and `M ⊆ B(H)` a concrete von Neumann algebra. Let `ψ : M → ℂ` be a positive bounded
+complex-linear functional for the spectral orders. Let `S` be the constructed maximal set
+of pairwise orthogonal nonzero star projections, each admitting a vector `ξ` with `Re
+ψ(b)≤Re ⟨ξ,bξ⟩` for `0≤b≤p`. For finite `t ⊆ S`, put `P_t=Σ_p∈t p`. for every finite
+`t⊆S`, `‖P_t‖≤1`, including the zero cutoff and zero algebra. -/
 theorem maximalLocalPositiveFiniteCutoffs_norm_le_one (M : VonNeumannAlgebra H) :
     letI : PartialOrder M := CStarAlgebra.spectralOrder M
     letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ
@@ -151,7 +178,12 @@ theorem maximalLocalPositiveFiniteCutoffs_norm_le_one (M : VonNeumannAlgebra H) 
   intro ψ t
   exact (maximalLocalPositiveFiniteCutoffs M ψ).property.2.2.2.1 t
 
-/-- The actual cutoff values are monotone in their finite index sets. -/
+/-- **Monotonicity of finite cutoff projections.** Let `H` be a complete complex Hilbert space
+and `M ⊆ B(H)` a concrete von Neumann algebra. Let `ψ : M → ℂ` be a positive bounded
+complex-linear functional for the spectral orders. Let `S` be the constructed maximal set
+of pairwise orthogonal nonzero star projections, each admitting a vector `ξ` with `Re
+ψ(b)≤Re ⟨ξ,bξ⟩` for `0≤b≤p`. For finite `t ⊆ S`, put `P_t=Σ_p∈t p`. if finite subsets
+satisfy `t⊆u⊆S`, then `P_t≤P_u`. -/
 theorem maximalLocalPositiveFiniteCutoffs_monotone (M : VonNeumannAlgebra H) :
     letI : PartialOrder M := CStarAlgebra.spectralOrder M
     letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ
@@ -164,7 +196,12 @@ theorem maximalLocalPositiveFiniteCutoffs_monotone (M : VonNeumannAlgebra H) :
   intro ψ
   exact (maximalLocalPositiveFiniteCutoffs M ψ).property.2.2.2.2.1
 
-/-- The range of actual cutoffs is nonempty, including the empty finite cutoff. -/
+/-- **Nonempty finite-cutoff range including the empty cutoff.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Let `ψ : M → ℂ` be a positive
+bounded complex-linear functional for the spectral orders. Let `S` be the constructed
+maximal set of pairwise orthogonal nonzero star projections, each admitting a vector `ξ`
+with `Re ψ(b)≤Re ⟨ξ,bξ⟩` for `0≤b≤p`. For finite `t ⊆ S`, put `P_t=Σ_p∈t p`. the cutoff
+range `{P_t : t finite in S}` is nonempty, since it contains `P_∅=0`. -/
 theorem maximalLocalPositiveFiniteCutoffs_range_nonempty (M : VonNeumannAlgebra H) :
     letI : PartialOrder M := CStarAlgebra.spectralOrder M
     letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ
@@ -175,7 +212,12 @@ theorem maximalLocalPositiveFiniteCutoffs_range_nonempty (M : VonNeumannAlgebra 
   intro ψ
   exact (maximalLocalPositiveFiniteCutoffs M ψ).property.2.2.2.2.2.1
 
-/-- The actual positive cutoff range is directed in the original spectral order. -/
+/-- **Directed order of the finite-cutoff range.** Let `H` be a complete complex Hilbert space
+and `M ⊆ B(H)` a concrete von Neumann algebra. Let `ψ : M → ℂ` be a positive bounded
+complex-linear functional for the spectral orders. Let `S` be the constructed maximal set
+of pairwise orthogonal nonzero star projections, each admitting a vector `ξ` with `Re
+ψ(b)≤Re ⟨ξ,bξ⟩` for `0≤b≤p`. For finite `t ⊆ S`, put `P_t=Σ_p∈t p`. the positive cutoff
+range is directed in the spectral order; `P_(t∪u)` is an upper bound for `P_t,P_u`. -/
 theorem maximalLocalPositiveFiniteCutoffs_directedOn (M : VonNeumannAlgebra H) :
     letI : PartialOrder M := CStarAlgebra.spectralOrder M
     letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ

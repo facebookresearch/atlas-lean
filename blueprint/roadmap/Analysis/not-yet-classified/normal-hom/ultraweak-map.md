@@ -1,3 +1,8 @@
-# Ultraweak Map
+# Continuous linear normal map between ultraweak algebras
 
-The same original map, continuously bundled between the actual ultraweak views.
+Let `M,N` be concrete von
+Neumann algebras on complete complex Hilbert spaces. Their normal-functional Banach spaces
+`M_*,N_*` are the norm-closed spans of vector functionals, and their ultraweak topologies
+are `σ(M,M_*)`, `σ(N,N_*)`. Let `f : M → N` be a unital complex star homomorphism that is
+ultraweakly continuous. `f.ultraweakMap : Ultraweak M →L[ℂ] Ultraweak N` is `x ↦ f(x)`
+with source and target ultraweak topologies.

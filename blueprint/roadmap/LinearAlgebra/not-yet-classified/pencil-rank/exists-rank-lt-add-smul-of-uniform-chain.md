@@ -1,4 +1,5 @@
-# Exists rank lt add smul of uniform chain
+# A higher-rank pencil at a prescribed scalar
 
-A uniform actual chain escaping `range A` forces a rank increment at a scalar in the
-prescribed distinct grid. The grid cardinality exceeds the original matrix dimension.
+Let K be a field, N finite, A,C ∈ Mat(N,N;K), and v₀,…,vₖ ∈ K^N with Av₀ = 0 and Avᵢ₊₁ = Cvᵢ
+for i < k. Suppose Cvₖ ∉ im A. For any finite set S ⊆ K with |S| > |N|, there exists t ∈ S
+such that rank A < rank(A+tC).

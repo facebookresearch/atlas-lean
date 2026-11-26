@@ -1,4 +1,5 @@
-# Is Left Generating Tuple iff is Right Generating Tuple
+# Left and right generating equations agree in a commutative semiring
 
-Over a commutative semiring the left and right generator predicates
-coincide.
+Let R be a semiring, I a finite index type and a:I→R. The tuple is left-generating when
+∃c:I→R, ∑i c_i*a_i=1, and right-generating when ∃c:I→R, ∑i a_i*c_i=1. If R is commutative,
+IsLeftGeneratingTuple a↔IsRightGeneratingTuple a.

@@ -1,4 +1,4 @@
-# Completion Adjoint
+# Adjoints of completed Hilbert tensor maps
 
-- [Adjoint map LCompletion](adjoint-map-lcompletion.md)
-- [Star map LCompletion](star-map-lcompletion.md)
+- [Adjoint of a completed tensor operator](adjoint-map-lcompletion.md)
+- [Operator star of a completed tensor endomorphism](star-map-lcompletion.md)

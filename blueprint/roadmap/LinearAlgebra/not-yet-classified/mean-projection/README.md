@@ -1,4 +1,4 @@
-# Mean Projection
+# Orthogonal removal of the vertex mean
 
-- [Mean Projection](mean-projection.md)
-- [Mean Projection energy](mean-projection-energy.md)
+- [Projection onto the zero-sum real subspace](mean-projection.md)
+- [Mean removal preserves energy when constants are annihilated](mean-projection-energy.md)

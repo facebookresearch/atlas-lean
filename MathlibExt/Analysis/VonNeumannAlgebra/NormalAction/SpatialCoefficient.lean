@@ -16,13 +16,14 @@ public import MathlibExt.MeasureTheory.Function.L2Space.TensorMap
 public import MathlibExt.Analysis.VonNeumannAlgebra.NormalAction.TensorCoefficient
 
 /-!
-# The original coefficient's actual spatial ambient range
+# Spatial ambient algebra of regular tensor coefficients
 
-The original tensor coefficient commutes with every constant operator from
-the original source commutant. The full-right commutant extraction and the
-actual bicommutant identity put it in M tensor B(L2). Its subtype star map
-retains the same operator values. The stronger Connes M tensor LInfinity
-coefficient target is a separate unfinished source clause.
+For the regular coefficient `Q_x=U⁻¹P_xU` on `T=Completion(H ⊗[ℂ] Lp ℂ 2 μ)`, the operator
+belongs to the spatial von Neumann algebra `M ⊗̄ B(Lp ℂ 2 μ)`.
+
+Restricting to this codomain gives the unital complex star homomorphism `x ↦ Q_x`. The measure
+is regular; Haar invariance is not required. No smaller multiplication-algebra codomain is
+asserted here.
 -/
 
 @[expose] public section
@@ -45,7 +46,17 @@ variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [Complet
 variable {M : VonNeumannAlgebra H}
 variable (μ : Measure G) [μ.Regular]
 
-/-- The original tensor coefficient belongs to the actual source spatial ambient algebra. -/
+/-- **Tensor coefficient belongs to the full-right spatial ambient.** Let `G` be a group with
+a topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann algebra,
+and `α` a normal action with norm-continuous inverse predual orbits. Assume `G` is a
+topological group. Assume `G` is locally compact with its Borel measurable structure, and
+`μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ =ᵐ[μ] (s ↦ α_(s⁻¹)(x)ξ(s))`. Haar
+invariance is not assumed. Let `T=Completion(H ⊗[ℂ] Lp ℂ 2 μ)` and `U : T ≃ₗᵢ[ℂ] L` be
+`tensorToLpRight μ`, with `U(ξ⊗f) =ᵐ[μ] (s ↦ f(s) • ξ)`. Set `Q_x=U⁻¹ P_x U`. for `x∈M`,
+`Q_x∈spatialTensorProduct M B(Lp ℂ 2 μ)`.
+
+Here `=ᵐ[μ]` denotes equality of measurable representatives μ-almost everywhere, not point
+evaluation of an L² class. Operator identities are equalities of bounded operators. -/
 theorem regularCoefficientTensor_mem_spatialTensorProduct
     (α : NormalAction G M) (x : M) :
     regularCoefficientTensor μ α x ∈ spatialTensorProduct M (⊤ : VonNeumannAlgebra (Lp ℂ 2 μ)) := by
@@ -86,7 +97,18 @@ theorem regularCoefficientTensor_mem_spatialTensorProduct
   rw [hAB]
   exact hcomm B hB
 
-/-- The original coefficient star homomorphism restricted to its proved spatial codomain. -/
+/-- **Regular coefficient star map into its spatial codomain.** Let `G` be a group with a
+topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann algebra,
+and `α` a normal action with norm-continuous inverse predual orbits. Assume `G` is a
+topological group. Assume `G` is locally compact with its Borel measurable structure, and
+`μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ =ᵐ[μ] (s ↦ α_(s⁻¹)(x)ξ(s))`. Haar
+invariance is not assumed. Let `T=Completion(H ⊗[ℂ] Lp ℂ 2 μ)` and `U : T ≃ₗᵢ[ℂ] L` be
+`tensorToLpRight μ`, with `U(ξ⊗f) =ᵐ[μ] (s ↦ f(s) • ξ)`. Set `Q_x=U⁻¹ P_x U`.
+`regularCoefficientSpatialHom μ α : M →⋆ₐ[ℂ] (M ⊗̄ B(Lp ℂ 2 μ))` sends `x` to the element
+represented by `Q_x`.
+
+Here `=ᵐ[μ]` denotes equality of measurable representatives μ-almost everywhere, not point
+evaluation of an L² class. Operator identities are equalities of bounded operators. -/
 def regularCoefficientSpatialHom (α : NormalAction G M) :
     M →⋆ₐ[ℂ] spatialTensorProduct M (⊤ : VonNeumannAlgebra (Lp ℂ 2 μ)) where
   toFun x := ⟨regularCoefficientTensor μ α x, regularCoefficientTensor_mem_spatialTensorProduct μ α x⟩

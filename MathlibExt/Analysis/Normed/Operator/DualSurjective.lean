@@ -14,14 +14,14 @@ module
 public import MathlibExt.Analysis.Normed.Operator.DualApproximatePreimage
 
 /-!
-# Actual exact Banach preimages from the original dual norm lower bound
+# Exact Banach preimages from a dual lower bound
 
-The proved controlled approximation is iterated on the original residual.
-Its errors decrease geometrically, while its actual preimages form a
-summable series in the original complete source. The series sum maps to
-the original target and has the proved norm bound. No exact preimage,
-surjectivity, quotient, closed range or model certificate is an input.
-This constructs the preimage prerequisite for the actual predual quotient.
+Let `E` be a complete complex normed space, `F` a complex normed space and `B : E →L[ℂ] F`. If
+`‖G‖≤‖G∘B‖` for every continuous functional `G ∈ F*`, then every `y ∈ F` has a preimage `x ∈ E`
+with `Bx=y` and `‖x‖≤5‖y‖`.
+
+Thus `B` is surjective. Completeness of `F` is not required, and the zero target and zero vector
+cases are included.
 -/
 
 @[expose] public section
@@ -41,7 +41,10 @@ universe u v
 variable {E : Type u} [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
 variable {F : Type v} [NormedAddCommGroup F] [NormedSpace ℂ F]
 
-/-- An original dual norm lower bound constructs exact preimages with a proved Banach norm bound. -/
+/-- **Exact preimage with a Banach norm bound.** Let `E` be a complete complex normed space,
+`F` a complex normed space and `B : E →L[ℂ] F` satisfy `‖G‖≤‖G∘B‖` for every `G ∈ F*`. For
+each `y ∈ F` there exists `x ∈ E` with `Bx=y` and `‖x‖≤5‖y‖`. The target may be
+incomplete. -/
 theorem exists_preimage_norm_le_of_dual_lower_bound (B : E →L[ℂ] F)
     (hdual : ∀ G : StrongDual ℂ F, ‖G‖ ≤ ‖G.comp B‖) (y : F) :
     ∃ x : E, B x = y ∧ ‖x‖ ≤ 5 * ‖y‖ := by
@@ -102,7 +105,10 @@ theorem exists_preimage_norm_le_of_dual_lower_bound (B : E →L[ℂ] F)
     at himageLimit
   exact ⟨x, tendsto_nhds_unique himageLimit htarget, hnorm⟩
 
-/-- The same original bounded map is surjective, with no quotient or closed-range premise. -/
+/-- **Surjectivity from a lower bound on the dual map.** Let `E` be a complete complex normed
+space, `F` a complex normed space and `B : E →L[ℂ] F`. If `‖G‖≤‖G∘B‖` for every continuous
+complex-linear functional `G ∈ F*`, then `B` is surjective; no completeness of `F` is
+assumed. -/
 theorem surjective_of_dual_lower_bound (B : E →L[ℂ] F)
     (hdual : ∀ G : StrongDual ℂ F, ‖G‖ ≤ ‖G.comp B‖) : Function.Surjective B := by
   intro y

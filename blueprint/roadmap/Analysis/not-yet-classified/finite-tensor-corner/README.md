@@ -1,8 +1,8 @@
-# Finite Tensor Corner
+# Finite-frame compression of compact tensors
 
-- [Tensor Frame Matrix Linear](tensor-frame-matrix-linear.md)
-- [Tensor Frame Matrix Linear apply](tensor-frame-matrix-linear-apply.md)
-- [Finite Tensor Corner](finite-tensor-corner.md)
-- [Finite Tensor Corner apply](finite-tensor-corner-apply.md)
-- [Finite Tensor Corner eq finite Matrix Tensor Hom](finite-tensor-corner-eq-finite-matrix-te.md)
-- [Finite Tensor Corner tmul](finite-tensor-corner-tmul.md)
+- [Matrix entries of an algebraic compact tensor](tensor-frame-matrix-linear.md)
+- [Entry formula for the frame matrix](tensor-frame-matrix-linear-apply.md)
+- [Finite-frame tensor corner](finite-tensor-corner.md)
+- [Formula for the tensor corner](finite-tensor-corner-apply.md)
+- [Factorization through an orthonormal matrix frame](finite-tensor-corner-eq-finite-matrix-te.md)
+- [Finite corner of a pure compact tensor](finite-tensor-corner-tmul.md)

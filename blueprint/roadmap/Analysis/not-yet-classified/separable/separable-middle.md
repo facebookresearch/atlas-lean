@@ -1,4 +1,4 @@
-# Separable middle
+# Separability of an extension algebra
 
-In a genuine normalized extension, separable endpoints imply that its
-actual middle algebra is separable. There is no section hypothesis.
+For a C-star extension `0 → B → X.Middle → A → 0`,
+separability of the nonunital endpoint algebras `A,B` implies `SeparableSpace X.Middle`.

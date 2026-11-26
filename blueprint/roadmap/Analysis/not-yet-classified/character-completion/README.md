@@ -1,8 +1,8 @@
-# Character Completion
+# Character automorphisms of the full crossed-product completion
 
-- [Completed Character Hom](completed-character-hom.md)
-- [Completed Character Hom apply](completed-character-hom-apply.md)
-- [Completed Character Hom one](completed-character-hom-one.md)
-- [Completed Character Hom mul](completed-character-hom-mul.md)
-- [Completed Character Equiv](completed-character-equiv.md)
-- [Completed Character Equiv apply](completed-character-equiv-apply.md)
+- [Completed character endomorphism](completed-character-hom.md)
+- [Character action on dense completed coefficients](completed-character-hom-apply.md)
+- [Trivial character on the full completion](completed-character-hom-one.md)
+- [Composition of completed character maps](completed-character-hom-mul.md)
+- [Completed unitary-character automorphism](completed-character-equiv.md)
+- [Character automorphism on the dense full core](completed-character-equiv-apply.md)

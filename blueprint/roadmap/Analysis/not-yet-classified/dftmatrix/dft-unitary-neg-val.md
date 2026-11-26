@@ -1,4 +1,4 @@
-# Dft Unitary Neg val
+# Underlying matrix of the negative Fourier unitary
 
-The negative-sign DFT unitary has the original negative-sign Fourier matrix as its underlying
-matrix.
+For `d>0`, the matrix underlying
+`dftUnitaryNeg d` is `dftMatrix d (-1)`.

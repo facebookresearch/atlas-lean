@@ -1,5 +1,5 @@
-# Is Full Hereditary Subalgebra
+# Full hereditary C-star subalgebra
 
-A star subalgebra is full hereditary when it is closed, hereditary in the
-shared canonical-order sense, and contained in no proper closed two-sided
-ideal.
+For `S : NonUnitalStarSubalgebra ℂ B`, this predicate
+requires norm-closedness, heredity, and `I = B` for every closed two-sided star ideal `I`
+containing `S`.

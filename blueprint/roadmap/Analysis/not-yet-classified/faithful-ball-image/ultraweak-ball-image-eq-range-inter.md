@@ -1,3 +1,8 @@
-# Ultraweak ball image eq range inter
+# Source norm-ball image equals the bounded range intersection
 
-The actual source ball image is exactly its original range intersected with the target norm ball.
+Let `M,N` be concrete
+von Neumann algebras on complete complex Hilbert spaces. Their normal-functional Banach
+spaces `M_*,N_*` are the norm-closed spans of vector functionals, and their ultraweak
+topologies are `σ(M,M_*)`, `σ(N,N_*)`. Let `f : M → N` be a unital complex star
+homomorphism that is ultraweakly continuous. Assume `f` is injective. for every `r : ℝ`,
+`f({x ∈ M : ‖x‖≤r})=range(f)∩{y ∈ N : ‖y‖≤r}`, as subsets of ultraweak `N`.

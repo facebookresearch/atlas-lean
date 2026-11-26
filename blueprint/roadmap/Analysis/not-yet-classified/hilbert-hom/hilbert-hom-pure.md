@@ -1,3 +1,4 @@
-# Hilbert Hom pure
+# Hilbert representation on pure vectors
 
-The actual Hilbert factor has the original first-factor pure value.
+`hilbertHom H A T (pure H A ξ b) = pure H A (T ξ)
+b`.

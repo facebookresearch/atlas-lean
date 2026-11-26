@@ -1,4 +1,5 @@
-# Right Matrix Compact Hom
+# Compact finite-matrix representation
 
-The actual finite matrix column hom with codomain restricted to the
-existing module-compact endomorphisms, including empty finite indices.
+For a nonunital complex C-star algebra `B` and
+finite index type `I`, the nonunital star homomorphism `M_I(B) → K_B(FiniteStandard B I)` is
+the column action `(M x)_i = ∑ j, M_ij*x_j`.

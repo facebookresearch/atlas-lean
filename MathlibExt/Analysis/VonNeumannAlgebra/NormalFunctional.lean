@@ -16,16 +16,14 @@ public import MathlibExt.Analysis.CStarAlgebra.RepresentationCoefficient
 public import Mathlib.Topology.Algebra.Module.Basic
 
 /-!
-# The actual closed space of normal functionals
+# The Banach space spanned by normal vector functionals
 
-For a concrete von Neumann algebra on an arbitrary complete complex Hilbert
-space, take the norm-closed complex linear span of its actual vector
-functionals in the original continuous dual. Evaluation, norm and linear
-operations are inherited from that dual. Completeness follows from the
-closed-subspace construction.
+Let `M ⊆ B(H)` be a concrete von Neumann algebra on a complete complex Hilbert space. The vector
+functional is `ω_(ξ,η)(x)=⟨ξ,xη⟩`, with `‖ω_(ξ,η)‖≤‖ξ‖‖η‖` in the continuous-dual operator norm.
 
-This supplies the explicit normal-functional carrier for the predual
-convention in Connes V Appendix A and Takesaki Definition 3.1.
+The normal-functional space `M_*` is the norm closure of the complex span of all such vector
+functionals in `M*`. It is a closed complex subspace and hence a Banach space. Any norm-closed
+complex subspace containing the vector functionals also contains `M_*`.
 -/
 
 @[expose] public section
@@ -43,7 +41,10 @@ universe u
 
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- The original operator norm bounds each actual vector coefficient. -/
+/-- **Coefficient bound for a concrete von Neumann operator.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for
+its vector functionals. for `ξ,η ∈ H` and `x ∈ M`, `|⟨ξ,xη⟩|≤‖ξ‖‖η‖‖x‖`, with the
+inherited operator norm on `M`. -/
 theorem vectorFunctional_bound (M : VonNeumannAlgebra H) (ξ η : H) (x : M) :
     ‖⟪ξ, (x : H →L[ℂ] H) η⟫_ℂ‖ ≤ (‖ξ‖ * ‖η‖) * ‖x‖ := by
   let φ : StrongDual ℂ M := representationCoefficient (A := M) M.toStarSubalgebra.subtype η ξ
@@ -59,12 +60,16 @@ theorem vectorFunctional_bound (M : VonNeumannAlgebra H) (ξ η : H) (x : M) :
     _ ≤ (‖ξ‖ * ‖η‖) * ‖x‖ :=
       mul_le_mul_of_nonneg_right hnorm (norm_nonneg x)
 
-/-- The concrete-algebra specialization of representation coefficients,
-with the original vector order and literal subtype representation. -/
+/-- **Vector functional on a concrete von Neumann algebra.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for
+its vector functionals. `vectorFunctional M ξ η : M →L[ℂ] ℂ` is `ω_(ξ,η)`, linear in the
+operator argument and using the inner product linear in its second vector argument. -/
 noncomputable def vectorFunctional (M : VonNeumannAlgebra H) (ξ η : H) : StrongDual ℂ M :=
   representationCoefficient (A := M) M.toStarSubalgebra.subtype η ξ
 
-/-- Evaluation of a vector functional is the original Hilbert coefficient. -/
+/-- **Value of a concrete vector functional.** Let `H` be a complete complex Hilbert space and
+`M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for its vector
+functionals. for `ξ,η ∈ H` and `x ∈ M`, `vectorFunctional M ξ η x=⟨ξ,(x : B(H))η⟩`. -/
 @[simp]
 theorem vectorFunctional_apply (M : VonNeumannAlgebra H) (ξ η : H) (x : M) :
     vectorFunctional M ξ η x = ⟪ξ, (x : H →L[ℂ] H) η⟫_ℂ := by
@@ -73,34 +78,52 @@ theorem vectorFunctional_apply (M : VonNeumannAlgebra H) (ξ η : H) (x : M) :
   rw [representationCoefficient_apply (A := M) M.toStarSubalgebra.subtype η ξ x]
   rfl
 
-/-- The dual norm of an actual vector functional is bounded by the two vector norms. -/
+/-- **Continuous-dual norm of a vector coefficient.** Let `H` be a complete complex Hilbert
+space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for its
+vector functionals. for `ξ,η ∈ H`, `‖vectorFunctional M ξ η‖≤‖ξ‖*‖η‖`. -/
 theorem norm_vectorFunctional_le (M : VonNeumannAlgebra H) (ξ η : H) :
     ‖vectorFunctional M ξ η‖ ≤ ‖ξ‖ * ‖η‖ := by
   simpa only [vectorFunctional, mul_comm] using
     norm_representationCoefficient_le (A := M) M.toStarSubalgebra.subtype η ξ
 
-/-- The norm-closed complex span of the actual vector functionals in the original dual. -/
+/-- **Norm-closed span of von Neumann vector functionals.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for
+its vector functionals. `normalFunctionalSpace M = closure(span ℂ {ω_(ξ,η) : ξ,η ∈ H})`
+inside the normed continuous dual `M*`. -/
 noncomputable def normalFunctionalSpace (M : VonNeumannAlgebra H) :
     Submodule ℂ (StrongDual ℂ M) :=
   (Submodule.span ℂ (Set.range fun p : H × H => vectorFunctional M p.1 p.2)).topologicalClosure
 
-/-- Every actual vector functional lies in the canonical closed span. -/
+/-- **Vector coefficient belongs to the normal-functional space.** Let `H` be a complete
+complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write
+`ω_(ξ,η)(x)=⟨ξ,xη⟩` for its vector functionals. Let `M_*` be their norm-closed complex
+span in the continuous dual `M*`. for every `ξ,η ∈ H`, `ω_(ξ,η)∈M_*`. -/
 theorem vectorFunctional_mem_normalFunctionalSpace (M : VonNeumannAlgebra H) (ξ η : H) :
     vectorFunctional M ξ η ∈ normalFunctionalSpace M :=
   (Submodule.le_topologicalClosure _)
     (Submodule.subset_span (Set.mem_range_self (ξ, η)))
 
-/-- The canonical normal functional space is closed for the original continuous-dual norm. -/
+/-- **Norm closedness of the normal-functional subspace.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for
+its vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. `M_*` is closed in `M*` for the continuous-dual operator norm. -/
 theorem normalFunctionalSpace_isClosed (M : VonNeumannAlgebra H) :
     IsClosed (normalFunctionalSpace M : Set (StrongDual ℂ M)) :=
   Submodule.isClosed_topologicalClosure _
 
-/-- The original dual norm makes the actual closed normal-functional carrier a Banach space. -/
+/-- **Completeness of the normal-functional Banach space.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for
+its vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. `M_*` is complete for its inherited continuous-dual norm. -/
 instance normalFunctionalSpace_completeSpace (M : VonNeumannAlgebra H) :
     CompleteSpace (normalFunctionalSpace M) :=
   (normalFunctionalSpace_isClosed M).isComplete.completeSpace_coe
 
-/-- Any closed complex subspace containing every vector functional contains their actual closed span. -/
+/-- **Least closed complex space containing the vector functionals.** Let `H` be a complete
+complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write
+`ω_(ξ,η)(x)=⟨ξ,xη⟩` for its vector functionals. Let `M_*` be their norm-closed complex
+span in the continuous dual `M*`. if `P` is a norm-closed complex subspace of `M*`
+containing every `ω_(ξ,η)`, then `M_*≤P`. -/
 theorem normalFunctionalSpace_le (M : VonNeumannAlgebra H)
     {P : Submodule ℂ (StrongDual ℂ M)} (hP : IsClosed (P : Set (StrongDual ℂ M)))
     (hvec : ∀ ξ η : H, vectorFunctional M ξ η ∈ P) : normalFunctionalSpace M ≤ P := by

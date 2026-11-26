@@ -15,10 +15,11 @@ public import MathlibExt.LinearAlgebra.Matrix.GeneralLinearGroup.Stabilization
 public import Mathlib.Data.Matrix.Basis
 
 /-!
-# Elementary matrices for `GL` over an arbitrary ring
+# Elementary transvections over arbitrary rings
 
-`elementary i j a` is `1 + single i j a` with `i ≠ j`; its inverse is
-`1 + single i j (-a)`. Works for noncommutative rings.
+Let R be a ring and n a finite index type. Write GL(n,R) for the group of invertible n×n
+matrices, and E_ij(a)=I+a*e_ij for i≠j, where e_ij is the single-entry matrix. The matrix
+E_ij(a) is invertible with inverse E_ij(-a). The ring need not be commutative.
 -/
 
 @[expose] public section
@@ -30,7 +31,12 @@ open Matrix
 variable {n : Type*} [DecidableEq n] [Fintype n]
 variable {R : Type*} [Ring R]
 
-/-- Elementary matrix `E_{ij}(a) = 1 + single i j a`, `i ≠ j`. -/
+/-- **Invertible elementary transvection matrix.**
+
+Let R be a ring and n a finite index type. Write GL(n,R) for the group of invertible n×n
+matrices, and E_ij(a)=I+a*e_ij for i≠j, where e_ij is the single-entry matrix. The element
+elementary i j hij a∈GL(n,R) is E_ij(a), with inverse I-a*e_ij.
+-/
 def elementary (i j : n) (hij : i ≠ j) (a : R) : GL n R where
   val := 1 + Matrix.single i j a
   inv := 1 + Matrix.single i j (-a)

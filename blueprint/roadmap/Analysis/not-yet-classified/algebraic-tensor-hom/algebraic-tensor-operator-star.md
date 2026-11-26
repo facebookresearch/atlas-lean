@@ -1,3 +1,4 @@
-# Algebraic Tensor Operator star
+# Star of a represented tensor
 
-The genuine factor adjoints preserve the original algebraic tensor involution.
+For a complex Hilbert space `H` and a nonunital C-star
+algebra `A`, `algebraicTensorOperator H A (star z) = star (algebraicTensorOperator H A z)`.

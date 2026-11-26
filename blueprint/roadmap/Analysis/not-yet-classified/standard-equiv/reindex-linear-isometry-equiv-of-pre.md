@@ -1,3 +1,4 @@
-# Reindex Linear Isometry Equiv of Pre
+# Completed reindexing on finite-support vectors
 
-Completed reindexing extends finite-support reindexing.
+`reindexLinearIsometryEquiv e (ofPre x) =
+ofPre (preReindexLinearEquiv e x)`.

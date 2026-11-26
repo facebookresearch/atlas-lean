@@ -1,3 +1,5 @@
-# Standard Coefficient Compact Hom apply
+# Vector action of the coefficient corner
 
-Every whole standard-vector action is the original single(0,b*coord(0,x)).
+For nonunital C-star `B`, `b : B` and `x :
+Standard B ℕ`, `β(b)x = Standard.single 0 (b * Standard.coord 0 x)`, where `β =
+standardCoefficientCompactHom B`.

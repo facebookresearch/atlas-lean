@@ -1,3 +1,5 @@
-# Injective algebraic Tensor Operator
+# Injective algebraic operator representation
 
-The original algebraic compact-action operator is injective on its actual raw tensor carrier.
+For a complex Hilbert space `H` and a
+nonunital C-star algebra `A`, the map `algebraicTensorOperator H A : A ⊗_ℂ K(H) → End_A(Space
+H A)` is injective.

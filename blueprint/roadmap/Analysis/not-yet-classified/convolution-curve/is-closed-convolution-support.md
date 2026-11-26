@@ -1,3 +1,5 @@
-# Is Closed convolution Support
+# Closedness of the convolution support
 
-The same product is closed without imposing separatedness on the original group.
+Let G be a topological group with a measurable structure, μ any measure on G, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For compactly supported continuous
+f,h:G→A, K=convolutionSupport μ α f h=tsupport(f)*tsupport(h) is closed.

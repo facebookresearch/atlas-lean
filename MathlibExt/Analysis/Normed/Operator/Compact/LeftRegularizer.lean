@@ -17,16 +17,14 @@ public import Mathlib.Analysis.Normed.Operator.Compact.Basic
 public import Mathlib.Topology.Order.IsLUB
 
 /-!
-# Injective operators with a compact left-parametrix error
+# Injective operators with compact left-parametrix error
 
-An injective continuous linear map with a continuous left regularizer modulo
-actual compact operators is a closed topological embedding. The scalar field
-and both normed spaces may be incomplete, and zero spaces are allowed.
+For normed spaces `E,F` over a nontrivially normed field, let `S : E → F` and `V : F → E` be
+bounded linear maps. If `S` is injective and `VS-I_E` is compact, then `S` has a positive lower
+bound `c‖x‖≤‖Sx‖` and is a closed topological embedding.
 
-The lower-bound argument uses the bounded-shell pattern from Mathlib's compact
-Fredholm alternative, but uses injectivity of the original map, not a
-non-eigenvalue or injectivity assumption on the composite. Both compactness
-arguments produce limits in the original domain rather than in a completion.
+Neither the scalar field nor either normed space needs completeness. The regularizer `V` need
+not be injective, and the zero-space cases are allowed.
 -/
 
 @[expose] public section
@@ -41,8 +39,10 @@ variable {𝕜 : Type u𝕜} [NontriviallyNormedField 𝕜]
 variable {E : Type uE} [NormedAddCommGroup E] [NormedSpace 𝕜 E]
 variable {F : Type uF} [NormedAddCommGroup F] [NormedSpace 𝕜 F]
 
-/-- An injective map with compact left-parametrix error has a positive norm
-lower bound, without a completeness or nontrivial-space assumption. -/
+/-- **Positive lower norm bound from a compact left error.** Let `𝕜` be a nontrivially normed
+field and `E,F` normed `𝕜`-spaces in independent universes; none is assumed complete. for
+bounded `S : E → F`, `V : F → E`, assume `S` is injective and `VS-I_E` is compact. Then
+there exists `c : ℝ` with `c>0` and `c‖x‖≤‖Sx‖` for every `x ∈ E`. -/
 private theorem exists_pos_mul_norm_le_of_injective_compact_left_parametrix
     (S : E →L[𝕜] F) (V : F →L[𝕜] E) (hS : Function.Injective S)
     (hCompact : IsCompactOperator (V.comp S - (1 : E →L[𝕜] E))) :
@@ -117,9 +117,10 @@ private theorem exists_pos_mul_norm_le_of_injective_compact_left_parametrix
     (hX0 a ha).mono fun n hn => (not_lt_of_ge (hx (ψ n)).2.1) hn
   simp only [Filter.eventually_const] at hBad
 
-/-- An injective continuous linear map with an actual compact left-parametrix
-error is a closed topological embedding. Neither ambient space nor the scalar
-field need be complete, and the left regularizer need not be injective. -/
+/-- **Closed embedding from an injective compact left parametrix.** Let `𝕜` be a nontrivially
+normed field and `E,F` normed `𝕜`-spaces in independent universes; none is assumed
+complete. if bounded `S : E → F` is injective and a bounded `V : F → E` has compact error
+`VS-I_E`, then `S` is a topological embedding with closed image. -/
 theorem isClosedEmbedding_of_injective_compact_left_parametrix
     (S : E →L[𝕜] F) (V : F →L[𝕜] E) (hS : Function.Injective S)
     (hCompact : IsCompactOperator (V.comp S - (1 : E →L[𝕜] E))) :

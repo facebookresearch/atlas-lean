@@ -1,4 +1,4 @@
-# Adjointable
+# Adjoint pairs on right scalar modules
 
 ## CStar Module
 
@@ -35,7 +35,7 @@
 - [Map right smul](map-right-smul.md)
 - [End](end.md)
 
-## Ordinary Hilbert-space adjoint pairs on the scalar-right model
+## Adjoint pairs on complex inner-product spaces
 
-- [Continuous Linear Map](continuous-linear-map.md)
-- [Of Ordinary Adjoint Pair](of-ordinary-adjoint-pair.md)
+- [Transport of a bounded complex-linear map](continuous-linear-map.md)
+- [Adjointable operator from an adjoint pair](of-ordinary-adjoint-pair.md)

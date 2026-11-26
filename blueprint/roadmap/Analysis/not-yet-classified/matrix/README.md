@@ -19,6 +19,6 @@
 
 ## Compactness of rectangular operator matrices
 
-- [To Pi Lp Matrix](to-pi-lp-matrix.md)
-- [Is Compact Operator to Pi Lp Continuous Linear Map iff](is-compact-operator-to-pi-lp-continuous.md)
-- [Is Compact Operator iff to Pi Lp Matrix](is-compact-operator-iff-to-pi-lp-matrix.md)
+- [Compact coordinate entry of a rectangular product operator](to-pi-lp-matrix.md)
+- [Compact finite matrix action exactly when all entries are compact](is-compact-operator-to-pi-lp-continuous.md)
+- [Compactness detected by finite rectangular entries](is-compact-operator-iff-to-pi-lp-matrix.md)

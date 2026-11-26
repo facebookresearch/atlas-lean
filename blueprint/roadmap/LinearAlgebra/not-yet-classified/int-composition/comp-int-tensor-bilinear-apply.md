@@ -1,4 +1,4 @@
-# Comp Int Tensor Bilinear apply
+# Value of the additive tensor composite
 
-The curried bilinear map evaluates the original two additive maps
-on the literal integer pure tensor.
+For additive commutative groups A,B,C,D, additive g:A⊗_ℤB→C and f:C→D, compIntTensorBilinear f
+g x y=f(g(x⊗_ℤy)).

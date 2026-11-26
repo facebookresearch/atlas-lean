@@ -18,11 +18,11 @@ public import Mathlib.RingTheory.TensorProduct.Maps
 public import Mathlib.RingTheory.TensorProduct.Pi
 
 /-!
-# Canonical finite-Galois self-tensor decomposition
+# Finite-Galois self-tensor decomposition
 
-For a finite Galois extension `L/F`, the canonical original tensor map
-`x ⊗ y ↦ (σ ↦ x * σ(y))` is an `L`-algebra equivalence.
-The generic construction and its proofs retain their existing public names.
+Let L/F be a finite Galois field extension. With the left L-algebra structure,
+Θ:L⊗_FL→L^(Aut_F L) sends x⊗y to (σ↦x*σ(y)). The map Θ is an L-algebra equivalence. Its
+inverse gives the product decomposition indexed by all F-automorphisms of L.
 -/
 
 @[expose] public section
@@ -39,8 +39,12 @@ namespace MilnorK
 
 variable (F L : Type u) [Field F] [Field L] [Algebra F L]
 
-/-- Canonical tensor coordinates: `x ⊗ y` has `σ`-coordinate
-`x * σ(y)`.  The tensor product uses its left `L`-algebra structure. -/
+/-- **Automorphism coordinates of a field self-tensor.**
+
+Let L/F be any extension of fields. With the left L-scalar action,
+finiteGaloisTensorToFunctions:L⊗_FL→L^(Aut_F L) is the algebra homomorphism x⊗y↦(σ↦xσ(y));
+finiteness and Galoisness are needed for its equivalence property.
+-/
 noncomputable def finiteGaloisTensorToFunctions :
     letI := Algebra.TensorProduct.leftAlgebra
       (R := F) (S := L) (A := L) (B := L)
@@ -58,13 +62,20 @@ theorem finiteGaloisTensorToFunctions_tmul (x y : L) :
   rw [finiteGaloisTensorToFunctions, Algebra.TensorProduct.lift_tmul]
   rfl
 
-/-- The `σ`-coordinate of the canonical self-tensor map, regarded as an
-`L`-linear functional. -/
+/-- **One automorphism coordinate as a tensor functional.**
+
+For a field extension L/F and σ∈Aut_F L, tensorCoordinateLinear σ:L⊗_FL→L is the L-linear
+functional x⊗y↦xσ(y).
+-/
 private noncomputable def tensorCoordinateLinear
     (σ : L ≃ₐ[F] L) : Module.Dual L (L ⊗[F] L) :=
   (LinearMap.proj σ).comp (finiteGaloisTensorToFunctions F L).toLinearMap
 
-/-- Restrict an `L`-linear tensor functional to `1 ⊗ L`. -/
+/-- **Restriction of a tensor functional to the right factor.**
+
+For a field extension L/F and an L-linear φ:L⊗_FL→L, tensorDualRestrictRight φ:L→L is F-linear
+with value y↦φ(1⊗y).
+-/
 private noncomputable def tensorDualRestrictRight :
     Module.Dual L (L ⊗[F] L) →ₗ[L] (L →ₗ[F] L) :=
   (LinearMap.applyₗ (1 : L)).comp
@@ -88,7 +99,12 @@ private theorem tensorCoordinateLinear_linearIndependent :
 
 variable [FiniteDimensional F L] [IsGalois F L]
 
-/-- The canonical finite-Galois tensor-coordinate map is injective. -/
+/-- **Injectivity of the finite-Galois coordinate map.**
+
+Let L/F be a finite Galois field extension. With the left L-algebra structure,
+Θ:L⊗_FL→L^(Aut_F L) sends x⊗y to (σ↦x*σ(y)). The map finiteGaloisTensorToFunctions F L is
+injective.
+-/
 theorem finiteGaloisTensorToFunctions_injective :
     Function.Injective (finiteGaloisTensorToFunctions F L) := by
   have hspan : Submodule.span L
@@ -121,7 +137,12 @@ theorem finiteGaloisTensorToFunctions_injective :
   · intro c f _ hf
     simp [hf]
 
-/-- The canonical finite-Galois tensor-coordinate map is surjective. -/
+/-- **Surjectivity of the finite-Galois coordinate map.**
+
+Let L/F be a finite Galois field extension. With the left L-algebra structure,
+Θ:L⊗_FL→L^(Aut_F L) sends x⊗y to (σ↦x*σ(y)). The map finiteGaloisTensorToFunctions F L is
+surjective.
+-/
 theorem finiteGaloisTensorToFunctions_surjective :
     Function.Surjective (finiteGaloisTensorToFunctions F L) := by
   apply (LinearMap.injective_iff_surjective_of_finrank_eq_finrank ?_).mp
@@ -131,14 +152,23 @@ theorem finiteGaloisTensorToFunctions_surjective :
   exact (IsGalois.card_aut_eq_finrank F L).symm.trans
     (Nat.card_eq_fintype_card (α := L ≃ₐ[F] L))
 
-/-- The canonical finite-Galois tensor-coordinate map is bijective. -/
+/-- **Bijectivity of the finite-Galois coordinate map.**
+
+Let L/F be a finite Galois field extension. With the left L-algebra structure,
+Θ:L⊗_FL→L^(Aut_F L) sends x⊗y to (σ↦x*σ(y)). The map finiteGaloisTensorToFunctions F L is
+bijective.
+-/
 theorem finiteGaloisTensorToFunctions_bijective :
     Function.Bijective (finiteGaloisTensorToFunctions F L) :=
   ⟨finiteGaloisTensorToFunctions_injective F L,
     finiteGaloisTensorToFunctions_surjective F L⟩
 
-/-- The finite-Galois self-tensor decomposition as an `L`-algebra
-equivalence. -/
+/-- **Algebra equivalence of a finite-Galois self-tensor.**
+
+Let L/F be a finite Galois field extension. With the left L-algebra structure,
+Θ:L⊗_FL→L^(Aut_F L) sends x⊗y to (σ↦x*σ(y)). The L-algebra equivalence
+finiteGaloisTensorProductEquiv F L is Θ.
+-/
 noncomputable def finiteGaloisTensorProductEquiv :
     letI := Algebra.TensorProduct.leftAlgebra
       (R := F) (S := L) (A := L) (B := L)

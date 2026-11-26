@@ -1,3 +1,4 @@
-# Compact Hilbert Hom pure
+# Compact Hilbert action on pure vectors
 
-The actual compact factor changes only the original Hilbert vector on pure tensors.
+For a compact `T`, `compactHilbertHom H A T (pure
+ξ b) = pure (T ξ) b`.

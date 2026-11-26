@@ -16,16 +16,14 @@ public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Basic
 public import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.Positive
 
 /-!
-# Actual positive normal functionals through positive continuous linear maps
+# Positive bounded normal functionals
 
-The index stores Mathlib's positive continuous linear map on the original
-concrete algebra, together with membership of that same bounded functional
-in the actual normal-functional space. The source and scalar orders are
-the canonical spectral orders. A lossless equivalence retains the complete
-original family of normal functionals with monotonicity.
+For a concrete von Neumann algebra `M`, a positive normal functional is a positive bounded
+complex-linear map `φ : M → ℂ` whose continuous functional belongs to `M_*`, the norm-closed
+span of vector functionals. Positivity and monotonicity use the canonical spectral orders.
 
-Evaluation and norm use the original continuous linear map. Positivity,
-linearity and continuity come from the existing positive-map bundle.
+The positive-map, bounded-functional and normal-space views have the same values and inherited
+dual norm. Positive normal functionals are equivalent to monotone members of `M_*`.
 -/
 
 @[expose] public section
@@ -41,7 +39,11 @@ universe u
 
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- An actual positive continuous linear map whose original bounded functional is normal. -/
+/-- **Positive continuous functional with normal membership.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for
+its vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. `PositiveNormalFunctional M` is the subtype of positive continuous complex-linear
+maps `φ : M → ℂ` with underlying functional in `M_*`. -/
 def PositiveNormalFunctional (M : VonNeumannAlgebra H) : Type u :=
   letI : PartialOrder M := CStarAlgebra.spectralOrder M
   letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ
@@ -51,7 +53,11 @@ namespace PositiveNormalFunctional
 
 variable {M : VonNeumannAlgebra H}
 
-/-- The same original functional as Mathlib's actual positive continuous linear map. -/
+/-- **Positive continuous map of a normal functional.** Let `H` be a complete complex Hilbert
+space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for its
+vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. Let `φ` be a positive bounded complex-linear functional belonging to `M_*`.
+`φ.toPositiveContinuousLinearMap` is the positive bounded map `M → ℂ` with value `φ(x)`. -/
 def toPositiveContinuousLinearMap (φ : PositiveNormalFunctional M) :
     letI : PartialOrder M := CStarAlgebra.spectralOrder M
     letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ
@@ -60,13 +66,21 @@ def toPositiveContinuousLinearMap (φ : PositiveNormalFunctional M) :
   letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ
   exact φ.1
 
-/-- The original continuous linear functional underlying the positive normal map. -/
+/-- **Underlying bounded positive normal functional.** Let `H` be a complete complex Hilbert
+space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for its
+vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. Let `φ` be a positive bounded complex-linear functional belonging to `M_*`.
+`φ.toContinuousLinearMap ∈ M*` is the bounded complex-linear map `x ↦ φ(x)`. -/
 def toContinuousLinearMap (φ : PositiveNormalFunctional M) : StrongDual ℂ M := by
   letI : PartialOrder M := CStarAlgebra.spectralOrder M
   letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ
   exact φ.1.toContinuousLinearMap
 
-/-- The normal-functional subtype contains that literal original bounded functional. -/
+/-- **Positive normal functional as a predual element.** Let `H` be a complete complex Hilbert
+space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for its
+vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. Let `φ` be a positive bounded complex-linear functional belonging to `M_*`.
+`φ.toNormalFunctionalSpace ∈ M_*` has underlying continuous functional `φ`. -/
 def toNormalFunctionalSpace (φ : PositiveNormalFunctional M) : normalFunctionalSpace M :=
   ⟨φ.toContinuousLinearMap, φ.2⟩
 
@@ -76,19 +90,32 @@ instance : Coe (PositiveNormalFunctional M) (StrongDual ℂ M) :=
 instance : CoeFun (PositiveNormalFunctional M) (fun _ => M → ℂ) :=
   ⟨fun φ => φ.1⟩
 
-/-- The bounded-functional and function views have exactly the same values. -/
+/-- **Value of the bounded positive normal map.** Let `H` be a complete complex Hilbert space
+and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for its vector
+functionals. Let `M_*` be their norm-closed complex span in the continuous dual `M*`. Let
+`φ` be a positive bounded complex-linear functional belonging to `M_*`. for `x∈M`,
+`φ.toContinuousLinearMap x=φ(x)`. -/
 @[simp]
 theorem toContinuousLinearMap_apply (φ : PositiveNormalFunctional M) (x : M) :
     φ.toContinuousLinearMap x = φ x :=
   rfl
 
-/-- Normal-space evaluation retains the same original functional values. -/
+/-- **Predual evaluation of a positive normal functional.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for
+its vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. Let `φ` be a positive bounded complex-linear functional belonging to `M_*`. for
+`x∈M`, `(φ.toNormalFunctionalSpace)(x)=φ(x)`. -/
 @[simp]
 theorem toNormalFunctionalSpace_apply (φ : PositiveNormalFunctional M) (x : M) :
     (φ.toNormalFunctionalSpace : StrongDual ℂ M) x = φ x :=
   rfl
 
-/-- The positive-map projection retains the original continuous linear map. -/
+/-- **Agreement of positive and bounded map views.** Let `H` be a complete complex Hilbert
+space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for its
+vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. Let `φ` be a positive bounded complex-linear functional belonging to `M_*`. the
+continuous-linear map underlying `φ.toPositiveContinuousLinearMap` equals
+`φ.toContinuousLinearMap`. -/
 theorem toPositiveContinuousLinearMap_toContinuousLinearMap (φ : PositiveNormalFunctional M) :
     letI : PartialOrder M := CStarAlgebra.spectralOrder M
     letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ
@@ -97,12 +124,20 @@ theorem toPositiveContinuousLinearMap_toContinuousLinearMap (φ : PositiveNormal
   let : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ
   rfl
 
-/-- The normal-space norm is the original continuous-dual operator norm. -/
+/-- **Inherited dual norm of a positive normal predual element.** Let `H` be a complete
+complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write
+`ω_(ξ,η)(x)=⟨ξ,xη⟩` for its vector functionals. Let `M_*` be their norm-closed complex
+span in the continuous dual `M*`. Let `φ` be a positive bounded complex-linear functional
+belonging to `M_*`. `‖φ.toNormalFunctionalSpace‖=‖φ.toContinuousLinearMap‖`. -/
 theorem norm_toNormalFunctionalSpace (φ : PositiveNormalFunctional M) :
     ‖φ.toNormalFunctionalSpace‖ = ‖φ.toContinuousLinearMap‖ :=
   rfl
 
-/-- The original functional is monotone for exactly the two canonical spectral orders. -/
+/-- **Spectral-order monotonicity of a positive normal functional.** Let `H` be a complete
+complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write
+`ω_(ξ,η)(x)=⟨ξ,xη⟩` for its vector functionals. Let `M_*` be their norm-closed complex
+span in the continuous dual `M*`. Let `φ` be a positive bounded complex-linear functional
+belonging to `M_*`. `a≤b` in `M` implies `φ(a)≤φ(b)` in the spectral order of `ℂ`. -/
 theorem monotone (φ : PositiveNormalFunctional M) :
     letI : PartialOrder M := CStarAlgebra.spectralOrder M
     letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ
@@ -111,7 +146,11 @@ theorem monotone (φ : PositiveNormalFunctional M) :
   let : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ
   exact φ.1.monotone'
 
-/-- Actual positive normal functionals preserve every canonically nonnegative element. -/
+/-- **Positive element has a nonnegative normal-functional value.** Let `H` be a complete
+complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write
+`ω_(ξ,η)(x)=⟨ξ,xη⟩` for its vector functionals. Let `M_*` be their norm-closed complex
+span in the continuous dual `M*`. Let `φ` be a positive bounded complex-linear functional
+belonging to `M_*`. if `x∈M` is positive, then `φ(x)≥0` in the spectral order of `ℂ`. -/
 theorem apply_nonneg (φ : PositiveNormalFunctional M) (x : M) :
     letI : PartialOrder M := CStarAlgebra.spectralOrder M
     letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ
@@ -121,7 +160,11 @@ theorem apply_nonneg (φ : PositiveNormalFunctional M) (x : M) :
   intro hx
   exact φ.1.map_nonneg hx
 
-/-- A Mathlib positive continuous linear map with actual normal membership gives the same index. -/
+/-- **Positive normal functional from a positive bounded map.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for
+its vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. if a positive continuous complex-linear map `φ : M → ℂ` belongs to `M_*`,
+`ofPositiveContinuousLinearMap M φ` bundles that map as a positive normal functional. -/
 def ofPositiveContinuousLinearMap (M : VonNeumannAlgebra H) :
     letI : PartialOrder M := CStarAlgebra.spectralOrder M
     letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ
@@ -132,7 +175,11 @@ def ofPositiveContinuousLinearMap (M : VonNeumannAlgebra H) :
   intro φ hφ
   exact ⟨φ, hφ⟩
 
-/-- Package any member of the complete original normal-and-monotone family through Mathlib's bundle. -/
+/-- **Positive normal map from a monotone predual member.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for
+its vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. if `φ∈M_*` is monotone for the spectral orders of `M` and `ℂ`, `ofNormalFunctional M
+φ` is the positive normal functional with the same bounded map. -/
 def ofNormalFunctional (M : VonNeumannAlgebra H) (φ : normalFunctionalSpace M)
     (hφ : letI : PartialOrder M := CStarAlgebra.spectralOrder M
       letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ
@@ -143,7 +190,11 @@ def ofNormalFunctional (M : VonNeumannAlgebra H) (φ : normalFunctionalSpace M)
   change (φ : StrongDual ℂ M) ∈ normalFunctionalSpace M
   exact φ.property
 
-/-- Construction from an original normal functional preserves its literal bounded map. -/
+/-- **Bounded value of a monotone-predual construction.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for
+its vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. for monotone `φ∈M_*`, the continuous functional underlying `ofNormalFunctional M φ`
+equals `φ`. -/
 theorem toContinuousLinearMap_ofNormalFunctional (M : VonNeumannAlgebra H)
     (φ : normalFunctionalSpace M)
     (hφ : letI : PartialOrder M := CStarAlgebra.spectralOrder M
@@ -152,7 +203,10 @@ theorem toContinuousLinearMap_ofNormalFunctional (M : VonNeumannAlgebra H)
     (ofNormalFunctional M φ hφ : StrongDual ℂ M) = (φ : StrongDual ℂ M) :=
   rfl
 
-/-- Construction recovers the same original normal-space element. -/
+/-- **Recovery of the monotone normal-space element.** Let `H` be a complete complex Hilbert
+space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for its
+vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. for monotone `φ∈M_*`, `(ofNormalFunctional M φ).toNormalFunctionalSpace=φ`. -/
 theorem toNormalFunctionalSpace_ofNormalFunctional (M : VonNeumannAlgebra H)
     (φ : normalFunctionalSpace M)
     (hφ : letI : PartialOrder M := CStarAlgebra.spectralOrder M
@@ -162,7 +216,12 @@ theorem toNormalFunctionalSpace_ofNormalFunctional (M : VonNeumannAlgebra H)
   apply Subtype.ext
   rfl
 
-/-- The entire old normal-and-monotone family and the actual positive-map index are equivalent. -/
+/-- **Positive normal functionals are monotone predual members.** Let `H` be a complete
+complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write
+`ω_(ξ,η)(x)=⟨ξ,xη⟩` for its vector functionals. Let `M_*` be their norm-closed complex
+span in the continuous dual `M*`. `equivNormalMonotone M` is the equivalence between
+`PositiveNormalFunctional M` and `{φ∈M_* : φ is monotone}`, retaining each functional's
+values. -/
 def equivNormalMonotone (M : VonNeumannAlgebra H) :
     letI : PartialOrder M := CStarAlgebra.spectralOrder M
     letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ

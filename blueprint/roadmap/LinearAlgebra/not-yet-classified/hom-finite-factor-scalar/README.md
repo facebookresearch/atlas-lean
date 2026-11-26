@@ -1,5 +1,5 @@
-# Hom Finite Factor Scalar
+# Hom–tensor comparison through a scalar quotient
 
-- [Hom Tensor Finite Factor Equiv Of Surjective Scalars](hom-tensor-finite-factor-equiv-of-surjec.md)
-- [Hom Tensor Finite Factor Equiv Of Surjective Scalars tmul](hom-tensor-finite-factor-equiv-of-surjec-2.md)
-- [Hom Tensor Finite Factor Equiv Of Surjective Scalars to Linear Map](hom-tensor-finite-factor-equiv-of-surjec-3.md)
+- [Hom–tensor equivalence for projectivity over quotient scalars](hom-tensor-finite-factor-equiv-of-surjec.md)
+- [Pure tensor evaluation in the scalar-quotient Hom equivalence](hom-tensor-finite-factor-equiv-of-surjec-2.md)
+- [Forward map of the scalar-quotient Hom–tensor equivalence](hom-tensor-finite-factor-equiv-of-surjec-3.md)

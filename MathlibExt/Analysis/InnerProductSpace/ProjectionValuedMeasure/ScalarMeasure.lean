@@ -17,24 +17,18 @@ public import Mathlib.MeasureTheory.Measure.Complex
 public import Mathlib.MeasureTheory.VectorMeasure.Variation.Basic
 
 /-!
-# Scalar coefficient measures of projection-valued measures
+# Scalar coefficient measures of a PVM
 
-For a projection-valued measure `E` and vectors `g h`, the scalar coefficient
-measure is
+For a strongly countably additive PVM `E` on a measurable space `X`, acting on a complete
+complex Hilbert space `H`, its coefficient measure is `μ_(g,h)(s)=⟨h,E(s)g⟩`. It is
+complex-linear in `g` and conjugate-linear in `h`, using the inner-product convention linear in
+the second argument.
 
-`E.scalarMeasure g h s = ⟪h, E s g⟫_ℂ`.
+For measurable `s`, total variation satisfies `|μ_(g,h)|(s)≤‖E(s)g‖‖h‖`. In particular,
+`|μ_(g,h)|(X)≤‖g‖‖h‖`, so every coefficient measure has finite variation.
 
-Mathlib's inner product is conjugate-linear in the first argument.  Thus the
-measure is complex-linear in `g` and conjugate-linear in `h`.  Its total
-variation satisfies the sharp local estimate
-
-`|E_{g,h}|(s) ≤ ‖E(s)g‖ ‖h‖`
-
-for measurable `s`, and hence the global estimate
-`|E_{g,h}|(univ) ≤ ‖g‖ ‖h‖`.
-
-This is the coefficient measure and total-variation estimate in Conway,
-*A Course in Functional Analysis*, second edition, Chapter IX, Lemma 1.9.
+These are the scalar coefficients and variation bounds of Conway, A Course in Functional
+Analysis, second edition, Chapter IX, Lemma 1.9.
 -/
 
 @[expose] public section
@@ -53,7 +47,10 @@ variable {X : Type u} {H : Type v}
 variable [MeasurableSpace X]
 variable [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- The complex measure `s ↦ ⟪h, E(s)g⟫`. -/
+/-- **Finite complex coefficient measure of a PVM.** Let `X` be a measurable space and `H` a
+complete complex Hilbert space. Let `E : ProjectionValuedMeasure X H` be a strongly
+countably additive PVM. for `g,h ∈ H`, `scalarMeasure E g h : ComplexMeasure X` has value
+`μ_(g,h)(s)=⟨h,E(s)g⟩` on each set and is linear in `g`, conjugate-linear in `h`. -/
 noncomputable def scalarMeasure (E : ProjectionValuedMeasure X H) (g h : H) :
     ComplexMeasure X :=
   VectorMeasure.mapRangeL (innerSL ℂ h) (E.applyVectorMeasure g)
@@ -179,7 +176,11 @@ private theorem sum_norm_scalarMeasure_le
     _ ≤ ‖h‖ * ‖E s g‖ := mul_le_mul_of_nonneg_left hsumE_le (norm_nonneg _)
     _ = ‖E s g‖ * ‖h‖ := mul_comm _ _
 
-/-- Sharp local total-variation bound for a scalar coefficient measure. -/
+/-- **Local total-variation bound for a spectral coefficient.** Let `X` be a measurable space
+and `H` a complete complex Hilbert space. Let `E : ProjectionValuedMeasure X H` be a
+strongly countably additive PVM. Write `μ_(g,h)(s)=⟨h,E(s)g⟩` for its scalar coefficient
+measures. for measurable `s ⊆ X`, `|μ_(g,h)|(s)≤‖E(s)g‖*‖h‖`, with the finite nonnegative
+bound embedded in `[0,∞]`. -/
 theorem scalarMeasure_variation_le (E : ProjectionValuedMeasure X H) (g h : H)
     {s : Set X} (hs : MeasurableSet s) :
     (E.scalarMeasure g h).variation s ≤
@@ -199,15 +200,21 @@ theorem scalarMeasure_variation_le (E : ProjectionValuedMeasure X H) (g h : H)
     simpa only [enorm_eq_nnnorm, ENNReal.ofNNReal_finsetSum, C] using hcoe
   exact (not_lt_of_ge hennreal) hPsum
 
-/-- Conway's global total-variation estimate
-`|E_{g,h}|(X) ≤ ‖g‖ ‖h‖`. -/
+/-- **Global total-variation bound for a spectral coefficient.** Let `X` be a measurable space
+and `H` a complete complex Hilbert space. Let `E : ProjectionValuedMeasure X H` be a
+strongly countably additive PVM. Write `μ_(g,h)(s)=⟨h,E(s)g⟩` for its scalar coefficient
+measures. `|μ_(g,h)|(X)≤‖g‖*‖h‖` for every `g,h ∈ H`. -/
 theorem scalarMeasure_variation_univ_le (E : ProjectionValuedMeasure X H) (g h : H) :
     (E.scalarMeasure g h).variation Set.univ ≤
       (((‖g‖₊ * ‖h‖₊ : ℝ≥0) : ℝ≥0∞)) := by
   simpa only [E.univ, one_apply_eq_self] using
     E.scalarMeasure_variation_le g h MeasurableSet.univ
 
-/-- Scalar coefficient measures have finite total variation. -/
+/-- **Finite variation of PVM coefficient measures.** Let `X` be a measurable space and `H` a
+complete complex Hilbert space. Let `E : ProjectionValuedMeasure X H` be a strongly
+countably additive PVM. Write `μ_(g,h)(s)=⟨h,E(s)g⟩` for its scalar coefficient measures.
+for `g,h ∈ H`, the positive measure `|μ_(g,h)|` is finite, with total mass at most
+`‖g‖‖h‖`. -/
 noncomputable instance instIsFiniteMeasureVariationScalarMeasure
     (E : ProjectionValuedMeasure X H) (g h : H) :
     IsFiniteMeasure (E.scalarMeasure g h).variation where
@@ -219,7 +226,10 @@ theorem scalarMeasure_variation_univ_lt_top
     (E.scalarMeasure g h).variation Set.univ < ∞ := by
   finiteness
 
-/-- Real-valued form of the sharp local variation estimate. -/
+/-- **Real-valued local variation estimate.** Let `X` be a measurable space and `H` a complete
+complex Hilbert space. Let `E : ProjectionValuedMeasure X H` be a strongly countably
+additive PVM. Write `μ_(g,h)(s)=⟨h,E(s)g⟩` for its scalar coefficient measures. for
+measurable `s`, the real mass `|μ_(g,h)|.real(s)` is at most `‖E(s)g‖*‖h‖`. -/
 theorem scalarMeasure_variation_real_le (E : ProjectionValuedMeasure X H) (g h : H)
     {s : Set X} (hs : MeasurableSet s) :
     (E.scalarMeasure g h).variation.real s ≤ ‖E s g‖ * ‖h‖ := by
@@ -230,7 +240,10 @@ theorem scalarMeasure_variation_real_le (E : ProjectionValuedMeasure X H) (g h :
       ENNReal.toReal_mono (by finiteness) (E.scalarMeasure_variation_le g h hs)
     _ = ‖E s g‖ * ‖h‖ := by simp
 
-/-- Real-valued global variation estimate. -/
+/-- **Real total variation of a spectral coefficient.** Let `X` be a measurable space and `H`
+a complete complex Hilbert space. Let `E : ProjectionValuedMeasure X H` be a strongly
+countably additive PVM. Write `μ_(g,h)(s)=⟨h,E(s)g⟩` for its scalar coefficient measures.
+the real total mass satisfies `|μ_(g,h)|.real(X)≤‖g‖*‖h‖`. -/
 theorem scalarMeasure_variation_real_univ_le
     (E : ProjectionValuedMeasure X H) (g h : H) :
     (E.scalarMeasure g h).variation.real Set.univ ≤ ‖g‖ * ‖h‖ := by

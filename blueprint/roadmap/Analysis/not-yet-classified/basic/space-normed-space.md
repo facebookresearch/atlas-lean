@@ -1,3 +1,4 @@
-# Space Normed Space
+# Complex normed-space structure on the amplification
 
-The stock completed complex module and norm, with their exact group data.
+Complex scalars act by `c • (ξ⊗a) =
+(c • ξ)⊗a = ξ⊗(c • a)`, with the completed inner-product norm.

@@ -1,4 +1,4 @@
-# Right Tensor Product
+# Hilbert-first scalar L² tensor equivalence
 
-- [Tensor To Lp Right](tensor-to-lp-right.md)
-- [Tensor To Lp Right tmul ae](tensor-to-lp-right-tmul-ae.md)
+- [Isometric equivalence from the Hilbert-first L² tensor](tensor-to-lp-right.md)
+- [Hilbert-first pure tensor formula almost everywhere](tensor-to-lp-right-tmul-ae.md)

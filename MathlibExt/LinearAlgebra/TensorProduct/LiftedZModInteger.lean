@@ -25,7 +25,12 @@ variable (ell : ℕ) (M : Type v) (N : Type w)
   [AddCommGroup M] [AddCommGroup N]
   [Module (ULift.{s} (ZMod ell)) M] [Module (ULift.{s} (ZMod ell)) N]
 
-/-- Integer balancing implies balancing over the actual lifted residue ring. -/
+/-- **Integer balancing is compatible with lifted residue scalars.**
+
+Let ℓ∈ℕ, L=ULift(ZMod ℓ) a universe-lifted copy of the residue ring, and M,N L-modules. With
+their integer scalar actions, (a•m)⊗_ℤn=m⊗_ℤ(a•n) for every a∈L. This is CompatibleSMul ℤ L M
+N, including ℓ=0.
+-/
 theorem liftedZModIntegerCompatibleSMul :
     TensorProduct.CompatibleSMul ℤ (ULift.{s} (ZMod ell)) M N := by
   refine ⟨?_⟩
@@ -37,7 +42,11 @@ theorem liftedZModIntegerCompatibleSMul :
   rw [← ha, Int.cast_smul_eq_zsmul, Int.cast_smul_eq_zsmul]
   exact TensorProduct.smul_tmul z m n
 
-/-- The original residue-ring tensor and its integer tensor have the same pure tensors. -/
+/-- **Lifted residue-ring tensor equals the integer tensor.**
+
+Let ℓ∈ℕ, L=ULift(ZMod ℓ) and M,N L-modules. The ℤ-linear equivalence
+liftedZModIntegerTensorEquiv:M⊗_LN≃ₗ[ℤ]M⊗_ℤN preserves m⊗n.
+-/
 def liftedZModIntegerTensorEquiv :
     M ⊗[ULift.{s} (ZMod ell)] N ≃ₗ[ℤ] M ⊗[ℤ] N := by
   let : TensorProduct.CompatibleSMul ℤ (ULift.{s} (ZMod ell)) M N :=
@@ -58,7 +67,11 @@ variable {M N} {P : Type p} {Q : Type q}
   [AddCommGroup P] [AddCommGroup Q]
   [Module (ULift.{s} (ZMod ell)) P] [Module (ULift.{s} (ZMod ell)) Q]
 
-/-- Both original factor maps commute with the computed integer tensor comparison. -/
+/-- **Naturality of the lifted-residue integer tensor comparison.**
+
+Let ℓ∈ℕ, L=ULift(ZMod ℓ), M,N,P,Q L-modules and f:M→P,g:N→Q L-linear. For Θ the
+pure-preserving equivalence between L and integer tensors, (f⊗_ℤg)∘Θ_(M,N)=Θ_(P,Q)∘(f⊗_Lg).
+-/
 theorem liftedZModIntegerTensorEquiv_naturality
     (f : M →ₗ[ULift.{s} (ZMod ell)] P) (g : N →ₗ[ULift.{s} (ZMod ell)] Q) :
     (TensorProduct.map (f.restrictScalars ℤ) (g.restrictScalars ℤ)).comp

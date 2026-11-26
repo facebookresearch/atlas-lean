@@ -14,10 +14,17 @@ module
 public import MathlibExt.Analysis.CStarAlgebra.Module.InternalTensorProduct.Semilinear
 
 /-!
-# Functoriality of coefficient-changing completed tensor equivalences
+# Functoriality of coefficient-changing tensor equivalences
 
-Identity and composition are established on the dense span of actual pure
-tensors. No extra action, inverse, or composite-compatibility premise is stored.
+Let the coefficient algebras be nonunital complex C-star algebras with star-compatible opposite
+orders, and let all component right modules be complete. Coefficient star-algebra equivalences
+`σ₁ : B₁ ≃ C₁`, `σ₂ : B₂ ≃ C₂` and complex-linear equivalences `U₁ : E₁ ≃ F₁`, `U₂ : E₂ ≃ F₂`
+induce the isometric tensor map `x⊗y ↦ U₁(x)⊗U₂(y)` when each inner product is transported
+through `σᵢ` and `U₂(φ(b)y) = ψ(σ₁(b))(U₂ y)` for the left star representations.
+
+Identity coefficient and vector maps induce the identity completed tensor equivalence. Two such
+compatible diagrams compose: the tensor map for `(Vᵢ Uᵢ, τᵢ σᵢ)` is the composite of the two
+induced tensor equivalences, with their transported inner products and representation square.
 -/
 
 @[expose] public section
@@ -105,8 +112,10 @@ attribute [local instance] coherenceTargetRadicalNormedSpace
 
 /-! ## Identity coherence -/
 
-/-- Identity coefficient and vector equivalences induce the identity on the
-literal completed internal tensor. -/
+/-- **Identity coefficient-changing tensor equivalence.** For complete right modules over
+nonunital C-star coefficients with star-compatible orders and a left star representation `φ`,
+taking identity coefficient and vector equivalences gives the identity complex-linear isometry
+of `CompletedTensor φ`. -/
 theorem completedSemilinearEquiv_refl :
     letI : NormedAddCommGroup (RadicalTensor (E₁ := E₁) φ) :=
       radicalTensorNormedAddCommGroup φ;
@@ -168,9 +177,12 @@ variable (kinner₂ : ∀ x y : F₂,
 variable (kφ : ∀ (c : C₁) (y : F₂),
   V₂ (ψ c y) = χ (τ₁ c) (V₂ y))
 
-/-- The constructed coefficient-changing tensor equivalence respects
-composition of compatible diagrams. Composite inner laws and the
-representation square are derived, not supplied as additional premises. -/
+/-- **Composition of compatible tensor equivalences.** For complete right modules over nonunital
+C-star algebras with star-compatible opposite orders, let coefficient star equivalences
+`σᵢ,τᵢ` and vector complex-linear equivalences `Uᵢ,Vᵢ` transport the coefficient inner
+products and intertwine the left star representations. The completed tensor equivalence for
+`(Vᵢ Uᵢ,τᵢ σᵢ)` equals the first induced equivalence followed by the second. The composite
+compatibility follows from the two diagrams. -/
 theorem completedSemilinearEquiv_trans :
     letI : NormedAddCommGroup (RadicalTensor (E₁ := E₁) φ) :=
       radicalTensorNormedAddCommGroup φ;

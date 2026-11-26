@@ -16,18 +16,14 @@ public import MathlibExt.Analysis.CStarAlgebra.RepresentationCoefficient
 public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order
 
 /-!
-# Positive diagonal coefficients of the actual weight GNS map
+# Positive diagonal coefficients of the weight representation
 
-The existing bounded representation coefficient at an original finite-square
-vector has the original compressed positive-weight value. The actual positive
-square root factors the original positive coefficient. The proved star law
-and canonical dense values reduce its diagonal pairing to the original
-finite-square weight value.
+Let `A` be a unital complex C-star algebra, `φ` an extended positive weight, and `Λ : n_φ → H_φ`
+its dense GNS map. The representation `π` satisfies `π(a)Λ(x)=Λ(a*x)`.
 
-This is a prerequisite for ultraweak continuity of the same computed GNS
-map. No normal-weight assumption or positive/normal functional certificate
-is used. Positive-LUB preservation, representation normality/range, full
-finite integration extension and Tomita/modular/polar data remain separate.
+For positive `a` and `x ∈ n_φ`, its diagonal coefficient is `⟨Λ(x),π(a)Λ(x)⟩ = (φ(x* a
+x)).toReal`, viewed as a complex number. The compression `x* a x` has finite weight. The formula
+requires no normality, faithfulness or lower semicontinuity assumption on `φ`.
 -/
 
 @[expose] public section
@@ -48,7 +44,12 @@ variable {A : Type u} [CStarAlgebra A]
 
 attribute [local instance] CStarAlgebra.spectralOrder CStarAlgebra.spectralOrderedRing
 
-/-- The actual positive diagonal GNS coefficient is the original finite compressed weight value. -/
+/-- **Compressed weight as a positive GNS coefficient.** Let `A` be a unital complex C-star
+algebra with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous
+weight vanishing at zero. Write `n_φ = {x : φ(x* x) < ∞}`, and let `Λ : n_φ → H_φ` be its
+dense GNS map. Let `π : A → B(H_φ)` be the unital star representation satisfying
+`π(a)Λ(x)=Λ(a*x)`. for `a ≥ 0` and `x ∈ n_φ`, `representationCoefficient π (Λ x) (Λ x) a = ⟨Λ
+x,π(a)Λ x⟩ = ((φ(x* a x)).toReal : ℂ)`; the positive compression has finite weight. -/
 theorem Weight.gnsCoefficient_positive_value (φ : Weight A) (a : A) (ha : 0 ≤ a)
     (x : φ.finiteSquareSubmodule) :
     representationCoefficient φ.gnsLeftStarAlgHom (φ.gnsMap x) (φ.gnsMap x) a =

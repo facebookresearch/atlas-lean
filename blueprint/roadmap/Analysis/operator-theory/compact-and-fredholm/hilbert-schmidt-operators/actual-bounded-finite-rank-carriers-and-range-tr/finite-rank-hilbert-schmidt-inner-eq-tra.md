@@ -1,3 +1,5 @@
-# Finite Rank Hilbert Schmidt Inner eq trace adjoint
+# Ordinary adjoint trace formula on two Hilbert spaces
 
-On two complete Hilbert spaces the generalized trace formula is the original adjoint formula.
+Let H,K be complete complex inner product spaces and S,T:H→K bounded finite-rank maps. Then
+finiteRankHilbertSchmidtInner S T=finiteRankRangeTrace(S.adjoint∘T), the trace of S†T on its
+finite-dimensional range.

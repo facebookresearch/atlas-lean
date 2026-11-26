@@ -1,4 +1,4 @@
-# Homotopy
+# Asymptotic homotopy equivalence and classes
 
 - [Point-norm homotopy of star homomorphisms](homotopic.md)
 - [Reflexivity of point-norm homotopy](refl.md)
@@ -13,11 +13,11 @@
 - [Murray Von Neumann Equivalent of path](murray-von-neumann-equivalent-of-path.md)
 - [Unitization preserves point-norm homotopy](unitization.md)
 - [Homotopy](unitization.md)
-- [Postcomp](postcomp-2.md)
-- [Pair Family](pair-family.md)
-- [Refl](refl-2.md)
-- [Symm](symm-2.md)
-- [Trans](trans-2.md)
-- [Homotopy Setoid](homotopy-setoid.md)
-- [Homotopy Classes](homotopy-classes.md)
-- [Mk Class](mk-class.md)
+- [Fixed-homomorphism postcomposition of an asymptotic family](postcomp-2.md)
+- [Pair of matching asymptotic homotopies](pair-family.md)
+- [Constant asymptotic homotopy](refl-2.md)
+- [Reversal of an asymptotic homotopy](symm-2.md)
+- [Concatenation of matching asymptotic homotopies](trans-2.md)
+- [Setoid of asymptotic homotopy](homotopy-setoid.md)
+- [Asymptotic homotopy classes](homotopy-classes.md)
+- [Class of an asymptotic morphism](mk-class.md)

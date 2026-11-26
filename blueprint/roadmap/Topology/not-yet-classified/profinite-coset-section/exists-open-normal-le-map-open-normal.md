@@ -1,5 +1,6 @@
-# Exists open Normal le map open Normal
+# Ambient open normal below an open subgroup's normal stage
 
-An open normal subgroup of an open subgroup contains the image of some
-ambient open normal subgroup.  The ambient subgroup is therefore contained
-in the open subgroup as well.
+Let `G` be a compact
+totally disconnected topological group. for an open subgroup `H≤G` and open normal `V≤H`,
+there is ambient open normal `U≤G` contained in the image of `V` under `H → G`, and thus
+in `H`.

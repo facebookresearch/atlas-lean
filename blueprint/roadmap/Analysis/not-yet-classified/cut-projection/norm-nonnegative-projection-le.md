@@ -1,3 +1,3 @@
-# Norm nonnegative Projection le
+# Norm bound for the nonnegative cut
 
-The nonnegative-degree projection is contractive.
+`‖nonnegativeProjection‖ ≤ 1`.

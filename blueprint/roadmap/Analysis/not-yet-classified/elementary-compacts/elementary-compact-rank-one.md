@@ -1,3 +1,4 @@
-# Elementary Compact Rank One
+# Elementary rank-one value in the compact algebra
 
-A computed elementary rank-one value in the original compact algebra, with actual ideal membership.
+The element of `CompactAlgebra H A`
+represented by `L_(u*star v) D_(rankOne ℂ ξ η)` is the module rank-one map `θ_(ξ⊗u,η⊗v)`.

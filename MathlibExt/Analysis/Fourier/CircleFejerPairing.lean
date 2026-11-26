@@ -16,15 +16,14 @@ public import Mathlib.MeasureTheory.Function.Holder
 public import Mathlib.Topology.MetricSpace.Equicontinuity
 
 /-!
-# Actual Fejer convergence against every original L-one test function
+# Fejér convergence against L¹ test functions
 
-Actual L-infinity/L-one Holder pairings have their computed uniform operator
-norm bound. The normalized Fourier polynomial has the proved Fourier
-coefficient limits; its pairings therefore converge on every Fourier
-monomial in L-one. Stock dense Fourier span and closed convergence for an
-equicontinuous family extend this to every actual L-one class. This is a
-necessary proof for the source Hardy predual quotient map, not an assumed
-weak-star approximation or chosen duality model.
+Let 𝕋=UnitAddCircle=ℝ/ℤ, with normalized Haar probability measure μ=AddCircle.haarAddCircle.
+Write e_k(x)=fourier k x and f̂(k)=∫ x:𝕋, f(x)e_(-k)(x) ∂μ for k∈ℤ. For f∈L∞(𝕋,μ) and N∈ℕ, let
+F_N(f)=circleFejerPolynomial f N be the continuous Fejér polynomial (N+1)⁻¹∑_{0≤i,j≤N}
+f̂(i-j)e_(i-j). For f∈L∞(𝕋,μ) and h∈L¹(𝕋,μ), put P(f,h)=∫ x, f(x)h(x) ∂μ, the bilinear L∞–L¹
+pairing. The L∞ classes f_N represented by F_N(f) satisfy ‖f_N‖L∞≤‖f‖L∞ and P(f_N,h)→P(f,h)
+for every h∈L¹. The pairings have operator norms uniformly bounded by ‖f‖L∞.
 -/
 
 @[expose] public section
@@ -33,12 +32,20 @@ open Filter MeasureTheory Set Topology
 open scoped BigOperators ENNReal InnerProductSpace
 namespace MathlibExt.Analysis.Fourier
 
-/-- Actual Holder norm bound for the original circle pairing. -/
+/-- **Hölder bound for the circle L∞–L¹ pairing.**
+
+Let 𝕋=UnitAddCircle=ℝ/ℤ, with normalized Haar probability measure μ=AddCircle.haarAddCircle.
+Write e_k(x)=fourier k x and f̂(k)=∫ x:𝕋, f(x)e_(-k)(x) ∂μ for k∈ℤ. For f∈L∞(𝕋,μ) and
+h∈L¹(𝕋,μ), put P(f,h)=∫ x, f(x)h(x) ∂μ, the bilinear L∞–L¹ pairing. For f∈L∞ and h∈L¹,
+|P(f,h)|≤‖f‖L∞‖h‖L¹.
+-/
 theorem circleLpPairing_norm_apply_le
-    (f : Lp ℂ ∞ (AddCircle.haarAddCircle : Measure UnitAddCircle)) (h : Lp ℂ 1 AddCircle.haarAddCircle) :
+    (f : Lp ℂ ∞ (AddCircle.haarAddCircle : Measure UnitAddCircle)) (h : Lp ℂ 1
+      AddCircle.haarAddCircle) :
     ‖((ContinuousLinearMap.mul ℂ ℂ).lpPairing AddCircle.haarAddCircle ∞ 1) f h‖ ≤ ‖f‖ * ‖h‖ := by
   let B := ContinuousLinearMap.mul ℂ ℂ
-  have hI : ‖((ContinuousLinearMap.mul ℂ ℂ).lpPairing AddCircle.haarAddCircle ∞ 1) f h‖ ≤ ‖B.holder 1 f h‖ := by
+  have hI : ‖((ContinuousLinearMap.mul ℂ ℂ).lpPairing AddCircle.haarAddCircle ∞ 1) f h‖ ≤
+    ‖B.holder 1 f h‖ := by
     change ‖L1.integralCLM' ℂ (B.holder 1 f h)‖ ≤ ‖B.holder 1 f h‖
     rw [← L1.integral_eq']
     exact L1.norm_integral_le _
@@ -49,28 +56,56 @@ theorem circleLpPairing_norm_apply_le
     simpa only [one_mul, mul_assoc] using he
   exact hI.trans (hB.trans hm)
 
-/-- Actual normalized-circle pairing has its computed operator-norm bound. -/
+/-- **Operator norm of an L∞ pairing functional.**
+
+Let 𝕋=UnitAddCircle=ℝ/ℤ, with normalized Haar probability measure μ=AddCircle.haarAddCircle.
+Write e_k(x)=fourier k x and f̂(k)=∫ x:𝕋, f(x)e_(-k)(x) ∂μ for k∈ℤ. For f∈L∞(𝕋,μ) and
+h∈L¹(𝕋,μ), put P(f,h)=∫ x, f(x)h(x) ∂μ, the bilinear L∞–L¹ pairing. For f∈L∞, the bounded
+complex linear functional h↦P(f,h) on L¹(𝕋,μ) has norm at most ‖f‖L∞.
+-/
 theorem circleLpPairing_norm_le (f : Lp ℂ ∞ (AddCircle.haarAddCircle : Measure UnitAddCircle)) :
     ‖((ContinuousLinearMap.mul ℂ ℂ).lpPairing AddCircle.haarAddCircle ∞ 1) f‖ ≤ ‖f‖ :=
-  (((ContinuousLinearMap.mul ℂ ℂ).lpPairing AddCircle.haarAddCircle ∞ 1) f).opNorm_le_bound (norm_nonneg f)
+  (((ContinuousLinearMap.mul ℂ ℂ).lpPairing AddCircle.haarAddCircle ∞ 1) f).opNorm_le_bound
+    (norm_nonneg f)
       (circleLpPairing_norm_apply_le f)
 
-/-- The actual finite Fejer polynomial as a genuine L-infinity boundary class. -/
+/-- **Fejér polynomial as an L∞ class.**
+
+Let 𝕋=UnitAddCircle=ℝ/ℤ, with normalized Haar probability measure μ=AddCircle.haarAddCircle.
+Write e_k(x)=fourier k x and f̂(k)=∫ x:𝕋, f(x)e_(-k)(x) ∂μ for k∈ℤ. For f∈L∞(𝕋,μ) and N∈ℕ, let
+F_N(f)=circleFejerPolynomial f N be the continuous Fejér polynomial (N+1)⁻¹∑_{0≤i,j≤N}
+f̂(i-j)e_(i-j). The class circleFejerLp f N∈L∞(𝕋,μ) is represented by the continuous
+polynomial F_N(f).
+-/
 def circleFejerLp (f : Lp ℂ ∞ (AddCircle.haarAddCircle : Measure UnitAddCircle))
     (N : ℕ) : Lp ℂ ∞ (AddCircle.haarAddCircle : Measure UnitAddCircle) :=
   (circleFejerPolynomial f N).toLp ∞ AddCircle.haarAddCircle ℂ
 
-/-- Literal boundary representative of the actual Fejer L-infinity class. -/
+/-- **Almost-everywhere representative of the Fejér L∞ class.**
+
+Let 𝕋=UnitAddCircle=ℝ/ℤ, with normalized Haar probability measure μ=AddCircle.haarAddCircle.
+Write e_k(x)=fourier k x and f̂(k)=∫ x:𝕋, f(x)e_(-k)(x) ∂μ for k∈ℤ. For f∈L∞(𝕋,μ) and N∈ℕ, let
+F_N(f)=circleFejerPolynomial f N be the continuous Fejér polynomial (N+1)⁻¹∑_{0≤i,j≤N}
+f̂(i-j)e_(i-j). The L∞ function circleFejerLp f N equals circleFejerPolynomial f N μ-almost
+everywhere.
+-/
 theorem circleFejerLp_coeFn
     (f : Lp ℂ ∞ (AddCircle.haarAddCircle : Measure UnitAddCircle)) (N : ℕ) :
     (circleFejerLp f N : UnitAddCircle → ℂ) =ᵐ[AddCircle.haarAddCircle] circleFejerPolynomial f N :=
   ContinuousMap.coeFn_toLp AddCircle.haarAddCircle _
 
-/-- Actual Fejer L-infinity norm bound follows from the actual finite polynomial and stock toLp bound. -/
+/-- **Contractive L∞ bound for Fejér classes.**
+
+Let 𝕋=UnitAddCircle=ℝ/ℤ, with normalized Haar probability measure μ=AddCircle.haarAddCircle.
+Write e_k(x)=fourier k x and f̂(k)=∫ x:𝕋, f(x)e_(-k)(x) ∂μ for k∈ℤ. For f∈L∞(𝕋,μ) and N∈ℕ, let
+F_N(f)=circleFejerPolynomial f N be the continuous Fejér polynomial (N+1)⁻¹∑_{0≤i,j≤N}
+f̂(i-j)e_(i-j). The L∞ class f_N=circleFejerLp f N satisfies ‖f_N‖L∞≤‖f‖L∞ for every N∈ℕ.
+-/
 theorem circleFejerLp_norm_le
     (f : Lp ℂ ∞ (AddCircle.haarAddCircle : Measure UnitAddCircle)) (N : ℕ) :
     ‖circleFejerLp f N‖ ≤ ‖f‖ := by
-  have hC : ‖ContinuousMap.toLp (E := ℂ) ∞ (AddCircle.haarAddCircle : Measure UnitAddCircle) ℂ‖ ≤ 1 := by
+  have hC : ‖ContinuousMap.toLp (E := ℂ) ∞ (AddCircle.haarAddCircle : Measure UnitAddCircle)
+    ℂ‖ ≤ 1 := by
     simpa only [ENNReal.toReal_top, inv_zero, Real.rpow_zero] using
       ContinuousMap.toLp_norm_le (E := ℂ)
         (μ := (AddCircle.haarAddCircle : Measure UnitAddCircle)) (p := ∞) (𝕜 := ℂ)
@@ -79,10 +114,18 @@ theorem circleFejerLp_norm_le
   exact hL.trans ((mul_le_mul_of_nonneg_right hC (norm_nonneg _)).trans
     (by rw [one_mul]; exact circleFejerPolynomial_norm_le f N))
 
-/-- Actual normalized Fejer pairings with each source L-one Fourier monomial. -/
+/-- **Circle pairing with a Fourier monomial.**
+
+Let 𝕋=UnitAddCircle=ℝ/ℤ, with normalized Haar probability measure μ=AddCircle.haarAddCircle.
+Write e_k(x)=fourier k x and f̂(k)=∫ x:𝕋, f(x)e_(-k)(x) ∂μ for k∈ℤ. For f∈L∞(𝕋,μ) and
+h∈L¹(𝕋,μ), put P(f,h)=∫ x, f(x)h(x) ∂μ, the bilinear L∞–L¹ pairing. For f∈L∞ and n∈ℤ,
+P(f,e_n)=f̂(-n), where e_n is regarded as its L¹ class fourierLp 1 n. The pairing uses the
+product f(x)e_n(x), without complex conjugation.
+-/
 theorem circleLpPairing_fourier
     (f : Lp ℂ ∞ (AddCircle.haarAddCircle : Measure UnitAddCircle)) (n : ℤ) :
-    ((ContinuousLinearMap.mul ℂ ℂ).lpPairing AddCircle.haarAddCircle ∞ 1) f (fourierLp 1 n) = fourierCoeff (f :
+    ((ContinuousLinearMap.mul ℂ ℂ).lpPairing AddCircle.haarAddCircle ∞ 1) f (fourierLp 1 n) =
+      fourierCoeff (f :
         UnitAddCircle → ℂ) (-n) := by
   rw [ContinuousLinearMap.lpPairing_eq_integral]
   change (∫ x, f x * fourierLp 1 n x ∂AddCircle.haarAddCircle) =
@@ -91,14 +134,24 @@ theorem circleLpPairing_fourier
   filter_upwards [coeFn_fourierLp 1 n] with x hx
   rw [hx, neg_neg, smul_eq_mul, mul_comm]
 
-/-- Actual Fejer pairings converge on each source L-one Fourier monomial. -/
+/-- **Fejér pairing convergence on Fourier monomials.**
+
+Let 𝕋=UnitAddCircle=ℝ/ℤ, with normalized Haar probability measure μ=AddCircle.haarAddCircle.
+Write e_k(x)=fourier k x and f̂(k)=∫ x:𝕋, f(x)e_(-k)(x) ∂μ for k∈ℤ. For f∈L∞(𝕋,μ) and N∈ℕ, let
+F_N(f)=circleFejerPolynomial f N be the continuous Fejér polynomial (N+1)⁻¹∑_{0≤i,j≤N}
+f̂(i-j)e_(i-j). For f∈L∞(𝕋,μ) and h∈L¹(𝕋,μ), put P(f,h)=∫ x, f(x)h(x) ∂μ, the bilinear L∞–L¹
+pairing. For fixed n∈ℤ and f_N=circleFejerLp f N, P(f_N,e_n) tends to P(f,e_n)=f̂(-n) as N→∞.
+-/
 theorem circleFejerLp_pairing_fourier_tendsto
     (f : Lp ℂ ∞ (AddCircle.haarAddCircle : Measure UnitAddCircle)) (n : ℤ) :
-    Tendsto (fun N : ℕ => ((ContinuousLinearMap.mul ℂ ℂ).lpPairing AddCircle.haarAddCircle ∞ 1) (circleFejerLp f N)
+    Tendsto (fun N : ℕ => ((ContinuousLinearMap.mul ℂ ℂ).lpPairing AddCircle.haarAddCircle ∞
+      1) (circleFejerLp f N)
         (fourierLp 1 n)) atTop
-      (𝓝 (((ContinuousLinearMap.mul ℂ ℂ).lpPairing AddCircle.haarAddCircle ∞ 1) f (fourierLp 1 n))) := by
+      (𝓝 (((ContinuousLinearMap.mul ℂ ℂ).lpPairing AddCircle.haarAddCircle ∞ 1) f (fourierLp
+        1 n))) := by
   have he : ∀ N : ℕ,
-      ((ContinuousLinearMap.mul ℂ ℂ).lpPairing AddCircle.haarAddCircle ∞ 1) (circleFejerLp f N) (fourierLp 1 n) =
+      ((ContinuousLinearMap.mul ℂ ℂ).lpPairing AddCircle.haarAddCircle ∞ 1) (circleFejerLp f
+        N) (fourierLp 1 n) =
         fourierCoeff (fun x : UnitAddCircle => circleFejerPolynomial f N x) (-n) := by
     intro N
     rw [circleLpPairing_fourier]
@@ -106,28 +159,43 @@ theorem circleFejerLp_pairing_fourier_tendsto
   simp_rw [he, circleLpPairing_fourier]
   exact circleFejerPolynomial_fourierCoeff_tendsto f (-n)
 
-/-- Computed uniform norm bound makes the actual Fejer functional family equicontinuous. -/
+/-- **Equicontinuity of Fejér pairing functionals.**
+
+Let 𝕋=UnitAddCircle=ℝ/ℤ, with normalized Haar probability measure μ=AddCircle.haarAddCircle.
+Write e_k(x)=fourier k x and f̂(k)=∫ x:𝕋, f(x)e_(-k)(x) ∂μ for k∈ℤ. For f∈L∞(𝕋,μ) and N∈ℕ, let
+F_N(f)=circleFejerPolynomial f N be the continuous Fejér polynomial (N+1)⁻¹∑_{0≤i,j≤N}
+f̂(i-j)e_(i-j). For f∈L∞(𝕋,μ) and h∈L¹(𝕋,μ), put P(f,h)=∫ x, f(x)h(x) ∂μ, the bilinear L∞–L¹
+pairing. For fixed f∈L∞, the family of functions h↦P(circleFejerLp f N,h), N∈ℕ, is
+equicontinuous on L¹(𝕋,μ), with uniform operator norm bound ‖f‖L∞.
+-/
 theorem circleFejerPairing_equicontinuous
     (f : Lp ℂ ∞ (AddCircle.haarAddCircle : Measure UnitAddCircle)) :
-    Equicontinuous (fun N : ℕ => (((ContinuousLinearMap.mul ℂ ℂ).lpPairing AddCircle.haarAddCircle ∞ 1)
+    Equicontinuous (fun N : ℕ => (((ContinuousLinearMap.mul ℂ ℂ).lpPairing
+      AddCircle.haarAddCircle ∞ 1)
         (circleFejerLp f N) : Lp ℂ 1 AddCircle.haarAddCircle → ℂ)) := by
   intro h₀
   apply Metric.equicontinuousAt_iff.mpr
   intro epsilon hepsilon
   refine ⟨epsilon / (‖f‖ + 1), div_pos hepsilon (by positivity), ?_⟩
   intro h hh N
-  have hN : ‖((ContinuousLinearMap.mul ℂ ℂ).lpPairing AddCircle.haarAddCircle ∞ 1) (circleFejerLp f N)‖ ≤ ‖f‖ :=
+  have hN : ‖((ContinuousLinearMap.mul ℂ ℂ).lpPairing AddCircle.haarAddCircle ∞ 1)
+    (circleFejerLp f N)‖ ≤ ‖f‖ :=
     (circleLpPairing_norm_le _).trans (circleFejerLp_norm_le f N)
-  have hd : dist (((ContinuousLinearMap.mul ℂ ℂ).lpPairing AddCircle.haarAddCircle ∞ 1) (circleFejerLp f N) h₀)
-      (((ContinuousLinearMap.mul ℂ ℂ).lpPairing AddCircle.haarAddCircle ∞ 1) (circleFejerLp f N) h) ≤
+  have hd : dist (((ContinuousLinearMap.mul ℂ ℂ).lpPairing AddCircle.haarAddCircle ∞ 1)
+    (circleFejerLp f N) h₀)
+      (((ContinuousLinearMap.mul ℂ ℂ).lpPairing AddCircle.haarAddCircle ∞ 1) (circleFejerLp f
+        N) h) ≤
       ‖f‖ * dist h h₀ := by
     rw [dist_eq_norm, ← map_sub, dist_eq_norm']
-    exact ((((ContinuousLinearMap.mul ℂ ℂ).lpPairing AddCircle.haarAddCircle ∞ 1) (circleFejerLp f N)).le_opNorm
+    exact ((((ContinuousLinearMap.mul ℂ ℂ).lpPairing AddCircle.haarAddCircle ∞ 1)
+      (circleFejerLp f N)).le_opNorm
         _).trans
       (mul_le_mul_of_nonneg_right hN (norm_nonneg _))
   calc
-    dist (((ContinuousLinearMap.mul ℂ ℂ).lpPairing AddCircle.haarAddCircle ∞ 1) (circleFejerLp f N) h₀)
-        (((ContinuousLinearMap.mul ℂ ℂ).lpPairing AddCircle.haarAddCircle ∞ 1) (circleFejerLp f N) h)
+    dist (((ContinuousLinearMap.mul ℂ ℂ).lpPairing AddCircle.haarAddCircle ∞ 1)
+      (circleFejerLp f N) h₀)
+        (((ContinuousLinearMap.mul ℂ ℂ).lpPairing AddCircle.haarAddCircle ∞ 1) (circleFejerLp
+          f N) h)
         ≤ (‖f‖ + 1) * dist h h₀ :=
       hd.trans (mul_le_mul_of_nonneg_right
         (le_add_of_nonneg_right (show (0 : ℝ) ≤ 1 from zero_le_one))
@@ -136,13 +204,24 @@ theorem circleFejerPairing_equicontinuous
       mul_lt_mul_of_pos_left hh (by positivity)
     _ = epsilon := by field_simp
 
-/-- Actual pointwise convergence of Fejer pairings on every L-one boundary class. -/
+/-- **Fejér pairing convergence for every L¹ coefficient.**
+
+Let 𝕋=UnitAddCircle=ℝ/ℤ, with normalized Haar probability measure μ=AddCircle.haarAddCircle.
+Write e_k(x)=fourier k x and f̂(k)=∫ x:𝕋, f(x)e_(-k)(x) ∂μ for k∈ℤ. For f∈L∞(𝕋,μ) and N∈ℕ, let
+F_N(f)=circleFejerPolynomial f N be the continuous Fejér polynomial (N+1)⁻¹∑_{0≤i,j≤N}
+f̂(i-j)e_(i-j). For f∈L∞(𝕋,μ) and h∈L¹(𝕋,μ), put P(f,h)=∫ x, f(x)h(x) ∂μ, the bilinear L∞–L¹
+pairing. For every h∈L¹(𝕋,μ), P(circleFejerLp f N,h) tends to P(f,h) as N→∞.
+-/
 theorem circleFejerLp_pairing_tendsto
-    (f : Lp ℂ ∞ (AddCircle.haarAddCircle : Measure UnitAddCircle)) (h : Lp ℂ 1 AddCircle.haarAddCircle) :
-    Tendsto (fun N : ℕ => ((ContinuousLinearMap.mul ℂ ℂ).lpPairing AddCircle.haarAddCircle ∞ 1) (circleFejerLp f N)
-        h) atTop (𝓝 (((ContinuousLinearMap.mul ℂ ℂ).lpPairing AddCircle.haarAddCircle ∞ 1) f h)) := by
+    (f : Lp ℂ ∞ (AddCircle.haarAddCircle : Measure UnitAddCircle)) (h : Lp ℂ 1
+      AddCircle.haarAddCircle) :
+    Tendsto (fun N : ℕ => ((ContinuousLinearMap.mul ℂ ℂ).lpPairing AddCircle.haarAddCircle ∞
+      1) (circleFejerLp f N)
+        h) atTop (𝓝 (((ContinuousLinearMap.mul ℂ ℂ).lpPairing AddCircle.haarAddCircle ∞ 1) f
+          h)) := by
   let M : Submodule ℂ (Lp ℂ 1 (AddCircle.haarAddCircle : Measure UnitAddCircle)) :=
-    { carrier := {h | Tendsto (fun N : ℕ => ((ContinuousLinearMap.mul ℂ ℂ).lpPairing AddCircle.haarAddCircle ∞ 1)
+    { carrier := {h | Tendsto (fun N : ℕ => ((ContinuousLinearMap.mul ℂ ℂ).lpPairing
+      AddCircle.haarAddCircle ∞ 1)
         (circleFejerLp f N) h) atTop
         (𝓝 (((ContinuousLinearMap.mul ℂ ℂ).lpPairing AddCircle.haarAddCircle ∞ 1) f h))}
       zero_mem' := by

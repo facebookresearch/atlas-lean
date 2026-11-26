@@ -1,3 +1,4 @@
-# Single Linear
+# Linear inclusion of one component
 
-The algebraic coordinate inclusion as a complex-linear map.
+The map `singleLinear i : E i → Algebraic B E` puts its
+argument in coordinate `i` and zero elsewhere.

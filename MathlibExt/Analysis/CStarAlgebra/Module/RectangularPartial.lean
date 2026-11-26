@@ -17,14 +17,15 @@ public import Mathlib.Analysis.Normed.Group.Defs
 public import Mathlib.LinearAlgebra.LinearPMap
 
 /-!
-# Dense rectangular partial operators with right coefficient actions
+# Densely defined operators with right coefficient actions
 
-The operator has its original dense complex submodule as domain and an
-actual complex-linear map from that domain to the independent codomain.
-Right coefficient stability and linearity express the original nonunital
-module action; no `Module B` structure or coefficient unit is imposed.
-This carrier uses only normed additive groups, complex modules and right actions.
-The adjoint construction supplies the original normed C-star-module context.
+Let `E,F` be normed additive groups with complex-module structures and actions of `Bᵐᵒᵖ`, for a
+coefficient type `B`. A densely defined right-linear partial operator has a complex submodule `D
+⊆ E` and a complex-linear map `T : D → F`. The domain is norm-dense and stable under `x <• b`,
+and `T (x <• b) = T x <• b` for `x ∈ D` and `b : B`.
+
+The coefficient type need not carry an algebra structure. These data specialize to densely
+defined operators between right C-star modules.
 -/
 
 @[expose] public section
@@ -39,19 +40,25 @@ namespace CStarModule
 
 universe uB uE uF
 
-/-- A densely defined right-linear operator between the original right modules. -/
+/-- **Densely defined right-linear partial operator.** For complex modules `E,F` with normed
+additive groups and right actions of a type `B`, this record contains a complex-linear partial
+map with norm-dense domain `D`, stability `D <• b ⊆ D`, and `T (x <• b) = T x <• b` on `D`. -/
 structure DenselyDefinedRightPartialOperator
     (B : Type uB) (E : Type uE) (F : Type uF)
     [NormedAddCommGroup E] [Module ℂ E] [SMul Bᵐᵒᵖ E]
     [NormedAddCommGroup F] [Module ℂ F] [SMul Bᵐᵒᵖ F] where
-  /-- The original rectangular complex-linear partial map. -/
+  /-- **Complex-linear partial map.** The operator acts complex-linearly from its domain submodule
+  of `E` into `F`. -/
   toPartial : E →ₗ.[ℂ] F
-  /-- Its actual domain is dense in the original source norm topology. -/
+  /-- **Density of the partial domain.** The domain of `toPartial` is dense in the norm topology
+  of `E`. -/
   dense_domain : Dense (toPartial.domain : Set E)
-  /-- The domain is stable under the original right coefficient action. -/
+  /-- **Right invariance of the domain.** For `x ∈ dom T` and `b : B`, the vector `x <• b` belongs
+  to `dom T`. -/
   domain_right_smul : ∀ (x : E), x ∈ toPartial.domain → ∀ b : B,
     x <• b ∈ toPartial.domain
-  /-- The actual partial map preserves that right coefficient action. -/
+  /-- **Right linearity on the partial domain.** For `x ∈ dom T` and `b : B`, `T (x <• b) = T x <•
+  b`. -/
   map_right_smul : ∀ (x : toPartial.domain) (b : B),
     toPartial ⟨(x : E) <• b, domain_right_smul (x : E) x.property b⟩ =
       toPartial x <• b
@@ -62,7 +69,8 @@ variable {B : Type uB} {E : Type uE} {F : Type uF}
 variable [NormedAddCommGroup E] [Module ℂ E] [SMul Bᵐᵒᵖ E]
 variable [NormedAddCommGroup F] [Module ℂ F] [SMul Bᵐᵒᵖ F]
 
-/-- Dense right-linear operators are determined by their genuine partial maps. -/
+/-- **Extensionality of dense right-linear operators.** Two such operators `T,S : E → F` are equal
+when their complex-linear partial maps are equal, including their domain submodules. -/
 @[ext]
 theorem ext {T S : DenselyDefinedRightPartialOperator B E F}
     (h : T.toPartial = S.toPartial) : T = S := by

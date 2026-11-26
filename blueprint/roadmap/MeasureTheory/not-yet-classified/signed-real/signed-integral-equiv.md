@@ -1,4 +1,6 @@
-# Signed Integral Equiv
+# Real-linear Riesz equivalence of regular signed measures
 
-Integration is a real-linear equivalence from regular signed measures to the bounded real dual
-of `C(X, ℝ)`.
+Let `X` be a compact
+Hausdorff space with its Borel measurable structure. `signedIntegralEquiv :
+RegularSignedMeasure X ≃ₗ[ℝ] C(X,ℝ)*` sends `s` to continuous integration and has inverse
+`signedRieszMeasure`.

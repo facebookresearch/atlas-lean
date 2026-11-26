@@ -16,13 +16,16 @@ public import MathlibExt.Analysis.CStarAlgebra.SeminormNonUnitalCompletion
 public import Mathlib.Analysis.Normed.Operator.Extend
 
 /-!
-# Original group translations on the same-seminorm completion
+# Group translations on a C-star seminorm completion
 
-The literal inverse left translation and modular right translation preserve
-every actual C-star seminorm. Extend their original linear maps along the
-actual dense separated-completion map. The completed maps have their exact
-original core values and form the same compatible centralizer pair.
-The zero seminorm is allowed; no group multiplier or invariance is supplied.
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p
+on Carrier μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for
+its dense core map. Let L_g,R_g:Xp→L[ℂ]Xp extend the coefficient translations
+f(s)↦α_g(f(g⁻¹*s)) and f(s)↦δ(g)•f(s*g⁻¹), respectively, where δ(g)=Measure.modularCharacter g
+is embedded in ℂ. Both actions are isometries, satisfy L_(gh)=L_g∘L_h and R_(gh)=R_h∘R_g, and
+form a compatible centralizer pair: (R_g x)*y=x*(L_g y). These laws apply to the zero
+seminorm.
 -/
 
 @[expose] public section
@@ -46,17 +49,42 @@ attribute [local instance] CStarSeminorm.nonUnitalCompletionCStarAlgebra
 
 variable (p : CStarSeminorm (Carrier μ α))
 
-/-- The actual inverse left group translation on the same-seminorm completion. -/
+/-- **Completed left group translation.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p
+on Carrier μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for
+its dense core map. Let L_g,R_g:Xp→L[ℂ]Xp extend the coefficient translations
+f(s)↦α_g(f(g⁻¹*s)) and f(s)↦δ(g)•f(s*g⁻¹), respectively, where δ(g)=Measure.modularCharacter g
+is embedded in ℂ. The map groupLeftCompletion μ α p g is L_g, determined by
+L_g(ιp(f))=ιp(s↦α_g(f(g⁻¹*s))).
+-/
 def groupLeftCompletion (g : G) : p.NonUnitalCompletion →L[ℂ] p.NonUnitalCompletion :=
   ((LinearMap.ofClass p.toNonUnitalCompletion).comp (groupLeft μ α g)).extendOfNorm
     (LinearMap.ofClass p.toNonUnitalCompletion)
 
-/-- The actual modular right group translation on the same-seminorm completion. -/
+/-- **Completed modular right group translation.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p
+on Carrier μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for
+its dense core map. Let L_g,R_g:Xp→L[ℂ]Xp extend the coefficient translations
+f(s)↦α_g(f(g⁻¹*s)) and f(s)↦δ(g)•f(s*g⁻¹), respectively, where δ(g)=Measure.modularCharacter g
+is embedded in ℂ. The map groupRightCompletion μ α p g is R_g, determined by
+R_g(ιp(f))=ιp(s↦δ(g)•f(s*g⁻¹)).
+-/
 def groupRightCompletion (g : G) : p.NonUnitalCompletion →L[ℂ] p.NonUnitalCompletion :=
   ((LinearMap.ofClass p.toNonUnitalCompletion).comp (groupRight μ α g)).extendOfNorm
     (LinearMap.ofClass p.toNonUnitalCompletion)
 
-/-- Completed inverse left translation retains every original Haar-core value. -/
+/-- **Left group translation on a dense coefficient class.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p
+on Carrier μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for
+its dense core map. For g∈G and f∈Carrier μ α, groupLeftCompletion μ α p g
+(ιp(f))=ιp(s↦α_g(f(g⁻¹*s))).
+-/
 theorem groupLeftCompletion_apply (g : G) (f : Carrier μ α) :
     groupLeftCompletion μ α p g (p.toNonUnitalCompletion f) =
       p.toNonUnitalCompletion (groupLeft μ α g f) := by
@@ -66,7 +94,14 @@ theorem groupLeftCompletion_apply (g : G) (f : Carrier μ α) :
     1 * ‖p.toNonUnitalCompletion h‖
   simp only [CStarSeminorm.norm_toNonUnitalCompletion, cstarSeminorm_groupLeft, one_mul, le_rfl]
 
-/-- Completed modular right translation retains every original Haar-core value. -/
+/-- **Right group translation on a dense coefficient class.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p
+on Carrier μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for
+its dense core map. For g∈G and f∈Carrier μ α, groupRightCompletion μ α p g
+(ιp(f))=ιp(s↦δ(g)•f(s*g⁻¹)), where δ(g)=Measure.modularCharacter g.
+-/
 theorem groupRightCompletion_apply (g : G) (f : Carrier μ α) :
     groupRightCompletion μ α p g (p.toNonUnitalCompletion f) =
       p.toNonUnitalCompletion (groupRight μ α g f) := by
@@ -76,7 +111,15 @@ theorem groupRightCompletion_apply (g : G) (f : Carrier μ α) :
     1 * ‖p.toNonUnitalCompletion h‖
   simp only [CStarSeminorm.norm_toNonUnitalCompletion, cstarSeminorm_groupRight, one_mul, le_rfl]
 
-/-- The completed inverse left translation preserves the actual same-seminorm norm. -/
+/-- **Isometry of the completed left translation.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p
+on Carrier μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for
+its dense core map. Let L_g,R_g:Xp→L[ℂ]Xp extend the coefficient translations
+f(s)↦α_g(f(g⁻¹*s)) and f(s)↦δ(g)•f(s*g⁻¹), respectively, where δ(g)=Measure.modularCharacter g
+is embedded in ℂ. For g∈G and x∈Xp, ‖L_g x‖=‖x‖.
+-/
 theorem norm_groupLeftCompletion_apply (g : G) (x : p.NonUnitalCompletion) :
     ‖groupLeftCompletion μ α p g x‖ = ‖x‖ := by
   refine congrFun ((p.denseRange_toNonUnitalCompletion).equalizer
@@ -85,7 +128,15 @@ theorem norm_groupLeftCompletion_apply (g : G) (x : p.NonUnitalCompletion) :
   simp only [Function.comp_apply, groupLeftCompletion_apply,
     CStarSeminorm.norm_toNonUnitalCompletion, cstarSeminorm_groupLeft]
 
-/-- The completed modular right translation preserves the actual same-seminorm norm. -/
+/-- **Isometry of the completed right translation.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p
+on Carrier μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for
+its dense core map. Let L_g,R_g:Xp→L[ℂ]Xp extend the coefficient translations
+f(s)↦α_g(f(g⁻¹*s)) and f(s)↦δ(g)•f(s*g⁻¹), respectively, where δ(g)=Measure.modularCharacter g
+is embedded in ℂ. For g∈G and x∈Xp, ‖R_g x‖=‖x‖.
+-/
 theorem norm_groupRightCompletion_apply (g : G) (x : p.NonUnitalCompletion) :
     ‖groupRightCompletion μ α p g x‖ = ‖x‖ := by
   refine congrFun ((p.denseRange_toNonUnitalCompletion).equalizer
@@ -94,7 +145,15 @@ theorem norm_groupRightCompletion_apply (g : G) (x : p.NonUnitalCompletion) :
   simp only [Function.comp_apply, groupRightCompletion_apply,
     CStarSeminorm.norm_toNonUnitalCompletion, cstarSeminorm_groupRight]
 
-/-- The group identity acts by the actual completed left identity operator. -/
+/-- **Identity in the completed left group action.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p
+on Carrier μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for
+its dense core map. Let L_g,R_g:Xp→L[ℂ]Xp extend the coefficient translations
+f(s)↦α_g(f(g⁻¹*s)) and f(s)↦δ(g)•f(s*g⁻¹), respectively, where δ(g)=Measure.modularCharacter g
+is embedded in ℂ. The group identity acts as L_1=id_Xp.
+-/
 @[simp]
 theorem groupLeftCompletion_one : groupLeftCompletion μ α p (1 : G) = ContinuousLinearMap.id ℂ _ := by
   apply ContinuousLinearMap.ext
@@ -104,7 +163,15 @@ theorem groupLeftCompletion_one : groupLeftCompletion μ α p (1 : G) = Continuo
   funext f
   simp only [Function.comp_apply, groupLeftCompletion_apply, groupLeft_one, LinearMap.id_apply, id_eq]
 
-/-- The group identity acts by the actual completed right identity operator. -/
+/-- **Identity in the completed right group action.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p
+on Carrier μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for
+its dense core map. Let L_g,R_g:Xp→L[ℂ]Xp extend the coefficient translations
+f(s)↦α_g(f(g⁻¹*s)) and f(s)↦δ(g)•f(s*g⁻¹), respectively, where δ(g)=Measure.modularCharacter g
+is embedded in ℂ. The group identity acts as R_1=id_Xp.
+-/
 @[simp]
 theorem groupRightCompletion_one : groupRightCompletion μ α p (1 : G) = ContinuousLinearMap.id ℂ _ := by
   apply ContinuousLinearMap.ext
@@ -114,7 +181,15 @@ theorem groupRightCompletion_one : groupRightCompletion μ α p (1 : G) = Contin
   funext f
   simp only [Function.comp_apply, groupRightCompletion_apply, groupRight_one, LinearMap.id_apply, id_eq]
 
-/-- Completed inverse left translations compose in the original group order. -/
+/-- **Composition of completed left translations.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p
+on Carrier μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for
+its dense core map. Let L_g,R_g:Xp→L[ℂ]Xp extend the coefficient translations
+f(s)↦α_g(f(g⁻¹*s)) and f(s)↦δ(g)•f(s*g⁻¹), respectively, where δ(g)=Measure.modularCharacter g
+is embedded in ℂ. For g,h∈G, L_(g*h)=L_g∘L_h.
+-/
 theorem groupLeftCompletion_mul (g h : G) :
     groupLeftCompletion μ α p (g * h) =
       (groupLeftCompletion μ α p g).comp (groupLeftCompletion μ α p h) := by
@@ -128,7 +203,15 @@ theorem groupLeftCompletion_mul (g h : G) :
   simp only [Function.comp_apply,
     groupLeftCompletion_apply, groupLeft_mul, LinearMap.comp_apply]
 
-/-- Completed modular right translations compose in the original centralizer order. -/
+/-- **Reversed composition of completed right translations.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p
+on Carrier μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for
+its dense core map. Let L_g,R_g:Xp→L[ℂ]Xp extend the coefficient translations
+f(s)↦α_g(f(g⁻¹*s)) and f(s)↦δ(g)•f(s*g⁻¹), respectively, where δ(g)=Measure.modularCharacter g
+is embedded in ℂ. For g,h∈G, R_(g*h)=R_h∘R_g.
+-/
 theorem groupRightCompletion_mul (g h : G) :
     groupRightCompletion μ α p (g * h) =
       (groupRightCompletion μ α p h).comp (groupRightCompletion μ α p g) := by
@@ -142,7 +225,15 @@ theorem groupRightCompletion_mul (g h : G) :
   simp only [Function.comp_apply,
     groupRightCompletion_apply, groupRight_mul, LinearMap.comp_apply]
 
-/-- The completed star exchanges inverse left translation with inverse right translation. -/
+/-- **Star exchanges left translation with inverse right translation.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p
+on Carrier μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for
+its dense core map. Let L_g,R_g:Xp→L[ℂ]Xp extend the coefficient translations
+f(s)↦α_g(f(g⁻¹*s)) and f(s)↦δ(g)•f(s*g⁻¹), respectively, where δ(g)=Measure.modularCharacter g
+is embedded in ℂ. For g∈G and x∈Xp, star(L_g x)=R_(g⁻¹)(star(x)).
+-/
 theorem star_groupLeftCompletion (g : G) (x : p.NonUnitalCompletion) :
     star (groupLeftCompletion μ α p g x) = groupRightCompletion μ α p g⁻¹ (star x) := by
   refine congrFun ((p.denseRange_toNonUnitalCompletion).equalizer
@@ -153,7 +244,15 @@ theorem star_groupLeftCompletion (g : G) (x : p.NonUnitalCompletion) :
     groupLeftCompletion_apply, ← map_star, groupRightCompletion_apply]
   exact congrArg p.toNonUnitalCompletion (crossedStar_groupLeft μ α g f)
 
-/-- The completed star exchanges modular right translation with inverse left translation. -/
+/-- **Star exchanges right translation with inverse left translation.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p
+on Carrier μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for
+its dense core map. Let L_g,R_g:Xp→L[ℂ]Xp extend the coefficient translations
+f(s)↦α_g(f(g⁻¹*s)) and f(s)↦δ(g)•f(s*g⁻¹), respectively, where δ(g)=Measure.modularCharacter g
+is embedded in ℂ. For g∈G and x∈Xp, star(R_g x)=L_(g⁻¹)(star(x)).
+-/
 theorem star_groupRightCompletion (g : G) (x : p.NonUnitalCompletion) :
     star (groupRightCompletion μ α p g x) = groupLeftCompletion μ α p g⁻¹ (star x) := by
   refine congrFun ((p.denseRange_toNonUnitalCompletion).equalizer
@@ -164,7 +263,15 @@ theorem star_groupRightCompletion (g : G) (x : p.NonUnitalCompletion) :
     groupRightCompletion_apply, ← map_star, groupLeftCompletion_apply]
   exact congrArg p.toNonUnitalCompletion (crossedStar_groupRight μ α g f)
 
-/-- The computed completed translations form the actual original group centralizer pair. -/
+/-- **Centralizer compatibility of completed group translations.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p
+on Carrier μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for
+its dense core map. Let L_g,R_g:Xp→L[ℂ]Xp extend the coefficient translations
+f(s)↦α_g(f(g⁻¹*s)) and f(s)↦δ(g)•f(s*g⁻¹), respectively, where δ(g)=Measure.modularCharacter g
+is embedded in ℂ. For g∈G and x,y∈Xp, (R_g x)*y=x*(L_g y).
+-/
 theorem groupCompletion_central (g : G) (x y : p.NonUnitalCompletion) :
     groupRightCompletion μ α p g x * y = x * groupLeftCompletion μ α p g y := by
   refine (p.denseRange_toNonUnitalCompletion).induction_on₂

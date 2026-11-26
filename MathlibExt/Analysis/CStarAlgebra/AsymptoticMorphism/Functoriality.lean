@@ -17,15 +17,15 @@ public import MathlibExt.Analysis.CStarAlgebra.Homotopy
 public import Mathlib.Data.Quot
 
 /-!
-# Fixed-hom functoriality and ordinary homomorphism inclusion
+# Functoriality of homotopy classes under star homomorphisms
 
-Only the composing map in pre/postcomposition is an actual star hom.
-The other family remains arbitrary and nonlinear. No same-time composition
-of two arbitrary asymptotic families is defined.
-
-Ordinary classes are the real quotient of the existing point-norm Homotopic
-predicate. Its proven equivalence is reused, and ofHom descends through the
-actual constructed asymptotic homotopy quotient.
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. Ordinary homomorphisms f,g:A→B are
+point-norm homotopic when there is a nonunital complex star homomorphism F:A→C([0,1],B) with
+F(a)(0)=f(a) and F(a)(1)=g(a). Precomposition by f:C→A and postcomposition by g:B→C act on
+ordinary homotopy classes [A,B] and on asymptotic homotopy classes [[A,B]]. The constant
+family φ_t(a)=h(a) of a star homomorphism h:A→B gives a map [A,B]→[[A,B]].
 -/
 
 @[expose] public section
@@ -43,7 +43,13 @@ variable {A : Type uA} {B : Type uB} {C : Type uC}
 variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
 variable [NonUnitalCStarAlgebra C]
 
-/-- The ordinary homotopy setoid, using the existing real hom-valued paths. -/
+/-- **Setoid of point-norm homomorphism homotopy.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). Ordinary homomorphisms f,g:A→B are
+point-norm homotopic when there is a nonunital complex star homomorphism F:A→C([0,1],B) with
+F(a)(0)=f(a) and F(a)(1)=g(a). This is the equivalence relation in
+NonUnitalStarAlgHom.homotopySetoid A B.
+-/
 def homotopySetoid
     (A : Type uA) (B : Type uB)
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B] :
@@ -51,13 +57,25 @@ def homotopySetoid
   r := Homotopic
   iseqv := Homotopic.equivalence A B
 
-/-- The actual ordinary homomorphism homotopy classes [A,B]. -/
+/-- **Ordinary star-homomorphism homotopy classes.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). Ordinary homomorphisms f,g:A→B are
+point-norm homotopic when there is a nonunital complex star homomorphism F:A→C([0,1],B) with
+F(a)(0)=f(a) and F(a)(1)=g(a). NonUnitalStarAlgHom.HomotopyClasses A B is the quotient of
+nonunital complex star homomorphisms A→B by this relation, denoted [A,B].
+-/
 abbrev HomotopyClasses
     (A : Type uA) (B : Type uB)
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B] :=
   Quotient (homotopySetoid A B)
 
-/-- The class of an actual star homomorphism in the point-norm homotopy quotient. -/
+/-- **Homotopy class of a star homomorphism.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). Ordinary homomorphisms f,g:A→B are
+point-norm homotopic when there is a nonunital complex star homomorphism F:A→C([0,1],B) with
+F(a)(0)=f(a) and F(a)(1)=g(a). For a nonunital complex star homomorphism f:A→B,
+mkHomotopyClass f is its class in [A,B].
+-/
 def mkHomotopyClass (f : A →⋆ₙₐ[ℂ] B) : HomotopyClasses A B :=
   Quotient.mk _ f
 
@@ -69,7 +87,12 @@ theorem mkHomotopyClass_eq_iff (f g : A →⋆ₙₐ[ℂ] B) :
   · intro h
     exact Quotient.sound h
 
-/-- Contravariant fixed-hom action on actual ordinary classes. -/
+/-- **Precomposition on ordinary homomorphism classes.**
+
+Let A,B,C be nonunital complex C-star algebras and f:C→A a nonunital complex star
+homomorphism. On point-norm homotopy classes, NonUnitalStarAlgHom.precompClass f:[A,B]→[C,B]
+sends [h] to [h∘f].
+-/
 def precompClass (f : C →⋆ₙₐ[ℂ] A) :
     HomotopyClasses A B → HomotopyClasses C B :=
   Quotient.map (sa := homotopySetoid A B) (sb := homotopySetoid C B)
@@ -77,7 +100,12 @@ def precompClass (f : C →⋆ₙₐ[ℂ] A) :
     intro g h hgh
     exact Homotopic.precomp hgh f)
 
-/-- Covariant fixed-hom action on actual ordinary classes. -/
+/-- **Postcomposition on ordinary homomorphism classes.**
+
+Let A,B,C be nonunital complex C-star algebras and g:B→C a nonunital complex star
+homomorphism. On point-norm homotopy classes, NonUnitalStarAlgHom.postcompClass g:[A,B]→[A,C]
+sends [h] to [g∘h].
+-/
 def postcompClass (g : B →⋆ₙₐ[ℂ] C) :
     HomotopyClasses A B → HomotopyClasses A C :=
   Quotient.map (sa := homotopySetoid A B) (sb := homotopySetoid A C)
@@ -103,8 +131,12 @@ variable {A : Type uA} {B : Type uB} {C : Type uC} {D : Type uD}
 variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
 variable [NonUnitalCStarAlgebra C] [NonUnitalCStarAlgebra D]
 
-/-- Precompose by a fixed actual nonunital star hom.
-No continuity or linearity of the asymptotic slice is added. -/
+/-- **Fixed-homomorphism precomposition of an asymptotic family.**
+
+Let A,B,C be nonunital complex C-star algebras, φ:A→B an asymptotic star morphism on T=[1,∞)
+and f:C→A a nonunital complex star homomorphism. The family precomp φ f has values
+(φ∘f)_t(c)=φ_t(f(c)).
+-/
 def precomp (φ : AsymptoticMorphism A B) (f : C →⋆ₙₐ[ℂ] A) :
     AsymptoticMorphism C B where
   toFun t a := φ t (f a)
@@ -176,7 +208,16 @@ theorem postcomp_ofHom (f : A →⋆ₙₐ[ℂ] B) (g : B →⋆ₙₐ[ℂ] C) :
 
 namespace Homotopy
 
-/-- Precompose the actual homotopy family by a fixed star hom. -/
+/-- **Precomposition of a whole asymptotic homotopy.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. A homotopy H between asymptotic
+families φ,ψ is an asymptotic family A→C([0,1],B) with H_t(a)(0)=φ_t(a) and H_t(a)(1)=ψ_t(a),
+using the supremum norm for time continuity and all defect limits. Let C be a nonunital
+complex C-star algebra and f:C→A a nonunital complex star homomorphism. Homotopy.precomp H f
+runs between φ∘f and ψ∘f, with interval-valued family c↦H_t(f(c)).
+-/
 def precomp {φ ψ : AsymptoticMorphism A B} (H : Homotopy φ ψ)
     (f : C →⋆ₙₐ[ℂ] A) : Homotopy (AsymptoticMorphism.precomp φ f)
       (AsymptoticMorphism.precomp ψ f) where
@@ -190,7 +231,16 @@ def precomp {φ ψ : AsymptoticMorphism A B} (H : Homotopy φ ψ)
     rw [precomp_apply, precomp_apply]
     exact H.finish t (f a)
 
-/-- Postcompose through the actual coefficient star hom on C([0,1],B). -/
+/-- **Postcomposition of a whole asymptotic homotopy.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. A homotopy H between asymptotic
+families φ,ψ is an asymptotic family A→C([0,1],B) with H_t(a)(0)=φ_t(a) and H_t(a)(1)=ψ_t(a),
+using the supremum norm for time continuity and all defect limits. Let C be a nonunital
+complex C-star algebra and g:B→C a nonunital complex star homomorphism. Homotopy.postcomp H g
+runs between g∘φ and g∘ψ, with values g(H_t(a)(s)).
+-/
 def postcomp {φ ψ : AsymptoticMorphism A B} (H : Homotopy φ ψ)
     (g : B →⋆ₙₐ[ℂ] C) : Homotopy (AsymptoticMorphism.postcomp φ g)
       (AsymptoticMorphism.postcomp ψ g) where
@@ -219,8 +269,14 @@ theorem homotopic_postcomp {φ ψ : AsymptoticMorphism A B}
   rcases h with ⟨H⟩
   exact ⟨H.postcomp g⟩
 
-/-- An ordinary point-norm homotopy supplies a constant-in-time asymptotic
-homotopy. The existing relation is an existential F, not a record assumed here. -/
+/-- **A point-norm homotopy gives a constant-time asymptotic homotopy.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). Ordinary homomorphisms f,g:A→B are
+point-norm homotopic when there is a nonunital complex star homomorphism F:A→C([0,1],B) with
+F(a)(0)=f(a) and F(a)(1)=g(a). If f,g are homotopic ordinary star homomorphisms, their
+constant-time asymptotic families ofHom f and ofHom g are asymptotically homotopic: the same
+path F is used at every t≥1.
+-/
 theorem homotopic_ofHom {f g : A →⋆ₙₐ[ℂ] B}
     (h : NonUnitalStarAlgHom.Homotopic f g) : Homotopic (ofHom f) (ofHom g) := by
   rcases h with ⟨F, h0, h1⟩
@@ -232,7 +288,12 @@ theorem homotopic_ofHom {f g : A →⋆ₙₐ[ℂ] B}
     rw [ofHom_apply, ofHom_apply]
     exact h1 a
 
-/-- Contravariant fixed-hom action on actual asymptotic homotopy classes. -/
+/-- **Precomposition on asymptotic homotopy classes.**
+
+Let A,B,C be nonunital complex C-star algebras and f:C→A a nonunital complex star
+homomorphism. The map AsymptoticMorphism.precompClass f:[[A,B]]→[[C,B]] sends [φ] to
+[t↦φ_t∘f], where classes use homotopies with supremum-norm interval-valued defects.
+-/
 def precompClass (f : C →⋆ₙₐ[ℂ] A) :
     HomotopyClasses A B → HomotopyClasses C B :=
   Quotient.map (sa := homotopySetoid A B) (sb := homotopySetoid C B)
@@ -240,7 +301,12 @@ def precompClass (f : C →⋆ₙₐ[ℂ] A) :
     intro φ ψ h
     exact homotopic_precomp h f)
 
-/-- Covariant fixed-hom action on actual asymptotic homotopy classes. -/
+/-- **Postcomposition on asymptotic homotopy classes.**
+
+Let A,B,C be nonunital complex C-star algebras and g:B→C a nonunital complex star
+homomorphism. The map AsymptoticMorphism.postcompClass g:[[A,B]]→[[A,C]] sends [φ] to
+[t↦g∘φ_t], with classes defined by supremum-norm interval-valued homotopies.
+-/
 def postcompClass (g : B →⋆ₙₐ[ℂ] C) :
     HomotopyClasses A B → HomotopyClasses A C :=
   Quotient.map (sa := homotopySetoid A B) (sb := homotopySetoid A C)
@@ -258,7 +324,12 @@ theorem postcompClass_mk (g : B →⋆ₙₐ[ℂ] C) (φ : AsymptoticMorphism A 
     postcompClass g (mkClass φ) = mkClass (postcomp φ g) := by
   rfl
 
-/-- The actual natural map [A,B]->[[A,B]]. -/
+/-- **Map from ordinary to asymptotic homotopy classes.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). The map ofHomClass:[A,B]→[[A,B]]
+sends the point-norm homotopy class of a nonunital complex star homomorphism f:A→B to the
+asymptotic homotopy class of the constant family φ_t(a)=f(a).
+-/
 def ofHomClass : NonUnitalStarAlgHom.HomotopyClasses A B → HomotopyClasses A B :=
   Quotient.map (sa := NonUnitalStarAlgHom.homotopySetoid A B)
     (sb := homotopySetoid A B) ofHom (by

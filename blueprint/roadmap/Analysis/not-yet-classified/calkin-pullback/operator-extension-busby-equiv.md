@@ -1,3 +1,5 @@
-# Operator Extension Busby Equiv
+# Equivalence with the compact-coefficient Busby extension
 
-The operator-coordinate normalization is the existing Busby extension with both endpoints fixed.
+The operator extension and the
+extension of `operatorBusbyMap φ` are equivalent by `(T,a) ↦ (a,m_T)`, with identity maps on
+the coefficient `K(H)` and quotient `A`.

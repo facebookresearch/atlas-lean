@@ -1,3 +1,4 @@
-# Dft Unitary Neg
+# Negative-sign normalized Fourier unitary
 
-DFT unitary for sign `-1`.
+For `d>0`, `dftUnitaryNeg d` is the unitary
+complex matrix with entries `exp(-2π Complex.I i j/d)/√d`.

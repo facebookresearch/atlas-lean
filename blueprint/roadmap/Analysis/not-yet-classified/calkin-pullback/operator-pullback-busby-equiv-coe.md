@@ -1,3 +1,4 @@
-# Operator Pullback Busby Equiv coe
+# Coordinates of the pullback equivalence
 
-The coordinate equivalence retains the actual quotient and bounded-operator multiplier values.
+The multiplier-coordinate image of `p` is
+`(p.1.2, DoubleCentralizer.compactMultiplierEquiv p.1.1)` in `A × M(K(H))`.

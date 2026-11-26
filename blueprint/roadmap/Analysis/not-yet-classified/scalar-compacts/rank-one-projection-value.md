@@ -1,3 +1,4 @@
-# Rank One Projection value
+# Value of the unit-vector projection
 
-The constructed projection is exactly the original rank-one compact operator.
+`(rankOneProjection v hv).value = rankOne v v` when
+`hv : ‖v‖=1`.

@@ -1,3 +1,4 @@
-# Compact Hilbert Hom apply
+# Value of the compact Hilbert representation
 
-The restricted factor retains the literal original compact operator as its source.
+For `T ∈ K(H)`, `compactHilbertHom H A T =
+hilbertOperator H A T` after inclusion into bounded Hilbert operators.

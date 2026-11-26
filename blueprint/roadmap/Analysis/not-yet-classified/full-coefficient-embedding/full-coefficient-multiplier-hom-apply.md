@@ -1,3 +1,5 @@
-# Full Coefficient Multiplier Hom apply
+# Coefficient homomorphism for the maximal covariant seminorm
 
-The named full coefficient homomorphism is its exact computed same-seminorm specialization.
+For a∈A, `fullCoefficientMultiplierHom μ α a = coefficientMultiplierHom μ α
+(maximalCStarSeminorm μ α) a`. Thus the full coefficient multiplier is the coefficient action
+on the maximal-seminorm completion.

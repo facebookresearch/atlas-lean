@@ -1,3 +1,5 @@
-# Neg
+# Negation preserves regular complex variation
 
-Regular variation is preserved by negation of complex measures.
+Let `X` have a topology and measurable
+structure. If a complex measure `c` has regular variation, then `-c` does too; no R₁ or
+Borel premise is required.

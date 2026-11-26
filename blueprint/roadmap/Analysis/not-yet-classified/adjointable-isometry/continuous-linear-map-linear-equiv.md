@@ -1,4 +1,5 @@
-# Continuous Linear Map Linear Equiv
+# Complex-linear operator correspondence
 
-The complete-Hilbert scalar-right correspondence as a complex-linear
-equivalence.
+For complex Hilbert spaces,
+`ofContinuousLinearMap` and `toContinuousLinearMap` give a complex-linear equivalence between
+bounded operators and right scalar-module adjointable operators.

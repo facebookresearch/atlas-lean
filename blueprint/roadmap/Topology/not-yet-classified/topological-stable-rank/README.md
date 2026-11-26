@@ -1,8 +1,8 @@
-# Topological Stable Rank
+# Numeric topological stable rank by dense generators
 
-- [Has Topological Stable Rank At Most](has-topological-stable-rank-at-most.md)
-- [Mono](mono.md)
-- [Topological Stable Rank](topological-stable-rank.md)
-- [Topological Stable Rank le nat Cast](topological-stable-rank-le-nat-cast.md)
-- [Topological Stable Rank eq top iff](topological-stable-rank-eq-top-iff.md)
-- [Topological Stable Rank ne zero](topological-stable-rank-ne-zero.md)
+- [Dense left-generating tuples as a stable-rank bound](has-topological-stable-rank-at-most.md)
+- [Monotonicity of positive generating-tuple density](mono.md)
+- [Extended-natural numeric topological stable rank](topological-stable-rank.md)
+- [A dense generating length bounds the numeric rank](topological-stable-rank-le-nat-cast.md)
+- [Infinite stable rank exactly when no finite generator locus is dense](topological-stable-rank-eq-top-iff.md)
+- [Numeric topological stable rank is nonzero](topological-stable-rank-ne-zero.md)

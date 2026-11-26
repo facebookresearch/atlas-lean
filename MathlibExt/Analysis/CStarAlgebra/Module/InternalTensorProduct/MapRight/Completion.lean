@@ -16,15 +16,15 @@ public import MathlibExt.Analysis.CStarAlgebra.Module.InternalTensorProduct.Comp
 public import MathlibExt.Analysis.CStarAlgebra.Module.Adjointable.OfPair
 
 /-!
-# Actual completed commuting second-factor operators
+# Completed commuting right-factor operators
 
-The proved bounded map on the original radical quotient is extended through
-the stock completion. The genuine source adjoint supplies its paired extension;
-the actual completed inner equation follows from dense quotient images.
+Let `E₁,E₂` be complete right C-star modules over nonunital `B₁,B₂` with star-compatible orders.
+A complex nonunital star representation `φ : B₁ → End_(B₂)(E₂)` and an adjointable `S` commuting
+with its image give the completed operator `I⊗S` on `E₁ ⊗_φ E₂`.
 
-This supplies the bounded second-factor action needed to form the original
-Hilbert/coefficient tensor action in Blackadar, K-Theory for Operator Algebras,
-Theorem 10.1.2. No completed operator, chosen norm or adjoint witness is an input.
+On pure tensors it sends `x⊗y` to `x⊗S y`, its adjoint sends them to `x⊗S* y`, and its norm is
+at most `‖S‖`. These values extend the balanced and radical quotient maps through the norm
+completion.
 -/
 
 @[expose] public section
@@ -47,7 +47,10 @@ variable {E₁ : Type uE₁} [NormedAddCommGroup E₁] [NormedSpace ℂ E₁]
 variable {E₂ : Type uE₂} [NormedAddCommGroup E₂] [NormedSpace ℂ E₂]
   [SMul B₂ᵐᵒᵖ E₂] [CStarModule B₂ᵐᵒᵖ E₂] [CompleteSpace E₂]
 
-/-- Extend the actual bounded radical map by stock completion. -/
+/-- **Completed continuous right-factor map.** Let `E₁,E₂` be complete right C-star modules over
+nonunital `B₁,B₂` with star-compatible opposite orders, and let the complex nonunital star
+representation `φ : B₁ → End_(B₂)(E₂)` commute with an adjointable `S`. extend the radical map
+`I⊗S` to a continuous complex-linear endomorphism of the completed internal tensor. -/
 def completedRightFactorCLM
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (S : AdjointableOperator.End B₂ E₂) (hComm : ∀ b : B₁, Commute S (φ b)) :
@@ -61,7 +64,11 @@ def completedRightFactorCLM
     RadicalTensor (E₁ := E₁) φ →L[ℂ] CompletedTensor (E₁ := E₁) φ).comp
       (radicalRightFactorCLM φ S hComm)).fromCompletion
 
-/-- Each original quotient image has the exact extended source value. -/
+/-- **Completed factor map on a radical image.** Let `E₁,E₂` be complete right C-star modules over
+nonunital `B₁,B₂` with star-compatible opposite orders, and let the complex nonunital star
+representation `φ : B₁ → End_(B₂)(E₂)` commute with an adjointable `S`. for the completion
+inclusion `j`, `completedRightFactorCLM φ S hComm (j q) = j (radicalRightFactorMap φ S hComm
+q)`. -/
 @[simp]
 theorem completedRightFactorCLM_coe
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -78,7 +85,11 @@ theorem completedRightFactorCLM_coe
     ContinuousLinearMap.comp_apply, UniformSpace.Completion.coe_toComplL,
     radicalRightFactorCLM_apply]
 
-/-- Original balanced representatives retain the original second-factor map. -/
+/-- **Completed factor map on balanced representatives.** Let `E₁,E₂` be complete right C-star
+modules over nonunital `B₁,B₂` with star-compatible opposite orders, and let the complex
+nonunital star representation `φ : B₁ → End_(B₂)(E₂)` commute with an adjointable `S`. the
+completed image of a balanced `z` is sent to the completed image of `balancedRightFactorMap φ
+S hComm z`. -/
 @[simp]
 theorem completedRightFactorCLM_fromBalanced
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -94,7 +105,10 @@ theorem completedRightFactorCLM_fromBalanced
   rw [completedFromBalanced_apply, completedFromBalanced_apply,
     completedRightFactorCLM_coe, radicalRightFactorMap_mkQ]
 
-/-- The original source bound passes through the stock completion. -/
+/-- **Vector bound for the completed right factor.** Let `E₁,E₂` be complete right C-star modules
+over nonunital `B₁,B₂` with star-compatible opposite orders, and let the complex nonunital
+star representation `φ : B₁ → End_(B₂)(E₂)` commute with an adjointable `S`.
+`‖completedRightFactorCLM φ S hComm z‖ ≤ ‖S‖ * ‖z‖` for every completed tensor `z`. -/
 theorem completedRightFactorCLM_norm_apply_le
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (S : AdjointableOperator.End B₂ E₂) (hComm : ∀ b : B₁, Commute S (φ b))
@@ -112,7 +126,10 @@ theorem completedRightFactorCLM_norm_apply_le
   simpa only [completedRightFactorCLM_coe, UniformSpace.Completion.norm_coe] using
     radicalRightFactorMap_norm_le φ S hComm q
 
-/-- The actual completed maps retain their original paired-adjoint equation. -/
+/-- **Completed right-factor adjoint pairing.** Let `E₁,E₂` be complete right C-star modules over
+nonunital `B₁,B₂` with star-compatible opposite orders, and let the complex nonunital star
+representation `φ : B₁ → End_(B₂)(E₂)` commute with an adjointable `S`. the completed maps
+satisfy `⟨(I⊗S)z,w⟩_(B₂) = ⟨z,(I⊗S*)w⟩_(B₂)`. -/
 theorem completedRightFactorCLM_inner_adjoint
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (S : AdjointableOperator.End B₂ E₂) (hComm : ∀ b : B₁, Commute S (φ b))
@@ -151,7 +168,10 @@ theorem completedRightFactorCLM_inner_adjoint
     completedFromBalanced_inner, completedFromBalanced_inner]
   exact balancedRightFactorMap_inner_adjoint φ S hComm q v
 
-/-- Package the computed extension and its computed genuine adjoint. -/
+/-- **Adjointable completed right factor.** Let `E₁,E₂` be complete right C-star modules over
+nonunital `B₁,B₂` with star-compatible opposite orders, and let the complex nonunital star
+representation `φ : B₁ → End_(B₂)(E₂)` commute with an adjointable `S`. bundle `I⊗S` and its
+adjoint `I⊗S*` as an adjointable endomorphism of the completed internal tensor. -/
 def completedRightOperator
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (S : AdjointableOperator.End B₂ E₂) (hComm : ∀ b : B₁, Commute S (φ b)) :
@@ -169,7 +189,10 @@ def completedRightOperator
     (completedRightFactorCLM φ S.adjointOperator (rightFactorCommutant_adjoint φ S hComm))
     (completedRightFactorCLM_inner_adjoint φ S hComm)
 
-/-- The original completed pure tensors have the literal second-factor value. -/
+/-- **Completed right factor on a pure tensor.** Let `E₁,E₂` be complete right C-star modules over
+nonunital `B₁,B₂` with star-compatible opposite orders, and let the complex nonunital star
+representation `φ : B₁ → End_(B₂)(E₂)` commute with an adjointable `S`.
+`completedRightOperator φ S hComm (completedPure φ x y) = completedPure φ x (S y)`. -/
 @[simp]
 theorem completedRightOperator_pure
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -189,7 +212,11 @@ theorem completedRightOperator_pure
   rw [completedPure_apply, completedPure_apply, completedRightFactorCLM_coe,
     radicalRightFactorMap_pure]
 
-/-- The actual stored adjoint has the genuine second-factor adjoint value. -/
+/-- **Adjoint completed factor on a pure tensor.** Let `E₁,E₂` be complete right C-star modules
+over nonunital `B₁,B₂` with star-compatible opposite orders, and let the complex nonunital
+star representation `φ : B₁ → End_(B₂)(E₂)` commute with an adjointable `S`. the adjoint of
+`completedRightOperator φ S hComm` sends `completedPure φ x y` to `completedPure φ x
+(S.adjoint y)`. -/
 @[simp]
 theorem completedRightOperator_adjoint_pure
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -211,7 +238,10 @@ theorem completedRightOperator_adjoint_pure
   rw [completedPure_apply, completedPure_apply, completedRightFactorCLM_coe,
     radicalRightFactorMap_pure, AdjointableOperator.adjointOperator_apply]
 
-/-- The actual completed operator retains the original source norm bound. -/
+/-- **Norm of the adjointable right factor.** Let `E₁,E₂` be complete right C-star modules over
+nonunital `B₁,B₂` with star-compatible opposite orders, and let the complex nonunital star
+representation `φ : B₁ → End_(B₂)(E₂)` commute with an adjointable `S`.
+`‖completedRightOperator φ S hComm‖ ≤ ‖S‖`. -/
 theorem completedRightOperator_norm_le
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (S : AdjointableOperator.End B₂ E₂) (hComm : ∀ b : B₁, Commute S (φ b)) :

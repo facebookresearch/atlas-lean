@@ -15,11 +15,12 @@ public import MathlibExt.LinearAlgebra.TensorProduct.PiFiniteFactor
 public import MathlibExt.LinearAlgebra.TensorProduct.SurjectiveScalarHom
 
 /-!
-# Original scalar transport for arbitrary-product tensor comparison
+# Product tensor comparison through a scalar quotient
 
-The scalar actions and product functions are the original ones. The native
-compatible-scalar tensor coordinates transport the actual finite-projective
-factor comparison, preserving every pure tensor and every original projection.
+Let R,S be commutative rings with a surjective algebra map R→S, U and all N_i S-modules with
+compatible restricted R-actions, and U finitely generated projective over S. The product index
+I is arbitrary. The R-linear map Π_R:U⊗_R(∏iN_i)→∏i(U⊗_RN_i), u⊗x↦(i↦u⊗x_i), is an
+isomorphism.
 -/
 
 @[expose] public section
@@ -39,8 +40,14 @@ variable {R : Type uR} {S : Type uS} [CommRing R] [CommRing S] [Algebra R S]
   [∀ i, AddCommGroup (N i)] [∀ i, Module R (N i)] [∀ i, Module S (N i)]
   [∀ i, IsScalarTower R S (N i)]
 
-/-- All scalar tensor coordinates and the original finite-factor product map
-are constructed internally from the actual surjective scalar action. -/
+/-- **Product tensor equivalence for finite projectivity over quotient scalars.**
+
+Let R,S be commutative rings with a surjective algebra map R→S, U and all N_i S-modules with
+compatible restricted R-actions, and U finitely generated projective over S. The product index
+I is arbitrary. The equivalence
+piRightFiniteFactorOfSurjectiveScalars:U⊗_R(∏iN_i)≃ₗ[R]∏i(U⊗_RN_i) has pure tensor value
+u⊗x↦(i↦u⊗x_i).
+-/
 def piRightFiniteFactorOfSurjectiveScalars
     [Module.Finite S U] [Module.Projective S U]
     (h : Function.Surjective (algebraMap R S)) :
@@ -53,7 +60,13 @@ def piRightFiniteFactorOfSurjectiveScalars
     (piRightFiniteFactor S N U).restrictScalars R ≪≫ₗ
       LinearEquiv.piCongrRight (fun i => TensorProduct.equivOfCompatibleSMul R S R U (N i))
 
-/-- Every original pure tensor retains every original product coordinate. -/
+/-- **Pure tensor coordinates of the scalar-quotient product equivalence.**
+
+Let R,S be commutative rings with a surjective algebra map R→S, U and all N_i S-modules with
+compatible restricted R-actions, and U finitely generated projective over S. The product index
+I is arbitrary. For u∈U, x∈∏iN_i and i∈I, piRightFiniteFactorOfSurjectiveScalars(u⊗_R
+x)(i)=u⊗_R x_i.
+-/
 theorem piRightFiniteFactorOfSurjectiveScalars_tmul
     [Module.Finite S U] [Module.Projective S U]
     (h : Function.Surjective (algebraMap R S)) (u : U) (x : ∀ i, N i) (i : ι) :
@@ -61,7 +74,13 @@ theorem piRightFiniteFactorOfSurjectiveScalars_tmul
   simp [piRightFiniteFactorOfSurjectiveScalars, piRightFiniteFactor,
     TensorProduct.equivOfCompatibleSMul, TensorProduct.piRightHom_tmul]
 
-/-- The original R product comparison is the exact forward map. -/
+/-- **Forward map of the scalar-quotient product equivalence.**
+
+Let R,S be commutative rings with a surjective algebra map R→S, U and all N_i S-modules with
+compatible restricted R-actions, and U finitely generated projective over S. The product index
+I is arbitrary. The linear map of piRightFiniteFactorOfSurjectiveScalars equals piRightHom R R
+U N, the product-coordinate comparison u⊗x↦(i↦u⊗x_i).
+-/
 theorem piRightFiniteFactorOfSurjectiveScalars_toLinearMap
     [Module.Finite S U] [Module.Projective S U]
     (h : Function.Surjective (algebraMap R S)) :

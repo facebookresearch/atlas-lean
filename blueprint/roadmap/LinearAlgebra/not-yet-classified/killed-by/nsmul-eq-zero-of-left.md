@@ -1,3 +1,4 @@
-# Nsmul eq zero of left
+# Torsion of the first factor annihilates the tensor
 
-Torsion of the first actual factor kills every vector of the existing tensor product.
+Let R be a commutative semiring, M,N R-semimodules and m∈ℕ. If m•x=0 for all x∈M, then m•z=0
+for all z∈M⊗_RN.

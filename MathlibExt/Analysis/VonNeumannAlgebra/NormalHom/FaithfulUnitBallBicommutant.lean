@@ -16,15 +16,13 @@ public import MathlibExt.Analysis.CStarAlgebra.BicommutantStrongClosureEquality
 public import MathlibExt.Analysis.CStarAlgebra.KaplanskyDensity
 
 /-!
-# Original double-commutant unit ball lies in the actual faithful normal image
+# Unit ball of the bicommutant lies in the normal operator image
 
-The original operator image is a unital star algebra. Its double commutant
-is its actual strong closure. The strict full-H Kaplansky theorem supplies
-bounded approximants in that image. The original bounded image ball is
-WOT closed, and the actual strong-to-WOT conversion is continuous, so the
-original operator lies in the literal image. This unit-ball prerequisite
-serves the exact von Neumann image carrier without a supplied image,
-closure, inverse, approximation or representation certificate.
+Let `f : M → N` be an injective normal unital complex star homomorphism and `R ⊆ B(K)` its
+operator range. If `T ∈ R''` and `‖T‖≤1`, then `T ∈ R`.
+
+The statement provides an operator-image conclusion from bicommutant membership and a unit-ball
+bound. No preimage or closed range is an input.
 -/
 
 @[expose] public section
@@ -44,7 +42,14 @@ variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [Complete
 variable {K : Type v} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
 variable {M : VonNeumannAlgebra H} {N : VonNeumannAlgebra K}
 
-/-- Original unit-ball double-commutant membership yields an element of the literal faithful normal image. -/
+/-- **Bounded bicommutant operator belongs to the injective normal image.** Let `M,N` be
+concrete von Neumann algebras on complete complex Hilbert spaces. Their normal-functional
+Banach spaces `M_*,N_*` are the norm-closed spans of vector functionals, and their
+ultraweak topologies are `σ(M,M_*)`, `σ(N,N_*)`. Let `f : M → N` be a unital complex star
+homomorphism that is ultraweakly continuous. Assume `f` is injective. Write `R={ (f(x) :
+B(K)) : x ∈ M }` for its operator range on the target Hilbert space `K`. if `T ∈ B(K)`
+commutes with every operator in the commutant `R'` and `‖T‖≤1`, then `T∈R`, equivalently
+there is `x ∈ M` with `(f(x) : B(K))=T`. -/
 theorem unitBall_bicommutant_mem_operatorRange (f : NormalStarAlgHom M N)
     (hf : Function.Injective f) (T : K →L[ℂ] K)
     (hT : T ∈ Set.centralizer (Set.centralizer

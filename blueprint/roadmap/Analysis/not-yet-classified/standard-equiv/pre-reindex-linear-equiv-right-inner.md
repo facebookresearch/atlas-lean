@@ -1,3 +1,4 @@
-# Pre Reindex Linear Equiv right Inner
+# Inner product under finite reindexing
 
-Reindexing preserves the coefficient-valued inner product.
+Reindexing by a bijection preserves the `B`-valued
+inner product: `⟨U x, U y⟩_B = ⟨x,y⟩_B`.

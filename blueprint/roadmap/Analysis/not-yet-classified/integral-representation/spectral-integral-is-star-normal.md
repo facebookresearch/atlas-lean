@@ -1,3 +1,7 @@
-# Spectral Integral is Star Normal
+# Normality of bounded spectral integrals
 
-Every bounded spectral integral is a normal operator.
+Let `X` be a measurable space and `H` a
+complete complex Hilbert space. Let `E : ProjectionValuedMeasure X H` be a strongly
+countably additive PVM. Write `μ_(g,h)(s)=⟨h,E(s)g⟩` for its scalar coefficient measures.
+For bounded measurable `f : X → ℂ`, let `I_E(f)=∫ f dE` be the bounded operator integral.
+the bounded operator `I_E(f)` is normal: `I_E(f)* I_E(f)=I_E(f) I_E(f)*`.

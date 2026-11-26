@@ -18,12 +18,13 @@ import Mathlib.Topology.Algebra.Star
 import Mathlib.Tactic.Abel
 
 /-!
-# Literal zero-normalization of asymptotic families
+# Zero normalization of an asymptotic morphism
 
-The original family need not send zero to zero at each finite time.
-Subtract its actual zero orbit to obtain an exactly zero-preserving equivalent
-family. All four asymptotic laws are proved directly from the original defects;
-boundedness, B-infinity and unitization are NOT used.
+Let A,B be nonunital complex C-star algebras and T=AsymptoticTime=[1,∞), with its real
+topology and order. Let φ be an asymptotic star morphism A→B, a family φ_t:A→B with continuous
+time orbits and vanishing additive, complex-scalar, multiplicative and star defects as t→∞.
+Put φ0_t(a)=φ_t(a)-φ_t(0). Then φ0 is an asymptotic star morphism, φ0_t(0)=0 at every time,
+and φ0_t(a)-φ_t(a)→0 for every a as t→∞.
 -/
 
 @[expose] public section
@@ -40,7 +41,13 @@ universe uA uB
 variable {A : Type uA} {B : Type uB}
 variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
 
-/-- Subtract the actual vanishing zero orbit, preserving arbitrary nonlinear slices. -/
+/-- **Asymptotic morphism with its zero orbit subtracted.**
+
+Let A,B be nonunital complex C-star algebras and T=AsymptoticTime=[1,∞), with its real
+topology and order. Let φ be an asymptotic star morphism A→B, a family φ_t:A→B with continuous
+time orbits and vanishing additive, complex-scalar, multiplicative and star defects as t→∞.
+The asymptotic star morphism normalize φ has values φ0_t(a)=φ_t(a)-φ_t(0).
+-/
 def normalize (φ : AsymptoticMorphism A B) : AsymptoticMorphism A B := by
   let f : AsymptoticTime → A → B := fun t a => φ t a - φ t 0
   refine
@@ -101,18 +108,37 @@ def normalize (φ : AsymptoticMorphism A B) : AsymptoticMorphism A B := by
     simpa only [toFun_eq_coe, sub_zero, zero_add, star_zero] using
       ((φ.star_defect_tendsto a).sub φ.zero_tendsto).add φ.zero_tendsto.star
 
-/-- Public characteristic formula, not an assumed chosen normalized family. -/
+/-- **Value of the zero-normalized family.**
+
+Let A,B be nonunital complex C-star algebras and T=AsymptoticTime=[1,∞), with its real
+topology and order. Let φ be an asymptotic star morphism A→B, a family φ_t:A→B with continuous
+time orbits and vanishing additive, complex-scalar, multiplicative and star defects as t→∞.
+For t∈T and a∈A, normalize φ t a=φ_t(a)-φ_t(0).
+-/
 @[simp]
 theorem normalize_apply (φ : AsymptoticMorphism A B)
     (t : AsymptoticTime) (a : A) : normalize φ t a = φ t a - φ t 0 := by
   rfl
 
-/-- Exact zero holds for the newly defined family, not for every original family. -/
+/-- **Exact zero for the normalized family.**
+
+Let A,B be nonunital complex C-star algebras and T=AsymptoticTime=[1,∞), with its real
+topology and order. Let φ be an asymptotic star morphism A→B, a family φ_t:A→B with continuous
+time orbits and vanishing additive, complex-scalar, multiplicative and star defects as t→∞. At
+every t∈T, normalize φ t 0=0.
+-/
 theorem normalize_zero (φ : AsymptoticMorphism A B) (t : AsymptoticTime) :
     normalize φ t 0 = 0 := by
   rw [normalize_apply, sub_self]
 
-/-- The defined normalized family is strictly equivalent to its original. -/
+/-- **Strict equivalence of normalization and the initial family.**
+
+Let A,B be nonunital complex C-star algebras and T=AsymptoticTime=[1,∞), with its real
+topology and order. Let φ be an asymptotic star morphism A→B, a family φ_t:A→B with continuous
+time orbits and vanishing additive, complex-scalar, multiplicative and star defects as t→∞.
+For every a∈A, normalize φ t a-φ_t(a)=-φ_t(0) tends to 0 as t→∞. Thus StrictlyEquivalent
+(normalize φ) φ.
+-/
 theorem normalize_strictlyEquivalent (φ : AsymptoticMorphism A B) :
     StrictlyEquivalent (normalize φ) φ := by
   intro a

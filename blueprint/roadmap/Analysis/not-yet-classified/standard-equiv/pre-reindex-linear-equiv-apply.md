@@ -1,3 +1,4 @@
-# Pre Reindex Linear Equiv apply
+# Coordinate formula for finite reindexing
 
-Reindexing has the expected coordinate formula.
+`preReindexLinearEquiv e x j = x (e.symm j)` for
+each finitely supported standard vector `x`.

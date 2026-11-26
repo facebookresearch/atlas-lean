@@ -1,3 +1,4 @@
-# Adjoint pairing
+# Pairing identity for the partial adjoint
 
-The partial adjoint satisfies the original coefficient-valued pairing on both domains.
+For `x ∈ dom T` and `y ∈ dom T*`, `⟨T x, y⟩_B =
+⟨x, T* y⟩_B`.

@@ -1,3 +1,4 @@
-# Diagonal Difference Shear apply
+# Forward value of the difference-coordinate shear
 
-The forward shear has its literal original difference-coordinate values.
+For a topological group `G` and
+`(s,t)∈G×G`, `diagonalDifferenceShear G (s,t)=(st⁻¹,t)`.

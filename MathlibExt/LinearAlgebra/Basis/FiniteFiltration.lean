@@ -14,44 +14,11 @@ public import Mathlib.LinearAlgebra.Dimension.Constructions
 /-!
 # Bases adapted to a finite filtration
 
-This file assembles bases of the successive quotients of an increasing
-filtration into a basis of a finite filtration stage.  It also records the
-chosen representative of every graded basis vector in the stage where that
-vector is introduced.
-
-## Main declarations
-
-* `Module.Basis.FiltrationIndex` is the dependent sum of the graded basis
-  indices below a finite cutoff.
-* `Module.Basis.ofFiltrationStage` is the resulting basis of a finite
-  filtration stage.
-* `Module.Basis.ofFiltrationStageVector` regards a basis vector as an element
-  of the stage where it is introduced.
-* `Module.Basis.ofFiltration` specializes the construction when the final
-  stage is the whole ambient module.
-
-## Informal proof
-
-Let `F 0 <= F 1 <= ...` be a filtration with `F 0 = 0`, and suppose that the
-quotient `F (i+1) / F i` has a basis indexed by `kappa i`.  We argue by
-induction on the cutoff `n`.
-
-For `n = 0`, the stage `F 0` is the zero module, so its empty family is a
-basis.  For the induction step, identify `F n` with its image as a submodule
-of `F (n+1)`.  Mathlib's `Module.Basis.sumQuot` combines the transported basis
-of this submodule with arbitrary representatives of the supplied basis of
-`F (n+1) / F n`.  Its index type is the disjoint sum of the old indices and
-`kappa n`; reindexing by the evident equivalence identifies this sum with
-`Sigma i : Fin (n+1), kappa i`.
-
-The `sumQuot_inl` formula says that every old vector is carried forward
-without changing its ambient value.  The `sumQuot_inr` formula says that each
-new vector maps to the prescribed quotient-basis vector.  Induction therefore
-shows that every final basis vector still lies in the stage where it was
-introduced and has exactly the prescribed image in the corresponding
-successive quotient.  If the final stage is the top submodule, its canonical
-linear equivalence with the ambient module transports this stage basis to a
-basis of the ambient module without changing any underlying vector.
+Let R be a commutative ring, M an R-module, F_i⊆M a chain for i=0,…,n with F_0=0, and b_i a
+basis indexed by κ_i of F_(i+1)/F_i for i<n. The stage basis B_n of F_n is indexed by
+Σ_{i<n}κ_i; its vector B_n(i,a) lies in F_(i+1) and represents b_i(a). These bases preserve
+earlier vectors on passage to a larger stage. If F_n=M they give a basis of M. The graded
+basis index sets may be infinite.
 -/
 
 @[expose] public section
@@ -63,11 +30,19 @@ namespace Module.Basis
 variable {R : Type u} {M : Type v} [CommRing R]
 variable [AddCommGroup M] [Module R M]
 
-/-- The dependent sum of the graded basis indices strictly below `n`. -/
+/-- **Index set for a finite filtration basis.**
+
+For κ:ℕ→Type and n∈ℕ, FiltrationIndex κ n=Σi:Fin n,κ_i, the disjoint union of the graded
+indices below n.
+-/
 abbrev FiltrationIndex (κ : ℕ → Type w) (n : ℕ) :=
   Σ i : Fin n, κ i.val
 
-/-- Add the last graded index to the dependent sum of the preceding indices. -/
+/-- **Adding the last graded index.**
+
+For κ:ℕ→Type and n∈ℕ, filtrationIndexSuccEquiv:(Σ_{i<n}κ_i)⊕κ_n≃Σ_{i<n+1}κ_i includes earlier
+indices and sends a∈κ_n to (n,a).
+-/
 def filtrationIndexSuccEquiv (κ : ℕ → Type w) (n : ℕ) :
     FiltrationIndex κ n ⊕ κ n ≃ FiltrationIndex κ (n + 1) where
   toFun
@@ -115,12 +90,13 @@ theorem filtrationIndexSuccEquiv_symm_last
       Sum.inr a := by
   simp [filtrationIndexSuccEquiv]
 
-/-- A basis of a finite filtration stage assembled from bases of all its
-successive quotients.
+/-- **Basis assembled on a finite filtration stage.**
 
-The filtration is indexed by natural numbers, while `n` selects the finite
-segment used by this construction.  The result is indexed by the dependent
-sum of the supplied graded basis indices. -/
+Let R be a commutative ring, M an R-module, F_i⊆M a chain for i=0,…,n with F_0=0, and b_i a
+basis indexed by κ_i of F_(i+1)/F_i for i<n. The stage basis B_n of F_n is indexed by
+Σ_{i<n}κ_i; its vector B_n(i,a) lies in F_(i+1) and represents b_i(a). The constructor
+ofFiltrationStage F hzero κ n hF b is the basis B_n of F_n.
+-/
 noncomputable def ofFiltrationStage
     (F : ℕ → Submodule R M) (hzero : F 0 = ⊥) (κ : ℕ → Type w) :
     ∀ n,
@@ -152,8 +128,13 @@ noncomputable def ofFiltrationStage
           (Submodule.comapSubtypeEquivOfLe hlast).symm
       (lower.sumQuot blast).reindex (filtrationIndexSuccEquiv κ n)
 
-/-- Passing to the next filtration stage does not change an earlier basis
-vector as an element of the ambient module. -/
+/-- **Earlier filtration basis vectors retain their ambient values.**
+
+Let R be a commutative ring, M an R-module, F_i⊆M a chain for i=0,…,n with F_0=0, and b_i a
+basis indexed by κ_i of F_(i+1)/F_i for i<n. The stage basis B_n of F_n is indexed by
+Σ_{i<n}κ_i; its vector B_n(i,a) lies in F_(i+1) and represents b_i(a). Using one chain and its
+quotient bases through stage n+1, B_(n+1)(i,a)=B_n(i,a) in M whenever i<n.
+-/
 @[simp]
 theorem ofFiltrationStage_castSucc
     (F : ℕ → Submodule R M) (hzero : F 0 = ⊥) (κ : ℕ → Type w)
@@ -168,8 +149,13 @@ theorem ofFiltrationStage_castSucc
         (fun j => b j.castSucc) ⟨i, a⟩ : F n) := by
   simp [ofFiltrationStage]
 
-/-- The vector added at the last step maps to the prescribed basis vector of
-the last successive quotient. -/
+/-- **Last-stage vector has the specified graded basis image.**
+
+Let R be a commutative ring, M an R-module, F_i⊆M a chain for i=0,…,n with F_0=0, and b_i a
+basis indexed by κ_i of F_(i+1)/F_i for i<n. The stage basis B_n of F_n is indexed by
+Σ_{i<n}κ_i; its vector B_n(i,a) lies in F_(i+1) and represents b_i(a). At stage n+1, the image
+of B_(n+1)(n,a) in F_(n+1)/F_n is b_n(a).
+-/
 @[simp]
 theorem ofFiltrationStage_last_mk
     (F : ℕ → Submodule R M) (hzero : F 0 = ⊥) (κ : ℕ → Type w)
@@ -184,8 +170,13 @@ theorem ofFiltrationStage_last_mk
       b (Fin.last n) a := by
   simp [ofFiltrationStage]
 
-/-- Every assembled basis vector belongs to the filtration stage where its
-graded index is introduced. -/
+/-- **A filtration basis vector lies in its introduction stage.**
+
+Let R be a commutative ring, M an R-module, F_i⊆M a chain for i=0,…,n with F_0=0, and b_i a
+basis indexed by κ_i of F_(i+1)/F_i for i<n. The stage basis B_n of F_n is indexed by
+Σ_{i<n}κ_i; its vector B_n(i,a) lies in F_(i+1) and represents b_i(a). For i<n and a∈κ_i, the
+ambient vector of ofFiltrationStage(i,a) belongs to F_(i+1).
+-/
 theorem ofFiltrationStage_mem
     (F : ℕ → Submodule R M) (hzero : F 0 = ⊥) (κ : ℕ → Type w)
     (n : ℕ) (hF : ∀ j : Fin n, F j.val ≤ F (j.val + 1))
@@ -207,8 +198,13 @@ theorem ofFiltrationStage_mem
         rw [ofFiltrationStage_castSucc]
         exact ih (fun k => hF k.castSucc) (fun k => b k.castSucc) j a
 
-/-- An assembled basis vector, restricted to the filtration stage where it
-is introduced. -/
+/-- **Introduced filtration vector in its own stage.**
+
+Let R be a commutative ring, M an R-module, F_i⊆M a chain for i=0,…,n with F_0=0, and b_i a
+basis indexed by κ_i of F_(i+1)/F_i for i<n. The stage basis B_n of F_n is indexed by
+Σ_{i<n}κ_i; its vector B_n(i,a) lies in F_(i+1) and represents b_i(a). The value
+ofFiltrationStageVector F hzero κ n hF b i a is B_n(i,a), regarded as a vector of F_(i+1).
+-/
 noncomputable def ofFiltrationStageVector
     (F : ℕ → Submodule R M) (hzero : F 0 = ⊥) (κ : ℕ → Type w)
     (n : ℕ)
@@ -220,8 +216,13 @@ noncomputable def ofFiltrationStageVector
   ⟨ofFiltrationStage F hzero κ n hF b ⟨i, a⟩,
     ofFiltrationStage_mem F hzero κ n hF b i a⟩
 
-/-- Every assembled filtration vector is an exact representative of the
-supplied basis vector in its successive quotient. -/
+/-- **Introduced vector represents its graded basis element.**
+
+Let R be a commutative ring, M an R-module, F_i⊆M a chain for i=0,…,n with F_0=0, and b_i a
+basis indexed by κ_i of F_(i+1)/F_i for i<n. The stage basis B_n of F_n is indexed by
+Σ_{i<n}κ_i; its vector B_n(i,a) lies in F_(i+1) and represents b_i(a). The image of
+ofFiltrationStageVector(i,a) in F_(i+1)/F_i equals b_i(a).
+-/
 @[simp]
 theorem ofFiltrationStageVector_mk
     (F : ℕ → Submodule R M) (hzero : F 0 = ⊥) (κ : ℕ → Type w)
@@ -244,8 +245,13 @@ theorem ofFiltrationStageVector_mk
         simpa [ofFiltrationStageVector] using
           ih (fun k => hF k.castSucc) (fun k => b k.castSucc) j a
 
-/-- A basis of the ambient module assembled from bases of the successive
-quotients of a finite filtration from zero to the top submodule. -/
+/-- **Ambient basis from a filtration ending at the whole module.**
+
+Let R be a commutative ring, M an R-module, F_i⊆M a chain for i=0,…,n with F_0=0, and b_i a
+basis indexed by κ_i of F_(i+1)/F_i for i<n. The stage basis B_n of F_n is indexed by
+Σ_{i<n}κ_i; its vector B_n(i,a) lies in F_(i+1) and represents b_i(a). If F_n=M, ofFiltration
+F hzero κ n hF b htop gives the basis of M indexed by Σ_{i<n}κ_i.
+-/
 noncomputable def ofFiltration
     (F : ℕ → Submodule R M) (hzero : F 0 = ⊥) (κ : ℕ → Type w)
     (n : ℕ)
@@ -257,8 +263,13 @@ noncomputable def ofFiltration
   (ofFiltrationStage F hzero κ n hF b).map
     ((LinearEquiv.ofEq (F n) ⊤ htop).trans Submodule.topEquiv)
 
-/-- Mapping the final filtration stage to the ambient module does not change
-the underlying basis vectors. -/
+/-- **Ambient filtration basis has the same stage vectors.**
+
+Let R be a commutative ring, M an R-module, F_i⊆M a chain for i=0,…,n with F_0=0, and b_i a
+basis indexed by κ_i of F_(i+1)/F_i for i<n. The stage basis B_n of F_n is indexed by
+Σ_{i<n}κ_i; its vector B_n(i,a) lies in F_(i+1) and represents b_i(a). If F_n=M, the vector of
+ofFiltration at (i,a) equals B_n(i,a) viewed from F_n in M.
+-/
 @[simp]
 theorem ofFiltration_apply
     (F : ℕ → Submodule R M) (hzero : F 0 = ⊥) (κ : ℕ → Type w)

@@ -1,4 +1,4 @@
-# Basic Compat
+# Tensor–Hom adjunctions for additive monoids and groups
 
-- [Lift Add Equiv Nat](lift-add-equiv-nat.md)
-- [Lift Add Equiv Int](lift-add-equiv-int.md)
+- [Additive tensor–Hom adjunction over the natural numbers](lift-add-equiv-nat.md)
+- [Additive tensor–Hom adjunction over the integers](lift-add-equiv-int.md)

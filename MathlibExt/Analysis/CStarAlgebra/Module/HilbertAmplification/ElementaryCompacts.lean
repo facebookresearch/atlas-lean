@@ -16,18 +16,15 @@ public import MathlibExt.Analysis.CStarAlgebra.Module.HilbertAmplification.Coeff
 public import MathlibExt.Analysis.CStarAlgebra.Operator.Calkin
 
 /-!
-# Actual elementary compact rank-one operators on Hilbert amplification
+# Rank-one compacts on Hilbert amplification
 
-The original Hilbert rank-one operator is a genuine compact operator on the
-same full Hilbert space. The product of its actual amplified action and the
-coefficient product u * star v is the literal module rank-one operator on
-xi tensor u and eta tensor v. Thus this elementary product has actual compact
-A-module image, with a computed value in the existing compact ideal.
+For a complex Hilbert space `H`, the compact rank-one operator `θ_(ξ,η)` acts by `ζ ↦ ⟪η,ζ⟫_ℂ •
+ξ`. On the amplification by a nonunital C-star algebra `A`, coefficient and Hilbert actions
+satisfy `L_(u*star v) D_(θ_(ξ,η)) = θ_(ξ⊗u,η⊗v)`.
 
-This is the generator prerequisite for the algebraic A tensor K(full H) map
-into the original CompactAlgebra H A required by Blackadar Theorem10.1.2.
-The arbitrary coefficient/compact-factor closure and minimum-completion
-comparison remain separate needed constructors; terminal Takai proofs stay open.
+Thus these products lie in the module compact ideal. Their compact-algebra values retain the
+same endomorphism action, while pure vectors satisfy `(c • ξ)⊗a = c • (ξ⊗a)` and `ξ⊗(u*v) =
+(ξ⊗u) <• v`.
 -/
 
 @[expose] public section
@@ -47,7 +44,8 @@ universe uH uA
 variable (H : Type uH)
 variable [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- The original full-H rank-one operator, bundled in the actual compact closed star ideal. -/
+/-- **Compact Hilbert-space rank-one operator.** For a complex Hilbert space `H` and `ξ,η : H`,
+this element of `K(H)` acts by `ζ ↦ inner ℂ η ζ • ξ`. -/
 def hilbertCompactRankOne (ξ η : H) :
     (compactEndomorphismClosedStarIdeal (H := H)).carrier := by
   refine ⟨InnerProductSpace.rankOne ℂ ξ η, ?_⟩
@@ -57,17 +55,19 @@ def hilbertCompactRankOne (ξ η : H) :
       (ContinuousLinearMap.toSpanSingleton ℂ ξ)).comp_clm (_root_.innerSL ℂ (E := H) η)
   simpa only [InnerProductSpace.rankOne_def', ContinuousLinearMap.coe_comp] using hcompact
 
-/-- The original compact rank-one subtype has its literal full-H vector action. -/
+/-- **Action of a compact rank-one operator.** `(hilbertCompactRankOne H ξ η) ζ = inner ℂ η ζ •
+ξ`. -/
 theorem hilbertCompactRankOne_apply (ξ η ζ : H) :
     (hilbertCompactRankOne H ξ η : H →L[ℂ] H) ζ = inner ℂ η ζ • ξ :=
   rfl
 
-/-- The compact-ideal inclusion retains the original rank-one operator. -/
+/-- **Rank-one operator under compact-ideal inclusion.** The bounded operator underlying
+`hilbertCompactRankOne H x y` is `InnerProductSpace.rankOne ℂ x y`. -/
 @[simp]
 theorem hilbertCompactRankOne_coe (x y : H) :
     (hilbertCompactRankOne H x y : H →L[ℂ] H) = InnerProductSpace.rankOne ℂ x y := rfl
 
-/-- The original rank-one composition law in the actual compact ideal. -/
+/-- **Product of compact rank-one operators.** `θ_(x,y) θ_(z,w) = inner ℂ y z • θ_(x,w)`. -/
 theorem hilbertCompactRankOne_mul (x y z w : H) :
     hilbertCompactRankOne H x y * hilbertCompactRankOne H z w = inner ℂ y z • hilbertCompactRankOne H x w := by
   apply Subtype.ext
@@ -75,7 +75,8 @@ theorem hilbertCompactRankOne_mul (x y z w : H) :
     inner ℂ y z • InnerProductSpace.rankOne ℂ x w
   exact InnerProductSpace.rankOne_comp_rankOne x y z w
 
-/-- The original adjoint exchanges the two rank-one vectors. -/
+/-- **Adjoint of a compact rank-one operator.** `star (hilbertCompactRankOne H x y) =
+hilbertCompactRankOne H y x`. -/
 @[simp]
 theorem hilbertCompactRankOne_star (x y : H) : star (hilbertCompactRankOne H x y) = hilbertCompactRankOne H y x := by
   apply Subtype.ext
@@ -84,7 +85,8 @@ theorem hilbertCompactRankOne_star (x y : H) : star (hilbertCompactRankOne H x y
 
 variable (A : Type uA) [NonUnitalCStarAlgebra A]
 
-/-- The original completed pure vector is complex-linear in its Hilbert factor. -/
+/-- **Complex linearity of the Hilbert tensor factor.** `pure H A (c • ξ) b = c • pure H A ξ b`
+for `c : ℂ`. -/
 theorem pure_smul_left (c : ℂ) (ξ : H) (b : A) :
     letI : NormedAddCommGroup (Space H A) := spaceNormedAddCommGroup H A;
     letI : NormedSpace ℂ (Space H A) := spaceNormedSpace H A;
@@ -116,7 +118,8 @@ theorem pure_smul_left (c : ℂ) (ξ : H) (b : A) :
   rw [map_smul]
   exact completedPure_smul_left (scalarSelfHom A) c ((ScalarRight.equivL H).symm ξ) b
 
-/-- Original coefficient multiplication is the actual completed right module action. -/
+/-- **Right action on a pure tensor.** For `ξ : H` and `u,v : A`, `pure H A ξ (u*v) = pure H A ξ u
+<• v`. -/
 theorem pure_right_smul (ξ : H) (u v : A) :
     letI : PartialOrder Aᵐᵒᵖ := CStarAlgebra.spectralOrder Aᵐᵒᵖ;
     letI : StarOrderedRing Aᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Aᵐᵒᵖ;
@@ -152,7 +155,9 @@ theorem pure_right_smul (ξ : H) (u v : A) :
   simpa only [CStarModule.Right.right_smul_self] using
     completedPure_right_smul (scalarSelfHom A) ((ScalarRight.equivL H).symm ξ) u v
 
-/-- The elementary coefficient/rank-one product equals the genuine amplified module rank-one operator. -/
+/-- **Factorization of a module rank-one operator.** On `Space H A`, `coefficientHom (u*star v) *
+hilbertOperator (rankOne ℂ ξ η)` equals the module rank-one operator defined by `pure ξ u` and
+`pure η v`. -/
 theorem coefficient_hilbertRankOne_eq_rankOne (ξ η : H) (u v : A) :
     letI : PartialOrder Aᵐᵒᵖ := CStarAlgebra.spectralOrder Aᵐᵒᵖ;
     letI : StarOrderedRing Aᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Aᵐᵒᵖ;
@@ -193,7 +198,8 @@ theorem coefficient_hilbertRankOne_eq_rankOne (ξ η : H) (u v : A) :
     pure H A ξ u <• (inner ℂ η ζ • (star v * b))
   rw [pure_smul_left, CStarModule.right_smul_smul, ← pure_right_smul, mul_assoc]
 
-/-- The original elementary generator product belongs to the actual compact module ideal. -/
+/-- **Compactness of an elementary rank-one product.** The amplification operator `L_(u*star v)
+D_(rankOne ℂ ξ η)` belongs to the module compact ideal, since it equals `θ_(ξ⊗u,η⊗v)`. -/
 theorem coefficient_hilbertRankOne_mem_compact (ξ η : H) (u v : A) :
     letI : PartialOrder Aᵐᵒᵖ := CStarAlgebra.spectralOrder Aᵐᵒᵖ;
     letI : StarOrderedRing Aᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Aᵐᵒᵖ;
@@ -228,7 +234,8 @@ theorem coefficient_hilbertRankOne_mem_compact (ξ η : H) (u v : A) :
   rw [coefficient_hilbertRankOne_eq_rankOne]
   exact AdjointableOperator.rankOne_mem_compact (pure H A ξ u) (pure H A η v)
 
-/-- A computed elementary rank-one value in the original compact algebra, with actual ideal membership. -/
+/-- **Elementary rank-one value in the compact algebra.** The element of `CompactAlgebra H A`
+represented by `L_(u*star v) D_(rankOne ℂ ξ η)` is the module rank-one map `θ_(ξ⊗u,η⊗v)`. -/
 def elementaryCompactRankOne (ξ η : H) (u v : A) : CompactAlgebra H A := by
   let : PartialOrder Aᵐᵒᵖ := CStarAlgebra.spectralOrder Aᵐᵒᵖ
   let : StarOrderedRing Aᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Aᵐᵒᵖ
@@ -255,7 +262,9 @@ def elementaryCompactRankOne (ξ η : H) (u v : A) : CompactAlgebra H A := by
   exact ⟨AdjointableOperator.rankOne (B := A) (pure H A ξ u) (pure H A η v),
     AdjointableOperator.rankOne_mem_compact (pure H A ξ u) (pure H A η v)⟩
 
-/-- The constructed compact element has the exact original coefficient/Hilbert generator value. -/
+/-- **Endomorphism of the elementary compact.** The inclusion of `elementaryCompactRankOne H A ξ η
+u v` into adjointable endomorphisms is `coefficientHom (u*star v) * hilbertOperator (rankOne ℂ
+ξ η)`. -/
 theorem elementaryCompactRankOne_coe (ξ η : H) (u v : A) :
     letI : PartialOrder Aᵐᵒᵖ := CStarAlgebra.spectralOrder Aᵐᵒᵖ;
     letI : StarOrderedRing Aᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Aᵐᵒᵖ;

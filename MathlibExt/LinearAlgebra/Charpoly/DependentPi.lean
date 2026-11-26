@@ -14,53 +14,13 @@ public import Mathlib.LinearAlgebra.Charpoly.ToMatrix
 import MathlibExt.LinearAlgebra.Charpoly.FiniteFiltration
 
 /-!
-# Characteristic polynomials of dependent componentwise endomorphisms
+# Characteristic polynomial of a dependent componentwise endomorphism
 
-Mathlib's `LinearMap.charpoly_prodMap` computes the characteristic
-polynomial of a binary product endomorphism.  This file proves the
-dependent-family version over a finite index type: the modules `M i` may
-have different ranks, and the characteristic polynomial of the
-componentwise endomorphism of `∀ i, M i` is the product of the component
-characteristic polynomials.  It is the characteristic-polynomial analogue
-of `LinearMap.det_pi_dependent` in
-`MathlibExt.LinearAlgebra.Determinant.DependentPi`.
-
-## Main results
-
-* `LinearMap.charpoly_pi_dependent`: the characteristic polynomial of a
-  componentwise endomorphism of a finite dependent product is the product
-  of the component characteristic polynomials.
-* `Algebra.lmul_charpoly_eq_of_algEquiv`: the characteristic polynomial of
-  left multiplication is invariant under algebra equivalence, paralleling
-  `Algebra.norm_eq_of_algEquiv`.
-* `Algebra.lmul_charpoly_pi_apply`: the characteristic polynomial of left
-  multiplication by an element of a finite dependent product of algebras
-  is the product of the component characteristic polynomials.
-
-## Informal proof
-
-The proof follows the pattern of `Algebra.norm_pi_apply` in
-`MathlibExt.RingTheory.Norm.FiniteProduct`, rather than the block-diagonal
-matrix computation used for determinants: `Matrix.charpoly`, unlike
-`Matrix.det`, takes `DecidableEq` and `Fintype` instance arguments, and
-the block-triangular route produces diagonal-block characteristic
-polynomials whose fiber instances mix two different `DecidableEq`
-sources, which do not unify with synthesized instances.  The induction
-route only ever uses the ambient module instances.
-
-For a product indexed by `Fin n`, induct on `n`.  The empty product is a
-zero module, so its characteristic polynomial is `1`.  At the successor
-step, split a dependent function into its zeroth coordinate and its tail.
-Conjugating the componentwise endomorphism by this linear equivalence
-gives the binary product of the head endomorphism and the componentwise
-tail endomorphism; `LinearMap.charpoly_prodMap`, conjugation invariance,
-and the induction hypothesis give the result.  Finally, reindex an
-arbitrary finite type by `Fin (Fintype.card ι)`; conjugation invariance
-of the characteristic polynomial and invariance of a finite product under
-reindexing finish the proof.  Left multiplication on a product algebra
-is componentwise by definition, and an algebra equivalence conjugates
-left multiplication by `x` to left multiplication by its image, giving
-the two algebra corollaries.
+Let R be a commutative ring, I finite, M_i finite free R-modules and f_i:M_i→M_i linear
+endomorphisms. The componentwise map f on ∏iM_i has characteristic polynomial χ_f=∏iχ_(f_i) in
+R[X]. The component modules may have different ranks, and the empty product has χ=1. For
+finite free R-algebras, left multiplication on a product also factors componentwise;
+characteristic polynomials of left multiplication are invariant under R-algebra equivalences.
 -/
 
 @[expose] public section
@@ -77,8 +37,12 @@ namespace LinearMap
 
 variable {R : Type uR} [CommRing R]
 
-/-- Split a dependent product over `Fin (n + 1)` into its head and tail
-factors, as a linear equivalence. -/
+/-- **Head-tail linear equivalence of a dependent product.**
+
+Let R be a commutative ring and M_i R-modules for i∈Fin(n+1). The linear equivalence
+piFinSuccLinearEquiv sends x to (x_0,(x_(i+1))_(i<n)), identifying ∏i M_i with
+M_0×∏_{i<n}M_(i+1).
+-/
 private def piFinSuccLinearEquiv {n : ℕ} (M : Fin (n + 1) → Type uM)
     [∀ i, AddCommGroup (M i)] [∀ i, Module R (M i)] :
     (∀ i, M i) ≃ₗ[R] M 0 × (∀ i : Fin n, M (Fin.succ i)) where
@@ -92,9 +56,11 @@ private def piFinSuccLinearEquiv {n : ℕ} (M : Fin (n + 1) → Type uM)
   map_add' _ _ := rfl
   map_smul' _ _ := rfl
 
-/-- Conjugating a componentwise endomorphism over `Fin (n + 1)` by the
-head-tail equivalence gives the binary product of the head endomorphism
-and the componentwise tail endomorphism. -/
+/-- **Head-tail conjugation of a componentwise map.**
+
+For R-modules M_i over a commutative ring and endomorphisms f_i, the head-tail equivalence
+over Fin(n+1) conjugates the componentwise map to f_0×(componentwise tail map).
+-/
 private theorem piFinSuccLinearEquiv_conj_pi {n : ℕ}
     {M : Fin (n + 1) → Type uM} [∀ i, AddCommGroup (M i)]
     [∀ i, Module R (M i)] (f : ∀ i, M i →ₗ[R] M i) :
@@ -110,9 +76,12 @@ private theorem piFinSuccLinearEquiv_conj_pi {n : ℕ}
   · funext i
     rfl
 
-/-- The characteristic polynomial of a componentwise endomorphism of a
-`Fin n`-indexed dependent product is the product of the component
-characteristic polynomials. -/
+/-- **Characteristic polynomial on a finite ordinal product.**
+
+Let R be a commutative ring, I finite, M_i finite free R-modules and f_i:M_i→M_i linear
+endomorphisms. The componentwise map f on ∏iM_i has characteristic polynomial χ_f=∏iχ_(f_i) in
+R[X]. For I=Fin n, the componentwise map has χ_f=∏_{i<n}χ_(f_i).
+-/
 private theorem charpoly_pi_dependent_fin {n : ℕ} {M : Fin n → Type uM}
     [∀ i, AddCommGroup (M i)] [∀ i, Module R (M i)]
     [∀ i, Module.Free R (M i)] [∀ i, Module.Finite R (M i)]
@@ -146,8 +115,12 @@ variable {M : ι → Type uM}
 variable [∀ i, AddCommGroup (M i)] [∀ i, Module R (M i)]
 variable [∀ i, Module.Free R (M i)] [∀ i, Module.Finite R (M i)]
 
-/-- Characteristic polynomial of a componentwise endomorphism of a finite
-dependent product. The component modules may have unequal ranks. -/
+/-- **Characteristic polynomial of a finite dependent product.**
+
+Let R be a commutative ring, I finite, M_i finite free R-modules and f_i:M_i→M_i linear
+endomorphisms. The componentwise map f on ∏iM_i has characteristic polynomial χ_f=∏iχ_(f_i) in
+R[X]. This is the identity charpoly_pi_dependent for the componentwise endomorphism.
+-/
 theorem charpoly_pi_dependent (f : ∀ i, M i →ₗ[R] M i) :
     (LinearMap.pi (fun i => (f i).comp (LinearMap.proj i))).charpoly =
       ∏ i, (f i).charpoly := by
@@ -182,10 +155,11 @@ variable [Algebra R S] [Algebra R T]
 variable [Module.Free R S] [Module.Finite R S]
 variable [Module.Free R T] [Module.Finite R T]
 
-/-- The characteristic polynomial of left multiplication is invariant under
-algebra equivalence: an algebra equivalence conjugates left multiplication
-by `x` to left multiplication by the image of `x`.  This parallels
-`Algebra.norm_eq_of_algEquiv`. -/
+/-- **Left-multiplication characteristic polynomial under algebra equivalence.**
+
+Let R be a commutative ring, S,T R-algebras finite free over R, e:S≃ₐ[R]T and x∈S. Then
+χ_(L_(e(x)) on T)=χ_(L_x on S). The algebras need not be commutative.
+-/
 theorem lmul_charpoly_eq_of_algEquiv (e : S ≃ₐ[R] T) (x : S) :
     (Algebra.lmul R T (e x)).charpoly =
       (Algebra.lmul R S x).charpoly := by
@@ -198,9 +172,11 @@ variable {ι : Type uI} [Fintype ι] {A : ι → Type uM}
 variable [∀ i, Ring (A i)] [∀ i, Algebra R (A i)]
 variable [∀ i, Module.Free R (A i)] [∀ i, Module.Finite R (A i)]
 
-/-- The characteristic polynomial of left multiplication by an element of a
-finite dependent product of algebras is the product of the characteristic
-polynomials of left multiplication by its components. -/
+/-- **Left-multiplication characteristic polynomial on a dependent product.**
+
+Let R be a commutative ring, I finite and A_i R-algebras finite free over R. For
+q=(q_i)∈∏iA_i, χ_(L_q)=∏iχ_(L_(q_i)), with left multiplication on each algebra.
+-/
 theorem lmul_charpoly_pi_apply (q : ∀ i, A i) :
     (Algebra.lmul R (∀ i, A i) q).charpoly =
       ∏ i, (Algebra.lmul R (A i) (q i)).charpoly := by

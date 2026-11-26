@@ -19,14 +19,15 @@ public import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
 public import Mathlib.MeasureTheory.Group.Integral
 
 /-!
-# The original left and right actions on the Haar twisted core
+# Coefficient and group actions on the twisted convolution core
 
-The compact-support functions and the measure/action-indexed carrier remain the
-original ones. Coefficients act by left multiplication and by the action-valued
-right coefficient. Group elements act by inverse left translation with the
-coefficient action, and by right translation with the right-pushforward modular
-factor. The identities here are the algebraic prerequisites of the canonical
-coefficient and group multiplier maps on the actual completed crossed product.
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For core coefficients f,
+define L_a f(s)=a*f(s) and R_a f(s)=f(s)*α_s(a). For core coefficients f, define L_g
+f(s)=α_g(f(g⁻¹*s)) and R_g f(s)=δ(g)•f(s*g⁻¹), where δ(g)=Measure.modularCharacter g is
+embedded in ℂ. These are complex-linear actions on compactly supported continuous
+coefficients. They satisfy the covariance and star-exchange identities and the convolution
+centralizer equations (R_a f)*h=f*(L_a h) and (R_g f)*h=f*(L_g h).
 -/
 
 @[expose] public section
@@ -48,7 +49,11 @@ section CoefficientCc
 variable {G : Type uG} [TopologicalSpace G]
 variable {A : Type uA} [NonUnitalCStarAlgebra A]
 
-/-- A coefficient multiplies the original compact-support function on the left. -/
+/-- **Left coefficient action on compactly supported functions.**
+
+Let G be a topological space and A a nonunital complex C-star algebra. For a∈A,
+coefficientLeftCc a is the complex linear map C_c(G,A)→C_c(G,A) given by f(s)↦a*f(s).
+-/
 def coefficientLeftCc (a : A) : C_c(G, A) →ₗ[ℂ] C_c(G, A) where
   toFun f :=
     { toFun s := a * f s
@@ -65,7 +70,11 @@ def coefficientLeftCc (a : A) : C_c(G, A) →ₗ[ℂ] C_c(G, A) where
     change a * (c • f s) = c • (a * f s)
     exact mul_smul_comm _ _ _
 
-/-- The left coefficient action has the literal original pointwise value. -/
+/-- **Pointwise value of left coefficient multiplication.**
+
+Let G be a topological space, A a nonunital complex C-star algebra, a∈A, f∈C_c(G,A) and s∈G.
+Then coefficientLeftCc a f s=a*f(s).
+-/
 @[simp]
 theorem coefficientLeftCc_apply (a : A) (f : C_c(G, A)) (s : G) :
     coefficientLeftCc a f s = a * f s := rfl
@@ -74,7 +83,11 @@ section Monoid
 
 variable [Monoid G] (α : PointNormCStarAction G A)
 
-/-- A coefficient multiplies on the right through the original point-norm action. -/
+/-- **Action-valued right coefficient multiplication.**
+
+Let G be a monoid with a topology, A a nonunital complex C-star algebra and α a point-norm
+action. For a∈A, coefficientRightCc α a:C_c(G,A)→ₗ[ℂ]C_c(G,A) sends f to s↦f(s)*α_s(a).
+-/
 def coefficientRightCc (a : A) : C_c(G, A) →ₗ[ℂ] C_c(G, A) where
   toFun f :=
     { toFun s := f s * α s a
@@ -92,7 +105,11 @@ def coefficientRightCc (a : A) : C_c(G, A) →ₗ[ℂ] C_c(G, A) where
     change (c • f s) * α s a = c • (f s * α s a)
     exact smul_mul_assoc _ _ _
 
-/-- The right coefficient action has the original action-valued coefficient. -/
+/-- **Pointwise value of right coefficient multiplication.**
+
+Let G be a monoid with a topology, A a nonunital complex C-star algebra and α a point-norm
+action. For a∈A, f∈C_c(G,A) and s∈G, coefficientRightCc α a f s=f(s)*α_s(a).
+-/
 @[simp]
 theorem coefficientRightCc_apply (a : A) (f : C_c(G, A)) (s : G) :
     coefficientRightCc α a f s = f s * α s a := rfl
@@ -106,7 +123,12 @@ variable {G : Type uG} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
   [LocallyCompactSpace G]
 variable {A : Type uA} [NonUnitalCStarAlgebra A]
 
-/-- Inverse left translation and the original coefficient action on C_c. -/
+/-- **Left group translation of compact coefficients.**
+
+Let G be a locally compact topological group, A a nonunital complex C-star algebra and α a
+point-norm action of G on A. For g∈G, groupLeftCc α g:C_c(G,A)→ₗ[ℂ]C_c(G,A) sends f to
+s↦α_g(f(g⁻¹*s)).
+-/
 def groupLeftCc (α : PointNormCStarAction G A) (g : G) : C_c(G, A) →ₗ[ℂ] C_c(G, A) where
   toFun f :=
     { toFun s := α g (f (g⁻¹ * s))
@@ -128,17 +150,31 @@ def groupLeftCc (α : PointNormCStarAction G A) (g : G) : C_c(G, A) →ₗ[ℂ] 
     exact α.apply_smul _ _ _
 
 omit [LocallyCompactSpace G] in
-/-- The original left group action retains its inverse-translation formula. -/
+/-- **Pointwise value of the left compact group translate.**
+
+Let G be a topological group, A a nonunital complex C-star algebra and α a point-norm action.
+For g,s∈G and f∈C_c(G,A), groupLeftCc α g f s=α_g(f(g⁻¹*s)).
+-/
 @[simp]
 theorem groupLeftCc_apply (α : PointNormCStarAction G A) (g : G) (f : C_c(G, A)) (s : G) :
     groupLeftCc α g f s = α g (f (g⁻¹ * s)) := rfl
 
-/-- Right translation has precisely the adopted right-pushforward modular factor. -/
+/-- **Modular right translation of compact coefficients.**
+
+Let G be a locally compact topological group, A a nonunital complex C-star algebra and α a
+point-norm action of G on A. For g∈G, groupRightCc g:C_c(G,A)→ₗ[ℂ]C_c(G,A) sends f to
+s↦δ(g)•f(s*g⁻¹), where δ(g)=Measure.modularCharacter g is embedded in ℂ.
+-/
 def groupRightCc (g : G) : C_c(G, A) →ₗ[ℂ] C_c(G, A) :=
   ((Measure.modularCharacter g : ℝ) : ℂ) •
     CompactlySupportedContinuousMap.compLinearMap (R := ℂ) (Homeomorph.mulRight g⁻¹).toCocompactMap
 
-/-- The original right group action has the printed Haar factor. -/
+/-- **Pointwise value of the modular compact right translate.**
+
+Let G be a locally compact topological group, A a nonunital complex C-star algebra and α a
+point-norm action of G on A. For g,s∈G and f∈C_c(G,A), groupRightCc g f
+s=((Measure.modularCharacter g:ℝ):ℂ)•f(s*g⁻¹).
+-/
 @[simp]
 theorem groupRightCc_apply (g : G) (f : C_c(G, A)) (s : G) :
     groupRightCc g f s = ((Measure.modularCharacter g : ℝ) : ℂ) • f (s * g⁻¹) := rfl
@@ -151,7 +187,12 @@ variable {G : Type uG} [Group G] [TopologicalSpace G] [MeasurableSpace G]
 variable {A : Type uA} [NonUnitalCStarAlgebra A]
 variable (μ : Measure G) (α : PointNormCStarAction G A)
 
-/-- The actual left coefficient map on the same original indexed carrier. -/
+/-- **Left coefficient action on the indexed core.**
+
+Let G be a group with a topology and measurable structure, μ a measure on G, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. The complex linear map
+coefficientLeft μ α a:Carrier μ α→Carrier μ α sends f to s↦a*f(s).
+-/
 def coefficientLeft (a : A) : Carrier μ α →ₗ[ℂ] Carrier μ α where
   toFun f := fromCc μ α (coefficientLeftCc a (toCc μ α f))
   map_add' f h := by
@@ -166,12 +207,22 @@ def coefficientLeft (a : A) : Carrier μ α →ₗ[ℂ] Carrier μ α where
       toCc μ α (c • fromCc μ α (coefficientLeftCc a (toCc μ α f)))
     simp only [toCc_smul, toCc_fromCc, map_smul]
 
-/-- Left coefficient evaluation retains the same original function value. -/
+/-- **Left coefficient value on the indexed core.**
+
+Let G be a group with a topology and measurable structure, μ a measure on G, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For a∈A, f∈Carrier μ α and s∈G,
+coefficientLeft μ α a f s=a*f(s).
+-/
 @[simp]
 theorem coefficientLeft_apply (a : A) (f : Carrier μ α) (s : G) :
     coefficientLeft μ α a f s = a * f s := rfl
 
-/-- The actual right coefficient map on the same original indexed carrier. -/
+/-- **Right coefficient action on the indexed core.**
+
+Let G be a group with a topology and measurable structure, μ a measure on G, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. The complex linear map
+coefficientRight μ α a:Carrier μ α→Carrier μ α sends f to s↦f(s)*α_s(a).
+-/
 def coefficientRight (a : A) : Carrier μ α →ₗ[ℂ] Carrier μ α where
   toFun f := fromCc μ α (coefficientRightCc α a (toCc μ α f))
   map_add' f h := by
@@ -186,12 +237,22 @@ def coefficientRight (a : A) : Carrier μ α →ₗ[ℂ] Carrier μ α where
       toCc μ α (c • fromCc μ α (coefficientRightCc α a (toCc μ α f)))
     simp only [toCc_smul, toCc_fromCc, map_smul]
 
-/-- Right coefficient evaluation retains the original action-valued coefficient. -/
+/-- **Right coefficient value on the indexed core.**
+
+Let G be a group with a topology and measurable structure, μ a measure on G, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For a∈A, f∈Carrier μ α and s∈G,
+coefficientRight μ α a f s=f(s)*α_s(a).
+-/
 @[simp]
 theorem coefficientRight_apply (a : A) (f : Carrier μ α) (s : G) :
     coefficientRight μ α a f s = f s * α s a := rfl
 
-/-- Original left coefficients compose by their original product. -/
+/-- **Composition of left coefficient actions.**
+
+Let G be a group with a topology and measurable structure, μ a measure on G, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For core coefficients f, define
+L_a f(s)=a*f(s) and R_a f(s)=f(s)*α_s(a). For a,b∈A, L_(a*b)=L_a∘L_b.
+-/
 theorem coefficientLeft_mul (a b : A) :
     coefficientLeft μ α (a * b) = (coefficientLeft μ α a).comp (coefficientLeft μ α b) := by
   apply LinearMap.ext
@@ -200,7 +261,12 @@ theorem coefficientLeft_mul (a b : A) :
   intro s
   simp only [LinearMap.comp_apply, coefficientLeft_apply, mul_assoc]
 
-/-- Original right coefficients compose in the double-centralizer order. -/
+/-- **Reversed composition of right coefficient actions.**
+
+Let G be a group with a topology and measurable structure, μ a measure on G, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For core coefficients f, define
+L_a f(s)=a*f(s) and R_a f(s)=f(s)*α_s(a). For a,b∈A, R_(a*b)=R_b∘R_a.
+-/
 theorem coefficientRight_mul (a b : A) :
     coefficientRight μ α (a * b) = (coefficientRight μ α b).comp (coefficientRight μ α a) := by
   apply LinearMap.ext
@@ -209,7 +275,12 @@ theorem coefficientRight_mul (a b : A) :
   intro s
   simp only [LinearMap.comp_apply, coefficientRight_apply, α.apply_mul_elem, mul_assoc]
 
-/-- The original left coefficient parameter is additive. -/
+/-- **Additivity in the left coefficient parameter.**
+
+Let G be a group with a topology and measurable structure, μ a measure on G, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For core coefficients f, define
+L_a f(s)=a*f(s) and R_a f(s)=f(s)*α_s(a). For a,b∈A, L_(a+b)=L_a+L_b.
+-/
 theorem coefficientLeft_add (a b : A) :
     coefficientLeft μ α (a + b) = coefficientLeft μ α a + coefficientLeft μ α b := by
   apply LinearMap.ext
@@ -219,7 +290,12 @@ theorem coefficientLeft_add (a b : A) :
   simp only [LinearMap.add_apply, coefficientLeft_apply, toCc_add,
     CompactlySupportedContinuousMap.add_apply, add_mul]
 
-/-- The original right coefficient parameter is additive. -/
+/-- **Additivity in the right coefficient parameter.**
+
+Let G be a group with a topology and measurable structure, μ a measure on G, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For core coefficients f, define
+L_a f(s)=a*f(s) and R_a f(s)=f(s)*α_s(a). For a,b∈A, R_(a+b)=R_a+R_b.
+-/
 theorem coefficientRight_add (a b : A) :
     coefficientRight μ α (a + b) = coefficientRight μ α a + coefficientRight μ α b := by
   apply LinearMap.ext
@@ -229,7 +305,12 @@ theorem coefficientRight_add (a b : A) :
   simp only [LinearMap.add_apply, coefficientRight_apply, toCc_add,
     CompactlySupportedContinuousMap.add_apply, α.apply_add, mul_add]
 
-/-- The original left coefficient parameter has its actual complex scaling. -/
+/-- **Complex scaling in the left coefficient parameter.**
+
+Let G be a group with a topology and measurable structure, μ a measure on G, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For core coefficients f, define
+L_a f(s)=a*f(s) and R_a f(s)=f(s)*α_s(a). For c∈ℂ and a∈A, L_(c•a)=c•L_a.
+-/
 theorem coefficientLeft_smul (c : ℂ) (a : A) :
     coefficientLeft μ α (c • a) = c • coefficientLeft μ α a := by
   apply LinearMap.ext
@@ -239,7 +320,12 @@ theorem coefficientLeft_smul (c : ℂ) (a : A) :
   simp only [LinearMap.smul_apply, coefficientLeft_apply, toCc_smul,
     CompactlySupportedContinuousMap.smul_apply, smul_mul_assoc]
 
-/-- The original right coefficient parameter has its actual complex scaling. -/
+/-- **Complex scaling in the right coefficient parameter.**
+
+Let G be a group with a topology and measurable structure, μ a measure on G, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For core coefficients f, define
+L_a f(s)=a*f(s) and R_a f(s)=f(s)*α_s(a). For c∈ℂ and a∈A, R_(c•a)=c•R_a.
+-/
 theorem coefficientRight_smul (c : ℂ) (a : A) :
     coefficientRight μ α (c • a) = c • coefficientRight μ α a := by
   apply LinearMap.ext
@@ -258,7 +344,12 @@ variable {G : Type uG} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
 variable {A : Type uA} [NonUnitalCStarAlgebra A]
 variable (μ : Measure G) (α : PointNormCStarAction G A)
 
-/-- The actual inverse left group action on the same indexed compact-support functions. -/
+/-- **Left group action on the indexed core.**
+
+Let G be a locally compact topological group with a measurable structure, μ a measure on G, A
+a nonunital complex C-star algebra and α a point-norm action of G on A. The complex linear map
+groupLeft μ α g on Carrier μ α sends f to s↦α_g(f(g⁻¹*s)).
+-/
 def groupLeft (g : G) : Carrier μ α →ₗ[ℂ] Carrier μ α where
   toFun f := fromCc μ α (groupLeftCc α g (toCc μ α f))
   map_add' f h := by
@@ -274,12 +365,23 @@ def groupLeft (g : G) : Carrier μ α →ₗ[ℂ] Carrier μ α where
     simp only [toCc_smul, toCc_fromCc, map_smul]
 
 omit [LocallyCompactSpace G] in
-/-- The indexed left group action retains every original inverse-translation value. -/
+/-- **Left group value on the indexed core.**
+
+Let G be a topological group with a measurable structure, μ a measure on G, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For g,s∈G and f∈Carrier μ α,
+groupLeft μ α g f s=α_g(f(g⁻¹*s)).
+-/
 @[simp]
 theorem groupLeft_apply (g : G) (f : Carrier μ α) (s : G) :
     groupLeft μ α g f s = α g (f (g⁻¹ * s)) := rfl
 
-/-- The actual modular right group action on the same indexed compact-support functions. -/
+/-- **Modular right group action on the indexed core.**
+
+Let G be a locally compact topological group with a measurable structure, μ a measure on G, A
+a nonunital complex C-star algebra and α a point-norm action of G on A. The complex linear map
+groupRight μ α g on Carrier μ α sends f to s↦δ(g)•f(s*g⁻¹), where
+δ(g)=Measure.modularCharacter g.
+-/
 def groupRight (g : G) : Carrier μ α →ₗ[ℂ] Carrier μ α where
   toFun f := fromCc μ α (groupRightCc g (toCc μ α f))
   map_add' f h := by
@@ -294,13 +396,23 @@ def groupRight (g : G) : Carrier μ α →ₗ[ℂ] Carrier μ α where
       toCc μ α (c • fromCc μ α (groupRightCc g (toCc μ α f)))
     simp only [toCc_smul, toCc_fromCc, map_smul]
 
-/-- The indexed right group action retains the adopted modular factor. -/
+/-- **Modular right group value on the indexed core.**
+
+Let G be a locally compact topological group with a measurable structure, μ a measure on G, A
+a nonunital complex C-star algebra and α a point-norm action of G on A. For g,s∈G and
+f∈Carrier μ α, groupRight μ α g f s=((Measure.modularCharacter g:ℝ):ℂ)•f(s*g⁻¹).
+-/
 @[simp]
 theorem groupRight_apply (g : G) (f : Carrier μ α) (s : G) :
     groupRight μ α g f s = ((Measure.modularCharacter g : ℝ) : ℂ) • f (s * g⁻¹) := rfl
 
 omit [LocallyCompactSpace G] in
-/-- The original left group identity acts as the actual identity map. -/
+/-- **Identity in the left core group action.**
+
+Let G be a topological group with a measurable structure, μ a measure on G, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For L_g f(s)=α_g(f(g⁻¹*s)), the
+identity group element acts by L_1=id on Carrier μ α.
+-/
 theorem groupLeft_one : groupLeft μ α 1 = LinearMap.id := by
   apply LinearMap.ext
   intro f
@@ -308,7 +420,12 @@ theorem groupLeft_one : groupLeft μ α 1 = LinearMap.id := by
   intro s
   simp only [groupLeft_apply, inv_one, one_mul, α.apply_one, LinearMap.id_apply]
 
-/-- The original right group identity acts as the actual identity map. -/
+/-- **Identity in the right core group action.**
+
+Let G be a locally compact topological group with a measurable structure, μ a measure on G, A
+a nonunital complex C-star algebra and α a point-norm action of G on A. For R_g
+f(s)=δ(g)•f(s*g⁻¹), with δ(g)=Measure.modularCharacter g, R_1=id on Carrier μ α.
+-/
 theorem groupRight_one : groupRight μ α 1 = LinearMap.id := by
   apply LinearMap.ext
   intro f
@@ -318,7 +435,12 @@ theorem groupRight_one : groupRight μ α 1 = LinearMap.id := by
     inv_one, mul_one, one_smul, LinearMap.id_apply]
 
 omit [LocallyCompactSpace G] in
-/-- Original left group actions compose in the source group order. -/
+/-- **Composition of left core group translations.**
+
+Let G be a topological group with a measurable structure, μ a measure on G, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For L_g f(s)=α_g(f(g⁻¹*s)),
+L_(g*h)=L_g∘L_h on Carrier μ α.
+-/
 theorem groupLeft_mul (g h : G) :
     groupLeft μ α (g * h) = (groupLeft μ α g).comp (groupLeft μ α h) := by
   apply LinearMap.ext
@@ -327,7 +449,12 @@ theorem groupLeft_mul (g h : G) :
   intro s
   simp only [LinearMap.comp_apply, groupLeft_apply, α.apply_mul, mul_inv_rev, mul_assoc]
 
-/-- Original right group actions compose in the double-centralizer order. -/
+/-- **Reversed composition of right core group translations.**
+
+Let G be a locally compact topological group with a measurable structure, μ a measure on G, A
+a nonunital complex C-star algebra and α a point-norm action of G on A. For R_g
+f(s)=δ(g)•f(s*g⁻¹), with δ(g)=Measure.modularCharacter g, R_(g*h)=R_h∘R_g on Carrier μ α.
+-/
 theorem groupRight_mul (g h : G) :
     groupRight μ α (g * h) = (groupRight μ α h).comp (groupRight μ α g) := by
   apply LinearMap.ext
@@ -340,7 +467,12 @@ theorem groupRight_mul (g h : G) :
     (((Measure.modularCharacter h : ℝ) : ℂ))]
 
 omit [LocallyCompactSpace G] in
-/-- The source left group and coefficient actions obey the actual covariance equation. -/
+/-- **Covariance of left core group and coefficient actions.**
+
+Let G be a topological group with a measurable structure, μ a measure on G, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For L_g f(s)=α_g(f(g⁻¹*s)) and L_a
+f(s)=a*f(s), L_g∘L_a=L_(α_g(a))∘L_g.
+-/
 theorem groupLeft_coefficientLeft (g : G) (a : A) :
     (groupLeft μ α g).comp (coefficientLeft μ α a) =
       (coefficientLeft μ α (α g a)).comp (groupLeft μ α g) := by
@@ -350,7 +482,13 @@ theorem groupLeft_coefficientLeft (g : G) (a : A) :
   intro s
   simp only [LinearMap.comp_apply, groupLeft_apply, coefficientLeft_apply, α.apply_mul_elem]
 
-/-- The source right group and coefficient actions obey the second covariance component. -/
+/-- **Covariance of right core group and coefficient actions.**
+
+Let G be a locally compact topological group with a measurable structure, μ a measure on G, A
+a nonunital complex C-star algebra and α a point-norm action of G on A. For R_a
+f(s)=f(s)*α_s(a) and R_g f(s)=δ(g)•f(s*g⁻¹), with δ(g)=Measure.modularCharacter g,
+R_a∘R_g=R_g∘R_(α_g(a)).
+-/
 theorem coefficientRight_groupRight (g : G) (a : A) :
     (coefficientRight μ α a).comp (groupRight μ α g) =
       (groupRight μ α g).comp (coefficientRight μ α (α g a)) := by
@@ -373,7 +511,13 @@ variable {G : Type uG} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
 variable {A : Type uA} [NonUnitalCStarAlgebra A]
 variable (μ : Measure G) (α : PointNormCStarAction G A)
 
-/-- The source star exchanges the left coefficient with the adjoint right coefficient. -/
+/-- **Modular star exchanges left and adjoint right coefficients.**
+
+Let G be a locally compact topological group with a measurable structure, μ a measure on G, A
+a nonunital complex C-star algebra and α a point-norm action of G on A. For core coefficients
+f, define L_a f(s)=a*f(s) and R_a f(s)=f(s)*α_s(a). For the modular star
+f⁎(s)=δ(s)•α_s(star(f(s⁻¹))), where δ(s)=Measure.modularCharacter s, (L_a f)⁎=R_star(a)(f⁎).
+-/
 theorem crossedStar_coefficientLeft (a : A) (f : Carrier μ α) :
     crossedStar μ α (coefficientLeft μ α a f) =
       coefficientRight μ α (star a) (crossedStar μ α f) := by
@@ -382,7 +526,13 @@ theorem crossedStar_coefficientLeft (a : A) (f : Carrier μ α) :
   simp only [crossedStar_apply, coefficientLeft_apply, coefficientRight_apply,
     star_mul, α.apply_mul_elem, smul_mul_assoc]
 
-/-- The source star exchanges the right coefficient with the adjoint left coefficient. -/
+/-- **Modular star exchanges right and adjoint left coefficients.**
+
+Let G be a locally compact topological group with a measurable structure, μ a measure on G, A
+a nonunital complex C-star algebra and α a point-norm action of G on A. For core coefficients
+f, define L_a f(s)=a*f(s) and R_a f(s)=f(s)*α_s(a). For the modular star
+f⁎(s)=δ(s)•α_s(star(f(s⁻¹))), where δ(s)=Measure.modularCharacter s, (R_a f)⁎=L_star(a)(f⁎).
+-/
 theorem crossedStar_coefficientRight (a : A) (f : Carrier μ α) :
     crossedStar μ α (coefficientRight μ α a f) =
       coefficientLeft μ α (star a) (crossedStar μ α f) := by
@@ -391,7 +541,14 @@ theorem crossedStar_coefficientRight (a : A) (f : Carrier μ α) :
   rw [crossedStar_apply, coefficientRight_apply, coefficientLeft_apply, crossedStar_apply]
   rw [star_mul, ← α.apply_star, α.apply_mul_elem, α.apply_apply_inv, mul_smul_comm]
 
-/-- The source star exchanges inverse left translation with inverse right translation. -/
+/-- **Modular star exchanges left and inverse right translations.**
+
+Let G be a locally compact topological group with a measurable structure, μ a measure on G, A
+a nonunital complex C-star algebra and α a point-norm action of G on A. For core coefficients
+f, define L_g f(s)=α_g(f(g⁻¹*s)) and R_g f(s)=δ(g)•f(s*g⁻¹), where
+δ(g)=Measure.modularCharacter g is embedded in ℂ. For the modular star
+f⁎(s)=δ(s)•α_s(star(f(s⁻¹))), (L_g f)⁎=R_(g⁻¹)(f⁎).
+-/
 theorem crossedStar_groupLeft (g : G) (f : Carrier μ α) :
     crossedStar μ α (groupLeft μ α g f) =
       groupRight μ α g⁻¹ (crossedStar μ α f) := by
@@ -406,7 +563,14 @@ theorem crossedStar_groupLeft (g : G) (f : Carrier μ α) :
   rw [crossedStar_apply, groupLeft_apply, groupRight_apply, crossedStar_apply, inv_inv]
   rw [← α.apply_star, ← α.apply_mul, mul_inv_rev, smul_smul, hd]
 
-/-- The source star exchanges modular right translation with inverse left translation. -/
+/-- **Modular star exchanges right and inverse left translations.**
+
+Let G be a locally compact topological group with a measurable structure, μ a measure on G, A
+a nonunital complex C-star algebra and α a point-norm action of G on A. For core coefficients
+f, define L_g f(s)=α_g(f(g⁻¹*s)) and R_g f(s)=δ(g)•f(s*g⁻¹), where
+δ(g)=Measure.modularCharacter g is embedded in ℂ. For the modular star
+f⁎(s)=δ(s)•α_s(star(f(s⁻¹))), (R_g f)⁎=L_(g⁻¹)(f⁎).
+-/
 theorem crossedStar_groupRight (g : G) (f : Carrier μ α) :
     crossedStar μ α (groupRight μ α g f) =
       groupLeft μ α g⁻¹ (crossedStar μ α f) := by
@@ -433,7 +597,13 @@ variable {A : Type uA} [NonUnitalCStarAlgebra A]
 variable (μ : Measure G) [μ.IsHaarMeasure] [μ.Regular] (α : PointNormCStarAction G A)
 
 omit [LocallyCompactSpace G] [μ.Regular] in
-/-- Left coefficients are the original left centralizers of Haar convolution. -/
+/-- **Left coefficient action is a convolution left centralizer.**
+
+Let G be a Borel topological group with left Haar measure μ, A a nonunital complex C-star
+algebra and α a point-norm action of G on A. For core coefficients f, define L_a f(s)=a*f(s)
+and R_a f(s)=f(s)*α_s(a). For core coefficients f,h, L_a(f*h)=(L_a f)*h, where (f*h)(s)=∫ t,
+f(t)*α_t(h(t⁻¹*s)) ∂μ.
+-/
 theorem coefficientLeft_convolution (a : A) (f h : Carrier μ α) :
     coefficientLeft μ α a (convolution μ α f h) =
       convolution μ α (coefficientLeft μ α a f) h := by
@@ -456,7 +626,13 @@ theorem coefficientLeft_convolution (a : A) (f h : Carrier μ α) :
       exact (mul_assoc _ _ _).symm
 
 omit [LocallyCompactSpace G] [μ.Regular] in
-/-- Right coefficients are the original right centralizers of Haar convolution. -/
+/-- **Right coefficient action is a convolution right centralizer.**
+
+Let G be a Borel topological group with left Haar measure μ, A a nonunital complex C-star
+algebra and α a point-norm action of G on A. For core coefficients f, define L_a f(s)=a*f(s)
+and R_a f(s)=f(s)*α_s(a). For core coefficients f,h, R_a(f*h)=f*(R_a h), where * is the μ-Haar
+twisted convolution.
+-/
 theorem coefficientRight_convolution (a : A) (f h : Carrier μ α) :
     coefficientRight μ α a (convolution μ α f h) =
       convolution μ α f (coefficientRight μ α a h) := by
@@ -483,7 +659,13 @@ theorem coefficientRight_convolution (a : A) (f h : Carrier μ α) :
       exact mul_assoc _ _ _
 
 omit [LocallyCompactSpace G] [μ.Regular] in
-/-- The two original coefficient actions form one compatible centralizer pair. -/
+/-- **Coefficient actions form a compatible centralizer pair.**
+
+Let G be a Borel topological group with left Haar measure μ, A a nonunital complex C-star
+algebra and α a point-norm action of G on A. For core coefficients f, define L_a f(s)=a*f(s)
+and R_a f(s)=f(s)*α_s(a). For core coefficients f,h, f*(L_a h)=(R_a f)*h, where * is twisted
+convolution.
+-/
 theorem convolution_coefficientLeft (a : A) (f h : Carrier μ α) :
     convolution μ α f (coefficientLeft μ α a h) =
       convolution μ α (coefficientRight μ α a f) h := by
@@ -496,7 +678,12 @@ theorem convolution_coefficientLeft (a : A) (f h : Carrier μ α) :
   rw [coefficientLeft_apply, coefficientRight_apply, map_mul (α.aut t), mul_assoc]
 
 omit [LocallyCompactSpace G] [μ.Regular] in
-/-- Original inverse left translation is the left centralizer of Haar convolution. -/
+/-- **Left group action is a convolution left centralizer.**
+
+Let G be a Borel topological group with left Haar measure μ, A a nonunital complex C-star
+algebra and α a point-norm action of G on A. For L_g f(s)=α_g(f(g⁻¹*s)) and twisted
+convolution *, L_g(f*h)=(L_g f)*h for core coefficients f,h.
+-/
 theorem groupLeft_convolution (g : G) (f h : Carrier μ α) :
     groupLeft μ α g (convolution μ α f h) =
       convolution μ α (groupLeft μ α g f) h := by
@@ -526,7 +713,13 @@ theorem groupLeft_convolution (g : G) (f h : Carrier μ α) :
       rw [groupLeft_apply]
 
 omit [μ.Regular] in
-/-- Original modular right translation is the right centralizer of Haar convolution. -/
+/-- **Modular right group action is a convolution right centralizer.**
+
+Let G be a locally compact Borel topological group with left Haar measure μ, A a nonunital
+complex C-star algebra and α a point-norm action. For R_g f(s)=δ(g)•f(s*g⁻¹), where
+δ(g)=Measure.modularCharacter g, R_g(f*h)=f*(R_g h) for core coefficients f,h and twisted
+convolution *.
+-/
 theorem groupRight_convolution (g : G) (f h : Carrier μ α) :
     groupRight μ α g (convolution μ α f h) =
       convolution μ α f (groupRight μ α g h) := by
@@ -544,7 +737,13 @@ theorem groupRight_convolution (g : G) (f h : Carrier μ α) :
       filter_upwards [] with t
       rw [groupRight_apply, map_smul (α.aut t), mul_smul_comm, mul_assoc]
 
-/-- Original left and modular right translations form the source centralizer pair. -/
+/-- **Group translations form a compatible centralizer pair.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For core coefficients f,
+define L_g f(s)=α_g(f(g⁻¹*s)) and R_g f(s)=δ(g)•f(s*g⁻¹), where δ(g)=Measure.modularCharacter
+g is embedded in ℂ. For core coefficients f,h and twisted convolution *, f*(L_g h)=(R_g f)*h.
+-/
 theorem convolution_groupLeft (g : G) (f h : Carrier μ α) :
     convolution μ α f (groupLeft μ α g h) =
       convolution μ α (groupRight μ α g f) h := by

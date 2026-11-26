@@ -1,4 +1,5 @@
-# Absolute Value
+# Absolute value of an adjointable map
 
-The positive square root of `T* T` in the adjointable endomorphism
-C-star algebra.
+For an adjointable map between complete right C-star
+modules, `T.absoluteValue` is the positive continuous-functional-calculus square root of `T*
+T` in `End_B(E)`.

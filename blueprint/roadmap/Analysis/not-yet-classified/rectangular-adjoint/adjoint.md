@@ -1,3 +1,5 @@
-# Adjoint
+# Complex-linear partial adjoint
 
-The genuine rectangular complex-linear partial adjoint on its full witness domain.
+For a densely defined right-module map `T : E → F`,
+`adjoint T : F →ₗ.[ℂ] E` has the full witness domain and evaluates each vector at its unique
+adjoint witness.

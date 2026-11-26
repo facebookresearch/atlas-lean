@@ -15,13 +15,14 @@ public import MathlibExt.Analysis.VonNeumannAlgebra.NormalHom.FaithfulBallImage
 public import MathlibExt.Analysis.VonNeumannAlgebra.UltraweakWOT
 
 /-!
-# Actual faithful normal operator-range balls are WOT compact and closed
+# Weak-operator compact balls in an injective normal range
 
-The existing compact ultraweak range ball maps continuously to the original
-weak operator carrier. Its image is exactly the original concrete operator
-range intersected with the same norm ball. Thus that literal intersection
-is WOT compact and closed, including arbitrary radii and zero Hilbert
-spaces. No closed-range, weak topology or compactness certificate is input.
+For an injective normal unital complex star homomorphism `f : M → N`, let `R ⊆ B(K)` be its
+operator range. For every real `r`, `{T ∈ R : ‖T‖≤r}` is compact and closed in the weak operator
+topology of `B(K)`.
+
+The bound uses the target operator norm. Negative radii give the empty set; no nonzero-space or
+global range-closedness premise is needed.
 -/
 
 @[expose] public section
@@ -41,7 +42,13 @@ variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [Complete
 variable {K : Type v} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
 variable {M : VonNeumannAlgebra H} {N : VonNeumannAlgebra K}
 
-/-- Each literal norm ball in the actual faithful normal operator range is WOT compact. -/
+/-- **WOT compactness of a bounded injective normal range.** Let `M,N` be concrete von Neumann
+algebras on complete complex Hilbert spaces. Their normal-functional Banach spaces
+`M_*,N_*` are the norm-closed spans of vector functionals, and their ultraweak topologies
+are `σ(M,M_*)`, `σ(N,N_*)`. Let `f : M → N` be a unital complex star homomorphism that is
+ultraweakly continuous. Assume `f` is injective. Write `R={ (f(x) : B(K)) : x ∈ M }` for
+its operator range on the target Hilbert space `K`. for every `r : ℝ`, `{T ∈ B(K) : T∈R ∧
+‖T‖≤r}` is compact in the weak operator topology. -/
 theorem wot_range_inter_ball_isCompact (f : NormalStarAlgHom M N)
     (hf : Function.Injective f) (r : ℝ) :
     IsCompact {q : K →WOT[ℂ] K |
@@ -80,7 +87,13 @@ theorem wot_range_inter_ball_isCompact (f : NormalStarAlgHom M N)
   rw [← hset]
   exact hcompact
 
-/-- The same literal faithful range norm ball is closed in the original WOT carrier. -/
+/-- **WOT closedness of a bounded injective normal range.** Let `M,N` be concrete von Neumann
+algebras on complete complex Hilbert spaces. Their normal-functional Banach spaces
+`M_*,N_*` are the norm-closed spans of vector functionals, and their ultraweak topologies
+are `σ(M,M_*)`, `σ(N,N_*)`. Let `f : M → N` be a unital complex star homomorphism that is
+ultraweakly continuous. Assume `f` is injective. Write `R={ (f(x) : B(K)) : x ∈ M }` for
+its operator range on the target Hilbert space `K`. for every `r : ℝ`, `{T ∈ B(K) : T∈R ∧
+‖T‖≤r}` is closed in the weak operator topology. -/
 theorem isClosed_wot_range_inter_ball (f : NormalStarAlgHom M N)
     (hf : Function.Injective f) (r : ℝ) :
     IsClosed {q : K →WOT[ℂ] K |

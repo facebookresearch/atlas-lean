@@ -26,27 +26,30 @@ open scoped ComplexOrder InnerProductSpace Matrix
 open Matrix Complex
 
 /-!
-# Unitary diagonalization
+# Unitary diagonalization of a finite unitary matrix
 
-This module proves unitary diagonalization for finite unitary matrices:
-every unitary is unitarily diagonalizable with unit-modulus diagonal
-entries.
-
-The real part `(U + Uᴴ)/2` and imaginary part `(-I/2)(U - Uᴴ)` are
-Hermitian, reconstruct `U`, commute when `U` is unitary, and induce
-commuting symmetric linear maps via `Matrix.toEuclideanLin` whose joint
-eigenbasis yields the diagonalization.
+Let I be a finite index type and U an I×I complex unitary matrix. There exist a unitary V and
+diagonal entries d_i of modulus 1 with U=V diag(d) Vᴴ. The Hermitian parts Re_op(U)=(U+Uᴴ)/2
+and Im_op(U)=(-i/2)(U-Uᴴ) commute and reconstruct U=Re_op(U)+i Im_op(U).
 -/
 
 namespace Matrix
 
 variable {n : Type*}
 
-/-- Real part of a complex matrix, `(U + Uᴴ)/2`. -/
+/-- **Hermitian real part of a complex matrix.**
+
+For any square complex matrix U, unitaryRealPart U=(U+Uᴴ)/2, the Hermitian real part in the
+operator sense.
+-/
 private noncomputable def unitaryRealPart (U : Matrix n n ℂ) : Matrix n n ℂ :=
   (2 : ℂ)⁻¹ • (U + Uᴴ)
 
-/-- Imaginary part of a complex matrix, `(-I/2)(U - Uᴴ)`. -/
+/-- **Hermitian imaginary part of a complex matrix.**
+
+For any square complex matrix U, unitaryImagPart U=(-i/2)(U-Uᴴ), the Hermitian imaginary part,
+with U=Re_op(U)+i Im_op(U).
+-/
 private noncomputable def unitaryImagPart (U : Matrix n n ℂ) : Matrix n n ℂ :=
   ((2 : ℂ)⁻¹ * (-Complex.I)) • (U - Uᴴ)
 

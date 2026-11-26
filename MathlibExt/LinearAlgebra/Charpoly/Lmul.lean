@@ -12,18 +12,10 @@ module
 public import Mathlib.LinearAlgebra.Charpoly.Basic
 
 /-!
-# Minimal and characteristic polynomials of left multiplication
+# Minimal polynomial equals left-multiplication characteristic polynomial
 
-If the natural degree of `minpoly K x` is the finrank of the
-finite-dimensional algebra `E`, the characteristic polynomial of left
-multiplication by `x` is the minimal polynomial. Both are monic, the
-minimal polynomial divides the characteristic polynomial by the existing
-Cayley--Hamilton evaluation theorem, and their natural degrees agree.
-
-The underlying polynomial-evaluation, integrality and minimal-polynomial
-transport facts are supplied by Mathlib's algebra-homomorphism APIs.
-The algebra need not be commutative, reduced or a domain. Finite
-dimensionality already supplies the integrality of `x`.
+Let K be a field, E a finite-dimensional K-algebra whose underlying ring may be
+noncommutative, and x∈E. If deg(minpoly_K(x))=dim_K(E), then χ_(L_x)=minpoly_K(x).
 -/
 
 @[expose] public section
@@ -39,9 +31,12 @@ section Primitive
 variable {K E : Type*} [Field K] [Ring E] [Algebra K E]
   [FiniteDimensional K E]
 
-/-- If the minimal polynomial of `x` has natural degree equal to the
-finrank of the algebra, it is the characteristic polynomial of left
-multiplication by `x`. Finite dimensionality supplies integrality. -/
+/-- **Full-degree minimal polynomial is the left-multiplication characteristic polynomial.**
+
+Let K be a field, E a finite-dimensional K-algebra with a ring structure and x∈E. If the
+natural degree of minpoly K x equals finrank_K E, then (Algebra.lmul K E x).charpoly=minpoly K
+x.
+-/
 theorem charpoly_lmul_eq_minpoly_of_natDegree_eq_finrank
     (x : E) (hDeg : (minpoly K x).natDegree = Module.finrank K E) :
     (Algebra.lmul K E x).charpoly = minpoly K x := by

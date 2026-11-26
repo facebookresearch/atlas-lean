@@ -1,12 +1,8 @@
-# Block Alt Prod
+# Ordered product of upper and lower block unipotents
 
-Alternating product of block unipotents in `GL (α ⊕ β) R`.
-
-Orientation: `Sum.inl A` uses `upperUnit` as `[[1, A],[0,1]]` and
-`Sum.inr C` uses `lowerUnit` as `[[1,0],[C,1]]`. Multiplication order is
-`List.prod` of the `Sum.elim`-image, so the head factor multiplies on the
-left: `blockAltProd (a :: L) = (Sum.elim upperUnit lowerUnit a) *
-blockAltProd L`. Works over any `[Ring R]` with `[Fintype α] [Fintype β]`;
-empty list is `1` and zero-dimensional `α` or `β` yields trivial blocks
-definitionally. This is a pure matrix recurrence; no elementary-subgroup,
-kernel, pivot, alternation, or C3 claim is made.
+Let R be any ring and α,β finite index types. For rectangular A:Matrix α β R and C:Matrix β α
+R, put U(A)=[[I_α,A],[0,I_β]] and L(C)=[[I_α,0],[C,I_β]] in GL(α⊕β,R). For a list ℒ of either
+α×β or β×α matrices, blockAltProd ℒ replaces a left-tagged A by U(A) and a right-tagged C by
+L(C), then multiplies in list order. Thus blockAltProd []=I and
+blockAltProd(a::ℒ)=E(a)*blockAltProd ℒ, where E selects U or L. Consecutive factors may have
+the same tag.

@@ -1,3 +1,3 @@
-# Positive NNReal Reciprocal Homeomorph time
+# Reciprocal coordinate of an interior asymptotic time
 
-Translation followed by the reciprocal coordinate has value `1/t`.
+For t>1, composing the translated coordinate u=t-1 with u↦1/(1+u) gives 1/t∈(0,1).

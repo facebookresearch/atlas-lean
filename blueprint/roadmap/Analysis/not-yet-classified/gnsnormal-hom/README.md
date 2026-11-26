@@ -1,4 +1,4 @@
-# GNSNormal Hom
+# Normal star homomorphism of the weight GNS representation
 
-- [Normal Weight GNSStar Alg Hom](normal-weight-gnsstar-alg-hom.md)
-- [Normal Weight GNSStar Alg Hom apply](normal-weight-gnsstar-alg-hom-apply.md)
+- [Normal GNS homomorphism of a normal weight](normal-weight-gnsstar-alg-hom.md)
+- [Operator value of the normal GNS homomorphism](normal-weight-gnsstar-alg-hom-apply.md)

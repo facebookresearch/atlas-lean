@@ -14,17 +14,15 @@ module
 public import MathlibExt.Analysis.CStarAlgebra.Module.HilbertAmplification.AlgebraicTensorHom
 
 /-!
-# Actual coefficient-valued tensor matrix entries
+# Coefficient-valued matrix entries of compact tensors
 
-Original Hilbert matrix entries are linear functionals on the full-H compact
-ideal. Their neutral tensor lifts give actual A-valued entries of the original
-algebraic compact action. The actual pure inner formula recovers those entries
-from its original module action. A zero action has every entry zero by genuine
-C-star square definiteness on the original coefficient algebra.
+For a complex Hilbert space `H` and nonunital C-star algebra `A`, the matrix-entry functional on
+`K(H)` is `T ↦ ⟪η,T ξ⟫_ℂ`. Its complex-linear tensor lift satisfies `C_(ξ,η)(a⊗T) = ⟪η,T ξ⟫_ℂ •
+a` in `A`.
 
-These are prerequisites of raw algebraic tensor injectivity, needed to build
-definite cross-norm/minimum output data. No faithful representation, tensor
-model, norm/equivalence certificate or nonzero-H assumption is provided.
+For the algebraic tensor action `P_z` on `Space H A`, the coefficient pairing is `⟨η⊗c,
+P_z(ξ⊗b)⟩_A = star c * (C_(ξ,η)(z) * b)`. Consequently a zero tensor action has every
+coefficient entry zero, using C-star square definiteness, with no nonzero-space restriction.
 -/
 
 @[expose] public section
@@ -44,7 +42,8 @@ universe uH uA
 variable (H : Type uH)
 variable [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- The original full-H compact operator matrix entry as an actual complex linear functional. -/
+/-- **Hilbert matrix-entry functional.** For `ξ,η : H`, this complex-linear functional on `K(H)`
+sends `T` to `inner ℂ η (T ξ)`. -/
 def compactOperatorMatrixCoefficient (ξ η : H) :
     (compactEndomorphismClosedStarIdeal (H := H)).carrier →ₗ[ℂ] ℂ where
   toFun := fun T => inner ℂ η ((T : H →L[ℂ] H) ξ)
@@ -56,14 +55,16 @@ def compactOperatorMatrixCoefficient (ξ η : H) :
     change inner ℂ η (c • ((T : H →L[ℂ] H) ξ)) = c * inner ℂ η ((T : H →L[ℂ] H) ξ)
     exact _root_.inner_smul_right _ _ _
 
-/-- The linear functional has the literal original matrix entry on every compact operator. -/
+/-- **Value of a compact operator matrix entry.** `compactOperatorMatrixCoefficient H ξ η T =
+inner ℂ η ((T : H →L[ℂ] H) ξ)`. -/
 theorem compactOperatorMatrixCoefficient_apply (ξ η : H)
     (T : (compactEndomorphismClosedStarIdeal (H := H)).carrier) :
     compactOperatorMatrixCoefficient H ξ η T = inner ℂ η ((T : H →L[ℂ] H) ξ) := rfl
 
 variable (A : Type uA) [NonUnitalCStarAlgebra A]
 
-/-- The neutral algebraic tensor lift of the original coefficient-valued matrix entries. -/
+/-- **Coefficient-valued tensor matrix entry.** For nonunital `A` and `ξ,η : H`, the
+complex-linear map `C_(ξ,η) : A ⊗_ℂ K(H) → A` is determined by `a⊗T ↦ ⟪η,T ξ⟫_ℂ • a`. -/
 def tensorMatrixCoefficient (ξ η : H) : A ⊗[ℂ] (compactEndomorphismClosedStarIdeal (H := H)).carrier →ₗ[ℂ] A :=
   TensorProduct.lift
     { toFun := fun a => (compactOperatorMatrixCoefficient H ξ η).smulRight a
@@ -80,12 +81,15 @@ def tensorMatrixCoefficient (ξ η : H) : A ⊗[ℂ] (compactEndomorphismClosedS
           c • (compactOperatorMatrixCoefficient H ξ η T • a)
         exact smul_comm _ _ _ }
 
-/-- Each original tensor matrix entry has its actual elementary scalar-times-coefficient value. -/
+/-- **Matrix coefficient of a pure tensor.** `tensorMatrixCoefficient H A ξ η (a⊗T) =
+compactOperatorMatrixCoefficient H ξ η T • a`. -/
 theorem tensorMatrixCoefficient_tmul (ξ η : H) (a : A)
     (T : (compactEndomorphismClosedStarIdeal (H := H)).carrier) :
     tensorMatrixCoefficient H A ξ η (a ⊗ₜ[ℂ] T) = compactOperatorMatrixCoefficient H ξ η T • a := rfl
 
-/-- The original module inner action recovers every actual coefficient-valued tensor matrix entry. -/
+/-- **Pairing that recovers tensor coefficients.** For `z ∈ A ⊗_ℂ K(H)`, `ξ,η : H` and `c,b : A`,
+`⟨pure η c, algebraicTensorOperator z (pure ξ b)⟩_A = star c * (tensorMatrixCoefficient ξ η z
+* b)`. -/
 theorem rightInner_algebraicTensorOperator_pure (z : A ⊗[ℂ] (compactEndomorphismClosedStarIdeal (H := H)).carrier)
     (ξ η : H) (c b : A) :
     letI : PartialOrder Aᵐᵒᵖ := CStarAlgebra.spectralOrder Aᵐᵒᵖ;
@@ -133,7 +137,8 @@ theorem rightInner_algebraicTensorOperator_pure (z : A ⊗[ℂ] (compactEndomorp
           star c * (tensorMatrixCoefficient H A ξ η (z + w) * b)
     rw [CStarModule.rightInner_add_right, hz, hw, map_add, add_mul, mul_add]
 
-/-- A zero original algebraic operator action forces every actual tensor matrix entry to vanish. -/
+/-- **Matrix entries of a zero tensor action.** If `algebraicTensorOperator H A z = 0`, then
+`tensorMatrixCoefficient H A ξ η z = 0` for every `ξ,η : H`. -/
 theorem tensorMatrixCoefficient_eq_zero_of_algebraicTensorOperator_eq_zero
     (z : A ⊗[ℂ] (compactEndomorphismClosedStarIdeal (H := H)).carrier) (ξ η : H) :
     letI : PartialOrder Aᵐᵒᵖ := CStarAlgebra.spectralOrder Aᵐᵒᵖ;

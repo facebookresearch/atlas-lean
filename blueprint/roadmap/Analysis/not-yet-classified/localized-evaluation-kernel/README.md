@@ -1,5 +1,5 @@
-# Localized Evaluation Kernel
+# Kernel factorization of a projection-localized functional
 
-- [Localized Operator Evaluation](localized-operator-evaluation.md)
-- [Localized Functional Linear Map](localized-functional-linear-map.md)
-- [Localized Operator Evaluation ker le](localized-operator-evaluation-ker-le.md)
+- [Bounded evaluation after right multiplication](localized-operator-evaluation.md)
+- [Bounded right-localized functional](localized-functional-linear-map.md)
+- [Local vector domination gives an evaluation-kernel inclusion](localized-operator-evaluation-ker-le.md)

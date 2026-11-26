@@ -1,3 +1,4 @@
-# Inverse
+# Pointwise inversion of an automorphism homotopy
 
-Invert every automorphism along a homotopy without reversing time.
+The path t ↦ hₜ⁻¹ is a point-norm homotopy from α⁻¹ to β⁻¹; the interval parameter is
+unchanged.

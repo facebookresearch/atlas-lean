@@ -1,12 +1,12 @@
-# Faithfully Flat Cech
+# Čech tensor exactness for faithfully flat scalars
 
-- [Cech Unit](cech-unit.md)
-- [Cech Difference](cech-difference.md)
-- [Cech Difference tmul](cech-difference-tmul.md)
-- [Cech Scalar Action](cech-scalar-action.md)
-- [Cech Scalar Action tmul](cech-scalar-action-tmul.md)
-- [Cech Difference comp unit](cech-difference-comp-unit.md)
-- [Cech Scalar Action comp l Tensor difference](cech-scalar-action-comp-l-tensor-differe.md)
-- [Cech l Tensor exact](cech-l-tensor-exact.md)
-- [Cech exact](cech-exact.md)
-- [Cech Unit injective](cech-unit-injective.md)
+- [Tensor unit of the Čech complex](cech-unit.md)
+- [Difference of the two Čech overlap maps](cech-difference.md)
+- [Pure tensor formula for the Čech difference](cech-difference-tmul.md)
+- [Multiplication contraction of the outer Čech coefficients](cech-scalar-action.md)
+- [Pure tensor value of the Čech coefficient contraction](cech-scalar-action-tmul.md)
+- [Čech overlap difference kills the tensor unit](cech-difference-comp-unit.md)
+- [Contraction identity after one scalar extension](cech-scalar-action-comp-l-tensor-differe.md)
+- [Čech exactness after tensoring once by the algebra](cech-l-tensor-exact.md)
+- [Faithful flatness reflects Čech exactness](cech-exact.md)
+- [Tensor-unit injection under faithfully flat scalars](cech-unit-injective.md)

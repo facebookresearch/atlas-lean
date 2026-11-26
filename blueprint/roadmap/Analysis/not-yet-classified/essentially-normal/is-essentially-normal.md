@@ -1,4 +1,4 @@
-# Is Essentially Normal
+# Essential normality of a Hilbert operator
 
-An operator is essentially normal when its class modulo compact operators
-is star-normal.
+For a complex Hilbert space `H`, a bounded `T`
+is essentially normal when its class `q(T) : Q(H)` satisfies `q(T)* q(T) = q(T) q(T)*`.

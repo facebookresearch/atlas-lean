@@ -16,13 +16,15 @@ public import MathlibExt.Analysis.CStarAlgebra.Module.Right
 public import Mathlib.Topology.Algebra.Module.Equiv.Basic
 
 /-!
-# Original inner-product covectors on a right C-star module
+# Inner-product covectors on right C-star modules
 
-The forward continuous map reuses the actual CStarModule.innerSL and the
-canonical unop transport. Its adjoint is the existing rightSMulCLM x.
-Only their defining right-inner pairing equation is proved to bundle the
-adjointable covector. No compactness, exact norm, Riesz theorem or supplied
-covector model constructs this DATA.
+Let `B` be a nonunital C-star algebra with a star-compatible order on `Bᵐᵒᵖ`, and let `E` be a
+right C-star module. For `x : E`, the complex-linear covector `t_x : E →L[ℂ] B` is `t_x(y) =
+rightInner x y`.
+
+This map is adjointable, with adjoint `B →L[ℂ] E` given by `a ↦ x <• a`. The pairing identity is
+`⟨t_x y, a⟩_B = ⟨y, x <• a⟩_B`. The definitions apply to pre-Hilbert modules and nonunital
+coefficient algebras.
 -/
 
 @[expose] public section
@@ -35,7 +37,9 @@ variable {B : Type uB} [NonUnitalCStarAlgebra B]
 variable {E : Type uE} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [SMul Bᵐᵒᵖ E] [CStarModule Bᵐᵒᵖ E]
 
-/-- The original B-valued inner-product functional at x. -/
+/-- **Inner-product covector.** Let `E` be a right C-star module over a nonunital `B` with a
+star-compatible order on `Bᵐᵒᵖ`. The complex-linear map `covectorCLM x : E →L[ℂ] B` sends `y`
+to `rightInner x y`. -/
 def covectorCLM (x : E) : E →L[ℂ] B :=
   (MulOpposite.opContinuousLinearEquiv ℂ (M := B)).symm.toContinuousLinearMap.comp
     (CStarModule.innerSL (A := Bᵐᵒᵖ) x)
@@ -44,7 +48,9 @@ theorem covectorCLM_apply (x y : E) :
     covectorCLM (B := B) x y = CStarModule.rightInner (B := B) x y := by
   rfl
 
-/-- The actual adjointable t_x, without a unit on B or any chosen source output. -/
+/-- **Adjointable inner-product covector.** Let `E` be a right C-star module over a nonunital `B`
+with a star-compatible order on `Bᵐᵒᵖ`. For `x : E`, the map `y ↦ rightInner x y` is
+adjointable from `E` to `B`, with adjoint `a ↦ x <• a`. -/
 def covector (x : E) : AdjointableOperator B E B :=
   ofAdjointPair (covectorCLM (B := B) x) (CStarModule.rightSMulCLM (B := B) x) <| by
     intro y a

@@ -1,3 +1,5 @@
-# Has Regular Variation to Signed Measure
+# Finite regular positive measure as a regular-variation signed measure
 
-A finite regular positive measure has regular variation when regarded as a signed measure.
+Let `X` have a
+topology and measurable structure, and `μ` a finite regular positive measure. Then
+`μ.toSignedMeasure` has regular variation, without R₁ or Borel assumptions.

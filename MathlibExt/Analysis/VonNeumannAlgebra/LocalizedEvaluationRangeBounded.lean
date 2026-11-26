@@ -15,13 +15,14 @@ public import MathlibExt.Analysis.VonNeumannAlgebra.LocalizedEvaluationRange
 public import Mathlib.Analysis.Real.Sqrt
 
 /-!
-# The original localized evaluation-range functional is bounded
+# Bounded functional on a localized vector evaluation range
 
-The existing squared vector bound implies a norm bound with constant
-sqrt(‖ψ(1)‖). Every point of the actual evaluation range has an original
-operator preimage, so the same estimate bounds the constructed range
-functional. Its continuous linear map and original localized value equation
-are constructed without a supplied norm or normality certificate.
+Under local domination of a positive functional `ψ` by a vector coefficient below the star
+projection `p`, the functional on `V={ (ap)ξ : a∈M }` satisfies `g((ap)ξ)=ψ(ap)` and
+`|g(v)|≤√(|ψ(1)|)‖v‖`.
+
+It therefore defines a continuous complex-linear functional on `V` with its inherited Hilbert
+norm. Completeness of this range subspace is not required.
 -/
 
 @[expose] public section
@@ -39,7 +40,12 @@ universe u
 
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- The original range factor is bounded, with its norm estimate and literal values proved internally. -/
+/-- **Bounded range factor with an explicit scalar constant.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Let `ψ : M → ℂ` be a positive
+bounded complex-linear functional for the spectral orders. Let `p ∈ M` be a star
+projection and `ξ ∈ H` satisfy `Re ψ(b)≤Re ⟨ξ,bξ⟩` for every positive `b≤p`. on `V=range(a
+↦ (ap)ξ)`, the construction returns `g∈V*` with `g((ap)ξ)=ψ(ap)` and
+`|g(v)|≤√(|ψ(1)|)*‖v‖` for every `v∈V`. -/
 def localizedEvaluationRangeBoundedFunctional (M : VonNeumannAlgebra H) :
     letI : PartialOrder M := CStarAlgebra.spectralOrder M
     letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ

@@ -14,15 +14,16 @@ module
 public import MathlibExt.Analysis.CStarAlgebra.Module.InternalTensorProduct.Radical
 
 /-!
-# Commuting second-factor maps on actual internal tensors
+# Commuting right-factor maps of internal tensors
 
-An adjointable map on the second factor that commutes with the given coefficient
-representation induces maps on the original complex, balanced and radical
-tensor carriers. Its genuine adjoint supplies the paired radical map.
+For right pre-Hilbert modules `E₁,E₂` over nonunital `B₁,B₂` and a complex nonunital star
+representation `φ : B₁ → End_(B₂)(E₂)`, the internal tensor balances `(x <• b)⊗y = x⊗φ(b)y`. Its
+coefficient inner product is `⟨x⊗y,x'⊗y'⟩_(B₂) = ⟨y,φ(⟨x,x'⟩_(B₁))y'⟩_(B₂)`.
 
-This is the algebraic prerequisite for the coefficient action on the original
-Hilbert amplification in Blackadar, K-Theory for Operator Algebras, 10.1.2.
-The second-factor norm bound and completed operator are separate constructions.
+An adjointable `S` on `E₂` commuting with every `φ(b)` induces `I⊗S` on the complex algebraic
+tensor, balanced quotient and zero-inner-product radical quotient. The adjoint is induced by
+`S*`, and these maps preserve right `B₂` actions. The algebraic constructions do not require
+complete component modules.
 -/
 
 @[expose] public section
@@ -45,12 +46,15 @@ variable {E₁ : Type uE₁} [NormedAddCommGroup E₁] [NormedSpace ℂ E₁]
 variable {E₂ : Type uE₂} [NormedAddCommGroup E₂] [NormedSpace ℂ E₂]
   [SMul B₂ᵐᵒᵖ E₂] [CStarModule B₂ᵐᵒᵖ E₂]
 
-/-- The original complex tensor map induced by the actual second-factor map. -/
+/-- **Right factor on the complex algebraic tensor.** For a complex vector space `E₁`, a right
+pre-Hilbert module `E₂` over nonunital C-star `B₂`, and an adjointable `S : E₂ → E₂`, the
+complex-linear map `rawRightFactorMap S` is `I⊗S`, sending `x⊗y` to `x⊗S y`. -/
 def rawRightFactorMap (S : AdjointableOperator.End B₂ E₂) :
     AlgebraicTensor E₁ E₂ →ₗ[ℂ] AlgebraicTensor E₁ E₂ :=
   TensorProduct.map LinearMap.id S.toContinuousLinearMap.toLinearMap
 
-/-- The actual raw map changes only the original second factor. -/
+/-- **Right-factor map on a pure tensor.** For `x : E₁`, `y : E₂` and adjointable `S`,
+`rawRightFactorMap S (x⊗y) = x⊗S y`. -/
 @[simp]
 theorem rawRightFactorMap_tmul (S : AdjointableOperator.End B₂ E₂)
     (x : E₁) (y : E₂) :
@@ -59,7 +63,9 @@ theorem rawRightFactorMap_tmul (S : AdjointableOperator.End B₂ E₂)
     ContinuousLinearMap.coe_coe, AdjointableOperator.coe_toContinuousLinearMap]
 
 omit [PartialOrder B₁ᵐᵒᵖ] in
-/-- Commutation with a star representation also holds for the genuine adjoint. -/
+/-- **Adjoints in a representation commutant.** For a complex nonunital star representation `φ` on
+a right module and adjointable `S`, if `S` commutes with every `φ(b)`, then
+`S.adjointOperator` also commutes with every `φ(b)`. -/
 theorem rightFactorCommutant_adjoint
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (S : AdjointableOperator.End B₂ E₂)
@@ -79,7 +85,10 @@ private theorem rightFactorCommutant_apply
     congrArg (fun T : AdjointableOperator.End B₂ E₂ => T y) (hComm b).eq
 
 omit [PartialOrder B₁ᵐᵒᵖ] [CStarModule B₁ᵐᵒᵖ E₁] in
-/-- Coefficient commutation preserves the literal balancing span. -/
+/-- **Preservation of the balancing relations.** Let `E₁,E₂` be right pre-Hilbert modules over
+nonunital C-star algebras `B₁,B₂` with their coefficient orders. Let `φ : B₁ → End_(B₂)(E₂)`
+be a complex nonunital star homomorphism and `S` an adjointable endomorphism of `E₂` commuting
+with every `φ(b)`. `I⊗S` maps the complex span of `(x <• b)⊗y - x⊗φ(b)y` into itself. -/
 theorem balancingSpan_rawRightFactorMap
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (S : AdjointableOperator.End B₂ E₂)
@@ -92,7 +101,10 @@ theorem balancingSpan_rawRightFactorMap
   simpa only [balanceRelation, map_sub, rawRightFactorMap_tmul,
     rightFactorCommutant_apply φ S hComm] using balanceRelation_mem φ x b (S y)
 
-/-- The actual second-factor adjoint gives the original raw-inner identity. -/
+/-- **Adjoint pairing on the raw tensor.** Let `E₁,E₂` be right pre-Hilbert modules over nonunital
+C-star algebras `B₁,B₂` with their coefficient orders. Let `φ : B₁ → End_(B₂)(E₂)` be a
+complex nonunital star homomorphism and `S` an adjointable endomorphism of `E₂` commuting with
+every `φ(b)`. for raw tensors `z,w`, `rawInner φ ((I⊗S) z) w = rawInner φ z ((I⊗S*) w)`. -/
 theorem rawRightFactorMap_inner_adjoint
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (S : AdjointableOperator.End B₂ E₂)
@@ -112,7 +124,8 @@ theorem rawRightFactorMap_inner_adjoint
     | add w w' hw hw' => simp only [map_add, hw, hw']
   | add z z' hz hz' => simp only [map_add, LinearMap.add_apply, hz, hz']
 
-/-- The second-factor map retains the original right coefficient action. -/
+/-- **Right coefficients commute with a tensor factor map.** For adjointable `S` on a right
+`B₂`-module and a raw complex tensor `z`, `(I⊗S)(z <• b) = ((I⊗S)z) <• b` for every `b : B₂`. -/
 theorem rawRightFactorMap_rawRightSMul
     (S : AdjointableOperator.End B₂ E₂) (b : B₂)
     (z : AlgebraicTensor E₁ E₂) :
@@ -124,7 +137,11 @@ theorem rawRightFactorMap_rawRightSMul
       AdjointableOperator.map_right_smul]
   | add z w hz hw => simp only [map_add, hz, hw]
 
-/-- The computed second-factor map on the genuine balanced quotient. -/
+/-- **Right factor on the balanced quotient.** Let `E₁,E₂` be right pre-Hilbert modules over
+nonunital C-star algebras `B₁,B₂` with their coefficient orders. Let `φ : B₁ → End_(B₂)(E₂)`
+be a complex nonunital star homomorphism and `S` an adjointable endomorphism of `E₂` commuting
+with every `φ(b)`. `balancedRightFactorMap` is the descended complex-linear map `[x⊗y] ↦ [x⊗S
+y]` on the quotient by the `B₁` balancing relations. -/
 def balancedRightFactorMap
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (S : AdjointableOperator.End B₂ E₂)
@@ -134,7 +151,11 @@ def balancedRightFactorMap
     (rawRightFactorMap S) (balancingSpan_rawRightFactorMap φ S hComm)
 
 omit [PartialOrder B₁ᵐᵒᵖ] [CStarModule B₁ᵐᵒᵖ E₁] in
-/-- Every original raw representative has its literal descended image. -/
+/-- **Balanced representative of a right-factor map.** Let `E₁,E₂` be right pre-Hilbert modules
+over nonunital C-star algebras `B₁,B₂` with their coefficient orders. Let `φ : B₁ →
+End_(B₂)(E₂)` be a complex nonunital star homomorphism and `S` an adjointable endomorphism of
+`E₂` commuting with every `φ(b)`. the quotient map `q_bal` satisfies `balancedRightFactorMap φ
+S hComm (q_bal z) = q_bal (rawRightFactorMap S z)`. -/
 theorem balancedRightFactorMap_mkQ
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (S : AdjointableOperator.End B₂ E₂)
@@ -144,7 +165,11 @@ theorem balancedRightFactorMap_mkQ
   simp only [balancedRightFactorMap, Submodule.mkQ_apply, Submodule.mapQ_apply]
 
 omit [PartialOrder B₁ᵐᵒᵖ] [CStarModule B₁ᵐᵒᵖ E₁] in
-/-- Balanced pure tensors retain the original second-factor formula. -/
+/-- **Right factor on balanced pure tensors.** Let `E₁,E₂` be right pre-Hilbert modules over
+nonunital C-star algebras `B₁,B₂` with their coefficient orders. Let `φ : B₁ → End_(B₂)(E₂)`
+be a complex nonunital star homomorphism and `S` an adjointable endomorphism of `E₂` commuting
+with every `φ(b)`. `balancedRightFactorMap φ S hComm (balancedPure φ x y) = balancedPure φ x
+(S y)`. -/
 @[simp]
 theorem balancedRightFactorMap_pure
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -154,7 +179,11 @@ theorem balancedRightFactorMap_pure
       balancedPure φ x (S y) := by
   simp only [balancedPure, balancedRightFactorMap_mkQ, rawRightFactorMap_tmul]
 
-/-- Both balanced descents retain the actual paired-adjoint equation. -/
+/-- **Adjoint pairing after balancing.** Let `E₁,E₂` be right pre-Hilbert modules over nonunital
+C-star algebras `B₁,B₂` with their coefficient orders. Let `φ : B₁ → End_(B₂)(E₂)` be a
+complex nonunital star homomorphism and `S` an adjointable endomorphism of `E₂` commuting with
+every `φ(b)`. for balanced `z,w`, `⟨R_S z,w⟩ = ⟨z,R_(S*) w⟩`, where `R_S =
+balancedRightFactorMap φ S hComm`. -/
 theorem balancedRightFactorMap_inner_adjoint
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (S : AdjointableOperator.End B₂ E₂)
@@ -169,7 +198,11 @@ theorem balancedRightFactorMap_inner_adjoint
     rawRightFactorMap_inner_adjoint φ S hComm z w
 
 omit [PartialOrder B₁ᵐᵒᵖ] [CStarModule B₁ᵐᵒᵖ E₁] in
-/-- The original right coefficient action commutes with the balanced map. -/
+/-- **Right action after balancing.** Let `E₁,E₂` be right pre-Hilbert modules over nonunital
+C-star algebras `B₁,B₂` with their coefficient orders. Let `φ : B₁ → End_(B₂)(E₂)` be a
+complex nonunital star homomorphism and `S` an adjointable endomorphism of `E₂` commuting with
+every `φ(b)`. put `R_S = balancedRightFactorMap φ S hComm`. It satisfies `R_S(z <• b) = R_S(z)
+<• b` for each `b : B₂`. -/
 theorem balancedRightFactorMap_balancedRightSMul
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (S : AdjointableOperator.End B₂ E₂)
@@ -182,7 +215,11 @@ theorem balancedRightFactorMap_balancedRightSMul
     congrArg (balancingSpan (E₁ := E₁) φ).mkQ
       (rawRightFactorMap_rawRightSMul S b z)
 
-/-- The proved actual adjoint identity preserves the original radical. -/
+/-- **Preservation of the zero-inner-product radical.** Let `E₁,E₂` be right pre-Hilbert modules
+over nonunital C-star algebras `B₁,B₂` with their coefficient orders. Let `φ : B₁ →
+End_(B₂)(E₂)` be a complex nonunital star homomorphism and `S` an adjointable endomorphism of
+`E₂` commuting with every `φ(b)`. the balanced map induced by `I⊗S` preserves the radical,
+since its paired adjoint is induced by `I⊗S*`. -/
 theorem radicalSpace_balancedRightFactorMap
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (S : AdjointableOperator.End B₂ E₂)
@@ -196,7 +233,11 @@ theorem radicalSpace_balancedRightFactorMap
   rw [balancedRightFactorMap_inner_adjoint]
   exact (mem_radicalSpace_iff φ z).mp hz _
 
-/-- The genuine second-factor map on the original radical quotient. -/
+/-- **Right factor on the radical quotient.** Let `E₁,E₂` be right pre-Hilbert modules over
+nonunital C-star algebras `B₁,B₂` with their coefficient orders. Let `φ : B₁ → End_(B₂)(E₂)`
+be a complex nonunital star homomorphism and `S` an adjointable endomorphism of `E₂` commuting
+with every `φ(b)`. the complex-linear map on the balanced tensor modulo its radical is
+determined by `[x⊗y] ↦ [x⊗S y]`. -/
 def radicalRightFactorMap
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (S : AdjointableOperator.End B₂ E₂)
@@ -205,7 +246,11 @@ def radicalRightFactorMap
   (radicalSpace (E₁ := E₁) φ).mapQ (radicalSpace (E₁ := E₁) φ)
     (balancedRightFactorMap φ S hComm) (radicalSpace_balancedRightFactorMap φ S hComm)
 
-/-- Each original balanced representative has the computed radical image. -/
+/-- **Radical representative of a right-factor map.** Let `E₁,E₂` be right pre-Hilbert modules
+over nonunital C-star algebras `B₁,B₂` with their coefficient orders. Let `φ : B₁ →
+End_(B₂)(E₂)` be a complex nonunital star homomorphism and `S` an adjointable endomorphism of
+`E₂` commuting with every `φ(b)`. the radical quotient map `q_rad` satisfies
+`radicalRightFactorMap φ S hComm (q_rad z) = q_rad (balancedRightFactorMap φ S hComm z)`. -/
 theorem radicalRightFactorMap_mkQ
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (S : AdjointableOperator.End B₂ E₂)
@@ -214,7 +259,10 @@ theorem radicalRightFactorMap_mkQ
       (radicalSpace (E₁ := E₁) φ).mkQ (balancedRightFactorMap φ S hComm z) := by
   simp only [radicalRightFactorMap, Submodule.mkQ_apply, Submodule.mapQ_apply]
 
-/-- The original radical pure tensors have the printed second-factor value. -/
+/-- **Right factor on radical pure tensors.** Let `E₁,E₂` be right pre-Hilbert modules over
+nonunital C-star algebras `B₁,B₂` with their coefficient orders. Let `φ : B₁ → End_(B₂)(E₂)`
+be a complex nonunital star homomorphism and `S` an adjointable endomorphism of `E₂` commuting
+with every `φ(b)`. the radical class of `x⊗y` is sent to the radical class of `x⊗S y`. -/
 theorem radicalRightFactorMap_pure
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (S : AdjointableOperator.End B₂ E₂)
@@ -223,7 +271,11 @@ theorem radicalRightFactorMap_pure
       (radicalSpace (E₁ := E₁) φ).mkQ (balancedPure φ x (S y)) := by
   simp only [radicalRightFactorMap_mkQ, balancedRightFactorMap_pure]
 
-/-- Both radical descents retain the original paired-adjoint identity. -/
+/-- **Adjoint pairing on the radical quotient.** Let `E₁,E₂` be right pre-Hilbert modules over
+nonunital C-star algebras `B₁,B₂` with their coefficient orders. Let `φ : B₁ → End_(B₂)(E₂)`
+be a complex nonunital star homomorphism and `S` an adjointable endomorphism of `E₂` commuting
+with every `φ(b)`. put `R_S = radicalRightFactorMap φ S hComm`. Then `radicalInner φ (R_S z) w
+= radicalInner φ z (R_(S*) w)`, using the induced map of `S*` on the right. -/
 theorem radicalRightFactorMap_inner_adjoint
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (S : AdjointableOperator.End B₂ E₂)
@@ -237,7 +289,11 @@ theorem radicalRightFactorMap_inner_adjoint
   simpa only [radicalRightFactorMap_mkQ, radicalInner_mkQ_mkQ] using
     balancedRightFactorMap_inner_adjoint φ S hComm z w
 
-/-- The original coefficient action commutes with the radical map. -/
+/-- **Right action on the radical quotient.** Let `E₁,E₂` be right pre-Hilbert modules over
+nonunital C-star algebras `B₁,B₂` with their coefficient orders. Let `φ : B₁ → End_(B₂)(E₂)`
+be a complex nonunital star homomorphism and `S` an adjointable endomorphism of `E₂` commuting
+with every `φ(b)`. put `R_S = radicalRightFactorMap φ S hComm`. It commutes with the right
+`B₂` action: `R_S(z <• b) = R_S(z) <• b`. -/
 theorem radicalRightFactorMap_radicalRightSMul
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (S : AdjointableOperator.End B₂ E₂)

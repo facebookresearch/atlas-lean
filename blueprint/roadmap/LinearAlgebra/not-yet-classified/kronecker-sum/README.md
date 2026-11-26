@@ -1,6 +1,6 @@
-# Kronecker Sum
+# Kronecker products and finite sums
 
-- [Sum kronecker](sum-kronecker.md)
-- [Kronecker sum](kronecker-sum.md)
-- [Sum kronecker fintype](sum-kronecker-fintype.md)
-- [Kronecker sum fintype](kronecker-sum-fintype.md)
+- [Finite-sum distribution in the first Kronecker factor](sum-kronecker.md)
+- [Finite-sum distribution in the second Kronecker factor](kronecker-sum.md)
+- [Whole finite-index sum in the first Kronecker factor](sum-kronecker-fintype.md)
+- [Whole finite-index sum in the second Kronecker factor](kronecker-sum-fintype.md)

@@ -1,3 +1,5 @@
-# Left Mul commutes scalar Self Hom
+# Commutation of coefficient multiplication with scalars
 
-Original coefficient left multiplication commutes with the literal scalar self representation.
+For nonunital `A`, left
+multiplication `b ↦ a*b` commutes with `scalarSelfHom A c`, the map `b ↦ c • b`, for all `a :
+A` and `c : ℂ`.

@@ -1,8 +1,8 @@
-# Int Composition
+# Integer bilinear composition of additive tensor maps
 
-- [To Int Bilinear](to-int-bilinear.md)
-- [To Int Bilinear apply](to-int-bilinear-apply.md)
-- [Int Bilinear Of Add](int-bilinear-of-add.md)
-- [Int Bilinear Of Add apply](int-bilinear-of-add-apply.md)
-- [Comp Int Tensor Bilinear](comp-int-tensor-bilinear.md)
-- [Comp Int Tensor Bilinear apply](comp-int-tensor-bilinear-apply.md)
+- [Biadditive map as an integer-bilinear map](to-int-bilinear.md)
+- [Value of integer bilinear conversion](to-int-bilinear-apply.md)
+- [Integer bilinear map from two additive laws](int-bilinear-of-add.md)
+- [Value of the bilinear map constructed from additive laws](int-bilinear-of-add-apply.md)
+- [Curried integer-bilinear composite through a tensor](comp-int-tensor-bilinear.md)
+- [Value of the additive tensor composite](comp-int-tensor-bilinear-apply.md)

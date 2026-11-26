@@ -16,15 +16,16 @@ module
 public import MathlibExt.Analysis.CStarAlgebra.Extension.StableSum.Calculus
 
 /-!
-# Stable strong equivalence is an equivalence relation
+# Equivalence relation of stable Busby sums
 
-The actual stable relation becomes an equivalence relation from the supplied
-associativity and commutativity coherence. Reflexivity uses a directly
-constructed zero trivial Busby map; transitivity uses only strict
-strong-unitary calculus and the proved stable-sum congruence/triviality laws.
-The source algebra keeps the weak BusbyHom telescope; no source completeness,
-strong zero law, or source-standard stabilization is assumed. The equivalence
-proof is reused strictly, not supplied by a source placeholder.
+Fix compatible multiplier and corona folds `S` with associativity and commutativity up to strong
+unitary equivalence. The relation that makes `τ₁,τ₂` equivalent after adjoining liftable Busby
+maps is reflexive, symmetric and transitive.
+
+Reflexivity uses the zero liftable map. Transitivity combines the strict unitary-conjugation
+calculus with sum congruence and the fact that the sum of two liftable maps is liftable. The
+domain is an algebraic semiring with complex scalar action and additive involution; completeness
+is not imposed on that domain.
 -/
 
 @[expose] public section
@@ -111,7 +112,9 @@ private theorem stably_strong_equivalent_trans (S : StableSumData A B)
     strongly_unitary_equivalent_trans hstep₄ <|
     strongly_unitary_equivalent_trans hstep₅ hstep₆
 
-/-- The stable strong relation is an equivalence relation. -/
+/-- **Equivalence relation of stable strong Busby sums.** If `S.IsCoherent`, then
+`StablyStrongEquivalent S` is reflexive, symmetric and transitive on the Busby homomorphisms
+`A → Q(B)`. -/
 theorem stably_strong_equivalent_equivalence (S : StableSumData A B)
     (hS : S.IsCoherent) :
     _root_.Equivalence (StablyStrongEquivalent S) := by

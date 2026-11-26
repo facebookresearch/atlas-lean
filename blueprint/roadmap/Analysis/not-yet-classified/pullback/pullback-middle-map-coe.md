@@ -1,3 +1,4 @@
-# Pullback Middle Map coe
+# Pair formula for pullback comparison
 
-The actual pair formula, including the unchanged multiplier coordinate.
+Under the product embeddings, `pullbackMiddleMap f τ
+p = (f p.1.1, p.1.2)`; the multiplier coordinate is unchanged.

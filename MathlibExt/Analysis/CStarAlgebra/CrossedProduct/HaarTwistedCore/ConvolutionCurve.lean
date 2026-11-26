@@ -18,17 +18,18 @@ public import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
 public import Mathlib.MeasureTheory.Integral.Bochner.Set
 
 /-!
-# Literal Haar convolution as an actual fixed-support Banach-valued integral
+# Twisted convolution as a Banach-valued Haar integral
 
-For original f and h, the curve s ↦ f(s)·α_s(h(s⁻¹·)) lies in the stock
-bounded-function subspace supported in tsupport(f)·tsupport(h). Joint
-coefficient continuity makes this an actual continuous compactly supported
-Banach-valued curve. Bounded point evaluations identify its integral with
-the original convolution. Its bounded map to the literal L1 completion
-therefore gives the original completed convolution image.
-
-The fixed-support carrier and integral are constructed, not supplied as
-model or agreement hypotheses. No raw or L1 C-star square law is used.
+Let G be a topological group with a measurable structure, μ any measure on G, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For compactly supported continuous
+coefficients f,h:G→A, put K=tsupport(f)*tsupport(h) and Fₛ(x)=f(s)*αₛ(h(s⁻¹*x)). Write
+E_K={b∈C_b(G,A):b(x)=0 for x∉K}, with its supremum norm. Each Fₛ belongs to this Banach space.
+The curve s↦Fₛ is norm-continuous and compactly supported. If G has its Borel measurable
+structure and μ is left Haar, its Bochner integral has coefficient function f*h. For locally
+compact Borel G and regular left Haar μ, let X₁ be the L¹ norm completion of the twisted
+coefficient core with dense map ι₁. For b∈E_K let c_b be its compactly supported coefficient
+function and J_K(b)=ι₁(c_b). This bounded complex linear map satisfies ‖J_K(b)‖≤μ.real(K)‖b‖∞
+and commutes with the convolution integral.
 -/
 
 @[expose] public section
@@ -50,23 +51,46 @@ variable {G : Type uG} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
 variable {A : Type uA} [NonUnitalCStarAlgebra A]
 variable (μ : Measure G) [μ.IsHaarMeasure] [μ.Regular] (α : PointNormCStarAction G A)
 
-/-- The original compact product supports both the convolution and all its coefficient slices. -/
+/-- **Product support for twisted convolution.**
+
+Let G be a topological group with a measurable structure, μ a measure on G, A a nonunital
+complex C-star algebra and α a point-norm action. For compactly supported continuous f,h:G→A,
+convolutionSupport μ α f h is K=tsupport(f)*tsupport(h), where tsupport is the closure of the
+nonzero set.
+-/
 def convolutionSupport (f h : Carrier μ α) : Set G :=
   tsupport (toCc μ α f) * tsupport (toCc μ α h)
 
 omit [LocallyCompactSpace G] [BorelSpace G] [μ.IsHaarMeasure] [μ.Regular] in
-/-- The product of the original two compact supports is compact. -/
+/-- **Compactness of the convolution support.**
+
+Let G be a topological group with a measurable structure, μ any measure on G, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For compactly supported continuous
+f,h:G→A, K=convolutionSupport μ α f h=tsupport(f)*tsupport(h) is compact.
+-/
 theorem isCompact_convolutionSupport (f h : Carrier μ α) :
     IsCompact (convolutionSupport μ α f h) :=
   (toCc μ α f).hasCompactSupport.mul (toCc μ α h).hasCompactSupport
 
 omit [LocallyCompactSpace G] [BorelSpace G] [μ.IsHaarMeasure] [μ.Regular] in
-/-- The same product is closed without imposing separatedness on the original group. -/
+/-- **Closedness of the convolution support.**
+
+Let G be a topological group with a measurable structure, μ any measure on G, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For compactly supported continuous
+f,h:G→A, K=convolutionSupport μ α f h=tsupport(f)*tsupport(h) is closed.
+-/
 theorem isClosed_convolutionSupport (f h : Carrier μ α) :
     IsClosed (convolutionSupport μ α f h) :=
   (isClosed_tsupport (toCc μ α h)).mul_left_of_isCompact (toCc μ α f).hasCompactSupport
 
-/-- The literal original coefficient-left/group-left slice in one actual complete support carrier. -/
+/-- **Convolution kernel in the fixed-support Banach space.**
+
+Let G be a topological group with a measurable structure, μ any measure on G, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For compactly supported continuous
+coefficients f,h:G→A, put K=tsupport(f)*tsupport(h) and Fₛ(x)=f(s)*αₛ(h(s⁻¹*x)). Write
+E_K={b∈C_b(G,A):b(x)=0 for x∉K}, with its supremum norm. Each Fₛ belongs to this Banach space.
+For s∈G, compactConvolutionCurve μ α f h s is Fₛ.
+-/
 def compactConvolutionCurve (f h : Carrier μ α) (s : G) :
     BoundedContinuousFunction.Supported ℂ A (convolutionSupport μ α f h) := by
   let F := toCc μ α f
@@ -91,14 +115,30 @@ def compactConvolutionCurve (f h : Carrier μ α) (s : G) :
   exact BoundedContinuousFunction.ccToSupported ℂ A (convolutionSupport μ α f h) c hSupport
 
 omit [LocallyCompactSpace G] [BorelSpace G] [μ.IsHaarMeasure] [μ.Regular] in
-/-- Every Banach-curve coefficient is the original twisted convolution kernel. -/
+/-- **Evaluation of the convolution kernel.**
+
+Let G be a topological group with a measurable structure, μ any measure on G, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For compactly supported continuous
+coefficients f,h:G→A, put K=tsupport(f)*tsupport(h) and Fₛ(x)=f(s)*αₛ(h(s⁻¹*x)). Write
+E_K={b∈C_b(G,A):b(x)=0 for x∉K}, with its supremum norm. Each Fₛ belongs to this Banach space.
+For s,x∈G, (compactConvolutionCurve μ α f h s)(x)=f(s)*αₛ(h(s⁻¹*x)).
+-/
 @[simp]
 theorem compactConvolutionCurve_apply (f h : Carrier μ α) (s x : G) :
     (compactConvolutionCurve μ α f h s).1 x = f s * α s (h (s⁻¹ * x)) :=
   rfl
 
 omit [LocallyCompactSpace G] [BorelSpace G] [μ.IsHaarMeasure] [μ.Regular] in
-/-- The fixed-support Banach curve is exactly the existing original multiplier slice as a C_c value. -/
+/-- **The convolution kernel as a compactly supported coefficient.**
+
+Let G be a topological group with a measurable structure, μ any measure on G, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For compactly supported continuous
+coefficients f,h:G→A, put K=tsupport(f)*tsupport(h) and Fₛ(x)=f(s)*αₛ(h(s⁻¹*x)). Write
+E_K={b∈C_b(G,A):b(x)=0 for x∉K}, with its supremum norm. Each Fₛ belongs to this Banach space.
+Let c_K:E_K→C_c(G,A) take the underlying compactly supported coefficient function. Then
+c_K(Fₛ)=coefficientLeft(f(s))(groupLeft(s,h)), whose value at x is f(s)*αₛ(h(s⁻¹*x));
+groupLeft(s,h)(x)=αₛ(h(s⁻¹*x)) and coefficientLeft(a)(k)(x)=a*k(x).
+-/
 theorem toCc_compactConvolutionCurve (f h : Carrier μ α) (s : G) :
     BoundedContinuousFunction.supportedToCc ℂ A (convolutionSupport μ α f h)
         (isCompact_convolutionSupport μ α f h) (isClosed_convolutionSupport μ α f h)
@@ -109,7 +149,15 @@ theorem toCc_compactConvolutionCurve (f h : Carrier μ α) (s : G) :
   rfl
 
 omit [LocallyCompactSpace G] [BorelSpace G] [μ.IsHaarMeasure] [μ.Regular] in
-/-- Joint original-kernel continuity gives continuity in the true fixed-support Banach norm. -/
+/-- **Supremum-norm continuity of the convolution curve.**
+
+Let G be a topological group with a measurable structure, μ any measure on G, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For compactly supported continuous
+coefficients f,h:G→A, put K=tsupport(f)*tsupport(h) and Fₛ(x)=f(s)*αₛ(h(s⁻¹*x)). Write
+E_K={b∈C_b(G,A):b(x)=0 for x∉K}, with its supremum norm. Each Fₛ belongs to this Banach space.
+The map s↦compactConvolutionCurve μ α f h s=Fₛ is continuous from G to the supremum-norm
+topology of E_K.
+-/
 theorem continuous_compactConvolutionCurve (f h : Carrier μ α) :
     Continuous (compactConvolutionCurve μ α f h) := by
   apply BoundedContinuousFunction.continuous_supported_of_joint ℂ A
@@ -118,7 +166,15 @@ theorem continuous_compactConvolutionCurve (f h : Carrier μ α) :
   exact (continuous_kernel α (toCc μ α f) (toCc μ α h)).comp continuous_swap
 
 omit [LocallyCompactSpace G] [BorelSpace G] [μ.IsHaarMeasure] [μ.Regular] in
-/-- The actual Banach-valued curve vanishes outside the original first compact support. -/
+/-- **Compact support in the integration variable.**
+
+Let G be a topological group with a measurable structure, μ any measure on G, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For compactly supported continuous
+coefficients f,h:G→A, put K=tsupport(f)*tsupport(h) and Fₛ(x)=f(s)*αₛ(h(s⁻¹*x)). Write
+E_K={b∈C_b(G,A):b(x)=0 for x∉K}, with its supremum norm. Each Fₛ belongs to this Banach space.
+The curve s↦Fₛ is zero outside tsupport(f), so compactConvolutionCurve μ α f h has compact
+support in s.
+-/
 theorem hasCompactSupport_compactConvolutionCurve (f h : Carrier μ α) :
     HasCompactSupport (compactConvolutionCurve μ α f h) := by
   refine HasCompactSupport.intro' (toCc μ α f).hasCompactSupport (isClosed_tsupport (toCc μ α f)) ?_
@@ -130,14 +186,33 @@ theorem hasCompactSupport_compactConvolutionCurve (f h : Carrier μ α) :
   rw [image_eq_zero_of_notMem_tsupport hs, zero_mul]
 
 omit [LocallyCompactSpace G] [μ.Regular] in
-/-- The literal continuous compactly supported Banach curve is Haar integrable. -/
+/-- **Bochner integrability of the convolution curve.**
+
+Let G be a topological group with its Borel measurable structure, μ a left Haar measure on G,
+A a nonunital complex C-star algebra and α a point-norm action of G on A. For compactly
+supported continuous coefficients f,h:G→A, put K=tsupport(f)*tsupport(h) and
+Fₛ(x)=f(s)*αₛ(h(s⁻¹*x)). Write E_K={b∈C_b(G,A):b(x)=0 for x∉K}, with its supremum norm. Each
+Fₛ belongs to this Banach space. The E_K-valued curve s↦compactConvolutionCurve μ α f h s=Fₛ
+is Bochner integrable with respect to μ.
+-/
 theorem integrable_compactConvolutionCurve (f h : Carrier μ α) :
     Integrable (compactConvolutionCurve μ α f h) μ :=
   (continuous_compactConvolutionCurve μ α f h).integrable_of_hasCompactSupport
     (hasCompactSupport_compactConvolutionCurve μ α f h)
 
 omit [LocallyCompactSpace G] [μ.Regular] in
-/-- Bounded evaluation identifies the actual Banach-valued integral with the original convolution. -/
+/-- **The Banach-valued integral equals twisted convolution.**
+
+Let G be a topological group with its Borel measurable structure, μ a left Haar measure on G,
+A a nonunital complex C-star algebra, and α a point-norm action of G on A. For compactly
+supported continuous coefficients f,h:G→A, put K=tsupport(f)*tsupport(h) and define
+Fₛ(x)=f(s)*αₛ(h(s⁻¹*x)).
+
+View s↦Fₛ as a curve in the Banach space of bounded continuous A-valued functions supported in
+K, with the supremum norm. The compactly supported continuous function underlying its integral
+∫ s, Fₛ ∂μ equals the twisted convolution f*h. For every x∈G, `(∫ s, Fₛ ∂μ)(x) = ∫ s,
+f(s)*αₛ(h(s⁻¹*x)) ∂μ = (f*h)(x)`.
+-/
 theorem toCc_integral_compactConvolutionCurve (f h : Carrier μ α) :
     let _ : NormedSpace ℝ (BoundedContinuousFunction.Supported ℂ A (convolutionSupport μ α f h)) :=
       NormedSpace.restrictScalars ℝ ℂ _
@@ -160,7 +235,17 @@ theorem toCc_integral_compactConvolutionCurve (f h : Carrier μ α) :
     _ = ∫ s : G, f s * α s (h (s⁻¹ * x)) ∂μ := rfl
     _ = _ := (ccConvolution_apply μ α (toCc μ α f) (toCc μ α h) x).symm
 
-/-- The original fixed-support L1 image is bounded by support measure times its sup norm. -/
+/-- **L¹ bound for functions supported in a compact set.**
+
+Let G be a locally compact topological group with its Borel measurable structure, μ a regular
+left Haar measure, A a nonunital complex C-star algebra and α a point-norm action of G on A.
+Let X₁=L1Completion μ α be the L¹ norm completion of the compactly supported twisted
+coefficient core, with ‖k‖₁=∫ x, ‖k(x)‖ ∂μ and dense coefficient map ι₁. For a compact closed
+K⊆G, let E_K be the supremum-norm Banach space of bounded continuous A-valued functions
+vanishing outside K. For b∈E_K, c_b is its compactly supported coefficient function, and
+J_K(b)=ι₁(c_b). The coefficient class satisfies ‖ι₁(c_b)‖≤μ.real(K)‖b‖∞, where μ.real(K) is
+the finite real measure of K.
+-/
 theorem norm_supportedToL1_raw_le (K : Set G) (hK : IsCompact K) (hKclosed : IsClosed K)
     (b : BoundedContinuousFunction.Supported ℂ A K) :
     let _ : NonUnitalNormedRing (L1Completion μ α) := l1CompletionNonUnitalNormedRing μ α
@@ -185,7 +270,17 @@ theorem norm_supportedToL1_raw_le (K : Set G) (hK : IsCompact K) (hKclosed : IsC
         (fun x => BoundedContinuousFunction.norm_coe_le_norm b.1 x)
     _ = μ.real K * ‖b‖ := by rw [setIntegral_const, smul_eq_mul]
 
-/-- The original fixed-support functions map boundedly to their literal L1 completion images. -/
+/-- **Bounded inclusion of fixed-support functions in the L¹ completion.**
+
+Let G be a locally compact topological group with its Borel measurable structure, μ a regular
+left Haar measure, A a nonunital complex C-star algebra and α a point-norm action of G on A.
+Let X₁=L1Completion μ α be the L¹ norm completion of the compactly supported twisted
+coefficient core, with ‖k‖₁=∫ x, ‖k(x)‖ ∂μ and dense coefficient map ι₁. For a compact closed
+K⊆G, let E_K be the supremum-norm Banach space of bounded continuous A-valued functions
+vanishing outside K. For b∈E_K, c_b is its compactly supported coefficient function, and
+J_K(b)=ι₁(c_b). The complex linear map supportedToL1Completion μ α K:E_K→X₁ is J_K, with
+operator norm at most μ.real(K).
+-/
 def supportedToL1Completion (K : Set G) (hK : IsCompact K) (hKclosed : IsClosed K) :
     let _ : NonUnitalNormedRing (L1Completion μ α) := l1CompletionNonUnitalNormedRing μ α
     let _ : NormedSpace ℂ (L1Completion μ α) := l1CompletionNormedSpace μ α
@@ -216,7 +311,16 @@ def supportedToL1Completion (K : Set G) (hK : IsCompact K) (hKclosed : IsClosed 
         rw [heq, map_smul, RingHom.id_apply] }
   exact J.mkContinuous (μ.real K) (norm_supportedToL1_raw_le μ α K hK hKclosed)
 
-/-- The bounded fixed-support map retains the original canonical L1 coefficient image. -/
+/-- **Value of the fixed-support L¹ inclusion.**
+
+Let G be a locally compact topological group with its Borel measurable structure, μ a regular
+left Haar measure, A a nonunital complex C-star algebra and α a point-norm action of G on A.
+Let X₁=L1Completion μ α be the L¹ norm completion of the compactly supported twisted
+coefficient core, with ‖k‖₁=∫ x, ‖k(x)‖ ∂μ and dense coefficient map ι₁. For a compact closed
+K⊆G, let E_K be the supremum-norm Banach space of bounded continuous A-valued functions
+vanishing outside K. For b∈E_K, c_b is its compactly supported coefficient function, and
+J_K(b)=ι₁(c_b). For b∈E_K, supportedToL1Completion μ α K b=J_K(b)=ι₁(c_b).
+-/
 @[simp]
 theorem supportedToL1Completion_apply (K : Set G) (hK : IsCompact K) (hKclosed : IsClosed K)
     (b : BoundedContinuousFunction.Supported ℂ A K) :
@@ -227,7 +331,16 @@ theorem supportedToL1Completion_apply (K : Set G) (hK : IsCompact K) (hKclosed :
       toL1Completion μ α (fromCc μ α (BoundedContinuousFunction.supportedToCc ℂ A K hK hKclosed b)) :=
   rfl
 
-/-- The Banach-to-L1 map has the true finite-support-measure sup-norm bound. -/
+/-- **Norm bound for the fixed-support L¹ inclusion.**
+
+Let G be a locally compact topological group with its Borel measurable structure, μ a regular
+left Haar measure, A a nonunital complex C-star algebra and α a point-norm action of G on A.
+Let X₁=L1Completion μ α be the L¹ norm completion of the compactly supported twisted
+coefficient core, with ‖k‖₁=∫ x, ‖k(x)‖ ∂μ and dense coefficient map ι₁. For a compact closed
+K⊆G, let E_K be the supremum-norm Banach space of bounded continuous A-valued functions
+vanishing outside K. For b∈E_K, c_b is its compactly supported coefficient function, and
+J_K(b)=ι₁(c_b). For b∈E_K, ‖supportedToL1Completion μ α K b‖=‖J_K(b)‖≤μ.real(K)‖b‖∞.
+-/
 theorem norm_supportedToL1Completion_le (K : Set G) (hK : IsCompact K) (hKclosed : IsClosed K)
     (b : BoundedContinuousFunction.Supported ℂ A K) :
     let _ : NonUnitalNormedRing (L1Completion μ α) := l1CompletionNonUnitalNormedRing μ α
@@ -236,7 +349,17 @@ theorem norm_supportedToL1Completion_le (K : Set G) (hK : IsCompact K) (hKclosed
     ‖supportedToL1Completion μ α K hK hKclosed b‖ ≤ μ.real K * ‖b‖ :=
   norm_supportedToL1_raw_le μ α K hK hKclosed b
 
-/-- Integrating the actual compact-support Banach curve gives the same completed convolution image. -/
+/-- **Convolution integral commutes with the L¹ inclusion.**
+
+Let G be a locally compact topological group with its Borel measurable structure, μ a regular
+left Haar measure, A a nonunital complex C-star algebra and α a point-norm action of G on A.
+For compactly supported continuous coefficients f,h:G→A, put K=tsupport(f)*tsupport(h) and
+Fₛ(x)=f(s)*αₛ(h(s⁻¹*x)). Write E_K={b∈C_b(G,A):b(x)=0 for x∉K}, with its supremum norm. Each
+Fₛ belongs to this Banach space. Let X₁=L1Completion μ α be the L¹ norm completion of the
+compactly supported twisted coefficient core, with ‖k‖₁=∫ x, ‖k(x)‖ ∂μ and dense coefficient
+map ι₁. Let J_K:E_K→X₁ send b to ι₁(c_b), the class of its underlying compactly supported
+coefficient. Then J_K(∫ s, Fₛ ∂μ)=ι₁(f*h), where (f*h)(x)=∫ s, f(s)*αₛ(h(s⁻¹*x)) ∂μ.
+-/
 theorem integral_compactConvolutionCurve_toL1Completion (f h : Carrier μ α) :
     let _ : NonUnitalNormedRing (L1Completion μ α) := l1CompletionNonUnitalNormedRing μ α
     let _ : NormedSpace ℂ (L1Completion μ α) := l1CompletionNormedSpace μ α
@@ -257,7 +380,17 @@ theorem integral_compactConvolutionCurve_toL1Completion (f h : Carrier μ α) :
   rw [supportedToL1Completion_apply, toCc_integral_compactConvolutionCurve]
   rfl
 
-/-- The original L1 integral of literal multiplier slices is the canonical Haar convolution image. -/
+/-- **Integrated coefficient-translation slices give L¹ convolution.**
+
+Let G be a locally compact topological group with its Borel measurable structure, μ a regular
+left Haar measure, A a nonunital complex C-star algebra and α a point-norm action of G on A.
+For compactly supported continuous coefficients f,h:G→A, put K=tsupport(f)*tsupport(h) and
+Fₛ(x)=f(s)*αₛ(h(s⁻¹*x)). Let X₁=L1Completion μ α be the L¹ norm completion of the compactly
+supported twisted coefficient core, with ‖k‖₁=∫ x, ‖k(x)‖ ∂μ and dense coefficient map ι₁. The
+compact coefficient Fₛ is coefficientLeft(f(s))(groupLeft(s,h)), with
+groupLeft(s,h)(x)=αₛ(h(s⁻¹*x)) and coefficientLeft(a)(k)(x)=a*k(x). In the Banach space X₁, ∫
+s, ι₁(Fₛ) ∂μ=ι₁(f*h).
+-/
 theorem integral_toL1Completion_coefficientLeft_groupLeft (f h : Carrier μ α) :
     let _ : NonUnitalNormedRing (L1Completion μ α) := l1CompletionNonUnitalNormedRing μ α
     let _ : NormedSpace ℂ (L1Completion μ α) := l1CompletionNormedSpace μ α

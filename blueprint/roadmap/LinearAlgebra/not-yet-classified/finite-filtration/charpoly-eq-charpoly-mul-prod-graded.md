@@ -1,8 +1,6 @@
-# Charpoly eq charpoly mul prod graded
+# Product formula through an invariant finite tower
 
-The characteristic polynomial on the final stage of a finite invariant
-filtration is the characteristic polynomial on the initial stage times the
-product of the characteristic polynomials on all successive graded
-quotients.  This is the characteristic-polynomial analogue of
-`LinearMap.det_eq_det_mul_prod_graded`, with the same interface: each
-`step i` identifies stage `i` with an invariant submodule of stage `i+1`.
+Let R be a commutative ring and (M_i,f_i)_(i=0)^n a finite tower of finite free modules with
+invariant inclusions M_i→M_(i+1). Assume each quotient Q_i is free; it is finite since M_(i+1)
+is finite. Let q_i be the induced quotient endomorphism. The final characteristic polynomial
+satisfies χ_(f_n)=χ_(f_0)∏_{i<n}χ_(q_i).

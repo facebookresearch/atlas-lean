@@ -14,19 +14,16 @@ module
 public import MathlibExt.Analysis.CStarAlgebra.AsymptoticMorphism.NHomotopy
 
 /-!
-# Arbitrary finite-stage maps on literal homotopy classes
+# Finite-offset transitions on homotopy classes
 
-The direct iterated map `stageMapFrom n k` sends an actual representative at
-stage `n` to one at stage `n + k`.  Naturality with the two endpoint maps
-transports a literal interval homotopy, so this map descends to the explicit
-quotient `NClasses`.
-
-The offset-addition law uses a separately named reassociated map.  Thus its
-target is visibly `(n + k) + l`; no definitional identification of that stage
-with `n + (k + l)` and no replacement relation are hidden in the API.
-
-This file defines only finite-stage data.  It does not construct a direct
-limit, product, flattening map, or E-theory class.
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, set αX=C_b([1,∞),X)/C₀([1,∞),X), α⁰X=X and αⁿ⁺¹X=α(αⁿX), with the
+quotient C-star norms. Write Q_n(A,B)=NClasses n A B for star homomorphisms A→αⁿB modulo
+homotopies F:A→αⁿ(C([0,1],B)) whose iterated endpoint evaluations are the two representatives.
+Write i_(n,k):αⁿB→αⁿ⁺ᵏB for the composite of k constant-class inclusions, and
+S_(n,k):Q_n(A,B)→Q_(n+k)(A,B) for [φ]↦[i_(n,k)∘φ]. These maps preserve n-homotopy, have
+S_(n,0)=id and S_(n,1)=stageTransition n A B, and compose by addition of offsets with the
+canonical reassociation of stage indices.
 -/
 
 @[expose] public section
@@ -44,9 +41,27 @@ namespace IteratedAsymptoticAlgebra
 
 universe uA uB
 
-/-! ## Representative and quotient maps -/
+/-!
+## Representative and class stage inclusions
 
-/-- Include one representative by an arbitrary finite stage offset. -/
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, set αX=C_b([1,∞),X)/C₀([1,∞),X), α⁰X=X and αⁿ⁺¹X=α(αⁿX), with the
+quotient C-star norms. Write Q_n(A,B)=NClasses n A B for star homomorphisms A→αⁿB modulo
+homotopies F:A→αⁿ(C([0,1],B)) whose iterated endpoint evaluations are the two representatives.
+Write i_(n,k):αⁿB→αⁿ⁺ᵏB for the composite of k constant-class inclusions, and
+S_(n,k):Q_n(A,B)→Q_(n+k)(A,B) for [φ]↦[i_(n,k)∘φ].
+-/
+
+/-- **Representative included across a finite stage offset.**
+
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, set αX=C_b([1,∞),X)/C₀([1,∞),X), α⁰X=X and αⁿ⁺¹X=α(αⁿX), with the
+quotient C-star norms. Write Q_n(A,B)=NClasses n A B for star homomorphisms A→αⁿB modulo
+homotopies F:A→αⁿ(C([0,1],B)) whose iterated endpoint evaluations are the two representatives.
+Write i_(n,k):αⁿB→αⁿ⁺ᵏB for the composite of k constant-class inclusions, and
+S_(n,k):Q_n(A,B)→Q_(n+k)(A,B) for [φ]↦[i_(n,k)∘φ]. The map stageTransitionRepresentativeFrom n
+k sends φ to i_(n,k)∘φ:A→αⁿ⁺ᵏB.
+-/
 def stageTransitionRepresentativeFrom (n k : ℕ)
     {A : Type uA} {B : Type uB}
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
@@ -62,8 +77,16 @@ theorem stageTransitionRepresentativeFrom_apply (n k : ℕ)
       stageMapFrom n k B (phi a) :=
   rfl
 
-/-- Every finite stage offset preserves the literal interval-homotopy
-relation. -/
+/-- **Finite-offset transitions preserve homotopy.**
+
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, set αX=C_b([1,∞),X)/C₀([1,∞),X), α⁰X=X and αⁿ⁺¹X=α(αⁿX), with the
+quotient C-star norms. Write Q_n(A,B)=NClasses n A B for star homomorphisms A→αⁿB modulo
+homotopies F:A→αⁿ(C([0,1],B)) whose iterated endpoint evaluations are the two representatives.
+Write i_(n,k):αⁿB→αⁿ⁺ᵏB for the composite of k constant-class inclusions, and
+S_(n,k):Q_n(A,B)→Q_(n+k)(A,B) for [φ]↦[i_(n,k)∘φ]. If φ and ψ are n-homotopic, then i_(n,k)∘φ
+and i_(n,k)∘ψ are (n+k)-homotopic.
+-/
 theorem stageTransitionRepresentativeFrom_respects (n k : ℕ)
     {A : Type uA} {B : Type uB}
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
@@ -88,7 +111,16 @@ theorem stageTransitionRepresentativeFrom_respects (n k : ℕ)
     rw [← NonUnitalStarAlgHom.comp_assoc, hnat,
       NonUnitalStarAlgHom.comp_assoc, h1]
 
-/-- The arbitrary finite-stage map on literal homotopy classes. -/
+/-- **Transition across a finite offset on class spaces.**
+
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, set αX=C_b([1,∞),X)/C₀([1,∞),X), α⁰X=X and αⁿ⁺¹X=α(αⁿX), with the
+quotient C-star norms. Write Q_n(A,B)=NClasses n A B for star homomorphisms A→αⁿB modulo
+homotopies F:A→αⁿ(C([0,1],B)) whose iterated endpoint evaluations are the two representatives.
+Write i_(n,k):αⁿB→αⁿ⁺ᵏB for the composite of k constant-class inclusions, and
+S_(n,k):Q_n(A,B)→Q_(n+k)(A,B) for [φ]↦[i_(n,k)∘φ]. The map stageTransitionFrom n k A B is
+S_(n,k).
+-/
 def stageTransitionFrom (n k : ℕ)
     (A : Type uA) (B : Type uB)
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B] :
@@ -105,7 +137,17 @@ theorem stageTransitionFrom_classOf (n k : ℕ)
       classOf (n + k) (stageTransitionRepresentativeFrom n k phi) :=
   rfl
 
-/-! ## Zero and one offsets -/
+/-!
+## Identity and successor stage offsets
+
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, set αX=C_b([1,∞),X)/C₀([1,∞),X), α⁰X=X and αⁿ⁺¹X=α(αⁿX), with the
+quotient C-star norms. Write Q_n(A,B)=NClasses n A B for star homomorphisms A→αⁿB modulo
+homotopies F:A→αⁿ(C([0,1],B)) whose iterated endpoint evaluations are the two representatives.
+Write i_(n,k):αⁿB→αⁿ⁺ᵏB for the composite of k constant-class inclusions, and
+S_(n,k):Q_n(A,B)→Q_(n+k)(A,B) for [φ]↦[i_(n,k)∘φ]. Offset zero is the identity; offset one is
+the constant-class successor inclusion.
+-/
 
 private theorem stageTransitionRepresentativeFrom_zero (n : ℕ)
     {A : Type uA} {B : Type uB}
@@ -118,7 +160,16 @@ private theorem stageTransitionRepresentativeFrom_zero (n : ℕ)
   intro a
   rfl
 
-/-- Offset zero is the identity on literal homotopy classes. -/
+/-- **Zero-offset class transition.**
+
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, set αX=C_b([1,∞),X)/C₀([1,∞),X), α⁰X=X and αⁿ⁺¹X=α(αⁿX), with the
+quotient C-star norms. Write Q_n(A,B)=NClasses n A B for star homomorphisms A→αⁿB modulo
+homotopies F:A→αⁿ(C([0,1],B)) whose iterated endpoint evaluations are the two representatives.
+Write i_(n,k):αⁿB→αⁿ⁺ᵏB for the composite of k constant-class inclusions, and
+S_(n,k):Q_n(A,B)→Q_(n+k)(A,B) for [φ]↦[i_(n,k)∘φ]. The map stageTransitionFrom n 0 A B equals
+id on Q_n(A,B).
+-/
 theorem stageTransitionFrom_zero (n : ℕ)
     (A : Type uA) (B : Type uB)
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B] :
@@ -139,7 +190,16 @@ private theorem stageTransitionRepresentativeFrom_one (n : ℕ)
   unfold stageTransitionRepresentativeFrom stageTransitionRepresentative
   rw [stageMapFrom_one]
 
-/-- Offset one is the existing one-step constant-stage transition. -/
+/-- **One-offset class transition.**
+
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, set αX=C_b([1,∞),X)/C₀([1,∞),X), α⁰X=X and αⁿ⁺¹X=α(αⁿX), with the
+quotient C-star norms. Write Q_n(A,B)=NClasses n A B for star homomorphisms A→αⁿB modulo
+homotopies F:A→αⁿ(C([0,1],B)) whose iterated endpoint evaluations are the two representatives.
+Write i_(n,k):αⁿB→αⁿ⁺ᵏB for the composite of k constant-class inclusions, and
+S_(n,k):Q_n(A,B)→Q_(n+k)(A,B) for [φ]↦[i_(n,k)∘φ]. The map stageTransitionFrom n 1 A B equals
+stageTransition n A B.
+-/
 theorem stageTransitionFrom_one (n : ℕ)
     (A : Type uA) (B : Type uB)
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B] :
@@ -152,11 +212,29 @@ theorem stageTransitionFrom_one (n : ℕ)
   rw [stageTransitionFrom_classOf, stageTransition_classOf,
     stageTransitionRepresentativeFrom_one]
 
-/-! ## Explicitly reassociated offset composition -/
+/-!
+## Reassociation in offset composition
 
-/-- The direct `(k + l)`-offset map, with its class target transported to the
-left-associated stage `(n + k) + l` by the already named representative map
-`stageMapFromReassoc`. -/
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, set αX=C_b([1,∞),X)/C₀([1,∞),X), α⁰X=X and αⁿ⁺¹X=α(αⁿX), with the
+quotient C-star norms. Write Q_n(A,B)=NClasses n A B for star homomorphisms A→αⁿB modulo
+homotopies F:A→αⁿ(C([0,1],B)) whose iterated endpoint evaluations are the two representatives.
+Write i_(n,k):αⁿB→αⁿ⁺ᵏB for the composite of k constant-class inclusions, and
+S_(n,k):Q_n(A,B)→Q_(n+k)(A,B) for [φ]↦[i_(n,k)∘φ]. The target stages n+(k+l) and (n+k)+l are
+identified by associativity of addition, so direct offset k+l agrees with successive offsets k
+and l.
+-/
+
+/-- **Reassociated target of an offset class map.**
+
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, set αX=C_b([1,∞),X)/C₀([1,∞),X), α⁰X=X and αⁿ⁺¹X=α(αⁿX), with the
+quotient C-star norms. Write Q_n(A,B)=NClasses n A B for star homomorphisms A→αⁿB modulo
+homotopies F:A→αⁿ(C([0,1],B)) whose iterated endpoint evaluations are the two representatives.
+Write i_(n,k):αⁿB→αⁿ⁺ᵏB for the composite of k constant-class inclusions, and
+S_(n,k):Q_n(A,B)→Q_(n+k)(A,B) for [φ]↦[i_(n,k)∘φ]. The map stageTransitionFromReassoc n k l A
+B is S_(n,k+l) with its target identified as Q_((n+k)+l)(A,B).
+-/
 def stageTransitionFromReassoc (n k l : ℕ)
     (A : Type uA) (B : Type uB)
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B] :
@@ -180,8 +258,17 @@ theorem stageTransitionFromReassoc_classOf (n k l : ℕ)
       classOf ((n + k) + l) ((stageMapFromReassoc n k l B).comp phi) :=
   rfl
 
-/-- Offset addition is composition after making the target reassociation
-explicit. -/
+/-- **Addition of offsets gives composition of class transitions.**
+
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, set αX=C_b([1,∞),X)/C₀([1,∞),X), α⁰X=X and αⁿ⁺¹X=α(αⁿX), with the
+quotient C-star norms. Write Q_n(A,B)=NClasses n A B for star homomorphisms A→αⁿB modulo
+homotopies F:A→αⁿ(C([0,1],B)) whose iterated endpoint evaluations are the two representatives.
+Write i_(n,k):αⁿB→αⁿ⁺ᵏB for the composite of k constant-class inclusions, and
+S_(n,k):Q_n(A,B)→Q_(n+k)(A,B) for [φ]↦[i_(n,k)∘φ]. With the target Q_((n+k)+l)(A,B),
+stageTransitionFromReassoc n k l A B=stageTransitionFrom(n+k) l A B∘stageTransitionFrom n k A
+B.
+-/
 theorem stageTransitionFrom_add (n k l : ℕ)
     (A : Type uA) (B : Type uB)
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B] :

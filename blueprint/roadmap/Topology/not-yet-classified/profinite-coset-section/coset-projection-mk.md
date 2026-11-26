@@ -1,4 +1,4 @@
-# Coset Projection mk
+# Representative value of a nested coset projection
 
-The nested coset projection sends the class of a representative to its
-class modulo the larger subgroup.
+For a group `G` with topology,
+subgroups `K≤H` and `g∈G`, `cosetProjection([g]_K)=[g]_H`.

@@ -1,3 +1,5 @@
-# Is Coherent
+# Associativity and commutativity of a Busby sum
 
-The original associativity/strong-commutativity conjunction; no strong zero law.
+Coherence of `S` means strong unitary
+equivalence of the two parenthesizations of each triple sum and of the two orders of each pair
+sum.

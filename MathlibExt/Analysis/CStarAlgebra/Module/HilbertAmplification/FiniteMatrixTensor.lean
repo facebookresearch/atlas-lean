@@ -17,16 +17,15 @@ public import Mathlib.Analysis.CStarAlgebra.CStarMatrix
 public import Mathlib.Analysis.InnerProductSpace.Orthonormal
 
 /-!
-# The actual finite-frame matrix corner in the full compact tensor
+# Finite matrix frames in algebraic compact tensors
 
-For a finite orthonormal family in the original Hilbert space, send a matrix
-to the literal sum of its entries tensor the original rank-one matrix units.
-The stock rank-one product/adjoint laws prove its algebra and star fields;
-the already constructed tensor matrix coefficients recover every entry.
+For a complex Hilbert space `H`, nonunital C-star algebra `A` and finite family `v : I → H`,
+define `Φ_v(M) = ∑ i, ∑ j, M i j ⊗ θ_(v i,v j)` in `A ⊗_ℂ K(H)`. This is complex-linear for
+every finite family.
 
-This injective raw map is the finite-corner prerequisite for comparing each
-genuine cross norm in its actual completion. It uses no tensor norm, completed
-model, countable Hilbert basis or nontrivial/unit coefficient hypothesis.
+If `v` is orthonormal, its rank-one operators obey the matrix-unit laws, so `Φ_v` is a nonunital
+star-algebra homomorphism. The tensor coefficient at input `v j` and test vector `v i` recovers
+`M i j`, making the map injective. An empty finite index type is allowed.
 -/
 
 @[expose] public section
@@ -47,7 +46,8 @@ variable (v : ι → H) (hv : Orthonormal ℂ v)
 open scoped Classical in
 omit [Fintype ι] in
 include hv in
-/-- Orthonormal rank-one matrix units have their literal Kronecker multiplication. -/
+/-- **Matrix-unit multiplication for an orthonormal frame.** If `v : I → H` is orthonormal, `θ_(v
+i,v j) θ_(v k,v l)` is `θ_(v i,v l)` when `j = k` and zero otherwise. -/
 theorem hilbertCompactRankOne_frame_mul (i j k l : ι) :
     hilbertCompactRankOne H (v i) (v j) * hilbertCompactRankOne H (v k) (v l) =
       if j = k then hilbertCompactRankOne H (v i) (v l) else 0 := by
@@ -56,7 +56,8 @@ theorem hilbertCompactRankOne_frame_mul (i j k l : ι) :
 
 variable (A : Type uA) [NonUnitalCStarAlgebra A]
 
-/-- The actual finite matrix-entry tensor sum on the original raw algebraic tensor. -/
+/-- **Finite matrix-entry tensor map.** For a finite family `v : I → H`, the complex-linear map
+from `CStarMatrix I I A` to `A ⊗_ℂ K(H)` sends `M` to `∑ i, ∑ j, M i j ⊗ θ_(v i,v j)`. -/
 noncomputable def finiteMatrixTensorLinear :
     CStarMatrix ι ι A →ₗ[ℂ] A ⊗[ℂ] (compactEndomorphismClosedStarIdeal (H := H)).carrier where
   toFun M := ∑ i, ∑ j, M i j ⊗ₜ[ℂ] hilbertCompactRankOne H (v i) (v j)
@@ -66,7 +67,8 @@ noncomputable def finiteMatrixTensorLinear :
     simp only [RingHom.id_apply, CStarMatrix.smul_apply, Finset.smul_sum,
       TensorProduct.smul_tmul']
 
-/-- Every source matrix has exactly its original finite entry/rank-one tensor sum. -/
+/-- **Formula for the finite matrix tensor map.** `finiteMatrixTensorLinear v A M = ∑ i, ∑ j, M i
+j ⊗ hilbertCompactRankOne H (v i) (v j)`. -/
 theorem finiteMatrixTensorLinear_apply (M : CStarMatrix ι ι A) :
     finiteMatrixTensorLinear v A M =
       ∑ i, ∑ j, M i j ⊗ₜ[ℂ] hilbertCompactRankOne H (v i) (v j) := rfl
@@ -74,7 +76,8 @@ theorem finiteMatrixTensorLinear_apply (M : CStarMatrix ι ι A) :
 open scoped Classical in
 omit [Fintype ι] in
 include hv in
-/-- A product of two original tensor summands obeys the genuine matrix-unit law. -/
+/-- **Product of elementary frame tensors.** For an orthonormal frame, `(a⊗θ_(v i,v j)) (b⊗θ_(v
+k,v l))` equals `(a*b)⊗θ_(v i,v l)` when `j=k` and zero otherwise. -/
 theorem finiteMatrixTensor_summand_mul (a b : A) (i j k l : ι) :
     (a ⊗ₜ[ℂ] hilbertCompactRankOne H (v i) (v j)) *
         (b ⊗ₜ[ℂ] hilbertCompactRankOne H (v k) (v l)) =
@@ -83,7 +86,8 @@ theorem finiteMatrixTensor_summand_mul (a b : A) (i j k l : ι) :
   split_ifs <;> simp only [TensorProduct.tmul_zero]
 
 include hv in
-/-- The raw finite tensor sum preserves the original matrix multiplication. -/
+/-- **Multiplication of finite matrix tensors.** For an orthonormal frame, `Φ_v(M*N) =
+Φ_v(M)*Φ_v(N)`. -/
 theorem finiteMatrixTensorLinear_mul (M N : CStarMatrix ι ι A) :
     finiteMatrixTensorLinear v A (M * N) =
       finiteMatrixTensorLinear v A M * finiteMatrixTensorLinear v A N := by
@@ -116,7 +120,8 @@ theorem finiteMatrixTensorLinear_mul (M N : CStarMatrix ι ι A) :
     _ = finiteMatrixTensorLinear v A (M * N) := by
       simp only [finiteMatrixTensorLinear_apply, CStarMatrix.mul_apply, TensorProduct.sum_tmul]
 
-/-- The raw finite tensor sum preserves the original matrix adjoint. -/
+/-- **Adjoints of finite matrix tensors.**
+For an orthonormal frame, `Φ_v(star M) = star (Φ_v M)`. -/
 theorem finiteMatrixTensorLinear_star (M : CStarMatrix ι ι A) :
     finiteMatrixTensorLinear v A (star M) = star (finiteMatrixTensorLinear v A M) := by
   simp only [finiteMatrixTensorLinear_apply, CStarMatrix.star_apply,
@@ -124,7 +129,8 @@ theorem finiteMatrixTensorLinear_star (M : CStarMatrix ι ι A) :
   exact Finset.sum_comm
 
 include hv in
-/-- Existing full-H tensor coefficients recover every original matrix entry. -/
+/-- **Recovery of finite matrix entries.** For an orthonormal frame, `tensorMatrixCoefficient H A
+(v j) (v i) (finiteMatrixTensorLinear v A M) = M i j`. -/
 theorem tensorMatrixCoefficient_finiteMatrixTensor (M : CStarMatrix ι ι A) (i j : ι) :
     tensorMatrixCoefficient H A (v j) (v i) (finiteMatrixTensorLinear v A M) = M i j := by
   classical
@@ -137,7 +143,8 @@ theorem tensorMatrixCoefficient_finiteMatrixTensor (M : CStarMatrix ι ι A) (i 
   simp [eq_comm]
 
 include hv in
-/-- The original matrix-entry sum is injective, including an empty finite frame. -/
+/-- **Injectivity of the finite frame tensor map.** For an orthonormal finite family,
+`finiteMatrixTensorLinear v A` is injective; this also holds for the empty frame. -/
 theorem finiteMatrixTensorLinear_injective : Function.Injective (finiteMatrixTensorLinear v A) := by
   intro M N h
   apply CStarMatrix.ext
@@ -145,18 +152,22 @@ theorem finiteMatrixTensorLinear_injective : Function.Injective (finiteMatrixTen
   have hc := congrArg (tensorMatrixCoefficient H A (v j) (v i)) h
   simpa only [tensorMatrixCoefficient_finiteMatrixTensor v hv A] using hc
 
-/-- The actual nonunital star homomorphism from the original C-star matrix corner. -/
+/-- **Star homomorphism of a finite matrix frame.** For an orthonormal finite family `v`, the map
+`M ↦ ∑ i,j, M i j ⊗ θ_(v i,v j)` is a nonunital complex star-algebra homomorphism into `A ⊗_ℂ
+K(H)`. -/
 noncomputable def finiteMatrixTensorHom :
     CStarMatrix ι ι A →⋆ₙₐ[ℂ] A ⊗[ℂ] (compactEndomorphismClosedStarIdeal (H := H)).carrier :=
   NonUnitalStarAlgHom.ofLinearMap (finiteMatrixTensorLinear v A)
     (finiteMatrixTensorLinear_mul v hv A) (finiteMatrixTensorLinear_star v A)
 
-/-- The star hom retains each actual finite matrix-entry tensor sum. -/
+/-- **Value of the finite frame star homomorphism.** `finiteMatrixTensorHom v hv A M = ∑ i, ∑ j, M
+i j ⊗ hilbertCompactRankOne H (v i) (v j)`. -/
 theorem finiteMatrixTensorHom_apply (M : CStarMatrix ι ι A) :
     finiteMatrixTensorHom v hv A M =
       ∑ i, ∑ j, M i j ⊗ₜ[ℂ] hilbertCompactRankOne H (v i) (v j) := rfl
 
-/-- The actual finite-frame star homomorphism has the original matrix kernel. -/
+/-- **Injective finite frame star homomorphism.** The homomorphism determined by an orthonormal
+finite family is injective, including an empty index type. -/
 theorem finiteMatrixTensorHom_injective : Function.Injective (finiteMatrixTensorHom v hv A) :=
   finiteMatrixTensorLinear_injective v hv A
 

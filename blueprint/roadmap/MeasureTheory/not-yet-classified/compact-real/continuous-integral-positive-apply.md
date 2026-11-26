@@ -1,3 +1,5 @@
-# Continuous Integral Positive apply
+# Value of the positive continuous integral functional
 
-The positive functional associated with a finite measure evaluates by integration.
+Let `X` be a compact topological
+space with its Borel measurable structure. for finite `μ` and `f∈C(X,ℝ)`,
+`continuousIntegralPositive μ f=∫ f dμ`, without a Hausdorff assumption.

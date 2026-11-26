@@ -18,19 +18,13 @@ public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order
 public import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.Positive
 
 /-!
-# A literal local positive comparison bounds the localized functional
+# Vector bounds from local positive-functional comparison
 
-The original functional's comparison with an actual vector coefficient on
-positive operators below a projection extends to every positive corner by
-finite positive scaling. The stock Cauchy--Schwarz inequality then bounds
-the original localized value on a*p by that operator's action on the same
-vector. No vector-bound or normal-functional membership certificate is an
-input.
+For a star projection `p ∈ M`, a vector `ξ∈H` and a bounded functional `ψ`, assume `Re ψ(b)≤Re
+⟨ξ,bξ⟩` for all positive `b≤p`. Then `Re ψ((ap)*ap)≤‖apξ‖²` for every `a∈M`.
 
-The local positive comparison is a mathematical hypothesis to be produced
-by the original order-normal comparison construction. It is not selected
-from an open source theorem; this module does not construct a normal GNS
-homomorphism or supply the missing global predual criterion.
+If `ψ` is also positive, Cauchy–Schwarz yields `|ψ(ap)|²≤|ψ(1)|‖apξ‖²`. This is a local norm
+estimate; normality of `ψ` is not assumed.
 -/
 
 @[expose] public section
@@ -49,7 +43,10 @@ universe u
 
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- A local positive comparison gives the literal Gram-corner vector comparison by scaling. -/
+/-- **Local comparison bounds a positive Gram corner.** Let `H` be a complete complex Hilbert
+space and `M ⊆ B(H)` a concrete von Neumann algebra. let `ψ∈M*`, `p∈M` a star projection
+and `ξ∈H` satisfy `Re ψ(b)≤Re ⟨ξ,bξ⟩` for all `0≤b≤p`. Then for every `a∈M`, `Re
+ψ((ap)*ap)≤‖apξ‖²`. Positivity of `ψ` is not required for this first estimate. -/
 theorem positiveCompression_re_le_of_local_vector_comparison (M : VonNeumannAlgebra H)
     (ψ : StrongDual ℂ M) (p : M) (hp : IsStarProjection p) (ξ : H)
     (hlocal : ∀ b : PositiveElement M,
@@ -100,7 +97,11 @@ theorem positiveCompression_re_le_of_local_vector_comparison (M : VonNeumannAlge
   rw [← hvalue]
   exact hfull
 
-/-- Positivity and the original local comparison give the localized functional's actual vector bound. -/
+/-- **Vector bound for a positive localized functional.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Let `ψ : M → ℂ` be a positive
+bounded complex-linear functional for the spectral orders. Let `p ∈ M` be a star
+projection and `ξ ∈ H` satisfy `Re ψ(b)≤Re ⟨ξ,bξ⟩` for every positive `b≤p`. for every
+`a∈M`, `|ψ(ap)|²≤|ψ(1)|*‖apξ‖²`. -/
 theorem localizedPositiveFunctional_norm_sq_le_vector (M : VonNeumannAlgebra H) :
     letI : PartialOrder M := CStarAlgebra.spectralOrder M
     letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ

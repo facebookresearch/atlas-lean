@@ -18,12 +18,16 @@ public import Mathlib.LinearAlgebra.Finsupp.SumProd
 public import Mathlib.Logic.Equiv.Nat
 
 /-!
-# Unitary equivalences of standard right C-star modules
+# Coordinate equivalences of standard Hilbert modules
 
-This file constructs the canonical unitary equivalences induced by a
-reindexing of coordinates and by splitting a sum of coordinate types.  In
-particular, the countable standard module is unitarily equivalent to the
-direct sum of two copies of itself.
+For a nonunital C-star algebra `B` and any index type `I`, `Standard B I` is the completion of
+finitely supported `B`-valued families with norm `‖x‖ = sqrt ‖∑ i, star (x i) * x i‖`. A
+bijection `e : I ≃ J` induces the unitary reindexing `(U x)_j = x_(e.symm j)`.
+
+Splitting the index type `I ⊕ J` gives a unitary `Standard B (I ⊕ J) ≃ Standard B I ⊕ Standard B
+J`; the direct-sum inner product is the sum of the component inner products. The countable index
+bijection then gives `H_B ⊕ H_B ≃ H_B`, where `H_B = Standard B ℕ`. All index types, including
+empty ones, are allowed.
 -/
 
 @[expose] public section
@@ -48,15 +52,17 @@ local instance coefficientSpectralOrderedRing : StarOrderedRing Bᵐᵒᵖ :=
 
 /-! ## Reindexing -/
 
-/-- Reindex finite-support standard vectors along an equivalence of
-coordinate types. -/
+/-- **Reindexing finitely supported standard vectors.** For nonunital `B` and a bijection `e : I ≃
+J`, this complex-linear equivalence sends a finitely supported family `x` to `j ↦ x (e.symm
+j)`. -/
 def preReindexLinearEquiv (e : ι ≃ κ) :
     StandardPre B ι ≃ₗ[ℂ] StandardPre B κ :=
   (StandardPre.toFinsuppLinearEquiv (B := B) (ι := ι)).trans
     ((Finsupp.domLCongr (R := ℂ) (M := B) e).trans
       (StandardPre.toFinsuppLinearEquiv (B := B) (ι := κ)).symm)
 
-/-- Reindexing has the expected coordinate formula. -/
+/-- **Coordinate formula for finite reindexing.** `preReindexLinearEquiv e x j = x (e.symm j)` for
+each finitely supported standard vector `x`. -/
 @[simp]
 theorem preReindexLinearEquiv_apply
     (e : ι ≃ κ) (x : StandardPre B ι) (j : κ) :
@@ -65,7 +71,7 @@ theorem preReindexLinearEquiv_apply
     (StandardPre.toFinsupp x)) j = x (e.symm j)
   simp
 
-/-- The inverse reindexing formula. -/
+/-- **Inverse finite reindexing.** `(preReindexLinearEquiv e).symm x i = x (e i)`. -/
 @[simp]
 theorem preReindexLinearEquiv_symm_apply
     (e : ι ≃ κ) (x : StandardPre B κ) (i : ι) :
@@ -74,7 +80,8 @@ theorem preReindexLinearEquiv_symm_apply
     (B := B) e ((preReindexLinearEquiv (B := B) e).symm x) (e i)
   simpa using h.symm
 
-/-- Reindexing preserves the coefficient-valued inner product. -/
+/-- **Inner product under finite reindexing.** Reindexing by a bijection preserves the `B`-valued
+inner product: `⟨U x, U y⟩_B = ⟨x,y⟩_B`. -/
 theorem preReindexLinearEquiv_rightInner
     (e : ι ≃ κ) (x y : StandardPre B ι) :
     CStarModule.rightInner (B := B)
@@ -94,7 +101,8 @@ theorem preReindexLinearEquiv_rightInner
     rw [Finsupp.sum]
   · exact fun _ _ _ _ h ↦ e.injective h
 
-/-- Reindexing preserves the standard-module norm. -/
+/-- **Norm under finite reindexing.** For the standard-module norm, `‖preReindexLinearEquiv e x‖ =
+‖x‖`. -/
 @[simp]
 theorem norm_preReindexLinearEquiv
     (e : ι ≃ κ) (x : StandardPre B ι) :
@@ -120,8 +128,9 @@ theorem reindexComparison_norm
     (ofPre (B := B) (ι := ι)).norm_map,
     norm_preReindexLinearEquiv]
 
-/-- The linear isometric equivalence of completed standard modules induced
-by a coordinate equivalence. -/
+/-- **Isometric reindexing of completed standard modules.** A bijection `e : I ≃ J` gives a
+complex-linear isometric equivalence `Standard B I ≃ Standard B J` extending finite-support
+reindexing. -/
 noncomputable def reindexLinearIsometryEquiv (e : ι ≃ κ) :
     Standard B ι ≃ₗᵢ[ℂ] Standard B κ :=
   (preReindexLinearEquiv (B := B) e).extendOfIsometry
@@ -131,7 +140,8 @@ noncomputable def reindexLinearIsometryEquiv (e : ι ≃ κ) :
     (denseRange_ofPre (B := B) (ι := κ))
     (reindexComparison_norm (B := B) e)
 
-/-- Completed reindexing extends finite-support reindexing. -/
+/-- **Completed reindexing on finite-support vectors.** `reindexLinearIsometryEquiv e (ofPre x) =
+ofPre (preReindexLinearEquiv e x)`. -/
 @[simp]
 theorem reindexLinearIsometryEquiv_ofPre
     (e : ι ≃ κ) (x : StandardPre B ι) :
@@ -141,7 +151,8 @@ theorem reindexLinearIsometryEquiv_ofPre
   exact LinearEquiv.extendOfIsometry_eq _ _ _ _ _
     (reindexComparison_norm (B := B) e) x
 
-/-- Completed reindexing has the expected coordinate formula. -/
+/-- **Coordinates of completed reindexing.** For `x : Standard B I`, `coord j
+(reindexLinearIsometryEquiv e x) = coord (e.symm j) x`. -/
 @[simp]
 theorem coord_reindexLinearIsometryEquiv
     (e : ι ≃ κ) (x : Standard B ι) (j : κ) :
@@ -161,7 +172,8 @@ theorem coord_reindexLinearIsometryEquiv
   rw [reindexLinearIsometryEquiv_ofPre, coord_ofPre, coord_ofPre,
     preReindexLinearEquiv_apply]
 
-/-- Completed reindexing preserves the coefficient-valued inner product. -/
+/-- **Inner product under completed reindexing.** The reindexing isometry preserves `⟨x,y⟩_B` for
+every pair of completed standard vectors. -/
 theorem reindexLinearIsometryEquiv_rightInner
     (e : ι ≃ κ) (x y : Standard B ι) :
     CStarModule.rightInner (B := B)
@@ -201,8 +213,8 @@ theorem reindexLinearIsometryEquiv_rightInner
         preReindexLinearEquiv_rightInner]
   exact congrFun hfun (x, y)
 
-/-- The unitary equivalence of standard modules induced by a coordinate
-equivalence. -/
+/-- **Unitary reindexing of a standard module.** For nonunital `B` and a bijection `e : I ≃ J`,
+this unitary is the reindexing map with coordinate formula `(U x)_j = x_(e.symm j)`. -/
 noncomputable def reindexUnitary (e : ι ≃ κ) :
     CStarModule.UnitaryEquiv B (Standard B ι) (Standard B κ) :=
   CStarModule.UnitaryEquiv.ofLinearIsometryEquiv
@@ -217,8 +229,8 @@ theorem coord_reindexUnitary
 
 /-! ## Splitting a sum of coordinate types -/
 
-/-- Split a finite-support standard vector on a sum of coordinate types into
-its two components. -/
+/-- **Splitting finite-support sum coordinates.** The equivalence sends a vector on `I ⊕ J` to the
+pair of restrictions `i ↦ x (Sum.inl i)` and `j ↦ x (Sum.inr j)`. -/
 def preSumLinearEquiv :
     StandardPre B (ι ⊕ κ) ≃ₗ[ℂ]
       WithCStarModule Bᵐᵒᵖ
@@ -263,8 +275,8 @@ theorem preSumLinearEquiv_symm_inr
         (Sum.inr j) = x.2 j :=
   rfl
 
-/-- Splitting finite-support vectors preserves the coefficient-valued inner
-product. -/
+/-- **Inner product of split finite-support vectors.** Splitting sum coordinates preserves the
+`B`-valued inner product, using the sum of the two component inner products on the target. -/
 theorem preSumLinearEquiv_rightInner
     (x y : StandardPre B (ι ⊕ κ)) :
     CStarModule.rightInner (B := B)
@@ -294,7 +306,8 @@ theorem preSumLinearEquiv_rightInner
   rw [← hx, Finsupp.sum_sumElim]
   rfl
 
-/-- Splitting finite-support vectors preserves the standard-module norm. -/
+/-- **Norm of split finite-support vectors.** `‖preSumLinearEquiv x‖ = ‖x‖` for the Hilbert-module
+direct-sum norm. -/
 @[simp]
 theorem norm_preSumLinearEquiv
     (x : StandardPre B (ι ⊕ κ)) :
@@ -310,7 +323,8 @@ theorem norm_preSumLinearEquiv
     _ = ‖x‖ :=
       (CStarModule.AdjointableOperator.norm_eq_sqrt_norm_rightInner x).symm
 
-/-- Include a pair of finite-support vectors into the completed direct sum. -/
+/-- **Finite-support inclusion into a completed direct sum.** Map `(x,y)` to `(ofPre x, ofPre y)`
+from the two finite-support standard modules into the direct sum of their completions. -/
 def productOfPre :
     WithCStarModule Bᵐᵒᵖ
         (StandardPre B ι × StandardPre B κ) →ₗ[ℂ]
@@ -323,7 +337,8 @@ def productOfPre :
       (WithCStarModule.linearEquiv ℂ Bᵐᵒᵖ
         (StandardPre B ι × StandardPre B κ)).toLinearMap)
 
-/-- The product inclusion acts componentwise. -/
+/-- **Components of the finite-support product inclusion.** Under the direct-sum carrier
+identification, `productOfPre (x,y) = (ofPre x, ofPre y)`. -/
 @[simp]
 theorem productOfPre_apply
     (x : WithCStarModule Bᵐᵒᵖ
@@ -334,8 +349,8 @@ theorem productOfPre_apply
       (ofPre x.1, ofPre x.2) :=
   rfl
 
-/-- The componentwise finite-support inclusion has dense range in the
-completed direct sum. -/
+/-- **Density of finite-support pairs.** The map `(x,y) ↦ (ofPre x, ofPre y)` has dense range in
+the completed Hilbert-module direct sum. -/
 theorem denseRange_productOfPre :
     DenseRange (productOfPre (B := B) (ι := ι) (κ := κ)) := by
   let raw : StandardPre B ι × StandardPre B κ →L[ℂ]
@@ -378,8 +393,8 @@ theorem denseRange_productOfPre :
   rw [hmap]
   exact hcomp
 
-/-- The componentwise finite-support inclusion preserves the
-coefficient-valued inner product. -/
+/-- **Inner product of finite-support pairs after completion.** `productOfPre` preserves the
+coefficient-valued inner product of the two-component Hilbert-module direct sum. -/
 theorem productOfPre_rightInner
     (x y : WithCStarModule Bᵐᵒᵖ
       (StandardPre B ι × StandardPre B κ)) :
@@ -393,8 +408,8 @@ theorem productOfPre_rightInner
       CStarModule.rightInner (B := B) x.2 y.2
   rw [rightInner_ofPre_ofPre, rightInner_ofPre_ofPre]
 
-/-- The componentwise finite-support inclusion is isometric for the genuine
-C-star-module direct-sum norm. -/
+/-- **Norm of the finite-support product inclusion.** `‖productOfPre x‖ = ‖x‖`, with the
+direct-sum norm given by the sum of component inner products. -/
 @[simp]
 theorem norm_productOfPre
     (x : WithCStarModule Bᵐᵒᵖ
@@ -419,8 +434,9 @@ theorem sumComparison_norm
   rw [norm_productOfPre, norm_preSumLinearEquiv]
   exact ((ofPre (B := B) (ι := ι ⊕ κ)).norm_map x).symm
 
-/-- Splitting the coordinate type gives a linear isometric equivalence from
-the completed standard module to the genuine direct sum. -/
+/-- **Isometric splitting of a completed standard module.** `Standard B (I ⊕ J)` is
+complex-linearly isometrically equivalent to the Hilbert-module direct sum of `Standard B I`
+and `Standard B J`. -/
 noncomputable def sumLinearIsometryEquiv :
     Standard B (ι ⊕ κ) ≃ₗᵢ[ℂ]
       WithCStarModule Bᵐᵒᵖ
@@ -432,7 +448,8 @@ noncomputable def sumLinearIsometryEquiv :
     (denseRange_productOfPre (B := B) (ι := ι) (κ := κ))
     (sumComparison_norm (B := B) (ι := ι) (κ := κ))
 
-/-- The completed sum equivalence extends finite-support splitting. -/
+/-- **Completed splitting on a finite-support vector.** The completed sum equivalence sends `ofPre
+x` to `productOfPre (preSumLinearEquiv x)`. -/
 @[simp]
 theorem sumLinearIsometryEquiv_ofPre
     (x : StandardPre B (ι ⊕ κ)) :
@@ -443,8 +460,8 @@ theorem sumLinearIsometryEquiv_ofPre
   exact LinearEquiv.extendOfIsometry_eq _ _ _ _ _
     (sumComparison_norm (B := B) (ι := ι) (κ := κ)) x
 
-/-- The first coordinates of the completed sum equivalence are the left
-summand coordinates. -/
+/-- **Left coordinates of completed splitting.** The first component satisfies `coord i
+(sumLinearIsometryEquiv x).1 = coord (Sum.inl i) x`. -/
 @[simp]
 theorem coord_sumLinearIsometryEquiv_inl
     (x : Standard B (ι ⊕ κ)) (i : ι) :
@@ -477,8 +494,8 @@ theorem coord_sumLinearIsometryEquiv_inl
     coord (Sum.inl i) (ofPre x : Standard B (ι ⊕ κ))
   rw [coord_ofPre, coord_ofPre, preSumLinearEquiv_fst]
 
-/-- The second coordinates of the completed sum equivalence are the right
-summand coordinates. -/
+/-- **Right coordinates of completed splitting.** The second component satisfies `coord j
+(sumLinearIsometryEquiv x).2 = coord (Sum.inr j) x`. -/
 @[simp]
 theorem coord_sumLinearIsometryEquiv_inr
     (x : Standard B (ι ⊕ κ)) (j : κ) :
@@ -511,7 +528,8 @@ theorem coord_sumLinearIsometryEquiv_inr
     coord (Sum.inr j) (ofPre x : Standard B (ι ⊕ κ))
   rw [coord_ofPre, coord_ofPre, preSumLinearEquiv_snd]
 
-/-- The inverse sum equivalence reconstructs the left coordinates. -/
+/-- **Left coordinates of inverse splitting.** For a pair `x`, `coord (Sum.inl i)
+((sumLinearIsometryEquiv).symm x) = coord i x.1`. -/
 @[simp]
 theorem coord_sumLinearIsometryEquiv_symm_inl
     (x : WithCStarModule Bᵐᵒᵖ
@@ -536,7 +554,8 @@ theorem coord_sumLinearIsometryEquiv_symm_inl
       rw [(sumLinearIsometryEquiv
         (B := B) (ι := ι) (κ := κ)).apply_symm_apply]
 
-/-- The inverse sum equivalence reconstructs the right coordinates. -/
+/-- **Right coordinates of inverse splitting.** For a pair `x`, `coord (Sum.inr j)
+((sumLinearIsometryEquiv).symm x) = coord j x.2`. -/
 @[simp]
 theorem coord_sumLinearIsometryEquiv_symm_inr
     (x : WithCStarModule Bᵐᵒᵖ
@@ -561,8 +580,8 @@ theorem coord_sumLinearIsometryEquiv_symm_inr
       rw [(sumLinearIsometryEquiv
         (B := B) (ι := ι) (κ := κ)).apply_symm_apply]
 
-/-- The completed sum equivalence preserves the coefficient-valued inner
-product. -/
+/-- **Inner product under completed splitting.** `⟨sumLinearIsometryEquiv x,
+sumLinearIsometryEquiv y⟩_B = ⟨x,y⟩_B`, with the target direct-sum inner product. -/
 theorem sumLinearIsometryEquiv_rightInner
     (x y : Standard B (ι ⊕ κ)) :
     CStarModule.rightInner (B := B)
@@ -606,8 +625,8 @@ theorem sumLinearIsometryEquiv_rightInner
         rightInner_ofPre_ofPre]
   exact congrFun hfun (x, y)
 
-/-- The standard module on a sum of coordinate types is unitarily equivalent
-to the genuine direct sum of the two standard modules. -/
+/-- **Unitary splitting of standard sum coordinates.** The coordinate restrictions give a unitary
+`Standard B (I ⊕ J) ≃ Standard B I ⊕ Standard B J` for arbitrary index types. -/
 noncomputable def sumUnitary :
     CStarModule.UnitaryEquiv B
       (Standard B (ι ⊕ κ))
@@ -618,8 +637,9 @@ noncomputable def sumUnitary :
     (sumLinearIsometryEquiv_rightInner
       (B := B) (ι := ι) (κ := κ))
 
-/-- The direct sum of two countable standard modules is unitarily equivalent
-to the countable standard module. -/
+/-- **Two copies of the countable standard module.** For `H_B = Standard B ℕ`, this unitary
+identifies `H_B ⊕ H_B` with `H_B` by splitting and reindexing through
+`Equiv.natSumNatEquivNat`. -/
 noncomputable def doubleHUnitary :
     CStarModule.UnitaryEquiv B
       (WithCStarModule Bᵐᵒᵖ (H B × H B)) (H B) :=

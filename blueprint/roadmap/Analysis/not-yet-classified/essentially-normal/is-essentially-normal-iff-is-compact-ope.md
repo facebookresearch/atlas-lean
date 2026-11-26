@@ -1,3 +1,4 @@
-# Is Essentially Normal iff is Compact Operator commutator
+# Compact commutator criterion for essential normality
 
-Essential normality is equivalent to compactness of the adjoint commutator.
+For a complex Hilbert space `H`,
+`T.IsEssentiallyNormal ↔ IsCompactOperator (star T*T - T*star T)` for a bounded operator `T`.

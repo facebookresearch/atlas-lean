@@ -1,3 +1,4 @@
-# Standard Coefficient Index
+# Initial standard-module coordinate
 
-The actual initial coefficient coordinate in the genuine standard module.
+The injection `Fin 1 ↪ ℕ` sends its unique index to
+`0`.

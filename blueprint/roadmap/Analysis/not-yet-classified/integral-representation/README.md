@@ -1,10 +1,10 @@
-# Integral Representation
+# The unital star representation of bounded spectral integration
 
-- [Spectral Integral star](spectral-integral-star.md)
-- [Spectral Integral mul](spectral-integral-mul.md)
-- [Spectral Integral one](spectral-integral-one.md)
-- [Spectral Integral Star Alg Hom](spectral-integral-star-alg-hom.md)
-- [Spectral Integral commute](spectral-integral-commute.md)
-- [Spectral Integral is Star Normal](spectral-integral-is-star-normal.md)
-- [Tendsto spectral Integral](tendsto-spectral-integral.md)
+- [Adjoint preservation by spectral integration](spectral-integral-star.md)
+- [Product preservation by spectral integration](spectral-integral-mul.md)
+- [Spectral integral of the constant function one](spectral-integral-one.md)
+- [Unital star homomorphism of bounded spectral integration](spectral-integral-star-alg-hom.md)
+- [Commutation of two bounded spectral integrals](spectral-integral-commute.md)
+- [Normality of bounded spectral integrals](spectral-integral-is-star-normal.md)
+- [Uniform limits give operator-norm spectral limits](tendsto-spectral-integral.md)
 - [Integral Representation](mellin-gaussian-laplace-eq-parabolic-cyl.md)

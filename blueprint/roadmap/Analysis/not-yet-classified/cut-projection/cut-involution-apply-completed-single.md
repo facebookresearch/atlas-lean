@@ -1,3 +1,4 @@
-# Cut Involution apply completed Single
+# Coordinate signs of a cut reflection
 
-The reflection acts by the literal signs fixed by the chosen cut.
+`F_s (j_i x) = j_i x` for `i ∈ s` and `F_s (j_i x) =
+-j_i x` otherwise, where `F_s = cutInvolution s`.

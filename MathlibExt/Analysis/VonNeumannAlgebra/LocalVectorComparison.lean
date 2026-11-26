@@ -21,21 +21,14 @@ public import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.Positive
 public import Mathlib.Order.Zorn
 
 /-!
-# An actual local positive comparison operator against the original vector functional
+# Nonzero positive interval with strict vector domination
 
-The comparison set consists of original positive operators below a with
-vector value at most the original positive functional value. Each original
-nonempty chain has its actual bounded positive supremum. The vector
-functional's proved ultraweak continuity and positivity of the original
-functional put that supremum back in the comparison set. Zorn gives an
-actual maximal comparison element; its difference from a is the positive
-nonzero operator on which the local strict comparison holds.
+Let `ψ` be a positive bounded functional and suppose a vector `ξ∈H` has `Re ψ(a)<Re ⟨ξ,aξ⟩` for
+a positive `a∈M`. There is a nonzero positive `b≤a` such that `Re ψ(t)<Re ⟨ξ,tξ⟩` for every
+nonzero positive `t≤b`.
 
-The dominating vector functional is the actual Hilbert coefficient. No
-normal-functional model, local-comparison output or source theorem is
-supplied as data. These prerequisites serve the localized-functional
-construction for the computed GNS normal homomorphism; terminal source
-proofs and global normal-functional membership remain separate.
+The vector `ξ` is unchanged. This is a local strict comparison result without a normality
+assumption on `ψ`.
 -/
 
 @[expose] public section
@@ -54,7 +47,11 @@ universe u
 
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- Construct the original positive local-comparison operator from its actual dominating vector. -/
+/-- **Nonzero positive subinterval of strict vector comparison.** Let `H` be a complete
+complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Let `ψ : M → ℂ` be a
+positive bounded complex-linear functional for the spectral orders. if `a∈M₊` and `ξ∈H`
+satisfy `Re ψ(a)<Re ⟨ξ,aξ⟩`, the construction returns `b∈M₊` with `b≤a`, `b≠0`, and `Re
+ψ(t)<Re ⟨ξ,tξ⟩` for every nonzero positive `t≤b`. -/
 def localVectorComparisonPositiveElement (M : VonNeumannAlgebra H) :
     letI : PartialOrder M := CStarAlgebra.spectralOrder M
     letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ

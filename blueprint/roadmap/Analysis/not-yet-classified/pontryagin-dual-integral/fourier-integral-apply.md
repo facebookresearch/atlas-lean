@@ -1,3 +1,5 @@
-# Fourier Integral apply
+# Conjugate-character scalar formula of the Fourier integral
 
-The source Fourier kernel is literally the conjugate original character.
+Let `G` be a monoid with a
+topology and measurable structure, `μ` any measure and `χ : PontryaginDual G` a continuous
+circle-valued character. for `f : G → ℂ`, `fourierIntegral μ f χ=∫ conj(χ(g)) f(g) dμ(g)`.

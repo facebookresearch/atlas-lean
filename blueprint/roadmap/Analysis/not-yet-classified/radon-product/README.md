@@ -1,34 +1,34 @@
-# Radon Product
+# Compact-support tensor products in Borel Radon L²
 
-## Compactly Supported Continuous Map
+## Real and imaginary parts of compact-support functions
 
-- [Real Part](real-part.md)
-- [Imag Part](imag-part.md)
-- [Real Part apply](real-part-apply.md)
-- [Imag Part apply](imag-part-apply.md)
-- [Inner Pair](inner-pair.md)
-- [Inner Pair apply](inner-pair-apply.md)
-- [Mul Prod Bilinear](mul-prod-bilinear.md)
-- [Mul Prod Bilinear apply](mul-prod-bilinear-apply.md)
-- [Real Part mul Prod](real-part-mul-prod.md)
-- [Imag Part mul Prod](imag-part-mul-prod.md)
-- [Integral real Part](integral-real-part.md)
-- [Integral imag Part](integral-imag-part.md)
+- [Real component of a compact-support complex function](real-part.md)
+- [Imaginary component of a compact-support complex function](imag-part.md)
+- [Value of a compact-support real component](real-part-apply.md)
+- [Value of a compact-support imaginary component](imag-part-apply.md)
+- [Pointwise complex inner pairing of compact-support functions](inner-pair.md)
+- [Value of the compact-support complex pairing](inner-pair-apply.md)
+- [Complex bilinear pure product of compact-support functions](mul-prod-bilinear.md)
+- [Pure product value of the compact-support bilinear map](mul-prod-bilinear-apply.md)
+- [Real part of a compact-support pure product](real-part-mul-prod.md)
+- [Imaginary part of a compact-support pure product](imag-part-mul-prod.md)
+- [Real part commutes with compact-support complex integration](integral-real-part.md)
+- [Imaginary part commutes with compact-support complex integration](integral-imag-part.md)
 
-## Measure
+## Factorization of Radon product integrals
 
-- [Integral mul Prod complex](integral-mul-prod-complex.md)
+- [Complex pure-product Radon integral factors](integral-mul-prod-complex.md)
 
-## Haar L2
+## Products in Haar L² spaces
 
-- [Compact Support Product](compact-support-product.md)
-- [Compact Support Product apply](compact-support-product-apply.md)
-- [Compact Support Product ae eq](compact-support-product-ae-eq.md)
-- [Norm compact Support Product sq](norm-compact-support-product-sq.md)
-- [Compact Support Product inner](compact-support-product-inner.md)
-- [Compact Support Factor Tensor](compact-support-factor-tensor.md)
-- [Compact Support Tensor To Lp](compact-support-tensor-to-lp.md)
-- [Compact Support Tensor To Lp tmul](compact-support-tensor-to-lp-tmul.md)
-- [Compact Support Tensor To Lp tmul ae](compact-support-tensor-to-lp-tmul-ae.md)
-- [Compact Support Tensor To Lp inner](compact-support-tensor-to-lp-inner.md)
-- [Norm compact Support Tensor To Lp](norm-compact-support-tensor-to-lp.md)
+- [Bilinear compact-support product into Radon L²](compact-support-product.md)
+- [Compact-support product followed by its L² inclusion](compact-support-product-apply.md)
+- [Almost-everywhere scalar pure-product L² value](compact-support-product-ae-eq.md)
+- [Product of squared factor norms for a compact-support L² product](norm-compact-support-product-sq.md)
+- [Full complex inner product of pure Radon products](compact-support-product-inner.md)
+- [Algebraic tensor of the two compact-support L² inclusions](compact-support-factor-tensor.md)
+- [Algebraic tensor lift of compact-support Radon products](compact-support-tensor-to-lp.md)
+- [Pure tensor value of the compact-support Radon lift](compact-support-tensor-to-lp-tmul.md)
+- [Almost-everywhere pure tensor value of the Radon lift](compact-support-tensor-to-lp-tmul-ae.md)
+- [Finite tensor pairings equal the factor Hilbert pairings](compact-support-tensor-to-lp-inner.md)
+- [Norm of the algebraic Radon tensor lift](norm-compact-support-tensor-to-lp.md)

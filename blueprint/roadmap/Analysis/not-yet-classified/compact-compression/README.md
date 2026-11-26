@@ -1,7 +1,7 @@
-# Compact Compression
+# Finite-basis compressions of compact operators
 
-- [Compact Compression](compact-compression.md)
-- [Compact Compression coe](compact-compression-coe.md)
-- [Norm compact Compression le](norm-compact-compression-le.md)
-- [Compact Compression tendsto](compact-compression-tendsto.md)
-- [Compact Compression eq sum](compact-compression-eq-sum.md)
+- [Finite-basis compression of a compact operator](compact-compression.md)
+- [Operator formula for compact compression](compact-compression-coe.md)
+- [Norm bound for basis compression](norm-compact-compression-le.md)
+- [Norm convergence of compact compressions](compact-compression-tendsto.md)
+- [Rank-one expansion of basis compression](compact-compression-eq-sum.md)

@@ -1,6 +1,6 @@
-# Haar Essential Covariant Representation
+# Essential restriction preserves Haar integrated norms
 
-- [Haar Integrated Hom mem essential Space](haar-integrated-hom-mem-essential-space.md)
-- [Essential Covariant Representation haar Integrated Hom apply coe](essential-covariant-representation-haar.md)
-- [Essential Covariant Representation haar Integrated Hom eq](essential-covariant-representation-haar-2.md)
-- [Norm essential Covariant Representation haar Integrated Hom](norm-essential-covariant-representation.md)
+- [Integrated vectors belong to the essential coefficient space](haar-integrated-hom-mem-essential-space.md)
+- [Integrated vector action after essential restriction](essential-covariant-representation-haar.md)
+- [Integrated operator is the restriction to the essential space](essential-covariant-representation-haar-2.md)
+- [Integrated operator norm is preserved by essential restriction](norm-essential-covariant-representation.md)

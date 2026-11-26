@@ -1,3 +1,5 @@
-# Regular Complex Measure Submodule
+# Complex submodule of regular-variation complex measures
 
-Complex measures whose total variation is regular.
+Let `X` be an R₁ topological
+space with its Borel measurable structure. `regularComplexMeasureSubmodule X` consists of
+complex measures `μ` whose total variation is regular.

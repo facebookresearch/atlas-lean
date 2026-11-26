@@ -15,15 +15,13 @@ public import MathlibExt.Analysis.VonNeumannAlgebra.Basic
 public import MathlibExt.Analysis.CStarAlgebra.PositiveFunctionalProjectionResidual
 
 /-!
-# The original positive functional's right-projection residual norm bound
+# Dual norm error of right projection localization
 
-The original source-facing name delegates to the generic unital C-star
-positive-functional/projection theorem with the actual inherited norm and
-canonical coefficient orders. All original functional/projection values
-and zero-H cases are unchanged.
-The residual value ψ(1-p) controls the continuous-dual norm error used by
-finite-projection approximation; no normal membership or cutoff bound is
-an input.
+For a positive bounded functional `ψ` on a concrete von Neumann algebra and star projection `p`,
+define `ψ_p(a)=ψ(ap)`. Then `‖ψ-ψ_p‖≤√(‖ψ‖ |ψ(1-p)|)` in the continuous-dual norm.
+
+This estimate requires no normality of `ψ` or local vector domination, and applies to zero
+projections and zero algebras.
 -/
 
 @[expose] public section
@@ -39,7 +37,10 @@ universe u
 
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- The literal right-projection residual has its original positive-functional norm bound. -/
+/-- **Norm bound for a positive functional's right-projection residual.** Let `H` be a
+complete complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Let `ψ : M →
+ℂ` be a positive bounded complex-linear functional for the spectral orders. for a star
+projection `p∈M` and `ψ_p(a)=ψ(ap)`, `‖ψ-ψ_p‖≤√(‖ψ‖*|ψ(1-p)|)`. -/
 theorem positiveFunctional_rightProjection_residual_norm_le (M : VonNeumannAlgebra H) :
     letI : PartialOrder M := CStarAlgebra.spectralOrder M
     letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ

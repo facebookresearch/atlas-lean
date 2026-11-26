@@ -39,20 +39,14 @@ import Mathlib.Tactic.Measurability.Init
 import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
 
 /-!
-# Regular real two-frame (half-circle equal-norm tight frame)
+# Regular real frame from half-circle directions
 
-This module formalizes the real half-circle equal-norm tight two-frame used in
-arXiv 2608.08836, equations (21)--(23).
+For `j∈Fin n`, the two real frame entries are `F_n(0,j)=cos(πj/n)/√n` and
+`F_n(1,j)=sin(πj/n)/√n`. For `n≥2`, the row Gram matrix is `(1/2)I₂`. For `n>0`, each column has
+squared Euclidean norm `1/n`.
 
-For `n : ℕ` and `j : Fin n`, the frame is
-
-* `regularTwoFrame n 0 j = cos (π * j / n) / √n`
-* `regularTwoFrame n 1 j = sin (π * j / n) / √n`
-
-Field division gives a total definition for `n = 0` (no `j : Fin 0` exists).
-For `2 ≤ n` the Gram matrix is `(1/2) • I₂` and each column has squared norm `1/n`.
-The proof uses positivity of `sin (π / n)` for `n ≥ 2` and the multiplied finite-sum
-identities `Real.sin_mul_sum_sin` and `Real.sin_mul_sum_cos` at frequency `2π / n`.
+The case `n=0` is the empty-column frame. These are the half-circle equal-norm tight-frame
+formulas in arXiv 2608.08836, equations (21)–(23).
 -/
 
 @[expose] public section
@@ -61,8 +55,9 @@ namespace Real
 
 open Finset
 
-/-- Real half-circle two-frame from arXiv 2608.08836 (21)--(23).
-`r = 0` gives cosine, `r = 1` gives sine, normalized by `√n`. -/
+/-- **Real two-row frame of equally spaced half-circle directions.** For `n∈ℕ`,
+`regularTwoFrame n` has entries `cos(πj/n)/√n` in row zero and `sin(πj/n)/√n` in row one,
+for `j∈Fin n`. The empty-column case `n=0` is included. -/
 public noncomputable def regularTwoFrame (n : ℕ) : Fin 2 → Fin n → ℝ :=
   fun r j =>
     if r.val = 0 then
@@ -399,7 +394,9 @@ private lemma reg_two_frame_one_aux (n : ℕ) (j : Fin n) :
   rw [this]
   simp
 
-/-- For at least two columns, the two regular-frame rows have Gram matrix one half times the identity. -/
+/-- **Half-identity Gram matrix of the regular real two-frame.** For `n≥2` and rows `r,s∈Fin
+2`, `Σ_j< n F_n(r,j)F_n(s,j)=1/2` when `r=s` and zero otherwise, where
+`F_n=regularTwoFrame n`. -/
 public theorem regularTwoFrame_gram (n : ℕ) (hn : 2 ≤ n) (r s : Fin 2) :
     (∑ j : Fin n, regularTwoFrame n r j * regularTwoFrame n s j) =
       if r = s then 1 / 2 else 0 := by
@@ -499,7 +496,8 @@ public theorem regularTwoFrame_gram (n : ℕ) (hn : 2 ≤ n) (r s : Fin 2) :
         _ = 0 := by simp
     · exact absurd rfl hrs
 
-/-- For a positive column count, the two squared frame entries in each column sum to its reciprocal. -/
+/-- **Reciprocal column squared norm of the regular real two-frame.** For `n>0`, each column
+`j∈Fin n` satisfies `Σ_r∈Fin 2 (regularTwoFrame n r j)²=1/n`. -/
 public theorem regularTwoFrame_row_norm (n : ℕ) (hn : 0 < n) (j : Fin n) :
     (∑ r : Fin 2, (regularTwoFrame n r j) ^ 2) = 1 / (n : ℝ) := by
   have _hn0 : 0 < n := hn

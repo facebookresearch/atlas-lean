@@ -1,5 +1,5 @@
-# Block Unipotent
+# Rectangular block unipotents and their ordered products
 
-- [Upper Unit](upper-unit.md)
-- [Lower Unit](lower-unit.md)
-- [Block Alt Prod](block-alt-prod.md)
+- [Upper block unipotent matrix](upper-unit.md)
+- [Lower block unipotent matrix](lower-unit.md)
+- [Ordered product of upper and lower block unipotents](block-alt-prod.md)

@@ -1,3 +1,3 @@
-# Tensor Product Real Add Equiv tmul
+# Pure tensor coordinates of the additive self-tensor map
 
-The additive coercion retains the original pure tensor coordinates.
+For z,w∈ℂ, tensorProductRealAddEquiv(z⊗_ℝw)=(zw,z*conj(w)).

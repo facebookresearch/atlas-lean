@@ -1,4 +1,5 @@
-# Completed is Model
+# Coordinate presentation of the constructed completion
 
-The literal choice-free completed construction satisfies the complete direct-sum
-model contract.
+The maps `completedSingle i`
+satisfy the action, inner-product, orthogonality and dense-span laws of `IsModel` on
+`Completed B E`.

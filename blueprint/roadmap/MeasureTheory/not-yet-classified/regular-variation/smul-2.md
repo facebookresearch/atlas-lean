@@ -1,3 +1,5 @@
-# Smul
+# Complex scaling preserves regular variation
 
-Regular variation is preserved by complex scalar multiplication.
+Let `X` have a topology and measurable
+structure. If a complex measure `c` has regular variation, then so does `z • c` for every
+`z∈ℂ`, without R₁ or Borel assumptions.

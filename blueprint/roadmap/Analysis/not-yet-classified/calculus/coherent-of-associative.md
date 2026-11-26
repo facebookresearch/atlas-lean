@@ -1,4 +1,5 @@
-# Coherent of associative
+# Coherence from strong associativity
 
-The original coherence predicate needs only a supplied associativity law,
-because strong commutativity follows from the actual matrix data.
+If the two parenthesizations of every triple `S`-sum
+are strongly equivalent, then `S.IsCoherent`; strong commutativity follows from the compatible
+matrix folds.

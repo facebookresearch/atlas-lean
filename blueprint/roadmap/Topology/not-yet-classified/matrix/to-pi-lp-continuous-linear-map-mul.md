@@ -1,4 +1,4 @@
-# To Pi Lp Continuous Linear Map mul
+# Multiplication of square continuous operator matrices
 
-The square operator-matrix action preserves actual ordered matrix
-multiplication, where operator multiplication is composition.
+Let R be a semiring,E a topological module additive group with continuous addition and n
+finite. For matrices A,B of continuous linear endomorphisms, T_(AB)=T_A∘T_B.

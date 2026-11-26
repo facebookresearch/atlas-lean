@@ -1,3 +1,4 @@
-# Range nonnegative Projection
+# Range of the nonnegative-degree projection
 
-The range of the nonnegative projection is the closed span of its actual degrees.
+The range of `P_+` is the norm closure of the
+complex span of inclusions `j_n(E_n)` for `n ≥ 0`.

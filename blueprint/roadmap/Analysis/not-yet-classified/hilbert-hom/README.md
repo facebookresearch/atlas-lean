@@ -1,11 +1,11 @@
-# Hilbert Hom
+# Hilbert operator representation on amplification
 
-- [Hilbert Hom](hilbert-hom.md)
-- [Hilbert Hom apply](hilbert-hom-apply.md)
-- [Hilbert Hom pure](hilbert-hom-pure.md)
-- [Hilbert Hom norm le](hilbert-hom-norm-le.md)
-- [Compact Hilbert Hom](compact-hilbert-hom.md)
-- [Compact Hilbert Hom apply](compact-hilbert-hom-apply.md)
-- [Compact Hilbert Hom pure](compact-hilbert-hom-pure.md)
-- [Compact Hilbert Hom norm le](compact-hilbert-hom-norm-le.md)
-- [Compact Hilbert Hom commutes coefficient Hom](compact-hilbert-hom-commutes-coefficient.md)
+- [Hilbert operator star representation](hilbert-hom.md)
+- [Value of the Hilbert representation](hilbert-hom-apply.md)
+- [Hilbert representation on pure vectors](hilbert-hom-pure.md)
+- [Contractive Hilbert operator representation](hilbert-hom-norm-le.md)
+- [Restriction to compact Hilbert operators](compact-hilbert-hom.md)
+- [Value of the compact Hilbert representation](compact-hilbert-hom-apply.md)
+- [Compact Hilbert action on pure vectors](compact-hilbert-hom-pure.md)
+- [Norm bound for the compact Hilbert action](compact-hilbert-hom-norm-le.md)
+- [Commutation of the two tensor representation factors](compact-hilbert-hom-commutes-coefficient.md)

@@ -1,19 +1,19 @@
-# Full Coefficient Embedding
+# Isometric coefficient embedding in the full crossed product
 
-## Covariant Representation
+## Covariant representations
 
-- [Algebra mul eq zero of integrated Coefficient Left eq zero](algebra-mul-eq-zero-of-integrated-coeffi.md)
-- [Algebra eq zero of integrated Coefficient Left eq zero](algebra-eq-zero-of-integrated-coefficien.md)
+- [Vanishing integrated coefficient action annihilates products](algebra-mul-eq-zero-of-integrated-coeffi.md)
+- [Vanishing integrated coefficient action annihilates the coefficient](algebra-eq-zero-of-integrated-coefficien.md)
 
-## Haar Twisted Core
+## Coefficient multipliers on the full completion
 
-- [Full Coefficient Multiplier Hom](full-coefficient-multiplier-hom.md)
-- [Full Coefficient Multiplier Hom apply](full-coefficient-multiplier-hom-apply.md)
-- [Full Coefficient Multiplier eq zero implies](full-coefficient-multiplier-eq-zero-impl.md)
-- [Full Coefficient Multiplier Hom injective](full-coefficient-multiplier-hom-injectiv.md)
-- [Norm full Coefficient Multiplier Hom](norm-full-coefficient-multiplier-hom.md)
-- [Full Coefficient Multiplier Hom isometry](full-coefficient-multiplier-hom-isometry.md)
-- [Full Coefficient Embedding](full-coefficient-embedding.md)
-- [Full Coefficient Embedding apply](full-coefficient-embedding-apply.md)
-- [Norm full Coefficient Embedding](norm-full-coefficient-embedding.md)
-- [Full Coefficient Embedding fst apply](full-coefficient-embedding-fst-apply.md)
+- [Coefficient homomorphism into the full multiplier algebra](full-coefficient-multiplier-hom.md)
+- [Coefficient homomorphism for the maximal covariant seminorm](full-coefficient-multiplier-hom-apply.md)
+- [A zero full coefficient multiplier has zero coefficient](full-coefficient-multiplier-eq-zero-impl.md)
+- [Injectivity of the full coefficient homomorphism](full-coefficient-multiplier-hom-injectiv.md)
+- [Norm of a full coefficient multiplier](norm-full-coefficient-multiplier-hom.md)
+- [Isometric coefficient homomorphism](full-coefficient-multiplier-hom-isometry.md)
+- [Coefficient algebra embedded in full multipliers](full-coefficient-embedding.md)
+- [Value of the full coefficient embedding](full-coefficient-embedding-apply.md)
+- [Norm preservation by the coefficient embedding](norm-full-coefficient-embedding.md)
+- [Left coefficient action on the dense full crossed-product core](full-coefficient-embedding-fst-apply.md)

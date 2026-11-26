@@ -1,12 +1,12 @@
-# Haar Right Regular Representation
+# Unitary representation by normalized Haar right translation
 
-- [Haar Right Modular Weight mul](haar-right-modular-weight-mul.md)
-- [Haar Right Pullback add](haar-right-pullback-add.md)
-- [Haar Right Pullback smul](haar-right-pullback-smul.md)
-- [Haar Right Pullback one](haar-right-pullback-one.md)
-- [Haar Right Pullback mul](haar-right-pullback-mul.md)
-- [Haar Right Regular Isometry](haar-right-regular-isometry.md)
-- [Haar Right Regular Unitary Hom](haar-right-regular-unitary-hom.md)
-- [Haar Right Regular Unitary Hom ae eq](haar-right-regular-unitary-hom-ae-eq.md)
-- [Haar Right Regular](haar-right-regular.md)
-- [Haar Right Regular ae eq](haar-right-regular-ae-eq.md)
+- [Multiplicativity of the normalized right modular weight](haar-right-modular-weight-mul.md)
+- [Additivity of normalized right pullback](haar-right-pullback-add.md)
+- [Complex linearity of normalized right pullback](haar-right-pullback-smul.md)
+- [Identity element acts as the identity right pullback](haar-right-pullback-one.md)
+- [Group composition order of normalized right Haar operators](haar-right-pullback-mul.md)
+- [Normalized right translation as a linear isometric equivalence](haar-right-regular-isometry.md)
+- [Unitary group homomorphism of normalized right Haar translations](haar-right-regular-unitary-hom.md)
+- [Representative of a normalized right unitary group value](haar-right-regular-unitary-hom-ae-eq.md)
+- [Strongly continuous normalized right Haar representation](haar-right-regular.md)
+- [Almost-everywhere formula of the right regular representation](haar-right-regular-ae-eq.md)

@@ -1,4 +1,4 @@
-# Is Busby Invariant
+# Characteristic equation of a Busby invariant
 
-A Busby map belongs to an extension when it has the characteristic
-quotient formula.
+A homomorphism `τ : A → Q(B)` is a Busby
+invariant for `X` when `τ(X.quotient e) = q(X.multiplierMap e)` for every `e : X.Middle`.

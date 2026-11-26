@@ -1,3 +1,6 @@
-# Norm universal State GNSRepresentation CLM le
+# Contractive norm of the universal-state representation
 
-The original universal coefficient map has operator norm at most one.
+Let `A` be a nonunital complex
+C-star algebra. Let `H_u` be the Hilbert direct sum of the GNS spaces of all positive
+bounded functionals of norm one, and `π_u : A →⋆ₙₐ[ℂ] B(H_u)` their coordinatewise GNS
+representation. `‖universalStateGNSRepresentationCLM A‖≤1`.

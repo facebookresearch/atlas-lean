@@ -16,14 +16,14 @@ public import MathlibExt.Analysis.VonNeumannAlgebra.PositiveFunctionalProjection
 public import MathlibExt.Algebra.Star.StarProjection.FiniteSum
 
 /-!
-# Actual finite orthogonal localizations with the original residual norm estimate
+# Finite normal approximations and projection residual bounds
 
-The original finite orthogonal projection sum is a genuine star projection.
-The strict finite local-normal constructor supplies the original ψ(a*∑p)
-values in the existing normal-functional space. The proved right-projection
-residual bound controls its continuous-dual norm error. Every output field
-is derived from these actual values, rather than supplied as a certificate.
-The maximal projection family and global normality criterion remain separate.
+For a positive bounded functional `ψ`, let `p_i` be pairwise orthogonal star projections with
+local vector domination on each interval `0≤b≤p_i`. A finite subset gives `P_s=Σ_i∈s p_i` and
+the normal functional `ρ_s(a)=ψ(aP_s)`.
+
+Its continuous-dual norm error satisfies `‖ψ-ρ_s‖≤√(‖ψ‖ |ψ(1-P_s)|)`. The finite sum is a star
+projection; no residual estimate or global normality of `ψ` is assumed.
 -/
 
 @[expose] public section
@@ -42,7 +42,13 @@ universe u v
 
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- Construct an actual finite normal approximation and its original projection-residual bound. -/
+/-- **Finite orthogonal localization with a dual norm error bound.** Let `H` be a complete
+complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Let `ψ : M → ℂ` be a
+positive bounded complex-linear functional for the spectral orders. Let `p_i ∈ M` be star
+projections indexed by an arbitrary type `I`, and `ξ_i ∈ H` satisfy `Re ψ(b)≤Re
+⟨ξ_i,bξ_i⟩` whenever `0≤b≤p_i`. assume additionally `p_i p_j=0` for `i≠j`. For finite `s`,
+the construction returns `ρ_s∈M_*` with `ρ_s(a)=ψ(aP_s)` for `P_s=Σ_i∈s p_i` and
+`‖ψ-ρ_s‖≤√(‖ψ‖*|ψ(1-P_s)|)`. -/
 def finiteOrthogonalNormalApproximation (M : VonNeumannAlgebra H) {I : Type v} :
     letI : PartialOrder M := CStarAlgebra.spectralOrder M
     letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ

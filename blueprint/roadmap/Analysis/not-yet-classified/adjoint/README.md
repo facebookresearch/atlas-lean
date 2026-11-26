@@ -1,4 +1,4 @@
-# Adjoint
+# Rectangular adjoints of operator-valued matrices
 
-- [To Pi Lp Continuous Linear Map adjoint Of Complete Source](to-pi-lp-continuous-linear-map-adjoint-o.md)
-- [To Pi Lp Continuous Linear Map adjoint](to-pi-lp-continuous-linear-map-adjoint.md)
+- [One-sided adjoint of a rectangular Hilbert column action](to-pi-lp-continuous-linear-map-adjoint-o.md)
+- [Adjoint matrix of a rectangular operator action](to-pi-lp-continuous-linear-map-adjoint.md)

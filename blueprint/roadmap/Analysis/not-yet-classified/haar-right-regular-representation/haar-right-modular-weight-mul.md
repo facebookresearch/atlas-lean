@@ -1,3 +1,5 @@
-# Haar Right Modular Weight mul
+# Multiplicativity of the normalized right modular weight
 
-The actual modular right weight respects group products.
+For a locally compact
+topological group, let `w(g)=Measure.modularCharacter(g)^(-1/2)` as a positive real
+scalar. Then `w(gh)=w(g)w(h)`, independently of a chosen Haar measure or Hilbert space.

@@ -18,13 +18,14 @@ public import Mathlib.Algebra.Star.StarAlgHom
 public import Mathlib.Algebra.BigOperators.Fin
 
 /-!
-# The actual coefficient corner into compacts of the genuine standard module
+# Initial coefficient corner in standard stabilization
 
-H_B is the existing coefficient-inner completion of finite-support vectors,
-with its verified norm-convergent coefficient square-sum realization. The
-coefficient goes through the literal 1×1 matrix and the actual finite-coordinate
-compact corner. No scalar norm-l2(B), coefficient unit, target model,
-stabilization/equivalence output or V/K0 theorem is used to form this DATA.
+For nonunital C-star `B`, insert its coefficient as a one-by-one C-star matrix and use the
+initial coordinate `0` of `H_B = Standard B ℕ`. The resulting nonunital star homomorphism `β : B
+→ K_B(H_B)` has action `β(b)x = single 0 (b * coord 0 x)`.
+
+This corner preserves the coefficient norm: `‖β(b)‖ = ‖b‖`, including the zero algebra. It is
+constructed from coefficient insertion and evaluation, without a unit-valued basis vector.
 -/
 
 @[expose] public section
@@ -37,21 +38,26 @@ noncomputable section
 universe uB
 attribute [local instance] standardStabilizationCStarAlgebra
 
-/-- The actual initial coefficient coordinate in the genuine standard module. -/
+/-- **Initial standard-module coordinate.** The injection `Fin 1 ↪ ℕ` sends its unique index to
+`0`. -/
 public def standardCoefficientIndex : Fin 1 ↪ ℕ where
   toFun i := i.val
   inj' := Fin.val_injective
 
-/-- The actual source coefficient as its literal 1×1 C-star matrix, with no coefficient unit. -/
+/-- **Coefficient as a one-by-one matrix.** For nonunital C-star `B`, the star homomorphism `B →
+M₁(B)` sends `b` to the matrix with its unique entry equal to `b`. -/
 public def standardCoefficientMatrix (B : Type uB) [NonUnitalCStarAlgebra B] :
     B →⋆ₙₐ[ℂ] CStarMatrix (Fin 1) (Fin 1) B := by
   exact (CStarMatrix.toOneByOne (Fin 1) ℂ B).toNonUnitalStarAlgHom
 
-/-- Every original 1×1 entry is exactly the supplied coefficient. -/
+/-- **Entry of the one-by-one coefficient matrix.** `standardCoefficientMatrix B b i j = b` for
+`i,j : Fin 1`. -/
 public theorem standardCoefficientMatrix_apply (B : Type uB) [NonUnitalCStarAlgebra B]
     (b : B) (i j : Fin 1) : standardCoefficientMatrix B b i j = b := rfl
 
-/-- The actual nonunital coefficient corner into K(H_B), using its original compact/inner norm. -/
+/-- **Coefficient corner in the stabilization algebra.** For nonunital C-star `B`, the nonunital
+star map `β : B → StandardStabilization B` is the compact operator `x ↦ single 0 (b * coord 0
+x)`. -/
 public def standardCoefficientCompactHom (B : Type uB) [NonUnitalCStarAlgebra B] :
     B →⋆ₙₐ[ℂ] StandardStabilization B := by
   letI : PartialOrder Bᵐᵒᵖ := CStarAlgebra.spectralOrder Bᵐᵒᵖ
@@ -60,10 +66,12 @@ public def standardCoefficientCompactHom (B : Type uB) [NonUnitalCStarAlgebra B]
   exact (CStarModule.AdjointableOperator.rightMatrixStandardCompactHom
     (B := B) standardCoefficientIndex).comp (standardCoefficientMatrix B)
 
-/-- The literal initial standard coordinate is zero. -/
+/-- **Value of the initial coordinate injection.** `standardCoefficientIndex (0 : Fin 1) = 0`. -/
 public theorem standardCoefficientIndex_zero : standardCoefficientIndex (0 : Fin 1) = 0 := rfl
 
-/-- Every whole standard-vector action is the original single(0,b*coord(0,x)). -/
+/-- **Vector action of the coefficient corner.** For nonunital C-star `B`, `b : B` and `x :
+Standard B ℕ`, `β(b)x = Standard.single 0 (b * Standard.coord 0 x)`, where `β =
+standardCoefficientCompactHom B`. -/
 public theorem standardCoefficientCompactHom_apply (B : Type uB) [NonUnitalCStarAlgebra B] :
     letI : PartialOrder Bᵐᵒᵖ := CStarAlgebra.spectralOrder Bᵐᵒᵖ;
     letI : StarOrderedRing Bᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Bᵐᵒᵖ;
@@ -82,7 +90,8 @@ public theorem standardCoefficientCompactHom_apply (B : Type uB) [NonUnitalCStar
       (CStarModule.AdjointableOperator.rightMatrixStandardCompactHom_apply
         (B := B) standardCoefficientIndex (standardCoefficientMatrix B b) x)
 
-/-- The original complete matrix and compact norms give the exact coefficient norm. -/
+/-- **Norm of the coefficient corner.** For nonunital C-star `B`, `‖standardCoefficientCompactHom
+B b‖ = ‖b‖`. -/
 public theorem norm_standardCoefficientCompactHom (B : Type uB) [NonUnitalCStarAlgebra B] :
     letI : NonUnitalCStarAlgebra (StandardStabilization B) := standardStabilizationCStarAlgebra B;
     ∀ b : B, ‖standardCoefficientCompactHom B b‖ = ‖b‖ := by

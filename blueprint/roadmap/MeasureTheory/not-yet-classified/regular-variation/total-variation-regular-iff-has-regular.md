@@ -1,4 +1,6 @@
-# Total Variation regular iff has Regular Variation
+# Signed total-variation regularity equals vector regularity
 
-Regularity of a signed measure's total variation is exactly regular variation in the generic
-vector-measure sense.
+Let `X` have a topology
+and measurable structure, and `s : SignedMeasure X`. Its total variation is regular
+exactly when `VectorMeasure.HasRegularVariation s`; neither an R₁ nor a Borel assumption
+is required for this identification.

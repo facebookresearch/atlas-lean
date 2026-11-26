@@ -1,3 +1,6 @@
-# Continuous Map Star Alg Hom measurable
+# Measurable function underlying the compact continuous inclusion
 
-The continuous-function inclusion has a measurable underlying function.
+Let `X` be a compact
+topological space with its Borel measurable structure, without a Hausdorff or
+nonempty-space assumption. the underlying function of `continuousMapStarAlgHom f` is
+measurable for every `f∈C(X,ℂ)`.

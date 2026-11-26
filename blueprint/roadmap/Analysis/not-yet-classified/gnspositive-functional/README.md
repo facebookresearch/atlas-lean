@@ -1,4 +1,4 @@
-# GNSPositive Functional
+# Positive continuous functionals from GNS vectors
 
-- [Gns Diagonal Positive Functional](gns-diagonal-positive-functional.md)
-- [Gns Diagonal Positive Functional to Continuous Linear Map](gns-diagonal-positive-functional-to-cont.md)
+- [Positive functional of a finite square GNS vector](gns-diagonal-positive-functional.md)
+- [Underlying bounded diagonal GNS coefficient](gns-diagonal-positive-functional-to-cont.md)

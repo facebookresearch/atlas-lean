@@ -16,13 +16,14 @@ public import Mathlib.Analysis.Normed.Module.HahnBanach
 public import Mathlib.Analysis.InnerProductSpace.Dual
 
 /-!
-# Realize the original localized functional by an actual Hilbert vector
+# Hilbert vector representing a projection-localized functional
 
-The bounded functional on the actual evaluation range has a stock
-Hahn--Banach extension. Riesz duality applied to that internally obtained
-extension constructs a vector with the exact original localized coefficient
-values. Neither an extension, a norm certificate nor normal membership is
-an input. The global order-normal criterion is a separate remaining step.
+Let `ψ` be a positive bounded functional on `M`, `p` a star projection, and `ξ∈H` dominate `Re
+ψ` on the positive interval `0≤b≤p` by `Re ⟨ξ,bξ⟩`.
+
+There is a vector `η∈H` with `ψ(ap)=⟨η,apξ⟩` for all `a∈M`. The construction uses a bounded
+functional on the vector evaluation range and Hilbert Riesz representation. Normality of `ψ` and
+a pre-supplied representing vector are not assumptions.
 -/
 
 @[expose] public section
@@ -41,7 +42,12 @@ universe u
 
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- Construct a genuine Riesz vector representing the original localized functional values. -/
+/-- **Representing vector for a projection-localized positive functional.** Let `H` be a
+complete complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Let `ψ : M →
+ℂ` be a positive bounded complex-linear functional for the spectral orders. Let `p ∈ M` be
+a star projection and `ξ ∈ H` satisfy `Re ψ(b)≤Re ⟨ξ,bξ⟩` for every positive `b≤p`.
+`localizedFunctionalVector M ψ p ξ` returns `η∈H` satisfying `ψ(ap)=⟨η,(ap)ξ⟩` for every
+`a∈M`. The input vector need not satisfy `pξ=ξ`. -/
 def localizedFunctionalVector (M : VonNeumannAlgebra H) :
     letI : PartialOrder M := CStarAlgebra.spectralOrder M
     letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ

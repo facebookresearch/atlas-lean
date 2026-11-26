@@ -1,3 +1,6 @@
-# Closed Range Projection mul self
+# Range-closure projection fixes the operator image
 
-The actual closed-range projection fixes every value of the original operator.
+Let `H` be a complete complex
+Hilbert space and `T : H →L[ℂ] H`. Write `P_T` for the orthogonal projection onto the norm
+closure of `range T`. `closedRangeProjection T * T=T`, where multiplication is
+composition.

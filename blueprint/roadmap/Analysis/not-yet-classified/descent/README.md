@@ -1,4 +1,4 @@
-# Descent
+# One-step gradient descent distance identities
 
-- [Gradient Descent Step sq norm](gradient-descent-step-sq-norm.md)
-- [Projected Gradient Descent Step sq norm le](projected-gradient-descent-step-sq-norm.md)
+- [Squared-distance expansion for a gradient step](gradient-descent-step-sq-norm.md)
+- [Projected-step bound on a comparator set](projected-gradient-descent-step-sq-norm.md)

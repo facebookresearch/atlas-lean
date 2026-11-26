@@ -1,3 +1,3 @@
-# Time Homeomorph NNReal apply
+# Real value of the translated time coordinate
 
-The translated time has its literal real coordinate.
+For t∈T=[1,∞), (timeHomeomorphNNReal t:ℝ)=t-1.

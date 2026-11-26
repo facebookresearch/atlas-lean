@@ -1,3 +1,5 @@
-# Signed Riesz Measure smul
+# Real scalar compatibility of the signed Riesz inverse
 
-The inverse signed Riesz construction is real-linear, including for negative scalars.
+Let `X` be a compact Hausdorff
+space with its Borel measurable structure. Let `F∈C(X,ℝ)*` be a bounded real-linear
+functional. for every `c∈ℝ`, `signedRieszMeasure(c • F)=c • signedRieszMeasure F`.

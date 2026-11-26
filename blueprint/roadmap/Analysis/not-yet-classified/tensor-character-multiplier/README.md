@@ -1,6 +1,6 @@
-# Tensor Character Multiplier
+# Character unitaries in the scalar tensor factor
 
-- [Character Multiplier Tensor coordinates](character-multiplier-tensor-coordinates.md)
-- [Character Multiplier Tensor Representation](character-multiplier-tensor-representati.md)
-- [Character Multiplier Tensor Representation apply](character-multiplier-tensor-representati-2.md)
-- [Character Multiplier Tensor conj Star Alg Equiv](character-multiplier-tensor-conj-star-al.md)
+- [Character multiplier compatibility with Hilbert-first L² coordinates](character-multiplier-tensor-coordinates.md)
+- [Strongly continuous tensor-factor character representation](character-multiplier-tensor-representati.md)
+- [Operator value of the tensor character unitary](character-multiplier-tensor-representati-2.md)
+- [Tensor-to-L² conjugation of a character unitary](character-multiplier-tensor-conj-star-al.md)

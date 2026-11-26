@@ -1,4 +1,4 @@
-# Pi
+# Compact functions into dependent products
 
-- [Eval](eval.md)
-- [Is Compact Operator pi iff](is-compact-operator-pi-iff.md)
+- [Compact coordinate of a function into a product](eval.md)
+- [Compactness of a finite product function from its coordinates](is-compact-operator-pi-iff.md)

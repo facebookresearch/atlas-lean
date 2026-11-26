@@ -15,15 +15,17 @@ public import MathlibExt.Analysis.CStarAlgebra.AsymptoticMorphism.Uniform
 public import Mathlib.Analysis.CStarAlgebra.Spectrum
 
 /-!
-# Completely positive asymptotic families
+# Completely positive asymptotic morphisms
 
-This file separates a broad neutral CP-slice carrier from Blackadar's literal
-CP-contraction specialization. Both reuse the existing nonlinear asymptotic
-family and canonical spectral orders. No finite-time norm bound is added to
-the broad carrier.
-
-The literal homotopy DATA uses CP contractions into `C([0,1],B)`. No homotopy
-setoid or quotient is installed before CP-contractive gluing is proved.
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. For a completely positive family, each
+slice φ_t is a completely positive complex-linear map for the canonical C-star positive cones,
+including all matrix levels. The subclass CompletelyPositiveContraction consists of families
+with ‖φ_t(a)‖≤‖a‖ at every time, the CP-contractive specialization used by Blackadar. For
+completely positive contraction asymptotic families φ0,φ1:A→B, a homotopy F has slices
+A→C([0,1],B) that are completely positive contractions and endpoints F_t(a)(0)=φ0_t(a),
+F_t(a)(1)=φ1_t(a). Its asymptotic limits use the supremum norm over the interval.
 -/
 
 @[expose] public section
@@ -43,8 +45,15 @@ universe uA uB
 variable {A : Type uA} {B : Type uB}
 variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
 
-/-- Every finite-time slice has a genuine completely positive complex-linear
-witness. No finite-time norm contraction is required. -/
+/-- **Completely positive time slices.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. The property IsCompletelyPositive φ
+means that for every t∈T there is a completely positive complex-linear map s_t:A→B with
+s_t(a)=φ_t(a) for all a. Positivity uses the canonical C-star positive cones at every matrix
+level.
+-/
 def IsCompletelyPositive (phi : AsymptoticMorphism A B) : Prop :=
   letI : PartialOrder A := CStarAlgebra.spectralOrder A
   letI : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A
@@ -52,19 +61,52 @@ def IsCompletelyPositive (phi : AsymptoticMorphism A B) : Prop :=
   letI : StarOrderedRing B := CStarAlgebra.spectralOrderedRing B
   ∀ t : AsymptoticTime, ∃ s : A →CP B, ∀ a : A, s a = phi t a
 
-/-- Broad neutral carrier of CP-slice asymptotic families. Blackadar's
-source carrier is the contraction specialization below. -/
+/-- **Asymptotic family with completely positive slices.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. For a completely positive family, each
+slice φ_t is a completely positive complex-linear map for the canonical C-star positive cones,
+including all matrix levels. The structure CompletelyPositiveFamily A B consists of such an
+asymptotic family and its complete-positivity property.
+-/
 structure CompletelyPositiveFamily (A : Type uA) (B : Type uB)
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
     extends AsymptoticMorphism A B where
-  /-- Every finite-time slice has a CP complex-linear witness. -/
+  /-- **Complete positivity of each slice.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. For a completely positive family, each
+slice φ_t is a completely positive complex-linear map for the canonical C-star positive cones,
+including all matrix levels. The field completelyPositive asserts that every time slice equals
+a completely positive complex-linear map A→B for the canonical C-star positive cones.
+-/
   completelyPositive : IsCompletelyPositive toAsymptoticMorphism
 
-/-- Blackadar's literal finite-time completely-positive-contraction carrier. -/
+/-- **Completely positive contractive asymptotic family.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. For a completely positive family, each
+slice φ_t is a completely positive complex-linear map for the canonical C-star positive cones,
+including all matrix levels. For a completely positive contraction family, additionally
+‖φ_t(a)‖≤‖a‖ for all a∈A and t∈T. CompletelyPositiveContraction A B is this class of
+asymptotic star morphisms.
+-/
 structure CompletelyPositiveContraction (A : Type uA) (B : Type uB)
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
     extends AsymptoticMorphism A B where
-  /-- Every finite-time slice has a CP contraction witness. -/
+  /-- **Contractive complete positivity of each slice.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. For a completely positive family, each
+slice φ_t is a completely positive complex-linear map for the canonical C-star positive cones,
+including all matrix levels. For a completely positive contraction family, additionally
+‖φ_t(a)‖≤‖a‖ for all a∈A and t∈T. The field completelyPositiveContraction asserts that every
+slice is a completely positive complex-linear contraction A→B.
+-/
   completelyPositiveContraction :
     IsCompletelyPositiveContraction toAsymptoticMorphism
 
@@ -78,7 +120,15 @@ theorem ext {phi psi : CompletelyPositiveFamily A B}
   cases h
   rfl
 
-/-- Proper reparametrization preserves the same CP slice witnesses. -/
+/-- **Reparametrization of a completely positive family.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. For a completely positive family, each
+slice φ_t is a completely positive complex-linear map for the canonical C-star positive cones,
+including all matrix levels. For continuous r:T→T with r(t)→∞, the reparametrized family has
+slices φ_(r(t)), which remain completely positive.
+-/
 def reparam (phi : CompletelyPositiveFamily A B)
     (r : AsymptoticTime → AsymptoticTime) (hr : Continuous r)
     (hrTop : Tendsto r atTop atTop) : CompletelyPositiveFamily A B where
@@ -109,7 +159,16 @@ theorem ext {phi psi : CompletelyPositiveContraction A B}
   cases h
   rfl
 
-/-- Forgetting the norm inequalities gives the broad neutral CP carrier. -/
+/-- **A CP-contractive family as a completely positive family.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. For a completely positive family, each
+slice φ_t is a completely positive complex-linear map for the canonical C-star positive cones,
+including all matrix levels. For a completely positive contraction family, additionally
+‖φ_t(a)‖≤‖a‖ for all a∈A and t∈T. The map toCompletelyPositiveFamily retains the same
+asymptotic coefficient values and regards each slice as a completely positive map.
+-/
 def toCompletelyPositiveFamily (phi : CompletelyPositiveContraction A B) :
     CompletelyPositiveFamily A B where
   toAsymptoticMorphism := phi.toAsymptoticMorphism
@@ -128,8 +187,12 @@ theorem toCompletelyPositiveFamily_toAsymptoticMorphism
       phi.toAsymptoticMorphism := by
   rfl
 
-/-- An actual star homomorphism as a constant CP-contractive asymptotic
-family. -/
+/-- **Constant CP-contractive family of a star homomorphism.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). A nonunital complex star
+homomorphism f:A→B gives CompletelyPositiveContraction.ofHom f with values φ_t(a)=f(a), each
+slice being completely positive and contractive.
+-/
 def ofHom (f : A →⋆ₙₐ[ℂ] B) : CompletelyPositiveContraction A B where
   toAsymptoticMorphism := AsymptoticMorphism.ofHom f
   completelyPositiveContraction := by
@@ -150,9 +213,13 @@ theorem ofHom_apply (f : A →⋆ₙₐ[ℂ] B)
     (ofHom f).toAsymptoticMorphism t a = f a := by
   rfl
 
-/-- A point-norm continuous time family of star homomorphisms is a literal
-CP-contractive asymptotic family. No uniform-in-time hom-space continuity is
-required beyond the continuous orbit of each input. -/
+/-- **Point-norm homomorphism family as CP-contractive asymptotic morphism.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). Suppose f_t:A→B are nonunital
+complex star homomorphisms and t↦f_t(a) is continuous for every a.
+CompletelyPositiveContraction.ofHomFamily f hf has values φ_t(a)=f_t(a), with completely
+positive contraction slices.
+-/
 def ofHomFamily (f : AsymptoticTime → A →⋆ₙₐ[ℂ] B)
     (hf : ∀ a : A, Continuous fun t => f t a) :
     CompletelyPositiveContraction A B where
@@ -170,7 +237,12 @@ def ofHomFamily (f : AsymptoticTime → A →⋆ₙₐ[ℂ] B)
       CompletelyPositiveMapClass.toCompletelyPositiveLinearMap (f t)
     exact ⟨s, NonUnitalStarAlgHom.norm_apply_le (f t), fun _ => rfl⟩
 
-/-- Forgetting the CPC witness retains the existing raw time family. -/
+/-- **Underlying asymptotic morphism of a homomorphism family.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). For nonunital complex star
+homomorphisms f_t:A→B with continuous orbits t↦f_t(a), the underlying family of
+CompletelyPositiveContraction.ofHomFamily f hf equals AsymptoticMorphism.ofHomFamily f hf.
+-/
 @[simp]
 theorem ofHomFamily_toAsymptoticMorphism
     (f : AsymptoticTime → A →⋆ₙₐ[ℂ] B)
@@ -179,15 +251,28 @@ theorem ofHomFamily_toAsymptoticMorphism
       AsymptoticMorphism.ofHomFamily f hf :=
   rfl
 
-/-- The time-family constructor keeps the literal homomorphism value. -/
+/-- **Value of the CP-contractive homomorphism-family construction.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). For nonunital complex star
+homomorphisms f_t:A→B with continuous coefficient orbits,
+CompletelyPositiveContraction.ofHomFamily f hf has φ_t(a)=f_t(a) for t≥1.
+-/
 theorem ofHomFamily_apply (f : AsymptoticTime → A →⋆ₙₐ[ℂ] B)
     (hf : ∀ a : A, Continuous fun t => f t a)
     (t : AsymptoticTime) (a : A) :
     (ofHomFamily f hf).toAsymptoticMorphism t a = f t a :=
   rfl
 
-/-- Proper reparametrization preserves CP and every finite-time contraction
-inequality. -/
+/-- **Reparametrization preserves completely positive contractions.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. For a completely positive family, each
+slice φ_t is a completely positive complex-linear map for the canonical C-star positive cones,
+including all matrix levels. For a completely positive contraction family, additionally
+‖φ_t(a)‖≤‖a‖ for all a∈A and t∈T. For continuous r:T→T with r(t)→∞, reparam φ r has slices
+φ_(r(t)) and retains ‖φ_(r(t))(a)‖≤‖a‖.
+-/
 def reparam (phi : CompletelyPositiveContraction A B)
     (r : AsymptoticTime → AsymptoticTime) (hr : Continuous r)
     (hrTop : Tendsto r atTop atTop) : CompletelyPositiveContraction A B where
@@ -206,22 +291,78 @@ theorem reparam_apply (phi : CompletelyPositiveContraction A B)
       phi.toAsymptoticMorphism (r t) a := by
   rfl
 
-/-- A literal CP-contractive homotopy: the whole interval-valued family,
-not only its endpoint evaluations, has CP-contraction slices. -/
+/-- **Homotopy through completely positive contractions.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. For a completely positive family, each
+slice φ_t is a completely positive complex-linear map for the canonical C-star positive cones,
+including all matrix levels. For a completely positive contraction family, additionally
+‖φ_t(a)‖≤‖a‖ for all a∈A and t∈T. For completely positive contraction asymptotic families
+φ0,φ1:A→B, a homotopy F has slices A→C([0,1],B) that are completely positive contractions and
+endpoints F_t(a)(0)=φ0_t(a), F_t(a)(1)=φ1_t(a). Its asymptotic limits use the supremum norm
+over the interval. Such interval-valued families constitute
+CompletelyPositiveContraction.Homotopy φ0 φ1.
+-/
 structure Homotopy (phi₀ phi₁ : CompletelyPositiveContraction A B) where
-  /-- The whole interval-valued CP-contractive asymptotic family. -/
+  /-- **Interval-valued CP-contractive homotopy family.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. For a completely positive family, each
+slice φ_t is a completely positive complex-linear map for the canonical C-star positive cones,
+including all matrix levels. For a completely positive contraction family, additionally
+‖φ_t(a)‖≤‖a‖ for all a∈A and t∈T. For completely positive contraction asymptotic families
+φ0,φ1:A→B, a homotopy F has slices A→C([0,1],B) that are completely positive contractions and
+endpoints F_t(a)(0)=φ0_t(a), F_t(a)(1)=φ1_t(a). Its asymptotic limits use the supremum norm
+over the interval. The field family is this asymptotic morphism A→C([0,1],B) with completely
+positive contraction slices.
+-/
   family : CompletelyPositiveContraction A C(unitInterval, B)
-  /-- Exact value at the initial endpoint. -/
+  /-- **Initial endpoint of a CP-contractive homotopy.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. For a completely positive family, each
+slice φ_t is a completely positive complex-linear map for the canonical C-star positive cones,
+including all matrix levels. For a completely positive contraction family, additionally
+‖φ_t(a)‖≤‖a‖ for all a∈A and t∈T. For completely positive contraction asymptotic families
+φ0,φ1:A→B, a homotopy F has slices A→C([0,1],B) that are completely positive contractions and
+endpoints F_t(a)(0)=φ0_t(a), F_t(a)(1)=φ1_t(a). Its asymptotic limits use the supremum norm
+over the interval. The field start states F_t(a)(0)=φ0_t(a) for every a∈A and t≥1.
+-/
   start : ∀ (t : AsymptoticTime) (a : A),
     family.toAsymptoticMorphism t a 0 = phi₀.toAsymptoticMorphism t a
-  /-- Exact value at the terminal endpoint. -/
+  /-- **Terminal endpoint of a CP-contractive homotopy.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. For a completely positive family, each
+slice φ_t is a completely positive complex-linear map for the canonical C-star positive cones,
+including all matrix levels. For a completely positive contraction family, additionally
+‖φ_t(a)‖≤‖a‖ for all a∈A and t∈T. For completely positive contraction asymptotic families
+φ0,φ1:A→B, a homotopy F has slices A→C([0,1],B) that are completely positive contractions and
+endpoints F_t(a)(0)=φ0_t(a), F_t(a)(1)=φ1_t(a). Its asymptotic limits use the supremum norm
+over the interval. The field finish states F_t(a)(1)=φ1_t(a) for every a∈A and t≥1.
+-/
   finish : ∀ (t : AsymptoticTime) (a : A),
     family.toAsymptoticMorphism t a 1 = phi₁.toAsymptoticMorphism t a
 
 namespace Homotopy
 
-/-- Forget the CP-contraction evidence while retaining the actual homotopy
-family and endpoints. -/
+/-- **Underlying asymptotic homotopy of a CP-contractive homotopy.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. For a completely positive family, each
+slice φ_t is a completely positive complex-linear map for the canonical C-star positive cones,
+including all matrix levels. For a completely positive contraction family, additionally
+‖φ_t(a)‖≤‖a‖ for all a∈A and t∈T. For completely positive contraction asymptotic families
+φ0,φ1:A→B, a homotopy F has slices A→C([0,1],B) that are completely positive contractions and
+endpoints F_t(a)(0)=φ0_t(a), F_t(a)(1)=φ1_t(a). Its asymptotic limits use the supremum norm
+over the interval. The map toAsymptoticHomotopy regards F as an ordinary interval-valued
+asymptotic homotopy with the same family and endpoint values.
+-/
 def toAsymptoticHomotopy
     {phi₀ phi₁ : CompletelyPositiveContraction A B}
     (H : Homotopy phi₀ phi₁) :
@@ -233,14 +374,31 @@ def toAsymptoticHomotopy
 
 end Homotopy
 
-/-- Literal homotopy through one whole interval-valued CPC family. -/
+/-- **Homotopy relation for CP-contractive asymptotic morphisms.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. For a completely positive family, each
+slice φ_t is a completely positive complex-linear map for the canonical C-star positive cones,
+including all matrix levels. For a completely positive contraction family, additionally
+‖φ_t(a)‖≤‖a‖ for all a∈A and t∈T. For completely positive contraction asymptotic families
+φ0,φ1:A→B, a homotopy F has slices A→C([0,1],B) that are completely positive contractions and
+endpoints F_t(a)(0)=φ0_t(a), F_t(a)(1)=φ1_t(a). Its asymptotic limits use the supremum norm
+over the interval. CompletelyPositiveContraction.Homotopic φ0 φ1 means that a homotopy F with
+these endpoints exists.
+-/
 def Homotopic
     (phi psi : CompletelyPositiveContraction A B) : Prop :=
   Nonempty (Homotopy phi psi)
 
 end CompletelyPositiveContraction
 
-/-- An actual star homomorphism also supplies the broad CP-only family. -/
+/-- **Constant completely positive family of a star homomorphism.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). A nonunital complex star
+homomorphism f:A→B gives CompletelyPositiveFamily.ofHom f with values φ_t(a)=f(a), a
+completely positive map at every time.
+-/
 def CompletelyPositiveFamily.ofHom (f : A →⋆ₙₐ[ℂ] B) :
     CompletelyPositiveFamily A B :=
   (CompletelyPositiveContraction.ofHom f).toCompletelyPositiveFamily

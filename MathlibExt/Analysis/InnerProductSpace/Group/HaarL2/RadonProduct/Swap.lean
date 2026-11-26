@@ -16,17 +16,14 @@ public import Mathlib.MeasureTheory.Function.LpSpace.Basic
 public import Mathlib.Analysis.Complex.Basic
 
 /-!
-# Actual coordinate exchange of the original Borel Radon product
+# Coordinate-swap isometry of Hilbert-valued Radon L²
 
-The generic measure owner proves the original coordinate exchange of the
-Borel Radon products. Literal measure-preserving pullbacks give the full
-normed-space-valued L2 equivalence, including zero fibers and independent
-factor universes. No inner product or completeness of H is required.
+For locally compact Hausdorff Borel factors and measures finite on compact sets, coordinate
+exchange gives `Lp H 2 (radonProd μ ν) ≃ Lp H 2 (radonProd ν μ)`.
 
-This is the coordinate field needed to identify the original H-first
-nested double tensor with its full Borel product L2 model before partial
-Fourier transport. It selects no normalized dual Haar measure or Fourier
-unitary from a Source existence statement.
+The forward and inverse maps pull back by `(y,x) ↦ (x,y)`. They preserve the L² norm and have
+the swapped coordinate values almost everywhere. The coefficient space `H` only needs a complex
+normed-space structure, with no inner product or completeness.
 -/
 
 @[expose] public section
@@ -50,11 +47,13 @@ variable {Y : Type uY} [TopologicalSpace Y] [T2Space Y] [LocallyCompactSpace Y]
 variable (μ : Measure X) (ν : Measure Y)
   [IsFiniteMeasureOnCompacts μ] [IsFiniteMeasureOnCompacts ν]
 
-/-- The original Borel measurable structure of the X-first topological product. -/
+/-- **Borel product structure before exchanging Radon L² coordinates.** For topological `X,Y`,
+use `borel(X×Y)` from the product topology. -/
 local instance instSwapXYMeasurableSpace : MeasurableSpace (X × Y) := borel (X × Y)
 local instance instSwapXYBorelSpace : BorelSpace (X × Y) := ⟨rfl⟩
 
-/-- The original Borel measurable structure of the Y-first topological product. -/
+/-- **Borel product structure after exchanging Radon L² coordinates.** For topological `X,Y`,
+use `borel(Y×X)` from the reversed product topology. -/
 local instance instSwapYXMeasurableSpace : MeasurableSpace (Y × X) := borel (Y × X)
 local instance instSwapYXBorelSpace : BorelSpace (Y × X) := ⟨rfl⟩
 
@@ -62,7 +61,11 @@ namespace HaarL2
 
 variable {H : Type uH} [NormedAddCommGroup H] [NormedSpace ℂ H]
 
-/-- Actual inverse coordinate pullback exchanges the full H-valued Borel product L2 spaces. -/
+/-- **Linear isometric exchange of Radon L² coordinates.** Let `X,Y` be locally compact
+Hausdorff Borel spaces, `μ,ν` measures finite on compact sets, and `H` a complex normed
+space, possibly incomplete. Put `R=radonProd μ ν` and `R'=radonProd ν μ`.
+`radonProductSwapIsometry μ ν : Lp H 2 R ≃ₗᵢ[ℂ] Lp H 2 R'` has almost-everywhere value
+`ξ(x,y) ↦ ξ(x,y)` evaluated at the swapped point `(y,x)`. -/
 def radonProductSwapIsometry :
     Lp H 2 (Measure.radonProd μ ν) ≃ₗᵢ[ℂ] Lp H 2 (Measure.radonProd ν μ) := by
   let hXY := Measure.measurePreserving_prodSwap_radonProd μ ν
@@ -92,19 +95,30 @@ def radonProductSwapIsometry :
       map_smul' c ξ := (Lp.compMeasurePreservingₗ ℂ (Prod.swap : Y × X → X × Y) hYX).map_smul c ξ
       norm_map' ξ := Lp.norm_compMeasurePreserving ξ hYX }
 
-/-- The actual coordinate L2 equivalence has its literal reversed-coordinate pullback DATA. -/
+/-- **Forward Radon-swap map as measure-preserving pullback.** Let `X,Y` be locally compact
+Hausdorff Borel spaces, `μ,ν` measures finite on compact sets, and `H` a complex normed
+space, possibly incomplete. Put `R=radonProd μ ν` and `R'=radonProd ν μ`. the forward map
+pulls a class on `X×Y` back along `Prod.swap : Y×X → X×Y`, using its measure preservation
+from `R'` to `R`. -/
 theorem radonProductSwapIsometry_apply (ξ : Lp H 2 (Measure.radonProd μ ν)) :
     radonProductSwapIsometry (H := H) μ ν ξ =
       Lp.compMeasurePreserving (Prod.swap : Y × X → X × Y)
         (Measure.measurePreserving_prodSwap_radonProd ν μ) ξ := rfl
 
-/-- The actual inverse coordinate equivalence has the literal original-coordinate pullback DATA. -/
+/-- **Inverse Radon-swap map as measure-preserving pullback.** Let `X,Y` be locally compact
+Hausdorff Borel spaces, `μ,ν` measures finite on compact sets, and `H` a complex normed
+space, possibly incomplete. Put `R=radonProd μ ν` and `R'=radonProd ν μ`. the inverse map
+pulls a class on `Y×X` back along `Prod.swap : X×Y → Y×X`, measure preserving from `R` to
+`R'`. -/
 theorem radonProductSwapIsometry_symm_apply (ξ : Lp H 2 (Measure.radonProd ν μ)) :
     (radonProductSwapIsometry (H := H) μ ν).symm ξ =
       Lp.compMeasurePreserving (Prod.swap : X × Y → Y × X)
         (Measure.measurePreserving_prodSwap_radonProd μ ν) ξ := rfl
 
-/-- Every original product L2 vector retains its swapped coordinate values almost everywhere. -/
+/-- **Almost-everywhere forward coordinate exchange in Radon L².** Let `X,Y` be locally
+compact Hausdorff Borel spaces, `μ,ν` measures finite on compact sets, and `H` a complex
+normed space, possibly incomplete. Put `R=radonProd μ ν` and `R'=radonProd ν μ`. for `ξ∈Lp
+H 2 R`, its forward image has value `(y,x) ↦ ξ(x,y)` for `R'`-almost every `(y,x)`. -/
 theorem radonProductSwapIsometry_ae_eq (ξ : Lp H 2 (Measure.radonProd μ ν)) :
     radonProductSwapIsometry (H := H) μ ν ξ =ᵐ[Measure.radonProd ν μ]
       fun z : Y × X => ξ (z.2, z.1) := by
@@ -113,7 +127,10 @@ theorem radonProductSwapIsometry_ae_eq (ξ : Lp H 2 (Measure.radonProd μ ν)) :
     (Measure.measurePreserving_prodSwap_radonProd ν μ)] with z hz
   exact hz
 
-/-- The actual inverse product L2 equivalence keeps the original swapped coordinate formula a.e. -/
+/-- **Almost-everywhere inverse coordinate exchange in Radon L².** Let `X,Y` be locally
+compact Hausdorff Borel spaces, `μ,ν` measures finite on compact sets, and `H` a complex
+normed space, possibly incomplete. Put `R=radonProd μ ν` and `R'=radonProd ν μ`. for `η∈Lp
+H 2 R'`, its inverse image has value `(x,y) ↦ η(y,x)` for `R`-almost every `(x,y)`. -/
 theorem radonProductSwapIsometry_symm_ae_eq (ξ : Lp H 2 (Measure.radonProd ν μ)) :
     (radonProductSwapIsometry (H := H) μ ν).symm ξ =ᵐ[Measure.radonProd μ ν]
       fun z : X × Y => ξ (z.2, z.1) := by

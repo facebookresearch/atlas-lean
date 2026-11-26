@@ -1,3 +1,4 @@
-# Group Left Cc apply
+# Pointwise value of the left compact group translate
 
-The original left group action retains its inverse-translation formula.
+Let G be a topological group, A a nonunital complex C-star algebra and α a point-norm action.
+For g,s∈G and f∈C_c(G,A), groupLeftCc α g f s=α_g(f(g⁻¹*s)).

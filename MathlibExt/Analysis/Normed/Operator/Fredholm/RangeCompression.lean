@@ -20,14 +20,15 @@ public import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.Idempotent
 import Mathlib.Tactic.Abel
 
 /-!
-# Fredholm compression between idempotent ranges
+# Fredholm compression between bounded idempotent ranges
 
-A Fredholm map between independent complete real or complex Hilbert spaces
-remains Fredholm after compression by bounded idempotents whose intertwining
-defect is compact. The actual range submodules retain their inherited norms,
-topologies and inner products. Neither orthogonality nor cofiniteness of the
-supports is required, and the target idempotent need not preserve the raw image.
-No equality between the ambient and compressed indices is asserted.
+Let `E,F` be complete real or complex Hilbert spaces, `T : E → F` a Fredholm operator, and `p :
+E → E`, `q : F → F` bounded idempotents. If the intertwining defect `Tp-qT` is compact, the
+compressed map `x ↦ q(Tx)` from `range p` to `range q` is Fredholm.
+
+The ranges carry their inherited norms, topologies and inner products. The idempotents need not
+be orthogonal or have cofinite ranges, and `T(range p) ⊆ range q` is not assumed. No equality of
+ambient and compressed indices is asserted.
 -/
 
 namespace ContinuousLinearMap
@@ -96,10 +97,11 @@ variable {E : Type uE} [NormedAddCommGroup E] [InnerProductSpace 𝕜 E]
 variable {F : Type uF} [NormedAddCommGroup F] [InnerProductSpace 𝕜 F]
   [CompleteSpace F]
 
-/-- A Fredholm map compresses to a Fredholm map between the actual ranges of
-bounded idempotents when its intertwining defect is compact. The idempotents
-need not be orthogonal, their ranges need not be cofinite, and no equality
-between the ambient and compressed indices is implied. -/
+/-- **Fredholm map compressed between idempotent ranges.** Let `𝕜` be real or complex, `E,F`
+complete normed inner-product `𝕜`-spaces, `T : E →L[𝕜] F` Fredholm, and bounded
+idempotents `p` on `E`, `q` on `F`. If `T∘p-q∘T` is compact, then `x ↦ q(Tx) : range p →
+range q` is Fredholm with the inherited subspace structures. The idempotents need not be
+self-adjoint or have cofinite ranges. -/
 theorem range_compression {p : E →L[𝕜] E} {q : F →L[𝕜] F} {T : E →L[𝕜] F}
     (hT : T.IsFredholm) (hp : IsIdempotentElem p) (hq : IsIdempotentElem q)
     (hDelta : IsCompactOperator (T.comp p - q.comp T)) :

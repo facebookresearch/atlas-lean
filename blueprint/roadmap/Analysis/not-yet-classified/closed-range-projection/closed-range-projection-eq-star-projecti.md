@@ -1,3 +1,6 @@
-# Closed Range Projection eq star Projection
+# Range-closure subspace projection
 
-The canonical closed-range projection is the original stock star projection.
+Let `H` be a complete complex Hilbert space and `T
+: H →L[ℂ] H`. Write `P_T` for the orthogonal projection onto the norm closure of `range
+T`. `closedRangeProjection T` equals the star projection of the closed submodule
+`T.range.topologicalClosure`.

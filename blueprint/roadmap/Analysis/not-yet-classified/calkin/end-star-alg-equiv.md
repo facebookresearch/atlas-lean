@@ -1,4 +1,5 @@
-# End Star Alg Equiv
+# Star-algebra equivalence of endomorphism algebras
 
-The canonical star-algebra equivalence between the two endomorphism
-algebras.
+For a complex Hilbert space `H`,
+bounded endomorphisms and adjointable endomorphisms of `ScalarRight H` are star-algebra
+equivalent by `T ↦ ofContinuousLinearMap H H T`.

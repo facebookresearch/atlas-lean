@@ -1,6 +1,6 @@
-# Coefficient Hom
+# Coefficient representation on Hilbert amplification
 
-- [Operator ext pure](operator-ext-pure.md)
-- [Coefficient Hom](coefficient-hom.md)
-- [Coefficient Hom apply](coefficient-hom-apply.md)
-- [Coefficient Hom pure](coefficient-hom-pure.md)
+- [Determination by pure amplification vectors](operator-ext-pure.md)
+- [Coefficient star-algebra representation](coefficient-hom.md)
+- [Value of the coefficient representation](coefficient-hom-apply.md)
+- [Coefficient representation on pure vectors](coefficient-hom-pure.md)

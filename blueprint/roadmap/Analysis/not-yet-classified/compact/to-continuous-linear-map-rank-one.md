@@ -1,5 +1,5 @@
-# To Continuous Linear Map rank One
+# Hilbert-space form of a module rank-one operator
 
-Forgetting a scalar-right module rank-one operator gives the ordinary
-Hilbert-space rank-one operator.  Completeness is not needed in this
-direction.
+For complex inner-product spaces,
+forgetting the module rank-one map defined by `x,y` gives `InnerProductSpace.rankOne ℂ (equivL
+K x) (equivL H y)`. Completeness is not required.

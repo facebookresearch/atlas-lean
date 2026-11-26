@@ -1,3 +1,3 @@
-# C0 Left Translation Equiv mul
+# Composition of left translations
 
-Translation composition has exactly the original noncommutative group order.
+For g, h ∈ G, λgh = λg ∘ λh. The formula retains this order for a noncommutative group.

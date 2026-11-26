@@ -1,3 +1,4 @@
-# Coefficient Operator pure
+# Coefficient operator on pure vectors
 
-The original Hilbert vector stays fixed while its coefficient is multiplied on the left.
+`coefficientOperator H A a (pure H A ξ b) = pure H A
+ξ (a*b)`.

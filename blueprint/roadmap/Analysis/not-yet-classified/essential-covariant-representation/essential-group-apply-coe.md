@@ -1,3 +1,3 @@
-# Essential Group apply coe
+# Restricted group action agrees on vectors
 
-The restricted group action retains every original essential-vector value.
+For ξ ∈ Eπ, including the restricted vector Ug|Eπ ξ into H gives Ug ξ.

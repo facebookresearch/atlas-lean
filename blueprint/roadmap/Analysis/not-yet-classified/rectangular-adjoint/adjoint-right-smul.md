@@ -1,3 +1,4 @@
-# Adjoint right smul
+# Right linearity of the partial adjoint
 
-The partial adjoint is right-linear on its actual source domain.
+On the full adjoint domain, `T* (y <• b) = T* y <•
+b` for every `b : B`.

@@ -1,4 +1,4 @@
-# To Homotopic trans
+# Underlying homotopy after concatenation
 
-Concatenating automorphism homotopies concatenates their underlying
-homomorphism homotopies.
+Homotopies from α to β and from β to γ give a point-norm homotopy between the star
+homomorphisms underlying α and γ.

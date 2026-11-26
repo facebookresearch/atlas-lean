@@ -1,3 +1,4 @@
-# Tensor Product Real Alg Equiv tmul
+# Pure tensor coordinates of the complex algebra equivalence
 
-The same original pure tensor has its identity and conjugation coordinates.
+For z,w∈ℂ, tensorProductRealAlgEquiv(z⊗_ℝw)=(zw,z*conj(w)), using complex scalars on the left
+factor.

@@ -1,3 +1,7 @@
-# Radical Right Factor CLM apply
+# Value of the continuous radical factor map
 
-Continuity retains every original algebraic quotient value.
+Let `E₁,E₂` be complete right C-star modules
+over nonunital `B₁,B₂` with star-compatible opposite orders, and let the complex nonunital
+star representation `φ : B₁ → End_(B₂)(E₂)` commute with an adjointable `S`.
+`radicalRightFactorCLM φ S hComm q = radicalRightFactorMap φ S hComm q` for every radical
+tensor `q`.

@@ -1,11 +1,11 @@
-# Split Pullback
+# Asymptotic quotients of split pullback algebras
 
-- [Pullback Comparison](pullback-comparison.md)
-- [Fst Hom comp pullback Comparison](fst-hom-comp-pullback-comparison.md)
-- [Snd Hom comp pullback Comparison](snd-hom-comp-pullback-comparison.md)
-- [Pullback Comparison injective](pullback-comparison-injective.md)
-- [Pullback Comparison surjective of right Inverse](pullback-comparison-surjective-of-right.md)
-- [Split Pullback Equiv](split-pullback-equiv.md)
-- [Split Pullback Equiv to Non Unital Star Alg Hom](split-pullback-equiv-to-non-unital-star.md)
-- [Fst Hom comp split Pullback Equiv](fst-hom-comp-split-pullback-equiv.md)
-- [Snd Hom comp split Pullback Equiv](snd-hom-comp-split-pullback-equiv.md)
+- [Comparison from the quotient of a pullback to the pullback of quotients](pullback-comparison.md)
+- [First coordinate of the pullback comparison](fst-hom-comp-pullback-comparison.md)
+- [Second coordinate of the pullback comparison](snd-hom-comp-pullback-comparison.md)
+- [Injectivity of the asymptotic pullback comparison](pullback-comparison-injective.md)
+- [Surjectivity of the pullback comparison with a section](pullback-comparison-surjective-of-right.md)
+- [Star equivalence for an asymptotic split pullback](split-pullback-equiv.md)
+- [Forward map of the split pullback equivalence](split-pullback-equiv-to-non-unital-star.md)
+- [First coordinate of the split pullback equivalence](fst-hom-comp-split-pullback-equiv.md)
+- [Second coordinate of the split pullback equivalence](snd-hom-comp-split-pullback-equiv.md)

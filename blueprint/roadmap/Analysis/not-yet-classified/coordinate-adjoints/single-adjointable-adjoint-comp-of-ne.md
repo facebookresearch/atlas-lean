@@ -1,3 +1,4 @@
-# Single Adjointable adjoint comp of ne
+# Evaluation at a different coordinate
 
-Evaluation at one index after insertion at a different index vanishes.
+For a nonunital complex C-star algebra `B` and
+arbitrary index type `I`, if `i ≠ j`, `(singleAdjointable i)* ∘ singleAdjointable j = 0`.

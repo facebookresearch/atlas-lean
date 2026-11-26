@@ -1,3 +1,5 @@
-# To Densely Defined Adjoint
+# Dense realization of the regular adjoint
 
-The same actual computed adjoint, bundled only with its existing density.
+The maximal adjoint of a regular operator is
+bundled with its dense domain and right-linearity, giving a densely defined right-linear
+partial operator on `E`.

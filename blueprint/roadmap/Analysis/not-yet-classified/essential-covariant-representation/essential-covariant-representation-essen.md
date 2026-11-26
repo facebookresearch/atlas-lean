@@ -1,3 +1,3 @@
-# Essential Covariant Representation essential Space eq top
+# Nondegeneracy of the essential coefficient representation
 
-The actual essential covariant coefficient map satisfies the neutral nondegeneracy condition.
+The coefficient essential space of the representation on Eπ is all of Eπ.

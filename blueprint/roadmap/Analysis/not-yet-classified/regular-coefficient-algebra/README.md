@@ -1,10 +1,10 @@
-# Regular Coefficient Algebra
+# Star-algebra laws and Haar covariance of regular coefficients
 
-- [Regular Coefficient add](regular-coefficient-add.md)
-- [Regular Coefficient smul](regular-coefficient-smul.md)
-- [Regular Coefficient mul](regular-coefficient-mul.md)
-- [Regular Coefficient one](regular-coefficient-one.md)
-- [Regular Coefficient star](regular-coefficient-star.md)
-- [Regular Coefficient inner compact Support](regular-coefficient-inner-compact-suppor.md)
-- [Regular Coefficient Hom](regular-coefficient-hom.md)
-- [Regular Coefficient covariance](regular-coefficient-covariance.md)
+- [Additivity of regular coefficient operators](regular-coefficient-add.md)
+- [Complex scaling of regular coefficient operators](regular-coefficient-smul.md)
+- [Multiplication of regular coefficient operators](regular-coefficient-mul.md)
+- [Unit coefficient is the L² identity](regular-coefficient-one.md)
+- [Adjoint of a regular coefficient operator](regular-coefficient-star.md)
+- [Adjoint pairing of compact-support regular coefficient vectors](regular-coefficient-inner-compact-suppor.md)
+- [Unital star homomorphism of regular coefficients](regular-coefficient-hom.md)
+- [Haar translation covariance of the regular coefficient homomorphism](regular-coefficient-covariance.md)

@@ -1,3 +1,4 @@
-# Second Coordinate Character Map apply
+# Value of a pulled-back second-coordinate character
 
-The pulled-back character is the same original character on the second coordinate.
+For a group `G` with topology, a
+continuous character `χ` and `(s,t)∈G×G`, `secondCoordinateCharacterMap χ (s,t)=χ(t)`.

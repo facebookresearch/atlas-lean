@@ -1,5 +1,5 @@
-# Complex Group Algebra
+# Complex group algebra carrier
 
-The complex group algebra as a genuine distinct type.  Its algebraic
-operations are transported from `MonoidAlgebra ℂ G`, while its star below is
-the group involution rather than the coefficientwise Finsupp star.
+For any type G, ComplexGroupAlgebra G is the space of finitely supported complex functions
+G→₀ℂ. For a group G it carries convolution multiplication and the group involution
+a*(g)=conj(a(g⁻¹)).

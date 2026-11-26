@@ -1,4 +1,4 @@
-# Haar Regular Tensor Coordinates
+# Exact Haar coordinates of a tensor left representation
 
-- [Haar Left Regular Tensor coordinates](haar-left-regular-tensor-coordinates.md)
-- [Haar Left Regular Tensor conj Star Alg Equiv](haar-left-regular-tensor-conj-star-alg-e.md)
+- [Tensor-to-L² intertwining of Haar left translation](haar-left-regular-tensor-coordinates.md)
+- [Operator conjugation of tensor Haar coordinates](haar-left-regular-tensor-conj-star-alg-e.md)

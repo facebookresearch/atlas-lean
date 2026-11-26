@@ -1,3 +1,7 @@
-# Norm compact Support Product sq
+# Product of squared factor norms for a compact-support L² product
 
-The computed pure product has the exact product of the original factor L2 squared norms.
+Let `X,Y` be locally
+compact Hausdorff Borel spaces and `μ,ν` regular measures. Write `R=radonProd μ ν` on
+`borel(X×Y)`, `i_μ,i_ν,i_R` for compact-support L² inclusions, `T=Completion(Lp ℂ 2 μ ⊗[ℂ]
+Lp ℂ 2 ν)`, `A(z)` for the algebraic factor tensor inclusion into `T`, and
+`F(f⊗g)=i_R((x,y) ↦ f(x)g(y))`. `‖compactSupportProduct μ ν f g‖²=‖i_μ f‖²‖i_ν g‖²`.

@@ -1,11 +1,11 @@
-# Arens Star
+# Involution reverses the two Arens extensions
 
-## Continuous Linear Map
+## Star reversal of Arens extensions
 
-- [Arens First star](arens-first-star.md)
-- [Arens Second star](arens-second-star.md)
+- [Star reversal of the first Arens extension](arens-first-star.md)
+- [Star reversal of the second Arens extension](arens-second-star.md)
 
-## Normed Space
+## Involutions and Arens products
 
-- [First Arens star mul](first-arens-star-mul.md)
-- [Second Arens star mul](second-arens-star-mul.md)
+- [Involution changes the first Arens product to the second](first-arens-star-mul.md)
+- [Involution changes the second Arens product to the first](second-arens-star-mul.md)

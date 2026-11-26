@@ -1,4 +1,4 @@
-# Charpoly eq one of subsingleton
+# Characteristic polynomial on a zero module
 
-The characteristic polynomial of an endomorphism of a zero module is
-`1`, paralleling `LinearMap.det_eq_one_of_subsingleton`.
+Let R be a commutative ring and M a finite free R-module with only the zero element. Every
+endomorphism f of M has χ_f=1.

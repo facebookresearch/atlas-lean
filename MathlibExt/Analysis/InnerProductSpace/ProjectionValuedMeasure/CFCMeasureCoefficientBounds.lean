@@ -19,15 +19,15 @@ public import Mathlib.Tactic.Ring
 public import Mathlib.Tactic.Linarith
 
 /-!
-# Computed normal-CFC coefficient form and its Cauchy--Schwarz bound
+# Cauchy–Schwarz bounds for normal CFC coefficient forms
 
-Only the actual normal T,hT, original vectors and measurable set are inputs.
-Sesquilinearity and the same computed positive diagonal Riesz measure supply
-the form, Hermitian symmetry and positivity. The stock Core Cauchy--Schwarz
-lemma is used with an explicit structure value; no Core norm/space instance
-is installed and the original H norm remains fixed. These strict facts serve
-the bounded coefficient operator E(s), resolutionOfIdentity and BFC DATA.
-No provided form/positivity/bound/PVM or desired-output premise is introduced.
+For a normal operator `T` on a complete complex Hilbert space, let `μ_(g,h)` be its regular CFC
+coefficient measure on `K=σ_ℂ(T)` and `ν_g` the positive diagonal measure. On a measurable set
+`s`, the form `F_s(h,g)=μ_(g,h)(s)` is Hermitian and positive semidefinite.
+
+Cauchy–Schwarz gives `|μ_(g,h)(s)|²≤ν_g.real(s) ν_h.real(s)`. Since `ν_g.real(s)≤‖g‖²`, this
+yields `|F_s(h,g)|≤‖h‖‖g‖`. All norms are those of the Hilbert space and the complex scalars; no
+new Hilbert norm is used.
 -/
 
 @[expose] public section
@@ -40,8 +40,12 @@ namespace MathlibExt.Analysis.InnerProductSpace.ProjectionValuedMeasure
 universe uH
 variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- The actual coefficient form: first argument h is conjugate-linear;
-second argument g is linear, with value mu(g,h)(s). -/
+/-- **Sesquilinear form of a CFC set coefficient.** Let `H` be a complete complex Hilbert
+space and `T : H →L[ℂ] H` a normal operator, so `T* T=T T*`. Put `K=σ_ℂ(T)` with its Borel
+measurable structure. Let `μ_(g,h)` be the regular complex measure on `K` characterized by
+`∫ f dμ_(g,h)=⟨h,f(T)g⟩` for `f ∈ C(K,ℂ)`. for any set `s ⊆ K`,
+`normalCFCCoefficientFormLinear T hT s (h,g)=μ_(g,h)(s)`, conjugate-linear in `h` and
+linear in `g`. -/
 def normalCFCCoefficientFormLinear (T : H →L[ℂ] H) (hT : IsStarNormal T)
     (s : Set (spectrum ℂ T)) : H →ₗ⋆[ℂ] H →ₗ[ℂ] ℂ where
   toFun h :=
@@ -68,7 +72,11 @@ def normalCFCCoefficientFormLinear (T : H →L[ℂ] H) (hT : IsStarNormal T)
     rw [normalCFCCoefficientMeasure_smul_right]
     rfl
 
-/-- Every form value is the same computed regular complex coefficient value. -/
+/-- **Value of the algebraic CFC coefficient form.** Let `H` be a complete complex Hilbert
+space and `T : H →L[ℂ] H` a normal operator, so `T* T=T T*`. Put `K=σ_ℂ(T)` with its Borel
+measurable structure. Let `μ_(g,h)` be the regular complex measure on `K` characterized by
+`∫ f dμ_(g,h)=⟨h,f(T)g⟩` for `f ∈ C(K,ℂ)`. for `s ⊆ K` and `g,h ∈ H`,
+`normalCFCCoefficientFormLinear T hT s h g=μ_(g,h)(s)`. -/
 theorem normalCFCCoefficientFormLinear_apply (T : H →L[ℂ] H) (hT : IsStarNormal T)
     (s : Set (spectrum ℂ T)) (h g : H) :
     normalCFCCoefficientFormLinear T hT s h g =
@@ -121,7 +129,11 @@ private theorem coefficient_form_hermitian (T : H →L[ℂ] H) (hT : IsStarNorma
   · simp only [Complex.star_def, Complex.conj_im]
     linarith
 
-/-- The same actual measurable coefficient values satisfy Hermitian symmetry. -/
+/-- **Hermitian symmetry of measurable CFC coefficients.** Let `H` be a complete complex
+Hilbert space and `T : H →L[ℂ] H` a normal operator, so `T* T=T T*`. Put `K=σ_ℂ(T)` with
+its Borel measurable structure. Let `μ_(g,h)` be the regular complex measure on `K`
+characterized by `∫ f dμ_(g,h)=⟨h,f(T)g⟩` for `f ∈ C(K,ℂ)`. for measurable `s ⊆ K` and
+`g,h ∈ H`, `μ_(g,h)(s)=conj(μ_(h,g)(s))`. -/
 theorem normalCFCCoefficientMeasure_conj_symm (T : H →L[ℂ] H) (hT : IsStarNormal T)
     (g h : H) (s : Set (spectrum ℂ T)) (hs : MeasurableSet s) :
     (normalCFCCoefficientMeasure T hT g h : ComplexMeasure (spectrum ℂ T)) s =
@@ -135,8 +147,12 @@ private theorem coefficient_diagonal_nonneg (T : H →L[ℂ] H) (hT : IsStarNorm
   simpa only [Complex.ofReal_re] using
     (measureReal_nonneg (μ := normalCFCDiagonalMeasure T hT x) (s := s))
 
-/-- Cauchy--Schwarz for the actual computed coefficient measure, using
-the same positive diagonal masses on the measurable set. -/
+/-- **Cauchy–Schwarz inequality for a spectral set coefficient.** Let `H` be a complete
+complex Hilbert space and `T : H →L[ℂ] H` a normal operator, so `T* T=T T*`. Put
+`K=σ_ℂ(T)` with its Borel measurable structure. Let `μ_(g,h)` be the regular complex
+measure on `K` characterized by `∫ f dμ_(g,h)=⟨h,f(T)g⟩` for `f ∈ C(K,ℂ)`. for measurable
+`s` and `g,h ∈ H`, `|μ_(g,h)(s)|²≤ν_g.real(s)*ν_h.real(s)`, where
+`ν_v=normalCFCDiagonalMeasure T hT v`. -/
 theorem normalCFCCoefficientMeasure_cauchySchwarz (T : H →L[ℂ] H) (hT : IsStarNormal T)
     (g h : H) (s : Set (spectrum ℂ T)) (hs : MeasurableSet s) :
     ‖(normalCFCCoefficientMeasure T hT g h : ComplexMeasure (spectrum ℂ T)) s‖ ^ 2 ≤
@@ -164,7 +180,10 @@ theorem normalCFCCoefficientMeasure_cauchySchwarz (T : H →L[ℂ] H) (hT : IsSt
     normalCFCCoefficientMeasure_diagonal_apply T hT g s hs,
     Complex.ofReal_re, pow_two, mul_comm] using hcs
 
-/-- The actual positive diagonal set mass is bounded by its original full mass. -/
+/-- **Diagonal spectral set mass bounded by vector norm.** Let `H` be a complete complex
+Hilbert space and `T : H →L[ℂ] H` a normal operator, so `T* T=T T*`. Put `K=σ_ℂ(T)` with
+its Borel measurable structure. for `g ∈ H` and any set `s ⊆ K`, `ν_g.real(s)≤‖g‖²`, where
+`ν_g=normalCFCDiagonalMeasure T hT g`. -/
 private theorem diagonal_mass_le_norm_sq (T : H →L[ℂ] H) (hT : IsStarNormal T)
     (g : H) (s : Set (spectrum ℂ T)) :
     (normalCFCDiagonalMeasure T hT g).real s ≤ ‖g‖ ^ 2 := by
@@ -175,8 +194,11 @@ private theorem diagonal_mass_le_norm_sq (T : H →L[ℂ] H) (hT : IsStarNormal 
         (measure_ne_top (normalCFCDiagonalMeasure T hT g) univ)
     _ = ‖g‖ ^ 2 := normalCFCDiagonalMeasure_real_univ T hT g
 
-/-- The exact coefficient operator bound from the same computed measures
-and original Hilbert norms, with no supplied bound or form. -/
+/-- **Hilbert norm bound for a measurable CFC coefficient.** Let `H` be a complete complex
+Hilbert space and `T : H →L[ℂ] H` a normal operator, so `T* T=T T*`. Put `K=σ_ℂ(T)` with
+its Borel measurable structure. Let `μ_(g,h)` be the regular complex measure on `K`
+characterized by `∫ f dμ_(g,h)=⟨h,f(T)g⟩` for `f ∈ C(K,ℂ)`. for measurable `s ⊆ K` and
+`g,h ∈ H`, `|μ_(g,h)(s)|≤‖g‖*‖h‖`. -/
 theorem normalCFCCoefficientMeasure_norm_apply_le (T : H →L[ℂ] H) (hT : IsStarNormal T)
     (g h : H) (s : Set (spectrum ℂ T)) (hs : MeasurableSet s) :
     ‖(normalCFCCoefficientMeasure T hT g h : ComplexMeasure (spectrum ℂ T)) s‖ ≤ ‖g‖ * ‖h‖ := by
@@ -190,7 +212,11 @@ theorem normalCFCCoefficientMeasure_norm_apply_le (T : H →L[ℂ] H) (hT : IsSt
         (measureReal_nonneg (μ := normalCFCDiagonalMeasure T hT h) (s := s)) (sq_nonneg ‖g‖)
     _ = (‖g‖ * ‖h‖) ^ 2 := by ring
 
-/-- Constant-one form bound in the exact orientation needed by mkContinuous₂. -/
+/-- **Unit bound for the CFC coefficient form.** Let `H` be a complete complex Hilbert space
+and `T : H →L[ℂ] H` a normal operator, so `T* T=T T*`. Put `K=σ_ℂ(T)` with its Borel
+measurable structure. Let `μ_(g,h)` be the regular complex measure on `K` characterized by
+`∫ f dμ_(g,h)=⟨h,f(T)g⟩` for `f ∈ C(K,ℂ)`. for measurable `s` and `h,g ∈ H`,
+`‖normalCFCCoefficientFormLinear T hT s h g‖≤1*‖h‖*‖g‖`. -/
 theorem normalCFCCoefficientFormLinear_norm_apply_le (T : H →L[ℂ] H) (hT : IsStarNormal T)
     (s : Set (spectrum ℂ T)) (hs : MeasurableSet s) (h g : H) :
     ‖normalCFCCoefficientFormLinear T hT s h g‖ ≤ (1 : ℝ) * ‖h‖ * ‖g‖ := by

@@ -12,12 +12,12 @@ module
 public import MathlibExt.LinearAlgebra.TensorProduct.DirectLimit.Diagonal
 
 /-!
-# Eventual vanishing in directed tensor systems
+# Eventual vanishing in directed module tensor systems
 
-If a tensor at one stage maps to zero after both factors are included in a
-direct limit, then it is already zero after some common later transition.
-The proof uses the earned simultaneous tensor/direct-limit equivalence and
-the native eventual-zero theorem for the concrete directed limit.
+Let R be a commutative ring, I an upward-directed preorder and (G_i,f_ij) a directed system of
+R-modules, with stage maps j_i:G_i→G∞=colim G. If x∈G_i⊗G_i maps to zero under j_i⊗j_i, then
+(f_ij⊗f_ij)x=0 at some j≥i. Finitely many zero limit classes at one stage are killed together
+at a common later stage.
 -/
 
 @[expose] public section
@@ -36,8 +36,12 @@ variable {G : ι → Type*} [∀ i, AddCommGroup (G i)] [∀ i, Module R (G i)]
 variable (f : ∀ i j, i ≤ j → G i →ₗ[R] G j)
 variable [DirectedSystem G (f · · ·)]
 
-/-- A stagewise tensor which vanishes after both factors map to the direct
-limit vanishes after one common enlargement. -/
+/-- **Stage tensor vanishing in a direct limit is eventually zero.**
+
+Let R be a commutative ring, I an upward-directed preorder and (G_i,f_ij) a directed system of
+R-modules, with stage maps j_i:G_i→G∞=colim G. If x∈G_i⊗_RG_i and (j_i⊗j_i)(x)=0, there exist
+j≥i with (f_ij⊗f_ij)(x)=0.
+-/
 theorem exists_eq_zero_of_map_to_directLimit_tensor_eq_zero
     {i : ι} (x : G i ⊗[R] G i)
     (hx : TensorProduct.map
@@ -57,8 +61,12 @@ variable {G : ι → Type*} [∀ i, AddCommGroup (G i)] [∀ i, Module R (G i)]
 variable (f : ∀ i j, i ≤ j → G i →ₗ[R] G j)
 variable [DirectedSystem G (f · · ·)]
 
-/-- A finite family from one stage which vanishes in a module direct limit
-is killed simultaneously at one common later stage. -/
+/-- **A finite family of zero classes is killed at one stage.**
+
+Let R be a commutative ring, I an upward-directed preorder and (G_i,f_ij) a directed system of
+R-modules, with stage maps j_i:G_i→G∞=colim G. Let J be finite and x_a∈G_i for a∈J. If
+j_i(x_a)=0 for every a, then some j≥i satisfies f_ij(x_a)=0 for all a simultaneously.
+-/
 theorem of.zero_exact_finite_family
     {I : Type*} [Finite I] {i : ι} (x : I → G i)
     (hx : ∀ a, Module.DirectLimit.of R ι G f i (x a) = 0) :

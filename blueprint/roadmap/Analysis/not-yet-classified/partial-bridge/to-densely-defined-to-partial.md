@@ -1,3 +1,4 @@
-# To Densely Defined to Partial
+# Underlying partial map of the regular realization
 
-This adapter retains the original partial map and its exact domain.
+`T.toDenselyDefined.toPartial =
+T.toPartial` for a regular operator `T`.

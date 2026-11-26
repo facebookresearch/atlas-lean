@@ -19,17 +19,20 @@ import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
 
 /-!
-# Actual strict continuity of the completed group multiplier
+# Strict continuity of completed group multipliers
 
-The original L1 translation limit controls the same-seminorm completion on
-each actual core image. Proved density and the computed group isometry give
-continuity on every completed vector. Original group composition shifts the
-continuity from the identity; star exchange gives the right component.
-
-The ordinary multiplier's explicit strict topology therefore makes the
-computed group map strictly continuous. The actual algebraic multiplier
-pair receives this proved continuity field, without a supplied continuity,
-nondegeneracy or faithful embedding model.
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the twisted core Carrier μ α, Xp=p.NonUnitalCompletion its separated C-star
+completion and ιp its dense coefficient map. Assume p(k)≤q(k)=∫ s, ‖k(s)‖ ∂μ for every
+compactly supported continuous core coefficient k. The group multiplier u_p(g) extends the
+left action L_g f(s)=α_g(f(g⁻¹*s)) and the right action R_g f(s)=δ(g)•f(s*g⁻¹), where
+δ(g)=Measure.modularCharacter g is viewed as a complex scalar. For every x∈Xp, the left and
+right completed translation orbits are norm-continuous in g. The strict topology on the
+multiplier algebra is the topology of pointwise norm convergence of both components: m_i→m
+means m_i.fst(x)→m.fst(x) and m_i.snd(x)→m.snd(x) for every x∈Xp. Thus g↦u_p(g) is strictly
+continuous; together with the coefficient multiplier homomorphism it forms a strictly
+continuous covariant pair.
 -/
 
 @[expose] public section
@@ -57,14 +60,31 @@ variable (p : CStarSeminorm (Carrier μ α)) (hp : p ∈ admissibleCStarSeminorm
 
 include hp
 
-/-- The original L1 translate distance controls every actual completed core orbit difference. -/
+/-- **L¹ bound for a dense translation orbit difference.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the twisted core Carrier μ α, Xp=p.NonUnitalCompletion its separated C-star
+completion and ιp its dense coefficient map. Assume p(k)≤q(k)=∫ s, ‖k(s)‖ ∂μ for every
+compactly supported continuous core coefficient k. For g∈G and core coefficient f, put L_g
+f(s)=α_g(f(g⁻¹*s)). Then dist(groupLeftCompletion μ α p g (ιp(f)),ιp(f))≤∫ s, ‖L_g f(s)-f(s)‖
+∂μ.
+-/
 theorem dist_groupLeftCompletion_source_le (g : G) (f : Carrier μ α) :
     dist (groupLeftCompletion μ α p g (p.toNonUnitalCompletion f)) (p.toNonUnitalCompletion f) ≤
       l1Gauge μ α (groupLeft μ α g f - f) := by
   rw [dist_eq_norm, groupLeftCompletion_apply, ← map_sub, CStarSeminorm.norm_toNonUnitalCompletion]
   exact hp _
 
-/-- Each original completed core image has a continuous group orbit at the identity. -/
+/-- **Continuity at the identity on dense completed coefficients.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the twisted core Carrier μ α, Xp=p.NonUnitalCompletion its separated C-star
+completion and ιp its dense coefficient map. Assume p(k)≤q(k)=∫ s, ‖k(s)‖ ∂μ for every
+compactly supported continuous core coefficient k. For every core coefficient f,
+g↦groupLeftCompletion μ α p g (ιp(f)) is norm-continuous at g=1; its value there is ιp(f).
+-/
 theorem groupLeftCompletion_source_continuousAt_one (f : Carrier μ α) :
     ContinuousAt (fun g : G => groupLeftCompletion μ α p g (p.toNonUnitalCompletion f)) 1 := by
   change Tendsto _ (𝓝 1) (𝓝 (groupLeftCompletion μ α p 1 (p.toNonUnitalCompletion f)))
@@ -74,7 +94,15 @@ theorem groupLeftCompletion_source_continuousAt_one (f : Carrier μ α) :
   filter_upwards [(tendsto_l1Gauge_groupLeft_sub μ α f).eventually (gt_mem_nhds hε)] with g hg
   exact (dist_groupLeftCompletion_source_le μ α p hp g f).trans_lt hg
 
-/-- Proved core density and actual group isometry give continuity on every completed vector at one. -/
+/-- **Continuity at the identity of every left completion orbit.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the twisted core Carrier μ α, Xp=p.NonUnitalCompletion its separated C-star
+completion and ιp its dense coefficient map. Assume p(k)≤q(k)=∫ s, ‖k(s)‖ ∂μ for every
+compactly supported continuous core coefficient k. For x∈Xp, the orbit g↦groupLeftCompletion μ
+α p g x is norm-continuous at the identity 1∈G.
+-/
 theorem groupLeftCompletion_continuousAt_one (x : p.NonUnitalCompletion) :
     ContinuousAt (fun g : G => groupLeftCompletion μ α p g x) 1 := by
   change Tendsto _ (𝓝 1) (𝓝 (groupLeftCompletion μ α p 1 x))
@@ -109,7 +137,15 @@ theorem groupLeftCompletion_continuousAt_one (x : p.NonUnitalCompletion) :
       add_lt_add hApprox (add_lt_add hg (by simpa only [dist_comm] using hApprox))
     _ = ε := by ring
 
-/-- Original group composition gives continuity of every completed left orbit at every group point. -/
+/-- **Norm continuity of completed left group orbits.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the twisted core Carrier μ α, Xp=p.NonUnitalCompletion its separated C-star
+completion and ιp its dense coefficient map. Assume p(k)≤q(k)=∫ s, ‖k(s)‖ ∂μ for every
+compactly supported continuous core coefficient k. For every x∈Xp, g↦groupLeftCompletion μ α p
+g x is norm-continuous on G. On dense classes this action is ιp(f)↦ιp(s↦α_g(f(g⁻¹*s))).
+-/
 theorem continuous_groupLeftCompletion (x : p.NonUnitalCompletion) :
     Continuous (fun g : G => groupLeftCompletion μ α p g x) := by
   rw [continuous_iff_continuousAt]
@@ -139,7 +175,16 @@ theorem continuous_groupLeftCompletion (x : p.NonUnitalCompletion) :
   rw [hfun] at hOrbit
   exact hOrbit
 
-/-- The computed right orbit is continuous by the actual inverse/star exchange. -/
+/-- **Norm continuity of completed right group orbits.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the twisted core Carrier μ α, Xp=p.NonUnitalCompletion its separated C-star
+completion and ιp its dense coefficient map. Assume p(k)≤q(k)=∫ s, ‖k(s)‖ ∂μ for every
+compactly supported continuous core coefficient k. For every x∈Xp, g↦groupRightCompletion μ α
+p g x is norm-continuous on G. On dense classes it is ιp(f)↦ιp(s↦δ(g)•f(s*g⁻¹)), with
+δ(g)=Measure.modularCharacter g.
+-/
 theorem continuous_groupRightCompletion (x : p.NonUnitalCompletion) :
     Continuous (fun g : G => groupRightCompletion μ α p g x) := by
   have h := ((continuous_groupLeftCompletion μ α p hp (star x)).comp continuous_inv).star
@@ -152,7 +197,19 @@ theorem continuous_groupRightCompletion (x : p.NonUnitalCompletion) :
   rw [hfun] at h
   exact h
 
-/-- The actual group multiplier is continuous for the existing explicit strict topology. -/
+/-- **Strict continuity of the group multiplier map.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the twisted core Carrier μ α, Xp=p.NonUnitalCompletion its separated C-star
+completion and ιp its dense coefficient map. Assume p(k)≤q(k)=∫ s, ‖k(s)‖ ∂μ for every
+compactly supported continuous core coefficient k. The group multiplier u_p(g) extends the
+left action L_g f(s)=α_g(f(g⁻¹*s)) and the right action R_g f(s)=δ(g)•f(s*g⁻¹), where
+δ(g)=Measure.modularCharacter g is viewed as a complex scalar. The strict topology on the
+multiplier algebra is the topology of pointwise norm convergence of both components: m_i→m
+means m_i.fst(x)→m.fst(x) and m_i.snd(x)→m.snd(x) for every x∈Xp. The map g↦groupMultiplier μ
+α p g is continuous from G to this strict topology.
+-/
 theorem strictContinuous_groupMultiplier :
     DoubleCentralizer.StrictContinuous (groupMultiplier μ α p) := by
   let _ : TopologicalSpace 𝓜(ℂ, p.NonUnitalCompletion) :=
@@ -166,13 +223,38 @@ theorem strictContinuous_groupMultiplier :
   exact ⟨(continuous_groupLeftCompletion μ α p hp x).tendsto g,
     (continuous_groupRightCompletion μ α p hp x).tendsto g⟩
 
-/-- The same computed unitary-valued group map is strictly continuous after its ordinary inclusion. -/
+/-- **Strict continuity of the unitary multiplier representation.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the twisted core Carrier μ α, Xp=p.NonUnitalCompletion its separated C-star
+completion and ιp its dense coefficient map. Assume p(k)≤q(k)=∫ s, ‖k(s)‖ ∂μ for every
+compactly supported continuous core coefficient k. The group multiplier u_p(g) extends the
+left action L_g f(s)=α_g(f(g⁻¹*s)) and the right action R_g f(s)=δ(g)•f(s*g⁻¹), where
+δ(g)=Measure.modularCharacter g is viewed as a complex scalar. The strict topology on the
+multiplier algebra is the topology of pointwise norm convergence of both components: m_i→m
+means m_i.fst(x)→m.fst(x) and m_i.snd(x)→m.snd(x) for every x∈Xp. The inclusion of
+groupUnitaryMultiplierHom μ α p:G→unitary(𝓜(ℂ,Xp)) into 𝓜(ℂ,Xp) is strictly continuous.
+-/
 theorem strictContinuous_groupUnitaryMultiplierHom :
     DoubleCentralizer.StrictContinuous (fun g : G =>
       (groupUnitaryMultiplierHom μ α p g : 𝓜(ℂ, p.NonUnitalCompletion))) := by
   simpa only [groupUnitaryMultiplierHom_coe] using strictContinuous_groupMultiplier μ α p hp
 
-/-- The actual coefficient/group pair with its internally proved original strict-continuity field. -/
+/-- **Strictly continuous canonical multiplier pair.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the twisted core Carrier μ α, Xp=p.NonUnitalCompletion its separated C-star
+completion and ιp its dense coefficient map. Assume p(k)≤q(k)=∫ s, ‖k(s)‖ ∂μ for every
+compactly supported continuous core coefficient k. For a∈A, the multiplier j_p(a) has left and
+right components extending L_a f(s)=a*f(s) and R_a f(s)=f(s)*α_s(a). The group multiplier
+u_p(g) extends the left action L_g f(s)=α_g(f(g⁻¹*s)) and the right action R_g
+f(s)=δ(g)•f(s*g⁻¹), where δ(g)=Measure.modularCharacter g is viewed as a complex scalar. The
+pair canonicalStrictMultiplierPair μ α p hp consists of j_p and u_p satisfying
+u_p(g)*j_p(a)*star(u_p(g))=j_p(α_g(a)), with g↦u_p(g) continuous for the topology of pointwise
+norm convergence of both multiplier components.
+-/
 def canonicalStrictMultiplierPair :
     { pair : (A →⋆ₙₐ[ℂ] 𝓜(ℂ, p.NonUnitalCompletion)) ×
         (G →* unitary 𝓜(ℂ, p.NonUnitalCompletion)) //
@@ -183,18 +265,45 @@ def canonicalStrictMultiplierPair :
   ⟨(canonicalMultiplierPair μ α p).val,
     (canonicalMultiplierPair μ α p).property, strictContinuous_groupUnitaryMultiplierHom μ α p hp⟩
 
-/-- Forgetting the new continuity proof preserves both original computed multiplier maps. -/
+/-- **Underlying maps of the strict multiplier pair.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the twisted core Carrier μ α, Xp=p.NonUnitalCompletion its separated C-star
+completion and ιp its dense coefficient map. Assume p(k)≤q(k)=∫ s, ‖k(s)‖ ∂μ for every
+compactly supported continuous core coefficient k. The coefficient and unitary group maps of
+canonicalStrictMultiplierPair μ α p hp equal those of canonicalMultiplierPair μ α p:
+coefficientMultiplierHom μ α p and groupUnitaryMultiplierHom μ α p.
+-/
 @[simp]
 theorem canonicalStrictMultiplierPair_val :
     (canonicalStrictMultiplierPair μ α p hp).val = (canonicalMultiplierPair μ α p).val := rfl
 
-/-- The actual strict pair carries the proved group strict-continuity value. -/
+/-- **Strict continuity carried by the canonical pair.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the twisted core Carrier μ α, Xp=p.NonUnitalCompletion its separated C-star
+completion and ιp its dense coefficient map. Assume p(k)≤q(k)=∫ s, ‖k(s)‖ ∂μ for every
+compactly supported continuous core coefficient k. For the unitary group map u_p in
+canonicalStrictMultiplierPair μ α p hp, g↦u_p(g).fst(x) and g↦u_p(g).snd(x) are
+norm-continuous for every x∈Xp; this is strict continuity.
+-/
 theorem canonicalStrictMultiplierPair_strictContinuous :
     DoubleCentralizer.StrictContinuous (fun g : G =>
       ((canonicalStrictMultiplierPair μ α p hp).val.2 g : 𝓜(ℂ, p.NonUnitalCompletion))) :=
   (canonicalStrictMultiplierPair μ α p hp).property.2
 
-/-- The actual strict pair retains the original full conjugation covariance. -/
+/-- **Covariance of the strict multiplier pair.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the twisted core Carrier μ α, Xp=p.NonUnitalCompletion its separated C-star
+completion and ιp its dense coefficient map. Assume p(k)≤q(k)=∫ s, ‖k(s)‖ ∂μ for every
+compactly supported continuous core coefficient k. The maps j_p,u_p of
+canonicalStrictMultiplierPair μ α p hp satisfy u_p(g)*j_p(a)*star(u_p(g))=j_p(α_g(a)) for all
+g∈G and a∈A.
+-/
 theorem canonicalStrictMultiplierPair_covariance (g : G) (a : A) :
     ((canonicalStrictMultiplierPair μ α p hp).val.2 g : 𝓜(ℂ, p.NonUnitalCompletion)) *
         (canonicalStrictMultiplierPair μ α p hp).val.1 a *

@@ -18,15 +18,14 @@ public import Mathlib.Analysis.RCLike.Basic
 public import Mathlib.Analysis.Complex.Basic
 
 /-!
-# A literal dual-precomposition lower bound gives an actual approximate unit-ball image
+# A dual norm lower bound controls the closed unit-ball image
 
-For an original complex bounded linear map B, the inequality
-‖F‖≤‖F∘B‖ for every actual continuous linear functional F implies that
-the image of the original closed unit ball is norm dense in a fixed
-positive-radius target ball. Separation from that convex closed image
-would give a functional contradicting the original dual norm inequality.
-No predual quotient, surjectivity, range-closure or model certificate is
-an input. This is the approximation prerequisite for the quotient constructor.
+Let `B : E →L[ℂ] F` be a bounded map between complex normed spaces, possibly incomplete. Suppose
+every continuous functional `G ∈ F*` satisfies `‖G‖≤‖G∘B‖`.
+
+Then the closed radius-one-half ball of `F` lies in the norm closure of the image of the closed
+unit ball of `E`: `closedBall_F(0,1/2) ⊆ closure(B(closedBall_E(0,1)))`. This is an
+approximation assertion and does not require surjectivity of `B`.
 -/
 
 @[expose] public section
@@ -45,7 +44,10 @@ universe u v
 variable {E : Type u} [NormedAddCommGroup E] [NormedSpace ℂ E]
 variable {F : Type v} [NormedAddCommGroup F] [NormedSpace ℂ F]
 
-/-- An actual dual norm lower bound gives the original target half-ball in the closed unit-ball image. -/
+/-- **Target half-ball in the closed unit-ball image.** Let `E,F` be complex normed spaces,
+with no completeness assumption, and `B : E →L[ℂ] F`. Assume `‖G‖≤‖G∘B‖` for every
+continuous complex-linear functional `G ∈ F*`. `closedBall_F(0,1/2) ⊆ closure(B ''
+closedBall_E(0,1))`, with closure in the norm topology of `F`. -/
 theorem halfBall_subset_closure_image_unitBall_of_dual_lower_bound (B : E →L[ℂ] F)
     (hdual : ∀ G : StrongDual ℂ F, ‖G‖ ≤ ‖G.comp B‖) :
     closedBall (0 : F) (1 / 2 : ℝ) ⊆ closure (B '' closedBall (0 : E) 1) := by

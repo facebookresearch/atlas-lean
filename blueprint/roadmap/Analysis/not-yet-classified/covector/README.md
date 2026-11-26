@@ -1,4 +1,4 @@
-# Covector
+# Inner-product covectors on right C-star modules
 
-- [Covector CLM](covector-clm.md)
-- [Covector](covector.md)
+- [Inner-product covector](covector-clm.md)
+- [Adjointable inner-product covector](covector.md)

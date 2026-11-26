@@ -1,3 +1,6 @@
-# Unilateral Shift mul star unilateral Shift
+# Unilateral adjoint product equals the defect complement
 
-Star-multiplication form of the unilateral shift's defect equation.
+Let `𝕜` be real or complex
+and `G` a normed inner-product `𝕜`-space. On `L=lp (fun _ : ℕ => G) 2`, write
+`Sx=(0,x_0,x_1,…)`. Assume `G` is complete, and put `B=S*`, `(Bx)_n=x_(n+1)`, and
+`P=I-SB`. `S S*=I_L-P`.

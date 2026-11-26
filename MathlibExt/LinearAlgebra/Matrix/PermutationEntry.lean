@@ -16,19 +16,11 @@ public import Mathlib.LinearAlgebra.Matrix.Permutation
 @[expose] public section
 
 /-!
-# Entry formula for permutation matrices
+# Permutation matrix entry formula
 
-`Matrix.permMatrix_entry_eq` gives the entries of `Equiv.Perm.permMatrix`:
-`(σ.permMatrix R) i j = if σ i = j then 1 else 0`, requiring only
-`[Zero R] [One R]`.
-
-This lives in its own lightweight module — rather than alongside the
-monomial-matrix / general-linear-group theory — so that basic results about
-permutation matrices (e.g. the Birkhoff–von Neumann 2×2 classification) do
-not pull in the permutation-cocycle, determinant, special-linear-group, and
-semidirect-product dependencies. It is stated in the `Matrix` namespace,
-matching Mathlib's existing permutation-matrix API (`Matrix.permMatrix_one`,
-`Matrix.det_permutation`), not the `GeneralLinearGroup` namespace.
+Let I be any index type, σ:I≃I a permutation, and R a type with zero and one. The permutation
+matrix Pσ has entry Pσ(i,j)=1 when σ(i)=j and 0 otherwise. No finiteness or ring structure is
+needed for this entry formula.
 -/
 
 open Matrix
@@ -39,8 +31,11 @@ universe uR uι
 
 variable {R : Type uR} [Zero R] [One R] {ι : Type uι} [DecidableEq ι]
 
-/-- Entry formula for permutation matrices: `(σ.permMatrix R) i j` is `1` if
-`σ i = j` and `0` otherwise. Registered as a `simp` lemma. -/
+/-- **Entries of a permutation matrix.**
+
+Let I be any index type, R a type with zero and one and σ a permutation of I. For i,j∈I,
+(σ.permMatrix R)_(i,j)=if σ(i)=j then 1 else 0.
+-/
 @[simp]
 theorem permMatrix_entry_eq (σ : Equiv.Perm ι) (i j : ι) :
     (σ.permMatrix R : Matrix ι ι R) i j = if σ i = j then 1 else 0 := by

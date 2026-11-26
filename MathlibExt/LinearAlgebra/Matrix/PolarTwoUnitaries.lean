@@ -24,18 +24,11 @@ open scoped Matrix.Norms.L2Operator ComplexStarModule ComplexOrder
 open Matrix
 
 /-!
-# Contractions as averages of two unitaries
+# Operator-norm contractions are averages of two unitaries
 
-This module proves that every finite contraction `‖X‖ ≤ 1` is the average
-of two unitaries. The proof obtains a unitary `P` with `P * sqrt(Xᴴ*X) = X`
-via `Matrix.exists_unitary_mul_eq_of_isometry`, writes the positive
-contraction `sqrt(Xᴴ*X)` as the real part of a unitary using C* functional
-calculus and `selfAdjoint.unitarySelfAddISMul`, and then multiplies.
-
-## Main result
-
-* `Matrix.exists_eq_average_two_unitaries_of_norm_le_one` – every
-  contraction is the midpoint of two unitaries.
+Let I be a finite index type and X an I×I complex matrix with Euclidean L² operator norm
+‖X‖≤1. There exist unitary matrices W,Z with X=(W+Z)/2. The norm is the operator norm on
+Euclidean ℂ^I.
 -/
 
 private theorem exists_eq_average_two_unitaries_of_isHermitian
@@ -100,7 +93,11 @@ private theorem exists_eq_average_two_unitaries_of_isHermitian
       _ = ((2 : ℂ)⁻¹) • (W + Z) := hR_to_C_eq
   exact ⟨W, Z, hW_mem, hZ_mem, hP_eq_C⟩
 
-/-- Gram matrix `Xᴴ * X`. -/
+/-- **Gram matrix of a finite complex operator.**
+
+Let I be a finite index type and X an I×I complex matrix. The matrix contractionGram X is XᴴX,
+the positive semidefinite Gram matrix of its columns.
+-/
 private def contractionGram {n : Type*} [Fintype n] [DecidableEq n]
     (X : Matrix n n ℂ) : Matrix n n ℂ :=
   Xᴴ * X

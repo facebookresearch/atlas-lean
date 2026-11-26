@@ -14,11 +14,15 @@ module
 public import MathlibExt.LinearAlgebra.TensorProduct.Balanced.Actions
 
 /-!
-# Right outer actions on the existing balanced quotient
+# Right outer actions on a balanced tensor quotient
 
-The given right action on the second factor is a left action of the opposite
-semiring. It descends through the actual ground-balanced quotient. The new
-module dictionaries are named values; no global action is installed.
+Let k be a commutative ring, R a semiring, Q a right R-module and N a left R-module, both
+additive commutative groups with k-module structures. Write B=B_k(R;Q,N) for the ground
+k-tensor quotient by (q·r)⊗n=q⊗(r•n), and q⊠n for its pure class. Let S be a semiring acting
+on N on the right, commuting with its k-action and left R-action. For t∈Sᵒᵖ, define
+ρ_t(q⊠n)=q⊠(t•n). The operators ρ_t give a semiring homomorphism Sᵒᵖ→End_k(B), hence a right
+S-module structure on B. When S is a k-algebra and N has a compatible scalar tower, this
+action restricts to the ground k-action.
 -/
 
 @[expose] public section
@@ -39,7 +43,14 @@ variable (k : Type u) (R : Type v) (S : Type s) (Q : Type w) (N : Type z)
   [Module k Q] [Module k N] [Module Rᵐᵒᵖ Q] [Module R N]
   [Module Sᵐᵒᵖ N] [SMulCommClass Sᵐᵒᵖ k N] [SMulCommClass R Sᵐᵒᵖ N]
 
-/-- The native right operator preserves the original balancing action. -/
+/-- **Right outer operator preserves left balancing scalars.**
+
+Let k be a commutative ring, R a semiring, Q a right R-module and N a left R-module, both
+additive commutative groups with k-module structures. Write B=B_k(R;Q,N) for the ground
+k-tensor quotient by (q·r)⊗n=q⊗(r•n), and q⊠n for its pure class. Let S be a semiring acting
+on N on the right, commuting with its k-action and left R-action. For t∈Sᵒᵖ, define
+ρ_t(q⊠n)=q⊠(t•n). For t∈Sᵒᵖ, r∈R and n∈N, t•(r•n)=r•(t•n).
+-/
 theorem rightOperator_equivariant (t : Sᵐᵒᵖ) :
     ∀ (r : R) (n : N),
       (Module.toModuleEnd k N t) (r • n) =
@@ -48,7 +59,14 @@ theorem rightOperator_equivariant (t : Sᵐᵒᵖ) :
   rw [leftOperator_apply, leftOperator_apply]
   exact (smul_comm r t n).symm
 
-/-- Literal pure-generator value of the native right operator's balanced map. -/
+/-- **Balanced pure value of the right outer operator.**
+
+Let k be a commutative ring, R a semiring, Q a right R-module and N a left R-module, both
+additive commutative groups with k-module structures. Write B=B_k(R;Q,N) for the ground
+k-tensor quotient by (q·r)⊗n=q⊗(r•n), and q⊠n for its pure class. Let S be a semiring acting
+on N on the right, commuting with its k-action and left R-action. For t∈Sᵒᵖ, define
+ρ_t(q⊠n)=q⊠(t•n). The map induced by id_Q and n↦t•n sends q⊠n to q⊠(t•n).
+-/
 theorem rightOperator_map_mk (t : Sᵐᵒᵖ) (q : Q) (n : N) :
     map (LinearMap.id : Q →ₗ[k] Q) (Module.toModuleEnd k N t)
         (fun r q => leftIdentity_equivariant k Rᵐᵒᵖ Q (op r) q)
@@ -59,7 +77,14 @@ theorem rightOperator_map_mk (t : Sᵐᵒᵖ) (q : Q) (n : N) :
     (rightOperator_equivariant k R S N t) q n
   exact h.trans (by rw [LinearMap.id_apply, leftOperator_apply])
 
-/-- The opposite-semiring action descends through the same actual quotient. -/
+/-- **Opposite-semiring representation on the balanced quotient.**
+
+Let k be a commutative ring, R a semiring, Q a right R-module and N a left R-module, both
+additive commutative groups with k-module structures. Write B=B_k(R;Q,N) for the ground
+k-tensor quotient by (q·r)⊗n=q⊗(r•n), and q⊠n for its pure class. Let S be a semiring acting
+on N on the right, commuting with its k-action and left R-action. For t∈Sᵒᵖ, define
+ρ_t(q⊠n)=q⊠(t•n). The semiring homomorphism rightAction k R S Q N:Sᵒᵖ→End_k(B) sends t to ρ_t.
+-/
 def rightAction : Sᵐᵒᵖ →+* Module.End k (Balanced k R Q N) where
   toFun t := map (LinearMap.id : Q →ₗ[k] Q) (Module.toModuleEnd k N t)
     (fun r q => leftIdentity_equivariant k Rᵐᵒᵖ Q (op r) q)
@@ -95,7 +120,14 @@ theorem rightAction_mk (t : Sᵐᵒᵖ) (q : Q) (n : N) :
     rightAction k R S Q N t (mk k R Q N q n) = mk k R Q N q (t • n) := by
   exact rightOperator_map_mk k R S Q N t q n
 
-/-- The computed right module retains the quotient's original ground module. -/
+/-- **Right outer module on the balanced quotient.**
+
+Let k be a commutative ring, R a semiring, Q a right R-module and N a left R-module, both
+additive commutative groups with k-module structures. Write B=B_k(R;Q,N) for the ground
+k-tensor quotient by (q·r)⊗n=q⊗(r•n), and q⊠n for its pure class. Let S be a semiring acting
+on N on the right, commuting with its k-action and left R-action. For t∈Sᵒᵖ, define
+ρ_t(q⊠n)=q⊠(t•n). The module rightModule k R S Q N over Sᵒᵖ has t•(q⊠n)=q⊠(t•n).
+-/
 abbrev rightModule : Module Sᵐᵒᵖ (Balanced k R Q N) :=
   Module.compHom (Balanced k R Q N) (rightAction k R S Q N)
 
@@ -106,7 +138,14 @@ theorem rightModule_smul_mk (t : Sᵐᵒᵖ) (q : Q) (n : N) :
   change rightAction k R S Q N t (mk k R Q N q n) = _
   exact rightAction_mk k R S Q N t q n
 
-/-- Every computed right scalar is linear for the original ground action. -/
+/-- **Right outer and ground scalars commute.**
+
+Let k be a commutative ring, R a semiring, Q a right R-module and N a left R-module, both
+additive commutative groups with k-module structures. Write B=B_k(R;Q,N) for the ground
+k-tensor quotient by (q·r)⊗n=q⊗(r•n), and q⊠n for its pure class. Let S be a semiring acting
+on N on the right, commuting with its k-action and left R-action. For t∈Sᵒᵖ, define
+ρ_t(q⊠n)=q⊠(t•n). For t∈Sᵒᵖ, c∈k and z∈B, ρ_t(c•z)=c•ρ_t(z).
+-/
 theorem rightSMulCommClass :
     letI := rightModule k R S Q N
     SMulCommClass Sᵐᵒᵖ k (Balanced k R Q N) := by
@@ -119,7 +158,15 @@ theorem rightSMulCommClass :
 variable [Algebra k S] [hSN : IsScalarTower k Sᵐᵒᵖ N]
 
 include hSN in
-/-- Ground scalars in the opposite algebra act through the original ground action. -/
+/-- **Ground scalars in the opposite algebra act on the quotient.**
+
+Let k be a commutative ring, R a semiring, Q a right R-module and N a left R-module, both
+additive commutative groups with k-module structures. Write B=B_k(R;Q,N) for the ground
+k-tensor quotient by (q·r)⊗n=q⊗(r•n), and q⊠n for its pure class. Let S be a semiring acting
+on N on the right, commuting with its k-action and left R-action. For t∈Sᵒᵖ, define
+ρ_t(q⊠n)=q⊠(t•n). Assume S is a k-algebra and N has compatible k,Sᵒᵖ scalar actions. Then
+rightAction(algebraMap k Sᵒᵖ c)=c•id_B for c∈k.
+-/
 theorem rightAction_algebraMap (c : k) :
     rightAction k R S Q N (algebraMap k Sᵐᵒᵖ c) =
       c • (1 : Module.End k (Balanced k R Q N)) := by
@@ -131,7 +178,15 @@ theorem rightAction_algebraMap (c : k) :
   exact (mk k R Q N q).map_smul c n
 
 include hSN in
-/-- The original second-factor compatibility earns the quotient scalar tower. -/
+/-- **Scalar tower for the right outer quotient action.**
+
+Let k be a commutative ring, R a semiring, Q a right R-module and N a left R-module, both
+additive commutative groups with k-module structures. Write B=B_k(R;Q,N) for the ground
+k-tensor quotient by (q·r)⊗n=q⊗(r•n), and q⊠n for its pure class. Let S be a semiring acting
+on N on the right, commuting with its k-action and left R-action. For t∈Sᵒᵖ, define
+ρ_t(q⊠n)=q⊠(t•n). If S is a k-algebra and N has a compatible k,Sᵒᵖ scalar tower, then the
+induced k,Sᵒᵖ actions on B form the same scalar tower.
+-/
 theorem rightScalarTower :
     letI := rightModule k R S Q N
     IsScalarTower k Sᵐᵒᵖ (Balanced k R Q N) := by
@@ -156,7 +211,16 @@ variable {k : Type u} {R : Type v} {S : Type s}
   [SMulCommClass Sᵐᵒᵖ k N] [SMulCommClass R Sᵐᵒᵖ N]
   [SMulCommClass Sᵐᵒᵖ k N'] [SMulCommClass R Sᵐᵒᵖ N']
 
-/-- The old ground-linear quotient map intertwines the two computed right actions. -/
+/-- **Balanced factor maps intertwine right outer actions.**
+
+Let k be a commutative ring, R a semiring, Q a right R-module and N a left R-module, both
+additive commutative groups with k-module structures. Write B=B_k(R;Q,N) for the ground
+k-tensor quotient by (q·r)⊗n=q⊗(r•n), and q⊠n for its pure class. Let S be a semiring acting
+on N on the right, commuting with its k-action and left R-action. For t∈Sᵒᵖ, define
+ρ_t(q⊠n)=q⊠(t•n). Let Q′,N′ have the corresponding structures and f:Q→Q′, g:N→N′ be k-linear,
+with f(q·r)=f(q)·r and g(r•n)=r•g(n). If g(t•n)=t•g(n), the induced balanced map F satisfies
+F∘ρ_t=ρ′_t∘F for all t∈Sᵒᵖ.
+-/
 theorem map_rightAction (f : Q →ₗ[k] Q') (g : N →ₗ[k] N')
     (hf : ∀ (r : R) (q : Q), f (op r • q) = op r • f q)
     (hg : ∀ (r : R) (n : N), g (r • n) = r • g n)
@@ -168,7 +232,16 @@ theorem map_rightAction (f : Q →ₗ[k] Q') (g : N →ₗ[k] N')
   simp only [LinearMap.comp_apply, rightAction_mk, map_mk]
   rw [hgS]
 
-/-- The same actual quotient map with its earned opposite-semiring linearity. -/
+/-- **Right outer-linear map induced on balanced quotients.**
+
+Let k be a commutative ring, R a semiring, Q a right R-module and N a left R-module, both
+additive commutative groups with k-module structures. Write B=B_k(R;Q,N) for the ground
+k-tensor quotient by (q·r)⊗n=q⊗(r•n), and q⊠n for its pure class. Let S be a semiring acting
+on N on the right, commuting with its k-action and left R-action. For t∈Sᵒᵖ, define
+ρ_t(q⊠n)=q⊠(t•n). Let Q′,N′ have the corresponding structures and f:Q→Q′, g:N→N′ be k-linear,
+with f(q·r)=f(q)·r and g(r•n)=r•g(n). If g is Sᵒᵖ-equivariant, mapRight f g is Sᵒᵖ-linear,
+with pure value q⊠n↦f(q)⊠g(n).
+-/
 def mapRight (f : Q →ₗ[k] Q') (g : N →ₗ[k] N')
     (hf : ∀ (r : R) (q : Q), f (op r • q) = op r • f q)
     (hg : ∀ (r : R) (n : N), g (r • n) = r • g n)
@@ -212,8 +285,15 @@ variable (k : Type u) (R : Type v) (L : Type vL) (T : Type vT)
   [Module L M] [SMulCommClass L k M] [SMulCommClass L Rᵐᵒᵖ M]
   [Module Tᵐᵒᵖ N] [SMulCommClass Tᵐᵒᵖ k N] [SMulCommClass R Tᵐᵒᵖ N]
 
-/-- Computed actions on separate factors commute without a ground-linearity
-assumption on either balancing action. -/
+/-- **Actions on separate balanced factors commute.**
+
+Let k be a commutative ring, R a semiring, Q a right R-module and N a left R-module, both
+additive commutative groups with k-module structures. Write B=B_k(R;Q,N) for the ground
+k-tensor quotient by (q·r)⊗n=q⊗(r•n), and q⊠n for its pure class. Let L act on Q commuting
+with its k and right R-actions, and let Tᵒᵖ act on N commuting with its k and left R-actions.
+The induced left L- and right T-actions on B commute: ℓ_l(ρ_t(z))=ρ_t(ℓ_l(z)). L,T are
+semirings; no k-linearity premise on the balancing R-actions is required.
+-/
 theorem leftRightSMulCommClass_of_factor_actions :
     letI := leftModule k R L M N
     letI := rightModule k R T M N

@@ -15,13 +15,13 @@ public import MathlibExt.Analysis.VonNeumannAlgebra.Weight.GNSNormalDiagonalFunc
 public import Mathlib.Analysis.InnerProductSpace.LinearMap
 
 /-!
-# Original normal-weight GNS off-diagonal coefficients in the actual normal span
+# Normal off-diagonal GNS coefficients on finite square vectors
 
-Four actual normal diagonal members at x+y, x-y, x+i*y and x-i*y combine
-by the original complex polarization identity. Their literal GNS map values
-and second-variable-linear pairing give the off-diagonal representation
-coefficient on the same original algebra. No desired normality, vector,
-GNS model or coefficient-bound certificate is an input.
+For a normal extended weight on a concrete von Neumann algebra, finite square vectors `x,y ∈
+n_φ` define the normal functional `a ↦ ⟨Λ(y),π(a)Λ(x)⟩`.
+
+Polarizing the normal diagonal coefficients puts this off-diagonal coefficient in `M_*`. The
+inner product is linear in its second argument; no faithfulness or semifiniteness is assumed.
 -/
 
 @[expose] public section
@@ -40,7 +40,15 @@ universe u
 
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- Construct the original off-diagonal GNS coefficient as an actual normal-functional member. -/
+/-- **Normal functional of two finite square GNS vectors.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Let `φ : M₊ → [0,∞]` be an
+extended positive weight: additive, homogeneous for finite nonnegative real scalars, and
+zero at zero. Put `n_φ={x : φ(x* x)<∞}`, and let `Λ : n_φ → H_φ` be the dense GNS map into
+the weight Hilbert completion. Its representation `π` satisfies `π(a)Λ(x)=Λ(a*x)`. Assume
+`φ` preserves least upper bounds of nonempty norm-bounded directed positive sets. for `x,y
+∈ n_φ`, `normalWeightGNSOffDiagonalFunctional M φ x y` returns `ρ ∈ M_*` whose underlying
+bounded functional is `representationCoefficient π (Λ x) (Λ y)`, with value
+`ρ(a)=⟨Λ(y),π(a)Λ(x)⟩`. -/
 def normalWeightGNSOffDiagonalFunctional (M : VonNeumannAlgebra H) (φ : Weight M)
     (hφ : IsNormalWeight M φ) (x y : φ.finiteSquareSubmodule) :
     {ρ : normalFunctionalSpace M // (ρ.val : StrongDual ℂ M) =

@@ -1,10 +1,10 @@
-# Circle Fejer Polynomial
+# Fejér polynomials and their uniform norm bound
 
-- [Circle Fejer Polynomial](circle-fejer-polynomial.md)
-- [Circle Fourier apply sub](circle-fourier-apply-sub.md)
-- [Circle Fejer Kernel fourier](circle-fejer-kernel-fourier.md)
-- [Circle Fourier integral translate](circle-fourier-integral-translate.md)
-- [Circle Fourier translate integrable](circle-fourier-translate-integrable.md)
-- [Circle Fejer Polynomial eq integral](circle-fejer-polynomial-eq-integral.md)
-- [Circle Fejer Kernel integral re sub](circle-fejer-kernel-integral-re-sub.md)
-- [Circle Fejer Polynomial norm le](circle-fejer-polynomial-norm-le.md)
+- [Continuous Fejér polynomial of an L∞ function](circle-fejer-polynomial.md)
+- [Circle Fourier character on a difference](circle-fourier-apply-sub.md)
+- [Finite Fourier expansion of the Fejér kernel](circle-fejer-kernel-fourier.md)
+- [Integral of a translated Fourier character](circle-fourier-integral-translate.md)
+- [Integrability of a translated Fourier term](circle-fourier-translate-integrable.md)
+- [Fejér polynomial as convolution with the Fejér kernel](circle-fejer-polynomial-eq-integral.md)
+- [Translated Fejér kernel has unit mass](circle-fejer-kernel-integral-re-sub.md)
+- [Uniform norm bound for a Fejér polynomial](circle-fejer-polynomial-norm-le.md)

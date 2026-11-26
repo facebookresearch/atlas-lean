@@ -1,3 +1,4 @@
-# Adjointable ext completed Single
+# Determination by completed coordinates
 
-Adjointable maps from the completed sum are determined by their coordinate values.
+Two adjointable maps from `Completed B E` are
+equal if they agree on every vector `completedSingle i x`.

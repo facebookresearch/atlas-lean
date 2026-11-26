@@ -16,14 +16,18 @@ public import MathlibExt.MeasureTheory.VectorMeasure.ComplexIntegral
 public import Mathlib.Analysis.InnerProductSpace.Adjoint
 
 /-!
-# Spectral integration for projection-valued measures
+# Bounded spectral integrals and simple-function approximations
 
-This file constructs the bounded operator integral of a bounded measurable
-complex-valued function against a projection-valued measure.  The construction
-is characterized by its scalar coefficients and agrees with the canonical
-finite sum on measurable simple functions.  It also provides the contraction,
-Lipschitz, strict simple-function approximation, and uniqueness interfaces
-needed for the later algebraic extension.
+For a strongly countably additive PVM `E` on a measurable space `X`, acting on a complete
+complex Hilbert space `H`, a bounded measurable function `f : X → ℂ` defines the operator
+`I_E(f)` characterized by `⟨h,I_E(f)g⟩=∫ f dμ_(g,h)`, where `μ_(g,h)(s)=⟨h,E(s)g⟩`.
+
+The integral is complex-linear and contractive for the supremum norm: `‖I_E(f)‖≤‖f‖∞` and
+`‖I_E(f)-I_E(k)‖≤‖f-k‖∞`. On a measurable simple function, `I_E(f)=Σ_c∈range(f) c E(f⁻¹({c}))`.
+
+Uniform simple-function approximations give operator-norm approximations by these finite sums,
+and they determine the continuous linear integral uniquely. No measure regularity, separability
+or nonempty-space assumption is needed.
 -/
 
 @[expose] public section
@@ -83,8 +87,11 @@ private theorem norm_spectralIntegralFormLinear_apply_le
         (norm_nonneg phi)
     _ = ‖phi‖ * ‖h‖ * ‖g‖ := by ring
 
-/-- The bounded sesquilinear coefficient form of the spectral integral.  It is
-conjugate-linear in the first vector and linear in the second. -/
+/-- **Bounded sesquilinear form of a spectral integral.** Let `X` be a measurable space and
+`H` a complete complex Hilbert space. Let `E : ProjectionValuedMeasure X H` be a strongly
+countably additive PVM. Write `μ_(g,h)(s)=⟨h,E(s)g⟩` for its scalar coefficient measures.
+for bounded measurable `f : X → ℂ`, `spectralIntegralForm E f (h,g)=∫ f dμ_(g,h)`. This is
+conjugate-linear in `h`, linear in `g`, and has bound `|F(h,g)|≤‖f‖∞‖h‖‖g‖`. -/
 @[no_expose]
 noncomputable def spectralIntegralForm
     (E : ProjectionValuedMeasure X H) (phi : BoundedMeasurableFunction X) :
@@ -98,15 +105,23 @@ theorem spectralIntegralForm_apply
     spectralIntegralForm E phi h g = complexIntegral (E.scalarMeasure g h) phi := by
   simp [spectralIntegralForm, spectralIntegralFormLinear]
 
-/-- The bounded operator integral of `phi` against `E`.  The adjoint is required
-because Mathlib's inner product is conjugate-linear in its first argument. -/
+/-- **Bounded operator integral of a measurable function.** Let `X` be a measurable space and
+`H` a complete complex Hilbert space. Let `E : ProjectionValuedMeasure X H` be a strongly
+countably additive PVM. Write `μ_(g,h)(s)=⟨h,E(s)g⟩` for its scalar coefficient measures.
+for bounded measurable `f : X → ℂ`, `spectralIntegral E f : H →L[ℂ] H` is the unique
+operator `I_E(f)` satisfying `⟨h,I_E(f)g⟩=∫ f dμ_(g,h)` for all `g,h ∈ H`. -/
 @[no_expose]
 noncomputable def spectralIntegral
     (E : ProjectionValuedMeasure X H) (phi : BoundedMeasurableFunction X) :
     H →L[ℂ] H :=
   (InnerProductSpace.continuousLinearMapOfBilin (spectralIntegralForm E phi)).adjoint
 
-/-- Characteristic scalar-coefficient identity for the spectral integral. -/
+/-- **Scalar coefficient identity of the spectral integral.** Let `X` be a measurable space
+and `H` a complete complex Hilbert space. Let `E : ProjectionValuedMeasure X H` be a
+strongly countably additive PVM. Write `μ_(g,h)(s)=⟨h,E(s)g⟩` for its scalar coefficient
+measures. For bounded measurable `f : X → ℂ`, let `I_E(f)=∫ f dE` be the bounded operator
+integral. for every `g,h ∈ H`, `⟨h,I_E(f)g⟩=complexIntegral μ_(g,h) f=∫ f dμ_(g,h)`, with
+the inner product linear in the second argument. -/
 theorem inner_spectralIntegral_apply
     (E : ProjectionValuedMeasure X H) (phi : BoundedMeasurableFunction X) (g h : H) :
     ⟪h, spectralIntegral E phi g⟫_ℂ = complexIntegral (E.scalarMeasure g h) phi := by
@@ -148,7 +163,11 @@ private theorem norm_spectralIntegral_apply_le
       _ = (‖phi‖ * ‖g‖) * ‖spectralIntegral E phi g‖ := by ring
     nlinarith
 
-/-- Spectral integration is contractive for the supremum norm. -/
+/-- **Supremum-norm bound for spectral integration.** Let `X` be a measurable space and `H` a
+complete complex Hilbert space. Let `E : ProjectionValuedMeasure X H` be a strongly
+countably additive PVM. Write `μ_(g,h)(s)=⟨h,E(s)g⟩` for its scalar coefficient measures.
+For bounded measurable `f : X → ℂ`, let `I_E(f)=∫ f dE` be the bounded operator integral.
+`‖I_E(f)‖≤‖f‖∞`, where the left side is the operator norm on `H`. -/
 theorem norm_spectralIntegral_le
     (E : ProjectionValuedMeasure X H) (phi : BoundedMeasurableFunction X) :
     ‖spectralIntegral E phi‖ ≤ ‖phi‖ := by
@@ -175,7 +194,12 @@ theorem spectralIntegral_smul
   simp only [inner_spectralIntegral_apply, smul_apply, inner_smul_right,
     complexIntegral_smul, smul_eq_mul]
 
-/-- Spectral integration as a contraction between normed complex spaces. -/
+/-- **Contractive linear map of bounded spectral integration.** Let `X` be a measurable space
+and `H` a complete complex Hilbert space. Let `E : ProjectionValuedMeasure X H` be a
+strongly countably additive PVM. Write `μ_(g,h)(s)=⟨h,E(s)g⟩` for its scalar coefficient
+measures. For bounded measurable `f : X → ℂ`, let `I_E(f)=∫ f dE` be the bounded operator
+integral. `spectralIntegralCLM E` is the bounded complex-linear map `f ↦ I_E(f)` from
+bounded measurable functions with supremum norm to `B(H)`, with norm at most one. -/
 @[no_expose]
 noncomputable def spectralIntegralCLM (E : ProjectionValuedMeasure X H) :
     BoundedMeasurableFunction X →L[ℂ] (H →L[ℂ] H) :=
@@ -196,7 +220,11 @@ theorem spectralIntegralCLM_apply
     spectralIntegralCLM E phi = spectralIntegral E phi := by
   simp [spectralIntegralCLM]
 
-/-- Difference form of the contraction estimate. -/
+/-- **Difference bound for bounded spectral integrals.** Let `X` be a measurable space and `H`
+a complete complex Hilbert space. Let `E : ProjectionValuedMeasure X H` be a strongly
+countably additive PVM. Write `μ_(g,h)(s)=⟨h,E(s)g⟩` for its scalar coefficient measures.
+For bounded measurable `f : X → ℂ`, let `I_E(f)=∫ f dE` be the bounded operator integral.
+for another bounded measurable function `k`, `‖I_E(f)-I_E(k)‖≤‖f-k‖∞`. -/
 theorem norm_spectralIntegral_sub_le
     (E : ProjectionValuedMeasure X H) (phi psi : BoundedMeasurableFunction X) :
     ‖spectralIntegral E phi - spectralIntegral E psi‖ ≤ ‖phi - psi‖ := by
@@ -211,7 +239,12 @@ theorem norm_spectralIntegral_sub_le
     _ = ‖spectralIntegral E (phi - psi)‖ := by rw [spectralIntegralCLM_apply]
     _ ≤ ‖phi - psi‖ := norm_spectralIntegral_le E (phi - psi)
 
-/-- Metric form of the contraction estimate. -/
+/-- **Metric contraction of spectral integration.** Let `X` be a measurable space and `H` a
+complete complex Hilbert space. Let `E : ProjectionValuedMeasure X H` be a strongly
+countably additive PVM. Write `μ_(g,h)(s)=⟨h,E(s)g⟩` for its scalar coefficient measures.
+For bounded measurable `f : X → ℂ`, let `I_E(f)=∫ f dE` be the bounded operator integral.
+for bounded measurable `f,k`, `dist(I_E(f),I_E(k))≤dist(f,k)`, using operator norm and
+supremum norm respectively. -/
 theorem dist_spectralIntegral_le
     (E : ProjectionValuedMeasure X H) (phi psi : BoundedMeasurableFunction X) :
     dist (spectralIntegral E phi) (spectralIntegral E psi) ≤ dist phi psi := by
@@ -221,14 +254,20 @@ theorem dist_spectralIntegral_le
     _ ≤ ‖phi - psi‖ := norm_spectralIntegral_sub_le E phi psi
     _ = dist phi psi := (dist_eq_norm phi psi).symm
 
-/-- The canonical finite operator sum attached to a measurable simple
-function. -/
+/-- **Finite projection sum of a measurable simple function.** Let `X` be a measurable space
+and `H` a complete complex Hilbert space. Let `E : ProjectionValuedMeasure X H` be a
+strongly countably additive PVM. for a measurable simple function `f : X → ℂ`,
+`simpleSpectralIntegral E f=Σ_c∈range(f) c • E(f⁻¹({c}))`. -/
 noncomputable def simpleSpectralIntegral
     (E : ProjectionValuedMeasure X H) (f : SimpleFunc X ℂ) : H →L[ℂ] H :=
   ∑ c ∈ f.range, c • E (f ⁻¹' {c})
 
-/-- Spectral integration agrees with the canonical finite sum on measurable
-simple functions. -/
+/-- **Spectral integral equals its finite simple-function sum.** Let `X` be a measurable space
+and `H` a complete complex Hilbert space. Let `E : ProjectionValuedMeasure X H` be a
+strongly countably additive PVM. Write `μ_(g,h)(s)=⟨h,E(s)g⟩` for its scalar coefficient
+measures. For bounded measurable `f : X → ℂ`, let `I_E(f)=∫ f dE` be the bounded operator
+integral. for a measurable simple function `s`, `I_E(s)=Σ_c∈range(s) c •
+E(s⁻¹({c}))=simpleSpectralIntegral E s`. -/
 theorem spectralIntegral_ofSimpleFunc
     (E : ProjectionValuedMeasure X H) (f : SimpleFunc X ℂ) :
     spectralIntegral E (BoundedMeasurableFunction.ofSimpleFunc f) =
@@ -244,7 +283,9 @@ theorem spectralIntegral_ofSimpleFunc
   intro c hc
   rw [smul_apply, inner_smul_right]
 
-/-- Integral of a constant-valued measurable indicator. -/
+/-- **Spectral integral of a scalar indicator.** Let `X` be a measurable space and `H` a
+complete complex Hilbert space. Let `E : ProjectionValuedMeasure X H` be a strongly
+countably additive PVM. for measurable `s ⊆ X` and `c : ℂ`, `I_E(c 1_s)=c • E(s)`. -/
 theorem spectralIntegral_indicatorConst
     (E : ProjectionValuedMeasure X H) (s : Set X) (hs : MeasurableSet s) (c : ℂ) :
     spectralIntegral E (BoundedMeasurableFunction.indicatorConst s hs c) = c • E s := by
@@ -257,15 +298,21 @@ theorem spectralIntegral_indicatorConst
   change c * ⟪h, E s g⟫_ℂ = ⟪h, c • E s g⟫_ℂ
   rw [inner_smul_right]
 
-/-- Integral of a measurable characteristic function. -/
+/-- **Spectral integral of a characteristic function.** Let `X` be a measurable space and `H`
+a complete complex Hilbert space. Let `E : ProjectionValuedMeasure X H` be a strongly
+countably additive PVM. for measurable `s ⊆ X`, `I_E(1_s)=E(s)`. -/
 theorem spectralIntegral_indicator
     (E : ProjectionValuedMeasure X H) (s : Set X) (hs : MeasurableSet s) :
     spectralIntegral E (BoundedMeasurableFunction.indicator s hs) = E s := by
   simpa [BoundedMeasurableFunction.indicator] using
     spectralIntegral_indicatorConst E s hs (1 : ℂ)
 
-/-- A uniform simple approximation with margin `delta < epsilon` gives the
-strict operator-norm estimate required by the finite-partition construction. -/
+/-- **Strict error bound from a uniform simple approximation.** Let `X` be a measurable space
+and `H` a complete complex Hilbert space. Let `E : ProjectionValuedMeasure X H` be a
+strongly countably additive PVM. Write `μ_(g,h)(s)=⟨h,E(s)g⟩` for its scalar coefficient
+measures. For bounded measurable `f : X → ℂ`, let `I_E(f)=∫ f dE` be the bounded operator
+integral. let `s : X → ℂ` be measurable simple and `δ,ε : ℝ` satisfy `0≤δ<ε`. If
+`|f(x)-s(x)|≤δ` for every `x`, then `‖I_E(f)-simpleSpectralIntegral E s‖<ε`. -/
 theorem norm_spectralIntegral_sub_simpleSpectralIntegral_lt
     (E : ProjectionValuedMeasure X H) (phi : BoundedMeasurableFunction X)
     (f : SimpleFunc X ℂ) {delta epsilon : ℝ} (hdelta : 0 ≤ delta)
@@ -283,8 +330,12 @@ theorem norm_spectralIntegral_sub_simpleSpectralIntegral_lt
     (BoundedMeasurableFunction.ofSimpleFunc f)).trans_lt
       (hnorm.trans_lt hdeltaepsilon)
 
-/-- Every spectral integral is a strict operator-norm limit of canonical
-finite simple-function sums. -/
+/-- **Finite-sum approximation of a bounded spectral integral.** Let `X` be a measurable space
+and `H` a complete complex Hilbert space. Let `E : ProjectionValuedMeasure X H` be a
+strongly countably additive PVM. Write `μ_(g,h)(s)=⟨h,E(s)g⟩` for its scalar coefficient
+measures. For bounded measurable `f : X → ℂ`, let `I_E(f)=∫ f dE` be the bounded operator
+integral. for every `ε>0`, there is a measurable simple `s : X → ℂ` with
+`‖I_E(f)-simpleSpectralIntegral E s‖<ε`. -/
 theorem exists_simpleSpectralIntegral_norm_sub_lt
     (E : ProjectionValuedMeasure X H) (phi : BoundedMeasurableFunction X)
     {epsilon : ℝ} (hepsilon : 0 < epsilon) :
@@ -305,8 +356,12 @@ private theorem dense_range_ofSimpleFunc :
   refine ⟨BoundedMeasurableFunction.ofSimpleFunc f, ?_, ⟨f, rfl⟩⟩
   simpa [Metric.mem_ball, Subtype.dist_eq, dist_eq_norm, norm_sub_rev] using hf
 
-/-- The coefficient construction is the unique continuous linear extension of
-the canonical simple-function sums. -/
+/-- **Uniqueness of continuous spectral integration from finite sums.** Let `X` be a
+measurable space and `H` a complete complex Hilbert space. Let `E :
+ProjectionValuedMeasure X H` be a strongly countably additive PVM. if a bounded
+complex-linear map `T` from bounded measurable functions to `B(H)` satisfies
+`T(s)=Σ_c∈range(s) c • E(s⁻¹({c}))` for every measurable simple `s`, then
+`T=spectralIntegralCLM E`. -/
 theorem spectralIntegralCLM_unique
     (E : ProjectionValuedMeasure X H)
     (T : BoundedMeasurableFunction X →L[ℂ] (H →L[ℂ] H))

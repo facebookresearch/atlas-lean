@@ -16,10 +16,16 @@ public import MathlibExt.Analysis.CStarAlgebra.AsymptoticMorphism.Homotopy
 public import MathlibExt.Analysis.CStarAlgebra.CompletelyPositiveMap.Basic
 
 /-!
-# Postcomposition of CPC asymptotic families
+# Postcomposition of CP-contractive asymptotic morphisms
 
-A genuine nonunital star homomorphism is completely positive and norm
-contractive, so postcomposition preserves every finite-time CPC witness.
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. For a completely positive family, each
+slice φ_t is a completely positive complex-linear map for the canonical C-star positive cones,
+including all matrix levels. For a completely positive contraction family, additionally
+‖φ_t(a)‖≤‖a‖ for all a∈A and t∈T. If C is a nonunital complex C-star algebra and g:B→C is a
+nonunital complex star homomorphism, g∘φ has completely positive contraction slices with
+values g(φ_t(a)).
 -/
 
 @[expose] public section
@@ -40,7 +46,17 @@ variable {A : Type uA} {B : Type uB} {C : Type uC}
 variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
 variable [NonUnitalCStarAlgebra C]
 
-/-- Postcompose a CPC asymptotic family by an actual nonunital star hom. -/
+/-- **CP-contractive family postcomposed by a star homomorphism.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. For a completely positive family, each
+slice φ_t is a completely positive complex-linear map for the canonical C-star positive cones,
+including all matrix levels. For a completely positive contraction family, additionally
+‖φ_t(a)‖≤‖a‖ for all a∈A and t∈T. For a nonunital complex C-star algebra C and a nonunital
+complex star homomorphism g:B→C, CompletelyPositiveContraction.postcomp φ g is the family
+(g∘φ)_t(a)=g(φ_t(a)).
+-/
 noncomputable def postcomp (phi : CompletelyPositiveContraction A B)
     (g : B →⋆ₙₐ[ℂ] C) : CompletelyPositiveContraction A C where
   toAsymptoticMorphism :=
@@ -70,7 +86,18 @@ noncomputable def postcomp (phi : CompletelyPositiveContraction A B)
         AsymptoticMorphism.postcomp_apply]
       rfl
 
-/-- Forgetting CPC evidence gives exactly ordinary postcomposition. -/
+/-- **Underlying asymptotic family of CP postcomposition.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. For a completely positive family, each
+slice φ_t is a completely positive complex-linear map for the canonical C-star positive cones,
+including all matrix levels. For a completely positive contraction family, additionally
+‖φ_t(a)‖≤‖a‖ for all a∈A and t∈T. For a nonunital complex star homomorphism g:B→C into a
+nonunital complex C-star algebra, the underlying asymptotic morphism of
+CompletelyPositiveContraction.postcomp φ g equals AsymptoticMorphism.postcomp
+φ.toAsymptoticMorphism g.
+-/
 @[simp]
 theorem postcomp_toAsymptoticMorphism
     (phi : CompletelyPositiveContraction A B) (g : B →⋆ₙₐ[ℂ] C) :
@@ -78,7 +105,17 @@ theorem postcomp_toAsymptoticMorphism
       AsymptoticMorphism.postcomp phi.toAsymptoticMorphism g :=
   rfl
 
-/-- CPC postcomposition has the literal star-hom value. -/
+/-- **Value of CP-contractive postcomposition.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. For a completely positive family, each
+slice φ_t is a completely positive complex-linear map for the canonical C-star positive cones,
+including all matrix levels. For a completely positive contraction family, additionally
+‖φ_t(a)‖≤‖a‖ for all a∈A and t∈T. For a nonunital complex star homomorphism g:B→C into a
+nonunital complex C-star algebra, t≥1 and a∈A, (CompletelyPositiveContraction.postcomp φ
+g)_t(a)=g(φ_t(a)).
+-/
 theorem postcomp_apply
     (phi : CompletelyPositiveContraction A B) (g : B →⋆ₙₐ[ℂ] C)
     (t : AsymptoticTime) (a : A) :

@@ -1,6 +1,5 @@
-# Finite Lattice
+# Finite module image has a common lattice-clearing scalar
 
-The actual coordinates of a finite generating family earn a common
-nonzero scalar carrying its entire image into the original domain span of
-a finite fraction-field basis. Neither freeness of the source module nor
-normality of the domain is needed.
+Let R be a commutative domain, K its fraction field, V a K-vector space with compatible
+R-action, b:I→V a basis with I finite, M finitely generated over R and f:M→V R-linear. Then
+∃a∈R, a≠0 and a•f(x)∈span_R(range b) for every x∈M.

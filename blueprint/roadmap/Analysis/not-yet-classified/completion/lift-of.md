@@ -1,3 +1,4 @@
-# Lift of
+# Universal map on a stage image
 
-The extension has exactly the prescribed stage values.
+For compatible stage maps, `S.lift g hg (S.of i x) = g i
+x`.

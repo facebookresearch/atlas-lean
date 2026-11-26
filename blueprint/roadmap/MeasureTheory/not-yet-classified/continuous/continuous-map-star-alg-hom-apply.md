@@ -1,3 +1,5 @@
-# Continuous Map Star Alg Hom apply
+# Pointwise value of the continuous-function star inclusion
 
-The continuous-function inclusion preserves every pointwise value.
+Let `X` be a compact
+topological space with its Borel measurable structure, without a Hausdorff or
+nonempty-space assumption. for `f∈C(X,ℂ)` and `x∈X`, `continuousMapStarAlgHom f x=f(x)`.

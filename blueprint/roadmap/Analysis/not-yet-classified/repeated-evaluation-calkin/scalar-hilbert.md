@@ -1,3 +1,4 @@
-# Scalar Hilbert
+# Countable scalar Hilbert space
 
-The original scalar Hilbert sum keeps the standard lp-two norm and inner product.
+`ScalarHilbert = lp (fun _ : ULift ℕ => ℂ) 2`, with the
+square-summable scalar norm and inner product.

@@ -1,3 +1,4 @@
-# Polar Unitary adjoint apply
+# Adjoint of the polar unitary
 
-The adjoint of the polar unitary sends `T x` back to `|T| x`.
+Assuming dense ranges of `|T|` and `T`, `U* (T x) = |T| x`,
+where `U = T.polarUnitary hAbsoluteDense hDense`.

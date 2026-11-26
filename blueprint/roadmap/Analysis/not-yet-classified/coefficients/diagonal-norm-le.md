@@ -1,3 +1,7 @@
-# Diagonal norm le
+# Operator norm bound for the diagonal action
 
-The diagonal action has the source operator's genuine norm bound.
+Let `H` be a complex normed inner-product
+space, with no completeness assumption. Write `ℓ²(H)=lp (fun _ : ℕ => H) 2` for its
+square-summable vector sequences. for every bounded complex-linear `T : H →L[ℂ] H`,
+`‖diagonal T‖≤‖T‖`, with the ℓ² norm on the sequence space and operator norms on both
+maps.

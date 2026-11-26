@@ -1,4 +1,4 @@
-# Multiplier Map inclusion
+# Multiplier action on the included ideal
 
-The multiplier action restricts to the canonical coefficient embedding
-on the distinguished ideal.
+For `b : B`, `X.multiplierMap (X.inclusion b) =
+DoubleCentralizer.coeHom b`, the canonical multiplier embedding.

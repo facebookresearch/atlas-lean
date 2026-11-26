@@ -16,11 +16,10 @@ public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.LinearAlgebra.UnitaryGroup
 
 /-!
-# The two-dimensional Hadamard matrix
+# Normalized two-dimensional Hadamard matrix
 
-This file defines the normalized Hadamard matrix on `Fin 2`
-with complex entries `1 / √2`, `1 / √2`, `1 / √2`, `-1 / √2`
-and proves it is unitary.
+The matrix H=(1/√2)[[1,1],[1,-1]] over ℂ satisfies HᴴH=HHᴴ=I. It defines the normalized
+Hadamard unitary on Fin 2.
 -/
 
 @[expose] public section
@@ -53,7 +52,10 @@ private lemma star_ofReal (r : ℝ) :
     star (r : Complex) = (r : Complex) := by
   rw [Complex.star_def, Complex.conj_ofReal]
 
-/-- The normalized `Fin 2` Hadamard matrix. -/
+/-- **Normalized Hadamard matrix on two coordinates.**
+
+The complex matrix finTwoHadamard on Fin 2 is (1/√2)[[1,1],[1,-1]].
+-/
 noncomputable def finTwoHadamard : Matrix (Fin 2) (Fin 2) Complex :=
   fun i j =>
     match i, j with
@@ -114,7 +116,10 @@ theorem finTwoHadamard_mem_unitaryGroup :
       rw [hSq]
       norm_num
 
-/-- The Hadamard matrix `finTwoHadamard` bundled as an element of the unitary group. -/
+/-- **Two-dimensional Hadamard unitary.**
+
+The element finTwoHadamardUnitary∈U(2,ℂ) has matrix (1/√2)[[1,1],[1,-1]].
+-/
 noncomputable def finTwoHadamardUnitary :
     Matrix.unitaryGroup (Fin 2) Complex :=
   ⟨finTwoHadamard, finTwoHadamard_mem_unitaryGroup⟩

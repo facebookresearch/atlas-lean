@@ -1,3 +1,4 @@
-# Finite Tensor Corner eq finite Matrix Tensor Hom
+# Factorization through an orthonormal matrix frame
 
-An orthonormal corner is the image of its actual matrix under the constructed star hom.
+For orthonormal `v`,
+`finiteTensorCorner v A z = finiteMatrixTensorHom v hv A (tensorFrameMatrixLinear v A z)`.

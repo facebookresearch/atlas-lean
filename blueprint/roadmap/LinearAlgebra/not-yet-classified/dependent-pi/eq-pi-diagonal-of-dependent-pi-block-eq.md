@@ -1,4 +1,4 @@
-# Eq pi diagonal of dependent Pi Block eq zero
+# Zero off-diagonal blocks characterize a componentwise map
 
-A finite dependent-product endomorphism with zero off-diagonal blocks is
-the componentwise endomorphism assembled from its diagonal blocks.
+Let I be finite and M_i R-modules over a commutative ring. If F_ij=proj_i F single_j is zero
+for i≠j, then F(x)_i=F_ii(x_i), so F is the componentwise map from its diagonal blocks.

@@ -1,3 +1,4 @@
-# Class Star Alg Hom surjective
+# Adjointable representatives of Calkin classes
 
-Every module-Calkin class has an adjointable representative.
+Every class in `Calkin B E` has a
+representative `T : End_B(E)` under the compact-ideal quotient map.

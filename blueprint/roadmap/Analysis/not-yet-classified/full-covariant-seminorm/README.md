@@ -1,12 +1,12 @@
-# Full Covariant Seminorm
+# The full covariant norm and its C-star completion
 
-- [Nondegenerate Covariant CStar Seminorms](nondegenerate-covariant-cstar-seminorms.md)
-- [Nondegenerate Covariant CStar Seminorms eq admissible](nondegenerate-covariant-cstar-seminorms-2.md)
-- [Haar Integrated CStar Seminorm mem nondegenerate Covariant Family](haar-integrated-cstar-seminorm-mem-nonde.md)
-- [Full Covariant Norm](full-covariant-norm.md)
-- [Full Covariant Norm eq s Sup](full-covariant-norm-eq-s-sup.md)
-- [Full Covariant Completion](full-covariant-completion.md)
-- [Full Covariant Completion CStar Algebra](full-covariant-completion-cstar-algebra.md)
-- [To Full Covariant Completion](to-full-covariant-completion.md)
-- [Norm to Full Covariant Completion](norm-to-full-covariant-completion.md)
-- [Dense Range to Full Covariant Completion](dense-range-to-full-covariant-completion.md)
+- [Seminorms of nondegenerate covariant representations](nondegenerate-covariant-cstar-seminorms.md)
+- [Covariant seminorms equal the L¹-admissible family](nondegenerate-covariant-cstar-seminorms-2.md)
+- [An arbitrary covariant seminorm has a nondegenerate realization](haar-integrated-cstar-seminorm-mem-nonde.md)
+- [Full covariant norm of a core coefficient](full-covariant-norm.md)
+- [Supremum formula for the full covariant norm](full-covariant-norm-eq-s-sup.md)
+- [The full covariant C-star completion](full-covariant-completion.md)
+- [C-star algebra structure on the full completion](full-covariant-completion-cstar-algebra.md)
+- [Canonical coefficient map into the full completion](to-full-covariant-completion.md)
+- [Norm of a dense full covariant coefficient class](norm-to-full-covariant-completion.md)
+- [Density of full covariant coefficient classes](dense-range-to-full-covariant-completion.md)

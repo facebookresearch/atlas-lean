@@ -17,17 +17,15 @@ public import MathlibExt.Analysis.CStarAlgebra.NonUnitalCompletion
 public import Mathlib.Analysis.Normed.Operator.Extend
 
 /-!
-# The completed compact embedding of an orthonormal family
+# Completed matrix embedding into Hilbert-space compacts
 
-The ordinary completion of the same positive matrix raw limit has one
-nonunital star-algebra map into the actual compact closed star ideal.
-Its function is the existing linear-isometry completion extension of the
-constructed raw map. Ordered multiplication and star preservation follow
-by closed-predicate induction on canonical raw images.
+For an orthonormal family `β_n` in a complete complex Hilbert space, let `D=lim_n M_(n+1)(ℂ)`
+along top-left zero padding, with its stage-preserving norm. Complete this normed algebra to
+`C`.
 
-The normed ring, group, metric, topology and complex action are unchanged.
-No raw completeness, spanning, target density, inverse or spatial
-identification is assumed. A nonspanning orthonormal family is permitted.
+The isometric star map `Φ_β : D → K(H)` given by its finite rank-one corners extends to an
+isometric nonunital complex star homomorphism `Φ̂_β : C → K(H)`, with `Φ̂_β(ι z)=Φ_β(z)`. The
+family need not span `H`; no density in the whole compact ideal or surjectivity is assumed.
 -/
 
 @[expose] public section
@@ -41,8 +39,12 @@ namespace Orthonormal
 
 universe uH
 
-/-- The single completed nonunital star-algebra map determined by the genuine
-raw compact embedding and its original norm-preserving linear extension. -/
+/-- **Completed star embedding of matrix stages into compacts.** Let `H` be a complete complex
+Hilbert space and `β : ℕ → H` an orthonormal family, which need not span `H`. Let `D=lim_n
+M_(n+1)(ℂ)` be the algebraic direct limit along top-left zero padding, with norm
+`‖[n,X]‖=‖X‖`. Write `θ_(x,y)z=⟨y,z⟩x` and `Φ_β([n,X])=Σ_i,j<n+1 X_ij θ_(β_i,β_j)` for the
+compact matrix map. for `C=Completion D`, `completedCompactEmbedding β : C →⋆ₙₐ[ℂ] K(H)`
+is the extension `Φ̂_β` of the matrix-corner map `Φ_β([n,X])=Σ_i,j<n+1 X_ij θ_(β_i,β_j)`. -/
 noncomputable def completedCompactEmbedding
     {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
     [CompleteSpace H] {β : ℕ → H} (hβ : Orthonormal ℂ β) :
@@ -178,8 +180,12 @@ noncomputable def completedCompactEmbedding
           map_smul' := fun c x => map_smul Φ c x }
       map_star' := hStar }
 
-/-- On the canonical raw coefficient image, the completed map equals the
-same constructed raw compact map in the actual compact ideal carrier. -/
+/-- **Completed compact embedding on an algebraic limit element.** Let `H` be a complete
+complex Hilbert space and `β : ℕ → H` an orthonormal family, which need not span `H`. Let
+`D=lim_n M_(n+1)(ℂ)` be the algebraic direct limit along top-left zero padding, with norm
+`‖[n,X]‖=‖X‖`. Write `θ_(x,y)z=⟨y,z⟩x` and `Φ_β([n,X])=Σ_i,j<n+1 X_ij θ_(β_i,β_j)` for the
+compact matrix map. for `C=Completion D` and `z ∈ D`, `completedCompactEmbedding β (z :
+C)=rawCompactEmbedding β z`. -/
 theorem completedCompactEmbedding_coe
     {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
     [CompleteSpace H] {β : ℕ → H} (hβ : Orthonormal ℂ β) :
@@ -272,8 +278,12 @@ theorem completedCompactEmbedding_coe
   intro z
   exact μli.fromCompletion_apply_coe z
 
-/-- The completed map preserves the canonical completion norm and is an
-isometry for that same metric and the inherited compact-operator metric. -/
+/-- **Norm and metric preservation of the completed compact embedding.** Let `H` be a complete
+complex Hilbert space and `β : ℕ → H` an orthonormal family, which need not span `H`. Let
+`D=lim_n M_(n+1)(ℂ)` be the algebraic direct limit along top-left zero padding, with norm
+`‖[n,X]‖=‖X‖`. Write `θ_(x,y)z=⟨y,z⟩x` and `Φ_β([n,X])=Σ_i,j<n+1 X_ij θ_(β_i,β_j)` for the
+compact matrix map. on `C=Completion D`, `Φ̂_β=completedCompactEmbedding β` satisfies
+`‖Φ̂_β(x)‖=‖x‖` for every `x ∈ C` and is an isometry into `K(H)`. -/
 theorem completedCompactEmbedding_norm_isometry
     {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
     [CompleteSpace H] {β : ℕ → H} (hβ : Orthonormal ℂ β) :

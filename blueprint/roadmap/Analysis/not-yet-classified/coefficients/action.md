@@ -1,3 +1,6 @@
-# Action
+# Bounded operator evaluation on a vector sequence
 
-The actual complex-linear map from bounded operators to their action on one source l-two vector.
+Let `H` be a complex normed
+inner-product space, with no completeness assumption. Write `ℓ²(H)=lp (fun _ : ℕ => H) 2`
+for its square-summable vector sequences. for fixed `x ∈ ℓ²(H)`, `action x : B(H) →L[ℂ]
+ℓ²(H)` sends `T` to `(T x_n)_n`, with bound `‖action x T‖₂≤‖x‖₂‖T‖`.

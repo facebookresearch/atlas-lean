@@ -1,4 +1,4 @@
-# Positive Cutoff Localization
+# Positive spectral cutoffs inside a bounding projection
 
-- [Positive Cutoff Projection le projection](positive-cutoff-projection-le-projection.md)
-- [Exists positive Cutoff Projection below projection](exists-positive-cutoff-projection-below.md)
+- [Positive-threshold cutoff lies in the bounding projection](positive-cutoff-projection-le-projection.md)
+- [Nonzero localized cutoff with its scalar threshold](exists-positive-cutoff-projection-below.md)

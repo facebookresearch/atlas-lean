@@ -1,4 +1,4 @@
-# Class Star Alg Hom
+# Calkin quotient homomorphism
 
-The canonical unital star-algebra class map from adjointable
-endomorphisms to the module Calkin algebra.
+For a complete right module, the unital star-algebra map
+`End_B(E) → Calkin B E` sends `T` to its compact-ideal class `[T]`.

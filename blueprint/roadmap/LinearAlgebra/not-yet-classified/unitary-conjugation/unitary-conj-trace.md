@@ -1,4 +1,4 @@
-# Unitary Conj trace
+# Trace is invariant under unitary conjugation
 
-Conjugation by a unitary preserves trace, by cyclicity and
-`star U * U = 1`.
+Let I be a finite index type, U∈U(I,ℂ) a unitary matrix and A an I×I complex matrix. Write
+C_U(A)=unitaryConj U A=U*A*Uᴴ. The trace identity is tr(unitaryConj U A)=tr(A).

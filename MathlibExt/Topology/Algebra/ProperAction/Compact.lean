@@ -15,11 +15,13 @@ public import Mathlib.Topology.Algebra.ProperAction.Basic
 public import Mathlib.Topology.Constructions.SumProd
 
 /-!
-# Proper actions of compact groups
+# Proper continuous actions with compact group carrier
 
-A continuous action of a compact group on a Hausdorff space is proper.  The
-result and its additive counterpart are explicit constructors rather than
-global instances, avoiding instance-search loops and diamonds.
+Let a group with a compact topology act jointly continuously on a Hausdorff space `X`. The
+action is proper: the map `(g,x) ↦ (g • x,x)` from `G×X` to `X×X` is proper.
+
+The additive form uses `(g,x) ↦ (g +ᵥ x,x)`. Continuity of the group operations is not an extra
+hypothesis of these action criteria.
 -/
 
 @[expose] public section
@@ -33,9 +35,15 @@ variable (G : Type u) (X : Type v)
 variable [Group G] [MulAction G X]
 variable [TopologicalSpace G] [TopologicalSpace X]
 
-/-- A continuous action of a compact group on a Hausdorff space is proper. -/
+/-- **Proper multiplicative action of a compact group carrier.** Let `G` be a group with
+compact topology, `X` a Hausdorff space and `G` act on `X` with jointly continuous scalar
+action. Then `(g,x) ↦ (g • x,x)` is a proper map, so `ProperSMul G X`. No continuity of
+group operations is assumed. -/
 @[to_additive
-  /-- A continuous action of a compact additive group on a Hausdorff space is proper. -/]
+  /-- **Proper additive action of a compact group carrier.** Let `G` be an additive group with
+compact topology, `X` a Hausdorff space and `G` act on `X` with jointly continuous vector
+addition. Then `(g,x) ↦ (g +ᵥ x,x)` is a proper map, so the additive action is proper.
+Continuity of group operations is not required. -/]
 theorem ProperSMul.ofCompactGroup [CompactSpace G] [T2Space X]
     [ContinuousSMul G X] : ProperSMul G X where
   isProperMap_smul_pair := by

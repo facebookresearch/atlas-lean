@@ -15,15 +15,12 @@ public import MathlibExt.Analysis.CStarAlgebra.Module.Standard
 public import MathlibExt.Analysis.CStarAlgebra.Module.Adjointable.OfPair
 
 /-!
-# Adjointable finite coefficient coordinates
+# Adjointable finite standard-module coordinates
 
-The existing finite coefficient insertion and evaluation are an actual
-adjoint pair on the original finite right standard module. The pairing is
-the stock finite Pi inner-product identity, specialized to the opposite
-coefficient algebra and the constant coefficient family.
-
-The original maps, coefficient-inner norm and module carrier are retained.
-No coefficient unit, nonzero algebra, supplied adjoint or new norm is needed.
+For nonunital C-star `B` and finite `I`, finite insertion `j_i : B → B^I` and evaluation `π_i :
+B^I → B` satisfy `⟨j_i a,x⟩_B = star a * x_i` for the finite coefficient inner product. They
+therefore form an adjointable pair on `FiniteStandard B I`, with insertion as the forward map
+and evaluation as its adjoint.
 -/
 
 @[expose] public section
@@ -34,8 +31,9 @@ universe uB uI
 
 variable {B : Type uB} [NonUnitalCStarAlgebra B] {I : Type uI} [Fintype I]
 
-/-- The existing finite coefficient insertion, with the existing coordinate
-evaluation as its actual stored adjoint. -/
+/-- **Adjointable finite coefficient insertion.** For a nonunital complex C-star algebra `B` and
+finite index type `I`, the map `B → FiniteStandard B I` inserts its argument in coordinate `i`
+and has adjoint `finiteCoord i`. -/
 noncomputable def finiteSingleAdjointable (i : I) :
     letI : PartialOrder Bᵐᵒᵖ := CStarAlgebra.spectralOrder Bᵐᵒᵖ;
     letI : StarOrderedRing Bᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Bᵐᵒᵖ;
@@ -75,7 +73,8 @@ noncomputable def finiteSingleAdjointable (i : I) :
       congrArg (fun b : B => CStarModule.rightInner (B := B) a b)
         (finiteCoord_apply (B := B) (ι := I) i y).symm
 
-/-- The forward bounded map is literally the original finite insertion. -/
+/-- **Forward map of finite insertion.** For a nonunital complex C-star algebra `B` and finite
+index type `I`, `(finiteSingleAdjointable i).toContinuousLinearMap = finiteSingle i`. -/
 theorem finiteSingleAdjointable_toContinuousLinearMap (i : I) :
     letI : PartialOrder Bᵐᵒᵖ := CStarAlgebra.spectralOrder Bᵐᵒᵖ;
     letI : StarOrderedRing Bᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Bᵐᵒᵖ;
@@ -87,7 +86,8 @@ theorem finiteSingleAdjointable_toContinuousLinearMap (i : I) :
   let : CStarModule Bᵐᵒᵖ B := CStarModule.Right.selfModule
   rfl
 
-/-- The stored adjoint is literally the original finite evaluation. -/
+/-- **Adjoint of finite coefficient insertion.** For a nonunital complex C-star algebra `B` and
+finite index type `I`, `(finiteSingleAdjointable i).adjoint = finiteCoord i`. -/
 theorem finiteSingleAdjointable_adjoint (i : I) :
     letI : PartialOrder Bᵐᵒᵖ := CStarAlgebra.spectralOrder Bᵐᵒᵖ;
     letI : StarOrderedRing Bᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Bᵐᵒᵖ;

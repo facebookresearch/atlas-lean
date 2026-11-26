@@ -16,12 +16,14 @@ public import MathlibExt.Analysis.InnerProductSpace.TensorProduct.CompletionAdjo
 public import MathlibExt.Analysis.InnerProductSpace.Group.HaarRegularRepresentation
 
 /-!
-# The original H-first tensor Haar unitary representation
+# Haar left representation in a Hilbert-first completed tensor
 
-The operator value is the actual completed tensor of id_H and the scalar
-Haar left regular operator. Its star-monoid laws give the actual unitary
-group map. The computed tensor/L2 comparison transfers the original vector
-orbit continuity onto this same tensor carrier.
+For a regular Haar measure and complete complex Hilbert space `H`, the representation on
+`T=Completion(H⊗Lp ℂ 2 μ)` has operator `V_g=I_H⊗λ_g^ℂ`.
+
+Its unitary group laws are tensor products of the scalar Haar laws, and strong continuity is
+transported through the tensor-to-L² unitary. The group is locally compact with Borel structure
+and may be nonabelian.
 -/
 
 @[expose] public section
@@ -43,7 +45,11 @@ variable (G : Type uG) [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
 variable (μ : Measure G) [μ.IsHaarMeasure] [μ.Regular]
 variable (H : Type uH) [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- The original strongly continuous Haar group unitaries on the literal H-first Hilbert tensor. -/
+/-- **Strongly continuous tensor Haar left representation.** Let `G` be a locally compact
+Borel topological group with regular Haar measure `μ` and `H` a complete complex Hilbert
+space. Let `λ_g^H ξ(s)=ξ(g⁻¹s)` on `Lp H 2 μ` and `T=Completion(H⊗Lp ℂ 2 μ)`, with
+`U=tensorToLpRight μ : T ≃ₗᵢ[ℂ] Lp H 2 μ`. `haarLeftRegularTensor G μ H : G → U(B(T))` has
+operator value `V_g=I_H⊗λ_g^ℂ`. -/
 def haarLeftRegularTensor :
     StronglyContinuousUnitaryRepresentation G (UniformSpace.Completion (H ⊗[ℂ] (Lp ℂ 2 μ))) := by
   let E := L2.tensorToLpRight (𝕜 := ℂ) (H := H) μ
@@ -121,7 +127,11 @@ def haarLeftRegularTensor :
   rw [htop] at hcontinuous
   simpa only [htransport] using hcontinuous
 
-/-- The original tensor Haar unitary is literally id_H tensored with the scalar Haar operator. -/
+/-- **Exact right-factor operator of tensor Haar translation.** Let `G` be a locally compact
+Borel topological group with regular Haar measure `μ` and `H` a complete complex Hilbert
+space. Let `λ_g^H ξ(s)=ξ(g⁻¹s)` on `Lp H 2 μ` and `T=Completion(H⊗Lp ℂ 2 μ)`, with
+`U=tensorToLpRight μ : T ≃ₗᵢ[ℂ] Lp H 2 μ`. for `g∈G`, the representation value is
+`TensorProduct.mapLCompletion I_H (haarLeftRegular G μ ℂ g)=I_H⊗λ_g^ℂ`. -/
 @[simp]
 theorem haarLeftRegularTensor_apply (g : G) :
     (haarLeftRegularTensor G μ H g :

@@ -1,3 +1,6 @@
-# Closed Supported On
+# Closed Lp support carrier with its inherited norm
 
-The actual closed support subspace, with the literal almost everywhere carrier.
+Let `X` be measurable, `μ` any
+measure, `𝕜` a normed field and `E` a normed `𝕜`-space. for `p≥1` and measurable `s`,
+`Lp.closedSupportedOn μ s` bundles the submodule of functions vanishing almost everywhere
+off `s` as a closed submodule.

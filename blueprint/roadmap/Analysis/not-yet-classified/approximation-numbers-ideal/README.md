@@ -1,5 +1,5 @@
-# Approximation Numbers Ideal
+# Composition, scaling and addition of approximation numbers
 
-- [Approximation Number comp le](approximation-number-comp-le.md)
-- [Approximation Number smul](approximation-number-smul.md)
-- [Approximation Number add le](approximation-number-add-le.md)
+- [Two-sided operator ideal inequality for approximation numbers](approximation-number-comp-le.md)
+- [Scalar homogeneity of approximation numbers](approximation-number-smul.md)
+- [Additive rank allowance for approximation numbers](approximation-number-add-le.md)

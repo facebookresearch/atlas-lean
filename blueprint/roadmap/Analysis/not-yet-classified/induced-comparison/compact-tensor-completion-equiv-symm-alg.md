@@ -1,3 +1,5 @@
-# Compact Tensor Completion Equiv symm algebraic
+# Inverse equivalence on an algebraic compact image
 
-The actual inverse sends each original algebraic compact image back to its canonical completion image.
+For `z : A ⊗_ℂ K(H)`,
+`(compactTensorCompletionEquiv H A).symm (algebraicCompactTensorHom H A z) =
+toCompactTensorCompletion H A z`.

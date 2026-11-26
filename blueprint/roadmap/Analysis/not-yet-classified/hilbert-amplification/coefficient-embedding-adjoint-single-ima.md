@@ -1,3 +1,5 @@
-# Coefficient Embedding adjoint single image
+# Adjoint returns an injected singleton coefficient
 
-The coefficient adjoint returns a singleton from its embedded position.
+Let `𝕜` be real or complex, `ι`
+have decidable equality and `f : ι ↪ ι`. For `j ∈ ι`, `z : 𝕜`, `(coefficientEmbedding
+f)*(single_(f(j)) z)=single_j z`.

@@ -12,47 +12,11 @@ module
 public import MathlibExt.LinearAlgebra.Charpoly.DependentPi
 
 /-!
-# Characteristic polynomials of left multiplication in a tower
+# Left-multiplication characteristic polynomial in a finite tower
 
-For a tower of finite extensions of fields `k ⊆ F ⊆ E` and an element
-`θ₀ : F` of the intermediate field, left multiplication on `E` by the
-image of `θ₀` has characteristic polynomial over `k` equal to the
-`Module.finrank F E`-th power of the characteristic polynomial of left
-multiplication by `θ₀` on `F`:
-
-```text
-(Algebra.lmul k E (algebraMap F E θ₀)).charpoly
-  = (Algebra.lmul k F θ₀).charpoly ^ Module.finrank F E.
-```
-
-This is leaf `B8` of the weighted branch multiplicity proof tree: for a
-normalization branch, `F` is the residue field of the reduced place,
-`θ₀` is the class of `X` (a primitive element of `F` over `k`, whose
-characteristic polynomial on `F` over `k` is its minimal polynomial over
-`k`), and `E` is the full
-branch residue field, so the characteristic polynomial of the reduced
-root is a power of its minimal polynomial with exponent the relative
-residue degree.
-
-## Informal proof
-
-Choose an `F`-basis of `E` indexed by `Fin (Module.finrank F E)`
-(`Module.finBasis`).  The coordinate equivalence `Module.Basis.equivFun`
-identifies `E` with `Fin (finrank F E) → F` as `F`-modules, hence also
-as `k`-modules after restricting scalars.  Multiplication by
-`algebraMap F E θ₀` is the scalar action of `θ₀` on `E` as an
-`F`-module, so in coordinates it acts componentwise as multiplication
-by `θ₀` on `F` — the matrix is block-diagonal with `finrank F E`
-identical blocks.  Conjugation invariance of the characteristic
-polynomial and the dependent-product formula
-`LinearMap.charpoly_pi_dependent` then give a product of
-`finrank F E` copies of `(Algebra.lmul k F θ₀).charpoly`.
-
-Only the bottom two entries of the tower need to be fields: `E` may be
-any ring with compatible algebra structures.  The finiteness of `E`
-over `k` is listed separately because the statement's characteristic
-polynomial needs it; it follows from the other two finiteness
-assumptions.
+Let k,F be fields with a finite extension k→F and E a ring with compatible k- and F-algebra
+structures, finite-dimensional over both. For θ∈F, χ_k(L_(image θ) on E)=χ_k(L_θ on F)^[dim_F
+E]. E may be noncommutative and need not be a field.
 -/
 
 @[expose] public section
@@ -69,12 +33,12 @@ variable {k F E : Type*} [Field k] [Field F] [Ring E]
   [Algebra k F] [Algebra F E] [Algebra k E] [IsScalarTower k F E]
   [FiniteDimensional k F] [FiniteDimensional F E] [FiniteDimensional k E]
 
-/-- Characteristic polynomial of left multiplication by an
-intermediate-field element in a finite tower: if `θ₀` lies in the
-intermediate field `F`, the characteristic polynomial of left
-multiplication by its image in `E` is the `Module.finrank F E`-th power
-of the characteristic polynomial of left multiplication by `θ₀` on
-`F`. -/
+/-- **Characteristic polynomial of an intermediate-field scalar.**
+
+Let k,F be fields, E a ring with compatible algebra tower k→F→E, and all k/F, F/E and k/E
+module dimensions finite. For θ∈F, (Algebra.lmul k E (algebraMap F E
+θ)).charpoly=(Algebra.lmul k F θ).charpoly^(finrank_F E).
+-/
 theorem lmul_charpoly_algebraMap_tower (θ₀ : F) :
     (Algebra.lmul k E (algebraMap F E θ₀)).charpoly =
       (Algebra.lmul k F θ₀).charpoly ^ Module.finrank F E := by

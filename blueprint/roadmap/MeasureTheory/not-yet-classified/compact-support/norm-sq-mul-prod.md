@@ -1,3 +1,4 @@
-# Norm Sq mul Prod
+# Squared norm of a pure product factors pointwise
 
-The pure complex product's squared norm is the actual product of the factor squared norms.
+For Hausdorff `X,Y` and complex
+compact-support `f,g`, `normSq(mulProd f g)=mulProd(normSq f)(normSq g)`.

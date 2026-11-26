@@ -1,12 +1,12 @@
-# Iterated Bilinear
+# Ordered multilinear iteration of bilinear steps
 
-## Top Module Cat
+## Bilinear maps through module isomorphisms
 
-- [Bilinear Through Module Iso](bilinear-through-module-iso.md)
-- [Bilinear maps retain the stored scalar modules and the...](bilinear-maps-retain-the-stored-scalar-m.md)
+- [Postcomposition of a bilinear map through a module isomorphism](bilinear-through-module-iso.md)
+- [Bilinear maps on the given topological module carriers](bilinear-maps-retain-the-stored-scalar-m.md)
 
-## Multilinear Map
+## Iterated cup products of multilinear maps
 
-- [Iterate Cup Multilinear](iterate-cup-multilinear.md)
-- [Iterate Cup Multilinear succ](iterate-cup-multilinear-succ.md)
-- [Iterate Cup Multilinear adjacent](iterate-cup-multilinear-adjacent.md)
+- [Ordered multilinear function from bilinear steps](iterate-cup-multilinear.md)
+- [Head-tail recursion of the ordered multilinear iteration](iterate-cup-multilinear-succ.md)
+- [Adjacent bilinear vanishing kills an ordered iteration](iterate-cup-multilinear-adjacent.md)

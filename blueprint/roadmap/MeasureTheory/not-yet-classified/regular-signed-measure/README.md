@@ -1,22 +1,22 @@
-# Regular Signed Measure
+# Regular signed-measure subspace and continuous integration
 
-## Measure Theory
+## Signed measures with regular total variation
 
-- [Regular Signed Measure Submodule](regular-signed-measure-submodule.md)
-- [Regular Signed Measure](regular-signed-measure.md)
+- [Real submodule of signed measures with regular total variation](regular-signed-measure-submodule.md)
+- [Signed measure with regular total variation](regular-signed-measure.md)
 
-## Regular Signed Measure
+## Regular variation of signed measures
 
-- [Total Variation regular](total-variation-regular.md)
-- [Has Regular Variation](has-regular-variation.md)
-- [Signed Integral Dual](signed-integral-dual.md)
-- [Signed Integral Dual apply](signed-integral-dual-apply.md)
-- [Norm signed Integral Dual apply le](norm-signed-integral-dual-apply-le.md)
-- [Norm signed Integral Dual le](norm-signed-integral-dual-le.md)
-- [Regular Signed Measure Integral](regular-signed-measure-integral.md)
-- [Signed Integral Dual zero](signed-integral-dual-zero.md)
-- [Signed Integral Dual add](signed-integral-dual-add.md)
-- [Signed Integral Dual smul](signed-integral-dual-smul.md)
-- [Signed Integral Dual neg](signed-integral-dual-neg.md)
-- [Signed Integral Dual sub](signed-integral-dual-sub.md)
-- [Regular Signed Measure Integral apply](regular-signed-measure-integral-apply.md)
+- [Regularity of a regular signed measure's total variation](total-variation-regular.md)
+- [Regular signed measure as a vector-measure regularity predicate](has-regular-variation.md)
+- [Bounded real functional of a regular signed measure](signed-integral-dual.md)
+- [Value of the regular signed integral functional](signed-integral-dual-apply.md)
+- [Pointwise total-variation bound for continuous signed integration](norm-signed-integral-dual-apply-le.md)
+- [Operator norm upper bound of signed integration](norm-signed-integral-dual-le.md)
+- [Real-linear map from regular signed measures to continuous functionals](regular-signed-measure-integral.md)
+- [Zero regular signed measure has zero continuous integral](signed-integral-dual-zero.md)
+- [Additivity of the continuous signed-measure functional](signed-integral-dual-add.md)
+- [Real homogeneity of the signed integral functional](signed-integral-dual-smul.md)
+- [Negation of a signed measure negates its integral functional](signed-integral-dual-neg.md)
+- [Difference of signed measures gives a difference of functionals](signed-integral-dual-sub.md)
+- [Evaluation of the linear regular signed integration map](regular-signed-measure-integral-apply.md)

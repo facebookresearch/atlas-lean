@@ -1,3 +1,4 @@
-# Finite Single Adjointable adjoint
+# Adjoint of finite coefficient insertion
 
-The stored adjoint is literally the original finite evaluation.
+For a nonunital complex C-star algebra `B` and
+finite index type `I`, `(finiteSingleAdjointable i).adjoint = finiteCoord i`.

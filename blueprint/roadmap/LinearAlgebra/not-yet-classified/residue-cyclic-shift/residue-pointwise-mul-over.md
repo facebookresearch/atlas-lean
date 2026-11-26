@@ -1,3 +1,4 @@
-# Residue Pointwise Mul Over
+# Pointwise multiplication on every scalar block
 
-Pointwise multiplication by one residue-field unit on every block.
+Let l be a field,r∈ℕ and a∈lˣ. The l-linear equivalence residuePointwiseMulOver is
+P_a:x_i↦a*x_i on every block.

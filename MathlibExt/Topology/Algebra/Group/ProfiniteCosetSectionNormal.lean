@@ -17,18 +17,11 @@ import Mathlib.Topology.Homeomorph.Quotient
 /-!
 # Continuous sections of closed normal profinite quotients
 
-A closed normal subgroup of a profinite group has a continuous
-set-theoretic quotient section.  This is the `K = ⊥` specialization of
-Serre's closed-coset section theorem, transported along the canonical
-homeomorphism `G / ⊥ ≃ₜ G`.
+For a compact Hausdorff totally disconnected topological group `G` and closed normal subgroup
+`N`, the quotient map `G → G/N` has a continuous set-theoretic right inverse.
 
-The section is neither homomorphic, canonical, nor natural.  The
-quotient-bottom bridge is proof-local and no splitting instance is
-introduced.
-
-## Main declaration
-
-* `QuotientGroup.exists_continuous_section_of_profinite`
+This is the bottom-subgroup case of the nested closed-coset section theorem, using `G/{1} ≃ G`.
+A homomorphic, canonical or natural splitting is not asserted.
 -/
 
 @[expose] public section
@@ -65,8 +58,9 @@ private theorem quotientMk_comp_quotientBotHomeomorph
   obtain ⟨g, rfl⟩ := QuotientGroup.mk_surjective q
   rfl
 
-/-- A closed normal subgroup of a profinite group has a continuous
-set-theoretic section of its quotient map. -/
+/-- **Continuous right inverse of a closed normal quotient map.** Let `G` be a compact
+Hausdorff totally disconnected topological group. if `N≤G` is closed and normal, there
+exists `s∈C(G/N,G)` with `q_N∘s=id_(G/N)`, where `q_N` is the quotient homomorphism. -/
 theorem exists_continuous_section_of_profinite
     {G : Type u} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
     [CompactSpace G] [T2Space G] [TotallyDisconnectedSpace G]

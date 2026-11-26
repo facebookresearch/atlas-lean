@@ -1,3 +1,4 @@
-# Cut Involution
+# Reflection of a coordinate cut
 
-The computed reflection is positive on the selected coordinates and negative elsewhere.
+`cutInvolution s = 2 * cutProjection s - 1`, with sign
+`+1` on selected coordinates and `-1` elsewhere.

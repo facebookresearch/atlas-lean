@@ -1,3 +1,4 @@
-# Absolute Value sq
+# Square of the absolute value
 
-The square of the absolute value is the adjoint square.
+For an adjointable map, `T.absoluteValue * T.absoluteValue =
+T.adjointSquare`.

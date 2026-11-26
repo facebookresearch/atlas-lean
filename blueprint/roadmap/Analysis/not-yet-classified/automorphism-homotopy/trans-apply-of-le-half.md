@@ -1,4 +1,3 @@
-# Trans apply of le half
+# Concatenation on the first half interval
 
-On the left half of the interval, concatenation is the first path with
-the parameter doubled.
+For t ≤ 1/2 and a ∈ A, the concatenated path satisfies (h.trans k)ₜ(a) = h₂ₜ(a).

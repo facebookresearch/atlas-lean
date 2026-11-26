@@ -20,15 +20,13 @@ import Mathlib.Algebra.BigOperators.Fin
 /-!
 # Compact matrix corners of finite orthonormal families
 
-The corner acts by the literal column-ordered sum of rank-one operators.
-Its target is the existing compact closed star ideal, with the inherited
-operator norm. Entry recovery proves injectivity, hence the complex C-star
-isometry theorem applies. Matrix identity maps to a finite orthogonal
-projection, not generally to the ambient identity.
+For a finite orthonormal family `β_i` in a complete complex Hilbert space, the nonunital star
+homomorphism `Φ_β : M_m(ℂ) → K(H)` is `Φ_β(X)=Σ_i,j X_ij θ_(β_i,β_j)`, where `θ_(x,y)z=⟨y,z⟩x`.
+It recovers the matrix entries by `⟨β_i,Φ_β(X)β_j⟩=X_ij`, and is injective and isometric.
 
-The finite index and complete complex Hilbert space have independent
-universes. Empty families and zero Hilbert spaces are allowed; neither a
-spanning assumption nor nontriviality or a norm-one-class hypothesis is used.
+Matrix identity maps to the orthogonal projection onto the family span. It is the ambient
+identity only for a spanning family. Empty families and zero Hilbert spaces are allowed;
+top-left zero padding agrees with restricting the larger orthonormal family.
 -/
 
 @[expose] public section
@@ -46,8 +44,11 @@ variable {H : Type uHilbert} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
   [CompleteSpace H]
 variable {β : m → H}
 
-/-- The nonunital complex matrix corner associated to a finite orthonormal
-family, valued in the actual compact-operator closed star ideal. -/
+/-- **Compact matrix corner of an orthonormal family.** Let `H` be a complete complex Hilbert
+space, `m` a finite index type and `β : m → H` an orthonormal family. Write
+`θ_(x,y)z=⟨y,z⟩x` and `Φ_β(X)=Σ_i,j X_ij θ_(β_i,β_j)` for the nonunital matrix corner
+`M_m(ℂ) → K(H)`. `compactCorner β` is the nonunital complex star homomorphism `Φ_β :
+M_m(ℂ) → K(H)`, with the C-star matrix norm and inherited compact-operator norm. -/
 def compactCorner (hβ : Orthonormal ℂ β) :
     letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ;
     letI : StarOrderedRing ℂ := CStarAlgebra.spectralOrderedRing ℂ;
@@ -115,14 +116,20 @@ def compactCorner (hβ : Orthonormal ℂ β) :
   exact (mem_compactEndomorphismIdeal (T X)).2
     (InnerProductSpace.finiteRankSubmodule_isCompactOperator hFinite)
 
-/-- Included into bounded operators, the corner is exactly the bundled
-finite rank-one sum. -/
+/-- **Rank-one sum representing the compact corner.** Let `H` be a complete complex Hilbert
+space, `m` a finite index type and `β : m → H` an orthonormal family. Write
+`θ_(x,y)z=⟨y,z⟩x` and `Φ_β(X)=Σ_i,j X_ij θ_(β_i,β_j)` for the nonunital matrix corner
+`M_m(ℂ) → K(H)`. for `X ∈ M_m(ℂ)`, the bounded operator underlying `Φ_β(X)` is `Σ_i,j X_ij
+θ_(β_i,β_j)`. -/
 theorem compactCorner_coe (hβ : Orthonormal ℂ β) (X : CStarMatrix m m ℂ) :
     (hβ.compactCorner X : H →L[ℂ] H) =
       ∑ i, ∑ j, X i j • InnerProductSpace.rankOne ℂ (β i) (β j) :=
   rfl
 
-/-- The corner has the literal column action on an arbitrary vector. -/
+/-- **Column action of a finite compact matrix corner.** Let `H` be a complete complex Hilbert
+space, `m` a finite index type and `β : m → H` an orthonormal family. Write
+`θ_(x,y)z=⟨y,z⟩x` and `Φ_β(X)=Σ_i,j X_ij θ_(β_i,β_j)` for the nonunital matrix corner
+`M_m(ℂ) → K(H)`. for `X ∈ M_m(ℂ)` and `z ∈ H`, `Φ_β(X)z=Σ_i (Σ_j X_ij⟨β_j,z⟩)β_i`. -/
 theorem compactCorner_apply (hβ : Orthonormal ℂ β) (X : CStarMatrix m m ℂ) (z : H) :
     (hβ.compactCorner X : H →L[ℂ] H) z =
       ∑ i, (∑ j, X i j * inner ℂ (β j) z) • β i := by
@@ -130,22 +137,30 @@ theorem compactCorner_apply (hβ : Orthonormal ℂ β) (X : CStarMatrix m m ℂ)
   simp only [sum_apply, smul_apply, InnerProductSpace.rankOne_apply,
     smul_smul, Finset.sum_smul]
 
-/-- Acting on the `j`th family vector recovers the full `j`th column. -/
+/-- **Finite matrix column on a family vector.** Let `H` be a complete complex Hilbert space,
+`m` a finite index type and `β : m → H` an orthonormal family. Write `θ_(x,y)z=⟨y,z⟩x` and
+`Φ_β(X)=Σ_i,j X_ij θ_(β_i,β_j)` for the nonunital matrix corner `M_m(ℂ) → K(H)`. for `X ∈
+M_m(ℂ)` and `j ∈ m`, `Φ_β(X)β_j=Σ_i X_ij β_i`. -/
 theorem compactCorner_basis (hβ : Orthonormal ℂ β) (X : CStarMatrix m m ℂ) (j : m) :
     (hβ.compactCorner X : H →L[ℂ] H) (β j) = ∑ i, X i j • β i := by
   classical
   rw [hβ.compactCorner_apply]
   simp [orthonormal_iff_ite.mp hβ]
 
-/-- The inner product is linear in its second argument: this recovers `X i j`,
-not its complex conjugate. -/
+/-- **Recovery of a compact corner matrix entry.** Let `H` be a complete complex Hilbert
+space, `m` a finite index type and `β : m → H` an orthonormal family. Write
+`θ_(x,y)z=⟨y,z⟩x` and `Φ_β(X)=Σ_i,j X_ij θ_(β_i,β_j)` for the nonunital matrix corner
+`M_m(ℂ) → K(H)`. for `X ∈ M_m(ℂ)` and `i,j ∈ m`, `⟨β_i,Φ_β(X)β_j⟩=X_ij`, using the complex
+inner product linear in its second argument. -/
 theorem compactCorner_inner (hβ : Orthonormal ℂ β) (X : CStarMatrix m m ℂ) (i j : m) :
     inner ℂ (β i) ((hβ.compactCorner X : H →L[ℂ] H) (β j)) = X i j := by
   rw [hβ.compactCorner_basis]
   exact hβ.inner_right_fintype (fun k => X k j) i
 
-/-- A finite orthonormal family gives an injective matrix corner without
-requiring that the family span the Hilbert space. -/
+/-- **Injectivity of a finite orthonormal matrix corner.** Let `H` be a complete complex
+Hilbert space, `m` a finite index type and `β : m → H` an orthonormal family. Write
+`θ_(x,y)z=⟨y,z⟩x` and `Φ_β(X)=Σ_i,j X_ij θ_(β_i,β_j)` for the nonunital matrix corner
+`M_m(ℂ) → K(H)`. the map `Φ_β` is injective; the orthonormal family need not span `H`. -/
 theorem compactCorner_injective (hβ : Orthonormal ℂ β) :
     Function.Injective hβ.compactCorner := by
   intro X Y hXY
@@ -156,8 +171,11 @@ theorem compactCorner_injective (hβ : Orthonormal ℂ β) :
       inner ℂ (β i) ((T : H →L[ℂ] H) (β j))) hXY
   simpa only [hβ.compactCorner_inner] using hEntry
 
-/-- The actual C-star matrix metric agrees with the inherited compact-operator
-metric under the injective corner. -/
+/-- **Metric isometry of a finite compact matrix corner.** Let `H` be a complete complex
+Hilbert space, `m` a finite index type and `β : m → H` an orthonormal family. Write
+`θ_(x,y)z=⟨y,z⟩x` and `Φ_β(X)=Σ_i,j X_ij θ_(β_i,β_j)` for the nonunital matrix corner
+`M_m(ℂ) → K(H)`. `Φ_β` is an isometry between the C-star matrix metric and the inherited
+operator-norm metric on `K(H)`. -/
 theorem compactCorner_isometry (hβ : Orthonormal ℂ β) :
     letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ;
     letI : StarOrderedRing ℂ := CStarAlgebra.spectralOrderedRing ℂ;
@@ -172,8 +190,10 @@ theorem compactCorner_isometry (hβ : Orthonormal ℂ β) :
     (compactEndomorphismClosedStarIdeal (H := H)).carrierCStarAlgebra
   exact NonUnitalStarAlgHom.isometry hβ.compactCorner hβ.compactCorner_injective
 
-/-- Norm preservation uses the existing complex C-star homomorphism theorem,
-with no alternative matrix or compact-operator norm. -/
+/-- **Norm preservation of an orthonormal matrix corner.** Let `H` be a complete complex
+Hilbert space, `m` a finite index type and `β : m → H` an orthonormal family. Write
+`θ_(x,y)z=⟨y,z⟩x` and `Φ_β(X)=Σ_i,j X_ij θ_(β_i,β_j)` for the nonunital matrix corner
+`M_m(ℂ) → K(H)`. for every `X ∈ M_m(ℂ)`, `‖Φ_β(X)‖=‖X‖`. -/
 theorem compactCorner_norm (hβ : Orthonormal ℂ β) (X : CStarMatrix m m ℂ) :
     letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ;
     letI : StarOrderedRing ℂ := CStarAlgebra.spectralOrderedRing ℂ;
@@ -188,23 +208,31 @@ theorem compactCorner_norm (hβ : Orthonormal ℂ β) (X : CStarMatrix m m ℂ) 
     (compactEndomorphismClosedStarIdeal (H := H)).carrierCStarAlgebra
   exact NonUnitalStarAlgHom.norm_map hβ.compactCorner hβ.compactCorner_injective X
 
-/-- Matrix identity becomes the finite orthogonal projection onto the family,
-not generally the identity operator on the whole Hilbert space. -/
+/-- **Matrix identity gives the finite family projection.** Let `H` be a complete complex
+Hilbert space, `m` a finite index type and `β : m → H` an orthonormal family. Write
+`θ_(x,y)z=⟨y,z⟩x` and `Φ_β(X)=Σ_i,j X_ij θ_(β_i,β_j)` for the nonunital matrix corner
+`M_m(ℂ) → K(H)`. with decidable equality on `m`, `Φ_β(I_m)=Σ_i θ_(β_i,β_i)`, the
+orthogonal projection onto the finite family span. -/
 theorem compactCorner_one [DecidableEq m] (hβ : Orthonormal ℂ β) :
     (hβ.compactCorner (1 : CStarMatrix m m ℂ) : H →L[ℂ] H) =
       ∑ i, InnerProductSpace.rankOne ℂ (β i) (β i) := by
   rw [hβ.compactCorner_coe]
   simp [CStarMatrix.one_apply]
 
-/-- The included image of matrix identity is a genuine star projection. -/
+/-- **Star projection from a corner matrix identity.** Let `H` be a complete complex Hilbert
+space, `m` a finite index type and `β : m → H` an orthonormal family. Write
+`θ_(x,y)z=⟨y,z⟩x` and `Φ_β(X)=Σ_i,j X_ij θ_(β_i,β_j)` for the nonunital matrix corner
+`M_m(ℂ) → K(H)`. with decidable equality on `m`, `Φ_β(I_m)` satisfies `P²=P` and `P*=P`. -/
 theorem compactCorner_one_isStarProjection [DecidableEq m] (hβ : Orthonormal ℂ β) :
     IsStarProjection (hβ.compactCorner (1 : CStarMatrix m m ℂ) : H →L[ℂ] H) :=
   ((IsStarProjection.one (CStarMatrix m m ℂ)).map hβ.compactCorner).map
     (NonUnitalStarSubalgebraClass.subtype
       (compactEndomorphismClosedStarIdeal (H := H)).carrier)
 
-/-- Top-left zero padding is compatible with restriction of the same
-orthonormal family along the actual finite index embedding. -/
+/-- **Top-left padding agrees with restricting an orthonormal family.** Let `H` be a complete
+complex Hilbert space, `r≤s` natural numbers and `γ : Fin s → H` orthonormal. If `γ_r` is
+its restriction along `Fin.castLE`, then for `X ∈ M_r(ℂ)`, `Φ_γ(zeroExtend X)=Φ_(γ_r)(X)`.
+The case `r=0` is allowed. -/
 theorem compactCorner_zeroExtend {r s : ℕ} (h : r ≤ s) {γ : Fin s → H}
     (hγ : Orthonormal ℂ γ) (X : CStarMatrix (Fin r) (Fin r) ℂ) :
     hγ.compactCorner (CStarMatrix.zeroExtendStarAlgHom h X) =

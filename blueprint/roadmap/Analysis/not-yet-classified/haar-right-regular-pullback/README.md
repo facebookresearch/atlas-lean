@@ -1,6 +1,6 @@
-# Haar Right Regular Pullback
+# Modularly normalized Haar right pullback
 
-- [Haar Right Pullback mem Lp](haar-right-pullback-mem-lp.md)
-- [Haar Right Pullback](haar-right-pullback.md)
-- [Haar Right Pullback ae eq](haar-right-pullback-ae-eq.md)
-- [Norm haar Right Pullback](norm-haar-right-pullback.md)
+- [Square integrability of the modularly normalized right translate](haar-right-pullback-mem-lp.md)
+- [Normalized right Haar pullback as an L² class](haar-right-pullback.md)
+- [Almost-everywhere normalized right Haar coordinates](haar-right-pullback-ae-eq.md)
+- [Norm preservation of normalized right Haar pullback](norm-haar-right-pullback.md)

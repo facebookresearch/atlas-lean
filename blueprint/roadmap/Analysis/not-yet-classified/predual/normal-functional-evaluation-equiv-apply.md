@@ -1,3 +1,6 @@
-# Normal Functional Evaluation Equiv apply
+# Pairing of the isometric predual evaluation equivalence
 
-The canonical isometric equivalence retains ordinary evaluation of the original functionals.
+Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for
+its vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. for `x ∈ M` and `φ ∈ M_*`, `(normalFunctionalEvaluationEquiv M x)(φ)=φ(x)`.

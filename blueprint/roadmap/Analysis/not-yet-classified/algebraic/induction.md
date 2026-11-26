@@ -1,4 +1,5 @@
-# Induction
+# Induction by adjoining nonzero coordinates
 
-Induction on algebraic direct sums, expressed through the public
-coefficient-indexed carrier rather than exposing raw `DFinsupp`.
+A property of finite-support vectors follows
+from its value at zero and preservation under `j_i b + y` when `y_i = 0`, `b ≠ 0`, and the
+property holds for `y`.

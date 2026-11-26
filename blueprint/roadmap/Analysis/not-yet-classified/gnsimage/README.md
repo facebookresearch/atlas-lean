@@ -1,7 +1,7 @@
-# GNSImage
+# Normal image equivalence of an NSF weight's GNS map
 
-- [Normal Semifinite Faithful Weight GNSStar Alg Hom injective](normal-semifinite-faithful-weight-gnssta.md)
-- [Normal Semifinite Faithful Weight GNSImage](normal-semifinite-faithful-weight-gnsima.md)
-- [Normal Semifinite Faithful Weight GNSImage Equiv](normal-semifinite-faithful-weight-gnsima-2.md)
-- [Coe normal Semifinite Faithful Weight GNSImage](coe-normal-semifinite-faithful-weight-gn.md)
-- [Normal Semifinite Faithful Weight GNSImage Equiv apply](normal-semifinite-faithful-weight-gnsima-3.md)
+- [Injectivity of the normal GNS map for an NSF weight](normal-semifinite-faithful-weight-gnssta.md)
+- [Von Neumann operator image of an NSF GNS representation](normal-semifinite-faithful-weight-gnsima.md)
+- [Normal equivalence onto an NSF GNS image](normal-semifinite-faithful-weight-gnsima-2.md)
+- [Exact operator carrier of an NSF GNS image](coe-normal-semifinite-faithful-weight-gn.md)
+- [Forward value of the NSF GNS normal equivalence](normal-semifinite-faithful-weight-gnsima-3.md)

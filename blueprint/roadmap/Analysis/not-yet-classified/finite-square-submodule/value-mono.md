@@ -1,3 +1,5 @@
-# Value mono
+# Monotonicity of a positive weight
 
-Positive additivity makes the actual global weight monotone on the original positive cone.
+Let `A` be a nonunital complex C-star algebra with its
+spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight vanishing
+at zero. for positive `a,b` with `a ≤ b`, `φ(a) ≤ φ(b)`; infinite values are permitted.

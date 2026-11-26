@@ -1,8 +1,8 @@
-# Haar Integrated Form
+# Haar-integrated covariant representations
 
-- [Haar Integrated Operator mul](haar-integrated-operator-mul.md)
-- [Haar Integrated Operator star](haar-integrated-operator-star.md)
-- [Haar Integrated Hom](haar-integrated-hom.md)
-- [Haar Integrated Hom apply](haar-integrated-hom-apply.md)
-- [Haar Integrated Hom apply vector](haar-integrated-hom-apply-vector.md)
-- [Norm haar Integrated Hom le](norm-haar-integrated-hom-le.md)
+- [Multiplicativity of the integrated representation](haar-integrated-operator-mul.md)
+- [Involution becomes the Hilbert adjoint](haar-integrated-operator-star.md)
+- [Integrated star-algebra homomorphism](haar-integrated-hom.md)
+- [Operator value of the integrated homomorphism](haar-integrated-hom-apply.md)
+- [Vector action of the integrated representation](haar-integrated-hom-apply-vector.md)
+- [L¹ bound for the integrated representation](norm-haar-integrated-hom-le.md)

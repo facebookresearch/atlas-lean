@@ -1,3 +1,4 @@
-# To DFinsupp
+# Coordinate representation of the algebraic sum
 
-The underlying dependent finite-support function.
+This complex-linear equivalence identifies
+`Algebraic B E` with the finite-support dependent functions `Π₀ i, E i`.

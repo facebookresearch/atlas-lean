@@ -1,4 +1,6 @@
-# Apply Vector Measure
+# Vector measure obtained by evaluating a PVM
 
-Evaluation of a PVM on one vector is an ordinary vector measure. This is
-a derived pointwise adapter, not an operator-valued vector measure.
+Let `X` be a measurable space and `H` a
+complete complex Hilbert space. Let `E : ProjectionValuedMeasure X H` be a strongly
+countably additive PVM. for `h ∈ H`, `applyVectorMeasure E h : VectorMeasure X H` is `s ↦
+E(s)h`, countably additive in the norm of `H`.

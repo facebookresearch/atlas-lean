@@ -1,4 +1,5 @@
-# Right Matrix Standard Compact Hom apply
+# Vector value of the standard matrix corner
 
-The whole corner action is the literal finite sum of coefficient singles
-with the original row-before-column, unconjugated matrix entries.
+For nonunital complex C-star `B`, finite `I`,
+arbitrary `κ`, and an injection `η : I ↪ κ`, `F_X y = ∑ i, single (η i) (∑ j, X i j * coord (η
+j) y)`, where `F_X = rightMatrixStandardCompactHom η X`.

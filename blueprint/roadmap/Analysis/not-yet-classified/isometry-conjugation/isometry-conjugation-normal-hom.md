@@ -1,3 +1,6 @@
-# Isometry Conjugation Normal Hom
+# Normal spatial conjugation into the full operator algebra
 
-The exact spatial map is normal by its actual source vector-functional pullbacks.
+Let `H,K` be complete
+complex Hilbert spaces, `e : H ≃ₗᵢ[ℂ] K` a unitary equivalence and `M ⊆ B(H)` a concrete
+von Neumann algebra. `isometryConjugationNormalHom e M : NormalStarAlgHom M B(K)` is the
+unital complex star map `x ↦ e x e⁻¹`, continuous for the ultraweak topologies.

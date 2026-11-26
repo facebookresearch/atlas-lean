@@ -1,3 +1,6 @@
-# Adjoint Of Complete Source inner left
+# Left inner-product identity of the one-sided adjoint
 
-The one-sided adjoint satisfies the left inner-product characteristic.
+Let `𝕜` be real or complex
+(`RCLike`), `E` a complete normed inner-product `𝕜`-space and `F` a normed inner-product
+`𝕜`-space, possibly incomplete. for bounded `T : E → F`, `x ∈ E` and `y ∈ F`,
+`⟨adjointOfCompleteSource T y,x⟩=⟨y,Tx⟩`.

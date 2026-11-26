@@ -1,3 +1,4 @@
-# Finite Matrix Tensor Hom apply
+# Value of the finite frame star homomorphism
 
-The star hom retains each actual finite matrix-entry tensor sum.
+`finiteMatrixTensorHom v hv A M = ∑ i, ∑ j, M
+i j ⊗ hilbertCompactRankOne H (v i) (v j)`.

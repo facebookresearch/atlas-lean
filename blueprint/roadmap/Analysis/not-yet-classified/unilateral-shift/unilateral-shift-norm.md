@@ -1,3 +1,5 @@
-# Unilateral Shift norm
+# Norm preservation of the unilateral shift
 
-The unilateral shift preserves the `ℓ²` norm.
+Let `𝕜` be real or complex and `G` a normed
+inner-product `𝕜`-space. On `L=lp (fun _ : ℕ => G) 2`, write `Sx=(0,x_0,x_1,…)`. for every
+`x ∈ L`, `‖Sx‖₂=‖x‖₂`.

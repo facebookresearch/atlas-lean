@@ -1,3 +1,4 @@
-# Stably Weak Equivalent
+# Stable weak equivalence relative to a fold
 
-The literal stable weak relation, with the same actual trivial summands.
+Two Busby maps are stably weakly equivalent
+when adjoining liftable `σ₁,σ₂` makes their `S`-sums conjugate by one unitary of `Q(B)`.

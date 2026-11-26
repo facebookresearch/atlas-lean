@@ -17,12 +17,13 @@ public import Mathlib.Topology.ContinuousMap.Compact
 public import Mathlib.Topology.ContinuousMap.Ordered
 
 /-!
-# Jordan decomposition of real functionals on `C(X, ℝ)`
+# Jordan decomposition of real continuous-function functionals
 
-On a compact topological space, every bounded real functional on the continuous real-valued
-functions is the difference of two positive bounded functionals.  The construction is the lattice
-positive part of the functional and includes the exact norm decomposition.  No separation or
-nonemptiness hypothesis on the source space is required.
+For a compact topological space `X`, every bounded real functional `F : C(X,ℝ) → ℝ` has positive
+bounded parts `F⁺,F⁻` satisfying `F=F⁺-F⁻`, `‖F‖=F⁺(1)+F⁻(1)`, and `‖F⁺‖=F⁺(1)`, `‖F⁻‖=F⁻(1)`.
+
+The positive part is obtained from the lattice positive part of the functional, and the negative
+part is the positive part of `-F`. No Hausdorff or nonempty-space condition is required.
 -/
 
 public section
@@ -472,24 +473,44 @@ private theorem jordan_norm_eq (F : StrongDual ℝ C(X, ℝ)) :
           2 * positiveAux F 1 - F 1 := by ring
       _ ≤ ‖F‖ := two_mul_positiveAux_one_sub_apply_le_norm F
 
-/-- The Jordan decomposition of a bounded real functional on the continuous functions of a compact
-space.  Both summands are positive, their difference is the original functional, and their masses
-add to its operator norm. -/
+/-- **Positive and negative decomposition of a real continuous-function dual.** Let `X` be a
+compact topological space, with no separation or nonempty-space assumption, and `F ∈
+C(X,ℝ)*` a bounded real-linear functional. `RealDualJordan F` contains positive bounded
+real-linear parts `F⁺,F⁻` with `F=F⁺-F⁻`, `‖F‖=F⁺(1)+F⁻(1)`, `‖F⁺‖=F⁺(1)` and
+`‖F⁻‖=F⁻(1)`. -/
 structure RealDualJordan (F : StrongDual ℝ C(X, ℝ)) where
-  /-- The positive part. -/
+  /-- **Positive Jordan functional.** Let `X` be a compact topological space, with no
+  separation or nonempty-space assumption, and `F ∈ C(X,ℝ)*` a bounded real-linear
+  functional. the positive part `F⁺ : C(X,ℝ) → ℝ` is bounded and real-linear, and
+  nonnegative on nonnegative continuous functions. -/
   pos : C(X, ℝ) →P[ℝ] ℝ
-  /-- The negative part. -/
+  /-- **Negative Jordan functional.** Let `X` be a compact topological space, with no
+  separation or nonempty-space assumption, and `F ∈ C(X,ℝ)*` a bounded real-linear
+  functional. the part `F⁻ : C(X,ℝ) → ℝ` is bounded, real-linear and positive, with
+  `F=F⁺-F⁻`. -/
   neg : C(X, ℝ) →P[ℝ] ℝ
-  /-- The positive part minus the negative part is the original functional. -/
+  /-- **Difference equation of the Jordan functional parts.** Let `X` be a compact topological
+  space, with no separation or nonempty-space assumption, and `F ∈ C(X,ℝ)*` a bounded
+  real-linear functional. the bounded positive parts satisfy `F⁺-F⁻=F` as continuous
+  real-linear maps. -/
   sub_eq : pos.toContinuousLinearMap - neg.toContinuousLinearMap = F
-  /-- The masses of the two parts add to the norm of the original functional. -/
+  /-- **Jordan masses add to the dual norm.** Let `X` be a compact topological space, with no
+  separation or nonempty-space assumption, and `F ∈ C(X,ℝ)*` a bounded real-linear
+  functional. the decomposition satisfies `‖F‖=F⁺(1)+F⁻(1)`. -/
   norm_eq : ‖F‖ = pos 1 + neg 1
-  /-- The norm of the positive part equals its mass. -/
+  /-- **Norm of the positive Jordan part.** Let `X` be a compact topological space, with no
+  separation or nonempty-space assumption, and `F ∈ C(X,ℝ)*` a bounded real-linear
+  functional. `‖F⁺‖=F⁺(1)` for the bounded positive part. -/
   norm_pos : ‖pos.toContinuousLinearMap‖ = pos 1
-  /-- The norm of the negative part equals its mass. -/
+  /-- **Norm of the negative Jordan part.** Let `X` be a compact topological space, with no
+  separation or nonempty-space assumption, and `F ∈ C(X,ℝ)*` a bounded real-linear
+  functional. `‖F⁻‖=F⁻(1)` for the bounded positive part of `-F`. -/
   norm_neg : ‖neg.toContinuousLinearMap‖ = neg 1
 
-/-- Construct the Jordan decomposition of a bounded real functional on `C(X, ℝ)`. -/
+/-- **Construction of positive and negative Jordan parts.** Let `X` be a compact topological
+space, with no separation or nonempty-space assumption, and `F ∈ C(X,ℝ)*` a bounded
+real-linear functional. `realDualJordan F` gives the lattice positive part `F⁺` and the
+positive part `F⁻` of `-F`, with their difference and exact norm-mass identities. -/
 noncomputable def realDualJordan (F : StrongDual ℝ C(X, ℝ)) : RealDualJordan F where
   pos := jordanPositiveContinuous F
   neg := jordanNegativeContinuous F

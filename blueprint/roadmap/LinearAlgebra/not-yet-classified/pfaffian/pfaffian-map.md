@@ -1,4 +1,4 @@
-# Pfaffian map
+# Pfaffian commutes with coefficient homomorphisms
 
-The integral Pfaffian commutes with every homomorphism of commutative
-rings, including reduction to positive characteristic.
+Let R,S be commutative rings, f:R→S a ring homomorphism and A an n×n matrix over R. Then
+pfaffian(A.map f)=f(pfaffian A), in all characteristics.

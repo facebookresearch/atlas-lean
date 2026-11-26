@@ -1,3 +1,5 @@
-# Operator Pullback Busby Equiv quotient
+# Quotient compatibility of the pullback equivalence
 
-Transport fixes the original quotient algebra and its literal second-coordinate map.
+The Busby quotient of
+`operatorPullbackBusbyEquiv φ p` equals `operatorPullbackQuotient φ p`, the coefficient
+coordinate of `p`.

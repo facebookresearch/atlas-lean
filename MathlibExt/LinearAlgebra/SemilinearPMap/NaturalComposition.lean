@@ -14,12 +14,12 @@ module
 public import MathlibExt.LinearAlgebra.SemilinearPMap.Basic
 
 /-!
-# Actual natural-domain partial composition over semirings
+# Natural-domain composition of partial semilinear maps
 
-The domain of A after B is exactly the original B-domain vectors whose
-actual B-value lies in the original A-domain. All values are A(Bx) on that
-subtype. Semiring coefficients and additive commutative monoids suffice.
-No full-range inclusion, topology, norm, subtraction or model input is used.
+Let R,S,T be semirings with σ:R→S and τ:S→T, E,F,G semimodules over them, B:D_B⊆E→F a partial
+σ-semilinear map and A:D_A⊆F→G a partial τ-semilinear map. Their natural composite has domain
+D={x∈D_B:B(x)∈D_A} and value x↦A(B(x)), semilinear for τ∘σ. No full-domain range inclusion is
+imposed; membership is tested within D_B.
 -/
 
 @[expose] public section
@@ -34,7 +34,13 @@ variable {E : Type uE} [AddCommMonoid E] [Module R E]
 variable {F : Type uF} [AddCommMonoid F] [Module S F]
 variable {G : Type uG} [AddCommMonoid G] [Module T G]
 
-/-- Compose the actual partial semilinear maps on their exact natural domain. -/
+/-- **Partial semilinear map on the natural composition domain.**
+
+Let R,S,T be semirings with σ:R→S and τ:S→T, E,F,G semimodules over them, B:D_B⊆E→F a partial
+σ-semilinear map and A:D_A⊆F→G a partial τ-semilinear map. Their natural composite has domain
+D={x∈D_B:B(x)∈D_A} and value x↦A(B(x)), semilinear for τ∘σ. The map naturalComp A B is the
+partial τ∘σ-semilinear composite.
+-/
 def naturalComp (A : SemilinearPMap tau F G) (B : SemilinearPMap sigma E F) :
     SemilinearPMap (tau.comp sigma) E G := by
   let D : Submodule R E := (Submodule.comap B.toFun A.domain).map B.domain.subtype
@@ -53,11 +59,23 @@ def naturalComp (A : SemilinearPMap tau F G) (B : SemilinearPMap sigma E F) :
   letI : RingHomCompTriple sigma tau (tau.comp sigma) := ⟨rfl⟩
   exact ⟨D, A.toFun.comp (b.codRestrict A.domain hb)⟩
 
-/-- The exact natural domain is the original inverse image inside B's domain, mapped back into E. -/
+/-- **Submodule formula for natural semilinear composition.**
+
+Let R,S,T be semirings with σ:R→S and τ:S→T, E,F,G semimodules over them, B:D_B⊆E→F a partial
+σ-semilinear map and A:D_A⊆F→G a partial τ-semilinear map. Their natural composite has domain
+D={x∈D_B:B(x)∈D_A} and value x↦A(B(x)), semilinear for τ∘σ. Its domain is B⁻¹(D_A) as a
+submodule of D_B, included into E by the domain inclusion.
+-/
 theorem domain_naturalComp (A : SemilinearPMap tau F G) (B : SemilinearPMap sigma E F) :
     (A.naturalComp B).domain = (Submodule.comap B.toFun A.domain).map B.domain.subtype := rfl
 
-/-- Both original domain memberships are retained by the natural product. -/
+/-- **Membership in a natural semilinear composition domain.**
+
+Let R,S,T be semirings with σ:R→S and τ:S→T, E,F,G semimodules over them, B:D_B⊆E→F a partial
+σ-semilinear map and A:D_A⊆F→G a partial τ-semilinear map. Their natural composite has domain
+D={x∈D_B:B(x)∈D_A} and value x↦A(B(x)), semilinear for τ∘σ. For x∈E, x belongs to the
+composite domain exactly when x∈D_B and B(x)∈D_A.
+-/
 theorem mem_domain_naturalComp (A : SemilinearPMap tau F G) (B : SemilinearPMap sigma E F) (x : E) :
     x ∈ (A.naturalComp B).domain ↔ ∃ hx : x ∈ B.domain, B ⟨x, hx⟩ ∈ A.domain := by
   rw [domain_naturalComp]
@@ -68,7 +86,13 @@ theorem mem_domain_naturalComp (A : SemilinearPMap tau F G) (B : SemilinearPMap 
   · rintro ⟨hx, hBx⟩
     exact ⟨⟨x, hx⟩, hBx, rfl⟩
 
-/-- On the actual natural domain, composition has exactly the original value A(Bx). -/
+/-- **Value of natural semilinear composition.**
+
+Let R,S,T be semirings with σ:R→S and τ:S→T, E,F,G semimodules over them, B:D_B⊆E→F a partial
+σ-semilinear map and A:D_A⊆F→G a partial τ-semilinear map. Their natural composite has domain
+D={x∈D_B:B(x)∈D_A} and value x↦A(B(x)), semilinear for τ∘σ. For x∈D, naturalComp A B
+x=A(B(x)).
+-/
 theorem naturalComp_apply (A : SemilinearPMap tau F G) (B : SemilinearPMap sigma E F)
     (x : E) (hx : x ∈ (A.naturalComp B).domain)
     (hxB : x ∈ B.domain) (hBx : B ⟨x, hxB⟩ ∈ A.domain) :

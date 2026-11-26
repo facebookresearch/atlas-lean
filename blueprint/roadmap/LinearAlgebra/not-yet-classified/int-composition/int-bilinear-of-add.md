@@ -1,4 +1,4 @@
-# Int Bilinear Of Add
+# Integer bilinear map from two additive laws
 
-Construct the same integer bilinear function directly from its
-two additive laws, retaining arbitrary integer module structures.
+Let A,B,D be additive commutative groups with ℤ-actions. If f:A×B→D is additive in each
+variable, intBilinearOfAdd f hLeft hRight is the ℤ-bilinear map with those values.

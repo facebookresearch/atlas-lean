@@ -18,18 +18,16 @@ public import MathlibExt.Analysis.InnerProductSpace.CompactOperator.FiniteRankCl
 import Mathlib.Analysis.CStarAlgebra.ApproximateUnit
 
 /-!
-# The actual arbitrary coefficient and full-H compact product image
+# Compact images of elementary tensor operators
 
-The original elementary rank-one identity gives compact image for coefficient
-products a * star e. The genuine approximate unit converges to each original
-coefficient, and the same coefficient representation is continuous. Then the
-actual norm closure of full-H Hilbert rank-one spans and continuity of the
-original factor action give compact image for every actual compact T.
+For complex Hilbert `H` and nonunital C-star `A`, let `L_a` be coefficient multiplication and
+`D_T` the amplified Hilbert operator on `Space H A`. For every `a : A` and compact `T ∈ K(H)`,
+the product `L_a D_T` is module-compact.
 
-The resulting value is in the existing CompactAlgebra H A. No compactness,
-output model or norm identity is supplied as a premise. This is a constructor
-prerequisite for the actual algebraic A tensor K(full H) map in Blackadar10.1.2;
-its minimum completion and the terminal Takai theorem are separate obligations.
+Rank-one factorization proves this for coefficient products `u*star v` and Hilbert rank-one
+operators. Coefficient approximate-unit convergence and the norm closure of the Hilbert rank-one
+span extend it to arbitrary `a,T`. The compact element retains the same adjointable endomorphism
+value.
 -/
 
 @[expose] public section
@@ -50,7 +48,9 @@ variable (H : Type uH) (A : Type uA)
 variable [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 variable [NonUnitalCStarAlgebra A]
 
-/-- The original Hilbert rank-one factor has compact module image for every original coefficient. -/
+/-- **Compact amplified rank-one products.** For a complex Hilbert space `H` and a nonunital
+C-star algebra `A`, for every `a : A` and `ξ,η : H`, `coefficientHom a * hilbertOperator
+(rankOne ℂ ξ η)` is module-compact on `Space H A`. -/
 theorem coefficient_hilbertRankOne_mem_compact_allCoefficients (a : A) (ξ η : H) :
     letI : PartialOrder Aᵐᵒᵖ := CStarAlgebra.spectralOrder Aᵐᵒᵖ;
     letI : StarOrderedRing Aᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Aᵐᵒᵖ;
@@ -109,7 +109,9 @@ theorem coefficient_hilbertRankOne_mem_compact_allCoefficients (a : A) (ξ η : 
     (B := A) (E := Space H A) (F := Space H A)).closure_eq] at hmem
   exact hmem
 
-/-- Every original compact Hilbert operator has actual compact module image with every coefficient. -/
+/-- **Compact amplified Hilbert products.** For a complex Hilbert space `H` and a nonunital C-star
+algebra `A`, if `T : H →L[ℂ] H` is a compact operator, then `coefficientHom a *
+hilbertOperator T` is module-compact for every `a : A`. -/
 theorem coefficient_hilbertOperator_mem_compact (a : A) (T : H →L[ℂ] H)
     (hT : IsCompactOperator T) :
     letI : PartialOrder Aᵐᵒᵖ := CStarAlgebra.spectralOrder Aᵐᵒᵖ;
@@ -179,7 +181,9 @@ theorem coefficient_hilbertOperator_mem_compact (a : A) (T : H →L[ℂ] H)
   change coefficientHom H A a * hilbertHom H A T ∈ K at hmem
   simpa only [hilbertHom_apply] using hmem
 
-/-- The two original algebraic tensor factors have actual compact module product image. -/
+/-- **Compact product of the two representation factors.** For a complex Hilbert space `H` and a
+nonunital C-star algebra `A`, for `a : A` and `T ∈ K(H)`, `coefficientHom a *
+compactHilbertHom T` belongs to the module compact ideal. -/
 theorem coefficient_compactHilbertHom_mem_compact (a : A)
     (T : (compactEndomorphismClosedStarIdeal (H := H)).carrier) :
     letI : PartialOrder Aᵐᵒᵖ := CStarAlgebra.spectralOrder Aᵐᵒᵖ;
@@ -217,7 +221,9 @@ theorem coefficient_compactHilbertHom_mem_compact (a : A)
   rw [compactHilbertHom_apply]
   exact coefficient_hilbertOperator_mem_compact H A a (T : H →L[ℂ] H) hT
 
-/-- Compute the original arbitrary coefficient/compact product in the actual compact algebra. -/
+/-- **Elementary compact on Hilbert amplification.** For a complex Hilbert space `H` and a
+nonunital C-star algebra `A`, `compactElementaryOperator H A a T` is the element of
+`CompactAlgebra H A` represented by `L_a D_T`, for `a : A` and `T ∈ K(H)`. -/
 def compactElementaryOperator (a : A)
     (T : (compactEndomorphismClosedStarIdeal (H := H)).carrier) : CompactAlgebra H A := by
   let : PartialOrder Aᵐᵒᵖ := CStarAlgebra.spectralOrder Aᵐᵒᵖ
@@ -245,7 +251,9 @@ def compactElementaryOperator (a : A)
   exact ⟨coefficientHom H A a * compactHilbertHom H A T,
     coefficient_compactHilbertHom_mem_compact H A a T⟩
 
-/-- The computed compact element keeps the literal original product of the two factors. -/
+/-- **Endomorphism value of an elementary compact.** For a complex Hilbert space `H` and a
+nonunital C-star algebra `A`, the compact-ideal inclusion of `compactElementaryOperator H A a
+T` equals `coefficientHom H A a * compactHilbertHom H A T`. -/
 theorem compactElementaryOperator_coe (a : A)
     (T : (compactEndomorphismClosedStarIdeal (H := H)).carrier) :
     letI : PartialOrder Aᵐᵒᵖ := CStarAlgebra.spectralOrder Aᵐᵒᵖ;

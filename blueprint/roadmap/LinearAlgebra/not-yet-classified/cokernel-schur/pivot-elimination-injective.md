@@ -1,4 +1,5 @@
-# Pivot Elimination injective
+# Injectivity of elimination for a nonzero pivot
 
-A nonzero pivot earns injectivity of the actual elimination map on
-every torsion-free module; a unit or finite-rank premise is unnecessary.
+Let R be a commutative ring and N an R-module. For a∈R, r:N→R, c:R→N and B:N→N linear, set
+T(x,y)=(a*x+r(y),c(x)+B(y)), E(x,y)=(x,a•y-c(x)) and S=a•B-c∘r. Assume a≠0 and r₀•n=0 implies
+r₀=0 or n=0 for scalars r₀∈R and n∈N. Then E is injective.

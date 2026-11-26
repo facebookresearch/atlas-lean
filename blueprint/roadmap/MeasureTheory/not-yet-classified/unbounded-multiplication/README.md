@@ -1,10 +1,10 @@
-# Unbounded Multiplication
+# Maximal-domain multiplication on L²
 
-- [Multiplication Domain](multiplication-domain.md)
-- [Mem multiplication Domain](mem-multiplication-domain.md)
-- [Multiplication Value](multiplication-value.md)
-- [Multiplication Value ae eq](multiplication-value-ae-eq.md)
-- [Multiplication Linear Map](multiplication-linear-map.md)
-- [Multiplication Operator](multiplication-operator.md)
-- [Multiplication Operator domain](multiplication-operator-domain.md)
-- [Multiplication Operator ae eq](multiplication-operator-ae-eq.md)
+- [Maximal L² product domain](multiplication-domain.md)
+- [Membership criterion for the maximal multiplication domain](mem-multiplication-domain.md)
+- [L² value of a maximal-domain product](multiplication-value.md)
+- [Almost-everywhere value of a maximal-domain product](multiplication-value-ae-eq.md)
+- [Linear multiplication map on the maximal domain](multiplication-linear-map.md)
+- [Partial multiplication operator with maximal product domain](multiplication-operator.md)
+- [Domain of the partial L² multiplication operator](multiplication-operator-domain.md)
+- [Almost-everywhere action of the partial multiplication operator](multiplication-operator-ae-eq.md)

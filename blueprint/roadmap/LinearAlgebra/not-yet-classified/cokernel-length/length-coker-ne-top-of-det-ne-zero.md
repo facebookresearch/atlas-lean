@@ -1,4 +1,6 @@
-# Length coker ne top of det ne zero
+# Nonzero determinant gives finite full cokernel length
 
-Finite length of the full matrix cokernel is earned from its actual
-nonzero determinant and the one-dimensional Noetherian domain hypotheses.
+Let R be a commutative Noetherian domain of Krull dimension at most one, I a finite index type
+and A an I×I matrix over R. Its full cokernel is coker(A)=R^I/range(A.mulVecLin), and
+ord_R(a)=length_R(R/(a)) is the order of vanishing in ℕ∪{∞}. If det(A)≠0, then
+length_R(coker(A))≠∞.

@@ -16,12 +16,14 @@ public import MathlibExt.Analysis.Normed.Operator.Fredholm.Prod
 public import MathlibExt.Analysis.Normed.Operator.Fredholm.Transport
 
 /-!
-# Strong Fredholm orthogonal block sums
+# Fredholm maps on orthogonal two-norm sums
 
-The existing rectangular block diagonal is transported from the actual
-Cartesian product of two strong Fredholm maps through the stock WithLp
-continuous linear equivalences. All five strong fields are preserved.
-No scalar/stage completeness, Hilbert structure or new norm is required.
+Over a nontrivially normed field, let `S : H₀ → H₁` and `T : K₀ → K₁` be bounded Fredholm maps
+of normed spaces. Their rectangular block map `(x,y) ↦ (Sx,Ty)` is Fredholm between the
+orthogonal two-norm sums.
+
+The conclusion retains strictness, closed finite-codimension range and finite-dimensional
+complemented kernel. Neither completeness of the field or spaces nor inner products are assumed.
 -/
 
 @[expose] public section
@@ -37,8 +39,12 @@ variable [NormedAddCommGroup H₁] [NormedSpace 𝕜 H₁]
 variable [NormedAddCommGroup K₀] [NormedSpace 𝕜 K₀]
 variable [NormedAddCommGroup K₁] [NormedSpace 𝕜 K₁]
 
-/-- The actual rectangular orthogonal block of two strong Fredholm maps is
-strong Fredholm, without completeness or inner-product hypotheses. -/
+/-- **Fredholm block diagonal on two-norm sums.** Let `𝕜` be a nontrivially normed field and
+`H₀,H₁,K₀,K₁` normed `𝕜`-spaces in independent universes. If bounded `S : H₀ → H₁` and `T
+: K₀ → K₁` are Fredholm, their block operator `(x,y) ↦ (Sx,Ty)` is Fredholm on the
+orthogonal two-norm sums. Fredholmness includes strictness, closed finite-codimension
+range and a finite-dimensional complemented kernel. No completeness or inner products are
+assumed. -/
 theorem isFredholm_blockDiagonal
     (S : H₀ →L[𝕜] H₁) (T : K₀ →L[𝕜] K₁)
     (hS : S.IsFredholm) (hT : T.IsFredholm) :

@@ -1,3 +1,5 @@
-# Equivalence
+# Equivalence relation of stable strong Busby sums
 
-The stable strong relation is an equivalence relation.
+If `S.IsCoherent`, then
+`StablyStrongEquivalent S` is reflexive, symmetric and transitive on the Busby homomorphisms
+`A → Q(B)`.

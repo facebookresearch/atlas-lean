@@ -1,3 +1,4 @@
-# Normed Add Comm Group bornology
+# Bounded sets in the right scalar module
 
-The factory's bornology is exactly the synonym's inherited bornology.
+Its bornology is induced by `q =
+WithCStarModule.equiv ℂᵐᵒᵖ H`; boundedness is measured by the corresponding subset of `H`.

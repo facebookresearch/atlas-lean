@@ -1,8 +1,8 @@
-# CFCMeasure Sesquilinearity
+# Sesquilinearity of normal CFC coefficient measures
 
-- [Normal CFCCoefficient Measure add left](normal-cfccoefficient-measure-add-left.md)
-- [Normal CFCCoefficient Measure smul left](normal-cfccoefficient-measure-smul-left.md)
-- [Normal CFCCoefficient Measure add right](normal-cfccoefficient-measure-add-right.md)
-- [Normal CFCCoefficient Measure smul right](normal-cfccoefficient-measure-smul-right.md)
-- [Normal CFCCoefficient Measure zero left](normal-cfccoefficient-measure-zero-left.md)
-- [Normal CFCCoefficient Measure zero right](normal-cfccoefficient-measure-zero-right.md)
+- [Addition in the first CFC coefficient vector](normal-cfccoefficient-measure-add-left.md)
+- [Complex linearity in the first coefficient vector](normal-cfccoefficient-measure-smul-left.md)
+- [Addition in the second CFC coefficient vector](normal-cfccoefficient-measure-add-right.md)
+- [Conjugate linearity in the second coefficient vector](normal-cfccoefficient-measure-smul-right.md)
+- [Zero first vector of a CFC coefficient measure](normal-cfccoefficient-measure-zero-left.md)
+- [Zero second vector of a CFC coefficient measure](normal-cfccoefficient-measure-zero-right.md)

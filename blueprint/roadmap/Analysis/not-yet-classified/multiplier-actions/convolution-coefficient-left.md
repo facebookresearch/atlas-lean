@@ -1,3 +1,6 @@
-# Convolution coefficient Left
+# Coefficient actions form a compatible centralizer pair
 
-The two original coefficient actions form one compatible centralizer pair.
+Let G be a Borel topological group with left Haar measure μ, A a nonunital complex C-star
+algebra and α a point-norm action of G on A. For core coefficients f, define L_a f(s)=a*f(s)
+and R_a f(s)=f(s)*α_s(a). For core coefficients f,h, f*(L_a h)=(R_a f)*h, where * is twisted
+convolution.

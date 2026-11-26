@@ -1,3 +1,3 @@
-# C0 Left Translation Equiv apply
+# Evaluation of a left translation
 
-Every coefficient value is the original inverse-left-translation formula.
+For g, s ∈ G and f ∈ C₀(G,ℂ), `c0LeftTranslationEquiv g f s = f (g⁻¹ * s)`.

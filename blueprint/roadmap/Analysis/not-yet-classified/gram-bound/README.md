@@ -1,4 +1,4 @@
-# Gram Bound
+# Coefficient Gram bounds for adjointable maps
 
-- [Exists norm square complement](exists-norm-square-complement.md)
-- [Inner apply self le norm sq smul](inner-apply-self-le-norm-sq-smul.md)
+- [Source square complement of a rectangular map](exists-norm-square-complement.md)
+- [Coefficient Gram bound for a rectangular map](inner-apply-self-le-norm-sq-smul.md)

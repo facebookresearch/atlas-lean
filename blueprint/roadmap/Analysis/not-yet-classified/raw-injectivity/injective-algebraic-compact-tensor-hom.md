@@ -1,3 +1,4 @@
-# Injective algebraic Compact Tensor Hom
+# Injective algebraic compact representation
 
-The actual algebraic A tensor K(full H) compact-module star hom is genuinely raw-injective.
+For a complex Hilbert space `H` and a
+nonunital C-star algebra `A`, `algebraicCompactTensorHom H A` is injective on `A ⊗_ℂ K(H)`.

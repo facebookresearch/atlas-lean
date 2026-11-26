@@ -1,4 +1,4 @@
-# Sum congr strong
+# Strong equivalence respects Busby sums
 
-The supplied stable sum respects strong unitary equivalence in both
-variables.
+For compatible folds `S`, strong unitary
+equivalences `τ₁ ∼ τ₁'` and `τ₂ ∼ τ₂'` imply `S.sum τ₁ τ₂ ∼ S.sum τ₁' τ₂'`.

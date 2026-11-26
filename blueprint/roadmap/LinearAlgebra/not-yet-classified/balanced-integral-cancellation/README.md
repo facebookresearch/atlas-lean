@@ -1,9 +1,9 @@
-# Balanced Integral Cancellation
+# Integral balancing cancels a scalar-extended free factor
 
-- [Integral Coordinate Data](integral-coordinate-data.md)
-- [Integral Coordinates](integral-coordinates.md)
-- [Integral Cancel Equiv](integral-cancel-equiv.md)
-- [Integral Cancel](integral-cancel.md)
-- [Integral Insert](integral-insert.md)
-- [Integral Map](integral-map.md)
-- [Integral Cancel Equiv naturality](integral-cancel-equiv-naturality.md)
+- [Canonical coordinate comparison of integral balanced quotients](integral-coordinate-data.md)
+- [Additive coordinates of the integral balanced quotient](integral-coordinates.md)
+- [Additive cancellation of an integral balanced free factor](integral-cancel-equiv.md)
+- [Integer-linear integral cancellation map](integral-cancel.md)
+- [Unit insertion into an integral balanced free factor](integral-insert.md)
+- [Factor maps on integral balanced free terms](integral-map.md)
+- [Naturality of integral free-factor cancellation](integral-cancel-equiv-naturality.md)

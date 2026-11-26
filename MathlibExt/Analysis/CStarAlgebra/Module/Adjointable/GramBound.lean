@@ -17,14 +17,14 @@ public import MathlibExt.Analysis.CStarAlgebra.Module.Adjointable
 import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order
 
 /-!
-# Coefficient-valued bounds for rectangular adjointable operators
+# Coefficient Gram bounds for adjointable maps
 
-A square complement is constructed in the actual complete source End algebra.
-The resulting coefficient-valued Gram remainder is nonnegative in the caller's
-unchanged opposite coefficient order. Target completeness is not needed.
+Let `B` be a nonunital C-star algebra with star-compatible opposite order, `E` a complete right
+Hilbert `B`-module, and `F` a right pre-Hilbert `B`-module. For adjointable `T : E → F`, a
+square complement on `E` gives `T* T + S* S = ‖T‖² I`.
 
-No scalar direct-sum norm, new order instance or desired positivity/adjoint
-field is assumed.
+Consequently `inner Bᵐᵒᵖ (T x) (T x) ≤ ‖T‖² • inner Bᵐᵒᵖ x x` in the coefficient order. Only the
+source module needs completeness; the target may be incomplete.
 -/
 
 public section
@@ -47,8 +47,9 @@ variable [SMul Bᵐᵒᵖ E] [CStarModule Bᵐᵒᵖ E] [CompleteSpace E]
 variable {F : Type uF} [NormedAddCommGroup F] [NormedSpace ℂ F]
 variable [SMul Bᵐᵒᵖ F] [CStarModule Bᵐᵒᵖ F]
 
-/-- An actual rectangular operator has a source square complement, constructed
-by positive CFC in the complete source End algebra. -/
+/-- **Source square complement of a rectangular map.** For adjointable `T : E → F` over nonunital
+C-star `B` with star-compatible opposite order, assume `E` complete and allow `F` incomplete.
+Some `S ∈ End_B(E)` satisfies `T* (T x) + S* (S x) = ‖T‖² • x` for every `x : E`. -/
 theorem exists_norm_square_complement (T : AdjointableOperator B E F) :
     ∃ S : End B E, ∀ x : E,
       T.adjoint (T x) + S.adjoint (S x) = (‖T‖ ^ 2 : ℝ) • x := by
@@ -85,8 +86,9 @@ theorem exists_norm_square_complement (T : AdjointableOperator B E F) :
     AdjointableOperator.algebraMap_apply,
     RCLike.real_smul_eq_coe_smul (K := ℂ)] using h
 
-/-- The genuine coefficient-valued Gram bound. Only the source module needs
-completeness; the rectangular target may be incomplete. -/
+/-- **Coefficient Gram bound for a rectangular map.** Over nonunital C-star `B` with
+star-compatible opposite order, an adjointable `T : E → F` with complete source satisfies
+`inner Bᵐᵒᵖ (T x) (T x) ≤ ‖T‖² • inner Bᵐᵒᵖ x x`; target completeness is not required. -/
 theorem inner_apply_self_le_norm_sq_smul
     (T : AdjointableOperator B E F) (x : E) :
     inner Bᵐᵒᵖ (T x) (T x) ≤ (‖T‖ ^ 2 : ℝ) • inner Bᵐᵒᵖ x x := by

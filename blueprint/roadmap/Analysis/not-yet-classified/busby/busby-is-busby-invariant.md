@@ -1,3 +1,4 @@
-# Busby is Busby Invariant
+# Characteristic equation for the extension Busby map
 
-The canonical Busby invariant satisfies its characteristic formula.
+The map `X.busby` satisfies
+`τ(X.quotient e) = q(X.multiplierMap e)` on every middle-algebra element.

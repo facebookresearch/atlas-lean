@@ -1,3 +1,5 @@
-# Projected Column Space
+# The span of projected columns
 
-The span of the actual projected columns of vectors in `S`.
+Let R be a commutative semiring. For S ⊆ R^(J × D), write P(S) for the R-submodule of R^J
+spanned by all columns xₐ with x ∈ S and a ∈ D. Thus P(S) = ∑ₐ∈D {xₐ : x ∈ S}, the supremum of
+the images of S under column projection.

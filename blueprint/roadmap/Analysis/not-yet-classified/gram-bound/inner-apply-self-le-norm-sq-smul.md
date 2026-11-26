@@ -1,4 +1,5 @@
-# Inner apply self le norm sq smul
+# Coefficient Gram bound for a rectangular map
 
-The genuine coefficient-valued Gram bound. Only the source module needs
-completeness; the rectangular target may be incomplete.
+Over nonunital C-star `B` with
+star-compatible opposite order, an adjointable `T : E → F` with complete source satisfies
+`inner Bᵐᵒᵖ (T x) (T x) ≤ ‖T‖² • inner Bᵐᵒᵖ x x`; target completeness is not required.

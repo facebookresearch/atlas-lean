@@ -1,3 +1,4 @@
-# Multiplier Map ideal Equiv coe
+# Multiplier action on an ideal representative
 
-The canonical multiplier action on literal ideal representatives.
+For the ideal identification `X.idealEquiv :
+B ≃ X.ideal`, `X.multiplierMap (X.idealEquiv b) = DoubleCentralizer.coeHom b`.

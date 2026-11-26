@@ -1,4 +1,5 @@
-# Of Continuous Linear Map mem finite Rank
+# Finite-rank maps under scalar-module transport
 
-The scalar-right correspondence sends the ordinary rank-one span into the
-module rank-one span.
+On complex Hilbert spaces `H,K`, a bounded
+map in the complex span of Hilbert-space rank-one operators is sent by `ofContinuousLinearMap`
+into the module rank-one span.

@@ -1,4 +1,4 @@
-# Sum Unitary
+# Unitary splitting of standard sum coordinates
 
-The standard module on a sum of coordinate types is unitarily equivalent
-to the genuine direct sum of the two standard modules.
+The coordinate restrictions give a unitary
+`Standard B (I ⊕ J) ≃ Standard B I ⊕ Standard B J` for arbitrary index types.

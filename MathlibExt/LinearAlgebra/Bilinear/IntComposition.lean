@@ -13,11 +13,11 @@ public import Mathlib.LinearAlgebra.TensorProduct.Basic
 public import Mathlib.Algebra.Module.NatInt
 
 /-!
-# Integer bilinear composition of tensor homomorphisms
+# Integer bilinear composition of additive tensor maps
 
-The actual additive tensor map followed by an additive coefficient map
-has its canonical curried integer-linear form. All group universes remain
-independent.
+Let A,B,C,D be additive commutative groups, with integer-module structures on A,B,D. A
+biadditive map A×B→D is ℤ-bilinear. For additive g:A⊗_ℤB→C and f:C→D, the curried bilinear
+composite is (x,y)↦f(g(x⊗y)). All group universes may be independent.
 -/
 
 @[expose] public section
@@ -31,8 +31,11 @@ variable {A : Type u} {B : Type v} {C : Type w} {D : Type z}
 variable [AddCommGroup A] [AddCommGroup B] [AddCommGroup C] [AddCommGroup D]
 variable [Module ℤ A] [Module ℤ B] [Module ℤ D]
 
-/-- A map additive in both arguments is integer bilinear for the
-supplied integer module structures, by the actual integer scalar law. -/
+/-- **Biadditive map as an integer-bilinear map.**
+
+Let A,B,D be additive commutative groups with their ℤ-module structures. For biadditive
+h:A×B→D, toIntBilinear h:A→ₗ[ℤ](B→ₗ[ℤ]D) has value h(x,y).
+-/
 def toIntBilinear (h : A →+ B →+ D) :
     A →ₗ[ℤ] B →ₗ[ℤ] D := by
   let k : A →+ (B →ₗ[ℤ] D) :=
@@ -54,12 +57,19 @@ def toIntBilinear (h : A →+ B →+ D) :
       map_smul' := fun r x => by
         simpa only [Int.cast_id, RingHom.id_apply] using map_intCast_smul k ℤ ℤ r x }
 
-/-- Integer bilinear conversion evaluates the original additive map. -/
+/-- **Value of integer bilinear conversion.**
+
+For additive commutative groups A,B,D with ℤ-actions and biadditive h, toIntBilinear h x
+y=h(x,y).
+-/
 theorem toIntBilinear_apply (h : A →+ B →+ D) (x : A) (y : B) :
     toIntBilinear h x y = h x y := rfl
 
-/-- Construct the same integer bilinear function directly from its
-two additive laws, retaining arbitrary integer module structures. -/
+/-- **Integer bilinear map from two additive laws.**
+
+Let A,B,D be additive commutative groups with ℤ-actions. If f:A×B→D is additive in each
+variable, intBilinearOfAdd f hLeft hRight is the ℤ-bilinear map with those values.
+-/
 def intBilinearOfAdd (f : A → B → D)
     (hLeft : ∀ x z y, f (x + z) y = f x y + f z y)
     (hRight : ∀ x y z, f x (y + z) = f x y + f x z) :
@@ -68,14 +78,21 @@ def intBilinearOfAdd (f : A → B → D)
     AddMonoidHom.mk' (fun x => AddMonoidHom.mk' (f x) (hRight x))
       (fun x z => AddMonoidHom.ext fun y => hLeft x z y)
 
-/-- Constructing integer bilinearity preserves the supplied function. -/
+/-- **Value of the bilinear map constructed from additive laws.**
+
+For additive commutative groups A,B,D and separately additive f:A×B→D, intBilinearOfAdd f
+hLeft hRight x y=f(x,y).
+-/
 theorem intBilinearOfAdd_apply (f : A → B → D)
     (hLeft : ∀ x z y, f (x + z) y = f x y + f z y)
     (hRight : ∀ x y z, f x (y + z) = f x y + f x z) (x : A) (y : B) :
     intBilinearOfAdd f hLeft hRight x y = f x y := rfl
 
-/-- Compose actual additive tensor and coefficient maps, then curry the
-same function over the supplied integer module structures. -/
+/-- **Curried integer-bilinear composite through a tensor.**
+
+Let A,B,C,D be additive commutative groups, g:A⊗_ℤB→C and f:C→D additive. The ℤ-bilinear map
+compIntTensorBilinear f g sends (x,y) to f(g(x⊗y)).
+-/
 def compIntTensorBilinear (f : C →+ D) (g : A ⊗[ℤ] B →+ C) :
     A →ₗ[ℤ] B →ₗ[ℤ] D := by
   let h : A →+ B →+ D :=
@@ -94,8 +111,11 @@ def compIntTensorBilinear (f : C →+ D) (g : A ⊗[ℤ] B →+ C) :
         simp only [TensorProduct.add_tmul, map_add] }
   exact toIntBilinear h
 
-/-- The curried bilinear map evaluates the original two additive maps
-on the literal integer pure tensor. -/
+/-- **Value of the additive tensor composite.**
+
+For additive commutative groups A,B,C,D, additive g:A⊗_ℤB→C and f:C→D, compIntTensorBilinear f
+g x y=f(g(x⊗_ℤy)).
+-/
 theorem compIntTensorBilinear_apply (f : C →+ D) (g : A ⊗[ℤ] B →+ C) (x : A) (y : B) :
     compIntTensorBilinear f g x y = f (g (x ⊗ₜ[ℤ] y)) := rfl
 

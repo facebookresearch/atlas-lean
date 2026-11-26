@@ -1,3 +1,4 @@
-# Pure smul left
+# Complex linearity of the Hilbert tensor factor
 
-The original completed pure vector is complex-linear in its Hilbert factor.
+`pure H A (c • ξ) b = c • pure H A ξ b`
+for `c : ℂ`.

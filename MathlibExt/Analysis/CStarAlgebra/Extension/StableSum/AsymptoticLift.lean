@@ -18,13 +18,16 @@ public import MathlibExt.Analysis.CStarAlgebra.CStarMatrix.DiagonalPair
 import Mathlib.Tactic.FinCases
 
 /-!
-# Exact asymptotic lifts of supplied stable sums
+# Exact asymptotic lifts of matrix-fold sums
 
-For arbitrary compatible stable-sum data, product pairing and actual diagonal
-postcomposition combine two nonlinear exact asymptotic lifts. The multiplier
-matrix equivalence preserves each time-continuous orbit and all four defect
-limits. Its compatibility with the actual quotient gives the exact Busby-sum
-identity at every time in [1, infinity), including the initial time.
+For nonunital C-star algebras `A,B`, compatible folds `S` and exact asymptotic lifts `ρ₁,ρ₂` of
+`τ₁,τ₂`, define `ρ_t(a) = S.multiplierMatrixEquiv (diag(ρ₁_t(a),ρ₂_t(a)))`. This is an
+asymptotic morphism into `M(B)` and satisfies `q(ρ_t(a)) = S.sum τ₁ τ₂ a` at every time `t ∈
+[1,∞)`.
+
+The diagonal pairing and multiplier fold preserve continuous time orbits and all four defect
+limits. Therefore asymptotic splitting is closed under these compatible sums, without an
+associativity assumption on `S`.
 -/
 
 @[expose] public section
@@ -44,7 +47,9 @@ section Lifts
 
 variable {A : Type uA} [NonUnitalCStarAlgebra A]
 
-/-- Sum two actual nonlinear exact lifts, by true diagonal/fold postcomposition. -/
+/-- **Folded diagonal of two exact lifts.** For compatible `S` and exact lifts `L₁,L₂`, fold
+`diag(L₁.family t a,L₂.family t a)` through the multiplier matrix equivalence; the resulting
+family exactly lifts `S.sum τ₁ τ₂` at every time. -/
 def StableSumData.asymptoticLift (S : StableSumData A B) {tau₁ tau₂ : BusbyHom A B}
     (L₁ : ExactAsymptoticLift tau₁) (L₂ : ExactAsymptoticLift tau₂) :
     ExactAsymptoticLift (S.sum tau₁ tau₂) := by
@@ -73,7 +78,8 @@ def StableSumData.asymptoticLift (S : StableSumData A B) {tau₁ tau₂ : BusbyH
     NonUnitalStarAlgHom.fst_apply, NonUnitalStarAlgHom.snd_apply, twoDiagonal]
   split_ifs <;> simp [L₁.quotient_eq, L₂.quotient_eq]
 
-/-- The actual generic matrix family, before the fixed multiplier fold. -/
+/-- **Value of the folded asymptotic lift.** `(S.asymptoticLift L₁ L₂).family t a =
+S.multiplierMatrixEquiv (diag(L₁.family t a,L₂.family t a))`. -/
 theorem StableSumData.asymptoticLift_apply (S : StableSumData A B)
     {tau₁ tau₂ : BusbyHom A B} (L₁ : ExactAsymptoticLift tau₁) (L₂ : ExactAsymptoticLift tau₂)
     (t : AsymptoticTime) (a : A) :
@@ -93,7 +99,9 @@ theorem StableSumData.asymptoticLift_apply (S : StableSumData A B)
     NonUnitalStarAlgHom.snd_apply, CStarMatrix.ofMatrix_apply, Matrix.diagonal_apply]
   fin_cases i <;> fin_cases j <;> rfl
 
-/-- Asymptotic splitting is closed under the actual compatible stable sum. -/
+/-- **Asymptotic splitting under compatible sums.** For nonunital C-star algebras `A,B` and
+compatible folds `S`, asymptotically split `τ₁,τ₂` have asymptotically split sum `S.sum τ₁
+τ₂`. -/
 theorem StableSumData.sum_isAsymptoticallySplit (S : StableSumData A B)
     {tau₁ tau₂ : BusbyHom A B}
     (h₁ : IsAsymptoticallySplit tau₁) (h₂ : IsAsymptoticallySplit tau₂) :

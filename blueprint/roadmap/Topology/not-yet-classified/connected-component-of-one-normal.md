@@ -1,5 +1,5 @@
-# Identity Component
+# Identity component is normal in a topological group
 
-The connected component of the identity is normal in every topological
-group.  This is a theorem rather than a global instance, so consumers may
-activate it only for the subgroup they own.
+For every topological group `G`,
+`connectedComponentOfOne G` is a normal subgroup: conjugation preserves the connected
+component of the identity.

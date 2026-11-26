@@ -1,3 +1,4 @@
-# Left Square mul le
+# Positive square bound for left multiplication
 
-Original left multiplication has the genuine C-star positive square estimate.
+For `a,x` in a nonunital complex C-star
+algebra with its spectral order, `(a*x)*(a*x) ≤ ‖a‖² • (x* x)`.

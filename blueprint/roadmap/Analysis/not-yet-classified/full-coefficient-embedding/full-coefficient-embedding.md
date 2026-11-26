@@ -1,3 +1,4 @@
-# Full Coefficient Embedding
+# Coefficient algebra embedded in full multipliers
 
-The secondary function embedding retains the actual named coefficient star-algebra homomorphism.
+The injective coefficient star homomorphism gives the function embedding
+A↪𝓜(FullCovariantCompletion μ α), a↦fullCoefficientMultiplierHom μ α a.

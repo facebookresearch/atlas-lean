@@ -1,9 +1,9 @@
-# Diagonal Lift
+# Diagonal lifts through multiplier quotients
 
-## Non Unital Star Alg Hom
+## Nonunital star algebra homomorphisms
 
-- [Map diagonal Pair](map-diagonal-pair.md)
+- [Entrywise homomorphism of a diagonal pair](map-diagonal-pair.md)
 
-## CStar Extension
+## C-star algebra extensions
 
-- [Diagonal Pair has Lift](diagonal-pair-has-lift.md)
+- [Diagonal lift of two split Busby maps](diagonal-pair-has-lift.md)

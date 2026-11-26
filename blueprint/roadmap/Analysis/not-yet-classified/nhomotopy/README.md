@@ -1,25 +1,25 @@
-# NHomotopy
+# Homotopy classes at finite asymptotic stages
 
 ## Iterated constant paths and reversal
 
-- [Constant Path Hom N](constant-path-hom-n.md)
-- [Reverse Path Hom N](reverse-path-hom-n.md)
+- [Constant path homomorphism at finite stage](constant-path-hom-n.md)
+- [Interval reversal at finite stage](reverse-path-hom-n.md)
 
-## The literal relation
+## Finite-stage homotopy equivalence
 
-- [Homotopic N](homotopic-n.md)
-- [Refl](refl.md)
-- [Symm](symm.md)
-- [Trans](trans.md)
+- [Homotopy through the iterated interval algebra](homotopic-n.md)
+- [Reflexivity of finite-stage homotopy](refl.md)
+- [Symmetry of finite-stage homotopy](symm.md)
+- [Transitivity of finite-stage homotopy](trans.md)
 
-## Explicit quotient data
+## Quotients by finite-stage homotopy
 
-- [Homotopic NSetoid](homotopic-nsetoid.md)
-- [NClasses](nclasses.md)
-- [Class Of](class-of.md)
+- [Setoid of finite-stage homotopy](homotopic-nsetoid.md)
+- [Finite-stage homotopy class space](nclasses.md)
+- [Class of a finite-stage representative](class-of.md)
 
 ## Constant-stage transition
 
-- [Stage Transition Representative](stage-transition-representative.md)
-- [Stage Transition Representative respects](stage-transition-representative-respects.md)
-- [Stage Transition](stage-transition.md)
+- [Representative included into the successor stage](stage-transition-representative.md)
+- [Successor inclusion preserves finite-stage homotopy](stage-transition-representative-respects.md)
+- [Successor map on finite-stage homotopy classes](stage-transition.md)
