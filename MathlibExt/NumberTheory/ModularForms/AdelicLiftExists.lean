@@ -63,7 +63,7 @@ namespace AdelicLiftExists
 
 private def ratArchHom : GL (Fin 2) (AdeleRing (𝓞 ℚ) ℚ) →* GL (Fin 2) ℝ :=
   (GeneralLinearGroup.map (InfinitePlace.Completion.ringEquivRealOfIsReal
-    LanglandsTunnell.rat_infinitePlace_isReal).toRingHom).comp
+    Rat.isReal_infinitePlace).toRingHom).comp
     ((archComponent ℚ default).comp (glArch (𝓞 ℚ) ℚ))
 
 private theorem ratArchHom_apply (g : GL (Fin 2) (AdeleRing (𝓞 ℚ) ℚ)) :
@@ -88,7 +88,7 @@ private theorem ratArch_globalPoints (γ : GL (Fin 2) ℚ) :
       GeneralLinearGroup.map (Rat.castHom ℝ) γ := by
   refine Matrix.GeneralLinearGroup.ext fun i j => ?_
   change ((InfinitePlace.Completion.ringEquivRealOfIsReal
-      LanglandsTunnell.rat_infinitePlace_isReal).toRingHom.comp
+      Rat.isReal_infinitePlace).toRingHom.comp
       ((archEval ℚ default).comp ((adeleArch (𝓞 ℚ) ℚ).comp
         (algebraMap ℚ (AdeleRing (𝓞 ℚ) ℚ)))))
       ((γ : Matrix (Fin 2) (Fin 2) ℚ) i j) = (Rat.castHom ℝ) ((γ : Matrix (Fin 2) (Fin 2) ℚ) i j)
@@ -190,9 +190,9 @@ private theorem intValuation_primePlace_le_iff (p : ℕ) [Fact p.Prime] (n : ℤ
 
 private theorem factorization_le_count {M : ℕ} (hM : M ≠ 0) (p : ℕ) [Fact p.Prime] :
     M.factorization p ≤ (Associates.mk (primePlace p).asIdeal).count
-      (Associates.mk (AdelicDock.ratLevel M)).factors := by
+      (Associates.mk (NumberField.AdelicLevel.ratLevel M)).factors := by
   refine (Associates.prime_pow_dvd_iff_le
-    (Associates.mk_ne_zero.mpr (AdelicDock.ratLevel_ne_bot hM))
+    (Associates.mk_ne_zero.mpr (NumberField.AdelicLevel.ratLevel_ne_bot hM))
     (primePlace p).associates_irreducible).mp ?_
   rw [← Associates.mk_pow]
   refine Associates.mk_dvd_mk.mpr ?_
@@ -203,19 +203,20 @@ private theorem factorization_le_count {M : ℕ} (hM : M ≠ 0) (p : ℕ) [Fact 
 private theorem pow_factorization_dvd_of_mem_idealBall {M : ℕ} (hM : M ≠ 0) (n : ℤ) (p : ℕ)
     [Fact p.Prime]
     (h : algebraMap ℚ (FiniteAdeleRing (𝓞 ℚ) ℚ) (n : ℚ) ∈
-      idealBall (𝓞 ℚ) ℚ (AdelicDock.ratLevel M)) :
+      idealBall (𝓞 ℚ) ℚ (NumberField.AdelicLevel.ratLevel M)) :
     (p : ℤ) ^ M.factorization p ∣ n := by
   have hv := h (primePlace p)
   rw [FiniteAdeleRing.algebraMap_apply, valuedAdicCompletion_eq_valuation',
     ← map_intCast (algebraMap (𝓞 ℚ) ℚ) n,
-    valuation_of_algebraMap, idealBound_of_ne_bot _ (AdelicDock.ratLevel_ne_bot hM)] at hv
+    valuation_of_algebraMap,
+    idealBound_of_ne_bot (NumberField.AdelicLevel.ratLevel_ne_bot hM)] at hv
   refine (intValuation_primePlace_le_iff p n _).mp (hv.trans ?_)
   rw [WithZero.exp_le_exp, neg_le_neg_iff, Nat.cast_le]
   exact factorization_le_count hM p
 
 private theorem natCast_dvd_of_mem_idealBall {M : ℕ} (hM : M ≠ 0) (n : ℤ)
     (h : algebraMap ℚ (FiniteAdeleRing (𝓞 ℚ) ℚ) (n : ℚ) ∈
-      idealBall (𝓞 ℚ) ℚ (AdelicDock.ratLevel M)) :
+      idealBall (𝓞 ℚ) ℚ (NumberField.AdelicLevel.ratLevel M)) :
     (M : ℤ) ∣ n := by
   rcases eq_or_ne n 0 with rfl | hn
   · exact dvd_zero _
@@ -234,7 +235,7 @@ variable (M : ℕ)
 determinant, and `u` in the finite level subgroup at `M`. -/
 private def IsLevelDecomp (x : GL (Fin 2) (AdeleRing (𝓞 ℚ) ℚ)) (γ : GL (Fin 2) ℚ)
     (h : GL (Fin 2) (AdeleRing (𝓞 ℚ) ℚ)) (u : GL (Fin 2) (FiniteAdeleRing (𝓞 ℚ) ℚ)) : Prop :=
-  u ∈ finiteLevelOne (𝓞 ℚ) ℚ (AdelicDock.ratLevel M) ∧ glFin (𝓞 ℚ) ℚ h = 1 ∧
+  u ∈ finiteLevelOne (𝓞 ℚ) ℚ (NumberField.AdelicLevel.ratLevel M) ∧ glFin (𝓞 ℚ) ℚ h = 1 ∧
     LanglandsTunnell.ratArchGL2 h ∈ GLPos (Fin 2) ℝ ∧
     x = globalPoints (𝓞 ℚ) ℚ γ * h * finEmbed (𝓞 ℚ) ℚ u
 
@@ -278,7 +279,7 @@ private theorem archVal_eq_of_isLevelDecomp (hM : M ≠ 0)
   have hfinq : glFin (𝓞 ℚ) ℚ (P δ) = u' * u⁻¹ := by
     rw [hquot, map_mul, map_mul, map_mul, map_inv, map_inv, hh, hh', hE, glFin_finEmbed,
       glFin_finEmbed, one_mul, inv_one, mul_one]
-  have hK1 : glFin (𝓞 ℚ) ℚ (P δ) ∈ finiteLevelOne (𝓞 ℚ) ℚ (AdelicDock.ratLevel M) := by
+  have hK1 : glFin (𝓞 ℚ) ℚ (P δ) ∈ finiteLevelOne (𝓞 ℚ) ℚ (NumberField.AdelicLevel.ratLevel M) := by
     rw [hfinq]; exact Subgroup.mul_mem _ hu' (Subgroup.inv_mem _ hu)
   have harch : LanglandsTunnell.ratArchGL2 (P δ) =
       LanglandsTunnell.ratArchGL2 h' * (LanglandsTunnell.ratArchGL2 h)⁻¹ := by
@@ -294,7 +295,7 @@ private theorem archVal_eq_of_isLevelDecomp (hM : M ≠ 0)
   have hε0 : ε ∈ CongruenceSubgroup.Gamma0 M := by
     rw [CongruenceSubgroup.Gamma0_mem]
     have hll : algebraMap ℚ (FiniteAdeleRing (𝓞 ℚ) ℚ) (((ε 1 0 : ℤ) : ℚ)) ∈
-        idealBall (𝓞 ℚ) ℚ (AdelicDock.ratLevel M) := by
+        idealBall (𝓞 ℚ) ℚ (NumberField.AdelicLevel.ratLevel M) := by
       have := hK1.1.lowerLeft
       rw [← hε] at this
       rw [show (((ε 1 0 : ℤ) : ℚ)) =
@@ -345,7 +346,7 @@ private theorem isLevelDecomp_globalPoints_mul_iff (γ₀ γ : GL (Fin 2) ℚ)
     rw [hx, map_mul, map_inv]; group
 
 private theorem isLevelDecomp_mul_finEmbed_iff {u₀ : GL (Fin 2) (FiniteAdeleRing (𝓞 ℚ) ℚ)}
-    (hu₀ : u₀ ∈ finiteLevelOne (𝓞 ℚ) ℚ (AdelicDock.ratLevel M)) (γ : GL (Fin 2) ℚ)
+    (hu₀ : u₀ ∈ finiteLevelOne (𝓞 ℚ) ℚ (NumberField.AdelicLevel.ratLevel M)) (γ : GL (Fin 2) ℚ)
     (x h : GL (Fin 2) (AdeleRing (𝓞 ℚ) ℚ)) (u : GL (Fin 2) (FiniteAdeleRing (𝓞 ℚ) ℚ)) :
     IsLevelDecomp M (x * finEmbed (𝓞 ℚ) ℚ u₀) γ h u ↔ IsLevelDecomp M x γ h (u * u₀⁻¹) := by
   constructor
