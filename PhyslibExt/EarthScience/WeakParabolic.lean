@@ -29,10 +29,13 @@ time outside. Spatial profiles use `EarthScience.WeakH10`, the `H¹₀(0,1)` str
 `PhyslibExt.EarthScience.WeakDiffusion`.
 
 `IsWeakParabolicSolution` is the solution class
-`L²(t0, t1; H¹₀(0,1)) ∩ C([t0, t1]; L²(0,1))`, written with representatives: time slices
-in `L²(0,1)` that vary continuously, `H¹₀(0,1)` profiles at almost every time, a forcing
-integrable against every test function, and the weak equation. The initial value is an
-`L²(0,1)` trace, `u t0 = u0` in `L²(0,1)`, so it may be any function of `L²(0,1)`.
+`L²(t0, t1; H¹₀(0,1)) ∩ C([t0, t1]; L²(0,1))`, with the given function as its representative
+in time: time slices in `L²(0,1)` that vary continuously, `H¹₀(0,1)` profiles at almost every
+time, a forcing integrable against every test function, and the weak equation. In space it
+fixes no representative: the profile condition asks for agreement almost everywhere on
+`[0, 1]`, and every other condition depends on the slices only up to such agreement. The
+initial value is an `L²(0,1)` trace, `u t0 = u0` in `L²(0,1)`, so it may be any function of
+`L²(0,1)`.
 
 `weak_parabolic_unique` proves that two solutions with the same forcing and the same
 initial value agree in `L²(0,1)` at every time. It takes the energy identity of the
@@ -81,9 +84,10 @@ namespace EarthScience
 
 /-! ## A. The weak formulation -/
 
-/-- Test functions for the parabolic weak formulation: smooth functions on time × space whose
-support, the closure of the set where they do not vanish, lies inside the open rectangle
-`(t0, t1) × (0, 1)`. Such a support is closed and bounded, hence compact.
+/-- **Test functions.** The test functions of the parabolic weak formulation are the smooth
+functions on time × space whose support, the closure of the set where they do not vanish, lies
+inside the open rectangle `(t0, t1) × (0, 1)`. Such a support is closed and bounded, hence
+compact.
 Note: `ContDiff ℝ (((⊤ : ℕ∞)) : WithTop ℕ∞)` is C^∞. Under current Mathlib `ContDiff` is indexed
 by `ℕ∞ω`, where `⊤ = ω` means analytic, while `∞` means C^∞. -/
 def ParabolicTest (t0 t1 : ℝ) (φ : ℝ → ℝ → ℝ) : Prop :=
@@ -207,15 +211,20 @@ lemma parabolicTest_deriv_memLp
       (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)) := hmem2
   exact ⟨hcont1, hcont2, hunc1, hunc2⟩
 
-/-- **Weak solutions** of `∂ₜu = ∂ₓ(κ ∂ₓu) + F` on `(t0, t1) × (0, 1)` with zero boundary
-values that are continuous in time with values in `L²(0,1)`.
+/-- **Weak parabolic solutions.** These are the weak solutions of `∂ₜu = ∂ₓ(κ ∂ₓu) + F` on
+`(t0, t1) × (0, 1)` with zero boundary values that are continuous in time with values in
+`L²(0,1)`.
 
 `u` is the solution and `ux` its spatial derivative, both as functions of `(t, x)`. This is
 the class `L²(t0, t1; H¹₀(0,1)) ∩ C([t0, t1]; L²(0,1))` of the standard theory (Evans,
-§5.9.2 and §7.1.1), written with representatives: every time slice is in `L²(0,1)` and
-the slices vary continuously in `L²(0,1)`, while the boundary values are imposed through
-`H¹₀(0,1)` profiles at almost every time only. In particular no profile is required at the
-initial time, so the initial value may be any function of `L²(0,1)`.
+§5.9.2 and §7.1.1). In space no representative is prescribed: every condition depends on
+`u t` and `ux t` only up to equality almost everywhere on `[0, 1]`, and at almost every time
+`u t` agrees almost everywhere on `[0, 1]` with an `H¹₀(0,1)` function (`WeakH10`) whose weak
+derivative agrees almost everywhere on `[0, 1]` with `ux t`. In time the given `u` is the
+representative: every time slice is in `L²(0,1)` and the slices vary continuously in
+`L²(0,1)`, while the `H¹₀(0,1)` condition, which imposes the boundary values, is required at
+almost every time only. In particular no profile is required at the initial time, so the
+initial value may be any function of `L²(0,1)`.
 
 Both sides of the weak equation are Lebesgue integrals, not Lean's default value `0` for a
 non-integrable function: the class requires the forcing to be integrable against every test
@@ -229,9 +238,11 @@ structure IsWeakParabolicSolution (t0 t1 : ℝ) (κ F u ux : ℝ → ℝ → ℝ
   continuous_slice : ∀ s ∈ Set.Icc t0 t1, Filter.Tendsto
     (fun t => (eLpNorm (fun x => u t x - u s x) 2 (volume.restrict (Set.Icc 0 1))).toReal)
     (nhdsWithin s (Set.Icc t0 t1)) (nhds 0)
-  /-- At almost every time, `u t` is in `H¹₀(0,1)` with weak derivative `ux t`. -/
+  /-- At almost every time, `u t` agrees almost everywhere on `[0, 1]` with an `H¹₀(0,1)`
+  function whose weak derivative agrees almost everywhere on `[0, 1]` with `ux t`. -/
   profile : ∀ᵐ t ∂(volume.restrict (Set.Icc t0 t1)),
-    ∃ h : WeakH10, h.toFun = u t ∧ h.weakDeriv = ux t
+    ∃ h : WeakH10, h.toFun =ᵐ[volume.restrict (Set.Icc 0 1)] u t
+      ∧ h.weakDeriv =ᵐ[volume.restrict (Set.Icc 0 1)] ux t
   /-- `u` is in `L²` on the rectangle. -/
   memLp : MemLp (Function.uncurry u) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1))
   /-- The spatial derivative `ux` is in `L²` on the rectangle. -/
@@ -302,9 +313,9 @@ lemma iterated_eq_product
   simp only [← integral_Icc_eq_integral_Ioc]
   rw [hProd, Measure.restrict_restrict hS, Set.inter_self]
 
-/-- For `u` and `ux` in `L²` on the rectangle and `κ` a.e. bounded and a.e. strongly
-measurable, the integrand of the weak equation is integrable on the rectangle for every
-test function. -/
+/-- **Integrability of the weak integrand.** For `u` and `ux` in `L²` on the rectangle and `κ`
+a.e. bounded and a.e. strongly measurable, the integrand of the weak equation is integrable on
+the rectangle for every test function. -/
 lemma weak_parabolic_integrand_integrable
     {t0 t1 : ℝ} {κ : ℝ → ℝ → ℝ} {kmin kmax : ℝ}
     (hκ_meas : AEStronglyMeasurable (Function.uncurry κ)
@@ -346,9 +357,10 @@ lemma weak_parabolic_integrand_integrable
     h2'.fun_mul (hbd hc2)
   exact (h1.add h2).integrable one_le_two
 
-/-- Two solutions of the weak equation with the same forcing differ by a solution of the
-homogeneous equation, provided both weak integrands are integrable on the rectangle
-(`weak_parabolic_integrand_integrable` gives this when `u` and `ux` are in `L²` there). -/
+/-- **Differences of weak solutions.** Two solutions of the weak equation with the same forcing
+differ by a solution of the homogeneous equation, provided both weak integrands are integrable
+on the rectangle (`weak_parabolic_integrand_integrable` gives this when `u` and `ux` are in
+`L²` there). -/
 lemma weak_parabolic_sub
     {t0 t1 : ℝ} (ht : t0 < t1) {κ F : ℝ → ℝ → ℝ}
     (u₁ ux₁ u₂ ux₂ : ℝ → ℝ → ℝ)
@@ -402,11 +414,11 @@ lemma weak_parabolic_sub
 
 /-! ## C. Uniqueness -/
 
-/-- Let the time slices `w τ`, `τ ∈ [t0, t1]`, be in `L²(0,1)`. If `w` satisfies the energy
-identity on `[t0, t1]` and `w t0 = 0` almost everywhere on `[0, 1]`, then `w τ = 0` almost
-everywhere on `[0, 1]` at every time `τ` of `[t0, t1]`: the dissipation `∫∫ κ (∂ₓw)²` is
-nonnegative because `κ ≥ kmin > 0`, so the energy identity forces `‖w τ‖ = 0`, and the norm
-is finite. -/
+/-- **Vanishing from the energy identity.** Let the time slices `w τ`, `τ ∈ [t0, t1]`, be in
+`L²(0,1)`. If `w` satisfies the energy identity on `[t0, t1]` and `w t0 = 0` almost everywhere
+on `[0, 1]`, then `w τ = 0` almost everywhere on `[0, 1]` at every time `τ` of `[t0, t1]`: the
+dissipation `∫∫ κ (∂ₓw)²` is nonnegative because `κ ≥ kmin > 0`, so the energy identity forces
+`‖w τ‖ = 0`, and the norm is finite. -/
 lemma weak_parabolic_unique_of_energy
     {t0 t1 : ℝ} {κ : ℝ → ℝ → ℝ} {kmin : ℝ} (hkmin : 0 < kmin)
     (hκ : ∀ᵐ p ∂(volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)), kmin ≤ κ p.1 p.2)
@@ -510,7 +522,7 @@ theorem weak_parabolic_unique
       obtain ⟨h, hh1, hh2⟩ := ht
       obtain ⟨h', hh1', hh2'⟩ := ht'
       obtain ⟨c, hc1, hc2⟩ := exists_weakH10_sub h' h
-      exact ⟨c, by rw [hc1, hh1, hh1']; rfl, by rw [hc2, hh2, hh2']; rfl⟩
+      exact ⟨c, hc1 ▸ hh1'.sub hh1, hc2 ▸ hh2'.sub hh2⟩
     · intro φ hφ
       exact (weak_parabolic_sub ht u' ux' u ux
         (fun _ hφ => weak_parabolic_integrand_integrable hκ_meas hκ hu'.memLp hu'.memLp_deriv hφ)

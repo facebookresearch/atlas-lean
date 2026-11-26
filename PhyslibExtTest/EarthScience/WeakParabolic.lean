@@ -235,7 +235,8 @@ not the continuity field, and it violates the energy identity at `ts`. -/
 example {t0 t1 ts : ℝ} (h0 : t0 < ts) (h1 : ts < t1) (κ : ℝ → ℝ → ℝ) :
     (∀ t ∈ Set.Icc t0 t1, MemLp (fun x => spikeW ts t x) 2 (volume.restrict (Set.Icc 0 1)))
     ∧ (∀ᵐ t ∂(volume.restrict (Set.Icc t0 t1)),
-        ∃ h : WeakH10, h.toFun = spikeW ts t ∧ h.weakDeriv = spikeWx ts t)
+        ∃ h : WeakH10, h.toFun =ᵐ[volume.restrict (Set.Icc 0 1)] spikeW ts t
+          ∧ h.weakDeriv =ᵐ[volume.restrict (Set.Icc 0 1)] spikeWx ts t)
     ∧ MemLp (Function.uncurry (spikeW ts)) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1))
     ∧ MemLp (Function.uncurry (spikeWx ts)) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1))
     ∧ (∀ φ : ℝ → ℝ → ℝ, ParabolicTest t0 t1 φ →
@@ -250,7 +251,9 @@ example {t0 t1 ts : ℝ} (h0 : t0 < ts) (h1 : ts < t1) (κ : ℝ → ℝ → ℝ
     ∧ (eLpNorm (fun x => spikeW ts ts x) 2 (volume.restrict (Set.Icc 0 1))).toReal ^ 2
           + 2 * ∫ t in t0..ts, ∫ x in (0 : ℝ)..1, κ t x * (spikeWx ts t x) ^ 2
         ≠ (eLpNorm (fun x => spikeW ts t0 x) 2 (volume.restrict (Set.Icc 0 1))).toReal ^ 2 :=
-  ⟨fun t _ => spike_slice_memLp ts t, Eventually.of_forall (spike_profile ts),
+  ⟨fun t _ => spike_slice_memLp ts t,
+    Eventually.of_forall fun t => (spike_profile ts t).imp fun _ h =>
+      ⟨EventuallyEq.of_eq h.1, EventuallyEq.of_eq h.2⟩,
     (spike_memLp t0 t1 ts).1, (spike_memLp t0 t1 ts).2, fun _ _ => by simp,
     fun φ _ => spike_weak κ φ,
     fun h => spike_not_continuous h0.le h1 (h.continuous_slice ts ⟨h0.le, h1.le⟩),
@@ -263,7 +266,7 @@ lemma zero_isWeakParabolicSolution (t0 t1 : ℝ) (κ : ℝ → ℝ → ℝ) :
     IsWeakParabolicSolution t0 t1 κ 0 (fun _ _ => 0) (fun _ _ => 0) where
   memLp_slice _ _ := MemLp.zero'
   continuous_slice _ _ := by simpa using tendsto_const_nhds
-  profile := Eventually.of_forall fun _ => ⟨zeroWeak, rfl, rfl⟩
+  profile := Eventually.of_forall fun _ => ⟨zeroWeak, EventuallyEq.rfl, EventuallyEq.rfl⟩
   memLp := MemLp.zero'
   memLp_deriv := MemLp.zero'
   forcing_integrable _ _ := by simp
@@ -284,6 +287,61 @@ example
   weak_parabolic_unique (u0 := 0) zero_lt_one (kmin := 1) (kmax := 1) zero_lt_one
     aestronglyMeasurable_const (Eventually.of_forall fun _ => ⟨le_rfl, le_rfl⟩) hEnergyId
     (zero_isWeakParabolicSolution 0 1 _) hu (by simp) (by simpa using hinit)
+
+/-! ## The class fixes no spatial representative -/
+
+/-- The zero solution changed to `1` at the single point `x = 1/2` of space, at every time. -/
+noncomputable def pointSpike (_t x : ℝ) : ℝ := if x = 1 / 2 then 1 else 0
+
+lemma pointSpike_ae_zero (t : ℝ) :
+    (fun x => pointSpike t x) =ᵐ[volume.restrict (Set.Icc (0 : ℝ) 1)] 0 := by
+  refine ae_restrict_of_ae (measure_mono_null (fun x hx => ?_) (measure_singleton (1 / 2 : ℝ)))
+  by_contra hne
+  apply hx
+  change (if x = 1 / 2 then (1 : ℝ) else 0) = 0
+  exact ite_eq_right_iff.mpr fun h => absurd h hne
+
+lemma pointSpike_ae_zero_rect (t0 t1 : ℝ) :
+    Function.uncurry pointSpike =ᵐ[volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1)] 0 := by
+  refine ae_restrict_of_ae
+    (measure_mono_null (t := Set.univ ×ˢ {(1 / 2 : ℝ)}) (fun p hp => ?_) ?_)
+  · by_contra hne
+    apply hp
+    change (if p.2 = 1 / 2 then (1 : ℝ) else 0) = 0
+    exact ite_eq_right_iff.mpr fun h => absurd ⟨Set.mem_univ _, h⟩ hne
+  · rw [Measure.volume_eq_prod, Measure.prod_prod, measure_singleton, mul_zero]
+
+/-- **Spatial null sets do not matter.** `pointSpike`, with derivative `0`, solves the
+homogeneous equation for every diffusivity: it agrees with the zero solution almost everywhere
+on `[0, 1]` at every time. The change is a null set in space at every time, unlike the time
+spike above, which changes a whole time slice. -/
+lemma pointSpike_isWeakParabolicSolution (t0 t1 : ℝ) (κ : ℝ → ℝ → ℝ) :
+    IsWeakParabolicSolution t0 t1 κ 0 pointSpike (fun _ _ => 0) where
+  memLp_slice t _ := MemLp.zero.ae_eq (pointSpike_ae_zero t).symm
+  continuous_slice _ _ := by simpa [pointSpike] using tendsto_const_nhds
+  profile := Eventually.of_forall fun t => ⟨zeroWeak, (pointSpike_ae_zero t).symm, EventuallyEq.rfl⟩
+  memLp := MemLp.zero.ae_eq (pointSpike_ae_zero_rect t0 t1).symm
+  memLp_deriv := MemLp.zero'
+  forcing_integrable _ _ := by simp
+  weak_eq φ _ := by
+    have hin : ∀ t, (∫ x in (0 : ℝ)..1, pointSpike t x * deriv (fun s => φ s x) t) = 0 := by
+      intro t
+      rw [intervalIntegral.integral_of_le zero_le_one]
+      refine integral_eq_zero_of_ae ?_
+      filter_upwards [ae_restrict_of_ae_restrict_of_subset Set.Ioc_subset_Icc_self
+        (pointSpike_ae_zero t)] with x hx
+      simp only [Pi.zero_apply] at hx
+      simp [hx]
+    simp [hin]
+
+/-- The profile condition needs agreement almost everywhere, not pointwise: no `H¹₀(0,1)`
+function with derivative `0` equals `pointSpike t`, since its value at `1/2` is the integral of
+`0` from `0` to `1/2`. -/
+example (t : ℝ) : ¬ ∃ h : WeakH10, h.toFun = pointSpike t ∧ h.weakDeriv = fun _ => 0 := by
+  rintro ⟨h, h1, h2⟩
+  have := h.toFun_eq_integral (1 / 2) ⟨by norm_num, by norm_num⟩
+  rw [h1, h2] at this
+  simp [pointSpike] at this
 
 /-! ## Test functions are supported inside the open rectangle -/
 
