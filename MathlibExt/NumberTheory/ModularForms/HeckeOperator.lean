@@ -79,14 +79,15 @@ import Mathlib.Tactic.Group
 import Mathlib.Tactic.LinearCombination
 
 /-!
-# The Hecke operators `T_p` and `U_p` on functions on the upper half-plane
+# The Hecke sums `heckeT` and `heckeU` on functions on the upper half-plane
 
 For `f : ℍ → ℂ`, `ModularForm.heckeU k p f` (from `TwoCuspReductionSpan`) is
 `τ ↦ p⁻¹ ∑_{j < p} f ((τ + j) / p)` and `ModularForm.heckeT k p f` adds `p ^ (k - 1) f (p τ)`.
 This file gives their values, their `q`-expansion coefficients for `p ≠ 0`
 (`ModularFormClass.qCoeff_heckeU`, `ModularFormClass.qCoeff_heckeT`), their regularity (holomorphy, period `1`, boundedness and
-vanishing at the cusps), their invariance under `Γ₀(N)`, and the linear maps `heckeTLin` and
-`heckeULin` they induce on modular and cusp forms of level `N`.
+vanishing at the cusps), their invariance under `Γ₀(N)` (`heckeT` for a prime `p ∤ N`, `heckeU`
+for `p ∣ N`), and the linear maps `heckeTLin` and `heckeULin` they induce on modular and cusp
+forms for `Γ₀(N)`: the classical Hecke operators `T_p` and `U_p`.
 -/
 
 @[expose] public section
@@ -119,14 +120,23 @@ theorem slash_heckeUpperMatrix_apply (k : ℤ) {p : ℕ} (hp : p ≠ 0) (j : ℕ
   simp only [ContinuousAlgEquiv.refl_apply, Nat.abs_cast, Complex.ofReal_natCast]
   rw [mul_assoc, ← zpow_add₀ hp', show k - 1 + -k = -1 by ring, zpow_neg_one, mul_comm]
 
-/-- The Hecke sum `T_p` in weight `k` on functions on the upper half-plane:
-`heckeU k p f + f ∣[k] heckeDiagMatrix p`. With Mathlib's slash action this is
-`T_p f τ = p⁻¹ ∑_{j < p} f ((τ + j) / p) + p ^ (k - 1) f (p τ)` for `p ≠ 0` (`heckeT_apply`),
-and `T_0 f = f`. For `p ≠ 0` it acts on the `q`-expansion coefficients of a modular form for a
-group with `1` as a strict period by `coeffHeckeT` (`ModularFormClass.qCoeff_heckeT`). On forms
-of level `N` it is the classical Hecke operator `T_p` only for a prime `p` not dividing `N`
-(`ModularForm.heckeTLin`); for composite `p` it is not `T_p`, and for a prime `p ∣ N` the
-classical operator is `heckeU`. -/
+/-- The Hecke sum `heckeT k p f = heckeU k p f + f ∣[k] heckeDiagMatrix p` in weight `k`, for a
+function `f` on the upper half-plane. With Mathlib's slash action this is
+`heckeT k p f τ = p⁻¹ ∑_{j < p} f ((τ + j) / p) + p ^ (k - 1) f (p τ)` for `p ≠ 0`
+(`heckeT_apply`), and `heckeT k 0 f = f`. For `p ≠ 0` it acts on the `q`-expansion coefficients
+of a modular form for a group with `1` as a strict period by `coeffHeckeT`
+(`ModularFormClass.qCoeff_heckeT`).
+
+On modular forms for `Γ₀(N)` it is the classical Hecke operator `T_p` only for a prime `p` not
+dividing `N` (`ModularForm.heckeTLin`); for composite `p` it is not `T_p`, and for a prime
+`p ∣ N` the classical operator is `U_p`, given by `heckeU k p` (`ModularForm.heckeULin`). On
+forms for a group `GammaH N H` between `Γ₁(N)` and `Γ₀(N)`, the classical `T_p` for a prime
+`p ∤ N` is `heckeU k p f + (⟨p⟩ f) ∣[k] heckeDiagMatrix p`, where the diamond operator `⟨p⟩`
+slashes by a matrix of `Γ₀(N)` whose lower-right entry is `p` modulo `N`. So the classical
+`T_p f` equals `heckeT k p f` exactly when `⟨p⟩ f = f`, for instance when `p` modulo `N` lies in
+`H`. In Lean, `CuspForm.coe_heckeTLinH_apply` gives this formula for `CuspForm.heckeTLinH` on
+cusp forms for `GammaH N H`, under the explicit hypothesis `CuspForm.StableT N H k p`; when that
+hypothesis does not hold, `CuspForm.heckeTLinH` is defined to be zero. -/
 def heckeT (k : ℤ) (p : ℕ) (f : UpperHalfPlane → ℂ) : UpperHalfPlane → ℂ :=
   heckeU k p f + f ∣[k] heckeDiagMatrix p
 
