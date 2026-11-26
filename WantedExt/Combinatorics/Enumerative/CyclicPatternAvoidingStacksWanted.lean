@@ -60,17 +60,6 @@ public theorem_wanted cyclicSortingMachine_321_identity_orbit_period {n m : ℕ}
     (cyclicSortingMachine [3, 2, 1])^[m] (List.range' 1 n) =
       (cyclicSortingMachine [3, 2, 1])^[m + (2 * n + 1) / 3] (List.range' 1 n)
 
-/-- **No permutation of length at least four is sorted by the consecutive cyclic $123$-stack.**
-Let $s^{[123]}$ be the consecutive-cyclic-pattern-avoiding stack-sorting map for $123$. For every
-$n \ge 4$, no permutation of $[n] = \{1, \dots, n\}$ is mapped by $s^{[123]}$ to the identity
-$12 \cdots n$; that is, the set $\mathrm{Sort}_n(s^{[123]})$ of permutations of $[n]$ that
-$s^{[123]}$ maps to the identity has $0$ elements.
-
-Source: Alex Zhan and Stella Bie, *Cyclic-Pattern-Avoiding Stacks*, INTEGERS 26 (2026),
-Article A15, Theorem 3 (`integers-2026-A15-thm-3`). -/
-public theorem_wanted sortedPermutations_consecutiveCyclicStackSort_123 {n : ℕ} (hn : 4 ≤ n) :
-    (sortedPermutations (consecutiveCyclicStackSort [1, 2, 3]) n).card = 0
-
 /-- **After one pass of the $123$ cyclic sorting machine, the reduction is shorter.** For every
 $n \ge 2$ and every permutation $\pi$ of $[n] = \{1, \ldots, n\}$, the reduction
 $\operatorname{red}(\mathrm{SC}_{[123]}(\pi))$ of the image of $\pi$ under the cyclic sorting
