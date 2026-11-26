@@ -3,13 +3,15 @@
 A Datalog program is nonrecursive when the graph on its predicates with an edge from each body predicate to the head
 predicate of each rule is acyclic, and linear when every rule has at most one intensional body atom.
 
-**Theorem (Chaudhuri–Vardi).** Containment of a Datalog query in a nonrecursive Datalog query is decidable and complete for
+**Theorem (Chaudhuri–Vardi).** Containment of a Datalog query in a nonrecursive Datalog query over the same extensional
+schema, with output relations of the same arity, is decidable and complete for
 3EXPTIME, and complete for 2EXPSPACE when the recursive program is linear. The extra exponential comes from unfolding the
 nonrecursive program into a union of conjunctive queries, which can be exponentially larger, and it is unavoidable.
 
 ## Depends on
 
 - [Datalog programs and the immediate consequence operator](../datalog-programs-and-the-immediate-consequence-operator.md)
+- [The class EXPSPACE](../../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/expspace.md)
 
 ## Proof depends on
 

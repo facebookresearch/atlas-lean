@@ -3,8 +3,10 @@
 Let $q = \mathrm{Answer} \mathrel{:-} R_1(\bar u_1), \dots, R_n(\bar u_n)$ be a Boolean acyclic conjunctive query, $D$ a database,
 and $q_i$ the conjunctive query with the single atom $R_i(\bar u_i)$ whose output tuple is $\bar u_i$ without its constants. Then
 $q(D)$ is true if and only if there are nonempty sets $S_1 \subseteq q_1(D), \dots, S_n \subseteq q_n(D)$ that are pairwise
-consistent: $S_i = S_i \ltimes S_j$ for all $i, j \in [n]$. Consequently the procedure that starts from $S_i = q_i(D)$ and
-replaces $S_i$ by $S_i \ltimes S_j$ while some $S_i \ne S_i \ltimes S_j$ returns true exactly when $q(D)$ is true.
+consistent: $S_i = S_i \ltimes S_j$ for all $i, j \in [n]$. Consequently the procedure that starts from $S_i = q_i(D)$,
+replaces $S_i$ by $S_i \ltimes S_j$ while some $S_i \ne S_i \ltimes S_j$, and then fails if some $S_i$ is empty, succeeds
+exactly when $q(D)$ is true. It is the $1$-consistency procedure of
+[the k-consistency procedure for Boolean conjunctive queries](../tractable-conjunctive-queries/k-consistency-procedure.md).
 
 ## Depends on
 

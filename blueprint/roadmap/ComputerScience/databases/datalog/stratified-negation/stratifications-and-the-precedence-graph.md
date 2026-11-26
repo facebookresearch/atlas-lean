@@ -1,7 +1,11 @@
 # Stratifications and the precedence graph of a Datalog program with negation
 
 A Datalog program with negation ($\mathrm{datalog}^\neg$) allows negated atoms $\neg R(\bar v)$ in rule bodies, under
-active-domain semantics. It is *semipositive* if every negated relation in a rule body is extensional.
+active-domain semantics. It is *semipositive* if every negated relation in a rule body is extensional. Its
+immediate consequence operator $T_P$ maps an instance $K$ over the schema of $P$ to the facts of $K$ over extensional
+relations together with the heads $A$ of the ground rule instances $A \leftarrow L_1, \dots, L_n$ over the constants of $P$
+and $K$ such that every positive literal $L_i$ is in $K$ and every negative literal $L_i = \neg B$ has $B \notin K$; unlike
+the operator of a program without negation it need not be monotone.
 
 A *stratification* of a $\mathrm{datalog}^\neg$ program $P$ is a sequence $P^1, \dots, P^n$ of programs, with a map $\sigma$
 from the intensional relations of $P$ to $[1..n]$, such that (i) $\{P^1, \dots, P^n\}$ is a partition of $P$; (ii) all rules
@@ -19,4 +23,4 @@ negated body atom over $R'$.
 
 ## Sources
 
-- S. Abiteboul, R. Hull and V. Vianu, *Foundations of Databases*, Addison-Wesley, 1995; authors' web edition <http://webdam.inria.fr/Alice/pdfs/all.pdf>, Definitions 15.2.1 and 15.2.4 and the definition of the precedence graph (pp. 377–380).
+- S. Abiteboul, R. Hull and V. Vianu, *Foundations of Databases*, Addison-Wesley, 1995; authors' web edition <http://webdam.inria.fr/Alice/pdfs/all.pdf>, the immediate consequence operator of a $\mathrm{datalog}^\neg$ program (p. 375), Definitions 15.2.1 and 15.2.4 and the definition of the precedence graph (pp. 377–380).

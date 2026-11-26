@@ -16,7 +16,7 @@ where $\mathrm{Eval}_v : \mathbb{N}[X] \to K$ is the unique semiring homomorphis
 
 ## Proof depends on
 
-- [A map of annotations commutes with positive relational algebra exactly when it is a semiring homomorphism](annotation-maps-commuting-with-positive-relational-algebra.md)
+- [A map of annotations commutes with positive relational algebra exactly when it preserves zero, sums and products](annotation-maps-commuting-with-positive-relational-algebra.md)
 
 ## Sources
 

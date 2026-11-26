@@ -23,6 +23,7 @@ acyclic although their core is.
 
 - [Conjunctive queries of bounded generalized hypertreewidth are evaluable in polynomial time](bounded-ghw-cqs-are-evaluable-in-polynomial-time.md)
 - [Generalized hypertreewidth at most one is acyclicity](generalized-hypertreewidth-one-is-acyclicity.md)
+- [Consistency criterion for Boolean acyclic conjunctive queries](../join-processing/consistency-criterion-for-boolean-acyclic-cqs.md)
 
 ## Sources
 

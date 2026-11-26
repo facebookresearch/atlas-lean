@@ -5,13 +5,15 @@ predicate of each rule is acyclic, and linear when every rule has at most one in
 
 **Theorem (Chaudhuri–Vardi).** Deciding, given a Datalog query $(P, Q)$ and a union of conjunctive queries $\psi$ of the
 same arity over its extensional schema, whether $(P, Q) \subseteq \psi$ is complete for 2EXPTIME, and complete for EXPSPACE
-when $P$ is linear. The lower bounds hold even for programs of bounded arity. The proof views $P$ as the infinite union of
+when $P$ is linear, completeness being under polynomial-time many-one reductions. The lower bounds hold even for programs of bounded arity. The proof views $P$ as the infinite union of
 its expansion trees and reduces containment to containment of tree automata of exponential size.
 
 ## Depends on
 
 - [Datalog programs and the immediate consequence operator](../datalog-programs-and-the-immediate-consequence-operator.md)
 - [Containment of unions of conjunctive queries](../../conjunctive-queries/cores-and-minimization/containment-of-unions-of-conjunctive-queries.md)
+- [The class EXPSPACE](../../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/expspace.md)
+- [Polynomial-time many-one reduction](../../../../TheoryOfComputation/np-completeness/cook-levin/binary-encoding-of-cnf-formulas/poly-many-one-red.md)
 
 ## Proof depends on
 
