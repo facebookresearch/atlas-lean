@@ -13,6 +13,7 @@ public import MathlibExt.NumberTheory.InclExclLikeSumBounds
 public import MathlibExt.NumberTheory.InclExclLikeSumRelations
 public import MathlibExt.NumberTheory.TverbergSumPeriodic
 public import MathlibExt.Algebra.Order.Floor.HalfShift
+public import MathlibExt.NumberTheory.CeilingHermiteIdentityTverbergSumRoundBounds
 
 /-!
 # Inclusion-exclusion-like sums with floor, ceiling and nearest-integer functions (statements)
@@ -23,7 +24,8 @@ This file states the sharp bounds of Onphaeng, Khemaratchatakumthorn and Pongsri
 `g^(F)`, `f^(F)` and the partial sums `S^(F)`, `T^(F)` of Jacobsthal and Tverberg type,
 where `F` is one of `⌊·⌋` (`j = 1`), `⌈·⌉` (`j = 2`),
 `r⁺(x) = ⌊x + 1/2⌋` (`j = 3`, Mathlib's `round`, see `round_eq`) and
-`r⁻(x) = ⌈x - 1/2⌉` (`j = 4`).
+`r⁻(x) = ⌈x - 1/2⌉` (`j = 4`). The sharp bounds for `f^(r⁺)`, `tverbergSum_round_bounds`, are
+proved in `MathlibExt.NumberTheory.CeilingHermiteIdentityTverbergSumRoundBounds`.
 
 Conventions: the multiset `C = {a_1, …, a_ℓ}` is a tuple `a : Fin ℓ → ℤ`; the modulus `m` is a
 natural number, and at `m = 0` Lean's `x / 0 = 0` makes every term `F 0 = 0`, so statements whose
@@ -153,28 +155,6 @@ public theorem_wanted tverbergSum_ceil_bounds {ℓ : ℕ} (hℓ : 2 ≤ ℓ) :
       ∀ r : ℕ, 0 < r →
         tverbergSum Int.ceil (fun _ : Fin ℓ => (r : ℤ)) (2 * r) 0 = (-1) ^ (ℓ + 1) * 2 ^ (ℓ - 2) ∧
           tverbergSum Int.ceil (fun _ : Fin ℓ => (r : ℤ)) (2 * r) r = (-1) ^ ℓ * 2 ^ (ℓ - 2)
-
-/-- **Sharp bounds for Tverberg's sum with rounding half up.** Let $\ell \ge 2$ and let $F$ be
-rounding to the nearest integer with ties rounded up, $F(y) = \lfloor y + 1/2 \rfloor$.
-For integers $a_1, \dots, a_\ell$, a natural number $m$ and an integer $k$, let
-$f(a, m, k) =
-\sum_{U \subseteq \{1, \dots, \ell\}} (-1)^{\ell - |U|} F((k + \sum_{i \in U} a_i)/m)$
-be Tverberg's sum of $F$, with $x/0 = 0$. Then $-2^{\ell-2} \le f(a, m, k) \le 2^{\ell-2}$ for
-all such $a$, $m$ and $k$. Both bounds are attained: for every integer $r \ge 1$, if $a_i = r$
-for all $i$ and $m = 2r$, then $f(a, m, 0) = (-1)^{\ell+1} 2^{\ell-2}$ and
-$f(a, m, r) = (-1)^{\ell} 2^{\ell-2}$.
-
-The paper states the equality cases separately for odd and even $\ell$.
-
-Source: Kritkhajohn Onphaeng, Tammatada Khemaratchatakumthorn, Prapanpong Pongsriiam,
-*Inequalities for Inclusion-Exclusion-Like Sums Involving the Ceiling and the Nearest Integer
-Functions*, INTEGERS 25 (2025), Article A45, Theorem 5. -/
-public theorem_wanted tverbergSum_round_bounds {ℓ : ℕ} (hℓ : 2 ≤ ℓ) :
-    (∀ (a : Fin ℓ → ℤ) (m : ℕ) (k : ℤ),
-      -2 ^ (ℓ - 2) ≤ tverbergSum round a m k ∧ tverbergSum round a m k ≤ 2 ^ (ℓ - 2)) ∧
-      ∀ r : ℕ, 0 < r →
-        tverbergSum round (fun _ : Fin ℓ => (r : ℤ)) (2 * r) 0 = (-1) ^ (ℓ + 1) * 2 ^ (ℓ - 2) ∧
-          tverbergSum round (fun _ : Fin ℓ => (r : ℤ)) (2 * r) r = (-1) ^ ℓ * 2 ^ (ℓ - 2)
 
 /-- **Sharp bounds for Tverberg's sum with rounding half down.** Let $\ell \ge 2$ and let $F$ be
 rounding to the nearest integer with ties rounded down, $F(y) = \lceil y - 1/2 \rceil$.
