@@ -9,9 +9,12 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import MathlibExt.NumberTheory.LurothConvergent
+public import MathlibExt.NumberTheory.LurothConsecutiveDigitsIntegral
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 public import Mathlib.Topology.Algebra.InfiniteSum.ENNReal
+public import MathlibExt.NumberTheory.LurothConsecutiveDigitsLeVolumeLurothDigitsGe
+public import MathlibExt.NumberTheory.LurothConsecutiveDigitsVolumeLurothCylinder
+public import MathlibExt.NumberTheory.LurothConsecutiveDigits
 
 /-!
 # Functions of consecutive digits in Lüroth series
@@ -88,35 +91,6 @@ theorem lurothDigitSeq_succ (x : ℝ) (k : ℕ) :
     lurothDigitSeq x (k + 1) = lurothDigitSeq (lurothMap x) k := by
   simp [lurothDigitSeq, Function.iterate_succ_apply]
 
-/-- **Measure of Lüroth cylinders.** Write $d_k(x)$ for the $k$-th Lüroth digit of $x$. For every
-$n \in \mathbb{N}$ and all natural numbers $c_1, \dots, c_n$, the set
-$\{x \in (0, 1] : d_j(x) = c_j \text{ for } 1 \le j \le n\}$ has Lebesgue measure
-$\prod_{j=1}^{n} \frac{1}{c_j (c_j - 1)}$, with the convention $1/0 = 0$; in particular both
-sides vanish when some $c_j < 2$.
-
-Source: Dmitry Kleinbock and Yuqing Zhang, *Metrical Properties of Functions of
-Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Proposition 1,
-(10) (`integers-2024-A67-prop-1`). -/
-public theorem_wanted volume_lurothCylinder {n : ℕ} (c : Fin n → ℕ) :
-    volume {x ∈ Set.Ioc (0 : ℝ) 1 | ∀ j : Fin n, lurothDigitSeq x j = c j} =
-      ∏ j, ENNReal.ofReal (1 / ((c j : ℝ) * ((c j : ℝ) - 1)))
-
-/-- **Borel–Bernstein theorem for Lüroth digits.** Let $(\Psi(n))_{n \ge 0}$ be a sequence of
-positive reals, write $d_k(x)$ for the $k$-th Lüroth digit of $x$, and let $E$ be the set of
-$x \in (0, 1]$ such that $d_{n+1}(x) \ge \Psi(n)$ for infinitely many $n$. If
-$\sum_{n \ge 0} 1 / \Psi(n) < \infty$ then $E$ has Lebesgue measure $0$, and if
-$\sum_{n \ge 0} 1 / \Psi(n) = \infty$ then $E$ has Lebesgue measure $1$.
-
-The paper quotes this result from Jager and de Vroedt (its reference [3]).
-
-Source: Dmitry Kleinbock and Yuqing Zhang, *Metrical Properties of Functions of
-Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Theorem 1
-(`integers-2024-A67-thm-1`). -/
-public theorem_wanted volume_lurothDigit_ge_zero_one (Ψ : ℕ → ℝ) (hΨ : ∀ n, 0 < Ψ n) :
-    let E := {x ∈ Set.Ioc (0 : ℝ) 1 | ∃ᶠ n in atTop, Ψ n ≤ lurothDigitSeq x n}
-    (Summable (fun n => (Ψ n)⁻¹) → volume E = 0) ∧
-      (¬ Summable (fun n => (Ψ n)⁻¹) → volume E = 1)
-
 /-- **Zero-one law for weighted products of consecutive Lüroth digits.** Let $m \ge 1$, let
 $t_0, \dots, t_{m-1}$ be positive reals, let $T = \max_i t_i$ and let $\ell$ be the number of
 indices $j$ with $t_j = T$. Let $(\Psi(n))_{n \ge 0}$ be a sequence of positive reals for which
@@ -166,36 +140,6 @@ public theorem_wanted volume_lurothConsecutiveDigits_zero_one {m : ℕ}
       ∃ᶠ n in atTop, Ψ n ≤ F (fun i => lurothDigitSeq x (n + i))}
     (∑' n, H (Ψ n) < ∞ → volume E = 0) ∧ (∑' n, H (Ψ n) = ∞ → volume E = 1)
 
-/-- **Integral zero-one law for functions of consecutive Lüroth digits.** Let $m \in \mathbb{N}$
-and let $F : \mathbb{R}^m \to \mathbb{R}$ be a measurable function that is positive on
-$[2, \infty)^m$ and non-decreasing there for the coordinatewise order. Let $M \in \mathbb{R}$
-satisfy $F(x) \le M F(\lfloor x_1 \rfloor, \dots, \lfloor x_m \rfloor)$ for every
-$x \in [2, \infty)^m$, and for $y \in \mathbb{R}$ put
-$$G(y) = \int_{\{x \in [2, \infty)^m : F(x) \ge y\}} \prod_{i=1}^{m} \frac{1}{x_i^2} \, dx.$$
-Let $(\Psi(n))_{n \ge 0}$ be a real sequence, write $d_k(x)$ for the $k$-th Lüroth digit of
-$x$, and let $E$ be the set of $x \in (0, 1]$ such that
-$F(d_{n+1}(x), \dots, d_{n+m}(x)) \ge \Psi(n)$ for infinitely many $n$. If
-$\sum_{n \ge 0} G(\Psi(n)) < \infty$ then $E$ has Lebesgue measure $0$, and if
-$\sum_{n \ge 0} G(M \Psi(n)) = \infty$ then $E$ has Lebesgue measure $1$.
-
-Here $M$ is any constant with this property (the paper takes the supremum; a larger $M$ only
-weakens the divergence condition). Unlike the paper, $\Psi$ need not be positive.
-
-Source: Dmitry Kleinbock and Yuqing Zhang, *Metrical Properties of Functions of
-Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Theorem 4, with (6)
-and `G` from (7) (`integers-2024-A67-thm-4`). -/
-public theorem_wanted volume_lurothConsecutiveDigits_zero_one_integral {m : ℕ}
-    (F : (Fin m → ℝ) → ℝ) (hFm : Measurable F)
-    (hpos : ∀ x : Fin m → ℝ, (∀ i, 2 ≤ x i) → 0 < F x)
-    (hmono : MonotoneOn F {x | ∀ i, 2 ≤ x i}) (M : ℝ)
-    (hM : ∀ x : Fin m → ℝ, (∀ i, 2 ≤ x i) → F x ≤ M * F (fun i => (⌊x i⌋₊ : ℝ)))
-    (Ψ : ℕ → ℝ) :
-    let G : ℝ → ℝ≥0∞ := fun y =>
-      ∫⁻ x in {x : Fin m → ℝ | (∀ i, 2 ≤ x i) ∧ y ≤ F x}, ENNReal.ofReal (∏ i, 1 / x i ^ 2)
-    let E := {x ∈ Set.Ioc (0 : ℝ) 1 |
-      ∃ᶠ n in atTop, Ψ n ≤ F (fun i => (lurothDigitSeq x (n + i) : ℝ))}
-    (∑' n, G (Ψ n) < ∞ → volume E = 0) ∧ (∑' n, G (M * Ψ n) = ∞ → volume E = 1)
-
 /-- **Borel–Cantelli dichotomy for Lüroth cylinder events.** Let $m \in \mathbb{N}$, let
 $(S_n)_{n \ge 0}$ be a sequence of sets of $m$-tuples of natural numbers, write $d_k(x)$ for
 the $k$-th Lüroth digit of $x$ and $\lambda$ for Lebesgue measure. Put
@@ -214,48 +158,6 @@ public theorem_wanted volume_limsup_lurothPreimage_zero_one {m : ℕ}
     let E := {x ∈ Set.Ioc (0 : ℝ) 1 |
       ∃ᶠ n in atTop, (fun i : Fin m => lurothDigitSeq x (n + i)) ∈ S n}
     (∑' n, volume (A n) < ∞ → volume E = 0) ∧ (∑' n, volume (A n) = ∞ → volume E = 1)
-
-/-- **Upper bound for the measure of a Lüroth digit superlevel set.** Let $m \in \mathbb{N}$, let
-$F : \mathbb{R}^m \to \mathbb{R}$ be non-decreasing on $[2, \infty)^m$ for the coordinatewise
-order, let $y \in \mathbb{R}$, and write $d_k(x)$ for the $k$-th Lüroth digit of $x$. Then the
-Lebesgue measure of $\{x \in (0, 1] : F(d_1(x), \dots, d_m(x)) \ge y\}$ is at most
-$$3^m \int_{\{x \in [2, \infty)^m : F(x) \ge y\}} \prod_{i=1}^{m} \frac{1}{x_i^2} \, dx.$$
-
-The paper states this bound for $y = \Psi(n)$ under the hypotheses of its Theorem 4; only
-the monotonicity of $F$ is used.
-
-Source: Dmitry Kleinbock and Yuqing Zhang, *Metrical Properties of Functions of
-Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Theorem 6
-(`integers-2024-A67-thm-6`). -/
-public theorem_wanted volume_lurothDigits_ge_le {m : ℕ} (F : (Fin m → ℝ) → ℝ)
-    (hmono : MonotoneOn F {x | ∀ i, 2 ≤ x i}) (y : ℝ) :
-    volume {x ∈ Set.Ioc (0 : ℝ) 1 | y ≤ F (fun i => (lurothDigitSeq x i : ℝ))} ≤
-      3 ^ m * ∫⁻ x in {x : Fin m → ℝ | (∀ i, 2 ≤ x i) ∧ y ≤ F x},
-        ENNReal.ofReal (∏ i, 1 / x i ^ 2)
-
-/-- **Lower bound for the measure of large Lüroth digit values.** Let $m$ be a natural number,
-let $D = [2, \infty)^m$, let $F : \mathbb{R}^m \to \mathbb{R}$ satisfy $F(x) > 0$ for every
-$x \in D$, and let $M$ be a real number with
-$F(x) \le M\,F(\lfloor x_1 \rfloor, \ldots, \lfloor x_m \rfloor)$ for every $x \in D$ (the
-paper's condition (6)). Put
-$G(y) = \int_{\{x \in D \,:\, F(x) \ge y\}} \prod_{i=1}^m x_i^{-2}\,dx$ for real $y$, let
-$\lambda$ be Lebesgue measure on $\mathbb{R}$ and let $d_1(x), d_2(x), \ldots$ be the Lüroth
-digits of $x$. Then for every real $y$,
-$$G(My) \le \lambda\{x \in (0, 1] : F(d_1(x), \ldots, d_m(x)) \ge y\}.$$
-
-The paper states it only at the values of the sequence in its Theorem 4, under that theorem's
-hypotheses, which also require $F$ to be measurable and non-decreasing; only positivity and
-condition (6) are assumed here.
-
-Source: Dmitry Kleinbock and Yuqing Zhang, *Metrical Properties of Functions of
-Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Theorem 7
-(`integers-2024-A67-thm-7`). -/
-public theorem_wanted le_volume_lurothDigits_ge {m : ℕ} (F : (Fin m → ℝ) → ℝ)
-    (hpos : ∀ x : Fin m → ℝ, (∀ i, 2 ≤ x i) → 0 < F x) (M : ℝ)
-    (hM : ∀ x : Fin m → ℝ, (∀ i, 2 ≤ x i) → F x ≤ M * F (fun i => (⌊x i⌋₊ : ℝ))) (y : ℝ) :
-    (∫⁻ x in {x : Fin m → ℝ | (∀ i, 2 ≤ x i) ∧ M * y ≤ F x},
-        ENNReal.ofReal (∏ i, 1 / x i ^ 2)) ≤
-      volume {x ∈ Set.Ioc (0 : ℝ) 1 | y ≤ F (fun i => (lurothDigitSeq x i : ℝ))}
 
 end
 

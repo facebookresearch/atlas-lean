@@ -30,3 +30,13 @@
 - [The replay attack makes one query](replay-attack-query-bounded.md)
 - [The stream cipher is not CPA-secure](cpa-advantage-replay-attack.md)
 - [No stream cipher family is polynomial-query CPA-secure](not-poly-query-cpasecure-stream-cipher.md)
+
+## Pseudoentropy and generic constructions
+
+- [Computational pseudoentropy](computational-pseudoentropy.md)
+- [Pseudorandom generators exist if and only if one-way functions exist](pseudorandom-generators-exist-if-and-only-if.md)
+- [The generator of a keyed function at fixed points](prg-of-prf.md)
+- [The PRF distinguisher built from a PRG distinguisher](prg-of-prfreduction.md)
+- [Pseudorandom generators from pseudorandom functions](pseudorandom-generators-from-pseudorandom.md)
+- [Asymptotic PRG security from a PRF](prg-secure-prg-of-prf.md)
+- [Sequential and parallel composition of pseudorandom generators](sequential-and-parallel-composition-of.md)

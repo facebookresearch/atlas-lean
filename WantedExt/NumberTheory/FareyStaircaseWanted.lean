@@ -20,6 +20,8 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import MathlibExt.NumberTheory.FareyStaircase
+public import MathlibExt.NumberTheory.FareyStaircaseFareyStaircaseLeFloorDiv
+public import MathlibExt.NumberTheory.FareyStaircaseFareyStaircaseSubMemIcc
 
 namespace MetaMathlibExt
 
@@ -49,17 +51,6 @@ public theorem_wanted tendsto_fareyZoom_sub_at_rational {x : ℝ} (hx : 0 ≤ x)
       Filter.atTop
       (nhds ((q : ℝ)⁻¹ * ∑ k ∈ Finset.Icc 1 ⌊(q : ℝ) * x⌋₊, Real.log (q * x / k)))
 
-/-- **Limit of the rescaled Farey staircase increment.** Let $A_n$ be the Farey staircase of order
-$n$ and $D_n = A_n - A_{n-1}$. For every real $x \ge 0$,
-$n^2 D_n(x/n) \to \sum_{k=1}^{\lfloor x \rfloor} (1 - \log(x/k))$ as $n \to \infty$.
-
-Source: David Harry Richman, *Lower Rational Approximations and Farey Staircases*, INTEGERS 24
-(2024), Article A37, Theorem 4 (`integers-2024-A37-thm-4`). -/
-public theorem_wanted tendsto_sq_mul_fareyStaircase_sub {x : ℝ} (hx : 0 ≤ x) :
-    Filter.Tendsto
-      (fun n : ℕ => (n : ℝ) ^ 2 * (fareyStaircase n (x / n) - fareyStaircase (n - 1) (x / n)))
-      Filter.atTop (nhds (∑ k ∈ Finset.Icc 1 ⌊x⌋₊, (1 - Real.log (x / k))))
-
 /-- **Floor gaps of Farey staircases are dense above $1 - \log 2$.** For $n \ge 1$ and
 $x \in \mathbb{R}$ let $f_n(x) = \lfloor nx \rfloor - n A_n(x)$, where $A_n$ is the Farey staircase
 of order $n$; thus $f_n(x) = \lfloor nx \rfloor - \sum_{k=1}^n \lfloor kx \rfloor / k$. Every real
@@ -84,27 +75,6 @@ Source: David Harry Richman, *Lower Rational Approximations and Farey Staircases
 public theorem_wanted floor_gaps_inter_Iic_finite {ε : ℝ} (hε : 0 < ε) :
     ({y : ℝ | ∃ n : ℕ, 1 ≤ n ∧ ∃ x : ℝ, y = ⌊(n : ℝ) * x⌋ - n * fareyStaircase n x} ∩
       Set.Iic (1 - Real.log 2 - ε)).Finite
-
-/-- **Bounds comparing the Farey staircase with $\lfloor nx \rfloor / n$.** For every natural
-number $n \ge 1$ and every real number $x$, the Farey staircase $A_n$ of order $n$ satisfies
-$A_n(x) \le \lfloor nx \rfloor / n \le A_n(x) + (\log n)/n$, where $\log$ is the natural
-logarithm.
-
-Source: David Harry Richman, *Lower Rational Approximations and Farey Staircases*, INTEGERS 24
-(2024), Article A37, Lemma 8 (a) (`integers-2024-A37-lem-8`). -/
-public theorem_wanted fareyStaircase_le_floor_div {n : ℕ} (hn : 1 ≤ n) (x : ℝ) :
-    fareyStaircase n x ≤ ⌊(n : ℝ) * x⌋ / n ∧
-      (⌊(n : ℝ) * x⌋ : ℝ) / n ≤ fareyStaircase n x + Real.log n / n
-
-/-- **Bounds on the increment of the Farey staircase.** Let $n \ge 2$ be a natural number and $x$
-a real number, and write $A_m$ for the Farey staircase of order $m$. Then
-$0 \le A_n(x) - A_{n-1}(x) \le \frac{\log n}{n(n-1)}$, where $\log$ is the natural logarithm.
-
-Source: David Harry Richman, *Lower Rational Approximations and Farey Staircases*, INTEGERS 24
-(2024), Article A37, Lemma 8 (b) (`integers-2024-A37-lem-8`). -/
-public theorem_wanted fareyStaircase_sub_mem_Icc {n : ℕ} (hn : 2 ≤ n) (x : ℝ) :
-    0 ≤ fareyStaircase n x - fareyStaircase (n - 1) x ∧
-      fareyStaircase n x - fareyStaircase (n - 1) x ≤ Real.log n / (n * (n - 1))
 
 end
 
