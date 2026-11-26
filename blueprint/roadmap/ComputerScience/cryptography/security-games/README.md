@@ -10,3 +10,7 @@ The framework of game-based security proofs: adaptive oracle algorithms, averagi
 - [Lazy sampling and the PRP/PRF switching lemma](lazy-sampling-and-the-prp-prf-switching-lemma/README.md)
 - [Oracle algorithms](oracle-algorithms/README.md)
 - [Semantic security and indistinguishability](semantic-security-and-indistinguishability/README.md)
+- [Computational and Statistical Indistinguishability of Ensembles](computational-indistinguishability-of-ensembles/README.md)
+- [Identical-until-Bad Oracle Handlers and Bad-Event Bounds](identical-until-bad-oracle-handlers/README.md)
+- [Probabilistic Oracle Programs and Their Simulation](probabilistic-oracle-programs/README.md)
+- [State-Separating Proofs](state-separating-proofs/README.md)
