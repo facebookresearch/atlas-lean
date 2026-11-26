@@ -62,16 +62,6 @@ def shakovA : ℕ → ℤ
       else if (n + 2) % 4 = 2 then 2 * shakovA (n + 1) + 1
       else shakovA (n + 1) - 1
 
-/-- **Primality of $n^2 + 1$ from the fibers of Shakov's sequence.** Let $s$ be Shakov's
-$2$-regular sequence. For every natural number $n \ge 1$, the number $n^2 + 1$ is prime if and
-only if the set of natural numbers $m$ with $s(m) = n$ is exactly $\{2^n, 2^{n+1} - 1\}$.
-
-Source: Anton Shakov, "A 2-Regular Sequence That
-Counts The Divisors of `n^2 + 1`", Proposition 8. -/
-theorem_wanted prime_iff_fiber (n : ℕ) (hn : 1 ≤ n) :
-    Nat.Prime (n ^ 2 + 1) ↔
-      {m : ℕ | shakovSeq m = (n : ℤ)} = {2 ^ n, 2 ^ (n + 1) - 1}
-
 /-- **Shakov's sequence takes Fibonacci values along the auxiliary sequence.** Let $s$ be
 Shakov's $2$-regular sequence, let $a$ be Shakov's auxiliary sequence, and let $F_k$ denote the
 $k$-th Fibonacci number, with $F_0 = 0$ and $F_1 = 1$. For every natural number $n \ge 1$,
