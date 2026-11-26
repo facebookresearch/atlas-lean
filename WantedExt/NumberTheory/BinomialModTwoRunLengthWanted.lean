@@ -57,18 +57,6 @@ public theorem_wanted runLengthTransform_choose_three_mul_fib (n : ℕ) :
     ((∑ k ∈ Finset.range (n + 1), ((3 * k).choose k * n.choose k) % 2 : ℕ) : ℤ) =
       runLengthTransform (fun i => (Nat.fib (i + 2) : ℤ)) n
 
-/-- **Sum of $\binom{n+2k}{2k}\binom{n}{k} \bmod 2$ as a run length transform.** For every
-natural number $n$, the sum $\sum_{k=0}^{n} \bigl(\binom{n+2k}{2k}\binom{n}{k} \bmod 2\bigr)$
-equals the value at $n$ of the run length transform of the sequence $S$ with $S(0) = 1$ and
-$S(i) = 2$ for $i \ge 1$, that is, $1, 2, 2, 2, \dots$.
-
-Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and
-2-Regular
-Sequences*, INTEGERS 24 (2024), Article A73, Theorem 5. -/
-public theorem_wanted runLengthTransform_choose_add_two_mul_one_two (n : ℕ) :
-    ((∑ k ∈ Finset.range (n + 1), ((n + 2 * k).choose (2 * k) * n.choose k) % 2 : ℕ) : ℤ) =
-      runLengthTransform (fun i => if i = 0 then 1 else 2) n
-
 /-- **Sum of $\binom{n+k}{n-k}\binom{n}{k} \bmod 2$ as a run length transform.** For every
 natural number $n$, the sum $\sum_{k=0}^{n} \bigl(\binom{n+k}{n-k}\binom{n}{k} \bmod 2\bigr)$
 equals the value at $n$ of the run length transform of the sequence $S(i) = i + 1$ of positive
