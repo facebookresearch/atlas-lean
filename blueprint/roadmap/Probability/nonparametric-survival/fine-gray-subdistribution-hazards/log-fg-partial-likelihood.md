@@ -1,0 +1,3 @@
+# Logarithm of the Fine–Gray partial likelihood
+
+For competing-risks data with observed times $X_i$, outcomes $\varepsilon_i$ (censored, or failure from a cause) and covariates $x_i \in \mathbb{R}^p$, the Fine–Gray risk set at $X_i$ for cause $c$ is $R^*(X_i) = \{l : X_l \ge X_i\} \cup \{l : X_l < X_i, l\text{ failed from a cause other than }c\}$. Then for every $\beta \in \mathbb{R}^p$, $\log\prod_{i:\varepsilon_i=c}e^{\langle\beta, x_i\rangle}/\sum_{l\in R^*(X_i)}e^{\langle\beta, x_l\rangle} = \sum_{i:\varepsilon_i=c}\big(\langle\beta, x_i\rangle - \log\sum_{l\in R^*(X_i)}e^{\langle\beta, x_l\rangle}\big)$.
