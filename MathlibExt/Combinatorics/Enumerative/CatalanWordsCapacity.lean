@@ -476,4 +476,68 @@ end
 
 end CatalanCapacity
 
+section SmoothCapacity
+
+open Polynomial
+
+@[expose] public section
+
+/-- **Smooth words.** For $n \ge 0$, the set $\mathcal{R}_n$ of smooth words of length $n$ consists
+of the words $w = w_1 \cdots w_n$ of positive integers with $w_1 = 1$ (when $n \ge 1$) and
+$|w_{i+1} - w_i| \le 1$ for $1 \le i < n$.
+
+The letters of a smooth word of length $n$ are at most $n$, so $\mathcal{R}_n$ is finite.
+
+Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
+to Capacity*, INTEGERS 25 (2025), Article A5, Section 1, definition of smooth words. -/
+public def smoothWords (n : ℕ) : Finset (Fin n → ℕ) :=
+  (Fintype.piFinset fun _ : Fin n => Finset.Icc 1 n).filter fun w =>
+    (∀ i : Fin n, i.val = 0 → w i = 1) ∧
+      ∀ i j : Fin n, j.val = i.val + 1 → w j ≤ w i + 1 ∧ w i ≤ w j + 1
+
+/-- **Characterization of smooth words.** For a natural number $n$, let $\mathcal{R}_n$ be the
+set of smooth words of length $n$, defined as the words $w = w_1 \cdots w_n$ with letters in
+$\{1, \dots, n\}$ such that $w_1 = 1$ when $n \ge 1$, and $w_{k+1} \le w_k + 1$ and
+$w_k \le w_{k+1} + 1$ for $1 \le k < n$. A word $w = w_1 \cdots w_n$ of natural numbers belongs
+to $\mathcal{R}_n$ if and only if $w_k \ge 1$ for every $k$, $w_1 = 1$ when $n \ge 1$, and
+$w_{k+1} \le w_k + 1$ and $w_k \le w_{k+1} + 1$ for $1 \le k < n$. In particular, the bound
+$w_k \le n$ on the letters is automatic.
+
+Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
+to Capacity*, INTEGERS 25 (2025), Article A5, Section 1, definition of smooth words. -/
+public theorem mem_smoothWords_iff {n : ℕ} (w : Fin n → ℕ) :
+    w ∈ smoothWords n ↔ (∀ i, 1 ≤ w i) ∧ (∀ i : Fin n, i.val = 0 → w i = 1) ∧
+      ∀ i j : Fin n, j.val = i.val + 1 → w j ≤ w i + 1 ∧ w i ≤ w j + 1 := by
+  simp only [smoothWords, Finset.mem_filter, Fintype.mem_piFinset, Finset.mem_Icc]
+  constructor
+  · rintro ⟨hb, h0, hg⟩
+    exact ⟨fun i => (hb i).1, h0, hg⟩
+  · rintro ⟨h1, h0, hg⟩
+    have key : ∀ k (hk : k < n), w ⟨k, hk⟩ ≤ k + 1 := by
+      intro k
+      induction k with
+      | zero => intro hk; rw [h0 ⟨0, hk⟩ rfl]
+      | succ k ih =>
+        intro hk
+        have h₁ := (hg ⟨k, by omega⟩ ⟨k + 1, hk⟩ rfl).1
+        have h₂ := ih (by omega)
+        omega
+    refine ⟨fun i => ⟨h1 i, ?_⟩, h0, hg⟩
+    have := key i.val i.isLt
+    rw [Fin.eta] at this
+    omega
+
+/-- **Capacity distribution of smooth words by last letter.** For $n, i \ge 0$, $r(n, i; q)$ is the
+polynomial $\sum_w q^{\operatorname{cap}(w)} \in \mathbb{Z}[q]$, where $w$ runs over the smooth
+words of length $n$ whose last letter is $i$ and $\operatorname{cap}(w)$ is the capacity of $w$.
+
+Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
+to Capacity*, INTEGERS 25 (2025), Article A5, Section 3, definition of `r(n, i; q)`. -/
+public noncomputable def smoothCapacityDist (n i : ℕ) : ℤ[X] :=
+  capacityDist (wordsEndingIn (smoothWords n) i)
+
+end
+
+end SmoothCapacity
+
 end MetaMathlibExt
