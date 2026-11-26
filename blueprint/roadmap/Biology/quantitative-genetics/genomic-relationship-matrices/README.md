@@ -27,3 +27,5 @@
 - [The KING moment](integral-sub-sq.md)
 - [The KING moment for non-inbred individuals](integral-sub-sq-of-inbreeding-eq-zero.md)
 - [The GCTA diagonal estimator is unbiased for $1 + F_i$](integral-grm-diag.md)
+- [KING-robust kinship estimator](king-robust-kinship-estimator.md)
+- [Marker cross-products capture pedigree relationships, so ridge-regression BLUP is animal-model BLUP](marker-cross-products-capture-pedigree-relationships.md)
