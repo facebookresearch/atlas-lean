@@ -65,4 +65,13 @@ example : 5 * ∑ j ∈ Finset.range 10, fibStep 6 j * fibStep 2 (9 - j) = 1105 
   rw [five_mul_sum_fibStep6_mul_fib 9 (by decide)]
   decide
 
+-- The first factor at the theorem's lower endpoint is the one-step sequence.
+example : fibStepSeq 1 4 = [0, 1, 1, 1, 1] := by decide
+
+example :
+    PowerSeries.X ^ 3 * fibStepGF 1 * fibStepGF 2 * fibStepGF 3 * fibStepGF 4 =
+      PowerSeries.X * fibStepGF 1 * fibStepGF 3 * fibStepGF 4 -
+        fibStepGF 2 * fibStepGF 4 + fibStepGF 1 * fibStepGF 4 := by
+  simpa only [pow_one] using fibStepGF_quadruple_consecutive (m := 1) (hm := by decide)
+
 end MathlibExt.Combinatorics.Enumerative.FibStepConvolutionWanted

@@ -13,23 +13,11 @@ public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 
 /-!
-# 3-MACHINE FLOW SHOP SCHEDULING is NP-complete
+# Instances and feasible schedules for the three-machine flow shop
 
-A list of jobs, each with three nonnegative integer processing times (on machines 1, 2, 3, in
-that order), together with a deadline `D`. The question is whether there are start times, one
-per job per machine, so that each job visits the machines in order, no machine processes two
-jobs at once, and every job completes by `D`. This is the general (non-permutation) flow shop:
-different machines may order the jobs differently.
-
-Encoding: the instance is decoded from a bitstring with the repository's
-canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
-bitstrings decoding to malformed instances, are no-instances.
-
-NP-completeness is stated in the same form as the proved results in
-`CSLibExt.Computability.Complexity.Karp`: membership in
-`MetaMathlibExt.ComplexityTheory.NP`, plus a polynomial-time many-one
-reduction from every language in `NP`
-(`Cslib.CookLevin.PolyManyOneRed`).
+Each job visits machines 1, 2 and 3 in order. On each machine one operation of each pair must
+finish by the time the other starts, including when a processing time is zero. The decision
+problem accepts encodings of well-formed instances with a feasible schedule by the deadline.
 -/
 
 @[expose] public section
@@ -56,8 +44,10 @@ $s_{j,2} + p_{j,2} \le s_{j,3}$ and $s_{j,3} + p_{j,3} \le D$, and for every mac
 $k \in \{1, 2, 3\}$ and all jobs $a < b$ we have $s_{a,k} + p_{a,k} \le s_{b,k}$ or
 $s_{b,k} + p_{b,k} \le s_{a,k}$.
 
-Here $s_{j,k}$ is the start time of job $j$ on machine $k$: each job visits machines 1, 2, 3 in
-that order, no machine processes two jobs at once, and every job finishes by $D$. -/
+Each job visits machines 1, 2 and 3 in order and finishes by $D$. The pairwise condition also
+applies to zero-duration operations. Such an operation may start at either endpoint of another
+operation on the same machine, but cannot start strictly inside it. Treating zero-duration
+operations as empty intervals would permit such a start. -/
 def FlowShopFeasible
     (i : FlowShopInstance) : Prop :=
   ∃ start : List (List ℕ), start.length = i.1.length ∧

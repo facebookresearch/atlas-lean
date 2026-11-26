@@ -154,9 +154,11 @@ private theorem separate_iff (a b : List ℕ × List ℕ) :
   have hmem (k : ℕ) : k ∈ [0, 1, 2] ↔ k < 3 := by simp; omega
   simp only [hmem]
 
-/-- Check an encoded flow-shop instance and an encoded list of three start times per job.
-The verifier checks each job's precedence and deadline and tests each pair for nonoverlap
-on all three machines. Malformed inputs or certificates are rejected. -/
+/-- **Checking a three-machine flow-shop schedule.** The verifier accepts an encoded instance and
+a certificate exactly when both decode, there is one certificate row per job, each job has three
+durations and three start times, and the schedule is feasible. Each job visits the machines in
+order and finishes by the deadline. On each machine one operation of every pair finishes by the
+start of the other, including when a duration is zero. -/
 def flowShopCheck (x w : List Bool) : Bool :=
   match bitDecode (α := FlowShopInstance) x, bitDecode (α := List (List ℕ)) w with
   | some (jobs, d), some starts =>
@@ -1987,8 +1989,9 @@ private theorem isPolyTime_check :
 
 end Verifier
 
-/-- Three-machine flow-shop scheduling belongs to NP. Each start time is bounded by the
-deadline, so the binary schedule certificate has length polynomial in the instance length. -/
+/-- **Three-machine flow-shop scheduling belongs to NP.** An encoded instance admits a feasible
+schedule exactly when a polynomial-time verifier accepts a certificate of length polynomial
+in the instance length. -/
 theorem flowShop_mem_NP : flowShopDec ∈ MetaMathlibExt.ComplexityTheory.NP := by
   refine ⟨Polynomial.X * (Polynomial.C 12 * Polynomial.X + Polynomial.C 7),
     fun p => flowShopCheck p.1 p.2, Verifier.isPolyTime_check, ?_⟩

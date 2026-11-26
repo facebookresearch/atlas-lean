@@ -9,5 +9,7 @@ $s_{j,2} + p_{j,2} \le s_{j,3}$ and $s_{j,3} + p_{j,3} \le D$, and for every mac
 $k \in \{1, 2, 3\}$ and all jobs $a < b$ we have $s_{a,k} + p_{a,k} \le s_{b,k}$ or
 $s_{b,k} + p_{b,k} \le s_{a,k}$.
 
-Here $s_{j,k}$ is the start time of job $j$ on machine $k$: each job visits machines 1, 2, 3 in
-that order, no machine processes two jobs at once, and every job finishes by $D$.
+Each job visits machines 1, 2 and 3 in order and finishes by $D$. The pairwise condition also
+applies to zero-duration operations. Such an operation may start at either endpoint of another
+operation on the same machine, but cannot start strictly inside it. Treating zero-duration
+operations as empty intervals would permit such a start.

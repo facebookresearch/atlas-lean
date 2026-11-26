@@ -1,5 +1,7 @@
-# Flow Shop Check
+# Checking a three-machine flow-shop schedule
 
-Check an encoded flow-shop instance and an encoded list of three start times per job.
-The verifier checks each job's precedence and deadline and tests each pair for nonoverlap
-on all three machines. Malformed inputs or certificates are rejected.
+The verifier accepts an encoded instance and
+a certificate exactly when both decode, there is one certificate row per job, each job has three
+durations and three start times, and the schedule is feasible. Each job visits the machines in
+order and finishes by the deadline. On each machine one operation of every pair finishes by the
+start of the other, including when a duration is zero.

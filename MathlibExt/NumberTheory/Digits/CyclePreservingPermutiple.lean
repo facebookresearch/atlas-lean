@@ -12,15 +12,14 @@ public import Mathlib.GroupTheory.Perm.Cycle.Basic
 public import MathlibExt.NumberTheory.Digits.Permutiple
 
 /-!
-# Permutiples with a fixed set of digits (Holt)
+# Cycle-preserving digit permutations of permutiples
 
-Statements from B. V. Holt, *A Method for Finding All Permutiples with a Fixed
-Set of Digits from a Single Known Example*, INTEGERS 24 (2024), Article A88
-(arXiv:2312.02056).
+If two positions on the same cycle carry the same digit, swapping them splits the cycle and
+preserves the permuted digit word. Repeating this step gives a permutation with distinct
+digits on every cycle.
 
-A `(k+1)`-digit base-`b` numeral `(d_k, …, d_0)_b` is a digit function
-`d : Fin (k + 1) → ℕ` (digit `d j` has weight `b ^ j`); for a permutation `π`,
-the numeral `(d_{π(k)}, …, d_{π(0)})_b` is `d ∘ π`.
+Source: Benjamin V. Holt, *Finding Permutiples of a Known Base and Multiplier*,
+arXiv:2411.10859v2, Definition 5 and Theorem 5, https://arxiv.org/abs/2411.10859.
 -/
 
 namespace MetaMathlibExt

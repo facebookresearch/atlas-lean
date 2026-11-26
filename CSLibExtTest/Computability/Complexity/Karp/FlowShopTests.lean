@@ -30,6 +30,20 @@ private def checks (i : FlowShopInstance) (starts : List (List ℕ)) : Bool :=
 #guard !(checks ([[0, 4, 0], [0, 0, 0]], 4) [[0, 0, 4], [0, 2, 4]])
 #guard checks ([[0, 4, 0], [0, 0, 0]], 4) [[0, 0, 4], [0, 4, 4]]
 
+-- The deadline forces the second job's zero-duration operation strictly inside the first job.
+example : ¬ FlowShopFeasible ([[0, 2, 0], [1, 0, 1]], 2) := by
+  rintro ⟨s, _, _, jobs, machines⟩
+  let a := s.getD 0 []
+  let b := s.getD 1 []
+  have a₂ : a.getD 1 0 + 2 ≤ a.getD 2 0 := (jobs 0 (by decide)).2.1
+  have a₃ : a.getD 2 0 + 0 ≤ 2 := (jobs 0 (by decide)).2.2
+  have b₁ : b.getD 0 0 + 1 ≤ b.getD 1 0 := (jobs 1 (by decide)).1
+  have b₂ : b.getD 1 0 + 0 ≤ b.getD 2 0 := (jobs 1 (by decide)).2.1
+  have b₃ : b.getD 2 0 + 1 ≤ 2 := (jobs 1 (by decide)).2.2
+  have sep : a.getD 1 0 + 2 ≤ b.getD 1 0 ∨ b.getD 1 0 + 0 ≤ a.getD 1 0 :=
+    machines 1 (by decide) 0 (by decide) 1 (by decide) (by decide)
+  omega
+
 -- Malformed bitstrings, malformed job rows, and malformed certificates.
 #guard !(flowShopCheck [true] [])
 #guard !(checks ([[1, 1]], 3) [[0, 1, 2]])

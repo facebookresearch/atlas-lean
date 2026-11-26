@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Combinatorics.RationalSimplicialHomology
+public import MathlibExt.Combinatorics.RationalSimplicialHomologyShared
 import Mathlib.Data.List.Sublists
 import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
 import Mathlib.Tactic.Ring
@@ -29,7 +29,7 @@ Problem 6 (Stanley–Garsia partitionability conjecture). UnsolvedMath record UM
 (`AMR-156-0005`), dataset ulamai/UnsolvedMath v1.8.0.
 
 Finite abstract simplicial complexes on the vertex set `ℕ`, links and reduced rational Betti numbers
-are those of `WantedExt/Combinatorics/RationalSimplicialHomologyShared.lean`. Cohen–Macaulay over
+are those of `MathlibExt/Combinatorics/RationalSimplicialHomologyShared.lean`. Cohen–Macaulay over
 `ℚ` is Reisner's criterion: `H̃_i(link F; ℚ) = 0` for `i < dim link F` (degrees above the dimension
 vanish automatically). Partitionable: the faces are partitioned into intervals `[r F, F]` indexed by
 the facets. Duval–Goeckner–Klivans–Martin take Reisner's criterion over an arbitrary field;

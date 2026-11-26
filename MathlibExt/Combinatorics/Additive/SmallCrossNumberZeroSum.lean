@@ -19,10 +19,16 @@ import Mathlib.Data.Fintype.CardEmbedding
 import Mathlib.GroupTheory.SpecificGroups.Cyclic
 
 /-!
-# Good sequences in cyclic groups of order `35 ^ k`
+# Good sequences in cyclic groups of order $35^k$ and binary vector spaces
 
 We bound the threshold for a random sequence to contain a nonempty zero-sum subsequence
-of cross number at most one by counting collisions between subset sums.
+of cross number at most one. For the cyclic groups we count collisions between subset sums.
+For the binary vector space of order $N=2^d$, a sequence is good exactly when it contains zero
+or a repeated entry. This gives the birthday threshold $\sqrt N$. At length $s<N$, the
+probability of avoiding both events is $\prod_{j=1}^s(1-j/N)$, at most $e^{-s(s+1)/(2N)}$.
+For $s\ge N$ it is zero. Conversely, the union bound gives a probability of at most
+$s(s+1)/(2N)$ for hitting zero or repeating an entry. Thus the good-sequence probability tends
+to zero for $s=o(\sqrt N)$ and to one for $\sqrt N=o(s)$.
 -/
 
 namespace MetaMathlibExt

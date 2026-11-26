@@ -1,4 +1,5 @@
-# Flow Shop mem NP
+# Three-machine flow-shop scheduling belongs to NP
 
-Three-machine flow-shop scheduling belongs to NP. Each start time is bounded by the
-deadline, so the binary schedule certificate has length polynomial in the instance length.
+An encoded instance admits a feasible
+schedule exactly when a polynomial-time verifier accepts a certificate of length polynomial
+in the instance length.

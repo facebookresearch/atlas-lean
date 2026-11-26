@@ -41,7 +41,7 @@ equivalent to one (and Mustaţă-Payne's polytope, a lattice polytope for the la
 becomes one in a basis of that lattice). The `h*`-polynomial is `MetaMathlibExt.IsHStarPolynomial`
 (the source's identity `∑ i(P, r) t^r = h*(t) / (1 - t)^{d+1}`) and unimodality is
 `MetaMathlibExt.IsUnimodal`, both reused from
-`WantedExt.Combinatorics.WeightedProjectiveSimplexIDPWanted`. Conjecture 1 of the same abstract
+`MathlibExt.Combinatorics.WeightedProjectiveSimplexEhrhart`. Conjecture 1 of the same abstract
 (standard Gorenstein `R_P` implies unimodal `h*`) is already stated as
 `conjectureGorensteinIDPUnimodal` in the OpenConjectures entry `IntegerDecompositionUnimodalHStar`.
 -/
@@ -336,7 +336,8 @@ as formal power series, such that $h^*_i = h^*_{d-i}$ for all $0 \le i \le d$ bu
 unimodal.
 
 Mustaţă and Payne (Example 1.1) give a reflexive $6$-dimensional lattice polytope with
-$h^*$-vector $(1, 6, 8, 6, 8, 6, 1)$, which is symmetric and not unimodal.
+$h^*$-vector $(1, 6, 8, 6, 8, 6, 1)$, which is symmetric and not unimodal. Another witness is
+the simplex in Payne’s Example 4.2 with $(b,k,r)=(3,2,0)$ and $h^*$-vector $(1,1,2,1,2,1,1)$.
 
 Source: C. A. Athanasiadis, On the unimodality of h*-vectors, in Ehrhart Quasipolynomials: Algebra,
 Combinatorics, and Geometry, Oberwolfach Reports 1 (2004), no. 39, p. 2078, Conjecture 2, DOI
@@ -346,6 +347,9 @@ numbers, Math. Ann. 333 (2005), 787-795, DOI 10.1007/s00208-005-0691-x, arXiv:ma
 ..., e6 - f, P is reflexive with δ_P = (1, 6, 8, 6, 8, 6, 1), a counterexample to Hibi's conjecture
 for d = 6 (abstract: 'counterexamples to Hibi's conjecture on the unimodality of delta-vectors of
 reflexive polytopes'), https://arxiv.org/abs/math/0504486.
+
+Source: Sam Payne, *Ehrhart series and lattice triangulations*, Example 4.2,
+https://arxiv.org/abs/math/0702052.
 -/
 public theorem hibiSymmetricUnimodal_refuted : ¬ hibiSymmetricUnimodal := by
   intro h

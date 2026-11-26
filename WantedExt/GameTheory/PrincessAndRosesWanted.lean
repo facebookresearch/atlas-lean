@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.GameTheory.SpragueGrundy
 public import MathlibExt.GameTheory.SpragueGrundyMex
 public import MathlibExt.GameTheory.SpragueGrundyZero
 public import WantedExt.Combinatorics.SlowANimWanted

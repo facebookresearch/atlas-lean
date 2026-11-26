@@ -6,4 +6,4 @@
 - [The 3-machine flow shop scheduling decision problem](flow-shop-dec.md)
 - [A polynomial-time verifier for three-machine flow-shop scheduling](a-polynomial-time-verifier-for-three-machine-flo/README.md)
 - [3-MACHINE FLOW SHOP SCHEDULING is NP-complete](flow-shop-np-complete.md)
-- [Hardness](flow-shop-hard.md)
+- [Three-machine flow-shop scheduling is NP-hard](flow-shop-hard.md)
