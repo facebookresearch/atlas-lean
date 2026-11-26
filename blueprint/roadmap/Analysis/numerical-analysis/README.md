@@ -34,7 +34,6 @@ Algorithms with error analysis: bisection and Newton's method, Euler and Rungeâ€
 - [delta-weakening is monotone](delta-weakening-is-monotone.md)
 - [Nonconvergence of schemes violating the CFL condition](nonconvergence-of-schemes-violating-the-cfl-condition.md)
 - [Upwind scheme](upwind-scheme/README.md)
-- [Finite-volume schemes for transport](finite-volume-schemes-for-transport/README.md)
 - [Operator splitting](operator-splitting/README.md)
 
 ## Related topics

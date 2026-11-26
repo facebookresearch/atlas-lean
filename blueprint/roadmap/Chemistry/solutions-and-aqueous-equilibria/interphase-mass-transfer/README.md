@@ -23,3 +23,4 @@ concentration, and the volumetric rate multiplies it by the interfacial area per
 - [Two-film elimination, gas basis](two-film-overall-kg.md)
 - [Overall liquid-side coefficient as the gas film coefficient grows](tendsto-overall-kl-k-g-at-top.md)
 - [Overall gas-side coefficient as the liquid film coefficient grows](tendsto-overall-kg-k-l-at-top.md)
+- [External balance of an open gas–liquid contactor](open-gas-liquid-contactor/README.md)
