@@ -20,3 +20,4 @@ The simplex category, simplicial and cosimplicial objects, simplicial sets with 
 - [Simplicial data to simplicial objects](simplicial-data-to-simplicial-objects/README.md)
 - [To Simplicial](to-simplicial/README.md)
 - [Data-level left extra degeneracy](extra-degeneracy.md)
+- [Kan complex](kan-complex.md)
