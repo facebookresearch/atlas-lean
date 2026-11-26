@@ -67,6 +67,7 @@ Topics added since this subject's fields were last revised.
 - [Summation](summation/README.md)
 - [Term List Collection](term-list-collection/README.md)
 - [Termination](termination/README.md)
+- [Test Collection](test-collection/README.md)
 - [Tree CSP](tree-csp/README.md)
 - [Verma Pearl Forward](verma-pearl-forward/README.md)
 - [Vertical Cells Connectivity](vertical-cells-connectivity/README.md)
