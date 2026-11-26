@@ -1,4 +1,4 @@
-# Hilbert functor ideals are generated in degree m
+# A Hilbert-function criterion for generation in degree m
 
 Let $n, m \in \mathbb{N}$ and $h : \mathbb{N} \to \mathbb{N}$. Write $\operatorname{piece}_d(J)$ for the degree-$d$ homogeneous polynomials modulo those lying in an ideal $J$. Assume
 

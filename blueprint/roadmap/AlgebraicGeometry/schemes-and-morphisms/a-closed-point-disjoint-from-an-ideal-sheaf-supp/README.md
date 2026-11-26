@@ -1,4 +1,4 @@
-# A closed point disjoint from an ideal sheaf support
+# Closed points outside the closed subscheme cut out by an ideal sheaf
 
 ## Ideal Sheaf Data
 
@@ -7,4 +7,4 @@
 
 ## Algebraic Geometry
 
-- [A closed point outside the support of an ideal sheaf](comap-ker-eq-top-and-finrank-eq-zero-of.md)
+- [A closed point outside the closed subscheme cut out by an ideal sheaf](comap-ker-eq-top-and-finrank-eq-zero-of.md)

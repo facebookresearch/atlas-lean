@@ -35,6 +35,6 @@ Univariate and multivariate polynomials and formal power series as algebraic obj
 - [Irreducibility over the algebraic closure persists under generic specialization](exists-ne-zero-and-forall-irreducible-ma.md)
 - [Polynomial expansion is finite and flat of rank a power](finite-and-flat-and-finrank-expand-eq-po.md)
 - [A multiplicative quartic norm form forces a square parameter](is-square-or-is-square-of-is-homogeneous.md)
-- [Frobenius-type substitution detects membership in a prime principal ideal](mem-span-map-of-aeval-x-pow-mem-span-map.md)
+- [Frobenius substitution detects membership in the extension of a prime principal ideal](mem-span-map-of-aeval-x-pow-mem-span-map.md)
 - [Twisted telescoping for an iterated ring endomorphism](one-sub-prod-iterate-mul-eq-sum-prod-ite.md)
 - [Values of a rational polynomial at multiples of high powers](exists-eval-eq-coeff-zero-add-pow-mul.md)

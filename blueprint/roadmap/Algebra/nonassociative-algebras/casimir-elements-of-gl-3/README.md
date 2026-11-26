@@ -10,4 +10,4 @@
 - [The first and second Casimir elements commute](commute-casimir1-casimir2.md)
 - [The first and third Casimir elements commute](commute-casimir1-casimir3.md)
 - [The second and third Casimir elements commute](commute-casimir2-casimir3.md)
-- [Casimir elements of a three-dimensional bracket family are central and commute](casimir-comm-and-generator-comm.md)
+- [The three Casimir elements commute with the generators and with one another](casimir-comm-and-generator-comm.md)

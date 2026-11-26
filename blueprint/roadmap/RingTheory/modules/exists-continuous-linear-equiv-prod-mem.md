@@ -1,4 +1,4 @@
-# Discrete subgroups of a finite-dimensional real normed space are lattices
+# Discrete subgroups of a finite-dimensional real normed space are lattices in their real spans
 
 Let $V$ be a finite-dimensional real normed space and $L \subseteq V$ an additive subgroup that is discrete in the subspace topology. Then there exist $a, b \in \mathbb{N}$ and a continuous $\mathbb{R}$-linear isomorphism
 

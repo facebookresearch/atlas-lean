@@ -1,4 +1,4 @@
-# Isomorphisms of projective schemes are detected on adic thickenings
+# Over a Noetherian I-adically complete base, isomorphisms of projective schemes are detected on adic thickenings
 
 Let $R$ be a Noetherian commutative ring that is $I$-adically complete for an ideal $I$. For $m \in \mathbb{N}$ write $\mathbb{P}^m_R = \operatorname{Proj} R[x_0, \dots, x_m]$ for projective space over $R$ with its structure morphism to $\operatorname{Spec} R$, and $X_n$ for the $n$-th adic thickening $X \times_{\operatorname{Spec} R} \operatorname{Spec}(R / I^{n+1})$ of a scheme over $\operatorname{Spec} R$.
 

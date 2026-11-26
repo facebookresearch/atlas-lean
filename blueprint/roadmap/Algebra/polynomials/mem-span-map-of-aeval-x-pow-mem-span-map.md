@@ -1,4 +1,4 @@
-# Frobenius-type substitution detects membership in a prime principal ideal
+# Frobenius substitution detects membership in the extension of a prime principal ideal
 
 Let $p$ be a prime, $K$ a field that is an algebra over $\mathbb{Z}/p\mathbb{Z}$, $\sigma$ a set of variables and $n \in \mathbb{N}$. Let $f \in (\mathbb{Z}/p\mathbb{Z})[X_i : i \in \sigma]$ be a prime element, and write $\bar f$ for its image in $K[X_i : i \in \sigma]$. If $g \in K[X_i : i \in \sigma]$ satisfies
 

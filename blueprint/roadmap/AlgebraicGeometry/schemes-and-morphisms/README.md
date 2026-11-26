@@ -2,7 +2,7 @@
 
 The scheme-theoretic foundations of algebraic geometry: points, immersions, smooth morphisms, varieties over a field, consequences of Zariski's main theorem and properties that persist under base change.
 
-- [A closed point disjoint from an ideal sheaf support](a-closed-point-disjoint-from-an-ideal-sheaf-supp/README.md)
+- [Closed points outside the closed subscheme cut out by an ideal sheaf](a-closed-point-disjoint-from-an-ideal-sheaf-supp/README.md)
 - [Abelian schemes and relative Poincaré families](abelian-schemes-and-relative-poincar-families/README.md)
 - [Adic thickenings of a scheme over an affine base](adic-thickenings-of-a-scheme-over-an-affine-base/README.md)
 - [Base-change morphisms for sheaves of modules over schemes](base-change-morphisms-for-sheaves-of-modules-ove/README.md)
@@ -11,7 +11,7 @@ The scheme-theoretic foundations of algebraic geometry: points, immersions, smoo
 - [Constructible complexes and rational perverse sheaves](constructible-complexes-and-rational-perverse-sh/README.md)
 - [Finiteness of H⁰ for a two-chart Čech complex](finiteness-of-h-for-a-two-chart-ech-complex/README.md)
 - [Geometric properties of schemes over a field](geometric-properties-of-schemes-over-a-field/README.md)
-- [Morphisms of projective schemes are determined by adic thickenings](morphisms-of-projective-schemes-are-determined-b/README.md)
+- [Morphisms of projective schemes over a Noetherian adically complete base, determined by adic thickenings](morphisms-of-projective-schemes-are-determined-b/README.md)
 - [Morphisms of schemes over a common base](morphisms-of-schemes-over-a-common-base/README.md)
 - [Perverse sheaves with coefficients in a real subfield](perverse-sheaves-with-coefficients-in-a-real-sub/README.md)
 - [Points and sections of schemes](points-and-sections-of-schemes/README.md)
@@ -44,6 +44,6 @@ The scheme-theoretic foundations of algebraic geometry: points, immersions, smoo
 - [Equality of morphisms into a separated scheme is detected after field extension](eq-of-pullback-map-eq-pullback-map-of-is.md)
 - [Morphisms over an algebraic extension descend to a finite subextension](exists-intermediate-field-finite-dimensi.md)
 - [Splitting a map from an fppf sheaf onto the constant sheaf](fppf-exists-section-of-map-eq-unit.md)
-- [Isomorphisms of projective schemes are detected on adic thickenings](is-iso-of-forall-is-iso-adic-thickening.md)
-- [Finite presentation of the first factor of a composite](locally-of-finite-presentation-of-comp-o.md)
+- [Over a Noetherian I-adically complete base, isomorphisms of projective schemes are detected on adic thickenings](is-iso-of-forall-is-iso-adic-thickening.md)
+- [Local finite presentation of the first factor of a composite](locally-of-finite-presentation-of-comp-o.md)
 - [Projectivity of complex projective space](is-projective-projective-space.md)
