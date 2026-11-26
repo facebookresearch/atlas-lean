@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import Mathlib.RingTheory.AdicCompletion.Topology
 public import Mathlib.RingTheory.Perfectoid.BDeRham
 public import Mathlib.RingTheory.WittVector.Compare
 public import MathlibExt.AlgebraicGeometry.AlgebraicallyClosedPadicTests
@@ -33,8 +34,8 @@ continuity, `ℚ_p`-linearly (`bdRPlusGaloisLinear`). For a scheme `A` over a su
 
 The `p`-adic completeness of `𝓞_ℂ_p` follows from that of the ring of integers `𝓞_C` of
 `AlgebraicallyClosedPadicTests` for `C = ℂ_p` (`padicComplexFieldTest`): the two rings have the
-same elements (`integersEquivPadicComplexInt`), and completeness passes along a ring isomorphism
-(`isAdicComplete_padicComplexInt`).
+same elements (`integersEquivPadicComplexInt`), and Mathlib's `IsAdicComplete.congr_ringEquiv`
+carries completeness along this ring isomorphism (`isAdicComplete_padicComplexInt`).
 -/
 
 @[expose] public noncomputable section
@@ -45,28 +46,6 @@ open _root_.CategoryTheory _root_.AlgebraicGeometry
 open HodgeTateComparison GeometricAdicGaloisOperators AdicLinearFunctoriality
 open AlgebraicallyClosedPadicTests
 open scoped TensorProduct
-
-section RingEquiv
-
-variable {A B : Type*} [CommRing A] [CommRing B]
-
-/- `I`-adic completeness passes to `I.map e` along a ring isomorphism `e`. -/
-theorem isAdicComplete_map_ringEquiv (e : A ≃+* B) (I : Ideal A) [IsAdicComplete I A] :
-    IsAdicComplete (I.map e) B := by
-  have key : ∀ (n : ℕ) (x y : B), x ≡ y [SMOD ((I.map e) ^ n • ⊤ : Submodule B B)] ↔
-      e.symm x ≡ e.symm y [SMOD (I ^ n • ⊤ : Submodule A A)] := by
-    intro n x y
-    rw [SModEq.sub_mem, SModEq.sub_mem, smul_eq_mul, smul_eq_mul, Ideal.mul_top, Ideal.mul_top,
-      ← Ideal.map_pow, ← map_sub, Ideal.symm_apply_mem_of_equiv_iff]
-  refine { haus' := fun x hx => ?_, prec' := fun f hf => ?_ }
-  · have h0 : e.symm x = 0 := IsHausdorff.haus' (I := I) (e.symm x) fun n => by
-      simpa using (key n x 0).1 (hx n)
-    simpa using congrArg e h0
-  · obtain ⟨L, hL⟩ := IsPrecomplete.prec' (I := I) (fun n => e.symm (f n))
-      fun hmn => (key _ _ _).1 (hf hmn)
-    exact ⟨e L, fun n => (key n _ _).2 (by simpa using hL n)⟩
-
-end RingEquiv
 
 variable (p : ℕ) [Fact p.Prime]
 
@@ -115,8 +94,7 @@ theorem isAdicComplete_padicComplexInt
     (h : IsAdicComplete (Ideal.span {(p : integers p (padicComplexFieldTest p))})
       (integers p (padicComplexFieldTest p))) :
     IsAdicComplete (Ideal.span {(p : 𝓞_ℂ_[p])}) 𝓞_ℂ_[p] := by
-  have := isAdicComplete_map_ringEquiv (integersEquivPadicComplexInt p)
-    (Ideal.span {(p : integers p (padicComplexFieldTest p))})
+  have := (IsAdicComplete.congr_ringEquiv _ (integersEquivPadicComplexInt p)).2 h
   rwa [Ideal.map_span, Set.image_singleton, map_natCast] at this
 
 /- The Galois action on `𝓞_ℂ_p`. -/
