@@ -1,5 +1,5 @@
-# Sbm Label Weight
+# Prior weight of a block-model labeling
 
-Assume that `V` is finite and that `K` is finite.
+Here $V$ and $K$ are finite.
 
 Prior weight of a labeling: each node draws its class independently.

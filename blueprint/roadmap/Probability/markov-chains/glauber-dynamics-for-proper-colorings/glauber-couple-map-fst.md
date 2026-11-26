@@ -1,5 +1,4 @@
-# Glauber Couple map fst
+# First marginal of the synchronous Glauber coupling
 
-Assume that `G.Adj` is a decidable relation.
 
 The first marginal of the synchronous coupling is the Glauber step.

@@ -1,22 +1,10 @@
 # Martingale CLT under the conditional-variance normalization
 
-**Martingale CLT under the conditional-variance normalization** (Brown 1971; Hall–Heyde
-Corollary 3.1 with a constant limit). Let row `n` of `X` be a square-integrable martingale
-difference sequence for the filtration `F n` (the partial sums `∑_{j<k} X n j` form a
-martingale; a finite row is extended by zeros). If the **predictable** quadratic variation
-`∑_{k<r n} E[X n k² | F n k]` of row `n` tends to `v` in probability and the **conditional Lindeberg condition**
-`∑_{k<r n} E[X n k² 1{ε < |X n k|} | F n k] → 0` in probability holds for every `ε > 0`, then
-`∑_{k<r n} X n k → N(0, v)` in distribution.
+On a probability space, let $(X_{n,k})$ be a square-integrable array whose row partial sums $\sum_{j<k} X_{n,j}$ are martingales for filtrations $(\mathcal F_{n,k})_k$, and let $r_n$ be row lengths. If the predictable quadratic variation $\sum_{k<r_n} \mathbb{E}[X_{n,k}^2 \mid \mathcal F_{n,k}]$ tends to $v \ge 0$ in probability and the conditional Lindeberg condition $\sum_{k<r_n} \mathbb{E}[X_{n,k}^2 \mathbf 1\{|X_{n,k}| > \varepsilon\} \mid \mathcal F_{n,k}] \to 0$ in probability holds for every $\varepsilon > 0$, then $\sum_{k<r_n} X_{n,k}$ converges in distribution to $N(0, v)$. Compared with McLeish's form, the realized quadratic variation is replaced by the predictable one and McLeish's maximal-moment condition is not assumed.
 
-Compared with `tendstoInDistribution_martingale_mcLeish`, the realized quadratic variation
-`∑ X n k²` is replaced by the predictable one, and McLeish's maximal-moment condition is not
-assumed.
+The proof cuts each row predictably, keeping increment $k$ while $\sum_{j \le k} \mathbb{E}[X_{n,j}^2 \mid \mathcal F_{n,j}] \le v + 1$, and applies McLeish's theorem to the cut row, which agrees with the original one outside an event of vanishing probability.
 
-Proof: cut each row predictably, keeping increment `k` while `∑_{j ≤ k} E[X n j² | F n j]`
-stays `≤ v + 1`. The cut row is still a martingale difference sequence, has
-`E[∑ X'²] ≤ v + 1` (so McLeish's (a)), its maximal increment tends to `0` (McLeish's (b),
-from the conditional Lindeberg condition), and its realized quadratic variation tends to `v`
-(McLeish's (c)): the big jumps are controlled by the conditional Lindeberg condition and the
-centred small jumps form a martingale with `L²` norm at most `ε² (v + 1)`. McLeish's theorem
-applies to the cut row, which agrees with the original one outside an event of vanishing
-probability.
+## Sources
+
+- B. M. Brown, "Martingale central limit theorems", Annals of Mathematical Statistics 42 (1971), 59–66.
+- P. Hall and C. C. Heyde, *Martingale Limit Theory and Its Application*, Academic Press (1980), Corollary 3.1, with a constant limit.

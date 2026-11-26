@@ -1,6 +1,3 @@
-# Lintegral run le geom
+# Drift recursion bound for expectations along the chain
 
-Assume `Measurable (fun p : S × D => f p.1 p.2)` and `Measurable V`.
-
-The drift recursion: if one step satisfies `E V(f x d) ≤ ρ V(x) + β`, then the
-expectation of `V` at mark `n` is at most `ρⁿ V(x₀) + β ∑_{k<n} ρᵏ`.
+Let $D$ carry a probability law, let the inputs of the chain be independent with that law, and let $f : S \times D \to S$ be jointly measurable and $V : S \to [0, \infty]$ measurable. If one step satisfies $\mathbb{E}[V(f(x, d))] \le \rho V(x) + \beta$ for every state $x$, with $\rho, \beta \in [0, \infty]$, then for every $n$ the expectation of $V$ at mark $n$ of the chain started at $x_0$ is at most $\rho^n V(x_0) + \beta \sum_{k<n} \rho^k$.

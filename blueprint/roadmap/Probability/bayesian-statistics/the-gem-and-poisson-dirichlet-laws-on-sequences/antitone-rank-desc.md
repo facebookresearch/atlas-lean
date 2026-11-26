@@ -1,7 +1,3 @@
-# Antitone rank Desc
+# The decreasing rearrangement is decreasing
 
-Assume `BddAbove (Set.range p)`.
-
-The ranked sequence is decreasing.
-
-In symbols: `Antitone (rankDesc p)`.
+For a real sequence $p$ that is bounded above, its decreasing rearrangement (the $k$-th largest value, counted with multiplicity, for $k = 0, 1, \dots$) is a nonincreasing sequence.

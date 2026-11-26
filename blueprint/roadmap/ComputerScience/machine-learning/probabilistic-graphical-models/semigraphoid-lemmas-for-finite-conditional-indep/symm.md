@@ -1,5 +1,5 @@
-# Symm
+# Conditional independence is symmetric
 
-Assume that equality on `V` is decidable; that `V` is finite; and that `α` is finite.
+Here $V$ and $\alpha$ are finite.
 
 Conditional independence is symmetric in its first two arguments.

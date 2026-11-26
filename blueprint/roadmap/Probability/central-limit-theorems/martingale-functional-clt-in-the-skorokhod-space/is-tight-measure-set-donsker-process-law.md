@@ -1,13 +1,7 @@
-# Tightness
+# Tightness of Donsker's polygonal laws
 
-Assume `∀ n, Measurable (X n)`, `iIndepFun X P`, `∀ i, IdentDistrib (X i) (X 0) P P`, `Integrable (X 0) P`, `MemLp (X 0) 2 P`, `P[X 0] = 0` and `IsBrownianReal B P'`.
-
-**Tightness** of Donsker's polygonal laws on `C([0,1])`. This is a consequence of Donsker
-convergence (`donsker_invariance_principle`) via Prokhorov's converse: the laws converge
-weakly, so their closure in the space of laws is compact, hence the family is tight. It feeds
-the tightness input of `tendstoInDistribution_skorokhod_of_tight_of_fdd` in
-`tendstoInDistribution_skorokhodStepProcess`.
+Let $X_0, X_1, \dots$ be i.i.d. measurable real random variables on a probability space with mean $0$ and variance $1$, and suppose a real Brownian motion exists on some probability space. Then the laws on $C([0, 1])$ of Donsker's polygonal processes of $X$ form a tight family. This follows from Donsker convergence by Prokhorov's converse: the laws converge weakly, so their closure in the space of laws is compact.
 
 ## Sources
 
-- Billingsley (1999), Theorem 5.2 (Prokhorov, converse half) applied to Theorem 8.2.
+- P. Billingsley, *Convergence of Probability Measures*, 2nd ed., Wiley (1999), Theorem 5.2 (Prokhorov, converse half) applied to Theorem 8.2.

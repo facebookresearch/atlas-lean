@@ -1,4 +1,3 @@
-# Exists eventually measure lt le
+# Convergence in probability to a constant gives boundedness in probability
 
-Convergence in probability to a constant gives boundedness in probability, in the form of
-the hypothesis `htight` of `tendstoInMeasure_sup_abs_sum_sq_sub_condExp`.
+If $f_n \to t$ in measure for a constant $t$, then $f_n$ is bounded in probability: for every $\eta > 0$ there is $C$ with $\mu(\{f_n > C\}) \le \eta$ for all large $n$.

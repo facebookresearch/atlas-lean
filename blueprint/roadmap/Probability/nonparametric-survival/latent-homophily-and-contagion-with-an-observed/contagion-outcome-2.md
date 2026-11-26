@@ -1,4 +1,4 @@
-# Contagion Outcome₁
+# Peer outcome under contagion when ego acts
 
 Contagion mechanism, peer behavior had ego acted: on the tie the peer acts;
 off the tie the peer behaves as under homophily, so the ego intervention reaches

@@ -1,6 +1,3 @@
-# Stationary AR1 variance
+# Variance of a stationary AR(1) process
 
-Assume `ρ ^ 2 ≠ 1`, `X = fun ω => ρ * Y ω + ε ω` and `variance Y μ = variance X μ`.
-
-If `X = ρ * Y + ε` with `Y` independent of `ε`, `Y` and `ε` square-integrable,
-and `Var Y = Var X` (stationarity), then `Var X = Var ε / (1 - ρ²)`.
+On a probability space, let $Y$ and $\varepsilon$ be independent square-integrable random variables, $\rho^2 \ne 1$, and $X = \rho Y + \varepsilon$ with $\operatorname{Var}(Y) = \operatorname{Var}(X)$ (stationarity of the AR(1) step). Then $\operatorname{Var}(X) = \operatorname{Var}(\varepsilon)/(1 - \rho^2)$.

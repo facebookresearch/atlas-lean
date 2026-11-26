@@ -1,5 +1,5 @@
-# Ergm Score eq zero iff
+# Moment equation of an exponential random graph model
 
-Assume that equality on `V` is decidable; that `V` is finite; and that `ι` is finite.
+Here $V$ and $\iota$ are finite.
 
 Moment equation: score vanishes iff observed equals expected.

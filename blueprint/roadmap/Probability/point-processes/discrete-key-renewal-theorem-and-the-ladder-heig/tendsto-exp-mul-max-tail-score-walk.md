@@ -1,14 +1,3 @@
 # Ladder-height limit for an i.i.d. integer score walk
 
-Assume `∀ i, Measurable (X i)`.
-
-**Ladder-height limit for an i.i.d. integer score walk** (Cramér–Lundberg /
-Karlin–Dembo). Let `X` be i.i.d. integer scores with walk `S`, maximum `M = sup_n S n`, and
-ladder-height law `g j = P(τ₊ < ∞, S_{τ₊} = j)`. If `θ > 0` satisfies the ladder Cramér
-identity `∑ g j e^{θ j} = 1` (here a hypothesis; it holds at the root of `𝔼 e^{θ X} = 1`
-when `X` is not almost surely `0`, `hasSum_ladderLaw_mul_exp` in `CramerIdentity`, and it
-forces `P(τ₊ < ∞) < 1`, see
-`tsum_lt_one_of_hasSum_exp_mul`), the ladder support is aperiodic and the tilted ladder mean
-`μ = ∑ j g j e^{θ j}` is finite, then
-`e^{θ k} P(M > k) → (1 - P(τ₊ < ∞)) / ((e^θ - 1) μ)`. The ladder decomposition is proved
-(`isRenewalSolution_maxTail`), not assumed.
+Let $X_0, X_1, \dots$ be i.i.d. integer-valued random variables on a probability space, with score walk $S$, maximum $M = \sup_n S_n$ and ladder-height law $g_j = \mathbb{P}(\tau_+ < \infty, S_{\tau_+} = j)$. Suppose $\theta > 0$ satisfies the ladder Cramér identity $\sum_j g_j e^{\theta j} = 1$ (here a hypothesis; it holds at the root of $\mathbb{E}[e^{\theta X_0}] = 1$ when $X_0$ is not almost surely $0$), the support $\{k : g_k > 0\}$ has greatest common divisor $1$, and the tilted ladder mean $\mu = \sum_k k\, g_k e^{\theta k}$ is finite. Then $e^{\theta k}\, \mathbb{P}(M > k) \to (1 - \mathbb{P}(M > 0)) / ((e^\theta - 1)\, \mu)$ (Cramér–Lundberg, Karlin–Dembo). The ladder decomposition of the tail of $M$ is proved, not assumed.

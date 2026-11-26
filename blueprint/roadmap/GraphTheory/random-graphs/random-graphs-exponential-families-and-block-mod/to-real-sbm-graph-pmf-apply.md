@@ -1,7 +1,3 @@
-# To Real sbm Graph PMF apply
+# Real values of the block-model law
 
-Assume that equality on `K` is decidable; that `V` is finite; and that `K` is finite.
-
-Real value of the block-model `PMF`.
-
-In symbols: `(sbmGraphPMF p W h G).toReal = sbmGraphWeight p W G`.
+For a finite linearly ordered vertex set $V$, a finite set of classes $K$, admissible block-model parameters $(p, W)$ and a simple graph $G$ on $V$, the real value of the mass that the block-model graph law gives to $G$ is the block-model graph weight of $G$.

@@ -1,7 +1,3 @@
-# Ergm PMF apply
+# Values of the exponential random graph law as a probability mass function
 
-Assume that equality on `V` is decidable; that `V` is finite; and that `ι` is finite.
-
-Evaluation of the PMF version.
-
-In symbols: `ergmPMF t θ G = ENNReal.ofReal (ergmProb t θ G)`.
+For a finite vertex set $V$, a statistic $t$ of simple graphs on $V$ with values in $\mathbb{R}^\iota$ for a finite index set $\iota$, and $\theta \in \mathbb{R}^\iota$, the exponential random graph law viewed as a probability mass function gives each graph $G$ the mass $P_\theta(G) = e^{\langle\theta, t(G)\rangle}/\sum_H e^{\langle\theta, t(H)\rangle}$, read as an extended nonnegative real.

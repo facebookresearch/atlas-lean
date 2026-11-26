@@ -1,17 +1,13 @@
 # Admissible pair for the key renewal theorem
 
-`KeyRenewalAdmissible Y y`
-says that the input `y` and the candidate solution `Y` lie in the class where
-the key renewal theorem (Feller Vol. II, §XI.1, Theorem 2, with uniqueness from
-§XI.1, Theorem 1) applies:
+A pair $(Y, y)$ of real functions is admissible for the key renewal theorem when:
 
-* `y` is measurable, vanishes on `(-∞, 0)`, is continuous at almost every point,
-  and on `[0, ∞)` is dominated in absolute value by an antitone majorant that is
-  integrable on `[0, ∞)`; this is the standard sufficient condition for direct
-  Riemann integrability (Feller §XI.1, condition (b); Asmussen, *Applied
-  Probability and Queues*, Prop. V.4.1);
-* `Y` is measurable, vanishes on `(-∞, 0)` and is bounded on every half-line
-  `(-∞, T]`, so it is the unique such solution of its renewal equation.
+- the input $y$ is measurable, vanishes on $(-\infty, 0)$, is continuous at almost every point, and on $[0, \infty)$ is dominated in absolute value by a nonincreasing majorant that is integrable on $[0, \infty)$, the standard sufficient condition for direct Riemann integrability;
+- the candidate solution $Y$ is measurable, vanishes on $(-\infty, 0)$ and is bounded on every half-line $(-\infty, T]$, so it is the unique such solution of its renewal equation.
 
-This is a sufficient condition, not a definition of direct Riemann
-integrability.
+This is a sufficient condition, not a definition of direct Riemann integrability.
+
+## Sources
+
+- W. Feller, *An Introduction to Probability Theory and Its Applications*, Vol. II, Section XI.1, Theorems 1 and 2 and condition (b).
+- S. Asmussen, *Applied Probability and Queues*, Proposition V.4.1.

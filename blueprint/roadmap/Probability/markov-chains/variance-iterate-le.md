@@ -1,6 +1,6 @@
 # Iterating a variance contraction
 
-Assume that `α` is finite.
+Here $\alpha$ is finite.
 
 A nonnegative one-step variance bound iterates geometrically.
 No stochasticity, stationarity, or gap assumptions are needed for this

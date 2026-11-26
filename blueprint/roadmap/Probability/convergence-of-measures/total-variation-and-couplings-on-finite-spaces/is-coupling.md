@@ -1,4 +1,3 @@
-# Is Coupling
+# Coupling of two distributions
 
-A coupling of `p` and `q`: a joint law on `α × α` with the two
-coordinate marginals `p` and `q`.
+A coupling of two probability mass functions $p$ and $q$ on a set $\alpha$ is a probability mass function $r$ on $\alpha \times \alpha$ whose first marginal is $p$ and whose second marginal is $q$.

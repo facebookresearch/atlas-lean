@@ -1,8 +1,3 @@
-# Rank Desc
+# The k-th largest value of a sequence
 
-The **supremal `k`-th largest value** (counted with multiplicity, from `k = 0`) of a
-sequence: the supremum over `(k + 1)`-element index sets `s` of `min_{i ∈ s} p i`. This is
-in general a supremum, not an entry of `p` (e.g. `p n = 1 - 1 / (n + 1)` gives
-`rankDesc p 0 = 1`, attained by no entry). For a nonnegative sequence tending to `0` the
-supremum is attained and this is the `k`-th entry of the decreasing rearrangement, padded
-with zeros when fewer than `k + 1` entries are positive.
+For a real sequence $p$ and $k \in \mathbb{N}$, the $k$-th largest value of $p$, counted with multiplicity from $k = 0$, is the supremum over $(k+1)$-element index sets $s$ of $\min_{i \in s} p_i$. In general this is a supremum, not an entry of $p$: for $p_n = 1 - 1/(n+1)$ the value at $k = 0$ is $1$, attained by no entry. For a nonnegative sequence tending to $0$ the supremum is attained and the value is the $k$-th entry of the decreasing rearrangement, padded with zeros when fewer than $k + 1$ entries are positive.

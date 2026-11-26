@@ -1,7 +1,3 @@
 # Ranking forgets the order
 
-Assume `BddAbove (Set.range p)`.
-
-Permuting the entries does not change the ranked sequence.
-
-In symbols: `rankDesc (p ∘ σ) = rankDesc p`.
+For a real sequence $p$ that is bounded above and a bijection $\sigma$ of $\mathbb{N}$, the decreasing rearrangement of $p \circ \sigma$ equals the decreasing rearrangement of $p$.

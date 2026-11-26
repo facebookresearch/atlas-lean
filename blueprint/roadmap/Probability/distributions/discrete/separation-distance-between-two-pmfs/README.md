@@ -1,4 +1,4 @@
 # Separation distance between two PMFs
 
-- [Pmf Real](pmf-real.md)
-- [Separation Distance](separation-distance.md)
+- [Real-valued mass of a probability mass function](pmf-real.md)
+- [Separation distance between probability mass functions](separation-distance.md)

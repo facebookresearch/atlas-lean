@@ -1,5 +1,5 @@
-# Two PLPMF apply
+# Response-pattern masses under the two-parameter logistic model
 
-Assume that equality on `ι` is decidable and that `ι` is finite.
+Here $\iota$ is finite.
 
 Mass of a response pattern under the two-parameter logistic model.

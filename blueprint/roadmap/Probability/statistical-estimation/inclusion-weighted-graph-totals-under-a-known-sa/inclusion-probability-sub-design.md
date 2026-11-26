@@ -1,5 +1,5 @@
-# Inclusion Probability sub Design
+# Inclusion probability in the subtype design
 
-Assume that equality on `V` is decidable and that `V` is finite.
+Here $V$ is finite.
 
 Inclusion in the subtype design as a vertex-level subset sum.

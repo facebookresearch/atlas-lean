@@ -1,5 +1,5 @@
-# Sum resid ols
+# Least-squares residuals sum to zero
 
-Assume that `ι` is finite.
+Here $\iota$ is finite.
 
 The least-squares residuals sum to zero (orthogonality to the constant vector).

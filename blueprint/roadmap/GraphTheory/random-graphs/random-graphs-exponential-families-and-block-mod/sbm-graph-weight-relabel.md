@@ -1,10 +1,7 @@
-# Sbm Graph Weight relabel
+# Relabeled parameters give the same block-model graph weight
 
-Assume that `V` is finite and that `K` is finite.
+Let $V$ be a finite linearly ordered vertex set, $K$ a finite set of classes, $p \in \mathbb{R}^K$, $W \in \mathbb{R}^{K \times K}$ and $\sigma$ a permutation of $K$. The relabeled parameters $(p \circ \sigma, (W_{\sigma(i)\sigma(j)})_{i,j})$ give the same block-model graph weight as $(p, W)$ at every graph, so block-model parameters are identified at most up to a permutation of the classes. This holds for arbitrary real parameters; for admissible parameters it is the equality of the two graph laws.
 
-Label swapping (Allman, Matias and Rhodes 2009, Section 2): relabeled parameters give the
-same weight.
+## Sources
 
-Parameters are identified at most modulo permutation of the classes: a
-numerical clustering output is not statistical identification. Under
-`SBMAdmissible` this is equality of laws (see `sbmGraphPMF_relabel`).
+- E. S. Allman, C. Matias and J. A. Rhodes, "Identifiability of parameters in latent structure models with many observed variables", Annals of Statistics 37(6A) (2009), 3099–3132, Section 2.

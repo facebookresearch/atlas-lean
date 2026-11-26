@@ -1,5 +1,3 @@
-# Sum div sum eq one
+# Normalizing a weight by its total gives total mass one
 
-Assume that `α` is finite. Assume `∑ x, w x ≠ 0`.
-
-Dividing a weight by its partition function `∑ y, w y` gives total mass `1`.
+For a finite set $\alpha$ and a weight $w$ with $\sum_x w(x) \ne 0$, dividing by the total gives total mass one: $\sum_x w(x)/\sum_y w(y) = 1$.

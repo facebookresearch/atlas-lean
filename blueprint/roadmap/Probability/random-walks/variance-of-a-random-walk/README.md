@@ -1,5 +1,5 @@
 # Variance of a random walk
 
-- [Random Walk variance](random-walk-variance.md)
-- [Random Walk variance of i Indep Fun](random-walk-variance-of-i-indep-fun.md)
-- [Random Walk variance four](random-walk-variance-four.md)
+- [Variance of a random walk grows linearly in the horizon](random-walk-variance.md)
+- [Variance of a random walk with independent innovations](random-walk-variance-of-i-indep-fun.md)
+- [Random walk variance, a numerical example](random-walk-variance-four.md)

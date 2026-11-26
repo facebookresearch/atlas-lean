@@ -1,6 +1,3 @@
-# Has Law pivot of has Law gaussian Real
+# The standardized pivot of a normal statistic is standard normal
 
-Assume `(v : ℝ) = s ^ 2` and `HasLaw T (gaussianReal θ v) μ`.
-
-If the statistic `T` has the normal law `N(θ, v)` with variance `v = s ^ 2`, `s ≠ 0`, then
-the pivot `(T - θ) / s` has the standard normal law.
+Let $T$ be a real random variable with the normal law $N(\theta, v)$, where $v = s^2$ and $s \ne 0$. Then the pivot $(T - \theta)/s$ has the standard normal law $N(0, 1)$.

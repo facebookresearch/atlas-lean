@@ -1,6 +1,3 @@
-# Ergm Prob add of affine
+# Directions of constant statistic do not change the exponential random graph law
 
-Assume that equality on `V` is decidable; that `V` is finite; and that `ι` is finite. Assume `∀ G, v ⬝ᵥ t G = c`.
-
-A constant-statistic direction is irrelevant: if `v ⬝ᵥ t G = c` for every graph `G`, then
-adding `v` to `θ` leaves the law unchanged.
+Let $V$ be a finite vertex set and $t$ a statistic assigning to each simple graph $G$ on $V$ a vector $t(G) \in \mathbb{R}^\iota$ over a finite index set $\iota$. If a direction $v \in \mathbb{R}^\iota$ has $\langle v, t(G)\rangle = c$ for every graph $G$, with one constant $c$, then $P_{\theta + v} = P_\theta$ for every $\theta$: moving the parameter along a direction of constant statistic leaves the exponential random graph law unchanged.

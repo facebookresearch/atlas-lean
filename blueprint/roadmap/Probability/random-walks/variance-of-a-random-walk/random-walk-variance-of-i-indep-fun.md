@@ -1,7 +1,3 @@
-# Random Walk variance of i Indep Fun
+# Variance of a random walk with independent innovations
 
-Assume `∀ i, MemLp (ε i) 2 μ`.
-
-`randomWalk_variance` for mutually independent innovations.
-
-In symbols: `variance (randomWalkPartialSum ε h) μ = (h : ℝ) * variance (ε 0) μ`.
+On a measure space, let $\varepsilon_0, \varepsilon_1, \dots$ be square-integrable, mutually independent random variables with a common variance. Then for every horizon $h$, the random walk $S_h = \sum_{i<h} \varepsilon_i$ has $\operatorname{Var}(S_h) = h \operatorname{Var}(\varepsilon_0)$.

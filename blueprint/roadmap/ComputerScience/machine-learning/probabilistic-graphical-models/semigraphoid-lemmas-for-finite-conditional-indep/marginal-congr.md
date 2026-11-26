@@ -1,7 +1,3 @@
-# Marginal congr
+# A marginal depends only on its own variables
 
-Assume that equality on `V` is decidable; that `V` is finite; and that `α` is finite. Assume `∀ v ∈ U, z v = x v`.
-
-A marginal only depends on the values on its variable set.
-
-In symbols: `marginal p U z = marginal p U x`.
+Let $V$ and $\alpha$ be finite sets, $p$ a real function on assignments $V \to \alpha$, and $U \subseteq V$. The marginal of $p$ on $U$ at an assignment depends only on the assignment's values on $U$: if $z(v) = x(v)$ for every $v \in U$, then the marginals of $p$ on $U$ at $z$ and at $x$ are equal.

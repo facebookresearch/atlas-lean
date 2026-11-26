@@ -1,14 +1,10 @@
 # Aldous's condition
 
-**Aldous's condition** for the partial sums `S n k = ∑_{i < k} ξ n i` of a triangular array,
-row `n` filtered by `𝓕 n` and observed at the times `k / n`: for every `ε, η > 0` there is a
-window `θ > 0` such that, for all large `n` and all pairs of `𝓕 n`-stopping times
-`σ ≤ ρ ≤ σ + nθ` (with `ρ ≤ n`), `P(|S n ρ - S n σ| ≥ ε) ≤ η`.
+Let $(\xi_{n,i})$ be a triangular array on a measure space, row $n$ filtered by $(\mathcal F_{n,i})_i$, with partial sums $S_n(k) = \sum_{i<k} \xi_{n,i}$ observed at the times $k/n$. The array satisfies Aldous's condition when for every $\varepsilon, \eta > 0$ there are a window $\theta > 0$ and an $N$ such that for all $n \ge N$ and all $\mathcal F_n$-stopping times $\sigma \le \rho \le \sigma + \lfloor n\theta\rfloor$ with $\rho \le n$, $\mathbb{P}(|S_n(\rho) - S_n(\sigma)| \ge \varepsilon) \le \eta$.
 
-This is the two-stopping-time form of Aldous's condition in Jacod–Shiryaev, *Limit Theorems
-for Stochastic Processes*, 2nd ed. (2003), Theorem VI.4.5 (ii):
-`lim_{θ↓0} limsup_n sup_{S ≤ T ≤ S + θ} P(|X^n_T - X^n_S| ≥ ε) = 0`, written for the grid
-stopping times of the step process `t ↦ S n ⌊n t⌋` on the horizon `[0, 1]`. Aldous's original
-form (D. Aldous, *Stopping times and tightness*, Ann. Probab. 6 (1978) 335–340) has a
-deterministic shift `δ_n → 0` after one stopping time; the two-stopping-time form is the one
-used to prove tightness.
+This is the two-stopping-time form of Aldous's condition, written for the grid stopping times of the step process $t \mapsto S_n(\lfloor n t\rfloor)$ on $[0, 1]$. Aldous's original form has a deterministic shift $\delta_n \to 0$ after one stopping time; the two-stopping-time form is the one used to prove tightness.
+
+## Sources
+
+- J. Jacod and A. N. Shiryaev, *Limit Theorems for Stochastic Processes*, 2nd ed., Springer (2003), Theorem VI.4.5 (ii).
+- D. Aldous, "Stopping times and tightness", Annals of Probability 6 (1978), 335–340.

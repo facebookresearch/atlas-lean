@@ -1,5 +1,5 @@
-# Expectation indicator
+# Expectation of an indicator is the probability of the event
 
-Assume that `E` is a decidable predicate and that `α` is finite.
+Here $\alpha$ is finite.
 
 The expectation of the indicator of an event is the probability of the event.

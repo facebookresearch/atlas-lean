@@ -1,7 +1,3 @@
 # Lattice tails are step functions
 
-Assume `∀ᵐ x ∂μ, ∃ k : ℤ, x = k * h`.
-
-If `μ` is concentrated on the lattice
-`h ℤ` (`h > 0`), then `μ [t, ∞) = μ [h ⌈t / h⌉, ∞)`: the tail only changes at
-lattice points.
+Let $h > 0$ and let $\mu$ be a measure on $\mathbb{R}$ concentrated on the lattice $h\mathbb{Z}$ (almost every point is $k h$ for some integer $k$). Then $\mu[t, \infty) = \mu[h \lceil t/h\rceil, \infty)$ for every $t$: the tail changes only at lattice points.

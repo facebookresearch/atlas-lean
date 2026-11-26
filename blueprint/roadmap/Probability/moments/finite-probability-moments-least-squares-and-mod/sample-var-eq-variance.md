@@ -1,5 +1,5 @@
-# Sample Var eq variance
+# The divide-by-n sample variance as a variance under the empirical weight
 
-Assume that `ι` is finite.
+Here $\iota$ is finite.
 
 The divide-by-`n` sample variance is the variance under the empirical weight.

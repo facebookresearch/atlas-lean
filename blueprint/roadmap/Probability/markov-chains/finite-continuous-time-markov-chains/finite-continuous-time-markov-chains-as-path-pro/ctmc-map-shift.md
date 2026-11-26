@@ -1,6 +1,3 @@
-# Ctmc map shift
+# Shifting the continuous-time chain's step sequence preserves its law
 
-Assume `IsRateMatrix Q`.
-
-The step sequence shifted by `n` has the same law; the specialization of
-`ctmc_map_shift_infinitePi` to `ctmcInputMeasure hQ`.
+For a rate matrix $Q$ of a finite-state continuous-time Markov chain and every $n$, the chain's i.i.d. input sequence of steps, shifted by $n$ steps, has the same law as the unshifted sequence.

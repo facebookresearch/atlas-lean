@@ -1,5 +1,5 @@
-# Inclusion Probability map
+# Inclusion probability under a pushforward design
 
-Assume that equality on `γ` is decidable; that `α` is finite; and that `γ` is finite.
+Here $\alpha$ and $\gamma$ are finite.
 
 Inclusion probability of a pushforward design, as a sum over preimages.

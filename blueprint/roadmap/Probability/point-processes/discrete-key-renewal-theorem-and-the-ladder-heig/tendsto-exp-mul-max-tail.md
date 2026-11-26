@@ -1,10 +1,3 @@
 # Tilted renewal limit for ladder tails (abstract form)
 
-Assume `g 0 = 0` and `IsRenewalSolution g (ladderTail g) T`.
-
-For any sub-probability law `g`
-on `{1, 2, …}` and any `T` solving `T k = ∑_{j > k} g j + ∑_{j ≤ k} g j * T (k - j)`, if
-`θ > 0` satisfies `∑ g j e^{θ j} = 1`, the support of `g` is aperiodic and
-`μ = ∑ j g j e^{θ j}` is finite, then `e^{θ k} T k → (1 - ∑ g) / ((e^θ - 1) μ)`. Here `g` and
-`T` are arbitrary; the score-walk instance, with `g` the ladder-height law and
-`T k = P(M > k)`, is `tendsto_exp_mul_maxTail_scoreWalk`.
+Let $g \ge 0$ be a law on $\mathbb{N}$ with $g_0 = 0$, and let $T$ solve $T_k = \sum_{j > k} g_j + \sum_{j \le k} g_j\, T_{k-j}$ for every $k$. Suppose $\theta > 0$ satisfies $\sum_j g_j e^{\theta j} = 1$, the support $\{k : g_k > 0\}$ has greatest common divisor $1$, and $\mu = \sum_j j\, g_j e^{\theta j}$ is finite. Then $e^{\theta k} T_k \to (1 - \sum_j g_j)/((e^\theta - 1)\, \mu)$. Here $g$ and $T$ are arbitrary; for a score walk, $g$ is the ladder-height law and $T_k = \mathbb{P}(M > k)$.

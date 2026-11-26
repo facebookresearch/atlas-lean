@@ -1,6 +1,3 @@
 # Mean of the tilted ladder law
 
-Assume `∫ y, exp (θ * y) ∂G = 1`.
-
-Under a Cramér root, the tilted measure
-has mean `∫ y e^{θ y} dG(y)`.
+Let $G$ be a measure on $\mathbb{R}$ with Cramér root $\theta$, $\int e^{\theta y}\, dG(y) = 1$. Then the tilted measure $e^{\theta y} dG(y)$ has mean $\int y\, e^{\theta y}\, dG(y)$.

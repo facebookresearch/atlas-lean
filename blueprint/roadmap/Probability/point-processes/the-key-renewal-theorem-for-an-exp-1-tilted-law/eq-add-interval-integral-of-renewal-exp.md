@@ -1,9 +1,3 @@
-# Explicit `Exp(1)` renewal solution
+# Explicit solution of the Exp(1) renewal equation
 
-Assume `∀ t, Y t = y t + ∫ x, Y (t - x) ∂(expMeasure 1)`.
-
-Let `y` be continuous at almost
-every point, and let `Y` be measurable, zero on `(-∞, 0)` and bounded on every
-half-line `(-∞, T]`. If `Y t = y t + ∫ Y (t - x) dExp(1)(x)` for every `t`, then
-`Y t = y t + ∫_0^t y` for every `t ≥ 0`: the `Exp(1)` renewal measure is
-`δ₀ + Lebesgue` on `[0, ∞)`.
+Let $y : \mathbb{R} \to \mathbb{R}$ be continuous at almost every point, and let $Y$ be measurable, zero on $(-\infty, 0)$ and bounded on every half-line $(-\infty, T]$. If $Y(t) = y(t) + \int Y(t - x)\, d\operatorname{Exp}(1)(x)$ for every $t$, then $Y(t) = y(t) + \int_0^t y(s)\, ds$ for every $t \ge 0$: the renewal measure of $\operatorname{Exp}(1)$ is $\delta_0$ plus Lebesgue measure on $[0, \infty)$.

@@ -1,7 +1,3 @@
-# Tau pos
+# A Lasso estimator has a positive tuning parameter
 
-Assume `IsLassoEstimator X Y τ θhat`.
-
-A Lasso estimator has a positive tuning parameter.
-
-In symbols: `0 < τ`.
+If $\hat\theta$ is a Lasso estimator for the design matrix $X$, the responses $Y$ and the tuning parameter $\tau$, then $\tau > 0$: the Lasso estimator is defined only for positive tuning parameters.

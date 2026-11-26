@@ -1,7 +1,3 @@
 # Yamada–Watanabe approximating functions
 
-If `h : [0, ∞) → [0, ∞)` is continuous,
-positive on `(0, ∞)`, and `∫⁻_{(0,ε]} h⁻² = ∞` for every `ε > 0`, there are
-`1 = a 0 > a 1 > ⋯ → 0` with `∫_{a (n+1)}^{a n} h⁻² = n + 1`, and even `C²`
-functions `φ n → |·|` with `|φ n'| ≤ 1` and `0 ≤ φ n'' ≤ 2 / ((n + 1) h(|x|)²)`, where
-`φ n''` vanishes outside `a (n+1) < |x| < a n`.
+Let $h$ be continuous on $[0, \infty)$ and positive on $(0, \infty)$, with $\int_{(0, \varepsilon]} h(u)^{-2}\, du = \infty$ for every $\varepsilon > 0$. Then there are $1 = a_0 > a_1 > \dots > 0$ with $a_n \to 0$ and $\int_{a_{n+1}}^{a_n} h(u)^{-2}\, du = n + 1$, and even $C^2$ functions $\varphi_n$ with $\varphi_n(x) \to |x|$ for every $x$, $|\varphi_n'| \le 1$, $0 \le \varphi_n'' \le 2/((n+1)\, h(|x|)^2)$, and $\varphi_n''(x) \ne 0$ only when $a_{n+1} < |x| < a_n$.

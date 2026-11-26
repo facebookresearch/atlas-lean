@@ -1,6 +1,3 @@
 # Ladder Cramér identity under negative drift
 
-Assume `∀ i, Measurable (X i)`, `iIndepFun X P` and `∀ i, IdentDistrib (X i) (X 0) P P`.
-
-If `θ > 0` solves `𝔼 e^{θ X} = 1` and
-`𝔼 X < 0`, then `∑ j, g j e^{θ j} = 1`; negative drift rules out `X = 0` almost surely.
+Let $X_0, X_1, \dots$ be i.i.d. integer-valued random variables on a probability space, with score walk $S$ and defective ladder-height law $g_j = \mathbb{P}(\tau_+ < \infty, S_{\tau_+} = j)$ of the first strict ascending ladder epoch $\tau_+$. If $\theta > 0$ solves $\mathbb{E}[e^{\theta X_0}] = 1$ and $\mathbb{E}[X_0] < 0$, then $\sum_j g_j e^{\theta j} = 1$. Negative drift rules out $X_0 = 0$ almost surely.

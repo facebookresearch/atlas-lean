@@ -1,6 +1,6 @@
 # The complete-randomization assignment law
 
-- [Integral diff In Means complete Randomization](integral-diff-in-means-complete-randomiz.md)
-- [Integral sq diff In Means sub ate complete Randomization](integral-sq-diff-in-means-sub-ate-comple.md)
-- [Integral neyman Var complete Randomization](integral-neyman-var-complete-randomizati.md)
-- [Integral sq diff In Means sub ate le integral neyman Var](integral-sq-diff-in-means-sub-ate-le-int.md)
+- [The difference in means is unbiased under complete randomization](integral-diff-in-means-complete-randomiz.md)
+- [Mean squared error of the difference in means under complete randomization](integral-sq-diff-in-means-sub-ate-comple.md)
+- [Expectation of Neyman's variance estimator under complete randomization](integral-neyman-var-complete-randomizati.md)
+- [Neyman's variance estimator is conservative](integral-sq-diff-in-means-sub-ate-le-int.md)

@@ -1,5 +1,3 @@
-# Const Mul of Continuous
+# Scaling commutes with the inclusion of continuous paths
 
-Scaling commutes with the inclusion of continuous paths.
-
-In symbols: `constMul c (ofContinuous f) = ofContinuous (c • f)`.
+For a real $c$ and a continuous path $f$ on $[0, T]$, scaling the Skorokhod path of $f$ by $c$ gives the Skorokhod path of the continuous path $c f$.

@@ -1,5 +1,3 @@
-# Rank Desc nonneg
+# The decreasing rearrangement of a nonnegative sequence is nonnegative
 
-Assume `BddAbove (Set.range p)`.
-
-The ranked entries of a nonnegative sequence are nonnegative.
+For a nonnegative real sequence $p$ that is bounded above, every entry of its decreasing rearrangement is nonnegative.

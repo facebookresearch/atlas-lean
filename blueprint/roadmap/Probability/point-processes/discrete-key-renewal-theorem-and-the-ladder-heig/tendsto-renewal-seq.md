@@ -1,7 +1,3 @@
 # Erdős–Feller–Pollard renewal theorem
 
-Assume `f 0 = 0`, `HasSum f 1` and `HasSum (fun k : ℕ => (k : ℝ) * f k) μ`.
-
-Let `f` be the law of a strictly positive
-integer waiting time with aperiodic support (`gcd {k | f k > 0} = 1`) and finite mean `μ`.
-Then the renewal sequence converges to `1 / μ`.
+Let $f \ge 0$ be the law of a strictly positive integer waiting time ($f_0 = 0$, $\sum_k f_k = 1$) with aperiodic support ($\gcd\{k : f_k > 0\} = 1$) and finite mean $\mu = \sum_k k f_k$. Then the renewal sequence of $f$ converges to $1/\mu$, read as $0$ when $\mu = 0$ by the convention for the inverse of zero.

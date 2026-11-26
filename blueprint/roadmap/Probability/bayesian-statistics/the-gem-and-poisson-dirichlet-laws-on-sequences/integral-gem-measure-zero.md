@@ -1,7 +1,3 @@
-# Integral gem Measure zero
+# Mean of the first GEM weight
 
-Assume `0 < θ`.
-
-The first GEM weight has mean `1 / (1 + θ)`.
-
-In symbols: `∫ p, p 0 ∂gemMeasure θ hθ = 1 / (1 + θ)`.
+For $\theta > 0$, the first weight $P_0$ of a GEM($\theta$) random sequence of stick-breaking weights has mean $1/(1 + \theta)$.

@@ -1,12 +1,8 @@
-# Lindeberg form
+# Martingale central limit theorem, Lindeberg form
 
-Rows of length `n`, square-integrable martingale differences, the
-(unconditional) Lindeberg condition `LindebergConditionTriangular`, and the predictable
-quadratic variation `∑_{k<n} E[X n k² | F n k] → v` in probability give
-`∑_{k<n} X n k → N(0, v)`. The Lindeberg condition implies the conditional one (take
-expectations and use Markov's inequality), so this is a corollary of
-`tendstoInDistribution_martingale_condVar`.
+On a probability space, let $(X_{n,k})$ be a square-integrable array whose row partial sums are martingales for filtrations $(\mathcal F_{n,k})_k$, satisfying the (unconditional) Lindeberg condition for triangular arrays. If the predictable quadratic variation $\sum_{k<n} \mathbb{E}[X_{n,k}^2 \mid \mathcal F_{n,k}]$ tends to $v \ge 0$ in probability, then $\sum_{k<n} X_{n,k}$ converges in distribution to $N(0, v)$. The Lindeberg condition implies the conditional Lindeberg condition, so this is a corollary of the conditional-variance form.
 
 ## Sources
 
-- Hall–Heyde (1980), Corollary 3.1 together with the remark that the Lindeberg condition implies the conditional Lindeberg condition; Brown (1971).
+- P. Hall and C. C. Heyde, *Martingale Limit Theory and Its Application*, Academic Press (1980), Corollary 3.1, with the remark that the Lindeberg condition implies the conditional one.
+- B. M. Brown, "Martingale central limit theorems", Annals of Mathematical Statistics 42 (1971), 59–66.

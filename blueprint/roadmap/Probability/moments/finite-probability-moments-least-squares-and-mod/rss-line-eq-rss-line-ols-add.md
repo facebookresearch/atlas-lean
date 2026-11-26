@@ -1,6 +1,3 @@
-# Rss Line eq rss Line ols add
+# Decomposition of the residual sum of squares around the least-squares line
 
-Assume that `ι` is finite.
-
-Decomposition of the residual sum of squares around the least-squares line:
-`RSS(a, b) = RSS(â, b̂) + n (a - â + (b - b̂) x̄) ^ 2 + (b - b̂) ^ 2 S_xx`.
+For data $x, y : \iota \to \mathbb{R}$ on a finite index set with $n$ elements and every line $a + b x$, the residual sum of squares satisfies $\mathrm{RSS}(a, b) = \mathrm{RSS}(\hat a, \hat b) + n\,(a - \hat a + (b - \hat b)\bar x)^2 + (b - \hat b)^2 S_{xx}$, where $\hat a$ and $\hat b$ are the least-squares intercept and slope.

@@ -1,10 +1,7 @@
-# Emp Freq l1 expectation
+# Expected L¹ error of the empirical frequencies
 
-Assume that equality on `α` is decidable.
+Let $p$ be a probability mass function on a finite set $\alpha$ with $k$ elements, and let $n \ge 1$. For a sample $x \in \alpha^n$ drawn i.i.d. from $p$, the expected $L^1$ distance between the empirical frequencies $\hat p_x$ and $p$ is at most $\sqrt{k/n}$:
 
-Learning a discrete distribution in total variation (expectation
-form): for `n ≥ 1` i.i.d. samples from `p` on a finite type, the
-expected `L1` distance between the empirical frequencies and `p`
-is at most `√(k / n)`, where `k` is the alphabet size. The
-expectation is over all sample tuples weighted by their
-probability under `p`.
+$$\sum_{x \in \alpha^n} \Bigl(\prod_{i} p(x_i)\Bigr) \sum_{a \in \alpha} |\hat p_x(a) - p(a)| \le \sqrt{k/n}.$$
+
+This is a bound on the $L^1$ distance $\sum_a |\hat p_x(a) - p(a)|$. Under the usual convention that the total variation distance is half the $L^1$ distance, it gives the expected total variation bound $\tfrac12 \sqrt{k/n}$, which is a consequence and not the statement itself.

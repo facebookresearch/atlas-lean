@@ -1,5 +1,3 @@
-# Measurable rank Desc seq
+# The decreasing-rearrangement map is measurable
 
-The ranking map is measurable.
-
-In symbols: `Measurable fun (p : ℕ → ℝ) (k : ℕ) => rankDesc p k`.
+The map sending a real sequence $p$ to its decreasing rearrangement $(\text{the } k\text{-th largest value of } p)_{k \in \mathbb{N}}$ is measurable from $\mathbb{R}^\mathbb{N}$ to $\mathbb{R}^\mathbb{N}$.

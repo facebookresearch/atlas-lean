@@ -1,5 +1,3 @@
-# Stopped of le
+# A state at or above the level is frozen
 
-A state at level `c` or above is frozen.
-
-In symbols: `stopped f V c x d = x`.
+For a step map $f$, a level function $V$ and a level $c$, the step map stopped at level $c$ leaves every state $x$ with $c \le V(x)$ unchanged, whatever the input.

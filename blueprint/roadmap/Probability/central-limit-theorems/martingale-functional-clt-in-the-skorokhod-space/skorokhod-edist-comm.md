@@ -1,5 +1,3 @@
-# Skorokhod EDist comm
+# The J1 distance is symmetric
 
-The J1 distance is symmetric.
-
-In symbols: `skorokhodEDist f g = skorokhodEDist g f`.
+For functions $f, g$ on $[0, T]$, the J1 distance is symmetric: $d_{J_1}(f, g) = d_{J_1}(g, f)$.

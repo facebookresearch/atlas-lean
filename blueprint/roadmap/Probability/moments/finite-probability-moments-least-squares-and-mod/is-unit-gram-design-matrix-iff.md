@@ -1,5 +1,3 @@
-# Is Unit gram design Matrix iff
+# Full column rank of the simple linear model
 
-Assume that `ι` is finite.
-
-The design matrix of the simple linear model has full column rank iff `0 < S_xx`.
+For data $x : \iota \to \mathbb{R}$ on a finite index set, the Gram matrix $X^{\mathsf T} X$ of the design matrix $X$ of the simple linear model, with rows $(1, x_i)$, is invertible if and only if $S_{xx} = \sum_i (x_i - \bar x)^2 > 0$.

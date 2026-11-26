@@ -1,5 +1,5 @@
-# Ctmc indep infinite Pi
+# Early and late steps of an i.i.d. step sequence are independent
 
-Assume that equality on `ι` is decidable and that `ι` is finite.
+Here $\iota$ is finite.
 
 Under an i.i.d. step law, the first `n` steps are independent of the remaining steps.

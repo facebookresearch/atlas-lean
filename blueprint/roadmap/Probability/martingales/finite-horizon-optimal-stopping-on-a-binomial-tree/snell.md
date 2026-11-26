@@ -1,4 +1,4 @@
-# Snell
+# Snell envelope by backward induction
 
 Snell envelope by backward induction: with `k` periods left at node `s`,
 the value of the optimal stopping problem for the (path-dependent) exercise

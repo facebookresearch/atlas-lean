@@ -1,8 +1,7 @@
 # Converging together in a pseudo-emetric space
 
-**Converging together in a pseudo-emetric space** (Slutsky-type lemma; Billingsley (1999),
-Theorem 3.1). If `Y n → Z` in distribution, and for every `ε > 0` the paths `X n` and `Y n`
-are `ε`-close outside measurable sets `A n` whose probabilities tend to `0`, then `X n → Z`
-in distribution.
+Let $E$ be a pseudo-emetric space whose open sets are measurable, and let $X_n, Y_n$ be $E$-valued random elements on a probability space, with $X_n$ almost everywhere measurable, and $Z$ one on a probability space. Suppose $Y_n \to Z$ in distribution and, for every $\varepsilon > 0$, there are measurable sets $A_n$ with $\mathbb{P}(A_n) \to 0$ such that $X_n$ and $Y_n$ are within distance $\varepsilon$ outside $A_n$. Then $X_n \to Z$ in distribution. No measurability of the distance between $X_n$ and $Y_n$ is required, so the statement applies to the Skorokhod space with the J1 distance.
 
-The statement works in an arbitrary pseudo-emetric space, such as the Skorokhod space with the J1 distance, and controls the distance through explicit measurable bad sets; no measurability of `edist (X n) (Y n)` is required.
+## Sources
+
+- P. Billingsley, *Convergence of Probability Measures*, 2nd ed., Wiley (1999), Theorem 3.1.

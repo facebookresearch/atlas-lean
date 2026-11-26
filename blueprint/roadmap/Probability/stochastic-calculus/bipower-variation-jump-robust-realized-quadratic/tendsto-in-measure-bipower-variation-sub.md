@@ -1,8 +1,3 @@
 # Bipower variation of the continuous part
 
-Assume `∀ n i, Measurable (Z n i)`, `∀ n i, IdentDistrib (Z n i) (Z 0 0) μ μ` and `Integrable (fun ω => Z 0 0 ω ^ 4) μ`.
-
-For increments `s n i * Z n i`, with each row
-`Z n` independent, every `Z n i` distributed as `Z 0 0` with finite fourth moment, and
-`∑_{i ≤ L n} (s n i)⁴ → 0`, the bipower variation is asymptotically
-`(E|Z 0 0|)² ∑_{i < L n} |s n i| |s n (i+1)|`.
+On a probability space, let the increments be $s_{n,i} Z_{n,i}$, where each row $(Z_{n,i})_i$ is independent, every $Z_{n,i}$ is measurable and distributed like $Z_{0,0}$, $\mathbb{E}[Z_{0,0}^4] < \infty$, and $\sum_{i \le L_n} s_{n,i}^4 \to 0$. Then the bipower variation over $L_n$ steps minus $(\mathbb{E}|Z_{0,0}|)^2 \sum_{i < L_n} |s_{n,i}|\,|s_{n,i+1}|$ tends to $0$ in probability.

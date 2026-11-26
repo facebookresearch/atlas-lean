@@ -1,5 +1,5 @@
-# Ergm Log Lik
+# Log-likelihood of an exponential random graph model
 
-Assume that equality on `V` is decidable; that `V` is finite; and that `ι` is finite.
+Here $V$ and $\iota$ are finite.
 
 Log-likelihood: the logarithm of the law in Snijders (2002), eq. (3).

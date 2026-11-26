@@ -1,5 +1,5 @@
-# Ergm Score
+# Score of an exponential random graph model
 
-Assume that equality on `V` is decidable; that `V` is finite; and that `ι` is finite.
+Here $V$ and $\iota$ are finite.
 
 Observed minus expected; its zero set is the moment equation, Snijders (2002), eq. (24).

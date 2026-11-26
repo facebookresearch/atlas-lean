@@ -1,4 +1,4 @@
-# Ladder Tail
+# Tail of a ladder-height law
 
 The **ladder tail** `∑_{j > k} g j` of a (possibly defective) ladder-height law `g`.
 For the first strict ascending ladder height of a random walk this is

@@ -1,5 +1,3 @@
-# Tsum ladder Law
+# Total mass of the ladder-height law
 
-Assume `∀ i, Measurable (X i)`, `iIndepFun X P` and `∀ i, IdentDistrib (X i) (X 0) P P`.
-
-`∑ g = P(τ₊ < ∞) = P(M > 0)`: the total mass of the ladder-height law.
+Let $X_0, X_1, \dots$ be i.i.d. measurable integer-valued random variables on a probability space, with score walk $S$ and maximum $M$. The total mass of the ladder-height law is $\sum_j g_j = \mathbb{P}(M > 0)$, which is also $\mathbb{P}(\tau_+ < \infty)$.

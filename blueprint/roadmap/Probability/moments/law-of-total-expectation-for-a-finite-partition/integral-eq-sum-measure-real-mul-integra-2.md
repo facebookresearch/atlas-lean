@@ -1,6 +1,3 @@
 # Law of total expectation
 
-Assume `⋃ i, B i = Set.univ` and `Integrable f μ`.
-
-**Law of total expectation**, partition form. If the measurable sets `B i` (finitely many)
-are pairwise disjoint and cover `Ω`, then `E[f] = ∑ᵢ P(Bᵢ) · E[f | Bᵢ]`.
+On a finite measure space, let $B_1, \dots, B_m$ be finitely many measurable, pairwise disjoint sets covering the whole space, and let $f$ be integrable. Then $\int f \, d\mu = \sum_i \mu(B_i)\, \mathbb{E}[f \mid B_i]$, where $\mathbb{E}[f \mid B_i]$ is the integral of $f$ against $\mu$ conditioned on $B_i$ (the zero measure, hence integral $0$, when $\mu(B_i) = 0$).

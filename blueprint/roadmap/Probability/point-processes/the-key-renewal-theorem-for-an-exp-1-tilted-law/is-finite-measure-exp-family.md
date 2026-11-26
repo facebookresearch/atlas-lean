@@ -1,7 +1,3 @@
-# Is Finite Measure exp Family
+# Members of the exponential family are finite measures
 
-Assume `-1 < θ`.
-
-The family member is a finite measure.
-
-In symbols: `IsFiniteMeasure (ENNReal.ofReal (1 + θ)⁻¹ • expMeasure (1 + θ))`.
+For $\theta > -1$, the measure $G_\theta = (1 + \theta)^{-1} \cdot \operatorname{Exp}(1 + \theta)$ is finite.

@@ -1,5 +1,3 @@
-# Weight Law inj On nonneg
+# A law with nonnegative point masses determines them
 
-Assume that `𝓧` is finite.
-
-`weightLaw` is injective on nonnegative weights: the law determines its point masses.
+Let $\mathcal X$ be a finite set with measurable singletons. On nonnegative weights $g$, the map $g \mapsto \sum_x g(x)\, \delta_x$ is injective: the measure determines its point masses.

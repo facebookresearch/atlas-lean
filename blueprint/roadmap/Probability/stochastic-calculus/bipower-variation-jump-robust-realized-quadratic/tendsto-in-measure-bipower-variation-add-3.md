@@ -1,8 +1,3 @@
 # Constant volatility
 
-Assume `∀ n i, Measurable (Z n i)`, `Integrable (fun ω => Z 0 0 ω ^ 4) μ`, `Measurable K`, `∀ k, Measurable (τ k)`, `∀ k, Measurable (ξ k)` and `∀ᵐ ω ∂μ, Set.InjOn (fun k => τ k ω) (Finset.range (K ω))`.
-
-On the grid of mesh `1/n` of `[0, 1]`, with continuous increments
-`σ / √n * Z n i` (each row `Z n` i.i.d. with the law of `Z 0 0`, finite fourth moment) plus
-finitely many jumps at a.s. distinct times, the bipower variation over the `n` increments tends
-to `(E|Z 0 0|)² σ²` in probability.
+On a probability space, on the grid of mesh $1/n$ of $[0, 1]$, let the continuous increments be $\sigma Z_{n,i}/\sqrt n$, where each row $(Z_{n,i})_i$ is independent, every $Z_{n,i}$ is measurable and distributed like $Z_{0,0}$, and $\mathbb{E}[Z_{0,0}^4] < \infty$. Add the increments of finitely many random jumps (a measurable number $K$ of jumps with measurable sizes $\xi_k$ at measurable, almost surely distinct times $\tau_k$). Then the bipower variation over the $n$ increments tends to $(\mathbb{E}|Z_{0,0}|)^2 \sigma^2$ in probability.

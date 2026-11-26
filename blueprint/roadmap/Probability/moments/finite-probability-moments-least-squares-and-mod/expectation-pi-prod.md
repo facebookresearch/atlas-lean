@@ -1,6 +1,3 @@
-# Expectation pi prod
+# Expectation of a product over distinct i.i.d. coordinates
 
-Assume that equality on `ι` is decidable; that `α` is finite; and that `ι` is finite.
-
-Under the i.i.d. weight `∏ i, p (ω i)` on samples `ω : ι → α`, the expectation of a product
-of functions of distinct coordinates is the product of the expectations.
+Let $\alpha$ and $\iota$ be finite sets and $p$ any weight on $\alpha$. Under the i.i.d. weight $\omega \mapsto \prod_i p(\omega_i)$ on samples $\omega \in \alpha^\iota$, the expectation of $\prod_i g_i(\omega_i)$ is $\prod_i \mathbb{E}_p[g_i]$, for all functions $g_i : \alpha \to \mathbb{R}$. The weight need not sum to one.

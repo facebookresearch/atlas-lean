@@ -1,8 +1,7 @@
-# Hall–Heyde, Theorem 2.23, with the realized variation tight
+# Realized and predictable quadratic variations agree uniformly (Hall–Heyde)
 
-Assume `∀ n i, StronglyMeasurable[𝓕 n (i + 1)] (ξ n i)`, `∀ n i, MemLp (ξ n i) 2 μ` and `LindebergConditionTriangular ξ μ`.
+On a probability space, let $(\xi_{n,i})$ be a triangular array and, for each row $n$, $(\mathcal F_{n,i})_i$ a filtration, with each $\xi_{n,i}$ strongly $\mathcal F_{n,i+1}$-measurable and square integrable, and with the array satisfying the Lindeberg condition for triangular arrays. Let $k_n \le n$ and suppose the realized variation is tight: for every $\eta > 0$ there is $C$ with $\mathbb{P}\bigl(\sum_{j < k_n} \xi_{n,j}^2 > C\bigr) \le \eta$ for all large $n$. Then $\max_{i \le k_n} \bigl|\sum_{j < i} (\xi_{n,j}^2 - \mathbb{E}[\xi_{n,j}^2 \mid \mathcal F_{n,j}])\bigr| \to 0$ in probability.
 
-Under the hypotheses of
-`tendstoInMeasure_sup_abs_sum_sq_sub_condExp` with tightness of the predictable variation
-replaced by tightness of the realized variation `∑_{j < k n} ξ n j²`,
-`max_{i ≤ k n} |∑_{j < i} ξ n j² - ∑_{j < i} E[ξ n j² | 𝓕 n j]| → 0` in probability.
+## Sources
+
+- P. Hall and C. C. Heyde, *Martingale Limit Theory and Its Application*, Academic Press (1980), Theorem 2.23, with tightness of the predictable variation replaced by tightness of the realized variation.

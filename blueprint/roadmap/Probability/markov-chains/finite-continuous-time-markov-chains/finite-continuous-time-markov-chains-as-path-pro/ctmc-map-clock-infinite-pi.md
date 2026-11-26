@@ -1,6 +1,3 @@
-# Ctmc map clock infinite Pi
+# Every clock of an i.i.d. step sequence is standard exponential
 
-Assume that equality on `ι` is decidable and that `ι` is finite. Assume `ν.map Prod.snd = expMeasure 1`.
-
-If the clock coordinate of the step law `ν` is `Exp(1)`, then so is every clock `E k` of the
-i.i.d. step sequence.
+Let $\iota$ be a finite set of states and $\nu$ a step law on pairs of a jump map $\iota \to \iota$ and a real clock whose clock coordinate is standard exponential. Under the i.i.d. law $\nu^{\otimes \mathbb{N}}$ of the step sequence, every clock $E_k$ is standard exponential.

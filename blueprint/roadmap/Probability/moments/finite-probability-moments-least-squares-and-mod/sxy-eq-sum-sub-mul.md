@@ -1,5 +1,3 @@
-# Sxy eq sum sub mul
+# Cross-product sum with centred first argument
 
-Assume that `ι` is finite.
-
-`S_xy = ∑ i, (x i - x̄) * y i`: the centred cross product is linear in `y`.
+For data $x, y : \iota \to \mathbb{R}$ on a finite index set, the centred cross-product sum satisfies $S_{xy} = \sum_i (x_i - \bar x)\, y_i$, so it is linear in $y$.

@@ -1,8 +1,3 @@
-# Key renewal theorem for `Exp(1)`
+# Key renewal theorem for Exp(1)
 
-Assume `∀ t, Y t = y t + ∫ x, Y (t - x) ∂(expMeasure 1)`.
-
-For every `KeyRenewalAdmissible` pair
-`(Y, y)` solving `Y t = y t + ∫ Y (t - x) dExp(1)(x)`,
-`Y t → (∫_{(0,∞)} y) / mean(Exp(1))`. This is the hypothesis `hKRT` of
-`LatticeConstants.tendsto_scaled_of_keyRenewal` for the tilted law `Exp(1)`.
+For every pair $(Y, y)$ admissible for the key renewal theorem that solves $Y(t) = y(t) + \int Y(t - x)\, d\operatorname{Exp}(1)(x)$ for every $t$, $Y(t) \to \int_{(0,\infty)} y(s)\, ds \,/\, \int x\, d\operatorname{Exp}(1)(x) = \int_{(0,\infty)} y(s)\, ds$ as $t \to \infty$. This is the key renewal hypothesis of the Cramér–Lundberg constant identification for a law whose Cramér tilt is $\operatorname{Exp}(1)$.

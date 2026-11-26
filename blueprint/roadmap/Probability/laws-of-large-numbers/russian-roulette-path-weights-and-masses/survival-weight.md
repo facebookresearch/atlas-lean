@@ -1,5 +1,3 @@
-# Survival Weight
+# Survival weight of a fixed-length path
 
-Weight of a fixed-length path `x : Fin (n+1) → S` under the survival kernel:
-the product of `Q` along its `n` transitions. Raw weight, not a probability
-law.
+For a kernel $Q$ on a set of states $S$ and a path $x = (x_0, \dots, x_n)$ of $n + 1$ states, the survival weight of $x$ is $\prod_{k<n} Q(x_k, x_{k+1})$, the product of the survival-kernel entries along its $n$ transitions. It is a raw weight, not a probability law.

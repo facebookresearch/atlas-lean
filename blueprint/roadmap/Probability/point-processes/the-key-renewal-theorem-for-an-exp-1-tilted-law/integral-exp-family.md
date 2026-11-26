@@ -1,6 +1,3 @@
-# Integral exp Family
+# Integrals against the exponential family
 
-Assume `-1 < θ`.
-
-Integrals against `(1 + θ)⁻¹ · Exp(1 + θ)` are integrals of
-`e^{-(1 + θ) x} f x` over `(0, ∞)`.
+For $\theta > -1$ and every $f : \mathbb{R} \to \mathbb{R}$, the integral of $f$ against $G_\theta = (1 + \theta)^{-1} \cdot \operatorname{Exp}(1 + \theta)$ is $\int_{(0,\infty)} e^{-(1+\theta)x} f(x)\, dx$.

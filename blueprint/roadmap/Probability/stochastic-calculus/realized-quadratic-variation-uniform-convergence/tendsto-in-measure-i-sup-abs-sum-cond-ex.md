@@ -1,6 +1,3 @@
-# Uniform-in-`t` convergence of the predictable quadratic variation from the realized one
+# Uniform convergence of the predictable quadratic variation from the realized one
 
-Assume `∀ n i, StronglyMeasurable[𝓕 n (i + 1)] (ξ n i)`, `∀ n i, MemLp (ξ n i) 2 μ` and `LindebergConditionTriangular ξ μ`.
-
-Under the hypotheses of `tendstoInMeasure_sum_condExp_floor_of_rqv`,
-`sup_{t ∈ [0,1]} |∑_{j < ⌊n t⌋} E[ξ n j² | 𝓕 n j] - t| → 0` in probability.
+On a probability space, let $(\xi_{n,i})$ be a triangular array and, for each row $n$, $(\mathcal F_{n,i})_i$ a filtration, with each $\xi_{n,i}$ strongly $\mathcal F_{n,i+1}$-measurable and square integrable, and with the array satisfying the Lindeberg condition for triangular arrays. If for every $t \in [0, 1]$ the realized quadratic variation $\sum_{j < \lfloor n t\rfloor} \xi_{n,j}^2$ converges in probability to $t$, then $\sup_{t \in [0,1]} \bigl|\sum_{j < \lfloor n t\rfloor} \mathbb{E}[\xi_{n,j}^2 \mid \mathcal F_{n,j}] - t\bigr| \to 0$ in probability.

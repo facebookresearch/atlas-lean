@@ -1,5 +1,4 @@
-# Glauber Couple map snd
+# Second marginal of the synchronous Glauber coupling
 
-Assume that `G.Adj` is a decidable relation.
 
 The second marginal of the synchronous coupling is the Glauber step.

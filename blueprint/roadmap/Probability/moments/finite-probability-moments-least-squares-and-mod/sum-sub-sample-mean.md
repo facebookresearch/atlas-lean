@@ -1,7 +1,3 @@
-# Sum sub sample Mean
+# Deviations from the sample mean sum to zero
 
-Assume that `ι` is finite.
-
-The deviations from the sample mean sum to zero.
-
-In symbols: `∑ i, (x i - sampleMean x) = 0`.
+For data $x : \iota \to \mathbb{R}$ on a finite index set, the deviations from the sample mean sum to zero: $\sum_i (x_i - \bar x) = 0$. For the empty index set both sides are $0$.

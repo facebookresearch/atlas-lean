@@ -1,3 +1,3 @@
-# Ar1 MA
+# Causal moving-average sum
 
-The causal moving-average (MA(infinity)) sum `∑'_k ρ^k ε_{t-k}`.
+For random variables $(\varepsilon_t)_{t \in \mathbb{Z}}$, a coefficient $\rho$ and a time $t$, the causal moving-average sum is $X_t = \sum_{k \ge 0} \rho^k \varepsilon_{t-k}$, taken pointwise as an unconditional sum, which is $0$ where the series is not summable.

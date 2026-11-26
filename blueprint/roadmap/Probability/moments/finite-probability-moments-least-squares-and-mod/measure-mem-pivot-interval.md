@@ -1,7 +1,3 @@
 # Coverage under a sampling model
 
-Assume `0 < s` and `HasLaw (fun ω => (T ω - θ) / s) ν μ`.
-
-If, under `μ`, the pivot `(T - θ) / s` of the statistic
-`T` has law `ν`, then the interval obtained by inverting it contains `θ` with probability
-`ν [lo, hi]`.
+Let $s > 0$, and suppose that under the measure $\mu$ the pivot $(T - \theta)/s$ of a statistic $T$ has law $\nu$. Then the interval obtained by inverting the pivot over the acceptance region $[l, h]$, the set of $\vartheta$ with $(T - \vartheta)/s \in [l, h]$, contains $\theta$ with $\mu$-probability $\nu([l, h])$.

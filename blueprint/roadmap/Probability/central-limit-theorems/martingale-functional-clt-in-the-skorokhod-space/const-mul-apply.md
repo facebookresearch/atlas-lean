@@ -1,5 +1,3 @@
-# Const Mul apply
+# Values of a scaled Skorokhod path
 
-Evaluation of `constMul`.
-
-In symbols: `constMul c f t = c * f t`.
+For a real $c$ and a Skorokhod path $f$ on $[0, T]$, the scaled path $c f$ takes the value $c\, f(t)$ at every $t \in [0, T]$.

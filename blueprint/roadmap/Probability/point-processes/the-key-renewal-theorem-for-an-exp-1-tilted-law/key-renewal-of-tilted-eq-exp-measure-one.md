@@ -1,6 +1,3 @@
-# `hKRT` for an `Exp(1)` tilted law
+# The key renewal hypothesis for a law with exponential tilt
 
-If the Cramér tilt of `G` is `Exp(1)`,
-`G.tilted (θ * ·) = expMeasure 1`, then the key renewal hypothesis `hKRT` of
-`LatticeConstants.tendsto_scaled_of_keyRenewal` and
-`LatticeConstants.tendsto_scaled_cramerLundberg` holds, verbatim.
+Let $G$ be a measure on $\mathbb{R}$ whose Cramér tilt $e^{\theta x} dG(x)$ is $\operatorname{Exp}(1)$. Then every pair $(Y, y)$ admissible for the key renewal theorem that solves $Y(t) = y(t) + \int Y(t - x)\, e^{\theta x} dG(x)$ for every $t$ has $Y(t) \to \int_{(0,\infty)} y(s)\, ds / \int x\, e^{\theta x} dG(x)$. This is exactly the key renewal hypothesis of the Cramér–Lundberg constant identification.

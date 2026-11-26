@@ -1,5 +1,5 @@
 # Russian-roulette path laws
 
-- [List Completed Weight](list-completed-weight.md)
-- [List Path Weight](list-path-weight.md)
-- [Path PMF](path-pmf.md)
+- [Completed-path weight of a list of states](list-completed-weight.md)
+- [Path weight of a list of states from a start state](list-path-weight.md)
+- [Law of completed paths from a start state](path-pmf.md)

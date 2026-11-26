@@ -1,6 +1,3 @@
-# Cramér root of the `Exp(1)` tilted family
+# Cramér root of the Exp(1) tilted family
 
-For `θ > -1`,
-`∫ e^{θ y} d((1 + θ)⁻¹ · Exp(1 + θ))(y) = 1`.
-
-In symbols: `∫ y, exp (θ * y) ∂(ENNReal.ofReal (1 + θ)⁻¹ • expMeasure (1 + θ)) = 1`.
+For $\theta > -1$ and $G_\theta = (1 + \theta)^{-1} \cdot \operatorname{Exp}(1 + \theta)$, $\int e^{\theta y}\, dG_\theta(y) = 1$: $\theta$ is a Cramér root of $G_\theta$.

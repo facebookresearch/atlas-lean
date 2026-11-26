@@ -1,4 +1,4 @@
-# Path
+# Paths of adjacent steps between two points
 
 Path data joining two points: either the points coincide, or one
 adjacent step followed by a path from the step's endpoint, with the

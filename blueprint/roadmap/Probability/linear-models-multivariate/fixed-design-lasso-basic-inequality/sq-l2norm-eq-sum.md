@@ -1,5 +1,3 @@
-# Sq L2norm eq sum
+# The squared L² norm as a sum of squares
 
-Unfolding equation for `sqL2norm`.
-
-In symbols: `sqL2norm v = ∑ i, v i ^ 2`.
+For $v \in \mathbb{R}^n$, the squared $L^2$ norm is $\|v\|_2^2 = \sum_i v_i^2$.

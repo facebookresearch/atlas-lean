@@ -1,5 +1,5 @@
-# Has Deriv At ergm Log Lik update
+# Coordinate derivative of the exponential random graph log-likelihood
 
-Assume that equality on `V` is decidable; that equality on `ι` is decidable; that `V` is finite; and that `ι` is finite.
+Here $V$ and $\iota$ are finite.
 
 Coordinate derivative of the log-likelihood is the score coordinate.

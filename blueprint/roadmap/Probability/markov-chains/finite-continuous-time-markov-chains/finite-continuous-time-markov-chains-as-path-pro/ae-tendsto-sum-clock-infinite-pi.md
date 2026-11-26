@@ -1,6 +1,3 @@
-# Ae tendsto sum clock infinite Pi
+# Partial sums of i.i.d. exponential clocks tend to infinity
 
-Assume `ν.map Prod.snd = expMeasure 1`.
-
-If the clock coordinate of the step law `ν` is `Exp(1)`, then almost surely the partial sums
-of the clocks of the i.i.d. step sequence tend to `∞` (strong law of large numbers).
+Let $\nu$ be a step law on pairs of a jump choice and a real clock whose clock coordinate is standard exponential. Under the i.i.d. law $\nu^{\otimes \mathbb{N}}$ of the step sequence, almost surely the partial sums of the clocks tend to $\infty$ (strong law of large numbers).

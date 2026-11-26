@@ -1,5 +1,3 @@
-# Is Cadlag
+# Skorokhod paths are càdlàg
 
-Every Skorokhod path is càdlàg.
-
-In symbols: `IsCadlag (f : Set.Icc (0 : ℝ) T → ℝ)`.
+Every path of the Skorokhod space $D([0, T])$, as a function on $[0, T]$, is càdlàg.

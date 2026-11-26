@@ -1,7 +1,3 @@
-# Expectation const
+# Expectation of a constant
 
-Assume that `α` is finite. Assume `∑ x, p x = 1`.
-
-The expectation of a constant is that constant.
-
-In symbols: `expectation p (fun _ => c) = c`.
+Let $\alpha$ be a finite set and $p : \alpha \to \mathbb{R}$ a weight with $\sum_x p(x) = 1$. The weighted expectation $\sum_x p(x)\, c$ of a constant $c$ is $c$.

@@ -1,5 +1,5 @@
-# Integrable ols Slope
+# The least-squares slope of integrable responses is integrable
 
-Assume that `ι` is finite.
+Here $\iota$ is finite.
 
 The least-squares slope of integrable responses is integrable.

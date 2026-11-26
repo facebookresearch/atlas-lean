@@ -1,6 +1,3 @@
-# Abs sub lt of grid
+# A monotone function close to the identity on a grid is close everywhere
 
-Assume `t ∈ Icc (0 : ℝ) 1`.
-
-A function nondecreasing on `[0,1]` that is within `r` of the identity at every grid point
-`i / N`, `i ≤ N`, is within `r + 1/N` of the identity on all of `[0,1]`.
+Let $g$ be nondecreasing on $[0, 1]$, let $N \ge 1$ and $r \in \mathbb{R}$, and suppose $|g(i/N) - i/N| < r$ for every $i \le N$. Then $|g(t) - t| < r + 1/N$ for every $t \in [0, 1]$.

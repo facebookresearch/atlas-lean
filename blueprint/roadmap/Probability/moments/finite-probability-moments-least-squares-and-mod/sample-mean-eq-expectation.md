@@ -1,5 +1,5 @@
-# Sample Mean eq expectation
+# The sample mean as an expectation under the empirical weight
 
-Assume that `ι` is finite.
+Here $\iota$ is finite.
 
 The sample mean is the expectation under the empirical weight `(card ι)⁻¹`.

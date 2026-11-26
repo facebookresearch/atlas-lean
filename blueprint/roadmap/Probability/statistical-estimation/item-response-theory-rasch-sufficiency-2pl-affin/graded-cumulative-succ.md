@@ -1,5 +1,7 @@
-# Graded Cumulative succ
+# Graded-response cumulative probability at a threshold
 
-Assume `j < m`.
+In the graded-response model with discrimination $a$, thresholds $b_1, \dots, b_m$ and ability $\theta$, the cumulative probability at index $j + 1$, for $j < m$, is $\sigma(a(\theta - b_{j+1}))$, where $\sigma(u) = 1/(1 + e^{-u})$ is the logistic function.
 
-Cumulative probability at a threshold index (Weeks 2010, (2)).
+## Sources
+
+- J. P. Weeks, "plink: An R package for linking mixed-format tests using IRT-based methods", Journal of Statistical Software 35(12) (2010), equation (2).

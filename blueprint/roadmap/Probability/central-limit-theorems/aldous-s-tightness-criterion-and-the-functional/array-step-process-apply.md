@@ -1,5 +1,3 @@
-# Array Step Process apply
+# Partial-sum formula for the step process of a triangular array
 
-Explicit partial-sum formula for `arrayStepProcess`.
-
-In symbols: `arrayStepProcess n ξ ω t = ∑ i ∈ Finset.range ⌊(n : ℝ) * t.1⌋₊, ξ n i ω`.
+For every $n$, every triangular array $(\xi_{n,i})$, every outcome $\omega$ and every $t \in [0, 1]$, the step process of row $n$ at time $t$ is the partial sum $\sum_{i < \lfloor n t\rfloor} \xi_{n,i}(\omega)$, with no normalization.

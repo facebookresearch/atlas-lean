@@ -1,13 +1,5 @@
 # Delta method with a moving centre
 
-Assume `∀ n, AEMeasurable (X n) μ` and `∀ n, AEMeasurable (fun ω ↦ g (X n ω)) μ`.
+Let $E$ and $F$ be second-countable normed real vector spaces with their Borel σ-algebras, and take limits along a filter on an index set. Let the scalars $r_n$ tend to $\infty$, let the deterministic centres $c_n \in E$ converge to $\theta$, and let $X_n$ be $E$-valued random variables with $X_n$ and $g(X_n)$ almost everywhere measurable. Suppose $r_n (X_n - c_n)$ converges in distribution to $Z$ and $g : E \to F$ is strictly differentiable at $\theta$ with derivative $L$. Then $r_n (g(X_n) - g(c_n))$ converges in distribution to $L Z$.
 
-Let `r n → ∞`, let the deterministic centres
-`c n → θ`, and suppose `r n • (X n - c n)` converges in distribution to `Z`. If `g` is
-*strictly* differentiable at `θ` with derivative `L`, then `r n • (g (X n) - g (c n))`
-converges in distribution to `L Z`.
-
-Strict differentiability (`HasStrictFDerivAt`) is the right hypothesis here: the increment
-`g (X n) - g (c n)` is taken between two points that both move towards `θ`, and plain
-differentiability at `θ` only controls increments based at `θ` itself. This is the form used
-for the bootstrap, where `X n` is the bootstrap statistic and `c n` the observed one.
+Strict differentiability is needed because the increment $g(X_n) - g(c_n)$ is taken between two points that both move towards $\theta$; plain differentiability at $\theta$ controls only increments based at $\theta$. This is the form used for the bootstrap, with $X_n$ the bootstrap statistic and $c_n$ the observed one.

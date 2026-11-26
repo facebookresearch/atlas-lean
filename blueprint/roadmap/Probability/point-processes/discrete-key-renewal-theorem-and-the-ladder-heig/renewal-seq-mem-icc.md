@@ -1,5 +1,3 @@
-# Renewal Seq mem Icc
+# The renewal sequence of a probability law takes values in [0, 1]
 
-Assume `∀ k, 0 ≤ f k` and `HasSum f 1`.
-
-The renewal sequence of a probability law on `{1, 2, …}` takes values in `[0, 1]`.
+Let $f : \mathbb{N} \to \mathbb{R}$ be nonnegative with $\sum_k f_k = 1$. Then every term of the renewal sequence of $f$ lies in $[0, 1]$. The value $f_0$ is not used by the renewal sequence.

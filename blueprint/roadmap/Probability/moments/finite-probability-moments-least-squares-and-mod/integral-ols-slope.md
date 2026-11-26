@@ -1,6 +1,3 @@
-# Integral ols Slope
+# Expectation of the least-squares slope
 
-Assume that `ι` is finite.
-
-Expectation commutes with the least-squares slope: for integrable responses `Y i`,
-`𝔼[b̂(x, Y)] = b̂(x, 𝔼 Y)`.
+For a fixed design $x : \iota \to \mathbb{R}$ on a finite index set and integrable random responses $Y_i$, expectation commutes with the least-squares slope: $\mathbb{E}[\hat b(x, Y)] = \hat b(x, \mathbb{E} Y)$, since the slope is linear in the responses.

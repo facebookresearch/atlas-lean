@@ -1,7 +1,3 @@
-# Not injective sbm Graph Weight of relabel ne
+# Label swapping makes the block-model weight map non-injective
 
-Assume that `K` is finite and that `V` is finite. Assume `(p ∘ σ, fun i j => W (σ i) (σ j)) ≠ (p, W)`.
-
-Label swapping makes the weight map non-injective.
-
-In symbols: `¬ Function.Injective (fun θ : (K → ℝ) × (K → K → ℝ) => sbmGraphWeight (V`.
+Let $K$ be a finite set of classes, $V$ a finite linearly ordered vertex set, $p \in \mathbb{R}^K$ and $W \in \mathbb{R}^{K \times K}$, and $\sigma$ a permutation of $K$. If relabeling by $\sigma$ changes the parameters, that is $(p \circ \sigma, (W_{\sigma(i)\sigma(j)})_{i,j}) \ne (p, W)$, then the map sending parameters $(p, W)$ to the block-model graph weight on $V$ is not injective.

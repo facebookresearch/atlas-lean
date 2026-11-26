@@ -1,4 +1,3 @@
-# Expectation two state
+# Mean of a two-state indicator
 
-The two-state (Bernoulli) weight `(1 - q, q)` on `Fin 2`: the indicator `(0, 1)` has mean
-`q`. For `0 ≤ q ≤ 1` this weight is a finite distribution; the identity is algebraic.
+For every real $q$, the two-state weight $(1 - q, q)$ on $\{0, 1\}$ gives the indicator $(0, 1)$ the expectation $q$. For $0 \le q \le 1$ this weight is a Bernoulli distribution; the identity itself is algebraic and holds for every $q$.

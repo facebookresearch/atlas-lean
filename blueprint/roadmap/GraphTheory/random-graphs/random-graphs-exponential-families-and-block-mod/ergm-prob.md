@@ -1,5 +1,5 @@
-# Ergm Prob
+# Exponential-family random graph law
 
-Assume that equality on `V` is decidable; that `V` is finite; and that `ι` is finite.
+Here $V$ and $\iota$ are finite.
 
 Exponential-family random graph law.

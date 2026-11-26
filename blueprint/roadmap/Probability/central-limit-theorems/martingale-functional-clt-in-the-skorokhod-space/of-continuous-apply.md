@@ -1,5 +1,3 @@
-# Of Continuous apply
+# Values of a continuous path in the Skorokhod space
 
-Evaluation of `ofContinuous`.
-
-In symbols: `ofContinuous f t = f t`.
+For a continuous path $f$ on $[0, T]$, its Skorokhod path takes the value $f(t)$ at every $t \in [0, T]$.

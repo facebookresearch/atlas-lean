@@ -1,7 +1,3 @@
-# Sum sbm Graph Weight
+# Block-model graph weights sum to one
 
-Assume that `V` is finite and that `K` is finite. Assume `SBMAdmissible p W`.
-
-The graph weights sum to one under admissibility.
-
-In symbols: `∑ G : SimpleGraph V, sbmGraphWeight p W G = 1`.
+Let $V$ be a finite linearly ordered vertex set and $K$ a finite set of classes. For admissible block-model parameters $(p, W)$ (positive class probabilities summing to one and a symmetric affinity matrix with entries in $[0, 1]$), the block-model graph weights of all simple graphs on $V$ sum to $1$.

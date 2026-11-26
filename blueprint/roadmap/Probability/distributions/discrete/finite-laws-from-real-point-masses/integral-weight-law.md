@@ -1,6 +1,3 @@
-# Integral weight Law
+# Integral against a law with finitely many point masses
 
-Assume that `𝓧` is finite.
-
-With nonnegative point masses, integration against `weightLaw g` is the weighted sum
-`∑ x, g x * φ x`.
+Let $\mathcal X$ be a finite set with measurable singletons and $g : \mathcal X \to \mathbb{R}$ with $g(x) \ge 0$ for all $x$. For every $\varphi : \mathcal X \to \mathbb{R}$, the integral of $\varphi$ against $\sum_x g(x)\, \delta_x$ is $\sum_x g(x)\, \varphi(x)$.

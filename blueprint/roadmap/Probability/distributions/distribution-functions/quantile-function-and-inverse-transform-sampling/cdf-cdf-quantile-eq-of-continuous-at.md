@@ -1,5 +1,3 @@
-# Cdf cdf Quantile eq of continuous At
+# The distribution function at the quantile equals the level at continuity points
 
-Assume `u ∈ Set.Ioo (0 : ℝ) 1`.
-
-The cdf at the quantile equals the level at every continuity point of the cdf.
+Let $\mu$ be a measure on $\mathbb{R}$ with distribution function $F$ and generalized inverse quantile $Q$, and let $0 < u < 1$. If $F$ is continuous at $Q(u)$, then $F(Q(u)) = u$.

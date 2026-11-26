@@ -1,7 +1,7 @@
 # Russian-roulette path weights and masses
 
-- [Step Kernel](step-kernel.md)
-- [Survival Weight](survival-weight.md)
-- [Completed Weight](completed-weight.md)
-- [Survival Mass](survival-mass.md)
-- [Stopped Mass](stopped-mass.md)
+- [Continuation kernel of a stopped Markov chain](step-kernel.md)
+- [Survival weight of a fixed-length path](survival-weight.md)
+- [Completed-path weight](completed-weight.md)
+- [Survival mass of paths of length n](survival-mass.md)
+- [Stopped mass after exactly n transitions](stopped-mass.md)

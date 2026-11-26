@@ -1,4 +1,4 @@
 # Unbiasedness of the sample covariance
 
-- [Sample Cov entry](sample-cov-entry.md)
-- [Sample Cov expectation](sample-cov-expectation.md)
+- [Entries of the sample covariance matrix](sample-cov-entry.md)
+- [The sample covariance matrix is unbiased](sample-cov-expectation.md)

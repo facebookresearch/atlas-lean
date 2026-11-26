@@ -3,17 +3,17 @@
 ## Step and polygonal paths of a triangular array
 
 - [Step process of a triangular array](array-step-process.md)
-- [Array Step Process apply](array-step-process-apply.md)
-- [Array Polygon](array-polygon.md)
-- [Array Polygon apply](array-polygon-apply.md)
+- [Partial-sum formula for the step process of a triangular array](array-step-process-apply.md)
+- [Polygonal process of a triangular array](array-polygon.md)
+- [Interpolation formula for the polygonal process](array-polygon-apply.md)
 - [The step process of a triangular array is measurable](measurable-array-step-process.md)
-- [Measurable array Polygon](measurable-array-polygon.md)
-- [Array Polygon zero](array-polygon-zero.md)
-- [Abs array Step Process sub array Polygon le](abs-array-step-process-sub-array-polygon.md)
+- [The polygonal process is measurable](measurable-array-polygon.md)
+- [The polygonal process starts at zero](array-polygon-zero.md)
+- [The polygonal process stays within the largest increment of the step process](abs-array-step-process-sub-array-polygon.md)
 
 ## Discrete stopping times
 
-- [Is Stopping Time nat Cast iff](is-stopping-time-nat-cast-iff.md)
+- [Natural-number random times as stopping times](is-stopping-time-nat-cast-iff.md)
 
 ## Aldous's condition
 

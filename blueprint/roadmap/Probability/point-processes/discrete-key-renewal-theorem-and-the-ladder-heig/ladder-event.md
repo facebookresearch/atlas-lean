@@ -1,4 +1,3 @@
-# Ladder Event
+# Ladder event of a given epoch and height
 
-The event `{τ₊ = n, S_{τ₊} = j}`: `n` is the first strict ascending ladder epoch
-(`S n > 0` and `S m ≤ 0` for `m < n`) and the ladder height is `j`.
+For integer scores $X$ with score walk $S_n = X_0 + \dots + X_{n-1}$ and natural numbers $n, j$, the ladder event of epoch $n$ and height $j$ is $\{S_n > 0,\ S_n = j,\ S_m \le 0 \text{ for all } m < n\}$: $n$ is the first strict ascending ladder epoch $\tau_+$ and the ladder height $S_{\tau_+}$ is $j$.

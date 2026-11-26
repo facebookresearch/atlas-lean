@@ -1,7 +1,3 @@
-# Expectation pi eval
+# Each coordinate of an i.i.d. sample has the common law
 
-Assume that equality on `ι` is decidable; that `α` is finite; and that `ι` is finite. Assume `∑ a, p a = 1`.
-
-Under the i.i.d. weight, each coordinate has law `p`.
-
-In symbols: `expectation (fun ω : ι → α => ∏ k, p (ω k)) (fun ω => f (ω i)) = expectation p f`.
+Let $\alpha$ and $\iota$ be finite sets and $p : \alpha \to \mathbb{R}$ a weight with $\sum_a p(a) = 1$. Under the i.i.d. weight $\omega \mapsto \prod_k p(\omega_k)$ on samples $\omega : \iota \to \alpha$, the expectation of $f(\omega_i)$ equals the $p$-expectation of $f$, for every coordinate $i$ and every $f : \alpha \to \mathbb{R}$.

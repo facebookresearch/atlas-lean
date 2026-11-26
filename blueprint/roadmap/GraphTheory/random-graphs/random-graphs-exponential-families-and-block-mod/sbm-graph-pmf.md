@@ -1,5 +1,5 @@
-# Sbm Graph PMF
+# Block-model graph law as a probability mass function
 
-Assume that equality on `K` is decidable; that `V` is finite; and that `K` is finite.
+Here $V$ and $K$ are finite.
 
 Block-model graph law as a `PMF` under admissibility.

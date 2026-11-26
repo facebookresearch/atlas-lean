@@ -1,5 +1,3 @@
-# Tv Dist
+# Total variation distance between probability mass functions
 
-Total variation distance between two probability mass functions
-on a finite type: the shared `MarkovMixing.tvDist` of their `toReal`
-masses.
+For probability mass functions $p$ and $q$ on a finite set, the total variation distance is $\tfrac12 \sum_a |p(a) - q(a)|$, computed from their real masses.

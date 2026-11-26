@@ -1,5 +1,3 @@
-# L1norm eq sum
+# The L¹ norm as a sum of absolute values
 
-Unfolding equation for `l1norm`.
-
-In symbols: `l1norm θ = ∑ j, |θ j|`.
+For $\theta \in \mathbb{R}^d$, the $L^1$ norm is $\|\theta\|_1 = \sum_j |\theta_j|$.

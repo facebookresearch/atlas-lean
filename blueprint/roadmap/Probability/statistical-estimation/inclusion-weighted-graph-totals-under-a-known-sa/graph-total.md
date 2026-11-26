@@ -1,5 +1,3 @@
-# Graph Total
+# Graph total of order k
 
-Assume that equality on `V` is decidable and that `V` is finite.
-
-Order-`k` graph total (Zhang-Patone (1)): `θ = ∑ M ∈ C_k, y M`.
+For a finite vertex set $V$, $k \in \mathbb{N}$ and a real quantity $y$ on vertex subsets, the graph total of order $k$ is $\theta = \sum_{|M| = k} y(M)$, the sum over all $k$-element subsets of $V$ (Zhang–Patone, equation (1)).

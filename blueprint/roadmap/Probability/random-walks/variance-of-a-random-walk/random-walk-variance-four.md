@@ -1,5 +1,3 @@
-# Random Walk variance four
+# Random walk variance, a numerical example
 
-Assume `∀ i, MemLp (ε i) 2 μ` and `Pairwise fun i j => ε i ⟂ᵢ[μ] ε j`.
-
-Numeric instance: horizon `4`, single-innovation variance `3`, gives `12`.
+On a measure space, let $\varepsilon_0, \varepsilon_1, \dots$ be square-integrable, pairwise independent random variables with a common variance $\operatorname{Var}(\varepsilon_i) = 3$. Then the random walk $S_4 = \varepsilon_0 + \varepsilon_1 + \varepsilon_2 + \varepsilon_3$ has $\operatorname{Var}(S_4) = 12$.

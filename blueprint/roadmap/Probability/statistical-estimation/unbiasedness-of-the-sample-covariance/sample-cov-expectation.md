@@ -1,8 +1,3 @@
-# Sample Cov expectation
+# The sample covariance matrix is unbiased
 
-Assume `∀ i j, ∫ ω, X i ω j ∂μ = m j` and `∀ i j k, cov[fun ω => X i ω j, fun ω => X i ω k; μ] = Sig j k`.
-
-Unbiasedness, entrywise: for `N ≥ 2` square-integrable sample vectors in `Fin d → ℝ` that
-are pairwise independent and share the mean `m` and the coordinate covariance matrix `Σ`, the
-expectation of the sample covariance is `Σ`. The samples need not be identically distributed or
-mutually independent.
+On a probability space, let $X_1, \dots, X_N$, $N \ge 2$, be random vectors in $\mathbb{R}^d$ that are pairwise independent, have integrable coordinates and integrable coordinate products, and share the mean $m$ and the covariance matrix $\Sigma$. Then the sample covariance matrix $\frac{1}{N-1} \sum_i (X_i - \bar X)(X_i - \bar X)^{\mathsf T}$ has expectation $\Sigma$, entry by entry. The vectors need not be identically distributed or mutually independent.

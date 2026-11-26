@@ -1,5 +1,3 @@
-# Tendsto In Measure add
+# Convergence in probability is additive
 
-Convergence in probability is additive.
-
-In symbols: `TendstoInMeasure μ (fun n ω => f n ω + f' n ω) atTop (fun ω => g ω + g' ω)`.
+If $f_n \to g$ and $f'_n \to g'$ in measure, then $f_n + f'_n \to g + g'$ in measure.

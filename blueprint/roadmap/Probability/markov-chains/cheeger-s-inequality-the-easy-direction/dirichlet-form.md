@@ -1,5 +1,5 @@
-# Dirichlet Form
+# Dirichlet form of a Markov kernel
 
-Assume that `α` is finite.
+Here $\alpha$ is finite.
 
 The Dirichlet form of the kernel `K` at `f` against `π`.

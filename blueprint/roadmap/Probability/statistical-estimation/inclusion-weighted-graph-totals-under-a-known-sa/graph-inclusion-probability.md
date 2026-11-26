@@ -1,5 +1,5 @@
-# Graph Inclusion Probability
+# Inclusion probability of a vertex subset
 
-Assume that equality on `V` is decidable and that `V` is finite.
+Here $V$ is finite.
 
 Inclusion probability `π(M) = Pr(M ⊆ s₁)`, as a vertex-level sum.

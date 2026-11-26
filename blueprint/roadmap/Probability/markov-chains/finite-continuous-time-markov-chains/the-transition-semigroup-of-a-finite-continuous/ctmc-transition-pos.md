@@ -1,6 +1,3 @@
 # Positivity of the transition function
 
-Assume that equality on `ι` is decidable and that `ι` is finite. Assume `IsRateMatrix Q`.
-
-If `Q` is a rate matrix with positive
-off-diagonal rates, every entry of `P t = exp (t • Q)` is positive for `t > 0`.
+Let $Q$ be a rate matrix on a finite state set whose off-diagonal rates are all positive, $Q_{ij} > 0$ for $i \ne j$. Then for every $t > 0$ every entry of the transition matrix $P(t) = e^{tQ}$ is positive.

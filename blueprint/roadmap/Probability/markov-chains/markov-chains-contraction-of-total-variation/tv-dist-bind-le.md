@@ -1,9 +1,3 @@
-# Tv Dist bind le
+# A common kernel does not increase total variation
 
-Assume that `α` is finite and that `β` is finite.
-
-Data processing: pushing two distributions through the same
-kernel `K : α → PMF β` cannot increase their total variation. For
-`β = α` this is one Markov step: total variation between the
-one-step distributions is at most the total variation between the
-starting distributions.
+Let $\alpha$ and $\beta$ be finite sets, $K$ a Markov kernel from $\alpha$ to probability mass functions on $\beta$, and $p, q$ probability mass functions on $\alpha$. Then the total variation distance between $p K$ and $q K$ is at most the total variation distance between $p$ and $q$. For $\beta = \alpha$ this says one Markov step does not increase total variation.

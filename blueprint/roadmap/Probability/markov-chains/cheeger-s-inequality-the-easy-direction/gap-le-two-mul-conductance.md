@@ -1,8 +1,3 @@
-# Gap le two mul conductance
+# Easy direction of Cheeger's inequality
 
-Assume that equality on `α` is decidable and that `α` is finite. Assume `∀ x, ∑ y, K x y = 1`, `∑ x, π x = 1` and `∀ x y, π x * K x y = π y * K y x`.
-
-Cheeger's inequality, easy direction (test-function form): if
-`gap` is a Poincaré constant for `K` (every function's Dirichlet
-form dominates `gap` times its variance), then for every set `S`
-of stationary mass at most `1 / 2`, `gap ≤ 2 * conductance S`.
+Let $\alpha$ be a finite set, $K$ a Markov kernel on $\alpha$ (nonnegative entries, rows summing to one) and $\pi$ a probability vector on $\alpha$ (nonnegative, summing to one) for which $K$ is reversible, $\pi(x) K(x, y) = \pi(y) K(y, x)$. Suppose $\gamma$ is a Poincaré constant for $K$: $\gamma \operatorname{Var}_\pi(f) \le \mathcal E(f)$ for every $f$, with $\mathcal E$ the Dirichlet form of $K$ against $\pi$. Then every set $S$ with $0 < \pi(S) \le 1/2$ has $\gamma \le 2\, \Phi(S)$, where $\Phi(S)$ is the conductance of $S$. This is the easy direction of Cheeger's inequality, in test-function form.

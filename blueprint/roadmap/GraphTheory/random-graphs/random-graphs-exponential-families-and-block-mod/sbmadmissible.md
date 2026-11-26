@@ -1,6 +1,6 @@
-# SBMAdmissible
+# Admissible stochastic block-model parameters
 
-Assume that `K` is finite.
+Here $K$ is finite.
 
 Admissible block-model parameters: positive `p` summing to one,
 symmetric `W` in `[0,1]`.

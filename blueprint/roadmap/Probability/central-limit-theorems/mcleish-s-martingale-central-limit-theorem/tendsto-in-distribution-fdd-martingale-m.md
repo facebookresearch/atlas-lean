@@ -1,21 +1,14 @@
 # Finite-dimensional convergence for martingale arrays
 
-Assume `∀ s, Measurable (Z s)` and `∀ (I : Finset ι) (c : I → ℝ), P'.map (fun ω => ∑ s : I, c s * Z s ω) = gaussianReal 0 (∑ s : I, ∑ u : I, c s * c u * A (min (s : ι) u)).toNNReal`.
+On a probability space, let $(X_{n,k})$ be an array whose row partial sums $\sum_{j<k} X_{n,j}$ are martingales for filtrations $(\mathcal F_{n,k})_k$, and let $r_n$ be row lengths such that McLeish's conditions hold:
 
-**Finite-dimensional convergence for martingale arrays** (McLeish 1974, Theorem (3.2),
-finite-dimensional part of the proof, with a general variance function `A` in place of `t`).
+- $\mathbb{E}[\max_{k < r_n} X_{n,k}^2]$ is eventually bounded;
+- $\max_{k < r_n} |X_{n,k}| \to 0$ in probability.
 
-Let `X n k` be a martingale difference array satisfying McLeish's conditions (a) and (b) on the
-rows `k < r n`, and let `S n s = ∑_{k < N n s} X n k` be the partial-sum process along a
-time index `s ∈ ι` (any linear order), where `N n` is monotone with `N n s ≤ r n` (for example
-`N n s = ⌊n s⌋` on `[0,1]` with `r n = n`). If for every time `s` the realized quadratic
-variation `∑_{k < N n s} X n k²` tends to `A s` in probability, then for every finite set of
-times `I` the vector `(S n s)_{s ∈ I}` converges in distribution to `(Z s)_{s ∈ I}`, for any
-process `Z` whose finite-dimensional laws are centered Gaussian with covariance
-`Cov(Z s, Z u) = A (min s u)` (stated through all linear combinations, `hZ`). With `A` the
-identity on `[0,1]`, `Z` is a Brownian motion; in general `Z = W ∘ A`.
+Let $\iota$ be a linearly ordered time axis, $N_n : \iota \to \mathbb{N}$ monotone with $N_n(s) \le r_n$ (for example $N_n(s) = \lfloor n s\rfloor$ on $[0, 1]$ with $r_n = n$), and $S_n(s) = \sum_{k < N_n(s)} X_{n,k}$. Suppose that for every time $s$ the realized quadratic variation $\sum_{k < N_n(s)} X_{n,k}^2$ tends to $A(s)$ in probability. Let $Z$ be a measurable process on a probability space whose finite linear combinations $\sum_{s \in I} c_s Z_s$ are centered Gaussian with variance the nonnegative part of $\sum_{s,u \in I} c_s c_u A(\min(s,u))$. Then for every finite set of times $I$, $(S_n(s))_{s \in I}$ converges in distribution to $(Z_s)_{s \in I}$. With $A$ the identity on $[0, 1]$, $Z$ is a Brownian motion; in general $Z = W \circ A$.
 
-The proof is the Cramér–Wold device applied to
-`tendstoInDistribution_martingale_mcLeish` for the weighted array
-`a n k X n k`, `a n k = ∑_{s ∈ I} c s 𝟙{k < N n s}`, whose quadratic variation is
-`∑_{s,u} c s c u ∑_{k < N n (min s u)} X n k²` by monotonicity of `N n`.
+The proof applies the Cramér–Wold device to the weighted array $a_{n,k} X_{n,k}$ with $a_{n,k} = \sum_{s \in I} c_s \mathbf 1\{k < N_n(s)\}$.
+
+## Sources
+
+- D. L. McLeish, "Dependent central limit theorems and invariance principles", Annals of Probability 2(4) (1974), 620–628, Theorem (3.2), finite-dimensional part of the proof, with a general variance function $A$ in place of $t$.

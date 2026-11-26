@@ -1,6 +1,3 @@
-# Logistic NLL gap eq zero of X eq zero
+# Objective gaps of the logistic loss with zero design vanish
 
-Assume `X = 0`.
-
-With zero design, every Euclidean objective gap for summed logistic NLL
-is zero. This is the `L = 0` counterpart of `gd_logisticNLL_rate`.
+For the zero design matrix $X = 0$, responses $y$ and coefficient vectors $\beta, \beta^\star$, the difference of the summed logistic negative log-likelihoods at $\beta$ and at $\beta^\star$ is $0$: with zero design the objective does not depend on the coefficients, so every objective gap vanishes.

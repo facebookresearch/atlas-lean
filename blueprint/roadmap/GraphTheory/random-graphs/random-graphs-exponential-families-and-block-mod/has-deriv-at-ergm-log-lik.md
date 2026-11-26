@@ -1,7 +1,3 @@
-# Has Deriv At ergm Log Lik
+# Directional derivative of the exponential random graph log-likelihood
 
-Assume that equality on `V` is decidable; that `V` is finite; and that `ι` is finite.
-
-Directional derivative of the log-likelihood is the score.
-
-In symbols: `HasDerivAt (fun s : ℝ => ergmLogLik t (θ + s • v) y) (v ⬝ᵥ ergmScore t θ y) 0`.
+Let $V$ be a finite vertex set, $t$ a statistic of simple graphs on $V$ with values in $\mathbb{R}^\iota$ for a finite index set $\iota$, $\theta, v \in \mathbb{R}^\iota$, and $y$ a graph on $V$. The function $s \mapsto \ell(\theta + s v; y)$ is differentiable at $s = 0$ with derivative $\langle v, U(\theta; y)\rangle$, where $\ell$ is the log-likelihood of the exponential random graph model and $U(\theta; y) = t(y) - \mu(\theta)$ is its score, the observed statistic minus its mean $\mu(\theta)$ under $P_\theta$.

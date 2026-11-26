@@ -1,11 +1,3 @@
 # Time reversal of a stationary finite Markov chain, general support
 
-Assume that equality on `ι` is decidable. Assume `P ∈ rowStochastic ℝ ι`, `(∀ i, 0 ≤ π i) ∧ ∑ i, π i = 1`, `π ᵥ* P = π`, `∀ i j, π i ≠ 0 → Pstar i j = π j * P j i / π i` and `∀ i, π i = 0 → (∀ j, 0 ≤ Pstar i j) ∧ ∑ j, Pstar i j = 1`.
-
-Let `P` be a
-row-stochastic matrix on a finite state space `ι` and let `π` be a probability vector that is
-stationary for `P` (`π ᵥ* P = π`). Let `Pstar` satisfy `Pstar i j = π j * P j i / π i` on every
-row `i` in the support of `π`, and have arbitrary stochastic rows off the support. Then `Pstar` is
-row-stochastic, the support of `π` is closed under `Pstar`, and `Pstar` agrees with `P` on every
-row in the support of `π` (`P* = P` `π`-almost everywhere) if and only if `π` and `P` are in
-detailed balance: `π i * P i j = π j * P j i` for all `i j`.
+Let $P$ be a row-stochastic matrix on a finite state set $\iota$ and $\pi$ a probability vector (nonnegative, summing to one) that is stationary for $P$, $\pi P = \pi$. Let $\hat P$ satisfy $\hat P_{ij} = \pi_j P_{ji} / \pi_i$ on every row $i$ with $\pi_i \ne 0$, and have nonnegative rows summing to one on the rows with $\pi_i = 0$. Then $\hat P$ is row-stochastic; the support of $\pi$ is closed under $\hat P$ ($\pi_i \ne 0$ and $\hat P_{ij} \ne 0$ imply $\pi_j \ne 0$); and $\hat P$ agrees with $P$ on every row in the support of $\pi$ if and only if $\pi$ and $P$ are in detailed balance, $\pi_i P_{ij} = \pi_j P_{ji}$ for all $i, j$.

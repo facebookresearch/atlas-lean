@@ -1,4 +1,3 @@
-# Martingale increment
+# Increments of a martingale are martingale differences
 
-Increments of a martingale `∑_{j<k} X_j` are martingale differences: `X_k` is
-`F_{k+1}`-measurable, integrable, and `E[X_k | F_k] = 0`.
+On a finite measure space, if the partial sums $\sum_{j<k} X_j$ form a martingale for a filtration $(\mathcal F_k)$, then every increment $X_k$ is a martingale difference: $X_k$ is strongly $\mathcal F_{k+1}$-measurable, integrable, and $\mathbb{E}[X_k \mid \mathcal F_k] = 0$ almost everywhere.

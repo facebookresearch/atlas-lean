@@ -1,4 +1,4 @@
-# Ar1 MA partial recursion
+# Recursion for the truncated moving-average sum
 
 Recursion with remainder: the length-`N` partial sum at `t` equals
 `ρ` times itself at `t - 1`, plus the innovation at `t`, minus the dropped

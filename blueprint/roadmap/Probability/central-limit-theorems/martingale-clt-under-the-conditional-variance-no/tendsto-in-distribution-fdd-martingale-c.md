@@ -1,21 +1,11 @@
 # Finite-dimensional convergence under the conditional-variance normalization
 
-Assume `∀ n k, MemLp (X n k) 2 μ`, `∀ s, Measurable (Z s)` and `∀ (I : Finset ι) (c : I → ℝ), P'.map (fun ω => ∑ s : I, c s * Z s ω) = gaussianReal 0 (∑ s : I, ∑ u : I, c s * c u * A (min (s : ι) u)).toNNReal`.
+On a probability space, let $(X_{n,k})$ be a square-integrable array whose row partial sums $\sum_{j<k} X_{n,j}$ are martingales for filtrations $(\mathcal F_{n,k})_k$. Let $\iota$ be a linearly ordered time axis, $N_n : \iota \to \mathbb{N}$ monotone with $N_n(s) \le r_n$, and $S_n(s) = \sum_{k < N_n(s)} X_{n,k}$. Suppose that:
 
-Let
-`S n s = ∑_{k < N n s} X n k` along a linearly ordered time axis, with `N n` monotone and
-`N n s ≤ r n`. If the predictable quadratic variation up to `N n s` tends to `A s` in probability
-for every `s`, the predictable quadratic variation of the whole row (up to `r n`) converges in
-probability to some `V`, and the conditional Lindeberg condition holds on the whole row, then
-the finite-dimensional distributions of `S n` converge to those of any process `Z` with centered
-Gaussian finite-dimensional laws of covariance `A (min s u)`.
+- the conditional Lindeberg condition holds on the whole rows: $\sum_{k < r_n} \mathbb{E}[X_{n,k}^2 \mathbf 1\{|X_{n,k}| > \varepsilon\} \mid \mathcal F_{n,k}] \to 0$ in probability for every $\varepsilon > 0$;
+- the predictable quadratic variation of the whole row, up to $r_n$, converges in probability to some constant $V$;
+- for every time $s$, the predictable quadratic variation up to $N_n(s)$ converges in probability to $A(s)$.
 
-The terminal hypothesis `hpqvEnd` is automatic when the row ends at a time of the axis
-(`r n = N n s₁`), as in `tendstoInDistribution_fdd_martingaleDifference_floor_condVar`. It is a
-proof convenience, not a sharp condition: the cut is built from the predictable quadratic
-variation of the whole row because the fdd interface of McLeish's theorem wants `N n s ≤ r n`
-and the quadratic-variation limit at every `s`; cutting at `N n (max I)` after re-indexing the
-time axis to `I` would remove it.
+Let $Z$ be a measurable process on a probability space whose finite linear combinations $\sum_{s \in I} c_s Z_s$ are centered Gaussian with variance the nonnegative part of $\sum_{s,u \in I} c_s c_u A(\min(s,u))$. Then for every finite set of times $I$, $(S_n(s))_{s \in I}$ converges in distribution to $(Z_s)_{s \in I}$.
 
-The proof is the cut of `tendstoInDistribution_martingale_condVar` (at level `|V| + 1`)
-followed by `tendstoInDistribution_fdd_martingale_mcLeish`.
+The convergence of the whole-row variation is automatic when the row ends at a time of the axis, $r_n = N_n(s_1)$. It is a convenience of the proof, not a sharp condition.

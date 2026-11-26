@@ -1,10 +1,5 @@
 # Strong law for nonnegative, non-identically distributed variables
 
-Let `Y₀, Y₁, …` be
-pairwise independent, a.e. nonnegative, square-integrable real random variables whose means
-`mᵢ = E Yᵢ` are bounded by `B`, whose variances satisfy `Var Yᵢ ≤ C mᵢ`, and whose total mean
-`Mₙ = ∑_{i<n} mᵢ` diverges. Then almost surely `(∑_{i<n} Yᵢ) / Mₙ → 1`.
+On a probability space, let $Y_0, Y_1, \dots$ be pairwise independent, almost surely nonnegative, square-integrable real random variables whose means $m_i = \mathbb{E}[Y_i]$ satisfy $m_i \le B$, whose variances satisfy $\operatorname{Var}(Y_i) \le C m_i$, and whose total mean $M_n = \sum_{i<n} m_i$ tends to $\infty$. Then almost surely $\sum_{i<n} Y_i / M_n \to 1$.
 
-For Poisson counts `Yᵢ ~ Po(mᵢ)` the variance hypothesis holds with `C = 1`. The proof is the
-Chebyshev–Borel–Cantelli argument along a subsequence with `M_{σ(k)} ≈ k²`, followed by
-bracketing, as in `ProbabilityTheory.pairwise_indep_slln` (the indicator case, `C = B = 1`).
+For Poisson counts $Y_i \sim \operatorname{Po}(m_i)$ the variance hypothesis holds with $C = 1$. The proof is the Chebyshev–Borel–Cantelli argument along a subsequence with $M_{\sigma(k)} \approx k^2$, followed by bracketing, as in Etemadi's strong law for pairwise independent indicators.

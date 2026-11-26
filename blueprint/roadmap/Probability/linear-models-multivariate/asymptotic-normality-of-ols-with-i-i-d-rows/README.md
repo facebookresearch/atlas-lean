@@ -4,4 +4,4 @@
 
 ## Relation to the HC0 sandwich of `HeteroskedasticityRobust`
 
-- [Pop Score Cov eq hc0 Pop Meat](pop-score-cov-eq-hc0-pop-meat.md)
+- [Population score covariance equals the population HC0 meat](pop-score-cov-eq-hc0-pop-meat.md)

@@ -1,7 +1,3 @@
-# Integral sample mean
+# Expectation of a sample mean with a common mean
 
-Assume `∀ i, Integrable (X i) μ` and `∀ i, ∫ ω, X i ω ∂μ = mu`.
-
-The sample mean of finitely many random variables with a common mean
-`mu` has expectation `mu` (no independence needed, and no probability-measure
-hypothesis).
+Let $(\Omega, \mu)$ be a measure space, $\iota$ a nonempty finite index set with $n$ elements, and $X_i$, $i \in \iota$, integrable real random variables with $\int X_i \, d\mu = m$ for every $i$. Then the sample mean has integral $m$: $\int \frac1n \sum_i X_i \, d\mu = m$. Neither independence nor a probability measure is assumed.

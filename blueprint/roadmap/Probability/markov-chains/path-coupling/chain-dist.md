@@ -1,4 +1,4 @@
-# Chain Dist
+# Distribution of a Markov chain after t steps
 
 The distribution of a Markov chain after `t` steps started from
 `x`, where `K` is the one-step kernel.

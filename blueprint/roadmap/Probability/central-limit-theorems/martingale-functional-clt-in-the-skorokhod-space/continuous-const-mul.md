@@ -1,5 +1,3 @@
-# Continuous const Mul
+# Scaling is continuous on the Skorokhod space
 
-Scaling is continuous on `D([0,T])`.
-
-In symbols: `Continuous (constMul (T`.
+For every real $c$, the map $f \mapsto c f$ on the Skorokhod space $D([0, T])$ with the J1 topology is continuous.

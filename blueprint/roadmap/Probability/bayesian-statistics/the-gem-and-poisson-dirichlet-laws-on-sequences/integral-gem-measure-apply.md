@@ -1,6 +1,3 @@
 # Mean GEM weights
 
-Assume `0 < θ`.
-
-`E[P_k] = θ^k / (1 + θ)^(k+1)`; in particular `E[P_0] = 1 / (1 + θ)`
-for the first weight (index `0` here).
+For $\theta > 0$ and every $k$, the $k$-th weight $P_k$ (indexed from $0$) of a GEM($\theta$) random sequence of stick-breaking weights has mean $\theta^k / (1 + \theta)^{k+1}$; in particular $\mathbb{E}[P_0] = 1/(1 + \theta)$.

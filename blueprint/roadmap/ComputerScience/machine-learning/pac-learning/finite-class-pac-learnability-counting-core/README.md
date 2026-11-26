@@ -1,5 +1,5 @@
 # Finite-class PAC learnability: counting core
 
-- [Card consistent](card-consistent.md)
-- [Card consistent le](card-consistent-le.md)
-- [Exists sample kills bad](exists-sample-kills-bad.md)
+- [Number of samples on which a hypothesis is consistent](card-consistent.md)
+- [Samples consistent with a wrong hypothesis](card-consistent-le.md)
+- [A sample that rules out every wrong hypothesis of a finite class](exists-sample-kills-bad.md)

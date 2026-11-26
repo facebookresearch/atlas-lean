@@ -1,8 +1,3 @@
 # Massart's finite-class lemma
 
-Assume `S.Nonempty`.
-
-Massart's finite-class lemma: the expected supremum of a
-Rademacher process indexed by a finite set `S` of vectors is at most
-`√(2 log |S|)` times the largest Euclidean norm in `S`. The left side
-is the uniform average over all sign vectors.
+Let $S$ be a nonempty finite set of vectors in $\mathbb{R}^m$. The expected supremum of the Rademacher process indexed by $S$, the average over all $2^m$ sign vectors $\sigma \in \{\pm 1\}^m$ of $\max_{v \in S} \sum_i \sigma_i v_i$, is at most $\sqrt{2 \log |S|}\, \max_{v \in S} \|v\|_2$.

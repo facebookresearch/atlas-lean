@@ -1,7 +1,3 @@
-# To Real map snd apply
+# Real values of the second marginal of a finite joint law
 
-Assume that `α` is finite and that `β` is finite.
-
-`map_snd_apply` after `ENNReal.toReal`.
-
-In symbols: `((p.map Prod.snd) b).toReal = ∑ a, (p (a, b)).toReal`.
+For a probability mass function $p$ on $\alpha \times \beta$ with $\alpha$ and $\beta$ finite, and $b \in \beta$, the second marginal of $p$ has real mass $\sum_a p(a, b)$ at $b$.

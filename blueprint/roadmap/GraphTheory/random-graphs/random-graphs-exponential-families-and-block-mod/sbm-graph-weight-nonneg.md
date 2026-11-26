@@ -1,7 +1,3 @@
-# Sbm Graph Weight nonneg
+# Block-model graph weights are nonnegative
 
-Assume that `V` is finite and that `K` is finite. Assume `SBMAdmissible p W`.
-
-The graph weight is nonnegative under admissibility.
-
-In symbols: `0 ≤ sbmGraphWeight p W G`.
+Let $V$ be a finite linearly ordered vertex set and $K$ a finite set of classes. For admissible block-model parameters $(p, W)$ (positive class probabilities summing to one and a symmetric affinity matrix with entries in $[0, 1]$), the block-model graph weight of every simple graph on $V$ is nonnegative.

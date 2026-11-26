@@ -1,5 +1,3 @@
-# Logistic NLL eq of X eq zero
+# The logistic loss with zero design does not depend on the coefficients
 
-Assume `X = 0`.
-
-With zero design, summed logistic NLL does not depend on coefficients.
+For the zero design matrix $X = 0$ and responses $y$, the summed logistic negative log-likelihood takes the same value at all coefficient vectors $\beta$ and $\gamma$.

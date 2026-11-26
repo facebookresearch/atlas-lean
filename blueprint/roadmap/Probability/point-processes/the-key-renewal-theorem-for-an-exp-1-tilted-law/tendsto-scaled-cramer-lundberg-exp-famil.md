@@ -1,10 +1,3 @@
-# Unconditional Cramér–Lundberg limit for the `Exp(1)` tilted family
+# Cramér–Lundberg limit for the Exp(1) tilted family
 
-Assume `∀ t, Z t = (Ici 0).indicator (fun s => (ENNReal.ofReal (1 + θ)⁻¹ • expMeasure (1 + θ)).real (Ioi s)) t + ∫ y, Z (t - y) ∂(ENNReal.ofReal (1 + θ)⁻¹ • expMeasure (1 + θ))`.
-
-For
-`θ > 0` let `G_θ = (1 + θ)⁻¹ · Exp(1 + θ)`. If `Z` is measurable, bounded, zero on
-`(-∞, 0)` and solves `Z t = 1_{t ≥ 0} G_θ(t, ∞) + ∫ Z (t - y) dG_θ(y)`, then
-`e^{θ t} Z t → (1 + θ)⁻¹`. (For the maximum `M` of the ladder process,
-`P(M > t) = (1 + θ)⁻¹ e^{-θ t}` exactly: a geometric sum of `Exp(1 + θ)` ladder
-heights with continuation probability `(1 + θ)⁻¹`.)
+For $\theta > 0$ let $G_\theta = (1 + \theta)^{-1} \cdot \operatorname{Exp}(1 + \theta)$. If $Z$ is measurable, bounded, zero on $(-\infty, 0)$ and solves $Z(t) = \mathbf 1\{t \ge 0\}\, G_\theta(t, \infty) + \int Z(t - y)\, dG_\theta(y)$ for every real $t$, then $e^{\theta t} Z(t) \to (1 + \theta)^{-1}$. No key renewal hypothesis is needed. For the maximum $M$ of the ladder process, $\mathbb{P}(M > t) = (1 + \theta)^{-1} e^{-\theta t}$ exactly: it is a geometric sum of $\operatorname{Exp}(1 + \theta)$ ladder heights with continuation probability $(1 + \theta)^{-1}$.

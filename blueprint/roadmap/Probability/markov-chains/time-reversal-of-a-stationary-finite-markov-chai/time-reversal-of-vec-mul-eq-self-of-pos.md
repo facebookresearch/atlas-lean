@@ -1,8 +1,3 @@
 # Time reversal of a stationary finite Markov chain, full support
 
-Assume that equality on `ι` is decidable and that `ι` is finite. Assume `P ∈ rowStochastic ℝ ι` and `π ᵥ* P = π`.
-
-If `π` is a stationary
-probability vector of the row-stochastic matrix `P` and `π i > 0` for every state `i`, then the
-reversed matrix `P* i j = π j * P j i / π i` is row-stochastic, and `P* = P` if and only if `π`
-and `P` are in detailed balance: `π i * P i j = π j * P j i` for all `i j`.
+Let $P$ be a row-stochastic matrix on a finite state set $\iota$ and $\pi$ a stationary probability vector for $P$, $\pi P = \pi$, with $\pi_i > 0$ for every state $i$. Then the reversed matrix $\hat P_{ij} = \pi_j P_{ji} / \pi_i$ is row-stochastic, and $\hat P = P$ if and only if $\pi$ and $P$ are in detailed balance: $\pi_i P_{ij} = \pi_j P_{ji}$ for all $i, j$.

@@ -1,6 +1,6 @@
-# Exists maximal coupling
+# A maximal coupling exists
 
-Assume that `α` is finite.
+Here $\alpha$ is finite.
 
 A maximal coupling exists: some coupling attains equality in the
 coupling inequality.

@@ -1,5 +1,3 @@
-# Gradient logistic NLL of X eq zero
+# Gradient of the logistic loss with zero design
 
-Assume `X = 0`.
-
-With zero design, the Euclidean gradient of summed logistic NLL is zero.
+For the zero design matrix $X = 0$, responses $y$ and every coefficient vector $\beta$ in Euclidean space, the gradient of the summed logistic negative log-likelihood at $\beta$ is $0$.

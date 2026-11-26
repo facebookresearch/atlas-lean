@@ -1,8 +1,3 @@
 # Weak union
 
-Assume that equality on `V` is decidable. Assume `Disjoint (A ∪ W) B`.
-
-**Weak union** for finite conditional independence of a nonnegative weight:
-part of the first family may move into the conditioning family. Nonnegativity is
-essential: for signed weights weak union fails, and the zero-conditioning-marginal
-case uses that marginals fixing more variables vanish.
+Let $V$ and $\alpha$ be finite sets, $p \ge 0$ a nonnegative weight on assignments $V \to \alpha$, and $A, W, B, S \subseteq V$ with $A \cup W$ disjoint from $B$. If $A \cup W$ and $B$ are conditionally independent given $S$ under $p$, then $A$ and $B$ are conditionally independent given $S \cup W$: part of the first family may move into the conditioning family. Nonnegativity is essential: for signed weights weak union fails.

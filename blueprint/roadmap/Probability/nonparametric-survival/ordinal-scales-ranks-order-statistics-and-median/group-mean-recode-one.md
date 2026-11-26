@@ -1,5 +1,3 @@
-# Group Mean Recode one
+# The group-mean recoding sends 1 to 2
 
-The recoding sends `1` to `2`.
-
-In symbols: `groupMeanRecode 1 = 2`.
+The group-mean recoding $t \mapsto \min(2t, (t+3)/2)$ sends $1$ to $2$.

@@ -1,5 +1,3 @@
-# Continuous of Continuous
+# Continuous paths embed continuously in the Skorokhod space
 
-The inclusion `C([0,T]) → D([0,T])` is continuous.
-
-In symbols: `Continuous (ofContinuous : C(Set.Icc (0 : ℝ) T, ℝ) → SkorokhodSpace T)`.
+The inclusion of continuous paths $C([0, T]) \to D([0, T])$, from the uniform topology to the Skorokhod J1 topology, is continuous.

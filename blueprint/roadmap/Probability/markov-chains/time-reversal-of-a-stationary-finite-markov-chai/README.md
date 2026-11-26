@@ -8,4 +8,4 @@
 
 ## Stochastic Matrix
 
-- [Time Reversal eq iff detailed Balance](time-reversal-eq-iff-detailed-balance.md)
+- [Time reversal equals the chain exactly under detailed balance](time-reversal-eq-iff-detailed-balance.md)

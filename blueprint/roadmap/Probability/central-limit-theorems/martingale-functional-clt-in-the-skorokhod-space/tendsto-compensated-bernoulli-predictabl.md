@@ -1,8 +1,3 @@
-# Tendsto compensated Bernoulli predictable QV
+# Limit of the predictable quadratic variation of the compensated Bernoulli process
 
-Assume `0 ≤ t`.
-
-The deterministic sequence `p (1 - p) ⌊n t⌋ / n`, informally the predictable quadratic
-variation of the compensated Bernoulli counting process (see
-`condExp_sq_increment_compensatedBernoulli`), converges to the continuous increasing limit
-`p (1 - p) t`. This is a floor limit; it is not stated in terms of the process.
+For real $p$ and $t \ge 0$, $p(1-p)\lfloor n t\rfloor/n \to p(1-p)\, t$ as $n \to \infty$. Informally the left side is the predictable quadratic variation of the compensated Bernoulli counting process at time $t$; the statement is a limit of floors and does not mention the process.

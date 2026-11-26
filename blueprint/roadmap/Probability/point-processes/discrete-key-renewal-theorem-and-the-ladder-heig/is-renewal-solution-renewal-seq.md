@@ -1,5 +1,3 @@
-# Is Renewal Solution renewal Seq
+# The renewal sequence solves the renewal equation
 
-Assume `f 0 = 0`.
-
-The renewal sequence solves the renewal equation with forcing `δ₀`.
+For an interarrival law $f : \mathbb{N} \to \mathbb{R}$ with $f_0 = 0$, the renewal sequence of $f$ solves the discrete renewal equation with interarrival weights $f$ and forcing $\delta_0$ (the sequence $1, 0, 0, \dots$).

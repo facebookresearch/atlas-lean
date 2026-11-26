@@ -1,5 +1,3 @@
-# Measurable rank Desc
+# Each entry of the decreasing rearrangement is measurable
 
-Each ranked entry depends measurably on the sequence.
-
-In symbols: `Measurable fun p : ℕ → ℝ => rankDesc p k`.
+For every $k$, the $k$-th largest value of a real sequence, as a function of the sequence $p \in \mathbb{R}^\mathbb{N}$, is measurable.

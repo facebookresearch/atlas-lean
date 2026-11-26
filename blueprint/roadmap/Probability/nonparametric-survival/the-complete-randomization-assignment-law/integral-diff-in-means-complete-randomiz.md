@@ -1,5 +1,7 @@
-# Integral diff In Means complete Randomization
+# The difference in means is unbiased under complete randomization
 
-Assume that equality on `ι` is decidable and that `ι` is finite. Assume `1 ≤ n₁` and `n₁ + 1 ≤ Fintype.card ι`.
+Let $\iota$ be a finite population of $N$ units with potential outcomes $y_0, y_1 : \iota \to \mathbb{R}$, and let $1 \le n_1 \le N - 1$. Under complete randomization, which assigns a uniformly random set of $n_1$ units to treatment, the expected difference in means (the mean of $y_1$ over the treated units minus the mean of $y_0$ over the control units) equals the average treatment effect $\frac1N \sum_i (y_{1,i} - y_{0,i})$.
 
-Neyman (1923), law form: the difference in means is unbiased for the ATE.
+## Sources
+
+- J. Neyman, "On the application of probability theory to agricultural experiments" (1923); translated by D. M. Dabrowska and T. P. Speed, Statistical Science 5(4) (1990), 465–472.

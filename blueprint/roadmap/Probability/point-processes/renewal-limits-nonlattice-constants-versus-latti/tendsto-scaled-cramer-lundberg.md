@@ -1,15 +1,3 @@
 # Cramér–Lundberg constant
 
-Assume `Integrable (fun y => y * exp (θ * y)) G`.
-
-Let `G` be a finite (typically defective)
-ladder-height measure on `[0, ∞)` with Cramér root `θ > 0`,
-`∫ e^{θ y} dG = 1`, and finite tilted mean `∫ y e^{θ y} dG`. Let `Z` be
-measurable, bounded, zero on `(-∞, 0)`, and solve
-`Z t = 1_{t ≥ 0} G(t, ∞) + ∫ Z (t - y) dG(y)` for all real `t` (Feller's
-convention: for the maximum `M` of the ladder process, `Z t = P(M > t)` for
-`t ≥ 0`). The vanishing and boundedness conditions pin `Z` down: without
-them, `Z + k e^{-θ t}` solves the same equation on all of `ℝ`. Given the key
-renewal theorem for the tilted law (hypothesis `hKRT`, as in
-`tendsto_scaled_of_keyRenewal`),
-`e^{θ t} Z t → (1 - G(ℝ)) / (θ ∫ y e^{θ y} dG(y))`.
+Let $G$ be a finite measure on $\mathbb{R}$ concentrated on $[0, \infty)$, typically a defective ladder-height measure, with a Cramér root $\theta > 0$, $\int e^{\theta y}\, dG(y) = 1$, and an integrable tilted mean $\int y\, e^{\theta y}\, dG(y)$. Let $Z$ be measurable and bounded, with $Z(t) = 0$ for $t < 0$, solving $Z(t) = \mathbf 1\{t \ge 0\}\, G(t, \infty) + \int Z(t - y)\, dG(y)$ for every real $t$; for the maximum $M$ of the ladder process, $Z(t) = \mathbb{P}(M > t)$ for $t \ge 0$. The vanishing and boundedness conditions pin $Z$ down: without them $Z + k e^{-\theta t}$ solves the same equation. Assume the key renewal theorem for the tilted law $e^{\theta y} dG(y)$, in the form that every admissible solution $Y$ of $Y(t) = y(t) + \int Y(t - x)\, e^{\theta x} dG(x)$ tends to $\int_{(0,\infty)} y / \int x\, e^{\theta x} dG(x)$; this is a hypothesis here. Then $e^{\theta t} Z(t) \to (1 - G(\mathbb{R})) / (\theta \int y\, e^{\theta y}\, dG(y))$.

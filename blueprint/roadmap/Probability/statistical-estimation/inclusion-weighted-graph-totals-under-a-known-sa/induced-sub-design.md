@@ -1,5 +1,5 @@
-# Induced Sub Design
+# Induced design on the k-subsets
 
-Assume that equality on `V` is decidable and that `V` is finite.
+Here $V$ is finite.
 
 Subtype-valued induced design on the `k`-subsets themselves.

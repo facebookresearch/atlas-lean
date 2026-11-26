@@ -1,5 +1,5 @@
-# SBMAdmissible nonempty
+# Admissible block-model parameters exist
 
-Assume that `K` is finite.
+Here $K$ is finite.
 
 The admissible parameter space is nonempty (uniform mixing).

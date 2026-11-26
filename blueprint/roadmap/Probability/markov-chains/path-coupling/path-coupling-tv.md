@@ -1,11 +1,3 @@
-# Path coupling tv
+# Path coupling bound on total variation
 
-Path coupling bound: suppose `Cadj x y` is a one-step coupling
-of `K x` and `K y` for every *adjacent* pair `x y`, and the coupled
-distance contracts in expectation by `β ≤ 1` on adjacent pairs.
-On a finite metric space whose nonzero distances are at least
-`δ > 0`, and where every two points are joined by a `Path` (adjacent
-steps with additive distance), the chains started at `x`, `y`
-satisfy `tvDist ≤ β^t * dist x y / δ` after `t` steps. The
-all-pairs coupling is obtained by gluing the adjacent couplings
-along the path, then iterating it.
+Let $\alpha$ be a finite pseudometric space, $K$ a Markov kernel on $\alpha$ and $\mathrm{Adj}$ an adjacency relation. Suppose that for every adjacent pair $x, y$ there is a coupling $C_{x,y}$ of $K(x)$ and $K(y)$ under which the expected distance of the coupled pair is at most $\beta\, d(x, y)$, with $\beta \le 1$; that distinct points are at distance at least $\delta > 0$; and that every two points are joined by a path of adjacent steps along which the distance adds. Then for all $x, y$ and every $t$, the distributions of the chains started at $x$ and $y$ after $t$ steps are at total variation distance at most $\beta^t\, d(x, y)/\delta$. The all-pairs coupling is obtained by gluing the adjacent couplings along the path and iterating.

@@ -1,6 +1,6 @@
-# Is Unit transpose mul self iff
+# Invertibility of the Gram matrix and linear independence of the columns
 
-Assume that equality on `k` is decidable; that `m` is finite; and that `k` is finite.
+Here $m$ and $k$ are finite.
 
 Full column rank: `Xᵀ X` is invertible if and only if the columns of `X` are linearly
 independent.

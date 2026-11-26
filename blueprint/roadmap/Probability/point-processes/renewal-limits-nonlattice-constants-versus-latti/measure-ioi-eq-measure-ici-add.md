@@ -1,8 +1,3 @@
 # Strict versus weak lattice tails
 
-Assume `∀ᵐ x ∂μ, ∃ k : ℤ, x = k * h`.
-
-If `μ` is concentrated on `h ℤ`, then
-`μ (k h, ∞) = μ [(k + 1) h, ∞)`. So for a lattice law the strict-tail constant
-of `P(M > t)` along the lattice is `e^{-θ h}` times the weak-tail constant of
-`P(M ≥ t)`.
+Let $h > 0$ and let $\mu$ be a measure on $\mathbb{R}$ concentrated on the lattice $h\mathbb{Z}$. Then $\mu(k h, \infty) = \mu[(k+1) h, \infty)$ for every integer $k$. Consequently, for a lattice law the strict-tail constant of $\mathbb{P}(M > t)$ along the lattice is $e^{-\theta h}$ times the weak-tail constant of $\mathbb{P}(M \ge t)$.

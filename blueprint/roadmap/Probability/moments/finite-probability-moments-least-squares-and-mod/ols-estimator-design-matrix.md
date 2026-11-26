@@ -1,5 +1,3 @@
-# Ols Estimator design Matrix
+# Matrix least squares for the simple linear model
 
-Assume that equality on `ι` is decidable and that `ι` is finite.
-
-For the design matrix with rows `(1, x i)` and `0 < S_xx`, the matrix least-squares estimator is `(olsIntercept x y, olsSlope x y)`.
+For data $x, y : \iota \to \mathbb{R}$ on a finite index set with $S_{xx} > 0$, the matrix least-squares estimator for the design matrix with rows $(1, x_i)$ is the pair $(\hat a, \hat b)$ of the least-squares intercept and slope.

@@ -1,5 +1,3 @@
-# Prob inter add prob sdiff
+# Total probability for a two-set partition
 
-Assume that equality on `α` is decidable.
-
-Total probability for the two-set partition `{t, tᶜ}`: `P(s) = P(s ∩ t) + P(s \ t)`.
+For a weight $p$ on a set $\alpha$ and finite sets $s, t$, $P(s \cap t) + P(s \setminus t) = P(s)$, where $P(A) = \sum_{a \in A} p(a)$.

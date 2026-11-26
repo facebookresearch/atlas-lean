@@ -1,3 +1,3 @@
-# Step Path
+# Normalized partial-sum step path
 
 The normalized partial-sum step path in `D([0,1])` built from `n` increments.

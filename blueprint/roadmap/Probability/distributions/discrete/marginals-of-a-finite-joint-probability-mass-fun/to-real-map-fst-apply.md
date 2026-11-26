@@ -1,7 +1,3 @@
-# To Real map fst apply
+# Real values of the first marginal of a finite joint law
 
-Assume that `β` is finite and that `α` is finite.
-
-`map_fst_apply` after `ENNReal.toReal`.
-
-In symbols: `((p.map Prod.fst) a).toReal = ∑ b, (p (a, b)).toReal`.
+For a probability mass function $p$ on $\alpha \times \beta$ with $\alpha$ and $\beta$ finite, and $a \in \alpha$, the first marginal of $p$ has real mass $\sum_b p(a, b)$ at $a$.

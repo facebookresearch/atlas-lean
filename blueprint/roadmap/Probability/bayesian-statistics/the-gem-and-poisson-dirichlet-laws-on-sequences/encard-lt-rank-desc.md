@@ -1,5 +1,3 @@
-# Encard lt rank Desc
+# The decreasing rearrangement has the same counting function
 
-Assume `BddAbove (Set.range p)`.
-
-The counting function of the ranked sequence equals that of the sequence.
+For a real sequence $p$ that is bounded above and every threshold $t$, the number of indices $k$ with $t <$ ($k$-th largest value of $p$) equals the number of indices $i$ with $t < p_i$, counted in $\mathbb{N} \cup \{\infty\}$: the decreasing rearrangement has the same counting function as $p$.

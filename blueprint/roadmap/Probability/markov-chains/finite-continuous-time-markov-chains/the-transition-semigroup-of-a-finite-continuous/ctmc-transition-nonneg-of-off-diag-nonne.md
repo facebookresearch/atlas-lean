@@ -1,7 +1,3 @@
 # Metzler matrices generate nonnegative semigroups
 
-Assume that equality on `ι` is decidable and that `ι` is finite.
-
-If only the off-diagonal entries of
-`Q` are nonnegative (no row-sum condition), then `exp (t • Q)` is entrywise nonnegative for
-`t ≥ 0`: uniformizing by `c = ∑ k, |Q k k|` makes `Q + c • 1` entrywise nonnegative.
+Let $Q$ be a real matrix on a finite index set whose off-diagonal entries are nonnegative, with no row-sum condition. Then $e^{tQ}$ is entrywise nonnegative for every $t \ge 0$. The proof uniformizes by $c = \sum_k |Q_{kk}|$, which makes $Q + c I$ entrywise nonnegative.

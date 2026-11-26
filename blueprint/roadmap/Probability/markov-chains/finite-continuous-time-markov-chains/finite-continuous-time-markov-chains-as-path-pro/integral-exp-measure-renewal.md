@@ -1,6 +1,3 @@
-# Integral exp Measure renewal
+# Renewal integral against the standard exponential law
 
-Assume `Integrable g (expMeasure 1)`.
-
-The renewal integral against `Exp(1)`: if `g e` is `c` when the holding time `e / q` exceeds
-`t`, and `f (t - e / q)` otherwise, then `∫ g dExp(1) = c e^{-q t} + q ∫₀ᵗ e^{-q s} f (t - s) ds`.
+Let $q > 0$, $t \ge 0$ and $c \in \mathbb{R}$, and let $g$ be integrable against $\operatorname{Exp}(1)$ with $g(e) = c$ when $e/q > t$ and $g(e) = f(t - e/q)$ otherwise, for every $e > 0$. Then $\int g \, d\operatorname{Exp}(1) = c\, e^{-q t} + q \int_0^t e^{-q s} f(t - s)\, ds$.

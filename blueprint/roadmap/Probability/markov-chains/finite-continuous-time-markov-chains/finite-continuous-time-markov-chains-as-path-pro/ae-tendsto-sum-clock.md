@@ -1,6 +1,3 @@
-# Ae tendsto sum clock
+# Partial sums of the continuous-time chain's clocks tend to infinity
 
-Assume `IsRateMatrix Q`.
-
-Almost surely the partial sums of the clocks tend to `∞` (strong law of large numbers);
-the specialization of `ae_tendsto_sum_clock_infinitePi` to `ctmcInputMeasure hQ`.
+For a rate matrix $Q$ of a finite-state continuous-time Markov chain, almost surely under the law of the chain's i.i.d. input sequence of jump choices and standard exponential clocks, the partial sums of the clocks tend to $\infty$. This is the strong law of large numbers for the clocks.

@@ -1,5 +1,3 @@
-# Local Indep PMF apply
+# Response-pattern masses under local independence
 
-Assume that equality on `ι` is decidable and that `ι` is finite. Assume `∀ i, 0 ≤ q i` and `∀ i, q i ≤ 1`.
-
-Mass of a response pattern under locally independent binary responses.
+For a finite set of items $\iota$ and success probabilities $q_i \in [0, 1]$, the law of locally independent binary responses gives a response pattern $x \in \{0,1\}^\iota$ the mass $\prod_i q_i^{x_i} (1 - q_i)^{1 - x_i}$: each item contributes $q_i$ if answered correctly and $1 - q_i$ otherwise.

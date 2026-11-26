@@ -1,11 +1,3 @@
 # Le Cam's bound in KL form
 
-Assume `∀ a, (q a) = 0 → (p a) = 0`.
-
-Le Cam's bound in KL form: for two distributions on a finite
-type, any test's two error probabilities sum to at least
-`1 - √(KL / 2)` (Pinsker applied to Le Cam's two-point bound).
-The decision `δ a = true` chooses `q`, and `δ a = false` chooses `p`,
-so the error sum is `p[δ = true] + q[δ = false]`.
-Assumes `q` dominates `p` pointwise, so `klDiv` is finite and
-its real value is the KL sum.
+Let $p$ and $q$ be probability mass functions on a finite set $\alpha$ with $p(a) = 0$ wherever $q(a) = 0$, so that the Kullback–Leibler divergence $\mathrm{KL}(p \,\|\, q)$ is finite. For every test $\delta : \alpha \to \{\text{choose } q, \text{choose } p\}$, the two error probabilities satisfy $p(\delta \text{ chooses } q) + q(\delta \text{ chooses } p) \ge 1 - \sqrt{\mathrm{KL}(p \,\|\, q)/2}$. This is Le Cam's two-point bound combined with Pinsker's inequality.

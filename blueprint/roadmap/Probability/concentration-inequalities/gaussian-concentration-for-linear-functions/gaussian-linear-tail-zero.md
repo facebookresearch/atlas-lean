@@ -1,7 +1,3 @@
-# Gaussian linear tail zero
+# Gaussian linear tail bound in the degenerate case
 
-Assume `∑ i, a i ^ 2 = 0`.
-
-The degenerate case: if the coefficient vector has
-`∑ a_i^2 = 0` (so every `a i = 0`), the exceedance event is empty
-for `t > 0`.
+Let $a \in \mathbb{R}^n$ with $\sum_i a_i^2 = 0$, so every $a_i = 0$, and let $t > 0$. Under the standard Gaussian measure on $\mathbb{R}^n$, the event $\{x : t \le |\sum_i a_i x_i|\}$ has measure $0$.

@@ -1,5 +1,5 @@
-# Sbm Edge Weight
+# Edge factor of a block-model labeling
 
-Assume that `V` is finite and that `K` is finite.
+Here $V$ and $K$ are finite.
 
 Edge factor of a labeling: independent Bernoulli edges given classes.

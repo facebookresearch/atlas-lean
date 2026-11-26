@@ -1,7 +1,3 @@
-# Meas breach Set le div
+# Horizon breach bound for a positive finite threshold
 
-Assume `Measurable (fun p : S × D => f p.1 p.2)`, `Measurable V`, `c ≠ 0` and `c ≠ ∞`.
-
-The horizon breach bound for a finite positive threshold `c`: if
-`E V(f x d) ≤ V(x) + β` at every state below `c`, the probability that `V` reaches
-`c` at some mark `n ≤ N` is at most `(V(x₀) + N β) / c`.
+Let $D$ carry a probability law, let the inputs be independent with that law, let $f : S \times D \to S$ be jointly measurable and $V : S \to [0, \infty]$ measurable, and let $0 < c < \infty$. If $\mathbb{E}[V(f(x, d))] \le V(x) + \beta$ at every state with $V(x) < c$, then the probability that the chain started at $x_0$ reaches level $c$ at some mark $n \le N$ is at most $(V(x_0) + N \beta)/c$.

@@ -1,4 +1,3 @@
-# Variance two state
+# Variance of a two-state indicator
 
-The two-state (Bernoulli) weight `(1 - q, q)` on `Fin 2`: the indicator `(0, 1)` has
-variance `q (1 - q)`.
+For every real $q$, the two-state weight $(1 - q, q)$ on $\{0, 1\}$ gives the indicator $(0, 1)$ the variance $q(1 - q)$.

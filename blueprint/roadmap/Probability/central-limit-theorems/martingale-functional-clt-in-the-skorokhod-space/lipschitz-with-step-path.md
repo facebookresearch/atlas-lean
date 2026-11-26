@@ -1,3 +1,3 @@
-# Lipschitz With step Path
+# The step-path map is Lipschitz
 
-The step-path map `ℝⁿ → D([0,1])` is `n`-Lipschitz (sup norm to J1).
+For every $n$, the map from increments $y \in \mathbb{R}^n$ with the sup norm to the normalized partial-sum step path in the Skorokhod space $D([0, 1])$ with the J1 distance is $n$-Lipschitz.

@@ -1,10 +1,5 @@
 # Ladder Cramér identity
 
-Assume `∀ i, Measurable (X i)` and `¬ ∀ᵐ ω ∂P, X 0 ω = 0`.
+Let $X_0, X_1, \dots$ be i.i.d. integer-valued random variables on a probability space that are not almost surely $0$, with score walk $S_n = X_0 + \dots + X_{n-1}$, first strict ascending ladder epoch $\tau_+$ and defective ladder-height law $g_j = \mathbb{P}(\tau_+ < \infty, S_{\tau_+} = j)$. If $\theta > 0$ solves $\mathbb{E}[e^{\theta X_0}] = 1$, then $\sum_j g_j e^{\theta j} = 1$.
 
-Let `X` be i.i.d. integer scores with walk `S`, first strict
-ascending ladder epoch `τ₊` and defective ladder-height law
-`g j = P(τ₊ < ∞, S_{τ₊} = j)` (`ladderLaw`). If `θ > 0` solves `𝔼 e^{θ X} = 1` and `X` is not almost surely `0`, then `∑ j, g j e^{θ j} = 1`.
-
-Proof: optional stopping of the martingale `e^{θ S_n}` at `τ₊ ∧ n` (`stopped_identity`, by
-fixed-time independence), with the remainder `𝔼[e^{θ S_n}; τ₊ > n] ≤ (𝔼 e^{θ X / 2})^n → 0`.
+The proof stops the martingale $e^{\theta S_n}$ at $\tau_+ \wedge n$ and bounds the remainder $\mathbb{E}[e^{\theta S_n}; \tau_+ > n] \le (\mathbb{E}[e^{\theta X_0/2}])^n \to 0$.

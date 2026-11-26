@@ -1,4 +1,3 @@
 # The rank characterization
 
-For a sequence bounded above, `t < rankDesc p k` iff at
-least `k + 1` entries exceed `t`.
+For a real sequence $p$ that is bounded above, $k \in \mathbb{N}$ and $t \in \mathbb{R}$, $t$ is below the $k$-th largest value of $p$ (counted from $0$) if and only if at least $k + 1$ entries of $p$ exceed $t$.

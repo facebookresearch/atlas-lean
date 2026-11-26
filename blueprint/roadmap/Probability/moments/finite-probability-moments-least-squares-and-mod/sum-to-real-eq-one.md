@@ -1,3 +1,3 @@
-# Sum to Real eq one
+# Real weights of a probability mass function on a finite type sum to one
 
-The real weights `(q a).toReal` of a probability mass function on a finite type sum to `1`.
+For a probability mass function $q$ on a finite set, the real masses $q(a)$ sum to $1$.

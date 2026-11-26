@@ -1,3 +1,3 @@
-# Trait Peer
+# Peer trait
 
 Peer trait (second latent coordinate).

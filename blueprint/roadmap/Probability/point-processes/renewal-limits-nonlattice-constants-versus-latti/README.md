@@ -18,7 +18,7 @@
 
 ## Nonlattice constant identification by exponential tilting
 
-- [Is Probability Measure tilted of integral eq one](is-probability-measure-tilted-of-integra.md)
+- [A Cramér root makes the tilted measure a probability measure](is-probability-measure-tilted-of-integra.md)
 - [Mean of the tilted ladder law](integral-id-tilt.md)
 - [Exponential tilting of a renewal equation](tilted-renewal-eq.md)
 - [Nonlattice constant identification](tendsto-scaled-of-key-renewal.md)

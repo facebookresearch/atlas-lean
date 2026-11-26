@@ -1,10 +1,3 @@
 # Ladder-height limit from the Cramér root
 
-Assume `∀ i, Measurable (X i)` and `¬ ∀ᵐ ω ∂P, X 0 ω = 0`.
-
-**Ladder-height limit from the Cramér root** (Cramér–Lundberg / Karlin–Dembo). For i.i.d.
-integer scores `X` that are not almost surely `0`, if `θ > 0` solves `𝔼 e^{θ X} = 1`, the
-ladder support is aperiodic and the tilted ladder mean `μ = ∑ j g j e^{θ j}` is finite, then
-`e^{θ k} P(M > k) → (1 - P(M > 0)) / ((e^θ - 1) μ)`. This is
-`tendsto_exp_mul_maxTail_scoreWalk` with its Cramér hypothesis discharged by
-`hasSum_ladderLaw_mul_exp`.
+Let $X_0, X_1, \dots$ be i.i.d. integer-valued random variables on a probability space that are not almost surely $0$, with score walk $S$, maximum $M = \sup_n S_n$ and defective ladder-height law $g$. Suppose $\theta > 0$ solves $\mathbb{E}[e^{\theta X_0}] = 1$, the support $\{k : g_k > 0\}$ of the ladder-height law has greatest common divisor $1$, and the tilted ladder mean $\mu = \sum_k k\, g_k e^{\theta k}$ is finite. Then $e^{\theta k}\, \mathbb{P}(M > k) \to (1 - \mathbb{P}(M > 0)) / ((e^\theta - 1)\, \mu)$ as $k \to \infty$ (Cramér–Lundberg, Karlin–Dembo).
