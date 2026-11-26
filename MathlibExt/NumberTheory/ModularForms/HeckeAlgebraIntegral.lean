@@ -68,22 +68,15 @@ import MathlibExt.NumberTheory.ModularForms.SturmBoundGamma0
 /-!
 # Integrality of the Hecke algebra of cusp forms on `Γ₀(N)`
 
-This file shows that the Hecke operators `T_p` and `U_p` are realized by cusp forms,
-that eigenvalues of an endomorphism stabilizing a finitely generated lattice are
-algebraic integers, and that, under an integral structure, the Hecke algebra
+This file shows that eigenvalues of an endomorphism stabilizing a finitely generated lattice
+are algebraic integers, and that, under an integral structure, the Hecke algebra
 `CuspForm.heckeAlgebra N k S` is a finite free `ℤ`-module and every ring homomorphism
 from it to `ℂ` is the system of eigenvalues of a nonzero cusp form.
 
 ## Main statements
 
-* `CuspForm.exists_coe_eq_heckeT`, `CuspForm.exists_coe_eq_heckeU`: `T_p f` and `U_p f`
-  are cusp forms.
 * `IsIntegral.of_mem_span_of_apply_eq_smul`: an eigenvalue of a lattice-stabilizing
   endomorphism, on an eigenvector in the span of the lattice, is integral over `ℤ`.
-* `exists_integralClosure_coe_eq_of_isIntegral`: an integral complex number lies in the
-  integral closure of `ℤ` in `ℂ`.
-* `CuspForm.HasIntegralStructure.eq_zero_of_forall_mem_intLattice`: an endomorphism
-  vanishing on the integral lattice is zero.
 * `CuspForm.linearIndependent_of_mem_intLattice`: `ℤ`-independent lattice vectors are
   `ℂ`-independent.
 * `Module.End.exists_ne_zero_forall_apply_eq_smul_of_ringHom`: a character of a
@@ -101,24 +94,6 @@ noncomputable section
 
 open UpperHalfPlane
 open scoped MatrixGroups ModularForm
-
-namespace CuspForm
-
-/-- The image `T_p f` of a cusp form `f` on `Γ₀(N)` under the Hecke operator at a prime
-`p ∤ N` is again a cusp form. -/
-theorem exists_coe_eq_heckeT {N : ℕ} {k : ℤ} (f : CuspForm (CongruenceSubgroup.Gamma0 N) k)
-    {p : ℕ} (hp : p.Prime) (hpN : ¬ p ∣ N) :
-    ∃ g : CuspForm (CongruenceSubgroup.Gamma0 N) k, ⇑g = ModularForm.heckeT k p ⇑f :=
-  ⟨heckeTLin k hp hpN f, rfl⟩
-
-/-- The image `U_p f` of a cusp form `f` on `Γ₀(N)` under the Hecke operator at a divisor
-`p ∣ N` is again a cusp form. -/
-theorem exists_coe_eq_heckeU {N : ℕ} [NeZero N] {k : ℤ}
-    (f : CuspForm (CongruenceSubgroup.Gamma0 N) k) {p : ℕ} (hpN : p ∣ N) :
-    ∃ g : CuspForm (CongruenceSubgroup.Gamma0 N) k, ⇑g = ModularForm.heckeU k p ⇑f :=
-  ⟨heckeULin k hpN f, rfl⟩
-
-end CuspForm
 
 section IsIntegral
 
@@ -173,20 +148,7 @@ theorem IsIntegral.of_mem_span_of_apply_eq_smul (L : Submodule ℤ V) (hfg : L.F
 
 end IsIntegral
 
-/-- A complex number integral over `ℤ` lies in the integral closure of `ℤ` in `ℂ`. -/
-theorem exists_integralClosure_coe_eq_of_isIntegral {z : ℂ} (hz : IsIntegral ℤ z) :
-    ∃ a : integralClosure ℤ ℂ, (a : ℂ) = z :=
-  ⟨⟨z, (mem_integralClosure_iff ℤ ℂ).mpr hz⟩, rfl⟩
-
 namespace CuspForm
-
-/-- Under an integral structure, a `ℂ`-linear endomorphism of cusp forms that vanishes on
-the integral lattice is zero. -/
-theorem HasIntegralStructure.eq_zero_of_forall_mem_intLattice {N : ℕ} {k : ℤ}
-    (hN : HasIntegralStructure N k)
-    (t : Module.End ℂ (CuspForm (CongruenceSubgroup.Gamma0 N) k))
-    (h : ∀ f ∈ intLattice N k, t f = 0) : t = 0 :=
-  LinearMap.ext_on hN fun f hf => by rw [LinearMap.zero_apply]; exact h f hf
 
 private theorem coeff_add_aux {N : ℕ} {k : ℤ} (f g : CuspForm (CongruenceSubgroup.Gamma0 N) k)
     (n : ℕ) :
@@ -230,8 +192,8 @@ private theorem truncC_injective (N : ℕ) [NeZero N] (k : ℤ) :
     simpa using harg
   exact DFunLike.coe_injective (hcoe.trans (FunLike.coe_zero).symm)
 
-/-- Cusp forms in the integral lattice that are linearly independent over `ℤ` are linearly
-independent over `ℂ`. -/
+/-- For `N ≠ 0`, cusp forms on `Γ₀(N)` in the integral lattice that are linearly independent over
+`ℤ` are linearly independent over `ℂ`. -/
 theorem linearIndependent_of_mem_intLattice {N : ℕ} [NeZero N] {k : ℤ} (n : ℕ)
     (f : Fin n → CuspForm (CongruenceSubgroup.Gamma0 N) k) (hf : ∀ i, f i ∈ intLattice N k)
     (h : LinearIndependent ℤ f) : LinearIndependent ℂ f := by
@@ -505,8 +467,8 @@ end Eigenvector
 
 namespace CuspForm
 
-/-- Under an integral structure in weight `k ≥ 1`, every ring homomorphism from the Hecke algebra
-to `ℂ` is the system of Hecke eigenvalues of a nonzero cusp form. -/
+/-- For `N ≠ 0`, under an integral structure in weight `k ≥ 1`, every ring homomorphism from the
+Hecke algebra to `ℂ` is the system of Hecke eigenvalues of a nonzero cusp form. -/
 theorem HasIntegralStructure.exists_ne_zero_forall_apply_eq_smul {N : ℕ} [NeZero N] {k : ℤ}
     (hN : HasIntegralStructure N k) (hk : 1 ≤ k) {S : Set ℕ}
     (χ : heckeAlgebra N k S →+* ℂ) :
@@ -516,11 +478,11 @@ theorem HasIntegralStructure.exists_ne_zero_forall_apply_eq_smul {N : ℕ} [NeZe
   Module.End.exists_ne_zero_forall_apply_eq_smul_of_ringHom (K := ℂ)
     (heckeAlgebra N k S).val.toRingHom (intLattice N k) (intLattice_fg N k)
     (fun t _ hf => mem_intLattice_of_mem_heckeAlgebra hk t.2 hf)
-    (fun _ ht => Subtype.ext (hN.eq_zero_of_forall_mem_intLattice _ ht))
+    (fun _ ht => Subtype.ext (LinearMap.ext_on (g := 0) hN fun f hf => ht f hf))
     (fun n f hf hind => linearIndependent_of_mem_intLattice n f hf hind) χ
 
-/-- Under an integral structure, the Hecke algebra in weight `k ≥ 1` is a finitely generated
-`ℤ`-module. -/
+/-- For `N ≠ 0`, under an integral structure, the Hecke algebra in weight `k ≥ 1` is a finitely
+generated `ℤ`-module. -/
 theorem HasIntegralStructure.moduleFinite_heckeAlgebra {N : ℕ} [NeZero N] {k : ℤ}
     (hN : HasIntegralStructure N k) (hk : 1 ≤ k) (S : Set ℕ) :
     Module.Finite ℤ (heckeAlgebra N k S) := by
@@ -539,12 +501,14 @@ theorem HasIntegralStructure.moduleFinite_heckeAlgebra {N : ℕ} [NeZero N] {k :
     rw [← LinearMap.ker_eq_bot, LinearMap.ker_eq_bot']
     intro t ht
     apply Subtype.ext
-    refine hN.eq_zero_of_forall_mem_intLattice (t : Module.End ℂ V) fun f hf => ?_
+    refine LinearMap.ext_on (g := 0) hN fun f hf => ?_
+    rw [LinearMap.zero_apply]
     calc (t : Module.End ℂ V) f = ((ψ t ⟨f, hf⟩ : L) : V) := rfl
       _ = 0 := by rw [ht]; rfl
   exact Module.Finite.of_injective ψ hψ
 
-/-- Under an integral structure, the Hecke algebra in weight `k ≥ 1` is a free `ℤ`-module. -/
+/-- For `N ≠ 0`, under an integral structure, the Hecke algebra in weight `k ≥ 1` is a free
+`ℤ`-module. -/
 theorem HasIntegralStructure.moduleFree_heckeAlgebra {N : ℕ} [NeZero N] {k : ℤ}
     (hN : HasIntegralStructure N k) (hk : 1 ≤ k) (S : Set ℕ) :
     Module.Free ℤ (heckeAlgebra N k S) := by

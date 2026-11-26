@@ -19,9 +19,33 @@ example (g : PowerSeries ℤ) (n : ℕ) :
     3 ∣ (PowerSeries.coeff n) (g * EisensteinWeightOne.e1Chi3) - (PowerSeries.coeff n) g :=
   EisensteinWeightOne.three_dvd_coeff_mul_e1Chi3_sub g n
 
-/-- exactSource consumer: the original binders apply verbatim. -/
-example (N : ℕ) : CuspForm.HasIntegralBasis N ↔ CuspForm.HasIntegralStructure N 2 :=
-  CuspForm.hasIntegralBasis_iff_hasIntegralStructure_two N
+/-- The source's weight-two cusp forms on `Γ₀(N)` with integral `q`-expansion coefficients. -/
+private def srcIntegralSet (N : ℕ) : Set (CuspForm (CongruenceSubgroup.Gamma0 N) 2) :=
+  {f | ∀ n : ℕ, ModularFormClass.qCoeff f n ∈ (⊥ : Subring ℂ)}
+
+private theorem coe_intLattice_two (N : ℕ) :
+    ((CuspForm.intLattice N 2 : Submodule ℤ (CuspForm (CongruenceSubgroup.Gamma0 N) 2)) :
+      Set (CuspForm (CongruenceSubgroup.Gamma0 N) 2)) = srcIntegralSet N := by
+  ext f
+  simp only [SetLike.mem_coe, CuspForm.mem_intLattice_iff, srcIntegralSet, Set.mem_ofPred_eq,
+    Subring.mem_bot, ModularFormClass.qCoeff_eq]
+  exact forall_congr' fun n => ⟨fun ⟨m, hm⟩ => ⟨m, hm.symm⟩, fun ⟨m, hm⟩ => ⟨m, hm.symm⟩⟩
+
+/-- exactSource restatement: the source's `HasIntegralBasis N`, that the weight-two cusp forms
+with integral `q`-expansion span everything over `ℂ`, is `CuspForm.HasIntegralStructure N 2`. -/
+example (N : ℕ) :
+    Submodule.span ℂ (srcIntegralSet N) = ⊤ ↔ CuspForm.HasIntegralStructure N 2 := by
+  rw [CuspForm.hasIntegralStructure_iff, coe_intLattice_two]
+
+/-- exactSource restatement: the source's lattice realization, with the integral cusp form taken
+from `srcIntegralSet N`, is `CuspForm.IsLatticeRealized N a`. -/
+example (N : ℕ) (a : ℕ → ℤ) :
+    (∃ f : CuspForm (CongruenceSubgroup.Gamma0 N) 2, f ∈ srcIntegralSet N ∧
+      ∃ af : ℕ → ℤ, (∀ n, (af n : ℂ) = ModularFormClass.qCoeff f n) ∧
+        ∀ n, (3 : ℤ) ∣ af n - (bridgeProduct a).coeff n) ↔
+      CuspForm.IsLatticeRealized N a := by
+  rw [CuspForm.IsLatticeRealized, ← coe_intLattice_two]
+  rfl
 
 /-- exactSource consumer: the original binders apply verbatim. -/
 example {N : ℕ} [NeZero N] {a : ℕ → ℤ} (h1 : a 1 = 1)
@@ -43,8 +67,9 @@ example {N : ℕ} [NeZero N] {a : ℕ → ℤ} (h1 : a 1 = 1)
           ((a ℓ : ℤ) : CuspForm.heckeAlgebra N 2 {ℓ | ℓ ∣ N}) ∈ 𝔪₁ :=
   CuspForm.exists_isMaximal_three_mem_heckeT_sub_mem h1 hT red hker hker' h3M hop
 
-/-- exactSource consumer: the original binders apply verbatim. -/
-example {N : ℕ} [NeZero N] (hN : CuspForm.HasIntegralStructure N 2) {a : ℕ → ℤ}
+/-- exactSource consumer: the original binders apply verbatim; the integral structure is no
+longer needed. -/
+example {N : ℕ} [NeZero N] (_hN : CuspForm.HasIntegralStructure N 2) {a : ℕ → ℤ}
     (h1 : a 1 = 1) (hreal : CuspForm.IsLatticeRealized N a) :
     ∃ (M : Type) (_ : AddCommGroup M) (_ : Module (CuspForm.heckeAlgebra N 2 {ℓ | ℓ ∣ N}) M)
       (red : PowerSeries ℤ → M),
@@ -55,7 +80,7 @@ example {N : ℕ} [NeZero N] (hN : CuspForm.HasIntegralStructure N 2) {a : ℕ �
         (CuspForm.heckeAlgebra.T hℓ hℓN hℓN -
             ((a ℓ : ℤ) : CuspForm.heckeAlgebra N 2 {ℓ | ℓ ∣ N})) • red (bridgeProduct a)
           = red (PowerSeries.heckeT ℓ 2 (bridgeProduct a) - a ℓ • bridgeProduct a) :=
-  CuspForm.exists_reductionModule_of_isLatticeRealized hN h1 hreal
+  CuspForm.exists_reductionModule_of_isLatticeRealized h1 hreal
 
 /-- exactSource consumer: the original binders apply verbatim. -/
 example {R : Type*} [CommRing R] {N : ℕ} {a : ℕ → R}
@@ -69,7 +94,7 @@ example {R : Type*} [CommRing R] {N : ℕ} {a : ℕ → R}
 /-- The two lattice-realization pieces combine: a lattice realization with `a 1 = 1` yields a
 maximal ideal of the Hecke algebra above `3` containing every `T_ℓ - a ℓ`, once `bridgeProduct a`
 is a formal eigenvector modulo `3`. -/
-example {N : ℕ} [NeZero N] (hN : CuspForm.HasIntegralStructure N 2) {a : ℕ → ℤ}
+example {N : ℕ} [NeZero N] {a : ℕ → ℤ}
     (h1 : a 1 = 1) (hreal : CuspForm.IsLatticeRealized N a)
     (hT : ∀ (ℓ : ℕ), ℓ.Prime → ¬ ℓ ∣ N → ∀ n : ℕ, (3 : ℤ) ∣ PowerSeries.coeff n
       (PowerSeries.heckeT ℓ 2 (bridgeProduct a) - a ℓ • bridgeProduct a)) :
@@ -79,7 +104,7 @@ example {N : ℕ} [NeZero N] (hN : CuspForm.HasIntegralStructure N 2) {a : ℕ �
         CuspForm.heckeAlgebra.T hℓ hℓN hℓN -
           ((a ℓ : ℤ) : CuspForm.heckeAlgebra N 2 {ℓ | ℓ ∣ N}) ∈ 𝔪₁ := by
   obtain ⟨M, _, _, red, hker, hker', h3M, hop⟩ :=
-    CuspForm.exists_reductionModule_of_isLatticeRealized hN h1 hreal
+    CuspForm.exists_reductionModule_of_isLatticeRealized h1 hreal
   exact CuspForm.exists_isMaximal_three_mem_heckeT_sub_mem h1 hT red hker hker' h3M hop
 
 /-- `U_ℓ` is a left inverse of `V_ℓ` on power series. -/

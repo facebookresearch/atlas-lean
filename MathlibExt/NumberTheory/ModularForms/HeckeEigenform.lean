@@ -75,7 +75,6 @@ primes `ℓ ∤ N` gives rise to a normalized eigenform with the same eigenvalue
 
 * `CuspForm.finiteDimensional_Gamma0`: cusp forms on `Γ₀(N)`, `N ≠ 0`, form a
   finite-dimensional complex vector space.
-* `CuspForm.qCoeff_zero`: the constant `q`-coefficient of a cusp form on `Γ₀(N)` vanishes.
 * `ModularFormClass.heckeT_eq_smul_iff`, `ModularFormClass.heckeU_eq_smul_iff`: being a Hecke
   eigenvector is a condition on `q`-coefficients.
 * `CuspForm.isNormalizedEigenform_iff_coeffHecke`, `CuspForm.isNormalizedEigenform_iff_heckeT`,
@@ -136,12 +135,6 @@ space: by the Sturm bound a cusp form is determined by finitely many `q`-coeffic
 instance finiteDimensional_Gamma0 (N : ℕ) [NeZero N] (k : ℤ) :
     FiniteDimensional ℂ (CuspForm (CongruenceSubgroup.Gamma0 N) k) :=
   FiniteDimensional.of_injective (truncC N k) (truncC_injective N k)
-
-/-- The constant `q`-coefficient of a cusp form on `Γ₀(N)` vanishes. -/
-theorem qCoeff_zero {N : ℕ} {k : ℤ} (f : CuspForm (CongruenceSubgroup.Gamma0 N) k) :
-    ModularFormClass.qCoeff f 0 = 0 :=
-  CuspFormClass.qExpansion_coeff_zero f one_pos
-    (CongruenceSubgroup.one_mem_strictPeriods_Gamma0 N)
 
 end CuspForm
 
@@ -380,7 +373,8 @@ theorem isNormalizedEigenform_iff_coeffHecke {N : ℕ}
             = ModularFormClass.qCoeff f p * ModularFormClass.qCoeff f n) ∧
           (p ∣ N → ∀ n : ℕ, ModularForm.coeffHeckeU p (ModularFormClass.qCoeff f) n
             = ModularFormClass.qCoeff f p * ModularFormClass.qCoeff f n))) := by
-  have h0 : qCoeff f 0 = 0 := CuspForm.qCoeff_zero f
+  have h0 : qCoeff f 0 = 0 := CuspFormClass.qExpansion_coeff_zero f one_pos
+    (CongruenceSubgroup.one_mem_strictPeriods_Gamma0 N)
   constructor
   · intro hf
     refine ⟨hf.qCoeff_one, fun p hp => ⟨fun hpN n => ?_, fun hpN n => ?_⟩⟩
@@ -403,9 +397,9 @@ theorem isNormalizedEigenform_iff_coeffHecke {N : ℕ}
         qCoeff_prime_pow_of_dvd := fun p r hp hpN =>
           rec_of_heckeU_eigen (qCoeff f) ((hE p hp).2 hpN) r }
 
-/-- A weight-two cusp form on `Γ₀(N)` is a normalized eigenform exactly when its first
-`q`-coefficient is `1` and `T_p f = a_p • f` for `p ∤ N` and `U_p f = a_p • f` for `p ∣ N`, as
-functions on the upper half-plane. -/
+/-- For `N ≠ 0`, a weight-two cusp form on `Γ₀(N)` is a normalized eigenform exactly when its
+first `q`-coefficient is `1` and, for every prime `p`, `T_p f = a_p • f` if `p ∤ N` and
+`U_p f = a_p • f` if `p ∣ N`, as functions on the upper half-plane. -/
 theorem isNormalizedEigenform_iff_heckeT {N : ℕ} [NeZero N]
     (f : CuspForm (CongruenceSubgroup.Gamma0 N) 2) :
     f.IsNormalizedEigenform ↔
@@ -418,9 +412,9 @@ theorem isNormalizedEigenform_iff_heckeT {N : ℕ} [NeZero N]
   rw [ModularFormClass.heckeT_eq_smul_iff f hΓ hp.ne_zero,
     ModularFormClass.heckeU_eq_smul_iff f hΓ hp.ne_zero]
 
-/-- A weight-two cusp form on `Γ₀(N)` is a normalized eigenform exactly when its first
-`q`-coefficient is `1` and it is an eigenvector of the linear Hecke operators `T_p` (for
-`p ∤ N`) and `U_p` (for `p ∣ N`) with eigenvalue `a_p`. -/
+/-- For `N ≠ 0`, a weight-two cusp form on `Γ₀(N)` is a normalized eigenform exactly when its
+first `q`-coefficient is `1` and, for every prime `p`, it is an eigenvector with eigenvalue `a_p`
+of the linear Hecke operator `T_p` if `p ∤ N` and `U_p` if `p ∣ N`. -/
 theorem isNormalizedEigenform_iff_heckeTLin {N : ℕ} [NeZero N]
     (f : CuspForm (CongruenceSubgroup.Gamma0 N) 2) :
     f.IsNormalizedEigenform ↔ (ModularFormClass.qCoeff f 1 = 1 ∧ ∀ (p : ℕ) (hp : p.Prime),
@@ -574,9 +568,9 @@ end Module.End
 
 namespace CuspForm
 
-/-- A nonzero weight-two cusp form `g` on `Γ₀(N)` with `T_ℓ g = a_ℓ • g` for every prime
-`ℓ ∤ N` outside `S` gives rise to a normalized eigenform `h` with `a_ℓ(h) = a ℓ` for every such
-prime `ℓ`. -/
+/-- For `N ≠ 0`, a nonzero weight-two cusp form `g` on `Γ₀(N)` with `T_ℓ g = a_ℓ • g` for every
+prime `ℓ ∤ N` outside `S` gives rise to a normalized eigenform `h` with `a_ℓ(h) = a ℓ` for every
+such prime `ℓ`. -/
 theorem exists_isNormalizedEigenform_of_forall_heckeTLin_eq_smul {N : ℕ} [NeZero N]
     {g : CuspForm (CongruenceSubgroup.Gamma0 N) 2} (hg : g ≠ 0) (a : ℕ → ℂ) (S : Set ℕ)
     (hT : ∀ (ℓ : ℕ) (hℓ : ℓ.Prime) (hℓN : ¬ ℓ ∣ N), ℓ ∉ S →
@@ -691,7 +685,8 @@ theorem exists_isNormalizedEigenform_of_forall_heckeTLin_eq_smul {N : ℕ} [NeZe
       intro n
       rw [qCoeff_zero']
       rcases Nat.eq_zero_or_pos n with rfl | hn
-      · exact CuspForm.qCoeff_zero h₀
+      · exact CuspFormClass.qExpansion_coeff_zero h₀ one_pos
+          (CongruenceSubgroup.one_mem_strictPeriods_Gamma0 N)
       · exact hall n hn.ne'
     exact DFunLike.coe_injective <| congrArg (fun F : ModularForm _ 2 ↦ ⇑F) <|
       ModularForm.qExpansion_injective one_pos hΓ (a₁ := ModularFormClass.modularForm h₀)

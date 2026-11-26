@@ -102,13 +102,13 @@ private theorem IsNormalizedEigenform.ne_zero_aux
   rw [zero_smul, zero_mul] at h0
   exact zero_ne_one (h0.symm.trans h1)
 
-/-- Under an integral structure, the `ℓ`-th `q`-expansion coefficient of a weight-two
-normalized eigenform, for a prime `ℓ`, is an algebraic integer. -/
+/-- For `N ≠ 0`, under an integral structure, the `ℓ`-th `q`-expansion coefficient of a
+weight-two normalized eigenform on `Γ₀(N)`, for a prime `ℓ`, is an algebraic integer. -/
 theorem IsNormalizedEigenform.exists_integralClosure_coe_eq_qCoeff [NeZero N]
     (hN : HasIntegralStructure N 2) {f : CuspForm (CongruenceSubgroup.Gamma0 N) 2}
     (hf : f.IsNormalizedEigenform) (ℓ : ℕ) (hℓ : ℓ.Prime) :
     ∃ a : integralClosure ℤ ℂ, (a : ℂ) = qCoeff f ℓ := by
-  apply exists_integralClosure_coe_eq_of_isIntegral
+  refine ⟨⟨qCoeff f ℓ, (mem_integralClosure_iff ℤ ℂ).mpr ?_⟩, rfl⟩
   have hv : f ∈ Submodule.span ℂ ((intLattice N 2 : Submodule ℤ _) :
       Set (CuspForm (CongruenceSubgroup.Gamma0 N) 2)) := by
     rw [(hasIntegralStructure_iff N 2).mp hN]
@@ -147,8 +147,9 @@ private theorem apply_eq_qCoeff_one_smul_of_mem [NeZero N] {S : Set ℕ}
   · intro x y _ _ hx hy
     rw [mul_apply_eq_comp, hy, map_smul, hx, smul_smul, qCoeff_smul_aux, h1, mul_one]
 
-/-- The Hecke eigenvalues of a weight-two normalized eigenform `f` form a ring homomorphism
-`χ` on the Hecke algebra away from `S`, with `χ(T_ℓ) = a_ℓ(f)` and `χ(U_q) = a_q(f)`. -/
+/-- For `N ≠ 0`, the Hecke eigenvalues of a weight-two normalized eigenform `f` on `Γ₀(N)` form a
+ring homomorphism `χ` on the Hecke algebra away from `S`, with `χ(T_ℓ) = a_ℓ(f)` and
+`χ(U_q) = a_q(f)`. -/
 theorem IsNormalizedEigenform.exists_ringHom_heckeAlgebra [NeZero N]
     {f : CuspForm (CongruenceSubgroup.Gamma0 N) 2} (hf : f.IsNormalizedEigenform)
     (S : Set ℕ) :
@@ -191,8 +192,8 @@ theorem IsNormalizedEigenform.exists_ringHom_heckeAlgebra [NeZero N]
   · change qCoeff ⇑((heckeULin 2 hqN) f) 1 = qCoeff ⇑f q
     rw [(hgen.2 q hq).2 hqN, qCoeff_smul_aux, h1, mul_one]
 
-/-- Under an integral structure, the Hecke eigenvalues of a weight-two normalized eigenform
-form a ring homomorphism from the Hecke algebra to the algebraic integers. -/
+/-- For `N ≠ 0`, under an integral structure, the Hecke eigenvalues of a weight-two normalized
+eigenform on `Γ₀(N)` form a ring homomorphism from the Hecke algebra to the algebraic integers. -/
 theorem IsNormalizedEigenform.exists_ringHom_heckeAlgebra_integralClosure [NeZero N]
     (hN : HasIntegralStructure N 2) {f : CuspForm (CongruenceSubgroup.Gamma0 N) 2}
     (hf : f.IsNormalizedEigenform) (S : Set ℕ) :
@@ -250,8 +251,8 @@ namespace CuspForm
 
 variable {N : ℕ}
 
-/-- Under an integral structure, every prime `𝔭` of the weight-two Hecke algebra away from
-the level with `𝔭 ∩ ℤ = 0` contains the annihilator of some normalized eigenform. -/
+/-- For `N ≠ 0`, under an integral structure, every prime `𝔭` of the weight-two Hecke algebra
+away from the level with `𝔭 ∩ ℤ = 0` contains the annihilator of some normalized eigenform. -/
 theorem exists_isNormalizedEigenform_ker_le_of_isPrime [NeZero N]
     (hN : HasIntegralStructure N 2) (𝔭 : Ideal (heckeAlgebra N 2 {ℓ | ℓ ∣ N}))
     (h𝔭 : 𝔭.IsPrime)
@@ -331,8 +332,9 @@ theorem exists_isNormalizedEigenform_ker_le_of_isPrime [NeZero N]
   · simpa using h0
   · exact absurd h0 hf.ne_zero_aux
 
-/-- **Deligne–Serre lifting in weight two.** Under an integral structure, let `𝔪₁` be a
-maximal ideal of the Hecke algebra away from the level containing `p`. Then there are a
+/-- **Eigenforms from a maximal ideal of the Hecke algebra.** Let `N ≠ 0`, assume an integral
+structure in weight two, and let `𝔪₁` be a maximal ideal of the Hecke algebra away from the level
+containing `p`. Then there are a
 normalized eigenform `f` and a maximal ideal `𝔪'` of the algebraic integers containing `p`
 such that `a_ℓ(f) ≡ b (mod 𝔪')` whenever `T_ℓ ≡ b (mod 𝔪₁)`. -/
 theorem exists_isNormalizedEigenform_congruent_of_isMaximal [NeZero N]

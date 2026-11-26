@@ -12,17 +12,17 @@ public import MathlibExt.NumberTheory.ModularForms.HeckeAlgebraIntegral
 
 @[expose] public section
 
-/-- exactSource consumer: the original binders apply verbatim. -/
+/-- exactSource restatement, from `CuspForm.heckeTLin` and `CuspForm.coe_heckeTLin_apply`. -/
 example {N : ℕ} {k : ℤ} (f : CuspForm (CongruenceSubgroup.Gamma0 N) k) {p : ℕ} (hp : p.Prime)
     (hpN : ¬ p ∣ N) :
     ∃ g : CuspForm (CongruenceSubgroup.Gamma0 N) k, ⇑g = ModularForm.heckeT k p ⇑f :=
-  CuspForm.exists_coe_eq_heckeT f hp hpN
+  ⟨CuspForm.heckeTLin k hp hpN f, CuspForm.coe_heckeTLin_apply k hp hpN f⟩
 
-/-- exactSource consumer: the original binders apply verbatim. -/
+/-- exactSource restatement, from `CuspForm.heckeULin` and `CuspForm.coe_heckeULin_apply`. -/
 example {N : ℕ} [NeZero N] {k : ℤ} (f : CuspForm (CongruenceSubgroup.Gamma0 N) k) {p : ℕ}
     (hpN : p ∣ N) :
     ∃ g : CuspForm (CongruenceSubgroup.Gamma0 N) k, ⇑g = ModularForm.heckeU k p ⇑f :=
-  CuspForm.exists_coe_eq_heckeU f hpN
+  ⟨CuspForm.heckeULin k hpN f, CuspForm.coe_heckeULin_apply k hpN f⟩
 
 /-- exactSource consumer: the original binders apply verbatim. -/
 example {V : Type*} [AddCommGroup V] [Module ℂ V] (L : Submodule ℤ V) (hfg : L.FG)
@@ -30,15 +30,15 @@ example {V : Type*} [AddCommGroup V] [Module ℂ V] (L : Submodule ℤ V) (hfg :
     (hv0 : v ≠ 0) {c : ℂ} (hTv : T v = c • v) : IsIntegral ℤ c :=
   IsIntegral.of_mem_span_of_apply_eq_smul L hfg T hTL hv hv0 hTv
 
-/-- exactSource consumer: the original binders apply verbatim. -/
+/-- exactSource restatement, from Mathlib's `mem_integralClosure_iff`. -/
 example {z : ℂ} (hz : IsIntegral ℤ z) : ∃ a : integralClosure ℤ ℂ, (a : ℂ) = z :=
-  exists_integralClosure_coe_eq_of_isIntegral hz
+  ⟨⟨z, (mem_integralClosure_iff ℤ ℂ).mpr hz⟩, rfl⟩
 
-/-- exactSource consumer: the original binders apply verbatim. -/
+/-- exactSource restatement, from Mathlib's `LinearMap.ext_on`. -/
 example {N : ℕ} {k : ℤ} (hN : CuspForm.HasIntegralStructure N k)
     (t : Module.End ℂ (CuspForm (CongruenceSubgroup.Gamma0 N) k))
     (h : ∀ f ∈ CuspForm.intLattice N k, t f = 0) : t = 0 :=
-  CuspForm.HasIntegralStructure.eq_zero_of_forall_mem_intLattice hN t h
+  LinearMap.ext_on hN fun f hf => by rw [LinearMap.zero_apply]; exact h f hf
 
 /-- exactSource consumer: the original binders apply verbatim. -/
 example {N : ℕ} [NeZero N] {k : ℤ} (n : ℕ)

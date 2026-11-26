@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.NumberTheory.ModularForms.HeckeEigenform
+import MathlibExt.NumberTheory.ModularForms.StrictPeriodsGamma0
 
 @[expose] public section
 
@@ -20,10 +21,10 @@ example (N : ℕ) [NeZero N] (k : ℤ) :
 /-- The finite-dimensionality is found by instance search, here at level `11`. -/
 example : FiniteDimensional ℂ (CuspForm (CongruenceSubgroup.Gamma0 11) 2) := inferInstance
 
-/-- exactSource consumer: the original binders apply verbatim. -/
+/-- exactSource restatement, from Mathlib's `CuspFormClass.qExpansion_coeff_zero`. -/
 example {N : ℕ} {k : ℤ} (f : CuspForm (CongruenceSubgroup.Gamma0 N) k) :
     ModularFormClass.qCoeff f 0 = 0 :=
-  CuspForm.qCoeff_zero f
+  CuspFormClass.qExpansion_coeff_zero f one_pos (CongruenceSubgroup.one_mem_strictPeriods_Gamma0 N)
 
 /-- exactSource consumer: the original binders apply verbatim. -/
 example {F : Type*} [FunLike F UpperHalfPlane ℂ]

@@ -68,18 +68,15 @@ power series, and this produces a maximal ideal of the Hecke algebra above `3` c
 * `EisensteinWeightOne.chiNegThree`, `EisensteinWeightOne.sigmaChi`,
   `EisensteinWeightOne.e1Chi3`, `EisensteinWeightOne.e1Chi3In`: the character `χ₋₃`, its twisted
   divisor sum and the `q`-expansion of the weight-one Eisenstein series `E₁,χ₋₃`.
-* `CuspForm.qIntegralSet`, `CuspForm.qIntegralLattice`, `CuspForm.HasIntegralBasis`: weight-two
-  cusp forms with integral `q`-expansion and the lattice they span.
 * `bridgeProduct`, `CuspForm.IsLatticeRealized`: the product of a coefficient sequence with
-  `E₁,χ₋₃`, and its realization modulo `3` by an integral cusp form.
+  `E₁,χ₋₃`, and its realization modulo `3` by a cusp form in the integral lattice
+  `CuspForm.intLattice N 2`.
 * `FormalHecke.IsEigensystem`: the formal Hecke recursion for a coefficient sequence.
 
 ## Main statements
 
 * `EisensteinWeightOne.three_dvd_coeff_mul_e1Chi3_sub`: multiplying by `E₁,χ₋₃` does not change
   coefficients modulo `3`.
-* `CuspForm.hasIntegralBasis_iff_hasIntegralStructure_two`: the two notions of integral
-  structure in weight two agree.
 * `CuspForm.exists_isMaximal_three_mem_heckeT_sub_mem`: a nonzero reduction on which the
   `T_ℓ - a ℓ` act as the formal operators gives a maximal ideal above `3`.
 * `CuspForm.exists_reductionModule_of_isLatticeRealized`: a lattice realization gives such a
@@ -124,7 +121,8 @@ lemma heckeU_heckeV (ℓ : ℕ) (hℓ : ℓ ≠ 0) (f : R⟦X⟧) : heckeU ℓ (
   ext n
   simp [Nat.mul_div_cancel_left n (Nat.pos_of_ne_zero hℓ), Dvd.intro n rfl]
 
-/-- The formal Hecke operator `T_ℓ = U_ℓ + ℓ ^ (k - 1) V_ℓ` of weight `k` on power series. -/
+/-- The formal Hecke operator `T_ℓ = U_ℓ + ℓ ^ (k - 1) V_ℓ` of weight `k` on power series. The
+exponent `k - 1` is computed in `ℕ`, so for `k = 0` the factor `ℓ ^ (k - 1)` is `1`. -/
 def heckeT (ℓ k : ℕ) : R⟦X⟧ →ₗ[R] R⟦X⟧ :=
   heckeU ℓ + (ℓ : R) ^ (k - 1) • heckeV ℓ
 
@@ -158,23 +156,6 @@ end EisensteinWeightOne
 
 open EisensteinWeightOne
 
-namespace CuspForm
-
-/-- The weight-two cusp forms on `Γ₀(N)` all of whose `q`-expansion coefficients are integers. -/
-def qIntegralSet (N : ℕ) : Set (CuspForm (CongruenceSubgroup.Gamma0 N) 2) :=
-  {f | ∀ n : ℕ, ModularFormClass.qCoeff f n ∈ (⊥ : Subring ℂ)}
-
-/-- The `ℤ`-span of the weight-two cusp forms on `Γ₀(N)` with integral `q`-expansion. -/
-def qIntegralLattice (N : ℕ) : Submodule ℤ (CuspForm (CongruenceSubgroup.Gamma0 N) 2) :=
-  Submodule.span ℤ (qIntegralSet N)
-
-/-- The weight-two cusp forms on `Γ₀(N)` have a basis of forms with integral `q`-expansion:
-the forms with integral `q`-expansion span everything over `ℂ`. -/
-def HasIntegralBasis (N : ℕ) : Prop :=
-  Submodule.span ℂ (qIntegralSet N) = ⊤
-
-end CuspForm
-
 /-- The product `(∑ aₙ Xⁿ) · E₁,χ₋₃` of the power series with coefficients `a` and the
 `q`-expansion of the weight-one Eisenstein series `E₁,χ₋₃`. -/
 def bridgeProduct {R : Type*} [CommRing R] (a : ℕ → R) : PowerSeries R :=
@@ -183,10 +164,10 @@ def bridgeProduct {R : Type*} [CommRing R] (a : ℕ → R) : PowerSeries R :=
 namespace CuspForm
 
 /-- The coefficient sequence `a` is realized by the integral lattice at level `N`: some
-weight-two cusp form on `Γ₀(N)` with integral `q`-expansion is congruent modulo `3`,
-coefficientwise, to `bridgeProduct a`. -/
+weight-two cusp form on `Γ₀(N)` in the integral lattice `CuspForm.intLattice N 2`, the forms with
+integral `q`-expansion, is congruent modulo `3`, coefficientwise, to `bridgeProduct a`. -/
 def IsLatticeRealized (N : ℕ) (a : ℕ → ℤ) : Prop :=
-  ∃ f : CuspForm (CongruenceSubgroup.Gamma0 N) 2, f ∈ qIntegralSet N ∧
+  ∃ f : CuspForm (CongruenceSubgroup.Gamma0 N) 2, f ∈ CuspForm.intLattice N 2 ∧
     ∃ af : ℕ → ℤ, (∀ n, (af n : ℂ) = ModularFormClass.qCoeff f n) ∧
       ∀ n, (3 : ℤ) ∣ af n - (bridgeProduct a).coeff n
 
@@ -264,36 +245,16 @@ private theorem not_three_dvd_coeff_one_bridgeProduct {a : ℕ → ℤ} (h1 : a 
   have : (3 : ℤ) ∣ 1 := by simpa using dvd_sub h3 h3'
   omega
 
-/-! ### Integral structures in weight two -/
-
-namespace CuspForm
-
-private theorem coe_intLattice_two (N : ℕ) :
-    ((intLattice N 2 : Submodule ℤ (CuspForm (CongruenceSubgroup.Gamma0 N) 2)) :
-      Set (CuspForm (CongruenceSubgroup.Gamma0 N) 2)) = qIntegralSet N := by
-  ext f
-  simp only [SetLike.mem_coe, mem_intLattice_iff, qIntegralSet, Set.mem_ofPred_eq,
-    Subring.mem_bot, ModularFormClass.qCoeff_eq]
-  exact forall_congr' fun n => ⟨fun ⟨m, hm⟩ => ⟨m, hm.symm⟩, fun ⟨m, hm⟩ => ⟨m, hm.symm⟩⟩
-
-/-- In weight two, having a basis of cusp forms with integral `q`-expansion is the same as
-having an integral structure. -/
-theorem hasIntegralBasis_iff_hasIntegralStructure_two (N : ℕ) :
-    CuspForm.HasIntegralBasis N ↔ CuspForm.HasIntegralStructure N 2 := by
-  rw [hasIntegralStructure_iff, coe_intLattice_two, HasIntegralBasis]
-
-end CuspForm
-
 /-! ### A maximal ideal above `3` from a reduction module -/
 
 namespace CuspForm
 
-/-- Let `red` be a reduction map from integral power series to a module `M` over the Hecke
-algebra away from the level, which kills the series divisible by `3`, detects `3`-divisibility
-of the first coefficient, and on which `T_ℓ - a ℓ` acts on `red (bridgeProduct a)` as the
-formal operator `T_ℓ - a ℓ` does. If `a 1 = 1`, `bridgeProduct a` is a formal
-`T_ℓ`-eigenvector modulo `3` and `3` kills `red (bridgeProduct a)`, then some maximal ideal of
-the Hecke algebra contains `3` and every `T_ℓ - a ℓ`. -/
+/-- Let `N ≠ 0`, and let `red` be a reduction map from integral power series to a module `M` over
+the Hecke algebra away from the level, which kills the series divisible by `3`, detects
+`3`-divisibility of the first coefficient, and on which `T_ℓ - a ℓ` acts on
+`red (bridgeProduct a)` as the formal operator `T_ℓ - a ℓ` does. If `a 1 = 1`, `bridgeProduct a`
+is a formal `T_ℓ`-eigenvector modulo `3` and `3` kills `red (bridgeProduct a)`, then some maximal
+ideal of the Hecke algebra contains `3` and every `T_ℓ - a ℓ`. -/
 theorem exists_isMaximal_three_mem_heckeT_sub_mem {N : ℕ} [NeZero N] {a : ℕ → ℤ}
     (h1 : a 1 = 1)
     (hT : ∀ (ℓ : ℕ), ℓ.Prime → ¬ ℓ ∣ N → ∀ n : ℕ, (3 : ℤ) ∣ PowerSeries.coeff n
@@ -720,14 +681,13 @@ end CuspForm.FormalHeckeReduction
 namespace CuspForm
 
 open FormalHeckeReduction in
-/-- A lattice realization of `bridgeProduct a` with `a 1 = 1` gives a reduction module for the
-Hecke algebra away from the level: the integral lattice modulo `3`, with a reduction map from
-integral power series that kills the series divisible by `3`, detects `3`-divisibility of the
-first coefficient, is killed by `3` at `bridgeProduct a`, and on which `T_ℓ - a ℓ` acts on
-`bridgeProduct a` as the formal operator `T_ℓ - a ℓ` does. -/
+/-- For `N ≠ 0`, a lattice realization of `bridgeProduct a` with `a 1 = 1` gives some module `M`
+over the Hecke algebra away from the level (in the proof, the integral lattice modulo `3`) with a
+reduction map from integral power series that kills the series divisible by `3`, detects
+`3`-divisibility of the first coefficient, is killed by `3` at `bridgeProduct a`, and on which
+`T_ℓ - a ℓ` acts on `bridgeProduct a` as the formal operator `T_ℓ - a ℓ` does. -/
 theorem exists_reductionModule_of_isLatticeRealized {N : ℕ} [NeZero N]
-    (_hN : CuspForm.HasIntegralStructure N 2) {a : ℕ → ℤ} (h1 : a 1 = 1)
-    (hreal : CuspForm.IsLatticeRealized N a) :
+    {a : ℕ → ℤ} (h1 : a 1 = 1) (hreal : CuspForm.IsLatticeRealized N a) :
     ∃ (M : Type) (_ : AddCommGroup M) (_ : Module (CuspForm.heckeAlgebra N 2 {ℓ | ℓ ∣ N}) M)
       (red : PowerSeries ℤ → M),
       (∀ g, (∀ n, (3 : ℤ) ∣ PowerSeries.coeff n g) → red g = 0) ∧
