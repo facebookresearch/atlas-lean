@@ -19,7 +19,6 @@ public import Mathlib.NumberTheory.Harmonic.Defs
 public import Mathlib.NumberTheory.Bernoulli
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import MathlibExt.NumberTheory.GeneralizedHarmonicGamma
-public import MathlibExt.NumberTheory.HyperharmonicPrimeSumsAlternatingHyperharmonicTypeIIIIsEquivalent
 
 /-!
 # Sums over primes II (statements)
@@ -27,12 +26,11 @@ public import MathlibExt.NumberTheory.HyperharmonicPrimeSumsAlternatingHyperharm
 Statement-only targets from Rusen Li, *Sums over Primes II*: the asymptotic of hyperharmonic
 numbers, the asymptotics of the `n`-th (squarefree) number with
 exactly `k` prime factors, two power-log summation asymptotics, the explicit formulas and
-asymptotics of the generalized (alternating) hyperharmonic numbers `H_n^{(p,r)} and
+asymptotics of the generalized (alternating) hyperharmonic numbers `H_n^{(p,r)}` and
 `H_n^{(p,r,i)}` (`i = 1, 2, 3`), and the asymptotics of sums over primes and over squarefree
 numbers with `k` prime factors weighted by powers of these numbers. The asymptotic of the type III
 numbers `H_n^{(p,r,3)}`, `alternatingHyperharmonic_typeIII_isEquivalent`, is not a target here:
-it is proved in
-`MathlibExt.NumberTheory.HyperharmonicPrimeSumsAlternatingHyperharmonicTypeIIIIsEquivalent`.
+it is proved in `MathlibExt.NumberTheory.AlternatingHyperharmonicTypeIIISquarefree`.
 -/
 
 namespace MetaMathlibExt
