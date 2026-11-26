@@ -16,3 +16,4 @@ The genetics of continuously varying traits: decomposition of genetic variance, 
 - [Pedigree kinship and inbreeding](pedigree-kinship-and-inbreeding/README.md)
 
 - [Optimal selection indices](optimal-selection-indices/README.md)
+- [Stability under a time varying g matrix](stability-under-a-time-varying-g-matrix/README.md)

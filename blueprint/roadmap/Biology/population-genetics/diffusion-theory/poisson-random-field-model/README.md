@@ -18,3 +18,6 @@
 
 - [The Poisson random field as the stationary limit of immigrating Wright–Fisher diffusions](poisson-random-field-as-the-stationary-limit-of.md)
 - [Diffusion observables averaged over a distribution of fitness effects](averages-over-a-distribution-of-fitness-effects.md)
+- [Coalescent dual representation of the non-equilibrium allele frequency spectrum](coalescent-dual-representation-of-the-non-equilibrium-allele-frequency-spectrum.md)
+- [Expected segregating sites during build-up from a monomorphic state](expected-segregating-sites-during-build-up-from-a-monomorphic-state.md)
+- [Non-equilibrium allele frequency spectrum](non-equilibrium-allele-frequency-spectrum.md)
