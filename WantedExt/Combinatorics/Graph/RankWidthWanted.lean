@@ -11,13 +11,15 @@ module
 public import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.SimpleGraph.RankWidthCliqueWidth
 public import MathlibExt.Combinatorics.SimpleGraph.TreeDecomposition
+public import MathlibExt.Combinatorics.Graph.RankWidthHasRankWidthAtMost
 
 /-!
 # Rank-width: wanted theorems
 
-Central theorems on rank-width whose proofs are deferred: the upper bound on rank-width in terms
-of clique-width (Oum–Seymour), vertex-minor monotonicity, the bound of rank-width by tree-width, and
-the excluded vertex-minor theorem.
+Central theorems on rank-width whose proofs are deferred: vertex-minor monotonicity, the bound of
+rank-width by tree-width, and the excluded vertex-minor theorem. The upper bound on rank-width in
+terms of clique-width (Oum–Seymour) is in
+`MathlibExt.Combinatorics.Graph.RankWidthHasRankWidthAtMost`.
 
 ## References
 
@@ -34,13 +36,6 @@ the excluded vertex-minor theorem.
 namespace SimpleGraph
 
 variable {V : Type*} [Fintype V]
-
-/-- **Rank-width is at most clique-width (Oum–Seymour).** If a finite graph has clique-width at
-most `k`, it has rank-width at most `k`; this is the inequality `rw(G) ≤ cw(G)` of Oum and
-Seymour, *Approximating clique-width and branch-width*, J. Combin. Theory Ser. B 96 (2006),
-Proposition 6.3 (also Oum, arXiv:1601.03800v2, Theorem 2.1). -/
-theorem_wanted HasCliqueWidthAtMost.hasRankWidthAtMost {G : SimpleGraph V} {k : ℕ}
-    (h : G.HasCliqueWidthAtMost k) : G.HasRankWidthAtMost k
 
 /-- **Rank-width does not increase under vertex-minors.** If `H` is a vertex-minor of the finite
 graph `G` and `G` has rank-width at most `k`, then so does `H` (Oum, *Rank-width and
