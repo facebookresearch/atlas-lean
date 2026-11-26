@@ -9,29 +9,31 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.Combinatorics.GDifferenceBases
+import MathlibExt.Combinatorics.Additive.GDifferenceBases
+import Mathlib.Topology.Order.OrderClosed
 
-/-! # Tests for difference bases of squares of finite fields -/
+/-! # Tests for convergence of the normalized difference basis numbers -/
 
 namespace MathlibExtTest.Combinatorics.GDifferenceBases
 
-open MetaMathlibExt Filter Topology
+open MetaMathlibExt Filter
+open scoped Topology
 
-instance : Fact (Nat.Prime 3) := ⟨by decide⟩
+-- The normalized `1`-difference basis numbers converge to a positive limit.
+example : ∃ c : ℝ, 0 < c ∧
+    Tendsto (fun n : ℕ => (diffBasisNumber 1 n : ℝ) / Real.sqrt n) atTop (𝓝 c) :=
+  tendsto_diffBasisNumber_div_sqrt 1 one_pos
 
-open Classical in
--- The normalized difference basis numbers converge for the smallest odd prime.
-example : Tendsto (fun t : ℕ =>
-    (groupDiffBasisNumber 1 (GaloisField 3 t × GaloisField 3 t) : ℝ) / (3 : ℝ) ^ t)
-    atTop (𝓝 1) :=
-  tendsto_groupDiffBasisNumber_galoisField_prod 3 (by norm_num)
-
-open Classical in
--- Hence the ratio minus one tends to zero.
-example : Tendsto (fun t : ℕ =>
-    (groupDiffBasisNumber 1 (GaloisField 3 t × GaloisField 3 t) : ℝ) / (3 : ℝ) ^ t - 1)
-    atTop (𝓝 0) := by
-  have h := tendsto_groupDiffBasisNumber_galoisField_prod 3 (by norm_num)
-  have h2 := h.sub_const 1
-  simpa using h2
+-- The limit for `g = 1` is at least `√2`, by the interval lower bound.
+example : ∃ c : ℝ, Real.sqrt 2 ≤ c ∧
+    Tendsto (fun n : ℕ => (diffBasisNumber 1 n : ℝ) / Real.sqrt n) atTop (𝓝 c) := by
+  obtain ⟨c, -, hc_lim⟩ := tendsto_diffBasisNumber_div_sqrt 1 one_pos
+  refine ⟨c, ?_, hc_lim⟩
+  have hev : ∀ᶠ n : ℕ in atTop,
+      Real.sqrt 2 ≤ (diffBasisNumber 1 n : ℝ) / Real.sqrt n := by
+    filter_upwards [eventually_gt_atTop 1] with n hn
+    have h := sqrt_two_mul_le_diffBasisNumber_div_sqrt 1 n hn
+    simpa using h
+  exact ge_of_tendsto hc_lim hev
 
 end MathlibExtTest.Combinatorics.GDifferenceBases
