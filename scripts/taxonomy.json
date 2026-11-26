@@ -10598,6 +10598,7 @@
   "MathlibExt/Combinatorics/Additive/SumsetsMinimumDistinctTerms": {"to": "Combinatorics/additive-combinatorics/sumsets-inverse-theorems", "title": "Sumsets with at least r distinct terms"},
   "MathlibExt/Combinatorics/Additive/SymmetricBasis": {"to": "Combinatorics/additive-combinatorics/additive-bases", "title": "Rohrbach's symmetric basis theorem"},
   "MathlibExt/Combinatorics/Additive/Szemeredi": {"to": "Combinatorics/additive-combinatorics/progressions-dense-sets", "title": "Szemerédi's theorem"},
+  "MathlibExt/Combinatorics/Additive/ThickBhSets": {"to": "Combinatorics/additive-combinatorics/sidon-sets-difference-sets", "title": "Constructions of thick B_h-sets"},
   "MathlibExt/Combinatorics/Additive/ThreeAPFreeComplementProgression": {"to": "Combinatorics/additive-combinatorics/progressions-dense-sets", "title": "Progression-free sets meeting every infinite progression"},
   "MathlibExt/Combinatorics/Additive/UpperDensitySumsetPartition": {"to": "Combinatorics/additive-combinatorics/additive-bases", "title": "Splitting sets with dense sumsets"},
   "MathlibExt/Combinatorics/Additive/VanDerWaerdenAP": {"to": "Combinatorics/ramsey-theory/van-der-waerden-theorems", "title": "Van der Waerden's theorem"},
