@@ -4,9 +4,7 @@ Topics added since this subject's fields were last revised.
 
 - [Adelic Lift](adelic-lift/README.md)
 - [Adelic Periodization](adelic-periodization/README.md)
-- [Arch Flow Chart](arch-flow-chart/README.md)
 - [Finite Ramification Conductors](finite-ramification-conductors/README.md)
-- [Fn Twist](fn-twist/README.md)
 - [Fundamental Domain Exact Volume](fundamental-domain-exact-volume/README.md)
 - [Hecke Operator](hecke-operator/README.md)
 - [Hecke UGamma H](hecke-ugamma-h/README.md)
