@@ -410,6 +410,7 @@
 "AlgebraicCurve.absLogHeight": "c82d2c658f4c21c3",
 "AlgebraicCurve.absLogHeight_pair_eq_absLogHeight₁": "4408f07978a2821e",
 "AlgebraicCurve.absLogHeight₁_root_le_coeff": "0d6113726996eae7",
+"AlgebraicCurve.exists_wittVector_lift_of_normalFormOrder": "cae727fb22d02651",
 "AlgebraicGeometry.AlgebraicSpaceChowComparison.OrdinaryChow": "5670fe3853397e3b",
 "AlgebraicGeometry.AlgebraicSpaceChowComparison.SpaceDictionary": "051671823ce5e35e",
 "AlgebraicGeometry.AlgebraicSpaceChowComparison.SpacePoint": "87267dd5e9d85fed",
