@@ -180,17 +180,6 @@ private theorem two_mul_lucasV_add (L : LucasSequenceParams) (m n : ℕ) :
     rw [show m + (n + 2) = m + n + 2 by omega, hVm, hVn, lucasU_add_two L n]
     linear_combination L.p * ih1 - L.q * ih0
 
-/-- Doubling formula $U_{2n} = U_n V_n$ for Lucas sequences. -/
-private theorem lucasU_two_mul (L : LucasSequenceParams) (n : ℕ) :
-    lucasU L (2 * n) = lucasU L n * lucasV L n := by
-  have h :=
-    MathlibExt.NumberTheory.Recurrences.KruchininPerminovaHadamardWanted.two_mul_lucasU_add
-      L n n
-  rw [show n + n = 2 * n by omega] at h
-  have h2 : 2 * lucasU L (2 * n) = 2 * (lucasU L n * lucasV L n) := by
-    linear_combination h
-  omega
-
 /-- Doubling formula $V_{2n} = V_n^2 - 2Q^n$ for Lucas sequences. -/
 private theorem lucasV_two_mul (L : LucasSequenceParams) (n : ℕ) :
     lucasV L (2 * n) = lucasV L n ^ 2 - 2 * L.q ^ n := by
@@ -258,7 +247,7 @@ private theorem frobenius_congs_of_euler_data
     rw [← hM] at hevenZ
     exact (Int.even_natCast M).mp hevenZ
   have hM2 : 2 * (M / 2) = M := Nat.two_mul_div_two_of_even hMeven
-  have hUd := lucasU_two_mul L (M / 2)
+  have hUd := lucasU_two_mul_eq_lucasU_mul_lucasV L (M / 2)
   rw [hM2] at hUd
   have hVd := lucasV_two_mul L (M / 2)
   rw [hM2] at hVd
