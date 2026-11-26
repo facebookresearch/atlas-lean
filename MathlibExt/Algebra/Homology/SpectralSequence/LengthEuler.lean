@@ -19,10 +19,13 @@ public import Mathlib.Algebra.Category.ModuleCat.Abelian
 /-!
 # Page length Euler invariance
 
-Finite lengths on the second page pass through the page-homology
-transitions. Each homological page differential lowers total degree by
-one, so the two differential-range sums in the Euler characteristic cancel.
-Bicomplex terms and first-page objects need not have finite length.
+For a homological spectral sequence of modules over a commutative ring,
+suppose the second page is zero outside a finite rectangle and its modules
+inside the rectangle have finite length. These two properties persist on
+every later page, and the signed length sum over the rectangle is invariant.
+Each page differential lowers total degree by one, so the differential-image
+contributions cancel. The hypotheses concern the second page; no finite-length
+condition is imposed on first-page modules or underlying bicomplex terms.
 -/
 
 @[expose] public section
@@ -40,12 +43,20 @@ variable {R : Type u} [CommRing R]
   (E : SpectralSequence (ModuleCat.{v} R)
     (fun r : ℤ => ComplexShape.spectralSequenceNat ⟨-r, r - 1⟩) 1)
 
-/-- The literal alternating length sum over a finite rectangle of an actual page. -/
+/-- For a homological spectral sequence `E` of modules over a commutative ring
+`R` and page `r ≥ 1`, the integer Euler sum over `0 ≤ p ≤ m`, `0 ≤ q ≤ n`,
+with summand `(-1)^(p+q) * (Module.length R ((E.page r hr).X (p,q))).toNat`.
+The definition uses `Module.length.toNat`; the invariance theorems require
+finite module lengths and vanishing outside this rectangle. -/
 def lengthEuler (r : ℤ) (hr : 1 ≤ r) (m n : ℕ) : ℤ :=
   ∑ p ∈ Finset.range (m + 1), ∑ q ∈ Finset.range (n + 1),
     (-1 : ℤ) ^ (p + q) * (Module.length R ((E.page r hr).X (p, q))).toNat
 
-/-- A real page homology transition retains finite support, finite lengths and the Euler sum. -/
+/-- Let `E` be a homological spectral sequence of modules over a commutative
+ring `R`. If page `r ≥ 1` vanishes whenever `p > m` or `q > n`, and every module
+inside `0 ≤ p ≤ m`, `0 ≤ q ≤ n` has finite `R`-length, page `r + 1` has
+the same support bound and finite-length property, and its rectangle Euler
+sum equals that of page `r`. The page differential lowers `p + q` by one. -/
 theorem lengthEuler_succ (r : ℤ) (hr : 1 ≤ r) (m n : ℕ)
     (hlen : ∀ p ≤ m, ∀ q ≤ n, Module.length R ((E.page r hr).X (p, q)) ≠ ⊤)
     (hzero : ∀ p q, m < p ∨ n < q → IsZero ((E.page r hr).X (p, q))) :
@@ -92,7 +103,11 @@ theorem lengthEuler_succ (r : ℤ) (hr : 1 ≤ r) (m n : ℕ)
       simp only [lengthEuler, s, ε, Finset.sum_product]
     exact hNext.trans (he.symm.trans hCurrent.symm)
 
-/-- From E2 onward, actual pages retain finite lengths, finite support and the Euler sum. -/
+/-- Let `E` be a homological spectral sequence of modules over a commutative
+ring `R`. Assume the second page vanishes whenever `p > m` or `q > n`, and all
+its modules in `0 ≤ p ≤ m`, `0 ≤ q ≤ n` have finite `R`-length. For every
+`t : ℕ`, page `t + 2` has the same support bound and finite-length property,
+and its rectangle Euler sum equals the second-page sum. -/
 theorem lengthEuler_from_secondPage (m n : ℕ)
     (hlen : ∀ p ≤ m, ∀ q ≤ n, Module.length R ((E.page 2 (by omega)).X (p, q)) ≠ ⊤)
     (hzero : ∀ p q, m < p ∨ n < q → IsZero ((E.page 2 (by omega)).X (p, q))) (t : ℕ) :
