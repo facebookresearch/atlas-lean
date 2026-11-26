@@ -1,0 +1,21 @@
+# Computing a Nash equilibrium of a two-player game is PPAD-complete
+
+The class PPAD consists of total search problems polynomial-time reducible to End-of-Line: given Boolean circuits $S, P$ on $\{0,1\}^k$ with $P(0^k) = 0^k \ne S(0^k)$, find a vertex $x \ne 0^k$ that is a source or sink of the directed graph with arcs $x \to S(x)$ whenever $P(S(x)) = x$. Computing a Nash equilibrium of a game with three or more players (exactly, or $\varepsilon$-approximately for $\varepsilon = 2^{-\mathrm{poly}}$) is PPAD-complete, and computing a Nash equilibrium of a two-player (bimatrix) game is PPAD-complete. Moreover, for two-player games it is PPAD-hard to compute an $\varepsilon$-approximate Nash equilibrium for $\varepsilon = 1/\mathrm{poly}(n)$, so no fully polynomial-time approximation scheme exists unless PPAD $\subseteq$ P.
+
+## Proof sketch
+
+Reduce End-of-Line to finding a Brouwer fixed point of a piecewise-linear function on a three-dimensional cube discretized into small cells (via Sperner-type colourings), then simulate the arithmetic of this function by graphical games with gadget players implementing addition, multiplication by constants and comparison; equilibria of the graphical game encode approximate fixed points. Multiplayer graphical games reduce to two-player games through a generalized matching-pennies construction that forces each player to spread probability over groups of strategies, and the precision analysis shows inverse-polynomial approximation already suffices for hardness.
+
+## Depends on
+
+- [Nash's theorem](../exists-is-mixed-nash.md)
+- [Mixed Nash equilibrium](../is-mixed-nash.md)
+
+## Proof depends on
+
+- [Nash's theorem](../exists-is-mixed-nash.md)
+
+## Sources
+
+- C. Daskalakis, P. W. Goldberg, C. H. Papadimitriou, "The Complexity of Computing a Nash Equilibrium", SIAM Journal on Computing 39(1) (2009); STOC 2006.
+- X. Chen, X. Deng, S.-H. Teng, "Settling the Complexity of Computing Two-Player Nash Equilibria", Journal of the ACM 56(3) (2009); FOCS 2006.

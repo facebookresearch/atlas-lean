@@ -1,0 +1,16 @@
+# String Attractors and Repetitiveness Measures
+
+- [String attractors](string-attractor.md)
+- [Computing small string attractors is NP-complete](attractor-np-completeness.md)
+- [Number $r$ of runs in the Burrows–Wheeler transform](bwt-run-count.md)
+- [Size $z$ of the greedy LZ77 factorization](lz77-factorization-size.md)
+- [Substring complexity $\delta$](substring-complexity.md)
+- [Thue–Morse words have smallest attractors of size four](thue-morse-gamma.md)
+- [Grammar size $g$ and bidirectional macro scheme size $b$](grammar-and-macro-measures.md)
+- [Substring complexity is at most the attractor size](delta-at-most-gamma.md)
+- [Substring complexity is computable in linear time](delta-linear-time.md)
+- [Dictionary compressors induce string attractors](compressors-induce-attractors.md)
+- [Strings with $\gamma = \Omega(\delta\log(n/\delta))$](gamma-delta-separation.md)
+- [Universal compressed representations from string attractors](attractor-universal-index.md)
+- [Thue–Morse words separate $\gamma$ from $b$](thue-morse-macro-scheme.md)
+- [Strings are representable in $O(\delta\log(n/\delta))$ space, optimally](delta-optimal-space.md)

@@ -10,3 +10,7 @@ Hash tables (chaining, open addressing, cuckoo, perfect), universal hash familie
 - [Perfect hashing](perfect-hashing/README.md)
 - [Universal hashing](universal-hashing/README.md)
 - [Hashing analysis](hashing-analysis/README.md)
+- [Open Addressing Without Reordering](open-addressing-without-reordering/README.md)
+- [Random-Walk Insertion for d-ary Cuckoo Hashing](random-walk-cuckoo-insertion/README.md)
+- [Stable Hash Tables, Iceberg Hashing and Tiny Pointers](stable-and-tiny-pointer-hash-tables/README.md)
+- [Tombstones, Anti-Clustering and Graveyard Hashing](tombstones-and-anti-clustering/README.md)

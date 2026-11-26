@@ -17,3 +17,7 @@ Mathematical theory of learning from data, including the probabilistic modelling
 - [Algorithmic fairness](algorithmic-fairness/README.md)
 - [Distribution shift and robustness](distribution-shift-and-robustness/README.md)
 - [Transformers and language models](transformers-and-language-models/README.md)
+- [Calibration Distance and Sequential Calibration](calibration-distance-and-sequential-calibration/README.md)
+- [Language Generation in the Limit](language-generation-in-the-limit/README.md)
+- [Multicalibration and Multiaccuracy](multicalibration-and-multiaccuracy/README.md)
+- [Outcome Indistinguishability and Omniprediction](outcome-indistinguishability-and-omniprediction/README.md)

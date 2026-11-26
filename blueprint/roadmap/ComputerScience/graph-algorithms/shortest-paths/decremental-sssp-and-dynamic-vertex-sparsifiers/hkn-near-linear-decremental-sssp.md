@@ -1,0 +1,26 @@
+# Henzinger-Krinninger-Nanongkai: decremental SSSP in m^{1+o(1)} total update time via hopsets
+
+For undirected graphs with integer edge weights in $[1, W]$ and constant $\varepsilon > 0$ there is a randomized decremental $(1+\varepsilon)$-approximate SSSP data structure with total update time $m^{1 + o(1)}\log W$, against an oblivious adversary. The algorithm maintains a sparse $(h, \varepsilon)$-hopset $F$, a set of weighted edges such that for all $u, v$,
+
+$$
+\mathrm{dist}_G(u, v) \le \mathrm{dist}^{(h)}_{G \cup F}(u, v) \le (1 + \varepsilon)\,\mathrm{dist}_G(u, v),
+$$
+
+where $\mathrm{dist}^{(h)}$ is the minimum length of a path with at most $h$ edges and $h = n^{o(1)}$.
+
+## Proof sketch
+
+On $G \cup F$, distances are realized by paths with few hops, so a weighted, rounded variant of the Even-Shiloach tree that only tracks $h$-hop distances runs in time about $m h$ per distance scale. The hopset is built from a hierarchy of balls around randomly sampled centres, which is decremental-friendly because balls only shrink; its edges are maintained by Even-Shiloach trees of bounded depth. The random centres must not be revealed to the adversary, which is why the guarantee assumes obliviousness.
+
+## Depends on
+
+- [Even-Shiloach: exact decremental BFS trees in O(mD) total update time](even-shiloach-total-time.md)
+- [Decremental (1+eps)-approximate single-source shortest paths](decremental-approximate-sssp-problem.md)
+
+## Proof depends on
+
+- [Dense Dijkstra's algorithm](../dijkstra-s-algorithm/dijkstra.md)
+
+## Sources
+
+- Monika Henzinger, Sebastian Krinninger, Danupon Nanongkai, "Decremental Single-Source Shortest Paths on Undirected Graphs in Near-Linear Total Update Time", FOCS (2014); J. ACM 65(6) (2018), arXiv:1512.08148.

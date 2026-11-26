@@ -1,0 +1,27 @@
+# Maximum Nash welfare gives a tight Theta(1/sqrt(n)) maximin share guarantee
+
+Throughout, $N = \{1, \dots, n\}$ is a finite set of agents and $M$ a finite set of indivisible goods; agent $i$ has an additive valuation $v_i(S) = \sum_{g \in S} v_i(g)$ with $v_i(g) \ge 0$. Let $\mu_i$ denote the maximin share of agent $i$ for $n$ agents. Every maximum Nash welfare allocation $X$ satisfies
+
+$$
+v_i(X_i) \ge \frac{2}{1 + \sqrt{4n - 3}}\; \mu_i \quad \text{for every agent } i,
+$$
+
+and for every $n$ there are instances with a maximum Nash welfare allocation attaining this ratio for some agent; hence maximum Nash welfare is not $c$-MMS for any constant $c > 0$ independent of $n$.
+
+## Proof sketch
+
+Fix $i$ and a partition witnessing $\mu_i$. Using the local swap inequality for each $j \ne i$ bounds how much value (for $i$) any other bundle can hold relative to $v_i(X_i)$ and the largest good; a counting argument over the $n$ parts of $i$'s maximin partition then yields a quadratic inequality in $\mu_i / v_i(X_i)$ whose root is $(1 + \sqrt{4n-3})/2$. The matching family places one agent against $n - 1$ agents with concentrated valuations.
+
+## Depends on
+
+- [Maximum Nash welfare allocation](../../../not-yet-classified/part-01/max-nash-welfare/is-max-nash-welfare.md)
+- [Maximin share](../../../not-yet-classified/part-01/indivisible/maximin-share.md)
+- [Local swap inequality at a maximum Nash welfare allocation](mnw-local-swap-inequality.md)
+
+## Proof depends on
+
+- [Local swap inequality at a maximum Nash welfare allocation](mnw-local-swap-inequality.md)
+
+## Sources
+
+- I. Caragiannis, D. Kurokawa, H. Moulin, A. D. Procaccia, N. Shah, J. Wang, "The Unreasonable Fairness of Maximum Nash Welfare", ACM Transactions on Economics and Computation 7(3) (2019); EC 2016.

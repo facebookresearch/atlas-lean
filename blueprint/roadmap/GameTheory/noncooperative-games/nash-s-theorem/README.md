@@ -12,6 +12,7 @@ Brouwer's fixed-point theorem for products of simplices, by Nash's 1951 argument
 - [Iterated elimination of weakly dominated strategies depends on order](iterated-weak-dominance-depends-on-order.md)
 - [Support characterization of mixed best responses](support-characterization-of-mixed-best-responses.md)
 - [Pure deviations suffice to check a mixed Nash equilibrium](pure-deviations-suffice-for-mixed-nash-equilibrium.md)
+- [Complexity of Nash Equilibria: PPAD-Hardness and CLS](complexity-of-nash-equilibria-ppad-and-cls/README.md)
 
 ## Related topics
 

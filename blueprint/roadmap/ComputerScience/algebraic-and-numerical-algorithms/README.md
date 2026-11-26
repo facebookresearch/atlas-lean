@@ -17,3 +17,4 @@ Algorithms on numbers, polynomials and matrices: integer and polynomial multipli
 - [Solving linear congruences](solving-linear-congruences/README.md)
 - [Strassen algorithm](strassen-algorithm/README.md)
 - [Lattice basis reduction](lattice-basis-reduction/README.md)
+- [Smoothed Analysis of the Simplex Method](smoothed-analysis-of-the-simplex-method/README.md)

@@ -1,0 +1,16 @@
+# Extended and Proportional Justified Representation
+
+- [Cohesive group of voters in an approval election](cohesive-group-approval-election.md)
+- [Marginal contributions of a committee under proportional approval voting sum to the number of represented voters](pav-marginal-contribution-identity.md)
+- [Thiele methods for approval committee elections](thiele-methods.md)
+- [Extended justified representation](extended-justified-representation.md)
+- [Proportional justified representation](proportional-justified-representation.md)
+- [Proportional approval voting satisfies extended justified representation](pav-satisfies-ejr.md)
+- [Extended justified representation implies proportional, which implies justified representation](ejr-implies-pjr-implies-jr.md)
+- [EJR+ and PJR+ proportionality axioms](ejr-plus-and-pjr-plus.md)
+- [Sequential Phragmén satisfies proportional justified representation](sequential-phragmen-satisfies-pjr.md)
+- [Verifying extended or proportional justified representation is coNP-complete](ejr-pjr-verification-conp-complete.md)
+- [Proportional approval voting is the only Thiele method satisfying EJR](pav-unique-thiele-method-ejr.md)
+- [Leximax Phragmén satisfies PJR and sequential Phragmén is committee monotone](phragmen-leximax-pjr-committee-monotone.md)
+- [EJR+ strengthens EJR, is verifiable in polynomial time, and is satisfied by PAV and equal shares](ejr-plus-verification-and-satisfaction.md)
+- [The Greedy Justified Candidate Rule satisfies EJR+ in polynomial time](greedy-justified-candidate-rule-ejr-plus.md)

@@ -18,3 +18,6 @@ Polynomial-time algorithms with proved approximation ratios for NP-hard optimiza
 
 - [Approximation ratio of the greedy superstring algorithm](approximation-ratio-of-the-greedy-superstring-algorithm.md)
 - [A fully polynomial-time approximation scheme for knapsack](fptas-for-the-knapsack-problem.md)
+- [Extension Complexity of the Matching Polytope](matching-polytope-extension-complexity/README.md)
+- [Maximum-Entropy Rounding for Metric TSP](max-entropy-metric-tsp/README.md)
+- [Tree and Connectivity Augmentation](tree-and-connectivity-augmentation/README.md)

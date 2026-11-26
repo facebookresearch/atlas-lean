@@ -14,3 +14,4 @@ Walks, paths and cycles in graphs, Eulerian and Hamiltonian cycles, and vertex a
 - [Říha's cycle lemma](ha-s-cycle-lemma/README.md)
 - [Fleischner's theorem](fleischner-s-theorem/README.md)
 - [Concatenation of paths meeting at one endpoint is a path](is-path-append-of-is-path.md)
+- [Cactus Representations and Sparse Connectivity Certificates](cactus-representation-and-sparse-certificates/README.md)

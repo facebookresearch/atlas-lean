@@ -11,6 +11,9 @@ Single-source and all-pairs shortest paths: Dijkstra, Bellman-Ford, DAG relaxati
 - [Shortest paths in directed acyclic graphs](shortest-paths-in-directed-acyclic-graphs/README.md)
 
 - [Slack and the critical path of a project network](slack-and-the-critical-path.md)
+- [Decremental SSSP and Dynamic Vertex Sparsifiers](decremental-sssp-and-dynamic-vertex-sparsifiers/README.md)
+- [Near-Linear Negative-Weight Single-Source Shortest Paths](near-linear-negative-weight-sssp/README.md)
+- [Strongly Polynomial Negative-Weight Shortest Paths](strongly-polynomial-negative-sssp/README.md)
 
 ## Related topics
 

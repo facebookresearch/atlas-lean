@@ -10,3 +10,4 @@ Graph products, line graphs and other constructions, together with special famil
 - [Zig-zag product and explicit expanders](zig-zag-product-and-explicit-expanders/README.md)
 - [Graphs that are line graphs](is-line-graph.md)
 - [Lexicographic product of graphs](lex-product.md)
+- [Expander Decomposition and Pruning](expander-decomposition-and-pruning/README.md)

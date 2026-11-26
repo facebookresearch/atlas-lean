@@ -13,6 +13,9 @@ The [revelation principle](revelation-principle/README.md) reduces the design pr
 - [Bilateral trade impossibility (dominant-strategy form)](bilateral-trade-impossibility.md)
 - [Characterization of proper scoring rules](characterization-of-proper-scoring-rules.md)
 - [Scoring rules and properness for finite outcomes](remaining-clauses-of-scoring-rules-and-properness.md)
+- [Combinatorial and Multi-Agent Contracts](combinatorial-and-multi-agent-contracts/README.md)
+- [Hidden-Action Principal-Agent Contracts](hidden-action-principal-agent-contracts/README.md)
+- [Multi-Item Revenue Maximization and Simple Mechanisms](multi-item-revenue-maximization/README.md)
 
 ## Related topics
 

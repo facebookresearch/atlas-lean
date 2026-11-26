@@ -9,6 +9,11 @@ Cryptographic schemes and their correctness and security reductions: the game-ba
 - [Signatures, identification and zero knowledge](signatures-and-protocols/README.md)
 - [Differential privacy](differential-privacy/README.md)
 - [Laplace and exponential mechanisms](laplace-and-exponential-mechanisms/README.md)
+- [Fingerprinting Lower Bounds and Adaptive Data Analysis](fingerprinting-lower-bounds-and-adaptive-data-analysis/README.md)
+- [Private Convex Optimization and Noisy SGD](private-convex-optimization-and-noisy-sgd/README.md)
+- [Shuffle Model and Privacy Amplification](shuffle-model-and-privacy-amplification/README.md)
+- [Trade-off Functions and Gaussian Differential Privacy](trade-off-functions-and-gaussian-differential-privacy/README.md)
+- [Zero-Concentrated Differential Privacy](zero-concentrated-differential-privacy/README.md)
 
 ## Related topics
 

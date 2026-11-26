@@ -1,0 +1,19 @@
+# Tree chains with shifts and rebuilds over recursive sparsified core graphs
+
+Let $d \ge 1$ and $k = m^{1/d}$. A $d$-level tree chain of $G$ is a sequence $\mathcal{G} = \{G_0 = G, G_1, \ldots, G_d\}$ where for each $i < d$ the graph $G_i$ carries a family of $k$ low-stretch forests $\{(T_j, F_j, \widetilde{\mathrm{str}}^j)\}_{j=0}^{k-1}$ as in *Multiplicative weights give k low-stretch forests that are good on average for every edge*, a shift index $\mathrm{shift}_i \in \{0, \ldots, k-1\}$, a $(\gamma_\ell, \gamma_c)$-sparsified core graph $\mathcal{S}(G_i, F_j)$ for each $j$, and
+
+$$
+G_{i+1} = \mathcal{S}(G_i, F_{\mathrm{shift}_i}),
+$$
+
+while $G_d$ carries $\widetilde{O}(|E(G_d)|)$ low-stretch trees. The chain determines a spanning tree $T^{\mathcal{G}}$ of $G$, the union of preimages of the selected forests. The operation $\mathrm{Rebuild}(i)$ reinitializes $G_i, \ldots, G_d$, and $\mathrm{Shift}(i)$ replaces $\mathrm{shift}_i$ by $\mathrm{shift}_i + 1 \bmod k$ and reinitializes $G_{i+1}, \ldots, G_d$. A branching variant keeps $\widetilde{O}(1)$ forests per level, giving $\widetilde{O}(1)^d$ chains in total.
+
+## Depends on
+
+- [Multiplicative weights give k low-stretch forests that are good on average for every edge](mwu-low-stretch-forest-family.md)
+- [Sparsified core graphs with short low-congestion embeddings](sparsified-core-graph-embedding.md)
+
+## Sources
+
+- Jan van den Brand, Li Chen, Rasmus Kyng, Yang P. Liu, Richard Peng, Maximilian Probst Gutenberg, Sushant Sachdeva, Aaron Sidford, "A Deterministic Almost-Linear Time Algorithm for Minimum-Cost Flow", FOCS (2023), arXiv:2309.16629.
+- Li Chen, Rasmus Kyng, Yang P. Liu, Richard Peng, Maximilian Probst Gutenberg, Sushant Sachdeva, "Maximum Flow and Minimum-Cost Flow in Almost-Linear Time", FOCS (2022), arXiv:2203.00671.

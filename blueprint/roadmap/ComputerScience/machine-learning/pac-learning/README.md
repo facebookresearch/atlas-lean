@@ -24,3 +24,5 @@ Valiant's model of learning from random examples (error, learners, version space
 - [DS dimension characterizes multiclass PAC learnability](ds-dimension-characterizes-multiclass-pac-learnability.md)
 - [Exact learning from queries](exact-learning-from-queries/README.md)
 - [Universal learning rates trichotomy](universal-learning-rates-trichotomy.md)
+- [Replicability and private learning](replicability-and-private-learning/README.md)
+- [Universal, multiclass and partial-concept learning](universal-multiclass-and-partial-learning/README.md)

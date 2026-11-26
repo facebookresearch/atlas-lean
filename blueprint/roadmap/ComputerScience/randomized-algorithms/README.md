@@ -14,3 +14,7 @@ Algorithms whose identity is their use of randomness or whose analysis averages 
 - [Streaming and memory hierarchy models](streaming-and-memory-hierarchy-models/README.md)
 - [Monte Carlo estimation and variance reduction](monte-carlo-estimation/README.md)
 - [Probabilistic analysis tools](probabilistic-analysis-tools/README.md)
+- [Johnson-Lindenstrauss Optimality and Metric Embeddings](johnson-lindenstrauss-optimality-and-metric-embeddings/README.md)
+- [Optimal Distinct Elements and Lp Sampling](optimal-distinct-elements-and-lp-sampling/README.md)
+- [Palette Sparsification and Sublinear Coloring](palette-sparsification-and-sublinear-coloring/README.md)
+- [Semi-Streaming Matching and Vertex Cover](semi-streaming-matching-and-vertex-cover/README.md)

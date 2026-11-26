@@ -12,3 +12,4 @@ Numerical and polynomial invariants of graphs such as degree sequences, arborici
 - [Erdős–Gallai theorem](erdos-gallai.md)
 
 - [Šoltés's problem for the Wiener index](soltes-problem-for-the-wiener-index.md)
+- [Theta Sandwich and Perfect Graph Optimization](theta-sandwich-and-perfect-graph-optimization/README.md)

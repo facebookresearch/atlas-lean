@@ -1,0 +1,21 @@
+# Efficient algorithms cannot answer quadratically many adaptive statistical queries
+
+Assuming one-way functions exist, for every polynomial-time mechanism that receives $n$ samples from an unknown distribution, there is a polynomial-time analyst that, after $O(n^2)$ adaptively chosen statistical queries, causes the mechanism to give an answer with error at least a constant, with constant probability. Together with the $\tilde O(n^2)$ upper bound obtained from differential privacy, this shows that $\tilde\Theta(n^2)$ adaptive queries is the limit for efficient mechanisms; information-theoretically, with unbounded computation, exponentially many queries can be answered.
+
+## Proof sketch
+
+The analyst runs an **interactive fingerprinting code**: it adaptively issues queries whose answers on the codewords of the sample's users let it accuse users whose data influenced the answers, with each query's bias chosen from the Tardos distribution and accused users dropped from future queries. An accurate mechanism must leak, after $O(n^2)$ queries, enough to accuse every user, after which it has no information to answer correctly. Computational hardness (encrypting the data universe with a pseudorandom function) prevents the mechanism from answering by inspecting the queries themselves.
+
+## Depends on
+
+- [Tardos codes: optimal fully collusion-resilient fingerprinting](tardos-fingerprinting-code.md)
+- [Differential privacy answers quadratically many adaptive statistical queries efficiently](adaptive-statistical-queries-via-privacy.md)
+
+## Proof depends on
+
+- [Tardos codes: optimal fully collusion-resilient fingerprinting](tardos-fingerprinting-code.md)
+- [Differential privacy answers quadratically many adaptive statistical queries efficiently](adaptive-statistical-queries-via-privacy.md)
+
+## Sources
+
+- T. Steinke, J. Ullman, "Interactive Fingerprinting Codes and the Hardness of Preventing False Discovery", COLT (2015), arXiv:1410.1228.

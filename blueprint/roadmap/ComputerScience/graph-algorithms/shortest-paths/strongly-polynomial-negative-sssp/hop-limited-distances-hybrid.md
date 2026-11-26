@@ -1,0 +1,28 @@
+# Computing h-hop distances by alternating Dijkstra and Bellman-Ford rounds in O(h(m + n log n)) time
+
+Let $G$ be in split form with all non-hop edges of nonnegative length. For every source set $S\subseteq V$ and $h\in\mathbb{N}$, the distances $d^h(S,v)$ for all $v\in V$, together with walks attaining them, can be computed deterministically in $O(h(m+n\log n))$ time. Moreover:
+
+1. if $d^{h+1}(s,v)=d^h(s,v)$ for every $v\in N$, then $d(s,v)=d^{h+1}(s,v)$ for every $v$, and if $G$ has no negative cycle this happens for some $h\le k$;
+2. for every $S\subseteq V$ and $r\in\mathbb{N}$, the price functions $\phi_1(v)=d^r(S,v)$ and $\phi_2(v)=-d^r(v,S)$ are valid (they create no new negative edge).
+
+## Proof sketch
+
+The recurrence for $d^{h+1}$ is evaluated by one Dijkstra computation on an auxiliary graph seeded with the values $d^h(s,u)+\ell(u,u')$ at heads $u'$ of negative edges, so each additional hop costs $O(m+n\log n)$. Item 1 follows because any walk with more hops can be shortened through the recurrence without changing the minimum, and a shortest simple path has at most $k$ hops. For item 2, every non-negative edge $(u,v)$ satisfies $d^r(S,v)\le d^r(S,u)+\ell(u,v)$ since appending a non-hop edge does not increase the hop count, which is the validity condition; the second potential is symmetric.
+
+## Depends on
+
+- [Negative vertices, h-hop distances and the negative h-hop reach](negative-vertices-and-hop-distances.md)
+- [ElimNeg: the Dijkstra-Bellman-Ford hybrid runs in time proportional to the negative-edge counts of shortest paths](../near-linear-negative-weight-sssp/elimneg-dijkstra-bellman-ford-hybrid.md)
+- [Dijkstra's algorithm with a binary heap](../../graph-algorithm-bounds/dijkstra-s-algorithm-with-a-binary-heap.md)
+
+## Proof depends on
+
+- [Negative vertices, h-hop distances and the negative h-hop reach](negative-vertices-and-hop-distances.md)
+- [Dijkstra's algorithm with a binary heap](../../graph-algorithm-bounds/dijkstra-s-algorithm-with-a-binary-heap.md)
+
+## Sources
+
+- Yefim Dinitz, Rotem Itzhak, "Hybrid Bellman-Ford-Dijkstra algorithm", Journal of Discrete Algorithms 42 (2017).
+- Aaron Bernstein, Danupon Nanongkai, Christian Wulff-Nilsen, "Negative-Weight Single-Source Shortest Paths in Near-linear Time", FOCS (2022), arXiv:2203.03456.
+- Jeremy T. Fineman, "Single-Source Shortest Paths with Negative Real Weights in Õ(mn^(8/9)) Time", STOC (2024), arXiv:2311.02520.
+- Yufan Huang, Peter Jin, Kent Quanrud, "Faster single-source shortest paths with negative real weights via proper hop distance", SODA (2025), arXiv:2407.04872.

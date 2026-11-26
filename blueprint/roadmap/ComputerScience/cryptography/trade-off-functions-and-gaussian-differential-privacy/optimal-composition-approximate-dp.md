@@ -1,0 +1,35 @@
+# Optimal composition theorem for approximate differential privacy
+
+For every $\varepsilon > 0$, $\delta \in [0,1]$ and $k \in \mathbb{N}$, the $k$-fold adaptive composition of $(\varepsilon,\delta)$-differentially private mechanisms is
+
+$$
+\Big( (k - 2i)\varepsilon,\; 1 - (1-\delta)^k (1 - \delta_i) \Big)\text{-DP} \quad \text{for every } i \in \{0, 1, \dots, \lfloor k/2 \rfloor\},
+$$
+
+where
+
+$$
+\delta_i = \frac{\sum_{\ell=0}^{i-1} \binom{k}{\ell}\big(e^{(k-\ell)\varepsilon} - e^{(k-2i+\ell)\varepsilon}\big)}{(1 + e^{\varepsilon})^k},
+$$
+
+and this family of guarantees is exactly optimal: for each $i$ there are $(\varepsilon,\delta)$-DP mechanisms whose $k$-fold composition is not $((k-2i)\varepsilon, \delta')$-DP for any $\delta' < 1 - (1-\delta)^k(1-\delta_i)$. In trade-off-function language, the composition is exactly $f_{\varepsilon,\delta}^{\otimes k}$-DP.
+
+## Proof sketch
+
+Every $(\varepsilon,\delta)$-DP mechanism is a post-processing of the canonical four-point pair representing $f_{\varepsilon,\delta}$ (a randomized-response mechanism that reveals the input with probability $\delta$), so by the data processing inequality composition is dominated by the $k$-fold product of this pair. The trade-off function of the product is computed exactly by a binomial count of the number of coordinates that point to each hypothesis, which yields the stated piecewise linear envelope; the canonical pair itself attains it.
+
+## Depends on
+
+- [Approximate differential privacy as f-differential privacy](epsilon-delta-dp-as-f-dp.md)
+- [Lossless adaptive composition of f-differential privacy](f-dp-adaptive-composition.md)
+- [Advanced composition](../differential-privacy/differentially-private-pi-advanced.md)
+
+## Proof depends on
+
+- [Approximate differential privacy as f-differential privacy](epsilon-delta-dp-as-f-dp.md)
+- [Lossless adaptive composition of f-differential privacy](f-dp-adaptive-composition.md)
+- [Advanced composition](../differential-privacy/differentially-private-pi-advanced.md)
+
+## Sources
+
+- P. Kairouz, S. Oh, P. Viswanath, "The Composition Theorem for Differential Privacy", ICML (2015); IEEE Transactions on Information Theory 63 (2017), arXiv:1311.0776.

@@ -25,6 +25,7 @@ In the [PAC-Bayes bounds](pac-bayes-bounds/README.md), Catoni's bound for bounde
 - [Weak learnability implies PAC learnability via boosting](weak-learnability-implies-pac-learnability-via-boosting.md)
 - [VC and Natarajan classes: uniform convergence and the fundamental theorems](vc-and-natarajan-classes/README.md)
 - [Limits of uniform convergence for explaining deep-learning generalization](limits-of-uniform-convergence-for-explaining-deep-learning-g.md)
+- [Sharp Generalization of Uniformly Stable Algorithms](sharp-generalization-of-uniformly-stable-algorithms/README.md)
 
 ## Related topics
 

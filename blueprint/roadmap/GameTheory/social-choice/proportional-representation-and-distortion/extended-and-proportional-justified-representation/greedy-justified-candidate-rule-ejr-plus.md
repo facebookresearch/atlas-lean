@@ -1,0 +1,19 @@
+# The Greedy Justified Candidate Rule satisfies EJR+ in polynomial time
+
+An approval election consists of a finite set $N$ of $n$ voters, a finite set $C$ of candidates, approval ballots $A_i \subseteq C$ for $i \in N$, and a committee size $k$ with $1 \le k \le \lvert C \rvert$; a committee is a set $W \subseteq C$ with $\lvert W \rvert = k$. The Greedy Justified Candidate Rule starts with $W = \emptyset$ and, for $\ell = k, k - 1, \dots, 1$, repeatedly adds a candidate $c \notin W$ for which some group $N' \subseteq N_c$ of at least $\ell n/k$ voters has $\lvert A_i \cap W\rvert < \ell$ for all $i \in N'$, as long as such a candidate exists, then decreases $\ell$; finally it fills $W$ arbitrarily to size $k$. The rule runs in polynomial time and its output satisfies EJR+, hence EJR; it never selects more than $k$ candidates before the filling step.
+
+## Proof sketch
+
+When the rule stops at level $\ell$, no witness for an EJR+ violation at level $\ell$ remains, and adding candidates later only increases $\lvert A_i \cap W\rvert$, so EJR+ holds at the end for all $\ell$. To bound the number of selected candidates, charge each candidate added at level $\ell$ to its witnessing group of at least $\ell n/k$ voters, all of whom then had fewer than $\ell$ representatives; a counting argument over levels, comparing the sizes of witnessing groups with the representation they receive, shows that at most $k$ candidates are added before the filling step.
+
+## Depends on
+
+- [EJR+ and PJR+ proportionality axioms](ejr-plus-and-pjr-plus.md)
+
+## Proof depends on
+
+- [EJR+ strengthens EJR, is verifiable in polynomial time, and is satisfied by PAV and equal shares](ejr-plus-verification-and-satisfaction.md)
+
+## Sources
+
+- M. Brill, J. Peters, "Robust and Verifiable Proportionality Axioms for Multiwinner Voting", EC 2023, arXiv:2302.01989.

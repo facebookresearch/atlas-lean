@@ -1,0 +1,17 @@
+# Cactus Representations and Sparse Connectivity Certificates
+
+- [Weighted cactus graphs with tree edges and cycle edges](weighted-cactus-graph.md)
+- [Crossing pairs of vertex bipartitions](crossing-vertex-bipartitions.md)
+- [Flow-equivalent and cut-equivalent trees of weighted graphs](flow-equivalent-and-cut-equivalent-trees.md)
+- [Sparse k-edge-connectivity certificates and forest decompositions](sparse-k-edge-connectivity-certificate.md)
+- [Minimum cuts of a weighted cactus are tree edges or pairs of edges on one cycle](cactus-minimum-cuts-classification.md)
+- [Unions of the first k forests are k-edge-connectivity certificates](forest-union-certificate.md)
+- [Cactus representations of all minimum cuts](cactus-representation-of-minimum-cuts.md)
+- [Corner structure of two crossing minimum cuts](crossing-minimum-cuts-corners.md)
+- [Linear-time sparse connectivity certificates by scan-first search (Nagamochi-Ibaraki)](nagamochi-ibaraki-linear-time-certificates.md)
+- [Dinits-Karzanov-Lomonosov theorem: every graph has a linear-size cactus of its minimum cuts](dinits-karzanov-lomonosov-cactus-theorem.md)
+- [Steiner cactus and hypercactus with polylogarithmically many max-flows](steiner-cactus-polylog-max-flows.md)
+- [Constructing the cactus of all minimum cuts in almost-linear deterministic time](cactus-construction-almost-linear.md)
+- [Gomory-Hu trees of weighted graphs in nearly quadratic time](gomory-hu-weighted-nearly-quadratic.md)
+- [Gomory-Hu trees in almost-linear time: all-pairs max-flow reduces to single-pair max-flow](gomory-hu-trees-almost-linear-time.md)
+- [Deterministic almost-linear-time Gomory-Hu trees](deterministic-gomory-hu-almost-linear.md)

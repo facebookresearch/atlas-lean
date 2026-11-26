@@ -9,3 +9,4 @@ Matchings and factors in graphs, stable matchings, and flows in networks, includ
 - [Max-flow min-cut theorem](max-flow-min-cut-theorem/README.md)
 - [Petersen's theorem](petersen-s-theorem/README.md)
 - [Stable marriage problem](stable-marriage-problem/README.md)
+- [Gallai-Edmonds Structure and Blossoms](gallai-edmonds-structure-and-blossoms/README.md)
