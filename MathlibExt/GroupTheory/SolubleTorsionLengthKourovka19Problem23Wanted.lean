@@ -1552,7 +1552,7 @@ private theorem tor2_eq_comap :
 /-- The witness `a`-generator in the first Klein bottle factor. -/
 private noncomputable def witnessG : KleinProd := (aKlein 1, 1)
 
-/-- The witness element of `G₃`: the `a`-generator, of infinite order in `G₃ / Tor₂(G₃)`. -/
+/-- The witness element of `G₃`: the `a`-generator, whose image in `G₃ / Tor₂(G₃)` has order two. -/
 private noncomputable def witness : G3 :=
   SemidirectProduct.inl (SemidirectProduct.inl witnessG)
 
