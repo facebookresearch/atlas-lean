@@ -1,10 +1,10 @@
 # Cyclic structural equations
 
-## Graphical Models
+## Structural equation systems
 
 - [Cyclic structural equation systems](structural-system.md)
 
-## Structural System
+## Solutions and examples
 
 - [Solutions of a structural equation system](is-solution.md)
 - [The Boolean negation cycle](neg-cycle.md)

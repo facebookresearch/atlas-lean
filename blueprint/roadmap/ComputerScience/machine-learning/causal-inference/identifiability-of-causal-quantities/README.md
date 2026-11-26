@@ -1,12 +1,12 @@
 # Identifiability of causal quantities
 
-## Graphical Models
+## Identified functionals
 
 - [Identified functionals on a class of models](identified-on.md)
 - [A functional of the observations is identified](of-eq-comp.md)
 - [An identified functional factors through the observations](exists-eq-comp.md)
 
-## Bayes Net
+## Back-door and front-door identification
 
 - [Back-door criterion](backdoor-criterion.md)
 - [Class of models satisfying the back-door criterion](backdoor-class.md)

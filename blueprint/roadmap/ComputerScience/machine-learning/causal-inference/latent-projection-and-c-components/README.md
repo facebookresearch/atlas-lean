@@ -1,6 +1,6 @@
 # Latent projection and c-components
 
-## ADMG
+## C-components of an acyclic directed mixed graph
 
 - [Membership in a c-component is bidirected reachability](mem-c-component-iff.md)
 - [C-components of an acyclic directed mixed graph](c-components.md)
@@ -8,7 +8,7 @@
 - [Overlapping c-components are equal](filter-c-component-eq-of-shared.md)
 - [Characterization of c-components](mem-c-components-iff.md)
 
-## Bayes Net
+## Latent paths and the latent projection
 
 - [Latent paths](latent-path.md)
 - [A direct edge is a latent path](latent-path-of-edge-direct.md)

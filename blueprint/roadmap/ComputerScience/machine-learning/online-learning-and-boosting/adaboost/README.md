@@ -19,7 +19,6 @@
 - [The Freund–Schapire bound on AdaBoost's training error](train-err-le-prod-sqrt.md)
 - [AdaBoost drives the training error down exponentially](train-err-le-exp.md)
 - [Freund and Schapire's training-error bound with per-round errors](train-err-le-prod-sqrt-of-eps.md)
-- [AdaBoost training error is at most the product of the round error factors](train-err-le-prod-sqrt-of-round-errors.md)
 - [AdaBoost training error is at most the exponential of the round errors](train-err-le-exp-of-round-errors.md)
 - [A round's factor in terms of its edge](two-mul-sqrt-eq-sqrt-one-sub.md)
 - [A round's factor is at most $e^{-2\gamma^2}$ for its own edge](two-mul-sqrt-le-exp-edge.md)

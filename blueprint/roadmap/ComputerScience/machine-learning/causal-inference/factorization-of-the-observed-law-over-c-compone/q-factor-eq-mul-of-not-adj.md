@@ -4,4 +4,4 @@ Let $b$ be a Bayesian network on $n$ nodes with values in a finite nonempty set 
 
 $$Q[H](v) = Q[T](v)\, Q[H \setminus T](v)$$
 
-(Tian and Pearl, Lemma 4(i)).
+(J. Tian and J. Pearl, On the testable implications of causal models with hidden variables, UAI 2002, Lemma 2, equation (20); Lemma 4(i) of their technical report R-290-L).

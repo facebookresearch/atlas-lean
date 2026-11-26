@@ -20,7 +20,7 @@
 - [Ordered pairs of nodes](pc-pairs.md)
 - [One round of the PC adjacency phase](pc-round.md)
 
-## Targets: graph lemmas and faithfulness
+## Graph lemmas and faithfulness
 
 - [Adjacency in the skeleton of a network](skeleton-adj.md)
 - [Adjacent nodes are never d-separated](not-d-separated-of-adj.md)
@@ -34,7 +34,7 @@
 - [For a symmetric oracle recorded sets separate both orders](pc-adjacency-sepset-of-symmetric.md)
 - [The PC adjacency phase reads only ordered queries](pc-adjacency-congr.md)
 
-## Targets: the d-separation and law instances
+## The d-separation and law oracles
 
 - [The d-separation oracle is a Markov oracle](markov-oracle-dsep-oracle.md)
 - [The d-separation oracle is adjacency-faithful](adjacency-faithful-dsep-oracle.md)

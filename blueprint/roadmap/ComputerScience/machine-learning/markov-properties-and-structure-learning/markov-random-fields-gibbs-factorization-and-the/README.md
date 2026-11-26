@@ -10,5 +10,5 @@
 - [Local Markov property](local-markov.md)
 - [Pairwise Markov property](pairwise-markov.md)
 - [Gibbs factorization implies the global Markov property](global-markov-of-gibbs-factorization.md)
-- [Local Markov of global Markov](local-markov-of-global-markov.md)
-- [Pairwise Markov of local Markov](pairwise-markov-of-local-markov.md)
+- [The global Markov property implies the local one](local-markov-of-global-markov.md)
+- [The local Markov property implies the pairwise one](pairwise-markov-of-local-markov.md)

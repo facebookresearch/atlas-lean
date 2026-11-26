@@ -1,10 +1,10 @@
 # Mediation effects in the additive linear mediation model
 
-## Linear Mediation
+## The additive linear mediation model
 
 - [Additive linear mediation model](mediation-model.md)
 
-## Mediation Model
+## Potential outcomes and effects
 
 - [Mediator equation](mediator.md)
 - [Outcome equation](outcome.md)

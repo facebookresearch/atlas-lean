@@ -5,7 +5,7 @@
 - [Joint probability of a class and features](joint.md)
 - [Evidence of the features](evidence.md)
 - [Posterior probability of a class](posterior.md)
-- [Joint probabilities sum to the evidence](sum-joint.md)
+- [Joint probabilities sum to one](sum-joint.md)
 - [Posterior probabilities sum to one](sum-posterior.md)
 - [The log joint is the log prior plus feature log probabilities](log-joint.md)
 

@@ -1,3 +1,3 @@
 # Blocking ignores the direction of traversal
 
-toward Verma-Pearl Lemma 1 (arXiv:1304.1108): blocking at `u, m, w` ignores direction.
+In a parent-set structure, a path is blocked by $Z$ at three consecutive nodes $u, m, w$ if and only if it is blocked by $Z$ at $w, m, u$: blocking at a node does not depend on the direction in which the path is traversed.

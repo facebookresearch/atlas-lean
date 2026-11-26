@@ -1,6 +1,6 @@
 # Kernel causal Bayesian networks
 
-## Kernel CBN
+## Kernel causal Bayesian networks
 
 - [Parent values read off a prefix assignment](parent-values.md)
 - [Joint law of the first nodes](joint-prefix.md)
@@ -12,7 +12,7 @@
 - [The kernel at the intervened node is a Dirac kernel](intervene-kernel-of-eq.md)
 - [Under intervention the intervened coordinate is Dirac](map-joint-prefix-intervene.md)
 
-## Graphical Models
+## Finite Bayesian networks as kernel networks
 
 - [A finite distribution as a measure](std-simplex-measure.md)
 - [A finite Bayesian network as a kernel causal Bayesian network](to-kernel-cbn.md)
@@ -26,5 +26,5 @@
 - [Kernel causal Bayesian network](kernel-cbn.md)
 - [Joint law of a kernel causal Bayesian network](joint.md)
 - [Intervention](intervene.md)
-- [Map joint intervene apply eq dirac](map-joint-intervene-apply-eq-dirac.md)
+- [The intervened node is a point mass after the intervention](map-joint-intervene-apply-eq-dirac.md)
 - [Joint law of a discrete Bayesian network as a density](to-kernel-cbn-joint-eq-with-density.md)
