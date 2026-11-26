@@ -18,6 +18,8 @@ Topics added since this subject's fields were last revised.
 - [QGram](qgram/README.md)
 - [Rooted SPRAgreement Forest](rooted-spragreement-forest/README.md)
 - [Siphon Persistence](siphon-persistence/README.md)
+- [Smith Hazel](smith-hazel/README.md)
+- [Smith Hazel Index](smith-hazel-index/README.md)
 - [Spearman Karber](spearman-karber/README.md)
 - [Species Reaction Graph](species-reaction-graph/README.md)
 - [Split Decomposition](split-decomposition/README.md)
