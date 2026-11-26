@@ -62,18 +62,6 @@ theorem_wanted giniSimpsonCount_ge_triangular (N m r : ℕ)
     (1 / 3) * (m : ℚ) * ((m : ℚ) ^ 2 + 3 * r - 1) + 1 ≤
       (giniSimpsonCount N : ℚ)
 
-/-- **Quadratic lower bound on the number of Gini–Simpson values.** Let $\gamma(N)$ be the number of
-distinct values of $a_1^2 + \dots + a_k^2$ over all finite sequences $(a_1, \dots, a_k)$ of natural
-numbers with $a_1 + \dots + a_k = N$ (for $N \ge 1$, the number of possible values of the
-Gini–Simpson index across samples of size $N$). Then for every natural number $N$,
-$$\tfrac{1}{2} \left( \lfloor N^2 / 5 \rfloor - N \right) \le \gamma(N).$$
-
-Source: Bradley K. Moon and Noah A. Rosenberg,
-"Integer Sequences for Diversity Statistics",
-Proposition 6. -/
-theorem_wanted giniSimpsonCount_ge (N : ℕ) :
-    (((N ^ 2 / 5 : ℕ) : ℚ) - N) / 2 ≤ (giniSimpsonCount N : ℚ)
-
 /-- **Upper bound on the number of Shannon values.** Let $\sigma(N)$ be the number of distinct real
 numbers $-\sum_{i=1}^{k} (a_i / N) \log (a_i / N)$ over all finite sequences $(a_1, \dots, a_k)$ of
 natural numbers with $a_1 + \dots + a_k = N$, where a term with $a_i = 0$ counts as $0$ (for $N \ge
