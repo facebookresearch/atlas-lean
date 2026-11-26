@@ -84,7 +84,7 @@ variable {m : ℕ}
 /-! ### Largest sum over a bounded number of coordinates -/
 
 /-- The largest sum `∑_{i ∈ S} x i` over sets `S` of at most `r` coordinates. For nonnegative `x`
-this is the sum of the `r` largest values of `x`. -/
+this is the sum of the `min r m` largest values of `x`. -/
 noncomputable def maxSubsetSum (x : Fin m → ℝ) (r : ℕ) : ℝ :=
   ((Finset.univ : Finset (Fin m)).powerset.filter fun S => S.card ≤ r).sup'
     ⟨∅, by simp⟩ fun S => ∑ i ∈ S, x i
