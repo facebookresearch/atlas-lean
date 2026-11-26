@@ -12931,7 +12931,6 @@
   "MathlibExt/NumberTheory/DelannoyBinomialCongruence": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Congruences for Delannoy numbers"},
   "MathlibExt/NumberTheory/DelannoyBinomialSum": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Congruences for Delannoy numbers"},
   "MathlibExt/NumberTheory/DelannoyPrimeCube": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Congruences for Delannoy numbers"},
-  "MathlibExt/NumberTheory/DigitSumDirichletConvolutionDigitSumAuxiliaryIsBigO": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Dirichlet convolutions of digit sums"},
   "MathlibExt/NumberTheory/Digits/BasePhiRepresentations": {"to": "NumberTheory/digits-numeration/numeration-automatic", "title": "Golden ratio base"},
   "MathlibExt/NumberTheory/Digits/BergmanLucasEvenAdd": {"to": "NumberTheory/digits-numeration/numeration-automatic", "title": "Golden ratio base"},
   "MathlibExt/NumberTheory/Digits/BergmanWordFib": {"to": "NumberTheory/digits-numeration/numeration-automatic", "title": "Golden ratio base"},
