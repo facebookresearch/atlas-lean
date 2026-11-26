@@ -50,35 +50,6 @@ namespace FastVanDerWaerdenGame
 
 open Finset
 
-/-- **Containing a homothetic copy.** Let $S$ and $M$ be finite sets of natural numbers. $M$
-contains a homothetic copy of $S$ if there are a natural number $a > 0$ and an integer $b$ such
-that $as + b \in M$ for every $s \in S$, that is, $aS + b \subseteq M$. This is Maker's winning
-condition.
-
-Source: Alpert, Barham, Freidin, Tan, and Weiner, *Fast Winning Strategies in a
-Generalized van der Waerden Game*, INTEGERS 26 (2026), Article A40, Section 1. -/
-def ContainsCopy (S M : Finset ℕ) : Prop :=
-  ∃ a : ℕ, 0 < a ∧ ∃ b : ℤ, ∀ s ∈ S, ∃ m ∈ M, (m : ℤ) = a * s + b
-
-/-- **Maker wins within $p$ moves.** Let $S$ be a finite set of natural numbers. In the
-$S$-game, Maker and Breaker alternately claim unclaimed natural numbers, and Maker wins once the
-numbers Maker has claimed contain a copy $aS + b = \{as + b : s \in S\}$ of $S$, where $a$ is a
-positive integer and $b$ is an integer. Let $M$ and $B$ be finite sets of natural numbers
-(claimed by Maker and by Breaker) and $p$ a natural number, with Maker to move. Maker wins
-within $p$ moves if $M$ already contains such a copy of $S$, or if $p \ge 1$ and there is a
-number $x \notin M \cup B$ such that for every number $y \ne x$ with $y \notin M \cup B$, Maker
-wins within $p - 1$ moves from the position where Maker has claimed $M \cup \{x\}$ and Breaker
-has claimed $B \cup \{y\}$.
-
-Source: Alpert, Barham, Freidin, Tan, and Weiner, *Fast Winning Strategies in a
-Generalized van der Waerden Game*, INTEGERS 26 (2026), Article A40, Sections 1
-and 5 (`p`-move strategy). -/
-def MakerWinsWithin (S : Finset ℕ) : ℕ → Finset ℕ → Finset ℕ → Prop
-  | 0, M, _ => ContainsCopy S M
-  | p + 1, M, B => ContainsCopy S M ∨
-      ∃ x : ℕ, x ∉ M ∧ x ∉ B ∧
-        ∀ y : ℕ, y ≠ x → y ∉ M → y ∉ B → MakerWinsWithin S p (insert x M) (insert y B)
-
 /-- **Reflections of finite sets of rationals.** Let $A$ and $B$ be finite sets of rational
 numbers. $B$ is a reflection of $A$ if there are rationals $a < 0$ and $b$ such that
 $B = aA + b = \{ax + b : x \in A\}$.
@@ -87,15 +58,6 @@ Source: Alpert, Barham, Freidin, Tan, and Weiner, *Fast Winning Strategies in a
 Generalized van der Waerden Game*, INTEGERS 26 (2026), Article A40, Section 6. -/
 def IsRatReflection (A B : Finset ℚ) : Prop :=
   ∃ a b : ℚ, a < 0 ∧ B = A.image fun x => a * x + b
-
-/-- **Symmetric sets of rationals.** A finite set $S$ of rational numbers is symmetric if it is
-symmetric of some type $(i, j)$ with $i, j < |S|$.
-
-Source: Alpert, Barham, Freidin, Tan, and Weiner, *Fast Winning Strategies in a
-Generalized van der Waerden Game*, INTEGERS 26 (2026), Article A40,
-Definition 2. -/
-def IsSymmetric (S : Finset ℚ) : Prop :=
-  ∃ i j : Fin S.card, IsSymmetricOfType S i j
 
 /-- **The zero-geometric set $S_2(n, k)$.** For a natural number $n$ and a rational number $k$,
 $S_2(n, k)$ is the finite set of rationals $\{0\} \cup \{k^i : 0 \le i < n - 1\}$, that is,
@@ -214,17 +176,6 @@ Generalized van der Waerden Game*, INTEGERS 26 (2026), Article A40, Theorem 5
 public theorem_wanted not_makerWinsWithin_card_of_five_le (S : Finset ℕ)
     (hS : 5 ≤ S.card) :
     ¬ MakerWinsWithin S S.card ∅ ∅
-
-/-- **Four-element sets with a four-move win are the symmetric ones.** If $S$ is a set of four
-natural numbers, then, starting from the position where no number has been claimed, Maker wins
-the $S$-game within $4$ moves if and only if $S$, viewed as a set of rationals, is symmetric.
-
-Source: Alpert, Barham, Freidin, Tan, and Weiner, *Fast Winning Strategies in a
-Generalized van der Waerden Game*, INTEGERS 26 (2026), Article A40, Theorem 6
-(`integers-2026-A40-thm-6`). -/
-public theorem_wanted makerWinsWithin_four_iff_isSymmetric (S : Finset ℕ)
-    (hS : S.card = 4) :
-    MakerWinsWithin S 4 ∅ ∅ ↔ IsSymmetric (S.image fun s : ℕ => (s : ℚ))
 
 /-- **Maker wins the $S$-game in five moves when $|S| = 4$.** If $S$ is a set of four natural
 numbers, then, starting from the position where no number has been claimed, Maker wins the
