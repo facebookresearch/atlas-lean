@@ -4,7 +4,6 @@
 
 - [Standard simplex](simplex.md)
 - [Centre of the standard simplex](simplex-center.md)
-- [Membership in the standard simplex](mem-simplex.md)
 - [The standard simplex is closed](is-closed-simplex.md)
 - [Simplex subset Icc](simplex-subset-icc.md)
 - [Is Compact simplex](is-compact-simplex.md)

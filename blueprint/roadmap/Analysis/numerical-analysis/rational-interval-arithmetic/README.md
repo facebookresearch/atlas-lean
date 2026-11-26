@@ -2,4 +2,4 @@
 
 - [Mul](mul.md)
 - [Inv](inv.md)
-- [Div](div.md)
+- [Rational interval division](div.md)

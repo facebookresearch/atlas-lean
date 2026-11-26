@@ -2,8 +2,8 @@
 
 ## B. Wave equation and boundary flux
 
-- [Wave mode neumann boundary](wave-mode-neumann-boundary.md)
+- [Zero boundary flux of the wave mode cos(ct) cos x](wave-mode-neumann-boundary.md)
 
 ## C. Energy and conservation
 
-- [Wave mode energy conserved](wave-mode-energy-conserved.md)
+- [Conserved energy of the wave mode cos(ct) cos x](wave-mode-energy-conserved.md)

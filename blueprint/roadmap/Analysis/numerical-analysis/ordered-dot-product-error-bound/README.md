@@ -1,7 +1,6 @@
 # Ordered dot-product error bound
 
-- [Input Perturbed](input-perturbed.md)
-- [Coeff Perturbed](coeff-perturbed.md)
+- [Perturbed entries in the ordered dot-product error model](coeff-perturbed.md)
 - [Product Perturbed](product-perturbed.md)
 - [Accumulator of an ordered sum](accumulator.md)
 - [Extend](extend.md)

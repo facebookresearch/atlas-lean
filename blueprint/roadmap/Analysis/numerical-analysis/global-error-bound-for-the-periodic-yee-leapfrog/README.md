@@ -2,7 +2,7 @@
 
 ## A. Definitions
 
-- [Global Error Bound](global-error-bound.md)
+- [Global error bound expression for the periodic Yee scheme](global-error-bound.md)
 - [Error Forcing](error-forcing.md)
 
 ## B. Algebraic structure of the update

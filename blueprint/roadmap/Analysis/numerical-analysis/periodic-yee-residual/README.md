@@ -14,7 +14,7 @@
 - [U Update Residual](u-update-residual.md)
 - [V Update Residual](v-update-residual.md)
 - [Collocated UUpdate Residual](collocated-uupdate-residual.md)
-- [Consistency Eta](consistency-eta.md)
+- [Consistency bound expression for the periodic Yee scheme](consistency-eta.md)
 
 ## Admissible smooth periodic solutions
 

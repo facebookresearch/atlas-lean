@@ -1,3 +1,5 @@
 # Second spatial derivative of the heat kernel
 
-Let $\Phi(t, x) = (4\pi t)^{-1/2} e^{-x^2/(4t)}$ be the one-dimensional heat kernel. For all real $t$ and $x$, this function is $\Big(\frac{x^2}{4t^2} - \frac{1}{2t}\Big)\Phi(t, x)$, with real division ($a/0 = 0$). It is the second spatial derivative of $\Phi$, and for $t > 0$ it is also the time derivative $\partial_t \Phi(t, x)$.
+Let $\Phi$ be the one-dimensional heat kernel. The real power is the one used for the kernel: $(4\pi t)^{-1/2}$ is the usual positive root for $t > 0$, and it is $0$ for $t \le 0$ (at a negative base the real power $y^{-1/2}$ is $\lvert y\rvert^{-1/2}\cos(-\pi/2) = 0$, and $0^{-1/2} = 0$). So in dimension one $\Phi(t, x)$ is the Gaussian $(4\pi t)^{-1/2} e^{-x^2/(4t)}$ for $t > 0$ and $0$ for $t \le 0$.
+
+The second spatial derivative kernel is $\Phi_{xx}(t, x) = \Big(\frac{x^2}{4t^2} - \frac{1}{2t}\Big)\Phi(t, x)$ for all real $t$ and $x$, with real division ($a/0 = 0$); it is $0$ for $t \le 0$. For $t > 0$ it is the derivative in $x$ of the [first spatial derivative kernel](heat-kernel-dx.md), and also the time derivative $\partial_t \Phi(t, x)$.

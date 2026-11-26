@@ -115,8 +115,10 @@ noncomputable def initialPairMismatch {N : ℕ} (u v : ℝ → ℝ → ℝ) (h d
     (u0 v0 : Fin N → ℝ) : ℝ :=
   pairNorm h (sampledU u dt h 0 - u0) (sampledV v dt h 0 - v0)
 
-/-- The global error bound
-`sqrt((1 + rho) / (1 - rho)) * (E0 + T * sqrt L * (Mt * dt^2 + c * Mx * h^2) / 6)`. -/
+/-- The global error bound expression
+`sqrt((1 + rho) / (1 - rho)) * (E0 + T * sqrt L * (Mt * dt^2 + c * Mx * h^2) / 6)`, defined for
+all real arguments (at `rho = 1` total division makes the prefactor `0`); it bounds the pair error
+under the hypotheses of `leapfrogPairError_le`. -/
 noncomputable def globalErrorBound (rho T L c Mt Mx dt h E0 : ℝ) : ℝ :=
   Real.sqrt ((1 + rho) / (1 - rho)) *
     (E0 + T * Real.sqrt L * (Mt * dt ^ 2 + c * Mx * h ^ 2) / 6)

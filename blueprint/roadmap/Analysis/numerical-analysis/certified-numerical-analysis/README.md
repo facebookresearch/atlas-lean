@@ -6,7 +6,6 @@
 - [Mid](mid.md)
 - [Of Rat](of-rat.md)
 - [Of Center](of-center.md)
-- [Encloses iff](encloses-iff.md)
 - [An enclosing interval has nonnegative width](width-nonneg.md)
 - [The midpoint approximates an enclosed value](abs-sub-mid-le.md)
 - [Encloses of Rat](encloses-of-rat.md)
