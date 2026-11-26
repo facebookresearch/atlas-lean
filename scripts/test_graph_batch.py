@@ -127,7 +127,25 @@ class EditPlacements(unittest.TestCase):
         with self.assertRaises(ValueError):
             batch.edit_placements(TAXONOMY_TEXT.replace('  "MathlibExt/D"', '  "MathlibExt/D" '), {}, [])
 
-    def test_the_committed_taxonomy_is_one_entry_per_line(self) -> None:
+    def test_an_entry_over_several_lines_keeps_them(self) -> None:
+        text = TAXONOMY_TEXT.replace('  "MathlibExt/D": {"to": "Algebra/groups", "title": "D"},\n',
+                                     '  "MathlibExt/D": {\n    "to": "Algebra/groups",\n    "title": "D"\n  },\n')
+        spot = {"to": "Algebra/groups", "title": "E"}
+        self.assertEqual(batch.edit_placements(text, {}, []), text)
+        # After it, the new line; its own lines, comma included, stay as they are.
+        self.assertEqual(batch.edit_placements(text, {"MathlibExt/E": spot}, []), text.replace(
+            '"title": "D"\n  },\n', '"title": "D"\n  },\n  "MathlibExt/E": {"to": "Algebra/groups", "title": "E"},\n'))
+        # Dropped, it loses all its lines; as the last entry, it gains or loses only its comma.
+        self.assertEqual(batch.edit_placements(text, {}, ["MathlibExt/D"]), TAXONOMY_TEXT.replace(
+            '  "MathlibExt/D": {"to": "Algebra/groups", "title": "D"},\n', ""))
+        last = text.replace('  },\n  "MathlibExt/C": {"to": "Algebra/groups", "title": "C"}\n', '  }\n')
+        self.assertEqual(batch.edit_placements(text, {}, ["MathlibExt/C"]), last)
+        self.assertEqual(batch.edit_placements(last, {"MathlibExt/Z": spot}, []), last.replace(
+            '"title": "D"\n  }\n', '"title": "D"\n  },\n  "MathlibExt/Z": {"to": "Algebra/groups", "title": "E"}\n'))
+        with self.assertRaises(ValueError):
+            batch.edit_placements(text.replace('    "title": "D"\n  },\n', '    "title": "D"\n'), {}, [])
+
+    def test_the_committed_taxonomy_round_trips(self) -> None:
         text = (ROOT / "scripts" / "taxonomy.json").read_text(encoding="utf-8")
         self.assertEqual(batch.edit_placements(text, {}, []), text)
 

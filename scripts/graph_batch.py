@@ -64,8 +64,8 @@ REPOSITORY = "facebookresearch/atlas-lean"
 MERGE = re.compile(r"Merge pull request #(\d+) from \S+")
 PLACE = re.compile(r"Place:[ \t]*(.*?)[ \t]*")
 PLACE_VALUE = re.compile(r"(?P<module>\S+)[ \t]+->[ \t]+(?P<to>\S+)(?:[ \t]+\|[ \t]+(?P<title>\S.*))?")
-# A placement line of scripts/taxonomy.json: two spaces, the module as a JSON string, then its entry.
-PLACEMENT_LINE = re.compile(r'  ("(?:[^"\\]|\\.)*"): (\{.*\})(,?)')
+# The first line of a placement entry of scripts/taxonomy.json: two spaces, then the module as a JSON string.
+PLACEMENT_START = re.compile(r'  "(?:[^"\\]|\\.)*": ')
 # A module of the five libraries, as scripts/taxonomy.json keys it: a path of Lean identifiers, without `.lean`.
 MODULE = re.compile(r"[A-Za-z0-9_]+(?:/[A-Za-z0-9_]+)+")
 TITLE_LIMIT = 160
@@ -520,34 +520,56 @@ def placement_plan(base: str, head: str, bodies: dict[int, str], indexes=None) -
     return plan
 
 
+def placement_entries(lines: list[str]) -> list[tuple[str, list[str]]]:
+    """The entries of the lines of scripts/taxonomy.json's placements block, in order, each as its module and its
+    lines without the comma that ends the last of them: one line, as the file writes an entry, or several, as a hand
+    edit may leave one. ValueError if the lines are not such entries."""
+    entries, number = [], 0
+    while number < len(lines):
+        if not PLACEMENT_START.match(lines[number]):
+            raise ValueError(f"scripts/taxonomy.json: not a placement entry: {lines[number][:80]}")
+        for last in range(number, len(lines)):
+            chunk = lines[number:last + 1]
+            comma = chunk[-1].endswith(",")
+            text = "\n".join(chunk)[:-1] if comma else "\n".join(chunk)
+            try:
+                entry = json.loads("{" + text + "}")
+            except ValueError:
+                continue
+            if len(entry) == 1 and isinstance(next(iter(entry.values())), dict):
+                entries.append((next(iter(entry)), chunk[:-1] + [chunk[-1][:-1] if comma else chunk[-1]]))
+                number = last + 1
+                break
+        else:
+            raise ValueError(f"scripts/taxonomy.json: a placement entry does not end: {lines[number][:80]}")
+    return entries
+
+
 def edit_placements(text: str, added: dict[str, dict[str, str]], dropped: list[str]) -> str:
     """scripts/taxonomy.json's *text* with the placements *added* and without those *dropped*. Each added entry is one
     line, as the file writes it, right after the entry whose module comes last before its own in plain string order,
     or first if none does: its place depends on the entries, not on when it is added, as insert_rows places a links
-    file's rows. Every other line stays as it is. ValueError if the placements are not one entry per line."""
+    file's rows. A dropped entry loses all its lines, and every other line stays as it is, an entry over several lines
+    included. ValueError if the placements block cannot be read entry by entry (placement_entries)."""
     lines = text.split("\n")
     try:
         start = lines.index(' "placements": {')
         end = next(number for number in range(start + 1, len(lines)) if lines[number] in (" }", " },"))
     except (ValueError, StopIteration):
-        raise ValueError("scripts/taxonomy.json has no placements block of one entry per line") from None
-    entries = []
-    for line in lines[start + 1:end]:
-        match = PLACEMENT_LINE.fullmatch(line)
-        if not match:
-            raise ValueError(f"scripts/taxonomy.json: not a placement line: {line[:80]}")
-        entries.append((json.loads(match.group(1)), f"  {match.group(1)}: {match.group(2)}"))
+        raise ValueError("scripts/taxonomy.json has no placements block") from None
+    entries = placement_entries(lines[start + 1:end])
     keys = {key for key, _ in entries}
     if overlap := sorted(keys & set(added)):
         raise ValueError(f"already placed: {', '.join(overlap)}")
     if missing := sorted(set(dropped) - keys):
         raise ValueError(f"no such placement: {', '.join(missing)}")
-    kept = [(key, line) for key, line in entries if key not in set(dropped)]
+    kept = [(key, chunk) for key, chunk in entries if key not in set(dropped)]
     for key, spot in sorted(added.items()):
         line = f"  {json.dumps(key, ensure_ascii=False)}: {json.dumps(spot, ensure_ascii=False)}"
         at = max(((other, number) for number, (other, _) in enumerate(kept) if other < key), default=(None, -1))[1]
-        kept.insert(at + 1, (key, line))
-    body = [line + ("," if number < len(kept) - 1 else "") for number, (_, line) in enumerate(kept)]
+        kept.insert(at + 1, (key, [line]))
+    body = [line for number, (_, chunk) in enumerate(kept)
+            for line in chunk[:-1] + [chunk[-1] + ("," if number < len(kept) - 1 else "")]]
     edited = "\n".join(lines[:start + 1] + body + lines[end:])
     before, after = json.loads(text), json.loads(edited)
     expected = {key: value for key, value in before["placements"].items() if key not in set(dropped)} | added
