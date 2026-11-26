@@ -1,3 +1,0 @@
-# Some output of a circuit attains its depth
-
-A straight-line circuit program has input wires and a sequence of gates, each applying an operation of a gate signature to wires that are inputs or earlier gates. The depth of an input wire is $0$, and the depth of a gate is one more than the largest depth among the wires it reads. A gate arrives at its delay plus the maximum of $0$ and the arrival times of the wires it reads. A circuit is such a program with a list of designated outputs, and its depth is the largest depth of an output (zero when there are none). If a circuit has at least one output, then some output has depth equal to the depth of the circuit.

@@ -9,3 +9,5 @@
 - [Optimal Delete Free Planning](part-10/optimal-delete-free-planning/README.md)
 
 ## [Part 18 of 20](part-18/README.md)
+
+- [Probabilistic](part-18/probabilistic/README.md)
