@@ -1,5 +1,3 @@
 # Common knowledge after an announcement
 
-After an announcement, common knowledge ranges over exactly the group
-paths whose steps land in announced worlds, with the announced body
-required, via the announcement, at every reached world.
+For formulas $\varphi$, $\psi$, a group $G$ of agents and a world $w$ of an epistemic model, $[!\varphi]C_G\psi$ holds at $w$ if and only if: if $\varphi$ holds at $w$, then every world $v$ reachable from $w$ by a finite path of steps $u \mathrel{R_i} u'$ with $i \in G$ and $\varphi$ true at $u'$ satisfies $[!\varphi]\psi$. Paths of length zero are included, so $v = w$ is one such world. The guard on $w$ matters: if $\varphi$ fails at $w$, the announcement holds vacuously at $w$, even when some step leads to a $\varphi$-world where $[!\varphi]\psi$ fails.

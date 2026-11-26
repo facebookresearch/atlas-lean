@@ -1,6 +1,3 @@
 # Satisfaction relative to a set of worlds
 
-Satisfaction relativized to a world predicate `P`: satisfaction in
-the submodel of `P`-worlds. Knowledge steps and common-knowledge paths
-stay inside the predicate, and an announcement strengthens it. This is
-meaningful at worlds satisfying `P`; callers guard the start world.
+For an epistemic model $M$ and a predicate $P$ on worlds, satisfaction relative to $P$ is defined by recursion on the formula: atoms, $\bot$ and implication are as in $M$; $K_i\varphi$ holds at $w$ when $\varphi$ holds (relative to $P$) at every $P$-world $v$ with $w \mathrel{R_i} v$; $C_G\varphi$ holds at $w$ when $\varphi$ holds at every world reachable from $w$ by a finite chain of steps $u \mathrel{R_i} u'$ with $i \in G$ and $P(u')$, zero steps included, so that $C_G\varphi$ implies $\varphi$ at $w$ itself; and $[!\varphi]\psi$ holds at $w$ when, if $\varphi$ holds at $w$, then $\psi$ holds at $w$ relative to the predicate $P \wedge \varphi$. This is satisfaction in the submodel of $P$-worlds when $w$ satisfies $P$; the definition does not check $P$ at the starting world, so callers guard it.

@@ -1,3 +1,3 @@
 # Classical propositional logic
 
-Classical logic further adds double negation elimination.
+Propositions over an atom type with decidable equality are built from atoms by $\wedge$, $\vee$ and $\to$; there is no primitive $\bot$ or $\top$. A theory $T$ is a set of propositions, and $T$ derives a sequent $\Gamma \vdash A$, for a finite set $\Gamma$ of propositions, by natural deduction with the members of $T$ as axioms. A designated bottom atom $\bot$ is fixed, and $\neg A$ is $A \to \bot$. Classical propositional logic is the theory $\{\neg\neg A \to A : A \text{ a proposition}\}$ of all double-negation-elimination instances. It is not the intuitionistic theory plus another schema: for example $\bot \to \bot$ is an explosion instance but not syntactically a double-negation-elimination instance. Explosion is derivable from this theory.
