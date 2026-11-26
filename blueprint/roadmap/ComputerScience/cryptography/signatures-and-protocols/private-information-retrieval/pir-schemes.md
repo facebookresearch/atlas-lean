@@ -1,0 +1,7 @@
+# Private information retrieval schemes
+
+A database $x \in \beta^n$ (by default $\beta = \{0,1\}$) is replicated on a set $S$ of $k$ servers. A *one-round $k$-server PIR scheme* consists of a randomized query algorithm that, on an index $i \in [n]$, outputs queries $(q_s)_{s \in S}$ from a query set $Q$ together with a retained state; answer functions $a_s(x, q_s) \in A$; and a reconstruction function computing an entry from the state and the answers. It is *perfectly correct* if reconstruction returns $x_i$ for every $x$, $i$ and coins; *perfectly private* if for every server $s$ the distribution of $q_s$ is the same for all indices $i$; *$t$-private* if for every coalition $T \subseteq S$ with $|T| \le t$ the joint distribution of $(q_s)_{s \in T}$ is independent of $i$ (equivalently, the joint law of every $t$-tuple of queries is index independent; $1$-privacy is ordinary privacy); *$\delta$-statistically private* if these laws are within statistical distance $\delta$ for any two indices. Its *communication* with fixed-length binary encodings is $|S|\,(\lceil\log_2|Q|\rceil + \lceil\log_2|A|\rceil)$ bits; schemes may use per-server query and answer alphabets, with communication $\sum_s(\lceil\log_2|Q_s|\rceil + \lceil\log_2|A_s|\rceil)$, and every uniform scheme embeds into such an indexed scheme with the same cost.
+
+## Sources
+
+- Benny Chor, Oded Goldreich, Eyal Kushilevitz and Madhu Sudan, "Private Information Retrieval", Journal of the ACM, 1998.
