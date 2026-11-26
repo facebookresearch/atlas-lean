@@ -64,8 +64,8 @@ open Finset
 
 namespace Domains.Biology.PopulationGenetics.Coalescent.EwensFreezeMerge
 
-/-- A partition of the labeled sample, with a subset of its blocks marked active.
-Native `Finpartition` ensures nonempty, disjoint blocks covering the sample. -/
+/-- **Freeze-and-merge state.** A partition of the labeled sample, with a subset of its blocks
+marked active. Native `Finpartition` ensures nonempty, disjoint blocks covering the sample. -/
 @[ext] structure State (n : ℕ) where
   partition : Finpartition (univ : Finset (Fin n))
   active : Finset (Finset (Fin n))
@@ -77,7 +77,7 @@ instance (n : ℕ) : Fintype (State n) :=
     intro s t h
     exact State.ext (congrArg Prod.fst h) (congrArg Prod.snd h))
 
-/-- The frozen blocks are precisely the blocks outside the active subset. -/
+/-- **Frozen blocks.** The frozen blocks are precisely the blocks outside the active subset. -/
 def frozen (n : ℕ) (s : State n) : Finset (Finset (Fin n)) :=
   s.partition.parts \ s.active
 
@@ -126,14 +126,15 @@ private lemma empty_notMem_merge (n : ℕ)
     simp [← heq] at this
   · exact fun h ↦ π.bot_notMem h.1
 
-/-- Freeze one specified active block without changing the partition or any other mark. -/
+/-- **Freezing an active block.** Freeze one specified active block without changing the
+partition or any other mark. -/
 def freeze (n : ℕ) (s : State n) (B : s.active) : State n where
   partition := s.partition
   active := s.active.erase B.1
   active_subset := (erase_subset _ _).trans s.active_subset
 
-/-- Merge a nonempty collection of active blocks into its union; all other blocks keep
-their marks. The jump law only calls this with a two-element collection. -/
+/-- **Merging active blocks.** Merge a nonempty collection of active blocks into its union; all
+other blocks keep their marks. The jump law only calls this with a two-element collection. -/
 def merge (n : ℕ) (s : State n) (p : Finset (Finset (Fin n)))
     (hp : p ⊆ s.active) (hne : p.Nonempty) : State n where
   partition := Finpartition.ofExistsUnique (insert (p.biUnion id) (s.partition.parts \ p))
@@ -148,8 +149,8 @@ def merge (n : ℕ) (s : State n) (p : Finset (Finset (Fin n)))
     · exact mem_insert_of_mem (mem_sdiff.mpr
         ⟨s.active_subset (mem_sdiff.mp hB).1, (mem_sdiff.mp hB).2⟩)
 
-/-- Legal nonabsorbing events: a specified active block freezes, or an unordered pair
-of distinct active blocks merges. -/
+/-- **Freeze-and-merge events.** Legal nonabsorbing events: a specified active block freezes,
+or an unordered pair of distinct active blocks merges. -/
 abbrev Event (n : ℕ) (s : State n) :=
   s.active ⊕ {p : Finset (Finset (Fin n)) // p ∈ s.active.powersetCard 2}
 
@@ -163,12 +164,14 @@ private lemma pair_nonempty (n : ℕ) (s : State n)
   rw [← card_pos, (mem_powersetCard.mp p.2).2]
   decide
 
-/-- Apply a legal event, preserving the native partition and marking invariants. -/
+/-- **Applying an event.** Apply a legal event, preserving the native partition and marking
+invariants. -/
 def applyEvent (n : ℕ) (s : State n) : Event n s → State n
   | Sum.inl B => freeze n s B
   | Sum.inr p => merge n s p.1 (by exact pair_subset n s p) (by exact pair_nonempty n s p)
 
-/-- Every nonabsorbing event reduces the number of active blocks by exactly one. -/
+/-- **Each jump removes one active block.** Every nonabsorbing event reduces the number of
+active blocks by exactly one. -/
 theorem applyEvent_active_card (n : ℕ) (s : State n) (e : Event n s) :
     (applyEvent n s e).active.card + 1 = s.active.card := by
   classical
@@ -191,11 +194,12 @@ theorem applyEvent_active_card (n : ℕ) (s : State n) (e : Event n s) :
     have := card_le_card hp
     omega
 
-/-- Freezing leaves the partition unchanged. -/
+/-- **Freezing keeps the partition.** Freezing leaves the partition unchanged. -/
 theorem freeze_partition (n : ℕ) (s : State n) (B : s.active) :
     (freeze n s B).partition = s.partition := rfl
 
-/-- A freeze adds precisely the selected block to the frozen set. -/
+/-- **Freezing adds one frozen block.** A freeze adds precisely the selected block to the
+frozen set. -/
 theorem freeze_frozen (n : ℕ) (s : State n) (B : s.active) :
     frozen n (freeze n s B) = insert B.1 (frozen n s) := by
   classical
@@ -207,7 +211,8 @@ theorem freeze_frozen (n : ℕ) (s : State n) (B : s.active) :
     simp [hB]
   · simp [hCB]
 
-/-- A merger preserves every frozen block, and creates no new frozen block. -/
+/-- **Merging keeps the frozen blocks.** A merger preserves every frozen block, and creates no
+new frozen block. -/
 theorem merge_frozen (n : ℕ) (s : State n) (p : Finset (Finset (Fin n)))
     (hp : p ⊆ s.active) (hne : p.Nonempty) :
     frozen n (merge n s p hp hne) = frozen n s := by
@@ -231,11 +236,12 @@ theorem merge_frozen (n : ℕ) (s : State n) (p : Finset (Finset (Fin n)))
       exact hU (mem_sdiff.mpr ⟨hB, hBp⟩)
     · exact hBa hactive
 
-/-- The denominator of a nonabsorbing jump at active count `k`. -/
+/-- **Jump denominator.** The denominator of a nonabsorbing jump at active count `k`. -/
 def denominator (θ : ℝ) (k : ℕ) : ℝ := k * (θ + k - 1)
 
-/-- The last-jump denominator vanishes at `θ = 0`, which is why that parameter is
-excluded from the nonabsorbing neutral transition law. -/
+/-- **The last-jump denominator vanishes without mutation.** The last-jump denominator vanishes
+at `θ = 0`, which is why that parameter is excluded from the nonabsorbing neutral transition
+law. -/
 theorem denominator_zero_last : denominator 0 1 = 0 := by
   norm_num [denominator]
 
@@ -258,6 +264,10 @@ private lemma union_notMem_parts_pair (n : ℕ)
   simp only [card_singleton, hc] at this
   omega
 
+private lemma union_notMem_active_pair (n : ℕ) (s : State n) (p : Finset (Finset (Fin n)))
+    (hp : p ⊆ s.active) (hc : p.card = 2) : p.biUnion id ∉ s.active := fun hu ↦
+  union_notMem_parts_pair n s.partition p (hp.trans s.active_subset) hc (s.active_subset hu)
+
 private lemma merge_pair_partition_card (n : ℕ) (s : State n)
     (p : {p : Finset (Finset (Fin n)) // p ∈ s.active.powersetCard 2}) :
     (applyEvent n s (Sum.inr p)).partition.parts.card + 1 = s.partition.parts.card := by
@@ -274,9 +284,7 @@ private lemma removed_merge_pair (n : ℕ) (s : State n)
     s.active \ (applyEvent n s (Sum.inr p)).active = p.1 := by
   classical
   have hp := pair_subset n s p
-  have hU : p.1.biUnion id ∉ s.active := fun h ↦
-    union_notMem_parts_pair n s.partition p.1 (hp.trans s.active_subset)
-      (mem_powersetCard.mp p.2).2 (s.active_subset h)
+  have hU := union_notMem_active_pair n s p.1 hp (mem_powersetCard.mp p.2).2
   ext B
   change B ∈ s.active \ insert (p.1.biUnion id) (s.active \ p.1) ↔ B ∈ p.1
   simp only [mem_sdiff, mem_insert]
@@ -301,7 +309,8 @@ private lemma freeze_injective (n : ℕ) (s : State n) :
   rw [← heq] at hmem
   exact notMem_erase _ _ hmem
 
-/-- Distinct legal freeze or unordered-merger events have distinct successor states. -/
+/-- **Distinct events give distinct states.** Distinct legal freeze or unordered-merger events
+have distinct successor states. -/
 theorem applyEvent_injective (n : ℕ) (s : State n) :
     Function.Injective (applyEvent n s) := by
   intro e f h
@@ -326,9 +335,10 @@ theorem applyEvent_injective (n : ℕ) (s : State n) :
       rw [removed_merge_pair, removed_merge_pair] at heq
       exact congrArg Sum.inr (Subtype.ext heq)
 
-/-- Each freeze has weight `θ / [k(θ+k-1)]`; each specified unordered merger has
-weight `2 / [k(θ+k-1)]`, matching pair rate one and mutation rate `θ/2`. These are the
-embedded jump probabilities of Donnelly and Tavaré (1986), p. 5, cases (a′) and (b′). -/
+/-- **Neutral jump weights.** Each freeze has weight `θ / [k(θ+k-1)]`; each specified
+unordered merger has weight `2 / [k(θ+k-1)]`, matching pair rate one and mutation rate `θ/2`.
+These are the embedded jump probabilities of Donnelly and Tavaré (1986), p. 5, cases (a′) and
+(b′). -/
 def eventWeight (θ : ℝ) (n : ℕ) (s : State n) : Event n s → ℝ
   | Sum.inl _ => θ / denominator θ s.active.card
   | Sum.inr _ => 2 / denominator θ s.active.card
@@ -349,7 +359,8 @@ private lemma twice_choose_two (k : ℕ) : (2 : ℝ) * k.choose 2 = k * (k - 1 :
       exact_mod_cast h
     simpa [mul_comm] using hr.symm
 
-/-- At positive active count the actual finite collection of event weights sums to one. -/
+/-- **The jump weights sum to one.** At positive active count the actual finite collection of
+event weights sums to one. -/
 theorem sum_eventWeight (θ : ℝ) (hθ : 0 < θ) (n : ℕ)
     (s : State n) (hk : 0 < s.active.card) : ∑ e : Event n s, eventWeight θ n s e = 1 := by
   classical
@@ -368,7 +379,8 @@ theorem sum_eventWeight (θ : ℝ) (hθ : 0 < θ) (n : ℕ)
     nlinarith
   rw [hnum, div_self hd]
 
-/-- The neutral event PMF, constructed from the nonnegative normalized finite weights. -/
+/-- **Neutral jump law.** The neutral event PMF, constructed from the nonnegative normalized
+finite weights. -/
 def eventLaw (θ : ℝ) (hθ : 0 < θ) (n : ℕ) (s : State n)
     (hk : 0 < s.active.card) : PMF (Event n s) := by
   classical
@@ -377,19 +389,21 @@ def eventLaw (θ : ℝ) (hθ : 0 < θ) (n : ℕ) (s : State n)
       (fun e _ ↦ eventWeight_nonneg θ hθ n s hk e),
       sum_eventWeight θ hθ n s hk, ENNReal.ofReal_one])
 
-/-- The event PMF evaluates to the specified finite real weight converted to `ENNReal`. -/
+/-- **Values of the jump law.** The event PMF evaluates to the specified finite real weight
+converted to `ENNReal`. -/
 theorem eventLaw_apply (θ : ℝ) (hθ : 0 < θ) (n : ℕ) (s : State n)
     (hk : 0 < s.active.card) (e : Event n s) :
     eventLaw θ hθ n s hk e = ENNReal.ofReal (eventWeight θ n s e) := rfl
 
-/-- The actual finite transition PMF: apply the event law while active, and stutter
-when every block is frozen. -/
+/-- **Freeze-and-merge transition law.** The actual finite transition PMF: apply the event law
+while active, and stutter when every block is frozen. -/
 def step (θ : ℝ) (hθ : 0 < θ) (n : ℕ) (s : State n) : PMF (State n) :=
   if hk : 0 < s.active.card then (eventLaw θ hθ n s hk).map (applyEvent n s)
   else PMF.pure s
 
-/-- The transition probability of each specified legal event is exactly its neutral
-weight; injectivity ensures no other event contributes to this successor. -/
+/-- **Transition probability of a jump.** The transition probability of each specified legal
+event is exactly its neutral weight; injectivity ensures no other event contributes to this
+successor. -/
 theorem step_applyEvent (θ : ℝ) (hθ : 0 < θ) (n : ℕ) (s : State n)
     (hk : 0 < s.active.card) (e : Event n s) :
     step θ hθ n s (applyEvent n s e) = ENNReal.ofReal (eventWeight θ n s e) := by
@@ -403,7 +417,8 @@ theorem step_applyEvent (θ : ℝ) (hθ : 0 < θ) (n : ℕ) (s : State n)
     simp [hne]
   · simp
 
-/-- With one active block, the last jump freezes it and leaves the partition fixed. -/
+/-- **The last jump keeps the partition.** With one active block, the last jump freezes it and
+leaves the partition fixed. -/
 theorem step_partition_one (θ : ℝ) (hθ : 0 < θ) (n : ℕ) (s : State n)
     (hk : s.active.card = 1) :
     (step θ hθ n s).map State.partition = PMF.pure s.partition := by
@@ -420,23 +435,26 @@ theorem step_partition_one (θ : ℝ) (hθ : 0 < θ) (n : ℕ) (s : State n)
       omega
   rw [hf, PMF.map_const]
 
-/-- Initially the partition consists of singletons, all marked active. -/
+/-- **Initial freeze-and-merge state.** Initially the partition consists of singletons, all
+marked active. -/
 def initial (n : ℕ) : State n where
   partition := ⊥
   active := (⊥ : Finpartition (univ : Finset (Fin n))).parts
   active_subset := Subset.refl _
 
-/-- Iterate the transition PMF independently of any terminal formula. -/
+/-- **Freeze-and-merge chain.** Iterate the transition PMF independently of any terminal
+formula. -/
 def run (θ : ℝ) (hθ : 0 < θ) (n : ℕ) : ℕ → PMF (State n)
   | 0 => PMF.pure (initial n)
   | t + 1 => (run θ hθ n t).bind (step θ hθ n)
 
-/-- Project the result after `n` jumps to the native labeled partition type. -/
+/-- **Terminal partition law.** Project the result after `n` jumps to the native labeled
+partition type. -/
 def terminalLaw (θ : ℝ) (hθ : 0 < θ) (n : ℕ) :
     PMF (Finpartition (univ : Finset (Fin n))) :=
   (run θ hθ n n).map State.partition
 
-/-- At zero active count the chain stutters. -/
+/-- **The chain stutters once absorbed.** At zero active count the chain stutters. -/
 theorem step_stutter (θ : ℝ) (hθ : 0 < θ) (n : ℕ) (s : State n)
     (hk : s.active.card = 0) : step θ hθ n s = PMF.pure s := by
   simp [step, hk]
@@ -455,12 +473,12 @@ private lemma step_active_card (θ : ℝ) (hθ : 0 < θ) (n : ℕ)
     subst t
     simp [hz]
 
-/-- Initially there are exactly `n` active singleton blocks. -/
+/-- **Initial active count.** Initially there are exactly `n` active singleton blocks. -/
 theorem initial_active_card (n : ℕ) : (initial n).active.card = n := by
   simp [initial]
 
-/-- The support after `t` jumps has exactly `n-t` active blocks, using truncated
-subtraction to include stuttering after absorption. -/
+/-- **Active count after `t` jumps.** The support after `t` jumps has exactly `n-t` active
+blocks, using truncated subtraction to include stuttering after absorption. -/
 theorem run_active_card (θ : ℝ) (hθ : 0 < θ) (n t : ℕ) (s : State n)
     (hs : s ∈ (run θ hθ n t).support) : s.active.card = n - t := by
   induction t generalizing s with
@@ -474,8 +492,8 @@ theorem run_active_card (θ : ℝ) (hθ : 0 < θ) (n t : ℕ) (s : State n)
     rw [step_active_card θ hθ n r s hs, ih r hr]
     omega
 
-/-- After `n` jumps all blocks are frozen; this follows from the actual chain's
-support and is independent of the terminal partition formula. -/
+/-- **Absorption after `n` jumps.** After `n` jumps all blocks are frozen; this follows from
+the actual chain's support and is independent of the terminal partition formula. -/
 theorem run_all_frozen (θ : ℝ) (hθ : 0 < θ) (n : ℕ) (s : State n)
     (hs : s ∈ (run θ hθ n n).support) : s.active = ∅ := by
   apply card_eq_zero.mp
@@ -675,19 +693,6 @@ private lemma pair_target_unique (n : ℕ) (s : State n)
   obtain ⟨x,hx⟩ := s.partition.nonempty_of_mem_parts (s.active_subset haB.1)
   exact π.eq_of_mem_parts hB hC (haB.2 hx) (haC.2 hx)
 
-private lemma union_notMem_active_pair (n : ℕ) (s : State n) (p : Finset (Finset (Fin n)))
-    (hp : p ⊆ s.active) (hc : p.card = 2) : p.biUnion id ∉ s.active := by
-  classical
-  intro hu
-  have hpU : p ⊆ {p.biUnion id} := by
-    intro A hA
-    obtain ⟨x,hx⟩ := s.partition.nonempty_of_mem_parts (s.active_subset (hp hA))
-    exact mem_singleton.mpr (s.partition.eq_of_mem_parts (s.active_subset (hp hA))
-      (s.active_subset hu) hx (mem_biUnion.mpr ⟨A,hA,hx⟩))
-  have hle := card_le_card hpU
-  rw [hc,card_singleton] at hle
-  omega
-
 private lemma merge_activeGroup_internal (n : ℕ) (s : State n)
     (p : Finset (Finset (Fin n))) (hp : p ⊆ s.active) (hne : p.Nonempty)
     (B : Finset (Fin n)) (hpB : p ⊆ activeGroup n s B) :
@@ -792,9 +797,7 @@ private lemma sum_merge_groups (n : ℕ) (s : State n)
   rw [sum_congr rfl hsum,sum_comm]
   apply sum_congr rfl
   intro p hp
-  have hne : p.Nonempty := by
-    rw [←card_pos,(mem_powersetCard.mp hp).2]
-    decide
+  have hne : p.Nonempty := pair_nonempty n s ⟨p, hp⟩
   by_cases hg : ∃ B ∈ π.parts, p ⊆ activeGroup n s B
   · obtain ⟨B,hB,hpB⟩ := hg
     rw [ite_eq_left ⟨B,hB,hpB⟩,sum_eq_single B]
@@ -935,10 +938,7 @@ private lemma compatible_event_back (n : ℕ) (s : State n)
     (h : compatible n (applyEvent n s e) π) : compatible n s π := by
   cases e with
   | inl A => exact freeze_compatible_back n s π A h
-  | inr p =>
-      have hp := (mem_powersetCard.mp p.2).1
-      have hn : p.1.Nonempty := by rw [← card_pos, (mem_powersetCard.mp p.2).2]; decide
-      exact merge_compatible_back n s π p.1 hp hn h
+  | inr p => exact merge_compatible_back n s π p.1 (pair_subset n s p) (pair_nonempty n s p) h
 
 private lemma potential_event_of_incompatible (θ : ℝ) (n : ℕ) (s : State n)
     (π : Finpartition (univ : Finset (Fin n))) (h : ¬ compatible n s π)
@@ -960,15 +960,10 @@ private lemma potential_freeze_weight (θ : ℝ) (hθ : 0 < θ) (n : ℕ)
     have hAf : A.1 ∉ frozen n s := fun hh => (mem_sdiff.mp hh).2 A.2
     have hAu : A.1 ∈ π.parts \ frozen n s := mem_sdiff.mpr ⟨hA,hAf⟩
     have hu : 0 < (π.parts \ frozen n s).card := card_pos.mpr ⟨A.1,hAu⟩
-    have hset : π.parts \ frozen n (freeze n s A) =
-        (π.parts \ frozen n s).erase A.1 := by
-      rw [freeze_frozen]
-      ext B
-      simp only [mem_sdiff, mem_insert, mem_erase]
-      tauto
     have huc : (π.parts \ frozen n (freeze n s A)).card =
         (π.parts \ frozen n s).card - 1 := by
-      rw [hset,card_erase_of_mem hAu]
+      have := freeze_nonfrozen_card n s π A hA
+      omega
     have hak : (activeGroup n s A.1).card = 1 := by
       rw [activeGroup_eq_singleton,card_singleton]
     have hbk : (activeGroup n (freeze n s A) A.1).card = 0 := by
@@ -1082,8 +1077,8 @@ private lemma potential_merge_sum (θ : ℝ) (hθ : 0 < θ) (n : ℕ)
   have hz : ∀ p ∈ s.active.powersetCard 2,
       ¬ (∃ B ∈ π.parts, p ⊆ activeGroup n s B) → f p = 0 := by
     intro p hp hn
-    obtain ⟨hpA,hc⟩ := mem_powersetCard.mp hp
-    have hne : p.Nonempty := by rw [← card_pos,hc]; decide
+    have hpA : p ⊆ s.active := pair_subset n s ⟨p, hp⟩
+    have hne : p.Nonempty := pair_nonempty n s ⟨p, hp⟩
     have hbad : ¬ compatible n (merge n s p hpA hne) π :=
       fun hh => hn ((merge_compatible_iff n s π h p hpA hne).mp hh)
     simp only [f,dite_eq_left hp,eventWeight,applyEvent]
@@ -1107,7 +1102,7 @@ private lemma potential_merge_sum (θ : ℝ) (hθ : 0 < θ) (n : ℕ)
     obtain ⟨hpB,hc⟩ := mem_powersetCard.mp hp
     have hpA : p ⊆ s.active := hpB.trans (filter_subset _ _)
     have hpLegal : p ∈ s.active.powersetCard 2 := mem_powersetCard.mpr ⟨hpA,hc⟩
-    have hne : p.Nonempty := by rw [← card_pos,hc]; decide
+    have hne : p.Nonempty := pair_nonempty n s ⟨p, hpLegal⟩
     simp only [f,dite_eq_left hpLegal,eventWeight,applyEvent]
     exact potential_merge_weight θ hθ n s π h p hpA hne hc B hB hpB
   rw [sum_congr rfl hval]
@@ -1266,16 +1261,17 @@ private lemma terminal_of_harmonic (θ : ℝ) (hθ : 0 < θ) (n : ℕ)
     · simp [hp]
     · simp [hp,Ne.symm hp]
 
-/-- The terminal law of the neutral embedded jumps equals the native Chinese
-restaurant partition law. -/
+/-- **The terminal law is the Chinese restaurant process.** The terminal law of the neutral
+embedded jumps equals the native Chinese restaurant partition law. -/
 theorem terminalLaw_eq_crp (θ : ℝ) (hθ : 0 < θ) (n : ℕ) :
     terminalLaw θ hθ n =
       MathlibExt.Biology.PopulationGenetics.ChineseRestaurant.crp θ hθ n := by
   exact terminal_of_harmonic θ hθ n (potential_harmonic θ hθ n)
 
-/-- Each particular labeled partition has the full Ewens probability, obtained from
-the terminal-law equality and the native `crp_apply` and `crpProb` declarations. This is
-Theorem 2.2 of Donnelly and Tavaré (1986), p. 6, at `k = 0`. -/
+/-- **Ewens sampling formula for the freeze-and-merge chain.** Each particular labeled
+partition has the full Ewens probability, obtained from the terminal-law equality and the native
+`crp_apply` and `crpProb` declarations. This is Theorem 2.2 of Donnelly and Tavaré (1986), p. 6,
+at `k = 0`. -/
 theorem terminalLaw_apply (θ : ℝ) (hθ : 0 < θ) (n : ℕ)
     (π : Finpartition (univ : Finset (Fin n))) :
     terminalLaw θ hθ n π = ENNReal.ofReal
