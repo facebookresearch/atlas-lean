@@ -15,7 +15,6 @@ Maurer's lemma bounds the exponential moment $\mathbb{E}_S\, e^{m\,\mathrm{kl}(L
 ## Depends on
 
 - [Donsker–Varadhan variational formula](../../../../../InformationTheory/information-inequalities/donsker-varadhan-variational-formula/kl-div-eq-i-sup.md)
-- [PAC-Bayes bound (McAllester form)](../pac-bayes-bound.md)
 
 ## Proof depends on
 

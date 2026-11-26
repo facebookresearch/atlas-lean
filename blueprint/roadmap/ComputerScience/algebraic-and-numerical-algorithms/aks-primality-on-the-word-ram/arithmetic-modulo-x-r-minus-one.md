@@ -17,4 +17,4 @@ All intermediate values stay below $n^2 + n$. Repeated squaring keeps the invari
 ## Sources
 
 - M. Agrawal, N. Kayal and N. Saxena, "PRIMES is in P", Annals of Mathematics 160(2), 2004.
-- D. E. Knuth, "The Art of Computer Programming, Volume 3: Sorting and Searching", 2nd ed., Addison-Wesley, 1998.
+- D. E. Knuth, "The Art of Computer Programming, Volume 2: Seminumerical Algorithms", 3rd ed., Addison-Wesley, 1997, Sections 4.6 and 4.6.3.

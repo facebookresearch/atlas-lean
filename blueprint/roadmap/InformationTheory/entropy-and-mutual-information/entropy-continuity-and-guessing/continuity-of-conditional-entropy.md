@@ -25,4 +25,4 @@ With $d = \delta(P,Q)$, write $P + d\Delta^- = Q + d\Delta^+$ where $\Delta^\pm$
 ## Sources
 
 - A. Winter, "Tight Uniform Continuity Bounds for Quantum Entropies: Conditional Entropy, Relative Entropy Distance and Energy Constraints", Communications in Mathematical Physics 347, 2016.
-- J. Januzelli, M. Rosulek and L. Roy, "Lower Bounds for Garbled Circuits from Shannon-Type Information Inequalities", 2025.
+- J. Januzelli, M. Rosulek and L. Roy, "Lower Bounds for Garbled Circuits from Shannon-Type Information Inequalities", Advances in Cryptology (CRYPTO 2025), 2025.

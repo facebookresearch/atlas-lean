@@ -15,7 +15,6 @@ The $Z(b)$ commute and $\Pi = 2^{-n}\sum_bZ(b)$ projects onto their joint $+1$ e
 ## Depends on
 
 - [Pauli strings and the Pauli group modulo $i$ as a Heisenberg group](pauli-group-modulo-i.md)
-- [Stone–von Neumann theorem for Heisenberg groups over local fields](../../../RepresentationTheory/automorphic-representations/theta-correspondence/stone-von-neumann-theorem.md)
 
 ## Sources
 
