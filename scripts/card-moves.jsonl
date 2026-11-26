@@ -898,6 +898,7 @@
 {"page": "AlgebraicGeometry/not-yet-classified/cassels-tate-pairing/elliptic-points-top-rep", "to": "NumberTheory/arithmetic-geometry/cassels-tate-pairing/elliptic-points-top-rep", "article_id": "af_43a8413d60720aa677c01690"}
 {"page": "AlgebraicGeometry/not-yet-classified/cassels-tate-pairing/elliptic-tate-shafarevich", "to": "NumberTheory/arithmetic-geometry/cassels-tate-pairing/elliptic-tate-shafarevich", "article_id": "af_29b9d1c45f039d9e01131982"}
 {"page": "Probability/stochastic-calculus/blumenthal-zero-one-law/gaussian-real-ioi-zero", "to": "Probability/distributions/continuous/gaussian-real-ioi-zero", "article_id": "af_a7cf73e1726dc09baac90a88"}
+{"statement": "af_a151da47d041132e76b05670", "page": "Biology/epidemiology/epidemics-on-networks/spectral-radius-and-die-out-of-sis-epidemics", "replaced_by": "af_f94a233790a941a5f344136d"}
 {"folder": "Probability/not-yet-classified/part-02/canonical", "to": "Probability/linear-models-multivariate/generalized-linear-models", "article_id": "af_39df90ce73da7f1a82d3f7f0"}
 {"page": "Probability/not-yet-classified/part-02/canonical/has-fderiv-at-logistic-score", "to": "Probability/linear-models-multivariate/generalized-linear-models/has-fderiv-at-logistic-score", "article_id": "af_581c52233532e0109f04bc57"}
 {"page": "Probability/not-yet-classified/part-02/canonical/logistic-cumulant-glm-hessian", "to": "Probability/linear-models-multivariate/generalized-linear-models/logistic-cumulant-glm-hessian", "article_id": "af_5d6cebc9d903c20b9914d91f"}
