@@ -36,8 +36,8 @@ every subcube of `M` of size `d^t` meets `C` (Lemma 1 of the paper). A set `C` i
 piecewise syndetic when, for some fixed `d`, `C + [0, d]^t` contains arbitrarily
 large subcubes (Proof 1 of Theorem 2 of the paper).
 
-Here `ℕ` contains `0`, while the paper works in positive integers; translating by
-the all-ones vector identifies the two settings and preserves all notions above.
+Here `ℕ` contains `0`. Theorem 2 uses the zero-based box `[0, B)^t`, which becomes the
+paper's `[1, B]^t` when the all-ones vector is added to the points and cube corners.
 -/
 
 namespace MetaMathlibExt
@@ -363,11 +363,12 @@ public theorem cubeGapSize_singleton {t : ℕ} (x : Fin t → ℕ) : cubeGapSize
 /-- **Monochromatic sets that are large relative to their gap size.** Let $r, t \in \mathbb{N}$ with
 $t \ge 1$, and let $f : \mathbb{N} \to \mathbb{N}$ be nondecreasing. There is $B \in \mathbb{N}$
 such that for every coloring of $\mathbb{N}^t$ with $r$ colors there is a finite monochromatic set
-$S \subseteq [1, B]^t$ with $|S| > f(\operatorname{gs}(S))$, where $\operatorname{gs}(S)$ is the gap
-size of $S$ and $[1, B]^t$ is the set of points $x$ with $1 \le x_i \le B$ for every coordinate $i$.
+$S \subseteq [0, B)^t$ with $|S| > f(\operatorname{gs}(S))$, where $\operatorname{gs}(S)$ is the gap
+size of $S$ and $[0, B)^t$ is the set of points $x$ with $0 \le x_i < B$ for every coordinate $i$.
+This box is the translate of the paper's $[1, B]^t$ by subtracting one in each coordinate.
 
 The paper's "(a smallest)" is omitted: it follows from existence. Only the restriction of the
-coloring to $[1, B]^t$ matters. The hypothesis $t \ge 1$ is the paper's; for $t = 0$ and $r \ge 1$
+coloring to $[0, B)^t$ matters. The hypothesis $t \ge 1$ is the paper's; for $t = 0$ and $r \ge 1$
 the statement fails when $f(1) \ge 1$, since the only point gives $|S| = 1 = \operatorname{gs}(S)$.
 The paper's hypothesis $r \ge 1$ is dropped: for $r = 0$ there is no coloring and the statement
 holds vacuously.
@@ -377,12 +378,18 @@ Source: Tom C. Brown, *Piecewise Syndetic Sets in `N^t` and `N^X`*, INTEGERS 24
 public theorem exists_cube_bound_monochromatic_card_gt_gapSize (r t : ℕ) (ht : 1 ≤ t)
     (f : ℕ → ℕ) (hf : Monotone f) :
     ∃ B : ℕ, ∀ c : (Fin t → ℕ) → Fin r, ∃ j : Fin r, ∃ S : Finset (Fin t → ℕ),
-      (S : Set (Fin t → ℕ)) ⊆ latticeCube (fun _ => 1) B ∧ (∀ x ∈ S, c x = j) ∧
+      (S : Set (Fin t → ℕ)) ⊆ latticeCube 0 B ∧ (∀ x ∈ S, c x = j) ∧
         f (cubeGapSize (S : Set (Fin t → ℕ))) < S.card := by
   classical
-  obtain ⟨B, hB⟩ := exists_cube_bound_isDenseInCubes r t (fun d => d * (f d + 1))
-  refine ⟨B, fun c => ?_⟩
-  obtain ⟨d, m, hd, hm, j, a, hsub, hdense⟩ := hB c
+  obtain ⟨A, hA⟩ := exists_cube_bound_isDenseInCubes r t (fun d => d * (f d + 1))
+  refine ⟨A + 1, fun c => ?_⟩
+  obtain ⟨d, m, hd, hm, j, a, hsub, hdense⟩ := hA c
+  have hbox : latticeCube (fun _ : Fin t => 1) A ⊆ latticeCube 0 (A + 1) := by
+    intro x hx
+    rw [mem_latticeCube] at hx ⊢
+    intro i
+    refine ⟨Nat.zero_le _, ?_⟩
+    simpa only [Pi.zero_apply, zero_add, Nat.add_comm 1 A] using (hx i).2
   let S := (Fintype.piFinset fun i => Finset.Ico (a i) (a i + m)).filter fun x => c x = j
   have mem_S {x : Fin t → ℕ} : x ∈ S ↔ x ∈ latticeCube a m ∧ c x = j := by
     simp only [S, Finset.mem_filter, Fintype.mem_piFinset, mem_latticeCube, Finset.mem_Ico]
@@ -425,7 +432,7 @@ public theorem exists_cube_bound_monochromatic_card_gt_gapSize (r t : ℕ) (ht :
   have hcard : f d + 1 ≤ S.card := by
     simpa using Fintype.card_le_of_injective (fun k => (⟨p k, (hp k).2⟩ : S))
       (fun _ _ heq => hpMono.injective (congrArg (fun x : S => (x : Fin t → ℕ) i₀) heq))
-  exact ⟨j, S, hS.trans hsub, fun x hx => (mem_S.mp hx).2,
+  exact ⟨j, S, (hS.trans hsub).trans hbox, fun x hx => (mem_S.mp hx).2,
     (hf hgap).trans_lt (Nat.lt_of_succ_le hcard)⟩
 
 end
