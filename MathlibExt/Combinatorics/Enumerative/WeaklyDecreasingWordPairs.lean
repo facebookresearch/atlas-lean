@@ -406,6 +406,31 @@ public theorem weaklyDecreasingNonIntersectingPairs_sameLength_card (k n : ℕ) 
   WeaklyDecreasingWordPairs.card_eq_sum k n n hn hn
 
 open WeaklyDecreasingWordPairs PowerSeries in
+/-- **Non-intersecting pairs of weakly decreasing words.** Fix natural numbers $k$, $n \ge 1$ and
+$r \ge 1$, and order an alphabet of $k$ letters. Write $[x^m] F$ for the coefficient of $x^m$ in a
+formal power series $F$ over $\mathbb{Q}$. The number of pairs $(u, v)$ of weakly decreasing words
+over this alphabet, $u$ of length $n$ and $v$ of length $r$, such that no letter occurs in both is
+$\sum_{j=1}^{k-1} \binom{k}{j} \, [x^n]\bigl(x^j (1-x)^{-j}\bigr) \,
+[x^r]\bigl((1-x)^{-(k-j)} - 1\bigr)$.
+
+Source: Aubrey Blecher and Arnold Knopfmacher, *Intersections in Pairs of Words*, INTEGERS 24 (2024),
+Article A107, Theorem 3 (`integers-2024-A107-thm-3`). -/
+public theorem weaklyDecreasingNonIntersectingPairs_card_eq_coeff (k n r : ℕ) (hn : 1 ≤ n)
+    (hr : 1 ≤ r) :
+    (((Finset.univ : Finset ((Fin n → Fin k) × (Fin r → Fin k))).filter fun p => Antitone p.1 ∧
+        Antitone p.2 ∧ Disjoint (Finset.univ.image p.1) (Finset.univ.image p.2)).card : ℚ) =
+      ∑ j ∈ Finset.Icc 1 (k - 1), (k.choose j : ℚ) * coeff n (X ^ j * ((1 - X) ^ j)⁻¹ : ℚ⟦X⟧) *
+        coeff r ((((1 - X) ^ (k - j))⁻¹ - 1 : ℚ⟦X⟧)) := by
+  rw [card_eq_sum k n r hn hr, Nat.cast_sum]
+  have hzero : coeff r (1 : ℚ⟦X⟧) = 0 := by
+    simp [coeff_one, show r ≠ 0 by omega]
+  refine Finset.sum_congr rfl fun j hj => ?_
+  obtain ⟨hj₁, hj₂⟩ := Finset.mem_Icc.mp hj
+  rw [Nat.cast_mul, Nat.cast_mul, coeff_first_word hn hj₁, map_sub, hzero, sub_zero,
+    coeff_inv_unweighted, Nat.multichoose_eq,
+    show k - j + r - 1 = r + k - j - 1 by omega]
+
+open WeaklyDecreasingWordPairs PowerSeries in
 /-- **Overlap statistic on pairs of weakly decreasing words.** Fix natural numbers $k$, $n \ge 1$,
 $r \ge 1$ and a rational number $q$, and order an alphabet of $k$ letters. For words $u$ and $v$
 over this alphabet, the overlap of $(u, v)$ is the number of positions of $v$ whose letter occurs

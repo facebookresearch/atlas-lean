@@ -45,6 +45,23 @@ example :
 
 open PowerSeries
 
+-- In Example 4, each first letter leaves six decreasing length-two words on the other letters.
+example :
+    ∑ j ∈ Icc 1 (4 - 1), (Nat.choose 4 j : ℚ) * coeff 1 (X ^ j * ((1 - X) ^ j)⁻¹ : ℚ⟦X⟧) *
+      coeff 2 ((((1 - X) ^ (4 - j))⁻¹ - 1 : ℚ⟦X⟧)) = 24 := by
+  rw [← weaklyDecreasingNonIntersectingPairs_card_eq_coeff 4 1 2 (by decide) (by decide)]
+  have h : ((univ : Finset ((Fin 1 → Fin 4) × (Fin 2 → Fin 4))).filter fun p =>
+      Antitone p.1 ∧ Antitone p.2 ∧ Disjoint (univ.image p.1) (univ.image p.2)).card = 24 := by
+    decide
+  exact_mod_cast h
+
+-- For the empty alphabet, truncated subtraction leaves an empty support-size interval.
+example (n r : ℕ) (hn : 1 ≤ n) (hr : 1 ≤ r) :
+    (((univ : Finset ((Fin n → Fin 0) × (Fin r → Fin 0))).filter fun p => Antitone p.1 ∧
+      Antitone p.2 ∧ Disjoint (univ.image p.1) (univ.image p.2)).card : ℚ) = 0 := by
+  rw [weaklyDecreasingNonIntersectingPairs_card_eq_coeff 0 n r hn hr]
+  simp
+
 -- With one letter, the full-support term is the only term. Both positions contribute to the weight.
 example (q : ℚ) :
     coeff 1 (X * (1 - X)⁻¹ : ℚ⟦X⟧) * coeff 2 (-1 + (1 - C q * X)⁻¹) = q ^ 2 := by
