@@ -26,7 +26,7 @@
 - [Displacement error is the coefficient error times the hat](physical-p1-sub-two-cell-reconstruction.md)
 - [Pointwise displacement error bound](abs-physical-p1-sub-two-cell-reconstruct.md)
 - [Energy of the displacement error](integral-energy-reconstruction-error.md)
-- [Mean-square displacement error](integral-sq-reconstruction-error.md)
+- [Squared L² displacement error](integral-sq-reconstruction-error.md)
 
 ## D. The normalized quadratic-load problem
 
@@ -59,13 +59,13 @@
 - [The midpoint coefficient in closed form](quad-midpoint-coeff-eq.md)
 - [Quadrature error of the interior coefficient](quad-midpoint-coeff-sub-quad-coeff.md)
 - [Energy of the quadrature error](integral-energy-quadrature-error.md)
-- [Mean-square quadrature error](integral-sq-quadrature-error.md)
+- [Squared L² quadrature error](integral-sq-quadrature-error.md)
 
 ## G. Composition with the residual and the discretization error
 
 - [Residual identity of the midpoint system](quad-midpoint-coeff-sub-eq.md)
 - [Composed energy-norm error bound](sqrt-energy-quad-error-le.md)
-- [Composed mean-square error bound](sqrt-sq-quad-error-le.md)
+- [Composed L² error bound](sqrt-sq-quad-error-le.md)
 
 ## H. Nodal exactness and the remaining errors
 
