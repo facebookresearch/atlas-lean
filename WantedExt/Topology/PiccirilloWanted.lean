@@ -35,7 +35,7 @@ statements are unchanged. Source: https://arxiv.org/abs/1808.02923
 module
 
 public import Batteries.Util.ProofWanted
-public import WantedExt.Topology.ConwayKnotShared
+public import MathlibExt.Topology.ConwayKnotSimple
 public import Mathlib.Analysis.InnerProductSpace.PiL2
 public import Mathlib.Analysis.Calculus.ContDiff.Basic
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
@@ -68,26 +68,6 @@ well. A direct Khovanov-homological computation shows Rasmussen's
 obstructions `s` and `τ` both vanish, which is why this trace-embedding
 detour through `K'` is needed.
 -/
-
-/- **The Conway-knot polyline is a simple closed curve.**
-
-A finite — if laborious — check on the fixed 78-vertex braid-closure
-polyline: all vertices distinct, non-adjacent edges disjoint, adjacent
-edges meeting only at their shared vertex. This certifies that `conwayKnot`
-is a genuine embedded knot — the subject the slice question is about — and
-is posed as its own hole so that the proof lives in the submission rather
-than as an unchecked field of `conwayKnot`. -/
-/-- **The Conway knot polyline is a simple closed curve.** Let $K$ be the Conway knot $11n34$,
-realized as a closed polyline in $\mathbb{R}^3$ (the braid closure of a 4-strand braid word for
-it), and let $N$ be its number of vertices. The periodic piecewise-linear parametrization of $K$,
-which traverses each edge in unit time, is injective on the interval $[0, N)$.
-
-Equivalently, the vertices of $K$ are distinct, non-adjacent edges are disjoint, and adjacent
-edges meet only at their shared vertex.
-
-Source: https://arxiv.org/abs/1808.02923 Via leanprover/lean-eval@38361be, problem
-`conway_knot_not_smoothly_slice`. -/
-public theorem_wanted conwayKnot_isSimple : conwayKnot.IsSimple
 
 /- **Piccirillo, "The Conway knot is not slice."**
 
