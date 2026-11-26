@@ -18,3 +18,4 @@
 
 - [Existence of a posterior argmax classifier](exists-is-posterior-argmax.md)
 - [The Bayes risk for the 0-1 loss](bayes-risk-zero-one-loss.md)
+- [Bayes rule for binary classification with misclassification costs](bayes-rule-for-binary-classification.md)

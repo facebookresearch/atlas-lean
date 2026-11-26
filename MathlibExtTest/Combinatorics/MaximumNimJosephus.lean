@@ -56,6 +56,18 @@ example : maximumNimGrundy (· / 3) 2 = 0 := by
   rw [maximumNimGrundy_eq, maximumNimMex_eq_iff]
   simp
 
+-- For the smallest divisor and `j = 1`, the largest pile below the divisor is terminal.
+example : maximumNimGrundy (· / 2) 1 = 0 :=
+  maximumNimGrundy_sub_eq_zero 2 1 (by decide) (by decide) (by decide)
+
+-- An interior value of `j` gives a positive pile strictly below `k`.
+example : maximumNimGrundy (· / 7) 4 = 0 :=
+  maximumNimGrundy_sub_eq_zero 7 3 (by decide) (by decide) (by decide)
+
+-- At `j = k`, the theorem also covers the empty pile for any permitted divisor.
+example (k : ℕ) (hk : 2 ≤ k) : maximumNimGrundy (· / k) 0 = 0 := by
+  simpa only [Nat.sub_self] using maximumNimGrundy_sub_eq_zero k k hk (by omega) le_rfl
+
 -- Test section: Grundy numbers at multiples of the divisor. For `k = 3`, the piles `3`, `6` and
 -- `9` have Grundy numbers `1`, `2` and `3`.
 example : maximumNimGrundy (· / 3) 3 = 1 :=
