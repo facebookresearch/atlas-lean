@@ -1,6 +1,6 @@
 # Computing dominance frontiers bottom up
 
-Let $G$ be a control-flow graph with $N$ nodes and $E$ edges, an entry node from which every node is reachable, and its dominator tree, and use the [dominance frontiers](dominance-frontiers.md) $\mathrm{DF}$, $\mathrm{DF}_{\mathrm{local}}$ and $\mathrm{DF}_{\mathrm{up}}$.
+Let $G$ be a control-flow graph with $N$ nodes and $E$ edges, an entry node that has no predecessors and from which every node is reachable, and its dominator tree, and use the [dominance frontiers](dominance-frontiers.md) $\mathrm{DF}$, $\mathrm{DF}_{\mathrm{local}}$ and $\mathrm{DF}_{\mathrm{up}}$.
 
 1. **Decomposition.** For every node $X$,
 

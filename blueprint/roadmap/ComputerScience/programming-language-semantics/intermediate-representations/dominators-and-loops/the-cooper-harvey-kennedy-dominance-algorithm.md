@@ -8,14 +8,18 @@ Let $G$ be a finite control-flow graph with entry node $n_0$ in which every node
 Here $\mathrm{intersect}(b_1, b_2)$ moves two fingers up the array, repeatedly replacing the finger with the smaller postorder number $f$ by $\mathrm{doms}[f]$, until they meet, and returns the common node.
 
 1. **Correctness.** The algorithm terminates, and then $\mathrm{doms}[b]$ is the immediate dominator of $b$ for every $b \ne n_0$. For every node $b$, $\mathrm{Dom}(b)$ is the set of nodes on the path $b, \mathrm{doms}[b], \mathrm{doms}[\mathrm{doms}[b]], \dots, n_0$, which is the path from $n_0$ to $b$ in the dominator tree.
-2. **Cost.** Each pass takes time $O(N + E \cdot D)$, where $N$ and $E$ are the numbers of nodes and edges and $D$ is the size of the largest dominator set.
+2. **Cost.** Each pass takes time $O(N + E \cdot D)$, where $N$ and $E$ are the numbers of nodes and edges and $D$ is the length of the longest chain $b, \mathrm{doms}[b], \dots, n_0$ that the intersections of that pass traverse; $D \le N$. Once the algorithm has converged these chains are the final dominator sets, but on an earlier pass a provisional chain can be longer than every final dominator set.
 
-**Proof idea.** The array represents each set $D(b)$ of the [iterative dataflow solution](dominator-sets-as-a-dataflow-problem.md) as the chain from $b$ to $n_0$, in the order of the path in the dominator tree. Nodes higher in that tree have larger postorder numbers, so walking the finger with the smaller number up the chain computes the intersection of two such sets. Each pass therefore performs one pass of the iterative dataflow algorithm.
+**Proof idea.** In reverse postorder of a depth-first search the parent of each node in the [search tree comes earlier](../../../graph-algorithms/traversal-and-connectivity/depth-first-search/parent-before-child-decreasing-finish.md), so on the first pass every node other than $n_0$ has a predecessor whose entry is already defined. The array represents each set $D(b)$ of the [iterative dataflow solution](dominator-sets-as-a-dataflow-problem.md) as the chain from $b$ to $n_0$, in the order of the path in the dominator tree. Nodes higher in that tree have larger postorder numbers, so walking the finger with the smaller number up the chain computes the intersection of two such sets. Each pass therefore performs one pass of the iterative dataflow algorithm.
 
 ## Depends on
 
 - [Dominance and static single assignment form](../dominance-and-static-single-assignment-form.md)
 - [Dominator sets as a dataflow problem](dominator-sets-as-a-dataflow-problem.md)
+
+## Proof depends on
+
+- [In decreasing finish order, a DFS parent precedes its child](../../../graph-algorithms/traversal-and-connectivity/depth-first-search/parent-before-child-decreasing-finish.md)
 
 ## Sources
 

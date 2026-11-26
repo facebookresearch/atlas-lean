@@ -6,11 +6,16 @@ Fix a variable $x$ of a program in control-flow-graph form, together with the so
 - A *UD-chain* is the subgraph connecting one use to all the definitions that reach it.
 - A *web* of $x$ is a connected component of its DU-graph. Equivalently, it is a maximal set of DU-chains and UD-chains closed under intersection: two chains that share a node belong to the same web.
 
-Different webs of one variable never communicate values: no definition of one web reaches a use of another, so each web can be renamed to a fresh variable, and hence allocated a register, without changing the behavior of the program. The webs of all variables can be computed from the def-use edges with a union-find structure, in time nearly linear in the number of def-use edges.
+Different webs of one variable never communicate values: no definition of one web reaches a use of another, so each web can be renamed to a fresh variable, and hence allocated a register, without changing the behavior of the program. The webs of all variables can be computed with a union-find structure: one set for each of the $V$ definition and use nodes, then a union for each of the $E$ def-use edges. With linking by rank and path compression this takes time $O((V + E)\,\alpha(V + E, V))$; isolated definitions and uses become singleton webs.
 
 ## Depends on
 
 - [Reaching definitions analysis](reaching-definitions-analysis.md)
+
+## Proof depends on
+
+- [Operation counts of connected components](../../../data-structures/disjoint-sets-and-dynamic-trees/disjoint-set-data-structure/connected-components-time-spec.md)
+- [Tarjan–van Leeuwen bound for union by rank with path compression](../../../data-structures/disjoint-sets-and-dynamic-trees/disjoint-set-data-structure/run-empty-cost-le-inverse-ackermann.md)
 
 ## Sources
 

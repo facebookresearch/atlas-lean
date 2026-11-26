@@ -1,15 +1,23 @@
 # Register allocation after classical SSA elimination is NP-complete
 
-*Classical SSA elimination* replaces each $\varphi$-function $v = \varphi(v_1, \dots, v_m)$ of a program in [SSA form](../intermediate-representations/dominance-and-static-single-assignment-form.md) by copy instructions $v = v_i$ at the end of the predecessor blocks. A *simple post-SSA program* is a program of the form produced in this way from an SSA program with a single loop: it copies its parameters into temporaries, contains one loop with copy instructions just before the loop and at its end corresponding to one eliminated matrix of $\varphi$-functions, and returns.
+*Classical SSA elimination* replaces each $\varphi$-function $v = \varphi(v_1, \dots, v_m)$ of a program in [SSA form](../intermediate-representations/dominance-and-static-single-assignment-form.md) by copy instructions $v = v_i$ at the end of the predecessor blocks. A *simple post-SSA program* is a program of the following form, which classical SSA elimination produces from an SSA program with one loop: it takes parameters $p_1, \dots, p_{K+1}$, copies them by $\mathtt{int}\ v_{1j} = p_j$ for $j \le K$ and $\mathtt{int}\ i_1 = p_{K+1}$, executes the copies $\mathtt{int}\ v_j = v_{1j}$ for $j \le K$ and $\mathtt{int}\ i = i_1$, and then runs
 
-**Theorem.** The [core register allocation problem](register-allocation-is-np-complete.md), with the number $K$ of registers part of the input, is NP-complete for simple post-SSA programs.
+$$\mathtt{while}\ (i < C)\ \{\ \mathtt{int}\ i_2 = i + 1;\ S^*;\ v_1 = v_{21}; \dots; v_K = v_{2K};\ i = i_2;\ \}\quad \mathtt{return}\ v_1;$$
 
-The proof reduces the coloring problem for circular-arc graphs: a circular graph $V$ with $\min(V) > K$ is $K$-colorable if and only if an associated *SSA-circular* graph $F(V, K)$ is, and an SSA-circular graph $Y$ is $K$-colorable if and only if the core register allocation problem has a solution for an associated simple post-SSA program $H(Y, K)$ with $K + 1$ registers. The result holds whatever the order in which the copies are inserted. So, although register allocation is polynomial for [strict SSA programs](optimal-coloring-of-ssa-interference-graphs.md), translating to SSA form, allocating registers and then eliminating SSA classically does not give a polynomial algorithm unless P = NP.
+where $C$ ranges over integer constants and every statement $S$ of the body is $\mathtt{int}\ v_j = i + C$, $v_j = v_k$ or $\mathtt{if}\ (v_j > C)\ \mathtt{break}$.
+
+**Theorem.** The [core register allocation problem](interference-graphs.md), with the number $K$ of registers part of the input, is NP-complete for simple post-SSA programs.
+
+The proof reduces the coloring problem for [circular-arc graphs](../../../TheoryOfComputation/np-completeness/graph-coloring-and-partitioning/graph-coloring-variants/circular-arc-coloring-np-complete.md), given by their representation $V$ as a set of arcs $(d, u)$ with integer endpoints, $\min(V)$ being the smallest endpoint used: when $\min(V) > K$, $V$ is $K$-colorable if and only if an associated *SSA-circular* graph $F(V, K)$ is, and an SSA-circular graph $Y$ is $K$-colorable if and only if the core register allocation problem has a solution for an associated simple post-SSA program $H(Y, K)$ with $K + 1$ registers. The result holds whatever the order in which the copies are inserted. So, although register allocation is polynomial for [strict SSA programs](optimal-coloring-of-ssa-interference-graphs.md), translating to SSA form, allocating registers and then eliminating SSA classically does not give a polynomial algorithm unless P = NP.
 
 ## Depends on
 
-- [Register allocation is NP-complete](register-allocation-is-np-complete.md)
+- [Interference graphs](interference-graphs.md)
 - [Dominance and static single assignment form](../intermediate-representations/dominance-and-static-single-assignment-form.md)
+
+## Proof depends on
+
+- [CIRCULAR-ARC GRAPH COLORING is NP-complete](../../../TheoryOfComputation/np-completeness/graph-coloring-and-partitioning/graph-coloring-variants/circular-arc-coloring-np-complete.md)
 
 ## Sources
 

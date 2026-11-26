@@ -7,14 +7,19 @@ $$\alpha(\mathrm{lfp}(c)) = \mathrm{lfp}(a).$$
 So an analysis whose constraint function is a sound and complete abstraction of the semantic constraint function computes exactly the abstraction of the semantics of the program.
 
 **Proof.** Let $y = \mathrm{lfp}(a)$.
-- $\alpha(\mathrm{lfp}(c)) \sqsubseteq y$: we have $\alpha(c(\gamma(y))) = a(\alpha(\gamma(y))) \sqsubseteq a(y) = y$, because $\alpha \circ \gamma$ is reductive and $a$ is monotone. By the adjunction, $c(\gamma(y)) \sqsubseteq \gamma(y)$, so $\gamma(y)$ is a pre-fixed point of $c$ and $\mathrm{lfp}(c) \sqsubseteq \gamma(y)$. By the adjunction again, $\alpha(\mathrm{lfp}(c)) \sqsubseteq y$.
-- $y \sqsubseteq \alpha(\mathrm{lfp}(c))$: $a(\alpha(\mathrm{lfp}(c))) = \alpha(c(\mathrm{lfp}(c))) = \alpha(\mathrm{lfp}(c))$, so $\alpha(\mathrm{lfp}(c))$ is a fixed point of $a$.
+- $\alpha(\mathrm{lfp}(c)) \sqsubseteq y$: we have $\alpha(c(\gamma(y))) = a(\alpha(\gamma(y))) \sqsubseteq a(y) = y$, because $\alpha \circ \gamma$ is reductive and $a$ is monotone. By the adjunction, $c(\gamma(y)) \sqsubseteq \gamma(y)$, so $\gamma(y)$ is a pre-fixed point of $c$ and $\mathrm{lfp}(c) \sqsubseteq \gamma(y)$, since [the least fixed point lies below every pre-fixed point](the-least-fixed-point-lies-below-every-pre-fixed.md). By the adjunction again, $\alpha(\mathrm{lfp}(c)) \sqsubseteq y$.
+- $y \sqsubseteq \alpha(\mathrm{lfp}(c))$: $a(\alpha(\mathrm{lfp}(c))) = \alpha(c(\mathrm{lfp}(c))) = \alpha(\mathrm{lfp}(c))$, because [the least fixed point is a fixed point](the-least-fixed-point-is-a-fixed-point.md); so $\alpha(\mathrm{lfp}(c))$ is a fixed point of $a$, hence a pre-fixed point, and $y \sqsubseteq \alpha(\mathrm{lfp}(c))$.
 
 The first inclusion uses only soundness; the second uses completeness.
 
 ## Depends on
 
 - [Sound, optimal and complete abstractions](sound-optimal-and-complete-abstractions.md)
+
+## Proof depends on
+
+- [The least fixed point is a fixed point](the-least-fixed-point-is-a-fixed-point.md)
+- [The least fixed point lies below every pre-fixed point](the-least-fixed-point-lies-below-every-pre-fixed.md)
 
 ## Sources
 

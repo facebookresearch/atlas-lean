@@ -1,6 +1,6 @@
 # Dominance frontiers
 
-Let $G$ be a control-flow graph with an entry node from which every node is reachable, with the [dominance relation](dominance-and-static-single-assignment-form.md) and its dominator tree. The *dominance frontier* of a node $X$ is the set of nodes $Y$ such that $X$ dominates a predecessor of $Y$ but does not strictly dominate $Y$:
+Let $G$ be a control-flow graph with an entry node that has no predecessors and from which every node is reachable, with the [dominance relation](dominance-and-static-single-assignment-form.md) and its dominator tree. The *dominance frontier* of a node $X$ is the set of nodes $Y$ such that $X$ dominates a predecessor of $Y$ but does not strictly dominate $Y$:
 
 $$\mathrm{DF}(X) = \{Y \mid \exists P \in \mathrm{Pred}(Y).\ X \text{ dominates } P \text{ and } X \text{ does not strictly dominate } Y\}.$$
 
