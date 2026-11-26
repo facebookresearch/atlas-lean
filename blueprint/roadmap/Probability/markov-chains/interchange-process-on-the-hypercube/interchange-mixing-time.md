@@ -1,4 +1,4 @@
-# Mixing time of the interchange process on the hypercube
+# Definition of the mixing time of the interchange process on the hypercube
 
 Let $n \in \mathbb{N}$ and let $d(t)$, for $t \in \mathbb{R}$, be the total variation distance between the law at time $t$ of the unit-rate interchange process on the hypercube $\{0,1\}^n$ started at the identity and the uniform distribution on permutations of $\{0, 1\}^n$. The mixing time is
 
