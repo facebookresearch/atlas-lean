@@ -50,7 +50,8 @@ example : ¬ IsRestPoint fit ![1 / 2, 1 / 2] := by
   norm_num [meanFitness, fit, Fin.sum_univ_two] at h0
 
 /-- **Constant solutions at rest points.** For any fitness `f`, the constant trajectory at a rest
-point of `f` solves the replicator equation. -/
+point of `f` solves the replicator equation. This is `isSolution_const` of
+`Domains.Biology.Dynamics.Replicator`, proved here from the foundation's definitions alone. -/
 theorem isSolution_const {ι : Type*} [Fintype ι] {f : (ι → ℝ) → ι → ℝ} {x : ι → ℝ}
     (hx : IsRestPoint f x) : IsSolution f (fun _ => x) where
   hasDerivAt i t _ := by
