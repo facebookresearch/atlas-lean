@@ -249,7 +249,7 @@ namespace PeriodicPlaneEmbedding
 
 /-- High-probability strip joined arms to the rays `{y ≤ s}` and `{y ≥ s + t}` with `L ⊆ H_R`
 (FKG, translation invariance, almost sure uniqueness). -/
-theorem exists_highProbability_finiteStripJoinedBoundaryArmEvent_with_separation
+lemma exists_highProbability_finiteStripJoinedBoundaryArmEvent_with_separation
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)

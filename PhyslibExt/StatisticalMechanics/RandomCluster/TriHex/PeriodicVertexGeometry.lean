@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.PeriodicDualShift
+import Mathlib.Analysis.Normed.Affine.AddTorsor
 
 /-!
 # Plane positions of the triangular and hexagonal lattices

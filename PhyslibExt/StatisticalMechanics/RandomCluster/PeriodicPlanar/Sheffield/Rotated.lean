@@ -418,7 +418,7 @@ lemma exists_buffer_primal_crossing_min_tendsto_zero_of_dual_max
 
 /-- The balanced-aspect contradiction: crossing probabilities with the stated aspect-ratio
 comparisons and limits cannot exist. The conclusion is `False`. -/
-theorem balanced_aspect_contradiction_of_crossing_limits
+lemma balanced_aspect_contradiction_of_crossing_limits
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     {B : Real} (hBpos : 0 < B)

@@ -10,6 +10,7 @@ module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.TriHex.PeriodicDual
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.Duality
+public import PhyslibExt.CondensedMatter.IsingModel.Onsager.Torus
 
 /-!
 # Random-cluster duality between the triangular and hexagonal tori
@@ -76,10 +77,6 @@ abbrev TorusSite (L : ℕ) := ZMod L × ZMod L
 abbrev TriHexTorusEdgeIndex (L : ℕ) := TorusSite L × Fin 3
 /-- Vertices of the hexagonal torus: a base site with a colour (`false` black, `true` white). -/
 abbrev HexTorusVertex (L : ℕ) := TorusSite L × Bool
-
-/-- For `L > 2`, `L ≠ 0`, so `ZMod L` is finite. -/
-instance triHexTorusNeZero (L : ℕ) [Fact (2 < L)] : NeZero L :=
-  ⟨by have := (Fact.out : 2 < L); omega⟩
 
 /-- For `L > 2`, `1 ≠ 0` in `ZMod L`. -/
 lemma zmod_one_ne_zero (L : ℕ) [Fact (2 < L)] :
@@ -472,7 +469,7 @@ noncomputable def triHexTorusEulerDefect (L : ℕ) [Fact (2 < L)]
     Nat.card K.ConnectedComponent + 1 - triHexTorusFaceCount L K
 
 /-- Euler's formula on the torus with the defect correction: `V - E + F = C + 1 - defect`. -/
-theorem triHexTorus_euler (L : ℕ) [Fact (2 < L)]
+lemma triHexTorus_euler (L : ℕ) [Fact (2 < L)]
     (K : SimpleGraph (TorusSite L)) :
     (Nat.card (TorusSite L) : ℤ) - K.edgeSet.ncard +
         triHexTorusFaceCount L K =
@@ -566,7 +563,7 @@ lemma triHexTorus_edge_card (L : ℕ) [Fact (2 < L)] :
 /-- Random-cluster duality on the triangular/hexagonal torus: the FK weight of `ω` equals that of
 the dual configuration at the dual parameter, up to explicit constants and the topological factor `q
 ^ defect`. -/
-theorem triHexTorus_fkWeight_duality (L : ℕ) [Fact (2 < L)]
+lemma triHexTorus_fkWeight_duality (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (Sym2 (TorusSite L)))
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     FK.fkWeight (triangularTorusGraph L) p q omega *
@@ -665,7 +662,7 @@ noncomputable def triHexTorusDualSectorSum
     else 0
 
 /-- Duality of the fixed-defect sector sums. -/
-theorem triHexTorus_sectorSum_duality (L : ℕ) [Fact (2 < L)]
+lemma triHexTorus_sectorSum_duality (L : ℕ) [Fact (2 < L)]
     (r : ℤ) (F : ConfigSpace (Sym2 (HexTorusVertex L)) → ℝ)
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     triHexTorusPrimalSectorSum L r p q F *

@@ -315,7 +315,7 @@ lemma activeBCNumer_eq_of_le_sup_boundaryClique
 
 /-- If `G ≤ H ≤ G ⊔ K_∂`, the boundary-wired expectation of a function of `E(G)` is the same on `H`
 as on `G`. -/
-theorem activeBCMean_eq_of_le_sup_boundaryClique
+lemma activeBCMean_eq_of_le_sup_boundaryClique
     (hGH : G <= H)
     (habsorb : H <= G ⊔ boundaryCliqueGraph boundary)
     (p q : Real) (f : ConfigSpace G.edgeSet -> Real) :
@@ -346,7 +346,7 @@ lemma exists_boundary_reachable_of_sup_boundaryClique
         exact (hroot hclique.2.1).elim
 
 /-- If `G ≤ H ≤ G ⊔ K_∂`, an interior root is joined to the boundary in `H` iff it is in `G`. -/
-theorem boundaryReachable_iff_of_le_sup_boundaryClique
+lemma boundaryReachable_iff_of_le_sup_boundaryClique
     (hGH : G <= H)
     (habsorb : H <= G ⊔ boundaryCliqueGraph boundary)
     {root : V} (hroot : ¬ boundary root)
@@ -474,7 +474,7 @@ lemma innerBoundaryReach_of_outerBoundaryReach
 
 /-- Along an adjacency-preserving box embedding, a root joined to the outer boundary is joined to
 the inner boundary in the restricted configuration. -/
-theorem outerRootBoundaryEvent_subset_innerRestrict
+lemma outerRootBoundaryEvent_subset_innerRestrict
     (hadj : ocd_AdjMatch Gin Gout incl)
     (hmargin : ∀ x, ¬ bdryOut (incl x))
     (hcross : ∀ x c, Gout.Adj (incl x) c →

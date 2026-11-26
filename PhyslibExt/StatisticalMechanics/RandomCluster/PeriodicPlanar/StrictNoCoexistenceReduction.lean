@@ -100,7 +100,7 @@ lemma dualCritical_crossBounds_of_sharpness_strictNoCoexistence
 
 /-- Conditional critical-point duality: off-critical sharpness of both models, dual subcritical
 coverage and strict no-coexistence give `pc* = (pc)*` and `pc / (1 - pc) · pc* / (1 - pc*) = q`. -/
-theorem dualCritical_relation_of_sharpness_strictNoCoexistence
+lemma dualCritical_relation_of_sharpness_strictNoCoexistence
     {primalPercolates dualPercolates : Real → Prop}
     {pc pcDual q : Real}
     (hpc : pc ∈ Ioo (0 : Real) 1)

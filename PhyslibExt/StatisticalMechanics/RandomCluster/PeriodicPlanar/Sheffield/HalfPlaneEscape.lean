@@ -346,7 +346,7 @@ lemma PeriodicPlaneEmbedding.exists_boundaryConnection_ge_orbitBox_sq
 translation invariance, almost sure uniqueness). See also
 `exists_infiniteBoundaryConnection_sequence_tendsto_one` (`HalfPlaneInfiniteArm`), which is
 stronger (finite sources, infinite-cluster event). -/
-theorem PeriodicPlaneEmbedding.exists_boundaryConnection_sequence_tendsto_one
+lemma PeriodicPlaneEmbedding.exists_boundaryConnection_sequence_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)

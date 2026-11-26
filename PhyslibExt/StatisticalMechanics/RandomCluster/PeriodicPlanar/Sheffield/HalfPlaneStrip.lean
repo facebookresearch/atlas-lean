@@ -244,7 +244,7 @@ lemma PeriodicPlaneEmbedding.halfPlaneStripPairMergeError_measureReal_tendsto
 
 /-- Under translation invariance and almost sure uniqueness, some translate of a pair of vertices
 has strip merge error below `ε` for some strip width. -/
-theorem PeriodicPlaneEmbedding.exists_shift_stripPairMergeError_measureReal_lt
+lemma PeriodicPlaneEmbedding.exists_shift_stripPairMergeError_measureReal_lt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)

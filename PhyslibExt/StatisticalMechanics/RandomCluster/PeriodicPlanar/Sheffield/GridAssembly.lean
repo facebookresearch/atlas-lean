@@ -127,7 +127,7 @@ connectors inside the rectangles, labeled bottom/top and left/right consistently
 preferences and with the boundary rows and columns, forces the larger of the two crossing
 probabilities to tend to `1` (Sheffield, *Random Surfaces*, Ch. 9). See also
 `exists_uniformRadius_deepGridPreference_crossing_max_tendsto_one`, which implies this. -/
-theorem PeriodicPlaneEmbedding.exists_uniformRadius_gridPreference_crossing_max_tendsto_one
+lemma PeriodicPlaneEmbedding.exists_uniformRadius_gridPreference_crossing_max_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)

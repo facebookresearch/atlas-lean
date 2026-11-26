@@ -351,7 +351,7 @@ lemma triHexFK_globalSweepSum_identity
 /-- Simultaneous star–triangle transformation: on the triangular critical surface with dual odds,
 replacing every triangle cell by a star leaves all expectations of sector observables unchanged
 (Grimmett, *The Random-Cluster Model*, §6.6). -/
-theorem triHexFK_globalSweepRatio_eq
+lemma triHexFK_globalSweepRatio_eq
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     {q y0 y1 y2 y0Star y1Star y2Star : Real}
     (hq : q ≠ 0) (hyprod : y0 * y1 * y2 ≠ 0)

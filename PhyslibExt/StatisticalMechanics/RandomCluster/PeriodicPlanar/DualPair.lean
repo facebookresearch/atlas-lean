@@ -388,7 +388,7 @@ lemma dualNoCoexistence_iff_freeDual
 /-- Conditional critical-point duality for a dual pair: free dual percolation below `pc` and
 no-coexistence of wired primal and free dual percolation give `pc* = (pc)*` and
 `pc / (1 - pc) · pc* / (1 - pc*) = q`. -/
-theorem dualCritical_relation_of_freeDual
+lemma dualCritical_relation_of_freeDual
     (D : PeriodicPlanarDualPair P Pdual) {q : ℝ}
     (hpc : P.criticalPoint q ∈ Ioo (0 : ℝ) 1)
     (hpcDual : Pdual.criticalPoint q ∈ Ioo (0 : ℝ) 1)

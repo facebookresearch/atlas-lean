@@ -69,7 +69,7 @@ variable {V : Type*} [Countable V] [DecidableEq V]
 /-! ## A. Buffered edge windows and tail events -/
 
 /-- The edges of the buffered box of index `N`, viewed as edges of the infinite graph. -/
-def PeriodicGraph.bufferedEdgeWindow (P : PeriodicGraph V) (N : ℕ) :
+noncomputable def PeriodicGraph.bufferedEdgeWindow (P : PeriodicGraph V) (N : ℕ) :
     Set (Sym2 V) :=
   Set.range (P.edgeIncl (P.bufferedRadius N))
 

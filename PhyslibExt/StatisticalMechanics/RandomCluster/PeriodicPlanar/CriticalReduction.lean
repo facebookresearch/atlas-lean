@@ -266,7 +266,7 @@ lemma dualCritical_eq_of_crossBounds
 
 /-- Conditional critical-point duality: off-critical sharpness of both models, dual subcritical
 coverage and no-coexistence give `pc* = (pc)*` and `pc / (1 - pc) · pc* / (1 - pc*) = q`. -/
-theorem dualCritical_relation_of_sharpness_noCoexistence
+lemma dualCritical_relation_of_sharpness_noCoexistence
     {primalPercolates dualPercolates : ℝ → Prop}
     {pc pcDual q : ℝ}
     (hpc : pc ∈ Ioo (0 : ℝ) 1)
@@ -298,7 +298,7 @@ theorem dualCritical_relation_of_sharpness_noCoexistence
 
 /-- Conditional critical-point duality for a periodic graph and its dual, under off-critical
 sharpness of both wired models, dual subcritical coverage and no-coexistence. -/
-theorem PeriodicGraph.dualCritical_relation_of_sharpness_noCoexistence
+lemma PeriodicGraph.dualCritical_relation_of_sharpness_noCoexistence
     [Countable V] [Countable W]
     (P : PeriodicGraph V) (Pdual : PeriodicGraph W)
     {q : ℝ}

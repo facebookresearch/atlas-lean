@@ -133,7 +133,7 @@ lemma PeriodicPlaneEmbedding.exists_shift_halfPlanePairMergeErrorUnion_measureRe
 
 /-- Under translation invariance and almost sure uniqueness, a suitable translate of the sources
 has half-plane merge error below `ε`. -/
-theorem PeriodicPlaneEmbedding.exists_shift_halfPlanePairMergeErrorUnion_measureReal_lt
+lemma PeriodicPlaneEmbedding.exists_shift_halfPlanePairMergeErrorUnion_measureReal_lt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)

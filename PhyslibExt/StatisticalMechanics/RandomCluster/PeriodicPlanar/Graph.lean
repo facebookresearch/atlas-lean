@@ -231,7 +231,7 @@ noncomputable def PeriodicGraph.freeInfiniteVolume (P : PeriodicGraph V)
 
 /-- The free infinite-volume measure is a weak limit along a subsequence of the free orbit-box
 measures. -/
-theorem PeriodicGraph.freeInfiniteVolume_isLimit (P : PeriodicGraph V)
+lemma PeriodicGraph.freeInfiniteVolume_isLimit (P : PeriodicGraph V)
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     ∃ phi : ℕ → ℕ, StrictMono phi ∧
       WeakConvergesTo (fun n => P.freeFiniteMeasure (phi n) hp hp1 hq)
@@ -249,7 +249,7 @@ noncomputable def PeriodicGraph.wiredInfiniteVolume (P : PeriodicGraph V)
 
 /-- The wired infinite-volume measure is a weak limit along a subsequence of the wired orbit-box
 measures. -/
-theorem PeriodicGraph.wiredInfiniteVolume_isLimit (P : PeriodicGraph V)
+lemma PeriodicGraph.wiredInfiniteVolume_isLimit (P : PeriodicGraph V)
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     ∃ phi : ℕ → ℕ, StrictMono phi ∧
       WeakConvergesTo (fun n => P.wiredFiniteMeasure (phi n) hp hp1 hq)

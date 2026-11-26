@@ -307,7 +307,7 @@ theorem triHexFK_terminalLaw_eq
 /-- Star–triangle transformation in edge parameters: for `pᵢ ∈ (0, 1)` on the triangular critical
 surface, the star with the dual parameters `dualParam pᵢ q` and the triangle with parameters `pᵢ`
 induce the same terminal law (Grimmett, *The Random-Cluster Model*, §6.6). -/
-theorem triHexFK_terminalLaw_dualParam
+lemma triHexFK_terminalLaw_dualParam
     {q p0 p1 p2 : Real}
     (hq : 0 < q) (hp0 : p0 ∈ Set.Ioo (0 : Real) 1)
     (hp1 : p1 ∈ Set.Ioo (0 : Real) 1)

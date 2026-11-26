@@ -126,7 +126,7 @@ lemma PeriodicGraph.infiniteCluster_component_after_finset
     (P.tailClusterGraph omega x) e (Opposite.op (P.tailClusterCut omega x K))⟩
 
 /-- The vertices of `V` underlying a component of the cluster with `K` removed. -/
-def PeriodicGraph.tailComponentVertices
+noncomputable def PeriodicGraph.tailComponentVertices
     (P : PeriodicGraph V) (omega : ConfigSpace (Sym2 V)) (x : V)
     (K : Finset V)
     (D : (P.tailClusterGraph omega x).ComponentCompl
@@ -208,7 +208,7 @@ structure PeriodicGraph.InfiniteTailData (P : PeriodicGraph V)
 
 /-- An infinite cluster containing a vertex of the finite set `K` has an open exit edge from `K`
 into an infinite tail connected outside `K`. -/
-theorem PeriodicGraph.infiniteCluster_has_open_exit
+lemma PeriodicGraph.infiniteCluster_has_open_exit
     (P : PeriodicGraph V) (omega : ConfigSpace (Sym2 V)) (x : V)
     (hinf : (P.cluster omega x).Infinite) (K : Finset V) (hxK : x ∈ K) :
     Nonempty (P.InfiniteTailData omega K x) := by

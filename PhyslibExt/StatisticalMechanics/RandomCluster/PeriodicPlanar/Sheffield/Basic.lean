@@ -1008,7 +1008,7 @@ omit [DecidableEq V] [Countable V] in
 `1 - √(1 - μ(A ∪ B)) ≤ max (μ A) (μ B)` (Grimmett, *The Random-Cluster Model*, 2006). See also
 `StatMech.Universality.rsw_sqrt_trick`, the same bound under the stronger hypothesis
 `PositivelyAssociated`. -/
-theorem measurable_sqrt_trick
+lemma measurable_sqrt_trick
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) {A B : Set (ConfigSpace (Sym2 V))}
     (hA : IsIncreasing A) (hB : IsIncreasing B)
@@ -1367,7 +1367,7 @@ lemma PeriodicGraph.clusterInfinite_isIncreasing
     rw [P.openSubgraph_adj] at hab ⊢
     refine ⟨hab.1, Bool.eq_true_of_true_le ?_⟩
     simpa [hab.2] using home s(a, b)
-  exact hinfinite.mono fun y hy => hy.mono hgraph
+  exact hinfinite.mono fun y (hy : y ∈ P.cluster omega x) => hy.mono hgraph
 
 lemma PeriodicGraph.orbitBoxHitsInfinite_measurableSet
     (P : PeriodicGraph V) (n : ℕ) :
@@ -1802,7 +1802,7 @@ lemma no_openRectWalkArc_crossing
 a dual vertical crossing of `[a + 4B, b - 4B] × [c, d]` cannot both occur. See also
 `PeriodicPlanarDualPair.matchedVerticalHorizontalCrossingEvents_disjoint`, the rotated
 statement. -/
-theorem matchedCrossingEvents_disjoint
+lemma matchedCrossingEvents_disjoint
     (D : PeriodicPlanarDualPair P Pdual) {B a b c d : ℝ}
     (hBpos : 0 < B)
     (hBp : ∀ {x y : V} (hxy : P.graph.Adj x y) (t) (i : Fin 2),

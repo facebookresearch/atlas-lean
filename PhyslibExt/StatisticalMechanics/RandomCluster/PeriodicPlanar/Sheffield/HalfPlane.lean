@@ -449,7 +449,7 @@ lemma PeriodicPlaneEmbedding.exists_shift_halfPlanePairMergeError_measureReal_le
 
 /-- Under translation invariance and almost-sure uniqueness of the infinite cluster, for every
 `ε > 0` some translate of `x`, `y` has half-plane merging error below `ε`. -/
-theorem PeriodicPlaneEmbedding.exists_shift_halfPlanePairMergeError_measureReal_lt
+lemma PeriodicPlaneEmbedding.exists_shift_halfPlanePairMergeError_measureReal_lt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)

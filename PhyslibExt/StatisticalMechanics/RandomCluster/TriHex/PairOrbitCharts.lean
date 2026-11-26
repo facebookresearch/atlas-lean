@@ -634,7 +634,7 @@ lemma triHexPairOrbitDataEquiv_add (z : Site 2)
   · rfl
 
 /-- The extended duality commutes with lattice translations. -/
-theorem triHexFullDualEdgeEquiv_shift (z : Site 2)
+lemma triHexFullDualEdgeEquiv_shift (z : Site 2)
     (e : Sym2 (Site 2)) :
     triHexFullDualEdgeEquiv (Sym2.map (siteTranslate z) e) =
       Sym2.map (hexTranslate z) (triHexFullDualEdgeEquiv e) := by
@@ -702,7 +702,7 @@ lemma triHexFullDualEdgeEquiv_edgeChart (a : TriHexEdgeIndex) :
   exact triHexFullDualEdgeEquiv_indexedEdge a
 
 /-- A pair is a triangular edge if and only if its image is a hexagonal edge. -/
-theorem triHexFullDualEdgeEquiv_mem_edgeSet (e : Sym2 (Site 2)) :
+lemma triHexFullDualEdgeEquiv_mem_edgeSet (e : Sym2 (Site 2)) :
     e ∈ triangularGraph.edgeSet ↔
       triHexFullDualEdgeEquiv e ∈ hexagonalGraph.edgeSet := by
   constructor
@@ -730,7 +730,7 @@ theorem triHexFullDualEdgeEquiv_mem_edgeSet (e : Sym2 (Site 2)) :
     exact triangularIndexedEdge_mem a
 
 /-- On triangular edges the extended duality agrees with `triHexDualEdgeEquiv`. -/
-theorem triHexFullDualEdgeEquiv_eq_edgeDual
+lemma triHexFullDualEdgeEquiv_eq_edgeDual
     (e : triangularGraph.edgeSet) :
     triHexFullDualEdgeEquiv (e : Sym2 (Site 2)) =
       (triHexDualEdgeEquiv e : Sym2 HexVertex) := by

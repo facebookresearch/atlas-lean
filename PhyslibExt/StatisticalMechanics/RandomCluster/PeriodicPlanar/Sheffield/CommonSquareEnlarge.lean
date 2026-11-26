@@ -62,7 +62,7 @@ variable {V : Type*} [DecidableEq V] [Countable V]
 
 /-- A connector-ready common-square family for a translation invariant probability measure can be
 enlarged to any larger square size `M' ≥ M`, keeping the connector radius. -/
-theorem PeriodicPlaneEmbedding.ConnectorReadyCommonSquareData.exists_enlarge
+lemma PeriodicPlaneEmbedding.ConnectorReadyCommonSquareData.exists_enlarge
     (E : PeriodicPlaneEmbedding P)
     {mu : Measure (ConfigSpace (Sym2 V))} [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu) {radius : Nat -> Nat}
@@ -356,7 +356,7 @@ variable {W : Type*} [DecidableEq W] [Countable W]
 
 /-- Primal and dual connector-ready families, for translation invariant probability measures, can be
 enlarged to the common square size `max (primal.M n) (dual.M n)`. -/
-theorem exists_commonHalfWidth_connectorReadyData
+lemma exists_commonHalfWidth_connectorReadyData
     (E : PeriodicPlaneEmbedding P)
     (Edual : PeriodicPlaneEmbedding Pdual)
     {mu : Measure (ConfigSpace (Sym2 V))} [IsProbabilityMeasure mu]

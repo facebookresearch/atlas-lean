@@ -73,7 +73,7 @@ variable {d : ℕ}
 
 /-- For `q ≥ 1`, if the wired infinite-volume measure gives positive mass to infinitely many
 infinite clusters, the origin is a trifurcation with positive probability. -/
-theorem wiredInfinite_trifurcation_pos_of_top_pos
+lemma wiredInfinite_trifurcation_pos_of_top_pos
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (htop : 0 < (wiredInfiniteVolume d hp hp1
       (zero_lt_one.trans_le hq) : Measure _)
@@ -90,7 +90,7 @@ theorem wiredInfinite_trifurcation_pos_of_top_pos
 
 /-- For `q ≥ 1`, if the free infinite-volume measure gives positive mass to infinitely many
 infinite clusters, the origin is a trifurcation with positive probability. -/
-theorem freeInfinite_trifurcation_pos_of_top_pos
+lemma freeInfinite_trifurcation_pos_of_top_pos
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (htop : 0 < (freeInfiniteVolume d hp hp1
       (zero_lt_one.trans_le hq) : Measure _)
@@ -206,7 +206,7 @@ theorem wiredInfinite_q2_canonical_uniqueness
           {omega | numInfiniteClusters d omega ≤ 1} = 1 := by
   exact cbk_canonical_uniqueness
     (wiredInfiniteVolume d hp hp1 (by norm_num : (0 : ℝ) < 2) : Measure _)
-    hd (feu_wiredIV_isErgodic hd hp hp1)
+    hd (cbk_wiredIV_isErgodic hd hp hp1)
     (wiredInfiniteVolume_hasFiniteEnergyMerge hp hp1
       (by norm_num : (1 : ℝ) ≤ 2))
     (wiredInfinite_q2_canonical_trifurcation_pos_of_top_pos hp hp1)

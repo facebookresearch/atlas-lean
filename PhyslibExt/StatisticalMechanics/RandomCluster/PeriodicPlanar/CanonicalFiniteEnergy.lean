@@ -465,7 +465,7 @@ lemma PeriodicGraph.freeBufferedInfiniteVolume_setClosed_absolutelyContinuous
 
 /-- Inserting a finite edge pattern maps the free buffered infinite-volume FK measure to an
 absolutely continuous measure. -/
-theorem PeriodicGraph.freeBufferedInfiniteVolume_setPattern_absolutelyContinuous
+lemma PeriodicGraph.freeBufferedInfiniteVolume_setPattern_absolutelyContinuous
     (P : PeriodicGraph V) {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
     (I : Finset (Sym2 V)) (eta : ConfigSpace ↥I) :
@@ -509,7 +509,7 @@ lemma hasFiniteEnergy_of_singleOpen
       rwa [← forceOpenFinset_insert e F] at htrans
 
 /-- For `0 < p < 1` and `q ≥ 1`, the free buffered infinite-volume FK measure has finite energy. -/
-theorem PeriodicGraph.freeBufferedInfiniteVolume_hasFiniteEnergy
+lemma PeriodicGraph.freeBufferedInfiniteVolume_hasFiniteEnergy
     (P : PeriodicGraph V) {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q) :
     HasFiniteEnergy
@@ -522,7 +522,7 @@ theorem PeriodicGraph.freeBufferedInfiniteVolume_hasFiniteEnergy
   exact P.freeBufferedInfiniteVolume_setOpen_absolutelyContinuous hp hp1 hq e
 
 /-- For `0 < p < 1` and `q ≥ 1`, the wired buffered infinite-volume FK measure has finite energy. -/
-theorem PeriodicGraph.wiredBufferedInfiniteVolume_hasFiniteEnergy
+lemma PeriodicGraph.wiredBufferedInfiniteVolume_hasFiniteEnergy
     (P : PeriodicGraph V) {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q) :
     HasFiniteEnergy

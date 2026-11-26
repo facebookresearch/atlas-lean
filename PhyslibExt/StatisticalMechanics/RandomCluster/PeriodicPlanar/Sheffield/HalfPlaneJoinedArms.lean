@@ -670,7 +670,7 @@ namespace PeriodicPlaneEmbedding
 /-- Separated margin version: joined arms between a translate of `L` in `H_R` and its vertical
 translate by `1 + t` steps, to the rays `{y ≤ s}` and `{y ≥ s + t}`, with probability above
 `1 - 2√(1 - P(arm to ∂H_r)) - 3ε` (FKG, translation invariance, almost sure uniqueness). -/
-theorem exists_inward_separated_finiteJoinedBoundaryArmEvent_with_margin_measureReal_gt
+lemma exists_inward_separated_finiteJoinedBoundaryArmEvent_with_margin_measureReal_gt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)

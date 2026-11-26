@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.VariablePadding
+import Mathlib.Data.Nat.Nth
 
 /-!
 # Paired primal–dual crossing recursions for periodic planar FK models
@@ -9501,7 +9502,7 @@ lemma nonempty_dependentRadiusFirstAdjacentEndpointRow
 cluster for the dual measure, radius-first adjacent endpoint rows can be chosen recursively
 (each row's height is the next row's step) with radii tending to infinity, merge errors tending
 to zero and dual crossings tending to one. -/
-theorem exists_recursiveDependentRadiusFirstAdjacentEndpointRows_with_limits
+lemma exists_recursiveDependentRadiusFirstAdjacentEndpointRows_with_limits
     (E : PeriodicPlaneEmbedding P) (Edual : PeriodicPlaneEmbedding Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (muDual : Measure (ConfigSpace (Sym2 W)))
@@ -9933,7 +9934,7 @@ omit [Countable W] in
 boundary-band scores tending to one, there is a uniform radius such that, for every aligned
 exact-extent score with connector slack at that radius, the better of the horizontal crossing of
 the narrow rectangle and the vertical crossing of the wide rectangle tends to one. -/
-theorem PeriodicPlaneEmbedding.exists_uniformOrbitBoxMixedRadius_alignedExact_primalLimit
+lemma PeriodicPlaneEmbedding.exists_uniformOrbitBoxMixedRadius_alignedExact_primalLimit
     (E : PeriodicPlaneEmbedding P) (Edual : PeriodicPlaneEmbedding Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (muDual : Measure (ConfigSpace (Sym2 W)))
@@ -10039,7 +10040,7 @@ theorem PeriodicPlaneEmbedding.exists_uniformOrbitBoxMixedRadius_alignedExact_pr
 to one, a four-shift template that hits the infinite cluster with probability tending to one,
 and pair-merge errors tending to zero give: the better of the horizontal crossing of the padded
 square and the vertical crossing of the square heightened by `step` tends to one. -/
-theorem PeriodicPlaneEmbedding.CommonSquareNormalBoundaryBandData.primalAdjacent_limit_of_pairMerge
+lemma PeriodicPlaneEmbedding.CommonSquareNormalBoundaryBandData.primalAdjacent_limit_of_pairMerge
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)

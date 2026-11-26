@@ -889,7 +889,7 @@ lemma PeriodicPlaneEmbedding.exists_finite_infiniteBoundaryConnection_measureRea
 `{y ≥ 1}`, each with probability above `1 - ε` (FKG, translation invariance, almost sure
 uniqueness). Special case `R = r` of
 `exists_finite_opposite_infiniteBoundaryRays_with_margin_gt` (`HalfPlaneInteriorArm`). -/
-theorem PeriodicPlaneEmbedding.exists_finite_opposite_infiniteBoundaryRays_measureReal_gt
+lemma PeriodicPlaneEmbedding.exists_finite_opposite_infiniteBoundaryRays_measureReal_gt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -1182,7 +1182,7 @@ lemma PeriodicPlaneEmbedding.exists_twoStep_infiniteBoundaryRays_measureReal_ge
 /-- Separated version: some vertical translate `S + z e₂` has an arm to `{y ≤ s}` and `S + (z + 1
 + t) e₂` has an arm to `{y ≥ s + t}`, each with probability at least `1 - √(1 - P(arm to
 ∂H_r)) - ε` (FKG, translation invariance). -/
-theorem PeriodicPlaneEmbedding.exists_separated_infiniteBoundaryRays_measureReal_ge
+lemma PeriodicPlaneEmbedding.exists_separated_infiniteBoundaryRays_measureReal_ge
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)

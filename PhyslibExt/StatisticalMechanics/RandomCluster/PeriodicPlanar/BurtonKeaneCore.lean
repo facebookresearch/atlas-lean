@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.CanonicalFiniteEnergy
+import Mathlib.MeasureTheory.MeasurableSpace.NCard
 
 /-!
 # The number of infinite clusters on a periodic planar graph
@@ -251,7 +252,7 @@ lemma PeriodicGraph.measurable_numInfiniteClusters (P : PeriodicGraph V) :
 /-! ## D. Uniqueness and almost-sure constancy -/
 
 /-- The infinite-cluster count equals `1` exactly when there is a unique infinite cluster. -/
-theorem PeriodicGraph.numInfiniteClusters_eq_one_iff_hasUnique
+lemma PeriodicGraph.numInfiniteClusters_eq_one_iff_hasUnique
     (P : PeriodicGraph V) (omega : ConfigSpace (Sym2 V)) :
     P.numInfiniteClusters omega = 1 ↔ P.HasUniqueInfiniteCluster omega := by
   constructor
@@ -298,7 +299,7 @@ lemma PeriodicGraph.numInfiniteClusters_eq_one_event
 
 /-- Under an ergodic probability measure, the number of infinite clusters is almost surely equal to
 a constant in `ℕ∞`. -/
-theorem PeriodicGraph.numInfiniteClusters_ae_const
+lemma PeriodicGraph.numInfiniteClusters_ae_const
     (P : PeriodicGraph V) (mu : Measure (ConfigSpace (Sym2 V)))
     [IsProbabilityMeasure mu] (herg : P.IsErgodic mu) :
     ∃ k : ℕ∞, mu {omega | P.numInfiniteClusters omega = k} = 1 := by

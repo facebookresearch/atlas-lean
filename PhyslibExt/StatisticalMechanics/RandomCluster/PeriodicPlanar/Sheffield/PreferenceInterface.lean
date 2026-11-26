@@ -1283,7 +1283,7 @@ lemma exists_preference_witness_of_boundary_walk
 /-- Preference witness: for a grid coloring with true bottom row and false top row, any set `Y`
 containing the left ends and not the right ends of the true boundary contains a true vertex
 king-adjacent both to a false vertex and to a vertex outside `Y`. -/
-theorem exists_preference_witness_of_grid_boundary {n m : Nat}
+lemma exists_preference_witness_of_grid_boundary {n m : Nat}
     (color : PreferenceGridVertex n m → Bool) (hn : 0 < n)
     (hbottom : ∀ i : Fin (n + 1), color (i, 0) = true)
     (htop : ∀ i : Fin (n + 1), color (i, Fin.last m) = false)

@@ -89,7 +89,7 @@ lemma PeriodicGraph.wiredBufferedMeasure_real_cylinder_monotone_in_p
 
 /-- For `q ≥ 1`, an increasing cylinder event has probability nondecreasing in `p` under the
 buffered wired infinite-volume measure. -/
-theorem PeriodicGraph.wiredBufferedInfiniteVolume_real_cylinder_monotone_in_p
+lemma PeriodicGraph.wiredBufferedInfiniteVolume_real_cylinder_monotone_in_p
     (P : PeriodicGraph V) (N : Nat)
     {p1 p2 q : Real} (hp1 : 0 < p1) (hp1' : p1 < 1)
     (hp2 : 0 < p2) (hp2' : p2 < 1) (hp12 : p1 <= p2) (hq : 1 <= q)
@@ -146,7 +146,7 @@ end Countable
 /-- Conditional critical-point duality: cylinder approximations for the primal and dual graphs, dual
 subcritical coverage and no-coexistence give `pc* = (pc)*` and
 `pc / (1 - pc) · pc* / (1 - pc*) = q`. -/
-theorem PeriodicGraph.dualCritical_relation_of_cylinderApproximation_noCoexistence
+lemma PeriodicGraph.dualCritical_relation_of_cylinderApproximation_noCoexistence
     [Countable V] [Countable W]
     (P : PeriodicGraph V) (Pdual : PeriodicGraph W)
     {q : Real}

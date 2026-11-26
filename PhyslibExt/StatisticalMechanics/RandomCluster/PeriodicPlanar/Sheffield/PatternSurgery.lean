@@ -115,7 +115,7 @@ lemma setPattern_primalDualOpenPattern_dual
 
 /-- Finitely many primal edges and finitely many dual edges can all be open in one configuration iff
 no primal edge of the first set is the partner of a dual edge of the second. -/
-theorem exists_primal_dual_open_iff_disjoint
+lemma exists_primal_dual_open_iff_disjoint
     (D : PeriodicPlanarDualPair P Pdual)
     (primal : Finset (Sym2 V)) (dual : Finset (Sym2 W)) :
     (∃ omega : ConfigSpace (Sym2 V),
@@ -309,7 +309,7 @@ lemma measureReal_pos_of_setPattern_preimage
 
 /-- Positive probability transfers through the primal/dual opening surgery for measures with finite
 energy for patterns. -/
-theorem measureReal_pos_of_primalDualOpenPattern_preimage
+lemma measureReal_pos_of_primalDualOpenPattern_preimage
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (hpattern : ∀ (I : Finset (Sym2 V)) (eta : ConfigSpace ↑I),

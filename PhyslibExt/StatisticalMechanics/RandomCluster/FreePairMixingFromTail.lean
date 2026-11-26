@@ -171,7 +171,7 @@ lemma freeAxisTranslationPower_escape (hd : 1 ≤ d)
 /-! ## B. Ergodicity of the axis translation -/
 
 /-- At `q = 2`, the unit axis translation is ergodic for the free infinite-volume measure. -/
-theorem freeInfiniteVolume_axisShift_ergodic
+lemma freeInfiniteVolume_axisShift_ergodic
     (hd : 1 ≤ d) {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
     _root_.Ergodic
       (shift (freeAxisTranslation hd) :
@@ -407,7 +407,7 @@ private lemma freePairGapAverage_tendsto
 
 /-- At `q = 2`, the free infinite-volume measure satisfies pair mixing: for every finite family of
 multi-edge open events and every `δ > 0` some translation makes all correlation gaps below `δ`. -/
-theorem freeInfiniteVolume_pairMixing_q2
+lemma freeInfiniteVolume_pairMixing_q2
     (hd : 1 ≤ d) {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
     fmu_PairMixing (G := Multiplicative (Site d))
       (freeInfiniteVolume d hp hp1 (by norm_num : (0 : ℝ) < 2) :

@@ -87,7 +87,7 @@ def commonRectTopShift (M : Nat → Nat) (N : Nat) : Site 2 :=
 measure with an almost surely unique infinite cluster, there are square sizes `M N` and four base
 points such that each buffered box, translated next to its side, lies in `[-M N, M N]²` and is
 connected inside the square to that side with probability tending to `1`. -/
-theorem PeriodicPlaneEmbedding.exists_commonSquare_fourBoundaryPlacements
+lemma PeriodicPlaneEmbedding.exists_commonSquare_fourBoundaryPlacements
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)

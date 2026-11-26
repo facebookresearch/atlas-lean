@@ -625,7 +625,7 @@ lemma PeriodicPlaneEmbedding.rightHalfPlaneHasInfiniteClusterAtInfinity_measure_
 
 /-- Zero–one law: under an ergodic measure, the right half-plane contains an infinite cluster
 with probability zero or one. -/
-theorem PeriodicPlaneEmbedding.rightHalfPlaneHasInfiniteCluster_measure_eq_zero_or_one
+lemma PeriodicPlaneEmbedding.rightHalfPlaneHasInfiniteCluster_measure_eq_zero_or_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hErgodic : P.IsErgodic mu) (r : Real) :

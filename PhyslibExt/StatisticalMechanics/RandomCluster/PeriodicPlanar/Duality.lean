@@ -81,7 +81,7 @@ lemma dual_parameter_boundary_involutive {p q : ℝ}
 /-- Free-to-wired duality on a finite planar subgraph of `ℤ²`: the dual parameter lies in `(0, 1)`,
 free boundary dualizes to wired, and the free random-cluster measure at `(p, q)` equals the
 dual-wired measure at `(p*, q)`. -/
-theorem finite_planar_free_dual_exchange
+lemma finite_planar_free_dual_exchange
     (P : Lattice.PlanarZ2Subgraph) (omega : ConfigSpace (Sym2 P.V))
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     dualParam p q ∈ Ioo (0 : ℝ) 1 ∧

@@ -343,7 +343,7 @@ private lemma triangularEdges_commonEndpoint_of_intersection
           Or.inl (h.trans hb.2)⟩
 
 /-- Two distinct straight triangular edges meet only at a common endpoint. -/
-theorem triangularStraightEdgeIntersection :
+lemma triangularStraightEdgeIntersection :
     TriangularStraightEdgeIntersectionProperty := by
   intro x y z w hxy hzw p hne hp hq
   have hpMem := hp
@@ -447,7 +447,6 @@ private lemma complexSegment_im (a b : Complex) (t : unitInterval) :
   rw [hexagonalPlaneVertex_im_scaled, hexagonalPlaneVertex_im_scaled]
   ring
 
--- the 9 `fin_cases i, j` cases each run `simp` and `omega` on six integer interval bounds
 /-- Two canonical hexagonal segments from black vertices `(x, false)`, `(z, false)` that share a
 point share an endpoint. -/
 lemma hexagonalCanonicalSegments_commonEndpoint
@@ -586,8 +585,14 @@ lemma hexagonalCanonicalSegments_commonEndpoint
   have hzTail : Matrix.vecHead (Matrix.vecTail z) = z 1 := rfl
   fin_cases i <;> fin_cases j
   all_goals
-    simp [hexagonalScaledCoordinate, hexagonalStep, funext_iff,
-      hxHead, hxTail, hzHead, hzTail] at h00 h01 h10 h11 hs0 hs1 ⊢
+    simp only [hexagonalScaledCoordinate, hexagonalStep, Fin.isValue, Bool.false_eq_true,
+      ↓reduceIte, Nat.succ_eq_add_one, Nat.reduceAdd, Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk,
+      Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one, Matrix.cons_val,
+      Pi.add_apply, Int.reduceNeg, add_zero, Prod.mk.injEq, funext_iff, Fin.forall_fin_two,
+      and_true, Matrix.add_cons, Matrix.empty_add_empty, hxHead, hxTail, hzHead, hzTail]
+      at h00 h01 h10 h11 hs0 hs1 ⊢
+    simp (disch := omega) only [min_eq_left, min_eq_right, max_eq_left, max_eq_right]
+      at h00 h01 h10 h11 hs0 hs1
   all_goals omega
 
 /-! ## D. Hexagonal edges meet only at endpoints -/
@@ -726,7 +731,7 @@ private lemma hexagonalEdges_commonEndpoint_of_intersection
           Or.inl (h.trans hb.2)⟩
 
 /-- Two distinct straight hexagonal edges meet only at a common endpoint. -/
-theorem hexagonalStraightEdgeIntersection :
+lemma hexagonalStraightEdgeIntersection :
     HexagonalStraightEdgeIntersectionProperty := by
   intro x y z w hxy hzw p hne hp hq
   have hpMem := hp

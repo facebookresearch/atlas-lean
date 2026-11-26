@@ -257,7 +257,7 @@ lemma halfPlane_walks_intersect
 
 /-- A lattice crosscut of the half-plane meets every half-plane walk from a root between its
 endpoints to a point lying to its right, above it, or below it. -/
-theorem halfPlane_walks_intersect_of_endpoint_outside
+lemma halfPlane_walks_intersect_of_endpoint_outside
     (alpha c d e beta f : Int) (hce : c < e) (hed : e < d)
     (crosscut : (hypercubicLattice 2).Walk ![alpha, c] ![alpha, d])
     (escape : (hypercubicLattice 2).Walk ![alpha, e] ![beta, f])
@@ -637,7 +637,7 @@ lemma wholeArc_intersects_escape_of_far
 /-- A continuous crosscut of the half-plane `{lo₀ ≤ x₀}` from `lo` to `hi` meets every half-plane
 path from a root between `lo` and `hi` on the boundary line to a point lying strictly to the
 right of, above, or below the whole crosscut. -/
-theorem wholeArc_intersects_escape_of_outside
+lemma wholeArc_intersects_escape_of_outside
     {lo hi root far : Fin 2 -> Real}
     (crosscut : Path lo hi) (escape : Path root far)
     (hloRootX : lo 0 = root 0) (hhiRootX : hi 0 = root 0)
@@ -888,7 +888,7 @@ structure WholeArcTraceIncidence
 
 /-- An open primal simple arc and an open dual simple arc with traces in crosscut position cannot
 exist: the conclusion is `False`. -/
-theorem no_open_primal_dual_of_wholeArcTraceIncidence
+lemma no_open_primal_dual_of_wholeArcTraceIncidence
     (D : PeriodicPlanarDualPair P Pdual)
     (omega : ConfigSpace (Sym2 V))
     {x y : V} {a b : W}

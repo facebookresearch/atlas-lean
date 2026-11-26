@@ -294,7 +294,7 @@ lemma configUpwardClosure_isClosed
 
 /-- If a probability measure satisfies the FKG inequality for clopen increasing events, it
 satisfies it for closed increasing events. -/
-theorem fkg_isClosed_of_isClopen
+lemma fkg_isClosed_of_isClopen
     (mu : Measure (ConfigSpace E)) [IsProbabilityMeasure mu]
     (hclopen : ∀ C D : Set (ConfigSpace E),
       IsClopen C → IsClopen D → IsIncreasing C → IsIncreasing D →
@@ -335,7 +335,7 @@ lemma exists_compact_subset_measureReal_lt_add
 
 /-- If a probability measure satisfies the FKG inequality for clopen increasing events, it
 satisfies it for all measurable increasing events. -/
-theorem fkg_measurable_of_isClopen
+lemma fkg_measurable_of_isClopen
     (mu : Measure (ConfigSpace E)) [IsProbabilityMeasure mu]
     (hclopen : ∀ C D : Set (ConfigSpace E),
       IsClopen C → IsClopen D → IsIncreasing C → IsIncreasing D →

@@ -1076,7 +1076,7 @@ end PeriodicPlaneEmbedding
 
 /-- Zero-one law: under the free buffered infinite-volume FK measure, coexistence of unique primal
 and dual infinite clusters has probability `0` or `1`. -/
-theorem PeriodicPlanarDualPair.freeBufferedInfiniteVolume_commonUnique_measure_zero_or_one
+lemma PeriodicPlanarDualPair.freeBufferedInfiniteVolume_commonUnique_measure_zero_or_one
     (D : PeriodicPlanarDualPair P Pdual)
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     let mu : Measure (ConfigSpace (Sym2 V)) :=

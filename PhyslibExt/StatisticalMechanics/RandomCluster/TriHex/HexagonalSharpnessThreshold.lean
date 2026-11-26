@@ -37,7 +37,7 @@ Fidelity:
   proved.
 - `β₁` is not shown to equal the critical point `β_c` (or the self-dual point) of the hexagonal
   FK model.
-- The decay theorem is vacuous unless the threshold set is nonempty: if it is empty then
+- The decay lemma is vacuous unless the threshold set is nonempty: if it is empty then
   `β₁ = sInf ∅ = 0` and the hypotheses `0 < β - 2δ`, `β < β₁` are contradictory
   (`hexagonalThreshold_decay_hypotheses_false_of_thresholdSet_empty`). Nonemptiness (some `β`
   with `Σ_n(β)` growing like `n`, i.e. a supercritical regime) is not proved in the library.
@@ -453,7 +453,7 @@ lemma hexagonalThresholdSig_le_linear
 subcritical half): for `q ≥ 1`, `0 < β - 2δ`, `β ≤ β₀` and `β < β₁`, `θ_n(β - 2δ) ≤ exp(-(n / Q)
 δ)`. Vacuous if the threshold set is empty, see
 `hexagonalThreshold_decay_hypotheses_false_of_thresholdSet_empty`. -/
-theorem hexagonalOuterInner_subcritical_decay_of_threshold
+lemma hexagonalOuterInner_subcritical_decay_of_threshold
     (q delta beta beta0 : Real) (hq : 1 <= q)
     (hbeta0 : beta <= beta0)
     (hdelta : 0 < delta) (hleft : 0 < beta - 2 * delta)

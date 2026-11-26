@@ -111,7 +111,7 @@ lemma triangularFKCritical_of_dual_hexagonal {q y yStar : ℝ}
 /-- Triangular–hexagonal duality of the homogeneous FK critical points: when `y * y* = q`, the odds
 `y` solves the triangular critical cubic iff the dual odds `y*` solves the hexagonal one (Grimmett,
 *The Random-Cluster Model*, §6.6). -/
-theorem triangularFKCritical_iff_hexagonal_of_dual {q y yStar : ℝ}
+lemma triangularFKCritical_iff_hexagonal_of_dual {q y yStar : ℝ}
     (hy : y ≠ 0) (hyStar : yStar ≠ 0) (hdual : y * yStar = q) :
     triangularFKCriticalPolynomial q y = 0 ↔
       hexagonalFKCriticalPolynomial q yStar = 0 :=

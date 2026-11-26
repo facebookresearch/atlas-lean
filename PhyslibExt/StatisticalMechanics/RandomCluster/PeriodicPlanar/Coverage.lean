@@ -88,7 +88,7 @@ lemma PeriodicGraph.bufferedTwoPointEvent_isIncreasing
 
 /-- The shell of a finite set of pairs: some pair is joined by an open path inside the buffered box.
 -/
-def PeriodicGraph.bufferedPairShell (P : PeriodicGraph V) (N : ℕ)
+noncomputable def PeriodicGraph.bufferedPairShell (P : PeriodicGraph V) (N : ℕ)
     (pairs : Finset (P.BufferedVertex N × P.BufferedVertex N)) :
     Set (ConfigSpace (Sym2 V)) :=
   ⋃ xy ∈ pairs, P.bufferedCylinder N
@@ -339,7 +339,7 @@ lemma freeDualHasInfiniteCluster_of_summable_shell_bound
 /-- Conditional dual percolation below `pc`: given polynomial connection shells and exponential
 decay of two-point connections below `pc`, the dual of the free buffered infinite-volume
 configuration has an infinite cluster almost surely. -/
-theorem freeDualHasInfiniteCluster_of_exponentialDecay
+lemma freeDualHasInfiniteCluster_of_exponentialDecay
     (D : PeriodicPlanarDualPair P Pdual)
     (H : PolynomialConnectionShells D) {p q pc : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hppc : p < pc) (hq : 1 ≤ q)

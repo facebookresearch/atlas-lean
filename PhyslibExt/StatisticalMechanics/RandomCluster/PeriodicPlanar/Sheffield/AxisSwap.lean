@@ -295,7 +295,7 @@ lemma PeriodicPlaneEmbedding.exists_horizontalCrossing_measureReal_gt_of_unique
 /-- Under FKG, translation invariance and almost-sure uniqueness of the infinite cluster, along a
 sequence of heights tending to infinity the horizontal crossing probability of a rectangle of
 fixed width tends to one. -/
-theorem PeriodicPlaneEmbedding.exists_cofinal_horizontalCrossing_tendsto_one_of_unique
+lemma PeriodicPlaneEmbedding.exists_cofinal_horizontalCrossing_tendsto_one_of_unique
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -343,7 +343,7 @@ theorem PeriodicPlaneEmbedding.exists_cofinal_horizontalCrossing_tendsto_one_of_
 dual measure, translation invariance and almost-sure uniqueness of the dual infinite cluster,
 dual horizontal crossings of tall rectangles have probability tending to one along a sequence of
 heights. -/
-theorem PeriodicPlanarDualPair.exists_cofinal_complementaryDual_horizontalCrossing_tendsto_one
+lemma PeriodicPlanarDualPair.exists_cofinal_complementaryDual_horizontalCrossing_tendsto_one
     {W : Type*} [DecidableEq W] [Countable W]
     {Pdual : PeriodicGraph W}
     (D : PeriodicPlanarDualPair P Pdual)

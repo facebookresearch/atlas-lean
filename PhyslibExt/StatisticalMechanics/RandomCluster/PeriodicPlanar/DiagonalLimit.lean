@@ -80,7 +80,7 @@ lemma PeriodicGraph.wiredBufferedRootBoundary_diag_antitone
 
 /-- For `q ≥ 1`, the wired probability on the buffered box of radius `n` that the root reaches its
 boundary converges to the wired percolation probability `θ(p, q)`. -/
-theorem PeriodicGraph.wiredBufferedRootBoundary_diag_tendsto
+lemma PeriodicGraph.wiredBufferedRootBoundary_diag_tendsto
     (P : PeriodicGraph V) {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q) :
     Tendsto
@@ -153,7 +153,7 @@ theorem PeriodicGraph.wiredBufferedRootBoundary_diag_tendsto
 /-- For `q ≥ 1` and a finite set `S` inside the buffered box of radius `N`, the wired probability on
 the box of radius `N + n` that `S` reaches its boundary converges to the infinite-volume probability
 that `S` meets an infinite cluster. -/
-theorem PeriodicGraph.wiredBufferedSetBoundary_diag_tendsto
+lemma PeriodicGraph.wiredBufferedSetBoundary_diag_tendsto
     (P : PeriodicGraph V) (S : Set V) (hSfinite : S.Finite) (N : Nat)
     (hS : S ⊆ (P.orbitBox (P.bufferedRadius N) : Set V))
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q) :

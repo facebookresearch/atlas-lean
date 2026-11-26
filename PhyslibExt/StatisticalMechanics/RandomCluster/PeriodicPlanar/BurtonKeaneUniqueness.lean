@@ -165,7 +165,7 @@ lemma PeriodicGraph.exists_trifurcation_pos_of_top
 
 /-- If the finite-pattern maps are absolutely continuous, a translation-invariant probability
 measure gives probability zero to infinitely many infinite clusters. -/
-theorem PeriodicPlaneEmbedding.numInfiniteClusters_top_measure_zero
+lemma PeriodicPlaneEmbedding.numInfiniteClusters_top_measure_zero
     {P : PeriodicGraph V} (E : PeriodicPlaneEmbedding P)
     (hconn : P.graph.Connected)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]

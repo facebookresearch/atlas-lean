@@ -250,7 +250,7 @@ lemma hexagonalStraightEdgeArc_range_chart
 
 /-- A straight triangular edge and a straight hexagonal edge cross if and only if they are dual
 edges. -/
-theorem triHexStraightEdge_crossing_iff_dual
+lemma triHexStraightEdge_crossing_iff_dual
     {x y : Site 2} {z w : HexVertex}
     (hxy : triangularGraph.Adj x y) (hzw : hexagonalGraph.Adj z w) :
     (∃ t u,

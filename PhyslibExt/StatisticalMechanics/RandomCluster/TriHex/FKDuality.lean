@@ -94,7 +94,7 @@ lemma hexagonalFKCriticalSurface_diagonal (q y : ℝ) :
 
 /-- Duality identity for the FK star–triangle surfaces: if `yᵢ yᵢ* = q` then `y₀ y₁ y₂ · hex(q, y*)
 = -q ^ 2 · tri(q, y)` (Baxter–Temperley–Ashley 1978; Grimmett, *The Random-Cluster Model*, §6.6). -/
-theorem trihex_dual_surface_identity {q y0 y1 y2 y0Star y1Star y2Star : ℝ}
+lemma trihex_dual_surface_identity {q y0 y1 y2 y0Star y1Star y2Star : ℝ}
     (h0 : y0 * y0Star = q) (h1 : y1 * y1Star = q)
     (h2 : y2 * y2Star = q) :
     (y0 * y1 * y2) *
@@ -165,7 +165,7 @@ lemma fkEdgeOdds_mul_dualParam {p q : ℝ}
 /-- Triangular–hexagonal duality of the inhomogeneous FK critical surfaces: for `pᵢ ∈ (0, 1)` and `q
 > 0`, the triangular surface holds at `(p₀, p₁, p₂)` iff the hexagonal surface holds at the dual
 parameters `dualParam pᵢ q` (Grimmett, *The Random-Cluster Model*, §6.6). -/
-theorem triangularFKCriticalSurface_iff_hexagonal_dualParam
+lemma triangularFKCriticalSurface_iff_hexagonal_dualParam
     {p0 p1 p2 q : ℝ}
     (hp0 : p0 ∈ Set.Ioo (0 : ℝ) 1) (hp1 : p1 ∈ Set.Ioo (0 : ℝ) 1)
     (hp2 : p2 ∈ Set.Ioo (0 : ℝ) 1) (hq : 0 < q) :
@@ -196,7 +196,7 @@ private lemma triangular_surface_one_scaled {p0 p1 p2 : ℝ}
 
 /-- At `q = 1` the triangular FK critical surface is the bond-percolation star–triangle surface
 `κ_△(p₀, p₁, p₂) = 0` (Wierman 1981; Grimmett, *Percolation*, §11.9). -/
-theorem triangularFKCriticalSurface_one_iff_isCriticalTri
+lemma triangularFKCriticalSurface_one_iff_isCriticalTri
     {p0 p1 p2 : ℝ} (hp0 : p0 ≠ 1) (hp1 : p1 ≠ 1) (hp2 : p2 ≠ 1) :
     triangularFKCriticalSurface 1 (fkEdgeOdds p0) (fkEdgeOdds p1) (fkEdgeOdds p2) = 0 ↔
       Universality.IsCriticalTri p0 p1 p2 := by
@@ -225,7 +225,7 @@ private lemma hexagonal_surface_one_scaled {p0 p1 p2 : ℝ}
 
 /-- At `q = 1` the hexagonal FK critical surface is the bond-percolation star–triangle surface
 `κ_⬡(p₀, p₁, p₂) = 0` (Wierman 1981; Grimmett, *Percolation*, §11.9). -/
-theorem hexagonalFKCriticalSurface_one_iff_isCriticalHex
+lemma hexagonalFKCriticalSurface_one_iff_isCriticalHex
     {p0 p1 p2 : ℝ} (hp0 : p0 ≠ 1) (hp1 : p1 ≠ 1) (hp2 : p2 ≠ 1) :
     hexagonalFKCriticalSurface 1 (fkEdgeOdds p0) (fkEdgeOdds p1) (fkEdgeOdds p2) = 0 ↔
       Universality.IsCriticalHex p0 p1 p2 := by

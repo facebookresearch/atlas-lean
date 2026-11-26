@@ -587,7 +587,7 @@ open scoped Classical in
 event of the box of radius `2k` at `x`, its probability under the measure wired at `Λ_{2n}` is at
 most its probability under the measure wired at the translated box (Grimmett, *The Random-Cluster
 Model*, §4.2). -/
-theorem hexagonalTransBox_activeBCMean_le
+lemma hexagonalTransBox_activeBCMean_le
     {n k : Nat} {x : Site 2} (hx : x ∈ box 2 n)
     (hk : 1 <= k) (hkn : 2 * k < n)
     (q beta : Real) (hq : 1 <= q) (hbeta : 0 < beta)

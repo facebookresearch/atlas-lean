@@ -134,7 +134,7 @@ lemma PeriodicGraph.hasUniqueInfiniteCluster_measure_eq_one_of_zero_or_one
 /-- On a connected periodic planar graph with `q ≥ 1`, if the root percolates with positive
 probability under the free buffered infinite-volume measure, then almost surely there is exactly one
 infinite cluster. -/
-theorem PeriodicPlaneEmbedding.freeBufferedInfiniteVolume_hasUniqueInfiniteCluster_measure_eq_one
+lemma PeriodicPlaneEmbedding.freeBufferedInfiniteVolume_hasUniqueInfiniteCluster_measure_eq_one
     (E : PeriodicPlaneEmbedding P) (hconn : P.graph.Connected)
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (hperc : 0 <
@@ -298,7 +298,7 @@ lemma dualMeasure_hasUniqueInfiniteCluster_measure_eq_one
 /-- On a connected dual graph with `q ≥ 1`, if the dual configuration percolates with positive
 probability under the free primal buffered infinite-volume measure, then almost surely the dual
 configuration has exactly one infinite cluster. -/
-theorem freeBufferedInfiniteVolume_dual_hasUniqueInfiniteCluster_measure_eq_one
+lemma freeBufferedInfiniteVolume_dual_hasUniqueInfiniteCluster_measure_eq_one
     (D : PeriodicPlanarDualPair P Pdual)
     (hconnDual : Pdual.graph.Connected)
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
@@ -344,7 +344,7 @@ lemma freeBufferedInfiniteVolume_dual_hasUniqueInfiniteCluster_of_freeDualPercol
 
 /-- If both the primal and the dual configuration percolate with positive probability under the free
 buffered infinite-volume measure, then almost surely each has exactly one infinite cluster. -/
-theorem freeBufferedInfiniteVolume_commonUniqueInfiniteClusterEvent_measure_eq_one
+lemma freeBufferedInfiniteVolume_commonUniqueInfiniteClusterEvent_measure_eq_one
     (D : PeriodicPlanarDualPair P Pdual)
     (hconn : P.graph.Connected) (hconnDual : Pdual.graph.Connected)
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)

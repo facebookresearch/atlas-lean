@@ -108,7 +108,7 @@ lemma PeriodicGraph.exteriorOpenGraph_le (P : PeriodicGraph V)
 
 /-- If a connected finite set `K` meets three distinct infinite clusters, some pattern on the
 edges touching `K` makes a vertex of `K` a trifurcation. -/
-theorem PeriodicGraph.three_clusters_core_pattern_trifurcation
+lemma PeriodicGraph.three_clusters_core_pattern_trifurcation
     (P : PeriodicGraph V) (omega : ConfigSpace (Sym2 V))
     (K : Finset V) (hKconn : (P.graph.induce (K : Set V)).Connected)
     (x : Fin 3 → V) (hxK : ∀ i, x i ∈ K)
@@ -405,7 +405,7 @@ theorem PeriodicGraph.three_clusters_core_pattern_trifurcation
 
 /-- On a connected periodic graph, three distinct infinite clusters yield a finite edge set and a
 pattern on it whose insertion creates a trifurcation. -/
-theorem PeriodicGraph.three_clusters_pattern_trifurcation
+lemma PeriodicGraph.three_clusters_pattern_trifurcation
     (P : PeriodicGraph V) (hconn : P.graph.Connected)
     (omega : ConfigSpace (Sym2 V)) (x : Fin 3 → V)
     (hinf : ∀ i, (P.cluster omega (x i)).Infinite)

@@ -158,7 +158,7 @@ def PeriodicPlaneEmbedding.NormalBoundaryBandFamily.seed
 /-- Normal boundary bands exist for the orbit box `P.orbitBox N` at threshold `θ_N² - δ`, `θ_N` the
 probability that the box meets the infinite cluster, for every `δ > 0`, under FKG, translation
 invariance and an almost surely unique infinite cluster. -/
-theorem PeriodicPlaneEmbedding.exists_orbitBox_normalBoundaryBandFamily
+lemma PeriodicPlaneEmbedding.exists_orbitBox_normalBoundaryBandFamily
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -308,7 +308,7 @@ omit [Countable V] in
 /-- Alternating margin sequences, both tending to infinity, such that the left and right bands at
 horizontal margin `horizontal n` fit below vertical margin `vertical n`, and the bottom and top
 bands at `vertical n` fit before `horizontal (n + 1)`. -/
-theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_alternatingMargins
+lemma PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_alternatingMargins
     (E : PeriodicPlaneEmbedding P)
     {mu : Measure (ConfigSpace (Sym2 V))} {S : Finset V} {p : Real}
     (family : E.NormalBoundaryBandFamily mu S p) :
@@ -359,7 +359,7 @@ theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.exists_alternatingMargin
 /-- Boundary scores of a grid placed inside the margins: for a translation invariant measure, every
 vertex of the bottom, top, left and right row or column of the grid is connected to the matching
 side of an explicit enlarged rectangle with probability greater than `p`. -/
-theorem PeriodicPlaneEmbedding.NormalBoundaryBandFamily.mixedBoundaryScores
+lemma PeriodicPlaneEmbedding.NormalBoundaryBandFamily.mixedBoundaryScores
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)

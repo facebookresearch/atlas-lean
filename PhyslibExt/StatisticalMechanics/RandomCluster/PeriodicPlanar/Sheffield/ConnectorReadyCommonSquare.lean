@@ -179,7 +179,7 @@ structure PeriodicPlaneEmbedding.ConnectorReadyCommonSquareData
 
 /-- Connector-ready common squares exist for every connector radius, for an FKG, translation
 invariant probability measure with an almost surely unique infinite cluster. -/
-theorem PeriodicPlaneEmbedding.exists_connectorReadyCommonSquareData
+lemma PeriodicPlaneEmbedding.exists_connectorReadyCommonSquareData
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -262,7 +262,7 @@ theorem PeriodicPlaneEmbedding.exists_connectorReadyCommonSquareData
 /-- There is a connector radius for which the uniform crossing bound holds and connector-ready
 common squares exist, for an FKG, translation invariant probability measure with an almost surely
 unique infinite cluster. -/
-theorem PeriodicPlaneEmbedding.exists_uniformConnectorRadius_with_commonSquare
+lemma PeriodicPlaneEmbedding.exists_uniformConnectorRadius_with_commonSquare
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -287,7 +287,7 @@ omit [Countable V] [Countable W] in
 vertical extents for which the boundary preference grids of both lattices are nondegenerate and all
 their buffered connectors fit in the common rectangle `[-M, M + extentX] × [-M, M + extentY]`, `M`
 the larger of the two square sizes. -/
-theorem exists_matchedPreferenceGrid_connectorContainment
+lemma exists_matchedPreferenceGrid_connectorContainment
     (E : PeriodicPlaneEmbedding P)
     (Edual : PeriodicPlaneEmbedding Pdual)
     {mu : Measure (ConfigSpace (Sym2 V))}

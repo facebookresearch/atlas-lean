@@ -236,7 +236,7 @@ lemma incidentHexFaces_adj (a : TriHexEdgeIndex) :
     ((triHexIndexEquiv a).1, false) (triHexIndexEquiv a).2
 
 /-- Both endpoints of a triangular edge lie on both faces joined by its dual hexagonal edge. -/
-theorem triangular_edge_incident_faces (a : TriHexEdgeIndex) :
+lemma triangular_edge_incident_faces (a : TriHexEdgeIndex) :
     let x := a.1
     let y := a.1 + triangularStep a.2
     x ∈ triangularFace (incidentHexFaces a).1 ∧

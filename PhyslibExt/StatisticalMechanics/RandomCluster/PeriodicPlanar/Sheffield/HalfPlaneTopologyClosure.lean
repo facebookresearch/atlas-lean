@@ -115,7 +115,7 @@ lemma threeCrossingCageEvent_disjoint_boundaryBandHasInfiniteCluster
 
 /-- Any joined boundary-arm event contained in the three-crossing cage is disjoint from the event
 that the dual boundary window has an infinite cluster in the half-plane. -/
-theorem finiteJoinedBoundaryArmEvent_disjoint_boundaryBand_of_subset_cage
+lemma finiteJoinedBoundaryArmEvent_disjoint_boundaryBand_of_subset_cage
     (D : PeriodicPlanarDualPair P Pdual)
     {B r R C D0 A Tbottom Ttop c d : Real}
     (hBpos : 0 < B)

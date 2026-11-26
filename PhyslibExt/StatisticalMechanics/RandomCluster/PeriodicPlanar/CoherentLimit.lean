@@ -388,7 +388,7 @@ lemma PeriodicGraph.bufferedRestrictLE_succ
   | _ x y => rfl
 
 /-- The cylinder event determined by the event `S` on the buffered box of index `N`. -/
-def PeriodicGraph.bufferedCylinder (P : PeriodicGraph V) (N : ℕ)
+noncomputable def PeriodicGraph.bufferedCylinder (P : PeriodicGraph V) (N : ℕ)
     (S : Set (ConfigSpace (Sym2 (P.BufferedVertex N)))) :
     Set (ConfigSpace (Sym2 V)) :=
   P.bufferedRestrict N ⁻¹' S

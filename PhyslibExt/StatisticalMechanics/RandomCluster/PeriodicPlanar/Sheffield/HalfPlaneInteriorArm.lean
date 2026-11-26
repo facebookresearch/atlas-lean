@@ -127,7 +127,7 @@ lemma PeriodicPlaneEmbedding.exists_finite_infiniteBoundaryConnection_with_margi
 the lower ray `{y ≤ 0}` and to the upper ray `{y ≥ 1}` of `∂H_r`, each with probability above
 `1 - ε`. Generalizes `exists_finite_opposite_infiniteBoundaryRays_measureReal_gt`
 (`HalfPlaneInfiniteArm`, the case `R = r`). -/
-theorem PeriodicPlaneEmbedding.exists_finite_opposite_infiniteBoundaryRays_with_margin_gt
+lemma PeriodicPlaneEmbedding.exists_finite_opposite_infiniteBoundaryRays_with_margin_gt
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)

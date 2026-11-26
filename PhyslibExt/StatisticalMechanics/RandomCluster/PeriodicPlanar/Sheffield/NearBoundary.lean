@@ -159,7 +159,7 @@ lemma PeriodicPlaneEmbedding.iUnion_leftBoundaryExhaustionEvent
     obtain ⟨n, x, hxS, hxinf, y, hy, hxy⟩ := Set.mem_iUnion.mp homega
     obtain ⟨hyRect, z, hyz, hz⟩ := hy
     refine ⟨x, hxS, hxinf, y, ⟨hyRect.1, z, hyz, hz⟩, ?_⟩
-    exact P.connectedWithinSet_mono_region (fun v hv => hv.1) x y hxy
+    exact P.connectedWithinSet_mono_region (by intro v hv; exact hv.1) x y hxy
   · rintro ⟨x, hxS, hxinf, y, hy, l, hchain, hlast, hregion⟩
     let F := hSfinite.toFinset ∪ (x :: l).toFinset
     let M : Real := ∑ v ∈ F,

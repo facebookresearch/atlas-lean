@@ -248,7 +248,7 @@ lemma triHexTorusDefectWeightedDualPartitionSum_eq_sectorSum
 
 /-- Duality of torus partition functions: triangular at `(p, q)` against defect-weighted hexagonal
 at `(p*, q)`. -/
-theorem triHexTorus_partition_duality_defectWeighted
+lemma triHexTorus_partition_duality_defectWeighted
     (L : ℕ) [Fact (2 < L)] {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     triHexTorusPrimalPartitionSum L p q *

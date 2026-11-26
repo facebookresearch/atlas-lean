@@ -10,6 +10,7 @@ module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.BoundaryGrid
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.GridAssembly
+import Mathlib.Data.Int.Order.Lemmas
 
 /-!
 # Boundary preference grids in a common rectangle
@@ -501,7 +502,7 @@ lemma PeriodicPlaneEmbedding.preferenceGrid_translatedSet_subset_rect_of_corners
   constructor <;> linarith
 
 omit [Countable V] in
-theorem PeriodicPlaneEmbedding.preferenceGrid_translatedSet_subset_rect_of_commonSquare
+lemma PeriodicPlaneEmbedding.preferenceGrid_translatedSet_subset_rect_of_commonSquare
     (E : PeriodicPlaneEmbedding P)
     (M extentX extentY : Nat)
     (baseLeft baseRight baseBottom baseTop : Site 2)
@@ -556,7 +557,7 @@ theorem PeriodicPlaneEmbedding.preferenceGrid_translatedSet_subset_rect_of_commo
 `horizontal` are fixed within distance `margin` of the four sides, some vertex at distance more than
 `margin` from the boundary is labeled bottom and left and has one king-move neighbor labeled top and
 one labeled right. The margin-free form is `exists_common_preference_grid_witness`. -/
-theorem exists_deep_common_preference_grid_witness
+lemma exists_deep_common_preference_grid_witness
     {width height margin : Nat} (hwidth : 0 < width)
     (vertical horizontal : PreferenceGridVertex width height → Bool)
     (hverticalBottom : ∀ v, v.2.val ≤ margin → vertical v = true)
@@ -636,7 +637,7 @@ are backed by side preferences, with buffered connectors inside the rectangle at
 forces the larger crossing probability to tend to `1` (Sheffield, *Random Surfaces*, Ch. 9). See
 also `exists_uniformRadius_gridPreference_crossing_max_tendsto_one`, the `margin = 0` case with
 containment required at every vertex, which this implies. -/
-theorem PeriodicPlaneEmbedding.exists_uniformRadius_deepGridPreference_crossing_max_tendsto_one
+lemma PeriodicPlaneEmbedding.exists_uniformRadius_deepGridPreference_crossing_max_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -720,7 +721,7 @@ theorem PeriodicPlaneEmbedding.exists_uniformRadius_deepGridPreference_crossing_
 
 /-! ## F. Common extents for primal and dual grids -/
 
-theorem exists_commonPreferenceExtents_ge
+lemma exists_commonPreferenceExtents_ge
     (baseLeft baseRight baseBottom baseTop : Site 2)
     (baseLeftDual baseRightDual baseBottomDual baseTopDual : Site 2)
     (minimumX minimumY : Nat) :

@@ -255,7 +255,7 @@ def PeriodicGraph.finiteWitnessInfiniteEvent
 
 /-- The approximation of `finiteWitnessInfiniteEvent` at box index `n`: some `x ∈ S` satisfies
 `Q x` and is connected to the boundary of the buffered box. -/
-def PeriodicGraph.finiteWitnessBoundaryApprox
+noncomputable def PeriodicGraph.finiteWitnessBoundaryApprox
     (P : PeriodicGraph V) (S : Finset V)
     (Q : V -> Set (ConfigSpace (Sym2 V))) (n : Nat) :
     Set (ConfigSpace (Sym2 V)) :=
@@ -552,7 +552,7 @@ lemma PeriodicPlaneEmbedding.rectSideConnectionEvent_eq_finiteWitnessInfinite
     exact ⟨x, hx, hxinf, y, hy, hxy⟩
 
 /-- FKG for rectangle side-connection events under the free buffered infinite-volume FK measure. -/
-theorem PeriodicPlaneEmbedding.freeBufferedInfiniteVolume_fkg_rectSideConnection
+lemma PeriodicPlaneEmbedding.freeBufferedInfiniteVolume_fkg_rectSideConnection
     {P : PeriodicGraph V} (E : PeriodicPlaneEmbedding P)
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
     (a b c d : Real)
@@ -578,7 +578,7 @@ theorem PeriodicPlaneEmbedding.freeBufferedInfiniteVolume_fkg_rectSideConnection
   exact hfkg
 
 /-- FKG for rectangle side-connection events under the wired buffered infinite-volume FK measure. -/
-theorem PeriodicPlaneEmbedding.wiredBufferedInfiniteVolume_fkg_rectSideConnection
+lemma PeriodicPlaneEmbedding.wiredBufferedInfiniteVolume_fkg_rectSideConnection
     {P : PeriodicGraph V} (E : PeriodicPlaneEmbedding P)
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
     (a b c d : Real)

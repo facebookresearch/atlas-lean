@@ -245,7 +245,7 @@ omit [Countable V] in
 /-- On the joined boundary-arm event, an open graph path inside the right half-plane joins the lower
 boundary ray (below `c`) to the upper boundary ray (above `d`), and its planar arc is injective:
 a simple open crosscut. -/
-theorem PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_simpleCrosscut
+lemma PeriodicPlaneEmbedding.finiteJoinedBoundaryArmEvent_simpleCrosscut
     (E : PeriodicPlaneEmbedding P) {omega : ConfigSpace (Sym2 V)}
     {r c d : Real} {n : Nat} {L R : Finset V} (hcd : c < d)
     (h : omega ∈ E.finiteJoinedBoundaryArmEvent r c d n L R) :

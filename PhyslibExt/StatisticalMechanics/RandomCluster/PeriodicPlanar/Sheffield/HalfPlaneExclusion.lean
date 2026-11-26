@@ -60,17 +60,17 @@ variable {V : Type*} [DecidableEq V] [Countable V]
 
 /-- Under an FKG, translation-invariant probability measure with an almost surely unique infinite
 cluster, joined open primal arms in some vertical strip exist almost surely. -/
-theorem PeriodicPlaneEmbedding.primalHalfPlaneBarrierReady_measureReal_eq_one
+lemma PeriodicPlaneEmbedding.primalHalfPlaneBarrierReady_measureReal_eq_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
     (hunique : mu {omega | P.HasUniqueInfiniteCluster omega} = 1) :
-    mu.real E.primalHalfPlaneBarrierReady = 1 := by
+    mu.real {ω | E.primalHalfPlaneBarrierReady ω} = 1 := by
   obtain ⟨B, hB0, hB⟩ := E.exists_edgeArc_displacement_bound
   apply le_antisymm measureReal_le_one
   by_contra hnot
-  have hlt : mu.real E.primalHalfPlaneBarrierReady < 1 := lt_of_not_ge hnot
-  let epsilon : Real := (1 - mu.real E.primalHalfPlaneBarrierReady) / 2
+  have hlt : mu.real {ω | E.primalHalfPlaneBarrierReady ω} < 1 := lt_of_not_ge hnot
+  let epsilon : Real := (1 - mu.real {ω | E.primalHalfPlaneBarrierReady ω}) / 2
   have hepsilon : 0 < epsilon := by
     dsimp only [epsilon]
     linarith
@@ -78,7 +78,7 @@ theorem PeriodicPlaneEmbedding.primalHalfPlaneBarrierReady_measureReal_eq_one
     E.exists_highProbability_primalHalfPlaneBarrierReady
       mu hFKG hTI hunique 0 B hB0 hB hepsilon
   have hmono : mu.real (E.finiteJoinedBoundaryArmEvent 0 0 1 n L U) ≤
-      mu.real E.primalHalfPlaneBarrierReady := measureReal_mono hsub
+      mu.real {ω | E.primalHalfPlaneBarrierReady ω} := measureReal_mono hsub
   dsimp only [epsilon] at hprob
   linarith
 
@@ -115,7 +115,7 @@ def HasOpenComplementaryDualTransverseWalks
 
 /-- Joined open primal arms in a strip and open dual horizontal crossings of every rectangle
 cannot occur together. -/
-theorem not_primalBarrierReady_and_complementaryDualTransverseWalks
+lemma not_primalBarrierReady_and_complementaryDualTransverseWalks
     (D : PeriodicPlanarDualPair P Pdual)
     (omega : ConfigSpace (Sym2 V)) :
     ¬(D.primalEmbedding.primalHalfPlaneBarrierReady omega ∧

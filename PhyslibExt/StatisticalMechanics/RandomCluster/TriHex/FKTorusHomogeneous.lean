@@ -120,7 +120,7 @@ lemma triHexFK_torus_homogeneous_activeSectorRatio_eq
 triangular self-dual point, the hexagonal-torus connection probability of white vertices at
 `dualParam p q` equals the triangular-torus connection probability at `p` (Grimmett, *The
 Random-Cluster Model*, §6.6). -/
-theorem triHexFK_torus_homogeneous_activeTwoPointRatio_eq
+lemma triHexFK_torus_homogeneous_activeTwoPointRatio_eq
     (L : Nat) [Fact (2 < L)] {q p : Real}
     (hq : 0 < q) (hp : p ∈ Ioo (0 : Real) 1)
     (hsurface : FK.TriHex.triangularFKCriticalPolynomial q

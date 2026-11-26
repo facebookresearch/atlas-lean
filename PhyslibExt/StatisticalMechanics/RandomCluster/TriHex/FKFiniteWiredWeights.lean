@@ -514,7 +514,7 @@ lemma triHexPlanarFiniteStarWiredBoundaryProbability_eq
 /-- Finite-volume star–triangle transformation of wired boundary connection: at the triangular
 self-dual point, the hexagonal wired probability at `dualParam p q` that the root reaches the
 boundary equals the triangular one at `p` (Grimmett, *The Random-Cluster Model*, §6.6). -/
-theorem triHexPlanarFiniteWiredBoundaryProbability_eq_homogeneous
+lemma triHexPlanarFiniteWiredBoundaryProbability_eq_homogeneous
     (n : Nat) {q p : Real} (hq : 0 < q)
     (hp : p ∈ Set.Ioo (0 : Real) 1)
     (hsurface : FK.TriHex.triangularFKCriticalPolynomial q

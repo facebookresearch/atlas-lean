@@ -52,7 +52,7 @@ open StatMech.Lattice
 /-- Two grid colorings, the vertical one with different bottom and top colors and the horizontal one
 true on the left column and false on the right column, have a common true vertex that is
 king-adjacent to a false vertex of each coloring. -/
-theorem exists_common_preference_grid_witness
+lemma exists_common_preference_grid_witness
     {n m : Nat} (hn : 0 < n)
     (vertical horizontal : PreferenceGridVertex n m -> Bool)
     (bottomColor topColor : Bool)

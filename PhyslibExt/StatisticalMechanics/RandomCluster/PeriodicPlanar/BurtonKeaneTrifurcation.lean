@@ -668,7 +668,7 @@ lemma PeriodicGraph.orbitShell_polynomial_ratio_tendsto_zero
 
 /-- Under a translation-invariant probability measure on a periodic graph with a plane embedding,
 each vertex is a trifurcation with probability zero. -/
-theorem PeriodicPlaneEmbedding.trifurcation_measure_eq_zero
+lemma PeriodicPlaneEmbedding.trifurcation_measure_eq_zero
     {P : PeriodicGraph V} (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu) (u : V)

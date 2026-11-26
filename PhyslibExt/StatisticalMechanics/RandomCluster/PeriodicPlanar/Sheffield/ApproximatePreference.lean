@@ -115,7 +115,7 @@ lemma exists_common_approximate_preference_grid_witness
 /-- If the bottom row prefers bottom, the top row top, the left column left and the right column
 right (each up to `ε`), some grid point prefers bottom and left while king-neighbours prefer top,
 resp. right (up to `ε`). -/
-theorem exists_common_weak_approximate_preference_grid_witness
+lemma exists_common_weak_approximate_preference_grid_witness
     {n m : Nat} (hn : 0 < n) (hm : 0 < m)
     (epsilon : Real) (hepsilon : 0 ≤ epsilon)
     (bottom top left right : PreferenceGridVertex n m → Real)

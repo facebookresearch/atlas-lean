@@ -512,7 +512,7 @@ lemma triangular_outer_inner_hcov_geom
 open scoped Classical in
 /-- OSSS differential inequality for the outer-wired triangular crossing probability: `θ (1 - θ) / Δ
 ≤ dθ/dβ` for `q ≥ 1`, `β > 0` (Duminil-Copin–Raoufi–Tassion 2019). -/
-theorem triangular_outer_inner_differential_logistic
+lemma triangular_outer_inner_differential_logistic
     (n : Nat) (hn : 1 ≤ n) (q beta : Real)
     (hq : 1 ≤ q) (hbeta : 0 < beta) :
     triangularOuterInnerTheta q beta n *
@@ -595,7 +595,7 @@ open scoped Classical in
 /-- OSSS differential inequality for the wired triangular box crossing probability: `c θ / Δ ≤
 dθ/dβ` for some `c > 0`, for `q ≥ 1`, `0 < β ≤ β₀` (Duminil-Copin–Raoufi–Tassion 2019). The constant
 is chosen after `n`. -/
-theorem triangularBox_differential_inequality
+lemma triangularBox_differential_inequality
     (n : Nat) (hn : 1 ≤ n) (q beta beta0 : Real)
     (hq : 1 ≤ q) (hbeta : 0 < beta) (hbeta0 : beta ≤ beta0) :
     ∃ c : Real, 0 < c ∧

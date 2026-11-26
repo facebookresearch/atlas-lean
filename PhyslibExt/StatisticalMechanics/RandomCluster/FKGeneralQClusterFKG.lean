@@ -53,7 +53,7 @@ open StatMech.Lattice
 
 /-- Harris–FKG inequality for the infinite-cluster events of two sites under the free
 infinite-volume random-cluster measure on `ℤ²` with `q ≥ 1`. -/
-theorem fkgq_freeInfiniteVolume_clusterInfinite_fkg
+lemma fkgq_freeInfiniteVolume_clusterInfinite_fkg
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
     (x y : Site 2) :
     let mu := (freeInfiniteVolume 2 hp hp1

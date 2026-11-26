@@ -1346,7 +1346,7 @@ lemma hexagonalSharpConstant_pos (beta0 : Real) :
 /-- Uniform OSSS differential inequality for hexagonal-lattice FK crossing probabilities: `(e^{-6β₀}
 / 8) (n / Σ_n) θ_n ≤ dθ_n/dβ` for `n ≥ 1`, `q ≥ 1`, `0 < β ≤ β₀` (Duminil-Copin–Raoufi–Tassion
 2019). -/
-theorem hexagonal_outer_inner_differential_uniform
+lemma hexagonal_outer_inner_differential_uniform
     (n : Nat) (hn : 1 ≤ n) (q beta beta0 : Real)
     (hq : 1 ≤ q) (hbeta : 0 < beta) (hbeta0 : beta ≤ beta0) :
     hexagonalSharpConstant beta0 *

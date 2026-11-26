@@ -1926,7 +1926,7 @@ def PeriodicPlaneEmbedding.UniformTemplateBoundaryBandCrossingRadius
 /-- A uniform template boundary-band crossing radius exists under FKG, translation invariance, an
 almost surely unique infinite cluster and templates hitting the infinite cluster with probability
 tending to `1`. -/
-theorem PeriodicPlaneEmbedding.exists_uniformTemplateBoundaryBandCrossingRadius
+lemma PeriodicPlaneEmbedding.exists_uniformTemplateBoundaryBandCrossingRadius
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -2021,7 +2021,7 @@ theorem PeriodicPlaneEmbedding.exists_uniformTemplateBoundaryBandCrossingRadius
 /-- Under FKG, translation invariance and an almost surely unique infinite cluster, there are a
 uniform boundary-band crossing radius and orbit-box band families with thresholds tending to `1`,
 each admitting a margin schedule that contains the connector. -/
-theorem PeriodicPlaneEmbedding.exists_uniformBoundaryBandRadius_with_cofinalConnectorSchedule
+lemma PeriodicPlaneEmbedding.exists_uniformBoundaryBandRadius_with_cofinalConnectorSchedule
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -2506,7 +2506,7 @@ lemma PeriodicPlaneEmbedding.nonempty_alignedSharedLevelStep
 
 /-- A recursively chosen sequence of `AlignedSharedLevelStep`s with prescribed score and merge
 tolerances, under translation invariance and an almost surely unique infinite cluster. -/
-theorem PeriodicPlaneEmbedding.exists_recursiveAlignedSharedLevelSteps
+lemma PeriodicPlaneEmbedding.exists_recursiveAlignedSharedLevelSteps
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -2546,7 +2546,7 @@ theorem PeriodicPlaneEmbedding.exists_recursiveAlignedSharedLevelSteps
 
 /-- Diagonal extraction: for countably many sequences `f k` tending to `1` and bounded by `1`, a
 cofinal index beyond any cutoff along which `f (k n) (index n) → 1` uniformly in `k n ≤ n`. -/
-theorem uniform_cofinal_diagonal_below_growing_cutoff
+lemma uniform_cofinal_diagonal_below_growing_cutoff
     (f : Nat → Nat → Real)
     (hf : ∀ k, Tendsto (f k) atTop (nhds 1))
     (hle : ∀ k n, f k n ≤ 1) (cutoff : Nat → Nat) :
@@ -2634,7 +2634,7 @@ lemma exists_cofinalIndex_uniform_tendsto_one_below_diagonal
 
 /-- Bottom and top sources connected to their sides with probability tending to `1`, with merge
 error tending to `0`, give vertical crossings with probability tending to `1` (FKG). -/
-theorem PeriodicPlaneEmbedding.verticalCrossing_tendsto_one_of_boundaryScores
+lemma PeriodicPlaneEmbedding.verticalCrossing_tendsto_one_of_boundaryScores
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu)
@@ -2681,7 +2681,7 @@ theorem PeriodicPlaneEmbedding.verticalCrossing_tendsto_one_of_boundaryScores
     hbound tendsto_const_nhds hlower (fun _ ↦ measureReal_le_one)
 
 /-- Horizontal analogue of `verticalCrossing_tendsto_one_of_boundaryScores`. -/
-theorem PeriodicPlaneEmbedding.horizontalCrossing_tendsto_one_of_boundaryScores
+lemma PeriodicPlaneEmbedding.horizontalCrossing_tendsto_one_of_boundaryScores
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu)
@@ -2918,7 +2918,7 @@ namespace PeriodicPlaneEmbedding
 /-- Crossing bound for grids of four-shift templates placed outward from a common square, under FKG,
 translation invariance and an almost surely unique infinite cluster, with connector containment
 given by coordinate bounds. -/
-theorem fourShift_crossing_tendsto_one_of_coordBounds
+lemma fourShift_crossing_tendsto_one_of_coordBounds
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -3044,7 +3044,7 @@ variable {W : Type*} [DecidableEq W] [Countable W]
 /-- Abstract rectangle-array contradiction: crossing probabilities indexed by height, starting
 vertical and ending horizontal, with primal crossings winning at every adjacent pair and dual
 crossings winning at every level, are incompatible with primal-dual exclusion. -/
-theorem adjacent_height_array_contradiction_of_primal_dual_bounded_limits
+lemma adjacent_height_array_contradiction_of_primal_dual_bounded_limits
     (horizontal vertical dualVertical dualHorizontal : Nat → Nat → Real)
     (K : Nat → Nat)
     (hhorizontal_nonneg : ∀ n k, 0 ≤ horizontal n k)
@@ -3100,7 +3100,7 @@ theorem adjacent_height_array_contradiction_of_primal_dual_bounded_limits
 `B`, an array of rectangles with the crossing limits of
 `adjacent_height_array_contradiction_of_primal_dual_bounded_limits` cannot exist (Sheffield, *Random
 Surfaces*, Ch. 9). -/
-theorem PeriodicPlanarDualPair.adjacent_rectangles_contradiction_of_bounded_max_limits
+lemma PeriodicPlanarDualPair.adjacent_rectangles_contradiction_of_bounded_max_limits
     (D : PeriodicPlanarDualPair P Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     {B : Real} (hBpos : 0 < B)

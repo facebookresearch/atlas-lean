@@ -129,7 +129,7 @@ lemma hexagonalEdgeTranslate_val (z : Site 2)
   exact congrArg (Sym2.map (hexTranslate z)) (congrArg Subtype.val he)
 
 /-- The triangular–hexagonal edge duality commutes with lattice translations. -/
-theorem triHexDualEdgeEquiv_add (z : Site 2)
+lemma triHexDualEdgeEquiv_add (z : Site 2)
     (e : triangularGraph.edgeSet) :
     triHexDualEdgeEquiv (triangularEdgeTranslate z e) =
       hexagonalEdgeTranslate z (triHexDualEdgeEquiv e) := by

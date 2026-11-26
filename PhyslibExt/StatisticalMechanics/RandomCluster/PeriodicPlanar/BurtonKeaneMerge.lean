@@ -356,7 +356,7 @@ lemma PeriodicGraph.numInfiniteClusters_lt_null
 
 /-- Under finite energy on a connected periodic graph, the infinite-cluster count cannot be almost
 surely equal to a finite constant `k ≥ 2`. -/
-theorem PeriodicGraph.numInfiniteClusters_const_ne_finite_two
+lemma PeriodicGraph.numInfiniteClusters_const_ne_finite_two
     (P : PeriodicGraph V) (hconn : P.graph.Connected)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hfe : HasFiniteEnergy mu) {k : ℕ∞}

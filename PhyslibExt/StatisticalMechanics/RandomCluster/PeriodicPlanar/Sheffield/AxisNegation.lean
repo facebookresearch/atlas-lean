@@ -177,7 +177,7 @@ lemma PeriodicPlaneEmbedding.axisNeg_leftBoundaryEvent
 /-- Right-boundary placement: under FKG, translation invariance and almost-sure uniqueness of the
 infinite cluster, there are finite sources in rectangles `[-(r + R_N), -r] × [-R_N, R_N]` that
 connect inside the rectangle to its right boundary with probability tending to one. -/
-theorem PeriodicPlaneEmbedding.exists_rightBoundaryPlacement_tendsto_one
+lemma PeriodicPlaneEmbedding.exists_rightBoundaryPlacement_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -207,7 +207,7 @@ theorem PeriodicPlaneEmbedding.exists_rightBoundaryPlacement_tendsto_one
 
 /-- Right-boundary placement with the source a translated orbit box of radius `N`; same hypotheses
 as `exists_rightBoundaryPlacement_tendsto_one`. -/
-theorem PeriodicPlaneEmbedding.exists_translatedOrbitBox_rightBoundaryPlacement_tendsto_one
+lemma PeriodicPlaneEmbedding.exists_translatedOrbitBox_rightBoundaryPlacement_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -246,7 +246,7 @@ theorem PeriodicPlaneEmbedding.exists_translatedOrbitBox_rightBoundaryPlacement_
 
 /-- Right-boundary placement where the larger orbit box of radius `buffer N` also fits in the
 rectangle; same hypotheses as `exists_rightBoundaryPlacement_tendsto_one`. -/
-theorem PeriodicPlaneEmbedding.exists_buffered_rightBoundaryPlacement_tendsto_one
+lemma PeriodicPlaneEmbedding.exists_buffered_rightBoundaryPlacement_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)

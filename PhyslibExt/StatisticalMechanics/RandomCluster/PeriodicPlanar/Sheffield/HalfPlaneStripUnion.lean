@@ -462,7 +462,7 @@ lemma PeriodicPlaneEmbedding.exists_inward_twoStep_stripPlacement_with_margin
 /-- A translate `S` of `L` and its vertical translate `S + (1 + t)e₂` lie in `H_R` with strip
 merge error in `H_r` below `ε` for some width (translation invariance, almost sure
 uniqueness). -/
-theorem PeriodicPlaneEmbedding.exists_inward_separated_stripPlacement_with_margin
+lemma PeriodicPlaneEmbedding.exists_inward_separated_stripPlacement_with_margin
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)

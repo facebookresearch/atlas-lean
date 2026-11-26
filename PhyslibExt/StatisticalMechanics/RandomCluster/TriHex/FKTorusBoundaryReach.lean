@@ -226,7 +226,7 @@ lemma triHexFK_torus_homogeneous_activeReachRatio_eq
 /-- Star–triangle transformation of torus connection probabilities: at the triangular self-dual
 point, `φ_hex,p*(x ↔ target) = φ_tri,p(x ↔ target)` on the torus (Grimmett, *The Random-Cluster
 Model*, §6.6). -/
-theorem triHexFK_torus_homogeneous_activeReachProbability_eq
+lemma triHexFK_torus_homogeneous_activeReachProbability_eq
     (L : Nat) [Fact (2 < L)] {q p : Real}
     (hq : 0 < q) (hp : p ∈ Ioo (0 : Real) 1)
     (hsurface : FK.TriHex.triangularFKCriticalPolynomial q

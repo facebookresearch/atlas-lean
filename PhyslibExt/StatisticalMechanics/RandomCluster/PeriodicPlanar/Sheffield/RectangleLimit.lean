@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PeriodicPlanar.Sheffield.RectanglePreference
+import Mathlib.Data.Int.Order.Lemmas
 
 /-!
 # Crossing limits from preference witnesses and uniform merge radii

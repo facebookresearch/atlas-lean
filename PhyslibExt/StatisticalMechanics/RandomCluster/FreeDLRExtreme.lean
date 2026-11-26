@@ -222,7 +222,7 @@ theorem freeInfiniteVolume_weakDLR_extreme {p q : ℝ}
 
 /-- If the free infinite-volume measure on `ℤ^d` is translation-ergodic, then almost surely there
 are zero or one infinite clusters, and never two or more. -/
-theorem freeInfinite_canonical_uniqueness_of_isErgodic
+lemma freeInfinite_canonical_uniqueness_of_isErgodic
     (hd : 1 ≤ d) {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (herg : StatMech.ConfigSpace.IsErgodic (G := Multiplicative (Site d))
       (freeInfiniteVolume d hp hp1 (zero_lt_one.trans_le hq) :

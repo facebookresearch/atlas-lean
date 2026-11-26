@@ -1818,7 +1818,7 @@ lemma PeriodicPlaneEmbedding.finiteOpenExitedJoinedBoundaryArmEvent_measureReal_
 /-- Joined arms with open exit edges to the rays `{y ≤ 0}` and `{y ≥ 1}` have positive
 probability for suitable finite sources (FKG, translation invariance, almost sure uniqueness,
 finite energy). -/
-theorem PeriodicPlaneEmbedding.exists_positive_finiteOpenExitedJoinedBoundaryArmEvent
+lemma PeriodicPlaneEmbedding.exists_positive_finiteOpenExitedJoinedBoundaryArmEvent
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -1970,7 +1970,7 @@ lemma PeriodicPlaneEmbedding.unique_halfPlane_outside_subset_boundaryInfinite
 /-- If `H_r` almost surely contains an infinite cluster and the infinite cluster is almost surely
 unique, then almost surely some boundary vertex of `H_r` has an infinite cluster inside `H_r`
 (translation invariance). -/
-theorem PeriodicPlaneEmbedding.rightHalfPlaneBoundaryHasInfiniteCluster_measure_eq_one
+lemma PeriodicPlaneEmbedding.rightHalfPlaneBoundaryHasInfiniteCluster_measure_eq_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hTI : P.IsTranslationInvariant mu)
@@ -2678,7 +2678,7 @@ namespace PeriodicPlanarDualPair
 
 /-- Three open primal crossings (one vertical on the right, two horizontal below and above)
 around a dual vertex make its dual cluster inside `H_r` finite. -/
-theorem not_infiniteComplementaryDualClusterWithin_rightHalfPlane_of_threeCrossings
+lemma not_infiniteComplementaryDualClusterWithin_rightHalfPlane_of_threeCrossings
     (D : PeriodicPlanarDualPair P Pdual)
     (omega : ConfigSpace (Sym2 V))
     {B r R C D0 A Tbottom Ttop : Real}

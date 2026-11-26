@@ -105,7 +105,7 @@ namespace PeriodicPlanarDualPair
 /-- Two nontrivial open primal walks ending at a common vertex, with arcs in the strip `a < x <
 b`, one starting below `c` and the other above `d`, leave no nontrivial open dual walk
 crossing the strip from left of `a` to right of `b` at heights in `(c, d)`. -/
-theorem no_open_dual_transverse_walk_of_joined_primal_arms
+lemma no_open_dual_transverse_walk_of_joined_primal_arms
     (D : PeriodicPlanarDualPair P Pdual)
     (omega : ConfigSpace (Sym2 V))
     {a b c d : ℝ} (hab : a < b) (hcd : c < d)

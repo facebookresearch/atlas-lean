@@ -374,7 +374,7 @@ lemma PeriodicPlaneEmbedding.bufferedOpenRectWalks_start_reachable
 
 /-- If a configuration crosses a rectangle horizontally (with vertical margin `4 B`) and vertically
 (with horizontal margin `4 B`), then the two crossings lie in one open cluster. -/
-theorem PeriodicPlaneEmbedding.bufferedCrossings_openCluster
+lemma PeriodicPlaneEmbedding.bufferedCrossings_openCluster
     (E : PeriodicPlaneEmbedding P) {B a b c d : ℝ}
     (hBpos : 0 < B)
     (hB : ∀ {x y : V} (hxy : P.graph.Adj x y) (t) (i : Fin 2),
@@ -414,7 +414,7 @@ theorem PeriodicPlaneEmbedding.bufferedCrossings_openCluster
 
 /-- Horizontal crossings of two overlapping rectangles, together with a vertical crossing of their
 overlap, give a horizontal crossing of the union rectangle. -/
-theorem PeriodicPlaneEmbedding.overlapCrossings_glue_horizontal
+lemma PeriodicPlaneEmbedding.overlapCrossings_glue_horizontal
     (E : PeriodicPlaneEmbedding P) {B a l m b c d : ℝ}
     (hBpos : 0 < B)
     (hB : ∀ {x y : V} (hxy : P.graph.Adj x y) (t) (i : Fin 2),

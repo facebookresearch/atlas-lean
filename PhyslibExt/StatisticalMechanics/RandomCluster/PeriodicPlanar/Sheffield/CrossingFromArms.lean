@@ -330,7 +330,7 @@ lemma PeriodicPlaneEmbedding.exists_verticalCrossing_measureReal_gt_of_unique
 
 /-- Strip widths tending to infinity along which vertical crossings of the middle third have
 probability tending to `1`, under FKG, translation invariance and uniqueness. -/
-theorem PeriodicPlaneEmbedding.exists_cofinal_verticalCrossing_tendsto_one_of_unique
+lemma PeriodicPlaneEmbedding.exists_cofinal_verticalCrossing_tendsto_one_of_unique
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)

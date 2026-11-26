@@ -231,7 +231,7 @@ end Countable
 /-- Conditional critical-point duality: monotonicity of the primal and dual wired percolation
 probabilities, dual subcritical coverage and no-coexistence give `pc* = (pc)*` and
 `pc / (1 - pc) · pc* / (1 - pc*) = q`. -/
-theorem PeriodicGraph.dualCritical_relation_of_monotonicity_noCoexistence
+lemma PeriodicGraph.dualCritical_relation_of_monotonicity_noCoexistence
     [Countable V] [Countable W]
     (P : PeriodicGraph V) (Pdual : PeriodicGraph W)
     {q : Real}

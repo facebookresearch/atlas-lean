@@ -111,7 +111,7 @@ lemma PeriodicGraph.orbitShellCandidatePairs_card_le
 
 /-- The canonical shell of radius `n` has at most `81 |D|² (n + 1)⁴` pairs, `D` the fundamental
 domain. -/
-theorem PeriodicGraph.canonicalConnectionShellPairs_card_le
+lemma PeriodicGraph.canonicalConnectionShellPairs_card_le
     (P : PeriodicGraph V) (n : Nat) :
     (P.canonicalConnectionShellPairs n).card ≤
       (81 * P.fundamentalDomain.card ^ 2) * (n + 1) ^ 4 := by

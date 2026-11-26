@@ -374,7 +374,7 @@ lemma PeriodicPlaneEmbedding.exists_highProbability_ordered_finiteJoinedBoundary
 the joined primal arms event (FKG, translation invariance, almost sure uniqueness). Weaker
 than the case `s = 0`, `t = 1` of
 `exists_highProbability_separated_primalHalfPlaneBarrierReady` up to rewriting. -/
-theorem PeriodicPlaneEmbedding.exists_highProbability_primalHalfPlaneBarrierReady
+lemma PeriodicPlaneEmbedding.exists_highProbability_primalHalfPlaneBarrierReady
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -387,7 +387,7 @@ theorem PeriodicPlaneEmbedding.exists_highProbability_primalHalfPlaneBarrierRead
       1 - epsilon <
         mu.real (E.finiteJoinedBoundaryArmEvent r 0 1 n L U) ∧
       E.finiteJoinedBoundaryArmEvent r 0 1 n L U ⊆
-        E.primalHalfPlaneBarrierReady := by
+        {ω | E.primalHalfPlaneBarrierReady ω} := by
   have hrR : r ≤ r + B := by linarith
   obtain ⟨L, U, n, hL, hprob⟩ :=
     E.exists_highProbability_finiteJoinedBoundaryArmEvent_with_margin
@@ -400,7 +400,7 @@ theorem PeriodicPlaneEmbedding.exists_highProbability_primalHalfPlaneBarrierRead
 /-- Joined arms to the rays `{y ≤ s}` and `{y ≥ s + t}` (`t > 0`) with probability above `1 - ε`,
 contained in the joined primal arms event (FKG, translation invariance, almost sure
 uniqueness). -/
-theorem PeriodicPlaneEmbedding.exists_highProbability_separated_primalHalfPlaneBarrierReady
+lemma PeriodicPlaneEmbedding.exists_highProbability_separated_primalHalfPlaneBarrierReady
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)
@@ -413,7 +413,7 @@ theorem PeriodicPlaneEmbedding.exists_highProbability_separated_primalHalfPlaneB
       1 - epsilon <
         mu.real (E.finiteJoinedBoundaryArmEvent r s (s + t) n L U) ∧
       E.finiteJoinedBoundaryArmEvent r s (s + t) n L U ⊆
-        E.primalHalfPlaneBarrierReady := by
+        {ω | E.primalHalfPlaneBarrierReady ω} := by
   have hrR : r ≤ r + B := by linarith
   obtain ⟨L, U, n, hL, _hU, hprob⟩ :=
     E.exists_highProbability_separated_finiteJoinedBoundaryArmEvent_with_margin

@@ -332,7 +332,7 @@ lemma triHexCriticalConclusion_of_exactDualThreshold
 the hexagonal critical cubic vanishes. Conditional: the triangular critical value is assumed
 (`hphase`), so the triangular cubic is not returned.
 No decay statements are assumed or concluded (Grimmett, *The Random-Cluster Model*, §6.6). -/
-theorem triangular_hexagonal_critical_of_phase_inputs
+lemma triangular_hexagonal_critical_of_phase_inputs
     {q : ℝ}
     (hq : 1 ≤ q)
     (hpcTri : triangular.criticalPoint q ∈ Ioo (0 : ℝ) 1)

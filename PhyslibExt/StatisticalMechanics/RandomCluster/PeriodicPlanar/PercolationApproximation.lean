@@ -278,7 +278,7 @@ lemma PeriodicGraph.hasPercolationCylinderApproximation
     (zero_lt_one.trans_le hq)
 
 /-- For `q ≥ 1` the wired percolation probability `θ(p, q)` is monotone in `p` on `(0, 1)`. -/
-theorem PeriodicGraph.wiredPercolationProbability_monotoneOn
+lemma PeriodicGraph.wiredPercolationProbability_monotoneOn
     (P : PeriodicGraph V) {q : Real} (hq : 1 ≤ q) :
     MonotoneOn (fun p => P.wiredPercolationProbability p q)
       (Ioo (0 : Real) 1) :=
@@ -287,7 +287,7 @@ theorem PeriodicGraph.wiredPercolationProbability_monotoneOn
 
 /-- For `q ≥ 1` and `pc ∈ (0, 1)`, the wired model does not percolate below `pc` and percolates
 above it. -/
-theorem PeriodicGraph.offCriticalSharpness
+lemma PeriodicGraph.offCriticalSharpness
     (P : PeriodicGraph V) {q : Real} (hq : 1 ≤ q)
     (hpc : P.criticalPoint q ∈ Ioo (0 : Real) 1) :
     OffCriticalSharpness
@@ -297,7 +297,7 @@ theorem PeriodicGraph.offCriticalSharpness
 
 /-- Conditional critical-point duality: dual subcritical coverage and no-coexistence give
 `pc* = (pc)*` and `pc / (1 - pc) · pc* / (1 - pc*) = q` for `q ≥ 1`. -/
-theorem PeriodicGraph.dualCritical_relation_of_noCoexistence
+lemma PeriodicGraph.dualCritical_relation_of_noCoexistence
     {W : Type*} [DecidableEq W] [Countable W]
     (P : PeriodicGraph V) (Pdual : PeriodicGraph W)
     {q : Real}

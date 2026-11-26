@@ -49,7 +49,7 @@ namespace StatMech.FK.PeriodicPlanar
 /-! ## A. Dirac masses are FKG -/
 
 /-- A Dirac mass on a configuration is FKG: correlations of events under it are `0` or `1`. -/
-theorem isFKG_dirac {V : Type} (omega : ConfigSpace (Sym2 V)) :
+lemma isFKG_dirac {V : Type} (omega : ConfigSpace (Sym2 V)) :
     IsFKG (Measure.dirac omega) := by
   intro A B hA hB _hAi _hBi
   rw [Measure.real, Measure.real, Measure.real,

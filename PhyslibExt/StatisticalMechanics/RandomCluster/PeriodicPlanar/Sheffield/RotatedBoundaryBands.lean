@@ -163,7 +163,7 @@ def PairedAlignedMarginSchedule.axisSwap
 
 /-- Paired mixed boundary scores exist for the swapped primal and dual embeddings, given
 translation-invariant measures, boundary-band families and an aligned margin schedule. -/
-theorem exists_pairedRotatedMixedBoundaryScores
+lemma exists_pairedRotatedMixedBoundaryScores
     (E : PeriodicPlaneEmbedding P) (Edual : PeriodicPlaneEmbedding Pdual)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (muDual : Measure (ConfigSpace (Sym2 W)))

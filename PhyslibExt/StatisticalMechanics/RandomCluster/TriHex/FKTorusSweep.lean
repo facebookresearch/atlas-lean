@@ -1173,7 +1173,7 @@ lemma triHexFK_globalConfigSum_identity
 /-- Star–triangle identity for the FK partition functions of the triangular and hexagonal tori on
 the triangular critical surface with dual odds (Baxter–Temperley–Ashley 1978; Grimmett, *The
 Random-Cluster Model*, §6.6). -/
-theorem triHexFK_torus_activeZ_identity
+lemma triHexFK_torus_activeZ_identity
     (L : ℕ) [Fact (2 < L)]
     (pfTri : Sym2 (TorusSite L) → ℝ)
     (pfStar : Sym2 (HexTorusVertex L) → ℝ)
@@ -1405,7 +1405,7 @@ lemma hexagonalTorusSectorTwoPointObservable_eq_indicator
 triangular critical surface, the hexagonal-torus connection probability of white vertices `x, y`
 equals the triangular-torus connection probability of `x, y` (Grimmett, *The Random-Cluster Model*,
 §6.6). -/
-theorem triHexFK_torus_activeTwoPointRatio_eq
+lemma triHexFK_torus_activeTwoPointRatio_eq
     (L : ℕ) [Fact (2 < L)]
     (pfTri : Sym2 (TorusSite L) → ℝ)
     (pfStar : Sym2 (HexTorusVertex L) → ℝ)

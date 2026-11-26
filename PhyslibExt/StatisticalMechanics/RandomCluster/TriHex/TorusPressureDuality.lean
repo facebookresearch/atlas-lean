@@ -259,7 +259,7 @@ lemma triHexTorusPressureDualityResidual_eq_partitionCorrection
 
 /-- Pressure duality: the residual of the triangular–hexagonal duality relation for the free energy
 per site tends to `0` as `L → ∞`. -/
-theorem triHexTorusPressureDualityResidual_tendsto_zero
+lemma triHexTorusPressureDualityResidual_tendsto_zero
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     Tendsto (fun n : ℕ => (by
       let L := n + 3

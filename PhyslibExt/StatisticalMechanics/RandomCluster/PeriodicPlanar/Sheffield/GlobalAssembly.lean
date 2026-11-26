@@ -110,7 +110,7 @@ lemma exists_adjacent_approximate_balanced_height_sequence
 pair of heights, the larger crossing probability tends to `1` while the smaller ones tend to `0`,
 then the approximately balanced pair of `exists_adjacent_approximate_balanced_height_sequence` gives
 a contradiction (Sheffield, *Random Surfaces*, Ch. 9). -/
-theorem approximate_balanced_height_sequence_contradiction
+lemma approximate_balanced_height_sequence_contradiction
     (horizontal vertical : Nat -> Nat -> Real)
     (error : Nat -> Real) (K : Nat -> Nat)
     (hhorizontal : forall n k, 0 <= horizontal n k)

@@ -116,7 +116,7 @@ lemma triHexFK_terminalWeightedSum_identity
 /-- Star–triangle transformation in an external environment: on the triangular critical surface with
 dual odds, star and triangle give the same expectation of every terminal observable, for every
 environment (Grimmett, *The Random-Cluster Model*, §6.6). -/
-theorem triHexFK_terminalWeightedRatio_eq
+lemma triHexFK_terminalWeightedRatio_eq
     {q y0 y1 y2 y0Star y1Star y2Star : Real}
     (hq : q ≠ 0) (hyprod : y0 * y1 * y2 ≠ 0)
     (h0 : y0 * y0Star = q) (h1 : y1 * y1Star = q)

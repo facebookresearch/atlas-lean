@@ -68,7 +68,7 @@ tending to `1`, there is a connector radius such that any labeled grid of transl
 labels are backed by approximate side preferences, with buffered connectors inside the rectangle at
 deep vertices, forces the larger crossing probability to tend to `1` (Sheffield, *Random Surfaces*,
 Ch. 9). See also `exists_uniformTemplate_approxPreference_crossing_max_tendsto_one`. -/
-theorem PeriodicPlaneEmbedding.exists_uniformTemplate_deepGridPreference_crossing_max_tendsto_one
+lemma PeriodicPlaneEmbedding.exists_uniformTemplate_deepGridPreference_crossing_max_tendsto_one
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsProbabilityMeasure mu]
     (hFKG : IsFKG mu) (hTI : P.IsTranslationInvariant mu)

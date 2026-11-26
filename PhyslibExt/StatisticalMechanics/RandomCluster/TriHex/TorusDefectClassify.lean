@@ -937,7 +937,7 @@ lemma triHexTorusDefect_le_two
         exact hstep.trans ihK'
 
 /-- The defect of a subgraph of the triangular torus is `0`, `1` or `2`. -/
-theorem triHexTorusDefect_classified
+lemma triHexTorusDefect_classified
     (L : ℕ) [Fact (2 < L)] (K : SimpleGraph (TorusSite L))
     (hK : K ≤ triangularTorusGraph L) :
     triHexTorusEulerDefect L K = 0 ∨ triHexTorusEulerDefect L K = 1 ∨

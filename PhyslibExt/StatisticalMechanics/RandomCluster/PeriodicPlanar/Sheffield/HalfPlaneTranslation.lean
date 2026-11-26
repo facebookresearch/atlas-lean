@@ -390,7 +390,7 @@ lemma PeriodicPlaneEmbedding.upperBoundaryRay_connection_measureReal_vertical
 /-- Under translation invariance, connecting the source moved down by `n` to the lower boundary ray
 at height `0` has probability tending to that of connecting the source to the whole half-plane
 boundary. -/
-theorem PeriodicPlaneEmbedding.shift_down_lowerBoundaryRay_measureReal_tendsto
+lemma PeriodicPlaneEmbedding.shift_down_lowerBoundaryRay_measureReal_tendsto
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (hTI : P.IsTranslationInvariant mu) (r : Real) (S : Set V) :
@@ -410,7 +410,7 @@ theorem PeriodicPlaneEmbedding.shift_down_lowerBoundaryRay_measureReal_tendsto
 /-- Under translation invariance, connecting the source moved up by `n` to the upper boundary ray at
 height `0` has probability tending to that of connecting the source to the whole half-plane
 boundary. -/
-theorem PeriodicPlaneEmbedding.shift_up_upperBoundaryRay_measureReal_tendsto
+lemma PeriodicPlaneEmbedding.shift_up_upperBoundaryRay_measureReal_tendsto
     (E : PeriodicPlaneEmbedding P)
     (mu : Measure (ConfigSpace (Sym2 V))) [IsFiniteMeasure mu]
     (hTI : P.IsTranslationInvariant mu) (r : Real) (S : Set V) :

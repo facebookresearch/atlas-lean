@@ -79,7 +79,7 @@ example : MeasurableSet {omega : ConfigSpace (Sym2 (StatMech.Lattice.Site 2)) |
   PeriodicPlanar.square.measurableSet_clusterWithinSet_infinite _ 0
 
 -- `clusterWithinSet` at the all-open configuration.
-example : Set (StatMech.Lattice.Site 2) :=
+noncomputable example : Set (StatMech.Lattice.Site 2) :=
   PeriodicPlanar.square.clusterWithinSet allOpen {z | 0 ≤ z 0} 0
 
 -- Half-planes at boundaries `0` and `1` have an infinite cluster with equal probability.
