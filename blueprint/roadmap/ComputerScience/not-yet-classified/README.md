@@ -47,6 +47,7 @@ Topics added since this subject's fields were last revised.
 - [Simulated Annealing](simulated-annealing/README.md)
 - [Soundness](soundness/README.md)
 - [Summation](summation/README.md)
+- [Term List Collection](term-list-collection/README.md)
 - [Termination](termination/README.md)
 - [Tree CSP](tree-csp/README.md)
 - [Vertical Cells Connectivity](vertical-cells-connectivity/README.md)
