@@ -1197,4 +1197,6 @@ Topics added since this subject's fields were last revised.
 - [Drinfeld Basis Torsion](drinfeld-basis-torsion/README.md)
 - [Torsion Cardinality](smul-some-eq-zero-iff.md)
 - [Supersingular Inertia](supersingular-inertia/README.md)
-- [Cassels Tate Pairing](cassels-tate-pairing/README.md)
+- [Faltings Height](faltings-height/README.md)
+- [Gaudron Remond Isogeny](gaudron-remond-isogeny/README.md)
+- [Javanpeykar Belyi](javanpeykar-belyi/README.md)
