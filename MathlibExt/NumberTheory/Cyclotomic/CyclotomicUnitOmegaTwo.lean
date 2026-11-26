@@ -28,6 +28,7 @@ removed and the names restated in Mathlib style.
 module
 
 public import MathlibExt.NumberTheory.Cyclotomic.UnitsModPowersEigenspace
+import MathlibExt.NumberTheory.Cyclotomic.UnitsOmegaEigenspaceFinrank
 import Mathlib.NumberTheory.NumberField.Cyclotomic.Galois
 
 /-!
@@ -380,39 +381,6 @@ private theorem omegaIdempotent_ne_zero_of_equivariant {i : ℕ} {N : Type*} [Ad
 end Aux2Glue
 
 open NumberField IsCyclotomicExtension Stickelberger
-
-namespace Stickelberger
-
-variable (p : ℕ) [Fact p.Prime]
-
-private lemma neZero_p : NeZero p := ⟨(Fact.out : p.Prime).ne_zero⟩
-
-attribute [local instance] neZero_p
-
-variable (K : Type*) [Field K] [NumberField K] [IsCyclotomicExtension {p} ℚ K]
-
-private theorem cycloGalEquiv_symm_apply_of_pow_eq (d : (ZMod p)ˣ) {x : K} (hx : x ^ p = 1) :
-    (IsCyclotomicExtension.Rat.galEquivZMod p K).symm d x = x ^ (d : ZMod p).val := by
-  have := IsCyclotomicExtension.Rat.galEquivZMod_apply_of_pow_eq p K
-    ((IsCyclotomicExtension.Rat.galEquivZMod p K).symm d) hx
-  rwa [MulEquiv.apply_symm_apply] at this
-
-private theorem clRingAction_eq :
-    clRingAction p K = (Stickelberger.galRestrictRingAut ℤ ℚ K (𝓞 K)).comp
-      (IsCyclotomicExtension.Rat.galEquivZMod p K).symm.toMonoidHom := rfl
-
-set_option backward.isDefEq.respectTransparency false in
-
-private theorem clRingAction_apply_of_pow_eq (d : (ZMod p)ˣ) {x : 𝓞 K} (hx : x ^ p = 1) :
-    clRingAction p K d x = x ^ (d : ZMod p).val := by
-  have hxK : (x : K) ^ p = 1 := by exact_mod_cast congrArg ((↑) : 𝓞 K → K) hx
-  apply FaithfulSMul.algebraMap_injective (𝓞 K) K
-  rw [show clRingAction p K d x =
-        galRestrict ℤ ℚ K (𝓞 K) ((IsCyclotomicExtension.Rat.galEquivZMod p K).symm d) x from rfl,
-    algebraMap_galRestrict_apply, map_pow]
-  exact cycloGalEquiv_symm_apply_of_pow_eq p K d hxK
-
-end Stickelberger
 
 open NumberField Stickelberger
 

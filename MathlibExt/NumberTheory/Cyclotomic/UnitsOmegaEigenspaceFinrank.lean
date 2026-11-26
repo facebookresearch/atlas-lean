@@ -56,42 +56,23 @@ infinite places it fixes, and the trace of the projector `Stickelberger.omegaIde
 
 set_option autoImplicit false
 
-section Aux2Dirwit
-open NumberField IsCyclotomicExtension Stickelberger
-
 namespace Stickelberger
 
-variable (p : ℕ) [Fact p.Prime]
+open NumberField
 
-private lemma neZero_p : NeZero p := ⟨(Fact.out : p.Prime).ne_zero⟩
-
-attribute [local instance] neZero_p
-
-variable (K : Type*) [Field K] [NumberField K] [IsCyclotomicExtension {p} ℚ K]
-
-private theorem cycloGalEquiv_symm_apply_of_pow_eq (d : (ZMod p)ˣ) {x : K} (hx : x ^ p = 1) :
-    (IsCyclotomicExtension.Rat.galEquivZMod p K).symm d x = x ^ (d : ZMod p).val := by
-  have := IsCyclotomicExtension.Rat.galEquivZMod_apply_of_pow_eq p K
-    ((IsCyclotomicExtension.Rat.galEquivZMod p K).symm d) hx
-  rwa [MulEquiv.apply_symm_apply] at this
-
-private theorem clRingAction_eq :
-    clRingAction p K = (Stickelberger.galRestrictRingAut ℤ ℚ K (𝓞 K)).comp
-      (IsCyclotomicExtension.Rat.galEquivZMod p K).symm.toMonoidHom := rfl
-
-set_option backward.isDefEq.respectTransparency false in
-
-private theorem clRingAction_apply_of_pow_eq (d : (ZMod p)ˣ) {x : 𝓞 K} (hx : x ^ p = 1) :
+/-- For `p ≠ 0` and a `p`-th cyclotomic number field `K`, `clRingAction p K d` raises a `p`-th
+root of unity of `𝓞 K` to the power `d`. -/
+theorem clRingAction_apply_of_pow_eq (p : ℕ) [NeZero p] (K : Type*) [Field K] [NumberField K]
+    [IsCyclotomicExtension {p} ℚ K] (d : (ZMod p)ˣ) {x : 𝓞 K} (hx : x ^ p = 1) :
     clRingAction p K d x = x ^ (d : ZMod p).val := by
-  have hxK : (x : K) ^ p = 1 := by exact_mod_cast congrArg ((↑) : 𝓞 K → K) hx
+  have h := IsCyclotomicExtension.Rat.galEquivZMod_smul_of_pow_eq p K
+    ((IsCyclotomicExtension.Rat.galEquivZMod p K).symm d) hx
+  rw [MulEquiv.apply_symm_apply] at h
+  rw [← h]
   apply FaithfulSMul.algebraMap_injective (𝓞 K) K
-  rw [show clRingAction p K d x =
-        galRestrict ℤ ℚ K (𝓞 K) ((IsCyclotomicExtension.Rat.galEquivZMod p K).symm d) x from rfl,
-    algebraMap_galRestrict_apply, map_pow]
-  exact cycloGalEquiv_symm_apply_of_pow_eq p K d hxK
+  exact algebraMap_galRestrict_apply ℤ _ x
 
 end Stickelberger
-end Aux2Dirwit
 
 noncomputable section
 

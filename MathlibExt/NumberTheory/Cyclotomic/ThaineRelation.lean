@@ -1797,94 +1797,6 @@ namespace ThaineDesk
 
 open UniqueFactorizationMonoid
 
-variable {A B : Type*} [CommRing A] [CommRing B] [IsDedekindDomain A] [IsDedekindDomain B]
-  [Algebra A B] [Algebra.IsIntegral A B] [Module.IsTorsionFree A B]
-
-private theorem count_normalizedFactors_finsetProd_pow (T : Finset (Ideal B))
-    (hT : ∀ P ∈ T, Prime P) (m : Ideal B → ℕ) (𝔓 : Ideal B) :
-    Multiset.count 𝔓 (normalizedFactors (∏ P ∈ T, P ^ m P))
-      = if 𝔓 ∈ T then m 𝔓 else 0 := by
-  classical
-  induction T using Finset.induction_on with
-  | empty => simp [-Ideal.one_eq_top, normalizedFactors_one]
-  | insert P₀ T hP₀T ih =>
-    have hP₀ : Prime P₀ := hT P₀ (Finset.mem_insert_self _ _)
-    have hT' : ∀ P ∈ T, Prime P := fun P hP => hT P (Finset.mem_insert_of_mem hP)
-    have hprod0 : (∏ P ∈ T, P ^ m P) ≠ 0 :=
-      Finset.prod_ne_zero_iff.mpr fun P hP => pow_ne_zero _ (hT' P hP).ne_zero
-    rw [Finset.prod_insert hP₀T,
-      normalizedFactors_mul (pow_ne_zero _ hP₀.ne_zero) hprod0, Multiset.count_add,
-      hP₀.irreducible.normalizedFactors_pow, normalize_eq, Multiset.count_replicate,
-      ih hT']
-    by_cases h1 : 𝔓 = P₀
-    · subst h1
-      simp [hP₀T]
-    · by_cases h2 : 𝔓 ∈ T <;> simp [Finset.mem_insert, h1, h2, Ne.symm h1]
-
-private theorem count_normalizedFactors_map_algebraMap
-    (𝔔 : Ideal A) [h𝔔max : 𝔔.IsMaximal] (𝔓 : Ideal B) [h𝔓p : 𝔓.IsPrime] [h𝔓Q : 𝔓.LiesOver 𝔔]
-    (I : Ideal A) (hI : I ≠ 0) :
-    Multiset.count 𝔓 (normalizedFactors (I.map (algebraMap A B)))
-      = 𝔔.ramificationIdx' 𝔓 * Multiset.count 𝔔 (normalizedFactors I) := by
-  classical
-  have hinj : Function.Injective (algebraMap A B) :=
-    Module.isTorsionFree_iff_algebraMap_injective.mp inferInstance
-  revert hI
-  refine UniqueFactorizationMonoid.induction_on_prime I ?_ ?_ ?_
-  · intro h0; exact absurd rfl h0
-  · intro u hu _
-    rw [Ideal.isUnit_iff.mp hu, Ideal.map_top]
-    simp [← Ideal.one_eq_top, normalizedFactors_one]
-  · intro I' 𝔮 hI'0 h𝔮 ih _
-    have h𝔮0 : 𝔮 ≠ 0 := h𝔮.ne_zero
-    have hmap𝔮0 : 𝔮.map (algebraMap A B) ≠ ⊥ := fun h =>
-      h𝔮0 (by rwa [Ideal.map_eq_bot_iff_of_injective hinj] at h)
-    have hmapI'0 : I'.map (algebraMap A B) ≠ ⊥ := fun h =>
-      hI'0 (by rwa [Ideal.map_eq_bot_iff_of_injective hinj] at h)
-    have h𝔮nf : normalizedFactors 𝔮 = {𝔮} := by
-      rw [normalizedFactors_irreducible h𝔮.irreducible, normalize_eq]
-    have hmain : Multiset.count 𝔓 (normalizedFactors (𝔮.map (algebraMap A B)))
-        = 𝔔.ramificationIdx' 𝔓 * Multiset.count 𝔔 (normalizedFactors 𝔮) := by
-      rw [h𝔮nf, Multiset.count_singleton]
-      by_cases hQQ : 𝔔 = 𝔮
-      · subst hQQ
-        rw [ite_eq_left rfl, mul_one]
-        have hprimes : ∀ P ∈ (𝔔.primesOver B).toFinset, Prime P := by
-          intro P hP
-          have hP' := Set.mem_toFinset.mp hP
-          have hunder : (⊥ : Ideal B).under A = ⊥ :=
-            Ideal.comap_bot_of_injective (algebraMap A B) hinj
-          refine Ideal.prime_of_isPrime (fun hPbot => h𝔮0 ?_) hP'.1
-          rw [hP'.2.over, hPbot, hunder]
-          exact Ideal.zero_eq_bot.symm
-        have h𝔓mem : 𝔓 ∈ (𝔔.primesOver B).toFinset := by
-          rw [Set.mem_toFinset]
-          exact ⟨h𝔓p, h𝔓Q⟩
-        rw [Ideal.map_algebraMap_eq_finsetProd_pow h𝔮0,
-          count_normalizedFactors_finsetProd_pow _ hprimes _ _, ite_eq_left h𝔓mem]
-        exact (Ideal.ramificationIdx'_eq_ramificationIdx (p := 𝔔) (q := 𝔓) h𝔮0).symm
-      · rw [ite_eq_right hQQ, mul_zero]
-        have hnle : ¬ 𝔮.map (algebraMap A B) ≤ 𝔓 := by
-          intro hle
-          have h1 := Ideal.map_le_iff_le_comap.mp hle
-          have h2 : 𝔔 = Ideal.comap (algebraMap A B) 𝔓 := h𝔓Q.over
-          rw [← h2] at h1
-          have h𝔮max : 𝔮.IsMaximal :=
-            (Ideal.isPrime_of_prime h𝔮).isMaximal h𝔮0
-          exact hQQ (h𝔮max.eq_of_le h𝔔max.ne_top h1).symm
-        have hcount := Ideal.count_normalizedFactors_eq (p := 𝔓)
-          (x := 𝔮.map (algebraMap A B)) (n := 0) (by simp) (by simpa using hnle)
-        simpa using hcount
-    rw [Ideal.map_mul, normalizedFactors_mul hmap𝔮0 hmapI'0, Multiset.count_add,
-      normalizedFactors_mul h𝔮0 hI'0, Multiset.count_add, ih hI'0, hmain, Nat.mul_add]
-
-end ThaineDesk
-open scoped ThaineReduce
-
-namespace ThaineDesk
-
-open UniqueFactorizationMonoid
-
 section Count
 
 variable {B : Type*} [CommRing B] [IsDedekindDomain B]
@@ -2277,88 +2189,30 @@ section Transport
 variable {A B : Type*} [CommRing A] [CommRing B] [IsDedekindDomain A] [IsDedekindDomain B]
   [Algebra A B] [Algebra.IsIntegral A B] [Module.IsTorsionFree A B]
 
-private theorem count_nF_finsetProd_pow' (T : Finset (Ideal B))
-    (hT : ∀ P ∈ T, Prime P) (m : Ideal B → ℕ) (𝔓 : Ideal B) :
-    Multiset.count 𝔓 (normalizedFactors (∏ P ∈ T, P ^ m P))
-      = if 𝔓 ∈ T then m 𝔓 else 0 := by
-  classical
-  induction T using Finset.induction_on with
-  | empty => simp [normalizedFactors_one, -Ideal.one_eq_top]
-  | insert P₀ T hP₀T ih =>
-    have hP₀ : Prime P₀ := hT P₀ (Finset.mem_insert_self _ _)
-    have hT' : ∀ P ∈ T, Prime P := fun P hP => hT P (Finset.mem_insert_of_mem hP)
-    have hprod0 : (∏ P ∈ T, P ^ m P) ≠ 0 :=
-      Finset.prod_ne_zero_iff.mpr fun P hP => pow_ne_zero _ (hT' P hP).ne_zero
-    rw [Finset.prod_insert hP₀T,
-      normalizedFactors_mul (pow_ne_zero _ hP₀.ne_zero) hprod0, Multiset.count_add,
-      hP₀.irreducible.normalizedFactors_pow, normalize_eq, Multiset.count_replicate,
-      ih hT']
-    by_cases h1 : 𝔓 = P₀
-    · subst h1
-      simp [hP₀T]
-    · by_cases h2 : 𝔓 ∈ T <;> simp [Finset.mem_insert, h1, h2, Ne.symm h1]
-
+omit [Algebra.IsIntegral A B] in
 private theorem count_nF_map_algebraMap'
-    (𝔔 : Ideal A) [h𝔔max : 𝔔.IsMaximal] (𝔓 : Ideal B) [h𝔓p : 𝔓.IsPrime] [h𝔓Q : 𝔓.LiesOver 𝔔]
-    (I : Ideal A) (hI : I ≠ 0) :
+    (𝔔 : Ideal A) (h𝔔0 : 𝔔 ≠ ⊥) [h𝔔p : 𝔔.IsPrime] (𝔓 : Ideal B) [h𝔓p : 𝔓.IsPrime]
+    [h𝔓Q : 𝔓.LiesOver 𝔔] (I : Ideal A) (hI : I ≠ 0) :
     Multiset.count 𝔓 (normalizedFactors (I.map (algebraMap A B)))
       = 𝔔.ramificationIdx' 𝔓 * Multiset.count 𝔔 (normalizedFactors I) := by
-  classical
   have hinj : Function.Injective (algebraMap A B) :=
     Module.isTorsionFree_iff_algebraMap_injective.mp inferInstance
-  revert hI
-  refine UniqueFactorizationMonoid.induction_on_prime I ?_ ?_ ?_
-  · intro h
-    exact absurd rfl h
-  · intro u hu _
-    rw [Ideal.isUnit_iff.mp hu, Ideal.map_top]
-    simp [← Ideal.one_eq_top, normalizedFactors_one]
-  · intro I' 𝔮 hI'0 h𝔮 ih _
-    have h𝔮0 : 𝔮 ≠ 0 := h𝔮.ne_zero
-    have hmap𝔮0 : 𝔮.map (algebraMap A B) ≠ ⊥ := fun h =>
-      h𝔮0 (by rwa [Ideal.map_eq_bot_iff_of_injective hinj] at h)
-    have hmapI'0 : I'.map (algebraMap A B) ≠ ⊥ := fun h =>
-      hI'0 (by rwa [Ideal.map_eq_bot_iff_of_injective hinj] at h)
-    have hmain : Multiset.count 𝔓 (normalizedFactors (𝔮.map (algebraMap A B)))
-        = 𝔔.ramificationIdx' 𝔓 * Multiset.count 𝔔 (normalizedFactors 𝔮) := by
-      have h𝔮nf : normalizedFactors 𝔮 = {𝔮} := by
-        rw [normalizedFactors_irreducible h𝔮.irreducible, normalize_eq]
-      rw [h𝔮nf, Multiset.count_singleton]
-      by_cases hQQ : 𝔔 = 𝔮
-      · subst hQQ
-        rw [ite_eq_left rfl, mul_one]
-        have hprimes : ∀ P ∈ (𝔔.primesOver B).toFinset, Prime P := by
-          intro P hP
-          have hP' := Set.mem_toFinset.mp hP
-          have hunder : (⊥ : Ideal B).under A = ⊥ :=
-            Ideal.comap_bot_of_injective (algebraMap A B) hinj
-          refine Ideal.prime_of_isPrime (fun hPbot => h𝔮0 ?_) hP'.1
-          rw [hP'.2.over, hPbot, hunder]
-          exact Ideal.zero_eq_bot.symm
-        have h𝔓mem : 𝔓 ∈ (𝔔.primesOver B).toFinset := by
-          rw [Set.mem_toFinset]
-          exact ⟨h𝔓p, h𝔓Q⟩
-        rw [Ideal.map_algebraMap_eq_finsetProd_pow h𝔮0,
-          count_nF_finsetProd_pow' _ hprimes _ _, ite_eq_left h𝔓mem]
-        exact (Ideal.ramificationIdx'_eq_ramificationIdx (p := 𝔔) (q := 𝔓) h𝔮0).symm
-      · rw [ite_eq_right hQQ, mul_zero]
-        have hnle : ¬ 𝔮.map (algebraMap A B) ≤ 𝔓 := by
-          intro hle
-          have h1 := Ideal.map_le_iff_le_comap.mp hle
-          have h2 : 𝔔 = Ideal.comap (algebraMap A B) 𝔓 := h𝔓Q.over
-          rw [← h2] at h1
-          have h𝔮max : 𝔮.IsMaximal :=
-            (Ideal.isPrime_of_prime h𝔮).isMaximal h𝔮0
-          exact hQQ (h𝔮max.eq_of_le h𝔔max.ne_top h1).symm
-        have hcount := Ideal.count_normalizedFactors_eq (p := 𝔓)
-          (x := 𝔮.map (algebraMap A B)) (n := 0) (by simp) (by simpa using hnle)
-        simpa using hcount
-    rw [Ideal.map_mul, normalizedFactors_mul hmap𝔮0 hmapI'0, Multiset.count_add,
-      normalizedFactors_mul h𝔮0 hI'0, Multiset.count_add, ih hI'0, Nat.mul_add, hmain]
+  have : FaithfulSMul A B := (faithfulSMul_iff_algebraMap_injective A B).mpr hinj
+  have h𝔓0 : 𝔓 ≠ ⊥ := fun h =>
+    h𝔔0 (by rw [h𝔓Q.over, h]; exact Ideal.comap_bot_of_injective _ hinj)
+  have hv : Irreducible 𝔔 := (Ideal.prime_of_isPrime h𝔔0 h𝔔p).irreducible
+  have hw : Irreducible 𝔓 := (Ideal.prime_of_isPrime h𝔓0 h𝔓p).irreducible
+  have hmap : I.map (algebraMap A B) ≠ 0 := by
+    rwa [Ne, Ideal.zero_eq_bot, Ideal.map_eq_bot_iff_of_injective hinj]
+  have h := Ideal.IsDedekindDomain.emultiplicity_map_eq_ramificationIdx'_mul hI hv hw h𝔓0
+  rw [emultiplicity_eq_count_normalizedFactors hw hmap,
+    emultiplicity_eq_count_normalizedFactors hv hI, normalize_eq, normalize_eq] at h
+  exact_mod_cast h
 
+omit [Algebra.IsIntegral A B] in
 private theorem count_descended (α : A) (β : B) (hβ0 : β ≠ 0) (n : ℕ)
     (hα : Ideal.span {algebraMap A B α} = Ideal.span {β} ^ n)
-    (𝔔 : Ideal A) [𝔔.IsMaximal] (𝔓 : Ideal B) [𝔓.IsPrime] [𝔓.LiesOver 𝔔]
+    (𝔔 : Ideal A) (h𝔔0 : 𝔔 ≠ ⊥) [𝔔.IsPrime] (𝔓 : Ideal B) [𝔓.IsPrime] [𝔓.LiesOver 𝔔]
     (hα0 : α ≠ 0) :
     𝔔.ramificationIdx' 𝔓 * Multiset.count 𝔔 (normalizedFactors (Ideal.span {α}))
       = n * Multiset.count 𝔓 (normalizedFactors (Ideal.span {β})) := by
@@ -2368,7 +2222,7 @@ private theorem count_descended (α : A) (β : B) (hβ0 : β ≠ 0) (n : ℕ)
     simpa [Ideal.span_singleton_eq_bot] using hα0
   have hspanβ0 : (Ideal.span {β} : Ideal B) ≠ 0 := by
     simpa [Ideal.span_singleton_eq_bot] using hβ0
-  rw [← count_nF_map_algebraMap' 𝔔 𝔓 _ hspanα0, hspan, normalizedFactors_pow,
+  rw [← count_nF_map_algebraMap' 𝔔 h𝔔0 𝔓 _ hspanα0, hspan, normalizedFactors_pow,
     Multiset.count_nsmul]
 
 end Transport
@@ -3378,20 +3232,20 @@ private theorem engine_out (p : ℕ) [Fact p.Prime] (hp5 : 5 ≤ p)
     exact ((hSmem 𝔔).mp h𝔔).1.isMaximal (hSbot 𝔔 h𝔔)
   have hSprime : ∀ 𝔔 ∈ S, Prime 𝔔 :=
     fun 𝔔 h𝔔 => Ideal.prime_of_isPrime (hSbot 𝔔 h𝔔) ((hSmem 𝔔).mp h𝔔).1
-  have hcount : ∀ (𝔔 : Ideal (𝓞 Kplus)), 𝔔.IsMaximal →
+  have hcount : ∀ (𝔔 : Ideal (𝓞 Kplus)), 𝔔 ≠ ⊥ → 𝔔.IsPrime →
       ∀ (𝔓 : Ideal (𝓞 (CyclotomicField ℓ Kplus))), 𝔓.IsPrime → 𝔓.LiesOver 𝔔 →
       Ideal.ramificationIdx' 𝔔 𝔓 *
         Multiset.count 𝔔 (normalizedFactors (Ideal.span {α}))
         = (ℓ - 1) * Multiset.count 𝔓
             (normalizedFactors (Ideal.span {(β : 𝓞 (CyclotomicField ℓ Kplus))})) := by
-    intro 𝔔 h𝔔max 𝔓 h𝔓p h𝔓Q
-    have := h𝔔max
+    intro 𝔔 h𝔔0 h𝔔p 𝔓 h𝔓p h𝔓Q
+    have := h𝔔p
     have := h𝔓p
     have := h𝔓Q
     rw [← hcardGal]
     exact ThaineDesk.count_descended (A := 𝓞 Kplus) (B := 𝓞 (CyclotomicField ℓ Kplus)) α
         (β : 𝓞 (CyclotomicField ℓ Kplus))
-      (by exact_mod_cast hβ0) _ hspanB 𝔔 𝔓 hα0
+      (by exact_mod_cast hβ0) _ hspanB 𝔔 h𝔔0 𝔓 hα0
   obtain ⟨W, hW0, hWrel⟩ :=
     ThaineDesk.exists_eq_finsetProd_mul_pow (A := 𝓞 Kplus) p (Ideal.span {α})
       (by simpa [Ideal.span_singleton_eq_bot] using hα0) S hSprime
@@ -3412,7 +3266,7 @@ private theorem engine_out (p : ℕ) [Fact p.Prime] (hp5 : 5 ≤ p)
         have he1 : Ideal.ramificationIdx' 𝔔 𝔓 = 1 :=
           ThaineAux.ramificationIdx_eq_one_of_not_mem (F := Kplus) (L := (CyclotomicField ℓ Kplus))
               (ℓ := ℓ) 𝔔 hℓ𝔔 𝔓
-        have h2 := hcount 𝔔 h𝔔max 𝔓 h𝔓max.isPrime h𝔓Q
+        have h2 := hcount 𝔔 h𝔔pr.ne_zero h𝔔p 𝔓 h𝔓max.isPrime h𝔓Q
         rw [he1, one_mul] at h2
         rw [h2]
         exact Dvd.dvd.mul_right hpℓ _)
@@ -3497,7 +3351,7 @@ private theorem engine_out (p : ℕ) [Fact p.Prime] (hp5 : 5 ≤ p)
     have haQP : Multiset.count 𝔔 (normalizedFactors (Ideal.span {α}))
         = Multiset.count 𝔓
             (normalizedFactors (Ideal.span {(β : 𝓞 (CyclotomicField ℓ Kplus))})) := by
-      have h1 := hcount 𝔔 h𝔔max 𝔓 h𝔓max.isPrime h𝔓Q
+      have h1 := hcount 𝔔 (hSbot 𝔔 h𝔔S) h𝔔max.isPrime 𝔓 h𝔓max.isPrime h𝔓Q
       rw [he𝔔] at h1
       have hℓ2 := hℓ.two_le
       exact Nat.eq_of_mul_eq_mul_left (by omega) h1
