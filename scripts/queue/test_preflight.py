@@ -933,6 +933,51 @@ class GitHubReadTests(unittest.TestCase):
         gh.logs = {}
         self.assertIn("could not be read", preflight.ci_run(gh, self.runs, self.head)["base_error"])
 
+    def test_only_a_pull_request_run_of_ci_can_skip_build(self):
+        actions = {"id": preflight.ACTIONS_APP_ID}
+        associated = [{"number": 6650, "base": {"ref": "main"}}]
+        gh = FakeGitHub({f"/repos/{REPO}/actions/runs/{run}": {"event": event, "path": path, "pull_requests": associated}
+                         for run, event, path in ((1, "pull_request", ".github/workflows/ci.yml"),
+                                                  (2, "pull_request", ".github/workflows/source-diagnostics.yml"),
+                                                  (3, "pull_request_target", ".github/workflows/ci.yml"))})
+
+        def scoped(name: str, run: int, provenance=preflight.Provenance(gh, 6650, "main"), **changes) -> bool:
+            check = dict({"id": run * 10, "name": name, "app": actions, "status": "completed", "conclusion": "skipped",
+                          "details_url": f"https://github.com/{REPO}/actions/runs/{run}/job/{run * 10}"}, **changes)
+            required = [{"context": name, "integration_id": preflight.ACTIONS_APP_ID}]
+            return bool(preflight.summarize_checks([check], required, [], provenance)["required"][0].get("scoped"))
+        self.assertTrue(scoped("build", 1))
+        self.assertFalse(scoped("build", 1, conclusion="success"))  # not a skip
+        self.assertFalse(scoped("repository integrity", 1))  # CI skips only build
+        self.assertFalse(scoped("build", 2))  # a job named build in another workflow
+        self.assertFalse(scoped("build", 3))  # not a pull_request run
+        self.assertFalse(scoped("build", 1, provenance=None))  # a run it does not read
+        self.assertFalse(scoped("build", 1, app={"id": 99}))  # another app
+
+    def test_ci_base_from_the_scope_job_when_build_is_skipped(self):
+        actions = {"id": preflight.ACTIONS_APP_ID}
+        head, base = "1" * 40, "2" * 40
+
+        def check(name: str, run: int, job: int, conclusion: str) -> dict:
+            return {"id": job, "name": name, "app": actions, "status": "completed", "conclusion": conclusion,
+                    "details_url": f"https://github.com/{REPO}/actions/runs/{run}/job/{job}"}
+        build, scope = check("build", 5, 51, "skipped"), check(preflight.SCOPE_JOB, 5, 52, "success")
+        responses = {f"/repos/{REPO}/actions/runs/5": {"event": "pull_request", "path": ".github/workflows/ci.yml",
+                                                      "head_sha": head, "created_at": "2026-11-23T17:00:00Z",
+                                                      "pull_requests": [{"number": 7000, "base": {"ref": "main"}}]},
+                     f"/repos/{REPO}/actions/jobs/51": {"run_id": 5, "name": "build"},
+                     f"/repos/{REPO}/actions/jobs/52": {"run_id": 5, "name": preflight.SCOPE_JOB}}
+        logs = {52: f"2026-11-23T17:00:05Z HEAD is now at abcdef0 Merge {head} into {base}\n"}
+        ci = preflight.ci_run(FakeGitHub(responses, logs), [build, scope], head, 7000, "main")
+        self.assertEqual((ci["base"], ci["base_error"]), (base, None))
+        # Another run's job, or a check run that points at another run's job, says nothing about this run.
+        other = check(preflight.SCOPE_JOB, 6, 62, "success")
+        self.assertIn(f"run 5 has no {preflight.SCOPE_JOB} job",
+                      preflight.ci_run(FakeGitHub(responses, logs), [build, other], head, 7000, "main")["base_error"])
+        responses[f"/repos/{REPO}/actions/jobs/52"] = {"run_id": 6, "name": preflight.SCOPE_JOB}
+        self.assertIn(f"run 5 has no {preflight.SCOPE_JOB} job",
+                      preflight.ci_run(FakeGitHub(responses, logs), [build, scope], head, 7000, "main")["base_error"])
+
     def test_a_heavy_rebuild_is_a_warning(self):
         def warned(built):
             result = preflight.evaluate(dict(ready_facts(), build_time=built), NOW)
@@ -1589,23 +1634,47 @@ class GitTests(unittest.TestCase):
         self.assertEqual(set(self.git.signatures[heads[0]]), {"docs/h0.md", "glob:docs/*.md"})  # watched entries only
 
     def test_the_repositorys_own_checks_can_be_followed(self):
-        """The code and inputs of this repository's required workflows, at its own HEAD, stay within the
+        """The code and inputs of this repository's staged workflows stay within the
         limit: an incomplete closure would make every pull request NOT READY."""
         root = Path(__file__).resolve().parents[2]
         found = subprocess.run(["git", "-C", str(root), "rev-parse", "--absolute-git-dir"], capture_output=True, text=True)
-        workflows = [w for w in (".github/workflows/ci.yml", ".github/workflows/bump-guard.yml",
-                                 ".github/workflows/source-diagnostics.yml") if (root / w).exists()]
-        if found.returncode != 0 or not workflows:
+        if found.returncode != 0:
             self.skipTest("not in a checkout of the repository")
         own = preflight.Git(Path(found.stdout.strip()), "https://github.com/facebookresearch/atlas-lean.git")
-        head = own.out("rev-parse", "HEAD")
+        # The index holds the merge result before a commit and matches HEAD in a clean checkout.
+        tree = own.out("write-tree")
+        workflows = own.out(
+            "ls-tree", "-r", "--name-only", tree, "--", ".github/workflows/ci.yml",
+            ".github/workflows/bump-guard.yml", ".github/workflows/source-diagnostics.yml",
+        ).splitlines()
+        self.assertTrue(workflows, "no required workflows in the staged tree")
         for workflow in workflows:
-            code = preflight.workflow_code(own, head, [workflow])
+            code = preflight.workflow_code(own, tree, [workflow])
             self.assertNotIn("?incomplete", code, workflow)
             self.assertLess(len(code), 300, workflow)
-            named = (root / workflow).read_text()  # a module the workflow names itself is its input; others are not
+            # A Lean module is an input when the workflow names it directly.
+            named = own.out("show", f"{tree}:{workflow}")
             self.assertFalse([c for c in code if c.endswith(".lean") and c.split("/", 1)[0] in preflight.LIBRARIES
                               and c not in named], workflow)
+        # The paths that scripts/ci_scope.py and its test name are rules and examples, not inputs (NAMES_ONLY).
+        self.assertEqual(preflight._code_closure(own, tree, {"scripts/test_ci_scope.py"}),
+                         {"scripts/test_ci_scope.py", "scripts/ci_scope.py"})
+
+    def test_a_script_that_only_names_paths(self):
+        r = self.remote
+        ci = ".github/workflows/ci.yml"
+        r.write({ci: WORKFLOWS[ci] + "    steps:\n      - run: python3 -I scripts/ci_scope.py x\n"
+                                     "      - run: python3 scripts/other.py\n",
+                 "scripts/ci_scope.py": "import sys\nimport helper\nDATA = {'scripts/data.json'}\n",
+                 "scripts/helper.py": "x = 1\n", "scripts/other.py": "open('scripts/read.json')\n",
+                 "scripts/data.json": "{}\n", "scripts/read.json": "{}\n"})
+        base = r.commit("Merge pull request #300 from x")
+        self.git.ensure()
+        self.git.fetch(["+refs/heads/main:refs/preflight/main"])
+        code = preflight.workflow_code(self.git, base, [ci])
+        self.assertTrue({"scripts/ci_scope.py", "scripts/helper.py", "scripts/other.py", "scripts/read.json"} <= set(code),
+                        code)  # its imports are followed, and another script's names still count
+        self.assertNotIn("scripts/data.json", code)
 
     def test_a_local_action(self):
         r = self.remote
@@ -2863,6 +2932,14 @@ class EvaluateTests(unittest.TestCase):
         result = preflight.evaluate(facts, NOW)
         self.assertTrue(result["ready"])
         self.assertIn("Blueprint Pages", result["warnings"][0])
+        facts = ready_facts()
+        facts["checks"]["required"][1].update(conclusion="skipped", scoped=True)  # see scoped_skip
+        result = preflight.evaluate(facts, NOW)
+        self.assertTrue(result["ready"])
+        passed = next(c for c in result["checks"] if c["name"] == "required checks")["detail"]
+        self.assertIn("build (skipped: the pull request does not need it)", passed)
+        facts["checks"]["required"][0].update(conclusion="skipped")  # any other skip does not pass
+        self.assertIn("repository integrity (skipped)", self.failed(facts)["required checks"]["detail"])
 
     def test_freshness(self):
         facts = ready_facts()
