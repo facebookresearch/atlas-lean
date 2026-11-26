@@ -29,3 +29,6 @@
 - [Localized Comparison](localized-comparison.md)
 - [Canonical Evaluation](canonical-evaluation.md)
 - [Value](value.md)
+- [Torsion independent](torsion-independent.md)
+- [Canonical Evaluation](canonical-evaluation-2.md)
+- [Evaluation independent](evaluation-independent.md)
