@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.NumberTheory.GaussKuzminCharacterization
+import Mathlib.Tactic.NormNum
 
 /-! # Tests for the characterization of the Gauss–Kuzmin density by reversal symmetry -/
 
@@ -58,3 +59,22 @@ example (S : Set ℕ) (hS : S.Infinite) :
   have hlog : log 2 < 2 - 1 := log_lt_sub_one_of_pos two_pos (by norm_num)
   norm_num at h
   linarith
+
+-- Lemma 3.1 at the string `[2]`: the density at `1/2` is `2/3` of its value at `0`.
+example (f : ℝ → ℝ) (hf : ContinuousOn f (Set.Icc 0 1))
+    (hf0 : ∀ x ∈ Set.Icc (0 : ℝ) 1, 0 ≤ f x) (hf1 : ∫ x in (0 : ℝ)..1, f x = 1)
+    (hsym : ∀ t : ℕ, 1 ≤ t →
+      ∫ x in cfCylinder [2, t], f x = ∫ x in cfCylinder [t, 2], f x) :
+    f (1 / 2) = (2 / 3) * f 0 := by
+  have h := density_cfValue_eq_of_append_symmetric f hf hf0 hf1 [2] (by decide) hsym
+  norm_num [convergentMatrix, div_eq_mul_inv] at h
+  simpa [div_eq_mul_inv, mul_comm, mul_assoc] using h
+
+-- Lemma 3.1: if the density vanishes at `0`, it vanishes at every convergent.
+example (f : ℝ → ℝ) (hf : ContinuousOn f (Set.Icc 0 1))
+    (hf0 : ∀ x ∈ Set.Icc (0 : ℝ) 1, 0 ≤ f x) (hf1 : ∫ x in (0 : ℝ)..1, f x = 1)
+    (a : List ℕ) (ha : ∀ x ∈ a, 0 < x) (hzero : f 0 = 0)
+    (hsym : ∀ t : ℕ, 1 ≤ t →
+      ∫ x in cfCylinder (a ++ [t]), f x = ∫ x in cfCylinder (t :: a.reverse), f x) :
+    f ((convergentMatrix a 0 1 : ℝ) / (convergentMatrix a 1 1 : ℝ)) = 0 := by
+  simpa [hzero] using density_cfValue_eq_of_append_symmetric f hf hf0 hf1 a ha hsym
