@@ -36,6 +36,8 @@ Article A86 (<https://math.colgate.edu/~integers/z86/z86.pdf>).
 * `klDeficientPerfectWith_one_prime_pow_iff`: the prime power `p ^ a` is
   `[1,ℓ]`-deficient-perfect with divisor `d` if and only if `p = 2`, `ℓ = 1`, `d = 1` and
   `a ≥ 1`. This is the `k = 1` part of Theorem 5.
+* `not_isKLNearPerfect_of_prime`: for `1 ≤ ℓ`, no prime is `[k,ℓ]`-near-perfect: its only
+  proper divisor is `1`, which leaves `ℓ * p = 0` (Proposition 2).
 * `isKLNearPerfect_one_two_mul_prime_pow`: `18` is `[1,1]`-near-perfect, and for an odd prime
   `p` and `1 ≤ ℓ`, the only `[1,ℓ]`-near-perfect number of the form `2 * p ^ a` is `18`
   (Theorem 14, part 1).
@@ -266,6 +268,21 @@ $\sigma_k(n) = \sum_{e \mid n} e^k$. The number $n$ is $[k,\ell]$-near-perfect w
 divisor $d$ of $n$ with $d < n$ such that $\sigma_k(n) = n^k + d^k + \ell n$. -/
 def IsKLNearPerfect (k l n : ℕ) : Prop :=
   ∃ d, KLNearPerfectWith k l n d
+
+/-- **Primes are not $[k,\ell]$-near-perfect.** Let $k$ and $\ell$ be natural numbers with
+$\ell \ge 1$ and let $p$ be a prime. Then $p$ is not $[k,\ell]$-near-perfect.
+
+Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
+and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
+`F_k`-Perfect Numbers", Proposition 2. -/
+theorem not_isKLNearPerfect_of_prime (k l p : ℕ)
+    (hl : 1 ≤ l) (hp : p.Prime) :
+    ¬ IsKLNearPerfect k l p := by
+  rintro ⟨d, hd, hlt, hsum⟩
+  have hd1 : d = 1 := (Nat.dvd_prime hp).mp hd |>.resolve_right (Nat.ne_of_lt hlt)
+  rw [hp.sum_divisors, hd1, one_pow] at hsum
+  have hzero : l * p = 0 := Nat.add_left_cancel (hsum.symm.trans (Nat.add_zero _).symm)
+  exact (Nat.ne_of_gt (Nat.mul_pos (Nat.succ_le_iff.mp hl) hp.pos)) hzero
 
 private theorem divisor_sum_two_mul_prime_pow (p a : ℕ) (hp : p.Prime) (hpo : Odd p) :
     (∑ e ∈ (2 * p ^ a).divisors, e ^ 1) =
