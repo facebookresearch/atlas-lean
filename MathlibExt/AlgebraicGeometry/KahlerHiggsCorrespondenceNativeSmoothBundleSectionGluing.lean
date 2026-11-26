@@ -48,7 +48,8 @@ private def smoothSectionLocalPredicate {n : ℕ} {M : Type} [TopologicalSpace M
     rw [dite_eq_left hy, dite_eq_left (a.le hy)]
     rfl
 
-/-- Native smooth bundle section kernels have their ordinary local sheaf condition. -/
+/-- Assuming `SectionCalculus B 0` and `SmoothSectionMultiplication B`, smooth sections of `B` that
+agree on pairwise overlaps glue uniquely over the union. -/
 public theorem native_smooth_bundle_section_gluing {n : ℕ} {M : Type} [TopologicalSpace M]
     [ChartedSpace (Coordinates n) M] {r : ℕ} (B : SmoothComplexBundle n M r)
     [SectionCalculus B 0] [SmoothSectionMultiplication B] : SmoothBundleSheafCondition B := by
