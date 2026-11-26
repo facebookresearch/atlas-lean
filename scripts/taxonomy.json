@@ -13762,6 +13762,7 @@
   "MathlibExt/NumberTheory/Stormer": {"to": "NumberTheory/diophantine-equations/exponential-diophantine", "title": "Størmer's theorem"},
   "MathlibExt/NumberTheory/StrongPseudoprime": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Strong pseudoprimes"},
   "MathlibExt/NumberTheory/StrongPseudoprimeBaseCount": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Strong pseudoprimes"},
+  "MathlibExt/NumberTheory/StrongPseudoprimePrimitivePart": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Strong pseudoprimes"},
   "MathlibExt/NumberTheory/StrongPseudoprimeZPowNeg": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Strong pseudoprimes"},
   "MathlibExt/NumberTheory/StrongTwoNearPerfectExponentBound": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Near-perfect and deficient-perfect numbers"},
   "MathlibExt/NumberTheory/SumProductPrimeCover": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Small solutions of diagonal congruences"},
