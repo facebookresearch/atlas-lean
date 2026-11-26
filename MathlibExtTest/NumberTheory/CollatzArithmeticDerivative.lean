@@ -32,7 +32,7 @@ example : arithmeticDerivative (collatzAccelerated (71 * 1609)) =
   exact ⟨h, odd_of_arithmeticDerivative_collatz_comm _ (by norm_num) h,
     composite_of_arithmeticDerivative_collatz_comm _ (by norm_num) h⟩
 
--- One is the only positive nonprime that is not composite.
+-- One is not a solution: the theorem rules it out.
 example : arithmeticDerivative (collatzAccelerated 1) ≠
     collatzAccelerated (arithmeticDerivative 1) := fun h =>
   (Nat.lt_irrefl 1) (composite_of_arithmeticDerivative_collatz_comm 1 (by decide) h).1
