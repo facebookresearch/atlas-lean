@@ -13,6 +13,7 @@ public import Mathlib.Data.Int.ModEq
 public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Data.Rat.Defs
+public import MathlibExt.NumberTheory.WilsonQuotientsExistsNatEqWilsonQuotientZPlusIff
 import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
 import Mathlib.Algebra.BigOperators.Intervals
@@ -33,9 +34,9 @@ import MathlibExt.NumberTheory.WilsonQuotients
 /-!
 # The sign-adjusted Wilson quotient sum at even arguments
 
-This module defines Morozov's sign-adjusted quotients `wilsonQuotientMPlus` and their sum
-`wilsonQuotientZPlus`, and proves that `Z⁺(2n)` is an integer congruent to `0` modulo `2n`
-for `n = 2` or non-prime `n ≠ 1`, and to `n + 1` modulo `2n` for odd primes `n`.
+For Morozov's sign-adjusted quotient sum `wilsonQuotientZPlus`, this module proves that `Z⁺(2n)`
+is an integer congruent to `0` modulo `2n` for `n = 2` or non-prime `n ≠ 1`, and to `n + 1`
+modulo `2n` for odd primes `n`.
 
 Statements from Ivan V. Morozov, "On Quotients of a More General
 Theorem of Wilson", *INTEGERS* 25 (2025), Article A93.
@@ -46,21 +47,6 @@ set_option autoImplicit false
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.WilsonQuotientsWanted
-
-/-- **Morozov's sign-adjusted Wilson quotients.** For natural numbers $k$ and $n$, $M_k^+(n)$ is
-the rational number
-
-$$M_k^+(n) = \frac{(-1)^k + k! \, (n - k - 1)!}{n},$$
-
-where $n - k - 1$ is truncated subtraction of natural numbers and division by $0$ gives $0$. -/
-def wilsonQuotientMPlus (k n : ℕ) : ℚ :=
-  ((-1 : ℚ) ^ k + (Nat.factorial k * Nat.factorial (n - k - 1) : ℚ)) / n
-
-/-- **Morozov's sign-adjusted Wilson quotient sum.** For a natural number $n$, $Z^+(n)$ is the
-rational number $\sum_{k=0}^{n-1} M_k^+(n)$, where $M_k^+(n) = ((-1)^k + k!\,(n-k-1)!)/n$ is
-Morozov's sign-adjusted quotient. -/
-def wilsonQuotientZPlus (n : ℕ) : ℚ :=
-  ∑ k ∈ Finset.range n, wilsonQuotientMPlus k n
 
 private theorem distinct_mul_dvd_factorial (a b m : ℕ) (ha0 : 0 < a) (hb0 : 0 < b)
     (hne : a ≠ b) (ham : a ≤ m) (hbm : b ≤ m) : a * b ∣ m.factorial := by

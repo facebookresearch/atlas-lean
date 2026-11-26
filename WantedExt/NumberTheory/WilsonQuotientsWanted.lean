@@ -31,6 +31,7 @@ public import Mathlib.NumberTheory.Harmonic.Defs
 public import MathlibExt.NumberTheory.WilsonQuotientPrimality
 public import MathlibExt.NumberTheory.WilsonQuotients
 public import MathlibExt.NumberTheory.WilsonQuotientsExistsIntEqWilsonQuotientZPlusTwoMulAndModEq
+public import MathlibExt.NumberTheory.WilsonQuotientsExistsNatEqWilsonQuotientZPlusIff
 
 set_option autoImplicit false
 
@@ -46,17 +47,6 @@ Theorem of Wilson", Theorem 1. -/
 theorem_wanted exists_int_eq_wilsonQuotientZ
     (n : ℕ) (hn : 1 ≤ n) :
     ∃ z : ℤ, (z : ℚ) = wilsonQuotientZ n
-
-/-- **When the sign-adjusted Wilson quotient sum is a natural number.** For every natural number
-$n \ge 1$, Morozov's sign-adjusted Wilson quotient sum $Z^+(n)$ is a natural number if and only
-if $n$ is even, $n = 1$, or $n$ is prime.
-
-Source: Ivan V. Morozov, "On Quotients of a More General
-Theorem of Wilson", Theorem 2. -/
-theorem_wanted exists_nat_eq_wilsonQuotientZPlus_iff
-    (n : ℕ) (hn : 1 ≤ n) :
-    (∃ m : ℕ, (m : ℚ) = wilsonQuotientZPlus n) ↔
-      n % 2 = 0 ∨ n = 1 ∨ n.Prime
 
 /-- **The Wilson quotient sum Z(n) modulo n.** Let $n \ge 1$ be a natural number. Morozov's
 Wilson quotient sum $Z(n)$ is an integer; moreover $Z(n) \equiv 1 \pmod{n}$ if $n$ is neither
