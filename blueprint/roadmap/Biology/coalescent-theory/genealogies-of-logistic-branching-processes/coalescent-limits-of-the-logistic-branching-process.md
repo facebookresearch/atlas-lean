@@ -6,9 +6,13 @@
 
 **Theorem.** In each regime, with the population started near its quasi-equilibrium as required for the corresponding forward-in-time limit:
 1. **Finite variance**, $\sum_\ell p_\ell\,\ell^{2+\delta} < \infty$ for some $\delta > 0$: $(\Pi^K(Kt))_{t\in[0,T]}$ converges in distribution to Kingman's coalescent with effective population size
+
 $$N_e = \frac{n_*}{b\,(m + m^{(2)})}.$$
+
 2. **$\alpha$-stable offspring**, $p_\ell \sim p_0\,\ell^{-1-\alpha}$ with $\alpha \in (1,2)$: $(\Pi^K(K^{\alpha-1}t))_{t\in[0,T]}$ converges to the Beta$(2-\alpha,\alpha)$-coalescent, the $\Lambda$-coalescent with
+
 $$\Lambda(du) = \frac{b\,p_0}{n_*^{\alpha-1}}(1-u)^{\alpha-1}u^{1-\alpha}\,du.$$
+
 3. **Neveu-type offspring**, $p_\ell\,\ell^2 \to p_0$: with no time rescaling, $(\Pi^K(t))_{t\in[0,T]}$ converges to the Bolthausen–Sznitman coalescent, $\Lambda(du) = b\,p_0\,du$.
 
 **Spatial version.** If $E$ is the flat torus, the rescaled motions $r_K\mathcal{Q}_K$ converge to Brownian motion and the initial type distribution is the stationary law of the limiting $(\Lambda, \Delta)$-Fleming–Viot process, then in each regime the spatial ancestral partition process (lineages with their locations) converges to the corresponding Brownian spatial $\Lambda$-coalescent.

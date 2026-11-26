@@ -5,7 +5,9 @@
 **Annealed limit (Birkner et al.).** Averaging over pedigrees, $\Pi^{N,n}_{\lfloor t/c_N\rfloor}$ converges in finite-dimensional distributions to an $n$-$\Xi$-coalescent.
 
 **Theorem (quenched limit).** Assume in addition $\int_\Delta \langle x,x\rangle^{-1}\Xi(dx) < \infty$, and let $\Psi$ be a Poisson point process on $[0,\infty) \times (\Delta \setminus \{\mathbf 0\})$ with intensity $dt \otimes \langle x,x\rangle^{-1}\Xi(dx)$; put $c_{\mathrm{pair}} = 1 - \Xi(\Delta \setminus \{\mathbf 0\})$. The *inhomogeneous $(\Psi, c_{\mathrm{pair}})$-coalescent* $\Pi^n$ on partitions of $[n]$ performs, given $\Psi$, an $x$-paintbox merger at each atom $(t, x)$ of $\Psi$, and in addition merges each pair of blocks at rate $c_{\mathrm{pair}}$ independently of $\Psi$. Then, conditionally on the pedigree $\mathcal{A}^{(N)}$, for all times $t_1, \dots, t_k > 0$ and partitions $\xi_1, \dots, \xi_k$,
+
 $$\mathbb{P}^{(N)}\big(\Pi^{N,n}_{\lfloor t_1/c_N\rfloor} = \xi_1, \dots, \Pi^{N,n}_{\lfloor t_k/c_N\rfloor} = \xi_k \,\big|\, \mathcal{A}^{(N)}\big) \to \mathbf{P}\big(\Pi^n_{t_1} = \xi_1, \dots, \Pi^n_{t_k} = \xi_k \,\big|\, \Psi\big)$$
+
 in distribution as $N \to \infty$. Averaging over $\Psi$ recovers the $\Xi$-coalescent.
 
 ## Depends on

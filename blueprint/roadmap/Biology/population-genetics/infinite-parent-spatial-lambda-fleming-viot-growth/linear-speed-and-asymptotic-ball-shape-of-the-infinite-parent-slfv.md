@@ -8,7 +8,9 @@
 - for every $y\in\mathbb R$, $\tau^{\mathcal H}((x,y))/x\to\nu$ in probability and in $L^1$.
 
 **Theorem (shape).** If $E$ is compact, then for every $\varepsilon>0$, almost surely
+
 $$\mathcal B\big(0,(\nu^{-1}-\varepsilon)t\big)\subseteq S^E_t\subseteq\mathcal B\big(0,(\nu^{-1}+\varepsilon)t\big)\quad\text{for all large }t.$$
+
 Moreover the bulk lags the tip by at most $O(\sqrt x)$: if $\sigma^E(z)$ is the first time the segment $\{uz:u\in[0,1]\}$ is entirely occupied, then for each $\varepsilon>0$ there are $\beta_\varepsilon,x_\varepsilon$ with $\mathbb P\big(\sigma^{\mathcal H}((x,0))>\tau^{\mathcal H}((x,0))+\beta\sqrt x\big)<\varepsilon$ for $\beta>\beta_\varepsilon$, $x>x_\varepsilon$.
 
 ## Depends on

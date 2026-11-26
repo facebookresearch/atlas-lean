@@ -1,12 +1,15 @@
 # Finite-type Ξ-Fleming–Viot semigroups do not identify the collision measure
 
 **Setting.** For $d \ge 2$ let $\Sigma_d = \{y \in [0,1]^d : \sum_k y_k = 1\}$ be the simplex of type frequencies. Let $\mathsf S^\Xi_t$ be the transition semigroup of the neutral $d$-type $\Xi$-Fleming–Viot process without mutation or selection. This is the forward-in-time frequency process dual to the $\Xi$-coalescent with collision measure $\Xi$ on the Kingman simplex $\mathcal K$. For $s \in (0, 1]$, consider the fixed-total-mass slice of $(d+1)$-atom mass partitions
+
 $$\mathcal F^\circ_{d+1,s} = \Big\{p \in \mathcal K : p_1 > \dots > p_{d+1} > 0,\ p_j = 0\ (j > d+1),\ \sum_{i=1}^{d+1} p_i = s\Big\}.$$
 
 **Proposition (finite-support obstruction).** Fix $d \ge 2$, $s \in (0,1]$, a nonempty relatively open $U \subset \mathcal F^\circ_{d+1,s}$ and $\delta > 0$. There are distinct laws $H_{d,s,+} \ne H_{d,s,-}$, compactly supported in $U$ with $C^\infty_c$ densities in the slice's affine coordinates and $0 < \|H_{d,s,+} - H_{d,s,-}\|_{\mathrm{TV}} < \delta$. They satisfy $\mathcal L\big(\sum_j P_jX_j\big) = \mathcal L\big(\sum_j P'_jX'_j\big)$ for $P \sim H_{d,s,+}$, $P' \sim H_{d,s,-}$ and every real i.i.d. mark distribution supported on at most $d$ points.
 
 **Theorem.** For every $d \ge 2$ and $\rho \in (0, 1]$ there are distinct probability collision measures $\Xi_{d,\rho,+} \ne \Xi_{d,\rho,-}$, supported on $\mathcal F^\circ_{d+1,\rho}$, with
+
 $$\mathsf S^{\Xi_{d,\rho,+}}_t f(y) = \mathsf S^{\Xi_{d,\rho,-}}_t f(y) \qquad \text{for all } t \ge 0,\ y \in \Sigma_d,\ f \in C(\Sigma_d).$$
+
 So even the complete mutation-free neutral dynamics of a fixed finite number of types can fail to determine the collision measure. By contrast, the law of one suitably marked sum of block frequencies at a single time does determine it.
 
 ## Depends on

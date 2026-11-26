@@ -4,9 +4,13 @@
 
 **Theorem.** Suppose the label distribution at time $0$ converges in probability to $\rho_0$.
 1. *(Finite variance.)* If $\sum_k k^{2+\delta}p_k < \infty$ for some $\delta > 0$ and $N/K \to n_*$ initially, then on time scale $Kt$ the rescaled size $N/K$ stays uniformly close to $n_*$ on $[0, T]$, and $(\rho^K_{Kt})_{t \le T}$ converges in distribution in $D([0, T])$ to a Fleming–Viot diffusion with speed $1/N_e$, where
+
 $$N_e = \frac{n_*}{b\,(m + m_{(2)})}, \qquad m_{(2)} = \sum_k k^2 p_k.$$
+
 2. *(α-stable offspring.)* If $p_k \sim p_0 k^{-1-\alpha}$ with $\alpha \in (1, 2)$ and $N/K$ is initially tight in $(0, \infty)$, then on time scale $K^{\alpha-1}t$ the size $N/K$ spends almost all time near $n_*$, and $\rho^K$ converges to the $\Lambda$-Fleming–Viot process with
+
 $$\Lambda(du) = \frac{b\,p_0\,\alpha}{n_*^{\alpha-1}}\,(1-u)^{\alpha-1}u^{1-\alpha}\,du,$$
+
 a multiple of the Beta$(2-\alpha, \alpha)$ measure.
 3. *(Neveu regime.)* If $k^2 p_k \to p_0$, then with $n_* = bp_0/c$ the size rescaled by $K\log K$ concentrates near $n_*$, and on the original time scale $\rho^K$ converges to the $\Lambda$-Fleming–Viot process with $\Lambda(du) = b\,p_0\,du$, the dual of the Bolthausen–Sznitman coalescent.
 

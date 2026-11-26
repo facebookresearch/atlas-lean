@@ -1,9 +1,13 @@
 # Jacobi flows from ratios of squared Bessel flows and the primitive Eve process
 
 **Jacobi processes and flows.** For $\delta, \delta' \in \mathbb{R}$, a $\mathrm{Jacobi}(\delta,\delta')$ process solves
+
 $$dY_t = 2\sqrt{Y_t(1-Y_t)}\,d\gamma_t + \big(\delta(1-Y_t) - \delta' Y_t\big)\,dt$$
+
 on $[0,1]$; in population genetics it is the Wright–Fisher diffusion with (possibly negative) mutation rates $(\delta, \delta')$, with $\delta = \delta' = 0$ dual to Kingman's coalescent. A $\mathrm{Jacobi}(\delta,\delta')$ *flow* is a family $(\mathcal{Y}_{s,t}(v))_{t\ge s,\,v\in[0,1]}$ of such processes, one for each initial time $s$ and initial frequency $v$, all driven by a single white noise $\mathcal{W}$ on $[0,1] \times \mathbb{R}$ through the martingale measure $\mathcal{M}(A \times [s,t]) = \mathcal{W}(A \times [s,t]) - \lambda(A \cap [0,1])\,\mathcal{W}([0,1] \times [s,t])$:
+
 $$\mathcal{Y}_{s,t}(v) = v + 2\int_s^t \mathcal{M}\big([0,\mathcal{Y}_{s,r}(v)], dr\big) + \int_s^t\big(\delta(1-\mathcal{Y}_{s,r}(v)) - \delta'\mathcal{Y}_{s,r}(v)\big)\,dr,$$
+
 with absorption at the boundary; it is the flow of bridges (in the sense of Bertoin and Le Gall) describing a Fleming–Viot population with mutation, the point $v$ tracking the mass of the descendants of the initial interval $[0,v]$.
 
 **Theorem (disintegration: Jacobi flows inside squared Bessel flows).** Let $\mathcal{S}$ be a $\mathrm{BESQ}^\delta$ flow driven by a white noise $\mathcal{W}$, and let $f$ solve $f(x) = b + 2\int_0^x \mathcal{W}([0,f(s)],ds) + (\delta+\delta')x$ (a $\mathrm{BESQ}^{\delta+\delta'}$ total mass started at $b > 0$, absorbed at $0$ at time $\mathfrak{d}_f$). The $\mathrm{BESQ}^{\delta,\delta'}_b$ flow $\Theta$ consists of the flow lines $\mathcal{S}_{r,\cdot}(a)$, $a \in [0,f(r)]$, each followed until it meets $f$ and equal to $f$ afterwards. After normalizing by $f$ and the time change $\eta_f(x) = \int_0^x dr/f(r)$, the resulting flow $\mathcal{Y}^+$ is a $\mathrm{Jacobi}(\delta,\delta')$ flow on the positive time axis, the pathwise unique strong solution of the flow SDE above, and it is independent of $f$. This is a flow version of Perkins' disintegration of a Feller continuous-state branching population into total mass and a Fleming–Viot process of type frequencies.

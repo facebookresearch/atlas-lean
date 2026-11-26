@@ -1,12 +1,17 @@
 # Poisson limit for fixation times of beneficial mutations in a Moran model with weak clonal interference
 
 **Model.** A population of fixed size $N$ evolves in continuous time. Each individual carries a number $k \ge 0$ of beneficial mutations and has fitness $(1+s_N)^k$. Each individual dies at rate $1$ and is replaced by the offspring of an individual chosen with probability proportional to fitness; each newborn independently acquires one additional beneficial mutation with probability $\mu_N$ (unlimited supply of beneficial mutations). Let $X_{k,N}(t)$ be the number of individuals with exactly $k$ mutations, $T_{0,N} = 0$ and
+
 $$T_{k,N} = \inf\Big\{t \ge 0 : X_{k,N}(t) > \frac{\log N}{s_N}\Big\},$$
+
 the time at which type $k$ becomes established. Assume
+
 $$0 < \mu_N \ll \frac{1}{N\log N}, \qquad N^{-\eta} \ll s_N \ll 1 \ \text{ for some } \eta < 1.$$
 
 **Theorem.** Let $\xi_1, \xi_2, \dots$ be i.i.d. exponential random variables with mean $1$. For each fixed $K$, as $N \to \infty$,
+
 $$\big(N\mu_N s_N\,(T_{k,N} - T_{k-1,N})\big)_{k=1}^K \Rightarrow (\xi_k)_{k=1}^K.$$
+
 Moreover there are constants $C_1, C_2$ depending on $\eta$ such that for every $k \ge 0$, with probability tending to one, $X_{k,N}(t) \ge N - C_2\log N/s_N$ for all $t$ with $T_{k,N} + C_1\log N/s_N \le t < T_{k+1,N}$: each new type sweeps to near-fixation within time $O(\log N/s_N)$.
 
 **Corollary.** With $\bar X_N(t) = N^{-1}\sum_k k X_{k,N}(t)$ the mean number of mutations, the finite-dimensional distributions of $\big(\bar X_N(t/(N\mu_N s_N))\big)_{t \ge 0}$ converge to those of a rate-one Poisson process.

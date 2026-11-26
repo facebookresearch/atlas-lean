@@ -1,15 +1,21 @@
 # Central limit theorems for pair occupation times of the voter model in dimensions three and four
 
 **Setting.** Let $(\eta_t)$ be the voter model on $\mathbb Z^d$ (each site at rate $1$ copies a uniformly chosen nearest neighbour), started from its non-trivial invariant law $\nu_p$, $p \in (0, 1)$, obtained as the limit from Bernoulli($p$) product measure. Let $\Phi(x)$ be the probability that simple random walk started at $x$ ever hits $\mathbf 0$ (so $\Phi(\mathbf 0) = 1$), $\gamma_d = \Phi(e_1)$ its return probability, and $\chi(p, d) = 2p(1 - p)(1 - \gamma_d)$. By duality with coalescing random walks,
+
 $$\alpha_{\mathbf 0, x}(p) := \mathbb E_{\nu_p}[\eta_t(\mathbf 0)\eta_t(x)] = p\,\Phi(x) + p^2\bigl(1 - \Phi(x)\bigr).$$
+
 The quadratic additive functional is $\xi^{\mathbf 0, x}_t = \int_0^t \eta_s(\mathbf 0)\eta_s(x)\,ds$, the time both sites hold opinion $1$.
 
 **Theorem.**
 1. *($d = 4$.)* For fixed $x \in \mathbb Z^4$ and $T > 0$,
+
 $$\left\{\frac{\xi^{\mathbf 0, x}_{tN} - tN\alpha_{\mathbf 0, x}(p)}{\sqrt{N\log N}}\right\}_{0 \le t \le T} \Longrightarrow \{C_4(x) B_t\}_{0 \le t \le T}, \qquad C_4(x) = \sqrt{\frac{\chi(p, 4)}{2\pi^2}}\,\bigl(\Phi(x) + 2(1 - \Phi(x))p\bigr),$$
+
 in $C[0, T]$, with $B$ a standard Brownian motion. For $x = \mathbf 0$ this is the occupation-time invariance principle.
 2. *($d = 3$.)* For $u \in \mathbb R^3 \setminus \{\mathbf 0\}$, with $u_N$ the nearest point of $\mathbb Z^3/\sqrt N$ to $u$,
+
 $$\left\{\frac{\xi^{\mathbf 0, \sqrt N u_N}_{tN} - tN\alpha_{\mathbf 0, \sqrt N u_N}(p)}{N^{3/4}}\right\}_{0 \le t \le T} \Longrightarrow \{C_3\zeta^u_t\}_{0 \le t \le T}, \qquad C_3 = \sqrt{6(1 - \gamma_3)p^3(1 - p)},$$
+
 where $\zeta^u$ is a centred continuous Gaussian process whose covariance is an explicit integral of the heat kernel $f^3_s$ of three-dimensional Brownian motion at $\mathbf 0$ and at $u$; it is not a Brownian motion.
 
 ## Depends on

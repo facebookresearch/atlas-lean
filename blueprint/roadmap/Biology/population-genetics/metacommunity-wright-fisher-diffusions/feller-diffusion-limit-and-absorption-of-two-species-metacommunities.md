@@ -5,7 +5,9 @@
 - (weak migration) $\sup_x |\Phi(x) - x| \to 0$ and $N(\Phi(x) - x) \to b(x)$ uniformly, for some $b \in C^2([0,1]^m, \mathbb{R}^m)$.
 
 Let $a(x) = \mathrm{diag}\big(x_1(1-x_1)/\kappa_1, \dots, x_m(1-x_m)/\kappa_m\big)$ and
+
 $$L = \frac12\sum_{i=1}^m a_i(x)\,\partial^2_{x_ix_i} + \sum_{i=1}^m b_i(x)\,\partial_{x_i}, \qquad \mathcal{D}(L) = C^2([0,1]^m),$$
+
 which degenerates on the whole boundary of the cube. The states $\mathbf 0 = (0, \dots, 0)$ and $\mathbf 1 = (1, \dots, 1)$ (one species extinct everywhere) are absorbing.
 
 **Theorem.**

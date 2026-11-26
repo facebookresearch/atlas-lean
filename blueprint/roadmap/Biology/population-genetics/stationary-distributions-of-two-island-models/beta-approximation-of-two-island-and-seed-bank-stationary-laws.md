@@ -6,7 +6,9 @@ Assume weak mutation ($p_i = \hat p_i/N$, $q_i = \hat q_i/N$), $M = mN$, and mig
 
 **Theorem.** Let $(X,Y)$ have the stationary law of the finite chain.
 1. *(Strong migration: beta limit.)* For $h \in C^{2,1}[0,1]$, with $Z \sim \mathrm{Beta}(a_1,a_2)$,
+
 $$\Big|\mathbb E\,h\Big(\tfrac{N}{N+M}X + \tfrac{M}{N+M}Y\Big) - \mathbb E\,h(Z)\Big| = O\big(N^{-\varepsilon/2}\big),$$
+
 where $a_1 = 2(Np_1 + Mq_1)$, $a_2 = 2(Np_2 + Mq_2)$ for the two-island model and $a_i = 2(N+M)p_i$ for the seed-bank model.
 2. *(Weak migration: two-island diffusion limit.)* For monomials $h(x,y) = x^ny^m$, $|\mathbb E\,h(X,Y) - \mathbb E\,h(Z_1,Z_2)| = O\big(N^{\max\{2\varepsilon - 1, -1/2\}}\big)$, where $(Z_1,Z_2)$ has the stationary law of the two-island (respectively seed-bank) Wright–Fisher diffusion with mutation and migration parameters matched to $(p_i, q_i, c)$.
 

@@ -5,10 +5,13 @@
 A *coalescence pattern* at time $T$ is a composition $c_1+\cdots+c_k=n$: the first $c_1$ particles have merged into survivor $1$, the next $c_2$ into survivor $2$, and so on, with survivors at ordered positions $y_1<\cdots<y_k$.
 
 **Coalescence matrix.** Index rows by $i\in\{1,\dots,n\}$ and columns by $j\in\{1,\dots,n\}$, the columns grouped into consecutive blocks of sizes $c_1,\dots,c_k$. If column $j$ lies in block $l$,
+
 $$\widetilde M_{ij}=\begin{cases}p_{x_i}(y_l)&\text{if $j$ is the first column of its block},\\ F_{x_i}(y_l)-\mathbf 1[i<j]&\text{otherwise.}\end{cases}$$
 
 **Statement.** For every measurable $A\subseteq W_k=\{(y_1,\dots,y_k)\in S^k:y_1<\cdots<y_k\}$,
+
 $$\mathbb P\bigl(\text{the pattern at time $T$ is }(c_1,\dots,c_k)\text{ and the survivors' positions lie in }A\bigr)=\int_A\det\widetilde M(y_1,\dots,y_k)\,\nu^{\otimes k}(\mathrm dy).$$
+
 So $\det\widetilde M$ is the joint density (continuous case) or mass function (discrete case) of the survivors for the given pattern. With every $c_l=1$ it is the Karlin–McGregor determinant $\det[p_{x_i}(y_j)]$ for non-colliding particles.
 
 **Example.** For two particles merging ($n=2$, $k=1$), $\det\widetilde M=p_{x_1}(y)F_{x_2}(y)+p_{x_2}(y)\bigl(1-F_{x_1}(y)\bigr)$. Integrating over $y$ gives $2\,\mathbb P(X^{(2)}_T<X^{(1)}_T)$ for two independent copies, the reflection-principle probability that the two paths have met by time $T$.

@@ -3,14 +3,21 @@
 **Model.** In the Moran process with population size $N$, types A and B have constant (frequency-independent) fitnesses $r$ and $1$, $r \ne 1$, $r > 0$. In each time step one individual is chosen to reproduce with probability proportional to fitness and its offspring replaces an individual chosen uniformly at random. Let $t_i$ be the mean number of steps to absorption (fixation of either type) from $i$ A individuals, and $t^N_i$, $t^0_i$ the mean absorption times conditioned on fixation of A, respectively of B. The mean conditional fixation time of a single mutant, $t_{\mathrm{fix}} = t^N_1$, is the same for a single A mutant and a single B mutant. Let $\gamma$ be the Euler–Mascheroni constant.
 
 **Theorem (single mutant).** As $N \to \infty$,
+
 $$t_{\mathrm{fix}} = N\,\frac{r+1}{|r-1|}\Big[\log N + \gamma + \log\big(1 - \min(r, r^{-1})\big)\Big] + \frac12\Big(\frac{r+1}{r-1}\Big)^2 + O(1/N).$$
+
 For the unconditional absorption times,
+
 $$t_1 = \frac{r+1}{r}N\log N + \Big[\frac{r+1}{r}\gamma + \log(1 - r^{-1})\Big]N + \frac{1+r^2}{2r(r-1)} + O(1/N)\quad (r>1),$$
+
 $$t_1 = -\frac{\log(1-r)}{r}\,N + \frac{r}{1-r} + O(1/N)\quad (0<r<1).$$
 
 **Theorem (fixed initial fraction).** For fixed rational $x \in (0,1)$ and $r > 1$, with $Nx$ an integer,
+
 $$t^N_{Nx} = \frac{r}{r-1}N\log N + \frac{r}{r-1}N\Big(\gamma + \log(1 - \tfrac1r) + \log(1-x) - \tfrac1r\log x\Big) + \frac{r+1}{2(r-1)^2}\Big(\frac{r}{1-x} + \frac1x - 1\Big) + O(1/N),$$
+
 $$t^0_{Nx} = \frac{1}{r-1}N\log N + \frac{1}{r-1}N\Big(\gamma + \log(1-\tfrac1r) - r\log(1-x) + \log x\Big) + \frac{r(r+1)}{2(r-1)^2}\Big(\frac{1}{1-x} + \frac{1}{rx} - 1\Big) + O(1/N),$$
+
 and $t_{Nx}$ has the same expansion as $t^N_{Nx}$ up to $O(1/N)$ (fixation of the fitter type dominates). The case $0 < r < 1$ follows by exchanging the roles of the types. By contrast, under neutrality $t^N_{Nx} = -\frac{(1-x)\log(1-x)}{x}N^2 - \frac12 N + O(1)$.
 
 ## Expansion

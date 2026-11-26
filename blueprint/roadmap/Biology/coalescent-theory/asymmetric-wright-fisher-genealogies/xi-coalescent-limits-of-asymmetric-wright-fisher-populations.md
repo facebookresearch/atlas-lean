@@ -1,12 +1,16 @@
 # Ξ-coalescent limits of asymmetric Wright–Fisher populations
 
 **Model.** In an asymmetric Wright–Fisher (AWF) population of fixed size $N$, in each generation an independent copy of a random probability vector $\boldsymbol\eta^{(N)} = (\eta^{(N)}_1,\dots,\eta^{(N)}_N)$ is drawn, and each child independently picks parent $i$ with probability $\eta^{(N)}_i$, so offspring numbers are multinomial$(N, \boldsymbol\eta^{(N)})$. The weights need not be exchangeable (reproductive success can depend on the label), but they are redrawn independently each generation (non-heritable success). Let
+
 $$c_N = \mathbb E\Big[\sum_{i=1}^N \big(\eta^{(N)}_i\big)^2\Big]$$
+
 be the probability that two sampled genes share a parent one generation back, and let $(\tilde\eta_1, \tilde\eta_2, \dots)$ be a size-biased reordering of $\boldsymbol\eta^{(N)}$.
 
 **Theorem.** Let $\Pi^{(N,n)}$ be the ancestral partition of a sample of $n$ genes.
 1. *(Criterion.)* $c_N \to 0$ and $(\Pi^{(N,n)}_{\lfloor t/c_N\rfloor})_{t\ge0}$ converges, for every $n$, in the Skorokhod space to a $\Xi$-coalescent if and only if for all $j \ge 1$ and $b_1 \ge \dots \ge b_j \ge 2$ the limits
+
 $$\phi_j(b_1,\dots,b_j) = \lim_{N\to\infty}\frac{1}{c_N}\,\mathbb E\Big[\prod_{i=1}^j \tilde\eta_i^{\,b_i - 1}\prod_{i=1}^{j-1}\Big(1 - \sum_{k=1}^i \tilde\eta_k\Big)\Big]$$
+
 exist; the $\phi_j$ are then the $\Xi$-coalescent's simultaneous-merger rates.
 2. *(Kingman case.)* If $\mathbb E\big[(\eta_2^{(N)})^3 + \dots + (\eta_N^{(N)})^3\big] = o(c_N)$, $\mathbb E\big[(\eta_1^{(N)})^\beta\big] = o(c_N)$ for some $\beta > 2$, and $c_N \to 0$, the limit is Kingman's coalescent.
 3. If instead $c_N \to c > 0$, the genealogy converges (without time rescaling) to a discrete-time Markov chain with transition matrix $\mathrm{Id} + c\,Q_\Xi$.

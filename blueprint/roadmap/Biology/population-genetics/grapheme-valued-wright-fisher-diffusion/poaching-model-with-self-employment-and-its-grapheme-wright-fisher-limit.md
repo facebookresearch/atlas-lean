@@ -5,6 +5,7 @@
 - for each vertex $v$, at rate $\mu\ge 0$, $v$ deletes all its edges (self-employment, i.e. mutation to a new type).
 
 Started from a graph whose components are complete, components stay complete and correspond exactly to the allelic classes of a Moran model with infinitely-many-alleles mutation at rate $\mu$. The chain is ergodic and its stationary law is the *multivariate Ewens distribution* (MED) $N$-graph: the partition of $[N]$ into complete components with $\nu(j)$ components of size $j$ has probability
+
 $$\pi^N_{\mathrm{MED}}(\nu)=\frac{N!}{\mu(\mu+1)\cdots(\mu+N-1)}\prod_{j=1}^N\frac{\mu^{\nu(j)}}{j^{\nu(j)}\,\nu(j)!}.$$
 
 **Limit object.** A grapheme is an equivalence class of $(\Omega,\tau,\mu,W)$ with a Polish space, a sampling probability measure and a symmetric adjacency map $W:\Omega^2\to\{0,1\}$; convergence means convergence of all sampled subgraph densities $\Phi^{k,A}(\mathfrak{g})=\int\mu^{\otimes k}(dx)\mathbf{1}_A\big((W(x_i,x_j))_{i,j\le k}\big)$. The *GEM-grapheme* is $\Omega=[0,1]$ with Lebesgue measure and a random $W$ whose components are complete and whose component masses have the law of the GEM($\mu$) (equivalently, ranked, Poisson-Dirichlet($\mu$)) frequencies.

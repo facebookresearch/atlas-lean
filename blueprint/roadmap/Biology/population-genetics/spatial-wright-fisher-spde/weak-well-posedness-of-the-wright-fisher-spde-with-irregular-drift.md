@@ -1,13 +1,19 @@
 # Weak well-posedness of the Wright–Fisher SPDE with irregular drift
 
 **Equation.** For an allele frequency field $u_t(x) \in [0, 1]$, $t \ge 0$, $x \in \mathbb{R}$, consider the one-dimensional Wright–Fisher stochastic heat equation
+
 $$\partial_t u_t = \tfrac12 \Delta u_t + b(u_t) + \sqrt{u_t(1 - u_t)}\, \dot W, \qquad u_0 = f,$$
+
 where $\dot W$ is space-time white noise and $f \in \mathcal C(\mathbb{R}, [0, 1])$. The drift is a power series with a possible jump at $1$,
+
 $$b(z) = \sum_{k=0}^\infty b_k z^k + b_\infty \mathbf 1_{\{1\}}(z), \qquad z \in [0, 1],$$
+
 with real coefficients $(b_k)_{k \in \mathbb{N} \cup \{\infty\}}$ satisfying $b(0) \ge 0 \ge b(1) > -\infty$.
 
 **Theorem.** If there is $R \ge 1$ such that
+
 $$b_1 \le -\sum_{k \in \bar{\mathbb N} \setminus \{1\}} |b_k|\, R^{k-1},$$
+
 then the equation is weakly well posed: a $[0, 1]$-valued continuous weak solution exists and its law is unique.
 
 The class contains drifts that are non-Lipschitz or discontinuous exactly where the noise coefficient degenerates, for example $b(u) = u^q(1 - u)$ for every $q \in (0, 1)$ (Hölder drift near $0$) and $b(u) = \mathbf 1_{(0,1]}(u) - u$ (discontinuous at $u = 0$), where pathwise uniqueness arguments fail.

@@ -1,11 +1,15 @@
 # Weak convergence of non-neutral genealogies to Kingman's coalescent
 
 **Setting.** $N$ particles reproduce in discrete generations, labelled backwards in time ($0$ is the present). Particle $j$ in generation $t-1$ has parent $a^{(j)}_t\in[N]$ in generation $t$, and $\nu^{(i)}_t=\#\{j:a^{(j)}_t=i\}$ are the offspring counts, which may depend on the whole history (selection, fitness inheritance, sequential Monte Carlo resampling). Let $\mathcal F_t=\sigma(\nu^{(1:N)}_s,s\le t)$. Assume the *random assignment condition* (A1): given $\nu^{(1:N)}_t$, parental indices are uniform over all assignments with these counts (weaker than exchangeability). Sample $n$ particles at time $0$ and let $G^{(n,N)}_t\in\mathcal P_n$ be the partition of $[n]$ into groups with a common ancestor $t$ generations back. Define the random pair-merger probability and time change
+
 $$c_N(t)=\frac1{(N)_2}\sum_{i=1}^N(\nu^{(i)}_t)_2,\qquad \tau_N(t)=\inf\Big\{s\in\mathbb N:\sum_{r=1}^sc_N(r)\ge t\Big\},$$
+
 where $(x)_k=x(x-1)\cdots(x-k+1)$.
 
 **Theorem.** Suppose (A1), that $\mathbb P[\tau_N(t)=\infty]=0$ for all $t$ and large $N$, and that there is a deterministic $b_N\to0$ with, almost surely and uniformly in $t\ge1$,
+
 $$\frac1{(N)_3}\sum_{i=1}^N\mathbb E\big[(\nu^{(i)}_t)_3\mid\mathcal F_{t-1}\big]\le b_N\,\frac1{(N)_2}\sum_{i=1}^N\mathbb E\big[(\nu^{(i)}_t)_2\mid\mathcal F_{t-1}\big].$$
+
 Then the rescaled genealogy $(G^{(n,N)}_{\tau_N(t)})_{t\ge0}$ converges weakly in the Skorokhod space $\mathcal D([0,\infty),\mathcal P_n)$ to Kingman's $n$-coalescent as $N\to\infty$.
 
 ## Depends on

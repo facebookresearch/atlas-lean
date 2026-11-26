@@ -3,12 +3,15 @@
 **Setting.** Start a birth–death process from one individual; each individual gives birth at rate $\lambda$ and dies at rate $\mu$, net growth rate $r=\lambda-\mu\ge0$, and $N_t$ is the population size. At time $T$, conditionally on $N_T\ge n$, sample $n$ individuals uniformly and form their genealogical tree. Let $L^k_{n,T}$ be the total length of branches supporting exactly $k$ sampled leaves. Under neutral mutations at rate $\nu$ per unit branch length (infinitely many sites), the site frequency spectrum count $M^k_{n,T}$ of mutations carried by exactly $k$ sampled individuals is, given the tree, Poisson with mean $\nu L^k_{n,T}$, so the SFS is governed by the $L^k_{n,T}$. The genealogy can be generated exactly as a *coalescent point process*: i.i.d. node depths $H_{i,n,T}$ with explicit law.
 
 **Theorem (critical case).** Let $\lambda=\mu=1$, $K\ge1$ fixed, and $T_n$ with $n/T_n\to0$. Then
+
 $$\sqrt{\frac n{\log n}}\Big(\frac{L^k_{n,T_n}}{N_{T_n}}-\frac1k\Big)_{k=1}^K\ \Rightarrow\ N(0,I_{K\times K}).$$
 
 **Theorem (supercritical case).** Allow $\lambda=\lambda_n$, $\mu=\mu_n$, $T=T_n$, $r_n=\lambda_n-\mu_n>0$, and fix $k\ge2$.
 1. If $ne^{-r_nT_n}\to0$, then $\dfrac{r_n}{n}L^k_{n,T_n}\xrightarrow{P}\dfrac1{k(k-1)}$.
 2. If $n^{3/2}(\log n)e^{-r_nT_n}\to0$, then for fixed $K\ge2$,
+
 $$\Big(\frac{r_n}{\sqrt n}\Big(L^k_{n,T_n}-\frac{n}{r_nk(k-1)}\Big)\Big)_{k=2}^K\Rightarrow N(0,V),$$
+
 with an explicit covariance matrix $V$; for instance $V_{k,k}=\frac{2}{(k-1)^2(2k-1)}-\frac{2k+1}{k^2(k-1)^2}-\frac2{k-1}+\frac{\pi^2}3-2\sum_{j=1}^{k-2}j^{-2}$.
 
 ## Expansion

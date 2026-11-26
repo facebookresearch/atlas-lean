@@ -1,13 +1,16 @@
 # Kingman rigidity of Gibbs-type allelic partitions
 
 **Setting.** An exchangeable random partition of $\{1,\dots,n\}$ is of *Gibbs type* with index $\sigma \in [0,1)$ if its EPPF factorizes as
+
 $$p^n_k(n_1,\dots,n_k) = V_{n,k}\prod_{j=1}^k (1-\sigma)_{n_j - 1}, \qquad V_{n,k} \ge 0,$$
+
 where $(a)_m = a(a+1)\cdots(a+m-1)$; the Ewens sampling formula ($\sigma = 0$) and the two-parameter Poisson–Dirichlet partitions are examples. Let $\Pi^\theta_n$ be the allelic partition of a sample of size $n$ whose genealogy is the $\Lambda$-coalescent ($\Lambda$ a finite non-zero measure on $[0,1]$), with infinitely-many-alleles mutation at rate $\theta > 0$.
 
 **Theorem.** The following are equivalent:
 1. $\Pi^\theta_n$ is of Gibbs type for some index $\sigma \in [0,1)$ (for every $n$);
 2. $\Lambda = c\,\delta_0$ for some $c > 0$, i.e. the genealogy is a time-changed Kingman coalescent;
 3. the EPPF of $\Pi^\theta_n$ is the Ewens sampling formula with parameter $\vartheta = \theta/c$:
+
 $$p^n_k(n_1,\dots,n_k) = \frac{\vartheta^k}{(\vartheta)_n}\prod_{j=1}^k (n_j - 1)!.$$
 
 In every case the index is $\sigma = 0$. The obstruction is already finite: if $\Lambda$ is not concentrated at $0$, the allelic law on a sample of six genes admits no Gibbs factorization with a common index $\sigma < 1$ (nor with $\sigma = -\infty$). Gibbs indices $\sigma < 0$ are excluded for every $\Lambda$.

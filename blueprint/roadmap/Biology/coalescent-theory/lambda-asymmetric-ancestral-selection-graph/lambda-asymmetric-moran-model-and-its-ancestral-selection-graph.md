@@ -4,10 +4,14 @@
 
 **Theorem.**
 1. *(Ancestral selection graph and duality.)* Tracing potential ancestors backwards, neutral arrows are followed by every type and selective arrows only by $\oplus$. The number of potential ancestors $A^N$ is a Markov chain with jumps $n \mapsto n - k$ ($k = 1,\dots,n-1$) at rate
+
 $$\frac nN\int_\Delta\binom{n-1}{k}y^k(1-y)^{n-1-k}\Lambda(dy,dz) + \Big(1 - \frac nN\Big)\int_\Delta\binom{n}{k+1}y^{k+1}(1-y)^{n-k-1}\Lambda(dy,dz)$$
+
 and $n \mapsto n+1$ at rate $\big(1 - \frac nN\big)\int_\Delta\big[(1-y)^n - (1-y-z)^n\big]\Lambda(dy,dz)$, and $\mathbb E_x\big[S_0(X^N_t, n)\big] = \mathbb E_n\big[S_0(x, A^N_t)\big]$ with $S_0(x,n) = \binom{Nx}{n}/\binom{N}{n}$.
 2. *(Scaling limits.)* If $\int_\Delta(y^2 + z)\,\Lambda(dy,dz) < \infty$, then under the appropriate time rescaling $X^N$ converges in the Skorokhod space to the unique strong solution of the jump SDE
+
 $$Y_t = x + \int_0^t\!\int_0^1\!\int_\Delta\Big(y(1-Y_{s-})\mathbf 1_{\{u \le Y_{s-}\}} - (y+z)Y_{s-}\mathbf 1_{\{u > Y_{s-}\}}\Big)\tilde N(ds,du,dy,dz) - \int_\Delta z\,\Lambda(dy,dz)\int_0^tY_s(1-Y_s)\,ds,$$
+
 with $\tilde N$ the compensated Poisson random measure of intensity $dt\,du\,\Lambda(dy,dz)$, and $A^N$ converges to the branching–coalescing chain with $m \mapsto m - k + 1$ at rate $\int_\Delta\binom mk y^k(1-y)^{m-k}\Lambda(dy,dz)$ ($k \ge 2$) and $m \mapsto m + 1$ at rate $\int_\Delta\big[(1-y)^m - (1-y-z)^m\big]\Lambda(dy,dz)$; the two limits are moment dual, $\mathbb E_x[Y_t^n] = \mathbb E_n[x^{A_t}]$.
 
 ## Expansion

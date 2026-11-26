@@ -1,16 +1,24 @@
 # Geometric ergodicity of Wright–Fisher kernels
 
 **Setting.** For $\delta, p \in [0,1]$ the *Wright–Fisher kernel* $P_{\delta,p}$ on $[0,1]$ acts on bounded measurable $h$ by
+
 $$P_{\delta,p}h(x) = p\,\mathbb E\big[h\big(x + (1-x)\delta U\big)\big] + (1-p)\,\mathbb E\big[h\big(x(1-\delta U)\big)\big], \qquad U \sim \mathrm{Unif}(0,1).$$
+
 It models the type-$0$ fraction $x$ in a population (e.g. pathogens within a host): each step a random fraction $\delta U$ of the population is replaced by clonal offspring of a type-$0$ parent with probability $p$, and of a type-$1$ parent otherwise. In the *non-linear* version the reproduction probability depends on the current state and on its own law: if $Z_n \sim \nu_n$, then $Z_{n+1} \sim P_{\delta, s(Z_n, \nu_n)}(Z_n, \cdot)$ for a map $s : [0,1]\times\mathcal P([0,1]) \to [0,1]$ that is $(L_1,L_2)$-Lipschitz:
+
 $$|s(x,\mu) - s(y,\nu)| \le L_1|x-y| + L_2\,W_1(\mu,\nu),$$
+
 where $W_1$ is the Wasserstein-1 distance.
 
 **Theorem.**
 1. For every $\delta \in (0,1]$ and $p \in [0,1]$, $P_{\delta,p}$ has a unique invariant law $\beta_{\delta,p}$, and for every initial law $\mu$,
+
 $$W_1\big(\mu P_{\delta,p}^n, \beta_{\delta,p}\big) \le \left(1 - \tfrac{\delta}{2}\right)^n W_1(\mu, \beta_{\delta,p}).$$
+
 2. If $s$ is $(L_1,L_2)$-Lipschitz with $L_1 + L_2 < 1$, the non-linear chain has a unique invariant law $\eta$ and
+
 $$W_1\big(\mathrm{Law}(Z_n), \eta\big) \le \left(1 - \tfrac{\delta(1 - L_1 - L_2)}{2}\right)^n W_1\big(\mathrm{Law}(Z_0), \eta\big).$$
+
 If $s(x,\mu)$ does not depend on $x$, then $\eta = \beta_{\delta,\bar s}$ where $\bar s$ is the unique solution of $s(0, \beta_{\delta,\bar s}) = \bar s$.
 
 ## Expansion

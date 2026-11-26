@@ -9,10 +9,13 @@
 **Lower bounds.**
 - For every $k > 1$ there are pairs of $k$-component mixtures with rates in $[0,1]$ separated by at least $\frac{1}{2k}$ such that any test distinguishing them from $N$ samples has Bayes error at least $\frac{1-\delta}{2}$ with $\delta = \frac{(2k-1)\sqrt{2N}}{2^{2k-3}}$: distinguishing requires $N = 2^{\Omega(k)}$ samples.
 - With rates in $(0,1]$ separated by $\Delta = 1/(m + 2k)$ and sharing one rate, there are pairs requiring $N \gtrsim \Delta^{-\Omega(k)}$ samples; and for fixed $\Delta$-separated rates, the minimax $\ell_1$ error for the weights satisfies
+
 $$\inf_{\hat p}\max_p \mathbb{E}\|p - \hat p\|_1 \ge \frac14\min\Big(1, \frac{k-3}{\sqrt{2N}}\Big(\frac{1}{\Delta(k-3)}\Big)^{k-4}\Big).$$
 
 **Matching upper bound.** The matrix pencil method applied to empirical moments $\tilde v_0, \dots, \tilde v_{2k-1}$ recovers all $(\lambda_j, p_j)$ to accuracy $\epsilon$ with probability $1 - \delta$ once
+
 $$N \ge N_0 = O\Big(\frac{k^{10}}{p_{\min}^4}\Big(\frac{2e}{\Delta}\Big)^{6k}\log\frac1\delta\Big),$$
+
 with errors $O\big(k^{3.5}p_{\min}^{-2}(2e/\Delta)^{2k}\sqrt{\log(1/\delta)/N}\big)$ for the rates; a Nazarov–Turán-based test distinguishes $k_0$ from $k_1$ components with sample size $(c_\Delta/\Delta)^{O(k)}$.
 
 So the data needed to reconstruct a population history grows exponentially in the number of subpopulations: a handful of hidden demes already makes inference from coalescence times infeasible.

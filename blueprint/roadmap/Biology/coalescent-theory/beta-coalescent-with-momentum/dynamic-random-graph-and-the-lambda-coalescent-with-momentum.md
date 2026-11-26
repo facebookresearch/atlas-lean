@@ -3,6 +3,7 @@
 **Θ-dynamic random graph.** Let $\Theta$ be a finite nonnegative measure on $[0,1]\times(0,1]$, $\theta = \int_{\{0\}\times[0,1]}q\,\Theta(du,dq)$, and $N$ a Poisson point process on $[0,\infty)\times(0,1]^2$ with intensity $dt\,\Theta(du,dq)\,u^{-2}\mathbf{1}_{u>0}$. The Θ-dynamic random graph $G^n = (G^n_t)_{t\ge0}$ on vertices $[n] = \{1,\dots,n\}$ starts with no edges and, at each atom $(t,u,q)$ of $N$, performs a $(u,q)$-merger: each vertex is colored independently with probability $u$, and each pair of colored vertices not already adjacent is joined independently with probability $q$. In addition, each non-adjacent pair is joined at rate $\theta$.
 
 **Coalescent with momentum.** The Θ-coalescent with momentum $\Pi^n = (\Pi^n_t)_{t\ge0}$ is the partition of $[n]$ into the vertex sets of the connected components of $G^n_t$. Its block size spectrum up to order $d$ is
+
 $$\mathtt{C}^n_t = (\mathtt{C}^n_{t,1},\dots,\mathtt{C}^n_{t,d}),\qquad \mathtt{C}^n_{t,i} = \big|\{A \in \Pi^n_t : |A| = i\}\big|.$$
 
 **Properties.**

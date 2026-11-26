@@ -5,9 +5,12 @@ Let $F(G_{n,p})$ be the Kingman forest of the Erdős–Rényi graph $G_{n,p}$ (K
 **Theorem 1.3.** Fix $p \in (0,1)$.
 
 1. Let $X_n = (|T_1|, \dots, |T_{C_{n,p}}|)$ be the tree sizes of $F(G_{n,p})$ in uniformly random order. Then
+
 $$\Big(\tfrac{1}{n} X_n,\ C_{n,p}\Big) \xrightarrow{d} (X, C_p),$$
+
 where, conditionally on $C_p$, $X$ is uniform on the unit simplex of dimension $C_p - 1$, i.e. $X \sim \mathrm{Dirichlet}(1, \dots, 1)$ with $C_p$ parameters.
 2. There is $K > 0$ such that for all $n$,
+
 $$\Big|\, \mathbb{E}[\mathrm{ht}(F(G_{n,p}))] - e \log n + \tfrac{3}{2} \log\log n \,\Big| \le K, \qquad \frac{\mathrm{ht}(F(G_{n,p}))}{e \log n} \xrightarrow{\ \mathbb{P}\ } 1 .$$
 
 In genealogical terms: the surviving lineages split the sample into families whose proportions are as in Kingman's coalescent stopped with $C_p$ blocks (uniform on the simplex), and the forest has the logarithmic height of a random recursive tree.

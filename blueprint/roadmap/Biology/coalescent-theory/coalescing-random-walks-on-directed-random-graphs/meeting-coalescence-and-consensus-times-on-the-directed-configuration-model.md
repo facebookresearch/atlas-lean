@@ -1,15 +1,21 @@
 # Meeting, coalescence and voter-model consensus times on the directed configuration model
 
 **Setting.** The directed configuration model $\mathrm{DCM}(\mathbf{d}^+,\mathbf{d}^-)$ on $[n]$ matches out-half-edges to in-half-edges uniformly at random for prescribed out- and in-degrees with $m = \sum_x d^+_x = \sum_x d^-_x$ edges. Assume $2 \le d^+_{\min}$ and $d^+_{\max}, d^-_{\max} \le C$. A random walk moves along a uniformly chosen out-edge; $\pi$ is its stationary law. Coalescing random walks start one walker per vertex and merge on meeting; the voter model is their dual, with $\tau_{\mathrm{coal}}$ the time to a single walker and $\tau_{\mathrm{cons}}$ the time to consensus. Define
+
 $$\delta = \frac mn,\quad \beta = \frac1m\sum_x (d^-_x)^2,\quad \rho = \sum_x \frac{d^-_x}{m}\frac{1}{d^+_x},\quad \gamma = \sum_x \frac{d^-_x}{m}\frac{d^-_x}{d^+_x},$$
+
 $$\mathfrak{p} = \frac1\delta\Big(\frac{\gamma-\rho}{1-\rho} + \beta - 1\Big),\quad \mathfrak{q} = \Big(1 + (\beta-1)\frac{1-\rho}{\gamma-\rho}\Big)^{-1},\quad \mathfrak{r} = \frac{\rho}{\rho - \mathfrak{q}(1 - \sqrt{1-\rho})},\quad \vartheta = \frac{\mathfrak{r}}{\mathfrak{p}}.$$
 
 **Theorem (meeting time).** For $G$ sampled from the DCM, the meeting time of two independent stationary walks satisfies
+
 $$d_W\Big(\frac{\tau^{\pi\otimes\pi}_{\mathrm{meet}}}{\tfrac12\vartheta n},\ \mathrm{Exp}(1)\Big) \xrightarrow{\ \mathbb{P}\ } 0,$$
+
 where $d_W$ is the $L^1$-Wasserstein distance; in particular the expected meeting time is $\sim \tfrac12\vartheta n$, linear in $n$.
 
 **Corollary (coalescence and consensus).** With independent $Z_k \sim \mathrm{Exp}\binom k2$,
+
 $$d_W\Big(\frac{\tau_{\mathrm{coal}}}{\tfrac12\vartheta n},\ \sum_{k\ge2}Z_k\Big) \xrightarrow{\mathbb{P}} 0,\qquad d_W\Big(\frac{\tau_{\mathrm{cons}}}{\tfrac12\vartheta n},\ \sum_{k\ge K}Z_k\Big) \xrightarrow{\mathbb{P}} 0$$
+
 for the voter model started from i.i.d. $\mathrm{Bernoulli}(u)$ opinions, where $K \sim U A + (1-U)B$ with $U \sim \mathrm{Bern}(u)$, $A \sim \mathrm{Geom}(1-u)$, $B \sim \mathrm{Geom}(u)$ independent of the $Z_k$. Thus coalescing walks on the DCM behave like a time-changed Kingman coalescent.
 
 **Examples.** For $d$-regular in- and out-degrees, $\vartheta = \sqrt{d/(d-1)} \in (1,\sqrt2]$. If all out-degrees equal $d$, $\vartheta = \sqrt{d(d-1)}/(\beta - 1) \le \sqrt{d/(d-1)}$; for Eulerian degree sequences ($d^+_x = d^-_x$), $\vartheta = \big(\beta/\delta - 1 + \sqrt{1 - 1/\delta}\big)^{-1}$.

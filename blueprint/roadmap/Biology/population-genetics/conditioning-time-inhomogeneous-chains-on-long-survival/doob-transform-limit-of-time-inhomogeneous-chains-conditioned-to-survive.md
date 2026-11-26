@@ -1,19 +1,27 @@
 # Doob transform limit of time-inhomogeneous finite Markov chains conditioned to survive
 
 **Setting.** Let $E$ be a finite set and $K$ a nonzero irreducible substochastic kernel on $E$ with killing ($\sum_y K(x,y) < 1$ for some $x$). By Perron–Frobenius, $K$ has an eigenvalue $\lambda \in (0,1)$ with positive left and right eigenvectors $L$, $R$, normalized by $LR = 1$. Its $h$-transform
+
 $$Q(x,y) = \frac{R(y)K(x,y)}{\lambda R(x)}$$
+
 is stochastic, with invariant law $\pi(x) = L(x)R(x)$, period $d$, cyclic classes $E_0,\dots,E_{d-1}$, and $\pi_r$ the restriction of $\pi$ to $E_r$, normalized.
 
 Let $(K_n)_{n\ge0}$ be irreducible substochastic kernels with the same support as $K$ and, for some $N$,
+
 $$\frac{K_n(x,y)}{K(x,y)} = 1 + \frac{a(x,y)}{n} + \frac{b(x,y)}{n^2} + O(n^{-3})\qquad (n \ge N),$$
+
 uniformly in $x, y$. Let $\mathbb{P}_{(m,x)}$ be the law of the time-inhomogeneous chain with kernels $(K_n)$ started at $x$ at time $m$, with lifetime $\zeta$. Put $g(x) = \sum_y Q(x,y)a(x,y)$, $\kappa = \pi[g]$, and let $u$ solve the Poisson equation $(I - Q)u = g - \kappa$, $\pi[u] = 0$.
 
 **Survival asymptotics.** There is $h : \mathbb{Z}_{\ge0}\times E \to (0,\infty)$ such that for $x \in E_r$,
+
 $$\mathbb{P}_{(m,x)}(n < \zeta) = \pi_{r+n-m}\big[1/R\big]\,\lambda^{n-m}\,n^{\kappa}\,h(m,x)\,\big(1 + O(n^{-1})\big)\qquad (n \to \infty),$$
+
 and $(m,x) \mapsto \lambda^{-m}h(m,x)$ is positive and space-time harmonic: $\sum_y K_m(x,y)h(m+1,y) = \lambda h(m,x)$.
 
 **Conditioning limit.** For $k \ge m$ and any event $\Lambda_{m,k} \in \sigma(X_m,\dots,X_k)$,
+
 $$\lim_{n\to\infty}\mathbb{P}_{(m,x)}(\Lambda_{m,k} \mid n < \zeta) = \mathbb{P}_{(m,x)}\Big[\mathbf{1}_{\Lambda_{m,k}}\,\lambda^{m-k}\,\frac{h(k,X_k)}{h(m,x)}\,\mathbf{1}_{\{k<\zeta\}}\Big],$$
+
 so the chain conditioned on long survival is the Doob transform by $\lambda^{-m}h$, a time-inhomogeneous Markov chain with kernels $Q_n(x,y) = K_n(x,y)h(n+1,y)/(\lambda h(n,x))$.
 
 **Behavior of the conditioned chain.**

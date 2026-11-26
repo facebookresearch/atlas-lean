@@ -1,8 +1,11 @@
 # Wright–Fisher and Moran models with time-varying selection conditioned never to be absorbed
 
 **Wright–Fisher model.** A population of fixed size $n_0 \ge 3$ has two types $\mathsf{a}$ and $\mathsf{A}$; $X_n$ is the number of $\mathsf{a}$ individuals in generation $n$, with $X_0 \in \{1,\dots,n_0-1\}$. The selective advantage of $\mathsf{a}$ in generation $n$ is
+
 $$\sigma_n = s_1 + \frac{s_2}{n} + \frac{s_3}{n^2} + O(n^{-3}),\qquad \sigma_n > -1,\ s_1 > -1,$$
+
 and given $X_n = i$, $X_{n+1} \sim \mathrm{Bin}(n_0, p_n(i))$ with $p_n(i) = (1+\sigma_n)i/(n_0 + \sigma_n i)$. Killing the chain at the absorbing states $0$ and $n_0$ gives kernels $K_n$ on $\{1,\dots,n_0-1\}$ converging to the killed kernel $K$ with constant selection $s_1$, with
+
 $$\frac{K_n(i,j)}{K(i,j)} = 1 + \frac{a(i,j)}{n} + O(n^{-2}),\qquad a(i,j) = s_2\Big(\frac{j}{1+s_1} - \frac{n_0 i}{n_0 + s_1 i}\Big).$$
 
 **Moran model.** With the same $\sigma_n$, one individual is replaced per step: $i \to i+1$ with probability $\frac{n_0 - i}{n_0}\cdot\frac{(1+\sigma_n)i}{n_0 + \sigma_n i}$, $i \to i-1$ with probability $\frac{i}{n_0}\cdot\frac{n_0 - i}{n_0 + \sigma_n i}$, and otherwise $i$ is unchanged.

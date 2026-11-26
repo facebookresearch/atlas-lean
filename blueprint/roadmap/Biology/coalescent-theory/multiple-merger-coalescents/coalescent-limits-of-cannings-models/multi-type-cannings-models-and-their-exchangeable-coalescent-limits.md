@@ -1,7 +1,9 @@
 # Multi-type Cannings models and their exchangeable coalescent limits
 
 **Model.** Individuals carry a type in a countable set $E$; subpopulation $k$ has constant size $N_k$. In each generation, the $i$-th individual of type $k$ has $\nu_{k,\ell,i}$ offspring of type $\ell$, with $\sum_k\sum_{i\le N_k}\nu_{k,\ell,i}=N_\ell$ for every $\ell$, i.i.d. across generations. The offspring numbers are assumed *jointly exchangeable* (A): for all permutations $\pi_{k,\ell}$ of $[N_k]$, $(\nu_{k,\ell,\pi_{k,\ell}(i)})$ has the same law as $(\nu_{k,\ell,i})$. This allows the between-type offspring totals $N_{k,\ell}$ (migration, mutation or type switching at reproduction) to be random. For a sample of $n$ individuals, the multi-type ancestral process $\mathcal A^{(n,N)}_r$ takes values in partitions of $[n]$ whose blocks are labelled by the type of the common ancestor $r$ generations back. Its transition probabilities from $\pi$ to a coarser $\pi'$ are
+
 $$p_{\pi,\pi'}=\frac{\prod_k(N_k)_{j_k}}{\prod_\ell(N_\ell)_{i_\ell}}\,\mathbb E\Big[\prod_{k,\ell}\prod_{s=1}^{j_k}(\nu_{k,\ell,s})_{i_{k,\ell,s}}\Big]=:\Phi_j(T),$$
+
 where $i_\ell$ is the number of $\ell$-blocks of $\pi$, $j_k$ the number of $k$-blocks of $\pi'$, and the tensor $T=(i_{k,\ell,s})$ records how many $\ell$-blocks merge into the $s$-th $k$-block.
 
 **Theorem (consistency and limits).** Under (A):
@@ -10,7 +12,9 @@ where $i_\ell$ is the number of $\ell$-blocks of $\pi$, $j_k$ the number of $k$-
 3. If there are $c_N\to0$ with $\Phi^{(N)}_j(T)/c_N\to\phi_j(T)$, then $(\mathcal A^{(n,N)}_{\lfloor t/c_N\rfloor})_{t\ge0}$ converges in $D([0,\infty))$ to a continuous-time Markov chain with off-diagonal rates $q_{\pi,\pi'}=\phi_j(T)$; by consistency these chains extend, via Kolmogorov's theorem, to a *multi-type exchangeable coalescent* on labelled partitions of $\mathbb N$.
 
 **Theorem (integral representation).** If the rates are concentrated on diagonal tensors (mergers produce a block of the same type as the merging blocks), there are $a_k\ge0$ and a finite measure $\Xi$ on $(\Delta\setminus\{0\})\times E^{\mathbb N}$, $\Delta$ the infinite simplex, such that
+
 $$\phi_j(T)=\sum_ka_k\mathbf 1_{\{j=e_k,\,i_{k,1}=2\}}+\int\sum_{(m_{k,s})\ \text{distinct}}\ \prod_k\prod_{s=1}^{j_k}x_{m_{k,s}}^{i_{k,s}}\mathbf 1_{\{k\}}(y_{m_{k,s}})\ \frac{\Xi(d(x,y))}{(x,x)},$$
+
 a typed analogue of the Schweinsberg $\Xi$-coalescent: Kingman-type pair mergers within each type at rate $a_k$, plus simultaneous multiple mergers driven by paintbox frequencies $x$ with type labels $y$.
 
 ## Depends on

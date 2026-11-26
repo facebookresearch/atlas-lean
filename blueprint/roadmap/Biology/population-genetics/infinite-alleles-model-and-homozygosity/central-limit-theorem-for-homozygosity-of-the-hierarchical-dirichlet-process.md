@@ -3,9 +3,13 @@
 **Setting.** For a type-frequency vector $\mathbf x = (x_1, x_2, \dots)$ in the infinite simplex, the $m$th order homozygosity $\varphi_m(\mathbf x) = \sum_i x_i^m$ ($m \ge 2$) is the probability that $m$ individuals sampled from the population all carry the same allele. Let $\mathbf V = (V_1, V_2, \dots)$ be GEM($\alpha$) stick-breaking weights (i.i.d. $U_k \sim \mathrm{Beta}(1, \alpha)$, $V_n = U_n\prod_{k<n}(1 - U_k)$), so their ranked version is Poisson–Dirichlet($\alpha$). Given $\mathbf V$, let $W_n \sim \mathrm{Beta}\bigl(\beta V_n, \beta(1 - \sum_{k \le n} V_k)\bigr)$ independently and $Z_n = W_n\prod_{k<n}(1 - W_k)$. Then $\sum_n Z_n\delta_{\xi_n}$ is the hierarchical Dirichlet process (HDP): a Dirichlet process with concentration $\beta$ whose base measure is itself a Dirichlet process with concentration $\alpha$. Write $H_m(\alpha, \beta) = \varphi_m(\mathbf Z)$ and let ${m \brack j}$ be unsigned Stirling numbers of the first kind.
 
 **Theorem.** As $\alpha, \beta \to \infty$ with $\alpha/\beta \to c \in (0, \infty)$,
+
 $$\sqrt\beta\;\frac{H_m(\alpha, \beta) - \beta^{1-m}\sum_{j=1}^m {m \brack j}\,\Gamma(j)\,(\alpha/\beta)^{1-j}}{\beta^{1-m}\sum_{j=1}^m {m \brack j}\,\Gamma(j)\, c^{1-j}} \xrightarrow{D} N(0, \sigma_c^2),$$
+
 with
+
 $$\sigma_c^2 = \frac{\sum_{j=1}^{2m} {2m \brack j}\Gamma(j)c^{1-j} - \sum_{1 \le i, j \le m} {m \brack i}{m \brack j}\Gamma(i+1)\Gamma(j+1)c^{1-i-j}}{\left(\sum_{j=1}^m {m \brack j}\Gamma(j)c^{1-j}\right)^2} - m^2.$$
+
 In the same regime $H_m(\alpha,\beta)$ divided by its centering tends to $1$ in probability, and $\{H_m(\alpha, \beta)\}$ satisfies a large deviation principle on $[0, 1]$ with speed $\max\{\alpha, \beta\}$. Analogous CLTs hold for the finite-dimensional HDP and for the HDP with $L$ groups sharing the base measure.
 
 ## Depends on

@@ -5,6 +5,7 @@
 **Compact support.** Under the integrability condition $\int_{0+} v(t)^{1+\varepsilon_o}e^{-t^{-\delta_o}}\,dt < \infty$ for some $\delta_o \in (0,1)$, $\varepsilon_o > 0$, almost surely the support of $X(t)$ is compact for every $t > 0$, even though $X(0)$ has unbounded support; and $\hat M(t)$ differs from the maximal initial location $M(t)$ of the ancestors of the time-$t$ population by at most $C(\delta)t^\delta$ for small $t$.
 
 **Theorem (general tail).** If $\lim_{t\to0+} v(t)\,\big|\bar F\big(\bar F^{(-1)}(x/v(t)) \pm C(\delta)t^\delta\big) - x/v(t)\big| = 0$ for $x > 0$, then
+
 $$\lim_{t\to0+}\mathbb{P}\Big(\hat M(t) \le \bar F^{(-1)}\big(x/v(t)\big)\Big) = e^{-x}.$$
 
 **Corollaries (explicit regimes).** As $t \to 0+$:

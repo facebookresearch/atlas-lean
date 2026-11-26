@@ -5,10 +5,13 @@
 Write $p'_\pi=N'_\pi/N'$, $W_\pi(i)=w_{\pi,i}(I')$, $\bar W_\pi=N'_\pi/N$, relative fitness $U=W_\pi/\bar W_\pi$, local average $\langle Y\rangle(i)=W_\pi(i)^{-1}\int Y\,\mathrm dw_{\pi,i}$, and let $\pi=\mathrm d\mu'_\pi/\mathrm d\mu'$ and $\nu=\mathrm d\mu'_\nu/\mathrm d\mu'=1-\pi$ be the deme densities. Let $\mathbb E,\operatorname{Cov}$ be averages under $\mu/N$ and $\mathbb E',\operatorname{Cov}'$ averages under $\mu'/N'$.
 
 **Open tower property.** For every integrable observable $Y$ on $I'$,
+
 $$\mathbb E'[Y]=\mathbb E\bigl[\langle Y\rangle\,U\bigr]+\frac1{p'_\pi}\operatorname{Cov}'(Y,\nu)=\mathbb E\bigl[\langle Y\rangle\,U\bigr]-\frac1{p'_\pi}\operatorname{Cov}'(Y,\pi).$$
 
 **Statement.** If $U$ has finite variance, then for all observables $X$ on $I$ and $Y$ on $I'$,
+
 $$\mathbb E'[Y]-\mathbb E[X]=\operatorname{Cov}(X,U)+\mathbb E\bigl[(\langle Y\rangle-X)\,U\bigr]+\frac1{p'_\pi}\operatorname{Cov}'(Y,\nu).$$
+
 The first two terms are the selection and transmission terms of the Price equation for the parented children; the third is the shift caused by orphans, positive when orphans carry above-average $Y$. When $\mu'_\nu=0$ it vanishes and the Price equation is recovered.
 
 ## Depends on

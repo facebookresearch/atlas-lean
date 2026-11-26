@@ -1,14 +1,19 @@
 # Survival of the flattest: plateau versus sharp peak in the long-chain quasispecies limit
 
 **Model.** Genotypes are binary sequences $u \in E = \{0,1\}^\ell$ ($\ell$ even). Each site mutates independently with probability $q$ per replication, giving the mutation kernel $M(u,v) = q^{d(u,v)}(1-q)^{\ell-d(u,v)}$ with $d$ the Hamming distance. For a fitness function $f \ge 1$, the quasispecies distribution $x$ (Moran–Kingman model) solves
+
 $$\lambda\, x(v) = \sum_{u\in E} x(u) f(u) M(u,v), \qquad \sum_v x(v) = 1,$$
+
 where the mean fitness $\lambda = \sum_u f(u)x(u)$ is the Perron–Frobenius eigenvalue of $(f(u)M(u,v))$. The *long-chain regime* is $\ell \to \infty$, $q \to 0$, $\ell q \to a \in (0,\infty)$.
 
 **Landscape.** For $\delta, \sigma \ge 1$ let
+
 $$f_{\mathrm{SP/PL}}(u) = \begin{cases}\delta & u = 0\cdots0 \ \ (\text{sharp peak}),\\ \sigma & u \text{ has } \ell/2 \text{ zeros and } \ell/2 \text{ ones} \ \ (\text{plateau}),\\ 1 & \text{otherwise.}\end{cases}$$
 
 **Theorem.** Let $\lambda(a,\sigma)$ be the unique $\lambda > 1$ with
+
 $$\frac{1}{\sigma-1} = \sum_{n\ge1}\frac{e^{-an}}{\lambda^n}\sum_{k\ge0}\frac{(an)^{2k}}{2^{2k}(k!)^2}.$$
+
 In the long-chain regime, $\lambda_{\mathrm{SP/PL}} \to \max\big(\delta e^{-a}, \lambda(a,\sigma)\big)$. Writing $y(0)$ for the equilibrium frequency of $0\cdots0$ and $y(\ell/2)$ for the total equilibrium frequency of the plateau class:
 - if $\lambda(a,\sigma) > \delta e^{-a}$, then $y(0) \to 0$ and $y(\ell/2) \to \dfrac{\lambda(a,\sigma)-1}{\sigma-1}$;
 - if $\delta e^{-a} > \lambda(a,\sigma)$, then $y(\ell/2) \to 0$ and $y(0) \to \dfrac{\delta e^{-a}-1}{\delta-1}$.

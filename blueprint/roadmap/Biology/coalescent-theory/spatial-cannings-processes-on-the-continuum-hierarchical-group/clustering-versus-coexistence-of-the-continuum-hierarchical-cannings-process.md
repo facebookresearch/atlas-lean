@@ -4,7 +4,9 @@ Let $\widehat X^\infty$ be the continuum hierarchical Cannings process on $\Omeg
 
 1. **Convergence to equilibrium.** The limit $\nu_\theta = \lim_{t\to\infty} \mathcal{L}[\widehat X^\infty_t]$ exists in $\mathcal{P}\bigl(\widetilde{\mathcal{M}}(\Omega_N^\infty \times \mathbb{K})\bigr)$. Under $\nu_\theta$ the spatial projection is $\mathfrak{h}$ almost surely and the mean type projection is $\theta$.
 2. **Dichotomy of equilibria.** Call $\nu_\theta$ **globally mono-type** (clustering) if
+
 $$\nu_\theta = \int_{\mathbb{K}} \theta(da)\, \delta_{\mathfrak{h} \otimes \delta_a},$$
+
 and **globally multi-type** (coexistence) otherwise; in the latter case $\nu_\theta = \delta_{\mathfrak{h} \otimes \theta}$.
 3. **Coincidence of all dichotomies.** $\nu_\theta$ is globally multi-type if and only if $\widehat X^\infty$ is locally multi-type, if and only if $\widehat X^\infty$ is deterministic. Hence clustering occurs exactly in the stochastic, locally mono-type regime.
 

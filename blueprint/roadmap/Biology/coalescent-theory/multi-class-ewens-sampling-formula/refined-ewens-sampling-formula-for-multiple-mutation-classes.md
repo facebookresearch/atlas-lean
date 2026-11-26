@@ -3,7 +3,9 @@
 **Model.** A Wright–Fisher population of $2N$ genes evolves under the infinitely-many-alleles model, with mutations of $k$ distinguishable classes: each gene independently mutates to a brand-new allele of class $l$ with probability $\mu_l$ per generation, $l = 1,\dots,k$. Each allele thus carries the class of the mutation that created it. For a sample of $n$ genes from the stationary population, let $A^{(l)}_{N,j}(n)$ be the number of alleles of class $l$ represented exactly $j$ times, so $\sum_{l=1}^k\sum_{j=1}^n j\,A^{(l)}_{N,j}(n) = n$.
 
 **Theorem.** Let $\mu_l = \theta_l/(4N)$ with fixed $\theta_1,\dots,\theta_k > 0$, and $\theta = \theta_1 + \dots + \theta_k$. As $N \to \infty$, $\big(A^{(l)}_{N,j}(n)\big)$ converges in distribution to $\big(A^{(l)}_j(n)\big)$ with
+
 $$\mathbb P\Big(A^{(l)}_j(n) = a^{(l)}_j\ \forall l, j\Big) = \mathbf 1\Big(\sum_{l=1}^k\sum_{j=1}^n j\,a^{(l)}_j = n\Big)\,\frac{n!}{(\theta)_n}\prod_{l=1}^k\prod_{j=1}^n\left(\frac{\theta_l}{j}\right)^{a^{(l)}_j}\frac{1}{a^{(l)}_j!},$$
+
 where $(\theta)_n = \theta(\theta+1)\cdots(\theta+n-1)$. Summing over classes recovers the Ewens sampling formula with parameter $\theta$. The family of these laws over $n$ is consistent under random deletion of a gene (a multiple partition structure), and it is a mixture of multinomial sampling from a $k$-colored Poisson–Dirichlet law $\mathrm{PD}(\theta_1,\dots,\theta_k)$.
 
 ## Expansion

@@ -5,8 +5,11 @@
 Let $C_{n,p}$ be the number of trees of $F(G_{n,p})$, with $G_{n,p}$ the Erdős–Rényi random graph.
 
 **Theorem 1.1.** There is a family of random variables $(C_p : p \in (0,1))$ such that, for each fixed $p \in (0,1)$,
+
 $$C_{n,p} \xrightarrow{d} C_p \quad\text{and}\quad \mathbb{E}[C_{n,p}] \to \mathbb{E}[C_p] \qquad (n \to \infty),$$
+
 and, as $p \to 0$,
+
 $$\frac{p}{2(1-p)}\, C_p \xrightarrow{\ \mathbb{P}\ } 1 \quad\text{and}\quad \frac{p}{2(1-p)}\, \mathbb{E}[C_p] \to 1 .$$
 
 **Theorem 1.2.** If $p = p(n) \to 0$ with $np \to \infty$, then $\frac{1-p}{2p}\, C_{n,p} \to 1$ in probability and $\frac{1-p}{2p}\, \mathbb{E}[C_{n,p}] \to 1$.

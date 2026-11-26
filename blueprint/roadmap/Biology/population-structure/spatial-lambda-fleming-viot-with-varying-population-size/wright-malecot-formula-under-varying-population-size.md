@@ -3,9 +3,13 @@
 **Setting.** In the mSLFV model with limiting population density $n_t$ solving $\partial_t n_t = uV_R\big(\frac{R^2}{d+2}\Delta n_t + r(n_t)n_t\big)$, let $Z_t$ be the Gaussian fluctuation limit and sample two individuals with spatial weights given by probability densities $\psi_1, \psi_2$ on $\mathbb{T}^d$, so the effective sampling densities are $\vartheta_i = n_t \psi_i / \langle n_t, \psi_i\rangle$. The rescaled probability of identity by descent is $N\delta_N^{2-d}\, P^N_t(\psi_1,\psi_2)$, where $P^N_t$ is the probability that the two sampled individuals carry the same type.
 
 **Theorem.** Let $G_{s,t}$ be the fundamental solution of $-\frac{d}{ds} G_{s,t}\psi = A_s^* G_{s,t}\psi$, where $A_s^*$ is the adjoint of the lineage generator
+
 $$A_s \phi = \frac{u V_R R^2}{d+2}\Big(\Delta\phi + 2\,\frac{\nabla n_s}{n_s}\cdot\nabla\phi\Big).$$
+
 Then
+
 $$\mathbb{E}\left[\frac{\langle Z_t\otimes Z_t, \mathbf{1}_{\{k_1=k_2\}}\,\psi_1\otimes\psi_2\rangle}{\langle n_t,\psi_1\rangle\langle n_t,\psi_2\rangle}\right] = u^2 V_R^2 \int_0^t \int_{\mathbb{T}^d} \frac{e^{-2\mu(t-s)}}{n_s(z)+1}\, G_{s,t}\vartheta_1(z)\, G_{s,t}\vartheta_2(z)\, dz\, ds .$$
+
 If the limit $N \to \infty$ can be exchanged with the expectation (stated as a conjecture in the source), this is the limit of $N\delta_N^{2-d}\,P^N_t(\psi_1,\psi_2)$.
 
 ## Depends on

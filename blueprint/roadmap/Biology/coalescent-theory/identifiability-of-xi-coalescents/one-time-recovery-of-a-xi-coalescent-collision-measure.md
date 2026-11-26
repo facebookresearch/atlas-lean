@@ -1,13 +1,19 @@
 # One-time recovery of a Ξ-coalescent collision measure
 
 **Setting.** Let $\mathcal K = \{p_1 \ge p_2 \ge \dots \ge 0 : \sum_j p_j \le 1\}$ be the Kingman simplex with the product topology, and write $V_2(p) = \sum_j p_j^2$. A finite collision measure $\Xi$ on $\mathcal K$ is split as $\Xi = a\delta_0 + \Xi_0$ with $\Xi_0(\{0\}) = 0$. The atom at the zero partition is the Kingman component. A specified collision of $r$ groups of sizes $k_1, \dots, k_r \ge 2$ among $b = k_1 + \dots + k_r + s$ blocks, leaving $s$ singletons, happens at Schweinsberg's rate
+
 $$\lambda^\Xi_{b;k_1,\dots,k_r;s} = a\,\mathbf 1_{\{r=1,\,k_1=2\}} + \int_{\mathcal K\setminus\{0\}} \sum_{\ell=0}^{s}\binom{s}{\ell}(1 - |x|)^{s-\ell} \sum_{\substack{i_1,\dots,i_{r+\ell}\\ \text{distinct}}} x_{i_1}^{k_1}\cdots x_{i_r}^{k_r}\,x_{i_{r+1}}\cdots x_{i_{r+\ell}}\,\frac{\Xi_0(dx)}{V_2(x)},$$
+
 with $|x| = \sum_i x_i$. Let $P^\Xi(t) \in \mathcal K$ be the ranked asymptotic block frequencies at time $t$ of the $\Xi$-coalescent started from singletons, with missing mass as dust. By Kingman's paintbox theorem, the law of $P^\Xi(t)$ is the same information as the exchangeable partition probability functions of all finite restrictions at time $t$.
 
 **Theorem.** For every known $t > 0$, the map
+
 $$\Xi \longmapsto \mathcal L\big(P^\Xi(t)\big)$$
+
 is a topological embedding of the finite nonnegative collision measures on $\mathcal K$ into the probability measures on $\mathcal K$, both with the weak topology. Moreover
+
 $$1 - \mathbb E\,V_2\big(P^\Xi(t)\big) = e^{-t\,\Xi(\mathcal K)} .$$
+
 So one fixed-time snapshot of the genealogy's partition law identifies the collision measure. With an unknown time, the snapshot identifies exactly the product $t\Xi$, and it identifies $t$ itself under the normalization $\Xi(\mathcal K) = 1$.
 
 ## Depends on

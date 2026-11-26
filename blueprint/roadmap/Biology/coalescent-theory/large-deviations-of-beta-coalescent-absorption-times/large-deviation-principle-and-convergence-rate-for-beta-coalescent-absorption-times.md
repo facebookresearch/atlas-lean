@@ -3,7 +3,9 @@
 **Setting.** The Beta$(a,b)$-coalescent, $a,b>0$, is the $\Lambda$-coalescent with $\Lambda(dr)=\beta_{a,b}(dr)=r^{a-1}(1-r)^{b-1}dr$: with $p$ blocks, each given set of $k\ge2$ blocks merges at rate $\lambda_{p,k}=B(a+k-2,b+p-k)$, and the total merger rate with $k$ blocks is $\lambda_k=\int(1-(1-r)^k-kr(1-r)^{k-1})r^{-2}\Lambda(dr)$. Started from $n$ blocks, $\tau_n$ is the absorption time (time to one block) and $T^k_n$ the first time fewer than $k$ blocks remain. For $a>1$, $\tau_n/\log n\to1/\mu$ in probability, $\mu=\int|\log(1-r)|r^{-2}\Lambda(dr)$; for $a<1$ the coalescent comes down from infinity and $\tau_n$ converges in law to $\rho_\infty$.
 
 **Rate function.** For $a>1$ let, for $y>-b$,
+
 $$L_{a,b}(y)=\frac{\Gamma(a)}{(2-a)(a-1)}\Big(\frac{\Gamma(b+y)}{\Gamma(a+b+y-2)}-\frac{\Gamma(b)}{\Gamma(a+b-2)}\Big)\quad(a\neq2),\qquad L_{2,b}(y)=\psi(b+y)-\psi(b),$$
+
 with $\psi$ the digamma function. $L_{a,b}$ is a concave increasing bijection from $(-b,\infty)$ onto $(-\infty,D_{a,b})$; let $\zeta_{a,b}$ be its inverse (convex, increasing, $+\infty$ beyond $D_{a,b}$) and $\mathcal{I}_{a,b}(x)=\sup_\theta\{\theta x-\zeta_{a,b}(\theta)\}$, so $\mathcal{I}_{a,b}=\infty$ on $(-\infty,0)$ and $\mathcal{I}_{a,b}(0)=b$. With $x_k=\zeta'_{a,b}(\lambda_k)$, the capped function is $\mathcal{I}^k_{a,b}(x)=\mathcal{I}_{a,b}(x)$ for $x\le x_k$ and $\mathcal{I}_{a,b}(x_k)+\lambda_k(x-x_k)$ for $x\ge x_k$.
 
 **Statements.**

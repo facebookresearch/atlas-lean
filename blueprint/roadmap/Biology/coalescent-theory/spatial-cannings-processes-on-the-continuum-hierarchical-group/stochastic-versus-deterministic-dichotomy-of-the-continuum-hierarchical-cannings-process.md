@@ -12,7 +12,9 @@ Write $\lambda_k = \int_{(0,1]} \Lambda_k(dr)$. Under the basic, non-triviality 
 
 1. **Coincidence.** $\widehat X^\infty$ is deterministic if and only if it is locally multi-type; equivalently, stochastic if and only if locally mono-type.
 2. **Criterion with block-resampling.** Suppose $\lambda_k > 0$ for some $k$. If $\sup_{k\in\mathbb{Z}} \lambda_k / c_k < \infty$ (resampling does not dominate migration), then
+
 $$\widehat X^\infty \text{ is stochastic} \iff \sum_{k \ge 0} \frac{1}{c_k} \sum_{\ell = 0}^{k} \lambda_\ell = \infty .$$
+
 If $\sup_k \lambda_k/c_k = \infty$, then $\widehat X^\infty$ is stochastic.
 3. **Criterion without block-resampling.** Suppose $\lambda_k = 0$ for all $k$. If $d^\ast > 0$, then $\widehat X^\infty$ is stochastic if and only if $\sum_{k \ge 0} 1/c_k = \infty$ and $\sum_{k < 0} 1/c_k < \infty$, i.e. the migration is point-recurrent. If $d^\ast = 0$, then $\widehat X^\infty$ is deterministic.
 

@@ -1,7 +1,9 @@
 # Haploid two-locus selection as multiplicative weights and loss of diversity
 
 **Model.** A haploid population carries alleles $i \in S_1 = \{1, \dots, m\}$ at one locus and $j \in S_2 = \{1, \dots, n\}$ at another. Under weak selection with fitness matrix $B = \mathbf{1}_{m \times n} + \varepsilon C$ (fitness $B_{ij}$ for genotype $(i,j)$) and in the regime where the population stays in linkage equilibrium, the allele frequencies $\boldsymbol x \in \Delta_m$, $\boldsymbol y \in \Delta_n$ evolve by
+
 $$x_i(t+1) = x_i(t)\,\frac{(B\boldsymbol y(t))_i}{\boldsymbol x(t)^{\mathsf T}B\boldsymbol y(t)}, \qquad y_j(t+1) = y_j(t)\,\frac{(B^{\mathsf T}\boldsymbol x(t))_j}{\boldsymbol x(t)^{\mathsf T}B\boldsymbol y(t)}.$$
+
 This is the discrete replicator dynamics, equivalently the multiplicative weights update algorithm, for the *coordination game* $(B, B)$ in which the two loci are players, alleles are strategies and both receive the genotype fitness. A Nash equilibrium is *weakly stable* if fixing either player to any pure strategy in its support leaves the other indifferent among the strategies in its own support.
 
 **Theorem.**

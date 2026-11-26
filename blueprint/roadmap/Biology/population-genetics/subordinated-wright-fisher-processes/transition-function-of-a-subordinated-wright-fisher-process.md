@@ -13,10 +13,14 @@ and transition function $p_t(x,du)$. Let $C$ be a non-decreasing Feller process 
 $$\widetilde p_t(x,du)=\sum_{n=0}^\infty\Phi_t(\lambda_n)\,Q_n(x,u)\,\mathcal{D}_\theta(du)
 =\sum_{m=0}^\infty\widetilde q_m^{|\theta|}(t)\sum_{|\mathbf{l}|=m}\mathcal{M}(\mathbf{l};m,x)\,\mathcal{D}_{\theta+\mathbf{l}}(du),$$
 with
+
 $$\widetilde q_m^{|\theta|}(t)=\sum_{j=m}^\infty(-1)^{j-m}\,\Phi_t(\lambda_j)\,\frac{(2j+|\theta|-1)\,(m+|\theta|)_{(j-1)}}{m!\,(j-m)!}\ \ge0 .$$
+
 So the conditional-expectation operators have eigenvalues $\Phi_t(\lambda_n)$; the leading non-trivial one, $\Phi_t(\lambda_1)$, sets the rate of convergence to $\mathcal{D}_\theta$.
 3. For $C=S$, $\Phi_t(\lambda_n)=e^{-t\psi(\lambda_n)}$ (exponential memory). For $C=R$, $t\mapsto\Phi_t(\lambda)$ solves the Volterra equation
+
 $$\Phi_t(\lambda)-1=-\lambda\int_0^t\kappa(t-s)\,\Phi_s(\lambda)\,ds,$$
+
 where $\kappa$ is the potential density of $S$; equivalently $\beta\,\partial_t\Phi_t+\int_0^t\partial_s\Phi_s\,\bar\pi(t-s)\,ds=-\lambda\Phi_t$ with $\bar\pi(s)=\pi((s,\infty))$. For the inverse of an $\alpha$-stable subordinator, $\Phi_t(\lambda)=E_\alpha(-\lambda t^\alpha)$ is a Mittag-Leffler function, giving heavy-tailed memory; for $K=2$ this is a (shifted) fractional Jacobi diffusion.
 
 ## Depends on

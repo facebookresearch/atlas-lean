@@ -8,7 +8,9 @@ dW &= -\big[(\mathfrak s^+ - \mathfrak v^+) - (\mathfrak s^- - \mathfrak v^-)\bi
 &\quad + \sqrt{(\mathfrak m + \mathfrak v^-)W(1-W) - (\mathfrak v^+ - \mathfrak v^-)W^2(1-W)}\;dB_t.
 \end{aligned}$$
 If $\mathfrak v^+ = \mathfrak v^- = \mathfrak v$, $\mathfrak s^+ \ge \mathfrak s^-$ and $\theta^- = 0$, then $W$ is moment dual to the block-counting process $A$ of the ancestral selection graph,
+
 $$\mathbb E\big[W(t)^n \mid W(0) = w\big] = \mathbb E\big[w^{A(t)} \mid A(0) = n\big],$$
+
 where $A$ jumps $n \mapsto n-1$ at rate $\binom{n}{2}(\mathfrak m + \mathfrak v) + n\theta^+$ (coalescence or a mutation that kills the lineage) and $n \mapsto n+1$ at rate $n(\mathfrak s^+ - \mathfrak s^-)$ (selective branching). Under stochastic-ordering and moment conditions, the time-rescaled lineage-counting process of the ancestral selection graph of the finite population converges to this $A$.
 
 ## Expansion

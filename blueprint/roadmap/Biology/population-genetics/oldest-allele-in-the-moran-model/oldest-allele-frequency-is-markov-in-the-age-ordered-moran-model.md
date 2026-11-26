@@ -9,9 +9,13 @@ This is the $(0,\theta)$-ordered Chinese restaurant up-down chain: an infinitely
 **Theorem.**
 1. If $X_n^{(0,\theta)}$ runs in stationarity, then $Z_n^{(0,\theta)}$ is a time-homogeneous Markov chain on $\{1, \dots, n\}$, including across the steps at which the oldest allele goes extinct and the former second-oldest allele becomes the oldest.
 2. With $\alpha_n = (n+\theta)(n+1)$, in stationarity
+
 $$\left(\tfrac{1}{n} Z_n^{(0,\theta)}(\lfloor \alpha_n t \rfloor)\right)_{t \ge 0} \Rightarrow Z^{(0,\theta)}$$
+
 in the Skorokhod topology, where $Z^{(0,\theta)}$ is the diffusion on $[0,1]$ with generator
+
 $$\mathcal{L} f(x) = x(1-x) f''(x) - \theta x f'(x), \qquad x \in (0,1),$$
+
 jumping in from the boundary $0$: a core of its generator is the set of $f \in C^2([0,1])$ with $\int_0^1 (f(x) - f(0))\, \theta (1-x)^{\theta-1}\, dx = 0$ and, if $\theta < 1$, $\lim_{x \to 1} f'(x)(1-x)^\theta = 0$.
 3. Started from an empty oldest block, the one-step rescaled jump-in point converges in law to the density $p(x) = \theta(1-x)^{\theta-1}$ on $(0,1)$.
 

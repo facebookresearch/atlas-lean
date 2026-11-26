@@ -11,10 +11,14 @@ So each lineage alternates between $\mathrm{Exp}(c)$ active periods and dormant 
 1. *(No coming down from infinity.)* If $N_0 + \|M_0\|_{TV}$ is countably infinite, then almost surely $N_t + \|M_t\|_{TV} = \infty$ for all $t \ge 0$.
 2. *(Finite mean TMRCA.)* $\mathbb{E}[T_{MRCA}(n,m)] < \infty$ if and only if the mean dormancy time $\int_{(0,\infty)} \lambda^{-1} \mu(d\lambda)$ is finite.
 3. *(Growth of the TMRCA.)* Suppose the flags of the initially dormant blocks are i.i.d. $\nu$. If $\operatorname{supp}\nu \subset (0, \bar\lambda_0]$, then
+
 $$\liminf_{n,\ \|m\|_{TV} \to \infty} \frac{\mathbb{E}[T_{MRCA}(n,m)]}{\log\big(\log n + \|m\|_{TV}/(2c)\big)} \ge \frac{1}{\bar\lambda_0},$$
+
 and for $\nu = \Gamma(a,b)$ the same $\liminf$ is at least $b/a$. If moreover $\operatorname{supp}\nu \subset [\underline\lambda_0, \bar\lambda_0]$ with $\underline\lambda_0 > 0$, the corresponding $\limsup$ is at most $2/\underline\lambda_0$.
 4. *(Ancestral line and fixation.)* A single ancestral line has limiting flag law
+
 $$\frac{1}{1 + \int \lambda^{-1}\mu(d\lambda)}\Big(\delta_0 + \lambda^{-1}\mu(d\lambda)\Big),$$
+
 and, when $\int \lambda^{-1}\mu(d\lambda) < \infty$, the dual continuum seed-bank diffusion started from active frequency $x$ and dormant frequency profile $y(\lambda)$ fixes on type $1$ with probability $\big(x + \int y(\lambda)\lambda^{-1}\mu(d\lambda)\big)/\big(1 + \int \lambda^{-1}\mu(d\lambda)\big)$.
 
 ## Depends on

@@ -4,9 +4,13 @@
 
 **Theorem.**
 1. As $N \to \infty$,
+
 $$\pi_N \sim \alpha^{\frac{1}{\alpha-1}}N^{-\frac{b}{\alpha-1}} = \big(\alpha s_N\big)^{\frac{1}{\alpha-1}}.$$
+
 2. *(Duality.)* The number $X^{(N)}_t$ of advantageous individuals is in hypergeometric duality with the block-counting process $A^{(N)}$ of a $\Lambda$-ancestral selection graph:
+
 $$\mathbb E\Big[\tfrac{(X_t)_n}{(N)_n}\,\Big|\, X_0 = k\Big] = \mathbb E\Big[\tfrac{(k)_{A_t}}{(N)_{A_t}}\,\Big|\, A_0 = n\Big], \qquad (m)_j = m(m-1)\cdots(m-j+1),$$
+
 and consequently $\pi_N = \mathbb E[A^{(N)}_{\mathrm{eq}}]/N$, where $A^{(N)}_{\mathrm{eq}}$ has the stationary law of $A^{(N)}$.
 
 ## Expansion

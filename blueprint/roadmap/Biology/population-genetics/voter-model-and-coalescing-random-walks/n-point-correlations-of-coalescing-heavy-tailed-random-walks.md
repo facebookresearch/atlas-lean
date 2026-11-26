@@ -1,14 +1,18 @@
 # $N$-point correlations of coalescing heavy-tailed random walks
 
 **Setting.** Start a coalescing random walk from every site of $\mathbb Z$: walkers jump at rate $1$ with a symmetric kernel in the domain of attraction of an $\alpha$-stable law, $\alpha \in (0, 1]$, with scaling function $B_t$ (so $X_t/B_t$ converges to a stable law with density $g_\alpha$), and two walkers merge when they meet. These are the dual lineages of the voter model with long-range interactions. Let $\xi_t(x) = 1$ if site $x$ is occupied at time $t$, and define
+
 $$l(t) = \int_0^t \frac{ds}{B_s}, \qquad \ell(t) = \frac{B_t\,l(t)}{t}.$$
+
 The walk is marginally recurrent when $\alpha = 1$ and $l(\infty) = \infty$, and transient otherwise; in the marginally recurrent case assume $\ell(t)^K \ge l(t)$ for some $K$ and all large $t$.
 
 **Theorem.**
 1. *(Density.)* $\rho_1(t) = \mathbb P(\xi_t(0) = 1) = \dfrac{g_\alpha(0)\,l(2t)}{t}\bigl(1 + o(1)\bigr)$, with explicit error rates in each regime.
 2. *(Non-collision.)* For $N$ independent walkers started at distinct $\mathbf x \in \mathbb Z^N$, the probability that no two have met by time $t$ is $\mathbb P(\tau_c > t) = \dfrac{c_{\mathbf x}}{l(2t)^{\binom N2}}\bigl(1 + o(1)\bigr)$.
 3. *(N-point correlation.)* For distinct $x_1, \dots, x_N$,
+
 $$\rho_N(\mathbf x, t) = \mathbb P\bigl(\xi_t(x_1) = \cdots = \xi_t(x_N) = 1\bigr) = \frac{c_{\mathbf x}\,g_\alpha(0)^N}{t^N\,l(2t)^{\binom N2 - N}}\bigl(1 + o(1)\bigr) \sim \rho_1(t)^N\,\mathbb P(\tau_c > t),$$
+
 with error $O(l(t)^{-(1/(2K) - \varepsilon)})$ (marginally recurrent), $O(\ell(t)^{-(1/2 - \varepsilon)})$ (marginally transient, $\alpha = 1$) or $O(t^{-\eta})$ for any $\eta > 1/\alpha - 1$ ($\alpha < 1$). Moreover $\rho_N$ is negatively correlated: $\rho_N(\mathbf x, t) \le \rho_{N-1}(x_1, \dots, x_{N-1}, t)\,\rho_1(t)$.
 
 ## Depends on

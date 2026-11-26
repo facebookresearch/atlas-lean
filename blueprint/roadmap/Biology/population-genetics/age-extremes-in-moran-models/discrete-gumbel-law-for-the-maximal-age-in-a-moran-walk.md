@@ -5,13 +5,19 @@
 **Final altitude.** $\mathbb{P}(Y_n = k) = q p^k$ for $0 \le k < n$ and $\mathbb{P}(Y_n = n) = p^n$: a truncated geometric law.
 
 **Theorem (height distribution).** Uniformly in $h \in [0,n]$,
+
 $$\mathbb{P}(H_n \le h) = \exp\big(-q\,n\,p^{h+1}\big)\,\big(1 + o(1)\big),$$
+
 with an explicit error term of order $(\ln n)^3/n$. Consequently $H_n$ has no continuous limit law: writing $\alpha(n) = p^{-\{\ln n/\ln(1/p)\}} \in [1, 1/p)$, with $\{\cdot\}$ the fractional part,
+
 $$\mathbb{P}\Big(H_n \le \Big\lfloor \frac{\ln n}{\ln(1/p)}\Big\rfloor + k\Big) = \exp\big(-q\,\alpha(n)\,p^{k+1}\big)(1+o(1))$$
+
 uniformly in $k$, a discrete Gumbel law whose shape oscillates with $\ln n$. The distribution of $H_n$ is unimodal with mode $h^*(n)$, the integer closest to $c^*(n)\ln n/\ln(1/p)$ with $c^*(n) = 1 - \ln(\ln(1/p)/q^2)/\ln n$, and $\mathbb{P}(H_n = h^*(n)) \sim p^{p/q} - p^{1/q}$.
 
 **Theorem (average height).**
+
 $$\mathbb{E}[H_n] = \frac{\ln n}{\ln(1/p)} - \frac{\gamma}{\ln p} - \frac12 - \frac{\ln q}{\ln p} + \frac{Q(\ln(qn))}{\ln p} + o(1),$$
+
 where $\gamma$ is Euler's constant and $Q(x) = \sum_{k \ne 0}\Gamma(s_k)e^{-s_k x}$, $s_k = 2ik\pi/\ln p$, is a real, infinitely differentiable Fourier series of period $\ln(1/p)$ and tiny amplitude.
 
 ## Expansion

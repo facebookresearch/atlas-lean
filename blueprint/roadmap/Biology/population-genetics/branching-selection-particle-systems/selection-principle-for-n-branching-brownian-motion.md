@@ -1,7 +1,9 @@
 # Selection principle for N-branching Brownian motion
 
 **Model.** The $N$-BBM with selection consists of $N$ particles on $\mathbb R$ that move as independent standard Brownian motions and branch at rate $1$; at each branching event the leftmost particle is removed, so the population size stays $N$. It models a population of fixed size under truncation selection on a trait (fitness) that diffuses. Let $\vec Y^N_t$ denote the particle positions seen from the leftmost particle, and $\Theta^N(x_1,\dots,x_N) = \frac1N\sum_i\delta_{x_i}$. As $N \to \infty$ on finite time intervals, the empirical measure follows the free-boundary problem
+
 $$\partial_t u = \tfrac12\Delta u + u \ \ (x > L_t), \qquad u(t, L_t) = 0, \qquad \int_{L_t}^\infty u(t,y)\,dy = 1,$$
+
 whose travelling waves have speeds $c \ge \sqrt 2$; the minimal one is $\pi_{\min}(x) = 2x e^{-\sqrt 2 x}$, $x > 0$, with speed $c_{\min} = \sqrt 2$.
 
 **Theorem.**

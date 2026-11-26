@@ -13,7 +13,9 @@ $$g(x,\mathbf{m})=\frac{(|\theta|)_{(|\mathbf{m}|)}}{\prod_i(\theta_i)_{(m_i)}}\
 $$\mathbb{P}[\widetilde Z(t)=\mathbf{n}\mid\widetilde Z(0)=\mathbf{n}]=\Phi_t(\lambda_{|\mathbf{n}|}).$$
 
 1. If $C=S$ is a subordinator with drift $\beta$ and Lévy measure $\pi$, $\widetilde Z$ is Markov, jumping from $\mathbf{n}$ to any $\mathbf{k}\le\mathbf{n}$ (hypergeometrically in the types), with total-count rates that are alternating combinations of
+
 $$\widetilde\lambda_j=\beta\lambda_j+\int_{(0,\infty)}\big(1-e^{-u\lambda_j}\big)\pi(du),$$
+
 so several lineages can be lost at once.
 2. If $C=R$ is the inverse of a subordinator, $\widetilde Z$ is non-Markov and, after a non-exponential holding time, descends almost surely through unit jumps only: under the generalized Caputo derivative $I^{(\beta,\pi)}_t$, the initial rates are $\lambda_{|\mathbf{n}|}n_i/|\mathbf{n}|$ for $\mathbf{n}\to\mathbf{n}-\mathbf{e}_i$, exactly those of the Wright–Fisher dual.
 

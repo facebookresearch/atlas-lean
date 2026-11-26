@@ -1,15 +1,21 @@
 # Excursion measures and boundary time sets of the Wright-Fisher diffusion with mutation
 
 **Setting.** $X$ is the Wright-Fisher diffusion on $[0,1]$ with generator
+
 $$\mathscr{G}=\tfrac12x(1-x)\frac{d^2}{dx^2}+\tfrac12(\theta_1-|\theta|x)\frac{d}{dx},\qquad |\theta|=\theta_1+\theta_2,$$
+
 with $0<\theta_1,\theta_2<1$, so both endpoints are regular and the stationary law is Beta$(\theta_1,\theta_2)$. Let $H_0,H_1$ be hitting times of $0$ and $1$. The *killed* diffusion is sent to a cemetery at $H_0\wedge H_1$. For a boundary point $y$ and $b\in\{0,1\}$, the excursions of $X$ that start at $y$ and are killed on reaching $b$ form the excursion process $\Xi^{y\to b}$ indexed by local time at $y$. Write $a(\lambda),b(\lambda)=\tfrac12\big(|\theta|-1\pm\sqrt{(|\theta|-1)^2-8\lambda}\big)$ and ${}_2F_1$ for the Gauss hypergeometric function.
 
 **Statements.**
 1. *(Resolvent and Green function.)* The Green function of $X$ has the three forms: a Jacobi-polynomial eigen-expansion $\sum_n\frac{2}{2\lambda+n(n+|\theta|-1)}\pi_n^{-1}R_n(x)R_n(y)$; a mixture over the block-counting (line-of-descent) representation; and the Wronskian form
+
 $$G_\lambda(x,y)=\frac{2\Gamma(a(\lambda))\Gamma(b(\lambda))}{\Gamma(|\theta|)}\,{}_2F_1\big(a,b;\theta_1;x\wedge y\big)\,{}_2F_1\big(a,b;\theta_2;1-(x\vee y)\big).$$
+
 The resolvent of the twice-killed process is given explicitly by subtracting boundary terms built from the four fundamental solutions ${}_2F_1(a,b;\theta_2;1-x)$, $x^{1-\theta_1}{}_2F_1(\theta_2-b,\theta_2-a;2-\theta_1;x)$, $(1-x)^{1-\theta_2}{}_2F_1(\theta_1-a,\theta_1-b;2-\theta_2;1-x)$, ${}_2F_1(a,b;\theta_1;x)$.
 2. *(Poisson structure.)* $\Xi^{y\to b}$ is a Poisson point process with intensity $\mathrm{Leb}\otimes n^{y\to b}$ for a $\sigma$-finite excursion measure $n^{y\to b}$, whose finite-dimensional marginals are an entrance law followed by killed transition kernels. The $\lambda$-potentials $n^{0\to1}_\lambda(dx)$, $n^{1\to0}_\lambda(dx)$ have explicit densities proportional to $x^{\theta_1-1}(1-x)^{\theta_2-1}$ times combinations of ${}_2F_1$ functions, and
+
 $$\lim_{\lambda\to0}\lambda\,n^{0\to1}_\lambda1=\lim_{\lambda\to0}\lambda\,n^{1\to0}_\lambda1=\frac{1}{2B(\theta_1,\theta_2)B(1-\theta_1,1-\theta_2)} .$$
+
 Concatenating marked excursions reconstructs the Wright-Fisher path.
 3. *(Boundary time sets.)* For fixed $T>0$, the closure $\mathcal{R}_0$ of $\{t:X_t=0\}$ satisfies $\dim_H(\mathcal{R}_0\cap[0,T])=1-\theta_1$ almost surely under $\mathbb{P}_0$, and $\dim_H(\mathcal{R}_1\cap[0,T])=1-\theta_2$ under $\mathbb{P}_1$.
 4. *(Singularity.)* For distinct $(\theta_1,\theta_2)\ne(\theta_1',\theta_2')$ in $(0,1)^2$, the path laws up to any fixed $T>0$ are mutually singular: the mutation rates can be read off a single path.

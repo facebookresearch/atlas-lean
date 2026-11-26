@@ -9,10 +9,13 @@
 **Theorem (representation of equivariant pairs).** $(\Pi, \tau)$ is equivariant if and only if, for $P_\tau$-almost every $\pi$, $\Pi$ is under $P_\pi$ a mixture $\int_\square P_\pi(R(q,x) \in \cdot)\,G_\pi(d(q,x))$ of labeled paintbox partitions, with $G_\pi = G_{\sigma\pi}$. The mixing variable is given by the limiting relative mutation and coalescence frequencies of $(\pi, \Pi)$, and $G_\pi$ is unique.
 
 **Corollary (characterization of LEPPFs).** $p$ is an LEPPF if and only if there is a unique probability measure $G$ on $\square$ with
+
 $$p(T) = \int_\square g_T(q)\,f_T(x)\,G(d(q,x)) \qquad \text{for all } T \in \mathcal T .$$
 
 **Theorem (jointly exchangeable consistent pairs).** $(\Pi, \tau)$ is jointly exchangeable and consistent if and only if there are unique probability measures $F$ on the type-frequency simplex and $G$ on $\square$ with
+
 $$P(\rho_n\Pi = \pi', \rho_n\tau = \pi) = \Big(\int\prod_{i=1}^n p_{t_i(\pi)}\,F(dp)\Big)\Big(\int_\square g_T(q)f_T(x)\,G(d(q,x))\Big).$$
+
 Equivalently, such pairs correspond one-to-one to pairs (exchangeable law of $\tau$, LEPPF).
 
 ## Depends on

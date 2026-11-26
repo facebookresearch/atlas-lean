@@ -1,7 +1,9 @@
 # Effective population size N^(1−c) in branching Brownian motion under moderate mutation–selection
 
 **Model.** Fix $c \in (0,1)$. For each $N$ consider dyadic branching Brownian motion on $[0, L]$ with drift $+\beta_N$, $\beta_N \in (0,1)$, branching rate $1/2$, reflection at $0$ and killing at $L$. Positions model the load of deleterious mutations: drift toward $L$ is mutation accumulation and killing at $L$ is selection. For each $\beta$ the killing point $L = L(\beta)$ is chosen to make the system **critical**: the principal eigenvalue of the particle density equation $\partial_t u = \tfrac12 \partial_{yy}u - \beta\partial_y u + \tfrac12 u$ (zero flux at $0$, $u(L) = 0$) is $0$, with eigenfunction built from $v_1(x) = \sin(\gamma(L - x))$, $\gamma = \sqrt{1-\beta^2}$. Here $\beta_N$ is chosen so that
+
 $$L(\beta_N) = c\log N + 6\log\log N,$$
+
 so the particle cloud has width of order $c\log N$ (the moderate mutation–selection regime). Let $h$ be the reproductive value, $\mathbb{E}_x[Z(t)] \approx h(x)$, and $\tilde h$ the stable configuration (left Perron–Frobenius eigenvector), normalized by $\int_0^L \tilde h = \int_0^L h\tilde h = 1$. The reproductive variance $\Sigma^2 = \int_0^L h^2 \tilde h$ satisfies $\Sigma^2 / N^{c} \to \sigma^2$ for a constant $\sigma = \sigma(c) > 0$. Let $Z(t)$ be the number of particles.
 
 **Theorem.** Let $t > 0$ and $x > 0$, and start from one particle at $x$.

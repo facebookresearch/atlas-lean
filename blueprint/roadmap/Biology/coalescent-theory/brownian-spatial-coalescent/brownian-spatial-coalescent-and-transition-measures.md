@@ -9,7 +9,9 @@
 2. For a given family $\boldsymbol\nu$, a Brownian spatial coalescent with transition measures $\boldsymbol\nu$ exists if and only if its normalization function $N^{\boldsymbol\nu} \colon \mathcal{X} \to [0, \infty]$ is finite and continuous.
 
 For two lineages at $\boldsymbol x = (x_1, x_2)$, the time $\tau$ and location $\xi$ of their merger have law
+
 $$P^{\boldsymbol x}(d\tau, d\xi) = \frac{1}{N^{\boldsymbol\nu}(\boldsymbol x)}\, p_\tau(x_1 - \xi)\, p_\tau(x_2 - \xi)\, e^{-\bar\nu_2 \tau}\, \nu_{2,2}(d\xi)\, d\tau, \qquad \bar\nu_2 = |\nu_{2,2}|,$$
+
 so $N^{\boldsymbol\nu}(\boldsymbol x)$ is the total mass of the unnormalized right-hand side. In general $\bar\nu_n = \sum_{\vec k} \binom{n}{k_1 \cdots k_m} |\nu_{n,\vec k}|$, and the law of the decorated forest is the non-spatial one with rates replaced by transition measures and one heat-kernel factor per branch.
 
 ## Depends on

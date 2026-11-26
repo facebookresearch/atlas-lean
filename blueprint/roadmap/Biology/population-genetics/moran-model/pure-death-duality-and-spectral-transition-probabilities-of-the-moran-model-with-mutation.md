@@ -1,16 +1,23 @@
 # Pure-death duality and spectral transition probabilities of the Moran model with mutation
 
 **Model.** In a population of $N$ individuals of types $a$ and $A$, reproduction events occur at rate $1/2$; a uniformly chosen parent replaces a uniformly chosen individual, and the offspring mutates $a\to A$ with probability $\theta_1/N$ and $A\to a$ with probability $\theta_2/N$. The number $X^N_t\in\{0,\dots,N\}$ of $A$ individuals is a birth–death chain with rates
+
 $$\lambda_i=\tfrac12\delta_N\Big(1-\tfrac iN\Big)\Big(\tfrac iN+\tfrac{a_N}N\Big),\qquad \mu_i=\tfrac12\delta_N\,\tfrac iN\Big(1-\tfrac iN+\tfrac{b_N}N\Big),$$
+
 where $\delta_N=1-\theta/N$, $\theta=\theta_1+\theta_2<N$, $a_N=\theta_1/\delta_N$, $b_N=\theta_2/\delta_N$. Its stationary law is $\mathrm{BetaBin}(N,a_N,b_N)$, and it is reversible, so the generator $Q_N$ is self-adjoint in $\ell^2(\pi)$ with eigenvalues $-\gamma^N_m$,
+
 $$\gamma^N_m=\frac{\delta_N}{2N^2}\,m\,(m+a_N+b_N-1),\qquad m=0,\dots,N .$$
 
 **Theorem (duality).** Let $M^N$ be the pure-death process on $\{0,\dots,N\}$ that jumps $m\to m-1$ at rate $\gamma^N_m$. There are explicit kernels $K^N_m(i,j)=\sum_{\ell=0}^m\mathcal H_{N,m;i}(\ell)\,\mathcal D_{N;m,\ell}(j)$, built from hypergeometric weights $\mathcal H_{N,m;i}(\ell)$ (draw $m$ of $N$ individuals without replacement, $\ell$ of them type $A$, when $i$ are type $A$) and beta-binomial-type laws $\mathcal D_{N;m,\ell}$, such that
+
 $$\mathbb E\big[K^N_m(X^N_t,j)\mid X^N_0=x\big]=\mathbb E\big[K^N_{M^N_t}(x,j)\mid M^N_0=m\big]\qquad(t\ge0).$$
 
 **Theorem (transition probabilities).** For all $i,j$ and $t\ge0$,
+
 $$\mathbb P[X^N_t=j\mid X^N_0=i]=\sum_{m=0}^Nq^N_{N,m}(t)\sum_{\ell=0}^m\mathcal H_{N,m;i}(\ell)\,\mathcal D_{N;m,\ell}(j),$$
+
 where $q^N_{N,m}(t)=\mathbb P[M^N_t=m\mid M^N_0=N]$ is the explicit alternating sum
+
 $$q^N_{N,m}(t)=\sum_{r=m}^N(-1)^{r-m}\frac{N!}{m!(r-m)!(N-r)!}\,\frac{2r+a_N+b_N-1}{m+r+a_N+b_N-1}\,\frac{(m+a_N+b_N)_{(N-m)}}{(m+r+a_N+b_N)_{(N-m)}}\,e^{-\gamma^N_rt}.$$
 
 ## Depends on
