@@ -4,4 +4,3 @@
 - [Blaschke products](blaschke-product.md)
 - [Infinite Blaschke products](is-infinite-blaschke-data.md)
 - [Stephenson's question on fibers of infinite Blaschke products](blaschke-fibers-infinite-near-zero.md)
-- [Infinite Blaschke products with finite fibers arbitrarily close to zero](blaschke-fibers-infinite-near-zero-refut.md)

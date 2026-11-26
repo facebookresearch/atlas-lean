@@ -12,5 +12,3 @@
 - [Collingwood's problem on locally exceptional values](collingwood-local-exception-problem.md)
 
 ## AMR22 Problem5019 Wanted
-
-- [Eremenko's answer to Collingwood's problem](collingwood-local-exception-problem-hold.md)

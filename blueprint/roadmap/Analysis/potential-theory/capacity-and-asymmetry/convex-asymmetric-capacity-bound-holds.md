@@ -2,9 +2,7 @@
 
 This settles [Fraenkel's question on capacity and asymmetry for convex sets](convex-asymmetric-capacity-bound.md) in the affirmative: its statement holds.
 
-Hall, Hayman and Weitsman obtain `cap E ≥ C (1 +
-k δ^\{N+1\})`, with `k > 0` depending only on the dimension, for every convex set `E` whose
-same-volume balls all have at least the proportion `δ` of their volume outside `E`.
+In dimension $N \ge 3$, Hall, Hayman and Weitsman obtain $\operatorname{cap} E \ge C (1 + k \delta^{N+1})$, with $k > 0$ depending only on $N$, for every bounded convex set $E$ whose same-volume balls all have at least the proportion $\delta \ge 0$ of their volume outside $E$, where $C$ is the [capacity](capacity.md) of a ball with the same volume as $E$.
 
 ## Sources
 

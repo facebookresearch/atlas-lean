@@ -1,4 +1,3 @@
 # Newtonian potential of point charges
 
-The Newtonian potential `u(y) = ∑_k a_k / |y - x_k|` of charges `a_k` at points `x_k` of
-`ℝ³`.
+For charges $a_1, \dots, a_n \in \mathbb{R}$ at points $x_1, \dots, x_n$ of $\mathbb{R}^3$, the function $u(y) = \sum_k a_k / |y - x_k|$, defined for every $y \in \mathbb{R}^3$ with division by zero read as $0$: at a charge's own location its summand is $0$. Off the charges it is the classical Newtonian potential of the charges; at a charge location its value is not a limit of the potential (for a single positive charge the value there is $0$, while the potential tends to $+\infty$ as $y$ approaches it). The [equilibrium set](equilibrium-set.md) excludes the charge locations.

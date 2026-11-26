@@ -26,10 +26,11 @@ regular $(N/2)$-gon containing $1$ is the set of $(N/2)$-th roots of unity; the 
 $(N/2)$-th roots of $c = w^{N/2}$ for any of its vertices $w$, with $|c| = 1$; and $c \ne 1$ because the
 two polygons share no vertex, the $z_i$ being distinct.
 
-The distinctness step uses one run with a positive start; the rest is the published distinct case. This does
-not establish the further historical claim recorded on erdosproblems.com/974 that two runs suffice without
-assuming distinctness, for which the problem page credits a proof by Hu, Tang and Zhang in its discussion
-rather than a published paper.
+The distinctness step uses one run with a positive start; the rest is the published distinct case. For
+$N \ge 2$ every run starts at a positive index, since $s_0 = N \ne 0$, so the same reduction already works
+with only two runs: either run gives distinctness and nonvanishing, and the two runs then satisfy the
+hypothesis of the published distinct-input theorem. The problem page separately credits a proof of the
+two-run statement without distinctness to Hu, Tang and Zhang, in its discussion.
 
 ## Sources
 

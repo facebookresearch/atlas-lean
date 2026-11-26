@@ -8,8 +8,10 @@ $\Omega \subset \mathbb{C}^* \times \mathbb{C}$ that is Runge in $\mathbb{C}^* \
 in $\mathbb{C}^2$. The domain contains a compact union $Y$ of two disjoint totally real discs that is
 holomorphically convex in $\mathbb{C}^* \times \mathbb{C}$ (hull taken with functions holomorphic on
 $\mathbb{C}^* \times \mathbb{C}$), while the polynomial hull of $Y$ in $\mathbb{C}^2$ contains the origin,
-so it meets $\{0\} \times \mathbb{C}$ and is not contained in $\Omega$. A Runge domain in $\mathbb{C}^2$
-contains the polynomial hull of each of its compact subsets, so $\Omega$ is not Runge in $\mathbb{C}^2$.
+so it meets $\{0\} \times \mathbb{C}$ and is not contained in $\Omega$. A Runge Fatou–Bieberbach domain in
+$\mathbb{C}^2$, being biholomorphic to $\mathbb{C}^2$ and hence Stein, contains the polynomial hull of each of its compact
+subsets, so $\Omega$ is not Runge in $\mathbb{C}^2$. The Fatou–Bieberbach hypothesis matters here: $\mathbb{C}^2 \setminus \{0\}$ is Runge,
+yet the polynomial hull of the unit sphere, which it contains, contains the origin.
 
 ## Sources
 
