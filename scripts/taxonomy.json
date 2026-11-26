@@ -13052,6 +13052,7 @@
   "MathlibExt/NumberTheory/LucasSequence": {"to": "NumberTheory/linear-recurrences/lucas-sequences-primitive-divisors", "title": "Lucas sequences"},
   "MathlibExt/NumberTheory/LucasSpecialPrime": {"to": "NumberTheory/linear-recurrences/lucas-sequences-primitive-divisors", "title": "Lucas sequences"},
   "MathlibExt/NumberTheory/LurothBorelBernstein": {"to": "NumberTheory/continued-fractions-expansions", "title": "Lüroth series"},
+  "MathlibExt/NumberTheory/LurothConsecutiveDigitsVolumeLurothCylinder": {"to": "NumberTheory/continued-fractions-expansions", "title": "Lüroth series"},
   "MathlibExt/NumberTheory/LurothConvergent": {"to": "NumberTheory/continued-fractions-expansions", "title": "Lüroth series"},
   "MathlibExt/NumberTheory/LucasnomialSum": {"to": "NumberTheory/quadratic-forms-sums-of-squares/waring-figurate", "title": "Lucas-polytopic numbers"},
   "MathlibExt/NumberTheory/MahlerPopkenComplexity": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Integer complexity"},
