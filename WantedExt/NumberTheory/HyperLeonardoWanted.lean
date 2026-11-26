@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.Basic.Real.Basic
 public import MathlibExt.NumberTheory.HyperLeonardo
+public import MathlibExt.NumberTheory.LeonardoLogBalanced
 public import WantedExt.NumberTheory.GenLeonardoWanted
 
 /-!
@@ -135,33 +136,6 @@ public theorem_wanted leonardo_logConvex_logConcave_pointwise :
     genLeonardo 1 5 ^ 2 = genLeonardo 1 4 * genLeonardo 1 6 ∧
     (∀ n, n = 2 ∨ n = 4 ∨ 6 ≤ n →
       genLeonardo 1 (n - 1) * genLeonardo 1 (n + 1) ≤ genLeonardo 1 n ^ 2)
-
-/-- **Leonardo numbers are log-balanced at index three.** Let $Le_n$ be the Leonardo numbers
-($Le_0 = Le_1 = 1$ and $Le_{n+2} = Le_{n+1} + Le_n + 1$). Then $Le_3^2 \le Le_2 Le_4$ and
-$\frac{Le_2}{2!} \cdot \frac{Le_4}{4!} \le \left(\frac{Le_3}{3!}\right)^2$, the second
-inequality in the real numbers. That is, $(Le_n)$ satisfies the log-convexity inequality at
-$n = 3$ and $(Le_n / n!)$ satisfies the log-concavity inequality at $n = 3$.
-
-Source: Elen Viviani Pereira Spreafico and Paula Maria Machado Cruz Catarino, *A Note on
-Hyper-Leonardo Numbers*, INTEGERS 26 (2026), Article A48, Proposition 11, with the
-definition of log-balanced displayed before Proposition 10 (`integers-2026-A48-prop-11`). -/
-public theorem_wanted leonardo_logBalanced_three :
-    genLeonardo 1 3 ^ 2 ≤ genLeonardo 1 2 * genLeonardo 1 4 ∧
-      ((genLeonardo 1 2 : ℝ) / Nat.factorial 2) * ((genLeonardo 1 4 : ℝ) / Nat.factorial 4) ≤
-        ((genLeonardo 1 3 : ℝ) / Nat.factorial 3) ^ 2
-
-/-- **Log-convexity and log-concavity of the hyper-Leonardo numbers at index one.** The
-hyper-Leonardo numbers $\mathrm{Le}^{(r)}_n$ satisfy
-$\left(\mathrm{Le}^{(1)}_1\right)^2 \le \mathrm{Le}^{(1)}_0 \mathrm{Le}^{(1)}_2$, and for every
-natural number $r \ge 2$ they satisfy
-$\mathrm{Le}^{(r)}_0 \mathrm{Le}^{(r)}_2 \le \left(\mathrm{Le}^{(r)}_1\right)^2$.
-
-Source: Elen Viviani Pereira Spreafico and Paula Maria Machado Cruz Catarino, *A Note on
-Hyper-Leonardo Numbers*, INTEGERS 26 (2026), Article A48, Proposition 12
-(`integers-2026-A48-prop-12`). -/
-public theorem_wanted hyperLeonardo_logConvex_logConcave_one :
-    hyperLeonardo 1 1 ^ 2 ≤ hyperLeonardo 1 0 * hyperLeonardo 1 2 ∧
-      ∀ r, 2 ≤ r → hyperLeonardo r 0 * hyperLeonardo r 2 ≤ hyperLeonardo r 1 ^ 2
 
 /-- **Eventual log-concavity of the hyper-Leonardo numbers of order one.** For every natural
 number $n \ge 2$, the hyper-Leonardo numbers $Le^{(1)}_n$ of order $1$ satisfy
