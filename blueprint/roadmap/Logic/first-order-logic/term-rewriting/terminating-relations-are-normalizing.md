@@ -11,4 +11,4 @@ Let $(A, \to)$ be an [abstract reduction system](abstract-reduction-system.md). 
 ## Sources
 
 - U. Waldmann, *Automated Reasoning*, lecture notes, Max Planck Institute for Informatics, winter semester 2019/20, <https://rg1-teaching.mpi-inf.mpg.de/autrea-ws19/script.pdf>, Section 1.2, Lemma 1.1 and the note after it, p. 4.
-- CSLib, `Relation.Terminating.to_normalizing` in `Cslib/Foundations/Relation/Termination.lean`, a formal statement and proof for an arbitrary relation on an arbitrary type.
+- CSLib at revision 22b39634cb3dc80d829683ad1f65c5680b722309, `Relation.Terminating.to_normalizing` in `Cslib/Foundations/Relation/Termination.lean`, a formal statement and proof for an arbitrary relation on an arbitrary type.
