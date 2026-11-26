@@ -52,7 +52,8 @@ def extendObjIso (X : IntConstruction T) :
     (extend T F hF).obj X ≅ F.obj X.positive ⊗ (F.obj X.negative)ᘁ :=
   rigidInverseObjIso (symmetricTraceOfRigid D) ((map T (symmetricTraceOfRigid D) F hF).obj X)
 
-/-- Restriction of the extension to the original category recovers the given functor. -/
+/-- Restriction of the extension to the original category is naturally isomorphic to the given
+functor. -/
 def extensionIso : embedding T ⋙ extend T F hF ≅ F :=
   (Functor.associator (embedding T) (map T (symmetricTraceOfRigid D) F hF)
       (rigidEquivalence (symmetricTraceOfRigid D)).inverse).symm ≪≫

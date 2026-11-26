@@ -1,6 +1,6 @@
 # Monoidal natural isomorphisms between Int functors
 
-- [Map Crossed naturality](map-crossed-naturality.md)
+- [Monoidal natural isomorphisms commute with crossed maps](map-crossed-naturality.md)
 - [Map Iso](map-iso.md)
 - [Hom map Iso hom app](hom-map-iso-hom-app.md)
 - [Hom map Iso inv app](hom-map-iso-inv-app.md)

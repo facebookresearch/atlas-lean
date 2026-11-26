@@ -138,8 +138,7 @@ theorem hom_ext {X Y Z : SumRelCat.{u}} {f g : Z ⟶ sum X Y}
   | inl x => simpa using congrArg (fun h : Z ⟶ X => (z, x) ∈ h.rel) hf
   | inr y => simpa using congrArg (fun h : Z ⟶ Y => (z, y) ∈ h.rel) hg
 
-/-- The chosen disjoint union has the binary product universal property.
-This is an abbreviation so the chosen tensor object reduces to its sum carrier. -/
+/-- The chosen disjoint union has the binary product universal property. -/
 abbrev binaryProduct (X Y : SumRelCat.{u}) : LimitCone (Limits.pair X Y) where
   cone := BinaryFan.mk (fst X Y) (snd X Y)
   isLimit := BinaryFan.IsLimit.mk _ (fun f g => pair f g)

@@ -221,8 +221,7 @@ instance symmetricCategory : SymmetricCategory RelCat.{u} where
     simp only [Hom.rel_comp_apply₂, Hom.rel_id_apply₂, braiding_hom_rel]
     simp [Prod.ext_iff]
 
-/-- Equality is the cup and cap giving every relation object as its own dual.
-This is a named choice, not a global instance: the tensor pairing reverses factors. -/
+/-- Equality is the cup and cap giving every relation object as its own dual. -/
 @[implicit_reducible]
 def exactPairing (X : RelCat.{u}) : ExactPairing X X where
   coevaluation' := .ofRel {p | p.2.1 = p.2.2}
@@ -296,7 +295,8 @@ theorem trace_union {X Y U : RelCat.{u}} (r s : X ⊗ U ⟶ Y ⊗ U) :
   change (∃ z, ((x, z), (y, z)) ∈ r.rel ∨ ((x, z), (y, z)) ∈ s.rel) ↔ _
   exact exists_or
 
-/-- For the graph of a function, feedback selects its loop fixed points. -/
+/-- For the graph of a function `f`, feedback relates `x` to `y` exactly when
+`f (x, z) = (y, z)` for some hidden value `z`. -/
 theorem trace_graph_rel {X Y U : RelCat.{u}} (f : X × U → Y × U) (x : X) (y : Y) :
     (x, y) ∈ (symmetricTrace.trace (X := X) (Y := Y) (U := U)
       (.ofRel f.graph)).rel ↔ ∃ z : U, f (x, z) = (y, z) := by

@@ -9,6 +9,6 @@
 - [Unit Iso](unit-iso.md)
 - [Core Monoidal](core-monoidal.md)
 - [Safe Invariant](safe-invariant.md)
-- [Feedback image subset iff](feedback-image-subset-iff.md)
-- [Comparison rel](comparison-rel.md)
+- [Partial correctness of feedback by a hidden invariant](feedback-image-subset-iff.md)
+- [Verification of a relation between disjoint unions](comparison-rel.md)
 - [Preserves trace](preserves-trace.md)

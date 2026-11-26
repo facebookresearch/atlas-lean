@@ -643,8 +643,9 @@ theorem existsUnique_extensionComparison : ∃! e : K ≅ extend T F hF,
 local instance : NatTrans.IsMonoidal (Iso.refl (embedding T ⋙ K)).hom :=
   inferInstanceAs (NatTrans.IsMonoidal (𝟙 (embedding T ⋙ K)))
 
-/-- Any braided monoidal functor out of Int is the extension of its restriction, up to
-its canonical monoidal comparison. The source need not have duals. -/
+/-- Any braided monoidal functor out of Int into a right-rigid symmetric monoidal category is
+the extension of its restriction, up to its canonical monoidal comparison. The source need not
+have duals. -/
 def universalComparison : K ≅ extend T (embedding T ⋙ K)
     (SymmetricTrace.Preserves.comp (embedding_preserves_trace T)
       (SymmetricTrace.preserves_of_rigid K)) :=

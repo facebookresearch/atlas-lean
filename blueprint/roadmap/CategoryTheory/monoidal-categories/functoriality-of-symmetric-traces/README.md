@@ -6,8 +6,8 @@
 
 ## Symmetric Trace
 
-- [Preserves](preserves.md)
+- [Preservation of symmetric traces by a monoidal functor](preserves.md)
 - [Preserves id](preserves-id.md)
 - [Comp](comp.md)
-- [Map trace Of Pairing](map-trace-of-pairing.md)
+- [Monoidal functors preserve traces along exact pairings](map-trace-of-pairing.md)
 - [Preserves of rigid](preserves-of-rigid.md)

@@ -1,3 +1,5 @@
-# Trace Of Pairing naturality
+# Naturality of the trace along an exact pairing
 
-Given an exact pairing between `U` and `D`, morphisms `f : X ⊗ U ⟶ Y ⊗ U`, `g : X' ⟶ X` and `h : Y ⟶ Y'`, the trace along the pairing of `(g ⊗ 𝟙 U) ≫ f ≫ (h ⊗ 𝟙 U)` equals `g ≫ traceOfPairing D f ≫ h`.
+Let $C$ be a symmetric monoidal category with symmetry $\beta$. Let $D$ be a right dual of $U$ through an exact pairing, with coevaluation $\eta_{U,D} : \mathbf{1} \to U \otimes D$ and evaluation $\varepsilon_{U,D} : D \otimes U \to \mathbf{1}$, and write $\operatorname{tr}_D(f) : X \to Y$ for the [trace along this pairing](trace-of-pairing.md) of $f : X \otimes U \to Y \otimes U$. For $f : X \otimes U \to Y \otimes U$, $g : X' \to X$ and $h : Y \to Y'$,
+
+$$\operatorname{tr}_D((h \otimes 1_U) \circ f \circ (g \otimes 1_U)) = h \circ \operatorname{tr}_D(f) \circ g.$$

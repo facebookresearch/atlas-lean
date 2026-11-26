@@ -21,7 +21,7 @@
 - [Snd](snd.md)
 - [Pair](pair.md)
 - [Hom ext](hom-ext.md)
-- [Binary Product](binary-product.md)
+- [Disjoint union is a categorical product of relations](binary-product.md)
 - [Zero Is Terminal](zero-is-terminal.md)
 - [Zero Is Initial](zero-is-initial.md)
 - [Inl](inl.md)

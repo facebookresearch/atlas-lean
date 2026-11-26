@@ -1,3 +1,5 @@
-# Trace Of Pairing unit
+# Trace along the unit pairing
 
-For a morphism `f : X ⊗ 𝟙 ⟶ Y ⊗ 𝟙` in a monoidal category, its trace along the standard exact pairing of the unit with itself equals `(ρ_ X).inv ≫ f ≫ (ρ_ Y).hom`.
+Let $C$ be a symmetric monoidal category with symmetry $\beta$. The unit object $\mathbf{1}$ is a right dual of itself through the pairing with coevaluation $\rho_{\mathbf{1}}^{-1} : \mathbf{1} \to \mathbf{1} \otimes \mathbf{1}$ and evaluation $\rho_{\mathbf{1}} : \mathbf{1} \otimes \mathbf{1} \to \mathbf{1}$, where $\rho$ is the right unitor. For $f : X \otimes \mathbf{1} \to Y \otimes \mathbf{1}$, the [trace along this pairing](trace-of-pairing.md) is
+
+$$\operatorname{tr}_{\mathbf{1}}(f) = \rho_Y \circ f \circ \rho_X^{-1}.$$

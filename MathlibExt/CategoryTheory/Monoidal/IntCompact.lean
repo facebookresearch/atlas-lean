@@ -187,8 +187,7 @@ private theorem snake_neg (A : C) :
       dsimp only [l, r, L, R]
       monoidal
 
-/-- The embedded positive object pairs with the corresponding negative object.
-This is a named pairing, not a global instance competing with tensor pairings. -/
+/-- The embedded positive object pairs with the corresponding negative object. -/
 @[instance_reducible]
 def positivePairing (A : C) :
     ExactPairing (⟨A, 𝟙_ C⟩ : IntConstruction T) ⟨𝟙_ C, A⟩ where

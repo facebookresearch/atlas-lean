@@ -2,7 +2,7 @@
 
 - [Compose tensor left](compose-tensor-left.md)
 - [Compose tensor right](compose-tensor-right.md)
-- [Map Pair](map-pair.md)
+- [Separated morphisms of the Int construction](map-pair.md)
 - [Pair Iso](pair-iso.md)
 - [Tensor Object](tensor-object.md)
 - [Tensor Shuffle](tensor-shuffle.md)
