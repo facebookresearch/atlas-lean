@@ -12,7 +12,6 @@ The encoded bit at position $(z,r)$ is $\langle\hat f(z),r\rangle$ for the low-d
 
 ## Proof depends on
 
-- [Yao's XOR lemma: hardness amplification by XOR](../yao-s-xor-lemma/yao-xor-lemma.md)
 - [Average-case hardness in E derandomizes BPP](../derandomization/average-case-hardness-in-e-derandomizes-bpp.md)
 
 ## Sources

@@ -10,6 +10,8 @@ Replace the $d$ occurrences of a variable $x$ by fresh copies $x_1,\dots,x_d$ an
 
 - [The 3SAT decision problem](../../np-completeness/satisfiability/3-satisfiability/sat3-dec.md)
 - [Counting satisfying assignments of a CNF formula](../../counting-complexity/counting-satisfiability-sat/count-sat-fun.md)
+- [The exponents s_k of k-SAT and #k-SAT](../sat-exponents-and-hypotheses/k-sat-exponents.md)
+- [The Satisfiability Hypothesis (SH) and its counting version](../sat-exponents-and-hypotheses/satisfiability-hypothesis.md)
 
 ## Proof depends on
 

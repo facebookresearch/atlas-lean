@@ -10,7 +10,7 @@ in particular at least $(3/4)^{n}/(3n+1)$ for $k=3$. Repeating $O\bigl((2(k-1)/k
 
 ## Proof sketch
 
-The Hamming distance to a fixed solution decreases with probability $\ge 1/k$ at each step, so it dominates a biased random walk. Starting at distance $d$, considering walks that take $j = \lfloor d/(k-2) \rfloor$ steps away from the solution and $d + j$ steps toward it gives success probability at least $(k-1)^{-d}$ up to a polynomial factor (with the ballot bound yielding $\binom{3d}{d}\frac{1}{3d+1}(1/3)^{2d}(2/3)^{d}\ge\frac{1}{3d+1}2^{-d}$ for $k=3$), and averaging over the binomially distributed $d$ gives the bound.
+The Hamming distance to a fixed solution decreases with probability $\ge 1/k$ at each step, so it dominates a biased random walk. Starting at distance $d$, considering walks that take $j = \lfloor d/(k-2) \rfloor$ steps away from the solution and $d + j$ steps toward it gives success probability at least $(k-1)^{-d}$ up to a polynomial factor (for $k=3$, the probability $\binom{3d}{d}(1/3)^{2d}(2/3)^{d} = 2^{-d}\binom{3d}{d}(1/3)^{d}(2/3)^{2d} \ge \frac{1}{3d+1}2^{-d}$ since the mode of $\mathrm{Bin}(3d, 1/3)$ has probability at least $\frac{1}{3d+1}$), and averaging over the binomially distributed $d$ gives the bound.
 
 ## Depends on
 

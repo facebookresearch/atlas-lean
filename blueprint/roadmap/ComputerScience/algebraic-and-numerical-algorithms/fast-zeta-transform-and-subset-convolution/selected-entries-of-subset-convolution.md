@@ -1,12 +1,12 @@
 # Selected entries of ranked subset convolution
 
-Let $f$ and $g$ be integer-valued set functions on $2^{[d]}$, given sparsely, with $f$ supported on sets of size $t_1$ and $g$ on sets of size $t_2$, and let $\mathcal{C}$ be a list of query sets each of size $t_1 + t_2$. Fix $s \le t_1 + t_2$. Then the values $(f \ast g)(C)$ for all $C \in \mathcal{C}$ can be computed on the word RAM with at most
+Let $f$ and $g$ be integer-valued set functions on $2^{[d]}$, given sparsely with $n$ nonzero entries in total and both supported on sets of size $t$, and let $\mathcal{C}$ be a list of query sets each of size $2t$. Fix $0 \le s \le 2t$. Then the values $(f \ast g)(C)$ for all $C \in \mathcal{C}$ can be computed on the word RAM in time
 
 $$
-200\,(d+1)^2\Big(\mathrm{low}(d, s) + |\mathcal{C}| \cdot \mathrm{high}(t_1 + t_2, s)\Big)
+\Bigl(n + \binom{d}{\le s} + |\mathcal{C}|\,\binom{2t}{\ge s}\Bigr)\,d^{O(1)},
 $$
 
-instructions, where $\mathrm{low}(d, s) = \sum_{i < s}\binom{d}{i}$ counts the sets of size below $s$ and $\mathrm{high}(r, s) = \sum_{i \le r - s}\binom{r}{i}$ counts the subsets of a query set needed above the threshold (Chan-Itakura-Ma-Yu, Theorem 2.2, with $t_1 = t_2 = t$).
+where $\binom{d}{\le s} = \sum_{i \le s}\binom{d}{i}$ counts the subsets of $[d]$ of size at most $s$ and $\binom{2t}{\ge s} = \sum_{i \ge s}\binom{2t}{i}$ counts the subsets of a query set of size at least $s$ (Chan, Itakura, Ma and Yu, Problem 2.1 and Theorem 2.2).
 
 ## Proof sketch
 
@@ -24,6 +24,6 @@ Precompute ranked zeta transforms of both inputs and the Möbius stage tables on
 
 ## Sources
 
-- T. M. Chan, R. Itakura, Z. Ma and Y. Yu, "3SUM Made Simpler (Without Matrix Multiplication), k-SUM Hypothesis Refuted for Odd k, and Real 3SUM/APSP", 2026.
+- T. M. Chan, R. Itakura, Z. Ma and Y. Yu, "3SUM Made Simpler (Without Matrix Multiplication), k-SUM Hypothesis Refuted for Odd k, and Real 3SUM/APSP Derandomized", arXiv:2610.42012v1, 2026, Problem 2.1 and Theorem 2.2.
 - A. Björklund, T. Husfeldt, P. Kaski and M. Koivisto, "Trimmed Moebius Inversion and Graphs of Bounded Degree", Theory of Computing Systems 47(3), 2010.
 - A. Björklund, T. Husfeldt, P. Kaski and M. Koivisto, "Fourier Meets Möbius: Fast Subset Convolution", Proceedings of the 39th ACM Symposium on Theory of Computing (STOC), 2007.

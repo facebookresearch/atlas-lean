@@ -9,6 +9,7 @@ Vertices for the vectors of each side, for the coordinates, and two hub vertices
 ## Depends on
 
 - [The 3SUM, APSP and Orthogonal Vectors hypotheses](../fine-grained-hypotheses/the-3sum-apsp-and-orthogonal-vectors-hypotheses.md)
+- [The exponents s_k of k-SAT and #k-SAT](../sat-exponents-and-hypotheses/k-sat-exponents.md)
 
 ## Proof depends on
 
