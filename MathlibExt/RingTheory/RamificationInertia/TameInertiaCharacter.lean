@@ -35,6 +35,22 @@ public import Mathlib.RingTheory.Ideal.Quotient.Operations
 
 import Mathlib.RingTheory.IntegralDomain
 
+/-!
+# The tame character of an inertia group
+
+Let a group `G` act on a commutative ring `B`, let `𝔓` be a maximal ideal of `B` with finite
+residue field, and let `ϖ ∈ 𝔓` generate `𝔓` modulo `𝔓 ^ 2` with `c * ϖ ∈ 𝔓 ^ 2` only for
+`c ∈ 𝔓`. The coefficient `t` in `σ • ϖ ≡ ϖ * t` modulo `𝔓 ^ 2` is then a unit modulo `𝔓` for
+every `σ` in the inertia group of `𝔓`, and it is multiplicative in `σ`.
+
+## Main results
+
+* `Ideal.exists_monoidHom_inertia_residueFieldUnits_ker_iff_of_uniformizer`: there is a
+  homomorphism `θ` from the inertia group of `𝔓` to `(B ⧸ 𝔓)ˣ` such that `θ σ` is the residue
+  class of `t` exactly when `σ • ϖ ≡ ϖ * t` modulo `𝔓 ^ 2`, `θ σ = 1` exactly when `σ` acts
+  trivially modulo `𝔓 ^ 2` on all of `B`, and the range of `θ` is cyclic.
+-/
+
 @[expose] public section
 
 namespace Ideal
@@ -62,7 +78,7 @@ private theorem smul_mem_sq_of_mem_inertia (𝔓 : Ideal B) {σ : G}
   exact h2 (Ideal.mem_map_of_mem f hz)
 
 private theorem pow_sub_pow_mem_sq (𝔓 : Ideal B) {a b : B} (hab : a - b ∈ 𝔓)
-    {N : ℕ} (hN : (N : B) ∈ 𝔓) (hN0 : N ≠ 0) :
+    {N : ℕ} (hN : (N : B) ∈ 𝔓) :
     a ^ N - b ^ N ∈ 𝔓 ^ 2 := by
   set m := a - b with hm
   have ha : a = b + m := by rw [hm]; ring
@@ -89,13 +105,12 @@ private theorem smul_sub_mem_sq_of_mem_inertia (𝔓 : Ideal B) [𝔓.IsMaximal]
     {σ : G} (hσ : σ ∈ 𝔓.inertia G) (hσϖ : σ • ϖ - ϖ ∈ 𝔓 ^ 2) (x : B) :
     σ • x - x ∈ 𝔓 ^ 2 := by
   classical
-  letI : Field (B ⧸ 𝔓) := Ideal.Quotient.field 𝔓
-  letI : Fintype (B ⧸ 𝔓) := Fintype.ofFinite _
+  let : Field (B ⧸ 𝔓) := Ideal.Quotient.field 𝔓
+  let : Fintype (B ⧸ 𝔓) := Fintype.ofFinite _
   set N := Fintype.card (B ⧸ 𝔓) with hNdef
   have hN : (N : B) ∈ 𝔓 := by
     rw [← Ideal.Quotient.eq_zero_iff_mem, map_natCast, hNdef]
     exact Nat.cast_card_eq_zero (B ⧸ 𝔓)
-  have hN0 : N ≠ 0 := Fintype.card_ne_zero
   have hF : x ^ N - x ∈ 𝔓 := by
     rw [← Ideal.Quotient.eq_zero_iff_mem, map_sub, map_pow, hNdef,
       FiniteField.pow_card, sub_self]
@@ -104,7 +119,7 @@ private theorem smul_sub_mem_sq_of_mem_inertia (𝔓 : Ideal B) [𝔓.IsMaximal]
   have hx : x = x ^ N + ϖ * y + e := by rw [he]; ring
   have h1 : σ • (x ^ N) - x ^ N ∈ 𝔓 ^ 2 := by
     rw [smul_pow']
-    exact pow_sub_pow_mem_sq 𝔓 (hσ x) hN hN0
+    exact pow_sub_pow_mem_sq 𝔓 (hσ x) hN
   have h2 : σ • (ϖ * y) - ϖ * y ∈ 𝔓 ^ 2 := by
     have hdecomp : σ • (ϖ * y) - ϖ * y
         = (σ • ϖ - ϖ) * (σ • y) + ϖ * (σ • y - y) := by
@@ -124,6 +139,7 @@ private theorem smul_sub_mem_sq_of_mem_inertia (𝔓 : Ideal B) [𝔓.IsMaximal]
 
 variable (𝔓 : Ideal B) [𝔓.IsMaximal] {ϖ : B}
 
+omit [𝔓.IsMaximal] in
 private theorem exists_tameCoeff (hϖP : ϖ ∈ 𝔓)
     (hgen : ∀ x ∈ 𝔓, ∃ y : B, x - ϖ * y ∈ 𝔓 ^ 2) {σ : G}
     (hσ : σ ∈ 𝔓.inertia G) : ∃ t : B, σ • ϖ - ϖ * t ∈ 𝔓 ^ 2 :=
@@ -134,12 +150,14 @@ private noncomputable def tameCoeff (hϖP : ϖ ∈ 𝔓)
     (hσ : σ ∈ 𝔓.inertia G) : B :=
   (exists_tameCoeff 𝔓 hϖP hgen hσ).choose
 
+omit [𝔓.IsMaximal] in
 private theorem tameCoeff_spec (hϖP : ϖ ∈ 𝔓)
     (hgen : ∀ x ∈ 𝔓, ∃ y : B, x - ϖ * y ∈ 𝔓 ^ 2) {σ : G}
     (hσ : σ ∈ 𝔓.inertia G) :
     σ • ϖ - ϖ * tameCoeff 𝔓 hϖP hgen hσ ∈ 𝔓 ^ 2 :=
   (exists_tameCoeff 𝔓 hϖP hgen hσ).choose_spec
 
+omit [𝔓.IsMaximal] in
 private theorem tameCoeff_unique
     (hreg : ∀ c : B, c * ϖ ∈ 𝔓 ^ 2 → c ∈ 𝔓) {z t t' : B}
     (ht : z - ϖ * t ∈ 𝔓 ^ 2) (ht' : z - ϖ * t' ∈ 𝔓 ^ 2) : t - t' ∈ 𝔓 := by
@@ -260,7 +278,7 @@ private theorem tameChar_eq_one_iff_forall [Finite (B ⧸ 𝔓)]
 
 private theorem isCyclic_range_tameChar [Finite (B ⧸ 𝔓)] :
     IsCyclic (tameChar (G := G) 𝔓 hϖP hgen hreg).range := by
-  letI : Field (B ⧸ 𝔓) := Ideal.Quotient.field 𝔓
+  let : Field (B ⧸ 𝔓) := Ideal.Quotient.field 𝔓
   exact isCyclic_of_injective_ringHom
     ((Units.coeHom (B ⧸ 𝔓)).comp (tameChar (G := G) 𝔓 hϖP hgen hreg).range.subtype)
     (Units.val_injective.comp Subtype.val_injective)
