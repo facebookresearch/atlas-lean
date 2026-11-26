@@ -33,13 +33,6 @@ namespace MathlibExt.Combinatorics.Coding.CycleShannonBoundsWanted
 
 open MathlibExt.Combinatorics.Coding.CycleGraphCode
 
-/-- **Shannon's upper bound for the capacity of the 7-cycle.** The Shannon capacity of the
-$7$-cycle is at most $7/2$.
-
-Source: Shannon (1956), the fractional-clique-cover upper bound. -/
-theorem_wanted shannon1956UpperBound :
-  shannonCapacityCycle 7 ≤ (7 : ENNReal) / 2
-
 /-- **Lovász's theta value for the 7-cycle.** This is the real number
 $\frac{7 \cos(\pi/7)}{1 + \cos(\pi/7)}$, Lovász's closed form for the theta number of the
 $7$-cycle, viewed as an element of $[0, \infty]$.

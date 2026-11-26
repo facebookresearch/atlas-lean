@@ -18,8 +18,11 @@ many trailing zeros, and a differentiable increasing interpolation `f` with `⌊
 Theorem 2 would make `0.h₂(1)h₂(2)…` normal; the paper shows it is not. Normality uses
 `MetaMathlibExt.NormalNumber.IsNormalInBase`.
 
-The definitions and the proved statements are in
-`MathlibExt.NumberTheory.Digits.SzuszVolkmannCounterexample`, which this module imports.
+The definitions and the other proved statements are in
+`MathlibExt.NumberTheory.Digits.SzuszVolkmannCounterexample`, which this module imports;
+`MetaMathlibExt.tendsto_log_campbellF_div_log` is proved in
+`MathlibExt.NumberTheory.Digits.SzuszVolkmannCounterexampleTendstoLogCampbellFDivLog`, which this
+module also imports.
 -/
 module
 
@@ -27,6 +30,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import MathlibExt.NumberTheory.Digits.SzuszVolkmannCounterexample
 public import MathlibExt.NumberTheory.NormalNumber
+public import MathlibExt.NumberTheory.Digits.SzuszVolkmannCounterexampleTendstoLogCampbellFDivLog
 
 namespace MetaMathlibExt
 
@@ -58,16 +62,6 @@ Source: John M. Campbell, *A Counterexample to a Purported Construction of Norma
 Journal of Integer Sequences 29 (2026), Article 26.3.4, Lemma 4
 (`jis-2026-26.3.4-lem-4`). -/
 public theorem_wanted campbellF_differentiableOn : DifferentiableOn ℝ campbellF (Set.Ioi 0)
-
-/-- **Growth exponent of Campbell's interpolation.** For Campbell's interpolation $f$,
-$\log f(x) / \log x \to 2$ as $x \to \infty$ over the reals; that is, $\eta(f) = 2$, where
-$\eta(h) = \lim_{x \to \infty} \log h(x) / \log x$.
-
-Source: John M. Campbell, *A Counterexample to a Purported Construction of Normal Numbers*,
-Journal of Integer Sequences 29 (2026), Article 26.3.4, Lemma 6
-(`jis-2026-26.3.4-lem-6`). -/
-public theorem_wanted tendsto_log_campbellF_div_log :
-    Filter.Tendsto (fun x => Real.log (campbellF x) / Real.log x) Filter.atTop (nhds 2)
 
 /-- **Growth exponent of the derivative of Campbell's interpolation.** For Campbell's
 interpolation $f$, $\log f'(x) / \log x \to 1$ as $x \to \infty$ over the reals; that is,
