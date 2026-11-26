@@ -37,16 +37,28 @@ private lemma ten_thirds_parts :
   norm_num [primeToPNum, basePDelay, padicValRat_def, padicValInt, Nat.padicValNat_def,
     hnum, hden, h10, h3]
 
-example : ⌊(10 / 3 : ℚ) * (5 : ℚ) ^ (-1 : ℤ)⌋ ≡
-    ⌊(10 / 3 : ℚ) * (5 : ℚ) ^ (-1 + basePPeriod 5 (10 / 3) : ℤ)⌋ [ZMOD 2] := by
+private lemma ten_thirds_period : basePPeriod 5 (10 / 3) = 2 := by
+  have hden : primeToPDen 5 (10 / 3) = 3 := by
+    have hd : (10 / 3 : ℚ).den = 3 := by
+      have hd : ((10 / 3 : ℚ).den : ℤ) = 3 :=
+        Rat.den_div_eq_of_coprime (by norm_num) (by decide)
+      omega
+    have h3 : multiplicity (5 : ℕ) 3 = 0 := multiplicity_eq_zero_of_not_dvd (by norm_num)
+    norm_num [primeToPDen, Nat.padicValNat_def, hd, h3]
+  unfold basePPeriod
+  rw [hden]
+  exact orderOf_eq_prime (by decide) (by decide)
+
+-- At `n = -1`, with period `2`, the floors are `0` and `16`, congruent modulo `2`.
+example : ⌊(10 / 3 : ℚ) * (5 : ℚ) ^ (-1 : ℤ)⌋ ≡ ⌊(10 / 3 : ℚ) * (5 : ℚ) ^ (1 : ℤ)⌋ [ZMOD 2] := by
   have h := (floor_mul_pow_modEq 5 (by norm_num : (0 : ℚ) < 10 / 3)).1 (-1) ?_
-  · simpa [ten_thirds_parts.1] using h
+  · simpa [ten_thirds_parts.1, ten_thirds_period] using h
   · norm_num [ten_thirds_parts.2]
 
-example : ⌊(10 / 3 : ℚ) * (5 : ℚ) ^ (0 : ℤ)⌋ ≡
-    ⌊(10 / 3 : ℚ) * (5 : ℚ) ^ (basePPeriod 5 (10 / 3) : ℤ)⌋ [ZMOD 5] := by
+-- At `n = 0`, with period `2`, the floors are `3` and `83`, congruent modulo `5`.
+example : ⌊(10 / 3 : ℚ) * (5 : ℚ) ^ (0 : ℤ)⌋ ≡ ⌊(10 / 3 : ℚ) * (5 : ℚ) ^ (2 : ℤ)⌋ [ZMOD 5] := by
   have h := (floor_mul_pow_modEq 5 (by norm_num : (0 : ℚ) < 10 / 3)).2 0 ?_
-  · simpa using h
+  · simpa [ten_thirds_period] using h
   · norm_num [ten_thirds_parts.2]
 
 end MathlibExtTest.NumberTheory.HigherANumbersPeriodicSumFloorMulPowModEq
