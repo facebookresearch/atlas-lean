@@ -18,11 +18,7 @@ $$w_i^{\mathrm{URI}} = \frac{1}{n_c} + \frac{n}{n_t}(X_i-\bar X_c)^\top (S_t+S_c
 
 and the weights sum to one within each group: $\sum_{i:Z_i=1} w_i^{\mathrm{URI}} = \sum_{i:Z_i=0} w_i^{\mathrm{URI}} = 1$.
 
-So the regression coefficient is a difference of Hájek (self-normalized) weighted means, and the weights depend on $(Z_i, X_i)$ only, never on the outcomes. They are uniform exactly when $\bar X_t = \bar X_c$, and they may be negative. The paper also notes $w_i^{\mathrm{URI}} = w_i^{\mathrm{MRI}}(x^*)$ with $x^* = S_c(S_t+S_c)^{-1}\bar X_t + S_t(S_t+S_c)^{-1}\bar X_c$, where $w^{\mathrm{MRI}}$ are the [two-regression implied weights](multiregression-implied-weights.md).
-
-## Depends on
-
-- [Implied weights of two-regression imputation](multiregression-implied-weights.md)
+So the regression coefficient is a difference of Hájek (self-normalized) weighted means, and the weights depend on $(Z_i, X_i)$ only, never on the outcomes. They are uniform exactly when $\bar X_t = \bar X_c$, and they may be negative. The paper also notes $w_i^{\mathrm{URI}} = w_i^{\mathrm{MRI}}(x^*)$ with $x^* = S_c(S_t+S_c)^{-1}\bar X_t + S_t(S_t+S_c)^{-1}\bar X_c$, where $w^{\mathrm{MRI}}$ are the two-regression implied weights.
 
 ## Expansion
 
