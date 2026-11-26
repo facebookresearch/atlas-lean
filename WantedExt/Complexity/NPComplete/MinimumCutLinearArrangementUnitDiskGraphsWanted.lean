@@ -97,8 +97,9 @@ def WellFormed (i : MinimumCutLinearArrangementUnitDiskGraphsInstance) : Prop :=
     MinimumCutLinearArrangement.WellFormed (toMinimumCutLinearArrangement i) ∧
     Cslib.Complexity.Karp.edgeGraph i.1.length i.2.1 = unitDiskGraph i.1
 
-/-- The cutwidth of the graph is at most `K` (the MINIMUM CUT LINEAR ARRANGEMENT question on
-`(|P|, E, K)`). -/
+/-- The MINIMUM CUT LINEAR ARRANGEMENT question on `(|P|, E, K)` for the supplied edge list
+`E`, which counts its entries; for a well-formed instance, `E` is the simple edge list of the unit
+disk graph and this says its cutwidth is at most `K`. -/
 def MinimumCutLinearArrangementUnitDiskGraphsFeasible
     (i : MinimumCutLinearArrangementUnitDiskGraphsInstance) : Prop :=
   MinimumCutLinearArrangementFeasible (toMinimumCutLinearArrangement i)

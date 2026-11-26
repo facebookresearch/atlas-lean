@@ -78,14 +78,14 @@ reduction from every language in `NP`
 /-- An instance: the list of cells `(a, b)` of the figure and the bound `k`. -/
 abbrev MinimumEdgeLengthRectangularPartitioningInstance := List (ℕ × ℕ) × ℕ
 
-/-- No two cells of `P` meet only at a corner: whenever two diagonally opposite cells of a `2 × 2`
-block are in `P`, so is one of the other two. -/
+/-- No `2 × 2` block contains exactly two cells of `P` on opposite corners: whenever two
+diagonally opposite cells of a `2 × 2` block are in `P`, so is one of the other two. -/
 def NoCornerContact (P : List (ℕ × ℕ)) : Prop :=
   ∀ a b : ℕ, ((a, b) ∈ P ∧ (a + 1, b + 1) ∈ P → (a + 1, b) ∈ P ∨ (a, b + 1) ∈ P) ∧
     ((a + 1, b) ∈ P ∧ (a, b + 1) ∈ P → (a, b) ∈ P ∨ (a + 1, b + 1) ∈ P)
 
 /-- Well-formedness of an instance: no cell is listed twice, and the cells form the region of a
-rectilinear figure (no two cells meet only at a corner). -/
+rectilinear figure (no `2 × 2` block contains exactly two cells, on opposite corners). -/
 def WellFormed (i : MinimumEdgeLengthRectangularPartitioningInstance) : Prop :=
   i.1.Nodup ∧ NoCornerContact i.1
 

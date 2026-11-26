@@ -96,9 +96,11 @@ def WellFormed (i : MostProbableExplanationInstance) : Prop :=
     (i.2.2.1.map Prod.fst).Nodup ∧ (∀ e ∈ i.2.2.1, e.1 < i.2.1.length ∧ e.2 < i.1) ∧
     0 < i.2.2.2.2
 
-/-- The network `b` has the parents and tables listed in the instance: node `k`'s parents are
-the listed ones, and for every listed row `(u, θ)` and every instantiation `y` of the parents
-that agrees with `u`, the distribution of node `k` given `y` is `θ`. -/
+/-- The network `b` agrees with the parents and tables listed in the instance: for every
+`j < k`, `j` is a parent of node `k` exactly when it is listed, and for every listed row
+`(u, θ)` and every instantiation `y` of the parents that agrees with `u`, the distribution of
+node `k` given `y` is `θ`. Listed indices `≥ k` and unlisted rows impose nothing, so the
+network is determined only for well-formed input. -/
 def Encodes (i : MostProbableExplanationInstance) (b : BayesNet (Fin i.1) i.2.1.length) :
     Prop :=
   ∀ k : Fin i.2.1.length,
@@ -112,9 +114,10 @@ def Encodes (i : MostProbableExplanationInstance) (b : BayesNet (Fin i.1) i.2.1.
 noncomputable def threshold (i : MostProbableExplanationInstance) : ℝ :=
   ((i.2.2.2.1.1 : ℝ) - i.2.2.2.1.2) / i.2.2.2.2
 
-/-- D-MPE: for the network `b` of the instance, some instantiation `x` of all the variables
-has `Pr(x, e) > p`, where `Pr(x, e)` is `Pr(x)` if `x` agrees with the evidence and `0`
-otherwise. -/
+/-- D-MPE: the domain is nonempty and some network `b` that `Encodes` the instance has an
+instantiation `x` of all the variables with `Pr(x, e) > p`, where `Pr(x, e)` is `Pr(x)` if `x`
+agrees with the evidence and `0` otherwise. For well-formed input, `b` is the network of the
+instance. -/
 def MostProbableExplanationFeasible (i : MostProbableExplanationInstance) : Prop :=
   ∃ _ : Nonempty (Fin i.1), ∃ b : BayesNet (Fin i.1) i.2.1.length, Encodes i b ∧
     ∃ x : Fin i.2.1.length → Fin i.1,

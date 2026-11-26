@@ -67,12 +67,13 @@ abbrev MaxCardinalitySMTIInstance :=
 def Acceptable (L : List (List ℕ)) (p : ℕ) : Prop :=
   ∃ t ∈ L, p ∈ t
 
-/-- The position of the tie containing `p` on the list `L` (`L.length` if `p` is not on it). -/
+/-- The position of the first tie containing `p` on the list `L` (`L.length` if `p` is not on
+it). -/
 def tieIndex (L : List (List ℕ)) (p : ℕ) : ℕ :=
   L.findIdx fun t => p ∈ t
 
-/-- The owner of the list `L` strictly prefers `p` to `p'`: `p` is on `L`, in an earlier tie
-than `p'`. -/
+/-- The owner of the list `L` strictly prefers `p` to `p'`: `p` is on `L`, and either `p'` is
+not on `L` or the first tie containing `p'` comes after the first tie containing `p`. -/
 def StrictlyPrefers (L : List (List ℕ)) (p p' : ℕ) : Prop :=
   Acceptable L p ∧ tieIndex L p < tieIndex L p'
 

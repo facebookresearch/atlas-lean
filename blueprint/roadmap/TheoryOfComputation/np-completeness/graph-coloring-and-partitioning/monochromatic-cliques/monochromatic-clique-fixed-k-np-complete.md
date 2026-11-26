@@ -1,4 +1,4 @@
-# MONOCHROMATIC K_k is NP-complete
+# MONOCHROMATIC K_k is NP-complete for every fixed k ≥ 4
 
 For every natural number $k$ with $4 \le k$, the decision problem MONOCHROMATIC K_k with that
 parameter is NP-complete: it belongs to NP, and every decision problem in NP has a
