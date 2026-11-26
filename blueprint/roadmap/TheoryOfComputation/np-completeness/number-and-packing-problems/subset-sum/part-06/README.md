@@ -1,5 +1,7 @@
 # The summing loop of the SUBSET-SUM verifier to Binary addition of framed numbers in quadratic time
 
+- [Count pick](count-pick.md)
+- [Ss Check encode](ss-check-encode.md)
 - [The summing loop of the SUBSET-SUM verifier](loop-run.md)
 - [Cubic bound on the verifier's phase costs](cost-le.md)
 - [The SUBSET-SUM verifier machine](run.md)

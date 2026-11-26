@@ -10,10 +10,10 @@ module
 
 public import CSLibExt.Computability.Complexity.Karp.Partition
 public import CSLibExt.Computability.Complexity.Defs
-import CSLibExt.Computability.Complexity.Karp.CardinalitySubsetSum
 import CSLibExt.Computability.Complexity.Karp.PartitionComplete
 import CSLibExt.Computability.Complexity.BoolClosure
 import CSLibExt.Computability.Complexity.PairProjection
+import CSLibExt.Computability.Complexity.PolynomialEncoding.StreamScan
 import MathlibExt.Computability.TuringMachine.Recursive.OfTM2
 
 /-!
@@ -37,6 +37,15 @@ NP-completeness is stated in the same form as the proved results in
 `MetaMathlibExt.ComplexityTheory.NP`, plus a polynomial-time many-one
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
+
+Source:
+M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
+Theory of NP-Completeness*, W. H. Freeman (1979), problem [SP12] PARTITION, comment ("Remains
+NP-complete even if we require that `|A'| = |A|/2`, or if the elements in `A` are ordered as
+`a₁, a₂, ..., a₂ₙ` and we require that `A'` contain exactly one of `a₂ᵢ₋₁, a₂ᵢ` for
+`1 ≤ i ≤ n`"); the entry's reference is "[Karp, 1972]. Transformation from 3DM (see
+Section 3.1.5)"; R. M. Karp, "Reducibility among combinatorial problems", in *Complexity of
+Computer Computations*, Plenum Press (1972), 85-103, doi:10.1007/978-1-4684-2001-2_9.
 -/
 
 /-
@@ -72,37 +81,10 @@ noncomputable def equalCardinalityPartitionDec :
 
 open BitstringEncoding ComplexityTheory Computability
 open Cslib.Complexity Cslib.Complexity.Karp Cslib.Complexity.PolynomialEncoding
-open CardinalitySubsetSum (scan polyScan polyAppend polyCombinePair count_pick ssCheck_encode
-  listRejectSuffix polyListRejectSuffix)
+open Cslib.Complexity.PolynomialEncoding.StreamScan
+open SSVerify (count_pick ssCheck_encode)
 
 private abbrev Bits := List Bool
-
--- No open frame, awaiting a marker in a nonempty frame, or awaiting a payload bit.
-private def blockStep (first : Bits) (payload : Bool → Bits) (close : Bool → Bits) :
-    Option Bool → Bool → Option Bool × Bits
-  | none, false => (none, close true)
-  | none, true => (some true, first)
-  | some false, false => (none, close false)
-  | some false, true => (some true, [])
-  | some true, b => (some false, payload b)
-
-private def scanBlocks (first : Bits) (payload : Bool → Bits) (close : Bool → Bits) : Bits → Bits :=
-  scan (blockStep first payload close) (fun _ => []) none
-
-private theorem scanBlocks_block (first : Bits) (payload : Bool → Bits) (close : Bool → Bits)
-    (p r : Bits) :
-    scanBlocks first payload close (delimit p ++ r) =
-      (if p.isEmpty then [] else first) ++ p.flatMap payload ++ close p.isEmpty ++
-        scanBlocks first payload close r := by
-  have inside (q : Bits) :
-      scan (blockStep first payload close) (fun _ => []) (some false) (delimit q ++ r) =
-        q.flatMap payload ++ close false ++ scanBlocks first payload close r := by
-    induction q with
-    | nil => simp [scan, blockStep, delimit, scanBlocks]
-    | cons b q ih => simp [scan, blockStep, delimit, ih, List.append_assoc]
-  cases p with
-  | nil => simp [scanBlocks, scan, blockStep, delimit]
-  | cons b p => simp [scanBlocks, scan, blockStep, delimit, inside, List.append_assoc]
 
 private abbrev frames (ps : List Bits) : Bits := (ps.map delimit).flatten
 
@@ -113,42 +95,39 @@ private theorem frames_append (ps qs : List Bits) :
     frames (ps ++ qs) = frames ps ++ frames qs := by
   simp only [frames, List.map_append, List.flatten_append]
 
-private theorem scanBlocks_noPayload (close : Bool → Bits) (p r : Bits) :
-    scanBlocks [] (fun _ => []) close (delimit p ++ r) =
-      close p.isEmpty ++ scanBlocks [] (fun _ => []) close r := by
+private theorem blocks_noPayload (close : Option Bool → Bits) (p r : Bits) :
+    blocks [] (fun _ => []) close (delimit p ++ r) =
+      close p.getLast? ++ blocks [] (fun _ => []) close r := by
   have hp : p.flatMap (fun _ => ([] : Bits)) = [] := by
     induction p with
     | nil => rfl
     | cons _ _ ih => simp [ih]
-  simp [scanBlocks_block, hp]
+  simp [blocks_frame, hp]
 
 private theorem encode_list (as : List ℕ) : bitEncode as = frames (as.map encodeNat) := rfl
 
 /-! ### Membership: the two tests use the same mask -/
 
-private def ones : Bits → Bits := scanBlocks [] (fun _ => []) (fun _ => delimit (encodeNat 1))
+private abbrev ones : Bits → Bits := marks (delimit (encodeNat 1))
 
 private theorem ones_frames (ps : List Bits) :
     ones (frames ps) = bitEncode (List.replicate ps.length (1 : ℕ)) := by
-  induction ps with
-  | nil => rfl
-  | cons p ps ih =>
-    simp only [ones, encode_list] at ih
-    simp only [ones, frames_cons, scanBlocks_noPayload, ih, encode_list, List.length_cons,
-      List.replicate_succ, List.map_cons]
+  unfold frames ones
+  rw [marks_frames, encode_list]
+  simp only [frames, List.map_replicate]
 
 private def emptyMarks : Bits → Bits :=
-  scanBlocks [] (fun _ => []) (fun empty => if empty then [true] else [])
+  blocks [] (fun _ => []) (fun last => if last.isNone then [true] else [])
 
 private def positive (x : Bits) : Bool := !(emptyMarks x).headD false
 
 private theorem positive_frames (ps : List Bits) :
     positive (frames ps) = true ↔ ∀ p ∈ ps, p ≠ [] := by
   induction ps with
-  | nil => change true = true ↔ ∀ p ∈ ([] : List Bits), p ≠ []; simp
+  | nil => simp [positive, emptyMarks, frames]
   | cons p ps ih =>
     unfold positive emptyMarks at ih ⊢
-    rw [frames_cons, scanBlocks_noPayload]
+    rw [frames_cons, blocks_noPayload]
     cases p <;> simp_all
 
 private theorem decodeNat_pos_iff (p : Bits) : 0 < decodeNat p ↔ p ≠ [] := by
@@ -175,10 +154,10 @@ private def verify (q : Bits × Bits) : Bool :=
     SSVerify.ssCheck (Partition.reduceToSubsetSum (ones q.1)) q.2
 
 private theorem polyVerify : IsPolyTime verify := by
-  have hmarks : IsPolyTime emptyMarks := polyScan _ _ _
+  have hmarks : IsPolyTime emptyMarks := polyBlocks _ _ _
   have hp : IsPolyTime positive := hmarks.comp
     (isPolyTime_dup.comp (isPolyTime_heads (fun b _ => !b)))
-  have ho : IsPolyTime ones := polyScan _ _ _
+  have ho : IsPolyTime ones := polyBlocks _ _ _
   have hr := Partition.MembershipMachine.isPolyTime_reduceToSubsetSum
   exact polyCombinePair
     (polyCombinePair (isPolyTime_fst.comp hp) (hr.map_fst.comp isPolyTime_ssCheck))
@@ -259,8 +238,7 @@ private theorem feasible_pad (as : List ℕ) :
       simp only [pad, List.length_append, List.length_map, List.length_replicate, List.sum_append,
         List.sum_replicate, smul_eq_mul, mul_one, sum_shift] <;> omega
 
-private def shiftRaw : Bits → Bits := scanBlocks [true, true] (fun b => [true, b])
-  (fun empty => if empty then [true, true, false] else [false])
+private def shiftRaw : Bits → Bits := blocks [true, true] (fun b => [true, b]) (fun _ => [false])
 
 private theorem encode_shift (a : ℕ) : encodeNat (shift a) = true :: encodeNat a := by
   rw [TM2Recursive.encodeNat_eq_cons (by simp [shift] : shift a ≠ 0)]
@@ -271,13 +249,13 @@ private theorem encode_shift (a : ℕ) : encodeNat (shift a) = true :: encodeNat
 private theorem shiftRaw_frame (p r : Bits) :
     shiftRaw (delimit p ++ r) = delimit (true :: p) ++ shiftRaw r := by
   unfold shiftRaw
-  rw [scanBlocks_block, DenseSAT.Converter.delimit_eq]
-  cases p <;> simp [List.append_assoc]
+  rw [blocks_frame, DenseSAT.Converter.delimit_eq]
+  simp [List.append_assoc]
 
 private theorem shiftRaw_frames (ps : List Bits) :
     shiftRaw (frames ps) = frames (ps.map (true :: ·)) := by
   induction ps with
-  | nil => rfl
+  | nil => simp [shiftRaw, frames]
   | cons p ps ih => rw [frames_cons, shiftRaw_frame, ih, List.map_cons, frames_cons]
 
 private theorem decode_shift (p : Bits) : decodeNat (true :: p) = shift (decodeNat p) := by
@@ -317,7 +295,7 @@ private theorem decode_append_true (x : Bits) : bitDecode (α := List ℕ) (x ++
 private def padRaw (x : Bits) : Bits := shiftRaw x ++ ones x ++ listRejectSuffix x
 
 private theorem polyPadRaw : IsPolyTime padRaw :=
-  polyAppend (polyAppend (polyScan _ _ _) (polyScan _ _ _)) polyListRejectSuffix
+  polyAppend (polyAppend (polyBlocks _ _ _) (polyBlocks _ _ _)) polyListRejectSuffix
 
 private theorem pad_correct (x : Bits) :
     Partition.partitionDec x = equalCardinalityPartitionDec (padRaw x) := by

@@ -1431,6 +1431,7 @@
   "CSLibExt/Computability/Complexity/PathInP": {"to": "TheoryOfComputation/polynomial-time-problems", "title": "Graph reachability"},
   "CSLibExt/Computability/Complexity/PathMachine": {"to": "TheoryOfComputation/polynomial-time-problems", "title": "Graph reachability"},
   "CSLibExt/Computability/Complexity/PolynomialEncoding": {"to": "TheoryOfComputation/np-completeness/cook-levin", "title": "Conversions between bit-string encodings"},
+  "CSLibExt/Computability/Complexity/PolynomialEncoding/StreamScan": {"to": "TheoryOfComputation/np-completeness/cook-levin", "title": "Conversions between bit-string encodings"},
   "CSLibExt/Computability/Complexity/Preimage": {"to": "TheoryOfComputation/complexity-classes", "title": "Time and space complexity classes"},
   "CSLibExt/Computability/Complexity/RPSubsetBPP": {"to": "TheoryOfComputation/randomized-and-quantum-complexity", "title": "Bounded-error probabilistic classes RP and BPP"},
   "CSLibExt/Computability/Complexity/RPSubsetNP": {"to": "TheoryOfComputation/randomized-and-quantum-complexity", "title": "Bounded-error probabilistic classes RP and BPP"},

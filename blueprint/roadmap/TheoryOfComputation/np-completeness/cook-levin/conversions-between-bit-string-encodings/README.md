@@ -17,4 +17,5 @@
 - [Canonical projection of lists of pairs of binary naturals](canonical-projection-of-lists-of-binary-nat-pair/README.md)
 - [Four canonical outputs from a list of pairs of naturals and a pair of naturals](four-canonical-outputs-from-a-nat-pair-list-and/README.md)
 - [Converting a unary count to a canonical binary natural number](reusable-unary-count-to-canonical-binary-nat-con/README.md)
+- [Polynomial-time streaming on bit strings](polynomial-time-streaming-on-bit-strings/README.md)
 - [Number normalizer restores its work stacks and prepends its answer](normalize-nat-run-frame.md)
