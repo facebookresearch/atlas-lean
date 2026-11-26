@@ -14,6 +14,7 @@ correctly rounded exact result; in the normal range no gradual-underflow branch 
 
 - [Total IEEE-style operation semantics with special values and exceptions](total-ieee-style-operation-semantics-with-special-values-and.md)
 - [Floating-point numbers of a bounded format](is-float-in.md)
+- [Round to nearest, ties to even](fl.md)
 
 ## Sources
 
