@@ -18,6 +18,7 @@ public import MathlibExt.Combinatorics.Enumerative.PellLucasNumber
 public import MathlibExt.NumberTheory.FibonacciCompanionCompositionSum
 public import MathlibExt.NumberTheory.GibonacciCompositionSum
 public import MathlibExt.NumberTheory.GibonacciNumber
+public import MathlibExt.NumberTheory.HoradamCompositionSumRecurrence
 public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.PellNumberSequence
 public import MathlibExt.NumberTheory.PellPellLucasCompositionSumsSqrtTwo
@@ -256,28 +257,6 @@ public theorem_wanted horadam_eq_composition_sum (p q r s : ℂ)
     v n = ∑ c : Composition n, ((r - q) / 2) ^ (n - c.length) *
       ∏ i : Fin c.length,
         ((q + 2 * p * s / (r - q)) * (c.blocksFun i : ℂ) - 2 * p * s / (r - q))
-
-/-- **Horadam composition sums satisfy the Horadam recurrence.** Let $p, q, r, s$ be complex
-numbers with $(q - r)^2 = 4s(p - 1)$ and $4s(p - 1) \ne 0$, put $e = 2ps/(r - q)$, and for every
-natural number $m$ let
-$$w_m = \sum_c \bigl((r - q)/2\bigr)^{m - \ell(c)} \prod_{j \in c} \bigl((q + e) j - e\bigr),$$
-where $c$ runs over the compositions of $m$ (ordered tuples of positive integers with sum $m$),
-$\ell(c)$ is the number of parts of $c$ and the product runs over the parts $j$ of $c$. Then
-$w_n = r w_{n-1} + s w_{n-2}$ for every $n \ge 3$.
-
-Source: Taras Goy and Mark Shattuck, *Determinantal Representations of Some Classical
-Recurrent Sequences*, INTEGERS 25 (2025), Article A97, Theorem 1 (`integers-2025-A97-thm-1`). -/
-public theorem_wanted horadam_composition_sum_recurrence (p q r s : ℂ)
-    (h : (q - r) ^ 2 = 4 * s * (p - 1)) (h0 : 4 * s * (p - 1) ≠ 0) (n : ℕ) (hn : 3 ≤ n) :
-    ∑ c : Composition n, ((r - q) / 2) ^ (n - c.length) *
-        ∏ i : Fin c.length,
-          ((q + 2 * p * s / (r - q)) * (c.blocksFun i : ℂ) - 2 * p * s / (r - q)) =
-      r * ∑ c : Composition (n - 1), ((r - q) / 2) ^ (n - 1 - c.length) *
-        ∏ i : Fin c.length,
-          ((q + 2 * p * s / (r - q)) * (c.blocksFun i : ℂ) - 2 * p * s / (r - q)) +
-      s * ∑ c : Composition (n - 2), ((r - q) / 2) ^ (n - 2 - c.length) *
-        ∏ i : Fin c.length,
-          ((q + 2 * p * s / (r - q)) * (c.blocksFun i : ℂ) - 2 * p * s / (r - q))
 
 /-- **Multiples of a shifted Gibonacci sequence that are Toeplitz–Hessenberg determinants.** Let
 $y$ and $z$ be non-negative integers, not both zero, and let $(G_k)$ be the Gibonacci sequence
