@@ -148,11 +148,34 @@ example (z₀ z : ℂ) :
     Complex.inv_I]
   ring_nf
 
+/-- The same factor as a number, at `z₀ = i` and `z = 0`: `[0, i; -i, -i / 2] = 3 / 2`. The value
+does not go through `crossRatio`, so a reversed cross-ratio convention (giving `2 / 3`) fails. -/
+example : thetaFactor (MonoidHom.id PGL(2, ℚ)) ⟨Complex.I, I_mem⟩
+      ⟨2 * Complex.I, mem_of_im_ne_zero (by simp)⟩ Complex.I 0 (Matrix.ProjGenLinGroup.mk S) =
+    3 / 2 := by
+  have h2 : (2 : ℂ) * Complex.I ≠ 0 := mul_ne_zero two_ne_zero Complex.I_ne_zero
+  simp only [thetaFactor, MonoidHom.id_apply, crossRatio]
+  rw [pmoebius_S Complex.I_ne_zero, pmoebius_S h2, one_div, one_div, Complex.inv_I, mul_inv,
+    Complex.inv_I]
+  ring_nf
+  rw [Complex.I_sq]
+  norm_num
+
 /-- Over the trivial group the theta function is the single cross-ratio `[z, z₀; a, b]`. -/
 example (a b : upperHalfPlane ℚ ℂ) (z₀ z : ℂ) :
     theta (1 : Unit →* PGL(2, ℚ)) a b z₀ z = crossRatio z z₀ a b := by
   rw [theta_eq_of_hasProd (hasProd_fintype _), Fintype.prod_unique]
   simp [thetaFactor]
+
+/-- The same as a number: over the trivial group `θ(i, 2 i; 0)`, normalized at `3 i`, is
+`[0, 3 i; i, 2 i] = 1 / 4`; a reversed cross-ratio convention gives `4`. -/
+example : theta (1 : Unit →* PGL(2, ℚ)) ⟨Complex.I, I_mem⟩
+      ⟨2 * Complex.I, mem_of_im_ne_zero (by simp)⟩ (3 * Complex.I) 0 = 1 / 4 := by
+  rw [theta_eq_of_hasProd (hasProd_fintype _), Fintype.prod_unique]
+  simp only [thetaFactor, MonoidHom.one_apply, pmoebius_one, crossRatio]
+  ring_nf
+  rw [Complex.I_sq]
+  norm_num
 
 /-- With `T2Space K`, `theta` is available over every topological field extension of `ℚ`. -/
 example {K : Type*} [Field K] [Algebra ℚ K] [DecidableEq K] [TopologicalSpace K]
@@ -173,6 +196,13 @@ example (a z₀ : upperHalfPlane ℚ ℂ) (h : (z₀ : ℂ) ≠ a) :
   rw [period, theta_eq_of_hasProd (hasProd_fintype _), Fintype.prod_unique]
   simp only [thetaFactor, MonoidHom.one_apply, pmoebius_one, crossRatio]
   exact div_self (mul_ne_zero h' h')
+
+/-- Regression for the normalization point: at `z₀ = a` the factor `[a, a; a, a]` has denominator
+`0`, so over the trivial group `period` is the totalized value `0`, while it is `1` for `z₀ ≠ a`
+(previous example). -/
+example (a : upperHalfPlane ℚ ℂ) : period (1 : Unit →* PGL(2, ℚ)) a a () () = 0 := by
+  rw [period, theta_eq_of_hasProd (hasProd_fintype _), Fintype.prod_unique]
+  simp [thetaFactor, crossRatio]
 
 /-- Automorphy on the upper half plane is the source's pointwise condition. -/
 example (ρ : PGL(2, ℚ) →* PGL(2, ℚ)) (f : ℂ → ℂ) (c : PGL(2, ℚ) →* ℂˣ) :

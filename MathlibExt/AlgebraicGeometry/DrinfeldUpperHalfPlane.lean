@@ -67,6 +67,11 @@ The group `PGL(2, K₀)` acts on the projective line `OnePoint K` by Möbius tra
   on `OnePoint K`, so that no `K₀`-rational point sent to `∞` is replaced by `0`.
 * Divisions follow Lean's convention `x / 0 = 0`. In particular a theta factor is `0` whenever its
   denominator vanishes, that is, when `z = γ b` or `z₀ = γ a`.
+* The theta function is normalized at `z₀` (every factor is `1` at `z = z₀`) only when `z₀` avoids
+  the orbits of both parameters, `γ a ≠ z₀` and `γ b ≠ z₀` for every `γ`, as the source's theorems
+  assume. The definitions do not require this. If `z₀ = γ a` or `z₀ = γ b` for some `γ`, that factor
+  is `0`, the product converges to `0`, and `theta` and `period` return this totalized value, which
+  is neither a normalized theta function nor an analytic period.
 * `theta` is the unconditional infinite product `∏'`. It is the limit of the products only when
   they converge (`ThetaMultipliable`); otherwise `∏'` returns `1`. The coefficient field is a
   Hausdorff topological ring, so that the limit is unique (`theta_eq_of_hasProd`).
@@ -276,24 +281,31 @@ def crossRatio (z z₀ x y : K) : K := ((z - x) * (z₀ - y)) / ((z - y) * (z₀
 `γ : G`. The parameters `a` and `b` are points of the upper half plane, so `pmoebius K₀ (ρ γ) a`
 and `pmoebius K₀ (ρ γ) b` are their actual images, never `∞` (`coe_pmoebius_of_mem`); a
 `K₀`-rational parameter could be sent to `∞`, which the affine formula cannot represent. When
-`z = γ b` or `z₀ = γ a` the denominator vanishes and the factor is `0` (`crossRatio`). -/
+`z = γ b` or `z₀ = γ a` the denominator vanishes and the factor is `0` (`crossRatio`); when
+`z₀ = γ b` the numerator vanishes for every `z`. So the factor is `1` at `z = z₀` exactly when
+`z₀ ≠ γ a` and `z₀ ≠ γ b`. -/
 noncomputable def thetaFactor [DecidableEq K] (ρ : G →* PGL(2, K₀)) (a b : upperHalfPlane K₀ K)
     (z₀ z : K) (γ : G) : K :=
   crossRatio z z₀ (pmoebius K₀ (ρ γ) a) (pmoebius K₀ (ρ γ) b)
 
-/-- The theta function `θ(a, b; z) = ∏_γ [z, z₀; γ a, γ b]` attached to `ρ`, normalized at `z₀`,
-as an unconditional infinite product in `K`. It is the limit of the finite products only when they
-converge (`ThetaMultipliable`); otherwise `∏'` returns `1`. `K` is a Hausdorff topological ring,
-so that this limit is unique (`theta_eq_of_hasProd`). The formula itself does not use
-`[IsTopologicalRing K] [T2Space K]`; they only restrict the setting. -/
+/-- The theta function `θ(a, b; z) = ∏_γ [z, z₀; γ a, γ b]` attached to `ρ`, as an unconditional
+infinite product in `K`. It is normalized at `z₀` only when `z₀` avoids the orbits of `a` and `b`
+(`γ a ≠ z₀` and `γ b ≠ z₀` for every `γ`), which the source's theorems assume and this definition
+does not: if `z₀ = γ a` or `z₀ = γ b`, the `γ`-th factor is `0`, the product converges to `0`, and
+`theta` is this totalized value, not a theta function. It is the limit of the finite products only
+when they converge (`ThetaMultipliable`); otherwise `∏'` returns `1`. `K` is a Hausdorff
+topological ring, so that this limit is unique (`theta_eq_of_hasProd`). The formula itself does
+not use `[IsTopologicalRing K] [T2Space K]`; they only restrict the setting. -/
 @[nolint unusedArguments]
 noncomputable def theta [DecidableEq K] [TopologicalSpace K] [IsTopologicalRing K] [T2Space K]
     (ρ : G →* PGL(2, K₀)) (a b : upperHalfPlane K₀ K) (z₀ : K) (z : K) : K :=
   ∏' γ : G, thetaFactor ρ a b z₀ z γ
 
 /-- The theta product converges at `z`: the factors `thetaFactor ρ a b z₀ z γ` are
-(unconditionally) multipliable in the Hausdorff topological ring `K`. As for `theta`, the
-hypotheses `[IsTopologicalRing K] [T2Space K]` only restrict the setting. -/
+(unconditionally) multipliable in the Hausdorff topological ring `K`. A product with a factor `0`
+converges (to `0`), so this does not exclude the degenerate normalization points `z₀ = γ a` and
+`z₀ = γ b`; the source states that orbit avoidance separately. As for `theta`, the hypotheses
+`[IsTopologicalRing K] [T2Space K]` only restrict the setting. -/
 @[nolint unusedArguments]
 def ThetaMultipliable [DecidableEq K] [TopologicalSpace K] [IsTopologicalRing K] [T2Space K]
     (ρ : G →* PGL(2, K₀)) (a b : upperHalfPlane K₀ K) (z₀ z : K) : Prop :=
@@ -336,8 +348,11 @@ def IsInvariant [DecidableEq K] (ρ : G →* PGL(2, K₀)) (Ω : Set K) (f : K �
 /-- The period `θ(a, α a; β z₀)` of `ρ` at `α, β : G`, for points `a` and `z₀` of the upper half
 plane: the theta function with parameters `a` and `α a = pmoebius K₀ (ρ α) a`, normalized at `z₀`,
 evaluated at `β z₀ = pmoebius K₀ (ρ β) z₀`. Both images are actual points of the upper half plane
-(`pmoebius_mem_upperHalfPlane`). Like `theta`, it needs a Hausdorff topological ring `K`, and it is
-meaningful when the theta product converges at `β z₀`. -/
+(`pmoebius_mem_upperHalfPlane`). Like `theta`, it needs a Hausdorff topological ring `K`. It is the
+analytic period only when `z₀` avoids the orbit of `a` (which is also the orbit of `α a`) and the
+theta product converges at `β z₀`, as the source's theorem on periods assumes; the definition
+requires neither. If `z₀ = γ a` for some `γ`, the `γ`-th factor is `0` and `period` is the
+totalized value `0`: for the trivial group it is `1` when `a ≠ z₀` and `0` when `a = z₀`. -/
 noncomputable def period [DecidableEq K] [TopologicalSpace K] [IsTopologicalRing K] [T2Space K]
     (ρ : G →* PGL(2, K₀)) (a z₀ : upperHalfPlane K₀ K) (α β : G) : K :=
   theta ρ a ⟨pmoebius K₀ (ρ α) a, pmoebius_mem_upperHalfPlane K₀ a.2 (ρ α)⟩ z₀
