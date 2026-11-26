@@ -497,8 +497,12 @@ private theorem curve_x {x y : ℚ} (hx : 0 < x) (he : OnCurve (-3) 3 x y) : x =
 
 end generalizedFermat_three_six_two_mul
 
--- A point on the Mordell curve y² = x³ + 1 with both coordinates nonzero has x-coordinate 2.
 open generalizedFermat_three_six_two_mul in
+/-- **Nonzero rational points on the Mordell curve $y^2 = x^3 + 1$.** If $x$ and $y$ are
+nonzero rationals with $y^2 = x^3 + 1$, then $x = 2$.
+
+Source: Keith Conrad, *Examples of Mordell's Equation*, Example 3.6, footnote 4
+(<https://kconrad.math.uconn.edu/blurbs/gradnumthy/mordelleqn1.pdf>). -/
 public theorem eq_two_of_sq_eq_cube_add_one {x y : ℚ} (hx : x ≠ 0) (hy : y ≠ 0)
     (he : y ^ 2 = x ^ 3 + 1) : x = 2 := by
   have hcurve : OnCurve (-3) 3 (x + 1) y := by
