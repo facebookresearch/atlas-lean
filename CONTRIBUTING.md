@@ -238,8 +238,9 @@ under [Maintaining articles](docs/BLUEPRINT.md#maintaining-articles). It is
   Place: MathlibExt/Algebra/Ring/Idempotents -> Algebra/rings-and-fields
   ```
 
-  Write it as a plain line of the description: the batch reads no line in a
-  fenced code block or an HTML comment. A topic is one line of at most 160
+  Write it as a plain line of the description, as the `Graph:` line is: the
+  batch reads only the lines that GitHub shows as plain text, none in a code
+  block, a list, a quotation or a comment. A topic is one line of at most 160
   characters with none of ``<>[]{}|`\@#`` and no address (`://`). Give a line
   to each new module that takes no placed module's declarations when you know
   its field, and always to a module in a folder that is no subject, one that
