@@ -40,3 +40,4 @@
 - [Coordinate ascent does not decrease the ELBO](elbo-le-elbo-cavi-step.md)
 - [The ELBO is nondecreasing along coordinate ascent](monotone-elbo-cavi-run.md)
 - [Stationary points of coordinate ascent](is-coord-max-iff.md)
+- [REGENIE: stacked block ridge regression and LOCO association testing](regenie-stacked-block-ridge-regression.md)

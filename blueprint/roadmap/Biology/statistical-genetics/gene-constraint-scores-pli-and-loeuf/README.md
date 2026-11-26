@@ -27,3 +27,5 @@
 - [The M-step maximizes the EM objective](em-q-le-em-step.md)
 - [EM does not decrease the likelihood](log-lik-le-log-lik-em-step.md)
 - [Monotonicity of the log-likelihood along the class-weight EM iterates](log-lik-iterate-em-step-monotone.md)
+- [Residual variation intolerance score](residual-variation-intolerance-score.md)
+- [Sequence-context de novo mutation model and the Poisson excess test](sequence-context-de-novo-mutation-model-and-poisson-excess-test.md)
