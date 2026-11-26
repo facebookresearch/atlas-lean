@@ -1,4 +1,4 @@
-# Exponential characters on sets of finite measure are in every Lᵖ
+# Exponential characters are continuous
 
-Let Ω⊆ ℝᵈ have finite Lebesgue measure and λ ∈ ℝᵈ, then the function e^\{2π i⟨λ,x ⟩\} is in Lᵖ(Ω)
-for all finite p> 0.
+For $d \in \mathbb{N}$ and $\lambda \in \mathbb{R}^d$, the exponential character
+$x \mapsto e^{2\pi i \langle \lambda, x \rangle}$ is a continuous function $\mathbb{R}^d \to \mathbb{C}$.

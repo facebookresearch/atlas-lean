@@ -1,6 +1,6 @@
 # Kakutani's fixed-point theorem from Brouwer's theorem
 
-Kakutani's fixed-point theorem, derived from Brouwer's theorem on the same domain: let `K` be
-a nonempty compact convex subset of a finite-dimensional real normed space, and suppose every
-continuous self-map of `K` has a fixed point (Brouwer). Then every correspondence `Φ` from `K`
-to itself with nonempty convex values and closed graph has a fixed point `x ∈ Φ x`.
+Let $K$ be a nonempty compact convex subset of a finite-dimensional real normed space $E$, and suppose that every
+map $g : E \to E$ that is continuous on $K$ and maps $K$ into $K$ has a fixed point in $K$ (Brouwer's theorem for
+$K$). Let $\Phi$ assign to each $x \in K$ a nonempty convex set $\Phi(x) \subseteq K$, with closed graph
+$\{(x, y) \in E \times E : x \in K,\ y \in \Phi(x)\}$. Then some $x \in K$ satisfies $x \in \Phi(x)$.

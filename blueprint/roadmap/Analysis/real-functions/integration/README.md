@@ -21,5 +21,3 @@ The Riemann integral via tagged partitions, iterated-integral formulas, moments,
 - [Elementary derivatives and integrals](elementary-derivatives-and-integrals/README.md)
 
 - [Gaussian integrals with exponential weights](gaussian-integrals-with-exponential-weights/README.md)
-
-

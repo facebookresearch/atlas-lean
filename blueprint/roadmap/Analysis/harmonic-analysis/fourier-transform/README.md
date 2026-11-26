@@ -14,7 +14,7 @@ The Fourier transform on R^n and Schwartz functions: convolution, Bochner, Hausd
 - [Nyquist–Shannon sampling theorem](nyquist-shannon-sampling-theorem/README.md)
 - [Convolution of two square-integrable functions is continuous and vanishes at infinity](continuous-and-tendsto-cocompact-convolu.md)
 - [Convolution theorem](convolution-theorem.md)
-- [Exponential characters on sets of finite measure are in every Lᵖ](exp-char-continuous.md)
+- [Exponential characters are continuous](exp-char-continuous.md)
 - [Hausdorff–Young inequality for Schwartz functions](exists-norm-fourier-to-lp-le-norm-to-lp.md)
 - [Poisson summation formula in Euclidean space](tsum-eq-tsum-fourier-euclidean-space.md)
 - [Fourier inversion formula](fourier-inv-fourier-eq.md)
