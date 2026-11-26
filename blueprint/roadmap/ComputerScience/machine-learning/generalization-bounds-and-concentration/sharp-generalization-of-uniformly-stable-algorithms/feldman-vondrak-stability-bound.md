@@ -3,10 +3,12 @@
 Let $A$ be $\gamma$-uniformly stable with loss bounded in $[0,1]$. Then with probability at least $1 - \delta$ over $S \sim D^n$,
 
 $$
-\big|R(A_S) - R_{\mathrm{emp}}(A_S)\big| \le O\!\left(\gamma\log(n)\log\frac{n}{\delta} + \sqrt{\frac{\log(1/\delta)}{n}}\right).
+\big|R(A_S) - R_{\mathrm{emp}}(A_S)\big| \le O\!\left(\gamma\log(n)\log\frac{en}{\delta} + \sqrt{\frac{\log(e/\delta)}{n}}\right).
 $$
 
-This was the first bound showing that $\gamma = o(1/\sqrt{n})$ is not needed for nontrivial high-probability generalization (the Bousquet–Elisseeff bound $O(\gamma\sqrt{n\log(1/\delta)} + \sqrt{\log(1/\delta)/n})$ is vacuous for $\gamma \gtrsim 1/\sqrt{n}$); the later bound of Bousquet, Klochkov and Zhivotovskiy removes one logarithmic factor.
+Logarithms of the confidence parameter follow the convention of Bousquet, Klochkov and Zhivotovskiy (§2.1), which floors them at $1$: $\log(e/\delta) = 1 + \log(1/\delta)$ lies between $\max\{1, \log(1/\delta)\}$ and twice it, so the right-hand side stays bounded away from $0$ as $\delta \to 1$.
+
+This was the first bound showing that $\gamma = o(1/\sqrt{n})$ is not needed for nontrivial high-probability generalization (the Bousquet–Elisseeff bound $O(\gamma\sqrt{n\log(e/\delta)} + \sqrt{\log(e/\delta)/n})$ is vacuous for $\gamma \gtrsim 1/\sqrt{n}$); the later bound of Bousquet, Klochkov and Zhivotovskiy removes one logarithmic factor.
 
 ## Proof sketch
 

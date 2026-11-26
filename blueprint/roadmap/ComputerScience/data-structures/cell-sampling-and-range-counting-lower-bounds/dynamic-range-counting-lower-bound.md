@@ -4,7 +4,7 @@ Every dynamic cell-probe structure for two-dimensional weighted orthogonal range
 
 ## Proof sketch
 
-There are $\Theta(\log_\beta n)$ epochs, and by the epoch-wise lemma a random query probes $\Omega(\log_\beta n)$ cells written in each of them; the sets of cells attributed to distinct epochs are disjoint because each cell is charged to the epoch of its last write. Summing gives $\Omega((\log_\beta n)^2)$. A range-tree style structure with fan-out $\lg^{\Omega(1)} n$ over a dominance counting structure achieves the matching query time with $\lg^{2+\Omega(1)} n$ update time.
+Take $\beta = (w t_u)^9$. There are $\log_\beta n$ epochs, and the $\log_\beta n - \lceil \tfrac{15}{16}\log_\beta n \rceil + 1 = \Theta(\log_\beta n)$ epochs $i \ge \tfrac{15}{16}\log_\beta n$ qualify for the epoch-wise lemma, so a random query probes, in expectation, $\Omega(\log_\beta n)$ cells written in each qualifying epoch; the sets of cells attributed to distinct epochs are disjoint because each cell is charged to the epoch of its last write. Summing over the qualifying epochs only gives expected query cost $\Omega((\log_\beta n)^2) = \Omega\big((\lg n / \lg(w t_u))^2\big)$, since $\log_\beta n = \lg n / (9 \lg(w t_u))$. A range-tree style structure with fan-out $\lg^{\Omega(1)} n$ over a dominance counting structure achieves the matching query time with $\lg^{2+\Omega(1)} n$ update time.
 
 ## Depends on
 

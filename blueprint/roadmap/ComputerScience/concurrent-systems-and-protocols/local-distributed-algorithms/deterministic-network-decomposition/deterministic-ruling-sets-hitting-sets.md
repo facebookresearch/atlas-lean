@@ -4,7 +4,7 @@ Let $G = (V, E)$ be a simple connected graph with $n$ vertices and maximum degre
 
 ## Proof sketch
 
-The ruling set algorithm repeatedly halves the identifier space bit by bit: in each step vertices whose current bit is $1$ are removed if they have a nearby surviving vertex with bit $0$, keeping distances among survivors large while ensuring domination grows by $O(1)$ per level; clustering via network decomposition compresses the $O(\log n)$ levels into $O(\log\log n)$ domination distance. Hitting sets and spanners derandomize sampling arguments whose analyses need only pairwise independence, using conditional expectations over clusters of a network decomposition.
+The ruling set algorithm runs $O(\log\log\Delta)$ stages, each sparsifying the current set $W$ (initially $V$). Within a stage, repeated deterministic sampling (Ghaffari–Grunau, Corollary 4.2: derandomized hitting-set sampling followed by removal of sampled vertices with too many sampled neighbours) yields a subset of $W$ that dominates all of $W$ and has maximum induced degree at most $\Delta_W^{0.9}$, where $\Delta_W$ is the maximum degree of $G[W]$; this subset replaces $W$, so each stage adds at most $1$ to the domination distance. Once the induced degree is bounded by a constant, a maximal independent set of $G[W]$, computed in $O(\log^* n)$ rounds, finishes the construction, giving an independent set within distance $O(\log\log\Delta) \le O(\log\log n)$ of every vertex. Hitting sets and spanners derandomize sampling arguments whose analyses need only pairwise independence, using conditional expectations over clusters of a network decomposition.
 
 ## Depends on
 
