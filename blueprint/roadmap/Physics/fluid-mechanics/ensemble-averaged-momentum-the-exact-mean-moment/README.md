@@ -6,7 +6,7 @@
 - [Ensemble mean of a stress field](ensemble-mean-stress.md)
 - [Reynolds stress](reynolds-stress.md)
 - [The Reynolds stress is positive semidefinite](reynolds-stress-pos-semidef.md)
-- [Without fluctuations the mean flow is laminar](reynolds-stress-eq-zero-of-ae-eq.md)
+- [Deterministic velocity fields have zero Reynolds stress](reynolds-stress-eq-zero-of-ae-eq.md)
 
 ## The mean momentum equation
 
