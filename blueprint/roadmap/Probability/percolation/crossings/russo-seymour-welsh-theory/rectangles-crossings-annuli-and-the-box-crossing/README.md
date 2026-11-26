@@ -20,8 +20,6 @@
 - [Dual bottom–top crossing steps](dual-vertical-crossing-iff.md)
 - [Antitonicity of dual left–right crossings](dual-horizontal-crossing-event-antitone.md)
 - [Antitonicity of dual bottom–top crossings](dual-vertical-crossing-event-antitone.md)
-- [Dual left–right crossings under rotated-complement order](dual-horizontal-crossing-event-increasin.md)
-- [Dual bottom–top crossings under rotated-complement order](dual-vertical-crossing-event-increasing.md)
 - [Square annulus in the plane lattice](annulus.md)
 - [Open circuit lying in an annulus](is-annulus-circuit.md)
 - [Existence of an open circuit in an annulus](annulus-circuit.md)
