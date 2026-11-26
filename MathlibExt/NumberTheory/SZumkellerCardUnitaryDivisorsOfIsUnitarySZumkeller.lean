@@ -9,20 +9,17 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.NumberTheory.SZumkeller
+import MathlibExt.NumberTheory.SZumkellerIsUnitarySZumkellerBounds
 import MathlibExt.NumberTheory.UnitaryDivisorCount
-import Mathlib.Algebra.BigOperators.Group.Finset.Powerset
 import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Finset
 import Mathlib.Algebra.Order.Field.Basic
 import Mathlib.Algebra.Order.GroupWithZero.Basic
 import Mathlib.Data.Finset.Card
 import Mathlib.Data.Finset.Max
-import Mathlib.Data.Finset.Powerset
 import Mathlib.Data.Finset.Range
 import Mathlib.Data.Finsupp.Basic
 import Mathlib.Data.Nat.Factorization.Basic
-import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.IntervalCases
-import Mathlib.Tactic.LinearCombination
 
 /-!
 # Unitary divisor counts of unitary s-Zumkeller numbers
@@ -214,127 +211,6 @@ private theorem prod_le_smallPrimes_prod (m : ℕ) : m ≤ 6 → ∀ (S : Finset
       intro j _
       positivity
 
--- The construction `unitaryFromSubset` and the proofs below that it inverts the prime-factor
--- set of a unitary divisor adapt the proof of `MetaMathlibExt.card_unitaryDivisors` in
--- `MathlibExt/NumberTheory/UnitaryDivisorCount.lean`.
-/-- The unitary divisor assembled from the prime powers indexed by a set. -/
-private def unitaryFromSubset (n : ℕ) (s : Finset ℕ) : ℕ :=
-  (n.factorization.filter (· ∈ s)).prod (· ^ ·)
-
-/-- The filtered factorization sits below the full factorization. -/
-private theorem unitaryFromSubset_le (n : ℕ) (s : Finset ℕ) :
-    n.factorization.filter (· ∈ s) ≤ n.factorization := by
-  rw [Finsupp.le_def]
-  intro p
-  by_cases hp : p ∈ s <;> simp [hp]
-
-/-- The factorization of the assembled divisor is the filtered factorization. -/
-private theorem unitaryFromSubset_factorization (n : ℕ) (s : Finset ℕ) :
-    (unitaryFromSubset n s).factorization = n.factorization.filter (· ∈ s) :=
-  Nat.factorization_prod_pow_eq_self_of_le_factorization (unitaryFromSubset_le n s)
-
-/-- The prime factors of the assembled divisor are the selected primes. -/
-private theorem unitaryFromSubset_primeFactors (n : ℕ) (s : Finset ℕ) :
-    (unitaryFromSubset n s).primeFactors = n.primeFactors.filter (· ∈ s) := by
-  rw [← Nat.support_factorization, unitaryFromSubset_factorization,
-    Finsupp.support_filter, Nat.support_factorization]
-
-/-- The assembled divisor is a unitary divisor. -/
-private theorem unitaryFromSubset_mem (n : ℕ) (hn : n ≠ 0) (s : Finset ℕ) :
-    unitaryFromSubset n s ∈ Nat.unitaryDivisors n := by
-  have hdvd : unitaryFromSubset n s ∣ n :=
-    Nat.prod_pow_dvd_of_le_factorization (unitaryFromSubset_le n s)
-  have hd0 : unitaryFromSubset n s ≠ 0 := ne_zero_of_dvd_ne_zero hn hdvd
-  have hq0 : n / unitaryFromSubset n s ≠ 0 :=
-    (Nat.div_pos (Nat.le_of_dvd (Nat.pos_of_ne_zero hn) hdvd)
-      (Nat.pos_of_ne_zero hd0)).ne'
-  refine Nat.mem_unitaryDivisors.mpr ⟨hdvd, hn, (Nat.disjoint_primeFactors hd0 hq0).mp ?_⟩
-  rw [Finset.disjoint_left]
-  intro p hp hq
-  rw [unitaryFromSubset_primeFactors, Finset.mem_filter] at hp
-  have hz : (n / unitaryFromSubset n s).factorization p = 0 := by
-    rw [Nat.factorization_div hdvd, Finsupp.tsub_apply, unitaryFromSubset_factorization]
-    simp [hp.2]
-  exact (Finsupp.notMem_support_iff.mpr hz) hq
-
-/-- Assembling over a subset of the prime factors inverts taking prime factors. -/
-private theorem unitaryFromSubset_primeFactors_of_mem (n : ℕ) (s : Finset ℕ)
-    (hs : s ∈ n.primeFactors.powerset) :
-    (unitaryFromSubset n s).primeFactors = s := by
-  rw [unitaryFromSubset_primeFactors]
-  ext p
-  rw [Finset.mem_filter]
-  exact ⟨And.right, fun hp => ⟨Finset.mem_powerset.mp hs hp, hp⟩⟩
-
-/-- Every unitary divisor is assembled from its prime factors. -/
-private theorem unitaryFromSubset_of_primeFactors (n : ℕ) (hn : n ≠ 0) (d : ℕ)
-    (hd : d ∈ Nat.unitaryDivisors n) : unitaryFromSubset n d.primeFactors = d := by
-  obtain ⟨hdvd, _, hcop⟩ := Nat.mem_unitaryDivisors.mp hd
-  change (n.factorization.filter (· ∈ d.primeFactors)).prod (· ^ ·) = d
-  suffices h : n.factorization.filter (· ∈ d.primeFactors) = d.factorization by
-    rw [h, Nat.prod_factorization_pow_eq_self (ne_zero_of_dvd_ne_zero hn hdvd)]
-  ext p
-  by_cases hp : p ∈ d.primeFactors
-  · rw [Finsupp.filter_apply_pos _ _ hp, ← Nat.div_mul_cancel hdvd,
-      Nat.factorization_eq_of_coprime_right hcop.symm
-        (Nat.mem_primeFactors_iff_mem_primeFactorsList.mp hp)]
-  · rw [Finsupp.filter_apply_neg _ _ hp, Finsupp.notMem_support_iff.mp hp]
-
-/-- The assembled divisor is the product of the selected prime powers. -/
-private theorem unitaryFromSubset_prod (n : ℕ) (s : Finset ℕ)
-    (hs : s ∈ n.primeFactors.powerset) :
-    unitaryFromSubset n s = ∏ p ∈ s, p ^ n.factorization p := by
-  have hsub : s ⊆ n.primeFactors := Finset.mem_powerset.mp hs
-  change (n.factorization.filter (· ∈ s)).prod (· ^ ·) = _
-  rw [Finsupp.prod_filter_index]
-  have hset : (n.factorization.filter (· ∈ s)).support = s := by
-    rw [Finsupp.support_filter, Nat.support_factorization]
-    ext x
-    simp only [Finset.mem_filter]
-    exact ⟨And.right, fun h => ⟨hsub h, h⟩⟩
-  rw [hset]
-
-/-- A multiplicative sum over unitary divisors is a product over prime factors. -/
-private theorem sum_unitaryDivisors_eq_prod {n : ℕ} (hn : n ≠ 0) (g : ℕ → ℚ)
-    (g1 : g 1 = 1) (gmul : ∀ a b, g (a * b) = g a * g b) :
-    ∑ d ∈ Nat.unitaryDivisors n, g d =
-      ∏ p ∈ n.primeFactors, (1 + g (p ^ n.factorization p)) := by
-  have hmul : ∀ s ∈ n.primeFactors.powerset,
-      g (unitaryFromSubset n s) = ∏ p ∈ s, g (p ^ n.factorization p) := by
-    intro s hs
-    rw [unitaryFromSubset_prod n s hs]
-    clear hs
-    induction s using Finset.induction with
-    | empty => simp [g1]
-    | @insert a s ha ih =>
-      rw [Finset.prod_insert ha, Finset.prod_insert ha, gmul, ih]
-  have hbij : ∑ d ∈ Nat.unitaryDivisors n, g d
-      = ∑ s ∈ n.primeFactors.powerset, g (unitaryFromSubset n s) := by
-    apply Finset.sum_bij (fun d _ => d.primeFactors)
-    · intro d hd
-      exact Finset.mem_powerset.mpr
-        (Nat.primeFactors_mono (Nat.dvd_of_mem_unitaryDivisors hd) hn)
-    · intro d₁ hd₁ d₂ hd₂ heq
-      have e1 := unitaryFromSubset_of_primeFactors n hn d₁ hd₁
-      have e2 := unitaryFromSubset_of_primeFactors n hn d₂ hd₂
-      have heq' : d₁.primeFactors = d₂.primeFactors := heq
-      rw [heq'] at e1
-      exact e1.symm.trans e2
-    · intro s hs
-      exact ⟨unitaryFromSubset n s, unitaryFromSubset_mem n hn s,
-        unitaryFromSubset_primeFactors_of_mem n s hs⟩
-    · intro d hd
-      show g d = g (unitaryFromSubset n d.primeFactors)
-      rw [unitaryFromSubset_of_primeFactors n hn d hd]
-  rw [hbij]
-  trans ∑ s ∈ n.primeFactors.powerset, ∏ p ∈ s, g (p ^ n.factorization p)
-  · apply Finset.sum_congr rfl
-    intro s hs
-    exact hmul s hs
-  · have hpa := Finset.prod_add (fun p => g (p ^ n.factorization p)) (fun _ => 1)
-      n.primeFactors
-    simpa [add_comm] using hpa.symm
-
 /-- A split with a singleton side over three explicit elements is impossible. -/
 private theorem nosplit_of_singleton {q x : ℕ} {E B : Finset ℕ}
     (hBsub : B ⊆ E) (hB1 : B.card = 1)
@@ -508,114 +384,14 @@ private theorem two_lt_card_of_isUnitarySZumkeller {n q : ℕ} (h : IsUnitarySZu
 private theorem six_lt_card_of_isUnitarySZumkeller {n : ℕ} (h : IsUnitarySZumkeller n)
     (hq : IsLeast {d | d ∈ Nat.unitaryDivisors n ∧ 1 < d} 2) :
     6 < n.primeFactors.card := by
-  have hn := ne_zero_of_isUnitarySZumkeller h
-  have hn0 : 0 < n := Nat.pos_of_ne_zero hn
-  have hqmem : 2 ∈ Nat.unitaryDivisors n ∧ 1 < 2 := hq.1
-  have h2dvd : 2 ∣ n := (Nat.mem_unitaryDivisors.mp hqmem.1).1
-  have hnmem : n ∈ Nat.unitaryDivisors n := self_mem_unitaryDivisors hn
   by_contra hcon
   have hm6 : n.primeFactors.card ≤ 6 := by omega
-  obtain ⟨A, hAsub, _, _, hbal⟩ := h
-  have h2e : n / 2 * 2 = n := Nat.div_mul_cancel h2dvd
-  have hemem : n / 2 ∈ Nat.unitaryDivisors n := by
-    rw [Nat.mem_unitaryDivisors]
-    refine ⟨Nat.div_dvd_of_dvd h2dvd, hn, ?_⟩
-    have hne : n / (n / 2) = 2 := Nat.div_div_self h2dvd hn
-    rw [hne]
-    exact (Nat.coprime_div_of_mem_unitaryDivisors hqmem.1).symm
-  have hene : n / 2 ≠ n := by
-    have hlt : n / 2 < n := Nat.div_lt_self hn0 (by norm_num)
-    omega
-  have heE : n / 2 ∈ (Nat.unitaryDivisors n).erase n := Finset.mem_erase.mpr ⟨hene, hemem⟩
-  have hTe : (n / 2) ^ 2 ≤ ∑ d ∈ A, d ^ 2 := by
-    by_cases heA : n / 2 ∈ A
-    · exact Finset.single_le_sum (f := fun d : ℕ => d ^ 2) (fun _ _ => Nat.zero_le _) heA
-    · have heB : n / 2 ∈ (Nat.unitaryDivisors n).erase n \ A :=
-        Finset.mem_sdiff.mpr ⟨heE, heA⟩
-      have hle : (n / 2) ^ 2 ≤ ∑ d ∈ (Nat.unitaryDivisors n).erase n \ A, d ^ 2 :=
-        Finset.single_le_sum (f := fun d : ℕ => d ^ 2) (fun _ _ => Nat.zero_le _) heB
-      omega
-  have hUD : Nat.unitaryDivisors n = insert n ((Nat.unitaryDivisors n).erase n) :=
-    (Finset.insert_erase hnmem).symm
-  have hsumUD : ∑ d ∈ Nat.unitaryDivisors n, d ^ 2 = n ^ 2 + 2 * ∑ d ∈ A, d ^ 2 := by
-    have hsplit := Finset.sum_sdiff (f := fun d : ℕ => d ^ 2) hAsub
-    rw [hUD, Finset.sum_insert (Finset.notMem_erase n _)]
-    omega
-  have hcast : (3 / 2 : ℚ) ≤ ∑ d ∈ Nat.unitaryDivisors n, ((d : ℚ) / (n : ℚ)) ^ 2 := by
-    have hnQ2 : (0 : ℚ) < (n : ℚ) ^ 2 := pow_pos (by exact_mod_cast hn0) 2
-    have h2eQ : (((n / 2 : ℕ)) : ℚ) * 2 = (n : ℚ) := by exact_mod_cast h2e
-    have hkey : (3 / 2 : ℚ) * (n : ℚ) ^ 2 ≤ ∑ d ∈ Nat.unitaryDivisors n, (d : ℚ) ^ 2 := by
-      have hnat : (n : ℚ) ^ 2 + 2 * ((((n / 2 : ℕ))) : ℚ) ^ 2
-          ≤ ∑ d ∈ Nat.unitaryDivisors n, (d : ℚ) ^ 2 := by
-        have h1 : n ^ 2 + 2 * (n / 2) ^ 2 ≤ ∑ d ∈ Nat.unitaryDivisors n, d ^ 2 := by omega
-        exact_mod_cast h1
-      have h4 : (n : ℚ) ^ 2 = 4 * ((((n / 2 : ℕ))) : ℚ) ^ 2 := by
-        rw [← h2eQ]
-        ring
-      linarith [hnat, h4]
-    have hdiv : ∑ d ∈ Nat.unitaryDivisors n, ((d : ℚ) / (n : ℚ)) ^ 2
-        = (∑ d ∈ Nat.unitaryDivisors n, (d : ℚ) ^ 2) / (n : ℚ) ^ 2 := by
-      simp only [div_pow]
-      simp only [div_eq_mul_inv, Finset.sum_mul]
-    rw [hdiv]
-    exact (le_div_iff₀ hnQ2).mpr hkey
-  have hreidx : ∑ d ∈ Nat.unitaryDivisors n, ((d : ℚ) / (n : ℚ)) ^ 2
-      = ∑ e ∈ Nat.unitaryDivisors n, 1 / (e : ℚ) ^ 2 := by
-    apply Finset.sum_bij (fun d _ => n / d)
-    · intro d hd
-      show n / d ∈ Nat.unitaryDivisors n
-      rw [Nat.mem_unitaryDivisors] at hd ⊢
-      obtain ⟨hdvd, _, hcop⟩ := hd
-      refine ⟨Nat.div_dvd_of_dvd hdvd, hn, ?_⟩
-      have hdd : n / (n / d) = d := Nat.div_div_self hdvd hn
-      rw [hdd]
-      exact hcop.symm
-    · intro d₁ hd₁ d₂ hd₂ heq
-      have heq' : n / d₁ = n / d₂ := heq
-      have hdvd₁ := (Nat.mem_unitaryDivisors.mp hd₁).1
-      have hdvd₂ := (Nat.mem_unitaryDivisors.mp hd₂).1
-      have e1 := Nat.div_div_self hdvd₁ hn
-      have e2 := Nat.div_div_self hdvd₂ hn
-      rw [heq'] at e1
-      exact e1.symm.trans e2
-    · intro e he
-      have hmem : n / e ∈ Nat.unitaryDivisors n := by
-        rw [Nat.mem_unitaryDivisors] at he ⊢
-        obtain ⟨hdvd, _, hcop⟩ := he
-        refine ⟨Nat.div_dvd_of_dvd hdvd, hn, ?_⟩
-        have hdd : n / (n / e) = e := Nat.div_div_self hdvd hn
-        rw [hdd]
-        exact hcop.symm
-      exact ⟨n / e, hmem, Nat.div_div_self (Nat.dvd_of_mem_unitaryDivisors he) hn⟩
-    · intro d hd
-      show ((d : ℚ) / (n : ℚ)) ^ 2 = 1 / ((((n / d : ℕ))) : ℚ) ^ 2
-      have hdvd := Nat.dvd_of_mem_unitaryDivisors hd
-      have hd0 : d ≠ 0 := by
-        rintro rfl
-        rw [zero_dvd_iff] at hdvd
-        exact hn hdvd
-      have hnd0 : n / d ≠ 0 :=
-        (Nat.div_pos (Nat.le_of_dvd hn0 hdvd) (Nat.pos_of_ne_zero hd0)).ne'
-      have hde : d * (n / d) = n := by
-        rw [mul_comm]
-        exact Nat.div_mul_cancel hdvd
-      have hdeQ : (d : ℚ) * ((((n / d : ℕ))) : ℚ) = (n : ℚ) := by exact_mod_cast hde
-      have hnQ : (n : ℚ) ≠ 0 := by exact_mod_cast hn
-      have hndQ : ((((n / d : ℕ))) : ℚ) ≠ 0 := by exact_mod_cast hnd0
-      have hfrac : (d : ℚ) / (n : ℚ) = ((((n / d : ℕ))) : ℚ)⁻¹ := by
-        field_simp
-        linear_combination hdeQ
-      rw [hfrac, inv_pow, one_div]
-  have hsumprod : ∑ e ∈ Nat.unitaryDivisors n, 1 / (e : ℚ) ^ 2
-      = ∏ p ∈ n.primeFactors, (1 + 1 / ((((p ^ n.factorization p : ℕ))) : ℚ) ^ 2) := by
-    have h := sum_unitaryDivisors_eq_prod hn (fun d : ℕ => 1 / (d : ℚ) ^ 2)
-      (by norm_num) (by
-        intro a b
-        show 1 / ((((a * b : ℕ))) : ℚ) ^ 2 = 1 / (a : ℚ) ^ 2 * (1 / (b : ℚ) ^ 2)
-        rw [Nat.cast_mul, mul_pow, ← one_div_mul_one_div])
-    exact h
+  -- Proposition 11 at `q = 2`: the left side is `3 / 2`.
+  have hb := (isUnitarySZumkeller_bounds n 2 h hq).2.2
+  have h32 : (2 : ℚ) / ((2 : ℕ) : ℚ) ^ 2 + 1 = 3 / 2 := by norm_num
+  rw [h32] at hb
   have hfactor : ∀ p ∈ n.primeFactors,
-      (1 : ℚ) + 1 / ((((p ^ n.factorization p : ℕ))) : ℚ) ^ 2
+      (1 + ((p : ℚ) ^ n.factorization p) ^ 2) / ((p : ℚ) ^ n.factorization p) ^ 2
         ≤ 1 + 1 / (p : ℚ) ^ 2 := by
     intro p hp
     have hpp : 2 ≤ p := (Nat.prime_of_mem_primeFactors hp).two_le
@@ -623,19 +399,23 @@ private theorem six_lt_card_of_isUnitarySZumkeller {n : ℕ} (h : IsUnitarySZumk
       have hmem : p ∈ n.factorization.support := by rwa [Nat.support_factorization]
       have hne := Finsupp.mem_support_iff.mp hmem
       omega
-    have hle : p ^ 1 ≤ p ^ n.factorization p := pow_le_pow_right₀ (by omega) hk
-    have hleQ : (p : ℚ) ^ 2 ≤ ((((p ^ n.factorization p : ℕ))) : ℚ) ^ 2 := by
-      have h1 : (p : ℚ) ≤ ((((p ^ n.factorization p : ℕ))) : ℚ) := by
-        have h2 : p ≤ p ^ n.factorization p := by
-          simpa using hle
-        exact_mod_cast h2
-      have ha0 : (0 : ℚ) ≤ (p : ℚ) := by positivity
-      exact pow_le_pow_left₀ ha0 h1 2
-    have hpos : (0 : ℚ) < (p : ℚ) ^ 2 := pow_pos (by exact_mod_cast (by omega : 0 < p)) 2
-    have hdiv := one_div_le_one_div_of_le hpos hleQ
+    have hp0 : (0 : ℚ) < (p : ℚ) := by exact_mod_cast (by omega : 0 < p)
+    have hx0 : (0 : ℚ) < (p : ℚ) ^ n.factorization p := pow_pos hp0 _
+    have hsplit : (1 + ((p : ℚ) ^ n.factorization p) ^ 2) / ((p : ℚ) ^ n.factorization p) ^ 2
+        = 1 + 1 / ((p : ℚ) ^ n.factorization p) ^ 2 := by
+      rw [add_div, div_self (pow_ne_zero 2 hx0.ne'), add_comm]
+    rw [hsplit]
+    have hle : (p : ℚ) ≤ (p : ℚ) ^ n.factorization p := by
+      calc (p : ℚ) = (p : ℚ) ^ 1 := (pow_one _).symm
+        _ ≤ (p : ℚ) ^ n.factorization p :=
+          pow_le_pow_right₀ (by exact_mod_cast (by omega : 1 ≤ p)) hk
+    have hleQ : (p : ℚ) ^ 2 ≤ ((p : ℚ) ^ n.factorization p) ^ 2 :=
+      pow_le_pow_left₀ hp0.le hle 2
+    have hdiv := one_div_le_one_div_of_le (pow_pos hp0 2) hleQ
     linarith
-  have hprod_le : ∏ p ∈ n.primeFactors, ((1 : ℚ) + 1 / ((((p ^ n.factorization p : ℕ))) : ℚ) ^ 2)
-      ≤ ∏ p ∈ n.primeFactors, (1 + 1 / (p : ℚ) ^ 2) := by
+  have hprod_le : ∏ p ∈ n.primeFactors,
+      (1 + ((p : ℚ) ^ n.factorization p) ^ 2) / ((p : ℚ) ^ n.factorization p) ^ 2
+        ≤ ∏ p ∈ n.primeFactors, (1 + 1 / (p : ℚ) ^ 2) := by
     apply Finset.prod_le_prod₀ _ hfactor
     intro p _
     positivity
@@ -658,7 +438,7 @@ private theorem six_lt_card_of_isUnitarySZumkeller {n : ℕ} (h : IsUnitarySZumk
       show (2 : ℕ) = 1 + 1 from rfl, Finset.prod_range_succ,
       show (1 : ℕ) = 0 + 1 from rfl, Finset.prod_range_succ, Finset.prod_range_zero]
     norm_num [smallPrime]
-  linarith [hcast, hreidx, hsumprod, hprod_le, hsorted, hmono, hF6]
+  linarith [hb, hprod_le, hsorted, hmono, hF6]
 
 /-- **Unitary divisor counts of unitary s-Zumkeller numbers.** Let $n$ be a unitary s-Zumkeller
 number and let $q$ be the least unitary divisor of $n$ greater than $1$. If $q = 2$, then $n$ has
