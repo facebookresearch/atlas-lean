@@ -25,6 +25,7 @@ Part 3 follows from parts 1 and 2 with $t = s$, since states that agree on every
 
 - [Big-step semantics of IMP](../operational-semantics-of-imp/big-step.md)
 - [Live variables of an IMP command](live-variables-of-an-imp-command.md)
+- [Correctness of live-variables analysis for IMP](correctness-of-live-variables-analysis-for-imp.md)
 
 ## Sources
 

@@ -14,6 +14,7 @@ The proof reduces the coloring problem for [circular-arc graphs](../../../Theory
 
 - [Interference graphs](interference-graphs.md)
 - [Dominance and static single assignment form](../intermediate-representations/dominance-and-static-single-assignment-form.md)
+- [Optimal coloring of SSA interference graphs](optimal-coloring-of-ssa-interference-graphs.md)
 
 ## Proof depends on
 

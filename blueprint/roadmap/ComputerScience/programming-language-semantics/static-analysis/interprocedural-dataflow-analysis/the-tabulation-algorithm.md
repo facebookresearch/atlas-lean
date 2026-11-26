@@ -8,6 +8,7 @@ For an [IFDS problem](ifds-problems-and-the-meet-over-all-valid-paths.md) with u
 ## Depends on
 
 - [IFDS problems are realizable-path reachability problems](ifds-problems-are-realizable-path-reachability.md)
+- [IFDS problems and the meet-over-all-valid-paths solution](ifds-problems-and-the-meet-over-all-valid-paths.md)
 
 ## Sources
 
