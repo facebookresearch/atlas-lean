@@ -1,10 +1,13 @@
 # Nonlinear decomposition principle for dynamic compartmental systems
 
 **Compartmental system.** Compartments $i = 1, \dots, n$ hold storages $x_i(t) \ge 0$ and exchange material (energy, nutrients, drug, infected individuals) through nonnegative flow rates $f_{ij}(t, \mathbf{x})$ from $j$ to $i$; index $0$ is the exterior, with external inputs $z_i = f_{i0}$ and outputs $y_j = f_{0j}$. Conservation gives
+
 $$\dot x_i = \sum_{j=0}^n f_{ij}(t, \mathbf{x}) - \sum_{j=0}^n f_{ji}(t, \mathbf{x}), \qquad \mathbf{x}(t_0) = \mathbf{x}_0.$$
 
 **Decomposition.** Split each storage as $x_i = \underline{x}_{i_0} + \sum_{k=1}^n x_{i_k}$, where $x_{i_k}$ is the part of compartment $i$'s content that entered the system from outside through compartment $k$ (the $k$-th *subsystem*), and $\underline{x}_{i_k}$ the part derived from the initial stock of compartment $k$ (the $k$-th *initial subsystem*). Flows are split in proportion to storage composition,
+
 $$f_{i_kj_k}(t, \mathbf{x}) = \frac{x_{j_k}(t)}{x_j(t)}\,f_{ij}(t, \mathbf{x}),$$
+
 and the subsystem $k$ receives the external input $z_k$ only at compartment $k$, while initial subsystem $k$ starts from $x_{k,0}\mathbf{e}_k$. This yields a closed nonlinear system for the $2n^2$ decomposed storages, collected in matrices $X(t) = (x_{i_k})$ and $\underline X(t) = (\underline x_{i_k})$.
 
 **Theorem.**

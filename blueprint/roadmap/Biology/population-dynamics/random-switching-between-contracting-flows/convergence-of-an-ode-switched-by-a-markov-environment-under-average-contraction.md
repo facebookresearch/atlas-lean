@@ -1,17 +1,25 @@
 # Convergence of an ODE switched by a Markov environment under average contraction
 
 **Setting.** Let $(I_t)_{t \ge 0}$ be an irreducible continuous-time Markov chain on a finite set $F$ of environments, with invariant probability $\nu$. Given smooth vector fields $F^{(i)} : \mathbb{R}^d \to \mathbb{R}^d$, $i \in F$, the state $X_t \in \mathbb{R}^d$ follows
+
 $$\partial_t X_t = F^{(I_t)}(X_t),$$
+
 i.e. between jumps of the environment it moves along the flow of the current vector field. The pair $(X_t, I_t)$ is a piecewise deterministic Markov process (PDMP); in population dynamics $X_t$ is a vector of population sizes or traits in a randomly fluctuating environment. Assume each field is **contracting at rate** $\rho(i) \in \mathbb{R}$ (possibly negative):
+
 $$\langle x - y, F^{(i)}(x) - F^{(i)}(y)\rangle \le -\rho(i)\,\|x - y\|^2 \qquad \text{for all } x, y \in \mathbb{R}^d .$$
+
 (For $C^1$ fields this holds whenever $\langle u, \mathbf{J}_x F^{(i)} u\rangle \le -\rho(i)\|u\|^2$ for all $u, x$; for gradient fields $F^{(i)} = -\nabla V_i$ it is $\rho(i)$-strong convexity of $V_i$.)
 
 **Theorem.** If
+
 $$\sum_{i \in F} \rho(i)\,\nu(i) > 0,$$
+
 then $(X_t, I_t)$ converges in law to a unique invariant probability measure, whatever the initial condition.
 
 **Counterpoint (switching can destabilise).** Stability of every field separately is not enough. In $\mathbb{R}^2$ with $F = \{0,1\}$, symmetric switching rate $\lambda$, and the linear Hurwitz fields
+
 $$F^{(0)}(v) = \begin{pmatrix} -1 & 4 \\ -1/4 & -1\end{pmatrix} v, \qquad F^{(1)}(v) = \begin{pmatrix} -1 & -1/4 \\ 4 & -1\end{pmatrix} v,$$
+
 there is a critical rate $\beta_c > 0$ such that $\|X_t\| \to 0$ exponentially fast if $\lambda < \beta_c$ and $\|X_t\| \to \infty$ exponentially fast if $\lambda > \beta_c$.
 
 ## Expansion

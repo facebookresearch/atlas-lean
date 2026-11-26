@@ -1,18 +1,25 @@
 # Diffusivity estimation from local measurements in a stochastic Meinhardt cell-polarity model
 
 **Model.** On the cell contour $\Lambda = \mathbb{R}/(L\mathbb{Z})$, an activator $A$ and inhibitor $I$ obey the stochastic Meinhardt reaction–diffusion system
+
 $$\partial_t A = D_A\partial_x^2 A + f_A(A, I, x) + \sigma_A\xi_A, \qquad \partial_t I = D_I\partial_x^2 I + f_I(A, I) + \sigma_I\xi_I,$$
+
 with independent space-time white noises $\xi_A, \xi_I$,
+
 $$f_A(y, x) = r_A\frac{\zeta(x)(b_A + y_1^2)}{(\zeta_I + |y_2|)(1 + \zeta_A y_1^2)} - r_A y_1, \qquad f_I(y) = b_I y_1 - r_I y_2,$$
+
 and external signal $\zeta(x) = 1 - a\cos(2\pi x/L)$ (e.g. a chemoattractant gradient whose maximum defines the cell front).
 
 **Theorem (well-posedness).** For initial data $(A_0, I_0) \in C^{2+s}(\Lambda; \mathbb{R}^2)$, $0 < s < \tfrac12$, there is a unique mild solution $X = (A, I) \in C([0,T]; C^s(\Lambda; \mathbb{R}^2))$; it decomposes as $X = \bar X + \tilde X$ with $\bar X$ the stochastic convolution solving the linear equation (no reaction terms, zero initial value) and $\tilde X$ a more regular perturbation.
 
 **Estimator.** Activator fluorescence is observed through a point spread function: $A_\delta(t, x_k) = \langle A(t), K_{\delta,x_k}\rangle$, $K_{\delta,x_k}(x) = \delta^{-1/2}K((x - x_k)/\delta)$, at $M$ locations, together with $A^\Delta_\delta(t, x_k) = \langle A(t), \partial_x^2 K_{\delta,x_k}\rangle$. The augmented maximum-likelihood estimator (ignoring the nonlinear term) is
+
 $$\hat D_{A,\delta} = \frac{\sum_{k=1}^M\int_0^T A^\Delta_\delta(t, x_k)\,dA_\delta(t, x_k)}{\sum_{k=1}^M\int_0^T \big(A^\Delta_\delta(t, x_k)\big)^2\,dt}.$$
 
 **Theorem (asymptotic normality).** Let $K \in H^2(\mathbb{R})$, $K \ne 0$, have compact support and $\sigma_A > 0$. As the resolution $\delta \to 0$,
+
 $$\delta^{-1}\big(\hat D_{A,\delta} - D_A\big) \xrightarrow{d} N\Big(0,\ D_A\frac{\Sigma}{MT}\Big), \qquad \Sigma = \frac{2\|K\|^2_{L^2(\mathbb{R})}}{\|K'\|^2_{L^2(\mathbb{R})}},$$
+
 so $\hat D_{A,\delta} \pm \delta(MT)^{-1/2}(\hat D_{A,\delta}\Sigma)^{1/2}q_{1-\alpha/2}$ is an asymptotic $(1-\alpha)$ confidence interval. The nonlinearity, the unobserved inhibitor and the signal $\zeta$ do not affect the limit.
 
 ## Expansion

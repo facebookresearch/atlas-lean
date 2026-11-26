@@ -11,6 +11,7 @@
 With $a(N) = a_0 + a_1 N$, $a_0, a_1 > 0$, analogous statements hold with $2a_0 b + 2a_1 V_R < (V_F - V_R)^2 V_R$ in place of the second condition.
 
 **Relaxation in the linear case.** For $b = 0$ and $a = a_0$, fast-decaying solutions satisfy, for every smooth convex $G$, a relative-entropy dissipation identity, and there is $\nu > 0$ (a Poincaré constant for the weight $p_\infty$) such that
+
 $$\int_{-\infty}^{V_F} p_\infty \Big(\frac{p(v,t) - p_\infty(v)}{p_\infty(v)}\Big)^2 dv \le e^{-2a_0\nu t}\int_{-\infty}^{V_F} p_\infty \Big(\frac{p^0(v) - p_\infty(v)}{p_\infty(v)}\Big)^2 dv.$$
 
 ## Depends on

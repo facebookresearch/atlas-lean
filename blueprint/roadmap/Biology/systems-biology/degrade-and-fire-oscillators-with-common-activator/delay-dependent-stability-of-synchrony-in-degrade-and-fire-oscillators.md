@@ -1,20 +1,26 @@
 # Delay-dependent stability of synchrony in degrade-and-fire oscillators
 
 **Model.** $N$ degrade-and-fire (DF) oscillators with repressor concentrations $x_1,\dots,x_N\ge 0$ share an activator $A\ge 0$:
+
 $$
 \dot x_i(t)=-1\ \text{ if } x_i(t)>0,\qquad x_i(t^+)=R+\nu A(t-\tau)\ \text{ if } x_i(t)=0,\qquad
 \dot A(t)=m(t)-\beta A(t),\quad m(t)=\frac1N\sum_{i=1}^N x_i(t),
 $$
+
 with parameters $R,\beta,\nu>0$, feedback delay $\tau\ge 0$, $\nu<\beta$ and $\tau<R$. Each repressor degrades linearly and is reset by a burst of synthesis ("firing") whose size grows with the delayed activator level; the activator integrates the mean repressor (quorum sensing). The firing order is preserved forever under
+
 $$
 \nu<\frac{\beta}{1+\beta R}. \tag{O}
 $$
 
 Put $R_\tau=R+\nu\,\frac{1+\beta\tau-e^{\beta\tau}}{\beta^2}$ and $\nu_\tau=\nu e^{\beta\tau}$, and assume
+
 $$
 R_\tau>0\quad\text{and}\quad \nu_\tau<\beta . \tag{C}
 $$
+
 On the synchronized subspace $x_1=\dots=x_N$ the dynamics reduces to the $N=1$ system, whose return map on the activator value at firing is
+
 $$
 F_1(A)=\frac{1}{\beta^2}+\Big(A\big(1-\tfrac{\nu_\tau}{\beta}\big)-\frac{R_\tau}{\beta}-\frac{1}{\beta^2}\Big)e^{-\beta(R_\tau+\nu_\tau A)} .
 $$

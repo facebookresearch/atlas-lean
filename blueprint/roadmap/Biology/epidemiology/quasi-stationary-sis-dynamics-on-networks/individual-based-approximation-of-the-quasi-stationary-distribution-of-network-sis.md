@@ -1,7 +1,9 @@
 # Individual-based approximation of the quasi-stationary distribution of network SIS
 
 **Setting.** In the Markovian SIS model on a strongly connected network with $N$ nodes, node $j$ infects a susceptible neighbour $i$ at rate $T_{ij}$, and node $i$ recovers at rate $\gamma_i$. The disease-free state is absorbing, so there is no endemic steady state. Long-lived endemic behaviour is described by the *quasi-stationary distribution* (QSD), the limiting law conditioned on non-extinction. Closing the QSD equations under the assumption that node states are independent gives the following problem. Find feasible $\langle Y\rangle^*\in[0,1]^N$, with $\langle X_i\rangle^*=1-\langle Y_i\rangle^*$, solving
+
 $$0=\sum_jT_{ij}\langle X_i\rangle\langle Y_j\rangle-\gamma_i\langle Y_i\rangle+\frac{\langle Y_i\rangle\sum_j\gamma_j\langle Y_j\rangle\prod_{k\neq j}\langle X_k\rangle}{1-\prod_k\langle X_k\rangle},$$
+
 and set $\langle I_i\rangle^{\mathrm{QSD}}_{\mathrm{approx}}=\langle Y_i\rangle^*/\big(1-\prod_k\langle X_k\rangle^*\big)$ and $[I]^{\mathrm{QSD}}_{\mathrm{approx}}=\sum_i\langle I_i\rangle^{\mathrm{QSD}}_{\mathrm{approx}}$. The last term of the equation is the *conditioning correction*: it re-injects the probability mass lost to extinction, in proportion to current infection.
 
 **Theorem.**

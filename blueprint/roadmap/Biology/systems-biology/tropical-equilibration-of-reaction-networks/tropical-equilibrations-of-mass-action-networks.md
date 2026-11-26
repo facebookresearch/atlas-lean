@@ -1,6 +1,7 @@
 # Tropical equilibrations of mass-action networks
 
 **Setting.** Consider mass-action kinetics with reactions $\sum_i \alpha_{ji} A_i \to \sum_k \beta_{jk} A_k$ and rates $R_j(\mathbf{x}) = k_j \mathbf{x}^{\boldsymbol\alpha_j}$, so that $\dot{\mathbf{x}} = \sum_j k_j (\boldsymbol\beta_j - \boldsymbol\alpha_j)\mathbf{x}^{\boldsymbol\alpha_j}$. Suppose rate constants are powers of a small parameter, $k_j = \bar k_j \epsilon^{\gamma_j}$, and rescale concentrations $x_i = \epsilon^{a_i}\bar x_i$. In the $i$-th equation the reaction $j$ then has order $\epsilon^{\mu_j}$ with
+
 $$
 \mu_j = \gamma_j + \langle \mathbf{a}, \boldsymbol\alpha_j \rangle .
 $$

@@ -5,7 +5,9 @@
 **Lemma.** The deterministic mass-action model of the slack network has the complex-balanced steady state $\tilde c = (c^*, 1, \dots, 1)^\top$.
 
 **Theorem.** There is a constant $M_N > 0$ such that
+
 $$\pi_N(\vec x) = M_N\,\pi(\vec x), \qquad \vec x \in \mathbb{S}_N.$$
+
 In particular, by the Anderson–Craciun–Kurtz theorem, $\pi_N$ is the product-form Poisson law $\prod_i e^{-c_i^*}(c_i^*)^{x_i}/x_i!$ restricted and renormalized to $\mathbb{S}_N$.
 
 ## Depends on

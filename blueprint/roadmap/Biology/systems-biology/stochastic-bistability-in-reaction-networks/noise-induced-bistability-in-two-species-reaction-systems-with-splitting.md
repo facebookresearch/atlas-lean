@@ -11,7 +11,9 @@
 For birth–death chains with $r_\pm(Nx)/N\to\tilde r_\pm(x)$, the transition times instead satisfy $\frac1N\log\beta_N\to\imath_{x_3,x_2}(\tilde r_+,\tilde r_-)$, with the discrete quasipotential $\imath$. When $N\varepsilon_N^2\to1$ this discrete rate is the correct one and is more informative than the diffusion rate.
 
 **Theorem (fast splitting: boundary bistability).** Suppose the reaction rates on the boundary are of order $\omega_N\to\infty$ and, for a time scale $\beta_N$, the escape and crossing probabilities satisfy
+
 $$\tfrac{1}{\omega_N}\textstyle\sum_j r_{0j}\to\tilde r_+,\quad \tfrac1{\omega_N}\sum_j r_{Nj}\to\tilde r_-,\quad \beta_N\sum_j r_{0j}\pi_{jN}\to\tilde r_{01},\quad \beta_N\sum_j r_{Nj}\pi_{j0}\to\tilde r_{10},$$
+
 together with vanishing mean excursion times. Then the times between switches, measured in units of $\beta_N$, converge to $\mathrm{Exp}(\tilde r_{01})$ and $\mathrm{Exp}(\tilde r_{10})$. The occupation measure of $X_N$ converges to the jump process alternating between $\delta_0$ and $\delta_1$. For a birth–death chain with $r_+(0)/N\to\tilde r_+$, $r_-(N)/N\to\tilde r_-$, $\sum_i|\varepsilon_N(i)|\to0$, $\sum_i (N-i)/r_+(i)\to0$ and $\sum_i i/r_-(i)\to0$, these conditions hold with $\omega_N=N$, $\beta_N=1$, $\tilde r_{01}=\tilde r_+$ and $\tilde r_{10}=\tilde r_-$.
 
 ## Expansion

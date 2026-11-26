@@ -1,9 +1,13 @@
 # Cycle maps, periodic orbits and chaos in Boolean Glass networks
 
 **Model.** A Glass network is the piecewise-linear system
+
 $$\dot y_i = -y_i + F_i(\tilde y_1,\dots,\tilde y_n), \qquad \tilde y_i = \begin{cases} 0 & y_i < 0 \\ 1 & y_i > 0\end{cases}, \qquad i = 1,\dots,n,$$
+
 the hard-switching limit of sigmoidal gene-regulatory or neural networks with all thresholds at $0$. It is **Boolean** if every $F_i(\tilde{\mathbf y}) = \pm 1$. Assume $F_i \neq 0$ (Condition 1) and that $F_i$ does not depend on $\tilde y_i$, i.e. no self-input (Condition 2). In the orthant with sign pattern $\tilde{\mathbf y}$, $\mathbf y(t) = \mathbf f + (\mathbf y(0) - \mathbf f)e^{-t}$ moves straight toward the focal point $\mathbf f = \mathbf F(\tilde{\mathbf y})$. If $\mathbf f$ lies outside the orthant, the trajectory crosses a boundary $y_j = 0$, and the boundary-to-boundary map is the fractional-linear map
+
 $$M^{(k)}\mathbf y = \frac{B^{(k)}\mathbf y}{1 + \langle\psi^{(k)},\mathbf y\rangle}, \qquad B^{(k)} = I - \frac{\mathbf f^{(k)}\mathbf e_j^{\top}}{f_j^{(k)}}, \qquad \psi^{(k)} = -\frac{\mathbf e_j}{f_j^{(k)}} .$$
+
 Composing along a cycle of orthants in the state-transition diagram (a directed graph on the $n$-cube) and dropping the coordinate that is zero on the return boundary gives a **cycle map** $M\mathbf y = A\mathbf y/(1 + \langle\phi,\mathbf y\rangle)$ with $A \in \mathbb{R}^{(n-1)\times(n-1)}$.
 
 **Propositions.**

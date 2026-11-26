@@ -3,9 +3,13 @@
 **Setting.** In the fast–slow protocell model with protocell reproduction $G_{FS}(x) = x - \eta x^2$ ($x$ = fraction of slow genes, $\eta \in (0,1]$), gene-level advantage $s$ for fast genes and relative between-protocell selection strength $\lambda$, the long-time state for $\lambda(1-\eta) > s\theta$ is the density $p^\lambda_\theta(x) \propto x^{(\lambda/s)(1-\eta)-\theta-1}(1-x)^{\theta-1} e^{-\lambda\eta x/s}$ (see [Long-time behavior of the fast–slow protocell PDE](long-time-behavior-of-the-fast-slow-protocell-pde.md)).
 
 **Proposition.** Suppose $\lambda(1-\eta) > s(\theta+1)$ and $\theta \ge 1$. For $\eta \in (0,1]$ the modal composition $\hat x^\lambda_{FS} = \arg\max_{x\in[0,1]} p^\lambda_\theta(x)$ is
+
 $$\hat x^\lambda_{FS} = \frac{\lambda - 2s - \sqrt{(\lambda - 2s)^2 - 4\lambda\eta\,[\lambda(1-\eta) - s(\theta+1)]}}{2\lambda\eta},$$
+
 and $\hat x^\lambda_{FS} = 1$ for $\eta = 0$. As between-protocell selection becomes infinitely strong,
+
 $$\hat x^\infty_{FS} = \lim_{\lambda\to\infty} \hat x^\lambda_{FS} = \begin{cases} 1, & \eta < \tfrac12,\\[2pt] \dfrac1\eta - 1, & \eta \ge \tfrac12 .\end{cases}$$
+
 For $\eta > 1/2$ the collective optimum is $x^* = 1/(2\eta)$, and $\hat x^\infty_{FS} = 1/\eta - 1 < 1/(2\eta)$: even with arbitrarily strong protocell-level competition the most abundant protocell carries fewer slow genes than the protocell-level optimum.
 
 ## Expansion

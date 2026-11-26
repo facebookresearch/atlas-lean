@@ -1,13 +1,19 @@
 # Stage covariance in the time-window-of-integration model
 
 **Model.** In the time-window-of-integration (TWIN) model of crossmodal reaction time, the response time is the sum of a first-stage time $W_1$ (a race of peripheral unimodal activations) and a second-stage time $W_2$ (neural integration and response preparation),
+
 $$RT_{VA}=W_1+W_2 ,$$
+
 with $W_1,W_2$ on one probability space. Let $I$ be the event that multisensory integration occurs (all first-stage processes finish within the time window), $\pi=\mathbb P(I)\in(0,1)$, and assume $W_1$ and $W_2$ are conditionally independent given $I$ and given $I^c$, with finite means. Then
+
 $$H(w_1,w_2)=\pi\,F_I(w_1)G_I(w_2)+(1-\pi)\,F_{I^c}(w_1)G_{I^c}(w_2),$$
+
 where $F_\cdot$ and $G_\cdot$ are the conditional distribution functions of $W_1$ and $W_2$.
 
 **Proposition.** If $W_1$ and $W_2$ have finite second moments, then
+
 $$\operatorname{Cov}(W_1,W_2)=\pi(1-\pi)\big(\mathbb E[W_1\mid I^c]-\mathbb E[W_1\mid I]\big)\big(\mathbb E[W_2\mid I^c]-\mathbb E[W_2\mid I]\big).$$
+
 In particular the dependence between the two stages is generated entirely by the integration event, and it can be positive, negative or zero depending on how integration shifts the two stage means.
 
 ## Expansion

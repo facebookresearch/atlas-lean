@@ -1,21 +1,29 @@
 # Sparsification of $k$-regular phylogenetic covariance matrices by Haar-like wavelets
 
 **Setting.** Let $T$ be a rooted tree with root $\circ$, leaf set $L$, internal nodes $I$ and edge lengths $\ell : E \to \mathbb R_+$; $T$ is $k$-regular if every non-root internal node has $k$ children (the root is planted), so $|L| = 1 + (k-1)(|I|-1)$. The **phylogenetic covariance matrix** is
+
 $$C(i,j) = \sum_{e \in [i\wedge j,\,\circ]}\ell(e), \qquad i, j \in L,$$
+
 the shared root-to-leaf branch length (the covariance of a Brownian trait on $T$). The **trace length** of an edge is $\ell^*(e) = |L(e)|\,\ell(e)$, with $L(e)$ the leaves below $e$, and $\ell^*(u,v) = \sum_{e\in[u,v]}\ell^*(e)$.
 
 **Haar-like wavelets.** Let $\phi_\circ \equiv |L|^{-1/2}$. For an internal node $v \ne \circ$ with children $v_1, \dots, v_k$ and $1 \le n < k$, let $L_{v,n} = L(v_1) \cup \dots \cup L(v_n)$ and $L^+_{v,n} = L_{v,n} \cup L(v_{n+1})$, and set
+
 $$\phi_{v,n} = \sqrt{\frac{|L(v_{n+1})|}{|L_{v,n}|\,|L^+_{v,n}|}}\,\mathbf 1_{L_{v,n}} - \sqrt{\frac{|L_{v,n}|}{|L(v_{n+1})|\,|L^+_{v,n}|}}\,\mathbf 1_{L(v_{n+1})}.$$
+
 These $|L|$ functions form an orthonormal basis of $\mathbb R^L$; let $\Phi$ be the matrix with these columns.
 
 **Theorem (diagonal action).** If $\psi$ is a Haar-like wavelet associated with $v \in I$, then $C\psi = \mathrm{diag}(\ell^*(L, v))\,\psi$, i.e. $(C\psi)(i) = \ell^*(i,v)\psi(i)$ for every leaf $i$.
 
 **Theorem (sparsity bound).** Let $\zeta$ be the fraction of vanishing entries of $\Phi^\top C\Phi$ and $\mathrm{IPL}(T)$ the internal path length of $T$. Then
+
 $$1 - \zeta \le \frac{(k-1)^2}{|I|} + 2(k-1)^2\frac{\mathrm{IPL}(T)}{|I|^2}.$$
+
 In particular $\zeta = 1 - o(1)$ whenever $\mathrm{IPL}(T) \ll |I|^2$.
 
 **Theorem (random trees).** For a uniformly random $k$-regular tree with $|I|$ internal nodes,
+
 $$\mathbb E[\mathrm{IPL}(T)] = \sqrt{\frac{\pi k|I|^3}{2(k-1)}}\,\big(1 + O(|I|^{-1/2})\big), \qquad \mathbb V[\mathrm{IPL}(T)] = \frac{k}{2(k-1)}\Big(\frac{10}{3} - \pi\Big)|I|^3\big(1 + O(|I|^{-1/2})\big).$$
+
 Hence $\mathrm{IPL}(T) = O_P(|I|^{3/2})$ and, for every $k \ge 2$, $\zeta \to 1$ in probability as $|I| \to \infty$.
 
 ## Expansion

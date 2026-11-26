@@ -1,24 +1,31 @@
 # Parameterized Tikhonov–Fenichel reduction formula
 
 **Setting.** Let $U\subseteq\mathbb{R}^n$ be open and consider a smooth $\varepsilon$-dependent system
+
 $$
 \dot x=h^{(0)}(x)+\varepsilon h^{(1)}(x)+O(\varepsilon^2),\qquad x\in U,\ \varepsilon\ge 0,
 $$
+
 without any a priori separation into slow and fast variables. Fix $0<r<n$, $s=n-r$, and a point $a$ in the zero set $\mathcal{V}(h^{(0)})$ such that on $Z=\mathcal{V}(h^{(0)})\cap\widetilde U$ (for a neighborhood $\widetilde U$ of $a$): $\operatorname{rank}Dh^{(0)}(x)=r$; $\mathbb{R}^n=\ker Dh^{(0)}(x)\oplus\operatorname{Im}Dh^{(0)}(x)$; and all nonzero eigenvalues of $Dh^{(0)}(x)$ have negative real part. These are exactly the conditions for a local transformation to Tikhonov standard form (Feliu–Kruff–Walcher, Proposition 1, recalling earlier work). Then $h^{(0)}=P\mu$ near $Z$ with $P(x)\in\mathbb{R}^{n\times r}$ of rank $r$, $Z=\mathcal{V}(\mu)\cap\widetilde U$, and the reduced (slow-time) system on the $s$-dimensional critical set $Z$ is
+
 $$
 x'=Q(x)h^{(1)}(x),\qquad Q(x)=I_n-P(x)\big(D\mu(x)P(x)\big)^{-1}D\mu(x),
 $$
+
 where $Q(x)$ is the projection onto $\ker Dh^{(0)}(x)$ along $\operatorname{Im}Dh^{(0)}(x)$.
 
 **Theorem (Feliu–Kruff–Walcher, Theorem 1).** Suppose $\Phi:W\to Z$, $W\subseteq\mathbb{R}^s$ open, is a smooth parameterization of the critical set $Z$ with $\operatorname{rank}D\Phi(v)=s$ for all $v\in W$. Then:
 
 1. for every $v\in W$ there is a unique $R(v)\in\mathbb{R}^{s\times n}$ with $Q(\Phi(v))=D\Phi(v)R(v)$;
 2. solutions of the reduced system starting in $\Phi(W)$ are $x(t)=\Phi(v(t))$ with
+
 $$
 v'=R(v)\,h^{(1)}(\Phi(v));
 $$
+
 3. $R(v)$ is characterized by $R(v)P(\Phi(v))=0$ and $R(v)D\Phi(v)=I_s$, i.e. $R(v)\big(D\Phi(v)\,|\,P(\Phi(v))\big)=(I_s\,|\,0)$ with the block matrix invertible, so $R$ is smooth;
 4. if $L(x)\in\mathbb{R}^{s\times n}$ has full rank $s$ and $L(x)Dh^{(0)}(x)=0$ on $Z$, then with $L^*(v)=L(\Phi(v))$
+
 $$
 v'=\big(L^*(v)D\Phi(v)\big)^{-1}L^*(v)\,h^{(1)}(\Phi(v)).
 $$

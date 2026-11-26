@@ -1,7 +1,9 @@
 # Large-time drug concentration under random nonadherence
 
 **Model.** In a one-compartment model with first-order absorption (rate $k_a$) and elimination (rate $k_e\neq k_a$), a dose $D$ with bioavailability $F$ is prescribed every $\tau$ time units. Let $\xi_n\in\{0,1\}$ record whether the patient remembers the $n$th dose; $(\xi_n)$ is a stationary, ergodic and possibly correlated sequence. A *dosing protocol* takes amount $Df_n$, with $f_n=f(\xi_{n-m},\dots,\xi_n)$, $f_n=0$ when $\xi_n=0$. The concentration is
+
 $$c(t)=\kappa\sum_{n=0}^{\lfloor t/\tau\rfloor}\Big(e^{-k_e(t-n\tau)}-e^{-k_a(t-n\tau)}\Big)f_n,\qquad \kappa=\frac{DF}{V}\frac{k_a}{k_a-k_e}.$$
+
 Write $\alpha=e^{-k_e\tau}$ and $\beta=e^{-k_a\tau}$. Two protocols are compared: *single dose*, where $f_n=\xi_n$; and *double dose*, where $f_n=0$ if $\xi_n=0$, $f_n=1$ if $\xi_n=\xi_{n-1}=1$, and $f_n=2$ if $\xi_n=1,\ \xi_{n-1}=0$.
 
 **Theorem.**

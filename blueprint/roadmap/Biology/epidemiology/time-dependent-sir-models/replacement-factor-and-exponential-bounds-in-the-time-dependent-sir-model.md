@@ -1,7 +1,9 @@
 # Replacement factor and exponential bounds in the time-dependent SIR model
 
 **Model.** In a closed population, let $s,i,r$ be the susceptible, infected and removed fractions. The transmission rate $\beta(t)$, death rate $\mu(t)$ and recovery rate $\gamma(t)$ are continuous and positive, and the total removal rate is $\rho(t)=\mu(t)+\gamma(t)$:
+
 $$s'=-\beta(t)si,\qquad i'=\beta(t)si-\rho(t)i,\qquad r'=\rho(t)i .$$
+
 Define the *reproduction factor* $\sigma(t)=\beta(t)/\rho(t)$ and the *replacement factor* $\sigma_s(t)=\beta(t)s(t)/\rho(t)$, a time-dependent effective reproduction number.
 
 **Theorem.**
@@ -9,8 +11,11 @@ Define the *reproduction factor* $\sigma(t)=\beta(t)/\rho(t)$ and the *replaceme
 1. If $i(t)>0$ then $s$ is strictly decreasing and $r$ strictly increasing; both are constant where $i=0$.
 2. $i'(t)$ has the sign of $\sigma_s(t)-1$. The epidemic grows when $\sigma_s>1$, declines when $\sigma_s<1$, and stagnates when $\sigma_s=1$. Since $s\le1$, $\sigma(t)<1$ implies decline. If $\sigma(t)>1$, the epidemic grows exactly while $s(t)>1/\sigma(t)$.
 3. *(Exponential decay.)* If $\sigma_s(t)\le\sigma_{\max}<1$ on $[t_0,t_1]$ and $\rho_{\min}=\min_{[t_0,t_1]}\rho$, then
+
 $$i(t)\le i(t_0)\,e^{-\rho_{\min}(1-\sigma_{\max})(t-t_0)},\qquad t\in[t_0,t_1].$$
+
 4. *(Exponential growth.)* If $\sigma_s(t)\ge\sigma_0>1$ on $[t_0,t_1]$, then
+
 $$i(t)\ge i(t_0)\,e^{\rho_{\min}(\sigma_0-1)(t-t_0)},\qquad t\in[t_0,t_1].$$
 
 ## Expansion

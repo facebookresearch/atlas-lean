@@ -12,9 +12,13 @@ $$\begin{aligned}
 with all parameters positive. HAART enters through the efficacies $\epsilon_{RT}, \epsilon_P \in [0,1)$ of reverse-transcriptase and protease inhibitors; $k_1,k_2$ are infection rates, $n_H, n_S$ burst sizes, $\sigma_H,\sigma_S$ clearance rates and $\lambda/\mu$ the cell-free target-cell level.
 
 **Theorem.** Solutions starting in $\mathbb R^6_{\ge0}$ stay non-negative and bounded. The single-virus submodels have reproduction numbers
+
 $$\mathcal R_{\mathrm{hiv}} = \frac{k_1 n_H(1-\epsilon_{RT})(1-\epsilon_P)\lambda}{\mu\,\sigma_H}, \qquad \mathcal R_{\mathrm{sars}} = \frac{k_2 n_S\lambda}{\mu\,\sigma_S},$$
+
 and the full model has
+
 $$\mathcal R_0 = \max\{\mathcal R_{\mathrm{hiv}}, \mathcal R_{\mathrm{sars}}\}.$$
+
 The disease-free equilibrium $(\lambda/\mu, 0,0,0,0,0)$ is locally asymptotically stable if $\mathcal R_0 < 1$ and unstable if $\mathcal R_0 > 1$. In each submodel the disease-free equilibrium is stable for reproduction number below $1$; the endemic equilibrium $E^e_{\mathrm{hiv}}$ (respectively $E^e_{\mathrm{sars}}$) enters the positive orthant through a transcritical bifurcation at $\mathcal R_{\mathrm{hiv}} = 1$ (respectively $\mathcal R_{\mathrm{sars}} = 1$) and is locally asymptotically stable above it. Therapy lowers $\mathcal R_{\mathrm{hiv}}$ by the factor $(1-\epsilon_{RT})(1-\epsilon_P)$ and so can clear HIV without affecting the SARS-CoV-2 threshold.
 
 ## Expansion

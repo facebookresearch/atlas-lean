@@ -1,9 +1,13 @@
 # Equilibria and Fisher information of a Darwinian (evolutionary game) population model
 
 **Model.** A population of density $x_t$ carries a mean trait $\theta_t$ that evolves by Darwinian (adaptive) dynamics:
+
 $$x_{t+1} = x_t\,G(x_t, \theta_t), \qquad \theta_{t+1} = \theta_t + \sigma^2\,\partial_\theta \ln G(x_t, \theta_t),$$
+
 with fitness generating function
+
 $$G(x,\theta) = b(\theta)\,e^{-c_u(\theta)x}, \qquad b(\theta) = b_0\,e^{-\theta^2/(2w^2)}, \qquad c_u(\theta) = c_0\,e^{-\kappa(\theta - u)},$$
+
 where $b_0 > 0$ is the maximal birth rate at the optimum trait $0$, $w > 0$ the width of the birth-rate profile, $c_0 > 0$ the competition coefficient, $\kappa > 0$ the trait sensitivity of competition, $u$ a reference trait and $\sigma^2 > 0$ the speed of evolution. Nontrivial equilibria $(x_*, \theta_*)$, $x_* > 0$, solve $G = 1$ and $\partial_\theta \ln G = 0$.
 
 **Proposition (equilibria).** Let $\xi_1 = \frac{1}{\kappa^2} + 2w^2\ln b_0$.
@@ -14,10 +18,15 @@ where $b_0 > 0$ is the maximal birth rate at the optimum trait $0$, $w > 0$ the 
 In each case $x_* = \ln b(\theta_*)/c_u(\theta_*) = \big(\ln b_0 - \theta_*^2/(2w^2)\big)\big/\big(c_0 e^{-\kappa(\theta_* - u)}\big)$, which is positive iff $\theta_*^2 < 2w^2\ln b_0$.
 
 **Theorem (Fisher information).** Treating $G(\cdot,\theta)$ as the trait-indexed density of the population process, the Fisher information about the trait parameter is
+
 $$I(\theta) = \frac{1}{w^2} + \kappa^2\,\Gamma_u(\theta), \qquad \Gamma_u(\theta) = \frac{b(\theta)}{c_u(\theta)} = \frac{b_0}{c_0}\exp\Big(-\frac{\theta^2}{2w^2} + \kappa(\theta - u)\Big).$$
+
 It is maximal at $\theta_{\max} = w^2\kappa$, with
+
 $$I_{\max} = \frac{1}{w^2} + \kappa^2\,\frac{b_0}{c_0}\,e^{\frac12(w\kappa)^2 - \kappa u},$$
+
 so the asymptotic (Cramér–Rao) error in estimating $\theta$ is smallest there. For $n$ traits with $b(\Theta) = b_0\exp(-\sum_i \theta_i^2/(2w_i^2))$ and $c_{\mathbf U}(\Theta) = c_0\exp(-\sum_i \kappa_i(\theta_i - u_i))$, the Fisher information matrix is
+
 $$I(\Theta) = \mathrm{diag}\big(w_1^{-2},\dots,w_n^{-2}\big) + \Gamma_{\mathbf U}(\Theta)\,\boldsymbol{\kappa}\boldsymbol{\kappa}^{\top}, \qquad \Gamma_{\mathbf U} = b/c_{\mathbf U}.$$
 
 ## Expansion

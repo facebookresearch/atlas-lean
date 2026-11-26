@@ -10,7 +10,9 @@ dR &= \big[\gamma_3(r)Q - (\mu(r) + \gamma_5(r))R\big]dt + \sigma_4(r)R\,dW_4,
 with $\sigma_i \ne 0$. Here $A$ is recruitment, $\mu$ natural death, $\gamma_1$ disease death, $\gamma_2$ quarantine, $\gamma_3$ recovery, $\gamma_4$ death in quarantine, $\gamma_5$ loss of immunity, and $F(S,I,k)$ a general per-infective incidence function (bilinear, saturated, Beddington–DeAngelis and similar forms are allowed). Let $c_2(k) = \mu(k) + \gamma_1(k) + \gamma_2(k)$.
 
 **Threshold.** Without infection the pair $(S, r)$ has a unique invariant probability measure $\nu_0$ on $(0,\infty)\times\mathcal M$. Define the invasion rate of the disease
+
 $$\lambda = \sum_{k\in\mathcal M}\int_{(0,\infty)}\Big[F(s,0,k) - c_2(k) - \frac{\sigma_2^2(k)}{2}\Big]\nu_0(ds,\{k\}).$$
+
 Without switching and with $F(s,i) = \beta s$, $\lambda = \beta A/\mu - c_2 - \sigma_2^2/2$.
 
 **Theorem.**

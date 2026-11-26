@@ -1,14 +1,19 @@
 # Convergence-time bounds for NIMFA SIS below the epidemic threshold
 
 **Model.** On a graph $G$ with $N$ nodes and adjacency matrix $A$, the N-intertwined mean-field approximation (NIMFA) of the SIS process gives each node $i$ an infection probability $v_i(t) \in [0,1]$ with
+
 $$\frac{dv_i}{dt} = -\delta v_i + \beta(1 - v_i)\sum_{j} a_{ij} v_j ,$$
+
 or, with time rescaled so that $\delta = 1$ and effective infection rate $\tau = \beta/\delta$, $\dot V = (\tau A - I)V - \tau\,\mathrm{diag}(V)AV$. The prevalence is $y(t) = \frac1N \sum_i v_i(t)$, the NIMFA epidemic threshold is $\tau_c^{(1)} = 1/\lambda_1(A)$, and $R_0(G,\tau) = \tau\lambda_1(A)$.
 
 On a time-varying network, the process is approximately *annealed* (sees the average network) when topology changes much faster than the epidemic, and *quenched* (sees a static snapshot) when the network changes much slower. For tolerance $r$ the upper-transition time $\overline T(r)$ is the boundary of the quenched regime: the time a static NIMFA process needs before its prevalence is within $r$ of the steady state $y_\infty$.
 
 **Lemma (below threshold).** If $\tau < \tau_c^{(1)}(G)$, then for every initial vector $V(0) \in [0,1]^N$
+
 $$y(t; G, \tau, V(0)) \le y(t; G, \tau, u) \le e^{(R_0(G,\tau) - 1)t},$$
+
 where $u$ is the all-one vector, and consequently
+
 $$\overline T(r) \le \frac{1}{1 - R_0(G,\tau)}\log\frac1r .$$
 
 **Lemma (above threshold, no uniform bound).** If $\tau > \tau_c^{(1)}$, then for every horizon $\mathcal T$ and tolerance $r < y_\infty$ there is $\varepsilon(r) > 0$ such that the start $V(0) = \varepsilon(r)u$ keeps $|y(t) - y_\infty| > r$ for all $t \le \mathcal T$: starts close to the disease-free state converge arbitrarily slowly.

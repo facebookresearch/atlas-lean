@@ -5,7 +5,9 @@
 **Optimal data.** A subspace $U$ of dimension $s$ is in *general position* with respect to the monomial basis if, for every basis $v_1, \dots, v_s$ of $U$ and every choice of $d - s$ distinct monomials, the $v_i$ and these monomials form a basis of $F_n(\mathbb{F}_q)$. A data set $X$ is *optimal* if $\ker\Phi_X$ is in general position.
 
 **Theorem.** Let $X$ be an optimal set of $m < q^n$ distinct points, let $f \ne 0$ be a linear combination of exactly $t$ fundamental monomials, and let the $m$ monomials completing the kernel basis be chosen uniformly at random. Then the probability that the orthogonal interpolant of the data $b_i = f(x_i)$ equals $f$ is
+
 $$P = \frac{\binom{q^n - t}{q^n - m}}{\binom{q^n}{m}} \quad (t \le m), \qquad P = 0 \quad (t > m).$$
+
 In particular, recovering $f$ requires at least as many data points as $f$ has terms, and $f$ is recovered exactly when its support is contained in the chosen monomials. For fixed $q$ and a fixed fraction of data, $P$ decays to $0$ like $r^{q^n}$ for some $0 < r < 1$ as the number of variables $n$ grows.
 
 ## Expansion

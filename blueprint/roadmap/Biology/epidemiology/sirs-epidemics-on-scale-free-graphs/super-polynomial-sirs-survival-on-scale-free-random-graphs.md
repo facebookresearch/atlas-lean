@@ -3,10 +3,13 @@
 In the SIRS process on a graph $G$, each vertex is susceptible, infected or recovered. An infected vertex infects each susceptible neighbour at rate $\lambda$ and recovers at rate $1$. A recovered vertex loses immunity and becomes susceptible again at the deimmunization rate $\varrho$. The survival time $T$ is the first time no vertex is infected. On a single star, recovered vertices stop the infection: the expected survival time is polynomial in $n$ whatever $\lambda$ is. This contrasts with the SIS process, which survives super-polynomially long on stars.
 
 **Theorem (scale-free graphs).** Fix constants $\varepsilon>0$ and $\varrho>0$. Let $G$ be a hyperbolic random graph, a geometric inhomogeneous random graph, or a Chung–Lu graph on $n$ vertices with power-law degree exponent $\gamma\in(2,3)$. Consider the SIRS process on $G$ with infection rate
+
 $$
 \lambda\in(0,1],\qquad \lambda=\Omega\Big(n^{-\frac{1}{(2+1/\varrho)(\gamma-1)}+\varepsilon}\Big),
 $$
+
 started with the highest-degree vertex infected and all others susceptible. Then
+
 $$
 \mathbb E[T]=\Omega\big(n^{\ln n}\big).
 $$

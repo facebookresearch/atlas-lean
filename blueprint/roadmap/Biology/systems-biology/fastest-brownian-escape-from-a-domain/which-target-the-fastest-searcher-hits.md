@@ -5,19 +5,25 @@
 **Theorem.**
 1. *(Exact formula.)* $\mathbb{P}(K_N = k) = N\int_0^\infty (1 - F(t))^{N-1}\,dF_k(t)$ for $k = 0, \dots, m-1$, and $\mathbb{P}(K_N = \infty) = \mathbb{P}(\tau = \infty)^N$.
 2. *(Asymptotics.)* Suppose that as $t \to 0^+$
+
 $$
 F(t) \sim A t^{p} e^{-C_0/t}, \qquad F_k(t) \sim B t^{q} e^{-C_k/t},
 $$
+
 with $C_k > C_0 > 0$, $A, B > 0$, $p, q \in \mathbb{R}$. Then
+
 $$
 \mathbb{P}(K_N = k) \sim \eta\,(\ln N)^{p\beta - q}\, N^{1-\beta} \quad (N \to \infty), \qquad \beta = \frac{C_k}{C_0} > 1, \quad \eta = B\,C_0^{\,q - p\beta} A^{-\beta}\,\beta\,\Gamma(\beta).
 $$
+
 3. *(Logarithmic version.)* If only $\lim_{t\to 0^+} t\ln F(t) \ge -C_0$ and $\lim_{t\to 0^+} t\ln F_k(t) \le -C_k$ with $C_k > C_0 > 0$, then $\mathbb{P}(K_N = k) = o(N^{1-\beta+\varepsilon})$ for every $\varepsilon > 0$.
 
 For diffusive searchers (including space-dependent diffusivity and drift, and diffusion on curved Riemannian spaces) the logarithmic hypotheses hold with $C_j$ proportional to $L_j^2$, where $L_j$ is a geodesic distance from the starting locations to target $j$; hence, with target $0$ the closest,
+
 $$
 \mathbb{P}(K_N = k) = o\bigl(N^{1 - (L_k/L_0)^2 + \varepsilon}\bigr) \quad \text{for every } \varepsilon > 0,
 $$
+
 whatever the targets' sizes or the single-searcher hitting probabilities.
 
 ## Depends on

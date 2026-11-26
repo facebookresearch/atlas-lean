@@ -10,11 +10,14 @@ with recruitment $B$, vaccination rate $v$, transmission $\beta$ (only asymptoma
 **Theorem.**
 1. The set $\{0 \le S + A + I + V + R + D \le B/\mu + N_0\}$ is positively invariant, and $S, A$ stay positive.
 2. With
+
 $$R_0 = \frac{B\beta}{N_0(v + \mu)(w + \mu)},$$
+
 the disease-free equilibrium $\big(S, A, I, V, R\big) = \big(\tfrac{B}{v+\mu}, 0, 0, \tfrac{v}{\mu}\tfrac{B}{v+\mu}, 0\big)$ is locally asymptotically stable if and only if $R_0 < 1$.
 3. If $R_0 > 1$ there is a unique, locally asymptotically stable endemic equilibrium.
 
 **Stochastic SARV chain.** In the embedded jump chain of a Markov SARV epidemic in a population of size $N$, each asymptomatic case infects at rate $\lambda$ (incidence $\lambda AS/N$), leaves $A$ after an $\mathrm{Exp}(\alpha)$ time, and a fraction $\theta$ of jumps are vaccinations; $R_0^{\mathrm{SARV}} = \lambda(1 - \theta)/\alpha$. As $N \to \infty$, the number of infections caused by one case has generating function $\mathbb{E}u^X = \frac{\alpha}{\alpha + \lambda(1-\theta)(1-u)}$ (geometric), so the probability that an outbreak started by one case goes extinct is
+
 $$q = \min\Big\{1, \frac{1}{R_0^{\mathrm{SARV}}}\Big\}.$$
 
 ## Depends on

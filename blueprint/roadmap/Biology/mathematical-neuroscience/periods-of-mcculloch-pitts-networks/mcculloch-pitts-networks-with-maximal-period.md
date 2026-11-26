@@ -1,11 +1,15 @@
 # McCulloch–Pitts networks with maximal period $2^n$
 
 **Setting.** A McCulloch–Pitts network on $n$ neurons, with no external input, is a map $\Phi:\{0,1\}^n \to \{0,1\}^n$ whose coordinates are linear threshold functions
+
 $$\Phi(x)_i = H\Big(\sum_{j=1}^n w_{ij}x_j - \theta_i\Big), \qquad H(d) = \begin{cases}1 & d \ge 0,\\ 0 & d < 0,\end{cases}$$
+
 with real weights $w_{ij}$ and thresholds $\theta_i$, iterated synchronously. Its *period* is the length of its longest cycle. The period equals $2^n$ exactly when $\Phi$ is a single cyclic permutation of all $2^n$ states, so every trajectory visits every state. Full period is a necessary condition for a network to behave irregularly, the way a pre-seizure brain state does.
 
 **The map $\Phi_n$.** For $x \in \{0,1\}^n$ let $m$ be the largest index such that $(x_1,\dots,x_m)$ alternates ($0101\ldots$ or $1010\ldots$). Then define
+
 $$\Phi_n(x)_i = \begin{cases}\overline{x_m} & 1 \le i \le m,\\ x_i & m < i \le n,\end{cases}$$
+
 where $\overline{x} = 1 - x$. It satisfies:
 - antisymmetry, $\Phi_n(\overline x) = \overline{\Phi_n(x)}$;
 - $\Phi_1(0) = 1$;
@@ -23,7 +27,9 @@ where $\overline{x} = 1 - x$. It satisfies:
 ## Expansion
 
 Theorem 1 follows by induction from the three properties. Starting at $0\cdots0$, the trajectory of $\Phi_n$ runs through all $2^{n-1}$ states with last bit $0$, copying $\Phi_{n-1}$, until it reaches the alternating vector. It then jumps to $1\cdots1$. Antisymmetry makes the second half retrace the bit-flipped first half through all states with last bit $1$, ending at the alternating vector ending $\ldots0101$, which maps back to $0\cdots0$. For Theorem 2, the defining properties determine the sequence $(\Phi_n)$ completely, so it is enough to check that the threshold functions have the same three properties. The key identities, both proved by induction, are
+
 $$\sum_{j \not\equiv n \ (2)} w_{n,i,j} = \theta_{n,i}, \qquad \sum_{j \equiv n\ (2)} w_{n,i,j} = \theta_{n,i} - 1 .$$
+
 Adding them gives $\sum_j w_{n,i,j} = 2\theta_{n,i} - 1$, so complementing the input $x \mapsto \overline x$ moves the weighted sum from $s$ to $2\theta_{n,i} - 1 - s$. That flips the Heaviside output and gives antisymmetry. On the alternating vector every unit fires. The trajectory is a Gray-code-like ordering of the cube (each step changes a prefix), so the network is an exhaustive but deterministic generator and does not produce genuinely random output.
 
 ## Sources

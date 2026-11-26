@@ -1,15 +1,21 @@
 # Long-time behavior of the fast–slow protocell PDE
 
 **Model.** A large population of protocells each contains two gene types: *fast* genes, which replicate faster inside the cell (advantage $s > 0$), and *slow* genes, which raise the protocell's own reproduction rate. Let $x \in [0,1]$ be the fraction of slow genes in a protocell and $f(t,x)$ the density of protocell compositions. Protocell-level reproduction is
+
 $$G_{FS}(x) = x - \eta x^2, \qquad \eta \in [0,1],$$
+
 so the collectively optimal composition is $x^* = \min\{1, 1/(2\eta)\}$. In the limit of many protocells, each with many genes, the two-level birth–death process gives
+
 $$\frac{\partial f}{\partial t}(t,x) = \frac{\partial}{\partial x}\big[s\,x(1-x)\,f(t,x)\big] + \lambda\, f(t,x)\Big[G_{FS}(x) - \int_0^1 G_{FS}(y) f(t,y)\,dy\Big],$$
+
 where $\lambda > 0$ is the relative strength of between-protocell to within-protocell competition. The equation is understood in the weak, measure-valued sense for $\mu_t(dx)$.
 
 **Hölder exponent.** The initial measure $\mu_0$ has Hölder exponent $\theta \ge 0$ near $x = 1$ if $\theta = \inf\{\Theta \ge 0 : \lim_{x\to 0} \mu_0([1-x,1])/x^\Theta > 0\}$; it measures how much initial mass sits near the all-slow composition.
 
 **Proposition.** Let $\mu_0$ have Hölder exponent $\theta > 0$ near $x=1$. As $t \to \infty$,
+
 $$\mu_t(dx) \rightharpoonup \begin{cases} \delta(x), & \lambda(1-\eta) \le s\theta,\\[4pt] \tilde Z^{-1}\, x^{(\lambda/s)(1-\eta) - \theta - 1}(1-x)^{\theta - 1} \exp\!\Big(-\dfrac{\lambda\eta x}{s}\Big)\,dx, & \lambda(1-\eta) > s\theta,\end{cases}$$
+
 with $\tilde Z$ a normalizing constant. Thus slow genes survive (coexistence of both types within protocells) exactly when between-protocell selection exceeds the threshold $\lambda^* = s\theta/(1-\eta)$; for $\eta = 1$ (all-fast and all-slow cells equally fit) coexistence is impossible at every $\lambda$.
 
 ## Expansion

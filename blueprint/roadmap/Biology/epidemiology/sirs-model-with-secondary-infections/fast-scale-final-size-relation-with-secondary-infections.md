@@ -1,16 +1,21 @@
 # Fast-scale final-size relation with secondary infections
 
 **Setting.** In the SIRS model with secondary infections, let $\varepsilon \to 0$ (immunity waning much slower than infection). The fast limit system is
+
 $$
 S' = -\beta S (I + \alpha Y),\quad I' = \beta S(I + \alpha Y) - \gamma_1 I,\quad T' = \gamma_1 I,\quad P' = -\nu\beta P(I + \alpha Y),\quad Y' = \nu\beta P(I + \alpha Y) - \gamma_2 Y,
 $$
+
 and its equilibria form the critical set $\mathcal{C}_1 = \{I = Y = 0\}$.
 
 **Result.** Every trajectory of the fast system converges to $\mathcal{C}_1$. Starting from $(S_0, I_0, T_0, P_0, Y_0)$ with $S_0 > 0$, the limit $S_\infty$ is the unique solution in $(0, S_0)$ of
+
 $$
 \log\frac{S_\infty}{S_0} - \beta\left(\frac{S_\infty - S_0}{\gamma_1} + \alpha\,\frac{P_0 (S_\infty / S_0)^{\nu} - P_0}{\gamma_2}\right) = -\beta\left(\frac{I_0}{\gamma_1} + \alpha\,\frac{Y_0}{\gamma_2}\right),
 $$
+
 and the partially susceptible pool ends at
+
 $$
 P_\infty = P_0 \left(\frac{S_\infty}{S_0}\right)^{\nu}.
 $$

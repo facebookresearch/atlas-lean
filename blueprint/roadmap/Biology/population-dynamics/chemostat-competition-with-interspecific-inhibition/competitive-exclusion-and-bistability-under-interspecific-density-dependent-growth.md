@@ -1,11 +1,13 @@
 # Competitive exclusion and bistability in the chemostat with interspecific density-dependent growth
 
 **Model.** Two microbial species $x_1,x_2$ compete for one substrate $S$ in a chemostat with dilution rate $D>0$ and feed concentration $S_{in}>0$. After rescaling biomasses by the yields,
+
 $$
 \dot S = D(S_{in}-S) - f_1(S,x_2)x_1 - f_2(S,x_1)x_2,\qquad
 \dot x_1 = (f_1(S,x_2)-D_1)x_1,\qquad
 \dot x_2 = (f_2(S,x_1)-D_2)x_2,
 $$
+
 with removal rates $D_i = \alpha_i D + a_i$ ($\alpha_i\in[0,1]$ decouples solid from hydraulic retention, $a_i\ge 0$ is mortality). Each $f_i:\mathbb{R}_+^2\to\mathbb{R}_+$ is $C^1$ with $f_i(0,x_j) = 0$, $\partial_S f_i>0$ and $\partial_{x_j} f_i<0$ for $S,x_j>0$ ($j\ne i$): growth needs substrate and is inhibited only by the *other* species. Solutions are nonnegative and bounded, and $\{S+x_1+x_2\le DS_{in}/\min(D,D_1,D_2)\}$ is positively invariant and globally attracting.
 
 **Break-even concentrations.** Let $\lambda_i(D)$ solve $f_i(\lambda_i,0) = D_i$, and $\tilde x_i = D(S_{in}-\lambda_i(D))/D_i$.

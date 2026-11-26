@@ -8,9 +8,11 @@ For fixed $\alpha$ and $G = \mathbb{Z}^d$ with nearest-neighbour edges in both d
 1. $\lambda(\alpha, d)^- \ge \dfrac{1}{2d}$ for every $d$.
 2. $\lambda(\alpha, d)^+ \le a_1 + a_2\alpha$ for all $d \in \mathbb{N}$, with constants $a_1, a_2$ independent of $d$.
 3. There is $D(\alpha) \in \mathbb{N}$ such that for all $d \ge D(\alpha)$,
+
 $$
 \lambda(\alpha, d)^+ \le \frac{C}{d}, \qquad C = 2\bigl((1 - e^{-1})\, e^{-4\alpha}\, e^{-3}\bigr)^{-1}.
 $$
+
 Hence both thresholds are of order $1/d$ as $d \to \infty$.
 4. *(Invariant measure.)* For $d \ge D(\alpha)$ and $\lambda > C/d$, the process started with every vertex infected and every edge active has a non-trivial translation- and time-invariant measure.
 

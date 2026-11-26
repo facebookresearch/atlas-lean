@@ -1,7 +1,9 @@
 # Herd-immunity steady states and final-size-optimal social distancing in the controlled SIR model
 
 **Model.** In time units of the infectious period ($\tau = \gamma t$) the SIR model with a time-varying reproduction number $\mathcal{R}(\tau) = \beta(\tau)/\gamma$ is
+
 $$\dot S = -\mathcal{R}(\tau)SI, \qquad \dot I = \mathcal{R}(\tau)SI - I,$$
+
 on $\mathcal{X} = \{S, I \ge 0,\ S + I \le 1\}$. Social distancing is a control $\mathcal{R}(\cdot) \in \Omega_{\mathcal{R}}$: $\mathcal{R}(\tau) \in [\underline{\mathcal{R}}, \bar{\mathcal{R}}]$ on a finite intervention window $[\tau_s, \tau_f]$ and $\mathcal{R}(\tau) = \bar{\mathcal{R}}$ outside it. Let $S^* = \min\{1, 1/\bar{\mathcal{R}}\}$ be the herd-immunity threshold without intervention.
 
 **Theorem (equilibrium set and final size).** With $\mathcal{R} \equiv \bar{\mathcal{R}}$:
@@ -11,7 +13,9 @@ on $\mathcal{X} = \{S, I \ge 0,\ S + I \le 1\}$. Social distancing is a control 
 4. Starting from $(1 - \epsilon, \epsilon)$ with $S(0) > S^*$, every admissible control yields $S_\infty \le S^*$: the smallest achievable final size after interventions end is $1 - S^*$, reached only by arriving at herd immunity with vanishing prevalence.
 
 **Theorem (control strategies).** Given a hospital capacity $I_{\max}$, the objective is $S(\tau) \to S^*$ with $I(\tau) \le I_{\max}$ for all $\tau$, at minimal cost $\int(\bar{\mathcal{R}} - \mathcal{R}(\tau))\,d\tau$. If a single-interval ("goldilocks") distancing with constant $\mathcal{R}$ achieving this exists, it is the only one approaching the objective as $\tau_f \to \infty$. The "wait, maintain, suspend" policy
+
 $$\mathcal{R}(\tau) = \bar{\mathcal{R}} \text{ on } [0, \tau_s)\cup(\tau_f, \infty), \qquad \mathcal{R}(\tau) = 1/S(\tau) \text{ on } [\tau_s, \tau_1), \qquad \mathcal{R}(\tau) = \mathcal{R}^*_{si} \text{ on } [\tau_1, \tau_f],$$
+
 which lets the outbreak grow until $I = I_{\max}$, holds prevalence constant ($\dot I = 0$), then applies a final constant level, approaches the objective arbitrarily well for suitable $0 \le \tau_s < \tau_1 < \tau_f$, and an optimal control exists.
 
 ## Expansion

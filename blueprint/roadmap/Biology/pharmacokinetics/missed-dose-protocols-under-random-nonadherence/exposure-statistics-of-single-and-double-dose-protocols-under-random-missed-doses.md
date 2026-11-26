@@ -10,10 +10,15 @@
 At large times, the ratio $Z = \mathrm{AUC}/\mathrm{AUC}^{\mathrm{perf}} = C(t)/C^{\mathrm{perf}}(t)$ over a dosing interval (the same for every $t \in [0,\tau)$) compares the patient to perfect adherence. Its statistics are the mean $\mu = \mathbb{E}Z$, the relative root-mean-square deviation $\mathrm{dev} = \sqrt{\mathbb{E}(Z-1)^2}$ and the worst case $\lambda = \sup_\xi Z$.
 
 **Theorem.**
+
 $$\mu^{\mathrm{single}} = p, \qquad \mu^{\mathrm{double}} = p + p(1-p), \qquad \mu^{\mathrm{boost}} = p + b\,p(1-p), \qquad \mu^{\mathrm{triple}} = 3p - 3p^2 + p^3, \qquad \mu^{\mathrm{all}} = 1;$$
+
 $$\mathrm{dev}^{\mathrm{single}} = \sqrt{\frac{1-p}{1+\alpha}}\sqrt{1 - \alpha(2p - 1)},$$
+
 $$\mathrm{dev}^{\mathrm{double}} = \sqrt{\frac{1-p}{1+\alpha}}\sqrt{1 + p + (1 - 7p + 2p^2)\alpha + 2p^2(2-p)\alpha^2};$$
+
 $$\lambda^{\mathrm{single}} = 1, \quad \lambda^{\mathrm{double}} = \frac{2}{1+\alpha}, \quad \lambda^{\mathrm{boost}} = \max\Big\{1, \frac{1+b}{1+\alpha}\Big\}, \quad \lambda^{\mathrm{triple}} = \frac{3}{1+\alpha+\alpha^2}, \quad \lambda^{\mathrm{all}} = \infty.$$
+
 The coefficient of variation of the single-dose protocol is $\sqrt{\frac{1-\alpha}{1+\alpha}}\sqrt{p(1-p)}$.
 
 ## Expansion

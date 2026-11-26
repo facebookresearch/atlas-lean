@@ -3,22 +3,28 @@
 **Quasi-stationarity.** Let $(X_t)_{t\ge0}$ be a continuous-time Markov chain on a finite set $S' = S \cup \Delta$ that is absorbed in $\Delta$ at time $\tau = \inf\{t : X_t \in \Delta\}$. A probability measure $\nu$ on $S$ is a *quasi-stationary distribution* (QSD) if $\mathbb{P}_\nu(X_t \in A \mid \tau > t) = \nu(A)$ for all $t \ge 0$ and $A \subseteq S$; it is a *quasi-limiting distribution* (Yaglom limit) for an initial law $\mu$ if $\mathbb{P}_\mu(X_t \in A \mid \tau > t) \to \nu(A)$ as $t \to \infty$. Under a QSD the absorption time is exponential: $\mathbb{P}_\nu(\tau > t) = e^{-\lambda(\nu) t}$ for some $\lambda(\nu) \ge 0$.
 
 **Model.** The general (Markovian) stochastic SIR epidemic in a closed population of size $N+1$ is the chain $(S_t, I_t)$ with $S_t + I_t + R_t = N + 1$, started from $(S_0, I_0) = (N, 1)$, with transitions
+
 $$
 (s,i) \to (s-1, i+1) \ \text{at rate } \beta s i, \qquad (s,i) \to (s, i-1) \ \text{at rate } \mu i,
 $$
+
 where $\beta > 0$ is the infection rate and $\mu > 0$ the removal rate. States with $i = 0$ are absorbing.
 
 **Statement.**
 
 1. *Triviality.* With the natural absorbing set $\{i = 0\}$, the chain is strictly evolutionary (reducible), and its QSD is a point mass on the last transient state before absorption: all quasi-stationary mass sits on a single state, so the QSD carries no information about the epidemic's course.
 2. *Modified absorption.* Let $\hat\Xi = \inf\{t > 0 : I_t \ne I_0\}$ be the first jump time and declare the process absorbed at
+
 $$
 \tau^* = \inf\{t > \hat\Xi : I_t = 1\},
 $$
+
 i.e. on returning to a single infective after leaving the initial state, with transient set $\{(N,1)\} \cup \{(s,i) : i \ge 2\}$. Then there is a non-trivial QSD $\nu_{\mathrm{SIR}}$ for $\tau^*$, positive on every transient state, if and only if
+
 $$
 \mu > \beta N .
 $$
+
 In that case $\nu_{\mathrm{SIR}}$ is the quasi-limiting distribution of the chain started from $(N,1)$, while for every initial law $\rho$ with $\rho(N,1) = 0$ the conditioned law converges to the point mass at $(0,2)$.
 
 The condition says the removal rate must exceed the total initial infection pressure, so in this framework a non-trivial QSD exists only for strongly subcritical epidemics; the ratio-of-expectations distribution is the more useful long-term descriptor otherwise.

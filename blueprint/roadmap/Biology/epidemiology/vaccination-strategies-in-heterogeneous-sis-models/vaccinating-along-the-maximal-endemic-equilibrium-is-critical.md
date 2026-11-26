@@ -1,12 +1,15 @@
 # Vaccinating along the maximal endemic equilibrium is critical
 
 Let $(\Omega,\mu)$ be a probability space of individual features, such as age or activity level, and $k\ge0$ a transmission kernel with a boundedness condition $\sup_x\|k(x,\cdot)\|_{L^q}<\infty$ for some $q>1$. The heterogeneous SIS model of Lajmanovich–Yorke type follows the vector field
+
 $$
 F(g)=(1-g)\,T_k(g)-\gamma g,\qquad T_k(g)(x)=\int_\Omega k(x,y)g(y)\,\mu(dy),
 $$
+
 on $\Delta=\{g:\Omega\to[0,1]\ \text{measurable}\}$, where $u_t(x)$ is the probability that an individual of feature $x$ is infected. Then $R_0=\rho(T_{k/\gamma})$, and there is a maximal equilibrium $\mathfrak g$ that dominates all equilibria, with $\mathfrak g\neq0$ iff $R_0>1$. A vaccination strategy $\eta:\Omega\to[0,1]$ is the fraction left unvaccinated at each feature. Its effective reproduction number is $R_e(\eta)=\rho(T_{k\eta/\gamma})$, the spectral radius of the operator with kernel $k(x,y)\eta(y)/\gamma$, and $\eta$ achieves herd immunity when $R_e(\eta)\le1$.
 
 **Theorem.** If $R_0\ge1$, the strategy $\eta^\star=1-\mathfrak g$ (vaccinate each feature class in proportion to its endemic prevalence) is critical:
+
 $$
 R_e(1-\mathfrak g)=1.
 $$

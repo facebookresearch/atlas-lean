@@ -1,9 +1,11 @@
 # Graph characterization and minimal observability of conjunctive Boolean networks
 
 **Setting.** A *conjunctive Boolean network* (CBN) on state variables $X_1, \dots, X_n \in \{0,1\}$ updates synchronously by
+
 $$
 X_i(k+1) = \bigwedge_{j \in N_{\mathrm{in}}(X_i)} X_j(k),
 $$
+
 where $N_{\mathrm{in}}(X_i)$ is the set of in-neighbours of $X_i$ in the dependency graph $G$. A set of nodes is measured directly (the *directly observable* nodes, the sensors), giving outputs $y(k)$. The CBN is *observable* if the initial state $X(0)$ is uniquely determined by the outputs $y(0), y(1), \dots$.
 
 **Properties.**

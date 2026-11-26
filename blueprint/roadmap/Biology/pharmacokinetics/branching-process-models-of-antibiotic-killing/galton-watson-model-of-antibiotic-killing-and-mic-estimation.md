@@ -1,9 +1,13 @@
 # Galton–Watson model of antibiotic killing and estimation of the minimal inhibitory concentration
 
 **Model.** Bacteria exposed to an antibiotic at concentration $c \ge 0$ form a Galton–Watson process: in each generation every live cell independently dies, survives undivided or divides, with probabilities $p_0(c)$, $p_1(c)$, $p_2(c)$; the offspring mean is $m(c) = p_1(c) + 2p_2(c)$. Because qPCR measures the genomes of live and dead cells alike, one follows the two-type process $(X_n, Y_n)$ of live and dead cells and observes the total $Z_n = X_n + Y_n$. Starting from one cell, its mean $\mu_n = \mathbb{E}Z_n$ is
+
 $$\mu_n = \frac{p_2 m^n - p_0}{m - 1} \ \ (m \neq 1), \qquad \mu_n = 1 + p_0 n \ \ (m = 1),$$
+
 with $m^n \le \mu_n \le \frac{m(m^n - 1)}{2(m-1)} + 1$ when $m > 1$ and $1 \le \mu_n \le \frac{m(1 - m^n)}{2(1-m)} + 1$ when $m < 1$. The concentration–response is modelled as
+
 $$m(c) = \frac{2}{1 + \alpha c^\beta}, \qquad \alpha, \beta > 0,$$
+
 and the **minimal inhibitory concentration** is $\vartheta = \mathrm{MIC} = \min\{c : m(c) \le 1\} = \alpha^{-1/\beta}$.
 
 **Data and estimators.** For each concentration $c_i$, $i = 1,\dots,K$, $N$ replicate cultures start from $x_0$ cells and are measured by qPCR after $n$ generations; the cycle-threshold readings are $C_j = a - \log_2 Z_n^{(j)} + \varepsilon_j$ with i.i.d. centred measurement errors of variance $\sigma_\varepsilon^2$ and a known constant $a$. Set $\log_2\widehat\mu_n = a - \log_2 x_0 - \frac1N\sum_{j=1}^N C_j$, let $\widehat m$ solve $\mu_n(\widehat m) = \widehat\mu_n$, obtain $(\widehat\alpha, \widehat\beta)$ from the least-squares regression of $\log(2/\widehat m(c_i) - 1)$ on $\log c_i$, and set $\widehat\vartheta = \widehat\alpha^{-1/\widehat\beta}$.

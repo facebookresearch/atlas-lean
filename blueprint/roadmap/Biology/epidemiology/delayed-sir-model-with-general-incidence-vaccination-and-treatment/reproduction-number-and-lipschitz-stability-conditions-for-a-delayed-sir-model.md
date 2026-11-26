@@ -7,18 +7,25 @@ y' &= b_1 f(x(t-\tau), y) - r\,p(y) - d_1 y,\\
 z' &= r\,p(y(t-\delta)) - \alpha z,
 \end{aligned}$$
 with positive constants. The incidence $f$, vaccination $v$ and treatment $p$ are nonnegative and $C^1$, $f(0,y) = f(x,0) = 0$, $f$ and $p$ are increasing, and they satisfy two-sided Lipschitz bounds
+
 $$K_1|x-\bar x| + K_2|y-\bar y| \le |f(x,y) - f(\bar x,\bar y)| \le K_3|x-\bar x| + K_4|y-\bar y|,$$
+
 $$M_1|x-\bar x| \le |v(x) - v(\bar x)| \le M_2|x-\bar x|, \qquad L_1|y-\bar y| \le |p(y) - p(\bar y)| \le L_2|y-\bar y|.$$
+
 Typical choices are $f = xy$, $xy/(1+bx)$, $xy/(1+ay)$, $p(y) = y$ or $y/(a+y)$, $v(x) = x$.
 
 **Reproduction number.** With disease-free susceptible level $x^*$, the next-generation matrix is scalar and
+
 $$R_0 = \frac{b_1 f_y(x^*, 0)}{r\,p'(0) + d_1}.$$
 
 **Theorem (local stability).** If $R_0 > 1$ the disease-free equilibrium is unstable. If $R_0 < 1$ it is locally stable provided the treatment-delay condition $\frac{r}{\alpha}e^{-\lambda\delta}\frac{dp(0)}{dy_\delta} < 1$ holds. The endemic equilibrium $(x^*, y^*, z^*)$ is locally asymptotically stable if
+
 $$\frac{b_1}{r p'(y^*) + d_1}\Big(f_y(x^*,y^*) + e^{-\lambda\tau}f_{x_\tau}(x^*,y^*)\Big) < 1 \quad\text{and}\quad \frac{r}{\alpha}e^{-\lambda\delta}\frac{dp(y^*)}{dy_\delta} < 1.$$
 
 **Theorem (global stability without delays).** In the absence of delays, the endemic equilibrium is globally asymptotically stable whenever
+
 $$bK_1 - b_1K_3 + d + cM_1 > 0 \quad\text{and}\quad bK_2 - b_1K_4 + rL_1 + rL_2 + d_1 > 0.$$
+
 Delay-dependent analogues hold under additional inequalities that bound the admissible delays.
 
 ## Expansion

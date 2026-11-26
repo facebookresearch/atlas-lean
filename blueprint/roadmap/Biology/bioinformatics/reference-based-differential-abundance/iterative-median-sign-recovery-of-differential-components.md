@@ -1,12 +1,15 @@
 # Iterative median-sign recovery of differential components
 
 Take expected relative abundances $Q_{k,i}$, $k=1,2$, $i\in[d]$, with $Q_{1,i}+Q_{2,i}>0$, and let $I_0$ be a reference set ($Q_{1,i}=bQ_{2,i}$ on $I_0$) with $|I_0|>d/2$; let $I_1=[d]\setminus I_0$. For $I\subseteq[d]$ define the renormalized differences and their median
+
 $$
 R_i(I)=\frac{Q_{1,i}}{\sum_{j\in I}Q_{1,j}}-\frac{Q_{2,i}}{\sum_{j\in I}Q_{2,j}}\quad(i\in I),\qquad M(I)=\operatorname{Median}\{R_i(I):i\in I\}.
 $$
+
 Start from $U_{(0)}=\emptyset$, $V_{(0)}=[d]$ and repeat. Let $W_{(t)}$ be the components of $V_{(t)}$ whose $R_i(V_{(t)})$ has a sign different from $M(V_{(t)})$: all nonzero ones if $M=0$, the negative and zero ones if $M>0$, the positive and zero ones if $M<0$. Set $U_{(t+1)}=U_{(t)}\cup W_{(t)}$ and $V_{(t+1)}=V_{(t)}\setminus W_{(t)}$, and stop when $W_{(t)}=\emptyset$, at $t=T$.
 
 **Theorem (noiseless recovery).** With $\hat I_0=V_{(T)}$ and $\hat I_1=U_{(T)}$,
+
 $$
 T\le|I_1|+1,\qquad \hat I_0=I_0,\qquad \hat I_1=I_1.
 $$

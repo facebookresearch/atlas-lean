@@ -5,6 +5,7 @@
 Because the CFN model is group-based and time-reversible, without a clock only the unrooted topology is identifiable.
 
 **Definition.** The rooted tree parameter is *generically identifiable* if for every pair of distinct rooted trees $T^1 \ne T^2$ with $n$ leaves,
+
 $$\dim(\mathcal M_{T^1}\cap\mathcal M_{T^2}) < \min\{\dim\mathcal M_{T^1}, \dim\mathcal M_{T^2}\}.$$
 
 **Theorem.** The rooted tree parameter of the CFN model with a molecular clock is generically identifiable, for every number of leaves $n$.

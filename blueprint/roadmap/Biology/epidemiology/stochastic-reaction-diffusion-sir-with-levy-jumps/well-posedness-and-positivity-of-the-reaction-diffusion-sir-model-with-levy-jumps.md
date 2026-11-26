@@ -1,6 +1,7 @@
 # Well-posedness and positivity of the reaction–diffusion SIR model with Lévy jumps
 
 **Model.** On an open bounded domain $\mathcal{U} \subset \mathbb{R}^n$ with $C^2$ boundary, with homogeneous Neumann boundary conditions and nonnegative initial data, consider
+
 $$
 \begin{aligned}
 dS &= \bigl[d_1\Delta S + \Lambda(x) - \mu(x) S - F(S, I)\bigr]dt + \int_{\mathbb{Z}} \mathcal{C}_1(z, x)\, S(t-, x)\,\tilde N(dt, dz),\\
@@ -8,6 +9,7 @@ dI &= \bigl[d_2\Delta I - (\mu(x) + \gamma(x)) I + F(S, I)\bigr]dt + \int_{\math
 dR &= \bigl[d_3\Delta R - \mu(x) R + \gamma(x) I\bigr]dt + \int_{\mathbb{Z}} \mathcal{C}_3(z, x)\, R(t-, x)\,\tilde N(dt, dz),
 \end{aligned}
 $$
+
 where $d_i > 0$, $\Lambda, \mu, \gamma$ are positive essentially bounded functions, $\tilde N$ is a compensated Poisson random measure with $\sigma$-finite intensity $\nu$, and the jump intensities $\mathcal{C}_i$ are essentially bounded. The incidence $F : [0,\infty)^2 \to [0,\infty)$ is either
 - **(P1)** globally Lipschitz (e.g. standard incidence $\beta(x)\,si/(s+i)$), or
 - **(P3)** locally Lipschitz with $F(s, i) \le C_F s$ (e.g. Crowley–Martin incidence $\beta(x)\,si/(1 + ai + bsi)$).

@@ -1,13 +1,19 @@
 # Airy limit law of the Sackin indices of random galled trees
 
 **Setting.** A galled tree is a rooted phylogenetic network in which every reticulation cycle (gall) is vertex-disjoint from the others; simplex and normal galled trees are the subclasses studied alongside it. For a leaf $x$ of a galled tree $N$, let $h^+(x)$ and $h^-(x)$ be the lengths of a longest and a shortest path from the root to $x$. The two Sackin indices are
+
 $$S^+(N) = \sum_{x \in L} h^+(x), \qquad S^-(N) = \sum_{x \in L} h^-(x),$$
+
 summing over the leaf set $L$. Let $S_n^{(*,**)}$ be the Sackin index of a galled tree with $n$ leaves drawn uniformly from its class, labeled ($* = \ell$) or unlabeled ($* = u$), using longest ($** = \max$) or shortest ($** = \min$) paths.
 
 **Theorem.** In every one of these cases, as $n \to \infty$,
+
 $$\mathbb{E}\,S_n^{(*,**)} \sim \sqrt{\pi}\,\mu^{(*,**)}\,n^{3/2},$$
+
 and, weakly and with convergence of all moments,
+
 $$\frac{S_n^{(*,**)}}{\mu^{(*,**)}\,n^{3/2}} \xrightarrow{d} S,$$
+
 where $S$ is the Airy distribution, determined by $\mathbb{E}S^m = \frac{2\sqrt{\pi}}{\Gamma((3m-1)/2)}\Omega_m$ for explicit constants $\Omega_m$ (so $\mathbb{E}S = \sqrt\pi$). The constants are:
 
 | class | $\mu^{(\ell,\max)}$ | $\mu^{(\ell,\min)}$ | $\mu^{(u,\max)}$ | $\mu^{(u,\min)}$ |

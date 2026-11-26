@@ -1,12 +1,16 @@
 # Unique asymptotic firing frequency of integrate-and-fire neurons under ergodic forcing
 
 **Model.** The membrane potential $V(t)$ of a pacemaker neuron stays between a lower threshold $V_l$ and an upper (firing) threshold $V_u$, normalized to the unit interval; between spikes
+
 $$\dot V(t) = F\big(\theta_0\cdot t,\, V(t)\big), \qquad V(t^+) = V_r \ \text{ whenever } V(t) = V_u,$$
+
 with rest potential $V_r \in [V_l, V_u)$. The forcing is driven by a measure-preserving flow $\omega$ on a probability space $(\Theta, \mathcal{B}, \mu)$, written $\theta \mapsto \theta\cdot t$, so the dynamics is a random dynamical system (RDS); $F: \Theta \times \mathbb{R} \to \mathbb{R}$ is bounded on $\Theta \times [0,1]$, uniformly Lipschitz in $V$, and satisfies $F(\theta, V_l) \ge 0$. Identifying $[V_l, V_u)$ with the circle $\mathbb{R}/\mathbb{Z}$ makes the neuron a randomly forced circle flow; let $t_n$ be the time of the $n$-th spike from $(\theta_0, x_0)$.
 
 **Theorem.** Suppose $(\Theta, \mathcal{B}, \mu, \omega)$ is ergodic.
 1. If $F$ is non-increasing in $V$, there is a real number $\nu$ such that for $\mu$-almost every $\theta_0$ and every $x_0 \in [V_l, V_r)$,
+
 $$\lim_{n\to\infty}\frac{n}{t_n} = \nu,$$
+
 a unique asymptotic firing frequency independent of the initial state.
 2. If instead $F(\theta, V_r) > 0$ for all $\theta$, then there is $\nu$ with $\lim_{n\to\infty} t_n/n = \nu$ for $\mu$-a.e. $\theta_0$ and all $x_0 \in [V_l, V_u)$. If moreover $\Theta$ is a compact metric space, $F$ is continuous, $F(\theta, V_u) > 0$ for all $\theta$ and $\omega$ is uniquely ergodic, the limit holds for every initial condition, uniformly in $(\theta_0, x_0)$.
 

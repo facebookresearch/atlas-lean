@@ -5,9 +5,11 @@
 **Binary transitive reduction (BTR).** Given $G$ and a set $E_{\mathrm{critical}}\subseteq E$ of edges that must be kept, find $E'$ with $E_{\mathrm{critical}}\subseteq E'\subseteq E$ and $\mathrm{reachable}(E') = \mathrm{reachable}(E)$ minimizing $|E'|$. An edge is removable when an alternative pathway of the same sign connects its endpoints. With $w\equiv 1$ and $E_{\mathrm{critical}} = \emptyset$ this is the minimum equivalent digraph problem, so BTR is NP-hard.
 
 **Redundancy measure.** With $E_{\mathrm{critical}} = \emptyset$ and $E'$ an optimal BTR solution,
+
 $$
 \mathcal{R}_{\mathrm{new}} = 1 - \frac{|E'|}{|E|}\in[0,1),
 $$
+
 larger values meaning more redundant networks. It depends on paths of arbitrary length, not only on local degree data: two graphs with identical in- and out-degree sequences can have $\mathcal{R}_{\mathrm{new}} = 0$ and $\mathcal{R}_{\mathrm{new}} = 3/11$, and the complete bipartite digraph $K_{n/2,n/2}$ (all edges directed one way) has average degree $n/2$ but $\mathcal{R}_{\mathrm{new}} = 0$.
 
 **Computation.** Every strongly connected component is either single-parity (between any two of its vertices, paths of exactly one parity exist) or multiple-parity (both parities exist). Exploiting this, a polynomial-time algorithm with worst-case time $O(n^3)$ returns a feasible $E'$ at most $3$ times the optimum size (a $3$-approximation), which is near-optimal in practice and scales to networks with thousands of nodes. The statistical significance of $\mathcal{R}_{\mathrm{new}}$ is assessed by a one-sample $t$-test against $100$ random networks drawn from a null model (exponential in-degree and power-law out-degree random networks for signaling and transcriptional networks, a Markov-chain randomization for the others).

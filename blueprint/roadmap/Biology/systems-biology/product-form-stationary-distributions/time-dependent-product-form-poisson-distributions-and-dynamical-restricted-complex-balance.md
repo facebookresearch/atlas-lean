@@ -3,7 +3,9 @@
 **Setting.** Consider a reaction network with species $S_1, \dots, S_d$, complexes $y \in \mathbb{Z}_{\ge 0}^d$ and reactions $y_k \to y_k'$ with rate constants $\kappa_k > 0$. The stochastic model $X_t$ uses mass-action intensities $\lambda_k(x) = \kappa_k \frac{x!}{(x - y_k)!}$, and the deterministic model is $\dot c = \sum_k \kappa_k c^{y_k}(y_k' - y_k)$, with $c^{y} = \prod_i c_i^{y_i}$.
 
 **Definition (DR condition).** A deterministic solution $c(t)$ satisfies the *dynamical and restricted complex balance* condition if for every complex $z$ with $\|z\|_1 \ge 2$ and every $t \ge 0$,
+
 $$\sum_{k : y_k = z}\kappa_k c(t)^{z} = \sum_{k : y_k' = z}\kappa_k c(t)^{y_k}.$$
+
 (Only complexes of molecularity at least two must balance, and only along the trajectory.) Along such a trajectory the mass-action vector field is linear and $c(t)$ stays positive.
 
 **Theorem.** Suppose $X_0$ has the product-Poisson law $\mu(x) = \prod_{i=1}^d e^{-\tilde c_i}\tilde c_i^{x_i}/x_i!$ with $\tilde c \in \mathbb{R}^d_{>0}$. The following are equivalent:

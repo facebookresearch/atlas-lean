@@ -1,17 +1,23 @@
 # Controlled and uncontrolled parasite infection in a dividing cell population with reinfection
 
 **Setting.** Use the cell-population model with parasite load dynamics $(g,\sigma,p,\pi)$, division rate $b$ with symmetric sharing law $\Theta$, death rate $d$, reservoir reinfection rate $\lambda(x)$ with amounts $\mathcal I$, and lysis reinfection rate $r(\cdot)$ with amounts $\mathcal P$ (see the depended-on article), with $b>d$ so that the cell population survives with positive probability. Let $N_t$ be the number of living cells and $V_t$ the set of living cells. Define
+
 $$\rho(x)=\mathbb E[\mathcal I]\,\lambda(x)+\mathbb E[\mathcal P]\,r(x)+g(x)-bx,\qquad x\ge0 .$$
 
 **Proposition (controlled versus uncontrolled infection).** Start from one cell with no parasites, $Z_0=\delta_0$.
 1. If $g(x)+\mathbb E[\mathcal I]\lambda(x)\le\tilde g\,x$ for large $x$ with $\tilde g<b$, there is $C<\infty$ such that for all $K,t\ge0$,
+
 $$\mathbb E_{\delta_0}\Big[\mathbf 1_{\{N_t\ge1\}}\frac{\#\{u\in V_t:X^u_t\ge K\}}{N_t}\Big]\le\frac{C}{\sqrt K}.$$
+
 The infection is controlled: at any fixed time the fraction of heavily infected cells is small.
 2. If $g(x)+\mathbb E[\mathcal I]\lambda(x)\ge\tilde g\,x$ for all $x>0$ with $\tilde g>b$, then for every $K\ge0$,
+
 $$\mathbf 1_{\{N_t\ge1\}}\frac{\#\{u\in V_t:\sup_{s\le t}X^u_s\le K\}}{N_t}\xrightarrow[t\to\infty]{}0\quad\text{in probability};$$
+
 in the long run almost every lineage has carried more than $K$ parasites at some time.
 
 **Proposition (clearing the infection without a reservoir).** Assume $\lambda\equiv0$, $g$ concave, and $\rho(x)\le-(\alpha x\wedge\eta)$ for all $x\ge0$ and some $\alpha,\eta>0$. Then for every $\varepsilon>0$ and $Z_0=\delta_{x_0}$ with $x_0<\infty$,
+
 $$\mathbf 1_{\{N_t\ge1\}}\frac{\#\{u\in V_t:X^u_t>\varepsilon\}}{N_t}\xrightarrow[t\to\infty]{}0\quad\text{in probability}.$$
 
 Parasite growth $g$ and reservoir reinfection $\mathbb E[\mathcal I]\lambda$ enter the criteria only through their sum, so reinfection from outside the population can turn a controlled infection into an uncontrolled one.

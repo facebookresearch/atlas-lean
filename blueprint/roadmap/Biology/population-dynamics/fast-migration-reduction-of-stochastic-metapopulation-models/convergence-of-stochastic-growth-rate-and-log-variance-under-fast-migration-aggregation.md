@@ -5,9 +5,11 @@ A population structured into $q$ classes lives on $r$ patches, with state $x(t)\
 **Hypotheses.** (H1) $H_{k,\eta}\to\bar H_\eta$ as $k\to\infty$. (H2) $\bar H_\eta=D_\eta G$ with $G\in\mathbb R_+^{q\times qr}$ independent of $\eta$. (H3) each $D_\eta$ is row-allowable and $G$ column-allowable. The aggregated variables $y=Gx$ (class totals) then follow the reduced system $y(t+1)=GD_{\tau_{t+1}}y(t)$.
 
 **Theorem.** Let $\tau_t$ be an irreducible, aperiodic homogeneous Markov chain and assume (H1)–(H3). If the aggregated set $\mathcal A_{ag}=\{GD_\eta\}$ is ergodic (some fixed-length product of its matrices is always positive), then the original sets $\{H_{k,\eta}\}_\eta$ are ergodic for all large $k$. The stochastic growth rate $\log\lambda_S=\lim_t t^{-1}\log\|x(t)\|$ and the scaled logarithmic variance $\sigma^2=\lim_t t^{-1}\mathrm{Var}\log\|x(t)\|$ therefore exist, and
+
 $$
 \lim_{k\to\infty}\lambda_{S,k}=\hat\lambda_S,\qquad \lim_{k\to\infty}\sigma_k=\hat\sigma,
 $$
+
 where $\hat\lambda_S,\hat\sigma$ are those of the reduced system. The asymptotically lognormal law of total population size can thus be computed from the $q$-dimensional reduced model.
 
 In the re-scaled survival model, the per-class limit of $(S_{k,\eta}P_\eta)^k$ is $\gamma^i_\eta v^i_\eta\mathbf 1^\top$. Here $v^i_\eta$ is the stationary migration distribution of class $i$, and $\gamma^i_\eta=\exp(\sum_\alpha v^{i,\alpha}_\eta\log s^{i,\alpha}_\eta)$ is the geometric mean of the patch survivals weighted by $v^i_\eta$. The reduced system therefore uses this geometric-mean survival rather than the arithmetic mean that arises when survival acts after migration.

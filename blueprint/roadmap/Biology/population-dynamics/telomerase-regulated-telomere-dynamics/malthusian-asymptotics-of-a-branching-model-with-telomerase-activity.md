@@ -5,7 +5,9 @@
 **Assumptions.** (i) Rates are bounded. (ii) The active configurations form an irreducible class. (iii) The Malthusian parameter $\lambda_0$ of the active part is positive (an expanding population of telomerase-positive cells, such as a tumour or germ line). (iv) $\mu_f$ has an exponential moment of order $\alpha_0>\frac1\omega\log\frac{\|b_{\mathrm{act}}\|_\infty}{\lambda_0}$. (v) $q(i)\to0$ as $i\to\infty$, so telomerase acts less on long telomeres.
 
 **Theorem.** Under (i)–(v) there are a function $\eta:E\to\mathbb R$, positive on $E_{\mathrm{act}}$ and zero on $E_{\mathrm{sen}}$, a probability measure $\nu$ on $E$, a Lyapunov function $V:E\to[1,\infty)$ and constants $C,\gamma>0$ such that for all $|g|\le V$
+
 $$\big|e^{-\lambda_0t}\psi_t g\,(c,x)-\eta(c,x)\,\nu[g]\big|\le C e^{-\gamma t}V(c,x),\qquad t\ge0 .$$
+
 One can take $V(c,\mathrm{sen})=1$ and $V(c,\mathrm{act})=\exp\big[\alpha\sum_{j=1}^K\big((m_j-k+\omega)_++(n_j-k+\omega)_+\big)\big]$ for some $k\ge1$, $\alpha>0$.
 
 ## Expansion

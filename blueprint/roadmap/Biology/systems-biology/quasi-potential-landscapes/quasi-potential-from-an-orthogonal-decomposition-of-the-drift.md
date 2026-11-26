@@ -1,17 +1,23 @@
 # Quasi-potential from an orthogonal decomposition of the drift
 
 **Setting.** For a Langevin equation with additive noise
+
 $$dx = f(x)\,dt + \sigma I_n\,dW_t, \qquad \sigma \to 0,$$
+
 the Freidlin–Wentzell action of a path $\varphi$ on $[0,T]$ is $S(\varphi) = \sigma^{-2}\int_0^T|\dot\varphi - f(\varphi)|^2dt$, and the **quasi-potential** relative to a stable fixed point $a$ is $Q_a(x) = \inf\{S(\varphi) : \varphi(0) = a,\ \varphi(T) = x,\ T > 0\}$, so that the stationary density behaves like $e^{-Q_a}$ in the basin of $a$ (Waddington-type landscapes of cell fate).
 
 **Decomposition.** Write $f = -\nabla U + f_U$. The decomposition is **sub-orthogonal** if $\nabla U\cdot f_U \le 0$ and **orthogonal** if $\nabla U\cdot f_U = 0$. A sub-orthogonal decomposition with $U \ge 0$ makes $U$ a Lyapunov function, since $\nabla U\cdot f = -|\nabla U|^2 + \nabla U\cdot f_U \le 0$.
 
 **Proposition.** If the decomposition is orthogonal, then within the basin of $a$
+
 $$Q_a(x) = \frac{4}{\sigma^2}\big(U(x) - U(a)\big),$$
+
 the minimum-action path being the time reversal of $\dot\varphi = \nabla U + f_U$.
 
 **Lemma (linear systems).** Let $f(x) = Ax$ with $A$ stable and $U(x) = \tfrac12x^\top Px$, $P = P^\top$. If $P$ maximizes $\mathrm{tr}(P)$ subject to the linear matrix inequality $P(A + P) \preceq 0$, then
+
 $$PA + A^\top P + 2P^2 = 0,$$
+
 i.e. $\nabla U\cdot f_U = 0$: the optimization returns the exact orthogonal decomposition, hence the exact quasi-potential. For polynomial $f$ the same program, with the matrix inequality replaced by sum-of-squares constraints, yields sub-orthogonal decompositions that can be improved iteratively.
 
 ## Expansion

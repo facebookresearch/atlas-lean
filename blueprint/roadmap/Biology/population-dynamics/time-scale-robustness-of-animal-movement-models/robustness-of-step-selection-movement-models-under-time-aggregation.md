@@ -1,7 +1,9 @@
 # Robustness of step-selection movement models under time aggregation
 
 **Model.** An animal's location $X_t \in \mathbb R$ is observed at times spaced by $\tau$. One step is a resource- or step-selection model: a Gaussian movement kernel $k_\sigma(x; y)$ (mean $y$, standard deviation $\sigma$) is reweighted by a positive habitat weighting function $w_\theta(x)$,
+
 $$p_{t-\tau,t}(x \mid y, \sigma, \theta) = \frac{k_\sigma(x;y)\,w_\theta(x)}{\int_{\mathbb R} k_\sigma(z;y)\,w_\theta(z)\,dz}.$$
+
 The $n$-step transition density $p_{t-n\tau,t}$ is the $n$-fold Chapman–Kolmogorov composition.
 
 **Definition.** The model is *robust of degree $n$* if there is an injective parameter map $g_n$ with $p_{t-n\tau,t}(x\mid y, \boldsymbol\theta) = p_{t-\tau,t}(x\mid y, g_n(\boldsymbol\theta))$ for all $t, x, y$: the coarsened model is the same model with transformed parameters. It is *asymptotically robust* if equality holds up to a factor $v(x,y;\tau)$ with $v - 1 = O(\tau)$, and *approximately robust of magnitude $\delta$* if $1 - \delta \le v \le 1 + \delta$.

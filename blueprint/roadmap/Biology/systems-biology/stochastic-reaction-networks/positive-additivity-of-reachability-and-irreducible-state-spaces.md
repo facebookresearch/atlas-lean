@@ -5,11 +5,15 @@
 **Proposition (positive additivity).** The reachability relation $x \to y$ is positively additive on $\mathcal E_0$: if $x \to y$ and $x + z \in \mathcal E_0$ for some $z \in \mathbb N_0^d$, then $y + z \in \mathcal E_0$ and $x + z \to y + z$.
 
 **Proposition (decomposition).** After a permutation of species, every species is either *bounded* (its copy number is bounded on $\mathcal E_0$), *free* or *restricted* (unbounded, with restricted species affine functions $\phi$ of free ones). If no conservation relation couples bounded with free/restricted species, then
+
 $$\mathcal E_0 \cong \mathcal E_b \times \Phi,$$
+
 where $\mathcal E_b$ is the finite bounded-species state set and $\Phi$ is the graph of the affine map $\phi$; irreducible state spaces of the network correspond to those of a reduced network on bounded and free species, $F \times G \leftrightarrow F \times \Phi_G$.
 
 **Theorem (identification).** Organize the bounded-species communication classes and the sets of free species that can be produced from them into a finite tree (the birth-cascade tree). If a minimal leaf $(C, A)$ is *death-exhaustive* and every free species that must be removed is *singularly degradable* (its negative unit vector lies in the $\mathbb N_0$-span of the stoichiometry vectors of available reactions), then
+
 $$C \times \mathbb N_0^{|A|} \times \{\mathbf 0\}$$
+
 is an irreducible state space, and under a further degradability condition it is the only one meeting $C \times \mathbb N_0^{d_f}$. If all leaves are minimal and satisfy these conditions, these sets are, up to relabeling, all the irreducible state spaces.
 
 ## Expansion

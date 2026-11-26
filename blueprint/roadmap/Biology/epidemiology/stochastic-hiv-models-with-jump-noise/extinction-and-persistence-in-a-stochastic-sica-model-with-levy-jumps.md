@@ -14,6 +14,7 @@ where $\tilde N$ is a compensated Poisson random measure with finite intensity $
 1. For initial data in the biologically feasible region $\Omega$, there is almost surely a unique global positive solution. Moreover $\limsup_{t\to\infty}S(t)\le\Lambda/\mu$ and $\liminf_{t\to\infty}S(t)\ge\Lambda/(\mu+d)$ almost surely, with analogous bounds for the other compartments.
 2. *(Extinction.)* If $\dfrac{\beta^2}{2\sigma^2}<(\rho+\phi+\mu)+(\alpha+\omega)\dfrac{\Lambda}{\mu}$, then $I(t)\to0$ almost surely.
 3. *(Persistence in the mean.)* If $\beta\dfrac{\Lambda}{\mu+d}>(\rho+\phi+\mu)+\dfrac{\sigma^2\Lambda^2}{2\mu^2}$, then
+
 $$\liminf_{t\to\infty}\frac1t\int_0^tI(s)\,ds\ \ge\ \frac1{\rho+\phi+\mu}\Big(\frac{\beta\Lambda}{\mu+d}-(\rho+\phi+\mu)-\frac{\sigma^2\Lambda^2}{2\mu^2}\Big)>0 .$$
 
 ## Expansion

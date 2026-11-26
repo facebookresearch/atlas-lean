@@ -5,18 +5,25 @@
 **Early-phase approximation.** As $n \to \infty$ with a fixed number $m$ of initial infectives, an infective joins mixing events at rate $\beta\mu_C$, the size of such an event is size-biased, $P(\tilde C = c) = c\,p_C(c)/\mu_C$, and the number infected at it is $\tilde Z \sim \mathrm{MixBin}(\tilde C - 1, \pi_{\tilde C})$. Without tracing the basic reproduction number is $R_0 = \frac{\beta}{\gamma+\delta}\,E[C(C-1)\pi_C]$. With tracing, individuals infected at the same event (a *sibling group*) have dependent lifetimes, so the infective process is a branching process with sibling dependence.
 
 **Sibling-group (macro) process.** The number $Y(t)$ of still-infectious members of a sibling group, $Y(0) \sim \tilde Z$, is a Markov jump process absorbed at $0$ with rates, for $i \ge 1$,
+
 $$q_{i,i-1} = i\gamma + i\delta(1-p)^{i-1}, \qquad q_{i,j} = i\delta\binom{i-1}{i-j-1}(1-p)^{j}p^{\,i-j-1}\quad (0 \le j \le i-2).$$
+
 Its jump chain has transition probabilities $p_{i,j} = q_{i,j}/(i(\gamma+\delta))$. Let $m_{00} = 0$ and define recursively
+
 $$m_{i0} = 1 + \sum_{j=1}^{i-1} p_{i,j}\, m_{j0}\qquad (i \ge 1),$$
+
 the expected number of jumps to absorption from $i$. Sibling groups are independent and form a Crump–Mode–Jagers process $\mathcal M$ in which a group of current size $Y(t)$ produces new groups at rate $\beta\mu_C Y(t)$.
 
 **Theorem (macro reproduction number).** The mean number of sibling groups produced by one sibling group is
+
 $$R_e = \frac{\beta}{\gamma+\delta}\sum_{c=2}^{\infty} c\,p_C(c)\sum_{i=1}^{c-1} m_{i0}\binom{c-1}{i}\pi_c^{\,i}(1-\pi_c)^{c-i-1}.$$
 
 **Proposition (individual and macro numbers agree).** If $G_{CT}$ is the number of mixing events a typical infective (in the traced process) attends while infectious, the individual reproduction number $R_e^{(ind)} = E[G_{CT}]\,E[\tilde Z]$ equals $R_e$. When $p = 0$, $m_{i0} = i$ and $R_e = R_0$.
 
 **Theorem (threshold and extinction).** Let $f_X(s) = \frac{\gamma+\delta}{\gamma+\delta+\beta\mu_C(1-s)}$ and let $N$ be the absorption time of the jump chain started from $Y(0) \sim \tilde Z$. Let $z_{\mathcal M}$ be the smallest root in $[0,1]$ of $s = E[f_X(s)^N]$. Then the early-epidemic process with $m \ge 1$ initial infectives dies out almost surely if $R_e \le 1$; if $R_e > 1$ it grows without bound with probability $1 - z^m$, where
+
 $$z = \frac{\gamma+\delta}{\gamma+\delta+\beta\mu_C(1 - z_{\mathcal M})} < 1 .$$
+
 Thus a major outbreak has positive probability in the large-population limit if and only if $R_e > 1$.
 
 ## Expansion

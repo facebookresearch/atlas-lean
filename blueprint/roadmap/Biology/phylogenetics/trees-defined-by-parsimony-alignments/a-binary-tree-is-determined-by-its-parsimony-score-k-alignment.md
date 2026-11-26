@@ -3,6 +3,7 @@
 **Setting.** For a binary phylogenetic $X$-tree $T$ with $n$ leaves and $k \ge 1$, let $A_k(T)$ be the set of binary characters on $X$ whose parsimony score on $T$ equals $k$, as defined in [the count of binary characters with parsimony score k](number-of-binary-characters-with-parsimony-score-k.md).
 
 **Theorem.** Let $k \ge 1$ and $n \ge 20k$. For binary phylogenetic $X$-trees $T, \widetilde T$ with $|X| = n$,
+
 $$T = \widetilde T \iff A_k(T) = A_k(\widetilde T).$$
 
 **Context.** For $k = 1$ this is Buneman's theorem, since $A_1(T)$ is the set of splits $\Sigma(T)$ and binary trees are determined by their splits; for $k = 2$ it was known for all $n$. For every $k \ge 3$ the statement fails when $n = 2k$, so some lower bound on $n/k$ is necessary.

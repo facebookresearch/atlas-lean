@@ -1,23 +1,29 @@
 # Endemic threshold of a reinfection model with waning immunity and recurrent vaccination
 
 **Model.** In a closed population, each individual alternates between an infectious state $I$ and a (partially) susceptible state $S$. On infection it draws a random infectiousness curve $\lambda : [0, T_I) \to [0,\infty)$ (with random infectious period $T_I$); on recovery, and again at each vaccination, it draws an independent random non-decreasing susceptibility curve $\sigma : [0,\infty) \to [0,1]$, describing waning immunity as a function of the time since the last immunizing event. Susceptible individuals are re-vaccinated according to a renewal process with i.i.d. inter-dose times distributed as $T_V$, until reinfected. A susceptible individual of age $a$ (time since last immunization) is infected at rate $\sigma(a)\Lambda(t)$, where $\Lambda(t)$ is the population-average infectiousness. The basic reproduction number is
+
 $$
 R_0 = \int_0^\infty \mathbb{E}[\lambda(a)]\,da < \infty .
 $$
+
 As the population size $N \to \infty$, the age-structured densities $I(t,a)$, $S(t,a)$ of infectious and susceptible individuals converge to the unique weak solution of a McKean–Vlasov/transport PDE system.
 
 **Statement.** Let $\mu_I$ and $\mu_V$ be the hazard rates of $T_I$ and $T_V$.
 
 1. *Disease-free equilibrium.* The limiting PDE has a unique disease-free equilibrium, $S(a) = \mathbb{E}[T_V]^{-1}\exp\bigl(-\int_0^a \mu_V(u)\,du\bigr)$, the stationary age law of the vaccination renewal process.
 2. *Endemic equilibria.* Endemic equilibria correspond one-to-one to positive solutions $x$ of $F_e(x) = R_0$, where
+
 $$
 F_e(x) = x\,\mathbb{E}[T_I] + x\,\frac{\mathbb{E}\Bigl[\int_0^{T_V} e^{-x\int_0^a \sigma(u)\,du}\,da\Bigr]}{\mathbb{E}\Bigl[1 - e^{-x\int_0^{T_V}\sigma(u)\,du}\Bigr]},
 $$
+
 with $x = R_0 I(0)$ the equilibrium force of infection, $I(a) = I(0)e^{-\int_0^a \mu_I}$ and $S(a) = S(0)e^{-\int_0^a\mu_V}\,\mathbb{E}\bigl[e^{-x\int_0^a\sigma}\bigr]$.
 3. *Threshold.* Define the mean susceptibility at the disease-free equilibrium
+
 $$
 \Sigma = \frac{\mathbb{E}\bigl[\int_0^{T_V}\sigma(a)\,da\bigr]}{\mathbb{E}[T_V]} = \lim_{x \downarrow 0} \frac{1}{F_e(x)} .
 $$
+
 An endemic equilibrium exists whenever $R_0\Sigma > 1$. If $\sigma$ is deterministic, or of SIRS type $\sigma(a) = \mathbf 1_{\{a \ge T_R\}}$ with $\mathbb{E}[T_R] < \infty$, then $F_e$ is increasing and there is a unique endemic equilibrium if and only if $R_0\Sigma > 1$, and none otherwise.
 4. *Optimal dose timing.* Write $\Phi(t) = \int_0^t \mathbb{E}[\sigma(a)]\,da$, a convex function, so $\Sigma = \mathbb{E}[\Phi(T_V)]/\mathbb{E}[T_V]$. Among vaccination policies using the same number of doses per unit time, $\mathbb{E}[T_V] = m$, Jensen's inequality gives $\Sigma \ge \Phi(m)/m$, with equality for evenly spaced doses $T_V \equiv m$. More generally, if $T_1 \preceq T_2$ in the convex order (same mean, less dispersed), then $\Sigma_1 \le \Sigma_2$; and scaling $T_V \mapsto mT_V$ makes $\Sigma$ increasing in $m$.
 

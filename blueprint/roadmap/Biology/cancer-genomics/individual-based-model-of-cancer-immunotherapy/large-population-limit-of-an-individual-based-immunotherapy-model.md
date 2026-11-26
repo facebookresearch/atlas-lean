@@ -6,14 +6,18 @@
 - cytokines decay at rate $d(w)$ and are produced in amounts $\ell^{\mathrm{kill}}_w(z,p)$ and $\ell^{\mathrm{prod}}_w(z,p)$ per T-cell killing event and T-cell stimulation event.
 
 **Proposition (deterministic limit).** If $V_K(0) \to v(0)$ almost surely, then for every $T > 0$,
+
 $$
 \mathbb{P}\Bigl(\lim_{K\to\infty}\sup_{0 \le t \le T} |V_K(t) - \mathfrak{n}(t)| = 0\Bigr) = 1,
 $$
+
 where $\mathfrak{n}$ is the unique solution with $\mathfrak{n}(0) = v(0)$ of the quadratic system in which, for example,
+
 $$
 \frac{d\mathfrak{n}_z}{dt} = \mathfrak{n}_z\Bigl(b(z) - d(z) + \sum_{(g,p)} b(z,p)\,\mathfrak{n}_{(g,p)}\Bigr), \qquad
 \frac{d\mathfrak{n}_w}{dt} = -d(w)\,\mathfrak{n}_w + \sum_{(g,p)}\mathfrak{n}_{(g,p)}\sum_{z}\bigl(\ell^{\mathrm{kill}}_w(z,p)\,t(z,p) + \ell^{\mathrm{prod}}_w(z,p)\,b(z,p)\bigr)\mathfrak{n}_z,
 $$
+
 and each $\mathfrak{n}_{(g,p)}$ follows the corresponding birth–death–switching–killing balance, with mutational influx $\mathfrak{n}_{(\tilde g,\tilde p)}\,\mu_{\tilde g}\, m((\tilde g,\tilde p),(g,p))\,\bigl\lfloor b(\tilde p) - \sum c_b(\tilde p, \cdot)\,\mathfrak{n}\bigr\rfloor_+$.
 
 ## Depends on

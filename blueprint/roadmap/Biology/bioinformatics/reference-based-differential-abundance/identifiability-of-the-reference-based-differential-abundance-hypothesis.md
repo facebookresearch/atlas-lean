@@ -1,10 +1,13 @@
 # Identifiability of the reference-based differential abundance hypothesis
 
 Let $A=(A_1,\dots,A_d)\ge0$ be the absolute abundances of $d$ components (for example taxa), observed only through multinomial counts $N\mid P,N^*\sim\mathrm{Multinomial}(N^*,P)$ with relative abundance $P_i=A_i/\sum_jA_j$. For two populations $\pi_1,\pi_2$ let $Q_{k,i}=\mathbb E_{\pi_k}(P_i)$ be the expected relative abundance of component $i$. A set $I_0\subseteq[d]$ is a *reference set* if there is a constant $b>0$ with
+
 $$
 Q_{1,i}=b\,Q_{2,i}\qquad(i\in I_0),
 $$
+
 so that ratios inside $I_0$ do not change between the populations. The reference-based hypotheses are
+
 $$
 H_{i,0}:\ \frac{Q_{1,i}}{\sum_{j\in I_0}Q_{1,j}}=\frac{Q_{2,i}}{\sum_{j\in I_0}Q_{2,j}}\qquad\text{vs.}\qquad H_{i,1}:\ \text{the two ratios differ}.
 $$

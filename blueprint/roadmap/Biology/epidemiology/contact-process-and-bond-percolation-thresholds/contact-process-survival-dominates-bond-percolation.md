@@ -5,6 +5,7 @@
 - *Contact process:* each infected vertex recovers at rate $1$ and infects each neighbour at rate $\lambda$ (an SIS epidemic with reinfection); $\theta_{\mathrm{CP}}(\lambda)$ is the probability that the process started from $\{o\}$ survives forever, and $\lambda_c(G) = \inf\{\lambda : \theta_{\mathrm{CP}}(\lambda) > 0\}$.
 
 **Theorem.** If $0 < p \le 1/2$ and $\lambda \ge 20p$, then
+
 $$\theta_{\mathrm{CP}}(\lambda) \ge \tfrac34\,\theta_{\mathrm{bond}}(p).$$
 
 **Corollary.** If $p_c(G) < 1/2$ then $\lambda_c(G) \le 20\,p_c(G)$. In particular $p_c(G) = 0$ implies $\lambda_c(G) = 0$: on any graph where SIR-type percolation occurs at every positive transmission probability, the SIS contact process survives at every positive infection rate.

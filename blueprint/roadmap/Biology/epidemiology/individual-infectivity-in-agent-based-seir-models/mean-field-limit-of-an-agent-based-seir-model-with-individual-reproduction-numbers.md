@@ -8,6 +8,7 @@
 4. each infected agent recovers with probability $\gamma$.
 
 Write $(\mathbf s,\mathbf e,\mathbf i,\mathbf r)(t)$ for the population fractions. The comparison model is the discrete-time SEIR recursion with $\alpha=\gamma R_0$:
+
 $$s_{t+1}=s_t-\alpha s_ti_t,\quad e_{t+1}=e_t+\alpha s_ti_t-\sigma e_t,\quad i_{t+1}=i_t+\sigma e_t-\gamma i_t,\quad r_{t+1}=r_t+\gamma i_t .$$
 
 **Theorem.** Assume $X$ has finite variance, fix a horizon $T$, and start from initial fractions converging to $(s_0,e_0,i_0,r_0)$. Then, as $N\to\infty$, $(\mathbf s,\mathbf e,\mathbf i,\mathbf r)(t)$ converges in probability to the deterministic solution $(s_t,e_t,i_t,r_t)$ for every $t\in\{1,\dots,T\}$. The same holds for a second agent-based model in which each susceptible meets at most one infective per day and is infected with probability $\min(\alpha\,\mathbf i(t),1)$, provided $i_t<1/\alpha$ along the deterministic path.

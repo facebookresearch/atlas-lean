@@ -11,10 +11,13 @@
 Let $M_s$ and $P_s$ be the mRNA and protein numbers at cell-cycle time $s$, once the lineage has reached its periodic equilibrium (after many divisions).
 
 **Proposition.** At equilibrium, $M_s$ is Poisson with mean
+
 $$x_s = \frac{\lambda_1}{\sigma_1}\left[1 - \frac{e^{-(s + \tau_D - \tau_R)\sigma_1}}{2 - e^{-\tau_D \sigma_1}} + \mathbb{1}_{\{s \ge \tau_R\}}\big(1 - e^{-(s - \tau_R)\sigma_1}\big)\right], \qquad 0 \le s < \tau_D .$$
 
 **Proposition (protein mean before replication).** For $s \in [0, \tau_R)$,
+
 $$\mathbb{E}[P_s] = \mathbb{E}[P_0] + \lambda_2\frac{\lambda_1}{\sigma_1}s + \Big(x_0 - \frac{\lambda_1}{\sigma_1}\Big)\frac{1 - e^{-\sigma_1 s}}{\sigma_1},$$
+
 and $\mathrm{Var}(P_s)$ is an explicit affine function of $\mathrm{Var}(P_0)$, $\mathrm{Cov}(P_0, M_0)$ and $x_0$.
 
 ## Expansion

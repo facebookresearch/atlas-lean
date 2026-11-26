@@ -4,10 +4,13 @@
 
 **Theorem.**
 1. *(Upper bound.)* If $\mathbf{x}_{\mathrm T} \in \partial\Omega_{\mathrm T}$ is such that the segment $\{(1-s)\mathbf{x}_0 + s\mathbf{x}_{\mathrm T} : s \in [0,1)\}$ lies in $\Omega$, and $z_0 = \|\mathbf{x}_0 - \mathbf{x}_{\mathrm T}\|$, then for every $m \ge 1$
+
 $$
 \limsup_{N \to \infty} \left(\frac{z_0^2}{4D\log N}\right)^{-m} \mathbb{E}\bigl[T_N^m\bigr] \le 1 .
 $$
+
 2. *(Exact asymptotics.)* Let $z_0 = \|\mathbf{x}_0 - \mathbf{x}_{\mathrm T}^*\|$ be the distance from $\mathbf{x}_0$ to the closure of the target, attained at $\mathbf{x}_{\mathrm T}^*$, assume the segment from $\mathbf{x}_0$ to $\mathbf{x}_{\mathrm T}^*$ lies in $\Omega$, and assume $\{\mathbf{x} : \|\mathbf{x} - \mathbf{x}_0\| < z_0\} \cap \Omega$ is star-shaped about $\mathbf{x}_0$ (true if $\Omega$ is convex). Then for every $m \ge 1$
+
 $$
 \mathbb{E}\bigl[T_N^m\bigr] \sim \mathbb{E}\bigl[T_{1\mathrm{d}}(z_0)^m\bigr] \sim \left(\frac{z_0^2}{4D\log N}\right)^{m}, \qquad N \to \infty .
 $$

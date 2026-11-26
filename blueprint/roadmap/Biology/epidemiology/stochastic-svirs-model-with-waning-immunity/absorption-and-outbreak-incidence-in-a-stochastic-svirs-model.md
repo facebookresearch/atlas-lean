@@ -14,7 +14,9 @@
 with $\beta, \gamma, \epsilon, \rho, \theta > 0$ and vaccine failure factor $h \in [0,1]$.
 
 **Long-term behaviour.** The states with neither infectious nor recovered individuals, $\mathcal{S}_A = \{(0, s, N-s) : 0 \le s \le N\}$, form a single closed communicating class; all other states are transient, so the epidemic dies out with probability one, in finite expected time. On $\mathcal{S}_A$ the chain is a finite birth–death process of the susceptible count driven by vaccination and waning protection, and its stationary law is binomial:
+
 $$p_s = \binom{N}{s}\Big(\frac{1}{1 + \rho/\theta}\Big)^{s}\Big(\frac{\rho/\theta}{1 + \rho/\theta}\Big)^{N-s}, \qquad 0 \le s \le N,$$
+
 so each individual is independently susceptible with probability $\theta/(\theta + \rho)$ in the long run.
 
 **Theorem (incidence of an outbreak).** Partition $\mathcal{S}$ into levels $\mathcal{S}(i)$ of states with $i$ infectious individuals ($c_i = \binom{N-i+2}{2}$ states each); the generator is block tridiagonal with blocks $\mathbf A_{i,i'}$. Let $Z$ be the number of new infections occurring before the outbreak, started from one infectious individual, ends. Then:

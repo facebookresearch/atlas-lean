@@ -5,11 +5,15 @@
 **Vector multiplicative coalescent.** Clusters carry size vectors $\mathbf x \in \mathbb{N}_0^k$ (numbers of particles of each type). With a nonnegative, irreducible, symmetric $k \times k$ matrix $V$ and initial type proportions $\boldsymbol\alpha \in (0,\infty)^k$, two clusters of sizes $\mathbf x, \mathbf y$ merge at rate $\langle\mathbf x | V | \mathbf y\rangle = \mathbf x^{\top}V\mathbf y$. In the large-population limit the fractions $\zeta_{\mathbf x}(t)$ of clusters of size $\mathbf x$ solve the (modified) Smoluchowski coagulation equations, and **gelation** is the loss of mass to a giant cluster.
 
 **Theorem (gelation).** (a) If $\rho(V D[\boldsymbol\alpha]\,t) \le 1$ the total mass $\sum_{\mathbf x}\zeta_{\mathbf x}(t)\,\mathbf x$ equals $\boldsymbol\alpha$; (b) if $\rho(V D[\boldsymbol\alpha]\,t) > 1$ it is strictly smaller. Hence the gelation time is
+
 $$T_{\mathrm{gel}} = \frac{1}{\rho\big(V D[\boldsymbol\alpha]\big)},$$
+
 where $D[\boldsymbol\alpha]$ is the diagonal matrix of $\boldsymbol\alpha$.
 
 **Theorem (correspondence and series).** The post-gelation mass equations of the coalescent coincide with the extinction equations of the multi-type Poisson branching process with mean matrix $\mathbf M = V D[\boldsymbol\alpha]\,t$: by the multidimensional Lambert–Euler inversion, $y_i e^{-\langle\mathbf e_i|V|\mathbf y\rangle} = \alpha_i t\,e^{-\langle\mathbf e_i|V|\boldsymbol\alpha t\rangle}$ has a unique solution $\mathbf y$ in the subcritical region, equal to $\boldsymbol\alpha t$ before gelation and strictly smaller after it, and this smallest solution is what determines both the post-gelation mass and the extinction vector. Consequently the extinction probabilities of a multi-type Poisson branching process whose mean matrix factors as $\mathbf M = V D[\boldsymbol\alpha]\,t$ (with $V$ symmetric, nonnegative and irreducible) have an explicit convergent series expansion
+
 $$\eta_\ell = \frac{1}{\alpha_\ell}\sum_{\mathbf x}\frac{\boldsymbol\alpha^{\mathbf x}}{\mathbf x!\,\mathbf x^{\mathbf 1}}\;\tau\Big(K_k,\ x_i x_j\frac{m_{ij}}{\alpha_j}\Big)\,\big(\mathbf M D[\alpha_i^{-1}]\mathbf x\big)^{\mathbf x - \mathbf 1}\,e^{-\langle\mathbf x|\mathbf M|\mathbf 1\rangle}\,x_\ell,$$
+
 where $\tau(K_k, w_{ij})$ is the weighted spanning-tree polynomial of the complete graph $K_k$ (multi-index powers are taken componentwise).
 
 ## Expansion

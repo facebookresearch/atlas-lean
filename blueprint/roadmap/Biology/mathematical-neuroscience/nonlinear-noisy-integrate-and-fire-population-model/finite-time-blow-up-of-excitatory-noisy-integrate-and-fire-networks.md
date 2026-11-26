@@ -1,14 +1,21 @@
 # Finite-time blow-up of excitatory noisy integrate-and-fire networks
 
 **Model.** The nonlinear noisy leaky integrate-and-fire (NNLIF) population model describes the density $p(v,t) \ge 0$ of neurons at membrane potential $v \in (-\infty, V_F]$, with firing threshold $V_F$ and reset potential $V_R < V_F$:
+
 $$\partial_t p + \partial_v\big[h(v, N(t))\,p\big] - a(N(t))\,\partial_v^2 p = \delta(v - V_R)\,N(t), \qquad v < V_F,$$
+
 $$p(V_F, t) = 0, \qquad p(-\infty, t) = 0, \qquad p(v, 0) = p^0(v), \qquad \int_{-\infty}^{V_F} p^0 = 1,$$
+
 where the mean firing rate is the outgoing flux at threshold,
+
 $$N(t) = -a(N(t))\,\partial_v p(V_F, t) \ge 0.$$
+
 The standard coefficients are $h(v,N) = -v + bN$ and $a(N) = a_0 + a_1 N$ with $a_0 > 0$, $a_1 \ge 0$; the connectivity $b$ is positive for average-excitatory and negative for average-inhibitory networks. A weak solution is a pair $(p, N)$ with $p \in L^\infty(\mathbb{R}_+; L^1_+(-\infty, V_F))$ and $N \in L^1_{\mathrm{loc},+}(\mathbb{R}_+)$ satisfying the equation against smooth test functions.
 
 **Theorem.** Assume $h(v,N) + v \ge bN$ and $a(N) \ge a_m > 0$ for all $v \le V_F$ and $N \ge 0$, with $b > 0$. Let $\mu > \max(V_F/a_m, 1/b)$. If
+
 $$\int_{-\infty}^{V_F} e^{\mu v}\,p^0(v)\,dv$$
+
 is large enough, that is, if the initial data are concentrated enough near the threshold $V_F$, then the problem has no global-in-time weak solution.
 
 ## Expansion

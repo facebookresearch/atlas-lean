@@ -1,21 +1,27 @@
 # Equilibria of the target-cell virus model with neutralizing and enhancing antibodies
 
 Extend the basic within-host virus model with target cells $T$, infected cells $I$, free virus $V$ and antibodies $A$:
+
 $$
 \dot T=\Lambda-\mu T-\beta(A)VT,\quad \dot I=\beta(A)VT-\delta I,\quad \dot V=\omega I-cV-bAV,\quad \dot A=aVA-\sigma A,\quad \beta(A)=\beta_0+\beta_1A,
 $$
+
 with all constants positive. Here $b$ is the average neutralizing power of antibodies, small for weakly neutralizing ones, and $\beta_1\ge0$ measures antibody-dependent enhancement (ADE) of infection. Let
+
 $$
 R_0=\frac{\beta_0\omega\Lambda}{c\delta\mu},\qquad V^{is}=(R_0-1)\frac{\mu}{\beta_0},\qquad V^t=\frac\sigma a,
 $$
+
 and assume $V^{is}>V^t$, which implies $R_0>1$.
 
 1. The infection-free equilibrium $(\Lambda/\mu,0,0,0)$ is unstable.
 2. The antibody-free (immunosuppression) equilibrium has $V=V^{is}$, $I=(R_0-1)\frac{c\mu}{\omega\beta_0}$ and $T=\frac{\delta c}{\omega\beta_0}$, and is unstable.
 3. At the immune-controlled equilibrium the antibody equation forces the virus load to $V=V^t=\sigma/a$. The antibody level $A^f$ is the unique positive root of
+
 $$
 \omega\beta(A)\Lambda=\delta(c+bA)\big(\mu+\beta(A)V^t\big),
 $$
+
 and $T^f=\frac{\delta(c+bA^f)}{\omega\beta(A^f)}$, $I^f=\frac{(c+bA^f)V^t}{\omega}$.
 4. Without ADE ($\beta_1=0$) this is the unique stable equilibrium, with $T=\frac{\Lambda}{\mu+\beta_0V^t}$, $I=\frac{\beta_0\Lambda V^t}{\delta(\mu+\beta_0V^t)}$ and $A=\frac{c\,\beta_0(V^{is}-V^t)}{b(\mu+\beta_0V^t)}$.
 

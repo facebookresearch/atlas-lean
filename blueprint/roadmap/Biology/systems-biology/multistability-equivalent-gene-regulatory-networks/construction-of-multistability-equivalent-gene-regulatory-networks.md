@@ -1,9 +1,13 @@
 # Construction of multistability-equivalent gene regulatory networks
 
 **Setting.** A low-dimensional gene-switch model
+
 $$\Sigma_f:\ \dot z = f(z) = a(z) - kz, \qquad z \in \mathbb{R}_+^n,\ k = \mathrm{diag}(k_1,\dots,k_n) > 0,$$
+
 has $R$ steady states $z^{*(r)}$, none with Jacobian eigenvalues on the imaginary axis, and a constant interaction sign matrix $S_a = \mathrm{sgn}(\partial a/\partial z)$. The structure of a larger gene regulatory network is known only qualitatively, through a sign matrix $S_A \in \{-1,0,1\}^{N \times N}$, $N \ge n$. A system
+
 $$\Sigma_F:\ \dot x = F(x) = A(x) - D(x), \qquad x \in \mathbb{R}_+^N,$$
+
 is **multistability-equivalent** to $\Sigma_f$ and consistent with $S_A$ if (i) $\mathrm{sgn}(\partial A/\partial x) = S_A$ on the open orthant; (ii) there is an injective map $h$ with $f(z^*) = 0 \iff F(h(z^*)) = 0$; and (iii) each pair of corresponding steady states $z^{*(r)}$, $h(z^{*(r)})$ has the same number of eigenvalues with positive real part. Equivalent systems thus have the same number of steady states with the same stability types.
 
 **Assumptions.** (*Modular structure*) After reordering, the first $n$ variables are master genes and each remaining module gene $i$ belongs to the module of exactly one master gene $m_i$: it receives activation from at most that master gene and otherwise only nonnegative inputs from genes of the same module. (*Consistency*) For every nonzero entry $S_a|_{i,j}$ there is a simple path from $j$ to $i$ in the network of $S_A$ whose product of signs is $S_a|_{i,j}$, and every path from $j$ entering master gene $i$ through a module gene corresponds to a nonzero $S_a|_{i,j}$.

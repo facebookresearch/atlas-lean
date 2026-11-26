@@ -7,11 +7,15 @@
 Selection is **stationary** if $\mu = \pi$; uniform selection on a doubly stochastic (isothermal) $W$ is the special case of the classical isothermal theorem. Let $T_{\mathrm{fix}}$ be the hitting time of the all-mutant state.
 
 **Theorem (stationary selection).** If $\mu = \pi$, then for every initial distribution concentrated on configurations with $i$ mutants, $0 < i < n$,
+
 $$\mathbb{P}(T_{\mathrm{fix}} < \infty) = \varrho_i = \begin{cases} \dfrac{1 - r^{-i}}{1 - r^{-n}} & r \neq 1,\\[2mm] \dfrac{i}{n} & r = 1,\end{cases}$$
+
 the fixation probability of the classical Moran process, whatever the graph and whatever the positions of the initial mutants.
 
 **Theorem (no alternative).** For any policy $\mu$, with $W_\mu = \mathrm{diag}(\mu)W$, the probabilities that the mutant count goes up or down in one step from $x$ are
+
 $$p_\mu^+(x) = \frac{r\,(xW_\mu\mathbf 1^{\top} - xW_\mu x^{\top})}{1 + (r-1)x\mu^{\top}}, \qquad p_\mu^-(x) = \frac{(1-x)W_\mu x^{\top}}{1 + (r-1)x\mu^{\top}},$$
+
 and the ratio $p_\mu^-/p_\mu^+$ is constant over all configurations iff $\mu = \pi$, in which case it equals $1/r$.
 
 So the projection of the spatial process onto the number of mutants is not Markov in general, which is the gap in the original proof of the isothermal theorem, but under stationary selection the up/down ratio is configuration-free and the mutant count is a martingale-type random walk with the Moran ratio $1/r$. For non-stationary policies, fixation can still equal the Moran value for special initial laws (explicit families on $2$- and $3$-vertex graphs).

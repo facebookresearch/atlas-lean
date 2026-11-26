@@ -1,16 +1,22 @@
 # Fertilized egg production under density-dependent fecundity
 
 **Setting.** Use the sex-structured burden model of the companion article: burden pgf $G$ with mean $m$, each parasite female with probability $\alpha$ ($\beta = 1-\alpha$), and polygamous mating. Female fecundity is negatively density dependent: in a host with $n$ parasites each female lays eggs at rate
+
 $$\lambda(n) = \lambda_0 e^{-\gamma(n-1)} = \lambda_0 z^{n-1}, \qquad z = e^{-\gamma} \in (0, 1],$$
+
 where $\lambda_0$ is the intrinsic fecundity and $\gamma \ge 0$ the strength of density dependence.
 
 **Proposition.** Per host, the mean egg production and the mean fertilised egg production are
+
 $$\lambda_0\,\alpha\, G'(z) \qquad\text{and}\qquad \lambda_0\,\alpha\, G'(z)\Big[1 - \frac{G'(\alpha z)}{G'(z)}\Big].$$
+
 Consequently:
 
 - the mean effective transmission contribution per female (eggs per female relative to $\lambda_0$) is $\psi = G'(z)/m$;
 - the fraction of eggs that are fertilised, i.e. the mating probability under density dependence, is
+
 $$\phi = 1 - \frac{G'(\alpha z)}{G'(z)},$$
+
 which reduces to $1 - G'(\alpha)/m$ when $z = 1$;
 - in a mean-burden transmission model the fertilised egg output is $\lambda_0\alpha m\,\psi(m)\,\phi(m) = \lambda_0\alpha G'(z)\big[1 - G'(\alpha z)/G'(z)\big]$.
 

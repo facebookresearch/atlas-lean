@@ -5,9 +5,11 @@
 **Facts.** If a biconnected graph $H$ with $m$ edges and $n$ nodes is a minor of $N$, then the level of $N$ is at least $m - n + 1$. All networks of level at most $3$ are planar, there is a non-planar level-$4$ network, and level-$1$ networks are outerplanar.
 
 **Theorem (upper bound).** Every level-$k$ network satisfies
+
 $$\mathrm{tw}(N) \le \frac{k+3}{2}.$$
 
 **Theorem (asymptotic upper bound).** For every $\epsilon > 0$ there is $n_\epsilon$ such that, if every maximal biconnected component of $N$ has reticulation number $k \ge n_\epsilon$, then
+
 $$\mathrm{tw}(N) < \Big(\frac13 + 2\epsilon\Big)k.$$
 
 **Theorem (lower bound).** For large $k$ there are level-$k$ networks with treewidth at least $k/13$; hence the maximum treewidth of level-$k$ networks is $\Theta(k)$.

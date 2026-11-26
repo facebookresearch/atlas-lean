@@ -3,9 +3,13 @@
 **Model ($\mathrm{DB}^{\mathrm f}$).** On $\mathbb Z^d$ each cell dies at rate $1$ and is replaced by the offspring of a neighbour chosen with probability proportional to fitness ($1$ for residents, $\lambda = 1 + \beta > 1$ for mutants). Let $\xi^0_t$ be the set of mutant sites at time $t$, started from a single mutant at the origin, and $\tau_\varnothing$ its extinction time; by the survival bounds, $\mathbb P(\tau_\varnothing = \infty) > 0$ for every $\beta > 0$ and $d \ge 1$.
 
 **Theorem ($d \ge 2$).** There is a convex set $D \subset \mathbb R^d$ such that for every $\varepsilon > 0$,
+
 $$\mathbb P\Bigl(\exists\, t_* < \infty : (1-\varepsilon)\, tD \cap \mathbb Z^d \subseteq \xi^0_t \subseteq (1+\varepsilon)\, tD \ \text{ for all } t \ge t_* \ \Big|\ \tau_\varnothing = \infty\Bigr) = 1.$$
+
 On the way, there are constants $c, A, \alpha, z_0 > 0$ such that, with $D_r$ the Euclidean ball of radius $r$,
+
 $$\mathbb P\bigl(D_{ct} \subseteq \xi^0_{t + z^2} \text{ for all } t \ge 0 \,\big|\, \tau_\varnothing = \infty\bigr) \ge 1 - A e^{-\alpha z}, \qquad z \ge z_0,$$
+
 and large mutant sets rarely die: $\sup_{|A| = k} \mathbb P(\tau^A_\varnothing < \infty) \le C e^{-\gamma k^{(d-1)/d}}$.
 
 **One dimension.** On $\mathbb Z$ the shape is explicit: conditioned on survival, the mutant interval grows linearly with $D = [-c_1(\beta), c_1(\beta)]$, $c_1(\beta) = \beta/(2+\beta)$, the long-run net drift of each endpoint.

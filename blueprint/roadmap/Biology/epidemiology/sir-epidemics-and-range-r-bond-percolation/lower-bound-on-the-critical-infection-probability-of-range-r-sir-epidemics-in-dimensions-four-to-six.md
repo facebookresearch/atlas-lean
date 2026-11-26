@@ -3,9 +3,13 @@
 **Model.** On $\mathbb Z^d$ join $x \ne y$ whenever $\|x - y\|_\infty \le R$, so each site has $V(R) = (2R+1)^d - 1$ neighbours. In range-$R$ bond percolation each edge is open independently with probability $p$; $p_c(R)$ is the critical probability for an infinite open cluster. Equivalently, consider the discrete-time SIR epidemic started from one infective at the origin: an infective at generation $n$ tries to infect each susceptible neighbour independently with probability $p$, then is removed forever. The set of ever-infected sites is the open cluster of the origin, so $p_c(R)$ is the critical infection probability for the epidemic to survive. A mean-field branching comparison gives $p_c(R)V(R) \ge 1$.
 
 **Theorem.** Let $4 \le d \le 6$ and $b_4 = 9/(2\pi^2)$; for $d = 5,6$ let
+
 $$b_d = 2^{-d}\sum_{k=1}^\infty \Big\lfloor \frac{k+2}{2}\Big\rfloor\, P\big(U_k \in [-1,1]^d\big),$$
+
 where $U_k$ is the sum of $k$ independent uniform random vectors on $[-1,1]^d$. For every $\theta < b_d$ there is $c(\theta) > 0$ such that for all integers $R > c(\theta)$,
+
 $$p_c(R)V(R) - 1 \ge \begin{cases} \theta\,\dfrac{\log R}{R^4}, & d = 4,\\[6pt] \dfrac{\theta}{R^d}, & d = 5, 6.\end{cases}$$
+
 In particular $\liminf_{R\to\infty} [p_c(R)V(R) - 1]R^4/\log R \ge b_4$ in $d = 4$ and $\liminf_{R\to\infty}[p_c(R)V(R) - 1]R^d \ge b_d$ in $d = 5, 6$, matching the conjectured order of the correction to the mean-field value.
 
 ## Expansion

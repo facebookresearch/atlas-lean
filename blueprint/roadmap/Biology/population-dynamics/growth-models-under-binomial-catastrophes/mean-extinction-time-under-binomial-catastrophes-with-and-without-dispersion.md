@@ -9,18 +9,24 @@
 
 **Theorem.**
 1. For $C(\lambda, p)$, extinction is certain and
+
 $$
 \mathbb{E}[\tau_A] = \frac{1}{\lambda}\left(\prod_{k=0}^{\infty} (1 + \lambda p^k) - 1\right).
 $$
+
 2. For $d = 2$: if $p < 2/(\lambda + 2)$,
+
 $$
 \mathbb{E}[\tau_2] = \frac{(\lambda p + 1)(\lambda p + 2)}{\lambda p^2 (\lambda + 1)} \ln\left[\frac{(1-p)(\lambda p + 2)}{(1-p)(\lambda p + 2) - \lambda p^2 (\lambda + 1)}\right],
 $$
+
 and $\mathbb{E}[\tau_2] = \infty$ at $p = 2/(\lambda + 2)$. An analogous closed form holds for $d = 3$ when $p < 3/(2\lambda + 3)$.
 3. For $C_*(\lambda, p)$: if $p < 1/(\lambda + 1)$,
+
 $$
 \mathbb{E}[\tau_*] = 1 - \frac{\lambda + 1}{\lambda} \ln\left[1 - \frac{\lambda p}{1 - p}\right],
 $$
+
 and $\mathbb{E}[\tau_*] = \infty$ at $p = 1/(\lambda + 1)$.
 4. *(Comparison.)* If $p < 1/(\lambda + 1)$, then $\mathbb{E}[\tau_A] < \mathbb{E}[\tau_*]$: unrestricted dispersion always prolongs the mean time to extinction. Whether $\mathbb{E}[\tau_A] < \mathbb{E}[\tau_2]$ (resp. $\mathbb{E}[\tau_3]$) holds is decided by comparing the $q$-product $\prod_k (1 + \lambda p^k)$ with the explicit logarithmic expressions, and either strategy can win depending on $(\lambda, p)$.
 

@@ -1,13 +1,19 @@
 # Crosstalk-induced bifurcation in the two-input Oja rule
 
 **Setting.** A neuron with two input channels learns weights $\mathbf w = (w_1, w_2)$ by the averaged Oja rule with synaptic crosstalk (inspecific Hebbian updates):
+
 $$\dot{\mathbf w} = \mathbf{EC}\,\mathbf w - (\mathbf w^{T}\mathbf C\,\mathbf w)\,\mathbf w,$$
+
 where the input covariance and the error (crosstalk) matrix are
+
 $$\mathbf C = \begin{pmatrix} v + \delta & c \\ c & v \end{pmatrix}, \qquad \mathbf E = \begin{pmatrix} q & 1-q \\ 1-q & q \end{pmatrix},$$
+
 with update quality $q \in (1/2, 1]$ ($q = 1$ means no crosstalk), $v > 0$, negative input correlation $c < 0$, $v > |c|$, $v > |\delta|$ and $\det \mathbf C = v(v+\delta) - c^2 > 0$. The parameter $\delta$ measures input bias. Set $\beta = qc + (1-q)v$ and $q^* = v/(v - c) \in (1/2, 1)$.
 
 **Spectrum.** $\mathbf{EC}$ has real eigenvalues
+
 $$\mu_{1,2} = \tfrac12\Big(2(1-q)c + q(2v + \delta) \pm \sqrt{\Delta}\Big), \qquad \Delta = \big[2qc + (1-q)(2v+\delta)\big]^2 + (2q-1)\delta^2,$$
+
 with eigenline slopes $z_{1,2} = (-q\delta \pm \sqrt\Delta)/(2\beta)$; they coincide exactly when $\delta = 0$ and $q = q^*$. The eigenlines are invariant under the flow.
 
 **Equilibria (distinct eigenvalues).** The equilibria are the origin, which repels, and the two opposite pairs of eigenvectors of $\mathbf{EC}$ normalised by $\mathbf w^T\mathbf C\mathbf w = \mu$. The pair for the larger eigenvalue $\mu_1$ are hyperbolic attracting nodes; the pair for $\mu_2$ are saddles. The phase plane has no cycles, and the two attractors have open half-planes as basins.

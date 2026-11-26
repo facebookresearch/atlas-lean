@@ -7,7 +7,9 @@
 2. If $\mathcal R_c > 1$, then $V^*$ is locally asymptotically stable, the system is weakly persistent ($\limsup_{t\to\infty} E(t) > \theta E^*$ for every $\theta \in (0,1)$), and $V^*$ is globally asymptotically stable in $\Omega$; conversely, global asymptotic stability of $V^*$ in $\Omega$ holds only if $\mathcal R_c > 1$.
 
 **Short-term model.** Dropping births and natural deaths ($\lambda = d = 0$), so that $N$ is a constant $\mathcal N$, every $\omega$-limit point lies in $\{S + R = \mathcal N,\ E = I = A = Q = 0\}$: the epidemic always dies out, with a final size given by the limiting value of $S$. The disease-free states are $\tilde V = (\tilde S, 0,0,0,0, \mathcal N - \tilde S)$, $0 \le \tilde S \le \mathcal N$, with control reproduction number
+
 $$\mathcal R_c(\tilde S) = \frac{\tilde S}{\mathcal N}\Big[\frac{a\beta}{c} + \frac{p\beta}{q_1 + r_1} + \frac{b\beta(1-p)}{q_2 + r_2}\Big];$$
+
 $(0,0,0,0,0,\mathcal N)$ is stable, and for $\tilde S \in (0, \mathcal N]$ the state $\tilde V$ is stable if $\mathcal R_c(\tilde S) \le 1$ and unstable if $\mathcal R_c(\tilde S) > 1$ (relative to $\tilde S > 0$).
 
 ## Expansion

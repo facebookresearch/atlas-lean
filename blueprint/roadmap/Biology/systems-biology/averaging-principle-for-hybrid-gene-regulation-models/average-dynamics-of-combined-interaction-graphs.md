@@ -3,7 +3,9 @@
 **Setting.** A cellular system has continuous concentrations $\mathbf x \in \mathbb R^N$ of abundant species and discrete states $\sigma \in \Sigma$ of a few molecular machines (for example promoter or operator occupancy of genes); $\Sigma$ is often a product $\Sigma_1\times\cdots\times\Sigma_r$ of the machines' state spaces. In each discrete state the concentrations follow a deterministic vector field $f^{(\sigma)}(\mathbf x)$ (with its own deterministic interaction graph $\mathcal I_D$), while $\sigma$ jumps as a continuous-time Markov chain with generator $K(\mathbf x)$ whose rates depend on $\mathbf x$ (with interaction graph $\mathcal I_{MC}$ on $\Sigma$). The two scales are coupled through a master equation for the joint density.
 
 **Average dynamics.** When the Markov chain is fast relative to the continuous dynamics (scaling parameter $\varepsilon \to 0$), the leading order of the $\varepsilon$-expansion of the joint density is a Liouville equation for a deterministic flow with vector field
+
 $$\mathcal X[\mathbf x] = \sum_{\sigma\in\Sigma}\mu_\sigma(\mathbf x)\,f^{(\sigma)}(\mathbf x),$$
+
 where $\mu(\mathbf x)$ is the invariant measure of the frozen chain $K(\mathbf x)$. The averaged interaction graph $\bar{\mathcal I}$ combines $\mathcal I_D$ and $\mathcal I_{MC}$.
 
 **Propositions.**

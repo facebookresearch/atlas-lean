@@ -1,7 +1,9 @@
 # Exact linear lumping of rational dynamical systems
 
 **Definitions.** Consider $\dot{\mathbf x} = \mathbf f(\mathbf x)$, $\mathbf x \in \mathbb{R}^n$, with rational right-hand side $\mathbf f \in \mathbb{R}(\mathbf x)^n$ (e.g. Michaelis–Menten or Hill kinetics in a biochemical model). A linear map $\mathbf y = L\mathbf x$ with $L \in \mathbb{R}^{m \times n}$ of rank $m$ is a **lumping** of dimension $m$ if there are rational functions $g_1,\dots,g_m \in \mathbb{R}(\mathbf y)$ with
+
 $$L\,\mathbf f(\mathbf x) = \mathbf g(L\mathbf x),$$
+
 so the macro-variables $\mathbf y$ obey the self-contained system $\dot{\mathbf y} = \mathbf g(\mathbf y)$. Given observables $\mathbf x_{\mathrm{obs}} = M\mathbf x$ ($M \in \mathbb{R}^{p \times n}$), a lumping is **constrained** if every observable is a linear combination of the entries of $\mathbf y$. Partition-based lumpings ($y_j = \sum_{i \in S_j} x_i$ over a partition of the variables) are constrained lumpings whose only observable is the total $\sum_i x_i$.
 
 **Invariant-subspace characterisation.** With $J(\mathbf x)$ the Jacobian of $\mathbf f$, $L$ is a lumping iff the row space of $L$ is invariant under right multiplication by $J(\mathbf x)$ for every $\mathbf x$ in the domain, i.e. $\mathrm{rowspan}(L\,J(\mathbf x)) \subseteq \mathrm{rowspan}(L)$ for all $\mathbf x$. Consequently the constrained lumping of minimal dimension is unique: its row space is the smallest subspace containing the rows of $M$ and invariant under all $J(\mathbf x)$.

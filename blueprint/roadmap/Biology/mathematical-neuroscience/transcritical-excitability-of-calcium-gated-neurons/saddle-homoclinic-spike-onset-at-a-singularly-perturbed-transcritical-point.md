@@ -1,9 +1,11 @@
 # Saddle-homoclinic spike onset at a singularly perturbed transcritical point
 
 **Setting.** Consider the transcritical fast–slow normal form
+
 $$
 \dot v=v^2-w^2+I+h_1(v,w,\epsilon),\qquad \dot w=\epsilon\big(-1+h_2(v,w,\epsilon)\big),
 $$
+
 obtained from calcium-gated planar neuron models. For $\epsilon=0$ the critical set $S_0=\{v^2-w^2+I+h_1=0\}$ has attracting branches $S_a^\pm$ and repelling branches $S_r^\pm$ above and below the transcritical singularity. For small $\epsilon>0$ Fenichel theory gives attracting and repelling slow invariant curves $S_a^\epsilon,S_r^\epsilon$ away from the singularity. Fix a section $\Delta=\{v_-\le v\le v_+,\ w=\rho\}$ with $\rho<0$ small, and let $q_{a,\epsilon},q_{r,\epsilon}$ be the intersections of $S_a^\epsilon,S_r^\epsilon$ with $\Delta$.
 
 **Theorem (Franci–Drion–Seutin–Sepulchre, supplementary Section S.1, Theorem 1; adapted from Krupa–Szmolyan's analysis of transcritical points).** There are $\epsilon_0>0$ and a smooth function $I_c(\sqrt\epsilon)$ on $[0,\epsilon_0]$ with $I_c(0)=0$ such that for every $\epsilon\in(0,\epsilon_0]$:
@@ -14,9 +16,11 @@ obtained from calcium-gated planar neuron models. For $\epsilon=0$ the critical 
 Since $S_a^\epsilon$ and $S_r^\epsilon$ coincide with the unstable and stable separatrices of the saddle, this gives a **saddle-homoclinic bifurcation** at $I=I_c(\sqrt\epsilon)$: for $I<I_c$ the unstable separatrix returns to the stable resting node (a single spike, then rest), at $I=I_c$ it forms a homoclinic loop, and for $I>I_c$ it spirals onto an exponentially stable spiking limit cycle. The transition is organized by the saddle's separatrices, which explains spike latency, plateau oscillations and after-depolarization potentials in neurons with strong calcium currents.
 
 **Transcritical hybrid model.** Following Izhikevich's hybrid approach, the spike downstroke is replaced by a reset:
+
 $$
 \dot v=v^2-w^2+I,\qquad \dot w=\epsilon(av-w+w_0),\qquad \text{if } v\ge v_{th}:\ v\leftarrow c,\ w\leftarrow d .
 $$
+
 The parameter $w_0$ mirrors calcium conductance: $w_0>0$ (recovery nullcline crossing the upper branch) recovers the classical fold-type excitability of the Izhikevich model, while $w_0<0$ (crossing the lower branch) gives the calcium-type phase portraits, and the model reproduces thalamocortical relay neuron firing patterns.
 
 ## Depends on

@@ -1,7 +1,9 @@
 # Reliable activation systems implement feed-forward neural networks
 
 **Setting.** A hard-wired feed-forward neural network has layers $\ell = 0, \dots, m$ with $c_\ell$ nodes, weight matrices $W^\ell$, biases $\beta^\ell$ and a monotone continuous activation $\varphi : \mathbb R \to \mathbb R_{\ge 0}$ applied coordinatewise; on input $d$ its layer outputs are $a^0 = d$ and $a^\ell = \varphi(W^\ell a^{\ell-1} + \beta^\ell)$. Consider the layered ODE system
+
 $$x^0_i(t) \equiv d_i \ \ (d \in \mathbb R^{c_0}_{\ge 0}), \qquad \frac{d}{dt}x^\ell_i = f^\ell_i\big(x^{\ell-1}(t), x^\ell_i(t)\big), \quad \ell = 1, \dots, m,$$
+
 with $x^\ell \in \mathbb R^{c_\ell}_{\ge 0}$. The system *implements* the network if for every input $d$ and every nonnegative initial condition the unique solution satisfies $x^\ell(t) \to a^\ell(d)$ for all $\ell$.
 
 For a parametrised scalar system $\dot x = f(y, x)$ with forcing $y$:

@@ -14,7 +14,9 @@ with positive constants: recruitment $b$, transmission $\beta$, natural death $\
 1. *Well-posedness.* For every initial value in $\mathbb{R}_+^5$ there is a unique global solution, which stays in $\mathbb{R}_+^5$ almost surely.
 2. *Stochastic permanence.* The solution is stochastically ultimately bounded and stochastically permanent: for every $\epsilon \in (0,1)$ there are $0 < \kappa < \chi$ with $\limsup_t \mathbb{P}(\|X(t)\| > \chi) < \epsilon$ and $\liminf_t \mathbb{P}(\|X(t)\| \ge \kappa) \ge 1 - \epsilon$.
 3. *Extinction.* If $\mu > \frac12\sigma_{\max}^2$ and $\sigma_1^2 \wedge \sigma_3^2 > 4\big(\beta h'(0)\tilde S_0 - \mu\big)$, then almost surely
+
 $$\limsup_{t\to\infty}\frac{\ln\big(E(t) + I(t)\big)}{t} \le \beta h'(0)\tilde S_0 - \mu - \frac{\sigma_2^2 \wedge \sigma_3^2}{4} < 0,$$
+
 and the time averages $\langle S\rangle_t \to \tilde S_0$, $\langle Q\rangle_t \to \dfrac{b\,d_3}{(\mu + \tau)(\eta + \mu + d_3)}$, $\langle R\rangle_t \to \dfrac{b\,[\eta(\mu + \tau) + \tau d_3]}{\mu(\eta + \mu + d_3)(\mu + \tau)}$ almost surely.
 4. *Ergodicity.* The Markov process $X(t) = (S, E, I, Q, R)$ is $V$-geometrically ergodic: it has a unique stationary distribution $\pi$, and for some $C, \Lambda > 0$ and all measurable $g$ with $|g| \le V$, $|\mathbb{E}\,g(X(t)) - \pi(g)| \le C\,V(X_0)\,e^{-\Lambda t}$.
 

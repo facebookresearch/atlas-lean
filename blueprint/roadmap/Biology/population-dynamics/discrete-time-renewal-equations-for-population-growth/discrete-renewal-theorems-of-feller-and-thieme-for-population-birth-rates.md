@@ -1,7 +1,9 @@
 # Discrete renewal theorems of Feller and Thieme for population birth rates
 
 **Scalar renewal equation.** Let $b(t)$ be the number of births at time $t \in \mathbb N$ and $k(s)$ the expected number of offspring produced at age $s \ge 1$ by an individual born at time $0$. Births satisfy
+
 $$b(t) = \sum_{s=1}^t k(s)\,b(t-s) + g(t), \qquad t \in \mathbb N, \quad b(0) = g(0),$$
+
 where $g(t) \ge 0$ collects births from individuals present before time $0$. Assume
 
 - A1: $k(t) \ge 0$ for all $t$, with strict inequality for some $t$;
@@ -16,7 +18,9 @@ With the $z$-transform $\bar k(z) = \sum_{s\ge1} k(s)z^{-s}$, the Euler–Lotka 
 3. If $\mathcal R_0 > 1$: $\rho^{-t}b(t) \to \bar g(\rho)\big/\sum_{s\ge1} s\,k(s)\rho^{-s}$.
 
 **Theorem (Thieme, systems).** For a vector of births by birth state $B(t)$ with non-negative matrix kernel $K(s)$ and input $G(t)$, $B(t) = \sum_{s=1}^t K(s)B(t-s) + G(t)$, under the irreducibility and aperiodicity assumptions A4–A7 and $\|G(t)\| \le M$: if $\mathcal R_0 = r(\bar K(1)) \ge 1$, the Euler–Lotka condition "$\bar K(\rho)$ has spectral radius $1$" has a unique real solution $\rho$ with $1 < \rho < \mathcal R_0$ or $\rho = 1 = \mathcal R_0$, and
+
 $$\rho^{-t}B(t) \to c\,\Phi, \qquad c = \frac{\Psi\,\bar G(\rho)}{\Psi\big(\sum_{s\ge1} s\rho^{-s}K(s)\big)\Phi},$$
+
 where $\Phi$ ($\|\Phi\| = 1$) and $\Psi$ ($\Psi\Phi = 1$) are the right and left positive eigenvectors of $\bar K(\rho)$ for eigenvalue $1$. Thus the birth-state composition converges to $\Phi$, the stable birth-state distribution, and $\Psi$ weights initial contributions by their reproductive value.
 
 ## Depends on

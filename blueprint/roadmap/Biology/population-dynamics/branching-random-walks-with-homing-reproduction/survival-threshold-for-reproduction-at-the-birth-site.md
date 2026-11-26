@@ -7,9 +7,11 @@
 - If $\beta>1/2$, there is $\alpha_c\in(0,1)$ such that $\mathbf{Y}$ survives with positive probability for $\alpha>\alpha_c$ and dies out for $\alpha\le\alpha_c$.
 
 The critical value is the root of $\mu(\alpha_c) = 1$, where
+
 $$
 \mu(\alpha) = \sum_{n\ge 1}\alpha^n p_n(O,O).
 $$
+
 So a species without navigation, relying on chance to find its birth place, can persist in some environment iff a single individual in a perfectly lenient environment returns home with probability greater than $1/2$. A recurrent chain ($\beta=1$; e.g. simple random walk on $\mathbb{Z}$ or $\mathbb{Z}^2$) always allows survival for $\alpha$ close to 1, whereas simple random walk on $\mathbb{Z}^3$ ($\beta\approx 0.34$) never does. For the nearest-neighbour walk on $\mathbb{Z}$ with right-step probability $p$, $\beta = 1-|1-2p|$, so survival is possible iff $1/4<p<3/4$.
 
 ## Expansion

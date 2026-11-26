@@ -1,15 +1,18 @@
 # Stability of uncorrelated Wilson–Cowan solutions in the infinite-size moment model
 
 **Model.** $M$ neural populations with Markovian (quiescent/active) firing, effective weights $w_{ij}$, decay rates $\alpha_i>0$, inputs $I_i$ and smooth sigmoidal gain functions $f_i$. Truncating the moment hierarchy of the master equation at second order (Bressloff's system-size expansion, or the Buice–Cowan normal-ordered cumulant expansion) and letting the population sizes $N_i\to\infty$ in the rescaled variables, both closures converge to the **infinite-size model** for the mean activities $\nu_i$ and the correlations $\Delta_{ij}$:
+
 $$
 \begin{aligned}
 \dot\nu_i&=-\alpha_i\nu_i+f_i(s_i)+\tfrac12 f_i''(s_i)\sum_{k,l}w_{ik}w_{il}\Delta_{kl},\qquad s_i=\sum_j w_{ij}\nu_j+I_i,\\
 \dot\Delta_{ij}&=-(\alpha_i+\alpha_j)\Delta_{ij}+\sum_k\big[f_i'(s_i)w_{ik}\Delta_{kj}+f_j'(s_j)w_{jk}\Delta_{ki}\big].
 \end{aligned}
 $$
+
 With $\Delta\equiv0$ the mean equation is the Wilson–Cowan (WC) system $\dot\nu_i=-\alpha_i\nu_i+f_i(s_i)$. For finite $N_i$ the Bressloff closure adds the source $\frac{1}{N_i}[\alpha_i\nu_i+f_i(s_i)]\delta_{ij}$ to the correlation equation (the Buice–Cowan closure adds terms of order $1/N_j$ proportional to $f_i'(s_i)w_{ij}\nu_j$), which unfolds the degenerate bifurcations of the infinite-size model.
 
 **Lemma (Touboul–Ermentrout, Lemma 1).** Let $A(x)=-\operatorname{diag}(\alpha)+F(x)$ with $F_{ij}(x)=f_i'\big(\sum_k w_{ik}x_k+I_i\big)w_{ij}$, the Jacobian of the WC vector field. Then $\dot\Delta=A(\nu)\Delta+\Delta A(\nu)^{\mathsf T}$, i.e. $V_\Delta=\operatorname{vec}(\Delta)$ satisfies
+
 $$
 \dot V_\Delta=\big(A(\nu(t))\oplus A(\nu(t))\big)V_\Delta,\qquad A\oplus A=A\otimes I_M+I_M\otimes A .
 $$

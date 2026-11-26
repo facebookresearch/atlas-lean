@@ -3,7 +3,9 @@
 Let $(X_i,Y_i)$, $i = 1,\dots,n$, be i.i.d. pixel intensity pairs from a joint distribution $F$ with marginals $F_X, F_Y$. **No colocalization** is $H_0: F(x,y) = F_X(x)F_Y(y)$ for all $x,y$. **Colocalization** is $H_1$: there exist signal thresholds $\eta_X,\eta_Y$ such that the conditional law $F_{\eta_X,\eta_Y}$ of $(X,Y)$ given $X>\eta_X$, $Y>\eta_Y$ is positively quadrant dependent, i.e. $F_{\eta_X,\eta_Y}(x,y)\ge F_{\eta_X}(x)F_{\eta_Y}(y)$ for all $x,y$, with strict inequality somewhere.
 
 For independent copies $(X,Y), (\tilde X,\tilde Y)\sim F$ define the conditional Kendall concordance
+
 $$T(\eta_X,\eta_Y) = \mathbb{P}\{(X-\tilde X)(Y-\tilde Y)>0\mid \cdot\} - \mathbb{P}\{(X-\tilde X)(Y-\tilde Y)<0\mid\cdot\},$$
+
 conditioning on $X,\tilde X>\eta_X$ and $Y,\tilde Y>\eta_Y$, and the signal mass $V(\eta_X,\eta_Y) = 1 + F(\eta_X,\eta_Y) - F_X(\eta_X) - F_Y(\eta_Y) = \mathbb{P}(X>\eta_X, Y>\eta_Y)$. Under $H_0$, $T\equiv0$; under $H_1$, $\sup T>0$.
 
 **Theorem.** Let $\Delta$ reject $H_0$ when the [maximal thresholded Kendall tau statistic](maximal-thresholded-kendall-tau-colocalization-statistic.md) $\tau^*$ exceeds its null $(1-\alpha)$-quantile.

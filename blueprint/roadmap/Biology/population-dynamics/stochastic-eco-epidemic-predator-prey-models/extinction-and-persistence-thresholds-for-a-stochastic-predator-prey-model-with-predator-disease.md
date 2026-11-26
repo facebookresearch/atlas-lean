@@ -12,7 +12,9 @@ with standard incidence $\beta(S,I) = \beta^*/(S + I + k)$. The predator carryin
 1. *Predator decline.* If $\max\{\beta^* - \alpha,\ a_2\} < \dfrac{1}{2\left(\sigma_2^{-2} + \sigma_3^{-2}\right)}$, then $S(t) \to 0$ and $I(t) \to 0$ a.s.
 2. *Prey decline.* If $a_1 - \tfrac12\sigma_1^2 < 0$, then $x(t) \to 0$ a.s.
 3. *Disease-free sustainability.* If
+
 $$a_1 - a - \tfrac12\sigma_1^2 > 0, \qquad a_2 - \beta^* - \tfrac12\sigma_2^2 > 0, \qquad \beta^* - \alpha - \tfrac12\sigma_3^2 < 0,$$
+
 then $I(t) \to 0$ a.s. and there is $\varepsilon > 0$, independent of the initial value, with $\liminf_{t\to\infty}\frac1t\int_0^t x\,ds > \varepsilon$ and $\liminf_{t\to\infty}\frac1t\int_0^t S\,ds > \varepsilon$ a.s.
 4. *Invariant measure.* Under the conditions of item 3 and $\alpha > \beta^*$, the transition semigroup has a Borel invariant measure on $\overline{\mathbb{R}}_+^3$.
 

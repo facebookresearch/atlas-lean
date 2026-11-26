@@ -3,10 +3,13 @@
 **Model.** Neurons are the $n$ vertices of a directed configuration model $CM(n, \mathbf d^+_n, \mathbf d^-_n)$: vertex $i$ has prescribed in-degree $d^-_{n,i}$ and out-degree $d^+_{n,i}$, and in- and out-half-edges are matched uniformly at random. The empirical joint degree law converges to the law $P(j,k)$ of a pair $(D_{\mathrm{in}}, D_{\mathrm{out}})$ with finite mean $\lambda = E[D_{\mathrm{in}}] = E[D_{\mathrm{out}}]$, and the average degrees converge to $\lambda$. An initial fraction $\alpha$ of neurons, chosen at random, is activated externally. Bootstrap percolation with threshold $\Omega$: an inactive neuron fires as soon as at least $\Omega$ of its in-neighbours have fired, and fired neurons stay fired. Let $\Phi_n(\alpha)$ be the final fraction of fired neurons.
 
 **Theorem.** Define
+
 $$f_\alpha(y) = \lambda y - (1-\alpha)\,E\big[D_{\mathrm{out}}\,\mathbf 1\{\mathrm{Bin}(D_{\mathrm{in}}, 1-y) < \Omega\}\big], \qquad y \in [0,1],$$
+
 and let $y^* = \max\{y \in [0,1] : f_\alpha(y) = 0\}$ (it exists since $f_\alpha(0) \le 0 < \lambda\alpha = f_\alpha(1)$).
 1. If $y^* = 0$, i.e. $f_\alpha > 0$ on $(0,1]$, then $\Phi_n(\alpha) = 1 - o_p(1)$: almost the whole network fires.
 2. If $y^* > 0$ and $y^*$ is not a local minimum of $f_\alpha$, then with high probability
+
 $$\Phi_n(\alpha) = 1 - (1-\alpha)\,P\big(\mathrm{Bin}(D_{\mathrm{in}}, 1 - y^*) < \Omega\big) + o_p(1).$$
 
 When $D_{\mathrm{in}}$ and $D_{\mathrm{out}}$ are independent, $f_\alpha(y) = \lambda[y - (1-\alpha)P(\mathrm{Bin}(D_{\mathrm{in}}, 1-y) < \Omega)]$, so the limit $\Phi(\alpha)$ depends only on the in-degree distribution, as observed in experiments on cultured hippocampal networks where the final active fraction jumps discontinuously in the stimulated fraction $\alpha$.

@@ -1,18 +1,26 @@
 # Propagation of chaos in spatially extended neural fields with delays
 
 **Setting.** Neurons are organized in $P(N)$ populations whose locations $r_\gamma$ (cortical position or feature, such as preferred orientation) are drawn i.i.d. from a law $\lambda$ on a compact set $\Gamma$. Population $\gamma$ has $N_\gamma(N)$ neurons. The state $X^{i,N}\in\mathbb R^d$ of neuron $i$ in population $\alpha$, for example a Hodgkin–Huxley or FitzHugh–Nagumo state, solves
+
 $$dX^{i,N}_t=\Big(f(r_\alpha,t,X^{i,N}_t)+\frac1{P(N)}\sum_{\gamma=1}^{P(N)}\sum_{p(j)=\gamma}\frac1{N_\gamma}\,b\big(r_\alpha,r_\gamma,X^{i,N}_t,X^{j,N}_{t-\tau(r_\alpha,r_\gamma)}\big)\Big)dt+\sigma(r_\alpha)\,dW^i_t,$$
+
 with space-dependent propagation delays $\tau(r,r')\le\tau$. Assume (H1)–(H5): $f$ and $b$ are uniformly Lipschitz in the state variables, $|b(r,r',x,z)|^2\le\tilde K(1+|x|^2)$, $|f(r,t,x)|^2\le C(1+|x|^2)$, and all coefficients are regular in the space variables. Assume also the *neural field limit*
+
 $$\epsilon(N):=\frac1{P(N)}\sum_{\gamma=1}^{P(N)}\frac1{N_\gamma(N)}\to0 ,$$
+
 which holds, for instance, when populations have comparable sizes and $P(N)=o(N)$.
 
 **Theorem.**
 
 1. For any square-integrable initial process, the network has a unique global strong solution. The *stochastic neural field mean-field equation*
+
 $$d\bar X_t(r)=f(r,t,\bar X_t(r))\,dt+\sigma(r)\,dW_t(r)+\int_\Gamma\mathbb E_{\bar Z}\big[b\big(r,r',\bar X_t(r),\bar Z_{t-\tau(r,r')}(r')\big)\big]\,d\lambda(r')\,dt,$$
+
 driven by a spatially chaotic Brownian field $W_t(r)$, with $\bar Z$ an independent copy of $\bar X$, has a unique solution on $[-\tau,T]$, measurable in $r$.
 2. For almost every realization of the locations, each neuron $i$ of population $\alpha$ satisfies
+
 $$\mathcal E\Big(\mathbb E\Big[\sup_{-\tau\le s\le T}\big|X^{i,N}_s-\bar X^i_s(r_\alpha)\big|^2\Big]\Big)=O\Big(\epsilon(N)+\frac1{P(N)}\Big).$$
+
 For any fixed distinct neurons $i_1,\dots,i_l$, their joint law converges to $m(r_{p(i_1)})\otimes\cdots\otimes m(r_{p(i_l)})$ (propagation of chaos).
 
 ## Expansion

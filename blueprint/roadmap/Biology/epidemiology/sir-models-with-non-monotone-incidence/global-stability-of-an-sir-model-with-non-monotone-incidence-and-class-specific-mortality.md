@@ -1,17 +1,25 @@
 # Global stability of an SIR model with non-monotone incidence and class-specific mortality
 
 **Model.** Susceptible, infected and recovered fractions with births balancing deaths, $b = \mu_1 S + \mu_2 I + \mu_3 R$, and non-monotone (psychological, Xiao–Ruan) incidence $g(I) = \beta I/(1 + \alpha I^2)$, $\alpha > 0$:
+
 $$S' = b - \mu_1 S - \frac{\beta SI}{1 + \alpha I^2}, \qquad I' = \frac{\beta SI}{1 + \alpha I^2} - (\mu_2 + \gamma)I, \qquad R' = \gamma I - \mu_3 R.$$
+
 With the total population normalised to $1$ and $R = 1 - S - I$, this reduces to the planar system on $D = \{S, I \ge 0,\ S + I \le 1\}$
+
 $$S' = \mu_3 + (\mu_2 - \mu_3)I - \mu_3 S - \frac{\beta SI}{1 + \alpha I^2}, \qquad I' = \frac{\beta SI}{1 + \alpha I^2} - (\mu_2 + \gamma)I.$$
 
 **Theorem.** Let $R_0 = \beta/(\mu_2 + \gamma)$.
 1. If $R_0 < 1$, the disease-free equilibrium $(1, 0)$ is globally asymptotically stable in $D$ (it is unstable if $R_0 > 1$).
 2. If $R_0 > 1$, there is a unique endemic equilibrium $(S^*, I^*)$, with $S^* = (1 + \alpha I^{*2})/R_0$ and $I^* \in (0,1)$ the positive root of
+
 $$\frac{\alpha}{R_0}I^2 + \Big(1 + \frac{\gamma}{\mu_3}\Big)I + \frac{1}{R_0} - 1 = 0,$$
+
 and it is globally asymptotically stable in $D \setminus \{I = 0\}$. A Lyapunov function is
+
 $$V(S,I) = \tfrac12(S - S^* + I - I^*)^2 + \frac{2\mu_3 + \gamma}{\beta}(1 + \alpha I^{*2})\Big(I - I^* - I^*\ln\frac{I}{I^*}\Big),$$
+
 for which
+
 $$V' = -\mu_3(S - S^*)^2 - (\mu_3 + \gamma)(I - I^*)^2 - \frac{(2\mu_3 + \gamma)\alpha S(I + I^*)}{1 + \alpha I^2}(I - I^*)^2 \le 0.$$
 
 ## Expansion

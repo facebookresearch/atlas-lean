@@ -1,17 +1,23 @@
 # Risk-structured SIS model with a non-communicable disease state
 
 Healthy susceptibles $S$ develop a non-communicable condition at rate $a$ and become weakened susceptibles $W$; they return at rate $b$. Both groups catch an SIS infection with different transmission coefficients, and infecteds recover into $S$ or $W$:
+
 $$
 S'=-aS+bW-\beta_SSI+\gamma_SI,\qquad W'=aS-bW-\beta_WWI+\gamma_WI,\qquad I'=\beta_SSI+\beta_WWI-\gamma I,
 $$
+
 with $\gamma=\gamma_S+\gamma_W$ and constant total population $N=S+W+I$. Solutions are bounded and the non-negative cone is forward invariant. The communicable-disease-free equilibrium is
+
 $$
 E_0^*=\Big(\frac{b}{a+b}N,\ \frac{a}{a+b}N,\ 0\Big),
 $$
+
 and the basic reproduction number is
+
 $$
 R_0=\frac{b\beta_S+a\beta_W}{(a+b)(\gamma_S+\gamma_W)}\,N .
 $$
+
 $E_0^*$ is locally asymptotically stable for $R_0<1$ and unstable for $R_0>1$. Unlike the homogeneous SIS model, where $R_{0,S}=\beta_SN/\gamma_S$ is a sharp global threshold, the risk structure created by the non-communicable disease can make the bifurcation at $R_0=1$ subcritical (backward). Endemic equilibria can then exist for $R_0<1$. Ignoring the non-communicable dynamics and fitting a homogeneous SIS model overestimates the reproduction number.
 
 ## Depends on

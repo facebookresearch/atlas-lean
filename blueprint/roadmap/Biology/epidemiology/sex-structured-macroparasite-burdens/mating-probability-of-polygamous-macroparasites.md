@@ -3,10 +3,13 @@
 **Setting.** Let the number $W$ of parasites per host have probability mass function $(p_n)_{n\ge0}$, probability generating function $G(s) = \sum_n p_n s^n$ and mean $m = G'(1)$. Each parasite is independently female with probability $\alpha$ and male with probability $\beta = 1 - \alpha$. Then the number of females per host is the stopped sum $F = \sum_{i=1}^{W} Y_i$, with $Y_i \sim \mathrm{Bernoulli}(\alpha)$ i.i.d. and independent of $W$, and $M = W - F$. Mating is polygamous: one male in a host fertilises all females in that host.
 
 **Sex distribution.** $F$ has generating function $G_F(s) = G(\beta + \alpha s)$, mean $\mu_F = \alpha m$, variance $\sigma_F^2 = \alpha^2\sigma_W^2 + \alpha\beta m$, and variance-to-mean ratio
+
 $$\frac{\sigma_F^2}{\mu_F} = \alpha\frac{\sigma_W^2}{m} + \beta,$$
+
 so overdispersion of the total burden passes to the females. $F$ and $M$ are dependent unless $W$ is Poisson.
 
 **Proposition.** The mean number of fertilised females per host is $\alpha m - \alpha G'(\alpha)$. Hence the mating probability of a female, the ratio of mean fertilised females to mean females, is
+
 $$\phi = 1 - \frac{G'(\alpha)}{m}.$$
 
 Examples: a Poisson burden with mean $m$ gives $\phi = 1 - e^{-\beta m}$; a negative binomial burden with mean $m$ and aggregation $k$, with $G(s) = (1 + m(1-s)/k)^{-k}$, gives $\phi = 1 - (1 + \beta m/k)^{-(k+1)}$.

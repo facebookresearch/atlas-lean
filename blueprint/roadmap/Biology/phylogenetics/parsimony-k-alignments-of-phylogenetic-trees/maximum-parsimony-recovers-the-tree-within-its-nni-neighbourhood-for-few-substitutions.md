@@ -3,11 +3,15 @@
 **Setting.** Let $T$ be a binary phylogenetic $X$-tree with $|X| = n$. For a binary character $f : X \to \{a, b\}$, $l(f, T)$ is its parsimony score (minimum number of substitutions on $T$, computed by Fitch's algorithm), and for an alignment $A$, $l(A, T) = \sum_{f \in A} l(f, T)$. The $A_k$-alignment $A_k(T)$ consists of all binary characters $f$ with $l(f, T) = k$ (each character counted once, up to swapping $a$ and $b$). Two binary trees are NNI neighbours if one arises from the other by swapping two subtrees across an inner edge.
 
 **Theorem.** Let $T, T'$ be NNI neighbours on $X$ with $|X| = n$, and let
+
 $$0 < k < \frac{n}{8} + \frac{11}{9} - \frac{1}{18}\sqrt{9\Big(\frac{n}{4}\Big)^2 + 16}.$$
+
 Then $l(A_k(T), T) < l(A_k(T), T')$: $T$ is the unique maximum parsimony tree for $A_k(T)$ within its NNI neighbourhood. The bound is asymptotically $k < n/12 + O(1)$. Consequently, if $n > 9k - 11 + \sqrt{9k^2 - 22k + 17}$, then any concatenation $A$ of copies of $A_0(T), \dots, A_k(T)$ satisfies $l(A, T) \le l(A, T')$, strictly if some $A_i(T)$ with $i > 0$ is included.
 
 **Theorem (failure for large $k$).** For every $n \ge 8$ there is a binary tree $T$ on $n$ leaves with an NNI neighbour $T'$ such that $l(A_k(T), T) > l(A_k(T), T')$, for
+
 $$k = \tfrac{n-4}{2},\ \tfrac{n-3}{2},\ \tfrac{n-2}{2},\ \tfrac{n-1}{2},\ \tfrac{n}{2} \quad \text{according as } n \bmod 8 \equiv 0;\ \{1,7\};\ \{2,6\};\ \{3,5\};\ 4.$$
+
 So $T$ need not be a maximum parsimony tree of its own $A_k$-alignment once $k$ is of order $n/2$. (For $k = 1$, and for $k = 2$ when $n \ge 9$, $T$ is the unique maximum parsimony tree over all trees.)
 
 ## Expansion

@@ -1,13 +1,17 @@
 # Optimal linear filter for Poisson case counts
 
 **Model.** A hidden epidemic state $\vec x_k \in \mathbb{R}^d$ (for example compartment sizes) and observed counts $\vec y_k$ (patients presenting each day) follow
+
 $$\vec x_k = F\vec x_{k-1} + \vec b_k + \vec\omega_{k-1}, \qquad \vec y_k \sim \mathrm{Poisson}(B\vec x_k)\ \text{(componentwise, conditionally on } \vec x_k),$$
+
 with known matrices $F$, $B$, known forcing $\vec b_k$, and dynamical noise $\vec\omega_k$ of mean zero and covariance $W$, independent of everything else. A linear filter has the form $\hat x_k = A_1\hat x_{k-1} + A_2\vec y_k$.
 
 **Key lemma.** If $\lambda$ is any random variable and $z \mid \lambda \sim \mathrm{Poisson}(\lambda)$, then $\mathbb{E}\big[(\lambda - \mathbb{E}\lambda)(z - \mathbb{E}[z \mid \lambda])\big] = 0$: the Poisson observation noise $z - \lambda$ is uncorrelated with the signal, although its variance $\lambda$ depends on it.
 
 **Poisson Kalman filter.** Forecast $\hat x_k^- = F\hat x_{k-1}^+$ (plus the known forcing), $P_k^- = FP_{k-1}^+F^\top + W$; assimilate
+
 $$\hat x_k^+ = \hat x_k^- + K_k\big(\vec y_k - B\hat x_k^-\big), \qquad K_k = P_k^-B^\top\big(BP_k^-B^\top + V_k\big)^{-1}, \qquad V_k = \mathrm{diag}(B\vec x_k),$$
+
 $$P_k^+ = (I - K_kB)P_k^-(I - K_kB)^\top + K_kV_kK_k^\top.$$
 
 **Theorem.**

@@ -1,20 +1,29 @@
 # Integral control of the mean dimer count in a stochastic dimerization network
 
 **Network.** Consider the stochastic mass-action reaction network
+
 $$\varnothing \xrightarrow{k_1} S_1, \qquad S_1 + S_1 \xrightarrow{b} S_2, \qquad S_1 \xrightarrow{\gamma_1} \varnothing, \qquad S_2 \xrightarrow{\gamma_2} \varnothing,$$
+
 a continuous-time Markov chain on $\mathbb Z_{\ge 0}^2$ for the copy numbers $(X_1, X_2)$, with positive constants $k_1, b, \gamma_1, \gamma_2$. The means $x_i = \mathbb E[X_i]$ obey the moment equations
+
 $$\dot x_1 = k_1 + (b - \gamma_1) x_1 - b x_1^2 - b v, \qquad \dot x_2 = -\tfrac b2 x_1 - \gamma_2 x_2 + \tfrac b2 x_1^2 + \tfrac b2 v,$$
+
 with $v = \operatorname{Var}(X_1)$, so the first moments are not closed: they depend on the variance.
 
 **Ergodicity.** For all positive parameter values the network is exponentially ergodic, all its moments are bounded and converge exponentially fast, and $v(t) \to v^* \ge 0$ for every initial state.
 
 **Controller.** The production rate is actuated by an integrator of the tracking error,
+
 $$\dot I = \mu - x_2, \qquad k_1(t) = k_c \max\{0, I(t)\},$$
+
 for a reference $\mu > 0$ and gain $k_c > 0$ (for every $\mu > 0$ some constant $k_1 > 0$ gives $\mathbb E[X_2]$ stationary mean $\mu$).
 
 **Theorem (nominal stabilization).** Assume the stationary quantity $S^* = x_1^{*2} - x_1^* + v^*$ depends continuously on $k_1$. If
+
 $$0 < k_c < 2\gamma_2 \Bigl(2\gamma_1 + \gamma_2 + 2\sqrt{\gamma_1(\gamma_1 + \gamma_2)}\Bigr),$$
+
 the closed loop has a unique locally exponentially stable equilibrium $(x_1^*, x_2^*, I^*)$ in the positive orthant with $x_2^* = \mu$, and the stationary variance satisfies
+
 $$v^* \in \Bigl(0, \frac{2\gamma_2 \mu}{b} + \frac14\Bigr].$$
 
 **Theorem (robust stabilization).** If the parameters are only known to lie in a box $\gamma_1 \in [\gamma_1^-, \gamma_1^+]$, $\gamma_2 \in [\gamma_2^-, \gamma_2^+]$, $b \in [b^-, b^+]$ with positive endpoints, the same conclusion holds for every parameter in the box provided $0 < k_c < 2\gamma_2^-\bigl(2\gamma_1^- + \gamma_2^- + 2\sqrt{\gamma_1^-(\gamma_1^- + \gamma_2^-)}\bigr)$, with $v^* \in (0, 2\gamma_2^+\mu/b^- + 1/4]$.

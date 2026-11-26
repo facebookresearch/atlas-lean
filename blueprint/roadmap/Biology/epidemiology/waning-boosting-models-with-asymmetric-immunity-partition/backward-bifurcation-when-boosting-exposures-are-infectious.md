@@ -1,6 +1,7 @@
 # Backward bifurcation in a waning–boosting model when boosting exposures are infectious (SIRWJS)
 
 **Model (SIRWJS).** Extend the SIRWS waning–boosting model by a compartment $J$ of secondary (sub-clinical) infections: exposure of a waning-immunity individual sends it to $J$ instead of directly to $R$, and $J$ individuals transmit with relative infectivity $\xi \ge 0$. With normalized population $S + I + R + W + J = 1$, transmission rate $\beta$, recovery rates $\gamma$ (primary) and $\rho$ (secondary), birth/death rate $\mu$, immune decay rate $\kappa$ partitioned by $\alpha, \omega > 1$ with $\alpha + \omega = \alpha\omega$ (full immunity lasts $1/(\alpha\kappa)$, waning immunity $1/(\omega\kappa)$), and boosting coefficient $\nu > 0$,
+
 $$
 \begin{aligned}
 \dot S &= -\beta(I + \xi J)S + \omega\kappa W + \mu(1 - S), &
@@ -12,6 +13,7 @@ $$
 $$
 
 **Statement.** The basic reproduction number is $\mathcal{R}_0 = \beta/(\gamma + \mu)$ (secondary infections cannot occur at the disease-free state, where $W = 0$). Let $\eta = \alpha + \omega$ and
+
 $$
 Q_0 = \alpha\kappa\gamma, \qquad Q_1 = \bigl(\gamma + \mu)(\eta\kappa + \mu) + \eta\kappa^2\bigr, \qquad \Theta = \nu\xi(\gamma + \mu)Q_0 - Q_1 .
 $$

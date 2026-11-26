@@ -7,6 +7,7 @@ dA &= \Big[\Big(\frac{\beta_I I}{1+bI} + \frac{\beta_A A}{1+bA}\Big)S - (\alpha 
 dI &= [\alpha A - (\delta_I + \mu + d)I]dt + \sigma_3 I\,dB_3,\qquad dR = [\delta_A A + \delta_I I - (\gamma + \mu)R]dt + \sigma_4 R\,dB_4,
 \end{aligned}$$
 with positive parameters ($\alpha$: progression to symptoms; $\delta_A, \delta_I$: recovery; $d$: disease death; $b$: saturation). Set $m = 4\mu + \alpha + \delta_A + \delta_I + d + \gamma + \tfrac12\sum_{i=1}^4 \sigma_i^2$, $\beta = \min\{\beta_I, \beta_A\}$ and
+
 $$R_0^s = \frac{3}{m}\sqrt[3]{\Lambda\alpha\beta}.$$
 
 **Theorem (persistence in mean).** If $R_0^s > 1$, then for every positive initial value the time averages $\frac1t\int_0^t S$, $\frac1t\int_0^t A$, $\frac1t\int_0^t I$ and $\frac1t\int_0^t R$ have positive lower limits, each bounded below by an explicit positive multiple of $R_0^s - 1$.

@@ -12,7 +12,9 @@ where $r$ is the birth rate, $k$ the carrying capacity, $p$ the fraction of offs
 **Proposition.**
 1. If $R_{0,1} < 1$, the disease-free equilibrium of patch $1$ is locally asymptotically stable (and likewise for patch $2$ with $R_{0,2}$).
 2. If $R_{0,1} > 1$, any endemic equilibrium of patch $1$, with total infected $I_1^* = J_{I,1}^* + A_{I,1}^*$, has
+
 $$J_{S,1}^* = \frac{I_1^*}{(R_{0,1}-1)(\lambda_1+1)},\quad A_{S,1}^* = \frac{\lambda_1 I_1^*}{(R_{0,1}-1)(\lambda_1+1)},\quad J_{I,1}^* = \frac{I_1^*}{\lambda_1+1},\quad A_{I,1}^* = \frac{\lambda_1 I_1^*}{\lambda_1+1},$$
+
 with adult-to-juvenile ratio $\lambda_1 = R_\alpha/(R_{0,1} + R_s - 1)$ in both classes; in particular the prevalence is $I_1^*/N_1^* = 1 - 1/R_{0,1}$. The value of $I_1^*$ solves an explicit equation that vanishes at $R_{0,1} = 1$ and at $R_{0,1} = 1 + \tfrac{R_\alpha}{2}\big(-1 \pm \sqrt{1 + 4rR_p/R_\alpha}\big) - R_s$.
 When $R_{0,1} > 1$ but this equation has no positive root, the source population is driven to the extinction equilibrium: infection-induced mortality removes the reproducing susceptible adults faster than they are replaced.
 

@@ -5,11 +5,15 @@
 **Theorem (conservation laws).** The conservation laws of the core model are in one-to-one correspondence with those of any extension model: each extension law is a core law plus a linear combination of the $u_i$. Consequently core and extension models have the same number of connected components of the reaction graph and the same deficiency.
 
 **Theorem (elimination).** The equations $\dot u_i = 0$ for all intermediates can always be solved, and at steady state
+
 $$u_i = \sum_{y} \mu_{i,y}\, c^{y},$$
+
 where each $\mu_{i,y} \ge 0$ is a rational function of the extension rate constants only, and $\mu_{i,y} > 0$ if and only if there is a reaction path $y \to \dots \to Y_i$ passing only through intermediates.
 
 **Theorem (reduced kinetics).** Substituting these expressions into the equations for $\dot c$ gives a mass-action system for the core model with rate constants
+
 $$\tau_{y\to y'} = \kappa_{y\to y'} + \sum_{j=1}^p \kappa_{Y_j \to y'}\, \mu_{j,y},$$
+
 so steady states of the extension model are in bijection with pairs (steady state $c$ of the core model with constants $\tau$, the induced $u$).
 
 **Corollary (canonical models).** Group extension models by their *class complexes*, the core complexes that contain a species appearing in some conservation law and react directly to an intermediate. The canonical model of a class adds one dead-end reaction $y \rightleftharpoons Y$ for each class complex. If the canonical model of a class has at most $N$ positive steady states for all rate constants and conserved amounts, then every extension model in that class or in any smaller class (fewer class complexes), the core model included, has at most $N$ positive steady states. Conversely, if the core model has $N$ non-degenerate positive steady states in one stoichiometric class for constants $\tau$ that an extension model can realize, the extension model has at least $N$ non-degenerate positive steady states for suitable constants and conserved amounts.

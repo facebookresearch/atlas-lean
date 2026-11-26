@@ -1,7 +1,9 @@
 # Many-to-one formula for parasite loads in a dividing cell population with reinfection
 
 **Model.** Cells carry a nonnegative quantity of parasites. Between events, the load of a cell follows
+
 $$d\mathfrak X_t=g(\mathfrak X_t)\,dt+\sqrt{2\sigma^2(\mathfrak X_t)}\,dB_t+\int_0^{p(\mathfrak X_{t-})}\!\!\int_{\mathbb R_+}z\,\widetilde Q(dt,dx,dz),$$
+
 with $\widetilde Q$ a compensated Poisson measure of intensity $dt\,dx\,\pi(dz)$; the states $0$ and $+\infty$ are absorbing. In addition:
 - each cell divides at constant rate $b$ into two cells with loads $\Theta x$ and $(1-\Theta)x$, where $\Theta\in(0,1)$ has a symmetric law $\kappa$ with $\mathbb E[\ln(1/\Theta)]<\infty$;
 - each cell dies at constant rate $d$;
@@ -11,9 +13,13 @@ with $\widetilde Q$ a compensated Poisson measure of intensity $dt\,dx\,\pi(dz)$
 Assume $p$ locally Lipschitz, non-decreasing with $p(0)=0$; $g$ continuous with $g(0)=0$ and a local $x(1-\ln x)$-type modulus of continuity; $\sigma$ locally $\tfrac12$-Hölder with $\sigma(0)=0$; $\int(z\wedge z^2)\pi(dz)<\infty$; $\lambda,r$ continuous, $r$ non-decreasing and bounded with $r(0)=0$; and $\mathfrak I,\mathfrak P$ with finite means. Then the population, encoded as the point measure $Z_t=\sum_{u\in V_t}\delta_{X^u_t}$ over the set $V_t$ of living cells, exists and is strongly unique.
 
 **Proposition (many-to-one formula).** For $x_0\ge0$, $t\ge0$ and every bounded measurable $F$ on paths $[0,t]\to[0,\infty]$,
+
 $$\mathbb E_{\delta_{x_0}}\Big[\sum_{u\in V_t}F\big(X^u_s,\,s\le t\big)\Big]=e^{(b-d)t}\,\mathbb E_{x_0}\big[F(Y_s,\,s\le t)\big],$$
+
 where $X^u_s$ is the load of the ancestor at time $s$ of cell $u$, and the auxiliary "typical cell" process $Y$ is the unique nonnegative strong solution of
+
 $$\begin{aligned}Y_t={}&x_0+\int_0^t g(Y_s)\,ds+\int_0^t\sqrt{2\sigma^2(Y_s)}\,dB_s+\int_0^t\!\!\int_0^{p(Y_{s-})}\!\!\int z\,\widetilde Q(ds,dx,dz)+\int_0^t\!\!\int_0^{2b}\!\!\int_0^1(\theta-1)Y_{s-}\,N(ds,dx,d\theta)\\&+\int_0^t\!\!\int_0^{r(\mathbb E_{x_0}[Y_s])}\!\!\int \mathfrak p\,N_1(ds,dx,d\mathfrak p)+\int_0^t\!\!\int_0^{\lambda(Y_{s-})}\!\!\int\mathfrak i\,N_2(ds,dx,d\mathfrak i),\end{aligned}$$
+
 with independent Poisson measures $N,N_1,N_2$ of intensities $ds\,dx\,\kappa(d\theta)$, $ds\,dx\,\mathfrak P(d\mathfrak p)$, $ds\,dx\,\mathfrak I(d\mathfrak i)$. The cell death rate $d$ does not enter $Y$, and division acts on $Y$ at the size-biased rate $2b$.
 
 ## Expansion

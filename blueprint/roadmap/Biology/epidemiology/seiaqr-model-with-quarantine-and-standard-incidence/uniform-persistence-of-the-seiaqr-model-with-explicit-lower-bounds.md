@@ -7,7 +7,9 @@ $$\begin{aligned}
 \dot Q &= q_1 I + q_2 A - (r_3 + d)Q, & \dot R &= r_1 I + r_2 A + r_3 Q - dR,
 \end{aligned}$$
 with all parameters positive and $p \in (0,1)$: $\lambda$ is recruitment, $d$ natural death, $\beta$ transmission, $a, b$ the relative infectiousness of exposed and asymptomatic individuals, $c$ the exit rate from latency, $q_i$ quarantine and $r_i$ recovery rates. With $B_i = q_i + r_i + d$ ($i=1,2$), the **control reproduction number** is
+
 $$\mathcal R_c = \frac{a\beta}{c+d} + \frac{pc\beta}{(c+d)B_1} + \frac{bc\beta(1-p)}{(c+d)B_2}.$$
+
 The disease-free equilibrium is $V^0 = (\lambda/d, 0,0,0,0,0)$.
 
 **Equilibria.** The system has a unique endemic equilibrium $V^* = (S^*, E^*, I^*, A^*, Q^*, R^*)$ if and only if $\mathcal R_c > 1$; then $\mathcal R_c = S^0/S^*$ with $S^0 = \lambda/d$, and $E^* = \lambda(\mathcal R_c - 1)/((c+d)\mathcal R_c)$.
@@ -15,9 +17,13 @@ The disease-free equilibrium is $V^0 = (\lambda/d, 0,0,0,0,0)$.
 **Local stability.** $V^0$ is locally asymptotically stable if $\mathcal R_c < 1$, linearly stable if $\mathcal R_c = 1$, and unstable if $\mathcal R_c > 1$.
 
 **Theorem (uniform persistence with explicit bound).** Let $\mathcal R_c > 1$ and $m = \max\{a, b, 1\}$. For every $\theta \in (0,1)$ there is an explicit time $T = T(\theta)$, built from the model parameters, such that every solution with positive initial data satisfies
+
 $$\liminf_{t\to\infty} E(t) \ge \nu := \theta E^* e^{(ad/m - c - d)T} = \frac{\theta\lambda(\mathcal R_c - 1)}{(c+d)\mathcal R_c}\, e^{(ad/m - c - d)T},$$
+
 and consequently
+
 $$\liminf S \ge \frac{\lambda}{\beta m},\quad \liminf I \ge \frac{pc\nu}{B_1},\quad \liminf A \ge \frac{(1-p)c\nu}{B_2},\quad \liminf Q \ge \frac{q_1\liminf I + q_2 \liminf A}{r_3 + d},$$
+
 with an analogous bound for $R$. In particular the epidemic is uniformly persistent whenever $\mathcal R_c > 1$.
 
 ## Expansion

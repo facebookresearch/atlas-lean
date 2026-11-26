@@ -1,7 +1,9 @@
 # Phase diagram of the contact process with an asymptomatic state
 
 **Model.** On $\mathbb{Z}^d$ each site is healthy ($0$), infected asymptomatic ($1$) or infected symptomatic ($2$). With $f_i(x,\xi)$ the fraction of the $2d$ nearest neighbours of $x$ in state $i$, the transitions are
+
 $$0 \to 1 \ \text{at rate}\ \beta_1 f_1(x,\xi) + \beta_2 f_2(x,\xi), \qquad 1 \to 2 \ \text{at rate}\ \gamma, \qquad 1 \to 0 \ \text{and}\ 2 \to 0 \ \text{at rate}\ 1 .$$
+
 New infections are always asymptomatic; asymptomatic and symptomatic individuals infect at rates $\beta_1$ and $\beta_2$ (social distancing or quarantine can make $\beta_2 < \beta_1$). Let $\beta_c \in (0,\infty)$ be the critical infection rate of the basic contact process on $\mathbb{Z}^d$. By monotone coupling with the basic process, $\beta_1, \beta_2 \le \beta_c$ gives extinction and $\beta_1, \beta_2 > \beta_c$ gives survival for every $\gamma$; the cases $\gamma = 0$ and $\gamma = \infty$ reduce to the basic process with rate $\beta_1$ or $\beta_2$.
 
 **Mean-field contrast.** In the homogeneously mixing limit the infection-free state is the only equilibrium unless $\beta_1 + \gamma\beta_2 > 1 + \gamma$, in which case a globally stable endemic equilibrium exists; so without space an epidemic occurs whenever either infection rate is large enough.

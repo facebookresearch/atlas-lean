@@ -1,15 +1,21 @@
 # Linear-programming certificates of ergodicity for stochastic reaction networks
 
 **Setting.** A reaction network with $d$ species and reactions $k \in \mathcal{K}$ ($K$ of them), reactant and product vectors $\nu_k, \nu'_k \in \mathbb{N}_0^d$, stoichiometry matrix $M = [\nu'_k - \nu_k]_{k}$ and mass-action propensities with rate constants $\theta_k > 0$, is modelled as a continuous-time Markov chain on a state space $\mathcal{S} \subset \mathbb{N}_0^d$ (the chemical master equation). The dynamics is **ergodic** if there is a probability distribution $\pi$ with
+
 $$\lim_{t\to\infty}\sup_{A \subset \mathcal{S}}|p_x(t,A) - \pi(A)| = 0 \qquad \text{for every } x \in \mathcal{S},$$
+
 which identifies the long-term behaviour of a cell population with the stationary law of a single cell.
 
 **Theorem (irreducibility, no conservation laws).** Suppose $\mathrm{Rank}(M) = d$, the integer column span of $M$ is $\mathbb{Z}^d$, and the linear feasibility problem
+
 $$\mathcal{F}_1 = \{v \in \mathbb{R}^K : Mv = 0,\ v \ge \mathbf{1}\}$$
+
 has a solution; assume also that the network and its reversed network are exhaustive (from abundant reactants, every species can be emptied, level by level). Then $\mathcal{S} = \mathbb{N}_0^d$ is irreducible. An analogous statement with a reduced stoichiometry matrix $\bar M$ for the $d_u$ unconserved species and an LFP $\mathcal{F}_2$ gives irreducibility of $\mathbb{N}_0^{d_u} \times \mathcal{E}_c$, where $\mathcal{E}_c$ is the finite set of states of the conserved species.
 
 **Theorem (ergodicity).** Suppose every reaction has at most two reactant molecules, $\mathcal{S} = \mathbb{N}_0^{d_u} \times \mathcal{E}_c$ is irreducible, and there is $w \in \mathbb{R}^d$ with strictly positive first $d_u$ components such that
+
 $$A w < 0 \qquad \text{and} \qquad w^{\top}M_q = 0,$$
+
 where $A = \sum_{k \in \mathcal{K}_{\mathrm{unr}}}\theta_k\,a_k(\nu'_k - \nu_k)^{\top}$ sums over unary reactions $S_i \to \star$ of unconserved species ($a_k$ the $i$-th unit vector in $\mathbb{R}^{d_u}$) and $M_q$ has as columns the net changes $\nu'_k - \nu_k$ of the binary reactions. Such a $w$ exists iff a linear feasibility problem $\mathcal{F}_3$ has a solution. Then the reaction dynamics is ergodic.
 
 ## Expansion

@@ -3,12 +3,17 @@
 **Model.** In an individual-based adaptive-dynamics model with carrying capacity $K$, each individual has a trait $x$ in a compact set $\mathcal X \subset \mathbb{R}$ and is either active or dormant. Active individuals of trait $x$ reproduce at rate $\lambda(x)$ (the offspring mutating with probability $u_K m(x)$, mutation steps drawn from a kernel $M$) and die naturally at rate $\mu(x)$; an active $x$ suffers competition from each active $y$ at rate $\alpha(x,y)/K$, and at such an event it becomes dormant with probability $p(x)$ and dies otherwise. Dormant individuals die at rate $\kappa(x)$ and resuscitate at rate $\sigma(x)$. In the limit $K \to \infty$ with rare mutations ($e^{-VK} \ll u_K \ll 1/(K\log K)$ for all $V > 0$), the trait process converges, on the mutation time scale, to a polymorphic evolution sequence, and in the small-mutation limit to the canonical equation of adaptive dynamics; evolutionary branching at a singular strategy $x^*$ occurs under second-derivative conditions on the invasion fitness $f(y,x)$, generalising the criterion of Metz et al.
 
 **Concrete model.** Take $\mathcal X = [-2,2]$, $\mu = 0$, $m(x) = m$, Gaussian mutation steps, Gaussian birth and competition kernels
+
 $$\lambda(x) = e^{-x^2/(2\sigma_b^2)}, \qquad \alpha(x,y) = e^{-(x-y)^2/(2\sigma_\alpha^2)},$$
+
 no dormant death ($\kappa = 0$), constant resuscitation rate $\sigma$, and dormancy probability
+
 $$p(x) = 1 - e^{-|x|^r/(2\sigma_p^2)}, \qquad \sigma_p, r > 0 .$$
 
 **Theorem (branching with dormancy).** Let $r = 2$ and assume the stability condition $\frac{1}{\sigma_p^2} < \frac{1}{\sigma_b^2}$. Then the trait process converges locally to the singular strategy $x^* = 0$, and evolutionary branching occurs there if
+
 $$\frac{1}{\sigma_\alpha^2} - \frac{1}{\sigma_b^2} + \frac{1}{\sigma_p^2} > 0 .$$
+
 Without dormancy the classical condition is $\frac{1}{\sigma_\alpha^2} - \frac{1}{\sigma_b^2} > 0$, i.e. $\sigma_\alpha < \sigma_b$; the extra positive term $1/\sigma_p^2$ means that **dormancy always enlarges the parameter range for evolutionary branching**.
 
 ## Expansion

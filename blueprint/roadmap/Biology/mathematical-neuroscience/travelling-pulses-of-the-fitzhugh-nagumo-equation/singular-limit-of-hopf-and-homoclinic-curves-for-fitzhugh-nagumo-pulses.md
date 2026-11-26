@@ -1,7 +1,9 @@
 # Singular limit of Hopf and homoclinic bifurcation curves for FitzHugh–Nagumo travelling pulses
 
 **Setting.** For the FitzHugh–Nagumo nerve-conduction equation $u_\tau = \delta u_{xx} + f_a(u) - w + p$, $w_\tau = \epsilon(u - \gamma w)$ with $f_a(u) = u(u-a)(1-u)$, travelling waves $u(x + s\tau)$ with speed $s$ solve a three-dimensional fast–slow ODE. With $a = \frac1{10}$, $\delta = 5$, $\gamma = 1$ and the slow time rescaled, it reads
+
 $$\epsilon\dot x_1 = x_2, \qquad \epsilon\dot x_2 = \tfrac15\big(s x_2 - f(x_1) + y - p\big), \qquad \dot y = \tfrac1s(x_1 - y),$$
+
 with $f(x_1) = x_1(x_1 - 1)(\tfrac1{10} - x_1)$. Homoclinic orbits correspond to travelling pulses, and in the $(p, s)$ parameter plane the system has a C-shaped curve of homoclinic bifurcations and a U-shaped curve of Hopf bifurcations of the equilibrium. The critical curve $C_0 = \{x_2 = 0,\ y = c(x_1)\}$ has fold points at $x_{1,\pm} = \frac{1}{30}\big(11 \pm \sqrt{91}\big)$, i.e. $x_{1,+} \approx 0.6846$, $x_{1,-} \approx 0.0487$.
 
 **Proposition (singular limit, $\epsilon \to 0$).**

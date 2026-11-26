@@ -1,11 +1,15 @@
 # Averaging of the stochastic cyclic Lotka–Volterra (rock–paper–scissors) particle system
 
 **Model.** $N$ individuals each occupy one of three cyclically ordered states $i \in \mathbb{Z}_3$. With $x = (x_0, x_1, x_2)$ the vector of state fractions on the grid $S_N = \{x \in \frac1N\mathbb{N}^3 : \sum_i x_i = 1\}$, each individual in state $i$ moves to state $i+1$ at rate $a + N x_{i+1}$ (spontaneous switching at rate $a \ge 0$ plus an extensive interaction with the next state); the generator is
+
 $$L_N f(x) = N\sum_{i \in \mathbb{Z}_3} x_i(a + N x_{i+1})\big(f(x + u_i/N) - f(x)\big), \qquad u_i = v_{i+1} - v_i.$$
+
 For $N \to \infty$ on short time scales $O(1/N)$ the fractions follow the cyclic Lotka–Volterra flow $\dot x_i = x_i(x_{i-1} - x_{i+1})$, which conserves $z(x) = x_0x_1x_2 \in (0, \tfrac1{27})$: the simplex interior is foliated by periodic orbits of period $T(z)$, with $T(z) \to 2\pi\sqrt{3}$ as $z \to \tfrac1{27}$ and $T(z) \sim -3\ln z$ as $z \to 0$.
 
 **Theorem (averaging).** Let $m(z) = -\langle x_{i+1}\dot x_i\rangle_z$ be the orbit average along the loop $\{z(x) = z\}$ (independent of $i$), equivalently $m = -A/T$ with $A(z)$ the signed area of the loop, $A' = T$. Let $Z_N(t) = z(X_N(t))$ and suppose $Z_N(0) \Rightarrow z_0 \in (0, \tfrac1{27})$. If $a \ge 1$ or $a = 0$, then for every $T > 0$, $Z_N$ converges in law on $[0,T]$ to the weak solution of
+
 $$dZ = 3\big(a\,m(Z) - Z\big)\,dt + \sqrt{6\,Z\,m(Z)}\,dW, \qquad Z(0) = z_0,$$
+
 whose generator is $\mathcal{L}_{\mathrm{avg}}f = 3(am - z)f' + 3zm f''$. For $0 < a < 1$ the sequence is tight and every limit point is a weak solution of the same equation. In this SDE the boundary $z = \tfrac1{27}$ (the centre) is entrance for all $a \ge 0$, while $z = 0$ (the boundary of the simplex) is entrance for $a \ge 1$, regular for $0 < a < 1$ and exit for $a = 0$.
 
 **Stationary measures.** For $a > 0$ the chain is ergodic with product-form invariant law $\mu_{N,a}(x) = C_{N,a}\prod_i \Gamma(Nx_i + a)/\Gamma(Nx_i + 1)$, which converges weakly to the symmetric Dirichlet law with density $\propto z(x)^{a-1}$ on the simplex; its image under $z$ is the stationary law of the averaged SDE.

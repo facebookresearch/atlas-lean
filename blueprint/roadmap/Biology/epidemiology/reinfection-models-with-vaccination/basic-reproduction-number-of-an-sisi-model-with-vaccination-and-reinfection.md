@@ -13,7 +13,9 @@ with recruitment $\Lambda$, natural mortality $\mu$, disease mortality $\mu'$ an
 
 1. Solutions are bounded, and $\Omega=\{S+I_1+S_1+I_2\le\Lambda/\mu\}$ is positively invariant.
 2. There is a unique disease-free equilibrium $e^{(0)}=\big((1-\upsilon)\Lambda/\mu,\,0,\,\upsilon\Lambda/\mu,\,0\big)$. It is locally asymptotically stable if $\mathcal R_0<1$ and unstable if $\mathcal R_0>1$, where
+
 $$\mathcal R_0=\frac{\Lambda\beta\,(\delta\upsilon+1-\upsilon)}{\mu(\mu+\mu'+\alpha)} .$$
+
 3. When $\mathcal R_0>1$ there is a unique positive endemic equilibrium $e^{(1)}$, given explicitly in terms of the total infected level $I^{(1)}=I_1^{(1)}+I_2^{(1)}$.
 
 ## Expansion

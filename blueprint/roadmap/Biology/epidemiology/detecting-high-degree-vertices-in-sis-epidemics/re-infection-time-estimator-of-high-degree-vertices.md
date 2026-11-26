@@ -5,12 +5,16 @@
 Assume there are at most $m$ vertices of degree at least $D=n^{\alpha}$, $\alpha\in(0,1)$, while every other vertex has degree at most $d$, with $m$ constant and $d=n^{o(1)}$ as $n\to\infty$.
 
 **Estimator.** For a vertex $v$ let $I_k(v)$ be its $k$-th infection time and $S_k(v)$ its $k$-th recovery time after infection. For a re-infection number $K$ and threshold $h>0$, among vertices infected more than $K$ times in $[0,T]$ compute
+
 $$R_K(v)=\max_{1\le k\le K}\big(I_{k+1}(v)-S_k(v)\big)$$
+
 and output $\widehat{\mathrm{HD}}=\{v:R_K(v)\le h\}$. Take $h=n^{-\alpha/2}$.
 
 **Theorem.**
 1. Let $V_K(T)$ be the set of vertices infected more than $K$ times in $[0,T]$. If $K>2/\alpha$, then with probability $1-o(1)$,
+
 $$\widehat{\mathrm{HD}}=\{v\in V_K(T):\deg(v)\ge n^{\alpha}\}.$$
+
 2. Let $\delta>0$, $K=\lceil3/\alpha\rceil$, and let $v$ have $\deg(v)\ge n^\alpha$ and be infected during $[0,1]$. If $T=\Omega\big(\alpha^{-1}\log(1/\delta)\big)$, then $\mathbb P(v\in\widehat{\mathrm{HD}})\ge1-\delta$.
 
 So super-spreaders can be identified after a constant observation time (independent of $n$), whereas full network reconstruction needs time growing with $n$. Vaccinating $\widehat{\mathrm{HD}}$ then approximates degree-targeted immunisation without knowing the graph.

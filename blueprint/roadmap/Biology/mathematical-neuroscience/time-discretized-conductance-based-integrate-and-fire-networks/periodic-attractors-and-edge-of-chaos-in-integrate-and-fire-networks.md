@@ -1,6 +1,7 @@
 # Periodic attractors and the edge of chaos in integrate-and-fire networks with conductance synapses
 
 **Setting.** A network of $N$ integrate-and-fire neurons with conductance-based synapses has membrane potentials $\mathbf V=(V_1,\dots,V_N)$ in a compact phase space $\mathcal M$, firing threshold $\theta$, reset after a spike, and constant external input. Spike times are known only to a finite precision $\delta>0$, which can be arbitrarily small. So spikes take effect at multiples of $\delta$, and the dynamics becomes a piecewise-smooth map $\mathbf V(t+1)=F(\mathbf V(t))$. Between spikes, the map is affine in $\mathbf V$ and contracting, with conductances depending on the past raster plot $\tilde\omega$. Its singularity set is $\{V_i=\theta\}$. Let $\Omega$ be the $\omega$-limit set of $\mathcal M$, and define the distance from the attractor to the singularity set
+
 $$d(\Omega,\mathcal S)=\inf_{\mathbf V\in\Omega}\ \inf_{t\ge0}\ \min_{i}\ |V_i(t)-\theta| .$$
 
 **Theorem.**

@@ -8,13 +8,19 @@ $$\begin{aligned}
 with recruitment $\Lambda, \Lambda_m$, natural death rates $\mu, \mu_m$, disease death $\mu_z$, recovery $\delta_z$, sexual transmission $\beta_z$, mosquito-to-human transmission $\beta_m$ and human-to-mosquito transmission $\alpha_m$. The disease-free equilibrium is $(\Lambda/\mu, 0, 0, \Lambda_m/\mu_m, 0)$.
 
 **Proposition.** Let $k = \mu_z + \delta_z + \mu$ and
+
 $$\mathcal{R}_{z_1} = \frac{\beta_z\Lambda}{2\mu k}, \qquad \bar{\mathcal{R}}_{z_2} = \frac{\beta_m\alpha_m\Lambda_m\Lambda}{\mu\mu_m^2 k}.$$
+
 1. The next-generation basic reproduction number is
+
 $$\mathcal{R}_z = \mathcal{R}_{z_1} + \sqrt{\mathcal{R}_{z_1}^2 + \bar{\mathcal{R}}_{z_2}},$$
+
 the positive root of $\lambda^2 - 2\mathcal{R}_{z_1}\lambda - \bar{\mathcal{R}}_{z_2} = 0$. Without sexual transmission it reduces to the geometric mean $\sqrt{\bar{\mathcal{R}}_{z_2}}$ of the two vector-borne legs; without vectors it is the sexual reproduction number $2\mathcal{R}_{z_1}$.
 2. With $\mathcal{R}_z^* = 2\mathcal{R}_{z_1} + \bar{\mathcal{R}}_{z_2} = \mathcal{R}_z^2 + 2\mathcal{R}_{z_1}(1 - \mathcal{R}_z)$, one has $\mathcal{R}_z \gtrless 1 \iff \mathcal{R}_z^* \gtrless 1$, and $\mathcal{R}_z = 1 \iff \mathcal{R}_z^* = 1$.
 3. If $\mathcal{R}_z^* < 1$ the disease-free equilibrium is locally asymptotically stable; if $\mathcal{R}_z^* > 1$ there is an endemic equilibrium
+
 $$E_z^* = \Big(\frac{\Lambda}{\mu}\Big(1 - \frac{R^*}{R_{\max}}\Big),\ \frac{\mu}{\delta_z}R^*,\ R^*,\ \frac{\Lambda_m}{\mu_m}\cdot\frac{\mu_m\delta_z}{\mu_m\delta_z + \alpha_m\mu R^*},\ \frac{\alpha_m\Lambda_m\mu R^*}{\mu_m\delta_z + \alpha_m\mu R^*}\Big), \qquad R_{\max} = \frac{\Lambda}{\mu}\frac{\delta_z}{k},$$
+
 where $R^* \in (0, R_{\max})$ is the positive root of the quadratic obtained by substituting these expressions into the $I_z$ equation.
 
 ## Expansion

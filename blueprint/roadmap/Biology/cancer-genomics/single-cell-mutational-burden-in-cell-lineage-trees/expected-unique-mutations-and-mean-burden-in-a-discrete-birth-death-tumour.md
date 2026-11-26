@@ -3,11 +3,15 @@
 **Model.** A discrete-time birth–death chain on population sizes: at each step a uniformly chosen living cell divides with probability $\beta$ or dies with probability $\delta = 1 - \beta$, with $\beta > \delta$. Each division gives the two daughters $\mathrm{Pois}(\mu)$ new (infinite-sites) mutations each. Start from $N_0 = 1$ mutation-free cell. Let $M_i$ be the number of distinct mutations present at step $i$ and $C_i$ the number of mutational occurrences (the total number of (cell, mutation) pairs, i.e. $C_i = \sum_k k B_{k,i} = \sum_j j S_{j,i}$, where $S_{j,i}$ is the site frequency spectrum). Then $C_i/N_i$ is the mean single-cell mutational burden.
 
 **Proposition (pure birth, $\beta = 1$).**
+
 $$\mathbb{E}[M_i] = 2\mu i, \qquad \mathbb{E}[C_i] = 2\mu(i+1)\big(H_{i+1} - 1\big),$$
+
 where $H_n = \sum_{k=1}^n k^{-1}$. Hence the mean burden per cell is $2\mu(H_{i+1}-1) \sim 2\mu \log i$, growing logarithmically in the step count.
 
 **Proposition (birth–death, first order, conditioned on survival).**
+
 $$\mathbb{E}[M_i] \simeq 2\mu\Big(\beta - \frac{\beta(\beta-\delta)}{\delta}\log\Big(1 - \frac{\delta}{\beta}\Big)(i-1)\Big), \qquad \mathbb{E}[C_i] \simeq 2\mu\beta\, \mathbb{E}[N_i]\sum_{i'=1}^{i}\frac{1}{\mathbb{E}[N_{i'}]}.$$
+
 The extinction probability from $N_0 = z$ on $\{0, \dots, N\}$ is $\gamma_z = \big((\delta/\beta)^N - (\delta/\beta)^z\big)/\big((\delta/\beta)^N - 1\big)$, which tends to $(\delta/\beta)^z$ as $N \to \infty$ (Proposition S1).
 
 ## Expansion

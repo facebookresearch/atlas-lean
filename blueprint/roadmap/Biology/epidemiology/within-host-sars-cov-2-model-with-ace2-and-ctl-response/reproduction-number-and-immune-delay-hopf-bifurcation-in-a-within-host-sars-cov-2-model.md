@@ -10,6 +10,7 @@ $$\begin{aligned}
 with positive parameters ($m$ is the burst size per infected-cell lifetime).
 
 **Reproduction number.** For the delay-free system the next-generation method gives
+
 $$R_0 = \frac{m\beta\lambda_1\lambda_2}{d_V d_E d_T}.$$
 
 **Theorem (delay-free stability).**

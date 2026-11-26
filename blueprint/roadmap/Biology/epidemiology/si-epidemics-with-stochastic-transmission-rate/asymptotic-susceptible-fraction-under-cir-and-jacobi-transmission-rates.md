@@ -1,11 +1,15 @@
 # Asymptotic susceptible fraction under CIR and Jacobi transmission rates
 
 **Model.** In a closed population let $S_t \in [0,1]$ be the susceptible fraction of an SI epidemic with random transmission rate $\beta_t = \varphi(t)P_t$:
+
 $$\frac{dS_t}{dt} = -\beta_t S_t(1 - S_t), \qquad S_0 = s_0 \in (0,1),$$
+
 where $\varphi > 0$ is a deterministic intervention profile and $(P_t)_{t\ge0}$ a positive stochastic process describing the uncontrolled infection rate. Let $H_t = \int_0^t \beta_s\,ds$ be the **integrated transmission intensity**.
 
 **Proposition (pathwise solution).** If $\beta$ has a.s. continuous paths, the equation has the unique global solution
+
 $$S_t = \Big[1 + \Big(\frac{1}{s_0} - 1\Big)e^{H_t}\Big]^{-1},$$
+
 so $S_\infty = [1 + (1/s_0 - 1)e^{H_\infty}]^{-1}$ is determined by $H_\infty \in (0,\infty]$.
 
 **Theorem (successful intervention).** If $\int_0^\infty \varphi(s)\,ds < \infty$ and $P$ has a.s. continuous positive paths with $\sup_t \mathbb E[P_t] < \infty$, then $H_\infty < \infty$ a.s. and $S_\infty \in (0, s_0)$ a.s.: a positive fraction escapes infection.
@@ -13,9 +17,13 @@ so $S_\infty = [1 + (1/s_0 - 1)e^{H_\infty}]^{-1}$ is determined by $H_\infty \i
 **Theorem (no intervention).** If $\varphi \equiv 1$ and $P$ is an ergodic Markov process with a unique stationary law $\pi$ on $(0,\infty)$ of finite positive mean, then $H_\infty = \infty$ a.s. and $S_\infty = 0$ a.s.
 
 **CIR intensity.** For the Cox–Ingersoll–Ross process $dP_t = \kappa(\eta - P_t)dt + \sigma\sqrt{P_t}\,dW_t$, $\mathbb E[H_t] = \int_0^t [\eta + (p_0 - \eta)e^{-\kappa s}]\,ds$, and for $0 < \lambda < \lambda_c = \kappa^2/(2\sigma^2)$
+
 $$\mathbb E[e^{\lambda H_t}\mid P_0 = p_0] = \exp\{A(t,\lambda) + B(t,\lambda)p_0\},$$
+
 with $A, B$ explicit solutions of Riccati equations (written with $\gamma = \sqrt{\kappa^2 - 2\sigma^2\lambda}$). Hence, for the time $\tau$ at which $H$ first reaches a threshold $M$ (equivalently, the infected fraction reaches a prescribed level),
+
 $$\mathbb P(\tau \le t) \le \inf_{0<\lambda<\lambda_c}\exp\{-\lambda M + A(t,\lambda) + B(t,\lambda)p_0\}.$$
+
 If $M > \mathbb E_{p_0}[H_t]$, the exponent is strictly convex in $\lambda$ with a unique minimizer $\lambda^*(M)$, which increases strictly in $M$ and tends to $\lambda_c$ as $M \to \infty$.
 
 ## Expansion

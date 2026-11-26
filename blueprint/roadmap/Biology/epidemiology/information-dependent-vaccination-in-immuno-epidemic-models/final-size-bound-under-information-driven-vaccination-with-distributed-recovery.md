@@ -1,6 +1,7 @@
 # Final-size bound under information-driven vaccination with distributed recovery
 
 Consider the age-independent reduction of an immuno-epidemiological model in which recovery and death happen at distributed times after infection, and the vaccinated proportion $\rho(t)$ grows according to an information index $m(t)=m(I(t))$:
+
 $$
 \begin{aligned}
 \dot S&=-\beta S(1-\rho)I\ \ (=:-J(t)),\\
@@ -9,14 +10,19 @@ $$
 \dot\rho&=\mathcal P(m(t))(1-\rho).
 \end{aligned}
 $$
+
 Here $r,d\ge0$ are the recovery and death kernels, with $\int_\zeta^{t_0}(r+d)(\xi-\zeta)\,d\xi\le1$ for all $\zeta<t_0$: the fraction of a cohort that has recovered or died by any time is at most $1$. Then $1-\rho(t)=(1-\rho_0)\exp\{-\int_0^t\mathcal P(m(I(\zeta)))\,d\zeta\}$, and the limit $S_f=\lim_{t\to\infty}S(t)$ satisfies
+
 $$
 S_0-S_f=\int_0^\infty J,\qquad \ln\frac{S_0}{S_f}=\beta\int_0^\infty(1-\rho(t))I(t)\,dt .
 $$
+
 If the vaccination propensity is bounded below, $\mathcal P(m(I))\ge k>0$, then $\int_0^\infty(1-\rho)I\le\frac{1-\rho_0}{k}\int_0^\infty J$. Hence
+
 $$
 \frac{\ln(S_0/S_f)}{S_0-S_f}\le\frac{\beta(1-\rho_0)}{k}.
 $$
+
 With $x=S_f/S_0$ and $\Lambda=\beta(1-\rho_0)S_0/k$ this reads $\frac{\ln x}{x-1}\le\Lambda$. The function $G(x)=\ln x/(x-1)$ decreases strictly on $(0,1)$ from $+\infty$ to $1$. So if $\Lambda>1$, the surviving susceptible fraction satisfies $x\ge x^*$, where $x^*\in(0,1)$ solves $G(x^*)=\Lambda$, and the attack ratio is at most $1-x^*$. If $\Lambda\le1$, then $G(x)>1\ge\Lambda$ for every $x\in(0,1)$, which forces $S_f=S_0$: no epidemic. A higher minimal vaccination propensity $k$ lowers $\Lambda$, which raises $x^*$ and shrinks the bound on the epidemic.
 
 ## Expansion

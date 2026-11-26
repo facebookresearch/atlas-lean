@@ -1,16 +1,21 @@
 # Fair vaccine allocation minimizes the endemic-threshold eigenvalue in a two-group model
 
 **Setting.** Extend the [reinfection model with waning immunity and recurrent vaccination](endemic-threshold-and-mean-stationary-susceptibility.md) to $L$ groups with population fractions $p_\ell$, an irreducible symmetric contact matrix $\Gamma = (\gamma_{\ell\ell'})$ and group-specific inter-dose times $T_\ell$. With the same law of susceptibility curves $\sigma$ in all groups, the mean susceptibility of group $\ell$ at the disease-free equilibrium is $\Sigma_\ell = \mathbb{E}[\int_0^{T_\ell}\sigma(a)\,da]/\mathbb{E}[T_\ell]$, and an infective of group $\ell$ causes on average $R_0 m_{\ell\ell'}$ infections in group $\ell'$, with
+
 $$
 m_{\ell\ell'} = p_{\ell'}\,\gamma_{\ell\ell'}\,\Sigma_{\ell'} .
 $$
+
 The early epidemic is a multitype branching process with mean matrix $R_0 M$, which survives with positive probability iff $R_0\rho > 1$, $\rho$ the leading eigenvalue of $M$.
 
 For $L = 2$ with equal activity levels ($\sum_{\ell'} p_{\ell'}\gamma_{\ell\ell'} = 1$) all symmetric contact matrices are
+
 $$
 \Gamma = \begin{pmatrix} \frac{1}{p_1}(1 - p_2\alpha) & \alpha \\ \alpha & \frac{1}{p_2}(1 - p_1\alpha) \end{pmatrix}, \qquad \alpha \in \Bigl[0, \min\bigl(\tfrac{1}{p_1}, \tfrac{1}{p_2}\bigr)\Bigr],
 $$
+
 assortative for $\alpha < 1$, well mixed for $\alpha = 1$, disassortative for $\alpha > 1$, and
+
 $$
 \rho(\alpha) = \tfrac12\bigl((1-p_2\alpha)\Sigma_1 + (1-p_1\alpha)\Sigma_2\bigr) + \tfrac12\sqrt{\bigl((1-p_2\alpha)\Sigma_1 + (1-p_1\alpha)\Sigma_2\bigr)^2 - 4(1-\alpha)\Sigma_1\Sigma_2}.
 $$
@@ -20,9 +25,11 @@ $$
 1. *Assortativity.* If $\Sigma_1 = \Sigma_2$ then $\rho = \Sigma_1$ for every $\alpha$. For any $\Sigma_1, \Sigma_2$, $\alpha \mapsto \rho(\alpha)$ is non-increasing and convex, so less assortative mixing makes endemicity harder.
 2. *Fair allocation.* Fix a dose budget: $p_1/\mathbb{E}[T_1] + p_2/\mathbb{E}[T_2] = 1/m$. Parametrize allocations by a fairness parameter $\beta \in [-1/p_2, 1/p_1]$ via $T_1(\beta) = T/(1+\beta p_2)$, $T_2(\beta) = T/(1-\beta p_1)$ for a fixed random $T$ with $\mathbb{E}[T] = m$. Then for every $\alpha \in [0,1]$ (assortative or well-mixed contacts), $\beta \mapsto \rho(\beta)$ is minimized at $\beta = 0$: splitting doses evenly between groups minimizes the endemic threshold eigenvalue.
 3. *Vaccine hesitancy.* If only group 1 is vaccinated (mean susceptibility $\Sigma$), group 2 not ($\Sigma_2 = 1$), and mixing is homogeneous ($\alpha = 1$), then $\rho = 1 - (1-\Sigma)p_1$, and endemicity is prevented ($R_0\rho \le 1$) iff
+
 $$
 p_1 \ge p_c = \frac{1 - 1/R_0}{1 - \Sigma},
 $$
+
 the analogue of the classical critical coverage $(1 - 1/R_0)/E$ with vaccine efficacy $E$ replaced by $1 - \Sigma$.
 
 ## Depends on

@@ -1,17 +1,23 @@
 # Backward and Hopf bifurcations in the SI model with saturated treatment
 
 Consider the reduced SIR dynamics with recruitment $A>0$, natural death $d>0$, mass-action transmission $\beta>0$, and removal of infecteds by death, disease mortality and natural recovery at total rate $\delta=d+\alpha+n$. Add a saturating treatment term $bI/(I+b)$ with capacity parameter $b>0$:
+
 $$
 \dot S=A-dS-\beta IS,\qquad \dot I=\beta IS-\delta I-\frac{bI}{I+b}.
 $$
+
 Let
+
 $$
 R_0=\frac{\beta A}{d(\delta+1)}.
 $$
+
 The disease-free equilibrium is $E_0=(A/d,0)$. Endemic equilibria $X^*=(S^*,I^*)$ with $I^*>0$ correspond to positive roots of
+
 $$
 P(I)=\delta I^2+\Big(b(\delta+1)+\frac{\delta d}{\beta}-A\Big)I+\frac{bd(\delta+1)}{\beta}(1-R_0),
 $$
+
 with $S^*=\beta^{-1}\big(\delta+b/(I^*+b)\big)$. Then:
 
 1. If $R_0>1$ there is exactly one endemic equilibrium.

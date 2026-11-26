@@ -1,11 +1,15 @@
 # Mass-action implementation of a smoothed-ReLU neural network
 
 **Activation.** For $\eta > 0$, the smoothed ReLU is
+
 $$\varphi_\eta(y) = \tfrac12\big(y + \sqrt{y^2 + 4\eta}\big),$$
+
 a strictly increasing positive function that tends to $\max(0, y)$ as $\eta \to 0$.
 
 **Proposition.** For a hard-wired feed-forward network with weights $W^\ell$ and biases $\beta^\ell$, the layered system
+
 $$x^0_i \equiv d_i, \qquad \frac{d}{dt}x^\ell_i = \eta + \rho^\ell_i(x^{\ell-1})\, x^\ell_i - (x^\ell_i)^2, \qquad \rho^\ell_i(x^{\ell-1}) = \sum_{j=1}^{c_{\ell-1}} W^\ell_{ij}x^{\ell-1}_j + \beta^\ell_i,$$
+
 implements the network with activation $\varphi_\eta$, from any nonnegative initial condition. It also converges from infinity in finite time and is exponentially reliable.
 
 **Reaction network.** The system is the mass-action ODE of a network built edge by edge. For an edge from node $X'$ to node $X$, and for the node $X$ itself, use:

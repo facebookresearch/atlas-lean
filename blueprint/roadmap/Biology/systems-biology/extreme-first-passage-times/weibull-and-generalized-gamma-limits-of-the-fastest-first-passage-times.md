@@ -3,9 +3,13 @@
 **Setting.** Let $\tau_1, \tau_2, \dots$ be i.i.d. first passage times of $N$ independent diffusive searchers to a target, and let $T_{k,N}$ be the $k$-th smallest of $\tau_1, \dots, \tau_N$ ($T_N = T_{1,N}$ is the **extreme first passage time**).
 
 **Theorem (power-law short-time regime).** Suppose that for some $A > 0$ and $p > 0$
+
 $$\mathbb P(\tau_1 \le t) \sim A t^p \qquad (t \to 0^+).$$
+
 Then $(AN)^{1/p}T_N \to \mathrm{Weibull}(1, p)$ in distribution, and more generally $(AN)^{1/p}T_{k,N}$ converges to a generalized gamma law $\mathrm{gen}\Gamma(1, p, k)$. If $\mathbb E[T_N] < \infty$ for some $N$, then for every $m > 0$
+
 $$\mathbb E[(T_{k,N})^m] \sim \frac{\Gamma(k + m/p)/\Gamma(k)}{(AN)^{m/p}} \qquad (N \to \infty),$$
+
 in particular $\mathbb E[T_N] \sim \Gamma(1 + 1/p)(AN)^{-1/p}$.
 
 **Proposition (slow-escape regime).** If instead $\lambda\tau \to \mathrm{Exp}(1)$ as a small parameter $\varepsilon \to 0$ (narrow escape, deep potential well), then for fixed $N$ the order statistics satisfy $\lambda T_{k,N} \to$ the $k$-th order statistic of $N$ independent unit exponentials, so $\mathbb E[T_N] \approx 1/(N\lambda)$.

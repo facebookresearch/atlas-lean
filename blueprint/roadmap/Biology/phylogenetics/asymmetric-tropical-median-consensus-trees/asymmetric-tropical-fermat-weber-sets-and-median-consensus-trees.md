@@ -1,7 +1,9 @@
 # Asymmetric tropical Fermat–Weber sets and median consensus trees
 
 **Setting.** On the tropical projective torus $\mathbb R^n/\mathbb R\mathbf 1$, the *asymmetric tropical distance* is
+
 $$d_\triangle(a,b)=\sum_{i\in[n]}(b_i-a_i)-n\min_{i\in[n]}(b_i-a_i)=\sum_{i}(b_i-a_i)+n\max_i(a_i-b_i),$$
+
 which is well defined modulo $\mathbb R\mathbf 1$, non-negative, and in general not symmetric. Its symmetrization is $n$ times the usual symmetric tropical distance. For sites $V=\{v_1,\dots,v_m\}$, the *Fermat–Weber set* $\mathrm{FW}(V)$ is the set of minimizers of $x\mapsto\sum_{i}d_\triangle(v_i,x)$. Restricted to the normalizing hyperplane $\mathcal H$ this sum equals $n\sum_i\max_j(v_{ij}-x_j)$. A point $u$ *evenly splits* $V$ if, for every $J\subseteq[n]$, the union $S_J(u)$ of the closed sectors with apex $u$ indexed by $J$ contains at least $m|J|/n$ sites.
 
 **Theorem.**

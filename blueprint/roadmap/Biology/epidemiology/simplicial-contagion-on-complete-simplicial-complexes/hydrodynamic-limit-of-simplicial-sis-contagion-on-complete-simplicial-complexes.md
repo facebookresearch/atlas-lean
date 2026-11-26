@@ -3,7 +3,9 @@
 **Model.** On $N$ nodes forming a complete simplicial complex of order $M$ (every set of $i+1 \le M+1$ nodes is an $i$-simplex), each node is susceptible or infected. Infected nodes recover at rate $\gamma$. A susceptible node in an $(i+1)$-node simplex whose other $i$ nodes are all infected receives infection pressure $r_i = s_i N^{-i}$ from that simplex ($s_i \ge 0$; $s_1 = \lambda$ is the pairwise rate, $s_2 = \mu$ the triangle rate, $s_3 = \theta$ the tetrahedron rate). Let $m^N(t)$ be the number of infected nodes.
 
 **Theorem (hydrodynamic limit).** Fix $T > 0$. Assume $m^N(t)/N$ converges uniformly on $[0,T]$ to a deterministic $m_I(t)$ and the martingale remainder $\eta^N_t$ in the semimartingale decomposition of $m^N$ satisfies $\sup_{t\le T}\mathbb E[\eta^N_t] \to 0$. Then
+
 $$\frac{dm_I}{dt} = (s_1 - \gamma)m_I + \sum_{i=1}^{M-1}\Big(\frac{s_{i+1}}{(i+1)!} - \frac{s_i}{i!}\Big)m_I^{i+1} - \frac{s_M}{M!}m_I^{M+1} = (1 - m_I)\sum_{i=1}^M \frac{s_i}{i!}m_I^i - \gamma m_I .$$
+
 For $M = 2$ this is $\dot m_I = (\lambda - \gamma)m_I + (\tfrac{\mu}{2} - \lambda)m_I^2 - \tfrac{\mu}{2}m_I^3$, and for $M = 3$ it adds $(\tfrac{\theta}{6} - \tfrac{\mu}{2})m_I^3 - \tfrac{\theta}{6}m_I^4$.
 
 **Bifurcations for $M = 2$.** Besides $m_I = 0$, steady states solve $0 = (\lambda - \gamma) + (\tfrac{\mu}{2} - \lambda)x - \tfrac{\mu}{2}x^2$. In the $(\lambda,\mu)$ quadrant, with discriminant curve $\lambda = -\mu/2 + \sqrt{2\mu\gamma}$:

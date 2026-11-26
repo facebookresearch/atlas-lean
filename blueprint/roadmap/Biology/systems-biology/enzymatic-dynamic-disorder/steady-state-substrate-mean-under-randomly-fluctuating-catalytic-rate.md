@@ -3,17 +3,23 @@
 Substrate flows in at rate $k_{\rm in}$ and is converted by an enzyme whose catalytic (degradation) rate fluctuates. This is dynamic disorder. The rate $\gamma(t)$ is a stationary continuous-time Markov chain on states $\gamma_1,\dots,\gamma_n>0$ with generator $Q$ and stationary law $\pi$. Its speed-$c$ version is $\gamma_c(t)=\gamma(ct)$, so $c$ is the speed of enzyme fluctuations relative to substrate kinetics. The substrate obeys $\dot S_c=k_{\rm in}-\gamma_c(t)S_c$, or the analogous birth–death chain for copy numbers. Let $m_{\rm eq}(c)=\lim_{t\to\infty}\mathbb E[S_c(t)]$ and $D=\mathrm{diag}(\gamma_1,\dots,\gamma_n)$.
 
 **Theorem.** For every $c\ge0$, the matrix $D-cQ$ is invertible and
+
 $$
 m_{\rm eq}(c)=k_{\rm in}\,\pi^\top(D-cQ)^{-1}\mathbf 1 .
 $$
+
 If $\tilde Q=D^{-1}Q$ is diagonalizable with eigenvalues $\lambda_i$, right eigenvectors $u_i$ and left eigenvectors $w_i$, then
+
 $$
 m_{\rm eq}(c)=k_{\rm in}\sum_{i=1}^n\frac{\alpha_i}{1-c\lambda_i},\qquad \alpha_i=(\pi^\top u_i)(w_i^\top D^{-1}\mathbf 1).
 $$
+
 Moreover, $m_{\rm eq}(c)$ always lies between the deterministic and static limits:
+
 $$
 \frac{k_{\rm in}}{\mathbb E_\pi[\gamma]}=\lim_{c\to\infty}m_{\rm eq}(c)\ \le\ m_{\rm eq}(c)\ \le\ \lim_{c\to0}m_{\rm eq}(c)=k_{\rm in}\,\mathbb E_\pi\Big[\frac1\gamma\Big].
 $$
+
 So slow conformational fluctuations raise the mean substrate level up to the Jensen gap $\mathbb E_\pi[1/\gamma]-1/\mathbb E_\pi[\gamma]$. This stochastic amplification is set by the relative speed $c$ alone.
 
 ## Depends on

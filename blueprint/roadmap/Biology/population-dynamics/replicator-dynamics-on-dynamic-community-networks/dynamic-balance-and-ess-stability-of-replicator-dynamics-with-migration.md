@@ -1,12 +1,17 @@
 # Dynamic balance and ESS stability of replicator dynamics with migration
 
 **Model.** A population game $(\mathcal Y, r)$ has actions $\mathcal A$, population states $y$ in the simplex and positive rewards $r_i(y)$. Individuals live in communities $\mathcal H$ with densities $\eta_h$ ($\sum_h\eta_h = 1$); $x_{ih}$ is the fraction of the population that is in community $h$ and plays $i$, and $y = x\mathbf 1$. Encounters between communities $h$ and $k$ have strength $W_{hk}$, with $W$ nonnegative, irreducible and with positive diagonal. Migration from $h$ to $k$ occurs at rate $\lambda_{hk}\phi_{hk}(x)$ with an environmental response $\phi \ge 0$. The co-evolution is
+
 $$\dot\eta_h = \sum_k\lambda_{kh}\phi_{kh}(x)\eta_k - \eta_h\sum_k\lambda_{hk}\phi_{hk}(x),$$
+
 $$\dot x_{ih} = \sum_k\lambda_{kh}\phi_{kh}(x)x_{ik} - x_{ih}\sum_k\lambda_{hk}\phi_{hk}(x) + \eta_h\sum_kx_{ik}W_{hk}r_i(y) - x_{ih}\sum_{j}\sum_kx_{jk}W_{hk}r_j(y),$$
+
 a closed migration process coupled to a replicator equation on the community network.
 
 **Theorem (dynamic balance).** If $x(t)\mathbf 1 \to y^*$, then $y^*$ is a restricted Nash equilibrium of the game, and in every community whose density stays bounded away from zero the local action frequencies converge to the global ones:
+
 $$\lim_{t\to\infty}\frac{x_{ih}(t)}{\eta_h(t)} = y^*_i \quad\text{for all } i \in \mathcal A.$$
+
 If moreover $\eta(t) \to \eta^*$, the system state converges to the rank-one matrix $y^*\eta^{*\top}$.
 
 **Theorem (evolutionary stability).** If $W$ is symmetric and the game is a two-action matrix game, then an evolutionarily stable state $\hat y$ is locally asymptotically stable for the population state, and if $\hat y$ lies in the interior of the simplex, every interior trajectory converges to it.

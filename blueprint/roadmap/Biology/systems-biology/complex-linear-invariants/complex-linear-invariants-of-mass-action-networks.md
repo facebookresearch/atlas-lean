@@ -1,14 +1,18 @@
 # Complex-linear invariants of mass-action networks
 
 **Setting.** A mass-action reaction network with species concentrations $x\in\mathbb R^n_{>0}$ and complexes $C_1,\dots,C_m$ has dynamics
+
 $$\frac{dx}{dt}=f(x)=Y\cdot\mathcal L(G)\cdot\Psi(x),$$
+
 where $Y$ is the $n\times m$ stoichiometric matrix of complexes, $\mathcal L(G)$ is the Laplacian of the labelled reaction graph on complexes (rate constants as edge labels), and $\Psi(x)=(x^{C_1},\dots,x^{C_m})$ is the vector of complex monomials. Put $M=Y\mathcal L(G)$. A *type 1 complex-linear invariant* on $C_1,\dots,C_k$ is a relation $\sum_{i\le k}a_i x^{C_i}=0$ that holds at every steady state and comes from a linear functional $a$ with $a\cdot B'=0$. Here $B$ is a matrix whose columns form a basis of $\ker M$, and $B'$ consists of its first $k$ rows.
 
 **Theorem.**
 
 1. The space $I_k$ of type 1 complex-linear invariants on $C_1,\dots,C_k$ has dimension $\dim I_k=k-\operatorname{rk}B'$.
 2. Choose a set $U$ of $l=\operatorname{rk}B'$ linearly independent rows of $B'$, and let $V$ be the remaining $k-l$ rows. Then at every steady state
+
 $$\Psi(x)_V=B'_V\,(B'_U)^{-1}\,\Psi(x)_U ,$$
+
 and each of the $k-l$ rows of this matrix identity is an independent type 1 complex-linear invariant. The coefficients are rational functions of the rate constants and can be computed by linear algebra alone.
 3. Applied to bifunctional enzymes, namely the EnvZ/OmpR osmoregulator and the PFK-2/F-2,6-BPase glycolytic regulator, whose networks have deficiency up to four, the invariants give explicit steady-state relations. They show that the concentration of the regulated phospho-form is controlled robustly, independently of total amounts and initial conditions.
 

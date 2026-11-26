@@ -3,15 +3,21 @@
 **Markovian binary tree (MBT).** Each branch of a species tree evolves independently through phases $\{1,\dots,n\}$ of a continuous-time Markov chain with an absorbing state, starting from an initial phase distribution $\alpha$. In phase $i$ it changes phase to $j$ at rate $(D_0)_{ij}$, goes extinct at rate $d_i$, and speciates at rate $B_{i,jk}$, moving itself to phase $k$ while the daughter branch starts in phase $j$ (so $B_{i,jk} = (D_1)_{ik}P_{j,ik}$). BiSSE, MuSSE and trait-dependent or geographic speciation models are special cases.
 
 **Extinction probabilities.** Let $E_i(t)$ be the probability that the tree started by one branch in phase $i$ is extinct by time $t$, and $\mathbf E(t) = (E_i(t))$. Then
+
 $$\frac{d\mathbf E(t)}{dt} = \mathbf d + \mathbf D_0\mathbf E(t) + \mathbf B\big(\mathbf E(t)\otimes\mathbf E(t)\big), \qquad \mathbf E(0) = \mathbf 0,$$
+
 and the ultimate extinction vector $\mathbf E = \lim_{t\to\infty}\mathbf E(t)$ is the minimal nonnegative solution of $\mathbf E = (-\mathbf D_0)^{-1}\mathbf d + (-\mathbf D_0)^{-1}\mathbf B(\mathbf E\otimes\mathbf E)$, computable by Newton's method from $\mathbf E_0 = \mathbf 0$.
 
 **Lemma (one surviving lineage).** Let $D^{(1)}_i(t)$ be the probability that a tree started in phase $i$ has exactly one extant lineage at time $t$. Then $\mathbf D^{(1)}(t)$ solves
+
 $$\frac{d\mathbf D^{(1)}(t)}{dt} = \mathbf D_0\mathbf D^{(1)}(t) + \mathbf B\big(\mathbf E(t)\otimes\mathbf D^{(1)}(t)\big) + \mathbf B\big(\mathbf D^{(1)}(t)\otimes\mathbf E(t)\big), \qquad \mathbf D^{(1)}(0) = \mathbf 1,$$
+
 equivalently $\mathbf D^{(1)}(t) = e^{\mathbf D_0t}\mathbf 1 + \int_0^t e^{\mathbf D_0(t-u)}\mathbf B\big(\mathbf E(u)\otimes\mathbf D^{(1)}(u) + \mathbf D^{(1)}(u)\otimes\mathbf E(u)\big)du$.
 
 **Lemma ($n$ surviving lineages).** With $\mathbf D^{(0)} = \mathbf E$, the probability vectors $\mathbf D^{(n)}(t)$ of exactly $n$ extant lineages satisfy
+
 $$\frac{d\mathbf D^{(n)}}{dt} = \mathbf D_0\mathbf D^{(n)} + \mathbf B\big(\mathbf D^{(0)}\otimes\mathbf D^{(n)} + \mathbf D^{(n)}\otimes\mathbf D^{(0)}\big) + \sum_{n_L=1}^{n-1}\mathbf B\big(\mathbf D^{(n_L)}\otimes\mathbf D^{(n-n_L)}\big),\qquad \mathbf D^{(n)}(0) = \mathbb 1\{n=1\}\mathbf 1,$$
+
 and analogous equations hold for the probability that $n_L$ of the $n$ lineages descend from the left subtree.
 
 ## Expansion

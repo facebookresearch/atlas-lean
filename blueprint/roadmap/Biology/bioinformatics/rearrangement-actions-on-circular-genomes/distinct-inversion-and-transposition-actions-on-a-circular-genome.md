@@ -5,6 +5,7 @@
 **Proposition.**
 1. The number of distinct rearrangement actions applying exactly $2$ cuts (inversions) is $\lfloor n/2 \rfloor$.
 2. The number of distinct rearrangement actions applying exactly $3$ cuts (signed transpositions) is
+
 $$\left\lfloor \frac{n^2}{3} \right\rfloor - \left\lfloor \frac{n}{2} \right\rfloor.$$
 
 ## Depends on

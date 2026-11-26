@@ -6,12 +6,15 @@ $q(x_2,x_3) = q_1+q_2x_2+q_3x_3$, $q_M(x_2,x_3) = q_{1,M}+q_{2,M}x_2+q_{3,M}x_3$
 **Scaling.** Set $X^K = \big(N_1^K/K,\; N_2^K/K^{1+\alpha},\; N_3^K/K^{\beta}\big)$. If $\sup_K\mathbb{E}\|X^K(0)\|^2<\infty$, then $\sup_K\mathbb{E}\sup_{t\le T}\|X^K(t)\|^2<\infty$ for every $T$.
 
 **Theorem (convergence to a PDMP).** If $(X^K(0),I^K(0))$ converges in law to $(x_0,i_0)$ with uniformly bounded second moments, then $(X^K,I^K)$ converges in law in the Skorokhod space $\mathbb{D}([0,T],\mathbb{R}_+^3\times\{0,1\})$ to the piecewise deterministic Markov process $(X,I)$ with generator
+
 $$
 \mathcal{L}f(x,i) = \sum_{j=1}^3 g_j(x,i)\,\partial_{x_j} f(x,i) + a_M(1-i)\big(f(x,1)-f(x,0)\big) + q_M(x_2,x_3)\,i\,\big(f(x,0)-f(x,1)\big),
 $$
+
 $$
 g(x,i) = \big(a-(a+q(x_2,x_3))x_1,\; r(x_2,x_3)x_1 - d x_2,\; r_M(x_2,x_3)\,i - d_M x_3\big)^{\mathsf T}.
 $$
+
 Between switches of the cancer-cell state $I$, the macroscopic populations $X$ follow the ODE $\dot X = g(X,I)$; the single cancer stem cell keeps its stochastic on/off dynamics in the limit, with switching rates that depend on $X$.
 
 ## Expansion

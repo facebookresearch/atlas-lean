@@ -5,9 +5,11 @@
 **Monotonicity criterion.** The system is monotone with respect to some orthant order if and only if every closed undirected chain of $G$ (a cycle traversed ignoring edge directions) has parity $+1$. Hence a monotone system has no negative feedback loop and no incoherent feed-forward loop, although these two conditions together are not sufficient. For example, the testosterone model $\dot x_1 = A/(K+x_3) - b_1x_1$, $\dot x_2 = c_1x_1 - b_2x_2$, $\dot x_3 = c_2x_2 - b_3x_3$ contains a negative loop and is not monotone for any orthant order.
 
 **Sign consistency and the degree of monotonicity.** The sign consistency problem asks for a vertex labeling $L:V\to\{-1,1\}$ maximizing the number of consistent edges $F = \{(u,v)\in E: w(u,v) = L(u)L(v)\}$. With $F$ optimal, the degree of monotonicity is
+
 $$
 \mathsf{M} = \frac{|F|}{|E|}\in(0,1],
 $$
+
 with $\mathsf{M} = 1$ exactly for orthant-monotone sign structures. A semidefinite-programming relaxation computes a labeling with at least about $88\%$ of the optimal number of consistent edges.
 
 **Relation to redundancy.** Across signaling networks, $\mathsf{M}$ is strongly negatively correlated with the topological redundancy $\mathcal{R}_{\mathrm{new}}$: more redundant networks are less monotone.

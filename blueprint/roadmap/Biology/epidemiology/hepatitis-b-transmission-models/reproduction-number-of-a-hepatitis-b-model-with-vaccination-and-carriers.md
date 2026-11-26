@@ -12,7 +12,9 @@ $$\begin{aligned}
 Here $\delta$ is recruitment, $d$ the unvaccinated fraction at birth, $r$ the probability of vertical transmission from carriers, $k$ the vaccination rate, $w$ the waning rate of vaccine immunity, $n$ the relative infectiousness of carriers, $\mu_1$ natural and $\mu_2$ disease-induced mortality.
 
 **Theorem.** Under Lipschitz bounds on the right-hand sides, the system has a unique solution on $[0,T]$. Solutions starting in $\mathbb R_+^6$ remain in $\mathbb R_+^6$, and the total population satisfies $0<S+A+M+C+R+V<\delta/\mu_1$. By the next-generation method, the basic reproduction number is
+
 $$\mathcal R_0=\frac{\delta\beta\gamma(\mu_1+e+na)(w+d\mu_1)}{\mu_1(\mu_1+\gamma)(\mu_1+e)(w+k+\mu_1)(\mu_1+\mu_2+a+m-r\delta d)},$$
+
 and the disease-free equilibrium is locally asymptotically stable when $\mathcal R_0<1$.
 
 ## Expansion

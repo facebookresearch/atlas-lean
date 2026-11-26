@@ -1,9 +1,11 @@
 # Every basic reproduction number fits an epidemic curve
 
 **Model.** With $\rho = \beta\tau$ the basic reproduction number and $\tau > 0$ the mean infectious period, consider
+
 $$
 S' = -\frac{\rho S I}{\tau}, \qquad I' = \frac{\rho S I - I}{\tau}, \qquad S(-\infty) = 1,
 $$
+
 on the whole time line; the incidence is $-S'$ and the final size depends only on $\rho$. A *target triple* $(A_f, \mu_f, \sigma_f)$ prescribes the total number of cases, the mean time and the standard deviation of an observed incidence curve. A function $A\cdot(-S'(t))$ is a *good fit* to the triple if its total mass, mean time and standard deviation equal $A_f$, $\mu_f$ and $\sigma_f$.
 
 **Results.**

@@ -1,7 +1,9 @@
 # Threshold dynamics of the diffusion time-changed SIS model
 
 **Model.** In a closed population of size $N$ with transmission rate $\beta$, death/replacement rate $\mu$ and recovery rate $\gamma$, the number of infectives obeys
+
 $$dI(t) = I(t)\big[\beta N - \mu - \gamma - \beta I(t)\big]\,dt + \sigma I(t)\big(N - I(t)\big)\,dB(E_t), \qquad I(0) = I_0 \in (0,N),$$
+
 where $B$ is a standard Brownian motion and $E_t$ is the inverse of a subordinator $D$ (a non-decreasing Lévy process), $E_t = \inf\{u > 0 : D(u) > t\}$, independent of $B$. The drift runs in physical time while the noise runs on the random clock $E_t$, modelling environmental shocks that arrive with trapping (sub-diffusive) periods. Let $\mathcal R_0 = \beta N/(\mu + \gamma)$.
 
 **Theorem.**

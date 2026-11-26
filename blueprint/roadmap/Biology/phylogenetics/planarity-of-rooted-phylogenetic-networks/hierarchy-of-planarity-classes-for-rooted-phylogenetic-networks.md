@@ -5,7 +5,9 @@
 **Theorem.**
 1. $N$ is terminal planar if and only if its completion $N^*$ is upward planar.
 2. For every $X$ with $|X| \ge 2$,
+
 $$\mathcal{P}_o(X) \subsetneq \mathcal{P}_t(X) \subsetneq \mathcal{P}_u(X) \subsetneq \mathcal{P}_p(X).$$
+
 3. Each of the four properties can be decided, and a corresponding drawing produced, in $O(m)$ time for a network with $m$ vertices; hence in $O(|X|)$ time for binary reticulation-visible networks and $O(|X|^2)$ time for normal networks.
 4. *Level-$k$ networks.* $\mathcal{L}_1(X) \subseteq \mathcal{P}_o(X)$; $\mathcal{L}_2(X) \subseteq \mathcal{P}_u(X)$ but $\mathcal{L}_2(X) \not\subseteq \mathcal{P}_t(X)$; $\mathcal{L}_3(X) \subseteq \mathcal{P}_p(X)$ but $\mathcal{L}_3(X) \not\subseteq \mathcal{P}_u(X)$; and $\mathcal{L}_4(X) \not\subseteq \mathcal{P}_p(X)$.
 5. For a level-2 network $N$ the following are equivalent: $N$ is terminal planar; $N$ is outer planar; $N$ contains no subdivision of four explicit small digraphs; the underlying graph $U(N)$ contains no subdivision of $K_{2,3}$.

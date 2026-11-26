@@ -5,9 +5,13 @@
 Pons and Batle encode tree-child networks by words: $\mathcal{C}_{n,k}$ is the set of words on letters $\omega_1,\dots,\omega_n$ in which $k$ letters occur three times and $n-k$ letters twice, such that in every prefix each letter $\omega_i$ that has occurred has occurred at least as often as every $\omega_j$ with $j > i$. Let $\mathcal{H}_{n,k} \subset \mathcal{C}_{n,k}$ consist of the words in which every letter immediately before the third occurrence of a letter is the second occurrence of that letter. Pons and Batle conjectured $|\mathcal{TC}_{n,k}| = \frac{n!}{(n-k)!}|\mathcal{C}_{n-1,k}|$ for all tree-child networks.
 
 **Theorem.** There is a bijection between $\mathcal{OTC}_{n,k}$ and $\mathcal{H}_{n-1,k} \times \{1,\dots,n\}^{\underline{k}}$ (sequences of $k$ distinct labels), so
+
 $$|\mathcal{OTC}_{n,k}| = \frac{n!}{(n-k)!}\,|\mathcal{H}_{n-1,k}|,$$
+
 which is the Pons–Batle identity for the one-component class. Since $|\mathcal{H}_{n,k}| = \binom{n}{k}(2n-1)!!$,
+
 $$|\mathcal{OTC}_{n,k}| = \frac{n!}{(n-k)!}\binom{n-1}{k}(2n-3)!! .$$
+
 Moreover, if $R_n$ is the number of reticulations of an OTC drawn uniformly from all OTCs with $n$ leaves, then $(R_n - \mathbb{E}R_n)/\sqrt{\mathrm{Var}(R_n)} \to N(0,1)$ in distribution.
 
 ## Expansion

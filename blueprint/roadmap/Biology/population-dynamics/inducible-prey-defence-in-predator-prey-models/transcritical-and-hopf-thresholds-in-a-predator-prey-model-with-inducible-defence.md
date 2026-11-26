@@ -1,16 +1,20 @@
 # Transcritical and Hopf thresholds in a predator–prey model with inducible defence
 
 In nondimensional form, prey $u$ grows logistically. Predators $v$ consume prey through a Holling type II response, but prey induce a defence that lowers the attack rate by the factor $1-\frac{\omega v}{\phi+v}$, which increases with predator density, with $0\le\omega<1$:
+
 $$
 \dot u=u\Big[(1-u)-\frac{(1-\frac{\omega v}{\phi+v})v}{m+(1-\frac{\omega v}{\phi+v})u}\Big],\qquad
 \dot v=v\Big[\frac{\xi(1-\frac{\omega v}{\phi+v})u}{m+(1-\frac{\omega v}{\phi+v})u}-\delta\Big],
 $$
+
 with $m,\phi,\xi,\delta>0$. Solutions starting in the closed positive quadrant stay non-negative and bounded.
 
 1. **Transcritical bifurcation.** At the prey-only equilibrium $E_1=(1,0)$ the predator's invasion rate is $\frac{\xi}{m+1}-\delta$. Taking the half-saturation constant $m$ as bifurcation parameter, $E_1$ undergoes a transcritical bifurcation at
+
 $$
 m_{tc}=\frac\xi\delta-1:
 $$
+
 predators cannot invade for $m>m_{tc}$ and can for $m<m_{tc}$, where a coexistence equilibrium $E^*$ appears.
 2. **Hopf bifurcation.** When $E^*$ is feasible, a simple Hopf bifurcation occurs at the unique $m=m_H$ where the trace of the Jacobian at $E^*$ vanishes, provided its determinant is positive there.
 

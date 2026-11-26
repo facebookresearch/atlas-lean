@@ -10,11 +10,15 @@ $$\begin{aligned}
 with force of infection $\lambda(t) = \boldsymbol\beta^{\mathsf T}\mathbf y$ (stage-specific transmission rates $\boldsymbol\beta \in \mathbb R_{\ge 0}^{k_I}$) and a smooth birth term $\Lambda \ge 0$ for which the disease-free equilibrium $(S_0, \mathbf 0, \mathbf 0, \mathbf 0)$ is locally asymptotically stable without the pathogen. Put $\mathbf G_E = \mathbf A_E - \mu\mathbf I$ and $\mathbf G_I = \mathbf A_I - \mu\mathbf I$.
 
 **Theorem.** The disease-free equilibrium is locally asymptotically stable if $\mathcal R_0 < 1$ and unstable if $\mathcal R_0 > 1$, where
+
 $$\mathcal R_0 = \underbrace{\boldsymbol\alpha_I^{\mathsf T}\bigl(-\mathbf G_I^{-1}\bigr)(\boldsymbol\beta S_0)}_{\mathcal R_{0,\mathrm{new}}} \cdot \underbrace{\boldsymbol\alpha_E \cdot \bigl((-\mathbf G_E^{-1})(-\mathbf A_E\mathbf 1)\bigr)}_{\mathcal P_{E\to I}}.$$
+
 Here $\mathcal R_{0,\mathrm{new}}$ is the expected number of infections caused by one infectious individual over its infectious period cut short by death, i.e. the expected reward with rates $\boldsymbol\beta S_0$ accumulated by the phase-type law that is the minimum of the infectious period and an $\mathrm{Exp}(\mu)$ lifetime, and $\mathcal P_{E\to I}$ is the probability of leaving E into I rather than dying.
 
 **Corollary (Erlang stages).** With constant birth rate, Erlang latent and infectious periods of means $\tau_E, \tau_I$ and integer shapes $k_E, k_I \ge 1$ (rates $r_E = k_E/\tau_E$, $r_I = k_I/\tau_I$), homogeneous transmission $\boldsymbol\beta = \beta\mathbf 1$ and exponential immunity,
+
 $$\mathcal R_0 = \beta S_0 \left(\sum_{j=0}^{k_I - 1} \frac{r_I^{\,j}}{(r_I + \mu)^{j+1}}\right) \left(\frac{r_E}{r_E + \mu}\right)^{k_E}.$$
+
 The bracket is the mean of the Coxian time $\min(\text{infectious period}, \text{lifetime})$, and the last factor the probability of surviving all $k_E$ latent stages.
 
 ## Depends on

@@ -1,10 +1,13 @@
 # Singular perturbation parameter for autocatalytic zymogen activation
 
 In intermolecular autocatalytic zymogen activation (IAZA), the active enzyme $E$ binds the zymogen $Z$ to form a complex $C$, which releases a second enzyme molecule: $Z+E\rightleftharpoons C\to2E$, with rate constants $k_1,k_{-1},k_2$. Let $w$ be the amount of zymogen converted. Mass action with $z(0)=z_0$, $e(0)=e_0$, $c(0)=w(0)=0$ gives
+
 $$
 \dot z=-k_1ez+k_{-1}c,\qquad \dot c=k_1ez-(k_{-1}+k_2)c,\qquad \dot e=-k_1ez+(k_{-1}+2k_2)c,\qquad \dot w=k_2c,
 $$
+
 with conservation laws $z+e+2c=E_T:=z_0+e_0$ and $z+c+w=z_0$. In the $(w,c)$ variables the complex equation factors as $\dot c=k_1(c-h^-(w))(c-h^+(w))$, where $h^-\le h^+$ are the two $c$-nullcline branches; $c=h^-(w)$ is the quasi-steady-state (QSS) manifold. Let $K_M=(k_{-1}+k_2)/k_1$, $K=k_2/k_1$, and
+
 $$
 \varphi=\begin{cases}\sqrt{K_M(K_M+2E_T)}, & e_0\le z_0,\\ \sqrt{(K_M+E_T)^2-4e_0z_0}, & z_0<e_0,\end{cases}
 \qquad
@@ -12,10 +15,12 @@ $$
 $$
 
 **Proposition.** For every solution starting in the trapping region $\Lambda^*$ of the phase plane, the distance $\mathcal E_Z=c-h^-(w)$ to the QSS manifold satisfies
+
 $$
 \mathcal E_Z^2(t)\le\mathcal E_Z^2(0)\,e^{-k_1\varphi t}+\varepsilon^2\lambda_Z^2,\qquad
 \varepsilon:=\frac{E_T}{K_M+E_T}\cdot\frac{K}{\varphi}.
 $$
+
 So trajectories reach an $O(\varepsilon\lambda_Z)$ neighbourhood of the QSS manifold on the fast time scale $1/(k_1\varphi)$, and $\varepsilon\ll1$ is the condition under which QSS-based estimation of kinetic constants from progress curves is valid. When $z_0>e_0$, normal hyperbolicity of the critical manifold is lost at $w_T=(z_0-e_0)/2$, where attracting and repelling branches of $\{c=z_0-w\}$ and $\{c=e_0+w\}$ exchange stability.
 
 ## Depends on

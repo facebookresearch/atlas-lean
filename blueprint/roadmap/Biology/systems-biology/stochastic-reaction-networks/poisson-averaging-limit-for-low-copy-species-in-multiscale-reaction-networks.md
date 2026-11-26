@@ -5,14 +5,18 @@
 **Assumptions.** (A1) every discrete species is produced or consumed by at least one fast reaction ($\beta_r=1$); (A2) for $y_r\to y_r'\in\mathcal{R}^*$, $\lambda_r(v,w)=\kappa_r(w)\,\frac{v!}{(v-\pi_d(y_r))!}$ with $\kappa_r(w)>0$ for $w>0$, the mass-action system $\mathcal{S}^w_d$ is complex balanced for every $w>0$ with complex-balanced equilibrium $q^w_d$, and its network is irreducible; (A3) the deterministic solution $z(t)$ of the reduced continuous system, whose rates are $\lambda_{c}(w)=\sum\kappa_r(w)(q^w_d)^{\pi_d(y_r)}$ over the fast reactions projected onto the continuous species, exists and stays positive on $[0,T]$ from $\pi_c(X_0)$; (A4) a moment bound $\sup_N\sup_{t\le T}\mathbb{E}[\psi(X^N_d(t))]<\infty$ for some locally bounded $\psi\ge 1$ with $\psi(v)\to\infty$ dominating all $\lambda_r(\cdot,w)$ for $w$ in compacts.
 
 **Theorem (Anderson–Cappelletti–Kurtz, Theorem 3.1).** Under (A1)–(A4),
+
 $$
 \sup_{t\in[0,T]}\big|N^{-1}X^N_c(t)-z(t)\big|\xrightarrow[N\to\infty]{}0\quad\text{in probability},
 $$
+
 and, with $J^{w}$ a product-form Poisson random vector with mean $q^{w}_d$, for every continuous $g$ with $|g(v)|/\psi(v)\to0$,
+
 $$
 \sup_{t\in[0,T]}\Big|\int_0^t\big(g(X^N_d(s))-\mathbb{E}[g(J^{z(s)})]\big)ds\Big|\to 0\ \text{ in probability},\qquad
 \sup_{t\in[\delta,T]}\big|\mathbb{E}[g(X^N_d(t))]-\mathbb{E}[g(J^{z(t)})]\big|\to0
 $$
+
 for each $\delta\in(0,T)$. So the low-copy species equilibrate instantaneously to the Poisson stationary law of the complex-balanced fast subsystem, slaved to the current continuous concentrations.
 
 **Corollary 3.2.** If the scaled intensities admit two-sided bounds of the form $h_r(w)w^{\pi_c(y_r)}v^{\pi_d(y_r)}\le N^{-\beta_r}\lambda^N_r(v,\lfloor Nw\rfloor)\le\hat h_r(w)v^{\pi_d(y_r)}$ (automatic for suitably rescaled mass-action kinetics) and every complex contains at most one discrete species with coefficient $1$, the same conclusions hold without (A4) for all continuous $g$ of polynomial growth (time-averaged) and all bounded continuous $g$ (fixed times).

@@ -1,9 +1,11 @@
 # Generic periodicity of the Beslon–Mazet–Soula spiking network
 
 **Model (BMS).** Fix $N$ neurons, a synaptic weight matrix $W=(W_{ij})$, a threshold $\theta>0$, a leak $\gamma\in[0,1)$ and constant external currents $I^{\mathrm{ext}}_i$. With $Z(x)=\mathbf 1_{\{x\ge\theta\}}$ the firing indicator, membrane potentials evolve synchronously in discrete time by
+
 $$
 V_i(t+1)=\gamma V_i(t)\big(1-Z[V_i(t)]\big)+\sum_{j=1}^N W_{ij}Z[V_j(t)]+I^{\mathrm{ext}}_i,\qquad i=1,\dots,N .
 $$
+
 A neuron that fires is reset (its leaky memory is erased) and every neuron receives the synaptic input of the neurons that fired. On each cell of the partition by firing pattern $\eta\in\{0,1\}^N$ the map is affine with diagonal linear part $\gamma(1-\eta_i)$, hence a contraction; the only source of complexity is the singularity set $\mathcal S=\{V:\ V_i=\theta\ \text{for some } i\}$.
 
 Let $\Omega$ be the $\omega$-limit set of the absorbing phase space, $d(\Omega,\mathcal S)=\inf_{V\in\Omega}\inf_{t\ge0}\min_i|V_i(t)-\theta|$ its distance to the threshold, and $V^{\sup}=\max_i\sup_{V}\limsup_{t\to\infty}V_i(t)$ the largest asymptotic potential. An orbit is a **ghost orbit** if some neuron never fires along it but $\limsup_t V_i(t)=\theta$.

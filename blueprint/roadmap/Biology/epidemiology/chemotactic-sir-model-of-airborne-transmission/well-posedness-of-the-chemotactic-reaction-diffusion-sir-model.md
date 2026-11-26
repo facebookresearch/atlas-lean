@@ -1,6 +1,7 @@
 # Well-posedness of the chemotactic reaction–diffusion SIR model
 
 **Model.** On a bounded smooth domain $\Omega$ and time interval $(0,T)$, with $Q = \Omega \times (0,T)$, consider densities $s, i, r$ of susceptible, infected and removed individuals:
+
 $$
 \begin{aligned}
 \partial_t s - \nabla\cdot(\nu_s\nabla s) + \frac{\beta\, i}{s+i+r}\, s &= 0,\\
@@ -8,6 +9,7 @@ $$
 \partial_t r - \nabla\cdot(\nu_r\nabla r) - \phi\, i &= 0,
 \end{aligned}
 $$
+
 with no-flux boundary conditions $\nabla s\cdot\mathbf{n} = (\nu_i\nabla i - \chi(i)\nabla s)\cdot\mathbf{n} = \nabla r\cdot\mathbf{n} = 0$ and nonnegative initial data, $0 \le s_0 \le s_M$. Here $\beta$ is the contact rate, $\phi$ the removal rate, $\nu_j > 0$ diffusion coefficients, and $\chi(i) \ge 0$ a chemotactic sensitivity: infected individuals move toward regions of higher susceptible density, mimicking airborne transmission concentrated where many hosts gather.
 
 **Results.** With $H = L^2(\Omega)$, $V = H^1(\Omega)$:

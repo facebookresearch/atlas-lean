@@ -7,10 +7,12 @@
 Let $\widetilde{\mathcal{S}}$ be the system with reactions $\mathcal{R}^*$ and deterministic kinetics $\tilde\lambda_r(v,w)=\kappa_r(w)v^{\pi_d(y_r)}$. Assume, besides (A1)–(A3) of the multiscale Poisson averaging theorem, that $\widetilde{\mathcal{S}}$ is a non-degenerate ACR system in which some ACR species are discrete; let $X^N_{\mathrm{acr}}$ be the counts of the discrete ACR species, $q$ their ACR values, and $J\sim\mathrm{Pois}(q)$ (product form). Assume also the two-sided intensity bounds and that each complex contains at most one discrete species, with coefficient $1$.
 
 **Corollary (Anderson–Cappelletti–Kurtz, Corollary 4.1).** If $\pi_c(X_0)$ is a positive equilibrium of the reduced continuous system, then for every continuous $\hat g$ of polynomial growth and every bounded continuous $\hat\varphi$, $\delta\in(0,T)$,
+
 $$
 \sup_{t\le T}\Big|\int_0^t\big(\hat g(X^N_{\mathrm{acr}}(s))-\mathbb{E}[\hat g(J)]\big)ds\Big|\to0\ \text{in probability},\qquad
 \sup_{t\in[\delta,T]}\big|\mathbb{E}[\hat\varphi(X^N_{\mathrm{acr}}(t))]-\mathbb{E}[\hat\varphi(J)]\big|\to0 .
 $$
+
 In particular $P(X^N_{\mathrm{acr}}(t)\in A)\to P(J\in A)$ uniformly on $[\delta,T]$: the ACR species are asymptotically Poisson with mean equal to the ACR value.
 
 **Corollary 4.2.** If $\pi_c(X_0)$ lies only in the basin of attraction of an equilibrium of the reduced continuous system, the same holds with $J$ replaced by $J^{z(t)}\sim\mathrm{Pois}(q^{z(t)}_d)$, and $q^{z(t)}_d\to q$ as $t\to\infty$.

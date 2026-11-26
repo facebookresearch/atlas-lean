@@ -1,16 +1,21 @@
 # The binary echelon tree uniquely maximizes the stairs2 index
 
 **Binary echelon tree.** For $n\ge2$ let $k$ be the unique power of two with $n/2\le k<n$. The binary echelon tree $BE_n$ is defined recursively by $BE_0=\emptyset$, $BE_1=$ a single vertex, and
+
 $$BE_n=\big(T^{fb}_{\log_2 k},\,BE_{n-k}\big),$$
+
 a fully balanced tree on $k$ leaves joined at the root with a binary echelon tree on $n-k$ leaves. When $n=2^h$ this is the fully balanced tree $T^{fb}_h$.
 
 **Theorem.** For every $n\ge1$ there is exactly one rooted binary tree with $n$ leaves of maximum stairs2 index, namely $BE_n$.
 
 **Corollary (recursion for the maximum).** Let $\mathrm{st}_2(n)$ denote the maximum stairs2 index on $n$ leaves. Then $\mathrm{st}_2(0)=\mathrm{st}_2(1)=0$ and, for $n\ge2$ with $k=2^{\lfloor\log_2 n\rfloor}$,
+
 $$\mathrm{st}_2(n)=\frac{1}{n-1}\Big((k-1)+(n-k-1)\,\mathrm{st}_2(n-k)+\frac{n-k}{k}\Big).$$
 
 **Corollary (closed form).** If $n\ge2$ has binary expansion $n=\sum_{i=1}^{\ell}2^{a_i}$ with $0\le a_1<a_2<\dots<a_\ell$, then
+
 $$\mathrm{st}_2(n)=\frac{1}{n-1}\left(\sum_{i=1}^{\ell}\big(2^{a_i}-1\big)+\sum_{i=1}^{\ell-1}\frac{\sum_{j=1}^{i}2^{a_j}}{2^{a_{i+1}}}\right).$$
+
 For example $\mathrm{st}_2(3)=\tfrac12\big(0+1+\tfrac12\big)=\tfrac34$ and $\mathrm{st}_2(2^h)=1$.
 
 ## Expansion

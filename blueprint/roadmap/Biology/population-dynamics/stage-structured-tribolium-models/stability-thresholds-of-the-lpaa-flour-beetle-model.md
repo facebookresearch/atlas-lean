@@ -8,6 +8,7 @@ A_1(t+1)&=(1-\mu_p)P(t),\\
 A_2(t+1)&=A_1(t)e^{-c_2A_2(t)}+(1-\mu_a)A_2(t),
 \end{aligned}$$
 where $b>0$ is fecundity, $\mu_l,\mu_p,\mu_a\in(0,1)$ are larval, pupal and adult mortalities, and $c_1,c_2\ge0$ measure cannibalism of eggs and of callow adults by mature adults. The inherent net reproductive number is
+
 $$R_0=\frac{b(1-\mu_l)(1-\mu_p)}{\mu_a}.$$
 
 **Theorem.**
@@ -15,9 +16,13 @@ $$R_0=\frac{b(1-\mu_l)(1-\mu_p)}{\mu_a}.$$
 1. The region $\Omega=\{L\le\hat L,\ P\le\hat P,\ A_1\le\hat A_1,\ A_2\le\hat A_1/\mu_a+A_2(0)\}$, with $\hat L=\frac{b}{ec_1}$, $\hat P=(1-\mu_l)\hat L$ and $\hat A_1=(1-\mu_p)\hat P$, is positively invariant.
 2. The extinction equilibrium $E^0$ is locally and globally asymptotically stable if $R_0<1$, and unstable if $R_0>1$.
 3. For $R_0>1$ there is a unique positive equilibrium $E^*$, with $A_2^*=\dfrac{\ln R_0}{c_1+c_2}$, $A_1^*=\mu_aA_2^*e^{c_2A_2^*}$, $L^*=bA_2^*e^{-c_1A_2^*}$ and $P^*=(1-\mu_l)L^*$. It is locally asymptotically stable when
+
 $$1<R_0<\min\Big\{\exp\Big(1+\frac{c_2}{c_1}\Big),\ \exp\Big(\frac{1-\mu_a}{\mu_a}\Big(1+\frac{c_1}{c_2}\Big)\Big)\Big\}$$
+
 and globally asymptotically stable when
+
 $$1<R_0<\min\Big\{e,\ \frac{ec_1(1-\mu_a)}{c_2\mu_a}\Big\}.$$
+
 Bifurcations of $E^*$ outside these ranges, and the resulting oscillatory and chaotic regimes, are explored numerically.
 
 ## Expansion

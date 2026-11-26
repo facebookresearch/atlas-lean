@@ -11,7 +11,9 @@ $$\begin{aligned}
 
 **Theorem.** Assume $r\kappa\mu_1 \ne v\sigma$ and that the persistent-epidemic equilibrium is asymptotically stable for the type-1–virus subsystem.
 1. *Linear stability.* The equilibrium $(n_{1a}^*, n_{1i}^*, 0, 0, 0, n_3^*)$ of the full system is unstable if
+
 $$\lambda_1 - \lambda_2 < \frac{qDn_3^*(v\sigma - r\kappa\mu_1)}{(r+v)(\kappa\mu_1 + \sigma)}$$
+
 and asymptotically stable if the reverse strict inequality holds.
 2. *Stochastic invasion.* Start $\mathbf{N}^K$ from the resident equilibrium with a single active type-2 individual. For all sufficiently small $\beta > 0$, the probability that type 2 reaches total size $\beta K$ before dying out converges as $K \to \infty$ to $1 - s_{2a}$, where $s_{2a}$ is the first coordinate of the smallest positive solution of the extinction-probability equations of the three-type branching process (active, dormant, infected) that linearises type 2 at the resident equilibrium. $s_{2a} < 1$ exactly under the instability condition of item 1; then, on invasion, the time to reach $\beta K$ is $(1/\lambda^* + o(1))\log K$, with $\lambda^* > 0$ the leading eigenvalue of the linearised mean matrix, while on extinction the invader dies out in time $o(\log K)$.
 

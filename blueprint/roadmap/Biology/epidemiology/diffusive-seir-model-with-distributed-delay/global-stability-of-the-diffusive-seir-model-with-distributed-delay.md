@@ -13,7 +13,9 @@ and $\partial_t R - k_R\Delta R = \gamma I - \mu R$ (decoupled). Here $b$ is rec
 This covers bilinear, saturated and Beddington–DeAngelis-type incidences.
 
 **Theorem.** The system is well posed in the space of continuous non-negative initial histories and its solutions are bounded. Let $S_0 = b/\mu$ and
+
 $$R_0 = \frac{\beta\alpha\,\partial_I f(S_0, 0)}{(\mu+\alpha)(\mu+\gamma+c)}.$$
+
 1. The disease-free equilibrium $(S_0, 0, 0)$ is globally asymptotically stable if and only if $R_0 \le 1$.
 2. If $R_0 > 1$, there is a unique spatially homogeneous endemic equilibrium $(S^*, E^*, I^*)$, it is the only equilibrium besides the disease-free one, and it is globally asymptotically stable.
 
@@ -22,7 +24,9 @@ Diffusion and the distributed delay therefore do not change the threshold or the
 ## Expansion
 
 Well-posedness writes the system as an abstract retarded equation $u' = Au + F(u_t)$ with $A$ the Neumann Laplacian and uses the analytic semigroup $T(t)$ in the mild formulation $u(t) = T(t)\phi(0) + \int_0^t T(t-s)F(u_s)\,ds$; boundedness follows from the equation for $S + E + I$. For stability, integrate over $\Omega$ a Volterra-type Lyapunov functional. At the endemic state use a functional of the form
+
 $$\int_\Omega\Big[S - S^* - \int_{S^*}^S\frac{f(S^*,I^*)}{f(\sigma,I^*)}d\sigma + E - E^* - E^*\ln\frac{E}{E^*} + \frac{\mu+\alpha}{\alpha}\Big(I - I^* - I^*\ln\frac{I}{I^*}\Big) + \text{delay terms}\Big]dx,$$
+
 where the delay terms are $\beta f(S^*,I^*)\int_0^h g(\tau)\int_{t-\tau}^t \Phi\big(f(S^*,I(s))/f(S^*,I^*)\big)\,ds\,d\tau$ with $\Phi(u) = u - 1 - \ln u$. Diffusion contributes only non-positive terms such as $-k_S S^*\int_\Omega |\nabla S|^2/S^2$ via Green's formula and the Neumann condition, and $(H_1)$–$(H_2)$ make the remaining reaction terms non-positive. LaSalle's invariance principle finishes both cases.
 
 ## Sources

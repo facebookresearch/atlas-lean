@@ -1,16 +1,24 @@
 # Small-noise phase diffusion along a stable limit cycle
 
 **Setting.** Let $F: \mathbb{R}^d \to \mathbb{R}^d$ be $C^2$ and suppose $\dot x = F(x)$ has a hyperbolic, locally stable limit cycle $M = \{q_t : t \in [0,T)\}$ of period $T$ with basin $W$. Every $y \in W$ lies on a unique isochron $W(q_t)$ (the stable fibre of $q_t$, a smooth $(d-1)$-dimensional hypersurface transverse to $F$); its *asymptotic phase* $\theta(y) \in \mathbb{R}/T\mathbb{Z}$ is that $t$, and the deterministic flow moves $\theta$ at unit speed. Add small noise:
+
 $$dX^\varepsilon_t = F(X^\varepsilon_t)\,dt + \varepsilon\,G(X^\varepsilon_t)\,dB_t,$$
+
 with $G$ locally Lipschitz, $d \times m$-matrix valued, and $B$ an $m$-dimensional Brownian motion. Let $\tau_{\varepsilon,W}$ be the exit time from $W$, $x_t$ the noiseless trajectory from $x_0$, and $\tilde\theta^\varepsilon_t$ the continuous lift of $\theta\big(X^\varepsilon_{\cdot\wedge\tau_{\varepsilon,W}}\big)$ evaluated at time $\varepsilon^{-2}t$.
 
 **Theorem.** Assume $X_0^\varepsilon \to x_0 \in W$ in probability and fix $t_f > 0$.
 1. *Proximity and phase limit on the time scale $\varepsilon^{-2}$.* For every $s_\varepsilon = o(\varepsilon^{-2})$ there is $\eta_\varepsilon = o(1)$, and for every $\beta \in (0,1)$ there is $c_\beta > 0$, such that with probability tending to $1$,
+
 $$\sup_{s \le s_\varepsilon}\|X^\varepsilon_s - x_s\| \le \eta_\varepsilon, \qquad \sup_{t \in [c_\beta\varepsilon^2|\log\varepsilon|,\, t_f]}\big\|X^\varepsilon_{\varepsilon^{-2}t} - q_{\tilde\theta^\varepsilon_t}\big\| \le \varepsilon^\beta,$$
+
 and the dephasing $\big(\tilde\theta^\varepsilon_t - \theta(x_0) - \varepsilon^{-2}t\big)_{t \in [0,t_f]}$ converges in law in $C^0([0,t_f])$ to $\sigma w_t + bt$, with $w$ a standard Brownian motion and
+
 $$\sigma^2 = \frac1T\int_0^T D\theta(q_s)\,G(q_s)G(q_s)^{\top}D\theta(q_s)^{\top}\,ds, \qquad b = \frac1{2T}\int_0^T \mathrm{tr}\big(G(q_s)G(q_s)^{\top}D^2\theta(q_s)\big)\,ds.$$
+
 2. *Drift dominance on longer time scales.* There is $c > 0$ such that if $\varepsilon^2 t_\varepsilon \to \infty$ and $e^{-c\varepsilon^{-2}}t_\varepsilon \to 0$, then the winding number $\mathcal{W}_\varepsilon(t) = \lfloor \tilde\theta^\varepsilon/T \rfloor$ satisfies, in probability,
+
 $$\lim_{\varepsilon\to 0}\frac{\mathcal{W}_\varepsilon(t_\varepsilon) - t_\varepsilon/T}{\varepsilon^2 t_\varepsilon/T} = b.$$
+
 In addition, trajectories started within $\varepsilon^{\beta_0}$ of $M$ stay within $\varepsilon^{\beta_1}$ of $M$ up to times $\exp(\varepsilon^{-\zeta})$ for $\beta_1 < \beta_0$ and $\zeta < 2(1 - \beta_1)$.
 
 ## Expansion

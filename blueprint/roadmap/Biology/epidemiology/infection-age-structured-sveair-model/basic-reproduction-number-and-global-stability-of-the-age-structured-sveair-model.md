@@ -1,6 +1,7 @@
 # Basic reproduction number and global stability of the age-structured SVEAIR model
 
 **Model.** In a closed population of constant size $N_0$ with birth and death rate $\mu$, let $S$ be susceptible, $V$ vaccinated, $R$ removed, and let $e(t,\theta)$, $a(t,\theta)$, $i(t,\theta)$ be densities of exposed, asymptomatic infectious and symptomatic infectious individuals by age $\theta$ since entering their class. With force of infection $\beta(t) = \int_0^\infty \bigl(\beta_A(\theta) a(t,\theta) + \beta_I(\theta) i(t,\theta)\bigr)d\theta$, vaccination rate $p$, vaccine efficacy $\epsilon \in [0,1)$ against infection, and loss rate $\zeta\epsilon$ of vaccinated individuals,
+
 $$
 \begin{aligned}
 S' &= \mu N_0 - (p + \beta + \mu) S, \qquad V' = pS - \bigl(\zeta\epsilon + (1-\epsilon)\beta + \mu\bigr)V,\\
@@ -9,25 +10,32 @@ S' &= \mu N_0 - (p + \beta + \mu) S, \qquad V' = pS - \bigl(\zeta\epsilon + (1-\
 (\partial_t + \partial_\theta) i &= -(\gamma_I + \mu)\, i, \qquad i(t,0) = \textstyle\int_0^\infty \bigl(k(1-q)\, e + \chi(1-\xi)\, a\bigr) d\theta,
 \end{aligned}
 $$
+
 where the age-dependent rates are: $k$ leaving latency, $q$ the fraction becoming asymptomatic, $\chi$ symptom onset among asymptomatics (a fraction $\xi$ recovers at rate $\gamma_A$ instead), and $\gamma_I$ recovery of symptomatics.
 
 **Results.**
 1. *(Well-posedness.)* For nonnegative $S_0, V_0, R_0$ and nonnegative $e_0, a_0, i_0 \in L^1(\mathbb{R}_+)$, the problem is globally well posed, with $S, V \in C^1$ nonnegative and $e, a, i \in C(\mathbb{R}_+; L^1(\mathbb{R}_+))$ nonnegative.
 2. *(Reproduction number.)* Writing $\Pi_g(s) = \exp(-\int_0^s g)$ for survival functions, set
+
 $$
 \mathcal{R}_A = \int_0^\infty kq\,\Pi_{k+\mu}\,ds \int_0^\infty \beta_A\,\Pi_{\gamma_A\xi + \chi(1-\xi) + \mu}\,ds,
 $$
+
 $$
 \mathcal{R}_I = \Bigl(\int_0^\infty k(1-q)\Pi_{k+\mu}\,ds + \int_0^\infty kq\,\Pi_{k+\mu}\,ds \int_0^\infty \chi(1-\xi)\Pi_{\gamma_A\xi + \chi(1-\xi) + \mu}\,ds\Bigr)\int_0^\infty \beta_I\,\Pi_{\gamma_I + \mu}\,ds,
 $$
+
 $$
 \mathcal{R}_0 = \frac{\mu N_0}{p + \mu}\Bigl(1 + \frac{p(1-\epsilon)}{\zeta\epsilon + \mu}\Bigr)(\mathcal{R}_A + \mathcal{R}_I).
 $$
+
 If $\mathcal{R}_0 \le 1$ the only steady state is disease free; if $\mathcal{R}_0 > 1$ there is in addition an endemic steady state, whose force of infection $\beta^* > 0$ solves an explicit quadratic equation.
 3. *(Global stability.)* If $\mathcal{R}_0 \le 1$, the disease-free steady state
+
 $$
 (S^*, V^*, e^*, a^*, i^*) = \Bigl(\frac{\mu N_0}{p+\mu},\ \frac{p\mu N_0}{(p+\mu)(\zeta\epsilon+\mu)},\ 0, 0, 0\Bigr)
 $$
+
 is globally asymptotically stable. If $\mathcal{R}_0 > 1$, the endemic steady state is globally asymptotically stable (for solutions with infection present).
 
 ## Depends on

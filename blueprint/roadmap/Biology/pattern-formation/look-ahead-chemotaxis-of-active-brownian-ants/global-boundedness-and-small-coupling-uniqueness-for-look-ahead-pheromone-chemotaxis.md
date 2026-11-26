@@ -1,8 +1,11 @@
 # Global boundedness and small-coupling uniqueness for look-ahead pheromone chemotaxis of active Brownian ants
 
 **Model.** Ants are active Brownian particles on the flat torus $\mathbb{T}^2$ with orientation $\theta \in \mathbb{T}_{2\pi}$, heading $\mathbf{e}_\theta = (\cos\theta, \sin\theta)$ and normal $\mathbf{n}_\theta = (-\sin\theta, \cos\theta)$. Each ant turns its heading up the gradient of a pheromone field sensed at a look-ahead distance $\lambda \ge 0$ in front of it. In rescaled form, the mean-field density $f(t, \mathbf{x}, \theta)$ (a probability density) and the quasi-stationary pheromone concentration $c(t, \mathbf{x})$ satisfy
+
 $$\partial_t f = \nabla_{\mathbf{x}}\cdot\big[D_T\nabla_{\mathbf{x}} f - \mathrm{Pe}\,\mathbf{e}_\theta f\big] + \partial_\theta\big[\partial_\theta f - \gamma\,(\mathbf{n}_\theta\cdot\nabla_{\mathbf{x}} c_\lambda)\,f\big],$$
+
 $$0 = \Delta_{\mathbf{x}} c - \alpha c + \rho, \qquad \rho(t,\mathbf{x}) = \int_0^{2\pi} f\,d\theta, \qquad c_\lambda(t,\mathbf{x},\theta) = c(t, \mathbf{x} + \lambda\mathbf{e}_\theta),$$
+
 with translational diffusion $D_T > 0$, Péclet number (self-propulsion) $\mathrm{Pe}$, alignment strength $\gamma \ge 0$ and pheromone decay $\alpha > 0$. The spatial density obeys $\partial_t\rho = \nabla\cdot[D_T\nabla\rho - \mathrm{Pe}\,\mathbf{p}]$ with polarization $\mathbf{p} = \int \mathbf{e}_\theta f\,d\theta$, so chemotaxis enters only through the orientation dynamics, unlike Keller–Segel.
 
 **Theorem.**

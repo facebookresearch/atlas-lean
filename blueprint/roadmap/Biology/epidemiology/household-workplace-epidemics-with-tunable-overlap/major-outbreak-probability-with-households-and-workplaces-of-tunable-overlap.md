@@ -5,9 +5,11 @@
 **Epidemic.** On this network runs a stochastic SIR epidemic. Infectious periods are i.i.d. copies of an arbitrary random variable $I$, possibly preceded by a latent period. During its infectious period an infective makes Poisson contacts at rate $\beta_H$ with uniformly chosen household members, at rate $\beta_W$ with uniformly chosen workplace members, and at rate $\beta_G$ with uniformly chosen members of the whole population. Let $Z^{(n)}$ be the final number infected from one initial case, and $\pi_G$ the probability that the global rate is in play ($\pi_G>0$ iff global infection is present).
 
 **Theorem.** As $n\to\infty$, $\mathbb P(Z^{(n)}>\log n)\to\rho$. When $\pi_G>0$,
+
 $$
 \rho=1-\xi,\qquad \xi=\min\{s\in[0,1]:\phi_A(\beta_G(1-s))=s\},
 $$
+
 where $A$ is the total infectious time (severity) accumulated by the local clump: the individuals infected through household and workplace contacts alone, starting from one case. $\phi_A$ is the Laplace transform of $A$, which is a $\theta:(1-\theta)$ mixture of the clump severities started from a mover and from a remainer. Moreover $\rho>0$ iff $R_*>1$, where $R_*$ is the mean of the susceptibility-set branching process ($R_*=\infty$ when the local reproduction number $R_L\ge1$, meaning local outbreaks can become infinite). When there is no global infection, $\rho>0$ iff $R_L>1$.
 
 ## Depends on

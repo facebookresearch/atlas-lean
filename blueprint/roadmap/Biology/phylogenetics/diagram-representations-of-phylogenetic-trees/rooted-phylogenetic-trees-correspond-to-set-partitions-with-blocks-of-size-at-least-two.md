@@ -5,7 +5,9 @@
 **Labelling (Erdős–Székely, Diaconis–Holmes).** Given $T \in \mathcal{RP}_n$, label internal vertices one at a time: among unlabelled non-root internal vertices whose children are all labelled, pick the one whose children carry the lowest label and give it the next label $n+1, n+2, \dots$. A tree with $\ell$ internal vertices thus has its $m = \ell - 1$ non-root internal vertices labelled $n+1,\dots,n+m$; the root stays unlabelled.
 
 **Theorem.** Mapping $T$ to the set partition of $[n+m]$ whose blocks are the sibling sets (the children of each internal vertex) is a bijection between non-trivial rooted phylogenetic trees and partitions of finite sets $[t]$ into blocks of size at least $2$. A partition $\pi$ of $[t]$ with $\ell(\pi)$ blocks corresponds to a tree on
+
 $$n = t - \ell(\pi) + 1$$
+
 leaves, with $m = \ell(\pi) - 1$ non-root internal vertices. Consequently $\mathcal{RP}_n$ is in bijection with the partition diagrams $\mathcal D^{(\ge2)}_{[n]}$ built from such partitions, and trees with $n$ leaves and $m$ non-root internal vertices are counted by partitions of $[n+m]$ into $m+1$ blocks of size $\ge 2$ (partial Bell polynomials).
 
 For binary trees every block has size $2$, recovering the Diaconis–Holmes bijection between rooted binary trees on $n$ leaves and perfect matchings of $[2n-2]$, so $|\mathcal{RP}^{\mathrm{bin}}_n| = (2n-3)!!$. Allowing singleton blocks (labelled roots) extends the bijection to forests: the set of all forests is in bijection with the set of all partitions of finite sets, and forests on $n$ leaves with the partitions $\Lambda_{[n]}$.

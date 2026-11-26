@@ -1,10 +1,13 @@
 # Consistency and asymptotic normality of the detected-case offspring-mean estimator
 
 In a partially observed branching process, $X_n$ infectious individuals in generation $n$ cannot be observed, and only the number $Z_n$ of detected cases is seen:
+
 $$
 X_0=1,\qquad Z_n=\sum_{i=1}^{X_n}\delta_{ni},\qquad X_{n+1}=\sum_{i=1}^{X_n}\big[X_{ni}(1-\delta_{ni})+X'_{ni}\delta_{ni}\big].
 $$
+
 Here $\delta_{ni}\sim\mathrm{Bernoulli}(\pi)$, $0<\pi<1$, indicates detection. $X_{ni}$ and $X'_{ni}$ are the offspring numbers of undetected and detected individuals, i.i.d. with finite fourth moments and with the detected offspring law stochastically smaller. All variables are independent. Then $(X_n,Z_n)$ is a Markov chain, and $X_n$ is a Bienaymé–Galton–Watson process with offspring mean $m$, the mean of the $(1-\pi):\pi$ mixture of the two offspring laws. Let $\sigma^2$ be its variance and $m_-$ the mean offspring of a detected individual. With $n_0=\lfloor(n-1)/2\rfloor$, define the estimator built only from detected counts,
+
 $$
 \widehat m_{n,o}=\frac{\sum_{k=0}^{n_0}Z_{2k+1}}{\sum_{k=0}^{n_0}Z_{2k}}.
 $$
@@ -13,6 +16,7 @@ $$
 
 1. $\widehat m_{n,o}\to m$ almost surely.
 2. $\gamma^{-1}\sqrt{\sum_{k=0}^{n_0}Z_{2k}}\,\big(\widehat m_{n,o}-m\big)$ converges in law to $N(0,1)$, conditionally on $\{X_n\to\infty\}$, where
+
 $$
 \gamma^2=(1-\pi)m+\pi\sigma^2+(1+\pi)m^2-2\pi mm_- .
 $$

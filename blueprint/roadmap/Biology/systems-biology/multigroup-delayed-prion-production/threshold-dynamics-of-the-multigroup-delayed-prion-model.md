@@ -6,7 +6,9 @@
 1. *Extinction.* If $\mathcal{R}_0 < 1$, then $E_0$ is globally asymptotically stable.
 2. *Instability.* If $\mathcal{R}_0 > 1$, then $E_0$ is locally unstable.
 3. *Uniform persistence.* If $\mathcal{R}_0 > 1$, there is $\varepsilon > 0$ such that for every initial condition with $\varphi_i(0) \ne 0$ for $i = 1, \dots, n$,
+
 $$\liminf_{t\to\infty} y_i(t) > \varepsilon, \qquad i = 1, \dots, n.$$
+
 4. *Endemic equilibrium.* If the minimum row sum of $F$ is strictly larger than $1$, the system has at least one endemic equilibrium.
 
 Moreover, if a single neuron has $R_{0\tilde\imath} > 1$, then $\mathcal{R}_0 > 1$ and $\limsup_{t\to\infty} y_{\tilde\imath}(t) > \varepsilon_{\tilde\imath}$ for some $\varepsilon_{\tilde\imath} > 0$.

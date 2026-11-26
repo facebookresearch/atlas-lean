@@ -1,10 +1,13 @@
 # Endemic equilibrium and Routh–Hurwitz stability of the SIRWS model with asymmetric immunity partition
 
 **Model (SIRWS).** In a normalized population ($S + I + R + W = 1$) with birth and death rate $\mu > 0$, transmission rate $\beta > 0$ and recovery rate $\gamma > 0$, recovered individuals pass from full immunity $R$ to waning immunity $W$ and then back to $S$. The total immune period is $1/\kappa$, split into a full-immunity period $1/(\alpha\kappa)$ and a waning period $1/(\omega\kappa)$ with $\alpha, \omega > 1$ and
+
 $$
 \frac{1}{\alpha\kappa} + \frac{1}{\omega\kappa} = \frac{1}{\kappa}, \qquad\text{i.e.}\qquad \omega = \frac{\alpha}{\alpha - 1}.
 $$
+
 Exposure of a $W$ individual to infection boosts it back to $R$ at rate $\nu\beta I$ ($\nu > 0$):
+
 $$
 \begin{aligned}
 \dot S &= -\beta I S + \omega\kappa W + \mu(1 - S), &
@@ -13,14 +16,17 @@ $$
 \dot W &= \alpha\kappa R - \omega\kappa W - \nu\beta I W - \mu W .
 \end{aligned}
 $$
+
 The classical symmetric case is $\alpha = \omega = 2$.
 
 **Statement.** Let $\mathcal{R}_0 = \beta/(\gamma + \mu)$.
 
 1. *Equilibria.* There is a unique disease-free equilibrium $(S,I,R) = (1,0,0)$. If $\mathcal{R}_0 \le 1$ there is no other equilibrium in the feasible simplex. If $\mathcal{R}_0 > 1$ there is a unique positive endemic equilibrium, with $S^* = (\gamma + \mu)/\beta$ and
+
 $$
 I^* = \frac{\sqrt{(c_1\nu + c_2)^2 + c_3\nu} + c_1\nu - c_2}{2\beta\nu(\gamma + \mu)},
 $$
+
 where $c_1 = \mu(\beta - \gamma - \mu)$, $c_2 = (\gamma + \mu)(\alpha + \omega)\kappa + \mu(\gamma + \mu) + \alpha\omega\kappa^2$ and $c_3 = 4\gamma(\beta - \gamma - \mu)\alpha\omega\kappa^2$.
 2. *Forward bifurcation.* The disease-free equilibrium is locally asymptotically stable for $\mathcal{R}_0 < 1$ and unstable for $\mathcal{R}_0 > 1$, and a transcritical bifurcation of forward type occurs at $\mathcal{R}_0 = 1$: the endemic equilibrium emerges stable.
 3. *Stability of the endemic equilibrium.* For $\mathcal{R}_0 > 1$ the linearization at the endemic equilibrium has characteristic polynomial $\lambda^3 + a_1\lambda^2 + a_2\lambda + a_3$ with $a_1, a_2, a_3 > 0$, so it is locally asymptotically stable iff $y_\nu(\alpha) := a_1a_2 - a_3 > 0$; sign changes of $y_\nu$ are Hopf points.

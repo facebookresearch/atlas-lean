@@ -8,7 +8,9 @@
 The population process is the solution of a stochastic differential equation driven by Poisson random measures, with global event intensity $\Lambda^e_t(Z_t) = \sum_k \lambda^e(t, I_k, Z_t)$.
 
 **Proposition (thinning).** Let $\bar Q$ be a Poisson random measure on $[0,T]\times\mathbb R_+$ with Lebesgue intensity and atoms $(\bar T_\ell, \bar\Theta_\ell)$, and let $\Lambda$ be a non-negative function with $\Lambda \le \bar\Lambda$. Then
+
 $$N^\Lambda_t = \sum_{\ell \ge 1} \mathbf 1_{\{\bar T_\ell \le t\}}\, \mathbf 1_{\{\bar\Theta_\ell \le \Lambda(\bar T_\ell)\}}$$
+
 is an inhomogeneous Poisson process with intensity $\Lambda$. Equivalently, candidate event times are generated at the dominating rate $\bar\Lambda$ and each is accepted with probability $\Lambda(\bar T_\ell)/\bar\Lambda$.
 
 **Bounds used for simulation.** If $\mu^e \le \bar\mu^e$, $\lambda^e(t, I) \le \bar\lambda^e$ and $W^e \le \bar W^e$ on $[0,T]$, then $\Lambda^e_t(Z_t)$ is dominated by $\bar\mu^e$, $\bar\lambda^e N_t$ or $\bar W^e N_t^2$ respectively, so between events the candidate rate is constant and the whole population path is simulated exactly, without time discretization: draw a candidate time, draw the event type and the individual (and, for interactions, a uniformly chosen partner $J$), and accept with probability $\lambda^e(t,I)/\bar\lambda^e$ or $W^e(t,I,J)/\bar W^e$.

@@ -1,7 +1,9 @@
 # Spiking zone invariance and voltage-parametrised blow-up in nonlinear adaptive integrate-and-fire neurons
 
 **Model.** The nonlinear bidimensional integrate-and-fire neuron (adaptive exponential, quartic and related models) has membrane potential $v$ and adaptation variable $w$ with
+
 $$\dot v = F(v) - w + I(t), \qquad \dot w = a(bv - w), \qquad a, b \ge 0,$$
+
 where $F$ is $C^3$, strictly convex, $\lim_{x\to-\infty}F'(x) \le 0$, and $F(v) \ge \alpha v^{1+\varepsilon}$ for large $v$ (some $\alpha, \varepsilon > 0$). A spike is the finite-time blow-up of $v$ (or crossing of a cutoff $\theta$), after which $(v,w) \mapsto (v_r, w + d)$. If moreover $F(v) \ge \alpha v^{2+\varepsilon}$, $w$ stays bounded at the blow-up time, so the reset value $w + d$ is well defined.
 
 **Definition.** For a threshold $V$ let $Z(V) = \{(v, w) : v \ge V,\ w \le bv\}$. If $I(t) \ge I^*$ on $(\tau_0, \tau_1)$, let $Z^* = Z(I^*, b) = \bigcup_{V \ge v_+(I^*, b)} Z(V)$, where $v_+(I^*, b)$ is the largest fixed point of the system with constant input $I^*$ ($-\infty$ if there is none, i.e. if $I^* > -m(b)$ with $m(b) = \min_v (F(v) - bv)$).
@@ -9,7 +11,9 @@ where $F$ is $C^3$, strictly convex, $\lim_{x\to-\infty}F'(x) \le 0$, and $F(v) 
 **Theorem.** Assume $I(t) \ge I^*$ on $(\tau_0, \tau_1)$.
 1. $Z^*$ is positively invariant under the flow.
 2. For $(v_0, w_0) \in Z^*$ the solution has $\dot v > 0$, so $t \mapsto v(t)$ is smoothly invertible; its inverse $T(v)$ and $W(v) = w(T(v))$ solve
+
 $$\frac{dT}{dv} = \frac{1}{F(v) - W + I(T)}, \qquad \frac{dW}{dv} = \frac{a(bv - W)}{F(v) - W + I(T)},$$
+
 and the spike (explosion) time and the adaptation value at the spike are $\lim_{v\to\infty}T(v)$ and $\lim_{v\to\infty}W(v)$.
 3. *Explicit Euler.* If $(v_0, w_0) \in Z^*$ and the step $\tau$ satisfies $\tau a < 1$, the Euler iterates stay in $Z^*$, $v_n$ and $w_n$ increase strictly, and $v_n \to \infty$ without finite-step blow-up, so fixed-step schemes misplace spike times and the post-spike adaptation value.
 

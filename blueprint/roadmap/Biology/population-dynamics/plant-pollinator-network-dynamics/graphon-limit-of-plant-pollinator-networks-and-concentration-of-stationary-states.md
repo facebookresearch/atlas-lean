@@ -4,13 +4,18 @@
 
 **Theorem (two-step limit).**
 1. *Large abundances.* For fixed $n, m$, as $K \to \infty$ the rescaled abundances converge a.s. uniformly on $[0,T]$ to the Lotka–Volterra-type ODE system
+
 $$\dot P^i = P^i\Big[g^P\Big(\sum_{j \sim i} c_{ij} A^j\Big) - \sum_\ell k_{i\ell}P^\ell\Big], \qquad \dot A^j = A^j\Big[g^A\Big(\sum_{i \sim j} c_{ij} P^i\Big) - \sum_\ell h_{j\ell}A^\ell\Big],$$
+
 and fluctuations of order $\sqrt{K}$ satisfy a central limit theorem (Gaussian linear SDE).
 2. *Many species.* If $m/n \to 1$ and the initial empirical measures $\frac1n\sum_i P^i_0\delta_{x^i}$, $\frac1m\sum_j A^j_0\delta_{y^j}$ converge weakly to bounded continuous densities $\bar p_0$, $\bar a_0$ (with uniformly bounded total masses), then as $n, m \to \infty$ the empirical measures converge in law in $C([0,T], \mathcal{M}_F([0,1])^2)$ to the unique deterministic solution, with densities $\bar p_t$, $\bar a_t$, of the integro-differential system
+
 $$\partial_t \bar p_t(x) = \bar p_t(x)\Big[g^P\Big(\int_0^1 \psi(x,y)\bar a_t(y)\,dy\Big) - k \star \bar p_t(x)\Big], \qquad \partial_t \bar a_t(y) = \bar a_t(y)\Big[g^A\Big(\int_0^1 \psi(x,y)\bar p_t(x)\,dx\Big) - h \star \bar a_t(y)\Big],$$
+
 with interaction kernel $\psi = c\,\phi$.
 
 **Proposition (no density stationary states).** Suppose $k$ and $h$ are constant and $\psi(x_0, \cdot)$ and $\psi(\cdot, y_0)$ are continuous and increasing for every $x_0, y_0$. Then the continuum system has no non-null stationary state with densities with respect to Lebesgue measure. Every non-null stationary state is a pair of atomic measures $\bar P^\infty = \bar p_1\delta_{\bar x_1} + \bar p_2\delta_{\bar x_2}$, $\bar A^\infty = \bar a_0\delta_{\bar y_0}$ with $\bar p_1, \bar a_0 > 0$, $\bar p_2 \ge 0$, satisfying
+
 $$g^P(\bar a_0\psi(\bar x_1, \bar y_0)) = g^P(\bar a_0\psi(\bar x_2, \bar y_0)) = k(\bar p_1 + \bar p_2), \qquad g^A\big(\bar p_1\psi(\bar x_1,\bar y_0) + \bar p_2\psi(\bar x_2, \bar y_0)\big) = h\bar a_0.$$
 
 ## Expansion

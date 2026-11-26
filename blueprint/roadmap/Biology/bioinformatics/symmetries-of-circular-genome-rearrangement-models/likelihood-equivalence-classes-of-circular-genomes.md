@@ -1,7 +1,9 @@
 # Likelihood equivalence classes of circular genomes under symmetric rearrangement models
 
 **Setting.** A circular genome with $N\ge3$ regions is a permutation $\sigma\in S_N$ ($\sigma(i)=j$: region $i$ sits at position $j$ in a fixed reference frame). Rotations and flips of the circle form the dihedral group $D_N\subset S_N$ of order $2N$, and $\sigma$ and $d\sigma$ ($d\in D_N$) represent the same physical genome. A **biological model** $(\mathcal M,w)$ is a set of rearrangements $\mathcal M\subseteq S_N\setminus D_N$ (for example inversions) with probabilities $w:\mathcal M\to(0,1]$, $\sum_{a\in\mathcal M}w(a)=1$; a rearrangement acts by $\sigma\mapsto a\sigma$, and events occur independently in time (for instance as a Poisson process of rate $1$). The **path probability** that the identity genome reaches the genome of $\sigma$ in $k$ events is
+
 $$\alpha_k(\sigma)=\sum_{d\in D_N}\ \sum_{\substack{(a_1,\dots,a_k)\in\mathcal M^k\\ a_k\cdots a_1=d\sigma}}w(a_1)\cdots w(a_k),$$
+
 and the likelihood of elapsed time $T$ is $L(T\mid\sigma)=\sum_{k\ge0}\alpha_k(\sigma)\,\mathbb P(k\text{ events in time }T)$; its maximiser is a rearrangement distance.
 
 The model has **dihedral symmetry** if $d\mathcal Md^{-1}=\mathcal M$ and $w(dad^{-1})=w(a)$ for all $d\in D_N$, $a\in\mathcal M$; it is **time reversible** if $\mathcal M=\mathcal M^{-1}$ and $w(a^{-1})=w(a)$. Two permutations are **$(\mathcal M,w)$-equivalent** if their likelihood functions coincide, which holds iff $\alpha_k(\sigma_1)=\alpha_k(\sigma_2)$ for all $k$.

@@ -1,9 +1,11 @@
 # Fixation probability on switching temporal networks
 
 **Setting.** $N$ individuals occupy the nodes of a network; residents have fitness $1$ and mutants fitness $r > 0$. Under *birth–death updating*, at each step an individual is chosen to reproduce with probability proportional to fitness and its offspring replaces a neighbour chosen with probability proportional to edge weight. In a *switching network* $(G_1, G_2, \tau)$ the contact network alternates between the static networks $G_1$ and $G_2$ on the same node set, every $\tau$ time steps (or at Markovian random times). Let $\rho$ be the fixation probability of a single mutant placed uniformly at random, and compare with the Moran (complete-graph) value
+
 $$
 \rho_{\mathrm{Moran}} = \frac{1 - 1/r}{1 - 1/r^{N}} .
 $$
+
 A network is an *amplifier* of selection if $\rho > \rho_{\mathrm{Moran}}$ for $r > 1$ and $\rho < \rho_{\mathrm{Moran}}$ for $r < 1$, a *suppressor* if the reverse holds, and *isothermal* if $\rho = \rho_{\mathrm{Moran}}$.
 
 **Results.**

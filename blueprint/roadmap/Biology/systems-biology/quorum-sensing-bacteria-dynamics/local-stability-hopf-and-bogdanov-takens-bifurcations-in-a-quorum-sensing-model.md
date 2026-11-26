@@ -1,11 +1,15 @@
 # Local stability and Hopf and Bogdanov–Takens bifurcations in a quorum-sensing bacteria model
 
 **Model.** With the autoinducer concentration held constant, the rescaled densities of motile bacteria $u \ge 0$ and static bacteria $v > 0$ obey
+
 $$\dot u = f(u,v) = \frac{u^2}{v(1 + K u^2)} + a - b u, \qquad \dot v = g(u,v) = u^2 + a e - v,$$
+
 with saturation constant $K > 0$, bacterial decay parameter $b > 0$, and production parameters $a, e > 0$ (the product $ae$ depends only on the bacterial response to the autoinducer). This is an activator–inhibitor system with saturating autocatalysis, the constant-autoinducer reduction of a three-component model in which the autoinducer is also dynamic.
 
 **Proposition (local stability).** At a positive steady state $(u_*, v_*)$ put
+
 $$\mathcal{J} = \frac{2u_*}{v_*(1 + K u_*^2)^2}, \qquad \Theta = \mathcal{J} - \frac{2u_*^3}{v_*^2(1 + K u_*^2)}.$$
+
 The Jacobian has trace $\mathcal{J} - b - 1$ and determinant $b - \Theta$, hence:
 1. if $\mathcal{J} < b + 1$ and $b > \Theta$, the steady state is locally asymptotically stable;
 2. if $\mathcal{J} > b + 1$ and $b > \Theta$, it is a repeller;
@@ -20,7 +24,9 @@ In the full three-component model the corresponding oscillations break up throug
 ## Expansion
 
 The Jacobian at $(u_*, v_*)$ is
+
 $$\begin{pmatrix} \mathcal{J} - b & -\frac{u_*^2}{v_*^2(1 + K u_*^2)} \\ 2u_* & -1 \end{pmatrix},$$
+
 since $\partial_u\big(u^2/(v(1+Ku^2))\big) = 2u/(v(1+Ku^2)^2)$. Its trace and determinant give the three cases, and their simultaneous degeneracies are the Hopf points ($\mathrm{tr} = 0$, $\det > 0$) and the Bogdanov–Takens points ($\mathrm{tr} = \det = 0$). The origin of the time-rescaled system is a repeller (one zero eigenvalue with a centre manifold, one eigenvalue $ae > 0$), so bacteria never die out from small positive densities. Sustained oscillations of motile versus static bacteria arise from the Hopf branch and terminate in homoclinic loops born at the Bogdanov–Takens point.
 
 ## Sources

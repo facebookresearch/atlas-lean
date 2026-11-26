@@ -5,6 +5,7 @@ Let $M_{T(S)}$ be the maximum quartet distance between two completions of a part
 **Background (Bandelt–Dress conjecture).** With no pinned taxa, the maximum quartet distance between two labelled trees of order $n$ is conjectured to be $(\frac23 + o(1))\binom n4$, i.e. asymptotically equal to the average $\frac23\binom n4$; it is known that the maximum is below $\frac{14}{15}\binom n4$ for $n\ge6$, below $(0.69+o(1))\binom n4$ in general, and equals $(\frac23 + o(1))\binom n4$ when both trees are caterpillars.
 
 **Theorem.** Let $0<\alpha<1$, let $T$ be a tree of order $n$ and $T(S)$ a partial labelling with $|S| = \alpha n$. Suppose there is an internal edge $e = uv$ whose removal leaves components $T_u$, $T_v$ with $\mathcal{L}(T_u) = S$, and such that $T_v$ (after suppressing the degree-2 vertex) is a caterpillar whose join edge is one of its four endpoint edges. Then
+
 $$M_{T(S)} - \mathbb{E}[X_{T(S)}] = \Theta(n^4).$$
 
 So the "maximum equals average" phenomenon conjectured in the no-information setting fails under partial information: such configurations exist for every $\alpha\in(0,1)$ (attach any labelled tree on $\alpha n$ leaves to an endpoint edge of an unlabelled caterpillar on $(1-\alpha)n$ leaves). This does not contradict the Bandelt–Dress conjecture itself, which concerns $\alpha = 0$.

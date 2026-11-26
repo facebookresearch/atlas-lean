@@ -1,18 +1,23 @@
 # Rate equation of multiplicatively interacting point processes
 
 **Model.** Let $A$ index neurons and let $W = (w_{aa'})$ be a positive coupling matrix. Neuron $a$ fires as a Cox process with rate
+
 $$
 \lambda_a(t) = \lambda_a(0)\exp\Bigl(\sum_{a' \in A} N_{a'}(t^-)\log w_{aa'}\Bigr),
 $$
+
 where $N_{a'}(t)$ counts the spikes of neuron $a'$ up to time $t$. Each spike of $a'$ thus multiplies the rate of $a$ by $w_{aa'}$: excitation if $w_{aa'} > 1$, inhibition if $w_{aa'} < 1$, with no positivity constraint on the inhibitory strength (unlike the linear Hawkes process). Writing $\ell_{aa'} = \log w_{aa'}$, the expected rates satisfy
+
 $$
 \frac{d}{dt}\mathbb{E}\lambda_a = \sum_{a'} \ell_{aa'}\bigl(\mathbb{E}\lambda_a\,\mathbb{E}\lambda_{a'} + \operatorname{Cov}(\lambda_a, \lambda_{a'})\bigr).
 $$
 
 **Rate equation.** Neglecting covariances gives the Lotka–Volterra-type system
+
 $$
 \dot y_a = y_a \sum_{a' \in A} \ell_{aa'}\, y_{a'}, \qquad y_a(0) = \mathbb{E}\lambda_a(0).
 $$
+
 Separating constant-rate Poisson inputs $P \subset A$ (with $\ell_{pa'} = 0$, rates $i_p$) from the recurrent population $R$ gives $\dot y_r = y_r\bigl((\mathcal{L}_R y)_r + (\mathcal{L}_P i)_r\bigr)$.
 
 **Results.**

@@ -1,9 +1,11 @@
 # Noise-induced extinction in the stochastic Gause predator–prey model
 
 In nondimensional form, consider prey $x$ with logistic growth, predators $y$, and independent multiplicative white noise:
+
 $$
 dx=\big(x(1-x)-\varphi(x)y\big)\,dt+\sigma_xx\,dB_x,\qquad dy=\big(\beta\varphi(x)y-\delta y\big)\,dt+\sigma_yy\,dB_y.
 $$
+
 Here $\beta,\delta,\sigma_x,\sigma_y>0$, and the functional response $\varphi$ is continuous and nonnegative with $\varphi(0)=0$ and $\sup_{x>0}\varphi(x)/x\le1$ (sub-linear). Let $\mathcal E_x,\mathcal E_y$ be the events $x(t)\to0$ and $y(t)\to0$.
 
 1. **Well-posedness.** For every initial value in $\mathbb R^2_+$ there is a.s. a unique global solution in $\mathbb R^2_+$. For $\theta_1,\theta_2>0$ with $\theta_1+\theta_2<\tfrac12$, the moment $\mathbb E[x^{\theta_1}y^{\theta_2}]$ is bounded uniformly in time, with explicit constants.
@@ -11,9 +13,11 @@ Here $\beta,\delta,\sigma_x,\sigma_y>0$, and the functional response $\varphi$ i
 3. **Prey extinction.** If $\sigma_x^2>2$, then $\mathbb P(\mathcal E_x)=1$.
 4. **Predator extinction.** If $\varphi\le1$ (bounded response) and $\sigma_y^2>2(\beta-\delta)$, then $\mathbb P(\mathcal E_y)=1$.
 5. **Prey after predator loss.** If $\sigma_x^2<2$, then on $\mathcal E_y$ the prey converges in distribution to $\tilde X>0$ with density
+
 $$
 f_{\tilde X}(x)\propto\frac{1}{\sigma_x^2x^2}\exp\Big(\frac{2(1-x+\log x)}{\sigma_x^2}\Big),\qquad x>0,
 $$
+
 the stationary law of the stochastic logistic equation.
 
 So noise can drive either species extinct even when the deterministic Gause model has a stable coexistence equilibrium.

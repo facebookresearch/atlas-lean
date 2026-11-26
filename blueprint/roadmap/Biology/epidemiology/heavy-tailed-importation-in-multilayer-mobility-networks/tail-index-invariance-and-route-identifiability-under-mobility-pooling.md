@@ -5,9 +5,11 @@
 **Results.**
 1. *(Poisson sampling preserves magnitude.)* If $\mathbf{B}_i = (B_{i\ell})_\ell$ is MRV with index $\tau$ and limit $\nu$, $Q_i$ is an independent random positive diagonal matrix with $\mathbb{E}\|Q_i\|^{\tau + \epsilon} < \infty$, and the counts $\mathbf{Z}_i$ are conditionally Poisson with mean $Q_i \mathbf{B}_i$, then $\mathbf{Z}_i$ is MRV with the same index $\tau$ and limit measure $\mu_Z(A) = \mathbb{E}\,\nu\{\mathbf{b} : Q_i\mathbf{b} \in A\}$. Layer-specific reporting $Q_i$ leaves the tail index unchanged but reweights the angular (composition) part.
 2. *(Aggregation.)* For a nonnegative $m \times |\mathcal{R}|$ matrix $S$ with no zero column, $S\mathbf{Z}$ is MRV with index $\tau$ and spectral measure
+
 $$
 H_S(A) = \frac{\int_{\mathbb{S}_+} \|Sw\|_1^{\tau}\, \mathbf{1}\{Sw/\|Sw\|_1 \in A\}\, H_R(dw)}{\int_{\mathbb{S}_+} \|Sw\|_1^{\tau}\, H_R(dw)} .
 $$
+
 3. *(Identifiability.)* Let $\hat s_e = s_e / \|s_e\|_1$ be the normalized columns of $S$. The map $T_S(w) = Sw/\|Sw\|_1$ is injective on $\mathbb{S}_+$ iff the signatures $\{\hat s_e\}$ are affinely independent; this needs $|\mathcal{R}| \le m$, so pooling to one aggregate ($m = 1$) is injective only for a single route. When injective, $H_R$ is recovered from $H_S$ by reweighting with $\|S\psi(v)\|_1^{-\tau}$, $\psi = T_S^{-1}$. Pooling layers within each source–destination pair identifies the source–destination spectral measure exactly, $H_{\mathrm{OD}} = H_R \circ S^{-1}$, but never the layer composition within a pair, since routes differing only in $\ell$ share a signature.
 
 ## Expansion

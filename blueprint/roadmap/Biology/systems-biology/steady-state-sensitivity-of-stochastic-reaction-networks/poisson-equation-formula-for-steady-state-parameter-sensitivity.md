@@ -3,10 +3,13 @@
 Consider a stochastic reaction network with $K$ reactions, stoichiometric vectors $\zeta_k$ and propensities $\lambda_k(x,\theta)$, modelled as a continuous-time Markov chain on a lattice state space $\mathcal E$ with generator $\mathbb Q_\theta$. Assume $\mathcal E$ is irreducible and a linear Foster–Lyapunov function $V\ge1$ certifies ergodicity, with the paper's growth conditions, so there is a unique stationary distribution $\pi_\theta$. Let $f:\mathcal E\to\mathbb R$ be an output with polynomial growth, and assume the derivatives $\partial\lambda_k/\partial\theta$ also grow polynomially. The steady-state sensitivity is $S_\theta(f)=\frac{\partial}{\partial\theta}\sum_xf(x)\pi_\theta(x)$.
 
 **Theorem.** The Poisson equation
+
 $$
 -\mathbb Q_\theta g=f-\langle f,\pi_\theta\rangle
 $$
+
 has a solution $g$, unique up to an additive constant, and
+
 $$
 S_\theta(f)=\sum_{k=1}^K\sum_{x\in\mathcal E}\frac{\partial\lambda_k(x,\theta)}{\partial\theta}\big(g(x+\zeta_k)-g(x)\big)\,\pi_\theta(x).
 $$

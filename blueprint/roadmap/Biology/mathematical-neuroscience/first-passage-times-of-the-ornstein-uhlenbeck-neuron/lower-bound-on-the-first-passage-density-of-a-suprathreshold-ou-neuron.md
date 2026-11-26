@@ -1,13 +1,19 @@
 # Lower bound on the first-passage density of a suprathreshold Ornstein–Uhlenbeck neuron
 
 **Setting.** The membrane potential of a stochastic leaky integrate-and-fire neuron between spikes is modelled by the Ornstein–Uhlenbeck process
+
 $$dX = -\beta X\,dt + \sigma\,dW, \qquad X(0) = x_0,$$
+
 with $\beta, \sigma, x_0 > 0$ and $W$ a standard Wiener process. Fix a threshold $\theta$ with $x_0 > \theta > 0$ (the process starts above threshold and relaxes towards $0$), and let $\rho_X(t)$ be the density of the first passage time $\inf\{t : X(t) = \theta\}$.
 
 **Theorem.** Let
+
 $$K = \frac{512}{9\pi}\Big(\frac{x_0}{\theta} - 1\Big), \qquad H = \frac{\beta}{32}\Big(\frac{\theta}{\sigma}\Big)^2,$$
+
 $$u = \frac{1}{2\beta}\log\Big[1 + \Big\{8 \vee \Big(1 + \frac{x_0^2}{\theta^2}\Big) \vee \frac{8\sigma^2}{\beta\theta^2}\Big\}\Big].$$
+
 Then for all $t > u$,
+
 $$\rho_X(t) > k\exp\big[-p\,e^{6\beta t}\big], \qquad k = 2\beta K, \quad p = 1 + H.$$
 
 ## Expansion

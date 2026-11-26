@@ -1,7 +1,9 @@
 # Unique stable limit cycle of an aligned periodic domain sequence in piecewise-affine gene networks
 
 **Model (Glass networks).** Concentrations $x \in \mathbb{R}_+^n$ of $n$ gene products evolve as
+
 $$\dot x = \kappa(x) - \Gamma x,$$
+
 where $\Gamma = \mathrm{diag}(\gamma_1, \dots, \gamma_n)$ holds positive degradation rates and $\kappa$ is piecewise constant, depending on $x$ only through step functions $\mathsf{s}^\pm(x_i, \theta_i)$ at thresholds $0 < \theta_i^1 < \dots < \theta_i^{q_i - 1}$. The thresholds cut the state space into rectangular regular domains $a$; inside $a$ the flow is affine and converges toward the *focal point* $\phi(a) = \Gamma^{-1}\kappa(a)$, leaving $a$ through a facet in some exit direction. Transition maps between entry and exit facets are explicit and act by $x_k \mapsto \phi_k + (x_k - \phi_k)\big(\frac{\phi_s - \theta_s}{\phi_s - x_s}\big)^{\gamma_k/\gamma_s}$ in the exit direction $s$.
 
 **Theorem.** Let $\mathcal{C} = \{a^0, \dots, a^{\ell - 1}\}$ be a sequence of regular domains visited periodically by the flow, each $a^i$ with a unique exit direction $s_i$, such that every variable switches at least once along $\mathcal{C}$ and successive focal points are *aligned* ($\phi_j^{i+1} = \phi_j^i$ for all $j \ne s_{i+1}$). Let $T: W^0 \to W^0$ be the first-return map to the entry wall $W^0$ of $a^0$, in coordinates where the periodic boundary point is $0$, and $\lambda = \rho\big(DT(0)\big)$. Then:

@@ -1,6 +1,7 @@
 # Equilibria and backward bifurcation of the SIRS model with secondary infections
 
 **Model.** Split a closed population (normalized to size $1$) into totally susceptible $S$, primary infected $I$, temporarily immune $T$, partially susceptible $P$, secondary infected $Y$ and fully immune $R = 1 - S - I - T - P - Y$. With positive parameters $\beta$ (transmission), $\alpha$ (relative infectiousness of secondary infections), $\nu$ (relative susceptibility of $P$), recovery rates $\gamma_1, \gamma_2$, loss of temporary immunity at rate $\varepsilon$, and loss of partial and full protection both at rate $\delta\varepsilon$ ($0 < \delta, \varepsilon \ll 1$), the reduced system is
+
 $$
 \begin{aligned}
 S' &= -\beta S(I + \alpha Y) + \delta\varepsilon P, \\
@@ -16,11 +17,13 @@ $$
 2. The basic reproduction number is $\mathcal{R}_0 = \beta / \gamma_1$; it depends only on the primary flow $S \to I \to T$. The disease-free equilibrium (DFE) is locally asymptotically stable if $\mathcal{R}_0 < 1$ and unstable if $\mathcal{R}_0 > 1$.
 3. *(Global stability.)* If $\gamma_1 \le \gamma_2$, $\mathcal{R}_0 < 1$ and $\alpha\nu < 1/\mathcal{R}_0$, the DFE is globally exponentially stable on $\Delta$.
 4. *(Endemic equilibria.)* If $\mathcal{R}_0 > 1$ there is a unique endemic (positive) equilibrium. If $\mathcal{R}_0 < 1$, then for $\delta \approx 0$ there are exactly two endemic equilibria if and only if
+
 $$
 \alpha\nu > \frac{\gamma_2}{\gamma_1}
 \quad\text{and}\quad
 \mathcal{R}_0 > 2\,\frac{\gamma_2}{\gamma_1\alpha\nu}\left(\frac12 - \frac{\gamma_2}{\gamma_1\alpha\nu} + \sqrt{\nu - \frac{\gamma_2}{\gamma_1\alpha}\Bigl(1 - \frac{\gamma_2}{\gamma_1\alpha}\Bigr)}\right).
 $$
+
 In that regime endemic states coexist with the locally stable DFE below threshold, the signature of a backward bifurcation at $\mathcal{R}_0 = 1$.
 
 ## Depends on

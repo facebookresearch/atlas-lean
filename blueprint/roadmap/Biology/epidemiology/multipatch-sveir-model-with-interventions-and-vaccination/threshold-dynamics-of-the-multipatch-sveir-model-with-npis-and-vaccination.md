@@ -1,7 +1,9 @@
 # Threshold dynamics of the multipatch SVEIR model with NPIs and vaccination
 
 **Model.** In each of $n$ patches the population is split into susceptible $S_i$, vaccinated $V_i$, non-infectious exposed $E_{1i}$, infectious pre-symptomatic $E_{2i}$, infectious infected $I_{1i}$, a second, non-transmitting infected stage $I_{2i}$ and recovered $R_i$. With force of infection
+
 $$\lambda_i = \beta_i\Big[(1-C_{ai})\frac{E_{2i}}{N_i} + (1-C_{si})\frac{I_{1i}}{N_i}\Big],$$
+
 where $C_{ai}, C_{si} \in [0,1]$ are the intensities of non-pharmaceutical interventions (NPIs) against pre-symptomatic and symptomatic transmission,
 $$\begin{aligned}
 \dot S_i &= \Lambda_i - \lambda_iS_i - (\xi_i + \mu_i)S_i + \textstyle\sum_j A_{ij}S_j, &

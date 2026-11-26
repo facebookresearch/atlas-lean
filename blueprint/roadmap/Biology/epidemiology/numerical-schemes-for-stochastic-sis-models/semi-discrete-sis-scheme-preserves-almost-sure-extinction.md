@@ -1,23 +1,29 @@
 # The semi-discrete stochastic SIS scheme preserves almost-sure exponential extinction
 
 **Setting.** Consider the stochastic SIS model
+
 $$
 dI_t = \Big(\eta I_t - \frac{\beta}{K} I_t^2\Big)dt + \sigma (K-I_t)I_t\, dW_t, \qquad \eta = \beta - b - \gamma,\ I_0\in(0,K),
 $$
+
 and its domain-preserving semi-discrete approximation $\hat Y_n = K\hat X_n/(1+\hat X_n)$, where
+
 $$
 \hat X_{n+1} = \hat X_n \exp\Big\{\Big(\eta - (b+\gamma)\hat X_n + \frac{\sigma^2K^2\hat X_n}{1+\hat X_n} - \tfrac12\sigma^2K^2\Big)\Delta + \sigma K\,\Delta W_n\Big\},\qquad \hat X_0 = \frac{I_0}{K-I_0}.
 $$
 
 **Exact process (Gray et al.).** If the stochastic reproduction number $\mathcal R_0^S = \mathcal R_0^D - \frac{\sigma^2K^2}{2(b+\gamma)} < 1$ (with the paper's deterministic reproduction number $\mathcal R_0^D$) and $\sigma^2 \le \beta/K^2$, then for every $I_0\in(0,K)$, almost surely
+
 $$
 \limsup_{t\to\infty} \frac1t \ln I_t \le \beta - b - \gamma - \tfrac12 \sigma^2K^2 < 0 .
 $$
 
 **Theorem (numerical extinction).** Under the same hypotheses and, in addition, $\sigma^2K^2 \le b+\gamma$, for every step size $0<\Delta<1$, almost surely
+
 $$
 \limsup_{n\Delta\to\infty} \frac{1}{n\Delta} \ln \hat Y_n \le \beta - b - \gamma - \tfrac12 \sigma^2K^2 < 0,
 $$
+
 so the scheme reproduces the exponential die-out of the disease with the same rate bound, for every step size.
 
 ## Expansion

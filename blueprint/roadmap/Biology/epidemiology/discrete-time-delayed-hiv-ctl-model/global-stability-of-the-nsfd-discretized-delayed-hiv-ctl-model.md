@@ -1,9 +1,13 @@
 # Global stability of the NSFD-discretized delayed HIV model with CTL response
 
 **Continuous model.** Let $X, Y, V, Z$ be uninfected CD4$^+$ cells, infected cells, free virus and cytotoxic T lymphocytes, with intracellular delay $\tau \ge 0$:
+
 $$\dot X = \lambda - dX - \beta XV,\quad \dot Y = \beta X(t-\tau)V(t-\tau) - aY - pYZ,\quad \dot V = aNY - \mu V,\quad \dot Z = cXYZ - sZ,$$
+
 all parameters positive ($N$ is the burst size). Define
+
 $$\mathcal R_0 = \frac{\beta N\lambda}{d\mu}, \qquad \mathcal R_1 = \frac{\beta N(\lambda c\mu - \beta s a N)}{d c\mu^2} = \mathcal R_0\,\frac{\lambda c\mu - \beta s aN}{\lambda c\mu} < \mathcal R_0 .$$
+
 The equilibria are the infection-free point $E_0 = (\lambda/d, 0,0,0)$, the immune-free infected point $E^* = \big(\tfrac{\mu}{\beta N}, \tfrac{\beta N\lambda - d\mu}{\beta N a}, \tfrac{\beta N\lambda - d\mu}{\beta\mu}, 0\big)$ (positive iff $\mathcal R_0 > 1$), and the CTL-active point $\overline E$ with $\overline X = \tfrac{\lambda c\mu - \beta saN}{dc\mu}$ (positive iff $\mathcal R_1 > 1$).
 
 **Discrete model.** With step $\phi > 0$, $\tau = m\phi$ for an integer $m$, and Mickens' nonstandard finite-difference (NSFD) scheme

@@ -3,7 +3,9 @@
 **Setting.** Let $(G_n^s)_{s\in[0,T]}$ be a *dynamic graph* on the fixed vertex set $[n]$ whose edge set changes over time. Its *time-marked union graph* $G_n^{[0,T]}$ is the union of all edges ever present, each edge marked by the set of times at which it is present. Suppose the uniformly rooted time-marked union graphs converge *locally in probability* to a random rooted time-marked graph with law $\mu$ on $\mathcal G_\star$. Run an SIR epidemic on $(G_n^s)$ with general (not necessarily exponential) infection and recovery times. Infection can pass along an edge only while the edge is present. Initially every vertex is infected independently with probability $\rho>0$. Let $\big(S_n(t),I_n(t),R_n(t)\big)$ be the fractions of susceptible, infected and recovered vertices.
 
 **Theorem.** For every $t\in[0,T]$,
+
 $$\big(S_n(t),I_n(t),R_n(t)\big)\xrightarrow{\ \mathbf P\ }\big(s(t),i(t),r(t)\big),$$
+
 where $s(t)=\mu(o\in\mathcal S(t))$, $i(t)=\mu(o\in\mathcal I(t))$ and $r(t)=\mu(o\in\mathcal R(t))$ are the probabilities that the root $o$ is susceptible, infected or recovered at time $t$ in the same SIR epidemic run on the limiting dynamic graph, again with independent initial infections of density $\rho$.
 
 The key quantitative inputs are the following.

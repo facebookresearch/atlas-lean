@@ -3,7 +3,9 @@
 **Setting.** Let $T$ be a binary phylogenetic $X$-tree with $|X| = n$ leaves. A binary character is a map $f: X \to \{a, b\}$, normalized by $f(1) = a$ so that $f$ and its state-swapped copy are identified (binary characters then correspond to $X$-splits). An extension $g$ of $f$ assigns states to all vertices of $T$ and agrees with $f$ on $X$; its changing number $ch(g)$ is the number of edges whose endpoints get different states. The parsimony score is $l(f, T) = \min_g ch(g)$. Let $A_k(T)$ be the set of binary characters with $l(f, T) = k$, the *alignment induced by $T$ and $k$*.
 
 **Theorem (Steel).** For $k \ge 1$ with $2k \le n$,
+
 $$|A_k(T)| = \frac{2n - 3k}{k}\binom{n - k - 1}{k - 1}\,2^{k-1}.$$
+
 In particular $|A_k(T)|$ depends only on $n$ and $k$, not on the shape of $T$; for $k = 1$ it equals $2n - 3$, the number of edges (splits) of $T$.
 
 **Menger characterization.** For binary $f$, $l(f, T)$ equals the maximum number of edge-disjoint leaf-to-leaf paths in $T$, each joining a leaf in state $a$ to a leaf in state $b$.
