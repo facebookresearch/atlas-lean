@@ -9,12 +9,14 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.EqualCharacteristicFFAnalyticModels
+public import MathlibExt.AlgebraicGeometry.EqualCharacteristicFFModels
 
 /-!
 # Native equal-characteristic relative FF construction requests
 
 Fargues--Scholze, arXiv:2102.13459v4, Definition I.2.2 and Section II.1.
-The source coefficient field is the actual k((t)) for finite k, and
+The source coefficient field is the actual k((t)) for finite k, now defined
+in `MathlibExt.AlgebraicGeometry.EqualCharacteristicFFModels`, and
 the original integral period ring is R+[[t]]. Actual t, varpi, q-power
 coefficient Frobenius, rational maps and all-rank valuation spectra are
 fixed by the public definitions. The annular/quotient sheaf dictionaries
@@ -35,13 +37,6 @@ open MathlibExt.AlgebraicGeometry.EqualCharacteristicCoefficientModels
 open MathlibExt.AlgebraicGeometry.EqualCharacteristicFFRingModels
 open MathlibExt.AlgebraicGeometry.EqualCharacteristicFFSheafModels
 open MathlibExt.AlgebraicGeometry.EqualCharacteristicFFAnalyticModels
-
-/-- For a prime $p$ and a finite field $k$ of characteristic $p$, the Laurent-series field $k((t))$,
-with the valuative relation of its $t$-adic valuation, is a nonarchimedean local field. -/
-public theorem_wanted laurentSeriesLocalField
-    (p : ℕ) [Fact p.Prime] (k : Type) [Field k] [CharP k p] [Fintype k] :
-    letI := valuativeRelation k
-    IsNonarchimedeanLocalField (CoefficientField k)
 
 /-- Restriction maps of the rational charts of the annulus: for a prime $p$, a finite field $k$ of
 characteristic $p$ with $\#k = p^f$ (`C`) and a perfectoid base `S` (a characteristic-$p$ perfectoid
