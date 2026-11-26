@@ -30,16 +30,14 @@ removed and the names restated in Mathlib style.
 module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
-public import Mathlib.FieldTheory.IsAlgClosed.Basic
 
 import Mathlib.Algebra.CharP.Algebra
 import Mathlib.Algebra.CharP.Lemmas
 import Mathlib.Algebra.Polynomial.Roots
 import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
+import Mathlib.FieldTheory.IsAlgClosed.Basic
 import Mathlib.Tactic.ComputeDegree
 import Mathlib.Tactic.LinearCombination
-
-@[expose] public section
 
 open WeierstrassCurve WeierstrassCurve.Affine WeierstrassCurve.Affine.Point
 
@@ -70,9 +68,9 @@ noncomputable def tc (W : WeierstrassCurve K) (x₀ y₀ α : K) : W.toAffine.Po
   | .zero => 1
   | .some x y _ => (y - y₀ - α * (x - x₀)) / (y - y₀ - (-W.a₁ - α) * (x - x₀))
 
-@[scoped simp] lemma tc_zero : tc W x₀ y₀ α 0 = 1 := rfl
+lemma tc_zero : tc W x₀ y₀ α 0 = 1 := rfl
 
-@[scoped simp] lemma tc_some {x y : K} (h : W.toAffine.Nonsingular x y) :
+lemma tc_some {x y : K} (h : W.toAffine.Nonsingular x y) :
     tc W x₀ y₀ α (.some x y h) = (y - y₀ - α * (x - x₀)) / (y - y₀ - (-W.a₁ - α) * (x - x₀)) := rfl
 
 variable (hd : NodalFrame W x₀ y₀ α)
@@ -92,7 +90,6 @@ lemma not_nonsingular_centre : ¬ W.toAffine.Nonsingular x₀ y₀ := by
 lemma factors_ne_zero {x y : K} (h : W.toAffine.Nonsingular x y) :
     y - y₀ - α * (x - x₀) ≠ 0 ∧ y - y₀ - (-W.a₁ - α) * (x - x₀) ≠ 0 := by
   have hfac := factor_eq hd h.left
-
   have hx0 : ∀ {u v : K}, u * v = (x - x₀) ^ 3 → u = 0 → x = x₀ := by
     intro u v huv hu
     rw [hu, zero_mul] at huv
@@ -109,12 +106,6 @@ lemma factors_ne_zero {x y : K} (h : W.toAffine.Nonsingular x y) :
     have hy : y = y₀ := by rw [hx, sub_self, mul_zero, sub_zero, sub_eq_zero] at hu; exact hu
     subst hx; subst hy
     exact not_nonsingular_centre hd h
-
-lemma tc_ne_zero (P : W.toAffine.Point) : tc W x₀ y₀ α P ≠ 0 := by
-  rcases P with _ | ⟨x, y, h⟩
-  · exact one_ne_zero
-  · obtain ⟨h1, h2⟩ := factors_ne_zero hd h
-    exact div_ne_zero h1 h2
 
 lemma eq_zero_of_tc_eq_one (hαβ : α ≠ -W.a₁ - α) (P : W.toAffine.Point)
     (hP : tc W x₀ y₀ α P = 1) : P = 0 := by
@@ -138,17 +129,6 @@ section Group
 
 variable [DecidableEq K]
 
-lemma tc_neg (P : W.toAffine.Point) : tc W x₀ y₀ α (-P) = (tc W x₀ y₀ α P)⁻¹ := by
-  rcases P with _ | ⟨x, y, h⟩
-  · rw [← zero_def, _root_.neg_zero, tc_zero, inv_one]
-  · rw [neg_some, tc_some, tc_some, negY, e₁, e₃, inv_div]
-    obtain ⟨h1, h2⟩ := factors_ne_zero hd h
-    have eA : -y - W.a₁ * x - W.a₃ - y₀ - α * (x - x₀) = -(y - y₀ - (-W.a₁ - α) * (x - x₀)) := by
-      linear_combination -hd.hFY
-    have eB : -y - W.a₁ * x - W.a₃ - y₀ - (-W.a₁ - α) * (x - x₀) = -(y - y₀ - α * (x - x₀)) := by
-      linear_combination -hd.hFY
-    rw [eA, eB, neg_div_neg_eq]
-
 lemma tc_add (P Q : W.toAffine.Point) :
     tc W x₀ y₀ α (P + Q) = tc W x₀ y₀ α P * tc W x₀ y₀ α Q := by
   rcases P with _ | ⟨x₁, y₁, h₁⟩
@@ -158,8 +138,7 @@ lemma tc_add (P Q : W.toAffine.Point) :
   obtain ⟨hA₁, hB₁⟩ := factors_ne_zero hd h₁
   obtain ⟨hA₂, hB₂⟩ := factors_ne_zero hd h₂
   by_cases hxy : x₁ = x₂ ∧ y₁ = W.toAffine.negY x₂ y₂
-  ·
-    obtain ⟨hx, hy⟩ := hxy
+  · obtain ⟨hx, hy⟩ := hxy
     rw [add_of_Y_eq hx hy, tc_zero, tc_some, tc_some]
     rw [negY, e₁, e₃] at hy
     subst hx
@@ -170,12 +149,10 @@ lemma tc_add (P Q : W.toAffine.Point) :
     rw [eA, eB, eq_comm, div_mul_div_comm, div_eq_one_iff_eq]
     · ring
     · exact mul_ne_zero (neg_ne_zero.mpr hA₂) hB₂
-  ·
-    rw [add_some hxy, tc_some, tc_some, tc_some]
+  · rw [add_some hxy, tc_some, tc_some, tc_some]
     set L := W.toAffine.slope x₁ x₂ y₁ y₂ with hL
     set x₃ := W.toAffine.addX x₁ x₂ L with hx₃
     set μ := y₁ - L * x₁ with hμ
-
     have hcubic : (Cubic.mk (1 : K) (-L ^ 2 - W.a₁ * L + W.a₂)
         (2 * x₁ * L ^ 2 + (W.a₁ * x₁ - 2 * y₁ - W.a₃) * L + (-W.a₁ * y₁ + W.a₄))
         (-x₁ ^ 2 * L ^ 2 + (2 * x₁ * y₁ + W.a₃ * x₁) * L - (y₁ ^ 2 + W.a₃ * y₁ - W.a₆)))
@@ -185,9 +162,7 @@ lemma tc_add (P Q : W.toAffine.Point) :
       exact (Cubic.toPoly_injective _ _).mp key
     simp only [Cubic.mk.injEq, true_and] at hcubic
     obtain ⟨hv₁, hv₂, hv₃⟩ := hcubic
-
     set ν := L * x₀ + μ - y₀ with hν
-
     have hs₁ : -L ^ 2 - W.a₁ * L + (3 * x₀ + W.a₂) = -((x₁ - x₀) + (x₂ - x₀) + (x₃ - x₀)) := by
       linear_combination hv₁
     have hs₂ : -(2 * L + W.a₁) * ν
@@ -195,7 +170,6 @@ lemma tc_add (P Q : W.toAffine.Point) :
       linear_combination hv₂ + 2 * x₀ * hv₁ + L * hd.hFY + hd.hFX
     have hs₃ : -ν ^ 2 = -((x₁ - x₀) * (x₂ - x₀) * (x₃ - x₀)) := by
       linear_combination hv₃ + x₀ * hv₂ + x₀ ^ 2 * hv₁ + ν * hd.hFY + hd.he
-
     have hy₂ : y₂ = L * x₂ + μ := by
       by_cases hx : x₁ = x₂
       · have hy : y₁ ≠ W.toAffine.negY x₂ y₂ := fun h => hxy ⟨hx, h⟩
@@ -205,14 +179,12 @@ lemma tc_add (P Q : W.toAffine.Point) :
           rw [hL, slope_of_X_ne hx, div_mul_cancel₀ _ (sub_ne_zero.mpr hx)]
         rw [hμ]
         linear_combination hL'
-
     have h₃' : W.toAffine.Nonsingular x₃ (W.toAffine.negAddY x₁ x₂ y₁ L) :=
       nonsingular_negAdd h₁ h₂ hxy
     obtain ⟨hA₃, hB₃⟩ := factors_ne_zero hd h₃'
     have hnegAddY : W.toAffine.negAddY x₁ x₂ y₁ L = L * x₃ + μ := by
       simp only [negAddY, hμ]; ring
     rw [hnegAddY] at hA₃ hB₃
-
     have hprodA : (L * x₁ + μ - y₀ - α * (x₁ - x₀)) * (L * x₂ + μ - y₀ - α * (x₂ - x₀))
         * (L * x₃ + μ - y₀ - α * (x₃ - x₀)) = ν ^ 3 := by
       linear_combination (L - α) ^ 3 * hs₃ - ((L - α) ^ 2 * ν) * hs₂ + ((L - α) * ν ^ 2) * hs₁
@@ -224,7 +196,6 @@ lemma tc_add (P Q : W.toAffine.Point) :
         linear_combination hd.hα
       linear_combination (L - (-W.a₁ - α)) ^ 3 * hs₃ - ((L - (-W.a₁ - α)) ^ 2 * ν) * hs₂
         + ((L - (-W.a₁ - α)) * ν ^ 2) * hs₁ + (ν ^ 2 * (L - (-W.a₁ - α))) * hβ
-
     have hy₁ : y₁ = L * x₁ + μ := by rw [hμ]; ring
     simp only [addY, negY, negAddY, e₁, e₃]
     rw [← hx₃, hy₂, hy₁]
@@ -249,7 +220,6 @@ theorem eq_zero_of_prime_smul_eq_zero (hαβ : α ≠ -W.a₁ - α) {p : ℕ}
     [Fact p.Prime] [CharP K p] (P : W.toAffine.Point) (hP : p • P = 0) : P = 0 := by
   apply eq_zero_of_tc_eq_one hd hαβ
   have h : tc W x₀ y₀ α P ^ p = 1 := by rw [← tc_nsmul hd, hP, tc_zero]
-
   have : (tc W x₀ y₀ α P - 1) ^ p = 0 := by rw [sub_pow_char, h, one_pow, sub_self]
   exact sub_eq_zero.mp (pow_eq_zero_iff (Fact.out : p.Prime).ne_zero |>.mp this)
 
@@ -262,12 +232,10 @@ lemma exists_frame {k : Type*} [Field k] (W : WeierstrassCurve k) (x₀ y₀ : k
     (hnode : W.b₂ + 12 * x₀ ≠ 0) {K : Type*} [Field K] [IsAlgClosed K] (f : k →+* K)
     (hf : Function.Injective f) :
     ∃ α : K, NodalFrame (W.map f) (f x₀) (f y₀) α ∧ α ≠ -(W.map f).a₁ - α := by
-
   rw [nonsingular_iff'] at hs
   push Not at hs
   obtain ⟨hFX, hFY⟩ := hs he
   rw [equation_iff] at he
-
   obtain ⟨α, hα⟩ : ∃ α : K, α ^ 2 + f W.a₁ * α - (3 * f x₀ + f W.a₂) = 0 := by
     let q : Polynomial K := Polynomial.X ^ 2 + Polynomial.C (f W.a₁) * Polynomial.X
       - Polynomial.C (3 * f x₀ + f W.a₂)
@@ -278,20 +246,19 @@ lemma exists_frame {k : Type*} [Field k] (W : WeierstrassCurve k) (x₀ y₀ : k
     refine ⟨α, ?_⟩
     simpa [q] using hα
   refine ⟨α, ⟨?_, ?_, ?_, hα⟩, ?_⟩
-  · show f y₀ ^ 2 + f W.a₁ * f x₀ * f y₀ + f W.a₃ * f y₀
+  · change f y₀ ^ 2 + f W.a₁ * f x₀ * f y₀ + f W.a₃ * f y₀
       - (f x₀ ^ 3 + f W.a₂ * f x₀ ^ 2 + f W.a₄ * f x₀ + f W.a₆) = 0
     have := congrArg f he
     simp only [_root_.map_add, _root_.map_mul, _root_.map_pow] at this
     exact sub_eq_zero.mpr this
-  · show f W.a₁ * f y₀ - (3 * f x₀ ^ 2 + 2 * f W.a₂ * f x₀ + f W.a₄) = 0
+  · change f W.a₁ * f y₀ - (3 * f x₀ ^ 2 + 2 * f W.a₂ * f x₀ + f W.a₄) = 0
     have := congrArg f hFX
     simpa only [_root_.map_sub, _root_.map_mul, _root_.map_add, _root_.map_pow, map_ofNat,
       _root_.map_zero] using this
-  · show 2 * f y₀ + f W.a₁ * f x₀ + f W.a₃ = 0
+  · change 2 * f y₀ + f W.a₁ * f x₀ + f W.a₃ = 0
     have := congrArg f hFY
     simpa only [_root_.map_add, _root_.map_mul, map_ofNat, _root_.map_zero] using this
-  ·
-    intro hαβ
+  · intro hαβ
     change α = -f W.a₁ - α at hαβ
     apply hnode
     apply hf
@@ -304,10 +271,14 @@ lemma exists_frame {k : Type*} [Field k] (W : WeierstrassCurve k) (x₀ y₀ : k
 
 end NodalTorsion
 
-/-- A point of prime order `p` on a nodal affine Weierstrass curve in
-characteristic `p`, at a singular point that is a node (`b₂ + 12x₀ ≠ 0`),
-is zero. -/
-theorem WeierstrassCurve.Affine.Point.eq_zero_of_prime_smul_eq_zero_of_isNode
+/-- **Trivial $p$-torsion on a nodal cubic in characteristic $p$.** Let $p$ be a prime, let $k$ be
+a field of characteristic $p$, let $W$ be a Weierstrass curve over $k$, and let
+$(x_0, y_0) \in k^2$ be a singular point of the affine curve $W$. Suppose $(x_0, y_0)$ is a node:
+$b_2 + 12 x_0 \ne 0$, that is, the two tangent lines to $W$ at $(x_0, y_0)$, defined over an
+algebraic closure of $k$, are distinct. Then the group $W(k)$ of nonsingular points of $W$,
+including the point at infinity, has trivial $p$-torsion: every $P \in W(k)$ with $p P = 0$ is
+$P = 0$. -/
+public theorem WeierstrassCurve.Affine.Point.eq_zero_of_prime_smul_eq_zero_of_isNode
     {k : Type*} [Field k] [DecidableEq k] {p : ℕ} [Fact p.Prime] [CharP k p]
     (W : WeierstrassCurve k) (x₀ y₀ : k) (he : W.toAffine.Equation x₀ y₀)
     (hs : ¬ W.toAffine.Nonsingular x₀ y₀) (hnode : W.b₂ + 12 * x₀ ≠ 0)
