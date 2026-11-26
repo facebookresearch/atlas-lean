@@ -10,14 +10,8 @@ LICENSE file in the root directory of this source tree.
 Portions of this file are adapted from:
 
 `Theorems/Thm_Module_End_exists_common_eigenvector_of_commute.lean`
-and
-`P2M/Sol/S_Module_End_exists_common_eigenvector_of_commute.lean`
-and
-`Theorems/Thm_DeligneSerre_exists_eigenvector_of_mem_minimalPrimes_of_faithfulSMul.lean`
-and
-`P2M/Sol/S_DeligneSerre_exists_eigenvector_of_mem_minimalPrimes_of_faithfulSMul.lean`
 (https://github.com/anthropics/fermats-last-theorem):
-Compared with the source files at commit
+Compared with the source file at commit
 `6e837e75355538c7f80bab5b956861e86c4eacc2`.
 Copyright (c) 2026 Anthropic, PBC. All rights reserved.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
@@ -27,8 +21,9 @@ Copyright (c) the respective Mathlib authors, as recorded in the headers of the
 Mathlib source files.
 Released under the Apache License, Version 2.0.
 The source is machine-generated proof code built around a proof-extraction
-framework; the statements and proofs are reused here with that machinery
-removed and the names restated in Mathlib style.
+framework; the statement is reused here with that machinery removed and
+the name restated in Mathlib style. The proof is new: it derives the result
+from Mathlib's weight theory for Lie modules.
 -/
 
 module
@@ -43,8 +38,11 @@ attribute [local instance 100] LieRing.ofAssociativeRing
 
 namespace Module.End
 
-/-- A commuting family of endomorphisms of a nonzero finite-dimensional
-vector space over an algebraically closed field has a common eigenvector. -/
+/-- **Common eigenvector of commuting endomorphisms.** Let $K$ be an algebraically closed field
+and $V$ a nonzero finite-dimensional vector space over $K$. Every family $(T_i)_{i \in \iota}$ of
+pairwise commuting endomorphisms of $V$, indexed by an arbitrary type $\iota$, has a common
+eigenvector: there are a nonzero $v \in V$ and scalars $\chi_i \in K$ with $T_i v = \chi_i v$ for
+every $i$. -/
 public theorem exists_common_eigenvector_of_commute
     {K : Type*} [Field K] [IsAlgClosed K] {V : Type*} [AddCommGroup V] [Module K V]
     [FiniteDimensional K V] [Nontrivial V] {ι : Type*} (T : ι → Module.End K V)

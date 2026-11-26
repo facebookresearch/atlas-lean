@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Analysis.Complex.Polynomial.Basic
+public import Mathlib.LinearAlgebra.Matrix.ToLin
 public import MathlibExt.LinearAlgebra.Eigenspace.CommonEigenvector
 
 @[expose] public section
@@ -25,3 +27,10 @@ example {K : Type 1} [Field K] [IsAlgClosed K] {V : Type 1} [AddCommGroup V] [Mo
     (hcomm : ∀ i j, Commute (T i) (T j)) :
     ∃ (χ : ι → K) (v : V), v ≠ 0 ∧ ∀ i, T i v = χ i • v :=
   Module.End.exists_common_eigenvector_of_commute T hcomm
+
+-- Concrete consumer: the two commuting diagonal matrices `diag(1, 2)` and `diag(3, 4)` over `ℂ`.
+example :
+    ∃ (χ : Fin 2 → ℂ) (v : Fin 2 → ℂ), v ≠ 0 ∧
+      ∀ i, Matrix.toLinAlgEquiv' (Matrix.diagonal (![![1, 2], ![3, 4]] i)) v = χ i • v :=
+  Module.End.exists_common_eigenvector_of_commute _ fun _ _ =>
+    (Matrix.commute_diagonal _ _).map Matrix.toLinAlgEquiv'
