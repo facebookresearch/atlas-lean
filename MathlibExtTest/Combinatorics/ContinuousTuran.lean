@@ -46,6 +46,47 @@ example (P : Set (ℝ × ℝ)) {m : ℝ} (hm : m ≤ 0) : opx m P = 0 := by
 
 end MetaMathlibExt.opx_mono_left
 
+namespace MetaMathlibExt.opx_mono_of_containsPattern
+
+-- A larger pattern is harder to avoid: a subpattern has the smaller continuous Turán number.
+example (n : ℝ) {P Q : Set (ℝ × ℝ)} (hPQ : P ⊆ Q) : opx n P ≤ opx n Q :=
+  opx_mono_of_containsPattern n
+    ⟨id, id, fun _ _ _ _ _ => le_rfl, fun _ _ _ _ _ => le_rfl, fun _ hp => hPQ hp⟩
+
+-- Stretching a pattern by a factor of two can only increase its continuous Turán number.
+example (n : ℝ) (P : Set (ℝ × ℝ)) : opx n P ≤ opx n ((fun p => (2 : ℝ) • p) '' P) := by
+  refine opx_mono_of_containsPattern n ⟨fun x => 2 * x, fun y => 2 * y, ?_, ?_, ?_⟩
+  · intro p _ q _ hlt
+    linarith
+  · intro p _ q _ hlt
+    linarith
+  · intro p hp
+    exact ⟨p, hp, by ext <;> simp⟩
+
+end MetaMathlibExt.opx_mono_of_containsPattern
+
+namespace MetaMathlibExt.osat_singleton_and_opx_singleton
+
+-- The point can lie outside the square.
+example : osat 1 {(2, 3)} = 0 ∧ opx 1 {(2, 3)} = 0 :=
+  osat_singleton_and_opx_singleton 1 (2, 3)
+
+-- Even in an empty ambient square, the empty set witnesses saturation for a singleton.
+example (p : ℝ × ℝ) : IsOpxSaturating (-1) {p} ∅ := by
+  refine ⟨isOpen_empty, empty_subset _, ?_, ?_⟩
+  · rintro ⟨_, _, _, _, h⟩
+    exact h p (mem_singleton p)
+  · intro S _ hS hne
+    obtain ⟨q, hq⟩ := empty_ssubset.mp hne
+    have := (hS hq).1.1.trans (hS hq).1.2
+    norm_num at this
+
+-- The empty pattern has no saturating set and uses the empty-infimum convention.
+example (n : ℝ) : osat n ∅ = 0 := by
+  simp [osat, IsOpxSaturating, pointSetContainsPattern_empty]
+
+end MetaMathlibExt.osat_singleton_and_opx_singleton
+
 namespace MetaMathlibExt.opxD_add_lt
 
 -- At the first admissible dimension the coefficient is 8 for n = 2 and ε = 1.

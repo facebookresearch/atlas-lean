@@ -34,6 +34,7 @@ public import Mathlib.Algebra.Group.Even
 public import Mathlib.Data.Int.GCD
 public import Mathlib.Data.Nat.GCD.Basic
 public import Mathlib.Data.Nat.Prime.Defs
+public import MathlibExt.NumberTheory.PellLucasDiophantine
 public import MathlibExt.NumberTheory.PellLucasSequence
 public import MathlibExt.NumberTheory.PellNumberSequence
 
@@ -76,15 +77,6 @@ Source: Sérgio Mendes, "The Diophantine Equation
 theorem_wanted gcd_pellNumber_pellLucasSequence (n : ℕ) :
     Nat.gcd (MetaMathlibExt.pellNumber n)
       (MetaMathlibExt.pellLucasSequence n) = 1
-
-/-- **Consecutive Pell–Lucas numbers are coprime.** For every natural number $n$, the Pell–Lucas
-numbers $Q_n$ and $Q_{n+1}$ satisfy $\gcd(Q_n, Q_{n+1}) = 1$.
-
-Source: Sérgio Mendes, "The Diophantine Equation
-`Q_n^x + Q_{n+1}^x = y^2`", Lemma 4. -/
-theorem_wanted gcd_pellLucasSequence_succ (n : ℕ) :
-    Nat.gcd (MetaMathlibExt.pellLucasSequence n)
-      (MetaMathlibExt.pellLucasSequence (n + 1)) = 1
 
 /-- **Sums of two coprime positive $n$-th powers are not squares for $n \ge 4$.** Let $n \ge 4$
 be a natural number and let $x$ and $y$ be coprime positive integers. Then $x^n + y^n$ is not a

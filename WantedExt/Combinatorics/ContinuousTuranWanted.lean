@@ -42,16 +42,6 @@ public theorem_wanted opx_rotate_reflect (n : ℝ) (P : Set (ℝ × ℝ)) :
       opx n ((fun p : ℝ × ℝ => (-p.1, p.2)) '' P) = opx n P ∧
       opx n ((fun p : ℝ × ℝ => (p.1, -p.2)) '' P) = opx n P
 
-/-- **Monotonicity of the continuous Turán number under containment.** Let $n$ be a real number
-and let $P, Q \subseteq \mathbb{R}^2$. If $Q$ contains $P$ in the sense of containment of planar
-point sets, then $\operatorname{opx}(n, P) \le \operatorname{opx}(n, Q)$.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Lemma 2.3
-(`integers-2024-A1-lem-2-3`). -/
-public theorem_wanted opx_mono_of_containsPattern (n : ℝ) {P Q : Set (ℝ × ℝ)}
-    (h : PointSetContainsPattern Q P) :
-    opx n P ≤ opx n Q
-
 /-- **Superadditivity of the continuous Turán number.** For every set $P \subseteq \mathbb{R}^2$
 and all real numbers $m, n > 0$,
 $\operatorname{opx}(m, P) + \operatorname{opx}(n, P) \le \operatorname{opx}(m + n, P)$.
@@ -528,55 +518,6 @@ public theorem_wanted opx_two_row_growing_iff (s : ℝ → ℝ) (Q : ℝ → Set
     (hy : ∀ n, ∀ p ∈ Q n, p.2 = 0 ∨ p.2 = 1) :
     (∀ ε : ℝ, 0 < ε → ∀ᶠ n in Filter.atTop, n ^ (2 - ε) ≤ opx n (Q n)) ↔
       ∀ ε : ℝ, 0 < ε → ∀ᶠ n in Filter.atTop, n ^ (1 - ε) ≤ s n
-
-/-- **Saturating sets for a point pattern.** Let $n$ be a real number and let $P$ and $S$ be
-subsets of $\mathbb{R}^2$. Then $S$ is saturating for $P$ in $[0, n]^2$ when $S$ is an open
-subset of $[0, n]^2$ that does not contain $P$, while every open set $S'$ with
-$S \subsetneq S' \subseteq [0, n]^2$ contains $P$. Here a set $T$ contains $P$ when there are
-maps $f_X, f_Y : \mathbb{R} \to \mathbb{R}$ such that $f_X(x) - f_X(x') \ge x - x'$ whenever
-$x > x'$ are $x$-coordinates of points of $P$, likewise $f_Y(y) - f_Y(y') \ge y - y'$ whenever
-$y > y'$ are $y$-coordinates of points of $P$, and $(f_X(x), f_Y(y)) \in T$ for every
-$(x, y) \in P$.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Section 6
-(definition of saturating sets). -/
-public def IsOpxSaturating (n : ℝ) (P S : Set (ℝ × ℝ)) : Prop :=
-  IsOpen S ∧ S ⊆ Set.Icc 0 n ×ˢ Set.Icc 0 n ∧ ¬ PointSetContainsPattern S P ∧
-    ∀ S' : Set (ℝ × ℝ), IsOpen S' → S' ⊆ Set.Icc 0 n ×ˢ Set.Icc 0 n → S ⊂ S' →
-      PointSetContainsPattern S' P
-
-/-- **Saturation function for continuous patterns.** For a real number $n$ and a set
-$P \subseteq \mathbb{R}^2$, call an open set $S \subseteq [0, n]^2$ saturating for $P$ if $S$
-does not contain $P$ but every open set $S' \subseteq [0, n]^2$ properly containing $S$ contains
-$P$ (containment in the sense of point-set pattern containment). The saturation function
-$\operatorname{osat}(n, P)$ is the infimum of the Lebesgue measures $\mu_2(S)$ over all sets $S$
-saturating for $P$, and is $0$ when no saturating set exists.
-
-The paper leaves $\operatorname{osat}(n, P)$ undefined when no saturating set exists.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Section 6
-(definition of `osat(n, P)`). -/
-public noncomputable def osat (n : ℝ) (P : Set (ℝ × ℝ)) : ℝ :=
-  sInf ((fun S => (MeasureTheory.volume S).toReal) '' {S | IsOpxSaturating n P S})
-
-/-- **The saturation function is nonnegative.** For every real number $n$ and every set
-$P \subseteq \mathbb{R}^2$, $\operatorname{osat}(n, P) \ge 0$.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Section 6
-(definition of `osat(n, P)`). -/
-public theorem osat_nonneg (n : ℝ) (P : Set (ℝ × ℝ)) : 0 ≤ osat n P := by
-  apply Real.sInf_nonneg
-  rintro _ ⟨S, -, rfl⟩
-  exact ENNReal.toReal_nonneg
-
-/-- **Saturation function and continuous Turán number of a single point.** For every real number
-$n$ and every point $p \in \mathbb{R}^2$, $\operatorname{osat}(n, \{p\}) = 0$ and
-$\operatorname{opx}(n, \{p\}) = 0$.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Lemma 6.5
-(`integers-2024-A1-lem-6-5`). -/
-public theorem_wanted osat_singleton_and_opx_singleton (n : ℝ) (p : ℝ × ℝ) :
-    osat n {p} = 0 ∧ opx n {p} = 0
 
 /-- **Containment of a point pattern in d-dimensional grid cells.** Let $d$ be a natural number,
 let $A \subseteq \mathbb{N}^d$ be a set of cells and let $P \subseteq \mathbb{R}^d$. Then $A$

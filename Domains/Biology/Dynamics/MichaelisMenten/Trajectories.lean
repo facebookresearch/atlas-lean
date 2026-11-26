@@ -40,9 +40,9 @@ keeps the total enzyme `e + c` and the total substrate `s + c + p`.
 * `IsSolution.nonneg`: nonnegative initial data stay nonnegative for *every* solution.
 * `IsSolution.substrate_pos_of_nonneg`, `IsSolution.complex_pos`, `IsSolution.enzyme_pos`:
   positivity of the first three coordinates, without any sign restriction on the product.
-* `IsSolution.complex_pos_of_pos`: with `s(0), e(0) > 0`, `k₁ > 0` and any `c(0) ≥ 0`, the
-  complex is positive at every `t > 0`; this includes the unprepared start `c(0) = 0`, where
-  `c(0)` differs from the quasi-steady-state value `qssComplex`.
+* `IsSolution.complex_pos_of_pos`: with `s(0), e(0) > 0`, `k₁ > 0`, `kb, k₂ ≥ 0` and any
+  `c(0) ≥ 0`, the complex is positive at every `t > 0`; this includes the unprepared start
+  `c(0) = 0`, where `c(0)` differs from the quasi-steady-state value `qssComplex`.
 * `isSolution_zeroSubstrate`, `IsSolution.eq_zeroSubstrate`: with no substrate and no complex
   nothing happens: `s ≡ c ≡ 0`, `e ≡ e(0)`, `p ≡ p(0)`.
 
@@ -273,8 +273,8 @@ private theorem mm_conservation {α : ℝ → Fin 4 → ℝ} {T : ℝ}
 
 /-! ### Forward-global existence -/
 
-/-- **Global positive Michaelis–Menten trajectories.** For nonnegative rate constants and every
-nonnegative initial state `(s₀, c₀, e₀, p₀)`, the Michaelis–Menten system has a solution with
+/-- **Global nonnegative Michaelis–Menten trajectories.** For nonnegative rate constants and
+every nonnegative initial state `(s₀, c₀, e₀, p₀)`, the Michaelis–Menten system has a solution with
 these initial values, with two-sided derivatives at every `t ≥ 0`, such that for all `t ≥ 0`:
 all four coordinates are nonnegative and `p` does not fall below `p₀`; the total enzyme
 `e + c = e₀ + c₀` and the total substrate `s + c + p = s₀ + c₀ + p₀` are conserved; and each of
@@ -434,9 +434,9 @@ theorem IsSolution.enzyme_pos (h : IsSolution k₁ kb k₂ s c e p) (hk₁ : 0 �
     (ht : 0 ≤ t) : 0 < e t :=
   (h.pos hk₁ hkb hk₂ hs hc he.le ht).2.2 he
 
-/-- **Unprepared initial complex.** With `k₁ > 0` and positive initial substrate and free enzyme,
-the complex is positive at every `t > 0`, whatever its initial value `c(0) ≥ 0` and the product.
-This covers the classical unprepared start `c(0) = 0`, where `c(0)` differs from the value
+/-- **Unprepared initial complex.** With `k₁ > 0`, `kb, k₂ ≥ 0` and positive initial substrate and
+free enzyme, the complex is positive at every `t > 0`, whatever its initial value `c(0) ≥ 0` and the
+product. This covers the classical unprepared start `c(0) = 0`, where `c(0)` differs from the value
 `qssComplex k₁ kb k₂ (e(0) + c(0)) s(0) > 0`. -/
 theorem IsSolution.complex_pos_of_pos (h : IsSolution k₁ kb k₂ s c e p) (hk₁ : 0 < k₁)
     (hkb : 0 ≤ kb) (hk₂ : 0 ≤ k₂) (hs : 0 < s 0) (hc : 0 ≤ c 0) (he : 0 < e 0)

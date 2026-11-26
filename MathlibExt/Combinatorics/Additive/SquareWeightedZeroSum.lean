@@ -10,6 +10,9 @@ module
 
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Algebra.Group.Pointwise.Set.Basic
+public import Mathlib.Data.Set.Card
+public import Mathlib.Data.Nat.Factorization.Basic
 import Mathlib.Data.Nat.ChineseRemainder
 import Mathlib.Data.Nat.PrimeFin
 import Mathlib.FieldTheory.Finite.Basic
@@ -22,10 +25,13 @@ and $U(n)^2$ for the squares of its units. An $A$-weighted zero sum uses a weigh
 each term of a sequence; an $A$-weighted zero-sum subsequence uses weights at a nonempty set of
 indices. In either case the weighted terms sum to zero.
 
-This file proves two results of Paul and Paul. For odd $n \ge 2$, Proposition 17 gives units
+This file proves four results of Paul and Paul. Lemma 5 counts the unit squares modulo a prime
+power after scaling by an even power of the prime. For odd $n \ge 2$, Proposition 17 gives units
 $u, v$ whose reductions modulo every prime $p$ dividing $n$ have no $S(p)$-weighted zero-sum
 subsequence. Lemma 13 lifts a $U(p^2)^2$-weighted zero sum modulo $p^2$ to an $S(p^r)$-weighted
 zero sum modulo $p^r$ when $p \ge 2$ and $r$ is positive and even; $p$ need not be prime.
+Lemma 7 lifts an $S(p^r)$-weighted zero sum of the reduction modulo $p^r$, where $p^r$ exactly
+divides $n$, to an $S(n)$-weighted zero sum modulo $n$.
 
 ## Main definitions
 
@@ -36,8 +42,10 @@ zero sum modulo $p^r$ when $p \ge 2$ and $r$ is positive and even; $p$ need not 
 
 ## Main results
 
+* `MetaMathlibExt.ncard_scale_unitSquares_primePower`: Lemma 5.
 * `MetaMathlibExt.exists_pair_units_avoiding_prime_squareWeights`: Proposition 17.
 * `MetaMathlibExt.squareWeightedZeroSum_of_reduction_square`: Lemma 13.
+* `MetaMathlibExt.squareWeightedZeroSum_of_primePower_reduction`: Lemma 7.
 
 ## Implementation notes
 
@@ -50,6 +58,10 @@ modulo every prime $p \mid n$.
 For the lifting lemma, lift the unit square roots and scale their squares by $p^{r-2}$.
 The even exponent makes this scale a square; multiplying by it lifts the zero-sum congruence
 from modulo $p^2$ to modulo $p^r$ without making any weight zero.
+
+For the prime-power component, write $n = p^r m$ with $p^r$ and $m$ coprime and take $e$ with
+$e \equiv 1 \pmod{p^r}$ and $e \equiv 0 \pmod m$. If $b_i = c_i^2$, the weights $(e c_i)^2$ reduce
+to $b_i$ modulo $p^r$ and to $0$ modulo $m$, so the weighted sum vanishes modulo both factors.
 
 ## References
 
@@ -248,5 +260,130 @@ public theorem squareWeightedZeroSum_of_reduction_square (p r k : ℕ)
       simp [d, Nat.mul_comm]
   · simpa only [z, Nat.cast_mul, Nat.cast_sum, Nat.cast_pow, ZMod.natCast_zmod_val,
       Finset.mul_sum, ← mul_assoc] using hdz
+
+open scoped Pointwise in
+/-- **Scaled unit squares modulo a prime power.** Let $p$ be a prime and $r, k$ natural numbers
+with $k = 0$ or $2k < r$, and write $U(m)^2$ for the set of squares of units of
+$\mathbb{Z}/m\mathbb{Z}$. Then the set $p^{2k} U(p^r)^2 = \{p^{2k} x : x \in U(p^r)^2\}$ in
+$\mathbb{Z}/p^r\mathbb{Z}$ has the same number of elements as $U(p^{r-2k})^2$.
+
+Source: Krishnendu Paul and Shameek Paul, *Square-Weighted Zero-Sum Constants*, Journal of Integer
+Sequences 27 (2024), Article 24.6.6, Lemma 5. -/
+public theorem ncard_scale_unitSquares_primePower (p r k : ℕ) (hp : p.Prime)
+    (hk : k ≤ (r - 1) / 2) :
+    (((p : ZMod (p ^ r)) ^ (2 * k)) • unitSquareSet (p ^ r)).ncard =
+      (unitSquareSet (p ^ (r - 2 * k))).ncard := by
+  by_cases hk0 : k = 0
+  · subst k
+    simp
+  have hr : 2 * k < r := by omega
+  let d := p ^ (2 * k)
+  let q := p ^ (r - 2 * k)
+  have hmod : p ^ r = d * q := by
+    dsimp [d, q]
+    rw [← pow_add, Nat.add_sub_of_le hr.le]
+  have hd : 0 < d := pow_pos hp.pos _
+  have : NeZero q := ⟨(pow_pos hp.pos (r - 2 * k)).ne'⟩
+  have : NeZero (p ^ r) := ⟨(pow_pos hp.pos r).ne'⟩
+  let f : ZMod q → ZMod (p ^ r) := fun x => (d * x.val : ℕ)
+  -- Multiplying canonical representatives by d embeds the smaller residue set.
+  have hfval (x : ZMod q) : (f x).val = d * x.val := by
+    apply ZMod.val_natCast_of_lt
+    rw [hmod]
+    exact Nat.mul_lt_mul_of_pos_left (ZMod.val_lt x) hd
+  have hf : Function.Injective f := by
+    intro x y h
+    apply ZMod.val_injective q
+    apply Nat.eq_of_mul_eq_mul_left hd
+    simpa only [hfval] using congrArg ZMod.val h
+  have hf_cast (a : ℕ) : f (a : ZMod q) = (d : ZMod (p ^ r)) * (a : ZMod (p ^ r)) := by
+    apply ZMod.val_injective (p ^ r)
+    calc
+      (f (a : ZMod q)).val = d * (a % q) := by rw [hfval, ZMod.val_natCast]
+      _ = (d * a) % p ^ r := by rw [hmod, Nat.mul_mod_mul_left]
+      _ = ((d : ZMod (p ^ r)) * (a : ZMod (p ^ r))).val := by
+        rw [← Nat.cast_mul, ZMod.val_natCast]
+  have hf_sq (a : ℕ) : f ((a : ZMod q) ^ 2) =
+      ((p : ZMod (p ^ r)) ^ (2 * k)) * (a : ZMod (p ^ r)) ^ 2 := by
+    have hqpow : ((a ^ 2 : ℕ) : ZMod q) = (a : ZMod q) ^ 2 := Nat.cast_pow a 2
+    have hppow : ((a ^ 2 : ℕ) : ZMod (p ^ r)) = (a : ZMod (p ^ r)) ^ 2 := Nat.cast_pow a 2
+    have hdpow : (d : ZMod (p ^ r)) = (p : ZMod (p ^ r)) ^ (2 * k) := Nat.cast_pow p (2 * k)
+    rw [← hqpow, ← hppow, ← hdpow]
+    exact hf_cast (a ^ 2)
+  -- Both exponents are positive, so the same representatives are units in either modulus.
+  have hunit (a : ℕ) : IsUnit (a : ZMod (p ^ r)) ↔ IsUnit (a : ZMod q) := by
+    change IsUnit (a : ZMod (p ^ r)) ↔ IsUnit (a : ZMod (p ^ (r - 2 * k)))
+    simp only [ZMod.isUnit_iff_coprime, Nat.coprime_pow_right_iff (by omega : 0 < r),
+      Nat.coprime_pow_right_iff (by omega : 0 < r - 2 * k)]
+  have himage : ((p : ZMod (p ^ r)) ^ (2 * k)) • unitSquareSet (p ^ r) = f '' unitSquareSet q := by
+    ext y
+    rw [Set.mem_smul_set, Set.mem_image]
+    constructor
+    · rintro ⟨_, ⟨u, hu, rfl⟩, rfl⟩
+      have huq : IsUnit (u.val : ZMod q) :=
+        (hunit u.val).mp (by simpa only [ZMod.natCast_zmod_val] using hu)
+      refine ⟨(u.val : ZMod q) ^ 2, ⟨(u.val : ZMod q), huq, rfl⟩, ?_⟩
+      simpa only [ZMod.natCast_zmod_val, smul_eq_mul] using hf_sq u.val
+    · rintro ⟨_, ⟨u, hu, rfl⟩, rfl⟩
+      have hup : IsUnit (u.val : ZMod (p ^ r)) :=
+        (hunit u.val).mpr (by simpa only [ZMod.natCast_zmod_val] using hu)
+      refine ⟨(u.val : ZMod (p ^ r)) ^ 2, ⟨(u.val : ZMod (p ^ r)), hup, rfl⟩, ?_⟩
+      simpa only [ZMod.natCast_zmod_val, smul_eq_mul] using (hf_sq u.val).symm
+  rw [himage]
+  exact Set.ncard_image_of_injective _ hf
+
+-- The exponent hypothesis alone gives the coprime splitting `n = p ^ r * m`; `hpn` is redundant.
+set_option linter.unusedVariables false in
+/-- **Square-weighted zero sums lift from a prime-power component.** Let $n \ge 2$, let $p$ be a
+prime dividing $n$, and let $r$ be the exponent of $p$ in $n$. Write $S(m)$ for the set of
+nonzero squares in $\mathbb{Z}_m$. Let $x_1, \dots, x_k$ be a sequence in $\mathbb{Z}_n$ whose
+reduction $\bar x_1, \dots, \bar x_k$ modulo $p^r$ has an $S(p^r)$-weighted zero sum, that is,
+there are $b_1, \dots, b_k \in S(p^r)$ with $\sum_i b_i \bar x_i = 0$. Then there are
+$a_1, \dots, a_k \in S(n)$ with $\sum_i a_i x_i = 0$.
+
+Source: Krishnendu Paul and Shameek Paul, *Square-Weighted Zero-Sum Constants*, Journal of Integer
+Sequences 27 (2024), Article 24.6.6, Lemma 7. -/
+public theorem squareWeightedZeroSum_of_primePower_reduction (n p r k : ℕ)
+    (hn : 2 ≤ n) (hp : p.Prime) (hpn : p ∣ n) (hval : n.factorization p = r)
+    (S : Fin k → ZMod n)
+    (hS : HasWeightedZeroSum (squareSet (p ^ r))
+      (fun i => (ZMod.cast (S i) : ZMod (p ^ r)))) :
+    HasWeightedZeroSum (squareSet n) S := by
+  have hn0 : n ≠ 0 := by omega
+  have : NeZero n := ⟨hn0⟩
+  have : NeZero (p ^ r) := ⟨(pow_pos hp.pos r).ne'⟩
+  -- Split `n = p ^ r * m` with `p ^ r` and `m` coprime.
+  set m := n / p ^ r with hm
+  have hqm : p ^ r * m = n := by
+    rw [hm, ← hval]
+    exact Nat.ordProj_mul_ordCompl_eq_self n p
+  have hco : (p ^ r).Coprime m := by
+    rw [hm, ← hval]
+    exact (Nat.coprime_ordCompl hp hn0).pow_left _
+  have hqn : p ^ r ∣ n := ⟨m, hqm.symm⟩
+  -- The Chinese remainder theorem gives `e ≡ 1 [MOD p ^ r]` and `e ≡ 0 [MOD m]`.
+  obtain ⟨e, he1, he0⟩ := Nat.chineseRemainder hco 1 0
+  have he1' : (e : ZMod (p ^ r)) = 1 := by
+    simpa using (ZMod.natCast_eq_natCast_iff e 1 (p ^ r)).mpr he1
+  have hme : m ∣ e := Nat.modEq_zero_iff_dvd.mp he0
+  obtain ⟨b, hb, hsum⟩ := hS
+  choose hb0 c hc using hb
+  -- The weight `a i = (e c_i) ^ 2` reduces to `b i` modulo `p ^ r` and to `0` modulo `m`.
+  have hred (i : Fin k) :
+      (ZMod.cast (((e * (c i).val : ℕ) : ZMod n) ^ 2) : ZMod (p ^ r)) = b i := by
+    rw [ZMod.cast_pow hqn, ZMod.cast_natCast hqn, Nat.cast_mul, he1', one_mul,
+      ZMod.natCast_zmod_val, hc]
+  refine ⟨fun i => ((e * (c i).val : ℕ) : ZMod n) ^ 2, fun i => ⟨fun h => hb0 i ?_, _, rfl⟩, ?_⟩
+  · rw [← hred i, show ((e * (c i).val : ℕ) : ZMod n) ^ 2 = 0 from h, ZMod.cast_zero]
+  · let Y : ℕ := ∑ i, (e * (c i).val) ^ 2 * (S i).val
+    have hY : ∑ i, ((e * (c i).val : ℕ) : ZMod n) ^ 2 * S i = (Y : ZMod n) := by
+      simp only [Y, Nat.cast_sum, Nat.cast_mul, Nat.cast_pow, ZMod.natCast_zmod_val]
+    rw [hY, ZMod.natCast_eq_zero_iff, ← hqm]
+    refine hco.mul_dvd_of_dvd_of_dvd ?_ ?_
+    · rw [← ZMod.natCast_eq_zero_iff, ← hsum]
+      simp only [Y, Nat.cast_sum, Nat.cast_mul, Nat.cast_pow, he1', one_mul, ZMod.natCast_val,
+        ZMod.cast_id', id, hc]
+    · exact Finset.dvd_sum fun i _ =>
+        Dvd.dvd.mul_right (Dvd.dvd.pow (hme.mul_right _) two_ne_zero) _
 
 end MetaMathlibExt

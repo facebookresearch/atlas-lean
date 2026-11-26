@@ -33,18 +33,12 @@ public import Mathlib.Data.Nat.Factorization.Basic
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import MathlibExt.NumberTheory.SZumkeller
 public import MathlibExt.NumberTheory.SumSquaredDivisorsProduct
+public import MathlibExt.NumberTheory.UnitaryDivisorCount
+public import MathlibExt.NumberTheory.SZumkellerHarmonicMeanSqLeOfIsSZumkeller
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Number of unitary divisors.** A positive integer $n$ with $m$ distinct prime factors has
-exactly $2^m$ unitary divisors.
-
-Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
-Numbers*, INTEGERS 24 (2024), Article A95, Lemma 2 (quoting Bege). -/
-public theorem_wanted card_unitaryDivisors (n : ℕ) (hn : n ≠ 0) :
-    (Nat.unitaryDivisors n).card = 2 ^ n.primeFactors.card
 
 /-- **Sum of squares of unitary divisors.** For every positive integer $n$, the sum of the
 squares of the unitary divisors of $n$ equals $\prod_{p} \left(1 + p^{2k_p}\right)$, where $p$
@@ -127,17 +121,6 @@ Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
 Numbers*, INTEGERS 24 (2024), Article A95, Proposition 8. -/
 public theorem_wanted le_of_isSZumkeller_odd_three_dvd (n : ℕ) (h : IsSZumkeller n)
     (ho : Odd n) (h3 : 3 ∣ n) : 12442607161209225 ≤ n
-
-/-- **Harmonic mean of squared divisors of even s-Zumkeller numbers.** Let $n$ be an even
-s-Zumkeller number and let $\tau(n)$ be the number of positive divisors of $n$. Then
-$\tau(n) / \sum_{d \mid n} d^{-2} \le 2\tau(n)/3$, where the sum runs over the positive divisors
-$d$ of $n$.
-
-Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
-Numbers*, INTEGERS 24 (2024), Article A95, Proposition 9. -/
-public theorem_wanted harmonicMeanSq_le_of_isSZumkeller (n : ℕ) (h : IsSZumkeller n)
-    (he : Even n) :
-    (n.divisors.card : ℚ) / ∑ d ∈ n.divisors, 1 / (d : ℚ) ^ 2 ≤ 2 * n.divisors.card / 3
 
 /-- **Lower bounds for unitary s-Zumkeller numbers.** Let $n$ be a unitary s-Zumkeller
 number, let $q$ be the least unitary divisor of $n$ greater than $1$, and for each prime $p$

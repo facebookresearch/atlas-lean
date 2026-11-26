@@ -14,6 +14,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Data.Set.Card
 public import Mathlib.RingTheory.Ideal.Span
 public import MathlibExt.Algebra.Polynomial.FactorialEvalBound
+public import MathlibExt.Algebra.Polynomial.InterpolationPolyExchange
 public import MathlibExt.Algebra.Polynomial.LocallyIntegerPolynomial
 public import MathlibExt.Algebra.Polynomial.LowDegreeInterpolant
 public import MathlibExt.Data.Nat.ProgressionIntersection
@@ -72,20 +73,6 @@ Source: Alexander Borisov, *Locally Integer Polynomial Functions*, INTEGERS 25 (
 Article A41, Lemma 4 (`integers-2025-A41-lem-4`). -/
 public theorem_wanted lipSubring_units_eq {U : Set ℤ} (hU : U.Infinite)
     (u : (lipSubring U)ˣ) : u = 1 ∨ u = -1
-
-/-- **Exchange formula for interpolation polynomials.** Let $f : \mathbb{Z} \to \mathbb{Z}$, and for
-a finite set $Y \subseteq \mathbb{Z}$ write $f_Y \in \mathbb{Q}[x]$ for the interpolation polynomial
-of $f$ on $Y$. Let $X \subseteq \mathbb{Z}$ be finite and $a, b \in \mathbb{Z} \setminus X$, and let
-$c$ be the coefficient of $x^{|X|+1}$ in $f_{X \cup \{a, b\}}$. Then
-$$f_{X \cup \{a\}} = f_{X \cup \{b\}} + c\,(a - b) \prod_{z \in X} (x - z).$$
-
-Source: Alexander Borisov, *Locally Integer Polynomial Functions*, INTEGERS 25 (2025),
-Article A41, Lemma 6 (`integers-2025-A41-lem-6`). -/
-public theorem_wanted interpolationPoly_exchange (X : Finset ℤ) {a b : ℤ} (ha : a ∉ X)
-    (hb : b ∉ X) (f : ℤ → ℤ) :
-    interpolationPoly (insert a X) f = interpolationPoly (insert b X) f +
-      C ((interpolationPoly (insert a (insert b X)) f).coeff (X.card + 1) * ((a : ℚ) - b)) *
-        ∏ z ∈ X, (Polynomial.X - C (z : ℚ))
 
 /-- **Denominator of the top coefficient on a circuit.** Let $f : \mathbb{Z} \to \mathbb{Z}$, and
 for a finite set $Y \subseteq \mathbb{Z}$ write $f_Y \in \mathbb{Q}[x]$ for the interpolation
@@ -206,16 +193,6 @@ Article A41, Theorem 5 (`integers-2025-A41-thm-5`). -/
 public theorem_wanted lip_univ_comp {f g : ↥(Set.univ : Set ℤ) → ℤ}
     (hf : f ∈ lipSubring Set.univ) (hg : g ∈ lipSubring Set.univ) :
     (fun x => f ⟨g x, Set.mem_univ _⟩) ∈ lipSubring Set.univ
-
-/-- **$\mathrm{LIP}(\mathbb{Z})$ is closed under the discrete derivative.** If $f$ lies in
-$\mathrm{LIP}(\mathbb{Z})$, the ring of locally integer polynomial functions
-$\mathbb{Z} \to \mathbb{Z}$, then so does the function $x \mapsto f(x) - f(x - 1)$.
-
-Source: Alexander Borisov, *Locally Integer Polynomial Functions*, INTEGERS 25 (2025),
-Article A41, Theorem 5 (`integers-2025-A41-thm-5`). -/
-public theorem_wanted lip_univ_sub_shift {f : ↥(Set.univ : Set ℤ) → ℤ}
-    (hf : f ∈ lipSubring Set.univ) :
-    (fun x => f x - f ⟨(x : ℤ) - 1, Set.mem_univ _⟩) ∈ lipSubring Set.univ
 
 /-- **Non-polynomial LIP functions on the integers that are small on an infinite set.** Let
 $\tau : \mathbb{N} \to \mathbb{R}$ with $\tau(n) \to +\infty$ as $n \to \infty$. Write

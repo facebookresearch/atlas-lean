@@ -22,4 +22,6 @@ Multivariate normal theory and linear models: Gaussian maximum likelihood, Cochr
 - [Gaussian maximum likelihood](gaussian-maximum-likelihood/README.md)
 - [Generalized estimating equations](generalized-estimating-equations/README.md)
 - [Kernel principal component analysis](kernel-principal-component-analysis/README.md)
+- [Factor analysis and structural equation models](factor-analysis-and-structural-equation-models/README.md)
+- [Panel data models](panel-data-models/README.md)
 - [Gauss–Markov covariance minimality](gauss-markov-covariance-minimality.md)

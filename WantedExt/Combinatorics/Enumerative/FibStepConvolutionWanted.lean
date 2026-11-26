@@ -313,21 +313,6 @@ theorem_wanted sum_neg_one_pow_sub_odd (m n : ℕ)
         ∑ j ∈ Finset.range (n - 2 * m + 1),
           fibStep (2 * m + 1) j * fibStep (2 * m - 1) (n - 2 * m - j)
 
-/-- **Alternating sum of the tribonacci numbers.** Write $T_n$ for the tribonacci numbers (the
-Fibonacci $3$-step numbers $F^{(3)}_n$). For every integer $n \ge 0$,
-$2 \sum_{j=0}^{n} (-1)^j T_j = (-1)^n (T_{n+1} - T_{n-1}) - 1$, where $T_{n-1}$ is read as
-$T_0 = 0$ when $n = 0$.
-
-The source prints this identity with a factor $1/2$; it is stated here multiplied by $2$.
-
-Source: Robert Frontczak and Karol Gryszka, "General
-Convolution Sums Involving Fibonacci `m`-Step Numbers",
-Corollary 18. -/
-theorem_wanted two_mul_sum_neg_one_pow_trib (n : ℕ) :
-    2 * ∑ j ∈ Finset.range (n + 1),
-        (-1 : ℤ) ^ j * fibStep 3 j =
-      (-1 : ℤ) ^ n * (fibStep 3 (n + 1) - fibStep 3 (n - 1)) - 1
-
 /-- **Convolution of the pentanacci and tribonacci numbers, second closed form.** Write $P_n$ for
 the pentanacci numbers and $T_n$ for the tribonacci numbers (the Fibonacci $m$-step numbers
 $F^{(m)}_n$ with $m = 5$ and $m = 3$). For every integer $n \ge 0$,
@@ -617,25 +602,6 @@ theorem_wanted two_mul_compProdSum_fib_trib_penta (n : ℕ)
         (fun i k => ![fibStep 2, fibStep 3, fibStep 5] i k) (n - 5) =
       fibStep 5 n - fibStep 5 (n - 1) + fibStep 5 (n - 2) -
         fibStep 3 n - fibStep 3 (n - 2) + fibStep 2 (n - 1)
-
-/-- **A product identity for four consecutive Fibonacci step generating functions.** Let
-$m \ge 1$ be a natural number. For each $k$, let $F^{(k)} = \sum_{n \ge 0} F^{(k)}_n X^n$ in
-$\mathbb{Q}[[X]]$ be the ordinary generating function of the Fibonacci $k$-step numbers
-$F^{(k)}_n$. Then
-$$X^{2m+1} F^{(m)} F^{(m+1)} F^{(m+2)} F^{(m+3)} =
-X^m F^{(m)} F^{(m+2)} F^{(m+3)} - F^{(m+1)} F^{(m+3)} + F^{(m)} F^{(m+3)}.$$
-
-Source: Robert Frontczak and Karol Gryszka, "General
-Convolution Sums Involving Fibonacci `m`-Step Numbers",
-Theorem 31. -/
-theorem_wanted fibStepGF_quadruple_consecutive (m : ℕ)
-    (hm : 1 ≤ m) :
-    PowerSeries.X ^ (2 * m + 1) * fibStepGF m * fibStepGF (m + 1) *
-        fibStepGF (m + 2) * fibStepGF (m + 3) =
-      PowerSeries.X ^ m * fibStepGF m * fibStepGF (m + 2) *
-          fibStepGF (m + 3) -
-        fibStepGF (m + 1) * fibStepGF (m + 3) +
-        fibStepGF m * fibStepGF (m + 3)
 
 /-- **Four-fold convolution of the Fibonacci, tribonacci, tetranacci and pentanacci numbers.**
 Write $F_n$, $T_n$, $Q_n$ and $P_n$ for the Fibonacci $m$-step numbers $F^{(m)}_n$ with

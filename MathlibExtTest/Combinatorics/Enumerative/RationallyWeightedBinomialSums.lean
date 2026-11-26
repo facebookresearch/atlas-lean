@@ -152,6 +152,21 @@ example : ∑ k ∈ Finset.range (2 + 1),
   apply (sum_pow_mul_choose_mul_secondOrder 2 (-1) (fun k ↦ (k : ℝ)) hW 2 5).trans
   norm_num [Finset.sum_range_succ, Nat.stirlingSecond, Nat.descFactorial]
 
+-- Exponent zero retains the nonzero L₀ term and recovers the unweighted Lucas sum.
+example (N : ℕ) : ∑ k ∈ Finset.range (N + 1), N.choose k * lucasNumber k = lucasNumber (2 * N) := by
+  simpa using sum_pow_mul_choose_mul_lucasNumber N 0
+
+-- At N = 0 the exponent-zero sum is L₀ = 2, but a positive exponent gives zero.
+example : ∑ k ∈ Finset.range (0 + 1), k ^ (0 : ℕ) * (0 : ℕ).choose k * lucasNumber k = 2 :=
+  (sum_pow_mul_choose_mul_lucasNumber 0 0).trans (by decide)
+
+example : ∑ k ∈ Finset.range (0 + 1), k ^ (1 : ℕ) * (0 : ℕ).choose k * lucasNumber k = 0 :=
+  (sum_pow_mul_choose_mul_lucasNumber 0 1).trans (by decide)
+
+-- At N = 2 and r = 5, orders above two vanish even when the index 2N - i truncates.
+example : ∑ k ∈ Finset.range (2 + 1), k ^ (5 : ℕ) * (2 : ℕ).choose k * lucasNumber k = 98 :=
+  (sum_pow_mul_choose_mul_lucasNumber 2 5).trans (by decide)
+
 -- At x = r = 0, the constant coefficient survives by the convention 0^0 = 1.
 example (a : ℕ → ℝ) :
     ∑ k ∈ Finset.range (2 + 1), (k : ℝ) ^ (0 : ℕ) * a k * (0 : ℝ) ^ k = a 0 := by
@@ -172,5 +187,41 @@ example : ∑ k ∈ Finset.range (2 + 1), (k : ℝ) ^ (3 : ℕ) * 1 * (-2 : ℝ)
     Polynomial.iterate_derivative_C_mul, Polynomial.iterate_derivative_X_pow_eq_C_mul,
     Polynomial.eval_mul, Polynomial.eval_C, Polynomial.eval_pow, Polynomial.eval_X]
   norm_num [Finset.sum_range_succ, Nat.stirlingSecond, Nat.descFactorial]
+
+-- Distinct roots 2 and -1 with Binet coefficients 2 and 3 give U₀ = 5, U₁ = 1, U₂ = 11.
+private noncomputable def sampleSequence (k : ℕ) : ℝ :=
+  2 * 2 ^ k + 3 * (-1) ^ k
+
+private theorem sampleSequence_rec (n : ℕ) :
+    sampleSequence (n + 2) = 1 * sampleSequence (n + 1) + 2 * sampleSequence n := by
+  simp only [sampleSequence, pow_add, pow_one]
+  ring
+
+-- h(k) = 1 + k + k² + k³; in row two the order-three factorial vanishes.
+-- At x = -1 the three terms on the left are 25 - 8 + 1815 = 1832.
+example : ∑ k ∈ Finset.range (2 + 1),
+    (∑ j ∈ Finset.range (3 + 1), (1 : ℂ) * (k : ℂ) ^ j) *
+      (2 : ℕ).choose k * (sampleSequence k : ℂ) ^ (2 : ℕ) * (-1 : ℂ) ^ k = 1832 := by
+  apply (sum_poly_mul_choose_mul_secondOrder_pow 1 2 sampleSequence sampleSequence_rec
+    2 (-1) (by norm_num) (by norm_num) (by norm_num) (fun _ => 1) 3 2 2 (-1)).trans
+  norm_num [sampleSequence, Finset.sum_range_succ, Nat.choose, Nat.stirlingSecond, Nat.descFactorial,
+    Complex.ofReal_add, Complex.ofReal_mul, Complex.ofReal_pow, Complex.ofReal_neg]
+
+-- Row zero with a constant weight keeps the k = 0 term, even at x = 0.
+example : ∑ k ∈ Finset.range (0 + 1),
+    (∑ j ∈ Finset.range (0 + 1), (2 : ℂ) * (k : ℂ) ^ j) *
+      (0 : ℕ).choose k * (sampleSequence k : ℂ) ^ (2 : ℕ) * (0 : ℂ) ^ k = 50 := by
+  apply (sum_poly_mul_choose_mul_secondOrder_pow 1 2 sampleSequence sampleSequence_rec
+    2 (-1) (by norm_num) (by norm_num) (by norm_num) (fun _ => 2) 0 0 2 0).trans
+  norm_num [sampleSequence, Finset.sum_range_succ, Nat.choose, Nat.stirlingSecond, Nat.descFactorial,
+    Complex.ofReal_add, Complex.ofReal_mul, Complex.ofReal_pow, Complex.ofReal_neg]
+
+-- With r = 0 even the zero sequence has unit weight from Uₖ^r; one characteristic root is zero.
+example : ∑ k ∈ Finset.range (1 + 1),
+    (∑ j ∈ Finset.range (1 + 1), (1 : ℂ) * (k : ℂ) ^ j) *
+      (1 : ℕ).choose k * (0 : ℂ) ^ (0 : ℕ) * (2 : ℂ) ^ k = 5 := by
+  apply (sum_poly_mul_choose_mul_secondOrder_pow 1 0 (fun _ => 0) (by simp)
+    1 0 (by norm_num) (by norm_num) (by norm_num) (fun _ => 1) 1 1 0 2).trans
+  norm_num [Finset.sum_range_succ, Nat.choose, Nat.stirlingSecond, Nat.descFactorial]
 
 end MathlibExtTest.RationallyWeightedBinomialSums
