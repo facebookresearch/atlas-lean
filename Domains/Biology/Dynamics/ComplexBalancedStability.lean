@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Domains.Biology.Dynamics.ComplexBalanced
+import MathlibExt.Analysis.ODE.MaximalSolution
 import MathlibExt.Dynamics.PolynomialNetworks.MassAction
 import Mathlib.Analysis.ODE.ExistUnique
 import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.Quotient
@@ -29,9 +30,14 @@ The theorem `stable` gives Lyapunov stability, and `attractive` gives convergenc
 for sufficiently nearby solutions in that class. Solutions have two-sided derivatives at
 all nonnegative times, including zero.
 
-Stability also holds without the class restriction (`stable_all_classes`); attractivity to
-the fixed equilibrium needs that restriction. These are local results: global convergence
-from arbitrary positive initial states is not claimed.
+Existence and stability also hold without the class restriction
+(`exists_solution_of_near_all_classes`, `stable_all_classes`); attractivity to the fixed
+equilibrium needs that restriction. These are local results: global convergence from arbitrary
+positive initial states is not claimed.
+
+Global existence applies `MaximalSolutionWanted.ode_global_exists_of_global_lipschitz` to the
+field clipped to a closed ball of positive states; the pseudo-Helmholtz energy keeps solutions
+that start near the equilibrium inside that ball, where the clipped field is the original one.
 
 ## References
 
@@ -247,8 +253,11 @@ private theorem energy_trapping {S ρ : Type*} [Fintype S] [Fintype ρ]
     (fun t ht => (hx t ht).continuousAt.continuousWithinAt)
     (fun t ht _ => hx t ht) hnear hsmall
 
-/-- A positive complex-balanced equilibrium is Lyapunov stable across all initial
-stoichiometric classes. -/
+/-- **Lyapunov stability across stoichiometric classes.** Let `a` be a positive complex-balanced
+point, hence an equilibrium, of a mass-action system with positive rate constants. For every
+`ε > 0` there is `η > 0` such that every solution on `[0, ∞)` that starts within `η` of `a`, in
+any stoichiometric compatibility class, stays within `ε` of `a` for all `t ≥ 0`. Distances are
+sup-norm distances on `S → ℝ`, and solutions have two-sided derivatives at every `t ≥ 0`. -/
 theorem stable_all_classes {S ρ : Type*} [Fintype S] [Fintype ρ]
     (N : ReactionNetwork S ρ) {k : ρ → ℝ} (hk : ∀ r, 0 < k r)
     {a : S → ℝ} (ha : ∀ s, 0 < a s) (hcb : N.IsComplexBalanced k a)
@@ -271,13 +280,13 @@ theorem stable_all_classes {S ρ : Type*} [Fintype S] [Fintype ρ]
     (hsmall (by simpa [dist_eq_norm] using hnear.trans_le (min_le_right r δ))) t ht
   exact htr.trans_le ((min_le_left _ _).trans (by linarith : ε / 2 ≤ ε))
 
-/-- CB2: `S`, `ρ`, `[Fintype S]`, and `[Fintype ρ]` encode the finite species and reactions;
-`N` is the native network. `k`, `hk` encode positive rate constants; `cstar`, `hcstar`, `hcb`
-encode a positive complex-balanced point; `xstar`, `hxstar`, `heq` encode a positive equilibrium.
-`ε`, `hε` quantify every positive tolerance. `η`, its positivity, and the universal `x` encode
-one neighborhood working for every half-line solution. `_hx` requires two-sided derivatives at
-every nonnegative time; `_hclass` is its initial stoichiometric class and `_hnear` its initial
-sup-norm distance. The conclusion bounds that same sup-norm distance at every `t ≥ 0`. -/
+/-- **Lyapunov stability of a positive equilibrium.** Let a mass-action system with positive
+rate constants have a positive complex-balanced point `cstar`, and let `xstar` be a positive
+equilibrium. For every `ε > 0` there is `η > 0` such that every solution on `[0, ∞)` that starts
+in the stoichiometric compatibility class of `xstar`, within `η` of it, stays within `ε` of it
+for all `t ≥ 0`. Distances are sup-norm distances on `S → ℝ`, and solutions have two-sided
+derivatives at every `t ≥ 0`. The class hypothesis is not needed: stability holds across
+classes (`stable_all_classes`). -/
 theorem stable {S ρ : Type*} [Fintype S] [Fintype ρ]
     (N : ReactionNetwork S ρ) (k : ρ → ℝ) (hk : ∀ r, 0 < k r)
     (cstar : S → ℝ) (hcstar : ∀ s, 0 < cstar s) (hcb : N.IsComplexBalanced k cstar)
@@ -391,14 +400,15 @@ private theorem exists_entry {S ρ : Type*} [Fintype S] [Fintype ρ]
   rw [hmul, mul_zero, add_zero] at hle
   linarith
 
-/-- CB3: `S`, `ρ`, `[Fintype S]`, and `[Fintype ρ]` encode the finite species and reactions;
-`N` is the native network. `k`, `hk` encode positive rate constants; `cstar`, `hcstar`, `hcb`
-encode a positive complex-balanced point; `xstar`, `hxstar`, `heq` encode a positive equilibrium.
-The existential positive `η` and universal `x` give one neighborhood for every half-line
-solution. `_hx` requires two-sided derivatives at every nonnegative time; `_hclass` encodes its
-initial stoichiometric class and `_hnear` its initial sup-norm distance. `Tendsto x atTop
-(nhds xstar)` encodes convergence of the state to that fixed equilibrium as time tends to
-infinity. -/
+/-- **Local attraction within the compatibility class.** Let a mass-action system with
+positive rate constants have a positive complex-balanced point `cstar`, and let `xstar` be a
+positive equilibrium. There is `η > 0` such that every solution on `[0, ∞)` that starts in the
+stoichiometric compatibility class of `xstar`, within `η` of it, converges to `xstar` as
+`t → ∞`. Distances are sup-norm distances on `S → ℝ`, and solutions have two-sided derivatives
+at every `t ≥ 0`. The convergence is local and relative to the class, and the class hypothesis
+cannot be dropped: equilibria of other classes can lie arbitrarily close to `xstar` (for
+`A ⇌ B` with equal rates, every `(c, c)` with `c > 0` is one), and they are constant
+solutions. -/
 theorem attractive {S ρ : Type*} [Fintype S] [Fintype ρ]
     (N : ReactionNetwork S ρ) (k : ρ → ℝ) (hk : ∀ r, 0 < k r)
     (cstar : S → ℝ) (hcstar : ∀ s, 0 < cstar s) (hcb : N.IsComplexBalanced k cstar)
@@ -462,86 +472,63 @@ private theorem clip_lipschitz {S : Type*} [Fintype S] (a : S → ℝ) (R : ℝ)
   have h := (heval.const_min (a s + R)).const_max (a s - R)
   simpa [clip] using h.norm_sub_le z w
 
-private theorem bounded_lipschitz_extension {S ρ : Type*} [Fintype S] [Fintype ρ]
+private theorem lipschitz_extension {S ρ : Type*} [Fintype S] [Fintype ρ]
     (N : ReactionNetwork S ρ) (k : ρ → ℝ) (a : S → ℝ) {R : ℝ} (hR : 0 ≤ R) :
-    ∃ g : (S → ℝ) → S → ℝ, ∃ K L : ℝ≥0,
-      LipschitzWith K g ∧ (∀ z, ‖g z‖ ≤ L) ∧
-      ∀ z, ‖z - a‖ ≤ R → g z = N.massActionField k z := by
+    ∃ g : (S → ℝ) → S → ℝ, ∃ K : ℝ≥0,
+      LipschitzWith K g ∧ ∀ z, ‖z - a‖ ≤ R → g z = N.massActionField k z := by
   let f := N.massActionField k
   have hf := N.massActionField_contDiff k
   obtain ⟨K, hK⟩ := hf.contDiffOn.exists_lipschitzOnWith (by simp)
     (convex_closedBall a R) (isCompact_closedBall a R)
-  obtain ⟨C, hC⟩ := (isCompact_closedBall a R).exists_bound_of_continuousOn
-    hf.continuous.continuousOn
-  let L : ℝ≥0 := ⟨max C 0, le_max_right _ _⟩
   let g := f ∘ clip a R
   have hclip (z : S → ℝ) : clip a R z ∈ Metric.closedBall a R := by
     simpa [Metric.mem_closedBall, dist_eq_norm] using clip_mem_closedBall a hR z
-  refine ⟨g, K, L, ?_, ?_, ?_⟩
+  refine ⟨g, K, ?_, ?_⟩
   · have h := hK.comp (clip_lipschitz a R).lipschitzOnWith (s := Set.univ)
       (fun z _ => hclip z)
     simpa only [mul_one, lipschitzOnWith_univ] using h
-  · intro z
-    exact (hC (clip a R z) (hclip z)).trans (le_max_left C 0)
   · intro z hz
     dsimp [g]
     rw [clip_eq_self a z hz]
 
-private theorem global_solution_of_bounded_lipschitz {E : Type*} [NormedAddCommGroup E]
-    [NormedSpace ℝ E] [CompleteSpace E] (g : E → E) {K L : ℝ≥0}
-    (hK : LipschitzWith K g) (hL : ∀ z, ‖g z‖ ≤ L) (z : E) :
-    ∃ x : ℝ → E, x 0 = z ∧ ∀ t, HasDerivAt x (g (x t)) t := by
-  classical
-  have hlocal (a : ℝ) : ∃ x : ℝ → E, x 0 = z ∧
-      ∀ t ∈ Ioo (-a) a, HasDerivAt x (g (x t)) t := by
-    by_cases ha : 0 < a
-    · let A : ℝ≥0 := ⟨(L : ℝ) * a, by positivity⟩
-      have hp : IsPicardLindelof (fun _ => g)
-          (tmin := -a) (tmax := a) ⟨0, by constructor <;> linarith⟩ z A 0 L K :=
-        IsPicardLindelof.of_time_independent (fun w _ => hL w) hK.lipschitzOnWith
-          (by
-            change (L : ℝ) * max (a - 0) (0 - -a) ≤ (L : ℝ) * a - 0
-            simp)
-      obtain ⟨x, hx0, hx⟩ := hp.exists_eq_forall_mem_Icc_hasDerivWithinAt₀
-      refine ⟨x, hx0, fun t ht => ?_⟩
-      exact (hx t ⟨ht.1.le, ht.2.le⟩).hasDerivAt (Icc_mem_nhds ht.1 ht.2)
-    · exact ⟨fun _ => z, rfl, fun t ht => False.elim (by linarith [ht.1, ht.2])⟩
-  choose α hα0 hα using hlocal
-  let x : ℝ → E := fun t => α (|t| + 1) t
-  have hagree (a : ℝ) (ha : 0 < a) : EqOn x (α a) (Ioo (-a) a) := by
-    intro t ht
-    let b := |t| + 1
-    let c := min a b
-    have hb : 0 < b := by dsimp [b]; positivity
-    have hc : 0 < c := lt_min ha hb
-    have htc : |t| < c := lt_min (abs_lt.mpr ht) (lt_add_one _)
-    have hca : Ioo (-c) c ⊆ Ioo (-a) a :=
-      Ioo_subset_Ioo (neg_le_neg (min_le_left a b)) (min_le_left a b)
-    have hcb : Ioo (-c) c ⊆ Ioo (-b) b :=
-      Ioo_subset_Ioo (neg_le_neg (min_le_right a b)) (min_le_right a b)
-    have heq : EqOn (α b) (α a) (Ioo (-c) c) :=
-      ODE_solution_unique_of_mem_Ioo (v := fun _ => g) (s := fun _ => Set.univ)
-        (fun _ _ => hK.lipschitzOnWith) ⟨neg_lt_zero.mpr hc, hc⟩
-        (fun u hu => ⟨hα b u (hcb hu), Set.mem_univ _⟩)
-        (fun u hu => ⟨hα a u (hca hu), Set.mem_univ _⟩)
-        (by rw [hα0 b, hα0 a])
-    exact heq (abs_lt.mp htc)
-  refine ⟨x, hα0 _, fun t => ?_⟩
-  let a := |t| + 1
-  have ha : 0 < a := by dsimp [a]; positivity
-  have ht : t ∈ Ioo (-a) a := abs_lt.mp (lt_add_one _)
-  have hevent : x =ᶠ[nhds t] α a :=
-    Filter.eventuallyEq_iff_exists_mem.mpr ⟨Ioo (-a) a, Ioo_mem_nhds ht.1 ht.2, hagree a ha⟩
-  have hd := (hα a t ht).congr_of_eventuallyEq hevent
-  rwa [← hagree a ha ht] at hd
+/-- **Forward solutions near a complex-balanced point, in every class.** Let `a` be a positive
+complex-balanced point, hence an equilibrium, of a mass-action system with positive rate
+constants. There is `η > 0` such that every state within `η` of `a`, in any stoichiometric
+compatibility class, is the initial value of a solution defined for all `t ≥ 0`, with two-sided
+derivatives at every `t ≥ 0`, including `0`. Distances are sup-norm distances on `S → ℝ`. -/
+theorem exists_solution_of_near_all_classes {S ρ : Type*} [Fintype S] [Fintype ρ]
+    (N : ReactionNetwork S ρ) {k : ρ → ℝ} (hk : ∀ r, 0 < k r)
+    {a : S → ℝ} (ha : ∀ s, 0 < a s) (hcb : N.IsComplexBalanced k a) :
+    ∃ η > 0, ∀ z : S → ℝ, ‖z - a‖ < η →
+      ∃ x : ℝ → S → ℝ, x 0 = z ∧
+        ∀ t, 0 ≤ t → HasDerivAt x (N.massActionField k (x t)) t := by
+  obtain ⟨R, hR, hpos⟩ := positive_closedBall ha
+  obtain ⟨b, hb, hboundary⟩ := energy_boundary_lower ha hR hpos
+  have hevent : ∀ᶠ z in nhds a, energy a z < b :=
+    (energy_continuousAt a ha).eventually_lt continuousAt_const
+      (by simpa [energy_self] using hb)
+  obtain ⟨δ, hδ, hsmall⟩ := Metric.eventually_nhds_iff.mp hevent
+  obtain ⟨g, K, hK, hagree⟩ := lipschitz_extension N k a hR.le
+  refine ⟨min R δ, lt_min hR hδ, fun z hnear => ?_⟩
+  obtain ⟨x, ⟨hx0, hx⟩, -⟩ :=
+    MathlibExt.Analysis.ODE.MaximalSolutionWanted.ode_global_exists_of_global_lipschitz
+      (fun _ => g) 0 z K (hK.continuous.comp continuous_snd) fun _ => hK
+  have htr : ∀ t, 0 ≤ t → ‖x t - a‖ < R :=
+    energy_trapping_of_continuousOn N hk ha hcb hpos hboundary
+      (fun t _ => (hx t).continuousAt.continuousWithinAt)
+      (fun t _ ht => by simpa only [hagree (x t) ht] using hx t)
+      (by simpa only [hx0] using hnear.trans_le (min_le_left R δ))
+      (by rw [hx0]; exact hsmall (by
+        simpa [dist_eq_norm] using hnear.trans_le (min_le_right R δ)))
+  exact ⟨x, hx0, fun t ht => by simpa only [hagree (x t) (htr t ht).le] using hx t⟩
 
-/-- CB1: `S`, `ρ`, `[Fintype S]`, and `[Fintype ρ]` encode the finite species and reactions;
-`N` is the native network. `k`, `hk` encode positive rate constants; `cstar`, `hcstar`, `hcb`
-encode a positive complex-balanced point; `xstar`, `hxstar`, `heq` encode a positive equilibrium.
-The existential positive `η` works for every initial state `z`. `_hclass` is `z`'s stoichiometric
-class and `_hnear` its sup-norm distance to `xstar`. The existential `x`, equation `x 0 = z`,
-and derivative condition at every `t ≥ 0` give global forward existence with two-sided
-derivatives, including at zero. -/
+/-- **Forward solutions near a positive equilibrium.** Let a mass-action system with positive
+rate constants have a positive complex-balanced point `cstar`, and let `xstar` be a positive
+equilibrium. There is `η > 0` such that every state `z` of the stoichiometric compatibility
+class of `xstar` within `η` of it is the initial value of a solution defined for all `t ≥ 0`,
+with two-sided derivatives at every `t ≥ 0`, including `0`. Distances are sup-norm distances on
+`S → ℝ`. The class hypothesis is not needed: `exists_solution_of_near_all_classes` gives such
+solutions from every nearby state. -/
 theorem exists_solution_of_near {S ρ : Type*} [Fintype S] [Fintype ρ]
     (N : ReactionNetwork S ρ) (k : ρ → ℝ) (hk : ∀ r, 0 < k r)
     (cstar : S → ℝ) (hcstar : ∀ s, 0 < cstar s) (hcb : N.IsComplexBalanced k cstar)
@@ -551,22 +538,7 @@ theorem exists_solution_of_near {S ρ : Type*} [Fintype S] [Fintype ρ]
       ∃ x : ℝ → S → ℝ, x 0 = z ∧
         ∀ t, 0 ≤ t → HasDerivAt x (N.massActionField k (x t)) t := by
   have hcbstar := N.isComplexBalanced_of_massActionField_eq_zero hk hcstar hcb hxstar heq
-  obtain ⟨R, hR, hpos⟩ := positive_closedBall hxstar
-  obtain ⟨b, hb, hboundary⟩ := energy_boundary_lower hxstar hR hpos
-  have hevent : ∀ᶠ z in nhds xstar, energy xstar z < b :=
-    (energy_continuousAt xstar hxstar).eventually_lt continuousAt_const
-      (by simpa [energy_self] using hb)
-  obtain ⟨δ, hδ, hsmall⟩ := Metric.eventually_nhds_iff.mp hevent
-  obtain ⟨g, K, L, hK, hL, hagree⟩ := bounded_lipschitz_extension N k xstar hR.le
-  refine ⟨min R δ, lt_min hR hδ, fun z _hclass hnear => ?_⟩
-  obtain ⟨x, hx0, hx⟩ := global_solution_of_bounded_lipschitz g hK hL z
-  have htr : ∀ t, 0 ≤ t → ‖x t - xstar‖ < R :=
-    energy_trapping_of_continuousOn N hk hxstar hcbstar hpos hboundary
-      (fun t _ => (hx t).continuousAt.continuousWithinAt)
-      (fun t _ ht => by simpa only [hagree (x t) ht] using hx t)
-      (by simpa only [hx0] using hnear.trans_le (min_le_left R δ))
-      (by rw [hx0]; exact hsmall (by
-        simpa [dist_eq_norm] using hnear.trans_le (min_le_right R δ)))
-  exact ⟨x, hx0, fun t ht => by simpa only [hagree (x t) (htr t ht).le] using hx t⟩
+  obtain ⟨η, hη, hexists⟩ := exists_solution_of_near_all_classes N hk hxstar hcbstar
+  exact ⟨η, hη, fun z _hclass hnear => hexists z hnear⟩
 
 end Domains.Biology.Dynamics.ComplexBalancedStability

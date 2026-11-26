@@ -20,7 +20,8 @@ import Mathlib.Tactic.Linarith
 The network `A ⇌ B` has two species, two reactions, unit rate constants, and the positive
 complex-balanced equilibrium `![1, 1]`. We instantiate forward existence, stability, and
 class-relative attractivity. Constant equilibria outside its class can be arbitrarily close
-to `![1, 1]` without converging to it, while stability still holds across classes.
+to `![1, 1]` without converging to it, while forward existence and stability still hold across
+classes.
 -/
 
 public section
@@ -109,6 +110,30 @@ theorem reversiblePair_stable_all_classes (ε : ℝ) (hε : 0 < ε) :
   exact stable_all_classes reversiblePair (by simp)
     (by intro s; fin_cases s <;> norm_num) reversiblePair_complexBalanced hε
 
+/-- Forward solutions exist from nearby states of every class: for small `δ > 0` the state
+`(1 + δ, 1)` is not an equilibrium, lies outside the class of `![1, 1]`, and still starts a
+solution on `[0, ∞)`. -/
+theorem reversiblePair_exists_solution_all_classes :
+    ∃ η > (0 : ℝ), ∀ δ : ℝ, 0 < δ → δ < η →
+      reversiblePair.massActionField (fun _ => 1) ![1 + δ, 1] ≠ 0 ∧
+      ![1 + δ, 1] - ![1, 1] ∉ reversiblePair.stoichiometricSubspace ∧
+      ∃ x : ℝ → Fin 2 → ℝ, x 0 = ![1 + δ, 1] ∧
+        ∀ t, 0 ≤ t → HasDerivAt x (reversiblePair.massActionField (fun _ => 1) (x t)) t := by
+  obtain ⟨η, hη, hexists⟩ := exists_solution_of_near_all_classes reversiblePair
+    (k := fun _ => 1) (by simp) (by intro s; fin_cases s <;> norm_num)
+    reversiblePair_complexBalanced
+  refine ⟨η, hη, fun δ hδ hδη => ⟨fun h => ?_, fun h => ?_, hexists _ ?_⟩⟩
+  · have h0 := congrFun h 0
+    rw [reversiblePair_field] at h0
+    simp at h0
+    linarith
+  · have hc := reversiblePair_conservation h
+    simp at hc
+    linarith
+  · apply (pi_norm_lt_iff hη).mpr
+    intro s
+    fin_cases s <;> simp [Real.norm_eq_abs, abs_of_pos hδ] <;> linarith
+
 /-- Arbitrarily near equilibria outside the reference class need not converge to it.
 This shows why the class restriction is necessary for attractivity; stability holds across
 classes. -/
@@ -144,6 +169,7 @@ theorem reversiblePair_attractivity_needs_class (η : ℝ) (hη : 0 < η) :
     linarith
 
 #print axioms Domains.Biology.Dynamics.ComplexBalancedStability.exists_solution_of_near
+#print axioms Domains.Biology.Dynamics.ComplexBalancedStability.exists_solution_of_near_all_classes
 #print axioms Domains.Biology.Dynamics.ComplexBalancedStability.stable
 #print axioms Domains.Biology.Dynamics.ComplexBalancedStability.attractive
 #print axioms Domains.Biology.Dynamics.ComplexBalancedStability.stable_all_classes
@@ -157,5 +183,6 @@ theorem reversiblePair_attractivity_needs_class (η : ℝ) (hη : 0 < η) :
 #print axioms reversiblePair_outside_class
 #print axioms reversiblePair_attractivity_needs_class
 #print axioms reversiblePair_stable_all_classes
+#print axioms reversiblePair_exists_solution_all_classes
 
 end DomainsTest.Biology.Dynamics.ComplexBalancedStability

@@ -16,7 +16,7 @@ import Mathlib.Analysis.Calculus.ContDiff.Operations
 # The mass-action vector field
 
 General facts about `ReactionNetwork.massActionField` that use neither complex balancing nor
-deficiency: the field is smooth on the whole real state space, and its values lie in the
+deficiency: the field is analytic on the whole real state space, and its values lie in the
 stoichiometric subspace.
 
 `MetaMathlibExt.contDiff_massActionField` in `MathlibExt.Analysis.ODE.InvariantRegions` states
@@ -27,7 +27,9 @@ public section
 
 namespace MathlibExt.Biology.Dynamics.ComplexBalanced.ReactionNetwork
 
-/-- The mass-action vector field is smooth on the full real state space. -/
+/-- **Analyticity of the mass-action field.** The mass-action vector field is `C^ω` on the whole
+real state space `S → ℝ` (`ContDiff ℝ ⊤`, where `⊤ = ω`), so in particular smooth: each
+coordinate is a polynomial in the state. -/
 theorem massActionField_contDiff {S ρ : Type*} [Fintype S] [Fintype ρ]
     (N : ReactionNetwork S ρ) (k : ρ → ℝ) :
     ContDiff ℝ ⊤ (N.massActionField k) := by
@@ -36,7 +38,8 @@ theorem massActionField_contDiff {S ρ : Type*} [Fintype S] [Fintype ρ]
   intro s
   fun_prop
 
-/-- The mass-action vector field takes values in the stoichiometric subspace. -/
+/-- **Values in the stoichiometric subspace.** At every real state `z`, the mass-action vector
+field lies in the stoichiometric subspace, the span of the reaction vectors `prod r - src r`. -/
 theorem massActionField_mem {S ρ : Type*} [Fintype S] [Fintype ρ]
     (N : ReactionNetwork S ρ) (k : ρ → ℝ) (z : S → ℝ) :
     N.massActionField k z ∈ N.stoichiometricSubspace := by

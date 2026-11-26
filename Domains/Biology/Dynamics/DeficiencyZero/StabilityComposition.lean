@@ -89,6 +89,11 @@ forward solution; for every `ε > 0`, every solution that starts in the class cl
 close enough to `xstar` converges to it. Distances are sup-norm distances on `S → ℝ`, and
 solutions have two-sided derivatives at every `t ≥ 0`.
 
+Existence and stability hold across classes as well
+(`ComplexBalancedStability.exists_solution_of_near_all_classes` and
+`ComplexBalancedStability.stable_all_classes`). Convergence is local and relative to the class;
+global convergence from arbitrary positive states is not claimed.
+
 Source: Feinberg (1987), Theorem 6.1.1(iii) and Section 5.2. -/
 theorem localAsymptoticStability {S ρ : Type*} [Fintype S] [Fintype ρ]
     (N : ReactionNetwork S ρ) (hδ : N.deficiency = 0)
