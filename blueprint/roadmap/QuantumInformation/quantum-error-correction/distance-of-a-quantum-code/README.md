@@ -9,7 +9,10 @@ Here "distance at least $d$" is defined with the Pauli operators of [CSS codes](
 - [Product of two Pauli operators](conj-transpose-pauli-mul-pauli.md)
 - [Weight of a product of Pauli operators](pauli-weight-add-le.md)
 - [Distance of a quantum code (lower bound)](has-distance-at-least.md)
+- [$[[n, k, d]]$ quantum code](n-k-d-quantum-code.md)
+- [Degenerate quantum code](degenerate-quantum-code.md)
 - [A code of distance $2t + 1$ corrects $t$ errors](is-correctable-of-has-distance-at-least.md)
+- [A code of distance $d$ corrects $d - 1$ erasures](distance-d-code-corrects-d-minus-1-erasures.md)
 - [The quantum Singleton bound](quantum-singleton-bound.md)
 
 ## Related topics
