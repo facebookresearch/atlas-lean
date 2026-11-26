@@ -1,4 +1,4 @@
-# Is Star Projection rectangular Equiv iff rank eq
+# Rectangular equivalence of star projections is equality of rank
 
-Two finite complex square star projections are rectangularly
-Murray--von Neumann equivalent exactly when their ranks agree.
+Let P,Q be complex star projections of sizes n×n and m×m. Then there exists U:m×n→ℂ with P=UᴴU
+and Q=UUᴴ if and only if rank(P)=rank(Q).

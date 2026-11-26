@@ -1,16 +1,16 @@
-# Compact Support
+# Compact-support pure products and their Radon integrals
 
-## Compactly Supported Continuous Map
+## Products of compactly supported functions
 
-- [Mul Prod](mul-prod.md)
-- [Mul Prod apply](mul-prod-apply.md)
-- [Norm Sq](norm-sq.md)
-- [Norm Sq apply](norm-sq-apply.md)
-- [Norm Sq mul Prod](norm-sq-mul-prod.md)
-- [Integral Right mul Prod](integral-right-mul-prod.md)
-- [Integral Right norm Sq mul Prod](integral-right-norm-sq-mul-prod.md)
+- [Compact-support product of two factor functions](mul-prod.md)
+- [Pointwise value of a compact-support pure product](mul-prod-apply.md)
+- [Real squared norm of a compact-support complex function](norm-sq.md)
+- [Value of the compact-support squared-norm function](norm-sq-apply.md)
+- [Squared norm of a pure product factors pointwise](norm-sq-mul-prod.md)
+- [Coordinate integral of a real pure product](integral-right-mul-prod.md)
+- [Coordinate integral of a complex pure product's squared norm](integral-right-norm-sq-mul-prod.md)
 
-## Measure
+## Factorization of product integrals
 
-- [Integral mul Prod](integral-mul-prod.md)
-- [Integral norm sq mul Prod](integral-norm-sq-mul-prod.md)
+- [Radon integral of a real pure product factors](integral-mul-prod.md)
+- [Radon squared-norm integral of a complex pure product factors](integral-norm-sq-mul-prod.md)

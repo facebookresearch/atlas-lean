@@ -1,3 +1,4 @@
-# Trace
+# Trace of a top-left zero extension
 
-The true top-left zero extension preserves trace, including the empty source matrix.
+Let A be an additive commutative monoid, r≤s and B:Matrix(Fin r,Fin r,A). Then
+trace(zeroExtend h B)=trace(B), with trace the finite diagonal sum.

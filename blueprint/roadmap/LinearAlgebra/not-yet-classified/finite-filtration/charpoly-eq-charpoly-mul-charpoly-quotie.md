@@ -1,9 +1,5 @@
-# Charpoly eq charpoly mul charpoly quotient Map
+# Characteristic polynomial factorization for an invariant extension
 
-Characteristic-polynomial factorization for one invariant extension.
-
-This is the reusable one-step block-triangular formula, the
-characteristic-polynomial analogue of
-`LinearMap.InvariantExtension.det_eq_det_mul_det_quotientMap`.  The upper
-stage is assumed free because `LinearMap.charpoly`, unlike `LinearMap.det`,
-is only defined on finite free modules.
+Let R be a commutative ring, V,W finite free R-modules with endomorphisms f,g, and E an
+invariant extension identifying V with a g-invariant submodule of W and intertwining f with
+the restriction. If its quotient Q is free, χ_g=χ_fχ_(E.quotientMap).

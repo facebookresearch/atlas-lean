@@ -1,6 +1,6 @@
-# Rectangular Support Compression
+# Rectangular compression between represented unit supports
 
-- [Unit Range Compression](unit-range-compression.md)
-- [Unit Range Compression apply](unit-range-compression-apply.md)
-- [Unit Range Compression intertwining](unit-range-compression-intertwining.md)
-- [Unit Range Compression intertwining compact](unit-range-compression-intertwining-comp.md)
+- [Bounded operator between represented unit ranges](unit-range-compression.md)
+- [Included-vector value of rectangular support compression](unit-range-compression-apply.md)
+- [Factorization of a supported intertwining defect](unit-range-compression-intertwining.md)
+- [Compactness passes to the represented-support defect](unit-range-compression-intertwining-comp.md)

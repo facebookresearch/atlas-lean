@@ -1,4 +1,5 @@
-# Adjoint map LCompletion
+# Adjoint of a completed tensor operator
 
-The actual Hilbert-space adjoint on the completed tensor is the tensor
-map of the factor adjoints.
+Let E₁,E₂,F₁,F₂ be Hilbert spaces over an RCLike field 𝕜 in independent universes. For bounded
+linear maps f:E₁→E₂ and g:F₁→F₂, adjoint(mapLCompletion f g)=mapLCompletion f.adjoint
+g.adjoint, between the completed Hilbert tensors.

@@ -1,3 +1,5 @@
-# Add of finite
+# Regularity of the sum of finite regular measures
 
-The sum of two finite regular measures is regular.
+Let `X` be an R₁ topological space
+with its Borel measurable structure. if `μ,ν` are finite regular measures, then `μ+ν` is
+regular.

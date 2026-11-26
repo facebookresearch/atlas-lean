@@ -17,17 +17,16 @@ public import MathlibExt.MeasureTheory.VectorMeasure.ComplexIntegral
 public import Mathlib.Analysis.RCLike.ContinuousMap
 
 /-!
-# Complex Riesz--Markov representation on compact spaces
+# Complex Riesz representation and its variation upper bounds
 
-On a compact Hausdorff Borel space, bounded complex-linear functionals on
-`C(X, ℂ)` correspond to complex measures with regular total variation.  The
-inverse is obtained by applying the signed real Riesz--Markov equivalence to
-the real and imaginary restrictions of a complex functional.
+On an R₁ Borel space, complex measures with regular total variation form a complex submodule,
+with regular signed real and imaginary parts. For a compact space, continuous integration gives
+a bounded functional with norm at most total variation mass.
 
-The carrier in this file is norm-free and installs no global instance on
-complex measures.  This layer records the total-variation upper bound.  The
-reverse norm inequality, which requires a finite-phase approximation followed
-by regular `L¹` density and radial clipping, is not claimed here.
+On a compact Hausdorff Borel space this is a complex-linear equivalence with `C(X,ℂ)*`, whose
+inverse is `complexRieszMeasure`. For a bounded measurable integrand, that representing measure
+satisfies `|∫ f dμ_Λ|≤2‖Λ‖‖f‖∞`. No reverse norm equality for the complex Riesz map is asserted
+in this module.
 -/
 
 @[expose] public section
@@ -47,7 +46,9 @@ universe u
 variable {X : Type u} [TopologicalSpace X] [R1Space X]
   [MeasurableSpace X] [BorelSpace X]
 
-/-- Complex measures whose total variation is regular. -/
+/-- **Complex submodule of regular-variation complex measures.** Let `X` be an R₁ topological
+space with its Borel measurable structure. `regularComplexMeasureSubmodule X` consists of
+complex measures `μ` whose total variation is regular. -/
 noncomputable def regularComplexMeasureSubmodule (X : Type u)
     [TopologicalSpace X] [R1Space X] [MeasurableSpace X] [BorelSpace X] :
     Submodule ℂ (ComplexMeasure X) where
@@ -60,19 +61,26 @@ noncomputable def regularComplexMeasureSubmodule (X : Type u)
     intro c mu hmu
     exact ComplexMeasure.HasRegularVariation.smul hmu c
 
-/-- A complex measure with regular total variation. -/
+/-- **Complex measure with regular total variation.** Let `X` be an R₁ topological space with
+its Borel measurable structure. `RegularComplexMeasure X` is the carrier of that
+submodule; compactness is not required for this measure carrier. -/
 abbrev RegularComplexMeasure (X : Type u) [TopologicalSpace X] [R1Space X]
     [MeasurableSpace X] [BorelSpace X] :=
   ↑(regularComplexMeasureSubmodule X)
 
 namespace RegularComplexMeasure
 
-/-- The defining regularity property. -/
+/-- **Regularity of a regular complex measure's variation.** Let `X` be an R₁ topological
+space with its Borel measurable structure. Let `μ` be a complex measure with regular total
+variation. the positive measure `|μ|` is regular. -/
 theorem variation_regular (mu : RegularComplexMeasure X) :
     (mu : ComplexMeasure X).variation.Regular :=
   mu.property
 
-/-- The real signed component of a regular complex measure. -/
+/-- **Regular signed real coordinate of a complex measure.** Let `X` be an R₁ topological
+space with its Borel measurable structure. Let `μ` be a complex measure with regular total
+variation. `RegularComplexMeasure.re μ` is the real signed part of `μ`, with regular total
+variation. -/
 noncomputable def re (mu : RegularComplexMeasure X) : RegularSignedMeasure X := by
   have hre : VectorMeasure.HasRegularVariation (mu : ComplexMeasure X).re :=
     (ComplexMeasure.hasRegularVariation_iff_re_im (mu : ComplexMeasure X)).mp mu.property |>.1
@@ -81,7 +89,10 @@ noncomputable def re (mu : RegularComplexMeasure X) : RegularSignedMeasure X := 
   rw [SignedMeasure.totalVariation_eq_variation]
   exact hre
 
-/-- The imaginary signed component of a regular complex measure. -/
+/-- **Regular signed imaginary coordinate of a complex measure.** Let `X` be an R₁ topological
+space with its Borel measurable structure. Let `μ` be a complex measure with regular total
+variation. `RegularComplexMeasure.im μ` is the imaginary signed part of `μ`, with regular
+total variation. -/
 noncomputable def im (mu : RegularComplexMeasure X) : RegularSignedMeasure X := by
   have him : VectorMeasure.HasRegularVariation (mu : ComplexMeasure X).im :=
     (ComplexMeasure.hasRegularVariation_iff_re_im (mu : ComplexMeasure X)).mp mu.property |>.2
@@ -90,13 +101,18 @@ noncomputable def im (mu : RegularComplexMeasure X) : RegularSignedMeasure X := 
   rw [SignedMeasure.totalVariation_eq_variation]
   exact him
 
-/-- The regular signed real component has the real part of the underlying complex measure. -/
+/-- **Underlying signed real part of a regular complex measure.** Let `X` be an R₁ topological
+space with its Borel measurable structure. Let `μ` be a complex measure with regular total
+variation. the signed measure underlying `RegularComplexMeasure.re μ` equals `Re μ`. -/
 @[simp]
 theorem coe_re (mu : RegularComplexMeasure X) :
     ((RegularComplexMeasure.re mu : RegularSignedMeasure X) : SignedMeasure X) =
       (mu : ComplexMeasure X).re := rfl
 
-/-- The regular signed imaginary component has the imaginary part of the underlying complex measure. -/
+/-- **Underlying signed imaginary part of a regular complex measure.** Let `X` be an R₁
+topological space with its Borel measurable structure. Let `μ` be a complex measure with
+regular total variation. the signed measure underlying `RegularComplexMeasure.im μ` equals
+`Im μ`. -/
 @[simp]
 theorem coe_im (mu : RegularComplexMeasure X) :
     ((RegularComplexMeasure.im mu : RegularSignedMeasure X) : SignedMeasure X) =
@@ -106,7 +122,9 @@ end RegularComplexMeasure
 
 variable [CompactSpace X] [T2Space X]
 
-/-- The real-linear pointwise inclusion of continuous real functions into continuous complex functions. -/
+/-- **Real-linear inclusion of continuous real functions into complex functions.** For any
+topological space `X`, `realContinuousMapCLM : C(X,ℝ) →L[ℝ] C(X,ℂ)` is the pointwise
+scalar inclusion `f(x) ↦ (f(x) : ℂ)`. -/
 @[no_expose]
 noncomputable def realContinuousMapCLM : C(X, ℝ) →L[ℝ] C(X, ℂ) :=
   Complex.ofRealCLM.compLeftContinuous ℝ X
@@ -118,7 +136,8 @@ private def continuousMapImaginaryPart (f : C(X, ℂ)) : C(X, ℝ) :=
   (Complex.imCLM.compLeftContinuous ℝ X) f
 
 omit [R1Space X] [MeasurableSpace X] [BorelSpace X] [CompactSpace X] [T2Space X] in
-/-- The real-to-complex continuous-map inclusion evaluates by the original real scalar inclusion. -/
+/-- **Pointwise value of real continuous-function complexification.** For a topological space
+`X`, `f∈C(X,ℝ)` and `x∈X`, `realContinuousMapCLM f x=(f(x) : ℂ)`. -/
 @[simp]
 theorem realContinuousMapCLM_apply (f : C(X, ℝ)) (x : X) :
     realContinuousMapCLM f x = (f x : ℂ) := by
@@ -142,35 +161,43 @@ private theorem real_imaginary_decomposition (f : C(X, ℂ)) :
   ext x
   simpa [smul_eq_mul, mul_comm] using Complex.re_add_im (f x)
 
-/-- Real part of a complex functional restricted to the real-valued continuous
-functions. -/
+/-- **Real restriction of a continuous complex functional.** For a topological space `X` and
+continuous complex-linear `Λ : C(X,ℂ) → ℂ`, `complexDualRealRestriction Λ` is the
+continuous real-linear functional `f ↦ Re Λ(f_ℂ)` on `C(X,ℝ)`, where `f_ℂ` is pointwise
+complexification. -/
 noncomputable def complexDualRealRestriction (Λ : StrongDual ℂ C(X, ℂ)) :
     StrongDual ℝ C(X, ℝ) :=
   Complex.reCLM.comp ((Λ.restrictScalars ℝ).comp realContinuousMapCLM)
 
-/-- Imaginary part of a complex functional restricted to the real-valued
-continuous functions. -/
+/-- **Imaginary restriction of a continuous complex functional.** For a topological space `X`
+and continuous complex-linear `Λ : C(X,ℂ) → ℂ`, `complexDualImagRestriction Λ` is the
+continuous real-linear functional `f ↦ Im Λ(f_ℂ)` on `C(X,ℝ)`. -/
 noncomputable def complexDualImagRestriction (Λ : StrongDual ℂ C(X, ℂ)) :
     StrongDual ℝ C(X, ℝ) :=
   Complex.imCLM.comp ((Λ.restrictScalars ℝ).comp realContinuousMapCLM)
 
 omit [R1Space X] [MeasurableSpace X] [BorelSpace X] [CompactSpace X] [T2Space X] in
-/-- The real restriction evaluates by taking the real part of the functional on the complexified function. -/
+/-- **Value of the real continuous-dual restriction.** For a topological space `X`, continuous
+complex-linear `Λ` on `C(X,ℂ)` and real continuous `f`, `complexDualRealRestriction Λ f=Re
+Λ(realContinuousMapCLM f)`. -/
 @[simp]
 theorem complexDualRealRestriction_apply
     (Λ : StrongDual ℂ C(X, ℂ)) (f : C(X, ℝ)) :
     complexDualRealRestriction Λ f = (Λ (realContinuousMapCLM f)).re := rfl
 
 omit [R1Space X] [MeasurableSpace X] [BorelSpace X] [CompactSpace X] [T2Space X] in
-/-- The imaginary restriction evaluates by taking the imaginary part of the functional on the
-complexified function. -/
+/-- **Value of the imaginary continuous-dual restriction.** For a topological space `X`,
+continuous complex-linear `Λ` on `C(X,ℂ)` and real continuous `f`,
+`complexDualImagRestriction Λ f=Im Λ(realContinuousMapCLM f)`. -/
 @[simp]
 theorem complexDualImagRestriction_apply
     (Λ : StrongDual ℂ C(X, ℂ)) (f : C(X, ℝ)) :
     complexDualImagRestriction Λ f = (Λ (realContinuousMapCLM f)).im := rfl
 
 omit [R1Space X] [MeasurableSpace X] [BorelSpace X] [T2Space X] in
-/-- The real restriction has operator norm at most the original complex functional's norm. -/
+/-- **Norm of the real restriction bounded by the complex functional norm.** Let `X` be a
+compact topological space and `Λ∈C(X,ℂ)*`. Then `‖complexDualRealRestriction Λ‖≤‖Λ‖`; no
+measurable or Hausdorff structure is required. -/
 theorem norm_complexDualRealRestriction_le (Λ : StrongDual ℂ C(X, ℂ)) :
     ‖complexDualRealRestriction Λ‖ ≤ ‖Λ‖ := by
   apply ContinuousLinearMap.opNorm_le_bound _ (norm_nonneg Λ)
@@ -187,7 +214,9 @@ theorem norm_complexDualRealRestriction_le (Λ : StrongDual ℂ C(X, ℂ)) :
       exact Complex.norm_real (f x)
 
 omit [R1Space X] [MeasurableSpace X] [BorelSpace X] [T2Space X] in
-/-- The imaginary restriction has operator norm at most the original complex functional's norm. -/
+/-- **Norm of the imaginary restriction bounded by the complex functional norm.** Let `X` be a
+compact topological space and `Λ∈C(X,ℂ)*`. Then `‖complexDualImagRestriction Λ‖≤‖Λ‖`,
+without measurable or Hausdorff assumptions. -/
 theorem norm_complexDualImagRestriction_le (Λ : StrongDual ℂ C(X, ℂ)) :
     ‖complexDualImagRestriction Λ‖ ≤ ‖Λ‖ := by
   apply ContinuousLinearMap.opNorm_le_bound _ (norm_nonneg Λ)
@@ -401,8 +430,10 @@ omit [R1Space X] [T2Space X] in
 private theorem continuousMapInclusionCLM_apply (f : C(X, ℂ)) :
     continuousMapInclusionCLM f = BoundedMeasurableFunction.ofContinuousMap f := rfl
 
-/-- Integration against a regular complex measure as a bounded complex
-functional on `C(X, ℂ)`. -/
+/-- **Bounded continuous-function functional of a regular complex measure.** Let `X` be an R₁
+topological space with its Borel measurable structure. Let `μ` be a complex measure with
+regular total variation. Assume `X` is compact, and write `I_μ(f)=∫ f dμ` for `f∈C(X,ℂ)`.
+`complexIntegralDual μ ∈ C(X,ℂ)*` sends `f` to `I_μ(f)`. -/
 @[no_expose]
 noncomputable def complexIntegralDual (mu : RegularComplexMeasure X) :
     StrongDual ℂ C(X, ℂ) := by
@@ -411,8 +442,10 @@ noncomputable def complexIntegralDual (mu : RegularComplexMeasure X) :
   exact (complexIntegralCLM (mu : ComplexMeasure X)).comp continuousMapInclusionCLM
 
 omit [T2Space X] in
-/-- The continuous-function dual associated with a regular complex measure evaluates by complex
-integration. -/
+/-- **Value of the regular complex integral functional.** Let `X` be an R₁ topological space
+with its Borel measurable structure. Let `μ` be a complex measure with regular total
+variation. Assume `X` is compact, and write `I_μ(f)=∫ f dμ` for `f∈C(X,ℂ)`. for
+`f∈C(X,ℂ)`, `complexIntegralDual μ f=complexIntegral μ (ofContinuousMap f)=I_μ(f)`. -/
 @[simp]
 theorem complexIntegralDual_apply
     (mu : RegularComplexMeasure X) (f : C(X, ℂ)) :
@@ -422,7 +455,10 @@ theorem complexIntegralDual_apply
   simp [complexIntegralDual]
 
 omit [T2Space X] in
-/-- The norm of the complex integral functional is bounded by the measure's total variation mass. -/
+/-- **Total variation upper bound of the complex integral norm.** Let `X` be an R₁ topological
+space with its Borel measurable structure. Let `μ` be a complex measure with regular total
+variation. Assume `X` is compact, and write `I_μ(f)=∫ f dμ` for `f∈C(X,ℂ)`.
+`‖complexIntegralDual μ‖≤|μ|.real(X)`. -/
 theorem norm_complexIntegralDual_le (mu : RegularComplexMeasure X) :
     ‖complexIntegralDual mu‖ ≤ (mu : ComplexMeasure X).variation.real univ := by
   let : IsFiniteMeasure (mu : ComplexMeasure X).variation :=
@@ -441,7 +477,9 @@ theorem norm_complexIntegralDual_le (mu : RegularComplexMeasure X) :
         BoundedMeasurableFunction.norm_continuousMapStarAlgHom f]
       ring
 
-/-- Complex integration is linear in a regular complex measure. -/
+/-- **Complex-linear integration map of regular complex measures.** Let `X` be an R₁
+topological space with its Borel measurable structure. Assume `X` is compact.
+`regularComplexMeasureIntegral` sends `μ` to `complexIntegralDual μ ∈ C(X,ℂ)*`. -/
 noncomputable def regularComplexMeasureIntegral :
     RegularComplexMeasure X →ₗ[ℂ] StrongDual ℂ C(X, ℂ) where
   toFun := complexIntegralDual
@@ -465,7 +503,10 @@ noncomputable def regularComplexMeasureIntegral :
     rw [complexIntegral_smul_measure]
 
 omit [T2Space X] in
-/-- The linear map from regular complex measures evaluates through the complex integral functional. -/
+/-- **Evaluation of the linear regular complex-measure integral map.** Let `X` be an R₁
+topological space with its Borel measurable structure. Let `μ` be a complex measure with
+regular total variation. Assume `X` is compact, and write `I_μ(f)=∫ f dμ` for `f∈C(X,ℂ)`.
+for `f∈C(X,ℂ)`, `regularComplexMeasureIntegral μ f=complexIntegralDual μ f`. -/
 @[simp]
 theorem regularComplexMeasureIntegral_apply
     (mu : RegularComplexMeasure X) (f : C(X, ℂ)) :
@@ -538,7 +579,10 @@ private theorem complexIntegralDual_restrictions
       signedComplexIntegral_ofReal, signedComplexIntegral_ofReal]
     simp
 
-/-- The regular complex measure representing a bounded complex functional. -/
+/-- **Regular complex measure representing a bounded complex functional.** Let `X` be a
+compact Hausdorff space with its Borel measurable structure. Let `Λ∈C(X,ℂ)*` be a bounded
+complex-linear functional. `complexRieszMeasure Λ=μ_Λ` is characterized by `∫ f dμ_Λ=Λ(f)`
+for every `f∈C(X,ℂ)`. -/
 noncomputable def complexRieszMeasure (Λ : StrongDual ℂ C(X, ℂ)) :
     RegularComplexMeasure X := by
   let s : RegularSignedMeasure X := signedRieszMeasure (complexDualRealRestriction Λ)
@@ -552,7 +596,9 @@ noncomputable def complexRieszMeasure (Λ : StrongDual ℂ C(X, ℂ)) :
   · rw [VectorMeasure.HasRegularVariation, ← SignedMeasure.totalVariation_eq_variation]
     exact RegularSignedMeasure.totalVariation_regular t
 
-/-- Integrating against the complex Riesz measure recovers the original continuous linear functional. -/
+/-- **Complex Riesz integration recovers its functional.** Let `X` be a compact Hausdorff
+space with its Borel measurable structure. Let `Λ∈C(X,ℂ)*` be a bounded complex-linear
+functional. `complexIntegralDual(complexRieszMeasure Λ)=Λ`. -/
 @[simp]
 theorem complexIntegralDual_complexRieszMeasure (Λ : StrongDual ℂ C(X, ℂ)) :
     complexIntegralDual (complexRieszMeasure Λ) = Λ := by
@@ -562,7 +608,9 @@ theorem complexIntegralDual_complexRieszMeasure (Λ : StrongDual ℂ C(X, ℂ)) 
   · rw [(complexIntegralDual_restrictions (complexRieszMeasure Λ)).2]
     exact signedIntegralDual_signedRieszMeasure (complexDualImagRestriction Λ)
 
-/-- A regular complex measure is determined by its integrals against continuous complex functions. -/
+/-- **Continuous complex integrals determine a regular measure.** Let `X` be a compact
+Hausdorff space with its Borel measurable structure. the map `μ ↦ complexIntegralDual μ`
+is injective on regular complex measures. -/
 theorem complexIntegralDual_injective :
     Function.Injective (complexIntegralDual (X := X)) := by
   intro mu nu h
@@ -584,14 +632,19 @@ theorem complexIntegralDual_injective :
         hre, him, RegularComplexMeasure.coe_re, RegularComplexMeasure.coe_im]
     _ = (nu : ComplexMeasure X) := ComplexMeasure.toComplexMeasure_to_signedMeasure _
 
-/-- The complex Riesz construction recovers a regular complex measure from its integral functional. -/
+/-- **Complex Riesz inversion recovers the regular measure.** Let `X` be a compact Hausdorff
+space with its Borel measurable structure. for regular complex `μ`,
+`complexRieszMeasure(complexIntegralDual μ)=μ`. -/
 @[simp]
 theorem complexRieszMeasure_complexIntegralDual (mu : RegularComplexMeasure X) :
     complexRieszMeasure (complexIntegralDual mu) = mu := by
   apply complexIntegralDual_injective
   rw [complexIntegralDual_complexRieszMeasure]
 
-/-- Complex Riesz--Markov as a complex-linear equivalence. -/
+/-- **Complex-linear Riesz equivalence for regular complex measures.** Let `X` be a compact
+Hausdorff space with its Borel measurable structure. `complexIntegralEquiv :
+RegularComplexMeasure X ≃ₗ[ℂ] C(X,ℂ)*` has forward map continuous integration and inverse
+`complexRieszMeasure`. -/
 noncomputable def complexIntegralEquiv :
     RegularComplexMeasure X ≃ₗ[ℂ] StrongDual ℂ C(X, ℂ) where
   toLinearMap := regularComplexMeasureIntegral
@@ -605,26 +658,35 @@ noncomputable def complexIntegralEquiv :
     change complexIntegralDual (complexRieszMeasure Λ) = Λ
     exact complexIntegralDual_complexRieszMeasure Λ
 
-/-- The complex Riesz equivalence sends a measure to its integral functional. -/
+/-- **Forward value of the complex Riesz equivalence.** Let `X` be a compact Hausdorff space
+with its Borel measurable structure. for regular complex `μ`, `complexIntegralEquiv
+μ=complexIntegralDual μ`. -/
 @[simp]
 theorem complexIntegralEquiv_apply (mu : RegularComplexMeasure X) :
     complexIntegralEquiv mu = complexIntegralDual mu := by
   rfl
 
-/-- The inverse complex Riesz equivalence is the constructed representing measure. -/
+/-- **Inverse value of the complex Riesz equivalence.** Let `X` be a compact Hausdorff space
+with its Borel measurable structure. Let `Λ∈C(X,ℂ)*` be a bounded complex-linear
+functional. `complexIntegralEquiv.symm Λ=complexRieszMeasure Λ`. -/
 @[simp]
 theorem complexIntegralEquiv_symm_apply (Λ : StrongDual ℂ C(X, ℂ)) :
     (complexIntegralEquiv (X := X)).symm Λ = complexRieszMeasure Λ := by
   rfl
 
-/-- The complex Riesz representing measure commutes with complex scalar multiplication. -/
+/-- **Complex scalar compatibility of the Riesz inverse.** Let `X` be a compact Hausdorff
+space with its Borel measurable structure. Let `Λ∈C(X,ℂ)*` be a bounded complex-linear
+functional. for `c∈ℂ`, `complexRieszMeasure(c • Λ)=c • complexRieszMeasure Λ`. -/
 @[simp]
 theorem complexRieszMeasure_smul (c : ℂ) (Λ : StrongDual ℂ C(X, ℂ)) :
     complexRieszMeasure (c • Λ) = c • complexRieszMeasure Λ := by
   simpa only [complexIntegralEquiv_symm_apply] using
     (complexIntegralEquiv (X := X)).symm.map_smul c Λ
 
-/-- A finite bound for the actual Riesz measure's Borel integral, needed to construct bounded operator coefficients. -/
+/-- **Bounded-measurable integral estimate for a complex Riesz measure.** Let `X` be a compact
+Hausdorff space with its Borel measurable structure. Let `Λ∈C(X,ℂ)*` be a bounded
+complex-linear functional. for every bounded measurable `f : X → ℂ`, `|complexIntegral
+(complexRieszMeasure Λ) f|≤2*‖Λ‖*‖f‖∞`. -/
 theorem norm_complexIntegral_complexRieszMeasure_le_two
     (Λ : StrongDual ℂ C(X, ℂ)) (phi : BoundedMeasurableFunction X) :
     ‖complexIntegral (complexRieszMeasure Λ : ComplexMeasure X) phi‖ ≤ 2 * ‖Λ‖ * ‖phi‖ := by

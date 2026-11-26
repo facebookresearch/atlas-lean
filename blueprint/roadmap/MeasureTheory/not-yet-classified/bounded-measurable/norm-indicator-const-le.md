@@ -1,3 +1,6 @@
-# Norm indicator Const le
+# Supremum norm of a scalar indicator is bounded by its value
 
-The norm of a constant-valued indicator is at most the norm of its value.
+Let `X` be a measurable
+space. Bounded measurable complex functions have pointwise equality and norm `‖f‖∞=sup_x
+|f(x)|`, zero on an empty source. for measurable `s` and `c∈ℂ`, `‖indicatorConst s
+c‖∞≤|c|`.

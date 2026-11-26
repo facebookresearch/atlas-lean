@@ -1,3 +1,6 @@
-# Conjugate Complex Operator
+# Bounded complex operator transported by a conjugate isometry
 
-The actual bounded complex-linear operator J A J^(-1) for the given conjugate-linear isometry.
+Let `H,K` be complex
+normed spaces in independent universes and `J : H ≃ₗᵢ⋆[ℂ] K` a conjugate-linear isometric
+equivalence. for `A : H →L[ℂ] H`, `conjugateComplexOperator J A : K →L[ℂ] K` is `J A J⁻¹`;
+the two conjugate scalar actions cancel.

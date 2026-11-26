@@ -1,11 +1,11 @@
-# Open Normal Below Open
+# Ambient open normal subgroups inside a fixed open subgroup
 
-## Open Normal Subgroup
+## Open normal subgroups inside a given open subgroup
 
-- [Below Open](below-open.md)
+- [Ambient open normal subgroup bounded by an open subgroup](below-open.md)
 
-## Below Open
+## Inclusion of restricted open-normal index sets
 
-- [Obj Embedding](obj-embedding.md)
-- [Inclusion](inclusion.md)
-- [Comap Functor](comap-functor.md)
+- [Injective inclusion of bounded open normals into all ambient ones](obj-embedding.md)
+- [Functor including bounded ambient open normal indices](inclusion.md)
+- [Preimage index functor from ambient normals to the open subgroup](comap-functor.md)

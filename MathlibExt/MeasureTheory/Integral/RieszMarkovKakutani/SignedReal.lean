@@ -17,13 +17,15 @@ public import MathlibExt.MeasureTheory.Measure.RegularSignedMeasure
 public import MathlibExt.MeasureTheory.VectorMeasure.RegularVariation
 
 /-!
-# Signed real Riesz--Markov representation on compact spaces
+# Signed real Riesz representation with exact variation norm
 
-For a compact Hausdorff Borel space, integration identifies the real bounded dual of `C(X, ℝ)`
-with the real signed measures whose total variation is regular.  The inverse is constructed from
-the positive and negative functionals in the Jordan decomposition of a bounded functional.  The
-two representing positive measures are proved mutually singular, so their sum is the canonical
-total variation and its mass is exactly the operator norm.
+On a compact Hausdorff Borel space, every bounded real functional `F : C(X,ℝ) → ℝ` is
+represented by a unique regular signed measure. Its positive and negative Jordan measures
+represent the positive and negative functional parts and are mutually singular.
+
+Integration gives a real-linear equivalence between regular signed measures and the bounded real
+dual. Total variation mass equals the functional's operator norm: `|s|(X)=‖I_s‖`, and
+`|signedRieszMeasure F|(X)=‖F‖`.
 -/
 
 public section
@@ -96,30 +98,44 @@ private theorem positiveSub_apply (P Q : C(X, ℝ) →P[ℝ] ℝ)
     positiveSub P Q hQP f = P f - Q f :=
   rfl
 
-/-- The positive representing measure of the Jordan positive functional. -/
+/-- **Positive measure representing the Jordan positive functional.** Let `X` be a compact
+Hausdorff space with its Borel measurable structure. Let `F∈C(X,ℝ)*` be a bounded
+real-linear functional. `signedRieszPositivePart F` is the finite regular positive measure
+representing the Jordan positive part `F⁺`. -/
 noncomputable def signedRieszPositivePart (F : StrongDual ℝ C(X, ℝ)) : Measure X :=
   continuousRieszMeasure (realDualJordan F).pos
 
-/-- The positive representing measure of the Jordan negative functional. -/
+/-- **Positive measure representing the Jordan negative functional.** Let `X` be a compact
+Hausdorff space with its Borel measurable structure. Let `F∈C(X,ℝ)*` be a bounded
+real-linear functional. `signedRieszNegativePart F` represents `F⁻`, the positive part of
+`-F`, as a finite regular positive measure. -/
 noncomputable def signedRieszNegativePart (F : StrongDual ℝ C(X, ℝ)) : Measure X :=
   continuousRieszMeasure (realDualJordan F).neg
 
-/-- The positive representing measure in the signed Riesz construction is regular. -/
+/-- **Regularity of the signed Riesz positive part.** Let `X` be a compact Hausdorff space
+with its Borel measurable structure. Let `F∈C(X,ℝ)*` be a bounded real-linear functional.
+`signedRieszPositivePart F` is regular. -/
 theorem signedRieszPositivePart_regular (F : StrongDual ℝ C(X, ℝ)) :
     (signedRieszPositivePart F).Regular :=
   continuousRieszMeasure_regular (realDualJordan F).pos
 
-/-- The negative representing measure in the signed Riesz construction is regular. -/
+/-- **Regularity of the signed Riesz negative part.** Let `X` be a compact Hausdorff space
+with its Borel measurable structure. Let `F∈C(X,ℝ)*` be a bounded real-linear functional.
+`signedRieszNegativePart F` is regular. -/
 theorem signedRieszNegativePart_regular (F : StrongDual ℝ C(X, ℝ)) :
     (signedRieszNegativePart F).Regular :=
   continuousRieszMeasure_regular (realDualJordan F).neg
 
-/-- The positive representing measure in the signed Riesz construction is finite. -/
+/-- **Finiteness of the signed Riesz positive part.** Let `X` be a compact Hausdorff space
+with its Borel measurable structure. Let `F∈C(X,ℝ)*` be a bounded real-linear functional.
+`signedRieszPositivePart F` has finite total mass. -/
 theorem signedRieszPositivePart_finite (F : StrongDual ℝ C(X, ℝ)) :
     IsFiniteMeasure (signedRieszPositivePart F) :=
   continuousRieszMeasure_finite (realDualJordan F).pos
 
-/-- The negative representing measure in the signed Riesz construction is finite. -/
+/-- **Finiteness of the signed Riesz negative part.** Let `X` be a compact Hausdorff space
+with its Borel measurable structure. Let `F∈C(X,ℝ)*` be a bounded real-linear functional.
+`signedRieszNegativePart F` has finite total mass. -/
 theorem signedRieszNegativePart_finite (F : StrongDual ℝ C(X, ℝ)) :
     IsFiniteMeasure (signedRieszNegativePart F) :=
   continuousRieszMeasure_finite (realDualJordan F).neg
@@ -185,13 +201,19 @@ private theorem continuousRieszMeasure_mutuallySingular
   change lambda = 0
   exact hlambda
 
-/-- The positive and negative representing measures are mutually singular. -/
+/-- **Mutual singularity of the two Jordan representing measures.** Let `X` be a compact
+Hausdorff space with its Borel measurable structure. Let `F∈C(X,ℝ)*` be a bounded
+real-linear functional. `signedRieszPositivePart F` and `signedRieszNegativePart F` are
+mutually singular. -/
 theorem signedRieszParts_mutuallySingular (F : StrongDual ℝ C(X, ℝ)) :
     signedRieszPositivePart F ⟂ₘ signedRieszNegativePart F := by
   apply continuousRieszMeasure_mutuallySingular
   rw [(realDualJordan F).sub_eq, (realDualJordan F).norm_eq]
 
-/-- The Jordan decomposition formed by the two positive Riesz measures. -/
+/-- **Jordan measure pair of a bounded real functional.** Let `X` be a compact Hausdorff space
+with its Borel measurable structure. Let `F∈C(X,ℝ)*` be a bounded real-linear functional.
+`signedRieszJordan F` is the Jordan decomposition with the two finite mutually singular
+positive measures representing `F⁺` and `F⁻`. -/
 noncomputable def signedRieszJordan (F : StrongDual ℝ C(X, ℝ)) : JordanDecomposition X where
   posPart := signedRieszPositivePart F
   negPart := signedRieszNegativePart F
@@ -199,7 +221,10 @@ noncomputable def signedRieszJordan (F : StrongDual ℝ C(X, ℝ)) : JordanDecom
   negPart_finite := signedRieszNegativePart_finite F
   mutuallySingular := signedRieszParts_mutuallySingular F
 
-/-- The regular signed measure representing a bounded functional on `C(X, ℝ)`. -/
+/-- **Regular signed measure representing a bounded real functional.** Let `X` be a compact
+Hausdorff space with its Borel measurable structure. Let `F∈C(X,ℝ)*` be a bounded
+real-linear functional. `signedRieszMeasure F` is the signed measure `μ_(F⁺)-μ_(F⁻)` with
+continuous integral functional `F`. -/
 noncomputable def signedRieszMeasure (F : StrongDual ℝ C(X, ℝ)) : RegularSignedMeasure X := by
   let _ : (signedRieszPositivePart F).Regular := signedRieszPositivePart_regular F
   let _ : (signedRieszNegativePart F).Regular := signedRieszNegativePart_regular F
@@ -215,7 +240,10 @@ noncomputable def signedRieszMeasure (F : StrongDual ℝ C(X, ℝ)) : RegularSig
       (signedRieszNegativePart F).toSignedMeasure)
   exact SignedMeasure.hasRegularVariation_toSignedMeasure_sub _ _
 
-/-- The underlying signed Riesz measure is the difference of its constructed positive and negative parts. -/
+/-- **Signed Riesz measure as its Jordan positive-minus-negative pair.** Let `X` be a compact
+Hausdorff space with its Borel measurable structure. Let `F∈C(X,ℝ)*` be a bounded
+real-linear functional. the signed measure underlying `signedRieszMeasure F` is
+`(signedRieszJordan F).toSignedMeasure`. -/
 @[simp]
 theorem coe_signedRieszMeasure (F : StrongDual ℝ C(X, ℝ)) :
     ((signedRieszMeasure F : RegularSignedMeasure X) : SignedMeasure X) =
@@ -224,8 +252,10 @@ theorem coe_signedRieszMeasure (F : StrongDual ℝ C(X, ℝ)) :
     unfold signedRieszMeasure
     rfl
 
-/-- The canonical Jordan decomposition of `signedRieszMeasure F` is the pair constructed from the
-positive and negative functionals of `F`. -/
+/-- **Canonical Jordan pair of the signed Riesz measure.** Let `X` be a compact Hausdorff
+space with its Borel measurable structure. Let `F∈C(X,ℝ)*` be a bounded real-linear
+functional. the Jordan decomposition of `signedRieszMeasure F` equals `signedRieszJordan
+F`. -/
 theorem signedRieszMeasure_toJordanDecomposition (F : StrongDual ℝ C(X, ℝ)) :
     ((signedRieszMeasure F : RegularSignedMeasure X) : SignedMeasure X).toJordanDecomposition =
       signedRieszJordan F := by
@@ -239,7 +269,9 @@ private theorem continuousMap_integrable_toSignedMeasure (mu : Measure X) [IsFin
   rw [Measure.variation_toSignedMeasure]
   exact f.continuous.integrable_of_hasCompactSupport (HasCompactSupport.of_compactSpace f)
 
-/-- Integrating against the constructed signed measure recovers the original functional. -/
+/-- **Signed Riesz integration recovers the bounded real functional.** Let `X` be a compact
+Hausdorff space with its Borel measurable structure. Let `F∈C(X,ℝ)*` be a bounded
+real-linear functional. `signedIntegralDual(signedRieszMeasure F)=F`. -/
 @[simp]
 theorem signedIntegralDual_signedRieszMeasure (F : StrongDual ℝ C(X, ℝ)) :
     RegularSignedMeasure.signedIntegralDual (signedRieszMeasure F) = F := by
@@ -304,7 +336,9 @@ private theorem regular_crossSum_eq
     integral_add_measure (f.integrable (μ := nuP)) (f.integrable (μ := muN))]
   exact sub_eq_sub_iff_add_eq_add.mp (h f.toContinuousMap)
 
-/-- Integration separates regular signed measures. -/
+/-- **Continuous integration separates regular signed measures.** Let `X` be a compact
+Hausdorff space with its Borel measurable structure. the map `s ↦ (f ↦ ∫ f ds)` from
+regular signed measures to `C(X,ℝ)*` is injective. -/
 theorem signedIntegralDual_injective :
     Function.Injective
       (RegularSignedMeasure.signedIntegralDual (X := X)) := by
@@ -353,8 +387,10 @@ theorem signedIntegralDual_injective :
     _ = (t : SignedMeasure X).toJordanDecomposition.toSignedMeasure := rfl
     _ = (t : SignedMeasure X) := SignedMeasure.toSignedMeasure_toJordanDecomposition _
 
-/-- The constructed signed Riesz measure is the unique regular signed measure representing the
-given functional. -/
+/-- **Uniqueness of a regular signed representing measure.** Let `X` be a compact Hausdorff
+space with its Borel measurable structure. Let `F∈C(X,ℝ)*` be a bounded real-linear
+functional. if regular signed `s` satisfies `signedIntegralDual s=F`, then
+`signedRieszMeasure F=s`. -/
 theorem signedRieszMeasure_unique (F : StrongDual ℝ C(X, ℝ))
     (s : RegularSignedMeasure X)
     (h : RegularSignedMeasure.signedIntegralDual s = F) :
@@ -362,14 +398,18 @@ theorem signedRieszMeasure_unique (F : StrongDual ℝ C(X, ℝ))
   apply signedIntegralDual_injective
   rw [signedIntegralDual_signedRieszMeasure, h]
 
-/-- Applying the inverse construction to signed integration recovers the signed measure. -/
+/-- **Riesz inversion recovers a regular signed measure.** Let `X` be a compact Hausdorff
+space with its Borel measurable structure. for regular signed `s`,
+`signedRieszMeasure(signedIntegralDual s)=s`. -/
 @[simp]
 theorem signedRieszMeasure_signedIntegralDual (s : RegularSignedMeasure X) :
     signedRieszMeasure (RegularSignedMeasure.signedIntegralDual s) = s :=
   signedRieszMeasure_unique _ s rfl
 
-/-- Integration is a real-linear equivalence from regular signed measures to the bounded real dual
-of `C(X, ℝ)`. -/
+/-- **Real-linear Riesz equivalence of regular signed measures.** Let `X` be a compact
+Hausdorff space with its Borel measurable structure. `signedIntegralEquiv :
+RegularSignedMeasure X ≃ₗ[ℝ] C(X,ℝ)*` sends `s` to continuous integration and has inverse
+`signedRieszMeasure`. -/
 noncomputable def signedIntegralEquiv :
     RegularSignedMeasure X ≃ₗ[ℝ] StrongDual ℝ C(X, ℝ) where
   toLinearMap :=
@@ -380,7 +420,9 @@ noncomputable def signedIntegralEquiv :
   left_inv := signedRieszMeasure_signedIntegralDual
   right_inv := signedIntegralDual_signedRieszMeasure
 
-/-- The signed Riesz equivalence sends a regular signed measure to its integral functional. -/
+/-- **Forward value of the real signed Riesz equivalence.** Let `X` be a compact Hausdorff
+space with its Borel measurable structure. for regular signed `s`, `signedIntegralEquiv
+s=signedIntegralDual s`. -/
 @[simp]
 theorem signedIntegralEquiv_apply (s : RegularSignedMeasure X) :
     signedIntegralEquiv s = RegularSignedMeasure.signedIntegralDual s :=
@@ -388,7 +430,9 @@ theorem signedIntegralEquiv_apply (s : RegularSignedMeasure X) :
     unfold signedIntegralEquiv
     rfl
 
-/-- The inverse signed Riesz equivalence is the constructed representing signed measure. -/
+/-- **Inverse value of the real signed Riesz equivalence.** Let `X` be a compact Hausdorff
+space with its Borel measurable structure. Let `F∈C(X,ℝ)*` be a bounded real-linear
+functional. `signedIntegralEquiv.symm F=signedRieszMeasure F`. -/
 @[simp]
 theorem signedIntegralEquiv_symm_apply (F : StrongDual ℝ C(X, ℝ)) :
     (signedIntegralEquiv (X := X)).symm F = signedRieszMeasure F :=
@@ -396,8 +440,9 @@ theorem signedIntegralEquiv_symm_apply (F : StrongDual ℝ C(X, ℝ)) :
     unfold signedIntegralEquiv
     rfl
 
-/-- The canonical total variation of the constructed signed measure has mass equal to the operator
-norm of the original functional. -/
+/-- **Total variation mass of a signed representing measure.** Let `X` be a compact Hausdorff
+space with its Borel measurable structure. Let `F∈C(X,ℝ)*` be a bounded real-linear
+functional. `|signedRieszMeasure F|.real(X)=‖F‖`. -/
 @[simp]
 theorem totalVariation_signedRieszMeasure (F : StrongDual ℝ C(X, ℝ)) :
     ((signedRieszMeasure F : RegularSignedMeasure X) : SignedMeasure X).totalVariation.real univ =
@@ -410,7 +455,9 @@ theorem totalVariation_signedRieszMeasure (F : StrongDual ℝ C(X, ℝ)) :
     continuousRieszMeasure_real_univ, continuousRieszMeasure_real_univ]
   exact (realDualJordan F).norm_eq.symm
 
-/-- The operator norm of signed integration is exactly the mass of the total variation. -/
+/-- **Exact variation norm of signed integration.** Let `X` be a compact Hausdorff space with
+its Borel measurable structure. for regular signed `s`, `‖signedIntegralDual
+s‖=|s|.real(X)`. -/
 theorem norm_signedIntegralDual_eq_totalVariation (s : RegularSignedMeasure X) :
     ‖RegularSignedMeasure.signedIntegralDual s‖ =
       (s : SignedMeasure X).totalVariation.real univ := by
@@ -419,7 +466,9 @@ theorem norm_signedIntegralDual_eq_totalVariation (s : RegularSignedMeasure X) :
   rw [signedRieszMeasure_signedIntegralDual] at h
   exact h.symm
 
-/-- The inverse signed Riesz construction is real-linear, including for negative scalars. -/
+/-- **Real scalar compatibility of the signed Riesz inverse.** Let `X` be a compact Hausdorff
+space with its Borel measurable structure. Let `F∈C(X,ℝ)*` be a bounded real-linear
+functional. for every `c∈ℝ`, `signedRieszMeasure(c • F)=c • signedRieszMeasure F`. -/
 @[simp]
 theorem signedRieszMeasure_smul (c : ℝ) (F : StrongDual ℝ C(X, ℝ)) :
     signedRieszMeasure (c • F) = c • signedRieszMeasure F := by

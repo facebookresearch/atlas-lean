@@ -1,6 +1,6 @@
-# Profinite Coset Limit
+# Coset space of a subgroup intersection as an inverse limit
 
-- [Antitone Coset System](antitone-coset-system.md)
-- [I Inf Coset Cone](i-inf-coset-cone.md)
-- [I Inf Coset Cone π app](i-inf-coset-cone-app.md)
-- [I Inf Coset Cone Is Limit](i-inf-coset-cone-is-limit.md)
+- [Inverse system of antitone subgroup coset spaces](antitone-coset-system.md)
+- [Coset cone from the subgroup intersection](i-inf-coset-cone.md)
+- [Component of the subgroup-intersection coset cone](i-inf-coset-cone-app.md)
+- [Limit property of a compact closed-subgroup intersection cone](i-inf-coset-cone-is-limit.md)

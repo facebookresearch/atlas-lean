@@ -1,3 +1,6 @@
-# Integral Right Positive Linear Map
+# Positive linear second-coordinate integral map
 
-Coordinate integration is an actual positive linear map on compact-support functions.
+Let `X` be Hausdorff, `Y` a
+topological space with a measurable structure making open sets measurable, and `ν` finite
+on compact sets. Assume also that `Y` is Hausdorff. `integralRightPositiveLinearMap ν`
+sends `f∈C_c(X×Y,ℝ)` to `integralRight ν f`, preserving addition, real scalars and order.

@@ -1,3 +1,6 @@
-# Norm complex Integral complex Riesz Measure le two
+# Bounded-measurable integral estimate for a complex Riesz measure
 
-A finite bound for the actual Riesz measure's Borel integral, needed to construct bounded operator coefficients.
+Let `X` be a compact
+Hausdorff space with its Borel measurable structure. Let `Λ∈C(X,ℂ)*` be a bounded
+complex-linear functional. for every bounded measurable `f : X → ℂ`, `|complexIntegral
+(complexRieszMeasure Λ) f|≤2*‖Λ‖*‖f‖∞`.

@@ -1,4 +1,4 @@
-# Character Multiplier Continuous
+# Strong continuity of compact-open character multiplication
 
-- [Character Multiplier continuous](character-multiplier-continuous.md)
-- [Character Multiplier Representation](character-multiplier-representation.md)
+- [Norm-continuous character orbit of an L² vector](character-multiplier-continuous.md)
+- [Strongly continuous character representation on Hilbert-valued L²](character-multiplier-representation.md)

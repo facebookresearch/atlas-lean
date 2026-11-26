@@ -1,4 +1,6 @@
-# Has Regular Variation iff jordan Parts regular
+# Regular signed variation exactly when both Jordan parts are regular
 
-A signed measure has regular variation exactly when both measures in its Jordan decomposition
-are regular.
+Let `X` be an R₁
+topological space with its Borel measurable structure. for `s : SignedMeasure X`,
+`HasRegularVariation s` is equivalent to regularity of both `s⁺` and `s⁻` in its Jordan
+decomposition.

@@ -1,9 +1,9 @@
-# Directed System
+# Eventual vanishing in directed module tensor systems
 
-## Tensor Product
+## Eventual vanishing of stage tensors
 
-- [Exists eq zero of map to direct Limit tensor eq zero](exists-eq-zero-of-map-to-direct-limit-te.md)
+- [Stage tensor vanishing in a direct limit is eventually zero](exists-eq-zero-of-map-to-direct-limit-te.md)
 
-## Direct Limit
+## Common stages for finite vanishing families
 
-- [Zero exact finite family](zero-exact-finite-family.md)
+- [A finite family of zero classes is killed at one stage](zero-exact-finite-family.md)

@@ -14,13 +14,14 @@ module
 public import MathlibExt.Analysis.VonNeumannAlgebra.NormalHom.RangeAnnihilator
 
 /-!
-# The actual faithful normal operator range is ultraweak closed
+# Ultraweak closedness of an injective normal homomorphism's range
 
-The proved original range-annihilator characterization identifies the
-actual ultraweak map range with the intersection of zero sets of original
-normal-functional evaluations annihilating its predual kernel. Every such
-evaluation is actually ultraweak continuous. Their intersection is closed.
-No range-closedness, predual quotient or inverse/model certificate is input.
+Let `f : M → N` be an injective normal unital complex star homomorphism between concrete von
+Neumann algebras. Its range is closed in the ultraweak topology `σ(N,N_*)`.
+
+The range is characterized by vanishing normal-functional evaluations corresponding to the
+kernel of the pullback `N_* → M_*`. The conclusion does not assume a normal inverse or prior
+closedness of the range.
 -/
 
 @[expose] public section
@@ -38,7 +39,12 @@ variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [Complete
 variable {K : Type v} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
 variable {M : VonNeumannAlgebra H} {N : VonNeumannAlgebra K}
 
-/-- The actual original faithful normal-map range is closed in the original target ultraweak topology. -/
+/-- **Ultraweak closed range of an injective normal map.** Let `M,N` be concrete von Neumann
+algebras on complete complex Hilbert spaces. Their normal-functional Banach spaces
+`M_*,N_*` are the norm-closed spans of vector functionals, and their ultraweak topologies
+are `σ(M,M_*)`, `σ(N,N_*)`. Let `f : M → N` be a unital complex star homomorphism that is
+ultraweakly continuous. Assume `f` is injective. the range of `f.ultraweakMap : Ultraweak
+M → Ultraweak N` is closed in the ultraweak topology of `N`. -/
 theorem ultraweak_range_isClosed (f : NormalStarAlgHom M N) (hf : Function.Injective f) :
     IsClosed (Set.range f.ultraweakMap) := by
   have hrange : Set.range f.ultraweakMap =

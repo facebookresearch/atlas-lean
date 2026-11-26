@@ -1,3 +1,4 @@
-# Pi Lp Star Alg Equiv apply
+# Column formula of the C-star matrix equivalence
 
-The C-star copy acts by the same actual operator column sum.
+For complex Hilbert H,I finite,X∈CStarMatrix I I B(H) and v∈H^I, CStarMatrix.piLpStarAlgEquiv
+X v i=∑jX_ij(v_j).

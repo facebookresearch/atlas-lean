@@ -16,12 +16,12 @@ public import Mathlib.MeasureTheory.Integral.Bochner.SumMeasure
 public import Mathlib.MeasureTheory.Integral.Bochner.Set
 
 /-!
-# Counting integrals of actual finitely supported vector functions
+# Counting integral of a finitely supported vector function
 
-A vector function supported on a literal finite set has its counting
-integral equal to the original finite sum. The domain may be uncountable;
-only measurability of its singletons is required. This supports the actual
-counting-Haar specialization of compact-source convolution and L1 gauges.
+Let `X` be measurable with measurable singletons and `E` a real Banach space. If `f : X → E`
+vanishes outside a finite set `s`, then `∫ f dcount=Σ_x∈s f(x)`.
+
+The source may be uncountable; no topology or global sigma-finiteness is required.
 -/
 
 @[expose] public section
@@ -38,7 +38,9 @@ universe uX uE
 variable {X : Type uX} [MeasurableSpace X] [MeasurableSingletonClass X]
 variable {E : Type uE} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
 
-/-- Counting integration on an actual finite support is its literal vector sum, with no countability. -/
+/-- **Finite sum formula for a counting integral.** Let `X` be a measurable space with
+measurable singletons, `E` a complete real normed space, `f : X → E` and `s : Finset X`.
+If `f(x)=0` outside `s`, then `∫ f dcount=Σ_x∈s f(x)`, without countability of `X`. -/
 theorem integral_count_eq_finset_sum (f : X → E) (s : Finset X)
     (hsupport : ∀ x : X, x ∉ s → f x = 0) :
     (∫ x : X, f x ∂Measure.count) = ∑ x ∈ s, f x := by

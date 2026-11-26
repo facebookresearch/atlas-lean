@@ -16,13 +16,14 @@ public import MathlibExt.Analysis.InnerProductSpace.Group.HaarRegularRepresentat
 public import MathlibExt.Analysis.InnerProductSpace.Group.HaarRightRegularRepresentation
 
 /-!
-# The original left and right Haar representations in an abelian group
+# Left and right regular representations of an abelian group
 
-A locally compact commutative group has trivial modular character. The
-actual normalized right action on Haar `L²(G,H)` is therefore exactly the
-left action by the inverse element. This comparison supplies the original
-regular-representation identification used in the abelian dual action and
-Takai statements, on the same actual Haar carrier and all Hilbert universes.
+For a locally compact abelian Borel topological group and regular Haar measure, the modular
+character is one. Normalized right translation therefore equals left translation by the inverse:
+`R_g=λ_(g⁻¹)`.
+
+The equality is on the same Hilbert-valued Haar L² space, with complete complex Hilbert
+coefficients. No Hausdorff or nonzero coefficient-space hypothesis is imposed.
 -/
 
 @[expose] public section
@@ -43,7 +44,10 @@ variable (G : Type uG) [CommGroup G] [TopologicalSpace G] [IsTopologicalGroup G]
 variable (μ : Measure G) [μ.IsHaarMeasure] [μ.Regular]
 variable (H : Type uH) [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- The actual abelian right regular unitary is the actual inverse left regular unitary. -/
+/-- **Abelian right regular unitary equals inverse left translation.** Let `G` be a locally
+compact abelian Borel topological group, `μ` regular Haar measure and `H` a complete
+complex Hilbert space. For `g∈G`, `haarRightRegular G μ H g=haarLeftRegular G μ H g⁻¹`,
+since `Δ(g)=1` and `xg=gx`. -/
 theorem haarRightRegular_eq_haarLeftRegular_inv (g : G) :
     haarRightRegular G μ H g = haarLeftRegular G μ H g⁻¹ := by
   apply Subtype.ext

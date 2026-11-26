@@ -1,4 +1,5 @@
-# Index
+# Additive index formula for a product map
 
-The integer index is additive for products with finite kernels and cokernels.
-No finite-dimensional assumption is imposed on an ambient source or target.
+Let k be a division ring, S:E₀→F₀,T:E₁→F₁ linear, and assume ker S,ker T,F₀/range S,F₁/range T
+finite-dimensional. Then (S.prodMap T).index=S.index+T.index in ℤ, with index the kernel
+dimension minus cokernel dimension.

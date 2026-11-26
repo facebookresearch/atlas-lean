@@ -1,3 +1,9 @@
-# Regular Coefficient vector Functional mem normal Functional Space
+# Normal pullback of every Haar L² vector coefficient
 
-Every actual regular coefficient vector pullback lies in the original complete normal-functional space.
+Let `G` be a group with a
+topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann algebra,
+and `α` a normal action with norm-continuous inverse predual orbits. Assume `G` is a
+topological group. Assume `G` is locally compact with its Borel measurable structure, and
+`μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`. Haar invariance
+is not assumed. Assume additionally that `μ` is a Haar measure. for `ξ,η∈L`, the
+functional `x ↦ ⟨ξ,P_xη⟩` belongs to the normal-functional space `M_*`.

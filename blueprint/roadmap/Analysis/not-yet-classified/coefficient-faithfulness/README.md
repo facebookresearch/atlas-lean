@@ -1,5 +1,5 @@
-# Coefficient Faithfulness
+# Faithfulness of Haar regular coefficient maps
 
-- [Regular Coefficient injective](regular-coefficient-injective.md)
-- [Regular Coefficient Tensor injective](regular-coefficient-tensor-injective.md)
-- [Regular Coefficient Spatial Normal Hom injective](regular-coefficient-spatial-normal-hom-i.md)
+- [Injective Haar regular coefficient star representation](regular-coefficient-injective.md)
+- [Injective Hilbert-first Haar tensor coefficient representation](regular-coefficient-tensor-injective.md)
+- [Faithful normal Haar coefficient map in its spatial ambient](regular-coefficient-spatial-normal-hom-i.md)

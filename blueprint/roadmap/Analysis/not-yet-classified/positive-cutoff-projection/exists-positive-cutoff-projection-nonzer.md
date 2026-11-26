@@ -1,3 +1,6 @@
-# Exists positive Cutoff Projection nonzero
+# Nonzero positive operator has a nonzero positive-threshold cutoff
 
-Every nonzero original positive operator has a genuine positive threshold with nonzero cutoff.
+Let `H` be a
+complete complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. For positive
+`a∈M` and `r : ℝ`, put `p_r(a)=s((a-rI)⁺)`, the support of the positive part. if `a≠0`,
+there exists `t>0` with `p_t(a)≠0`.

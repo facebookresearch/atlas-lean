@@ -15,12 +15,12 @@ public import MathlibExt.LinearAlgebra.MatrixSpace.Blowup
 public import Mathlib.LinearAlgebra.Matrix.Rank
 
 /-!
-# Range and rank of a matrix tensored with the identity
+# Range and rank of tensoring a matrix with an identity
 
-The actual map `A ⊗ I` applies `A` independently to each block column. Its range
-is the column amplification of the range of `A`, and its rank is the rank of `A`
-times the number of block columns. The matrix may be rectangular, with an arbitrary
-row type and a finite column type. Empty identity indices are included.
+Let i be any row type, j a finite column type, d a finite identity index and A:Matrix i j R.
+The Kronecker matrix A⊗I_d acts independently on the d columns. Over a commutative semiring,
+its range consists of vectors whose every d-column lies in range(A). Over a field,
+rank(A⊗I_d)=rank(A)|d|. Empty identity indices are included.
 -/
 
 @[expose] public section
@@ -58,7 +58,12 @@ private theorem kronecker_one_insert (A : Matrix i j R) (a : d) (x : j → R) :
     rw [hp, Matrix.mulVec_zero] at hc
     simpa [LinearMap.columnInsert_apply, h] using hc
 
-/-- Tensoring a matrix with the identity amplifies its actual range column by column. -/
+/-- **Column amplification of the range under a Kronecker identity.**
+
+Let R be a commutative semiring, i any row type, j,d finite index types and A:Matrix i j R.
+Then range((A⊗I_d).mulVecLin)=range(A.mulVecLin).columnAmplification d, the vectors with each
+d-column in range(A).
+-/
 theorem range_kronecker_one (A : Matrix i j R) :
     (A ⊗ₖ (1 : Matrix d d R)).mulVecLin.range = A.mulVecLin.range.columnAmplification d := by
   apply le_antisymm
@@ -81,7 +86,11 @@ section Field
 
 variable {K : Type u} [Field K]
 
-/-- Tensoring with a finite identity matrix multiplies rank by its size, including size zero. -/
+/-- **Rank multiplied by the size of a Kronecker identity.**
+
+Let K be a field, i any row type, j,d finite index types and A:Matrix i j K. Then
+rank(A⊗I_d)=rank(A)*|d|, also when d is empty.
+-/
 theorem rank_kronecker_one (A : Matrix i j K) :
     (A ⊗ₖ (1 : Matrix d d K)).rank = A.rank * Fintype.card d := by
   change Module.finrank K (A ⊗ₖ (1 : Matrix d d K)).mulVecLin.range =

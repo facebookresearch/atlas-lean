@@ -16,12 +16,13 @@ public import Mathlib.LinearAlgebra.Matrix.ToLin
 public import Mathlib.LinearAlgebra.Matrix.Nondegenerate
 
 /-!
-# Actual matrix coordinates for the full pivot cokernel
+# Pivot coordinates and cokernel lengths
 
-The coordinate equivalence is the existing sum decomposition and evaluation
-on the singleton block. The original matrix map becomes the literal module
-block map, with both off-diagonal maps retained. These comparisons connect
-division-free determinant elimination to full singular cokernel lengths.
+Let R be a commutative ring, I a finite index type, a ∈ R, r ∈ Mat(1,I;R), c ∈ Mat(I,1;R), and
+B ∈ Mat(I,I;R). The decomposition R^(1 ⊕ I) ≃ R × R^I identifies the block matrix
+[[a,r],[c,B]] with (x,y) ↦ (ax + ry,cx + By). Over a domain, a ≠ 0 and nonzero block
+determinant imply ℓ(coker P) + |I|ℓ(R/aR) = ℓ(R/aR) + ℓ(coker(aB − cr)), with module lengths
+in ℕ∞.
 -/
 
 @[expose] public section
@@ -33,22 +34,37 @@ namespace Matrix
 
 variable {R : Type u} [CommRing R] {ι : Type v} [Fintype ι]
 
-/-- The actual canonical coordinates for the singleton pivot and remaining
-indices, using existing linear equivalences. -/
+/-- **Coordinates for a distinguished pivot.**
+
+For a commutative ring R and finite I, the R-linear equivalence R^(1 ⊕ I) ≃ R × R^I sends z to
+(z(*), i ↦ z(i)); its inverse combines the singleton coordinate and the I-coordinates.
+-/
 def pivotCoordinates : ((Unit ⊕ ι) → R) ≃ₗ[R] R × (ι → R) :=
   (LinearEquiv.sumArrowLequivProdArrow Unit ι R R).trans
     ((LinearEquiv.funUnique Unit R R).prodCongr (LinearEquiv.refl R (ι → R)))
 
-/-- The original row matrix, evaluated in the actual singleton coordinate. -/
+/-- **The linear functional of a pivot row.**
+
+For a commutative ring R, finite I and r ∈ Mat(1,I;R), the R-linear functional associated to r
+is y ↦ ∑ⱼ r(*,j)yⱼ on R^I.
+-/
 def pivotRowLinear (r : Matrix Unit ι R) : (ι → R) →ₗ[R] R :=
   (LinearEquiv.funUnique Unit R R).toLinearMap.comp r.mulVecLin
 
-/-- The original column matrix, with the actual singleton inverse coordinate. -/
+/-- **The linear map of a pivot column.**
+
+For a commutative ring R, finite I and c ∈ Mat(I,1;R), the R-linear map associated to c sends
+x ∈ R to the vector i ↦ c(i,*)x in R^I.
+-/
 def pivotColumnLinear (c : Matrix ι Unit R) : R →ₗ[R] (ι → R) :=
   c.mulVecLin.comp (LinearEquiv.funUnique Unit R R).symm.toLinearMap
 
-/-- The actual original matrix map is the original module pivot map in
-canonical coordinates, rather than an assumed matrix-map comparison. -/
+/-- **The block matrix in pivot coordinates.**
+
+Let R be a commutative ring, I a finite index type, a ∈ R, r ∈ Mat(1,I;R), c ∈ Mat(I,1;R), and
+B ∈ Mat(I,I;R). Under C : R^(1 ⊕ I) ≃ R × R^I, the conjugate C P C⁻¹ of the matrix map P =
+[[a,r],[c,B]] is the linear map (x,y) ↦ (ax + ∑ⱼ r(*,j)yⱼ, i ↦ c(i,*)x + (By)ᵢ).
+-/
 theorem pivotBlock_coordinate_map (a : R) (r : Matrix Unit ι R)
     (c : Matrix ι Unit R) (B : Matrix ι ι R) :
     (pivotCoordinates (R := R) (ι := ι)).toLinearMap.comp
@@ -67,8 +83,12 @@ theorem pivotBlock_coordinate_map (a : R) (r : Matrix Unit ι R)
     simp [hy, pivotCoordinates, pivotBlock, pivotColumnLinear, LinearMap.pivotBlock,
       Matrix.fromBlocks_mulVec, Matrix.mulVec, dotProduct]
 
-/-- The actual Schur matrix map agrees with the original full module
-Schur map, preserving the off-diagonal composition. -/
+/-- **The Schur matrix as a linear map.**
+
+Let R be a commutative ring, I a finite index type, a ∈ R, r ∈ Mat(1,I;R), c ∈ Mat(I,1;R), and
+B ∈ Mat(I,I;R). The matrix map of S = aB − cr is y ↦ a(By) − c(ry), where ry = ∑ⱼ r(*,j)yⱼ and
+c(x)ᵢ = c(i,*)x.
+-/
 theorem pivotSchur_linear_map (a : R) (r : Matrix Unit ι R)
     (c : Matrix ι Unit R) (B : Matrix ι ι R) :
     (pivotSchur a r c B).mulVecLin =
@@ -79,10 +99,13 @@ theorem pivotSchur_linear_map (a : R) (r : Matrix Unit ι R)
   simp [pivotSchur, pivotRowLinear, pivotColumnLinear, LinearMap.pivotSchur,
     Matrix.mulVec, dotProduct, Matrix.mul_apply, Finset.mul_sum, mul_assoc]
 
-/-- For every original full-rank pivot matrix over a domain, its full
-cokernel lengths satisfy the exact arbitrary-size elimination relation.
-Injectivity and coordinate comparison are earned from the determinant and
-canonical maps; no length equality or finite-length premise is assumed. -/
+/-- **The pivot cokernel length relation.**
+
+Let R be a commutative ring, I a finite index type, a ∈ R, r ∈ Mat(1,I;R), c ∈ Mat(I,1;R), and
+B ∈ Mat(I,I;R). Assume R is a domain, a ≠ 0 and det P ≠ 0 for P = [[a,r],[c,B]]. Write S = aB
+− cr and ℓ for R-module length in ℕ∞. Then ℓ(R^(1 ⊕ I)/im P) + |I|ℓ(R/aR) = ℓ(R/aR) + ℓ(R^I/im
+S). The equality does not require these lengths to be finite.
+-/
 theorem length_coker_pivot_matrix_relation [DecidableEq ι] [IsDomain R]
     (a : R) (ha : a ≠ 0) (r : Matrix Unit ι R) (c : Matrix ι Unit R) (B : Matrix ι ι R)
     (hA : (pivotBlock a r c B).det ≠ 0) :

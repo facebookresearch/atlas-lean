@@ -16,14 +16,14 @@ public import Mathlib.Logic.Equiv.Set
 public import Mathlib.Topology.Homeomorph.Defs
 
 /-!
-# A faithful normal map is a homeomorphism onto its actual ultraweak range
+# Ultraweak homeomorphism onto an injective normal range
 
-The original normal map is injective between the actual ultraweak views.
-Its literal range equivalence is constructed by the stock injective-range
-factory. Every original source normal evaluation has a genuine target
-predual preimage under the constructed pullback. Those original target
-evaluations prove continuity of the actual inverse. No range, quotient,
-normal inverse or model certificate is supplied as an input.
+For an injective normal unital complex star homomorphism `f : M → N`, the bijection from `M` to
+its range is a homeomorphism for the ultraweak topology on `M` and the subspace ultraweak
+topology of `N`.
+
+Its forward value is the normal map `f`; the inverse is continuous because normal functionals on
+`M` lift through predual pullback from `N`. Surjectivity onto all of `N` is not assumed.
 -/
 
 @[expose] public section
@@ -41,7 +41,13 @@ variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [Complete
 variable {K : Type v} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
 variable {M : VonNeumannAlgebra H} {N : VonNeumannAlgebra K}
 
-/-- Construct the original ultraweak homeomorphism onto the literal operator-map range. -/
+/-- **Ultraweak homeomorphism onto a normal map's range.** Let `M,N` be concrete von Neumann
+algebras on complete complex Hilbert spaces. Their normal-functional Banach spaces
+`M_*,N_*` are the norm-closed spans of vector functionals, and their ultraweak topologies
+are `σ(M,M_*)`, `σ(N,N_*)`. Let `f : M → N` be a unital complex star homomorphism that is
+ultraweakly continuous. Assume `f` is injective. `ultraweakRangeHomeomorph f : Ultraweak M
+≃ₜ range(f.ultraweakMap)` is `x ↦ f(x)`, with the range carrying the subspace topology of
+ultraweak `N`. -/
 def ultraweakRangeHomeomorph (f : NormalStarAlgHom M N) (hf : Function.Injective f) :
     Ultraweak M ≃ₜ Set.range f.ultraweakMap := by
   have hinjective : Function.Injective f.ultraweakMap := by
@@ -76,7 +82,12 @@ def ultraweakRangeHomeomorph (f : NormalStarAlgHom M N) (hf : Function.Injective
     exact (ultraweak_eval_continuous N φ).comp continuous_subtype_val
   exact ⟨e, hforward, hinverse⟩
 
-/-- The actual range homeomorphism retains exactly the original ultraweak-map value. -/
+/-- **Forward value of the ultraweak range homeomorphism.** Let `M,N` be concrete von Neumann
+algebras on complete complex Hilbert spaces. Their normal-functional Banach spaces
+`M_*,N_*` are the norm-closed spans of vector functionals, and their ultraweak topologies
+are `σ(M,M_*)`, `σ(N,N_*)`. Let `f : M → N` be a unital complex star homomorphism that is
+ultraweakly continuous. Assume `f` is injective. for `x ∈ Ultraweak M`, the element of
+`Ultraweak N` underlying `ultraweakRangeHomeomorph f x` is `f.ultraweakMap x`. -/
 @[simp]
 theorem ultraweakRangeHomeomorph_apply (f : NormalStarAlgHom M N) (hf : Function.Injective f)
     (x : Ultraweak M) : (f.ultraweakRangeHomeomorph hf x).val = f.ultraweakMap x :=

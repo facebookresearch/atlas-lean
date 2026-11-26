@@ -1,4 +1,6 @@
-# Continuous Map Star Alg Hom
+# Unital star inclusion of compact continuous functions
 
-The continuous-function inclusion, bundled as a unital complex
-star-algebra homomorphism.
+Let `X` be a compact
+topological space with its Borel measurable structure, without a Hausdorff or
+nonempty-space assumption. `continuousMapStarAlgHom : C(X,ℂ) →⋆ₐ[ℂ]
+BoundedMeasurableFunction X` is the pointwise function inclusion.

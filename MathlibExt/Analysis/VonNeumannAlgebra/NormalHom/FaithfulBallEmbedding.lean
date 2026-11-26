@@ -15,13 +15,14 @@ public import MathlibExt.Analysis.VonNeumannAlgebra.NormalHom.CompactBallImage
 public import Mathlib.Topology.Separation.Hausdorff
 
 /-!
-# A faithful normal homomorphism embeds each original ultraweak norm ball
+# Closed embeddings of norm balls under injective normal maps
 
-The original source norm ball is actually ultraweak compact. Restricting
-the original normal map to that ball gives a continuous injection into
-the original Hausdorff target ultraweak space, hence a closed embedding.
-This proves inverse continuity on each actual bounded image without a
-supplied weakly closed range, normal inverse or predual/model certificate.
+An injective normal unital complex star homomorphism `f : M → N` restricts to a closed
+topological embedding on every source norm ball `{x ∈ M : ‖x‖≤r}`, with the source and target
+ultraweak topologies.
+
+Thus the inverse on that ball's image is continuous. The radius may be any real number, and the
+assertion does not assume a globally normal inverse or a pre-existing closed-range property.
 -/
 
 @[expose] public section
@@ -39,7 +40,13 @@ variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [Complete
 variable {K : Type v} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
 variable {M : VonNeumannAlgebra H} {N : VonNeumannAlgebra K}
 
-/-- Restriction of the original faithful normal map to each actual norm ball is a closed embedding. -/
+/-- **Closed ultraweak embedding of an injective normal map's ball.** Let `M,N` be concrete
+von Neumann algebras on complete complex Hilbert spaces. Their normal-functional Banach
+spaces `M_*,N_*` are the norm-closed spans of vector functionals, and their ultraweak
+topologies are `σ(M,M_*)`, `σ(N,N_*)`. Let `f : M → N` be a unital complex star
+homomorphism that is ultraweakly continuous. Assume `f` is injective. for every `r : ℝ`,
+the restriction `f : {x ∈ Ultraweak M : ‖x‖≤r} → Ultraweak N` is a topological embedding
+with closed image. -/
 theorem ultraweak_ball_isClosedEmbedding (f : NormalStarAlgHom M N)
     (hf : Function.Injective f) (r : ℝ) :
     Topology.IsClosedEmbedding (fun x : {x : Ultraweak M | ‖ultraweakLinearEquiv M x‖ ≤ r} =>

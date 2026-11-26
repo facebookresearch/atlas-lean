@@ -1,4 +1,5 @@
-# Ord det reindex
+# Determinant order is invariant under independent reindexing
 
-The actual sign from independent row and column reindexing is a unit,
-so the order of the determinant is unchanged over any commutative ring.
+Let R be a commutative ring, I,J finite index types, er,ec:I≃J and A:I×I→R. With
+ord_R(a)=length_R(R/(a)), ord_R(det(A.reindex er ec))=ord_R(det A); the determinant changes by
+a sign unit.

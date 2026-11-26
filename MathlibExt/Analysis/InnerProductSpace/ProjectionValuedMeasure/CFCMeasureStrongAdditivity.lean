@@ -15,16 +15,15 @@ public import MathlibExt.Analysis.InnerProductSpace.ProjectionValuedMeasure.Orth
 public import MathlibExt.Analysis.InnerProductSpace.ProjectionValuedMeasure.CFCMeasureProjectionIntersection
 
 /-!
-# Strong countable additivity of the actual normal-CFC coefficient operators
+# Strong countable additivity of normal CFC set operators
 
-The computed operators of disjoint measurable sets are orthogonal projections
-by their actual intersection law. Their original complex coefficient measures
-are countably additive. The existing strong orthogonal-projection sum is
-therefore the computed operator of the union, identified on the same H by
-its original inner coefficients. This supplies the strong-additivity field
-needed by resolutionOfIdentity and borelFunctionalCalculus. No PVM, desired
-limit, projection or coefficient-convergence certificate is an input.
-Numbered textbook terminal theorem proofs remain wholly open.
+Let `T` be a normal operator on a complete complex Hilbert space and `P_s` its coefficient
+operator for a subset of `σ_ℂ(T)`. For pairwise disjoint measurable sets `s_n`, the projections
+`P_(s_n)` have orthogonal ranges.
+
+Their strong sum satisfies `Σ_n P_(s_n)g=P_(⋃n s_n)g` in the Hilbert norm for every vector `g`.
+Scalar coefficient measure additivity identifies this limit; operator-norm convergence is not
+asserted.
 -/
 
 @[expose] public section
@@ -36,7 +35,13 @@ namespace MathlibExt.Analysis.InnerProductSpace.ProjectionValuedMeasure
 universe uH
 variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- Disjoint measurable computed coefficients sum in norm on every original vector. -/
+/-- **Strong sum over disjoint measurable spectral sets.** Let `H` be a complete complex
+Hilbert space and `T : H →L[ℂ] H` a normal operator, so `T* T=T T*`. Put `K=σ_ℂ(T)` with
+its Borel measurable structure. Let `μ_(g,h)` be the regular complex measure on `K`
+characterized by `∫ f dμ_(g,h)=⟨h,f(T)g⟩` for `f ∈ C(K,ℂ)`. For measurable `s ⊆ K`, let
+`P_s` be the bounded coefficient operator with `⟨h,P_s g⟩=μ_(g,h)(s)`, and set `P_s=0` for
+nonmeasurable `s`. for pairwise disjoint measurable `s_n ⊆ K` and every `g ∈ H`, `HasSum
+(fun n => P_(s_n)g) (P_(⋃n s_n)g)`, a norm-convergent vector series on the Hilbert space. -/
 theorem normalCFCCoefficientOperator_m_iUnion
     (T : H →L[ℂ] H) (hT : IsStarNormal T) (s : ℕ → Set (spectrum ℂ T))
     (hs : ∀ n, MeasurableSet (s n))

@@ -18,17 +18,15 @@ public import MathlibExt.Analysis.CStarAlgebra.Operator.Calkin
 import Mathlib.Analysis.CStarAlgebra.Hom
 
 /-!
-# Finite Hilbert operator matrices modulo compact operators
+# Finite operator matrices modulo compact operators
 
-The actual column-action star equivalence identifies compact finite blocks with
-matrices of compact coefficients. The entrywise Calkin projection has exactly
-this closed star ideal as its kernel. Descending coordinate recovery through the
-existing compact-operator quotient gives the actual Calkin algebra of the finite
-Hilbert product as the C-star matrix algebra over the coefficient Calkin algebra.
-
-The canonical quotient carriers and norms are retained. Empty finite indices and
-zero Hilbert spaces are allowed; no basis, absorption, nontriviality or norm-one
-assumption is made. No Hilbert tensor or source classification is asserted.
+Let H be a complex Hilbert space and I finite. Write QH=B(H)/K(H) for its Calkin algebra, q_H
+for the quotient map, and H^I for the finite ℓ² Hilbert product. For X∈M_I(B(H)),
+(Θ(X)v)_i=∑jX_ij(v_j). Let q_I(X)=(q_H(X_ij))_ij in CStarMatrix I I QH. The C-star matrix norm
+is the canonical CStarMatrix norm, and the Calkin norms are quotient operator norms.
+Coordinate maps are j_j:H→H^I and p_i:H^I→H. A block operator Θ(X) is compact exactly when all
+entries X_ij are compact. Hence Q(H^I)≃M_I(QH) by the recovered quotient entries [p_i T j_j],
+isometrically for these norms.
 -/
 
 @[expose] public section
@@ -43,19 +41,38 @@ variable [InnerProductSpace ℂ H] [CompleteSpace H]
 
 namespace CStarMatrix
 
-/-- The actual Calkin projection applied to every operator coefficient. -/
+/-- **Entrywise Calkin homomorphism on operator matrices.**
+
+Let H be a complex Hilbert space and I finite. Write QH=B(H)/K(H) for its Calkin algebra, q_H
+for the quotient map, and H^I for the finite ℓ² Hilbert product. For X∈M_I(B(H)),
+(Θ(X)v)_i=∑jX_ij(v_j). Let q_I(X)=(q_H(X_ij))_ij in CStarMatrix I I QH. The nonunital complex
+star homomorphism calkinMap is q_I:X↦(q_H(X_ij))_ij.
+-/
 def calkinMap :
     CStarMatrix n n (H →L[ℂ] H) →⋆ₙₐ[ℂ]
       CStarMatrix n n (CalkinAlgebra ℂ H) :=
   mapₙₐ (CalkinAlgebra.classStarMap (H := H)).toNonUnitalStarAlgHom
 
-/-- Each entry is the class of the original continuous linear operator. -/
+/-- **Entry of the matrix Calkin symbol.**
+
+Let H be a complex Hilbert space and I finite. Write QH=B(H)/K(H) for its Calkin algebra, q_H
+for the quotient map, and H^I for the finite ℓ² Hilbert product. For X∈M_I(B(H)),
+(Θ(X)v)_i=∑jX_ij(v_j). Let q_I(X)=(q_H(X_ij))_ij in CStarMatrix I I QH. For i,j∈I, calkinMap X
+i j=q_H(X_ij).
+-/
 @[simp]
 theorem calkinMap_apply_entry (X : CStarMatrix n n (H →L[ℂ] H)) (i j : n) :
     calkinMap (n := n) (H := H) X i j = CalkinAlgebra.classStarMap (H := H) (X i j) :=
   rfl
 
-/-- Finite matrices of actual Calkin classes have actual operator representatives. -/
+/-- **Surjectivity of the entrywise matrix Calkin projection.**
+
+Let H be a complex Hilbert space and I finite. Write QH=B(H)/K(H) for its Calkin algebra, q_H
+for the quotient map, and H^I for the finite ℓ² Hilbert product. For X∈M_I(B(H)),
+(Θ(X)v)_i=∑jX_ij(v_j). Let q_I(X)=(q_H(X_ij))_ij in CStarMatrix I I QH. Every matrix of
+classes in CStarMatrix I I QH has an operator-matrix representative X with calkinMap X equal
+to it.
+-/
 theorem calkinMap_surjective :
     Function.Surjective (calkinMap (n := n) (H := H)) := by
   classical
@@ -70,7 +87,13 @@ theorem calkinMap_surjective :
   change CalkinAlgebra.classStarMap (H := H) (M i j) = X i j
   exact hM i j
 
-/-- A matrix has zero symbol exactly when every actual entry is compact. -/
+/-- **Zero matrix Calkin symbol is entrywise compactness.**
+
+Let H be a complex Hilbert space and I finite. Write QH=B(H)/K(H) for its Calkin algebra, q_H
+for the quotient map, and H^I for the finite ℓ² Hilbert product. For X∈M_I(B(H)),
+(Θ(X)v)_i=∑jX_ij(v_j). Let q_I(X)=(q_H(X_ij))_ij in CStarMatrix I I QH. For X, calkinMap X=0
+if and only if every X_ij is a compact operator on H.
+-/
 theorem calkinMap_eq_zero_iff (X : CStarMatrix n n (H →L[ℂ] H)) :
     calkinMap (n := n) (H := H) X = 0 ↔ ∀ i j : n, IsCompactOperator (X i j) := by
   constructor
@@ -89,7 +112,13 @@ section HilbertBlock
 
 variable [DecidableEq n]
 
-/-- Compactness of the actual finite Hilbert block is exactly entrywise compactness. -/
+/-- **Compactness of a finite Hilbert block is entrywise compactness.**
+
+Let H be a complex Hilbert space and I finite. Write QH=B(H)/K(H) for its Calkin algebra, q_H
+for the quotient map, and H^I for the finite ℓ² Hilbert product. For X∈M_I(B(H)),
+(Θ(X)v)_i=∑jX_ij(v_j). Let q_I(X)=(q_H(X_ij))_ij in CStarMatrix I I QH. The operator Θ(X) on
+H^I is compact exactly when each coefficient X_ij is compact.
+-/
 theorem isCompactOperator_piLpStarAlgEquiv_iff
     (X : CStarMatrix n n (H →L[ℂ] H)) :
     IsCompactOperator (piLpStarAlgEquiv (n := n) (H := H) X) ↔
@@ -101,7 +130,13 @@ theorem isCompactOperator_piLpStarAlgEquiv_iff
     (Matrix.isCompactOperator_toPiLpContinuousLinearMap_iff
       (CStarMatrix.ofMatrix.symm X))
 
-/-- The actual closed compact-block ideal, pulled back along the Hilbert equivalence. -/
+/-- **Closed ideal of compact operator matrices.**
+
+Let H be a complex Hilbert space and I finite. Write QH=B(H)/K(H) for its Calkin algebra, q_H
+for the quotient map, and H^I for the finite ℓ² Hilbert product. For X∈M_I(B(H)),
+(Θ(X)v)_i=∑jX_ij(v_j). Let q_I(X)=(q_H(X_ij))_ij in CStarMatrix I I QH. The closed star ideal
+compactOperatorIdeal is {X:Θ(X) is compact}, equivalently all entries are compact.
+-/
 def compactOperatorIdeal :
     letI : PartialOrder (H →L[ℂ] H) := CStarAlgebra.spectralOrder _;
     letI : StarOrderedRing (H →L[ℂ] H) := CStarAlgebra.spectralOrderedRing _;
@@ -112,7 +147,13 @@ def compactOperatorIdeal :
     (piLpStarAlgEquiv (n := n) (H := H)).toNonUnitalStarAlgHom
     (compactEndomorphismClosedStarIdeal (H := PiLp 2 (fun _ : n => H)))
 
-/-- Membership in the actual closed matrix ideal is the literal compact-entry predicate. -/
+/-- **Membership in the compact matrix ideal.**
+
+Let H be a complex Hilbert space and I finite. Write QH=B(H)/K(H) for its Calkin algebra, q_H
+for the quotient map, and H^I for the finite ℓ² Hilbert product. For X∈M_I(B(H)),
+(Θ(X)v)_i=∑jX_ij(v_j). Let q_I(X)=(q_H(X_ij))_ij in CStarMatrix I I QH. X belongs to
+compactOperatorIdeal if and only if every entry X_ij is compact.
+-/
 @[simp]
 theorem mem_compactOperatorIdeal :
     letI : PartialOrder (H →L[ℂ] H) := CStarAlgebra.spectralOrder _;
@@ -127,7 +168,13 @@ theorem mem_compactOperatorIdeal :
       ∀ i j : n, IsCompactOperator (X i j)
   exact fun X => isCompactOperator_piLpStarAlgEquiv_iff X
 
-/-- The genuine entrywise projection kernel is the actual closed compact-block ideal. -/
+/-- **Kernel of the entrywise Calkin map.**
+
+Let H be a complex Hilbert space and I finite. Write QH=B(H)/K(H) for its Calkin algebra, q_H
+for the quotient map, and H^I for the finite ℓ² Hilbert product. For X∈M_I(B(H)),
+(Θ(X)v)_i=∑jX_ij(v_j). Let q_I(X)=(q_H(X_ij))_ij in CStarMatrix I I QH. The closed kernel
+ideal of calkinMap q_I is compactOperatorIdeal.
+-/
 theorem ker_calkinMap :
     letI : PartialOrder (H →L[ℂ] H) := CStarAlgebra.spectralOrder _;
     letI : StarOrderedRing (H →L[ℂ] H) := CStarAlgebra.spectralOrderedRing _;
@@ -153,7 +200,15 @@ namespace CalkinAlgebra
 variable [DecidableEq n]
 
 open scoped NonUnitalStarSubalgebra.Quotient in
-/-- Coordinate recovery followed by entrywise classes, on the existing Calkin quotient. -/
+/-- **Quotient coordinate map from the block Calkin algebra.**
+
+Let H be a complex Hilbert space and I finite. Write QH=B(H)/K(H) for its Calkin algebra, q_H
+for the quotient map, and H^I for the finite ℓ² Hilbert product. For X∈M_I(B(H)),
+(Θ(X)v)_i=∑jX_ij(v_j). Let q_I(X)=(q_H(X_ij))_ij in CStarMatrix I I QH. The C-star matrix norm
+is the canonical CStarMatrix norm, and the Calkin norms are quotient operator norms.
+Coordinate maps are j_j:H→H^I and p_i:H^I→H. The homomorphism
+CalkinAlgebra.piLpMap:Q(H^I)→CStarMatrix I I QH sends [T] to ([p_i T j_j])_ij.
+-/
 def piLpMap :
     CalkinAlgebra ℂ (PiLp 2 (fun _ : n => H)) →⋆ₙₐ[ℂ]
       CStarMatrix n n (CalkinAlgebra ℂ H) := by
@@ -180,7 +235,15 @@ def piLpMap :
       map_smul' := map_smul induced
       map_star' := map_star induced }
 
-/-- On an actual operator representative, the quotient map is the literal recovered symbol. -/
+/-- **Block Calkin map on an operator representative.**
+
+Let H be a complex Hilbert space and I finite. Write QH=B(H)/K(H) for its Calkin algebra, q_H
+for the quotient map, and H^I for the finite ℓ² Hilbert product. For X∈M_I(B(H)),
+(Θ(X)v)_i=∑jX_ij(v_j). Let q_I(X)=(q_H(X_ij))_ij in CStarMatrix I I QH. The C-star matrix norm
+is the canonical CStarMatrix norm, and the Calkin norms are quotient operator norms.
+Coordinate maps are j_j:H→H^I and p_i:H^I→H. For T∈B(H^I), piLpMap([T])=q_I(Θ⁻¹(T)), the
+matrix of recovered compact-quotient classes.
+-/
 @[simp]
 theorem piLpMap_classStarMap
     (T : PiLp 2 (fun _ : n => H) →L[ℂ] PiLp 2 (fun _ : n => H)) :
@@ -189,8 +252,13 @@ theorem piLpMap_classStarMap
         ((CStarMatrix.piLpStarAlgEquiv (n := n) (H := H)).symm T) :=
   rfl
 
-/-- The induced map is genuinely bijective, using actual compactness and
-quotient representatives. -/
+/-- **Bijectivity of the finite-block Calkin coordinate map.**
+
+Let H be a complex Hilbert space and I finite. Write QH=B(H)/K(H) for its Calkin algebra, q_H
+for the quotient map, and H^I for the finite ℓ² Hilbert product. For X∈M_I(B(H)),
+(Θ(X)v)_i=∑jX_ij(v_j). Let q_I(X)=(q_H(X_ij))_ij in CStarMatrix I I QH. The map
+piLpMap:Q(H^I)→CStarMatrix I I QH is bijective.
+-/
 theorem piLpMap_bijective : Function.Bijective (piLpMap (n := n) (H := H)) := by
   let e := CStarMatrix.piLpStarAlgEquiv (n := n) (H := H)
   let p := CStarMatrix.calkinMap (n := n) (H := H)
@@ -221,14 +289,28 @@ theorem piLpMap_bijective : Function.Bijective (piLpMap (n := n) (H := H)) := by
       _ = p M := congrArg (fun Y => p Y) (e.symm_apply_apply M)
       _ = X := hM
 
-/-- The actual Calkin algebra of the finite Hilbert product, as an
-operator-matrix Calkin algebra. -/
+/-- **Star equivalence of finite-block and matrix Calkin algebras.**
+
+Let H be a complex Hilbert space and I finite. Write QH=B(H)/K(H) for its Calkin algebra, q_H
+for the quotient map, and H^I for the finite ℓ² Hilbert product. For X∈M_I(B(H)),
+(Θ(X)v)_i=∑jX_ij(v_j). Let q_I(X)=(q_H(X_ij))_ij in CStarMatrix I I QH. The C-star matrix norm
+is the canonical CStarMatrix norm, and the Calkin norms are quotient operator norms.
+Coordinate maps are j_j:H→H^I and p_i:H^I→H. The equivalence
+CalkinAlgebra.piLpStarAlgEquiv:Q(H^I)≃⋆ₐ[ℂ]CStarMatrix I I QH has value [T]↦([p_i T j_j])_ij.
+-/
 def piLpStarAlgEquiv :
     CalkinAlgebra ℂ (PiLp 2 (fun _ : n => H)) ≃⋆ₐ[ℂ]
       CStarMatrix n n (CalkinAlgebra ℂ H) :=
   StarAlgEquiv.ofBijective (piLpMap (n := n) (H := H)) piLpMap_bijective
 
-/-- The equivalence retains the actual operator representative and recovered entry classes. -/
+/-- **Calkin equivalence on a block representative.**
+
+Let H be a complex Hilbert space and I finite. Write QH=B(H)/K(H) for its Calkin algebra, q_H
+for the quotient map, and H^I for the finite ℓ² Hilbert product. For X∈M_I(B(H)),
+(Θ(X)v)_i=∑jX_ij(v_j). Let q_I(X)=(q_H(X_ij))_ij in CStarMatrix I I QH. The C-star matrix norm
+is the canonical CStarMatrix norm, and the Calkin norms are quotient operator norms.
+Coordinate maps are j_j:H→H^I and p_i:H^I→H. For T∈B(H^I), piLpStarAlgEquiv([T])=q_I(Θ⁻¹(T)).
+-/
 theorem piLpStarAlgEquiv_classStarMap
     (T : PiLp 2 (fun _ : n => H) →L[ℂ] PiLp 2 (fun _ : n => H)) :
     piLpStarAlgEquiv (n := n) (H := H)
@@ -237,8 +319,13 @@ theorem piLpStarAlgEquiv_classStarMap
         ((CStarMatrix.piLpStarAlgEquiv (n := n) (H := H)).symm T) :=
   piLpMap_classStarMap T
 
-/-- On an entrywise operator representative, the inverse is the class of its
-actual Hilbert block. -/
+/-- **Inverse Calkin equivalence of an entrywise operator symbol.**
+
+Let H be a complex Hilbert space and I finite. Write QH=B(H)/K(H) for its Calkin algebra, q_H
+for the quotient map, and H^I for the finite ℓ² Hilbert product. For X∈M_I(B(H)),
+(Θ(X)v)_i=∑jX_ij(v_j). Let q_I(X)=(q_H(X_ij))_ij in CStarMatrix I I QH. For X∈CStarMatrix I I
+B(H), piLpStarAlgEquiv⁻¹(q_I(X))=[Θ(X)] in Q(H^I).
+-/
 theorem piLpStarAlgEquiv_symm_calkinMap (X : CStarMatrix n n (H →L[ℂ] H)) :
     (piLpStarAlgEquiv (n := n) (H := H)).symm
         (CStarMatrix.calkinMap (n := n) (H := H) X) =
@@ -250,7 +337,15 @@ theorem piLpStarAlgEquiv_symm_calkinMap (X : CStarMatrix n n (H →L[ℂ] H)) :
   rw [piLpStarAlgEquiv_classStarMap]
   exact (congrArg (fun Y => p Y) (e.symm_apply_apply X)).symm
 
-/-- The quotient bridge preserves the actual canonical Calkin and CStarMatrix metrics. -/
+/-- **Isometry of the block Calkin equivalence.**
+
+Let H be a complex Hilbert space and I finite. Write QH=B(H)/K(H) for its Calkin algebra, q_H
+for the quotient map, and H^I for the finite ℓ² Hilbert product. For X∈M_I(B(H)),
+(Θ(X)v)_i=∑jX_ij(v_j). Let q_I(X)=(q_H(X_ij))_ij in CStarMatrix I I QH. The C-star matrix norm
+is the canonical CStarMatrix norm, and the Calkin norms are quotient operator norms.
+Coordinate maps are j_j:H→H^I and p_i:H^I→H. The equivalence Q(H^I)→CStarMatrix I I QH is an
+isometry for the quotient and canonical C-star matrix metrics.
+-/
 theorem piLpStarAlgEquiv_isometry :
     letI : PartialOrder (CalkinAlgebra ℂ H) := CStarAlgebra.spectralOrder _;
     letI : StarOrderedRing (CalkinAlgebra ℂ H) := CStarAlgebra.spectralOrderedRing _;
@@ -260,7 +355,14 @@ theorem piLpStarAlgEquiv_isometry :
   let e := piLpStarAlgEquiv (n := n) (H := H)
   exact NonUnitalStarAlgHom.isometry e.toNonUnitalStarAlgHom e.injective
 
-/-- No quotient norm is replaced: this is the actual matrix operator norm of the image. -/
+/-- **Norm identity for the block Calkin equivalence.**
+
+Let H be a complex Hilbert space and I finite. Write QH=B(H)/K(H) for its Calkin algebra, q_H
+for the quotient map, and H^I for the finite ℓ² Hilbert product. For X∈M_I(B(H)),
+(Θ(X)v)_i=∑jX_ij(v_j). Let q_I(X)=(q_H(X_ij))_ij in CStarMatrix I I QH. The C-star matrix norm
+is the canonical CStarMatrix norm, and the Calkin norms are quotient operator norms.
+Coordinate maps are j_j:H→H^I and p_i:H^I→H. For z∈Q(H^I), ‖piLpStarAlgEquiv(z)‖=‖z‖.
+-/
 theorem piLpStarAlgEquiv_norm_map :
     letI : PartialOrder (CalkinAlgebra ℂ H) := CStarAlgebra.spectralOrder _;
     letI : StarOrderedRing (CalkinAlgebra ℂ H) := CStarAlgebra.spectralOrderedRing _;

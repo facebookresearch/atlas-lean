@@ -1,5 +1,5 @@
-# Finite Rank
+# The complex or scalar-general module of bounded finite-rank maps
 
-- [Finite Rank Operator](finite-rank-operator.md)
-- [Mem finite Rank Operator](mem-finite-rank-operator.md)
-- [Finite Rank Operator eq comap finite Range](finite-rank-operator-eq-comap-finite-ran.md)
+- [Submodule of bounded finite-rank operators](finite-rank-operator.md)
+- [Membership in the bounded finite-rank submodule](mem-finite-rank-operator.md)
+- [Finite-rank bounded maps as a linear-map preimage](finite-rank-operator-eq-comap-finite-ran.md)

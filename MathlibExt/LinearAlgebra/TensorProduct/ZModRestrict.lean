@@ -13,19 +13,12 @@ public import Mathlib.Algebra.Module.ZMod
 public import Mathlib.LinearAlgebra.TensorProduct.Basic
 
 /-!
-# Tensor products after restricting `ZMod n`-modules to `ℤ`
+# Residue-ring tensors and integer tensors
 
-For `ZMod n`-modules `M` and `N`, the tensor product of their underlying
-abelian groups over `ℤ` is canonically isomorphic to `M ⊗[ZMod n] N` after
-forgetting its scalar structure to `ℤ`.  The construction uses only the
-universal properties and the fact that the integral tensor product is
-`n`-torsion.
-
-The canonical equivalence accepts the actual stored integer module
-structures. Their equality with the canonical integer action is the stock
-uniqueness theorem, so this extension retains the same tensor comparison.
-
-The statement includes `n = 0`, where `ZMod 0 = ℤ`.
+Let n∈ℕ and M,N be ZMod n-modules, regarded as integer modules on their additive groups. For
+n=0, ZMod 0=ℤ. Let Θ:M⊗_ℤN≃ₗ[ℤ]M⊗_(ZMod n)N be the comparison preserving pure tensors. The
+equivalence and inverse retain the pure value m⊗n. The integer tensor is n-torsion, which
+supplies its residue scalar action.
 -/
 
 @[expose] public section
@@ -43,7 +36,11 @@ variable [AddCommGroup M] [AddCommGroup N]
 variable [Module (ZMod n) M] [Module (ZMod n) N]
 
 omit [Module (ZMod n) N] in
-/-- The integral tensor product of two `ZMod n`-modules is `n`-torsion. -/
+/-- **Residue torsion in an integer tensor with one torsion factor.**
+
+Let n∈ℕ, M a ZMod n-module and N any additive commutative group. Then n•z=0 for every z∈M⊗_ℤN;
+no residue-ring module action on N is needed.
+-/
 theorem intTensor_nsmul_eq_zero (z : TensorProduct ℤ M N) : n • z = 0 := by
   induction z using TensorProduct.inductionOn with
   | tmul x y =>
@@ -53,8 +50,12 @@ theorem intTensor_nsmul_eq_zero (z : TensorProduct ℤ M N) : n • z = 0 := by
   | add x y hx hy =>
       rw [nsmul_add, hx, hy, add_zero]
 
-/-- Canonical integral-linear map from the tensor product over `ℤ` to the
-tensor product over `ZMod n`. -/
+/-- **Integer-linear map to a residue-ring tensor.**
+
+Let n∈ℕ and M,N be ZMod n-modules, regarded as integer modules on their additive groups. For
+n=0, ZMod 0=ℤ. Let Θ:M⊗_ℤN≃ₗ[ℤ]M⊗_(ZMod n)N be the comparison preserving pure tensors. The map
+intToZMod:M⊗_ℤN→ₗ[ℤ]M⊗_(ZMod n)N sends m⊗n′ to the same pure tensor.
+-/
 noncomputable def intToZMod :
     TensorProduct ℤ M N →ₗ[ℤ] TensorProduct (ZMod n) M N := by
   let inner (x : M) : N →+ TensorProduct (ZMod n) M N :=
@@ -78,8 +79,13 @@ theorem intToZMod_tmul (x : M) (y : N) :
     intToZMod n M N (x ⊗ₜ[ℤ] y) = x ⊗ₜ[ZMod n] y :=
   rfl
 
-/-- Canonical `ZMod n`-linear map back to the integral tensor product,
-equipped with its canonical `n`-torsion module structure. -/
+/-- **Residue-linear map back to the integer tensor.**
+
+Let n∈ℕ and M,N be ZMod n-modules, regarded as integer modules on their additive groups. For
+n=0, ZMod 0=ℤ. Let Θ:M⊗_ℤN≃ₗ[ℤ]M⊗_(ZMod n)N be the comparison preserving pure tensors. The map
+zmodToInt:M⊗_(ZMod n)N→ₗ[ZMod n]M⊗_ℤN preserves pure tensors, with the target carrying its
+induced n-torsion scalar structure.
+-/
 noncomputable def zmodToInt :
     TensorProduct (ZMod n) M N →ₗ[ZMod n] TensorProduct ℤ M N := by
   let inner (x : M) : N →+ TensorProduct ℤ M N :=
@@ -103,8 +109,12 @@ theorem zmodToInt_tmul (x : M) (y : N) :
     zmodToInt n M N (x ⊗ₜ[ZMod n] y) = x ⊗ₜ[ℤ] y :=
   by simp [zmodToInt]
 
-/-- The `ℤ`-linear form of `zmodToInt`, forgetting its `ZMod n` scalar
-structure. -/
+/-- **Integer-linear residue-to-integer tensor map.**
+
+Let n∈ℕ and M,N be ZMod n-modules, regarded as integer modules on their additive groups. For
+n=0, ZMod 0=ℤ. Let Θ:M⊗_ℤN≃ₗ[ℤ]M⊗_(ZMod n)N be the comparison preserving pure tensors. The map
+zmodToIntLinear is the integer-linear form of the pure-preserving inverse comparison.
+-/
 noncomputable def zmodToIntLinear :
     TensorProduct (ZMod n) M N →ₗ[ℤ] TensorProduct ℤ M N :=
   (zmodToInt n M N).toAddMonoidHom.toIntLinearMap
@@ -117,8 +127,12 @@ theorem zmodToIntLinear_tmul (x : M) (y : N) :
 
 variable [iM : Module ℤ M] [iN : Module ℤ N]
 
-/-- Canonical comparison between tensoring two `ZMod n`-modules over `ℤ`
-and tensoring them over `ZMod n`, with the latter restricted to `ℤ`. -/
+/-- **Canonical equivalence of integer and residue tensors.**
+
+Let n∈ℕ and M,N be ZMod n-modules, regarded as integer modules on their additive groups. For
+n=0, ZMod 0=ℤ. Let Θ:M⊗_ℤN≃ₗ[ℤ]M⊗_(ZMod n)N be the comparison preserving pure tensors. This
+pure-preserving equivalence is zmodRestrictIntEquiv n M N.
+-/
 noncomputable def zmodRestrictIntEquiv :
     TensorProduct ℤ M N ≃ₗ[ℤ] TensorProduct (ZMod n) M N := by
   cases Subsingleton.elim iM (AddCommGroup.toIntModule (M := M))

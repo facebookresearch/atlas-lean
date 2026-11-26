@@ -17,18 +17,13 @@ public import Mathlib.Topology.Compactness.Compact
 public import Mathlib.Topology.ClusterPt
 
 /-!
-# Actual bounded positive suprema in the original concrete algebra
+# Bounded suprema of directed positive operator sets
 
-The actual compact positive part of an original norm bound contains the
-original nonempty directed positive family. An actual cluster point is
-positive and bounded; closed comparisons prove it is the original least
-upper bound. The supremum carrier uses that proved witness and its exact
-original value, without selecting an open source completeness theorem.
+Let `M ⊆ B(H)` be a concrete von Neumann algebra. A nonempty directed set `S` of positive
+elements with `‖a‖≤C` for all `a∈S` has a positive least upper bound `s ∈ M` satisfying `‖s‖≤C`.
 
-These DATA supply bounded comparison-chain suprema needed for the positive
-order-normal/predual criterion and the actual GNS normal homomorphism.
-No supplied supremum, predual/normality certificate or representation model
-is an input. Original zero Hilbert/algebra and coefficient universes remain.
+The construction returns this supremum with its order and norm properties. The norm bound is any
+real `C` satisfying the premise; no supremum element is supplied by the caller.
 -/
 
 @[expose] public section
@@ -47,7 +42,11 @@ universe u
 
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- An actual nonempty directed norm-bounded positive family has its original bounded supremum witness. -/
+/-- **Positive supremum with its given operator-norm bound.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Let `S ⊆ M₊` be nonempty and
+directed in the spectral order, and `C : ℝ` satisfy `‖a‖≤C` for all `a∈S`.
+`boundedPositiveSupremum M S C` returns `s∈M₊` that is the least upper bound of `S` and
+satisfies `‖s‖≤C`. -/
 def boundedPositiveSupremum (M : VonNeumannAlgebra H) (S : Set (PositiveElement M))
     (hne : S.Nonempty)
     (hdir : DirectedOn (fun p q : PositiveElement M =>
@@ -115,7 +114,11 @@ def boundedPositiveSupremum (M : VonNeumannAlgebra H) (S : Set (PositiveElement 
         (ultraweak_le_iff M y ((ultraweakLinearEquiv M).symm q)).mp hyq
   exact ⟨Classical.choose hexists, Classical.choose_spec hexists⟩
 
-/-- The actual selected bounded positive witness is the original least upper bound. -/
+/-- **Least-upper-bound property of the bounded positive supremum.** Let `H` be a complete
+complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Let `S ⊆ M₊` be
+nonempty and directed in the spectral order, and `C : ℝ` satisfy `‖a‖≤C` for all `a∈S`.
+the positive element returned by `boundedPositiveSupremum M S C` is the least upper bound
+of `S` in the operator spectral order. -/
 theorem boundedPositiveSupremum_isLUB (M : VonNeumannAlgebra H) (S : Set (PositiveElement M))
     (hne : S.Nonempty)
     (hdir : DirectedOn (fun p q : PositiveElement M =>
@@ -126,7 +129,10 @@ theorem boundedPositiveSupremum_isLUB (M : VonNeumannAlgebra H) (S : Set (Positi
       (boundedPositiveSupremum M S hne hdir C hbound).val :=
   (boundedPositiveSupremum M S hne hdir C hbound).property.1
 
-/-- The same original supremum retains the actual given norm bound. -/
+/-- **Norm estimate for the bounded positive supremum.** Let `H` be a complete complex Hilbert
+space and `M ⊆ B(H)` a concrete von Neumann algebra. Let `S ⊆ M₊` be nonempty and directed
+in the spectral order, and `C : ℝ` satisfy `‖a‖≤C` for all `a∈S`. the supremum
+`s=boundedPositiveSupremum M S C` satisfies `‖s‖≤C`. -/
 theorem boundedPositiveSupremum_norm_le (M : VonNeumannAlgebra H) (S : Set (PositiveElement M))
     (hne : S.Nonempty)
     (hdir : DirectedOn (fun p q : PositiveElement M =>

@@ -1,4 +1,4 @@
-# Exists is Idempotent Elem quotient lift
+# Lifting an idempotent matrix across a nilpotent quotient
 
-A target idempotent matrix lifts to an actual idempotent source matrix
-whose original entrywise quotient map has precisely the specified value.
+Let R be a ring, I a nilpotent two-sided ideal and n finite. For B∈Matrix n n(R/I) with B²=B,
+there exists A∈Matrix n n R with A²=A and entrywise quotient image q_*(A)=B.

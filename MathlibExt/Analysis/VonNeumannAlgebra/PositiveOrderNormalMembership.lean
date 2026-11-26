@@ -17,15 +17,14 @@ public import Mathlib.Topology.Order.MonotoneConvergence
 public import Mathlib.Topology.MetricSpace.Pseudo.Lemmas
 
 /-!
-# Original positive-LUB preservation constructs actual normal-functional membership
+# Positive order-normal functionals belong to the normal span
 
-Original ψ preserves bounded increasing positive-family LUBs in its real
-values. The internally constructed maximal local family has finite cutoffs
-with original identity as LUB. Those values converge to ψ(1), so the actual
-positive residual ψ(1-P) tends to zero. The proved residual norm estimate
-makes the actual finite normal functionals approximate ψ in its original
-dual norm. Closedness of the existing normal span gives actual membership.
-No family, LUB, limit, vector, bound or normality model is an input.
+Let `M` be a concrete von Neumann algebra and `ψ : M → ℂ` a positive bounded complex-linear
+functional. Suppose `Re ψ` preserves least upper bounds of nonempty directed increasing positive
+families that are bounded in operator norm.
+
+Then `ψ` belongs to the normal-functional Banach space `M_*`, the norm-closed span of vector
+functionals. No normal-functional membership is assumed in this order-normality criterion.
 -/
 
 @[expose] public section
@@ -44,7 +43,13 @@ universe u
 
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- Original bounded positive-LUB preservation yields actual membership in the canonical normal span. -/
+/-- **Positive least-upper-bound preservation implies normal membership.** Let `H` be a
+complete complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write
+`ω_(ξ,η)(x)=⟨ξ,xη⟩` for its vector functionals. Let `M_*` be their norm-closed complex
+span in the continuous dual `M*`. let `ψ : PositiveContinuousLinearMap ℂ M ℂ`. Assume that
+for every nonempty directed monotone norm-bounded positive family `a_i` with least upper
+bound `s`, `Re ψ(s)` is the least upper bound of `{Re ψ(a_i)}`. Then the bounded
+functional underlying `ψ` belongs to `M_*`. -/
 theorem positiveFunctional_mem_normalFunctionalSpace_of_positiveLUBs (M : VonNeumannAlgebra H) :
     letI : PartialOrder M := CStarAlgebra.spectralOrder M
     letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ

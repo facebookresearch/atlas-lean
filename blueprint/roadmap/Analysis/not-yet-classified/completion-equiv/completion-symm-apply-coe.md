@@ -1,3 +1,6 @@
-# Completion symm apply coe
+# Inverse completion equivalence on a target vector
 
-The inverse completed equivalence retains the literal original inverse coefficient value.
+Let `𝕜` be a normed field, `E,F`
+normed `𝕜`-spaces in independent universes, and `e : E ≃ₗᵢ[𝕜] F` a linear isometric
+equivalence. for `y ∈ F`, `(e.completion).symm (y : Completion F)=(e.symm y : Completion
+E)`.

@@ -1,3 +1,5 @@
-# Open Normal Comap Functor id
+# Identity law of the open-normal preimage functor
 
-The open-normal preimage functor of the identity is the identity functor.
+For a group `G` with topology, the
+preimage functor of `id_G` on the opposite open-normal inclusion poset is the identity
+functor.

@@ -14,33 +14,12 @@ public import Mathlib.LinearAlgebra.Matrix.Charpoly.Basic
 public import Mathlib.RingTheory.LocalRing.Quotient
 
 /-!
-# Characteristic polynomials under quotient and base-ring equivalence
+# Left-multiplication characteristic polynomials under scalar change
 
-* `Algebra.charpoly_lmul_quotient_maximalIdeal_map`: over a local
-  ring `R`, the characteristic polynomial of left multiplication by the
-  class of `s` on the special fiber `S ⧸ 𝔪S` is the reduction modulo
-  `𝔪` of the characteristic polynomial of left multiplication by `s`
-  on `S`.
-* `Algebra.charpoly_lmul_map_ringEquiv`: if the scalars of an
-  algebra are reindexed along a ring equivalence `φ : k ≃+* k'`, the
-  characteristic polynomial of left multiplication is mapped along
-  `φ`.
-
-Both proofs compare matrices in corresponding bases: the reduced basis
-`IsLocalRing.basisQuotient` in the first case, and the transferred
-basis `Module.Basis.mapCoeffs` (the same vectors, with coordinates
-reindexed along `φ.symm`) in the second; in each case the matrices
-differ entrywise by the relevant ring homomorphism and
-`Matrix.charpoly_map` concludes.
-
-The freeness and finiteness instances needed to *form* the
-characteristic polynomials in the statements are not automatic (the
-quotient module is free only because `basisQuotient` is a basis, and
-finiteness over the reindexed scalars only because a transferred basis
-is still finite), so they are supplied explicitly by `let` in the
-statements from those bases.  Both classes are propositions, so clients
-whose context provides different instance terms can still apply the
-lemmas up to defeq.
+Let R be a commutative local ring, S a commutative R-algebra finite free over R and 𝔪 its
+maximal ideal. Left multiplication on S/𝔪S has characteristic polynomial equal to coefficient
+reduction of that on S. Scalar reindexing along a field equivalence likewise maps the
+characteristic polynomial coefficients.
 -/
 
 @[expose] public section
@@ -56,12 +35,11 @@ section QuotientMaximalIdeal
 variable {R S : Type*} [CommRing R] [CommRing S] [Algebra R S]
   [IsLocalRing R] [Module.Finite R S] [Module.Free R S]
 
-/-- Quotient base-change for the characteristic polynomial of left
-multiplication: over a local ring `R` with maximal ideal `𝔪`,
-the characteristic polynomial of left multiplication by the class of
-`s` on `S ⧸ 𝔪S` over the residue field `R ⧸ 𝔪` is the reduction
-modulo `𝔪` of the characteristic polynomial of left multiplication by
-`s` on `S`. -/
+/-- **Residue-field reduction of a left-multiplication characteristic polynomial.**
+
+Let R be a commutative local ring with maximal ideal 𝔪, S a commutative R-algebra finite free
+over R and s∈S. For k=R/𝔪 and S̄=S/𝔪S, χ_k(L_s̄) is χ_R(L_s) with coefficients reduced by R→k.
+-/
 theorem charpoly_lmul_quotient_maximalIdeal_map (s : S) :
     let _ : Module.Free (R ⧸ IsLocalRing.maximalIdeal R)
         (S ⧸ (IsLocalRing.maximalIdeal R).map (algebraMap R S)) :=
@@ -116,11 +94,12 @@ section MapRingEquiv
 variable {k k' E : Type*} [Field k] [Field k'] [CommRing E]
   [Algebra k' E] [Module.Finite k' E]
 
-/-- Characteristic polynomial of left multiplication under a base-ring
-equivalence: if `E` is viewed as a `k`-algebra along
-`φ : k ≃+* k'`, then mapping the `k`-characteristic polynomial of left
-multiplication by `x` along `φ` gives the `k'`-characteristic
-polynomial of left multiplication by `x`. -/
+/-- **Field-equivalence transport of a left-multiplication characteristic polynomial.**
+
+Let k,k′ be fields, φ:k≃+*k′ and E a commutative finite-dimensional k′-algebra. Regard E as a
+k-algebra by c↦algebraMap(k′,E)(φ(c)). For x∈E, χ_k(L_x) mapped coefficientwise by φ equals
+χ_(k′)(L_x).
+-/
 theorem charpoly_lmul_map_ringEquiv (φ : k ≃+* k') (x : E) :
     letI : Algebra k E :=
       ((algebraMap k' E).comp φ.toRingHom).toAlgebra

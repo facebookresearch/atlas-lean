@@ -18,22 +18,10 @@ public import Mathlib.LinearAlgebra.QuadraticForm.Prod
 /-!
 # Successor decomposition of Pfister forms
 
-The subset coordinates of a successor Pfister form split canonically into
-two blocks: subsets avoiding the final index, and subsets containing it.
-This file packages that partition as a linear equivalence and identifies the
-successor Pfister form with the product of the lower Pfister form and its
-scalar multiple by the negative final coefficient.
-
-The construction is characteristic-free.  It does not assert roundness,
-hyperbolicity, existence of a half-dimensional isotropic subspace, or any
-norm-residue consequence.
-
-## Main declarations
-
-* `QuadraticForm.pfisterLowerIndex`
-* `QuadraticForm.pfisterUpperIndex`
-* `QuadraticForm.pfisterSuccLinearEquiv`
-* `QuadraticForm.pfisterSuccEquiv`
+Let F be a field and a₀,…,aₙ ∈ Fˣ. Subsets of Fin(n+1) split into those omitting the last
+index and those containing it. In these coordinates, the Pfister form qₐ is isometric to q_b ⊕
+(−aₙ)q_b, where b is the tuple a₀,…,aₙ₋₁. The coordinate decomposition also gives a linear
+equivalence for any module over a semiring.
 -/
 
 @[expose] public section
@@ -48,15 +36,21 @@ universe u v
 
 namespace QuadraticForm
 
-/-- Embed a lower-rank Pfister coordinate as a subset avoiding the final
-index. -/
+/-- **The lower Pfister subset embedding.**
+
+For n ∈ ℕ, the embedding L : Finset(Fin n) → Finset(Fin(n+1)) sends s to its image under i ↦
+i, so L(s) omits the last index n.
+-/
 def pfisterLowerIndex (n : ℕ) :
     Finset (Fin n) ↪ Finset (Fin (n + 1)) where
   toFun s := s.map Fin.castSuccEmb
   inj' := Finset.map_injective Fin.castSuccEmb
 
-/-- Embed a lower-rank Pfister coordinate in the upper block by inserting
-the final index. -/
+/-- **The upper Pfister subset embedding.**
+
+For n ∈ ℕ, the embedding U : Finset(Fin n) → Finset(Fin(n+1)) sends s to the image of s under
+i ↦ i together with the last index n.
+-/
 def pfisterUpperIndex (n : ℕ) :
     Finset (Fin n) ↪ Finset (Fin (n + 1)) where
   toFun s := insert (Fin.last n) (pfisterLowerIndex n s)
@@ -84,8 +78,11 @@ private theorem last_mem_pfisterUpperIndex
   change Fin.last n ∈ insert (Fin.last n) (pfisterLowerIndex n s)
   simp
 
-/-- The full Pfister coefficient on a lower-block coordinate is the
-lower-rank Pfister coefficient. -/
+/-- **Weights on the lower Pfister block.**
+
+Let F be a field and a₀,…,aₙ ∈ Fˣ, with lower tuple bᵢ = aᵢ for i < n. For wₐ(s) = ∏ᵢ∈s (−aᵢ)
+and L(s) the image of s ⊆ Fin n in Fin(n+1) omitting n, one has wₐ(L(s)) = w_b(s).
+-/
 @[simp]
 theorem pfisterWeight_lowerIndex {F : Type u} [Field F] {n : ℕ}
     (a : Fin (n + 1) → Fˣ) (s : Finset (Fin n)) :
@@ -97,8 +94,11 @@ theorem pfisterWeight_lowerIndex {F : Type u} [Field F] {n : ℕ}
   rw [Finset.prod_map]
   rfl
 
-/-- The full Pfister coefficient on an upper-block coordinate is the lower
-coefficient multiplied by the negative final coefficient. -/
+/-- **Weights on the upper Pfister block.**
+
+Let F be a field and a₀,…,aₙ ∈ Fˣ, with bᵢ = aᵢ for i < n. Let U(s) be the image of s ⊆ Fin n
+together with the last index n. For wₐ(t) = ∏ᵢ∈t (−aᵢ), one has wₐ(U(s)) = (−aₙ)w_b(s).
+-/
 @[simp]
 theorem pfisterWeight_upperIndex {F : Type u} [Field F] {n : ℕ}
     (a : Fin (n + 1) → Fˣ) (s : Finset (Fin n)) :
@@ -208,8 +208,13 @@ private theorem pfisterSuccIndexEquiv_symm_upperIndex
       Sum.inr s := by
   exact (pfisterSuccIndexEquiv n).symm_apply_eq.mpr rfl
 
-/-- Split functions on successor Pfister coordinates into the block avoiding
-the final index and the block containing it. -/
+/-- **Splitting successor subset coordinates.**
+
+Let R be a semiring and M an additive commutative monoid with an R-module structure. For n ∈
+ℕ, let L(s) embed s ⊆ Fin n without the last index and U(s) add that index. The map x ↦ (s ↦
+x(L(s)), s ↦ x(U(s))) is an R-linear equivalence from (Finset(Fin(n+1)) → M) to (Finset(Fin n)
+→ M) × (Finset(Fin n) → M).
+-/
 noncomputable def pfisterSuccLinearEquiv
     (R : Type u) [Semiring R]
     {M : Type v} [AddCommMonoid M] [Module R M]
@@ -295,8 +300,12 @@ theorem pfisterSuccLinearEquiv_symm_apply_upperIndex
   congr 1
   simpa [pfisterLowerPart] using pfisterLowerPart_upperIndex n s
 
-/-- A successor Pfister form is isometric to the product of the lower form
-and its scalar multiple by the negative final coefficient. -/
+/-- **The successor Pfister isometry.**
+
+Let F be a field and a₀,…,aₙ ∈ Fˣ, with bᵢ = aᵢ for i < n. Write qₐ(x) = ∑ₛ(∏ᵢ∈s −aᵢ)xₛ² and
+define q_b similarly. Splitting the coordinates by whether their subset contains n gives an
+isometry qₐ ≃ q_b ⊕ (−aₙ)q_b.
+-/
 noncomputable def pfisterSuccEquiv
     (F : Type u) [Field F] {n : ℕ}
     (a : Fin (n + 1) → Fˣ) :

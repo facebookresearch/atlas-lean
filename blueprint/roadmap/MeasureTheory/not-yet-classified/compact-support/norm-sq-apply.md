@@ -1,3 +1,4 @@
-# Norm Sq apply
+# Value of the compact-support squared-norm function
 
-The compact-support squared norm has the literal real squared-norm values.
+For topological `X`, `f∈C_c(X,ℂ)`
+and `x∈X`, `normSq f x=|f(x)|²`.

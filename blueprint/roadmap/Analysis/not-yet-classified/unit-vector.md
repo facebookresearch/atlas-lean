@@ -1,6 +1,4 @@
-# Unit Vector
+# Complex unit vector by coordinates
 
-A finite-dimensional normalized complex vector in the natural complex
-   inner-product space, indexed by a finite type `d`. Normalization is
-   expressed as `∑ i, star (coord i) * coord i = 1`, i.e. unit norm for the
-   standard Hermitian inner product on `d → ℂ`.
+For a finite index type I, UnitVector I consists of z:I→ℂ with ∑i conj(z_i)z_i=1, equivalently
+∑i|z_i|²=1.

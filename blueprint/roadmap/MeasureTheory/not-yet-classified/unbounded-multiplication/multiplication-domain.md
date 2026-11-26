@@ -1,3 +1,5 @@
-# Multiplication Domain
+# Maximal L² product domain
 
-The actual maximal domain consists precisely of original L2classes with L2pointwise product.
+Let X be a measurable space, μ any measure on X and m:X→ℂ an arbitrary function. On
+H=L²(X,μ;ℂ) set D_m={u∈H:m*u is a.e. strongly measurable and square-integrable}, with
+multiplication taken pointwise. The submodule multiplicationDomain μ m is D_m.

@@ -1,4 +1,3 @@
-# Gradient Descent Step sq norm
+# Squared-distance expansion for a gradient step
 
-One-step gradient-descent identity: the squared distance of the update
-`x - η • g` to a comparator `c` expands exactly.
+Let E be a real inner product space and x,g,c∈E,η∈ℝ. Then ‖x−ηg−c‖²=‖x−c‖²−2η⟪g,x−c⟫+η²‖g‖².

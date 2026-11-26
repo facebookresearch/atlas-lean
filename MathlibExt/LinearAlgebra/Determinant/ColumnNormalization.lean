@@ -13,49 +13,10 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.LinearAlgebra.Determinant
 
 /-!
-# Determinants after basis-column normalization
+# Determinant factorization from normalized basis columns
 
-This file records the determinant factorization obtained by extracting a
-possibly different power of one scalar from every column of a linear
-endomorphism.
-
-## Main result
-
-* `LinearMap.det_eq_pow_sum_mul_det_of_apply_basis`: if, on a finite basis
-  `b`, two endomorphisms satisfy
-
-  ```text
-  f (b i) = π ^ c i • g (b i),
-  ```
-
-  then
-
-  ```text
-  det f = π ^ (∑ i, c i) * det g.
-  ```
-* `LinearMap.UniformizerColumnNormalization`: bundles the basis, extracted
-  exponents, normalized endomorphism, and column identities; its `det_eq`
-  theorem applies the factorization directly.
-
-The statement is valid over an arbitrary commutative ring.  In particular,
-`π` need not be regular or a uniformizer; those hypotheses belong only to
-applications which construct `g` by dividing the columns of `f`.  The
-explicit finite basis supplies the determinant data, so no separate
-`Module.Free` or `Module.Finite` instance is required.
-
-## Informal proof
-
-Write both endomorphisms in the basis `b`.  The hypothesis says that column
-`i` of the matrix of `f` is column `i` of the matrix of `g`, multiplied by
-`π ^ c i`.  Hence
-
-```text
-matrix(f) = matrix(g) * diagonal(i ↦ π ^ c i).
-```
-
-Taking determinants turns the matrix product into a product.  The determinant
-of the diagonal factor is `∏ i, π ^ c i`, and collecting powers of the common
-base `π` changes this product to `π ^ ∑ i, c i`.
+Let R be a commutative ring, M an R-module with finite basis b:I→M, π∈R and c_i∈ℕ. If
+endomorphisms f,g satisfy f(b_i)=π^(c_i)•g(b_i), then det(f)=π^(∑i c_i)det(g). The determinant identity holds for every scalar π.
 -/
 
 @[expose] public section
@@ -74,12 +35,12 @@ variable {R : Type uR} {M : Type uM} {ι : Type uI}
 variable [CommRing R] [Fintype ι]
 variable [AddCommGroup M] [Module R M]
 
-/-- Extracting the power `π ^ c i` from basis column `i` extracts the sum of
-the exponents from the determinant.
+/-- **Extracted column powers sum in the determinant.**
 
-This is a columnwise factorization theorem, not a division theorem: the
-normalized endomorphism `g` and the displayed basis equalities are supplied
-as data.  Consequently no regularity assumption on `π` is required. -/
+Let R be a commutative ring, M an R-module with finite basis b:I→M, π∈R and c_i∈ℕ. If
+endomorphisms f,g satisfy f(b_i)=π^(c_i)•g(b_i), then det(f)=π^(∑i c_i)det(g). This is
+det_eq_pow_sum_mul_det_of_apply_basis, including empty bases.
+-/
 theorem det_eq_pow_sum_mul_det_of_apply_basis
     (b : Module.Basis ι R M) (π : R) (c : ι → ℕ)
     (f g : M →ₗ[R] M)
@@ -106,8 +67,13 @@ theorem det_eq_pow_sum_mul_det_of_apply_basis
       rw [Finset.prod_pow_eq_pow_sum]
       exact mul_comm _ _
 
-/-- Basis-indexed data exhibiting an endomorphism as columnwise powers of
-one scalar times a normalized endomorphism. -/
+/-- **Finite basis-column normalization data.**
+
+Let R be a commutative ring, M an R-module with finite basis b:I→M, π∈R and c_i∈ℕ. If
+endomorphisms f,g satisfy f(b_i)=π^(c_i)•g(b_i), then det(f)=π^(∑i c_i)det(g).
+UniformizerColumnNormalization π f records a finite basis b, exponents c_i, an endomorphism g
+and these column identities.
+-/
 structure UniformizerColumnNormalization {R : Type uR} {M : Type uM}
     [CommRing R] [AddCommGroup M] [Module R M]
     (pi : R) (f : M →ₗ[R] M) where
@@ -123,9 +89,12 @@ namespace UniformizerColumnNormalization
 
 variable {pi : R} {f : M →ₗ[R] M}
 
-/-- Construct bundled column-normalization data from basiswise divisibility
-witnesses.  The normalized endomorphism is the linear map sending each basis
-vector to a chosen quotient column. -/
+/-- **Column normalization from divisibility of basis images.**
+
+Let R be a commutative ring, b a finite basis of M, π∈R,c_i∈ℕ and f an endomorphism. If for
+every i there exists y_i with f(b_i)=π^(c_i)•y_i, ofExists constructs the normalization with
+g(b_i)=y_i.
+-/
 noncomputable def ofExists (b : Module.Basis ι R M) (pi : R)
     (c : ι → ℕ) (f : M →ₗ[R] M)
     (h : ∀ i, ∃ y : M, f (b i) = pi ^ c i • y) :
@@ -139,7 +108,12 @@ noncomputable def ofExists (b : Module.Basis ι R M) (pi : R)
     rw [Module.Basis.constr_basis]
     exact Classical.choose_spec (h i)
 
-/-- Total scalar exponent extracted from all basis columns. -/
+/-- **Sum of extracted basis-column exponents.**
+
+Let R be a commutative ring, M an R-module with finite basis b:I→M, π∈R and c_i∈ℕ. If
+endomorphisms f,g satisfy f(b_i)=π^(c_i)•g(b_i), then det(f)=π^(∑i c_i)det(g). For
+normalization data D, totalExponent D=∑i D.exponent(i).
+-/
 noncomputable def totalExponent
     (D : UniformizerColumnNormalization pi f) : ℕ := by
   letI : Fintype D.index := D.indexFintype
@@ -152,8 +126,12 @@ theorem totalExponent_ofExists (b : Module.Basis ι R M) (pi : R)
     (ofExists b pi c f h).totalExponent = ∑ i, c i :=
   rfl
 
-/-- Determinant factorization supplied by bundled column-normalization
-data. -/
+/-- **Determinant formula from column-normalization data.**
+
+Let R be a commutative ring, M an R-module with finite basis b:I→M, π∈R and c_i∈ℕ. If
+endomorphisms f,g satisfy f(b_i)=π^(c_i)•g(b_i), then det(f)=π^(∑i c_i)det(g). For
+D:UniformizerColumnNormalization π f, det(f)=π^(D.totalExponent)det(D.normalized).
+-/
 theorem det_eq (D : UniformizerColumnNormalization pi f) :
     f.det = pi ^ D.totalExponent * D.normalized.det := by
   let _ : Fintype D.index := D.indexFintype

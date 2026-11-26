@@ -21,26 +21,19 @@ public import Mathlib.MeasureTheory.VectorMeasure.Basic
 import MathlibExt.Algebra.Star.StarProjection.FiniteSum
 
 /-!
-# Projection-valued measures on Hilbert spaces
+# Projection-valued measures on complex Hilbert spaces
 
-A projection-valued measure (`ProjectionValuedMeasure`) assigns an orthogonal
-projection to every measurable set, sends the empty set to zero and the whole
-space to one, turns intersections into products, and is countably additive in
-the strong operator topology.  Strong additivity is represented directly by
-pointwise norm-convergent `HasSum` statements.
+For a measurable space `X` and complete complex Hilbert space `H`, a PVM assigns to each
+measurable set `s` an orthogonal projection `E(s)` on `H`. It satisfies `E(∅)=0`, `E(X)=I`,
+`E(s∩t)=E(s)E(t)`, and `Σ_n E(s_n)h=E(⋃n s_n)h` in the Hilbert norm whenever the measurable sets
+`s_n` are pairwise disjoint. Nonmeasurable sets are assigned zero.
 
-The bundle is defined on all sets, following Mathlib's `VectorMeasure`
-convention that nonmeasurable sets are canonically sent to zero.  It does not
-extend `VectorMeasure X (H →L[ℂ] H)`, since that would incorrectly require
-operator-norm countable additivity.  For a fixed vector `h`, however,
-`E.applyVectorMeasure h` is a genuine `H`-valued vector measure; this derived
-adapter lets the ordinary finite-union and complement API be reused without
-strengthening the PVM laws.
+For fixed `h`, the map `s ↦ E(s)h` is an `H`-valued vector measure. Disjoint sets yield
+orthogonal projection ranges, complements give `E(sᶜ)=I-E(s)`, and measurable inclusion gives
+the projection order. Operator-norm countable additivity is not imposed.
 
-The basic API uses Mathlib's canonical `IsStarProjection`.  It includes
-measurable-set extensionality, projection/order/complement laws, disjoint
-orthogonality and finite additivity, and the strong-sum semantics of a
-countable orthogonal family of projections.
+A countable family of pairwise orthogonal projections sums strongly to the orthogonal projection
+onto the closed span of all their ranges.
 -/
 
 @[expose] public section
@@ -58,26 +51,41 @@ variable {X : Type u} {H : Type v}
 variable [MeasurableSpace X]
 variable [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- A projection-valued measure with pointwise-norm (strong-operator)
-countable additivity. Nonmeasurable sets are canonically assigned zero. -/
+/-- **Projection-valued measure with strong countable additivity.** Let `X` be a measurable
+space and `H` a complete complex Hilbert space. a PVM sends measurable sets to orthogonal
+projections, satisfies `E(∅)=0`, `E(X)=I`, `E(s∩t)=E(s)E(t)` and `Σ_n E(s_n)h=E(⋃n s_n)h`
+in norm for disjoint measurable `s_n`. Nonmeasurable sets have value zero. -/
 @[ext]
 structure ProjectionValuedMeasure (X : Type u) (H : Type v)
     [MeasurableSpace X] [NormedAddCommGroup H] [InnerProductSpace ℂ H]
     [CompleteSpace H] where
-  /-- The projection assigned to a set. -/
+  /-- **Set-valued operator function of a PVM.** Let `X` be a measurable space and `H` a
+  complete complex Hilbert space. the function `E : Set X → B(H)` assigns a bounded
+  complex-linear projection operator to each measurable set and zero to nonmeasurable
+  sets. -/
   toFun : Set X → H →L[ℂ] H
-  /-- Nonmeasurable sets are assigned zero. -/
+  /-- **Zero value on nonmeasurable sets.** Let `X` be a measurable space and `H` a complete
+  complex Hilbert space. the set-operator function of a PVM satisfies `E(s)=0` whenever `s
+  ⊆ X` is not measurable. -/
   not_measurable' : ∀ {s : Set X}, ¬ MeasurableSet s → toFun s = 0
-  /-- Every measurable value is an orthogonal projection. -/
+  /-- **Orthogonal projection values of a PVM.** Let `X` be a measurable space and `H` a
+  complete complex Hilbert space. for every measurable `s ⊆ X`, its PVM value satisfies
+  `E(s)²=E(s)` and `E(s)*=E(s)`. -/
   projection' : ∀ s : Set X, MeasurableSet s → IsStarProjection (toFun s)
-  /-- The empty set is assigned zero. -/
+  /-- **Empty-set value of a PVM.** Let `X` be a measurable space and `H` a complete complex
+  Hilbert space. the set-operator function satisfies `E(∅)=0`. -/
   empty' : toFun ∅ = 0
-  /-- The whole space is assigned the identity. -/
+  /-- **Identity value on the whole space.** Let `X` be a measurable space and `H` a complete
+  complex Hilbert space. the PVM value of the whole measurable space is `E(X)=I_H`. -/
   univ' : toFun Set.univ = 1
-  /-- Intersections are sent to products. -/
+  /-- **Intersection law of a PVM.** Let `X` be a measurable space and `H` a complete complex
+  Hilbert space. for measurable `s,t ⊆ X`, `E(s∩t)=E(s)E(t)`, with operator multiplication
+  given by composition. -/
   inter' : ∀ s : Set X, MeasurableSet s → ∀ t : Set X, MeasurableSet t →
     toFun (s ∩ t) = toFun s * toFun t
-  /-- Countable additivity in the strong operator topology. -/
+  /-- **Strong countable additivity of a PVM.** Let `X` be a measurable space and `H` a
+  complete complex Hilbert space. for pairwise disjoint measurable sets `s_n` and every `h
+  ∈ H`, the series `Σ_n E(s_n)h` has sum `E(⋃n s_n)h` in the Hilbert norm. -/
   m_iUnion' : ∀ (s : ℕ → Set X), (∀ n, MeasurableSet (s n)) →
     (Pairwise fun i j ↦ Disjoint (s i) (s j)) → ∀ h : H,
       HasSum (fun n ↦ toFun (s n) h) (toFun (⋃ n, s n) h)
@@ -92,8 +100,10 @@ theorem not_measurable (E : ProjectionValuedMeasure X H) {s : Set X}
     (hs : ¬ MeasurableSet s) : E s = 0 :=
   E.not_measurable' hs
 
-/-- Every value of a PVM is a star projection; a nonmeasurable set has value
-zero. -/
+/-- **Orthogonal projection property for every PVM value.** Let `X` be a measurable space and
+`H` a complete complex Hilbert space. Let `E : ProjectionValuedMeasure X H` be a strongly
+countably additive PVM. for every set `s ⊆ X`, `E(s)²=E(s)` and `E(s)*=E(s)`;
+nonmeasurable sets have the zero projection. -/
 theorem isStarProjection (E : ProjectionValuedMeasure X H) (s : Set X) :
     IsStarProjection (E s) := by
   by_cases hs : MeasurableSet s
@@ -124,7 +134,9 @@ theorem m_iUnion (E : ProjectionValuedMeasure X H) (s : ℕ → Set X)
     HasSum (fun n ↦ E (s n) h) (E (⋃ n, s n) h) :=
   E.m_iUnion' s hs hdisj h
 
-/-- Two PVMs agreeing on measurable sets are equal. -/
+/-- **PVM equality from measurable-set values.** Let `X` be a measurable space and `H` a
+complete complex Hilbert space. two strongly countably additive PVMs `E,F` are equal if
+`E(s)=F(s)` for every measurable set `s ⊆ X`. -/
 theorem ext_measurable {E F : ProjectionValuedMeasure X H}
     (h : ∀ s : Set X, MeasurableSet s → E s = F s) : E = F := by
   apply ProjectionValuedMeasure.ext
@@ -133,8 +145,10 @@ theorem ext_measurable {E F : ProjectionValuedMeasure X H}
   · exact h s hs
   · rw [E.not_measurable hs, F.not_measurable hs]
 
-/-- Evaluation of a PVM on one vector is an ordinary vector measure. This is
-a derived pointwise adapter, not an operator-valued vector measure. -/
+/-- **Vector measure obtained by evaluating a PVM.** Let `X` be a measurable space and `H` a
+complete complex Hilbert space. Let `E : ProjectionValuedMeasure X H` be a strongly
+countably additive PVM. for `h ∈ H`, `applyVectorMeasure E h : VectorMeasure X H` is `s ↦
+E(s)h`, countably additive in the norm of `H`. -/
 def applyVectorMeasure (E : ProjectionValuedMeasure X H) (h : H) :
     VectorMeasure X H where
   measureOf' s := E s h
@@ -152,7 +166,9 @@ theorem applyVectorMeasure_apply (E : ProjectionValuedMeasure X H) (h : H) (s : 
     E.applyVectorMeasure h s = E s h :=
   rfl
 
-/-- A PVM is finitely additive on disjoint measurable sets. -/
+/-- **Finite additivity of PVM projections.** Let `X` be a measurable space and `H` a complete
+complex Hilbert space. Let `E : ProjectionValuedMeasure X H` be a strongly countably
+additive PVM. for disjoint measurable `s,t`, `E(s∪t)=E(s)+E(t)`. -/
 theorem union (E : ProjectionValuedMeasure X H) {s t : Set X}
     (hs : MeasurableSet s) (ht : MeasurableSet t) (hdisj : Disjoint s t) :
     E (s ∪ t) = E s + E t := by
@@ -160,7 +176,9 @@ theorem union (E : ProjectionValuedMeasure X H) {s t : Set X}
   intro h
   exact (E.applyVectorMeasure h).of_union hdisj hs ht
 
-/-- The projection of a measurable complement is `1 - E s`. -/
+/-- **Projection of a measurable complement.** Let `X` be a measurable space and `H` a
+complete complex Hilbert space. Let `E : ProjectionValuedMeasure X H` be a strongly
+countably additive PVM. for a measurable set `s ⊆ X`, `E(sᶜ)=I_H-E(s)`. -/
 theorem compl (E : ProjectionValuedMeasure X H) {s : Set X} (hs : MeasurableSet s) :
     E sᶜ = 1 - E s := by
   apply ContinuousLinearMap.ext
@@ -168,13 +186,18 @@ theorem compl (E : ProjectionValuedMeasure X H) {s : Set X} (hs : MeasurableSet 
   simpa only [applyVectorMeasure_apply, E.univ, one_apply_eq_self, sub_apply] using
     (VectorMeasure.of_compl (v := E.applyVectorMeasure h) hs)
 
-/-- Projections of disjoint measurable sets multiply to zero. -/
+/-- **Zero product of disjoint spectral projections.** Let `X` be a measurable space and `H` a
+complete complex Hilbert space. Let `E : ProjectionValuedMeasure X H` be a strongly
+countably additive PVM. if measurable `s,t` are disjoint, `E(s)E(t)=0`. -/
 theorem mul_eq_zero_of_disjoint (E : ProjectionValuedMeasure X H) {s t : Set X}
     (hs : MeasurableSet s) (ht : MeasurableSet t) (hdisj : Disjoint s t) :
     E s * E t = 0 := by
   rw [← E.inter s hs t ht, Set.disjoint_iff_inter_eq_empty.mp hdisj, E.empty]
 
-/-- Projections of disjoint measurable sets have orthogonal images. -/
+/-- **Orthogonality of disjoint spectral ranges.** Let `X` be a measurable space and `H` a
+complete complex Hilbert space. Let `E : ProjectionValuedMeasure X H` be a strongly
+countably additive PVM. for disjoint measurable `s,t` and any `x,y ∈ H`,
+`⟨E(s)x,E(t)y⟩=0`. -/
 theorem inner_apply_eq_zero_of_disjoint (E : ProjectionValuedMeasure X H) {s t : Set X}
     (hs : MeasurableSet s) (ht : MeasurableSet t) (hdisj : Disjoint s t)
     (x y : H) :
@@ -188,7 +211,10 @@ theorem inner_apply_eq_zero_of_disjoint (E : ProjectionValuedMeasure X H) {s t :
       rfl
     _ = 0 := by rw [E.mul_eq_zero_of_disjoint hs ht hdisj]; simp
 
-/-- The PVM is monotone on measurable sets in the canonical projection order. -/
+/-- **Monotonicity of spectral projections.** Let `X` be a measurable space and `H` a complete
+complex Hilbert space. Let `E : ProjectionValuedMeasure X H` be a strongly countably
+additive PVM. if measurable `s,t` satisfy `s ⊆ t`, then `E(s)≤E(t)` in the order of
+positive Hilbert-space operators. -/
 theorem mono (E : ProjectionValuedMeasure X H) {s t : Set X}
     (hs : MeasurableSet s) (ht : MeasurableSet t) (hst : s ⊆ t) :
     E s ≤ E t := by
@@ -197,8 +223,10 @@ theorem mono (E : ProjectionValuedMeasure X H) {s t : Set X}
   apply (E.projection s hs).sub_of_mul_eq_left (E.projection t ht)
   rw [← E.inter s hs t ht, Set.inter_eq_left.mpr hst]
 
-/-- A finite union of pairwise-disjoint measurable sets is sent to the finite
-sum of its projections. -/
+/-- **Projection of a finite disjoint union.** Let `X` be a measurable space and `H` a
+complete complex Hilbert space. Let `E : ProjectionValuedMeasure X H` be a strongly
+countably additive PVM. for a finite index set `u` and pairwise disjoint measurable `s_i`
+with `i ∈ u`, `E(⋃i∈u s_i)=Σ_i∈u E(s_i)`. The empty finite family is allowed. -/
 theorem biUnion_finset (E : ProjectionValuedMeasure X H) {I : Type*}
     (u : Finset I) (s : I → Set X)
     (hs : ∀ i ∈ u, MeasurableSet (s i))
@@ -211,8 +239,9 @@ theorem biUnion_finset (E : ProjectionValuedMeasure X H) {I : Type*}
       (E.applyVectorMeasure h).of_biUnion_finset hdisj hs
     _ = (∑ i ∈ u, E (s i)) h := by simp
 
-/-- The point-mass PVM at `x`: a measurable set containing `x` is assigned
-the identity projection and every other set is assigned zero. -/
+/-- **Point-mass projection-valued measure.** Let `X` be a measurable space and `H` a complete
+complex Hilbert space. for `x ∈ X`, `dirac x` assigns `I_H` to measurable sets containing
+`x` and zero to every other set. The singleton `{x}` need not be measurable. -/
 noncomputable def dirac (x : X) : ProjectionValuedMeasure X H := by
   classical
   refine
@@ -293,8 +322,10 @@ private theorem projectionPartialSum_mul_of_subset
   · intro hin
     exact (hin (huv hi)).elim
 
-/-- Conway IX.1.5: a countable pairwise-orthogonal family of projections sums
-strongly to the projection onto the closed supremum of their ranges. -/
+/-- **Strong sum of countably many orthogonal projections.** Let `H` be a complete complex
+Hilbert space and `P_n : H →L[ℂ] H` orthogonal projections satisfying `P_i P_j=0` for
+`i≠j`. There is an orthogonal projection `Q` with `Σ_n P_n h=Qh` in norm for every `h ∈
+H`, and `range Q` is the closure of the linear span of all `range P_n`. -/
 theorem exists_hasSum_of_pairwise_orthogonal
     (P : ℕ → H →L[ℂ] H) (hP : ∀ i, IsStarProjection (P i))
     (horth : Pairwise fun i j ↦ P i * P j = 0) :

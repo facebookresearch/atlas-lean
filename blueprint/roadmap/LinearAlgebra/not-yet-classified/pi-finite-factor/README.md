@@ -1,7 +1,7 @@
-# Pi Finite Factor
+# Tensoring arbitrary products with a finite-projective factor
 
-- [Finite Pi Flip](finite-pi-flip.md)
-- [Pi Right Hom factor naturality](pi-right-hom-factor-naturality.md)
-- [Pi Right Hom finite Free bijective](pi-right-hom-finite-free-bijective.md)
-- [Pi Right Hom finite Factor bijective](pi-right-hom-finite-factor-bijective.md)
-- [Pi Right Finite Factor](pi-right-finite-factor.md)
+- [Finite coordinate and arbitrary product interchange](finite-pi-flip.md)
+- [Naturality of the product comparison in the tensor factor](pi-right-hom-factor-naturality.md)
+- [Product tensor comparison for a finite-free factor](pi-right-hom-finite-free-bijective.md)
+- [Product tensor comparison for a finite-projective factor](pi-right-hom-finite-factor-bijective.md)
+- [Finite-projective factor product tensor equivalence](pi-right-finite-factor.md)

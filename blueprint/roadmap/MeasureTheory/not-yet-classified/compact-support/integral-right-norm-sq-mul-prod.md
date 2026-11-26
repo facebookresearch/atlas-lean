@@ -1,3 +1,6 @@
-# Integral Right norm Sq mul Prod
+# Coordinate integral of a complex pure product's squared norm
 
-Coordinate integration of the pure square retains the actual compact-support squared-norm factor.
+Let `X` be Hausdorff,
+`Y` a topological space with a measurable structure making open sets measurable, and `ν`
+finite on compact sets. Assume `Y` is Hausdorff. for complex compact-support `f,g`,
+`integralRight ν (normSq(mulProd f g))=(∫ |g|² dν) • normSq f`.

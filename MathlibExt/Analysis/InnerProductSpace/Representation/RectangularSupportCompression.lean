@@ -15,12 +15,16 @@ public import MathlibExt.Analysis.InnerProductSpace.Representation.SupportCompre
 public import Mathlib.Analysis.Normed.Operator.Compact.Basic
 
 /-!
-# Rectangular operators between represented unit ranges
+# Rectangular compression between represented unit supports
 
-A possibly nonunital representation of a unital algebra has an actual unit
-range. This file constructs the rectangular operator between two such ranges
-and proves that an original compact intertwining defect remains compact.
-No Fredholmness or global-index agreement is asserted by this construction.
+For possibly nonunital representations `σ_i : A → B(H_i)` of a unital complex algebra with
+star-ring involution, let `p_i=σ_i(1)`. A bounded operator `T : H₀ → H₁` compresses to `C :
+range p₀ → range p₁`, `Cx=p₁(Tx)`.
+
+For each coefficient `a`, its supported intertwining defect is `C σ₀^p(a)-σ₁^p(a) C =
+p₁(Tσ₀(a)-σ₁(a)T)|_(range p₀)`. Thus compactness of the full defect implies compactness of the
+compressed defect. Both Hilbert spaces are complete; no coefficient norm, Fredholmness or index
+comparison is imposed.
 -/
 
 @[expose] public section
@@ -35,16 +39,23 @@ variable {H₀ : Type uH₀} [NormedAddCommGroup H₀] [InnerProductSpace ℂ H�
 variable {H₁ : Type uH₁} [NormedAddCommGroup H₁] [InnerProductSpace ℂ H₁]
   [CompleteSpace H₁]
 
-/-- Compress an actual rectangular operator to the two represented unit
-ranges, using the target unit image and the original source inclusion. -/
+/-- **Bounded operator between represented unit ranges.** Let `A` be a unital semiring with a
+complex algebra structure and star-ring involution, `H₀,H₁` complete complex Hilbert
+spaces, `σ_i : A →⋆ₙₐ[ℂ] B(H_i)` possibly nonunital representations, and `T : H₀ →L[ℂ]
+H₁`. Put `p_i=σ_i(1)` and `C : range p₀ → range p₁`, `Cx=p₁(Tx)`. `unitRangeCompression σ₀
+σ₁ T` is `C`, using the subspace norms and the complete Hilbert structures of the
+projection ranges. -/
 noncomputable def unitRangeCompression
     (σ₀ : A →⋆ₙₐ[ℂ] (H₀ →L[ℂ] H₀))
     (σ₁ : A →⋆ₙₐ[ℂ] (H₁ →L[ℂ] H₁)) (T : H₀ →L[ℂ] H₁) :
     (σ₀ (1 : A)).range →L[ℂ] (σ₁ (1 : A)).range :=
   (σ₁ (1 : A)).rangeRestrict.comp (T.domRestrict ((σ₀ (1 : A)).range))
 
-/-- The included supported value is the literal target unit image applied
-to the original operator value. This permits zero or finite support. -/
+/-- **Included-vector value of rectangular support compression.** Let `A` be a unital semiring
+with a complex algebra structure and star-ring involution, `H₀,H₁` complete complex
+Hilbert spaces, `σ_i : A →⋆ₙₐ[ℂ] B(H_i)` possibly nonunital representations, and `T : H₀
+→L[ℂ] H₁`. Put `p_i=σ_i(1)` and `C : range p₀ → range p₁`, `Cx=p₁(Tx)`. for `x ∈ range
+p₀`, the vector of `H₁` underlying `unitRangeCompression σ₀ σ₁ T x` is `p₁(Tx)`. -/
 @[simp]
 theorem unitRangeCompression_apply
     (σ₀ : A →⋆ₙₐ[ℂ] (H₀ →L[ℂ] H₀))
@@ -52,8 +63,12 @@ theorem unitRangeCompression_apply
     (x : (σ₀ (1 : A)).range) :
     (unitRangeCompression σ₀ σ₁ T x : H₁) = σ₁ (1 : A) (T (x : H₀)) := rfl
 
-/-- The supported intertwining defect factors through exactly the original
-rectangular defect, followed by the actual target range map. -/
+/-- **Factorization of a supported intertwining defect.** Let `A` be a unital semiring with a
+complex algebra structure and star-ring involution, `H₀,H₁` complete complex Hilbert
+spaces, `σ_i : A →⋆ₙₐ[ℂ] B(H_i)` possibly nonunital representations, and `T : H₀ →L[ℂ]
+H₁`. Put `p_i=σ_i(1)` and `C : range p₀ → range p₁`, `Cx=p₁(Tx)`. let `σ_i^p` denote
+`unitRangeStarAlgHom σ_i`. For `a ∈ A`, `C σ₀^p(a)-σ₁^p(a) C = p₁(Tσ₀(a)-σ₁(a)T)|_(range
+p₀)`, with codomain `range p₁`. -/
 theorem unitRangeCompression_intertwining
     (σ₀ : A →⋆ₙₐ[ℂ] (H₀ →L[ℂ] H₀))
     (σ₁ : A →⋆ₙₐ[ℂ] (H₁ →L[ℂ] H₁)) (T : H₀ →L[ℂ] H₁) (a : A) :
@@ -91,8 +106,12 @@ theorem unitRangeCompression_intertwining
   simp only [unitRangeCompression_apply, unitRangeStarAlgHom_apply,
     map_sub, hleft, hright]
 
-/-- An original compact intertwining defect stays compact on the actual
-unit supports. Compactness is derived by the displayed factorization. -/
+/-- **Compactness passes to the represented-support defect.** Let `A` be a unital semiring
+with a complex algebra structure and star-ring involution, `H₀,H₁` complete complex
+Hilbert spaces, `σ_i : A →⋆ₙₐ[ℂ] B(H_i)` possibly nonunital representations, and `T : H₀
+→L[ℂ] H₁`. Put `p_i=σ_i(1)` and `C : range p₀ → range p₁`, `Cx=p₁(Tx)`. for `a ∈ A`, if
+`Tσ₀(a)-σ₁(a)T` is compact, then `C σ₀^p(a)-σ₁^p(a) C` is compact, where
+`σ_i^p=unitRangeStarAlgHom σ_i`. -/
 theorem unitRangeCompression_intertwining_compact
     (σ₀ : A →⋆ₙₐ[ℂ] (H₀ →L[ℂ] H₀))
     (σ₁ : A →⋆ₙₐ[ℂ] (H₁ →L[ℂ] H₁)) (T : H₀ →L[ℂ] H₁) (a : A)

@@ -1,3 +1,6 @@
-# Indicator Projection
+# Orthogonal projection by an indicator multiplier
 
-Multiplication by a measurable-set indicator as a bounded operator on `L²`.
+Let `X` be a measurable space, `μ`
+any measure on `X`, and `L²(μ)=Lp ℂ 2 μ`, with its Hilbert norm. for a measurable set `s`,
+`indicatorProjection μ s : L²(μ) →L[ℂ] L²(μ)` acts by `f ↦ 1_s f` almost everywhere, with
+norm at most one.

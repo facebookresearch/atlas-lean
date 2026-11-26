@@ -18,17 +18,14 @@ public import Mathlib.Analysis.CStarAlgebra.ContinuousLinearMap
 public import Mathlib.MeasureTheory.Group.Integral
 
 /-!
-# The actual LCA Haar-square coordinate shear unitary
+# Measure-preserving shear of an abelian Haar Radon square
 
-Reverse compact-support integration and the original Haar invariance prove
-that `(s,t) ↦ (s*t⁻¹,t)` preserves the actual Borel Radon square measure.
-Its original inverse `(r,t) ↦ (r*t,t)` then gives a literal linear isometry
-equivalence on the full Hilbert-valued product L2 space. Both operator
-directions retain their original a.e. coordinates and compact-support values.
+For a Hausdorff locally compact abelian Borel group and Haar measure `μ`, the shear
+`S(s,t)=(st⁻¹,t)` and its inverse preserve `R=radonProd μ μ`.
 
-The original LCA/LCH/Borel/regular-Haar hypotheses and independent Hilbert
-universe are retained. H may be zero. No countability, s-finiteness,
-supplied unitary or desired spatial model is used.
+Inverse-shear pullback gives the L² isometry `Fξ(s,t)=ξ(st,t)`, with inverse value `ξ(st⁻¹,t)`.
+When the coefficient inner-product space is complete, this is a bounded unitary. No regularity
+of the Haar measure, countability or s-finiteness is needed for these formulas.
 -/
 
 @[expose] public section
@@ -49,14 +46,18 @@ variable {G : Type uG} [CommGroup G] [TopologicalSpace G] [IsTopologicalGroup G]
   [T2Space G] [LocallyCompactSpace G] [MeasurableSpace G] [BorelSpace G]
 variable (μ : Measure G) [μ.IsHaarMeasure] [μ.Regular]
 
-/-- The actual Borel measurable space of the original topological Haar square. -/
+/-- **Borel measurable structure of a Haar square.** For a topological space `G`, the square
+has the measurable structure `borel(G×G)` of its product topology. -/
 local instance instExactShearProductMeasurableSpace : MeasurableSpace (G × G) := borel (G × G)
 local instance instExactShearProductBorelSpace : BorelSpace (G × G) := ⟨rfl⟩
 
 namespace Measure
 
 omit [μ.Regular] in
-/-- The literal original difference-coordinate shear preserves the actual Borel Radon square. -/
+/-- **Difference-coordinate shear preserves the Haar Radon square.** Let `G` be a Hausdorff
+locally compact abelian topological group with Borel structure and Haar measure `μ`. Put
+`R=radonProd μ μ` on the Borel square and `S(s,t)=(st⁻¹,t)`. `Measure.map S R=R`.
+Regularity of `μ` is not an extra premise. -/
 theorem map_diagonalDifferenceShear_radonProd :
     Measure.map (Homeomorph.diagonalDifferenceShear G) (radonProd μ μ) = radonProd μ μ := by
   let e := Homeomorph.diagonalDifferenceShear G
@@ -79,7 +80,10 @@ theorem map_diagonalDifferenceShear_radonProd :
       integral_mul_left_eq_self (μ := μ) (fun s : G => f (s, t)) t⁻¹
 
 omit [μ.Regular] in
-/-- The actual forward coordinate shear is measure preserving on the full Borel Radon square. -/
+/-- **Measure preservation of the difference-coordinate shear.** Let `G` be a Hausdorff
+locally compact abelian topological group with Borel structure and Haar measure `μ`. Put
+`R=radonProd μ μ` on the Borel square and `S(s,t)=(st⁻¹,t)`. `S : G×G → G×G` is measure
+preserving for `R`. -/
 theorem measurePreserving_diagonalDifferenceShear_radonProd :
     MeasurePreserving (Homeomorph.diagonalDifferenceShear G)
       (radonProd μ μ) (radonProd μ μ) :=
@@ -87,7 +91,10 @@ theorem measurePreserving_diagonalDifferenceShear_radonProd :
     map_diagonalDifferenceShear_radonProd μ⟩
 
 omit [μ.Regular] in
-/-- The original inverse coordinate shear is also measure preserving on the same actual carrier. -/
+/-- **Measure preservation of the inverse coordinate shear.** Let `G` be a Hausdorff locally
+compact abelian topological group with Borel structure and Haar measure `μ`. Put
+`R=radonProd μ μ` on the Borel square and `S(s,t)=(st⁻¹,t)`. `S⁻¹(r,t)=(rt,t)` is measure
+preserving for `R`. -/
 theorem measurePreserving_diagonalDifferenceShear_symm_radonProd :
     MeasurePreserving (Homeomorph.diagonalDifferenceShear G).symm
       (radonProd μ μ) (radonProd μ μ) :=
@@ -100,7 +107,12 @@ namespace HaarL2
 
 variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- The actual inverse-shear pullback and its literal forward-shear inverse on full H-valued Radon L2. -/
+/-- **Linear L² isometric equivalence by inverse-shear pullback.** Let `G` be a Hausdorff
+locally compact abelian topological group with Borel structure and Haar measure `μ`. Put
+`R=radonProd μ μ` on the Borel square and `S(s,t)=(st⁻¹,t)`. Let `H` be a complex normed
+inner-product space, possibly incomplete, and `E=Lp H 2 R`. `diagonalShearIsometry μ : E
+≃ₗᵢ[ℂ] E` is pullback by `S⁻¹`, with forward representative `ξ(st,t)` and inverse
+representative `ξ(st⁻¹,t)`. -/
 def diagonalShearIsometry :
     Lp H 2 (Measure.radonProd μ μ) ≃ₗᵢ[ℂ] Lp H 2 (Measure.radonProd μ μ) := by
   let e := Homeomorph.diagonalDifferenceShear G
@@ -132,21 +144,33 @@ def diagonalShearIsometry :
       norm_map' ξ := Lp.norm_compMeasurePreserving ξ hInv }
 
 omit [CompleteSpace H] [μ.Regular] in
-/-- The actual full L2 shear has the literal inverse-coordinate pullback DATA. -/
+/-- **Forward L² shear as measure-preserving inverse pullback.** Let `G` be a Hausdorff
+locally compact abelian topological group with Borel structure and Haar measure `μ`. Put
+`R=radonProd μ μ` on the Borel square and `S(s,t)=(st⁻¹,t)`. Let `H` be a complex normed
+inner-product space, possibly incomplete, and `E=Lp H 2 R`. the forward isometry sends `ξ`
+to `Lp.compMeasurePreserving S⁻¹ ξ`, without a completeness assumption on `H`. -/
 theorem diagonalShearIsometry_apply (ξ : Lp H 2 (Measure.radonProd μ μ)) :
     diagonalShearIsometry (H := H) μ ξ =
       Lp.compMeasurePreserving (Homeomorph.diagonalDifferenceShear G).symm
         (Measure.measurePreserving_diagonalDifferenceShear_symm_radonProd μ) ξ := rfl
 
 omit [CompleteSpace H] [μ.Regular] in
-/-- The inverse full L2 shear has the literal forward-coordinate pullback DATA. -/
+/-- **Inverse L² shear as forward-coordinate pullback.** Let `G` be a Hausdorff locally
+compact abelian topological group with Borel structure and Haar measure `μ`. Put
+`R=radonProd μ μ` on the Borel square and `S(s,t)=(st⁻¹,t)`. Let `H` be a complex normed
+inner-product space, possibly incomplete, and `E=Lp H 2 R`. the inverse isometry sends `ξ`
+to `Lp.compMeasurePreserving S ξ`. -/
 theorem diagonalShearIsometry_symm_apply (ξ : Lp H 2 (Measure.radonProd μ μ)) :
     (diagonalShearIsometry (H := H) μ).symm ξ =
       Lp.compMeasurePreserving (Homeomorph.diagonalDifferenceShear G)
         (Measure.measurePreserving_diagonalDifferenceShear_radonProd μ) ξ := rfl
 
 omit [CompleteSpace H] [μ.Regular] in
-/-- Every actual product-L2 vector has the original inverse-shear coordinates almost everywhere. -/
+/-- **Almost-everywhere forward shear coordinates.** Let `G` be a Hausdorff locally compact
+abelian topological group with Borel structure and Haar measure `μ`. Put `R=radonProd μ μ`
+on the Borel square and `S(s,t)=(st⁻¹,t)`. Let `H` be a complex normed inner-product
+space, possibly incomplete, and `E=Lp H 2 R`. for `ξ∈E`, `(diagonalShearIsometry μ
+ξ)(s,t)=ξ(st,t)` for `R`-almost every `(s,t)`. -/
 theorem diagonalShearIsometry_ae_eq (ξ : Lp H 2 (Measure.radonProd μ μ)) :
     diagonalShearIsometry (H := H) μ ξ =ᵐ[Measure.radonProd μ μ]
       fun z : G × G => ξ (z.1 * z.2, z.2) := by
@@ -156,7 +180,11 @@ theorem diagonalShearIsometry_ae_eq (ξ : Lp H 2 (Measure.radonProd μ μ)) :
   simpa only [Function.comp_apply, Homeomorph.diagonalDifferenceShear_symm_apply] using hz
 
 omit [CompleteSpace H] [μ.Regular] in
-/-- The actual inverse Hilbert operator has the original forward-shear coordinates a.e. -/
+/-- **Almost-everywhere inverse shear coordinates.** Let `G` be a Hausdorff locally compact
+abelian topological group with Borel structure and Haar measure `μ`. Put `R=radonProd μ μ`
+on the Borel square and `S(s,t)=(st⁻¹,t)`. Let `H` be a complex normed inner-product
+space, possibly incomplete, and `E=Lp H 2 R`. for `ξ∈E`, `((diagonalShearIsometry μ).symm
+ξ)(s,t)=ξ(st⁻¹,t)` almost everywhere. -/
 theorem diagonalShearIsometry_symm_ae_eq (ξ : Lp H 2 (Measure.radonProd μ μ)) :
     (diagonalShearIsometry (H := H) μ).symm ξ =ᵐ[Measure.radonProd μ μ]
       fun z : G × G => ξ (z.1 * z.2⁻¹, z.2) := by
@@ -166,7 +194,11 @@ theorem diagonalShearIsometry_symm_ae_eq (ξ : Lp H 2 (Measure.radonProd μ μ))
   simpa only [Function.comp_apply, Homeomorph.diagonalDifferenceShear_apply] using hz
 
 omit [CompleteSpace H] [μ.Regular] in
-/-- The Hilbert operator retains the original inverse-shear compact-support vector map. -/
+/-- **L² shear agrees with compact-support inverse pullback.** Let `G` be a Hausdorff locally
+compact abelian topological group with Borel structure and Haar measure `μ`. Put
+`R=radonProd μ μ` on the Borel square and `S(s,t)=(st⁻¹,t)`. Let `H` be a complex normed
+inner-product space, possibly incomplete, and `E=Lp H 2 R`. for `f∈C_c(G×G,H)` and its
+inclusion `i_R`, `diagonalShearIsometry μ (i_R f)=i_R((s,t) ↦ f(st,t))`. -/
 theorem diagonalShearIsometry_apply_compactSupport (f : C_c(G × G, H)) :
     diagonalShearIsometry (H := H) μ
       (compactSupportInclusion (Measure.radonProd μ μ) f) =
@@ -185,13 +217,22 @@ theorem diagonalShearIsometry_apply_compactSupport (f : C_c(G × G, H)) :
       (CompactlySupportedContinuousMap.diagonalShearPullback f)] with z h₁ h₂ h₃
   exact h₁.trans (h₂.trans h₃.symm)
 
-/-- The actual full H-valued Radon-square shear as a bounded unitary operator. -/
+/-- **Bounded Hilbert unitary of the Haar-square shear.** Let `G` be a Hausdorff locally
+compact abelian topological group with Borel structure and Haar measure `μ`. Put
+`R=radonProd μ μ` on the Borel square and `S(s,t)=(st⁻¹,t)`. Let `H` be a complex normed
+inner-product space, possibly incomplete, and `E=Lp H 2 R`. assume `H` is complete.
+`diagonalShearUnitary μ∈U(B(E))` has forward value the inverse-shear L² isometry. -/
 def diagonalShearUnitary :
     unitary (Lp H 2 (Measure.radonProd μ μ) →L[ℂ] Lp H 2 (Measure.radonProd μ μ)) :=
   Unitary.linearIsometryEquiv.symm (diagonalShearIsometry (H := H) μ)
 
 omit [μ.Regular] in
-/-- The bounded shear operator is the same literal full-L2 linear isometry. -/
+/-- **Bounded operator of the Haar-square shear unitary.** Let `G` be a Hausdorff locally
+compact abelian topological group with Borel structure and Haar measure `μ`. Put
+`R=radonProd μ μ` on the Borel square and `S(s,t)=(st⁻¹,t)`. Let `H` be a complex normed
+inner-product space, possibly incomplete, and `E=Lp H 2 R`. assume `H` is complete. The
+operator underlying `diagonalShearUnitary μ` equals the continuous linear map of
+`diagonalShearIsometry μ`. -/
 @[simp]
 theorem diagonalShearUnitary_coe :
     (diagonalShearUnitary (H := H) μ :
@@ -200,7 +241,11 @@ theorem diagonalShearUnitary_coe :
   rfl
 
 omit [μ.Regular] in
-/-- The actual bounded unitary retains the original inverse-shear coordinates on all vectors a.e. -/
+/-- **Almost-everywhere coordinates of the bounded shear unitary.** Let `G` be a Hausdorff
+locally compact abelian topological group with Borel structure and Haar measure `μ`. Put
+`R=radonProd μ μ` on the Borel square and `S(s,t)=(st⁻¹,t)`. Let `H` be a complex normed
+inner-product space, possibly incomplete, and `E=Lp H 2 R`. assume `H` is complete. For
+`ξ∈E`, the unitary acts almost everywhere by `(s,t) ↦ ξ(st,t)`. -/
 theorem diagonalShearUnitary_ae_eq (ξ : Lp H 2 (Measure.radonProd μ μ)) :
     (diagonalShearUnitary (H := H) μ :
       Lp H 2 (Measure.radonProd μ μ) →L[ℂ] Lp H 2 (Measure.radonProd μ μ)) ξ =ᵐ[Measure.radonProd μ μ]

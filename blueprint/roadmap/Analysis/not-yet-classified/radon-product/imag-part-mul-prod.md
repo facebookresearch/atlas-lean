@@ -1,3 +1,4 @@
-# Imag Part mul Prod
+# Imaginary part of a compact-support pure product
 
-The imaginary component of a pure product has the original imaginary multiplication formula.
+For Hausdorff `X,Y` and complex
+compact-support `f,g`, `Im(f⊠g)=(Re f⊠Im g)+(Im f⊠Re g)`.

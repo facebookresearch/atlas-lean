@@ -15,15 +15,13 @@ public import MathlibExt.MeasureTheory.Measure.RadonProduct
 public import Mathlib.MeasureTheory.Integral.Prod
 
 /-!
-# Reverse compact-support integration for the actual Borel Radon product
+# Reverse-order compact-support Radon integration
 
-The published compact-support Fubini theorem applies to the original
-jointly continuous real function and the two factor measures finite on
-compact sets. Together with the defining Radon-product integral, it gives
-the original reverse-order formula on the topological product.
+For locally compact Hausdorff Borel spaces and measures finite on compact sets, a real
+compact-support continuous function has equal iterated integrals in both coordinate orders.
 
-There is no global s-finiteness or countability assumption, and no equality
-between the product Borel sigma-algebra and the factor product sigma-algebra.
+Thus `∫ f d(μ⊗_Rν)=∫ y, ∫ x, f(x,y) dμ dν`. No global s-finiteness or countability assumption is
+imposed, and the measure is on the Borel structure of the topological product.
 -/
 
 @[expose] public section
@@ -45,12 +43,16 @@ variable {Y : Type uY} [TopologicalSpace Y] [T2Space Y] [LocallyCompactSpace Y]
 variable (μ : Measure X) (ν : Measure Y)
   [IsFiniteMeasureOnCompacts μ] [IsFiniteMeasureOnCompacts ν]
 
-/-- The actual Borel measurable space of the topological product. -/
+/-- **Borel product structure for reverse coordinate integration.** For topological spaces
+`X,Y`, the product measurable space is `borel(X×Y)` from its product topology. -/
 local instance instFubiniProductMeasurableSpace : MeasurableSpace (X × Y) := borel (X × Y)
 local instance instFubiniProductBorelSpace : BorelSpace (X × Y) := ⟨rfl⟩
 
 omit [T2Space X] [LocallyCompactSpace X] [T2Space Y] [LocallyCompactSpace Y] in
-/-- The original real compact-support coordinate integrals have equal values in both orders. -/
+/-- **Equality of both iterated compact-support integral orders.** Let `X,Y` be locally
+compact Hausdorff spaces with their Borel measurable structures, and `μ,ν` measures finite
+on compact sets. Write `μ⊗_Rν=radonProd μ ν` on the Borel topological product `X×Y`. for
+`f∈C_c(X×Y,ℝ)`, `∫ x, ∫ y, f(x,y) dν dμ = ∫ y, ∫ x, f(x,y) dμ dν`. -/
 theorem integral_integral_radonProd_swap (f : C_c(X × Y, ℝ)) :
     (∫ x : X, ∫ y : Y, f (x, y) ∂ν ∂μ) =
       ∫ y : Y, ∫ x : X, f (x, y) ∂μ ∂ν := by
@@ -62,7 +64,10 @@ theorem integral_integral_radonProd_swap (f : C_c(X × Y, ℝ)) :
   exact integral_integral_swap_of_hasCompactSupport
     (huncurry.symm ▸ f.continuous) (huncurry.symm ▸ f.hasCompactSupport)
 
-/-- The actual Borel Radon-product integral has the original reverse-coordinate formula. -/
+/-- **Reverse coordinate formula for the Borel Radon integral.** Let `X,Y` be locally compact
+Hausdorff spaces with their Borel measurable structures, and `μ,ν` measures finite on
+compact sets. Write `μ⊗_Rν=radonProd μ ν` on the Borel topological product `X×Y`. for
+`f∈C_c(X×Y,ℝ)`, `∫ f d(μ⊗_Rν)=∫ y, ∫ x, f(x,y) dμ dν`. -/
 theorem integral_radonProd_swap (f : C_c(X × Y, ℝ)) :
     (∫ z : X × Y, f z ∂(radonProd μ ν)) =
       ∫ y : Y, ∫ x : X, f (x, y) ∂μ ∂ν := by

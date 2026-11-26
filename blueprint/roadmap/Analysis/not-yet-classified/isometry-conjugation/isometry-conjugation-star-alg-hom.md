@@ -1,3 +1,6 @@
-# Isometry Conjugation Star Alg Hom
+# Spatial star homomorphism into the full target operator algebra
 
-Restrict the original spatial operator conjugation to the source algebra and full target.
+Let `H,K` be complete
+complex Hilbert spaces, `e : H ≃ₗᵢ[ℂ] K` a unitary equivalence and `M ⊆ B(H)` a concrete
+von Neumann algebra. `isometryConjugationStarAlgHom e M : M →⋆ₐ[ℂ] B(K)` sends `x` to `e x
+e⁻¹`, viewing `B(K)` as its full von Neumann algebra.

@@ -15,11 +15,12 @@ public import MathlibExt.LinearAlgebra.TensorProduct.HomFiniteFactor
 public import MathlibExt.LinearAlgebra.TensorProduct.SurjectiveScalarHom
 
 /-!
-# Original scalar transport for a finite-projective tensor factor
+# Hom–tensor comparison through a scalar quotient
 
-The unchanged scalar coordinate factors transport the coefficient equivalence
-earned from the actual finite-free retraction of the tensor factor. The first
-Hom source is arbitrary, and the hom is the original R coefficient map.
+Let R,S be commutative rings with surjective algebra map R→S, and P,N,U S-modules with
+compatible restricted R-actions. Assume U is finitely generated projective over S; P and N are
+otherwise arbitrary. The R-linear map C_R:Hom_R(P,N)⊗_R U→Hom_R(P,N⊗_R U), C_R(f⊗u)(p)=f(p)⊗u,
+is an isomorphism.
 -/
 
 @[expose] public section
@@ -40,8 +41,13 @@ variable {R : Type uR} {S : Type uS} [CommRing R] [CommRing S] [Algebra R S]
   [Module S P] [Module S N] [Module S U]
   [IsScalarTower R S P] [IsScalarTower R S N] [IsScalarTower R S U]
 
-/-- Original scalar/input/output Isos surround the actual finite-factor
-coefficient equivalence. No finite-projectivity of the Hom source is required. -/
+/-- **Hom–tensor equivalence for projectivity over quotient scalars.**
+
+Let R,S be commutative rings with surjective algebra map R→S, and P,N,U S-modules with
+compatible restricted R-actions. Assume U is finitely generated projective over S; P and N are
+otherwise arbitrary. The equivalence homTensorFiniteFactorEquivOfSurjectiveScalars identifies
+Hom_R(P,N)⊗_R U with Hom_R(P,N⊗_R U), by (f⊗u)(p)↦f(p)⊗u.
+-/
 def homTensorFiniteFactorEquivOfSurjectiveScalars
     [Module.Finite S U] [Module.Projective S U]
     (h : Function.Surjective (algebraMap R S)) :
@@ -50,7 +56,13 @@ def homTensorFiniteFactorEquivOfSurjectiveScalars
     (homTensorFiniteFactorEquiv S P N U).restrictScalars R ≪≫ₗ
       rTensorHomScalarOutputEquiv h
 
-/-- Every original pure tensor retains its actual coefficient evaluation. -/
+/-- **Pure tensor evaluation in the scalar-quotient Hom equivalence.**
+
+Let R,S be commutative rings with surjective algebra map R→S, and P,N,U S-modules with
+compatible restricted R-actions. Assume U is finitely generated projective over S; P and N are
+otherwise arbitrary. For R-linear f:P→N, u∈U and p∈P,
+homTensorFiniteFactorEquivOfSurjectiveScalars(f⊗_Ru)(p)=f(p)⊗_Ru.
+-/
 theorem homTensorFiniteFactorEquivOfSurjectiveScalars_tmul
     [Module.Finite S U] [Module.Projective S U]
     (h : Function.Surjective (algebraMap R S)) (f : P →ₗ[R] N) (u : U) (p : P) :
@@ -62,8 +74,13 @@ theorem homTensorFiniteFactorEquivOfSurjectiveScalars_tmul
     TensorProduct.equivOfCompatibleSMul, LinearEquiv.arrowCongr,
     LinearMap.extendScalarsOfSurjectiveEquiv]
 
-/-- The source map is exactly the original R coefficient comparison, with the
-scalar quotient and its actual inverse completely internal to the construction. -/
+/-- **Forward map of the scalar-quotient Hom–tensor equivalence.**
+
+Let R,S be commutative rings with surjective algebra map R→S, and P,N,U S-modules with
+compatible restricted R-actions. Assume U is finitely generated projective over S; P and N are
+otherwise arbitrary. The R-linear map of homTensorFiniteFactorEquivOfSurjectiveScalars equals
+rTensorHomToHomRTensor(.id R) P N U, with pure values f⊗u↦(p↦f(p)⊗u).
+-/
 theorem homTensorFiniteFactorEquivOfSurjectiveScalars_toLinearMap
     [Module.Finite S U] [Module.Projective S U]
     (h : Function.Surjective (algebraMap R S)) :

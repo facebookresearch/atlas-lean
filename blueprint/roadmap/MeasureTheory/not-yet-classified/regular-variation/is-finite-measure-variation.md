@@ -1,3 +1,5 @@
-# Is Finite Measure variation
+# Finite total variation of a complex measure
 
-Complex measures have finite total variation.
+Let `X` be a measurable space and `c :
+ComplexMeasure X`. the positive measure `|c|` is finite; this is independent of any
+topology on `X`.

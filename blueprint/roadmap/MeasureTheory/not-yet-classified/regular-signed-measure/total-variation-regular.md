@@ -1,3 +1,5 @@
-# Total Variation regular
+# Regularity of a regular signed measure's total variation
 
-The defining regularity property of a regular signed measure.
+Let `X` be an R₁ topological
+space with its Borel measurable structure. Let `s` be a signed measure whose total
+variation `|s|` is regular. the positive measure `|s|` is regular.

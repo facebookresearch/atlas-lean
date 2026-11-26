@@ -29,4 +29,4 @@
 
 ## Strong Fredholm orthogonal block sums
 
-- [Orthogonal Sum](is-fredholm-block-diagonal.md)
+- [Fredholm block diagonal on two-norm sums](is-fredholm-block-diagonal.md)

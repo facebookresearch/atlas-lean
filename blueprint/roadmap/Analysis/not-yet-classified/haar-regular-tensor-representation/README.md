@@ -1,4 +1,4 @@
-# Haar Regular Tensor Representation
+# Haar left representation in a Hilbert-first completed tensor
 
-- [Haar Left Regular Tensor](haar-left-regular-tensor.md)
-- [Haar Left Regular Tensor apply](haar-left-regular-tensor-apply.md)
+- [Strongly continuous tensor Haar left representation](haar-left-regular-tensor.md)
+- [Exact right-factor operator of tensor Haar translation](haar-left-regular-tensor-apply.md)

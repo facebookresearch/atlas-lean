@@ -1,3 +1,5 @@
-# Has Regular Variation to Signed Measure sub
+# Regular signed variation of two finite positive measures' difference
 
-The difference of finite regular positive measures has regular variation as a signed measure.
+Let `X` be an R₁
+topological space with its Borel measurable structure. if `μ,ν` are finite regular
+positive measures, `μ.toSignedMeasure-ν.toSignedMeasure` has regular variation.

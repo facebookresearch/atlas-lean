@@ -1,3 +1,5 @@
-# Degree Two Lift
+# Back substitution at two neighbors
 
-Back substitution is linear in the original right-hand side and retained candidate.
+For a real matrix A on V, r ∈ V, u,v ∈ I = V ∖ {r}, p = Aᵣᵣ, c = Aᵣᵤ and d = Aᵣᵥ, define
+L(b,z)ᵣ = (bᵣ − c zᵤ − d zᵥ)/p and L(b,z)|I = z. The map is linear jointly in b and z and is
+defined for all p.

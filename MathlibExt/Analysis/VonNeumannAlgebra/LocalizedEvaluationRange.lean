@@ -14,13 +14,14 @@ module
 public import MathlibExt.Analysis.VonNeumannAlgebra.LocalizedEvaluationKernel
 
 /-!
-# Factor the original localized functional through the actual evaluation range
+# Linear functional on a localized vector evaluation range
 
-The original local comparison proves the evaluation-kernel inclusion. The
-stock surjective-range factorization then constructs a linear functional on
-the actual range of a ↦ (a*p)ξ, with literal value ψ(a*p). The value equation
-is proved by the stock lift law, rather than supplied as a constructor field.
-No norm or normal-functional membership certificate is assumed.
+Suppose positive `ψ`, star projection `p` and vector `ξ` satisfy `Re ψ(b)≤Re ⟨ξ,bξ⟩` for
+`0≤b≤p`. On the linear subspace `V={ (ap)ξ : a∈M } ⊆ H`, the formula `g((ap)ξ)=ψ(ap)` is
+well-defined and complex-linear.
+
+The kernel inclusion of the evaluation and localized functional gives this factorization. No
+continuity or norm estimate is assumed for the range functional in this construction.
 -/
 
 @[expose] public section
@@ -38,7 +39,12 @@ universe u
 
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- The actual range functional, with its original localized value equation proved internally. -/
+/-- **Linear factor through the localized evaluation range.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Let `ψ : M → ℂ` be a positive
+bounded complex-linear functional for the spectral orders. Let `p ∈ M` be a star
+projection and `ξ ∈ H` satisfy `Re ψ(b)≤Re ⟨ξ,bξ⟩` for every positive `b≤p`. for
+`V=range(a ↦ (ap)ξ) ⊆ H`, the construction returns `g : V →ₗ[ℂ] ℂ` with `g((ap)ξ)=ψ(ap)`
+for every `a∈M`. -/
 def localizedEvaluationRangeFunctional (M : VonNeumannAlgebra H) :
     letI : PartialOrder M := CStarAlgebra.spectralOrder M
     letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ

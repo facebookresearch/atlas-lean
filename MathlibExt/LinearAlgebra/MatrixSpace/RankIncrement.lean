@@ -16,22 +16,17 @@ public import MathlibExt.LinearAlgebra.MatrixSpace.PencilRank
 public import MathlibExt.LinearAlgebra.Matrix.KroneckerRank
 
 /-!
-# Ordinary rank increments from the actual Wong shift
+# A rank increment from a Wong shift
 
-A first Wong exit constructs the literal shift sum in a further square blow-up.
-If that sum already has larger rank, it is returned. Otherwise the actual uniform
-lifted chain gives a larger-rank pencil at a scalar from the supplied grid.
-The output is reindexed through the explicit product association and belongs to
-the single blow-up with product block indices.
-
-The strict threshold is the actual rank of `A ⊗ I`, namely `r * card d * q`.
-Cyclic rounding to `(r + 1) * card d * q`, compression and computational bounds
-are separate conclusions.
+Let K be a field, N,D finite with D nonempty, B ⊆ Mat(N,N;K), and A ∈ B^[D] of rank r|D|. If
+the stable second Wong subspace for A and B^[D] escapes im A, q > r and a scalar set S has
+more than |N||D|q elements, there exists M ∈ B^[D × Fin q] with rank M > r|D|q. The matrix M
+is a reindexed shift sum D_C or a reindexed pencil A ⊗ I_q + tD_C for t ∈ S.
 
 ## References
 
-Ivanyos, Qiao and Subrahmanyam, *Non-commutative Edmonds' problem and matrix
-semi-invariants*, Fact 2.2 and Algorithm 2, lines 19–25.
+Ivanyos, Qiao and Subrahmanyam, *Non-commutative Edmonds' problem and matrix semi-invariants*,
+Fact 2.2 and Algorithm 2, lines 19–25.
 -/
 
 @[expose] public section
@@ -59,8 +54,15 @@ private theorem mem_kroneckerBlowup_assoc_iff
 variable {K : Type u} [Field K] {n : Type v} {d : Type w}
 variable [Fintype n] [Fintype d]
 
-/-- A true first Wong exit returns the literal shift or pencil branch in the associated
-source blow-up, with ordinary rank strictly larger than the old amplified rank. -/
+/-- **The shift or pencil gives a larger-rank blow-up.**
+
+Let K be a field, N,D finite with D nonempty and B ⊆ Mat(N,N;K). Put E = B^[D] = span{X ⊗ T :
+X ∈ B, T ∈ Mat(D,D;K)}. Suppose A ∈ E, rank A = r|D|, and the stable sequence W₀ = 0, Wⱼ₊₁ =
+E(A⁻¹Wⱼ) is not contained in im A. Let q > r and S ⊆ K finite with |S| > |N||D|q. Then some k
+≤ r and C₀,…,Cₖ ∈ E give D_C = ∑ᵢ Cᵢ ⊗ E_{i+1 mod q,i} and M ∈ B^[D × Fin q] with rank M >
+r|D|q. If rank D_C > r|D|q, M is D_C reindexed by ((n,d),i) ↦ (n,(d,i)); otherwise M is the
+same reindexing of A ⊗ I_q + tD_C for some t ∈ S.
+-/
 theorem exists_wongShift_rank_increment [Nonempty d]
     (A : Matrix (n × d) (n × d) K)
     (B : Submodule K (Matrix n n K)) (r q : ℕ)

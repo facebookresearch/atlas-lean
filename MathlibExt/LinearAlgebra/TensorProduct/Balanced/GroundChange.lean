@@ -15,12 +15,14 @@ public import MathlibExt.LinearAlgebra.TensorProduct.Balanced.RightActions
 public import Mathlib.Algebra.Module.LinearMap.Defs
 
 /-!
-# Ground change for the original noncommutative balanced quotient
+# Ground-ring change for balanced tensor quotients
 
-The integer carrier below is exactly the existing integer-balanced quotient,
-with its original canonical integer factor modules. Its k action is derived
-from the first factor. Balancing along algebraMap(k,R) gives k-linearity in
-the second factor. Both directions use the existing quotient lifts.
+Let k be a commutative ring, R a k-algebra, Q a right R-module and N a left R-module with
+k-actions agreeing with the actions of algebraMap(k,R). Let Bk=B_k(R;Q,N) be the k-balanced
+quotient and BI=Bℤ(R;Q,N) its integral version. The k-action on BI is
+c•(q⊠ℤn)=(c•q)⊠ℤn=q⊠ℤ(c•n). The k-linear equivalence θ:Bk≃BI sends each pure class q⊠n to q⊠ℤn
+and has the same pure-class inverse. It also respects commuting outer actions on either
+factor.
 -/
 
 @[expose] public section
@@ -34,7 +36,12 @@ universe u r q n a
 
 namespace TensorProduct.Balanced.GroundChange
 
-/-- The existing integer quotient, with its original integer factor dictionaries. -/
+/-- **Integral balanced quotient of two module factors.**
+
+Let R be a ring, Q a right R-module and N a left R-module with additive commutative groups.
+GroundChange.integral R Q N is Bℤ(R;Q,N), the quotient of Q⊗_ℤN by the integer span of
+(q·r)⊗n-q⊗(r•n).
+-/
 abbrev integral (R : Type r) (Q : Type q) (N : Type n) [Ring R]
     [AddCommGroup Q] [AddCommGroup N] [Module Rᵐᵒᵖ Q] [Module R N] :
     Type (max q n) := by
@@ -42,7 +49,11 @@ abbrev integral (R : Type r) (Q : Type q) (N : Type n) [Ring R]
   letI : Module ℤ N := AddCommGroup.toIntModule N
   exact TensorProduct.Balanced ℤ R Q N
 
-/-- The original integer pure pairing, without changing either factor. -/
+/-- **Pure pairing into the integral balanced quotient.**
+
+Let R be a ring, Q a right R-module and N a left R-module. The ℤ-bilinear map integralMk R Q N
+sends (q,n) to its class q⊠ℤn in the integral balanced quotient.
+-/
 def integralMk (R : Type r) (Q : Type q) (N : Type n) [Ring R]
     [AddCommGroup Q] [AddCommGroup N] [Module Rᵐᵒᵖ Q] [Module R N] :
     Q →ₗ[ℤ] N →ₗ[ℤ] integral R Q N := by
@@ -50,7 +61,11 @@ def integralMk (R : Type r) (Q : Type q) (N : Type n) [Ring R]
   letI : Module ℤ N := AddCommGroup.toIntModule N
   exact mk ℤ R Q N
 
-/-- The original outer action on Q earns the same action on the integer quotient. -/
+/-- **Outer left action on the integral quotient.**
+
+Let R be a ring, Q a right R-module and N a left R-module. If a semiring A acts on Q commuting
+with its right R-action, integralLeftModule R Q N A acts on Bℤ(R;Q,N) by a•(q⊠ℤn)=(a•q)⊠ℤn.
+-/
 abbrev integralLeftModule (R : Type r) (Q : Type q) (N : Type n) [Ring R]
     [AddCommGroup Q] [AddCommGroup N] [Module Rᵐᵒᵖ Q] [Module R N]
     (A : Type a) [Semiring A] [Module A Q] [SMulCommClass A Rᵐᵒᵖ Q] :
@@ -59,7 +74,11 @@ abbrev integralLeftModule (R : Type r) (Q : Type q) (N : Type n) [Ring R]
   letI : Module ℤ N := AddCommGroup.toIntModule N
   exact leftModule ℤ R A Q N
 
-/-- The last factor likewise earns the actual right action on the integer quotient. -/
+/-- **Outer right action on the integral quotient.**
+
+Let R be a ring, Q a right R-module and N a left R-module. If Aᵒᵖ acts on N commuting with its
+left R-action, integralRightModule R Q N A acts by t•(q⊠ℤn)=q⊠ℤ(t•n).
+-/
 abbrev integralRightModule (R : Type r) (Q : Type q) (N : Type n) [Ring R]
     [AddCommGroup Q] [AddCommGroup N] [Module Rᵐᵒᵖ Q] [Module R N]
     (A : Type a) [Semiring A] [Module Aᵐᵒᵖ N] [SMulCommClass R Aᵐᵒᵖ N] :
@@ -73,14 +92,27 @@ variable (k : Type u) [CommRing k] (R : Type r) [Ring R] [Algebra k R]
   [Module k Q] [Module k N] [Module Rᵐᵒᵖ Q] [Module R N]
   [IsScalarTower k Rᵐᵒᵖ Q] [IsScalarTower k R N]
 
-/-- The actual k action on the integer quotient comes from the given action on Q. -/
+/-- **Ground action on the integral quotient.**
+
+Let k be a commutative ring, R a k-algebra, Q a right R-module and N a left R-module with
+k-actions agreeing with the actions of algebraMap(k,R). Let Bk=B_k(R;Q,N) be the k-balanced
+quotient and BI=Bℤ(R;Q,N) its integral version. The k-action on BI is
+c•(q⊠ℤn)=(c•q)⊠ℤn=q⊠ℤ(c•n). The module integralModule is the k-action c•(q⊠ℤn)=(c•q)⊠ℤn on BI.
+-/
 abbrev integralModule : Module k (integral R Q N) := by
   letI : Module ℤ Q := AddCommGroup.toIntModule Q
   letI : Module ℤ N := AddCommGroup.toIntModule N
   exact leftModule ℤ R k Q N
 
 set_option linter.unusedSectionVars false in
-/-- Its pure value is the given k action on the first factor. -/
+/-- **Pure value of the integral ground scalar action.**
+
+Let k be a commutative ring, R a k-algebra, Q a right R-module and N a left R-module with
+k-actions agreeing with the actions of algebraMap(k,R). Let Bk=B_k(R;Q,N) be the k-balanced
+quotient and BI=Bℤ(R;Q,N) its integral version. The k-action on BI is
+c•(q⊠ℤn)=(c•q)⊠ℤn=q⊠ℤ(c•n). For c∈k, q∈Q and n∈N, c•integralMk R Q N q n=integralMk R Q N
+(c•q) n.
+-/
 @[nolint unusedArguments] -- omitting them would shrink `pairing` and `fromIntegral`
 theorem integralModule_mk (c : k) (q : Q) (n : N) :
     letI := integralModule k R Q N
@@ -91,7 +123,13 @@ theorem integralModule_mk (c : k) (q : Q) (n : N) :
   change leftAction ℤ R k Q N c (mk ℤ R Q N q n) = mk ℤ R Q N (c • q) n
   exact leftAction_mk ℤ R k Q N c q n
 
-/-- The actual R balance moves a ground scalar between the two original factors. -/
+/-- **Ground scalars move to the second integral factor.**
+
+Let k be a commutative ring, R a k-algebra, Q a right R-module and N a left R-module with
+k-actions agreeing with the actions of algebraMap(k,R). Let Bk=B_k(R;Q,N) be the k-balanced
+quotient and BI=Bℤ(R;Q,N) its integral version. The k-action on BI is
+c•(q⊠ℤn)=(c•q)⊠ℤn=q⊠ℤ(c•n). For c∈k, q∈Q and n∈N, q⊠ℤ(c•n)=c•(q⊠ℤn).
+-/
 theorem integralMk_smul_right (c : k) (q : Q) (n : N) :
     letI := integralModule k R Q N
     integralMk R Q N q (c • n) = c • integralMk R Q N q n := by
@@ -112,7 +150,14 @@ theorem integralMk_smul_right (c : k) (q : Q) (n : N) :
       congrArg (fun q : Q => integralMk R Q N q n) hQ
     _ = c • integralMk R Q N q n := (integralModule_mk k R Q N c q n).symm
 
-/-- The original integer pairing is bilinear over the given ground ring. -/
+/-- **Ground-bilinear pairing into the integral quotient.**
+
+Let k be a commutative ring, R a k-algebra, Q a right R-module and N a left R-module with
+k-actions agreeing with the actions of algebraMap(k,R). Let Bk=B_k(R;Q,N) be the k-balanced
+quotient and BI=Bℤ(R;Q,N) its integral version. The k-action on BI is
+c•(q⊠ℤn)=(c•q)⊠ℤn=q⊠ℤ(c•n). The k-bilinear map pairing k R Q N sends (q,n) to q⊠ℤn with the
+induced k-action on BI.
+-/
 def pairing :
     letI := integralModule k R Q N
     Q →ₗ[k] N →ₗ[k] integral R Q N := by
@@ -134,7 +179,13 @@ def pairing :
     exact (integralModule_mk k R Q N c q n).symm
 
 include k in
-/-- Descent from the original k-balanced quotient to the original integer quotient. -/
+/-- **Map from the ground-balanced to the integral quotient.**
+
+Let k be a commutative ring, R a k-algebra, Q a right R-module and N a left R-module with
+k-actions agreeing with the actions of algebraMap(k,R). Let Bk=B_k(R;Q,N) be the k-balanced
+quotient and BI=Bℤ(R;Q,N) its integral version. The k-action on BI is
+c•(q⊠ℤn)=(c•q)⊠ℤn=q⊠ℤ(c•n). The k-linear map toIntegral k R Q N:Bk→BI sends q⊠n to q⊠ℤn.
+-/
 def toIntegral :
     letI := integralModule k R Q N
     TensorProduct.Balanced k R Q N →ₗ[k] integral R Q N := by
@@ -145,12 +196,24 @@ def toIntegral :
   let : Module ℤ N := AddCommGroup.toIntModule N
   exact balance ℤ R Q N r q n
 
-/-- Pure classes keep both original factors under the canonical comparison. -/
+/-- **Pure class under the integral comparison.**
+
+Let k be a commutative ring, R a k-algebra, Q a right R-module and N a left R-module with
+k-actions agreeing with the actions of algebraMap(k,R). Let Bk=B_k(R;Q,N) be the k-balanced
+quotient and BI=Bℤ(R;Q,N) its integral version. The k-action on BI is
+c•(q⊠ℤn)=(c•q)⊠ℤn=q⊠ℤ(c•n). For q∈Q and n∈N, toIntegral k R Q N (q⊠n)=q⊠ℤn.
+-/
 @[simp, nolint simpNF] -- stated with Balanced.mk for rw; Balanced.mk_apply simplifies LHS
 theorem toIntegral_mk (q : Q) (n : N) :
     toIntegral k R Q N (mk k R Q N q n) = integralMk R Q N q n := rfl
 
-/-- The original ground pairing, viewed as an integer bilinear pairing. -/
+/-- **Integer bilinear pairing into the ground-balanced quotient.**
+
+Let k be a commutative ring, R a k-algebra, Q a right R-module and N a left R-module with
+k-actions agreeing with the actions of algebraMap(k,R). Let Bk=B_k(R;Q,N) be the k-balanced
+quotient and BI=Bℤ(R;Q,N) its integral version. The k-action on BI is
+c•(q⊠ℤn)=(c•q)⊠ℤn=q⊠ℤ(c•n). The ℤ-bilinear map integerPairing sends (q,n) to q⊠n in Bk.
+-/
 def integerPairing : Q →ₗ[ℤ] N →ₗ[ℤ] TensorProduct.Balanced k R Q N := by
   letI : Module ℤ Q := AddCommGroup.toIntModule Q
   letI : Module ℤ N := AddCommGroup.toIntModule N
@@ -169,7 +232,13 @@ def integerPairing : Q →ₗ[ℤ] N →ₗ[ℤ] TensorProduct.Balanced k R Q N 
     intro n
     exact (((mk k R Q N).flip n).toAddMonoidHom.toIntLinearMap).map_smul c q
 
-/-- The actual integer quotient lift to the given k-balanced quotient. -/
+/-- **Additive lift from the integral balanced quotient.**
+
+Let k be a commutative ring, R a k-algebra, Q a right R-module and N a left R-module with
+k-actions agreeing with the actions of algebraMap(k,R). Let Bk=B_k(R;Q,N) be the k-balanced
+quotient and BI=Bℤ(R;Q,N) its integral version. The k-action on BI is
+c•(q⊠ℤn)=(c•q)⊠ℤn=q⊠ℤ(c•n). The additive map fromIntegralRaw:BI→Bk sends q⊠ℤn to q⊠n.
+-/
 def fromIntegralRaw : integral R Q N →+ TensorProduct.Balanced k R Q N := by
   letI : Module ℤ Q := AddCommGroup.toIntModule Q
   letI : Module ℤ N := AddCommGroup.toIntModule N
@@ -182,7 +251,14 @@ set_option linter.unusedSectionVars false in
 theorem fromIntegralRaw_mk (q : Q) (n : N) :
     fromIntegralRaw k R Q N (integralMk R Q N q n) = mk k R Q N q n := rfl
 
-/-- The same integer quotient lift is linear for the computed original k action. -/
+/-- **Ground-linear lift from the integral quotient.**
+
+Let k be a commutative ring, R a k-algebra, Q a right R-module and N a left R-module with
+k-actions agreeing with the actions of algebraMap(k,R). Let Bk=B_k(R;Q,N) be the k-balanced
+quotient and BI=Bℤ(R;Q,N) its integral version. The k-action on BI is
+c•(q⊠ℤn)=(c•q)⊠ℤn=q⊠ℤ(c•n). The k-linear map fromIntegral:BI→Bk sends q⊠ℤn to q⊠n, using the
+induced k-action on BI.
+-/
 def fromIntegral :
     letI := integralModule k R Q N
     integral R Q N →ₗ[k] TensorProduct.Balanced k R Q N := by
@@ -210,7 +286,14 @@ def fromIntegral :
 theorem fromIntegral_mk (q : Q) (n : N) :
     fromIntegral k R Q N (integralMk R Q N q n) = mk k R Q N q n := rfl
 
-/-- The original two quotient maps are actual inverses. -/
+/-- **Equivalence of ground and integral balancing.**
+
+Let k be a commutative ring, R a k-algebra, Q a right R-module and N a left R-module with
+k-actions agreeing with the actions of algebraMap(k,R). Let Bk=B_k(R;Q,N) be the k-balanced
+quotient and BI=Bℤ(R;Q,N) its integral version. The k-action on BI is
+c•(q⊠ℤn)=(c•q)⊠ℤn=q⊠ℤ(c•n). The k-linear equivalence equiv k R Q N:Bk≃ₗ[k]BI has pure value
+q⊠n↦q⊠ℤn and inverse q⊠ℤn↦q⊠n.
+-/
 def equiv :
     letI := integralModule k R Q N
     TensorProduct.Balanced k R Q N ≃ₗ[k] integral R Q N := by
@@ -242,7 +325,14 @@ section OuterLeft
 variable (A : Type a) [Semiring A] [Module A Q]
   [SMulCommClass A k Q] [SMulCommClass A Rᵐᵒᵖ Q]
 
-/-- Ground change preserves the original first-factor outer action. -/
+/-- **Ground change preserves a first-factor outer action.**
+
+Let k be a commutative ring, R a k-algebra, Q a right R-module and N a left R-module with
+k-actions agreeing with the actions of algebraMap(k,R). Let Bk=B_k(R;Q,N) be the k-balanced
+quotient and BI=Bℤ(R;Q,N) its integral version. The k-action on BI is
+c•(q⊠ℤn)=(c•q)⊠ℤn=q⊠ℤ(c•n). Let A be a semiring acting on Q and commuting with k and right R.
+For its induced actions and a∈A,z∈Bk, θ(a•z)=a•θ(z), where θ=equiv k R Q N.
+-/
 theorem equiv_left_smul (a : A) (x : TensorProduct.Balanced k R Q N) :
     equiv k R Q N ((leftModule k R A Q N).smul a x) =
       (integralLeftModule R Q N A).smul a (equiv k R Q N x) := by
@@ -263,7 +353,14 @@ theorem equiv_left_smul (a : A) (x : TensorProduct.Balanced k R Q N) :
     exact (leftAction_mk ℤ R A Q N a q n).symm
   exact DFunLike.congr_fun h x
 
-/-- The same chosen comparison is linear for the actual left outer modules. -/
+/-- **Outer left-linear ground-change equivalence.**
+
+Let k be a commutative ring, R a k-algebra, Q a right R-module and N a left R-module with
+k-actions agreeing with the actions of algebraMap(k,R). Let Bk=B_k(R;Q,N) be the k-balanced
+quotient and BI=Bℤ(R;Q,N) its integral version. The k-action on BI is
+c•(q⊠ℤn)=(c•q)⊠ℤn=q⊠ℤ(c•n). If a semiring A acts on Q commuting with k and right R, equivLeft
+is the A-linear equivalence Bk≃BI with pure value q⊠n↦q⊠ℤn.
+-/
 def equivLeft :
     letI := leftModule k R A Q N
     letI := integralLeftModule R Q N A
@@ -285,7 +382,14 @@ section OuterRight
 variable (A : Type a) [Semiring A] [Module Aᵐᵒᵖ N]
   [SMulCommClass Aᵐᵒᵖ k N] [SMulCommClass R Aᵐᵒᵖ N]
 
-/-- Ground change preserves the actual last-factor right action. -/
+/-- **Ground change preserves a last-factor outer action.**
+
+Let k be a commutative ring, R a k-algebra, Q a right R-module and N a left R-module with
+k-actions agreeing with the actions of algebraMap(k,R). Let Bk=B_k(R;Q,N) be the k-balanced
+quotient and BI=Bℤ(R;Q,N) its integral version. The k-action on BI is
+c•(q⊠ℤn)=(c•q)⊠ℤn=q⊠ℤ(c•n). Let A be a semiring whose opposite acts on N, commuting with k and
+left R. For t∈Aᵒᵖ,z∈Bk, θ(t•z)=t•θ(z), where θ=equiv k R Q N.
+-/
 theorem equiv_right_smul (a : Aᵐᵒᵖ) (x : TensorProduct.Balanced k R Q N) :
     equiv k R Q N ((rightModule k R A Q N).smul a x) =
       (integralRightModule R Q N A).smul a (equiv k R Q N x) := by
@@ -306,7 +410,14 @@ theorem equiv_right_smul (a : Aᵐᵒᵖ) (x : TensorProduct.Balanced k R Q N) :
     exact (rightAction_mk ℤ R A Q N a q n).symm
   exact DFunLike.congr_fun h x
 
-/-- The actual ground comparison is right-linear, with its same computed inverse. -/
+/-- **Outer right-linear ground-change equivalence.**
+
+Let k be a commutative ring, R a k-algebra, Q a right R-module and N a left R-module with
+k-actions agreeing with the actions of algebraMap(k,R). Let Bk=B_k(R;Q,N) be the k-balanced
+quotient and BI=Bℤ(R;Q,N) its integral version. The k-action on BI is
+c•(q⊠ℤn)=(c•q)⊠ℤn=q⊠ℤ(c•n). If a semiring A acts on N on the right, commuting with k and left
+R, equivRight is the Aᵒᵖ-linear equivalence Bk≃BI with pure value q⊠n↦q⊠ℤn.
+-/
 def equivRight :
     letI := rightModule k R A Q N
     letI := integralRightModule R Q N A

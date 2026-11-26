@@ -1,4 +1,4 @@
-# Cokernel Length
+# Matrix cokernel length and determinant order
 
-- [Length coker eq ord det](length-coker-eq-ord-det.md)
-- [Length coker ne top of det ne zero](length-coker-ne-top-of-det-ne-zero.md)
+- [Full matrix cokernel length equals determinant order](length-coker-eq-ord-det.md)
+- [Nonzero determinant gives finite full cokernel length](length-coker-ne-top-of-det-ne-zero.md)

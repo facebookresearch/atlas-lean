@@ -1,8 +1,8 @@
-# Isometry Conjugation
+# Normal spatial maps between unitarily equivalent Hilbert spaces
 
-- [Isometry Conjugation Star Alg Hom](isometry-conjugation-star-alg-hom.md)
-- [Isometry Conjugation Star Alg Hom coe](isometry-conjugation-star-alg-hom-coe.md)
-- [Isometry Conjugation vector Functional](isometry-conjugation-vector-functional.md)
-- [Isometry Conjugation Normal Hom](isometry-conjugation-normal-hom.md)
-- [Isometry Conjugation Normal Hom coe](isometry-conjugation-normal-hom-coe.md)
-- [Isometry Conjugation Normal Hom apply apply](isometry-conjugation-normal-hom-apply-ap.md)
+- [Spatial star homomorphism into the full target operator algebra](isometry-conjugation-star-alg-hom.md)
+- [Bounded-operator value of spatial conjugation](isometry-conjugation-star-alg-hom-coe.md)
+- [Vector functional pullback through a spatial map](isometry-conjugation-vector-functional.md)
+- [Normal spatial conjugation into the full operator algebra](isometry-conjugation-normal-hom.md)
+- [Operator value of the normal spatial homomorphism](isometry-conjugation-normal-hom-coe.md)
+- [Target-vector action of a normal spatial map](isometry-conjugation-normal-hom-apply-ap.md)

@@ -18,15 +18,16 @@ public import MathlibExt.MeasureTheory.VectorMeasure.RegularVariation
 import Mathlib.MeasureTheory.Integral.IntegrableOn
 
 /-!
-# Integrating bounded measurable functions against complex measures
+# Bounded measurable integration against complex measures
 
-This file defines the pairing of a bounded measurable complex-valued function with a complex
-measure.  Every complex measure has finite total variation; the definition uses Mathlib's
-vector-measure integral with complex multiplication regarded as a continuous real-bilinear map.
+On any measurable space, a bounded measurable complex function is integrable against every
+complex measure. The pairing `I_μ(f)=∫ f dμ` is complex-linear in both `f` and `μ`, and
+satisfies `|I_μ(f)|≤‖f‖∞ |μ|(X)`.
 
-Although the underlying vector integral is only real-bilinear in general, complex multiplication
-makes this pairing complex-linear in both the function and the measure.  The corresponding
-complex-linearity results are proved explicitly below.
+For indicators, `I_μ(c1_s)=c μ(s)`, and for a measurable simple function it is the finite sum
+`Σ_c∈range(f) c μ(f⁻¹({c}))`. Pointwise equality or equality almost everywhere for total
+variation gives equal integrals. For fixed `μ`, this is a bounded complex-linear functional on
+pointwise bounded measurable functions.
 -/
 
 @[expose] public section
@@ -48,40 +49,52 @@ local instance complexIntegralVariationFinite (μ : ComplexMeasure X) :
     IsFiniteMeasure μ.variation :=
   ComplexMeasure.isFiniteMeasure_variation μ
 
-/-- The integral of a bounded measurable function against a complex measure, using complex
-multiplication as the real-bilinear pairing in Mathlib's vector-measure integral. -/
+/-- **Integral pairing of a bounded measurable function and complex measure.** Let `X` be a
+measurable space, `μ : ComplexMeasure X` and `f : X → ℂ` bounded measurable with pointwise
+supremum norm. Write `I_μ(f)=∫ f dμ`; the total variation `|μ|` is finite.
+`complexIntegral μ f=I_μ(f)` is the vector-measure integral paired by complex
+multiplication, giving the ordinary complex integral. -/
 noncomputable def complexIntegral (μ : ComplexMeasure X) (φ : BoundedMeasurableFunction X) : ℂ :=
   ∫ᵛ x, φ x ∂[ContinuousLinearMap.mul ℝ ℂ; μ]
 
-/-- A bounded measurable function is integrable with respect to every complex measure. -/
+/-- **Bounded measurable functions integrable against complex measures.** Let `X` be a
+measurable space, `μ : ComplexMeasure X` and `f : X → ℂ` bounded measurable with pointwise
+supremum norm. Write `I_μ(f)=∫ f dμ`; the total variation `|μ|` is finite. the underlying
+function `f` is integrable against `μ` because it is bounded and `|μ|(X)<∞`. -/
 theorem complexIntegral_integrable (μ : ComplexMeasure X) (φ : BoundedMeasurableFunction X) :
     μ.Integrable (fun x ↦ φ x) := by
   apply Integrable.of_bound φ.measurable.aestronglyMeasurable ‖φ‖
   exact Filter.Eventually.of_forall fun x ↦ φ.norm_apply_le_norm x
 
-/-- Integrating the zero bounded measurable function against a complex measure gives zero. -/
+/-- **Zero function has zero complex integral.** Let `X` be a measurable space, `μ :
+ComplexMeasure X` and `f : X → ℂ` bounded measurable with pointwise supremum norm. Write
+`I_μ(f)=∫ f dμ`; the total variation `|μ|` is finite. `I_μ(0)=0`. -/
 @[simp]
 theorem complexIntegral_zero (μ : ComplexMeasure X) :
     complexIntegral μ (0 : BoundedMeasurableFunction X) = 0 := by
   simp [complexIntegral]
 
-/-- Integrating against the zero complex measure gives zero. -/
+/-- **Zero complex measure has zero integral.** Let `X` be a measurable space, `μ :
+ComplexMeasure X` and `f : X → ℂ` bounded measurable with pointwise supremum norm. Write
+`I_μ(f)=∫ f dμ`; the total variation `|μ|` is finite. `I_0(f)=0`. -/
 @[simp]
 theorem complexIntegral_zero_measure (φ : BoundedMeasurableFunction X) :
     complexIntegral (0 : ComplexMeasure X) φ = 0 := by
   simp [complexIntegral]
 
-/-- Additivity in the bounded measurable function. -/
+/-- **Additivity of the bounded complex integrand.** Let `X` be a measurable space, `μ :
+ComplexMeasure X` and `f : X → ℂ` bounded measurable with pointwise supremum norm. Write
+`I_μ(f)=∫ f dμ`; the total variation `|μ|` is finite. for another bounded measurable `g`,
+`I_μ(f+g)=I_μ(f)+I_μ(g)`. -/
 theorem complexIntegral_add (μ : ComplexMeasure X) (φ ψ : BoundedMeasurableFunction X) :
     complexIntegral μ (φ + ψ) = complexIntegral μ φ + complexIntegral μ ψ := by
   change (∫ᵛ x, φ x + ψ x ∂[ContinuousLinearMap.mul ℝ ℂ; μ]) = _
   exact MeasureTheory.VectorMeasure.integral_fun_add
     (complexIntegral_integrable μ φ) (complexIntegral_integrable μ ψ)
 
-/-- Complex homogeneity in the bounded measurable function.  This uses the generic scalar
-linearity theorem for `setToFun`, together with complex-linearity of multiplication in its first
-argument; it does not identify complex scalar multiplication with the real scalar API of the
-vector integral. -/
+/-- **Complex homogeneity of the bounded integrand.** Let `X` be a measurable space, `μ :
+ComplexMeasure X` and `f : X → ℂ` bounded measurable with pointwise supremum norm. Write
+`I_μ(f)=∫ f dμ`; the total variation `|μ|` is finite. for `z∈ℂ`, `I_μ(z • f)=z • I_μ(f)`. -/
 theorem complexIntegral_smul (μ : ComplexMeasure X) (c : ℂ)
     (φ : BoundedMeasurableFunction X) :
     complexIntegral μ (c • φ) = c • complexIntegral μ φ := by
@@ -97,16 +110,20 @@ theorem complexIntegral_smul (μ : ComplexMeasure X) (c : ℂ)
       (μ := μ.variation) (T := μ.transpose B)
       (dominatedFinMeasAdditive_cbmApplyMeasure μ B) hline c (fun x ↦ φ x)) using 1
 
-/-- Additivity in the complex measure. -/
+/-- **Additivity in the complex measure.** Let `X` be a measurable space, `μ : ComplexMeasure
+X` and `f : X → ℂ` bounded measurable with pointwise supremum norm. Write `I_μ(f)=∫ f dμ`;
+the total variation `|μ|` is finite. for another complex measure `ν`,
+`I_(μ+ν)(f)=I_μ(f)+I_ν(f)`. -/
 theorem complexIntegral_add_measure (μ ν : ComplexMeasure X)
     (φ : BoundedMeasurableFunction X) :
     complexIntegral (μ + ν) φ = complexIntegral μ φ + complexIntegral ν φ := by
   exact MeasureTheory.VectorMeasure.integral_add_vectorMeasure
     (complexIntegral_integrable μ φ) (complexIntegral_integrable ν φ)
 
-/-- Multiplying the set-function in a `setToFun` construction by a complex scalar multiplies its
-value by the same scalar.  Mathlib provides this directly for real scalars; this local lemma records
-the complex consequence needed for complex measures. -/
+/-- **Complex scaling of a dominated finitely additive integral.** Let `X` be measurable, `E`
+a real normed space, `ρ` a measure and `T_s : E →L[ℝ] ℂ` a set-indexed family satisfying
+`DominatedFinMeasAdditive ρ T C`. For `z∈ℂ` and any function `f : X → E`, the totalized
+integral construction satisfies `setToFun ρ (z • T) f=z • setToFun ρ T f`. -/
 private theorem setToFun_complex_smul_left
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     {ρ : Measure X} {T : Set X → E →L[ℝ] ℂ} {C : ℝ}
@@ -133,9 +150,9 @@ private theorem setToFun_complex_smul_left
           congrArg (c • ·) (setToFun_congr_ae hT hgh)
   · rw [setToFun_undef (hT.smul c) hf, setToFun_undef hT hf, smul_zero]
 
-/-- Complex homogeneity in the measure.  The proof uses
-`variation (c • μ) = ‖c‖₊ • variation μ` to change the reference measure, then applies the local
-complex scalar extension lemma to the transposed set-function. -/
+/-- **Complex homogeneity in the measure.** Let `X` be a measurable space, `μ : ComplexMeasure
+X` and `f : X → ℂ` bounded measurable with pointwise supremum norm. Write `I_μ(f)=∫ f dμ`;
+the total variation `|μ|` is finite. for `z∈ℂ`, `I_(z • μ)(f)=z • I_μ(f)`. -/
 theorem complexIntegral_smul_measure (c : ℂ) (μ : ComplexMeasure X)
     (φ : BoundedMeasurableFunction X) :
     complexIntegral (c • μ) φ = c • complexIntegral μ φ := by
@@ -184,7 +201,10 @@ theorem complexIntegral_smul_measure (c : ℂ) (μ : ComplexMeasure X)
     _ = c • setToFun μ.variation (μ.transpose B)
         (dominatedFinMeasAdditive_cbmApplyMeasure μ B) (fun x ↦ φ x) := rfl
 
-/-- The sharp total-variation bound for the complex integral pairing. -/
+/-- **Total-variation norm bound for a bounded complex integral.** Let `X` be a measurable
+space, `μ : ComplexMeasure X` and `f : X → ℂ` bounded measurable with pointwise supremum
+norm. Write `I_μ(f)=∫ f dμ`; the total variation `|μ|` is finite.
+`|I_μ(f)|≤‖f‖∞*|μ|.real(X)`. -/
 theorem norm_complexIntegral_le (μ : ComplexMeasure X) (φ : BoundedMeasurableFunction X) :
     ‖complexIntegral μ φ‖ ≤ ‖φ‖ * μ.variation.real univ := by
   simpa [complexIntegral, ContinuousLinearMap.opNorm_mul] using
@@ -193,7 +213,10 @@ theorem norm_complexIntegral_le (μ : ComplexMeasure X) (φ : BoundedMeasurableF
       (f := fun x ↦ φ x)
       (Filter.Eventually.of_forall fun x ↦ φ.norm_apply_le_norm x))
 
-/-- Evaluation on a constant-valued measurable indicator. -/
+/-- **Complex integral of a scalar measurable indicator.** Let `X` be a measurable space, `μ :
+ComplexMeasure X` and `f : X → ℂ` bounded measurable with pointwise supremum norm. Write
+`I_μ(f)=∫ f dμ`; the total variation `|μ|` is finite. for measurable `s⊆X` and `z∈ℂ`,
+`I_μ(z1_s)=z*μ(s)`. -/
 theorem complexIntegral_indicatorConst (μ : ComplexMeasure X)
     (s : Set X) (hs : MeasurableSet s) (c : ℂ) :
     complexIntegral μ (BoundedMeasurableFunction.indicatorConst s hs c) = c * μ s := by
@@ -201,13 +224,19 @@ theorem complexIntegral_indicatorConst (μ : ComplexMeasure X)
     (MeasureTheory.VectorMeasure.integral_indicator_const
       (μ := μ) (B := ContinuousLinearMap.mul ℝ ℂ) c hs)
 
-/-- Evaluation on a measurable characteristic function. -/
+/-- **Complex integral of a characteristic function.** Let `X` be a measurable space, `μ :
+ComplexMeasure X` and `f : X → ℂ` bounded measurable with pointwise supremum norm. Write
+`I_μ(f)=∫ f dμ`; the total variation `|μ|` is finite. for measurable `s⊆X`,
+`I_μ(1_s)=μ(s)`. -/
 theorem complexIntegral_indicator (μ : ComplexMeasure X) (s : Set X) (hs : MeasurableSet s) :
     complexIntegral μ (BoundedMeasurableFunction.indicator s hs) = μ s := by
   simpa [BoundedMeasurableFunction.indicator] using
     complexIntegral_indicatorConst μ s hs (1 : ℂ)
 
-/-- The finite sum formula for a measurable simple function. -/
+/-- **Finite sum formula for a measurable simple integrand.** Let `X` be a measurable space,
+`μ : ComplexMeasure X` and `f : X → ℂ` bounded measurable with pointwise supremum norm.
+Write `I_μ(f)=∫ f dμ`; the total variation `|μ|` is finite. for a measurable simple
+function `g`, `I_μ(g)=Σ_z∈range(g) z*μ(g⁻¹({z}))`. -/
 theorem complexIntegral_ofSimpleFunc (μ : ComplexMeasure X) (f : SimpleFunc X ℂ) :
     complexIntegral μ (BoundedMeasurableFunction.ofSimpleFunc f) =
       ∑ c ∈ f.range, c * μ (f ⁻¹' {c}) := by
@@ -222,7 +251,11 @@ theorem complexIntegral_ofSimpleFunc (μ : ComplexMeasure X) (f : SimpleFunc X �
     (setToFun_simpleFunc (dominatedFinMeasAdditive_cbmApplyMeasure μ
       (ContinuousLinearMap.mul ℝ ℂ)) f hf)
 
-/-- The complex integral against a scalar Dirac measure is the scalar times pointwise evaluation. -/
+/-- **Integral against a scalar point-mass measure.** Let `X` be a measurable space, `μ :
+ComplexMeasure X` and `f : X → ℂ` bounded measurable with pointwise supremum norm. Write
+`I_μ(f)=∫ f dμ`; the total variation `|μ|` is finite. for `a∈X`, `z∈ℂ`,
+`I_(zδ_a)(f)=f(a)*z`. The vector-measure point mass is defined without a
+measurable-singleton assumption. -/
 @[simp]
 theorem complexIntegral_dirac (a : X) (z : ℂ) (φ : BoundedMeasurableFunction X) :
     complexIntegral (MeasureTheory.VectorMeasure.dirac a z) φ = φ a * z := by
@@ -231,21 +264,30 @@ theorem complexIntegral_dirac (a : X) (z : ℂ) (φ : BoundedMeasurableFunction 
       (B := ContinuousLinearMap.mul ℝ ℂ)
       (f := fun x ↦ φ x) φ.measurable.stronglyMeasurable)
 
-/-- Pointwise equal bounded measurable functions have equal complex integrals. -/
+/-- **Pointwise equality preserves bounded complex integrals.** Let `X` be a measurable space,
+`μ : ComplexMeasure X` and `f : X → ℂ` bounded measurable with pointwise supremum norm.
+Write `I_μ(f)=∫ f dμ`; the total variation `|μ|` is finite. if bounded measurable
+functions `f,g` agree at every point, then `I_μ(f)=I_μ(g)`. -/
 theorem complexIntegral_congr_fun (μ : ComplexMeasure X)
     {φ ψ : BoundedMeasurableFunction X} (h : ∀ x, φ x = ψ x) :
     complexIntegral μ φ = complexIntegral μ ψ := by
   apply MeasureTheory.VectorMeasure.integral_congr_ae
   exact Filter.Eventually.of_forall h
 
-/-- Almost-everywhere equal bounded measurable functions have equal complex integrals. -/
+/-- **Total-variation almost-everywhere equality preserves complex integrals.** Let `X` be a
+measurable space, `μ : ComplexMeasure X` and `f : X → ℂ` bounded measurable with pointwise
+supremum norm. Write `I_μ(f)=∫ f dμ`; the total variation `|μ|` is finite. if bounded
+measurable `f,g` agree almost everywhere for `|μ|`, then `I_μ(f)=I_μ(g)`. -/
 theorem complexIntegral_congr_ae (μ : ComplexMeasure X)
     {φ ψ : BoundedMeasurableFunction X} (h : (fun x ↦ φ x) =ᵐ[μ.variation] fun x ↦ ψ x) :
     complexIntegral μ φ = complexIntegral μ ψ :=
   MeasureTheory.VectorMeasure.integral_congr_ae h
 
-/-- For a fixed complex measure, integration is a continuous complex-linear functional on bounded
-measurable functions. -/
+/-- **Bounded linear integral functional on measurable bounded functions.** Let `X` be a
+measurable space, `μ : ComplexMeasure X` and `f : X → ℂ` bounded measurable with pointwise
+supremum norm. Write `I_μ(f)=∫ f dμ`; the total variation `|μ|` is finite.
+`complexIntegralCLM μ : BoundedMeasurableFunction X →L[ℂ] ℂ` sends `f` to `I_μ(f)`, with
+bound `|I_μ(f)|≤|μ|.real(X)‖f‖∞`. -/
 noncomputable def complexIntegralCLM (μ : ComplexMeasure X) :
     BoundedMeasurableFunction X →L[ℂ] ℂ :=
   LinearMap.mkContinuous
@@ -256,7 +298,10 @@ noncomputable def complexIntegralCLM (μ : ComplexMeasure X) :
     (fun φ ↦ by
       simpa [mul_comm] using norm_complexIntegral_le μ φ)
 
-/-- The continuous linear complex-integral map evaluates by the original complex integral. -/
+/-- **Value of the bounded complex integral functional.** Let `X` be a measurable space, `μ :
+ComplexMeasure X` and `f : X → ℂ` bounded measurable with pointwise supremum norm. Write
+`I_μ(f)=∫ f dμ`; the total variation `|μ|` is finite. `complexIntegralCLM μ
+f=complexIntegral μ f=I_μ(f)`. -/
 @[simp]
 theorem complexIntegralCLM_apply (μ : ComplexMeasure X) (φ : BoundedMeasurableFunction X) :
     complexIntegralCLM μ φ = complexIntegral μ φ :=

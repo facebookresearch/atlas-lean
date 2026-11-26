@@ -16,13 +16,15 @@ public import Mathlib.Analysis.Normed.Operator.Basic
 public import Mathlib.RingTheory.SimpleModule.Basic
 
 /-!
-# Bounded finite-rank operators
+# The complex or scalar-general module of bounded finite-rank maps
 
-The scalar-general carrier reuses Mathlib's finite-range submodule by comapping
-along the continuous-linear-map inclusion. The original normed domain and
-range and nontrivially normed field are unchanged. Over a field, noetherian
-range and finitely generated range are equivalent; the membership theorem
-retains the source finite-range characterization.
+For normed spaces `E,F` over a nontrivially normed field `𝕜`, bounded operators with
+finite-dimensional range form a `𝕜`-submodule of `E →L[𝕜] F`.
+
+The carrier is the inverse image of the finite-range submodule of linear maps under the
+forgetful map from bounded operators. Membership is equivalent to finite-dimensional range of
+the underlying linear map. Completeness and finite dimension of either ambient space are not
+required.
 -/
 
 @[expose] public section
@@ -37,18 +39,25 @@ variable {𝕜 : Type u𝕜} [NontriviallyNormedField 𝕜]
 variable {E : Type uE} [NormedAddCommGroup E] [NormedSpace 𝕜 E]
 variable {F : Type uF} [NormedAddCommGroup F] [NormedSpace 𝕜 F]
 
-/-- Bounded finite-rank operators are the comap of Mathlib's finite-range submodule. -/
+/-- **Submodule of bounded finite-rank operators.** Let `𝕜` be a nontrivially normed field and
+`E,F` normed `𝕜`-spaces. `finiteRankOperator` is the submodule of `E →L[𝕜] F` consisting
+of bounded maps with finite-dimensional range, obtained by taking the preimage of the
+finite-range linear-map submodule. -/
 abbrev finiteRankOperator : Submodule 𝕜 (E →L[𝕜] F) :=
   (LinearMap.finiteRange 𝕜 E F).comap (ContinuousLinearMap.coeLM 𝕜)
 
-/-- Membership is the finite-range property on the same underlying linear map.
-Use this equivalence explicitly: stock comap simp rules already normalize its left side. -/
+/-- **Membership in the bounded finite-rank submodule.** Let `𝕜` be a nontrivially normed
+field and `E,F` normed `𝕜`-spaces. A bounded `T : E →L[𝕜] F` lies in `finiteRankOperator`
+exactly when its underlying linear map has finite-dimensional range, that is,
+`T.toLinearMap.HasFiniteRange`. -/
 theorem mem_finiteRankOperator (T : E →L[𝕜] F) :
     T ∈ finiteRankOperator (𝕜 := 𝕜) ↔ T.toLinearMap.HasFiniteRange := by
   change T.toLinearMap.HasNoetherianRange ↔ T.toLinearMap.HasFiniteRange
   exact ⟨fun h => h.hasFiniteRange, fun h => h.hasNoetherianRange⟩
 
-/-- Compatibility with the canonical noetherian-range comap over the same field. -/
+/-- **Finite-rank bounded maps as a linear-map preimage.** Let `𝕜` be a nontrivially normed
+field and `E,F` normed `𝕜`-spaces. The submodule `finiteRankOperator` equals the preimage
+of `LinearMap.finiteRange 𝕜 E F` under the linear map forgetting continuity. -/
 theorem finiteRankOperator_eq_comap_finiteRange :
     finiteRankOperator (𝕜 := 𝕜) (E := E) (F := F) =
       (LinearMap.finiteRange 𝕜 E F).comap (ContinuousLinearMap.coeLM 𝕜) :=

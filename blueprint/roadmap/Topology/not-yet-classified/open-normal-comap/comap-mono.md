@@ -1,3 +1,4 @@
-# Comap mono
+# Monotonicity of open-normal preimages
 
-Open-normal preimage is monotone in the subgroup.
+Let `G,H` be groups with topologies and `φ : H
+→ₜ* G` a continuous homomorphism. if open normal `U≤V` in `G`, then `comap φ U≤comap φ V`.

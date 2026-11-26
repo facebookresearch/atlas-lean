@@ -1,3 +1,8 @@
-# Recovered Radon Coefficient ae eq
+# Almost-everywhere inverse-difference coefficient formula
 
-Every full Radon product-L2 vector has the exact original inverse-difference coefficient a.e.
+Let `G` be a Hausdorff
+locally compact abelian topological group with Borel structure and regular Haar measure
+`μ`, `H` a complete complex Hilbert space, and `α` a normal action on `M⊆B(H)` with
+norm-continuous inverse predual orbits. Put `L_R=Lp H 2 (radonProd μ μ)` on the Borel
+topological square. for `x∈M`, `ξ∈L_R`, `(recoveredRadonCoefficient μ α
+x)ξ(s,t)=α_((st⁻¹)⁻¹)(x)ξ(s,t)` almost everywhere.

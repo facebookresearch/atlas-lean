@@ -1,3 +1,5 @@
-# Wong Shift
+# A cyclic shift matrix unit
 
-The actual source shift: one matrix unit between successive slots, wrapping at the last slot.
+Let R be a commutative semiring, k,q ∈ ℕ and k+1 ≤ q. Embed i ∈ Fin(k+1) in Fin q and write
+σ(i) = i+1 modulo q. Define Sᵢ = E_{σ(i),i} ∈ Mat(q,q;R), the matrix unit taking slot i to its
+successor and annihilating the other slots.

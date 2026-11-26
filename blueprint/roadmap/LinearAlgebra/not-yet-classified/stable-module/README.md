@@ -1,21 +1,21 @@
-# Stable Module
+# Stable modules of finitely supported matrices
 
-## Matrix
+## Stable matrix actions on modules
 
-- [Stable Module](stable-module.md)
+- [The stable coefficient module](stable-module.md)
 
-## Stable Module
+## Modules of finite and stabilized matrices
 
-- [Of Finite](of-finite.md)
-- [Exists of Finite](exists-of-finite.md)
-- [Exists positive of Finite](exists-positive-of-finite.md)
-- [Finite Entries](finite-entries.md)
-- [Entries](entries.md)
-- [Entries injective](entries-injective.md)
-- [Of Finite injective](of-finite-injective.md)
-- [Entries bounded](entries-bounded.md)
-- [Entries finite Support](entries-finite-support.md)
-- [To Finsupp](to-finsupp.md)
-- [To Finsupp surjective](to-finsupp-surjective.md)
-- [To Finsupp Linear](to-finsupp-linear.md)
-- [Finsupp Equiv](finsupp-equiv.md)
+- [Inclusion of a finite coefficient matrix](of-finite.md)
+- [Finite matrix representatives of stable elements](exists-of-finite.md)
+- [Positive finite matrix representatives](exists-positive-of-finite.md)
+- [Extending finite matrix entries by zero](finite-entries.md)
+- [Entries of a stable coefficient matrix](entries.md)
+- [Faithfulness of stable matrix entries](entries-injective.md)
+- [Injectivity of finite coefficient inclusions](of-finite-injective.md)
+- [A finite square contains the support](entries-bounded.md)
+- [Finite support of stable matrix entries](entries-finite-support.md)
+- [The finite-support coordinates of a stable matrix](to-finsupp.md)
+- [Every finitely supported matrix has a finite representative](to-finsupp-surjective.md)
+- [The linear map to finite-support coordinates](to-finsupp-linear.md)
+- [Stable matrices and finite-support functions](finsupp-equiv.md)

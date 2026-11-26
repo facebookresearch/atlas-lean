@@ -14,19 +14,10 @@ public import MathlibExt.LinearAlgebra.QuadraticForm.PfisterRoundness
 /-!
 # Half-dimensional isotropic subspaces of Pfister forms
 
-Every non-anisotropic explicit subset-indexed Pfister form has a
-half-dimensional totally isotropic subspace.  We also expose the concrete
-submodule form needed by the norm-neighbor intersection argument, with rank
-exactly half the Pfister carrier dimension.
-
-The proof is characteristic-free and valid for every tuple length at least
-one.  This file defines no norm-quadric point, symbol splitting, motive,
-VM2, or norm-residue theorem.
-
-## Main declarations
-
-* `QuadraticForm.pfister_hasHalfDimensionalTotallyIsotropicSubspace`
-* `QuadraticForm.pfister_exists_halfDimensionalTotallyIsotropic`
+Let F be a field, n ∈ ℕ and a₀,…,aₙ ∈ Fˣ. Define qₐ(x) = ∑ₛ(∏ᵢ∈s −aᵢ)xₛ² on
+F^(Finset(Fin(n+1))). If qₐ is not anisotropic, there exists a subspace H on which qₐ vanishes
+with dim H = 2^n, half its ambient dimension 2^(n+1). This holds over fields of arbitrary
+characteristic.
 -/
 
 @[expose] public section
@@ -39,8 +30,12 @@ universe u
 
 namespace QuadraticForm
 
-/-- A non-anisotropic explicit Pfister form has a half-dimensional totally
-isotropic subspace. -/
+/-- **Half-dimensional total isotropy of an isotropic Pfister form.**
+
+Let F be a field, n ∈ ℕ and a₀,…,aₙ ∈ Fˣ. Define qₐ(x) = ∑ₛ(∏ᵢ∈s −aᵢ)xₛ² on
+F^(Finset(Fin(n+1))). If qₐ is not anisotropic, it has a totally isotropic subspace H
+satisfying 2 dim_F H = dim_F(F^(Finset(Fin(n+1)))).
+-/
 theorem pfister_hasHalfDimensionalTotallyIsotropicSubspace
     (F : Type u) [Field F]
     {n : ℕ} (a : Fin (n + 1) → Fˣ)
@@ -68,8 +63,12 @@ theorem pfister_hasHalfDimensionalTotallyIsotropicSubspace
           Q c hc hround (fun hlow => ih lower hlow) hprod
       exact hP.map_isometryEquiv e.symm
 
-/-- A non-anisotropic explicit Pfister form has a concrete totally isotropic
-submodule of rank exactly half the ambient Pfister dimension. -/
+/-- **A concrete isotropic subspace of a Pfister form.**
+
+Let F be a field, n ∈ ℕ and a₀,…,aₙ ∈ Fˣ. Define qₐ(x) = ∑ₛ(∏ᵢ∈s −aᵢ)xₛ² on
+F^(Finset(Fin(n+1))). If qₐ is not anisotropic, there exists H ⊆ F^(Finset(Fin(n+1))) with
+dim_F H = 2^n and qₐ(x) = 0 for every x ∈ H.
+-/
 theorem pfister_exists_halfDimensionalTotallyIsotropic
     (F : Type u) [Field F]
     {n : ℕ} (a : Fin (n + 1) → Fˣ)

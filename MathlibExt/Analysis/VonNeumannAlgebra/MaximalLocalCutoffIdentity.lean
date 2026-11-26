@@ -16,14 +16,13 @@ public import MathlibExt.Analysis.VonNeumannAlgebra.MaximalLocalProjectionAnnihi
 public import Mathlib.Analysis.CStarAlgebra.Projection
 
 /-!
-# The actual maximal-family finite-cutoff supremum is the original identity
+# Maximal-family finite cutoffs have supremum the identity
 
-Each original family member is the value of its actual singleton cutoff,
-so it lies below the constructed cutoff supremum s. Both are genuine star
-projections; therefore s*p=p for every family member p. Its star-projection
-complement 1-s annihilates the entire actual family. The proved original
-maximal-family annihilator law gives 1-s=0 and hence s=1. No identity limit,
-LUB, projection or normality certificate is supplied as an input.
+For a positive bounded functional `ψ`, the finite projection cutoffs of the constructed maximal
+local family have least upper bound `I_M`.
+
+Their positive supremum is a star projection whose complement annihilates the whole maximal
+family, so the complement is zero. This includes the zero algebra, where the identity is zero.
 -/
 
 @[expose] public section
@@ -42,7 +41,13 @@ universe u
 
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- The actual maximal-family finite positive cutoffs have original identity as their constructed supremum. -/
+/-- **Identity is the constructed maximal-family cutoff supremum.** Let `H` be a complete
+complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Let `ψ : M → ℂ` be a
+positive bounded complex-linear functional for the spectral orders. Let `S` be the
+constructed maximal set of pairwise orthogonal nonzero star projections, each admitting a
+vector `ξ` with `Re ψ(b)≤Re ⟨ξ,bξ⟩` for `0≤b≤p`. For finite `t ⊆ S`, put `P_t=Σ_p∈t p`.
+`maximalLocalCutoffSupremum M ψ=I_M` as an element of `M`; hence `I_M` is the least upper
+bound of all finite cutoffs `P_t`. -/
 theorem maximalLocalCutoffSupremum_eq_one (M : VonNeumannAlgebra H) :
     letI : PartialOrder M := CStarAlgebra.spectralOrder M
     letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ

@@ -1,4 +1,6 @@
-# Of Filtration stable
+# Basis-level lower-stage errors force stage invariance
 
-The basis-level condition `U b - b ∈ F i` on every vector introduced at
-grade `i` forces every filtration stage to be `U`-stable.
+Let R be a commutative ring and 0=F_0⊆⋯⊆F_n a finite filtration in M, with quotient bases b_i
+indexed by κ_i. Write B for the assembled basis whose grade-i vector represents b_i in
+F_(i+1)/F_i. Assume F_n=M. If the κ_i are finite and U(B_(i,a))-B_(i,a)∈F_i for all i,a, then
+U(F_j)⊆F_j for every j≤n.

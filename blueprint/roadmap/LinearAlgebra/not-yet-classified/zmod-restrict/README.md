@@ -1,7 +1,7 @@
-# ZMod Restrict
+# Residue-ring tensors and integer tensors
 
-- [Int Tensor nsmul eq zero](int-tensor-nsmul-eq-zero.md)
-- [Int To ZMod](int-to-zmod.md)
-- [Zmod To Int](zmod-to-int.md)
-- [Zmod To Int Linear](zmod-to-int-linear.md)
-- [Zmod Restrict Int Equiv](zmod-restrict-int-equiv.md)
+- [Residue torsion in an integer tensor with one torsion factor](int-tensor-nsmul-eq-zero.md)
+- [Integer-linear map to a residue-ring tensor](int-to-zmod.md)
+- [Residue-linear map back to the integer tensor](zmod-to-int.md)
+- [Integer-linear residue-to-integer tensor map](zmod-to-int-linear.md)
+- [Canonical equivalence of integer and residue tensors](zmod-restrict-int-equiv.md)

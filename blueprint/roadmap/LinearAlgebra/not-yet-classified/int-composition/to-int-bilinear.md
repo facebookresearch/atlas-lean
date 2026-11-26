@@ -1,4 +1,4 @@
-# To Int Bilinear
+# Biadditive map as an integer-bilinear map
 
-A map additive in both arguments is integer bilinear for the
-supplied integer module structures, by the actual integer scalar law.
+Let A,B,D be additive commutative groups with their ℤ-module structures. For biadditive
+h:A×B→D, toIntBilinear h:A→ₗ[ℤ]&#40;B→ₗ[ℤ]D) has value h(x,y).

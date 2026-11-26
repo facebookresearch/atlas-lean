@@ -1,3 +1,4 @@
-# Diagonal Phase conj Transpose eq neg
+# Conjugate transpose of a phase matrix
 
-Conjugate transpose equals diagonal phase with negated angles.
+For an index type I and real angles θ:I→ℝ, let D(θ)=diagonalPhase θ be the complex diagonal
+matrix with D(θ)_(i,i)=exp(iθ_i) and zero off the diagonal. For any I, D(θ)ᴴ=D(-θ).

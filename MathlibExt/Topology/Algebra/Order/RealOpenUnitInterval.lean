@@ -17,10 +17,13 @@ public import Mathlib.Topology.Algebra.Field
 public import Mathlib.Topology.Instances.Real.Lemmas
 
 /-!
-# The real line and the open unit interval
+# Explicit homeomorphism from the real line to the open unit interval
 
-The ordered interval chart is shared by the ordinary sphere model and the
-realized simplicial circle.
+The map `x ↦ (1+x/(1+|x|))/2` is a homeomorphism `ℝ ≃ (0,1)`. Its inverse sends `t` to
+`(2t-1)/(1-|2t-1|)`.
+
+The first stage maps the real line to `(-1,1)` by `x/(1+|x|)`; an affine map then gives the open
+unit interval.
 -/
 
 @[expose] public section
@@ -32,7 +35,9 @@ noncomputable section
 
 namespace AlgebraicTopology
 
-/-- A concrete homeomorphism from the real line to the open unit interval. -/
+/-- **Real-line homeomorphism with the open unit interval.** `realHomeomorphUnitOpenInterval :
+ℝ ≃ₜ (0,1)` is `x ↦ (1+x/(1+|x|))/2`, with inverse `t ↦ (2t-1)/(1-|2t-1|)`. The target has
+its interval subspace topology. -/
 noncomputable def realHomeomorphUnitOpenInterval :
     ℝ ≃ₜ Set.Ioo (0 : ℝ) 1 := by
   let e₀ : ℝ ≃ₜ Set.Ioo (-1 : ℝ) 1 :=

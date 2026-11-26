@@ -1,5 +1,5 @@
-# Conjugation Predual
+# Predual pullback and ultraweak continuity of star conjugation
 
-- [Normal Functional Conjugation Pullback](normal-functional-conjugation-pullback.md)
-- [Normal Functional Conjugation Pullback apply](normal-functional-conjugation-pullback-a.md)
-- [Ultraweak star Conjugation continuous](ultraweak-star-conjugation-continuous.md)
+- [Predual pullback of a fixed star conjugation](normal-functional-conjugation-pullback.md)
+- [Value of the star-conjugation predual pullback](normal-functional-conjugation-pullback-a.md)
+- [Ultraweak continuity of fixed star conjugation](ultraweak-star-conjugation-continuous.md)

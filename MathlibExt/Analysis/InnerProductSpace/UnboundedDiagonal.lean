@@ -17,12 +17,15 @@ public import Mathlib.LinearAlgebra.LinearPMap
 public import Mathlib.LinearAlgebra.Pi
 
 /-!
-# Unbounded diagonal operators for a supplied Hilbert basis
+# Diagonal partial operators on maximal weighted-coefficient domains
 
-Arbitrary scalar weights define a partial linear operator on precisely those
-vectors whose weighted basis coefficients belong to `ℓ²`. Its value is the
-inverse basis representation of that actual `ℓ²` vector. No bound on the
-weights or nonempty-index hypothesis is imposed.
+For a real or complex Hilbert basis `e_i` and any scalar family `α_i`, the diagonal domain is
+`D_α={x : Σ_i ‖α_i⟨e_i,x⟩‖²<∞}`. The partial linear operator is `D_α → H`, `x ↦ Σ_i α_i⟨e_i,x⟩
+e_i`, with norm-convergent Hilbert series on this domain.
+
+Its weighted coordinate vector is `α_i (e.repr x)_i`. No bound, reality or positivity of the
+weights is assumed, and indices may be empty. Zero weights give domain all of `H` and the zero
+operator.
 -/
 
 @[expose] public section
@@ -42,21 +45,35 @@ variable {ι : Type uI} {𝕜 : Type uK} [RCLike 𝕜]
 variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace 𝕜 H]
 variable (e : HilbertBasis ι 𝕜 H) (α : ι → 𝕜)
 
-/-- The unrestricted weighted basis coordinates as a linear map into all scalar families. -/
+/-- **Linear weighted coordinates of a Hilbert-basis vector.** Let `𝕜` be real or complex, `H`
+a normed inner-product `𝕜`-space, `e : HilbertBasis ι 𝕜 H` and `α : ι → 𝕜` any scalar
+family. Write `D_α={x ∈ H : Σ_i ‖α_i⟨e_i,x⟩‖² < ∞}`. `diagonalCoordinateLinearMap e α : H
+→ₗ[𝕜] (ι → 𝕜)` has coordinate `α_i (e.repr x)_i`, without a summability restriction on its
+output. -/
 def diagonalCoordinateLinearMap : H →ₗ[𝕜] (ι → 𝕜) :=
   LinearMap.pi fun i =>
     α i • ((lp.evalₗ (𝕜 := 𝕜) (fun _ : ι => 𝕜) 2 i).comp e.repr.toLinearMap)
 
-/-- Every raw coordinate is the original scalar weight times the supplied basis coefficient. -/
+/-- **Value of a weighted basis coordinate.** Let `𝕜` be real or complex, `H` a normed
+inner-product `𝕜`-space, `e : HilbertBasis ι 𝕜 H` and `α : ι → 𝕜` any scalar family. Write
+`D_α={x ∈ H : Σ_i ‖α_i⟨e_i,x⟩‖² < ∞}`. for `x ∈ H` and `i ∈ ι`,
+`diagonalCoordinateLinearMap e α x i=α_i (e.repr x)_i`. -/
 @[simp]
 theorem diagonalCoordinateLinearMap_apply (h : H) (i : ι) :
     diagonalCoordinateLinearMap e α h i = α i * e.repr h i := rfl
 
-/-- The maximal domain on which the weighted basis coefficients are square summable. -/
+/-- **Maximal square-summability domain of a diagonal operator.** Let `𝕜` be real or complex,
+`H` a normed inner-product `𝕜`-space, `e : HilbertBasis ι 𝕜 H` and `α : ι → 𝕜` any scalar
+family. Write `D_α={x ∈ H : Σ_i ‖α_i⟨e_i,x⟩‖² < ∞}`. `unboundedDiagonalDomain e α` is the
+complex- or real-linear submodule `D_α` of vectors whose weighted coordinates belong to
+`ℓ²(ι,𝕜)`. -/
 def unboundedDiagonalDomain : Submodule 𝕜 H :=
   (lpSubmodule 𝕜 (fun _ : ι => 𝕜) 2).comap (diagonalCoordinateLinearMap e α)
 
-/-- Membership in the domain is exactly square summability of the weighted coordinates. -/
+/-- **Domain membership by summability of weighted coefficients.** Let `𝕜` be real or complex,
+`H` a normed inner-product `𝕜`-space, `e : HilbertBasis ι 𝕜 H` and `α : ι → 𝕜` any scalar
+family. Write `D_α={x ∈ H : Σ_i ‖α_i⟨e_i,x⟩‖² < ∞}`. for `x ∈ H`, `x∈D_α` exactly when the
+nonnegative series `Σ_i ‖α_i⟨e_i,x⟩‖²` is summable. -/
 theorem mem_unboundedDiagonalDomain_iff (h : H) :
     h ∈ unboundedDiagonalDomain e α ↔
       Summable fun i => ‖α i * ⟪e i, h⟫_𝕜‖ ^ 2 := by
@@ -65,54 +82,84 @@ theorem mem_unboundedDiagonalDomain_iff (h : H) :
   simpa only [ENNReal.toReal_ofNat, Real.rpow_two, HilbertBasis.repr_apply_apply] using
     (memℓp_gen_iff (p := (2 : ℝ≥0∞)) (f := fun i => α i * e.repr h i) htwo)
 
-/-- The actual square-summable weighted coordinate vector, as a linear map on the domain. -/
+/-- **Square-summable weighted-coordinate map on the diagonal domain.** Let `𝕜` be real or
+complex, `H` a normed inner-product `𝕜`-space, `e : HilbertBasis ι 𝕜 H` and `α : ι → 𝕜`
+any scalar family. Write `D_α={x ∈ H : Σ_i ‖α_i⟨e_i,x⟩‖² < ∞}`. `unboundedDiagonalLp e α :
+D_α →ₗ[𝕜] ℓ²(ι,𝕜)` sends `x` to `(α_i (e.repr x)_i)_i`. -/
 def unboundedDiagonalLp : unboundedDiagonalDomain e α →ₗ[𝕜] lp (fun _ : ι => 𝕜) 2 :=
   (diagonalCoordinateLinearMap e α).submoduleComap (lpSubmodule 𝕜 (fun _ : ι => 𝕜) 2)
 
-/-- The coordinate vector retains the original weight and supplied basis coefficient. -/
+/-- **Coordinate of the diagonal domain's weighted vector.** Let `𝕜` be real or complex, `H` a
+normed inner-product `𝕜`-space, `e : HilbertBasis ι 𝕜 H` and `α : ι → 𝕜` any scalar
+family. Write `D_α={x ∈ H : Σ_i ‖α_i⟨e_i,x⟩‖² < ∞}`. for `x ∈ D_α` and `i ∈ ι`,
+`(unboundedDiagonalLp e α x)_i=α_i (e.repr x)_i`. -/
 @[simp]
 theorem unboundedDiagonalLp_apply (x : unboundedDiagonalDomain e α) (i : ι) :
     unboundedDiagonalLp e α x i = α i * e.repr (x : H) i := rfl
 
-/-- The diagonal partial linear map on its full square-summability domain. -/
+/-- **Diagonal partial linear operator on the full weighted domain.** Let `𝕜` be real or
+complex, `H` a normed inner-product `𝕜`-space, `e : HilbertBasis ι 𝕜 H` and `α : ι → 𝕜`
+any scalar family. Write `D_α={x ∈ H : Σ_i ‖α_i⟨e_i,x⟩‖² < ∞}`. `unboundedDiagonal e α : H
+→ₗ.[𝕜] H` has domain `D_α` and value `e.repr⁻¹((α_i (e.repr x)_i)_i)`. -/
 def unboundedDiagonal : H →ₗ.[𝕜] H :=
   LinearPMap.mk (unboundedDiagonalDomain e α)
     (e.repr.symm.toLinearMap.comp (unboundedDiagonalLp e α))
 
-/-- The partial map has precisely the maximal weighted-coordinate domain. -/
+/-- **Domain of the diagonal partial map.** Let `𝕜` be real or complex, `H` a normed
+inner-product `𝕜`-space, `e : HilbertBasis ι 𝕜 H` and `α : ι → 𝕜` any scalar family. Write
+`D_α={x ∈ H : Σ_i ‖α_i⟨e_i,x⟩‖² < ∞}`. the domain of `unboundedDiagonal e α` is exactly
+`unboundedDiagonalDomain e α=D_α`. -/
 @[simp]
 theorem unboundedDiagonal_domain :
     (unboundedDiagonal e α).domain = unboundedDiagonalDomain e α := rfl
 
-/-- The value is the supplied basis reconstruction of the actual weighted coordinate vector. -/
+/-- **Basis reconstruction of a diagonal partial-map value.** Let `𝕜` be real or complex, `H`
+a normed inner-product `𝕜`-space, `e : HilbertBasis ι 𝕜 H` and `α : ι → 𝕜` any scalar
+family. Write `D_α={x ∈ H : Σ_i ‖α_i⟨e_i,x⟩‖² < ∞}`. for `x ∈ D_α`, `unboundedDiagonal e α
+x=e.repr.symm(unboundedDiagonalLp e α x)`. -/
 @[simp]
 theorem unboundedDiagonal_apply (x : unboundedDiagonalDomain e α) :
     unboundedDiagonal e α x = e.repr.symm (unboundedDiagonalLp e α x) := rfl
 
-/-- Every basis coordinate is multiplied by its original scalar weight. -/
+/-- **Weighted basis coefficient of the diagonal output.** Let `𝕜` be real or complex, `H` a
+normed inner-product `𝕜`-space, `e : HilbertBasis ι 𝕜 H` and `α : ι → 𝕜` any scalar
+family. Write `D_α={x ∈ H : Σ_i ‖α_i⟨e_i,x⟩‖² < ∞}`. for `x ∈ D_α` and `i ∈ ι`,
+`(e.repr(unboundedDiagonal e α x))_i=α_i (e.repr x)_i`. -/
 theorem unboundedDiagonal_repr_apply (x : unboundedDiagonalDomain e α) (i : ι) :
     e.repr (unboundedDiagonal e α x) i = α i * e.repr (x : H) i := by
   rw [unboundedDiagonal_apply, e.repr.apply_symm_apply]
   exact unboundedDiagonalLp_apply e α x i
 
-/-- The defining Hilbert series converges to the actual partial-map value. -/
+/-- **Norm-convergent Hilbert series of the diagonal operator.** Let `𝕜` be real or complex,
+`H` a normed inner-product `𝕜`-space, `e : HilbertBasis ι 𝕜 H` and `α : ι → 𝕜` any scalar
+family. Write `D_α={x ∈ H : Σ_i ‖α_i⟨e_i,x⟩‖² < ∞}`. for `x ∈ D_α`, the vector series `Σ_i
+(α_i⟨e_i,x⟩) • e_i` has sum `unboundedDiagonal e α x` in the norm of `H`. -/
 theorem unboundedDiagonal_hasSum (x : unboundedDiagonalDomain e α) :
     HasSum (fun i => (α i * ⟪e i, (x : H)⟫_𝕜) • e i) (unboundedDiagonal e α x) := by
   simpa only [unboundedDiagonal_apply, unboundedDiagonalLp_apply,
     HilbertBasis.repr_apply_apply] using e.hasSum_repr_symm (unboundedDiagonalLp e α x)
 
-/-- The convergent defining series evaluates to the diagonal operator. -/
+/-- **Series formula for a diagonal partial operator.** Let `𝕜` be real or complex, `H` a
+normed inner-product `𝕜`-space, `e : HilbertBasis ι 𝕜 H` and `α : ι → 𝕜` any scalar
+family. Write `D_α={x ∈ H : Σ_i ‖α_i⟨e_i,x⟩‖² < ∞}`. for `x ∈ D_α`, `unboundedDiagonal e α
+x=Σ' i, (α_i⟨e_i,x⟩) • e_i`. -/
 theorem unboundedDiagonal_eq_tsum (x : unboundedDiagonalDomain e α) :
     unboundedDiagonal e α x = ∑' i, (α i * ⟪e i, (x : H)⟫_𝕜) • e i :=
   (unboundedDiagonal_hasSum e α x).tsum_eq.symm
 
-/-- Zero weights give the entire original space as the domain. -/
+/-- **Zero diagonal weights give the whole domain.** Let `𝕜` be real or complex, `H` a normed
+inner-product `𝕜`-space, `e : HilbertBasis ι 𝕜 H` and `α : ι → 𝕜` any scalar family. Write
+`D_α={x ∈ H : Σ_i ‖α_i⟨e_i,x⟩‖² < ∞}`. when every weight is zero, `unboundedDiagonalDomain
+e 0=H`. -/
 @[simp]
 theorem unboundedDiagonalDomain_zero : unboundedDiagonalDomain e (0 : ι → 𝕜) = ⊤ := by
   ext h
   simp [mem_unboundedDiagonalDomain_iff]
 
-/-- Zero weights give the zero vector at every point of the actual domain. -/
+/-- **Zero diagonal weights give zero output.** Let `𝕜` be real or complex, `H` a normed
+inner-product `𝕜`-space, `e : HilbertBasis ι 𝕜 H` and `α : ι → 𝕜` any scalar family. Write
+`D_α={x ∈ H : Σ_i ‖α_i⟨e_i,x⟩‖² < ∞}`. for zero weights and every vector in the resulting
+whole-space domain, `unboundedDiagonal e 0 x=0`. -/
 theorem unboundedDiagonal_zero_apply (x : unboundedDiagonalDomain e (0 : ι → 𝕜)) :
     unboundedDiagonal e (0 : ι → 𝕜) x = 0 := by
   apply e.repr.injective

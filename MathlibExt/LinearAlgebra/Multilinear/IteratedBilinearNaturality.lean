@@ -11,7 +11,15 @@ module
 
 public import MathlibExt.LinearAlgebra.Multilinear.IteratedBilinear
 
-/-! # Naturality of actual ordered bilinear iteration -/
+/-!
+# Naturality of ordered bilinear iteration
+
+Let R be a commutative ring with a topology, V an R-module, A,C_n topological R-module
+objects, κ:V→A linear, u∈C_0 and bilinear steps b_n:A×C_n→C_(n+1). Define F_0=u and
+F_(n+1)(v₀,…,v_n)=b_n(κ(v₀),F_n(v₁,…,v_n)). A second such system (κ′,u′,b′) and linear maps
+j:V→V′,f:A→A′,g_n:C_n→C′_n with fκ=κ′j,g_0u=u′ and g_(n+1)b_n=b′_n(f,g_n) satisfy
+g_nF_n(v)=F′_n(jv).
+-/
 
 @[expose] public section
 noncomputable section
@@ -21,8 +29,14 @@ universe r a a' b b'
 namespace MultilinearMap
 variable {R : Type r} [CommRing R] [TopologicalSpace R]
 
-/-- A genuine map of bilinear steps and their starting vectors preserves
-all ordered iterations, including the empty tuple. -/
+/-- **A map of bilinear steps preserves every ordered iteration.**
+
+Let R be a commutative ring with a topology, V an R-module, A,C_n topological R-module
+objects, κ:V→A linear, u∈C_0 and bilinear steps b_n:A×C_n→C_(n+1). Define F_0=u and
+F_(n+1)(v₀,…,v_n)=b_n(κ(v₀),F_n(v₁,…,v_n)). For a second system and linear j,f,g_n satisfying
+f(κx)=κ′(jx), g_0u=u′ and g_(n+1)(b_n(a,z))=b′_n(fa,g_nz), one has g_n(F_n(v))=F′_n(i↦j(v_i)),
+including n=0.
+-/
 theorem iterateCupMultilinear_naturality
     (V : Type a) [AddCommGroup V] [Module R V]
     (V' : Type a') [AddCommGroup V'] [Module R V']

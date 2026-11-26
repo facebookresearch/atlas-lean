@@ -16,12 +16,14 @@ public import MathlibExt.Analysis.InnerProductSpace.TensorProduct.CompletionAdjo
 public import MathlibExt.MeasureTheory.Function.L2Space.RightTensorProduct
 
 /-!
-# Actual right-factor character unitaries on the original H-first tensor
+# Character unitaries in the scalar tensor factor
 
-The operator is the literal completed tensor of id_H and the original
-scalar Haar character multiplier. Its pure a.e. values and completion
-density give its actual L2 coordinates. Strong continuity is transferred
-through the proved coordinates on the same stock tensor topology.
+On `T=Completion(H ⊗[ℂ] Lp ℂ 2 μ)`, let `W_χ=I_H⊗U_χ`. The tensor-to-L² unitary sends this
+operator to the vector-valued character multiplier on `Lp H 2 μ`.
+
+For a locally compact Borel topological group and regular measure, the family is strongly
+continuous for compact-open character topology. The coordinate equality itself holds without
+local compactness, group-operation continuity or regularity of `μ`.
 -/
 
 @[expose] public section
@@ -44,7 +46,10 @@ variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [Complet
 variable (μ : Measure G) [μ.Regular]
 
 omit [IsTopologicalGroup G] [LocallyCompactSpace G] [μ.Regular] in
-/-- The actual right-factor scalar character operator has its original vector-valued L2 coordinates. -/
+/-- **Character multiplier compatibility with Hilbert-first L² coordinates.** Let `G` be a
+group with Borel topology, `μ` any measure and `H` a complete complex Hilbert space. For
+`T=Completion(H⊗Lp ℂ 2 μ)` and `U=tensorToLpRight μ`, `U((I_H⊗U_χ)z)=U_χ^H(Uz)` for every
+`z∈T`, where both character multipliers have pointwise factor `χ(s)`. -/
 theorem characterMultiplierTensor_coordinates (χ : PontryaginDual G)
     (z : UniformSpace.Completion (H ⊗[ℂ] (Lp ℂ 2 μ))) :
     L2.tensorToLpRight μ
@@ -77,7 +82,12 @@ theorem characterMultiplierTensor_coordinates (χ : PontryaginDual G)
   | add z w hz hw =>
     simpa only [UniformSpace.Completion.coe_add, map_add] using congrArg₂ (fun x y => x + y) hz hw
 
-/-- The actual strongly continuous character representation is id_H tensored with the scalar character unitary. -/
+/-- **Strongly continuous tensor-factor character representation.** Let `G` be a locally
+compact topological group with its Borel structure, `μ` a regular measure and `H` a
+complete complex Hilbert space. Let `U_χξ(s)=χ(s) • ξ(s)` on `Lp H 2 μ`, with compact-open
+topology on the character group. on `T=Completion(H⊗Lp ℂ 2 μ)`,
+`characterMultiplierTensorRepresentation μ χ=I_H⊗U_χ` is a strongly continuous unitary
+representation. -/
 def characterMultiplierTensorRepresentation :
     StronglyContinuousUnitaryRepresentation (PontryaginDual G)
       (UniformSpace.Completion (H ⊗[ℂ] (Lp ℂ 2 μ))) := by
@@ -125,7 +135,11 @@ def characterMultiplierTensorRepresentation :
   rw [htop] at hc
   simpa only [htransport] using hc
 
-/-- Every original tensor character unitary keeps its literal right-factor operator value. -/
+/-- **Operator value of the tensor character unitary.** Let `G` be a locally compact
+topological group with its Borel structure, `μ` a regular measure and `H` a complete
+complex Hilbert space. Let `U_χξ(s)=χ(s) • ξ(s)` on `Lp H 2 μ`, with compact-open topology
+on the character group. for `T=Completion(H⊗Lp ℂ 2 μ)`, the representation at `χ` is
+`TensorProduct.mapLCompletion I_H (characterMultiplierUnitary μ χ)=I_H⊗U_χ`. -/
 @[simp]
 theorem characterMultiplierTensorRepresentation_apply (χ : PontryaginDual G) :
     (characterMultiplierTensorRepresentation (H := H) μ χ :
@@ -135,7 +149,11 @@ theorem characterMultiplierTensorRepresentation_apply (χ : PontryaginDual G) :
         (characterMultiplierUnitary (H := ℂ) μ χ : Lp ℂ 2 μ →L[ℂ] Lp ℂ 2 μ) :=
   rfl
 
-/-- The literal tensor character unitary is the original vector character unitary in actual L2 coordinates. -/
+/-- **Tensor-to-L² conjugation of a character unitary.** Let `G` be a locally compact
+topological group with its Borel structure, `μ` a regular measure and `H` a complete
+complex Hilbert space. Let `U_χξ(s)=χ(s) • ξ(s)` on `Lp H 2 μ`, with compact-open topology
+on the character group. for `U=tensorToLpRight μ`, conjugation sends the tensor
+representation at `χ` to `characterMultiplierUnitary μ χ` on `Lp H 2 μ`. -/
 theorem characterMultiplierTensor_conjStarAlgEquiv (χ : PontryaginDual G) :
     (L2.tensorToLpRight (𝕜 := ℂ) (H := H) μ).conjStarAlgEquiv
         (characterMultiplierTensorRepresentation (H := H) μ χ :

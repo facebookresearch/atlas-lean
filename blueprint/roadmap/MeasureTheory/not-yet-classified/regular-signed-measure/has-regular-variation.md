@@ -1,3 +1,6 @@
-# Has Regular Variation
+# Regular signed measure as a vector-measure regularity predicate
 
-A regular signed measure has regular variation in the generic vector-measure sense.
+Let `X` be an R₁
+topological space with its Borel measurable structure. Let `s` be a signed measure whose
+total variation `|s|` is regular. the underlying signed vector measure satisfies
+`VectorMeasure.HasRegularVariation s`.

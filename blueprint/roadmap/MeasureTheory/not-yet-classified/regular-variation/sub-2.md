@@ -1,3 +1,5 @@
-# Sub
+# Subtraction of complex measures with regular variation
 
-Regular variation is preserved by subtraction of complex measures.
+Let `X` be an R₁ topological
+space with its Borel measurable structure. if complex measures `c,d` have regular
+variation, then `c-d` has regular variation.

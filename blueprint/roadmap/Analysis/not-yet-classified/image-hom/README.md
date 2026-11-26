@@ -1,6 +1,6 @@
-# Image Hom
+# Normal homomorphism onto the concrete image algebra
 
-- [To Image](to-image.md)
-- [To Image apply](to-image-apply.md)
-- [To Image injective](to-image-injective.md)
-- [To Image surjective](to-image-surjective.md)
+- [Normal range restriction of an injective homomorphism](to-image.md)
+- [Operator value of the normal image map](to-image-apply.md)
+- [Injectivity of the normal map into its image](to-image-injective.md)
+- [Surjectivity of the normal map into its image](to-image-surjective.md)

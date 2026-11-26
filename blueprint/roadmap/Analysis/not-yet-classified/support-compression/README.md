@@ -1,4 +1,4 @@
-# Support Compression
+# Unital representation on the represented unit range
 
-- [Unit Range Star Alg Hom](unit-range-star-alg-hom.md)
-- [Unit Range Star Alg Hom apply](unit-range-star-alg-hom-apply.md)
+- [Unital restriction to a represented unit range](unit-range-star-alg-hom.md)
+- [Included-vector action of the support representation](unit-range-star-alg-hom-apply.md)

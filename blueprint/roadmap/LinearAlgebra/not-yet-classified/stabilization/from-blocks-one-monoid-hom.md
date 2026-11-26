@@ -1,3 +1,4 @@
-# From Blocks One Monoid Hom
+# Matrix monoid homomorphism adjoining an identity block
 
-Matrix `MonoidHom` `A ↦ fromBlocks A 0 0 1`.
+Let R be a semiring and n,m finite index types. The multiplicative map fromBlocksOneMonoidHom
+R n m sends a square matrix A to diag(A,I_m) on n⊕m.

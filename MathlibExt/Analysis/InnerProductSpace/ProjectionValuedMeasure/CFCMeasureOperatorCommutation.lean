@@ -15,16 +15,14 @@ public import MathlibExt.Analysis.InnerProductSpace.ProjectionValuedMeasure.CFCM
 public import MathlibExt.Analysis.InnerProductSpace.ProjectionValuedMeasure.CFCMeasureContinuousProducts
 
 /-!
-# Computed coefficient operators commute with the actual continuous CFC
+# Spectral coefficient operators commute with continuous calculus
 
-The coefficient identity and actual regular-measure balancing identify both
-matrix coefficients. The stock Hilbert adjoint identity moves the CFC star
-back to the operator side. Nonmeasurable sets use the computed zero value.
-This serves the projection/intersection fields of the resolutionOfIdentity
-constructor and its Borel-functional-calculus DATA. No selfadjointness,
-commutant, PVM or correctness premise is supplied; terminal source proofs
-remain open. The original complete H and spectrum, including their zero and
-empty cases, are unchanged.
+For a normal operator `T` on a complete complex Hilbert space, let `P_s` be the set operator
+with `⟨h,P_s g⟩=μ_(g,h)(s)` on measurable subsets of `σ_ℂ(T)`, and zero on nonmeasurable
+subsets.
+
+For every continuous function `f` on the spectrum, `P_s f(T)=f(T)P_s`. This applies to every set
+`s`, including the zero value for nonmeasurable sets, and permits a zero Hilbert space.
 -/
 
 @[expose] public section
@@ -36,7 +34,13 @@ namespace MathlibExt.Analysis.InnerProductSpace.ProjectionValuedMeasure
 universe uH
 variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- Every computed coefficient operator commutes with every actual continuous CFC value. -/
+/-- **Commutation of a spectral set operator with continuous CFC.** Let `H` be a complete
+complex Hilbert space and `T : H →L[ℂ] H` a normal operator, so `T* T=T T*`. Put
+`K=σ_ℂ(T)` with its Borel measurable structure. Let `μ_(g,h)` be the regular complex
+measure on `K` characterized by `∫ f dμ_(g,h)=⟨h,f(T)g⟩` for `f ∈ C(K,ℂ)`. For measurable
+`s ⊆ K`, let `P_s` be the bounded coefficient operator with `⟨h,P_s g⟩=μ_(g,h)(s)`, and
+set `P_s=0` for nonmeasurable `s`. for every set `s ⊆ K` and `f ∈ C(K,ℂ)`, `P_s
+f(T)=f(T)P_s`, equivalently `Commute (normalCFCCoefficientOperator T hT s) (cfcHom hT f)`. -/
 theorem normalCFCCoefficientOperator_commute_cfc (T : H →L[ℂ] H) (hT : IsStarNormal T)
     (s : Set (spectrum ℂ T)) (f : C(spectrum ℂ T, ℂ)) :
     Commute (normalCFCCoefficientOperator T hT s) (cfcHom hT f) := by

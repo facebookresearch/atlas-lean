@@ -1,7 +1,7 @@
-# Module Map
+# Maps respecting commuting tensor-algebra actions
 
-- [Of Linear Map](of-linear-map.md)
-- [To Left Linear Map](to-left-linear-map.md)
-- [To Right Linear Map](to-right-linear-map.md)
-- [To Left Linear Map of Linear Map](to-left-linear-map-of-linear-map.md)
-- [To Right Linear Map of Linear Map](to-right-linear-map-of-linear-map.md)
+- [Equivariant ground map as a tensor-linear map](of-linear-map.md)
+- [Tensor-linear map restricted to the left algebra](to-left-linear-map.md)
+- [Tensor-linear map restricted to the right algebra](to-right-linear-map.md)
+- [Left-factor restriction recovers the ground map](to-left-linear-map-of-linear-map.md)
+- [Right-factor restriction recovers the ground map](to-right-linear-map-of-linear-map.md)

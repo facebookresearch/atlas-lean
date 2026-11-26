@@ -17,13 +17,14 @@ public import Mathlib.LinearAlgebra.TensorProduct.Basic
 public import Mathlib.LinearAlgebra.TensorProduct.Tower
 
 /-!
-# Integral balanced tensors of a scalar-extended module
+# Integral balancing cancels a scalar-extended free factor
 
-For a compatible right module over a possibly noncommutative k-algebra R,
-the actual integral R-balanced tensor of `R ⊗[k] V` is additively isomorphic
-to `M ⊗[k] V`. The quotient on the source is the existing integral balanced
-quotient. The maps use the earned ground-change equivalence and native cancellation;
-no k-module on that integral quotient is required as an input.
+Let k be a commutative ring, R a k-algebra that may be noncommutative, M a right R-module with
+compatible commuting k-actions, and V a k-module. For the k-balanced quotient B_k(R;M,R⊗_kV),
+free-factor cancellation sends m⊠(r⊗v) to (m·r)⊗v. Let BI=Bℤ(R;M,R⊗_kV), with its canonical
+integer scalar actions. The additive cancellation equivalence λ:BI→M⊗_kV has
+λ(m⊠(r⊗v))=(m·r)⊗v and inverse m⊗v↦m⊠(1_R⊗v). The maps are defined for arbitrary compatible M
+and V; no freeness or finiteness of these modules is required.
 -/
 
 @[expose] public section
@@ -43,7 +44,16 @@ variable (k : Type u) (R : Type v) (M : Type w) (V : Type z)
   [SMulCommClass k Rᵐᵒᵖ M] [IsScalarTower k Rᵐᵒᵖ M]
   [AddCommGroup V] [Module k V]
 
-/-- Compare the original integer factor dictionaries and preserve their pure classes. -/
+/-- **Canonical coordinate comparison of integral balanced quotients.**
+
+Let k be a commutative ring, R a k-algebra that may be noncommutative, M a right R-module with
+compatible commuting k-actions, and V a k-module. For the k-balanced quotient B_k(R;M,R⊗_kV),
+free-factor cancellation sends m⊠(r⊗v) to (m·r)⊗v. Let BI=Bℤ(R;M,R⊗_kV), with its canonical
+integer scalar actions. The additive cancellation equivalence λ:BI→M⊗_kV has
+λ(m⊠(r⊗v))=(m·r)⊗v and inverse m⊗v↦m⊠(1_R⊗v). The value integralCoordinateData is the
+canonical additive identification of Balanced ℤ R M (R⊗_kV) with GroundChange.integral R M
+(R⊗_kV), carrying each m⊠x to the same pure balanced class.
+-/
 def integralCoordinateData :
     {e : Balanced ℤ R M (R ⊗[k] V) ≃+
         GroundChange.integral R M (R ⊗[k] V) //
@@ -71,7 +81,15 @@ def integralCoordinateData :
     exact ⟨AddEquiv.refl _, fun _ _ => rfl⟩
   exact compare dM cM dN cN (Subsingleton.elim _ _) (Subsingleton.elim _ _)
 
-/-- The actual identity-coordinate comparison of the two integer quotient presentations. -/
+/-- **Additive coordinates of the integral balanced quotient.**
+
+Let k be a commutative ring, R a k-algebra that may be noncommutative, M a right R-module with
+compatible commuting k-actions, and V a k-module. For the k-balanced quotient B_k(R;M,R⊗_kV),
+free-factor cancellation sends m⊠(r⊗v) to (m·r)⊗v. Let BI=Bℤ(R;M,R⊗_kV), with its canonical
+integer scalar actions. The additive cancellation equivalence λ:BI→M⊗_kV has
+λ(m⊠(r⊗v))=(m·r)⊗v and inverse m⊗v↦m⊠(1_R⊗v). The equivalence integralCoordinates identifies
+the two integral quotient presentations by m⊠x↦m⊠x.
+-/
 def integralCoordinates : Balanced ℤ R M (R ⊗[k] V) ≃+
     GroundChange.integral R M (R ⊗[k] V) :=
   (integralCoordinateData k R M V).1
@@ -83,7 +101,15 @@ theorem integralCoordinates_mk (m : M) (x : R ⊗[k] V) :
       GroundChange.integralMk R M (R ⊗[k] V) m x :=
   (integralCoordinateData k R M V).2 m x
 
-/-- The original integral cancellation is the earned ground change followed by cancellation. -/
+/-- **Additive cancellation of an integral balanced free factor.**
+
+Let k be a commutative ring, R a k-algebra that may be noncommutative, M a right R-module with
+compatible commuting k-actions, and V a k-module. For the k-balanced quotient B_k(R;M,R⊗_kV),
+free-factor cancellation sends m⊠(r⊗v) to (m·r)⊗v. Let BI=Bℤ(R;M,R⊗_kV), with its canonical
+integer scalar actions. The additive cancellation equivalence λ:BI→M⊗_kV has
+λ(m⊠(r⊗v))=(m·r)⊗v and inverse m⊗v↦m⊠(1_R⊗v). The equivalence integralCancelEquiv k R M V is
+λ:BI≃+M⊗_kV.
+-/
 def integralCancelEquiv : Balanced ℤ R M (R ⊗[k] V) ≃+ (M ⊗[k] V) :=
   letI : Module k (GroundChange.integral R M (R ⊗[k] V)) :=
     GroundChange.integralModule k R M (R ⊗[k] V)
@@ -91,7 +117,15 @@ def integralCancelEquiv : Balanced ℤ R M (R ⊗[k] V) ≃+ (M ⊗[k] V) :=
     ((GroundChange.equiv k R M (R ⊗[k] V)).symm.toAddEquiv.trans
       (cancelEquiv k R M V).toAddEquiv)
 
-/-- The actual forward map, preserving its original integer module dictionaries. -/
+/-- **Integer-linear integral cancellation map.**
+
+Let k be a commutative ring, R a k-algebra that may be noncommutative, M a right R-module with
+compatible commuting k-actions, and V a k-module. For the k-balanced quotient B_k(R;M,R⊗_kV),
+free-factor cancellation sends m⊠(r⊗v) to (m·r)⊗v. Let BI=Bℤ(R;M,R⊗_kV), with its canonical
+integer scalar actions. The additive cancellation equivalence λ:BI→M⊗_kV has
+λ(m⊠(r⊗v))=(m·r)⊗v and inverse m⊗v↦m⊠(1_R⊗v). The map integralCancel k R M V:BI→ₗ[ℤ]M⊗_kV
+sends m⊠(r⊗v) to (m·r)⊗v.
+-/
 def integralCancel : Balanced ℤ R M (R ⊗[k] V) →ₗ[ℤ] (M ⊗[k] V) :=
   ((integralCancelEquiv k R M V).toIntLinearEquiv
     (modM := inferInstance) (modM₂ := inferInstance)).toLinearMap
@@ -113,7 +147,15 @@ theorem integralCancel_mk_tmul (m : M) (r : R) (v : V) :
   rw [integralCancel_mk]
   rfl
 
-/-- The inverse is the same actual composite inverse, with no input k-module on the source. -/
+/-- **Unit insertion into an integral balanced free factor.**
+
+Let k be a commutative ring, R a k-algebra that may be noncommutative, M a right R-module with
+compatible commuting k-actions, and V a k-module. For the k-balanced quotient B_k(R;M,R⊗_kV),
+free-factor cancellation sends m⊠(r⊗v) to (m·r)⊗v. Let BI=Bℤ(R;M,R⊗_kV), with its canonical
+integer scalar actions. The additive cancellation equivalence λ:BI→M⊗_kV has
+λ(m⊠(r⊗v))=(m·r)⊗v and inverse m⊗v↦m⊠(1_R⊗v). The additive map integralInsert k R M V:M⊗_kV→BI
+sends m⊗v to m⊠(1_R⊗v), the inverse of λ.
+-/
 def integralInsert : M ⊗[k] V →+ Balanced ℤ R M (R ⊗[k] V) :=
   (integralCancelEquiv k R M V).symm.toAddMonoidHom
 
@@ -158,8 +200,16 @@ variable {M' : Type w'} [AddCommGroup M'] [Module k M'] [Module Rᵐᵒᵖ M']
   [SMulCommClass k Rᵐᵒᵖ M'] [IsScalarTower k Rᵐᵒᵖ M']
   {V' : Type z'} [AddCommGroup V'] [Module k V']
 
-/-- The actual map in both free-term variables; the acting-ring condition
-is a condition on the coefficient map, not a supplied comparison square. -/
+/-- **Factor maps on integral balanced free terms.**
+
+Let k be a commutative ring, R a k-algebra that may be noncommutative, M a right R-module with
+compatible commuting k-actions, and V a k-module. For the k-balanced quotient B_k(R;M,R⊗_kV),
+free-factor cancellation sends m⊠(r⊗v) to (m·r)⊗v. Let BI=Bℤ(R;M,R⊗_kV), with its canonical
+integer scalar actions. The additive cancellation equivalence λ:BI→M⊗_kV has
+λ(m⊠(r⊗v))=(m·r)⊗v and inverse m⊗v↦m⊠(1_R⊗v). Let M′,V′ have the same kinds of scalar
+structures, f:M→M′ be k-linear and right-R-equivariant, and g:V→V′ k-linear. Then integralMap
+f g sends m⊠x to f(m)⊠((id_R⊗g)x).
+-/
 def integralMap (f : M →ₗ[k] M') (g : V →ₗ[k] V')
     (hf : ∀ (r : R) (m : M), f (op r • m) = op r • f m) :
     Balanced ℤ R M (R ⊗[k] V) →ₗ[ℤ] Balanced ℤ R M' (R ⊗[k] V') := by
@@ -205,8 +255,15 @@ theorem integralMap_mk_tmul (f : M →ₗ[k] M') (g : V →ₗ[k] V')
     (fun (m' : M') (x : R ⊗[k] V') => mk ℤ R M' (R ⊗[k] V') m' x)
     (show f0 m = f m from rfl) hWord)
 
-/-- The free-term cancellation respects actual coefficient and word maps
-with independent source and target carrier universes. -/
+/-- **Naturality of integral free-factor cancellation.**
+
+Let k be a commutative ring, R a k-algebra that may be noncommutative, M a right R-module with
+compatible commuting k-actions, and V a k-module. For the k-balanced quotient B_k(R;M,R⊗_kV),
+free-factor cancellation sends m⊠(r⊗v) to (m·r)⊗v. Let BI=Bℤ(R;M,R⊗_kV), with its canonical
+integer scalar actions. The additive cancellation equivalence λ:BI→M⊗_kV has
+λ(m⊠(r⊗v))=(m·r)⊗v and inverse m⊗v↦m⊠(1_R⊗v). For a k-linear right-R-equivariant f:M→M′ and
+k-linear g:V→V′ between corresponding modules, λ_(M′,V′)∘integralMap(f,g)=(f⊗g)∘λ_(M,V).
+-/
 theorem integralCancelEquiv_naturality (f : M →ₗ[k] M') (g : V →ₗ[k] V')
     (hf : ∀ (r : R) (m : M), f (op r • m) = op r • f m)
     (q : Balanced ℤ R M (R ⊗[k] V)) :

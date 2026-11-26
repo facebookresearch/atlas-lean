@@ -1,4 +1,6 @@
 # Product support for twisted convolution
 
-For compactly supported coefficients f,h, define K=tsupport(f)*tsupport(h). This set contains
-the support of f*h and the x-support of every kernel Fs(x)=f(s)*αs(h(s⁻¹*x)).
+Let G be a topological group with a measurable structure, μ a measure on G, A a nonunital
+complex C-star algebra and α a point-norm action. For compactly supported continuous f,h:G→A,
+convolutionSupport μ α f h is K=tsupport(f)*tsupport(h), where tsupport is the closure of the
+nonzero set.

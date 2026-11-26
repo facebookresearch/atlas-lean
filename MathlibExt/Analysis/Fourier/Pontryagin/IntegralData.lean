@@ -16,14 +16,14 @@ public import MathlibExt.Analysis.InnerProductSpace.Group.HaarL2.CompactSupport
 public import Mathlib.MeasureTheory.Integral.Bochner.Set
 
 /-!
-# The original general LCA character Fourier integral
+# Integrable compact-support character Fourier kernels
 
-For the true compact-open Pontryagin dual and an original left Haar measure,
-use the literal integral of conjugate chi(s) times f(s). Compact-supported
-scalar functions retain the existing actual Haar L2 inclusion. Integrability
-and the L1 bound use only the original scalar character norm and compact
-support. No finite/Euclidean Plancherel model, dual measure normalization,
-Fourier equivalence or C0-range conclusion is supplied or chosen as DATA.
+Let `G` be a group with Borel topology and Haar measure `μ`. For `f∈C_c(G,ℂ)` and continuous
+circle-valued character `χ`, the function `s ↦ conj(χ(s)) f(s)` is integrable against `μ`.
+
+This uses unit character modulus and compact support. Commutativity, local compactness,
+continuity of group operations and regularity of the measure are not extra hypotheses of this
+integrability lemma. No Fourier isometry or dual Haar normalization is asserted.
 -/
 
 @[expose] public section
@@ -45,7 +45,10 @@ variable {G : Type uG} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
 variable (mu : Measure G) [mu.IsHaarMeasure] [mu.Regular]
 
 omit [IsTopologicalGroup G] [LocallyCompactSpace G] [mu.Regular] in
-/-- Every literal original compact-supported Fourier kernel is Haar integrable. -/
+/-- **Integrability of a compact-support character Fourier kernel.** Let `G` be a group with
+its Borel topological structure and `μ` a Haar measure. For `f∈C_c(G,ℂ)` and continuous
+character `χ∈PontryaginDual G`, `s ↦ conj(χ(s)) f(s)` is integrable. No group-operation
+continuity, local compactness, regularity of `μ` or abelian hypothesis is required. -/
 theorem integrable_haarFourierKernel (f : C_c(G, ℂ)) (chi : PontryaginDual G) :
     Integrable (fun s : G => star (chi s : ℂ) * f s) mu := by
   have hcontinuous : Continuous (fun s : G => star (chi s : ℂ) * f s) :=

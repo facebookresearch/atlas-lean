@@ -17,13 +17,14 @@ public import Mathlib.MeasureTheory.VectorMeasure.Integral
 public import Mathlib.Topology.ContinuousMap.Compact
 
 /-!
-# Regular signed measures and integration on continuous functions
+# Regular signed-measure subspace and continuous integration
 
-This file packages the real signed measures whose total variation is regular as
-a real submodule.  On a compact Borel space, integration against such a measure
-is a bounded real functional on the continuous real-valued functions.  The
-construction installs no regularity or norm instance on the ambient type of
-signed measures.
+On an R₁ Borel space, signed measures with regular total variation form a real submodule. On a
+compact such space, integration defines the bounded real functional `I_s : C(X,ℝ) → ℝ`.
+
+It satisfies `|I_s(f)|≤|s|(X)‖f‖∞` and is linear in the signed measure, including negative
+scalars. The norm equality and inverse Riesz construction are established separately for compact
+Hausdorff spaces.
 -/
 
 @[expose] public section
@@ -40,8 +41,9 @@ universe u
 variable {X : Type u} [TopologicalSpace X] [R1Space X]
   [MeasurableSpace X] [BorelSpace X]
 
-/-- Signed measures with regular total variation, as a real submodule of all
-signed measures. -/
+/-- **Real submodule of signed measures with regular total variation.** Let `X` be an R₁
+topological space with its Borel measurable structure. `regularSignedMeasureSubmodule X`
+consists of signed measures `s` whose positive total-variation measure `|s|` is regular. -/
 noncomputable def regularSignedMeasureSubmodule (X : Type u)
     [TopologicalSpace X] [R1Space X] [MeasurableSpace X] [BorelSpace X] :
     Submodule ℝ (SignedMeasure X) where
@@ -65,19 +67,26 @@ noncomputable def regularSignedMeasureSubmodule (X : Type u)
     exact (SignedMeasure.totalVariation_regular_iff_hasRegularVariation (c • s)).2
       (((SignedMeasure.totalVariation_regular_iff_hasRegularVariation s).1 hs).smul c)
 
-/-- A real signed measure whose total variation is regular. -/
+/-- **Signed measure with regular total variation.** Let `X` be an R₁ topological space with
+its Borel measurable structure. `RegularSignedMeasure X` is the carrier of that real
+submodule; it stores the signed measure and regularity of `|s|`. -/
 abbrev RegularSignedMeasure (X : Type u) [TopologicalSpace X] [R1Space X]
     [MeasurableSpace X] [BorelSpace X] :=
   ↑(regularSignedMeasureSubmodule X)
 
 namespace RegularSignedMeasure
 
-/-- The defining regularity property of a regular signed measure. -/
+/-- **Regularity of a regular signed measure's total variation.** Let `X` be an R₁ topological
+space with its Borel measurable structure. Let `s` be a signed measure whose total
+variation `|s|` is regular. the positive measure `|s|` is regular. -/
 theorem totalVariation_regular (s : RegularSignedMeasure X) :
     (s : SignedMeasure X).totalVariation.Regular :=
   s.property
 
-/-- A regular signed measure has regular variation in the generic vector-measure sense. -/
+/-- **Regular signed measure as a vector-measure regularity predicate.** Let `X` be an R₁
+topological space with its Borel measurable structure. Let `s` be a signed measure whose
+total variation `|s|` is regular. the underlying signed vector measure satisfies
+`VectorMeasure.HasRegularVariation s`. -/
 theorem hasRegularVariation (s : RegularSignedMeasure X) :
     VectorMeasure.HasRegularVariation (s : SignedMeasure X) :=
   (SignedMeasure.totalVariation_regular_iff_hasRegularVariation (s : SignedMeasure X)).1
@@ -131,8 +140,11 @@ private theorem norm_signedIntegralLinear_apply_le
   simpa [signedIntegralLinear, SignedMeasure.totalVariation_eq_variation,
     mul_comm] using h
 
-/-- Integration against a regular signed measure, as a bounded functional on
-the continuous real-valued functions. -/
+/-- **Bounded real functional of a regular signed measure.** Let `X` be an R₁ topological
+space with its Borel measurable structure. Let `s` be a signed measure whose total
+variation `|s|` is regular. Assume `X` is compact, and write `I_s(f)=∫ f ds` for
+`f∈C(X,ℝ)`. `signedIntegralDual s : C(X,ℝ) →L[ℝ] ℝ` is `f ↦ I_s(f)` with the supremum norm
+on continuous functions. -/
 @[no_expose]
 noncomputable def signedIntegralDual (s : RegularSignedMeasure X) :
     StrongDual ℝ C(X, ℝ) :=
@@ -140,7 +152,10 @@ noncomputable def signedIntegralDual (s : RegularSignedMeasure X) :
     ((s : SignedMeasure X).totalVariation.real univ)
     (norm_signedIntegralLinear_apply_le s)
 
-/-- The continuous signed-integral functional evaluates by vector-measure integration. -/
+/-- **Value of the regular signed integral functional.** Let `X` be an R₁ topological space
+with its Borel measurable structure. Let `s` be a signed measure whose total variation
+`|s|` is regular. Assume `X` is compact, and write `I_s(f)=∫ f ds` for `f∈C(X,ℝ)`. for
+`f∈C(X,ℝ)`, `signedIntegralDual s f=∫ᵛ f ds`, the signed vector-measure integral. -/
 @[simp]
 theorem signedIntegralDual_apply (s : RegularSignedMeasure X) (f : C(X, ℝ)) :
     signedIntegralDual s f = ∫ᵛ x, f x ∂<•(s : SignedMeasure X) :=
@@ -148,7 +163,10 @@ theorem signedIntegralDual_apply (s : RegularSignedMeasure X) (f : C(X, ℝ)) :
     simp only [signedIntegralDual, LinearMap.mkContinuous_apply,
       signedIntegralLinear_apply]
 
-/-- The pointwise total-variation bound for signed integration. -/
+/-- **Pointwise total-variation bound for continuous signed integration.** Let `X` be an R₁
+topological space with its Borel measurable structure. Let `s` be a signed measure whose
+total variation `|s|` is regular. Assume `X` is compact, and write `I_s(f)=∫ f ds` for
+`f∈C(X,ℝ)`. for `f∈C(X,ℝ)`, `|I_s(f)|≤|s|.real(X)*‖f‖∞`. -/
 theorem norm_signedIntegralDual_apply_le
     (s : RegularSignedMeasure X) (f : C(X, ℝ)) :
     ‖signedIntegralDual s f‖ ≤
@@ -157,14 +175,20 @@ theorem norm_signedIntegralDual_apply_le
     simpa only [signedIntegralDual, LinearMap.mkContinuous_apply] using
       norm_signedIntegralLinear_apply_le s f
 
-/-- The operator norm of signed integration is bounded by the total mass of
-the total variation. -/
+/-- **Operator norm upper bound of signed integration.** Let `X` be an R₁ topological space
+with its Borel measurable structure. Let `s` be a signed measure whose total variation
+`|s|` is regular. Assume `X` is compact, and write `I_s(f)=∫ f ds` for `f∈C(X,ℝ)`.
+`‖signedIntegralDual s‖≤|s|.real(X)`. -/
 theorem norm_signedIntegralDual_le (s : RegularSignedMeasure X) :
     ‖signedIntegralDual s‖ ≤ (s : SignedMeasure X).totalVariation.real univ := by
   apply ContinuousLinearMap.opNorm_le_bound _ measureReal_nonneg
   exact norm_signedIntegralDual_apply_le s
 
-/-- Integration is real-linear in a regular signed measure. -/
+/-- **Real-linear map from regular signed measures to continuous functionals.** Let `X` be an
+R₁ topological space with its Borel measurable structure. Let `s` be a signed measure
+whose total variation `|s|` is regular. Assume `X` is compact, and write `I_s(f)=∫ f ds`
+for `f∈C(X,ℝ)`. `regularSignedMeasureIntegral` sends each regular signed measure `t` to
+`I_t ∈ C(X,ℝ)*`. -/
 @[no_expose]
 noncomputable def regularSignedMeasureIntegral :
     RegularSignedMeasure X →ₗ[ℝ] StrongDual ℝ C(X, ℝ) where
@@ -187,37 +211,55 @@ noncomputable def regularSignedMeasureIntegral :
       c • ∫ᵛ x, f x ∂<•(s : SignedMeasure X)
     exact VectorMeasure.integral_smul_vectorMeasure (fun x ↦ f x) c
 
-/-- The zero regular signed measure has the zero integral functional. -/
+/-- **Zero regular signed measure has zero continuous integral.** Let `X` be an R₁ topological
+space with its Borel measurable structure. Let `s` be a signed measure whose total
+variation `|s|` is regular. Assume `X` is compact, and write `I_s(f)=∫ f ds` for
+`f∈C(X,ℝ)`. `signedIntegralDual 0=0`. -/
 @[simp]
 theorem signedIntegralDual_zero :
     signedIntegralDual (0 : RegularSignedMeasure X) = 0 :=
   (regularSignedMeasureIntegral (X := X)).map_zero
 
-/-- The signed integral functional is additive in the regular signed measure. -/
+/-- **Additivity of the continuous signed-measure functional.** Let `X` be an R₁ topological
+space with its Borel measurable structure. Let `s` be a signed measure whose total
+variation `|s|` is regular. Assume `X` is compact, and write `I_s(f)=∫ f ds` for
+`f∈C(X,ℝ)`. for another regular signed measure `t`, `I_(s+t)=I_s+I_t`. -/
 @[simp]
 theorem signedIntegralDual_add (s t : RegularSignedMeasure X) :
     signedIntegralDual (s + t) = signedIntegralDual s + signedIntegralDual t :=
   (regularSignedMeasureIntegral (X := X)).map_add s t
 
-/-- The signed integral functional commutes with real scalar multiplication of the measure. -/
+/-- **Real homogeneity of the signed integral functional.** Let `X` be an R₁ topological space
+with its Borel measurable structure. Let `s` be a signed measure whose total variation
+`|s|` is regular. Assume `X` is compact, and write `I_s(f)=∫ f ds` for `f∈C(X,ℝ)`. for
+every `c∈ℝ`, `I_(c • s)=c • I_s`. -/
 @[simp]
 theorem signedIntegralDual_smul (c : ℝ) (s : RegularSignedMeasure X) :
     signedIntegralDual (c • s) = c • signedIntegralDual s :=
   (regularSignedMeasureIntegral (X := X)).map_smul c s
 
-/-- Negating a regular signed measure negates its integral functional. -/
+/-- **Negation of a signed measure negates its integral functional.** Let `X` be an R₁
+topological space with its Borel measurable structure. Let `s` be a signed measure whose
+total variation `|s|` is regular. Assume `X` is compact, and write `I_s(f)=∫ f ds` for
+`f∈C(X,ℝ)`. `I_(-s)=-I_s`. -/
 @[simp]
 theorem signedIntegralDual_neg (s : RegularSignedMeasure X) :
     signedIntegralDual (-s) = -signedIntegralDual s :=
   (regularSignedMeasureIntegral (X := X)).map_neg s
 
-/-- The signed integral functional takes a difference of measures to the difference of their functionals. -/
+/-- **Difference of signed measures gives a difference of functionals.** Let `X` be an R₁
+topological space with its Borel measurable structure. Let `s` be a signed measure whose
+total variation `|s|` is regular. Assume `X` is compact, and write `I_s(f)=∫ f ds` for
+`f∈C(X,ℝ)`. for regular signed `t`, `I_(s-t)=I_s-I_t`. -/
 @[simp]
 theorem signedIntegralDual_sub (s t : RegularSignedMeasure X) :
     signedIntegralDual (s - t) = signedIntegralDual s - signedIntegralDual t :=
   (regularSignedMeasureIntegral (X := X)).map_sub s t
 
-/-- The linear integration map evaluates by integration against the underlying signed measure. -/
+/-- **Evaluation of the linear regular signed integration map.** Let `X` be an R₁ topological
+space with its Borel measurable structure. Let `s` be a signed measure whose total
+variation `|s|` is regular. Assume `X` is compact, and write `I_s(f)=∫ f ds` for
+`f∈C(X,ℝ)`. for `f∈C(X,ℝ)`, `regularSignedMeasureIntegral s f=∫ᵛ f ds`. -/
 @[simp]
 theorem regularSignedMeasureIntegral_apply
     (s : RegularSignedMeasure X) (f : C(X, ℝ)) :

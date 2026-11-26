@@ -1,6 +1,6 @@
-# CFCMeasure Continuous Products
+# Continuous calculus factors in spectral coefficient measures
 
-- [Normal CFCCoefficient Measure cfc mul left](normal-cfccoefficient-measure-cfc-mul-le.md)
-- [Normal CFCCoefficient Measure cfc star mul right](normal-cfccoefficient-measure-cfc-star-m.md)
-- [Normal CFCCoefficient Measure cfc mul right](normal-cfccoefficient-measure-cfc-mul-ri.md)
-- [Normal CFCCoefficient Measure cfc balance](normal-cfccoefficient-measure-cfc-balanc.md)
+- [Continuous factor from the first CFC coefficient vector](normal-cfccoefficient-measure-cfc-mul-le.md)
+- [Adjoint continuous factor in the second coefficient vector](normal-cfccoefficient-measure-cfc-star-m.md)
+- [Conjugated integrand from the second coefficient vector](normal-cfccoefficient-measure-cfc-mul-ri.md)
+- [Balancing a continuous CFC factor across coefficient vectors](normal-cfccoefficient-measure-cfc-balanc.md)

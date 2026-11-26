@@ -1,3 +1,4 @@
-# Circle Fejer Kernel integral sub
+# Unit mass after translation and inversion
 
-Haar invariance gives the actual unit mass for every translated/inverted kernel.
+For every `N : ℕ` and `x : UnitAddCircle`,
+`∫ t, circleFejerKernel N (x - t) ∂AddCircle.haarAddCircle = 1`.

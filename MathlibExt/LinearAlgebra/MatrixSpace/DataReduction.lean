@@ -17,16 +17,18 @@ public import Mathlib.LinearAlgebra.Finsupp.LinearCombination
 public import Mathlib.Algebra.Group.Pi.Lemmas
 
 /-!
-# Prescribed-grid reduction preserving an actual minor
+# Grid reduction preserving a nonzero matrix minor
 
-The coordinate scan tests the actual selected determinant and takes the first
-passing value in a prescribed ordered grid. Its tested-index trace is constructed
-by the same branches as its output. The algebraic guarantee uses the native
-degree bound for an affine determinant and the finite distinct-root bound.
+Let F be a field, A₀,…,Aₘ₋₁ ∈ Mat(k,l;F), and fix injections selecting r rows and r columns.
+Write M(θ) for the determinant of that r × r minor of ∑ᵢ θᵢAᵢ. Let g : Fin N → F be an ordered
+scalar grid. Starting from M(β) ≠ 0, a scan replaces coefficients one at a time by the first
+grid value retaining a nonzero minor. If g is injective and N > r, the scan returns α with
+every αᵢ in the grid and M(α) ≠ 0. It performs at most mN minor tests; this bound also applies
+when a scan fails.
 
-Reference: Ivanyos, Qiao and Subrahmanyam, *Constructive noncommutative rank
-computation in deterministic polynomial time over fields of arbitrary
-characteristics*, January 20, 2016 addendum, Lemma 6.
+Reference: Ivanyos, Qiao and Subrahmanyam, *Constructive noncommutative rank computation in
+deterministic polynomial time over fields of arbitrary characteristics*, January 20, 2016
+addendum, Lemma 6.
 -/
 
 @[expose] public section
@@ -42,13 +44,24 @@ namespace Matrix
 
 variable {F : Type u} [Field F] [DecidableEq F] {k l m r N : ℕ}
 
-/-- Determinant of the actual selected minor of the combination. -/
+/-- **A selected minor of a matrix combination.**
+
+Let F be a field, A₀,…,Aₘ₋₁ ∈ Mat(k,l;F), and fix injections selecting r rows and r columns.
+Write M(θ) for the determinant of that r × r minor of ∑ᵢ θᵢAᵢ. The scalar function θ ↦ M(θ) is
+the selected determinant, with value 1 for the empty r = 0 minor.
+-/
 def selectedMinor (A : Fin m → Matrix (Fin k) (Fin l) F)
     (rows : Fin r ↪ Fin k) (cols : Fin r ↪ Fin l) (theta : Fin m → F) : F :=
   ((Fintype.linearCombination F A theta).submatrix rows cols).det
 
-/-- Search the given indices, returning the first passing point and the indices
-whose actual determinant predicates were evaluated. -/
+/-- **The first grid value preserving a minor.**
+
+Let F be a field, A₀,…,Aₘ₋₁ ∈ Mat(k,l;F), and fix injections selecting r rows and r columns.
+Write M(θ) for the determinant of that r × r minor of ∑ᵢ θᵢAᵢ. Let g : Fin N → F be an ordered
+scalar grid. For a coordinate i, coefficient tuple θ and a list L of grid indices, search L in
+order for t with M(θ[i ↦ g(t)]) ≠ 0. Return the first such index, or none if it does not
+exist, together with the list of indices tested up to success or exhaustion.
+-/
 def minorGridSearch (A : Fin m → Matrix (Fin k) (Fin l) F) (grid : Fin N → F)
     (rows : Fin r ↪ Fin k) (cols : Fin r ↪ Fin l) (theta : Fin m → F) (i : Fin m) :
     List (Fin N) → Option (Fin N) × List (Fin N)
@@ -60,8 +73,15 @@ def minorGridSearch (A : Fin m → Matrix (Fin k) (Fin l) F) (grid : Fin N → F
         let rest := minorGridSearch A grid rows cols theta i ts
         (rest.1, t :: rest.2)
 
-/-- Reduce exactly the listed coefficient coordinates, retaining the actual
-coordinate/grid-index trace of determinant tests. -/
+/-- **Reducing a list of coefficient coordinates.**
+
+Let F be a field, A₀,…,Aₘ₋₁ ∈ Mat(k,l;F), and fix injections selecting r rows and r columns.
+Write M(θ) for the determinant of that r × r minor of ∑ᵢ θᵢAᵢ. Let g : Fin N → F be an ordered
+scalar grid. Given a list of coordinates and an initial θ, replace each listed coordinate by
+the first grid value preserving M ≠ 0, in grid-index order. Return the final tuple if all
+searches succeed, or none at the first failure, together with the sequence of tested
+coordinate/index pairs.
+-/
 def minorGridReduceOn (A : Fin m → Matrix (Fin k) (Fin l) F) (grid : Fin N → F)
     (rows : Fin r ↪ Fin k) (cols : Fin r ↪ Fin l) :
     List (Fin m) → (Fin m → F) → Option (Fin m → F) × List (Fin m × Fin N)
@@ -74,13 +94,27 @@ def minorGridReduceOn (A : Fin m → Matrix (Fin k) (Fin l) F) (grid : Fin N →
           let rest := minorGridReduceOn A grid rows cols is (Function.update theta i (grid t))
           (rest.1, trial.2.map (fun t => (i, t)) ++ rest.2)
 
-/-- Scan every coefficient once, with the actual determinant-test trace. -/
+/-- **The full coefficient scan and its test sequence.**
+
+Let F be a field, A₀,…,Aₘ₋₁ ∈ Mat(k,l;F), and fix injections selecting r rows and r columns.
+Write M(θ) for the determinant of that r × r minor of ∑ᵢ θᵢAᵢ. Let g : Fin N → F be an ordered
+scalar grid. Starting from β, scan coordinates 0,…,m−1, replacing each by the first grid value
+retaining a nonzero selected minor. The output is an optional coefficient tuple paired with
+the sequence of tested coordinate/grid-index pairs.
+-/
 def reduceMinorGridWithTrace (A : Fin m → Matrix (Fin k) (Fin l) F) (grid : Fin N → F)
     (rows : Fin r ↪ Fin k) (cols : Fin r ↪ Fin l) (beta : Fin m → F) :
     Option (Fin m → F) × List (Fin m × Fin N) :=
   minorGridReduceOn A grid rows cols (List.finRange m) beta
 
-/-- The Option output of the actual prescribed-grid coordinate scan. -/
+/-- **The output of grid reduction.**
+
+Let F be a field, A₀,…,Aₘ₋₁ ∈ Mat(k,l;F), and fix injections selecting r rows and r columns.
+Write M(θ) for the determinant of that r × r minor of ∑ᵢ θᵢAᵢ. Let g : Fin N → F be an ordered
+scalar grid. The reduction map returns the optional tuple produced by scanning all m
+coordinates in order and selecting the first grid value at each coordinate for which the
+selected determinant stays nonzero.
+-/
 def reduceMinorGrid (A : Fin m → Matrix (Fin k) (Fin l) F) (grid : Fin N → F)
     (rows : Fin r ↪ Fin k) (cols : Fin r ↪ Fin l) (beta : Fin m → F) : Option (Fin m → F) :=
   (reduceMinorGridWithTrace A grid rows cols beta).1
@@ -97,8 +131,13 @@ theorem minorGridSearch_fst (A : Fin m → Matrix (Fin k) (Fin l) F) (grid : Fin
       · simp [minorGridSearch, h]
       · simp [minorGridSearch, h, ih]
 
-/-- Every trace entry corresponds to a visited predicate branch, and the search
-visits no more indices than were supplied. -/
+/-- **The number of tests in a single coordinate search.**
+
+Let F be a field, A₀,…,Aₘ₋₁ ∈ Mat(k,l;F), and fix injections selecting r rows and r columns.
+Write M(θ) for the determinant of that r × r minor of ∑ᵢ θᵢAᵢ. Let g : Fin N → F be an ordered
+scalar grid. For any coefficient tuple θ, coordinate i and list L of grid indices, the
+sequence of indices tested while searching for M(θ[i ↦ g(t)]) ≠ 0 has length at most |L|.
+-/
 theorem minorGridSearch_trace_length_le (A : Fin m → Matrix (Fin k) (Fin l) F) (grid : Fin N → F)
     (rows : Fin r ↪ Fin k) (cols : Fin r ↪ Fin l) (theta : Fin m → F)
     (i : Fin m) (ts : List (Fin N)) :
@@ -110,7 +149,13 @@ theorem minorGridSearch_trace_length_le (A : Fin m → Matrix (Fin k) (Fin l) F)
       · simp [minorGridSearch, h]
       · simpa [minorGridSearch, h] using Nat.succ_le_succ ih
 
-/-- The actual affine polynomial used by one coordinate's determinant test. -/
+/-- **The determinant polynomial for one coordinate.**
+
+Let F be a field, A₀,…,Aₘ₋₁ ∈ Mat(k,l;F), and fix injections selecting r rows and r columns.
+Write M(θ) for the determinant of that r × r minor of ∑ᵢ θᵢAᵢ. Fix θ and i. Define pᵢ(X) =
+det(X Aᵢ|minor + (∑ⱼ θ[i ↦ 0]ⱼ Aⱼ)|minor). Its evaluation at t equals M(θ[i ↦ t]); this is the
+determinant of an affine r × r matrix pencil.
+-/
 noncomputable def coordinateMinorPolynomial (A : Fin m → Matrix (Fin k) (Fin l) F)
     (rows : Fin r ↪ Fin k) (cols : Fin r ↪ Fin l) (theta : Fin m → F) (i : Fin m) : F[X] :=
   ((Polynomial.X : F[X]) • ((A i).submatrix rows cols).map Polynomial.C +
@@ -167,7 +212,13 @@ theorem exists_grid_selectedMinor_ne_zero (A : Fin m → Matrix (Fin k) (Fin l) 
   · exact (coordinateMinorPolynomial_natDegree_le A rows cols theta i).trans_lt
       (by simpa using hsize)
 
-/-- A nonzero current minor guarantees a computed passing grid point. -/
+/-- **A nonzero minor survives one grid search.**
+
+Let F be a field, A₀,…,Aₘ₋₁ ∈ Mat(k,l;F), and fix injections selecting r rows and r columns.
+Write M(θ) for the determinant of that r × r minor of ∑ᵢ θᵢAᵢ. Let g : Fin N → F be an ordered
+scalar grid. Assume g is injective, N > r and M(θ) ≠ 0. For every coordinate i, searching
+indices 0,…,N−1 returns some t and M(θ[i ↦ g(t)]) ≠ 0.
+-/
 theorem minorGridSearch_success (A : Fin m → Matrix (Fin k) (Fin l) F) (grid : Fin N → F)
     (rows : Fin r ↪ Fin k) (cols : Fin r ↪ Fin l) (theta : Fin m → F) (i : Fin m)
     (hgrid : Function.Injective grid) (hsize : r < N)
@@ -186,8 +237,14 @@ theorem minorGridSearch_success (A : Fin m → Matrix (Fin k) (Fin l) F) (grid :
       rw [minorGridSearch_fst] at hs
       simpa using List.find?_some hs
 
-/-- The reducer preserves the actual minor and records exactly which coordinates
-have been processed; coordinates outside the scan remain unchanged. -/
+/-- **A partial coefficient scan preserves its minor.**
+
+Let F be a field, A₀,…,Aₘ₋₁ ∈ Mat(k,l;F), and fix injections selecting r rows and r columns.
+Write M(θ) for the determinant of that r × r minor of ∑ᵢ θᵢAᵢ. Let g : Fin N → F be an ordered
+scalar grid. Assume g is injective, N > r and M(θ) ≠ 0. Scanning any list L of coordinates
+succeeds with α satisfying M(α) ≠ 0. Every coordinate occurring in L has αᵢ in the grid, and
+every coordinate outside L has αᵢ = θᵢ.
+-/
 theorem minorGridReduceOn_success (A : Fin m → Matrix (Fin k) (Fin l) F) (grid : Fin N → F)
     (rows : Fin r ↪ Fin k) (cols : Fin r ↪ Fin l) (xs : List (Fin m))
     (theta : Fin m → F) (hgrid : Function.Injective grid) (hsize : r < N)
@@ -226,8 +283,13 @@ theorem minorGridReduceOn_success (A : Fin m → Matrix (Fin k) (Fin l) F) (grid
         rw [hunprocessed j hjxs]
         exact Function.update_of_ne hji (grid t) theta
 
-/-- The actual full scan returns grid coefficients while preserving its selected
-nonzero minor. No successful tuple is supplied to the computation. -/
+/-- **Grid coefficients with the selected minor nonzero.**
+
+Let F be a field, A₀,…,Aₘ₋₁ ∈ Mat(k,l;F), and fix injections selecting r rows and r columns.
+Write M(θ) for the determinant of that r × r minor of ∑ᵢ θᵢAᵢ. Let g : Fin N → F be an ordered
+scalar grid. Assume g is injective, N > r and M(β) ≠ 0. The full scan returns α such that
+every αᵢ belongs to the range of g and M(α) ≠ 0.
+-/
 theorem reduceMinorGrid_success (A : Fin m → Matrix (Fin k) (Fin l) F) (grid : Fin N → F)
     (rows : Fin r ↪ Fin k) (cols : Fin r ↪ Fin l) (beta : Fin m → F)
     (hgrid : Function.Injective grid) (hsize : r < N)
@@ -239,7 +301,13 @@ theorem reduceMinorGrid_success (A : Fin m → Matrix (Fin k) (Fin l) F) (grid :
     minorGridReduceOn_success A grid rows cols (List.finRange m) beta hgrid hsize hminor
   exact ⟨alpha, houtput, fun i => hprocessed i (by simp), hdet⟩
 
-/-- The unconditional count follows the actual test trace, including failed scans. -/
+/-- **A test bound for a partial coefficient scan.**
+
+Let F be a field, A₀,…,Aₘ₋₁ ∈ Mat(k,l;F), and fix injections selecting r rows and r columns.
+Write M(θ) for the determinant of that r × r minor of ∑ᵢ θᵢAᵢ. Let g : Fin N → F be an ordered
+scalar grid. For any list L of coefficient coordinates and any starting tuple θ, the sequence
+of minor tests in its grid scan has length at most |L|N, whether the scan succeeds or fails.
+-/
 theorem minorGridReduceOn_trace_length_le (A : Fin m → Matrix (Fin k) (Fin l) F)
     (grid : Fin N → F) (rows : Fin r ↪ Fin k) (cols : Fin r ↪ Fin l)
     (xs : List (Fin m)) (theta : Fin m → F) :
@@ -262,7 +330,13 @@ theorem minorGridReduceOn_trace_length_le (A : Fin m → Matrix (Fin k) (Fin l) 
             _ ≤ N + xs.length * N := Nat.add_le_add hs (ih (Function.update theta i (grid t)))
             _ = (xs.length + 1) * N := by simp [Nat.add_mul, Nat.add_comm]
 
-/-- At most `m*N` actual minor predicates occur in the coupled full-scan trace. -/
+/-- **A test bound for the full coefficient scan.**
+
+Let F be a field, A₀,…,Aₘ₋₁ ∈ Mat(k,l;F), and fix injections selecting r rows and r columns.
+Write M(θ) for the determinant of that r × r minor of ∑ᵢ θᵢAᵢ. Let g : Fin N → F be an ordered
+scalar grid. For every initial tuple β, the full ordered scan of m coordinates has at most mN
+recorded minor tests, whether it succeeds or fails.
+-/
 theorem reduceMinorGridWithTrace_length_le (A : Fin m → Matrix (Fin k) (Fin l) F)
     (grid : Fin N → F) (rows : Fin r ↪ Fin k) (cols : Fin r ↪ Fin l) (beta : Fin m → F) :
     (reduceMinorGridWithTrace A grid rows cols beta).2.length ≤ m * N := by

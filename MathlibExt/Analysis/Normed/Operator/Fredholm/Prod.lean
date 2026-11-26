@@ -22,14 +22,15 @@ public import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.Restrict
 public import Mathlib.Topology.Maps.Strict.Module
 
 /-!
-# Cartesian products of strong Fredholm maps
+# Fredholm Cartesian products of continuous linear maps
 
-Construct all five fields of the existing strong Fredholm predicate for the
-ordinary product map. The scalar is a `NontriviallyNormedField`, with its
-actual norm, but neither scalar nor stage completeness is assumed.
-Stages need only their topological additive/module structures; the two
-source topological-add-group assumptions support the strict product lemma.
-No stage norm, output model or independently supplied product projection is used.
+Let `𝕜` be a nontrivially normed field and four additive groups carry topologies and algebraic
+`𝕜`-module structures. Assume addition and negation are continuous on the two source groups. The
+Cartesian product of two continuous Fredholm maps is Fredholm for the product topologies.
+
+This preserves strictness, closed finite-codimension range and finite-dimensional complemented
+kernel. Stage norms, scalar or stage completeness, and continuity of target addition are not
+premises.
 -/
 
 @[expose] public section
@@ -48,8 +49,11 @@ variable [AddCommGroup F₀] [Module 𝕜 F₀] [TopologicalSpace F₀]
 variable [AddCommGroup F₁] [Module 𝕜 F₁] [TopologicalSpace F₁]
 variable [IsTopologicalAddGroup E₀] [IsTopologicalAddGroup E₁]
 
-/-- The Cartesian product of two strong Fredholm maps is strong Fredholm.
-No completeness of the scalar field or either source/target stage is required. -/
+/-- **Cartesian product of two Fredholm maps.** Let `𝕜` be a nontrivially normed field. Let
+`E₀,E₁,F₀,F₁` have additive-group, algebraic `𝕜`-module and topological-space structures,
+with continuous addition and negation on `E₀,E₁`. If continuous linear `S : E₀ → F₀` and
+`T : E₁ → F₁` are Fredholm, then `(x,y) ↦ (Sx,Ty)` is Fredholm for product topologies,
+retaining all five conditions. No stage norms or completeness are assumed. -/
 theorem IsFredholm.prodMap {S : E₀ →L[𝕜] F₀} {T : E₁ →L[𝕜] F₁}
     (hS : S.IsFredholm) (hT : T.IsFredholm) : (S.prodMap T).IsFredholm := by
   let U := S.prodMap T

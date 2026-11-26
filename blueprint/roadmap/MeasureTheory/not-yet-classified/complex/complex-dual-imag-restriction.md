@@ -1,4 +1,5 @@
-# Complex Dual Imag Restriction
+# Imaginary restriction of a continuous complex functional
 
-Imaginary part of a complex functional restricted to the real-valued
-continuous functions.
+For a topological space `X`
+and continuous complex-linear `Λ : C(X,ℂ) → ℂ`, `complexDualImagRestriction Λ` is the
+continuous real-linear functional `f ↦ Im Λ(f_ℂ)` on `C(X,ℝ)`.

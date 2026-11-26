@@ -1,3 +1,5 @@
-# Finite Galois Tensor To Functions injective
+# Injectivity of the finite-Galois coordinate map
 
-The canonical finite-Galois tensor-coordinate map is injective.
+Let L/F be a finite Galois field extension. With the left L-algebra structure,
+Θ:L⊗_FL→L^(Aut_F L) sends x⊗y to (σ↦x*σ(y)). The map finiteGaloisTensorToFunctions F L is
+injective.

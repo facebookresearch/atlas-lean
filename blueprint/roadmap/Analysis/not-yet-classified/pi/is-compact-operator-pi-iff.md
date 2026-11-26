@@ -1,4 +1,6 @@
-# Is Compact Operator pi iff
+# Compactness of a finite product function from its coordinates
 
-An arbitrary function into a finite dependent product is a compact operator
-if and only if each coordinate is a compact operator.
+Let `X` be a
+topological space with zero, `Y_i` topological spaces indexed by a finite type, and `f : X
+→ ∏i Y_i` any function. It maps a neighborhood of zero into a compact set exactly when
+each coordinate map does. Continuity or linearity of `f` is not required.

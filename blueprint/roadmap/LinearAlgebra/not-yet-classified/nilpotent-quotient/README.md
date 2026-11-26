@@ -1,10 +1,10 @@
-# Nilpotent Quotient
+# Idempotent matrix lifting through a nilpotent ideal
 
-## Semiring
+## Matrix powers and ideal powers
 
-- [Pow apply mem ideal pow](pow-apply-mem-ideal-pow.md)
+- [Entries of a matrix power lie in the corresponding ideal power](pow-apply-mem-ideal-pow.md)
 
-## Ring
+## Nilpotent quotient kernels and idempotent lifting
 
-- [Is Nilpotent of quotient map eq zero](is-nilpotent-of-quotient-map-eq-zero.md)
-- [Exists is Idempotent Elem quotient lift](exists-is-idempotent-elem-quotient-lift.md)
+- [Matrix kernel of a nilpotent quotient consists of nilpotents](is-nilpotent-of-quotient-map-eq-zero.md)
+- [Lifting an idempotent matrix across a nilpotent quotient](exists-is-idempotent-elem-quotient-lift.md)

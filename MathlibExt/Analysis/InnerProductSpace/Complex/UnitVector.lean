@@ -17,20 +17,10 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.Star.Basic
 
 /-!
-# Finite complex unit vectors
+# Finite normalized complex vectors
 
-This module defines finite-dimensional normalized complex vectors in the
-natural complex inner-product domain. A unit vector is indexed by a finite
-type and satisfies the normalization condition `∑ i, star (coord i) * coord i = 1`,
-corresponding to unit norm in the standard complex inner product on `d → ℂ`.
-
-## Main definitions
-
-* `Complex.UnitVector d` – unit vector on index type `d` with complex coordinates.
-
-## Main results
-
-* `UnitVector.ext` – extensionality by coordinates.
+For a finite index type I, a UnitVector I has coordinates z_i∈ℂ satisfying ∑i conj(z_i)z_i=1.
+This is unit norm in the standard Hermitian ℓ² product on ℂ^I.
 -/
 
 @[expose] public section
@@ -40,12 +30,16 @@ open Complex
 
 namespace Complex
 
-/-- A finite-dimensional normalized complex vector in the natural complex
-    inner-product space, indexed by a finite type `d`. Normalization is
-    expressed as `∑ i, star (coord i) * coord i = 1`, i.e. unit norm for the
-    standard Hermitian inner product on `d → ℂ`. -/
+/-- **Complex unit vector by coordinates.**
+
+For a finite index type I, UnitVector I consists of z:I→ℂ with ∑i conj(z_i)z_i=1, equivalently
+∑i|z_i|²=1.
+-/
 structure UnitVector (d : Type*) [Fintype d] where
-  /-- The complex coordinates of the vector, indexed by `d`. -/
+  /-- **Coordinates of a finite complex unit vector.**
+
+For finite I and u:UnitVector I, the field coord:I→ℂ gives z_i with ∑i conj(z_i)z_i=1.
+-/
   coord : d → ℂ
   normalized' : ∑ i, star (coord i) * coord i = 1
 

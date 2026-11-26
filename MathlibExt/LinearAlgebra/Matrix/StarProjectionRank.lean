@@ -17,13 +17,13 @@ public import Mathlib.Analysis.InnerProductSpace.Projection.FiniteDimensional
 public import Mathlib.LinearAlgebra.Matrix.Rank
 
 /-!
-# Rank classification of finite complex star projections
+# Rank classification of complex star projections
 
-A finite complex star projection admits an orthonormal frame for its range.
-The associated rectangular matrix has identity Gram matrix and reconstructs
-the projection.  Consequently two square star projections, possibly in
-different matrix sizes, are rectangularly Murray--von Neumann equivalent
-exactly when their matrix ranks agree.
+Let P be an n×n complex matrix, represented in CStarMatrix, and r=rank(P). Its Euclidean range
+has a rank-indexed orthonormal basis; let E_P be the n×r matrix of those basis columns. The
+columns satisfy E_PᴴE_P=I_r. If P=Pᴴ=P², they reconstruct P=E_PE_Pᴴ. Two square complex star
+projections in different sizes are rectangularly equivalent by P=UᴴU,Q=UUᴴ precisely when
+rank(P)=rank(Q).
 -/
 
 @[expose] public section
@@ -51,8 +51,13 @@ private theorem cStarMatrix_one_mul
   intro i j
   simp [CStarMatrix.mul_apply, CStarMatrix.one_apply]
 
-/-- A rank-indexed orthonormal basis for the range of a finite complex
-matrix, regarded as an operator on Euclidean space. -/
+/-- **Rank-indexed orthonormal basis of a matrix range.**
+
+Let P be an n×n complex matrix, represented in CStarMatrix, and r=rank(P). Its Euclidean range
+has a rank-indexed orthonormal basis; let E_P be the n×r matrix of those basis columns. The
+value starProjectionRangeBasis P is an orthonormal basis of range(P:ℂ^n→ℂ^n), indexed by Fin
+r.
+-/
 noncomputable def starProjectionRangeBasis
     (P : CStarMatrix (Fin n) (Fin n) ℂ) :
     OrthonormalBasis
@@ -75,8 +80,13 @@ noncomputable def starProjectionRangeBasis
   exact (stdOrthonormalBasis ℂ (LinearMap.range T)).reindex
     (finCongr hrank)
 
-/-- The isometric inclusion of rank coordinates into the range of a finite
-complex matrix. -/
+/-- **Isometric inclusion of matrix range coordinates.**
+
+Let P be an n×n complex matrix, represented in CStarMatrix, and r=rank(P). Its Euclidean range
+has a rank-indexed orthonormal basis; let E_P be the n×r matrix of those basis columns. The
+linear isometry starProjectionRangeIsometry P:ℂ^r→ℂ^n sends the standard coordinate basis to
+that orthonormal range basis.
+-/
 noncomputable def starProjectionRangeIsometry
     (P : CStarMatrix (Fin n) (Fin n) ℂ) :
     EuclideanSpace ℂ
@@ -113,8 +123,12 @@ private theorem starProjectionRangeIsometry_range
         EuclideanSpace ℂ (Fin n)) = y
     rw [(starProjectionRangeBasis P).repr.symm_apply_apply]
 
-/-- The rectangular matrix whose columns form an orthonormal basis of the
-range of a finite complex matrix. -/
+/-- **Rectangular orthonormal frame of a matrix range.**
+
+Let P be an n×n complex matrix, represented in CStarMatrix, and r=rank(P). Its Euclidean range
+has a rank-indexed orthonormal basis; let E_P be the n×r matrix of those basis columns. The
+matrix starProjectionRangeFrame P is E_P, with columns that orthonormal basis of range(P).
+-/
 noncomputable def starProjectionRangeFrame
     (P : CStarMatrix (Fin n) (Fin n) ℂ) :
     CStarMatrix (Fin n)
@@ -126,7 +140,12 @@ noncomputable def starProjectionRangeFrame
       (EuclideanSpace.basisFun (Fin n) ℂ).toBasis
       (starProjectionRangeIsometry P).toLinearMap
 
-/-- The columns of `starProjectionRangeFrame` are orthonormal. -/
+/-- **Identity Gram matrix of the range frame.**
+
+Let P be an n×n complex matrix, represented in CStarMatrix, and r=rank(P). Its Euclidean range
+has a rank-indexed orthonormal basis; let E_P be the n×r matrix of those basis columns. For
+every P, starProjectionRangeFrame P satisfies E_PᴴE_P=I_r.
+-/
 @[simp]
 theorem starProjectionRangeFrame_conjTranspose_mul_self
     (P : CStarMatrix (Fin n) (Fin n) ℂ) :
@@ -144,7 +163,12 @@ theorem starProjectionRangeFrame_conjTranspose_mul_self
   rw [L.adjoint_comp_self']
   exact LinearMap.toMatrix_id br.toBasis
 
-/-- For a star projection, its range frame reconstructs the projection. -/
+/-- **Range frame reconstructs a star projection.**
+
+Let P be an n×n complex matrix, represented in CStarMatrix, and r=rank(P). Its Euclidean range
+has a rank-indexed orthonormal basis; let E_P be the n×r matrix of those basis columns. If P
+is a star projection, P=Pᴴ=P², then E_PE_Pᴴ=P.
+-/
 @[simp]
 theorem IsStarProjection.starProjectionRangeFrame_mul_conjTranspose
     {P : CStarMatrix (Fin n) (Fin n) ℂ} (hP : IsStarProjection P) :
@@ -190,7 +214,11 @@ theorem IsStarProjection.starProjectionRangeFrame_mul_conjTranspose
   rw [show L.toLinearMap.comp L.toLinearMap.adjoint = T from hST]
   simp [T, M]
 
-/-- A complex star projection has a rectangular orthonormal range frame. -/
+/-- **Rectangular frame for a finite star projection.**
+
+Let P∈CStarMatrix(Fin n,Fin n,ℂ) be a star projection and r=rank(P). There exists
+E∈CStarMatrix(Fin n,Fin r,ℂ) with EᴴE=I_r and EEᴴ=P.
+-/
 theorem IsStarProjection.exists_rangeFrame
     {P : CStarMatrix (Fin n) (Fin n) ℂ} (hP : IsStarProjection P) :
     ∃ E : CStarMatrix (Fin n)
@@ -201,8 +229,11 @@ theorem IsStarProjection.exists_rangeFrame
     starProjectionRangeFrame_conjTranspose_mul_self P,
     Matrix.IsStarProjection.starProjectionRangeFrame_mul_conjTranspose hP⟩
 
-/-- A complex star projection has a range frame at any prescribed index size
-equal to its rank. -/
+/-- **Range frame at a prescribed rank-sized index.**
+
+Let P be an n×n complex star projection, r∈ℕ and rank(P)=r. There exists an n×r complex matrix
+E with EᴴE=I_r and EEᴴ=P, including r=0.
+-/
 theorem IsStarProjection.exists_rangeFrame_of_rank_eq
     {P : CStarMatrix (Fin n) (Fin n) ℂ} (hP : IsStarProjection P)
     (r : ℕ) (hr : Matrix.rank (CStarMatrix.ofMatrix.symm P) = r) :
@@ -212,8 +243,11 @@ theorem IsStarProjection.exists_rangeFrame_of_rank_eq
   subst r
   exact Matrix.IsStarProjection.exists_rangeFrame hP
 
-/-- A rectangular partial-isometry witness forces equality of the two square
-matrix ranks. -/
+/-- **Ranks of the two rectangular Gram matrices agree.**
+
+Let U be an m×n complex matrix, P=UᴴU and Q=UUᴴ. Then rank(P)=rank(Q); P,Q need not be assumed
+projections for this rank identity.
+-/
 theorem rank_eq_of_rectangular_partialIsometry
     {P : CStarMatrix (Fin n) (Fin n) ℂ}
     {Q : CStarMatrix (Fin m) (Fin m) ℂ}
@@ -228,8 +262,11 @@ theorem rank_eq_of_rectangular_partialIsometry
       (Matrix.rank_self_mul_conjTranspose
         (CStarMatrix.ofMatrix.symm U)).symm
 
-/-- Two finite complex square star projections are rectangularly
-Murray--von Neumann equivalent exactly when their ranks agree. -/
+/-- **Rectangular equivalence of star projections is equality of rank.**
+
+Let P,Q be complex star projections of sizes n×n and m×m. Then there exists U:m×n→ℂ with P=UᴴU
+and Q=UUᴴ if and only if rank(P)=rank(Q).
+-/
 theorem isStarProjection_rectangularEquiv_iff_rank_eq
     {P : CStarMatrix (Fin n) (Fin n) ℂ}
     {Q : CStarMatrix (Fin m) (Fin m) ℂ}

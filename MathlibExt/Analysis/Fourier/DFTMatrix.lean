@@ -22,44 +22,15 @@ public import Mathlib.Algebra.Field.GeomSum
 public import Mathlib.Data.Fintype.BigOperators
 
 /-!
-# Normalized finite-dimensional DFT matrix
+# Normalized discrete Fourier matrices with both signs
 
-This module defines the normalized discrete Fourier transform matrix on
-`Fin d` with an integer sign parameter.
+For `d : ℕ`, integer sign `s` and indices `i,j<d`, define `F_(d,s)(i,j)=exp(2π I s i j/d)/√d`.
+The normalization uses the positive real square root, embedded in the complex scalars, and `I`
+is the imaginary unit.
 
-## Definition
-
-For `d : ℕ` and `s : ℤ`, the DFT matrix is
-
-```
-dftMatrix d s (i, j) = exp (2 * π * I * s * i * j / d) / √(d)
-```
-
-with `i, j : Fin d` using 0-based indexing (`i.val`, `j.val`).
-The factor `1/√d` is the unitary normalization. The case `d = 0`
-is defined as `0` because division by zero in a field yields `0`;
-unitarity statements require `0 < d`.
-
-## Sign convention
-
-`s = 1` gives the forward transform `exp (+2πI j k / d)` and `s = -1`
-gives the backward transform `exp (-2πI j k / d)`. The two are
-adjoint of each other: `conj(exp(... s ...)) = exp(... (-s) ...)`.
-
-## Indexing
-
-`Fin d` is 0-based, so indices `j, k ∈ {0, …, d-1}` appear as
-`j.val`, `k.val` in the exponent.
-
-## Main definitions
-
-* `dftMatrix d s` – normalized `Fin d × Fin d` complex DFT matrix.
-* `dftMatrix_apply` – entry formula.
-* `dftUnitaryPos d hd` – bundled `unitaryGroup (Fin d) ℂ` for `s = +1`.
-* `dftUnitaryNeg d hd` – bundled `unitaryGroup (Fin d) ℂ` for `s = -1`.
-
-Roots-of-unity, conjugation, transpose, divisibility, geometric-sum,
-and matrix unitarity facts used in the proof are kept private.
+For `d>0`, the matrices with `s=1` and `s=-1` are unitary and adjoint to each other. They use
+the positive and negative Fourier exponents respectively. At `d=0`, the matrix is the unique
+empty matrix; the bundled unitary constructors require `d>0`.
 -/
 
 @[expose] public section
@@ -71,9 +42,10 @@ namespace Matrix
 
 /-! ### Definition -/
 
-/-- Normalized DFT matrix on `Fin d` with sign `s : ℤ`.
-Entry `i, j` is `exp (2 * π * I * s * i * j / d) / √d`. For `d = 0`
-the value is `0` (field division by zero), but unitary lemmas require `0 < d`. -/
+/-- **Normalized Fourier matrix with an integer exponent sign.** For `d∈ℕ`, `s∈ℤ`, `dftMatrix
+d s` is the complex `d×d` matrix with entry `exp(2π I s i j/d)/√d`, where indices are
+`i,j∈Fin d`. At `d=0` it is the empty matrix. Unitary constructors below use only signs
+`±1` and positive dimension. -/
 noncomputable def dftMatrix (d : ℕ) (s : ℤ) : Matrix (Fin d) (Fin d) ℂ :=
   fun i j =>
     let sqrtD : ℂ := (Real.sqrt (d : ℝ) : ℂ)
@@ -82,7 +54,8 @@ noncomputable def dftMatrix (d : ℕ) (s : ℤ) : Matrix (Fin d) (Fin d) ℂ :=
           (i.val : ℂ) * (j.val : ℂ) / (d : ℂ)) /
       sqrtD
 
-/-- Entry formula for `dftMatrix`. -/
+/-- **Entry formula of the normalized discrete Fourier matrix.** For `d∈ℕ`, `s∈ℤ` and
+zero-based `i,j∈Fin d`, `dftMatrix d s i j=exp(2π Complex.I s i.val j.val/d)/(√d : ℂ)`. -/
 @[simp]
 theorem dftMatrix_apply (d : ℕ) (s : ℤ) (i j : Fin d) :
     dftMatrix d s i j =
@@ -92,7 +65,7 @@ theorem dftMatrix_apply (d : ℕ) (s : ℤ) (i j : Fin d) :
         (Real.sqrt (d : ℝ) : ℂ) :=
   rfl
 
-/-! ### Private auxiliary lemmas about `Real.sqrt` and casts -/
+/-! ### Square roots and dimension scalars -/
 
 private lemma sqrtD_ne_zero {d : ℕ} (hd : 0 < d) :
     (Real.sqrt (d : ℝ) : ℂ) ≠ 0 := by
@@ -170,7 +143,7 @@ private lemma conj_sqrtD (d : ℕ) :
     star (Real.sqrt (d : ℝ) : ℂ) = (Real.sqrt (d : ℝ) : ℂ) := by
   rw [Complex.star_def, Complex.conj_ofReal]
 
-/-! ### Private conjugation and transpose -/
+/-! ### Conjugation and transpose of Fourier matrices -/
 
 private theorem dftMatrix_conj (d : ℕ) (s : ℤ) (i j : Fin d) :
     star (dftMatrix d s i j) =
@@ -224,7 +197,7 @@ private theorem dftMatrix_conjTranspose (d : ℕ) (s : ℤ) :
   rw [h]
   exact dftMatrix_symm d (-s) j i
 
-/-! ### Private roots-of-unity lemmas -/
+/-! ### Finite roots of unity -/
 
 private lemma two_pi_I_ne_zero : (2 * (Real.pi : ℂ) * Complex.I) ≠ 0 := by
   have hpi : (Real.pi : ℂ) ≠ 0 := by
@@ -379,7 +352,7 @@ private theorem sum_fin_exp_two_pi_int_div {d : ℕ} (hd : 0 < d) (t : ℤ) :
             Complex.exp (2 * (Real.pi : ℂ) * Complex.I * (t : ℂ) * (k : ℂ) / (d : ℂ)))]
     _ = _ := hrange
 
-/-! ### Private divisibility helpers -/
+/-! ### Divisibility of frequency indices -/
 
 private lemma fin_sub_dvd_eq {d : ℕ} (hd : 0 < d) {a b : Fin d}
     (hdiv : (d : ℤ) ∣ ((a.val : ℤ) - (b.val : ℤ))) : a = b := by
@@ -437,7 +410,7 @@ private lemma dvd_smul_fin_sub_iff {d : ℕ} (hd : 0 < d) {a b : Fin d}
     rw [heq]
     simp
 
-/-! ### Private unitary identities -/
+/-! ### Fourier matrix unitarity identities -/
 
 private lemma dft_entry_mul_conj {d : ℕ} (hd : 0 < d) (s : ℤ)
     (a b : Fin d) (k : Fin d) :
@@ -598,9 +571,10 @@ private theorem dftMatrix_mul_conjTranspose {d : ℕ} (hd : 0 < d) (s : ℤ)
     rw [this]
     simp [hab]
 
-/-! ### Bundled unitary matrices for `±1` -/
+/-! ### Positive and negative Fourier unitaries -/
 
-/-- DFT unitary for sign `+1`. -/
+/-- **Positive-sign normalized Fourier unitary.** For `d>0`, `dftUnitaryPos d` is the unitary
+complex matrix with entries `exp(2π Complex.I i j/d)/√d`. -/
 noncomputable def dftUnitaryPos (d : ℕ) (hd : 0 < d) :
     Matrix.unitaryGroup (Fin d) ℂ where
   val := dftMatrix d 1
@@ -608,7 +582,8 @@ noncomputable def dftUnitaryPos (d : ℕ) (hd : 0 < d) :
     rw [Matrix.mem_unitaryGroup_iff]
     exact dftMatrix_mul_conjTranspose hd 1 (Or.inl rfl)
 
-/-- DFT unitary for sign `-1`. -/
+/-- **Negative-sign normalized Fourier unitary.** For `d>0`, `dftUnitaryNeg d` is the unitary
+complex matrix with entries `exp(-2π Complex.I i j/d)/√d`. -/
 noncomputable def dftUnitaryNeg (d : ℕ) (hd : 0 < d) :
     Matrix.unitaryGroup (Fin d) ℂ where
   val := dftMatrix d (-1)
@@ -616,15 +591,15 @@ noncomputable def dftUnitaryNeg (d : ℕ) (hd : 0 < d) :
     rw [Matrix.mem_unitaryGroup_iff]
     exact dftMatrix_mul_conjTranspose hd (-1) (Or.inr rfl)
 
-/-- The positive-sign DFT unitary has the original positive-sign Fourier matrix as its underlying
-matrix. -/
+/-- **Underlying matrix of the positive Fourier unitary.** For `d>0`, the matrix underlying
+`dftUnitaryPos d` is `dftMatrix d 1`. -/
 @[simp]
 theorem dftUnitaryPos_val (d : ℕ) (hd : 0 < d) :
     (dftUnitaryPos d hd : Matrix (Fin d) (Fin d) ℂ) = dftMatrix d 1 :=
   rfl
 
-/-- The negative-sign DFT unitary has the original negative-sign Fourier matrix as its underlying
-matrix. -/
+/-- **Underlying matrix of the negative Fourier unitary.** For `d>0`, the matrix underlying
+`dftUnitaryNeg d` is `dftMatrix d (-1)`. -/
 @[simp]
 theorem dftUnitaryNeg_val (d : ℕ) (hd : 0 < d) :
     (dftUnitaryNeg d hd : Matrix (Fin d) (Fin d) ℂ) = dftMatrix d (-1) :=

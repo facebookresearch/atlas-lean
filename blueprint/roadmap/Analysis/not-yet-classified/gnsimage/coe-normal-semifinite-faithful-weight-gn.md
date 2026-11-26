@@ -1,3 +1,11 @@
-# Coe normal Semifinite Faithful Weight GNSImage
+# Exact operator carrier of an NSF GNS image
 
-The actual NSF GNS image carrier consists exactly of the original computed GNS operators.
+Let `H` be a complete complex Hilbert
+space and `M ⊆ B(H)` a concrete von Neumann algebra. Let `φ : M₊ → [0,∞]` be an extended
+positive weight: additive, homogeneous for finite nonnegative real scalars, and zero at
+zero. Put `n_φ={x : φ(x* x)<∞}`, and let `Λ : n_φ → H_φ` be the dense GNS map into the
+weight Hilbert completion. Its representation `π` satisfies `π(a)Λ(x)=Λ(a*x)`. Assume `φ`
+preserves least upper bounds of nonempty norm-bounded directed positive sets. Assume also
+that the complex span of finite-weight positive elements is ultraweakly dense and that
+`φ(a)=0 → a=0` on positive elements. the set underlying
+`normalSemifiniteFaithfulWeightGNSImage M φ` is `range(φ.gnsLeftStarAlgHom)=π(M)`.

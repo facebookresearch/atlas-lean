@@ -15,13 +15,14 @@ public import MathlibExt.Analysis.VonNeumannAlgebra.NormalAction.RegularCoeffici
 public import Mathlib.Analysis.CStarAlgebra.ContinuousLinearMap
 
 /-!
-# The actual regular coefficient star homomorphism and Haar covariance
+# Star-algebra laws and Haar covariance of regular coefficients
 
-All algebra laws come from the original pointwise normal automorphism on
-the same Haar L2 representatives. The original Hilbert adjoint identity
-gives star preservation. Haar left translation supplies the genuine
-covariance equation for this normal action, without a point-norm action
-assumption or a selected normal/faithful representation theorem.
+For a normal action on `M`, the regular-measure coefficient operators `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`
+satisfy `P_(x+y)=P_x+P_y`, `P_(cx)=cP_x`, `P_(xy)=P_xP_y`, `P_1=I` and `P_(x*)=P_x*`. Thus `x ↦
+P_x` is a unital complex star homomorphism on full `Lp H 2 μ`.
+
+For a regular Haar measure, left translations additionally satisfy `λ_g P_x λ_g*=P_(α_g(x))`.
+Haar invariance is needed for this covariance, but not for the preceding algebra laws.
 -/
 
 @[expose] public section
@@ -45,7 +46,12 @@ variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [Complet
 variable {M : VonNeumannAlgebra H}
 variable (μ : Measure G) [μ.Regular]
 
-/-- The original coefficient action preserves actual algebra sums. -/
+/-- **Additivity of regular coefficient operators.** Let `G` be a group with a topology, `H` a
+complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann algebra, and `α` a normal
+action with norm-continuous inverse predual orbits. Assume `G` is a topological group.
+Assume `G` is locally compact with its Borel measurable structure, and `μ` is a regular
+measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`. Haar invariance is not assumed.
+for `x,y∈M`, `P_(x+y)=P_x+P_y`. -/
 theorem regularCoefficient_add (α : NormalAction G M) (x y : M) :
     regularCoefficient μ α (x + y) = regularCoefficient μ α x + regularCoefficient μ α y := by
   apply ContinuousLinearMap.ext
@@ -62,7 +68,12 @@ theorem regularCoefficient_add (α : NormalAction G M) (x y : M) :
   rw [h₂, h₃, map_add]
   rfl
 
-/-- The actual coefficient action preserves the original complex scalars. -/
+/-- **Complex scaling of regular coefficient operators.** Let `G` be a group with a topology,
+`H` a complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann algebra, and `α` a
+normal action with norm-continuous inverse predual orbits. Assume `G` is a topological
+group. Assume `G` is locally compact with its Borel measurable structure, and `μ` is a
+regular measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`. Haar invariance is not
+assumed. for `c∈ℂ`, `x∈M`, `P_(c • x)=c • P_x`. -/
 theorem regularCoefficient_smul (α : NormalAction G M) (c : ℂ) (x : M) :
     regularCoefficient μ α (c • x) = c • regularCoefficient μ α x := by
   apply ContinuousLinearMap.ext
@@ -77,7 +88,12 @@ theorem regularCoefficient_smul (α : NormalAction G M) (c : ℂ) (x : M) :
   rw [h₂, map_smul]
   rfl
 
-/-- The original coefficient action preserves algebra products on the same L2 vectors. -/
+/-- **Multiplication of regular coefficient operators.** Let `G` be a group with a topology,
+`H` a complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann algebra, and `α` a
+normal action with norm-continuous inverse predual orbits. Assume `G` is a topological
+group. Assume `G` is locally compact with its Borel measurable structure, and `μ` is a
+regular measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`. Haar invariance is not
+assumed. for `x,y∈M`, `P_(xy)=P_x P_y`. -/
 theorem regularCoefficient_mul (α : NormalAction G M) (x y : M) :
     regularCoefficient μ α (x * y) = regularCoefficient μ α x * regularCoefficient μ α y := by
   apply ContinuousLinearMap.ext
@@ -91,7 +107,12 @@ theorem regularCoefficient_mul (α : NormalAction G M) (x y : M) :
   rw [h₁, h₂, h₃, map_mul]
   rfl
 
-/-- The original algebra unit acts as the identity on the actual Haar L2 carrier. -/
+/-- **Unit coefficient is the L² identity.** Let `G` be a group with a topology, `H` a
+complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann algebra, and `α` a normal
+action with norm-continuous inverse predual orbits. Assume `G` is a topological group.
+Assume `G` is locally compact with its Borel measurable structure, and `μ` is a regular
+measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`. Haar invariance is not assumed.
+`P_1=I_L`. -/
 theorem regularCoefficient_one (α : NormalAction G M) :
     regularCoefficient μ α (1 : M) = 1 := by
   apply ContinuousLinearMap.ext
@@ -102,7 +123,12 @@ theorem regularCoefficient_one (α : NormalAction G M) :
   rw [hs, map_one]
   rfl
 
-/-- The original coefficient involution becomes the actual Hilbert operator adjoint. -/
+/-- **Adjoint of a regular coefficient operator.** Let `G` be a group with a topology, `H` a
+complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann algebra, and `α` a normal
+action with norm-continuous inverse predual orbits. Assume `G` is a topological group.
+Assume `G` is locally compact with its Borel measurable structure, and `μ` is a regular
+measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`. Haar invariance is not assumed.
+for `x∈M`, `P_(x*)=P_x*`. -/
 theorem regularCoefficient_star (α : NormalAction G M) (x : M) :
     regularCoefficient μ α (star x) = star (regularCoefficient μ α x) := by
   rw [ContinuousLinearMap.star_eq_adjoint]
@@ -119,7 +145,13 @@ theorem regularCoefficient_star (α : NormalAction G M) (x : M) :
   rw [ContinuousLinearMap.star_eq_adjoint]
   exact ContinuousLinearMap.adjoint_inner_left (α s⁻¹ x : H →L[ℂ] H) (η s) (ξ s)
 
-/-- The source compact-support vectors retain the original coefficient adjoint pairing. -/
+/-- **Adjoint pairing of compact-support regular coefficient vectors.** Let `G` be a group
+with a topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann
+algebra, and `α` a normal action with norm-continuous inverse predual orbits. Assume `G`
+is a topological group. Assume `G` is locally compact with its Borel measurable structure,
+and `μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`. Haar
+invariance is not assumed. for `x∈M`, `f,g∈C_c(G,H)` and their L² inclusion `i_μ`,
+`⟨P_x(i_μ f),i_μ g⟩=⟨i_μ f,P_(x*)(i_μ g)⟩`. -/
 theorem regularCoefficient_inner_compactSupport (α : NormalAction G M) (x : M)
     (f g : C_c(G, H)) :
     ⟪regularCoefficient μ α x (compactSupportInclusion μ f), compactSupportInclusion μ g⟫_ℂ =
@@ -129,7 +161,12 @@ theorem regularCoefficient_inner_compactSupport (α : NormalAction G M) (x : M)
   exact (ContinuousLinearMap.adjoint_inner_right (regularCoefficient μ α x)
     (compactSupportInclusion μ f) (compactSupportInclusion μ g)).symm
 
-/-- The genuine original regular coefficient representation as a unital complex star homomorphism. -/
+/-- **Unital star homomorphism of regular coefficients.** Let `G` be a group with a topology,
+`H` a complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann algebra, and `α` a
+normal action with norm-continuous inverse predual orbits. Assume `G` is a topological
+group. Assume `G` is locally compact with its Borel measurable structure, and `μ` is a
+regular measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`. Haar invariance is not
+assumed. `regularCoefficientHom μ α : M →⋆ₐ[ℂ] B(L)` sends `x` to `P_x`. -/
 def regularCoefficientHom (α : NormalAction G M) : M →⋆ₐ[ℂ] (Lp H 2 μ →L[ℂ] Lp H 2 μ) where
   toFun := regularCoefficient μ α
   map_one' := regularCoefficient_one μ α
@@ -151,7 +188,13 @@ def regularCoefficientHom (α : NormalAction G M) : M →⋆ₐ[ℂ] (Lp H 2 μ 
 
 variable [μ.IsHaarMeasure]
 
-/-- The actual Haar left unitaries and original coefficient homomorphism satisfy normal-action covariance. -/
+/-- **Haar translation covariance of the regular coefficient homomorphism.** Let `G` be a
+group with a topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von
+Neumann algebra, and `α` a normal action with norm-continuous inverse predual orbits.
+Assume `G` is a topological group. Assume `G` is locally compact with its Borel measurable
+structure, and `μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`.
+Haar invariance is not assumed. Assume additionally that `μ` is a Haar measure. for `λ_g
+ξ(s)=ξ(g⁻¹s)`, `λ_g P_x λ_g*=P_(α_g(x))` for every `g∈G`, `x∈M`. -/
 theorem regularCoefficient_covariance (α : NormalAction G M) (g : G) (x : M) :
     (StronglyContinuousUnitaryRepresentation.haarLeftRegular G μ H g :
         Lp H 2 μ →L[ℂ] Lp H 2 μ) * regularCoefficient μ α x *

@@ -1,3 +1,4 @@
-# Right Module is Scalar Tower
+# Right subfield scalar action agrees with the common base
 
-A base-compatible embedding makes the right subfield action extend the same base action.
+Let F,L be commutative semirings,D an F-algebra and ι:L→ₐ[F]D. On D with right L-action xι(a),
+the F-action agrees with restriction through F→L, giving the scalar tower F→L→D.

@@ -1,4 +1,4 @@
-# Det block Diagonal'
+# Determinant of a dependent block-diagonal matrix
 
-The determinant of a finite dependent block-diagonal matrix is the
-product of the determinants of its blocks.
+Let R be a commutative ring, I finite, all κ_i finite and A_i square matrices on κ_i. Then
+det(blockDiagonal′(A_i))=∏i det(A_i), including empty blocks.

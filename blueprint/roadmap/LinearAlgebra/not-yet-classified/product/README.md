@@ -1,12 +1,12 @@
-# Product
+# General linear groups over product semirings
 
-## Matrix
+## Matrices over product semirings
 
 - [Prod Ring Equiv](prod-ring-equiv.md)
 
-## General Linear Group
+## General linear groups over product semirings
 
-- [Prod Equiv](prod-equiv.md)
+- [Product-semiring general linear group equivalence](prod-equiv.md)
 
 ## Exterior powers of arbitrary product modules
 

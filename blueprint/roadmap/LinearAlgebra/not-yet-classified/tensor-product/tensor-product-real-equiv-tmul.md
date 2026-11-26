@@ -1,3 +1,3 @@
-# Tensor Product Real Equiv tmul
+# Pure tensor coordinates of the complex-linear map
 
-The complex-linear coercion retains the original pure tensor map.
+For z,w∈ℂ, tensorProductRealEquiv(z⊗_ℝw)=(zw,z*conj(w)).

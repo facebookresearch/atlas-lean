@@ -15,22 +15,19 @@ public import MathlibExt.MeasureTheory.Measure.RadonProduct.Haar
 public import MathlibExt.Analysis.VonNeumannAlgebra.HaarWeylAlgebra
 
 /-!
-# The diagonal Weyl algebra on full Hilbert-valued Radon product L2
+# Diagonal Weyl algebra on a Hilbert-valued Radon square
 
-The original Haar left representation of the actual product group is
-restricted along the diagonal homomorphism. The character representation
-uses actual character pullback along the second coordinate. These operators
-generate a concrete von Neumann algebra on the full `Lp H 2 (radonProd μ μ)`
-for the Borel sigma-algebra of the topological product.
+Let `G` be a Hausdorff locally compact topological group with Borel structure and regular Haar
+measure `μ`. For a complete complex Hilbert space `H`, use `L=Lp H 2 (radonProd μ μ)` on the
+Borel topological product `G×G`.
 
-All group, Hilbert and measure carriers are the original ones. The
-generator unitaries retain their bounded-operator values and a.e. diagonal
-translation and second-coordinate character formulas. The inverse character
-uses the same original multiplier at `χ⁻¹`. There is no countability,
-s-finiteness or nonzero-Hilbert-space assumption.
+The diagonal translation is `D_gξ(s,t)=ξ(g⁻¹s,g⁻¹t)`, and the second-coordinate character
+multiplier is `V_χξ(s,t)=χ(t) • ξ(s,t)`. These strongly continuous unitary families generate the
+diagonal Weyl von Neumann algebra on `L`. It is WOT closed and is the least von Neumann algebra
+containing both families.
 
-This construction selects no Fourier unitary, spatial shear or factor
-isomorphism. Their original source identifications remain separate.
+No countability or s-finiteness hypothesis is imposed. The measure is the Radon product on the
+topological product's Borel structure; the Hilbert space may be zero.
 -/
 
 @[expose] public section
@@ -52,11 +49,18 @@ variable {G : Type uG} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
 variable (μ : Measure G) [μ.IsHaarMeasure] [μ.Regular]
 variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- The actual Borel measurable space of the original topological square. -/
+/-- **Borel measurable structure on a topological square.** For a topological space `G`, the
+measurable structure on `G×G` is `borel (G×G)`, formed from its product topology. This
+definition does not require a Haar measure or a countability assumption. -/
 local instance instDiagonalWeylProductMeasurableSpace : MeasurableSpace (G × G) := borel (G × G)
 local instance instDiagonalWeylProductBorelSpace : BorelSpace (G × G) := ⟨rfl⟩
 
-/-- The original product-Haar representation restricted along the actual diagonal homomorphism. -/
+/-- **Strongly continuous diagonal Haar translation representation.** Let `G` be a Hausdorff
+locally compact topological group with its Borel structure, `μ` a regular Haar measure and
+`H` a complete complex Hilbert space. Put `L=Lp H 2 (radonProd μ μ)` on the Borel
+topological product `G×G`, `D_g ξ(s,t)=ξ(g⁻¹s,g⁻¹t)` and `V_χ ξ(s,t)=χ(t) • ξ(s,t)`.
+`diagonalHaarLeftRegular μ : G → U(L)` is the Haar representation of `G×G` restricted to
+`g ↦ (g,g)`. -/
 def diagonalHaarLeftRegular :
     StronglyContinuousUnitaryRepresentation G (Lp H 2 (Measure.radonProd μ μ)) where
   toMonoidHom :=
@@ -67,7 +71,12 @@ def diagonalHaarLeftRegular :
       (G × G) (Measure.radonProd μ μ) H).continuous_orbit ξ).comp
         (ContinuousMonoidHom.diag G).continuous
 
-/-- The diagonal representation is the unchanged original Haar operator at `(g,g)`. -/
+/-- **Diagonal translation as a product-group Haar operator.** Let `G` be a Hausdorff locally
+compact topological group with its Borel structure, `μ` a regular Haar measure and `H` a
+complete complex Hilbert space. Put `L=Lp H 2 (radonProd μ μ)` on the Borel topological
+product `G×G`, `D_g ξ(s,t)=ξ(g⁻¹s,g⁻¹t)` and `V_χ ξ(s,t)=χ(t) • ξ(s,t)`. for `g∈G`,
+`diagonalHaarLeftRegular μ g` is the Haar left translation of the product group at
+`(g,g)`. -/
 @[simp]
 theorem diagonalHaarLeftRegular_apply (g : G) :
     (diagonalHaarLeftRegular (H := H) μ g :
@@ -77,7 +86,12 @@ theorem diagonalHaarLeftRegular_apply (g : G) :
           Lp H 2 (Measure.radonProd μ μ) →L[ℂ] Lp H 2 (Measure.radonProd μ μ)) :=
   rfl
 
-/-- Both original coordinates translate by `g⁻¹` on every full product-L2 vector a.e. -/
+/-- **Almost-everywhere diagonal translation on the Radon square.** Let `G` be a Hausdorff
+locally compact topological group with its Borel structure, `μ` a regular Haar measure and
+`H` a complete complex Hilbert space. Put `L=Lp H 2 (radonProd μ μ)` on the Borel
+topological product `G×G`, `D_g ξ(s,t)=ξ(g⁻¹s,g⁻¹t)` and `V_χ ξ(s,t)=χ(t) • ξ(s,t)`. for
+`ξ∈L`, `(diagonalHaarLeftRegular μ g)ξ(s,t)=ξ(g⁻¹s,g⁻¹t)` almost everywhere for `radonProd
+μ μ`. -/
 theorem diagonalHaarLeftRegular_ae_eq (g : G) (ξ : Lp H 2 (Measure.radonProd μ μ)) :
     (diagonalHaarLeftRegular (H := H) μ g :
       Lp H 2 (Measure.radonProd μ μ) →L[ℂ] Lp H 2 (Measure.radonProd μ μ)) ξ =ᵐ[Measure.radonProd μ μ]
@@ -85,18 +99,26 @@ theorem diagonalHaarLeftRegular_ae_eq (g : G) (ξ : Lp H 2 (Measure.radonProd μ
   StronglyContinuousUnitaryRepresentation.haarLeftRegular_ae_eq
     (G × G) (Measure.radonProd μ μ) H (g, g) ξ
 
-/-- Pull back the actual continuous-character group along the literal second projection. -/
+/-- **Character pullback along the second projection.** For a group `G` with a topology,
+`secondCoordinateCharacterMap : PontryaginDual G →ₜ* PontryaginDual (G×G)` sends the
+continuous character `χ` to `(s,t) ↦ χ(t)`. -/
 def secondCoordinateCharacterMap : PontryaginDual G →ₜ* PontryaginDual (G × G) :=
   PontryaginDual.map (ContinuousMonoidHom.snd G G)
 
 omit [IsTopologicalGroup G] [T2Space G] [LocallyCompactSpace G] [MeasurableSpace G] [BorelSpace G] in
-/-- The pulled-back character is the same original character on the second coordinate. -/
+/-- **Value of a pulled-back second-coordinate character.** For a group `G` with topology, a
+continuous character `χ` and `(s,t)∈G×G`, `secondCoordinateCharacterMap χ (s,t)=χ(t)`. -/
 @[simp]
 theorem secondCoordinateCharacterMap_apply (χ : PontryaginDual G) (z : G × G) :
     secondCoordinateCharacterMap χ z = χ z.2 :=
   rfl
 
-/-- Actual second-coordinate character multiplication on the original full Hilbert-valued square. -/
+/-- **Strongly continuous character multiplication on the Radon square.** Let `G` be a
+Hausdorff locally compact topological group with its Borel structure, `μ` a regular Haar
+measure and `H` a complete complex Hilbert space. Put `L=Lp H 2 (radonProd μ μ)` on the
+Borel topological product `G×G`, `D_g ξ(s,t)=ξ(g⁻¹s,g⁻¹t)` and `V_χ ξ(s,t)=χ(t) • ξ(s,t)`.
+`diagonalHaarCharacterRepresentation μ : PontryaginDual G → U(L)` is the representation `χ
+↦ V_χ`, with the compact-open character topology. -/
 def diagonalHaarCharacterRepresentation :
     StronglyContinuousUnitaryRepresentation (PontryaginDual G) (Lp H 2 (Measure.radonProd μ μ)) where
   toMonoidHom :=
@@ -108,7 +130,12 @@ def diagonalHaarCharacterRepresentation :
         (secondCoordinateCharacterMap (G := G)).continuous
 
 omit [μ.Regular] in
-/-- The character representation is the exact original multiplier at the pulled-back character. -/
+/-- **Operator of a second-coordinate character representation.** Let `G` be a Hausdorff
+locally compact topological group with its Borel structure, `μ` a regular Haar measure and
+`H` a complete complex Hilbert space. Put `L=Lp H 2 (radonProd μ μ)` on the Borel
+topological product `G×G`, `D_g ξ(s,t)=ξ(g⁻¹s,g⁻¹t)` and `V_χ ξ(s,t)=χ(t) • ξ(s,t)`.
+`diagonalHaarCharacterRepresentation μ χ` is the multiplier associated to the character
+`(s,t) ↦ χ(t)`. -/
 @[simp]
 theorem diagonalHaarCharacterRepresentation_apply (χ : PontryaginDual G) :
     (diagonalHaarCharacterRepresentation (H := H) μ χ :
@@ -118,7 +145,12 @@ theorem diagonalHaarCharacterRepresentation_apply (χ : PontryaginDual G) :
   rfl
 
 omit [μ.Regular] in
-/-- The character multiplier has its original positive second-coordinate values on all vectors a.e. -/
+/-- **Almost-everywhere second-coordinate character action.** Let `G` be a Hausdorff locally
+compact topological group with its Borel structure, `μ` a regular Haar measure and `H` a
+complete complex Hilbert space. Put `L=Lp H 2 (radonProd μ μ)` on the Borel topological
+product `G×G`, `D_g ξ(s,t)=ξ(g⁻¹s,g⁻¹t)` and `V_χ ξ(s,t)=χ(t) • ξ(s,t)`. for `ξ∈L`,
+`(diagonalHaarCharacterRepresentation μ χ)ξ(s,t)=χ(t) • ξ(s,t)` almost everywhere for the
+Radon product measure. -/
 theorem diagonalHaarCharacterRepresentation_ae_eq (χ : PontryaginDual G)
     (ξ : Lp H 2 (Measure.radonProd μ μ)) :
     (diagonalHaarCharacterRepresentation (H := H) μ χ :
@@ -127,7 +159,11 @@ theorem diagonalHaarCharacterRepresentation_ae_eq (χ : PontryaginDual G)
   HaarL2.characterMultiplier_ae_eq (Measure.radonProd μ μ) (secondCoordinateCharacterMap χ) ξ
 
 omit [μ.Regular] in
-/-- The actual inverse-character operator keeps the original conjugate-coordinate convention a.e. -/
+/-- **Inverse character action on the Radon square.** Let `G` be a Hausdorff locally compact
+topological group with its Borel structure, `μ` a regular Haar measure and `H` a complete
+complex Hilbert space. Put `L=Lp H 2 (radonProd μ μ)` on the Borel topological product
+`G×G`, `D_g ξ(s,t)=ξ(g⁻¹s,g⁻¹t)` and `V_χ ξ(s,t)=χ(t) • ξ(s,t)`. for `ξ∈L`, the
+representation at `χ⁻¹` has almost-everywhere value `χ⁻¹(t) • ξ(s,t)`. -/
 theorem diagonalHaarInverseCharacterRepresentation_ae_eq (χ : PontryaginDual G)
     (ξ : Lp H 2 (Measure.radonProd μ μ)) :
     (diagonalHaarCharacterRepresentation (H := H) μ χ⁻¹ :
@@ -135,7 +171,11 @@ theorem diagonalHaarInverseCharacterRepresentation_ae_eq (χ : PontryaginDual G)
         fun z : G × G => ((χ⁻¹ z.2 : Circle) : ℂ) • ξ z :=
   diagonalHaarCharacterRepresentation_ae_eq μ χ⁻¹ ξ
 
-/-- The actual original diagonal translations and second-coordinate character operator ranges. -/
+/-- **Generator set of diagonal translations and second-coordinate multipliers.** Let `G` be a
+Hausdorff locally compact topological group with its Borel structure, `μ` a regular Haar
+measure and `H` a complete complex Hilbert space. Put `L=Lp H 2 (radonProd μ μ)` on the
+Borel topological product `G×G`, `D_g ξ(s,t)=ξ(g⁻¹s,g⁻¹t)` and `V_χ ξ(s,t)=χ(t) • ξ(s,t)`.
+`diagonalHaarWeylGenerators μ=range(D)∪range(V)` in `B(L)`. -/
 def diagonalHaarWeylGenerators :
     Set (Lp H 2 (Measure.radonProd μ μ) →L[ℂ] Lp H 2 (Measure.radonProd μ μ)) :=
   Set.range (fun g : G => (diagonalHaarLeftRegular (H := H) μ g :
@@ -143,25 +183,43 @@ def diagonalHaarWeylGenerators :
     Set.range (fun χ : PontryaginDual G => (diagonalHaarCharacterRepresentation (H := H) μ χ :
       Lp H 2 (Measure.radonProd μ μ) →L[ℂ] Lp H 2 (Measure.radonProd μ μ)))
 
-/-- The actual diagonal Weyl algebra on the original full Hilbert-valued Radon square. -/
+/-- **Von Neumann algebra generated by diagonal Haar Weyl operators.** Let `G` be a Hausdorff
+locally compact topological group with its Borel structure, `μ` a regular Haar measure and
+`H` a complete complex Hilbert space. Put `L=Lp H 2 (radonProd μ μ)` on the Borel
+topological product `G×G`, `D_g ξ(s,t)=ξ(g⁻¹s,g⁻¹t)` and `V_χ ξ(s,t)=χ(t) • ξ(s,t)`.
+`diagonalHaarWeylAlgebra μ` is the von Neumann algebra generated by `D_g` and `V_χ` on
+`L`. -/
 def diagonalHaarWeylAlgebra : VonNeumannAlgebra (Lp H 2 (Measure.radonProd μ μ)) :=
   generatedBy (diagonalHaarWeylGenerators (H := H) μ)
 
-/-- Every original diagonal Haar unitary belongs to the same full product-L2 generated algebra. -/
+/-- **Diagonal translation belongs to its Weyl algebra.** Let `G` be a Hausdorff locally
+compact topological group with its Borel structure, `μ` a regular Haar measure and `H` a
+complete complex Hilbert space. Put `L=Lp H 2 (radonProd μ μ)` on the Borel topological
+product `G×G`, `D_g ξ(s,t)=ξ(g⁻¹s,g⁻¹t)` and `V_χ ξ(s,t)=χ(t) • ξ(s,t)`. for every `g∈G`,
+`D_g∈diagonalHaarWeylAlgebra μ`. -/
 theorem diagonalHaarLeftRegular_mem_diagonalHaarWeylAlgebra (g : G) :
     (diagonalHaarLeftRegular (H := H) μ g :
       Lp H 2 (Measure.radonProd μ μ) →L[ℂ] Lp H 2 (Measure.radonProd μ μ)) ∈
         diagonalHaarWeylAlgebra (H := H) μ :=
   subset_generatedBy _ (Or.inl (Set.mem_range_self g))
 
-/-- Every original second-coordinate character unitary belongs to the same generated algebra. -/
+/-- **Second-coordinate character belongs to the diagonal Weyl algebra.** Let `G` be a
+Hausdorff locally compact topological group with its Borel structure, `μ` a regular Haar
+measure and `H` a complete complex Hilbert space. Put `L=Lp H 2 (radonProd μ μ)` on the
+Borel topological product `G×G`, `D_g ξ(s,t)=ξ(g⁻¹s,g⁻¹t)` and `V_χ ξ(s,t)=χ(t) • ξ(s,t)`.
+for every `χ∈PontryaginDual G`, `V_χ∈diagonalHaarWeylAlgebra μ`. -/
 theorem diagonalHaarCharacterRepresentation_mem_diagonalHaarWeylAlgebra (χ : PontryaginDual G) :
     (diagonalHaarCharacterRepresentation (H := H) μ χ :
       Lp H 2 (Measure.radonProd μ μ) →L[ℂ] Lp H 2 (Measure.radonProd μ μ)) ∈
         diagonalHaarWeylAlgebra (H := H) μ :=
   subset_generatedBy _ (Or.inr (Set.mem_range_self χ))
 
-/-- Containment of the actual diagonal Weyl algebra is precisely containment of its original operators. -/
+/-- **Diagonal Weyl containment tested by its two unitary families.** Let `G` be a Hausdorff
+locally compact topological group with its Borel structure, `μ` a regular Haar measure and
+`H` a complete complex Hilbert space. Put `L=Lp H 2 (radonProd μ μ)` on the Borel
+topological product `G×G`, `D_g ξ(s,t)=ξ(g⁻¹s,g⁻¹t)` and `V_χ ξ(s,t)=χ(t) • ξ(s,t)`. for a
+concrete von Neumann algebra `N⊆B(L)`, `diagonalHaarWeylAlgebra μ≤N` exactly when `D_g∈N`
+for all `g` and `V_χ∈N` for all `χ`. -/
 theorem diagonalHaarWeylAlgebra_le_iff
     (N : VonNeumannAlgebra (Lp H 2 (Measure.radonProd μ μ))) :
     diagonalHaarWeylAlgebra (H := H) μ ≤ N ↔
@@ -173,7 +231,11 @@ theorem diagonalHaarWeylAlgebra_le_iff
   simp only [diagonalHaarWeylGenerators, Set.union_subset_iff, Set.range_subset_iff]
   exact Iff.rfl
 
-/-- The original full product-L2 diagonal Weyl carrier is closed in the actual weak operator topology. -/
+/-- **WOT closedness of the diagonal Haar Weyl algebra.** Let `G` be a Hausdorff locally
+compact topological group with its Borel structure, `μ` a regular Haar measure and `H` a
+complete complex Hilbert space. Put `L=Lp H 2 (radonProd μ μ)` on the Borel topological
+product `G×G`, `D_g ξ(s,t)=ξ(g⁻¹s,g⁻¹t)` and `V_χ ξ(s,t)=χ(t) • ξ(s,t)`. the operator
+carrier of `diagonalHaarWeylAlgebra μ` is closed in the weak operator topology on `B(L)`. -/
 theorem diagonalHaarWeylAlgebra_isClosedWOT :
     IsClosed {T : Lp H 2 (Measure.radonProd μ μ) →WOT[ℂ] Lp H 2 (Measure.radonProd μ μ) |
       T.toCLM ∈ diagonalHaarWeylAlgebra (H := H) μ} :=

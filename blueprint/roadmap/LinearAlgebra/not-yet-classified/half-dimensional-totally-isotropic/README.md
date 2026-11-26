@@ -1,40 +1,40 @@
-# Half Dimensional Totally Isotropic
+# Half-dimensional totally isotropic subspaces
 
-## Quadratic Map
+## Totally isotropic subspaces
 
-- [Is Totally Isotropic](is-totally-isotropic.md)
+- [Total isotropy of a submodule](is-totally-isotropic.md)
 
-## Is Totally Isotropic
+## Isometries and products of isotropic subspaces
 
-- [Map isometry Equiv](map-isometry-equiv.md)
-- [Prod](prod.md)
-- [Smul](smul.md)
+- [Transport of a totally isotropic submodule](map-isometry-equiv.md)
+- [Products of totally isotropic submodules](prod.md)
+- [Scalar multiples preserve total isotropy](smul.md)
 
-## Quadratic Map
+## Round quadratic maps
 
-- [Is Round](is-round.md)
+- [Roundness of a quadratic map](is-round.md)
 
-## Isometry Equiv
+## Isometries of quadratic maps
 
-- [Smul](smul-2.md)
-- [Of Eq](of-eq.md)
-- [Anisotropic iff](anisotropic-iff.md)
+- [Scaling a quadratic isometry](smul-2.md)
+- [The isometry associated to equality](of-eq.md)
+- [Anisotropy is invariant under isometry](anisotropic-iff.md)
 
-## Is Round
+## Value ratios for round quadratic maps
 
-- [Ratio equivalent](ratio-equivalent.md)
+- [Ratios of represented values in a round form](ratio-equivalent.md)
 
-## Quadratic Form
+## Half-dimensional totally isotropic subspaces
 
-- [Has Half Dimensional Totally Isotropic Subspace](has-half-dimensional-totally-isotropic-s.md)
+- [The half-dimensional total-isotropy property](has-half-dimensional-totally-isotropic-s.md)
 
-## Has Half Dimensional Totally Isotropic Subspace
+## Isometries and products of half-dimensional isotropic subspaces
 
-- [Map isometry Equiv](map-isometry-equiv-2.md)
-- [Prod neg smul of left](prod-neg-smul-of-left.md)
-- [Prod neg smul of equivalent](prod-neg-smul-of-equivalent.md)
+- [Isometry invariance of half-dimensional total isotropy](map-isometry-equiv-2.md)
+- [A product inheriting half-dimensional total isotropy](prod-neg-smul-of-left.md)
+- [An isotropic graph from a similarity](prod-neg-smul-of-equivalent.md)
 
-## Quadratic Form
+## Existence criteria for half-dimensional isotropic subspaces
 
-- [Has Half Dimensional Totally Isotropic Subspace prod neg smul of not anisotropic](has-half-dimensional-totally-isotropic-s-2.md)
-- [Has Half Dimensional Totally Isotropic Subspace of not anisotropic finrank two](has-half-dimensional-totally-isotropic-s-3.md)
+- [The roundness step for an isotropic product](has-half-dimensional-totally-isotropic-s-2.md)
+- [An isotropic line in dimension two](has-half-dimensional-totally-isotropic-s-3.md)

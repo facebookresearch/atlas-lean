@@ -16,12 +16,13 @@ public import MathlibExt.Analysis.InnerProductSpace.ClosedRangeProjection
 public import Mathlib.Analysis.InnerProductSpace.Adjoint
 
 /-!
-# The generic closed-range projection of an algebra element belongs to its algebra
+# Range-closure projection of a von Neumann algebra element
 
-The original commutant and its adjoints preserve the actual closed range and
-its orthogonal complement. Double-commutant membership then proves the generic
-Hilbert-space projection belongs to M. No positive element or weight/predual
-model is a premise.
+For a concrete von Neumann algebra `M ⊆ B(H)` on a complete complex Hilbert space and `T ∈ M`,
+the orthogonal projection onto `closure(range T)` also belongs to `M`.
+
+The result uses the algebra's commutant invariance of the range and its orthogonal complement.
+Positivity of `T` and any weight or functional are not assumptions.
 -/
 
 @[expose] public section
@@ -39,7 +40,10 @@ universe u
 
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- Every actual algebra element has its generic closed-range projection in the same algebra. -/
+/-- **Range-closure projection belongs to the operator algebra.** Let `H` be a complete
+complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. if `T ∈ B(H)` belongs
+to `M`, then `closedRangeProjection T`, the orthogonal projection onto `closure(range T)`,
+belongs to `M`. Positivity is not required. -/
 theorem closedRangeProjection_mem (M : VonNeumannAlgebra H) (T : H →L[ℂ] H) (hT : T ∈ M) :
     ContinuousLinearMap.closedRangeProjection T ∈ M := by
   let R : Submodule ℂ H := T.range.topologicalClosure

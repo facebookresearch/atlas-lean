@@ -1,4 +1,4 @@
-# Finite Support Linear Map
+# Linear maps into a dependent direct sum
 
-- [Linear Map Of Finite Support](linear-map-of-finite-support.md)
-- [Linear Map Of Finite Support apply](linear-map-of-finite-support-apply.md)
+- [Direct-sum linear map from a pointwise finite-support family](linear-map-of-finite-support.md)
+- [Coordinate of the finite-support linear-map construction](linear-map-of-finite-support-apply.md)

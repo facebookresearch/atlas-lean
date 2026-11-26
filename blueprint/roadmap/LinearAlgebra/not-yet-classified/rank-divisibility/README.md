@@ -1,9 +1,9 @@
-# Rank Divisibility
+# Rank divisibility from compatible division-algebra actions
 
-## Linear Map
+## Divisibility of image dimensions by division-ring actions
 
-- [Dvd finrank range of division Ring action](dvd-finrank-range-of-division-ring-actio.md)
+- [Division-ring equivariance forces divisibility of a range dimension](dvd-finrank-range-of-division-ring-actio.md)
 
-## Matrix
+## Divisibility of matrix ranks
 
-- [Dvd rank of division Ring action](dvd-rank-of-division-ring-action.md)
+- [Matrix rank divisibility under division-ring equivariance](dvd-rank-of-division-ring-action.md)

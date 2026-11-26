@@ -1,15 +1,15 @@
-# Radon Product
+# Radon product on a topological product's Borel structure
 
-## Compactly Supported Continuous Map
+## Sections of compactly supported functions
 
-- [Section Right](section-right.md)
-- [Section Right apply](section-right-apply.md)
-- [Integral Right](integral-right.md)
-- [Integral Right apply](integral-right-apply.md)
-- [Integral Right Positive Linear Map](integral-right-positive-linear-map.md)
-- [Integral Right Positive Linear Map apply](integral-right-positive-linear-map-apply.md)
+- [Second-coordinate section of a compact-support real function](section-right.md)
+- [Value of a compact-support section](section-right-apply.md)
+- [Compact-support function obtained by second-coordinate integration](integral-right.md)
+- [Pointwise value of a coordinate integral](integral-right-apply.md)
+- [Positive linear second-coordinate integral map](integral-right-positive-linear-map.md)
+- [Function value of the positive coordinate integral map](integral-right-positive-linear-map-apply.md)
 
-## Measure
+## Radon product measures from iterated integrals
 
-- [Radon Prod](radon-prod.md)
-- [Integral radon Prod](integral-radon-prod.md)
+- [Regular Riesz measure of the iterated compact-support integral](radon-prod.md)
+- [Defining iterated integral of the Borel Radon product](integral-radon-prod.md)

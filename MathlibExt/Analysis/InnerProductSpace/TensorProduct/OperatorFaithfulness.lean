@@ -16,13 +16,15 @@ public import MathlibExt.LinearAlgebra.TensorProduct.HomInjective
 public import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.Basic
 
 /-!
-# Faithfulness of the actual completed tensor operator action
+# Faithfulness of finite tensors of bounded operators
 
-The tensor lift of the bounded factor maps acts on the stock Hilbert tensor
-completion. Its values on the actual raw core agree with the canonical
-algebraic tensor action of the underlying linear maps. Raw faithfulness and
-the genuine completion inclusion then prove injectivity, including zero
-factor spaces. No norm comparison or completed-model certificate is supplied.
+Let E₁,E₂,F₁,F₂ be inner product spaces over an RCLike field 𝕜 in independent universes, and
+write E⊗̂F for the completion of the inner-product tensor norm. For bounded linear f:E₁→E₂ and
+g:F₁→F₂, the operator f⊗̂g sends completed pure tensors x⊗y to f(x)⊗g(y). Let Φ be the
+𝕜-linear map from (E₁→L[𝕜]E₂)⊗(F₁→L[𝕜]F₂) to bounded maps E₁⊗̂F₁→E₂⊗̂F₂, with Φ(f⊗g)=f⊗̂g. The
+map Φ=mapLCompletionLinear is injective, so a finite algebraic tensor of bounded maps is
+determined by its action on the Hilbert tensor completion. Zero and incomplete factor spaces
+are included.
 -/
 
 @[expose] public section
@@ -43,7 +45,14 @@ variable {E₂ : Type uE₂} [NormedAddCommGroup E₂] [InnerProductSpace 𝕜 E
 variable {F₁ : Type uF₁} [NormedAddCommGroup F₁] [InnerProductSpace 𝕜 F₁]
 variable {F₂ : Type uF₂} [NormedAddCommGroup F₂] [InnerProductSpace 𝕜 F₂]
 
-/-- The actual linear tensor lift of the bounded completed factor-map action. -/
+/-- **Linear tensor action of bounded factor maps.**
+
+Let E₁,E₂,F₁,F₂ be inner product spaces over an RCLike field 𝕜 in independent universes, and
+write E⊗̂F for the completion of the inner-product tensor norm. For bounded linear f:E₁→E₂ and
+g:F₁→F₂, the operator f⊗̂g sends completed pure tensors x⊗y to f(x)⊗g(y). Let Φ be the
+𝕜-linear map from (E₁→L[𝕜]E₂)⊗(F₁→L[𝕜]F₂) to bounded maps E₁⊗̂F₁→E₂⊗̂F₂, with Φ(f⊗g)=f⊗̂g. The
+map mapLCompletionLinear is Φ on the algebraic tensor of the bounded-map spaces.
+-/
 noncomputable def mapLCompletionLinear :
     (E₁ →L[𝕜] E₂) ⊗[𝕜] (F₁ →L[𝕜] F₂) →ₗ[𝕜]
       Completion (E₁ ⊗[𝕜] F₁) →L[𝕜] Completion (E₂ ⊗[𝕜] F₂) :=
@@ -61,11 +70,26 @@ noncomputable def mapLCompletionLinear :
         intro g
         exact mapLCompletion_smul_left c f g }
 
-/-- A pure tensor of bounded operators has the original completed tensor action. -/
+/-- **Pure operator tensor acts as the completed tensor map.**
+
+Let E₁,E₂,F₁,F₂ be inner product spaces over an RCLike field 𝕜 in independent universes, and
+write E⊗̂F for the completion of the inner-product tensor norm. For bounded linear f:E₁→E₂ and
+g:F₁→F₂, the operator f⊗̂g sends completed pure tensors x⊗y to f(x)⊗g(y). Let Φ be the
+𝕜-linear map from (E₁→L[𝕜]E₂)⊗(F₁→L[𝕜]F₂) to bounded maps E₁⊗̂F₁→E₂⊗̂F₂, with Φ(f⊗g)=f⊗̂g. For
+bounded f:E₁→E₂ and g:F₁→F₂, mapLCompletionLinear(f⊗g)=mapLCompletion f g.
+-/
 theorem mapLCompletionLinear_tmul (f : E₁ →L[𝕜] E₂) (g : F₁ →L[𝕜] F₂) :
     mapLCompletionLinear (f ⊗ₜ[𝕜] g) = mapLCompletion f g := rfl
 
-/-- The actual completed action retains the canonical raw algebraic operator value. -/
+/-- **Algebraic values of the completed finite-operator tensor action.**
+
+Let E₁,E₂,F₁,F₂ be inner product spaces over an RCLike field 𝕜 in independent universes, and
+write E⊗̂F for the completion of the inner-product tensor norm. For bounded linear f:E₁→E₂ and
+g:F₁→F₂, the operator f⊗̂g sends completed pure tensors x⊗y to f(x)⊗g(y). Let Φ be the
+𝕜-linear map from (E₁→L[𝕜]E₂)⊗(F₁→L[𝕜]F₂) to bounded maps E₁⊗̂F₁→E₂⊗̂F₂, with Φ(f⊗g)=f⊗̂g. If
+z=∑i f_i⊗g_i and u∈E₁⊗F₁, Φ(z)(ι(u)) is the inclusion into E₂⊗̂F₂ of ∑i(f_i⊗g_i)(u), where ι
+is the domain completion inclusion and each algebraic factor map sends x⊗y to f_i(x)⊗g_i(y).
+-/
 theorem mapLCompletionLinear_coe
     (z : (E₁ →L[𝕜] E₂) ⊗[𝕜] (F₁ →L[𝕜] F₂)) (u : E₁ ⊗[𝕜] F₁) :
     mapLCompletionLinear z (u : Completion (E₁ ⊗[𝕜] F₁)) =
@@ -80,7 +104,14 @@ theorem mapLCompletionLinear_coe
     simp only [map_add, _root_.add_apply, LinearMap.add_apply,
       Completion.coe_add, hz, hw]
 
-/-- Finite tensors of bounded maps act faithfully on the original completed Hilbert tensor. -/
+/-- **Injectivity of the completed finite-operator tensor action.**
+
+Let E₁,E₂,F₁,F₂ be inner product spaces over an RCLike field 𝕜 in independent universes, and
+write E⊗̂F for the completion of the inner-product tensor norm. For bounded linear f:E₁→E₂ and
+g:F₁→F₂, the operator f⊗̂g sends completed pure tensors x⊗y to f(x)⊗g(y). Let Φ be the
+𝕜-linear map from (E₁→L[𝕜]E₂)⊗(F₁→L[𝕜]F₂) to bounded maps E₁⊗̂F₁→E₂⊗̂F₂, with Φ(f⊗g)=f⊗̂g. The
+map Φ:(E₁→LE₂)⊗(F₁→LF₂)→(E₁⊗̂F₁→LE₂⊗̂F₂) is injective.
+-/
 theorem mapLCompletionLinear_injective :
     Function.Injective
       (mapLCompletionLinear : (E₁ →L[𝕜] E₂) ⊗[𝕜] (F₁ →L[𝕜] F₂) →ₗ[𝕜]

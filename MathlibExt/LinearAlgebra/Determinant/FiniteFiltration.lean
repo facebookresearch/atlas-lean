@@ -13,51 +13,13 @@ public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.LinearAlgebra.Determinant
 
 /-!
-# Determinants along finite invariant filtrations
+# Determinants along invariant extensions and finite filtrations
 
-This file packages and iterates the determinant factorization for an
-endomorphism preserving a submodule.  It is intended for finite filtrations
-whose stages and successive quotients are finite free modules.
-
-## Main declarations
-
-* `LinearMap.InvariantExtension` records one inclusion of a filtration stage
-  as an invariant submodule of the next stage.
-* `LinearMap.InvariantExtension.quotientMap` is the induced endomorphism on
-  the successive quotient.
-* `LinearMap.InvariantExtension.det_eq_det_mul_det_quotientMap` is the
-  one-step determinant factorization.
-* `LinearMap.det_eq_det_mul_prod_graded` iterates the factorization through a
-  finite tower.
-* `LinearMap.det_eq_prod_graded_of_bottom_subsingleton` removes the bottom
-  determinant when the initial stage is zero.
-
-## Informal proof
-
-For one step, let `f` act on the lower stage `V`, let `g` act on the next
-stage `W`, and identify `V` with a `g`-invariant submodule `S` of `W`.
-Mathlib's `LinearMap.det_eq_det_mul_det` chooses a basis of `S`, extends it by
-a basis of `W/S`, and writes the matrix of `g` in block upper-triangular
-form.  It gives
-
-`det(g) = det(g|S) * det(g on W/S)`.
-
-The stored intertwining equality says that `g|S` is conjugate to `f` through
-the identification `V ~= S`.  Determinants are invariant under conjugation,
-so the first factor is `det(f)`.
-
-For a finite tower, apply this one-step identity at every adjacent pair.  A
-plain induction over `Fin n` multiplies the successive quotient determinants:
-if `d_(i+1) = d_i * q_i`, then
-
-`d_n = d_0 * product_i q_i`.
-
-When the bottom stage is a zero module, its determinant is one, leaving only
-the product over the graded quotients.
-
-The freeness of every successive quotient is explicit.  Over an arbitrary
-commutative ring it does not follow merely from freeness of the two adjacent
-stages; this hypothesis is therefore not hidden or weakened.
+Let R be a commutative ring and M_0,…,M_n finite free modules with invariant endomorphisms f_i
+and invariant extensions between adjacent stages. Assume every quotient Q_i is free and write
+q_i for its induced endomorphism. The final determinant satisfies
+det(f_n)=det(f_0)∏_{i<n}det(q_i). If M_0=0 its determinant factor is1, leaving only the graded
+factors.
 -/
 
 @[expose] public section
@@ -73,21 +35,41 @@ variable {V : Type v} {W : Type w}
 variable [AddCommGroup V] [Module R V]
 variable [AddCommGroup W] [Module R W]
 
-/-- One step of an invariant filtration.
+/-- **One invariant extension of module endomorphisms.**
 
-The lower endomorphism `f` is identified with the restriction of the upper
-endomorphism `g` to `submodule`.  The quotient endomorphism is consequently
-the action of `g` on the corresponding successive graded piece. -/
+Let R be a commutative ring, V,W R-modules and f:V→V,g:W→W endomorphisms. An invariant
+extension E consists of a g-invariant submodule U⊆W and a linear equivalence e:V≃U satisfying
+e∘f=(g|U)∘e. These submodule, stability, identification and intertwining data form
+InvariantExtension f g.
+-/
 structure InvariantExtension (f : V →ₗ[R] V) (g : W →ₗ[R] W) where
-  /-- The lower filtration stage inside the next stage. -/
+  /-- **Lower stage inside an invariant extension.**
+
+Let R be a commutative ring, V,W R-modules and f:V→V,g:W→W endomorphisms. An invariant
+extension E consists of a g-invariant submodule U⊆W and a linear equivalence e:V≃U satisfying
+e∘f=(g|U)∘e. The field submodule is U⊆W, identified with V.
+-/
   submodule : Submodule R W
-  /-- The next-stage endomorphism preserves the lower stage. -/
+  /-- **Invariant-extension submodule stability.**
+
+Let R be a commutative ring, V,W R-modules and f:V→V,g:W→W endomorphisms. An invariant
+extension E consists of a g-invariant submodule U⊆W and a linear equivalence e:V≃U satisfying
+e∘f=(g|U)∘e. The field stable is g(U)⊆U.
+-/
   stable : submodule ≤ submodule.comap g
-  /-- Identification of the abstract lower stage with the invariant
-  submodule. -/
+  /-- **Identification with the invariant submodule.**
+
+Let R be a commutative ring, V,W R-modules and f:V→V,g:W→W endomorphisms. An invariant
+extension E consists of a g-invariant submodule U⊆W and a linear equivalence e:V≃U satisfying
+e∘f=(g|U)∘e. The field equiv is e:V≃ₗ[R]U.
+-/
   equiv : V ≃ₗ[R] submodule
-  /-- Under `equiv`, the lower endomorphism intertwines with the restriction
-  of the upper endomorphism. -/
+  /-- **Intertwining of lower and restricted upper endomorphisms.**
+
+Let R be a commutative ring, V,W R-modules and f:V→V,g:W→W endomorphisms. An invariant
+extension E consists of a g-invariant submodule U⊆W and a linear equivalence e:V≃U satisfying
+e∘f=(g|U)∘e. The field intertwines states e∘f=(g|U)∘e.
+-/
   intertwines :
     (equiv : V →ₗ[R] submodule) ∘ₗ f =
       (g.restrict stable) ∘ₗ (equiv : V →ₗ[R] submodule)
@@ -96,8 +78,12 @@ namespace InvariantExtension
 
 variable {f : V →ₗ[R] V} {g : W →ₗ[R] W}
 
-/-- The intertwining square in an invariant extension, rewritten as a
-conjugation identity. -/
+/-- **Conjugation identity of an invariant extension.**
+
+Let R be a commutative ring, V,W R-modules and f:V→V,g:W→W endomorphisms. An invariant
+extension E consists of a g-invariant submodule U⊆W and a linear equivalence e:V≃U satisfying
+e∘f=(g|U)∘e. The endomorphism identity e∘f∘e⁻¹=g|U holds on U.
+-/
 theorem conjugate_eq (E : InvariantExtension f g) :
     (E.equiv : V →ₗ[R] E.submodule) ∘ₗ f ∘ₗ
         (E.equiv.symm : E.submodule →ₗ[R] V) =
@@ -107,14 +93,22 @@ theorem conjugate_eq (E : InvariantExtension f g) :
   have h := LinearMap.congr_fun E.intertwines (E.equiv.symm x)
   simpa using h
 
-/-- The endomorphism induced on the successive quotient of an invariant
-extension. -/
+/-- **Endomorphism on the quotient of an invariant extension.**
+
+Let R be a commutative ring, V,W R-modules and f:V→V,g:W→W endomorphisms. An invariant
+extension E consists of a g-invariant submodule U⊆W and a linear equivalence e:V≃U satisfying
+e∘f=(g|U)∘e. The map quotientMap E:W/U→W/U is [x]↦[g(x)].
+-/
 def quotientMap (E : InvariantExtension f g) :
     (W ⧸ E.submodule) →ₗ[R] (W ⧸ E.submodule) :=
   E.submodule.mapQ E.submodule g E.stable
 
-/-- The quotient endomorphism sends the class of a representative to the
-class of its image under the upper-stage endomorphism. -/
+/-- **Representative value of the invariant-extension quotient map.**
+
+Let R be a commutative ring, V,W R-modules and f:V→V,g:W→W endomorphisms. An invariant
+extension E consists of a g-invariant submodule U⊆W and a linear equivalence e:V≃U satisfying
+e∘f=(g|U)∘e. For x∈W, quotientMap E ([x])=[g(x)].
+-/
 @[simp]
 theorem quotientMap_mk (E : InvariantExtension f g) (x : W) :
     E.quotientMap (Submodule.Quotient.mk x : W ⧸ E.submodule) =
@@ -122,11 +116,12 @@ theorem quotientMap_mk (E : InvariantExtension f g) (x : W) :
   simpa only [quotientMap] using
     (Submodule.mapQ_apply E.submodule E.submodule g (h := E.stable) x)
 
-/-- Determinant factorization for one invariant extension.
+/-- **Determinant factorization for an invariant extension.**
 
-This is the reusable one-step block-triangular formula.  The lower stage and
-the quotient are required to be finite free in exactly the places needed by
-`LinearMap.det_eq_det_mul_det`. -/
+Let R be a commutative ring, V,W R-modules and f:V→V,g:W→W endomorphisms. An invariant
+extension E consists of a g-invariant submodule U⊆W and a linear equivalence e:V≃U satisfying
+e∘f=(g|U)∘e. If V is finite free, W finite and W/U free, then det(g)=det(f)det(E.quotientMap).
+-/
 theorem det_eq_det_mul_det_quotientMap (E : InvariantExtension f g)
     [Module.Free R V] [Module.Finite R V] [Module.Finite R W]
     [Module.Free R (W ⧸ E.submodule)] :
@@ -170,14 +165,12 @@ variable {n : ℕ} {M : Fin (n + 1) → Type v}
 variable [∀ i, AddCommGroup (M i)] [∀ i, Module R (M i)]
 variable [∀ i, Module.Free R (M i)] [∀ i, Module.Finite R (M i)]
 
-/-- The determinant on the final stage of a finite invariant filtration is
-the determinant on the initial stage times the product of the determinants
-on all successive graded quotients.
+/-- **Determinant product across an invariant finite tower.**
 
-The stages may be presented as different module types.  Each `step i`
-identifies stage `i` with an invariant submodule of stage `i+1`; this avoids
-choosing coercion-heavy nested subtypes and makes the theorem convenient for
-filtrations transported through canonical linear equivalences. -/
+Let R be a commutative ring and M_0,…,M_n finite free modules with invariant endomorphisms f_i
+and invariant extensions between adjacent stages. Assume every quotient Q_i is free and write
+q_i for its induced endomorphism. Then det(f_n)=det(f_0)∏_{i<n}det(q_i).
+-/
 theorem det_eq_det_mul_prod_graded (endomorphism : ∀ i, M i →ₗ[R] M i)
     (step : ∀ i : Fin n,
       InvariantExtension (endomorphism i.castSucc) (endomorphism i.succ))
@@ -191,8 +184,12 @@ theorem det_eq_det_mul_prod_graded (endomorphism : ∀ i, M i →ₗ[R] M i)
   let _ : Module.Free R (M i.succ ⧸ (step i).submodule) := quotientFree i
   exact (step i).det_eq_det_mul_det_quotientMap
 
-/-- Version of `LinearMap.det_eq_det_mul_prod_graded` for a filtration whose
-bottom determinant has already been identified with one. -/
+/-- **Graded determinant product with unit bottom determinant.**
+
+Let R be a commutative ring and M_0,…,M_n finite free modules with invariant endomorphisms f_i
+and invariant extensions between adjacent stages. Assume every quotient Q_i is free and write
+q_i for its induced endomorphism. If det(f_0)=1, then det(f_n)=∏_{i<n}det(q_i).
+-/
 theorem det_eq_prod_graded_of_bottom_det_eq_one
     (endomorphism : ∀ i, M i →ₗ[R] M i)
     (step : ∀ i : Fin n,
@@ -202,8 +199,12 @@ theorem det_eq_prod_graded_of_bottom_det_eq_one
     (endomorphism (Fin.last n)).det = ∏ i, (step i).quotientMap.det := by
   rw [det_eq_det_mul_prod_graded endomorphism step quotientFree, hbottom, one_mul]
 
-/-- Determinant product formula for a finite invariant filtration starting
-at a zero module. -/
+/-- **Graded determinant product from a zero bottom module.**
+
+Let R be a commutative ring and M_0,…,M_n finite free modules with invariant endomorphisms f_i
+and invariant extensions between adjacent stages. Assume every quotient Q_i is free and write
+q_i for its induced endomorphism. If M_0=0, then det(f_n)=∏_{i<n}det(q_i).
+-/
 theorem det_eq_prod_graded_of_bottom_subsingleton
     (endomorphism : ∀ i, M i →ₗ[R] M i)
     (step : ∀ i : Fin n,

@@ -1,3 +1,5 @@
-# Finite Rank Range Trace
+# Trace of a finite-rank endomorphism on its range
 
-The genuine finite-dimensional trace on the actual operator range.
+Let H be a complex normed space and T:H→H a bounded finite-rank endomorphism. The scalar
+finiteRankRangeTrace T is the finite-dimensional trace of the restriction
+T|range(T):range(T)→range(T).

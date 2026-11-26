@@ -1,38 +1,38 @@
-# Regular Representation
+# Regular matrices from right coefficient actions
 
-## Right Action
+## Right module actions
 
-- [Right Module](right-module.md)
-- [Right Module smul](right-module-smul.md)
-- [Left Regular](left-regular.md)
-- [Left Regular apply](left-regular-apply.md)
-- [Left Regular smul op](left-regular-smul-op.md)
-- [Left Regular injective](left-regular-injective.md)
+- [Right coefficient scalar module](right-module.md)
+- [Value of the right coefficient scalar action](right-module-smul.md)
+- [Left matrix regular representation over right scalars](left-regular.md)
+- [Value of left regular matrix multiplication](left-regular-apply.md)
+- [Left matrix action preserves right multiplication by D](left-regular-smul-op.md)
+- [Faithfulness of the left regular matrix action](left-regular-injective.md)
 
-## Coordinates
+## Coordinates of right modules
 
-- [Right Coordinates](right-coordinates.md)
-- [Right Coordinates apply](right-coordinates-apply.md)
-- [Right Coordinate Module](right-coordinate-module.md)
-- [Right Coordinate Module smul](right-coordinate-module-smul.md)
-- [Regular Representation With Basis](regular-representation-with-basis.md)
-- [Regular Representation With Basis mul Vec](regular-representation-with-basis-mul-ve.md)
-- [Regular Representation With Basis apply](regular-representation-with-basis-apply.md)
-- [Regular Representation With Basis injective](regular-representation-with-basis-inject.md)
-- [Regular Representation With Basis smul op](regular-representation-with-basis-smul-o.md)
+- [Right-basis coordinates of tuples](right-coordinates.md)
+- [Coordinate value of a right-basis tuple](right-coordinates-apply.md)
+- [Right opposite action transported into basis coordinates](right-coordinate-module.md)
+- [Value of the coordinate right opposite action](right-coordinate-module-smul.md)
+- [Faithful matrix representation in right-basis coordinates](regular-representation-with-basis.md)
+- [Action of the regular coordinate matrix](regular-representation-with-basis-mul-ve.md)
+- [Entry of a right-basis regular matrix](regular-representation-with-basis-apply.md)
+- [Injectivity of the regular coordinate matrix representation](regular-representation-with-basis-inject.md)
+- [Regular coordinate matrices preserve the right opposite action](regular-representation-with-basis-smul-o.md)
 
-## Common Base
+## Scalar towers over a common base
 
-- [Right Module is Scalar Tower](right-module-is-scalar-tower.md)
-- [Right Coordinate Module is Scalar Tower](right-coordinate-module-is-scalar-tower.md)
+- [Right subfield scalar action agrees with the common base](right-module-is-scalar-tower.md)
+- [Coordinate opposite action agrees over the common base](right-coordinate-module-is-scalar-tower.md)
 
-## Rank
+## Rank divisibility of regular representations
 
-- [Dvd rank regular Representation With Basis](dvd-rank-regular-representation-with-bas.md)
+- [Rank divisibility of a basis-coordinate regular representation](dvd-rank-regular-representation-with-bas.md)
 
-## Constructed Basis
+## Bases and matrices of regular representations
 
-- [Right Subfield Basis](right-subfield-basis.md)
-- [Regular Representation](regular-representation.md)
-- [Regular Representation injective](regular-representation-injective.md)
-- [Dvd rank regular Representation](dvd-rank-regular-representation.md)
+- [Right subfield basis from the two base dimensions](right-subfield-basis.md)
+- [Regular representation from a degree-d subfield](regular-representation.md)
+- [Faithfulness of the dimension-based regular representation](regular-representation-injective.md)
+- [Rank divisibility of the dimension-based regular matrices](dvd-rank-regular-representation.md)

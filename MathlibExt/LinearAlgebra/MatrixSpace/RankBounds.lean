@@ -17,26 +17,20 @@ public import Mathlib.LinearAlgebra.Matrix.Rank
 public import Mathlib.Data.Rat.Cast.Order
 
 /-!
-# Uniform rank bounds from shrunk subspaces
+# Rank bounds for square Kronecker blow-ups
 
-An actual shrunk subspace of a native matrix space amplifies to a shrunk subspace
-of every square Kronecker blow-up. Restricted and global rank-nullity then bound
-the rank of every matrix in that blow-up. For a positive block degree, rational
-division gives the corresponding normalized upper bound.
-
-The stable Wong preimage supplies such a subspace when the actual stable value
-stays inside the starting matrix's range. Its kernel deficiency therefore bounds
-all square-blow-up ranks by the starting rank times the block degree.
-
-These statements concern concrete matrices and subspaces. The integral bounds include
-empty block indices; the normalized bounds use a nonempty block-index type.
+Let K be a field, I,J,D finite index types, B ⊆ Mat(I,J;K) a subspace and U ⊆ K^J. Write B(U)
+= span{Ax : A ∈ B, x ∈ U} and B^[D] = span{A ⊗ T : A ∈ B, T ∈ Mat(D,D;K)}. If dim B(U) + s ≤
+dim U, every C ∈ B^[D] satisfies rank C + s|D| ≤ |J||D|. For nonempty D this gives rank C/|D|
+≤ |J| − s in ℚ. For square matrices, containment of the stable second Wong subspace in im A
+gives rank C ≤ rank A · |D| for every C in the blow-up.
 
 ## References
 
 Gábor Ivanyos, Youming Qiao and K. V. Subrahmanyam, *Constructive noncommutative rank
-computation in deterministic polynomial time over fields of arbitrary characteristics*,
-§1, the shrunk-space upper bound preceding Theorem 1; and *Non-commutative Edmonds'
-problem and matrix semi-invariants*, §2.2, Fact 2.1 and §5.1.
+computation in deterministic polynomial time over fields of arbitrary characteristics*, §1,
+the shrunk-space upper bound preceding Theorem 1; and *Non-commutative Edmonds' problem and
+matrix semi-invariants*, §2.2, Fact 2.1 and §5.1.
 -/
 
 @[expose] public section
@@ -58,7 +52,13 @@ section Uniform
 
 variable [Finite i] [Fintype j] [Fintype d]
 
-/-- The actual amplified subspace transports a shrink inequality to every square blow-up. -/
+/-- **Amplification of a shrunk subspace.**
+
+Let K be a field, I,J,D finite index types, B ⊆ Mat(I,J;K) a subspace and U ⊆ K^J. Write B(U)
+= span{Ax : A ∈ B, x ∈ U} and B^[D] = span{A ⊗ T : A ∈ B, T ∈ Mat(D,D;K)}. Assume dim B(U) + s
+≤ dim U for s ∈ ℕ. If U^D consists of vectors on J × D with all columns in U, then dim
+B^[D](U^D) + s|D| ≤ dim U^D.
+-/
 theorem kroneckerBlowup_shrunkSpace (B : Submodule K (Matrix i j K))
     (U : Submodule K (j → K)) {s : ℕ}
     (hU : Module.finrank K (Submodule.map₂ (Matrix.mulVecBilin K K) B U) + s ≤
@@ -71,7 +71,12 @@ theorem kroneckerBlowup_shrunkSpace (B : Submodule K (Matrix i j K))
     Submodule.finrank_columnAmplification]
   simpa only [add_mul] using Nat.mul_le_mul_right (Fintype.card d) hU
 
-/-- A base shrunk subspace bounds the rank of every actual square-blow-up member. -/
+/-- **A rank bound for every blow-up member.**
+
+Let K be a field, I,J,D finite index types, B ⊆ Mat(I,J;K) a subspace and U ⊆ K^J. Write B(U)
+= span{Ax : A ∈ B, x ∈ U} and B^[D] = span{A ⊗ T : A ∈ B, T ∈ Mat(D,D;K)}. Assume dim B(U) + s
+≤ dim U for s ∈ ℕ. Every C ∈ B^[D] satisfies rank C + s|D| ≤ |J||D|, including empty D.
+-/
 theorem rank_add_mul_card_le_of_mem_kroneckerBlowup (B : Submodule K (Matrix i j K))
     (U : Submodule K (j → K)) {s : ℕ}
     (hU : Module.finrank K (Submodule.map₂ (Matrix.mulVecBilin K K) B U) + s ≤
@@ -93,7 +98,13 @@ theorem rank_add_mul_card_le_of_mem_kroneckerBlowup (B : Submodule K (Matrix i j
   change C.rank + s * Fintype.card d ≤ Module.finrank K (j × d → K) at h
   simpa only [Module.finrank_fintype_fun_eq_card, Fintype.card_prod] using h
 
-/-- For a positive block degree, a real shrunk subspace gives a rational normalized rank bound. -/
+/-- **A normalized blow-up rank bound.**
+
+Let K be a field, I,J,D finite index types, B ⊆ Mat(I,J;K) a subspace and U ⊆ K^J. Write B(U)
+= span{Ax : A ∈ B, x ∈ U} and B^[D] = span{A ⊗ T : A ∈ B, T ∈ Mat(D,D;K)}. Assume D is
+nonempty and dim B(U) + s ≤ dim U. For every C ∈ B^[D], one has (rank C)/|D| ≤ |J| − s as an
+inequality in ℚ.
+-/
 theorem rank_div_card_le_of_mem_kroneckerBlowup [Nonempty d]
     (B : Submodule K (Matrix i j K)) (U : Submodule K (j → K)) {s : ℕ}
     (hU : Module.finrank K (Submodule.map₂ (Matrix.mulVecBilin K K) B U) + s ≤
@@ -114,8 +125,12 @@ section Wong
 
 variable {n : Type v} [Fintype n] [DecidableEq n] [Fintype d]
 
-/-- Containment of the actual stable Wong space bounds every square-blow-up member's rank
-by the starting matrix's rank times the block degree. -/
+/-- **A blow-up rank bound from the Wong limit.**
+
+Let K be a field, N,D finite index types, A ∈ Mat(N,N;K) and B ⊆ Mat(N,N;K) a subspace. Let W∞
+be the stable value of W₀ = 0, Wⱼ₊₁ = B(A⁻¹Wⱼ). Suppose W∞ ⊆ im A. For B^[D] = span{X ⊗ T : X
+∈ B, T ∈ Mat(D,D;K)} and C ∈ B^[D], one has rank C ≤ rank A · |D|.
+-/
 theorem rank_le_mul_card_of_secondWongLimit_le_range (A : Matrix n n K)
     (B : Submodule K (Matrix n n K))
     (hW : LinearMap.secondWongLimit (Matrix.toLin' A) (B.map Matrix.toLin'.toLinearMap) ≤
@@ -136,7 +151,12 @@ theorem rank_le_mul_card_of_secondWongLimit_le_range (A : Matrix n n K)
   rw [add_mul] at hscale
   omega
 
-/-- The actual stable-preimage certificate bounds normalized ranks at every positive block degree. -/
+/-- **A normalized rank bound from the Wong limit.**
+
+Let K be a field, N,D finite index types, A ∈ Mat(N,N;K) and B ⊆ Mat(N,N;K) a subspace. Let W∞
+be the stable value of W₀ = 0, Wⱼ₊₁ = B(A⁻¹Wⱼ). Assume D is nonempty and W∞ ⊆ im A. For every
+C ∈ B^[D] = span{X ⊗ T : X ∈ B, T ∈ Mat(D,D;K)}, one has (rank C)/|D| ≤ rank A in ℚ.
+-/
 theorem rank_div_card_le_of_secondWongLimit_le_range [Nonempty d] (A : Matrix n n K)
     (B : Submodule K (Matrix n n K))
     (hW : LinearMap.secondWongLimit (Matrix.toLin' A) (B.map Matrix.toLin'.toLinearMap) ≤

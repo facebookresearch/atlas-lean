@@ -19,15 +19,13 @@ public import Mathlib.Algebra.Module.Equiv.Defs
 public import Mathlib.Data.Finset.Lattice.Fold
 
 /-!
-# Finite-support coefficient matrices as a native module direct limit
+# Stable modules of finitely supported matrices
 
-The coefficient module is the actual `DirectLimit` of finite square matrices
-under top-left zero extension. Native direct-limit instances give its ground
-module structure. Its entries are a faithful map into matrices indexed by the
-natural numbers, and every element has support in one finite square.
-
-No ring structure or multiplication on the coefficient carrier is required.
-No infinite sum or supplied stable comparison is used.
+Let k be a semiring and A an additive commutative monoid with a k-module structure. Write S =
+colimₙ Mat(n,n;A), with transition maps extending each finite matrix by zero outside its
+upper-left square. The k-module S is linearly equivalent to (ℕ × ℕ) →₀ A. Every element has a
+finite matrix representative, and its coordinates vanish outside some finite square. Each
+finite-stage inclusion is injective, including the size-zero stage.
 -/
 
 @[expose] public section
@@ -44,7 +42,13 @@ local instance : DirectedSystem (fun n : ℕ => Matrix (Fin n) (Fin n) A)
     (fun _ _ h => zeroExtendLinear (k := k) h) :=
   zeroExtendLinear_directedSystem (k := k) (A := A)
 
-/-- The actual finite-support coefficient module, constructed as the native direct limit. -/
+/-- **The stable coefficient module.**
+
+Let k be a semiring and A an additive commutative monoid with a k-module structure. Write S =
+colimₙ Mat(n,n;A), with transition maps extending each finite matrix by zero outside its
+upper-left square. This defines the stable k-module of coefficient matrices; its coordinate
+realization is the space of finitely supported functions ℕ × ℕ → A.
+-/
 abbrev StableModule : Type v :=
   letI : DirectedSystem (fun n : ℕ => Matrix (Fin n) (Fin n) A)
       (fun _ _ h => zeroExtendLinear (k := k) h) :=
@@ -54,7 +58,13 @@ abbrev StableModule : Type v :=
 
 namespace StableModule
 
-/-- The canonical ground-linear inclusion of a finite coefficient matrix stage. -/
+/-- **Inclusion of a finite coefficient matrix.**
+
+Let k be a semiring and A an additive commutative monoid with a k-module structure. Write S =
+colimₙ Mat(n,n;A), with transition maps extending each finite matrix by zero outside its
+upper-left square. For every n, the k-linear inclusion iₙ : Mat(n,n;A) → S takes a matrix to
+its colimit class. One has iₘ(zeroExtend B) = iₙ(B) for n ≤ m.
+-/
 def ofFinite (n : ℕ) : Matrix (Fin n) (Fin n) A →ₗ[k] StableModule k A :=
   DirectLimit.Module.of k ℕ (fun n : ℕ => Matrix (Fin n) (Fin n) A)
     (fun _ _ h => zeroExtendLinear (k := k) h) n
@@ -64,18 +74,35 @@ theorem ofFinite_zeroExtend {n m : ℕ} (h : n ≤ m) (B : Matrix (Fin n) (Fin n
     ofFinite k A m (zeroExtend h B) = ofFinite k A n B :=
   DirectLimit.Module.of_f (hij := h)
 
-/-- Every stable matrix is represented at a genuine finite stage. -/
+/-- **Finite matrix representatives of stable elements.**
+
+Let k be a semiring and A an additive commutative monoid with a k-module structure. Write S =
+colimₙ Mat(n,n;A), with transition maps extending each finite matrix by zero outside its
+upper-left square. For every x ∈ S there exist n and B ∈ Mat(n,n;A) such that x = iₙ(B), where
+iₙ is the finite-stage inclusion.
+-/
 theorem exists_ofFinite (x : StableModule k A) :
     ∃ (n : ℕ) (B : Matrix (Fin n) (Fin n) A), x = ofFinite k A n B :=
   DirectLimit.exists_eq_mk (f := fun _ _ h => zeroExtendLinear (k := k) (A := A) h) x
 
-/-- The size-zero stage adds no exceptional stable element: positive stages suffice. -/
+/-- **Positive finite matrix representatives.**
+
+Let k be a semiring and A an additive commutative monoid with a k-module structure. Write S =
+colimₙ Mat(n,n;A), with transition maps extending each finite matrix by zero outside its
+upper-left square. For every x ∈ S there exist n ≥ 0 and B ∈ Mat(n+1,n+1;A) such that x =
+iₙ₊₁(B). This includes elements represented initially by a size-zero matrix.
+-/
 theorem exists_positive_ofFinite (x : StableModule k A) :
     ∃ (n : ℕ) (B : Matrix (Fin (n + 1)) (Fin (n + 1)) A), x = ofFinite k A (n + 1) B := by
   obtain ⟨n, B, rfl⟩ := exists_ofFinite k A x
   exact ⟨n, zeroExtend (Nat.le_succ n) B, (ofFinite_zeroExtend k A (Nat.le_succ n) B).symm⟩
 
-/-- The natural-number entries of a finite matrix, extended by zero outside its finite square. -/
+/-- **Extending finite matrix entries by zero.**
+
+Let k be a semiring and A an additive commutative monoid with a k-module structure. For B ∈
+Mat(n,n;A), define its natural-number entries E(B)ᵢⱼ = Bᵢⱼ when i,j < n and E(B)ᵢⱼ = 0
+otherwise. The formula applies also at n = 0.
+-/
 def finiteEntries {n : ℕ} (B : Matrix (Fin n) (Fin n) A) : Matrix ℕ ℕ A :=
   Matrix.of fun i j => if hi : i < n then
     if hj : j < n then B ⟨i, hi⟩ ⟨j, hj⟩ else 0 else 0
@@ -95,7 +122,14 @@ theorem finiteEntries_zeroExtend {n m : ℕ} (h : n ≤ m)
   · by_cases him : i < m <;> by_cases hjm : j < m <;>
       simp only [finiteEntries, Matrix.of_apply, zeroExtend_apply, hi, him, hjm, ↓reduceDIte]
 
-/-- Actual natural-number entries of the native direct-limit matrix. -/
+/-- **Entries of a stable coefficient matrix.**
+
+Let k be a semiring and A an additive commutative monoid with a k-module structure. Write S =
+colimₙ Mat(n,n;A), with transition maps extending each finite matrix by zero outside its
+upper-left square. The natural-number matrix E(x) of x ∈ S is specified by E(iₙ(B))ᵢⱼ = Bᵢⱼ
+for i,j < n and zero otherwise. Extending a representative by zero leaves these entries
+unchanged.
+-/
 def entries : StableModule k A → Matrix ℕ ℕ A :=
   DirectLimit.lift (fun _ _ h => zeroExtendLinear (k := k) (A := A) h)
     (fun _ B => finiteEntries A B)
@@ -110,7 +144,13 @@ theorem entries_ofFinite_fin (n : ℕ) (B : Matrix (Fin n) (Fin n) A) (i j : Fin
     entries k A (ofFinite k A n B) i.val j.val = B i j := by
   simp only [entries_ofFinite, dite_eq_left i.is_lt, dite_eq_left j.is_lt]
 
-/-- Entries do not identify distinct stable matrices. -/
+/-- **Faithfulness of stable matrix entries.**
+
+Let k be a semiring and A an additive commutative monoid with a k-module structure. Write S =
+colimₙ Mat(n,n;A), with transition maps extending each finite matrix by zero outside its
+upper-left square. For E(x) the zero-extended natural-number matrix of x, equality E(x) = E(y)
+implies x = y.
+-/
 theorem entries_injective : Function.Injective (entries k A) := by
   apply DirectLimit.lift_injective
   intro n B C h
@@ -118,14 +158,25 @@ theorem entries_injective : Function.Injective (entries k A) := by
   have he := congrArg (fun D : Matrix ℕ ℕ A => D i.val j.val) h
   simpa only [finiteEntries, Matrix.of_apply, dite_eq_left i.is_lt, dite_eq_left j.is_lt] using he
 
-/-- The canonical finite-stage inclusions are injective. -/
+/-- **Injectivity of finite coefficient inclusions.**
+
+Let k be a semiring and A an additive commutative monoid with a k-module structure. Write S =
+colimₙ Mat(n,n;A), with transition maps extending each finite matrix by zero outside its
+upper-left square. For every n, the finite-stage map iₙ : Mat(n,n;A) → S is injective.
+-/
 theorem ofFinite_injective (n : ℕ) : Function.Injective (ofFinite k A n) := by
   intro B C h
   ext i j
   simpa only [entries_ofFinite_fin] using
     congrArg (fun x : StableModule k A => entries k A x i.val j.val) h
 
-/-- Every stable matrix has a finite bound for both its rows and its columns. -/
+/-- **A finite square contains the support.**
+
+Let k be a semiring and A an additive commutative monoid with a k-module structure. Write S =
+colimₙ Mat(n,n;A), with transition maps extending each finite matrix by zero outside its
+upper-left square. For every x ∈ S there is n such that its entry E(x)ᵢⱼ vanishes whenever n ≤
+i or n ≤ j.
+-/
 theorem entries_bounded (x : StableModule k A) :
     ∃ n, ∀ i j : ℕ, n ≤ i ∨ n ≤ j → entries k A x i j = 0 := by
   obtain ⟨n, B, rfl⟩ := exists_ofFinite k A x
@@ -135,7 +186,13 @@ theorem entries_bounded (x : StableModule k A) :
   · by_cases hi : i < n <;>
       simp only [entries_ofFinite, hi, ↓reduceDIte, dite_eq_right (Nat.not_lt.mpr hj)]
 
-/-- The actual natural-number entry function has finite support. -/
+/-- **Finite support of stable matrix entries.**
+
+Let k be a semiring and A an additive commutative monoid with a k-module structure. Write S =
+colimₙ Mat(n,n;A), with transition maps extending each finite matrix by zero outside its
+upper-left square. For every x ∈ S, the support of the function (i,j) ↦ E(x)ᵢⱼ on ℕ × ℕ is
+finite.
+-/
 theorem entries_finiteSupport (x : StableModule k A) :
     (Function.support (fun p : ℕ × ℕ => entries k A x p.1 p.2)).Finite := by
   obtain ⟨n, hn⟩ := entries_bounded k A x
@@ -149,7 +206,13 @@ theorem entries_finiteSupport (x : StableModule k A) :
     exact hp (hn p.1 p.2 (Or.inr (Nat.le_of_not_gt h)))
   exact Finset.mem_product.mpr ⟨Finset.mem_range.mpr hrow, Finset.mem_range.mpr hcol⟩
 
-/-- The finite-support realization uses the native `Finsupp` constructor. -/
+/-- **The finite-support coordinates of a stable matrix.**
+
+Let k be a semiring and A an additive commutative monoid with a k-module structure. Write S =
+colimₙ Mat(n,n;A), with transition maps extending each finite matrix by zero outside its
+upper-left square. Define F(x) ∈ (ℕ × ℕ) →₀ A by F(x)(i,j) = E(x)ᵢⱼ, the zero-extended entries
+of a finite matrix representative.
+-/
 def toFinsupp (x : StableModule k A) : (ℕ × ℕ) →₀ A :=
   Finsupp.ofSupportFinite (fun p => entries k A x p.1 p.2) (entries_finiteSupport k A x)
 
@@ -163,7 +226,12 @@ theorem toFinsupp_injective : Function.Injective (toFinsupp k A) := by
   ext i j
   exact congrArg (fun f : (ℕ × ℕ) →₀ A => f (i, j)) h
 
-/-- Every finitely supported natural-number matrix comes from an actual finite stage. -/
+/-- **Every finitely supported matrix has a finite representative.**
+
+Let k be a semiring and A an additive commutative monoid with a k-module structure. Write S =
+colimₙ Mat(n,n;A), with transition maps extending each finite matrix by zero outside its
+upper-left square. Every f ∈ (ℕ × ℕ) →₀ A equals the entry function F(x) of some x ∈ S.
+-/
 theorem toFinsupp_surjective : Function.Surjective (toFinsupp k A) := by
   intro f
   let n := f.support.sup (fun p => max p.1 p.2) + 1
@@ -193,7 +261,12 @@ theorem toFinsupp_surjective : Function.Surjective (toFinsupp k A) := by
     have hi' : p.1 < n := Nat.lt_succ_of_le (hmax.trans hsup)
     exact hi hi'
 
-/-- The finite-support realization preserves the actual native ground-module structure. -/
+/-- **The linear map to finite-support coordinates.**
+
+Let k be a semiring and A an additive commutative monoid with a k-module structure. Write S =
+colimₙ Mat(n,n;A), with transition maps extending each finite matrix by zero outside its
+upper-left square. The coordinate map F : S → (ℕ × ℕ) →₀ A, F(x)(i,j) = E(x)ᵢⱼ, is k-linear.
+-/
 def toFinsuppLinear : StableModule k A →ₗ[k] (ℕ × ℕ) →₀ A where
   toFun := toFinsupp k A
   map_add' x y := by
@@ -214,7 +287,12 @@ def toFinsuppLinear : StableModule k A →ₗ[k] (ℕ × ℕ) →₀ A where
       simp only [toFinsupp_apply, entries_ofFinite, hi, hj, ↓reduceDIte,
         Finsupp.smul_apply, Matrix.smul_apply, smul_zero]
 
-/-- An earned ground-linear equivalence with the literal finite-support matrix coordinates. -/
+/-- **Stable matrices and finite-support functions.**
+
+Let k be a semiring and A an additive commutative monoid with a k-module structure. Write S =
+colimₙ Mat(n,n;A), with transition maps extending each finite matrix by zero outside its
+upper-left square. The map x ↦ ((i,j) ↦ E(x)ᵢⱼ) gives a k-linear equivalence S ≃ (ℕ × ℕ) →₀ A.
+-/
 def finsuppEquiv : StableModule k A ≃ₗ[k] (ℕ × ℕ) →₀ A :=
   { toFinsuppLinear k A,
     Equiv.ofBijective (toFinsupp k A)

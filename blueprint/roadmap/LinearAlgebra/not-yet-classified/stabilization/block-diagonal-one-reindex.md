@@ -1,5 +1,5 @@
-# Block Diagonal One reindex
+# Block stabilization is natural under both index equivalences
 
-The original block stabilization is natural under both index
-equivalences. In particular any enumeration of the inactive identity
-coordinates preserves the whole active matrix, over arbitrary semirings.
+Let R be a semiring, A₁,A₂,I₁,I₂ finite index types, eA:A₁≃A₂, eI:I₁≃I₂ and g∈GL(A₁,R).
+Reindexing diag(g,I_(I₁)) along eA⊕eI gives diag(reindex_eA(g),I_(I₂)). All four index types
+and R may have independent universes.

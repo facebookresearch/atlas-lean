@@ -1,3 +1,4 @@
-# Difference Coordinate Hom apply
+# Value of the multiplicative difference coordinate
 
-The difference homomorphism has its original multiplicative coordinate values.
+For an abelian topological group
+`G` and `(s,t)∈G×G`, `differenceCoordinateHom (s,t)=st⁻¹`.

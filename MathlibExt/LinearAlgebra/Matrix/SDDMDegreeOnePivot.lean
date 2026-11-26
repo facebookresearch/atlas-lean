@@ -18,16 +18,17 @@ public import Mathlib.Tactic.FieldSimp
 public import Mathlib.Tactic.LinearCombination
 
 /-!
-# Sparse degree-one elimination of an SDDM matrix
+# Eliminating a vertex with one neighbor
 
-The primitive computes one retained diagonal update, one forward right-hand-side update,
-and the back-substituted pivot coordinate from the original matrix entries. The full pivot
-diagonal is retained in every denominator, including its nonnegative diagonal surplus.
+Let A be a real matrix on a finite set V, r ∈ V, and u ∈ I = V ∖ {r}. Put p = Aᵣᵣ and c = Aᵣᵤ.
+The retained matrix is S = A|I − (c²/p)eᵤeᵤᵀ, the new right-hand side is b′ = b|I − (c
+bᵣ/p)eᵤ, and back substitution restores xᵣ = (bᵣ − c zᵤ)/p. A positive definite symmetric
+matrix with nonpositive off-diagonal entries and nonnegative row sums retains these properties
+after this elimination. The factorization uses the full diagonal pivot p.
 
-These are the degree-one operations in Spielman and Teng, *Nearly-Linear Time Algorithms for
-Preconditioning and Solving Symmetric, Diagonally Dominant Linear Systems*, arXiv cs/0607105v5,
-current typesetting 26 November 2024, §§1.1, 3.1, 4.1 and 5. This module supplies one matrix
-primitive, not the complete sparse state, pivot queue, factor chain, or operation-count proof.
+Reference: Spielman and Teng, Nearly-Linear Time Algorithms for Preconditioning and Solving
+Symmetric, Diagonally Dominant Linear Systems, arXiv:cs/0607105v5, typesetting dated 26
+November 2024, §§1.1, 3.1, 4.1 and 5.
 -/
 
 @[expose] public section
@@ -41,13 +42,22 @@ namespace Matrix
 
 variable {V : Type*} [DecidableEq V]
 
-/-- Delete the pivot coordinate and update only its retained neighbor's diagonal. -/
+/-- **The retained matrix for one-neighbor elimination.**
+
+For a real matrix A on a set V, r ∈ V and u ∈ I = V ∖ {r}, put p = Aᵣᵣ and c = Aᵣᵤ. Define Sᵢⱼ
+= Aᵢⱼ − (c²/p) when i = j = u, and Sᵢⱼ = Aᵢⱼ otherwise. Real division defines this matrix also
+when p = 0.
+-/
 def degreeOnePivot (A : Matrix V V ℝ) (r : V) (u : {v : V // v ≠ r}) :
     Matrix {v : V // v ≠ r} {v : V // v ≠ r} ℝ :=
   fun i j => if i = u ∧ j = u then
     A u.val u.val - (A r u.val) ^ 2 / A r r else A i.val j.val
 
-/-- Sparse forward substitution: only the retained neighbor's right-hand side changes. -/
+/-- **Forward substitution at one neighbor.**
+
+For a real matrix A on V, r ∈ V, u ∈ I = V ∖ {r}, p = Aᵣᵣ and c = Aᵣᵤ, the linear map b ↦ b′
+is b′ᵢ = bᵢ − 1_{i=u} c bᵣ/p. It is defined for every p, with real division at p = 0.
+-/
 def degreeOneRHS (A : Matrix V V ℝ) (r : V) (u : {v : V // v ≠ r}) :
     (V → ℝ) →ₗ[ℝ] ({v : V // v ≠ r} → ℝ) where
   toFun b := Function.update (fun v => b v.val) u
@@ -67,7 +77,11 @@ def degreeOneRHS (A : Matrix V V ℝ) (r : V) (u : {v : V // v ≠ r}) :
       ring
     · simp [hi]
 
-/-- Back substitution, linear in the original right-hand side and retained candidate. -/
+/-- **Back substitution at one neighbor.**
+
+For a real matrix A on V, r ∈ V, u ∈ I = V ∖ {r}, p = Aᵣᵣ and c = Aᵣᵤ, define the linear map
+L(b,z) by L(b,z)ᵣ = (bᵣ − c zᵤ)/p and L(b,z)ᵢ = zᵢ for i ∈ I. It is linear jointly in b and z.
+-/
 def degreeOneLift (A : Matrix V V ℝ) (r : V) (u : {v : V // v ≠ r}) :
     (V → ℝ) × ({v : V // v ≠ r} → ℝ) →ₗ[ℝ] (V → ℝ) where
   toFun bz i := if hi : i = r then (bz.1 r - A r u.val * bz.2 u) / A r r else bz.2 ⟨i, hi⟩
@@ -86,7 +100,11 @@ def degreeOneLift (A : Matrix V V ℝ) (r : V) (u : {v : V // v ≠ r}) :
       ring
     · simp [hi]
 
-/-- The computed normalized Cholesky column of this pivot, in the original coordinates. -/
+/-- **The one-neighbor factor column.**
+
+For a real matrix A on V, r ∈ V and u ∈ V ∖ {r}, put p = Aᵣᵣ and c = Aᵣᵤ. Define l = √p eᵣ +
+(c/√p)eᵤ. The formula uses the real square root and real division for every p.
+-/
 def degreeOneColumn (A : Matrix V V ℝ) (r : V) (u : {v : V // v ≠ r}) : V → ℝ :=
   Real.sqrt (A r r) • Pi.single r 1 + (A r u.val / Real.sqrt (A r r)) • Pi.single u.val 1
 
@@ -224,8 +242,13 @@ private theorem pivot_action (z : {v : V // v ≠ r} → ℝ) :
   ext i
   simp [mul_comm, mul_assoc, mul_left_comm]
 
-/-- The computed sparse primitive transports the full residual for every retained candidate.
-No correctness assumption on a lower solve is required. -/
+/-- **Residual after one-neighbor back substitution.**
+
+Let A be a real matrix on a finite set V, r ∈ V, and u ∈ I = V ∖ {r}. Put p = Aᵣᵣ and c = Aᵣᵤ.
+Assume A is symmetric, Aᵣⱼ = 0 for j outside {r,u}, and p ≠ 0. Let S = A|I − (c²/p)eᵤeᵤᵀ, b′ =
+b|I − (c bᵣ/p)eᵤ, and L(b,z)ᵣ = (bᵣ − c zᵤ)/p with L(b,z)|I = z. If J inserts a zero at r,
+then A L(b,z) − b = J(Sz − b′) for all b and z.
+-/
 theorem degreeOneLift_residual (hA : A.IsHermitian)
     (hs : ∀ j, j ≠ r → j ≠ u.val → A r j = 0) (hp : A r r ≠ 0)
     (b : V → ℝ) (z : {v : V // v ≠ r} → ℝ) :
@@ -240,7 +263,12 @@ theorem degreeOneLift_residual (hA : A.IsHermitian)
   field_simp [hp]
   ring
 
-/-- Back substitution keeps every retained candidate coordinate literally. -/
+/-- **Restriction of one-neighbor back substitution.**
+
+Let A be a real matrix on a finite set V, r ∈ V, and u ∈ I = V ∖ {r}. Put p = Aᵣᵣ and c = Aᵣᵤ.
+For L(b,z)ᵣ = (bᵣ − c zᵤ)/p and L(b,z)|I = z, the coordinate restriction C : ℝ^V → ℝ^I
+satisfies C L(b,z) = z for every b and z, with no nonzero-pivot condition.
+-/
 theorem degreeOneLift_restrict (b : V → ℝ) (z : {v : V // v ≠ r} → ℝ) :
     groundRestriction r *ᵥ degreeOneLift A r u (b, z) = z := by
   rw [groundRestriction_mulVec]
@@ -287,7 +315,13 @@ private theorem pivot_posDef [Finite V] (hA : A.PosDef)
   have h := hA.conjTranspose_mul_mul_same hinj
   rwa [liftMatrix_congruence A r u hA.isHermitian hs (ne_of_gt hA.diag_pos)] at h
 
-/-- Differences of back-substituted candidates have exactly the computed reduced energy. -/
+/-- **Energy of a one-neighbor lifted error.**
+
+Let A be a real matrix on a finite set V, r ∈ V, and u ∈ I = V ∖ {r}. Put p = Aᵣᵣ and c = Aᵣᵤ.
+Assume A is symmetric, Aᵣⱼ = 0 for j outside {r,u}, and p ≠ 0. Let S = A|I − (c²/p)eᵤeᵤᵀ and
+let L(b,z) restore the root coordinate (bᵣ − c zᵤ)/p. For e = L(b,z) − L(b,w), one has eᵀ A e
+= (z − w)ᵀ S(z − w).
+-/
 theorem degreeOneLift_error_energy (hA : A.IsHermitian)
     (hs : ∀ j, j ≠ r → j ≠ u.val → A r j = 0) (hp : A r r ≠ 0)
     (b : V → ℝ) (z w : {v : V // v ≠ r} → ℝ) :
@@ -316,7 +350,11 @@ private theorem sum_delete (f : V → ℝ) :
   linarith only [h]
 
 omit [DecidableEq V] in
-/-- The original pivot surplus is its full diagonal plus its one off-diagonal entry. -/
+/-- **Row sum at a one-neighbor pivot.**
+
+Let A be a real matrix on a finite set V, r ∈ V, and u ∈ I = V ∖ {r}. Put p = Aᵣᵣ and c = Aᵣᵤ.
+If Aᵣⱼ = 0 outside {r,u}, then ∑ⱼ Aᵣⱼ = p + c.
+-/
 theorem degreeOnePivot_surplus
     (hs : ∀ j, j ≠ r → j ≠ u.val → A r j = 0) :
     (∑ j, A r j) = A r r + A r u.val := by
@@ -328,7 +366,12 @@ theorem degreeOnePivot_surplus
     exact hs j.val j.property (fun h => hju (Subtype.ext h))
   · simp
 
-/-- The computed reduced row sums retain and transfer the original diagonal surplus. -/
+/-- **Retained row sums after one-neighbor elimination.**
+
+Let A be a real matrix on a finite set V, r ∈ V, and u ∈ I = V ∖ {r}. Put p = Aᵣᵣ and c = Aᵣᵤ.
+Assume A is symmetric, Aᵣⱼ = 0 for j outside {r,u}, and p ≠ 0. For S = A|I − (c²/p)eᵤeᵤᵀ and i
+∈ I, one has ∑ⱼ∈I Sᵢⱼ = ∑ⱼ∈V Aᵢⱼ − 1_{i=u}(c/p)∑ⱼ∈V Aᵣⱼ.
+-/
 theorem degreeOnePivot_rowSum (hA : A.IsHermitian)
     (hs : ∀ j, j ≠ r → j ≠ u.val → A r j = 0) (hp : A r r ≠ 0)
     (i : {v : V // v ≠ r}) :
@@ -351,8 +394,13 @@ theorem degreeOnePivot_rowSum (hA : A.IsHermitian)
     simp only [degreeOnePivot_apply, hi, false_and, ite_false, sub_zero,
       sum_delete r (fun j => A i.val j), hcol]
 
-/-- The actual degree-one update preserves positive definiteness, nonpositive off-diagonals,
-and nonnegative row sums, the native matrix conditions defining SDDM. -/
+/-- **Preservation of positive definite diagonal dominance.**
+
+Let A be a real matrix on a finite set V, r ∈ V, and u ∈ I = V ∖ {r}. Put p = Aᵣᵣ and c = Aᵣᵤ.
+Assume A is positive definite, its off-diagonal entries are nonpositive, its row sums are
+nonnegative, and Aᵣⱼ = 0 outside {r,u}. Then S = A|I − (c²/p)eᵤeᵤᵀ is positive definite, has
+nonpositive off-diagonal entries and has nonnegative row sums.
+-/
 theorem degreeOnePivot_preserves_sddm (hA : A.PosDef)
     (hoff : ∀ i j, i ≠ j → A i j ≤ 0) (hrows : ∀ i, 0 ≤ ∑ j, A i j)
     (hs : ∀ j, j ≠ r → j ≠ u.val → A r j = 0) :
@@ -406,8 +454,12 @@ private theorem embedding_apply (M : Matrix {v : V // v ≠ r} {v : V // v ≠ r
       simp only [dite_eq_right hi, dite_eq_right hj]
       rfl
 
-/-- The computed two-coordinate column and computed reduced matrix give the actual
-one-pivot normalized Cholesky factorization in the original coordinates. -/
+/-- **The one-neighbor matrix factorization.**
+
+Let A be a real matrix on a finite set V, r ∈ V, and u ∈ I = V ∖ {r}. Put p = Aᵣᵣ and c = Aᵣᵤ.
+Assume A is symmetric, Aᵣⱼ = 0 outside {r,u}, and p > 0. Put l = √p eᵣ + (c/√p)eᵤ and S = A|I
+− (c²/p)eᵤeᵤᵀ. For zero insertion J and coordinate restriction C, one has A = l lᵀ + J S C.
+-/
 theorem degreeOnePivot_factor (hA : A.IsHermitian)
     (hs : ∀ j, j ≠ r → j ≠ u.val → A r j = 0) (hp : 0 < A r r) :
     A = vecMulVec (degreeOneColumn A r u) (degreeOneColumn A r u) +
@@ -451,7 +503,11 @@ theorem degreeOnePivot_factor (hA : A.IsHermitian)
         (if j = u.val then 1 else 0)) hratio
       linear_combination -h
 
-/-- The support bound concerns the actual column in `degreeOnePivot_factor`. -/
+/-- **Support of the one-neighbor factor column.**
+
+Let A be a real matrix on a finite set V, r ∈ V, and u ∈ I = V ∖ {r}. Put p = Aᵣᵣ and c = Aᵣᵤ.
+For l = √p eᵣ + (c/√p)eᵤ, the number of coordinates i with lᵢ ≠ 0 is at most two.
+-/
 theorem degreeOneColumn_support_card :
     ((univ : Finset V).filter fun i => degreeOneColumn A r u i ≠ 0).card ≤ 2 := by
   have hsub : (univ : Finset V).filter (fun i => degreeOneColumn A r u i ≠ 0) ⊆ {r, u.val} := by

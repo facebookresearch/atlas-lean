@@ -17,13 +17,14 @@ public import Mathlib.Data.Fintype.BigOperators
 public import Mathlib.Algebra.Order.Star.Real
 
 /-!
-# Literal ground-coordinate restriction and zero insertion
+# Ground-coordinate restriction and zero insertion
 
-These matrices delete a chosen coordinate and reinsert zero there. Their energy comparison
-uses the actual principal submatrix, and the restriction plus the ordinary coordinate sum
-determines a vector uniquely. The empty remaining subtype is included.
+Let V be a finite index type and r∈V. The grounding map C_r deletes coordinate r, and J_r
+reinserts it as zero: (J_r z)(r)=0 and (J_r z)(v)=z(v) for v≠r. For any real V×V matrix A and
+z∈ℝ^(V∖{r}), (J_r z)ᵀA(J_r z)=zᵀ A_(V∖{r},V∖{r}) z. This includes an empty remaining
+coordinate set.
 
-This is the coordinate reduction in Spielman and Teng, arXiv cs/0607105v5, §3.2.
+Source: Spielman and Teng, arXiv cs/0607105v5, §3.2.
 -/
 
 @[expose] public section
@@ -37,11 +38,21 @@ namespace Matrix
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
-/-- Delete the chosen root coordinate by the corresponding rows of the identity matrix. -/
+/-- **Matrix deleting a root coordinate.**
+
+Let V be a finite index type and r∈V. The grounding map C_r deletes coordinate r, and J_r
+reinserts it as zero: (J_r z)(r)=0 and (J_r z)(v)=z(v) for v≠r. The matrix groundRestriction r
+represents C_r:x↦x|_(V∖{r}) and consists of the corresponding rows of the identity matrix.
+-/
 def groundRestriction (r : V) : Matrix {v : V // v ≠ r} V ℝ :=
   (1 : Matrix V V ℝ).submatrix Subtype.val id
 
-/-- Reinsert a zero root coordinate; this is the transpose of the actual restriction. -/
+/-- **Matrix reinserting a zero root coordinate.**
+
+Let V be a finite index type and r∈V. The grounding map C_r deletes coordinate r, and J_r
+reinserts it as zero: (J_r z)(r)=0 and (J_r z)(v)=z(v) for v≠r. The matrix zeroInsertion r is
+J_r=C_rᵀ, with entry 1 on matching nonroot coordinates and zero elsewhere.
+-/
 def zeroInsertion (r : V) : Matrix V {v : V // v ≠ r} ℝ := (groundRestriction r)ᵀ
 
 theorem groundRestriction_mulVec (r : V) (x : V → ℝ) :
@@ -99,7 +110,12 @@ theorem groundRestriction_mul_mul_zeroInsertion (r : V) (A : Matrix V V ℝ) :
       mul_submatrix_one (Equiv.refl V) (Subtype.val : {v : V // v ≠ r} → V)
         (A.submatrix Subtype.val id)
 
-/-- Grounding identifies the quadratic form of the actual principal submatrix exactly. -/
+/-- **Quadratic energy of the grounded principal submatrix.**
+
+Let V be a finite index type and r∈V. The grounding map C_r deletes coordinate r, and J_r
+reinserts it as zero: (J_r z)(r)=0 and (J_r z)(v)=z(v) for v≠r. For arbitrary A:Matrix V V ℝ
+and z∈ℝ^(V∖{r}), (J_r z)ᵀA(J_r z)=zᵀ(A.submatrix Subtype.val Subtype.val)z.
+-/
 theorem zeroInsertion_energy (r : V) (A : Matrix V V ℝ)
     (z : {v : V // v ≠ r} → ℝ) :
     (zeroInsertion r *ᵥ z) ⬝ᵥ (A *ᵥ (zeroInsertion r *ᵥ z)) =

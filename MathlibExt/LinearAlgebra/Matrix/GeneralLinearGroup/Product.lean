@@ -18,13 +18,9 @@ public import Mathlib.Algebra.Ring.Prod
 /-!
 # General linear groups over product semirings
 
-This file gives the entrywise ring equivalence
-`Matrix n n (R × S) ≃+* Matrix n n R × Matrix n n S` and its induced
-multiplicative equivalence
-`GL n (R × S) ≃* GL n R × GL n S`.
-
-The coefficient rings and finite matrix index may live in independent
-universes.  No topology, commutativity, determinant, or K-theory API is used.
+Let R,S be semirings and n a finite index type, with all types allowed independent universes.
+Entrywise coordinate projection identifies Matrix n n(R×S) with Matrix n n R×Matrix n n S as
+semirings, and induces GL(n,R×S)≃GL(n,R)×GL(n,S).
 -/
 
 @[expose] public section
@@ -59,9 +55,12 @@ namespace Matrix.GeneralLinearGroup
 variable {R R' : Type u} {S S' : Type v}
 variable [Semiring R] [Semiring S] [Semiring R'] [Semiring S']
 
-/-- Let `R` and `S` be semirings and `n` a finite index type with decidable equality.
-The general linear group over `R × S` is multiplicatively equivalent to
-`GL n R × GL n S`; the empty index type is included. -/
+/-- **Product-semiring general linear group equivalence.**
+
+Let R,S be semirings and n a finite index type. The group equivalence prodSemiringEquiv
+n:GL(n,R×S)≃*GL(n,R)×GL(n,S) sends A to (A.map fst,A.map snd); its inverse combines the two
+matrices entrywise. Empty indices and independent coefficient universes are included.
+-/
 def prodSemiringEquiv (n : Type*) [Fintype n] [DecidableEq n] :
     GL n (R × S) ≃* GL n R × GL n S :=
   (Units.mapEquiv (Matrix.prodRingEquiv n R S).toMulEquiv).trans

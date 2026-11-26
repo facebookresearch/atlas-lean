@@ -1,4 +1,4 @@
-# Quotient
+# Kernel containment is injectivity after quotient base change
 
-For a surjective linear map, quotient base change is injective exactly
-when the original kernel is contained in the ideal multiple of the source.
+Let R be a commutative ring, I an ideal and f:P→M surjective R-linear. Then ker(f)≤I•P if and
+only if f.baseChange(R/I) is injective. The modules and ideal are arbitrary.

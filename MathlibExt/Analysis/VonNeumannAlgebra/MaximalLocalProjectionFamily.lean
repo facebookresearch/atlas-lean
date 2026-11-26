@@ -15,14 +15,14 @@ public import MathlibExt.Analysis.VonNeumannAlgebra.LocalVectorDominatedProjecti
 public import Mathlib.Order.Zorn
 
 /-!
-# An actual maximal orthogonal family of locally dominated original projections
+# Maximal orthogonal family of locally dominated projections
 
-The eligible original operators are nonzero star projections admitting the
-literal vector comparison on their positive corner. Chain unions preserve
-these operator conditions and pairwise zero products. Zorn's lemma therefore
-constructs a maximal set of such original projections. Only that internally
-proved witness is chosen; no family, limit, normal member or norm certificate
-is an input. Completeness of the finite cutoffs is a separate next step.
+For a positive bounded functional `ψ`, call a nonzero star projection `p` eligible when some
+`ξ∈H` satisfies `Re ψ(b)≤Re ⟨ξ,bξ⟩` for every positive `b≤p`.
+
+There is a maximal set `S` of eligible projections with `pq=0` for distinct members. Maximality
+is by inclusion among such orthogonal sets. The construction allows an empty family in a zero
+algebra and does not assume normality of `ψ`.
 -/
 
 @[expose] public section
@@ -40,7 +40,12 @@ universe u
 
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- Construct a maximal family of original nonzero projections with genuine local vector comparison. -/
+/-- **Maximal set of orthogonal locally vector-dominated projections.** Let `H` be a complete
+complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Let `ψ : M → ℂ` be a
+positive bounded complex-linear functional for the spectral orders.
+`maximalLocalProjectionFamily M ψ` returns a set `S` of nonzero star projections with
+pairwise zero products. Each `p∈S` has a vector `ξ` dominating `Re ψ` on `0≤b≤p`; any
+larger orthogonal set with these properties is contained in `S`. -/
 def maximalLocalProjectionFamily (M : VonNeumannAlgebra H) :
     letI : PartialOrder M := CStarAlgebra.spectralOrder M
     letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ

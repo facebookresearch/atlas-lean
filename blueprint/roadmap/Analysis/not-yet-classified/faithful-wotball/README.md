@@ -1,4 +1,4 @@
-# Faithful WOTBall
+# Weak-operator compact balls in an injective normal range
 
-- [Wot range inter ball is Compact](wot-range-inter-ball-is-compact.md)
-- [Is Closed wot range inter ball](is-closed-wot-range-inter-ball.md)
+- [WOT compactness of a bounded injective normal range](wot-range-inter-ball-is-compact.md)
+- [WOT closedness of a bounded injective normal range](is-closed-wot-range-inter-ball.md)

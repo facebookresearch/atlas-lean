@@ -1,3 +1,4 @@
-# L2 Multiplication Representation ae eq
+# Pointwise value of compact-space continuous multiplication
 
-Every original continuous coefficient keeps its literal original L2product values almost everywhere.
+Let X be a compact Borel topological space, μ any measure, f∈C(X,ℂ) and u∈L²(X,μ;ℂ). Then
+ContinuousMap.l2MultiplicationRepresentation μ f u equals x↦f(x)u(x) μ-almost everywhere.

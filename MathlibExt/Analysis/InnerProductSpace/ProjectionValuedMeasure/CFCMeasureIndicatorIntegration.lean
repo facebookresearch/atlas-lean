@@ -14,13 +14,15 @@ module
 public import MathlibExt.MeasureTheory.Integral.RieszMarkovKakutani.Complex
 
 /-!
-# Continuous indicator limits through the actual complex integral
+# Dominated continuous indicator limits in complex integrals
 
-This strict dominated-convergence bridge serves the computed coefficient
-intersection/projection laws required by resolutionOfIdentity and Borel DATA.
-The approximation inputs are ordinary continuous functions with their actual
-pointwise bound and almost-everywhere limit. No operator, projector, PVM,
-representation or correctness output is assumed.
+Let `X` be a compact topological space with its Borel measurable structure, `μ` a complex
+measure and `s` a measurable set. Suppose continuous functions `F_n : X → ℂ` satisfy
+`|F_n(x)|≤1` and converge to `1_s(x)` for `|μ|`-almost every `x`.
+
+For every bounded measurable `q : X → ℂ`, the integrals converge: `∫ F_n q dμ → ∫ 1_s q dμ`.
+This uses the supplied almost-everywhere approximation and does not assert its existence or
+require `X` to be Hausdorff.
 -/
 
 @[expose] public section
@@ -33,8 +35,11 @@ open MathlibExt.MeasureTheory.VectorMeasure
 namespace MathlibExt.Analysis.InnerProductSpace.ProjectionValuedMeasure
 universe uX
 
-/-- A bounded continuous indicator approximation passes through every bounded
-measurable multiplier and the original complex measure integral. -/
+/-- **Dominated convergence for continuous indicator approximations.** Let `X` be compact with
+a topology and its Borel measurable structure, `μ : ComplexMeasure X`, `s ⊆ X` measurable,
+and `F_n ∈ C(X,ℂ)` with `|F_n(x)|≤1` for all `n,x`. If `F_n(x)→1_s(x)` for `|μ|`-almost
+every `x`, then for every bounded measurable `q`, `complexIntegral μ
+(F_n*q)→complexIntegral μ (1_s*q)` as `n→∞`. No Hausdorff assumption is imposed. -/
 theorem continuousIndicator_complexIntegral_mul_tendsto {X : Type uX}
     [TopologicalSpace X] [CompactSpace X] [MeasurableSpace X] [BorelSpace X]
     (mu : ComplexMeasure X) (s : Set X) (hs : MeasurableSet s)

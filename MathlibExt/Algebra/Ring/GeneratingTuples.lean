@@ -18,9 +18,10 @@ public import Mathlib.Algebra.Star.Basic
 /-!
 # Finite left- and right-generating tuples
 
-Pure algebraic carrier and characteristic laws used by numeric topological
-stable rank.  The two orientations remain distinct over a noncommutative
-semiring.  This module has no topology dependency.
+Let R be a semiring, I a finite index type and a:I→R. The tuple is left-generating when
+∃c:I→R, ∑i c_i*a_i=1, and right-generating when ∃c:I→R, ∑i a_i*c_i=1. These orientations
+differ over a noncommutative semiring; the left equation is Rieffel's Lg_n convention.
+Coefficient homomorphisms preserve both, and star reverses their orientation.
 -/
 
 public section
@@ -29,15 +30,23 @@ open scoped BigOperators
 
 universe uR uS uI
 
-/-- A tuple generates the unit as a left ideal: coefficients multiply its
-entries on the left.  This is Rieffel's `Lg_n` orientation. -/
+/-- **Tuple generating the unit with left coefficients.**
+
+Let R be a semiring, I a finite index type and a:I→R. The tuple is left-generating when
+∃c:I→R, ∑i c_i*a_i=1, and right-generating when ∃c:I→R, ∑i a_i*c_i=1. IsLeftGeneratingTuple a
+is the left equation ∑i c_i*a_i=1 for some c.
+-/
 @[expose] def IsLeftGeneratingTuple
     {R : Type uR} [Semiring R] {ι : Type uI} [Fintype ι]
     (a : ι → R) : Prop :=
   ∃ b : ι → R, ∑ i, b i * a i = 1
 
-/-- A tuple generates the unit as a right ideal: coefficients multiply its
-entries on the right. -/
+/-- **Tuple generating the unit with right coefficients.**
+
+Let R be a semiring, I a finite index type and a:I→R. The tuple is left-generating when
+∃c:I→R, ∑i c_i*a_i=1, and right-generating when ∃c:I→R, ∑i a_i*c_i=1. IsRightGeneratingTuple a
+is the right equation ∑i a_i*c_i=1 for some c.
+-/
 @[expose] def IsRightGeneratingTuple
     {R : Type uR} [Semiring R] {ι : Type uI} [Fintype ι]
     (a : ι → R) : Prop :=
@@ -45,8 +54,13 @@ entries on the right. -/
 
 namespace IsLeftGeneratingTuple
 
-/-- A coefficient ring homomorphism carries a left-generating tuple to a
-left-generating tuple. -/
+/-- **Coefficient homomorphisms preserve left-generating tuples.**
+
+Let R be a semiring, I a finite index type and a:I→R. The tuple is left-generating when
+∃c:I→R, ∑i c_i*a_i=1, and right-generating when ∃c:I→R, ∑i a_i*c_i=1. For a semiring S and
+homomorphism f:R→S, left generation of a implies left generation of (f(a_i))_i, with
+coefficients f(c_i).
+-/
 theorem map
     {R : Type uR} {S : Type uS} [Semiring R] [Semiring S]
     {ι : Type uI} [Fintype ι]
@@ -56,8 +70,12 @@ theorem map
   refine ⟨fun i => f (b i), ?_⟩
   simpa only [map_sum, map_mul, map_one] using congrArg f hb
 
-/-- Taking stars sends a left-generating tuple to a right-generating tuple;
-the coefficient order is reversed exactly once. -/
+/-- **Star sends left generation to right generation.**
+
+Let R be a semiring, I a finite index type and a:I→R. The tuple is left-generating when
+∃c:I→R, ∑i c_i*a_i=1, and right-generating when ∃c:I→R, ∑i a_i*c_i=1. If R is a star ring and
+a is left-generating, then (star(a_i))_i is right-generating, using coefficients star(c_i).
+-/
 theorem star
     {R : Type uR} [Semiring R] [StarRing R]
     {ι : Type uI} [Fintype ι]
@@ -82,8 +100,12 @@ end IsLeftGeneratingTuple
 
 namespace IsRightGeneratingTuple
 
-/-- A coefficient ring homomorphism carries a right-generating tuple to a
-right-generating tuple. -/
+/-- **Coefficient homomorphisms preserve right-generating tuples.**
+
+Let R be a semiring, I a finite index type and a:I→R. The tuple is left-generating when
+∃c:I→R, ∑i c_i*a_i=1, and right-generating when ∃c:I→R, ∑i a_i*c_i=1. For a semiring S and
+homomorphism f:R→S, right generation of a implies right generation of (f(a_i))_i.
+-/
 theorem map
     {R : Type uR} {S : Type uS} [Semiring R] [Semiring S]
     {ι : Type uI} [Fintype ι]
@@ -93,7 +115,12 @@ theorem map
   refine ⟨fun i => f (b i), ?_⟩
   simpa only [map_sum, map_mul, map_one] using congrArg f hb
 
-/-- Taking stars sends a right-generating tuple to a left-generating tuple. -/
+/-- **Star sends right generation to left generation.**
+
+Let R be a semiring, I a finite index type and a:I→R. The tuple is left-generating when
+∃c:I→R, ∑i c_i*a_i=1, and right-generating when ∃c:I→R, ∑i a_i*c_i=1. If R is a star ring and
+a is right-generating, then (star(a_i))_i is left-generating.
+-/
 theorem star
     {R : Type uR} [Semiring R] [StarRing R]
     {ι : Type uI} [Fintype ι]
@@ -116,8 +143,12 @@ theorem star
 
 end IsRightGeneratingTuple
 
-/-- Over a commutative semiring the left and right generator predicates
-coincide. -/
+/-- **Left and right generating equations agree in a commutative semiring.**
+
+Let R be a semiring, I a finite index type and a:I→R. The tuple is left-generating when
+∃c:I→R, ∑i c_i*a_i=1, and right-generating when ∃c:I→R, ∑i a_i*c_i=1. If R is commutative,
+IsLeftGeneratingTuple a↔IsRightGeneratingTuple a.
+-/
 theorem isLeftGeneratingTuple_iff_isRightGeneratingTuple
     {R : Type uR} [CommSemiring R]
     {ι : Type uI} [Fintype ι] (a : ι → R) :

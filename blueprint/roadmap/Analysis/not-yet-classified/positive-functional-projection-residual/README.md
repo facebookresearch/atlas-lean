@@ -1,3 +1,3 @@
-# Positive Functional Projection Residual
+# Dual norm error of right projection localization
 
-- [Positive Functional Projection Residual](positive-functional-right-projection-res.md)
+- [Norm bound for a positive functional's right-projection residual](positive-functional-right-projection-res.md)

@@ -14,11 +14,13 @@ module
 public import Mathlib.MeasureTheory.Group.ModularCharacter
 
 /-!
-# Right translation of a regular Haar measure
+# Modular scaling of Haar measure under right translation
 
-The pushforward by right multiplication is the original left Haar measure
-scaled by the pinned modular character. This measure statement is independent
-of Hilbert spaces and square-integrable representations.
+For a locally compact topological group with Borel structure and regular left Haar measure `μ`,
+the pushforward by `x ↦ xg` is `Δ(g) • μ`, where `Δ=Measure.modularCharacter`.
+
+This fixes the modular-character convention used by right-translation operators and requires no
+Hilbert-space representation.
 -/
 
 @[expose] public section
@@ -36,7 +38,9 @@ variable {G : Type uG} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
   [LocallyCompactSpace G] [MeasurableSpace G] [BorelSpace G]
 variable (μ : Measure G) [μ.IsHaarMeasure] [μ.Regular]
 
-/-- Actual regular Haar measures have the pinned right-translation scalar. -/
+/-- **Right-translation pushforward of a regular Haar measure.** Let `G` be a locally compact
+topological group with its Borel structure and `μ` a regular Haar measure. For `g∈G`,
+`Measure.map (fun x => x*g) μ = Measure.modularCharacter g • μ`. -/
 theorem map_right_mul_modular (g : G) :
     Measure.map (fun x : G => x * g) μ = Measure.modularCharacter g • μ := by
   let : (Measure.map (fun x : G => x * g) μ).Regular :=

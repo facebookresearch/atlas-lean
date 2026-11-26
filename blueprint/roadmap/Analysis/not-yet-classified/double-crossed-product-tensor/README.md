@@ -1,6 +1,6 @@
-# Double Crossed Product Tensor
+# Iterated tensor crossed product and the second dual action
 
-- [Double Crossed Product Tensor](double-crossed-product-tensor.md)
-- [Double Dual Tensor Normal Action](double-dual-tensor-normal-action.md)
-- [Double Dual Tensor Normal Action fix coefficient](double-dual-tensor-normal-action-fix-coe.md)
-- [Double Dual Tensor Normal Action scale group](double-dual-tensor-normal-action-scale-g.md)
+- [Second regular tensor crossed product with an explicit dual Haar measure](double-crossed-product-tensor.md)
+- [Second dual tensor action pulled back by evaluation](double-dual-tensor-normal-action.md)
+- [Second dual action fixes the first crossed-product coefficient image](double-dual-tensor-normal-action-fix-coe.md)
+- [Second dual action scales the dual Haar implementer](double-dual-tensor-normal-action-scale-g.md)

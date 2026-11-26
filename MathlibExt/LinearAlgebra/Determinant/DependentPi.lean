@@ -13,52 +13,13 @@ public import Mathlib.LinearAlgebra.Determinant
 public import Mathlib.LinearAlgebra.Matrix.Block
 
 /-!
-# Determinants of dependent componentwise endomorphisms
+# Determinants of dependent product endomorphisms
 
-Mathlib's `LinearMap.det_pi` computes the determinant of a componentwise
-endomorphism of `ι → M`, where every component is the same finite free
-module.  This file proves the dependent-family version: the modules `M i`
-may have different ranks.
-
-## Informal proof
-
-Choose a finite basis `b i` of each component `M i`.  The dependent Pi basis
-`Pi.basis b` is indexed by the sigma type of all component basis indices.
-In that basis the componentwise endomorphism has matrix
-
-```text
-Matrix.blockDiagonal' (fun i => matrix (f i)).
-```
-
-Indeed, a basis vector supported in component `j` stays in component `j`, so
-every off-diagonal block is zero, while the `j`-th diagonal block is exactly
-the matrix of `f j`.
-
-For completeness, the required determinant formula for unequal block sizes
-is proved first.  Give the finite outer index an arbitrary linear order and
-view `blockDiagonal'` as block triangular.  The block-triangular determinant
-theorem expresses its determinant as the product of its square diagonal
-blocks.  The fiber of `Sigma.fst` over `i` is canonically equivalent to the
-index type of the `i`-th block, so determinant invariance under reindexing
-identifies that square block with the original matrix.  Applying this matrix
-formula to the dependent Pi basis gives the result.
-
-## Reconstructing a block-diagonal endomorphism
-
-For an arbitrary endomorphism `F` of a finite dependent product, its `(i,j)`
-block is the composite
-
-```text
-M j --single j--> (∀ i, M i) --F--> (∀ i, M i) --proj i--> M i.
-```
-
-Suppose every block with `i ≠ j` is zero.  Decompose an arbitrary vector as
-the finite sum `∑ j, Pi.single j (x j)` and apply linearity of `F`.  After
-evaluating at coordinate `i`, all terms except `j = i` vanish by the block
-hypothesis.  The surviving term is the diagonal block applied to `x i`.
-Function and linear-map extensionality therefore identify `F` with the
-componentwise endomorphism assembled from its diagonal blocks.  This argument
-uses neither matrices nor finite-free hypotheses.
+Let R be a commutative ring, I finite and M_i finite free R-modules of possibly different
+ranks. For componentwise f=(f_i) on ∏iM_i, det(f)=∏i det(f_i). A dependent block-diagonal
+matrix likewise has determinant the product of its square block determinants. A finite product
+endomorphism with zero off-diagonal blocks equals the componentwise map from its diagonal
+blocks.
 -/
 
 @[expose] public section
@@ -76,8 +37,11 @@ variable {R : Type uR} [CommRing R]
 variable {ι : Type uI} [Fintype ι]
 variable {κ : ι → Type uK} [∀ i, Fintype (κ i)]
 
-/-- The index type of one block is equivalent to the corresponding fiber of
-the sigma-type block projection. -/
+/-- **Index set of a dependent matrix block.**
+
+For a family κ:I→Type and i∈I, sigmaBlockFiberEquiv i identifies κ_i with the fiber
+{x∈Σjκ_j:x.1=i}, by a↦(i,a).
+-/
 private noncomputable def sigmaBlockFiberEquiv (i : ι) :
     κ i ≃ {x : Sigma κ // x.1 = i} :=
   Equiv.ofBijective
@@ -126,8 +90,11 @@ private theorem det_blockDiagonal'_of_linearOrder
   rw [toSquareBlock_blockDiagonal'_eq_reindex,
     Matrix.det_reindex_self]
 
-/-- The determinant of a finite dependent block-diagonal matrix is the
-product of the determinants of its blocks. -/
+/-- **Determinant of a dependent block-diagonal matrix.**
+
+Let R be a commutative ring, I finite, all κ_i finite and A_i square matrices on κ_i. Then
+det(blockDiagonal′(A_i))=∏i det(A_i), including empty blocks.
+-/
 theorem det_blockDiagonal' [DecidableEq ι] [∀ i, DecidableEq (κ i)]
     (A : ∀ i, Matrix (κ i) (κ i) R) :
     (Matrix.blockDiagonal' A).det = ∏ i, (A i).det := by
@@ -144,15 +111,21 @@ variable {ι : Type uI}
 variable {M : ι → Type uM}
 variable [∀ i, AddCommGroup (M i)] [∀ i, Module R (M i)]
 
-/-- The `(i,j)` block of an endomorphism of a dependent product: include the
-`j`-th component, apply the endomorphism, then project to component `i`. -/
+/-- **Block of a dependent product endomorphism.**
+
+Let R be a commutative ring and M_i R-modules. For F:∏iM_i→∏iM_i, dependentPiBlock F i j is
+proj_i∘F∘single_j:M_j→M_i.
+-/
 noncomputable def dependentPiBlock
     (F : (∀ i, M i) →ₗ[R] ∀ i, M i) (i j : ι) : M j →ₗ[R] M i := by
   classical
   exact (LinearMap.proj i).comp (F.comp (LinearMap.single R M j))
 
-/-- A finite dependent-product endomorphism with zero off-diagonal blocks is
-the componentwise endomorphism assembled from its diagonal blocks. -/
+/-- **Zero off-diagonal blocks characterize a componentwise map.**
+
+Let I be finite and M_i R-modules over a commutative ring. If F_ij=proj_i F single_j is zero
+for i≠j, then F(x)_i=F_ii(x_i), so F is the componentwise map from its diagonal blocks.
+-/
 theorem eq_pi_diagonal_of_dependentPiBlock_eq_zero
     [Finite ι]
     (F : (∀ i, M i) →ₗ[R] ∀ i, M i)
@@ -179,9 +152,12 @@ theorem eq_pi_diagonal_of_dependentPiBlock_eq_zero
 variable [Fintype ι]
 variable [∀ i, Module.Free R (M i)] [∀ i, Module.Finite R (M i)]
 
-/-- Determinant of a componentwise endomorphism of a finite dependent
-product.  Unlike `LinearMap.det_pi`, the component modules may have unequal
-ranks. -/
+/-- **Determinant of a finite dependent componentwise map.**
+
+Let R be a commutative ring, I finite and M_i finite free R-modules of possibly different
+ranks. For componentwise f=(f_i) on ∏iM_i, det(f)=∏i det(f_i). The identity is
+det_pi_dependent for the linear map x↦(f_i(x_i))_i.
+-/
 theorem det_pi_dependent (f : ∀ i, M i →ₗ[R] M i) :
     (LinearMap.pi (fun i => (f i).comp (LinearMap.proj i))).det =
       ∏ i, (f i).det := by
@@ -215,8 +191,12 @@ variable {M : ι → Type uM}
 variable [∀ i, AddCommGroup (M i)] [∀ i, Module R (M i)]
 variable [∀ i, Module.Free R (M i)] [∀ i, Module.Finite R (M i)]
 
-/-- The determinant of a dependent product of linear equivalences is the
-product of their determinants. -/
+/-- **Determinant of a dependent product of equivalences.**
+
+Let R be a commutative ring, I finite and M_i finite free R-modules of possibly different
+ranks. For componentwise f=(f_i) on ∏iM_i, det(f)=∏i det(f_i). For component linear
+equivalences e_i:M_i≃M_i, det(piCongrRight e)=∏i det(e_i).
+-/
 theorem det_piCongrRight (f : ∀ i, M i ≃ₗ[R] M i) :
     LinearEquiv.det (LinearEquiv.piCongrRight f) =
       ∏ i, LinearEquiv.det (f i) := by

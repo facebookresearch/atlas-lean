@@ -13,28 +13,15 @@ public import Mathlib.Topology.Algebra.OpenSubgroup
 public import Mathlib.CategoryTheory.Category.Preorder
 
 /-!
-# Preimages of open normal subgroups
+# Open normal subgroup preimages and reverse-inclusion indices
 
-A continuous homomorphism pulls an open normal subgroup back to an open
-normal subgroup. This file packages that construction, its membership,
-monotonicity, identity, and source-first composition laws, and the induced
-change-of-index functor between the opposite open-normal posets.
+A continuous group homomorphism `φ : H → G` sends an open normal subgroup `U≤G` to its preimage
+`φ⁻¹(U)`, an open normal subgroup of `H`. Preimages are monotone, preserve identity maps and
+satisfy `(φ∘ψ)⁻¹(U)=ψ⁻¹(φ⁻¹(U))`.
 
-Source, target, and intermediate group universes are independent. Only the
-group structures, topologies, and bundled continuity of the homomorphisms are
-used; no IsTopologicalGroup, compactness, or surjectivity assumption is
-required.
-
-## Main declarations
-
-* OpenNormalSubgroup.comap
-* OpenNormalSubgroup.mem_comap
-* OpenNormalSubgroup.comap_mono
-* OpenNormalSubgroup.comap_id
-* OpenNormalSubgroup.comap_comp
-* ContinuousCohomology.openNormalComapFunctor
-* ContinuousCohomology.openNormalComapFunctor_id
-* ContinuousCohomology.openNormalComapFunctor_comp
+They define the corresponding functor on opposite inclusion posets of open normal subgroups.
+Groups need only their topologies and bundled homomorphism continuity; compactness, surjectivity
+or continuity of group operations is not required.
 -/
 
 @[expose] public section
@@ -47,7 +34,9 @@ universe u v w
 
 namespace OpenNormalSubgroup
 
-/-- Preimage of an open normal subgroup under a continuous homomorphism. -/
+/-- **Open normal subgroup preimage under a continuous homomorphism.** Let `G,H` be groups
+with topologies and `φ : H →ₜ* G` a continuous homomorphism. for an open normal subgroup
+`U≤G`, `comap φ U=φ⁻¹(U)` is an open normal subgroup of `H`. -/
 def comap
     {G : Type u} {H : Type v}
     [Group G] [TopologicalSpace G]
@@ -57,7 +46,9 @@ def comap
   toOpenSubgroup := U.toOpenSubgroup.comap phi.toMonoidHom phi.continuous
   isNormal' := U.isNormal'.comap phi.toMonoidHom
 
-/-- Membership in an open-normal preimage is literal preimage membership. -/
+/-- **Membership in a continuous open-normal preimage.** Let `G,H` be groups with topologies
+and `φ : H →ₜ* G` a continuous homomorphism. for `U≤G` open normal and `h∈H`, `h∈comap φ
+U` exactly when `φ(h)∈U`. -/
 @[simp]
 theorem mem_comap
     {G : Type u} {H : Type v}
@@ -67,7 +58,8 @@ theorem mem_comap
     h ∈ comap phi U ↔ phi h ∈ U :=
   Iff.rfl
 
-/-- Open-normal preimage is monotone in the subgroup. -/
+/-- **Monotonicity of open-normal preimages.** Let `G,H` be groups with topologies and `φ : H
+→ₜ* G` a continuous homomorphism. if open normal `U≤V` in `G`, then `comap φ U≤comap φ V`. -/
 theorem comap_mono
     {G : Type u} {H : Type v}
     [Group G] [TopologicalSpace G]
@@ -75,7 +67,8 @@ theorem comap_mono
     (phi : H →ₜ* G) {U V : OpenNormalSubgroup G} (hUV : U ≤ V) :
     comap phi U ≤ comap phi V := fun _ h => hUV h
 
-/-- Preimage under the identity homomorphism is the original subgroup. -/
+/-- **Identity preimage of an open normal subgroup.** For a group `G` with topology and open
+normal `U≤G`, `comap(id_G,U)=U`. -/
 @[simp]
 theorem comap_id
     {G : Type u} [Group G] [TopologicalSpace G]
@@ -84,7 +77,9 @@ theorem comap_id
   ext g
   rfl
 
-/-- Open-normal preimages compose in source-first homomorphism order. -/
+/-- **Composition law of continuous open-normal preimages.** Let `G,H` be groups with
+topologies and `φ : H →ₜ* G` a continuous homomorphism. for a group `K` with topology and
+continuous homomorphism `ψ : K → H`, `comap (φ∘ψ) U=comap ψ (comap φ U)`. -/
 theorem comap_comp
     {G : Type u} {H : Type v} {K : Type w}
     [Group G] [TopologicalSpace G]
@@ -99,7 +94,10 @@ end OpenNormalSubgroup
 
 namespace ContinuousCohomology
 
-/-- Opposite-index change of variables induced by open-normal preimage. -/
+/-- **Reverse-inclusion index functor of open-normal preimages.** Let `G,H` be groups with
+topologies and `φ : H →ₜ* G` a continuous homomorphism. `openNormalComapFunctor φ :
+OpenNormal(G)ᵒᵖ ⥤ OpenNormal(H)ᵒᵖ` sends `U` to `φ⁻¹(U)` and refinement maps to the
+corresponding preimage inclusions. -/
 def openNormalComapFunctor
     {G : Type u} {H : Type v}
     [Group G] [TopologicalSpace G]
@@ -112,7 +110,9 @@ def openNormalComapFunctor
   map_id _ := Subsingleton.elim _ _
   map_comp _ _ := Subsingleton.elim _ _
 
-/-- The open-normal preimage functor of the identity is the identity functor. -/
+/-- **Identity law of the open-normal preimage functor.** For a group `G` with topology, the
+preimage functor of `id_G` on the opposite open-normal inclusion poset is the identity
+functor. -/
 theorem openNormalComapFunctor_id
     {G : Type u} [Group G] [TopologicalSpace G] :
     openNormalComapFunctor (ContinuousMonoidHom.id G) = 𝟭 _ := by
@@ -123,7 +123,9 @@ theorem openNormalComapFunctor_id
   · intro U V f
     exact Subsingleton.elim _ _
 
-/-- Open-normal preimage functors compose in source-first homomorphism order. -/
+/-- **Functorial composition of open-normal preimages.** Let `G,H` be groups with topologies
+and `φ : H →ₜ* G` a continuous homomorphism. for continuous `ψ : K → H`,
+`openNormalComapFunctor (φ∘ψ)=openNormalComapFunctor φ ⋙ openNormalComapFunctor ψ`. -/
 theorem openNormalComapFunctor_comp
     {G : Type u} {H : Type v} {K : Type w}
     [Group G] [TopologicalSpace G]

@@ -1,5 +1,4 @@
-# Lmul charpoly pi apply
+# Left-multiplication characteristic polynomial on a dependent product
 
-The characteristic polynomial of left multiplication by an element of a
-finite dependent product of algebras is the product of the characteristic
-polynomials of left multiplication by its components.
+Let R be a commutative ring, I finite and A_i R-algebras finite free over R. For
+q=(q_i)∈∏iA_i, χ_(L_q)=∏iχ_(L_(q_i)), with left multiplication on each algebra.

@@ -12,12 +12,10 @@ module
 public import Mathlib.LinearAlgebra.DFinsupp
 
 /-!
-# Linear maps into dependent finitely supported functions
+# Linear maps into a dependent direct sum
 
-A family of linear maps f i : M →ₗ[R] N i determines a linear map into the
-dependent direct sum whenever its value on every input has finite support.
-This file packages that standard construction and exposes its coordinate
-formula.
+Let R be a semiring, M an R-semimodule, I arbitrary and N_i R-semimodules. A family f_i:M→N_i
+of linear maps defines F:M→⊕iN_i when {i:f_i(x)≠0} is finite for each x, with F(x)_i=f_i(x).
 -/
 
 @[expose] public section
@@ -35,8 +33,11 @@ variable {M : Type uM} [AddCommMonoid M] [Module R M]
 variable {N : ι → Type uN}
 variable [∀ i, AddCommMonoid (N i)] [∀ i, Module R (N i)]
 
-/-- Assemble a pointwise finitely supported family of linear maps into one
-linear map with dependent direct-sum target. -/
+/-- **Direct-sum linear map from a pointwise finite-support family.**
+
+Let R be a semiring, M,N_i R-semimodules and f_i:M→N_i linear. If each x∈M has only finitely
+many nonzero values f_i(x), linearMapOfFiniteSupport f hf:M→⊕iN_i is x↦(f_i(x))_i.
+-/
 noncomputable def linearMapOfFiniteSupport
     (f : ∀ i, M →ₗ[R] N i)
     (hf : ∀ x, {i | f i x ≠ 0}.Finite) :
@@ -72,7 +73,11 @@ noncomputable def linearMapOfFiniteSupport
           _ = c • toFunImpl x i := by rw [applyImpl]
           _ = (c • toFunImpl x) i := rfl }
 
-/-- Coordinate evaluation of the finite-support linear-map constructor. -/
+/-- **Coordinate of the finite-support linear-map construction.**
+
+For R-semimodules M,N_i and a linear family f_i with finite support on each input,
+linearMapOfFiniteSupport f hf x i=f_i(x).
+-/
 @[simp]
 theorem linearMapOfFiniteSupport_apply
     (f : ∀ i, M →ₗ[R] N i)

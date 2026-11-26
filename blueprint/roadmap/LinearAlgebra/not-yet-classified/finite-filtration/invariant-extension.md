@@ -1,7 +1,6 @@
-# Invariant Extension
+# One invariant extension of module endomorphisms
 
-One step of an invariant filtration.
-
-The lower endomorphism `f` is identified with the restriction of the upper
-endomorphism `g` to `submodule`.  The quotient endomorphism is consequently
-the action of `g` on the corresponding successive graded piece.
+Let R be a commutative ring, V,W R-modules and f:V→V,g:W→W endomorphisms. An invariant
+extension E consists of a g-invariant submodule U⊆W and a linear equivalence e:V≃U satisfying
+e∘f=(g|U)∘e. These submodule, stability, identification and intertwining data form
+InvariantExtension f g.

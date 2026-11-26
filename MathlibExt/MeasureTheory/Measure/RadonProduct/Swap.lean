@@ -14,11 +14,13 @@ module
 public import MathlibExt.MeasureTheory.Measure.RadonProduct.Fubini
 
 /-!
-# Coordinate exchange of the actual Borel Radon product
+# Coordinate exchange of Borel Radon products
 
-Compact-support integral uniqueness and the original reverse Fubini law
-prove the literal exchange of two topological Borel Radon measures.
-Independent factors and zero measures remain; no L2 or Haar model enters.
+For locally compact Hausdorff Borel spaces and measures finite on compact sets, the coordinate
+swap `(x,y) ↦ (y,x)` pushes `radonProd μ ν` to `radonProd ν μ`.
+
+It is measure preserving between these two Borel topological products. The factors and their
+universes are independent, and no countability or s-finiteness assumption is required.
 -/
 
 @[expose] public section
@@ -40,15 +42,21 @@ variable {Y : Type uY} [TopologicalSpace Y] [T2Space Y] [LocallyCompactSpace Y]
 variable (μ : Measure X) (ν : Measure Y)
   [IsFiniteMeasureOnCompacts μ] [IsFiniteMeasureOnCompacts ν]
 
-/-- The original Borel measurable structure of the X-first topological product. -/
+/-- **Borel measurable structure of the first coordinate order.** For topological spaces
+`X,Y`, the carrier `X×Y` uses `borel(X×Y)` from its product topology. -/
 local instance instSwapXYMeasurableSpace : MeasurableSpace (X × Y) := borel (X × Y)
 local instance instSwapXYBorelSpace : BorelSpace (X × Y) := ⟨rfl⟩
 
-/-- The original Borel measurable structure of the Y-first topological product. -/
+/-- **Borel measurable structure of the reversed coordinate order.** For topological spaces
+`X,Y`, the carrier `Y×X` uses `borel(Y×X)` from its product topology. -/
 local instance instSwapYXMeasurableSpace : MeasurableSpace (Y × X) := borel (Y × X)
 local instance instSwapYXBorelSpace : BorelSpace (Y × X) := ⟨rfl⟩
 
-/-- Literal coordinate exchange maps the actual Borel Radon product to its reversed product. -/
+/-- **Swap pushforward reverses the Radon product factors.** Let `X,Y` be locally compact
+Hausdorff spaces with their Borel measurable structures, and `μ,ν` measures finite on
+compact sets. Write `μ⊗_Rν=radonProd μ ν` on the Borel topological product `X×Y`.
+`Measure.map Prod.swap (radonProd μ ν)=radonProd ν μ` on the reversed Borel topological
+product `Y×X`. -/
 theorem map_prodSwap_radonProd :
     Measure.map (Prod.swap : X × Y → Y × X) (radonProd μ ν) = radonProd ν μ := by
   let e := Homeomorph.prodComm X Y
@@ -64,7 +72,10 @@ theorem map_prodSwap_radonProd :
   rw [integral_radonProd μ ν F, integral_radonProd_swap ν μ f]
   rfl
 
-/-- Coordinate exchange preserves the actual two Borel Radon measures in their original orders. -/
+/-- **Measure-preserving coordinate swap of Radon products.** Let `X,Y` be locally compact
+Hausdorff spaces with their Borel measurable structures, and `μ,ν` measures finite on
+compact sets. Write `μ⊗_Rν=radonProd μ ν` on the Borel topological product `X×Y`.
+`Prod.swap : X×Y → Y×X` is measure preserving from `radonProd μ ν` to `radonProd ν μ`. -/
 theorem measurePreserving_prodSwap_radonProd :
     MeasurePreserving (Prod.swap : X × Y → Y × X) (radonProd μ ν) (radonProd ν μ) :=
   ⟨(Homeomorph.prodComm X Y).measurable, map_prodSwap_radonProd μ ν⟩

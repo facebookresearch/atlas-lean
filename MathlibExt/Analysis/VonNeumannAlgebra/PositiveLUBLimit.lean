@@ -17,18 +17,15 @@ public import Mathlib.Topology.Compactness.Compact
 public import Mathlib.Topology.ClusterPt
 
 /-!
-# A provided original bounded positive LUB is its ultraweak directed limit
+# Ultraweak limits of bounded increasing positive families
 
-The original positive family stays in the actual compact positive part of
-its original norm bound. Closed comparisons force each cluster point to be
-an upper bound of the same family and below its provided original LUB.
-Uniqueness gives the actual ultraweak limit. Fixed literal star conjugation
-then preserves that same LUB by its proved ultraweak continuity.
+For a concrete von Neumann algebra, a monotone norm-bounded positive family `a_i` with least
+upper bound `s` converges ultraweakly to `s` along `atTop`, provided this index filter is
+nonbottom.
 
-These are prerequisites for the actual normal-weight/GNS normality
-construction. No supremum is supplied as a new model or chosen from an
-open source existence/completeness theorem. The original directed family,
-positive hypothesis, actual bound and actual IsLUB relation are retained.
+Fixed star conjugation preserves a supplied least upper bound: the family `x* a_i x` has least
+upper bound `x* s x`. This latter statement is given for any preorder-indexed monotone bounded
+positive family with the stated least upper bound, without a nonbottom-filter premise.
 -/
 
 @[expose] public section
@@ -48,7 +45,10 @@ universe u v
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 variable {I : Type v} [Preorder I]
 
-/-- A bounded positive LUB is the actual ultraweak limit for a nonbottom original index filter. -/
+/-- **Bounded positive least upper bound is the ultraweak limit.** Let `H` be a complete
+complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. let `I` be a preorder
+with nonbottom `atTop`, and `a_i ∈ M` a monotone positive family bounded in operator norm.
+If `s∈M` is its least upper bound, then `a_i→s` ultraweakly along `atTop`. -/
 theorem boundedPositiveIsLUB_tendsto_ultraweak [NeBot (atTop : Filter I)]
     (M : VonNeumannAlgebra H) (a : I → M) (s : M)
     (hmono : @Monotone I M inferInstance (CStarAlgebra.spectralOrder M).toPreorder a)
@@ -110,7 +110,11 @@ theorem boundedPositiveIsLUB_tendsto_ultraweak [NeBot (atTop : Filter I)]
 
 variable [IsDirectedOrder I] [Nonempty I]
 
-/-- Literal fixed star conjugation preserves the same provided original bounded positive LUB. -/
+/-- **Fixed star conjugation preserves a bounded positive least upper bound.** Let `H` be a
+complete complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. for any
+preorder `I`, monotone norm-bounded positive family `a_i`, its least upper bound `s`, and
+`x∈M`, the element `x* s x` is the least upper bound of `{x* a_i x}`. No nonbottom `atTop`
+condition is assumed in this statement. -/
 theorem starConjugation_preserves_boundedPositiveIsLUB (M : VonNeumannAlgebra H) (x : M)
     (a : I → M) (s : M)
     (hmono : @Monotone I M inferInstance (CStarAlgebra.spectralOrder M).toPreorder a)

@@ -1,4 +1,4 @@
-# Dependent Pi Block
+# Block of a dependent product endomorphism
 
-The `(i,j)` block of an endomorphism of a dependent product: include the
-`j`-th component, apply the endomorphism, then project to component `i`.
+Let R be a commutative ring and M_i R-modules. For F:∏iM_i→∏iM_i, dependentPiBlock F i j is
+proj_i∘F∘single_j:M_j→M_i.

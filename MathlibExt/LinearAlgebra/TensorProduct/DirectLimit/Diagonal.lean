@@ -15,11 +15,15 @@ public import Mathlib.LinearAlgebra.TensorProduct.DirectLimit
 public import Mathlib.Order.DirectedInverseSystem
 
 /-!
-# Actual mixed-stage maps for the tensor/direct-limit diagonal
+# Diagonal tensor direct limits and mixed-stage tensors
 
-These maps use the existing native module direct limit and tensor maps.
-Changing the common upper stage does not change the represented tensor.
-No transition injectivity or flatness is assumed.
+Let R be a commutative semiring, I a preorder, M_i,N_i R-semimodules and
+f_ab:M_a→M_b,g_ab:N_a→N_b transition families for a≤b. Write δ_ab=f_ab⊗g_ab, Lδ for the
+presented module direct limit of M_i⊗_RN_i, and LM,LN for the two factor limits with stage
+maps m_a,n_a,d_a. Assume f,g satisfy the directed-system identity and composition laws. Assume
+I is upward directed. For a,b≤c, put S_ab(z)=d_c((f_ac⊗g_bc)(z)); this is independent of c.
+The R-linear equivalence Lδ≃LM⊗_RLN sends d_a(x⊗y) to m_a(x)⊗n_a(y), with inverse S_ab on
+mixed-stage classes. No injective-transition assumption is used.
 -/
 
 @[expose] public section
@@ -38,17 +42,35 @@ variable {R : Type r} [CommSemiring R] {ι : Type i} [Preorder ι] [DecidableEq 
   (f : ∀ a b, a ≤ b → M a →ₗ[R] M b)
   (g : ∀ a b, a ≤ b → N a →ₗ[R] N b)
 
-/-- The simultaneous transition is the actual native tensor map. -/
+/-- **Simultaneous tensor transition map.**
+
+Let R be a commutative semiring, I a preorder, M_i,N_i R-semimodules and
+f_ab:M_a→M_b,g_ab:N_a→N_b transition families for a≤b. Write δ_ab=f_ab⊗g_ab, Lδ for the
+presented module direct limit of M_i⊗_RN_i, and LM,LN for the two factor limits with stage
+maps m_a,n_a,d_a. The map diagonalTransition f g a b h is δ_ab=f_ab⊗g_ab.
+-/
 def diagonalTransition (a b : ι) (h : a ≤ b) :
     M a ⊗[R] N a →ₗ[R] M b ⊗[R] N b :=
   TensorProduct.map (f a b h) (g a b h)
 
-/-- The native module direct limit of simultaneous tensor stages. -/
+/-- **Module direct limit of simultaneous tensor stages.**
+
+Let R be a commutative semiring, I a preorder, M_i,N_i R-semimodules and
+f_ab:M_a→M_b,g_ab:N_a→N_b transition families for a≤b. Write δ_ab=f_ab⊗g_ab, Lδ for the
+presented module direct limit of M_i⊗_RN_i, and LM,LN for the two factor limits with stage
+maps m_a,n_a,d_a. The module diagonalLimit f g is Lδ, represented by stage tensors with
+transition relations z_a∼δ_ab(z)_b.
+-/
 abbrev diagonalLimit :=
   Module.DirectLimit (fun j => M j ⊗[R] N j) (diagonalTransition f g)
 
-/-- Push a mixed-stage tensor to an actual common upper stage and take its
-native module-colimit class. -/
+/-- **Mixed tensor represented at a specified upper stage.**
+
+Let R be a commutative semiring, I a preorder, M_i,N_i R-semimodules and
+f_ab:M_a→M_b,g_ab:N_a→N_b transition families for a≤b. Write δ_ab=f_ab⊗g_ab, Lδ for the
+presented module direct limit of M_i⊗_RN_i, and LM,LN for the two factor limits with stage
+maps m_a,n_a,d_a. For a,b≤c, diagonalStageAt a b c sends z∈M_a⊗N_b to d_c((f_ac⊗g_bc)z).
+-/
 def diagonalStageAt (a b c : ι) (ha : a ≤ c) (hb : b ≤ c) :
     M a ⊗[R] N b →ₗ[R] diagonalLimit f g :=
   (Module.DirectLimit.of R ι (fun j => M j ⊗[R] N j)
@@ -65,8 +87,14 @@ theorem diagonalStageAt_tmul (a b c : ι) (ha : a ≤ c) (hb : b ≤ c)
 variable [DirectedSystem M (f · · ·)] [DirectedSystem N (g · · ·)]
 
 omit [DecidableEq ι] in
-/-- The actual simultaneous tensor transitions form a directed system.
-Only the original preorder and factor-system laws are needed. -/
+/-- **Tensor transitions satisfy the directed-system laws.**
+
+Let R be a commutative semiring, I a preorder, M_i,N_i R-semimodules and
+f_ab:M_a→M_b,g_ab:N_a→N_b transition families for a≤b. Write δ_ab=f_ab⊗g_ab, Lδ for the
+presented module direct limit of M_i⊗_RN_i, and LM,LN for the two factor limits with stage
+maps m_a,n_a,d_a. Assume f,g satisfy the directed-system identity and composition laws. The
+simultaneous transitions δ satisfy δ_aa=id and δ_bc∘δ_ab=δ_ac for a≤b≤c.
+-/
 instance diagonalDirectedSystem :
     DirectedSystem (fun a => M a ⊗[R] N a) (diagonalTransition f g · · ·) where
   map_self a z := by
@@ -82,7 +110,15 @@ instance diagonalDirectedSystem :
           DirectedSystem.map_map' f hab hbc, DirectedSystem.map_map' g hab hbc]
     | add x y hx hy => simp only [map_add, hx, hy]
 
-/-- Raising the common upper stage gives the same actual class. -/
+/-- **Raising the common tensor stage preserves its limit class.**
+
+Let R be a commutative semiring, I a preorder, M_i,N_i R-semimodules and
+f_ab:M_a→M_b,g_ab:N_a→N_b transition families for a≤b. Write δ_ab=f_ab⊗g_ab, Lδ for the
+presented module direct limit of M_i⊗_RN_i, and LM,LN for the two factor limits with stage
+maps m_a,n_a,d_a. Assume f,g satisfy the directed-system identity and composition laws. For
+a,b≤c≤d, d_c((f_ac⊗g_bc)z)=d_d((f_ad⊗g_bd)z), so diagonalStageAt is unchanged by raising c to
+d.
+-/
 theorem diagonalStageAt_mono (a b c d : ι) (ha : a ≤ c) (hb : b ≤ c)
     (h : c ≤ d) :
     diagonalStageAt f g a b c ha hb =
@@ -100,8 +136,16 @@ theorem diagonalStageAt_mono (a b c d : ι) (ha : a ≤ c) (hb : b ≤ c)
 
 variable [IsDirectedOrder ι]
 
-/-- Independence of the chosen upper stage follows from an actual further
-common upper stage and directed-system composition. -/
+/-- **Independence of a chosen common tensor upper stage.**
+
+Let R be a commutative semiring, I a preorder, M_i,N_i R-semimodules and
+f_ab:M_a→M_b,g_ab:N_a→N_b transition families for a≤b. Write δ_ab=f_ab⊗g_ab, Lδ for the
+presented module direct limit of M_i⊗_RN_i, and LM,LN for the two factor limits with stage
+maps m_a,n_a,d_a. Assume f,g satisfy the directed-system identity and composition laws. Assume
+I is upward directed. For a,b≤c, put S_ab(z)=d_c((f_ac⊗g_bc)(z)); this is independent of c. If
+both c,d bound a,b from above, the maps diagonalStageAt a b c and diagonalStageAt a b d
+coincide.
+-/
 theorem diagonalStageAt_eq (a b c d : ι) (ha : a ≤ c) (hb : b ≤ c)
     (ha' : a ≤ d) (hb' : b ≤ d) :
     diagonalStageAt f g a b c ha hb = diagonalStageAt f g a b d ha' hb' := by
@@ -110,8 +154,15 @@ theorem diagonalStageAt_eq (a b c d : ι) (ha : a ≤ c) (hb : b ≤ c)
     (diagonalStageAt_mono f g a b d e ha' hb' hd).symm
 
 
-/-- The canonical mixed-stage map uses an actual common upper stage. Its value
-is independent of that choice by diagonalStageAt_eq. -/
+/-- **Canonical mixed-stage tensor map into the diagonal limit.**
+
+Let R be a commutative semiring, I a preorder, M_i,N_i R-semimodules and
+f_ab:M_a→M_b,g_ab:N_a→N_b transition families for a≤b. Write δ_ab=f_ab⊗g_ab, Lδ for the
+presented module direct limit of M_i⊗_RN_i, and LM,LN for the two factor limits with stage
+maps m_a,n_a,d_a. Assume f,g satisfy the directed-system identity and composition laws. Assume
+I is upward directed. For a,b≤c, put S_ab(z)=d_c((f_ac⊗g_bc)(z)); this is independent of c.
+The map diagonalStage a b:M_a⊗N_b→Lδ is S_ab, represented at any common upper stage.
+-/
 def diagonalStage (a b : ι) : M a ⊗[R] N b →ₗ[R] diagonalLimit f g :=
   let h := exists_ge_ge a b
   diagonalStageAt f g a b (Classical.choose h)
@@ -123,7 +174,15 @@ theorem diagonalStage_eq (a b c : ι) (ha : a ≤ c) (hb : b ≤ c) :
   exact diagonalStageAt_eq f g a b (Classical.choose h) c
     (Classical.choose_spec h).1 (Classical.choose_spec h).2 ha hb
 
-/-- Compatibility with the actual transition in the second tensor factor. -/
+/-- **Mixed-stage map respects the second factor transition.**
+
+Let R be a commutative semiring, I a preorder, M_i,N_i R-semimodules and
+f_ab:M_a→M_b,g_ab:N_a→N_b transition families for a≤b. Write δ_ab=f_ab⊗g_ab, Lδ for the
+presented module direct limit of M_i⊗_RN_i, and LM,LN for the two factor limits with stage
+maps m_a,n_a,d_a. Assume f,g satisfy the directed-system identity and composition laws. Assume
+I is upward directed. For a,b≤c, put S_ab(z)=d_c((f_ac⊗g_bc)(z)); this is independent of c.
+For b≤c, S_ac∘(id_(M_a)⊗g_bc)=S_ab.
+-/
 theorem diagonalStage_comp_right (a b c : ι) (h : b ≤ c) :
     (diagonalStage f g a c).comp
         (TensorProduct.map (LinearMap.id : M a →ₗ[R] M a) (g b c h)) =
@@ -135,7 +194,15 @@ theorem diagonalStage_comp_right (a b c : ι) (h : b ≤ c) :
   simp only [LinearMap.comp_apply, TensorProduct.map_tmul, LinearMap.id_apply,
     diagonalStageAt_tmul, DirectedSystem.map_map' g]
 
-/-- Compatibility with the actual transition in the first tensor factor. -/
+/-- **Mixed-stage map respects the first factor transition.**
+
+Let R be a commutative semiring, I a preorder, M_i,N_i R-semimodules and
+f_ab:M_a→M_b,g_ab:N_a→N_b transition families for a≤b. Write δ_ab=f_ab⊗g_ab, Lδ for the
+presented module direct limit of M_i⊗_RN_i, and LM,LN for the two factor limits with stage
+maps m_a,n_a,d_a. Assume f,g satisfy the directed-system identity and composition laws. Assume
+I is upward directed. For a,b≤c, put S_ab(z)=d_c((f_ac⊗g_bc)(z)); this is independent of c.
+For a≤c, S_cb∘(f_ac⊗id_(N_b))=S_ab.
+-/
 theorem diagonalStage_comp_left (a b c : ι) (h : a ≤ c) :
     (diagonalStage f g c b).comp
         (TensorProduct.map (f a c h) (LinearMap.id : N b →ₗ[R] N b)) =
@@ -147,8 +214,15 @@ theorem diagonalStage_comp_left (a b c : ι) (h : a ≤ c) :
   simp only [LinearMap.comp_apply, TensorProduct.map_tmul, LinearMap.id_apply,
     diagonalStageAt_tmul, DirectedSystem.map_map' f]
 
-/-- At an actual diagonal stage the canonical mixed-stage map is the native
-stage injection, rather than a caller-supplied inverse formula. -/
+/-- **Diagonal mixed-stage map is the canonical stage inclusion.**
+
+Let R be a commutative semiring, I a preorder, M_i,N_i R-semimodules and
+f_ab:M_a→M_b,g_ab:N_a→N_b transition families for a≤b. Write δ_ab=f_ab⊗g_ab, Lδ for the
+presented module direct limit of M_i⊗_RN_i, and LM,LN for the two factor limits with stage
+maps m_a,n_a,d_a. Assume f,g satisfy the directed-system identity and composition laws. Assume
+I is upward directed. For a,b≤c, put S_ab(z)=d_c((f_ac⊗g_bc)(z)); this is independent of c.
+For a∈I, S_aa=d_a:M_a⊗N_a→Lδ.
+-/
 theorem diagonalStage_self (a : ι) :
     diagonalStage f g a a =
       Module.DirectLimit.of R ι (fun j => M j ⊗[R] N j) (diagonalTransition f g) a := by
@@ -160,8 +234,14 @@ theorem diagonalStage_self (a : ι) :
 
 omit [IsDirectedOrder ι] [DirectedSystem M (f · · ·)]
   [DirectedSystem N (g · · ·)] in
-/-- The actual forward diagonal comparison is the native module-colimit lift
-of the simultaneous stage injections into the two factor colimits. -/
+/-- **Forward comparison to the tensor of module limits.**
+
+Let R be a commutative semiring, I a preorder, M_i,N_i R-semimodules and
+f_ab:M_a→M_b,g_ab:N_a→N_b transition families for a≤b. Write δ_ab=f_ab⊗g_ab, Lδ for the
+presented module direct limit of M_i⊗_RN_i, and LM,LN for the two factor limits with stage
+maps m_a,n_a,d_a. The R-linear map diagonalToTensor:Lδ→LM⊗LN sends d_a(z) to (m_a⊗n_a)(z).
+This formula requires no directed-order or transition-law assumption.
+-/
 def diagonalToTensor :
     diagonalLimit f g →ₗ[R] Module.DirectLimit M f ⊗[R] Module.DirectLimit N g :=
   Module.DirectLimit.lift R ι (fun j => M j ⊗[R] N j) (diagonalTransition f g)
@@ -181,8 +261,13 @@ def diagonalToTensor :
 
 omit [IsDirectedOrder ι] [DirectedSystem M (f · · ·)]
   [DirectedSystem N (g · · ·)] in
-/-- The whole forward stage tensor uses the native factor injections.
-This characteristic needs no directedness or directed-system laws. -/
+/-- **Forward comparison on a full stage tensor.**
+
+Let R be a commutative semiring, I a preorder, M_i,N_i R-semimodules and
+f_ab:M_a→M_b,g_ab:N_a→N_b transition families for a≤b. Write δ_ab=f_ab⊗g_ab, Lδ for the
+presented module direct limit of M_i⊗_RN_i, and LM,LN for the two factor limits with stage
+maps m_a,n_a,d_a. For a∈I and z∈M_a⊗N_a, diagonalToTensor(d_a(z))=(m_a⊗n_a)(z).
+-/
 @[simp]
 theorem diagonalToTensor_of (a : ι) (z : M a ⊗[R] N a) :
     diagonalToTensor f g
@@ -201,8 +286,15 @@ theorem diagonalToTensor_of_tmul (a : ι) (x : M a) (y : N a) :
       Module.DirectLimit.of R ι M f a x ⊗ₜ[R] Module.DirectLimit.of R ι N g a y := by
   rw [diagonalToTensor_of, TensorProduct.map_tmul]
 
-/-- Native tensor/direct-limit commutation in the second factor followed by
-the computed mixed-stage lift. -/
+/-- **Second-factor limit map with one stage fixed.**
+
+Let R be a commutative semiring, I a preorder, M_i,N_i R-semimodules and
+f_ab:M_a→M_b,g_ab:N_a→N_b transition families for a≤b. Write δ_ab=f_ab⊗g_ab, Lδ for the
+presented module direct limit of M_i⊗_RN_i, and LM,LN for the two factor limits with stage
+maps m_a,n_a,d_a. Assume f,g satisfy the directed-system identity and composition laws. Assume
+I is upward directed. For a,b≤c, put S_ab(z)=d_c((f_ac⊗g_bc)(z)); this is independent of c.
+For a∈I, diagonalSecond a:M_a⊗LN→Lδ sends x⊗n_b(y) to S_ab(x⊗y).
+-/
 def diagonalSecond (a : ι) :
     M a ⊗[R] Module.DirectLimit N g →ₗ[R] diagonalLimit f g :=
   (Module.DirectLimit.lift R ι (fun b => M a ⊗[R] N b)
@@ -238,7 +330,15 @@ theorem diagonalSecond_tmul_of (a b : ι) (x : M a) (y : N b) :
       (i := b) (x ⊗ₜ[R] y)
   exact (congrArg p he).trans hp
 
-/-- The second-factor lift respects the actual first-factor transition. -/
+/-- **Fixed-stage second-factor lift respects a first-factor transition.**
+
+Let R be a commutative semiring, I a preorder, M_i,N_i R-semimodules and
+f_ab:M_a→M_b,g_ab:N_a→N_b transition families for a≤b. Write δ_ab=f_ab⊗g_ab, Lδ for the
+presented module direct limit of M_i⊗_RN_i, and LM,LN for the two factor limits with stage
+maps m_a,n_a,d_a. Assume f,g satisfy the directed-system identity and composition laws. Assume
+I is upward directed. For a,b≤c, put S_ab(z)=d_c((f_ac⊗g_bc)(z)); this is independent of c.
+For a≤c, diagonalSecond c∘(f_ac⊗id_(LN))=diagonalSecond a.
+-/
 theorem diagonalSecond_comp (a c : ι) (h : a ≤ c) :
     (diagonalSecond f g c).comp (LinearMap.rTensor (Module.DirectLimit N g) (f a c h)) =
       diagonalSecond f g a := by
@@ -260,8 +360,15 @@ theorem diagonalSecond_comp (a c : ι) (h : a ≤ c) :
     exact LinearMap.congr_fun (diagonalStage_comp_left f g a b c h) (x ⊗ₜ[R] y)
   exact LinearMap.congr_fun hx z
 
-/-- The inverse candidate uses native single-moving-factor equivalences and
-module-colimit lifts, with both transition compatibilities already earned. -/
+/-- **Inverse comparison from the tensor of module limits.**
+
+Let R be a commutative semiring, I a preorder, M_i,N_i R-semimodules and
+f_ab:M_a→M_b,g_ab:N_a→N_b transition families for a≤b. Write δ_ab=f_ab⊗g_ab, Lδ for the
+presented module direct limit of M_i⊗_RN_i, and LM,LN for the two factor limits with stage
+maps m_a,n_a,d_a. Assume f,g satisfy the directed-system identity and composition laws. Assume
+I is upward directed. For a,b≤c, put S_ab(z)=d_c((f_ac⊗g_bc)(z)); this is independent of c.
+The R-linear map tensorToDiagonal:LM⊗LN→Lδ sends m_a(x)⊗n_b(y) to S_ab(x⊗y).
+-/
 def tensorToDiagonal :
     Module.DirectLimit M f ⊗[R] Module.DirectLimit N g →ₗ[R] diagonalLimit f g :=
   (Module.DirectLimit.lift R ι (fun a => M a ⊗[R] Module.DirectLimit N g)
@@ -271,7 +378,15 @@ def tensorToDiagonal :
       exact LinearMap.congr_fun (diagonalSecond_comp f g a c h) z)).comp
     (TensorProduct.directLimitLeft f (Module.DirectLimit N g)).toLinearMap
 
-/-- Its mixed-stage characteristic is the actual common-stage tensor class. -/
+/-- **Inverse comparison on a mixed-stage pure tensor.**
+
+Let R be a commutative semiring, I a preorder, M_i,N_i R-semimodules and
+f_ab:M_a→M_b,g_ab:N_a→N_b transition families for a≤b. Write δ_ab=f_ab⊗g_ab, Lδ for the
+presented module direct limit of M_i⊗_RN_i, and LM,LN for the two factor limits with stage
+maps m_a,n_a,d_a. Assume f,g satisfy the directed-system identity and composition laws. Assume
+I is upward directed. For a,b≤c, put S_ab(z)=d_c((f_ac⊗g_bc)(z)); this is independent of c.
+For x∈M_a,y∈N_b, tensorToDiagonal(m_a(x)⊗n_b(y))=S_ab(x⊗y).
+-/
 @[simp]
 theorem tensorToDiagonal_of_tmul_of (a b : ι) (x : M a) (y : N b) :
     tensorToDiagonal f g
@@ -297,8 +412,15 @@ theorem tensorToDiagonal_of_tmul_of (a b : ι) (x : M a) (y : N b) :
   exact (congrArg p he).trans hp
 
 
-/-- The computed forward map sends a mixed-stage tensor to its two native
-factor classes, independently of the common upper stage. -/
+/-- **Forward comparison of a mixed-stage diagonal class.**
+
+Let R be a commutative semiring, I a preorder, M_i,N_i R-semimodules and
+f_ab:M_a→M_b,g_ab:N_a→N_b transition families for a≤b. Write δ_ab=f_ab⊗g_ab, Lδ for the
+presented module direct limit of M_i⊗_RN_i, and LM,LN for the two factor limits with stage
+maps m_a,n_a,d_a. Assume f,g satisfy the directed-system identity and composition laws. Assume
+I is upward directed. For a,b≤c, put S_ab(z)=d_c((f_ac⊗g_bc)(z)); this is independent of c.
+For x∈M_a,y∈N_b, diagonalToTensor(S_ab(x⊗y))=m_a(x)⊗n_b(y).
+-/
 theorem diagonalToTensor_diagonalStage (a b : ι) (x : M a) (y : N b) :
     diagonalToTensor f g (diagonalStage f g a b (x ⊗ₜ[R] y)) =
       Module.DirectLimit.of R ι M f a x ⊗ₜ[R] Module.DirectLimit.of R ι N g b y := by
@@ -306,8 +428,15 @@ theorem diagonalToTensor_diagonalStage (a b : ι) (x : M a) (y : N b) :
   rw [diagonalStage_eq f g a b c ha hb, diagonalStageAt_tmul,
     diagonalToTensor_of_tmul, Module.DirectLimit.of_f, Module.DirectLimit.of_f]
 
-/-- The inverse candidate followed by the forward map is identity on the
-actual factor-colimit tensor product. -/
+/-- **Forward then inverse tensor comparison identity.**
+
+Let R be a commutative semiring, I a preorder, M_i,N_i R-semimodules and
+f_ab:M_a→M_b,g_ab:N_a→N_b transition families for a≤b. Write δ_ab=f_ab⊗g_ab, Lδ for the
+presented module direct limit of M_i⊗_RN_i, and LM,LN for the two factor limits with stage
+maps m_a,n_a,d_a. Assume f,g satisfy the directed-system identity and composition laws. Assume
+I is upward directed. For a,b≤c, put S_ab(z)=d_c((f_ac⊗g_bc)(z)); this is independent of c.
+The maps Ψ=diagonalToTensor and Φ=tensorToDiagonal satisfy Ψ∘Φ=id_(LM⊗LN).
+-/
 theorem diagonalToTensor_comp_tensorToDiagonal :
     (diagonalToTensor f g).comp (tensorToDiagonal f g) = LinearMap.id := by
   apply TensorProduct.ext'
@@ -332,8 +461,15 @@ theorem diagonalToTensor_comp_tensorToDiagonal :
     rw [tensorToDiagonal_of_tmul_of, diagonalToTensor_diagonalStage]
   exact LinearMap.congr_fun (LinearMap.congr_fun he x) y
 
-/-- The forward map followed by the inverse is identity on the actual
-simultaneous-stage module quotient. -/
+/-- **Inverse then forward diagonal comparison identity.**
+
+Let R be a commutative semiring, I a preorder, M_i,N_i R-semimodules and
+f_ab:M_a→M_b,g_ab:N_a→N_b transition families for a≤b. Write δ_ab=f_ab⊗g_ab, Lδ for the
+presented module direct limit of M_i⊗_RN_i, and LM,LN for the two factor limits with stage
+maps m_a,n_a,d_a. Assume f,g satisfy the directed-system identity and composition laws. Assume
+I is upward directed. For a,b≤c, put S_ab(z)=d_c((f_ac⊗g_bc)(z)); this is independent of c.
+The maps Ψ=diagonalToTensor and Φ=tensorToDiagonal satisfy Φ∘Ψ=id_(Lδ).
+-/
 theorem tensorToDiagonal_comp_diagonalToTensor :
     (tensorToDiagonal f g).comp (diagonalToTensor f g) = LinearMap.id := by
   apply Module.DirectLimit.hom_ext (R := R) (ι := ι)
@@ -349,16 +485,31 @@ theorem tensorToDiagonal_comp_diagonalToTensor :
       (diagonalTransition f g) a (x ⊗ₜ[R] y)
   rw [diagonalToTensor_of_tmul, tensorToDiagonal_of_tmul_of, diagonalStage_self]
 
-/-- The canonical unbundled diagonal tensor/direct-limit equivalence.
-The index, scalar and both module worlds are independent; no transition
-injectivity, flatness, field or supplied inverse is assumed. -/
+/-- **Tensor product commutes with the diagonal module limit.**
+
+Let R be a commutative semiring, I a preorder, M_i,N_i R-semimodules and
+f_ab:M_a→M_b,g_ab:N_a→N_b transition families for a≤b. Write δ_ab=f_ab⊗g_ab, Lδ for the
+presented module direct limit of M_i⊗_RN_i, and LM,LN for the two factor limits with stage
+maps m_a,n_a,d_a. Assume f,g satisfy the directed-system identity and composition laws. Assume
+I is upward directed. For a,b≤c, put S_ab(z)=d_c((f_ac⊗g_bc)(z)); this is independent of c.
+The R-linear equivalence directLimitDiagonal:Lδ≃ₗ[R]LM⊗LN has forward map diagonalToTensor and
+inverse tensorToDiagonal.
+-/
 def directLimitDiagonal :
     diagonalLimit f g ≃ₗ[R] Module.DirectLimit M f ⊗[R] Module.DirectLimit N g :=
   LinearEquiv.ofLinearMap (diagonalToTensor f g) (tensorToDiagonal f g)
     (diagonalToTensor_comp_tensorToDiagonal f g)
     (tensorToDiagonal_comp_diagonalToTensor f g)
 
-/-- The whole stage tensor maps by the exact native injections of its factors. -/
+/-- **Diagonal tensor equivalence on an arbitrary stage tensor.**
+
+Let R be a commutative semiring, I a preorder, M_i,N_i R-semimodules and
+f_ab:M_a→M_b,g_ab:N_a→N_b transition families for a≤b. Write δ_ab=f_ab⊗g_ab, Lδ for the
+presented module direct limit of M_i⊗_RN_i, and LM,LN for the two factor limits with stage
+maps m_a,n_a,d_a. Assume f,g satisfy the directed-system identity and composition laws. Assume
+I is upward directed. For a,b≤c, put S_ab(z)=d_c((f_ac⊗g_bc)(z)); this is independent of c.
+For z∈M_a⊗N_a, directLimitDiagonal(d_a(z))=(m_a⊗n_a)(z).
+-/
 @[simp]
 theorem directLimitDiagonal_of (a : ι) (z : M a ⊗[R] N a) :
     directLimitDiagonal f g
@@ -368,7 +519,15 @@ theorem directLimitDiagonal_of (a : ι) (z : M a ⊗[R] N a) :
         (Module.DirectLimit.of R ι N g a) z := by
   exact diagonalToTensor_of f g a z
 
-/-- The forward characteristic retains exactly the native simultaneous stage map. -/
+/-- **Diagonal tensor equivalence on a stage pure tensor.**
+
+Let R be a commutative semiring, I a preorder, M_i,N_i R-semimodules and
+f_ab:M_a→M_b,g_ab:N_a→N_b transition families for a≤b. Write δ_ab=f_ab⊗g_ab, Lδ for the
+presented module direct limit of M_i⊗_RN_i, and LM,LN for the two factor limits with stage
+maps m_a,n_a,d_a. Assume f,g satisfy the directed-system identity and composition laws. Assume
+I is upward directed. For a,b≤c, put S_ab(z)=d_c((f_ac⊗g_bc)(z)); this is independent of c.
+For x∈M_a,y∈N_a, directLimitDiagonal(d_a(x⊗y))=m_a(x)⊗n_a(y).
+-/
 theorem directLimitDiagonal_of_tmul (a : ι) (x : M a) (y : N a) :
     directLimitDiagonal f g
         (Module.DirectLimit.of R ι (fun j => M j ⊗[R] N j)
@@ -376,7 +535,15 @@ theorem directLimitDiagonal_of_tmul (a : ι) (x : M a) (y : N a) :
       Module.DirectLimit.of R ι M f a x ⊗ₜ[R] Module.DirectLimit.of R ι N g a y :=
   diagonalToTensor_of_tmul f g a x y
 
-/-- The inverse characteristic is the computed class at any actual common stage. -/
+/-- **Inverse tensor equivalence on two stage classes.**
+
+Let R be a commutative semiring, I a preorder, M_i,N_i R-semimodules and
+f_ab:M_a→M_b,g_ab:N_a→N_b transition families for a≤b. Write δ_ab=f_ab⊗g_ab, Lδ for the
+presented module direct limit of M_i⊗_RN_i, and LM,LN for the two factor limits with stage
+maps m_a,n_a,d_a. Assume f,g satisfy the directed-system identity and composition laws. Assume
+I is upward directed. For a,b≤c, put S_ab(z)=d_c((f_ac⊗g_bc)(z)); this is independent of c.
+For x∈M_a,y∈N_b, directLimitDiagonal⁻¹(m_a(x)⊗n_b(y))=S_ab(x⊗y).
+-/
 @[simp]
 theorem directLimitDiagonal_symm_of_tmul_of (a b : ι) (x : M a) (y : N b) :
     (directLimitDiagonal f g).symm
@@ -384,9 +551,15 @@ theorem directLimitDiagonal_symm_of_tmul_of (a b : ι) (x : M a) (y : N b) :
       diagonalStage f g a b (x ⊗ₜ[R] y) :=
   tensorToDiagonal_of_tmul_of f g a b x y
 
-/-- A stage tensor whose two factor classes give zero is killed at an actual
-common later stage. This uses only additive monoids over a commutative semiring;
-the supplied stage removes any need for a nonempty-index assumption. -/
+/-- **A tensor class vanishing in the limits vanishes at a later stage.**
+
+Let R be a commutative semiring, I a preorder, M_i,N_i R-semimodules and
+f_ab:M_a→M_b,g_ab:N_a→N_b transition families for a≤b. Write δ_ab=f_ab⊗g_ab, Lδ for the
+presented module direct limit of M_i⊗_RN_i, and LM,LN for the two factor limits with stage
+maps m_a,n_a,d_a. Assume f,g satisfy the directed-system identity and composition laws. Assume
+I is upward directed. For a,b≤c, put S_ab(z)=d_c((f_ac⊗g_bc)(z)); this is independent of c. If
+z∈M_a⊗N_a satisfies (m_a⊗n_a)(z)=0, then there exist c≥a with (f_ac⊗g_ac)(z)=0.
+-/
 theorem exists_eq_zero_of_map_to_directLimit_diagonal_eq_zero
     {a : ι} (z : M a ⊗[R] N a)
     (hz : TensorProduct.map (Module.DirectLimit.of R ι M f a)

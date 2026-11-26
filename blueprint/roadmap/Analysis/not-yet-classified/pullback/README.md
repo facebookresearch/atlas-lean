@@ -69,5 +69,5 @@
 - [Comparison of Busby pullback algebras](pullback-middle-map.md)
 - [Pair formula for pullback comparison](pullback-middle-map-coe.md)
 - [Morphism of pullback extensions](pullback-hom.md)
-- [Comp](comp.md)
-- [Comp apply](comp-apply.md)
+- [Normal action pulled back by a continuous group homomorphism](comp.md)
+- [Automorphism value of a pulled-back normal action](comp-apply.md)

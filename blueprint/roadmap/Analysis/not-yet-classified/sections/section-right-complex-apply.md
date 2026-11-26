@@ -1,3 +1,4 @@
-# Section Right Complex apply
+# Pointwise value of a complex compact-support section
 
-The complex section retains each original pointwise value.
+For topological `X`, Hausdorff
+`Y`, `F∈C_c(X×Y,ℂ)` and `x,y`, `sectionRightComplex F x y=F(x,y)`.

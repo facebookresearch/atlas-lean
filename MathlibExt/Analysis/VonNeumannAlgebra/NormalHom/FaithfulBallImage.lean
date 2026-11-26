@@ -15,13 +15,13 @@ public import MathlibExt.Analysis.VonNeumannAlgebra.NormalHom.CompactBallImage
 public import Mathlib.Analysis.CStarAlgebra.Hom
 
 /-!
-# Faithful normal homomorphisms identify actual norm balls in their operator range
+# Norm balls in the range of an injective normal map
 
-Injectivity of the original star homomorphism gives its stock C-star
-isometry. Its original ultraweak ball image is therefore exactly the
-intersection of its actual range with the target original norm ball.
-Compactness of the original ball image makes that actual intersection
-compact. No range closedness, predual or normal inverse certificate is input.
+Let `f : M → N` be an injective normal unital complex star homomorphism. Its C-star isometry
+gives `f({x : ‖x‖≤r})=range(f) ∩ {y : ‖y‖≤r}` for every real `r`.
+
+This intersection is compact in the target ultraweak topology. The norms are the inherited
+operator norms, and no global closed-range or normal-inverse hypothesis is used.
 -/
 
 @[expose] public section
@@ -39,7 +39,12 @@ variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [Complete
 variable {K : Type v} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
 variable {M : VonNeumannAlgebra H} {N : VonNeumannAlgebra K}
 
-/-- The actual source ball image is exactly its original range intersected with the target norm ball. -/
+/-- **Source norm-ball image equals the bounded range intersection.** Let `M,N` be concrete
+von Neumann algebras on complete complex Hilbert spaces. Their normal-functional Banach
+spaces `M_*,N_*` are the norm-closed spans of vector functionals, and their ultraweak
+topologies are `σ(M,M_*)`, `σ(N,N_*)`. Let `f : M → N` be a unital complex star
+homomorphism that is ultraweakly continuous. Assume `f` is injective. for every `r : ℝ`,
+`f({x ∈ M : ‖x‖≤r})=range(f)∩{y ∈ N : ‖y‖≤r}`, as subsets of ultraweak `N`. -/
 theorem ultraweak_ball_image_eq_range_inter (f : NormalStarAlgHom M N)
     (hf : Function.Injective f) (r : ℝ) :
     f.ultraweakMap '' {x : Ultraweak M | ‖ultraweakLinearEquiv M x‖ ≤ r} =
@@ -62,7 +67,12 @@ theorem ultraweak_ball_image_eq_range_inter (f : NormalStarAlgHom M N)
     rw [← hnorm]
     exact hx
 
-/-- The original range's intersection with every original target norm ball is actually compact. -/
+/-- **Ultraweak compactness of bounded normal-map range intersections.** Let `M,N` be concrete
+von Neumann algebras on complete complex Hilbert spaces. Their normal-functional Banach
+spaces `M_*,N_*` are the norm-closed spans of vector functionals, and their ultraweak
+topologies are `σ(M,M_*)`, `σ(N,N_*)`. Let `f : M → N` be a unital complex star
+homomorphism that is ultraweakly continuous. Assume `f` is injective. for every `r : ℝ`,
+`range(f)∩{y ∈ N : ‖y‖≤r}` is compact in `σ(N,N_*)`. -/
 theorem ultraweak_range_inter_ball_isCompact (f : NormalStarAlgHom M N)
     (hf : Function.Injective f) (r : ℝ) :
     IsCompact (Set.range f.ultraweakMap ∩ {y : Ultraweak N | ‖ultraweakLinearEquiv N y‖ ≤ r}) := by

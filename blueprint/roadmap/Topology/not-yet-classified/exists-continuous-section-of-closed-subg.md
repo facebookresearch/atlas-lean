@@ -1,4 +1,6 @@
-# Profinite Coset Section Zorn
+# Continuous section between nested closed profinite coset spaces
 
-For closed subgroups `K ≤ H` of a profinite group, the canonical
-projection `G / K → G / H` admits a continuous set-theoretic section.
+Let `G` be a compact
+Hausdorff totally disconnected topological group. for closed subgroups `K≤H`, there is
+continuous `s : G/H → G/K` satisfying `cosetProjection∘s=id_(G/H)`. No normality or
+finite-index assumption is required.

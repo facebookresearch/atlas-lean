@@ -1,3 +1,7 @@
-# Normal CFCCoefficient Measure cfc mul left
+# Continuous factor from the first CFC coefficient vector
 
-Acting on the first vector by the actual continuous CFC multiplies the continuous integrand.
+Let `H` be a complete complex
+Hilbert space and `T : H →L[ℂ] H` a normal operator, so `T* T=T T*`. Put `K=σ_ℂ(T)` with
+its Borel measurable structure. Let `μ_(g,h)` be the regular complex measure on `K`
+characterized by `∫ f dμ_(g,h)=⟨h,f(T)g⟩` for `f ∈ C(K,ℂ)`. for `g,h ∈ H` and `f,q ∈
+C(K,ℂ)`, `∫ q dμ_(f(T)g,h)=∫ q*f dμ_(g,h)`.

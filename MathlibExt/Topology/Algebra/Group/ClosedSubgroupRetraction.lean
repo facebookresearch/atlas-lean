@@ -13,12 +13,14 @@ public import MathlibExt.Topology.Algebra.Group.ProfiniteCosetSectionZorn
 public import Mathlib.GroupTheory.QuotientGroup.Basic
 
 /-!
-# Continuous equivariant coordinates for closed profinite subgroups
+# Continuous equivariant retraction onto a closed profinite subgroup
 
-A genuine continuous closed-coset section gives a continuous left
-`H`-equivariant retraction `G → H`, normalized on `H`. No normality or
-finite-index hypothesis is used. The coordinate is noncanonical; its
-existence and normalization are proved from the actual quotient section.
+For a closed subgroup `H` of a compact Hausdorff totally disconnected topological group `G`,
+there exists a continuous retraction `r : G → H` with `r(hg)=h r(g)` for all `h∈H`, `g∈G`, and
+`r(h)=h` on the subgroup.
+
+A choice of such retraction retains these equivariance and normalization equations. No
+normality, finite index or homomorphic splitting of `H` is assumed.
 -/
 
 @[expose] public section
@@ -34,8 +36,10 @@ namespace Subgroup
 variable {G : Type g} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
 variable [CompactSpace G] [T2Space G] [TotallyDisconnectedSpace G]
 
-/-- Every closed subgroup of a profinite group has a continuous,
-left-equivariant retraction, with no normality or index restriction. -/
+/-- **Continuous left-equivariant retraction onto a closed subgroup.** Let `G` be a compact
+Hausdorff totally disconnected topological group. Let `H≤G` be a closed subgroup, without
+a normality or finite-index condition. there exists `r∈C(G,H)` with `r(hg)=h r(g)` for
+every `h∈H`, `g∈G`, and `r(h)=h` on `H`. -/
 theorem exists_continuous_equivariant_retraction
     (H : Subgroup G) [IsClosed (H : Set G)] :
     ∃ r : C(G, H), (∀ (h : H) (g : G), r ((h : G) * g) = h * r g) ∧
@@ -80,25 +84,36 @@ theorem exists_continuous_equivariant_retraction
   have h := hr h 1
   simpa only [mul_one, r, ContinuousMap.coe_mk, mul_inv_cancel, mul_one] using h
 
-/-- A chosen actual continuous left-equivariant retraction of a closed
-subgroup; the choice is made from the proved closed-coset section theorem. -/
+/-- **Chosen continuous equivariant closed-subgroup coordinate.** Let `G` be a compact
+Hausdorff totally disconnected topological group. Let `H≤G` be a closed subgroup, without
+a normality or finite-index condition. `continuousEquivariantRetraction H : C(G,H)` is a
+retraction with `r(hg)=h r(g)` and `r(h)=h`; it is not asserted to be a group
+homomorphism. -/
 def continuousEquivariantRetraction (H : Subgroup G) [IsClosed (H : Set G)] : C(G, H) :=
   (exists_continuous_equivariant_retraction H).choose
 
-/-- The chosen coordinate is left-equivariant for every subgroup element. -/
+/-- **Left subgroup equivariance of the retraction.** Let `G` be a compact Hausdorff totally
+disconnected topological group. Let `H≤G` be a closed subgroup, without a normality or
+finite-index condition. for `r=continuousEquivariantRetraction H`, `h∈H`, `g∈G`, `r(hg)=h
+r(g)`. -/
 theorem continuousEquivariantRetraction_equivariant
     (H : Subgroup G) [IsClosed (H : Set G)] (h : H) (g : G) :
     continuousEquivariantRetraction H ((h : G) * g) =
       h * continuousEquivariantRetraction H g :=
   (exists_continuous_equivariant_retraction H).choose_spec.1 h g
 
-/-- The chosen coordinate fixes every actual element of the closed subgroup. -/
+/-- **Closed-subgroup retraction fixes subgroup elements.** Let `G` be a compact Hausdorff
+totally disconnected topological group. Let `H≤G` be a closed subgroup, without a
+normality or finite-index condition. for `r=continuousEquivariantRetraction H` and `h∈H`,
+`r(h)=h`. -/
 theorem continuousEquivariantRetraction_subtype
     (H : Subgroup G) [IsClosed (H : Set G)] (h : H) :
     continuousEquivariantRetraction H (h : G) = h :=
   (exists_continuous_equivariant_retraction H).choose_spec.2 h
 
-/-- The normalization fixes the identity element. -/
+/-- **Identity normalization of the closed-subgroup retraction.** Let `G` be a compact
+Hausdorff totally disconnected topological group. Let `H≤G` be a closed subgroup, without
+a normality or finite-index condition. `continuousEquivariantRetraction H (1_G)=1_H`. -/
 theorem continuousEquivariantRetraction_one
     (H : Subgroup G) [IsClosed (H : Set G)] :
     continuousEquivariantRetraction H (1 : G) = 1 :=

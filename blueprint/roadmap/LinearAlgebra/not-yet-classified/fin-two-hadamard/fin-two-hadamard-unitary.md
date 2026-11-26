@@ -1,3 +1,3 @@
-# Fin Two Hadamard Unitary
+# Two-dimensional Hadamard unitary
 
-The Hadamard matrix `finTwoHadamard` bundled as an element of the unitary group.
+The element finTwoHadamardUnitary∈U(2,ℂ) has matrix (1/√2)[[1,1],[1,-1]].

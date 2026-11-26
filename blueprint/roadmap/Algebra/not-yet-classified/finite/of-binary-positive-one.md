@@ -1,3 +1,4 @@
-# Of Binary Positive one
+# Singleton binary-splitting family
 
-Positive size one is the literal singleton family `1`.
+For a type R with multiplication and a distinguished element 1 and v∈R², ofBinaryPositive v 1
+has its single value 1.

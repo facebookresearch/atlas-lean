@@ -15,10 +15,11 @@ public import MathlibExt.MeasureTheory.Function.L2Space.RightTensorProduct
 public import MathlibExt.Analysis.InnerProductSpace.TensorProduct.CompletionMap
 
 /-!
-# Actual constant operators in H-first tensor L2 coordinates
+# Constant Hilbert operators in tensor L² coordinates
 
-The original completed tensor map on the Hilbert factor is exactly the
-existing pointwise Lp composition map in the computed L2 coordinates.
+Let X be a measurable space, μ any measure, 𝕜 an RCLike field and H₁,H₂ complete inner product
+spaces over 𝕜 in independent universes. For J_i:H_i⊗̂L²(X,μ;𝕜)≃L²(X,μ;H_i),
+J_i(x⊗f)(s)=f(s)•x, and a bounded B:H₁→H₂, J₂∘(B⊗̂id)=M_B∘J₁, where M_B acts pointwise by B.
 -/
 
 @[expose] public section
@@ -40,7 +41,13 @@ variable {𝕜 : Type uK} [RCLike 𝕜]
 variable {H₁ : Type uH₁} [NormedAddCommGroup H₁] [InnerProductSpace 𝕜 H₁] [CompleteSpace H₁]
 variable {H₂ : Type uH₂} [NormedAddCommGroup H₂] [InnerProductSpace 𝕜 H₂] [CompleteSpace H₂]
 
-/-- The original completed tensor operator has its actual pointwise vector L2 value. -/
+/-- **Tensor-to-L² coordinates intertwine a constant operator.**
+
+Let X be measurable, μ any measure, 𝕜 an RCLike field and H₁,H₂ complete inner product spaces.
+Let J_i=tensorToLpRight μ:H_i⊗̂L²(X,μ;𝕜)≃L²(X,μ;H_i). For bounded B:H₁→H₂ and z in the first
+tensor completion, J₂((B⊗̂id)z)=B.compLpL 2 μ (J₁z), whose representative is s↦B((J₁z)(s))
+almost everywhere.
+-/
 theorem tensorToLpRight_mapLCompletion (μ : Measure X) (B : H₁ →L[𝕜] H₂)
     (z : UniformSpace.Completion (H₁ ⊗[𝕜] (Lp 𝕜 2 μ))) :
     tensorToLpRight μ

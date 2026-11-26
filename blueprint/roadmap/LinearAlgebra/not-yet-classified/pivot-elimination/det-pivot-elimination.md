@@ -1,4 +1,4 @@
-# Det pivot Elimination
+# Determinant of the elimination matrix
 
-The original elimination determinant is the exact pivot power for
-every lower-block size, including the empty lower block.
+For a commutative ring R, finite I, a ∈ R and c ∈ Mat(I,1;R), the matrix E = [[1,0],[−c,aI]]
+satisfies det E = a^|I|. In particular, the empty lower block gives det E = 1.

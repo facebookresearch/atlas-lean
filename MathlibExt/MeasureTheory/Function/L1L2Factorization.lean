@@ -15,11 +15,12 @@ public import Mathlib.MeasureTheory.Function.Holder
 public import Mathlib.MeasureTheory.Function.L2Space
 
 /-!
-# Factoring complex `L¹` functions through `L²`
+# Complex L¹ factorization by two L² functions
 
-Every complex `L¹` function is the pointwise product of an `L²` function and the conjugate of
-another `L²` function. The result is stated on canonical `Lp` carriers and requires no assumption on
-the measure.
+On any measure space, each complex `L¹` class factors as `f=g conj(h)` for two classes `g,h∈L²`.
+The product is the pointwise product interpreted in the canonical `Lp ℂ 1 μ` carrier.
+
+No finiteness, sigma-finiteness or nonzero-measure hypothesis is required.
 -/
 
 @[expose] public section
@@ -35,7 +36,10 @@ universe u
 
 variable {X : Type u} [MeasurableSpace X] {mu : Measure X}
 
-/-- Every complex `L¹` function factors as `g * conj h` for two `L²` functions. -/
+/-- **Factorization of a complex L¹ class by two L² classes.** Let `X` be a measurable space
+and `μ` any measure. For every `f∈Lp ℂ 1 μ`, there exist `g,h∈Lp ℂ 2 μ` with `g*conj(h)=f`
+as L¹ classes, the product being the pointwise `Lp` multiplication. No assumption on the
+measure is required. -/
 theorem exists_l2_mul_star_eq (f : Lp ℂ 1 mu) :
     ∃ g h : Lp ℂ 2 mu, (g • star h : Lp ℂ 1 mu) = f := by
   let r : X → ℝ := fun x ↦ Real.sqrt ‖f x‖

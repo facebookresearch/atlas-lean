@@ -16,13 +16,14 @@ public import MathlibExt.Analysis.VonNeumannAlgebra.Weight
 public import MathlibExt.Analysis.VonNeumannAlgebra.MultiplicationPredual
 
 /-!
-# Source semifiniteness gives the actual finite-square ultraweak density
+# Ultraweak density of a semifinite weight's square domain
 
-The original finite-positive integration span lies in the exact
-finite-square module by the neutral scalar-weight compression APIs.
-Source semifiniteness transfers its actual ultraweak density to that same
-module. Weight-independent multiplication and predual continuity APIs are
-supplied by the neutral MultiplicationPredual sibling.
+For an extended positive weight on a concrete von Neumann algebra, the finite-positive
+integration span lies in `n_φ={x : φ(x* x)<∞}`. If the integration span is ultraweakly dense,
+then `n_φ` is ultraweakly dense as well.
+
+This density assertion requires semifiniteness in the finite-positive span sense. Faithfulness
+and normality of the weight are not premises.
 -/
 
 @[expose] public section
@@ -40,7 +41,11 @@ universe uH
 
 variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- Source finite-positive-span semifiniteness gives density of the actual original square module. -/
+/-- **Semifinite square domain is ultraweakly dense.** Let `H` be a complete complex Hilbert
+space and `M ⊆ B(H)` a concrete von Neumann algebra. Let `φ : M₊ → [0,∞]` be an extended
+positive weight: additive, homogeneous for finite nonnegative real scalars, and zero at
+zero. if `span ℂ {a ≥ 0 : φ(a)<∞}` is ultraweakly dense in `M`, then the complex submodule
+`n_φ={x : φ(x* x)<∞}` is ultraweakly dense. No faithfulness or normality is assumed. -/
 theorem weightFiniteSquareUltraweakDense (M : VonNeumannAlgebra H)
     (φ : CStarAlgebra.ScalarWeight.Weight M) (hφ : IsSemifiniteWeight M φ) :
     Dense ((φ.finiteSquareSubmodule.map (ultraweakLinearEquiv M).symm.toLinearMap :

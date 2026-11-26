@@ -12,12 +12,12 @@ module
 public import MathlibExt.LinearAlgebra.CokernelLengthComposition
 
 /-!
-# Literal pivot elimination on arbitrary module blocks
+# Pivot elimination and full Schur cokernels
 
-The pivot is nonzero, with no unit-pivot premise. The actual elimination map
-and Schur map retain the original off-diagonal maps. Their composition and
-injectivity are earned from the actual module operations. These are the
-arbitrary-size prerequisites for singular determinant/cokernel length.
+Let R be a commutative ring and N an R-module. For a∈R, r:N→R, c:R→N and B:N→N linear, set
+T(x,y)=(a*x+r(y),c(x)+B(y)), E(x,y)=(x,a•y-c(x)) and S=a•B-c∘r. Then E∘T(x,y)=(a*x+r(y),S(y)).
+If a≠0 and N has no zero scalar divisors, E is injective; injectivity of T also makes S
+injective. These relations give full cokernel-length formulas over possibly singular rings.
 -/
 
 @[expose] public section
@@ -29,23 +29,42 @@ namespace LinearMap
 
 variable {R : Type u} [CommRing R] {N : Type v} [AddCommGroup N] [Module R N]
 
-/-- The original pivot block acting on the full module R × N. -/
+/-- **Pivot block map on a ring and a module.**
+
+Let R be a commutative ring and N an R-module. For a∈R, r:N→R, c:R→N and B:N→N linear, set
+T(x,y)=(a*x+r(y),c(x)+B(y)), E(x,y)=(x,a•y-c(x)) and S=a•B-c∘r. The endomorphism pivotBlock a
+r c B:R×N→R×N is T.
+-/
 def pivotBlock (a : R) (r : N →ₗ[R] R) (c : R →ₗ[R] N) (B : N →ₗ[R] N) :
     R × N →ₗ[R] R × N :=
   (a • LinearMap.fst R R N + r.comp (LinearMap.snd R R N)).prod
     (c.comp (LinearMap.fst R R N) + B.comp (LinearMap.snd R R N))
 
-/-- The literal lower elimination map, with the original nonunit pivot. -/
+/-- **Lower pivot elimination map.**
+
+Let R be a commutative ring and N an R-module. For a∈R, r:N→R, c:R→N and B:N→N linear, set
+T(x,y)=(a*x+r(y),c(x)+B(y)), E(x,y)=(x,a•y-c(x)) and S=a•B-c∘r. The endomorphism
+pivotElimination a c is E(x,y)=(x,a•y-c(x)).
+-/
 def pivotElimination (a : R) (c : R →ₗ[R] N) : R × N →ₗ[R] R × N :=
   (LinearMap.fst R R N).prod
     (-(c.comp (LinearMap.fst R R N)) + a • LinearMap.snd R R N)
 
-/-- The actual Schur block; the full original off-diagonal product remains. -/
+/-- **Schur map with the pivot retained.**
+
+Let R be a commutative ring and N an R-module. For a∈R, r:N→R, c:R→N and B:N→N linear, set
+T(x,y)=(a*x+r(y),c(x)+B(y)), E(x,y)=(x,a•y-c(x)) and S=a•B-c∘r. The endomorphism pivotSchur a
+r c B:N→N is S=a•B-c∘r.
+-/
 def pivotSchur (a : R) (r : N →ₗ[R] R) (c : R →ₗ[R] N) (B : N →ₗ[R] N) : N →ₗ[R] N :=
   a • B - c.comp r
 
-/-- Actual pivot elimination produces the original upper block map with
-the full Schur block, without inverting the pivot. -/
+/-- **Elimination gives the upper pivot and Schur blocks.**
+
+Let R be a commutative ring and N an R-module. For a∈R, r:N→R, c:R→N and B:N→N linear, set
+T(x,y)=(a*x+r(y),c(x)+B(y)), E(x,y)=(x,a•y-c(x)) and S=a•B-c∘r. The equality
+pivotElimination∘pivotBlock sends (x,y) to (a*x+r(y),S(y)).
+-/
 theorem pivotElimination_comp (a : R) (r : N →ₗ[R] R) (c : R →ₗ[R] N) (B : N →ₗ[R] N) :
     (pivotElimination a c).comp (pivotBlock a r c B) =
       (a • LinearMap.fst R R N + r.comp (LinearMap.snd R R N)).prod
@@ -59,8 +78,12 @@ theorem pivotElimination_comp (a : R) (r : N →ₗ[R] R) (c : R →ₗ[R] N) (B
     rw [map_add, hc, smul_add]
     abel
 
-/-- A nonzero pivot earns injectivity of the actual elimination map on
-every torsion-free module; a unit or finite-rank premise is unnecessary. -/
+/-- **Injectivity of elimination for a nonzero pivot.**
+
+Let R be a commutative ring and N an R-module. For a∈R, r:N→R, c:R→N and B:N→N linear, set
+T(x,y)=(a*x+r(y),c(x)+B(y)), E(x,y)=(x,a•y-c(x)) and S=a•B-c∘r. Assume a≠0 and r₀•n=0 implies
+r₀=0 or n=0 for scalars r₀∈R and n∈N. Then E is injective.
+-/
 theorem pivotElimination_injective [NoZeroSMulDivisors R N] (a : R) (ha : a ≠ 0)
     (c : R →ₗ[R] N) : Function.Injective (pivotElimination a c) := by
   rw [injective_iff_map_eq_zero]
@@ -71,8 +94,12 @@ theorem pivotElimination_injective [NoZeroSMulDivisors R N] (a : R) (ha : a ≠ 
   have hy0 : y = 0 := (eq_zero_or_eq_zero_of_smul_eq_zero hy).resolve_left ha
   exact Prod.ext hx hy0
 
-/-- Injectivity of the original block and its nonzero pivot earns the full
-Schur block's injectivity by clearing that pivot in the actual source vector. -/
+/-- **Injectivity passes from the pivot block to the Schur map.**
+
+Let R be a commutative ring and N an R-module. For a∈R, r:N→R, c:R→N and B:N→N linear, set
+T(x,y)=(a*x+r(y),c(x)+B(y)), E(x,y)=(x,a•y-c(x)) and S=a•B-c∘r. Assume a≠0, N has no zero
+scalar divisors and T is injective. Then S is injective.
+-/
 theorem pivotSchur_injective [NoZeroSMulDivisors R N]
     (a : R) (ha : a ≠ 0) (r : N →ₗ[R] R) (c : R →ₗ[R] N) (B : N →ₗ[R] N)
     (hA : Function.Injective (pivotBlock a r c B)) : Function.Injective (pivotSchur a r c B) := by
@@ -91,9 +118,12 @@ theorem pivotSchur_injective [NoZeroSMulDivisors R N]
   have hy0 : a • y = 0 := congrArg Prod.snd hv
   exact (eq_zero_or_eq_zero_of_smul_eq_zero hy0).resolve_left ha
 
-/-- The actual elimination map has precisely the full cokernel length of
-its lower scalar block. The proof uses actual product changes of basis and
-the upper block exact sequence, retaining nonunit pivots. -/
+/-- **Length of the pivot elimination cokernel.**
+
+Let R be a commutative ring and N an R-module. For a∈R, r:N→R, c:R→N and B:N→N linear, set
+T(x,y)=(a*x+r(y),c(x)+B(y)), E(x,y)=(x,a•y-c(x)) and S=a•B-c∘r. For every a,c,
+ℓ_R((R×N)/range(E))=ℓ_R(N/aN), including infinite module lengths.
+-/
 theorem length_coker_pivotElimination (a : R) (c : R →ₗ[R] N) :
     Module.length R ((R × N) ⧸ (pivotElimination a c).range) =
       Module.length R (N ⧸ (a • (LinearMap.id : N →ₗ[R] N)).range) := by
@@ -124,10 +154,12 @@ theorem length_coker_pivotElimination (a : R) (c : R →ₗ[R] N) :
   rw [hzero, add_zero] at hblock
   exact hchange.trans hblock
 
-/-- Full pivot elimination earns the all-module cokernel length relation
-needed by determinant induction. Injectivity is derived for the actual
-elimination and Schur maps; no finite-length or norm/order equality premise
-is introduced. -/
+/-- **Full pivot cokernel length relation.**
+
+Let R be a commutative ring and N an R-module. For a∈R, r:N→R, c:R→N and B:N→N linear, set
+T(x,y)=(a*x+r(y),c(x)+B(y)), E(x,y)=(x,a•y-c(x)) and S=a•B-c∘r. If a≠0, N has no zero scalar
+divisors and T is injective, then ℓ_R(coker T)+ℓ_R(N/aN)=ℓ_R(R/aR)+ℓ_R(coker S).
+-/
 theorem length_coker_pivot_relation [NoZeroSMulDivisors R N]
     (a : R) (ha : a ≠ 0) (r : N →ₗ[R] R) (c : R →ₗ[R] N) (B : N →ₗ[R] N)
     (hA : Function.Injective (pivotBlock a r c B)) :

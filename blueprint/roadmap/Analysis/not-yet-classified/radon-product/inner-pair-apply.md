@@ -1,3 +1,4 @@
-# Inner Pair apply
+# Value of the compact-support complex pairing
 
-The compact-support pairing is the original complex inner product at every point.
+For topological `X`, `f,g∈C_c(X,ℂ)` and
+`x∈X`, `innerPair f g x=⟨f(x),g(x)⟩_ℂ=conj(f(x))*g(x)`.

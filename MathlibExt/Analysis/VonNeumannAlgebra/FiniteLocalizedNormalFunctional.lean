@@ -14,14 +14,13 @@ module
 public import MathlibExt.Analysis.VonNeumannAlgebra.LocalizedNormalFunctional
 
 /-!
-# Finite original projection localizations give an actual normal functional
+# Finite sums of projection-localized normal functionals
 
-For each original projection and vector with the literal positive local
-comparison, the strict local constructor supplies ψ(·p) in the existing
-normal-functional space. Their finite sum is an actual member of the same
-space and evaluates to ψ(a*∑p). No normal member or finite-cutoff norm
-certificate is an input. Orthogonality and maximal-family approximation
-are separate remaining prerequisites for the global normality criterion.
+For a positive bounded functional `ψ`, let star projections `p_i` and vectors `ξ_i` satisfy `Re
+ψ(b)≤Re ⟨ξ_i,bξ_i⟩` whenever `0≤b≤p_i`. Each functional `a ↦ ψ(ap_i)` is normal.
+
+For any finite subset `s` of the index type, their sum is a member `ρ_s∈M_*` with `ρ_s(a)=ψ(a
+Σ_i∈s p_i)`. Orthogonality of the projections is not required for this finite sum.
 -/
 
 @[expose] public section
@@ -40,7 +39,13 @@ universe u v
 
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- Construct the finite sum of actual local normal functionals, with its original sum-projection values. -/
+/-- **Normal functional of a finite projection localization sum.** Let `H` be a complete
+complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Let `ψ : M → ℂ` be a
+positive bounded complex-linear functional for the spectral orders. Let `p_i ∈ M` be star
+projections indexed by an arbitrary type `I`, and `ξ_i ∈ H` satisfy `Re ψ(b)≤Re
+⟨ξ_i,bξ_i⟩` whenever `0≤b≤p_i`. for `s : Finset I`, `finiteLocalizedNormalFunctional`
+returns `ρ_s∈M_*` with `ρ_s(a)=ψ(a*Σ_i∈s p_i)` for all `a∈M`. No pairwise orthogonality is
+assumed. -/
 def finiteLocalizedNormalFunctional (M : VonNeumannAlgebra H) {I : Type v} :
     letI : PartialOrder M := CStarAlgebra.spectralOrder M
     letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ

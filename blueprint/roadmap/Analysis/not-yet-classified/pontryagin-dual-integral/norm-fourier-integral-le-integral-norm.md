@@ -1,3 +1,5 @@
-# Norm fourier Integral le integral norm
+# L¹ integral upper bound of a character Fourier value
 
-The literal Fourier integral is bounded pointwise by the original L1 integral.
+Let `G` be a monoid with a
+topology and measurable structure, `μ` any measure and `χ : PontryaginDual G` a continuous
+circle-valued character. for any `f : G → ℂ`, `|fourierIntegral μ f χ|≤∫ |f(g)| dμ(g)`.

@@ -1,3 +1,5 @@
-# Bilateral Reindex Seq norm
+# Norm preserved by integer-coordinate reindexing
 
-Reindexing by an equivalence preserves the `ℓ²` norm.
+Let `G` be a normed additive
+commutative group and `e : ℤ ≃ ℤ`. For every `x ∈ ℓ²(ℤ,G)`, the reindexed square-summable
+sequence `n ↦ x(e(n))` has norm `‖x‖₂`.

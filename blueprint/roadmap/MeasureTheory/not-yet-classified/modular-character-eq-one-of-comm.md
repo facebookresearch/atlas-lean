@@ -1,3 +1,4 @@
-# Modular Character Abelian
+# Trivial modular character of a locally compact abelian group
 
-The modular character of a locally compact abelian group is identically one.
+Let `G` be a locally
+compact abelian topological group. For every `g∈G`, `Measure.modularCharacter g=1`.

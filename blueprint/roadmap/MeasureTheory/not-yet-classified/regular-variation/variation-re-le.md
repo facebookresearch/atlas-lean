@@ -1,3 +1,4 @@
-# Variation re le
+# Real-part variation bounded by complex variation
 
-The variation of the real part of a complex measure is bounded by its complex variation.
+Let `X` be a measurable space and `c
+: ComplexMeasure X`. `|Re c|≤|c|` as positive measures, without a topology assumption.

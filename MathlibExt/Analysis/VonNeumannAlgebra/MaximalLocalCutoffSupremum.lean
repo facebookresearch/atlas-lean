@@ -15,14 +15,13 @@ public import MathlibExt.Analysis.VonNeumannAlgebra.MaximalLocalFiniteCutoffs
 public import MathlibExt.Analysis.VonNeumannAlgebra.PositiveSupremum
 
 /-!
-# The actual positive supremum of the maximal family's finite cutoffs
+# Positive supremum of maximal-family finite cutoffs
 
-The strict finite-cutoff constructor proves positivity, norm≤1, nonemptiness
-and directedness from original ψ. Feeding precisely those actual fields to
-the strict bounded-positive-supremum constructor gives an original positive
-least upper bound of the literal cutoff range. Its norm≤1 and order≤1 are
-proved internally. No LUB, projection limit or normal member is an input.
-The supremum's projection law and zero complement remain subsequent steps.
+For a positive bounded functional `ψ`, the finite projection cutoffs `P_t` of its maximal local
+family have a nonempty directed range bounded by the identity and in norm by one.
+
+Their constructed positive least upper bound `s` satisfies `s=sup_t P_t`, `‖s‖≤1` and `s≤I`. Its
+projection and identity properties are established in the subsequent cutoff lemmas.
 -/
 
 @[expose] public section
@@ -40,7 +39,13 @@ universe u
 
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- Construct the actual original finite-cutoff positive LUB with original norm and identity bounds. -/
+/-- **Positive least upper bound of the finite cutoff family.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Let `ψ : M → ℂ` be a positive
+bounded complex-linear functional for the spectral orders. Let `S` be the constructed
+maximal set of pairwise orthogonal nonzero star projections, each admitting a vector `ξ`
+with `Re ψ(b)≤Re ⟨ξ,bξ⟩` for `0≤b≤p`. For finite `t ⊆ S`, put `P_t=Σ_p∈t p`.
+`maximalLocalCutoffSupremum M ψ` returns `s∈M₊` that is the least upper bound of `{P_t}`,
+with `‖s‖≤1` and `s≤I_M`. -/
 def maximalLocalCutoffSupremum (M : VonNeumannAlgebra H) :
     letI : PartialOrder M := CStarAlgebra.spectralOrder M
     letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ
@@ -86,7 +91,13 @@ def maximalLocalCutoffSupremum (M : VonNeumannAlgebra H) :
     exact (maximalLocalPositiveFiniteCutoffs_le_one M ψ) t
   exact ⟨s.val, hLUB, s.property.2, hunit⟩
 
-/-- The constructed cutoff supremum is the least upper bound of the literal cutoff values. -/
+/-- **Least-upper-bound property of the maximal-family cutoff supremum.** Let `H` be a
+complete complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Let `ψ : M →
+ℂ` be a positive bounded complex-linear functional for the spectral orders. Let `S` be the
+constructed maximal set of pairwise orthogonal nonzero star projections, each admitting a
+vector `ξ` with `Re ψ(b)≤Re ⟨ξ,bξ⟩` for `0≤b≤p`. For finite `t ⊆ S`, put `P_t=Σ_p∈t p`.
+the element `s=maximalLocalCutoffSupremum M ψ` is the least upper bound of the range of
+finite cutoffs `P_t`. -/
 theorem maximalLocalCutoffSupremum_isLUB (M : VonNeumannAlgebra H) :
     letI : PartialOrder M := CStarAlgebra.spectralOrder M
     letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ
@@ -99,7 +110,12 @@ theorem maximalLocalCutoffSupremum_isLUB (M : VonNeumannAlgebra H) :
   intro ψ
   exact (maximalLocalCutoffSupremum M ψ).property.1
 
-/-- The same constructed cutoff supremum has norm at most one. -/
+/-- **Norm bound of the finite-cutoff supremum.** Let `H` be a complete complex Hilbert space
+and `M ⊆ B(H)` a concrete von Neumann algebra. Let `ψ : M → ℂ` be a positive bounded
+complex-linear functional for the spectral orders. Let `S` be the constructed maximal set
+of pairwise orthogonal nonzero star projections, each admitting a vector `ξ` with `Re
+ψ(b)≤Re ⟨ξ,bξ⟩` for `0≤b≤p`. For finite `t ⊆ S`, put `P_t=Σ_p∈t p`. for
+`s=maximalLocalCutoffSupremum M ψ`, `‖s‖≤1`. -/
 theorem maximalLocalCutoffSupremum_norm_le_one (M : VonNeumannAlgebra H) :
     letI : PartialOrder M := CStarAlgebra.spectralOrder M
     letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ
@@ -110,7 +126,12 @@ theorem maximalLocalCutoffSupremum_norm_le_one (M : VonNeumannAlgebra H) :
   intro ψ
   exact (maximalLocalCutoffSupremum M ψ).property.2.1
 
-/-- The same constructed cutoff supremum lies below the identity in the spectral order. -/
+/-- **Finite-cutoff supremum lies below the identity.** Let `H` be a complete complex Hilbert
+space and `M ⊆ B(H)` a concrete von Neumann algebra. Let `ψ : M → ℂ` be a positive bounded
+complex-linear functional for the spectral orders. Let `S` be the constructed maximal set
+of pairwise orthogonal nonzero star projections, each admitting a vector `ξ` with `Re
+ψ(b)≤Re ⟨ξ,bξ⟩` for `0≤b≤p`. For finite `t ⊆ S`, put `P_t=Σ_p∈t p`. for
+`s=maximalLocalCutoffSupremum M ψ`, `s≤I_M` in the spectral order. -/
 theorem maximalLocalCutoffSupremum_le_one (M : VonNeumannAlgebra H) :
     letI : PartialOrder M := CStarAlgebra.spectralOrder M
     letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ

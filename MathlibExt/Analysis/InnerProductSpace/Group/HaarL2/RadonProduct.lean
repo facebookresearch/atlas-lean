@@ -17,17 +17,16 @@ public import Mathlib.Analysis.InnerProductSpace.TensorProduct
 public import Mathlib.LinearAlgebra.BilinearMap
 
 /-!
-# The actual compact-support tensor map into Borel Radon L2
+# Compact-support tensor products in Borel Radon L²
 
-The literal compact-support product is a complex bilinear map. Its actual
-Lp inclusion gives an algebraic tensor map into the original Borel Radon
-product L2 space. Compact-support complex integrals prove the full mixed
-inner-product identity, including the imaginary part. Bilinearity then
-preserves every finite tensor pairing and its norm, compared with the stock
-tensor of the two original compact-support L2 inclusions.
+For locally compact Hausdorff Borel spaces and regular measures, the product of scalar
+compact-support functions gives the bilinear map `(f,g) ↦ i_R((x,y) ↦ f(x)g(y))` into `Lp ℂ 2
+R`, where `R=radonProd μ ν`.
 
-No completed tensor equivalence, dense-range conclusion or coordinate shear
-is selected here. Their full arbitrary-group source scope remains open.
+Its inner product factors into the two factor inner products. The algebraic tensor lift `F`
+consequently satisfies `⟨F(z),F(w)⟩=⟨A(z),A(w)⟩` and `‖F(z)‖=‖A(z)‖`, with `A` the tensor of the
+compact-support factor L² inclusions. The product uses the Borel topological product and no
+countability or s-finiteness assumption.
 -/
 
 @[expose] public section
@@ -48,30 +47,36 @@ section Components
 
 variable {X : Type uX} [TopologicalSpace X]
 
-/-- The actual real component of a complex compact-support function. -/
+/-- **Real component of a compact-support complex function.** On any topological space `X`,
+`realPart f∈C_c(X,ℝ)` is `x ↦ Re f(x)` for `f∈C_c(X,ℂ)`. -/
 def realPart (f : C_c(X, ℂ)) : C_c(X, ℝ) where
   toFun x := (f x).re
   continuous_toFun := Complex.continuous_re.comp f.continuous
   hasCompactSupport' := f.hasCompactSupport.comp_left (g := Complex.re) (by simp)
 
-/-- The actual imaginary component of a complex compact-support function. -/
+/-- **Imaginary component of a compact-support complex function.** On any topological space
+`X`, `imagPart f∈C_c(X,ℝ)` is `x ↦ Im f(x)`. -/
 def imagPart (f : C_c(X, ℂ)) : C_c(X, ℝ) where
   toFun x := (f x).im
   continuous_toFun := Complex.continuous_im.comp f.continuous
   hasCompactSupport' := f.hasCompactSupport.comp_left (g := Complex.im) (by simp)
 
-/-- The compact-support real component retains every original pointwise value. -/
+/-- **Value of a compact-support real component.** For topological `X`, `f∈C_c(X,ℂ)` and
+`x∈X`, `realPart f x=Re f(x)`. -/
 @[simp]
 theorem realPart_apply (f : C_c(X, ℂ)) (x : X) : realPart f x = (f x).re := rfl
 
-/-- The compact-support imaginary component retains every original pointwise value. -/
+/-- **Value of a compact-support imaginary component.** For topological `X`, `f∈C_c(X,ℂ)` and
+`x∈X`, `imagPart f x=Im f(x)`. -/
 @[simp]
 theorem imagPart_apply (f : C_c(X, ℂ)) (x : X) : imagPart f x = (f x).im := rfl
 
-/-- The actual compact-support scalar inner-product function, linear in the second factor. -/
+/-- **Pointwise complex inner pairing of compact-support functions.** For topological `X` and
+`f,g∈C_c(X,ℂ)`, `innerPair f g=conj(f)*g`, linear in the second argument. -/
 def innerPair (f g : C_c(X, ℂ)) : C_c(X, ℂ) := star f * g
 
-/-- The compact-support pairing is the original complex inner product at every point. -/
+/-- **Value of the compact-support complex pairing.** For topological `X`, `f,g∈C_c(X,ℂ)` and
+`x∈X`, `innerPair f g x=⟨f(x),g(x)⟩_ℂ=conj(f(x))*g(x)`. -/
 @[simp]
 theorem innerPair_apply (f g : C_c(X, ℂ)) (x : X) :
     innerPair f g x = inner ℂ (f x) (g x) := by
@@ -85,7 +90,9 @@ section BilinearProduct
 variable {X : Type uX} [TopologicalSpace X] [T2Space X]
 variable {Y : Type uY} [TopologicalSpace Y] [T2Space Y]
 
-/-- The literal compact-support pure product as an actual complex bilinear map. -/
+/-- **Complex bilinear pure product of compact-support functions.** For Hausdorff spaces
+`X,Y`, `mulProdBilinear : C_c(X,ℂ) →ₗ[ℂ] C_c(Y,ℂ) →ₗ[ℂ] C_c(X×Y,ℂ)` sends `(f,g)` to
+`(x,y) ↦ f(x)g(y)`. -/
 def mulProdBilinear : C_c(X, ℂ) →ₗ[ℂ] C_c(Y, ℂ) →ₗ[ℂ] C_c(X × Y, ℂ) where
   toFun f :=
     { toFun g := mulProd f g
@@ -114,12 +121,15 @@ def mulProdBilinear : C_c(X, ℂ) →ₗ[ℂ] C_c(Y, ℂ) →ₗ[ℂ] C_c(X × Y
     change (c * f x) * g y = c * (f x * g y)
     exact mul_assoc _ _ _
 
-/-- The bilinear constructor retains the exact compact-support pure product. -/
+/-- **Pure product value of the compact-support bilinear map.** For Hausdorff `X,Y` and
+compact-support complex `f,g`, `mulProdBilinear f g=mulProd f g`. -/
 @[simp]
 theorem mulProdBilinear_apply (f : C_c(X, ℂ)) (g : C_c(Y, ℂ)) :
     mulProdBilinear f g = mulProd f g := rfl
 
-/-- The real component of a pure product has the original real multiplication formula. -/
+/-- **Real part of a compact-support pure product.** For Hausdorff `X,Y` and complex
+compact-support `f,g`, `Re(f⊠g)=(Re f⊠Re g)-(Im f⊠Im g)`, where `⊠` denotes pointwise
+factor product. -/
 theorem realPart_mulProd (f : C_c(X, ℂ)) (g : C_c(Y, ℂ)) :
     realPart (mulProd f g) = mulProd (realPart f) (realPart g) - mulProd (imagPart f) (imagPart g) := by
   ext z
@@ -127,7 +137,8 @@ theorem realPart_mulProd (f : C_c(X, ℂ)) (g : C_c(Y, ℂ)) :
   change (f x * g y).re = (f x).re * (g y).re - (f x).im * (g y).im
   exact Complex.mul_re _ _
 
-/-- The imaginary component of a pure product has the original imaginary multiplication formula. -/
+/-- **Imaginary part of a compact-support pure product.** For Hausdorff `X,Y` and complex
+compact-support `f,g`, `Im(f⊠g)=(Re f⊠Im g)+(Im f⊠Re g)`. -/
 theorem imagPart_mulProd (f : C_c(X, ℂ)) (g : C_c(Y, ℂ)) :
     imagPart (mulProd f g) = mulProd (realPart f) (imagPart g) + mulProd (imagPart f) (realPart g) := by
   ext z
@@ -142,11 +153,15 @@ section ComponentIntegral
 variable {X : Type uX} [TopologicalSpace X] [MeasurableSpace X] [OpensMeasurableSpace X]
 variable (μ : Measure X) [IsFiniteMeasureOnCompacts μ]
 
-/-- The compact-support real-component integral is the real part of the original complex integral. -/
+/-- **Real part commutes with compact-support complex integration.** Let `X` have a topology
+and measurable open sets, and `μ` be finite on compact sets. For `f∈C_c(X,ℂ)`, `∫ Re f
+dμ=Re(∫ f dμ)`. -/
 theorem integral_realPart (f : C_c(X, ℂ)) :
     ∫ x : X, realPart f x ∂μ = (∫ x : X, f x ∂μ).re := integral_re f.integrable
 
-/-- The compact-support imaginary-component integral is the imaginary part of the original complex integral. -/
+/-- **Imaginary part commutes with compact-support complex integration.** Let `X` have a
+topology and measurable open sets, and `μ` be finite on compact sets. For `f∈C_c(X,ℂ)`, `∫
+Im f dμ=Im(∫ f dμ)`. -/
 theorem integral_imagPart (f : C_c(X, ℂ)) :
     ∫ x : X, imagPart f x ∂μ = (∫ x : X, f x ∂μ).im := integral_im f.integrable
 
@@ -165,11 +180,14 @@ variable {Y : Type uY} [TopologicalSpace Y] [T2Space Y] [LocallyCompactSpace Y]
 variable (μ : Measure X) (ν : Measure Y)
   [IsFiniteMeasureOnCompacts μ] [IsFiniteMeasureOnCompacts ν]
 
-/-- The Borel measurable space of the literal product for compact-support complex integration. -/
+/-- **Borel product structure for complex compact-support integration.** For topological
+`X,Y`, the product carrier uses `borel(X×Y)` from its product topology. -/
 local instance instComplexProductBorelMeasurableSpace : MeasurableSpace (X × Y) := borel (X × Y)
 local instance instComplexProductBorelSpace : BorelSpace (X × Y) := ⟨rfl⟩
 
-/-- The original Borel Radon integral of a complex compact-support pure product factors exactly. -/
+/-- **Complex pure-product Radon integral factors.** Let `X,Y` be locally compact Hausdorff
+Borel spaces and `μ,ν` measures finite on compact sets. For `f∈C_c(X,ℂ)`, `g∈C_c(Y,ℂ)`, `∫
+f(x)g(y) d(radonProd μ ν)=(∫ f dμ)(∫ g dν)`. -/
 theorem integral_mulProd_complex (f : C_c(X, ℂ)) (g : C_c(Y, ℂ)) :
     ∫ z : X × Y, mulProd f g z ∂(radonProd μ ν) =
       (∫ x : X, f x ∂μ) * ∫ y : Y, g y ∂ν := by
@@ -203,27 +221,46 @@ variable {Y : Type uY} [TopologicalSpace Y] [T2Space Y] [LocallyCompactSpace Y]
   [MeasurableSpace Y] [BorelSpace Y]
 variable (μ : Measure X) (ν : Measure Y) [μ.Regular] [ν.Regular]
 
-/-- The Borel measurable space of the literal product used by the original product L2 carrier. -/
+/-- **Borel topological product underlying scalar Radon L².** For topological `X,Y`, use
+`borel(X×Y)` as the measurable structure of the product carrier. -/
 local instance instProductL2BorelMeasurableSpace : MeasurableSpace (X × Y) := borel (X × Y)
 local instance instProductL2BorelSpace : BorelSpace (X × Y) := ⟨rfl⟩
 
-/-- The computed compact-support bilinear map into the actual Borel Radon product L2 space. -/
+/-- **Bilinear compact-support product into Radon L².** Let `X,Y` be locally compact Hausdorff
+Borel spaces and `μ,ν` regular measures. Write `R=radonProd μ ν` on `borel(X×Y)`,
+`i_μ,i_ν,i_R` for compact-support L² inclusions, `T=Completion(Lp ℂ 2 μ ⊗[ℂ] Lp ℂ 2 ν)`,
+`A(z)` for the algebraic factor tensor inclusion into `T`, and `F(f⊗g)=i_R((x,y) ↦
+f(x)g(y))`. `compactSupportProduct μ ν f g=i_R((x,y) ↦ f(x)g(y))`. -/
 def compactSupportProduct :
     C_c(X, ℂ) →ₗ[ℂ] C_c(Y, ℂ) →ₗ[ℂ] Lp ℂ 2 (Measure.radonProd μ ν) :=
   (mulProdBilinear (X := X) (Y := Y)).compr₂
     (compactSupportInclusion (H := ℂ) (Measure.radonProd μ ν))
 
-/-- The bilinear L2 map is the literal compact-support product followed by the original inclusion. -/
+/-- **Compact-support product followed by its L² inclusion.** Let `X,Y` be locally compact
+Hausdorff Borel spaces and `μ,ν` regular measures. Write `R=radonProd μ ν` on
+`borel(X×Y)`, `i_μ,i_ν,i_R` for compact-support L² inclusions, `T=Completion(Lp ℂ 2 μ ⊗[ℂ]
+Lp ℂ 2 ν)`, `A(z)` for the algebraic factor tensor inclusion into `T`, and
+`F(f⊗g)=i_R((x,y) ↦ f(x)g(y))`. `compactSupportProduct μ ν f g=i_R(mulProd f g)` for
+`f∈C_c(X,ℂ)`, `g∈C_c(Y,ℂ)`. -/
 @[simp]
 theorem compactSupportProduct_apply (f : C_c(X, ℂ)) (g : C_c(Y, ℂ)) :
     compactSupportProduct μ ν f g = compactSupportInclusion (Measure.radonProd μ ν) (mulProd f g) := rfl
 
-/-- The computed product L2 vector retains its literal factor values almost everywhere. -/
+/-- **Almost-everywhere scalar pure-product L² value.** Let `X,Y` be locally compact Hausdorff
+Borel spaces and `μ,ν` regular measures. Write `R=radonProd μ ν` on `borel(X×Y)`,
+`i_μ,i_ν,i_R` for compact-support L² inclusions, `T=Completion(Lp ℂ 2 μ ⊗[ℂ] Lp ℂ 2 ν)`,
+`A(z)` for the algebraic factor tensor inclusion into `T`, and `F(f⊗g)=i_R((x,y) ↦
+f(x)g(y))`. for compact-support `f,g`, `compactSupportProduct μ ν f g` has representative
+`(x,y) ↦ f(x)g(y)` almost everywhere for `R`. -/
 theorem compactSupportProduct_ae_eq (f : C_c(X, ℂ)) (g : C_c(Y, ℂ)) :
     compactSupportProduct μ ν f g =ᵐ[Measure.radonProd μ ν] fun z => f z.1 * g z.2 :=
   compactSupportInclusion_ae_eq (Measure.radonProd μ ν) (mulProd f g)
 
-/-- The computed pure product has the exact product of the original factor L2 squared norms. -/
+/-- **Product of squared factor norms for a compact-support L² product.** Let `X,Y` be locally
+compact Hausdorff Borel spaces and `μ,ν` regular measures. Write `R=radonProd μ ν` on
+`borel(X×Y)`, `i_μ,i_ν,i_R` for compact-support L² inclusions, `T=Completion(Lp ℂ 2 μ ⊗[ℂ]
+Lp ℂ 2 ν)`, `A(z)` for the algebraic factor tensor inclusion into `T`, and
+`F(f⊗g)=i_R((x,y) ↦ f(x)g(y))`. `‖compactSupportProduct μ ν f g‖²=‖i_μ f‖²‖i_ν g‖²`. -/
 theorem norm_compactSupportProduct_sq (f : C_c(X, ℂ)) (g : C_c(Y, ℂ)) :
     ‖compactSupportProduct μ ν f g‖ ^ 2 =
       ‖compactSupportInclusion μ f‖ ^ 2 * ‖compactSupportInclusion ν g‖ ^ 2 := by
@@ -231,7 +268,12 @@ theorem norm_compactSupportProduct_sq (f : C_c(X, ℂ)) (g : C_c(Y, ℂ)) :
     norm_compactSupportInclusion_sq, norm_compactSupportInclusion_sq]
   exact Measure.integral_norm_sq_mulProd μ ν f g
 
-/-- The actual compact-support pure products preserve the full complex mixed factor pairing. -/
+/-- **Full complex inner product of pure Radon products.** Let `X,Y` be locally compact
+Hausdorff Borel spaces and `μ,ν` regular measures. Write `R=radonProd μ ν` on
+`borel(X×Y)`, `i_μ,i_ν,i_R` for compact-support L² inclusions, `T=Completion(Lp ℂ 2 μ ⊗[ℂ]
+Lp ℂ 2 ν)`, `A(z)` for the algebraic factor tensor inclusion into `T`, and
+`F(f⊗g)=i_R((x,y) ↦ f(x)g(y))`. for compact-support `f,f',g,g'`,
+`⟨i_R(f⊠g),i_R(f'⊠g')⟩=⟨i_μ f,i_μ f'⟩⟨i_ν g,i_ν g'⟩`. -/
 theorem compactSupportProduct_inner
     (f f' : C_c(X, ℂ)) (g g' : C_c(Y, ℂ)) :
     inner ℂ (compactSupportProduct μ ν f g) (compactSupportProduct μ ν f' g') =
@@ -259,30 +301,53 @@ theorem compactSupportProduct_inner
       · exact integral_congr_ae (Eventually.of_forall fun x => innerPair_apply f f' x)
       · exact integral_congr_ae (Eventually.of_forall fun y => innerPair_apply g g' y)
 
-/-- The literal algebraic tensor of the original two compact-support L2 inclusions. -/
+/-- **Algebraic tensor of the two compact-support L² inclusions.** Let `X,Y` be topological
+Borel spaces and `μ,ν` regular measures. For compact-support functions, let `A :
+C_c(X,ℂ)⊗C_c(Y,ℂ) → T` be the tensor of their L² inclusions followed by completion.
+`compactSupportFactorTensor μ ν : C_c(X,ℂ)⊗C_c(Y,ℂ) →ₗ[ℂ] Lp ℂ 2 μ⊗Lp ℂ 2 ν` sends `f⊗g`
+to `i_μ f⊗i_ν g`. -/
 def compactSupportFactorTensor :
     C_c(X, ℂ) ⊗[ℂ] C_c(Y, ℂ) →ₗ[ℂ] (Lp ℂ 2 μ) ⊗[ℂ] (Lp ℂ 2 ν) :=
   TensorProduct.map (compactSupportInclusion μ) (compactSupportInclusion ν)
 
-/-- The algebraic tensor lift of the computed product L2 bilinear map. -/
+/-- **Algebraic tensor lift of compact-support Radon products.** Let `X,Y` be locally compact
+Hausdorff Borel spaces and `μ,ν` regular measures. Write `R=radonProd μ ν` on
+`borel(X×Y)`, `i_μ,i_ν,i_R` for compact-support L² inclusions, `T=Completion(Lp ℂ 2 μ ⊗[ℂ]
+Lp ℂ 2 ν)`, `A(z)` for the algebraic factor tensor inclusion into `T`, and
+`F(f⊗g)=i_R((x,y) ↦ f(x)g(y))`. `compactSupportTensorToLp μ ν=F` is the complex-linear
+lift sending `f⊗g` to `i_R(f⊠g)`. -/
 def compactSupportTensorToLp :
     C_c(X, ℂ) ⊗[ℂ] C_c(Y, ℂ) →ₗ[ℂ] Lp ℂ 2 (Measure.radonProd μ ν) :=
   TensorProduct.lift (compactSupportProduct μ ν)
 
-/-- The actual algebraic lift has its literal compact-support pure-tensor value. -/
+/-- **Pure tensor value of the compact-support Radon lift.** Let `X,Y` be locally compact
+Hausdorff Borel spaces and `μ,ν` regular measures. Write `R=radonProd μ ν` on
+`borel(X×Y)`, `i_μ,i_ν,i_R` for compact-support L² inclusions, `T=Completion(Lp ℂ 2 μ ⊗[ℂ]
+Lp ℂ 2 ν)`, `A(z)` for the algebraic factor tensor inclusion into `T`, and
+`F(f⊗g)=i_R((x,y) ↦ f(x)g(y))`. `F(f⊗g)=i_R(mulProd f g)`. -/
 @[simp]
 theorem compactSupportTensorToLp_tmul (f : C_c(X, ℂ)) (g : C_c(Y, ℂ)) :
     compactSupportTensorToLp μ ν (f ⊗ₜ[ℂ] g) =
       compactSupportInclusion (Measure.radonProd μ ν) (mulProd f g) :=
   TensorProduct.lift.tmul (f' := compactSupportProduct μ ν) f g
 
-/-- The actual algebraic pure-tensor value is the original pointwise product almost everywhere. -/
+/-- **Almost-everywhere pure tensor value of the Radon lift.** Let `X,Y` be locally compact
+Hausdorff Borel spaces and `μ,ν` regular measures. Write `R=radonProd μ ν` on
+`borel(X×Y)`, `i_μ,i_ν,i_R` for compact-support L² inclusions, `T=Completion(Lp ℂ 2 μ ⊗[ℂ]
+Lp ℂ 2 ν)`, `A(z)` for the algebraic factor tensor inclusion into `T`, and
+`F(f⊗g)=i_R((x,y) ↦ f(x)g(y))`. for compact-support `f,g`, `F(f⊗g)(x,y)=f(x)g(y)` for
+`R`-almost every `(x,y)`. -/
 theorem compactSupportTensorToLp_tmul_ae (f : C_c(X, ℂ)) (g : C_c(Y, ℂ)) :
     compactSupportTensorToLp μ ν (f ⊗ₜ[ℂ] g) =ᵐ[Measure.radonProd μ ν] fun z => f z.1 * g z.2 := by
   rw [compactSupportTensorToLp_tmul]
   exact compactSupportInclusion_ae_eq (Measure.radonProd μ ν) (mulProd f g)
 
-/-- Every finite compact-support tensor pairing agrees with its original stock factor-tensor pairing. -/
+/-- **Finite tensor pairings equal the factor Hilbert pairings.** Let `X,Y` be locally compact
+Hausdorff Borel spaces and `μ,ν` regular measures. Write `R=radonProd μ ν` on
+`borel(X×Y)`, `i_μ,i_ν,i_R` for compact-support L² inclusions, `T=Completion(Lp ℂ 2 μ ⊗[ℂ]
+Lp ℂ 2 ν)`, `A(z)` for the algebraic factor tensor inclusion into `T`, and
+`F(f⊗g)=i_R((x,y) ↦ f(x)g(y))`. for algebraic compact-support tensors `z,w`,
+`⟨F(z),F(w)⟩=⟨A(z),A(w)⟩`. -/
 theorem compactSupportTensorToLp_inner (z w : C_c(X, ℂ) ⊗[ℂ] C_c(Y, ℂ)) :
     inner ℂ (compactSupportTensorToLp μ ν z) (compactSupportTensorToLp μ ν w) =
       inner ℂ (compactSupportFactorTensor μ ν z) (compactSupportFactorTensor μ ν w) := by
@@ -296,7 +361,11 @@ theorem compactSupportTensorToLp_inner (z w : C_c(X, ℂ) ⊗[ℂ] C_c(Y, ℂ)) 
     | add z w hz hw => simp only [map_add, inner_add_right, hz, hw]
   | add z w hz hw => simp only [map_add, inner_add_left, hz, hw]
 
-/-- Every finite compact-support tensor has the original stock factor-tensor norm. -/
+/-- **Norm of the algebraic Radon tensor lift.** Let `X,Y` be locally compact Hausdorff Borel
+spaces and `μ,ν` regular measures. Write `R=radonProd μ ν` on `borel(X×Y)`, `i_μ,i_ν,i_R`
+for compact-support L² inclusions, `T=Completion(Lp ℂ 2 μ ⊗[ℂ] Lp ℂ 2 ν)`, `A(z)` for the
+algebraic factor tensor inclusion into `T`, and `F(f⊗g)=i_R((x,y) ↦ f(x)g(y))`. for every
+algebraic compact-support tensor `z`, `‖F(z)‖=‖A(z)‖`. -/
 theorem norm_compactSupportTensorToLp (z : C_c(X, ℂ) ⊗[ℂ] C_c(Y, ℂ)) :
     ‖compactSupportTensorToLp μ ν z‖ = ‖compactSupportFactorTensor μ ν z‖ := by
   have hsq : ‖compactSupportTensorToLp μ ν z‖ ^ 2 = ‖compactSupportFactorTensor μ ν z‖ ^ 2 := by

@@ -15,13 +15,14 @@ public import MathlibExt.Analysis.VonNeumannAlgebra.MaximalLocalProjectionFamily
 public import Mathlib.Analysis.CStarAlgebra.Projection
 
 /-!
-# No nonzero star projection annihilates the actual maximal local family
+# No nonzero projection annihilates a maximal local family
 
-For a nonzero original projection e, the actual local construction supplies
-a nonzero locally dominated projection F≤e. If e annihilates every member
-of the constructed maximal family, so does F. Selfadjointness supplies the
-reverse zero products; inserting F contradicts actual maximality. The
-finite-cutoff supremum and its limiting behavior remain separate next data.
+Let `S` be the maximal orthogonal family of locally vector-dominated nonzero star projections
+for a positive bounded functional `ψ`. If a star projection `e∈M` satisfies `ep=0` for every
+`p∈S`, then `e=0`.
+
+A nonzero `e` would contain another nonzero locally dominated projection orthogonal to `S`,
+contradicting maximality.
 -/
 
 @[expose] public section
@@ -39,7 +40,12 @@ universe u
 
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- An original star projection orthogonal to the actual maximal family must be zero. -/
+/-- **Projection annihilating the maximal local family is zero.** Let `H` be a complete
+complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Let `ψ : M → ℂ` be a
+positive bounded complex-linear functional for the spectral orders. Let `S` be the
+constructed maximal set of pairwise orthogonal nonzero star projections, each admitting a
+vector `ξ` with `Re ψ(b)≤Re ⟨ξ,bξ⟩` for `0≤b≤p`. For finite `t ⊆ S`, put `P_t=Σ_p∈t p`. if
+a star projection `e∈M` satisfies `ep=0` for every `p∈S`, then `e=0`. -/
 theorem maximalLocalProjectionFamily_annihilator_eq_zero (M : VonNeumannAlgebra H) :
     letI : PartialOrder M := CStarAlgebra.spectralOrder M
     letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ

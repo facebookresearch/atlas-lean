@@ -16,13 +16,13 @@ public import MathlibExt.Analysis.VonNeumannAlgebra.NormalHom.RangeHomeomorph
 public import MathlibExt.Analysis.VonNeumannAlgebra.NormalEquiv
 
 /-!
-# The actual normal equivalence onto the literal VN image
+# Normal equivalence onto an injective homomorphism's image
 
-The computed normal range map is internally proved bijective. Its actual
-star equivalence uses that same forward map. The generic proved ultraweak
-range homeomorphism, restricted along the literal identity into its full
-range, proves continuity of the computed inverse. No inverse, surjectivity,
-normality, image or source-existence certificate is supplied.
+An injective normal unital complex star homomorphism `f : M → N` gives a normal star-algebra
+equivalence `e : M ≃ R`, where `R={f(x) : x ∈ M}` is its concrete von Neumann image algebra.
+
+The forward value is `e(x)=f(x)`, and its inverse returns the source element with the prescribed
+image operator. Both directions are ultraweakly continuous.
 -/
 
 @[expose] public section
@@ -42,7 +42,14 @@ variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [Complete
 variable {K : Type v} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
 variable {M : VonNeumannAlgebra H} {N : VonNeumannAlgebra K}
 
-/-- The original faithful normal map is normally equivalent to its literal constructed VN image. -/
+/-- **Normal star equivalence onto the von Neumann image.** Let `M,N` be concrete von Neumann
+algebras on complete complex Hilbert spaces. Their normal-functional Banach spaces
+`M_*,N_*` are the norm-closed spans of vector functionals, and their ultraweak topologies
+are `σ(M,M_*)`, `σ(N,N_*)`. Let `f : M → N` be a unital complex star homomorphism that is
+ultraweakly continuous. Assume `f` is injective. Write `R={ (f(x) : B(K)) : x ∈ M }` for
+its operator range on the target Hilbert space `K`. `f.imageEquiv : NormalStarAlgEquiv M
+R` is the star equivalence with forward map `x ↦ f(x)`, ultraweakly continuous in both
+directions. -/
 def imageEquiv (f : NormalStarAlgHom M N) (hf : Function.Injective f) :
     NormalStarAlgEquiv M (f.imageVonNeumannAlgebra hf) := by
   let P := f.imageVonNeumannAlgebra hf
@@ -91,7 +98,13 @@ def imageEquiv (f : NormalStarAlgHom M N) (hf : Function.Injective f) :
         exact q.continuous_ultraweak
       continuous_ultraweak_symm := hinverse }
 
-/-- The actual normal equivalence has exactly the original concrete forward operator value. -/
+/-- **Forward operator value of the normal image equivalence.** Let `M,N` be concrete von
+Neumann algebras on complete complex Hilbert spaces. Their normal-functional Banach spaces
+`M_*,N_*` are the norm-closed spans of vector functionals, and their ultraweak topologies
+are `σ(M,M_*)`, `σ(N,N_*)`. Let `f : M → N` be a unital complex star homomorphism that is
+ultraweakly continuous. Assume `f` is injective. Write `R={ (f(x) : B(K)) : x ∈ M }` for
+its operator range on the target Hilbert space `K`. for `x ∈ M`, the operator underlying
+`f.imageEquiv x` is `(f(x) : B(K))`. -/
 @[simp]
 theorem imageEquiv_apply (f : NormalStarAlgHom M N) (hf : Function.Injective f) (a : M) :
     (f.imageEquiv hf a : K →L[ℂ] K) = (f a : K →L[ℂ] K) := by
@@ -104,7 +117,13 @@ theorem imageEquiv_apply (f : NormalStarAlgHom M N) (hf : Function.Injective f) 
   exact (congrArg (fun b : f.imageVonNeumannAlgebra hf => (b : K →L[ℂ] K)) h).trans
     (f.toImage_apply hf a)
 
-/-- The actual inverse returns an original source element with precisely the given image operator. -/
+/-- **Source preimage of an image-algebra operator.** Let `M,N` be concrete von Neumann
+algebras on complete complex Hilbert spaces. Their normal-functional Banach spaces
+`M_*,N_*` are the norm-closed spans of vector functionals, and their ultraweak topologies
+are `σ(M,M_*)`, `σ(N,N_*)`. Let `f : M → N` be a unital complex star homomorphism that is
+ultraweakly continuous. Assume `f` is injective. Write `R={ (f(x) : B(K)) : x ∈ M }` for
+its operator range on the target Hilbert space `K`. for `y ∈ R`, the inverse `e⁻¹(y)` of
+`e=f.imageEquiv` satisfies `(f(e⁻¹(y)) : B(K))=(y : B(K))`. -/
 theorem imageEquiv_symm_operator_value (f : NormalStarAlgHom M N) (hf : Function.Injective f)
     (b : f.imageVonNeumannAlgebra hf) :
     (f ((f.imageEquiv hf).toStarAlgEquiv.symm b) : K →L[ℂ] K) = (b : K →L[ℂ] K) := by

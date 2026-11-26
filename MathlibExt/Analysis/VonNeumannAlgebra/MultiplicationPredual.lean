@@ -17,13 +17,14 @@ public import Mathlib.Analysis.Normed.Operator.Mul
 public import Mathlib.Analysis.Normed.Operator.Bilinear
 
 /-!
-# Fixed multiplication on the actual normal predual and ultraweak algebra
+# Fixed multiplication and normal-functional pullback
 
-Original fixed-left multiplication pulls the actual bounded functional
-back by its literal product formula. Vector coefficients become the
-original adjoint-shifted vector coefficients. This preserves the actual
-norm-closed normal-functional span and proves continuity in the original
-ultraweak view. No scalar weight or GNS supplier is needed.
+For a concrete von Neumann algebra `M` and fixed `a ∈ M`, left multiplication `x ↦ ax` gives the
+bounded functional pullback `ψ ↦ (x ↦ ψ(ax))` on `M*`.
+
+It sends a vector functional `ω_(ξ,η)` to `ω_(a*ξ,η)` and preserves the normal-functional
+subspace `M_*`. Consequently fixed left multiplication is ultraweakly continuous. Joint
+ultraweak continuity of multiplication is not asserted.
 -/
 
 @[expose] public section
@@ -41,17 +42,24 @@ universe uH
 
 variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- Actual bounded functional precomposition by original fixed-left multiplication. -/
+/-- **Bounded dual pullback of fixed left multiplication.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. for `a ∈ M`,
+`normalFunctionalLeftPullback M a : M* →L[ℂ] M*` sends `ψ` to `x ↦ ψ(ax)`. -/
 def normalFunctionalLeftPullback (M : VonNeumannAlgebra H) (a : M) :
     StrongDual ℂ M →L[ℂ] StrongDual ℂ M :=
   (ContinuousLinearMap.compL ℂ M M ℂ).flip (ContinuousLinearMap.mul ℂ M a)
 
-/-- The original bounded functional pullback has the literal original product value. -/
+/-- **Value of fixed-left functional pullback.** Let `H` be a complete complex Hilbert space
+and `M ⊆ B(H)` a concrete von Neumann algebra. for `a,x ∈ M` and `ψ ∈ M*`,
+`normalFunctionalLeftPullback M a ψ x=ψ(a*x)`. -/
 theorem normalFunctionalLeftPullback_apply (M : VonNeumannAlgebra H) (a : M)
     (ψ : StrongDual ℂ M) (x : M) : normalFunctionalLeftPullback M a ψ x = ψ (a * x) :=
   rfl
 
-/-- Fixed-left pullback of an original vector coefficient is the original adjoint-shifted coefficient. -/
+/-- **Adjoint shift of a vector coefficient under left multiplication.** Let `H` be a complete
+complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write
+`ω_(ξ,η)(x)=⟨ξ,xη⟩` for its vector functionals. for `a ∈ M` and `ξ,η ∈ H`,
+`normalFunctionalLeftPullback M a (ω_(ξ,η))=ω_(a*ξ,η)`. -/
 theorem normalFunctionalLeftPullback_vectorFunctional (M : VonNeumannAlgebra H) (a : M)
     (ξ η : H) :
     normalFunctionalLeftPullback M a (vectorFunctional M ξ η) =
@@ -64,7 +72,11 @@ theorem normalFunctionalLeftPullback_vectorFunctional (M : VonNeumannAlgebra H) 
   exact (ContinuousLinearMap.adjoint_inner_left (a : H →L[ℂ] H)
     ((x : H →L[ℂ] H) η) ξ).symm
 
-/-- The actual norm-closed normal-functional span is invariant under original fixed-left pullback. -/
+/-- **Normal-functional space invariant under left-multiplication pullback.** Let `H` be a
+complete complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write
+`ω_(ξ,η)(x)=⟨ξ,xη⟩` for its vector functionals. Let `M_*` be their norm-closed complex
+span in the continuous dual `M*`. for `a ∈ M` and `ψ ∈ M_*`, `normalFunctionalLeftPullback
+M a ψ∈M_*`. -/
 theorem normalFunctionalLeftPullback_mem (M : VonNeumannAlgebra H) (a : M)
     (ψ : StrongDual ℂ M) (hψ : ψ ∈ normalFunctionalSpace M) :
     normalFunctionalLeftPullback M a ψ ∈ normalFunctionalSpace M := by
@@ -82,7 +94,11 @@ theorem normalFunctionalLeftPullback_mem (M : VonNeumannAlgebra H) (a : M)
   have hle : normalFunctionalSpace M ≤ P := normalFunctionalSpace_le M hP hvec
   exact hle hψ
 
-/-- Original fixed-left multiplication is continuous for the actual ultraweak topology. -/
+/-- **Ultraweak continuity of fixed left multiplication.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for
+its vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. Equip `M` with the ultraweak topology `σ(M,M_*)`, induced by `x ↦ φ(x)` for `φ ∈
+M_*`. for every fixed `a ∈ M`, `x ↦ a*x` is continuous on `M` with its ultraweak topology. -/
 theorem ultraweak_left_mul_continuous (M : VonNeumannAlgebra H) (a : M) :
     Continuous (fun x : Ultraweak M => (ultraweakLinearEquiv M).symm (a * ultraweakLinearEquiv M x)) := by
   apply (ultraweak_continuous_iff M).2

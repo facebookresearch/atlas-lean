@@ -19,18 +19,15 @@ public import Mathlib.Topology.Order.MonotoneConvergence
 public import Mathlib.Topology.Instances.ENNReal.Lemmas
 
 /-!
-# Original normal-weight values make the same GNS diagonal coefficient order normal
+# Order normality of diagonal GNS coefficients
 
-Original finite-square elements have finite positive compressed weight
-values, by the original conjugation norm bound and scalar-weight monotonicity.
-Normality of the same global weight applies to the literal compressed
-positive family and its proved original LUB. Finite values and the actual
-positive coefficient identity give preservation of the real diagonal LUB.
+For a normal extended weight `φ` on a concrete von Neumann algebra and `x ∈ n_φ`, the positive
+bounded functional `ψ_x(a)=⟨Λ(x),π(a)Λ(x)⟩` preserves bounded increasing positive least upper
+bounds in its real values.
 
-The bounded coefficient is the existing positive continuous linear map.
-No normal-predual membership or selected representation model is an input.
-That membership criterion and the computed GNS normal homomorphism remain
-separate, as do full scalar extension and Tomita/modular/polar constructors.
+For a nonempty directed index type and monotone norm-bounded positive family `a_i` with least
+upper bound `s`, the number `Re ψ_x(s)` is the least upper bound of `{Re ψ_x(a_i)}`.
+Faithfulness and semifiniteness of the weight are not required.
 -/
 
 @[expose] public section
@@ -50,7 +47,15 @@ universe u v
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 variable {I : Type v} [Preorder I] [IsDirectedOrder I] [Nonempty I]
 
-/-- A normal scalar weight makes its actual positive diagonal coefficient preserve positive LUBs. -/
+/-- **Positive least upper bounds preserved by a diagonal GNS functional.** Let `H` be a
+complete complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Let `φ : M₊
+→ [0,∞]` be an extended positive weight: additive, homogeneous for finite nonnegative real
+scalars, and zero at zero. Put `n_φ={x : φ(x* x)<∞}`, and let `Λ : n_φ → H_φ` be the dense
+GNS map into the weight Hilbert completion. Its representation `π` satisfies
+`π(a)Λ(x)=Λ(a*x)`. Assume `φ` preserves least upper bounds of nonempty norm-bounded
+directed positive sets. for `x ∈ n_φ`, let `ψ_x(a)=⟨Λ(x),π(a)Λ(x)⟩`. If `a_i` is a
+monotone norm-bounded positive family indexed by a nonempty directed preorder and has
+least upper bound `s`, then `Re ψ_x(s)` is the least upper bound of `{Re ψ_x(a_i)}`. -/
 theorem gnsDiagonalPositiveFunctional_preserves_boundedPositiveIsLUB
     (M : VonNeumannAlgebra H) (φ : Weight M) (hφ : IsNormalWeight M φ)
     (x : φ.finiteSquareSubmodule) (a : I → PositiveElement M) (s : PositiveElement M)

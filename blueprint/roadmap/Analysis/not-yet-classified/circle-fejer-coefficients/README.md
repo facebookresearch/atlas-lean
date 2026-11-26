@@ -1,12 +1,12 @@
-# Circle Fejer Coefficients
+# Fourier coefficients of Fejér polynomials
 
-- [Circle Difference Sum](circle-difference-sum.md)
-- [Circle Difference Sum row](circle-difference-sum-row.md)
-- [Circle Difference Sum nat](circle-difference-sum-nat.md)
-- [Circle Difference Sum neg](circle-difference-sum-neg.md)
-- [Circle Fejer Weight](circle-fejer-weight.md)
-- [Circle Difference Sum eq](circle-difference-sum-eq.md)
-- [Circle Fejer Polynomial fourier Coeff sum](circle-fejer-polynomial-fourier-coeff-su.md)
-- [Circle Fejer Polynomial fourier Coeff](circle-fejer-polynomial-fourier-coeff.md)
-- [Circle Fejer Weight tendsto](circle-fejer-weight-tendsto.md)
-- [Circle Fejer Polynomial fourier Coeff tendsto](circle-fejer-polynomial-fourier-coeff-te.md)
+- [Finite difference-frequency sum](circle-difference-sum.md)
+- [A row of the nonnegative difference-frequency sum](circle-difference-sum-row.md)
+- [Multiplicity of a nonnegative difference frequency](circle-difference-sum-nat.md)
+- [Symmetry of difference-frequency counts](circle-difference-sum-neg.md)
+- [Normalized Fejér Fourier weight](circle-fejer-weight.md)
+- [Normalized difference counts equal Fejér weights](circle-difference-sum-eq.md)
+- [Fourier coefficient from the finite Fejér difference sum](circle-fejer-polynomial-fourier-coeff-su.md)
+- [Fourier coefficient of a Fejér polynomial](circle-fejer-polynomial-fourier-coeff.md)
+- [Fejér weights approach one at each fixed frequency](circle-fejer-weight-tendsto.md)
+- [Coefficientwise convergence of Fejér polynomials](circle-fejer-polynomial-fourier-coeff-te.md)

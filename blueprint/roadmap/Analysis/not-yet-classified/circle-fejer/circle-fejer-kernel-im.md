@@ -1,3 +1,4 @@
-# Circle Fejer Kernel im
+# Real-valued Fejér kernel
 
-The actual kernel is real-valued.
+For every `N : ℕ` and `x : UnitAddCircle`,
+`(circleFejerKernel N x).im = 0`.

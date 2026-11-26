@@ -14,13 +14,14 @@ module
 public import MathlibExt.Analysis.Normed.Operator.DualLowerBound
 
 /-!
-# Actual controlled approximate preimages from the literal dual norm lower bound
+# Controlled approximate preimages from a dual lower bound
 
-The derived half-ball closure gives an actual unit-ball preimage whose
-image approximates a normalized original target vector. Positive real
-scaling gives approximation error≤‖y‖/2 and preimage norm≤2‖y‖. The zero
-target case is handled by the original zero map law. No preimage, quotient,
-surjectivity, closed range or model certificate is input.
+For a bounded complex-linear map `B : E → F` between normed spaces, assume `‖G‖≤‖G∘B‖` for every
+continuous `G ∈ F*`. Every `y ∈ F` then has an approximate preimage `x ∈ E` with `‖Bx-y‖≤‖y‖/2`
+and `‖x‖≤2‖y‖`.
+
+Completeness of the spaces is not required. For `y=0` the bound permits the zero preimage. An
+exact preimage or surjectivity is not asserted.
 -/
 
 @[expose] public section
@@ -39,7 +40,10 @@ universe u v
 variable {E : Type u} [NormedAddCommGroup E] [NormedSpace ℂ E]
 variable {F : Type v} [NormedAddCommGroup F] [NormedSpace ℂ F]
 
-/-- Original dual norm lower bound gives genuine controlled approximate preimages for every target vector. -/
+/-- **Approximate preimage with fixed error and norm constants.** Let `E,F` be complex normed
+spaces, with no completeness assumption, and `B : E →L[ℂ] F`. Assume `‖G‖≤‖G∘B‖` for every
+continuous complex-linear functional `G ∈ F*`. for every `y ∈ F`, there exists `x ∈ E`
+with `dist(Bx,y)≤(1/2)*‖y‖` and `‖x‖≤2*‖y‖`, including `y=0`. -/
 theorem exists_controlled_approx_preimage_of_dual_lower_bound (B : E →L[ℂ] F)
     (hdual : ∀ G : StrongDual ℂ F, ‖G‖ ≤ ‖G.comp B‖) (y : F) :
     ∃ x : E, dist (B x) y ≤ (1 / 2 : ℝ) * ‖y‖ ∧ ‖x‖ ≤ 2 * ‖y‖ := by

@@ -1,4 +1,4 @@
-# Superpolynomial Decay nat Cast add one iff
+# Equivalent weights for superpolynomial decay
 
-The usual weight `n` and the positive weight `n + 1` give the same rapid decay
-predicate, including the harmless finite head at coordinate zero.
+For a real sequence f : ℕ → ℝ, superpolynomial decay at infinity with respect to the weight n
+is equivalent to superpolynomial decay with respect to n+1.

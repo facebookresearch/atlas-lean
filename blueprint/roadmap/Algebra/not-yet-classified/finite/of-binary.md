@@ -1,3 +1,6 @@
-# Of Binary
+# Binary last-leaf splitting family
 
-The actual binary leaf-splitting family, with positive size `n+1`.
+Let R be a type with multiplication and a distinguished element 1, and v=(v₀,v₁)∈R². Define
+u^(0)=(1), and obtain u^(n+1) by retaining all but the last leaf of u^(n), then replacing its
+last leaf u by (u*v₀,u*v₁). The family has n+1 leaves at index n. The family ofBinary v n is
+u^(n).

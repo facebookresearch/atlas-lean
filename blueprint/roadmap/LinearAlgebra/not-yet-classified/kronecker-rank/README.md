@@ -1,9 +1,9 @@
-# Kronecker Rank
+# Range and rank of tensoring a matrix with an identity
 
-## Comm Semiring
+## Column amplification of matrix ranges
 
-- [Range kronecker one](range-kronecker-one.md)
+- [Column amplification of the range under a Kronecker identity](range-kronecker-one.md)
 
-## Field
+## Ranks of Kronecker products over fields
 
-- [Rank kronecker one](rank-kronecker-one.md)
+- [Rank multiplied by the size of a Kronecker identity](rank-kronecker-one.md)

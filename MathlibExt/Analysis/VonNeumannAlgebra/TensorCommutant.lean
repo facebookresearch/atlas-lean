@@ -15,12 +15,14 @@ public import MathlibExt.Analysis.VonNeumannAlgebra.TensorProduct
 public import Mathlib.Analysis.Normed.Module.RCLike.Real
 
 /-!
-# Left operators extracted from the original full-right tensor commutant
+# Left factors in a full-right spatial tensor commutant
 
-A rank-one right operator factors through insertion and its actual Hilbert
-adjoint. Commutation with these operators computes the left factor. The
-original source-algebra generators then put that factor in its commutant.
-This is the constructor prerequisite for actual spatial coefficient range.
+Let `M ⊆ B(H)` be a concrete von Neumann algebra and `K` another complete complex Hilbert space.
+On `L=Completion(H ⊗[ℂ] K)`, every operator in the commutant of `M ⊗̄ B(K)` has the form `B⊗I_K`
+with `B ∈ M'`.
+
+The result asserts existence of a left factor, not uniqueness when `K` is zero. No nonzero-space
+or separability assumption is imposed.
 -/
 
 @[expose] public section
@@ -40,7 +42,11 @@ universe uH uK
 variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 variable {K : Type uK} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
 
-/-- The full-right spatial commutant consists of actual left operators from the source commutant. -/
+/-- **Left factor of a full-right tensor commutant operator.** Let `H,K` be complete complex
+Hilbert spaces, `M ⊆ B(H)` a concrete von Neumann algebra and `L=Completion(H ⊗[ℂ] K)`. If
+`A ∈ B(L)` commutes with `spatialTensorProduct M B(K)`, then there exists `B ∈ B(H)`
+commuting with `M` such that `A=TensorProduct.mapLCompletion B I_K=B⊗I_K`. Zero spaces are
+allowed. -/
 theorem exists_mapLCompletion_id_of_mem_commutant_spatialTensorProduct_top
     (M : VonNeumannAlgebra H) (A : Completion (H ⊗[ℂ] K) →L[ℂ] Completion (H ⊗[ℂ] K))
     (hA : A ∈ (spatialTensorProduct M (⊤ : VonNeumannAlgebra K)).commutant) :

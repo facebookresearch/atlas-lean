@@ -15,11 +15,11 @@ public import Mathlib.RingTheory.Localization.FractionRing
 public import Mathlib.RingTheory.Localization.Integer
 
 /-!
-# Clearing a finite module into the lattice of a field basis
+# A common denominator puts a finite module image in a basis lattice
 
-A single nonzero denominator carries the image of a finite module into
-the full span over the original domain of a finite fraction-field basis.
-The denominator is derived from the actual generator coordinates.
+Let R be a commutative domain, K its fraction field, V a K-vector space with compatible
+R-action and finite K-basis b, M a finitely generated R-module and f:M→V R-linear. There
+exists a nonzero a∈R with a•f(M)⊆span_R{b_i}.
 -/
 
 @[expose] public section
@@ -34,10 +34,12 @@ variable {K : Type v} [Field K] [Algebra R K] [IsFractionRing R K]
 variable {V : Type w} [AddCommGroup V] [Module K V] [Module R V] [IsScalarTower R K V]
 variable {M : Type z} [AddCommGroup M] [Module R M] [Module.Finite R M]
 
-/-- The actual coordinates of a finite generating family earn a common
-nonzero scalar carrying its entire image into the original domain span of
-a finite fraction-field basis. Neither freeness of the source module nor
-normality of the domain is needed. -/
+/-- **Finite module image has a common lattice-clearing scalar.**
+
+Let R be a commutative domain, K its fraction field, V a K-vector space with compatible
+R-action, b:I→V a basis with I finite, M finitely generated over R and f:M→V R-linear. Then
+∃a∈R, a≠0 and a•f(x)∈span_R(range b) for every x∈M.
+-/
 theorem exists_scalar_image_mem_span {ι : Type t} [Finite ι]
     (b : Basis ι K V) (f : M →ₗ[R] V) :
     ∃ a : R, a ≠ 0 ∧ ∀ x : M, a • f x ∈ Submodule.span R (Set.range b) := by

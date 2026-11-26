@@ -1,3 +1,6 @@
-# L2 Multiplication Representation ae eq
+# Value of the bounded-function multiplication representation
 
-The multiplication representation keeps the literal original product representative.
+Let X be a topological space with its Borel measurable structure, μ any measure on X and
+H=L²(X,μ;ℂ). For f∈C_b(X,ℂ), let M_f:H→H be multiplication by f, (M_f u)(x)=f(x)u(x) μ-almost
+everywhere. For f∈C_b(X,ℂ) and u∈H, BoundedContinuousFunction.l2MultiplicationRepresentation μ
+f u equals x↦f(x)u(x) μ-almost everywhere.

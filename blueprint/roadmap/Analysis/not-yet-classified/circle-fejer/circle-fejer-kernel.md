@@ -1,3 +1,4 @@
-# Circle Fejer Kernel
+# Continuous Fejér kernel on the unit circle
 
-The actual Fejer kernel is the normalized squared absolute Dirichlet polynomial.
+For `N : ℕ`, this is the continuous
+complex-valued Fejér kernel on `ℝ/ℤ`, with value `‖D_N(x)‖² / (N + 1)` at `x`.

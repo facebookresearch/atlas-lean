@@ -1,6 +1,6 @@
-# Hom Finite Factor
+# Hom–tensor comparison with a finite-projective factor
 
-- [Hom Tensor Coefficient naturality](hom-tensor-coefficient-naturality.md)
-- [Hom Tensor Finite Free bijective](hom-tensor-finite-free-bijective.md)
-- [Hom Tensor Finite Factor bijective](hom-tensor-finite-factor-bijective.md)
-- [Hom Tensor Finite Factor Equiv](hom-tensor-finite-factor-equiv.md)
+- [Naturality of the Hom–tensor comparison in its tensor factor](hom-tensor-coefficient-naturality.md)
+- [Hom–tensor comparison for a finite-free factor](hom-tensor-finite-free-bijective.md)
+- [Hom–tensor comparison for a finite-projective factor](hom-tensor-finite-factor-bijective.md)
+- [Hom–tensor linear equivalence for a finite-projective factor](hom-tensor-finite-factor-equiv.md)

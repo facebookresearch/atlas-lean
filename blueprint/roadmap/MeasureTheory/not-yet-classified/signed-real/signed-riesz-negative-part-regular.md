@@ -1,3 +1,5 @@
-# Signed Riesz Negative Part regular
+# Regularity of the signed Riesz negative part
 
-The negative representing measure in the signed Riesz construction is regular.
+Let `X` be a compact Hausdorff space
+with its Borel measurable structure. Let `F∈C(X,ℝ)*` be a bounded real-linear functional.
+`signedRieszNegativePart F` is regular.

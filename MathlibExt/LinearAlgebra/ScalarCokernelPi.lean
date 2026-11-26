@@ -15,12 +15,11 @@ public import Mathlib.LinearAlgebra.Pi
 public import Mathlib.LinearAlgebra.Isomorphisms
 
 /-!
-# The full scalar cokernel on arbitrary products
+# Scalar cokernels on arbitrary products
 
-The equivalence is induced by the actual coordinate quotient maps. Every
-coordinate lift is earned by quotient surjectivity; no finite-length premise
-or radical quotient is used. Finite products then earn the exact scalar
-cokernel length required by arbitrary-size pivot elimination.
+Let R be a commutative ring, I any index type and a∈R. Put C_a(I)=R^I/aR^I and C_a=R/aR, with
+quotient projections q_I,q. The scalar quotient equivalence Φ:C_a(I)≃ₗ[R](C_a)^I sends [f] to
+(i↦[f_i]). For finite I, ℓ_R(C_a(I))=|I|ℓ_R(C_a)=|I|ord_R(a), where ord_R(a)=ℓ_R(R/(a)).
 -/
 
 @[expose] public section
@@ -32,8 +31,12 @@ namespace LinearMap
 
 variable {R : Type u} [CommRing R] {ι : Type v}
 
-/-- The literal scalar cokernel on a product is the product of the full
-original scalar cokernels, preserving the actual quotient maps. -/
+/-- **Product of full scalar quotient modules.**
+
+Let R be a commutative ring, I any index type and a∈R. Put C_a(I)=R^I/aR^I and C_a=R/aR, with
+quotient projections q_I,q. The scalar quotient equivalence Φ:C_a(I)≃ₗ[R](C_a)^I sends [f] to
+(i↦[f_i]). The map scalarCokernelPiEquiv a is Φ, an R-linear equivalence for arbitrary I.
+-/
 def scalarCokernelPiEquiv (a : R) :
     ((ι → R) ⧸ (a • (LinearMap.id : (ι → R) →ₗ[R] (ι → R))).range) ≃ₗ[R]
       (ι → (R ⧸ (a • (LinearMap.id : R →ₗ[R] R)).range)) := by
@@ -66,37 +69,57 @@ def scalarCokernelPiEquiv (a : R) :
     exact ⟨f, funext hf⟩
   exact (Submodule.quotEquivOfEq _ _ hk.symm).trans (π.quotKerEquivOfSurjective hs)
 
-/-- The scalar cokernel equivalence sends every original product
-representative to its actual coordinate quotient representatives. -/
+/-- **Scalar quotient equivalence on a product representative.**
+
+Let R be a commutative ring, I any index type and a∈R. Put C_a(I)=R^I/aR^I and C_a=R/aR, with
+quotient projections q_I,q. The scalar quotient equivalence Φ:C_a(I)≃ₗ[R](C_a)^I sends [f] to
+(i↦[f_i]). For f∈R^I, Φ(q_I(f))(i)=q(f_i).
+-/
 @[simp] theorem scalarCokernelPiEquiv_apply_mk (a : R) (f : ι → R) :
     scalarCokernelPiEquiv a (Submodule.Quotient.mk f) =
       fun i => (Submodule.Quotient.mk (f i) :
         R ⧸ (a • (LinearMap.id : R →ₗ[R] R)).range) := rfl
 
-/-- The representative law through the actual linear quotient map. -/
+/-- **Scalar product quotient map intertwining.**
+
+Let R be a commutative ring, I any index type and a∈R. Put C_a(I)=R^I/aR^I and C_a=R/aR, with
+quotient projections q_I,q. The scalar quotient equivalence Φ:C_a(I)≃ₗ[R](C_a)^I sends [f] to
+(i↦[f_i]). For f∈R^I, scalarCokernelPiEquiv a (q_I(f))=(i↦q(f_i)).
+-/
 theorem scalarCokernelPiEquiv_apply_mkQ (a : R) (f : ι → R) :
     scalarCokernelPiEquiv a
         ((a • (LinearMap.id : (ι → R) →ₗ[R] (ι → R))).range.mkQ f) =
       fun i => (a • (LinearMap.id : R →ₗ[R] R)).range.mkQ (f i) := rfl
 
-/-- The actual quotient representative is preserved at each product coordinate. -/
+/-- **Coordinate of the scalar product quotient equivalence.**
+
+Let R be a commutative ring, I any index type and a∈R. Put C_a(I)=R^I/aR^I and C_a=R/aR, with
+quotient projections q_I,q. The scalar quotient equivalence Φ:C_a(I)≃ₗ[R](C_a)^I sends [f] to
+(i↦[f_i]). For f∈R^I and i∈I, scalarCokernelPiEquiv a (q_I(f)) i=q(f_i).
+-/
 theorem scalarCokernelPiEquiv_apply_mkQ_apply (a : R) (f : ι → R) (i : ι) :
     scalarCokernelPiEquiv a
         ((a • (LinearMap.id : (ι → R) →ₗ[R] (ι → R))).range.mkQ f) i =
       (a • (LinearMap.id : R →ₗ[R] R)).range.mkQ (f i) :=
   congrFun (scalarCokernelPiEquiv_apply_mkQ a f) i
 
-/-- Every finite product has the full scalar cokernel length equal to its
-actual cardinality times the original scalar quotient length, including
-the empty product and unit scalar. -/
+/-- **Length of a scalar cokernel on a finite product.**
+
+Let R be a commutative ring, I any index type and a∈R. Put C_a(I)=R^I/aR^I and C_a=R/aR, with
+quotient projections q_I,q. The scalar quotient equivalence Φ:C_a(I)≃ₗ[R](C_a)^I sends [f] to
+(i↦[f_i]). If I is finite, ℓ_R(C_a(I))=|I|ℓ_R(C_a), in ℕ∪{∞}; for empty I the left side is
+zero.
+-/
 theorem length_scalar_coker_pi [Fintype ι] (a : R) :
     Module.length R ((ι → R) ⧸ (a • (LinearMap.id : (ι → R) →ₗ[R] (ι → R))).range) =
       (Fintype.card ι : ℕ∞) * Module.length R (R ⧸ (a • (LinearMap.id : R →ₗ[R] R)).range) := by
   rw [(scalarCokernelPiEquiv (ι := ι) a).length_eq, Module.length_pi_of_fintype]
   simp only [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
 
-/-- The literal scalar image is the full principal ideal, so its cokernel
-length is the existing order of vanishing without taking a radical. -/
+/-- **Scalar quotient length is the order of vanishing.**
+
+Let R be a commutative ring and a∈R. Then ℓ_R(R/range(a•id_R))=Ring.ord R a=ℓ_R(R/(a)).
+-/
 theorem length_scalar_coker_eq_ord (a : R) :
     Module.length R (R ⧸ (a • (LinearMap.id : R →ₗ[R] R)).range) = Ring.ord R a := by
   have hr : (a • (LinearMap.id : R →ₗ[R] R)).range = (Ideal.span {a} : Submodule R R) := by
@@ -110,17 +133,23 @@ theorem length_scalar_coker_eq_ord (a : R) :
       exact ⟨y, hy.symm⟩
   exact congrArg (fun I : Submodule R R => Module.length R (R ⧸ I)) hr
 
-/-- The full nonzero scalar quotient has finite length under the actual
-one-dimensional Noetherian domain hypotheses; no finite-length premise or
-unit-pivot restriction is supplied. -/
+/-- **Finite scalar cokernel length in a one-dimensional domain.**
+
+Let R be a commutative Noetherian domain with Krull dimension at most one and a≠0. Then
+ℓ_R(R/aR) is finite.
+-/
 theorem length_scalar_coker_ne_top [IsNoetherianRing R] [Ring.KrullDimLE 1 R] [IsDomain R]
     (a : R) (ha : a ≠ 0) :
     Module.length R (R ⧸ (a • (LinearMap.id : R →ₗ[R] R)).range) ≠ ⊤ := by
   rw [length_scalar_coker_eq_ord]
   exact Ring.ord_ne_top (by simpa using ha)
 
-/-- The finite product scalar cokernel retains its full original
-one-dimensional order, with exact cardinality and empty-product cases. -/
+/-- **Order formula for a finite product scalar cokernel.**
+
+Let R be a commutative ring, I any index type and a∈R. Put C_a(I)=R^I/aR^I and C_a=R/aR, with
+quotient projections q_I,q. The scalar quotient equivalence Φ:C_a(I)≃ₗ[R](C_a)^I sends [f] to
+(i↦[f_i]). For finite I, ℓ_R(C_a(I))=|I|Ring.ord R a, including empty products and unit a.
+-/
 theorem length_scalar_coker_pi_eq_ord [Fintype ι] (a : R) :
     Module.length R ((ι → R) ⧸ (a • (LinearMap.id : (ι → R) →ₗ[R] (ι → R))).range) =
       (Fintype.card ι : ℕ∞) * Ring.ord R a := by

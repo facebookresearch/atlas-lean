@@ -15,35 +15,13 @@ public import Mathlib.LinearAlgebra.Matrix.Kronecker
 public import Mathlib.Data.Fintype.BigOperators
 
 /-!
-# Kronecker product distributes over sums
+# Kronecker products and finite sums
 
-This module provides minimal generic lemmas for distributing the Kronecker
-product over `Finset` and `Fintype` sums, abstracting the private copies that
-appear in QIT consumers.
-
-Kronecker multiplication is pointwise multiplication of entries, so
-`(∑ᵢ Aᵢ) ⊗ₖ B = ∑ᵢ (Aᵢ ⊗ₖ B)` uses right-distributivity `add_mul` and
-`zero_mul`, while `A ⊗ₖ (∑ᵢ Bᵢ) = ∑ᵢ (A ⊗ₖ Bᵢ)` uses `mul_add` and `mul_zero`.
-Hence `NonUnitalNonAssocSemiring` on the coefficient type suffices; we do not
-assume commutativity, associativity of `*`, or a one.
-
-The proofs use the existing `Matrix.add_kronecker`, `Matrix.kronecker_add`,
-`Matrix.zero_kronecker`, and `Matrix.kronecker_zero` lemmas and plain
-`Finset.induction`.  The `Fintype` corollaries follow from `Finset.univ`;
-equivalently they can be obtained from `Matrix.kroneckerBilinear` and
-`LinearMap.map_sum` when a `Semiring` instance is available, which yields the
-same equalities in one line.
-
-## Main results
-
-* `Matrix.sum_kronecker` – `∑ i ∈ s, f i ⊗ₖ N = (∑ i ∈ s, f i) ⊗ₖ N`
-* `Matrix.kronecker_sum` – `∑ i ∈ s, M ⊗ₖ f i = M ⊗ₖ (∑ i ∈ s, f i)`
-* `Matrix.sum_kronecker_fintype` – Fintype version of `sum_kronecker`
-* `Matrix.kronecker_sum_fintype` – Fintype version of `kronecker_sum`
-
-## Tags
-
-matrix, Kronecker product, Finset sum, Fintype sum
+Let R be an additive commutative monoid with a possibly nonassociative multiplication
+distributing over addition and absorbing zero, and let A,B be rectangular matrices over R.
+Their Kronecker product has entries (A⊗B)_((i,k),(j,l))=A_(i,j)B_(k,l). The product
+distributes over finite sums in either factor: (∑A_i)⊗B=∑(A_i⊗B) and A⊗(∑B_i)=∑(A⊗B_i). Only
+distributivity and zero absorption are required; matrix index types are arbitrary.
 -/
 
 @[expose] public section
@@ -58,8 +36,13 @@ variable {α : Type*} {ι : Type*}
 
 -- Finset sum, left argument varies.
 
-/-- Kronecker product distributes over a `Finset` sum on the left:
-`∑ i ∈ s, f i ⊗ₖ N = (∑ i ∈ s, f i) ⊗ₖ N`. -/
+/-- **Finite-sum distribution in the first Kronecker factor.**
+
+Let R be an additive commutative monoid with a possibly nonassociative multiplication
+distributing over addition and absorbing zero, and let A,B be rectangular matrices over R.
+Their Kronecker product has entries (A⊗B)_((i,k),(j,l))=A_(i,j)B_(k,l). For a finite set s⊂I,
+matrices A_i of common l×m size and B of n×p size, ∑i∈s(A_i⊗B)=(∑i∈s A_i)⊗B.
+-/
 theorem sum_kronecker {s : Finset ι} {f : ι → Matrix l m α} {N : Matrix n p α}
     [NonUnitalNonAssocSemiring α] :
     ∑ i ∈ s, f i ⊗ₖ N = (∑ i ∈ s, f i) ⊗ₖ N := by
@@ -70,8 +53,13 @@ theorem sum_kronecker {s : Finset ι} {f : ι → Matrix l m α} {N : Matrix n p
   | insert a s ha ih =>
     rw [Finset.sum_insert ha, Finset.sum_insert ha, add_kronecker, ih]
 
-/-- Kronecker product distributes over a `Finset` sum on the right:
-`∑ i ∈ s, M ⊗ₖ f i = M ⊗ₖ (∑ i ∈ s, f i)`. -/
+/-- **Finite-sum distribution in the second Kronecker factor.**
+
+Let R be an additive commutative monoid with a possibly nonassociative multiplication
+distributing over addition and absorbing zero, and let A,B be rectangular matrices over R.
+Their Kronecker product has entries (A⊗B)_((i,k),(j,l))=A_(i,j)B_(k,l). For A of l×m size, a
+finite set s⊂I and matrices B_i of common n×p size, ∑i∈s(A⊗B_i)=A⊗(∑i∈s B_i).
+-/
 theorem kronecker_sum {s : Finset ι} {M : Matrix l m α} {f : ι → Matrix n p α}
     [NonUnitalNonAssocSemiring α] :
     ∑ i ∈ s, M ⊗ₖ f i = M ⊗ₖ ∑ i ∈ s, f i := by
@@ -84,7 +72,13 @@ theorem kronecker_sum {s : Finset ι} {M : Matrix l m α} {f : ι → Matrix n p
 
 -- Fintype corollaries via `Finset.univ`.
 
-/-- Fintype version of `Matrix.sum_kronecker`. -/
+/-- **Whole finite-index sum in the first Kronecker factor.**
+
+Let R be an additive commutative monoid with a possibly nonassociative multiplication
+distributing over addition and absorbing zero, and let A,B be rectangular matrices over R.
+Their Kronecker product has entries (A⊗B)_((i,k),(j,l))=A_(i,j)B_(k,l). For finite I, matrices
+A_i of a common rectangular size and fixed B, ∑i∈I(A_i⊗B)=(∑i∈I A_i)⊗B.
+-/
 theorem sum_kronecker_fintype [Fintype ι] {f : ι → Matrix l m α} {N : Matrix n p α}
     [NonUnitalNonAssocSemiring α] :
     ∑ i : ι, f i ⊗ₖ N = (∑ i : ι, f i) ⊗ₖ N := by
@@ -93,7 +87,13 @@ theorem sum_kronecker_fintype [Fintype ι] {f : ι → Matrix l m α} {N : Matri
     _ = (∑ i ∈ Finset.univ, f i) ⊗ₖ N := sum_kronecker
     _ = (∑ _ : ι, f _) ⊗ₖ N := rfl
 
-/-- Fintype version of `Matrix.kronecker_sum`. -/
+/-- **Whole finite-index sum in the second Kronecker factor.**
+
+Let R be an additive commutative monoid with a possibly nonassociative multiplication
+distributing over addition and absorbing zero, and let A,B be rectangular matrices over R.
+Their Kronecker product has entries (A⊗B)_((i,k),(j,l))=A_(i,j)B_(k,l). For finite I, fixed A
+and matrices B_i of a common rectangular size, ∑i∈I(A⊗B_i)=A⊗(∑i∈I B_i).
+-/
 theorem kronecker_sum_fintype [Fintype ι] {M : Matrix l m α} {f : ι → Matrix n p α}
     [NonUnitalNonAssocSemiring α] :
     ∑ i : ι, M ⊗ₖ f i = M ⊗ₖ ∑ i : ι, f i := by

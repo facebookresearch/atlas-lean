@@ -14,15 +14,14 @@ module
 public import MathlibExt.Analysis.InnerProductSpace.ProjectionValuedMeasure.CFCMeasureCoefficients
 
 /-!
-# Actual continuous-CFC product identities for the regular coefficient measures
+# Continuous calculus factors in spectral coefficient measures
 
-These strict identities serve the PVM intersection/projection construction
-required by resolutionOfIdentity and Borel defining DATA. The continuous
-integrands and original vectors are actual inputs; only cfcHom multiplication,
-star and the existing adjoint identity are used. The actual regular measures
-are identified by strict complex-Riesz uniqueness. No supplied PVM, weighted-
-measure correctness, bound, form or output certificate is assumed. The
-original complete H and normal T are retained, including zero H/empty spectrum.
+For a normal operator `T` on a complete complex Hilbert space, its coefficient measures satisfy
+`∫ q dμ_(f(T)g,h)=∫ q f dμ_(g,h)` and `∫ q dμ_(g,f(T)h)=∫ q conj(f) dμ_(g,h)` for continuous
+`f,q` on `K=σ_ℂ(T)`.
+
+In particular, `μ_(f(T)g,h)=μ_(g,conj(f)(T)h)` as regular complex measures. These identities
+follow the inner-product convention linear in the second argument.
 -/
 
 @[expose] public section
@@ -34,7 +33,11 @@ namespace MathlibExt.Analysis.InnerProductSpace.ProjectionValuedMeasure
 universe uH
 variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- Acting on the first vector by the actual continuous CFC multiplies the continuous integrand. -/
+/-- **Continuous factor from the first CFC coefficient vector.** Let `H` be a complete complex
+Hilbert space and `T : H →L[ℂ] H` a normal operator, so `T* T=T T*`. Put `K=σ_ℂ(T)` with
+its Borel measurable structure. Let `μ_(g,h)` be the regular complex measure on `K`
+characterized by `∫ f dμ_(g,h)=⟨h,f(T)g⟩` for `f ∈ C(K,ℂ)`. for `g,h ∈ H` and `f,q ∈
+C(K,ℂ)`, `∫ q dμ_(f(T)g,h)=∫ q*f dμ_(g,h)`. -/
 theorem normalCFCCoefficientMeasure_cfc_mul_left (T : H →L[ℂ] H) (hT : IsStarNormal T)
     (g h : H) (f q : C(spectrum ℂ T, ℂ)) :
     MathlibExt.MeasureTheory.complexIntegralDual
@@ -43,7 +46,11 @@ theorem normalCFCCoefficientMeasure_cfc_mul_left (T : H →L[ℂ] H) (hT : IsSta
   rw [normalCFCCoefficientMeasure_represents, normalCFCCoefficientMeasure_represents, map_mul]
   rfl
 
-/-- The original CFC star moves the continuous factor to the second coefficient vector. -/
+/-- **Adjoint continuous factor in the second coefficient vector.** Let `H` be a complete
+complex Hilbert space and `T : H →L[ℂ] H` a normal operator, so `T* T=T T*`. Put
+`K=σ_ℂ(T)` with its Borel measurable structure. Let `μ_(g,h)` be the regular complex
+measure on `K` characterized by `∫ f dμ_(g,h)=⟨h,f(T)g⟩` for `f ∈ C(K,ℂ)`. for `g,h ∈ H`
+and `f,q ∈ C(K,ℂ)`, `∫ q dμ_(g,conj(f)(T)h)=∫ q*f dμ_(g,h)`. -/
 theorem normalCFCCoefficientMeasure_cfc_star_mul_right (T : H →L[ℂ] H) (hT : IsStarNormal T)
     (g h : H) (f q : C(spectrum ℂ T, ℂ)) :
     MathlibExt.MeasureTheory.complexIntegralDual
@@ -55,7 +62,11 @@ theorem normalCFCCoefficientMeasure_cfc_star_mul_right (T : H →L[ℂ] H) (hT :
   rw [ContinuousLinearMap.adjoint_inner_left, mul_comm q f, map_mul]
   rfl
 
-/-- Acting on the second vector inserts the conjugate continuous integrand. -/
+/-- **Conjugated integrand from the second coefficient vector.** Let `H` be a complete complex
+Hilbert space and `T : H →L[ℂ] H` a normal operator, so `T* T=T T*`. Put `K=σ_ℂ(T)` with
+its Borel measurable structure. Let `μ_(g,h)` be the regular complex measure on `K`
+characterized by `∫ f dμ_(g,h)=⟨h,f(T)g⟩` for `f ∈ C(K,ℂ)`. for `g,h ∈ H` and `f,q ∈
+C(K,ℂ)`, `∫ q dμ_(g,f(T)h)=∫ q*conj(f) dμ_(g,h)`. -/
 theorem normalCFCCoefficientMeasure_cfc_mul_right (T : H →L[ℂ] H) (hT : IsStarNormal T)
     (g h : H) (f q : C(spectrum ℂ T, ℂ)) :
     MathlibExt.MeasureTheory.complexIntegralDual
@@ -64,7 +75,11 @@ theorem normalCFCCoefficientMeasure_cfc_mul_right (T : H →L[ℂ] H) (hT : IsSt
   simpa only [star_star] using
     normalCFCCoefficientMeasure_cfc_star_mul_right T hT g h (star f) q
 
-/-- Riesz uniqueness gives equality of the same actual regular complex coefficient measures. -/
+/-- **Balancing a continuous CFC factor across coefficient vectors.** Let `H` be a complete
+complex Hilbert space and `T : H →L[ℂ] H` a normal operator, so `T* T=T T*`. Put
+`K=σ_ℂ(T)` with its Borel measurable structure. Let `μ_(g,h)` be the regular complex
+measure on `K` characterized by `∫ f dμ_(g,h)=⟨h,f(T)g⟩` for `f ∈ C(K,ℂ)`. for `g,h ∈ H`
+and `f ∈ C(K,ℂ)`, `μ_(f(T)g,h)=μ_(g,conj(f)(T)h)` as regular complex measures. -/
 theorem normalCFCCoefficientMeasure_cfc_balance (T : H →L[ℂ] H) (hT : IsStarNormal T)
     (g h : H) (f : C(spectrum ℂ T, ℂ)) :
     normalCFCCoefficientMeasure T hT (cfcHom hT f g) h =

@@ -1,3 +1,4 @@
-# Circle Dirichlet Polynomial
+# Dirichlet polynomial on the unit circle
 
-The Dirichlet polynomial with nonnegative frequencies on the normalized additive unit circle.
+For `N : ℕ`, `D_N : C(UnitAddCircle, ℂ)`
+is the sum of Fourier characters with frequencies `0,…,N`.

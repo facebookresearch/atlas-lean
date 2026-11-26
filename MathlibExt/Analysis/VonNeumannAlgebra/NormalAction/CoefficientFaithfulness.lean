@@ -19,18 +19,13 @@ public import Mathlib.MeasureTheory.Measure.Typeclasses.Finite
 public import Mathlib.MeasureTheory.Measure.Restrict
 
 /-!
-# Faithfulness of the original Haar coefficient representation
+# Faithfulness of Haar regular coefficient maps
 
-The actual indicator of a measurable finite-Haar neighborhood, multiplied by
-an original Hilbert vector, is an actual Lp H 2 vector. If an original coefficient
-operator vanishes, its exact a.e. formula makes the continuous inverse-action
-vector orbit vanish on that open neighborhood. Haar full support promotes the
-a.e. equality to the original pointwise equality, including at the identity.
+For a normal action `α` on a concrete von Neumann algebra and regular Haar measure `μ`, the
+regular coefficient map `x ↦ P_x` on `Lp H 2 μ` is injective.
 
-This supplies injectivity needed by the original normal faithful coefficient
-inclusion and source crossed-product constructor. The exact H-first tensor
-coefficient inherits it through the already proved original unitary coordinates.
-Normality and membership in the spatial ambient remain separate prerequisites.
+Its tensor transport `x ↦ Q_x` and normal map into `M ⊗̄ B(Lp ℂ 2 μ)` are likewise injective. No
+faithfulness of the group action itself or nonzero Hilbert space is required.
 -/
 
 @[expose] public section
@@ -53,7 +48,13 @@ variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [Complet
 variable {M : VonNeumannAlgebra H}
 variable (μ : Measure G) [μ.IsHaarMeasure] [μ.Regular]
 
-/-- The actual original regular coefficient star representation on Haar Lp is injective. -/
+/-- **Injective Haar regular coefficient star representation.** Let `G` be a group with a
+topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann algebra,
+and `α` a normal action with norm-continuous inverse predual orbits. Assume `G` is a
+topological group. Assume `G` is locally compact with its Borel measurable structure, and
+`μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`. Haar invariance
+is not assumed. Assume additionally that `μ` is a Haar measure. `regularCoefficientHom μ α
+: M → B(L)` is injective. -/
 theorem regularCoefficient_injective (α : NormalAction G M) :
     Function.Injective (regularCoefficientHom μ α) := by
   classical
@@ -97,7 +98,15 @@ theorem regularCoefficient_injective (α : NormalAction G M) :
     rw [map_sub, hxy, sub_self]
   exact sub_eq_zero.mp (hzero (x - y) hmap)
 
-/-- The exact original H-first tensor coefficient representation is injective through the verified coordinates. -/
+/-- **Injective Hilbert-first Haar tensor coefficient representation.** Let `G` be a group
+with a topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann
+algebra, and `α` a normal action with norm-continuous inverse predual orbits. Assume `G`
+is a topological group. Assume `G` is locally compact with its Borel measurable structure,
+and `μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`. Haar
+invariance is not assumed. Let `T=Completion(H ⊗[ℂ] Lp ℂ 2 μ)` and `U : T ≃ₗᵢ[ℂ] L` be
+`tensorToLpRight μ`, with `U(ξ⊗f)(s)=f(s) • ξ`. Set `Q_x=U⁻¹ P_x U`. Assume additionally
+that `μ` is a Haar measure. `regularCoefficientTensorHom μ α : M → B(T)` is injective
+because it is the unitary transport of the faithful regular coefficient map. -/
 theorem regularCoefficientTensor_injective (α : NormalAction G M) :
     Function.Injective (regularCoefficientTensorHom μ α) := by
   let Φ := L2.tensorToLpRight (𝕜 := ℂ) (H := H) μ
@@ -107,7 +116,15 @@ theorem regularCoefficientTensor_injective (α : NormalAction G M) :
       Φ.symm.conjStarAlgEquiv (regularCoefficientHom μ α y) := hxy
   exact Φ.symm.conjStarAlgEquiv.injective hConj
 
-/-- The literal original spatial normal coefficient homomorphism is faithful. -/
+/-- **Faithful normal Haar coefficient map in its spatial ambient.** Let `G` be a group with a
+topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann algebra,
+and `α` a normal action with norm-continuous inverse predual orbits. Assume `G` is a
+topological group. Assume `G` is locally compact with its Borel measurable structure, and
+`μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`. Haar invariance
+is not assumed. Let `T=Completion(H ⊗[ℂ] Lp ℂ 2 μ)` and `U : T ≃ₗᵢ[ℂ] L` be
+`tensorToLpRight μ`, with `U(ξ⊗f)(s)=f(s) • ξ`. Set `Q_x=U⁻¹ P_x U`. Assume additionally
+that `μ` is a Haar measure. the normal homomorphism `regularCoefficientSpatialNormalHom μ
+α : M → M ⊗̄ B(Lp ℂ 2 μ)` is injective. -/
 theorem regularCoefficientSpatialNormalHom_injective (α : NormalAction G M) :
     Function.Injective (regularCoefficientSpatialNormalHom μ α) := by
   intro x y hxy

@@ -1,4 +1,5 @@
-# Adjoint Of Complete Source eq adjoint
+# Agreement with the Hilbert adjoint when both spaces are complete
 
-When the target is also complete, the fixed one-sided construction is
-the usual adjoint. The facade retains both completeness requirements.
+Let `𝕜` be real or
+complex and `E,F` complete normed inner-product `𝕜`-spaces. For every `T : E →L[𝕜] F`,
+`adjointOfCompleteSource T=ContinuousLinearMap.adjoint T`.

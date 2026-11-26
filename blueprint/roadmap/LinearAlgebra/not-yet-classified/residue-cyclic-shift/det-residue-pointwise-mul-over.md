@@ -1,4 +1,3 @@
-# Det residue Pointwise Mul Over
+# Coefficient-field determinant of pointwise block multiplication
 
-Pointwise multiplication on `r + 1` blocks has determinant
-`a ^ (r + 1)` over the residue field.
+Let l be a field,r∈ℕ,a∈lˣ. Over l, det(P_a on l^(r+1))=a^(r+1).

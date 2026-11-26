@@ -18,13 +18,16 @@ public import MathlibExt.Analysis.CStarAlgebra.CStarMatrix.CuntzFold
 import Mathlib.Analysis.CStarAlgebra.Hom
 
 /-!
-# Positive finite matrix folds of the actual Hilbert Calkin algebra
+# Finite matrix folds of a Hilbert-space Calkin algebra
 
-The frame comes from actual basis-coordinate DATA, not a supplied fold/model.
-The existing classStarMap carries both computed Cuntz laws to the same Calkin
-carrier, and the existing general Cuntz fold supplies the matrix equivalence.
-This is a fixed-H precursor, not the general stable-B/spatial identification
-or an Ext/K₁ pairing/descent theorem. The finite index is genuinely positive.
+Let `H` be a complete complex Hilbert space with a Hilbert basis `b_i` and an index bijection
+`Fin 2 × ι ≃ ι`. For any positive finite size `N`, its coordinate construction gives Cuntz
+isometries `S_i`. Their Calkin classes `c_i=[S_i]` satisfy `c_i* c_j=δ_ij I` and `Σ_i c_i
+c_i*=I`.
+
+The complex star equivalence `M_N(Q(H)) ≃ Q(H)` has forward formula `X ↦ Σ_i,j c_i X_ij c_j*`
+and inverse entries `z ↦ c_i* z c_j`. It preserves the C-star metrics, and quotienting the
+corresponding bounded-operator sum agrees with this fold. The index `N` is positive.
 -/
 
 @[expose] public section
@@ -40,7 +43,11 @@ universe uI uH
 variable {ι : Type uI} {H : Type uH}
 variable [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- The actual quotient coordinate family satisfies every finite Gram relation. -/
+/-- **Calkin Gram relations of the finite coordinate family.** Let `H` be a complete complex
+Hilbert space with Hilbert basis `b : HilbertBasis ι ℂ H`, an index bijection `e : Fin 2 ×
+ι ≃ ι`, and `N : ℕ+`. Let `U_i b_j=b_(e(i,j))`, and obtain `S_N` from `[I]` by splitting
+each last leaf `V` into `V U_0,V U_1`. Write `q : B(H) → Q(H)` for the Calkin quotient and
+`c_i=q(S_N(i))`. for `i,j ∈ Fin N`, `c_i* c_j=I` when `i=j` and zero otherwise. -/
 theorem finiteClassFamily_orthogonal (b : HilbertBasis ι ℂ H)
     (e : (Fin 2 × ι) ≃ ι) (N : ℕ+) (i j : Fin N) :
     star (classStarMap (H := H) (HilbertAmplification.finiteFamily b e N i)) *
@@ -56,7 +63,11 @@ theorem finiteClassFamily_orthogonal (b : HilbertBasis ι ℂ H)
       rw [(HilbertAmplification.finiteFamily_relations b e N).1 i j]
       split_ifs <;> simp only [map_one, map_zero]
 
-/-- The actual quotient coordinate ranges partition the Calkin unit. -/
+/-- **Finite coordinate classes partition the Calkin unit.** Let `H` be a complete complex
+Hilbert space with Hilbert basis `b : HilbertBasis ι ℂ H`, an index bijection `e : Fin 2 ×
+ι ≃ ι`, and `N : ℕ+`. Let `U_i b_j=b_(e(i,j))`, and obtain `S_N` from `[I]` by splitting
+each last leaf `V` into `V U_0,V U_1`. Write `q : B(H) → Q(H)` for the Calkin quotient and
+`c_i=q(S_N(i))`. `Σ_i∈Fin N c_i c_i*=I_(Q(H))`. -/
 theorem finiteClassFamily_partition (b : HilbertBasis ι ℂ H)
     (e : (Fin 2 × ι) ≃ ι) (N : ℕ+) :
     (∑ i : Fin N,
@@ -73,14 +84,24 @@ theorem finiteClassFamily_partition (b : HilbertBasis ι ℂ H)
         star (HilbertAmplification.finiteFamily b e N i)) := (map_sum q _ _).symm
     _ = 1 := by rw [(HilbertAmplification.finiteFamily_relations b e N).2, map_one]
 
-/-- The actual positive matrix identification from the computed coordinate family. -/
+/-- **Finite matrix star equivalence of the Calkin algebra.** Let `H` be a complete complex
+Hilbert space with Hilbert basis `b : HilbertBasis ι ℂ H`, an index bijection `e : Fin 2 ×
+ι ≃ ι`, and `N : ℕ+`. Let `U_i b_j=b_(e(i,j))`, and obtain `S_N` from `[I]` by splitting
+each last leaf `V` into `V U_0,V U_1`. Write `q : B(H) → Q(H)` for the Calkin quotient and
+`c_i=q(S_N(i))`. `finiteMatrixFold b e N : M_N(Q(H)) ≃⋆ₐ[ℂ] Q(H)` sends `X` to `Σ_i,j c_i
+X_ij c_j*`, with inverse entries `c_i* z c_j`. -/
 def finiteMatrixFold (b : HilbertBasis ι ℂ H) (e : (Fin 2 × ι) ≃ ι) (N : ℕ+) :
     CStarMatrix (Fin N) (Fin N) (CalkinAlgebra ℂ H) ≃⋆ₐ[ℂ] CalkinAlgebra ℂ H :=
   CuntzFamily.fold ℂ
     (fun i => classStarMap (H := H) (HilbertAmplification.finiteFamily b e N i))
     (finiteClassFamily_orthogonal b e N) (finiteClassFamily_partition b e N)
 
-/-- Literal ordered sum for the constructed quotient fold. -/
+/-- **Ordered sum of the finite Calkin matrix fold.** Let `H` be a complete complex Hilbert
+space with Hilbert basis `b : HilbertBasis ι ℂ H`, an index bijection `e : Fin 2 × ι ≃ ι`,
+and `N : ℕ+`. Let `U_i b_j=b_(e(i,j))`, and obtain `S_N` from `[I]` by splitting each last
+leaf `V` into `V U_0,V U_1`. Write `q : B(H) → Q(H)` for the Calkin quotient and
+`c_i=q(S_N(i))`. for `X ∈ M_N(Q(H))`, `finiteMatrixFold b e N X=Σ_i,j∈Fin N c_i X_ij
+c_j*`. -/
 theorem finiteMatrixFold_apply (b : HilbertBasis ι ℂ H)
     (e : (Fin 2 × ι) ≃ ι) (N : ℕ+)
     (X : CStarMatrix (Fin N) (Fin N) (CalkinAlgebra ℂ H)) :
@@ -91,7 +112,12 @@ theorem finiteMatrixFold_apply (b : HilbertBasis ι ℂ H)
           star (classStarMap (H := H) (HilbertAmplification.finiteFamily b e N j)) :=
   CuntzFamily.fold_apply ℂ _ _ _ X
 
-/-- The inverse has the actual adjoint/class/operator sandwich entries. -/
+/-- **Inverse entry of the finite Calkin fold.** Let `H` be a complete complex Hilbert space
+with Hilbert basis `b : HilbertBasis ι ℂ H`, an index bijection `e : Fin 2 × ι ≃ ι`, and
+`N : ℕ+`. Let `U_i b_j=b_(e(i,j))`, and obtain `S_N` from `[I]` by splitting each last
+leaf `V` into `V U_0,V U_1`. Write `q : B(H) → Q(H)` for the Calkin quotient and
+`c_i=q(S_N(i))`. for `z ∈ Q(H)` and `i,j ∈ Fin N`, `(finiteMatrixFold b e N).symm z i
+j=c_i* z c_j`. -/
 theorem finiteMatrixFold_symm_apply_entry (b : HilbertBasis ι ℂ H)
     (e : (Fin 2 × ι) ≃ ι) (N : ℕ+) (z : CalkinAlgebra ℂ H) (i j : Fin N) :
     (finiteMatrixFold b e N).symm z i j =
@@ -99,7 +125,12 @@ theorem finiteMatrixFold_symm_apply_entry (b : HilbertBasis ι ℂ H)
         z * classStarMap (H := H) (HilbertAmplification.finiteFamily b e N j) :=
   CuntzFamily.fold_symm_apply_entry ℂ _ _ _ z i j
 
-/-- Quotienting the actual ordered upstairs sum agrees with the constructed matrix fold. -/
+/-- **Calkin fold agrees with quotienting the operator matrix sum.** Let `H` be a complete
+complex Hilbert space with Hilbert basis `b : HilbertBasis ι ℂ H`, an index bijection `e :
+Fin 2 × ι ≃ ι`, and `N : ℕ+`. Let `U_i b_j=b_(e(i,j))`, and obtain `S_N` from `[I]` by
+splitting each last leaf `V` into `V U_0,V U_1`. Write `q : B(H) → Q(H)` for the Calkin
+quotient and `c_i=q(S_N(i))`. for bounded-operator entries `X_ij ∈ B(H)`, folding the
+matrix of classes `[X_ij]` gives `q(Σ_i,j S_N(i) X_ij S_N(j)*)`. -/
 theorem finiteMatrixFold_ofMatrix_classes (b : HilbertBasis ι ℂ H)
     (e : (Fin 2 × ι) ≃ ι) (N : ℕ+) (X : Fin N → Fin N → (H →L[ℂ] H)) :
     finiteMatrixFold b e N
@@ -115,7 +146,12 @@ theorem finiteMatrixFold_ofMatrix_classes (b : HilbertBasis ι ℂ H)
           classStarMap (H := H) (X i j) := rfl
   simp only [hEntry, map_sum, map_mul, map_star]
 
-/-- The fold uses the actual operator metric under the coefficient's computed spectral order. -/
+/-- **Metric preservation of the finite Calkin matrix fold.** Let `H` be a complete complex
+Hilbert space with Hilbert basis `b : HilbertBasis ι ℂ H`, an index bijection `e : Fin 2 ×
+ι ≃ ι`, and `N : ℕ+`. Let `U_i b_j=b_(e(i,j))`, and obtain `S_N` from `[I]` by splitting
+each last leaf `V` into `V U_0,V U_1`. Write `q : B(H) → Q(H)` for the Calkin quotient and
+`c_i=q(S_N(i))`. `finiteMatrixFold b e N` is an isometry from the C-star matrix metric on
+`M_N(Q(H))` to the Calkin quotient-norm metric. -/
 theorem finiteMatrixFold_isometry (b : HilbertBasis ι ℂ H)
     (e : (Fin 2 × ι) ≃ ι) (N : ℕ+) :
     letI : PartialOrder (CalkinAlgebra ℂ H) := CStarAlgebra.spectralOrder _;

@@ -1,4 +1,4 @@
-# Pfister Isotropic Subspace
+# Half-dimensional isotropic subspaces of Pfister forms
 
-- [Pfister has Half Dimensional Totally Isotropic Subspace](pfister-has-half-dimensional-totally-iso.md)
-- [Pfister exists half Dimensional Totally Isotropic](pfister-exists-half-dimensional-totally.md)
+- [Half-dimensional total isotropy of an isotropic Pfister form](pfister-has-half-dimensional-totally-iso.md)
+- [A concrete isotropic subspace of a Pfister form](pfister-exists-half-dimensional-totally.md)

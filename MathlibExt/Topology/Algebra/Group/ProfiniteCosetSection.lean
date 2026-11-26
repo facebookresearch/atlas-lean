@@ -15,28 +15,14 @@ import Mathlib.Topology.Algebra.ProperAction.Basic
 import Mathlib.Tactic.Group
 
 /-!
-# Continuous sections of finite-index nested coset projections
+# Continuous sections of finite-relative-index coset projections
 
-Let `K ≤ H` be closed subgroups of a profinite group, with `K` of finite
-relative index in `H`.  The canonical continuous map from left `K`-cosets
-to left `H`-cosets is a surjective local homeomorphism and therefore has a
-continuous set-theoretic section.
+For closed nested subgroups `K≤H` of a compact totally disconnected topological group, finite
+relative index gives a continuous section of `G/K → G/H`.
 
-Neither subgroup is assumed normal.  The section is existential and is not
-claimed to be homomorphic, canonical, or natural.  This is only the
-finite-index case; no inverse-limit or general closed-subgroup section is
-constructed.
-
-## Main declarations
-
-* `QuotientGroup.cosetProjection`
-* `QuotientGroup.cosetProjection_mk`
-* `QuotientGroup.exists_continuous_section_of_isFiniteRelIndex`
-
-## Reference
-
-This is the finite-index leaf in the proof of J.-P. Serre,
-*Galois Cohomology*, Chapter I, Section 1, Proposition 1.
+The projection sends a representative to its class modulo the larger subgroup. Ambient open
+normal subgroups give the refining finite-index neighborhoods used by the section construction.
+No normality of `K,H` or homomorphic section is assumed.
 -/
 
 @[expose] public section
@@ -52,8 +38,9 @@ namespace QuotientGroup
 
 universe u
 
-/-- The continuous projection from left `K`-cosets to left `H`-cosets
-induced by an inclusion `K ≤ H`.  No normality is required. -/
+/-- **Continuous nested coset projection.** Let `G` be a group with a topology and `K≤H`
+subgroups. `cosetProjection : G/K → G/H` sends each left coset of `g` modulo `K` to the
+left coset of `g` modulo `H`. No normality is required. -/
 def cosetProjection
     {G : Type u} [Group G] [TopologicalSpace G]
     {K H : Subgroup G} (h : K ≤ H) : C(G ⧸ K, G ⧸ H) :=
@@ -64,8 +51,8 @@ def cosetProjection
       QuotientGroup.leftRel_apply.mpr
         (h (QuotientGroup.leftRel_apply.mp hab))⟩
 
-/-- The nested coset projection sends the class of a representative to its
-class modulo the larger subgroup. -/
+/-- **Representative value of a nested coset projection.** For a group `G` with topology,
+subgroups `K≤H` and `g∈G`, `cosetProjection([g]_K)=[g]_H`. -/
 @[simp]
 theorem cosetProjection_mk
     {G : Type u} [Group G] [TopologicalSpace G]
@@ -139,8 +126,10 @@ private theorem cosetProjection_isLocalHomeomorph_of_inf_le
       exact hab
   · exact (cosetProjection_isOpenMap hKH).domRestrict hVopen
 
-/-- If `K` has finite relative index in the closed subgroup `H` of a
-profinite group, some ambient open normal subgroup meets `H` inside `K`. -/
+/-- **Ambient open-normal refinement of a finite-relative-index subgroup.** Let `G` be a
+compact totally disconnected topological group. if `K≤G` is closed and has finite relative
+index in a subgroup `H` (the index of `H∩K` in `H` is finite), there is open normal `U≤G`
+with `U∩H≤K`. No inclusion `K≤H` or closedness of `H` is assumed in this refinement lemma. -/
 theorem exists_openNormal_inf_le_of_isFiniteRelIndex
     {G : Type u} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
     [CompactSpace G] [TotallyDisconnectedSpace G]
@@ -171,9 +160,10 @@ theorem exists_openNormal_inf_le_of_isFiniteRelIndex
     exact hgO
   exact hgKsub
 
-/-- An open normal subgroup of an open subgroup contains the image of some
-ambient open normal subgroup.  The ambient subgroup is therefore contained
-in the open subgroup as well. -/
+/-- **Ambient open normal below an open subgroup's normal stage.** Let `G` be a compact
+totally disconnected topological group. for an open subgroup `H≤G` and open normal `V≤H`,
+there is ambient open normal `U≤G` contained in the image of `V` under `H → G`, and thus
+in `H`. -/
 theorem exists_openNormal_le_map_openNormal
     {G : Type u} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
     [CompactSpace G] [TotallyDisconnectedSpace G]
@@ -189,8 +179,10 @@ theorem exists_openNormal_le_map_openNormal
       hKopen K.one_mem
   exact ⟨U, hU⟩
 
-/-- For closed nested subgroups of a profinite group, finite relative index
-gives a continuous set-theoretic section of the nested coset projection. -/
+/-- **Continuous section of a finite-relative-index coset projection.** Let `G` be a compact
+totally disconnected topological group. if `K≤H` are closed subgroups with finite relative
+index of `K` in `H`, there exists continuous `s : G/H → G/K` with
+`cosetProjection∘s=id_(G/H)`. The section need not be homomorphic. -/
 theorem exists_continuous_section_of_isFiniteRelIndex
     {G : Type u} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
     [CompactSpace G] [TotallyDisconnectedSpace G]

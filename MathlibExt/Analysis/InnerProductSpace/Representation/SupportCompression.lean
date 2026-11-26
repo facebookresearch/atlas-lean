@@ -18,13 +18,15 @@ public import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.Idempotent
 public import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.Restrict
 
 /-!
-# A unital representation on the actual range of the represented unit
+# Unital representation on the represented unit range
 
-A possibly nonunital complex star representation of a unital source algebra
-restricts to a genuinely unital representation on the range of its unit image.
-The support has the inherited Hilbert structure and completeness from the
-closed range of the actual idempotent; no projector or new norm is constructed.
-The source algebra need not be normed or complete. Zero support is permitted.
+Let `A` be a unital semiring with complex algebra structure and a star-ring involution, and `σ :
+A → B(H)` a possibly nonunital complex star homomorphism on a complete complex Hilbert space.
+Its unit image `p=σ(1)` is an orthogonal projection.
+
+Restriction to `range p` gives a unital complex star homomorphism `A → B(range p)`, with action
+`x ↦ σ(a)x`. The support inherits its Hilbert norm and is complete. No norm or completeness of
+`A`, or nonzero support, is required.
 -/
 
 @[expose] public section
@@ -36,8 +38,12 @@ universe uA uH
 variable {A : Type uA} [Semiring A] [Algebra ℂ A] [StarRing A]
 variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- Restrict a possibly nonunital complex star representation to the actual
-range of its represented unit. The resulting representation is unital there. -/
+/-- **Unital restriction to a represented unit range.** Let `A` be a unital semiring with a
+complex algebra structure and star-ring involution, without a norm or completeness
+assumption. Let `H` be a complete complex Hilbert space and `σ : A →⋆ₙₐ[ℂ] B(H)` a
+possibly nonunital representation. Put `p=σ(1)`. `unitRangeStarAlgHom σ : A →⋆ₐ[ℂ] B(range
+p)` acts by `σ(a)` on the range of `p`, with unit `I_(range p)` and the inherited complete
+Hilbert structure. -/
 noncomputable def unitRangeStarAlgHom (σ : A →⋆ₙₐ[ℂ] (H →L[ℂ] H)) :
     letI : CompleteSpace (σ (1 : A)).range :=
       (ContinuousLinearMap.IsIdempotentElem.isClosed_range
@@ -105,8 +111,11 @@ noncomputable def unitRangeStarAlgHom (σ : A →⋆ₙₐ[ℂ] (H →L[ℂ] H))
         rw [map_star σ a, ContinuousLinearMap.star_eq_adjoint]
         exact ContinuousLinearMap.adjoint_inner_left (σ a) (y : H) (x : H) }
 
-/-- The included-vector action of the support representation is exactly
-the original represented operator, not a newly chosen compression value. -/
+/-- **Included-vector action of the support representation.** Let `A` be a unital semiring
+with a complex algebra structure and star-ring involution, without a norm or completeness
+assumption. Let `H` be a complete complex Hilbert space and `σ : A →⋆ₙₐ[ℂ] B(H)` a
+possibly nonunital representation. Put `p=σ(1)`. for `a ∈ A` and `x ∈ range p`, the vector
+of `H` underlying `unitRangeStarAlgHom σ a x` is `σ(a)x`. -/
 @[simp]
 theorem unitRangeStarAlgHom_apply (σ : A →⋆ₙₐ[ℂ] (H →L[ℂ] H))
     (a : A) (x : (σ (1 : A)).range) :

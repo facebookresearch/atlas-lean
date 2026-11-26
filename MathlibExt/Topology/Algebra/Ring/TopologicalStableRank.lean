@@ -20,11 +20,12 @@ import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Topology.Homeomorph.Lemmas
 
 /-!
-# Numeric topological stable rank
+# Numeric topological stable rank by dense generators
 
-The algebraic generator predicates live in the lower pure-algebra module.
-This module owns the exposed density bound, its positive-length monotonicity,
-the numeric infimum, and basic ENat characteristics.
+Let R be a semiring with any topology. For positive n, let Lg_n(R)={a∈R^n:∃c∈R^n,∑i
+c_i*a_i=1}, with the finite product topology. Rieffel’s numeric topological stable rank tsr(R)
+is the infimum of those positive n for which Lg_n(R) is dense, and ∞ if none exists. Finite
+stable-rank bounds are monotone in positive tuple length; the numeric rank is never zero.
 -/
 
 public section
@@ -33,15 +34,25 @@ open Set
 
 universe u
 
-/-- Rieffel's finite bound: left-generating `n`-tuples are dense in all
-`n`-tuples, with the actual finite product topology. -/
+/-- **Dense left-generating tuples as a stable-rank bound.**
+
+Let R be a semiring with any topology. For positive n, let Lg_n(R)={a∈R^n:∃c∈R^n,∑i
+c_i*a_i=1}, with the finite product topology. Rieffel’s numeric topological stable rank tsr(R)
+is the infimum of those positive n for which Lg_n(R) is dense, and ∞ if none exists.
+HasTopologicalStableRankAtMost R n means Dense(Lg_n(R)) in R^n.
+-/
 @[expose] def HasTopologicalStableRankAtMost
     (R : Type u) [Semiring R] [TopologicalSpace R]
     (n : ℕ+) : Prop :=
   Dense {a : Fin n → R | IsLeftGeneratingTuple a}
 
-/-- Density of left-generating tuples is monotone in the positive tuple
-length. -/
+/-- **Monotonicity of positive generating-tuple density.**
+
+Let R be a semiring with any topology. For positive n, let Lg_n(R)={a∈R^n:∃c∈R^n,∑i
+c_i*a_i=1}, with the finite product topology. Rieffel’s numeric topological stable rank tsr(R)
+is the infimum of those positive n for which Lg_n(R) is dense, and ∞ if none exists. If
+Lg_m(R) is dense and 0<m≤n, then Lg_n(R) is dense.
+-/
 theorem HasTopologicalStableRankAtMost.mono
     {R : Type u} [Semiring R] [TopologicalSpace R]
     {m n : ℕ+} (hm : HasTopologicalStableRankAtMost R m)
@@ -79,15 +90,25 @@ theorem HasTopologicalStableRankAtMost.mono
     Finset.sum_const_zero, add_zero]
   exact hb
 
-/-- Numeric topological stable rank.  Finite values are positive natural
-numbers; `⊤` means no finite left-generating tuple locus is dense. -/
+/-- **Extended-natural numeric topological stable rank.**
+
+Let R be a semiring with any topology. For positive n, let Lg_n(R)={a∈R^n:∃c∈R^n,∑i
+c_i*a_i=1}, with the finite product topology. Rieffel’s numeric topological stable rank tsr(R)
+is the infimum of those positive n for which Lg_n(R) is dense, and ∞ if none exists. This
+extended natural number is topologicalStableRank R.
+-/
 @[expose] noncomputable def topologicalStableRank
     (R : Type u) [Semiring R] [TopologicalSpace R] : ℕ∞ :=
   ⨅ n : {n : ℕ+ // HasTopologicalStableRankAtMost R n},
     ((n.1 : ℕ) : ℕ∞)
 
-/-- Any witnessed dense generator length is an upper bound for the numeric
-topological stable rank. -/
+/-- **A dense generating length bounds the numeric rank.**
+
+Let R be a semiring with any topology. For positive n, let Lg_n(R)={a∈R^n:∃c∈R^n,∑i
+c_i*a_i=1}, with the finite product topology. Rieffel’s numeric topological stable rank tsr(R)
+is the infimum of those positive n for which Lg_n(R) is dense, and ∞ if none exists. If
+Lg_n(R) is dense, then topologicalStableRank R≤n.
+-/
 theorem topologicalStableRank_le_natCast
     (R : Type u) [Semiring R] [TopologicalSpace R]
     (n : ℕ+) (hn : HasTopologicalStableRankAtMost R n) :
@@ -95,8 +116,13 @@ theorem topologicalStableRank_le_natCast
   unfold topologicalStableRank
   exact iInf_le_of_le ⟨n, hn⟩ le_rfl
 
-/-- The numeric rank is infinite exactly when no positive finite generator
-length has dense locus. -/
+/-- **Infinite stable rank exactly when no finite generator locus is dense.**
+
+Let R be a semiring with any topology. For positive n, let Lg_n(R)={a∈R^n:∃c∈R^n,∑i
+c_i*a_i=1}, with the finite product topology. Rieffel’s numeric topological stable rank tsr(R)
+is the infimum of those positive n for which Lg_n(R) is dense, and ∞ if none exists. The rank
+is ∞ exactly when Lg_n(R) fails to be dense for every positive n.
+-/
 theorem topologicalStableRank_eq_top_iff
     (R : Type u) [Semiring R] [TopologicalSpace R] :
     topologicalStableRank R = ⊤ ↔
@@ -114,8 +140,13 @@ theorem topologicalStableRank_eq_top_iff
       ⟨fun n => hnone n.1 n.2⟩
     exact ENat.iInf_eq_top_of_isEmpty
 
-/-- Numeric topological stable rank cannot be zero because all candidate
-lengths are positive.  This remains true when no finite length works. -/
+/-- **Numeric topological stable rank is nonzero.**
+
+Let R be a semiring with any topology. For positive n, let Lg_n(R)={a∈R^n:∃c∈R^n,∑i
+c_i*a_i=1}, with the finite product topology. Rieffel’s numeric topological stable rank tsr(R)
+is the infimum of those positive n for which Lg_n(R) is dense, and ∞ if none exists. The value
+topologicalStableRank R is not0, even when it is∞.
+-/
 theorem topologicalStableRank_ne_zero
     (R : Type u) [Semiring R] [TopologicalSpace R] :
     topologicalStableRank R ≠ 0 := by

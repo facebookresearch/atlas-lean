@@ -16,12 +16,10 @@ public import Mathlib.LinearAlgebra.Matrix.Reindex
 public import Mathlib.LinearAlgebra.UnitaryGroup
 
 /-!
-# Unitary block diagonal and reindexing
+# Block diagonal and reindexing of unitary matrices
 
-This file proves that a block diagonal matrix formed from unitary blocks
-is unitary on the sum type, and that reindexing a unitary matrix along
-an equivalence remains unitary. These lemmas are generic transport tools
-for block-diagonal and reindexed unitary constructions.
+Let R be a commutative star ring and n,m finite index types. If U∈U(n,R), V∈U(m,R), then
+diag(U,V) is unitary on n⊕m. Reindexing a unitary along n≃m also preserves unitarity.
 -/
 
 @[expose] public section
@@ -34,7 +32,11 @@ variable {n : Type u} {m : Type v} {R : Type w}
 variable [Fintype n] [DecidableEq n] [Fintype m] [DecidableEq m]
 variable [CommRing R] [StarRing R]
 
-/-- Block diagonal of two unitaries is unitary on the sum type. -/
+/-- **Block diagonal of two unitaries.**
+
+Let R be a commutative star ring, n,m finite index types and U,V unitary matrices over R of
+those sizes. Then [[U,0],[0,V]] belongs to U(n⊕m,R).
+-/
 theorem fromBlocks_diagonal_mem_unitaryGroup
     {U : Matrix n n R} {V : Matrix m m R}
     (hU : U ∈ Matrix.unitaryGroup n R)
@@ -56,7 +58,11 @@ theorem fromBlocks_diagonal_mem_unitaryGroup
     add_zero, zero_add]
   rw [hU, hV, Matrix.fromBlocks_one]
 
-/-- Reindexing a unitary matrix along an equivalence preserves unitarity. -/
+/-- **Unitarity under an index equivalence.**
+
+Let R be a commutative star ring, n,m finite index types, e:n≃m and U∈U(n,R). The matrix
+reindex_e(U) with entry U(e⁻¹(i),e⁻¹(j)) belongs to U(m,R).
+-/
 theorem reindex_mem_unitaryGroup (e : n ≃ m)
     {U : Matrix n n R} (hU : U ∈ Matrix.unitaryGroup n R) :
     Matrix.reindex e e U ∈ Matrix.unitaryGroup m R := by

@@ -14,13 +14,13 @@ module
 public import MathlibExt.Analysis.InnerProductSpace.Group.HaarRegularTensorRepresentation
 
 /-!
-# Exact original tensor Haar coordinates
+# Exact Haar coordinates of a tensor left representation
 
-The verified tensor Haar operator remains the actual id_H tensor scalar-Haar
-operator. Its original pure a.e. formulas, Haar-preserving coordinate pullback
-and source tensor/completion density give its exact vector-valued L2 coordinates.
-This exposes the original representation's local coordinate argument for the
-source crossed-product covariance, preserving that verified provider's bytes.
+On `T=Completion(H⊗Lp ℂ 2 μ)`, the Haar unitary is `V_g=I_H⊗λ_g^ℂ`. The tensor-to-L² unitary `U`
+intertwines it with the Hilbert-valued Haar operator: `U V_g=λ_g^H U`.
+
+Equivalently, conjugation gives `U V_g U⁻¹=λ_g^H`. The identities retain the inverse
+left-translation coordinate `g⁻¹s` and the same Haar and Hilbert norms.
 -/
 
 @[expose] public section
@@ -42,7 +42,11 @@ variable (G : Type uG) [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
 variable (μ : Measure G) [μ.IsHaarMeasure] [μ.Regular]
 variable (H : Type uH) [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- The actual original H-first Haar unitary has its exact vector-valued Haar coordinates. -/
+/-- **Tensor-to-L² intertwining of Haar left translation.** Let `G` be a locally compact Borel
+topological group with regular Haar measure `μ` and `H` a complete complex Hilbert space.
+Let `λ_g^H ξ(s)=ξ(g⁻¹s)` on `Lp H 2 μ` and `T=Completion(H⊗Lp ℂ 2 μ)`, with
+`U=tensorToLpRight μ : T ≃ₗᵢ[ℂ] Lp H 2 μ`. for `g∈G`, `z∈T` and `V_g=haarLeftRegularTensor
+G μ H g`, `U(V_g z)=λ_g^H(Uz)` as L² classes. -/
 theorem haarLeftRegularTensor_coordinates (g : G)
     (z : UniformSpace.Completion (H ⊗[ℂ] (Lp ℂ 2 μ))) :
     L2.tensorToLpRight μ
@@ -87,7 +91,11 @@ theorem haarLeftRegularTensor_coordinates (g : G)
   | add z w hz hw =>
     simpa only [UniformSpace.Completion.coe_add, map_add] using congrArg₂ (fun x y => x + y) hz hw
 
-/-- The same actual tensor Haar operator is exactly the original Haar operator under the verified coordinates. -/
+/-- **Operator conjugation of tensor Haar coordinates.** Let `G` be a locally compact Borel
+topological group with regular Haar measure `μ` and `H` a complete complex Hilbert space.
+Let `λ_g^H ξ(s)=ξ(g⁻¹s)` on `Lp H 2 μ` and `T=Completion(H⊗Lp ℂ 2 μ)`, with
+`U=tensorToLpRight μ : T ≃ₗᵢ[ℂ] Lp H 2 μ`. for `V_g=I_H⊗λ_g^ℂ`,
+`U.conjStarAlgEquiv(V_g)=λ_g^H`, equivalently `U V_g U⁻¹=λ_g^H`. -/
 theorem haarLeftRegularTensor_conjStarAlgEquiv (g : G) :
     (L2.tensorToLpRight (𝕜 := ℂ) (H := H) μ).conjStarAlgEquiv
         (haarLeftRegularTensor G μ H g :

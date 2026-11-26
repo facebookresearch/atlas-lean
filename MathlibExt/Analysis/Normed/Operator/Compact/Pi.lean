@@ -16,15 +16,15 @@ public import Mathlib.Topology.Compactness.Compact
 public import Mathlib.Order.Filter.Finite
 
 /-!
-# Compact operators into dependent products
+# Compact functions into dependent products
 
-Coordinate extraction works for arbitrary products. For a finite product,
-coordinate compactness is also sufficient: finitely many source neighborhoods
-can be synchronized and the product of the coordinate witnesses is compact.
+Let `X` be a topological space with a distinguished zero and `Y_i` topological spaces. A
+function `f : X → ∏i Y_i` is a compact operator when it maps some neighborhood of zero into a
+compact set.
 
-These statements use the stock predicate on arbitrary functions, with only
-a zero and topology on the source and topologies on the components. They do
-not require target algebra, continuity of the function or preservation of zero.
+Such a function has compact coordinate maps `x ↦ f(x)_i` for arbitrary indices. For a finite
+index type, compactness of every coordinate is also sufficient. No continuity of `f`,
+preservation of zero or algebraic structure on the target spaces is required.
 -/
 
 public section
@@ -37,8 +37,10 @@ universe uX uI uB
 variable {X : Type uX} [Zero X] [TopologicalSpace X]
 variable {ι : Type uI} {β : ι → Type uB} [∀ i, TopologicalSpace (β i)]
 
-/-- Each coordinate of a compact operator into a dependent product is compact.
-The index type need not be finite. -/
+/-- **Compact coordinate of a function into a product.** Let `X` be a topological space with
+zero, `Y_i` any family of topological spaces, and `f : X → ∏i Y_i` map a neighborhood of
+zero into a compact set. For every index `i`, the coordinate function `x ↦ f(x)_i` is a
+compact operator in the same neighborhood sense. The index type may be infinite. -/
 theorem IsCompactOperator.eval {f : X → ∀ i, β i}
     (hf : IsCompactOperator f) (i : ι) :
     IsCompactOperator (fun x => f x i) := by
@@ -46,8 +48,10 @@ theorem IsCompactOperator.eval {f : X → ∀ i, β i}
   refine ⟨Function.eval i '' K, hK.image (continuous_apply i), ?_⟩
   exact Filter.mem_of_superset hPreimage fun x hx => ⟨f x, hx, rfl⟩
 
-/-- An arbitrary function into a finite dependent product is a compact operator
-if and only if each coordinate is a compact operator. -/
+/-- **Compactness of a finite product function from its coordinates.** Let `X` be a
+topological space with zero, `Y_i` topological spaces indexed by a finite type, and `f : X
+→ ∏i Y_i` any function. It maps a neighborhood of zero into a compact set exactly when
+each coordinate map does. Continuity or linearity of `f` is not required. -/
 theorem isCompactOperator_pi_iff [Finite ι] (f : X → ∀ i, β i) :
     IsCompactOperator f ↔ ∀ i, IsCompactOperator (fun x => f x i) := by
   constructor

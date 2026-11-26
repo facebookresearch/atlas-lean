@@ -14,11 +14,14 @@ module
 public import MathlibExt.Analysis.VonNeumannAlgebra.NormalHom
 
 /-!
-# Normal homomorphisms from actual vector-functional pullbacks
+# Normality from pullback of vector functionals
 
-Norm-continuous functional precomposition preserves the closed span once
-it preserves every original vector functional. The evaluation-induced
-ultraweak topology then gives the normality of the same algebra map.
+Let `f : M → N` be a unital complex star homomorphism between concrete von Neumann algebras. If
+every target vector functional `x ↦ ⟨ξ,f(x)η⟩` belongs to the source normal-functional space
+`M_*`, then `f` is ultraweakly continuous and defines a normal homomorphism.
+
+The criterion uses vector functionals on the complete target Hilbert space and the norm-closed
+source predual span. Injectivity is not required.
 -/
 
 @[expose] public section
@@ -38,7 +41,12 @@ variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [Complet
 variable {K : Type uK} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
 variable {M : VonNeumannAlgebra H} {N : VonNeumannAlgebra K}
 
-/-- The literal star map is normal when its computed vector pullbacks lie in the actual source predual. -/
+/-- **Normal homomorphism from normal vector-functional pullbacks.** Let `M,N` be concrete von
+Neumann algebras on complete complex Hilbert spaces. Their normal-functional Banach spaces
+`M_*,N_*` are the norm-closed spans of vector functionals, and their ultraweak topologies
+are `σ(M,M_*)`, `σ(N,N_*)`. let `f : M →⋆ₐ[ℂ] N` and suppose `vectorFunctional N ξ η ∘ f ∈
+M_*` for every `ξ,η` in the target Hilbert space. Then `ofVectorFunctionalPullbacks f`
+bundles this star map as an ultraweakly continuous normal homomorphism. -/
 def ofVectorFunctionalPullbacks (f : M →⋆ₐ[ℂ] N)
     (hvec : ∀ ξ η : K, (vectorFunctional N ξ η).comp
       (⟨LinearMap.ofClass f, map_continuous f⟩ : M →L[ℂ] N) ∈ normalFunctionalSpace M) :

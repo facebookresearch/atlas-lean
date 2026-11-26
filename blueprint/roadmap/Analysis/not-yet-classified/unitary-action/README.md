@@ -1,7 +1,7 @@
-# Unitary Action
+# Normal action of a strongly continuous normalizing representation
 
-- [Unitary Conjugation Normal Hom](unitary-conjugation-normal-hom.md)
-- [Unitary Conjugation Normal Hom apply](unitary-conjugation-normal-hom-apply.md)
-- [Unitary Conjugation predual vector Functional](unitary-conjugation-predual-vector-funct.md)
-- [Unitary Conjugation predual continuous](unitary-conjugation-predual-continuous.md)
-- [Unitary Conjugation Normal Action](unitary-conjugation-normal-action.md)
+- [Normal-automorphism homomorphism of a unitary representation](unitary-conjugation-normal-hom.md)
+- [Operator value of the representation's normal automorphism](unitary-conjugation-normal-hom-apply.md)
+- [Covariant predual action on a vector functional](unitary-conjugation-predual-vector-funct.md)
+- [Norm continuity of the unitary action on normal functionals](unitary-conjugation-predual-continuous.md)
+- [Normal action induced by unitary normalization](unitary-conjugation-normal-action.md)

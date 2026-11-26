@@ -17,12 +17,11 @@ public import Mathlib.RingTheory.Finiteness.Projective
 public import MathlibExt.LinearAlgebra.LinearMap.RetractComparison
 
 /-!
-# Hom–tensor comparison for a finite-projective tensor factor
+# Hom–tensor comparison with a finite-projective factor
 
-The first Hom source is arbitrary. A genuine native finite-free retraction of
-the tensor factor, together with the original coefficient-map naturality,
-earns invertibility. Native finite product/tensor and Hom/product coordinates
-compute the finite-free case. No basis or desired comparison is caller data.
+Let R be a commutative ring and P,N R-modules. For an R-module U, define C_U:Hom_R(P,N)⊗_R
+U→Hom_R(P,N⊗_R U) by C_U(f⊗u)(p)=f(p)⊗u. If U is finitely generated projective over R, C_U is
+an R-linear isomorphism. The Hom source P has no finiteness requirement.
 -/
 
 @[expose] public section
@@ -42,7 +41,12 @@ variable (R : Type uR) [CommRing R]
 
 attribute [local ext high] TensorProduct.ext
 
-/-- Original coefficient-map naturality in the actual tensor factor. -/
+/-- **Naturality of the Hom–tensor comparison in its tensor factor.**
+
+Let R be a commutative ring and P,N R-modules. For an R-module U, define C_U:Hom_R(P,N)⊗_R
+U→Hom_R(P,N⊗_R U) by C_U(f⊗u)(p)=f(p)⊗u. For R-modules U,V and R-linear g:U→V,
+C_V∘(id⊗g)=postcompose(id_N⊗g)∘C_U.
+-/
 theorem homTensorCoefficient_naturality
     {U : Type uU} {V : Type uV}
     [AddCommGroup U] [Module R U] [AddCommGroup V] [Module R V]
@@ -55,8 +59,11 @@ theorem homTensorCoefficient_naturality
   intro p
   rfl
 
-/-- The canonical Hom–tensor map is bijective for a native finite-free tensor
-factor. The Hom source remains unrestricted. -/
+/-- **Hom–tensor comparison for a finite-free factor.**
+
+Let R be a commutative ring and P,N R-modules. For an R-module U, define C_U:Hom_R(P,N)⊗_R
+U→Hom_R(P,N⊗_R U) by C_U(f⊗u)(p)=f(p)⊗u. For n∈ℕ and U=R^(Fin n), C_U is bijective.
+-/
 theorem homTensorFiniteFree_bijective (n : ℕ) :
     Function.Bijective (rTensorHomToHomRTensor (.id R) P N (Fin n → R)) := by
   let e : (P →ₗ[R] N) ⊗[R] (Fin n → R) ≃ₗ[R] (Fin n → (P →ₗ[R] N)) :=
@@ -90,8 +97,12 @@ theorem homTensorFiniteFree_bijective (n : ℕ) :
     obtain ⟨x, hx⟩ := hb.surjective (t y)
     exact ⟨x, t.injective hx⟩
 
-/-- A genuine finite-projective tensor factor earns bijectivity of the original
-canonical coefficient map by its native finite-free retraction. -/
+/-- **Hom–tensor comparison for a finite-projective factor.**
+
+Let R be a commutative ring and P,N R-modules. For an R-module U, define C_U:Hom_R(P,N)⊗_R
+U→Hom_R(P,N⊗_R U) by C_U(f⊗u)(p)=f(p)⊗u. If U is finitely generated projective over R, C_U is
+bijective.
+-/
 theorem homTensorFiniteFactor_bijective
     (U : Type uU) [AddCommGroup U] [Module R U]
     [Module.Finite R U] [Module.Projective R U] :
@@ -117,8 +128,13 @@ theorem homTensorFiniteFactor_bijective
     (rTensorHomToHomRTensor (.id R) P N (Fin n → R))
     dG dF cG cF hd hc hNatG hNatF hFree
 
-/-- Actual original coefficient Iso; its forward map is the canonical map by
-construction, rather than an arbitrary finite-projective comparison. -/
+/-- **Hom–tensor linear equivalence for a finite-projective factor.**
+
+Let R be a commutative ring and P,N R-modules. For an R-module U, define C_U:Hom_R(P,N)⊗_R
+U→Hom_R(P,N⊗_R U) by C_U(f⊗u)(p)=f(p)⊗u. For U finitely generated projective over R,
+homTensorFiniteFactorEquiv R P N U:Hom_R(P,N)⊗_R U≃ₗ[R]Hom_R(P,N⊗_R U) is C_U, with
+C_U(f⊗u)(p)=f(p)⊗u.
+-/
 def homTensorFiniteFactorEquiv
     (U : Type uU) [AddCommGroup U] [Module R U]
     [Module.Finite R U] [Module.Projective R U] :

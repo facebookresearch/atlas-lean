@@ -1,3 +1,5 @@
-# Complex Integral Dual injective
+# Continuous complex integrals determine a regular measure
 
-A regular complex measure is determined by its integrals against continuous complex functions.
+Let `X` be a compact
+Hausdorff space with its Borel measurable structure. the map `μ ↦ complexIntegralDual μ`
+is injective on regular complex measures.

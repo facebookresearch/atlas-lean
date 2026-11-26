@@ -1,5 +1,5 @@
-# Cokernel Reindex
+# Matrix cokernels under independent row and column reindexing
 
-- [Length coker reindex](length-coker-reindex.md)
-- [Ord det reindex](ord-det-reindex.md)
-- [Det reindex ne zero iff](det-reindex-ne-zero-iff.md)
+- [Cokernel length is invariant under row and column reindexing](length-coker-reindex.md)
+- [Determinant order is invariant under independent reindexing](ord-det-reindex.md)
+- [Reindexing preserves determinant nonvanishing](det-reindex-ne-zero-iff.md)

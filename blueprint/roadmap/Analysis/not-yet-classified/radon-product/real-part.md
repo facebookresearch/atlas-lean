@@ -1,3 +1,4 @@
-# Real Part
+# Real component of a compact-support complex function
 
-The actual real component of a complex compact-support function.
+On any topological space `X`,
+`realPart f∈C_c(X,ℝ)` is `x ↦ Re f(x)` for `f∈C_c(X,ℂ)`.

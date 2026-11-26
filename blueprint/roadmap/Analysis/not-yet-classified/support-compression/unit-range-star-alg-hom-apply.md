@@ -1,4 +1,7 @@
-# Unit Range Star Alg Hom apply
+# Included-vector action of the support representation
 
-The included-vector action of the support representation is exactly
-the original represented operator, not a newly chosen compression value.
+Let `A` be a unital semiring
+with a complex algebra structure and star-ring involution, without a norm or completeness
+assumption. Let `H` be a complete complex Hilbert space and `σ : A →⋆ₙₐ[ℂ] B(H)` a
+possibly nonunital representation. Put `p=σ(1)`. for `a ∈ A` and `x ∈ range p`, the vector
+of `H` underlying `unitRangeStarAlgHom σ a x` is `σ(a)x`.

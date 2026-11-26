@@ -1,3 +1,5 @@
-# Upper Unit
+# Upper block unipotent matrix
 
-Upper unitriangular `[[1, A],[0,1]]`.
+Let R be any ring and α,β finite index types. For rectangular A:Matrix α β R and C:Matrix β α
+R, put U(A)=[[I_α,A],[0,I_β]] and L(C)=[[I_α,0],[C,I_β]] in GL(α⊕β,R). The element upperUnit A
+is U(A), with inverse U(-A), for every rectangular A:Matrix α β R.

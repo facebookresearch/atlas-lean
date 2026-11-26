@@ -1,15 +1,15 @@
-# Actual bounded finite-rank carriers and range trace
+# Finite-rank range trace and Hilbert–Schmidt functions
 
-## Normed Spaces
+## Bounded finite-rank maps on normed spaces
 
-- [Finite Rank Compose Left](finite-rank-compose-left.md)
-- [Finite Rank Compose Left coe](finite-rank-compose-left-coe.md)
-- [Finite Rank Range Trace](finite-rank-range-trace.md)
+- [Left composition of a bounded finite-rank map](finite-rank-compose-left.md)
+- [Bounded map underlying finite-rank left composition](finite-rank-compose-left-coe.md)
+- [Trace of a finite-rank endomorphism on its range](finite-rank-range-trace.md)
 
-## Hilbert Spaces
+## Hilbert–Schmidt structure on finite-rank maps
 
-- [Finite Rank Operator eq finite Rank Submodule](finite-rank-operator-eq-finite-rank-subm.md)
-- [Finite Rank Hilbert Schmidt Inner](finite-rank-hilbert-schmidt-inner.md)
-- [Finite Rank Hilbert Schmidt Norm](finite-rank-hilbert-schmidt-norm.md)
-- [Finite Rank Hilbert Schmidt Inner def](finite-rank-hilbert-schmidt-inner-def.md)
-- [Finite Rank Hilbert Schmidt Inner eq trace adjoint](finite-rank-hilbert-schmidt-inner-eq-tra.md)
+- [Finite-rank maps equal the rank-one span for a complete domain](finite-rank-operator-eq-finite-rank-subm.md)
+- [Finite-rank Hilbert–Schmidt inner function](finite-rank-hilbert-schmidt-inner.md)
+- [Square-root finite-rank Hilbert–Schmidt function](finite-rank-hilbert-schmidt-norm.md)
+- [Complete-source adjoint trace formula for the inner function](finite-rank-hilbert-schmidt-inner-def.md)
+- [Ordinary adjoint trace formula on two Hilbert spaces](finite-rank-hilbert-schmidt-inner-eq-tra.md)

@@ -17,19 +17,16 @@ public import MathlibExt.Analysis.InnerProductSpace.Group.HaarRegularRepresentat
 public import Mathlib.Analysis.Normed.Operator.Basic
 
 /-!
-# The actual regular coefficient operator of a normal action
+# Inverse-action coefficient operators on regular-measure L²
 
-The original compact-support formula is alpha(s inverse)(x) applied to the
-original vector at s. The existing normal-action vector continuity and
-automorphism norm bound supply the shared bounded pointwise L2 construction.
-These original regular-coefficient names are wrappers around that construction
-on the actual source seminorm, its separation quotient and ordinary completion,
-and the original Lp H 2 Haar carrier.
+For a normal action `α` on `M⊆B(H)`, the coefficient field is `x_s=α_(s⁻¹)(x)`. Its vector
+action is jointly continuous and satisfies `‖x_s‖≤‖x‖`. It acts on compact-support continuous
+vectors by `f(s) ↦ x_s f(s)`.
 
-The shared operator retains the literal formula almost everywhere on every
-Lp vector. The source action is normal with continuous predual orbits, rather
-than a different norm-continuous C-star action. Connes's tensor transport is
-separate.
+For a locally compact group with Borel structure and regular measure `μ`, this extends to the
+bounded operator `P_x` on `Lp H 2 μ` with `(P_x ξ)(s)=x_s ξ(s)` almost everywhere and
+`‖P_xξ‖≤‖x‖‖ξ‖`. The separated L² completion of `C_c(G,H)` gives the same action on its dense
+images. The measure need not be Haar.
 -/
 
 @[expose] public section
@@ -53,28 +50,44 @@ variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [Complet
 variable {M : VonNeumannAlgebra H}
 
 omit [LocallyCompactSpace G] [MeasurableSpace G] [BorelSpace G] in
-/-- The inverse-coordinate coefficient field has jointly continuous vector action. -/
+/-- **Joint continuity of the inverse-action coefficient field.** Let `G` be a group with a
+topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann algebra,
+and `α` a normal action with norm-continuous inverse predual orbits. Assume `G` is a
+topological group. for `x∈M`, the map `(s,ξ) ↦ (α_(s⁻¹)(x) : B(H))ξ` is continuous from
+`G×H` to `H`. Local compactness and a measure are not required. -/
 theorem continuous_regularCoefficientField (α : NormalAction G M) (x : M) :
     Continuous fun p : G × H => (α p.1⁻¹ x : H →L[ℂ] H) p.2 :=
   (continuous_vector_action α x).comp
     ((continuous_inv.comp continuous_fst).prodMk continuous_snd)
 
 omit [IsTopologicalGroup G] [LocallyCompactSpace G] [MeasurableSpace G] [BorelSpace G] in
-/-- The original algebra norm bounds every inverse-coordinate coefficient operator. -/
+/-- **Uniform coefficient norm of a normal automorphism orbit.** Let `G` be a group with a
+topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann algebra,
+and `α` a normal action with norm-continuous inverse predual orbits. for `x∈M` and `s∈G`,
+`‖(α_(s⁻¹)(x) : B(H))‖≤‖x‖`. Continuity of group operations is not needed for this bound. -/
 theorem regularCoefficientField_norm_le (α : NormalAction G M) (x : M) (s : G) :
     ‖(α s⁻¹ x : H →L[ℂ] H)‖ ≤ ‖x‖ := by
   change ‖α s⁻¹ x‖ ≤ ‖x‖
   exact (StarAlgEquiv.norm_map (α s⁻¹).toStarAlgEquiv x).le
 
 omit [LocallyCompactSpace G] [MeasurableSpace G] [BorelSpace G] in
-/-- The original regular coefficient action on continuous compact-support vectors. -/
+/-- **Inverse-action coefficient on compact-support vectors.** Let `G` be a group with a
+topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann algebra,
+and `α` a normal action with norm-continuous inverse predual orbits. Assume `G` is a
+topological group. for `x∈M`, `regularCoefficientCompactSupport α x : C_c(G,H) →ₗ[ℂ]
+C_c(G,H)` sends `f(s)` to `α_(s⁻¹)(x)f(s)`. No measure or local compactness is required
+here. -/
 def regularCoefficientCompactSupport (α : NormalAction G M) (x : M) :
     C_c(G, H) →ₗ[ℂ] C_c(G, H) :=
   pointwiseCompactSupport (fun s => (α s⁻¹ x : H →L[ℂ] H))
     (continuous_regularCoefficientField α x)
 
 omit [LocallyCompactSpace G] [MeasurableSpace G] [BorelSpace G] in
-/-- The compact-support action keeps the original inverse group-coordinate formula. -/
+/-- **Pointwise compact-support regular coefficient formula.** Let `G` be a group with a
+topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann algebra,
+and `α` a normal action with norm-continuous inverse predual orbits. Assume `G` is a
+topological group. for `x∈M`, `f∈C_c(G,H)` and `s∈G`, `regularCoefficientCompactSupport α
+x f s=α_(s⁻¹)(x)f(s)`. -/
 @[simp]
 theorem regularCoefficientCompactSupport_apply (α : NormalAction G M) (x : M)
     (f : C_c(G, H)) (s : G) :
@@ -84,7 +97,13 @@ theorem regularCoefficientCompactSupport_apply (α : NormalAction G M) (x : M)
 variable (μ : Measure G) [μ.Regular]
 
 omit [LocallyCompactSpace G] in
-/-- The original operator norm bounds the actual compact-support L2 images. -/
+/-- **L² bound of the compact-support coefficient action.** Let `G` be a group with a
+topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann algebra,
+and `α` a normal action with norm-continuous inverse predual orbits. Assume `G` is a
+topological group. Give `G` its Borel structure and let `μ` be a regular measure. Write
+`i_μ : C_c(G,H) → Lp H 2 μ` for the compact-support inclusion. for `x∈M` and `f∈C_c(G,H)`,
+`‖i_μ(regularCoefficientCompactSupport α x f)‖≤‖x‖‖i_μ(f)‖`. Local compactness is not
+assumed in this estimate. -/
 theorem regularCoefficientCompactSupport_l2Bound (α : NormalAction G M) (x : M)
     (f : C_c(G, H)) :
     ‖compactSupportInclusion μ (regularCoefficientCompactSupport α x f)‖ ≤
@@ -93,26 +112,51 @@ theorem regularCoefficientCompactSupport_l2Bound (α : NormalAction G M) (x : M)
     (continuous_regularCoefficientField α x) μ ‖x‖ (regularCoefficientField_norm_le α x) f
 
 omit [LocallyCompactSpace G] in
-/-- The bounded compact-support coefficient map descends and extends through the genuine source completion. -/
+/-- **Coefficient extension from the separated compact-support completion.** Let `G` be a
+group with a topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von
+Neumann algebra, and `α` a normal action with norm-continuous inverse predual orbits.
+Assume `G` is a topological group. Give `G` its Borel structure and let `μ` be a regular
+measure. Write `i_μ : C_c(G,H) → Lp H 2 μ` for the compact-support inclusion. let `C_μ` be
+the completion of `C_c(G,H)` after quotienting by the zero L²-seminorm vectors.
+`regularCoefficientSourceMap μ α x : C_μ →L[ℂ] Lp H 2 μ` sends the dense image of `f` to
+`i_μ(s ↦ α_(s⁻¹)(x)f(s))`. -/
 def regularCoefficientSourceMap (α : NormalAction G M) (x : M) :
     CompletionCore (H := H) μ →L[ℂ] Lp H 2 μ :=
   pointwiseSourceMap (fun s => (α s⁻¹ x : H →L[ℂ] H))
     (continuous_regularCoefficientField α x) μ ‖x‖ (regularCoefficientField_norm_le α x)
 
 omit [LocallyCompactSpace G] in
-/-- The extended source map retains each original compact-support coefficient image. -/
+/-- **Dense compact-support value of the source completion map.** Let `G` be a group with a
+topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann algebra,
+and `α` a normal action with norm-continuous inverse predual orbits. Assume `G` is a
+topological group. Give `G` its Borel structure and let `μ` be a regular measure. Write
+`i_μ : C_c(G,H) → Lp H 2 μ` for the compact-support inclusion. for `C_μ` the separated L²
+completion and its inclusion `j_μ`, `regularCoefficientSourceMap μ α x (j_μ
+f)=i_μ(regularCoefficientCompactSupport α x f)`. -/
 theorem regularCoefficientSourceMap_apply (α : NormalAction G M) (x : M) (f : C_c(G, H)) :
     regularCoefficientSourceMap μ α x (toCompletion μ f) =
       compactSupportInclusion μ (regularCoefficientCompactSupport α x f) :=
   pointwiseSourceMap_apply (fun s => (α s⁻¹ x : H →L[ℂ] H))
     (continuous_regularCoefficientField α x) μ ‖x‖ (regularCoefficientField_norm_le α x) f
 
-/-- The actual regular coefficient operator on the same original Haar Lp H 2 carrier. -/
+/-- **Bounded regular coefficient on full L².** Let `G` be a group with a topology, `H` a
+complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann algebra, and `α` a normal
+action with norm-continuous inverse predual orbits. Assume `G` is a topological group.
+Assume `G` is locally compact with its Borel measurable structure, and `μ` is a regular
+measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`. Haar invariance is not assumed.
+`regularCoefficient μ α x=P_x : L →L[ℂ] L` is the operator with almost-everywhere formula
+`P_xξ(s)=α_(s⁻¹)(x)ξ(s)`. -/
 def regularCoefficient (α : NormalAction G M) (x : M) : Lp H 2 μ →L[ℂ] Lp H 2 μ :=
   pointwiseOperator (fun s => (α s⁻¹ x : H →L[ℂ] H))
     (continuous_regularCoefficientField α x) μ ‖x‖ (regularCoefficientField_norm_le α x)
 
-/-- The actual Lp operator retains the exact compact-support inverse-action formula. -/
+/-- **Regular coefficient preserves the compact-support inclusion formula.** Let `G` be a
+group with a topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von
+Neumann algebra, and `α` a normal action with norm-continuous inverse predual orbits.
+Assume `G` is a topological group. Assume `G` is locally compact with its Borel measurable
+structure, and `μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`.
+Haar invariance is not assumed. for `f∈C_c(G,H)`, `P_x(i_μ f)=i_μ(s ↦ α_(s⁻¹)(x)f(s))`,
+where `i_μ` is the L² inclusion. -/
 theorem regularCoefficient_apply_compactSupport (α : NormalAction G M) (x : M)
     (f : C_c(G, H)) :
     regularCoefficient μ α x (compactSupportInclusion μ f) =
@@ -120,26 +164,51 @@ theorem regularCoefficient_apply_compactSupport (α : NormalAction G M) (x : M)
   pointwiseOperator_apply_compactSupport (fun s => (α s⁻¹ x : H →L[ℂ] H))
     (continuous_regularCoefficientField α x) μ ‖x‖ (regularCoefficientField_norm_le α x) f
 
-/-- Every actual Lp vector has the literal original regular coefficient representative almost everywhere. -/
+/-- **Almost-everywhere representative of every regular coefficient value.** Let `G` be a
+group with a topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von
+Neumann algebra, and `α` a normal action with norm-continuous inverse predual orbits.
+Assume `G` is a topological group. Assume `G` is locally compact with its Borel measurable
+structure, and `μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`.
+Haar invariance is not assumed. for `x∈M` and `ξ∈L`, `regularCoefficient μ α x ξ =ᵐ[μ] (s
+↦ α_(s⁻¹)(x)ξ(s))`. -/
 theorem regularCoefficient_ae_eq (α : NormalAction G M) (x : M) (ξ : Lp H 2 μ) :
     regularCoefficient μ α x ξ =ᵐ[μ] fun s : G => (α s⁻¹ x : H →L[ℂ] H) (ξ s) :=
   pointwiseOperator_ae_eq (fun s => (α s⁻¹ x : H →L[ℂ] H))
     (continuous_regularCoefficientField α x) μ ‖x‖ (regularCoefficientField_norm_le α x) ξ
 
-/-- The actual original algebra norm bounds every Haar L2 vector image. -/
+/-- **Vector norm bound of a regular coefficient operator.** Let `G` be a group with a
+topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann algebra,
+and `α` a normal action with norm-continuous inverse predual orbits. Assume `G` is a
+topological group. Assume `G` is locally compact with its Borel measurable structure, and
+`μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`. Haar invariance
+is not assumed. for `x∈M` and `ξ∈L`, `‖P_xξ‖≤‖x‖‖ξ‖`. -/
 theorem regularCoefficient_norm_apply_le (α : NormalAction G M) (x : M) (ξ : Lp H 2 μ) :
     ‖regularCoefficient μ α x ξ‖ ≤ ‖x‖ * ‖ξ‖ :=
   pointwiseOperator_norm_apply_le (fun s => (α s⁻¹ x : H →L[ℂ] H))
     (continuous_regularCoefficientField α x) μ ‖x‖ (regularCoefficientField_norm_le α x) ξ
 
-/-- The same actual coefficient operator on the original separated C_c completion. -/
+/-- **Coefficient operator on the separated compact-support Hilbert completion.** Let `G` be a
+group with a topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von
+Neumann algebra, and `α` a normal action with norm-continuous inverse predual orbits.
+Assume `G` is a topological group. Assume `G` is locally compact with its Borel measurable
+structure, and `μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`.
+Haar invariance is not assumed. let `C_μ` be the separated L² completion of `C_c(G,H)` and
+`J : C_μ ≃ₗᵢ[ℂ] L` its L² identification. Then `regularCoefficientOriginal μ α x=J⁻¹ P_x
+J`. -/
 def regularCoefficientOriginal (α : NormalAction G M) (x : M) :
     CompletionCore (H := H) μ →L[ℂ] CompletionCore (H := H) μ :=
   (completionToLp (H := H) μ).symm.toLinearIsometry.toContinuousLinearMap.comp
     ((regularCoefficient μ α x).comp
       (completionToLp (H := H) μ).toLinearIsometry.toContinuousLinearMap)
 
-/-- The original source-completion operator has the original compact-support coordinate formula. -/
+/-- **Dense value of the coefficient operator on its compact-support completion.** Let `G` be
+a group with a topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von
+Neumann algebra, and `α` a normal action with norm-continuous inverse predual orbits.
+Assume `G` is a topological group. Assume `G` is locally compact with its Borel measurable
+structure, and `μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`.
+Haar invariance is not assumed. for `C_μ` the separated L² completion with dense map
+`j_μ`, `regularCoefficientOriginal μ α x (j_μ f)=j_μ(regularCoefficientCompactSupport α x
+f)` for `f∈C_c(G,H)`. -/
 theorem regularCoefficientOriginal_apply (α : NormalAction G M) (x : M) (f : C_c(G, H)) :
     regularCoefficientOriginal μ α x (toCompletion μ f) =
       toCompletion μ (regularCoefficientCompactSupport α x f) := by

@@ -1,8 +1,8 @@
-# Pfister Successor
+# Successor decomposition of Pfister forms
 
-- [Pfister Lower Index](pfister-lower-index.md)
-- [Pfister Upper Index](pfister-upper-index.md)
-- [Pfister Weight lower Index](pfister-weight-lower-index.md)
-- [Pfister Weight upper Index](pfister-weight-upper-index.md)
-- [Pfister Succ Linear Equiv](pfister-succ-linear-equiv.md)
-- [Pfister Succ Equiv](pfister-succ-equiv.md)
+- [The lower Pfister subset embedding](pfister-lower-index.md)
+- [The upper Pfister subset embedding](pfister-upper-index.md)
+- [Weights on the lower Pfister block](pfister-weight-lower-index.md)
+- [Weights on the upper Pfister block](pfister-weight-upper-index.md)
+- [Splitting successor subset coordinates](pfister-succ-linear-equiv.md)
+- [The successor Pfister isometry](pfister-succ-equiv.md)

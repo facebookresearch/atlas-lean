@@ -15,16 +15,14 @@ public import MathlibExt.Analysis.InnerProductSpace.Group.HaarL2.RadonProduct.Un
 public import MathlibExt.Analysis.InnerProductSpace.Group.HaarL2.TensorProduct
 
 /-!
-# The actual scalar product tensor amplified by a Hilbert space
+# Hilbert amplification of the scalar Radon tensor comparison
 
-Tensor congruence amplifies the verified original scalar Radon product unitary
-by the identity on H. Its actual forward and inverse completion maps give an
-isometry equivalence, and the existing one-measure tensor-to-Lp comparison
-then gives the full H-valued Borel Radon Lp space. H may be zero.
+For a complete complex Hilbert space `H`, tensor the scalar Radon unitary `U_R : T ≃ Lp ℂ 2 R`
+with the identity on `H`, then use the one-measure scalar-to-vector L² comparison.
 
-The source-side mapped model is the stock completion of the original full
-scalar factor tensor tensored with H. No product unitary, norm certificate,
-countability or s-finiteness assumption is supplied as an input.
+This gives `U_H : Completion(T⊗H) ≃ Lp H 2 R` with `U_H(t⊗ξ)(z)=U_R(t)(z) • ξ` almost
+everywhere. On compact-support factor tensors its value is `f(x)g(y) • ξ`. The same map also
+identifies the source with the separated compact-support L² completion of the product space.
 -/
 
 @[expose] public section
@@ -48,11 +46,19 @@ variable {Y : Type uY} [TopologicalSpace Y] [T2Space Y] [LocallyCompactSpace Y]
 variable (μ : Measure X) (ν : Measure Y) [μ.Regular] [ν.Regular]
 variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- The actual Borel measurable space of the original topological product. -/
+/-- **Borel product structure for Hilbert-valued Radon L².** For topological `X,Y`, the
+product measurable carrier uses `borel(X×Y)`. -/
 local instance instHilbertProductBorelMeasurableSpace : MeasurableSpace (X × Y) := borel (X × Y)
 local instance instHilbertProductBorelSpace : BorelSpace (X × Y) := ⟨rfl⟩
 
-/-- The original full scalar factor tensor, amplified by H, is actual H-valued product Lp. -/
+/-- **Amplified scalar Radon tensor unitary.** Let `X,Y` be locally compact Hausdorff Borel
+spaces and `μ,ν` regular measures. Write `R=radonProd μ ν` on `borel(X×Y)`, `i_μ,i_ν,i_R`
+for compact-support L² inclusions, `T=Completion(Lp ℂ 2 μ ⊗[ℂ] Lp ℂ 2 ν)`, `A(z)` for the
+algebraic factor tensor inclusion into `T`, and `F(f⊗g)=i_R((x,y) ↦ f(x)g(y))`. Let `H` be
+a complete complex Hilbert space, `U_R : T ≃ₗᵢ[ℂ] Lp ℂ 2 R` the scalar Radon tensor
+unitary, and `U_H : Completion(T⊗H) ≃ₗᵢ[ℂ] Lp H 2 R` its Hilbert amplification.
+`radonProductTensorHilbertUnitary μ ν=U_H`, obtained by the completion of `U_R⊗I_H`
+followed by the one-measure L² tensor unitary. -/
 def radonProductTensorHilbertUnitary :
     UniformSpace.Completion
       ((UniformSpace.Completion ((Lp ℂ 2 μ) ⊗[ℂ] (Lp ℂ 2 ν))) ⊗[ℂ] H) ≃ₗᵢ[ℂ]
@@ -97,14 +103,28 @@ def radonProductTensorHilbertUnitary :
   let E := LinearIsometryEquiv.ofLinearIsometry f g.toLinearMap hfg hgf
   exact E.trans (L2.tensorToLp (𝕜 := ℂ) (H := H) (Measure.radonProd μ ν))
 
-/-- The amplified constructor has the original stock tensor-congruence linear-map DATA. -/
+/-- **Linear composition of the amplified Radon comparison.** Let `X,Y` be locally compact
+Hausdorff Borel spaces and `μ,ν` regular measures. Write `R=radonProd μ ν` on
+`borel(X×Y)`, `i_μ,i_ν,i_R` for compact-support L² inclusions, `T=Completion(Lp ℂ 2 μ ⊗[ℂ]
+Lp ℂ 2 ν)`, `A(z)` for the algebraic factor tensor inclusion into `T`, and
+`F(f⊗g)=i_R((x,y) ↦ f(x)g(y))`. Let `H` be a complete complex Hilbert space, `U_R : T
+≃ₗᵢ[ℂ] Lp ℂ 2 R` the scalar Radon tensor unitary, and `U_H : Completion(T⊗H) ≃ₗᵢ[ℂ] Lp H 2
+R` its Hilbert amplification. the linear map of `U_H` is `tensorToLp R ∘
+Completion(U_R⊗I_H)`. -/
 theorem radonProductTensorHilbertUnitary_toLinearMap :
     (radonProductTensorHilbertUnitary (H := H) μ ν).toLinearMap =
       (L2.tensorToLp (𝕜 := ℂ) (H := H) (Measure.radonProd μ ν)).toLinearMap.comp
         ((TensorProduct.congrIsometry (radonProductTensorUnitary μ ν)
           (LinearIsometryEquiv.refl ℂ H)).toLinearIsometry.completion).toLinearMap := rfl
 
-/-- Every full scalar tensor vector amplified by ξ has its actual scalar-vector values a.e. -/
+/-- **Pure tensor action of the Hilbert-amplified Radon unitary.** Let `X,Y` be locally
+compact Hausdorff Borel spaces and `μ,ν` regular measures. Write `R=radonProd μ ν` on
+`borel(X×Y)`, `i_μ,i_ν,i_R` for compact-support L² inclusions, `T=Completion(Lp ℂ 2 μ ⊗[ℂ]
+Lp ℂ 2 ν)`, `A(z)` for the algebraic factor tensor inclusion into `T`, and
+`F(f⊗g)=i_R((x,y) ↦ f(x)g(y))`. Let `H` be a complete complex Hilbert space, `U_R : T
+≃ₗᵢ[ℂ] Lp ℂ 2 R` the scalar Radon tensor unitary, and `U_H : Completion(T⊗H) ≃ₗᵢ[ℂ] Lp H 2
+R` its Hilbert amplification. for `t∈T`, `ξ∈H`, `U_H(t⊗ξ)(z)=U_R(t)(z) • ξ` for `R`-almost
+every `z`. -/
 theorem radonProductTensorHilbertUnitary_tmul_ae
     (t : UniformSpace.Completion ((Lp ℂ 2 μ) ⊗[ℂ] (Lp ℂ 2 ν))) (ξ : H) :
     radonProductTensorHilbertUnitary (H := H) μ ν
@@ -127,7 +147,14 @@ theorem radonProductTensorHilbertUnitary_tmul_ae
           UniformSpace.Completion ((Lp ℂ 2 (Measure.radonProd μ ν)) ⊗[ℂ] H)) =ᵐ[Measure.radonProd μ ν] _
   exact L2.tensorToLp_tmul_ae (Measure.radonProd μ ν) (radonProductTensorUnitary μ ν t) ξ
 
-/-- Original compact-support factor vectors and ξ retain their literal product values a.e. -/
+/-- **Compact factor tensor formula of the Hilbert amplification.** Let `X,Y` be locally
+compact Hausdorff Borel spaces and `μ,ν` regular measures. Write `R=radonProd μ ν` on
+`borel(X×Y)`, `i_μ,i_ν,i_R` for compact-support L² inclusions, `T=Completion(Lp ℂ 2 μ ⊗[ℂ]
+Lp ℂ 2 ν)`, `A(z)` for the algebraic factor tensor inclusion into `T`, and
+`F(f⊗g)=i_R((x,y) ↦ f(x)g(y))`. Let `H` be a complete complex Hilbert space, `U_R : T
+≃ₗᵢ[ℂ] Lp ℂ 2 R` the scalar Radon tensor unitary, and `U_H : Completion(T⊗H) ≃ₗᵢ[ℂ] Lp H 2
+R` its Hilbert amplification. for compact-support `f,g` and `ξ∈H`, `U_H((i_μ f⊗i_ν
+g)⊗ξ)(x,y)=f(x)g(y) • ξ` almost everywhere. -/
 theorem radonProductTensorHilbertUnitary_compact_tmul_ae
     (f : C_c(X, ℂ)) (g : C_c(Y, ℂ)) (ξ : H) :
     radonProductTensorHilbertUnitary (H := H) μ ν
@@ -144,7 +171,15 @@ theorem radonProductTensorHilbertUnitary_compact_tmul_ae
     radonProductTensorUnitary_tmul_ae μ ν f g] with z hvector hscalar
   exact hvector.trans (congrArg (fun c : ℂ => c • ξ) hscalar)
 
-/-- The same amplified tensor is the original H-valued Haar-L2 compact-support completion model. -/
+/-- **Hilbert tensor realization of the separated product compact-support completion.** Let
+`X,Y` be locally compact Hausdorff Borel spaces and `μ,ν` regular measures. Write
+`R=radonProd μ ν` on `borel(X×Y)`, `i_μ,i_ν,i_R` for compact-support L² inclusions,
+`T=Completion(Lp ℂ 2 μ ⊗[ℂ] Lp ℂ 2 ν)`, `A(z)` for the algebraic factor tensor inclusion
+into `T`, and `F(f⊗g)=i_R((x,y) ↦ f(x)g(y))`. Let `H` be a complete complex Hilbert space,
+`U_R : T ≃ₗᵢ[ℂ] Lp ℂ 2 R` the scalar Radon tensor unitary, and `U_H : Completion(T⊗H)
+≃ₗᵢ[ℂ] Lp H 2 R` its Hilbert amplification. the map `Completion(T⊗H) →
+CompletionCore(H,R)` is `J_R⁻¹∘U_H`, where `J_R` identifies the separated compact-support
+L² completion with `Lp H 2 R`. -/
 def radonProductHilbertCompletionUnitary :
     UniformSpace.Completion
       ((UniformSpace.Completion ((Lp ℂ 2 μ) ⊗[ℂ] (Lp ℂ 2 ν))) ⊗[ℂ] H) ≃ₗᵢ[ℂ]
@@ -152,7 +187,14 @@ def radonProductHilbertCompletionUnitary :
   (radonProductTensorHilbertUnitary (H := H) μ ν).trans
     (completionToLp (H := H) (Measure.radonProd μ ν)).symm
 
-/-- The mapped original completion model has the same actual H-valued product Lp vector. -/
+/-- **Product L² value of the compact-support completion comparison.** Let `X,Y` be locally
+compact Hausdorff Borel spaces and `μ,ν` regular measures. Write `R=radonProd μ ν` on
+`borel(X×Y)`, `i_μ,i_ν,i_R` for compact-support L² inclusions, `T=Completion(Lp ℂ 2 μ ⊗[ℂ]
+Lp ℂ 2 ν)`, `A(z)` for the algebraic factor tensor inclusion into `T`, and
+`F(f⊗g)=i_R((x,y) ↦ f(x)g(y))`. Let `H` be a complete complex Hilbert space, `U_R : T
+≃ₗᵢ[ℂ] Lp ℂ 2 R` the scalar Radon tensor unitary, and `U_H : Completion(T⊗H) ≃ₗᵢ[ℂ] Lp H 2
+R` its Hilbert amplification. for every source vector `z`, applying `J_R` to
+`radonProductHilbertCompletionUnitary μ ν z` gives `U_H(z)`. -/
 theorem radonProductHilbertCompletionUnitary_toLp
     (z : UniformSpace.Completion
       ((UniformSpace.Completion ((Lp ℂ 2 μ) ⊗[ℂ] (Lp ℂ 2 ν))) ⊗[ℂ] H)) :

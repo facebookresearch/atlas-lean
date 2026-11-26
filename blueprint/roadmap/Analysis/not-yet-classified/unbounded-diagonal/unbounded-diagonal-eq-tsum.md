@@ -1,3 +1,6 @@
-# Unbounded Diagonal eq tsum
+# Series formula for a diagonal partial operator
 
-The convergent defining series evaluates to the diagonal operator.
+Let `𝕜` be real or complex, `H` a
+normed inner-product `𝕜`-space, `e : HilbertBasis ι 𝕜 H` and `α : ι → 𝕜` any scalar
+family. Write `D_α={x ∈ H : Σ_i ‖α_i⟨e_i,x⟩‖² < ∞}`. for `x ∈ D_α`, `unboundedDiagonal e α
+x=Σ' i, (α_i⟨e_i,x⟩) • e_i`.

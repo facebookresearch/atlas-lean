@@ -1,3 +1,7 @@
-# Star Conjugation preserves bounded Positive Is LUB
+# Fixed star conjugation preserves a bounded positive least upper bound
 
-Literal fixed star conjugation preserves the same provided original bounded positive LUB.
+Let `H` be a
+complete complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. for any
+preorder `I`, monotone norm-bounded positive family `a_i`, its least upper bound `s`, and
+`x∈M`, the element `x* s x` is the least upper bound of `{x* a_i x}`. No nonbottom `atTop`
+condition is assumed in this statement.

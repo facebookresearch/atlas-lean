@@ -1,3 +1,6 @@
-# Norm of Bound le
+# Nonnegative pointwise bound controls the supremum norm
 
-A nonnegative pointwise bound controls the supremum norm, including on the empty source.
+Let `X` be a measurable space.
+Bounded measurable complex functions have pointwise equality and norm `‖f‖∞=sup_x |f(x)|`,
+zero on an empty source. if measurable `f` has `|f(x)|≤C` for all `x` and `C≥0`, then
+`‖ofBound f C‖∞≤C`.

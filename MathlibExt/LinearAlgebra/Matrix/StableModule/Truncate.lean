@@ -15,11 +15,12 @@ public import MathlibExt.LinearAlgebra.Matrix.StableModule
 public import Mathlib.LinearAlgebra.Pi
 
 /-!
-# Linear retraction to an actual finite matrix stage
+# Truncation of stable coefficient matrices
 
-Natural-number finite-support coordinates restrict to a finite square. This
-is a ground-linear retraction of the stage inclusion. It is not claimed to be
-an algebra map or a chain map.
+Let k be a semiring and A an additive commutative monoid with a k-module structure. Write S =
+colimₙ Mat(n,n;A), with transition maps extending each finite matrix by zero outside its
+upper-left square. Restricting natural-number entries to an r × r square defines a k-linear
+map Tᵣ : S → Mat(r,r;A). It retracts the inclusion iᵣ: Tᵣ(iᵣ(B)) = B, including r = 0.
 -/
 
 @[expose] public section
@@ -32,7 +33,13 @@ namespace Matrix.StableModule
 
 variable (k : Type u) [Semiring k] (M : Type v) [AddCommMonoid M] [Module k M]
 
-/-- Actual finite-square projection of the native coefficient direct limit. -/
+/-- **The finite-square truncation map.**
+
+Let k be a semiring and A an additive commutative monoid with a k-module structure. Write S =
+colimₙ Mat(n,n;A), with transition maps extending each finite matrix by zero outside its
+upper-left square. For r ∈ ℕ, define the k-linear map Tᵣ : S → Mat(r,r;A) by Tᵣ(x)ᵢⱼ = E(x)ᵢⱼ
+for i,j < r, where E(x) is the natural-number entry matrix of x.
+-/
 def truncate (r : ℕ) : Matrix.StableModule k M →ₗ[k] Matrix (Fin r) (Fin r) M :=
   (LinearMap.pi fun i : Fin r => LinearMap.pi fun j : Fin r =>
     Finsupp.lapply (i.val, j.val)).comp (finsuppEquiv k M).toLinearMap
@@ -41,7 +48,13 @@ def truncate (r : ℕ) : Matrix.StableModule k M →ₗ[k] Matrix (Fin r) (Fin r
 theorem truncate_apply (r : ℕ) (X : Matrix.StableModule k M) (i j : Fin r) :
     truncate k M r X i j = entries k M X i.val j.val := rfl
 
-/-- The finite-square projection is a retraction of the actual stage inclusion. -/
+/-- **Truncation retracts the finite-stage inclusion.**
+
+Let k be a semiring and A an additive commutative monoid with a k-module structure. Write S =
+colimₙ Mat(n,n;A), with transition maps extending each finite matrix by zero outside its
+upper-left square. For the inclusion iᵣ : Mat(r,r;A) → S and entry restriction Tᵣ : S →
+Mat(r,r;A), one has Tᵣ(iᵣ(B)) = B for every B, including the empty matrix when r = 0.
+-/
 @[simp]
 theorem truncate_ofFinite (r : ℕ) (X : Matrix (Fin r) (Fin r) M) :
     truncate k M r (ofFinite k M r X) = X := by

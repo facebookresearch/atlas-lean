@@ -1,15 +1,15 @@
-# Open Normal Comap
+# Open normal subgroup preimages and reverse-inclusion indices
 
-## Open Normal Subgroup
+## Preimages of open normal subgroups
 
-- [Comap](comap.md)
-- [Mem comap](mem-comap.md)
-- [Comap mono](comap-mono.md)
-- [Comap id](comap-id.md)
-- [Comap comp](comap-comp.md)
+- [Open normal subgroup preimage under a continuous homomorphism](comap.md)
+- [Membership in a continuous open-normal preimage](mem-comap.md)
+- [Monotonicity of open-normal preimages](comap-mono.md)
+- [Identity preimage of an open normal subgroup](comap-id.md)
+- [Composition law of continuous open-normal preimages](comap-comp.md)
 
-## Continuous Cohomology
+## Functoriality of open-normal subgroup preimages
 
-- [Open Normal Comap Functor](open-normal-comap-functor.md)
-- [Open Normal Comap Functor id](open-normal-comap-functor-id.md)
-- [Open Normal Comap Functor comp](open-normal-comap-functor-comp.md)
+- [Reverse-inclusion index functor of open-normal preimages](open-normal-comap-functor.md)
+- [Identity law of the open-normal preimage functor](open-normal-comap-functor-id.md)
+- [Functorial composition of open-normal preimages](open-normal-comap-functor-comp.md)
