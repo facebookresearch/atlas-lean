@@ -10,6 +10,7 @@ In [Curry-style System F](curry-style-system-f.md):
 ## Depends on
 
 - [Curry-style System F](curry-style-system-f.md)
+- [Two-inequality semi-unification](two-inequality-semi-unification.md)
 
 ## Proof depends on
 

@@ -11,16 +11,11 @@ The theorem is the main step in the proof of the standardization theorem.
 ## Depends on
 
 - [Residuals and developments](residuals-and-developments.md)
+- [Named, de Bruijn and locally nameless lambda terms](../../syntax-with-binders/named-de-bruijn-and-locally-nameless-lambda-terms.md)
 
 ## Proof depends on
 
 - [Strongly normalizing terms are the terms typable in system D](../intersection-types/strongly-normalizing-terms-are-typable-in-d.md)
-
-## Expansion
-
-This page becomes ready once:
-
-- One-step β-reduction of untyped λ-terms as a relation of its own, with its reflexive–transitive closure (statement prerequisite; not yet stated as a page)
 
 ## Sources
 

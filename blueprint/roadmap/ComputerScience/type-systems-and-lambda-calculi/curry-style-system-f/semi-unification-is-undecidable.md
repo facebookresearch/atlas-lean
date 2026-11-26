@@ -1,12 +1,11 @@
 # Semi-unification is undecidable
 
-*Two-inequality semi-unification* asks, given two pairs $(\sigma_1, \tau_1)$ and $(\sigma_2, \tau_2)$ of simple types (types built from type variables by $\to$
-alone), whether there are substitutions $\varphi$, $\psi_1$, $\psi_2$ of simple types for type variables with
+[Two-inequality semi-unification](two-inequality-semi-unification.md) is undecidable (Kfoury, Tiuryn and Urzyczyn). It remains undecidable for left-uniform
+instances, in which $\sigma_1 = \sigma_2$.
 
-$$\psi_1(\varphi(\sigma_1)) = \varphi(\tau_1) \quad\text{and}\quad \psi_2(\varphi(\sigma_2)) = \varphi(\tau_2).$$
+## Depends on
 
-This problem, which combines first-order unification (for $\varphi$) with first-order matching (for $\psi_1$, $\psi_2$), is undecidable (Kfoury, Tiuryn and
-Urzyczyn). It remains undecidable for *left-uniform* instances, in which $\sigma_1 = \sigma_2$.
+- [Two-inequality semi-unification](two-inequality-semi-unification.md)
 
 ## Sources
 

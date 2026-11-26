@@ -12,6 +12,12 @@ $\mu t.\, s \to t =_R \mu t.\, s \to (s \to t)$, which the congruence generated 
 
 - [Recursive types and their tree expansions](recursive-types-and-their-tree-expansions.md)
 
+## Expansion
+
+This page becomes ready once:
+
+- Unique solutions of systems of contractive type equations up to the rules above, used in the completeness direction (proof prerequisite; not yet stated as a page)
+
 ## Sources
 
 - R. M. Amadio and L. Cardelli, "Subtyping recursive types", *ACM Transactions on Programming Languages and Systems* 15(4):575–631, 1993, <http://lucacardelli.name/Papers/SRT.pdf>: Section 5.1 (the rules, Proposition 5.1.1 on soundness and Derived Rules 5.1.2), Lemmas 5.2.1–5.2.2 (systems of contractive equations have unique solutions) and Theorem 5.2.7 (completeness).

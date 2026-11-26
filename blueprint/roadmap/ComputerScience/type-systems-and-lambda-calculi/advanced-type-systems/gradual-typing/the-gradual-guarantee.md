@@ -3,11 +3,12 @@
 Suppose $e \sqsubseteq e'$ in [term precision](precision-of-gradual-types-and-terms.md) and $\vdash e : T$ in the [GTLC](the-gradually-typed-lambda-calculus.md).
 
 1. **Static.** $\vdash e' : T'$ for some $T'$ with $T \sqsubseteq T'$.
-2. **Dynamic, toward less precision.** If $e \Downarrow v$ then $e' \Downarrow v'$ for some $v'$ with $v \sqsubseteq v'$; if $e \Uparrow$ then $e' \Uparrow$.
+2. **Dynamic, toward less precision.** If $e \Downarrow v$ then $e' \Downarrow v'$ for some $v'$ with $v \sqsubseteq v'$ in cast-calculus precision; if $e \Uparrow$ then $e' \Uparrow$.
 3. **Dynamic, toward more precision.** If $e' \Downarrow v'$ then $e \Downarrow v$ with $v \sqsubseteq v'$, or $e \Downarrow \mathrm{blame}_T\, \ell$ for some $\ell$; if $e' \Uparrow$ then $e \Uparrow$ or
    $e \Downarrow \mathrm{blame}_T\, \ell$ for some $\ell$.
 
-Removing type annotations therefore preserves typability and behaviour, and adding them can only introduce trapped cast errors.
+Removing type annotations therefore preserves typability and behaviour; and adding annotations to a well-typed program, if the result is still well typed,
+can change its behaviour only by introducing trapped cast errors (adding an annotation can also make the program ill typed).
 
 ## Depends on
 

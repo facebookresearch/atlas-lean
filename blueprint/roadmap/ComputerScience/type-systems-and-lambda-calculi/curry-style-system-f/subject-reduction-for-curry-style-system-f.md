@@ -8,12 +8,7 @@ $x : a \to \forall b.\, (b \to b) \vdash x : a \to b \to b$ does not hold. The C
 ## Depends on
 
 - [Curry-style System F](curry-style-system-f.md)
-
-## Expansion
-
-This page becomes ready once:
-
-- One-step β-reduction of untyped λ-terms as a relation of its own (statement prerequisite; not yet stated as a page)
+- [Named, de Bruijn and locally nameless lambda terms](../syntax-with-binders/named-de-bruijn-and-locally-nameless-lambda-terms.md)
 
 ## Sources
 

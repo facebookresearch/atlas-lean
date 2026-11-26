@@ -13,12 +13,13 @@ Let $\vdash$ be the typing judgment of [system D](intersection-type-system-d.md)
 - [Beta equivalence in the untyped term model](../../system-f/the-existing-untyped-beta-conversion-term-model/beta-eq.md)
 - [The intersection type system D](intersection-type-system-d.md)
 - [The intersection type system DΩ](intersection-type-system-d-omega.md)
+- [Named, de Bruijn and locally nameless lambda terms](../../syntax-with-binders/named-de-bruijn-and-locally-nameless-lambda-terms.md)
 
 ## Expansion
 
 This page becomes ready once:
 
-- One-step β-reduction of untyped λ-terms as a relation of its own, with its reflexive–transitive closure (statement prerequisite; not yet stated as a page)
+- Multi-step β-reduction of untyped λ-terms, the reflexive–transitive closure of the one-step reduction of the linked page on λ-terms, as a page of its own (statement prerequisite; not yet stated as a page)
 
 ## Sources
 

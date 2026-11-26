@@ -12,3 +12,4 @@ The gradually typed λ-calculus with the unknown type, its cast calculus with bl
 - [Type safety of the blame calculus](type-safety-of-the-blame-calculus.md)
 - [Factoring subtyping into positive and negative subtyping](factoring-subtyping-into-positive-and-negative.md)
 - [Well-typed programs can't be blamed](well-typed-programs-can-t-be-blamed.md)
+- [The blame-subtyping theorem for the GTLC](blame-subtyping-theorem-for-the-gtlc.md)
