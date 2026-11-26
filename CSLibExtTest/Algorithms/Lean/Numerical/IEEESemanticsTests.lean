@@ -18,7 +18,8 @@ public import Mathlib.Data.Rat.Floor
 * Rounding in a bounded format, executed over `ℚ` with `decide +kernel`, for `p = 3` and
   `qmin = -4` (smallest normal number `1/4`): the four modes on `±1/3`; gradual underflow of
   `1/64` and a subnormal tie `3/32 ↦ 1/8`, where `fl` (unbounded exponent) keeps `3/32`; and
-  agreement with `fl` in the normal range.
+  agreement with `fl` in the normal range. In any linearly ordered field with a floor, rounding
+  toward `-∞` stays below `x`, toward `+∞` above it, and toward zero between `0` and `x ≥ 0`.
 * For every format and mode: NaN propagation without flags; each invalid case; division by
   zero; exact operations on infinities; the signed-zero rules (`+0 + -0`, `-0 + -0`, `x - x`,
   `√-0`, products); overflow of `M + M` and `-M + -M` in each mode, `M` the largest finite
@@ -62,6 +63,26 @@ example : RoundingMode.nearestEven.round 3 (-4) (11 / 8 : ℚ) = fl 3 (11 / 8 : 
 example (x : ℝ) (h : (-4 : ℤ) ≤ ulpExp 3 x) :
     RoundingMode.nearestEven.round 3 (-4) x = fl 3 x :=
   RoundingMode.round_nearestEven_eq_fl h
+
+-- the directed modes round in their direction, in any linearly ordered field with a floor
+example {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K] [FloorRing K] (p : ℕ)
+    (qmin : ℤ) (x : K) : RoundingMode.towardNegative.round p qmin x ≤ x := by
+  have hpos := two_zpow_pos (K := K) (max (ulpExp p x) qmin)
+  have h := (le_div_iff₀ hpos).1 (Int.floor_le (x / 2 ^ max (ulpExp p x) qmin))
+  simpa [RoundingMode.round, RoundingMode.roundInt] using h
+example {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K] [FloorRing K] (p : ℕ)
+    (qmin : ℤ) (x : K) : x ≤ RoundingMode.towardPositive.round p qmin x := by
+  have hpos := two_zpow_pos (K := K) (max (ulpExp p x) qmin)
+  have h := (div_le_iff₀ hpos).1 (Int.le_ceil (x / 2 ^ max (ulpExp p x) qmin))
+  simpa [RoundingMode.round, RoundingMode.roundInt] using h
+example {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K] [FloorRing K] (p : ℕ)
+    (qmin : ℤ) (x : K) (hx : 0 ≤ x) :
+    0 ≤ RoundingMode.towardZero.round p qmin x ∧ RoundingMode.towardZero.round p qmin x ≤ x := by
+  have hpos := two_zpow_pos (K := K) (max (ulpExp p x) qmin)
+  have hm : 0 ≤ x / 2 ^ max (ulpExp p x) qmin := div_nonneg hx hpos.le
+  simp only [RoundingMode.round, RoundingMode.roundInt, hm, ↓reduceIte]
+  refine ⟨mul_nonneg (by exact_mod_cast Int.floor_nonneg.2 hm) hpos.le, ?_⟩
+  exact (le_div_iff₀ hpos).1 (Int.floor_le _)
 
 /-! ## Operations in every format and mode -/
 
