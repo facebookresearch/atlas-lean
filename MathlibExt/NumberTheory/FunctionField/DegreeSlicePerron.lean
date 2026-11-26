@@ -142,7 +142,7 @@ public theorem perron_formula_polynomial_degree_slice
     (∑ f ∈ fixedDegreeMonic F n, a f) =
       (1 / (2 * Real.pi * Complex.I)) *
         ∮ u in C(0, r), A u / u ^ (n + 1) := by
-  set c : ℕ → ℂ := fun m => ∑ f ∈ fixedDegreeMonic F m, a f with hc
+  set c : ℕ → ℂ := fun m => ∑ f ∈ fixedDegreeMonic F m, a f
   -- Term-by-term integration on the circle.
   have hHas : HasSum (fun m : ℕ => ∮ u in C(0, r), c m * u ^ m / u ^ (n + 1))
       (∮ u in C(0, r), A u / u ^ (n + 1)) := by
@@ -178,7 +178,6 @@ public theorem perron_formula_polynomial_degree_slice
   have := (hasSum_ite_eq n (c n * (2 * Real.pi * I))).unique hHas
   rw [← this]
   have h2 : (2 * Real.pi * I : ℂ) ≠ 0 := by simp [Real.pi_ne_zero, I_ne_zero]
-  field_simp
-  rfl
+  rw [one_div, inv_mul_eq_div, mul_div_cancel_right₀ _ h2]
 
 end MetaMathlibExt
