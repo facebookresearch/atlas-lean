@@ -19,14 +19,14 @@ open scoped RealInnerProductSpace
 
 /-- The strong power of `G` on words of length `k` (as in the repository's Shannon capacity
 pages): distinct words are adjacent when each coordinate is equal or adjacent. -/
-def strongPowerTest {V : Type*} (G : SimpleGraph V) (k : ℕ) : SimpleGraph (Fin k → V) where
+private def strongPowerTest {V : Type*} (G : SimpleGraph V) (k : ℕ) : SimpleGraph (Fin k → V) where
   Adj x y := x ≠ y ∧ ∀ i, x i = y i ∨ G.Adj (x i) (y i)
   symm.symm x y := by
     rintro ⟨hxy, hcoord⟩
     exact ⟨hxy.symm, fun i => (hcoord i).imp Eq.symm SimpleGraph.Adj.symm⟩
   loopless := ⟨fun _ h => h.1 rfl⟩
 
-theorem strongPowerTest_hyp {V : Type*} (G : SimpleGraph V) (k : ℕ) :
+private theorem strongPowerTest_hyp {V : Type*} (G : SimpleGraph V) (k : ℕ) :
     ∀ x y, x ≠ y → ¬ (strongPowerTest G k).Adj x y → ∃ i, x i ≠ y i ∧ ¬ G.Adj (x i) (y i) := by
   intro x y hxy hadj
   by_contra h
