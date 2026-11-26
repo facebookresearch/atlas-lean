@@ -53,4 +53,15 @@ example : ¬ MathlibExt.NumberTheory.FkPerfectWanted.IsNearFPerfect 8 := by
   simpa using MathlibExt.NumberTheory.FkPerfectWanted.not_isNearFPerfect_two_pow_mul_prime_pow
     11 3 0 (by decide) (by decide)
 
+-- `3 ^ 1 * 5 ^ 2` is not deficient `F₂`-perfect: `1 + 2` is odd.
+example : ¬ IsDeficientFkPerfect 2 (3 ^ 1 * 5 ^ 2) :=
+  not_isDeficientFkPerfect_pow_mul_pow 2 3 5 1 2 (by decide) (by decide) (by decide)
+    (by decide) (by decide) (by decide) (by decide) (by decide) (Or.inl (by decide))
+
+-- `3 ^ 1 * 5 ^ 1` is not deficient `F₃`-perfect: both exponents are odd.
+example : ¬ IsDeficientFkPerfect 3 (3 ^ 1 * 5 ^ 1) :=
+  not_isDeficientFkPerfect_pow_mul_pow 3 3 5 1 1 (by decide) (by decide) (by decide)
+    (by decide) (by decide) (by decide) (by decide) (by decide)
+    (Or.inr ⟨by decide, by decide⟩)
+
 end MathlibExtTest.NumberTheory.FkPerfect

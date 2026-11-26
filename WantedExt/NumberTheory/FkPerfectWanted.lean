@@ -42,7 +42,6 @@ public import Mathlib.NumberTheory.Divisors
 public import MathlibExt.NumberTheory.NearPerfectTwoPrimePower
 public import MathlibExt.NumberTheory.OddPrimeDeficientPerfect
 public import MathlibExt.NumberTheory.FkPerfect
-public import MathlibExt.NumberTheory.FkPerfectNotIsDeficientFkPerfectPowMulPow
 
 set_option autoImplicit false
 
