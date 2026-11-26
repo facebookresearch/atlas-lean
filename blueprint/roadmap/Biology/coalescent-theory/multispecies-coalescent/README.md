@@ -118,6 +118,8 @@
 - [Identifiability of networks under the network multispecies coalescent](network-coalescent-identifiability-questions-spe.md)
 - [Network multispecies coalescent: the gene-tree probability kernel of a fixed network](network-multispecies-coalescent-fixed-network-ge.md)
 - [One species-tree branch: exit law and merge order of the realized coalescent](one-species-tree-branch-exit-law-and-merge-order.md)
+- [Gene tree density under the multispecies coalescent with branch population functions](gene-tree-density-under-the-multispecies-coalescent-with-branch-population-functions.md)
+- [Hierarchical Bayesian posterior for species trees from multilocus data](hierarchical-bayesian-posterior-for-species-trees-from-multilocus-data.md)
 - [Flattening rank under the multispecies coalescent](flattening-rank-under-the-multispecies-coalescent.md)
 - [Gene tree topology probabilities on a phylogenetic network via MUL-trees and allele mappings](gene-tree-topology-probability-on-a-network-via-mul-trees.md)
 - [Maximum-likelihood inference of phylogenetic networks from gene trees, and nesting of network models](maximum-likelihood-network-inference-from-gene-trees.md)
