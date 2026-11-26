@@ -148,6 +148,39 @@ theorem strongProd_adj [DecidableEq V] [DecidableEq W]
   · exact fun e => h.ne (congrArg Prod.fst e)
   · exact fun e => h.ne (congrArg Prod.fst e)
 
+/-- **Formula products with an opposable first factor.** Let $G$ and $H$ be graphs, let
+$\varphi$ be a Boolean function of four truth values, and let $G \varphi H$ be the formula
+product, in which distinct pairs $(g_1, h_1)$ and $(g_2, h_2)$ are adjacent when $\varphi$ is
+true at the atoms $g_1g_2 \in E(G)$, $h_1h_2 \in E(H)$, $g_1 = g_2$, $h_1 = h_2$. Suppose that
+for all distinct non-adjacent vertices $g_1, g_2$ of $G$ and every vertex $h$ of $H$, $\varphi$
+is false at the atoms $g_1g_2 \in E(G)$, $hh \in E(H)$, $g_1 = g_2$, $h = h$ (whose values are
+false, false, false, true). If $G$ is opposable, then $G \varphi H$ is opposable.
+
+Source: Ashmore, Austin, Davies, Dyer, Kellough, *On Graph Automorphisms
+Related to SNORT*, INTEGERS 26 (2026), Article G2, Theorem 3. -/
+theorem isOpposable_formulaProduct [DecidableEq V] [DecidableEq W]
+    (φ : Bool → Bool → Bool → Bool → Bool) (G : SimpleGraph V) (H : SimpleGraph W)
+    [DecidableRel G.Adj] [DecidableRel H.Adj]
+    (hφ : ∀ g₁ g₂ : V, ∀ h : W, g₁ ≠ g₂ → ¬ G.Adj g₁ g₂ →
+      φ (G.Adj g₁ g₂) (H.Adj h h) (g₁ = g₂) (h = h) = false)
+    (hG : IsOpposable G) : IsOpposable (formulaProduct φ G H) := by
+  obtain ⟨f, hf⟩ := hG
+  let e := f.toEquiv.prodCongr (Equiv.refl W)
+  refine ⟨⟨e, ?_⟩, fun x => ⟨Prod.ext (hf x.1).1 rfl, ?_, ?_⟩⟩
+  · intro x y
+    simp [formulaProduct, e, Prod.ext_iff, f.map_adj_iff, f.injective.eq_iff]
+  · exact fun h => (hf x.1).2.1 (congrArg Prod.fst h)
+  · obtain ⟨_, hne, hnonadj⟩ := hf x.1
+    have hforward := hφ x.1 (f x.1) x.2 hne.symm hnonadj
+    have hreverse := hφ (f x.1) x.1 x.2 hne (mt G.adj_symm hnonadj)
+    change ¬ (formulaProduct φ G H).Adj x (e x)
+    intro hx
+    rw [formulaProduct, SimpleGraph.fromRel_adj] at hx
+    -- `fromRel` allows the formula to hold in either orientation.
+    rcases hx.2 with h | h
+    · exact Bool.noConfusion (hforward.symm.trans h)
+    · exact Bool.noConfusion (hreverse.symm.trans h)
+
 /-- **Standard products with an opposable first factor.** If $G$ is an opposable graph, then for
 every graph $H$ the Cartesian product $G \mathbin{\square} H$, the strong product $G \boxtimes H$,
 and the tensor, lexicographic, co-normal and homomorphic products of $G$ with $H$ are opposable.
@@ -173,15 +206,11 @@ theorem isOpposable_products [DecidableEq V] [DecidableEq W]
       (hfar : ∀ x, ¬ P.Adj x (e x)) : IsOpposable P :=
     ⟨⟨e, hmap _ _⟩, fun x => ⟨Prod.ext (hf x.1).1 rfl,
       fun h => (hf x.1).2.1 (congrArg Prod.fst h), hfar x⟩⟩
-  -- On a vertex and its image, the four atoms always have the same values.
   have formula (φ : Bool → Bool → Bool → Bool → Bool) (hφ : φ false false false true = false) :
       IsOpposable (formulaProduct φ G H) := by
-    apply lift
-    · intro x y
-      simp [formulaProduct, e, Prod.ext_iff, f.map_adj_iff, f.injective.eq_iff]
-    · intro x
-      obtain ⟨_, hne, hnonadj⟩ := hf x.1
-      simp [formulaProduct, e, hne, hne.symm, hnonadj, mt G.adj_symm hnonadj, hφ]
+    apply isOpposable_formulaProduct φ G H _ ⟨f, hf⟩
+    intro g₁ g₂ h hne hnonadj
+    simp [hne, hnonadj, hφ]
   refine ⟨lift _ ?_ ?_, formula _ rfl, formula _ rfl, formula _ rfl, formula _ rfl, formula _ rfl⟩
   · intro x y
     simp [SimpleGraph.boxProd_adj, e, f.map_adj_iff, f.injective.eq_iff]
