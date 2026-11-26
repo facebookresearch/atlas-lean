@@ -36,10 +36,10 @@ The signals `(1, 2)` and `(3, 4, 5)` have linear convolution `(3, 10, 13, 10)`,
 so the exact padding boundary is `N = 2 + 3 - 1 = 4`. -/
 
 /-- The signal `(1, 2)` of support length two. -/
-def padSigA : Fin 2 → ℂ := fun i => (i.val : ℂ) + 1
+private def padSigA : Fin 2 → ℂ := fun i => (i.val : ℂ) + 1
 
 /-- The signal `(3, 4, 5)` of support length three. -/
-def padSigB : Fin 3 → ℂ := fun j => (j.val : ℂ) + 3
+private def padSigB : Fin 3 → ℂ := fun j => (j.val : ℂ) + 3
 
 /-- The full linear convolution is `(3, 10, 13, 10)` and vanishes at the linear length. -/
 example : linearConvolution 2 3 padSigA padSigB 0 = 3 ∧
@@ -117,13 +117,13 @@ The `2 x 2` array `x(i, j) = i + 2 j + 1` is convolved with the `2 x 1` column
 on a different axis in the aliasing checks. -/
 
 /-- The `2 x 2` array with entries `1, 2` in column `0` and `3, 4` in column `1`. -/
-def padArr : Fin 2 × Fin 2 → ℂ := fun p => (p.1.val : ℂ) + 2 * p.2.val + 1
+private def padArr : Fin 2 × Fin 2 → ℂ := fun p => (p.1.val : ℂ) + 2 * p.2.val + 1
 
 /-- The `2 x 1` column `(5, 6)`. -/
-def padCol : Fin 2 × Fin 1 → ℂ := fun p => (p.1.val : ℂ) + 5
+private def padCol : Fin 2 × Fin 1 → ℂ := fun p => (p.1.val : ℂ) + 5
 
 /-- The `1 x 2` row `(5, 6)`. -/
-def padRow : Fin 1 × Fin 2 → ℂ := fun p => (p.2.val : ℂ) + 5
+private def padRow : Fin 1 × Fin 2 → ℂ := fun p => (p.2.val : ℂ) + 5
 
 /-- Linear convolution with the column: `(0, 1) ↦ 15`, `(1, 1) ↦ 38`, `(2, 1) ↦ 24`,
 and zero past the second-axis length. -/
