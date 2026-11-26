@@ -36,4 +36,5 @@
 - [Odd powers of $2$ times two distinct odd primes are super-m-Zumkeller](is-super-mzumkeller-two-pow-mul-two-prim.md)
 - [Powers of $2$ times at least three distinct odd primes are super-m-Zumkeller](is-super-mzumkeller-two-pow-mul-prod-pri.md)
 - [$k$-m-perfect numbers with $k$ a positive multiple of $4$ are super-m-Zumkeller](is-super-mzumkeller-of-is-kmperfect.md)
+- [Unitary divisors as sets of prime factors](sum-unitary-divisors-eq-sum-powerset.md)
 - [$4$ is super-m-Zumkeller but not $k$-m-perfect for $k \ge 2$](is-super-mzumkeller-four-not-km-perfect.md)
