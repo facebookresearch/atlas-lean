@@ -10,11 +10,12 @@ Let $(N, M_0)$ be a [free-choice net](subclasses-of-petri-nets.md) whose net is 
 
 ## Expansion
 
-This page becomes ready once:
+This page becomes ready once the two directions are linked to their proof prerequisites:
 
-- A checked locator for a complete proof of the theorem, which the survey cited here states without proof (source check)
+- for "every siphon contains a marked trap implies live": a marked trap stays marked, the places unmarked at a marking that enables no transition of a given set form a siphon, and in a free-choice net a marking enables one transition of a cluster exactly when it enables all of them (proof prerequisites)
+- for "live implies every siphon contains a marked trap": in a live net every siphon is marked at every reachable marking; for a siphon $R$ whose maximal trap is $Q$ there is a circuit-free allocation of the clusters of the output transitions of $R \setminus Q$ that allocates no input transition of $Q$; and, by the allocation lemma, a live free-choice net has an infinite firing sequence that fires allocated transitions infinitely often and the other transitions of those clusters never (proof prerequisites)
 
 ## Sources
 
 - T. Murata, "Petri nets: Properties, analysis and applications", *Proceedings of the IEEE* 77(4):541–580, 1989, Section VI-B, Theorem 12 (stated without proof, with Example 9).
-- J. Esparza, *Petri Nets*, lecture notes, Technical University of Munich, version of 18 June 2019, <https://archive.model.in.tum.de/um/courses/petri/SS2019/PNSkript.pdf>, Definition 1.3.8 (Petri nets are connected, with nonempty sets of places and transitions) and Theorems 5.3.3 and 5.3.9 (Commoner's liveness theorem), pp. 16 and 105–111.
+- J. Esparza, *Petri Nets*, lecture notes, Technical University of Munich, version of 18 June 2019, <https://archive.model.in.tum.de/um/courses/petri/SS2019/PNSkript.pdf>, Definition 1.3.8 (Petri nets are connected, with nonempty sets of places and transitions) and Theorems 5.3.3 and 5.3.9, whose proofs go through the steps listed under Expansion, pp. 16 and 105–111.

@@ -13,4 +13,3 @@ Let $N$ be an ordinary [Petri net](place-transition-petri-nets.md).
 ## Sources
 
 - T. Murata, "Petri nets: Properties, analysis and applications", *Proceedings of the IEEE* 77(4):541–580, 1989, Section VI-A ("Subclass of Petri nets"), items 1)–3), and Section VI-B on the drawing of marked graphs as marked directed graphs.
-- J. Esparza and M. Nielsen, "Decidability issues for Petri nets – a survey", BRICS Report Series RS-94-8, Aarhus University, 1994, <https://arxiv.org/abs/2411.01592>, Section 2 (free-choice nets and marked graphs).

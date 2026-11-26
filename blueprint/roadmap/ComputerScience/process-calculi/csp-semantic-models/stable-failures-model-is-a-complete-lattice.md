@@ -6,10 +6,6 @@ For every alphabet $\Sigma$, finite or infinite, the [stable failures model](the
 
 - [The stable failures model of CSP](the-stable-failures-model.md)
 
-## Proof depends on
-
-- [The stable failures model of CSP](the-stable-failures-model.md)
-
 ## Sources
 
 - A. W. Roscoe, *The Theory and Practice of Concurrency*, Prentice Hall, 1997; revised edition 2005, author's online version, <https://www.cs.ox.ac.uk/bill.roscoe/publications/68b.pdf>, Section 8.4, Theorem 8.4.1 and the discussion of $\bot_{\mathcal{F}}$, $\top_{\mathcal{F}}$ and componentwise unions before it.

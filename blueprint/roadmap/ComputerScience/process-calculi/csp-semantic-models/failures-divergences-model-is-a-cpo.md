@@ -8,10 +8,6 @@ $$\bigsqcup \Delta = \Big( \bigcap \{ F \mid (F, D) \in \Delta \},\ \bigcap \{ D
 
 - [The failures-divergences model of CSP](the-failures-divergences-model.md)
 
-## Proof depends on
-
-- [The failures-divergences model of CSP](the-failures-divergences-model.md)
-
 ## Sources
 
 - A. W. Roscoe, *The Theory and Practice of Concurrency*, Prentice Hall, 1997; revised edition 2005, author's online version, <https://www.cs.ox.ac.uk/bill.roscoe/publications/68b.pdf>, Section 8.3.1, Theorem 8.3.1; the proof checks the healthiness conditions for the intersection, using directedness for F3 and finiteness of $\Sigma$.

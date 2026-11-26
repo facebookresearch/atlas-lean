@@ -18,13 +18,13 @@ Because $\omega$ forgets how a place grows, the coverability tree does not decid
 
 ## Expansion
 
-This page becomes ready once:
+This page becomes ready once the proof of termination is linked. It needs:
 
-- Dickson's lemma, that $\mathbb{N}^k$ with the placewise order is a well-quasi-order, stated on a page crediting Mathlib's `Pi.wellQuasiOrderedLE` (proof prerequisite of termination; not yet stated)
-- König's lemma for finitely branching trees (proof prerequisite of termination; not yet stated)
-- A checked locator for the termination proof in R. M. Karp and R. E. Miller, "Parallel program schemata", *Journal of Computer and System Sciences*, 1969 (source check)
+- Dickson's lemma: every infinite sequence of vectors in $\mathbb{N}^k$ has two terms $A_m \le A_n$ with $m < n$ (proof prerequisite of termination)
+- König's lemma: an infinite tree in which every node has finitely many children has an infinite path (proof prerequisite of termination; each node of the coverability tree has at most one child per transition)
+- the step combining them: along an infinite path no label repeats an earlier one, so Dickson's lemma, applied to the places that are not yet $\omega$, gives a strictly larger later label and with it a new $\omega$, which can happen at most once per place (proof of termination)
+- the soundness and completeness arguments for properties 1–4, relating firing sequences of the net to paths of the tree (proof of the properties)
 
 ## Sources
 
 - T. Murata, "Petri nets: Properties, analysis and applications", *Proceedings of the IEEE* 77(4):541–580, 1989, Section V-A: properties 1)–4) of the coverability tree, and Figs. 18–20 (two nets with the same coverability tree, one live and one not).
-- J. Esparza and M. Nielsen, "Decidability issues for Petri nets – a survey", BRICS Report Series RS-94-8, Aarhus University, 1994, <https://arxiv.org/abs/2411.01592>, Section 3, paragraph "Boundedness" (the coverability tree of Karp and Miller and its non-primitive-recursive size).

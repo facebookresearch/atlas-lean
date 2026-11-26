@@ -8,10 +8,6 @@ In the [denotational semantics of CSP](denotational-semantics-of-csp.md) over th
 - [The stable failures model is a complete lattice](stable-failures-model-is-a-complete-lattice.md)
 - [The stable failures model of CSP](the-stable-failures-model.md)
 
-## Proof depends on
-
-- [Denotational semantics of CSP](denotational-semantics-of-csp.md)
-
 ## Sources
 
 - A. W. Roscoe, *The Theory and Practice of Concurrency*, Prentice Hall, 1997; revised edition 2005, author's online version, <https://www.cs.ox.ac.uk/bill.roscoe/publications/68b.pdf>, Section 8.4, Theorem 8.4.2; the proof uses the relational representations of the operators, as in Section 8.2 (Theorem 8.2.1).

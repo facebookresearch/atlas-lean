@@ -7,10 +7,6 @@ Let $A$ be the incidence matrix of a pure [Petri net](place-transition-petri-net
 - [The state equation of a Petri net](state-equation.md)
 - [Place/transition Petri nets](place-transition-petri-nets.md)
 
-## Proof depends on
-
-- [The state equation of a Petri net](state-equation.md)
-
 ## Sources
 
 - T. Murata, "Petri nets: Properties, analysis and applications", *Proceedings of the IEEE* 77(4):541–580, 1989, Section VIII: the definition of S- and T-invariants and Theorem 33.

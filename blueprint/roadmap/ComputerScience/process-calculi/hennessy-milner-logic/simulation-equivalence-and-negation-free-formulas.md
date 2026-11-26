@@ -11,10 +11,6 @@ where $\mathcal{M}$ is the fragment of [Hennessy–Milner logic](hennessy-milner
 - [Hennessy–Milner logic](hennessy-milner-logic.md)
 - [Observational equivalence by stratification](observational-equivalence-by-stratification.md)
 
-## Proof depends on
-
-- [Hennessy–Milner logic](hennessy-milner-logic.md)
-
 ## Sources
 
 - M. Hennessy and R. Milner, "Algebraic laws for nondeterminism and concurrency", *Journal of the ACM* 32(1):137–161, 1985, <https://www.scss.tcd.ie/matthew.hennessy/pubs/old/HMjacm85.pdf>, Section 2.2: the asymmetric map $AE$, the relations $\sqsubseteq_n$, $\sqsubseteq$ and $\simeq$, and Theorem 2.4; the example showing that $\simeq$ is weaker than $\sim$ is in Section 3.2.

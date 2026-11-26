@@ -9,10 +9,6 @@ In the calculus of [may and must testing](may-and-must-testing-preorders.md):
 
 - [May and must testing preorders](may-and-must-testing-preorders.md)
 
-## Proof depends on
-
-- [May and must testing preorders](may-and-must-testing-preorders.md)
-
 ## Sources
 
 - R. De Nicola and M. C. B. Hennessy, "Testing equivalences for processes", *Theoretical Computer Science* 34(1–2):83–133, 1984, <https://www.scss.tcd.ie/Matthew.Hennessy/pubs/old/TCS84.pdf>, Section 2.2: Proposition 2.2.1 (preservation by $\mid$, proved by moving $r$ into the observer) and the counterexample for $+$ that follows it, which motivates the precongruences of Definition 2.2.2.

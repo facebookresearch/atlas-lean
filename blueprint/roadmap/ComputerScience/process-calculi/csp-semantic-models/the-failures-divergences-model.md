@@ -1,6 +1,6 @@
 # The failures-divergences model of CSP
 
-With $\Sigma^{*\checkmark} = \Sigma^* \cup \{ s ^\frown \langle \checkmark \rangle \mid s \in \Sigma^* \}$ and $\Sigma^{\checkmark} = \Sigma \cup \{\checkmark\}$, the *failures-divergences model* $\mathcal{N}$ consists of the pairs $P = (F, D)$ with $F \subseteq \Sigma^{*\checkmark} \times \mathcal{P}(\Sigma^{\checkmark})$ and $D \subseteq \Sigma^{*\checkmark}$ that satisfy, where $\mathrm{traces}_\bot(P) = \{ t \mid (t, X) \in F \}$, $s, t$ range over $\Sigma^{*\checkmark}$ and $X, Y$ over subsets of $\Sigma^{\checkmark}$:
+With $\Sigma^{*\checkmark} = \Sigma^* \cup \{ s ^\frown \langle \checkmark \rangle \mid s \in \Sigma^* \}$ and $\Sigma^{\checkmark} = \Sigma \cup \{\checkmark\}$, the *failures-divergences model* $\mathcal{N}$ consists of the pairs $P = (F, D)$ with $F \subseteq \Sigma^{*\checkmark} \times \mathcal{P}(\Sigma^{\checkmark})$ and $D \subseteq \Sigma^{*\checkmark}$ that satisfy, where $\mathrm{traces}_\bot(P) = \{ t \mid (t, X) \in F \text{ for some } X \}$, $s, t$ range over $\Sigma^{*\checkmark}$ and $X, Y$ over subsets of $\Sigma^{\checkmark}$:
 
 - F1: $\mathrm{traces}_\bot(P)$ is nonempty and prefix closed;
 - F2: $(s, X) \in F$ and $Y \subseteq X$ imply $(s, Y) \in F$;
