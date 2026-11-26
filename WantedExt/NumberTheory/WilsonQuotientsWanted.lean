@@ -31,6 +31,7 @@ public import Mathlib.NumberTheory.Harmonic.Defs
 public import MathlibExt.NumberTheory.WilsonQuotientPrimality
 public import MathlibExt.NumberTheory.WilsonQuotients
 public import MathlibExt.NumberTheory.WilsonQuotientsExistsNatEqWilsonQuotientZPlusIff
+public import MathlibExt.NumberTheory.WilsonQuotientsExistsIntEqWilsonQuotientZAndModEq
 
 set_option autoImplicit false
 
@@ -46,18 +47,6 @@ Theorem of Wilson", Theorem 1. -/
 theorem_wanted exists_int_eq_wilsonQuotientZ
     (n : ℕ) (hn : 1 ≤ n) :
     ∃ z : ℤ, (z : ℚ) = wilsonQuotientZ n
-
-/-- **The Wilson quotient sum Z(n) modulo n.** Let $n \ge 1$ be a natural number. Morozov's
-Wilson quotient sum $Z(n)$ is an integer; moreover $Z(n) \equiv 1 \pmod{n}$ if $n$ is neither
-$1$ nor prime, and $Z(n) \equiv -1 \pmod{n}$ if $n = 1$ or $n$ is prime.
-
-Source: Ivan V. Morozov, "On Quotients of a More General
-Theorem of Wilson", Theorem 3. -/
-theorem_wanted exists_int_eq_wilsonQuotientZ_and_modEq
-    (n : ℕ) (hn : 1 ≤ n) :
-    ∃ z : ℤ, (z : ℚ) = wilsonQuotientZ n ∧
-      ((¬(n = 1 ∨ n.Prime) → z ≡ 1 [ZMOD (n : ℤ)]) ∧
-        ((n = 1 ∨ n.Prime) → z ≡ -1 [ZMOD (n : ℤ)]))
 
 /-- **The sign-adjusted Wilson quotient sum Z⁺(2n) modulo 2n.** Let $n \ge 1$ be a natural
 number. Morozov's sign-adjusted Wilson quotient sum $Z^+(2n)$ is an integer; it satisfies
