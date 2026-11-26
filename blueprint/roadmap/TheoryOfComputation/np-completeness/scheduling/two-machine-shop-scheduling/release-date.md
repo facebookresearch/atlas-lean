@@ -1,0 +1,3 @@
+# Release date of a job in TWO-MACHINE UNIT-TIME NO-WAIT JOB SHOP WITH RELEASE DATES, TOTAL COMPLETION TIME
+
+An instance of TWO-MACHINE UNIT-TIME NO-WAIT JOB SHOP WITH RELEASE DATES, TOTAL COMPLETION TIME is a pair $(J, K)$ of a list $J$ of jobs, job $j$ given as a pair $(O_j, r_j)$ of its list of operations, each a pair of a processing time and a machine, and a natural number $r_j$, and a bound $K$. Its jobs are the positions of $J$, the jobs of the two-machine job-shop instance with the same operation lists. The release date of job $j$ is the second component $r_j$ of the pair at position $j$ of $J$.

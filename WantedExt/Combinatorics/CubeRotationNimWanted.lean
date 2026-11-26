@@ -17,12 +17,14 @@ public import MathlibExt.Combinatorics.MisereCubeRotationNim
 public import MathlibExt.Combinatorics.SlowCubeEdgeNim
 public import MathlibExt.Combinatorics.SlowCubeFaceNim
 public import MathlibExt.Combinatorics.SlowCubeVertexNim
+public import MathlibExt.Combinatorics.CubeRotationNimCubeEdgeNimPPositions
 
 /-!
 # Nim games on a cube
 
 Statement-only targets from Balaji R. Kadam and A. J. Shaiju, *Variations of the Nim Game
-Played on a Cube*, INTEGERS 25 (2025), Article G2.
+Played on a Cube*, INTEGERS 25 (2025), Article G2. The theorem `cubeEdgeNim_pPositions` is
+proved in `MathlibExt.Combinatorics.CubeRotationNimCubeEdgeNimPPositions`.
 
 A position `p : Fin 6 → ℕ` lists the token counts `(a, b, c, A, B, C)` on the faces
 `f_a, f_b, f_c, f_A, f_B, f_C` (indices `0, …, 5`; `f_A` is opposite `f_a`, and so on). In the
@@ -60,24 +62,6 @@ public theorem_wanted cubeRotationNim_pPositions :
     let P : Set (Fin 6 → ℕ) := {p | p 0 + p 3 = p 1 + p 4 ∧ p 1 + p 4 = p 2 + p 5}
     (∀ p q, p ∈ P → CubeRotationMove p q → q ∉ P) ∧
       ∀ p, p ∉ P → ∃ q, CubeRotationMove p q ∧ q ∈ P
-
-/-- **P-positions of edge Nim on a cube.** Write positions of the game $C_E$ as tuples
-$(a, b, c, A, B, C)$ of numbers of tokens on the faces $f_a, f_b, f_c, f_A, f_B, f_C$, where
-$f_A$, $f_B$, $f_C$ are opposite $f_a$, $f_b$, $f_c$, and let $\oplus$ be the Nim-sum (bitwise
-exclusive or) of natural numbers. Let $\mathcal P$ be the set of positions with
-$a \oplus A = b \oplus B = c \oplus C$. Then no edge move leads from a position in $\mathcal P$
-to a position in $\mathcal P$, and from every position outside $\mathcal P$ there is an edge
-move to a position in $\mathcal P$.
-
-Every move removes a token, so the game terminates and $\mathcal P$ is exactly the set of
-P-positions (second-player wins) under normal play.
-
-Source: Balaji R. Kadam and A. J. Shaiju, *Variations of the Nim Game Played on a Cube*,
-INTEGERS 25 (2025), Article G2, Theorem 3 (`integers-2025-G2-thm-3`). -/
-public theorem_wanted cubeEdgeNim_pPositions :
-    let P : Set (Fin 6 → ℕ) := {p | p 0 ^^^ p 3 = p 1 ^^^ p 4 ∧ p 1 ^^^ p 4 = p 2 ^^^ p 5}
-    (∀ p q, p ∈ P → CubeEdgeMove p q → q ∉ P) ∧
-      ∀ p, p ∉ P → ∃ q, CubeEdgeMove p q ∧ q ∈ P
 
 /-- **Misère P-positions of vertex Nim on a cube.** Write a position of the cube game as
 $p = (a, b, c, A, B, C)$, the numbers of tokens on the six faces of a cube, where the faces
