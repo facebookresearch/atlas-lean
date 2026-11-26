@@ -199,21 +199,6 @@ public theorem_wanted odd_primitiveNondeficient_primeReciprocalSum_ge
         ((abundancySup n : ℝ) - 2) / 2 - ((abundancySup n : ℝ) - 2) ^ 2 / 4 ≤
       ∑ p ∈ n.primeFactors, (1 : ℝ) / p
 
-/-- **No odd prime $q$ lifts $H$ of the odd part of $q + 1$ across $2$.** For a positive integer
-$m$ write $H(m) = \prod_{p \mid m} p/(p-1)$, the product over the prime divisors of $m$, and
-$\operatorname{odd}(m)$ for the largest odd divisor of $m$. There is no odd prime $q$ with
-$H(\operatorname{odd}(q+1)) < 2$ and $H(q \cdot \operatorname{odd}(q+1)) > 2$.
-
-For $q = 2$ the conclusion fails: $H(3) = 3/2 < 2$ and $H(6) = 3 > 2$.
-
-Source: Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd
-Perfect or Odd Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59,
-Proposition 10 (`integers-2025-A59-prop-10`). -/
-public theorem_wanted not_abundancySup_oddPart_succ_lt_two_and_two_lt
-    (q : ℕ) (hq : q.Prime) (hodd : Odd q) :
-    ¬ (abundancySup (ordCompl[2] (q + 1)) < 2 ∧
-      2 < abundancySup (q * ordCompl[2] (q + 1)))
-
 /-- **Refined fifth-power bound on the Euler prime of an odd perfect number.** If $(n, q, e, m)$
 is in Eulerian form, that is, $n$ is an odd perfect number, $q$ is a prime coprime to $m$,
 $n = q^e m^2$ and $q \equiv e \equiv 1 \pmod 4$, then $e = 1$ or

@@ -1,0 +1,3 @@
+# Resource bound in RESOURCE CONSTRAINED SCHEDULING
+
+An instance of RESOURCE CONSTRAINED SCHEDULING is a tuple $(m, r, B, T, D)$ of a number $m$ of processors, a number $r$ of resources, a list $B$ of natural numbers (the resource bounds), a list $T$ of lists of natural numbers (one row of requirements per task), and a deadline $D$. Neither $B$ nor any row is required to have $r$ entries; in a well-formed instance $B$ has exactly $r$ entries and so does every row. For a natural number $k$, the bound $B_k$ of resource $k$ is the entry of $B$ at position $k$, and $0$ when $B$ has no entry at position $k$. That the bounds are positive is likewise a condition of a well-formed instance. For example, with $r = 1$ and $B = (2, 7)$ the bound of resource $1$ is $7$.
