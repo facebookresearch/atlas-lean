@@ -152,7 +152,10 @@ end QuaternionRecog
 open QuaternionRecog in
 /-- **Recognition of quaternion algebras over `ℚ`.** A four-dimensional
 central division algebra over `ℚ` is a quaternion algebra: there are nonzero
-`a, b : ℚ` with `D ≃ₐ[ℚ] ℍ[ℚ, a, b]`. -/
+`a, b : ℚ` with `D ≃ₐ[ℚ] ℍ[ℚ, a, b]`. Here `hdiv` and `hcen` say that `D` is a division ring
+with centre `ℚ`. The same result, stated with the classes `DivisionRing D` and
+`Algebra.IsCentral ℚ D`, is
+`Algebra.IsCentral.exists_nonempty_algEquiv_quaternionAlgebra_of_finrank_eq_four`. -/
 public theorem exists_nonempty_algEquiv_quaternionAlgebra_of_finrank_eq_four
     (D : Type*) [Ring D] [Algebra ℚ D] (hdim : Module.finrank ℚ D = 4)
     (hdiv : ∀ x : D, x ≠ 0 → IsUnit x)
@@ -320,9 +323,9 @@ public theorem exists_nonempty_algEquiv_quaternionAlgebra_of_finrank_eq_four
       f.toLinearMap)).mpr hsurj
   exact ⟨a, b, ha, hb0, ⟨(AlgEquiv.ofBijective f hbij).symm⟩⟩
 
-/-- **Four-dimensional central division algebras over `ℚ` are quaternion algebras.** A division
-ring `D` that is a central `ℚ`-algebra of dimension `4` is isomorphic to `ℍ[ℚ, a, b]` for some
-nonzero `a, b : ℚ`. -/
+-- `exists_nonempty_algEquiv_quaternionAlgebra_of_finrank_eq_four` with the classes
+-- `DivisionRing D` and `Algebra.IsCentral ℚ D` in place of `hdiv` and `hcen`. It has no docstring
+-- of its own, so that the result keeps one page, documented by the theorem above.
 public theorem Algebra.IsCentral.exists_nonempty_algEquiv_quaternionAlgebra_of_finrank_eq_four
     (D : Type*) [DivisionRing D] [Algebra ℚ D] [Algebra.IsCentral ℚ D]
     (hdim : Module.finrank ℚ D = 4) :
