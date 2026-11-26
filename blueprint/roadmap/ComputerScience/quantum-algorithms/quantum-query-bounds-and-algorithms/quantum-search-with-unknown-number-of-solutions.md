@@ -1,6 +1,6 @@
 # Quantum search with an unknown number of marked items (BBHT)
 
-Let $x \in \{0,1\}^N$ have $t \ge 1$ marked positions, $t$ unknown. Running Grover's iteration a number of times chosen uniformly from $\{0, \dots, M - 1\}$ with $M \ge \sqrt{N/t}$ (suitably scaled) and measuring finds a marked item with probability at least $1/4$. Iterating with geometrically increasing $M$ gives an algorithm that finds a marked item with $O(\sqrt{N/t})$ expected queries, and a fixed-budget algorithm with $O(\sqrt N)$ queries computes $\mathrm{OR}_N$ with error at most $1/3$.
+Let $x \in \{0,1\}^N$ have $t \ge 1$ marked positions, $t$ unknown. Running Grover's iteration a number of times chosen uniformly from $\{0, \dots, M - 1\}$ and measuring finds a marked item with probability exactly $\frac12-\frac{\sin(4M\theta)}{4M\sin(2\theta)}$, where $\sin^2\theta=t/N$ and $0<\theta\le\pi/2$; this is at least $1/4$ whenever $t<N$ and $M\ge1/\sin(2\theta)$ (BBHT, Lemma 2). Since $1/\sin(2\theta)\le\sqrt{N/t}$ when $t\le 3N/4$, $M\ge\sqrt{N/t}$ suffices in that range. Iterating with geometrically increasing $M$ gives an algorithm that finds a marked item with $O(\sqrt{N/t})$ expected queries (BBHT, Theorem 3), and a fixed-budget algorithm with $O(\sqrt N)$ queries computes $\mathrm{OR}_N$ with error at most $1/3$.
 
 ## Proof sketch
 
@@ -17,5 +17,5 @@ After $j$ iterations the success probability is $\sin^2((2j+1)\theta)$ with $\si
 
 ## Sources
 
-- M. Boyer, G. Brassard, P. Høyer and A. Tapp, "Tight Bounds on Quantum Searching", Fortschritte der Physik 46(4-5), 1998.
+- M. Boyer, G. Brassard, P. Høyer and A. Tapp, "Tight Bounds on Quantum Searching", Fortschritte der Physik 46(4-5), 1998 (arXiv:quant-ph/9605034), Lemma 2 and Theorem 3.
 - R. de Wolf, "Quantum Computing: Lecture Notes", arXiv:1907.09415, 2019.

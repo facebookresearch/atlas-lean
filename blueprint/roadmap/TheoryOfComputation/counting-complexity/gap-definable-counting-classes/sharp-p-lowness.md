@@ -10,7 +10,7 @@ For $A\in\mathsf{UP}\cap\mathsf{coUP}$, answer each query by guessing the unique
 
 - [GapP and the gap-definable classes SPP, WPP, LWPP, AWPP, C=P and Mod_kP](gap-definable-classes.md)
 - [The counting class $\#P$](../../complexity-classes/time-and-space-complexity-classes/sharp-p.md)
-- [Unambiguous and few-witness polynomial time: UP and FewP](../../complexity-classes/reducibilities-and-isomorphism/up-and-fewp.md)
+- [Unambiguous and few-witness polynomial time: UP and FewP](../../complexity-classes/structural-complexity/reducibilities-and-isomorphism/up-and-fewp.md)
 
 ## Sources
 

@@ -16,52 +16,12 @@ Boolean circuits as a model of computation, including arithmetic circuits built 
 - [Unbounded fan-in circuits](unbounded-fan-in-circuits/README.md)
 - [Constant depth circuit lower bounds](constant-depth-circuit-lower-bounds/README.md)
 
-- [AC0: Fourier Concentration and Pseudorandomness](ac0-fourier-and-pseudorandomness/README.md)
-
-- [ACC0 and Williams's Algorithmic Method](acc0-and-williams-algorithmic-method/README.md)
-
-- [Branching Programs and Monoid Programs](branching-programs/README.md)
-
-- [Circuit Models and Complexity Measures](circuit-models-and-complexity-measures/README.md)
-
-- [Circuit Synthesis Upper Bounds](circuit-synthesis-upper-bounds/README.md)
-
-- [Circuits for Iterated Maps](circuits-for-iterated-maps/README.md)
-
-- [Explicit Constructions and Circuit Lower Bounds for Functions in P](explicit-constructions-and-lower-bounds/README.md)
-
-- [Fanout-Bounded Prefix Circuits](fanout-bounded-prefix-circuits/README.md)
-
-- [Formula Depth and Karchmer-Wigderson Games](formula-depth-and-karchmer-wigderson-games/README.md)
-
-- [Formula Size Lower Bounds](formula-size-lower-bounds/README.md)
-
-- [Gate Elimination and Explicit Lower Bounds](gate-elimination-and-explicit-lower-bounds/README.md)
-
 - [Hardness Amplification for Circuits](hardness-amplification-for-circuits/README.md)
-
-- [Knowledge Compilation Circuits](knowledge-compilation-circuits/README.md)
-
-- [Mass Production and Sparse Synthesis](mass-production-and-sparse-synthesis/README.md)
 
 - [Monotone Circuit Complexity](monotone-circuit-complexity/README.md)
 
-- [Nonuniform Circuit Classes](nonuniform-circuit-classes/README.md)
-
-- [Normal-Form Size Lower Bounds](normal-form-size-lower-bounds/README.md)
-
 - [Parallel Circuit Hierarchies](parallel-circuit-hierarchies/README.md)
 
-- [Rectifier and Additive Circuits](rectifier-and-additive-circuits/README.md)
-
-- [Refinements of the Frontier Method](frontier-method-refinements/README.md)
-
-- [Simulations Between Circuit Bases](simulations-between-circuit-bases/README.md)
-
-- [The Frontier Method](frontier-method/README.md)
-
-- [The Fusion Method](fusion-method/README.md)
-
-- [The Polynomial Method for AC0[p]](polynomial-method-for-ac0-p/README.md)
-
-- [Threshold Circuits](threshold-circuits/README.md)
+- [Circuit models, bases and nonuniform classes](circuit-models-and-classes/README.md)
+- [Circuit synthesis and upper bounds](circuit-synthesis-and-upper-bounds/README.md)
+- [Lower bounds for general circuits and formulas](lower-bounds-for-general-circuits-and-formulas/README.md)

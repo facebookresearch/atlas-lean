@@ -4,7 +4,7 @@ For constants $0\le\beta<\alpha^{2}\le1$, **Statistical Difference** $\mathrm{SD
 
 ## Depends on
 
-- [Promise problems and promise classes](../../randomized-and-quantum-complexity/promise-and-randomized-classes/promise-problems.md)
+- [Promise problems and promise classes](../../randomized-and-quantum-complexity/bounded-error-probabilistic-classes-rp-and-bpp/promise-and-randomized-classes/promise-problems.md)
 
 ## Sources
 

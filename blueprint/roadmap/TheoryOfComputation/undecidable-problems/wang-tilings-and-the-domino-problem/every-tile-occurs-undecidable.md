@@ -1,10 +1,10 @@
 # The every-tile-occurs tiling problem is undecidable
 
-It is undecidable whether every tile of a finite palette $T$ occurs at the origin of some tiling of the plane by $T$. The domino problem reduces to it: adjoining to $T$ a fresh tile whose colours exceed all colours of $T$ does not change the answer, and a decider for the every-tile-occurs problem, applied to suitable sub-palettes, decides whether $T$ tiles the plane.
+It is undecidable whether every tile of a finite palette $T$ occurs at the origin of some tiling of the plane by $T$ (by translation, equivalently whether every tile occurs somewhere in some tiling by $T$). The domino problem Turing-reduces to it: a decider for the every-tile-occurs problem, applied to the nonempty sub-palettes of $T$, decides whether $T$ tiles the plane.
 
 ## Proof sketch
 
-$T$ tiles the plane iff some nonempty sub-palette $T'\subseteq T$ has every tile occurring in tilings by $T'$ (take $T'$ the set of tiles used by a tiling); checking the finitely many sub-palettes with the hypothetical decider would decide the domino problem.
+$T$ tiles the plane iff some nonempty sub-palette $T'\subseteq T$ has every tile occurring in tilings by $T'$: a tiling by $T'$ is a tiling by $T$, and conversely the set of tiles used by a tiling by $T$ is such a $T'$. Checking the finitely many sub-palettes with the hypothetical decider would decide the domino problem.
 
 ## Depends on
 

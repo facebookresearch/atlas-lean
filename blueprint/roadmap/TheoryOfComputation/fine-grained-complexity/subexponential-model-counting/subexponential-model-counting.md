@@ -18,7 +18,7 @@ Sparsify the formula (with a counting-preserving, disjoint version of the IPZ sp
 ## Proof depends on
 
 - [Model counting by tensor contraction in time 2^{O(m/√log n)}](tensor-contraction-model-counting.md)
-- [Impagliazzo–Paturi–Zane sparsification and ETH in terms of clauses](../sat-exponents-and-hypotheses/sparsification-lemma.md)
+- [Impagliazzo–Paturi–Zane sparsification lemma](../sparsification-lemma/impagliazzo-paturi-zane-sparsification-lemma.md)
 
 ## Sources
 

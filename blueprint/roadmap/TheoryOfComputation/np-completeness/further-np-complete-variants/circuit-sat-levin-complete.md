@@ -8,7 +8,7 @@ For a PC relation with polynomial-time decider $V$, map $x$ to the circuit compu
 
 ## Depends on
 
-- [Self-reducible search problems (Goldreich's PC and PF)](../../complexity-classes/search-problems-and-self-reducibility/self-reducible-search-problems.md)
+- [Self-reducible search problems (Goldreich's PC and PF)](../../complexity-classes/structural-complexity/search-problems-and-self-reducibility/self-reducible-search-problems.md)
 - [CIRCUIT SAT is NP-complete](../satisfiability/circuit-satisfiability/circuit-sat-np-complete.md)
 
 ## Proof depends on

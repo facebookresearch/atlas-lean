@@ -1,10 +1,10 @@
 # 2-SAT witnesses in polynomial time via the implication graph
 
-For a 2-CNF $\varphi$ build the implication graph with an arc $\neg\ell\to\ell'$ and $\neg\ell'\to\ell$ for each clause $\ell\vee\ell'$. $\varphi$ is satisfiable iff no variable $x$ has $x$ and $\neg x$ in a common strongly connected component, and a satisfying assignment is computable in polynomial time by setting each variable according to the topological order of the components of $x$ and $\neg x$ (Aspvall–Plass–Tarjan).
+There is a polynomial-time (indeed linear-time) algorithm that, given a 2-CNF $\varphi$ (every clause has at most two literals), outputs a satisfying assignment of $\varphi$ if one exists and reports that $\varphi$ is unsatisfiable otherwise. If $\varphi$ contains the empty clause it is unsatisfiable. Otherwise the algorithm builds the implication graph, with arcs $\neg\ell\to\ell'$ and $\neg\ell'\to\ell$ for each clause $\ell\vee\ell'$ and the arc $\neg\ell\to\ell$ for each unit clause $\ell$, computes its strongly connected components in a topological order, and, when no variable $x$ has $x$ and $\neg x$ in a common component, sets $x$ true exactly when the component of $\neg x$ precedes that of $x$ (Aspvall–Plass–Tarjan).
 
 ## Proof sketch
 
-Paths in the implication graph are forced implications, so $x\leadsto\neg x\leadsto x$ makes $\varphi$ unsatisfiable. Otherwise assign $x$ true iff the component of $\neg x$ precedes that of $x$ in topological order; no clause can then be violated since that would create an arc against the order.
+The empty-clause test, the graph and its strongly connected components (Tarjan's algorithm) take linear time. If some $x$ shares a component with $\neg x$, the formula is unsatisfiable by the characterization. Otherwise the assignment is well defined, and it is consistent along arcs: a clause it violated would give an arc from a true literal to a false one, which runs against the topological order of the components.
 
 ## Depends on
 
@@ -12,7 +12,7 @@ Paths in the implication graph are forced implications, so $x\leadsto\neg x\lead
 
 ## Proof depends on
 
-- [2-SAT is in P](../2-satisfiability/two-sat-in-p.md)
+- [2-SAT characterization](../../../Logic/propositional-logic/2-satisfiability/cnf-sat-iff-of-is-two-cnf.md)
 
 ## Sources
 

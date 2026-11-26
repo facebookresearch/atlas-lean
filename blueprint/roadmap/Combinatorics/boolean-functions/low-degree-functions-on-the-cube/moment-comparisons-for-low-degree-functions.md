@@ -12,7 +12,7 @@ For $f : \{-1,1\}^n \to \mathbb{R}$ of degree at most $k$: (1) for $0 < p \le 2$
 
 ## Proof depends on
 
-- [The Bonami Lemma](the-bonami-lemma.md)
+- [Bonami Lemma](../../../Probability/concentration-inequalities/bonami-beckner-hypercontractivity/bonami-lemma.md)
 - [L^p norms under a uniform distribution increase with p](../fourier-expansion-supplements/lp-norms-increase-with-p.md)
 
 ## Sources

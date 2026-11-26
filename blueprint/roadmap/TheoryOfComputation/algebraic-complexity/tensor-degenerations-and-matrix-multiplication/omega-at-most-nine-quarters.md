@@ -20,5 +20,5 @@ A product of a canonical polynomial-multiplication tensor with its two role exch
 
 ## Sources
 
-- Rafael Pass, "Matrix Multiplication from Polynomial Packings: A Constructive and Elementary Proof of \omega \le 9/4", 2026.
-- OpenAI, "An Upper Bound of 9/4 for the Matrix Multiplication Exponent", Preprint, 2 October 2026, 2026.
+- Rafael Pass, "Matrix Multiplication from Polynomial Packings: A Constructive and Elementary Proof of ω ≤ 9/4", arXiv:2610.28627, 2026.
+- OpenAI, "An Upper Bound of 9/4 for the Matrix Multiplication Exponent", preprint, 2 October 2026.

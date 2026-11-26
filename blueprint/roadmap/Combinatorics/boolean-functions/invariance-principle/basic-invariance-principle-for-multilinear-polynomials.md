@@ -14,7 +14,7 @@ Replace variables one at a time as in Lindeberg's method; the error at step $i$ 
 ## Proof depends on
 
 - [Invariance principle for sums of independent random variables](invariance-principle-for-sums.md)
-- [The Bonami Lemma](../low-degree-functions-on-the-cube/the-bonami-lemma.md)
+- [Bonami Lemma](../../../Probability/concentration-inequalities/bonami-beckner-hypercontractivity/bonami-lemma.md)
 
 ## Sources
 

@@ -18,4 +18,4 @@ Eliminate the variables one by one by Fourier–Motzkin elimination; each derive
 ## Sources
 
 - Alexander Schrijver, "Theory of Linear and Integer Programming", John Wiley & Sons, 1986.
-- Ji\vrí Matou\vsek, Bernd G\"artner, "Understanding and Using Linear Programming", Springer, 2007.
+- Jiří Matoušek, Bernd Gärtner, "Understanding and Using Linear Programming", Springer, 2007.

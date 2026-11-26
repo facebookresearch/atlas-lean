@@ -19,4 +19,4 @@ Let $X=P-Q=X_+-X_-$ with spectral projections $E,F$ onto the nonnegative and neg
 ## Sources
 
 - Robert T. Powers, Erling Størmer, "Free states of the canonical anticommutation relations", Communications in Mathematical Physics, 1970.
-- Gábor Szab\'o, Lise Wouters, "Equivariant property Gamma and the tracial local-to-global principle for C*-dynamics", Analysis & PDE, 2025.
+- Gábor Szabó, Lise Wouters, "Equivariant property Gamma and the tracial local-to-global principle for C*-dynamics", Analysis & PDE, 2025.

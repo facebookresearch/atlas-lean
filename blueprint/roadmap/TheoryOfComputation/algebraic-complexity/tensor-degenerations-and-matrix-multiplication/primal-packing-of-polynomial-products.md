@@ -13,4 +13,4 @@ The telescoping sum $\sum_\nu z^{t\nu}AE_\nu=AP_1+\varepsilon z^bAQ-z^{ct}AP_{c+
 
 ## Sources
 
-- Rafael Pass, "Matrix Multiplication from Polynomial Packings: A Constructive and Elementary Proof of \omega \le 9/4", 2026.
+- Rafael Pass, "Matrix Multiplication from Polynomial Packings: A Constructive and Elementary Proof of ω ≤ 9/4", arXiv:2610.28627, 2026.

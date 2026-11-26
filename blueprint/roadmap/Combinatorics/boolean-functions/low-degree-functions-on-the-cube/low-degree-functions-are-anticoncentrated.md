@@ -17,7 +17,7 @@ Apply the Paley–Zygmund inequality to $Z = (f - \mu)^2$, which has $\mathbb{E}
 
 ## Proof depends on
 
-- [The Bonami Lemma](the-bonami-lemma.md)
+- [Bonami Lemma](../../../Probability/concentration-inequalities/bonami-beckner-hypercontractivity/bonami-lemma.md)
 
 ## Sources
 

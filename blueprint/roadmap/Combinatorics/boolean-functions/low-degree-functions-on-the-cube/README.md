@@ -1,6 +1,5 @@
 # Low-Degree Functions on the Boolean Cube
 
-- [The Bonami Lemma](the-bonami-lemma.md)
 - [Dimension of the space of low-degree functions](dimension-of-low-degree-functions.md)
 - [Schwartz–Zippel on the cube and influences of low-degree functions](schwartz-zippel-on-the-boolean-cube.md)
 - [Low-degree functions are anticoncentrated](low-degree-functions-are-anticoncentrated.md)

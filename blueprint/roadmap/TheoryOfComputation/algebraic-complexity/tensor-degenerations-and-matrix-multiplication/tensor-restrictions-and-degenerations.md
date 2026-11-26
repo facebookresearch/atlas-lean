@@ -11,4 +11,4 @@ An order-three tensor over a commutative ring $R$ with finite index sets $X,Y,Z$
 
 - Peter Bürgisser, Michael Clausen, M. Amin Shokrollahi, "Algebraic Complexity Theory", Springer, 1997.
 - Dario Bini, "Relations between exact and approximate bilinear algorithms. Applications", Calcolo, 1980.
-- Rafael Pass, "Matrix Multiplication from Polynomial Packings: A Constructive and Elementary Proof of \omega \le 9/4", 2026.
+- Rafael Pass, "Matrix Multiplication from Polynomial Packings: A Constructive and Elementary Proof of ω ≤ 9/4", arXiv:2610.28627, 2026.

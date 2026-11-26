@@ -15,7 +15,7 @@ All four follow from the closed form of the coefficients by comparing ratios of 
 ## Proof depends on
 
 - [The Fourier coefficients of majority](fourier-coefficients-of-majority.md)
-- [Noise stability as a sum over Fourier levels](../noise-sensitivity-and-stable-influence/noise-stability-as-a-sum-over-levels.md)
+- [Fourier formula for noise stability](../../../Analysis/harmonic-analysis/discrete-fourier-analysis/influences-and-the-noise-operator-on-the-boolean/bool-noise-stab-eq-sum.md)
 
 ## Sources
 

@@ -8,7 +8,7 @@ For $L\in\mathsf{NE}$, write $x$ in binary as a number $m_x$ and consider the ta
 
 ## Depends on
 
-- [Tally languages](../../complexity-classes/advice-sparse-and-selective-sets/tally-languages.md)
+- [Tally languages](../../complexity-classes/structural-complexity/advice-sparse-and-selective-sets/tally-languages.md)
 - [The complexity class NEXP](../../complexity-classes/time-and-space-complexity-classes/nexp.md)
 - [The class EXP](../../complexity-classes/time-and-space-complexity-classes/exp.md)
 - [The class E](../../complexity-classes/time-and-space-complexity-classes/e.md)

@@ -13,7 +13,7 @@ For $q \ge 2$: $\|f^{\le k}\|_q \le \sqrt{q-1}^{\,k}\|f^{\le k}\|_2 \le \sqrt{q-
 
 ## Proof depends on
 
-- [The Bonami Lemma](../low-degree-functions-on-the-cube/the-bonami-lemma.md)
+- [Bonami Lemma](../../../Probability/concentration-inequalities/bonami-beckner-hypercontractivity/bonami-lemma.md)
 - [L^p norms under a uniform distribution increase with p](../fourier-expansion-supplements/lp-norms-increase-with-p.md)
 
 ## Sources

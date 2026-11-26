@@ -14,7 +14,7 @@ Clause grouping: split the $m$ clauses of a 3-CNF into $k$ groups of $m/k$ claus
 
 ## Proof depends on
 
-- [Impagliazzo–Paturi–Zane sparsification and ETH in terms of clauses](../sat-exponents-and-hypotheses/sparsification-lemma.md)
+- [ETH holds for sparse 3-SAT iff for general 3-SAT](../sparsification-lemma/eth-for-sparse-3sat.md)
 
 ## Sources
 

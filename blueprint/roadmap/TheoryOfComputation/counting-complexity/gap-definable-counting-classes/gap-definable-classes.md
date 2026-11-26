@@ -13,7 +13,7 @@ One has $\mathsf{UP}\subseteq\mathsf{FewP}\subseteq\mathsf{SPP}\subseteq\mathsf{
 
 - [The counting class $\#P$](../../complexity-classes/time-and-space-complexity-classes/sharp-p.md)
 - [Probabilistic polynomial time with unbounded error](../../complexity-classes/time-and-space-complexity-classes/pp.md)
-- [Unambiguous and few-witness polynomial time: UP and FewP](../../complexity-classes/reducibilities-and-isomorphism/up-and-fewp.md)
+- [Unambiguous and few-witness polynomial time: UP and FewP](../../complexity-classes/structural-complexity/reducibilities-and-isomorphism/up-and-fewp.md)
 
 ## Sources
 

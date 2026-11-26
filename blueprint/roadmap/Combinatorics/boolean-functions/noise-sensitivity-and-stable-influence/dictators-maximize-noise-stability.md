@@ -12,7 +12,7 @@ With $\hat f(\emptyset) = 0$, $\mathrm{Stab}_\rho[f] = \sum_{k \ge 1}\rho^k\math
 
 ## Proof depends on
 
-- [Noise stability as a sum over Fourier levels](noise-stability-as-a-sum-over-levels.md)
+- [Fourier formula for noise stability](../../../Analysis/harmonic-analysis/discrete-fourier-analysis/influences-and-the-noise-operator-on-the-boolean/bool-noise-stab-eq-sum.md)
 - [Boolean functions with all Fourier weight at degree one are the literals](../fourier-expansion-supplements/degree-one-weight-one-implies-literal.md)
 
 ## Sources

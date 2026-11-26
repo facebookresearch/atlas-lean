@@ -14,7 +14,7 @@ Parametrize each pivot subspace by its subspace polynomial; the map $w \mapsto \
 
 ## Depends on
 
-- [Affine dispersers](../../circuit-complexity/gate-elimination-and-explicit-lower-bounds/affine-dispersers.md)
+- [Affine dispersers](../../circuit-complexity/lower-bounds-for-general-circuits-and-formulas/gate-elimination-and-explicit-lower-bounds/affine-dispersers.md)
 - [The Galois field with pⁿ elements](../../../FieldTheory/finite-fields/finite-field-existence.md)
 
 ## Sources

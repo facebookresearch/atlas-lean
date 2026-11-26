@@ -8,5 +8,5 @@ For $a,b\ge1$ the *full polynomial multiplication tensor* $\mathrm{Full}_{a,b}$ 
 
 ## Sources
 
-- Rafael Pass, "Matrix Multiplication from Polynomial Packings: A Constructive and Elementary Proof of \omega \le 9/4", 2026.
+- Rafael Pass, "Matrix Multiplication from Polynomial Packings: A Constructive and Elementary Proof of ω ≤ 9/4", arXiv:2610.28627, 2026.
 - Peter Bürgisser, Michael Clausen, M. Amin Shokrollahi, "Algebraic Complexity Theory", Springer, 1997.

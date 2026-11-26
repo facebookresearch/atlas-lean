@@ -18,4 +18,4 @@ Apply the isolation lemma to the family of proof trees of each gate, whose numbe
 ## Sources
 
 - Klaus Reinhardt, Eric Allender, "Making Nondeterminism Unambiguous", SIAM Journal on Computing, 2000.
-- William M. Hoza, "NL = UL", Electronic Colloquium on Computational Complexity, 2026.
+- William M. Hoza, "NL = UL", Electronic Colloquium on Computational Complexity, report TR26-323, 2026.

@@ -6,7 +6,7 @@ For $0\le s< c\le1$, $\mathrm{Gap}\text{-}k\text{-SAT}_{c,s}$ is the promise pro
 
 - [The exponents s_k of k-SAT and #k-SAT](k-sat-exponents.md)
 - [MAXIMUM SATISFIABILITY as a decision problem](../../np-completeness/satisfiability/maximum-satisfiability/max-sat-dec.md)
-- [Promise problems and promise classes](../../randomized-and-quantum-complexity/promise-and-randomized-classes/promise-problems.md)
+- [Promise problems and promise classes](../../randomized-and-quantum-complexity/bounded-error-probabilistic-classes-rp-and-bpp/promise-and-randomized-classes/promise-problems.md)
 
 ## Sources
 

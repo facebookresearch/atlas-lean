@@ -14,7 +14,7 @@ $\rho^k\mathbf{W}^{\le k} \le \sum_j\rho^j\mathbf{W}^j = \mathrm{Stab}_\rho \le 
 ## Proof depends on
 
 - [Small-Set Expansion Theorem](../../../Probability/concentration-inequalities/bonami-beckner-hypercontractivity/bool-noise-stab-le-rpow-of-indicator.md)
-- [Noise stability as a sum over Fourier levels](../noise-sensitivity-and-stable-influence/noise-stability-as-a-sum-over-levels.md)
+- [Fourier formula for noise stability](../../../Analysis/harmonic-analysis/discrete-fourier-analysis/influences-and-the-noise-operator-on-the-boolean/bool-noise-stab-eq-sum.md)
 
 ## Sources
 

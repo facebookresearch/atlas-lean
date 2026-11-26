@@ -9,7 +9,7 @@ Lift every line $L$ of the derivation to $\bigwedge \rho \Rightarrow L$ by addin
 ## Depends on
 
 - [The cutting planes proof system](cutting-planes-proof-system.md)
-- [Pseudo-Boolean constraints in normalized form](../../propositional-logic/pseudo-boolean-proof-logging/pseudo-boolean-constraints.md)
+- [Pseudo-Boolean constraints in normalized form](../../propositional-logic/proof-certificates/pseudo-boolean-proof-logging/pseudo-boolean-constraints.md)
 
 ## Sources
 

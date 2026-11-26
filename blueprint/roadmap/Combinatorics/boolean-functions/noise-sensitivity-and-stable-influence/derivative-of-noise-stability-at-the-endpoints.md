@@ -14,7 +14,7 @@ Differentiate $\sum_k \rho^k\mathbf{W}^k[f]$ termwise; at $\rho = 1$ the derivat
 
 ## Proof depends on
 
-- [Noise stability as a sum over Fourier levels](noise-stability-as-a-sum-over-levels.md)
+- [Fourier formula for noise stability](../../../Analysis/harmonic-analysis/discrete-fourier-analysis/influences-and-the-noise-operator-on-the-boolean/bool-noise-stab-eq-sum.md)
 - [Total influence in Fourier form](../../../Analysis/harmonic-analysis/discrete-fourier-analysis/influences-and-the-noise-operator-on-the-boolean/bool-total-influence-eq-sum-card-mul-sq.md)
 
 ## Sources

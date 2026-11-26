@@ -16,3 +16,4 @@
 - [Parameterized Clique](clique-param.md)
 - [The level $\mathrm{W}(t)$ of the W-hierarchy](wlevel.md)
 - [Parameterized complexity: FPT and W(1)-completeness of Clique](parameterized-clique-w1-complete.md)
+- [Kernelization, Compression and Parameterized Lower Bounds](kernelization-and-parameterized-lower-bounds/README.md)

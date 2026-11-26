@@ -5,7 +5,7 @@ An *$(n, k)$ affine source* is the uniform distribution on an affine subspace of
 ## Depends on
 
 - [k-sources, (k, ε)-sources and flat sources](../weak-sources-and-extractors/weak-random-sources.md)
-- [Affine dispersers](../../circuit-complexity/gate-elimination-and-explicit-lower-bounds/affine-dispersers.md)
+- [Affine dispersers](../../circuit-complexity/lower-bounds-for-general-circuits-and-formulas/gate-elimination-and-explicit-lower-bounds/affine-dispersers.md)
 - [Two-source extractors](../weak-sources-and-extractors/two-source-extractors.md)
 
 ## Sources

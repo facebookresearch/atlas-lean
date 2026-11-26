@@ -5,7 +5,9 @@ The **subset convolution** of $f, g : 2^{[n]} \to R$ is
 $$
 (f \ast g)(S) = \sum_{T \subseteq S} f(T)\, g(S \setminus T).
 $$
+
 The **ranked zeta transform** of $f$ is the family $\hat f_k = \zeta(f \cdot [|\cdot| = k])$, $k = 0, \dots, n$. Then for every $S$ with $|S| = s$,
+
 $$
 (f \ast g)(S) = \mu\Big( \sum_{k=0}^{s} \hat f_k \cdot \hat g_{s-k} \Big)(S),
 $$

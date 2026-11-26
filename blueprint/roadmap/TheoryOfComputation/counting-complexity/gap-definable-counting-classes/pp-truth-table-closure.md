@@ -10,7 +10,7 @@ Represent the sign of a gap by a low-degree rational function (Newman's approxim
 
 - [Probabilistic polynomial time with unbounded error](../../complexity-classes/time-and-space-complexity-classes/pp.md)
 - [Polynomial time with a #P oracle](../../complexity-classes/time-and-space-complexity-classes/pwith-sharp-p.md)
-- [Polynomial-time truth-table, bounded and Turing reductions](../../complexity-classes/reducibilities-and-isomorphism/truth-table-reductions.md)
+- [Polynomial-time truth-table, bounded and Turing reductions](../../complexity-classes/structural-complexity/reducibilities-and-isomorphism/truth-table-reductions.md)
 
 ## Proof depends on
 

@@ -14,7 +14,8 @@ Compose sparsification (which makes the number of clauses linear in the number o
 
 ## Proof depends on
 
-- [Impagliazzo–Paturi–Zane sparsification and ETH in terms of clauses](../sat-exponents-and-hypotheses/sparsification-lemma.md)
+- [Impagliazzo–Paturi–Zane sparsification lemma](../sparsification-lemma/impagliazzo-paturi-zane-sparsification-lemma.md)
+- [ETH holds for sparse 3-SAT iff for general 3-SAT](../sparsification-lemma/eth-for-sparse-3sat.md)
 - [Linear-size parsimonious reduction to three occurrences per variable](linear-three-occurrence-reduction.md)
 - [A linear-size reduction from 3SAT to Hamiltonian path and cycle](linear-size-hamiltonian-reduction.md)
 - [Exponent transfer under the Satisfiability Hypothesis](../sat-exponents-and-hypotheses/sh-exponent-transfer.md)

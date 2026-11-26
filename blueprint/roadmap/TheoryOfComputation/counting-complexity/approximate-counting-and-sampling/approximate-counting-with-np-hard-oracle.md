@@ -8,7 +8,7 @@ Stockmeyer's hashing argument approximates $|R(x)|$ to within a constant factor 
 
 ## Depends on
 
-- [Self-reducible search problems (Goldreich's PC and PF)](../../complexity-classes/search-problems-and-self-reducibility/self-reducible-search-problems.md)
+- [Self-reducible search problems (Goldreich's PC and PF)](../../complexity-classes/structural-complexity/search-problems-and-self-reducibility/self-reducible-search-problems.md)
 - [Polynomial time with an oracle](../../complexity-classes/time-and-space-complexity-classes/pwith-oracle.md)
 
 ## Proof depends on

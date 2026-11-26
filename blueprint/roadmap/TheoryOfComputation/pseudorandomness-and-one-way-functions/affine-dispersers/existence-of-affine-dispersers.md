@@ -8,8 +8,8 @@ There are at most $2^{n(d+1)}$ affine maps $\{0,1\}^d \to \{0,1\}^n$, and at mos
 
 ## Depends on
 
-- [Affine dispersers](../../circuit-complexity/gate-elimination-and-explicit-lower-bounds/affine-dispersers.md)
+- [Affine dispersers](../../circuit-complexity/lower-bounds-for-general-circuits-and-formulas/gate-elimination-and-explicit-lower-bounds/affine-dispersers.md)
 
 ## Sources
 
-- O. S. Mishra and R. Santhanam, "An Explicit 3.5n − o(n) Size Lower Bound against General Boolean Circuits", 2026.
+- O. S. Mishra and R. Santhanam, "An Explicit 3.5n − o(n) Size Lower Bound against General Boolean Circuits", Electronic Colloquium on Computational Complexity, report TR26-260, 2026.

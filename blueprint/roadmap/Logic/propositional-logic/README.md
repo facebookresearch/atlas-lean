@@ -28,6 +28,4 @@ Classical propositional logic: truth-table semantics, natural deduction and its 
 - [SAT solving](sat-solving/README.md)
 - [Boolean Clones and Post's Lattice](boolean-clones-and-post-lattice/README.md)
 - [CNF Gadgets and Encodings](cnf-gadgets-and-encodings/README.md)
-- [Clausal Proof Certificates](clausal-proof-certificates/README.md)
 - [Plaisted–Greenbaum Transformation](plaisted-greenbaum-transformation/README.md)
-- [Pseudo-Boolean Proof Logging](pseudo-boolean-proof-logging/README.md)

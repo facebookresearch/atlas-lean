@@ -12,7 +12,7 @@ Reduce 3-Coloring on $N$ vertices, which needs $2^{\Omega(N)}$ under ETH, by gro
 
 ## Proof depends on
 
-- [Impagliazzo–Paturi–Zane sparsification and ETH in terms of clauses](../sat-exponents-and-hypotheses/sparsification-lemma.md)
+- [ETH holds for sparse 3-SAT iff for general 3-SAT](../sparsification-lemma/eth-for-sparse-3sat.md)
 
 ## Sources
 
