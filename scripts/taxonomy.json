@@ -10928,6 +10928,7 @@
   "MathlibExt/Combinatorics/Enumerative/IdentityProductNecklace": {"to": "Combinatorics/elementary-enumeration", "title": "Necklaces over a group with identity product"},
   "MathlibExt/Combinatorics/Enumerative/IdentityProductNecklacePiCyclic": {"to": "Combinatorics/elementary-enumeration", "title": "Necklaces over a group with identity product"},
   "MathlibExt/Combinatorics/Enumerative/IncompleteBinomialHarmonicSums": {"to": "Combinatorics/binomial-coefficients/central-binomial-harmonic-sums", "title": "Kollár's incomplete binomial sums"},
+  "MathlibExt/Combinatorics/Enumerative/InversionSequenceAvoid011102120": {"to": "Combinatorics/permutations/permutation-patterns", "title": "Pattern avoidance in inversion sequences"},
   "MathlibExt/Combinatorics/Enumerative/InversionSequencePatternSets": {"to": "Combinatorics/permutations/permutation-patterns", "title": "Pattern avoidance in inversion sequences"},
   "MathlibExt/Combinatorics/Enumerative/InversionSequenceWilf201210": {"to": "Combinatorics/permutations/permutation-patterns", "title": "Pattern avoidance in inversion sequences"},
   "MathlibExt/Combinatorics/Enumerative/InvertTransform": {"to": "Combinatorics/riordan-arrays-transforms/sequence-transforms", "title": "INVERT transform"},
