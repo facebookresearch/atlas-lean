@@ -1,3 +1,3 @@
 # Erase Chain With Cost nil
 
-The empty erasure scan records its terminal event.
+On the empty chain, the counted erasure scan returns the empty chain after one event: the result is the pair $([\,], 1)$.

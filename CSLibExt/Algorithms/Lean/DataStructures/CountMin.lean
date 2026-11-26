@@ -51,7 +51,8 @@ def estimate {X : Type*} [DecidableEq X] [Fintype X]
   Finset.inf' (Finset.Icc 0 (d - 1)) ⟨0, Finset.mem_Icc.mpr ⟨le_refl 0, by omega⟩⟩
     (fun j => counter f (H j) (H j x))
 
-/-- The estimate never undercounts: `f x ≤ estimate f H d hd x`. -/
+/-- With natural-number frequencies on a finite universe and `0 < d` rows, the estimate
+never undercounts: `f x ≤ estimate f H d hd x`. -/
 theorem freq_le_estimate {X : Type*} [DecidableEq X] [Fintype X]
     (f : X → ℕ) (H : ℕ → (X → ℕ)) (d : ℕ) (hd : 0 < d) (x : X) :
     f x ≤ estimate f H d hd x := by

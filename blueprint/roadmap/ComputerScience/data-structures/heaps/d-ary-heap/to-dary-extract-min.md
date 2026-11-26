@@ -1,4 +1,3 @@
 # To Dary extract Min
 
-Binary extraction agrees with arity-two extraction: the same minimum and the arity-two view
-of the same remaining heap.
+For a binary min-heap over a linearly ordered type, extracting the minimum agrees with extracting it from the arity-two view of the heap: both return nothing when the heap is empty, and otherwise both return the same key, with the remaining arity-two heap equal to the arity-two view of the remaining binary heap.

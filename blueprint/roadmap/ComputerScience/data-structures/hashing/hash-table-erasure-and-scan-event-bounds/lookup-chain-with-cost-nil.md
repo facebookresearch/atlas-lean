@@ -1,3 +1,3 @@
 # Lookup Chain With Cost nil
 
-The empty lookup scan records its terminal event.
+On the empty chain, the counted lookup scan returns nothing after one event: the result is the pair $(\mathrm{none}, 1)$.
