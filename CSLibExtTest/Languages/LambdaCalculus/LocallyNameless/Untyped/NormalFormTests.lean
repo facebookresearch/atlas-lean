@@ -17,8 +17,9 @@ public import Cslib.Foundations.Relation.Confluence
 
 Statement pins for every public declaration of
 `CSLibExt.Languages.LambdaCalculus.LocallyNameless.Untyped.NormalForm`, the ill-scoped
-counterexample to the converse without local closure, a finite-name control, concrete uses of
-each theorem, and agreement with the uniqueness of relational normal forms.
+counterexample showing that the local-closure hypothesis of `NormalForm.betaNormal_of_normal`
+cannot be dropped, a finite-name control, concrete uses of each theorem, and agreement with the
+uniqueness of relational normal forms.
 -/
 
 namespace CSLibExtTest.Languages.LambdaCalculus.LocallyNameless.Untyped.NormalFormTests
@@ -72,8 +73,8 @@ private theorem illScoped_normal {Var : Type u} :
 private theorem illScoped_not_betaNormal {Var : Type u} : ¬ (illScoped : Term Var).BetaNormal :=
   fun h => absurd ((rfl : (illScoped : Term Var).countRedexes = 1).symm.trans h) Nat.one_ne_zero
 
-/-- Acceptance A1: the converse of `NormalForm.betaNormal_of_normal` without local closure fails,
-for every type of names. -/
+/-- Acceptance A1: `NormalForm.betaNormal_of_normal` without its local-closure hypothesis fails,
+for every type of names: the ill-scoped redex is relationally normal but not `BetaNormal`. -/
 example {Var : Type u} : ¬ ∀ M : Term Var, Relation.Normal FullBeta M → M.BetaNormal :=
   fun hall => illScoped_not_betaNormal (hall _ illScoped_normal)
 
