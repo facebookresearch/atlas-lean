@@ -70,6 +70,7 @@ Topics added since this subject's fields were last revised.
 - [Quasi Iso Projective Separator](quasi-iso-projective-separator/README.md)
 - [Quotient](quotient/README.md)
 - [Real Subfield Coefficients](real-subfield-coefficients/README.md)
+- [Recognition](recognition/README.md)
 - [Relative Annihilator](relative-annihilator/README.md)
 - [Relative Cochain Homotopies](relative-cochain-homotopies/README.md)
 - [Relative Cyclic Gluing](relative-cyclic-gluing/README.md)

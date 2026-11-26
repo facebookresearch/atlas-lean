@@ -16,3 +16,5 @@ Topics added since this subject's fields were last revised.
 - [Higher Units](higher-units-at.md)
 - [Fowler's bound on imaginary quadratic order discriminants](sqrt-abs-discriminant-le-of-gauss-class.md)
 - [Degree of a singular modulus](finrank-adjoin-j-function-eq-gauss-class.md)
+- [Ternary isotropy over `ℚ_(p)` for odd `p`](exists-ternary-isotropic-of-norm-eq-one.md)
+- [Hilbert reciprocity for ternary forms over `ℚ`](hilbert-reciprocity-even-card-not-ternar.md)
