@@ -1,6 +1,6 @@
 # Optimal coloring of SSA interference graphs
 
-Let $P$ be a strict program in SSA form with interference graph $G$, and let $\mathrm{maxlive}$ be the largest number of variables live at one label of $P$.
+Let $P$ be a strict program in SSA form with interference graph $G$, with the liveness convention of [interference in strict SSA programs](interference-in-strict-ssa-programs.md), and let $\mathrm{maxlive}$ be the largest number of variables live at one label of $P$.
 
 **Theorem.** Coloring the variables greedily in the reverse of the [perfect elimination order given by dominance](dominance-order-gives-a-perfect-elimination-order.md), each with the first color not used by its already colored neighbors, uses exactly $\mathrm{maxlive}$ colors. This is the chromatic number of $G$, which equals the size of its largest clique. So $P$ can be allocated to $k$ registers without spilling if and only if $\mathrm{maxlive} \le k$, and then the coloring is found in quadratic time.
 
@@ -8,6 +8,7 @@ Let $P$ be a strict program in SSA form with interference graph $G$, and let $\m
 
 ## Depends on
 
+- [Interference in strict SSA programs](interference-in-strict-ssa-programs.md)
 - [Interfering variables of a strict SSA program are simultaneously live](cliques-in-ssa-interference-graphs.md)
 - [Dominance order gives a perfect elimination order](dominance-order-gives-a-perfect-elimination-order.md)
 

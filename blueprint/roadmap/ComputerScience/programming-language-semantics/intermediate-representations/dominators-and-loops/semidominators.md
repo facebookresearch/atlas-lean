@@ -1,6 +1,6 @@
 # Semidominators
 
-Let $G = (V, E, r)$ be a flowgraph: a finite directed graph with a start vertex $r$ from which every vertex is reachable. Number the vertices $1, \dots, n$ in the order in which a depth-first search from $r$ first reaches them, identify each vertex with its number, and let $T$ be the spanning tree of the search. Write $v \xrightarrow{*} w$ when $v$ is an ancestor of $w$ in $T$, and $v \xrightarrow{+} w$ when moreover $v \ne w$.
+Let $G = (V, E, r)$ be a flowgraph: a finite directed graph with a start vertex $r$ from which every vertex is reachable. Number the vertices $1, \dots, n$ in the order in which a [depth-first search](../../../graph-algorithms/traversal-and-connectivity/depth-first-search/dfs.md) from $r$ first reaches them, identify each vertex with its number, and let $T$ be the spanning tree of the search. Write $v \xrightarrow{*} w$ when $v$ is an [ancestor](../../../graph-algorithms/traversal-and-connectivity/strongly-connected-components/tree-ancestor.md) of $w$ in $T$, and $v \xrightarrow{+} w$ when moreover $v \ne w$.
 
 The *semidominator* of a vertex $w \ne r$ is
 
@@ -11,6 +11,8 @@ The tree parent of $w$ is a candidate, so $\mathrm{sdom}(w) < w$. Replacing the 
 ## Depends on
 
 - [Dominance and static single assignment form](../dominance-and-static-single-assignment-form.md)
+- [Left-first depth-first search](../../../graph-algorithms/traversal-and-connectivity/depth-first-search/dfs.md)
+- [Ancestor in a depth-first spanning forest](../../../graph-algorithms/traversal-and-connectivity/strongly-connected-components/tree-ancestor.md)
 
 ## Sources
 

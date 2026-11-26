@@ -13,7 +13,7 @@ The constraints are
 - $[\![v]\!] = \mathrm{JOIN}(v) \cup \mathrm{exps}(E)$ for a branch condition $E$ and for an output statement $E$;
 - $[\![v]\!] = \mathrm{JOIN}(v)$ for every other node.
 
-The right-hand sides are monotone, so the constraints have a least solution in this lattice, the largest family of sets satisfying them. It is a backward *must* analysis. A compiler can hoist the computation of a very busy expression to the earliest point where it is very busy. Each transfer function has the gen/kill form: for an assignment $X = E$, $\mathit{gen}[v] = \mathrm{exps}(E)$ and $\mathit{kill}[v]$ is the set of expressions containing $X$.
+The right-hand sides are monotone, so the constraints have a least solution in this lattice, the largest family of sets satisfying them. It is a backward *must* analysis. The property concerns paths that reach the exit, so it does not license moving an evaluation earlier by itself: in $\mathtt{while}\ b\ \{\ \mathtt{skip}\ \};\ \mathtt{output}\ 1/x$, the expression $1/x$ is very busy before the loop, yet an execution in which $b$ stays true never evaluates it, and evaluating it before the loop turns that divergence into a division error when $x = 0$. Hoisting a very busy expression to an earlier point is safe when its evaluation is total and has no side effects. Each transfer function has the gen/kill form: for an assignment $X = E$, $\mathit{gen}[v] = \mathrm{exps}(E)$ and $\mathit{kill}[v]$ is the set of expressions containing $X$.
 
 ## Depends on
 

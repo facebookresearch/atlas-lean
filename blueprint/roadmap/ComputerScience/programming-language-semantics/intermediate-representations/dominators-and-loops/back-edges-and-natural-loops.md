@@ -5,7 +5,7 @@ Let $G$ be a control-flow graph with a start node from which every node is reach
 - An edge $n \to h$ is a *back edge* if $h$ dominates $n$, and a *forward edge* if $n$ dominates $h$.
 - The *natural loop* of a back edge $n \to h$ is the set consisting of $h$ and of the nodes that are dominated by $h$ and can reach $n$ by a path that does not pass through $h$. Its *header* is $h$.
 
-A natural loop is strongly connected, and every edge entering it from outside ends at its header. Every loop, a strongly connected set of nodes entered only through one node, contains at least one back edge. The natural loop of a back edge $n \to h$ is found by a search backward from $n$ along reversed edges that stops at $h$; the nodes reached that are dominated by $h$ form the loop.
+A natural loop is strongly connected, and every edge entering it from outside ends at its header. Every *loop*, a strongly connected set of nodes that contains a cycle of at least one edge (for a single node, an edge from the node to itself) and is entered only through one node, contains at least one back edge. The natural loop of a back edge $n \to h$ is found by a search backward from $n$ along reversed edges that stops at $h$; the nodes reached that are dominated by $h$ form the loop.
 
 ## Depends on
 

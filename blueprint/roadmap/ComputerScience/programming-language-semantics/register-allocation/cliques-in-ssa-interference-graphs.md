@@ -2,7 +2,7 @@
 
 Let $P$ be a strict program in SSA form with its interference graph, in the sense of [interference in strict SSA programs](interference-in-strict-ssa-programs.md).
 
-**Theorem.** For every clique $C$ of the interference graph there is a label at which all variables of $C$ are live. So the size of the largest clique equals the largest number of variables live at one label.
+**Theorem.** For every clique $C$ of the interference graph there is a label at which all variables of $C$ are live. So the size of the largest clique equals the largest number of variables live at one label. The convention that a variable is live at its definition and has a use matters for single variables: in $x \leftarrow 0;\ \mathtt{return}\ 1$, without it the clique $\{x\}$ would have no label where $x$ is live.
 
 **Proof.** By [the comparability lemma](interfering-ssa-variables-have-comparable-defi.md) the defining labels of the variables of $C$ are totally ordered by dominance, so they can be listed as $D_{c_1}, \dots, D_{c_n}$ with each dominating the next. By [the liveness lemma](the-earlier-of-two-interfering-ssa-variables.md) every $c_i$ is live at $D_{c_n}$.
 

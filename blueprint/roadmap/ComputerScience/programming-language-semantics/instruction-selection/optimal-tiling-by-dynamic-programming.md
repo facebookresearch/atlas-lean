@@ -6,9 +6,9 @@ $$c(u) = \min_{\tau \text{ matches at } u} \Bigl(\mathrm{cost}(\tau) + \sum_{w \
 
 where $\mathrm{holes}_u(\tau)$ is the set of nodes matched by the holes of $\tau$ placed at $u$, and the minimum over no tiles is $\infty$. So an optimal tiling of a node is built from optimal tilings of the subtrees left uncovered by its root tile.
 
-**Algorithm.** Computing $c(u)$ by this recurrence, remembering at each node its least cost and the tile achieving it, yields a tiling of $T$ of least total cost. Each node is evaluated once, so the number of tile matches attempted is at most the number of nodes times the maximum number of tiles that can match at a node, and the algorithm runs in time polynomial in the size of $T$ for a fixed tile set.
+**Algorithm.** Compute $c(u)$ bottom up by this recurrence, remembering at each node its least cost and, when it is finite, a tile achieving it. If $c(\mathrm{root}) = \infty$, $T$ has no tiling, as with a tile set containing only a constant tile and a tree whose root is a temporary; otherwise the remembered tiles, read from the root, form a tiling of $T$ of least total cost. Each node is evaluated once, so a simple matcher that tests every tile at every node performs at most $|T| \cdot |\mathrm{tiles}|$ tests, and the algorithm runs in time polynomial in the size of $T$ for a fixed tile set.
 
-**Proof.** The recurrence holds because the cost of a tiling is the cost of its root tile plus the costs of the tilings of the uncovered subtrees, which can be chosen independently. Induction on the height of $u$ shows that the remembered tiles form a tiling of cost $c(u)$.
+**Proof.** The recurrence holds because the cost of a tiling is the cost of its root tile plus the costs of the tilings of the uncovered subtrees, which can be chosen independently. Induction on the height of $u$ shows that, when $c(u)$ is finite, the remembered tiles form a tiling of cost $c(u)$.
 
 ## Depends on
 

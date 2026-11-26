@@ -12,13 +12,18 @@ L_t(\mathtt{while}\ b\ \mathtt{do}\ c, X) &= \mathrm{lfp}\bigl(Y \mapsto \mathrm
 \end{aligned}
 $$
 
-where $\mathrm{lfp}$ is the least fixed point in the complete lattice of sets of variables, ordered by inclusion. The definition is well formed because $L_t(c, \cdot)$ is monotone for every command $c$, by induction on $c$, so the map whose least fixed point is taken in the loop case is monotone. The loop case can no longer be a single union: in $\mathtt{while}\ b\ \mathtt{do}\ c$ a variable may become live only after several iterations of the body. For a finite $X$, the least fixed point is reached by iterating the map from $\emptyset$ until it is stable.
+where $\mathrm{lfp}$ is the least fixed point in the complete lattice of sets of variables, ordered by inclusion. The definition is well formed because $L_t(c, \cdot)$ is monotone for every command $c$, by induction on $c$, so the map whose least fixed point is taken in the loop case is monotone. The loop case can no longer be a single union: in $\mathtt{while}\ b\ \mathtt{do}\ c$ a variable may become live only after several iterations of the body. For a finite $X$, the least fixed point is reached by iterating the map from $\emptyset$ until it is stable: the iterates stay inside the finite set of subsets of $X$ and the variables of the command, where the iteration stabilizes, and a stable iterate is the least fixed point.
 
 ## Depends on
 
 - [Commands of IMP](../operational-semantics-of-imp/cmd.md)
 - [Live variables of an IMP command](live-variables-of-an-imp-command.md)
 - [Complete lattice](../../../Order/lattices-boolean-algebras/complete-lattice.md)
+
+## Proof depends on
+
+- [Kleene iteration from the bottom stabilizes on a finite partial order](../dataflow-analysis-by-kleene-iteration/kildall-stabilizes.md)
+- [A stable Kleene iterate is the least fixed point](../dataflow-analysis-by-kleene-iteration/kildall-eq-lfp.md)
 
 ## Sources
 

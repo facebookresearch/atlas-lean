@@ -1,6 +1,6 @@
 # Upward test for dominance frontiers
 
-Let $G$ be a control-flow graph with an entry node from which every node is reachable, with its dominator tree and the [dominance frontiers](dominance-frontiers.md) $\mathrm{DF}$ and $\mathrm{DF}_{\mathrm{up}}$. For every node $X$ and every child $Z$ of $X$ in the dominator tree,
+Let $G$ be a control-flow graph with an entry node that has no predecessors and from which every node is reachable, with its dominator tree and the [dominance frontiers](dominance-frontiers.md) $\mathrm{DF}$ and $\mathrm{DF}_{\mathrm{up}}$. For every node $X$ and every child $Z$ of $X$ in the dominator tree,
 
 $$\mathrm{DF}_{\mathrm{up}}(Z) = \{Y \in \mathrm{DF}(Z) \mid \mathrm{idom}(Y) \ne X\}.$$
 

@@ -12,7 +12,7 @@ L(\mathtt{while}\ b\ \mathtt{do}\ c, X) &= \mathrm{vars}(b) \cup X \cup L(c, X).
 \end{aligned}
 $$
 
-A variable is *dead* before $c$ relative to $X$ if it is not in $L(c, X)$. The analysis does not evaluate Boolean conditions: a variable read in either branch of a conditional is live before it. It is also weaker than the semantic notion of liveness. For example, $y$ is live before $x := y;\ x := 0;\ y := 1$ relative to any $X$, although its initial value cannot affect the final state.
+A variable is *dead* before $c$ relative to $X$ if it is not in $L(c, X)$. The analysis does not evaluate Boolean conditions: a variable live on entry to either branch of a conditional, or read by its condition, is live before it. It is also weaker than the semantic notion of liveness. For example, $y$ is live before $x := y;\ x := 0;\ y := 1$ relative to any $X$, although its initial value cannot affect the final state.
 
 ## Depends on
 

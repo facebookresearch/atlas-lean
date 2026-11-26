@@ -3,7 +3,7 @@
 Number the instructions of a program and, from [live-variables analysis](../static-analysis/live-variables-analysis.md), give each variable $v$ a *live interval* $[i, j]$: no instruction numbered above $j$ or below $i$ has $v$ live. Two live intervals *overlap* if they share an instruction number. With $R$ registers, the *linear-scan* algorithm processes the intervals in increasing order of start point, keeping a list of *active* intervals that currently hold registers, sorted by end point:
 - at each new interval it frees the registers of active intervals that ended before its start;
 - it gives the new interval a free register if there is one;
-- otherwise it spills either the new interval or the active interval that ends last, whichever ends later, and gives the freed register to the other.
+- otherwise, if the active interval that ends last ends strictly later than the new interval, it spills that active interval, gives its register to the new interval and replaces it by the new interval in the active list; if not, it spills the new interval and leaves the active list unchanged.
 
 **Theorem.**
 1. If $n > R$ live intervals overlap at some point, then in any assignment in which no two overlapping intervals share a register, at least $n - R$ of them reside in memory.

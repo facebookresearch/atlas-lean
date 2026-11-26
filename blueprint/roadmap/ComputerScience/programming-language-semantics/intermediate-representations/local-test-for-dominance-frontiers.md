@@ -1,6 +1,6 @@
 # Local test for dominance frontiers
 
-Let $G$ be a control-flow graph with an entry node from which every node is reachable, and let $\mathrm{DF}_{\mathrm{local}}$ be the local part of the [dominance frontier](dominance-frontiers.md). For every node $X$,
+Let $G$ be a control-flow graph with an entry node that has no predecessors and from which every node is reachable, and let $\mathrm{DF}_{\mathrm{local}}$ be the local part of the [dominance frontier](dominance-frontiers.md). For every node $X$,
 
 $$\mathrm{DF}_{\mathrm{local}}(X) = \{Y \in \mathrm{Succ}(X) \mid \mathrm{idom}(Y) \ne X\}.$$
 

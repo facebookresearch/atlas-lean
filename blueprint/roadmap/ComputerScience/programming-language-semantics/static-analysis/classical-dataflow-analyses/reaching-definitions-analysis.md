@@ -1,6 +1,6 @@
 # Reaching definitions analysis
 
-Let a program be given as a control-flow graph whose nodes are statements, with an entry node, and call each assignment node $X = E$ a *definition* of $X$. A definition $d$ of $X$ *reaches* a program point if some path in the graph from $d$ to that point contains no other definition of $X$.
+Let a program be given as a control-flow graph whose nodes are statements, with an entry node that has no predecessors and is not an assignment, and call each assignment node $X = E$ a *definition* of $X$. A definition $d$ of $X$ *reaches* a program point if some path in the graph from $d$ to that point contains no other definition of $X$.
 
 *Reaching definitions analysis* approximates, for every node $v$, the set of definitions that may reach the point after $v$. It uses the powerset lattice $(\mathcal{P}(\mathrm{Defs}), \subseteq)$ of the assignment nodes of the program and a constraint variable $[\![v]\!]$ for each node, with
 

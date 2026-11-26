@@ -1,6 +1,6 @@
 # Computing dominance frontiers bottom up
 
-Let $G$ be a control-flow graph with $N$ nodes and $E$ edges and an entry node from which every node is reachable, with its dominator tree and the [dominance frontiers](dominance-frontiers.md) $\mathrm{DF}$. Visit the nodes in a bottom-up traversal of the dominator tree and, at a node $X$, compute
+Let $G$ be a control-flow graph with $N$ nodes and $E$ edges and an entry node that has no predecessors and from which every node is reachable, with its dominator tree and the [dominance frontiers](dominance-frontiers.md) $\mathrm{DF}$. Visit the nodes in a bottom-up traversal of the dominator tree and, at a node $X$, compute
 
 $$\mathrm{DF}(X) = \{Y \in \mathrm{Succ}(X) \mid \mathrm{idom}(Y) \ne X\} \cup \bigcup_{Z \in \mathrm{Children}(X)} \{Y \in \mathrm{DF}(Z) \mid \mathrm{idom}(Y) \ne X\}$$
 

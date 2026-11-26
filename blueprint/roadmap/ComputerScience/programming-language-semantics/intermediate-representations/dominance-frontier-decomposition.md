@@ -1,6 +1,6 @@
 # Dominance frontier decomposition
 
-Let $G$ be a control-flow graph with an entry node from which every node is reachable, with its dominator tree and the [dominance frontiers](dominance-frontiers.md) $\mathrm{DF}$, $\mathrm{DF}_{\mathrm{local}}$ and $\mathrm{DF}_{\mathrm{up}}$. For every node $X$,
+Let $G$ be a control-flow graph with an entry node that has no predecessors and from which every node is reachable, with its dominator tree and the [dominance frontiers](dominance-frontiers.md) $\mathrm{DF}$, $\mathrm{DF}_{\mathrm{local}}$ and $\mathrm{DF}_{\mathrm{up}}$. For every node $X$,
 
 $$\mathrm{DF}(X) = \mathrm{DF}_{\mathrm{local}}(X) \cup \bigcup_{Z \in \mathrm{Children}(X)} \mathrm{DF}_{\mathrm{up}}(Z),$$
 

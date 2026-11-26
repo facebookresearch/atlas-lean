@@ -1,6 +1,6 @@
 # Converging paths meet in an iterated dominance frontier
 
-Let $G$ be a control-flow graph with an entry node from which every node is reachable. If $X \ne Y$ and nonnull paths from $X$ to $Z$ and from $Y$ to $Z$ [converge](converging-paths-and-join-sets.md) at $Z$, then
+Let $G$ be a control-flow graph with an entry node that has no predecessors and from which every node is reachable. If $X \ne Y$ and nonnull paths from $X$ to $Z$ and from $Y$ to $Z$ [converge](converging-paths-and-join-sets.md) at $Z$, then
 
 $$Z \in \mathrm{DF}^+(\{X\}) \cup \mathrm{DF}^+(\{Y\}),$$
 
