@@ -14,7 +14,8 @@ import CSLibExt.Computability.Complexity.Smolensky
 # Parity is not in AC0
 
 Every circuit family witnessing membership in $\mathsf{AC}^0$ also witnesses membership in
-$\mathsf{AC}^0[m]$ for every modulus $m$, since it contains no modular gates.
+$\mathsf{AC}^0[m]$ for every modulus $m$, since it contains no modular gates
+(`Cslib.Complexity.Classes.ac0_subset_ac0Mod`).
 Applying this inclusion at $m = 3$ to Smolensky's lower bound gives `parity_not_in_ac0`.
 
 Sources for the method: A. A. Razborov, "Lower bounds on the size of bounded depth networks over
@@ -34,20 +35,6 @@ Computing (STOC 1986), 6-20.
 namespace MetaMathlibExt.Complexity.KeyTheorems.ParityNotInAC0
 
 open Cslib.Complexity.Classes
-
-/-- **Inclusion of AC0 in AC0 with modular gates.** For every natural number $m$,
-$\mathsf{AC}^0 \subseteq \mathsf{AC}^0[m]$. The same circuit family witnesses both memberships
-because a mod-free circuit satisfies the restriction on modular gates for every modulus.
-
-Source: The definitions of `AC0` and `AC0Mod` in `CSLibExt.Computability.Complexity.Classes`. -/
-public theorem ac0_subset_ac0Mod (m : ℕ) : AC0 ⊆ AC0Mod m := by
-  rintro L ⟨d, p, C, hC⟩
-  refine ⟨d, p, C, fun n => ?_⟩
-  obtain ⟨hWF, hFree, hSize, hDepth, hEval⟩ := hC n
-  refine ⟨hWF, fun g hg => ?_, hSize, hDepth, hEval⟩
-  cases g with
-  | modGate k inputs => exact (hFree _ hg).elim
-  | _ => trivial
 
 /-- **Parity is not in AC0.** The parity language, which accepts a bitstring exactly when an odd
 number of its entries are true, is not in the class $\mathsf{AC}^0$.

@@ -548,6 +548,24 @@ theorem unaryHalt_not_computable :
   intro c
   simp [unaryHalt, iterate_cons_length]
 
+/-! ### `AC0` is contained in every `AC0Mod m` -/
+
+/-- The empty circuit family decides the empty language, also when modulus-three gates are
+allowed. -/
+example : (fun _ : List Bool => false) ∈ AC0Mod 3 := by
+  apply ac0_subset_ac0Mod 3
+  refine ⟨0, 0, fun _ => [], fun n => ?_⟩
+  simp [WellFormedCircuit, IsModFree, circuitDepth, circuitDepths, circuitEval]
+
+/-- The inclusion holds for the degenerate modulus `0` too: the one-constant-gate families of
+`lengthOnly_mem_AC0` also witness membership in `AC0Mod 0`. -/
+example (h : ℕ → Bool) : (fun x : List Bool => h x.length) ∈ AC0Mod 0 :=
+  ac0_subset_ac0Mod 0 (lengthOnly_mem_AC0 h)
+
+/-- Hence `ACC0`, the union of the `AC0Mod m`, is non-uniform as well: it contains the
+undecidable unary halting language. -/
+example : unaryHalt ∈ ACC0 := Set.mem_iUnion.mpr ⟨2, ac0_subset_ac0Mod 2 unaryHalt_mem_AC0⟩
+
 /-! ### Approximation classes are maximization-only -/
 
 /-- Two feasible solutions, `[]` with value `1` and `[true]` with value `2`. -/

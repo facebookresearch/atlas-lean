@@ -26,10 +26,4 @@ example : AC0 ≠ Set.univ := fun h => parity_not_in_ac0 (h ▸ Set.mem_univ _)
 example : parityDec [] = false ∧ parityDec [true] = true ∧ parityDec [true, false, true] = false :=
   by decide
 
--- The empty circuit family decides the empty language, also when modulus-three gates are allowed.
-example : (fun _ : List Bool => false) ∈ AC0Mod 3 := by
-  apply ac0_subset_ac0Mod 3
-  refine ⟨0, 0, fun _ => [], fun n => ?_⟩
-  simp [WellFormedCircuit, IsModFree, circuitDepth, circuitDepths, circuitEval]
-
 end MetaMathlibExt.Complexity.KeyTheorems.ParityNotInAC0
