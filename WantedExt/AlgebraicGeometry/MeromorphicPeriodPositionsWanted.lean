@@ -11,6 +11,7 @@ public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.MeromorphicPeriodPositionMaps
 public import MathlibExt.AlgebraicGeometry.ReductiveGroupSchemeModels
 public import MathlibExt.AlgebraicGeometry.AnalyticProObjectSites
+public import MathlibExt.AlgebraicGeometry.MeromorphicPeriodPositionsPeriodBoundFrameIndependence
 
 /-!
 # Actual source period bridges and Hecke position comparison requests
@@ -20,6 +21,9 @@ Its bridge uses the actual chart model/global-ring dictionary and every
 finite completion stage. The Cartier/period parameter unit is explicit.
 Position and lattice requests concern the actual completed global
 comparison, with every representation and every original frame retained.
+Frame independence of the period bound (`periodBound_frame_independence`)
+is proved in
+`MathlibExt.AlgebraicGeometry.MeromorphicPeriodPositionsPeriodBoundFrameIndependence`.
 
 Source: Fargues--Scholze, arXiv:2102.13459v4, Sections III.3 and VI.1--VI.2.
 No classification or Hecke-stack equivalence is a hypothesis.
@@ -158,15 +162,6 @@ public theorem_wanted periodPosition_frame_independence
     (μ : Cocharacter E.field G) :
     HasPeriodPosition p K R I A T D V d U Q B G H P Aq Bq F h C M left right μ ↔
       HasPeriodPosition p K R I A T D V d U Q B G H P Aq Bq F h C M left' right' μ
-
-/-- Closed representation-lattice bounds retain the same all-frame invariance. -/
-public theorem_wanted periodBound_frame_independence
-    [ReductiveGroupSchemeModels.IsReductive (Spec (.of E.field)) G]
-    (left' : IntegralFrame p E.field G H d U Q (originalModification p E.field G H P d U M).left)
-    (right' : IntegralFrame p E.field G H d U Q (originalModification p E.field G H P d U M).right)
-    (μ : Cocharacter E.field G) :
-    IsPeriodBounded p K R I A T D V d U Q B G H P Aq Bq F h C M left right μ ↔
-      IsPeriodBounded p K R I A T D V d U Q B G H P Aq Bq F h C M left' right' μ
 
 end SourcePeriods
 
