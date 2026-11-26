@@ -11,16 +11,17 @@ module
 public import Mathlib.Algebra.Free
 public import MathlibExt.Combinatorics.SemigroupLargeness
 import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Combinatorics.HalesJewett
 import Mathlib.Data.Fintype.Pi
 import Mathlib.Data.List.OfFn
 import Mathlib.Data.Nat.Pairing
 
 /-!
-# Hales–Jewett configurations in J-sets and C-sets
+# Hales–Jewett configurations in large sets of words
 
-Every J-set of nonempty words contains all substitutions of a variable word over any
-given finite level of an increasing alphabet. A sequence of such words can also realize
-ordered finite products of prescribed variable patterns or finite sums of prescribed counts.
+Every piecewise syndetic set or J-set of nonempty words contains all substitutions of a variable
+word over any given finite level of an increasing alphabet. In a J-set a sequence of words can
+realize ordered finite products of prescribed variable patterns or finite sums of prescribed counts.
 In a C-set one can choose the words so that all ordered products of their substitutions belong
 to the set.
 -/
@@ -86,6 +87,70 @@ private theorem exists_interleave (A : ℕ → Finset α) (hA : Monotone A)
 end VariableWordPattern
 
 open VariableWordPattern
+
+-- The free semigroup homomorphism maps the head and tail letter by letter.
+private theorem VariableWordPattern.map_mk {α β : Type*} (f : α → β) (c : α) (cs : List α) :
+    FreeSemigroup.map f ⟨c, cs⟩ = ⟨f c, cs.map f⟩ := by
+  induction cs generalizing c with
+  | nil => rfl
+  | cons b bs ih =>
+    change FreeSemigroup.map f (FreeSemigroup.of c * ⟨b, bs⟩) = _
+    rw [map_mul, FreeSemigroup.map_of, ih]
+    rfl
+
+/-- **Piecewise syndetic sets contain Hales–Jewett configurations.** Let
+$A_0 \subseteq A_1 \subseteq \cdots$ be finite sets with union $A$, and let $S_0$ be the semigroup
+of nonempty finite words over $A$ under concatenation. For $n \in \mathbb{N}$, an $n$-variable
+word over $A$ is a nonempty finite word over $A \cup \{v_0, \dots, v_{n-1}\}$, for distinct
+variables $v_i \notin A$, in which every $v_i$ occurs; for $\vec a = (a_0, \dots, a_{n-1})$ in
+$A^n$, the word $w(\vec a) \in S_0$ is obtained from $w$ by replacing each $v_i$ by $a_i$. If
+$D \subseteq S_0$ is piecewise syndetic, then for all $m, n \in \mathbb{N}$ there is an
+$n$-variable word $w$ over $A$ with $w(\vec a) \in D$ for every $\vec a \in A_m^n$.
+
+For $n = 0$ the claim is that $D$ is nonempty.
+
+Source: Aninda Chakraborty and Sayan Goswami, *An Analogue to the Infinitary Hales–Jewett
+Theorem*, INTEGERS 24 (2024), Article A74, Lemma 3.3. -/
+public theorem exists_variableWord_subst_mem_of_isMulPiecewiseSyndetic {α : Type*}
+    (A : ℕ → Finset α) (hA : Monotone A) (hcover : ∀ x, ∃ i, x ∈ A i) (m n : ℕ)
+    {D : Set (FreeSemigroup α)} (hD : IsMulPiecewiseSyndetic D) :
+    ∃ w : FreeSemigroup (α ⊕ Fin n), (∀ i, Sum.inr i ∈ w.head :: w.tail) ∧
+      ∀ a : Fin n → α, (∀ i, a i ∈ A m) → FreeSemigroup.map (Sum.elim id a) w ∈ D := by
+  classical
+  obtain ⟨G, hG⟩ := hD
+  obtain ⟨seed, _⟩ := hG ∅
+  obtain ⟨q, hq⟩ := hcover seed.head
+  let B := A (max m q)
+  let c : B := ⟨seed.head, hA (le_max_right m q) hq⟩
+  obtain ⟨N, hN⟩ := Combinatorics.Subspace.exists_mono_in_high_dimension_fin B G (Fin n)
+  -- Give each cube point a fixed first letter, so its word is nonempty even when N = 0.
+  let word (v : Fin N → B) : FreeSemigroup α := ⟨c, List.ofFn fun j => (v j).val⟩
+  obtain ⟨x, hx⟩ := hG (Finset.univ.image word)
+  have exists_prefix (v : Fin N → B) : ∃ t : G, t.val * (word v * x) ∈ D := by
+    obtain ⟨t, ht, hmem⟩ := hx (word v) (Finset.mem_image_of_mem word (Finset.mem_univ v))
+    exact ⟨⟨t, ht⟩, hmem⟩
+  choose color hcolor using exists_prefix
+  -- On the monochromatic subspace one prefix works for all substitutions.
+  obtain ⟨l, t, ht⟩ := hN color
+  let letter (j : Fin N) : α ⊕ Fin n := (l.idxFun j).map Subtype.val id
+  let middle : FreeSemigroup (α ⊕ Fin n) := ⟨Sum.inl c.val, List.ofFn letter⟩
+  refine ⟨embed t.val * (middle * embed x), ?_, ?_⟩
+  · intro i
+    obtain ⟨j, hj⟩ := l.proper i
+    change Sum.inr i ∈ letters (embed t.val * (middle * embed x))
+    rw [letters_mul]
+    apply List.mem_append_right
+    rw [letters_mul]
+    exact List.mem_append_left _ (.tail _ (List.mem_ofFn.mpr ⟨j, by simp [letter, hj]⟩))
+  · intro a ha
+    let b (i : Fin n) : B := ⟨a i, hA (le_max_left m q) (ha i)⟩
+    have hletter (j : Fin N) : (Sum.elim id a) (letter j) = (l b j).val := by
+      cases hj : l.idxFun j <;> simp [letter, Combinatorics.Subspace.apply_def, hj, b]
+    have hmiddle : FreeSemigroup.map (Sum.elim id a) middle = word (l b) := by
+      simp [middle, map_mk, List.map_ofFn, Function.comp_def, hletter, word]
+    have hfix (u : FreeSemigroup α) : FreeSemigroup.map (Sum.elim id a) (embed u) = u := by
+      induction u with simp [embed, *]
+    simpa only [map_mul, hfix, hmiddle, ht b] using hcolor (l b)
 
 /-- **J-sets contain Hales–Jewett configurations.** Let $A_0 \subseteq A_1 \subseteq \cdots$ be
 finite sets whose union $A$ is nonempty, and let $S_0$ be the semigroup of nonempty finite words

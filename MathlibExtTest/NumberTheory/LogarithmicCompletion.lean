@@ -10,7 +10,7 @@ module
 
 import MathlibExt.NumberTheory.LogarithmicCompletion
 
-/-! # Endpoint tests for logarithmic completion of quadratic exponential sums -/
+/-! # Endpoint tests for completion of exponential sums -/
 
 namespace MathlibExtTest.NumberTheory.LogarithmicCompletion
 
@@ -34,5 +34,35 @@ example : ‖∑ x ∈ Icc 1 (37 : ℕ), exp (2 * Real.pi * I * (x : ℂ) ^ 2 / 
   have h := MetaMathlibExt.norm_incompleteSum_lt_sup_mul_log 37 (by decide) (by decide)
     (X ^ 2) (by simp) 37 (by decide) le_rfl
   simpa [quadraticMax] using h
+
+private lemma exp_mod_two (t : ℕ) : exp (2 * Real.pi * I * (t : ℂ) / 2) = (-1 : ℂ) ^ t := by
+  rw [show 2 * Real.pi * I * (t : ℂ) / 2 = (t : ℂ) * (Real.pi * I) by ring,
+    exp_nat_mul, exp_pi_mul_I]
+
+-- The nonzero twist gives a sharp error at the smallest prime and shortest interval.
+example : ∃ θ : ℂ, ‖θ‖ = 1 ∧ (-1 : ℂ) = θ := by
+  have h := MetaMathlibExt.exists_incompleteSum_eq_completeSum_add 2 (by decide) X 1
+    le_rfl (by decide)
+  have hIcc : Icc (1 : ℕ) 2 = {1, 2} := by decide
+  have hhalf : Real.sin (Real.pi / 2) = 1 := Real.sin_pi_div_two
+  have hfour : exp (2 * Real.pi * I * 4 / 2) = 1 := by
+    have h := exp_mod_two 4
+    norm_num at h
+    exact h
+  obtain ⟨θ, _, hθ⟩ := h
+  have hθ' : (-1 : ℂ) = θ := by
+    norm_num [hIcc, exp_mod_two, hhalf, hfour] at hθ
+    norm_num [mul_assoc] at hθ
+    exact hθ
+  exact ⟨θ, by rw [← hθ']; simp, hθ'⟩
+
+-- At full length the sine weight vanishes, even when the nonzero twist has norm two.
+example : ∃ θ : ℂ, ‖θ‖ ≤ 1 ∧ (0 : ℂ) = θ * 0 * 2 := by
+  have h := MetaMathlibExt.exists_incompleteSum_eq_completeSum_add 2 (by decide) X 2
+    (by decide) le_rfl
+  have hIcc : Icc (1 : ℕ) 2 = {1, 2} := by decide
+  have hsin : Real.sin (Real.pi * 2 / 2) = 0 := by
+    rw [show Real.pi * 2 / 2 = Real.pi by ring, Real.sin_pi]
+  simpa [hIcc, exp_mod_two, hsin, Real.sin_pi_div_two] using h
 
 end MathlibExtTest.NumberTheory.LogarithmicCompletion
