@@ -110,7 +110,10 @@ open Classical in
 /-- The probability that the epidemic path started from `x₀` lies in `E`, for the random graph
 of the degree sequence `d`: the configuration multigraph `G*` (`simple = false`, a uniform
 matching) or the uniform simple graph `G` (`simple = true`, a uniform matching conditioned on a
-simple multigraph). (`hQ` records that each epidemic rate matrix is a rate matrix.) -/
+simple multigraph). When no matching qualifies (an odd total degree, or `simple = true` and no
+matching gives a simple multigraph), the denominator is `0` and Lean's `x / 0 = 0` convention
+makes the value `0` for every `E`. (`hQ` records that each epidemic rate matrix is a rate
+matrix.) -/
 noncomputable def epidemicProb {n : ℕ} (d : Fin n → ℕ) (simple : Bool) (β ρ : ℝ)
     (hQ : ∀ σ : Matching d, IsRateMatrix (sirRateMatrix (mult σ) β ρ)) (x₀ : Fin n → Fin 3)
     (E : (ℝ≥0 → Fin n → Fin 3) → Prop) : ℝ :=
@@ -200,7 +203,10 @@ noncomputable def infectiveLimit (αS αI μ μR β ρ : ℝ) (p : ℕ → ℝ) 
 /-- `R₀ = (β / (ρ + β)) (α_S / μ) ∑_k (k - 1) k p_k` (Eq. (2.23)), with values in `[0, ∞]`:
 the terms `(k - 1) k p_k` are nonnegative for a degree law `p ≥ 0`, so the sum is `∞` exactly when
 `(p_k)` has no second moment, and then `R₀ = ∞` (Janson, Luczak and Windridge 2014, end of
-Section 7); when the second moment is finite, `R₀` is the real number of Eq. (2.23). -/
+Section 7); when the second moment is finite, `R₀` is the real number of Eq. (2.23). Both claims
+about `R₀` assume that the prefactor `β / (ρ + β) · (α_S / μ)` is positive, as it is when `β > 0`,
+`ρ ≥ 0`, `α_S > 0` and `μ > 0`; otherwise `ENNReal.ofReal` sends it to `0`, and `R₀ = 0` for
+every `p`, since `0 · ∞ = 0` in `ℝ≥0∞`. -/
 noncomputable def R0 (αS μ β ρ : ℝ) (p : ℕ → ℝ) : ℝ≥0∞ :=
   ENNReal.ofReal (β / (ρ + β) * (αS / μ)) * ∑' k : ℕ, ENNReal.ofReal (((k : ℝ) - 1) * k * p k)
 
