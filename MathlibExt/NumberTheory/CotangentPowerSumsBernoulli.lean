@@ -248,38 +248,18 @@ private theorem cotangentPowerCoeff_eq_definingSum {r j : ℕ} :
       exact hk2 (Finset.mem_Icc.mpr ⟨by omega, by omega⟩)
     simp [Nat.stirlingFirst_eq_zero_of_lt hkj]
 
-/-- Shifting a range sum by one, when the first term vanishes. -/
-private theorem sum_range_shift (f : ℕ → ℚ) (n : ℕ) (h0 : f 0 = 0) :
-    ∑ k ∈ Finset.range (n + 1), f k = ∑ k ∈ Finset.range n, f (k + 1) := by
-  rw [Finset.sum_range_succ']
-  simp [h0]
-
 /-- Extending a range sum by one, when the new term vanishes. -/
 private theorem sum_range_extend (f : ℕ → ℚ) (n : ℕ) (h : f n = 0) :
     ∑ k ∈ Finset.range (n + 1), f k = ∑ k ∈ Finset.range n, f k := by
   rw [Finset.sum_range_succ]
   simp [h]
 
-/-- A binomial identity in the naturals, used to compare the defining and weighted sums. -/
-private theorem choose_key_nat {r K : ℕ} (hr : 1 ≤ r) (hK : K ≤ r) :
-    r.choose K * (r - K) = r * (r - 1).choose K := by
-  cases K with
-  | zero => simp
-  | succ K =>
-    have h1 := Nat.choose_succ_right_eq r (K + 1)
-    have h2 := Nat.add_one_mul_choose_eq (r - 1) (K + 1)
-    rw [Nat.sub_add_cancel hr] at h2
-    calc r.choose (K + 1) * (r - (K + 1)) = r.choose (K + 2) * (K + 2) := h1.symm
-      _ = r * (r - 1).choose (K + 1) := h2.symm
-
-/-- The rational form of `choose_key_nat`. -/
+/-- A binomial identity over the rationals used to compare the defining and weighted sums. -/
 private theorem choose_key {r K : ℕ} (hr : 1 ≤ r) (hK : K ≤ r) :
     (r.choose K : ℚ) * ((r : ℚ) - K) = (r : ℚ) * ((r - 1).choose K : ℚ) := by
-  have h := choose_key_nat hr hK
-  have hcast : ((r.choose K * (r - K) : ℕ) : ℚ) = ((r * (r - 1).choose K : ℕ) : ℚ) :=
-    congrArg (fun n : ℕ => (n : ℚ)) h
-  rw [Nat.cast_mul, Nat.cast_mul, Nat.cast_sub hK] at hcast
-  exact hcast
+  have h := (Nat.choose_mul_succ_eq (r - 1) K).symm
+  rw [Nat.sub_add_cancel hr, Nat.mul_comm _ r] at h
+  simpa only [Nat.cast_mul, Nat.cast_sub hK] using congrArg (fun n : ℕ => (n : ℚ)) h
 
 /-- The difference between the two factorial weights of a binomial term. -/
 private theorem choose_diff {r k : ℕ} (hr : 1 ≤ r) (hk : k + 1 ≤ r) :
