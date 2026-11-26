@@ -14,17 +14,20 @@ public import Mathlib.Topology.MetricSpace.Bounded
 import Mathlib.Analysis.Calculus.Deriv.AffineMap
 import Mathlib.Analysis.Calculus.Deriv.MeanValue
 import Mathlib.Analysis.Calculus.Deriv.Pow
+import Mathlib.Analysis.Calculus.Deriv.Slope
 import Mathlib.Analysis.Convex.Deriv
 import Mathlib.Analysis.Convex.SpecificFunctions.Pow
+import Mathlib.Analysis.MeanInequalities
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 
 /-!
 # Quadratic lower bound for exp-concave functions
 
 A function `f` is `α`-exp-concave on a convex set `K` when `z ↦ exp (-(α * f z))` is concave on
-`K`. Such a function is strongly convex in the direction of its gradient: if `K` is bounded with
-diameter at most `D`, `g` is a gradient of `f` at `y ∈ K` within `K` with `‖g‖ ≤ G`, and
-`2 * γ ≤ α` and `2 * γ * (G * D) ≤ 1`, then for every `x ∈ K`
+`K`. Such a function is strongly convex in the direction of its subgradients: if `K` is bounded
+with diameter at most `D`, `g` is a subgradient of `f` at `y ∈ K` relative to `K`
+(`f y + ⟪g, z - y⟫ ≤ f z` for every `z ∈ K`) with `‖g‖ ≤ G`, and `2 * γ ≤ α` and
+`2 * γ * (G * D) ≤ 1`, then for every `x ∈ K`
 
 `f y + ⟪g, x - y⟫ + γ / 2 * ⟪g, x - y⟫ ^ 2 ≤ f x`.
 
@@ -33,19 +36,23 @@ ed. (arXiv:1909.05207), the step behind the logarithmic regret of the Online New
 
 ## Main results
 
-* `quadratic_lower_bound`: the bound above, in a real Hilbert space.
+* `quadratic_lower_bound`: the bound above, in a real inner product space.
+* `quadratic_lower_bound_of_hasGradientWithinAt`: the same bound for a gradient of `f` at `y`
+  within `K`, which is a subgradient there, in a real Hilbert space.
 
 ## Implementation notes
 
 Hazan's condition `γ ≤ ½ min {1 / (G D), α}` is stated as the two hypotheses `2 * γ ≤ α` and
-`2 * γ * (G * D) ≤ 1`, which read `1 / (G D)` as `+∞` when `G D = 0`. The gradient is a
-gradient within `K` (`HasGradientWithinAt`), so `f` need only be differentiable relative to `K`
-at `y`, and the bound `G` is needed only at `y`. Convexity of `f`, which Hazan's definition of
-exp-concavity includes, is not assumed. `γ` may be zero or negative.
+`2 * γ * (G * D) ≤ 1`, which read `1 / (G D)` as `+∞` when `G D = 0`. As in Hazan (Section 2.1),
+`g` is any subgradient, such as the gradient `∇f(y)` when `f` is differentiable at `y`; the
+bound `G` is needed only at `y`. Convexity of `f`, part of Hazan's definition of exp-concavity,
+is not assumed: it follows from exp-concavity. `γ` may be zero or negative.
 
-The proof follows Hazan: `exp (-(2 * γ * f))` is the power `2 * γ / α` of `exp (-(α * f))`,
-hence concave; its first-order condition at `y` gives
-`exp (-(2 * γ * (f x - f y))) ≤ 1 - u` with `u = 2 * γ * ⟪g, x - y⟫ ≥ -1`, and
+The proof follows Hazan: `h = exp (-(2 * γ * f))` is the power `2 * γ / α` of
+`exp (-(α * f))`, hence concave. Along the segment from `y` to `x`, concavity of `h` and the
+subgradient inequality bound `h x - h y` by the difference quotients of
+`t ↦ h y * exp (-(2 * γ * t * ⟪g, x - y⟫))` at `0⁺`, whose limit gives
+`exp (-(2 * γ * (f x - f y))) ≤ 1 - u` with `u = 2 * γ * ⟪g, x - y⟫ ≥ -1`; and
 `1 - u ≤ exp (-(u + u ^ 2 / 4))` for `u ≥ -1`.
 -/
 
@@ -53,7 +60,7 @@ hence concave; its first-order condition at `y` gives
 
 namespace MathlibExt.Analysis.Convex.ExpConcave
 
-open Real Set
+open Real Set Filter Topology
 open scoped InnerProductSpace
 
 /-- `(1 - u) * exp (u + u ^ 2 / 4)` increases on `[-1, 0]` and decreases on `[0, ∞)`, so it is at
@@ -123,6 +130,20 @@ private theorem concaveOn_exp_neg_mul_of_le {E : Type*} [AddCommGroup E] [Module
   simp only [smul_eq_mul] at h1 h2
   exact h1.trans (rpow_le_rpow (by positivity) h2 hp0)
 
+/-- Exp-concavity implies convexity: `f = -log (exp (-(α * f))) / α` with `exp (-(α * f))`
+positive and concave. -/
+private theorem convexOn_of_concaveOn_exp_neg_mul {E : Type*} [AddCommGroup E] [Module ℝ E]
+    {K : Set E} {f : E → ℝ} {α : ℝ} (hα : 0 < α)
+    (h : ConcaveOn ℝ K fun z ↦ exp (-(α * f z))) : ConvexOn ℝ K f := by
+  refine ⟨h.1, fun x hx y hy a b ha hb hab ↦ ?_⟩
+  have h2 := h.2 hx hy ha hb hab
+  have hgm := geom_mean_le_arith_mean2_weighted ha hb (exp_pos (-(α * f x))).le
+    (exp_pos (-(α * f y))).le hab
+  simp only [smul_eq_mul] at h2 ⊢
+  rw [← exp_mul, ← exp_mul, ← exp_add] at hgm
+  have := exp_le_exp.1 (hgm.trans h2)
+  nlinarith
+
 /-- First-order condition for a concave function with a derivative within its domain. -/
 private theorem le_add_of_concaveOn_of_hasFDerivWithinAt {E : Type*} [NormedAddCommGroup E]
     [NormedSpace ℝ E] {K : Set E} {h : E → ℝ} {h' : E →L[ℝ] ℝ} {x y : E}
@@ -143,23 +164,67 @@ private theorem le_add_of_concaveOn_of_hasFDerivWithinAt {E : Type*} [NormedAddC
   simp only [Function.comp_apply, hℓ0, hℓ1, sub_zero, div_one] at hslope
   linarith
 
-variable {F : Type*} [NormedAddCommGroup F] [InnerProductSpace ℝ F] [CompleteSpace F]
+variable {F : Type*} [NormedAddCommGroup F] [InnerProductSpace ℝ F]
 
-/-- The bound for `γ > 0`. -/
-private theorem quadratic_lower_bound_of_pos {K : Set F} {f : F → ℝ} {α γ G D : ℝ} {x y g : F}
+/-- First-order condition for `exp (-(β * f))` from a subgradient `g` of `f` at `y`: the
+difference quotients of `t ↦ exp (-(β * f y)) * exp (-(β * ⟪g, x - y⟫) * t)` at `0⁺` bound
+`exp (-(β * f x)) - exp (-(β * f y))`. -/
+private theorem exp_neg_le_of_subgradient {K : Set F} {f : F → ℝ} {β : ℝ} {x y g : F}
+    (hconc : ConcaveOn ℝ K fun z ↦ exp (-(β * f z))) (hβ : 0 < β) (hx : x ∈ K) (hy : y ∈ K)
+    (hg : ∀ z ∈ K, f y + ⟪g, z - y⟫_ℝ ≤ f z) :
+    exp (-(β * f x)) ≤ exp (-(β * f y)) * (1 - β * ⟪g, x - y⟫_ℝ) := by
+  set c := ⟪g, x - y⟫_ℝ with hc
+  set A := exp (-(β * f y)) with hA
+  set ψ : ℝ → ℝ := fun t ↦ A * exp (-(β * c) * t) with hψdef
+  have hψ : HasDerivAt ψ (A * (exp (-(β * c) * 0) * (-(β * c) * 1))) 0 :=
+    (((hasDerivAt_id (0 : ℝ)).const_mul (-(β * c))).exp).const_mul A
+  have key : ∀ t ∈ Ioc (0 : ℝ) 1, exp (-(β * f x)) - A ≤ t⁻¹ • (ψ (0 + t) - ψ 0) := by
+    intro t ht
+    have ht0 := ht.1
+    have hmem := hconc.2 hy hx (sub_nonneg.2 ht.2) ht0.le (by ring)
+    have hsub := hg _ (hconc.1 hy hx (sub_nonneg.2 ht.2) ht0.le (by ring))
+    have hin : ⟪g, (1 - t) • y + t • x - y⟫_ℝ = t * c := by
+      have : (1 - t) • y + t • x - y = t • (x - y) := by module
+      rw [this, inner_smul_right]
+    rw [hin] at hsub
+    have hup : exp (-(β * f ((1 - t) • y + t • x))) ≤ A * exp (-(β * c) * t) := by
+      rw [hA, ← exp_add]
+      exact exp_le_exp.2 (by nlinarith)
+    simp only [smul_eq_mul] at hmem
+    simp only [hψdef, zero_add, mul_zero, exp_zero, mul_one, smul_eq_mul]
+    rw [le_inv_mul_iff₀ ht0]
+    nlinarith
+  have hev : ∀ᶠ t in 𝓝[>] (0 : ℝ), exp (-(β * f x)) - A ≤ t⁻¹ • (ψ (0 + t) - ψ 0) := by
+    filter_upwards [Ioc_mem_nhdsGT (zero_lt_one' ℝ)] with t ht using key t ht
+  have hlim := ge_of_tendsto hψ.tendsto_slope_zero_right hev
+  simp only [mul_zero, exp_zero, one_mul, mul_one] at hlim
+  linarith
+
+/-- **Quadratic lower bound for exp-concave functions.** Let `K` be a bounded set in a real inner
+product space with `Metric.diam K ≤ D`, let `α > 0`, and let `f` be `α`-exp-concave on `K`:
+`z ↦ exp (-(α * f z))` is concave on `K` (Mathlib's `ConcaveOn` includes convexity of `K`). Let
+`x, y ∈ K` and let `g` be a subgradient of `f` at `y` relative to `K` (for instance `∇f(y)` when
+`f` is differentiable at `y`): `f y + ⟪g, z - y⟫ ≤ f z` for every `z ∈ K`, with `‖g‖ ≤ G`. If
+`2 * γ ≤ α` and `2 * γ * (G * D) ≤ 1`, that is `γ ≤ ½ min {1 / (G D), α}` with `1 / (G D) = +∞`
+when `G D = 0`, then `f y + ⟪g, x - y⟫ + γ / 2 * ⟪g, x - y⟫ ^ 2 ≤ f x`. Convexity of `f`, part of
+Hazan's definition of exp-concavity, is not assumed: it follows from exp-concavity. `γ` may be
+zero or negative.
+
+Source: E. Hazan, *Introduction to Online Convex Optimization*, 2nd ed., arXiv:1909.05207,
+Section 4.2, Lemma 4.3. -/
+theorem quadratic_lower_bound {K : Set F} {f : F → ℝ} {α γ G D : ℝ} {x y g : F}
     (hα : 0 < α) (hexp : ConcaveOn ℝ K fun z ↦ exp (-(α * f z)))
     (hK : Bornology.IsBounded K) (hD : Metric.diam K ≤ D) (hx : x ∈ K) (hy : y ∈ K)
-    (hg : HasGradientWithinAt f g K y) (hgG : ‖g‖ ≤ G) (hγ : 0 < γ) (hγα : 2 * γ ≤ α)
+    (hg : ∀ z ∈ K, f y + ⟪g, z - y⟫_ℝ ≤ f z) (hgG : ‖g‖ ≤ G) (hγα : 2 * γ ≤ α)
     (hγGD : 2 * γ * (G * D) ≤ 1) :
     f y + ⟪g, x - y⟫_ℝ + γ / 2 * ⟪g, x - y⟫_ℝ ^ 2 ≤ f x := by
+  rcases le_or_gt γ 0 with hγ | hγ
+  · -- The quadratic term is nonpositive, and the rest is the subgradient inequality.
+    have := hg x hx
+    nlinarith [mul_nonpos_of_nonpos_of_nonneg hγ (sq_nonneg ⟪g, x - y⟫_ℝ)]
   set z := ⟪g, x - y⟫_ℝ with hz
   have hconc := concaveOn_exp_neg_mul_of_le hα (by linarith) hγα hexp
-  have hd : HasFDerivWithinAt (fun w ↦ exp (-(2 * γ * f w)))
-      (exp (-(2 * γ * f y)) • -((2 * γ) • InnerProductSpace.toDual ℝ F g)) K y :=
-    ((hg.hasFDerivWithinAt.const_smul (2 * γ)).neg).exp
-  have hfirst := le_add_of_concaveOn_of_hasFDerivWithinAt hconc hx hy hd
-  simp only [smul_apply, neg_apply,
-    InnerProductSpace.toDual_apply_apply, smul_eq_mul] at hfirst
+  have hfirst := exp_neg_le_of_subgradient hconc (by linarith) hx hy hg
   rw [← hz] at hfirst
   -- `u = 2 * γ * z` is at least `-1`.
   have hzabs : |z| ≤ G * D := by
@@ -171,48 +236,27 @@ private theorem quadratic_lower_bound_of_pos {K : Set F} {f : F → ℝ} {α γ 
     have := neg_abs_le z
     nlinarith
   have htaylor := one_sub_le_exp_neg hu
-  have hmain : exp (-(2 * γ * f x)) ≤ exp (-(2 * γ * f y) - (2 * γ * z + (2 * γ * z) ^ 2 / 4)) := by
+  have hmain :
+      exp (-(2 * γ * f x)) ≤ exp (-(2 * γ * f y) - (2 * γ * z + (2 * γ * z) ^ 2 / 4)) := by
     rw [sub_eq_add_neg, exp_add]
-    calc exp (-(2 * γ * f x)) ≤ exp (-(2 * γ * f y)) * (1 - 2 * γ * z) := by linarith
+    calc exp (-(2 * γ * f x)) ≤ exp (-(2 * γ * f y)) * (1 - 2 * γ * z) := hfirst
       _ ≤ exp (-(2 * γ * f y)) * exp (-(2 * γ * z + (2 * γ * z) ^ 2 / 4)) :=
         mul_le_mul_of_nonneg_left htaylor (exp_pos _).le
   rw [exp_le_exp] at hmain
   nlinarith
 
-/-- **Quadratic lower bound for exp-concave functions.** Let `K` be a bounded set in a real
-Hilbert space with `Metric.diam K ≤ D`, let `α > 0`, and let `f` be `α`-exp-concave on `K`:
-`z ↦ exp (-(α * f z))` is concave on `K` (Mathlib's `ConcaveOn` includes convexity of `K`). Let
-`x, y ∈ K` and let `g` be a gradient of `f` at `y` within `K` with `‖g‖ ≤ G`. If `2 * γ ≤ α` and
-`2 * γ * (G * D) ≤ 1`, that is `γ ≤ ½ min {1 / (G D), α}` with `1 / (G D) = +∞` when `G D = 0`, then
-`f y + ⟪g, x - y⟫ + γ / 2 * ⟪g, x - y⟫ ^ 2 ≤ f x`. Convexity of `f` is not assumed, and `γ` may be
-zero or negative.
-
-Source: E. Hazan, *Introduction to Online Convex Optimization*, 2nd ed., arXiv:1909.05207,
-Section 4.2, Lemma 4.3. -/
-theorem quadratic_lower_bound {K : Set F} {f : F → ℝ} {α γ G D : ℝ} {x y g : F}
-    (hα : 0 < α) (hexp : ConcaveOn ℝ K fun z ↦ exp (-(α * f z)))
+-- The gradient case: `f` is convex on `K` by exp-concavity, so a gradient of `f` at `y` within
+-- `K` is a subgradient there.
+theorem quadratic_lower_bound_of_hasGradientWithinAt [CompleteSpace F] {K : Set F} {f : F → ℝ}
+    {α γ G D : ℝ} {x y g : F} (hα : 0 < α) (hexp : ConcaveOn ℝ K fun z ↦ exp (-(α * f z)))
     (hK : Bornology.IsBounded K) (hD : Metric.diam K ≤ D) (hx : x ∈ K) (hy : y ∈ K)
     (hg : HasGradientWithinAt f g K y) (hgG : ‖g‖ ≤ G) (hγα : 2 * γ ≤ α)
     (hγGD : 2 * γ * (G * D) ≤ 1) :
     f y + ⟪g, x - y⟫_ℝ + γ / 2 * ⟪g, x - y⟫_ℝ ^ 2 ≤ f x := by
-  rcases lt_or_ge 0 γ with hγ | hγ
-  · exact quadratic_lower_bound_of_pos hα hexp hK hD hx hy hg hgG hγ hγα hγGD
-  -- For `γ ≤ 0` the quadratic term is nonpositive; the bound for a small positive `γ₀` gives
-  -- the first-order inequality.
-  have hG : 0 ≤ G := (norm_nonneg g).trans hgG
-  have hD0 : 0 ≤ D := Metric.diam_nonneg.trans hD
-  have hGD : 0 ≤ G * D := mul_nonneg hG hD0
-  set γ₀ := min (α / 2) (1 / (2 * (G * D + 1))) with hγ₀
-  have hγ₀pos : 0 < γ₀ := lt_min (by linarith) (by positivity)
-  have hγ₀α : 2 * γ₀ ≤ α := by linarith [min_le_left (α / 2) (1 / (2 * (G * D + 1)))]
-  have hγ₀GD : 2 * γ₀ * (G * D) ≤ 1 := by
-    have h1 : γ₀ ≤ 1 / (2 * (G * D + 1)) := min_le_right _ _
-    have h2 : 2 * γ₀ * (G * D + 1) ≤ 1 := by
-      rw [le_div_iff₀ (by positivity)] at h1
-      linarith
-    nlinarith
-  have h0 := quadratic_lower_bound_of_pos hα hexp hK hD hx hy hg hgG hγ₀pos hγ₀α hγ₀GD
-  have hsq : 0 ≤ ⟪g, x - y⟫_ℝ ^ 2 := sq_nonneg _
-  nlinarith [mul_nonneg hγ₀pos.le hsq, mul_nonpos_of_nonpos_of_nonneg hγ hsq]
+  refine quadratic_lower_bound hα hexp hK hD hx hy (fun z hz ↦ ?_) hgG hγα hγGD
+  have h := le_add_of_concaveOn_of_hasFDerivWithinAt
+    (convexOn_of_concaveOn_exp_neg_mul hα hexp).neg hz hy hg.hasFDerivWithinAt.neg
+  simp only [Pi.neg_apply, neg_apply, InnerProductSpace.toDual_apply_apply] at h
+  linarith
 
 end MathlibExt.Analysis.Convex.ExpConcave
