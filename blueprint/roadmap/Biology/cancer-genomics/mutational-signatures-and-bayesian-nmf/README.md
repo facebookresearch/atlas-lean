@@ -16,3 +16,5 @@
 - [Pruned components are those at the relevance floor](relevance-eq-floor-iff.md)
 - [A zero entry of H stays zero under the update](update-h-eq-zero.md)
 - [A zero entry of W stays zero under the update](update-w-eq-zero.md)
+- [Compressive hyperprior for signature-number selection](compressive-hyperprior-for-signature-number-selection.md)
+- [Power posterior for Poisson NMF](power-posterior-for-poisson-nmf.md)

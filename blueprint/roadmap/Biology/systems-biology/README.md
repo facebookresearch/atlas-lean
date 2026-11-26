@@ -30,3 +30,5 @@ Dynamics of biochemical reaction networks and gene regulatory circuits: mass-act
 - [Gillespie direct method (stochastic simulation algorithm)](gillespie-direct-method.md)
 - [Exactness of the SSA path law](exactness-of-the-ssa-path-law.md)
 - [Total-variation error of a finite-precision SSA step](total-variation-error-of-a-finite-precision-ssa-step.md)
+- [Significance of signed causal graph predictions](significance-of-signed-causal-graph-predictions/README.md)
+- [Wagner model of transcriptional network development](wagner-model-of-transcriptional-network-development/README.md)
