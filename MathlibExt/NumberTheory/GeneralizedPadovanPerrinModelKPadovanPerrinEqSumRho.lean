@@ -51,12 +51,25 @@ def padovanPerrinRho [CommSemiring R] (k₁ k₂ : R) (p s n : ℕ) : R :=
         (fun ab => s * ab.1 + (s + p) * ab.2 = n - (s + p)),
       (Nat.choose (ab.1 + ab.2) ab.1 : R) * k₁ ^ ab.1 * k₂ ^ ab.2
 
-private theorem padovanPerrinRho_of_lt_local [CommSemiring R] (k₁ k₂ : R) (p s n : ℕ)
-    (hn : n < s + p) :
+/-- **The Padovan–Perrin coefficients vanish below the order.** Let $R$ be a commutative
+semiring, let $k_1, k_2 \in R$ and let $p, s, n$ be natural numbers with $n < s + p$. Then the
+Padovan–Perrin coefficient $\rho(n, s + p)$ attached to $k_1, k_2, p, s$ equals $0$.
+
+Source: Elen Viviani Pereira Spreafico, Mustapha Rachidi, and Paula Maria Machado Cruz Catarino,
+*On a Model of (k;p;s)-Generalized Padovan-Perrin and Fibonacci Fundamental System*, INTEGERS 24
+(2024), Article A49, Proposition 4. -/
+theorem padovanPerrinRho_of_lt [CommSemiring R] (k₁ k₂ : R) (p s n : ℕ) (hn : n < s + p) :
     padovanPerrinRho k₁ k₂ p s n = 0 := by
   simp [padovanPerrinRho, hn]
 
-private theorem padovanPerrinRho_self_local [CommSemiring R] (k₁ k₂ : R) (p s : ℕ) (hs : 0 < s) :
+/-- **Normalization of the Padovan–Perrin coefficients.** Let $R$ be a commutative semiring, let
+$k_1, k_2 \in R$ and let $p, s$ be natural numbers with $s > 0$. Then the Padovan–Perrin
+coefficient $\rho(s + p, s + p)$ attached to $k_1, k_2, p, s$ equals $1$.
+
+Source: Elen Viviani Pereira Spreafico, Mustapha Rachidi, and Paula Maria Machado Cruz Catarino,
+*On a Model of (k;p;s)-Generalized Padovan-Perrin and Fibonacci Fundamental System*, INTEGERS 24
+(2024), Article A49, Proposition 4. -/
+theorem padovanPerrinRho_self [CommSemiring R] (k₁ k₂ : R) (p s : ℕ) (hs : 0 < s) :
     padovanPerrinRho k₁ k₂ p s (s + p) = 1 := by
   rw [padovanPerrinRho, Nat.sub_self]
   simp only [lt_irrefl, ↓reduceIte]
@@ -80,8 +93,20 @@ private theorem padovanPerrinRho_self_local [CommSemiring R] (k₁ k₂ : R) (p 
     apply h
     simp
 
-private theorem padovanPerrinRho_add_succ_local [CommSemiring R] (k₁ k₂ : R) (p s n : ℕ)
-    (hs : 0 < s) :
+/-- **Recurrence for the generalized Padovan–Perrin coefficients ρ.** Let $R$ be a commutative
+semiring, $k_1, k_2 \in R$, and $p, s \in \mathbb{N}$ with $s > 0$, and write $\rho(m, s+p)$ for
+the Padovan–Perrin coefficient. For every $n \ge 0$,
+
+$$\rho(n + s + p + 1, s + p) = k_1 \, \rho(n + p + 1, s + p) + k_2 \, \rho(n + 1, s + p),$$
+
+that is, $\rho(m, s+p) = k_1 \rho(m - s, s+p) + k_2 \rho(m - s - p, s+p)$ for every $m > s + p$.
+
+Together with $\rho(m, s+p) = 0$ for $m < s + p$ and $\rho(s+p, s+p) = 1$, this determines $\rho$.
+
+Source: Elen Viviani Pereira Spreafico, Mustapha Rachidi, and Paula Maria Machado Cruz Catarino,
+*On a Model of (k;p;s)-Generalized Padovan-Perrin and Fibonacci Fundamental System*, INTEGERS 24
+(2024), Article A49, equation (12) and Proposition 4. -/
+theorem padovanPerrinRho_add_succ [CommSemiring R] (k₁ k₂ : R) (p s n : ℕ) (hs : 0 < s) :
     padovanPerrinRho k₁ k₂ p s (n + (s + p) + 1) =
       k₁ * padovanPerrinRho k₁ k₂ p s (n + p + 1) + k₂ * padovanPerrinRho k₁ k₂ p s (n + 1) := by
   set r := s + p with hr
@@ -236,17 +261,17 @@ public theorem kPadovanPerrin_eq_sum_rho [CommRing R] (k : R) (v : ℕ → R)
   have hrho : ∀ t, padovanPerrinRho 1 k 1 2 (t + 4) =
       padovanPerrinRho 1 k 1 2 (t + 2) + k * padovanPerrinRho 1 k 1 2 (t + 1) := by
     intro t
-    have h := padovanPerrinRho_add_succ_local 1 k 1 2 t two_pos
+    have h := padovanPerrinRho_add_succ 1 k 1 2 t two_pos
     rw [one_mul] at h
     exact h
   have h0 : padovanPerrinRho 1 k 1 2 0 = 0 :=
-    padovanPerrinRho_of_lt_local 1 k 1 2 0 (by omega)
+    padovanPerrinRho_of_lt 1 k 1 2 0 (by omega)
   have h1 : padovanPerrinRho 1 k 1 2 1 = 0 :=
-    padovanPerrinRho_of_lt_local 1 k 1 2 1 (by omega)
+    padovanPerrinRho_of_lt 1 k 1 2 1 (by omega)
   have h2 : padovanPerrinRho 1 k 1 2 2 = 0 :=
-    padovanPerrinRho_of_lt_local 1 k 1 2 2 (by omega)
+    padovanPerrinRho_of_lt 1 k 1 2 2 (by omega)
   have h3 : padovanPerrinRho 1 k 1 2 3 = 1 :=
-    padovanPerrinRho_self_local 1 k 1 2 two_pos
+    padovanPerrinRho_self 1 k 1 2 two_pos
   have h4 : padovanPerrinRho 1 k 1 2 4 = 0 := by
     have e : padovanPerrinRho 1 k 1 2 4 =
         padovanPerrinRho 1 k 1 2 2 + k * padovanPerrinRho 1 k 1 2 1 := hrho 0
