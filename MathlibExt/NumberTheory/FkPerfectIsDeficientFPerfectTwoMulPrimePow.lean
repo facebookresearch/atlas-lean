@@ -15,15 +15,18 @@ import Mathlib.NumberTheory.ArithmeticFunction.Misc
 import Mathlib.NumberTheory.Divisors
 import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.Ring
+import MathlibExt.NumberTheory.FkPerfect
 
 /-! # The only deficient `F`-perfect number of the form `2 * p ^ a` is `6`
 
 For odd `p`, the divisor sum of `2 * p ^ a` factors as `(1 + 2 ^ 2)` times a
 geometric sum; a size comparison then leaves only `2 * 3 = 6` and `2 * 5 = 10`,
-and `10` is ruled out by direct computation. Powers of two are ruled out
-modulo `4`. This module proves that `6` is deficient `F`-perfect with divisor
-`2` and is the only such number of the form `2 * p ^ a`; deficient `F`-perfect
-numbers are defined in `MathlibExt.NumberTheory.FkPerfectNotIsDeficientFPerfectOfPrime`.
+and `10` is ruled out by direct computation. Powers of two, including `2`
+itself, are ruled out by the prime-power classification
+`isKLDeficientPerfect_prime_pow_two_iff`. This module proves that `6` is
+deficient `F`-perfect with divisor `2` and is the only such number of the form
+`2 * p ^ a`; deficient `F`-perfect numbers are defined in
+`MathlibExt.NumberTheory.FkPerfectNotIsDeficientFPerfectOfPrime`.
 
 Full reference: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta, and Manjil P.
 Saikia, "On Near `F_k`-Perfect and Deficient `F_k`-Perfect Numbers",
@@ -36,46 +39,6 @@ set_option autoImplicit false
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.FkPerfectWanted
-
-private theorem not_isDeficientFPerfect_two : ¬ IsDeficientFPerfect 2 := by
-  rintro ⟨d, hd, hlt, hsum⟩
-  have hdmem := Nat.mem_divisors.mpr ⟨hd, (by decide : (2 : ℕ) ≠ 0)⟩
-  rw [Nat.prime_two.divisors] at hdmem
-  simp only [Finset.mem_insert, Finset.mem_singleton] at hdmem
-  have hd1 : d = 1 := hdmem.resolve_right (Nat.ne_of_lt hlt)
-  have h1 : (1 : ℕ) ∉ ({2} : Finset ℕ) := by decide
-  rw [Nat.prime_two.divisors, Finset.sum_insert h1, Finset.sum_singleton] at hsum
-  rw [hd1] at hsum
-  exact absurd hsum (by decide)
-
-private theorem not_isDeficientFPerfect_two_pow (b : ℕ) (hb : 2 ≤ b) :
-    ¬ IsDeficientFPerfect (2 ^ b) := by
-  rintro ⟨d, hd, _hlt, hsum⟩
-  have hdecomp : (∑ e ∈ (2 ^ b).divisors, e ^ 2)
-      = (∑ i ∈ Finset.range b, 2 ^ ((i + 1) * 2)) + 1 := by
-    simp only [← ArithmeticFunction.sigma_apply,
-      ArithmeticFunction.sigma_apply_prime_pow Nat.prime_two, Finset.sum_range_succ',
-      zero_mul, pow_zero]
-  have htail : 4 ∣ ∑ i ∈ Finset.range b, 2 ^ ((i + 1) * 2) := by
-    apply Finset.dvd_sum
-    intro i _
-    have hle : 2 ≤ (i + 1) * 2 := by omega
-    exact pow_dvd_pow (2 : ℕ) hle
-  have hσ : (∑ e ∈ (2 ^ b).divisors, e ^ 2) % 4 = 1 := by omega
-  have hne : b ≠ 0 := by omega
-  have h1 : 4 ∣ (2 ^ b) ^ 2 := pow_dvd_pow_of_dvd (dvd_pow_self 2 hne) 2
-  have h2 : 4 ∣ 3 * 2 ^ b := by
-    obtain ⟨t, ht⟩ := pow_dvd_pow (2 : ℕ) hb
-    exact ⟨3 * t, by rw [ht]; ring⟩
-  have hrhs : ((2 ^ b) ^ 2 + 3 * 2 ^ b) % 4 = 0 := by omega
-  obtain ⟨j, _hjb, rfl⟩ := (Nat.dvd_prime_pow Nat.prime_two).mp hd
-  rcases Nat.eq_zero_or_pos j with rfl | hj
-  · have h1' : ((2 : ℕ) ^ 0) ^ 2 = 1 := by decide
-    omega
-  · have hne' : j ≠ 0 := by omega
-    have hj4 : 4 ∣ ((2 : ℕ) ^ j) ^ 2 :=
-      pow_dvd_pow_of_dvd (dvd_pow_self 2 hne') 2
-    omega
 
 private theorem not_isDeficientFPerfect_ten : ¬ IsDeficientFPerfect 10 := by
   rintro ⟨d, hd, _hlt, hsum⟩
@@ -165,18 +128,15 @@ theorem isDeficientFPerfect_two_mul_prime_pow
     decide
   · intro h
     rcases hp.eq_two_or_odd' with rfl | hpo
+    · have e : (2 : ℕ) * 2 ^ a = 2 ^ (a + 1) := (pow_succ' 2 a).symm
+      rw [e] at h
+      exact absurd ((isKLDeficientPerfect_prime_pow_two_iff 2 (a + 1) 3 Nat.prime_two).mp h).2.2
+        (by decide)
     · rcases Nat.eq_zero_or_pos a with rfl | ha
-      · have h2 : (2 : ℕ) * 2 ^ 0 = 2 := by decide
+      · have h2 : (2 : ℕ) * p ^ 0 = 2 ^ 1 := by simp
         rw [h2] at h
-        exact absurd h not_isDeficientFPerfect_two
-      · have hb : 2 ≤ a + 1 := by omega
-        have e : (2 : ℕ) * 2 ^ a = 2 ^ (a + 1) := (pow_succ' 2 a).symm
-        rw [e] at h
-        exact absurd h (not_isDeficientFPerfect_two_pow (a + 1) hb)
-    · rcases Nat.eq_zero_or_pos a with rfl | ha
-      · have h2 : (2 : ℕ) * p ^ 0 = 2 := by simp
-        rw [h2] at h
-        exact absurd h not_isDeficientFPerfect_two
+        exact absurd ((isKLDeficientPerfect_prime_pow_two_iff 2 1 3 Nat.prime_two).mp h).2.2
+          (by decide)
       · exact deficientFPerfect_two_mul_odd_imp p a hp hpo ha h
 
 end MathlibExt.NumberTheory.FkPerfectWanted
