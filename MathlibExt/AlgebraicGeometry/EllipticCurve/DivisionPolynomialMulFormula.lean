@@ -10,9 +10,11 @@ LICENSE file in the root directory of this source tree.
 Portions of this file are adapted from:
 
 `Definitions/Def_WeierstrassCurve_AddFormula.lean`,
-`Definitions/Def_WeierstrassCurve_DivPolyMulFormula.lean`
-and
+`Definitions/Def_WeierstrassCurve_DivPolyMulFormula.lean`,
 `Definitions/Def_WeierstrassCurve_DivPolyMulFormulaCore.lean`
+and
+`Definitions/Def_NetPairing_Basic.lean` (`Point.xOrZero` and its two lemmas, here
+`Point.xCoordOrZero`, `Point.xCoordOrZero_zero` and `Point.xCoordOrZero_some`)
 (https://github.com/anthropics/fermats-last-theorem):
 Compared with the source files at commit
 `6e837e75355538c7f80bab5b956861e86c4eacc2`.
@@ -41,7 +43,8 @@ This file defines the predicates used to state the multiplication formula
 for the division polynomials of a Weierstrass curve, together with the
 affine addition-formula identities from which the formula is derived.
 
-For a nonsingular affine point `P = (x, y)`, `MFred W m h` says that the
+For a nonsingular affine point `P = (x, y)` of a Weierstrass curve `W` over a
+field, `MFred W m h` says that the
 `x`-coordinate of `m • P` is `Φ m` evaluated at `x`, divided by `ΨSq m`
 evaluated at `x`, expressed without division as
 `xCoordOrZero (m • P) * (ΨSq m).eval x = (Φ m).eval x`, together with
@@ -144,8 +147,9 @@ lemma eval_Φ_two (x : F) :
     (W.Φ 2).eval x = x ^ 4 - W.b₄ * x ^ 2 - 2 * W.b₆ * x - W.b₈ := by
   simp [Φ_two]
 
-/-- **Duplication denominator as a square.** If $(x, y)$ satisfies the Weierstrass equation of $W$,
-then $(y - \operatorname{negY}(x, y))^2 = \Psi_2^2(x)$, where
+/-- **Duplication denominator as a square.** Let $W$ be a Weierstrass curve over a field $F$. If
+$x, y \in F$ satisfy the Weierstrass equation of $W$, then
+$(y - \operatorname{negY}(x, y))^2 = \Psi_2^2(x)$, where
 $\operatorname{negY}(x, y) = -y - a_1x - a_3$ is the $y$-coordinate of the negative of $(x, y)$ and
 $\Psi_2^2$ is the polynomial `W.Ψ₂Sq`. This is Mathlib's `Affine.den_duplication_eq`, stated with
 `Ψ₂Sq` and `negY`. -/
@@ -154,10 +158,10 @@ lemma sq_sub_negY_eq_eval_Ψ₂Sq {x y : F} (h : W.toAffine.Equation x y) :
   rw [Ψ₂Sq_eq, eval_toPoly_twoTorsionPolynomial, Affine.den_duplication_eq h, Affine.negY]
   ring
 
-/-- **Duplication denominator is nonzero.** If $(x, y)$ satisfies the Weierstrass equation of $W$
-and $y \ne \operatorname{negY}(x, y)$, then $\Psi_2^2(x) \ne 0$, where $\Psi_2^2$ is the polynomial
-`W.Ψ₂Sq`. This is one direction of Mathlib's `Affine.den_duplication_eq_zero_iff`, stated with
-`Ψ₂Sq`. -/
+/-- **Duplication denominator is nonzero.** Let $W$ be a Weierstrass curve over a field $F$. If
+$x, y \in F$ satisfy the Weierstrass equation of $W$ and $y \ne \operatorname{negY}(x, y)$, then
+$\Psi_2^2(x) \ne 0$, where $\Psi_2^2$ is the polynomial `W.Ψ₂Sq`. This is one direction of
+Mathlib's `Affine.den_duplication_eq_zero_iff`, stated with `Ψ₂Sq`. -/
 lemma Ψ₂Sq_eval_ne_zero {x y : F} (h : W.toAffine.Equation x y)
     (hy : y ≠ W.toAffine.negY x y) : (W.Ψ₂Sq).eval x ≠ 0 := by
   rw [Ψ₂Sq_eq, eval_toPoly_twoTorsionPolynomial]
@@ -262,11 +266,11 @@ theorem addX_mul_addX_negY_mul_sq {x₁ x₂ y₁ y₂ : F}
           ((x₁ * x₂) ^ 2 - W.b₄ * (x₁ * x₂) - W.b₆ * (x₁ + x₂) -
             W.b₈) := by ring
 
-/-- **Doubling formula.** If $(x_1, y_1)$ satisfies the Weierstrass equation of $W$ and
-$y_1 \ne \operatorname{negY}(x_1, y_1)$, then the $x$-coordinate
-`addX x₁ x₁ (slope x₁ x₁ y₁ y₁)` of $(x_1, y_1) + (x_1, y_1)$, multiplied by $\Psi_2^2(x_1)$, is
-$\Phi_2(x_1)$, where $\Psi_2^2$ and $\Phi_2$ are the polynomials `W.Ψ₂Sq` and `W.Φ 2`. This is
-Mathlib's `Affine.addX_self_of_Y_ne` with the denominator cleared. -/
+/-- **Doubling formula.** Let $W$ be a Weierstrass curve over a field $F$. If $x_1, y_1 \in F$
+satisfy the Weierstrass equation of $W$ and $y_1 \ne \operatorname{negY}(x_1, y_1)$, then the
+$x$-coordinate `addX x₁ x₁ (slope x₁ x₁ y₁ y₁)` of $(x_1, y_1) + (x_1, y_1)$, multiplied by
+$\Psi_2^2(x_1)$, is $\Phi_2(x_1)$, where $\Psi_2^2$ and $\Phi_2$ are the polynomials `W.Ψ₂Sq` and
+`W.Φ 2`. This is Mathlib's `Affine.addX_self_of_Y_ne` with the denominator cleared. -/
 theorem addX_self_mul_Ψ₂Sq {x₁ y₁ : F} (h₁ : W.toAffine.Equation x₁ y₁)
     (hy : y₁ ≠ W.toAffine.negY x₁ y₁) :
     W.toAffine.addX x₁ x₁ (W.toAffine.slope x₁ x₁ y₁ y₁) *
