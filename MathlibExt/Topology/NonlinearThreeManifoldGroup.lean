@@ -15,7 +15,8 @@ https://github.com/leanprover/lean-eval), problem `nonlinear_three_manifold_grou
 `manifests/problems/nonlinear_three_manifold_group.toml`, rev 1, submitter Kim Morrison, status
 archived): the structure `Closed3Manifold` and the statement of `nonlinear_three_manifold_group`,
 with the docstrings and comments they had in the former wanted module
-`WantedExt/Topology/NonlinearThreeManifoldGroupWanted.lean`.
+`WantedExt/Topology/NonlinearThreeManifoldGroupWanted.lean`, the citation of Button's paper
+corrected as described below.
 Copyright 2026 Lean FRO, LLC.
 Authors: Kim Morrison
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use these portions
@@ -33,12 +34,20 @@ Modification notice (Apache License 2.0, Section 4). Changes made: converted eac
 `def_wanted`), replaced `EvalTools.Markers` with `Batteries.Util.ProofWanted`, inlined any
 `LeanEval` helper modules, and placed the declarations in the
 `MathlibExt.Topology.NonlinearThreeManifoldGroupWanted` namespace. Mathematical statements are
-unchanged. Source: J. O. Button, *Aspherical 3-manifold groups not in GL(4, k) for any field k*,
-arXiv:1404.4639 (2014). See the discussion of [Kir97, Problem 3.33] in the K3 problem list.
-Later change (ATLAS, 2026): the `theorem_wanted` was proved and the declarations moved from
+unchanged. Source: J. O. Button, *A 3-manifold group which is not four dimensional linear*,
+arXiv:1210.3068 (2012); J. Pure Appl. Algebra 218 (2014), 1604–1619. See the discussion of
+[Kir97, Problem 3.33] in the K3 problem list.
+Later changes (ATLAS, 2026): the `theorem_wanted` was proved and the declarations moved from
 `WantedExt/Topology/NonlinearThreeManifoldGroupWanted.lean` to this `MathlibExt` module with
-unchanged names, statements and docstrings, and the imports of `Batteries.Util.ProofWanted` and of
-all of Mathlib were replaced by narrower Mathlib imports.
+unchanged names and statements, and the imports of `Batteries.Util.ProofWanted` and of all of
+Mathlib were replaced by narrower Mathlib imports. The citation of Button's paper in this notice
+and in the docstring of `nonlinear_three_manifold_group` gave it the title *Aspherical 3-manifold
+groups not in GL(4, k) for any field k* and the number arXiv:1404.4639, which belongs to an
+unrelated paper, and the module documentation gave a shortened form of that title; all three now
+name Button's preprint arXiv:1210.3068 under its own title. The docstring of
+`nonlinear_three_manifold_group` also says that Button's result holds for every field, and that
+the double of the quaternionic space form `S³/Q₈` minus a ball, the witness used in this file,
+gives the counterexample over `ℝ` only.
 
 The rest of this file is new ATLAS work, not adapted from lean-eval: the proof of
 `nonlinear_three_manifold_group`, the private definitions and lemmas it uses, and the parts of
@@ -62,7 +71,7 @@ generated 3-manifold group admits a faithful (injective) representation into
 `GL(4, ℝ)`. This is true for hyperbolic 3-manifolds, but Button gave a negative
 answer in general: the fundamental groups of certain closed graph manifolds
 admit no faithful representation into `GL(4, k)` for *any* field `k` (J. O.
-Button, *Aspherical 3-manifold groups not in `GL(4, k)`*, 2014).
+Button, *A 3-manifold group which is not four dimensional linear*, arXiv:1210.3068).
 
 We prove the negative answer to Thurston's question over `ℝ`
 (`nonlinear_three_manifold_group`): there is a closed connected 3-manifold whose
@@ -103,11 +112,6 @@ obstruction it uses is special to the field `ℝ`.
   `S³ → S³/Q₈`, shows `a₁² ≠ 1`, `a₂² ≠ 1` and `a₁² ≠ a₂²`.
 * A faithful representation in `GL(4, ℝ)` would send both `a₁²` and `a₂²` to
   `-1`, contradicting `a₁² ≠ a₂²`.
-
-Button's construction is in the arXiv preprint arXiv:1210.3068 (J. O. Button,
-*A 3-manifold group which is not four dimensional linear*); the arXiv number in
-the `Source:` line of `nonlinear_three_manifold_group`, kept from lean-eval, is
-that of an unrelated paper.
 -/
 
 @[expose] public section
@@ -1830,8 +1834,12 @@ set_option linter.dupNamespace false in
 is a closed connected topological 3-manifold $M$ with a point $x$ such that no group
 homomorphism from the fundamental group $\pi_1(M, x)$ to $GL_4(\mathbb{R})$ is injective.
 
-Source: J. O. Button, *Aspherical 3-manifold groups not in GL(4, k) for any field k*,
-arXiv:1404.4639 (2014). See the discussion of [Kir97, Problem 3.33] in the K3 problem list. Via
+Source: J. O. Button, *A 3-manifold group which is not four dimensional linear*,
+arXiv:1210.3068 (2012); J. Pure Appl. Algebra 218 (2014), 1604–1619. Button proves more: some
+closed orientable graph 3-manifolds have fundamental groups that are subgroups of $GL_4(k)$ for
+no field $k$. The double of the quaternionic space form $S^3/Q_8$ minus a ball is a different
+witness; it gives the counterexample over $\mathbb{R}$, not Button's result for every field.
+See the discussion of [Kir97, Problem 3.33] in the K3 problem list. Via
 leanprover/lean-eval@38361be, problem `nonlinear_three_manifold_group`. -/
 theorem nonlinear_three_manifold_group :
     ∃ (M : Closed3Manifold) (x : M.carrier),
