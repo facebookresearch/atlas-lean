@@ -18,6 +18,7 @@ public import Mathlib.Data.ZMod.Basic
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 public import Mathlib.Topology.Algebra.InfiniteSum.Defs
 
+import MathlibExt.NumberTheory.GobelSequenceError
 import Mathlib.Analysis.SpecificLimits.Normed
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
@@ -79,34 +80,6 @@ private theorem linear_hasSum (n : ℕ) :
     ring
   · norm_num
     ring
-private theorem log_step (k l j : ℕ) (hk : 2 ≤ k) (hl : 2 ≤ l) (hj : 1 ≤ j) :
-    Real.log (gobelSequence k l (j + 1) : ℝ) =
-      (k : ℝ) * Real.log (gobelSequence k l j : ℝ) - Real.log ((j : ℝ) + 1) +
-        Real.log (1 + (j : ℝ) / (gobelSequence k l j : ℝ) ^ (k - 1)) := by
-  have hg : (0 : ℝ) < gobelSequence k l j := lt_of_lt_of_le zero_lt_one (seq_one_le k l j hl hj)
-  have hp := pow_ne_zero (k - 1) hg.ne'
-  have hjp : (j : ℝ) + 1 ≠ 0 := by positivity
-  have hr := congrArg (Rat.cast : ℚ → ℝ) (gobelSequence_succ k l j hj)
-  push_cast at hr
-  have hpk : (gobelSequence k l j : ℝ) ^ k =
-      (gobelSequence k l j : ℝ) ^ (k - 1) * (gobelSequence k l j : ℝ) := by
-    rw [← pow_succ, Nat.sub_add_cancel (by omega : 1 ≤ k)]
-  have heq : (gobelSequence k l (j + 1) : ℝ) =
-      (gobelSequence k l j : ℝ) ^ k *
-        (1 + (j : ℝ) / (gobelSequence k l j : ℝ) ^ (k - 1)) / ((j : ℝ) + 1) := by
-    apply (eq_div_iff hjp).mpr
-    rw [hpk]
-    field_simp
-    nlinarith [hr]
-  rw [heq, Real.log_div (mul_ne_zero (pow_ne_zero k hg.ne') (by positivity)) hjp,
-    Real.log_mul (pow_ne_zero k hg.ne') (by positivity), Real.log_pow]
-  ring
-private theorem log_normalized (k l n m : ℕ) (hk : 2 ≤ k) (hl : 2 ≤ l) (hn : 1 ≤ n) :
-    (k : ℝ) ^ n * Real.log ((gobelSequence k l (m + n) : ℝ) ^
-      (1 / (k : ℝ) ^ (m + n))) = Real.log (gobelSequence k l (m + n) : ℝ) / (k : ℝ) ^ m := by
-  have hk0 : (k : ℝ) ≠ 0 := by positivity
-  rw [Real.log_rpow (lt_of_lt_of_le zero_lt_one (seq_one_le k l (m + n) hl (by omega))), pow_add]
-  field_simp
 private theorem seq_lower (k l : ℕ) (hk : 2 ≤ k) (hl : 2 ≤ l) (C : ℝ)
     (hC : Tendsto (fun j : ℕ => (gobelSequence k l j : ℝ) ^ (1 / (k : ℝ) ^ j))
       atTop (𝓝 C)) (j : ℕ) (hj : 1 ≤ j) :
@@ -169,21 +142,6 @@ private theorem log_summable (k n : ℕ) (hk : 2 ≤ k) :
       div_le_div_of_nonneg_left (by positivity) (by positivity)
         (pow_le_pow_left₀ (by norm_num) hk2 _)
     _ = _ := by push_cast; ring
-private theorem log_difference (k l n m : ℕ) (hk : 2 ≤ k) (hl : 2 ≤ l) (hn : 1 ≤ n) :
-    (k : ℝ) ^ n * Real.log ((gobelSequence k l (m + 1 + n) : ℝ) ^
-        (1 / (k : ℝ) ^ (m + 1 + n))) -
-      (k : ℝ) ^ n * Real.log ((gobelSequence k l (m + n) : ℝ) ^
-        (1 / (k : ℝ) ^ (m + n))) =
-      Real.log (1 + ((m + n : ℕ) : ℝ) / (gobelSequence k l (m + n) : ℝ) ^ (k - 1)) /
-        (k : ℝ) ^ (m + 1) - Real.log ((m + 1 : ℝ) + n) / (k : ℝ) ^ (m + 1) := by
-  have hk0 : (k : ℝ) ≠ 0 := by positivity
-  rw [log_normalized k l n (m + 1) hk hl hn, log_normalized k l n m hk hl hn,
-    show m + 1 + n = m + n + 1 by omega, log_step k l (m + n) hk hl (by omega)]
-  push_cast
-  rw [pow_succ]
-  field_simp
-  ring_nf
-
 @[expose] public section
 
 /-- **Series formula and bound for the Göbel error.** Let $k, l \ge 2$ be natural numbers, let
@@ -230,24 +188,12 @@ public theorem gobelSequence_error_eq_tsum_le (k l : ℕ) (hk : 2 ≤ k) (hl : 2
   have heb (m : ℕ) : e m ≤ b m := (correction_bound k l hk hl C hC n hn m).2
   have he : Summable e := hb.summable.of_nonneg_of_le he0 heb
   have ha : Summable a := log_summable k n hk
-  have hdiff (m : ℕ) : e m - a m = f (m + 1) - f m :=
-    (log_difference k l n m hk hl hn).symm
-  have hsum (M : ℕ) : ∑ m ∈ Finset.range M, (e m - a m) = f M - f 0 := by
-    simp_rw [hdiff]
-    exact Finset.sum_range_sub f M
-  have hf : Tendsto f atTop (𝓝 ((k : ℝ) ^ n * Real.log C)) :=
-    ((hC.log hC0.ne').comp (tendsto_add_atTop_nat n)).const_mul _
-  have ht := (he.sub ha).hasSum.tendsto_sum_nat
-  rw [he.tsum_sub ha] at ht
-  have ht' : Tendsto (fun M => ∑ m ∈ Finset.range M, (e m - a m)) atTop
-      (𝓝 ((k : ℝ) ^ n * Real.log C - f 0)) := by
-    simp only [hsum]
-    exact hf.sub tendsto_const_nhds
-  have heq := tendsto_nhds_unique ht ht'
+  have hid : (∑' m, a m) - (∑' m, e m) = (k : ℝ) ^ n *
+      (Real.log ((gobelSequence k l n : ℝ) ^ ((1 : ℝ) / (k : ℝ) ^ n)) - Real.log C) :=
+    gobelSequence_log_series_sub_correction_series hk hl hC hC0 hn ha he
   constructor
   · change (∑' m, a m) - (k : ℝ) ^ n *
         (Real.log ((gobelSequence k l n : ℝ) ^ (1 / (k : ℝ) ^ n)) - Real.log C) = ∑' m, e m
-    simp only [f, Nat.zero_add] at heq
     linarith
   · change (∑' m, e m) ≤ 2 * n / d
     calc
