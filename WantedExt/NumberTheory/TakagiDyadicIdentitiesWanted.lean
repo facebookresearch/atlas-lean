@@ -15,6 +15,7 @@ public import Mathlib.Data.Tree.Basic
 public import Mathlib.NumberTheory.Padics.PadicVal.Defs
 public import MathlibExt.Analysis.SpecialFunctions.TakagiFunction
 public import MathlibExt.NumberTheory.Digits.BinaryDigitSum
+public import MathlibExt.NumberTheory.TakagiDNodeSuccessor
 public import MathlibExt.NumberTheory.TakagiDyadicIdentities
 
 /-!
@@ -125,16 +126,6 @@ $\delta(n+1) = \delta(n) + \lfloor \log_2 n \rfloor - 2 s_1(n) + 2$.
 Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
 Sequences 27 (2024), Article 24.2.7, Lemma 20 (`jis-2024-24.2.7-lem-20`). -/
 public theorem_wanted dcDNodes_succ_of_odd (n : ℕ) (hodd : Odd n) :
-    (dcDNodes (n + 1) : ℤ) = dcDNodes n + Nat.log 2 n - 2 * (Nat.digits 2 n).sum + 2
-
-/-- **Successor formula for the divide-and-conquer D-node count.** Let $\delta$ be the
-divide-and-conquer D-node count and $s_1(n)$ the number of ones in the binary expansion of $n$.
-For every integer $n > 0$,
-$\delta(n+1) = \delta(n) + \lfloor \log_2 n \rfloor - 2 s_1(n) + 2$.
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Theorem 21 (`jis-2024-24.2.7-thm-21`). -/
-public theorem_wanted dcDNodes_succ (n : ℕ) (hn : 0 < n) :
     (dcDNodes (n + 1) : ℤ) = dcDNodes n + Nat.log 2 n - 2 * (Nat.digits 2 n).sum + 2
 
 /-- **Binary-digit formula for the divide-and-conquer D-node count.** Let $\delta$ be the
