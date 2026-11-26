@@ -37,4 +37,9 @@
 
 ## Constructions from pseudorandom generators
 
+- [Translating the queries of an oracle algorithm](reindex.md)
+- [Running against a lazily sampled function with presampled answers](sim-lazy.md)
+- [Walking down the evaluation tree](walk.md)
+- [The GGM tree construction](ggm.md)
+- [The PRG distinguisher built from a PRF adversary against the GGM construction](ggm-reduction.md)
 - [The GGM construction: pseudorandom generators give pseudorandom functions](the-ggm-construction-pseudorandom-generators.md)

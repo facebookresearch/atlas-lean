@@ -1648,6 +1648,7 @@
   "CSLibExt/Crypto/Signatures/Lamport": {"to": "ComputerScience/cryptography/signatures-and-protocols", "title": "Lamport signature"},
   "CSLibExt/Crypto/Signatures/MerkleSignatures": {"to": "ComputerScience/cryptography/signatures-and-protocols", "title": "Merkle signature scheme"},
   "CSLibExt/Crypto/SymmetricKey/EncryptThenMac": {"to": "ComputerScience/cryptography/symmetric-key", "title": "Encrypt-then-MAC"},
+  "CSLibExt/Crypto/SymmetricKey/GGM": {"to": "ComputerScience/cryptography/symmetric-key", "title": "Pseudorandom functions"},
   "CSLibExt/Crypto/SymmetricKey/PRF": {"to": "ComputerScience/cryptography/symmetric-key", "title": "Pseudorandom functions"},
   "CSLibExt/Crypto/SymmetricKey/PRG": {"to": "ComputerScience/cryptography/symmetric-key", "title": "Pseudorandom generators"},
   "CSLibExt/Crypto/SymmetricKey/PRP": {"to": "ComputerScience/cryptography/symmetric-key", "title": "Pseudorandom permutations"},
