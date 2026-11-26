@@ -64,8 +64,11 @@ def swTable {α : Type*} (σ : α → α → ℤ) (gap : ℤ) (xs ys : List α) 
 /-- **Global traceback from a cell.** The global traceback from cell `(i, j)` of the table `T` with
 fuel `n`, where `acc` holds the columns already emitted. A cell of the top row steps left and one
 of the left column steps up; an interior cell steps diagonally if `T[i-1][j-1] + σ` gives the
-cell, else up if `T[i-1][j] + gap` does, else left. The table and the sequences are arrays, so a
-step reads its cells and letters in constant time. -/
+cell, else up if `T[i-1][j] + gap` does, else left. It returns `acc` unchanged at cell `(0, 0)`,
+when the fuel is `0` (at any cell), and when a letter it needs is missing (`i > |xs|` or
+`j > |ys|`). `nwTraceback` starts at `(|xs|, |ys|)` with fuel `|xs| + |ys|`, and each step lowers
+the fuel and `i + j` by one, so only `(0, 0)` stops it. The table and the sequences are arrays, so
+a step reads its cells and letters in constant time. -/
 def nwTraceAux {α : Type*} (σ : α → α → ℤ) (gap : ℤ) (T : Array (Array ℤ)) (xs ys : Array α) :
     ℕ → ℕ → ℕ → Alignment α → Alignment α
   | 0, _, _, acc => acc
@@ -105,8 +108,12 @@ def argmaxCell (T : List (List ℤ)) : ℕ × ℕ :=
     Prod.snd).map Prod.fst).getD (0, 0)
 
 /-- **Local traceback from a cell.** The local traceback from cell `(i, j)` of the table `T` with
-fuel `n`: stop at a cell equal to `0` or on the border and return its position and the emitted
-columns; otherwise step as in `nwTraceAux`, in constant time per step. -/
+fuel `n`, where `acc` holds the columns already emitted. It stops at a cell of the top row or the
+left column, at an interior cell equal to `0`, when the fuel is `0` (even at a nonzero interior
+cell), and when a letter it needs is missing (`i > |xs|` or `j > |ys|`); it then returns that
+cell's position and `acc`. Otherwise it steps as in `nwTraceAux`, in constant time per step.
+`swTraceback` starts at a cell `(i, j)` of the table with fuel `i + j`, and each step lowers both
+by one, so only the border or a cell equal to `0` stops it. -/
 def swTraceAux {α : Type*} (σ : α → α → ℤ) (gap : ℤ) (T : Array (Array ℤ)) (xs ys : Array α) :
     ℕ → ℕ → ℕ → Alignment α → ℕ × ℕ × Alignment α
   | 0, i, j, acc => (i, j, acc)

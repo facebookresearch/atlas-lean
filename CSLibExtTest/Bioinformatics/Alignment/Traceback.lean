@@ -74,6 +74,42 @@ example : argmaxCell [[], []] = (0, 0) := by decide +kernel
 /-- Ties keep the first largest entry. -/
 example : argmaxCell [[-2, -1], [-1]] = (0, 1) := by decide +kernel
 
+/-! Predecessor ties, over any alphabet: one symbol per sequence, so cell `(1, 1)` is the only
+interior cell and the scores alone decide which predecessors attain it. -/
+
+/-- A three-way predecessor tie: with zero substitution and gap scores, the diagonal, up and left
+predecessors of cell `(1, 1)` all give its value `0`, and the traceback takes the diagonal, a
+single column. -/
+example {α : Type} (a b : α) : nwTraceback (fun _ _ => 0) 0 [a] [b] = [(some a, some b)] := rfl
+
+/-- Up before left: substitution score `-1` and gap score `0` leave the up and left predecessors
+of cell `(1, 1)` tied, and the traceback steps up first. -/
+example {α : Type} (a b : α) :
+    nwTraceback (fun _ _ => -1) 0 [a] [b] = [(none, some b), (some a, none)] := rfl
+
+/-- The same three-way tie in the local traceback, with substitution and gap score `1`: cell
+`(1, 1)` is the largest, and the traceback takes the diagonal. -/
+example {α : Type} (a b : α) :
+    swTraceback (fun _ _ => 1) 1 [a] [b] =
+      { xStart := 0, xEnd := 1, yStart := 0, yEnd := 1, alignment := [(some a, some b)] } := rfl
+
+/-- Up before left in the local traceback: substitution score `0` and gap score `1`. -/
+example {α : Type} (a b : α) :
+    swTraceback (fun _ _ => 0) 1 [a] [b] =
+      { xStart := 0, xEnd := 1, yStart := 1, yEnd := 1, alignment := [(some a, none)] } := rfl
+
+/-! The workers' early returns: with fuel `0` they stop at once, the local worker even at the
+nonzero interior cell `(1, 1)`, and with a letter missing they stop where they are. -/
+
+example : swTraceAux s 1 #[#[0, 0], #[0, 1]] #[5] #[7] 0 1 1 [] = (1, 1, []) := by decide +kernel
+
+example : nwTraceAux s (-1) #[#[0, -1], #[-1, 2]] #[1] #[1] 0 1 1 [] = [] := by decide +kernel
+
+example : swTraceAux s (-1) #[#[0, 0], #[0, 2]] #[] #[1] 2 1 1 [] = (1, 1, []) := by
+  decide +kernel
+
+example : nwTraceAux s (-1) #[#[0, -1], #[-1, 2]] #[] #[1] 2 1 1 [] = [] := by decide +kernel
+
 /-- Diagonal, up, diagonal, left, diagonal: an optimal alignment of score `4`. -/
 example : nwTraceback s (-1) [1, 2, 3, 5] [1, 3, 4, 5] =
     [(some 1, some 1), (some 2, none), (some 3, some 3), (none, some 4), (some 5, some 5)] := by
