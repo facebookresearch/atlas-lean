@@ -14,6 +14,17 @@ open MetaMathlibExt
 
 example : szDualIndex [2, 0, 1] = [1, 2, 0] := by decide
 
+example : szQMZV (szBlockIndex []) = 1 :=
+  (szQMZV_szBlockIndex_dual [] (by simp)).trans szQMZV_nil
+
+-- A block with no zero entries is dual to an index starting with 1.
+example : szQMZV [3] = szQMZV [1, 0, 0] :=
+  szQMZV_szBlockIndex_dual [(3, 1)] (by simp)
+
+-- Both reversing the block order and swapping the two entries matter here.
+example : szQMZV [2, 0, 0, 1, 0] = szQMZV [2, 3, 0] :=
+  szQMZV_szBlockIndex_dual [(2, 3), (1, 2)] (by simp)
+
 example : oozToSZ [3, 2] [2, 1] = 4 := by
   have h : Finset.Icc 1 3 = {1, 2, 3} := by decide
   norm_num [oozToSZ, oozToSZTail, h, Finset.sum_range_succ, Finsupp.mapDomain_add,

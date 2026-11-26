@@ -16,15 +16,26 @@ import Mathlib.Algebra.Ring.GeomSum
 import Mathlib.RingTheory.Ideal.Quotient.Basic
 
 /-!
-# Duality for Ohno–Okuda–Zudilin q-multiple zeta values
+# Duality for Schlesinger–Zudilin and Ohno–Okuda–Zudilin q-multiple zeta values
 
-OOZ evaluation is invariant under the duality transported from Schlesinger–Zudilin words
-by the binomial change of basis.
+For Schlesinger–Zudilin values, reversing a word and exchanging its letters amounts to
+reversing the block list and exchanging the two entries of each block. OOZ evaluation is
+invariant under the duality transported from Schlesinger–Zudilin words by the binomial
+change of basis.
 
 To check the coefficient of degree `N`, we work modulo `X ^ (N + 1)`. In an SZ word,
 a letter `p` multiplies by a geometric series and a letter `y` sums over smaller indices.
 These operations are adjoint for the symmetric pairing with kernel `X ^ (m * n)`.
 Moving the letters across the pairing reverses the word and exchanges `p` and `y`.
+
+## References
+
+* Benjamin Brindle, *A Unified Approach to qMZVs*, INTEGERS 24 (2024), Article A6,
+  pp. 1–41, Theorem 5 (word and block formulations of SZ duality).
+* Jianqiang Zhao, *Uniform Approach to Double Shuffle and Duality Relations of Various
+  q-Analogs of Multiple Zeta Values via Rota–Baxter Algebras*, in *Periods in Quantum
+  Field Theory and Arithmetic*, Springer Proceedings in Mathematics & Statistics 314
+  (2020), pp. 259–292, Theorem 8.3 (SZ duality).
 -/
 
 open PowerSeries
@@ -150,6 +161,16 @@ public theorem coeff_zero_oozQMZV_cons (k : ℕ) (ks : List ℕ) :
     coeff 0 (oozQMZV (k :: ks)) = 0 := by
   have h : Finset.Ioo 0 1 = ∅ := by decide
   simp [oozQMZV, h]
+
+/-- **Block indices for Schlesinger–Zudilin qMZVs.** For a list of pairs of natural numbers
+$(k_1, d_1), \dots, (k_r, d_r)$, the block index is the index
+$(k_1, \{0\}^{d_1 - 1}, \dots, k_r, \{0\}^{d_r - 1})$ obtained by concatenating, for
+$j = 1, \dots, r$, the entry $k_j$ followed by $d_j - 1$ zeros (no zeros when $d_j = 0$).
+
+Source: Benjamin Brindle, *A Unified Approach to qMZVs*, INTEGERS 24 (2024),
+Article A6, Theorem 4 and Theorem 5 (SZ duality), index notation. -/
+public def szBlockIndex (kd : List (ℕ × ℕ)) : List ℕ :=
+  (kd.map fun p => p.1 :: List.replicate (p.2 - 1) 0).flatten
 
 /-- **Word of an index.** The word of an index $(k_1, \dots, k_r)$ of natural numbers is the word
 $p^{k_1} y \cdots p^{k_r} y$ in the letters $p$ and $y$.
@@ -500,6 +521,59 @@ end
 end sum_oozQMZV_eq_of_oozToSZ_eq_szDual
 
 open sum_oozQMZV_eq_of_oozToSZ_eq_szDual
+
+private lemma szWord_replicate_zero_append (n : ℕ) (ks : List ℕ) :
+    szWord (List.replicate n 0 ++ ks) = List.replicate n false ++ szWord ks := by
+  induction n with
+  | zero => rfl
+  | succ n ih => simp [List.replicate_succ, word_cons, ih]
+
+private lemma szWord_szBlockIndex (kd : List (ℕ × ℕ)) (hd : ∀ p ∈ kd, 1 ≤ p.2) :
+    szWord (szBlockIndex kd) =
+      kd.flatMap (fun p => List.replicate p.1 true ++ List.replicate p.2 false) := by
+  induction kd with
+  | nil => rfl
+  | cons p kd ih =>
+    obtain ⟨k, d⟩ := p
+    have h := hd (k, d) List.mem_cons_self
+    have ht : ∀ p ∈ kd, 1 ≤ p.2 := fun p hp => hd p (List.mem_cons_of_mem _ hp)
+    change szWord (k :: (List.replicate (d - 1) 0 ++ szBlockIndex kd)) = _
+    rw [word_cons, szWord_replicate_zero_append, ih ht, ← List.cons_append,
+      ← List.replicate_succ, Nat.sub_add_cancel h, ← List.append_assoc, List.flatMap_cons]
+
+private lemma szWord_szBlockIndex_dual (kd : List (ℕ × ℕ))
+    (hkd : ∀ p ∈ kd, 1 ≤ p.1 ∧ 1 ≤ p.2) :
+    (szWord (szBlockIndex kd)).reverse.map not =
+      szWord (szBlockIndex (kd.reverse.map Prod.swap)) := by
+  have hd : ∀ p ∈ kd.reverse.map Prod.swap, 1 ≤ p.2 := by
+    intro p hp
+    obtain ⟨q, hq, rfl⟩ := List.mem_map.mp hp
+    exact (hkd q (List.mem_reverse.mp hq)).1
+  rw [szWord_szBlockIndex kd (fun p hp => (hkd p hp).2), szWord_szBlockIndex _ hd]
+  simp [-List.map_reverse, List.reverse_flatMap, List.map_flatMap, List.flatMap_map,
+    Function.comp_def]
+
+/-- **Schlesinger–Zudilin duality.** Let $\zeta_q^{SZ}$ denote the Schlesinger–Zudilin qMZV, let
+$(k_1, d_1), \dots, (k_r, d_r)$ be pairs of natural numbers with $k_j \ge 1$ and $d_j \ge 1$
+for all $j$, and let $\{0\}^n$ denote $n$ zeros. Then
+$$\zeta_q^{SZ}(k_1, \{0\}^{d_1 - 1}, \dots, k_r, \{0\}^{d_r - 1}) =
+\zeta_q^{SZ}(d_r, \{0\}^{k_r - 1}, \dots, d_1, \{0\}^{k_1 - 1}).$$
+That is, $\zeta_q^{SZ}$ takes the same value at the block index of the list of pairs and at
+the block index of the reversed list with each pair swapped.
+
+Source: Benjamin Brindle, *A Unified Approach to qMZVs*, INTEGERS 24 (2024),
+Article A6, Theorem 5 (SZ duality, Zhao) (`integers-2024-A6-thm-5`). -/
+public theorem szQMZV_szBlockIndex_dual (kd : List (ℕ × ℕ))
+    (hkd : ∀ p ∈ kd, 1 ≤ p.1 ∧ 1 ≤ p.2) :
+    szQMZV (szBlockIndex kd) = szQMZV (szBlockIndex (kd.reverse.map Prod.swap)) := by
+  have hhead : ∀ a ∈ (szBlockIndex kd).head?, 1 ≤ a := by
+    cases kd with
+    | nil => simp [szBlockIndex]
+    | cons p kd =>
+      have hp := (hkd p List.mem_cons_self).1
+      simpa [szBlockIndex] using hp
+  simpa only [szDualIndex, szWord_szBlockIndex_dual kd hkd, decode_word] using
+    (dual_value (szBlockIndex kd) hhead).symm
 
 /-- **Duality for OOZ-qMZVs.** Call an index $(k_1, \dots, k_r)$ of natural numbers SZ-admissible
 if it is empty or $k_1 \ge 1$. Extend $\zeta_q^{\mathrm{OOZ}}$ and the map $V$ linearly to formal
