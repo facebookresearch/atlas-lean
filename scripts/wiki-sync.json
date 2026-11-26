@@ -34545,6 +34545,7 @@
 "IsDiscreteValuationRing.algebraMap_mem_maximalIdeal_pow_ramificationIdx": "21b235f932fd177b",
 "IsDiscreteValuationRing.eisenstein_adjoin_of_ramificationIdx_eq_finrank": "2ffd9a6b9fa4591d",
 "IsDiscreteValuationRing.emultiplicity_maximalIdeal_span_eq_addVal": "78dc7135fe60edde",
+"IsDiscreteValuationRing.eq_one_of_pow_eq_one_of_mem_principalUnits": "96d9a9e51bc3eeab",
 "IsDiscreteValuationRing.etale_of_isSeparable_residueField_of_finrank_eq": "4a5127766d070614",
 "IsDiscreteValuationRing.exists_adjoin_eq_top_of_separable_residueField": "8ea414e8b958d3c4",
 "IsDiscreteValuationRing.exists_generator_with_residue_minpoly_uniformizer": "4b91f0a8e75579cc",
