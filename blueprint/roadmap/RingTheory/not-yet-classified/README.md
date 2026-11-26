@@ -56,6 +56,7 @@ Topics added since this subject's fields were last revised.
 - [Semiperfect Crystalline Residues](semiperfect-crystalline-residues/README.md)
 - [Semiperfect Witt PDEnvelopes](semiperfect-witt-pdenvelopes/README.md)
 - [Subst Basis](subst-basis/README.md)
+- [Unramified Lifts](unramified-lifts/README.md)
 - [Is Base Change Span](span-range-eq-top.md)
 - [Freeness from a balanced perfect pairing](free-of-torsion-by-set-eq-annihilator-sm.md)
 - [Jacobian Square Presentation](associated-discr-norm-jacobian-det-of-sq.md)
@@ -63,4 +64,5 @@ Topics added since this subject's fields were last revised.
 - [Nested Hopf orders with the same kernel and image agree](eq-of-le-of-comap-hopf-ker-eq-of-map-eq.md)
 - [Trdeg Quotient Bound](exists-not-mem-under-forall-trdeg-quotie.md)
 - [Adjoin Maximality](is-maximal-of-lies-over-adjoin-of-forall.md)
+- [Complex Coordinates](exists-bij-on-eval-differentiable-on-pi.md)
 - [Non-$p$-th powers have nonzero differential](d-ne-zero-of-forall-pow-ne.md)
