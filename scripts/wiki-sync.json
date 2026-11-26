@@ -110421,6 +110421,7 @@
 "WeierstrassCurve.Affine.IsSupersingular.pow_torsion": "559c58b8f133b195",
 "WeierstrassCurve.Affine.MulGood": "8ed53870312477fe",
 "WeierstrassCurve.Affine.Point.exists_zsmul_eq_of_isAlgClosed": "c5de4881022d2e52",
+"WeierstrassCurve.Affine.Point.two_smul_some_eq_zero_iff": "f639719979989d2a",
 "WeierstrassCurve.Affine.Point.variableChangeAddEquiv": "389e418aed4cfd77",
 "WeierstrassCurve.Affine.Point.xc": "95c7d6044afc8a3e",
 "WeierstrassCurve.Affine.Point.yc": "47a9260d19512ec7",
