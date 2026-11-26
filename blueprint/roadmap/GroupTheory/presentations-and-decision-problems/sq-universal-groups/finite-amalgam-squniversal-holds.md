@@ -1,4 +1,4 @@
-# Amalgams of countable groups over finite subgroups of index greater than two are SQ-universal
+# Amalgams of countable groups over finite proper subgroups, of index greater than two in one factor, are SQ-universal
 
 Let $A, B$ be countable groups and $G = A *_C B$ their free product amalgamating finite proper subgroups $H \le A$ and $K \le B$ (isomorphic to a finite group $C$) with $|A : H| > 2$, indices possibly infinite. Then $G$ is SQ-universal. A group is SQ-universal when every countable group embeds in a quotient of it.
 
