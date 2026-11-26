@@ -4,7 +4,7 @@ On single-peaked preferences over $[a, b]$, the minimum-peak rule (choose the sm
 
 ## Proof sketch
 
-Individual rationality with respect to $a$ means the outcome never exceeds the smallest reported peak, so every coalition parameter of the generalized median voter scheme for a nonempty coalition must be at least $b$ in the max-min form, which yields exactly the minimum-peak scheme.
+Write the rule in the max-min form $\max_S \min(\beta_S, \min_{i \in S} p_i)$ of the Moulin–Ching characterization, with $\beta_\emptyset = a$ and $\beta_N = b$. For a coalition $S \ne \emptyset, N$, put the peaks of $S$ at $b$ and the others at $a$; by monotonicity the outcome is $\beta_S$, and the agents with peak $a$ strictly prefer $a$ to any other point, so individual rationality forces $\beta_S = a$. With $\beta_S = a$ for every $S \ne N$ the scheme is $\max(a, \min(b, \min_i p_i)) = \min_i p_i$, the minimum-peak rule, and that rule is strategy-proof, onto and individually rational with respect to $a$.
 
 ## Depends on
 

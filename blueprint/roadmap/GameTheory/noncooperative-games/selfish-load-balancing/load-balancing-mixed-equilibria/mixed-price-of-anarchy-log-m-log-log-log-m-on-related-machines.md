@@ -4,7 +4,7 @@ For load-balancing games on $m \ge 16$ uniformly related machines, every mixed N
 
 ## Proof sketch
 
-Expected loads obey the same factorial speed-prefix bound as pure loads, giving $O(\log m/\log\log m)$ expected load; random fluctuations above the expected load on fast machines add only a $\log m / \log\log\log m$ factor by Chernoff bounds over speed-doubling groups. The lower bound places each replicated tier's jobs uniformly over the tier above.
+Expected loads obey the same factorial speed-prefix bound as pure loads, giving $O(\log m/\log\log m)$ expected load; random fluctuations above the expected load on fast machines add only an additive $O(\log m / \log\log\log m) \cdot \mathrm{OPT}$ term by Chernoff bounds over speed-doubling groups. The lower bound places each replicated tier's jobs uniformly over the tier above.
 
 ## Depends on
 

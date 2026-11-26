@@ -1,8 +1,8 @@
 # Yao's next-bit theorem: a generator is pseudorandom iff it is unpredictable
 
-Let $G$ be a deterministic polynomial-time generator with output length $\ell(n) > n$, $\ell$ polynomially bounded. Then $G$ is a secure pseudorandom generator against probabilistic polynomial-time tests if and only if it is next-bit unpredictable. Concretely, every test $D$ yields a predictor $P$ (which chooses a uniform position) with
+Let $G$ be a deterministic polynomial-time generator with output length $\ell(n) > n$, $\ell$ polynomially bounded. Then $G$ is a secure pseudorandom generator against probabilistic polynomial-time tests if and only if it is next-bit unpredictable. Concretely, every test $D$ yields a predictor $P$ (which on index $i$ runs the predictor $P_i$ of the positional sum bound) with
 
-$$\mathrm{PRGadv}(D, G) \le \ell(n) \cdot \mathrm{NBadv}_P(n),$$
+$$\mathrm{PRGadv}(D, G) \le \ell(n) \cdot \max_{i < \ell(n)} |\mathrm{NBadv}_P(n, i)|,$$
 
 and every predictor yields a test with equal advantage.
 

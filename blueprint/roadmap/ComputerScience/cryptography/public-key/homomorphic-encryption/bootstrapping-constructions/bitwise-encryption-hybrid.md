@@ -1,6 +1,6 @@
 # Bit-by-bit encryption of words is IND-CPA secure
 
-Let $\mathcal{E}$ be an IND-CPA secure bit-encryption scheme and encrypt a word $x \in \{0,1\}^\ell$ by encrypting each bit independently under the same public key. For every adversary $\mathcal{A}$ distinguishing encryptions of two adaptively chosen words of length $\ell$ there is an adversary $\mathcal{B}$ against $\mathcal{E}$ with about the same running time such that
+Let $\mathcal{E}$ be an IND-CPA secure bit-encryption scheme and encrypt a word $x \in \{0,1\}^\ell$ by encrypting each bit independently under the same public key. For every adversary $\mathcal{A}$ distinguishing encryptions of two adaptively chosen words of length $\ell$ there is an adversary $\mathcal{B}$ against $\mathcal{E}$ whose running time exceeds that of $\mathcal{A}$ by at most the time of $\ell$ encryptions under $\mathcal{E}$ such that
 
 $$
 \mathrm{Adv}(\mathcal{A}) \le 2\ell \cdot \mathrm{Adv}^{\mathrm{ind\text{-}cpa}}_{\mathcal{E}}(\mathcal{B}).

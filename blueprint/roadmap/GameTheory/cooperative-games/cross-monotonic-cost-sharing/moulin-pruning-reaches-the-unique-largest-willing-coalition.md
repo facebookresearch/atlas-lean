@@ -4,7 +4,7 @@ For every cross-monotonic scheme $\xi$ and arbitrary real bids $b$, the coalitio
 
 ## Proof sketch
 
-Cross-monotonicity implies an agent willing in a coalition remains willing in every subcoalition containing it, so the union of willing coalitions is willing; pruning never removes an agent of the largest willing coalition, by induction on rounds.
+Cross-monotonicity implies an agent willing in a coalition remains willing in every larger coalition (its share can only drop), so the union of willing coalitions is willing; pruning never removes an agent of the largest willing coalition, by induction on rounds.
 
 ## Depends on
 

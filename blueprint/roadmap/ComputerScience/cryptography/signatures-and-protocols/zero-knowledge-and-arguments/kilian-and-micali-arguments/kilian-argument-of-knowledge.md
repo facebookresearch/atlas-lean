@@ -13,7 +13,7 @@ Every accepted run reveals at most polylogarithmically many table positions; sin
 
 ## Proof depends on
 
-- [Exact soundness of Kilian's protocol from Merkle position binding](kilian-exact-soundness.md)
+- [Soundness of Kilian's protocol from Merkle position binding](kilian-exact-soundness.md)
 
 ## Sources
 

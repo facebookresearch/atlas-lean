@@ -1,6 +1,12 @@
 # Quantum soundness of the two-player linearity test
 
-In the two-player linearity test over $\mathbb{F}_2^n$ the referee sends Alice a pair of points $(u, v)$ and Bob one of $u$, $v$ or $u + v$ (uniform $u, v$), expects Alice's answers $(a_u, a_v)$, accepts if Bob's answer matches the corresponding value $a_u$, $a_v$ or $a_u \oplus a_v$. If a tensor strategy with projective measurements passes with probability at least $1 - \varepsilon$, then there are commuting $\pm 1$ observables $W(s)$ indexed by $s \in \mathbb{F}_2^n$ forming a representation of $\mathbb{F}_2^n$ (so Alice's answers are approximately given by measuring a single projective measurement with outcomes $s$ and answering $\langle s, u \rangle$), with distance $O(\sqrt\varepsilon)$ on the state.
+In the two-player linearity test over $\mathbb{F}_2^n$ the referee sends Alice a pair of points $(u, v)$ and Bob one of $u$, $v$ or $u + v$ (uniform $u, v$), expects Alice's answers $(a_u, a_v)$, accepts if Bob's answer matches the corresponding value $a_u$, $a_v$ or $a_u \oplus a_v$. Let a tensor strategy on a state $\psi$ use projective measurements, with Bob's projector for answer $b \in \{0, 1\}$ on question $w$ written $B^w_b$. If it passes with probability at least $1 - \varepsilon$, then there is a measurement $\{Q_s\}_{s \in \mathbb{F}_2^n}$ on Bob's space such that
+
+$$
+\mathop{\mathbb{E}}_{w} \sum_{b \in \{0, 1\}} \Big\| \Big(1 \otimes \big(B^w_b - \textstyle\sum_{s : \langle s, w \rangle = b} Q_s\big)\Big)\psi \Big\|^2 \le C\varepsilon
+$$
+
+for an absolute constant $C$, with $w$ uniform in $\mathbb{F}_2^n$: Bob's answers are approximately obtained by measuring $s$ once and answering $\langle s, w \rangle$.
 
 ## Proof sketch
 

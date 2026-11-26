@@ -1,6 +1,6 @@
 # CPA-secure ciphers rarely repeat ciphertexts
 
-Let a symmetric cipher on $n$-bit messages be CPA secure. Then every efficient adversary with an encryption oracle obtains two equal ciphertexts (on any queries) only with negligible probability; concretely the repetition probability is at most $2\,\mathrm{CPAadv}(B)$ for a reduction $B$ of comparable cost, for all $n \ge 1$.
+Let a symmetric cipher on $n$-bit messages, with $n$ a function of the security parameter such that $2^{-n}$ is negligible, be CPA secure. Then every efficient adversary with an encryption oracle obtains two equal ciphertexts (on any queries) only with negligible probability; concretely, for an adversary making $Q$ queries, the repetition probability is at most $\mathrm{CPAadv}(B) + \binom{Q}{2}/2^n$ for a reduction $B$ of comparable cost.
 
 ## Proof sketch
 

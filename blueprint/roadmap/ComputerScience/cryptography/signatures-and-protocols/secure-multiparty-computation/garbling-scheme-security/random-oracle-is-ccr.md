@@ -1,6 +1,6 @@
 # A random oracle is circular correlation robust
 
-Let $H : L \times \mathcal{T} \to M$ be a random oracle and $\Delta$ uniform in a subset $D \subseteq L$ (for Free-XOR, labels with colour bit $1$). For every adversary making $q_O$ queries to the circular correlation oracle $(x, t, b) \mapsto H(x \oplus \Delta, t) \oplus b\Delta'$ without repeating a tweak with different inputs, and $q_H$ direct queries to $H$, the advantage in distinguishing the oracle from a random function is at most
+Let $H : L \times \mathcal{T} \to M$ be a random oracle and $\Delta$ uniform in a subset $D \subseteq L$ (for Free-XOR, labels with colour bit $1$). For every adversary making $q_O$ queries to the circular correlation oracle $(x, t, b) \mapsto H(x \oplus \Delta, t) \oplus b\Delta'$ without repeating a tweak with different inputs and without querying both $(x, t, 0)$ and $(x, t, 1)$, and $q_H$ direct queries to $H$, the advantage in distinguishing the oracle from a random function is at most
 
 $$
 \frac{q_O\, q_H}{|D|}.

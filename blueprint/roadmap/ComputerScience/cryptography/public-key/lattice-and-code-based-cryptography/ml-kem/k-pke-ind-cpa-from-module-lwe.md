@@ -1,6 +1,6 @@
 # IND-CPA security of K-PKE from Module-LWE
 
-Consider K-PKE in which the public key contains the matrix $\mathbf{A}$ itself and all noise is sampled with fresh fair coins. For every two-stage IND-CPA adversary $\mathcal{A}$ there are adversaries $\mathcal{B}_1, \mathcal{B}_2$ with essentially the running time of $\mathcal{A}$ such that
+Consider K-PKE in which the public key contains the matrix $\mathbf{A}$ itself and all noise is sampled with fresh fair coins. For every two-stage IND-CPA adversary $\mathcal{A}$ there are adversaries $\mathcal{B}_1, \mathcal{B}_2$ whose running times exceed that of $\mathcal{A}$ by at most the time of one key generation and one encryption of K-PKE such that
 
 $$
 \mathrm{Adv}^{\mathrm{ind\text{-}cpa}}_{\text{K-PKE}}(\mathcal{A}) \le \mathrm{Adv}^{\mathrm{mlwe}}_{k,k,\eta_1}(\mathcal{B}_1) + \mathrm{Adv}^{\mathrm{mlwe}}_{k+1,k,\eta_1,\eta_2}(\mathcal{B}_2),

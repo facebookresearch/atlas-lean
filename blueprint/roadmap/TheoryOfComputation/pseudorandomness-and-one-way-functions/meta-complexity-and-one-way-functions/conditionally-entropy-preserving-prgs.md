@@ -1,6 +1,6 @@
 # Conditionally entropy-preserving pseudorandom generators from one-way functions
 
-A $\mu$-*conditionally entropy-preserving PRG* is a polynomial-time $G : \{0,1\}^n \to \{0,1\}^{n + \gamma\log n}$ together with an event $E_n$ of probability at least $1 - \mu(n)$ over the seed such that $G(U_n)$ conditioned on $E_n$ is computationally indistinguishable from uniform and the conditional distribution retains essentially full entropy: $H(U_n \mid E_n) \ge n - O(\log n)$. If one-way functions exist, then for every constant $\gamma$ there is a $\mu$-conditionally entropy-preserving PRG with $\mu$ an inverse polynomial. Such generators are used to show that one-way functions make $K^t$ mildly hard on average.
+A $\mu$-*conditionally entropy-preserving PRG* is a polynomial-time $G : \{0,1\}^n \to \{0,1\}^{n + \gamma\log n}$ together with an event $E_n$ of probability at least $1 - \mu(n)$ over the seed such that $G(U_n)$ conditioned on $E_n$ is computationally indistinguishable from uniform and the seed retains almost all of its entropy: $H(U_n \mid E_n) \ge n - c\log n$ for a constant $c$. If one-way functions exist, then for every constant $\gamma$ there is a $\mu$-conditionally entropy-preserving PRG with $\mu$ an inverse polynomial. Such generators are used to show that one-way functions make $K^t$ mildly hard on average.
 
 ## Proof sketch
 

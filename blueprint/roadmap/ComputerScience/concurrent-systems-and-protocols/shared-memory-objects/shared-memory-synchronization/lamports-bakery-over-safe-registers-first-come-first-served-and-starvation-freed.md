@@ -12,10 +12,6 @@ A process finishing its doorway before another starts makes the latter read a la
 - [The bakery algorithm as a labelled transition system](../../bakery-algorithm/lts.md)
 - [Weak and strong fairness](../../distributed-execution-models/weak-and-strong-fairness.md)
 
-## Proof depends on
-
-- [Mutual exclusion for the bakery algorithm](../../bakery-algorithm/mutual-exclusion.md)
-
 ## Sources
 
 - Leslie Lamport, "A New Solution of Dijkstra's Concurrent Programming Problem", Communications of the ACM, 1974.

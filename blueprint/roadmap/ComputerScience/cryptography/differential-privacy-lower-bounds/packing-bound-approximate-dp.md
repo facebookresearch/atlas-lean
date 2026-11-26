@@ -6,7 +6,7 @@ $$
 |J| \cdot \bigl(\tfrac12 - m\, e^{(m-1)\varepsilon}\delta\bigr) \le e^{m\varepsilon} .
 $$
 
-More generally, if an adjacency relates $x_0$ to each $x_j$ directly and $M(x_j)$ puts mass at least $\beta$ on $B_j$, then $|J|(\beta - \delta) \le e^{\varepsilon}$. For pure privacy ($\delta = 0$) this is the packing bound $|J| \le 2e^{m\varepsilon}$, which gives lower bounds of order $\log|J|/\varepsilon$ on the noise needed for many queries.
+More generally, if an adjacency relates $x_0$ to each $x_j$ directly and $M(x_j)$ puts mass at least $\beta$ on $B_j$, then $|J|(\beta - \delta) \le e^{\varepsilon}$. For pure privacy ($\delta = 0$) this is the packing bound $|J| \le 2e^{m\varepsilon}$, which forces $m \ge (\ln|J| - \ln 2)/\varepsilon$.
 
 ## Proof sketch
 

@@ -1,6 +1,6 @@
 # Equilibria of weakest-link and best-shot reliability games
 
-In a weakest-link game every common effort level up to the smallest stand-alone optimum $\min_i \bar x_i$ is a pure Nash equilibrium (and the profile with all agents at that level is the best one); with identical agents the social optimum is an equilibrium, and liability or negligence rules can make the efficient common level an equilibrium. In a best-shot game every pure Nash equilibrium has exactly one agent exerting positive effort, equal to its stand-alone optimum, and the profile where the agent with the highest benefit-cost ratio provides its stand-alone effort is an equilibrium; reliability falls short of the optimum.
+Assume the reliability function $P$ is concave. In a weakest-link game every common effort level up to the smallest stand-alone optimum $\min_i \bar x_i$ is a pure Nash equilibrium (and the profile with all agents at that level is the best one); with identical agents the social optimum is an equilibrium, and liability or negligence rules can make the efficient common level an equilibrium. In a best-shot game every pure Nash equilibrium has at most one agent exerting positive effort, equal to its stand-alone optimum, and the profile where the agent with the highest benefit-cost ratio provides its stand-alone effort is an equilibrium; reliability falls short of the optimum.
 
 ## Proof sketch
 

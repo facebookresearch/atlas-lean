@@ -6,7 +6,7 @@ $$\frac{(3T + 4)^2/2 + 2}{q}.$$
 
 ## Proof sketch
 
-Track labels as linear polynomials in two unknowns. A collision between distinct tracked polynomials, or between the output and the degree-two polynomial $XY$, occurs with probability at most $2/q$ per pair by the Schwartz–Zippel lemma, and there are at most $\binom{3T+4}{2}$ pairs.
+Track labels as linear polynomials in two unknowns. A collision between distinct tracked polynomials, or between the output and the degree-two polynomial $XY$, occurs with probability at most $1/q$ for each pair of distinct tracked linear polynomials and at most $2/q$ for the output against $XY$, by the Schwartz–Zippel lemma, and there are at most $\binom{3T+4}{2}$ pairs of tracked polynomials.
 
 ## Depends on
 

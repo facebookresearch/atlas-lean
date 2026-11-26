@@ -1,6 +1,6 @@
 # The hashed Diffie–Hellman KEM is CCA secure in the random oracle model under gap-CDH
 
-Let the KEM have public key $u = g^{\alpha}$, encapsulate by choosing $\beta$, sending $v = g^\beta$ and deriving the key $H(v, u^\beta)$, and decapsulate by $H(v, v^\alpha)$, where $H$ is a random oracle. Under gap-CDH this KEM is IND-CCA secure. For an adversary making $Q_h$ hash queries the advantage is at most the gap-CDH advantage of a reduction (with $Q_h$ DDH-oracle queries) plus a negligible term.
+Let the KEM have public key $u = g^{\alpha}$, encapsulate by choosing $\beta$, sending $v = g^\beta$ and deriving the key $H(v, u^\beta)$, and decapsulate by $H(v, v^\alpha)$, where $H$ is a random oracle. Under gap-CDH this KEM is IND-CCA secure.
 
 ## Proof sketch
 

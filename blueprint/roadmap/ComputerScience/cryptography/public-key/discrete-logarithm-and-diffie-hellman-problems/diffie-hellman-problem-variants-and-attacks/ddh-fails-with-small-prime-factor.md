@@ -4,7 +4,7 @@ Let $\ell$ be a prime divisor of the group order $q$. The test accepting $(g^a, 
 
 ## Proof sketch
 
-The test checks whether $ab \equiv 0 \pmod{\ell}$ agrees with $a \equiv 0$ or $b \equiv 0$, which always holds for real triples and fails for random triples with probability about $1/\ell$.
+The test checks whether $ab \equiv 0 \pmod{\ell}$ agrees with $a \equiv 0$ or $b \equiv 0$, which always holds for real triples and fails for random triples with probability exactly $(1 - 1/\ell)(3/\ell - 2/\ell^2)$.
 
 ## Depends on
 

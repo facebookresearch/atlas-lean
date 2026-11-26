@@ -4,7 +4,7 @@ A *private quantum channel* for $n$ qubits is a family of unitaries $U_1, \dots,
 
 ## Proof sketch
 
-Apply the channel to one half of a maximally entangled state of $2n$ qubits: the output must be a fixed state tensored with nothing correlated, and its von Neumann entropy, which is at most $H(p)$ plus the entropy of the half, must be $2n$.
+Apply the channel to one half of a maximally entangled state of $2n$ qubits: since the channel maps every operator $X$ to $\mathrm{tr}(X)\,I/2^n$, the output is $I/2^n \otimes I/2^n$, of von Neumann entropy $2n$, while a $p$-weighted mixture of $N$ unitary images of a pure state has entropy at most $H(p)$.
 
 ## Depends on
 

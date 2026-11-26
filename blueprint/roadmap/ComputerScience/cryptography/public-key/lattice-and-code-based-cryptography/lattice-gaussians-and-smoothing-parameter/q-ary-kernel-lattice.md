@@ -1,6 +1,6 @@
 # The q-ary kernel lattice and short integer solutions
 
-For a matrix $A \in \mathbb{Z}_q^{n \times m}$, the *$q$-ary kernel lattice* is $\Lambda_q^{\perp}(A) = \{x \in \mathbb{Z}^m : Ax \equiv 0 \pmod q\}$, a full-rank lattice containing $q\mathbb{Z}^m$ with determinant at most $q^n$. The *short integer solution* problem $\mathrm{SIS}_{n,m,q,\beta}$ asks, for uniform $A$, for a nonzero $x \in \Lambda_q^{\perp}(A)$ with $\|x\| \le \beta$; finding such vectors makes $x \mapsto Ax \bmod q$ a collision-resistant hash on short vectors.
+For a matrix $A \in \mathbb{Z}_q^{n \times m}$, the *$q$-ary kernel lattice* is $\Lambda_q^{\perp}(A) = \{x \in \mathbb{Z}^m : Ax \equiv 0 \pmod q\}$, a full-rank lattice containing $q\mathbb{Z}^m$ with determinant at most $q^n$. The *short integer solution* problem $\mathrm{SIS}_{n,m,q,\beta}$ asks, for uniform $A$, for a nonzero $x \in \Lambda_q^{\perp}(A)$ with $\|x\| \le \beta$; if $\mathrm{SIS}_{n,m,q,\beta}$ is hard, then $x \mapsto Ax \bmod q$ is collision resistant on vectors of norm at most $\beta/2$, since a collision $x \ne x'$ gives the solution $x - x'$.
 
 ## Depends on
 

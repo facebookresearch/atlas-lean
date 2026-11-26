@@ -4,8 +4,6 @@ Let $k \ge md$. If a finite symmetric tensor strategy (swap-invariant state, ide
 
 $$160000\, m^2 \Big(100000\, k^2 m R + e^{-k/(80000 m^2)}\Big).$$
 
-For general (not necessarily symmetric) projective strategies there are projective polynomial measurements on each player's original space with point and full-polynomial disagreements bounded, respectively, by $\sigma + \sqrt{8\zeta + 4\sqrt{18\zeta}}$ and $\zeta + 2\sqrt{18 \zeta}$ in the same parameters.
-
 ## Proof sketch
 
 Induct on the dimension: restrict the strategy to slices with fixed last coordinate, apply self-improvement and the induction hypothesis on the slices, show that slice outcomes approximately commute (using diagonal lines), and paste them into polynomial outcomes on $\mathbb{F}^m$; the error recursion over $m$ steps gives the stated bound. Non-symmetric strategies are reduced to symmetric ones by symmetrization.

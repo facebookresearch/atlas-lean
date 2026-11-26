@@ -6,7 +6,7 @@ $$
 h_A(x) = A x \bmod q \in \mathbb{Z}_q^n .
 $$
 
-The hash family $\{h_A\}$ is keyed by a uniformly random $A$. When $m > n \log_2 q$ it compresses $m$ bits to $n \lceil \log_2 q \rceil$ bits. A *collision* is a pair $x \ne y$ in the domain with $h_A(x) = h_A(y)$.
+The hash family $\{h_A\}$ is keyed by a uniformly random $A$. When $m > n \lceil \log_2 q \rceil$ it compresses $m$ bits to $n \lceil \log_2 q \rceil$ bits. A *collision* is a pair $x \ne y$ in the domain with $h_A(x) = h_A(y)$.
 
 ## Depends on
 

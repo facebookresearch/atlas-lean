@@ -1,6 +1,6 @@
 # Coin-flipping programs have rational output probabilities, and rational Bernoulli coins are exactly samplable
 
-Every terminating probabilistic program built from uniform choices over finite sets $\{0, \dots, n\}$ assigns to each output a rational probability, computable structurally from the program tree. Conversely, for every rational $p = a/b \in [0,1]$, the program that draws one uniform element $i$ of $\{0, \dots, b-1\}$ and outputs $[i < a]$ is an exact Bernoulli($p$) coin. With only fair bits, an exact Bernoulli($a/b$) coin needs unbounded running time when $b$ is not a power of two, but a $T$-trial capped sampler is within statistical distance $2^{-T}$.
+Every terminating probabilistic program built from uniform choices over finite sets $\{0, \dots, n\}$ assigns to each output a rational probability, computable structurally from the program tree. Conversely, for every rational $p = a/b \in [0,1]$, the program that draws one uniform element $i$ of $\{0, \dots, b-1\}$ and outputs $[i < a]$ is an exact Bernoulli($p$) coin. With only fair bits, an exact Bernoulli($a/b$) coin needs unbounded running time when the reduced denominator of $a/b$ is not a power of two, but a $T$-trial capped sampler is within statistical distance $2^{-T}$.
 
 ## Proof sketch
 

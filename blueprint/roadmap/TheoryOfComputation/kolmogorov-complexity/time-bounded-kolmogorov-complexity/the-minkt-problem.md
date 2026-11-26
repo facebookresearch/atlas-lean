@@ -1,6 +1,6 @@
 # The time-bounded Kolmogorov complexity problem MINKT
 
-*MINKT* is the language of triples $(x, 1^t, 1^s)$ with $K^t(x) \le s$, where the step budget $t$ and the size threshold $s$ are given in unary. For fixed functions $t, s$ computable in polynomial time in unary, $\mathrm{MINKT}[t, s] = \{x : K^{t(|x|)}(x) \le s(|x|)\}$. The gap version $\mathrm{GapMINKT}$ distinguishes $K^t(x) \le s$ from $K^{\mathrm{poly}(t)}(x) > s + \mathrm{poly}\log$. *MINcKT* is the conditional analogue on inputs $(x, y, 1^t, 1^s)$ asking whether $K^t(x \mid y) \le s$.
+*MINKT* is the language of triples $(x, 1^t, 1^s)$ with $K^t(x) \le s$, where the step budget $t$ and the size threshold $s$ are given in unary. For fixed functions $t, s$ computable in polynomial time in unary, $\mathrm{MINKT}[t, s] = \{x : K^{t(|x|)}(x) \le s(|x|)\}$. *MINcKT* is the conditional analogue on inputs $(x, y, 1^t, 1^s)$ asking whether $K^t(x \mid y) \le s$.
 
 ## Depends on
 

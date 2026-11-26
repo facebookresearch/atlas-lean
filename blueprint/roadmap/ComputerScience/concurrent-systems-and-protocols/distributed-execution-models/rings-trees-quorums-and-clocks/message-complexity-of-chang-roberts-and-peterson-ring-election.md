@@ -4,7 +4,7 @@ On a unidirectional asynchronous FIFO ring of $n$ processes with distinct identi
 
 ## Proof sketch
 
-In Chang–Roberts, the message of identifier $x$ travels until it meets a larger identifier, so total messages are the sum of these arc lengths; averaging over rotations gives harmonic sums. In Peterson's algorithm a process survives a phase only if its middle value is a local maximum, and no two consecutive active processes both survive.
+In Chang–Roberts, the message of identifier $x$ travels until it meets a larger identifier, so total messages are the sum of these arc lengths; averaging over all arrangements, the identifier with $k - 1$ larger ones travels $n/k$ links in expectation, which sums to $n H_n$. In Peterson's algorithm a process survives a phase only if its middle value is a local maximum, and no two consecutive active processes both survive.
 
 ## Depends on
 

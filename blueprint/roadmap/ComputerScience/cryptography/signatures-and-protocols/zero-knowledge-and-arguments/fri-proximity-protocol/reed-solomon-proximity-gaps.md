@@ -6,7 +6,7 @@ $$
 \Pr_{z \in \mathbb{F}}\Bigl[\Delta\bigl(\textstyle\sum_r z^r u_r, V\bigr) \le \delta\Bigr] > \frac{(l-1)\, n}{|\mathbb{F}|},
 $$
 
-then $u_0, \dots, u_{l-1}$ have *correlated agreement*: there is a set $S \subseteq D$ with $|S| \ge (1-\delta) n$ on which all $u_r$ agree with codewords. (ii) *Johnson regime:* the same conclusion holds for $\delta < 1 - \sqrt{\rho} - \eta$, with the probability threshold replaced by a bound of order $(l-1)\, n^2 / (|\mathbb{F}|\, \eta^{O(1)})$ (Guruswami–Sudan list decoding).
+then $u_0, \dots, u_{l-1}$ have *correlated agreement*: there is a set $S \subseteq D$ with $|S| \ge (1-\delta) n$ on which all $u_r$ agree with codewords. (ii) *Johnson regime:* the same conclusion holds for $\delta < 1 - \sqrt{\rho} - \eta$, for any $\eta > 0$, with the probability threshold replaced by $(l-1)\,k^2 / \bigl((2\min(\eta, \sqrt\rho/20))^7\,|\mathbb{F}|\bigr)$ (Guruswami–Sudan list decoding).
 
 ## Proof sketch
 

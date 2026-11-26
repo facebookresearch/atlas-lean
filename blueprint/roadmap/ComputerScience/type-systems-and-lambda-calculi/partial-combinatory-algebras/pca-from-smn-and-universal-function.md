@@ -11,10 +11,6 @@ Take $\mathsf{k}$ to be an index that on input $a$ returns $s(\mathrm{fst}, a)$ 
 - [Partial combinatory algebra](partial-combinatory-algebra.md)
 - [Parametrized s-m-n theorem](../../../TheoryOfComputation/computability/exists-computable-code.md)
 
-## Proof depends on
-
-- [Parametrized s-m-n theorem](../../../TheoryOfComputation/computability/exists-computable-code.md)
-
 ## Sources
 
 - J. van Oosten, "Realizability: An Introduction to its Categorical Side", Studies in Logic and the Foundations of Mathematics 152, Elsevier, 2008.

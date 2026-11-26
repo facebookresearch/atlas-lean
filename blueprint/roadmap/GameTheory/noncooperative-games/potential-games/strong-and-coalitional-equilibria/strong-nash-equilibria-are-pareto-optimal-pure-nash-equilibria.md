@@ -1,6 +1,6 @@
 # Strong Nash equilibria are Pareto optimal pure Nash equilibria
 
-Every strong Nash equilibrium $s$ of a cost-minimization game is a pure Nash equilibrium (take singleton coalitions) and is weakly Pareto optimal: no profile $s'$ satisfies $c_i(s') \le c_i(s)$ for all players with strict inequality for some player (take the grand coalition).
+Every strong Nash equilibrium $s$ of a cost-minimization game is a pure Nash equilibrium (take singleton coalitions) and is Pareto optimal: no profile $s'$ satisfies $c_i(s') \le c_i(s)$ for all players with strict inequality for some player (take the grand coalition).
 
 ## Proof sketch
 

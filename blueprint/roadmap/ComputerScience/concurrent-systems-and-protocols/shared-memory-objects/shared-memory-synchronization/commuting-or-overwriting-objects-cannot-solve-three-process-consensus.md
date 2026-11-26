@@ -4,7 +4,7 @@ Call a family of deterministic shared objects *commuting or overwriting* if any 
 
 ## Proof sketch
 
-Take a critical bivalent configuration where the next steps of two processes lead to different valences; both must access the same object. If the operations commute, a third process cannot distinguish the two orders; if one overwrites the other, running the overwriting process first and then a solo third process yields indistinguishable runs with different decisions.
+Take a critical bivalent configuration where the next steps of two processes lead to different valences; both must access the same object. If the operations commute, a third process cannot distinguish the two orders; if $q$'s operation overwrites $p$'s, the runs ($p$'s step, then $q$'s) and ($q$'s step alone) leave the object in the same state, so a solo run of a third process yields indistinguishable runs with different decisions.
 
 ## Depends on
 

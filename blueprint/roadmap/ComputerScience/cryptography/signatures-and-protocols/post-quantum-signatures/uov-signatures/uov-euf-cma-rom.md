@@ -1,6 +1,6 @@
 # UOV is EUF-CMA secure in the random oracle model
 
-Instantiate salted hash-and-sign with the UOV trapdoor: to sign $m$, draw a salt $r$, set $t = H(m, r)$, and sample a preimage of $t$ by the vinegar-and-linear-solve procedure (retrying on singular systems). Assume the *UOV problem* (finding a preimage of a uniform target under a public UOV map) is hard and that the preimages returned by the signer are distributed, for uniform targets, statistically close to uniform preimages. Then, in the classical random oracle model, every forger making $q_S$ signing and $q_H$ hash queries succeeds with probability at most $(q_H + 1)$ times the UOV-inversion advantage of an explicit reduction, plus a salt-collision term $q_S(q_S + q_H)/|\mathcal{R}|$ and the statistical distance of the preimage sampler.
+Instantiate salted hash-and-sign with the UOV trapdoor: to sign $m$, draw a salt $r$, set $t = H(m, r)$, and sample a preimage of $t$ by the vinegar-and-linear-solve procedure (retrying on singular systems). Assume the *UOV problem* (finding a preimage of a uniform target under a public UOV map) is hard and that, for a uniform target, the signer's preimage is within statistical distance $\zeta$ of a uniform preimage of that target. Then, in the classical random oracle model, every forger making $q_S$ signing and $q_H$ hash queries succeeds with probability at most $(q_H + 1)$ times the UOV-inversion advantage of an explicit reduction, plus a salt-collision term $q_S(q_S + q_H)/|\mathcal{R}|$ and $q_S\,\zeta$.
 
 ## Proof sketch
 

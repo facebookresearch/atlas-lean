@@ -1,6 +1,6 @@
 # Half-block encryption with a strong PRP is CCA secure
 
-Let $E$ be a strong PRP on $2n$-bit blocks. The half-block cipher encrypts an $n$-bit message $m$ as $E(k, r \| m)$ for a fresh uniform $r \in \{0,1\}^n$, and decrypts $c$ to the last $n$ bits of $D(k, c)$ (rejecting words of other lengths). It is CCA secure, with advantage at most $2\,\mathrm{SPRPadv}(E) + O(Q^2/2^n)$ for $Q$ queries.
+Let $E$ be a strong PRP on $2n$-bit blocks. The half-block cipher encrypts an $n$-bit message $m$ as $E(k, r \| m)$ for a fresh uniform $r \in \{0,1\}^n$, and decrypts $c$ to the last $n$ bits of $D(k, c)$ (rejecting words of other lengths). It is CCA secure.
 
 ## Proof sketch
 

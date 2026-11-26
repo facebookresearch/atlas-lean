@@ -1,10 +1,10 @@
 # Observed-remove sets and the impossibility of untagged convergent sets
 
-In the observed-remove set CRDT, each add creates a unique tag and a remove deletes only the tags it has observed; concurrent add and remove operations commute, an element is present iff some add of it is not causally followed by a remove observing its tag (add wins over concurrent remove), and all replicas that have delivered the same operations converge. By contrast, no state-based replicated set whose state is just a finite set of elements, merged by any function, can satisfy the sequential specification of insert and remove: insert-then-erase and erase-then-insert must give different results, which no commutative merge of untagged states can distinguish.
+In the observed-remove set CRDT, each add creates a unique tag and a remove deletes only the tags it has observed; concurrent add and remove operations commute, an element is present iff some add of it is not causally followed by a remove observing its tag (add wins over concurrent remove), and all replicas that have delivered the same operations converge. By contrast, no state-based replicated set whose state is just a finite set of elements, merged by any function, can satisfy the sequential specification of insert and remove: the states $\{a\}$ and $\emptyset$ must merge to $\{a\}$ when the empty replica never saw $a$, and to $\emptyset$ when it received the insert of $a$ and then erased $a$, so no function of the two states alone is correct.
 
 ## Proof sketch
 
-Tags make removes refer to specific adds, so the effect of concurrent operations is independent of delivery order. Without tags, the merge of a replica that inserted and erased with one that did nothing equals the merge for the reverse order, contradicting the specification.
+Tags make removes refer to specific adds, so the effect of concurrent operations is independent of delivery order. Without tags, let replica $A$ insert $a$ while replica $B$ either does nothing or receives $A$'s state and then erases $a$; in both runs the states to merge are $\{a\}$ and $\emptyset$, but the specification requires $\{a\}$ in the first and $\emptyset$ in the second.
 
 ## Depends on
 

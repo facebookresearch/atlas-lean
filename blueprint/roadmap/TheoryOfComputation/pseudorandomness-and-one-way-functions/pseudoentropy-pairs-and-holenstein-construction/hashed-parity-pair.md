@@ -4,7 +4,7 @@ Let $f$ map $n$-bit inputs to $m(n)$-bit outputs. The *hashed parity pair* of $f
 
 $$X = \bigl(f(x),\ i,\ M,\ (Mx)_{1..i},\ r\bigr)$$
 
-together with the hidden bit $B = \langle x, r \rangle \bmod 2$. The prefix of the linear hash pins $x$ down within its fiber $f^{-1}(f(x))$ when $i$ is close to $\log_2|f^{-1}(f(x))|$, which bounds the conditional entropy of $B$ given $X$.
+together with the hidden bit $B = \langle x, r \rangle \bmod 2$.
 
 ## Depends on
 

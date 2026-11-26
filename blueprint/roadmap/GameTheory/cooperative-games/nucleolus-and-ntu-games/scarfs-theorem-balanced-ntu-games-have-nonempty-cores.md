@@ -10,10 +10,6 @@ Shapley's proof applies a KKMS-type covering lemma on the simplex: label each po
 
 - [Nontransferable-utility cooperative game and its core](nontransferable-utility-cooperative-game-and-its-core.md)
 
-## Proof depends on
-
-- [Sperner's lemma in dimension two (parity form)](../../../Combinatorics/polytopes-simplicial-complexes/sperner-s-lemma/odd-card-rainbow.md)
-
 ## Sources
 
 - Herbert E. Scarf, "The Core of an N Person Game", Econometrica, 1967.

@@ -18,7 +18,7 @@ Fix the oracle trace: if it is collision-free and records all hash steps of the 
 
 ## Proof depends on
 
-- [Exact soundness of Kilian's protocol from Merkle position binding](kilian-exact-soundness.md)
+- [Soundness of Kilian's protocol from Merkle position binding](kilian-exact-soundness.md)
 - [Existential soundness of Merkle inclusion proofs](../../../hash-functions/merkle-trees/verify-sound.md)
 
 ## Sources

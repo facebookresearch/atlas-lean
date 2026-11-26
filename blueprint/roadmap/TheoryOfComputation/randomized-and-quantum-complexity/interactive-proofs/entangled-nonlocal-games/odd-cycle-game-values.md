@@ -10,10 +10,6 @@ Classically an odd cycle has no proper 2-colouring, so at least one of the $2n$ 
 
 - [XOR games and Tsirelson's vector characterization](xor-games-and-tsirelsons-theorem.md)
 
-## Proof depends on
-
-- [XOR games and Tsirelson's vector characterization](xor-games-and-tsirelsons-theorem.md)
-
 ## Sources
 
 - R. Cleve, P. Høyer, B. Toner and J. Watrous, "Consequences and Limits of Nonlocal Strategies", IEEE Conference on Computational Complexity, 2004.

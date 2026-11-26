@@ -1,6 +1,6 @@
 # The Naor–Reingold function is a PRF under DDH
 
-If the decisional Diffie–Hellman assumption holds for the group family, then the Naor–Reingold function is a pseudorandom function into the group. For an adversary making $Q$ queries, $\mathrm{PRFadv} \le n \cdot \mathrm{MultiDDHadv}$ for a multi-DDH distinguisher with $Q$ pairs, hence at most $n \cdot \mathrm{DDHadv} + n Q/q$ up to a polynomial factor; composing with a universal hash gives a bit-string PRF.
+If the decisional Diffie–Hellman assumption holds for the group family, then the Naor–Reingold function is a pseudorandom function into the group. For an adversary making $Q$ queries, $\mathrm{PRFadv} \le n \cdot \mathrm{MultiDDHadv}$ for a multi-DDH distinguisher with $Q$ pairs; composing with a universal hash gives a bit-string PRF.
 
 ## Proof sketch
 

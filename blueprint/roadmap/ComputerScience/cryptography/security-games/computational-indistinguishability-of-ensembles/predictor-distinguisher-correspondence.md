@@ -2,7 +2,7 @@
 
 Let $G : \{0,1\}^n \to \{0,1\}^{\ell}$ be a generator. (a) For every predictor $P$ for position $i$ there is a test $D_P$, which on input $y$ accepts iff $P(y_{1..i}) = y_{i+1}$, whose PRG advantage equals $|\mathrm{NBadv}_P(i)|$ exactly. (b) For every test $D$ there are predictors $P_0, \dots, P_{\ell-1}$, where $P_i$ completes the prefix $y_{1..i}$ with uniform bits $r_{i+1}, \dots, r_\ell$, runs $D$ and outputs $r_{i+1}$ if $D$ accepts and $1 - r_{i+1}$ otherwise, such that
 
-$$\mathrm{PRGadv}(D, G) \le \sum_{i=0}^{\ell-1} \mathrm{NBadv}_{P_i}(i).$$
+$$\mathrm{PRGadv}(D, G) = \Bigl|\sum_{i=0}^{\ell-1} \mathrm{NBadv}_{P_i}(i)\Bigr| \le \sum_{i=0}^{\ell-1} |\mathrm{NBadv}_{P_i}(i)|.$$
 
 ## Proof sketch
 

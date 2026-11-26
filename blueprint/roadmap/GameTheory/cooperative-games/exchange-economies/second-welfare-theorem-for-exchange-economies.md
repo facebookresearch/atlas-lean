@@ -1,6 +1,6 @@
 # Second welfare theorem for exchange economies
 
-Let traders have locally nonsatiated, convex (quasiconcave) preferences on nonnegative bundles, and let $x$ be a Pareto-optimal allocation with $\sum_i x_i \le \sum_i e_i$. Then there is a nonzero price vector $p \ge 0$ such that each $x_i$ is a quasi-demand at $p$: every bundle weakly preferred to $x_i$ costs at least $p \cdot x_i$. Reallocating endowments so that $e'_i = x_i$ turns $(x, p)$ into a competitive equilibrium when all incomes are positive.
+Let traders have locally nonsatiated, convex (quasiconcave) preferences on nonnegative bundles, and let $x$ be a Pareto-optimal allocation with $\sum_i x_i \le \sum_i e_i$. Then there is a nonzero price vector $p \ge 0$ such that each $x_i$ is a quasi-demand at $p$: every bundle weakly preferred to $x_i$ costs at least $p \cdot x_i$. Reallocating endowments so that $e'_i = x_i$ turns $(x, p)$ into a competitive equilibrium when all incomes are positive and preferences are continuous.
 
 ## Proof sketch
 

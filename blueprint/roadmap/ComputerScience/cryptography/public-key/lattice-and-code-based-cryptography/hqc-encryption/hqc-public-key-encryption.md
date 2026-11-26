@@ -6,7 +6,7 @@ $$
 u = r_1 + h r_2, \qquad v = \mathrm{trunc}\bigl(m\mathbf{G} + s r_2 + e\bigr).
 $$
 
-Decryption decodes $v - \mathrm{trunc}(u y) = m\mathbf{G} + \mathrm{trunc}(x r_2 - r_1 y + e)$ with the decoder of $\mathcal{C}$. Security rests on the hardness of decoding random quasi-cyclic codes: distinguishing $(h, x + hy)$ (two blocks) and the three-block syndrome $(h, s, r_1 + hr_2, s r_2 + e)$ from uniform.
+Decryption decodes $v - \mathrm{trunc}(u y) = m\mathbf{G} + \mathrm{trunc}(x r_2 - r_1 y + e)$ with the decoder of $\mathcal{C}$. Security rests on the hardness of decoding random quasi-cyclic codes: distinguishing $(h, x + hy)$ (two blocks) and the three-block syndrome $(h, s, r_1 + hr_2, s r_2 + e)$ from uniform vectors of the same parities (the parity of each syndrome block is determined by $h$, $s$ and the weights).
 
 ## Depends on
 

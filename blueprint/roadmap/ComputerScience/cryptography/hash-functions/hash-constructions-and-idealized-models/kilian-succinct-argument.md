@@ -1,6 +1,6 @@
 # Kilian's argument: committing to a PCP proof with a Merkle tree
 
-Let $V$ be a PCP verifier for a language $L$ with logarithmic randomness and constant query complexity, and $H$ a collision-resistant keyed hash. In Kilian's protocol the verifier sends a uniform hash key $k$; the prover sends $x$ and the Merkle root of its PCP proof under $H_k$; the verifier sends independent PCP random strings; the prover opens the queried positions with authentication paths; the verifier accepts iff all paths verify and $V$ accepts on every random string. The protocol is complete and is an argument with negligible soundness error against efficient provers, with communication polynomial in the security parameter and logarithmic in the proof length.
+Let $V$ be a PCP verifier for a language $L$ with logarithmic randomness and constant query complexity, and $H$ a collision-resistant keyed hash. In Kilian's protocol the verifier sends a uniform hash key $k$; the prover sends $x$ and the Merkle root of its PCP proof under $H_k$; the verifier sends $\lambda$ independent PCP random strings, where $\lambda$ is the security parameter; the prover opens the queried positions with authentication paths; the verifier accepts iff all paths verify and $V$ accepts on every random string. The protocol is complete and is an argument with negligible soundness error against efficient provers, with communication polynomial in the security parameter and logarithmic in the proof length.
 
 ## Proof sketch
 

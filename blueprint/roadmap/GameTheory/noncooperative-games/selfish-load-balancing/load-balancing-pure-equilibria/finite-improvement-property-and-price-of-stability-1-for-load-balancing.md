@@ -4,7 +4,7 @@ Every load-balancing game on uniformly related machines (zero-weight jobs allowe
 
 ## Proof sketch
 
-An improving move strictly decreases the sorted load vector lexicographically: the job leaves a machine whose load is at least the new load of the target. Termination follows from finiteness, and the moving job's new machine stays below the old maximum.
+An improving move of a job with positive weight (or positive processing times) strictly decreases the sorted load vector lexicographically: the job leaves a machine whose load is strictly greater than the new load of the target. A zero-weight job changes no load and moves to a machine of strictly smaller load, so only finitely many such moves occur between two moves of positive-weight jobs. Termination follows from finiteness, and the moving job's new machine stays below the old maximum.
 
 ## Depends on
 

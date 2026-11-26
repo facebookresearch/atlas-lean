@@ -1,6 +1,6 @@
 # Prefix-free encoding of messages
 
-A *prefix-free encoding* is an injective map $\mathrm{pf} : M \to X^{\le \ell}$ into block sequences such that no image is a proper prefix of another. Examples: prepending the block count, or appending an end-marker block. A *randomized* prefix-free encoding is a keyed family whose images form a prefix-free set except with negligible probability over the key.
+A *prefix-free encoding* is an injective map $\mathrm{pf} : M \to X^{\le \ell}$ into block sequences such that no image is a proper prefix of another. Examples: prepending the block count, or appending an end-marker block that no message block can equal. A *randomized* prefix-free encoding is a keyed family whose images form a prefix-free set except with negligible probability over the key.
 
 ## Depends on
 

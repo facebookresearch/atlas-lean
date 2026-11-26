@@ -1,6 +1,6 @@
 # No Byzantine agreement across a vertex separator of size at most 2t
 
-Let $G$ be a communication graph with two vertices $u, v$ separated by a set $C$ of at most $2t$ vertices (every $u$–$v$ path meets $C$, and $u, v \notin C$). Then no deterministic synchronous protocol solves Boolean Byzantine agreement on $G$ against $t$ faults, for any fixed number of rounds. Consequently Byzantine agreement on $G$ requires $G$ to be $(2t + 1)$-vertex-connected.
+Let $G$ be a communication graph with two vertices $u, v$ separated by a set $C$ of at most $2t$ vertices (every $u$–$v$ path meets $C$, and $u, v \notin C$). Then no deterministic synchronous protocol solves Boolean Byzantine agreement on $G$ against $t$ faults, for any fixed number of rounds. Consequently Byzantine agreement on a non-complete graph $G$ requires $G$ to be $(2t + 1)$-vertex-connected.
 
 ## Proof sketch
 

@@ -1,6 +1,6 @@
 # Rounding to a τ-grid yields a dτ-approximate Nash equilibrium
 
-Let $M$ be a binary-action graphical game with local payoffs in $[0, 1]$ and maximum degree at most $d$, let $p$ be an exact mixed Nash equilibrium and $m \ge 1$. Rounding each $p_i$ to the nearest point of the grid $\{0, 1/m, \dots, 1\}$ changes each strategy by at most $1/m$ in $L^1$, and the rounded profile is an additive $(d/m)$-approximate Nash equilibrium. Hence ApproximateTreeNash on the grid finds an $\varepsilon$-approximate equilibrium of a tree graphical game with grid resolution $\tau = \varepsilon/d$.
+Let $M$ be a binary-action graphical game with local payoffs in $[0, 1]$ in which each player's payoff depends on the actions of at most $d$ players, itself included, let $p$ be an exact mixed Nash equilibrium and $m \ge 1$. Rounding each $p_i$ to the nearest point of the grid $\{0, 1/m, \dots, 1\}$ changes each strategy by at most $1/m$ in $L^1$, and the rounded profile is an additive $(d/m)$-approximate Nash equilibrium. Hence ApproximateTreeNash on the grid finds an $\varepsilon$-approximate equilibrium of a tree graphical game with grid resolution $\tau = \varepsilon/d$.
 
 ## Proof sketch
 

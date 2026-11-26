@@ -4,7 +4,7 @@ Let $g$ be computable in polynomial time. Then there are a polynomial $q$ and a 
 
 ## Proof sketch
 
-The program consists of a fixed description of a machine for $g$ followed by $z$ in self-delimiting form; the universal machine simulates it with polynomial overhead.
+The program consists of a fixed self-delimiting description of a machine for $g$ followed by $z$ verbatim; the universal machine simulates it with polynomial overhead.
 
 ## Depends on
 

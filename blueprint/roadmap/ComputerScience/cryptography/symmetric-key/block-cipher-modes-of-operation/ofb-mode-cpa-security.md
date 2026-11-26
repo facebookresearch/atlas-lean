@@ -1,6 +1,6 @@
 # Output feedback (OFB) mode is CPA secure
 
-For a PRF $F$ on $b$-bit blocks, OFB mode encrypts $m_1 \| \cdots \| m_\ell$ by choosing a uniform $x_0$, setting $x_i = F(k, x_{i-1})$ and outputting $x_0 \| (m_1 \oplus x_1) \| \cdots \| (m_\ell \oplus x_\ell)$. If $F$ is a PRF and $2^{-b}$ is negligible, OFB mode is CPA secure, with advantage at most $2\,\mathrm{PRFadv}(F) + O((Q\ell)^2/2^b)$.
+For a PRF $F$ on $b$-bit blocks, OFB mode encrypts $m_1 \| \cdots \| m_\ell$ by choosing a uniform $x_0$, setting $x_i = F(k, x_{i-1})$ and outputting $x_0 \| (m_1 \oplus x_1) \| \cdots \| (m_\ell \oplus x_\ell)$. If $F$ is a PRF and $2^{-b}$ is negligible, OFB mode is CPA secure, with advantage at most $2\,\mathrm{PRFadv}(F) + (Q\ell)^2/2^b$ for an adversary making $Q$ queries of at most $\ell$ blocks.
 
 ## Proof sketch
 

@@ -4,7 +4,7 @@ A tester in the dense graph model is *canonical* if it samples a uniformly rando
 
 ## Proof sketch
 
-Each query of the original tester involves at most two new vertices, so its run depends only on the subgraph induced by at most $2q$ vertices; by isomorphism invariance one may relabel these to be a uniformly random set. The canonical tester accepts iff some run of the original tester on the induced subgraph accepts, preserving one-sided error.
+Each query of the original tester involves at most two new vertices, so its run depends only on the subgraph induced by at most $2q$ vertices; by isomorphism invariance one may relabel these to be a uniformly random set. The canonical tester accepts iff the induced subgraph is an induced subgraph of some graph in $\Pi$: a one-sided tester can reject only on answers inconsistent with every graph in $\Pi$, so whenever the emulated run rejects the canonical tester rejects too, and graphs in $\Pi$ are always accepted.
 
 ## Depends on
 

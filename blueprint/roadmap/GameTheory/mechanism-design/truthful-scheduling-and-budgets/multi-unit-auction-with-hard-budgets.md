@@ -1,6 +1,6 @@
 # Multi-unit auction with hard budgets
 
-A divisible supply $m > 0$ of a good is sold to bidders $i$ with private per-unit values $v_i \ge 0$ and hard budgets $B_i \ge 0$. An outcome allocates $x_i \ge 0$ with $\sum_i x_i \le m$ and charges $P_i \le B_i$; bidder utility is $v_i x_i - P_i$. An outcome is *Pareto optimal* if no other feasible budget-respecting outcome makes all bidders and the seller (counting revenue) weakly better off with someone strictly better off; equivalently, no unit is held by a bidder whose value is lower than that of another bidder who still has unspent budget and receives less than the full supply.
+A divisible supply $m > 0$ of a good is sold to bidders $i$ with private per-unit values $v_i \ge 0$ and hard budgets $B_i \ge 0$. An outcome allocates $x_i \ge 0$ with $\sum_i x_i \le m$ and charges $P_i \le B_i$; bidder utility is $v_i x_i - P_i$. An outcome is *Pareto optimal* if no other feasible budget-respecting outcome makes all bidders and the seller (counting revenue) weakly better off with someone strictly better off.
 
 ## Depends on
 

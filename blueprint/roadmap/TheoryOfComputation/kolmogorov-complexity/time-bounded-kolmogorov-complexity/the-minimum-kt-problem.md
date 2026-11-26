@@ -1,6 +1,6 @@
 # The minimum Kt problem MKtP
 
-*MKtP* is the language of pairs $(x, 1^s)$ with $Kt(x) \le s$; for a function $s$ computable in polynomial time, $\mathrm{MKtP}[s] = \{x : Kt(x) \le s(|x|)\}$. The promise version $\mathrm{GapMKtP}$ separates $Kt(x) \le s$ from $Kt(x) > s + O(\log |x|)$. Since $Kt(x) \le |x| + O(\log|x|)$, only thresholds up to about $|x|$ matter, and for such thresholds unary and binary encodings are polynomially related.
+*MKtP* is the language of pairs $(x, 1^s)$ with $Kt(x) \le s$; for a function $s$ computable in polynomial time, $\mathrm{MKtP}[s] = \{x : Kt(x) \le s(|x|)\}$. For a constant $c$, the promise problem $\mathrm{GapMKtP}_c$ separates $Kt(x) \le s$ from $Kt(x) > s + c\log|x|$. Since there is a constant $c_0$ with $Kt(x) \le |x| + c_0\log|x|$ for every $x$ of length at least $2$, every threshold $s \ge |x| + c_0\log|x|$ accepts $x$, so only smaller thresholds matter, and for those unary and binary encodings are polynomially related.
 
 ## Depends on
 

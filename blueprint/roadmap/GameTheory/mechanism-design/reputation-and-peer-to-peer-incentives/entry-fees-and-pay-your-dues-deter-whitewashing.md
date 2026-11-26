@@ -3,7 +3,7 @@
 Consider the randomly matched repeated prisoner's dilemma with stage payoffs $\pi(C,C) = 1$, $\pi(D,D) = 0$, $\pi(D,C) = 2$, $\pi(C,D) = -1$, discount factor $0 \le \delta < 1$ and discounted average payoff $(1 - \delta)\sum_t \delta^t \pi_t$, in which reputations are public and any player may *whitewash*: leave and re-register under a fresh pseudonym with a good reputation.
 
 - **Entry fee.** If every registration costs $f$, then deviating once and re-registering is unprofitable against reputational grim if and only if $\delta f \ge 1$, that is $f \ge 1/\delta$; reputational grim is then a subgame-perfect equilibrium when also $\delta \ge 1/2$, the condition that deters deviation without whitewashing.
-- **Pay your dues.** Without fees, the pay-your-dues strategy (play $C$ against a veteran who has never deviated from it and $D$ against any other veteran; play $D$ against a newcomer unless oneself a newcomer, in which case play $C$) yields a subgame-perfect equilibrium in which every player's average discounted payoff is $1$. An encounter between a veteran and a newcomer yields total payoff $2 - 1 = 1$ instead of the $2$ of mutual cooperation, so the possibility of whitewashing imposes a social cost.
+- **Pay your dues.** Without fees, the pay-your-dues strategy (play $C$ against a veteran who has never deviated from it and $D$ against any other veteran; play $D$ against a newcomer unless oneself a newcomer, in which case play $C$) yields a subgame-perfect equilibrium. An encounter between a veteran and a newcomer yields total payoff $2 - 1 = 1$ instead of the $2$ of mutual cooperation, so the possibility of whitewashing imposes a social cost.
 
 ## Proof sketch
 

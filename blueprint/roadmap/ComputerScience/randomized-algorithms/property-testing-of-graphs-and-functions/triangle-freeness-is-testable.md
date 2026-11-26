@@ -10,10 +10,6 @@ Each triangle is hit by $6$ of the $n^3$ ordered triples. The removal lemma, pro
 
 - [Property testing in the dense graph model](dense-graph-property-testing-model.md)
 
-## Proof depends on
-
-- [Polynomial triangle removal in $\mathbb{F}_2^n$](../../../Combinatorics/additive-combinatorics/progressions-dense-sets/polynomial-triangle-removal-in-vector-spaces/polynomial-triangle-removal.md)
-
 ## Sources
 
 - N. Alon, R. A. Duke, H. Lefmann, V. Rödl and R. Yuster, "The Algorithmic Aspects of the Regularity Lemma", Journal of Algorithms 16(1), 1994.

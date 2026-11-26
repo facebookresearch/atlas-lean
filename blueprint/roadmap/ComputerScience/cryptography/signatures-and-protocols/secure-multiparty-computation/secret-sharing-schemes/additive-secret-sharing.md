@@ -1,6 +1,6 @@
 # Additive $n$-out-of-$n$ secret sharing
 
-Over an abelian group $G$, share $z$ among $n$ parties by drawing $\sigma_1, \dots, \sigma_{n-1}$ and setting $\sigma_n = z - \sum_{i<n}\sigma_i$. The full coalition reconstructs $z = \sum_i \sigma_i$, and every proper coalition's shares are uniform and independent of $z$ under every translation-invariant distribution of $(\sigma_1, \dots, \sigma_{n-1})$, so this is a perfectly private scheme for the all-party access structure. For infinite $G$ with $n \ge 2$ no translation-invariant probability distribution exists, so the scheme needs a finite group.
+Over an abelian group $G$, share $z$ among $n$ parties by drawing $\sigma_1, \dots, \sigma_{n-1}$ and setting $\sigma_n = z - \sum_{i<n}\sigma_i$. The full coalition reconstructs $z = \sum_i \sigma_i$, and every proper coalition's shares are uniform and independent of $z$ under every translation-invariant distribution of $(\sigma_1, \dots, \sigma_{n-1})$, so this is a perfectly private scheme for the all-party access structure. For infinite $G$ with $n \ge 2$ no translation-invariant probability mass function (discrete distribution) on $G$ exists, so with discrete randomness the scheme needs a finite group.
 
 ## Proof sketch
 

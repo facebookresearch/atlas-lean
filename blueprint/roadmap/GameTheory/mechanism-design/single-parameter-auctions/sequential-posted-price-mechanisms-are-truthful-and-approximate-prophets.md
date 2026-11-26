@@ -4,7 +4,7 @@ A sequential posted-price mechanism offers bidders in a fixed order take-it-or-l
 
 ## Proof sketch
 
-Each bidder faces a price independent of its own report, which gives truthfulness. The welfare bounds are prophet inequalities: with threshold $\tau$, welfare is at least $\tau \Pr[\max \ge \tau] + \Pr[\text{nobody before}] \mathbb{E}[(v_i - \tau)^+]$, and the stated choices of $\tau$ make this at least half the expected maximum. Revenue follows by applying the argument to virtual values.
+Each bidder faces a price independent of its own report, which gives truthfulness. The welfare bounds are prophet inequalities: with threshold $\tau$, welfare is at least $\tau \Pr[\max \ge \tau] + \sum_i \Pr[\text{nobody before } i \text{ accepts}]\, \mathbb{E}[(v_i - \tau)^+]$, and the stated choices of $\tau$ make this at least half the expected maximum. Revenue follows by applying the argument to virtual values.
 
 ## Depends on
 

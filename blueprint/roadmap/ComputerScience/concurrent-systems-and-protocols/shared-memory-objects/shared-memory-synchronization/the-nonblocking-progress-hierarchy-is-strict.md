@@ -1,6 +1,6 @@
 # The nonblocking progress hierarchy is strict
 
-For asynchronous shared-memory implementations, wait-freedom implies lock-freedom, which implies obstruction-freedom. Implementations in which every operation changes the shared state a bounded number of times are lock-free. The inclusions are strict: an atomic fetch-and-increment counter is wait-free, while a compare-and-swap retry-loop counter is lock-free but not wait-free (a process can starve forever while others succeed), and Treiber's stack is lock-free.
+For asynchronous shared-memory implementations, wait-freedom implies lock-freedom, which implies obstruction-freedom. The inclusions are strict: an atomic fetch-and-increment counter is wait-free, while a compare-and-swap retry-loop counter is lock-free but not wait-free (a process can starve forever while others succeed), and Treiber's stack is lock-free.
 
 ## Proof sketch
 

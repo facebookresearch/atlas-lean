@@ -1,6 +1,6 @@
 # Completeness and soundness of the masked 3SAT protocol
 
-In the three-copy masked 3SAT protocol: (i) if $w$ satisfies $f(a)$, the honest prover makes the verifier accept with probability $1$; (ii) if $f(a)$ is unsatisfiable and $3m + 1 \le \ell(m)$ for all $m$, then no prover, even computationally unbounded and stateful, makes the verifier accept with probability greater than $1 - 1/(3|\varphi|)$, where $|\varphi|$ is the number of clauses (statistical binding of the PRG commitments holds except with probability $2^{-m}$). Sequentially repeating the protocol $k$ times multiplies the soundness bound: if no stateful prover makes one execution accept with probability more than $c$, then no prover makes all $k$ sequential executions accept with probability more than $c^k$.
+In the three-copy masked 3SAT protocol: (i) if $w$ satisfies $f(a)$, the honest prover makes the verifier accept with probability $1$; (ii) if $f(a)$ is unsatisfiable and $3m + 1 \le \ell(m)$ for all $m$, then no prover, even computationally unbounded and stateful, makes the verifier accept with probability greater than $1 - 1/(3|\varphi|) + 2^{-m}$, where $|\varphi|$ is the number of clauses and $2^{-m}$ bounds the probability that the verifier's first message makes the PRG commitments non-binding. Sequentially repeating the protocol $k$ times multiplies the soundness bound: if no stateful prover makes one execution accept with probability more than $c$, then no prover makes all $k$ sequential executions accept with probability more than $c^k$.
 
 ## Proof sketch
 

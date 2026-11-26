@@ -4,7 +4,7 @@ If $s$ is a pure Nash equilibrium of the local connection game with $\alpha \ge 
 
 ## Proof sketch
 
-Distance costs are at most $d$ times the lower bound $2n(n-1)$. Bridge edges number at most $n-1$ and cost at most $\alpha(n-1)$. A non-bridge edge bought by $u$ is critical for a set of targets whose distances would grow without it; these sets are disjoint across $u$'s edges and the equilibrium condition bounds their total price by $2d(n-1)$.
+Distance costs are at most $d\, n(n-1)$, and $n(n-1)$ is a lower bound on the distance cost of every connected profile. Bridge edges number at most $n-1$ and cost at most $\alpha(n-1)$. A non-bridge edge bought by $u$ is critical for a set of targets whose distances would grow without it; these sets are disjoint across $u$'s edges and the equilibrium condition bounds their total price by $2d(n-1)$.
 
 ## Depends on
 

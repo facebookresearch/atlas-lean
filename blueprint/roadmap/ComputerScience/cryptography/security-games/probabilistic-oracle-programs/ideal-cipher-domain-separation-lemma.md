@@ -1,6 +1,6 @@
 # Domain separation lemma for the ideal cipher
 
-Let $U, V, X$ be finite sets and $f : U \to V$. In the *coalesced* experiment an adversary makes adaptive forward and inverse queries $(\mu, \pm, z)$ with $\mu \in U$, answered by a family of independent random permutations $(\pi_v)_{v \in V}$ of $X$ via $\pi_{f(\mu)}$, so keys in one fiber of $f$ share a permutation. In the *split* experiment every $\mu \in U$ has its own independent random permutation $\pi'_\mu$. Then the distinguishing advantage between the two experiments is at most the probability, in the split experiment, that two queries with distinct keys $\mu \ne \mu'$ in the same fiber of $f$ produce a common input or a common output value across their partial permutations. For an adversary making $Q$ queries this is at most $\binom{Q}{2}\cdot \frac{2}{|X|}$.
+Let $U, V, X$ be finite sets and $f : U \to V$. In the *coalesced* experiment an adversary makes adaptive forward and inverse queries $(\mu, \pm, z)$ with $\mu \in U$, answered by a family of independent random permutations $(\pi_v)_{v \in V}$ of $X$ via $\pi_{f(\mu)}$, so keys in one fiber of $f$ share a permutation. In the *split* experiment every $\mu \in U$ has its own independent random permutation $\pi'_\mu$. Then the distinguishing advantage between the two experiments is at most the probability, in the split experiment, that two queries with distinct keys $\mu \ne \mu'$ in the same fiber of $f$ produce a common input or a common output value across their partial permutations.
 
 ## Proof sketch
 
@@ -13,7 +13,6 @@ Run both experiments with lazily sampled permutations and flag the first cross-k
 ## Proof depends on
 
 - [Fundamental lemma of game playing for stateful oracle handlers](../identical-until-bad-oracle-handlers/fundamental-lemma-for-stateful-handlers.md)
-- [Triangular (birthday-type) bound for linearly growing bad sets](../identical-until-bad-oracle-handlers/triangular-bad-event-bound.md)
 
 ## Sources
 

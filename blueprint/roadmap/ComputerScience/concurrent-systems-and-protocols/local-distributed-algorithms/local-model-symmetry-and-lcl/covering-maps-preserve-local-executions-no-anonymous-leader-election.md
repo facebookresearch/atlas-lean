@@ -1,6 +1,6 @@
 # Covering maps preserve LOCAL executions; no anonymous leader election
 
-In the synchronous LOCAL model on locally finite graphs, either with broadcast of multisets of messages or with port numbering and local inputs, let $\phi : H \to G$ be a covering map (a surjective graph homomorphism that is a bijection on every closed neighbourhood, respecting ports and inputs). Then for every deterministic anonymous protocol and every round, each vertex of $H$ is in the same state as its image in $G$. Consequently no deterministic anonymous protocol elects a unique leader on a graph that is a nontrivial cover of another network, for example on rings of any size with identical inputs or on bipartite double covers.
+In the synchronous LOCAL model on locally finite graphs, either with broadcast of multisets of messages or with port numbering and local inputs, let $\phi : H \to G$ be a covering map (a surjective graph homomorphism that is a bijection on every closed neighbourhood, respecting ports and inputs). Then for every deterministic anonymous protocol and every round, each vertex of $H$ is in the same state as its image in $G$. Consequently no deterministic anonymous protocol elects a unique leader on a graph that is a nontrivial cover of another network, for example on a ring $C_{km}$ with $k \ge 2$, $m \ge 3$ and identical inputs (a $k$-fold cover of $C_m$), or on bipartite double covers.
 
 ## Proof sketch
 

@@ -1,10 +1,10 @@
 # Pure price of anarchy Ω(log m / log log m) on related machines
 
-For every $k$ there is a load-balancing game on uniformly related machines with $k + 1$ speed tiers (tier $t$ has $2^{k-t} k!/t!$ machines of speed $2^t$), at most $2^{k+1} k!$ machines in total, optimal makespan at most $1$, and a pure Nash equilibrium of makespan at least about $k$. Hence the pure price of anarchy on $m$ related machines is $\Omega(\log m / \log\log m)$, matching the upper bound.
+For every integer $k \ge 1$ there is a load-balancing game on uniformly related machines with $k + 1$ speed tiers (tier $t \in \{0, \dots, k\}$ has $k!/t!$ machines of speed $2^t$, so $m = \sum_{t=0}^{k} k!/t! < e \cdot k!$ machines in total) and, for each $t \in \{1, \dots, k\}$, $k!/(t-1)!$ jobs of weight $2^t$, whose optimal makespan is at most $2$ and which has a pure Nash equilibrium of makespan exactly $k$. Hence the pure price of anarchy on $m$ related machines is $\Omega(\log m / \log\log m)$, matching the upper bound.
 
 ## Proof sketch
 
-In the bad equilibrium the jobs of weight $2^t$ sit one tier higher than in the optimum, stacking load $k - t$ on tier $t$; the equilibrium inequality is checked tier by tier, and $k \approx \log m / \log\log m$.
+In the optimum each job of weight $2^t$ has its own machine of tier $t - 1$, a load of $2$. In the bad equilibrium each machine of tier $t$ holds $t$ jobs of weight $2^t$, a load of $t$, so the single machine of tier $k$ has load $k$. A job on tier $t$ moving to a machine of tier $j$ would see load $j + 2^{t-j} > t$ if $j < t$, at least $j + 1 > t$ if $j > t$ and $t + 1$ if $j = t$, so no job gains. The price of anarchy is at least $k/2$, and $m < e \cdot k!$ gives $k = \Omega(\log m / \log\log m)$.
 
 ## Depends on
 

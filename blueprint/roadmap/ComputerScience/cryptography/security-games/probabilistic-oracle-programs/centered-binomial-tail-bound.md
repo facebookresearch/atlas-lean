@@ -12,10 +12,6 @@ If $|X| \ge B$ then one of the two counts deviates from its mean $\eta/2$ by at 
 
 - [Hoeffding's inequality for averages of bounded variables](../../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-avg-sub-ge-le.md)
 
-## Proof depends on
-
-- [Hoeffding's inequality for averages of bounded variables](../../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-avg-sub-ge-le.md)
-
 ## Sources
 
 - C. Peikert, "A Decade of Lattice Cryptography", Foundations and Trends in Theoretical Computer Science 10(4), 2016.

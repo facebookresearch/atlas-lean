@@ -6,7 +6,7 @@ $$
 \|\varepsilon'\|_\infty \le \tfrac{p}{q}\|\varepsilon\|_\infty + \tfrac12(1 + \|\mathbf{s}\|_1) + \Bigl|\tfrac{p}{q}\lfloor q/2 \rfloor - \lfloor p/2 \rfloor\Bigr|,
 $$
 
-and if this bound $B'$ satisfies the decoding margin $4B' + 2 < p$, decryption at modulus $p$ returns $m$; if both moduli satisfy their margins, switching preserves the decryption result. For honestly generated ciphertexts whose secrets and errors are bounded componentwise, decryption after switching fails only if one of the $2k + 1$ independently sampled noise polynomials exceeds the good radius, and with centered binomial noise whose rank and degree grow polynomially and moduli chosen accordingly, the failure probability is negligible.
+and if this bound $B'$ satisfies the decoding margin $4B' + 2 < p$, decryption at modulus $p$ returns $m$; if both moduli satisfy their margins, switching preserves the decryption result.
 
 ## Proof sketch
 

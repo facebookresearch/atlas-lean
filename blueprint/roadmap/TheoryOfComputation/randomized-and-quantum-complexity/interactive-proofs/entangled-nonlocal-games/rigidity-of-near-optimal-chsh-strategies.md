@@ -4,7 +4,7 @@ Let a tensor strategy for the CHSH game use $\pm 1$-valued observables $A_0, A_1
 
 $$\big\| (A_0 A_1 + A_1 A_0) \otimes 1 \cdot \psi \big\|^2 \le C \sqrt{\varepsilon}$$
 
-for an absolute constant $C$, and symmetrically for Bob. Consequently every near-optimal strategy is close, up to local isometries, to the canonical strategy on an EPR pair (self-testing of the singlet).
+for an absolute constant $C$, and symmetrically for Bob.
 
 ## Proof sketch
 

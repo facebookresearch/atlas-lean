@@ -1,6 +1,6 @@
 # Replacing the public-key distribution in chosen-message security
 
-Let two public-key distributions $\mathcal{P}_0, \mathcal{P}_1$ (for example honest keys and lossy or simulated keys) be computationally indistinguishable, and let decryption not be needed by the adversary (CPA, or CCA where the decryption oracle can be simulated from the key-generation coins). Then the CPA advantage of any adversary against keys from $\mathcal{P}_0$ and from $\mathcal{P}_1$ differ by at most twice the key-distinguishing advantage of a reduction that runs the adversary on the challenge key and encrypts the challenge itself.
+Let two public-key distributions $\mathcal{P}_0, \mathcal{P}_1$ (for example honest keys and lossy or simulated keys) be computationally indistinguishable. Then the CPA advantage of any adversary against keys from $\mathcal{P}_0$ and from $\mathcal{P}_1$ differ by at most twice the key-distinguishing advantage of a reduction that runs the adversary on the challenge key and encrypts the challenge itself.
 
 ## Proof sketch
 

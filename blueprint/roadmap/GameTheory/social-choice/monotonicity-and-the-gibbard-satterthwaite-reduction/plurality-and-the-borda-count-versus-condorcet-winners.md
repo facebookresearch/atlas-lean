@@ -1,6 +1,6 @@
 # Plurality and the Borda count versus Condorcet winners
 
-A Condorcet winner, an alternative beating every other in pairwise majority, is unique when it exists, and with at least three voters and three alternatives there are profiles with no Condorcet winner. The plurality rule is onto, non-dictatorial, not strategy-proof, and not Condorcet consistent (it can fail to select an existing Condorcet winner). The Borda count is Pareto and non-dictatorial but violates independence of irrelevant alternatives.
+A Condorcet winner, an alternative beating every other in pairwise majority, is unique when it exists, and with at least three voters and three alternatives there are profiles with no Condorcet winner. For at least three voters and three alternatives, the plurality rule (ties broken by a fixed order of the alternatives) is onto, non-dictatorial, not strategy-proof, and not Condorcet consistent (it can fail to select an existing Condorcet winner). For at least two voters and three alternatives, the Borda count is Pareto and non-dictatorial but violates independence of irrelevant alternatives.
 
 ## Proof sketch
 

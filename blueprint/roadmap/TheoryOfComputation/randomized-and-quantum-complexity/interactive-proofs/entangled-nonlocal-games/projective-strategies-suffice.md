@@ -4,7 +4,7 @@ For every finite-dimensional entangled strategy with POVM measurements there is 
 
 ## Proof sketch
 
-Naimark's theorem dilates each POVM $\{P_a\}$ on $H$ to a projective measurement $\{\Pi_a\}$ on $H \otimes \mathbb{C}^A$ with $P_a = V^* \Pi_a V$ for the isometry $V\phi = \sum_a \sqrt{P_a}\phi \otimes e_a$. Dilating each party locally and embedding the state by $V_A \otimes V_B$ preserves all joint probabilities.
+Naimark's theorem dilates each POVM $\{P_a\}$ on $H$ to a projective measurement $\{\Pi_a\}$ on $H \otimes \mathbb{C}^A$ with $P_a = V^* \Pi_a V$ for the isometry $V\phi = \sum_a \sqrt{P_a}\phi \otimes e_a$. Since $V = V_x$ depends on the question, extend each $V_x$ to a unitary $U_x$ on $H \otimes \mathbb{C}^A$ with $U_x(\phi \otimes e_{a_0}) = V_x \phi$, set $\Pi^x_a = U_x^* (1 \otimes |e_a\rangle\langle e_a|) U_x$, and append the fixed ancilla $e_{a_0}$ on each side; doing this locally for both parties preserves all joint probabilities.
 
 ## Depends on
 

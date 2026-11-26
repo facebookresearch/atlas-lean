@@ -1,10 +1,10 @@
 # BLS signatures are strongly unforgeable in the random oracle model
 
-If the co-CDH problem (given $g_1^{\alpha}, g_2^{\alpha}$ and $h \in G_1$, compute $h^{\alpha}$) is hard, then BLS signatures are EUF-CMA secure in the random oracle model, and since signatures are unique also SUF-CMA secure. A forger making $Q_H$ hash and $Q_S$ signing queries yields a co-CDH solver with advantage at least about $\varepsilon/(e(Q_S+1))$ using Coron's biased programming, or $\varepsilon/Q_H$ by guessing the forgery's hash query.
+If the co-CDH problem (given $g_1^{\alpha}, g_2^{\alpha}$ and $h \in G_1$, compute $h^{\alpha}$) is hard, then BLS signatures are EUF-CMA secure in the random oracle model, and since signatures are unique also SUF-CMA secure. A forger with success probability $\varepsilon$ that makes $Q_H$ hash and $Q_S$ signing queries, and queries $H$ on the message it forges, yields a co-CDH solver with advantage at least $\varepsilon/(e(Q_S+1))$ using Coron's biased programming with probability $1/(Q_S+1)$, since $(1 - 1/(Q_S+1))^{Q_S} \ge 1/e$, or $\varepsilon/Q_H$ by guessing the forgery's hash query.
 
 ## Proof sketch
 
-Program $H(m) = g_1^{r}$ on most queries, so that signatures $u_1^{r}$ can be produced from $g_1^\alpha$, and $H(m) = h\,g_1^{r}$ on the guessed forgery query, so that a forgery yields $h^\alpha$. Uniqueness of signatures (the verification equation determines $\sigma$) gives strong unforgeability.
+Program $H(m) = g_1^{r}$ on most queries, so that signatures $(g_1^{\alpha})^{r}$ can be produced from $g_1^\alpha$, and $H(m) = h\,g_1^{r}$ on the guessed forgery query, so that a forgery yields $h^\alpha$. Uniqueness of signatures (the verification equation determines $\sigma$) gives strong unforgeability.
 
 ## Depends on
 

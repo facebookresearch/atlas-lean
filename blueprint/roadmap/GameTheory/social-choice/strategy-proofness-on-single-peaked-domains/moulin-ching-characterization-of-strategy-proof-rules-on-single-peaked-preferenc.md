@@ -1,6 +1,6 @@
 # Moulin–Ching characterization of strategy-proof rules on single-peaked preferences
 
-A rule on ordinal single-peaked preferences over $[a, b]$ with finitely many agents is strategy-proof and onto if and only if it is a generalized median voter scheme applied to the reported peaks, i.e. of the form $\max_S \min(\beta_S, \min_{i \in S} p_i)$ for monotone coalition parameters $\beta_S$. Every such rule is group strategy-proof in the strong sense.
+A rule on ordinal single-peaked preferences over $[a, b]$ with finitely many agents is strategy-proof and onto if and only if it is a generalized median voter scheme applied to the reported peaks, i.e. of the form $\max_{S \subseteq N} \min(\beta_S, \min_{i \in S} p_i)$, with the convention $\min_{i \in \emptyset} p_i = b$, for coalition parameters $\beta_S \in [a, b]$ that are monotone ($\beta_S \le \beta_T$ whenever $S \subseteq T$) and satisfy $\beta_\emptyset = a$ and $\beta_N = b$. Every such rule is group strategy-proof in the strong sense.
 
 ## Proof sketch
 

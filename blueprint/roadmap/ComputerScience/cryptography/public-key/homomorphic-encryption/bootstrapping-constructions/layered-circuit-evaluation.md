@@ -1,6 +1,6 @@
 # Homomorphic evaluation of Boolean circuits layer by layer along a key chain
 
-Let $\mathcal{E}$ be bootstrappable for the identity and NAND gates. Compile a Boolean circuit $C$ of depth $d$ into $2d$ consecutive layers of NAND gates and copy (identity) gates by De Morgan's laws. Given a valid acyclic key chain of length at least $2d$, evaluate layer $i$ by applying refresh or NAND refresh with link $\overline{sk_i}$ to the ciphertexts of layer $i-1$, and encrypt constants under the current public key. Then every output wire decrypts under $sk_{2d}$ to the corresponding output of $C$ on the plaintext inputs, every ciphertext has the base width, the order and multiplicities of the selected output wires are preserved, and unused gates do not increase the number of key transitions.
+Let $\mathcal{E}$ be bootstrappable for the identity and NAND gates. Compile a Boolean circuit $C$ of depth $d$ into $2d$ consecutive layers of NAND gates and copy (identity) gates by De Morgan's laws. Given a valid acyclic key chain of length at least $2d$, evaluate layer $i$ by applying refresh or NAND refresh with link $\overline{sk_{i-1}}$ to the ciphertexts of layer $i-1$, and encrypt constants under the current public key. Then every output wire decrypts under $sk_{2d}$ to the corresponding output of $C$ on the plaintext inputs, every ciphertext has the base width, the order and multiplicities of the selected output wires are preserved, and unused gates do not increase the number of key transitions.
 
 ## Proof sketch
 

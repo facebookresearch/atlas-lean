@@ -1,6 +1,6 @@
 # Correct decryption of GSW ciphertexts with small noise
 
-If a GSW ciphertext encrypts $\mu$ with error $\varepsilon$ satisfying $4\|\varepsilon\|_\infty < q$, decryption returns $\mu$: the selected row, recomposed and paired with the unexpanded secret $s$, equals $\mu\, 2^{w-1} + \varepsilon_j \bmod q$, and its top digit decodes to $\mu$. At width $w = 1$ decryption reads the single bit of the phase.
+If a GSW ciphertext encrypts $\mu$ with error $\varepsilon$ satisfying $4\|\varepsilon\|_\infty < q$, decryption returns $\mu$: the selected row, recomposed and paired with the unexpanded secret $s$, equals $\mu\, 2^{w-1} + \varepsilon_j \bmod q$, and rounding it modulo $q$ to the nearer of $0$ and $2^{w-1}$ (the top bit of the value plus $2^{w-2}$) recovers $\mu$. At width $w = 1$ decryption reads the single bit of the phase.
 
 ## Proof sketch
 

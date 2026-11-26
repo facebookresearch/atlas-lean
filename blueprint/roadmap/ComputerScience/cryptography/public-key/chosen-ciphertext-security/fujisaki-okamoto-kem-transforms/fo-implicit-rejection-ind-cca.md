@@ -1,6 +1,6 @@
 # IND-CCA security of $\mathrm{FO}^{\not\perp}$ in the random oracle model
 
-Let $\mathrm{PKE}$ be $\delta$-correct with a finite message space $M$ (no spreadness is required). For every IND-CCA adversary $\mathcal{A}$ against the implicit-rejection KEM $\mathrm{FO}^{\not\perp}[\mathrm{PKE}, G, H]$ making at most $q_G$, $q_H$ random-oracle queries and any number of decapsulation queries, there is an IND-CPA adversary $\mathcal{B}$ against $\mathrm{PKE}$ with about the same running time such that
+Let $\mathrm{PKE}$ be $\delta$-correct with a finite message space $M$ (no spreadness is required). For every IND-CCA adversary $\mathcal{A}$ against the implicit-rejection KEM $\mathrm{FO}^{\not\perp}[\mathrm{PKE}, G, H]$ making at most $q_G$, $q_H$ random-oracle queries and any number of decapsulation queries, there is an IND-CPA adversary $\mathcal{B}$ against $\mathrm{PKE}$ whose running time exceeds that of $\mathcal{A}$ by at most a polynomial in its numbers of queries and the running times of the algorithms of $\mathrm{PKE}$ such that
 
 $$
 \mathrm{Adv}^{\mathrm{ind\text{-}cca}}_{\mathrm{FO}^{\not\perp}}(\mathcal{A}) \le 2 (q_G + q_H)\delta + \frac{2 (q_G + q_H) + 1}{|M|} + 3\,\mathrm{Adv}^{\mathrm{ind\text{-}cpa}}_{\mathrm{PKE}}(\mathcal{B})

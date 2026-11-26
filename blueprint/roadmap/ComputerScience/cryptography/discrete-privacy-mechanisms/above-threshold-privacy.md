@@ -4,7 +4,7 @@ Let the queries have sensitivity $\Delta$. If shifting the threshold noise by $\
 
 ## Proof sketch
 
-Fix the query noises of the rounds before the stopping index; the output pattern $\bot^{k-1}\top$ occurs on $x$ for threshold $\hat T$ exactly when it occurs on the neighbour $y$ for threshold $\hat T + \Delta$ and the last query noise shifted by $2\Delta$. A change of variables in these two noises costs $e^{\varepsilon_1}$ and $e^{\varepsilon_2}$.
+Fix the query noises of the rounds before the stopping index; the output pattern $\bot^{k-1}\top$ occurs on $x$ for threshold $\hat T$ only if it occurs on the neighbour $y$ for threshold $\hat T + \Delta$ and the last query noise shifted by $2\Delta$. A change of variables in these two noises costs $e^{\varepsilon_1}$ and $e^{\varepsilon_2}$.
 
 ## Depends on
 

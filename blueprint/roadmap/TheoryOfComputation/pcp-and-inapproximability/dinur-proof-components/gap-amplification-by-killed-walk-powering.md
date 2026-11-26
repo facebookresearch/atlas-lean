@@ -1,6 +1,6 @@
 # Gap amplification by killed-walk powering
 
-For every $d$ and $\lambda < d$ there is $c > 0$ such that for every $d$-regular constraint graph $G$ with self-loops and second eigenvalue at most $\lambda$, and every $t \ge 1$, the killed-walk power satisfies: $G^t$ is satisfiable iff $G$ is, its size is $|V(G)| \cdot d^{O(t)}$, and
+For every $d$, every $\lambda < d$ and every finite alphabet $\Sigma$ there is $c = c(d, \lambda, |\Sigma|) > 0$ such that for every $d$-regular constraint graph $G$ over $\Sigma$ with self-loops and second eigenvalue at most $\lambda$, and every $t \ge 1$, the killed-walk power satisfies: $G^t$ is satisfiable iff $G$ is, its size is $|V(G)| \cdot d^{O(t)}$, and
 
 $$\mathrm{UNSAT}(G^t) \ge c \sqrt{t} \cdot \min\Big(\mathrm{UNSAT}(G), \frac{1}{t}\Big).$$
 

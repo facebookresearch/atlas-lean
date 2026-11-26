@@ -1,6 +1,6 @@
 # Lundelius–Lynch skew bound in the lockstep drift-free model
 
-Consider $n$ processes with drift-free hardware clocks $H_p(t) = t + c_p$ for unknown offsets and message delays in $[d_{\min}, d_{\max}]$, running a deterministic full-information protocol for a fixed number of lockstep rounds and then adjusting their clocks. The optimal worst-case skew after adjustment is exactly $\bigl(1 - \frac1n\bigr)(d_{\max} - d_{\min})$: averaging the offset estimates achieves it, and time-shift indistinguishability shows no protocol does better. With up to $t$ Byzantine clocks and $n > 3t$, using the trimmed midpoint of offset estimates instead of the average bounds the honest skew by a contracting recurrence.
+Consider $n$ processes with drift-free hardware clocks $H_p(t) = t + c_p$ for unknown offsets and message delays in $[d_{\min}, d_{\max}]$, running a deterministic full-information protocol for a fixed number of lockstep rounds and then adjusting their clocks. The optimal worst-case skew after adjustment is exactly $\bigl(1 - \frac1n\bigr)(d_{\max} - d_{\min})$: averaging the offset estimates achieves it, and time-shift indistinguishability shows no protocol does better.
 
 ## Proof sketch
 
@@ -9,10 +9,6 @@ Shifting process $p$'s clock offset by $\delta$ while changing its incoming and 
 ## Depends on
 
 - [Timed message-passing runs](../../distributed-execution-models/timed-message-passing-runs.md)
-
-## Proof depends on
-
-- [Validity and contraction of the trimmed midpoint](validity-and-contraction-of-the-trimmed-midpoint.md)
 
 ## Sources
 

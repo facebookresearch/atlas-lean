@@ -1,6 +1,6 @@
 # Byzantine consensus under partial synchrony requires and suffices with n > 3t
 
-In the basic round model of partial synchrony (arbitrary message loss before an unknown global stabilization round, reliable delivery among correct processes afterwards), deterministic unauthenticated Byzantine consensus with agreement, strong validity on correct inputs and termination is solvable if and only if $n > 3t$ (or $n \le 1$). For $n > 3t$ a rotating-coordinator protocol with view locking and quorums of size $n - t$ is safe in every run, regardless of synchrony, and terminates within a bounded number of views after stabilization.
+In the basic round model of partial synchrony (arbitrary message loss before an unknown global stabilization round, reliable delivery among correct processes afterwards), deterministic unauthenticated Byzantine consensus with agreement, strong validity on correct inputs and termination is solvable if and only if $n > 3t$ (or $n \le 1$). For $n > 3t$ a rotating-coordinator protocol with view locking and quorums of size $n - t$ is safe in every run, regardless of synchrony, and every correct process decides by the end of the first view that starts after stabilization and has a correct coordinator, hence within $t + 1$ views after stabilization.
 
 ## Proof sketch
 

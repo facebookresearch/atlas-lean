@@ -1,6 +1,6 @@
 # Local neighbourhood equivalence preserves correlated equilibria
 
-Let $M$ be a graphical game on $G$ and let $\sigma, \tau$ be locally neighbourhood equivalent. Then $\sigma$ is a correlated equilibrium of $M$ if and only if $\tau$ is. Consequently every correlated equilibrium of a graphical game has a locally equivalent representative whose description size is governed by the neighbourhood marginals.
+Let $M$ be a graphical game on $G$ and let $\sigma, \tau$ be locally neighbourhood equivalent. Then $\sigma$ is a correlated equilibrium of $M$ if and only if $\tau$ is.
 
 ## Proof sketch
 

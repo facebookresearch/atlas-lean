@@ -6,7 +6,7 @@ $$
 \frac{\varepsilon^2}{Q} - \frac{\varepsilon}{|C|}
 $$
 
-$\mathcal{B}$ obtains a nonzero vector $\mathbf{z}$ with $[\,I_d \mid \mathbf{A} \mid \mathbf{t}\,]\, \mathbf{z} = 0$ and coefficients bounded by $2\beta$, i.e. a Module-SIS solution for the extended matrix. With a digest oracle followed by a deterministic challenge expansion, an extra additive term accounts for distinct digests expanding to the same challenge.
+$\mathcal{B}$ obtains, for the matrix $\mathbf{A} \in R_q^{d \times k}$, vector $\mathbf{t} \in R_q^d$ and bound $\beta$ of the SelfTargetMSIS instance, a nonzero vector $\mathbf{z}$ with $[\,I_d \mid \mathbf{A} \mid \mathbf{t}\,]\, \mathbf{z} = 0$ and coefficients bounded by $2\beta$, i.e. a Module-SIS solution for the extended matrix.
 
 ## Proof sketch
 

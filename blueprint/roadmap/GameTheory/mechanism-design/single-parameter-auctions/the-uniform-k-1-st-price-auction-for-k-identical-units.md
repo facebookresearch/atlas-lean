@@ -4,7 +4,7 @@ In a multi-unit auction of $k$ identical items to unit-demand bidders, awarding 
 
 ## Proof sketch
 
-A winner's critical bid is the $(k+1)$-st highest bid among the others' bids together with the threshold; the externality of a winner on the others is exactly displacing the $(k+1)$-st bidder.
+A winner's critical bid is the $k$-th highest of the others' bids ($0$ if there are fewer than $k$ others), which is the $(k+1)$-st highest bid overall; the externality of a winner on the others is exactly displacing the $(k+1)$-st bidder.
 
 ## Depends on
 

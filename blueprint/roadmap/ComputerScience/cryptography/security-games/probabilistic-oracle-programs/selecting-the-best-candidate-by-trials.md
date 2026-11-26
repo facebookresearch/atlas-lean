@@ -14,10 +14,6 @@ On the event that all $m$ estimates are $\varepsilon$-accurate (union bound over
 
 - [Hoeffding's inequality for averages of bounded variables](../../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-avg-sub-ge-le.md)
 
-## Proof depends on
-
-- [Hoeffding's inequality for averages of bounded variables](../../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-avg-sub-ge-le.md)
-
 ## Sources
 
 - O. Goldreich, "Computational Complexity: A Conceptual Perspective", Cambridge University Press, 2008.

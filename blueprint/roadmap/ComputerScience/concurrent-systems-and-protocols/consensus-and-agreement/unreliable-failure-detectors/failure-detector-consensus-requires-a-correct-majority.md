@@ -1,6 +1,6 @@
 # Failure-detector consensus requires a correct majority
 
-In the asynchronous round model augmented with a failure detector, no protocol solves consensus with uniform agreement and validity tolerating $t$ crashes when $n \le 2t$, even with an eventually perfect failure detector. For $n > 2t$, the rotating-coordinator protocol with $\Diamond\mathcal S$ (or $\Diamond \mathcal W$) is safe in every run and terminates.
+In the asynchronous round model augmented with a failure detector, no protocol solves consensus with uniform agreement and validity tolerating $t$ crashes when $2 \le n \le 2t$, even with an eventually perfect failure detector. For $n > 2t$, the rotating-coordinator protocol with $\Diamond\mathcal S$ (or $\Diamond \mathcal W$) is safe in every run and terminates.
 
 ## Proof sketch
 

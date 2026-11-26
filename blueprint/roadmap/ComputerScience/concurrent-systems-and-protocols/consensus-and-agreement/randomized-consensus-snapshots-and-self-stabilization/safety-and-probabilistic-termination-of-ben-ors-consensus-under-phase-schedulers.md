@@ -1,6 +1,6 @@
 # Safety and probabilistic termination of Ben-Or's consensus under phase schedulers
 
-In Ben-Or's binary consensus protocol with $n > 2t$ processes, quorums of size $n - t$ and crash faults, every run satisfies agreement and validity deterministically, and once all correct processes hold the same estimate they decide it within one phase. Against an adversary that fixes each phase's quorums from the state at the phase boundary before coins are flipped, the probability that not all processes have decided after $k + 1$ phases is at most $(1 - 2^{-n})^k$ with independent local coins and at most $2^{-k}$ with a common coin; in both cases termination occurs with probability $1$.
+In Ben-Or's binary consensus protocol with $n > 2t$ processes, quorums of size $n - t$ and crash faults, every run satisfies agreement and validity deterministically, and once all correct processes hold the same estimate they decide it within one phase. Against an adversary that fixes each phase's quorums from the state at the phase boundary before coins are flipped, the probability that not all correct processes have decided after $k + 1$ phases is at most $(1 - 2^{-n})^k$ with independent local coins and at most $2^{-k}$ with a common coin; in both cases termination occurs with probability $1$.
 
 ## Proof sketch
 

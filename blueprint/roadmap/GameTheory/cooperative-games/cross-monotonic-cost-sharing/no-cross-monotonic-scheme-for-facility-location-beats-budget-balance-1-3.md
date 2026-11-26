@@ -4,7 +4,7 @@ For every $\gamma > 1/3$ there is a metric facility location game that admits no
 
 ## Proof sketch
 
-The optimal coalition cost of the instance is $3m + k + 1$; a probabilistic averaging over random subcoalitions combined with cross-monotonicity bounds the total share recoverable from the grand coalition by roughly a third of this cost.
+A probabilistic averaging over random subcoalitions combined with cross-monotonicity bounds the total share recoverable from the grand coalition by $1/3 + o(1)$ times its optimal cost as $m$ and the numbers of agents grow.
 
 ## Depends on
 

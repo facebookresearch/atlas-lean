@@ -4,7 +4,7 @@ Let $d \ge 1$ and let $\varphi_d > 1$ be the unique root of $\varphi^{d+1} = (1 
 
 ## Proof sketch
 
-For natural numbers $y, z$ prove the one-variable inequality $y (z+1)^j \le \lambda_d y^{j+1} + \mu_d z^{j+1}$ for every $j \le d$ by optimizing the ratio, with the extremal ratio attained where $\varphi^{d+1} = (1+\varphi)^d$. Summing over resources gives smoothness, and the robust price-of-anarchy theorem gives the bounds.
+For reals $y, z \ge 0$ prove $y (z+y)^j \le \lambda_d y^{j+1} + \mu_d z^{j+1}$ for every $j \le d$ by optimizing the ratio, with the extremal ratio attained where $\varphi^{d+1} = (1+\varphi)^d$; since $(z+1)^j \le (z+y)^j$ for natural $y \ge 1$, this gives $y (z+1)^j \le \lambda_d y^{j+1} + \mu_d z^{j+1}$ for natural $y, z$. Summing over resources gives smoothness, and the robust price-of-anarchy theorem gives the bounds.
 
 ## Depends on
 

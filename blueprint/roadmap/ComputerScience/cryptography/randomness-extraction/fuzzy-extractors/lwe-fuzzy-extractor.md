@@ -1,6 +1,6 @@
 # A computational fuzzy extractor from LWE (decode-then-extract)
 
-Over the Hamming space $\mathbb{Z}_q^m$, let $\mathrm{Gen}(w)$ sample a uniform matrix $A \in \mathbb{Z}_q^{m \times (k+l)}$ and secret $s$, publish $p = (A, As + w)$ and output the first $k$ coordinates of $s$ as the key; $\mathrm{Rep}(w', p)$ subtracts $w'$ and decodes the resulting LWE sample with error $w - w'$ of Hamming weight at most $t$ (for example by trying random subsets of rows). If decision LWE in dimension $l$ holds for error distributions dominated by the sources, the scheme is a computationally secure fuzzy extractor: $(s_{1..k}, p)$ is indistinguishable from $(U, p)$.
+Over the Hamming space $\mathbb{Z}_q^m$, let $\mathrm{Gen}(w)$ sample a uniform matrix $A \in \mathbb{Z}_q^{m \times (k+l)}$ and secret $s$, publish $p = (A, As + w)$ and output the first $k$ coordinates of $s$ as the key; $\mathrm{Rep}(w', p)$ subtracts $w'$ and decodes the resulting LWE sample with error $w - w'$ of Hamming weight at most $t$ (for example by trying random subsets of rows). If decision LWE in dimension $l$ holds with the source distribution of the reading $w$ as the error distribution, the scheme is a computationally secure fuzzy extractor: $(s_{1..k}, p)$ is indistinguishable from $(U, p)$.
 
 ## Proof sketch
 

@@ -6,7 +6,7 @@ $$
 C = G^{-1}\bigl(\mu\, G^{\mathsf T} + R A\bigr) \in \{0,1\}^{N \times N},
 $$
 
-the bit decomposition of $\mu G^{\mathsf T} + R A$. The defining *approximate eigenvector* relation is $C\, G^{\mathsf T} s = \mu\, G^{\mathsf T} s + R e$. Decryption selects the row of $C$ whose recomposition pairs with $s$ to $2^{w-1}\mu + \text{noise}$ and decodes its top digit. Homomorphic NAND of $C_1, C_2$ is $G^{-1}(G^{\mathsf T} - C_1 C_2 G^{\mathsf T})$, and the noiseless encryption of a constant $\mu$ is $G^{-1}(\mu\, G^{\mathsf T})$.
+the bit decomposition of $\mu G^{\mathsf T} + R A$. The defining *approximate eigenvector* relation is $C\, G^{\mathsf T} s = \mu\, G^{\mathsf T} s + R e$. Decryption selects the row of $C$ whose recomposition pairs with $s$ to $2^{w-1}\mu + \text{noise}$ and decodes it by half-modulus rounding to the nearer of $0$ and $2^{w-1}$. Homomorphic NAND of $C_1, C_2$ is $G^{-1}(G^{\mathsf T} - C_1 C_2 G^{\mathsf T})$, and the noiseless encryption of a constant $\mu$ is $G^{-1}(\mu\, G^{\mathsf T})$.
 
 ## Depends on
 

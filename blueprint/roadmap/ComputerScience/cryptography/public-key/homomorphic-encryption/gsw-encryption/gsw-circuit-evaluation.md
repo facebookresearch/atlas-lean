@@ -1,6 +1,6 @@
 # GSW evaluates Boolean circuits of bounded depth
 
-Compile a Boolean circuit into consecutive NAND layers. For GSW parameters with fresh noise bound $m\beta$, every compiled circuit of NAND depth $L$ with $4 (N+1)^L m\beta < q$ is evaluated correctly on fresh encryptions, constants being encrypted noiselessly and copies forwarded. In particular, with $t = 1 + \lceil \log_2(\lambda + 2) \rceil$, digit width $w = 16384\, t^2$, $N = (n+1)w$, $m = N + 2\lambda$ and depth budget $L = 512\, t$, the modulus $q = 2^w$ leaves a noise margin for every circuit of logarithmic NAND depth at most $L$.
+Compile a Boolean circuit into consecutive NAND layers. For GSW parameters with fresh noise bound $m\beta$, every compiled circuit of NAND depth $L$ with $4 (N+1)^L m\beta < q$ is evaluated correctly on fresh encryptions, constants being encrypted noiselessly and copies forwarded. In particular, with $t = 1 + \lceil \log_2(\lambda + 2) \rceil$, digit width $w = 16384\, t^2$, $N = (n+1)w$, $m = N + 2\lambda$ and depth budget $L = 512\, t$, and for $n \le \lambda$ and $\beta \le \lambda$, the modulus $q = 2^w$ leaves a noise margin for every circuit of logarithmic NAND depth at most $L$.
 
 ## Proof sketch
 

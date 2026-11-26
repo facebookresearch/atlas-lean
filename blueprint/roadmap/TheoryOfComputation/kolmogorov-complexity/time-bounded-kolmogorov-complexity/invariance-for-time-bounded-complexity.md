@@ -1,6 +1,6 @@
 # Invariance theorem for time-bounded complexity
 
-Let $M$ and $N$ be description methods such that $N$ *simulates* $M$: every $M$-program $p$ compiles to an $N$-program of length at most $|p| + c$ with the same output, and if $p$ halts within $t$ steps then the compiled program halts within $\tau(|p|)\, t$ steps, with $\tau$ monotone. Then $C_N(x) \le C_M(x) + c$, and $K^{t}_M(x) \le k$ implies $K^{\tau(k) t}_N(x) \le k + c$. For the universal machine and any multi-tape machine $M$ the overhead is polynomial, so $K^{\mathrm{poly}(t)}_U(x) \le K^t_M(x) + O(1)$ and $Kt_U(x) \le Kt_M(x) + O(\log |x|)$.
+Let $M$ and $N$ be description methods such that $N$ *simulates* $M$: every $M$-program $p$ compiles to an $N$-program of length at most $|p| + c$ with the same output, and if $p$ halts within $t$ steps then the compiled program halts within $\tau(|p|)\, t$ steps, with $\tau$ monotone. Then $C_N(x) \le C_M(x) + c$, and $K^{t}_M(x) \le k$ implies $K^{\tau(k) t}_N(x) \le k + c$. For the universal machine and any multi-tape machine $M$ the overhead is polynomial: there are a polynomial $p$ and a constant $c$ with $K^{p(t)}_U(x) \le K^t_M(x) + c$ for all $x$ and $t$, and $Kt_U(x) \le Kt_M(x) + O(\log |x|)$.
 
 ## Proof sketch
 
