@@ -32822,6 +32822,7 @@
 "FundamentalGroupoid.SigmaSubtype.mapFull": "515378675492d0aa",
 "FundamentalGroupoid.SigmaSubtype.mapFullOfPathConnectedSimplyConnected": "675a1508dfa2834f",
 "FundamentalGroupoid.SigmaSubtype.map_apply": "6f4d0cba6cb2a25c",
+"GaloisRep.exists_intermediateField_isGalois_fixingSubgroup_eq_ker": "a37be49baddbe377",
 "GaloisTheory.not_solvableByRad_of_gal_iso_S5": "6129996b428d2f30",
 "GaloisTheory.not_solvableByRad_of_gal_iso_perm": "01f00e2c8c68c4bf",
 "GaussianInt.gaussianInt_card_repr_prime_pow": "c021aa52d48fbbc3",
