@@ -1744,6 +1744,7 @@
   "CSLibExt/Languages/LambdaCalculus/References/Syntax": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Lambda calculus with references"},
   "CSLibExt/Languages/LambdaCalculus/References/Typing": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "Lambda calculus with references"},
   "CSLibExt/Languages/LambdaCalculus/SystemF": {"to": "ComputerScience/type-systems-and-lambda-calculi", "title": "System F"},
+  "CSLibExt/Languages/LambdaCalculus/ZeroCFA": {"to": "ComputerScience/programming-language-semantics", "title": "0-CFA control-flow analysis"},
   "CSLibExt/Languages/MiniImp/Semantics": {"to": "ComputerScience/programming-language-semantics", "title": "An imperative language with arrays"},
   "CSLibExt/Languages/MiniImp/Syntax": {"to": "ComputerScience/programming-language-semantics", "title": "An imperative language with arrays"},
   "CSLibExt/Languages/MiniImp/VC": {"to": "ComputerScience/program-logics-and-verification", "title": "Hoare logic for an imperative language with arrays"},

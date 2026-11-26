@@ -2,6 +2,7 @@
 
 Operational and denotational semantics of programming languages and correctness of compilation: the IMP language (syntax, big- and small-step, heap semantics, denotational semantics, stack-machine compilation), PCF with adequacy and contextual equivalence, models of the untyped λ-calculus in Scott's graph model, CPS translation and closure conversion.
 
+- [0-CFA control-flow analysis](0-cfa-control-flow-analysis/README.md)
 - [An imperative language with arrays](an-imperative-language-with-arrays/README.md)
 - [Bounded symbolic execution for IMP](bounded-symbolic-execution-for-imp/README.md)
 - [Closure conversion](closure-conversion/README.md)
