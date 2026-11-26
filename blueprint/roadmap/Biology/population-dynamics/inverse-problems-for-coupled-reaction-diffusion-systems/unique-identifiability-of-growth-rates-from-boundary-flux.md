@@ -1,10 +1,12 @@
 # Unique identification of growth-rate coefficients in a coupled population system from average boundary flux
 
 Let $\Omega \subset \mathbb{R}^N$ be a bounded domain with smooth boundary, $T > 0$, $D_T = \Omega \times (0, T]$, $S_T = \partial\Omega \times (0, T]$, and $\Gamma_T = \Lambda \times (0, T]$ for a nonempty open $\Lambda \subset \partial\Omega$ with outward unit normal $\nu$. Fix $\gamma \in (0, 1)$, diffusivities $d_1, d_2 > 0$, constant drift vectors $\alpha, \beta \in \mathbb{R}^N$ and an integer $M \ge 1$. For coefficients $l, v \in C^{\gamma, \gamma/2}(D_T)$ and inputs $a_1, a_2, q_1, q_2 \in C^{\gamma,\gamma/2}(D_T)$ consider the coupled system for two population densities $u, m \ge 0$:
+
 $$\begin{aligned}
 \partial_t u - d_1 \Delta u + \alpha \cdot \nabla u &= l(x,t)\, u + a_1\Big(-u^2 - \sum_{k=1}^{M} u^k m^{M-k+1}\Big) + q_1 && \text{in } D_T,\\
 \partial_t m - d_2 \Delta m + \beta \cdot \nabla m &= v(x,t)\, m + a_2\Big(-m^2 - \sum_{k=1}^{M} u^k m^{M-k+1}\Big) + q_2 && \text{in } D_T,
 \end{aligned}$$
+
 with $u = m = 0$ on $S_T$ and $u(\cdot, 0) = m(\cdot, 0) = 0$ in $\Omega$. For positive $a_i, q_i$ this system has a unique positive solution (Ding, Liu and Zheng 2023, Theorem 3.2). Given nonnegative, nonzero weights $h, g \in C_0^{\gamma,\gamma/2}(\Gamma_T)$, the **average flux measurements** are
 
 $$F^{+}_{l,v}(a_1, a_2, q_1, q_2) = \int_{\Gamma_T} \frac{\partial u}{\partial \nu}\, h \, dx\, dt, \qquad G^{+}_{l,v}(a_1, a_2, q_1, q_2) = \int_{\Gamma_T} \frac{\partial m}{\partial \nu}\, g \, dx\, dt.$$

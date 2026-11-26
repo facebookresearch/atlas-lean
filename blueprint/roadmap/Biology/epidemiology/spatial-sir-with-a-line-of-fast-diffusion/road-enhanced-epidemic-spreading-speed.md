@@ -1,10 +1,12 @@
 # A line of fast diffusion speeds up epidemic spreading exactly when D > 2d
 
 **Model (SIRT).** In the upper half-plane $\{(x, y) : x \in \mathbb{R}, y > 0\}$ ("the field"), infected individuals $I$ diffuse with diffusivity $d > 0$ and susceptibles $S$ do not move, as in the [spatial SIR model](spreading-speed-of-the-spatial-sir-model.md). On the boundary line $\{y = 0\}$ ("the road") a population of travelling infected individuals $T(t, x)$ diffuses with diffusivity $D > 0$ and exchanges with the field at rates $\nu, \mu > 0$:
+
 $$\begin{aligned}
 &\partial_t I - d\,\Delta I + \alpha I = \beta S I, \qquad \partial_t S = -\beta S I, && y > 0,\\
 &-d\, \partial_y I(t, x, 0) = \mu T - \nu I(t, x, 0), \qquad \partial_t T - D\, \partial_{xx} T = \nu I(t, x, 0) - \mu T, && y = 0,
 \end{aligned}$$
+
 with $S(0, \cdot) \equiv S_0 > 0$ and nonnegative compactly supported initial infections $I_0 \not\equiv 0$, $T_0$. With $u = \int_0^t T\, ds$, $v = \int_0^t I\, ds$ and $f(v) = S_0(1 - e^{-\beta v}) - \alpha v$, the system becomes
 
 $$\partial_t u - D\, \partial_{xx} u = \nu v(t, x, 0) - \mu u + T_0, \quad \partial_t v - d\, \Delta v = f(v) + I_0, \quad -d\, \partial_y v(t, x, 0) = \mu u - \nu v(t, x, 0).$$
