@@ -27,8 +27,9 @@ public import MathlibExt.AlgebraicGeometry.FormalOmega.LatticeOrbital
 # Base change and depth of lattices and vertices
 
 An `LT.LatticeTree.IntegralHom R' K' R K` is a ring homomorphism `K' → K` compatible with one
-`R' → R`. It base changes lattices (`LT.LatticeTree.latticeBaseChange`) and, when `K` is the
-fraction field of `R`, vertices, equivariantly for `GL₂`, so fixed vertices map to fixed vertices.
+`R' → R`. It base changes `R'`-submodules of `K'²` (`LT.LatticeTree.latticeBaseChange`) and, when
+`K` is the fraction field of `R`, full lattices and vertices, equivariantly for `GL₂`, so fixed
+vertices map to fixed vertices.
 For `c ∈ Kˣ`, `LT.LatticeTree.Vertex.IsWithin c n v w` says that `v` and `w` have representatives
 `L` and `M` with `c^n L ≤ M ≤ L`. The (twisted) orbital balls are the vertices within depth `n` of
 their (twisted) translate, and at depth `0` they are the (twisted) fixed-vertex sets.
@@ -49,7 +50,7 @@ attribute [local simp] IntegralAut.symm_toBase IntegralAut.symm_toField galVec_g
 section BaseChangeVocabulary
 
 /-- A ring homomorphism `K' → K` together with a compatible ring homomorphism `R' → R`, used to
-base change lattices and vertices. -/
+base change submodules and vertices. -/
 structure IntegralHom (R' K' R K : Type*) [CommRing R'] [Field K'] [Algebra R' K']
     [CommRing R] [Field K] [Algebra R K] where
   /-- The homomorphism of fields `K' → K`. -/
@@ -116,7 +117,7 @@ theorem IntegralHom.mapGL_scalarGL (c : K'ˣ) :
   congr 1
   rw [Matrix.one_apply, Matrix.one_apply, apply_ite ι.toField, map_one, map_zero]
 
-/-- The base change of an `R'`-lattice: the `R`-span of its image. -/
+/-- The base change of an `R'`-submodule of `K'²`: the `R`-span of its image. -/
 def latticeBaseChange (L' : Submodule R' (Fin 2 → K')) : Submodule R (Fin 2 → K) :=
   Submodule.span R (vecMap ι '' (L' : Set (Fin 2 → K')))
 
@@ -334,7 +335,7 @@ section DepthCurrency
 
 variable {R : Type*} [CommRing R] {K : Type*} [Field K] [Algebra R K]
 
-/-- `c^n L ≤ M ≤ L`: the lattice `M` is within depth `n` of `L`. -/
+/-- `c^n L ≤ M ≤ L` for `R`-submodules `L` and `M` of `K²`: `M` is within depth `n` of `L`. -/
 def LatticeWithin (c : Kˣ) (n : ℕ) (L M : Submodule R (Fin 2 → K)) : Prop :=
   latticeMap (scalarGL (c ^ n)) L ≤ M ∧ M ≤ L
 
@@ -350,7 +351,8 @@ theorem latticeWithin_zero_iff (c : Kˣ) (L M : Submodule R (Fin 2 → K)) :
   simp only [LatticeWithin, pow_zero, scalarGL_one, latticeMap_one]
   exact ⟨fun h => le_antisymm h.2 h.1, fun h => ⟨h.ge, h.le⟩⟩
 
-/-- Vertices within depth `0` are equal. -/
+/-- For any `c ∈ Kˣ`, two vertices are within depth zero of one another if and only if they are
+equal. -/
 theorem Vertex.isWithin_zero_iff (c : Kˣ) (v w : Vertex R K) : Vertex.IsWithin c 0 v w ↔ v = w := by
   constructor
   · rintro ⟨L, M, hL, hM, rfl, rfl, h⟩

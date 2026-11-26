@@ -26,13 +26,14 @@ public import MathlibExt.AlgebraicGeometry.FormalOmega.LatticeStd
 /-!
 # Vertices of the lattice graph
 
-For a commutative ring `R` with an `R`-algebra field `K`, the vertices of the lattice graph
-(`CerednikDrinfeld.BruhatTits.tree`) are the homothety classes of full `R`-lattices in `K²`
-(`LT.LatticeTree.Vertex`), with the induced action of `GL₂(K)`. When `K` is the fraction field of
-`R`, the stabilizer of the standard vertex is `Kˣ · GL₂(R)`, and for an irreducible `ϖ` the
-lattices `R²` and `diag(1, ϖ) R²` are adjacent (`LT.LatticeTree.AdjacentLattice`), as are
-`diag(1, ϖ) R²` and `diag(1, ϖ)² R²`, and neither `diag(1, ϖ)` nor `diag(1, ϖ)²` fixes the
-standard vertex.
+For a commutative ring `R` and any `R`-algebra field `K`, `LT.LatticeTree.Vertex R K` is the type
+of homothety classes of full `R`-lattices in `K²`, with the induced action of `GL₂(K)`. Adjacency
+(`LT.LatticeTree.AdjacentLattice`), and with it the graph `CerednikDrinfeld.BruhatTits.tree` on
+these classes, needs `K` to be the fraction field of `R`; when `R` is moreover a discrete valuation
+ring, that graph is the Bruhat-Tits tree of `PGL₂(K)`. When `K` is the fraction field of `R`, the
+stabilizer of the standard vertex is `Kˣ · GL₂(R)`, and for an irreducible `ϖ` the lattices `R²`
+and `diag(1, ϖ) R²` are adjacent, as are `diag(1, ϖ) R²` and `diag(1, ϖ)² R²`, and neither
+`diag(1, ϖ)` nor `diag(1, ϖ)²` fixes the standard vertex.
 -/
 
 @[expose] public section
@@ -52,7 +53,9 @@ def homothetySetoid : Setoid (FullLattice R K) where
   iseqv := ⟨fun L => Homothetic.refl L.1, Homothetic.symm, Homothetic.trans⟩
 
 variable (R K) in
-/-- The vertices of the lattice graph: homothety classes of full `R`-lattices in `K²`. -/
+/-- The homothety classes of full `R`-lattices in `K²`, for any `R`-algebra field `K`. When `K` is
+the fraction field of `R`, they are the vertices of the graph `CerednikDrinfeld.BruhatTits.tree`.
+-/
 def Vertex : Type _ := Quotient (homothetySetoid R K)
 
 variable (R K) in
@@ -92,7 +95,7 @@ theorem Vertex.act_mul (g h : Matrix.GeneralLinearGroup (Fin 2) K) (v : Vertex R
   induction v using Quotient.inductionOn with
   | h L => exact congrArg _ (Subtype.ext (latticeMap_mul g h L.1))
 
-/-- A lattice homothetic to `R²`, contained in `R²`, and containing a vector with first coordinate
+/-- A submodule homothetic to `R²`, contained in `R²`, and containing a vector with first coordinate
 `1` is `R²`. -/
 theorem eq_stdLattice_of_homothetic_of_le {L : Submodule R (Fin 2 → K)}
     (hhom : Homothetic (stdLattice R K) L) (hle : L ≤ stdLattice R K)
@@ -190,7 +193,8 @@ theorem stdVertex_ne_act_diagSnd {ϖ : R} (hϖ : Irreducible ϖ) :
   rw [stdVertex, Vertex.act_mk, Ne, Vertex.mk_eq_mk_iff]
   exact fun h => not_homothetic_stdLattice_diagSnd hϖ h.symm
 
-/-- Adjacency of lattices: `ϖ L < L' < L` for some irreducible `ϖ`. -/
+/-- For `K` the fraction field of `R`, adjacency of `R`-submodules of `K²`: `ϖ L < L' < L` for some
+irreducible `ϖ`. -/
 def AdjacentLattice (L L' : Submodule R (Fin 2 → K)) : Prop :=
   ∃ (ϖ : R) (hϖ : Irreducible ϖ),
     latticeMap (scalarGL (unitOfNeZero (K := K) hϖ.ne_zero)) L < L' ∧ L' < L

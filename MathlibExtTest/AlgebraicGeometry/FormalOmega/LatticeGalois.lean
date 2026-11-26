@@ -90,8 +90,8 @@ private theorem latticeGal_conj_line_ne :
   rw [h0, one_mul] at h1
   exact complex_I_ne_neg_I h1
 
-/-- Consumer with the original binders: the twisted action of an order-two automorphism iterates
-to the norm. -/
+/-- Consumer with the original binders: if `σ² = id`, applying the twisted action twice is the
+action of `normTwo δ σ`. -/
 private theorem exactSource {R : Type*} [CommRing R] {K : Type*} [Field K] [Algebra R K]
     (δ : Matrix.GeneralLinearGroup (Fin 2) K) {σ : IntegralAut R K}
     (hσ : σ.comp σ = IntegralAut.refl R K) (L : Submodule R (Fin 2 → K)) :

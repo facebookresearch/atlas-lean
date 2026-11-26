@@ -30,13 +30,14 @@ import Mathlib.Tactic.LinearCombination
 # Neighbours of the standard lattice
 
 The proper nonzero subspaces of a two-dimensional vector space are the points of its projective
-line, so over a finite field `k` there are `|k| + 1` of them. For `ϖ, c, d ∈ R`, the lattice
+line, so over a finite field `k` there are `|k| + 1` of them. For `ϖ, c, d ∈ R`, the submodule
 `LT.LatticeTree.interLattice R K ϖ c d` consists of the vectors `v` with integral coordinates and
-`d v₀ - c v₁ ∈ ϖ R`. `LT.LatticeTree.neighborOfOption` indexes these lattices by
-`Option (R ⧸ (ϖ))`, with `none` for `(c, d) = (0, 1)` and `some a` for `(1, a)`; this index type is
-the projective line over `R ⧸ (ϖ)` when that ring is a field. When `K` is the fraction field of `R`
-and `ϖ` is irreducible, each of these lattices lies strictly between `ϖ R²` and `R²`, and the
-indexing is injective.
+`d v₀ - c v₁ ∈ ϖ R`; for arbitrary `(c, d)` it need not be a lattice.
+`LT.LatticeTree.neighborOfOption` indexes the normalized pairs by `Option (R ⧸ (ϖ))`, with `none`
+for `(c, d) = (0, 1)` and `some a` for `(1, a)`; this index type is the projective line over
+`R ⧸ (ϖ)` when that ring is a field. When `K` is the fraction field of `R` and `ϖ` is irreducible,
+each submodule of this normalized family lies strictly between `ϖ R²` and `R²`, and the indexing
+is injective.
 -/
 
 @[expose] public section
@@ -113,9 +114,9 @@ section NeighbourFamily
 variable {R : Type*} [CommRing R] {K : Type*} [Field K] [Algebra R K]
 
 variable (R K) in
-/-- The lattice of the vectors `v ∈ K²` with integral coordinates and `d v₀ - c v₁ ∈ ϖ R`. When `K`
-is the fraction field of `R`, `ϖ ≠ 0` and `ϖ` does not divide both `c` and `d`, it lies strictly
-between `ϖ R²` and `R²`. -/
+/-- The `R`-submodule of the vectors `v ∈ K²` with integral coordinates and `d v₀ - c v₁ ∈ ϖ R`.
+When `K` is the fraction field of `R`, `ϖ ≠ 0` and `ϖ` does not divide both `c` and `d`, it lies
+strictly between `ϖ R²` and `R²`. -/
 def interLattice (ϖ c d : R) : Submodule R (Fin 2 → K) where
   carrier := {v | (∀ i, IsLocalization.IsInteger R (v i)) ∧
     ∃ w : K, IsLocalization.IsInteger R w ∧
@@ -240,7 +241,7 @@ theorem dvd_of_vecPair_mem_latticeMap_scalarGL {ϖ : R} (hϖ : ϖ ≠ 0) {x y : 
     exists_isInteger_eq_algebraMap_mul_iff_dvd.mp ⟨w1, hw1, hw1'.symm⟩⟩
 
 /-- When `K` is the fraction field of `R`, `ϖ ≠ 0` and `ϖ` does not divide both `c` and `d`, the
-lattice `interLattice ϖ c d` strictly contains `ϖ R²`. -/
+submodule `interLattice ϖ c d` strictly contains `ϖ R²`. -/
 theorem latticeMap_scalarGL_lt_interLattice {ϖ : R} (hϖ : ϖ ≠ 0) {c d : R}
     (hcd : ¬(ϖ ∣ c ∧ ϖ ∣ d)) :
     latticeMap (scalarGL (unitOfNeZero (K := K) hϖ)) (stdLattice R K) <
@@ -249,8 +250,8 @@ theorem latticeMap_scalarGL_lt_interLattice {ϖ : R} (hϖ : ϖ ≠ 0) {c d : R}
   exact dvd_of_vecPair_mem_latticeMap_scalarGL hϖ
     (h ▸ vecPair_mem_interLattice (R := R) (K := K) ϖ c d)
 
-/-- When `K` is the fraction field of `R` and `ϖ` does not divide both `c` and `d`, the lattice
-`interLattice ϖ c d` is a proper sublattice of `R²`. -/
+/-- When `K` is the fraction field of `R` and `ϖ` does not divide both `c` and `d`, the submodule
+`interLattice ϖ c d` is properly contained in `R²`. -/
 theorem interLattice_lt_stdLattice {ϖ : R} {c d : R} (hcd : ¬(ϖ ∣ c ∧ ϖ ∣ d)) :
     interLattice R K ϖ c d < stdLattice R K := by
   rw [lt_iff_le_and_ne]
@@ -266,9 +267,9 @@ theorem interLattice_lt_stdLattice {ϖ : R} {c d : R} (hcd : ¬(ϖ ∣ c ∧ ϖ 
     exact hd he
 
 variable (R K) in
-/-- The lattices `interLattice R K ϖ c d` indexed by `Option (R ⧸ (ϖ))`: `none` gives
-`(c, d) = (0, 1)` and `some a` gives `(1, a')` for the chosen representative `a'` of `a`. The index
-type is the projective line over `R ⧸ (ϖ)` when that ring is a field. -/
+/-- The submodules `interLattice R K ϖ c d` of the normalized pairs, indexed by `Option (R ⧸ (ϖ))`:
+`none` gives `(c, d) = (0, 1)` and `some a` gives `(1, a')` for the chosen representative `a'` of
+`a`. The index type is the projective line over `R ⧸ (ϖ)` when that ring is a field. -/
 noncomputable def neighborOfOption (ϖ : R) (x : Option (R ⧸ Ideal.span {ϖ})) :
     Submodule R (Fin 2 → K) :=
   x.elim (interLattice R K ϖ 0 1) (fun y => interLattice R K ϖ 1 y.out)
@@ -291,7 +292,7 @@ theorem neighborOfOption_mem_interval {ϖ : R} (hϖ : Irreducible ϖ)
       interLattice_lt_stdLattice (hcd _)⟩
 
 /-- When `K` is the fraction field of `R` and `ϖ` is irreducible, distinct elements of
-`Option (R ⧸ (ϖ))` give distinct lattices `neighborOfOption R K ϖ x`. -/
+`Option (R ⧸ (ϖ))` give distinct submodules `neighborOfOption R K ϖ x`. -/
 theorem neighborOfOption_injective {ϖ : R} (hϖ : Irreducible ϖ) :
     Function.Injective (neighborOfOption R K ϖ) := by
   have haff : ∀ (a : R), interLattice R K ϖ 0 1 ≠ interLattice R K ϖ 1 a := by

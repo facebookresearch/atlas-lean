@@ -59,8 +59,8 @@ private theorem exactSource {R : Type*} [CommRing R] {K : Type*} [Field K] [Alge
     unitOrbitalCount R (h * g * h⁻¹) = unitOrbitalCount R g :=
   unitOrbitalCount_conj g h
 
-/-- Higher-universe consumer: twisted fixed vertices of an order-three twist are fixed by the
-norm. -/
+/-- Higher-universe consumer: if `σ³ = id`, twisted fixed vertices are fixed by `normThree δ σ`.
+-/
 example {R : Type (u + 1)} [CommRing R] {K : Type (u + 1)} [Field K] [Algebra R K]
     (δ : Matrix.GeneralLinearGroup (Fin 2) K) {σ : IntegralAut R K}
     (hσ : (σ.comp σ).comp σ = IntegralAut.refl R K) :

@@ -27,9 +27,11 @@ public import MathlibExt.AlgebraicGeometry.FormalOmega.LatticeVertex
 # Integral automorphisms acting on lattices and vertices
 
 An `LT.LatticeTree.IntegralAut R K` is a ring automorphism of `K` with a compatible automorphism of
-`R`. It acts coordinatewise on `K²`, on `R`-lattices (`LT.LatticeTree.latticeGal`), on full
-lattices and on vertices. For `δ ∈ GL₂(K)` the twisted action `L ↦ δ σ(L)` iterates, for `σ` of
-order two or three, to the action of the norms `δ σ(δ)` and `δ σ(δ) σ²(δ)`.
+`R`. It acts coordinatewise on `K²`, on `R`-submodules of `K²` (`LT.LatticeTree.latticeGal`), on
+full lattices and on vertices. For `δ ∈ GL₂(K)` and any integral automorphism `σ`,
+`LT.LatticeTree.normTwo δ σ` and `LT.LatticeTree.normThree δ σ` are the products `δ σ(δ)` and
+`δ σ(δ) σ²(δ)`. If `σ² = id`, applying the twisted action `L ↦ δ σ(L)` twice is the action of
+`δ σ(δ)`; if `σ³ = id`, applying it three times is the action of `δ σ(δ) σ²(δ)`.
 -/
 
 @[expose] public section
@@ -378,7 +380,7 @@ theorem Vertex.galAct_stdVertex (σ : IntegralAut R K) :
   rw [stdVertex, Vertex.galAct_mk, Vertex.mk_eq_mk_iff, latticeGal_stdLattice]
   exact Homothetic.refl _
 
-/-- The twisted action `L ↦ δ σ(L)` on lattices. -/
+/-- The twisted action `L ↦ δ σ(L)` on `R`-submodules of `K²`. -/
 def twistedLatticeMap (δ : Matrix.GeneralLinearGroup (Fin 2) K) (σ : IntegralAut R K)
     (L : Submodule R (Fin 2 → K)) : Submodule R (Fin 2 → K) :=
   latticeMap δ (latticeGal σ L)
@@ -396,17 +398,17 @@ theorem twistedLatticeMap_twistedLatticeMap (δ δ' : Matrix.GeneralLinearGroup 
   unfold twistedLatticeMap
   rw [latticeGal_latticeMap, ← latticeMap_mul, latticeGal_comp]
 
-/-- The norm `δ σ(δ)` of `δ` for a twist of order two. -/
+/-- The product `δ σ(δ)`, for any integral automorphism `σ`. -/
 def normTwo (δ : Matrix.GeneralLinearGroup (Fin 2) K) (σ : IntegralAut R K) :
     Matrix.GeneralLinearGroup (Fin 2) K :=
   δ * σ.mapGL δ
 
-/-- The norm `δ σ(δ) σ²(δ)` of `δ` for a twist of order three. -/
+/-- The product `δ σ(δ) σ²(δ)`, for any integral automorphism `σ`. -/
 def normThree (δ : Matrix.GeneralLinearGroup (Fin 2) K) (σ : IntegralAut R K) :
     Matrix.GeneralLinearGroup (Fin 2) K :=
   δ * σ.mapGL δ * (σ.comp σ).mapGL δ
 
-/-- For `σ` of order two, applying the twisted action twice is the action of `normTwo δ σ`. -/
+/-- If `σ² = id`, applying the twisted action twice is the action of `normTwo δ σ`. -/
 theorem twistedLatticeMap_two_of_orderTwo (δ : Matrix.GeneralLinearGroup (Fin 2) K)
     {σ : IntegralAut R K} (hσ : σ.comp σ = IntegralAut.refl R K)
     (L : Submodule R (Fin 2 → K)) :
@@ -415,8 +417,7 @@ theorem twistedLatticeMap_two_of_orderTwo (δ : Matrix.GeneralLinearGroup (Fin 2
   unfold twistedLatticeMap normTwo
   rw [latticeGal_refl]
 
-/-- For `σ` of order three, applying the twisted action three times is the action of `normThree δ
-σ`. -/
+/-- If `σ³ = id`, applying the twisted action three times is the action of `normThree δ σ`. -/
 theorem twistedLatticeMap_three_of_orderThree (δ : Matrix.GeneralLinearGroup (Fin 2) K)
     {σ : IntegralAut R K} (hσ : (σ.comp σ).comp σ = IntegralAut.refl R K)
     (L : Submodule R (Fin 2 → K)) :

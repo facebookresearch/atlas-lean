@@ -28,13 +28,17 @@ public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Projective
 /-!
 # The lattice graph and the Bruhat-Tits tree
 
-For a commutative ring `R` and an `R`-algebra field `K`, `CerednikDrinfeld.BruhatTits.tree R K` is
-the simple graph on the homothety classes of full lattices in `K²` whose edges join classes with
-adjacent representatives (`ϖ L < L' < L` for an irreducible `ϖ`). When `R` is a discrete valuation
-ring with fraction field `K`, this graph is the Bruhat-Tits tree of `PGL₂(K)` (Serre, *Trees*,
-Chapter II, §1); for other rings it need not be a tree. The action of `GL₂(K)` on vertices factors
-through `PGL₂(K)`, and when `K` is the fraction field of `R` both groups act on the graph by graph
-automorphisms (`CerednikDrinfeld.Mumford.GraphAction`).
+Three cases, with increasing hypotheses:
+
+* For a commutative ring `R` and any `R`-algebra field `K`, the homothety classes of full
+  `R`-lattices in `K²` (`LT.LatticeTree.Vertex R K`) carry an action of `GL₂(K)`, which factors
+  through `PGL₂(K)`.
+* When `K` is the fraction field of `R`, `CerednikDrinfeld.BruhatTits.tree R K` is the simple graph
+  on these classes whose edges join classes with adjacent representatives (`ϖ L < L' < L` for an
+  irreducible `ϖ`), and both groups act on it by graph automorphisms
+  (`CerednikDrinfeld.Mumford.GraphAction`).
+* When `R` is moreover a discrete valuation ring, this graph is the Bruhat-Tits tree of `PGL₂(K)`
+  (Serre, *Trees*, Chapter II, §1); for other rings it need not be a tree.
 -/
 
 @[expose] public section
@@ -50,7 +54,7 @@ open Mumford LT.LatticeTree
 
 variable {R : Type*} [CommRing R] {K : Type*} [Field K] [Algebra R K]
 
-/-- `GL₂(K)` acts on the vertices of the lattice graph. -/
+/-- `GL₂(K)` acts on the homothety classes of full lattices, for any `R`-algebra field `K`. -/
 instance instMulActionGLVertex : MulAction (GL (Fin 2) K) (Vertex R K) where
   smul := Vertex.act
   one_smul := Vertex.act_one
@@ -95,7 +99,8 @@ instance instMulActionPGLVertex : MulAction (Matrix.ProjGenLinGroup (Fin 2) K) (
 
 variable [IsFractionRing R K]
 
-/-- When `K` is the fraction field of `R`, `GL₂(K)` preserves adjacency of lattices. -/
+/-- When `K` is the fraction field of `R`, `GL₂(K)` preserves adjacency of `R`-submodules of `K²`.
+-/
 theorem adjacentLattice_latticeMap (g : GL (Fin 2) K) {L L' : Submodule R (Fin 2 → K)}
     (h : AdjacentLattice L L') : AdjacentLattice (latticeMap g L) (latticeMap g L') := by
   obtain ⟨ϖ, hϖ, h₁, h₂⟩ := h
@@ -104,16 +109,17 @@ theorem adjacentLattice_latticeMap (g : GL (Fin 2) K) {L L' : Submodule R (Fin 2
   exact (latticeMap_lt_latticeMap_iff g).2 h₁
 
 variable (R K) in
-/-- Two vertices are related when they have adjacent representatives. -/
+/-- For `K` the fraction field of `R`, two vertices are related when they have adjacent
+representatives. -/
 def VertRel (x y : Vertex R K) : Prop :=
   ∃ (L L' : Submodule R (Fin 2 → K)) (hL : Submodule.IsFullLattice K L)
       (hL' : Submodule.IsFullLattice K L'),
     Vertex.mk R K L hL = x ∧ Vertex.mk R K L' hL' = y ∧ AdjacentLattice L L'
 
 variable (R K) in
-/-- The graph on vertices whose edges join classes with adjacent representative lattices. When `R`
-is a discrete valuation ring with fraction field `K`, it is the Bruhat-Tits tree of `PGL₂(K)`
-(Serre, *Trees*, Chapter II, §1). -/
+/-- For `K` the fraction field of `R`, the graph on vertices whose edges join classes with adjacent
+representative lattices. When `R` is moreover a discrete valuation ring, it is the Bruhat-Tits tree
+of `PGL₂(K)` (Serre, *Trees*, Chapter II, §1). -/
 def tree : SimpleGraph (Vertex R K) := SimpleGraph.fromRel (VertRel R K)
 
 theorem tree_adj_iff (x y : Vertex R K) :

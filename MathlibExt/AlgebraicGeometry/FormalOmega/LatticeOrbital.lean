@@ -32,12 +32,12 @@ For `g ∈ GL₂(K)`, `LT.LatticeTree.fixedVertexSet g` is the set of vertices f
 `LT.LatticeTree.unitOrbitalCount R g` its cardinality (as `Nat.card`). Conjugating `g` by `h`
 translates the fixed set by `h` and preserves its count, and scalars fix every vertex. Let `R` be a
 domain with fraction field `K`, let `M ∈ GL₂(R)`, let `ϖ` be prime and not divide both `c` and `d`,
-and write `(x, y) = M (c, d)ᵀ`. If `M` fixes the vertex of
-`LT.LatticeTree.interLattice R K ϖ c d`, then `ϖ ∣ d x - c y` (`dvd_of_isFixedVertex_interLattice`);
-if `(x, y) ≡ λ (c, d)` modulo `ϖ` for a unit `λ`, then `M` maps that lattice onto itself. For `σ`
-an integral automorphism of order two or three, the vertices fixed by the twisted action of
-`(δ, σ)` are fixed by the norm of `δ`, so the twisted count is `1` when the norm has at most one
-fixed vertex and some vertex is twisted-fixed.
+and write `(x, y) = M (c, d)ᵀ`. If the submodule `LT.LatticeTree.interLattice R K ϖ c d` is a full
+lattice and `M` fixes its vertex, then `ϖ ∣ d x - c y` (`dvd_of_isFixedVertex_interLattice`). For
+`λ ∈ Rˣ` with `(x, y) ≡ λ (c, d)` modulo `ϖ`, `M` maps that submodule onto itself. If `σ² = id`,
+the vertices fixed by the twisted action of `(δ, σ)` are fixed by `normTwo δ σ`, and if `σ³ = id`,
+by `normThree δ σ`; so the twisted count is `1` when that product has at most one fixed vertex and
+some vertex is twisted-fixed.
 -/
 
 @[expose] public section
@@ -314,8 +314,8 @@ theorem interLattice_unit_mul (ϖ : R) (u : Rˣ) (c d : R) :
       _ = algebraMap R K ϖ * (algebraMap R K (u : R) * w) := by rw [hweq]; ring
 
 omit [IsFractionRing R K] in
-/-- If `M (c, d)ᵀ ≡ λ (c, d)` modulo `ϖ` for a unit `λ`, then `M` maps `interLattice R K ϖ c d`
-onto itself. -/
+/-- Let `M ∈ GL₂(R)` and `λ ∈ Rˣ`. If `M (c, d)ᵀ ≡ λ (c, d)` modulo `ϖ`, then `M` maps
+`interLattice R K ϖ c d` onto itself. -/
 theorem latticeMap_map_interLattice_eq_self (M : Matrix.GeneralLinearGroup (Fin 2) R)
     {ϖ c d : R} (lam : Rˣ)
     (h0 : ϖ ∣ mulVecPair (M : Matrix (Fin 2) (Fin 2) R) c d 0 - (lam : R) * c)
@@ -415,8 +415,8 @@ theorem latticeMap_scalarGL_inv_le_of_mul_eq_unit {e : Kˣ} {ϖ : R} (hϖ : ϖ �
   rw [Pi.smul_apply, smul_eq_mul, hinv, ← hwi]
   ring
 
-/-- For a prime `ϖ` of a domain `R` with fraction field `K`, two homothetic lattices `N` and `N'`
-with `ϖ R² < N ≤ R²` and `ϖ R² < N' ≤ R²` are equal. -/
+/-- For a prime `ϖ` of a domain `R` with fraction field `K`, two homothetic `R`-submodules `N` and
+`N'` of `K²` with `ϖ R² < N ≤ R²` and `ϖ R² < N' ≤ R²` are equal. -/
 theorem eq_of_homothetic_of_mem_interval [IsDomain R] {ϖ : R} (hϖ : Prime ϖ)
     {N N' : Submodule R (Fin 2 → K)}
     (hNlow : latticeMap (scalarGL (unitOfNeZero (K := K) hϖ.ne_zero)) (stdLattice R K) < N)
@@ -480,8 +480,9 @@ private theorem dvd_and_dvd_of_dvd_mulVecPair (M : Matrix.GeneralLinearGroup (Fi
     h1 ▸ dvd_add (dvd_mul_of_dvd_right h.1 _) (dvd_mul_of_dvd_right h.2 _)⟩
 
 /-- Let `R` be a domain with fraction field `K`, let `M ∈ GL₂(R)`, let `ϖ` be prime and let `ϖ` not
-divide both `c` and `d`. If `M` fixes the vertex of `interLattice R K ϖ c d`, then `ϖ ∣ d x - c y`
-for `(x, y) = M (c, d)ᵀ`: the pairs `(c, d)` and `M (c, d)ᵀ` are linearly dependent modulo `ϖ`. -/
+divide both `c` and `d`. If `interLattice R K ϖ c d` is a full lattice and `M` fixes its vertex,
+then `ϖ ∣ d x - c y` for `(x, y) = M (c, d)ᵀ`: the pairs `(c, d)` and `M (c, d)ᵀ` are linearly
+dependent modulo `ϖ`. -/
 theorem dvd_of_isFixedVertex_interLattice [IsDomain R]
     (M : Matrix.GeneralLinearGroup (Fin 2) R)
     {ϖ c d : R} (hϖ : Prime ϖ) (hcd : ¬(ϖ ∣ c ∧ ϖ ∣ d))
@@ -517,8 +518,8 @@ section FullLattice
 
 variable [IsFractionRing R K]
 
-/-- Over a Noetherian ring `R` with fraction field `K`, for `ϖ ≠ 0` every lattice between `ϖ R²`
-and `R²` is a full lattice. -/
+/-- Over a Noetherian ring `R` with fraction field `K`, for `ϖ ≠ 0` every `R`-submodule between
+`ϖ R²` and `R²` is a full lattice. -/
 theorem isFullLattice_of_le_of_le [IsNoetherianRing R] {ϖ : R} (hϖ : ϖ ≠ 0)
     {N : Submodule R (Fin 2 → K)}
     (hlow : latticeMap (scalarGL (unitOfNeZero (K := K) hϖ)) (stdLattice R K) ≤ N)
@@ -635,14 +636,14 @@ theorem isFixedVertex_normTwo_of_isTwistedFixedVertex
   change Vertex.act (normTwo δ σ) v = v
   rw [← Vertex.twistedAct_two_of_orderTwo δ hσ, hv', hv']
 
-/-- For `σ` of order three, twisted fixed vertices are fixed by the norm `normThree δ σ`. -/
+/-- If `σ³ = id`, twisted fixed vertices are fixed by `normThree δ σ`. -/
 theorem twistedFixedVertexSet_subset_fixedVertexSet_normThree
     (δ : Matrix.GeneralLinearGroup (Fin 2) K) {σ : IntegralAut R K}
     (hσ : (σ.comp σ).comp σ = IntegralAut.refl R K) :
     twistedFixedVertexSet δ σ ⊆ fixedVertexSet (R := R) (normThree δ σ) :=
   fun _ hv => isFixedVertex_normThree_of_isTwistedFixedVertex δ hσ hv
 
-/-- For `σ` of order two, twisted fixed vertices are fixed by the norm `normTwo δ σ`. -/
+/-- If `σ² = id`, twisted fixed vertices are fixed by `normTwo δ σ`. -/
 theorem twistedFixedVertexSet_subset_fixedVertexSet_normTwo
     (δ : Matrix.GeneralLinearGroup (Fin 2) K) {σ : IntegralAut R K}
     (hσ : σ.comp σ = IntegralAut.refl R K) :
@@ -712,9 +713,9 @@ section SingletonCounts
 
 variable {R' : Type*} [CommRing R'] {K' : Type*} [Field K'] [Algebra R' K']
 
-/-- For `σ` of order three, if the norm of `δ` has at most one fixed vertex, `δ` has a twisted
-fixed vertex, and `γ` has exactly one fixed vertex, then the twisted fixed-vertex count of `(δ, σ)`
-equals the fixed-vertex count of `γ`: both are `1`. -/
+/-- If `σ³ = id`, `normThree δ σ` has at most one fixed vertex, `δ` has a twisted fixed vertex, and
+`γ` has exactly one fixed vertex, then the twisted fixed-vertex count of `(δ, σ)` equals the
+fixed-vertex count of `γ`: both are `1`. -/
 theorem twistedUnitOrbitalCount_eq_unitOrbitalCount_of_subsingleton
     (δ : Matrix.GeneralLinearGroup (Fin 2) K) {σ : IntegralAut R K}
     (hσ : (σ.comp σ).comp σ = IntegralAut.refl R K)
@@ -727,7 +728,8 @@ theorem twistedUnitOrbitalCount_eq_unitOrbitalCount_of_subsingleton
   rw [twistedUnitOrbitalCount_eq_one_of_subsingleton_normThree δ hσ hsub_up hv₀,
     unitOrbitalCount_eq_one_of_subsingleton hsub_down hw₀]
 
-/-- The order-two analogue of `twistedUnitOrbitalCount_eq_unitOrbitalCount_of_subsingleton`. -/
+/-- The analogue of `twistedUnitOrbitalCount_eq_unitOrbitalCount_of_subsingleton` for `σ² = id`,
+with `normTwo δ σ`. -/
 theorem twistedUnitOrbitalCount_eq_unitOrbitalCount_of_subsingleton_two
     (δ : Matrix.GeneralLinearGroup (Fin 2) K) {σ : IntegralAut R K}
     (hσ : σ.comp σ = IntegralAut.refl R K)
