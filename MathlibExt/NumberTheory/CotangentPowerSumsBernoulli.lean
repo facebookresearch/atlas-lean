@@ -132,72 +132,32 @@ private theorem evenBernoulliSeries_ode :
   linear_combination bernoulliPowerSeries_ode
     + X * bernoulliPowerSeries ℚ * hhalf
 
-/-- Splitting off the first component of a tuple in the sum defining `tupleSum`. -/
-private theorem tupleSum_succ (r m : ℕ) :
-    tupleSum (r + 1) m =
-      ∑ n ∈ range (m + 1), evenBernoulliCoeff n * tupleSum r (m - n) := by
-  have hsigma : (∑ n ∈ range (m + 1), evenBernoulliCoeff n * tupleSum r (m - n)) =
-      ∑ x ∈ (range (m + 1)).sigma (fun n => antidiagonalTuple r (m - n)),
-        evenBernoulliCoeff x.1 * ∏ t, evenBernoulliCoeff (x.2 t) := by
-    rw [Finset.sum_sigma]
-    refine Finset.sum_congr rfl fun n _ => ?_
-    show evenBernoulliCoeff n * tupleSum r (m - n) = _
-    rw [tupleSum, Finset.mul_sum]
-    exact Finset.sum_congr rfl fun a _ => rfl
-  rw [hsigma]
-  change (∑ a ∈ antidiagonalTuple (r + 1) m, ∏ t, evenBernoulliCoeff (a t)) = _
-  refine Finset.sum_bij (fun a _ => ⟨a 0, Fin.tail a⟩) ?_ ?_ ?_ ?_
-  · intro a ha
-    rw [mem_antidiagonalTuple] at ha
-    have hle : a 0 ≤ m := by
-      have h1 : a 0 ≤ ∑ i, a i :=
-        Finset.single_le_sum (fun i _ => Nat.zero_le _) (Finset.mem_univ 0)
-      omega
-    have htail : ∑ i, Fin.tail a i = m - a 0 := by
-      have hsum := Fin.sum_univ_succ a
-      have h2 : ∑ i, Fin.tail a i = ∑ i, a (Fin.succ i) :=
-        Finset.sum_congr rfl fun i _ => rfl
-      omega
-    rw [Finset.mem_sigma]
-    exact ⟨Finset.mem_range.mpr (show a 0 < m + 1 by omega), mem_antidiagonalTuple.mpr htail⟩
-  · intro a _ b _ hab
-    rw [Sigma.mk.inj_iff] at hab
-    obtain ⟨h0, ht⟩ := hab
-    have h1 : a = Fin.cons (a 0) (Fin.tail a) := (Fin.cons_self_tail a).symm
-    have h2 : b = Fin.cons (b 0) (Fin.tail b) := (Fin.cons_self_tail b).symm
-    rw [h1, h2, h0, eq_of_heq ht]
-  · intro x hx
-    rw [Finset.mem_sigma] at hx
-    obtain ⟨hn, hx⟩ := hx
-    rw [Finset.mem_range] at hn
-    rw [mem_antidiagonalTuple] at hx
-    refine ⟨Fin.cons x.1 x.2, ?_, ?_⟩
-    · rw [mem_antidiagonalTuple, Fin.sum_univ_succ]
-      simp only [Fin.cons_zero, Fin.cons_succ]
-      omega
-    · simp
-  · intro a _
-    rw [Fin.prod_univ_succ]
-    congr 1
-
 /-- The coefficient of a power of the even Bernoulli series is the corresponding
 tuple sum. -/
 private theorem coeff_pow_eq_tupleSum (r m : ℕ) :
     coeff m (evenBernoulliSeries ^ r) = tupleSum r m := by
-  induction r generalizing m with
-  | zero =>
-    cases m with
-    | zero => simp [tupleSum, antidiagonalTuple_zero_right]
-    | succ m => simp [tupleSum, antidiagonalTuple_zero_succ]
-  | succ r ih =>
-    rw [pow_succ', coeff_mul, Finset.Nat.sum_antidiagonal_eq_sum_range_succ_mk]
-    change (∑ k ∈ range (m + 1),
-      coeff k evenBernoulliSeries * coeff (m - k) (evenBernoulliSeries ^ r)) = _
-    rw [tupleSum_succ]
-    refine Finset.sum_congr rfl fun n _ => ?_
-    have hG : coeff n evenBernoulliSeries = evenBernoulliCoeff n := by
-      simp only [evenBernoulliSeries, coeff_mk, evenBernoulliCoeff]
-    rw [hG, ih (m - n)]
+  rw [PowerSeries.coeff_pow, tupleSum]
+  refine sum_bij (fun f _ (i : Fin r) => f i) ?_ ?_ ?_ ?_
+  · intro f hf
+    exact mem_antidiagonalTuple.mpr
+      ((Finset.sum_range f).symm.trans (mem_finsuppAntidiag.mp hf).1)
+  · intro f hf g hg h
+    ext i
+    by_cases hi : i ∈ range r
+    · exact congrFun h ⟨i, mem_range.mp hi⟩
+    · rw [Finsupp.notMem_support_iff.mp (mt ((mem_finsuppAntidiag.mp hf).2 ·) hi),
+        Finsupp.notMem_support_iff.mp (mt ((mem_finsuppAntidiag.mp hg).2 ·) hi)]
+  · intro a ha
+    let f := Finsupp.embDomain Fin.valEmbedding (Finsupp.equivFunOnFinite.symm a)
+    have hf (i : Fin r) : f i = a i :=
+      Finsupp.embDomain_apply_self Fin.valEmbedding _ i
+    refine ⟨f, mem_finsuppAntidiag.mpr ⟨?_, ?_⟩, funext hf⟩
+    · simpa only [Finset.sum_range, hf] using mem_antidiagonalTuple.mp ha
+    · intro i hi
+      obtain ⟨j, _, rfl⟩ := mem_map.mp hi
+      exact mem_range.mpr j.isLt
+  · intro f _
+    simp only [Finset.prod_range, evenBernoulliSeries, coeff_mk, evenBernoulliCoeff]
 
 /-- The coefficient of a power of the expanded series is the corresponding tuple sum. -/
 private theorem coeff_expandedPow_eq_tupleSum (r m : ℕ) :
