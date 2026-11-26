@@ -9,6 +9,16 @@ and only if there is a real constant $C$ such that
 $(\Delta^k m_\mu)_n \le C \, (\Delta^k m_\lambda)_n$ for all multi-indices $k \le n$
 (coordinatewise), where $\Delta^k$ is the iterated backward difference.
 
+Knill compares the moments of two probability measures on the cube. Taking the second
+measure to be $\lambda$ gives this criterion, with bounded density expressed as
+$\mu \le M\lambda$ for some $M \ge 0$.
+
 ## Sources
 
-- F. Hausdorff (1921–1923); see Shohat–Tamarkin, *The Problem of Moments*. Knill, *Some fundamental theorems in mathematics*, §115. Problem `hausdorff_absolute_continuity` of the lean-eval benchmark.
+- O. Knill, *Some fundamental theorems in mathematics*, §115 “Moments”, p. 52, paragraph following
+  the Hausdorff–Hildebrandt–Schoenberg theorem.
+  [arXiv:1807.08416v4](https://arxiv.org/pdf/1807.08416v4#page=52)
+- For background on the interval moment problem see F. Hausdorff, *Summationsmethoden und
+  Momentfolgen I, II* (1921) and *Momentprobleme für ein endliches Intervall* (1923), and
+  Shohat–Tamarkin, *The Problem of Moments*.
+- Problem `hausdorff_absolute_continuity` of the lean-eval benchmark.

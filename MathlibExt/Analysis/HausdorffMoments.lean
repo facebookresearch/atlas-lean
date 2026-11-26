@@ -34,8 +34,17 @@ import Mathlib.Tactic.Ring
 # Hausdorff positivity on the unit cube
 
 `hausdorff_positivity` characterizes the moments of finite positive measures on the cube by
-nonnegativity of all iterated backward differences. The converse uses the tensor-product
-Bernstein basis to construct a positive polynomial functional, then represents it by a measure.
+nonnegativity of all iterated backward differences.
+
+F. Hausdorff, *Summationsmethoden und Momentfolgen I, II*, Math. Z. 9 (1921), gives the
+one-dimensional criterion. O. Knill, *Some fundamental theorems in mathematics*,
+arXiv:1807.08416v4, §115 “Moments”, p. 52, describes positivity in several dimensions.
+
+The one-dimensional argument extends to the cube by taking products of the polynomials
+$x_i^{n_i-k_i}(1-x_i)^{k_i}$. The moment functional takes the value $(\Delta^k a)_n$ on
+each such product. Up to positive binomial factors these products form the tensor Bernstein
+bases. Positivity on these bases in every degree gives a positive functional on polynomials.
+Its positive extension to continuous functions on the cube is represented by a finite measure.
 -/
 
 @[expose] public section

@@ -23,8 +23,9 @@ recorded here is a Hausdorff moment problem: consistency gives
 `r (i + 2 + c) (i + 2) = ((I - E) ^ c m) i` for the sequence `m i = r (i + 2) (i + 2)` and the
 shift `E`, so nonnegativity says that `m` is completely monotone, and Hausdorff's theorem
 yields a finite measure on `[0, 1]` whose moments are `m`. The one-dimensional case of
-`MathlibExt.Analysis.HausdorffMomentsWanted.Analysis.hausdorff_positivity` would therefore
-give this statement; neither is proved yet.
+`MathlibExt.Analysis.HausdorffMomentsWanted.Analysis.hausdorff_positivity`, proved in
+`MathlibExt.Analysis.HausdorffMoments`, supplies the moment criterion for the remaining
+coalescent existence statement.
 
 Sources: J. Pitman, "Coalescents with multiple collisions", Ann. Probab. 27 (1999)
 1870–1902, Theorem 1; F. Hausdorff, "Summationsmethoden und Momentfolgen I", Math. Z. 9

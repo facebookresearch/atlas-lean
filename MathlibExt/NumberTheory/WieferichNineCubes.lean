@@ -40,14 +40,6 @@ smallest such bound — `23` requires nine cubes (`23 = 2·2³ + 7·1³`, with n
 representation using eight or fewer cubes). This is the `k = 3` case of the
 Hilbert–Waring problem (`g(3) = 9`).
 
-Mathlib has Lagrange's four-square theorem (`Nat.sum_four_squares`) but no
-Hilbert–Waring material: no `g(k)`, no "sum of `k` cubes" predicate, and no
-`g(3) = 9`. The trusted helper `IsSumOfCubes` (a non-hole) fixes the meaning of
-"sum of `k` cubes".
-
-This is a category-(b) candidate from §76 of the Knill survey
-(`sections/076-four-square-theorem.md`).
-
 For large numbers we use Legendre's three-square theorem and the identity
 `(m + x)³ + (m - x)³ = 2m³ + 6mx²`. The finite part starts with two bit tables
 checked by the kernel. Subtracting a cube three times extends the six-cube table

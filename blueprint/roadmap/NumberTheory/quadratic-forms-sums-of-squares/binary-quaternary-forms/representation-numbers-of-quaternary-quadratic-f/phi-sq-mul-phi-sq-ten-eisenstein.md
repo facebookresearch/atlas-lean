@@ -11,6 +11,15 @@ $$
 4q^3 \frac{f_4^5 f_{10} f_{40}^2}{f_2 f_8^2 f_{20}}.
 $$
 
+The final factor $4q^3$ corrects the printed $4q^2$ in (3.13). Writing
+$\eta_k = q^{k/24} f_k$, the eta quotient has order
+$(5\cdot4+10+2\cdot40-2-2\cdot8-20)/24=3$. Each $f_k$ has constant term $1$,
+so the last summand starts with $4q^3$. A factor $4q^2$ would raise the coefficient
+of $q^2$ on the right from $4$ to $8$, while the theta product has coefficient $4$.
+
 ## Sources
 
 - K. R. Vasuki and P. Nagendra, *On Certain Quaternary Quadratic Forms*, INTEGERS 25 (2025), Article A24, Lemma 3.3, Equation (3.13).
+- A. Alaca and M. Altiary, *Representations by Quaternary Quadratic Forms with Coefficients
+  1, 2, 5 or 10*, Theorem 2.5, give the final summand as $4A_3(q)$ with the eta quotient
+  $A_3$ defined in (2.15). [arXiv:1607.03196v1](https://arxiv.org/pdf/1607.03196v1#page=6)

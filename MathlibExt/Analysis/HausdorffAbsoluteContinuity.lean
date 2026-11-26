@@ -38,10 +38,8 @@ into a Batteries `theorem_wanted` (data/instance holes into
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
 and placed the declarations in the `MathlibExt.Analysis.HausdorffAbsoluteContinuityWanted`
 namespace. ATLAS later proved the criterion and moved these declarations from
-`WantedExt/Analysis/HausdorffAbsoluteContinuityWanted.lean` with unchanged names,
-definitions, statements and declaration docstrings. Source: F. Hausdorff (1921–1923);
-see Shohat–Tamarkin, *The Problem of Moments* and Knill, *Some fundamental theorems in
-mathematics*, §115.
+`WantedExt/Analysis/HausdorffAbsoluteContinuityWanted.lean` and clarified the source of the
+multidimensional criterion in the module documentation.
 -/
 module
 
@@ -56,16 +54,17 @@ import MathlibExt.RingTheory.MvPolynomial.BernsteinBounds
 /-!
 # Hausdorff moment problem: absolute-continuity criterion
 
-`hausdorff_absolute_continuity`: a positive probability measure `μ` on the unit
-cube is uniformly absolutely continuous with respect to Lebesgue measure iff its
-moment differences are dominated by those of Lebesgue measure. This is the third
-statement of §115 of the Knill survey (the moment realizability and positivity
-criteria are the companion lean-eval problems). The trusted helpers (`cube`,
-`monomial`, `momentOf`, `multiChoose`, `diff`, `UniformlyAbsolutelyContinuous`)
-are non-holes. Mathlib has `SignedMeasure`, finite measures, and set integrals
-but no moment-problem machinery.
+A probability measure on the unit cube is dominated by a constant multiple of Lebesgue
+measure if and only if its moment differences satisfy the corresponding bound
+(`hausdorff_absolute_continuity`). This specializes the comparison of two probability
+measures in O. Knill, *Some fundamental theorems in mathematics*, arXiv:1807.08416v4,
+§115 “Moments”, p. 52 (the paragraph following the Hausdorff–Hildebrandt–Schoenberg theorem).
+Taking the second measure to be Lebesgue measure on the cube expresses bounded density
+as $\mu \le M\lambda$ for some $M \ge 0$.
 
-Category-(b) candidate from §115 of the Knill survey (additional statement 2).
+For the interval moment problem, see F. Hausdorff, *Summationsmethoden und Momentfolgen I, II*
+(1921) and *Momentprobleme für ein endliches Intervall* (1923), and Shohat–Tamarkin,
+*The Problem of Moments*.
 -/
 
 @[expose] public section
