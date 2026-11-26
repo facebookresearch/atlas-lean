@@ -10648,6 +10648,7 @@
   "MathlibExt/Combinatorics/ConstrainedTIntersections": {"to": "Geometry/discrete-geometry", "title": "Pancake cutting with exotic knives"},
   "MathlibExt/Combinatorics/CubeNim": {"to": "GameTheory/combinatorial-games", "title": "Nim on a cube"},
   "MathlibExt/Combinatorics/ContinuousTuran": {"to": "Geometry/discrete-geometry", "title": "Continuous Turán numbers of planar patterns"},
+  "MathlibExt/Combinatorics/ContinuousTuranMonotonicity": {"to": "Geometry/discrete-geometry", "title": "Continuous Turán numbers of planar patterns"},
   "MathlibExt/Combinatorics/DedekindAntichainCountErdosProblem497": {"to": "Combinatorics/boolean-functions", "title": "Dedekind numbers"},
   "MathlibExt/Combinatorics/DensityHalesJewett": {"to": "Combinatorics/ramsey-theory/structural-ramsey", "title": "Density Hales–Jewett theorem"},
   "MathlibExt/Combinatorics/DescendingWaveColoringErdosProblem781": {"to": "Combinatorics/ramsey-theory/van-der-waerden-theorems", "title": "Monochromatic descending waves"},
