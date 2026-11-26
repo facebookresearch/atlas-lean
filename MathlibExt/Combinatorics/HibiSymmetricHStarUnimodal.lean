@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import MathlibExt.Combinatorics.WeightedProjectiveSimplexEhrhart
 public import MathlibExt.Combinatorics.WeightedProjectiveSimplexReflexive
 public import MathlibExt.Geometry.LatticePointEnumerator
 public import Mathlib.RingTheory.PowerSeries.Basic
@@ -16,14 +17,28 @@ import Mathlib.Algebra.Order.Antidiag.FinsuppEquiv
 import Mathlib.Analysis.Convex.Combination
 import Mathlib.RingTheory.PowerSeries.WellKnown
 import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
 
 /-!
-# The Ehrhart numerator of the weighted simplex with weights `(1, 1, 1, 1, 1, 3)`
+# Hibi's conjecture on symmetric h*-vectors
 
-The seven integral parts of the homogenized barycentric coordinates give the denominator
-`(1 - X)^7`. The nine possible residues give the palindromic numerator `(1, 1, 2, 1, 2, 1, 1)`.
+The weighted simplex with weights `(1, 1, 1, 1, 1, 3)` is a counterexample. The seven integral
+parts of the homogenized barycentric coordinates give the denominator `(1 - X)^7`. The nine
+possible residues give the palindromic numerator `(1, 1, 2, 1, 2, 1, 1)`.
+
+## References
+
+* C. A. Athanasiadis, *On the unimodality of h*-vectors*, in *Ehrhart Quasipolynomials: Algebra,
+  Combinatorics, and Geometry*, Oberwolfach Reports 1 (2004), no. 39, p. 2078, Conjecture 2.
+* M. Mustaţă and S. Payne, *Ehrhart polynomials and stringy Betti numbers*, Math. Ann. 333 (2005),
+  787–795, Example 1.1 (a different six-dimensional counterexample).
+* B. Braun, R. Davis, and L. Solus, *Detecting the integer decomposition property and Ehrhart
+  unimodality in reflexive simplices*, Adv. in Appl. Math. 100 (2018), 122–142, Theorem 2.2
+  (the fundamental-parallelepiped argument) and Remark 3.5 (the counterexample weights).
+* B. Braun, R. Davis, D. Hanely, M. Lane, and L. Solus, *The Integer Decomposition Property and
+  Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article A60, Theorem 5 (the formula).
 -/
 
 namespace MathlibExt.Combinatorics
@@ -363,24 +378,25 @@ private theorem numerator_eq :
   norm_num
   ring
 
+/-- **Full dimension of the counterexample simplex.** The weighted simplex with weights
+$(1,1,1,1,1,3)$ has nonempty interior in $\mathbb{R}^6$. -/
+public theorem hibiWeightedSimplex_interior_nonempty :
+    (interior (weightedSimplex ![1, 1, 1, 1, 1, 3])).Nonempty :=
+  ⟨0, zero_mem_interior⟩
+
 /-- **Ehrhart numerator of the six-dimensional counterexample simplex.** The full-dimensional
 weighted simplex with weights $(1,1,1,1,1,3)$ has Ehrhart numerator
-$1 + X + 2X^2 + X^3 + 2X^4 + X^5 + X^6$. This instance of the weighted-simplex formula is proved
-by a direct cone decomposition.
+$1 + X + 2X^2 + X^3 + 2X^4 + X^5 + X^6$.
 
 Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
 Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article A60,
 Theorem 5. -/
 public theorem hibiWeightedSimplex_hStar :
-    let P := weightedSimplex ![1, 1, 1, 1, 1, 3]
-    (interior P).Nonempty ∧
-      PowerSeries.mk (fun n => (LatticePointEnumerator.latticeEnumerator 6 P n : ℤ)) *
-        (1 - PowerSeries.X) ^ 7 =
-          ((1 + Polynomial.X + 2 * Polynomial.X ^ 2 + Polynomial.X ^ 3 +
-            2 * Polynomial.X ^ 4 + Polynomial.X ^ 5 + Polynomial.X ^ 6 : Polynomial ℤ) :
-            PowerSeries ℤ) := by
-  change (interior (weightedSimplex weights)).Nonempty ∧ _
-  refine ⟨⟨0, zero_mem_interior⟩, ?_⟩
+    PowerSeries.mk (fun n => (LatticePointEnumerator.latticeEnumerator 6
+      (weightedSimplex ![1, 1, 1, 1, 1, 3]) n : ℤ)) * (1 - PowerSeries.X) ^ 7 =
+        ((1 + Polynomial.X + 2 * Polynomial.X ^ 2 + Polynomial.X ^ 3 +
+          2 * Polynomial.X ^ 4 + Polynomial.X ^ 5 + Polynomial.X ^ 6 : Polynomial ℤ) :
+          PowerSeries ℤ) := by
   let G : PowerSeries ℤ := PowerSeries.mk fun n => ((6 + n).choose 6 : ℤ)
   have hG : G * (1 - PowerSeries.X) ^ 7 = 1 :=
     PowerSeries.mk_add_choose_mul_one_sub_pow_eq_one ℤ 6
@@ -402,3 +418,99 @@ public theorem hibiWeightedSimplex_hStar :
 end
 
 end MathlibExt.Combinatorics
+
+@[expose] public section
+
+namespace MathlibExt.Combinatorics.HibiSymmetricHStarUnimodalOWR741Problem003Wanted
+
+open MetaMathlibExt
+
+/-- The lattice polytope in `ℝ^d` spanned by the finite set `S ⊆ ℤ^d` of integer points. -/
+def latticePolytope {d : ℕ} (S : Finset (Fin d → ℤ)) : Set (Fin d → ℝ) :=
+  convexHull ℝ ((fun v : Fin d → ℤ => fun i => (v i : ℝ)) '' (S : Set (Fin d → ℤ)))
+
+/-- **Hibi's conjecture on symmetric $h^*$-vectors.** For every natural number $d$, every finite
+set $S \subseteq \mathbb{Z}^d$ whose convex hull $P \subseteq \mathbb{R}^d$ has nonempty interior,
+and every polynomial $h = \sum_i h^*_i z^i \in \mathbb{Z}[z]$ that is an $h^*$-polynomial of $P$,
+that is,
+$$\Big(\sum_{t \ge 0} \#(tP \cap \mathbb{Z}^d)\, z^t\Big) (1 - z)^{d+1} = h(z)$$
+as formal power series, if $h^*_i = h^*_{d-i}$ for all $0 \le i \le d$, then $h$ is unimodal.
+
+This is Hibi's conjecture, Conjecture 2 of C. A. Athanasiadis's Oberwolfach report (Oberwolfach
+Reports 1 (2004), no. 39, p. 2078), stated there for $d$-dimensional integral polytopes; every
+such polytope is lattice-equivalent to a full-dimensional lattice polytope in $\mathbb{R}^d$. -/
+def hibiSymmetricUnimodal : Prop :=
+  ∀ (d : ℕ) (S : Finset (Fin d → ℤ)), (interior (latticePolytope S)).Nonempty →
+    ∀ h : Polynomial ℤ, IsHStarPolynomial (latticePolytope S) h →
+      (∀ i ≤ d, h.coeff i = h.coeff (d - i)) → IsUnimodal h
+
+/--
+**Hibi's conjecture on symmetric $h^*$-vectors is false.** There are a natural number $d$, a
+finite set $S \subseteq \mathbb{Z}^d$ whose convex hull $P \subseteq \mathbb{R}^d$ has nonempty
+interior, and a polynomial $h = \sum_i h^*_i z^i \in \mathbb{Z}[z]$ that is an $h^*$-polynomial
+of $P$, that is,
+$$\Big(\sum_{t \ge 0} \#(tP \cap \mathbb{Z}^d)\, z^t\Big) (1 - z)^{d+1} = h(z)$$
+as formal power series, such that $h^*_i = h^*_{d-i}$ for all $0 \le i \le d$ but $h$ is not
+unimodal.
+
+Mustaţă and Payne (Example 1.1) give a reflexive $6$-dimensional lattice polytope with
+$h^*$-vector $(1, 6, 8, 6, 8, 6, 1)$, which is symmetric and not unimodal.
+
+The weighted simplex with weights $(1,1,1,1,1,3)$ is another counterexample, with
+$h^*$-vector $(1,1,2,1,2,1,1)$ by `MathlibExt.Combinatorics.hibiWeightedSimplex_hStar`.
+
+Source: C. A. Athanasiadis, On the unimodality of h*-vectors, in Ehrhart Quasipolynomials: Algebra,
+Combinatorics, and Geometry, Oberwolfach Reports 1 (2004), no. 39, p. 2078, Conjecture 2, DOI
+10.4171/OWR/2004/39; resolution: M. Mustaţă and S. Payne, Ehrhart polynomials and stringy Betti
+numbers, Math. Ann. 333 (2005), 787-795, DOI 10.1007/s00208-005-0691-x, arXiv:math/0504486, Example
+1.1: for f = (e1 + ... + e6)/3, N = ℤ⁶ + ℤ f and P the polytope with vertices e1, ..., e6, e1 - f,
+..., e6 - f, P is reflexive with δ_P = (1, 6, 8, 6, 8, 6, 1), a counterexample to Hibi's conjecture
+for d = 6 (abstract: 'counterexamples to Hibi's conjecture on the unimodality of delta-vectors of
+reflexive polytopes'), https://arxiv.org/abs/math/0504486.
+-/
+public theorem hibiSymmetricUnimodal_refuted : ¬ hibiSymmetricUnimodal := by
+  classical
+  intro hibi
+  -- Use the weighted simplex with vertex set {e₀, …, e₅, −(1, 1, 1, 1, 1, 3)}.
+  let S : Finset (Fin 6 → ℤ) :=
+    insert ![-1, -1, -1, -1, -1, -3] (Finset.univ.image fun i => Pi.single i 1)
+  have hS : latticePolytope S = weightedSimplex ![1, 1, 1, 1, 1, 3] := by
+    unfold latticePolytope S weightedSimplex
+    congr 1
+    rw [Finset.coe_insert, Finset.coe_image, Finset.coe_univ, Set.image_insert_eq,
+      Set.image_image, Set.image_univ, Set.insert_eq, Set.union_comm]
+    congr 1
+    · congr 1
+      funext j i
+      by_cases h : i = j <;> simp [h]
+    · congr 1
+      funext i
+      fin_cases i <;> norm_num
+  let h : Polynomial ℤ := 1 + Polynomial.X + 2 * Polynomial.X ^ 2 + Polynomial.X ^ 3 +
+    2 * Polynomial.X ^ 4 + Polynomial.X ^ 5 + Polynomial.X ^ 6
+  have hStar : IsHStarPolynomial (latticePolytope S) h := by
+    unfold IsHStarPolynomial
+    simp only [ehrhart_eq_latticeEnumerator, Fintype.card_fin, hS]
+    exact hibiWeightedSimplex_hStar
+  have hSymm : ∀ i ≤ 6, h.coeff i = h.coeff (6 - i) := by
+    intro i hi
+    interval_cases i <;> norm_num only [h, Polynomial.coeff_add, Polynomial.coeff_one,
+      Polynomial.coeff_X_pow, Polynomial.coeff_X, Polynomial.coeff_ofNat_mul] <;> decide
+  have hDip : h.coeff 2 = 2 ∧ h.coeff 3 = 1 ∧ h.coeff 4 = 2 := by
+    norm_num only [h, Polynomial.coeff_add, Polynomial.coeff_one, Polynomial.coeff_X_pow,
+      Polynomial.coeff_X, Polynomial.coeff_ofNat_mul]
+    decide
+  obtain ⟨h₂, h₃, h₄⟩ := hDip
+  have hdeg : 4 ≤ h.natDegree := Polynomial.le_natDegree_of_ne_zero (by rw [h₄]; decide)
+  have hInterior : (interior (latticePolytope S)).Nonempty :=
+    hS ▸ hibiWeightedSimplex_interior_nonempty
+  obtain ⟨t, _, hinc, hdec⟩ := hibi 6 S hInterior h hStar hSymm
+  by_cases ht : 3 ≤ t
+  · have := hinc 2 3 (by decide) ht
+    omega
+  · have := hdec 3 4 (by omega) (by decide) hdeg
+    omega
+
+end MathlibExt.Combinatorics.HibiSymmetricHStarUnimodalOWR741Problem003Wanted
+
+end

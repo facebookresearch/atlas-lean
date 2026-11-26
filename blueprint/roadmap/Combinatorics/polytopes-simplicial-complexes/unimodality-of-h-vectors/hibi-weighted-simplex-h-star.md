@@ -1,9 +1,7 @@
 # Ehrhart numerator of the six-dimensional counterexample simplex
 
-The full-dimensional
-weighted simplex with weights $(1,1,1,1,1,3)$ has Ehrhart numerator
-$1 + X + 2X^2 + X^3 + 2X^4 + X^5 + X^6$. This instance of the weighted-simplex formula is proved
-by a direct cone decomposition.
+The full-dimensional weighted simplex with weights $(1,1,1,1,1,3)$ has Ehrhart numerator
+$1 + X + 2X^2 + X^3 + 2X^4 + X^5 + X^6$.
 
 ## Sources
 

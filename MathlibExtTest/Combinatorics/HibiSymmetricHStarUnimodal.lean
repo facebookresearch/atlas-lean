@@ -18,7 +18,10 @@ namespace MathlibExtTest.Combinatorics.HibiSymmetricHStarUnimodal
 open MathlibExt.Combinatorics MetaMathlibExt
 
 example : (interior (weightedSimplex ![1, 1, 1, 1, 1, 3])).Nonempty :=
-  hibiWeightedSimplex_hStar.1
+  hibiWeightedSimplex_interior_nonempty
+
+example : ¬ HibiSymmetricHStarUnimodalOWR741Problem003Wanted.hibiSymmetricUnimodal :=
+  HibiSymmetricHStarUnimodalOWR741Problem003Wanted.hibiSymmetricUnimodal_refuted
 
 noncomputable section
 
@@ -30,7 +33,7 @@ private def numerator : PowerSeries ℤ :=
 example : PowerSeries.coeff 2 numerator = 2 ∧ PowerSeries.coeff 3 numerator = 1 ∧
     PowerSeries.coeff 4 numerator = 2 := by
   unfold numerator
-  rw [hibiWeightedSimplex_hStar.2]
+  rw [hibiWeightedSimplex_hStar]
   norm_num only [Polynomial.coeff_coe, Polynomial.coeff_add, Polynomial.coeff_one,
     Polynomial.coeff_X_pow, Polynomial.coeff_X, Polynomial.coeff_ofNat_mul]
   decide
