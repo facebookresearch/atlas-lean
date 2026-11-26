@@ -62,8 +62,9 @@ the scaling that sends its abscissa to the Deuring coefficient `β`.
 
 Quotients by `deuringA₃ x₁ y₁ = 2y₁ + a₁x₁ + a₃` use `Ring.inverse`. So when it is not a unit,
 `tangentSlope`, `levelThreeModulus`, `levelThreeAbscissa` and `levelThreeOrdinate` are `0` and
-`deuringA₁` is `a₁`; over a field this happens exactly when `deuringA₃ x₁ y₁ = 0`, which for a
-point of the curve means that the point is its own negative. The variable-change laws and the
+`deuringA₁` is `a₁`. Over a field this happens exactly when `deuringA₃ x₁ y₁ = 0`, that is, when
+`y₁ = negY x₁ y₁` (`deuringA₃_eq_sub_negY`); for a nonsingular point of the curve this means that
+the point is its own negative. The variable-change laws and the
 base-change laws along field homomorphisms hold without hypotheses; along a ring homomorphism the
 base-change laws need `deuringA₃ x₁ y₁` to be a unit.
 -/
@@ -74,8 +75,13 @@ variable {R : Type*} [CommRing R]
 
 /-- **Deuring normal form.** For $\alpha, \beta$ in a commutative ring $R$, `deuringCurve α β` is
 the Weierstrass curve $y^2 + \alpha xy + \beta y = x^3$, with discriminant
-$\beta^3(\alpha^3 - 27\beta)$ (`deuringCurve_Δ`). It is the normal form of an elliptic curve with a
-point of order three at the origin whose tangent line is $y = 0$ (`deuringVariableChange_smul`). -/
+$\beta^3(\alpha^3 - 27\beta)$ (`deuringCurve_Δ`). Over a field with $\beta \ne 0$, the origin is
+a nonsingular point of the curve, and its tangent line $y = 0$ meets the curve only there, to
+order three, so the origin is a flex; when the curve is moreover elliptic, the origin is a point of
+order three. Conversely, over a field `deuringVariableChange_smul` puts a Weierstrass curve in this
+form, with a given point at the origin, when that point lies on the curve, satisfies
+$2y + a_1x + a_3 \ne 0$ and has vanishing flex form, that is, when it is a flex whose tangent line
+is not vertical. -/
 def deuringCurve (α β : R) : WeierstrassCurve R := ⟨α, 0, β, 0, 0⟩
 
 section deuringCurve
@@ -130,10 +136,10 @@ variable (W : WeierstrassCurve R)
 /-- **The $y$-derivative $2y + a_1x + a_3$.** For a Weierstrass curve $W$ over a commutative ring
 and $x, y$ in that ring, `W.deuringA₃ x y` is $2y + a_1x + a_3$. It is the partial derivative in
 $y$ of the Weierstrass polynomial at $(x, y)$ (`deuringA₃_eq_evalEval_polynomialY`), and the
-difference $y - y'$, where $y'$ is the ordinate of the negative of $(x, y)$
-(`deuringA₃_eq_sub_negY`). At a point $(x, y)$ of $W$ over a field where it is nonzero and the
-flex form vanishes, it is the coefficient $a_3$ of the Deuring form before scaling
-(`deuringVariableChange_smul`). The quotients of this file divide by it. -/
+difference $y - y'$ for $y'$ = `W.toAffine.negY x y`, which is the ordinate of $-(x, y)$ when
+$(x, y)$ is a nonsingular point of $W$ (`deuringA₃_eq_sub_negY`). At a point $(x, y)$ of $W$ over
+a field where it is nonzero and the flex form vanishes, it is the coefficient $a_3$ of the Deuring
+form before scaling (`deuringVariableChange_smul`). The quotients of this file divide by it. -/
 def deuringA₃ (x y : R) : R := 2 * y + W.a₁ * x + W.a₃
 
 /-- **Numerator of the tangent-slope quotient.** For a Weierstrass curve $W$ and $x, y$,
@@ -142,14 +148,18 @@ minus the partial derivative in $x$ of the Weierstrass polynomial at $(x, y)$
 (`tangentSlopeNum_eq_neg_evalEval_polynomialX`). -/
 def tangentSlopeNum (x y : R) : R := 3 * x ^ 2 + 2 * W.a₂ * x + W.a₄ - W.a₁ * y
 
-/-- **Totalized tangent-slope quotient.** For a Weierstrass curve $W$ and $x, y$,
+/-- **Totalized tangent-slope quotient.** For a Weierstrass curve $W$ and any $x, y$,
 `W.tangentSlope x y` is $(3x^2 + 2a_2x + a_4 - a_1y)/(2y + a_1x + a_3)$ with the division taken by
-`Ring.inverse`, so the value is $0$ whenever $2y + a_1x + a_3$ is not a unit. When $(x, y)$ is a
-point of $W$ and $2y + a_1x + a_3$ is a unit, it is the slope of the tangent line to $W$ at
-$(x, y)$. At a point of $W$ where $2y + a_1x + a_3 = 0$ the tangent line is vertical and the
-value $0$ is not its slope: on $y^2 = x^3 - x$ at $(0, 0)$ the tangent line is $x = 0$. Over a
-field with $2y + a_1x + a_3 \ne 0$ it equals `W.toAffine.slope x x y y`
-(`tangentSlope_eq_slope`). -/
+`Ring.inverse`, so the value is $0$ whenever $2y + a_1x + a_3$ is not a unit. Over a field with
+$2y + a_1x + a_3 \ne 0$ it equals `W.toAffine.slope x x y y` (`tangentSlope_eq_slope`).
+
+When $(x, y)$ is a point of $W$ and $2y + a_1x + a_3$ is a unit, the value is the slope of the
+tangent line to $W$ at $(x, y)$. When $2y + a_1x + a_3 = 0$ the value $0$ is only the totalized
+quotient. At a nonsingular point of $W$ over a field, $2y + a_1x + a_3$ is the partial derivative
+in $y$ of the Weierstrass polynomial, so when it vanishes the partial derivative in $x$,
+$a_1y - (3x^2 + 2a_2x + a_4)$, does not, and the tangent line is vertical: on $y^2 = x^3 - x$ at
+$(0, 0)$ it is $x = 0$. At a singular point both partial derivatives vanish: on the cusp
+$y^2 = x^3$ at $(0, 0)$ the tangent cone is the double line $y = 0$. -/
 noncomputable def tangentSlope (x y : R) : R := W.tangentSlopeNum x y * Ring.inverse (W.deuringA₃ x
   y)
 
@@ -162,10 +172,11 @@ noncomputable def deuringA₁ (x y : R) : R := W.a₁ + 2 * W.tangentSlope x y
 
 /-- **Flex form.** For a Weierstrass curve $W$ and $x, y$, write $n$ for `W.tangentSlopeNum x y`
 and $d$ for `W.deuringA₃ x y`. Then `W.flexForm x y` is $n^2 + a_1nd - (a_2 + 3x)d^2$. When $d$ is
-invertible this is $d^2(m^2 + a_1m - a_2 - 3x)$ for $m = n/d$, and at a point $(x, y)$ of $W$,
-where $m$ is the slope of the tangent line, the factor $m^2 + a_1m - a_2 - 3x$ vanishes exactly
-when the tangent line meets $W$ to order three there, that is, when $(x, y)$ is a flex. On the
-curve the flex form is $-\Psi_3(x)$ (`flexForm_eq_neg_eval_Ψ₃`). -/
+invertible this is $d^2(m^2 + a_1m - a_2 - 3x)$ for $m = n/d$. At a point $(x, y)$ of $W$ over a
+field with $d \ne 0$, which is then nonsingular, $m$ is the slope of the tangent line, and the
+factor $m^2 + a_1m - a_2 - 3x$ vanishes exactly when the tangent line meets $W$ to order three
+there, that is, when $(x, y)$ is a flex. On the curve the flex form is $-\Psi_3(x)$
+(`flexForm_eq_neg_eval_Ψ₃`). -/
 def flexForm (x y : R) : R :=
   W.tangentSlopeNum x y ^ 2 + W.a₁ * W.tangentSlopeNum x y * W.deuringA₃ x y
     - (W.a₂ + 3 * x) * W.deuringA₃ x y ^ 2
