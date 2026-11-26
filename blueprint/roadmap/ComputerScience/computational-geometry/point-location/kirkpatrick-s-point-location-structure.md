@@ -1,6 +1,6 @@
 # Kirkpatrick's point location structure
 
-Let $T_0$ be a triangulation of the plane by a planar straight-line graph with $n$ vertices whose outer face is the exterior of a triangle $abc$. Repeatedly delete from $T_i$ an independent set of vertices of degree at most $8$, not containing $a$, $b$ or $c$, and retriangulate the holes to obtain $T_{i+1}$, until only the triangle $abc$ remains; link each triangle of $T_{i+1}$ to the at most $8$ triangles of $T_i$ that it overlaps. The resulting hierarchy has $O(\log n)$ levels and size $O(n)$, and the triangle of $T_0$ containing a query point is found in $O(\log n)$ time by descending from $abc$ through the levels.
+Let $T_0$ be a triangulation of the plane by a planar straight-line graph with $n$ vertices whose outer face is the exterior of a triangle $abc$. Repeatedly delete from $T_i$ an independent set of vertices of degree at most $8$, not containing $a$, $b$ or $c$ (removing these three from a set of at least $|V(T_i)|/18$ such vertices leaves a constant fraction for $|V(T_i)|$ large enough), and retriangulate the holes to obtain $T_{i+1}$, until only the triangle $abc$ remains; link each triangle of $T_{i+1}$ to the at most $8$ triangles of $T_i$ that it overlaps. The resulting hierarchy has $O(\log n)$ levels and size $O(n)$, and the triangle of $T_0$ containing a query point is found in $O(\log n)$ time by descending from $abc$ through the levels.
 
 ## Depends on
 

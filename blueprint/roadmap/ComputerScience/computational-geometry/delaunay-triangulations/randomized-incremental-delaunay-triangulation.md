@@ -2,7 +2,7 @@
 
 Let $P$ be a set of $n \ge 3$ points in $\mathbb{R}^2$, not all on one line. A *triangulation* of $P$ is a maximal planar subdivision with vertex set $P$: a maximal set of closed segments with endpoints in $P$ that meet only in common endpoints and contain no other point of $P$; its bounded faces are triangles whose union is $\operatorname{conv}(P)$.
 
-Assume no four points of $P$ lie on a common circle. The randomized incremental algorithm inserts the points of $P$ in an order chosen uniformly at random, locates each new point in the triangle of the current Delaunay triangulation that contains it, joins it to the vertices of that triangle and restores the Delaunay property by flipping edges that fail the in-circle test, keeping every uninserted point in a bucket of the triangle that contains it. It computes the Delaunay triangulation of $P$; the expected number of edge changes per insertion is $O(1)$, and the expected total running time is $O(n \log n)$, the expectation being over the insertion order only.
+Assume no four points of $P$ lie on a common circle. The randomized incremental algorithm starts from three sentinel points forming a triangle that contains $P$, chosen so far out that they lie in no circumcircle of a triangle of the final triangulation; it inserts the points of $P$ in an order chosen uniformly at random, locates each new point in the triangle of the current Delaunay triangulation that contains it, joins it to the vertices of that triangle and restores the Delaunay property by flipping edges that fail the in-circle test, keeping every uninserted point in a bucket of the triangle that contains it, and at the end removes the sentinels and their incident triangles. It computes the Delaunay triangulation of $P$; the expected number of edge changes per insertion is $O(1)$, and the expected total running time is $O(n \log n)$, the expectation being over the insertion order only.
 
 ## Depends on
 
@@ -17,4 +17,4 @@ Assume no four points of $P$ lie on a common circle. The randomized incremental 
 
 ## Sources
 
-- D. M. Mount, *CMSC 754: Computational Geometry*, lecture notes, University of Maryland, Spring 2020, <https://www.cs.umd.edu/class/spring2020/cmsc754/Lects/cmsc754-spring2020-lects.pdf>: Lecture 13, "Constructing the Delaunay Triangulation" and "Running-Time Analysis": $O(1)$ expected structural changes per insertion and $O(n \log n)$ expected time
+- D. M. Mount, *CMSC 754: Computational Geometry*, lecture notes, University of Maryland, Spring 2020, <https://www.cs.umd.edu/class/spring2020/cmsc754/Lects/cmsc754-spring2020-lects.pdf>: Lecture 13, "Constructing the Delaunay Triangulation", the incremental update with three sentinel points and its footnote on choosing them, and "Running-Time Analysis": $O(1)$ expected structural changes per insertion and $O(n \log n)$ expected time

@@ -1,6 +1,6 @@
 # Partition of a simple polygon into monotone pieces
 
-Let $P$ be a simple polygon with $n$ vertices, no two of them with the same $x$-coordinate. A plane sweep from left to right, which keeps the polygon edges crossing the sweep line in a balanced search tree together with a *helper* vertex for each edge and adds a diagonal at every split vertex and merge vertex (reflex vertices whose two incident edges both lie to their right, respectively to their left), adds non-crossing diagonals of $P$ that partition it into polygons monotone with respect to the $x$-axis, in $O(n \log n)$ time.
+Let $P$ be a simple polygon with $n$ vertices, no two of them with the same $x$-coordinate. A plane sweep from left to right, which keeps the polygon edges crossing the sweep line in a balanced search tree together with a *helper* vertex for each edge and adds a diagonal at every split vertex and merge vertex (reflex vertices whose two incident edges both lie to their right, respectively to their left), adds non-crossing diagonals of $P$ that partition it into polygons monotone with respect to the $x$-axis, in $O(n \log n)$ time. Its correctness uses the characterization of monotone polygons by interior cusps with the roles of $x$ and $y$ exchanged: the added diagonals remove every split and merge vertex, the interior cusps for the $x$-direction.
 
 ## Depends on
 

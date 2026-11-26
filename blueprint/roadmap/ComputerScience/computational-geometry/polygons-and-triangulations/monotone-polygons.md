@@ -1,6 +1,6 @@
 # Monotone polygons
 
-A polygonal chain $p_1, \dots, p_k$ is *monotone with respect to a line* $L$ if the orthogonal projections of $p_1, \dots, p_k$ onto $L$ occur in the same order along $L$ as in the chain (consecutive vertices may project to the same point). A simple polygon is *monotone with respect to* $L$ if its boundary can be split into two chains that are both monotone with respect to $L$; it is *$y$-monotone* when $L$ is the $y$-axis. An *interior cusp* of a simple polygon is a reflex vertex (interior angle greater than $\pi$) whose two neighbouring vertices both have larger $y$-coordinate than it or both have smaller $y$-coordinate than it.
+A polygonal chain $p_1, \dots, p_k$ is *monotone with respect to a line* $L$ if the orthogonal projections of $p_1, \dots, p_k$ onto $L$ occur in the same order along $L$ as in the chain (consecutive vertices may project to the same point). A simple polygon is *monotone with respect to* $L$ if its boundary can be split into two chains that are both monotone with respect to $L$; it is *$y$-monotone* when $L$ is the $y$-axis. An *interior cusp* of a simple polygon is a reflex vertex (interior angle greater than $\pi$) such that neither of its two neighbouring vertices has larger $y$-coordinate than it, or neither has smaller $y$-coordinate than it (neighbours at the same height count on either side).
 
 ## Depends on
 
