@@ -13,8 +13,8 @@ public import Mathlib.Analysis.Asymptotics.Defs
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 import MathlibExt.NumberTheory.SquareSplittingConvolution.DivisorProperties
-import all MathlibExt.NumberTheory.SquareSplittingConvolution.MoebiusInversion
-import all MathlibExt.NumberTheory.SquareSplittingConvolutionSquareSplitMoebiusFormula
+import MathlibExt.NumberTheory.SquareSplittingConvolution.MoebiusInversion
+import MathlibExt.NumberTheory.SquareSplittingConvolutionSquareSplitMoebiusFormula
 import MathlibExt.NumberTheory.ArithmeticFunction.JordanTotient
 import Mathlib.NumberTheory.ArithmeticFunction.Moebius
 import Mathlib.Data.Nat.Factorization.Root
