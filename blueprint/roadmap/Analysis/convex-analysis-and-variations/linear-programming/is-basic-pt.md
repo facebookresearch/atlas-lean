@@ -1,4 +1,3 @@
 # Basic points of a linear system
 
-`z` is a basic point for the linear map `L`: the only kernel direction of `L` that vanishes
-wherever `z` vanishes is `0`.
+Let $\iota$ be a finite index set, $E$ a real vector space and $L : \mathbb{R}^\iota \to E$ a linear map. A point $z \in \mathbb{R}^\iota$ is basic for $L$ when the only $d \in \mathbb{R}^\iota$ with $L d = 0$ and $d_i = 0$ for every $i$ with $z_i = 0$ is $d = 0$.
