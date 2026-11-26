@@ -79,7 +79,7 @@ statement, is category-(a) — already in Mathlib — and is not a candidate.)
 
 open MeasureTheory
 
-variable {X : Type*} [NormedAddCommGroup X] [NormedSpace ℝ X] [CompleteSpace X]
+variable {X : Type*} [NormedAddCommGroup X] [NormedSpace ℝ X]
 
 /- **Choquet's representation theorem.** Every point `x` of a compact convex
 set `K` in a Banach space is the barycenter of a probability measure supported
@@ -94,7 +94,7 @@ Source: G. Choquet, *Existence et unicité des représentations intégrales au m
 extrémaux dans les cônes convexes*, Séminaire Bourbaki (1956). Knill, *Some fundamental theorems
 in mathematics*, §88. Via leanprover/lean-eval@38361be, problem
 `choquet_representation_theorem`. -/
-public theorem_wanted choquet [MeasurableSpace X] [BorelSpace X]
+public theorem_wanted choquet [CompleteSpace X] [MeasurableSpace X] [BorelSpace X]
     (K : Set X) (hK_cpt : IsCompact K) (hK_cvx : Convex ℝ K)
     {x : X} (hx : x ∈ K) :
     ∃ μ : Measure X, IsProbabilityMeasure μ ∧
