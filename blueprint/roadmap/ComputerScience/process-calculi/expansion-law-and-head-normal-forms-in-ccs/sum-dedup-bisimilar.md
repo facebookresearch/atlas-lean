@@ -1,0 +1,3 @@
+# Removing duplicate summands preserves strong bisimilarity
+
+Let the channel names form a type with decidable equality. For a list $s$ of summands (pairs $(\alpha, P)$ of a CCS action and a static CCS process), $\Sigma s$ denotes the right-associated finite choice $\alpha_1.P_1 + (\alpha_2.P_2 + (\cdots + (\alpha_n.P_n + 0)))$ of its entries, with $\Sigma [\,] = 0$. For every list $s$ of summands, let $\operatorname{dedup} s$ be the list obtained by removing repeated entries (summands compared by syntactic equality), keeping the last occurrence of each entry and the relative order of the kept entries. Then $\Sigma(\operatorname{dedup} s)$ is strongly bisimilar in the labelled transition system of static CCS to $\Sigma s$.

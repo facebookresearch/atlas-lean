@@ -1,0 +1,3 @@
+# Membership in the constrained reachability set at index zero
+
+Let $L$ be a labelled transition system with states $S$ and labels $\Lambda$, given by its transition relation $s \xrightarrow{\mu} t$, and let $\alpha : S \to T$. For a predicate $\mathrm{Init}$ on $S$, a sequence $p : \mathbb{N} \to T$ of abstract states and a sequence $\mu : \mathbb{N} \to \Lambda$ of labels, the constrained reachability sets $C_k \subseteq S$ are $C_0 = \{ s : \mathrm{Init}(s) \text{ and } \alpha(s) = p_0 \}$ and $C_{n+1} = \{ t : \alpha(t) = p_{n+1} \text{ and } s \xrightarrow{\mu_n} t \text{ for some } s \in C_n \}$. For every $t \in S$, $t \in C_0$ if and only if $\mathrm{Init}(t)$ and $\alpha(t) = p_0$.

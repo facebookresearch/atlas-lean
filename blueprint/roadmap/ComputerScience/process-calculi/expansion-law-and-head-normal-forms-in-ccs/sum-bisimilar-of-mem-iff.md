@@ -1,0 +1,3 @@
+# Finite sums with the same summands are strongly bisimilar
+
+Let the channel names form a type with decidable equality. For a list $s$ of summands (pairs $(\alpha, P)$ of a CCS action and a static CCS process), $\Sigma s$ denotes the right-associated finite choice $\alpha_1.P_1 + (\alpha_2.P_2 + (\cdots + (\alpha_n.P_n + 0)))$ of its entries, with $\Sigma [\,] = 0$. Let $s$ and $t$ be lists of summands with the same entries, that is, every summand is an entry of $s$ if and only if it is an entry of $t$. Then $\Sigma s$ and $\Sigma t$ are strongly bisimilar in the labelled transition system of static CCS. Equality of summands is syntactic equality of the action and of the continuation process.

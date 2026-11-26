@@ -1,0 +1,3 @@
+# A state is divergent exactly when it starts an infinite run of silent steps
+
+Let $L$ be a labelled transition system with states $S$ and labels $\Lambda$, given by its transition relation $s \xrightarrow{\mu} t$, and let $\tau \in \Lambda$ be a designated silent label. A state $s$ is divergent when there are a sequence of states $(s_i)_{i \in \mathbb{N}}$ and a sequence of labels $(\mu_i)_{i \in \mathbb{N}}$ with $s_0 = s$, $s_i \xrightarrow{\mu_i} s_{i+1}$ for every $i$, and $\mu_i = \tau$ for every $i$. Then $s$ is divergent if and only if there is a sequence of states $(s_i)_{i \in \mathbb{N}}$ with $s_0 = s$ and $s_i \xrightarrow{\tau} s_{i+1}$ for every $i$.
