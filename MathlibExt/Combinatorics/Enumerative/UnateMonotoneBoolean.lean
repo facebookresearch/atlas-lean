@@ -23,7 +23,15 @@ namespace MetaMathlibExt
 
 /-! Boolean functions on `n` variables are `(Fin n → Bool) → Bool`; monotone
 means Mathlib's `Monotone` for the coordinatewise order with `false ≤ true`.
-The paper's variable `x₁` (the top bit of the truth table) is index `0`. -/
+The paper's variable `x₁` (the top bit of the truth table) is index `0`.
+
+## References
+
+* Aniruddha Biswas and Palash Sarkar, *Counting Unate and Monotone Boolean Functions under
+  Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer Sequences 28 (2025),
+  Article 25.3.4, pp. 1–19. Proposition 14(a), p. 11, gives the NN- and NPN-class count
+  equalities by passing from each unate function to a monotone representative.
+-/
 
 /-- **Weight of a Boolean function.** The weight $\mathrm{wt}(f)$ of an $n$-variable Boolean
 function $f \colon \{0,1\}^n \to \{0,1\}$ is the number of inputs $x \in \{0,1\}^n$ with
@@ -795,6 +803,102 @@ private theorem classCount_le_of_flip (P Q : ((Fin n → Bool) → Bool) → Pro
     _ = 2 ^ n * (classes Q).ncard := by simp [Nat.card_eq_fintype_card]
 
 end boolFunClassCount_varPerm_unate_le
+
+namespace boolFunClassCount_unate_eq_monotone
+
+open boolFunClassCount_varPerm_nondegenerate_eq_sub (classCount_eq_ncard)
+
+variable {n : ℕ}
+
+private theorem equivalence_isBoolFunNNEquiv : Equivalence (IsBoolFunNNEquiv (n := n)) where
+  refl := isBoolFunNNEquiv_refl
+  symm := by
+    rintro f g ⟨a, c, h⟩
+    refine ⟨a, c, fun x => ?_⟩
+    rw [h]
+    simp
+  trans := by
+    rintro f g k ⟨a, c, h⟩ ⟨b, d, h'⟩
+    refine ⟨fun i => xor (b i) (a i), xor c d, fun x => ?_⟩
+    rw [h', h]
+    simp only [Bool.xor_assoc]
+
+private theorem equivalence_isBoolFunNPNEquiv : Equivalence (IsBoolFunNPNEquiv (n := n)) where
+  refl := isBoolFunNPNEquiv_refl
+  symm := by
+    rintro f g ⟨σ, a, c, h⟩
+    refine ⟨σ.symm, fun i => a (σ.symm i), c, fun x => ?_⟩
+    rw [h]
+    simp
+  trans := by
+    rintro f g k ⟨σ, a, c, h⟩ ⟨τ, b, d, h'⟩
+    refine ⟨σ.trans τ, fun i => xor (b (σ i)) (a i), xor c d, fun x => ?_⟩
+    rw [h', h]
+    simp only [Equiv.trans_apply, Bool.xor_assoc]
+
+/-- If `Q` is contained in `P` and meets every class meeting `P`, both count the same classes. -/
+private theorem classCount_eq_of_representatives
+    {R : ((Fin n → Bool) → Bool) → ((Fin n → Bool) → Bool) → Prop}
+    (hR : Equivalence R) {P Q : ((Fin n → Bool) → Bool) → Prop}
+    (hQP : ∀ f, Q f → P f) (hrep : ∀ f, P f → ∃ g, Q g ∧ R f g) :
+    boolFunClassCount R P = boolFunClassCount R Q := by
+  have hclass {f g} (hfg : R f g) : {k | R f k} = {k | R g k} :=
+    Set.ext fun _ => ⟨hR.trans (hR.symm hfg), hR.trans hfg⟩
+  let classes (B : ((Fin n → Bool) → Bool) → Prop) := {S | ∃ f, B f ∧ S = {g | R f g}}
+  -- Intersecting with `B` bijects the ambient classes meeting `B` with the restricted classes.
+  have hcount (B) : boolFunClassCount R B = (classes B).ncard := by
+    rw [classCount_eq_ncard]
+    symm
+    refine Set.ncard_congr (fun S _ => {g | B g ∧ g ∈ S}) ?_ ?_ ?_
+    · rintro _ ⟨f, hf, rfl⟩
+      exact ⟨f, hf, rfl⟩
+    · rintro _ _ ⟨f, _, rfl⟩ ⟨g, hg, rfl⟩ heq
+      change {k | B k ∧ R f k} = {k | B k ∧ R g k} at heq
+      have hmem : g ∈ {k | B k ∧ R g k} := ⟨hg, hR.refl _⟩
+      rw [← heq] at hmem
+      exact hclass hmem.2
+    · rintro _ ⟨f, hf, rfl⟩
+      exact ⟨_, ⟨f, hf, rfl⟩, rfl⟩
+  -- Both properties meet exactly the same ambient classes.
+  rw [hcount P, hcount Q]
+  congr 1
+  ext S
+  constructor
+  · rintro ⟨f, hf, rfl⟩
+    obtain ⟨g, hg, hfg⟩ := hrep f hf
+    exact ⟨g, hg, hclass hfg⟩
+  · rintro ⟨g, hg, rfl⟩
+    exact ⟨g, hQP g hg, rfl⟩
+
+end boolFunClassCount_unate_eq_monotone
+
+open boolFunClassCount_unate_eq_monotone in
+open boolFunClassCount_varPerm_unate_le (exists_monotone_flip) in
+open boolFunClassCount_varPerm_unate_le renaming flip → flipInputs in
+/-- **Unate and monotone functions have equally many NN- and NPN-classes.** For every $n$, the
+number of NN-inequivalent unate $n$-variable Boolean functions equals the number of
+NN-inequivalent monotone ones, and the number of NPN-inequivalent unate $n$-variable Boolean
+functions equals the number of NPN-inequivalent monotone ones. Here monotone means nondecreasing
+for the coordinatewise order with $0 < 1$.
+
+Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
+under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
+Sequences 28 (2025), Article 25.3.4, Proposition 14(a) (`jis-2025-25.3.4-prop-14`). -/
+public theorem boolFunClassCount_unate_eq_monotone (n : ℕ) :
+    boolFunClassCount (n := n) IsBoolFunNNEquiv IsUnateBoolFun
+        = boolFunClassCount (n := n) IsBoolFunNNEquiv Monotone ∧
+      boolFunClassCount (n := n) IsBoolFunNPNEquiv IsUnateBoolFun
+        = boolFunClassCount (n := n) IsBoolFunNPNEquiv Monotone := by
+  have hrep (f : (Fin n → Bool) → Bool) (hf : IsUnateBoolFun f) :
+      ∃ g, Monotone g ∧ IsBoolFunNNEquiv f g := by
+    obtain ⟨a, ha⟩ := exists_monotone_flip hf
+    exact ⟨f ∘ flipInputs a, ha, a, false, fun _ => (Bool.xor_false _).symm⟩
+  refine ⟨classCount_eq_of_representatives equivalence_isBoolFunNNEquiv
+    (fun _ => isUnateBoolFun_of_monotone) hrep,
+    classCount_eq_of_representatives equivalence_isBoolFunNPNEquiv
+      (fun _ => isUnateBoolFun_of_monotone) fun f hf => ?_⟩
+  obtain ⟨g, hg, a, c, h⟩ := hrep f hf
+  exact ⟨g, hg, 1, a, c, h⟩
 
 open boolFunClassCount_varPerm_unate_le in
 /-- **Unate versus monotone permutation classes.** Write $[Q]_n$ for the number of classes of
