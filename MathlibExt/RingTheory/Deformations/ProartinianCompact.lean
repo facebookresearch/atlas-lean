@@ -23,6 +23,18 @@ Released under the Apache License, Version 2.0.
 The source is machine-generated proof code built around a proof-extraction
 framework; the statements and proofs are reused here with that machinery
 removed and the names restated in Mathlib style.
+
+The cited upstream file is adapted in part from a file of the Imperial College London FLT
+project (https://github.com/ImperialCollegeLondon/FLT, branch `main` as of 2026-05-21, as
+the upstream `ATTRIBUTION.md` records; header checked at commit
+`a7dbce8494c29858093974a612a72b6454fc5cba`). The opening of the proof of
+`IsProartinian.finite_quotient_of_isOpen` (a proper open ideal has an artinian local
+quotient) is adapted from:
+
+`FLT/Deformations/IsProartinian.lean` (FLT):
+Copyright (c) 2025 Andrew Yang. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Andrew Yang, Kevin Buzzard, Ruben Van de Velde
 -/
 
 module
@@ -30,7 +42,7 @@ module
 public import MathlibExt.RingTheory.Deformations.ProartinianCat
 
 import Mathlib.RingTheory.HopkinsLevitzki
-import Mathlib.RingTheory.Ideal.Quotient.Index
+import Mathlib.RingTheory.LocalRing.Quotient
 import Mathlib.Topology.Algebra.IsUniformGroup.Basic
 
 /-!
@@ -60,12 +72,8 @@ open CategoryTheory Function IsLocalRing Filter Topology Set Pointwise
 /-- An artinian local ring with finite residue field is finite. -/
 theorem IsArtinianRing.finite_of_finite_residueField (R : Type*) [CommRing R] [IsArtinianRing R]
     [IsLocalRing R] [Finite (ResidueField R)] : Finite R := by
-  obtain ⟨n, hn⟩ := IsArtinianRing.isNilpotent_jacobson R
-  rw [ringJacobson_eq_maximalIdeal] at hn
-  have h1 : Finite (R ⧸ maximalIdeal R) := ‹Finite (ResidueField R)›
-  have h2 : Finite (R ⧸ maximalIdeal R ^ n) :=
-    Ideal.finite_quotient_pow (IsNoetherian.noetherian _) n
-  rw [hn, Ideal.zero_eq_bot] at h2
+  have : Finite (R ⧸ (⊥ : Ideal R)) := IsLocalRing.finite_quotient_iff.mpr
+    (IsLocalRing.exists_maximalIdeal_pow_le_of_isArtinianRing_quotient ⊥)
   exact .of_equiv _ (RingEquiv.quotientBot R).toEquiv
 
 namespace IsProartinian

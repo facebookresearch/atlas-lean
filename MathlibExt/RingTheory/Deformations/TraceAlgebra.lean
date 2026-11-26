@@ -23,6 +23,15 @@ Released under the Apache License, Version 2.0.
 The source is machine-generated proof code built around a proof-extraction
 framework; the statements and proofs are reused here with that machinery
 removed and the names restated in Mathlib style.
+
+The subgroup in `Deformation.conjKer` restates the one in `repnQuotFunctor` of a file of the
+Imperial College London FLT project (https://github.com/ImperialCollegeLondon/FLT, branch
+`main` as of 2026-05-21; header checked at commit `a7dbce8494c29858093974a612a72b6454fc5cba`):
+
+`FLT/Deformations/LiftFunctor.lean` (FLT):
+Copyright (c) 2025 Andrew Yang. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Andrew Yang, Kevin Buzzard, Ruben Van de Velde
 -/
 
 module

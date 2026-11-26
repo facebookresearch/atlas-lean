@@ -25,6 +25,22 @@ Released under the Apache License, Version 2.0.
 The source is machine-generated proof code built around a proof-extraction
 framework; the statements and proofs are reused here with that machinery
 removed and the names restated in Mathlib style.
+
+The cited upstream files are adapted from files of the Imperial College London FLT
+project (https://github.com/ImperialCollegeLondon/FLT, branch `main` as of 2026-05-21, as
+the upstream `ATTRIBUTION.md` records; headers checked at commit
+`a7dbce8494c29858093974a612a72b6454fc5cba`). The portions of this file that come from them
+are adapted from:
+
+`FLT/Deformations/IsProartinian.lean` (FLT):
+Copyright (c) 2025 Andrew Yang. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Andrew Yang, Kevin Buzzard, Ruben Van de Velde
+
+`FLT/Deformations/Lemmas.lean` (FLT):
+Copyright (c) 2025 Andrew Yang. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Andrew Yang, Kevin Buzzard, Ruben Van de Velde
 -/
 
 module
@@ -37,8 +53,7 @@ public import Mathlib.Topology.Algebra.IsUniformGroup.Defs
 public import Mathlib.Topology.Algebra.LinearTopology
 public import Mathlib.Topology.UniformSpace.Cauchy
 
-import Mathlib.RingTheory.Artinian.Ring
-import Mathlib.RingTheory.LocalRing.RingHom.Basic
+import Mathlib.RingTheory.LocalRing.Quotient
 
 /-!
 # Proartinian topological rings
@@ -125,17 +140,8 @@ theorem isOpen_maximalIdeal_of_isProartinian [IsProartinian R] :
 theorem exists_maximalIdeal_pow_le_of_isProartinian [IsProartinian R]
     (I : Ideal R) (hI : IsOpen (X := R) I) :
     ∃ n, maximalIdeal R ^ n ≤ I := by
-  by_cases hI' : I = ⊤
-  · exact ⟨1, by simp [hI']⟩
   have := IsProartinian.isArtinianRing_quotient I hI
-  have : Nontrivial (R ⧸ I) := Ideal.Quotient.nontrivial_iff.2 hI'
-  have : IsLocalRing (R ⧸ I) := .of_surjective' _ Ideal.Quotient.mk_surjective
-  obtain ⟨n, hn⟩ := IsArtinianRing.isNilpotent_jacobson (R ⧸ I)
-  rw [ringJacobson_eq_maximalIdeal,
-    ← IsLocalRing.map_maximalIdeal_of_surjective _ Ideal.Quotient.mk_surjective,
-    ← Ideal.map_pow, Ideal.zero_eq_bot, ← le_bot_iff, Ideal.map_le_iff_le_comap,
-    ← RingHom.ker, Ideal.mk_ker] at hn
-  exact ⟨n, hn⟩
+  exact exists_maximalIdeal_pow_le_of_isArtinianRing_quotient I
 
 /-- A continuous ring map between proartinian local rings is local. -/
 theorem isLocalHom_of_isContinuous_of_isProartinian

@@ -27,7 +27,7 @@ removed and the names restated in Mathlib style.
 
 module
 
-public import Mathlib.CategoryTheory.Subfunctor.Basic
+public import Mathlib.CategoryTheory.Subfunctor.Image
 public import MathlibExt.RingTheory.Deformations.TraceAlgebra
 
 /-!
@@ -64,13 +64,10 @@ open ProartinianCat
 
 variable (n) in
 /-- The image of a subfunctor of the representation functor in the functor of strict
-equivalence classes. -/
+equivalence classes, that is `Subfunctor.image` along `toRepnQuot n G 𝓞`. -/
 noncomputable def conjQuotSubfunctor (F : Subfunctor (repnFunctor n G 𝓞)) :
-    Subfunctor (repnQuotFunctor n G 𝓞) where
-  obj R := (toRepnQuot n G 𝓞).app R '' F.obj R
-  map {R S} f := by
-    rintro _ ⟨ρ', hρ', rfl⟩
-    exact ⟨(repnFunctor n G 𝓞).map f ρ', F.map f hρ', rfl⟩
+    Subfunctor (repnQuotFunctor n G 𝓞) :=
+  F.image (toRepnQuot n G 𝓞)
 
 variable (n) in
 theorem mem_conjQuotSubfunctor_obj_iff {F : Subfunctor (repnFunctor n G 𝓞)}

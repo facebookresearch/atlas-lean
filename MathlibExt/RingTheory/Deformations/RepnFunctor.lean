@@ -25,6 +25,22 @@ Released under the Apache License, Version 2.0.
 The source is machine-generated proof code built around a proof-extraction
 framework; the statements and proofs are reused here with that machinery
 removed and the names restated in Mathlib style.
+
+The cited upstream files are adapted from files of the Imperial College London FLT
+project (https://github.com/ImperialCollegeLondon/FLT, branch `main` as of 2026-05-21, as
+the upstream `ATTRIBUTION.md` records; headers checked at commit
+`a7dbce8494c29858093974a612a72b6454fc5cba`). The portions of this file that come from them
+are adapted from:
+
+`FLT/Deformations/LiftFunctor.lean` (FLT):
+Copyright (c) 2025 Andrew Yang. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Andrew Yang, Kevin Buzzard, Ruben Van de Velde
+
+`FLT/Deformations/Lemmas.lean` (FLT):
+Copyright (c) 2025 Andrew Yang. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Andrew Yang, Kevin Buzzard, Ruben Van de Velde
 -/
 
 module
@@ -43,8 +59,7 @@ relation is the functor `repnQuotFunctor n G 𝓞`.
 
 ## Main definitions
 
-* `Units.mapₜ`, `ContinuousAlgHom.mapMatrix`, `ContinuousAlgHom.toContinuousMonoidHom`:
-  continuous versions of the corresponding maps.
+* `Units.mapₜ`, `ContinuousAlgHom.mapMatrix`: continuous versions of the corresponding maps.
 * The pointwise action of a monoid acting distributively on `G` on `M →* G` and `M →ₜ* G`.
 * `Deformation.repnFunctor n G 𝓞`: `R ↦ (G →ₜ* GL n R)`.
 * `Deformation.repnQuotFunctor n G 𝓞`: representations up to strict equivalence.
@@ -57,9 +72,7 @@ relation is the functor `repnQuotFunctor n G 𝓞`.
 @[simps!]
 def Units.mapₜ {M N : Type*} [Monoid M] [Monoid N] [TopologicalSpace M] [TopologicalSpace N]
     (f : M →ₜ* N) : Mˣ →ₜ* Nˣ :=
-  ⟨Units.map f,
-  continuous_induced_rng.mpr (continuous_prodMk.mpr ⟨f.2.comp Units.continuous_val,
-    MulOpposite.continuous_op.comp (f.2.comp Units.continuous_coe_inv)⟩)⟩
+  ⟨Units.map f, Continuous.units_map _ f.continuous⟩
 
 /-- The continuous algebra map of matrix rings induced by a continuous algebra map. -/
 @[simps!]
@@ -69,18 +82,6 @@ def ContinuousAlgHom.mapMatrix
     [Fintype n] [DecidableEq n] :
     Matrix n n A →A[R] Matrix n n B :=
   ⟨f.1.mapMatrix, Continuous.matrix_map continuous_id' f.2⟩
-
-/-- A continuous algebra map as a continuous monoid homomorphism. -/
-def ContinuousAlgHom.toContinuousMonoidHom
-    {R A B : Type*} [CommSemiring R] [Semiring A] [Semiring B] [TopologicalSpace A]
-    [TopologicalSpace B] [Algebra R A] [Algebra R B] (f : A →A[R] B) : A →ₜ* B :=
-  ⟨f.1.toMonoidHom, f.2⟩
-
-@[simp]
-theorem ContinuousAlgHom.coe_toContinuousMonoidHom
-    {R A B : Type*} [CommSemiring R] [Semiring A] [Semiring B] [TopologicalSpace A]
-    [TopologicalSpace B] [Algebra R A] [Algebra R B] (f : A →A[R] B) :
-    (f.toContinuousMonoidHom : A → B) = f := rfl
 
 /-- A monoid acting distributively on `G` acts pointwise on monoid homomorphisms into `G`. -/
 instance MonoidHom.instMulActionOfMulDistribMulAction
@@ -128,7 +129,7 @@ variable (n) in
 def repnFunctor : ProartinianCat 𝓞 ⥤ Type (max u v w) where
   obj R := G →ₜ* GL n R
   map {R S} f := TypeCat.ofHom
-    (fun ρ ↦ .comp (Units.mapₜ f.hom.mapMatrix.toContinuousMonoidHom) ρ)
+    (fun ρ ↦ .comp (Units.mapₜ (f.hom.mapMatrix (n := n) : Matrix n n R →ₜ* Matrix n n S)) ρ)
 
 omit [IsLocalRing 𝓞] in
 @[simp]
