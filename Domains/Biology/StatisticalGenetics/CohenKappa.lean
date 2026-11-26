@@ -13,6 +13,30 @@ public import Mathlib.Basic.Real.Basic
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Algebra.BigOperators.Field
 
+/-!
+# Cohen's kappa
+
+Two raters classify the same items into `k` categories with joint table `pᵢⱼ` (a probability
+table: entries nonnegative, summing to `1`), row margins `pᵢ.` and column margins `p.ⱼ`. The
+observed agreement is `p_o = ∑ᵢ pᵢᵢ`, the chance agreement is `p_e = ∑ᵢ pᵢ. p.ᵢ`, and Cohen's
+kappa is `κ = (p_o - p_e) / (1 - p_e)`.
+
+## Main statements
+
+* `kappa_le_kappaMax`: when `p_e < 1`, every joint probability table with the margins of `P`
+  has `κ ≤ κ_max = (∑ᵢ min(pᵢ., p.ᵢ) - p_e) / (1 - p_e)`, since `pᵢᵢ ≤ min(pᵢ., p.ᵢ)`, with
+  equality for a table with these margins whose diagonal is `min(pᵢ., p.ᵢ)` (Cohen's `κ_M`,
+  the maximum permitted by the margins).
+
+The definitions follow Cohen (1960) as restated in secondary sources, and the statements here are
+derived from them.
+
+## References
+
+* J. Cohen, "A coefficient of agreement for nominal scales", Educ. Psychol. Meas. 20 (1960)
+  37–46, doi:10.1177/001316446002000104.
+-/
+
 @[expose] public section
 
 namespace WantedExt.Biology.StatisticalGenetics.CohenKappaWanted

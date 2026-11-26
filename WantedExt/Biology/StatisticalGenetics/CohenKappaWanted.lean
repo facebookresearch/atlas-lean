@@ -18,9 +18,11 @@ and, for fixed margins, `κ ≤ κ_max = (∑ᵢ min(pᵢ., p.ᵢ) - p_e) / (1 -
 `pᵢᵢ ≤ min(pᵢ., p.ᵢ)`, with equality for a table with these margins whose diagonal is
 `min(pᵢ., p.ᵢ)` (Cohen's `κ_M`, the maximum permitted by the margins).
 
-Recorded here: the three properties, including attainment of `κ_max`. The primary is paywalled
-and was not read; the definitions follow Cohen (1960) as restated in secondary sources, and the
-three properties are derived.
+Recorded here: perfect agreement and independent raters. The definitions and the maximum kappa
+for fixed margins, with its attainment (`kappa_le_kappaMax`), are in
+`Domains.Biology.StatisticalGenetics.CohenKappa`, which this module re-exports. The primary is
+paywalled and was not read; the definitions follow Cohen (1960) as restated in secondary
+sources, and the three properties are derived.
 
 Sources: J. Cohen, "A coefficient of agreement for nominal scales", Educ. Psychol. Meas. 20
 (1960) 37–46, doi:10.1177/001316446002000104.
