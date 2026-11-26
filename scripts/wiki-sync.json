@@ -34573,6 +34573,7 @@
 "IntegerSequence.IsPrimitivePrimeDivisor.unique": "51cf069c37972bbe",
 "IntermediateField.IsFiniteUnramified": "8162eb469f54ed8b",
 "IntermediateField.IsFiniteUnramified.map": "11281e1914931577",
+"IntermediateField.exists_algHom_adjoin_apply_eq_of_isAlgebraic_of_transcendental": "ee66f67e225fb63e",
 "IntermediateField.kummerCorrespondence": "1cf266b8673f11ec",
 "IntermediateField.le_maximalUnramifiedSubextension": "51a8e2a7d628796e",
 "IntermediateField.map_maximalUnramifiedSubextension": "93b60e4009b1db37",
