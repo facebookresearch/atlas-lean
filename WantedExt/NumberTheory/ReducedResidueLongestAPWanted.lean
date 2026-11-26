@@ -15,6 +15,7 @@ public import MathlibExt.NumberTheory.ReducedResiduePrimeBound
 public import MathlibExt.NumberTheory.ReducedResidueAverage
 public import MathlibExt.NumberTheory.ReducedResidueLongestAPAbsLeastAPLengthPrimeOfModFourEqOne
 public import MathlibExt.NumberTheory.ReducedResidueLongestAPIsLeastLongestAPLengthPrimeOfModFourEqOne
+public import MathlibExt.NumberTheory.ReducedResidueLongestAPLongestAPLengthMinOfNotSquarefreeOfNotIsPrimePow
 public import MathlibExt.NumberTheory.ReducedResidueLongestAPIsGreatestLongestAPLength
 
 /-!
@@ -111,26 +112,6 @@ Arithmetic Progressions in a Certain Reduced Residue System*, INTEGERS 26 (2026)
 Theorem 3 (`integers-2026-A6-thm-3`). -/
 public theorem_wanted isLeast_longestAPLength_prime_pow {p r : ℕ} (hp : p.Prime) (hr : 1 < r) :
     IsLeast (Set.range fun m : ℤ => longestAPLength m (p ^ r)) (p ^ (r - 1))
-
-/-- **Minimum longest progression length when $n$ is neither squarefree nor a prime power.** Let
-$n > 1$ be a natural number that is neither squarefree nor a prime power, $\operatorname{rad}(n)$
-the product of its distinct prime factors and $\operatorname{gpf}(n)$ its largest prime factor.
-For an integer $m$ let $f_m(n)$ be the length of the longest arithmetic progression with positive
-common difference contained in the set $R_m(n)$ of integers $a$ with $m + 1 \le a \le m + n$ and
-$\gcd(a, n) = 1$. Then $f_m(n) \ge n / \operatorname{rad}(n)$ for every integer $m$, and
-$f_m(n) \le \max(n / \operatorname{rad}(n), \operatorname{gpf}(n) - 1)$ for some integer $m$.
-If moreover $\operatorname{gpf}(n) - 1 \le n / \operatorname{rad}(n)$, then the least value of
-$f_m(n)$ over all integers $m$ is $n / \operatorname{rad}(n)$.
-
-Source: Chaninat Phothila, Natthakan Thoket and Narakorn Rompurk Kanasri, *Length of the Longest
-Arithmetic Progressions in a Certain Reduced Residue System*, INTEGERS 26 (2026), Article A6,
-Theorem 3 (`integers-2026-A6-thm-3`). -/
-public theorem_wanted longestAPLength_min_of_not_squarefree_of_not_isPrimePow {n : ℕ}
-    (hn : 1 < n) (hsq : ¬ Squarefree n) (hpp : ¬ IsPrimePow n) :
-    ((∀ m : ℤ, n / radical n ≤ longestAPLength m n) ∧
-      ∃ m : ℤ, longestAPLength m n ≤ max (n / radical n) (n.primeFactors.sup id - 1)) ∧
-    (n.primeFactors.sup id - 1 ≤ n / radical n →
-      IsLeast (Set.range fun m : ℤ => longestAPLength m n) (n / radical n))
 
 end
 
