@@ -65,8 +65,9 @@ more steps. -/
 def IsAncestor (F : UnorderedTreeEditDistance.LabeledForest) (x y : Fin F.n) : Prop :=
   Relation.TransGen (fun a b => F.parent a = some b) y x
 
-/-- An embedding of `S` into `T`: an injective map of the nodes that preserves labels and
-ancestorship. -/
+/-- An embedding of `S` into `T`: an injective map `f` of the nodes that preserves labels, such
+that `x` is a proper ancestor of `y` in `S` exactly when `f x` is a proper ancestor of `f y` in
+`T`. -/
 def Embeds (S T : UnorderedTreeEditDistance.LabeledForest) : Prop :=
   ∃ f : Fin S.n → Fin T.n, Function.Injective f ∧ (∀ x, S.label x = T.label (f x)) ∧
     ∀ x y, IsAncestor S x y ↔ IsAncestor T (f x) (f y)

@@ -39,4 +39,3 @@ Vertex, edge, list and precoloring-extension coloring, achromatic number, graph 
 - [Precoloring extension](precoloring-extension/README.md)
 - [Treewidth](treewidth/README.md)
 - [Vertex ranking](vertex-ranking/README.md)
-- [Grundy number](grundy-number/README.md)

@@ -1,5 +1,10 @@
 # Maximum coverage
 
+- [Maximum-coverage instances](maximum-coverage-instance.md)
+- [Well-formed maximum-coverage instances](well-formed.md)
+- [Feasible maximum-coverage instances](maximum-coverage-feasible.md)
+- [The MAXIMUM COVERAGE decision problem](maximum-coverage-dec.md)
+- [MAXIMUM COVERAGE is NP-complete](maximum-coverage-np-complete.md)
 - [Instances of MAXIMUM COVERAGE LOCATION ON A NETWORK](maximum-coverage-location-instance.md)
 - [Graph of a MAXIMUM COVERAGE LOCATION ON A NETWORK instance](maximum-coverage-location-graph.md)
 - [Points of a network](maximum-coverage-location-on-graph.md)
@@ -8,8 +13,3 @@
 - [Feasible instances of MAXIMUM COVERAGE LOCATION ON A NETWORK](maximum-coverage-location-feasible.md)
 - [MAXIMUM COVERAGE LOCATION ON A NETWORK as a decision problem](maximum-coverage-location-dec.md)
 - [MAXIMUM COVERAGE LOCATION ON A NETWORK is NP-complete](maximum-coverage-location-np-complete.md)
-- [Maximum-coverage instances](maximum-coverage-instance.md)
-- [Well-formed maximum-coverage instances](well-formed.md)
-- [Feasible maximum-coverage instances](maximum-coverage-feasible.md)
-- [The MAXIMUM COVERAGE decision problem](maximum-coverage-dec.md)
-- [MAXIMUM COVERAGE is NP-complete](maximum-coverage-np-complete.md)
