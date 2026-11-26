@@ -15320,7 +15320,6 @@
   "WantedExt/Combinatorics/Enumerative/BarryTriangleExplicitFormulasWanted": {"to": "Combinatorics/riordan-arrays-transforms/riordan-arrays", "title": "Barry's Stirling-like triangle"},
   "WantedExt/Combinatorics/Enumerative/BellRiordanTotalPositivityWanted": {"to": "Combinatorics/riordan-arrays-transforms/riordan-arrays", "title": "Total positivity of Riordan arrays"},
   "WantedExt/Combinatorics/Enumerative/BiPeriodicFibonacciSquaredWanted": {"to": "Combinatorics/tilings-board-placements", "title": "Fence tilings and bi-periodic Fibonacci numbers"},
-  "WantedExt/Combinatorics/Enumerative/BinomialSumRecurrencesWanted": {"to": "Combinatorics/binomial-coefficients/binomial-sums", "title": "Recurrences for step sums of binomial coefficients"},
   "WantedExt/Combinatorics/Enumerative/CarlitzTypeQPolynomialsWanted": {"to": "Combinatorics/stirling-bell-eulerian/bernoulli-euler-genocchi", "title": "Carlitz q-Bernoulli polynomials"},
   "WantedExt/Combinatorics/Enumerative/CatalanWordsCapacityWanted": {"to": "Combinatorics/combinatorics-on-words/finite-words", "title": "Capacity of Catalan words"},
   "WantedExt/Combinatorics/Enumerative/CentralBinomHarmonicSumsWanted": {"to": "Combinatorics/binomial-coefficients/central-binomial-harmonic-sums", "title": "Central binomial sums with harmonic numbers"},
