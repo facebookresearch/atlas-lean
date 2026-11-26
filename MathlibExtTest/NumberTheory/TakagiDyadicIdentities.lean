@@ -37,6 +37,20 @@ example : (dcDNodes 8 : ℚ) - dcDNodes 9 = -3 := by
   rw [show (Nat.digits 2 8).sum = 1 by decide, show Nat.log 2 8 = 3 by decide] at h
   linarith only [h]
 
+-- The largest offset below the next power of two is odd, so the correction is +1.
+example : (dcDNodes 7 : ℚ) - ((dcDNodes 6 : ℚ) + dcDNodes 8) / 2 = 1 := by
+  have h := dcDNodes_eq_midpoint_add_one_sub_lowestBit 2 3 (by decide) (by decide)
+  change (dcDNodes 7 : ℚ) = ((dcDNodes 6 : ℚ) + dcDNodes 8) / 2 + 1 - padicValNat 2 3 at h
+  rw [show padicValNat 2 3 = 0 by decide +kernel, Nat.cast_zero, sub_zero] at h
+  linarith only [h]
+
+-- The offset four has valuation two, so the correction is -1.
+example : (dcDNodes 12 : ℚ) - ((dcDNodes 11 : ℚ) + dcDNodes 13) / 2 = -1 := by
+  have h := dcDNodes_eq_midpoint_add_one_sub_lowestBit 3 4 (by decide) (by decide)
+  change (dcDNodes 12 : ℚ) = ((dcDNodes 11 : ℚ) + dcDNodes 13) / 2 + 1 - padicValNat 2 4 at h
+  rw [show padicValNat 2 4 = 2 by decide +kernel, Nat.cast_ofNat] at h
+  linarith only [h]
+
 -- At level two, the count rises and then falls as bit two changes from zero to one at 12 leaves.
 example : dcLevelDNodes 11 2 = 3 ∧ dcLevelDNodes 12 2 = 4 ∧ dcLevelDNodes 13 2 = 3 := by decide
 

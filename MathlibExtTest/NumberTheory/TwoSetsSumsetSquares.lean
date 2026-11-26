@@ -17,6 +17,18 @@ import Mathlib.Tactic.NormNum
 
 open MathlibExt.NumberTheory.TwoSetsSumsetSquaresWanted
 
+-- Six distinct entries, including a negative summand, at (p, q, r, s) = (5, 3, 2, 1).
+example : PairwiseSumsSquares ![-165, 315, 0] ![361, 169, (841 : ℤ)] := by
+  have h := pairwiseSumsSquares_triple_family32 5 3 2 1
+  norm_num at h
+  exact h
+
+-- With p = q and r = s, four of the six entries vanish.
+example : PairwiseSumsSquares ![0, 64, 0] ![0, 0, (36 : ℤ)] := by
+  have h := pairwiseSumsSquares_triple_family32 2 2 1 1
+  norm_num at h
+  exact h
+
 -- Choudhry's numerical example for (3.3), in the order of the parametrization.
 example : PairwiseSumsSquares ![4, 484, 169] ![192, 0, (672 : ℤ)] :=
   pairwiseSumsSquares_triple_family33 5 3 2 1

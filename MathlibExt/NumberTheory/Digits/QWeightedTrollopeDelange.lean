@@ -48,8 +48,8 @@ only through `q ≠ 0`. For the Trollope–Delange formula, take `M = ⌊log₂ 
 
 `qWeightedDigitSum`, `qWeightedDigitPartialSum`, `takagiLandsberg`, their completed lemmas and
 both theorems keep the full names, statements, definition bodies and docstrings they had in
-`WantedExt.NumberTheory.QWeightedTrollopeDelangeWanted`, which imports this module and keeps its
-other wanted statements about these functions. The auxiliary lemmas of the proof are private.
+`WantedExt.NumberTheory.QWeightedTrollopeDelangeWanted`. The auxiliary lemmas of the proof are
+private.
 
 ## References
 
