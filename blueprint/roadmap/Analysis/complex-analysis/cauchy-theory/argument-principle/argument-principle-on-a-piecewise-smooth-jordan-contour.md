@@ -13,7 +13,10 @@ The proof combines Cauchy's theorem on the Jordan domain $D$ with the residue of
 ## Depends on
 
 - [Argument principle on a closed disc](argument-principle-closed-ball-general.md): the disc case, which this statement extends to piecewise-smooth Jordan contours
-- [Argument principle for a simple closed curve](argument-principle.md): the zero and pole count for a positively oriented simple closed piecewise $C^1$ curve whose inside lies in the domain
+
+## Proof depends on
+
+- [Argument principle for a simple closed curve](argument-principle.md): supplies the equality of the logarithmic-derivative integral with the zero and pole count; the remaining step identifies that integral with the winding number about $0$ of $f \circ \Gamma$
 
 ## Sources
 

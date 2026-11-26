@@ -1,4 +1,3 @@
 # Holomorphic functions of several variables are continuously differentiable
 
-A function of several complex variables that is complex differentiable on an open set is
-continuously differentiable there.
+Let $n \in \mathbb{N}$, $E$ a complex Banach space, $U \subseteq \mathbb{C}^n$ open and $f : \mathbb{C}^n \to E$ complex differentiable on $U$. Then $f$ is continuously differentiable on $U$.

@@ -1,17 +1,5 @@
 # Harmonic measure
 
-Let Ω⊂ℝⁿ be a bounded domain and let x∈Ω.
+For $n \in \mathbb{N}$, a set $\Omega \subseteq \mathbb{R}^n$, a point $x$ and a probability measure $\mu$ on $\mathbb{R}^n$, $\mu$ is a harmonic measure of $\Omega$ at $x$ if and only if $\Omega$ is open, connected and bounded, $x \in \Omega$, $\mu$ gives measure $0$ to the complement of $\partial\Omega$, and for every $f : \mathbb{R}^n \to \mathbb{R}$ continuous on $\partial\Omega$ the upper Perron solution of $f$ at $x$ equals $\int f \, d\mu$, as an extended real number.
 
-The harmonic measure ω_Ωˣ is the probability measure concentrated on ∂Ω which represents the
-generalized Dirichlet solution.
-
-More precisely, for every continuous boundary datum f:∂Ω→ℝ, one has
-
-H_f(x)=∫_\{∂Ω\} f dω_Ωˣ,
-
-where H_f is the Perron, or generalized, solution of the Dirichlet problem on Ω with boundary data
-f.
-
-For continuous finite-valued boundary data on a bounded Euclidean domain, the Perron solution is
-finite, so although the formal `upperPerronSolution` is naturally `EReal`-valued, its value in this
-representation agrees with the coercion to `EReal` of the ordinary real-valued integral.
+This is a predicate on a candidate measure, not a statement that one exists. It can fail for every candidate: for $n = 0$, $\Omega = \mathbb{R}^0$ is a bounded domain with empty boundary, so no probability measure is concentrated on $\partial\Omega$.

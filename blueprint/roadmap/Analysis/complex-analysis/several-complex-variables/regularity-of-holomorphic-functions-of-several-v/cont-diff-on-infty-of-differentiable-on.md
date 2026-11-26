@@ -1,4 +1,3 @@
 # Holomorphic functions of several variables are smooth
 
-A function of several complex variables that is complex differentiable on an open set is
-smooth there.
+Let $n \in \mathbb{N}$, $E$ a complex Banach space, $U \subseteq \mathbb{C}^n$ open and $f : \mathbb{C}^n \to E$ complex differentiable on $U$. Then $f$ is $C^\infty$ on $U$.

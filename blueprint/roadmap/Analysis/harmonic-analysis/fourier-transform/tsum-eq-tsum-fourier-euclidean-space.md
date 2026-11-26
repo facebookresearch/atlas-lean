@@ -1,7 +1,5 @@
 # Poisson summation formula in Euclidean space
 
-Poisson summation for a Schwartz function on a finite-dimensional
-Euclidean space: summing `f` over the integer lattice translates of `x`
-equals summing the Fourier transform of `f` over the lattice, weighted by
-the character `𝐞 ⟪n, x⟫`. This is the multi-dimensional analogue of the
-one-dimensional `SchwartzMap.tsum_eq_tsum_fourier` in Mathlib.
+Let $\iota$ be a finite index set, $f$ a complex-valued Schwartz function on the Euclidean space $\mathbb{R}^\iota$ and $x \in \mathbb{R}^\iota$. Then
+$$\sum_{n \in \mathbb{Z}^\iota} f(x + n) = \sum_{n \in \mathbb{Z}^\iota} \hat f(n)\, e^{2\pi i \langle n, x\rangle},$$
+where $\mathbb{Z}^\iota$ is the coordinate integer lattice. This is the multi-dimensional analogue of Mathlib's one-dimensional Poisson summation formula `SchwartzMap.tsum_eq_tsum_fourier`.

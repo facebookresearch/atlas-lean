@@ -1,27 +1,5 @@
 # Morrey quasiconvex functions on 2×2 matrices
 
-Let
-
-W:ℝ^\{2×2\}→ℝ.
-
-The function W is quasiconvex in the sense of Morrey if, for every bounded open set
-
-Ω⊂ℝ²,
-
-every
-
-A∈ℝ^\{2×2\},
-
-and every smooth compactly supported function
-
-φ∈ C_c^∞(Ω;ℝ²),
-
-one has
-
-W(A)≤1/(|Ω|) ∫_Ω W(A+Dφ(x)) dx.
-
-Equivalently,
-
-|Ω|W(A) ≤ ∫_Ω W(A+Dφ(x)) dx.
-
-The Lean definition uses this latter, unnormalized form.
+A function $W : \mathbb{R}^{2 \times 2} \to \mathbb{R}$ is quasiconvex in the sense of Morrey if, for every bounded open set $\Omega \subseteq \mathbb{R}^2$, every $A \in \mathbb{R}^{2 \times 2}$, every compact $K \subseteq \Omega$ and every smooth $\varphi : \mathbb{R}^2 \to \mathbb{R}^2$ supported in $K$,
+$$|\Omega|\, W(A) \le \int_\Omega W(A + D\varphi(x))\, dx,$$
+where $|\Omega|$ is the Lebesgue measure of $\Omega$. For nonempty $\Omega$, $|\Omega| > 0$, and this is the average form $W(A) \le \frac{1}{|\Omega|} \int_\Omega W(A + D\varphi(x))\, dx$. For $\Omega = \emptyset$ the condition reads $0 \le 0$, while the average form is undefined.

@@ -2,7 +2,6 @@
 
 ## A. Exponential decay
 
-- [Derivative of exponential decay](has-deriv-at-exp-decay.md)
 - [Exponential decay in semi-log coordinates](has-deriv-at-log-exp-decay.md)
 - [Integral of exponential decay](integral-exp-decay.md)
 - [Integral of exponential decay up to a ratio time](integral-exp-decay-ratio-time.md)

@@ -8,5 +8,7 @@ If `f` is holomorphic on a punctured neighbourhood of `a`, this integral is cons
 `a` whose closed disc lies in a set on which `f` is holomorphic away from `a`. For other `f` the
 value carries no meaning.
 
-The codomain must be complete: on an incomplete space every circle integral is `0`, so the limit
-would be `0` for every `f`.
+The codomain must be complete: the circle integral is a Bochner integral, which is defined to be `0`
+when the codomain is incomplete, so without completeness the limit would be `0` for every `f`. That
+is a convention of the integral, not a property of circle integrals: around the unit circle, `v/z`
+integrates to `2πi v` in the complete line spanned by `v`.

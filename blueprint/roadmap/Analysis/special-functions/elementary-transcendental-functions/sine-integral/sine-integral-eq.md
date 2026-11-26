@@ -1,5 +1,3 @@
 # Laplace representation of the sine integral
 
-Laplace representation of the sine integral: writing `1 / u = ∫₀^∞ e^{-u t} dt` and
-swapping the integrals (Fubini),
-`Si T = ∫₀^∞ (1 - e^{-T t} (t sin T + cos T)) / (1 + t²) dt` for `T > 0`.
+For real $T > 0$, $\operatorname{Si}(T) = \int_0^\infty \frac{1 - e^{-Tt}(t \sin T + \cos T)}{1 + t^2}\,dt$. The derivation writes $1/u = \int_0^\infty e^{-ut}\,dt$, which holds for $u > 0$, and swaps the integrals (Fubini).

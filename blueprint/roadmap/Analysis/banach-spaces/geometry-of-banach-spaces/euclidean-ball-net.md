@@ -1,6 +1,3 @@
 # Volumetric covering bound for Euclidean balls
 
-Volumetric covering bound: the closed ball of radius `R` in
-`EuclideanSpace ℝ (Fin m)` has an `ε`-net of at most
-`(1 + 2R/ε)^m` points (the bound is stated over the reals), with
-the net itself contained in the radius-`R` ball.
+For $m \in \mathbb{N}$, $R \ge 0$ and $\varepsilon > 0$, the closed ball of radius $R$ in $\mathbb{R}^m$ with the Euclidean norm has an $\varepsilon$-net contained in the ball with at most $(1 + 2R/\varepsilon)^m$ points. The positivity of $\varepsilon$ is needed: an interval of positive length has no finite $0$-net.
