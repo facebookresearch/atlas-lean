@@ -12169,6 +12169,7 @@
   "MathlibExt/Geometry/LebesgueUniversalCoveringConstant": {"to": "Geometry/packings-and-coverings", "title": "Lebesgue's universal covering problem"},
   "MathlibExt/Geometry/LebesgueUniversalCoveringHansen": {"to": "Geometry/packings-and-coverings", "title": "Lebesgue's universal covering problem"},
   "MathlibExt/Geometry/LebesgueUniversalCoveringJung": {"to": "Geometry/packings-and-coverings", "title": "Lebesgue's universal covering problem"},
+  "MathlibExt/Geometry/LebesgueUniversalCoveringSprague": {"to": "Geometry/packings-and-coverings", "title": "Lebesgue's universal covering problem"},
   "MathlibExt/Geometry/LensCurvatureRecurrence": {"to": "Geometry/euclidean-geometry/circles-and-conics", "title": "Lens sequences of tangent circles"},
   "MathlibExt/Geometry/LinearProgramming": {"to": "Geometry/convex-geometry", "title": "Linear programming"},
   "MathlibExt/Geometry/LinearProgrammingMaximumPrinciple": {"to": "Geometry/convex-geometry", "title": "Linear programming"},
