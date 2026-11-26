@@ -41,6 +41,7 @@ public import MathlibExt.Data.Nat.Choose.AlternatingShiftedSum
 public import MathlibExt.NumberTheory.GeneralizedFibonacciPolynomial
 public import MathlibExt.NumberTheory.Recurrences.EvenBinomialAlternatingSum
 public import MathlibExt.NumberTheory.Recurrences.FloorPowBinomialSum
+public import MathlibExt.NumberTheory.Recurrences.GFPFibCatalan
 public import MathlibExt.NumberTheory.Recurrences.GFPFibSumChoose
 public import MathlibExt.NumberTheory.Recurrences.GFPLucasCatalan
 public import MathlibExt.NumberTheory.Recurrences.OddBinomialAlternatingSum
@@ -82,20 +83,6 @@ public theorem_wanted choose_sub_sub_one_eq_two_zpow_mul_sum {m n : ℕ} (hmn : 
     ((n - m - 1).choose m : ℚ) =
       (2 : ℚ) ^ (2 * (m : ℤ) - n + 1) *
         ∑ j ∈ Icc m ((n - 1) / 2), (j.choose m : ℚ) * (n.choose (2 * j + 1) : ℚ)
-
-/-- **Catalan identity for Fibonacci-type generalized Fibonacci polynomials.** Let $d$ and $g$ be
-polynomials with integer coefficients, and let $F_n$ be the generalized Fibonacci polynomials
-defined by $F_0 = 0$, $F_1 = 1$ and $F_{n+2} = d F_{n+1} + g F_n$. Then for every natural number
-$n$ (for $n = 0$ both sides are $0$),
-$$2^{n-1} F_n = \sum_{i=0}^{\lfloor (n-1)/2 \rfloor} \binom{n}{2i+1} d^{n-2i-1} (4g + d^2)^i.$$
-
-Source: Maribel Diaz Noguera, Rigoberto Flórez, José L. Ramírez, and Martha Romero Rojas,
-*Catalan Identities for Generalized Fibonacci Polynomials*, The Fibonacci Quarterly 62 (2024),
-Article florez11012023, Theorem 3.3 (1) (`fq-2024-florez11012023-thm-3.3`). -/
-public theorem_wanted gfp_fib_catalan (d g : ℤ[X]) (n : ℕ) :
-    2 ^ (n - 1) * generalizedFibonacciPolynomial 0 1 d g n =
-      ∑ i ∈ range ((n - 1) / 2 + 1),
-        (n.choose (2 * i + 1) : ℤ[X]) * d ^ (n - 2 * i - 1) * (4 * g + d ^ 2) ^ i
 
 /-- **Generating function of the floor-exponent binomial sums.** Let $R$ be a commutative ring,
 $t \in R$ and $\ell \ge 1$ an integer, and for $n \ge 0$ let
