@@ -15068,7 +15068,6 @@
   "WantedExt/Combinatorics/CleanLatticeParallelogramWanted": {"to": "Combinatorics/polytopes-simplicial-complexes", "title": "Clean lattice parallelograms"},
   "WantedExt/Combinatorics/Coding/CycleShannonBoundsWanted": {"to": "GraphTheory/graph-invariants-and-labelings", "title": "Shannon capacity of a graph"},
   "WantedExt/Combinatorics/CohenMacaulayPartitionabilityAMR156Problem0005Wanted": {"to": "Combinatorics/polytopes-simplicial-complexes", "title": "Partitionable and interval-decomposable complexes"},
-  "WantedExt/Combinatorics/ComparablePairsSetFamilyErdosProblem777Wanted": {"to": "Combinatorics/extremal-set-theory/intersecting-families", "title": "Comparable pairs in set families"},
   "WantedExt/Combinatorics/ConjectureOfMartonWanted": {"to": "Combinatorics/additive-combinatorics/sumsets-inverse-theorems", "title": "Polynomial Freiman–Ruzsa theorem"},
   "WantedExt/Combinatorics/ConlonLeeSubdivisionConjectureWanted": {"to": "GraphTheory/extremal-graph-theory", "title": "Turán numbers of bipartite graphs"},
   "WantedExt/Combinatorics/ContinuousTuranWanted": {"to": "Geometry/discrete-geometry", "title": "Continuous Turán numbers of planar patterns"},
