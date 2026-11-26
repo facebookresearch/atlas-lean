@@ -15,6 +15,7 @@ public import MathlibExt.NumberTheory.PrimitivePrimeDivisorPowAddOne
 public import MathlibExt.NumberTheory.PrimitivePrimeDivisorPowSubOne
 public import MathlibExt.NumberTheory.ArithmeticFunction.BiunitaryFortyOne
 public import MathlibExt.NumberTheory.ArithmeticFunction.BiunitaryDivisorParity
+public import MathlibExt.NumberTheory.ArithmeticFunction.BiunitaryTriperfect
 
 /-!
 # Biunitary triperfect numbers divisible by `27`
@@ -71,21 +72,6 @@ Source: Tomohiro Yamada, *Determining all Biunitary Triperfect Numbers of a Cert
 Journal of Integer Sequences 28 (2025), Article 25.4.5, Lemma 2 (`jis-2025-25.4.5-lem-2`). -/
 public theorem_wanted two_pow_card_primeFactors_sub_one_dvd_sigmaBiunitary_of_even (n : ℕ)
     (hn : 0 < n) (he : Even n) : 2 ^ (n.primeFactors.card - 1) ∣ sigmaBiunitary n
-
-/-- **Comparison bounds for the biunitary divisor sum of a prime power.** Let $p$ be a prime and
-let $m \ge 1$ and $e \ge 2m - 1$ be natural numbers, and write $\sigma^{**}$ for the biunitary
-divisor sum. Then, in $\mathbb{Q}$,
-$\sigma^{**}(p^e)/p^e \ge \sigma^{**}(p^{2m})/p^{2m}$, and if moreover $e \ne 2m$, then
-$\sigma^{**}(p^e)/p^e \ge \sum_{i=0}^{m} 1/p^i$.
-
-Source: Tomohiro Yamada, *Determining all Biunitary Triperfect Numbers of a Certain Form*,
-Journal of Integer Sequences 28 (2025), Article 25.4.5, Lemma 3 (`jis-2025-25.4.5-lem-3`). -/
-public theorem_wanted sigmaBiunitary_prime_pow_div_ge_of_two_mul_sub_one_le (p m e : ℕ)
-    (hp : p.Prime) (hm : 0 < m) (he : 2 * m - 1 ≤ e) :
-    ((sigmaBiunitary (p ^ (2 * m)) : ℚ) / (p : ℚ) ^ (2 * m) ≤
-        (sigmaBiunitary (p ^ e) : ℚ) / (p : ℚ) ^ e) ∧
-      (e ≠ 2 * m → ∑ i ∈ Finset.range (m + 1), 1 / (p : ℚ) ^ i ≤
-        (sigmaBiunitary (p ^ e) : ℚ) / (p : ℚ) ^ e)
 
 /-- **Prime factors of the biunitary divisor sum of a power of $3$.** Let $f$, $t$ and $\eta$ be
 natural numbers with $\eta \in \{0, 1\}$ and $f = 2t - 1 - \eta$, suppose $f \ge 5$, and write
