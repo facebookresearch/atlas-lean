@@ -14074,6 +14074,7 @@
   "MathlibExt/Probability/ProbabilityGeneratingFunction": {"to": "Probability/characteristic-functions", "title": "Probability generating functions"},
   "MathlibExt/Probability/ProbabilityMassFunction/Expectation": {"to": "Probability/distributions/discrete", "title": "Expectation under a probability mass function"},
   "MathlibExt/Probability/ProbabilityMassFunction/Uniform": {"to": "Probability/distributions/discrete", "title": "Discrete uniform distribution"},
+  "MathlibExt/Probability/Process/BrownianStrongMarkovMapISupEqMapAbs": {"to": "Probability/stochastic-calculus", "title": "Strong Markov property and reflection principle"},
   "MathlibExt/Probability/Process/ContinuousDoobLp": {"to": "Probability/martingales", "title": "Doob's maximal inequalities"},
   "MathlibExt/Probability/Process/ContinuousOptionalStopping": {"to": "Probability/martingales", "title": "Optional stopping theorem"},
   "MathlibExt/Probability/Process/ContinuousTimeMarkovChain": {"to": "Probability/markov-chains", "title": "Finite continuous-time Markov chains"},
