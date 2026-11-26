@@ -3,7 +3,6 @@
 ## Weierstrass Curve
 
 - [Affine points under a ring homomorphism](map-point.md)
-- [Ring homomorphisms induce homomorphisms of point groups](map-point-hom.md)
 - [Points of equal Weierstrass curves](point-add-equiv-of-eq.md)
 
 ## Point
