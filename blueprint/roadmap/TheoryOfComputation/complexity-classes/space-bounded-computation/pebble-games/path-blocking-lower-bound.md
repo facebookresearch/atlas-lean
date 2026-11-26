@@ -1,10 +1,10 @@
-# Path-blocking lower bounds for black pebbling
+# Lower bound for black pebbling from disjoint ancestor sets
 
-Say that $v$ **forces $k$ pebbles** if every pebbling of $v$ reaches a configuration with at least $k$ pebbles. If $v$ has two predecessors $u_1,u_2$ such that $u_1$ forces $k$ pebbles and every configuration at the moment $u_2$ is last pebbled before $v$ must also block every source-to-$u_1$ path by a pebble (or symmetrically), then $v$ forces $k+1$ pebbles. Consequently $\mathrm{Peb}(G,v)\ge k$ whenever $v$ forces $k$ pebbles, and the price is determined by any matching upper bound.
+The **ancestors** of a vertex $u$ are $u$ itself and every vertex from which $u$ is reachable. Say that $v$ **forces $k$ pebbles** if every pebbling of $v$ reaches a configuration with at least $k$ pebbles, that is, $\mathrm{Peb}(G,v)\ge k$. If $v$ has exactly two predecessors $u_1,u_2$, each forcing $k$ pebbles, and no vertex is an ancestor of both, then $v$ forces $k+1$ pebbles.
 
 ## Proof sketch
 
-Consider the last time a pebble is placed on one of the predecessors before $v$ is pebbled; at that moment the other predecessor carries a pebble, and the path-blocking condition shows the pebbling of the first predecessor needed $k$ pebbles while one extra pebble was kept.
+In a pebbling of $v$, let $s_i$ be the last moment before $v$ is pebbled at which no ancestor of $u_i$ ($u_i$ included) carries a pebble, and say $s_1\le s_2$. After $s_2$, the moves on the ancestors of $u_2$ pebble $u_2$ from nothing (every predecessor of an ancestor is an ancestor, so these moves are legal on their own), so at some moment they carry $k$ pebbles, while the ancestors of $u_1$ still carry one. The two ancestor sets are disjoint, so that moment has $k+1$ pebbles.
 
 ## Depends on
 
@@ -12,4 +12,4 @@ Consider the last time a pebble is placed on one of the predecessors before $v$ 
 
 ## Sources
 
-- Jakob Nordström, "New Wine into Old Wineskins: A Survey of Some Pebbling Classics with Supplemental Results", 2015.
+- Jakob Nordström, "New Wine into Old Wineskins: A Survey of Some Pebbling Classics with Supplemental Results", manuscript, version of 19 November 2010, https://people.csail.mit.edu/jakobn/research/PebblingSurveyTMP.pdf (the induction over the height behind Theorem 4.1, for complete binary trees).

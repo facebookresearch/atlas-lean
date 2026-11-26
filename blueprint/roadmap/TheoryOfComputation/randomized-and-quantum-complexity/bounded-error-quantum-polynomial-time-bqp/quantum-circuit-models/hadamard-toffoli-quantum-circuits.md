@@ -1,6 +1,6 @@
 # Quantum circuits over the Hadamard–Toffoli gate set
 
-An $m$-qubit register has state space $\mathbb{C}^{\{0,1\}^m}$ with computational basis $|x\rangle$. A quantum circuit over the *Hadamard–Toffoli* gate set is a sequence of gates, each a Hadamard gate $H=\tfrac1{\sqrt2}\begin{pmatrix}1&1\\1&-1\end{pmatrix}$ on one qubit or a classical reversible gate (NOT, CNOT, Toffoli) on at most three qubits, all acting as the identity on the other qubits; the circuit's unitary is the product of the gate matrices, whose entries lie in $\{0,\pm1,\pm1/\sqrt2\}$. This gate set is universal for $\mathsf{BQP}$ (approximately, with real amplitudes). Measuring designated qubits in the computational basis at the end gives the output distribution.
+An $m$-qubit register has state space $\mathbb{C}^{\{0,1\}^m}$ with computational basis $|x\rangle$. A quantum circuit over the *Hadamard–Toffoli* gate set is a sequence of gates, each a Hadamard gate $H=\tfrac1{\sqrt2}\begin{pmatrix}1&1\\1&-1\end{pmatrix}$ on one qubit or a classical reversible gate (NOT, CNOT, Toffoli) on at most three qubits, all acting as the identity on the other qubits; the circuit's unitary is the product of the gate matrices, whose entries lie in $\{0,\pm1,\pm1/\sqrt2\}$. Bounded-error polynomial-time uniform families of circuits over this gate set decide exactly the languages in $\mathsf{BQP}$ (Shi; Aharonov). Measuring designated qubits in the computational basis at the end gives the output distribution.
 
 ## Depends on
 

@@ -18,4 +18,4 @@ Induct on product-depth: at a product gate with children on disjoint block sets 
 
 ## Sources
 
-- Nutan Limaye, Srikanth Srinivasan, Sébastien Tavenas, "Superpolynomial Lower Bounds Against Low-Depth Algebraic Circuits", full version of the FOCS 2021 paper, Electronic Colloquium on Computational Complexity TR21-081, 2021, Claim 16 (in the proof of Lemma 15).
+- Nutan Limaye, Srikanth Srinivasan, Sébastien Tavenas, "Superpolynomial Lower Bounds Against Low-Depth Algebraic Circuits", full version of the FOCS 2021 paper, Electronic Colloquium on Computational Complexity TR21-081, revision 1, 2021, Claim 16 (in the proof of Lemma 15).

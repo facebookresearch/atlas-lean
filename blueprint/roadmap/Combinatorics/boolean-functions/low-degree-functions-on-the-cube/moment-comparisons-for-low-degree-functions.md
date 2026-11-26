@@ -4,7 +4,7 @@ For $f : \{-1,1\}^n \to \mathbb{R}$ of degree at most $k$: (1) for $0 < p \le 2$
 
 ## Proof sketch
 
-(1) Interpolate between $p$ and a large $q$ using Hölder and the Bonami bound $\|f\|_q \le \sqrt{q-1}^{\,k}\|f\|_2$, optimizing $q$. (2) Markov's inequality on $|f|^q$ with $q$ chosen as a function of $t$.
+(1) Interpolate between $p$ and a large $q$ using Hölder and the hypercontractive bound $\|f\|_q \le \sqrt{q-1}^{\,k}\|f\|_2$, optimizing $q$. (2) Markov's inequality on $|f|^q$ with $q$ chosen as a function of $t$.
 
 ## Depends on
 
@@ -13,6 +13,7 @@ For $f : \{-1,1\}^n \to \mathbb{R}$ of degree at most $k$: (1) for $0 < p \le 2$
 ## Proof depends on
 
 - [Bonami Lemma](../../../Probability/concentration-inequalities/bonami-beckner-hypercontractivity/bonami-lemma.md)
+- [Hypercontractivity Theorem (Bonami–Beckner)](../../../Probability/concentration-inequalities/bonami-beckner-hypercontractivity/hypercontractivity-theorem.md)
 - [L^p norms under a uniform distribution increase with p](../fourier-expansion-supplements/lp-norms-increase-with-p.md)
 
 ## Sources

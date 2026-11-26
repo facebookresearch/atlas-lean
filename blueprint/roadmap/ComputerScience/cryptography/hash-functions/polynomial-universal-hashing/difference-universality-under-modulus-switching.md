@@ -4,7 +4,7 @@ Let $p, N \ge 1$ with $2(p-1) < N$ (in particular whenever $2p \le N$), and let 
 
 ## Proof sketch
 
-Differences of representatives lie in $(-(p-1), p-1)$, and since $2(p-1) < N$ distinct integer differences in that range remain distinct modulo $N$. So each target difference modulo $N$ comes from at most one source difference modulo $p$, whose probability is at most $\varepsilon$.
+Differences of representatives lie in the closed interval $[-(p-1), p-1]$, and since $2(p-1) < N$ distinct integer differences in that range remain distinct modulo $N$. So each target difference modulo $N$ comes from at most one source difference modulo $p$, whose probability is at most $\varepsilon$.
 
 ## Depends on
 

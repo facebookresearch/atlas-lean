@@ -10,7 +10,6 @@
 - [Expectation under independent biased bits is the Fourier expansion at the means](expectation-under-biased-bits-is-the-fourier-expansion.md)
 - [Acceptance probability of the Odd BLR test](acceptance-probability-of-the-odd-blr-test.md)
 - [Relabelling coordinates relabels Fourier coefficients](relabelling-coordinates-relabels-fourier-coefficients.md)
-- [Uncertainty principle on the Boolean cube](uncertainty-principle-on-the-boolean-cube.md)
 - [Boolean functions with all Fourier weight at degree one are the literals](degree-one-weight-one-implies-literal.md)
 - [Small spectral norm gives concentration on few sets, and concentration survives approximation](spectral-concentration-on-few-sets.md)
 - [The spectral sample of a Boolean function](spectral-sample-of-a-boolean-function.md)

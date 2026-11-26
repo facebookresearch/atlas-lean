@@ -10,7 +10,6 @@ If $r=0$ take a unit vector. Otherwise choose $r$ linearly independent rows and 
 
 ## Depends on
 
-- [Farkas' lemma over linearly ordered fields](farkas-lemma-over-ordered-fields.md)
 - [Hadamard's determinant inequality](../../positive-definite-matrices/hadamard-s-inequality-and-determinant-bounds-for/hadamard-s-determinant-inequality/hadamard-determinant-inequality.md)
 
 ## Sources

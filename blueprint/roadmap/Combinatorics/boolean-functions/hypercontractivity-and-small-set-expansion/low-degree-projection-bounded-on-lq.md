@@ -4,7 +4,7 @@ For every real $f$ on $\{-1,1\}^n$ and $k \ge 0$: $\|f^{\le k}\|_q \le \sqrt{q -
 
 ## Proof sketch
 
-For $q \ge 2$: $\|f^{\le k}\|_q \le \sqrt{q-1}^{\,k}\|f^{\le k}\|_2 \le \sqrt{q-1}^{\,k}\|f\|_2 \le \sqrt{q-1}^{\,k}\|f\|_q$ by Bonami and orthogonality. For $q \le 2$ use duality with the conjugate exponent. For the noise version, $f^{\le k} = T_{1/\rho}^{\le k} T_\rho f$ and $T_{1/\rho}$ amplifies degree-$j$ parts by $\rho^{-j}$.
+For $q \ge 2$: $\|f^{\le k}\|_q \le \sqrt{q-1}^{\,k}\|f^{\le k}\|_2 \le \sqrt{q-1}^{\,k}\|f\|_2 \le \sqrt{q-1}^{\,k}\|f\|_q$ by hypercontractivity and orthogonality. For $q \le 2$ use duality with the conjugate exponent. For the noise version, $f^{\le k} = T_{1/\rho}^{\le k} T_\rho f$ and $T_{1/\rho}$ amplifies degree-$j$ parts by $\rho^{-j}$.
 
 ## Depends on
 
@@ -14,6 +14,7 @@ For $q \ge 2$: $\|f^{\le k}\|_q \le \sqrt{q-1}^{\,k}\|f^{\le k}\|_2 \le \sqrt{q-
 ## Proof depends on
 
 - [Bonami Lemma](../../../Probability/concentration-inequalities/bonami-beckner-hypercontractivity/bonami-lemma.md)
+- [Hypercontractivity Theorem (Bonami–Beckner)](../../../Probability/concentration-inequalities/bonami-beckner-hypercontractivity/hypercontractivity-theorem.md)
 - [L^p norms under a uniform distribution increase with p](../fourier-expansion-supplements/lp-norms-increase-with-p.md)
 
 ## Sources

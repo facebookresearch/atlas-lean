@@ -1,6 +1,7 @@
 # Structural complexity
 
 Reducibilities and isomorphism, advice and sparse sets, immunity and measure, hierarchy collapses, uniform diagonalization, and search problems with self-reducibility.
+
 - [Polynomial-Time Reducibilities, Autoreducibility and Isomorphism](reducibilities-and-isomorphism/README.md)
 - [Advice, Sparse and Selective Sets](advice-sparse-and-selective-sets/README.md)
 - [Immunity, Complexity Cores and Resource-Bounded Measure](immunity-measure-and-cores/README.md)

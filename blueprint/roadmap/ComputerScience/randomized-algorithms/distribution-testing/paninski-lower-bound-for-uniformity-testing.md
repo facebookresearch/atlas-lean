@@ -1,6 +1,6 @@
 # Paninski's lower bound for uniformity testing
 
-For even $n$ and proximity $\delta \le 1/2$, every $k$-sample uniformity tester on $n$ points satisfies $n \le 52\, k^2 \delta^4$; hence $\Omega(\sqrt n/\delta^2)$ samples are necessary, matching the collision tester up to a constant. At $\delta = 1/2$ this is the birthday-type bound $4n \le 13 k^2$.
+For even $n$ and proximity $\delta \le 1/2$, every $k$-sample uniformity tester on $n$ points satisfies $n \le 52\, k^2 \delta^4$; hence $\Omega(\sqrt n/\delta^2)$ samples are necessary, matching the $O(\sqrt n/\delta^2)$ sample bound of the collision tester. At $\delta = 1/2$ this is the birthday-type bound $4n \le 13 k^2$.
 
 ## Proof sketch
 

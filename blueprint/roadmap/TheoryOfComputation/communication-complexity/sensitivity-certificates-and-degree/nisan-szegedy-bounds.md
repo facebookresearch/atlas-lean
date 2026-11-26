@@ -1,6 +1,6 @@
 # Nisan–Szegedy: block sensitivity is at most quadratic in degree and approximate degree
 
-For every Boolean function $f$, $bs(f) \le 2 \deg(f)^2$ and $bs(f) \le 6\, \widetilde{\deg}(f)^2$, where $\widetilde{\deg}(f)$ is the $1/3$-approximate degree. More generally, if a real polynomial $p$ of degree at most $D$ satisfies $|p(x) - f(x)| \le \varepsilon < 1/2$ for all $x$, then $(1 - 2\varepsilon)\, bs(f) \le 2 D^2$ up to the normalization in Markov's inequality.
+For every Boolean function $f$, $bs(f) \le 2 \deg(f)^2$ and $bs(f) \le 6\, \widetilde{\deg}(f)^2$, where $\widetilde{\deg}(f)$ is the $1/3$-approximate degree. More generally, if a real polynomial $p$ of degree at most $D$ satisfies $|p(x) - f(x)| \le \varepsilon < 1/2$ for all $x$, then $(1 - 2\varepsilon)\, bs(f) \le 2 D^2$.
 
 ## Proof sketch
 

@@ -6,10 +6,6 @@ Let $v_1,\dots,v_m\in K^\kappa$ over a field $K$ have Gram matrix $(d-c)I+cJ$ (i
 
 The Gram matrix has eigenvalues $d-c$ (multiplicity $m-1$) and $d-c+mc$, so it is nonsingular, and the rank of a Gram matrix is at most the rank of the family.
 
-## Depends on
-
-- [Subadditivity of the rank](../../../Analysis/approximation-theory/low-rank-matrix-recovery/rank-sub-le.md)
-
 ## Sources
 
 - Stasys Jukna, "Boolean Function Complexity: Advances and Frontiers", Springer, 2012.

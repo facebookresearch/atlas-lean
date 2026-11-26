@@ -1,6 +1,6 @@
 # Slab storage with hysteresis has amortized constant reorganization cost
 
-Let a bucket store its $c = qK + r$ items as $q$ full slabs of $K$ items and $r < 2K$ tail items (with $r \ge 1$ whenever $q > 0$), promoting $K$ tail items into a new full slab when $r$ reaches $2K$ and demoting one full slab into the tail when $r$ drops to $0$ with $q > 0$. Then every slab promotion or demotion moves $O(K)$ items, and with the potential $\Phi(q, r) = \alpha \cdot |r - K|$ for a suitable constant $\alpha$ each insertion and deletion has amortized cost $O(1)$, deterministically and for every hash seed. No slot of a full slab is ever empty.
+Let a bucket store its $c = qK + r$ items as $q$ full slabs of $K$ items and $r < 2K$ tail items (with $r \ge 1$ whenever $q > 0$), promoting $K$ tail items into a new full slab when $r$ reaches $2K$ and demoting one full slab into the tail when $r$ drops to $0$ with $q > 0$. Then every slab promotion or demotion moves $O(K)$ items, and with the potential $\Phi(q, r) = \alpha \cdot |r - K|$ for any constant $\alpha$ at least the cost of moving one item each insertion and deletion has amortized cost $O(1)$, deterministically and for every hash seed. No slot of a full slab is ever empty.
 
 ## Proof sketch
 

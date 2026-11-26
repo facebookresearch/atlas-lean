@@ -4,7 +4,7 @@ Let $H$ be an $n\times n$ Hadamard matrix ($\pm1$ entries with $HH^{T}=nI$) or a
 
 ## Proof sketch
 
-Every $a\times b$ submatrix of a Hadamard matrix has rank at least $ab/n$ (its rows are orthogonal of norm $\sqrt n$, so the operator norm is at most $\sqrt n$ while the Frobenius norm is $\sqrt{ab}$). If fewer than $n^2/(4r)$ entries are changed, some $2r$ rows contain few changes, and selecting $2r$ rows and the unchanged columns gives a submatrix of rank above $r$. For Sylvester matrices, tile by $2^t\times2^t$ blocks, each $\pm S_t$ of full rank, and count changed blocks (Midrijānis).
+Every $a\times b$ submatrix of a Hadamard matrix has rank at least $ab/n$ (its rows are orthogonal of norm $\sqrt n$, so the operator norm is at most $\sqrt n$ while the Frobenius norm is $\sqrt{ab}$). If fewer than $n^2/(4r)$ entries are changed, some $2r$ rows contain few changes, and selecting $2r$ rows and the unchanged columns gives a submatrix of rank above $r$. For Sylvester matrices with $r=2^t$, tile by the $(2^k/2r)^2$ blocks of size $2r\times2r$, each $\pm S_{t+1}$ of rank $2r$; each changed entry lowers the rank of its block by at most one, so lowering the rank to $r$ needs at least $r$ changes in every block (Midrijānis).
 
 ## Depends on
 

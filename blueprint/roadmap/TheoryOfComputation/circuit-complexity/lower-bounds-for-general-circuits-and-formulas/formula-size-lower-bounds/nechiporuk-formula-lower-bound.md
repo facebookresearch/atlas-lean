@@ -6,7 +6,7 @@ $$
 L\ge\frac14\sum_{i=1}^k\log_2 s_i(f)-\frac k4 .
 $$
 
-This yields lower bounds of order $n^2/\log n$ for explicit functions, even over the full binary basis.
+For element distinctness on $m$ blocks of $2\log_2 m$ bits ($n=2m\log_2 m$ variables), each block has at least $\binom{m^2}{m-1}$ subfunctions, so every formula over the full binary basis has leaf size $\Omega(m^2\log m)=\Omega(n^2/\log n)$.
 
 ## Proof sketch
 
