@@ -34588,6 +34588,7 @@
 "IsIntegrallyClosed.exists_valuationSubring_mem_iff_of_height_eq_one": "bd65df1fae906873",
 "IsIntegrallyClosed.isDomain_and_isIntegrallyClosed_of_flat_of_isLocalHom": "d654158f80071d62",
 "IsIntegrallyClosed.minpoly_eq_map_iff_isIntegral": "a4d07ae02b45e8ae",
+"IsIntegrallyClosed.of_faithfullyFlat": "523227b13a24be14",
 "IsIrreducible.topologicalKrullDim_add_one_le_of_isClosed_of_ne": "0a52a404b311aef3",
 "IsLipschitzParametrizable": "de85039cbe8d4213",
 "IsLipschitzParametrizable.image_lipschitzWith": "57ac4b96017259cc",
