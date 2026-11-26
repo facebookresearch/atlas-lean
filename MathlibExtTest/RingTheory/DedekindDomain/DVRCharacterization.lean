@@ -22,23 +22,23 @@ public import MathlibExt.RingTheory.DedekindDomain.DVRCharacterization
 
 /-- Smoke test: Definition 2.10 recovers `IsDedekindDomain ℤ` from
 `ℤ` being integrally closed of Krull dimension at most one. -/
-theorem test_int_isDedekindDomain : IsDedekindDomain ℤ :=
+private theorem test_int_isDedekindDomain : IsDedekindDomain ℤ :=
   (integrallyClosed_dimensionLEOne_iff_isDedekindDomain ℤ).mp
     ⟨inferInstance, inferInstance⟩
 
 /-- Smoke test: the other direction of Definition 2.10 at `ℤ`. -/
-theorem test_int_integrallyClosed_dimensionLEOne :
+private theorem test_int_integrallyClosed_dimensionLEOne :
     IsIntegrallyClosed ℤ ∧ Ring.DimensionLEOne ℤ :=
   (integrallyClosed_dimensionLEOne_iff_isDedekindDomain ℤ).mpr inferInstance
 
 /-- The ideal `(2)` of `ℤ` is prime. -/
-theorem span_two_isPrime : (Ideal.span ({2} : Set ℤ)).IsPrime :=
+private theorem span_two_isPrime : (Ideal.span ({2} : Set ℤ)).IsPrime :=
   Ideal.isPrime_span_singleton_of_prime (by
     rw [Int.prime_iff_natAbs_prime]; simpa using Nat.prime_two)
 
 /-- Smoke test: Proposition 2.9 at `ℤ` gives that the localization at
 the prime `(2)` is a discrete valuation ring. -/
-theorem test_int_localization_evalAtTwo_isDVR
+private theorem test_int_localization_evalAtTwo_isDVR
     (h2 : (Ideal.span ({2} : Set ℤ)).IsPrime) :
     IsDiscreteValuationRing
       (Localization.AtPrime (Ideal.span ({2} : Set ℤ))) :=
@@ -55,11 +55,11 @@ example : True := by
 
 /-- The evaluation map `(Polynomial ℤ) → ZMod 2` sending `X` to `0`, used to show
 that `(X)` is not maximal in `(Polynomial ℤ)`. -/
-def test_evalZeroModTwo : (Polynomial ℤ) →+* ZMod 2 :=
+private def test_evalZeroModTwo : (Polynomial ℤ) →+* ZMod 2 :=
   Polynomial.eval₂RingHom (Int.castRingHom (ZMod 2)) 0
 
 /-- The evaluation map above is surjective. -/
-theorem test_evalZeroModTwo_surjective :
+private theorem test_evalZeroModTwo_surjective :
     Function.Surjective test_evalZeroModTwo := by
   intro y
   obtain ⟨z, hz⟩ := ZMod.intCast_surjective (n := 2) y
@@ -67,7 +67,7 @@ theorem test_evalZeroModTwo_surjective :
 
 /-- `(X)` is a nonzero prime ideal of `(Polynomial ℤ)` that is not maximal, so
 `(Polynomial ℤ)` does not have Krull dimension at most one. -/
-theorem test_polynomial_int_not_dimensionLEOne :
+private theorem test_polynomial_int_not_dimensionLEOne :
     ¬ Ring.DimensionLEOne (Polynomial ℤ) := by
   intro h
   have hXprime : (Ideal.span ({Polynomial.X} : Set (Polynomial ℤ))).IsPrime :=
@@ -99,7 +99,7 @@ theorem test_polynomial_int_not_dimensionLEOne :
 
 /-- Smoke test: `(Polynomial ℤ)` is not a Dedekind domain, via Definition 2.10 and
 the dimension failure above. -/
-theorem test_polynomial_int_not_isDedekindDomain : ¬ IsDedekindDomain (Polynomial ℤ) := by
+private theorem test_polynomial_int_not_isDedekindDomain : ¬ IsDedekindDomain (Polynomial ℤ) := by
   intro h
   exact test_polynomial_int_not_dimensionLEOne
     ((integrallyClosed_dimensionLEOne_iff_isDedekindDomain (Polynomial ℤ)).mpr h).2
