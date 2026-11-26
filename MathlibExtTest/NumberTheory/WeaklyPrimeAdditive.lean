@@ -55,4 +55,22 @@ example : {n : ℕ | 8 ∣ n ∧ IsWeaklyPrimeAdditive n ∧ weaklyPrimeAdditive
   intro h
   exact (infinite_shortest_weaklyPrimeAdditive_dvd_iff 8 (by decide)).mp h dvd_rfl
 
+section
+
+variable (H : ∀ a f g : ℕ, 1 ≤ a → a ≤ f → Nat.Coprime a f → 4 ∣ f → g.Prime → Odd g →
+  g ∣ f → jacobiSym g a = -1 →
+  ∃ p : ℕ, p.Prime ∧ p ≡ a [MOD f] ∧ IsPrimitiveRoot (g : ZMod p) (p - 1))
+
+-- At the smallest positive modulus there are infinitely many numbers of exact length four.
+example : {n : ℕ | IsWeaklyPrimeAdditive n ∧ weaklyPrimeAdditiveLength n = 4}.Infinite := by
+  simpa using infinite_weaklyPrimeAdditive_length_four_dvd H 1 (by decide)
+
+-- Divisibility by both eight and an odd prime is compatible with exact length four.
+example (B : ℕ) : ∃ n > B, 24 ∣ n ∧ IsWeaklyPrimeAdditive n ∧ weaklyPrimeAdditiveLength n = 4 := by
+  obtain ⟨n, hn, hB⟩ := Set.infinite_iff_exists_gt.mp
+    (infinite_weaklyPrimeAdditive_length_four_dvd H 24 (by decide)) B
+  exact ⟨n, hB, hn⟩
+
+end
+
 end MathlibExtTest.WeaklyPrimeAdditive
