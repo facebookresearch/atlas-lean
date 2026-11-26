@@ -388,6 +388,7 @@
 "AlgebraicCurve.Place.residueEquiv": "56907653ec501f3b",
 "AlgebraicCurve.Place.residueInv": "dc42569b6c2109c5",
 "AlgebraicCurve.WeilReciprocity": "0a8bbf814bf9967f",
+"AlgebraicCurve.exists_wittVector_lift_of_normalFormOrder": "cae727fb22d02651",
 "AlgebraicGeometry.AlgebraicSpaceChowComparison.OrdinaryChow": "5670fe3853397e3b",
 "AlgebraicGeometry.AlgebraicSpaceChowComparison.SpaceDictionary": "051671823ce5e35e",
 "AlgebraicGeometry.AlgebraicSpaceChowComparison.SpacePoint": "87267dd5e9d85fed",
