@@ -123,7 +123,7 @@ class BlueprintWorkflowTests(unittest.TestCase):
             "scripts/pack_pages_site.py", "scripts/pages_packing.js", "scripts/pages_size.sh", "scripts/cards.py",
             # Their tests.
             "scripts/test_generate_wiki_navigation.py", "scripts/test_generate_wiki_docstrings.py",
-            "scripts/test_sync_wiki.py", "scripts/test_import_mathgraph.py",
+            "scripts/test_sync_wiki.py", "scripts/test_graph_batch.py", "scripts/test_import_mathgraph.py",
             "scripts/test_extract_v2_lean_dependencies.py", "scripts/test_extract_mathlib_graph.py",
             "scripts/test_check_blueprint_site_navigation.py", "scripts/test_site_chrome.py",
             "scripts/test_blueprint_workflow.py", "scripts/test_blueprint_taxonomy.py",
