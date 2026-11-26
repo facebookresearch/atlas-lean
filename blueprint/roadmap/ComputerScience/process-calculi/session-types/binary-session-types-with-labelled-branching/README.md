@@ -79,7 +79,7 @@
 - [Lookup in a dual context](lookup-dual.md)
 - [Duality preserves disjointness of contexts](disjoint-dual.md)
 - [Duality preserves ownership splits](dual-11.md)
-- [Context advancement leaves other channels unchanged](lookup-of-ne.md)
+- [Context advancement preserves other channels up to permutation equivalence](lookup-of-ne.md)
 - [Context advancement preserves disjointness](disjoint-left.md)
 - [Advancing one side of an ownership split advances the context](advance-left.md)
 - [Dual contexts advance by dual actions](dual-12.md)
