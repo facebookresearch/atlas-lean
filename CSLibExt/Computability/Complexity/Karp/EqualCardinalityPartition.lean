@@ -32,6 +32,14 @@ Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
 bitstrings decoding to malformed instances, are no-instances.
 
+NP-completeness is stated in the same form as the proved results in
+`CSLibExt.Computability.Complexity.Karp`: membership in
+`MetaMathlibExt.ComplexityTheory.NP`, plus a polynomial-time many-one
+reduction from every language in `NP`
+(`Cslib.CookLevin.PolyManyOneRed`).
+-/
+
+/-
 For membership in NP, the same positional mask is checked against the input weights and a list
 of ones. For hardness, replace each weight `a` by `2*a+1` and append one `1` per input entry.
 Every half-length sublist contributes the same total offset from these ones, so balance of
