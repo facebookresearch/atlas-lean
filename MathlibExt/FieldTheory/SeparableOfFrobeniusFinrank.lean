@@ -37,8 +37,8 @@ public import Mathlib.RingTheory.Unramified.Field
 
 namespace Algebra
 
-/-- A finite extension `F/E` in characteristic `p` is separable when the
-subfield `F^p` of `p`-th powers has degree `p` over itself inside `F`
+/-- A finite extension `F/E`, with `F` of prime characteristic `p`, is
+separable when `F` has degree `p` over its subfield `F^p` of `p`-th powers
 (that is, `[F : F^p] = p`) and `E` contains an element whose image in `F`
 does not lie in `F^p`.
 
