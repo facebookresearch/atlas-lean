@@ -4,13 +4,15 @@ Let $\mathcal A$ be a complementary alphabet of size $2m$, and let $S(n,m)$ be t
 
 **Theorem.**
 
-1. (Exact count)
+*(1)* (Exact count)
 
 $$|\mathcal P(n,m)|=\sum_{\lambda=(\lambda_1,\dots,\lambda_k)\models n}(2m)^k(2m-1)^{n-k}\prod_{i=1}^kC_{\lambda_i-1},$$
 
 where the sum runs over compositions $\lambda$ of $n$ and $C_r$ is the $r$-th Catalan number.
-2. (Vanishing proportion) For fixed $m$, $\displaystyle\lim_{n\to\infty}\frac{|\mathcal P(n,m)|}{|S(n,m)|}=0$.
-3. (Gap in the number of valid trees) If a word of length $2n$ has $k$ valid plane trees with $k\neq C_n$, then $k\le C_{n-1}$. The number of words in $\mathcal P(n,m)$ with exactly $C_{n-1}$ valid plane trees is $4m(2m-1)n$, and for $m=1$ exactly $2n$ words have a unique valid plane tree.
+
+*(2)* (Vanishing proportion) For fixed $m$, $\displaystyle\lim_{n\to\infty}\frac{|\mathcal P(n,m)|}{|S(n,m)|}=0$.
+
+*(3)* (Gap in the number of valid trees) If a word of length $2n$ has $k$ valid plane trees with $k\neq C_n$, then $k\le C_{n-1}$. The number of words in $\mathcal P(n,m)$ with exactly $C_{n-1}$ valid plane trees is $4m(2m-1)n$, and for $m=1$ exactly $2n$ words have a unique valid plane tree.
 
 ## Depends on
 

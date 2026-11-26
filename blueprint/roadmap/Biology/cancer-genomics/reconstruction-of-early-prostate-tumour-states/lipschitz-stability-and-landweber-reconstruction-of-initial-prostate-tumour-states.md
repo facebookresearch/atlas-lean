@@ -11,12 +11,14 @@ $$\begin{aligned}
 with $\phi = 0$, $\partial_n\sigma = \partial_n p = 0$ on $\partial\Omega$, double well $F(\phi) = M\phi^2(1-\phi)^2$, interpolation $h(\phi) = M\phi^2(3-2\phi)$, and nutrient-dependent net proliferation $m(\sigma) = m_{ref}\big(\frac{\rho+A}{2} + \frac{\rho-A}{\pi}\arctan\frac{\sigma-\sigma_l}{\sigma_r}\big)$. Serum PSA is $P_s = \int_\Omega p\,dx$. The **inverse problem** is to recover the initial state $\psi_0 = (\phi_0,\sigma_0,p_0)$ from a single measurement of $\mathcal{R}(\psi_0) = (\phi,\sigma,p)(T)$ at a later time $T$.
 
 **Theorem.**
-1. (Conditional logarithmic stability) For two admissible initial data, if $\varepsilon$, the $H$-distance of the two final states divided by an a priori bound $M$, is small enough, then the initial data differ by at most a constant times a logarithmic modulus of $\varepsilon$.
-2. (Lipschitz stability on finite-dimensional sets) If the admissible initial data lie in a compact subset $K$ of a finite-dimensional subspace $\Lambda$, there is an explicit $C_s$ with
+
+*(1)* (Conditional logarithmic stability) For two admissible initial data, if $\varepsilon$, the $H$-distance of the two final states divided by an a priori bound $M$, is small enough, then the initial data differ by at most a constant times a logarithmic modulus of $\varepsilon$.
+
+*(2)* (Lipschitz stability on finite-dimensional sets) If the admissible initial data lie in a compact subset $K$ of a finite-dimensional subspace $\Lambda$, there is an explicit $C_s$ with
 
 $$\|\psi^1_0 - \psi^2_0\|_{H} \le C_s\,\|\mathcal{R}(\psi^1_0) - \mathcal{R}(\psi^2_0)\|_{H}.$$
 
-3. (Landweber convergence) Suppose $\mathcal{R}(\bar\psi_0) = \psi_{meas}$ for some $\bar\psi_0 \in K$. For the Landweber iteration $\psi^{j+1}_0 = \psi^j_0 - \mu\,\mathcal{R}'(\psi^j_0)^*\big[\vec\kappa\cdot(\mathcal{R}(\psi^j_0) - \psi_{meas})\big]$, with weights $\vec\kappa = (\kappa_1,\kappa_2,\kappa_3)$ on the three components and the adjoint of the Fréchet derivative computed through a backward adjoint system, there are $\rho > 0$, $0 < c < 1$ and $\mu^* > 0$ such that $\|\psi^0_0 - \bar\psi_0\|^2_H \le \rho$ and $\mu|\vec\kappa| < \mu^*$ imply
+*(3)* (Landweber convergence) Suppose $\mathcal{R}(\bar\psi_0) = \psi_{meas}$ for some $\bar\psi_0 \in K$. For the Landweber iteration $\psi^{j+1}_0 = \psi^j_0 - \mu\,\mathcal{R}'(\psi^j_0)^*\big[\vec\kappa\cdot(\mathcal{R}(\psi^j_0) - \psi_{meas})\big]$, with weights $\vec\kappa = (\kappa_1,\kappa_2,\kappa_3)$ on the three components and the adjoint of the Fréchet derivative computed through a backward adjoint system, there are $\rho > 0$, $0 < c < 1$ and $\mu^* > 0$ such that $\|\psi^0_0 - \bar\psi_0\|^2_H \le \rho$ and $\mu|\vec\kappa| < \mu^*$ imply
 
 $$\|\psi^j_0 - \bar\psi_0\|^2_H \le \rho(1-c)^j \quad\text{for all } j,$$
 

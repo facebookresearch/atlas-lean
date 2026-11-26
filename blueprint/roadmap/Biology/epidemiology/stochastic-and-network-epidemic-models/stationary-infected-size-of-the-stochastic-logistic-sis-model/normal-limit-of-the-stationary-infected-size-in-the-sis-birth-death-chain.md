@@ -3,12 +3,14 @@
 **Model.** In a population of constant size $M$, the number of infected individuals $I$ is a birth-death chain on $\{0,\dots,M\}$. Lifetimes are exponential with rate $\alpha$ and each death is replaced by a susceptible newborn, so $I \to I-1$ at rate $\mu_i = \alpha i$ for $1 \le i \le M$. Infection occurs at the logistic rate $\beta i(M-i)/M$, which vanishes at $i = 0$, so $0$ would be absorbing. An external infection rate $\epsilon > 0$ is added at state $0$ only: the upward rates are $\lambda_0 = \epsilon$, $\lambda_i = \beta i(M-i)/M$ for $1 \le i \le M-1$, and there is no upward transition from $M$. The chain is then irreducible with stationary distribution $\pi^{[\epsilon]}_M(i) = \theta_i/\sum_{j=0}^{M}\theta_j$, where $\theta_0 = 1$ and $\theta_i = \frac{\lambda_0\lambda_1\cdots\lambda_{i-1}}{\mu_1\cdots\mu_i}$ for $1 \le i \le M$. Let $R = \beta/\alpha$ be the reproduction number. (Adding $\epsilon$ to the infection rate at every state, as in the source's numerical illustration, gives a different chain with different stationary weights; the theorem below is about the chain just defined.)
 
 **Theorem.** Assume $R > 1$ and $\epsilon > 0$ fixed.
-1. As $M \to \infty$, $\pi^{[\epsilon]}_M(k) \sim \pi(k)$ for $k = 1,\dots,M$, where
+
+*(1)* As $M \to \infty$, $\pi^{[\epsilon]}_M(k) \sim \pi(k)$ for $k = 1,\dots,M$, where
 
 $$\pi(k) = \frac{R-1}{R}\,\frac{M}{(M-k)!\,k}\Big(\frac{M}{R}\Big)^{M-k}e^{-M/R}.$$
 
 Equivalently, $\pi(k) \propto \frac{M}{k}\,\mathbb{P}(X = M-k)$ with $X \sim \mathrm{Poisson}(M/R)$, and the normalization uses $\mathbb{E}[M/(M-X)\mid X<M] \to R/(R-1)$.
-2. The stationary infected size is asymptotically normal with mean $(1 - \tfrac{1}{R})M$ and variance $\tfrac{M}{R}$.
+
+*(2)* The stationary infected size is asymptotically normal with mean $(1 - \tfrac{1}{R})M$ and variance $\tfrac{M}{R}$.
 
 ## Expansion
 

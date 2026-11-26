@@ -7,9 +7,12 @@ $$g_w(z)=\big[\,1,\ 1+z,\ \dots,\ 1+z+\dots+z^{w-1}\,\big],$$
 each output repeated a Poisson number of times. For stream probabilities $\mathbf p=(p_1,\dots,p_w)$, $p_j=\mathbb P(W=j)$, the *averaged free distance* is $\tilde d_{\mathrm{free}}=\min_{v\ne0}\sum_jp_j\,\mathrm{wt}(v^{(j)})$ over nonzero codewords.
 
 **Theorem.**
-1. If $W\in\{1,2\}$ with probability $\tfrac12$ each, the optimal coverage is $c(p)=\dfrac{2/3}{1-e^{-D(\theta)}}$.
-2. The code $g_w$ has free distance $2w$ for $w\ge3$, and if $W$ is uniform on $\{1,\dots,w\}$ with $w\ge3$, then $c(p)=\dfrac{w}{d_{\mathrm{free}}(1-e^{-D(\theta)})}=\dfrac{1/2}{1-e^{-D(\theta)}}$.
-3. For general $\mathbf p$ such that the generator polynomials on the support of $\mathbf p$ have greatest common divisor $1$ (non-catastrophic code), $\tilde d_{\mathrm{free}}=\min\{\mathbb E[W],2\}$ and
+
+*(1)* If $W\in\{1,2\}$ with probability $\tfrac12$ each, the optimal coverage is $c(p)=\dfrac{2/3}{1-e^{-D(\theta)}}$.
+
+*(2)* The code $g_w$ has free distance $2w$ for $w\ge3$, and if $W$ is uniform on $\{1,\dots,w\}$ with $w\ge3$, then $c(p)=\dfrac{w}{d_{\mathrm{free}}(1-e^{-D(\theta)})}=\dfrac{1/2}{1-e^{-D(\theta)}}$.
+
+*(3)* For general $\mathbf p$ such that the generator polynomials on the support of $\mathbf p$ have greatest common divisor $1$ (non-catastrophic code), $\tilde d_{\mathrm{free}}=\min\{\mathbb E[W],2\}$ and
 
 $$c(p)=\frac1{\tilde d_{\mathrm{free}}\,(1-e^{-D(\theta)})}=\frac1{\min\{\mathbb E[W],2\}\,(1-e^{-D(\theta)})}.$$
 

@@ -6,8 +6,9 @@ $$(\ast)\qquad g \text{ continuous at } b,\quad g(b)>0,\quad g\le G \text{ on } 
 
 **Theorem (first generation).** Under $(\ast)$, with $p=b/\lambda_0$:
 
-1. $\displaystyle \mathbb E Z_1(t)\sim\frac{V_0u_1\,g(b)}{b\,t}\,e^{(\lambda_0+b)t}$.
-2. For $\theta\ge0$,
+*(1)* $\displaystyle \mathbb E Z_1(t)\sim\frac{V_0u_1\,g(b)}{b\,t}\,e^{(\lambda_0+b)t}$.
+
+*(2)* For $\theta\ge0$,
 
 $$\mathbb E\exp\!\big(-\theta\,t^{1+p}e^{-(\lambda_0+b)t}Z_1(t)\big)\to\exp\!\big(-V_0u_1\,\theta^{\lambda_0/(\lambda_0+b)}\,c_1(\lambda_0,b)\big),$$
 
@@ -16,7 +17,8 @@ with
 $$c_1(\lambda_0,b)=\frac{g(b)}{\lambda_0}\Big(\frac{a_0+b}{\lambda_0+b}\Big)^{-b/(\lambda_0+b)}\Gamma\!\Big(\frac{\lambda_0}{\lambda_0+b}\Big)\Gamma\!\Big(1-\frac{\lambda_0}{\lambda_0+b}\Big),$$
 
 so $t^{1+p}e^{-(\lambda_0+b)t}Z_1(t)\Rightarrow V_1$, a one-sided stable law of index $\lambda_0/(\lambda_0+b)$ with $\Pr(V_1>v)\asymp v^{-\lambda_0/(\lambda_0+b)}$.
-3. $V_1$ is the sum of the points of a Poisson process on $(0,\infty)$ with mean measure $\mu(z,\infty)=A_1(\lambda_0,b)\,u_1V_0\,z^{-\lambda_0/(\lambda_0+b)}$ for an explicit constant $A_1$: many mutant lineages contribute to the first generation.
+
+*(3)* $V_1$ is the sum of the points of a Poisson process on $(0,\infty)$ with mean measure $\mu(z,\infty)=A_1(\lambda_0,b)\,u_1V_0\,z^{-\lambda_0/(\lambda_0+b)}$ for an explicit constant $A_1$: many mutant lineages contribute to the first generation.
 
 **Theorem ($k$-th generation).** Define $p_k$ and $u_{1,k}$ by
 

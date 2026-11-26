@@ -8,13 +8,15 @@ For a rooted binary tree with leaf depths $\delta_\ell$, $p_\ell=2^{-\delta_\ell
 
 **Theorem.**
 
-1. (Markov branching trees) If $T_n$ is a Markov branching tree with root-split distributions $(q_n)$, $K_n\sim q_n$, and $\mu_n=\mathbb E[B_2(T_n)]$, $v_n=\operatorname{Var}B_2(T_n)$, then $\mu_1=v_1=0$ and
+*(1)* (Markov branching trees) If $T_n$ is a Markov branching tree with root-split distributions $(q_n)$, $K_n\sim q_n$, and $\mu_n=\mathbb E[B_2(T_n)]$, $v_n=\operatorname{Var}B_2(T_n)$, then $\mu_1=v_1=0$ and
 
 $$\mu_n=\mathbb E[\mu_{K_n}]+1,\qquad v_n=\tfrac14\operatorname{Var}\big(\mu_{K_n}+\mu_{n-K_n}\big)+\tfrac12\mathbb E[v_{K_n}].$$
 
-2. (Yule / equal-rate Markov model) $\displaystyle\mathbb E[B_2(T_n)]=\sum_{k=1}^{n-1}\frac1k$ and $\operatorname{Var}B_2(T_n)\to2-\pi^2/6$ as $n\to\infty$.
-3. (Uniform / PDA model on rooted binary trees with $n$ labeled leaves) $\mathbb E[B_2(T_n)]=\dfrac{3(n-1)}{n+1}$ and $\operatorname{Var}B_2(T_n)\to4/9$.
-4. (Galton–Watson trees) For a time-inhomogeneous Galton–Watson tree with offspring law $Y_t$ in generation $t$, $\alpha_t=\mathbb P(Y_t>0)$ and $\eta_t=\mathbb E[\log_2(Y_t)\mathbf 1_{Y_t>0}]$, the tree truncated at generation $k$ satisfies
+*(2)* (Yule / equal-rate Markov model) $\displaystyle\mathbb E[B_2(T_n)]=\sum_{k=1}^{n-1}\frac1k$ and $\operatorname{Var}B_2(T_n)\to2-\pi^2/6$ as $n\to\infty$.
+
+*(3)* (Uniform / PDA model on rooted binary trees with $n$ labeled leaves) $\mathbb E[B_2(T_n)]=\dfrac{3(n-1)}{n+1}$ and $\operatorname{Var}B_2(T_n)\to4/9$.
+
+*(4)* (Galton–Watson trees) For a time-inhomogeneous Galton–Watson tree with offspring law $Y_t$ in generation $t$, $\alpha_t=\mathbb P(Y_t>0)$ and $\eta_t=\mathbb E[\log_2(Y_t)\mathbf 1_{Y_t>0}]$, the tree truncated at generation $k$ satisfies
 
 $$\mathbb E[B_2(T_{\le k})]=\sum_{t=0}^{k-1}\eta_t\prod_{s=0}^{t-1}\alpha_s .$$
 

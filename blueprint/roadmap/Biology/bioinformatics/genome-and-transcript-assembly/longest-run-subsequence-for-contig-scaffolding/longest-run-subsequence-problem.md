@@ -2,10 +2,10 @@
 
 **Motivation.** In reference-guided scaffolding, a contig of one assembly $X$ is split into equal-size bins, and each bin is mapped to its best-matching contig of a related assembly $Y$. Reading the bins in order gives a string $S$ over the alphabet $\Sigma$ of $Y$-contigs. Mapping errors and mutations make $S$ inconsistent (a $Y$-contig appears in scattered bins), and the most likely partition of $X$ is read off from a longest subsequence in which each $Y$-contig appears contiguously.
 
-**Definitions.** For a string $S$ over $\Sigma$, an *$a$-run* is a substring consisting only of the symbol $a$. A *run subsequence* of $S$ is a subsequence that contains at most one run of each symbol $a\in\Sigma$. **Longest Run Subsequence (LRS):** given $S$ and an integer $k$, decide whether $S$ has a run subsequence of length $k$ (optimization: maximize the length).
+**Definitions.** For a string $R$ over $\Sigma$, an *$a$-run* of $R$ is a maximal substring of $R$ consisting only of the symbol $a$ (a maximal constant block). A *run subsequence* of $S$ is a subsequence $R$ of $S$ such that, for each symbol $a\in\Sigma$, all occurrences of $a$ **in $R$** form one contiguous block, equivalently $R$ has at most one $a$-run. The condition is on the chosen subsequence $R$, not on $S$: $R$ need not retain every occurrence of $a$ in $S$, and for instance $R=aa$ is a run subsequence of length 2 with one run (its substring $a$ is not a separate run, since it is not maximal). **Longest Run Subsequence (LRS):** given $S$ and an integer $k$, decide whether $S$ has a run subsequence of length $k$ (optimization: maximize the length).
 
 **Facts.**
-- An optimal run subsequence need not use any maximal run (all occurrences of a symbol) and may omit symbols entirely: for $S=abacaabbab$ an optimum is $R=aaaabbb$, which uses no $c$ and neither all $a$'s nor all $b$'s.
+- An optimal run subsequence need not retain all occurrences of any symbol of $S$ and may omit symbols entirely: for $S=abacaabbab$ an optimum is $R=aaaabbb$, which uses no $c$ and neither all $a$'s nor all $b$'s.
 - LRS is NP-hard and fixed-parameter tractable in $|\Sigma|$ (Schrinner et al., 2020).
 - LRS has a kernel with $k^2$ symbols for the parameter $k$: if some symbol occurs at least $k$ times its run alone is a solution, and if $|\Sigma|\ge k$ one occurrence of each of $k$ symbols is a solution, so otherwise $|S|<k^2$.
 

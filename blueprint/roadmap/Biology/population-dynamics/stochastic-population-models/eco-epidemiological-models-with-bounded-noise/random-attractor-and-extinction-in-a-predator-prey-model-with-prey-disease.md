@@ -12,9 +12,11 @@ Hypotheses: all rates are positive with $\mu<c$; the predation responses $f,g\ge
 
 **Theorem.**
 
-1. For every $\omega$ and nonnegative initial data there is a unique bounded nonnegative solution, generating a random dynamical system, and this system has a unique global random attractor $\mathcal A$; deterministic invariant regions of the form $\mathcal K_\delta$ serve as absorbing sets.
-2. (Prevalence of susceptible prey.) With $\xi_\delta=\Lambda^\ell-f\big(\tfrac{\Theta^u+\delta}{a^u},0,0\big)(\Theta^u+\delta)$ and $\zeta_\delta=\mu+\beta\tfrac{\Theta^u+\delta}{r}$, the $S$-component of every section satisfies $A_S(\omega)\ge\xi_\delta/\zeta_\delta$; in particular susceptibles are prevalent if $\xi_\delta>0$ for some $\delta>0$.
-3. (Joint extinction of infection and predators.) If
+*(1)* For every $\omega$ and nonnegative initial data there is a unique bounded nonnegative solution, generating a random dynamical system, and this system has a unique global random attractor $\mathcal A$; deterministic invariant regions of the form $\mathcal K_\delta$ serve as absorbing sets.
+
+*(2)* (Prevalence of susceptible prey.) With $\xi_\delta=\Lambda^\ell-f\big(\tfrac{\Theta^u+\delta}{a^u},0,0\big)(\Theta^u+\delta)$ and $\zeta_\delta=\mu+\beta\tfrac{\Theta^u+\delta}{r}$, the $S$-component of every section satisfies $A_S(\omega)\ge\xi_\delta/\zeta_\delta$; in particular susceptibles are prevalent if $\xi_\delta>0$ for some $\delta>0$.
+
+*(3)* (Joint extinction of infection and predators.) If
 
 $$\frac{\beta\,\Theta^u}{a^u}<c\qquad\text{and}\qquad\gamma f\Big(\frac{\Theta^u}{a^u},0,0\Big)<\delta_1,$$
 

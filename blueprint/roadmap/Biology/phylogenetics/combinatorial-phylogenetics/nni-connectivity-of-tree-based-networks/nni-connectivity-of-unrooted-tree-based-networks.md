@@ -4,13 +4,15 @@
 
 **Theorem.**
 
-1. For every $n$ and $k$, $\mathrm{TBN}(n,k)$ is connected under NNI moves that never leave $\mathrm{TBN}(n,k)$.
-2. Its NNI diameter is at most
+*(1)* For every $n$ and $k$, $\mathrm{TBN}(n,k)$ is connected under NNI moves that never leave $\mathrm{TBN}(n,k)$.
+
+*(2)* Its NNI diameter is at most
 
 $$f(n,k)=\binom{k-1}{2}+\binom{n-2}{2}+4nk+4k^2+4n-4k-17,$$
 
 so it is $O((n+k)^2)$, and $O(n^2)$ for fixed tier.
-3. Triangle moves map tree-based networks to tree-based networks of the adjacent tier, so the space of all tree-based networks on $X$ is connected under NNI and triangle moves, and the distance between networks of fixed tiers $k_1\le k_2$ is $O(n^2)$.
+
+*(3)* Triangle moves map tree-based networks to tree-based networks of the adjacent tier, so the space of all tree-based networks on $X$ is connected under NNI and triangle moves, and the distance between networks of fixed tiers $k_1\le k_2$ is $O(n^2)$.
 
 ## Expansion
 

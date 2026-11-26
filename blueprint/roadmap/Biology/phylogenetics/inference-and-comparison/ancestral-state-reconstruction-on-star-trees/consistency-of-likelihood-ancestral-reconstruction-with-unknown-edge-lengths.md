@@ -8,13 +8,15 @@ with known stationary distribution $\pi>0$. Assume $\liminf_n\bar s>0$, where $\
 
 **Theorem.** As $n\to\infty$ with $N$ fixed or slowly growing:
 
-1. The empirical Bayes estimator concentrates on the set $\mathcal H$ of maximizers of the limiting averaged likelihood: $\mathbb P(\hat\rho_B\in\mathcal H)\to1$. Both estimators are therefore consistent exactly when $\mathcal H=\{\rho^*\}$.
-2. (Symmetric models) If $\pi_1=\dots=\pi_c=1/c$, then $\mathbb P(\hat\rho=\rho^*)\to1$.
-3. (Inconsistency zone) If $\rho^*=(r,\dots,r)$, there exist $\pi$ and $\lim\bar s>0$ for which the MLE is inconsistent. A sufficient condition is $v(\pi_a)>v(\pi_r)$ for some state $a$, where, with $X\sim\mathrm{Bin}(N,p)$ and $\hat p=X/N$,
+*(1)* The empirical Bayes estimator concentrates on the set $\mathcal H$ of maximizers of the limiting averaged likelihood: $\mathbb P(\hat\rho_B\in\mathcal H)\to1$. Both estimators are therefore consistent exactly when $\mathcal H=\{\rho^*\}$.
+
+*(2)* (Symmetric models) If $\pi_1=\dots=\pi_c=1/c$, then $\mathbb P(\hat\rho=\rho^*)\to1$.
+
+*(3)* (Inconsistency zone) If $\rho^*=(r,\dots,r)$, there exist $\pi$ and $\lim\bar s>0$ for which the MLE is inconsistent. A sufficient condition is $v(\pi_a)>v(\pi_r)$ for some state $a$, where, with $X\sim\mathrm{Bin}(N,p)$ and $\hat p=X/N$,
 
 $$v(p)=\mathbb E\Big[\Big\{\hat p\log\frac{\hat p}{p}+(1-\hat p)\log\frac{1-\hat p}{1-p}\Big\}\mathbf 1\{\hat p>p\}\Big].$$
 
-4. (A consistent alternative) Let $\hat\pi_{jl}=\frac1n\sum_k\mathbf 1\{y_{kl}=j\}$ and $V(j,l)=\hat\pi_{jl}-\frac1{N-1}\sum_{v\ne l}\hat\pi_{jv}$, and set $\rho_l^{(D)}=\arg\max_jV(j,l)$. If $\liminf\bar s>0$, $N=O(\sqrt{n/\log n})$ and $\rho^*$ has at least two distinct states, then $\mathbb P(\rho^{(D)}=\rho^*)\to1$.
+*(4)* (A consistent alternative) Let $\hat\pi_{jl}=\frac1n\sum_k\mathbf 1\{y_{kl}=j\}$ and $V(j,l)=\hat\pi_{jl}-\frac1{N-1}\sum_{v\ne l}\hat\pi_{jv}$, and set $\rho_l^{(D)}=\arg\max_jV(j,l)$. If $\liminf\bar s>0$, $N=O(\sqrt{n/\log n})$ and $\rho^*$ has at least two distinct states, then $\mathbb P(\rho^{(D)}=\rho^*)\to1$.
 
 ## Expansion
 

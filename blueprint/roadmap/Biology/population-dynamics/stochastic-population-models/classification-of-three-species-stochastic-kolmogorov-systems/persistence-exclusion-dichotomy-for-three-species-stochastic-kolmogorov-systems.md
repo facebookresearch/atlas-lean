@@ -10,19 +10,22 @@ with correlated Brownian environmental noise $\mathbf E=\Gamma^\top\mathbf B$, $
 
 **Theorem.** Assume $\mathbf X$ is not a rock–paper–scissors system, and that all invasion rates are non-zero: $\lambda_i(\mu)\neq0$ for every ergodic $\mu$ and $i\notin I_\mu$.
 
-1. **Persistence.** $\mathbf X$ is strongly stochastically persistent iff
+*(1) Persistence.* $\mathbf X$ is strongly stochastically persistent iff
 
 $$\max_{i}\lambda_i(\mu)>0\qquad\text{for every ergodic }\mu\text{ with }|I_\mu|\le2 .$$
 
 In that case $\mathbb P_y(\mathbf X(t)\in\cdot)$ converges in total variation to the persistent invariant measure for every $y\in(0,\infty)^3$.
-2. **Exclusion.** Otherwise there are ergodic measures $\mu^1,\dots,\mu^k$ with $k\le3$ such that
-   - $|I_{\mu^i}|\le2$,
-   - no $I_{\mu^i}$ is contained in another $I_{\mu^j}$,
-   - $p_y(\mu^i)>0$ for every $i$ and every $y\in(0,\infty)^3$,
-   - $\sum_ip_y(\mu^i)=1$.
 
-   Every positive initial condition ends up, with positive probability, at each of these boundary communities, and the excluded species decay exponentially at rate $\lambda_i(\mu^\ell)<0$.
-3. **Genericity.** The non-zero invasion rate condition is generic: for any $\delta>0$, perturbing the $f_i$ by at most $\delta$ in sup norm, with $g$ unchanged, yields a system for which every ergodic measure has non-zero invasion rates.
+*(2) Exclusion.* Otherwise there are ergodic measures $\mu^1,\dots,\mu^k$ with $k\le3$ such that
+
+- $|I_{\mu^i}|\le2$,
+- no $I_{\mu^i}$ is contained in another $I_{\mu^j}$,
+- $p_y(\mu^i)>0$ for every $i$ and every $y\in(0,\infty)^3$,
+- $\sum_ip_y(\mu^i)=1$.
+
+Every positive initial condition ends up, with positive probability, at each of these boundary communities, and the excluded species decay exponentially at rate $\lambda_i(\mu^\ell)<0$.
+
+*(3) Genericity.* The non-zero invasion rate condition is generic: for any $\delta>0$, perturbing the $f_i$ by at most $\delta$ in sup norm, with $g$ unchanged, yields a system for which every ergodic measure has non-zero invasion rates.
 
 Together with the rock–paper–scissors criterion and the one- and two-species classifications (exactly four outcomes for two species), the long-run behavior from positive initial conditions falls, up to relabeling species, into $10$ types. One type is extinction of all species; the other nine have at least one persisting species. Each type is determined by the signs of finitely many invasion rates.
 

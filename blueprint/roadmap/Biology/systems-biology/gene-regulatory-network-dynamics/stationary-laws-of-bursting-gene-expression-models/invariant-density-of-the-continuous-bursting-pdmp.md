@@ -14,9 +14,11 @@ $$Kv(x)=\int_0^x h(x-z,z)\,\frac{\varphi(z)}{\gamma(z)}\,e^{-Q(z)}\int_z^\infty 
 
 **Theorem.**
 
-1. The associated substochastic semigroup $\{P(t)\}$ on $L^1(0,\infty)$ has at most one invariant density, and it is stochastic whenever $K$ is mean ergodic.
-2. *(Correspondence.)* If $u^*\ge0$ with $\varphi u^*\in L^1$ solves $\gamma(x)u^*(x)=\int_0^x\overline H(x-y,y)\varphi(y)u^*(y)\,dy$, where $\overline H(x,y)=\int_x^\infty h(z,y)\,dz$, then $v^*(x)=\int_0^xh(x-y,y)\varphi(y)u^*(y)\,dy$ is a fixed point of $K$; conversely a nonnegative fixed point $v^*$ of $K$ yields such a $u^*$ via the formula below.
-3. *(Asymptotic stability.)* If $K$ has an invariant density $v^*>0$ a.e. and
+*(1)* The associated substochastic semigroup $\{P(t)\}$ on $L^1(0,\infty)$ has at most one invariant density, and it is stochastic whenever $K$ is mean ergodic.
+
+*(2)* *(Correspondence.)* If $u^*\ge0$ with $\varphi u^*\in L^1$ solves $\gamma(x)u^*(x)=\int_0^x\overline H(x-y,y)\varphi(y)u^*(y)\,dy$, where $\overline H(x,y)=\int_x^\infty h(z,y)\,dz$, then $v^*(x)=\int_0^xh(x-y,y)\varphi(y)u^*(y)\,dy$ is a fixed point of $K$; conversely a nonnegative fixed point $v^*$ of $K$ yields such a $u^*$ via the formula below.
+
+*(3)* *(Asymptotic stability.)* If $K$ has an invariant density $v^*>0$ a.e. and
 
 $$c:=\int_0^\infty\frac{1}{\gamma(x)}\int_x^\infty e^{Q(y)-Q(x)}v^*(y)\,dy\,dx<\infty,$$
 

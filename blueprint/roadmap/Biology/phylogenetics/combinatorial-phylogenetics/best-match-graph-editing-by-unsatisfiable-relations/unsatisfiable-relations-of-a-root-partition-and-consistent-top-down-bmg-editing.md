@@ -3,14 +3,18 @@
 **Setting.** Let $(\vec G=(V,E),\sigma)$ be a properly vertex-colored digraph (genes colored by species). For a leaf-colored tree $T$ on $V$ let $\vec G(T,\sigma)$ be its best match graph (BMG): $(x,y)$ is an arc iff $\sigma(x)\ne\sigma(y)$ and $y$ is a closest relative of $x$ among genes of color $\sigma(y)$. *BMG editing* asks for a minimum set of arc insertions and deletions turning $(\vec G,\sigma)$ into a BMG (an NP-hard problem). For a partition $\mathscr{V}=\{V_1,\dots,V_k\}$ of $V$, $k\ge2$, let $\mathscr{T}(\mathscr{V})$ be the trees whose root's children have leaf sets exactly $V_1,\dots,V_k$. The **unsatisfiable relations** $U(\vec G,\mathscr{V})$ are the ordered pairs $(x,y)$ that must be edited for every $T\in\mathscr{T}(\mathscr{V})$ (arcs absent from every $\vec G(T,\sigma)$, or non-arcs present in every one), and $c(\vec G,\mathscr{V})=|U(\vec G,\mathscr{V})|$ is the **UR-cost** of the partition.
 
 **Theorem.**
-1. *(Explicit form.)* $U(\vec G,\mathscr{V})$ is the disjoint union of
+
+*(1)* *(Explicit form.)* $U(\vec G,\mathscr{V})$ is the disjoint union of
 
 $$\begin{aligned}U_1&=\{(x,y)\in E:\ x\in V_i,\ y\notin V_i,\ \sigma(y)\in\sigma(V_i)\},\\ U_2&=\{(x,y)\notin E:\ x\in V_i,\ y\notin V_i,\ \sigma(y)\notin\sigma(V_i)\},\\ U_3&=\{(x,y)\notin E:\ x\ne y\in V_i,\ V_i[\sigma(y)]=\{y\}\},\end{aligned}$$
 
 so it can be computed in $O(|V|^2)$ time without enumerating trees.
-2. *(Edits forced by every tree.)* For $|V|\ge2$, the pairs that must be edited for every phylogenetic tree on $V$ are exactly $U^*(\vec G)=\{(x,y)\notin E:\ x\ne y,\ V[\sigma(y)]=\{y\}\}$: missing arcs into a gene that is the only one of its species.
-3. *(Top-down editing.)* Recursively choose a partition of the current vertex set, apply the edits $U(\vec G^*[V'],\mathscr{V})$, and recurse into each part. The output graph equals $\vec G(T,\sigma)$ for the tree $T$ built from the partitions, so it is a BMG, and its edit cost is the sum of the UR-costs of the chosen partitions (edit sets of different steps are disjoint).
-4. *(Consistency.)* The algorithm leaves every BMG unchanged if at each step it picks either a partition of minimal UR-cost, or, when the Aho graph of the informative triples is disconnected with zero-cost component partition, that component partition.
+
+*(2)* *(Edits forced by every tree.)* For $|V|\ge2$, the pairs that must be edited for every phylogenetic tree on $V$ are exactly $U^*(\vec G)=\{(x,y)\notin E:\ x\ne y,\ V[\sigma(y)]=\{y\}\}$: missing arcs into a gene that is the only one of its species.
+
+*(3)* *(Top-down editing.)* Recursively choose a partition of the current vertex set, apply the edits $U(\vec G^*[V'],\mathscr{V})$, and recurse into each part. The output graph equals $\vec G(T,\sigma)$ for the tree $T$ built from the partitions, so it is a BMG, and its edit cost is the sum of the UR-costs of the chosen partitions (edit sets of different steps are disjoint).
+
+*(4)* *(Consistency.)* The algorithm leaves every BMG unchanged if at each step it picks either a partition of minimal UR-cost, or, when the Aho graph of the informative triples is disconnected with zero-cost component partition, that component partition.
 
 ## Expansion
 

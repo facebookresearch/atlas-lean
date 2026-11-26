@@ -11,12 +11,14 @@ for any threshold distribution. If $\theta \sim \mathrm{Exp}(\alpha)$, then with
 $$ R_0 = 2\Big(\mathbb{E}[N] - \sum_s\pi(s)\sum_{i=1}^{n(s)}\widetilde W_i^{(s)}(\alpha)\Big). $$
 
 **Closed forms.** Let $\eta = \alpha/\mu$ be the normalized transmission rate.
-- M/M/1/FCFS with load $\rho = \lambda/\mu$: $W_i^{(s)} \sim \mathrm{Erlang}(i,\mu)$, $\widetilde W_i^{(s)}(\alpha) = (1+\eta)^{-i}$, and
+
+*(i)* M/M/1/FCFS with load $\rho = \lambda/\mu$: $W_i^{(s)} \sim \mathrm{Erlang}(i,\mu)$, $\widetilde W_i^{(s)}(\alpha) = (1+\eta)^{-i}$, and
 
 $$ R_0 = 2\,\frac{\rho}{1-\rho}\cdot\frac{\eta}{\eta + 1 - \rho} . $$
 
 This is convex increasing in the arrival rate $\lambda$, convex decreasing in the service rate $\mu$, and concave increasing in $\alpha$; the same holds for the infection rate $\lambda R_0$.
-- M/M/$c$/FCFS with load $\rho = \lambda/(c\mu)$ and Erlang-C probability $C(c,\rho)$:
+
+*(ii)* M/M/$c$/FCFS with load $\rho = \lambda/(c\mu)$ and Erlang-C probability $C(c,\rho)$:
 
 $$ R_0 = 2\Big(\frac{\rho}{1-\rho}C(c,\rho) + c\rho - \frac{1}{\eta+2}\Big(C(c,\rho)\,\frac{2c\rho - c\eta}{\eta + c - c\rho} + 2c\rho\Big)\Big). $$
 

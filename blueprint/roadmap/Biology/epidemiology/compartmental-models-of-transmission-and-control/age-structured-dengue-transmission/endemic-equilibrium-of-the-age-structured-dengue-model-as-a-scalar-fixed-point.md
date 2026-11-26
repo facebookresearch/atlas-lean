@@ -13,12 +13,14 @@ $$ Q = Q\iint_\Omega k(x,s)\,e^{-Q\Lambda(x,s)}\,d(s,x), $$
 and the **basic reproductive number** is $\mathcal{R}_0 = \iint_\Omega k(x,s)\,d(s,x)$.
 
 **Theorem.**
-1. For $Q > 0$ the profile satisfies $0 < w(x;Q) < 1$ for $x > 0$, $w(0) = 0$, and necessarily $Q < 1$.
-2. If $0 < \mathcal{R}_0 \le 1$, only the disease-free solution $Q = 0$ exists. If $\mathcal{R}_0 > 1$, there is additionally a unique endemic solution $Q^* \in (0,1)$, and
+
+*(1)* For $Q > 0$ the profile satisfies $0 < w(x;Q) < 1$ for $x > 0$, $w(0) = 0$, and necessarily $Q < 1$.
+
+*(2)* If $0 < \mathcal{R}_0 \le 1$, only the disease-free solution $Q = 0$ exists. If $\mathcal{R}_0 > 1$, there is additionally a unique endemic solution $Q^* \in (0,1)$, and
 
 $$ 0 < Q^* < \frac{\mathcal{R}_0 - 1}{\frac{\gamma}{\gamma + \theta_{\max}} + \mathcal{R}_0 - 1} \longrightarrow 0 \quad (\mathcal{R}_0 \to 1^+). $$
 
-3. The iteration $Q^{(j)} = T(Q^{(j-1)}) := Q^{(j-1)}\iint_\Omega k\,e^{-Q^{(j-1)}\Lambda}$ has $T'(0) = \mathcal{R}_0$. For $\mathcal{R}_0 < 1$ it converges locally to $0$. For $1 < \mathcal{R}_0 < 2e \approx 5.44$, $|T'(Q^*)| < 1$, so it converges locally to the endemic $Q^*$ while $Q = 0$ is repelling.
+*(3)* The iteration $Q^{(j)} = T(Q^{(j-1)}) := Q^{(j-1)}\iint_\Omega k\,e^{-Q^{(j-1)}\Lambda}$ has $T'(0) = \mathcal{R}_0$. For $\mathcal{R}_0 < 1$ it converges locally to $0$. For $1 < \mathcal{R}_0 < 2e \approx 5.44$, $|T'(Q^*)| < 1$, so it converges locally to the endemic $Q^*$ while $Q = 0$ is repelling.
 
 Fitting a Gaussian-peaked $\theta(x) = \theta_0 + \theta_1e^{-(x-x_p)^2/(2\sigma^2)}$ to hospitalization data from Semarang, Indonesia reproduces the observed concentration of cases in young age groups.
 

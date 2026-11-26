@@ -1,10 +1,14 @@
 # Exchangeable weight of a discrete distribution
 
-**Latent weight.** Let $\mathcal{P}$ be the probability measures on a finite set $\Omega$ and $\mathcal{Q}\subseteq\mathcal{P}$ a model class. The *latent weight* of $\mathcal{Q}$ in $P\in\mathcal{P}$ is
+**Latent weight.** Let $\mathcal{P}$ be the probability measures on a finite set $\Omega$ and $\mathcal{Q}\subseteq\mathcal{P}$ a nonempty model class. The *latent weight* of $\mathcal{Q}$ in $P\in\mathcal{P}$ is
 
-$$\lambda_{\mathcal{Q}}(P)=\sup\{\lambda:\ P\ge\lambda Q\text{ pointwise for some }Q\in\mathcal{Q}\},$$
+$$\lambda_{\mathcal{Q}}(P)=\sup\{\lambda\in[0,1]:\ P\ge\lambda Q\text{ pointwise for some }Q\in\mathcal{Q}\},$$
 
-the largest fraction of $P$ that can be explained by a model in $\mathcal{Q}$ when the rest is arbitrary contamination: $P=\lambda Q+(1-\lambda)R$. For closed $\mathcal{Q}$: $\lambda_{\mathcal{Q}}(P)=1$ iff $P\in\mathcal{Q}$, and $\lambda_{\mathcal{Q}}(P)=\sup_{Q\in\mathcal{Q}}\min_{\omega}P(\omega)/Q(\omega)$, with the supremum attained.
+the largest fraction of $P$ that can be explained by a model in $\mathcal{Q}$ when the rest is arbitrary contamination: $P=\lambda Q+(1-\lambda)R$. Nonemptiness makes $\lambda=0$ feasible, so the supremum is over a nonempty set. For nonempty closed $\mathcal{Q}$: $\lambda_{\mathcal{Q}}(P)=1$ iff $P\in\mathcal{Q}$, and
+
+$$\lambda_{\mathcal{Q}}(P)=\max_{Q\in\mathcal{Q}}\ \min_{\omega:\,Q(\omega)>0}\frac{P(\omega)}{Q(\omega)},$$
+
+with the maximum attained by some $Q\in\mathcal{Q}$; the inner minimum ranges only over the support of $Q$, which is nonempty because $Q$ is a probability measure. Equivalently, set $P(\omega)/Q(\omega)=+\infty$ for **every** $\omega$ with $Q(\omega)=0$, including when $P(\omega)=0$. For example, with $P=Q=(1,0)$ on two outcomes and $\mathcal{Q}=\{Q\}$ the weight is $\min\{1/1\}=1$, and no $0/0$ arises.
 
 **Exchangeable weight.** Take $\Omega=\mathcal{X}^d$ (for example $d$ CpG sites read on one DNA fragment, $\mathcal{X}$ = methylated/unmethylated) and $\mathcal{Q}=\mathcal{E}$, the exchangeable distributions. For $x\in\mathcal{X}^d$ let $[x]$ be its orbit under coordinate permutations. Then
 
@@ -20,7 +24,7 @@ and if $\lambda_{\mathcal{E}}(P)>0$ the exchangeable component is unique: $Q(x)=
 
 ## Expansion
 
-The supremum formula follows because $P\ge\lambda Q$ is equivalent to $\lambda\le P(\omega)/Q(\omega)$ for all $\omega$. An exchangeable $Q$ is constant on each orbit, so $\lambda Q(x)\le\min_{y\in[x]}P(y)$, and taking $\lambda Q$ equal to these orbit minima is feasible and optimal, which gives the closed form. Marginalization and lumping map exchangeable measures to exchangeable measures and preserve the domination $P\ge\lambda Q$, giving the monotonicity properties. The estimator is a sum of minima of empirical frequencies; minima of jointly Gaussian fluctuations over tied minimizers give the non-normal limit, which becomes normal when ties are absent. Applied to methylation reads, a weight well below one indicates patterns overrepresented beyond what exchangeable (site-symmetric) methylation plus contamination explains.
+The supremum formula follows because $P\ge\lambda Q$ is equivalent to $\lambda\le P(\omega)/Q(\omega)$ for all $\omega$ with $Q(\omega)>0$ (the constraint is vacuous where $Q(\omega)=0$); attainment uses compactness of the nonempty closed class and upper semicontinuity of $Q\mapsto\min_{Q(\omega)>0}P(\omega)/Q(\omega)$. An exchangeable $Q$ is constant on each orbit, so $\lambda Q(x)\le\min_{y\in[x]}P(y)$, and taking $\lambda Q$ equal to these orbit minima is feasible and optimal, which gives the closed form. Marginalization and lumping map exchangeable measures to exchangeable measures and preserve the domination $P\ge\lambda Q$, giving the monotonicity properties. The estimator is a sum of minima of empirical frequencies; minima of jointly Gaussian fluctuations over tied minimizers give the non-normal limit, which becomes normal when ties are absent. Applied to methylation reads, a weight well below one indicates patterns overrepresented beyond what exchangeable (site-symmetric) methylation plus contamination explains.
 
 ## Sources
 

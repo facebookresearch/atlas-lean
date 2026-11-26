@@ -6,7 +6,7 @@
 
 $$\mathrm{ssd}(S,\mathcal T)=\sum_{s\in S}\Big(\sum_{T\in\mathcal T}|s|_T\Big)^2-\sum_{x\in E(\mathcal T)\cap X(S)}\ \sum_{T\in\mathcal T}|x|_T^2 .$$
 
-**Theorem.** Let $\mu$ be the Fréchet mean of $\mathcal T$ and $S=\{s_1,\dots,s_m\}$ its splits of positive weight. Then $\mathrm{ssd}(S,\mathcal T)>0$, that is
+**Theorem.** Let $\mu$ be the Fréchet mean of $\mathcal T$ and $S=\{s_1,\dots,s_m\}$ its splits of positive weight, and suppose $S$ is nonempty ($m\ge1$, that is, $\mu$ is not the star tree). Then $\mathrm{ssd}(S,\mathcal T)>0$, that is
 
 $$\sum_{i=1}^m\Big(\sum_{T\in\mathcal T}|s_i|_T\Big)^2>\sum_{x\in E(\mathcal T)\cap X(\mu)}\ \sum_{T\in\mathcal T}|x|_T^2 .$$
 
@@ -14,7 +14,7 @@ Consequently, by Cauchy–Schwarz,
 
 $$r\sum_{i=1}^m\sum_{T}|s_i|_T^2>\sum_{x\in E(\mathcal T)\cap X(\mu)}\sum_T|x|_T^2,\qquad r\sum_{i=1}^m\Big(\sum_T|s_i|_T\Big)^2>\sum_{x\in E(\mathcal T)\cap X(\mu)}\Big(\sum_T|x|_T\Big)^2 .$$
 
-Any candidate split set (orthant) for the mean with non-positive square-sum difference can therefore be discarded before solving for the mean. The condition is not sufficient: several compatible split sets can satisfy it for the same sample.
+If the mean is the star tree, then $S$ and $X(S)$ are empty, both sides vanish, and the test says nothing. Accordingly, any **nonempty** candidate split set (orthant) for the mean with non-positive square-sum difference can be discarded before solving for the mean; the empty candidate set (the star tree) is never discarded by this test. The condition is not sufficient: several compatible split sets can satisfy it for the same sample.
 
 ## Depends on
 
@@ -22,7 +22,7 @@ Any candidate split set (orthant) for the mean with non-positive square-sum diff
 
 ## Expansion
 
-For each tree $T$ let $(\mathcal A^T,\mathcal B^T)$ be the support of the geodesic from $\mu$ to $T$, and let $p(i,T)$ index the block containing $s_i$. At the mean, each split satisfies the first-order condition $\sum_T|s_i|_T>\sum_{T:\,s_i\in X(T)}\frac{\|B^T_{p(i,T)}\|}{\|A^T_{p(i,T)}\|}|s_i|_\mu$. Squaring (the square of a sum of non-negative terms dominates the sum of squares) and summing over $i$, then regrouping by blocks with $\|A^T_j\|^2=\sum_{a\in A^T_j}|a|_\mu^2$, the right side collapses to $\sum_T\sum_{j\ge1}\|B^T_j\|^2$. The blocks $B^T_j$ with $j\ge1$ collect exactly the splits of $T$ incompatible with $\mu$, so this is the sum of squared weights over $E(\mathcal T)\cap X(\mu)$, an inequality in the data only. The corollary follows from Cauchy–Schwarz on sums of $r$ terms.
+For each tree $T$ let $(\mathcal A^T,\mathcal B^T)$ be the support of the geodesic from $\mu$ to $T$, and let $p(i,T)$ index the block containing $s_i$. At the mean, each split satisfies the first-order condition $\sum_T|s_i|_T>\sum_{T:\,s_i\in X(T)}\frac{\|B^T_{p(i,T)}\|}{\|A^T_{p(i,T)}\|}|s_i|_\mu$. Here $m\ge1$, so there is at least one strict summand. Squaring (the square of a sum of non-negative terms dominates the sum of squares) and summing over the $m\ge1$ strict inequalities, then regrouping by blocks with $\|A^T_j\|^2=\sum_{a\in A^T_j}|a|_\mu^2$, the right side collapses to $\sum_T\sum_{j\ge1}\|B^T_j\|^2$. The blocks $B^T_j$ with $j\ge1$ collect exactly the splits of $T$ incompatible with $\mu$, so this is the sum of squared weights over $E(\mathcal T)\cap X(\mu)$, an inequality in the data only. The corollary follows from Cauchy–Schwarz on sums of $r$ terms.
 
 ## Sources
 

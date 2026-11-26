@@ -1,6 +1,6 @@
 # Parameterized and approximation complexity of longest run subsequence
 
-**Problem.** Longest Run Subsequence (LRS): given a string $S$ over alphabet $\Sigma$ and an integer $k$, find a subsequence of length $k$ containing at most one run of each symbol. Let $r$ be the number of runs in the solution, so $r\le|\Sigma|$. 2-LRS is the restriction where every symbol occurs at most twice in $S$.
+**Problem.** Longest Run Subsequence (LRS): given a string $S$ over alphabet $\Sigma$ and an integer $k$, find a subsequence $R$ of $S$ of length $k$ in which, for each symbol, all occurrences of that symbol in $R$ form one contiguous block (equivalently, $R$ has at most one maximal constant block per symbol; occurrences of a symbol in $S$ may be dropped). Let $r$ be the number of maximal runs of $R$, so $r\le|\Sigma|$. 2-LRS is the restriction where every symbol occurs at most twice in $S$.
 
 **Theorem.**
 1. (FPT in the number of runs) LRS can be solved by a randomized algorithm in $O(2^r\,r\,|S|^3)$ time and polynomial space.

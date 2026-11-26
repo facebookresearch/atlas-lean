@@ -4,15 +4,19 @@
 
 **Results.**
 
-1. (Robustness) Tolerance persists on an open time interval around $\tau$ and under small perturbations of either initial condition. At the first crossing time $t_1$ one has $\psi_1(t_1)=\phi_1(t_1)$ and $f(\psi(t_1))\le f(\phi(t_1))$.
-2. (Obstruction) If $\phi_1,\psi_1\to0$ monotonically and $(x_p,y_p)$ lies on the backward orbit of $(x_r,y_r)$, so that $\psi$ is a time-shift of $\phi$, there is no tolerance. If $y$ inhibits $x$ throughout a region containing both trajectories and the graph of $\psi$ lies above that of $\phi$ (with $x_p$ beyond a threshold $M$), there is no tolerance either. Conversely, tolerance requires a region of inhibition in which the two solutions take equal first components.
-3. (Linear systems, distinct eigenvalues) For $\dot{\mathbf x}=A\mathbf x$ with eigenvalues $\lambda_2<\lambda_1<0$ and eigenvectors $v$, $w$, write $(x_r,y_r)=c_1v+c_2w$ and $(x_p,y_p)=d_1v+d_2w$.
-   - If $v_1=0$ (the slow eigenvector is vertical) or $w_1=0$, tolerance never occurs.
-   - If $v_1=w_1=1$, tolerance holds for all $t>T$ iff $c_1>d_1$ and $c_2<d_2$, with
+*(1) Robustness.* Tolerance persists on an open time interval around $\tau$ and under small perturbations of either initial condition. At the first crossing time $t_1$ one has $\psi_1(t_1)=\phi_1(t_1)$ and $f(\psi(t_1))\le f(\phi(t_1))$.
+
+*(2) Obstruction.* If $\phi_1,\psi_1\to0$ monotonically and $(x_p,y_p)$ lies on the backward orbit of $(x_r,y_r)$, so that $\psi$ is a time-shift of $\phi$, there is no tolerance. If $y$ inhibits $x$ throughout a region containing both trajectories and the graph of $\psi$ lies above that of $\phi$ (with $x_p$ beyond a threshold $M$), there is no tolerance either. Conversely, tolerance requires a region of inhibition in which the two solutions take equal first components.
+
+*(3) Linear systems, distinct eigenvalues.* For $\dot{\mathbf x}=A\mathbf x$ with eigenvalues $\lambda_2<\lambda_1<0$ and eigenvectors $v$, $w$, write $(x_r,y_r)=c_1v+c_2w$ and $(x_p,y_p)=d_1v+d_2w$.
+
+*(3a)* If $v_1=0$ (the slow eigenvector is vertical) or $w_1=0$, tolerance never occurs.
+
+*(3b)* If $v_1=w_1=1$, tolerance holds for all $t>T$ iff $c_1>d_1$ and $c_2<d_2$, with
 
 $$T=\frac{\ln\big[(d_2-c_2)/(c_1-d_1)\big]}{\lambda_1-\lambda_2}.$$
 
-4. (Linear systems, repeated eigenvalue) If $\lambda_1=\lambda_2<0$ with two independent eigenvectors, tolerance is impossible. With a one-dimensional eigenspace, tolerance is decided explicitly by the coefficients along the eigenvector and the generalized eigenvector.
+*(4) Linear systems, repeated eigenvalue.* If $\lambda_1=\lambda_2<0$ with two independent eigenvectors, tolerance is impossible. With a one-dimensional eigenspace, tolerance is decided explicitly by the coefficients along the eigenvector and the generalized eigenvector.
 
 ## Expansion
 

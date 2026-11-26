@@ -13,9 +13,12 @@ The noise $\sigma_\beta\,dW_\beta$ perturbs the transmission rate; $\widetilde{N
 $$\mathcal{R}^s_0 = \frac{1}{c_I}\Big(\frac{\beta A}{\mu_1} - \frac{A^2\sigma_\beta^2}{\mu_1\chi} - \Lambda_2\Big), \qquad \widehat{\mathcal{R}}^s_0 = \frac{1}{c_I}\Big(\frac{\beta A}{\mu_1} - \frac{\sigma_\beta^2A^2}{2\mu_1^2} - \Lambda_2\Big).$$
 
 **Theorem.** For any initial value in $\mathbb{R}^3_+$:
-1. (Ergodicity) If $\mathcal{R}^s_0 > 1$, the system has a unique stationary distribution and is ergodic.
-2. (Persistence in the mean) If $\mathcal{R}^s_0 > 1$, then $\liminf_{t\to\infty}\frac1t\int_0^tI(s)\,ds > 0$ almost surely, with an explicit lower bound proportional to $\mathcal{R}^s_0 - 1$.
-3. (Extinction) If either $\widehat{\mathcal{R}}^s_0 < 1$ and $\sigma_\beta^2 \le \mu_1\beta/A$, or
+
+*(1)* (Ergodicity) If $\mathcal{R}^s_0 > 1$, the system has a unique stationary distribution and is ergodic.
+
+*(2)* (Persistence in the mean) If $\mathcal{R}^s_0 > 1$, then $\liminf_{t\to\infty}\frac1t\int_0^tI(s)\,ds > 0$ almost surely, with an explicit lower bound proportional to $\mathcal{R}^s_0 - 1$.
+
+*(3)* (Extinction) If either $\widehat{\mathcal{R}}^s_0 < 1$ and $\sigma_\beta^2 \le \mu_1\beta/A$, or
 
 $$\frac{\beta^2}{2\sigma_\beta^2} - c_I - \Lambda_2 < 0,$$
 

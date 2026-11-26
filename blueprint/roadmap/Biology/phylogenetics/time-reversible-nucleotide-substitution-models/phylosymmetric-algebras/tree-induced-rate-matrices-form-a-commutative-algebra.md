@@ -8,12 +8,13 @@ minus the graph Laplacian, so the rate matrix of the model is $Q=\sum_\alpha\alp
 
 **Theorem (products).** Let $u,v$ be non-leaf vertices with rates $\alpha,\beta$, let $T^\alpha$ be the subtree at $u$ and $|T|$ its number of leaves.
 
-1. If $v$ is a descendant of $u$ and $T^\alpha_\beta$ is the subtree at the child of $u$ that is an ancestor of $v$, then
+*(1)* If $v$ is a descendant of $u$ and $T^\alpha_\beta$ is the subtree at the child of $u$ that is an ancestor of $v$, then
 
 $$Q_\alpha Q_\beta=\big(|T^\alpha_\beta|-|T^\alpha|\big)Q_\beta=Q_\beta Q_\alpha.$$
 
-2. If $u$ and $v$ are incomparable, then $Q_\alpha Q_\beta=0$.
-3. $(Q_\alpha^2)_{ii}=d_i(d_i+1)$, $(Q_\alpha^2)_{ij}=-|T^\alpha|$ if $i,j$ lie in different parts of $G_\alpha$, and $(Q_\alpha^2)_{ij}=d_i$ if $i\ne j$ lie in the same part, where $d_i$ is the degree of $i$ in $G_\alpha$.
+*(2)* If $u$ and $v$ are incomparable, then $Q_\alpha Q_\beta=0$.
+
+*(3)* $(Q_\alpha^2)_{ii}=d_i(d_i+1)$, $(Q_\alpha^2)_{ij}=-|T^\alpha|$ if $i,j$ lie in different parts of $G_\alpha$, and $(Q_\alpha^2)_{ij}=d_i$ if $i\ne j$ lie in the same part, where $d_i$ is the degree of $i$ in $G_\alpha$.
 
 Consequently, for a binary tree with distinct rates, $\mathcal Q_{\mathcal T}$ is a commutative matrix algebra; the transition matrices $e^{tQ}$ then lie in $I+\mathcal Q_{\mathcal T}$ and can be written in closed form without numerical matrix exponentials.
 

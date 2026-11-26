@@ -3,7 +3,8 @@
 **Homeostatic clones.** A progenitor cell (P) divides into PP, PD or DD with probabilities $a$, $b$, $c$ ($a+b+c = 1$), where D cells are differentiated and never divide. Index the process by the clone size $n$ (each division adds one cell) rather than by time; then the number $k$ of progenitors performs a lattice walk with up, flat and down steps of probabilities $a$, $b$, $c$, absorbed at $0$ (gambler's ruin). Starting from one progenitor, let $P_{n,k}$ be the probability that the clone has $k$ progenitors when it has $n$ cells.
 
 **Theorem 1.**
-1. For $k \ge 1$,
+
+*(1)* For $k \ge 1$,
 
 $$P_{n,k} = \sum_{i=0}^{\lfloor (n-k)/2\rfloor}\binom{n-1}{k+2i-1}\Big(\binom{k+2i-1}{i} - \binom{k+2i-1}{i-1}\Big)a^{k+i-1}b^{n-k-2i}c^i,$$
 
@@ -11,7 +12,7 @@ and the probability that a clone of size $n$ is fully differentiated is the weig
 
 $$P_{n,0} = \sum_{i=0}^{\lfloor (n-2)/2\rfloor}\binom{n-2}{2i}\Big(\binom{2i}{i} - \binom{2i}{i-1}\Big)a^ib^{n-2-2i}c^{i+1}.$$
 
-2. The generating function of the absorption probabilities is
+*(2)* The generating function of the absorption probabilities is
 
 $$G(t) = \sum_{n}P_{n,0}t^n = \frac{1 - bt - \sqrt{(bt-1)^2 - 4act^2}}{2a},$$
 

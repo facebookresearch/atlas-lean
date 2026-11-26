@@ -7,14 +7,18 @@ $$B'=\Phi(t)-d_bB-e^{-d_b\tau}\Phi(t-\tau),\qquad H'=e^{-d_b\tau}\Phi(t-\tau)-d_
 with nonnegative continuous history on $[-\tau,0]$ and the compatible brood condition $B(0)=\int_{-\tau}^0\Phi(s)e^{d_bs}\,ds$ (brood alive at time $0$ is exactly the surviving cohorts laid in the last $\tau$ days).
 
 **Results.**
-1. The model is positively invariant and bounded on $C([-\tau,0],\mathbb R_+)^2$.
-2. The extinction equilibrium $E_e=(0,0)$ is always locally asymptotically stable (cooperative brood care gives a strong Allee effect). If $d_h>\dfrac{re^{-d_b\tau}}{2\sqrt K}$, $E_e$ is globally stable.
-3. Interior equilibria satisfy $B^\ast=\dfrac{d_h(e^{d_b\tau}-1)}{d_b}H^\ast$. Let
+
+*(1)* The model is positively invariant and bounded on $C([-\tau,0],\mathbb R_+)^2$.
+
+*(2)* The extinction equilibrium $E_e=(0,0)$ is always locally asymptotically stable (cooperative brood care gives a strong Allee effect). If $d_h>\dfrac{re^{-d_b\tau}}{2\sqrt K}$, $E_e$ is globally stable.
+
+*(3)* Interior equilibria satisfy $B^\ast=\dfrac{d_h(e^{d_b\tau}-1)}{d_b}H^\ast$. Let
 
 $$\Theta=\frac{d_br-\alpha d_h^2e^{d_b\tau}(e^{d_b\tau}-1)}{2d_hd_be^{d_b\tau}\sqrt K}.$$
 
 If $\Theta>1$ there are exactly two interior equilibria $H_1^\ast<H_2^\ast$, the roots of $d_b(K+H^2)d_h+\alpha d_h^2(e^{d_b\tau}-1)H=e^{-d_b\tau}rd_bH$; if $\Theta=1$ they merge. $H_1^\ast$ increases and $H_2^\ast$ decreases in $\alpha$, $K$, $d_b$ and $d_h$, and the reverse holds in $r$.
-4. For $\alpha=0$ and $r>2d_he^{d_b\tau}\sqrt K$, $E_1$ is unstable and $E_2$ is locally asymptotically stable for every maturation delay $\tau$; at the critical value $d_h=re^{-d_b\tau}/(2\sqrt K)$ the unique interior equilibrium $\big(r(1-e^{-d_b\tau})/(2d_b),\sqrt K\big)$ is locally asymptotically stable for every $\tau>0$.
+
+*(4)* For $\alpha=0$ and $r>2d_he^{d_b\tau}\sqrt K$, $E_1$ is unstable and $E_2$ is locally asymptotically stable for every maturation delay $\tau$; at the critical value $d_h=re^{-d_b\tau}/(2\sqrt K)$ the unique interior equilibrium $\big(r(1-e^{-d_b\tau})/(2d_b),\sqrt K\big)$ is locally asymptotically stable for every $\tau>0$.
 
 So with $\alpha=0$ the colony is bistable between collapse and the large equilibrium $E_2$ when $r\ge 2d_he^{d_b\tau}\sqrt K$, and collapses from every initial state when $r<2d_he^{d_b\tau}\sqrt K$; the delay affects only the location of the equilibria, not their stability.
 

@@ -11,13 +11,16 @@ $$V(x) = \sup_{(Y,Z)}\ \mathbb{E}_x\Big[\int_0^\infty e^{-\delta s}f(X(s-))\cdot
 Three regimes are considered: bounded seeding rate $dZ = C\,dt$, $0 \le C \le \lambda$, with unbounded harvesting; bounded seeding and harvesting rates $dY = R\,dt$, $0 \le R \le \mu$; and unbounded seeding with bounded harvesting.
 
 **Theorem.**
-1. (Truncation, bounded seeding) If for some $U > 0$, $\sum_i[b_i(x) - \delta(x_i - U)]f_i < 0$ for $|x| > U$, then there is $x^* \in [0,U]^d$ with $V(x) = V(x^*) + f\cdot(x - x^*)$ outside $[0,U]^d$, and $V$ equals the value $V^U$ of the problem confined to $[0,U]^d$: above a threshold one harvests instantly down to $[0,U]^d$.
-2. (HJB, both rates bounded) $V$ is finite and continuous on $\overline{S}$ and is a viscosity solution of
+
+*(1)* (Truncation, bounded seeding) If for some $U > 0$, $\sum_i[b_i(x) - \delta(x_i - U)]f_i < 0$ for $|x| > U$, then there is $x^* \in [0,U]^d$ with $V(x) = V(x^*) + f\cdot(x - x^*)$ outside $[0,U]^d$, and $V$ equals the value $V^U$ of the problem confined to $[0,U]^d$: above a threshold one harvests instantly down to $[0,U]^d$.
+
+*(2)* (HJB, both rates bounded) $V$ is finite and continuous on $\overline{S}$ and is a viscosity solution of
 
 $$(\mathcal{L} - \delta)V + \max_{\xi\in[-\lambda,\mu]}\big[\xi^-\cdot(f - \nabla V) - \xi^+\cdot(g - \nabla V)\big] = 0,$$
 
 where $\mathcal{L}$ is the generator of the uncontrolled diffusion.
-3. (Numerical approximation) Under a diagonal-dominance condition on the diffusion matrix $\sigma\sigma'$, the values $V^h$ of locally consistent controlled Markov chains with step $h$ converge to $V$ (resp. $V^U$) on $[0,U]^d$ in each of the three regimes, and near-optimal chain policies are near-optimal for the diffusion.
+
+*(3)* (Numerical approximation) Under a diagonal-dominance condition on the diffusion matrix $\sigma\sigma'$, the values $V^h$ of locally consistent controlled Markov chains with step $h$ converge to $V$ (resp. $V^U$) on $[0,U]^d$ in each of the three regimes, and near-optimal chain policies are near-optimal for the diffusion.
 
 ## Expansion
 

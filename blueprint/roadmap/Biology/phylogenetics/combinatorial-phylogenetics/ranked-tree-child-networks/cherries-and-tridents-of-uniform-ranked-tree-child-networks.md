@@ -2,11 +2,11 @@
 
 **Setting.** Let $\nu_\ell$ be a uniformly random ranked tree-child network (RTCN) on $\ell$ labeled leaves. A *cherry* is a pair of leaves with a common parent; a *trident* (reticulated cherry) is a triple of leaves whose parents form a reticulation pattern created by a single reticulation event. Let $\kappa_\ell$ and $\chi_\ell$ be the numbers of cherries and tridents of $\nu_\ell$.
 
-**Theorem (cherries).** For all $\ell \ge 2$,
+**Theorem (cherries).** For $\ell=2$ the network is a single cherry, so $\kappa_2=1$ and $\mathbb E[\kappa_2]=1$. For all $\ell \ge 3$,
 
-$$\mathbb E[\kappa_\ell] = \frac{(3\ell-5)\,\ell}{12(\ell-1)(\ell-2)},$$
+$$\mathbb E[\kappa_\ell] = \frac{(3\ell-5)\,\ell}{12(\ell-1)(\ell-2)}$$
 
-the factorial moments satisfy $\mathbb E[\kappa_\ell(\kappa_\ell-1)\cdots(\kappa_\ell-n+1)] \to 4^{-n}$, and hence
+(the right side is undefined at $\ell=2$). The factorial moments satisfy $\mathbb E[\kappa_\ell(\kappa_\ell-1)\cdots(\kappa_\ell-n+1)] \to 4^{-n}$, and hence
 
 $$\kappa_\ell \xrightarrow[\ell\to\infty]{d} \mathrm{Poisson}(1/4).$$
 

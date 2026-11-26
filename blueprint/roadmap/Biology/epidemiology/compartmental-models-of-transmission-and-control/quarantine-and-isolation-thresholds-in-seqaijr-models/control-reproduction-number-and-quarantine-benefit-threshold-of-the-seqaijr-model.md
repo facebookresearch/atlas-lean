@@ -11,14 +11,18 @@ and $R'=\sigma_1Q+\sigma_2A+\sigma_3I+\sigma_4J-\mu R$. Here $\gamma_1$ is the q
 $$R_c=\frac{\beta}{a}\Big[\frac{r_Q\gamma_1}{q}+\frac{r_Apk_1}{s}+\frac{(1-p)k_1}{i}+\frac{r_J\gamma_1k_2}{qj}+\frac{r_J(1-p)k_1\gamma_2}{ij}\Big].$$
 
 **Theorem.**
-1. The disease-free equilibrium is locally and globally asymptotically stable if $R_c<1$ and unstable if $R_c>1$.
-2. A unique endemic equilibrium exists iff $R_c>1$, and it is locally asymptotically stable (forward transcritical bifurcation at $R_c=1$).
-3. *(Quarantine threshold.)* $\partial R_c/\partial\gamma_1<0$, i.e. quarantining exposed individuals has a positive population-level impact, iff $r_Q<r_{\gamma_1}$, where
+
+*(1)* The disease-free equilibrium is locally and globally asymptotically stable if $R_c<1$ and unstable if $R_c>1$.
+
+*(2)* A unique endemic equilibrium exists iff $R_c>1$, and it is locally asymptotically stable (forward transcritical bifurcation at $R_c=1$).
+
+*(3)* *(Quarantine threshold.)* $\partial R_c/\partial\gamma_1<0$, i.e. quarantining exposed individuals has a positive population-level impact, iff $r_Q<r_{\gamma_1}$, where
 
 $$r_{\gamma_1}=\frac{q}{k_1+\mu}\Big[\frac{r_Apk_1}{s}+\frac{(1-p)k_1}{i}\Big]+\frac{r_J\,q}{(k_1+\mu)j}\Big[\frac{(1-p)k_1\gamma_2}{i}-\frac{k_2(k_1+\mu)}{q}\Big]>0;$$
 
 if $r_Q>r_{\gamma_1}$, more quarantine raises $R_c$.
-4. *(Isolation threshold.)* Analogously, isolation of symptomatic individuals lowers $R_c$ iff $r_J$ is below an explicit threshold $r_{\gamma_2}$.
+
+*(4)* *(Isolation threshold.)* Analogously, isolation of symptomatic individuals lowers $R_c$ iff $r_J$ is below an explicit threshold $r_{\gamma_2}$.
 
 ## Expansion
 

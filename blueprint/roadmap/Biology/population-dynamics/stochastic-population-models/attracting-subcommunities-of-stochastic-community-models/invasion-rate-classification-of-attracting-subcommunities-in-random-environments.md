@@ -15,12 +15,14 @@ and $r_i(\mu)=0$ for every species $i$ present in the support of $\mu$. For $I\s
 2. if $I\ne\emptyset$, $\max_{i\in I} r_i(\nu)>0$ for all $\nu\in\mathrm{Conv}(\mathcal{M}^{I,\partial})$ (the subcommunity $I$ is persistent on its own face).
 
 **Theorem.**
-1. For every $I\in E_1$, $I\ne\{1,\dots,n\}$, there is $\alpha_I>0$ such that for every compact $K$ in the interior of the face of $I$,
+
+*(1)* For every $I\in E_1$, $I\ne\{1,\dots,n\}$, there is $\alpha_I>0$ such that for every compact $K$ in the interior of the face of $I$,
 
 $$\lim_{\operatorname{dist}(z,K)\to 0}\ \mathbb{P}_z\Big\{\lim_{t\to\infty}\tfrac1t\ln X_i(t)\le-\alpha_I,\ i\notin I\Big\}=1:$$
 
 started near the community $I$, the outsiders go extinct exponentially fast with probability close to one.
-2. If every $J\notin E_1$ satisfies $\max_i r_i(\nu)>0$ for all $\nu\in\mathcal{M}^{J,+}$, and the union of the $E_1$ faces is accessible, then from every interior state
+
+*(2)* If every $J\notin E_1$ satisfies $\max_i r_i(\nu)>0$ for all $\nu\in\mathcal{M}^{J,+}$, and the union of the $E_1$ faces is accessible, then from every interior state
 
 $$\sum_{I\in E_1}p_{z,I}=1,$$
 

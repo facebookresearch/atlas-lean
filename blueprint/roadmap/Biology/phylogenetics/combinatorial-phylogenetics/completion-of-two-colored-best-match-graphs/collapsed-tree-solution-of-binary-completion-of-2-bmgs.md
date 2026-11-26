@@ -6,13 +6,15 @@ For a tree $(T,\sigma)$ with two leaf colors, the *collapsed tree* $(T^*,\sigma)
 
 **Theorem.** Let $(G,\sigma)$ be a 2-BMG with LRT $(T,\sigma)$.
 
-1. In any completion of a BMG to a beBMG, every induced hourglass $[xy\,\Join\,x'y']$ receives both missing arcs $(x',y)$ and $(y',x)$.
-2. The minimum-cardinality arc completion of $(G,\sigma)$ to a binary-explainable 2-BMG is unique and equals
+*(1)* In any completion of a BMG to a beBMG, every induced hourglass $[xy\,\Join\,x'y']$ receives both missing arcs $(x',y)$ and $(y',x)$.
+
+*(2)* The minimum-cardinality arc completion of $(G,\sigma)$ to a binary-explainable 2-BMG is unique and equals
 
 $$F=E\big(G(T^*,\sigma)\big)\setminus E(G).$$
 
-3. This completion problem with a 2-BMG as input is solvable in $O(|V|+|E|\log^2|V|)$ time, whereas the same completion problem for arbitrary properly 2-colored input digraphs is NP-complete.
-4. A 2-colored least resolved tree is the LRT of a binary-explainable 2-BMG if and only if it is a collapsed tree.
+*(3)* This completion problem with a 2-BMG as input is solvable in $O(|V|+|E|\log^2|V|)$ time, whereas the same completion problem for arbitrary properly 2-colored input digraphs is NP-complete.
+
+*(4)* A 2-colored least resolved tree is the LRT of a binary-explainable 2-BMG if and only if it is a collapsed tree.
 
 ## Expansion
 

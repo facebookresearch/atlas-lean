@@ -14,13 +14,15 @@ $$\tau_c=\frac{\log(a/b)}{\log(1+b)}.$$
 
 **Theorem.**
 
-1. (Equilibria) If $\tau\ge\lceil\tau_c\rceil$, the only nonnegative equilibrium is $0$. If $\tau<\lceil\tau_c\rceil$, there is also a unique positive equilibrium
+*(1)* (Equilibria) If $\tau\ge\lceil\tau_c\rceil$, the only nonnegative equilibrium is $0$. If $\tau<\lceil\tau_c\rceil$, there is also a unique positive equilibrium
 
 $$\tilde z_+=\frac{-b(2\beta-1)+\sqrt{b^2(2\beta-1)^2+4b(a-b\beta)(\beta-1)}}{2c(\beta-1)}.$$
 
-2. (Extinction) If $\tau\ge\lceil\tau_c\rceil$, the zero equilibrium is globally asymptotically stable for all nonnegative initial conditions.
-3. (Persistence) If $\tau<\lceil\tau_c\rceil$, then $0$ is unstable and $\tilde z_+$ is globally asymptotically stable for all initial conditions $\vec z_0\not\equiv0$.
-4. The positive equilibrium decreases as the delay $\tau$ increases.
+*(2)* (Extinction) If $\tau\ge\lceil\tau_c\rceil$, the zero equilibrium is globally asymptotically stable for all nonnegative initial conditions.
+
+*(3)* (Persistence) If $\tau<\lceil\tau_c\rceil$, then $0$ is unstable and $\tilde z_+$ is globally asymptotically stable for all initial conditions $\vec z_0\not\equiv0$.
+
+*(4)* The positive equilibrium decreases as the delay $\tau$ increases.
 
 ## Expansion
 

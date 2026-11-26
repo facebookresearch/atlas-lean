@@ -10,13 +10,15 @@ so $j\to k$ when $j$ is a reactant in a reaction that changes $k$. Let $G^\sim$ 
 
 **Theorem.** Let $[A,B,D]$ partition $\mathcal V$.
 
-1. (Local independence) $\lambda^B(t)$ is $\mathcal F^{\operatorname{cl}(B)}_t$-measurable. If $A\perp_{G^\sim}B\mid D$, then $N^B$ is locally independent of $N^A$ given $N^{B\cup D}$, and symmetrically.
-2. (Global independence) Suppose the reactions $\Gamma=\Delta(A)\cap\Delta(B)$ are *identified by consumption of reactants*: each consumes, and never produces, its reactants, and no two of them consume reactants identically. Then $A\perp_{G^\sim}B\mid D$ implies
+*(1)* (Local independence) $\lambda^B(t)$ is $\mathcal F^{\operatorname{cl}(B)}_t$-measurable. If $A\perp_{G^\sim}B\mid D$, then $N^B$ is locally independent of $N^A$ given $N^{B\cup D}$, and symmetrically.
+
+*(2)* (Global independence) Suppose the reactions $\Gamma=\Delta(A)\cap\Delta(B)$ are *identified by consumption of reactants*: each consumes, and never produces, its reactants, and no two of them consume reactants identically. Then $A\perp_{G^\sim}B\mid D$ implies
 
 $$\mathcal F^A_t\perp\!\!\!\perp\mathcal F^B_t\ \big|\ \mathcal F^{D^*}_t\qquad\text{for all }t\ge0,$$
 
 under both $\mathsf P_t$ and a reference measure $\tilde{\mathsf P}_t$. Here $N^{D^*}$ refines $N^D$ by recording separately the jumps of $D$ caused by reactions that also change $A$ only, $A$ and $B$, $B$ only, or $D$ alone. The likelihood ratio factorizes as $d\mathsf P_t/d\tilde{\mathsf P}_t=\psi_{AD^*,t}\,\psi_{BD^*,t}$, with each factor measurable with respect to its own side.
-3. (Sharpness) Under the same hypotheses, conditioning on $\mathcal F^D_t$ alone instead of $\mathcal F^{D^*}_t$ need not give conditional independence: in the network $A\rightleftharpoons D\rightleftharpoons B$ neither $\mathcal F^A_t\perp\!\!\!\perp\mathcal F^B_t\mid\mathcal F^D_t$ under $\mathsf P_t$ nor under $\tilde{\mathsf P}_t$ holds.
+
+*(3)* (Sharpness) Under the same hypotheses, conditioning on $\mathcal F^D_t$ alone instead of $\mathcal F^{D^*}_t$ need not give conditional independence: in the network $A\rightleftharpoons D\rightleftharpoons B$ neither $\mathcal F^A_t\perp\!\!\!\perp\mathcal F^B_t\mid\mathcal F^D_t$ under $\mathsf P_t$ nor under $\tilde{\mathsf P}_t$ holds.
 
 ## Expansion
 

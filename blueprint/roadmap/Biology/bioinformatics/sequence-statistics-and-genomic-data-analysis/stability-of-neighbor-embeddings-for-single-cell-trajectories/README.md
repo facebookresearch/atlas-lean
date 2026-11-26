@@ -1,3 +1,3 @@
 # Stability of neighbor embeddings for single-cell trajectories
 
-- [t-SNE fragments a circle at low graph connectivity](t-sne-fragments-a-circle-at-low-graph-connectivity.md)
+- [Conditional distortion blow-up of optimal t-SNE embeddings of a sampled circle](t-sne-fragments-a-circle-at-low-graph-connectivity.md)

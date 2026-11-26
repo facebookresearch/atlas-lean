@@ -6,7 +6,7 @@
 
 **Algorithm (product projections).** For each node take the top $m$ left singular vectors $\hat U^u$ of $\hat P^{u,u}_{1,2}$ and project path meta-observations onto $\hat U^{H_u}=\bigotimes_{v\in H_u}\hat U^v$ instead of the full $n^{|H_u|}$-dimensional space. Symmetrize the projected second- and third-order co-occurrences of $(x_1,x_2,x_3)$, orthogonalize and decompose the projected third-order tensor (the tensor power method), and undo the projection: $\hat O^u=\hat U^u\hat\Theta^u$.
 
-**Theorem (consistency).** Run on the first three observations of $N$ i.i.d. sequences, for every node $u$ there is, with high probability, a column permutation $\Pi^u$ with $\|O^u-\Pi^u\hat O^u\|\le\varepsilon(N)$, where $\varepsilon(N)\to0$ as $N\to\infty$. The permutations are globally consistent across nodes, so transition tensors and initial laws are also recovered, and finite-sample bounds hold.
+**Theorem (consistency).** Run on the first three observations of $N$ i.i.d. sequences, for every node $u$ there is, with high probability, an $m\times m$ permutation matrix $\Pi^u$ with $\|O^u-\hat O^u\Pi^u\|\le\varepsilon(N)$ (right multiplication relabels the columns, that is, the hidden states), where $\varepsilon(N)\to0$ as $N\to\infty$. The permutations are globally consistent across nodes, so transition tensors and initial laws are also recovered, and finite-sample bounds hold.
 
 ## Expansion
 

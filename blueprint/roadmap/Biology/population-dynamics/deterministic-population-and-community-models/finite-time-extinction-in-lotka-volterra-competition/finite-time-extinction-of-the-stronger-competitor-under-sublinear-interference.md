@@ -10,8 +10,9 @@ with positive constants $a_i,b_i,c_i$. The classical model is $p=q=1$. For $0<p<
 
 **Exclusion case.** Suppose $\dfrac{a_1}{a_2}>\max\Bigl\{\dfrac{b_1}{c_2},\dfrac{c_1}{b_2}\Bigr\}$, so that in the classical model $(a_1/b_1,0)$ attracts every positive solution and $u$ excludes $v$. Take $q=1$.
 
-1. There is $p\in(0,1)$ for which an interior saddle equilibrium $E_3$ exists. The $u$-nullcline $v=u^{1-p}(a_1-b_1u)/c_1$ crosses the unchanged $v$-nullcline.
-2. **Theorem (FTE of the stronger competitor).** Let $0<p<1$ and let $u(0)>0$, $v(0)>0$ with $u(0)\le a_1/b_1$. If
+*(1)* There is $p\in(0,1)$ for which an interior saddle equilibrium $E_3$ exists. The $u$-nullcline $v=u^{1-p}(a_1-b_1u)/c_1$ crosses the unchanged $v$-nullcline.
+
+*(2)* **Theorem (FTE of the stronger competitor).** Let $0<p<1$ and let $u(0)>0$, $v(0)>0$ with $u(0)\le a_1/b_1$. If
 
 $$
 v(0)>f(u(0)),\qquad f(u)=\frac{a_1c_2+(1-p)a_1b_1}{(1-p)\,c_1b_1}\,u^{1-p},

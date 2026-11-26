@@ -6,13 +6,16 @@
 - An $m$-angulation of a regular $((m-2)k+2)$-gon divides it by diagonals into $k$ $m$-gons; it is *diagonal-coloured* if each $m$-gon has sides coloured $S_1,\dots,S_m$ clockwise.
 
 **Theorem.**
-1. The following sets are in bijection: connected noncrossing RNA $m$-diagrams of degree $k$; rooted $m$-edge-coloured trees with $k$ vertices; labelled $m$-edge-coloured trees with $k$ vertices and circular order $(k\ k{-}1\ \cdots\ 1)$; rooted diagonal-coloured $m$-angulations of the $((m-2)k+2)$-gon up to rotation.
-2. Each of these sets has cardinality
+
+*(1)* The following sets are in bijection: connected noncrossing RNA $m$-diagrams of degree $k$; rooted $m$-edge-coloured trees with $k$ vertices; labelled $m$-edge-coloured trees with $k$ vertices and circular order $(k\ k{-}1\ \cdots\ 1)$; rooted diagonal-coloured $m$-angulations of the $((m-2)k+2)$-gon up to rotation.
+
+*(2)* Each of these sets has cardinality
 
 $$T_{k,m} = \frac{m}{(m-2)k+2}\binom{(m-1)k}{k-1}.$$
 
-3. The total number of labelled $m$-edge-coloured trees with $k$ vertices is $U_{k,m} = \dfrac{m\,((m-1)k)!}{((m-2)k+2)!}$.
-4. (Induction classes) Two labelled $m$-edge-coloured trees on $k$ vertices are related by a sequence of chain-flip "induction" moves $L_i$, $R_i$ if and only if they have the same circular order; every unlabelled $m$-edge-coloured tree shape occurs in each such class.
+*(3)* The total number of labelled $m$-edge-coloured trees with $k$ vertices is $U_{k,m} = \dfrac{m\,((m-1)k)!}{((m-2)k+2)!}$.
+
+*(4)* (Induction classes) Two labelled $m$-edge-coloured trees on $k$ vertices are related by a sequence of chain-flip "induction" moves $L_i$, $R_i$ if and only if they have the same circular order; every unlabelled $m$-edge-coloured tree shape occurs in each such class.
 
 ## Expansion
 

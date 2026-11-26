@@ -18,11 +18,11 @@ $$\mathbb P\big(Y(t)\ne(S,\dots,S)\big)\le C\sqrt{N\sum_i\mathbf 1\{X_i(0)\in\{I
 
 ## Expansion
 
-The marginal infection probabilities $P_i(t)=\mathbb P(X_i(t)=I)$ satisfy an exact equation whose pair-correlation terms enter with a minus sign, so $\dot P\le(\beta A-\delta I)P$ componentwise; since $\beta A-\delta I$ is Metzler, $P(t)\le e^{t(\beta A-\delta I)}P(0)$. A union bound gives $\mathbb P(\text{some }I)\le\mathbf 1^{\mathsf T}P(t)$, and Cauchy–Schwarz with symmetric $A$ gives the $\sqrt N\,\|P(0)\|_2$ factor. Integrating $\min\{1,Ne^{-(\delta-\beta\lambda_1)t}\}$ and splitting at $t^\ast=\log N/(\delta-\beta\lambda_1)$ gives the mean-time bound. The temporary immunity class adds the rate $-\gamma$ to the decay of the probability of not being fully susceptible. This is the SIRS analogue of the spectral die-out bound for network SIS epidemics.
+The marginal infection probabilities $P_i(t)=\mathbb P(X_i(t)=I)$ satisfy an exact equation whose pair-correlation terms enter with a minus sign, so $\dot P\le(\beta A-\delta I)P$ componentwise; since $\beta A-\delta I$ is Metzler, $P(t)\le e^{t(\beta A-\delta I)}P(0)$. A union bound gives $\mathbb P(\text{some }I)\le\mathbf 1^{\mathsf T}P(t)$, and Cauchy–Schwarz with symmetric $A$ gives the $\sqrt N\,\|P(0)\|_2$ factor. Integrating $\min\{1,Ne^{-(\delta-\beta\lambda_1)t}\}$ and splitting at $t^\ast=\log N/(\delta-\beta\lambda_1)$ gives the mean-time bound. The temporary immunity class adds the rate $-\gamma$ to the decay of the probability of not being fully susceptible. This is the SIRS analogue of the fast die-out bound on the expected extinction time of network SIS epidemics.
 
 ## Depends on
 
-- [Spectral radius and die-out of SIS epidemics on graphs](../../epidemics-on-networks/spectral-radius-and-die-out-of-sis-epidemics.md)
+- [Fast die-out, expected extinction time](../../sis-extinction-times-on-finite-graphs/lintegral-extinction-time-le.md)
 
 ## Sources
 

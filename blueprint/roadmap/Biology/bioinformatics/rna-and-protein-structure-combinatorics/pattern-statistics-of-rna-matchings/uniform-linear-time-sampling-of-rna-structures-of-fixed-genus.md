@@ -8,14 +8,15 @@ so $g$ follows directly from counting boundary components. Secondary structures 
 
 **Theorem.**
 
-1. (Chapuy's trisection bijection) A unicellular map of genus $g$ has exactly $2g$ trisections. There is a bijection between pairs (map of genus $g$, trisection) and the disjoint union over $k<g$ of tuples (map of genus $k$, ordered $2g-2k+1$ distinct vertices). Consequently
+*(1)* (Chapuy's trisection bijection) A unicellular map of genus $g$ has exactly $2g$ trisections. There is a bijection between pairs (map of genus $g$, trisection) and the disjoint union over $k<g$ of tuples (map of genus $k$, ordered $2g-2k+1$ distinct vertices). Consequently
 
 $$2g\,\epsilon_g(n)=\binom{n+1-2(g-1)}3\epsilon_{g-1}(n)+\dots+\binom{n+1}{2g+1}\epsilon_0(n),$$
 
 $$\epsilon_g(n)=\sum_{0=g_0<g_1<\dots<g_r=g}\ \prod_{i=1}^r\frac1{2g_i}\binom{n+1-2g_{i-1}}{2(g_i-g_{i-1})+1}\cdot\frac1{n+1}\binom{2n}n .$$
 
-2. (Uniform sampler) Draw a uniform plane tree with $n$ edges, then repeatedly glue vertices to raise the genus along a path $0=g_0<g_1<\dots<g_r=g$ chosen with probabilities proportional to the summands above. The result is a uniformly distributed unicellular map, and hence a uniformly distributed RNA diagram, of genus $g$ with $n$ arcs. The algorithm runs in time linear in $n$ for each fixed $g$.
-3. (Energy-weighted sampler) For a simplified loop-based energy of the planar skeleton, computing the partition function once in $O(n^2)$ time allows Boltzmann-weighted structures of genus $g$ to be sampled in linear time each.
+*(2)* (Uniform sampler) Draw a uniform plane tree with $n$ edges, then repeatedly glue vertices to raise the genus along a path $0=g_0<g_1<\dots<g_r=g$ chosen with probabilities proportional to the summands above. The result is a uniformly distributed unicellular map, and hence a uniformly distributed RNA diagram, of genus $g$ with $n$ arcs. The algorithm runs in time linear in $n$ for each fixed $g$.
+
+*(3)* (Energy-weighted sampler) For a simplified loop-based energy of the planar skeleton, computing the partition function once in $O(n^2)$ time allows Boltzmann-weighted structures of genus $g$ to be sampled in linear time each.
 
 ## Expansion
 
