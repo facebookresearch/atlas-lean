@@ -59700,6 +59700,7 @@
 "MathlibExt.Economics.Producer.hasFDerivAt_profitFn_eq_of_isProfitMax": "731c4715007823ad",
 "MathlibExt.Economics.Producer.hasFDerivAt_profit_eq_dotL": "18974f5e23dc8514",
 "MathlibExt.Economics.Producer.hasFDerivAt_profit_eq_netSupply": "576e827caf095957",
+"MathlibExt.Economics.Producer.interior_first_order_conditions": "d4fff448d113ed41",
 "MathlibExt.Economics.Producer.isLeast_cobbDouglasCost": "328a2229bc272bfd",
 "MathlibExt.Economics.Producer.isProfitMax_unique_of_hasFDerivAt": "72f1bc482b3f43af",
 "MathlibExt.Economics.Producer.netSupply_unique_of_hasFDerivAt": "ecfe682d589e6369",
