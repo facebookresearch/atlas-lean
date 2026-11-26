@@ -74,17 +74,54 @@ open Complex Filter Topology
 
 namespace LanglandsTunnell
 
-/-- For a family `H` whose Mellin transforms are eventually nonzero and satisfy
-the stated shift-ratio asymptotics, the Hermite-type sum weighted by
-`Complex.Gammaℝ` and Mellin values is nonzero for arbitrarily large real
-shifts. -/
+/-- **Admissible Hermite indices.** For $m \in \mathbb{N}$, $a_3 \in \mathbb{Z}/2$ and
+$e \in \mathbb{Z}$, the finite set of index quadruples $T = ((i, l), (j, k))$ of natural numbers
+at most $m$ with $l + j + k + 2i = m$ and $l \equiv e + a_3 \pmod 2$. -/
+def hermiteAdmissible (m : ℕ) (a₃ : ZMod 2) (e : ℤ) : Finset ((ℕ × ℕ) × (ℕ × ℕ)) :=
+  ((Finset.range (m + 1) ×ˢ Finset.range (m + 1)) ×ˢ (Finset.range (m + 1) ×ˢ
+    Finset.range (m + 1))).filter
+      (fun T : (ℕ × ℕ) × (ℕ × ℕ) => T.1.2 + T.2.1 + T.2.2 + 2 * T.1.1 = m ∧
+        ((T.1.2 : ZMod 2) = (e : ZMod 2) + a₃))
 
+/-- **Hermite coefficient.** For $m \in \mathbb{N}$, $a \in \mathbb{Q}$ and an index
+$T = ((i, l), (j, k))$,
+$$c_T = (-1)^{j + k} \cdot \frac{(-1)^i \, m! \, a^k}{i! \, l! \, j! \, k! \, (4\pi)^i}.$$ -/
+noncomputable def hermiteCoeff (m : ℕ) (a : ℚ) (T : (ℕ × ℕ) × (ℕ × ℕ)) : ℂ :=
+  (-1 : ℂ) ^ (T.2.1 + T.2.2) *
+    ((-1 : ℂ) ^ T.1.1 * (m.factorial : ℂ) * (a : ℂ) ^ T.2.2 /
+      ((T.1.1.factorial : ℂ) * (T.1.2.factorial : ℂ) * (T.2.1.factorial : ℂ) *
+        (T.2.2.factorial : ℂ) * (4 * (Real.pi : ℂ)) ^ T.1.1))
+
+/-- **Gamma–Mellin weighted Hermite sum.** For a family
+$H : \mathbb{N} \to \mathbb{Z}/2 \to \mathbb{R} \to \mathbb{C}$ and a real shift $s$, the sum
+over the admissible indices $T = ((i, l), (j, k))$ (`hermiteAdmissible m a₃ e`) of
+$$c_T \, \Gamma_{\mathbb{R}}(s + u_3 + l) \, \mathcal{M}(H_{j,\, e + k})(s + k - 1),$$
+where $c_T$ is `hermiteCoeff m a T`, the parity $e + k$ is read in $\mathbb{Z}/2$, and
+$\mathcal{M}$ is the Mellin transform. -/
+noncomputable def hermiteGammaMellinSum (m : ℕ) (a : ℚ) (u₃ : ℂ) (a₃ : ZMod 2) (e : ℤ)
+    (H : ℕ → ZMod 2 → ℝ → ℂ) (s : ℝ) : ℂ :=
+  ∑ T ∈ hermiteAdmissible m a₃ e, hermiteCoeff m a T *
+    Complex.Gammaℝ ((s : ℂ) + u₃ + (T.1.2 : ℂ)) *
+      mellin (H T.2.1 ((e : ZMod 2) + (T.2.2 : ZMod 2))) ((s : ℂ) + (T.2.2 : ℂ) - 1)
+
+/-- **Gamma–Mellin Hermite sums do not vanish for large shifts.** Let $m \in \mathbb{N}$,
+$a \in \mathbb{Q}$ with $a \neq 0$, $u_3 \in \mathbb{C}$, $a_3 \in \mathbb{Z}/2$ and
+$e \in \mathbb{Z}$, and suppose the admissible index set `hermiteAdmissible m a₃ e` is nonempty.
+Let $H : \mathbb{N} \to \mathbb{Z}/2 \to \mathbb{R} \to \mathbb{C}$ be a family whose Mellin
+transforms $M_{j,b} = \mathcal{M}(H_{j,b})$ satisfy two conditions, each for every
+$\varepsilon > 0$ and all large real $x$:
+
+* (`hA`) for every $j$ and every parity $b$, $M_{j,b}(x) \neq 0$ and
+  $$\Bigl\lVert M_{j,b}(x + 2) - \frac{x}{2\pi a^2} \, M_{j,b}(x) \Bigr\rVert
+    \le \varepsilon \, x \, \lVert M_{j,b}(x) \rVert;$$
+* (`hB`) for every $j$ and all parities $b$ and $b'$,
+  $$\lVert M_{j+1,b'}(x - 1) \rVert \le \varepsilon \, \lVert M_{j,b}(x) \rVert.$$
+
+Then for every $\sigma_0 \in \mathbb{R}$ there is a real $s > \sigma_0$ with
+`hermiteGammaMellinSum m a u₃ a₃ e H s ≠ 0`. -/
 public theorem exists_gt_and_hermiteSum_GammaR_mul_mellin_ne_zero_of_shift_ratio_real
     (m : ℕ) (a : ℚ) (ha : a ≠ 0) (u₃ : ℂ) (a₃ : ZMod 2) (e : ℤ)
-    (hne : (((Finset.range (m + 1) ×ˢ Finset.range (m + 1)) ×ˢ (Finset.range (m + 1) ×ˢ
-      Finset.range (m + 1))).filter
-            (fun T : (ℕ × ℕ) × (ℕ × ℕ) => T.1.2 + T.2.1 + T.2.2 + 2 * T.1.1 = m ∧ ((T.1.2 : ZMod 2)
-              = (e : ZMod 2) + a₃))).Nonempty)
+    (hne : (hermiteAdmissible m a₃ e).Nonempty)
     (H : ℕ → ZMod 2 → ℝ → ℂ)
     (hA : ∀ (j : ℕ) (b : ZMod 2) (ε : ℝ), 0 < ε → ∃ R : ℝ, ∀ x : ℝ, R ≤ x →
       mellin (H j b) (x : ℂ) ≠ 0 ∧
@@ -92,24 +129,10 @@ public theorem exists_gt_and_hermiteSum_GammaR_mul_mellin_ne_zero_of_shift_ratio
         (x : ℂ)‖ ≤ ε * x * ‖mellin (H j b) (x : ℂ)‖)
     (hB : ∀ (j : ℕ) (b b' : ZMod 2) (ε : ℝ), 0 < ε → ∃ R : ℝ, ∀ x : ℝ, R ≤ x →
       ‖mellin (H (j + 1) b') ((x : ℂ) - 1)‖ ≤ ε * ‖mellin (H j b) (x : ℂ)‖) :
-    ∀ σ₀ : ℝ, ∃ s : ℝ, σ₀ < s ∧
-      ∑ T ∈ ((Finset.range (m + 1) ×ˢ Finset.range (m + 1)) ×ˢ (Finset.range (m + 1) ×ˢ
-        Finset.range (m + 1))).filter
-            (fun T : (ℕ × ℕ) × (ℕ × ℕ) => T.1.2 + T.2.1 + T.2.2 + 2 * T.1.1 = m ∧ ((T.1.2 : ZMod 2)
-              = (e : ZMod 2) + a₃)),
-          ((-1 : ℂ) ^ (T.2.1 + T.2.2) *
-            ((-1 : ℂ) ^ T.1.1 * (m.factorial : ℂ) * (a : ℂ) ^ T.2.2 /
-              ((T.1.1.factorial : ℂ) * (T.1.2.factorial : ℂ) * (T.2.1.factorial : ℂ) *
-                (T.2.2.factorial : ℂ) *
-                (4 * (Real.pi : ℂ)) ^ T.1.1))) *
-            Complex.Gammaℝ ((s : ℂ) + u₃ + (T.1.2 : ℂ)) * mellin (H T.2.1 ((e : ZMod 2) + (T.2.2 :
-              ZMod 2))) ((s : ℂ) + (T.2.2 : ℂ) - 1) ≠ 0 := by
+    ∀ σ₀ : ℝ, ∃ s : ℝ, σ₀ < s ∧ hermiteGammaMellinSum m a u₃ a₃ e H s ≠ 0 := by
   intro σ₀
   classical
-  set Adm := (((Finset.range (m + 1) ×ˢ Finset.range (m + 1)) ×ˢ (Finset.range (m + 1) ×ˢ
-    Finset.range (m + 1))).filter
-            (fun T : (ℕ × ℕ) × (ℕ × ℕ) => T.1.2 + T.2.1 + T.2.2 + 2 * T.1.1 = m ∧ ((T.1.2 : ZMod 2)
-              = (e : ZMod 2) + a₃))) with hAdm
+  set Adm := hermiteAdmissible m a₃ e
 
   obtain ⟨T₁, hT₁⟩ := hne
   have hT₁' := (Finset.mem_filter.1 hT₁).2
@@ -125,17 +148,12 @@ public theorem exists_gt_and_hermiteSum_GammaR_mul_mellin_ne_zero_of_shift_ratio
     exact (ZMod.natCast_mod T₁.1.2 2).symm ▸ rfl
   set TS : (ℕ × ℕ) × (ℕ × ℕ) := ((0, iS), (0, lS)) with hTS
   have hTS_mem : TS ∈ Adm := by
-    rw [hAdm, Finset.mem_filter]
-    refine ⟨?_, ?_, ?_⟩
+    refine Finset.mem_filter.2 ⟨?_, ?_, ?_⟩
     · simp only [hTS, Finset.mem_product, Finset.mem_range]; omega
     · simp only [hTS]; omega
     · simpa only [hTS] using hiSpar
 
-  set d : (ℕ × ℕ) × (ℕ × ℕ) → ℂ := fun T => ((-1 : ℂ) ^ (T.2.1 + T.2.2) *
-            ((-1 : ℂ) ^ T.1.1 * (m.factorial : ℂ) * (a : ℂ) ^ T.2.2 /
-              ((T.1.1.factorial : ℂ) * (T.1.2.factorial : ℂ) * (T.2.1.factorial : ℂ) *
-                (T.2.2.factorial : ℂ) *
-                (4 * (Real.pi : ℂ)) ^ T.1.1))) with hd
+  set d := hermiteCoeff m a with hd
   set G : (ℕ × ℕ) × (ℕ × ℕ) → ℝ → ℂ := fun T s =>
     Complex.Gammaℝ ((s : ℂ) + u₃ + (T.1.2 : ℂ)) * mellin (H T.2.1 ((e : ZMod 2) + (T.2.2 : ZMod
       2))) ((s : ℂ) + (T.2.2 : ℂ) - 1) with hG
@@ -472,7 +490,7 @@ public theorem exists_gt_and_hermiteSum_GammaR_mul_mellin_ne_zero_of_shift_ratio
             0) := by
       intro T hT
       obtain ⟨-, hsum, hpar⟩ := Finset.mem_filter.1 hT
-      simp only [hd, hκ]
+      simp only [hd, hκ, hermiteCoeff]
       split_ifs with h
       · obtain ⟨hr, hj⟩ := h
 
@@ -502,8 +520,9 @@ public theorem exists_gt_and_hermiteSum_GammaR_mul_mellin_ne_zero_of_shift_ratio
   have hev := eventually_sum_mul_ne_zero Adm d G atTop TS hG₀ κ hlim hL
   obtain ⟨s, hsσ, hs⟩ := ((eventually_gt_atTop σ₀).and hev).exists
   refine ⟨s, hsσ, ?_⟩
-  convert hs using 2 with T
-  simp only [hd, hG]
-  ring
+  have hsum : hermiteGammaMellinSum m a u₃ a₃ e H s = ∑ T ∈ Adm, d T * G T s :=
+    Finset.sum_congr rfl fun _ _ => mul_assoc _ _ _
+  rw [hsum]
+  exact hs
 
 end LanglandsTunnell
