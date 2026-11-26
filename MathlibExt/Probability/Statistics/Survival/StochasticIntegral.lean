@@ -585,7 +585,8 @@ theorem stronglyAdapted_kaplanMeierProcess {N Y : ℕ → Ω → ℝ} (hN : Stro
   exact stronglyMeasurable_const.sub (((hA (k + 1)).mono (ℱ.mono hk)).sub
     ((hA k).mono (ℱ.mono hk.le)))
 
-/-- The integrand `Ŝ_{k-1} / (S_k Y_k)` of Gill's martingale representation of Kaplan–Meier. -/
+/-- The integrand `Ŝ_{k-1} / S_k · Y_k⁻¹` of Gill's martingale representation of Kaplan–Meier,
+where `Y_k⁻¹` is the total inverse, `0` when `Y_k = 0` (zero risk). -/
 noncomputable def kaplanMeierIntegrand (N Y : ℕ → Ω → ℝ) (α : ℕ → ℝ) (k : ℕ) (ω : Ω) : ℝ :=
   kaplanMeierProcess N Y (k - 1) ω / prodIntegral α k * (Y k ω)⁻¹
 
@@ -595,7 +596,9 @@ noncomputable def kaplanMeierRemainder (N Y : ℕ → Ω → ℝ) (α : ℕ → 
 
 /-- **Martingale representation of the Kaplan–Meier estimator** (pathwise, from Duhamel's
 equation): with `S = 𝒫(1 - dα)` and `M = N - ∫ Y dα`,
-`Ŝ/S - 1 = -∫ Ŝ₋ / (S Y) dM + ∫ Ŝ₋ / S · 1{Y = 0} dα`.
+`Ŝ/S - 1 = -∫ Ŝ₋ / S · Y⁻¹ dM + ∫ Ŝ₋ / S · 1{Y = 0} dα`, where the increment from `k` to
+`k + 1` of the first integral has integrand `Ŝ_k / S_{k+1} · Y_{k+1}⁻¹` and `Y_{k+1}⁻¹` is the total
+inverse, `0` when `Y_{k+1} = 0` (zero risk).
 The second term is the vanishing-risk remainder; it is `0` while the risk set is non-empty. -/
 theorem kaplanMeierProcess_div_sub_one (N Y : ℕ → Ω → ℝ) {α : ℕ → ℝ}
     (hα : ∀ k, α (k + 1) - α k ≠ 1) (n : ℕ) (ω : Ω) :
