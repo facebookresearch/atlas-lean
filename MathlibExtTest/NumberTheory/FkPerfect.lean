@@ -5,19 +5,41 @@ All rights reserved.
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
+
 module
 
-public import MathlibExt.NumberTheory.FkPerfect
+import MathlibExt.NumberTheory.FkPerfect
 
-/-! # Tests for prime powers that are `[k,ℓ]`-near-perfect -/
-
-@[expose] public section
+/-! # Tests for `MathlibExt.NumberTheory.FkPerfect` -/
 
 namespace MathlibExtTest.NumberTheory.FkPerfect
 
 open MathlibExt.NumberTheory.FkPerfectWanted
 
--- The paper's example: σ₃(4) = 73 = 4³ + 1³ + 2 * 4.
+-- `8 = 2 ^ 3` is `[1, 1]`-deficient-perfect with divisor `1`.
+example : KLDeficientPerfectWith 1 1 (2 ^ 3) 1 :=
+  (klDeficientPerfectWith_one_prime_pow_iff 2 3 1 1 Nat.prime_two).mpr
+    ⟨rfl, rfl, rfl, by decide⟩
+
+-- Every power of two from `2 ^ 1` on is `[1, 1]`-deficient-perfect with divisor `1`.
+example (a : ℕ) (ha : 1 ≤ a) : IsKLDeficientPerfect 1 1 (2 ^ a) :=
+  ⟨1, (klDeficientPerfectWith_one_prime_pow_iff 2 a 1 1 Nat.prime_two).mpr
+    ⟨rfl, rfl, rfl, ha⟩⟩
+
+-- No power of `3` is `[1, ℓ]`-deficient-perfect with any divisor.
+example (a l d : ℕ) : ¬ KLDeficientPerfectWith 1 l (3 ^ a) d := by
+  intro h
+  have h2 := (klDeficientPerfectWith_one_prime_pow_iff 3 a l d (by decide)).mp h
+  exact (by decide : (3 : ℕ) ≠ 2) h2.1
+
+-- At exponent zero, `2 ^ 0 = 1` has no proper divisor, so the predicate is false.
+example (l d : ℕ) : ¬ KLDeficientPerfectWith 1 l (2 ^ 0) d := by
+  intro h
+  have h2 := (klDeficientPerfectWith_one_prime_pow_iff 2 0 l d Nat.prime_two).mp h
+  exact absurd h2.2.2.2 (by decide)
+
+-- A counterexample to the printed conclusion `a = k` of Theorem 4:
+-- σ₃(4) = 73 = 4³ + 1³ + 2 * 4, with a = 2 ≠ 3 = k.
 example : KLNearPerfectWith 3 2 (2 ^ 2) 1 := by
   rw [klNearPerfectWith_prime_pow_iff 2 2 3 2 1 Nat.prime_two (by decide) (by decide)]
   exact ⟨by decide, by decide, rfl, by decide⟩
