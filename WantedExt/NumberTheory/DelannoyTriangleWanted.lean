@@ -55,6 +55,7 @@ public import MathlibExt.NumberTheory.DelannoyBinomialSum
 public import MathlibExt.NumberTheory.DelannoyBinomialCongruence
 public import MathlibExt.NumberTheory.DelannoyPrimeCube
 public import MathlibExt.NumberTheory.FermatQuotient
+public import MathlibExt.NumberTheory.DelannoyTriangle
 
 set_option autoImplicit false
 
@@ -114,22 +115,6 @@ theorem_wanted sum_harmonic_two_pow_div (p : ℕ)
     (∑ k ∈ Finset.Icc 1 (p - 1),
         harmonicMod p k * (2 : ZMod p) ^ k * (k : ZMod p)⁻¹) =
       -((Int.fermatQuotient p hp 2 h2p : ZMod p)) ^ 2
-
-/-- **Sum of the Delannoy triangle entries in rows $0$ to $p - 1$ modulo $p$.** Let $p$ be an
-odd prime and let $T(n, k; 1)$ denote the entry of the ordinary Riordan Pascal-like triangle
-with $r = 1$ (the Delannoy triangle). Then
-$$\sum_{n=0}^{p-1} \sum_{k=0}^{n} T(n, k; 1) \equiv \left(\frac{2}{p}\right) \pmod{p},$$
-where $\left(\frac{2}{p}\right)$ is the Legendre symbol.
-
-Source: Chahinaze Djadi and Hacène Belbachir,
-"Congruence Properties for the Delannoy Triangle
-Coefficients", Theorem 9. -/
-theorem_wanted sum_delannoy (p : ℕ) [Fact p.Prime]
-    (hp2 : p ≠ 2) :
-    (∑ n ∈ Finset.range p, ∑ k ∈ Finset.range (n + 1),
-        (MetaMathlibExt.ordinaryRiordanPascalLikeMatrix
-            n k 1 : ZMod p)) =
-      (legendreSym p 2 : ZMod p)
 
 /-- Bridge to the existing symmetric-case API: the constant
 term of `(a x⁻¹ + b + a x)ⁿ`
