@@ -60,3 +60,5 @@ Topics added since this subject's fields were last revised.
 - [Nested Hopf orders with the same kernel and image agree](eq-of-le-of-comap-hopf-ker-eq-of-map-eq.md)
 - [Trdeg Quotient Bound](exists-not-mem-under-forall-trdeg-quotie.md)
 - [Adjoin Maximality](is-maximal-of-lies-over-adjoin-of-forall.md)
+- [Residue-field maps out of finite étale algebras lift uniquely](exists-unique-alg-hom-base-change-residu.md)
+- [Idempotents of the closed fibre lift uniquely](exists-unique-is-idempotent-elem-mk-eq-o.md)
