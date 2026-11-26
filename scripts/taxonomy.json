@@ -1488,6 +1488,7 @@
   "CSLibExt/Computability/Distributed/CrashConsensusRounds": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Synchronous consensus with crash failures"},
   "CSLibExt/Computability/Distributed/FLP/Bivalence": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "FLP impossibility"},
   "CSLibExt/Computability/Distributed/FLP/Original": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "FLP impossibility"},
+  "CSLibExt/Computability/Distributed/KSetAgreement": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Consensus and agreement"},
   "CSLibExt/Computability/Distributed/LamportClock": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Lamport clocks"},
   "CSLibExt/Computability/Distributed/Linearizability": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Linearizability"},
   "CSLibExt/Computability/Distributed/LubyMIS": {"to": "ComputerScience/parallel-algorithms", "title": "Luby's maximal independent set algorithm"},
