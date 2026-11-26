@@ -16,3 +16,6 @@ Projective, free and finitely generated modules over commutative rings and modul
 - [Finitely generated module](finitely-generated-module.md)
 - [Support of the quotient M/IM of a finitely generated module](support-quotient-by-ideal-times-module.md)
 - [Tensoring with a flat module preserves exactness](tensor-with-a-flat-module-preserves-exactness.md)
+- [Faithfully flat descent for algebras](bijective-tensor-product-equalizer-of-fa.md)
+- [Surjective ring maps that fix a free module action are bijective](bijective-of-surjective-of-smul-eq.md)
+- [Bases of a module near a prime where it is free](exists-not-mem-basis-localized-module-of.md)

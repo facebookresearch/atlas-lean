@@ -7,6 +7,12 @@ Algorithms for quantum computers and their analysis: Fourier sampling with the D
 - [Lower bound for quantum search](lower-bound-for-quantum-search/README.md)
 - [Shor's order-finding algorithm](shor-s-order-finding-algorithm/README.md)
 - [Shor's reduction of factoring to order finding](shor-s-reduction-of-factoring-to-order-finding/README.md)
+- [Bernstein–Vazirani amplitude identity](bernstein-vazirani-amplitude-identity/README.md)
+- [Block encodings and their products](block-encodings-and-their-products/README.md)
+- [QFT row normalization and orthogonality](qft-row-normalization-and-orthogonality/README.md)
+- [Unitary error budgets](unitary-error-budgets/README.md)
+- [The quantum Fourier transform matrix as a discrete Fourier transform](the-quantum-fourier-transform-matrix-as-a-discre/README.md)
+- [Shor good-unit density for `N = p * q`](shor-good-units.md)
 
 - [Quantum query lower bounds](quantum-query-lower-bounds/README.md)
 - [Quantum phase estimation](quantum-phase-estimation.md)

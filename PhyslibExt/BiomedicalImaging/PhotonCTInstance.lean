@@ -47,9 +47,9 @@ namespace PhyslibExt.BiomedicalImaging.PhotonCTInstance
 /-- The rank-deficient two-cell single-ray CT design `[1, 1]`. -/
 def ctRow : Matrix (Fin 1) (Fin 2) ℝ := ![![1, 1]]
 
-/-- **Admissible nullspace pair.** The nonnegative coefficient
-vectors `(1, 0)` and `(0, 1)` are distinct but have the same
-forward measurement. -/
+/-- **Admissible nullspace pair.** For the single-ray design `ctRow = [1, 1]`, the
+nonnegative coefficient vectors `(1, 0)` and `(0, 1)` are distinct but have the same
+forward measurement `1`. -/
 lemma ct_nullspace_pair :
     ctRow *ᵥ ![1, 0] = ctRow *ᵥ ![0, 1] ∧ (![1, 0] : Fin 2 → ℝ) ≠ ![0, 1] ∧
       (∀ i, 0 ≤ (![1, 0] : Fin 2 → ℝ) i) ∧ (∀ i, 0 ≤ (![0, 1] : Fin 2 → ℝ) i) := by

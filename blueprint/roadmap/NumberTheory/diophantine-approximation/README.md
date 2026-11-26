@@ -7,3 +7,4 @@ Approximating reals by rationals or algebraics, Roth and subspace theorems, line
 - [Uniform distribution and metric approximation](uniform-distribution-metric/README.md)
 - [n-Lagrange and n-Markoff spectra](n-lagrange-and-n-markoff-spectra/README.md)
 - [Rational approximation of linear subspaces](rational-approximation-of-linear-subspaces/README.md)
+- [Stereographic snapping to rational points of `S^1` and `S^3`](stereographic-snapping-to-rational-points-of-s-1/README.md)

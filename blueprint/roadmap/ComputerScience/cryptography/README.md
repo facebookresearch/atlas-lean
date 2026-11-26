@@ -20,6 +20,8 @@ Cryptographic schemes and their correctness and security reductions: the game-ba
 - [Privacy-loss random variable and KL bound](privacy-loss-random-variable-and-kl-bound/README.md)
 - [Renyi differential privacy](renyi-differential-privacy/README.md)
 - [Laplace and exponential mechanisms](laplace-and-exponential-mechanisms/README.md)
+- [BB84 intercept-resend error rate](bb84-intercept-resend-error-rate/README.md)
+- [Hybrid argument for sequences of distributions](hybrid-argument-for-sequences-of-distributions/README.md)
 
 ## Related topics
 
