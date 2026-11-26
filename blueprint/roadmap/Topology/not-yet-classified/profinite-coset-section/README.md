@@ -1,7 +1,7 @@
-# Profinite Coset Section
+# Continuous sections of finite-relative-index coset projections
 
-- [Coset Projection](coset-projection.md)
-- [Coset Projection mk](coset-projection-mk.md)
-- [Exists open Normal inf le of is Finite Rel Index](exists-open-normal-inf-le-of-is-finite-r.md)
-- [Exists open Normal le map open Normal](exists-open-normal-le-map-open-normal.md)
-- [Exists continuous section of is Finite Rel Index](exists-continuous-section-of-is-finite-r.md)
+- [Continuous nested coset projection](coset-projection.md)
+- [Representative value of a nested coset projection](coset-projection-mk.md)
+- [Ambient open-normal refinement of a finite-relative-index subgroup](exists-open-normal-inf-le-of-is-finite-r.md)
+- [Ambient open normal below an open subgroup's normal stage](exists-open-normal-le-map-open-normal.md)
+- [Continuous section of a finite-relative-index coset projection](exists-continuous-section-of-is-finite-r.md)

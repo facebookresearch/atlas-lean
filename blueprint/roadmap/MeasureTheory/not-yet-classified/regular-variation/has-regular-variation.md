@@ -1,3 +1,5 @@
-# Has Regular Variation
+# Regularity predicate for vector-measure variation
 
-A vector measure has regular variation when its total-variation measure is regular.
+Let `X` have a topology and
+measurable structure and `V` be a normed additive commutative group. `HasRegularVariation
+μ` means the positive measure `μ.variation` is regular for `μ : VectorMeasure X V`.

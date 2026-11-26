@@ -1,3 +1,7 @@
-# To Linear PMap of Linear PMap
+# Ring partial map recovered after both presentations
 
-Entering and leaving the generic carrier retains the entire original stock partial map.
+Let R,S be semirings, σ:R→S a semiring homomorphism, E an R-semimodule and F an S-semimodule.
+A partial σ-semilinear map f consists of a submodule D_f⊆E and a σ-semilinear value map D_f→F,
+with f(x+y)=f(x)+f(y) and f(r•x)=σ(r)•f(x). Assume additionally R,S are rings and E,F additive
+groups. The same domain and σ-semilinear value map give the ring partial-map presentation
+LinearPMap. For a LinearPMap f, toLinearPMap(ofLinearPMap f)=f.

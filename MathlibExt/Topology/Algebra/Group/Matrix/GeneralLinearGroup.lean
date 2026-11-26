@@ -16,16 +16,13 @@ public import Mathlib.Topology.Algebra.Group.Units
 public import Mathlib.Topology.Instances.Matrix
 
 /-!
-# Continuous maps and products of finite general linear groups
+# Continuous coefficient maps and product general linear groups
 
-Continuous coefficient homomorphisms induce continuous entrywise maps on
-finite general linear groups.  Finite general linear groups over a product
-semiring are continuously multiplicatively equivalent to the product of the
-two finite general linear groups.
-
-The coefficient semirings and matrix index may live in independent universes.
-Neither result requires commutativity or continuity of the semiring
-operations.
+Let R,S be semirings with arbitrary topologies and I a finite index type in an independent
+universe. Give finite matrices their coefficient product topologies and their general linear
+groups the induced unit topologies. A continuous semiring homomorphism f:R→S induces the
+continuous entrywise map GL(I,R)→GL(I,S). The coefficient product also gives a group
+homeomorphism GL(I,R×S)≃GL(I,R)×GL(I,S).
 -/
 
 @[expose] public section
@@ -40,9 +37,13 @@ variable [Semiring R] [Semiring S]
 variable [TopologicalSpace R] [TopologicalSpace S]
 variable {f : R →+* S}
 
-/-- A continuous coefficient homomorphism induces a continuous map on finite
-general linear groups. The coefficient semirings and matrix index may live in
-independent universes. -/
+/-- **Continuity of a coefficient homomorphism on general linear groups.**
+
+Let R,S be semirings with arbitrary topologies and I a finite index type in an independent
+universe. Give finite matrices their coefficient product topologies and their general linear
+groups the induced unit topologies. If f:R→S is a continuous semiring homomorphism, mapRingHom
+f:GL(I,R)→GL(I,S), A↦(f(A(i,j)))_ij, is continuous.
+-/
 @[fun_prop]
 theorem _root_.Continuous.generalLinearGroup_mapRingHom
     (hf : Continuous f) :
@@ -53,8 +54,14 @@ theorem _root_.Continuous.generalLinearGroup_mapRingHom
   change Continuous (Units.map (f.mapMatrix (m := ι)).toMonoidHom)
   exact Continuous.units_map _ hmatrix
 
-/-- The algebraic product equivalence on finite general linear groups is a
-homeomorphism in both directions for the finite matrix product topologies. -/
+/-- **General linear group over a product as a group homeomorphism.**
+
+Let R,S be semirings with arbitrary topologies and I a finite index type in an independent
+universe. Give finite matrices their coefficient product topologies and their general linear
+groups the induced unit topologies. The continuous multiplicative equivalence
+prodContinuousMulEquiv:GL(I,R×S)≃ₜ*GL(I,R)×GL(I,S) sends a matrix to its two coordinate
+matrices, with continuous inverse given by entrywise pairing.
+-/
 def prodContinuousMulEquiv :
     GL ι (R × S) ≃ₜ* GL ι R × GL ι S := by
   let matrixEquiv :

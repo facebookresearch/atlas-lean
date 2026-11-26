@@ -22,11 +22,14 @@ import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 
 /-!
-# The unitary algebra of normalized Haar right translation
+# Unitary representation by normalized Haar right translation
 
-Normalized right pullback defines the actual unitary group homomorphism on
-the original Haar `L²` carrier. All products and inverse laws follow at the
-original almost-everywhere function representatives.
+For the normalized pullback `R_gξ(x)=Δ(g)^(-1/2) • ξ(xg)`, linearity, `R_1=I` and
+`R_(gh)=R_gR_h` give a linear isometric group action on Haar L².
+
+With complete complex Hilbert coefficients, these isometries form a strongly continuous unitary
+representation. The inverse is the operator at `g⁻¹`. The modular weight and group order are
+retained for nonabelian groups.
 -/
 
 @[expose] public section
@@ -80,7 +83,9 @@ private theorem locallyCompactVectorApprox
 variable {G : Type uG} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
   [LocallyCompactSpace G]
 
-/-- The actual modular right weight respects group products. -/
+/-- **Multiplicativity of the normalized right modular weight.** For a locally compact
+topological group, let `w(g)=Measure.modularCharacter(g)^(-1/2)` as a positive real
+scalar. Then `w(gh)=w(g)w(h)`, independently of a chosen Haar measure or Hilbert space. -/
 theorem haarRightModularWeight_mul (g h : G) :
     (Measure.modularCharacter (g * h) : ℝ) ^ (-(2 : ℝ)⁻¹) =
       (Measure.modularCharacter g : ℝ) ^ (-(2 : ℝ)⁻¹) *
@@ -98,7 +103,11 @@ private theorem rightQuasi (g : G) :
   rw [Measure.map_right_mul_modular μ g]
   exact Measure.AbsolutelyContinuous.smul_left Measure.AbsolutelyContinuous.rfl _
 
-/-- Normalized right pullback preserves addition on the actual `L²` carrier. -/
+/-- **Additivity of normalized right pullback.** Let `G` be a locally compact topological
+group with its Borel structure, `μ` a regular Haar measure and `H` a complex normed
+inner-product space, possibly incomplete. Put `w(g)=Δ(g)^(-1/2)` for
+`Δ=Measure.modularCharacter` and `R_gξ(x)=w(g) • ξ(xg)` on `Lp H 2 μ`. for `ξ,η∈Lp H 2 μ`,
+`R_g(ξ+η)=R_gξ+R_gη`. -/
 theorem haarRightPullback_add (g : G) (ξ η : Lp H 2 μ) :
     haarRightPullback μ g (ξ + η) = haarRightPullback μ g ξ + haarRightPullback μ g η := by
   apply Lp.ext
@@ -111,7 +120,11 @@ theorem haarRightPullback_add (g : G) (ξ η : Lp H 2 μ) :
   rw [h₁, h₅, h₂, h₃, h₄]
   exact smul_add _ _ _
 
-/-- Normalized right pullback preserves the original complex scalar action. -/
+/-- **Complex linearity of normalized right pullback.** Let `G` be a locally compact
+topological group with its Borel structure, `μ` a regular Haar measure and `H` a complex
+normed inner-product space, possibly incomplete. Put `w(g)=Δ(g)^(-1/2)` for
+`Δ=Measure.modularCharacter` and `R_gξ(x)=w(g) • ξ(xg)` on `Lp H 2 μ`. for `c∈ℂ`, `R_g(c •
+ξ)=c • R_gξ`. -/
 theorem haarRightPullback_smul (g : G) (c : ℂ) (ξ : Lp H 2 μ) :
     haarRightPullback μ g (c • ξ) = c • haarRightPullback μ g ξ := by
   apply Lp.ext
@@ -123,13 +136,21 @@ theorem haarRightPullback_smul (g : G) (c : ℂ) (ξ : Lp H 2 μ) :
   rw [h₁, h₄, h₂, h₃]
   exact smul_comm _ c _
 
-/-- The normalized identity right translation is the identity operator. -/
+/-- **Identity element acts as the identity right pullback.** Let `G` be a locally compact
+topological group with its Borel structure, `μ` a regular Haar measure and `H` a complex
+normed inner-product space, possibly incomplete. Put `w(g)=Δ(g)^(-1/2)` for
+`Δ=Measure.modularCharacter` and `R_gξ(x)=w(g) • ξ(xg)` on `Lp H 2 μ`. for `ξ∈Lp H 2 μ`,
+`R_1ξ=ξ`. -/
 theorem haarRightPullback_one (ξ : Lp H 2 μ) : haarRightPullback μ (1 : G) ξ = ξ := by
   apply Lp.ext
   simpa only [map_one, NNReal.coe_one, Real.one_rpow, one_smul, mul_one] using
     haarRightPullback_ae_eq μ (1 : G) ξ
 
-/-- Actual right pullbacks compose in the original group order. -/
+/-- **Group composition order of normalized right Haar operators.** Let `G` be a locally
+compact topological group with its Borel structure, `μ` a regular Haar measure and `H` a
+complex normed inner-product space, possibly incomplete. Put `w(g)=Δ(g)^(-1/2)` for
+`Δ=Measure.modularCharacter` and `R_gξ(x)=w(g) • ξ(xg)` on `Lp H 2 μ`. for `g,h∈G` and
+`ξ∈Lp H 2 μ`, `R_(gh)ξ=R_g(R_hξ)`. -/
 theorem haarRightPullback_mul (g h : G) (ξ : Lp H 2 μ) :
     haarRightPullback μ (g * h) ξ = haarRightPullback μ g (haarRightPullback μ h ξ) := by
   apply Lp.ext
@@ -147,7 +168,12 @@ theorem haarRightPullback_mul (g h : G) (ξ : Lp H 2 μ) :
       mul_smul _ _ _
     _ = _ := by rw [mul_assoc]
 
-/-- The actual modularly normalized right translation as a linear isometry equivalence. -/
+/-- **Normalized right translation as a linear isometric equivalence.** Let `G` be a locally
+compact topological group with its Borel structure, `μ` a regular Haar measure and `H` a
+complex normed inner-product space, possibly incomplete. Put `w(g)=Δ(g)^(-1/2)` for
+`Δ=Measure.modularCharacter` and `R_gξ(x)=w(g) • ξ(xg)` on `Lp H 2 μ`.
+`haarRightRegularIsometry μ g` has forward function `R_g` and inverse `R_(g⁻¹)`;
+completeness of `H` is not required. -/
 def haarRightRegularIsometry (g : G) : Lp H 2 μ ≃ₗᵢ[ℂ] Lp H 2 μ where
   toFun := haarRightPullback μ g
   invFun := haarRightPullback μ g⁻¹
@@ -165,7 +191,11 @@ def haarRightRegularIsometry (g : G) : Lp H 2 μ ≃ₗᵢ[ℂ] Lp H 2 μ where
 
 variable [CompleteSpace H]
 
-/-- The genuine unitary group homomorphism of normalized Haar right translations. -/
+/-- **Unitary group homomorphism of normalized right Haar translations.** Let `G` be a locally
+compact topological group with its Borel structure, `μ` a regular Haar measure and `H` a
+complex normed inner-product space, possibly incomplete. Put `w(g)=Δ(g)^(-1/2)` for
+`Δ=Measure.modularCharacter` and `R_gξ(x)=w(g) • ξ(xg)` on `Lp H 2 μ`. Assume `H` is
+complete. `haarRightRegularUnitaryHom μ : G → U(B(Lp H 2 μ))` sends `g` to `R_g`. -/
 def haarRightRegularUnitaryHom : G →* unitary (Lp H 2 μ →L[ℂ] Lp H 2 μ) where
   toFun g := Unitary.linearIsometryEquiv.symm (haarRightRegularIsometry (H := H) μ g)
   map_one' := by
@@ -179,7 +209,12 @@ def haarRightRegularUnitaryHom : G →* unitary (Lp H 2 μ →L[ℂ] Lp H 2 μ) 
     intro ξ
     exact haarRightPullback_mul μ g h ξ
 
-/-- The actual unitary operator has the original prescribed Haar representatives. -/
+/-- **Representative of a normalized right unitary group value.** Let `G` be a locally compact
+topological group with its Borel structure, `μ` a regular Haar measure and `H` a complex
+normed inner-product space, possibly incomplete. Put `w(g)=Δ(g)^(-1/2)` for
+`Δ=Measure.modularCharacter` and `R_gξ(x)=w(g) • ξ(xg)` on `Lp H 2 μ`. Assume `H` is
+complete. for `g∈G`, `ξ∈Lp H 2 μ`, the unitary at `g` has almost-everywhere value
+`Δ(g)^(-1/2) • ξ(xg)`. -/
 theorem haarRightRegularUnitaryHom_ae_eq (g : G) (ξ : Lp H 2 μ) :
     (haarRightRegularUnitaryHom (H := H) μ g).val ξ =ᵐ[μ]
       fun x : G => (Measure.modularCharacter g : ℝ) ^ (-(2 : ℝ)⁻¹) • ξ (x * g) :=
@@ -322,14 +357,24 @@ private theorem continuous_haarRight_orbit (ξ : Lp H 2 μ) :
 
 variable (G H)
 
-/-- The genuine strongly continuous normalized Haar right regular representation. -/
+/-- **Strongly continuous normalized right Haar representation.** Let `G` be a locally compact
+topological group with its Borel structure, `μ` a regular Haar measure and `H` a complex
+normed inner-product space, possibly incomplete. Put `w(g)=Δ(g)^(-1/2)` for
+`Δ=Measure.modularCharacter` and `R_gξ(x)=w(g) • ξ(xg)` on `Lp H 2 μ`. Assume `H` is
+complete. `haarRightRegular G μ H` is the strongly continuous unitary representation with
+operator value `g ↦ R_g`. -/
 def haarRightRegular : StronglyContinuousUnitaryRepresentation G (Lp H 2 μ) where
   toMonoidHom := haarRightRegularUnitaryHom (H := H) μ
   continuous_orbit := by
     intro ξ
     exact continuous_haarRight_orbit μ ξ
 
-/-- The complete right regular action has the original modular Haar formula. -/
+/-- **Almost-everywhere formula of the right regular representation.** Let `G` be a locally
+compact topological group with its Borel structure, `μ` a regular Haar measure and `H` a
+complex normed inner-product space, possibly incomplete. Put `w(g)=Δ(g)^(-1/2)` for
+`Δ=Measure.modularCharacter` and `R_gξ(x)=w(g) • ξ(xg)` on `Lp H 2 μ`. Assume `H` is
+complete. for `g∈G` and `ξ∈Lp H 2 μ`, `(haarRightRegular G μ H g)ξ(x)=Δ(g)^(-1/2) • ξ(xg)`
+almost everywhere. -/
 theorem haarRightRegular_ae_eq (g : G) (ξ : Lp H 2 μ) :
     (haarRightRegular G μ H g : Lp H 2 μ →L[ℂ] Lp H 2 μ) ξ =ᵐ[μ]
       fun x : G => (Measure.modularCharacter g : ℝ) ^ (-(2 : ℝ)⁻¹) • ξ (x * g) :=

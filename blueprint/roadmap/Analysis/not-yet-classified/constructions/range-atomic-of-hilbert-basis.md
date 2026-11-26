@@ -1,4 +1,5 @@
-# Range atomic Of Hilbert Basis
+# Closed selected-basis span of an atomic PVM
 
-The range of an atomic Hilbert-basis projection is the closed span of the selected basis
-vectors.
+Let `X` be measurable, `L` a complete
+complex Hilbert space, `b : HilbertBasis ι ℂ L` and `x : ι → X`. For measurable `s`,
+`range(atomicOfHilbertBasis b x s)` is the norm closure of `span ℂ {b_i : x_i∈s}`.

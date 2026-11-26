@@ -1,3 +1,4 @@
-# To Int Bilinear apply
+# Value of integer bilinear conversion
 
-Integer bilinear conversion evaluates the original additive map.
+For additive commutative groups A,B,D with ℤ-actions and biadditive h, toIntBilinear h x
+y=h(x,y).

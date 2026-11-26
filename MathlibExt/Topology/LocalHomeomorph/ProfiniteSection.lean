@@ -13,19 +13,13 @@ public import Mathlib.Topology.IsLocalHomeomorph
 import Mathlib.Topology.Separation.DisjointCover
 
 /-!
-# Sections of local homeomorphisms over profinite spaces
+# Continuous right inverses of local homeomorphisms over profinite spaces
 
-A surjective local homeomorphism over a compact Hausdorff totally
-disconnected space has a continuous right inverse.  The proof chooses local
-inverses, refines their domains to a finite pairwise-disjoint clopen cover,
-and glues the corresponding local sections.
+A surjective local homeomorphism `f : E → X` has a continuous right inverse when `X` is compact,
+Hausdorff and totally disconnected.
 
-The resulting section is merely existential: no canonical choice,
-naturality, or global instance is introduced.
-
-## Main declaration
-
-* `IsLocalHomeomorph.exists_continuous_rightInverse_of_profinite`
+Local inverses glue along a finite disjoint clopen refinement. The source `E` is an arbitrary
+topological space; no compactness or separation of `E` is required.
 -/
 
 @[expose] public section
@@ -40,8 +34,10 @@ universe u v
 
 namespace IsLocalHomeomorph
 
-/-- A surjective local homeomorphism over a compact Hausdorff totally
-disconnected space admits a continuous right inverse. -/
+/-- **Continuous section of a surjective local homeomorphism over a profinite space.** Let `E`
+be any topological space, `X` compact Hausdorff and totally disconnected, and `f : E → X`
+a surjective local homeomorphism. There exists `s∈C(X,E)` with `f∘s=id_X`; no compactness
+or Hausdorff assumption on `E` is imposed. -/
 theorem exists_continuous_rightInverse_of_profinite
     {E : Type u} {X : Type v}
     [TopologicalSpace E] [TopologicalSpace X]

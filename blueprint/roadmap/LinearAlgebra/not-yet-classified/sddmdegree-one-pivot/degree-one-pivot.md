@@ -1,3 +1,5 @@
-# Degree One Pivot
+# The retained matrix for one-neighbor elimination
 
-Delete the pivot coordinate and update only its retained neighbor's diagonal.
+For a real matrix A on a set V, r ∈ V and u ∈ I = V ∖ {r}, put p = Aᵣᵣ and c = Aᵣᵤ. Define Sᵢⱼ
+= Aᵢⱼ − (c²/p) when i = j = u, and Sᵢⱼ = Aᵢⱼ otherwise. Real division defines this matrix also
+when p = 0.

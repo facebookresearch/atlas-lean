@@ -12,12 +12,11 @@ module
 public import MathlibExt.LinearAlgebra.TensorProduct.DirectedSystem
 
 /-!
-# Tensor products of two directed module systems
+# Tensoring two directed module systems
 
-If a tensor from two directed systems vanishes after mapping both factors to
-their direct limits, it vanishes after one common later transition.
-The historical constructors below are compatibility abbreviations of the
-generalized `Diagonal` API; they do not define another colimit or inverse.
+Let R be a commutative ring, I an upward-directed preorder and G_i,H_i directed systems of
+R-modules with transitions f,g. Then colim_i(G_i⊗H_i)≃(colim G)⊗(colim H). A tensor killed in
+the two limits is killed by a simultaneous later transition.
 -/
 
 @[expose] public section
@@ -40,8 +39,12 @@ variable (f : ∀ i j, i ≤ j → G i →ₗ[R] G j)
 variable (g : ∀ i j, i ≤ j → H i →ₗ[R] H j)
 variable [DirectedSystem G (f · · ·)] [DirectedSystem H (g · · ·)]
 
-/-- Vanishing after mapping two stagewise factors to their direct limits is
-detected after one common enlargement. -/
+/-- **Vanishing in two module limits is detected at a later stage.**
+
+Let R be a commutative ring and G,H directed module systems over an upward-directed preorder
+I. If x∈G_i⊗H_i maps to zero under the two stage maps to their limits, then some j≥i satisfies
+(f_ij⊗g_ij)(x)=0.
+-/
 theorem exists_eq_zero_of_map_to_two_directLimits_tensor_eq_zero
     {i : ι} (x : G i ⊗[R] H i)
     (hx : TensorProduct.map
@@ -58,8 +61,11 @@ variable [∀ i, AddCommGroup (G i)] [∀ i, Module R (G i)]
 variable (f : ∀ i j, i ≤ j → G i →ₗ[R] G j)
 variable [DirectedSystem G (f · · ·)]
 
-/-- The diagonal tensor-product transition attached to two directed module
-systems. -/
+/-- **Tensor transition for two module systems.**
+
+Let R be a commutative ring and G,H R-module systems with transitions f_ij,g_ij over a
+preorder I. The map directedTensorTransition f g i j is f_ij⊗g_ij:G_i⊗H_i→G_j⊗H_j.
+-/
 noncomputable abbrev directedTensorTransition
     {H : ι → Type*} [∀ i, AddCommGroup (H i)] [∀ i, Module R (H i)]
     (g : ∀ i j, i ≤ j → H i →ₗ[R] H j)
@@ -67,8 +73,11 @@ noncomputable abbrev directedTensorTransition
     G i ⊗[R] H i →ₗ[R] G j ⊗[R] H j :=
   diagonalTransition f g i j hij
 
-/-- Tensoring two directed systems stagewise again gives a directed
-system. -/
+/-- **Simultaneous tensoring gives a directed system.**
+
+For directed R-module systems G,H over an upward-directed preorder and R commutative, the
+stages G_i⊗H_i and transitions f_ij⊗g_ij form a directed system.
+-/
 instance directedTensorSystem
     {H : ι → Type*} [∀ i, AddCommGroup (H i)] [∀ i, Module R (H i)]
     (g : ∀ i j, i ≤ j → H i →ₗ[R] H j)
@@ -77,8 +86,12 @@ instance directedTensorSystem
       (directedTensorTransition f g · · ·) :=
   diagonalDirectedSystem f g
 
-/-- The canonical map from the direct limit of the stagewise tensor
-products to the tensor product of the two direct limits. -/
+/-- **Forward map from the limit of tensor stages.**
+
+Let G,H be R-module systems over an upward-directed preorder, R commutative, with stage maps
+a_i,b_i to the limits. The map diagonalDirectLimitToTensor sends the class of z∈G_i⊗H_i to
+(a_i⊗b_i)(z).
+-/
 noncomputable abbrev diagonalDirectLimitToTensor
     {H : ι → Type*} [∀ i, AddCommGroup (H i)] [∀ i, Module R (H i)]
     (g : ∀ i j, i ≤ j → H i →ₗ[R] H j)
@@ -99,9 +112,11 @@ theorem diagonalDirectLimitToTensor_of
         (Module.DirectLimit.of R ι H g i) x := by
   exact diagonalToTensor_of f g i x
 
-/-- The canonical diagonal direct-limit map is bijective.  Thus filtered
-direct limits commute with a stagewise binary tensor product even when both
-factors vary over the same directed index. -/
+/-- **Bijectivity of the two-system tensor comparison.**
+
+Let R be a commutative ring and G,H directed R-module systems over an upward-directed
+preorder. The canonical map colim_i(G_i⊗H_i)→(colim G)⊗(colim H) is bijective.
+-/
 theorem diagonalDirectLimitToTensor_bijective
     {H : ι → Type*} [∀ i, AddCommGroup (H i)] [∀ i, Module R (H i)]
     (g : ∀ i j, i ≤ j → H i →ₗ[R] H j)
@@ -109,8 +124,12 @@ theorem diagonalDirectLimitToTensor_bijective
     Function.Bijective (diagonalDirectLimitToTensor f g) := by
   exact (directLimitDiagonal f g).bijective
 
-/-- The direct limit of the stagewise tensor products is canonically
-linearly equivalent to the tensor product of the two direct limits. -/
+/-- **Linear equivalence of diagonal and factor tensor limits.**
+
+Let R be a commutative ring and G,H directed R-module systems over an upward-directed
+preorder. The equivalence diagonalDirectLimitEquivTensor:colim_i(G_i⊗H_i)≃ₗ[R](colim G)⊗(colim
+H) has the canonical stage-map forward formula.
+-/
 noncomputable abbrev diagonalDirectLimitEquivTensor
     {H : ι → Type*} [∀ i, AddCommGroup (H i)] [∀ i, Module R (H i)]
     (g : ∀ i j, i ≤ j → H i →ₗ[R] H j)

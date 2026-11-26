@@ -1,12 +1,12 @@
-# Circle Fejer
+# Fejér kernels on the unit circle
 
-- [Circle Dirichlet Polynomial](circle-dirichlet-polynomial.md)
-- [Circle Dirichlet Polynomial apply](circle-dirichlet-polynomial-apply.md)
-- [Circle Fejer Kernel](circle-fejer-kernel.md)
-- [Circle Fejer Kernel apply](circle-fejer-kernel-apply.md)
-- [Circle Fejer Kernel re nonneg](circle-fejer-kernel-re-nonneg.md)
-- [Circle Fejer Kernel im](circle-fejer-kernel-im.md)
-- [Circle Fejer Kernel norm](circle-fejer-kernel-norm.md)
-- [Circle Dirichlet Polynomial inner](circle-dirichlet-polynomial-inner.md)
-- [Circle Fejer Kernel integral](circle-fejer-kernel-integral.md)
-- [Circle Fejer Kernel integral sub](circle-fejer-kernel-integral-sub.md)
+- [Dirichlet polynomial on the unit circle](circle-dirichlet-polynomial.md)
+- [Evaluation of the Dirichlet polynomial](circle-dirichlet-polynomial-apply.md)
+- [Continuous Fejér kernel on the unit circle](circle-fejer-kernel.md)
+- [Squared-modulus formula for the Fejér kernel](circle-fejer-kernel-apply.md)
+- [Nonnegativity of the Fejér kernel](circle-fejer-kernel-re-nonneg.md)
+- [Real-valued Fejér kernel](circle-fejer-kernel-im.md)
+- [Norm of the Fejér kernel](circle-fejer-kernel-norm.md)
+- [L² norm of the Dirichlet polynomial](circle-dirichlet-polynomial-inner.md)
+- [Unit mass of the Fejér kernel](circle-fejer-kernel-integral.md)
+- [Unit mass after translation and inversion](circle-fejer-kernel-integral-sub.md)

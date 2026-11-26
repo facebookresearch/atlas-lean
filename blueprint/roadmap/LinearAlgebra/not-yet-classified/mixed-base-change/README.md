@@ -1,5 +1,5 @@
-# Mixed Base Change
+# Mixed base change across two independent coefficient rings
 
-- [Mixed Base Change Equiv](mixed-base-change-equiv.md)
-- [Mixed Base Change Equiv symm tmul](mixed-base-change-equiv-symm-tmul.md)
-- [Mixed Base Change Equiv unit tmul](mixed-base-change-equiv-unit-tmul.md)
+- [Cancellation of mixed tensor scalar extensions](mixed-base-change-equiv.md)
+- [Inverse mixed-base-change value on a pure tensor](mixed-base-change-equiv-symm-tmul.md)
+- [Unit tensor value of the mixed-base-change equivalence](mixed-base-change-equiv-unit-tmul.md)

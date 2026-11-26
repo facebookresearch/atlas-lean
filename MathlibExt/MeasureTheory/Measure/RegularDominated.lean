@@ -14,11 +14,13 @@ module
 public import Mathlib.MeasureTheory.Measure.Regular
 
 /-!
-# Regularity of finite measures under domination
+# Regularity inherited from finite measure domination
 
-A measure dominated by a finite regular Borel measure is regular.  The proof
-uses compact approximation for the upper measure and therefore needs no
-metrizability or countability assumption.
+On an R₁ Borel space, a measure dominated by a finite regular measure is regular. The sum of two
+finite regular measures is regular, and domination by a finite nonnegative scalar multiple also
+gives regularity.
+
+No compactness, metrizability or countability hypothesis is needed.
 -/
 
 @[expose] public section
@@ -33,8 +35,9 @@ universe u
 variable {X : Type u} [TopologicalSpace X] [R1Space X]
   [MeasurableSpace X] [BorelSpace X]
 
-/-- A measure dominated by a finite regular measure is regular.  This applies
-on nonmetrizable compact Hausdorff Borel spaces as well as metric spaces. -/
+/-- **Regular measure under domination by a finite regular measure.** Let `X` be an R₁
+topological space with its Borel measurable structure. if `μ` is finite and regular and
+`ν≤μ`, then `ν` is regular. -/
 theorem of_le {nu mu : Measure X} [mu.Regular] [IsFiniteMeasure mu]
     (h : nu ≤ mu) : nu.Regular := by
   let : IsFiniteMeasure nu := isFiniteMeasure_of_le mu h
@@ -52,13 +55,16 @@ theorem of_le {nu mu : Measure X} [mu.Regular] [IsFiniteMeasure mu]
     exact lt_of_tsub_lt_tsub_left hdiff
   infer_instance
 
-/-- The sum of two finite regular measures is regular. -/
+/-- **Regularity of the sum of finite regular measures.** Let `X` be an R₁ topological space
+with its Borel measurable structure. if `μ,ν` are finite regular measures, then `μ+ν` is
+regular. -/
 theorem add_of_finite (mu nu : Measure X) [mu.Regular] [nu.Regular]
     [IsFiniteMeasure mu] [IsFiniteMeasure nu] : (mu + nu).Regular := by
   infer_instance
 
-/-- A measure dominated by a finite nonnegative scalar multiple of a finite
-regular measure is regular. -/
+/-- **Regularity under finite nonnegative scalar domination.** Let `X` be an R₁ topological
+space with its Borel measurable structure. if `μ` is finite regular, `c∈ℝ≥0` and `ν≤c •
+μ`, then `ν` is regular, including `c=0`. -/
 theorem of_le_nnreal_smul {nu mu : Measure X} [mu.Regular] [IsFiniteMeasure mu]
     (c : ℝ≥0) (h : nu ≤ c • mu) : nu.Regular := by
   let : (c • mu).Regular := by infer_instance

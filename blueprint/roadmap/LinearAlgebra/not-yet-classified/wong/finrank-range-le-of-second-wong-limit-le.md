@@ -1,3 +1,5 @@
-# Finrank range le of second Wong Limit le range
+# The rank bound from a contained Wong limit
 
-Containment of the stable Wong space bounds every member's rank in `B` by the rank of `A`.
+Let K be a field, V,W K-vector spaces, A : V → W linear and B a subspace of linear maps V → W.
+Assume V,W are finite-dimensional. Let W∞ be the stable value of W₀ = 0, Wⱼ₊₁ = B(A⁻¹Wⱼ), and
+suppose W∞ ⊆ im A. Then rank C ≤ rank A for every C ∈ B.

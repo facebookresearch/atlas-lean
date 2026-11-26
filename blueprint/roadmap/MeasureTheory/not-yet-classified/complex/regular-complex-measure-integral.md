@@ -1,3 +1,5 @@
-# Regular Complex Measure Integral
+# Complex-linear integration map of regular complex measures
 
-Complex integration is linear in a regular complex measure.
+Let `X` be an R₁
+topological space with its Borel measurable structure. Assume `X` is compact.
+`regularComplexMeasureIntegral` sends `μ` to `complexIntegralDual μ ∈ C(X,ℂ)*`.

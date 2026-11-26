@@ -1,9 +1,4 @@
-# Projected Gradient Descent Step sq norm le
+# Projected-step bound on a comparator set
 
-Projected one-step bound, set-scoped: if `c ∈ K` and `xn` is no farther
-than the unprojected update `x - η • g` from every point of `K`, then its
-squared distance to `c` is bounded by the one-step expansion.
-
-The comparator set cannot be dropped: an ambient `∀ d` hypothesis would force
-`xn = x - η • g` (take `d := x - η • g`), collapsing the projection to the
-identity.
+Let E be a real inner product space, x,g,x⁺∈E,η∈ℝ,K⊆E and c∈K. If ‖x⁺−d‖≤‖x−ηg−d‖ for every
+d∈K, then ‖x⁺−c‖²≤‖x−c‖²−2η⟪g,x−c⟫+η²‖g‖².

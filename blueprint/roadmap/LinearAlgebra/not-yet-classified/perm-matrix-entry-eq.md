@@ -1,4 +1,4 @@
-# Permutation Entry
+# Entries of a permutation matrix
 
-Entry formula for permutation matrices: `(σ.permMatrix R) i j` is `1` if
-`σ i = j` and `0` otherwise. Registered as a `simp` lemma.
+Let I be any index type, R a type with zero and one and σ a permutation of I. For i,j∈I,
+(σ.permMatrix R)_(i,j)=if σ(i)=j then 1 else 0.

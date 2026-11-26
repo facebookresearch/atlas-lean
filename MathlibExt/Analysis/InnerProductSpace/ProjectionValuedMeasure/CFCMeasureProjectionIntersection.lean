@@ -18,17 +18,15 @@ public import MathlibExt.MeasureTheory.Function.ContinuousIndicatorApproximation
 public import Mathlib.Algebra.Star.StarProjection
 
 /-!
-# Actual projection and intersection laws for the computed CFC coefficients
+# Projection and intersection laws of normal CFC set operators
 
-Bounded continuous indicators converge almost everywhere for sums of the
-actual regular coefficient variations. The original complex integral passes
-these limits by dominated convergence. Continuous-CFC product identities and
-computed-operator commutation then identify mu(E(t)g,h)(s) with mu(g,h)(s∩t).
-The actual operator intersection, idempotence and star-projection laws follow
-on the same original H and spectrum. No desired projector/PVM, representation,
-correctness, norm model or additional H/spectrum premise is supplied.
-These are constructor prerequisites for resolutionOfIdentity and its Borel
-DATA. Numbered textbook terminal theorem bodies remain wholly open.
+For a normal operator `T` on a complete complex Hilbert space, let `P_s` be its coefficient
+operator on the spectrum `K`. For measurable `s,t`, the regular measures satisfy `μ_(P_t
+g,h)(s)=μ_(g,h)(s∩t)`.
+
+Consequently `P_s P_t=P_(s∩t)`. Each set operator is an orthogonal projection, with the zero
+projection on nonmeasurable sets. Continuous functions also satisfy `μ_(f(T)g,h)(t)=∫ 1_t f
+dμ_(g,h)`; these are identities for the coefficient operators and measures defined by CFC.
 -/
 
 @[expose] public section
@@ -67,7 +65,13 @@ private theorem existsContinuousComplexIndicator {X : Type uX}
 
 variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- The actual continuous functional of mu(E(t)g,h) is the t-value of mu(cfc(q)g,h). -/
+/-- **Continuous integral after a spectral set operator.** Let `H` be a complete complex
+Hilbert space and `T : H →L[ℂ] H` a normal operator, so `T* T=T T*`. Put `K=σ_ℂ(T)` with
+its Borel measurable structure. Let `μ_(g,h)` be the regular complex measure on `K`
+characterized by `∫ f dμ_(g,h)=⟨h,f(T)g⟩` for `f ∈ C(K,ℂ)`. For measurable `s ⊆ K`, let
+`P_s` be the bounded coefficient operator with `⟨h,P_s g⟩=μ_(g,h)(s)`, and set `P_s=0` for
+nonmeasurable `s`. for measurable `t ⊆ K`, `q ∈ C(K,ℂ)` and `g,h ∈ H`, `∫ q dμ_(P_t
+g,h)=μ_(q(T)g,h)(t)`. -/
 theorem normalCFCCoefficientMeasure_operator_continuousIntegral
     (T : H →L[ℂ] H) (hT : IsStarNormal T) (g h : H)
     (t : Set (spectrum ℂ T)) (ht : MeasurableSet t) (q : C(spectrum ℂ T, ℂ)) :
@@ -87,7 +91,13 @@ theorem normalCFCCoefficientMeasure_operator_continuousIntegral
     _ = (normalCFCCoefficientMeasure T hT (cfcHom hT q g) h : ComplexMeasure (spectrum ℂ T)) t :=
       normalCFCCoefficientOperator_coefficient T hT t ht (cfcHom hT q g) h
 
-/-- The same actual coefficient measure inserts a continuous CFC factor on a measurable set. -/
+/-- **Indicator integral of a continuous CFC coefficient.** Let `H` be a complete complex
+Hilbert space and `T : H →L[ℂ] H` a normal operator, so `T* T=T T*`. Put `K=σ_ℂ(T)` with
+its Borel measurable structure. Let `μ_(g,h)` be the regular complex measure on `K`
+characterized by `∫ f dμ_(g,h)=⟨h,f(T)g⟩` for `f ∈ C(K,ℂ)`. For measurable `s ⊆ K`, let
+`P_s` be the bounded coefficient operator with `⟨h,P_s g⟩=μ_(g,h)(s)`, and set `P_s=0` for
+nonmeasurable `s`. for measurable `t ⊆ K`, `q ∈ C(K,ℂ)` and `g,h ∈ H`, `μ_(q(T)g,h)(t)=∫
+1_t*q dμ_(g,h)`. -/
 theorem normalCFCCoefficientMeasure_cfc_setIntegral
     (T : H →L[ℂ] H) (hT : IsStarNormal T) (g h : H)
     (q : C(spectrum ℂ T, ℂ)) (t : Set (spectrum ℂ T)) (ht : MeasurableSet t) :
@@ -141,7 +151,13 @@ theorem normalCFCCoefficientMeasure_cfc_setIntegral
   rw [hsame] at hnu
   exact tendsto_nhds_unique hnu hmu
 
-/-- Acting by the computed E(t) restricts the same actual regular coefficient values. -/
+/-- **Restriction of a coefficient measure by a spectral operator.** Let `H` be a complete
+complex Hilbert space and `T : H →L[ℂ] H` a normal operator, so `T* T=T T*`. Put
+`K=σ_ℂ(T)` with its Borel measurable structure. Let `μ_(g,h)` be the regular complex
+measure on `K` characterized by `∫ f dμ_(g,h)=⟨h,f(T)g⟩` for `f ∈ C(K,ℂ)`. For measurable
+`s ⊆ K`, let `P_s` be the bounded coefficient operator with `⟨h,P_s g⟩=μ_(g,h)(s)`, and
+set `P_s=0` for nonmeasurable `s`. for measurable `s,t ⊆ K` and `g,h ∈ H`, `μ_(P_t
+g,h)(s)=μ_(g,h)(s∩t)`. -/
 theorem normalCFCCoefficientMeasure_operator_inter
     (T : H →L[ℂ] H) (hT : IsStarNormal T) (g h : H)
     (s : Set (spectrum ℂ T)) (hs : MeasurableSet s)
@@ -194,7 +210,13 @@ theorem normalCFCCoefficientMeasure_operator_inter
   rw [hsame] at hnu
   exact tendsto_nhds_unique hnu hmu
 
-/-- Products of the computed measurable values are the computed intersection value. -/
+/-- **Intersection product of normal CFC set operators.** Let `H` be a complete complex
+Hilbert space and `T : H →L[ℂ] H` a normal operator, so `T* T=T T*`. Put `K=σ_ℂ(T)` with
+its Borel measurable structure. Let `μ_(g,h)` be the regular complex measure on `K`
+characterized by `∫ f dμ_(g,h)=⟨h,f(T)g⟩` for `f ∈ C(K,ℂ)`. For measurable `s ⊆ K`, let
+`P_s` be the bounded coefficient operator with `⟨h,P_s g⟩=μ_(g,h)(s)`, and set `P_s=0` for
+nonmeasurable `s`. for measurable `s,t ⊆ K`, `normalCFCCoefficientOperator T hT s *
+normalCFCCoefficientOperator T hT t=P_(s∩t)`. -/
 theorem normalCFCCoefficientOperator_mul_inter
     (T : H →L[ℂ] H) (hT : IsStarNormal T)
     (s : Set (spectrum ℂ T)) (hs : MeasurableSet s)
@@ -217,7 +239,13 @@ theorem normalCFCCoefficientOperator_mul_inter
     _ = ⟪h, normalCFCCoefficientOperator T hT (s ∩ t) g⟫_ℂ :=
       (normalCFCCoefficientOperator_coefficient T hT (s ∩ t) (hs.inter ht) g h).symm
 
-/-- Every computed value is idempotent; nonmeasurable values are the actual zero. -/
+/-- **Idempotence of every normal CFC set operator.** Let `H` be a complete complex Hilbert
+space and `T : H →L[ℂ] H` a normal operator, so `T* T=T T*`. Put `K=σ_ℂ(T)` with its Borel
+measurable structure. Let `μ_(g,h)` be the regular complex measure on `K` characterized by
+`∫ f dμ_(g,h)=⟨h,f(T)g⟩` for `f ∈ C(K,ℂ)`. For measurable `s ⊆ K`, let `P_s` be the
+bounded coefficient operator with `⟨h,P_s g⟩=μ_(g,h)(s)`, and set `P_s=0` for
+nonmeasurable `s`. for every set `s ⊆ K`, `P_s²=P_s`, including nonmeasurable sets
+assigned zero. -/
 theorem normalCFCCoefficientOperator_idempotent
     (T : H →L[ℂ] H) (hT : IsStarNormal T) (s : Set (spectrum ℂ T)) :
     IsIdempotentElem (normalCFCCoefficientOperator T hT s) := by
@@ -228,7 +256,13 @@ theorem normalCFCCoefficientOperator_idempotent
   · simpa only [Set.inter_self] using normalCFCCoefficientOperator_mul_inter T hT s hs s hs
   · rw [normalCFCCoefficientOperator_not_measurable T hT s hs, zero_mul]
 
-/-- These same actual coefficient operators are canonical star projections. -/
+/-- **Orthogonal projection property of normal CFC set operators.** Let `H` be a complete
+complex Hilbert space and `T : H →L[ℂ] H` a normal operator, so `T* T=T T*`. Put
+`K=σ_ℂ(T)` with its Borel measurable structure. Let `μ_(g,h)` be the regular complex
+measure on `K` characterized by `∫ f dμ_(g,h)=⟨h,f(T)g⟩` for `f ∈ C(K,ℂ)`. For measurable
+`s ⊆ K`, let `P_s` be the bounded coefficient operator with `⟨h,P_s g⟩=μ_(g,h)(s)`, and
+set `P_s=0` for nonmeasurable `s`. for every set `s ⊆ K`, `P_s²=P_s` and `P_s*=P_s`, so
+`normalCFCCoefficientOperator T hT s` is an orthogonal projection. -/
 theorem normalCFCCoefficientOperator_isStarProjection
     (T : H →L[ℂ] H) (hT : IsStarNormal T) (s : Set (spectrum ℂ T)) :
     IsStarProjection (normalCFCCoefficientOperator T hT s) :=

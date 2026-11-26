@@ -15,14 +15,14 @@ public import Mathlib.Analysis.Normed.Operator.LinearIsometry
 public import Mathlib.Analysis.Complex.Basic
 
 /-!
-# Actual bounded operators conjugated by an antiunitary
+# Conjugate-linear isometric transport of bounded operators
 
-A given conjugate-linear complex linear-isometry equivalence J transports
-an original bounded complex-linear operator A to J A J^(-1). The two
-conjugate scalar changes compose to the identity, so the result is an
-actual complex-linear bounded operator on the target normed space.
-The source and target have independent carrier universes. On complex
-Hilbert spaces J is the usual antiunitary isometry equivalence.
+Let `H,K` be complex normed spaces and `J : H ≃ₗᵢ⋆[ℂ] K` a conjugate-linear isometric
+equivalence. For `A : H →L[ℂ] H`, the conjugated operator on `K` is `J A J⁻¹`, with value `x ↦
+J(A(J⁻¹x))`.
+
+The two conjugate-linear factors make this a bounded complex-linear operator. Inner products and
+completeness are not required; when the spaces are Hilbert spaces, `J` is an antiunitary.
 -/
 
 @[expose] public section
@@ -39,12 +39,17 @@ universe uH uK
 variable {H : Type uH} [NormedAddCommGroup H] [NormedSpace ℂ H]
 variable {K : Type uK} [NormedAddCommGroup K] [NormedSpace ℂ K]
 
-/-- The actual bounded complex-linear operator J A J^(-1) for the given conjugate-linear isometry. -/
+/-- **Bounded complex operator transported by a conjugate isometry.** Let `H,K` be complex
+normed spaces in independent universes and `J : H ≃ₗᵢ⋆[ℂ] K` a conjugate-linear isometric
+equivalence. for `A : H →L[ℂ] H`, `conjugateComplexOperator J A : K →L[ℂ] K` is `J A J⁻¹`;
+the two conjugate scalar actions cancel. -/
 def conjugateComplexOperator (J : H ≃ₗᵢ⋆[ℂ] K) (A : H →L[ℂ] H) : K →L[ℂ] K :=
   J.toContinuousLinearEquiv.toContinuousLinearMap.comp
     (A.comp J.symm.toContinuousLinearEquiv.toContinuousLinearMap)
 
-/-- The transported bounded operator has its literal original J(A(J^(-1)x)) value. -/
+/-- **Value of a conjugate-isometry operator transport.** Let `H,K` be complex normed spaces
+in independent universes and `J : H ≃ₗᵢ⋆[ℂ] K` a conjugate-linear isometric equivalence.
+for bounded `A : H →L[ℂ] H` and `x ∈ K`, `J.conjugateComplexOperator A x=J(A(J.symm x))`. -/
 @[simp]
 theorem conjugateComplexOperator_apply (J : H ≃ₗᵢ⋆[ℂ] K) (A : H →L[ℂ] H) (x : K) :
     J.conjugateComplexOperator A x = J (A (J.symm x)) :=

@@ -1,3 +1,5 @@
-# Norm signed Integral Dual eq total Variation
+# Exact variation norm of signed integration
 
-The operator norm of signed integration is exactly the mass of the total variation.
+Let `X` be a compact Hausdorff space with
+its Borel measurable structure. for regular signed `s`, `‖signedIntegralDual
+s‖=|s|.real(X)`.

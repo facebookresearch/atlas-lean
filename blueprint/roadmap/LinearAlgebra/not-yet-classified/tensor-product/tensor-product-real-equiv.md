@@ -1,3 +1,4 @@
-# Tensor Product Real Equiv
+# Complex-linear equivalence of the real self-tensor
 
-The original field K₀ client uses the actual complex-linear coercion.
+The ℂ-linear equivalence tensorProductRealEquiv:ℂ⊗_ℝℂ≃ₗ[ℂ]ℂ×ℂ is Θ(z⊗w)=(zw,z*conj(w)), with
+the left-factor complex action.

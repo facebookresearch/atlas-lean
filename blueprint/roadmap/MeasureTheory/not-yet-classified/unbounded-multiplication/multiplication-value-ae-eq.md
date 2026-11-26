@@ -1,3 +1,6 @@
-# Multiplication Value ae eq
+# Almost-everywhere value of a maximal-domain product
 
-Every maximal-domain product keeps the original pointwise multiplication values almost everywhere.
+Let X be a measurable space, μ any measure on X and m:X→ℂ an arbitrary function. On
+H=L²(X,μ;ℂ) set D_m={u∈H:m*u is a.e. strongly measurable and square-integrable}, with
+multiplication taken pointwise. For u∈D_m, multiplicationValue μ m u equals x↦m(x)u(x)
+μ-almost everywhere.

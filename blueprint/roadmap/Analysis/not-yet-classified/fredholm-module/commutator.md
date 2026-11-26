@@ -1,4 +1,8 @@
-# Commutator
+# Cycle commutator with a represented coefficient
 
-The ordinary commutator of the cycle operator with a represented
-coefficient.  Graded source algebras require a separate signed extension.
+Let `A` be an algebraic nonunital
+complex star algebra with compatible scalar multiplication and involution, and `H` a
+complete complex Hilbert space. No norm, completeness or C-star condition is imposed on
+`A`. Let `π : A →⋆ₙₐ[ℂ] B(H)` and `F ∈ B(H)` be the representation and cycle operator.
+`Data.commutator a=Fπ(a)-π(a)F` for `a ∈ A`; this is the ordinary commutator for an
+ungraded coefficient algebra.

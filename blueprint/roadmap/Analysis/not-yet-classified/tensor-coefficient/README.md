@@ -1,8 +1,8 @@
-# Tensor Coefficient
+# Regular coefficients on the Hilbert-first tensor model
 
-- [Regular Coefficient Tensor](regular-coefficient-tensor.md)
-- [Regular Coefficient Tensor Hom](regular-coefficient-tensor-hom.md)
-- [Regular Coefficient Tensor Hom apply](regular-coefficient-tensor-hom-apply.md)
-- [Norm regular Coefficient Tensor le](norm-regular-coefficient-tensor-le.md)
-- [Regular Coefficient Tensor ae eq](regular-coefficient-tensor-ae-eq.md)
-- [Regular Coefficient Tensor apply compact Support tmul ae](regular-coefficient-tensor-apply-compact.md)
+- [Regular coefficient conjugated onto the Hilbert-first tensor](regular-coefficient-tensor.md)
+- [Tensor regular coefficient star homomorphism](regular-coefficient-tensor-hom.md)
+- [Operator value of the tensor coefficient homomorphism](regular-coefficient-tensor-hom-apply.md)
+- [Operator norm of the Hilbert-first tensor coefficient](norm-regular-coefficient-tensor-le.md)
+- [L² representative of a tensor coefficient value](regular-coefficient-tensor-ae-eq.md)
+- [Pure compact-support tensor formula of the regular coefficient](regular-coefficient-tensor-apply-compact.md)

@@ -1,4 +1,5 @@
-# Exists eq zero of map to two direct Limits tensor eq zero
+# Vanishing in two module limits is detected at a later stage
 
-Vanishing after mapping two stagewise factors to their direct limits is
-detected after one common enlargement.
+Let R be a commutative ring and G,H directed module systems over an upward-directed preorder
+I. If x∈G_i⊗H_i maps to zero under the two stage maps to their limits, then some j≥i satisfies
+(f_ij⊗g_ij)(x)=0.

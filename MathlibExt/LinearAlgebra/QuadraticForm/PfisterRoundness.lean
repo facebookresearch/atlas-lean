@@ -13,26 +13,17 @@ public import MathlibExt.LinearAlgebra.QuadraticForm.Round
 public import MathlibExt.LinearAlgebra.QuadraticForm.PfisterSuccessor
 
 /-!
-# Roundness of explicit Pfister forms
+# Roundness of Pfister forms
 
-Every subset-indexed quadratic Pfister form is round.  The zero-fold form is
-the one-coordinate square form.  The successor step uses the canonical
-successor-product isometry and preservation of roundness under adjoining a
-nonzero binary Pfister factor.
-
-The proof is characteristic-free and assumes no finite dimension,
-nondegeneracy, anisotropy, hyperbolicity, or half-dimensional isotropic
-subspace.  It proves no norm-quadric point, splitting, VM2, or norm-residue
-statement.
-
-## Main declaration
-
-* `QuadraticForm.pfister_isRound`
+Let F be a field, n ∈ ℕ and a₀,…,aₙ₋₁ ∈ Fˣ. For s ⊆ Fin n put wₐ(s) = ∏ᵢ∈s (−aᵢ), and let
+qₐ(x) = ∑ₛ wₐ(s)xₛ² on F^(Finset(Fin n)). Roundness means that, for every nonzero c, c is
+represented by qₐ if and only if cqₐ is isometric to qₐ. Every qₐ is round over an arbitrary
+field. This includes the zero-fold square form.
 
 ## Reference
 
-* R. Elman, N. Karpenko, A. Merkurjev,
-  *The Algebraic and Geometric Theory of Quadratic Forms*, Corollary 9.9.
+* R. Elman, N. Karpenko, A. Merkurjev,   *The Algebraic and Geometric Theory of Quadratic
+Forms*, Corollary 9.9.
 -/
 
 @[expose] public section
@@ -111,7 +102,12 @@ private theorem pfisterZero_isRound (a : Fin 0 → Fˣ) :
     rw [pfister_oneVector]
     ring
 
-/-- Every explicit subset-indexed Pfister form is round. -/
+/-- **Every Pfister form is round.**
+
+Let F be a field, n ∈ ℕ and a₀,…,aₙ₋₁ ∈ Fˣ. For s ⊆ Fin n put wₐ(s) = ∏ᵢ∈s (−aᵢ), and let
+qₐ(x) = ∑ₛ wₐ(s)xₛ² on F^(Finset(Fin n)). For every c ≠ 0, there exists x with qₐ(x) = c if
+and only if cqₐ is isometric to qₐ.
+-/
 theorem pfister_isRound {n : ℕ} (a : Fin n → Fˣ) :
     (pfister F a).IsRound := by
   induction n with

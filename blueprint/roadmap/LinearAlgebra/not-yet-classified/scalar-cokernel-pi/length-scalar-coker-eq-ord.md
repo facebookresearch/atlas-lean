@@ -1,4 +1,3 @@
-# Length scalar coker eq ord
+# Scalar quotient length is the order of vanishing
 
-The literal scalar image is the full principal ideal, so its cokernel
-length is the existing order of vanishing without taking a radical.
+Let R be a commutative ring and a∈R. Then ℓ_R(R/range(a•id_R))=Ring.ord R a=ℓ_R(R/(a)).

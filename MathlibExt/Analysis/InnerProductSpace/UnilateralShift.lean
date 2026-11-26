@@ -20,11 +20,16 @@ import Mathlib.Analysis.RCLike.Lemmas
 import Mathlib.Tactic.NormNum
 
 /-!
-# The unilateral shift on `ℓ²`
+# Unilateral shift, backward shift and the coordinate defect
 
-This file defines the forward unilateral shift on the canonical Mathlib carrier
-`lp (fun _ : ℕ ↦ G) 2`. It inserts zero in the zeroth coordinate and moves
-each existing coordinate one place to the right.
+For a real or complex normed inner-product space `G`, the unilateral shift on `ℓ²(ℕ,G)` is
+`S(x_0,x_1,…)=(0,x_0,x_1,…)`. It is a linear isometry. When `G` is complete, its adjoint is the
+backward shift `B(x)_n=x_(n+1)`, satisfying `BS=I`.
+
+The defect `P=I-SB` projects onto the zeroth-coordinate copy of `G`. It is compact when `G` is
+finite-dimensional. The shift is Fredholm exactly in that finite-dimensional case; its algebraic
+index is `-finrank_𝕜(G)`. For infinite-dimensional multiplicity this totalized index value is
+zero and does not imply Fredholmness.
 -/
 
 @[expose] public section
@@ -39,7 +44,9 @@ variable {𝕜 : Type u} [RCLike 𝕜]
 variable {G : Type v} [NormedAddCommGroup G] [InnerProductSpace 𝕜 G]
   [hG : CompleteSpace G]
 
-/-- The coordinate function underlying the forward unilateral shift. -/
+/-- **Coordinate function of a right unilateral shift.** Let `G` be a normed additive
+commutative group and `x ∈ ℓ²(ℕ,G)`. `unilateralShiftSeq x` has zeroth value zero and
+successor value `x_n` at `n+1`. -/
 def unilateralShiftSeq (x : lp (fun _ : ℕ ↦ G) 2) : ℕ → G
   | 0 => 0
   | n + 1 => x n
@@ -126,7 +133,9 @@ private theorem unilateralShiftSeq_norm (x : lp (fun _ : ℕ ↦ G) 2) :
     rw [lp.norm_eq_tsum_rpow hp]
   rw [hnormShift, hnormInput, hsumEq]
 
-/-- The linear map underlying the unilateral shift. -/
+/-- **Linear unilateral coordinate shift.** Let `𝕜` be real or complex and `G` a normed
+inner-product `𝕜`-space. On `L=lp (fun _ : ℕ => G) 2`, write `Sx=(0,x_0,x_1,…)`.
+`unilateralShiftLinear : L →ₗ[𝕜] L` has zeroth coordinate zero and `(Sx)_(n+1)=x_n`. -/
 def unilateralShiftLinear :
     lp (fun _ : ℕ ↦ G) 2 →ₗ[𝕜] lp (fun _ : ℕ ↦ G) 2 where
   toFun x := ⟨unilateralShiftSeq x, unilateralShiftSeq_mem x⟩
@@ -156,16 +165,19 @@ theorem unilateralShiftLinear_norm (x : lp (fun _ : ℕ ↦ G) 2) :
   rw [h]
   exact unilateralShiftSeq_norm x
 
-/-- The forward unilateral shift on `ℓ²(ℕ, G)`.
-
-It sends `(x 0, x 1, ...)` to `(0, x 0, x 1, ...)`. -/
+/-- **Bounded forward unilateral shift.** Let `𝕜` be real or complex and `G` a normed
+inner-product `𝕜`-space. On `L=lp (fun _ : ℕ => G) 2`, write `Sx=(0,x_0,x_1,…)`.
+`unilateralShift : L →L[𝕜] L` is the norm-preserving operator `S`; completeness is not
+needed for this bounded shift. -/
 noncomputable def unilateralShift :
     lp (fun _ : ℕ ↦ G) 2 →L[𝕜] lp (fun _ : ℕ ↦ G) 2 :=
   unilateralShiftLinear.mkContinuous 1 fun x ↦ by
     rw [unilateralShiftLinear_norm, one_mul]
 
 omit hG in
-/-- The zeroth coordinate of the unilateral shift is zero. -/
+/-- **Zero initial coordinate of the unilateral shift.** Let `𝕜` be real or complex and `G` a
+normed inner-product `𝕜`-space. On `L=lp (fun _ : ℕ => G) 2`, write `Sx=(0,x_0,x_1,…)`.
+for every `x ∈ L`, `(unilateralShift x)_0=0`. -/
 @[simp]
 theorem unilateralShift_apply_zero (x : lp (fun _ : ℕ ↦ G) 2) :
     unilateralShift (𝕜 := 𝕜) x 0 = 0 := by
@@ -175,7 +187,9 @@ theorem unilateralShift_apply_zero (x : lp (fun _ : ℕ ↦ G) 2) :
   exact unilateralShiftSeq_zero x
 
 omit hG in
-/-- The successor coordinates of the unilateral shift recover the input coordinates. -/
+/-- **Successor coordinate of the unilateral shift.** Let `𝕜` be real or complex and `G` a
+normed inner-product `𝕜`-space. On `L=lp (fun _ : ℕ => G) 2`, write `Sx=(0,x_0,x_1,…)`.
+for `x ∈ L` and `n : ℕ`, `(unilateralShift x)_(n+1)=x_n`. -/
 @[simp]
 theorem unilateralShift_apply_succ (x : lp (fun _ : ℕ ↦ G) 2) (n : ℕ) :
     unilateralShift (𝕜 := 𝕜) x (n + 1) = x n := by
@@ -185,7 +199,9 @@ theorem unilateralShift_apply_succ (x : lp (fun _ : ℕ ↦ G) 2) (n : ℕ) :
   exact unilateralShiftSeq_succ x n
 
 omit hG in
-/-- The unilateral shift moves the `n`-th standard single to the `(n+1)`-st. -/
+/-- **Unilateral shift of a scalar-multiplicity singleton.** Let `𝕜` be real or complex and
+`G` a normed inner-product `𝕜`-space. On `L=lp (fun _ : ℕ => G) 2`, write
+`Sx=(0,x_0,x_1,…)`. for `n : ℕ` and `g ∈ G`, `S(single_n g)=single_(n+1) g`. -/
 @[simp]
 theorem unilateralShift_single (n : ℕ) (g : G) :
     unilateralShift (𝕜 := 𝕜) (lp.single (E := fun _ : ℕ ↦ G) 2 n g) =
@@ -207,7 +223,9 @@ theorem unilateralShift_single (n : ℕ) (g : G) :
       rw [lp.single_apply_ne (E := fun _ : ℕ ↦ G) 2 (n + 1) g h']
 
 omit hG in
-/-- The unilateral shift preserves the `ℓ²` norm. -/
+/-- **Norm preservation of the unilateral shift.** Let `𝕜` be real or complex and `G` a normed
+inner-product `𝕜`-space. On `L=lp (fun _ : ℕ => G) 2`, write `Sx=(0,x_0,x_1,…)`. for every
+`x ∈ L`, `‖Sx‖₂=‖x‖₂`. -/
 theorem unilateralShift_norm (x : lp (fun _ : ℕ ↦ G) 2) :
     ‖unilateralShift (𝕜 := 𝕜) x‖ = ‖x‖ := by
   have h : unilateralShift (𝕜 := 𝕜) x =
@@ -216,24 +234,34 @@ theorem unilateralShift_norm (x : lp (fun _ : ℕ ↦ G) 2) :
   exact unilateralShiftLinear_norm x
 
 omit hG in
-/-- The unilateral shift is an isometry. -/
+/-- **Metric isometry of the unilateral shift.** Let `𝕜` be real or complex and `G` a normed
+inner-product `𝕜`-space. On `L=lp (fun _ : ℕ => G) 2`, write `Sx=(0,x_0,x_1,…)`. `S` is an
+isometry for the square-summable norm metric. -/
 theorem unilateralShift_isometry :
     Isometry (unilateralShift (𝕜 := 𝕜) (G := G)) :=
   (AddMonoidHomClass.isometry_iff_norm _).mpr unilateralShift_norm
 
 omit hG in
-/-- The unilateral shift is injective. -/
+/-- **Injectivity of the unilateral shift.** Let `𝕜` be real or complex and `G` a normed
+inner-product `𝕜`-space. On `L=lp (fun _ : ℕ => G) 2`, write `Sx=(0,x_0,x_1,…)`. the
+bounded shift `S : L → L` is injective, including the zero-multiplicity case. -/
 theorem unilateralShift_injective :
     Function.Injective (unilateralShift (𝕜 := 𝕜) (G := G)) :=
   (unilateralShift_isometry (𝕜 := 𝕜) (G := G)).injective
 
-/-- The range of the unilateral shift is closed. -/
+/-- **Closed range of the complete-multiplicity unilateral shift.** Let `𝕜` be real or complex
+and `G` a normed inner-product `𝕜`-space. On `L=lp (fun _ : ℕ => G) 2`, write
+`Sx=(0,x_0,x_1,…)`. Assume `G` is complete, and put `B=S*`, `(Bx)_n=x_(n+1)`, and
+`P=I-SB`. the range of `S` is norm-closed in `L`. -/
 theorem unilateralShift_isClosed_range :
     IsClosed (Set.range (unilateralShift (𝕜 := 𝕜) (G := G))) :=
   (unilateralShift_isometry (𝕜 := 𝕜) (G := G)).isClosedEmbedding.isClosed_range
 
 omit hG in
-/-- The unilateral shift is not surjective when its multiplicity space is nontrivial. -/
+/-- **Nonsurjectivity for nonzero unilateral multiplicity.** Let `𝕜` be real or complex and
+`G` a normed inner-product `𝕜`-space. On `L=lp (fun _ : ℕ => G) 2`, write
+`Sx=(0,x_0,x_1,…)`. if `G` is nontrivial, `S : L → L` is not surjective because every
+shifted vector has zeroth coordinate zero. -/
 theorem unilateralShift_not_surjective [Nontrivial G] :
     ¬ Function.Surjective (unilateralShift (𝕜 := 𝕜) (G := G)) := by
   intro hsurj
@@ -243,12 +271,18 @@ theorem unilateralShift_not_surjective [Nontrivial G] :
   apply hg
   simpa using (congrArg (fun y => y 0) hx).symm
 
-/-- The backward unilateral shift, defined as the Hilbert-space adjoint of the forward shift. -/
+/-- **Backward shift as the Hilbert adjoint.** Let `𝕜` be real or complex and `G` a normed
+inner-product `𝕜`-space. On `L=lp (fun _ : ℕ => G) 2`, write `Sx=(0,x_0,x_1,…)`. Assume
+`G` is complete, and put `B=S*`, `(Bx)_n=x_(n+1)`, and `P=I-SB`. `backwardShift : L →L[𝕜]
+L` is `B=S*`, with `(Bx)_n=x_(n+1)`. -/
 noncomputable abbrev backwardShift :
     lp (fun _ : ℕ ↦ G) 2 →L[𝕜] lp (fun _ : ℕ ↦ G) 2 :=
   ContinuousLinearMap.adjoint (unilateralShift (𝕜 := 𝕜) (G := G))
 
-/-- The backward shift removes the zeroth coordinate and moves every later coordinate left. -/
+/-- **Coordinate formula of the backward shift.** Let `𝕜` be real or complex and `G` a normed
+inner-product `𝕜`-space. On `L=lp (fun _ : ℕ => G) 2`, write `Sx=(0,x_0,x_1,…)`. Assume
+`G` is complete, and put `B=S*`, `(Bx)_n=x_(n+1)`, and `P=I-SB`. for `x ∈ L` and `n : ℕ`,
+`backwardShift x n=x_(n+1)`. -/
 @[simp]
 theorem backwardShift_apply (x : lp (fun _ : ℕ ↦ G) 2) (n : ℕ) :
     backwardShift (𝕜 := 𝕜) x n = x (n + 1) := by
@@ -268,7 +302,10 @@ theorem backwardShift_apply (x : lp (fun _ : ℕ ↦ G) 2) (n : ℕ) :
     _ = inner 𝕜 g (x (n + 1)) :=
       lp.inner_single_left (𝕜 := 𝕜) (n + 1) g x
 
-/-- The backward shift kills a standard single in the zeroth coordinate. -/
+/-- **Backward shift kills the initial singleton.** Let `𝕜` be real or complex and `G` a
+normed inner-product `𝕜`-space. On `L=lp (fun _ : ℕ => G) 2`, write `Sx=(0,x_0,x_1,…)`.
+Assume `G` is complete, and put `B=S*`, `(Bx)_n=x_(n+1)`, and `P=I-SB`. for `g ∈ G`,
+`B(single_0 g)=0`. -/
 @[simp]
 theorem backwardShift_single_zero (g : G) :
     backwardShift (𝕜 := 𝕜)
@@ -280,7 +317,10 @@ theorem backwardShift_single_zero (g : G) :
     (Nat.succ_ne_zero j)]
   rfl
 
-/-- The backward shift moves a successor standard single one coordinate left. -/
+/-- **Backward shift of a successor singleton.** Let `𝕜` be real or complex and `G` a normed
+inner-product `𝕜`-space. On `L=lp (fun _ : ℕ => G) 2`, write `Sx=(0,x_0,x_1,…)`. Assume
+`G` is complete, and put `B=S*`, `(Bx)_n=x_(n+1)`, and `P=I-SB`. for `n : ℕ`, `g ∈ G`,
+`B(single_(n+1) g)=single_n g`. -/
 @[simp]
 theorem backwardShift_single_succ (n : ℕ) (g : G) :
     backwardShift (𝕜 := 𝕜)
@@ -296,7 +336,9 @@ theorem backwardShift_single_succ (n : ℕ) (g : G) :
     rw [lp.single_apply_ne (E := fun _ : ℕ ↦ G) 2 (n + 1) g h']
     rw [lp.single_apply_ne (E := fun _ : ℕ ↦ G) 2 n g h]
 
-/-- The backward shift is a left inverse of the forward unilateral shift. -/
+/-- **Backward shift is a left inverse.** Let `𝕜` be real or complex and `G` a normed
+inner-product `𝕜`-space. On `L=lp (fun _ : ℕ => G) 2`, write `Sx=(0,x_0,x_1,…)`. Assume
+`G` is complete, and put `B=S*`, `(Bx)_n=x_(n+1)`, and `P=I-SB`. `B∘S=I_L`. -/
 @[simp]
 theorem backwardShift_comp_unilateralShift :
     backwardShift (𝕜 := 𝕜) (G := G) ∘L
@@ -304,7 +346,10 @@ theorem backwardShift_comp_unilateralShift :
   (unilateralShift (𝕜 := 𝕜) (G := G)).norm_map_iff_adjoint_comp_self.mp
     unilateralShift_norm
 
-/-- The backward unilateral shift is surjective. -/
+/-- **Surjectivity of the backward shift.** Let `𝕜` be real or complex and `G` a normed
+inner-product `𝕜`-space. On `L=lp (fun _ : ℕ => G) 2`, write `Sx=(0,x_0,x_1,…)`. Assume
+`G` is complete, and put `B=S*`, `(Bx)_n=x_(n+1)`, and `P=I-SB`. `B : L → L` is
+surjective, with `S` providing a right inverse. -/
 theorem backwardShift_surjective :
     Function.Surjective (backwardShift (𝕜 := 𝕜) (G := G)) := by
   intro x
@@ -316,27 +361,40 @@ theorem backwardShift_surjective :
       (unilateralShift (𝕜 := 𝕜) x) = x at h
   exact h
 
-/-- Projection onto the zeroth-coordinate defect of the unilateral shift. -/
+/-- **Projection onto the unilateral shift's initial-coordinate defect.** Let `𝕜` be real or
+complex and `G` a normed inner-product `𝕜`-space. On `L=lp (fun _ : ℕ => G) 2`, write
+`Sx=(0,x_0,x_1,…)`. Assume `G` is complete, and put `B=S*`, `(Bx)_n=x_(n+1)`, and
+`P=I-SB`. `unilateralShiftDefectProjection=P=I-SB`, retaining the zeroth coordinate of a
+vector and setting every successor coordinate to zero. -/
 noncomputable def unilateralShiftDefectProjection :
     lp (fun _ : ℕ ↦ G) 2 →L[𝕜] lp (fun _ : ℕ ↦ G) 2 :=
   1 - unilateralShift (𝕜 := 𝕜) (G := G) ∘L
     backwardShift (𝕜 := 𝕜) (G := G)
 
-/-- The defect projection preserves the zeroth coordinate. -/
+/-- **Initial coordinate retained by the defect projection.** Let `𝕜` be real or complex and
+`G` a normed inner-product `𝕜`-space. On `L=lp (fun _ : ℕ => G) 2`, write
+`Sx=(0,x_0,x_1,…)`. Assume `G` is complete, and put `B=S*`, `(Bx)_n=x_(n+1)`, and
+`P=I-SB`. for `x ∈ L`, `(Px)_0=x_0`. -/
 @[simp]
 theorem unilateralShiftDefectProjection_apply_zero
     (x : lp (fun _ : ℕ ↦ G) 2) :
     unilateralShiftDefectProjection (𝕜 := 𝕜) x 0 = x 0 := by
   simp [unilateralShiftDefectProjection, ContinuousLinearMap.comp_apply]
 
-/-- Every successor coordinate of the defect projection vanishes. -/
+/-- **Successor coordinates killed by the defect projection.** Let `𝕜` be real or complex and
+`G` a normed inner-product `𝕜`-space. On `L=lp (fun _ : ℕ => G) 2`, write
+`Sx=(0,x_0,x_1,…)`. Assume `G` is complete, and put `B=S*`, `(Bx)_n=x_(n+1)`, and
+`P=I-SB`. for `x ∈ L` and `n : ℕ`, `(Px)_(n+1)=0`. -/
 @[simp]
 theorem unilateralShiftDefectProjection_apply_succ
     (x : lp (fun _ : ℕ ↦ G) 2) (n : ℕ) :
     unilateralShiftDefectProjection (𝕜 := 𝕜) x (n + 1) = 0 := by
   simp [unilateralShiftDefectProjection, ContinuousLinearMap.comp_apply]
 
-/-- The forward shift followed by the backward shift is the complement of the defect. -/
+/-- **Shift and backward shift give the complement of the defect.** Let `𝕜` be real or complex
+and `G` a normed inner-product `𝕜`-space. On `L=lp (fun _ : ℕ => G) 2`, write
+`Sx=(0,x_0,x_1,…)`. Assume `G` is complete, and put `B=S*`, `(Bx)_n=x_(n+1)`, and
+`P=I-SB`. `S∘B=I_L-P`. -/
 @[simp]
 theorem unilateralShift_comp_backwardShift :
     unilateralShift (𝕜 := 𝕜) (G := G) ∘L
@@ -344,7 +402,10 @@ theorem unilateralShift_comp_backwardShift :
         1 - unilateralShiftDefectProjection (𝕜 := 𝕜) (G := G) := by
   simp [unilateralShiftDefectProjection]
 
-/-- A vector lies in the defect range exactly when all its successor coordinates vanish. -/
+/-- **Range of the zeroth-coordinate defect projection.** Let `𝕜` be real or complex and `G` a
+normed inner-product `𝕜`-space. On `L=lp (fun _ : ℕ => G) 2`, write `Sx=(0,x_0,x_1,…)`.
+Assume `G` is complete, and put `B=S*`, `(Bx)_n=x_(n+1)`, and `P=I-SB`. for `x ∈ L`,
+`x∈range P` exactly when `x_(n+1)=0` for every `n : ℕ`. -/
 theorem mem_unilateralShiftDefectProjection_range_iff
     (x : lp (fun _ : ℕ ↦ G) 2) :
     x ∈ (unilateralShiftDefectProjection (𝕜 := 𝕜) (G := G)).range ↔
@@ -360,7 +421,9 @@ theorem mem_unilateralShiftDefectProjection_range_iff
     | zero => simp
     | succ n => simpa using (hx n).symm
 
-/-- The kernel of the defect projection is exactly the range of the unilateral shift. -/
+/-- **Defect kernel is the unilateral shift range.** Let `𝕜` be real or complex and `G` a
+normed inner-product `𝕜`-space. On `L=lp (fun _ : ℕ => G) 2`, write `Sx=(0,x_0,x_1,…)`.
+Assume `G` is complete, and put `B=S*`, `(Bx)_n=x_(n+1)`, and `P=I-SB`. `ker P=range S`. -/
 theorem unilateralShiftDefectProjection_ker :
     (unilateralShiftDefectProjection (𝕜 := 𝕜) (G := G)).ker =
       (unilateralShift (𝕜 := 𝕜) (G := G)).range := by
@@ -384,7 +447,9 @@ theorem unilateralShiftDefectProjection_ker :
     funext n
     cases n <;> simp
 
-/-- The zeroth-coordinate defect operator is a self-adjoint projection. -/
+/-- **Self-adjoint idempotence of the unilateral defect.** Let `𝕜` be real or complex and `G`
+a normed inner-product `𝕜`-space. On `L=lp (fun _ : ℕ => G) 2`, write `Sx=(0,x_0,x_1,…)`.
+Assume `G` is complete, and put `B=S*`, `(Bx)_n=x_(n+1)`, and `P=I-SB`. `P²=P` and `P*=P`. -/
 theorem unilateralShiftDefectProjection_isStarProjection :
     IsStarProjection
       (unilateralShiftDefectProjection (𝕜 := 𝕜) (G := G)) where
@@ -451,7 +516,10 @@ private theorem unilateralShiftDefectProjection_eq_single_comp_eval :
         ((lp.evalCLM 𝕜 (fun _ : ℕ ↦ G) 2 0) x)
         (Nat.succ_ne_zero n)]
 
-/-- The defect projection is compact when the multiplicity space is finite-dimensional. -/
+/-- **Compact initial defect for finite-dimensional multiplicity.** Let `𝕜` be real or complex
+and `G` a normed inner-product `𝕜`-space. On `L=lp (fun _ : ℕ => G) 2`, write
+`Sx=(0,x_0,x_1,…)`. Assume `G` is complete, and put `B=S*`, `(Bx)_n=x_(n+1)`, and
+`P=I-SB`. if `G` is finite-dimensional over `𝕜`, the operator `P` is compact. -/
 theorem unilateralShiftDefectProjection_isCompact [FiniteDimensional 𝕜 G] :
     IsCompactOperator
       (unilateralShiftDefectProjection (𝕜 := 𝕜) (G := G)) := by
@@ -460,7 +528,10 @@ theorem unilateralShiftDefectProjection_isCompact [FiniteDimensional 𝕜 G] :
   exact (isCompactOperator_of_locallyCompactSpace_rng
     (lp.singleContinuousLinearMap 𝕜 (fun _ : ℕ ↦ G) 2 0)).comp_clm _
 
-/-- Star-multiplication form of the unilateral shift's isometry equation. -/
+/-- **Adjoint product equation of the unilateral isometry.** Let `𝕜` be real or complex and
+`G` a normed inner-product `𝕜`-space. On `L=lp (fun _ : ℕ => G) 2`, write
+`Sx=(0,x_0,x_1,…)`. Assume `G` is complete, and put `B=S*`, `(Bx)_n=x_(n+1)`, and
+`P=I-SB`. `S* S=I_L`. -/
 @[simp]
 theorem star_unilateralShift_mul_unilateralShift :
     star (unilateralShift (𝕜 := 𝕜) (G := G)) *
@@ -468,7 +539,10 @@ theorem star_unilateralShift_mul_unilateralShift :
   rw [ContinuousLinearMap.star_eq_adjoint, ContinuousLinearMap.mul_def]
   exact backwardShift_comp_unilateralShift (𝕜 := 𝕜) (G := G)
 
-/-- Star-multiplication form of the unilateral shift's defect equation. -/
+/-- **Unilateral adjoint product equals the defect complement.** Let `𝕜` be real or complex
+and `G` a normed inner-product `𝕜`-space. On `L=lp (fun _ : ℕ => G) 2`, write
+`Sx=(0,x_0,x_1,…)`. Assume `G` is complete, and put `B=S*`, `(Bx)_n=x_(n+1)`, and
+`P=I-SB`. `S S*=I_L-P`. -/
 theorem unilateralShift_mul_star_unilateralShift :
     unilateralShift (𝕜 := 𝕜) (G := G) *
       star (unilateralShift (𝕜 := 𝕜) (G := G)) =
@@ -512,7 +586,10 @@ private noncomputable def unilateralShiftCokerEquiv :
     ((lp.evalCLM 𝕜 (fun _ : ℕ ↦ G) 2 0).toLinearMap.quotKerEquivOfSurjective
       (unilateralShift_evalZero_surjective (𝕜 := 𝕜) (G := G)))
 
-/-- The unilateral shift is Fredholm exactly when its multiplicity space is finite-dimensional. -/
+/-- **Fredholmness exactly for finite-dimensional shift multiplicity.** Let `𝕜` be real or
+complex and `G` a normed inner-product `𝕜`-space. On `L=lp (fun _ : ℕ => G) 2`, write
+`Sx=(0,x_0,x_1,…)`. Assume `G` is complete, and put `B=S*`, `(Bx)_n=x_(n+1)`, and
+`P=I-SB`. `S` is Fredholm exactly when `FiniteDimensional 𝕜 G`. -/
 theorem unilateralShift_isFredholm_iff :
     (unilateralShift (𝕜 := 𝕜) (G := G)).IsFredholm ↔
       FiniteDimensional 𝕜 G := by
@@ -529,9 +606,11 @@ theorem unilateralShift_isFredholm_iff :
       FiniteDimensional.of_injective e.toLinearMap e.injective
     exact (unilateralShift_isometry (𝕜 := 𝕜) (G := G)).isClosedEmbedding.isFredholm hcofg
 
-/-- The algebraic index of the unilateral shift is minus the finite rank of its
-multiplicity space. For infinite-dimensional multiplicity, both totalized
-finite-rank expressions are zero; this does not assert Fredholmness. -/
+/-- **Totalized algebraic index of the unilateral shift.** Let `𝕜` be real or complex and `G`
+a normed inner-product `𝕜`-space. On `L=lp (fun _ : ℕ => G) 2`, write `Sx=(0,x_0,x_1,…)`.
+Assume `G` is complete, and put `B=S*`, `(Bx)_n=x_(n+1)`, and `P=I-SB`.
+`S.index=-(finrank_𝕜 G : ℤ)`. For infinite-dimensional `G`, `finrank` and this totalized
+index value are zero; the formula does not assert Fredholmness in that case. -/
 theorem unilateralShift_index :
     (unilateralShift (𝕜 := 𝕜) (G := G)).index =
       -(Module.finrank 𝕜 G : ℤ) := by

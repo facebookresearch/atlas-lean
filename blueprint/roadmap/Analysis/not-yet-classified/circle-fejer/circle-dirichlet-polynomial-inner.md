@@ -1,3 +1,4 @@
-# Circle Dirichlet Polynomial inner
+# L² norm of the Dirichlet polynomial
 
-The genuine finite Dirichlet L-two vector has its literal squared norm.
+For every `N : ℕ`, the `L²` inner product
+of `D_N` with itself, for the Haar probability measure on `ℝ/ℤ`, is `(N + 1 : ℂ)`.

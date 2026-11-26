@@ -1,3 +1,6 @@
-# Complex Integral Equiv
+# Complex-linear Riesz equivalence for regular complex measures
 
-Complex Riesz--Markov as a complex-linear equivalence.
+Let `X` be a compact
+Hausdorff space with its Borel measurable structure. `complexIntegralEquiv :
+RegularComplexMeasure X ≃ₗ[ℂ] C(X,ℂ)*` has forward map continuous integration and inverse
+`complexRieszMeasure`.

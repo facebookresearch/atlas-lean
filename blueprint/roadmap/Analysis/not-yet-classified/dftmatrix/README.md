@@ -1,13 +1,13 @@
-# DFTMatrix
+# Normalized discrete Fourier matrices with both signs
 
-## Definition
+## Discrete Fourier transform matrices
 
-- [Dft Matrix](dft-matrix.md)
-- [Dft Matrix apply](dft-matrix-apply.md)
+- [Normalized Fourier matrix with an integer exponent sign](dft-matrix.md)
+- [Entry formula of the normalized discrete Fourier matrix](dft-matrix-apply.md)
 
-## Bundled unitary matrices for `±1`
+## Unitary Fourier matrices with either sign
 
-- [Dft Unitary Pos](dft-unitary-pos.md)
-- [Dft Unitary Neg](dft-unitary-neg.md)
-- [Dft Unitary Pos val](dft-unitary-pos-val.md)
-- [Dft Unitary Neg val](dft-unitary-neg-val.md)
+- [Positive-sign normalized Fourier unitary](dft-unitary-pos.md)
+- [Negative-sign normalized Fourier unitary](dft-unitary-neg.md)
+- [Underlying matrix of the positive Fourier unitary](dft-unitary-pos-val.md)
+- [Underlying matrix of the negative Fourier unitary](dft-unitary-neg-val.md)

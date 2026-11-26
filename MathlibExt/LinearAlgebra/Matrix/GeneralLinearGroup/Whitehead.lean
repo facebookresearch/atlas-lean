@@ -18,9 +18,11 @@ public import Mathlib.Logic.Equiv.Fin.Basic
 /-!
 # Finite Whitehead block factorization
 
-`diag(g,g⁻¹)` is a product of six block unipotents, hence lies in `E_{n⊕n}`;
-the same yields `diag(⁅g,h⁆,1)` and the reindexed `Fin (n+n)` form over an
-arbitrary (possibly noncommutative) ring.
+Let R be a ring and n a finite index type. Write GL(n,R) for the group of invertible n×n
+matrices, and E_ij(a)=I+a*e_ij for i≠j, where e_ij is the single-entry matrix. For g∈GL(n,R),
+put D(g)=diag(g,g⁻¹) on n⊕n, U(A)=[[I,A],[0,I]] and L(A)=[[I,0],[A,I]]. The identity
+U(g)L(-g⁻¹)U(g)U(-I)L(I)U(-I)=D(g) puts D(g) in the elementary subgroup of GL(n⊕n,R). For
+[g,h]=g*h*g⁻¹*h⁻¹, the block diag([g,h],I) is also a product of these diagonal units.
 -/
 
 @[expose] public section
@@ -33,7 +35,13 @@ open scoped commutatorElement
 variable {n : Type*} [DecidableEq n] [Fintype n]
 variable {R : Type*} [Ring R]
 
-/-- Diagonal unit `diag(g,g⁻¹)` on `n ⊕ n`. -/
+/-- **Diagonal unit with a matrix and its inverse.**
+
+Let R be a ring and n a finite index type. Write GL(n,R) for the group of invertible n×n
+matrices, and E_ij(a)=I+a*e_ij for i≠j, where e_ij is the single-entry matrix. For g∈GL(n,R),
+put D(g)=diag(g,g⁻¹) on n⊕n, U(A)=[[I,A],[0,I]] and L(A)=[[I,0],[A,I]]. The element diagUnit g
+is D(g)=diag(g,g⁻¹). Its inverse is diag(g⁻¹,g).
+-/
 def diagUnit (g : GL n R) : GL (n ⊕ n) R where
   val := fromBlocks (↑g : Matrix n n R) 0 0 (↑(g⁻¹) : Matrix n n R)
   inv := fromBlocks (↑(g⁻¹) : Matrix n n R) 0 0 (↑g : Matrix n n R)
@@ -61,7 +69,14 @@ lemma coe_diagUnit (g : GL n R) :
     (↑(diagUnit (n := n) (R := R) g) : Matrix (n ⊕ n) (n ⊕ n) R) =
       fromBlocks (↑g : Matrix n n R) 0 0 (↑(g⁻¹) : Matrix n n R) := rfl
 
-/-! ### Six-unipotent Whitehead identity -/
+/-!
+### Six-unipotent Whitehead identity
+
+Let R be a ring and n a finite index type. Write GL(n,R) for the group of invertible n×n
+matrices, and E_ij(a)=I+a*e_ij for i≠j, where e_ij is the single-entry matrix. For g∈GL(n,R),
+put D(g)=diag(g,g⁻¹) on n⊕n, U(A)=[[I,A],[0,I]] and L(A)=[[I,0],[A,I]]. The ordered product
+U(g)L(-g⁻¹)U(g)U(-I)L(I)U(-I) equals diag(g,g⁻¹).
+-/
 
 private lemma diagUnit_val_mul_inv (g : GL n R) :
     (↑g : Matrix n n R) * (↑(g⁻¹) : Matrix n n R) = 1 := by
@@ -73,7 +88,13 @@ private lemma diagUnit_inv_mul_val (g : GL n R) :
   have := g.inv_val
   exact_mod_cast this
 
-/-- Whitehead identity `U(g) L(-g⁻¹) U(g) U(-1) L(1) U(-1) = diagUnit g`. -/
+/-- **Six-unipotent factorization of a diagonal inverse pair.**
+
+Let R be a ring and n a finite index type. Write GL(n,R) for the group of invertible n×n
+matrices, and E_ij(a)=I+a*e_ij for i≠j, where e_ij is the single-entry matrix. For g∈GL(n,R),
+put D(g)=diag(g,g⁻¹) on n⊕n, U(A)=[[I,A],[0,I]] and L(A)=[[I,0],[A,I]]. For g∈GL(n,R),
+U(g)*L(-g⁻¹)*U(g)*U(-I)*L(I)*U(-I)=diagUnit g.
+-/
 theorem diagUnit_eq_six_unipotent (g : GL n R) :
     BlockElementary.upperUnit (↑g : Matrix n n R) *
       BlockElementary.lowerUnit (-(↑(g⁻¹) : Matrix n n R)) *
@@ -171,9 +192,22 @@ theorem diagUnit_mem (g : GL n R) :
   exact Subgroup.mul_mem _ (Subgroup.mul_mem _ (Subgroup.mul_mem _
     (Subgroup.mul_mem _ (Subgroup.mul_mem _ hg hg_inv) hg) h_m1) h1) h_m1
 
-/-! ### Commutator `diag(⁅g,h⁆,1)` -/
+/-!
+### Padded commutator identity
 
-/-- `diag(⁅g,h⁆,1)` equals `diagUnit g * diagUnit h * diagUnit (g⁻¹*h⁻¹)`. -/
+Let R be a ring and n a finite index type. Write GL(n,R) for the group of invertible n×n
+matrices, and E_ij(a)=I+a*e_ij for i≠j, where e_ij is the single-entry matrix. For g∈GL(n,R),
+put D(g)=diag(g,g⁻¹) on n⊕n, U(A)=[[I,A],[0,I]] and L(A)=[[I,0],[A,I]]. For g,h∈GL(n,R),
+D(g)D(h)D(g⁻¹h⁻¹)=diag([g,h],I), where [g,h]=ghg⁻¹h⁻¹.
+-/
+
+/-- **Product of diagonal inverse pairs gives a padded commutator.**
+
+Let R be a ring and n a finite index type. Write GL(n,R) for the group of invertible n×n
+matrices, and E_ij(a)=I+a*e_ij for i≠j, where e_ij is the single-entry matrix. For g∈GL(n,R),
+put D(g)=diag(g,g⁻¹) on n⊕n, U(A)=[[I,A],[0,I]] and L(A)=[[I,0],[A,I]]. For g,h∈GL(n,R),
+diagUnit g*diagUnit h*diagUnit(g⁻¹*h⁻¹)=blockDiagonalOne n n R [g,h], with [g,h]=g*h*g⁻¹*h⁻¹.
+-/
 theorem diagUnit_commutator_eq (g h : GL n R) :
     diagUnit g * diagUnit h * diagUnit (g⁻¹ * h⁻¹) =
       blockDiagonalOne n n R ⁅g, h⁆ := by
@@ -216,9 +250,19 @@ theorem diag_commutator_mem (g h : GL n R) :
   exact Subgroup.mul_mem _ (Subgroup.mul_mem _ (diagUnit_mem g) (diagUnit_mem h))
     (diagUnit_mem (g⁻¹ * h⁻¹))
 
-/-! ### `Fin (n+n)` reindexed commutator -/
+/-!
+### Reindexed finite padded commutator
 
-/-- Reindexed `diag(⁅g,h⁆,1)` in `GL (Fin (k+k))`. -/
+Let R be a ring, k∈ℕ and g,h∈GL(Fin k,R). The padded commutator diag([g,h],I_k) on Fin k⊕Fin k
+is reindexed to Fin(k+k), with [g,h]=g*h*g⁻¹*h⁻¹.
+-/
+
+/-- **Padded commutator on a doubled finite index.**
+
+Let R be a ring, k∈ℕ and g,h∈GL(Fin k,R). The element reindexedDiagCommutatorUnit k R g
+h∈GL(Fin(k+k),R) is diag(g*h*g⁻¹*h⁻¹,I_k), reindexed from Fin k⊕Fin k by the canonical
+finite-sum equivalence.
+-/
 def reindexedDiagCommutatorUnit (k : ℕ) (R : Type*) [Ring R]
     (g h : GL (Fin k) R) : GL (Fin (k + k)) R :=
   reindexMulEquiv (finSumFinEquiv (m := k) (n := k))

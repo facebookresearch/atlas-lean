@@ -1,3 +1,5 @@
-# Mem comap
+# Membership in a continuous open-normal preimage
 
-Membership in an open-normal preimage is literal preimage membership.
+Let `G,H` be groups with topologies
+and `φ : H →ₜ* G` a continuous homomorphism. for `U≤G` open normal and `h∈H`, `h∈comap φ
+U` exactly when `φ(h)∈U`.

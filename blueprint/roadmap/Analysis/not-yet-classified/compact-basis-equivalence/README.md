@@ -1,4 +1,4 @@
-# Compact Basis Equivalence
+# Compact operators as the completion of basis matrix corners
 
-- [Completed Compact Embedding surjective](completed-compact-embedding-surjective.md)
-- [Compact Matrix Completion Equiv](compact-matrix-completion-equiv.md)
+- [Surjectivity of the completed basis compact map](completed-compact-embedding-surjective.md)
+- [Star equivalence between completed basis matrices and compacts](compact-matrix-completion-equiv.md)

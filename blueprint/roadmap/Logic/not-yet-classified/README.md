@@ -9,4 +9,4 @@ Topics added since this subject's fields were last revised.
 - [KMRevision](part-01/kmrevision/README.md)
 - [KMUpdate](part-01/kmupdate/README.md)
 - [Soundness of Farkas certificates](part-03/farkas-infeasible.md)
-- [Two Point Sum Compl](two-point-sum-compl.md)
+- [Equivalence isolating two distinct points and their complement](two-point-sum-compl.md)

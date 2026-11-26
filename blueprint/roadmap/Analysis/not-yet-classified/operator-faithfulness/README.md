@@ -1,6 +1,6 @@
-# Operator Faithfulness
+# Faithfulness of finite tensors of bounded operators
 
-- [Map LCompletion Linear](map-lcompletion-linear.md)
-- [Map LCompletion Linear tmul](map-lcompletion-linear-tmul.md)
-- [Map LCompletion Linear coe](map-lcompletion-linear-coe.md)
-- [Map LCompletion Linear injective](map-lcompletion-linear-injective.md)
+- [Linear tensor action of bounded factor maps](map-lcompletion-linear.md)
+- [Pure operator tensor acts as the completed tensor map](map-lcompletion-linear-tmul.md)
+- [Algebraic values of the completed finite-operator tensor action](map-lcompletion-linear-coe.md)
+- [Injectivity of the completed finite-operator tensor action](map-lcompletion-linear-injective.md)

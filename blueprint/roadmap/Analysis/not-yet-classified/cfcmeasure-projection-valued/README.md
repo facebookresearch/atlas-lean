@@ -1,8 +1,8 @@
-# CFCMeasure Projection Valued
+# The PVM determined by a normal operator's continuous calculus
 
-- [Normal CFCPVM](normal-cfcpvm.md)
-- [Normal CFCPVM apply](normal-cfcpvm-apply.md)
-- [Normal CFCPVM scalar Measure](normal-cfcpvm-scalar-measure.md)
-- [Normal CFCPVM scalar Measure regular](normal-cfcpvm-scalar-measure-regular.md)
-- [Normal CFCPVM spectral Integral continuous](normal-cfcpvm-spectral-integral-continuo.md)
-- [Normal CFCPVM spectral Integral coordinate](normal-cfcpvm-spectral-integral-coordina.md)
+- [Spectral PVM from continuous functional calculus](normal-cfcpvm.md)
+- [Set projection of the CFC spectral measure](normal-cfcpvm-apply.md)
+- [Scalar measure of the CFC spectral PVM](normal-cfcpvm-scalar-measure.md)
+- [Regular variation of CFC spectral coefficients](normal-cfcpvm-scalar-measure-regular.md)
+- [Continuous spectral integration equals CFC](normal-cfcpvm-spectral-integral-continuo.md)
+- [Recovery of a normal operator by its spectral coordinate](normal-cfcpvm-spectral-integral-coordina.md)

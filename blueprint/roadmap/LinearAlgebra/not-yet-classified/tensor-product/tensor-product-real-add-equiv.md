@@ -1,3 +1,4 @@
-# Tensor Product Real Add Equiv
+# Additive equivalence of the real complex self-tensor
 
-Additive coercion of the same canonical algebra equivalence.
+The additive equivalence tensorProductRealAddEquiv:ℂ⊗_ℝℂ≃+ℂ×ℂ is Θ, with
+Θ(z⊗w)=(zw,z*conj(w)).

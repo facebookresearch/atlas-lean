@@ -1,4 +1,4 @@
-# Killed By
+# Natural-number torsion passes to tensor products
 
-- [Nsmul eq zero of left](nsmul-eq-zero-of-left.md)
-- [Nsmul eq zero of right](nsmul-eq-zero-of-right.md)
+- [Torsion of the first factor annihilates the tensor](nsmul-eq-zero-of-left.md)
+- [Torsion of the second factor annihilates the tensor](nsmul-eq-zero-of-right.md)

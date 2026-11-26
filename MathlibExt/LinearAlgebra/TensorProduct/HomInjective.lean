@@ -16,15 +16,11 @@ public import Mathlib.LinearAlgebra.TensorProduct.Basis
 public import Mathlib.LinearAlgebra.TensorProduct.Map
 
 /-!
-# Faithfulness of the algebraic tensor action on linear maps
+# Injectivity of algebraic tensor evaluation on linear maps
 
-The canonical tensor evaluation maps are injective over a field. Coordinates
-in a basis of the vector factor detect every coefficient linear map. Applying
-this twice proves faithfulness of the tensor action on two spaces, without
-finite-dimension assumptions.
-
-This injectivity supplies the algebraic faithfulness needed by tensor
-representations and completion maps.
+Let K be a field and all modules vector spaces in independent universes. The maps
+P⊗Hom(M,N)→Hom(M,P⊗N), Hom(P,M)⊗N→Hom(P,M⊗N), and Hom(M,M₂)⊗Hom(N,N₂)→Hom(M⊗N,M₂⊗N₂) are
+injective, with the usual pure-tensor evaluations.
 -/
 
 @[expose] public section
@@ -42,7 +38,11 @@ variable {M : Type uM} [AddCommGroup M] [Module R M]
 variable {N : Type uN} [AddCommGroup N] [Module R N]
 variable {P : Type uP} [AddCommGroup P] [Module R P]
 
-/-- Tensoring vectors with linear maps gives a faithful pointwise tensor action. -/
+/-- **Faithfulness of vector-first tensor evaluation.**
+
+Let K be a field and P,M,N K-vector spaces. The linear map P⊗_KHom_K(M,N)→Hom_K(M,P⊗_KN),
+sending p⊗f to x↦p⊗f(x), is injective, even without finite-dimensionality.
+-/
 theorem lTensorHomToHomLTensor_injective :
     Function.Injective (lTensorHomToHomLTensor (RingHom.id R) P M N) := by
   classical
@@ -68,7 +68,11 @@ theorem lTensorHomToHomLTensor_injective :
   rw [← hcoord z i p, ← hcoord w i p] at hc
   exact hc
 
-/-- Tensoring linear maps with vectors also gives a faithful tensor action. -/
+/-- **Faithfulness of map-first tensor evaluation.**
+
+Let K be a field and P,M,N K-vector spaces. The linear map Hom_K(P,M)⊗_KN→Hom_K(P,M⊗_KN),
+f⊗n↦(p↦f(p)⊗n), is injective.
+-/
 theorem rTensorHomToHomRTensor_injective :
     Function.Injective (rTensorHomToHomRTensor (RingHom.id R) P M N) := by
   have hflip (z : (P →ₗ[R] M) ⊗[R] N) (p : P) :
@@ -93,7 +97,11 @@ theorem rTensorHomToHomRTensor_injective :
 variable {M₂ : Type uM₂} [AddCommGroup M₂] [Module R M₂]
 variable {N₂ : Type uN₂} [AddCommGroup N₂] [Module R N₂]
 
-/-- The tensor product of two linear maps acts faithfully on the algebraic tensor of their inputs. -/
+/-- **Faithfulness of the tensor product action of two linear-map spaces.**
+
+Let K be a field and M,N,M₂,N₂ K-vector spaces. The map
+Hom(M,M₂)⊗_KHom(N,N₂)→Hom(M⊗_KN,M₂⊗_KN₂), f⊗g↦(x⊗y↦f(x)⊗g(y)), is injective.
+-/
 theorem homTensorHomMap_injective :
     Function.Injective (homTensorHomMap (RingHom.id R) M N M₂ N₂) := by
   have heval (z : (M →ₗ[R] M₂) ⊗[R] (N →ₗ[R] N₂)) (m : M) (n : N) :

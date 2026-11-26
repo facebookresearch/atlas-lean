@@ -16,14 +16,14 @@ public import Mathlib.Algebra.Group.Pointwise.Set.Card
 public import Mathlib.Topology.Instances.Discrete
 
 /-!
-# Counting Haar measure on arbitrary discrete groups
+# Regular counting Haar measure on arbitrary discrete groups
 
-Counting measure is regular on a discrete Borel space: compact sets are
-finite, every set is open, and finite subsets approximate the infinite
-counting mass. Individual group translations preserve the counting measure,
-so it is an actual regular Haar measure and has trivial modular character.
-The group need not be countable, and no global sigma-finiteness or joint
-measurability of multiplication is supplied.
+Counting measure is regular on every discrete Borel space. For a discrete Borel group, each left
+and right translation preserves it, so counting measure is Haar and the modular character is
+one.
+
+The space or group may be uncountable. No sigma-finiteness or joint measurability of
+multiplication is imposed.
 -/
 
 @[expose] public section
@@ -40,7 +40,9 @@ noncomputable section
 
 universe uX uG
 
-/-- Counting measure on any discrete Borel space is regular, including uncountable spaces. -/
+/-- **Regularity of counting measure on a discrete Borel space.** Let `X` be a discrete
+topological space with its Borel measurable structure. Counting measure on `X` is regular,
+even when `X` is uncountable. -/
 instance regular_count_of_discrete
     {X : Type uX} [TopologicalSpace X] [DiscreteTopology X] [MeasurableSpace X] [BorelSpace X] :
     (count : Measure X).Regular where
@@ -61,7 +63,9 @@ instance regular_count_of_discrete
 variable {G : Type uG} [Group G] [TopologicalSpace G] [DiscreteTopology G]
   [MeasurableSpace G] [BorelSpace G]
 
-/-- Each discrete left translation preserves counting measure without joint measurability. -/
+/-- **Counting measure invariant under each left group translation.** Let `G` be any discrete
+group with a topology and its Borel measurable structure; no countability assumption is
+imposed. for every `g∈G`, the map `x ↦ gx` preserves counting measure. -/
 instance isMulLeftInvariant_count_of_discrete : (count : Measure G).IsMulLeftInvariant where
   map_mul_left_eq_self g := by
     have hm : Measurable (fun x : G => g * x) :=
@@ -70,7 +74,9 @@ instance isMulLeftInvariant_count_of_discrete : (count : Measure G).IsMulLeftInv
     rw [map_apply hm hS, count_apply hS, count_apply (hS.preimage hm),
       encard_preimage_of_bijective (Group.mulLeft_bijective g)]
 
-/-- Each discrete right translation preserves counting measure without joint measurability. -/
+/-- **Counting measure invariant under each right group translation.** Let `G` be any discrete
+group with a topology and its Borel measurable structure; no countability assumption is
+imposed. for every `g∈G`, the map `x ↦ xg` preserves counting measure. -/
 instance isMulRightInvariant_count_of_discrete : (count : Measure G).IsMulRightInvariant where
   map_mul_right_eq_self g := by
     have hm : Measurable (fun x : G => x * g) :=
@@ -79,13 +85,18 @@ instance isMulRightInvariant_count_of_discrete : (count : Measure G).IsMulRightI
     rw [map_apply hm hS, count_apply hS, count_apply (hS.preimage hm),
       encard_preimage_of_bijective (Group.mulRight_bijective g)]
 
-/-- The actual counting measure is a Haar measure on any discrete Borel group. -/
+/-- **Counting Haar measure of a discrete Borel group.** Let `G` be any discrete group with a
+topology and its Borel measurable structure; no countability assumption is imposed.
+counting measure is Haar: it is left invariant, finite on compact sets, and positive on
+every nonempty open set. -/
 instance isHaarMeasure_count_of_discrete : (count : Measure G).IsHaarMeasure where
   lt_top_of_isCompact _ hK := count_apply_lt_top.mpr hK.finite_of_discrete
   map_mul_left_eq_self := isMulLeftInvariant_count_of_discrete.map_mul_left_eq_self
   open_pos _ _ hU := count_ne_zero_iff.mpr hU
 
-/-- Every discrete group has trivial modular character, as witnessed by actual counting Haar. -/
+/-- **Trivial modular character of a discrete group.** Let `G` be any discrete group with a
+topology and its Borel measurable structure; no countability assumption is imposed. for
+every `g∈G`, `modularCharacter g=1`. -/
 theorem modularCharacter_eq_one_of_discrete (g : G) : modularCharacter g = 1 := by
   change modularCharacterFun g = 1
   rw [modularCharacterFun_eq_haarScalarFactor (count : Measure G) g]

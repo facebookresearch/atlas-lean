@@ -1,4 +1,5 @@
-# Coset Projection
+# Continuous nested coset projection
 
-The continuous projection from left `K`-cosets to left `H`-cosets
-induced by an inclusion `K ≤ H`.  No normality is required.
+Let `G` be a group with a topology and `K≤H`
+subgroups. `cosetProjection : G/K → G/H` sends each left coset of `g` modulo `K` to the
+left coset of `g` modulo `H`. No normality is required.

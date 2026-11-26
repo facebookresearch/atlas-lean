@@ -1,3 +1,5 @@
-# Signed Integral Equiv apply
+# Forward value of the real signed Riesz equivalence
 
-The signed Riesz equivalence sends a regular signed measure to its integral functional.
+Let `X` be a compact Hausdorff
+space with its Borel measurable structure. for regular signed `s`, `signedIntegralEquiv
+s=signedIntegralDual s`.

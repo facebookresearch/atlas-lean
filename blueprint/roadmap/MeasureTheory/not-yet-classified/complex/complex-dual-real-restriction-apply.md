@@ -1,3 +1,5 @@
-# Complex Dual Real Restriction apply
+# Value of the real continuous-dual restriction
 
-The real restriction evaluates by taking the real part of the functional on the complexified function.
+For a topological space `X`, continuous
+complex-linear `Λ` on `C(X,ℂ)` and real continuous `f`, `complexDualRealRestriction Λ f=Re
+Λ(realContinuousMapCLM f)`.

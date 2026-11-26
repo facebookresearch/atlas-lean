@@ -1,3 +1,4 @@
-# Circle Fejer Kernel norm
+# Norm of the Fejér kernel
 
-The norm of the genuine complex kernel equals its nonnegative real density.
+For every `N : ℕ` and `x : UnitAddCircle`,
+`‖circleFejerKernel N x‖ = (circleFejerKernel N x).re`.

@@ -1,15 +1,15 @@
-# Whitehead
+# Finite Whitehead block factorization
 
-- [Diag Unit](diag-unit.md)
+- [Diagonal unit with a matrix and its inverse](diag-unit.md)
 
 ## Six-unipotent Whitehead identity
 
-- [Diag Unit eq six unipotent](diag-unit-eq-six-unipotent.md)
+- [Six-unipotent factorization of a diagonal inverse pair](diag-unit-eq-six-unipotent.md)
 
-## Commutator `diag(⁅g,h⁆,1)`
+## Padded diagonal commutators
 
-- [Diag Unit commutator eq](diag-unit-commutator-eq.md)
+- [Product of diagonal inverse pairs gives a padded commutator](diag-unit-commutator-eq.md)
 
-## `Fin (n+n)` reindexed commutator
+## Commutators on doubled finite indices
 
-- [Reindexed Diag Commutator Unit](reindexed-diag-commutator-unit.md)
+- [Padded commutator on a doubled finite index](reindexed-diag-commutator-unit.md)

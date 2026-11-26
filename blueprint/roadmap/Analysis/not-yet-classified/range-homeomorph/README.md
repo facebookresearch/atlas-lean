@@ -1,4 +1,4 @@
-# Range Homeomorph
+# Ultraweak homeomorphism onto an injective normal range
 
-- [Ultraweak Range Homeomorph](ultraweak-range-homeomorph.md)
-- [Ultraweak Range Homeomorph apply](ultraweak-range-homeomorph-apply.md)
+- [Ultraweak homeomorphism onto a normal map's range](ultraweak-range-homeomorph.md)
+- [Forward value of the ultraweak range homeomorphism](ultraweak-range-homeomorph-apply.md)

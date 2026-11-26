@@ -1,3 +1,5 @@
-# Continuous Integral Positive apply one
+# Total mass of a positive integral functional
 
-The positive integral functional takes the constant one function to the measure's total mass.
+Let `X` be a compact topological space
+with its Borel measurable structure. for finite `μ`, `continuousIntegralPositive μ
+1=μ.real(X)`.

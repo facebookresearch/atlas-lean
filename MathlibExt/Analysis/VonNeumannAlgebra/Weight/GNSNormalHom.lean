@@ -15,14 +15,14 @@ public import MathlibExt.Analysis.VonNeumannAlgebra.Weight.GNSNormalCoefficients
 public import MathlibExt.Analysis.VonNeumannAlgebra.NormalHom.VectorFunctionalCriterion
 
 /-!
-# The original normal weight has its computed normal GNS star homomorphism
+# Normal star homomorphism of the weight GNS representation
 
-The existing original unital GNS star map is restricted to the full concrete
-operator von Neumann algebra on its actual Hilbert completion. Every vector
-functional pullback is exactly its original GNS representation coefficient,
-whose actual normal membership is proved from the original normal weight.
-The stock vector-functional criterion constructs normality of that same
-map. No normal homomorphism, GNS model or output certificate is supplied.
+For a normal extended weight on a concrete von Neumann algebra, its GNS left star representation
+`π : M → B(H_φ)` is ultraweakly continuous. It therefore defines a normal unital complex star
+homomorphism into the full operator von Neumann algebra on `H_φ`.
+
+Its operator value is the completed left multiplication with `π(a)Λ(x)=Λ(a*x)`. Faithfulness and
+semifiniteness are not required for this normality construction.
 -/
 
 @[expose] public section
@@ -42,7 +42,14 @@ universe u
 
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- Construct normality of the same original completed weight GNS star representation. -/
+/-- **Normal GNS homomorphism of a normal weight.** Let `H` be a complete complex Hilbert
+space and `M ⊆ B(H)` a concrete von Neumann algebra. Let `φ : M₊ → [0,∞]` be an extended
+positive weight: additive, homogeneous for finite nonnegative real scalars, and zero at
+zero. Put `n_φ={x : φ(x* x)<∞}`, and let `Λ : n_φ → H_φ` be the dense GNS map into the
+weight Hilbert completion. Its representation `π` satisfies `π(a)Λ(x)=Λ(a*x)`. Assume `φ`
+preserves least upper bounds of nonempty norm-bounded directed positive sets.
+`normalWeightGNSStarAlgHom M φ : NormalStarAlgHom M B(H_φ)` is the unital star
+representation `π`, continuous for the ultraweak topologies. -/
 def normalWeightGNSStarAlgHom (M : VonNeumannAlgebra H) (φ : Weight M)
     (hφ : IsNormalWeight M φ) : NormalStarAlgHom M (⊤ : VonNeumannAlgebra φ.GNS) := by
   let N : VonNeumannAlgebra φ.GNS := ⊤
@@ -63,7 +70,13 @@ def normalWeightGNSStarAlgHom (M : VonNeumannAlgebra H) (φ : Weight M)
   rw [hvalue]
   exact normalWeightGNSCoefficient_mem M φ hφ η ξ
 
-/-- The actual normal map keeps the same original completed GNS operator at every source element. -/
+/-- **Operator value of the normal GNS homomorphism.** Let `H` be a complete complex Hilbert
+space and `M ⊆ B(H)` a concrete von Neumann algebra. Let `φ : M₊ → [0,∞]` be an extended
+positive weight: additive, homogeneous for finite nonnegative real scalars, and zero at
+zero. Put `n_φ={x : φ(x* x)<∞}`, and let `Λ : n_φ → H_φ` be the dense GNS map into the
+weight Hilbert completion. Its representation `π` satisfies `π(a)Λ(x)=Λ(a*x)`. Assume `φ`
+preserves least upper bounds of nonempty norm-bounded directed positive sets. for `a ∈ M`,
+the operator underlying `normalWeightGNSStarAlgHom M φ a` is `φ.gnsLeftStarAlgHom a=π(a)`. -/
 @[simp]
 theorem normalWeightGNSStarAlgHom_apply (M : VonNeumannAlgebra H) (φ : Weight M)
     (hφ : IsNormalWeight M φ) (a : M) :

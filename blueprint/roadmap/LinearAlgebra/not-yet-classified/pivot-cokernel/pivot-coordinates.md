@@ -1,4 +1,4 @@
-# Pivot Coordinates
+# Coordinates for a distinguished pivot
 
-The actual canonical coordinates for the singleton pivot and remaining
-indices, using existing linear equivalences.
+For a commutative ring R and finite I, the R-linear equivalence R^(1 ⊕ I) ≃ R × R^I sends z to
+(z(*), i ↦ z(i)); its inverse combines the singleton coordinate and the I-coordinates.

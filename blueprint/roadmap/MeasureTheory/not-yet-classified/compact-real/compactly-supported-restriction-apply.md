@@ -1,3 +1,5 @@
-# Compactly Supported Restriction apply
+# Value of a compact-support positive-functional restriction
 
-Restricting the positive functional to compactly supported functions preserves its values.
+For a topological space
+`X`, positive continuous real-linear `P : C(X,ℝ) → ℝ` and `f∈C_c(X,ℝ)`,
+`compactlySupportedRestriction P f=P(f.toContinuousMap)`.

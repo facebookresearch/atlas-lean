@@ -12,20 +12,12 @@ module
 public import Mathlib.LinearAlgebra.DFinsupp
 
 /-!
-# Dependent finitely supported functions with product fibers
+# Dependent direct sums with product fibers
 
-For dependent module families `M N : ι → Type*`, a finitely supported
-function with product-valued fibers is linearly equivalent to a pair of
-finitely supported functions:
-
-```text
-(Π₀ i, M i × N i) ≃ₗ[R] (Π₀ i, M i) × (Π₀ i, N i).
-```
-
-The forward map applies the two projections with `DFinsupp.mapRange`.  The
-inverse uses `DFinsupp.zipWith`; its finite-support witness is therefore built
-from the union of the two input supports.  No decidable equality on the index
-type is required by the equivalence itself.
+Let R be a semiring, I an arbitrary index type and M_i,N_i R-semimodules. Write ⊕iM_i for
+dependent finitely supported vectors. The equivalence Φ:⊕i(M_i×N_i)≃ₗ[R](⊕iM_i)×(⊕iN_i) splits
+coordinates, with inverse (m,n)↦(i↦(m_i,n_i)). The forward map takes coordinate projections;
+the inverse support lies in the union of the two input supports.
 -/
 
 @[expose] public section
@@ -42,8 +34,12 @@ variable {M : ι → Type uM} {N : ι → Type uN}
 variable [∀ i, AddCommMonoid (M i)] [∀ i, Module R (M i)]
 variable [∀ i, AddCommMonoid (N i)] [∀ i, Module R (N i)]
 
-/-- Split a dependent finitely supported function with product fibers into
-the pair of its component families. -/
+/-- **Linear equivalence splitting product fibers.**
+
+Let R be a semiring, I an arbitrary index type and M_i,N_i R-semimodules. Write ⊕iM_i for
+dependent finitely supported vectors. The equivalence Φ:⊕i(M_i×N_i)≃ₗ[R](⊕iM_i)×(⊕iN_i) splits
+coordinates, with inverse (m,n)↦(i↦(m_i,n_i)). The map prodLEquiv is Φ.
+-/
 def prodLEquiv :
     (Π₀ i, M i × N i) ≃ₗ[R] (Π₀ i, M i) × (Π₀ i, N i) where
   toFun x :=
@@ -60,28 +56,49 @@ def prodLEquiv :
   map_smul' r x := by
     apply Prod.ext <;> ext i <;> rfl
 
-/-- Coordinate formula for the first forward component. -/
+/-- **First projected direct-sum coordinate.**
+
+Let R be a semiring, I an arbitrary index type and M_i,N_i R-semimodules. Write ⊕iM_i for
+dependent finitely supported vectors. The equivalence Φ:⊕i(M_i×N_i)≃ₗ[R](⊕iM_i)×(⊕iN_i) splits
+coordinates, with inverse (m,n)↦(i↦(m_i,n_i)). For x∈⊕i(M_i×N_i), Φ(x)_1(i)=x_i.1.
+-/
 @[simp]
 theorem prodLEquiv_apply_fst_apply
     (x : Π₀ i, M i × N i) (i : ι) :
     (prodLEquiv (R := R) x).1 i = (x i).1 :=
   rfl
 
-/-- Coordinate formula for the second forward component. -/
+/-- **Second projected direct-sum coordinate.**
+
+Let R be a semiring, I an arbitrary index type and M_i,N_i R-semimodules. Write ⊕iM_i for
+dependent finitely supported vectors. The equivalence Φ:⊕i(M_i×N_i)≃ₗ[R](⊕iM_i)×(⊕iN_i) splits
+coordinates, with inverse (m,n)↦(i↦(m_i,n_i)). For x∈⊕i(M_i×N_i), Φ(x)_2(i)=x_i.2.
+-/
 @[simp]
 theorem prodLEquiv_apply_snd_apply
     (x : Π₀ i, M i × N i) (i : ι) :
     (prodLEquiv (R := R) x).2 i = (x i).2 :=
   rfl
 
-/-- Coordinate formula for the inverse product assembly. -/
+/-- **Coordinate of the inverse product assembly.**
+
+Let R be a semiring, I an arbitrary index type and M_i,N_i R-semimodules. Write ⊕iM_i for
+dependent finitely supported vectors. The equivalence Φ:⊕i(M_i×N_i)≃ₗ[R](⊕iM_i)×(⊕iN_i) splits
+coordinates, with inverse (m,n)↦(i↦(m_i,n_i)). For m∈⊕iM_i,n∈⊕iN_i, Φ⁻¹(m,n)_i=(m_i,n_i).
+-/
 @[simp]
 theorem prodLEquiv_symm_apply_apply
     (x : (Π₀ i, M i) × (Π₀ i, N i)) (i : ι) :
     ((prodLEquiv (R := R)).symm x) i = (x.1 i, x.2 i) :=
   rfl
 
-/-- Splitting a one-coordinate vector splits its product-valued coordinate. -/
+/-- **Splitting a single product-fiber vector.**
+
+Let R be a semiring, I an arbitrary index type and M_i,N_i R-semimodules. Write ⊕iM_i for
+dependent finitely supported vectors. The equivalence Φ:⊕i(M_i×N_i)≃ₗ[R](⊕iM_i)×(⊕iN_i) splits
+coordinates, with inverse (m,n)↦(i↦(m_i,n_i)). For i∈I and (m,n)∈M_i×N_i, Φ(δ_i(m,n))=(δ_i
+m,δ_i n), where δ_i is the one-coordinate vector.
+-/
 @[simp]
 theorem prodLEquiv_single [DecidableEq ι]
     (i : ι) (x : M i × N i) :
@@ -93,8 +110,12 @@ theorem prodLEquiv_single [DecidableEq ι]
   · exact DFinsupp.mapRange_single
       (f := fun i (p : M i × N i) => p.2) (hf := fun _ => rfl)
 
-/-- The inverse sends two one-coordinate vectors at the same index to the
-corresponding product-valued one-coordinate vector. -/
+/-- **Combining two single vectors at the same index.**
+
+Let R be a semiring, I an arbitrary index type and M_i,N_i R-semimodules. Write ⊕iM_i for
+dependent finitely supported vectors. The equivalence Φ:⊕i(M_i×N_i)≃ₗ[R](⊕iM_i)×(⊕iN_i) splits
+coordinates, with inverse (m,n)↦(i↦(m_i,n_i)). For i∈I,m∈M_i,n∈N_i, Φ⁻¹(δ_i m,δ_i n)=δ_i(m,n).
+-/
 @[simp]
 theorem prodLEquiv_symm_single_single [DecidableEq ι]
     (i : ι) (m : M i) (n : N i) :

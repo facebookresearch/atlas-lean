@@ -14,7 +14,13 @@ module
 public import MathlibExt.LinearAlgebra.Matrix.ZeroExtension
 public import Mathlib.LinearAlgebra.Matrix.Trace
 
-/-! The added zero diagonal entries do not change the actual finite matrix trace. -/
+/-!
+# Trace preserved by zero extension
+
+Let A be an additive commutative monoid, r≤s natural numbers and B an r×r matrix over A.
+Extend B to s×s by keeping its top-left block and setting every other entry to zero. The sum
+of the diagonal entries is unchanged, including r=0.
+-/
 
 @[expose] public section
 
@@ -26,7 +32,11 @@ universe v
 
 variable {A : Type v} [AddCommMonoid A]
 
-/-- The true top-left zero extension preserves trace, including the empty source matrix. -/
+/-- **Trace of a top-left zero extension.**
+
+Let A be an additive commutative monoid, r≤s and B:Matrix(Fin r,Fin r,A). Then
+trace(zeroExtend h B)=trace(B), with trace the finite diagonal sum.
+-/
 theorem zeroExtend_trace {r s : ℕ} (h : r ≤ s) (B : Matrix (Fin r) (Fin r) A) :
     Matrix.trace (zeroExtend h B) = Matrix.trace B := by
   obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le h

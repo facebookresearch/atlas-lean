@@ -14,23 +14,11 @@ public import Mathlib.LinearAlgebra.FiniteDimensional.Basic
 public import Mathlib.LinearAlgebra.Matrix.Rank
 
 /-!
-# Rank divisibility from a division-ring action
+# Rank divisibility from compatible division-algebra actions
 
-An `L`-linear map that also preserves an actual `D`-module action has the same
-range over the common base field, whether bundled as an `L`-linear or a
-`D`-linear map. If `L` has base-field dimension `d` and the division ring `D`
-has base-field dimension `d²`, its range over `L` has dimension divisible by `d`.
-
-The two scalar actions need only extend the same base-field action. In
-particular, no commutation between `L` and `D`, or `L`-algebra structure on `D`,
-is required. The matrix theorem applies to the actual `Matrix.mulVec` action.
-
-## References
-
-Ivanyos, Qiao and Subrahmanyam, *Constructive noncommutative rank computation
-in deterministic polynomial time over fields of arbitrary characteristics*,
-20 January 2016 addendum, Claim 11. Construction of the source opposite action,
-cyclic division algebra, splitting matrices and algorithmic bounds is separate.
+Let F,L be fields,D a division F-algebra,dim_F L=d>0 and dim_F D=d². If an L-linear map from a
+finite-dimensional L-space also preserves compatible D-actions on source and target, its
+L-rank is divisible by d. The D and L actions agree over F, not necessarily over each other.
 -/
 
 @[expose] public section
@@ -76,8 +64,12 @@ private theorem exists_divisionLinearMap_range (f : V →ₗ[L] W)
     _ = Module.finrank F L * Module.finrank L f.range :=
       (Module.finrank_mul_finrank F L (f.range.restrictScalars F)).symm
 
-/-- An actual map preserving both scalar actions has `L`-range dimension divisible by `d`,
-when the scalar dimensions over the common base field are `d` and `d²`. -/
+/-- **Division-ring equivariance forces divisibility of a range dimension.**
+
+Let F,L be fields,D a division F-algebra,V a finite-dimensional L-space and W an L-space, both
+also D-modules with compatible common F-actions. Suppose f:V→W is L-linear and D-equivariant.
+If dim_F L=d>0 and dim_F D=d², then d divides dim_L range(f).
+-/
 theorem dvd_finrank_range_of_divisionRing_action (F : Type uF) (D : Type uD)
     [Field F] [DivisionRing D] [Algebra F L] [Algebra F D]
     [Module F V] [Module D V] [Module F W] [Module D W]
@@ -102,8 +94,12 @@ variable {m : Type um} {n : Type un} [Fintype n]
   [Module D (m → L)] [Module D (n → L)]
   [IsScalarTower F D (m → L)] [IsScalarTower F D (n → L)]
 
-/-- A matrix with finitely many columns intertwining actual division-ring actions has rank divisible
-by `d`, for scalar dimensions `d` and `d²` over the common base field. -/
+/-- **Matrix rank divisibility under division-ring equivariance.**
+
+Let F,L be fields,D a division F-algebra,dim_F L=d>0 and dim_F D=d². Let n be finite,m
+arbitrary, with D-actions on L^n,L^m compatible with their F-actions. If A:L^n→L^m is a matrix
+map commuting with D, then d divides rank_L(A).
+-/
 theorem dvd_rank_of_divisionRing_action (F : Type uF) (D : Type uD)
     [Field F] [DivisionRing D] [Algebra F L] [Algebra F D]
     [FiniteDimensional F L] [Module D (m → L)] [Module D (n → L)]

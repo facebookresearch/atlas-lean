@@ -20,10 +20,9 @@ import Mathlib.Tactic.Abel
 /-!
 # Integer index of a product of linear maps
 
-Use the existing kernel-minus-cokernel integer index. Finiteness is required
-only for the two kernels and two cokernels, not for the four ambient stages.
-The scalar can be a DivisionRing; no topology, norm or completeness is used.
-The quotient identification is proved from the actual quotient maps.
+Let k be a division ring and S:E₀→F₀,T:E₁→F₁ linear maps. If their kernels and cokernels are
+finite-dimensional, ind(S)=dim ker(S)-dim coker(S) and ind(S×T)=ind(S)+ind(T). The four
+ambient modules may be infinite-dimensional.
 -/
 
 @[expose] public section
@@ -39,8 +38,12 @@ variable [AddCommGroup E₁] [Module k E₁]
 variable [AddCommGroup F₀] [Module k F₀]
 variable [AddCommGroup F₁] [Module k F₁]
 
-/-- The integer index is additive for products with finite kernels and cokernels.
-No finite-dimensional assumption is imposed on an ambient source or target. -/
+/-- **Additive index formula for a product map.**
+
+Let k be a division ring, S:E₀→F₀,T:E₁→F₁ linear, and assume ker S,ker T,F₀/range S,F₁/range T
+finite-dimensional. Then (S.prodMap T).index=S.index+T.index in ℤ, with index the kernel
+dimension minus cokernel dimension.
+-/
 @[simp]
 theorem index_prodMap (S : E₀ →ₗ[k] F₀) (T : E₁ →ₗ[k] F₁)
     [FiniteDimensional k S.ker] [FiniteDimensional k T.ker]

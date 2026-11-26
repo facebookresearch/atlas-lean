@@ -1,4 +1,4 @@
-# Of Eq
+# The isometry associated to equality
 
-Equality of quadratic maps gives an isometry equivalence with identity
-underlying linear equivalence.
+Let R be a commutative semiring, M,N R-modules and Q,Q′ : M → N quadratic maps. If Q = Q′, the
+identity linear equivalence on M gives an isometry Q ≃ Q′.

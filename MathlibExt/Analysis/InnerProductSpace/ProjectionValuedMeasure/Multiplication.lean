@@ -19,17 +19,22 @@ public import Mathlib.MeasureTheory.Function.L2Space
 public import Mathlib.MeasureTheory.Integral.DominatedConvergence
 
 /-!
-# The indicator-multiplication projection-valued measure on `L²`
+# Indicator multiplication as a projection-valued measure
 
-For every measure `μ`, measurable sets act on `Lp ℂ 2 μ` by multiplication by their
-indicators. These operators form a projection-valued measure with strong countable additivity. No
-finiteness, sigma-finiteness, nonzero-measure, or nonempty-space hypothesis is required.
+For any measure `μ` on a measurable space `X`, let `L²(μ)=Lp ℂ 2 μ`. A measurable set `s`
+defines the orthogonal projection `P_s` by `(P_s f)(x)=1_s(x) f(x)` almost everywhere. Its range
+is the closed subspace of functions vanishing almost everywhere off `s`.
 
-## Primary source
+These projections satisfy `P_∅=0`, `P_X=I`, `P_(s∩t)=P_s P_t`, and `Σ_n P_(s_n) f=P_(⋃n s_n) f`
+in the Hilbert norm for pairwise disjoint measurable sets `s_n`. Assigning zero to nonmeasurable
+sets gives the indicator-multiplication PVM. No finiteness, sigma-finiteness, nonzero measure or
+nonempty-space condition is imposed.
 
-John B. Conway, *A Course in Functional Analysis*, 2nd ed., Chapter IX, §1,
-Example 1.6. The compact Borel-space example is generalized here to arbitrary
-measure spaces, with strong countable additivity expressed by pointwise `HasSum`.
+## Indicator spectral measures
+
+John B. Conway, A Course in Functional Analysis, second edition, Chapter IX, §1, Example 1.6,
+gives the compact Borel-space example. Here the measure space is arbitrary and countable
+additivity is strong operator additivity.
 -/
 
 @[expose] public section
@@ -87,14 +92,20 @@ private theorem norm_indicatorLinearMap_le (s : Set X) (hs : MeasurableSet s)
   apply ENNReal.toReal_mono (Lp.eLpNorm_ne_top f)
   exact eLpNorm_indicator_le (fun x ↦ f x) hs.nullMeasurableSet
 
-/-- Multiplication by a measurable-set indicator as a bounded operator on `L²`. -/
+/-- **Orthogonal projection by an indicator multiplier.** Let `X` be a measurable space, `μ`
+any measure on `X`, and `L²(μ)=Lp ℂ 2 μ`, with its Hilbert norm. for a measurable set `s`,
+`indicatorProjection μ s : L²(μ) →L[ℂ] L²(μ)` acts by `f ↦ 1_s f` almost everywhere, with
+norm at most one. -/
 @[no_expose]
 noncomputable def indicatorProjection (s : Set X) (hs : MeasurableSet s) :
     Lp ℂ 2 mu →L[ℂ] Lp ℂ 2 mu :=
   (indicatorLinearMap mu s hs).mkContinuous 1 fun f ↦ by
     simpa only [one_mul] using norm_indicatorLinearMap_le mu s hs f
 
-/-- The indicator projection has its expected pointwise representative. -/
+/-- **Almost-everywhere formula for an indicator projection.** Let `X` be a measurable space,
+`μ` any measure on `X`, and `L²(μ)=Lp ℂ 2 μ`, with its Hilbert norm. for a measurable `s ⊆
+X` and `f ∈ L²(μ)`, `(indicatorProjection μ s f)(x)=1_s(x) f(x)` for `μ`-almost every `x`.
+In Lean this is `indicatorProjection μ s hs f =ᵐ[μ] s.indicator f`. -/
 theorem indicatorProjection_apply (s : Set X) (hs : MeasurableSet s) (f : Lp ℂ 2 mu) :
     indicatorProjection mu s hs f =ᵐ[mu] s.indicator fun x ↦ f x :=
   ((Lp.memLp f).indicator hs.nullMeasurableSet).coeFn_toLp
@@ -121,7 +132,10 @@ theorem indicatorProjection_univ :
   filter_upwards [indicatorProjection_apply mu Set.univ MeasurableSet.univ f] with x hf
   simpa using hf
 
-/-- Indicator projections multiply by intersecting their measurable sets. -/
+/-- **Intersection product of indicator projections.** Let `X` be a measurable space, `μ` any
+measure on `X`, and `L²(μ)=Lp ℂ 2 μ`, with its Hilbert norm. for measurable sets `s,t`,
+`indicatorProjection μ (s∩t)=indicatorProjection μ s * indicatorProjection μ t`, with
+operator multiplication given by composition. -/
 theorem indicatorProjection_inter (s t : Set X) (hs : MeasurableSet s)
     (ht : MeasurableSet t) :
     indicatorProjection mu (s ∩ t) (hs.inter ht) =
@@ -137,7 +151,9 @@ theorem indicatorProjection_inter (s t : Set X) (hs : MeasurableSet s)
   rw [hst, hs']
   by_cases hxs : x ∈ s <;> by_cases hxt : x ∈ t <;> simp [hxs, hxt, ht']
 
-/-- Indicator projections are finitely additive on disjoint measurable sets. -/
+/-- **Additivity on disjoint measurable indicators.** Let `X` be a measurable space, `μ` any
+measure on `X`, and `L²(μ)=Lp ℂ 2 μ`, with its Hilbert norm. if measurable `s,t` are
+disjoint, `indicatorProjection μ (s∪t)=indicatorProjection μ s+indicatorProjection μ t`. -/
 theorem indicatorProjection_union {s t : Set X} (hs : MeasurableSet s)
     (ht : MeasurableSet t) (hdisj : Disjoint s t) :
     indicatorProjection mu (s ∪ t) (hs.union ht) =
@@ -156,7 +172,9 @@ theorem indicatorProjection_union {s t : Set X} (hs : MeasurableSet s)
   · exact (Set.disjoint_left.1 hdisj hxs hxt).elim
   all_goals simp [hxs, hxt]
 
-/-- Multiplication by an indicator is an orthogonal projection. -/
+/-- **Self-adjoint idempotence of an indicator multiplier.** Let `X` be a measurable space,
+`μ` any measure on `X`, and `L²(μ)=Lp ℂ 2 μ`, with its Hilbert norm. for a measurable set
+`s`, `P=indicatorProjection μ s` satisfies `P²=P` and `P*=P`. -/
 theorem indicatorProjection_isStarProjection (s : Set X) (hs : MeasurableSet s) :
     IsStarProjection (indicatorProjection mu s hs) := by
   constructor
@@ -174,12 +192,18 @@ theorem indicatorProjection_isStarProjection (s : Set X) (hs : MeasurableSet s) 
     rw [hf, hg]
     by_cases hx : x ∈ s <;> simp [hx]
 
-/-- The closed subspace of `L²` functions vanishing almost everywhere off `s`. -/
+/-- **Subspace of square-integrable functions supported on a set.** Let `X` be a measurable
+space, `μ` any measure on `X`, and `L²(μ)=Lp ℂ 2 μ`, with its Hilbert norm. for any `s ⊆
+X`, `indicatorRange μ s` is the complex submodule `{f ∈ L²(μ) : f(x)=0 for μ-almost every
+x outside s}`. -/
 abbrev indicatorRange (s : Set X) : Submodule ℂ (Lp ℂ 2 mu) :=
   MathlibExt.MeasureTheory.Function.Lp.supportedOn
     (𝕜 := ℂ) (E := ℂ) (p := 2) mu s
 
-/-- The range of the indicator projection consists exactly of functions supported on the set. -/
+/-- **Range of an indicator projection.** Let `X` be a measurable space, `μ` any measure on
+`X`, and `L²(μ)=Lp ℂ 2 μ`, with its Hilbert norm. for a measurable set `s`, the linear
+range of `indicatorProjection μ s` is exactly `indicatorRange μ s`, the functions
+vanishing almost everywhere off `s`. -/
 theorem range_indicatorProjection (s : Set X) (hs : MeasurableSet s) :
     LinearMap.range (indicatorProjection mu s hs).toLinearMap = indicatorRange mu s := by
   apply le_antisymm
@@ -316,7 +340,11 @@ private theorem tendsto_indicatorProjection_partialUnion
     simp [U, t, unionTail, hxU, hxp]
   · by_cases hxU : x ∈ U <;> simp [U, t, unionTail, hxU, hxp]
 
-/-- The indicator-multiplication PVM on `L²(μ)`. -/
+/-- **Projection-valued measure of indicator multipliers.** Let `X` be a measurable space, `μ`
+any measure on `X`, and `L²(μ)=Lp ℂ 2 μ`, with its Hilbert norm. `indicatorPVM μ :
+ProjectionValuedMeasure X L²(μ)` sends measurable `s` to `P_s f=1_s f` and nonmeasurable
+sets to zero. It is countably additive in the strong operator topology and sends `X` to
+the identity. -/
 @[no_expose]
 noncomputable def indicatorPVM : ProjectionValuedMeasure X (Lp ℂ 2 mu) := by
   classical
@@ -364,7 +392,9 @@ noncomputable def indicatorPVM : ProjectionValuedMeasure X (Lp ℂ 2 mu) := by
         rw [← hQeq]
         simpa only [P, hs, dite_true] using hQsum f }
 
-/-- Measurable-set action of the multiplication PVM. -/
+/-- **Measurable-set action of the multiplication PVM.** Let `X` be a measurable space, `μ`
+any measure on `X`, and `L²(μ)=Lp ℂ 2 μ`, with its Hilbert norm. for a measurable set `s`
+and `f ∈ L²(μ)`, `(indicatorPVM μ s f)(x)=1_s(x) f(x)` for `μ`-almost every `x`. -/
 theorem indicatorPVM_apply {s : Set X} (hs : MeasurableSet s) (f : Lp ℂ 2 mu) :
     indicatorPVM mu s f =ᵐ[mu] s.indicator fun x ↦ f x := by
   classical
@@ -374,8 +404,10 @@ theorem indicatorPVM_apply {s : Set X} (hs : MeasurableSet s) (f : Lp ℂ 2 mu) 
   rw [dite_eq_left hs]
   exact indicatorProjection_apply mu s hs f
 
-/-- The range of a measurable value of the multiplication PVM is the supported-function
-submodule. -/
+/-- **Supported-function range of the multiplication PVM.** Let `X` be a measurable space, `μ`
+any measure on `X`, and `L²(μ)=Lp ℂ 2 μ`, with its Hilbert norm. for measurable `s`, the
+linear range of `indicatorPVM μ s` is `{f ∈ L²(μ) : f=0 μ-almost everywhere off s}`,
+namely `indicatorRange μ s`. -/
 theorem range_indicatorPVM {s : Set X} (hs : MeasurableSet s) :
     LinearMap.range (indicatorPVM mu s).toLinearMap = indicatorRange mu s := by
   classical

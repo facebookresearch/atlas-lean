@@ -14,10 +14,13 @@ public import Mathlib.Topology.Algebra.Group.Quotient
 public import Mathlib.Topology.LocallyConstant.Basic
 
 /-!
-# Continuity of right transversals of open subgroups
+# Continuous factor coordinates for an open-subgroup transversal
 
-The existing right-coset representative is locally constant when the subgroup is open.
-Both components of the existing complement equivalence are then continuous.
+Let `H` be an open subgroup of a topological group `G` and `T` a right transversal, so every `g`
+has a unique decomposition `g=ht` with `h∈H`, `t∈T`.
+
+The representative function `g ↦ t` is locally constant. Both coordinates of the complement
+equivalence `G ≃ H×T` are continuous. Normality of `H` is not required.
 -/
 
 @[expose] public section
@@ -29,7 +32,9 @@ universe u
 variable {G : Type u} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
   {H : Subgroup G} {T : Set G}
 
-/-- The existing right-coset representative of an open subgroup is locally constant. -/
+/-- **Locally constant representative of an open-subgroup right coset.** Let `G` be a
+topological group, `H≤G` open and `T` a right transversal with unique factorization
+`g=ht`, `h∈H`, `t∈T`. The function selecting `t` is locally constant. -/
 theorem isLocallyConstant_toRightFun (hT : IsComplement (H : Set G) T)
     (hOpen : IsOpen (H : Set G)) : IsLocallyConstant hT.toRightFun := by
   let : DiscreteTopology (G ⧸ H) := QuotientGroup.discreteTopology_iff.mpr hOpen
@@ -45,7 +50,9 @@ theorem isLocallyConstant_toRightFun (hT : IsComplement (H : Set G) T)
     rw [inv_inv]
   simpa only [Function.comp_def, heq, toRightFun] using hc
 
-/-- The transversal component of the existing complement equivalence is continuous. -/
+/-- **Continuous transversal coordinate of the group complement equivalence.** For an open
+subgroup `H` of a topological group `G` and right transversal `T`, the map `g ↦ t∈T` in
+the unique factorization `g=ht` is continuous. -/
 theorem continuous_equiv_snd (hT : IsComplement (H : Set G) T)
     (hOpen : IsOpen (H : Set G)) : Continuous (fun g : G => (hT.equiv g).2) := by
   have heq : hT.toRightFun = fun g => (hT.equiv g).2 := by
@@ -61,7 +68,9 @@ theorem continuous_equiv_snd (hT : IsComplement (H : Set G) T)
   rw [← heq]
   exact (hT.isLocallyConstant_toRightFun hOpen).continuous
 
-/-- The subgroup component of the existing complement equivalence is continuous. -/
+/-- **Continuous subgroup coordinate of the group complement equivalence.** For an open
+subgroup `H` of a topological group `G` and right transversal `T`, the map `g ↦ h∈H` in
+`g=ht` is continuous. The subgroup need not be normal. -/
 theorem continuous_equiv_fst (hT : IsComplement (H : Set G) T)
     (hOpen : IsOpen (H : Set G)) : Continuous (fun g : G => (hT.equiv g).1) := by
   apply Continuous.subtype_mk

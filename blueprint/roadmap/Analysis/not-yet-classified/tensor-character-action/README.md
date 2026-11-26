@@ -1,9 +1,9 @@
-# Tensor Character Action
+# Normal character action on the tensor crossed product
 
-- [Character Multiplier Tensor fix regular Coefficient Tensor](character-multiplier-tensor-fix-regular.md)
-- [Character Multiplier Tensor scale haar Left Regular Tensor](character-multiplier-tensor-scale-haar-l.md)
-- [Tensor Character Conjugation mem crossed Product Tensor](tensor-character-conjugation-mem-crossed.md)
-- [Tensor Character Conjugation normalizes](tensor-character-conjugation-normalizes.md)
-- [Tensor Character Normal Action](tensor-character-normal-action.md)
-- [Tensor Character Normal Action fix coefficient](tensor-character-normal-action-fix-coeff.md)
-- [Tensor Character Normal Action scale group](tensor-character-normal-action-scale-gro.md)
+- [Tensor character conjugation fixes regular coefficients](character-multiplier-tensor-fix-regular.md)
+- [Tensor character covariance of Haar implementers](character-multiplier-tensor-scale-haar-l.md)
+- [Character conjugation preserves the tensor crossed-product carrier](tensor-character-conjugation-mem-crossed.md)
+- [Setwise normalization of the tensor crossed product by characters](tensor-character-conjugation-normalizes.md)
+- [Normal dual-character action on the tensor crossed product](tensor-character-normal-action.md)
+- [Tensor character action fixes the canonical source coefficient](tensor-character-normal-action-fix-coeff.md)
+- [Tensor character action scales the canonical Haar unitary](tensor-character-normal-action-scale-gro.md)

@@ -1,9 +1,9 @@
-# Generating Tuples
+# Finite left- and right-generating tuples
 
-- [Is Left Generating Tuple](is-left-generating-tuple.md)
-- [Is Right Generating Tuple](is-right-generating-tuple.md)
-- [Map](map.md)
-- [Star](star.md)
-- [Map](map-2.md)
-- [Star](star-2.md)
-- [Is Left Generating Tuple iff is Right Generating Tuple](is-left-generating-tuple-iff-is-right-ge.md)
+- [Tuple generating the unit with left coefficients](is-left-generating-tuple.md)
+- [Tuple generating the unit with right coefficients](is-right-generating-tuple.md)
+- [Coefficient homomorphisms preserve left-generating tuples](map.md)
+- [Star sends left generation to right generation](star.md)
+- [Coefficient homomorphisms preserve right-generating tuples](map-2.md)
+- [Star sends right generation to left generation](star-2.md)
+- [Left and right generating equations agree in a commutative semiring](is-left-generating-tuple-iff-is-right-ge.md)

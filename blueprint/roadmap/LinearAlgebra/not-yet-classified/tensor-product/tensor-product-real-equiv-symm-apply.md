@@ -1,3 +1,3 @@
-# Tensor Product Real Equiv symm apply
+# Inverse coordinates of the real complex self-tensor
 
-The whole original inverse is verified against the same canonical coordinate map.
+For (p,q)∈ℂ×ℂ, tensorProductRealEquiv⁻¹(p,q)=((p+q)/2)⊗_ℝ1+((p-q)/(2i))⊗_ℝi.

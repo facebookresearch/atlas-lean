@@ -1,12 +1,12 @@
-# Column Normalization
+# Determinant factorization from normalized basis columns
 
-## Linear Map
+## Determinants and column normalization
 
-- [Det eq pow sum mul det of apply basis](det-eq-pow-sum-mul-det-of-apply-basis.md)
-- [Uniformizer Column Normalization](uniformizer-column-normalization.md)
+- [Extracted column powers sum in the determinant](det-eq-pow-sum-mul-det-of-apply-basis.md)
+- [Finite basis-column normalization data](uniformizer-column-normalization.md)
 
-## Uniformizer Column Normalization
+## Uniformizer exponents and normalized columns
 
-- [Of Exists](of-exists.md)
-- [Total Exponent](total-exponent.md)
-- [Det eq](det-eq.md)
+- [Column normalization from divisibility of basis images](of-exists.md)
+- [Sum of extracted basis-column exponents](total-exponent.md)
+- [Determinant formula from column-normalization data](det-eq.md)

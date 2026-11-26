@@ -1,5 +1,5 @@
-# Regular Two Frame
+# Regular real frame from half-circle directions
 
-- [Regular Two Frame](regular-two-frame.md)
-- [Regular Two Frame gram](regular-two-frame-gram.md)
-- [Regular Two Frame row norm](regular-two-frame-row-norm.md)
+- [Real two-row frame of equally spaced half-circle directions](regular-two-frame.md)
+- [Half-identity Gram matrix of the regular real two-frame](regular-two-frame-gram.md)
+- [Reciprocal column squared norm of the regular real two-frame](regular-two-frame-row-norm.md)

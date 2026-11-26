@@ -1,5 +1,5 @@
-# General linear groups over product semirings
+# Product-semiring general linear group equivalence
 
-Let `R` and `S` be semirings and `n` a finite index type with decidable equality.
-The general linear group over `R × S` is multiplicatively equivalent to
-`GL n R × GL n S`; the empty index type is included.
+Let R,S be semirings and n a finite index type. The group equivalence prodSemiringEquiv
+n:GL(n,R×S)≃*GL(n,R)×GL(n,S) sends A to (A.map fst,A.map snd); its inverse combines the two
+matrices entrywise. Empty indices and independent coefficient universes are included.

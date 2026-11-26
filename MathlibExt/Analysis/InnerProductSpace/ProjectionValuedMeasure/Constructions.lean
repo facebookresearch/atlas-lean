@@ -16,18 +16,19 @@ public import Mathlib.Analysis.InnerProductSpace.l2Space
 public import Mathlib.Analysis.Normed.Lp.lpHolder
 
 /-!
-# Constructions of projection-valued measures
+# Unitary transport, Hilbert sums and atomic PVMs
 
-This file supplies functorial and model constructions for projection-valued measures: transport by
-a unitary equivalence, arbitrary Hilbert direct sums and inflations, and atomic diagonal measures.
-All countable additivity remains pointwise-norm (strong-operator) additivity.
+Projection-valued measures on a measurable space `X` transport through a unitary `U : H ≃ K` by
+`E_U(s)=U E(s) U⁻¹`. Families `E_i` on complete complex Hilbert spaces `H_i` have the Hilbert
+direct sum PVM on `ℓ²(H_i)`, with `(E_⊕(s)f)_i=E_i(s)f_i`.
 
-## Primary source
+For any index type and points `x_i ∈ X`, the atomic diagonal PVM on `ℓ²(ι,ℂ)` has coordinate
+value `f_i` when `x_i∈s` and zero otherwise. A Hilbert basis transports this PVM to its Hilbert
+space, with range the closed span of basis vectors selected by the measurable set.
 
-John B. Conway, *A Course in Functional Analysis*, 2nd ed., Chapter IX, §1,
-Examples 1.7–1.8 (inflation and atomic measures). The direct-sum and atomic
-models here allow arbitrary index types over measurable spaces; strong
-countable additivity is expressed by pointwise `HasSum`.
+Indices may be empty or uncountable, and atomic points may repeat. All countable additivity is
+strong operator additivity. These constructions include Conway, A Course in Functional Analysis,
+Chapter IX, §1, Examples 1.7–1.8.
 -/
 
 @[expose] public section
@@ -49,7 +50,10 @@ variable {X : Type u} [MeasurableSpace X]
 variable {H : Type v} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 variable {K : Type w} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
 
-/-- Transport a projection-valued measure through a unitary linear equivalence. -/
+/-- **Unitary transport of a projection-valued measure.** Let `X` be a measurable space and
+`H` a complete complex Hilbert space. Let `E : ProjectionValuedMeasure X H` be a strongly
+countably additive PVM. for a complete complex Hilbert space `K` and unitary `U : H ≃ₗᵢ[ℂ]
+K`, `unitaryTransport U E` is the PVM `s ↦ U E(s) U⁻¹` on `K`. -/
 noncomputable def unitaryTransport (U : H ≃ₗᵢ[ℂ] K) (E : ProjectionValuedMeasure X H) :
     ProjectionValuedMeasure X K where
   toFun s := U.conjStarAlgEquiv (E s)
@@ -78,7 +82,10 @@ theorem unitaryTransport_apply (U : H ≃ₗᵢ[ℂ] K) (E : ProjectionValuedMea
     unitaryTransport U E s y = U (E s (U.symm y)) :=
   rfl
 
-/-- The range of a transported projection is the unitary image of the original range. -/
+/-- **Range of a unitarily transported spectral projection.** Let `X` be a measurable space
+and `H` a complete complex Hilbert space. Let `E : ProjectionValuedMeasure X H` be a
+strongly countably additive PVM. for a unitary `U : H ≃ₗᵢ[ℂ] K` between complete complex
+Hilbert spaces and any set `s`, `range((unitaryTransport U E)(s))=U(range E(s))`. -/
 theorem range_unitaryTransport (U : H ≃ₗᵢ[ℂ] K) (E : ProjectionValuedMeasure X H)
     (s : Set X) :
     LinearMap.range (unitaryTransport U E s).toLinearMap =
@@ -103,7 +110,10 @@ theorem unitaryTransport_refl (E : ProjectionValuedMeasure X H) :
 
 variable {G : Type z} [NormedAddCommGroup G] [InnerProductSpace ℂ G] [CompleteSpace G]
 
-/-- Successive unitary transports agree with transport through the composite unitary. -/
+/-- **Composition of unitary PVM transports.** Let `X` be a measurable space and `H` a
+complete complex Hilbert space. Let `E : ProjectionValuedMeasure X H` be a strongly
+countably additive PVM. for unitaries `U : H ≃ K` and `V : K ≃ G` between complete complex
+Hilbert spaces, transporting first by `U` then by `V` equals transport by `V∘U`. -/
 theorem unitaryTransport_trans (U : H ≃ₗᵢ[ℂ] K) (V : K ≃ₗᵢ[ℂ] G)
     (E : ProjectionValuedMeasure X H) :
     unitaryTransport V (unitaryTransport U E) = unitaryTransport (U.trans V) E := by
@@ -126,7 +136,10 @@ variable {ι : Type z} {F : ι → Type v}
 variable [∀ i, NormedAddCommGroup (F i)] [∀ i, InnerProductSpace ℂ (F i)]
   [∀ i, CompleteSpace (F i)]
 
-/-- The coordinatewise operator associated to a family of PVM values. -/
+/-- **Coordinate operator of a Hilbert sum of PVMs.** Let `X` be a measurable space, `ι` any
+index type, and `H_i` complete complex Hilbert spaces with PVMs `E_i` on `X`. For any set
+`s`, `directSumValue E s` acts on `lp H 2` by `(E_i(s)f_i)_i`, with operator norm at most
+one. -/
 noncomputable def directSumValue (E : ∀ i, ProjectionValuedMeasure X (F i)) (s : Set X) :
     lp F 2 →L[ℂ] lp F 2 :=
   lp.mapCLM 2 (fun i ↦ E i s) zero_le_one fun i ↦
@@ -166,7 +179,10 @@ private theorem directSumValue_isStarProjection
         rw [← ContinuousLinearMap.star_eq_adjoint,
           ((E i).isStarProjection s).isSelfAdjoint.star_eq]
 
-/-- The Hilbert direct sum of an arbitrary family of projection-valued measures. -/
+/-- **Hilbert direct sum of projection-valued measures.** Let `X` be a measurable space and
+`E_i` PVMs on complete complex Hilbert spaces `H_i`, indexed by any type `ι`. Their direct
+sum is the strongly countably additive PVM on `lp H 2` with coordinate `(directSum E s
+f)_i=E_i(s)f_i`. Empty and uncountable index types are allowed. -/
 @[no_expose]
 noncomputable def directSum (E : ∀ i, ProjectionValuedMeasure X (F i)) :
     ProjectionValuedMeasure X (lp F 2) where
@@ -241,7 +257,10 @@ theorem directSum_apply (E : ∀ i, ProjectionValuedMeasure X (F i))
   change directSumValue E s f i = E i s (f i)
   exact directSumValue_apply E s f i
 
-/-- Inflation of a PVM by an arbitrary index type. -/
+/-- **Inflation of a PVM on a Hilbert sequence sum.** Let `X` be a measurable space and `H` a
+complete complex Hilbert space. Let `E : ProjectionValuedMeasure X H` be a strongly
+countably additive PVM. for any index type `ι`, `inflate ι E` is the PVM on `lp (fun _ : ι
+=> H) 2` acting coordinatewise by `(inflate ι E)(s)f_i=E(s)f_i`. -/
 noncomputable def inflate (ι : Type z) (E : ProjectionValuedMeasure X H) :
     ProjectionValuedMeasure X (lp (fun _ : ι ↦ H) 2) :=
   directSum (fun _ : ι ↦ E)
@@ -263,7 +282,10 @@ variable {ι : Type z}
 
 open scoped Classical
 
-/-- The diagonal atomic PVM determined by points `x i`. Repeated points are allowed. -/
+/-- **Atomic diagonal projection-valued measure.** For a measurable space `X`, any index type
+`ι` and map `x : ι → X`, `atomicDiagonal x` is the PVM on `lp (fun _ : ι => ℂ) 2` sending
+a measurable set `s` to the coordinate projection onto indices with `x_i∈s`. Repeated
+points and empty indices are allowed. -/
 noncomputable def atomicDiagonal (x : ι → X) :
     ProjectionValuedMeasure X (lp (fun _ : ι ↦ ℂ) 2) :=
   directSum fun i ↦ ProjectionValuedMeasure.dirac (H := ℂ) (x i)
@@ -289,12 +311,18 @@ theorem atomicDiagonal_apply (x : ι → X) {s : Set X} (hs : MeasurableSet s)
 
 variable {L : Type v} [NormedAddCommGroup L] [InnerProductSpace ℂ L] [CompleteSpace L]
 
-/-- Transport the atomic diagonal PVM through a Hilbert basis. -/
+/-- **Atomic PVM associated to a Hilbert basis.** Let `X` be a measurable space, `L` a
+complete complex Hilbert space, `b : HilbertBasis ι ℂ L` and `x : ι → X`. The PVM
+`atomicOfHilbertBasis b x` selects the basis vectors `b_i` whose points `x_i` lie in the
+measurable set. -/
 noncomputable def atomicOfHilbertBasis (b : HilbertBasis ι ℂ L) (x : ι → X) :
     ProjectionValuedMeasure X L :=
   unitaryTransport b.repr.symm (atomicDiagonal x)
 
-/-- Coordinate action of the atomic PVM transported through a Hilbert basis. -/
+/-- **Basis coefficients of an atomic spectral projection.** Let `X` be measurable, `L` a
+complete complex Hilbert space, `b : HilbertBasis ι ℂ L` and `x : ι → X`. For measurable
+`s`, `v ∈ L` and `i : ι`, the `i`th Hilbert-basis coefficient of `atomicOfHilbertBasis b x
+s v` equals that of `v` if `x_i∈s`, and is zero otherwise. -/
 theorem atomicOfHilbertBasis_repr_apply (b : HilbertBasis ι ℂ L) (x : ι → X)
     {s : Set X} (hs : MeasurableSet s) (v : L) (i : ι) :
     b.repr (atomicOfHilbertBasis b x s v) i =
@@ -329,8 +357,9 @@ theorem atomicOfHilbertBasis_apply_basis_of_not_mem (b : HilbertBasis ι ℂ L) 
     simp [hi]
   · simp [b.repr_self, lp.single_apply, hji]
 
-/-- The range of an atomic Hilbert-basis projection is the closed span of the selected basis
-vectors. -/
+/-- **Closed selected-basis span of an atomic PVM.** Let `X` be measurable, `L` a complete
+complex Hilbert space, `b : HilbertBasis ι ℂ L` and `x : ι → X`. For measurable `s`,
+`range(atomicOfHilbertBasis b x s)` is the norm closure of `span ℂ {b_i : x_i∈s}`. -/
 theorem range_atomicOfHilbertBasis (b : HilbertBasis ι ℂ L) (x : ι → X)
     (s : Set X) (hs : MeasurableSet s) :
     LinearMap.range (atomicOfHilbertBasis b x s).toLinearMap =

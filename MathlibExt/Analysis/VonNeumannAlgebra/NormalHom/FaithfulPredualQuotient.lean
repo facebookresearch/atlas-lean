@@ -15,14 +15,15 @@ public import MathlibExt.Analysis.VonNeumannAlgebra.NormalHom.FaithfulPredualDua
 public import MathlibExt.Analysis.Normed.Operator.DualSurjective
 
 /-!
-# The actual predual pullback of a faithful normal map is surjective and a quotient
+# Surjective quotient predual pullback for an injective normal map
 
-The original faithful normal map makes the literal dual of its constructed
-predual pullback isometric. The strict Banach preimage theorem applies to
-that actual norm inequality and constructs genuine preimages. Thus the
-original pullback is surjective; the stock Banach open mapping theorem
-gives its quotient topology. No quotient, range-closure, surjectivity or
-normal inverse/model certificate is an input.
+For an injective normal unital complex star homomorphism `f : M → N`, the bounded pullback `B :
+N_* → M_*`, `B(φ)=φ∘f`, is surjective. Every normal functional on `M` is the pullback of one on
+`N`.
+
+The topology on `M_*` is the quotient topology induced by `B` from the Banach norm topology on
+`N_*`. This is a topological quotient statement; no quotient map or surjectivity is given as a
+premise.
 -/
 
 @[expose] public section
@@ -40,7 +41,13 @@ variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [Complete
 variable {K : Type v} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
 variable {M : VonNeumannAlgebra H} {N : VonNeumannAlgebra K}
 
-/-- The original predual pullback has actual preimages under faithfulness, with no quotient certificate. -/
+/-- **Surjective predual pullback of an injective normal map.** Let `M,N` be concrete von
+Neumann algebras on complete complex Hilbert spaces. Their normal-functional Banach spaces
+`M_*,N_*` are the norm-closed spans of vector functionals, and their ultraweak topologies
+are `σ(M,M_*)`, `σ(N,N_*)`. Let `f : M → N` be a unital complex star homomorphism that is
+ultraweakly continuous. Assume `f` is injective. Let `B=f.predualPullback : N_* → M_*`,
+`B(φ)=φ∘f`, and `B*(F)=F∘B`. `B : N_* → M_*` is surjective, so every `ψ ∈ M_*` has `φ ∈
+N_*` with `φ∘f=ψ`. -/
 theorem predualPullback_surjective_of_injective (f : NormalStarAlgHom M N)
     (hf : Function.Injective f) : Function.Surjective f.predualPullback := by
   apply ContinuousLinearMap.surjective_of_dual_lower_bound
@@ -49,7 +56,13 @@ theorem predualPullback_surjective_of_injective (f : NormalStarAlgHom M N)
   change ‖G.comp f.predualPullback‖ = ‖G‖ at hnorm
   exact hnorm.symm.le
 
-/-- The same original predual pullback has the actual Banach quotient topology. -/
+/-- **Banach quotient topology of normal predual pullback.** Let `M,N` be concrete von Neumann
+algebras on complete complex Hilbert spaces. Their normal-functional Banach spaces
+`M_*,N_*` are the norm-closed spans of vector functionals, and their ultraweak topologies
+are `σ(M,M_*)`, `σ(N,N_*)`. Let `f : M → N` be a unital complex star homomorphism that is
+ultraweakly continuous. Assume `f` is injective. Let `B=f.predualPullback : N_* → M_*`,
+`B(φ)=φ∘f`, and `B*(F)=F∘B`. `B : N_* → M_*` is a quotient map for the inherited Banach
+norm topologies. -/
 theorem predualPullback_isQuotientMap_of_injective (f : NormalStarAlgHom M N)
     (hf : Function.Injective f) : Topology.IsQuotientMap f.predualPullback :=
   f.predualPullback.isQuotientMap (f.predualPullback_surjective_of_injective hf)

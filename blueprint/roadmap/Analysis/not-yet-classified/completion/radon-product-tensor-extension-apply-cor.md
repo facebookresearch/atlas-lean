@@ -1,3 +1,8 @@
-# Radon Product Tensor Extension apply core
+# Core agreement of the Radon tensor continuous extension
 
-The continuous extension retains each original algebraic compact-support tensor value.
+Let `X,Y` be locally compact
+Hausdorff Borel spaces and `μ,ν` regular measures. Write `R=radonProd μ ν` on
+`borel(X×Y)`, `i_μ,i_ν,i_R` for compact-support L² inclusions, `T=Completion(Lp ℂ 2 μ ⊗[ℂ]
+Lp ℂ 2 ν)`, `A(z)` for the algebraic factor tensor inclusion into `T`, and
+`F(f⊗g)=i_R((x,y) ↦ f(x)g(y))`. for algebraic compact-support `z`,
+`radonProductTensorExtension μ ν (A(z))=F(z)`.

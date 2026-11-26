@@ -1,3 +1,7 @@
-# Stock Radon Product Lp Normed Add Comm Group
+# Inherited L² normed group of the Radon product space
 
-The original stock normed additive group of the Borel Radon product Lp target.
+Let `X,Y` be locally compact
+Hausdorff Borel spaces and `μ,ν` regular measures. Write `R=radonProd μ ν` on
+`borel(X×Y)`, `i_μ,i_ν,i_R` for compact-support L² inclusions, `T=Completion(Lp ℂ 2 μ ⊗[ℂ]
+Lp ℂ 2 ν)`, `A(z)` for the algebraic factor tensor inclusion into `T`, and
+`F(f⊗g)=i_R((x,y) ↦ f(x)g(y))`. `Lp ℂ 2 R` has its L² normed additive-group structure.

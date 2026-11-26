@@ -1,3 +1,4 @@
-# Circle Fejer Kernel re nonneg
+# Nonnegativity of the Fejér kernel
 
-Positivity of the actual kernel does not require any desired norm-bound certificate.
+For every `N : ℕ` and `x : UnitAddCircle`,
+`0 ≤ (circleFejerKernel N x).re`.

@@ -16,17 +16,14 @@ public import Mathlib.MeasureTheory.Function.ConvergenceInMeasure
 public import Mathlib.Topology.Instances.ENNReal.Lemmas
 
 /-!
-# Actual bounded continuous indicator approximation in L2 and almost everywhere
+# Continuous unit-interval approximation of measurable indicators
 
-These strict approximation facts serve the actual CFC coefficient-operator
-intersection/projection construction, hence resolutionOfIdentity and BFC DATA.
-The original measurable set and finite weakly regular measure are inputs.
-No PVM, projection, norm bound, field or desired-output certificate is assumed.
-Stock continuous Lp density gives approximants; actual max/min clipping keeps
-their values in[0,1] and does not increase indicator error. A stock convergence-
-in-measure subsequence preserves L2 convergence and gives a.e. convergence.
-The normal-space hypotheses hold for every compact metric spectrum; no new
-restriction on the original Hilbert space or a nonempty spectrum is introduced.
+On a normal topological Borel space, let `μ` be finite and weakly regular and `s` measurable.
+Its indicator has continuous real approximants taking values in `[0,1]`, with arbitrarily small
+L² error.
+
+A sequence of these approximants can converge both in L² and pointwise almost everywhere to
+`1_s`. Compactness, Hausdorffness and a nonempty source are not assumed.
 -/
 
 @[expose] public section
@@ -58,8 +55,10 @@ private theorem clip_norm_sub_one (t : ℝ) :
     rw [min_eq_left h1, max_eq_right zero_le_one, sub_self, norm_zero]
     exact norm_nonneg _
 
-/-- For every actual measurable set, bounded continuous[0,1] functions
-approximate its indicator in the original L2 seminorm to any positive tolerance. -/
+/-- **Continuous indicator approximation at any nonzero extended tolerance.** Let `X` be a
+normal topological space with its Borel structure, `μ` a finite weakly regular measure,
+and `s⊆X` measurable. for `ε∈[0,∞]` with `ε≠0`, there exists `f∈C(X,ℝ)` with `0≤f≤1` and
+`eLpNorm(f-1_s,2,μ)≤ε`. The tolerance may be infinite. -/
 theorem exists_continuous_indicator_eLpNorm_le
     (μ : Measure X) [μ.WeaklyRegular] [IsFiniteMeasure μ]
     (s : Set X) (hs : MeasurableSet s) {ε : ℝ≥0∞} (hε : ε ≠ 0) :
@@ -92,8 +91,9 @@ theorem exists_continuous_indicator_eLpNorm_le
     f.continuous.aestronglyMeasurable.sub hI.aestronglyMeasurable
   exact ⟨f, hf, (eLpNorm_mono hmeas hpoint).trans hg⟩
 
-/-- A genuine sequence of continuous[0,1] functions converges to the
-measurable indicator in L2 for the same original finite measure. -/
+/-- **Sequence of bounded continuous L² indicator approximants.** Let `X` be a normal
+topological space with its Borel structure, `μ` a finite weakly regular measure, and `s⊆X`
+measurable. there are `f_n∈C(X,ℝ)` with `0≤f_n≤1` everywhere and `eLpNorm(f_n-1_s,2,μ)→0`. -/
 theorem exists_continuous_indicator_l2
     (μ : Measure X) [μ.WeaklyRegular] [IsFiniteMeasure μ]
     (s : Set X) (hs : MeasurableSet s) :
@@ -119,8 +119,10 @@ theorem exists_continuous_indicator_l2
   exact tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hε
     (fun _ => bot_le) herror
 
-/-- The same bounded continuous indicator approximation can retain both
-original L2 convergence and almost-everywhere pointwise convergence. -/
+/-- **Continuous indicator approximants converging in L² and almost everywhere.** Let `X` be a
+normal topological space with its Borel structure, `μ` a finite weakly regular measure,
+and `s⊆X` measurable. there are `f_n∈C(X,ℝ)` with `0≤f_n≤1`, `eLpNorm(f_n-1_s,2,μ)→0`, and
+`f_n(x)→1_s(x)` for `μ`-almost every `x`. -/
 theorem exists_continuous_indicator_l2_ae
     (μ : Measure X) [μ.WeaklyRegular] [IsFiniteMeasure μ]
     (s : Set X) (hs : MeasurableSet s) :

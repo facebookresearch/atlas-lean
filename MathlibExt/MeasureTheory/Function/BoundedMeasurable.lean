@@ -18,15 +18,14 @@ public import Mathlib.MeasureTheory.Function.SimpleFuncDense
 import Mathlib.Topology.MetricSpace.ProperSpace
 
 /-!
-# Bounded measurable functions with the pointwise supremum norm
+# Pointwise bounded measurable functions and uniform approximation
 
-This file defines the bounded measurable complex-valued functions on a measurable space as the
-closed star subalgebra of the raw bounded-function space `lp (fun _ => ℂ) ∞`.  Thus equality is
-pointwise equality, not almost-everywhere equality, and all normed algebra and C-star structure is
-inherited from the canonical `lp` carrier.
+On any measurable space `X`, the bounded measurable complex functions form a closed star
+subalgebra of the raw bounded-function space `lp(X,ℂ,∞)`. Equality is pointwise and the norm is
+the supremum norm, with value zero on the empty source. No measure is required.
 
-The API includes measurable indicators, conversion of measurable simple functions, and uniform
-approximation by finite-range measurable functions.  No measure on the source type is required.
+Measurable simple functions and indicators lie in this algebra. Every bounded measurable
+function has arbitrarily close measurable simple and finite-range approximants in supremum norm.
 -/
 
 @[expose] public section
@@ -42,7 +41,10 @@ universe u
 
 variable (X : Type u) [MeasurableSpace X]
 
-/-- The star subalgebra of raw bounded functions consisting of the measurable functions. -/
+/-- **Closed star subalgebra of measurable bounded functions.** Let `X` be a measurable space.
+Bounded measurable complex functions have pointwise equality and norm `‖f‖∞=sup_x |f(x)|`,
+zero on an empty source. `boundedMeasurableFunctions X` is the complex star subalgebra of
+`lp(X,ℂ,∞)` with carrier `{f : Measurable f}`. -/
 noncomputable def boundedMeasurableFunctions :
     StarSubalgebra ℂ (lp (fun _ : X ↦ ℂ) ∞) where
   carrier := {f | Measurable fun x ↦ f x}
@@ -69,7 +71,10 @@ noncomputable def boundedMeasurableFunctions :
     change Measurable fun x ↦ star (f x)
     exact Complex.continuous_conj.measurable.comp hf
 
-/-- Bounded measurable complex-valued functions, with pointwise equality and the supremum norm. -/
+/-- **Pointwise bounded measurable complex function.** Let `X` be a measurable space. Bounded
+measurable complex functions have pointwise equality and norm `‖f‖∞=sup_x |f(x)|`, zero on
+an empty source. `BoundedMeasurableFunction X` is the carrier of that star subalgebra,
+with pointwise algebra operations and no almost-everywhere quotient. -/
 abbrev BoundedMeasurableFunction := ↥(boundedMeasurableFunctions X)
 
 namespace BoundedMeasurableFunction
@@ -79,16 +84,25 @@ variable {X}
 instance : CoeFun (BoundedMeasurableFunction X) (fun _ ↦ X → ℂ) where
   coe f := f.1
 
-/-- The underlying raw bounded function of a bounded measurable function. -/
+/-- **Underlying raw bounded function.** Let `X` be a measurable space. Bounded measurable
+complex functions have pointwise equality and norm `‖f‖∞=sup_x |f(x)|`, zero on an empty
+source. for `f : BoundedMeasurableFunction X`, `f.toLp ∈ lp(X,ℂ,∞)` has the same pointwise
+values. -/
 abbrev toLp (f : BoundedMeasurableFunction X) : lp (fun _ : X ↦ ℂ) ∞ := f
 
-/-- Coercing to the raw bounded function preserves the original pointwise function. -/
+/-- **Pointwise function retained by the bounded-function inclusion.** Let `X` be a measurable
+space. Bounded measurable complex functions have pointwise equality and norm `‖f‖∞=sup_x
+|f(x)|`, zero on an empty source. for `f : BoundedMeasurableFunction X`, the function
+underlying `f.toLp` equals `f : X → ℂ`. -/
 theorem coe_toLp (f : BoundedMeasurableFunction X) :
     (f.toLp : X → ℂ) = f :=
   rfl
 
-/-- Build a bounded measurable function from its actual raw function and pointwise norm bound.
-No nonempty source or nonnegative bound is required by the DATA constructor. -/
+/-- **Bounded measurable function from a pointwise norm bound.** Let `X` be a measurable
+space. Bounded measurable complex functions have pointwise equality and norm `‖f‖∞=sup_x
+|f(x)|`, zero on an empty source. if measurable `f : X → ℂ` and `C : ℝ` satisfy `|f(x)|≤C`
+for every `x`, `ofBound f C` packages this function. `C≥0` and nonemptiness of `X` are not
+required for the constructor. -/
 noncomputable def ofBound (f : X → ℂ) (hf : Measurable f) (C : ℝ)
     (hC : ∀ x, ‖f x‖ ≤ C) : BoundedMeasurableFunction X := by
   classical
@@ -99,45 +113,67 @@ noncomputable def ofBound (f : X → ℂ) (hf : Measurable f) (C : ℝ)
     rintro _ ⟨x, rfl⟩
     exact hC x⟩, hf⟩
 
-/-- Evaluation of the actual bound-based constructor is the original pointwise function. -/
+/-- **Pointwise value of a bound-based measurable function.** Let `X` be a measurable space.
+Bounded measurable complex functions have pointwise equality and norm `‖f‖∞=sup_x |f(x)|`,
+zero on an empty source. for measurable `f` with `|f(x)|≤C`, `ofBound f C x=f(x)`. -/
 @[simp]
 theorem ofBound_apply (f : X → ℂ) (hf : Measurable f) (C : ℝ)
     (hC : ∀ x, ‖f x‖ ≤ C) (x : X) : ofBound f hf C hC x = f x := rfl
 
-/-- The constructor retains its original pointwise norm bound. -/
+/-- **Pointwise norm bound of the packaged function.** Let `X` be a measurable space. Bounded
+measurable complex functions have pointwise equality and norm `‖f‖∞=sup_x |f(x)|`, zero on
+an empty source. for measurable `f` with bound `|f(x)|≤C`, the packaged function satisfies
+`|ofBound f C x|≤C` at every `x`. -/
 theorem norm_ofBound_apply_le (f : X → ℂ) (hf : Measurable f) (C : ℝ)
     (hC : ∀ x, ‖f x‖ ≤ C) (x : X) : ‖ofBound f hf C hC x‖ ≤ C := hC x
 
-/-- A nonnegative pointwise bound controls the supremum norm, including on the empty source. -/
+/-- **Nonnegative pointwise bound controls the supremum norm.** Let `X` be a measurable space.
+Bounded measurable complex functions have pointwise equality and norm `‖f‖∞=sup_x |f(x)|`,
+zero on an empty source. if measurable `f` has `|f(x)|≤C` for all `x` and `C≥0`, then
+`‖ofBound f C‖∞≤C`. -/
 theorem norm_ofBound_le (f : X → ℂ) (hf : Measurable f) (C : ℝ)
     (hC : ∀ x, ‖f x‖ ≤ C) (hC0 : 0 ≤ C) : ‖ofBound f hf C hC‖ ≤ C := by
   change ‖(ofBound f hf C hC).toLp‖ ≤ C
   exact lp.norm_le_of_forall_le hC0 hC
 
-/-- The supremum norm has a uniform bound without imposing nonemptiness or a bound sign. -/
+/-- **Supremum norm bound allowing an empty source and signed constant.** Let `X` be a
+measurable space. Bounded measurable complex functions have pointwise equality and norm
+`‖f‖∞=sup_x |f(x)|`, zero on an empty source. for measurable `f` with `|f(x)|≤C`
+everywhere, `‖ofBound f C‖∞≤max(C,0)`. -/
 theorem norm_ofBound_le_max (f : X → ℂ) (hf : Measurable f) (C : ℝ)
     (hC : ∀ x, ‖f x‖ ≤ C) : ‖ofBound f hf C hC‖ ≤ max C 0 := by
   change ‖(ofBound f hf C hC).toLp‖ ≤ max C 0
   exact lp.norm_le_of_forall_le (le_max_right C 0)
     (fun x => (hC x).trans (le_max_left C 0))
 
-/-- A bounded measurable function is measurable as an ordinary pointwise function. -/
+/-- **Measurability of a bounded measurable function.** Let `X` be a measurable space. Bounded
+measurable complex functions have pointwise equality and norm `‖f‖∞=sup_x |f(x)|`, zero on
+an empty source. the function `x ↦ f(x)` is measurable for every `f :
+BoundedMeasurableFunction X`. -/
 theorem measurable (f : BoundedMeasurableFunction X) : Measurable fun x ↦ f x :=
   show Measurable (fun x ↦ f.1 x) from f.property
 
-/-- The norm is the pointwise supremum norm, including on the empty source type. -/
+/-- **Supremum formula for a bounded measurable norm.** Let `X` be a measurable space. Bounded
+measurable complex functions have pointwise equality and norm `‖f‖∞=sup_x |f(x)|`, zero on
+an empty source. for `f : BoundedMeasurableFunction X`, `‖f‖=sup_x |f(x)|`, with the empty
+supremum interpreted as zero. -/
 theorem norm_eq_iSup_norm (f : BoundedMeasurableFunction X) :
     ‖f‖ = ⨆ x : X, ‖f x‖ :=
   lp.norm_eq_ciSup f.toLp
 
-/-- Evaluation at every point is bounded by the supremum norm. -/
+/-- **Evaluation bounded by the supremum norm.** Let `X` be a measurable space. Bounded
+measurable complex functions have pointwise equality and norm `‖f‖∞=sup_x |f(x)|`, zero on
+an empty source. for every `f` and `x∈X`, `|f(x)|≤‖f‖∞`. -/
 theorem norm_apply_le_norm (f : BoundedMeasurableFunction X) (x : X) :
     ‖f x‖ ≤ ‖f‖ :=
   lp.norm_apply_le_norm ENNReal.top_ne_zero f.toLp x
 
 end BoundedMeasurableFunction
 
-/-- The measurable bounded-function star subalgebra is closed in the raw supremum-norm space. -/
+/-- **Uniform closedness of measurable bounded functions.** Let `X` be a measurable space.
+Bounded measurable complex functions have pointwise equality and norm `‖f‖∞=sup_x |f(x)|`,
+zero on an empty source. the measurable bounded-function subalgebra is closed in
+`lp(X,ℂ,∞)` for the supremum-norm topology. -/
 theorem isClosed_boundedMeasurableFunctions :
     IsClosed (boundedMeasurableFunctions X : Set (lp (fun _ : X ↦ ℂ) ∞)) := by
   rw [← isSeqClosed_iff_isClosed]
@@ -158,7 +194,10 @@ variable {X}
 
 /-! ### Measurable simple functions and indicators -/
 
-/-- A measurable simple function, regarded as a bounded measurable function. -/
+/-- **Measurable simple function in the bounded-function algebra.** Let `X` be a measurable
+space. Bounded measurable complex functions have pointwise equality and norm `‖f‖∞=sup_x
+|f(x)|`, zero on an empty source. `ofSimpleFunc f` includes a measurable finite-range
+complex function `f : SimpleFunc X ℂ` with its pointwise values. -/
 noncomputable def ofSimpleFunc (f : SimpleFunc X ℂ) : BoundedMeasurableFunction X :=
   by
     classical
@@ -171,34 +210,49 @@ noncomputable def ofSimpleFunc (f : SimpleFunc X ℂ) : BoundedMeasurableFunctio
           exact Finset.single_le_sum (fun y _ ↦ norm_nonneg y) (f.mem_range_self x)⟩,
         f.measurable⟩
 
-/-- Converting a measurable simple function preserves its pointwise values. -/
+/-- **Value of the measurable simple-function inclusion.** Let `X` be a measurable space.
+Bounded measurable complex functions have pointwise equality and norm `‖f‖∞=sup_x |f(x)|`,
+zero on an empty source. for `f : SimpleFunc X ℂ` and `x∈X`, `ofSimpleFunc f x=f(x)`. -/
 @[simp]
 theorem ofSimpleFunc_apply (f : SimpleFunc X ℂ) (x : X) : ofSimpleFunc f x = f x :=
   rfl
 
-/-- A measurable-set indicator with the constant value `c` on the set. -/
+/-- **Measurable scalar indicator function.** Let `X` be a measurable space. Bounded
+measurable complex functions have pointwise equality and norm `‖f‖∞=sup_x |f(x)|`, zero on
+an empty source. for measurable `s⊆X` and `c∈ℂ`, `indicatorConst s c` is `c` on `s` and
+zero outside `s`. -/
 noncomputable def indicatorConst (s : Set X) (hs : MeasurableSet s) (c : ℂ) :
     BoundedMeasurableFunction X :=
   ofSimpleFunc <| SimpleFunc.piecewise s hs (SimpleFunc.const X c) 0
 
-/-- The bounded measurable constant indicator has the usual set-indicator values. -/
+/-- **Pointwise scalar indicator values.** Let `X` be a measurable space. Bounded measurable
+complex functions have pointwise equality and norm `‖f‖∞=sup_x |f(x)|`, zero on an empty
+source. for measurable `s`, `c∈ℂ`, `indicatorConst s c x=1_s(x)c`. -/
 @[simp]
 theorem indicatorConst_apply (s : Set X) (hs : MeasurableSet s) (c : ℂ) (x : X) :
     indicatorConst s hs c x = s.indicator (fun _ ↦ c) x := by
   by_cases hx : x ∈ s <;> simp [indicatorConst, hx]
 
-/-- The characteristic function of a measurable set as a bounded measurable function. -/
+/-- **Measurable characteristic function as a bounded function.** Let `X` be a measurable
+space. Bounded measurable complex functions have pointwise equality and norm `‖f‖∞=sup_x
+|f(x)|`, zero on an empty source. for measurable `s⊆X`, `indicator s` is the
+complex-valued characteristic function `1_s`. -/
 noncomputable def indicator (s : Set X) (hs : MeasurableSet s) :
     BoundedMeasurableFunction X :=
   indicatorConst s hs 1
 
-/-- The bounded measurable indicator evaluates to one on its set and zero elsewhere. -/
+/-- **Pointwise characteristic-function value.** Let `X` be a measurable space. Bounded
+measurable complex functions have pointwise equality and norm `‖f‖∞=sup_x |f(x)|`, zero on
+an empty source. for measurable `s` and `x∈X`, `indicator s x` is one if `x∈s` and zero
+otherwise. -/
 @[simp]
 theorem indicator_apply (s : Set X) (hs : MeasurableSet s) (x : X) :
     indicator s hs x = s.indicator (fun _ ↦ (1 : ℂ)) x := by
   rw [indicator, indicatorConst_apply]
 
-/-- The constant indicator of the empty set is zero. -/
+/-- **Scalar indicator of the empty set.** Let `X` be a measurable space. Bounded measurable
+complex functions have pointwise equality and norm `‖f‖∞=sup_x |f(x)|`, zero on an empty
+source. for every `c∈ℂ`, `indicatorConst ∅ c=0`. -/
 @[simp]
 theorem indicatorConst_empty (c : ℂ) :
     indicatorConst (∅ : Set X) MeasurableSet.empty c = 0 := by
@@ -207,12 +261,17 @@ theorem indicatorConst_empty (c : ℂ) :
   funext x
   simp
 
-/-- The bounded measurable indicator of the empty set is zero. -/
+/-- **Characteristic function of the empty set.** Let `X` be a measurable space. Bounded
+measurable complex functions have pointwise equality and norm `‖f‖∞=sup_x |f(x)|`, zero on
+an empty source. `indicator ∅=0`. -/
 @[simp]
 theorem indicator_empty : indicator (∅ : Set X) MeasurableSet.empty = 0 := by
   simp [indicator]
 
-/-- The bounded measurable indicator of the whole space is one. -/
+/-- **Characteristic function of the whole source.** Let `X` be a measurable space. Bounded
+measurable complex functions have pointwise equality and norm `‖f‖∞=sup_x |f(x)|`, zero on
+an empty source. `indicator X=1`, including the empty source where the function algebra is
+trivial. -/
 @[simp]
 theorem indicator_univ : indicator (Set.univ : Set X) MeasurableSet.univ = 1 := by
   apply Subtype.ext
@@ -220,7 +279,10 @@ theorem indicator_univ : indicator (Set.univ : Set X) MeasurableSet.univ = 1 := 
   funext x
   simp
 
-/-- Multiplying two bounded measurable indicators gives the indicator of their intersection. -/
+/-- **Product of two measurable characteristic functions.** Let `X` be a measurable space.
+Bounded measurable complex functions have pointwise equality and norm `‖f‖∞=sup_x |f(x)|`,
+zero on an empty source. for measurable `s,t`, `indicator(s∩t)=indicator s * indicator t`
+pointwise. -/
 @[simp]
 theorem indicator_inter (s t : Set X) (hs : MeasurableSet s) (ht : MeasurableSet t) :
     indicator (s ∩ t) (hs.inter ht) = indicator s hs * indicator t ht := by
@@ -229,7 +291,10 @@ theorem indicator_inter (s t : Set X) (hs : MeasurableSet s) (ht : MeasurableSet
   funext x
   by_cases hxs : x ∈ s <;> by_cases hxt : x ∈ t <;> simp [indicator_apply, hxs, hxt]
 
-/-- A bounded measurable indicator is self-adjoint. -/
+/-- **Self-adjointness of a measurable characteristic function.** Let `X` be a measurable
+space. Bounded measurable complex functions have pointwise equality and norm `‖f‖∞=sup_x
+|f(x)|`, zero on an empty source. for measurable `s`, pointwise conjugation fixes
+`indicator s`. -/
 @[simp]
 theorem star_indicator (s : Set X) (hs : MeasurableSet s) :
     star (indicator s hs) = indicator s hs := by
@@ -238,7 +303,10 @@ theorem star_indicator (s : Set X) (hs : MeasurableSet s) :
   funext x
   by_cases hx : x ∈ s <;> simp [indicator_apply, hx]
 
-/-- The norm of a constant-valued indicator is at most the norm of its value. -/
+/-- **Supremum norm of a scalar indicator is bounded by its value.** Let `X` be a measurable
+space. Bounded measurable complex functions have pointwise equality and norm `‖f‖∞=sup_x
+|f(x)|`, zero on an empty source. for measurable `s` and `c∈ℂ`, `‖indicatorConst s
+c‖∞≤|c|`. -/
 theorem norm_indicatorConst_le (s : Set X) (hs : MeasurableSet s) (c : ℂ) :
     ‖indicatorConst s hs c‖ ≤ ‖c‖ := by
   change ‖(indicatorConst s hs c).toLp‖ ≤ ‖c‖
@@ -246,7 +314,10 @@ theorem norm_indicatorConst_le (s : Set X) (hs : MeasurableSet s) (c : ℂ) :
   intro x
   by_cases hx : x ∈ s <;> simp [indicatorConst_apply, hx]
 
-/-- On a nonempty set, a constant-valued indicator has exactly the norm of its value. -/
+/-- **Exact norm of a nonempty scalar indicator.** Let `X` be a measurable space. Bounded
+measurable complex functions have pointwise equality and norm `‖f‖∞=sup_x |f(x)|`, zero on
+an empty source. if measurable `s` is nonempty, `‖indicatorConst s c‖∞=|c|` for every
+`c∈ℂ`. -/
 theorem norm_indicatorConst (s : Set X) (hs : MeasurableSet s) (hne : s.Nonempty) (c : ℂ) :
     ‖indicatorConst s hs c‖ = ‖c‖ := by
   apply le_antisymm (norm_indicatorConst_le s hs c)
@@ -255,7 +326,9 @@ theorem norm_indicatorConst (s : Set X) (hs : MeasurableSet s) (hne : s.Nonempty
     ‖c‖ = ‖indicatorConst s hs c x‖ := by simp [indicatorConst_apply, hx]
     _ ≤ ‖indicatorConst s hs c‖ := norm_apply_le_norm _ _
 
-/-- A nonempty measurable set has characteristic function of norm one. -/
+/-- **Norm one of a nonempty measurable characteristic function.** Let `X` be a measurable
+space. Bounded measurable complex functions have pointwise equality and norm `‖f‖∞=sup_x
+|f(x)|`, zero on an empty source. if measurable `s` is nonempty, `‖indicator s‖∞=1`. -/
 theorem norm_indicator (s : Set X) (hs : MeasurableSet s) (hne : s.Nonempty) :
     ‖indicator s hs‖ = 1 := by
   simpa [indicator] using norm_indicatorConst s hs hne (1 : ℂ)
@@ -310,7 +383,10 @@ private theorem exists_simpleFunc_uniform_approx
   change dist (q (f x)) (f x) < r
   exact hnear'.trans_lt hball'
 
-/-- Every bounded measurable function is uniformly approximable by measurable simple functions. -/
+/-- **Uniform measurable simple-function approximation.** Let `X` be a measurable space.
+Bounded measurable complex functions have pointwise equality and norm `‖f‖∞=sup_x |f(x)|`,
+zero on an empty source. for every `f : BoundedMeasurableFunction X` and `ε>0`, there
+exists measurable simple `g : X → ℂ` with `‖f-ofSimpleFunc g‖∞<ε`. -/
 theorem exists_simpleFunc_norm_sub_lt
     (f : BoundedMeasurableFunction X) {r : ℝ} (hr : 0 < r) :
     ∃ g : SimpleFunc X ℂ, ‖f - ofSimpleFunc g‖ < r := by
@@ -322,8 +398,10 @@ theorem exists_simpleFunc_norm_sub_lt
     simpa only [ofSimpleFunc_apply, dist_eq_norm, norm_sub_rev] using (hg x).le
   exact ⟨g, hle.trans_lt (half_lt_self hr)⟩
 
-/-- Every bounded measurable function is uniformly approximable by finite-range bounded measurable
-functions. -/
+/-- **Uniform finite-range bounded measurable approximation.** Let `X` be a measurable space.
+Bounded measurable complex functions have pointwise equality and norm `‖f‖∞=sup_x |f(x)|`,
+zero on an empty source. for every bounded measurable `f` and `ε>0`, there is bounded
+measurable `g` with finite range and `‖f-g‖∞<ε`. -/
 theorem exists_finiteRange_norm_sub_lt
     (f : BoundedMeasurableFunction X) {r : ℝ} (hr : 0 < r) :
     ∃ g : BoundedMeasurableFunction X,

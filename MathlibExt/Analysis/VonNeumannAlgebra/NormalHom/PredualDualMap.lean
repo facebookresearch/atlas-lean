@@ -14,13 +14,14 @@ module
 public import MathlibExt.Analysis.VonNeumannAlgebra.NormalHom
 
 /-!
-# The actual predual pullback's dual is the original normal map
+# The dual of normal-functional pullback is the normal algebra map
 
-Continuous functional precomposition by the constructed predual pullback
-is its bounded dual map. The existing original normal-functional evaluation
-isometries identify that dual map with the same original normal homomorphism.
-Every value is literal evaluation at f(x). No predual quotient, dual
-surjectivity, closed image or inverse/model certificate is an input.
+For a normal unital complex star homomorphism `f : M → N`, let `B : N_* → M_*` be the pullback
+`φ ↦ φ∘f`. Its bounded dual is `B*(F)=F∘B`.
+
+Let `J_M(x)(φ)=φ(x)` and `J_N(y)(ψ)=ψ(y)` be the evaluation identifications with the duals of
+the normal-functional Banach spaces. Then `B*(J_M(x))=J_N(f(x))` for every `x ∈ M`. Injectivity
+of `f` is not required.
 -/
 
 @[expose] public section
@@ -38,7 +39,12 @@ variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [Complete
 variable {K : Type v} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
 variable {M : VonNeumannAlgebra H} {N : VonNeumannAlgebra K}
 
-/-- The literal dual of original predual pullback agrees with the original map under actual evaluation. -/
+/-- **Dual pullback agrees with the algebra map under evaluation.** Let `M,N` be concrete von
+Neumann algebras on complete complex Hilbert spaces. Their normal-functional Banach spaces
+`M_*,N_*` are the norm-closed spans of vector functionals, and their ultraweak topologies
+are `σ(M,M_*)`, `σ(N,N_*)`. Let `f : M → N` be a unital complex star homomorphism that is
+ultraweakly continuous. let `B=f.predualPullback`, `B*(F)=F∘B`, and `J_M(x)(φ)=φ(x)`,
+`J_N(y)(ψ)=ψ(y)`. For every `x ∈ M`, `B*(J_M(x))=J_N(f(x))` in `(N_*)*`. -/
 theorem predualPullback_dual_evaluation (f : NormalStarAlgHom M N) (x : M) :
     ((ContinuousLinearMap.compL ℂ (normalFunctionalSpace N) (normalFunctionalSpace M) ℂ).flip
       f.predualPullback) (normalFunctionalEvaluationEquiv M x) =

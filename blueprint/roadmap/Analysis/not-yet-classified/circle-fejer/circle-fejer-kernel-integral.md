@@ -1,3 +1,4 @@
-# Circle Fejer Kernel integral
+# Unit mass of the Fejér kernel
 
-The actual positive normalized kernel has integral exactly one.
+For every `N : ℕ`,
+`∫ x, circleFejerKernel N x ∂AddCircle.haarAddCircle = 1` on `UnitAddCircle`.

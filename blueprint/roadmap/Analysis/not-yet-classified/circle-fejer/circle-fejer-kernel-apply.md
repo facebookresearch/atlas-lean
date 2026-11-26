@@ -1,3 +1,4 @@
-# Circle Fejer Kernel apply
+# Squared-modulus formula for the Fejér kernel
 
-Literal positive real density represented by the actual complex Fejer kernel.
+For `N : ℕ` and `x : UnitAddCircle`,
+`circleFejerKernel N x = (‖circleDirichletPolynomial N x‖² / (N + 1) : ℝ)` in `ℂ`.

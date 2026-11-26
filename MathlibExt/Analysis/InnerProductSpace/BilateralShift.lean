@@ -18,11 +18,15 @@ import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Linarith
 
 /-!
-# The bilateral shift on `ℓ²`
+# Right bilateral shift on vector-valued square-summable sequences
 
-This file defines the forward bilateral shift on the canonical Mathlib carrier
-`lp (fun _ : ℤ ↦ G) 2`.  It moves each coordinate one place to the right:
-the value at `n` after shifting is the old value at `n - 1`.
+For a real or complex normed inner-product space `G`, the shift on `ℓ²(ℤ,G)` is `Sx(n)=x(n-1)`.
+It is a linear isometry, moving a singleton at `n` to the singleton at `n+1`. Reindexing by any
+equivalence of `ℤ` also preserves the square-summable norm.
+
+When `G` is complete, the adjoint is the left shift `S*x(n)=x(n+1)`. Both `S*S=I` and `SS*=I`,
+so `S` is unitary. The norm and coordinate assertions do not require completeness of `G`, and
+the zero space is permitted.
 -/
 
 @[expose] public section
@@ -37,9 +41,11 @@ variable {𝕜 : Type u} [RCLike 𝕜]
 variable {G : Type v} [NormedAddCommGroup G] [InnerProductSpace 𝕜 G]
   [hG : CompleteSpace G]
 
-/-! ## Reindexing on the canonical `lp` carrier -/
+/-! ## Reindexing of square-summable sequences -/
 
-/-- Reindex an `ℓ²(ℤ, G)` vector along an equivalence of `ℤ`. -/
+/-- **Reindexed square-summable sequence.** Let `G` be a normed additive commutative group, `e
+: ℤ ≃ ℤ` and `x ∈ lp (fun _ : ℤ => G) 2`. The function `bilateralReindexSeq e x` has value
+`x(e(n))` at `n : ℤ`; no scalar field or completeness is required for these coordinates. -/
 def bilateralReindexSeq (e : ℤ ≃ ℤ)
     (x : lp (fun _ : ℤ ↦ G) 2) : ℤ → G :=
   fun n ↦ x (e n)
@@ -57,7 +63,9 @@ theorem bilateralReindexSeq_mem (e : ℤ ≃ ℤ)
   exact memℓp_gen hreindex
 
 omit hG in
-/-- Reindexing by an equivalence preserves the `ℓ²` norm. -/
+/-- **Norm preserved by integer-coordinate reindexing.** Let `G` be a normed additive
+commutative group and `e : ℤ ≃ ℤ`. For every `x ∈ ℓ²(ℤ,G)`, the reindexed square-summable
+sequence `n ↦ x(e(n))` has norm `‖x‖₂`. -/
 theorem bilateralReindexSeq_norm (e : ℤ ≃ ℤ)
     (x : lp (fun _ : ℤ ↦ G) 2) :
     ‖(⟨bilateralReindexSeq e x, bilateralReindexSeq_mem e x⟩ :
@@ -81,7 +89,10 @@ theorem bilateralReindexSeq_norm (e : ℤ ≃ ℤ)
     rw [lp.norm_eq_tsum_rpow hp]
   rw [hnormReindex, hnormInput, hsum]
 
-/-- The linear reindexing map induced by an equivalence of `ℤ`. -/
+/-- **Linear integer-coordinate reindexing.** Let `𝕜` be real or complex and `G` a normed
+inner-product `𝕜`-space. Write `L=lp (fun _ : ℤ => G) 2` and `Sx(n)=x(n-1)` for the right
+bilateral shift. for `e : ℤ ≃ ℤ`, `bilateralReindexLinear e : L →ₗ[𝕜] L` acts by `x(n) ↦
+x(e(n))`. -/
 def bilateralReindexLinear (e : ℤ ≃ ℤ) :
     lp (fun _ : ℤ ↦ G) 2 →ₗ[𝕜] lp (fun _ : ℤ ↦ G) 2 where
   toFun x := ⟨bilateralReindexSeq e x, bilateralReindexSeq_mem e x⟩
@@ -102,12 +113,17 @@ theorem bilateralReindexLinear_norm (e : ℤ ≃ ℤ)
 
 /-! ## Forward and inverse translations -/
 
-/-- The forward/right translation before it is bundled continuously. -/
+/-- **Linear right bilateral translation.** Let `𝕜` be real or complex and `G` a normed
+inner-product `𝕜`-space. Write `L=lp (fun _ : ℤ => G) 2` and `Sx(n)=x(n-1)` for the right
+bilateral shift. `bilateralShiftLinear : L →ₗ[𝕜] L` is `S`, with `(Sx)(n)=x(n-1)`. -/
 def bilateralShiftLinear :
     lp (fun _ : ℤ ↦ G) 2 →ₗ[𝕜] lp (fun _ : ℤ ↦ G) 2 :=
   bilateralReindexLinear (Equiv.subRight (1 : ℤ))
 
-/-- The inverse/left translation before it is bundled continuously. -/
+/-- **Linear left bilateral translation.** Let `𝕜` be real or complex and `G` a normed
+inner-product `𝕜`-space. Write `L=lp (fun _ : ℤ => G) 2` and `Sx(n)=x(n-1)` for the right
+bilateral shift. `bilateralShiftInverseLinear : L →ₗ[𝕜] L` is the inverse shift, with
+value `x(n+1)` at `n`. -/
 def bilateralShiftInverseLinear :
     lp (fun _ : ℤ ↦ G) 2 →ₗ[𝕜] lp (fun _ : ℤ ↦ G) 2 :=
   bilateralReindexLinear (Equiv.addRight (1 : ℤ))
@@ -159,23 +175,32 @@ private def bilateralShiftLinearIsometry :
   toLinearMap := bilateralShiftLinear
   norm_map' := bilateralShiftLinear_norm
 
-/-- The linearly isometric equivalence underlying the bilateral shift. -/
+/-- **Isometric equivalence of the right bilateral shift.** Let `𝕜` be real or complex and `G`
+a normed inner-product `𝕜`-space. Write `L=lp (fun _ : ℤ => G) 2` and `Sx(n)=x(n-1)` for
+the right bilateral shift. the linear isometric equivalence `bilateralShiftEquiv : L
+≃ₗᵢ[𝕜] L` has forward value `x(n-1)` and inverse value `x(n+1)`. -/
 private noncomputable def bilateralShiftEquiv :
     lp (fun _ : ℤ ↦ G) 2 ≃ₗᵢ[𝕜] lp (fun _ : ℤ ↦ G) 2 :=
   LinearIsometryEquiv.ofLinearIsometry
     bilateralShiftLinearIsometry bilateralShiftInverseLinear
     bilateralShiftLinear_comp_inverse bilateralShiftInverse_comp_linear
 
-/-! ## Public bilateral-shift API -/
+/-! ## Bilateral shift and its adjoint -/
 
-/-- The forward/right bilateral shift on `ℓ²(ℤ, G)`. -/
+/-- **Bounded right bilateral shift.** Let `𝕜` be real or complex and `G` a normed
+inner-product `𝕜`-space. Write `L=lp (fun _ : ℤ => G) 2` and `Sx(n)=x(n-1)` for the right
+bilateral shift. `bilateralShift : L →L[𝕜] L` is the bounded complex- or real-linear
+operator `S`, preserving the ℓ² norm. Completeness is not needed for this bounded
+operator. -/
 noncomputable def bilateralShift :
     lp (fun _ : ℤ ↦ G) 2 →L[𝕜] lp (fun _ : ℤ ↦ G) 2 :=
   bilateralShiftLinear.mkContinuous 1 fun x ↦ by
     rw [bilateralShiftLinear_norm, one_mul]
 
 omit hG in
-/-- Coordinate formula for the forward/right bilateral shift. -/
+/-- **Coordinates of the right bilateral shift.** Let `𝕜` be real or complex and `G` a normed
+inner-product `𝕜`-space. Write `L=lp (fun _ : ℤ => G) 2` and `Sx(n)=x(n-1)` for the right
+bilateral shift. for `x ∈ L` and `n : ℤ`, `bilateralShift x n=x(n-1)`. -/
 @[simp]
 theorem bilateralShift_apply
     (x : lp (fun _ : ℤ ↦ G) 2) (n : ℤ) :
@@ -184,7 +209,9 @@ theorem bilateralShift_apply
   rfl
 
 omit hG in
-/-- The bilateral shift moves the `n`-th single to the `(n+1)`-st. -/
+/-- **Right shift of an integer singleton.** Let `𝕜` be real or complex and `G` a normed
+inner-product `𝕜`-space. Write `L=lp (fun _ : ℤ => G) 2` and `Sx(n)=x(n-1)` for the right
+bilateral shift. for `n : ℤ`, `g ∈ G`, `S(single_n g)=single_(n+1) g`. -/
 @[simp]
 theorem bilateralShift_single (n : ℤ) (g : G) :
     bilateralShift (𝕜 := 𝕜)
@@ -206,14 +233,19 @@ theorem bilateralShift_single (n : ℤ) (g : G) :
     rw [lp.single_apply_ne (E := fun _ : ℤ ↦ G) 2 (n + 1) g hj]
 
 omit hG in
-/-- The bilateral shift preserves the `ℓ²` norm. -/
+/-- **Square-summable norm preserved by the bilateral shift.** Let `𝕜` be real or complex and
+`G` a normed inner-product `𝕜`-space. Write `L=lp (fun _ : ℤ => G) 2` and `Sx(n)=x(n-1)`
+for the right bilateral shift. for every `x ∈ L`, `‖Sx‖₂=‖x‖₂`, including the zero-space
+case. -/
 theorem bilateralShift_norm (x : lp (fun _ : ℤ ↦ G) 2) :
     ‖bilateralShift (𝕜 := 𝕜) x‖ = ‖x‖ := by
   change ‖bilateralShiftLinear (𝕜 := 𝕜) x‖ = ‖x‖
   exact bilateralShiftLinear_norm x
 
 omit hG in
-/-- The bilateral shift is an isometry. -/
+/-- **Metric isometry of the right bilateral shift.** Let `𝕜` be real or complex and `G` a
+normed inner-product `𝕜`-space. Write `L=lp (fun _ : ℤ => G) 2` and `Sx(n)=x(n-1)` for the
+right bilateral shift. `S : L → L` is an isometry for the ℓ² norm-induced metric. -/
 theorem bilateralShift_isometry :
     Isometry (bilateralShift (𝕜 := 𝕜) (G := G)) :=
   (AddMonoidHomClass.isometry_iff_norm _).mpr bilateralShift_norm
@@ -231,7 +263,10 @@ private theorem adjoint_bilateralShift_eq_inverse :
   rw [hshift]
   exact (bilateralShiftEquiv (𝕜 := 𝕜) (G := G)).adjoint_eq_symm
 
-/-- The adjoint is the inverse translation, with value `x (n+1)` at `n`. -/
+/-- **Coordinate action of the bilateral-shift adjoint.** Let `𝕜` be real or complex and `G` a
+normed inner-product `𝕜`-space. Write `L=lp (fun _ : ℤ => G) 2` and `Sx(n)=x(n-1)` for the
+right bilateral shift. Assume `G` is complete, so the Hilbert adjoint on `L` is defined.
+for `x ∈ L` and `n : ℤ`, `(S*x)(n)=x(n+1)`. -/
 @[simp]
 theorem adjoint_bilateralShift_apply
     (x : lp (fun _ : ℤ ↦ G) 2) (n : ℤ) :
@@ -240,7 +275,10 @@ theorem adjoint_bilateralShift_apply
   change bilateralShiftInverseLinear (𝕜 := 𝕜) x n = x (n + 1)
   rfl
 
-/-- The adjoint moves the `n`-th single to the `(n-1)`-st. -/
+/-- **Left singleton shift under the bilateral adjoint.** Let `𝕜` be real or complex and `G` a
+normed inner-product `𝕜`-space. Write `L=lp (fun _ : ℤ => G) 2` and `Sx(n)=x(n-1)` for the
+right bilateral shift. Assume `G` is complete, so the Hilbert adjoint on `L` is defined.
+for `n : ℤ`, `g ∈ G`, `S*(single_n g)=single_(n-1) g`. -/
 @[simp]
 theorem adjoint_bilateralShift_single (n : ℤ) (g : G) :
     star (bilateralShift (𝕜 := 𝕜) (G := G))
@@ -261,7 +299,10 @@ theorem adjoint_bilateralShift_single (n : ℤ) (g : G) :
     rw [lp.single_apply_ne (E := fun _ : ℤ ↦ G) 2 n g h]
     rw [lp.single_apply_ne (E := fun _ : ℤ ↦ G) 2 (n - 1) g hj]
 
-/-- The adjoint followed by the bilateral shift is the identity. -/
+/-- **Bilateral-shift adjoint is a left inverse.** Let `𝕜` be real or complex and `G` a normed
+inner-product `𝕜`-space. Write `L=lp (fun _ : ℤ => G) 2` and `Sx(n)=x(n-1)` for the right
+bilateral shift. Assume `G` is complete, so the Hilbert adjoint on `L` is defined.
+`S*∘S=I_L`. -/
 @[simp]
 theorem adjoint_bilateralShift_comp_bilateralShift :
     star (bilateralShift (𝕜 := 𝕜) (G := G)) ∘L
@@ -275,7 +316,10 @@ theorem adjoint_bilateralShift_comp_bilateralShift :
   rw [adjoint_bilateralShift_apply, bilateralShift_apply]
   rw [add_sub_cancel_right]
 
-/-- The bilateral shift followed by its adjoint is the identity. -/
+/-- **Bilateral-shift adjoint is a right inverse.** Let `𝕜` be real or complex and `G` a
+normed inner-product `𝕜`-space. Write `L=lp (fun _ : ℤ => G) 2` and `Sx(n)=x(n-1)` for the
+right bilateral shift. Assume `G` is complete, so the Hilbert adjoint on `L` is defined.
+`S∘S*=I_L`. -/
 @[simp]
 theorem bilateralShift_comp_adjoint_bilateralShift :
     bilateralShift (𝕜 := 𝕜) (G := G) ∘L
@@ -289,7 +333,10 @@ theorem bilateralShift_comp_adjoint_bilateralShift :
   rw [bilateralShift_apply, adjoint_bilateralShift_apply]
   rw [sub_add_cancel]
 
-/-- The bilateral shift is a unitary continuous linear endomorphism. -/
+/-- **Unitarity of the vector-valued bilateral shift.** Let `𝕜` be real or complex and `G` a
+normed inner-product `𝕜`-space. Write `L=lp (fun _ : ℤ => G) 2` and `Sx(n)=x(n-1)` for the
+right bilateral shift. Assume `G` is complete, so the Hilbert adjoint on `L` is defined.
+the bounded operator `S` lies in the unitary group of `B(L)`, with `S*S=SS*=I_L`. -/
 theorem bilateralShift_mem_unitary :
     bilateralShift (𝕜 := 𝕜) (G := G) ∈
       unitary (lp (fun _ : ℤ ↦ G) 2 →L[𝕜]

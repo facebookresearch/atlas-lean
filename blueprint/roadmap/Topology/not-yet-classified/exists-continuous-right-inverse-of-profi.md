@@ -1,4 +1,6 @@
-# Profinite Section
+# Continuous section of a surjective local homeomorphism over a profinite space
 
-A surjective local homeomorphism over a compact Hausdorff totally
-disconnected space admits a continuous right inverse.
+Let `E`
+be any topological space, `X` compact Hausdorff and totally disconnected, and `f : E → X`
+a surjective local homeomorphism. There exists `s∈C(X,E)` with `f∘s=id_X`; no compactness
+or Hausdorff assumption on `E` is imposed.

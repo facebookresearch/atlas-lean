@@ -1,5 +1,5 @@
-# Continuous Indicator Approximation
+# Continuous unit-interval approximation of measurable indicators
 
-- [Exists continuous indicator e Lp Norm le](exists-continuous-indicator-e-lp-norm-le.md)
-- [Exists continuous indicator l2](exists-continuous-indicator-l2.md)
-- [Exists continuous indicator l2 ae](exists-continuous-indicator-l2-ae.md)
+- [Continuous indicator approximation at any nonzero extended tolerance](exists-continuous-indicator-e-lp-norm-le.md)
+- [Sequence of bounded continuous L² indicator approximants](exists-continuous-indicator-l2.md)
+- [Continuous indicator approximants converging in L² and almost everywhere](exists-continuous-indicator-l2-ae.md)

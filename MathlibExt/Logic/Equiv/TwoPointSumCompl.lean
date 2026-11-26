@@ -14,13 +14,13 @@ module
 public import Mathlib.Logic.Equiv.Sum
 
 /-!
-# Two-point complement equivalence
+# Splitting two distinct points from a type
 
-This file constructs an equivalence between `Fin 2 ⊕ {x // x ≠ a ∧ x ≠ b}`
-and `α` for distinct points `a b : α`. The left summand maps `0` to `a`
-and `1` to `b`, and the right summand maps a complement element to its
-underlying value. The construction uses only decidable equality and avoids
-any finiteness or cardinality assumptions.
+For a type `α` with decidable equality and distinct `a,b∈α`, there is an equivalence `Fin 2 ⊕ {x
+: α : x≠a ∧ x≠b} ≃ α`.
+
+The two finite points map to `a,b`, and the complementary summand maps to its underlying value.
+No finiteness or cardinality assumption on `α` is required.
 -/
 
 @[expose] public section
@@ -29,7 +29,10 @@ namespace Equiv
 
 variable {α : Type*} [DecidableEq α]
 
-/-- Equivalence isolating two distinct points `a` and `b`. -/
+/-- **Equivalence isolating two distinct points and their complement.** Let `α` have decidable
+equality and `a,b∈α` satisfy `a≠b`. `twoPointSumCompl a b` maps `inl 0` to `a`, `inl 1` to
+`b`, and `inr x` to the underlying complement element `x`. Its inverse tests equality with
+`a,b` and otherwise returns the complement summand. -/
 def twoPointSumCompl (a b : α) (hab : a ≠ b) :
     Fin 2 ⊕ {x : α // x ≠ a ∧ x ≠ b} ≃ α where
   toFun

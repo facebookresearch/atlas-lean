@@ -1,4 +1,4 @@
-# Dft Unitary Pos val
+# Underlying matrix of the positive Fourier unitary
 
-The positive-sign DFT unitary has the original positive-sign Fourier matrix as its underlying
-matrix.
+For `d>0`, the matrix underlying
+`dftUnitaryPos d` is `dftMatrix d 1`.

@@ -16,12 +16,15 @@ public import Mathlib.Algebra.Order.Field.Basic
 public import Mathlib.LinearAlgebra.Dimension.DivisionRing
 
 /-!
-# Operator ideal laws for approximation numbers
+# Composition, scaling and addition of approximation numbers
 
-Finite-rank approximants remain admissible under composition. The proofs use
-cardinal range rank and infimum lower bounds, without assuming a minimizing
-approximant or finite-dimensional carriers. Indices retain the rank-at-most
-convention of `approximationNumber`.
+For bounded operators between normed spaces over a nontrivially normed field, use `a_n(T)=inf
+{‖T-R‖ : dim(range R)≤n}`. Composition satisfies `a_n(BTA)≤‖B‖ a_n(T) ‖A‖`, and scalar
+multiplication gives `a_n(cT)=‖c‖a_n(T)`.
+
+The rank allowances add under sums: `a_(n+m)(T+S)≤a_n(T)+a_m(S)`. These inequalities apply to
+incomplete and infinite-dimensional spaces and do not assume a minimizing finite-rank
+approximant.
 -/
 
 @[expose] public section
@@ -68,7 +71,11 @@ private theorem le_mul_approximationNumber_of_le_errors (T : E →L[𝕜] F) (n 
       exact (div_le_iff₀ hpos).mpr (by simpa only [mul_comm] using h R hR)
     simpa only [mul_comm] using (div_le_iff₀ hpos).mp hbound
 
-/-- Approximation numbers satisfy the two-sided operator ideal norm inequality. -/
+/-- **Two-sided operator ideal inequality for approximation numbers.** Let `𝕜` be a
+nontrivially normed field and `D,E,F,G` normed `𝕜`-spaces in independent universes. For
+bounded `A : D → E`, `T : E → F`, `B : F → G` and `n : ℕ`, `a_n(B∘T∘A)≤‖B‖ a_n(T) ‖A‖`,
+where `a_n` is the infimum of errors over approximants of cardinal range dimension at most
+`n`. -/
 theorem approximationNumber_comp_le (B : F →L[𝕜] G) (T : E →L[𝕜] F)
     (A : D →L[𝕜] E) (n : ℕ) :
     approximationNumber (B.comp (T.comp A)) n ≤ ‖B‖ * approximationNumber T n * ‖A‖ := by
@@ -98,7 +105,10 @@ private theorem approximationNumber_smul_le (c : 𝕜) (T : E →L[𝕜] F) (n :
   have h := approximationNumber_le_norm_sub (c • T) n (c • R) hRank
   simpa only [← smul_sub, norm_smul] using h
 
-/-- Scalar multiplication scales approximation numbers by the scalar norm. -/
+/-- **Scalar homogeneity of approximation numbers.** Let `𝕜` be a nontrivially normed field
+and `E,F` normed `𝕜`-spaces, possibly incomplete. For `T : E →L[𝕜] F`, set `a_n(T)=inf
+{‖T-R‖ : R : E →L[𝕜] F, dim_𝕜(range R)≤n}`, using cardinal dimension and `n : ℕ`. for
+every `c : 𝕜`, `a_n(c • T)=‖c‖*a_n(T)`, including `c=0`. -/
 @[simp] theorem approximationNumber_smul (c : 𝕜) (T : E →L[𝕜] F) (n : ℕ) :
     approximationNumber (c • T) n = ‖c‖ * approximationNumber T n := by
   apply le_antisymm (approximationNumber_smul_le c T n)
@@ -122,7 +132,10 @@ private theorem rank_add_budget (R S : E →L[𝕜] F) {n m : ℕ}
     _ ≤ (n : Cardinal) + (m : Cardinal) := add_le_add hR hS
     _ = ((n + m : ℕ) : Cardinal) := (Nat.cast_add n m).symm
 
-/-- Adding two operators adds their finite-rank approximation budgets. -/
+/-- **Additive rank allowance for approximation numbers.** Let `𝕜` be a nontrivially normed
+field and `E,F` normed `𝕜`-spaces, possibly incomplete. For `T : E →L[𝕜] F`, set
+`a_n(T)=inf {‖T-R‖ : R : E →L[𝕜] F, dim_𝕜(range R)≤n}`, using cardinal dimension and `n :
+ℕ`. for bounded `S : E → F` and `n,m : ℕ`, `a_(n+m)(T+S)≤a_n(T)+a_m(S)`. -/
 theorem approximationNumber_add_le (T S : E →L[𝕜] F) (n m : ℕ) :
     approximationNumber (T + S) (n + m) ≤ approximationNumber T n + approximationNumber S m := by
   have hbound : approximationNumber (T + S) (n + m) - approximationNumber T n ≤

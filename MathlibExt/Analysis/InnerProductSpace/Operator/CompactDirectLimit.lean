@@ -17,16 +17,15 @@ public import MathlibExt.Analysis.Normed.Ring.DirectLimit
 public import MathlibExt.Analysis.Normed.Module.DirectLimit
 
 /-!
-# The literal raw compact embedding of an infinite orthonormal family
+# Algebraic matrix direct limit inside Hilbert-space compacts
 
-The positive C-star matrix stages are glued by their actual top-left padding.
-The raw carrier and its normed ring, group, metric, topology and scalar values
-are the existing norm-preserving direct-limit dictionaries. The target is the
-actual compact closed star ideal with its inherited operator norm.
+Let `β_n` be an orthonormal family in a complete complex Hilbert space `H`. The matrix algebras
+`M_(n+1)(ℂ)` form a direct system under top-left zero padding. Their algebraic direct limit `D`
+has the norm `‖[n,X]‖=‖X‖`.
 
-Finite-corner compatibility is proved, not supplied. The family need not
-span the complete complex Hilbert space. No completeness of the raw limit,
-completion map, target density, surjectivity or spatial identification is used.
+The nonunital star homomorphism `Φ_β : D → K(H)` sends `[n,X]` to `Σ_i,j<n+1 X_ij θ_(β_i,β_j)`.
+It preserves norm and is an isometry. The family need not span `H`; neither completeness of `D`
+nor surjectivity of `Φ_β` is asserted.
 -/
 
 @[expose] public section
@@ -42,8 +41,12 @@ namespace Orthonormal
 
 universe uH
 
-/-- The actual nonunital star-algebra map from the positive matrix raw limit
-into compact operators, constructed from the given orthonormal family. -/
+/-- **Algebraic matrix direct-limit map to compacts.** Let `H` be a complete complex Hilbert
+space and `β : ℕ → H` an orthonormal family, which need not span `H`. Let `D=lim_n
+M_(n+1)(ℂ)` be the algebraic direct limit along top-left zero padding, with norm
+`‖[n,X]‖=‖X‖`. Write `θ_(x,y)z=⟨y,z⟩x` and `Φ_β([n,X])=Σ_i,j<n+1 X_ij θ_(β_i,β_j)` for the
+compact matrix map. `rawCompactEmbedding β : D →⋆ₙₐ[ℂ] K(H)` is the nonunital complex star
+homomorphism `Φ_β`. -/
 noncomputable def rawCompactEmbedding
     {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
     [CompleteSpace H] {β : ℕ → H} (hβ : Orthonormal ℂ β) :
@@ -134,8 +137,12 @@ noncomputable def rawCompactEmbedding
   change σ n (star X) = star (σ n X)
   exact map_star (σ n) X
 
-/-- Every genuine raw stage representative has the literal column-ordered
-finite rank-one value in the ambient bounded operators. -/
+/-- **Finite matrix representative in the compact direct limit.** Let `H` be a complete
+complex Hilbert space and `β : ℕ → H` an orthonormal family, which need not span `H`. Let
+`D=lim_n M_(n+1)(ℂ)` be the algebraic direct limit along top-left zero padding, with norm
+`‖[n,X]‖=‖X‖`. Write `θ_(x,y)z=⟨y,z⟩x` and `Φ_β([n,X])=Σ_i,j<n+1 X_ij θ_(β_i,β_j)` for the
+compact matrix map. for `X ∈ M_(n+1)(ℂ)`, the bounded operator representing
+`rawCompactEmbedding β [n,X]` is the finite rank-one sum `Σ_i,j<n+1 X_ij θ_(β_i,β_j)`. -/
 theorem rawCompactEmbedding_mk
     {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
     [CompleteSpace H] {β : ℕ → H} (hβ : Orthonormal ℂ β) :
@@ -221,8 +228,12 @@ theorem rawCompactEmbedding_mk
       X i j • InnerProductSpace.rankOne ℂ (β i.val) (β j.val)
   exact hβn.compactCorner_coe X
 
-/-- The constructed raw map preserves the existing representative norm and
-is an isometry for that same norm-induced metric. -/
+/-- **Isometry of the algebraic compact matrix embedding.** Let `H` be a complete complex
+Hilbert space and `β : ℕ → H` an orthonormal family, which need not span `H`. Let `D=lim_n
+M_(n+1)(ℂ)` be the algebraic direct limit along top-left zero padding, with norm
+`‖[n,X]‖=‖X‖`. Write `θ_(x,y)z=⟨y,z⟩x` and `Φ_β([n,X])=Σ_i,j<n+1 X_ij θ_(β_i,β_j)` for the
+compact matrix map. the map `Φ_β=rawCompactEmbedding β` satisfies `‖Φ_β(z)‖=‖z‖` for every
+`z ∈ D` and is an isometry from `D` to `K(H)`. -/
 theorem rawCompactEmbedding_norm_isometry
     {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
     [CompleteSpace H] {β : ℕ → H} (hβ : Orthonormal ℂ β) :

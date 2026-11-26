@@ -1,4 +1,4 @@
-# Faithful Predual Dual
+# Isometric dual of the predual pullback of an injective normal map
 
-- [Predual Pullback dual norm](predual-pullback-dual-norm.md)
-- [Predual Pullback dual isometry](predual-pullback-dual-isometry.md)
+- [Norm preserved by the dual of injective normal predual pullback](predual-pullback-dual-norm.md)
+- [Isometry of the dual precomposition map](predual-pullback-dual-isometry.md)

@@ -1,3 +1,6 @@
-# To Right Linear Map
+# Tensor-linear map restricted to the right algebra
 
-A tensor-module morphism preserves the original second scalar action.
+Let k be a commutative semiring, A,B k-algebras that may be noncommutative, and M,N k-modules
+with compatible A- and B-actions that commute with each other. The tensor algebra A⊗_kB acts
+by (a⊗b)•x=a•(b•x). For an A⊗_kB-linear f:M→N, toRightLinearMap f:M→ₗ[B]N is the same
+function, satisfying f(b•x)=b•f(x).

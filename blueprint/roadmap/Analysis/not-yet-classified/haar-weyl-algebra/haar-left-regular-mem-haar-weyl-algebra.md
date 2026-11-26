@@ -1,3 +1,6 @@
-# Haar Left Regular mem haar Weyl Algebra
+# Haar left translation belongs to the Weyl algebra
 
-Every original scalar Haar left translation belongs to the same generated algebra.
+Let `G` be a locally compact
+topological group with its Borel measurable structure, and `μ` a regular Haar measure. On
+`L²(G,μ)`, let `λ_g ξ(s)=ξ(g⁻¹s)` and `U_χ ξ(s)=χ(s)ξ(s)` for a continuous circle-valued
+character `χ`. for every `g∈G`, `λ_g∈haarWeylAlgebra μ`.

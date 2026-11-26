@@ -1,4 +1,5 @@
-# Det eq prod graded of bottom det eq one
+# Graded determinant product with unit bottom determinant
 
-Version of `LinearMap.det_eq_det_mul_prod_graded` for a filtration whose
-bottom determinant has already been identified with one.
+Let R be a commutative ring and M_0,…,M_n finite free modules with invariant endomorphisms f_i
+and invariant extensions between adjacent stages. Assume every quotient Q_i is free and write
+q_i for its induced endomorphism. If det(f_0)=1, then det(f_n)=∏_{i<n}det(q_i).

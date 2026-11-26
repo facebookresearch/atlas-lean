@@ -17,17 +17,14 @@ public import Mathlib.MeasureTheory.Measure.Haar.Basic
 public import Mathlib.Topology.UrysohnsLemma
 
 /-!
-# Haar invariance of the actual Borel Radon product
+# Left Haar invariance of a Borel Radon product
 
-The compact-support integral formula and the original coordinate Haar
-invariance prove invariance under actual product left translation. Positive
-compact-support factor integrals prove that the constructed product is
-nonzero. Its existing regularity then supplies open positivity, giving a
-genuine Haar measure on the Borel sigma-algebra of the topological product.
+For Hausdorff locally compact topological groups, the Radon product of regular left-invariant
+factor measures is invariant under left translation in both coordinates.
 
-No countability, s-finiteness or product-sigma-algebra identification is
-used. The variable-coordinate shear and reverse-order compact-support
-Fubini theorem remain separate obligations.
+For regular Haar factor measures the product is nonzero and positive on nonempty open sets,
+hence is a Haar measure on the Borel topological product. No countability, s-finiteness or
+identification with a factor-product measurable space is required.
 -/
 
 @[expose] public section
@@ -50,7 +47,8 @@ variable {K : Type uK} [Group K] [TopologicalSpace K] [IsTopologicalGroup K]
   [T2Space K] [LocallyCompactSpace K] [MeasurableSpace K] [BorelSpace K]
 variable (μ : Measure G) (ν : Measure K) [μ.Regular] [ν.Regular]
 
-/-- The literal Borel measurable space of the topological product. -/
+/-- **Borel measurable structure of a topological group product.** For topological spaces
+underlying groups `G,K`, the product carrier uses `borel(G×K)` from its product topology. -/
 local instance instHaarRadonProductMeasurableSpace : MeasurableSpace (G × K) := borel (G × K)
 local instance instHaarRadonProductBorelSpace : BorelSpace (G × K) := ⟨rfl⟩
 
@@ -58,7 +56,10 @@ section Invariance
 
 variable [IsMulLeftInvariant μ] [IsMulLeftInvariant ν]
 
-/-- Actual left translation in both coordinates preserves the original Borel Radon product. -/
+/-- **Product left translation preserves the Borel Radon measure.** Let `G,K` be Hausdorff
+locally compact topological groups with their Borel structures, and `μ,ν` regular measures
+invariant under every left translation. for `a∈G×K`, `Measure.map (a*·) (radonProd μ
+ν)=radonProd μ ν`. Haar positivity is not required for this invariance statement. -/
 theorem map_mulLeft_radonProd (a : G × K) :
     Measure.map (a * ·) (radonProd μ ν) = radonProd μ ν := by
   let e : (G × K) ≃ₜ (G × K) := Homeomorph.mulLeft a
@@ -84,11 +85,17 @@ theorem map_mulLeft_radonProd (a : G × K) :
     _ = ∫ s : G, ∫ t : K, f (s, t) ∂ν ∂μ :=
       integral_mul_left_eq_self (μ := μ) (fun s : G => ∫ t : K, f (s, t) ∂ν) a.1
 
-/-- The original Radon product is left invariant for the literal product group. -/
+/-- **Left-invariance structure of a regular Radon product.** Let `G,K` be Hausdorff locally
+compact topological groups with their Borel structures, and `μ,ν` regular measures
+invariant under every left translation. `radonProd μ ν` is invariant under each left
+translation of `G×K`. -/
 instance isMulLeftInvariant_radonProd : IsMulLeftInvariant (radonProd μ ν) where
   map_mul_left_eq_self := map_mulLeft_radonProd μ ν
 
-/-- The actual product left translation is measure preserving on the full Borel carrier. -/
+/-- **Measure-preserving product left translation.** Let `G,K` be Hausdorff locally compact
+topological groups with their Borel structures, and `μ,ν` regular measures invariant under
+every left translation. for `a∈G×K`, the map `z ↦ az` is measure preserving for `radonProd
+μ ν`. -/
 theorem measurePreserving_mulLeft_radonProd (a : G × K) :
     MeasurePreserving (a * ·) (radonProd μ ν) (radonProd μ ν) :=
   ⟨(Homeomorph.mulLeft a).measurable, map_mulLeft_radonProd μ ν a⟩
@@ -109,7 +116,9 @@ private theorem exists_compactSupport_integral_pos
   exact ⟨F, integral_pos_of_integrable_nonneg_nonzero f.continuous F.integrable hfNonneg hfx⟩
 
 omit [IsTopologicalGroup G] [IsTopologicalGroup K] in
-/-- Positive original factor integrals make the actual Radon product nonzero. -/
+/-- **Nonzero Radon product of regular Haar measures.** Let `G,K` be groups with Hausdorff
+locally compact Borel topologies and regular Haar measures `μ,ν`. Then `radonProd μ ν≠0`.
+Continuity of the group operations is not assumed for this nonzero assertion. -/
 theorem radonProd_ne_zero : radonProd μ ν ≠ 0 := by
   obtain ⟨f, hf⟩ := exists_compactSupport_integral_pos μ (1 : G)
   obtain ⟨g, hg⟩ := exists_compactSupport_integral_pos ν (1 : K)
@@ -121,7 +130,9 @@ theorem radonProd_ne_zero : radonProd μ ν ≠ 0 := by
   simp only [integral_zero_measure] at hpos
   exact (lt_irrefl (0 : ℝ)) hpos
 
-/-- The constructed Borel Radon product of the original regular Haar measures is a Haar measure. -/
+/-- **Regular Haar measure on the Borel group product.** Let `G,K` be Hausdorff locally
+compact topological groups with their Borel structures and regular Haar measures `μ,ν`.
+the measure `radonProd μ ν` is Haar on `G×K`, with its product-topology Borel structure. -/
 instance isHaarMeasure_radonProd : (radonProd μ ν).IsHaarMeasure := by
   let : NeZero (radonProd μ ν) := ⟨radonProd_ne_zero μ ν⟩
   exact

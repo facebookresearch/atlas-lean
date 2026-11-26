@@ -15,24 +15,17 @@ public import Mathlib.Data.Nat.Init
 public import Mathlib.LinearAlgebra.Matrix.Defs
 
 /-!
-# Integral Pfaffians
+# Integral Pfaffian by first-row expansion
 
-The Pfaffian is defined by expansion along the first row, with the empty
-Pfaffian equal to one. This is a polynomial with integer coefficients: no
-division, characteristic assumption, or choice of a square root is involved.
+Let R be a commutative ring and A a square matrix indexed by Fin n. The integral Pfaffian has
+pf_0=1, pf_1=0 and pf_(n+2)(A)=∑_{j=1}^{n+1}(-1)^(j-1) A_(0,j) pf(A with rows and columns 0,j
+deleted in order). This is an integer-coefficient polynomial using the strictly upper
+triangular entries. It gives the usual Pfaffian for alternating matrices, applies in every
+characteristic and is zero in odd sizes. In size 4 it is A01*A23-A02*A13+A03*A12.
 
-The definition uses the strictly upper triangular entries of any matrix. On
-alternating matrices (skew symmetric with zero diagonal, including in
-characteristic two) it is the usual Pfaffian. In odd sizes the recursion gives
-zero. Principal submatrices can be passed directly to `Matrix.pfaffian`.
-
-The scalar-map theorem and the formulas in sizes zero, one, two and four are
-the initial interface. Determinant identities, changes of basis, deletion
-vectors and exterior divided powers are outside this leaf's scope.
-
-Reference: D. A. Buchsbaum and D. Eisenbud, *Algebra Structures for Finite Free
-Resolutions, and Some Structure Theorems for Ideals of Codimension 3* (1977),
-§2, especially Lemma 2.4 and its Pfaffian expansion illustration.
+Reference: D. A. Buchsbaum and D. Eisenbud, Algebra Structures for Finite Free Resolutions,
+and Some Structure Theorems for Ideals of Codimension 3 (1977), §2, especially Lemma 2.4 and
+its Pfaffian expansion illustration.
 -/
 
 @[expose] public section
@@ -45,10 +38,13 @@ universe u v
 
 variable {R : Type u} [CommRing R]
 
-/-- The integral Pfaffian, recursively expanded along the first row.
-In each summand `j` indexes the partner of the first row in the remaining
-`n + 1` indices; `j.succAbove` deletes that partner before `Fin.succ` restores
-the original indexing. -/
+/-- **First-row recursive integral Pfaffian.**
+
+Let R be a commutative ring and A a square matrix indexed by Fin n. The integral Pfaffian has
+pf_0=1, pf_1=0 and pf_(n+2)(A)=∑_{j=1}^{n+1}(-1)^(j-1) A_(0,j) pf(A with rows and columns 0,j
+deleted in order). This defines pfaffian for every square matrix, with no alternating-matrix
+premise on the input.
+-/
 def pfaffian : {n : ℕ} → Matrix (Fin n) (Fin n) R → R
   | 0, _ => 1
   | 1, _ => 0
@@ -65,15 +61,24 @@ theorem pfaffian_fin_zero (A : Matrix (Fin 0) (Fin 0) R) :
 theorem pfaffian_fin_one (A : Matrix (Fin 1) (Fin 1) R) :
     pfaffian A = 0 := rfl
 
-/-- The first-row expansion, without any division. -/
+/-- **Pfaffian expansion along the first row.**
+
+Let R be a commutative ring and A a square matrix indexed by Fin n. The integral Pfaffian has
+pf_0=1, pf_1=0 and pf_(n+2)(A)=∑_{j=1}^{n+1}(-1)^(j-1) A_(0,j) pf(A with rows and columns 0,j
+deleted in order). For an (n+2)×(n+2) matrix, the displayed sum ranges over the partners
+j=1,…,n+1 of the first index, with the induced ordered principal minor.
+-/
 theorem pfaffian_succ_succ {n : ℕ} (A : Matrix (Fin (n + 2)) (Fin (n + 2)) R) :
     pfaffian A =
       ∑ j : Fin (n + 1), (-1 : R) ^ (j : ℕ) * A 0 j.succ *
         pfaffian (A.submatrix (fun i : Fin n => (j.succAbove i).succ)
           (fun i : Fin n => (j.succAbove i).succ)) := rfl
 
-/-- The integral Pfaffian commutes with every homomorphism of commutative
-rings, including reduction to positive characteristic. -/
+/-- **Pfaffian commutes with coefficient homomorphisms.**
+
+Let R,S be commutative rings, f:R→S a ring homomorphism and A an n×n matrix over R. Then
+pfaffian(A.map f)=f(pfaffian A), in all characteristics.
+-/
 theorem pfaffian_map {S : Type v} [CommRing S] (f : R →+* S) {n : ℕ}
     (A : Matrix (Fin n) (Fin n) R) :
     pfaffian (A.map f) = f (pfaffian A) := by
@@ -93,7 +98,11 @@ theorem pfaffian_fin_two (A : Matrix (Fin 2) (Fin 2) R) :
     pfaffian A = A 0 1 := by
   simp [pfaffian]
 
-/-- The three terms of the Pfaffian of a four by four matrix. -/
+/-- **Four-by-four Pfaffian formula.**
+
+Let R be a commutative ring and A a 4×4 matrix over R. Then pfaffian
+A=A01*A23-A02*A13+A03*A12.
+-/
 theorem pfaffian_fin_four (A : Matrix (Fin 4) (Fin 4) R) :
     pfaffian A = A 0 1 * A 2 3 - A 0 2 * A 1 3 + A 0 3 * A 1 2 := by
   simp [pfaffian, Fin.sum_univ_succ, Fin.succAbove, sub_eq_add_neg, add_assoc]

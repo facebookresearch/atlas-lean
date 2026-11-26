@@ -1,3 +1,6 @@
-# Smul
+# Regular variation under normed-field scalar multiplication
 
-Scalar multiplication preserves regular variation of a vector measure.
+Let `X` have a topology
+and measurable structure and `V` be a normed additive commutative group. if `V` is a
+normed space over a normed field `𝕜`, `μ` has regular variation and `z∈𝕜`, then `z • μ`
+has regular variation. Finite total variation is not assumed.

@@ -1,6 +1,6 @@
-# CFCMeasure Coefficients
+# Regular scalar measures of continuous functional calculus
 
-- [Normal CFCCoefficient Functional](normal-cfccoefficient-functional.md)
-- [Normal CFCCoefficient Functional apply](normal-cfccoefficient-functional-apply.md)
-- [Normal CFCCoefficient Measure](normal-cfccoefficient-measure.md)
-- [Normal CFCCoefficient Measure represents](normal-cfccoefficient-measure-represents.md)
+- [Continuous coefficient functional of a normal operator](normal-cfccoefficient-functional.md)
+- [Value of a continuous CFC coefficient](normal-cfccoefficient-functional-apply.md)
+- [Regular complex Riesz measure of a CFC coefficient](normal-cfccoefficient-measure.md)
+- [Continuous integral representation of CFC coefficients](normal-cfccoefficient-measure-represents.md)

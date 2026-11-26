@@ -1,11 +1,11 @@
-# Pfister
+# Subset coordinates of Pfister forms
 
-- [Pfister Weight](pfister-weight.md)
-- [Pfister Weight empty](pfister-weight-empty.md)
-- [Pfister Weight insert](pfister-weight-insert.md)
-- [Pfister Weight ne zero](pfister-weight-ne-zero.md)
-- [Pfister](pfister.md)
-- [Pfister apply](pfister-apply.md)
-- [Pfister radical](pfister-radical.md)
-- [Pfister nondegenerate](pfister-nondegenerate.md)
-- [Finrank pfister carrier](finrank-pfister-carrier.md)
+- [The coefficient of a Pfister subset](pfister-weight.md)
+- [The empty Pfister coefficient](pfister-weight-empty.md)
+- [Inserting an index into a Pfister coefficient](pfister-weight-insert.md)
+- [Nonvanishing of Pfister coefficients](pfister-weight-ne-zero.md)
+- [The diagonal Pfister form](pfister.md)
+- [Evaluation of the diagonal Pfister form](pfister-apply.md)
+- [The radical of a Pfister form](pfister-radical.md)
+- [Nondegeneracy of a Pfister form](pfister-nondegenerate.md)
+- [Dimension of the Pfister coordinate space](finrank-pfister-carrier.md)

@@ -1,3 +1,5 @@
-# Complex Integral Equiv apply
+# Forward value of the complex Riesz equivalence
 
-The complex Riesz equivalence sends a measure to its integral functional.
+Let `X` be a compact Hausdorff space
+with its Borel measurable structure. for regular complex `μ`, `complexIntegralEquiv
+μ=complexIntegralDual μ`.

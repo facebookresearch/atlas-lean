@@ -18,12 +18,14 @@ import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 
 /-!
-# Strong continuity of actual compact-open character multiplication
+# Strong continuity of compact-open character multiplication
 
-The original compact-open evaluation controls every compact-support L2
-vector. The same character unitary norm and genuine compact-support density
-extend its continuity to every vector, without countability or separability
-of the original group or Hilbert space and without sigma-finiteness.
+For a locally compact Borel topological group, regular measure `μ` and complete complex Hilbert
+space `H`, the character multipliers have norm-continuous vector orbits `χ ↦ U_χξ` on `Lp H 2
+μ`.
+
+They form a strongly continuous unitary representation of the compact-open character group. Haar
+invariance, countability, separability and sigma-finiteness are not required.
 -/
 
 @[expose] public section
@@ -46,7 +48,11 @@ variable {G : Type uG} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
 variable (μ : Measure G) [μ.Regular]
 variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- The actual character multiplier has continuous vector orbits for the original compact-open dual topology. -/
+/-- **Norm-continuous character orbit of an L² vector.** Let `G` be a locally compact
+topological group with its Borel structure, `μ` a regular measure and `H` a complete
+complex Hilbert space. Let `U_χξ(s)=χ(s) • ξ(s)` on `Lp H 2 μ`, with compact-open topology
+on the character group. for every `ξ∈Lp H 2 μ`, `χ ↦ characterMultiplier μ χ ξ` is
+continuous in the Hilbert norm. -/
 theorem characterMultiplier_continuous (ξ : Lp H 2 μ) :
     Continuous fun χ : PontryaginDual G => characterMultiplier (H := H) μ χ ξ := by
   have hcompact (f : C_c(G, H)) :
@@ -141,7 +147,11 @@ theorem characterMultiplier_continuous (ξ : Lp H 2 μ) :
       dist (compactSupportInclusion μ f) ξ) := by rw [hisometry, hisometry]
     _ < ε := by rw [dist_comm (compactSupportInclusion μ f) ξ]; linarith
 
-/-- The actual compact-open dual-group representation by original character multipliers. -/
+/-- **Strongly continuous character representation on Hilbert-valued L².** Let `G` be a
+locally compact topological group with its Borel structure, `μ` a regular measure and `H`
+a complete complex Hilbert space. Let `U_χξ(s)=χ(s) • ξ(s)` on `Lp H 2 μ`, with
+compact-open topology on the character group. `characterMultiplierRepresentation μ :
+PontryaginDual G → U(Lp H 2 μ)` has operator value `χ ↦ U_χ`. -/
 def characterMultiplierRepresentation :
     StronglyContinuousUnitaryRepresentation (PontryaginDual G) (Lp H 2 μ) where
   toMonoidHom := characterMultiplierUnitaryHom (H := H) μ

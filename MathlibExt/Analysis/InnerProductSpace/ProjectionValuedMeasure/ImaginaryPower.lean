@@ -16,18 +16,17 @@ public import Mathlib.MeasureTheory.Function.SpecialFunctions.Basic
 public import Mathlib.Analysis.Complex.Trigonometric
 
 /-!
-# Actual bounded spectral imaginary-power coordinates
+# Bounded imaginary-power functions and spectral integrals
 
-The bounded Borel coordinate is exp(it log r). On the positive real spectrum
-this is the original r^(it). The total real-log convention is immaterial to
-a positive nonsingular operator's spectral measure, which assigns zero to
-the nonpositive excluded spectrum. The coordinate has modulus one at every
-real r and is integrated using the existing strict bounded PVM integral.
+For `t : ℝ`, the measurable bounded function on the real axis is `f_t(r)=exp(i t log r)`, using
+the total real logarithm. It has modulus one at every real `r`; on `r>0` it is the imaginary
+power `r^(it)`.
 
-These are actual coordinate/operator DATA from a given spectral measure.
-No source Delta, spectral resolution, polar decomposition or unitary family
-is selected from an open theorem. Positivity, nonsingularity and the link to
-a given original operator are retained in the later whole source statement.
+For a projection-valued measure `E` on `ℝ` acting on a complete complex Hilbert space `H`,
+define `S_t=∫ f_t dE`. Its coefficients are `⟨h,S_t g⟩=∫ exp(i t log r) dμ_(g,h)(r)`, where
+`μ_(g,h)(s)=⟨h,E(s)g⟩`. Countable additivity of `E` is in the strong operator topology. The
+definition uses any such PVM, without assuming a separately given positive or nonsingular
+operator.
 -/
 
 @[expose] public section
@@ -45,7 +44,10 @@ open scoped ENNReal
 open MathlibExt.MeasureTheory.Function
 open MathlibExt.MeasureTheory.VectorMeasure
 
-/-- The actual bounded measurable exp(it log r) coordinate on the real spectral axis. -/
+/-- **Bounded imaginary-power coordinate on the real axis.** For `t : ℝ`,
+`imaginaryPowerCoordinate t : BoundedMeasurableFunction ℝ` has value `r ↦ exp(i t log r)`
+and supremum norm one. The real logarithm is total, with `log 0=0`; for `r>0` the value is
+`r^(it)`. -/
 def imaginaryPowerCoordinate (t : ℝ) : BoundedMeasurableFunction ℝ := by
   refine ⟨⟨(show PreLp (fun _ : ℝ => ℂ) from
     fun r => Complex.exp (((t : ℂ) * Complex.I) * (Real.log r : ℂ))), ?_⟩, ?_⟩
@@ -60,13 +62,17 @@ def imaginaryPowerCoordinate (t : ℝ) : BoundedMeasurableFunction ℝ := by
     exact Complex.continuous_exp.measurable.comp
       (measurable_const.mul (Complex.measurable_ofReal.comp Real.measurable_log))
 
-/-- The coordinate retains its exact original positive-spectral exponential/logarithm value. -/
+/-- **Value of the spectral imaginary-power coordinate.** For all `t,r : ℝ`,
+`imaginaryPowerCoordinate t r = exp(((t : ℂ)*i)*(Real.log r : ℂ))`. On positive `r`, this
+is `r^(it)`. -/
 @[simp]
 theorem imaginaryPowerCoordinate_apply (t r : ℝ) :
     imaginaryPowerCoordinate t r = Complex.exp (((t : ℂ) * Complex.I) * (Real.log r : ℂ)) :=
   rfl
 
-/-- The actual imaginary-power coordinate has modulus one on the whole real axis. -/
+/-- **Modulus of the imaginary-power coordinate.** For every `t,r : ℝ`,
+`‖imaginaryPowerCoordinate t r‖=1`, including `r=0` and negative `r`, since the
+exponential has purely imaginary exponent. -/
 theorem imaginaryPowerCoordinate_norm (t r : ℝ) : ‖imaginaryPowerCoordinate t r‖ = 1 := by
   rw [imaginaryPowerCoordinate_apply, Complex.norm_exp]
   simp [Complex.mul_re, Complex.mul_im]
@@ -75,11 +81,18 @@ universe u
 
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- The actual bounded spectral integral of the original imaginary-power coordinate. -/
+/-- **Spectral integral of an imaginary-power function.** Let `H` be a complete complex
+Hilbert space and `E : ProjectionValuedMeasure ℝ H` a strongly countably additive PVM. For
+`t : ℝ`, `spectralImaginaryPower E t : H →L[ℂ] H` is the bounded operator `S_t=∫ exp(i t
+log r) dE(r)`. -/
 def spectralImaginaryPower (E : ProjectionValuedMeasure ℝ H) (t : ℝ) : H →L[ℂ] H :=
   E.spectralIntegral (imaginaryPowerCoordinate t)
 
-/-- Every coefficient of the actual power is the original spectral coefficient integral. -/
+/-- **Coefficient integral of a spectral imaginary power.** Let `H` be a complete complex
+Hilbert space, `E : ProjectionValuedMeasure ℝ H` a strongly countably additive PVM, `t :
+ℝ`, and `g,h ∈ H`. Then `⟨h,spectralImaginaryPower E t g⟩ = ∫ exp(i t log r) dμ_(g,h)(r)`,
+where the finite complex measure is `μ_(g,h)(s)=⟨h,E(s)g⟩`. The inner product is linear in
+its second argument. -/
 theorem spectralImaginaryPower_inner (E : ProjectionValuedMeasure ℝ H) (t : ℝ) (g h : H) :
     inner ℂ h (spectralImaginaryPower E t g) = complexIntegral (E.scalarMeasure g h) (imaginaryPowerCoordinate t) :=
   inner_spectralIntegral_apply E (imaginaryPowerCoordinate t) g h

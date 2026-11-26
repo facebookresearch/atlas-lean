@@ -12,26 +12,17 @@ module
 public import MathlibExt.LinearAlgebra.QuadraticForm.HalfDimensionalTotallyIsotropic
 
 /-!
-# Round quadratic forms and binary Pfister products
+# Round forms and binary Pfister factors
 
-This file proves that roundness is preserved by isometry equivalence and by
-adjoining a nonzero binary Pfister factor.  The product theorem uses an
-explicit strong-multiplicativity matrix on
-`Q.prod ((-c) • Q)` and follows EKM Proposition 9.8(1).
-
-The proof is characteristic-free.  It assumes no finite dimension,
-nondegeneracy, anisotropy, hyperbolicity, or half-dimensional isotropic
-subspace, and introduces no second similarity-factor predicate.
-
-## Main declarations
-
-* `QuadraticMap.IsRound.map_isometryEquiv`
-* `QuadraticMap.IsRound.prod_neg_smul`
+Let F be a field, V an F-vector space, and Q : V → F a quadratic form. Roundness means that,
+for every nonzero c, c is represented by Q if and only if cQ is isometric to Q. Roundness is
+invariant under isometry. If Q is round and c ≠ 0, the form (x,y) ↦ Q(x) − cQ(y) on V × V is
+round. Both results apply to arbitrary vector spaces over fields of any characteristic.
 
 ## Reference
 
-* R. Elman, N. Karpenko, A. Merkurjev,
-  *The Algebraic and Geometric Theory of Quadratic Forms*, Proposition 9.8.
+* R. Elman, N. Karpenko, A. Merkurjev,   *The Algebraic and Geometric Theory of Quadratic
+Forms*, Proposition 9.8.
 -/
 
 @[expose] public section
@@ -182,7 +173,13 @@ private theorem similarity_transport
   obtain ⟨ed⟩ := h
   exact ⟨(e.symm.smul d).trans (ed.trans e)⟩
 
-/-- Roundness is preserved by isometry equivalence. -/
+/-- **Isometry invariance of roundness.**
+
+Let F be a field, V an F-vector space, and Q : V → F a quadratic form. Roundness means that,
+for every nonzero c, c is represented by Q if and only if cQ is isometric to Q. Let Q′ be a
+quadratic form on another F-vector space W and e : Q ≃ Q′ an isometry. If Q is round, then Q′
+is round.
+-/
 theorem map_isometryEquiv
     {W : Type w} [AddCommGroup W] [Module F W]
     {Q : QuadraticForm F V} {Q' : QuadraticForm F W}
@@ -204,7 +201,12 @@ theorem map_isometryEquiv
     refine ⟨e x, ?_⟩
     rw [e.map_app, hx]
 
-/-- Adjoining a nonzero binary Pfister factor preserves roundness. -/
+/-- **Adjoining a binary factor preserves roundness.**
+
+Let F be a field, V an F-vector space, and Q : V → F a quadratic form. Roundness means that,
+for every nonzero c, c is represented by Q if and only if cQ is isometric to Q. If Q is round
+and c ∈ F is nonzero, then Q ⊕ (−cQ), the form (x,y) ↦ Q(x) − cQ(y), is round.
+-/
 theorem prod_neg_smul
     {Q : QuadraticForm F V} (hQ : Q.IsRound)
     (c : F) (hc : c ≠ 0) :

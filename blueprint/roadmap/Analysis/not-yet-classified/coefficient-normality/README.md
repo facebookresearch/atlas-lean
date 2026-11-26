@@ -1,6 +1,6 @@
-# Coefficient Normality
+# Normality of Haar regular coefficient representations
 
-- [Regular Coefficient compact Vector Functional mem normal Functional Space](regular-coefficient-compact-vector-funct.md)
-- [Regular Coefficient vector Functional mem normal Functional Space](regular-coefficient-vector-functional-me.md)
-- [Regular Coefficient Normal Hom](regular-coefficient-normal-hom.md)
-- [Regular Coefficient Spatial Normal Hom](regular-coefficient-spatial-normal-hom.md)
+- [Normal pullback of a compact-support Haar vector coefficient](regular-coefficient-compact-vector-funct.md)
+- [Normal pullback of every Haar L² vector coefficient](regular-coefficient-vector-functional-me.md)
+- [Normal homomorphism of the Haar regular coefficient representation](regular-coefficient-normal-hom.md)
+- [Normal tensor coefficient map into the full-right spatial algebra](regular-coefficient-spatial-normal-hom.md)

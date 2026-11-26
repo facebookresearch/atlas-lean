@@ -14,22 +14,14 @@ public import Mathlib.LinearAlgebra.QuadraticForm.Prod
 /-!
 # Half-dimensional totally isotropic subspaces
 
-This file develops a weak, characteristic-free quadratic-form property: the
-existence of a half-dimensional subspace on which a quadratic map vanishes.
-It provides transport under isometry equivalences, product and scalar
-constructions, similarity graphs, a roundness-based recursive step, and the
-rank-two base case.
-
-The property includes no nondegeneracy, perpendicular-equality, Lagrangian,
-metabolic, or hyperbolic assertion.
-
-## Main declarations
-
-* `QuadraticMap.IsTotallyIsotropic`
-* `QuadraticMap.IsRound`
-* `QuadraticForm.HasHalfDimensionalTotallyIsotropicSubspace`
-* `QuadraticForm.hasHalfDimensionalTotallyIsotropicSubspace_prod_neg_smul_of_not_anisotropic`
-* `QuadraticForm.hasHalfDimensionalTotallyIsotropicSubspace_of_not_anisotropic_finrank_two`
+Let F be a field, V an F-vector space, and Q : V → F a quadratic form. Say that Q has a
+half-dimensional totally isotropic subspace if V is finite-dimensional and there exists H ⊆ V
+with Q|H = 0 and 2 dim_F H = dim_F V. Total isotropy is also defined for module-valued
+quadratic maps by Q(x) = 0 for every x in the submodule. It is preserved by isometries,
+products and scalar multiplication. A similarity cQ ≃ Q gives a half-dimensional isotropic
+graph in Q ⊕ (−cQ); roundness supplies such a similarity when a nonzero ratio of represented
+values occurs. Every isotropic two-dimensional quadratic form has an isotropic line. These
+statements apply over arbitrary fields.
 -/
 
 @[expose] public section
@@ -45,14 +37,22 @@ variable {M : Type v} [AddCommMonoid M] [Module R M]
 variable {M' : Type v'} [AddCommMonoid M'] [Module R M']
 variable {N : Type w} [AddCommMonoid N] [Module R N]
 
-/-- A submodule on which a quadratic map vanishes identically. -/
+/-- **Total isotropy of a submodule.**
+
+Let R be a commutative semiring, M,N R-modules, Q : M → N a quadratic map and H ⊆ M a
+submodule. H is totally isotropic for Q precisely when Q(x) = 0 for every x ∈ H.
+-/
 def IsTotallyIsotropic (Q : QuadraticMap R M N) (H : Submodule R M) : Prop :=
   ∀ x ∈ H, Q x = 0
 
 namespace IsTotallyIsotropic
 
-/-- Total isotropy is preserved by mapping a submodule through an isometry
-equivalence. -/
+/-- **Transport of a totally isotropic submodule.**
+
+Let R be a commutative semiring, M,M′,N R-modules, and Q : M → N and Q′ : M′ → N quadratic
+maps. Let H ⊆ M satisfy Q|H = 0 and let e : M ≃ M′ be an R-linear isometry, so Q′(e(x)) =
+Q(x). Then e(H) is totally isotropic for Q′.
+-/
 theorem map_isometryEquiv {Q : QuadraticMap R M N}
     {Q' : QuadraticMap R M' N} {H : Submodule R M}
     (hH : Q.IsTotallyIsotropic H) (e : Q.IsometryEquiv Q') :
@@ -62,8 +62,12 @@ theorem map_isometryEquiv {Q : QuadraticMap R M N}
   rw [e.map_app]
   exact hH x hx
 
-/-- The product of two totally isotropic submodules is totally isotropic for
-the product quadratic map. -/
+/-- **Products of totally isotropic submodules.**
+
+Let R be a commutative semiring, M,M′,N R-modules, and Q : M → N and Q′ : M′ → N quadratic
+maps. If Q vanishes on H ⊆ M and Q′ vanishes on H′ ⊆ M′, then the quadratic map (x,y) ↦ Q(x) +
+Q′(y) vanishes on H × H′.
+-/
 theorem prod {Q : QuadraticMap R M N} {Q' : QuadraticMap R M' N}
     {H : Submodule R M} {H' : Submodule R M'}
     (hH : Q.IsTotallyIsotropic H) (hH' : Q'.IsTotallyIsotropic H') :
@@ -72,8 +76,11 @@ theorem prod {Q : QuadraticMap R M N} {Q' : QuadraticMap R M' N}
   change x ∈ H ∧ y ∈ H' at hxy
   rw [QuadraticMap.prod_apply, hH x hxy.1, hH' y hxy.2, zero_add]
 
-/-- A totally isotropic submodule remains so after scaling the quadratic
-map. -/
+/-- **Scalar multiples preserve total isotropy.**
+
+Let R be a commutative semiring, M,N R-modules, Q : M → N a quadratic map and H ⊆ M with Q|H =
+0. For every c ∈ R, the quadratic map cQ also vanishes on H.
+-/
 theorem smul (c : R) {Q : QuadraticMap R M N} {H : Submodule R M}
     (hH : Q.IsTotallyIsotropic H) :
     (c • Q).IsTotallyIsotropic H := by
@@ -82,29 +89,46 @@ theorem smul (c : R) {Q : QuadraticMap R M N} {H : Submodule R M}
 
 end IsTotallyIsotropic
 
-/-- A quadratic map is round when its nonzero represented values are exactly
-its similarity factors. -/
+/-- **Roundness of a quadratic map.**
+
+Let R be a commutative semiring, M an R-module and Q : M → R a quadratic map. Q is round when,
+for every c ≠ 0, the existence of x with Q(x) = c is equivalent to the existence of an
+R-linear isometry cQ ≃ Q.
+-/
 def IsRound (Q : QuadraticMap R M R) : Prop :=
   ∀ c : R, c ≠ 0 →
     ((∃ x, Q x = c) ↔ (c • Q).Equivalent Q)
 
 namespace IsometryEquiv
 
-/-- Scalar multiplication transports an isometry equivalence. -/
+/-- **Scaling a quadratic isometry.**
+
+Let R be a commutative semiring, M,M′,N R-modules, and Q : M → N and Q′ : M′ → N quadratic
+maps. For an R-linear isometry e : Q ≃ Q′ and any c ∈ R, the same linear equivalence gives an
+isometry cQ ≃ cQ′.
+-/
 def smul {Q : QuadraticMap R M N} {Q' : QuadraticMap R M' N}
     (c : R) (e : Q.IsometryEquiv Q') :
     (c • Q).IsometryEquiv (c • Q') where
   toLinearEquiv := e.toLinearEquiv
   map_app' x := by simp [e.map_app]
 
-/-- Equality of quadratic maps gives an isometry equivalence with identity
-underlying linear equivalence. -/
+/-- **The isometry associated to equality.**
+
+Let R be a commutative semiring, M,N R-modules and Q,Q′ : M → N quadratic maps. If Q = Q′, the
+identity linear equivalence on M gives an isometry Q ≃ Q′.
+-/
 def ofEq {Q Q' : QuadraticMap R M N} (h : Q = Q') :
     Q.IsometryEquiv Q' where
   toLinearEquiv := LinearEquiv.refl R M
   map_app' x := by cases h; rfl
 
-/-- An isometry equivalence preserves and reflects anisotropy. -/
+/-- **Anisotropy is invariant under isometry.**
+
+Let R be a commutative semiring, M,M′,N R-modules, and Q : M → N and Q′ : M′ → N quadratic
+maps. If e : Q ≃ Q′ is an R-linear isometry, Q is anisotropic if and only if Q′ is
+anisotropic, where anisotropy means Q(x) = 0 implies x = 0.
+-/
 theorem anisotropic_iff {Q : QuadraticMap R M N}
     {Q' : QuadraticMap R M' N} (e : Q.IsometryEquiv Q') :
     Q.Anisotropic ↔ Q'.Anisotropic := by
@@ -127,8 +151,12 @@ namespace IsRound
 variable {F : Type u} [Field F]
 variable {V : Type v} [AddCommGroup V] [Module F V]
 
-/-- In a round form, the ratio of two nonzero represented values is a
-similarity factor. -/
+/-- **Ratios of represented values in a round form.**
+
+Let F be a field, V an F-vector space, and Q : V → F a quadratic form. Roundness means that,
+for every nonzero c, c is represented by Q if and only if cQ is isometric to Q. If Q(x) ≠ 0
+and Q(y) ≠ 0, then (Q(x)/Q(y))Q is isometric to Q.
+-/
 theorem ratio_equivalent (Q : QuadraticForm F V) (hQ : Q.IsRound)
     {x y : V} (hx : Q x ≠ 0) (hy : Q y ≠ 0) :
     ((Q x / Q y) • Q).Equivalent Q := by
@@ -155,8 +183,13 @@ universe u₁ v₁
 variable {F : Type u₁} [Field F]
 variable {V : Type v₁} [AddCommGroup V] [Module F V]
 
-/-- A finite-dimensional quadratic form has a half-dimensional totally isotropic subspace.
-This includes no nondegeneracy or perpendicular-equality claim. -/
+/-- **The half-dimensional total-isotropy property.**
+
+Let F be a field, V an F-vector space, and Q : V → F a quadratic form. Say that Q has a
+half-dimensional totally isotropic subspace if V is finite-dimensional and there exists H ⊆ V
+with Q|H = 0 and 2 dim_F H = dim_F V. Thus the predicate asserts finite-dimensionality,
+vanishing on H, and the exact dimension equality.
+-/
 def HasHalfDimensionalTotallyIsotropicSubspace
     (Q : QuadraticForm F V) : Prop :=
   Module.Finite F V ∧ ∃ H : Submodule F V,
@@ -206,8 +239,14 @@ private theorem similarityGraph_isTotallyIsotropic
 
 namespace HasHalfDimensionalTotallyIsotropicSubspace
 
-/-- The half-dimensional totally isotropic-subspace property is preserved by
-isometry equivalence. -/
+/-- **Isometry invariance of half-dimensional total isotropy.**
+
+Let F be a field, V an F-vector space, and Q : V → F a quadratic form. Say that Q has a
+half-dimensional totally isotropic subspace if V is finite-dimensional and there exists H ⊆ V
+with Q|H = 0 and 2 dim_F H = dim_F V. Let W be a finite-dimensional F-vector space and Q′ a
+quadratic form on W. If Q has this property and e : Q ≃ Q′ is an isometry, then Q′ has the
+same property.
+-/
 theorem map_isometryEquiv
     {W : Type*} [AddCommGroup W] [Module F W]
     [FiniteDimensional F W]
@@ -222,8 +261,13 @@ theorem map_isometryEquiv
   rw [e.toLinearEquiv.finrank_map_eq, hHdim,
     e.toLinearEquiv.finrank_eq]
 
-/-- A product with a scalar multiple inherits a half-dimensional totally
-isotropic subspace from the left form. -/
+/-- **A product inheriting half-dimensional total isotropy.**
+
+Let F be a field, V an F-vector space, and Q : V → F a quadratic form. Say that Q has a
+half-dimensional totally isotropic subspace if V is finite-dimensional and there exists H ⊆ V
+with Q|H = 0 and 2 dim_F H = dim_F V. If Q has this property, then Q ⊕ (−cQ) on V × V has it
+for every c ∈ F. A suitable subspace is H × H, where H is the subspace for Q.
+-/
 theorem prod_neg_smul_of_left
     (Q : QuadraticForm F V) (c : F)
     (hQ : Q.HasHalfDimensionalTotallyIsotropicSubspace) :
@@ -235,8 +279,12 @@ theorem prod_neg_smul_of_left
   rw [finrank_prodSubmodule, Module.finrank_prod]
   omega
 
-/-- A similarity equivalence supplies a half-dimensional totally isotropic
-graph in `Q.prod ((-c) • Q)`. -/
+/-- **An isotropic graph from a similarity.**
+
+Let F be a field, V an F-vector space, and Q : V → F a quadratic form. Assume V is
+finite-dimensional and cQ is isometric to Q. For an isometry e : cQ ≃ Q, the graph {(e(v),v) :
+v ∈ V} is totally isotropic for Q ⊕ (−cQ), with dimension dim V, half the dimension of V × V.
+-/
 theorem prod_neg_smul_of_equivalent [FiniteDimensional F V]
     (Q : QuadraticForm F V) (c : F) (h : (c • Q).Equivalent Q) :
     HasHalfDimensionalTotallyIsotropicSubspace
@@ -260,8 +308,13 @@ private theorem hasHalfDimensionalTotallyIsotropicSubspace_prod_neg_smul_of_left
   · exact HasHalfDimensionalTotallyIsotropicSubspace.prod_neg_smul_of_equivalent
       Q c he
 
-/-- Recursive induction step once lower-rank roundness and the
-lower-isotropic induction hypothesis are available. -/
+/-- **The roundness step for an isotropic product.**
+
+Let F be a field, V an F-vector space, and Q : V → F a quadratic form. Assume V is
+finite-dimensional, Q is round and c ≠ 0. Suppose that isotropy of Q implies that Q has a
+half-dimensional totally isotropic subspace. If Q ⊕ (−cQ) is not anisotropic, it has a
+subspace H on which it vanishes and with 2 dim H = dim(V × V).
+-/
 theorem hasHalfDimensionalTotallyIsotropicSubspace_prod_neg_smul_of_not_anisotropic
     [FiniteDimensional F V] (Q : QuadraticForm F V) (c : F) (hc : c ≠ 0)
     (hround : Q.IsRound)
@@ -294,8 +347,12 @@ theorem hasHalfDimensionalTotallyIsotropicSubspace_prod_neg_smul_of_not_anisotro
       Q c he
   · exact (hind hQ).prod_neg_smul_of_left Q c
 
-/-- Every non-anisotropic rank-two form has an isotropic line, hence the
-half-dimensional totally isotropic-subspace property. -/
+/-- **An isotropic line in dimension two.**
+
+Let F be a field, V an F-vector space, and Q : V → F a quadratic form. Assume V is
+finite-dimensional with dim V = 2 and Q is not anisotropic. Then there exists H ⊆ V with Q|H =
+0 and dim H = 1; equivalently, Q has a half-dimensional totally isotropic subspace.
+-/
 theorem hasHalfDimensionalTotallyIsotropicSubspace_of_not_anisotropic_finrank_two
     [FiniteDimensional F V] (Q : QuadraticForm F V)
     (hdim : Module.finrank F V = 2) (hQ : ¬ Q.Anisotropic) :

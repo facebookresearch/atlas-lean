@@ -1,3 +1,4 @@
-# Int Tensor nsmul eq zero
+# Residue torsion in an integer tensor with one torsion factor
 
-The integral tensor product of two `ZMod n`-modules is `n`-torsion.
+Let n∈ℕ, M a ZMod n-module and N any additive commutative group. Then n•z=0 for every z∈M⊗_ℤN;
+no residue-ring module action on N is needed.

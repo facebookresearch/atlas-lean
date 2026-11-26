@@ -15,14 +15,14 @@ public import MathlibExt.Analysis.VonNeumannAlgebra.NormalHom.FaithfulUnitBallBi
 public import Mathlib.Analysis.Complex.Norm
 
 /-!
-# The literal faithful normal operator range equals its double commutant
+# Double commutant of an injective normal operator range
 
-For every original double-commutant operator T, the nonzero scalar inverse
-of ‖T‖ + 1 places T in the actual unit ball without a nonzero-operator or
-nonzero-space assumption. Original scalar commutation preserves its
-membership, the strict unit-ball image theorem supplies a source preimage,
-and the original star map scales it back to T. This equality provides the
-exact closure field for the actual von Neumann image carrier.
+For an injective normal unital complex star homomorphism `f : M → N`, view its range as the
+operator set `R={f(x) : x ∈ M} ⊆ B(K)` on the target Hilbert space. Then `R=R''`, where
+commutants are taken in `B(K)`.
+
+The equality includes the zero-operator and zero-space cases. It is a range conclusion derived
+from the given map, not a range condition assumed as input.
 -/
 
 @[expose] public section
@@ -40,7 +40,13 @@ variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [Complete
 variable {K : Type v} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
 variable {M : VonNeumannAlgebra H} {N : VonNeumannAlgebra K}
 
-/-- The original faithful normal operator image is exactly its original double centralizer. -/
+/-- **Operator range of an injective normal map equals its bicommutant.** Let `M,N` be
+concrete von Neumann algebras on complete complex Hilbert spaces. Their normal-functional
+Banach spaces `M_*,N_*` are the norm-closed spans of vector functionals, and their
+ultraweak topologies are `σ(M,M_*)`, `σ(N,N_*)`. Let `f : M → N` be a unital complex star
+homomorphism that is ultraweakly continuous. Assume `f` is injective. Write `R={ (f(x) :
+B(K)) : x ∈ M }` for its operator range on the target Hilbert space `K`.
+`R=R''=Set.centralizer (Set.centralizer R)` as subsets of `B(K)`. -/
 theorem operatorRange_eq_bicommutant (f : NormalStarAlgHom M N) (hf : Function.Injective f) :
     Set.range (fun x : M => (f x : K →L[ℂ] K)) =
       Set.centralizer (Set.centralizer (Set.range fun x : M => (f x : K →L[ℂ] K))) := by

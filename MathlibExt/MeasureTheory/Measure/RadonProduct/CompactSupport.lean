@@ -15,17 +15,15 @@ public import MathlibExt.MeasureTheory.Measure.RadonProduct
 public import Mathlib.Analysis.Complex.Basic
 
 /-!
-# Compact-support pure products for the actual Borel Radon measure
+# Compact-support pure products and their Radon integrals
 
-The literal product of compact-support factor functions has compact support
-on the topological product. For complex factors, its squared norm is the
-literal product of the two real squared-norm functions. Coordinate integration
-retains an actual compact-support function, and the original Radon-product
-integral gives the exact pure-product square-integral identity.
+For Hausdorff topological spaces and a topological multiplicative space with absorbing zero and
+continuous multiplication, compact factor functions have compact-support product
+`(f⊠g)(x,y)=f(x)g(y)`.
 
-The inputs remain arbitrary locally compact Hausdorff Borel factor spaces
-and measures finite on compact sets. The completed L2 tensor identification
-and its dense extension remain separate obligations.
+For complex factors, `|f⊠g|²=|f|²⊠|g|²`. On locally compact Hausdorff Borel spaces with measures
+finite on compact sets, `∫ f⊠g d(μ⊗_Rν)=(∫ f dμ)(∫ g dν)` for real factors, and the squared-norm
+integral factors likewise for complex factors. Countability and s-finiteness are not required.
 -/
 
 @[expose] public section
@@ -48,7 +46,10 @@ variable {X : Type uX} [TopologicalSpace X] [T2Space X]
 variable {Y : Type uY} [TopologicalSpace Y] [T2Space Y]
 variable {R : Type uR} [TopologicalSpace R] [MulZeroClass R] [ContinuousMul R]
 
-/-- The literal pure product of compact-support functions on the original topological product. -/
+/-- **Compact-support product of two factor functions.** Let `X,Y` be Hausdorff spaces and `R`
+a topological space with multiplication, absorbing zero and continuous multiplication
+(`MulZeroClass R`). For `f∈C_c(X,R)`, `g∈C_c(Y,R)`, `mulProd f g∈C_c(X×Y,R)` has value
+`(x,y) ↦ f(x)g(y)`. No associativity, additive structure or measures are assumed. -/
 def mulProd (f : C_c(X, R)) (g : C_c(Y, R)) : C_c(X × Y, R) where
   toFun z := f z.1 * g z.2
   continuous_toFun := (f.continuous.comp continuous_fst).mul (g.continuous.comp continuous_snd)
@@ -60,7 +61,9 @@ def mulProd (f : C_c(X, R)) (g : C_c(Y, R)) : C_c(X × Y, R) where
       simp only [image_eq_zero_of_notMem_tsupport hy, mul_zero]
     · simp only [image_eq_zero_of_notMem_tsupport hx, zero_mul]
 
-/-- The compact-support pure product has its exact original factor values. -/
+/-- **Pointwise value of a compact-support pure product.** For Hausdorff `X,Y`, a topological
+`R` with absorbing zero and continuous multiplication, and compact-support factors `f,g`,
+`mulProd f g (x,y)=f(x)g(y)`. -/
 @[simp]
 theorem mulProd_apply (f : C_c(X, R)) (g : C_c(Y, R)) (x : X) (y : Y) :
     mulProd f g (x, y) = f x * g y := rfl
@@ -71,20 +74,24 @@ section NormSquare
 
 variable {X : Type uX} [TopologicalSpace X]
 
-/-- The actual real squared-norm function of a complex compact-support function. -/
+/-- **Real squared norm of a compact-support complex function.** For any topological space `X`
+and `f∈C_c(X,ℂ)`, `normSq f∈C_c(X,ℝ)` has value `x ↦ |f(x)|²`; no Hausdorff or measure
+hypothesis is required. -/
 def normSq (f : C_c(X, ℂ)) : C_c(X, ℝ) where
   toFun x := ‖f x‖ ^ 2
   continuous_toFun := f.continuous.norm.pow 2
   hasCompactSupport' := f.hasCompactSupport.comp_left (g := fun z : ℂ => ‖z‖ ^ 2) (by simp)
 
-/-- The compact-support squared norm has the literal real squared-norm values. -/
+/-- **Value of the compact-support squared-norm function.** For topological `X`, `f∈C_c(X,ℂ)`
+and `x∈X`, `normSq f x=|f(x)|²`. -/
 @[simp]
 theorem normSq_apply (f : C_c(X, ℂ)) (x : X) : normSq f x = ‖f x‖ ^ 2 := rfl
 
 variable [T2Space X]
 variable {Y : Type uY} [TopologicalSpace Y] [T2Space Y]
 
-/-- The pure complex product's squared norm is the actual product of the factor squared norms. -/
+/-- **Squared norm of a pure product factors pointwise.** For Hausdorff `X,Y` and complex
+compact-support `f,g`, `normSq(mulProd f g)=mulProd(normSq f)(normSq g)`. -/
 theorem normSq_mulProd (f : C_c(X, ℂ)) (g : C_c(Y, ℂ)) :
     normSq (mulProd f g) = mulProd (normSq f) (normSq g) := by
   ext z
@@ -100,7 +107,10 @@ variable {Y : Type uY} [TopologicalSpace Y] [T2Space Y]
   [MeasurableSpace Y] [OpensMeasurableSpace Y]
 variable (ν : Measure Y) [IsFiniteMeasureOnCompacts ν]
 
-/-- The real pure product's coordinate integral is the original factor times the actual scalar integral. -/
+/-- **Coordinate integral of a real pure product.** Let `X` be Hausdorff, `Y` a topological
+space with a measurable structure making open sets measurable, and `ν` finite on compact
+sets. Assume `Y` is Hausdorff. for `f∈C_c(X,ℝ)`, `g∈C_c(Y,ℝ)`, `integralRight ν (mulProd f
+g)=(∫ g dν) • f`. -/
 theorem integralRight_mulProd (f : C_c(X, ℝ)) (g : C_c(Y, ℝ)) :
     integralRight ν (mulProd f g) = (∫ y : Y, g y ∂ν) • f := by
   ext x
@@ -108,7 +118,10 @@ theorem integralRight_mulProd (f : C_c(X, ℝ)) (g : C_c(Y, ℝ)) :
   rw [integral_const_mul]
   exact mul_comm _ _
 
-/-- Coordinate integration of the pure square retains the actual compact-support squared-norm factor. -/
+/-- **Coordinate integral of a complex pure product's squared norm.** Let `X` be Hausdorff,
+`Y` a topological space with a measurable structure making open sets measurable, and `ν`
+finite on compact sets. Assume `Y` is Hausdorff. for complex compact-support `f,g`,
+`integralRight ν (normSq(mulProd f g))=(∫ |g|² dν) • normSq f`. -/
 theorem integralRight_normSq_mulProd (f : C_c(X, ℂ)) (g : C_c(Y, ℂ)) :
     integralRight ν (normSq (mulProd f g)) = (∫ y : Y, ‖g y‖ ^ 2 ∂ν) • normSq f := by
   rw [normSq_mulProd]
@@ -129,11 +142,15 @@ variable {Y : Type uY} [TopologicalSpace Y] [T2Space Y] [LocallyCompactSpace Y]
 variable (μ : Measure X) (ν : Measure Y)
   [IsFiniteMeasureOnCompacts μ] [IsFiniteMeasureOnCompacts ν]
 
-/-- The Borel measurable space of the literal product used for compact-support Radon integration. -/
+/-- **Borel product structure for compact-support integration.** For topological spaces `X,Y`,
+the product carrier uses `borel(X×Y)` from its product topology. -/
 local instance instCompactSupportProductBorelMeasurableSpace : MeasurableSpace (X × Y) := borel (X × Y)
 local instance instCompactSupportProductBorelSpace : BorelSpace (X × Y) := ⟨rfl⟩
 
-/-- The actual Borel Radon integral of a real compact-support pure product factors exactly. -/
+/-- **Radon integral of a real pure product factors.** Let `X,Y` be locally compact Hausdorff
+spaces with their Borel measurable structures, and `μ,ν` measures finite on compact sets.
+Write `μ⊗_Rν=radonProd μ ν` on the Borel topological product `X×Y`. for `f∈C_c(X,ℝ)`,
+`g∈C_c(Y,ℝ)`, `∫ mulProd f g d(μ⊗_Rν)=(∫ f dμ)*(∫ g dν)`. -/
 theorem integral_mulProd (f : C_c(X, ℝ)) (g : C_c(Y, ℝ)) :
     ∫ z : X × Y, mulProd f g z ∂(radonProd μ ν) =
       (∫ x : X, f x ∂μ) * ∫ y : Y, g y ∂ν := by
@@ -145,7 +162,10 @@ theorem integral_mulProd (f : C_c(X, ℝ)) (g : C_c(Y, ℝ)) :
     _ = (∫ x : X, f x ∂μ) * ∫ y : Y, g y ∂ν :=
       integral_mul_const (∫ y : Y, g y ∂ν) (f : X → ℝ)
 
-/-- The pure complex product has the exact original product of square integrals on the Borel Radon carrier. -/
+/-- **Radon squared-norm integral of a complex pure product factors.** Let `X,Y` be locally
+compact Hausdorff spaces with their Borel measurable structures, and `μ,ν` measures finite
+on compact sets. Write `μ⊗_Rν=radonProd μ ν` on the Borel topological product `X×Y`. for
+`f∈C_c(X,ℂ)`, `g∈C_c(Y,ℂ)`, `∫ |mulProd f g|² d(μ⊗_Rν)=(∫ |f|² dμ)*(∫ |g|² dν)`. -/
 theorem integral_norm_sq_mulProd (f : C_c(X, ℂ)) (g : C_c(Y, ℂ)) :
     ∫ z : X × Y, ‖mulProd f g z‖ ^ 2 ∂(radonProd μ ν) =
       (∫ x : X, ‖f x‖ ^ 2 ∂μ) * ∫ y : Y, ‖g y‖ ^ 2 ∂ν := by

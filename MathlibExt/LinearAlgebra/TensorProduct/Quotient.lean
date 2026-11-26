@@ -13,18 +13,10 @@ public import Mathlib.LinearAlgebra.TensorProduct.RightExactness
 public import Mathlib.RingTheory.Ideal.Quotient.Operations
 
 /-!
-# Quotient base change and kernels
+# Quotient base change detects a kernel condition
 
-For a surjective linear map, base change to a quotient ring is injective
-exactly when every element of the original kernel lies in the corresponding
-ideal multiple of the source.
-
-The result is stated for arbitrary modules in independent universes.  It
-requires no locality, finiteness, freeness, flatness, or smallness assumption.
-
-## Main declaration
-
-* `LinearMap.ker_le_ideal_smul_top_iff_baseChange_quotient_injective`
+Let R be a commutative ring, I an ideal and f:P→M a surjective linear map of arbitrary
+R-modules. The induced map (R/I)⊗_RP→(R/I)⊗_RM is injective exactly when ker(f)⊆IP.
 -/
 
 @[expose] public section
@@ -40,8 +32,11 @@ universe u v w
 
 namespace LinearMap
 
-/-- For a surjective linear map, quotient base change is injective exactly
-when the original kernel is contained in the ideal multiple of the source. -/
+/-- **Kernel containment is injectivity after quotient base change.**
+
+Let R be a commutative ring, I an ideal and f:P→M surjective R-linear. Then ker(f)≤I•P if and
+only if f.baseChange(R/I) is injective. The modules and ideal are arbitrary.
+-/
 theorem ker_le_ideal_smul_top_iff_baseChange_quotient_injective
     {R : Type u} [CommRing R] (I : Ideal R)
     {P : Type v} [AddCommGroup P] [Module R P]

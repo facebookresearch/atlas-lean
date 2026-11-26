@@ -1,3 +1,5 @@
-# Norm vector Functional le
+# Continuous-dual norm of a vector coefficient
 
-The dual norm of an actual vector functional is bounded by the two vector norms.
+Let `H` be a complete complex Hilbert
+space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for its
+vector functionals. for `ξ,η ∈ H`, `‖vectorFunctional M ξ η‖≤‖ξ‖*‖η‖`.

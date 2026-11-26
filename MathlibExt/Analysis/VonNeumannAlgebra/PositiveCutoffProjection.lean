@@ -16,18 +16,15 @@ public import Mathlib.Analysis.CStarAlgebra.SpecialFunctions.PosPart
 public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order
 
 /-!
-# The actual positive cutoff projection and its original threshold
+# Support cutoffs of shifted positive operators
 
-The cutoff is the original support of the positive part of a minus a real
-scalar identity. The actual support fixes that positive part and annihilates
-its negative part. Their original decomposition gives the threshold bound
-without a spectral-cutoff model. A genuine source threshold/nonzero positive
-operator supplies nonzero cutoff projections.
+For positive `a` in a concrete von Neumann algebra, define `p_r(a)=s((a-rI)⁺)` for each real
+threshold `r`, using the support projection of the positive part. This is a star projection and
+satisfies `r p_r(a)≤a`.
 
-These DATA and algebra facts are required for local vector domination in
-an actual positive order-normal/predual construction. No cutoff, normal
-functional or representation model is supplied; terminal source proofs,
-true normal membership and GNS normality/range remain separate.
+If `a` is not bounded above by `rI`, the cutoff is nonzero. Every nonzero positive `a` therefore
+has a strictly positive threshold with a nonzero cutoff. The definition and threshold inequality
+allow all real `r`.
 -/
 
 @[expose] public section
@@ -46,14 +43,21 @@ universe u
 
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- The actual cutoff is the original support of the literal shifted positive part. -/
+/-- **Support projection of a shifted positive part.** Let `H` be a complete complex Hilbert
+space and `M ⊆ B(H)` a concrete von Neumann algebra. For positive `a∈M` and `r : ℝ`, put
+`p_r(a)=s((a-rI)⁺)`, the support of the positive part. `positiveCutoffProjection M a
+r=p_r(a)` is the orthogonal projection onto the closure of the range of `(a-rI)⁺`, as an
+element of `M`. -/
 def positiveCutoffProjection (M : VonNeumannAlgebra H) (a : PositiveElement M) (r : ℝ) : M :=
   letI : PartialOrder M := CStarAlgebra.spectralOrder M
   letI : LE M := (CStarAlgebra.spectralOrder M).toLE
   letI : StarOrderedRing M := CStarAlgebra.spectralOrderedRing M
   positiveRangeProjection M ⟨((a : M) - algebraMap ℝ M r)⁺, CFC.posPart_nonneg _⟩
 
-/-- The same original shifted-positive-part support is a genuine star projection. -/
+/-- **Star projection property of a positive cutoff.** Let `H` be a complete complex Hilbert
+space and `M ⊆ B(H)` a concrete von Neumann algebra. For positive `a∈M` and `r : ℝ`, put
+`p_r(a)=s((a-rI)⁺)`, the support of the positive part. `p_r(a)²=p_r(a)` and
+`p_r(a)*=p_r(a)` for every real `r`. -/
 theorem positiveCutoffProjection_isStarProjection (M : VonNeumannAlgebra H)
     (a : PositiveElement M) (r : ℝ) : IsStarProjection (positiveCutoffProjection M a r) := by
   let : PartialOrder M := CStarAlgebra.spectralOrder M
@@ -67,7 +71,10 @@ theorem positiveCutoffProjection_isStarProjection (M : VonNeumannAlgebra H)
   · apply Subtype.val_injective
     exact h.isSelfAdjoint.star_eq
 
-/-- The actual original cutoff projection satisfies its original scalar threshold bound. -/
+/-- **Threshold inequality of the shifted positive-part support.** Let `H` be a complete
+complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. For positive `a∈M`
+and `r : ℝ`, put `p_r(a)=s((a-rI)⁺)`, the support of the positive part. `r • p_r(a)≤a` in
+the spectral order, without a positivity assumption on `r`. -/
 theorem positiveCutoffProjection_threshold (M : VonNeumannAlgebra H)
     (a : PositiveElement M) (r : ℝ) :
     @LE.le M (CStarAlgebra.spectralOrder M).toLE (r • positiveCutoffProjection M a r) (a : M) := by
@@ -124,7 +131,10 @@ theorem positiveCutoffProjection_threshold (M : VonNeumannAlgebra H)
     simpa only [q, star_sub, star_one, hpstar] using star_left_conjugate_nonneg a.property q
   exact add_nonneg hc hqpos
 
-/-- A genuine original above-threshold positive value gives a nonzero actual cutoff projection. -/
+/-- **Nonzero cutoff above a violated scalar bound.** Let `H` be a complete complex Hilbert
+space and `M ⊆ B(H)` a concrete von Neumann algebra. For positive `a∈M` and `r : ℝ`, put
+`p_r(a)=s((a-rI)⁺)`, the support of the positive part. if `a` is not at most `rI` in the
+spectral order, then `p_r(a)≠0`. -/
 theorem positiveCutoffProjection_ne_zero_of_not_le (M : VonNeumannAlgebra H)
     (a : PositiveElement M) (r : ℝ)
     (hnot : ¬ @LE.le M (CStarAlgebra.spectralOrder M).toLE (a : M) (algebraMap ℝ M r)) :
@@ -144,7 +154,10 @@ theorem positiveCutoffProjection_ne_zero_of_not_le (M : VonNeumannAlgebra H)
   have hnonpos : d ≤ 0 := (CFC.posPart_eq_zero_iff d hd).mp hczero
   exact hnot (sub_nonpos.mp hnonpos)
 
-/-- Every nonzero original positive operator has a genuine positive threshold with nonzero cutoff. -/
+/-- **Nonzero positive operator has a nonzero positive-threshold cutoff.** Let `H` be a
+complete complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. For positive
+`a∈M` and `r : ℝ`, put `p_r(a)=s((a-rI)⁺)`, the support of the positive part. if `a≠0`,
+there exists `t>0` with `p_t(a)≠0`. -/
 theorem exists_positiveCutoffProjection_nonzero (M : VonNeumannAlgebra H)
     (a : PositiveElement M) (hne : (a : M) ≠ 0) :
     ∃ r : ℝ, 0 < r ∧ positiveCutoffProjection M a r ≠ 0 := by

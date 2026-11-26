@@ -1,7 +1,7 @@
-# Completion Equiv
+# Completion of a linear isometric equivalence
 
-- [Completion](completion.md)
-- [Completion apply coe](completion-apply-coe.md)
-- [Completion symm apply coe](completion-symm-apply-coe.md)
-- [Completion to Linear Map](completion-to-linear-map.md)
-- [Completion symm to Linear Map](completion-symm-to-linear-map.md)
+- [Completed linear isometric equivalence](completion.md)
+- [Completion equivalence on a source vector](completion-apply-coe.md)
+- [Inverse completion equivalence on a target vector](completion-symm-apply-coe.md)
+- [Forward linear map of the completed equivalence](completion-to-linear-map.md)
+- [Inverse linear map of the completed equivalence](completion-symm-to-linear-map.md)

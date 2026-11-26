@@ -18,16 +18,14 @@ public import Mathlib.Analysis.InnerProductSpace.Adjoint
 public import Mathlib.Analysis.Real.Sqrt
 
 /-!
-# The continuous vector action of an actual normal predual action
+# Vector continuity of a normal predual action
 
-Norm continuity of each original inverse predual orbit gives continuity of
-every normal scalar functional on the primal orbit. The actual vector
-functionals and the adjoint squared-norm identity then give norm continuity
-of every vector orbit. The constant automorphism norm bound gives the mixed
-group/vector continuity needed by the regular Haar coefficient operator.
+Let `G` be a topological group and `α` a normal action on a concrete von Neumann algebra `M ⊆
+B(H)`, where `H` is a complete complex Hilbert space. Norm continuity of inverse predual orbits
+implies continuity of `g ↦ φ(α_g(x))` for every `φ ∈ M_*` and `x ∈ M`.
 
-The group need only be a topological group and the Hilbert space is arbitrary.
-The full locally compact Connes/Takesaki continuity equivalence is separate.
+For each fixed `x ∈ M`, the vector action `(g,ξ) ↦ α_g(x)ξ` is jointly continuous in the group
+topology and Hilbert norm. No local compactness or separability of the group is required.
 -/
 
 @[expose] public section
@@ -47,7 +45,14 @@ variable {G : Type uG} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
 variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 variable {M : VonNeumannAlgebra H}
 
-/-- Every actual normal functional is continuous on the original forward algebra orbit. -/
+/-- **Normal coefficient continuity of a forward action orbit.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for
+its vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. Equip `M` with the ultraweak topology `σ(M,M_*)`, induced by `x ↦ φ(x)` for `φ ∈
+M_*`. Let `G` be a group with a topology and `α : G → Aut_normal(M)` a homomorphism such
+that `g ↦ φ∘α_g⁻¹` is norm-continuous in `M_*` for every `φ ∈ M_*`. assume additionally
+that `G` is a topological group. For `φ ∈ M_*` and `x ∈ M`, `g ↦ φ(α_g(x))` is continuous
+in `ℂ`. -/
 theorem continuous_normalFunctional_apply (α : NormalAction G M)
     (φ : normalFunctionalSpace M) (x : M) :
     Continuous fun g : G => (φ : StrongDual ℂ M) (α g x) := by
@@ -64,7 +69,14 @@ theorem continuous_normalFunctional_apply (α : NormalAction G M)
   rw [heq] at h
   exact h
 
-/-- Every original algebra element acts norm continuously on each fixed Hilbert vector. -/
+/-- **Norm-continuous vector orbit of a normal action.** Let `H` be a complete complex Hilbert
+space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for its
+vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. Equip `M` with the ultraweak topology `σ(M,M_*)`, induced by `x ↦ φ(x)` for `φ ∈
+M_*`. Let `G` be a group with a topology and `α : G → Aut_normal(M)` a homomorphism such
+that `g ↦ φ∘α_g⁻¹` is norm-continuous in `M_*` for every `φ ∈ M_*`. assume `G` is a
+topological group. For `x ∈ M` and `ξ ∈ H`, `g ↦ (α_g(x) : B(H))ξ` is norm-continuous in
+`H`. -/
 theorem continuous_vector_apply (α : NormalAction G M) (x : M) (ξ : H) :
     Continuous fun g : G => (α g x : H →L[ℂ] H) ξ := by
   let F : G → H := fun g => (α g x : H →L[ℂ] H) ξ
@@ -112,7 +124,14 @@ theorem continuous_vector_apply (α : NormalAction G M) (x : M) (ξ : H) :
     exact Real.continuous_sqrt.comp hsquare
   simpa only [w, sub_self, norm_zero] using hnorm.tendsto g₀
 
-/-- The original algebra element acts jointly continuously in the group and vector variables. -/
+/-- **Joint group and vector continuity of a normal action.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for
+its vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. Equip `M` with the ultraweak topology `σ(M,M_*)`, induced by `x ↦ φ(x)` for `φ ∈
+M_*`. Let `G` be a group with a topology and `α : G → Aut_normal(M)` a homomorphism such
+that `g ↦ φ∘α_g⁻¹` is norm-continuous in `M_*` for every `φ ∈ M_*`. assume `G` is a
+topological group. For fixed `x ∈ M`, the map `(g,ξ) ↦ (α_g(x) : B(H))ξ` is continuous
+from `G×H` to `H` with its Hilbert norm. -/
 theorem continuous_vector_action (α : NormalAction G M) (x : M) :
     Continuous fun p : G × H => (α p.1 x : H →L[ℂ] H) p.2 := by
   let F : G → H →L[ℂ] H := fun g => (α g x : H →L[ℂ] H)

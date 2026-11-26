@@ -15,12 +15,15 @@ public import MathlibExt.Analysis.VonNeumannAlgebra.NormalHom
 public import Mathlib.Topology.Algebra.Module.Equiv.Basic
 
 /-!
-# Compositional normal equivalences and actual predual automorphisms
+# Normal equivalences and their actions on normal functionals
 
-Normal equivalences retain both original star maps and their ultraweak
-continuity. Their identity, inverse and composition form the actual normal
-automorphism group. Functional pullback gives the continuous linear predual
-equivalence, and inverse pullback gives its covariant automorphism action.
+A normal equivalence `f : M ≃ N` of concrete von Neumann algebras is a complex star-algebra
+equivalence whose forward and inverse maps are ultraweakly continuous. Identities, inverses and
+composition give the group of normal automorphisms, with `(f*g)(x)=f(g(x))`.
+
+Functional pullback is the continuous linear equivalence `f_* : N_* ≃ M_*`, `φ ↦ φ∘f`. For
+automorphisms, inverse pullback is the covariant action `f·φ=φ∘f⁻¹`, forming a group
+homomorphism to continuous linear automorphisms of `M_*`.
 -/
 
 @[expose] public section
@@ -37,15 +40,32 @@ universe u v w
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 variable {K : Type v} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
 
-/-- An actual complex star algebra equivalence that is ultraweak continuous in both directions. -/
+/-- **Star-algebra equivalence continuous ultraweakly in both directions.** Let `M,N` be
+concrete von Neumann algebras on complete complex Hilbert spaces. Their normal-functional
+Banach spaces `M_*,N_*` are the norm-closed spans of vector functionals, and their
+ultraweak topologies are `σ(M,M_*)`, `σ(N,N_*)`. `NormalStarAlgEquiv M N` contains a
+complex star-algebra equivalence `f : M ≃ N` whose forward and inverse maps are
+ultraweakly continuous. -/
 structure NormalStarAlgEquiv (M : VonNeumannAlgebra H) (N : VonNeumannAlgebra K) where
-  /-- The original complex star algebra equivalence of the concrete carriers. -/
+  /-- **Underlying star equivalence of a normal isomorphism.** Let `M,N` be concrete von
+  Neumann algebras on complete complex Hilbert spaces. Their normal-functional Banach
+  spaces `M_*,N_*` are the norm-closed spans of vector functionals, and their ultraweak
+  topologies are `σ(M,M_*)`, `σ(N,N_*)`. the field is `f : M ≃⋆ₐ[ℂ] N`, a complex
+  star-algebra equivalence of the concrete carriers. -/
   toStarAlgEquiv : M ≃⋆ₐ[ℂ] N
-  /-- Ultraweak continuity of the same original forward map. -/
+  /-- **Ultraweak continuity of the forward normal equivalence.** Let `M,N` be concrete von
+  Neumann algebras on complete complex Hilbert spaces. Their normal-functional Banach
+  spaces `M_*,N_*` are the norm-closed spans of vector functionals, and their ultraweak
+  topologies are `σ(M,M_*)`, `σ(N,N_*)`. the forward map `f : M → N` is continuous from
+  `σ(M,M_*)` to `σ(N,N_*)`. -/
   continuous_ultraweak :
     Continuous fun x : Ultraweak M =>
       (ultraweakLinearEquiv N).symm (toStarAlgEquiv (ultraweakLinearEquiv M x))
-  /-- Ultraweak continuity of the same original inverse map. -/
+  /-- **Ultraweak continuity of the inverse normal equivalence.** Let `M,N` be concrete von
+  Neumann algebras on complete complex Hilbert spaces. Their normal-functional Banach
+  spaces `M_*,N_*` are the norm-closed spans of vector functionals, and their ultraweak
+  topologies are `σ(M,M_*)`, `σ(N,N_*)`. the inverse map `f⁻¹ : N → M` is continuous from
+  `σ(N,N_*)` to `σ(M,M_*)`. -/
   continuous_ultraweak_symm :
     Continuous fun x : Ultraweak N =>
       (ultraweakLinearEquiv M).symm (toStarAlgEquiv.symm (ultraweakLinearEquiv N x))
@@ -54,7 +74,11 @@ namespace NormalStarAlgEquiv
 
 variable {M : VonNeumannAlgebra H} {N : VonNeumannAlgebra K}
 
-/-- The original star equivalence determines both maps of a normal equivalence. -/
+/-- **Normal equivalence equality from its star-algebra map.** Let `M,N` be concrete von
+Neumann algebras on complete complex Hilbert spaces. Their normal-functional Banach spaces
+`M_*,N_*` are the norm-closed spans of vector functionals, and their ultraweak topologies
+are `σ(M,M_*)`, `σ(N,N_*)`. normal equivalences with equal underlying complex star-algebra
+equivalences are equal. -/
 @[ext]
 theorem ext {f g : NormalStarAlgEquiv M N}
     (h : f.toStarAlgEquiv = g.toStarAlgEquiv) : f = g := by
@@ -83,24 +107,41 @@ instance : AlgEquivClass (NormalStarAlgEquiv M N) ℂ M N where
 instance : StarHomClass (NormalStarAlgEquiv M N) M N where
   map_star f := map_star f.toStarAlgEquiv
 
-/-- The forgetful star equivalence uses the same original value. -/
+/-- **Underlying star-equivalence value.** Let `M,N` be concrete von Neumann algebras on
+complete complex Hilbert spaces. Their normal-functional Banach spaces `M_*,N_*` are the
+norm-closed spans of vector functionals, and their ultraweak topologies are `σ(M,M_*)`,
+`σ(N,N_*)`. Let `f : M ≃ N` be a complex star-algebra equivalence, ultraweakly continuous
+in both directions. for `x ∈ M`, `f.toStarAlgEquiv x=f(x)`. -/
 @[simp]
 theorem toStarAlgEquiv_apply (f : NormalStarAlgEquiv M N) (x : M) :
     f.toStarAlgEquiv x = f x :=
   rfl
 
-/-- Forget the inverse map while retaining the actual normal homomorphism. -/
+/-- **Forward normal homomorphism of a normal equivalence.** Let `M,N` be concrete von Neumann
+algebras on complete complex Hilbert spaces. Their normal-functional Banach spaces
+`M_*,N_*` are the norm-closed spans of vector functionals, and their ultraweak topologies
+are `σ(M,M_*)`, `σ(N,N_*)`. Let `f : M ≃ N` be a complex star-algebra equivalence,
+ultraweakly continuous in both directions. `f.toNormalStarAlgHom : M → N` retains the
+forward unital complex star map and its ultraweak continuity. -/
 def toNormalStarAlgHom (f : NormalStarAlgEquiv M N) : NormalStarAlgHom M N where
   toStarAlgHom := f.toStarAlgEquiv.toStarAlgHom
   continuous_ultraweak := f.continuous_ultraweak
 
-/-- The normal homomorphism conversion preserves original values. -/
+/-- **Forward normal-map value of an equivalence.** Let `M,N` be concrete von Neumann algebras
+on complete complex Hilbert spaces. Their normal-functional Banach spaces `M_*,N_*` are
+the norm-closed spans of vector functionals, and their ultraweak topologies are
+`σ(M,M_*)`, `σ(N,N_*)`. Let `f : M ≃ N` be a complex star-algebra equivalence, ultraweakly
+continuous in both directions. for `x ∈ M`, `f.toNormalStarAlgHom x=f(x)`. -/
 @[simp]
 theorem toNormalStarAlgHom_apply (f : NormalStarAlgEquiv M N) (x : M) :
     f.toNormalStarAlgHom x = f x :=
   rfl
 
-/-- The identity normal equivalence on the original algebra. -/
+/-- **Identity normal star-algebra equivalence.** Let `H` be a complete complex Hilbert space
+and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for its vector
+functionals. Let `M_*` be their norm-closed complex span in the continuous dual `M*`.
+Equip `M` with the ultraweak topology `σ(M,M_*)`, induced by `x ↦ φ(x)` for `φ ∈ M_*`.
+`NormalStarAlgEquiv.refl M` is `x ↦ x` in both directions. -/
 def refl (M : VonNeumannAlgebra H) : NormalStarAlgEquiv M M where
   toStarAlgEquiv := StarAlgEquiv.refl ℂ M
   continuous_ultraweak := by
@@ -124,12 +165,21 @@ def refl (M : VonNeumannAlgebra H) : NormalStarAlgEquiv M M where
     rw [hfun]
     exact continuous_id
 
-/-- Identity acts by the original algebra element. -/
+/-- **Identity equivalence on a von Neumann element.** Let `H` be a complete complex Hilbert
+space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for its
+vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. Equip `M` with the ultraweak topology `σ(M,M_*)`, induced by `x ↦ φ(x)` for `φ ∈
+M_*`. for `x ∈ M`, `NormalStarAlgEquiv.refl M x=x`. -/
 @[simp]
 theorem refl_apply (x : M) : refl M x = x :=
   rfl
 
-/-- Invert a normal equivalence using the same original inverse map. -/
+/-- **Inverse normal star-algebra equivalence.** Let `M,N` be concrete von Neumann algebras on
+complete complex Hilbert spaces. Their normal-functional Banach spaces `M_*,N_*` are the
+norm-closed spans of vector functionals, and their ultraweak topologies are `σ(M,M_*)`,
+`σ(N,N_*)`. Let `f : M ≃ N` be a complex star-algebra equivalence, ultraweakly continuous
+in both directions. `f.symm : N ≃ M` has forward map `f⁻¹` and inverse map `f`, both
+ultraweakly continuous. -/
 def symm (f : NormalStarAlgEquiv M N) : NormalStarAlgEquiv N M where
   toStarAlgEquiv := f.toStarAlgEquiv.symm
   continuous_ultraweak := f.continuous_ultraweak_symm
@@ -146,22 +196,38 @@ def symm (f : NormalStarAlgEquiv M N) : NormalStarAlgEquiv N M where
     rw [hfun]
     exact f.continuous_ultraweak
 
-/-- The normal inverse and original inverse have the same values. -/
+/-- **Value of the inverse normal equivalence.** Let `M,N` be concrete von Neumann algebras on
+complete complex Hilbert spaces. Their normal-functional Banach spaces `M_*,N_*` are the
+norm-closed spans of vector functionals, and their ultraweak topologies are `σ(M,M_*)`,
+`σ(N,N_*)`. Let `f : M ≃ N` be a complex star-algebra equivalence, ultraweakly continuous
+in both directions. for `y ∈ N`, `f.symm y=f.toStarAlgEquiv.symm y=f⁻¹(y)`. -/
 theorem symm_apply (f : NormalStarAlgEquiv M N) (x : N) :
     f.symm x = f.toStarAlgEquiv.symm x :=
   rfl
 
-/-- The original inverse recovers the source element. -/
+/-- **Normal inverse recovers a source element.** Let `M,N` be concrete von Neumann algebras
+on complete complex Hilbert spaces. Their normal-functional Banach spaces `M_*,N_*` are
+the norm-closed spans of vector functionals, and their ultraweak topologies are
+`σ(M,M_*)`, `σ(N,N_*)`. Let `f : M ≃ N` be a complex star-algebra equivalence, ultraweakly
+continuous in both directions. for `x ∈ M`, `f.symm (f(x))=x`. -/
 @[simp]
 theorem symm_apply_apply (f : NormalStarAlgEquiv M N) (x : M) : f.symm (f x) = x :=
   f.toStarAlgEquiv.symm_apply_apply x
 
-/-- The original forward map recovers the target element. -/
+/-- **Normal forward map recovers a target element.** Let `M,N` be concrete von Neumann
+algebras on complete complex Hilbert spaces. Their normal-functional Banach spaces
+`M_*,N_*` are the norm-closed spans of vector functionals, and their ultraweak topologies
+are `σ(M,M_*)`, `σ(N,N_*)`. Let `f : M ≃ N` be a complex star-algebra equivalence,
+ultraweakly continuous in both directions. for `y ∈ N`, `f(f.symm y)=y`. -/
 @[simp]
 theorem apply_symm_apply (f : NormalStarAlgEquiv M N) (x : N) : f (f.symm x) = x :=
   f.toStarAlgEquiv.apply_symm_apply x
 
-/-- Inversion twice retains the same normal equivalence. -/
+/-- **Double inverse of a normal equivalence.** Let `M,N` be concrete von Neumann algebras on
+complete complex Hilbert spaces. Their normal-functional Banach spaces `M_*,N_*` are the
+norm-closed spans of vector functionals, and their ultraweak topologies are `σ(M,M_*)`,
+`σ(N,N_*)`. Let `f : M ≃ N` be a complex star-algebra equivalence, ultraweakly continuous
+in both directions. `f.symm.symm=f`. -/
 @[simp]
 theorem symm_symm (f : NormalStarAlgEquiv M N) : f.symm.symm = f := by
   apply ext
@@ -170,7 +236,13 @@ theorem symm_symm (f : NormalStarAlgEquiv M N) : f.symm.symm = f := by
 variable {L : Type w} [NormedAddCommGroup L] [InnerProductSpace ℂ L] [CompleteSpace L]
 variable {P : VonNeumannAlgebra L}
 
-/-- Compose normal equivalences by the same original forward and inverse maps. -/
+/-- **Composition of normal star-algebra equivalences.** Let `M,N` be concrete von Neumann
+algebras on complete complex Hilbert spaces. Their normal-functional Banach spaces
+`M_*,N_*` are the norm-closed spans of vector functionals, and their ultraweak topologies
+are `σ(M,M_*)`, `σ(N,N_*)`. Let `f : M ≃ N` be a complex star-algebra equivalence,
+ultraweakly continuous in both directions. for a normal equivalence `g : N ≃ P` to another
+concrete von Neumann algebra, `f.trans g : M ≃ P` has forward map `g∘f` and inverse map
+`f⁻¹∘g⁻¹`. -/
 def trans (f : NormalStarAlgEquiv M N) (g : NormalStarAlgEquiv N P) :
     NormalStarAlgEquiv M P where
   toStarAlgEquiv := f.toStarAlgEquiv.trans g.toStarAlgEquiv
@@ -211,13 +283,23 @@ def trans (f : NormalStarAlgEquiv M N) (g : NormalStarAlgEquiv N P) :
     rw [hfun]
     exact f.continuous_ultraweak_symm.comp g.continuous_ultraweak_symm
 
-/-- Forward composition uses the original algebra values in order. -/
+/-- **Forward value of composed normal equivalences.** Let `M,N` be concrete von Neumann
+algebras on complete complex Hilbert spaces. Their normal-functional Banach spaces
+`M_*,N_*` are the norm-closed spans of vector functionals, and their ultraweak topologies
+are `σ(M,M_*)`, `σ(N,N_*)`. Let `f : M ≃ N` be a complex star-algebra equivalence,
+ultraweakly continuous in both directions. for a normal equivalence `g : N ≃ P` and `x ∈
+M`, `f.trans g x=g(f(x))`. -/
 @[simp]
 theorem trans_apply (f : NormalStarAlgEquiv M N) (g : NormalStarAlgEquiv N P) (x : M) :
     f.trans g x = g (f x) :=
   rfl
 
-/-- Normal automorphisms form a group under the original function composition. -/
+/-- **Group of normal star automorphisms.** Let `H` be a complete complex Hilbert space and `M
+⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for its vector
+functionals. Let `M_*` be their norm-closed complex span in the continuous dual `M*`.
+Equip `M` with the ultraweak topology `σ(M,M_*)`, induced by `x ↦ φ(x)` for `φ ∈ M_*`. the
+normal star automorphisms of `M` form a group with identity `id`, product
+`(f*g)(x)=f(g(x))` and inverse the normal inverse map. -/
 instance automorphismGroup : Group (NormalStarAlgEquiv M M) where
   one := refl M
   mul f g := g.trans f
@@ -243,29 +325,52 @@ instance automorphismGroup : Group (NormalStarAlgEquiv M M) where
     intro x
     exact f.toStarAlgEquiv.symm_apply_apply x
 
-/-- The normal automorphism identity has the original identity value. -/
+/-- **Identity normal automorphism value.** Let `H` be a complete complex Hilbert space and `M
+⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for its vector
+functionals. Let `M_*` be their norm-closed complex span in the continuous dual `M*`.
+Equip `M` with the ultraweak topology `σ(M,M_*)`, induced by `x ↦ φ(x)` for `φ ∈ M_*`. for
+`x ∈ M`, `(1 : NormalStarAlgEquiv M M)(x)=x`. -/
 @[simp]
 theorem one_apply (x : M) : (1 : NormalStarAlgEquiv M M) x = x :=
   rfl
 
-/-- Normal automorphism multiplication is original function composition. -/
+/-- **Product of normal automorphisms is function composition.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for
+its vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. Equip `M` with the ultraweak topology `σ(M,M_*)`, induced by `x ↦ φ(x)` for `φ ∈
+M_*`. Let `f,g` be normal complex star automorphisms of `M`. for `x ∈ M`,
+`(f*g)(x)=f(g(x))`. -/
 @[simp]
 theorem mul_apply (f g : NormalStarAlgEquiv M M) (x : M) : (f * g) x = f (g x) :=
   rfl
 
-/-- The normal automorphism inverse is its original normal inverse. -/
+/-- **Inverse normal automorphism value.** Let `H` be a complete complex Hilbert space and `M
+⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for its vector
+functionals. Let `M_*` be their norm-closed complex span in the continuous dual `M*`.
+Equip `M` with the ultraweak topology `σ(M,M_*)`, induced by `x ↦ φ(x)` for `φ ∈ M_*`. Let
+`f,g` be normal complex star automorphisms of `M`. for `x ∈ M`, `f⁻¹(x)=f.symm x`. -/
 @[simp]
 theorem inv_apply (f : NormalStarAlgEquiv M M) (x : M) : f⁻¹ x = f.symm x :=
   rfl
 
-/-- Forget normality as a group homomorphism on the same original automorphisms. -/
+/-- **Forgetful group map from normal to star automorphisms.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for
+its vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. Equip `M` with the ultraweak topology `σ(M,M_*)`, induced by `x ↦ φ(x)` for `φ ∈
+M_*`. `toStarAlgAutHom M` sends a normal automorphism to its underlying complex
+star-algebra automorphism and preserves identity and composition. -/
 def toStarAlgAutHom (M : VonNeumannAlgebra H) :
     NormalStarAlgEquiv M M →* (M ≃⋆ₐ[ℂ] M) where
   toFun := toStarAlgEquiv
   map_one' := rfl
   map_mul' _ _ := rfl
 
-/-- Functional pullback is the actual continuous linear equivalence of predual spaces. -/
+/-- **Continuous linear pullback equivalence of normal functionals.** Let `M,N` be concrete
+von Neumann algebras on complete complex Hilbert spaces. Their normal-functional Banach
+spaces `M_*,N_*` are the norm-closed spans of vector functionals, and their ultraweak
+topologies are `σ(M,M_*)`, `σ(N,N_*)`. Let `f : M ≃ N` be a complex star-algebra
+equivalence, ultraweakly continuous in both directions. `f.predualEquiv : N_* ≃L[ℂ] M_*`
+sends `φ` to `φ∘f`, with inverse `ψ ↦ ψ∘f⁻¹`. -/
 def predualEquiv (f : NormalStarAlgEquiv M N) :
     normalFunctionalSpace N ≃L[ℂ] normalFunctionalSpace M where
   toLinearEquiv :=
@@ -290,13 +395,22 @@ def predualEquiv (f : NormalStarAlgEquiv M N) :
   continuous_toFun := f.toNormalStarAlgHom.predualPullback.continuous
   continuous_invFun := f.symm.toNormalStarAlgHom.predualPullback.continuous
 
-/-- The predual equivalence evaluates by the same original functional pullback. -/
+/-- **Evaluation of the predual equivalence.** Let `M,N` be concrete von Neumann algebras on
+complete complex Hilbert spaces. Their normal-functional Banach spaces `M_*,N_*` are the
+norm-closed spans of vector functionals, and their ultraweak topologies are `σ(M,M_*)`,
+`σ(N,N_*)`. Let `f : M ≃ N` be a complex star-algebra equivalence, ultraweakly continuous
+in both directions. for `φ ∈ N_*` and `x ∈ M`, `(f.predualEquiv φ)(x)=φ(f(x))`. -/
 @[simp]
 theorem predualEquiv_apply (f : NormalStarAlgEquiv M N) (φ : normalFunctionalSpace N) (x : M) :
     (f.predualEquiv φ : StrongDual ℂ M) x = (φ : StrongDual ℂ N) (f x) :=
   f.toNormalStarAlgHom.predualPullback_apply φ x
 
-/-- Inverse pullback gives the covariant action of actual normal automorphisms on the predual. -/
+/-- **Covariant normal-automorphism action on the predual.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for
+its vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. Equip `M` with the ultraweak topology `σ(M,M_*)`, induced by `x ↦ φ(x)` for `φ ∈
+M_*`. `predualActionHom M` is the group homomorphism sending a normal automorphism `f` to
+the continuous linear automorphism `φ ↦ φ∘f⁻¹` of `M_*`. -/
 def predualActionHom (M : VonNeumannAlgebra H) :
     NormalStarAlgEquiv M M →*
       (normalFunctionalSpace M ≃L[ℂ] normalFunctionalSpace M) where
@@ -324,7 +438,12 @@ def predualActionHom (M : VonNeumannAlgebra H) :
       (φ : StrongDual ℂ M) (g.toStarAlgEquiv.symm (f.toStarAlgEquiv.symm x))
     rw [StarAlgEquiv.symm_trans_apply]
 
-/-- The covariant predual action uses the original inverse automorphism in evaluation. -/
+/-- **Inverse-automorphism formula for the predual action.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for
+its vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. Equip `M` with the ultraweak topology `σ(M,M_*)`, induced by `x ↦ φ(x)` for `φ ∈
+M_*`. Let `f,g` be normal complex star automorphisms of `M`. for `φ ∈ M_*` and `x ∈ M`,
+`(predualActionHom M f φ)(x)=φ(f⁻¹(x))`. -/
 @[simp]
 theorem predualActionHom_apply (f : NormalStarAlgEquiv M M)
     (φ : normalFunctionalSpace M) (x : M) :

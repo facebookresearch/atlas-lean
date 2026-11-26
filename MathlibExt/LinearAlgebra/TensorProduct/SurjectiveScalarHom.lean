@@ -15,11 +15,12 @@ public import Mathlib.LinearAlgebra.Contraction
 public import Mathlib.Algebra.Algebra.Tower
 
 /-!
-# Actual finite tensor–Hom transport along a surjective scalar map
+# Tensor–Hom scalar change through a quotient
 
-Native scalar extension identifies the original linear maps, and native
-compatible-scalar tensor equivalences retain every original pure tensor.
-The only finite-projective contraction is the existing native equivalence.
+Let R,S be commutative rings with surjective algebra map R→S, and M,J,U S-modules with
+compatible restricted R-actions. Scalar restriction identifies R-linear and S-linear Hom
+spaces and R/S tensor products. If M is finitely generated projective over S,
+Hom_R(M,J)⊗_RU≃Hom_R(M,J⊗_RU) by f⊗u↦(m↦f(m)⊗u).
 -/
 
 @[expose] public section
@@ -38,14 +39,24 @@ variable {R : Type uR} {S : Type uS} [CommRing R] [CommRing S] [Algebra R S]
   [Module S M] [Module S J] [Module S U]
   [IsScalarTower R S M] [IsScalarTower R S J] [IsScalarTower R S U]
 
-/-- A surjective actual scalar map proves compatibility on the original R tensor. -/
+/-- **Surjective scalars give tensor scalar compatibility.**
+
+Let R,S be commutative rings with surjective algebra map R→S, and M,J,U S-modules with
+compatible restricted R-actions. For s∈S,m∈M,j∈J, (s•m)⊗_Rj=m⊗_R(s•j), so CompatibleSMul R S M
+J holds.
+-/
 theorem compatibleSMul_of_surjective_algebraMap
     (h : Function.Surjective (algebraMap R S)) : CompatibleSMul R S M J where
   smul_tmul s m j := by
     obtain ⟨r, rfl⟩ := h s
     simpa only [algebraMap_smul] using (TensorProduct.smul_tmul (R := R) r m j)
 
-/-- Original scalar/input tensor coordinates; no finite-projectivity premise is used. -/
+/-- **Scalar-change equivalence on the input Hom tensor.**
+
+Let R,S be commutative rings with surjective algebra map R→S, and M,J,U S-modules with
+compatible restricted R-actions. The R-linear equivalence rTensorHomScalarInputEquiv
+identifies Hom_R(M,J)⊗_RU with Hom_S(M,J)⊗_SU, preserving f⊗u.
+-/
 def rTensorHomScalarInputEquiv
     (h : Function.Surjective (algebraMap R S)) :
     (M →ₗ[R] J) ⊗[R] U ≃ₗ[R] (M →ₗ[S] J) ⊗[S] U := by
@@ -56,7 +67,13 @@ def rTensorHomScalarInputEquiv
   exact TensorProduct.congr eHom (LinearEquiv.refl R U) ≪≫ₗ
     TensorProduct.equivOfCompatibleSMul S R R (M →ₗ[S] J) U
 
-/-- Original scalar/output Hom coordinates, retaining every original underlying function. -/
+/-- **Scalar-change equivalence on the output Hom space.**
+
+Let R,S be commutative rings with surjective algebra map R→S, and M,J,U S-modules with
+compatible restricted R-actions. The R-linear equivalence rTensorHomScalarOutputEquiv
+identifies Hom_S(M,J⊗_SU) with Hom_R(M,J⊗_RU), using the pure-preserving tensor scalar
+comparison.
+-/
 def rTensorHomScalarOutputEquiv
     (h : Function.Surjective (algebraMap R S)) :
     (M →ₗ[S] J ⊗[S] U) ≃ₗ[R] M →ₗ[R] J ⊗[R] U := by
@@ -68,8 +85,12 @@ def rTensorHomScalarOutputEquiv
     (R := R) (S := S) (M := M) (N := J ⊗[S] U) h).symm ≪≫ₗ
       (LinearEquiv.refl R M).arrowCongr eTensor
 
-/-- The actual native coefficient transports followed by the existing S contraction.
-The original construction is factored through the same unchanged scalar coordinates. -/
+/-- **Tensor–Hom equivalence for projectivity over quotient scalars.**
+
+Let R,S be commutative rings with surjective algebra map R→S, and M,J,U S-modules with
+compatible restricted R-actions. If M is finitely generated projective over S,
+rTensorHomEquivOfSurjectiveScalars:Hom_R(M,J)⊗_RU≃ₗ[R]Hom_R(M,J⊗_RU) sends f⊗u to m↦f(m)⊗u.
+-/
 def rTensorHomEquivOfSurjectiveScalars
     [Module.Projective S M] [Module.Finite S M]
     (h : Function.Surjective (algebraMap R S)) :
@@ -78,7 +99,12 @@ def rTensorHomEquivOfSurjectiveScalars
     (_root_.rTensorHomEquivHomRTensor S M J U).restrictScalars R ≪≫ₗ
       rTensorHomScalarOutputEquiv h
 
-/-- The transport retains the canonical original R-linear evaluation on every pure tensor. -/
+/-- **Pure tensor evaluation in the quotient-scalar tensor–Hom equivalence.**
+
+Let R,S be commutative rings with surjective algebra map R→S, and M,J,U S-modules with
+compatible restricted R-actions. If M is finitely generated projective over S, then
+rTensorHomEquivOfSurjectiveScalars(f⊗_Ru)(m)=f(m)⊗_Ru.
+-/
 theorem rTensorHomEquivOfSurjectiveScalars_tmul
     [Module.Projective S M] [Module.Finite S M]
     (h : Function.Surjective (algebraMap R S)) (f : M →ₗ[R] J) (u : U) (m : M) :
@@ -90,8 +116,12 @@ theorem rTensorHomEquivOfSurjectiveScalars_tmul
     TensorProduct.equivOfCompatibleSMul, LinearEquiv.arrowCongr,
     LinearMap.extendScalarsOfSurjectiveEquiv]
 
-/-- The forward linear map is the exact original R coefficient map, independent of
-the quotient/transport used to earn its inverse. -/
+/-- **Forward map of the quotient-scalar tensor–Hom equivalence.**
+
+Let R,S be commutative rings with surjective algebra map R→S, and M,J,U S-modules with
+compatible restricted R-actions. For M finitely generated projective over S, the forward map
+is rTensorHomToHomRTensor(.id R) M J U, the evaluation f⊗u↦(m↦f(m)⊗u).
+-/
 theorem rTensorHomEquivOfSurjectiveScalars_toLinearMap
     [Module.Projective S M] [Module.Finite S M]
     (h : Function.Surjective (algebraMap R S)) :

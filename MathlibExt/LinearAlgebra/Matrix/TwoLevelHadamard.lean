@@ -20,19 +20,24 @@ import MathlibExt.LinearAlgebra.Matrix.UnitaryBlockDiagonal
 import MathlibExt.Logic.Equiv.TwoPointSumCompl
 
 /-!
-# Two-level Hadamard unitary
+# Hadamard action on two chosen coordinates
 
-This file defines the two-level Hadamard matrix that acts as the
-normalized `Fin 2` Hadamard block on two distinct indices `a` and `b`
-and as the identity elsewhere. It proves unitary membership by
-block-diagonal transport and reindexing.
+Put c=1/√2. For indices a,b, the two-level matrix H_(a,b) is the identity away from the a,b
+coordinates and has block [[c,c],[c,-c]] there when a≠b. When a=b, it is diagonal with entry c
+at a and 1 elsewhere. On a finite index type with a≠b, this is a unitary matrix.
 -/
 
 @[expose] public section
 
 namespace Matrix
 
-/-- Two-level Hadamard matrix with Hadamard block on `a`, `b`. -/
+/-- **Two-level Hadamard matrix.**
+
+Put c=1/√2. For indices a,b, the two-level matrix H_(a,b) is the identity away from the a,b
+coordinates and has block [[c,c],[c,-c]] there when a≠b. When a=b, it is diagonal with entry c
+at a and 1 elsewhere. The matrix twoLevelHadamard a b is defined on any index type; unitarity
+is asserted separately under finiteness and a≠b.
+-/
 noncomputable def twoLevelHadamard {n : Type*} [DecidableEq n] (a b : n) :
     Matrix n n Complex :=
   fun i j =>
@@ -168,7 +173,13 @@ private theorem reindex_twoLevelBlock_eq {n : Type*} [DecidableEq n] (a b : n)
             rw [ite_eq_right hi1, ite_eq_right hi2, ite_eq_right hij]
             simp [hne]
 
-/-- Two-level Hadamard is unitary for distinct indices. -/
+/-- **Unitarity of the distinct-coordinate Hadamard matrix.**
+
+Put c=1/√2. For indices a,b, the two-level matrix H_(a,b) is the identity away from the a,b
+coordinates and has block [[c,c],[c,-c]] there when a≠b. When a=b, it is diagonal with entry c
+at a and 1 elsewhere. For a finite index type I and distinct a,b∈I, twoLevelHadamard a b
+belongs to U(I,ℂ).
+-/
 theorem twoLevelHadamard_mem_unitaryGroup {n : Type*} [Fintype n] [DecidableEq n]
     (a b : n) (hab : a ≠ b) :
     twoLevelHadamard a b ∈ Matrix.unitaryGroup n Complex := by
@@ -179,7 +190,13 @@ theorem twoLevelHadamard_mem_unitaryGroup {n : Type*} [Fintype n] [DecidableEq n
   rw [hEq] at hRe
   exact hRe
 
-/-- Bundled unitary for the two-level Hadamard. -/
+/-- **Two-level Hadamard as a unitary element.**
+
+Put c=1/√2. For indices a,b, the two-level matrix H_(a,b) is the identity away from the a,b
+coordinates and has block [[c,c],[c,-c]] there when a≠b. When a=b, it is diagonal with entry c
+at a and 1 elsewhere. For finite I and a≠b, twoLevelHadamardUnitary a b hab∈U(I,ℂ) has
+underlying matrix H_(a,b).
+-/
 noncomputable def twoLevelHadamardUnitary {n : Type*} [Fintype n] [DecidableEq n]
     (a b : n) (hab : a ≠ b) : Matrix.unitaryGroup n Complex :=
   ⟨twoLevelHadamard a b, twoLevelHadamard_mem_unitaryGroup a b hab⟩

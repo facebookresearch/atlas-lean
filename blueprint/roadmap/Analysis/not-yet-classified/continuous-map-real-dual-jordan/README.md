@@ -1,4 +1,4 @@
-# Continuous Map Real Dual Jordan
+# Jordan decomposition of real continuous-function functionals
 
-- [Real Dual Jordan](real-dual-jordan.md)
-- [Real Dual Jordan](real-dual-jordan-2.md)
+- [Positive and negative decomposition of a real continuous-function dual](real-dual-jordan.md)
+- [Construction of positive and negative Jordan parts](real-dual-jordan-2.md)

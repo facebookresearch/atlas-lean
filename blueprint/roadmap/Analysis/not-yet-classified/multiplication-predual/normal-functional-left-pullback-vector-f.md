@@ -1,3 +1,6 @@
-# Normal Functional Left Pullback vector Functional
+# Adjoint shift of a vector coefficient under left multiplication
 
-Fixed-left pullback of an original vector coefficient is the original adjoint-shifted coefficient.
+Let `H` be a complete
+complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write
+`ω_(ξ,η)(x)=⟨ξ,xη⟩` for its vector functionals. for `a ∈ M` and `ξ,η ∈ H`,
+`normalFunctionalLeftPullback M a (ω_(ξ,η))=ω_(a*ξ,η)`.

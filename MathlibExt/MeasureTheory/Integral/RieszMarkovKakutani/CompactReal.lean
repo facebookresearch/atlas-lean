@@ -17,12 +17,15 @@ public import Mathlib.Topology.ContinuousMap.Compact
 public import Mathlib.Topology.ContinuousMap.Ordered
 
 /-!
-# Positive Riesz--Markov representation on a compact space
+# Positive Riesz representation on compact Hausdorff spaces
 
-On a compact Hausdorff Borel space, continuous functions and compactly supported continuous
-functions have the same underlying functions.  This file transports the positive real
-Riesz--Markov theorem across that identification and also packages integration against a finite
-measure as a positive continuous functional on `C(X, ℝ)`.
+On a compact Borel space, integration against a finite measure gives the positive bounded
+functional `f ↦ ∫ f dμ` on `C(X,ℝ)`, with value `μ(X)` at one.
+
+When the space is Hausdorff, a positive bounded functional `P` is represented by a finite
+regular measure `μ_P`, satisfying `∫ f dμ_P=P(f)` and `μ_P(X)=P(1)`. Restriction to
+compact-support continuous functions is pointwise and also makes sense on general topological
+spaces.
 -/
 
 public section
@@ -64,7 +67,10 @@ private theorem norm_continuousIntegralLinear_apply_le
     (Filter.Eventually.of_forall fun x ↦ f.norm_coe_le_norm x)
   simpa [continuousIntegralLinear, mul_comm] using h
 
-/-- Integration against a finite measure, as a positive continuous functional on `C(X, ℝ)`. -/
+/-- **Positive bounded integration functional on compact continuous functions.** Let `X` be a
+compact topological space with its Borel measurable structure. for a finite measure `μ`,
+`continuousIntegralPositive μ : C(X,ℝ) → ℝ` sends `f` to `∫ f dμ` and is positive and
+continuous. Hausdorffness is not required. -/
 noncomputable def continuousIntegralPositive (mu : Measure X) [IsFiniteMeasure mu] :
     C(X, ℝ) →P[ℝ] ℝ :=
   { toPositiveLinearMap :=
@@ -77,7 +83,9 @@ noncomputable def continuousIntegralPositive (mu : Measure X) [IsFiniteMeasure m
       (norm_continuousIntegralLinear_apply_le mu) |>.cont }
 
 omit [T2Space X] in
-/-- The positive functional associated with a finite measure evaluates by integration. -/
+/-- **Value of the positive continuous integral functional.** Let `X` be a compact topological
+space with its Borel measurable structure. for finite `μ` and `f∈C(X,ℝ)`,
+`continuousIntegralPositive μ f=∫ f dμ`, without a Hausdorff assumption. -/
 @[simp]
 theorem continuousIntegralPositive_apply (mu : Measure X) [IsFiniteMeasure mu]
     (f : C(X, ℝ)) :
@@ -86,14 +94,18 @@ theorem continuousIntegralPositive_apply (mu : Measure X) [IsFiniteMeasure mu]
   rfl
 
 omit [T2Space X] in
-/-- The positive integral functional takes the constant one function to the measure's total mass. -/
+/-- **Total mass of a positive integral functional.** Let `X` be a compact topological space
+with its Borel measurable structure. for finite `μ`, `continuousIntegralPositive μ
+1=μ.real(X)`. -/
 @[simp]
 theorem continuousIntegralPositive_apply_one (mu : Measure X) [IsFiniteMeasure mu] :
     continuousIntegralPositive mu 1 = mu.real univ := by
   simp [continuousIntegralPositive_apply]
 
 omit [T2Space X] in
-/-- Integration of a nonnegative continuous function is monotone in the measure. -/
+/-- **Monotonicity of nonnegative continuous integration in the measure.** Let `X` be a
+compact topological space with its Borel measurable structure. if finite measures `μ≤ν`
+and `f∈C(X,ℝ)` satisfies `f≥0`, then `∫ f dμ≤∫ f dν`. -/
 theorem continuousIntegralPositive_mono_measure {mu nu : Measure X}
     [IsFiniteMeasure mu] [IsFiniteMeasure nu] (h : mu ≤ nu)
     {f : C(X, ℝ)} (hf : 0 ≤ f) :
@@ -103,8 +115,9 @@ theorem continuousIntegralPositive_mono_measure {mu nu : Measure X}
     (Filter.Eventually.of_forall (ContinuousMap.le_def.mp hf))
     (continuousMap_integrable_measure nu f)
 
-/-- Restrict a positive continuous functional on `C(X, ℝ)` to compactly supported continuous
-functions. -/
+/-- **Positive functional restricted to compact-support functions.** For a topological space
+`X` and positive continuous real-linear `P : C(X,ℝ) → ℝ`, `compactlySupportedRestriction
+P` sends `f∈C_c(X,ℝ)` to `P(f.toContinuousMap)`. -/
 noncomputable def compactlySupportedRestriction (P : C(X, ℝ) →P[ℝ] ℝ) :
     C_c(X, ℝ) →ₚ[ℝ] ℝ where
   toFun f := P f.toContinuousMap
@@ -121,30 +134,41 @@ noncomputable def compactlySupportedRestriction (P : C(X, ℝ) →P[ℝ] ℝ) :
     exact fun x ↦ hfg x
 
 omit [CompactSpace X] [T2Space X] [MeasurableSpace X] [BorelSpace X] in
-/-- Restricting the positive functional to compactly supported functions preserves its values. -/
+/-- **Value of a compact-support positive-functional restriction.** For a topological space
+`X`, positive continuous real-linear `P : C(X,ℝ) → ℝ` and `f∈C_c(X,ℝ)`,
+`compactlySupportedRestriction P f=P(f.toContinuousMap)`. -/
 @[simp]
 theorem compactlySupportedRestriction_apply (P : C(X, ℝ) →P[ℝ] ℝ)
     (f : C_c(X, ℝ)) : compactlySupportedRestriction P f = P f.toContinuousMap := by
   unfold compactlySupportedRestriction
   rfl
 
-/-- The regular measure representing a positive continuous functional on `C(X, ℝ)`. -/
+/-- **Finite regular representing measure of a positive continuous functional.** Let `X` be a
+compact Hausdorff space with its Borel measurable structure. for positive bounded `P :
+C(X,ℝ) → ℝ`, `continuousRieszMeasure P=μ_P` satisfies `∫ f dμ_P=P(f)` for every continuous
+real `f`. -/
 noncomputable def continuousRieszMeasure (P : C(X, ℝ) →P[ℝ] ℝ) : Measure X :=
   RealRMK.rieszMeasure (compactlySupportedRestriction P)
 
-/-- The compact Riesz measure is regular. -/
+/-- **Regularity of the positive compact Riesz measure.** Let `X` be a compact Hausdorff space
+with its Borel measurable structure. for positive bounded `P`, the measure
+`continuousRieszMeasure P` is regular. -/
 theorem continuousRieszMeasure_regular (P : C(X, ℝ) →P[ℝ] ℝ) :
     (continuousRieszMeasure P).Regular := by
   unfold continuousRieszMeasure
   infer_instance
 
-/-- The compact Riesz measure is finite. -/
+/-- **Finiteness of the positive compact Riesz measure.** Let `X` be a compact Hausdorff space
+with its Borel measurable structure. for positive bounded `P`, `continuousRieszMeasure P`
+is finite. -/
 theorem continuousRieszMeasure_finite (P : C(X, ℝ) →P[ℝ] ℝ) :
     IsFiniteMeasure (continuousRieszMeasure P) := by
   unfold continuousRieszMeasure
   infer_instance
 
-/-- The compact Riesz measure represents the original functional on every continuous function. -/
+/-- **Continuous integral representation of a positive compact functional.** Let `X` be a
+compact Hausdorff space with its Borel measurable structure. for positive bounded `P` and
+`f∈C(X,ℝ)`, `∫ f d(continuousRieszMeasure P)=P(f)`. -/
 @[simp]
 theorem integral_continuousRieszMeasure (P : C(X, ℝ) →P[ℝ] ℝ)
     (f : C(X, ℝ)) :
@@ -155,7 +179,9 @@ theorem integral_continuousRieszMeasure (P : C(X, ℝ) →P[ℝ] ℝ)
   change (∫ x, f x ∂(continuousRieszMeasure P)) = P f at h
   exact h
 
-/-- The total mass of the compact Riesz measure is the value of the functional at one. -/
+/-- **Positive Riesz total mass equals the functional at one.** Let `X` be a compact Hausdorff
+space with its Borel measurable structure. for positive bounded `P`,
+`(continuousRieszMeasure P).real(X)=P(1)`. -/
 @[simp]
 theorem continuousRieszMeasure_real_univ (P : C(X, ℝ) →P[ℝ] ℝ) :
     (continuousRieszMeasure P).real univ = P 1 := by

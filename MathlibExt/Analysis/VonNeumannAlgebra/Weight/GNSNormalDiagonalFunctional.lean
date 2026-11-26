@@ -15,14 +15,14 @@ public import MathlibExt.Analysis.VonNeumannAlgebra.PositiveOrderNormalMembershi
 public import MathlibExt.Analysis.VonNeumannAlgebra.Weight.GNSCoefficientOrderNormal
 
 /-!
-# The actual GNS diagonal coefficient of a normal weight is a normal functional
+# Normal diagonal functionals from finite square GNS vectors
 
-Normality of the original scalar weight makes its existing positive GNS
-diagonal coefficient preserve original bounded positive-family LUBs. The
-strict membership criterion applies to that same bounded map and gives a
-member of the existing canonical normal-functional space. No normal member,
-GNS model, family, limit or norm certificate is supplied as an input.
-Faithfulness, semifiniteness and representation normality remain separate.
+For a normal extended weight `φ` on a concrete von Neumann algebra, each finite square element
+`x ∈ n_φ` gives a normal functional `ψ_x(a)=⟨Λ(x),π(a)Λ(x)⟩` in the closed vector-functional
+span `M_*`.
+
+It is the positive diagonal coefficient of the GNS left representation. Faithfulness and
+semifiniteness of `φ` are not required.
 -/
 
 @[expose] public section
@@ -40,7 +40,14 @@ universe u
 
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- Construct the actual normal-functional member of the original normal-weight GNS diagonal coefficient. -/
+/-- **Normal functional of a finite square GNS vector.** Let `H` be a complete complex Hilbert
+space and `M ⊆ B(H)` a concrete von Neumann algebra. Let `φ : M₊ → [0,∞]` be an extended
+positive weight: additive, homogeneous for finite nonnegative real scalars, and zero at
+zero. Put `n_φ={x : φ(x* x)<∞}`, and let `Λ : n_φ → H_φ` be the dense GNS map into the
+weight Hilbert completion. Its representation `π` satisfies `π(a)Λ(x)=Λ(a*x)`. Assume `φ`
+preserves least upper bounds of nonempty norm-bounded directed positive sets. for `x ∈
+n_φ`, `normalWeightGNSDiagonalFunctional M φ x ∈ M_*` is the bounded coefficient `a ↦
+⟨Λ(x),π(a)Λ(x)⟩`. -/
 def normalWeightGNSDiagonalFunctional (M : VonNeumannAlgebra H) (φ : Weight M)
     (hφ : IsNormalWeight M φ) (x : φ.finiteSquareSubmodule) : normalFunctionalSpace M := by
   let : PartialOrder M := CStarAlgebra.spectralOrder M
@@ -53,7 +60,14 @@ def normalWeightGNSDiagonalFunctional (M : VonNeumannAlgebra H) (φ : Weight M)
       hmono hbound hLUB
   exact ⟨ψ.toContinuousLinearMap, hmember⟩
 
-/-- Coercion of the actual normal diagonal member is the same original GNS representation coefficient. -/
+/-- **Underlying bounded functional of a normal GNS diagonal.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Let `φ : M₊ → [0,∞]` be an
+extended positive weight: additive, homogeneous for finite nonnegative real scalars, and
+zero at zero. Put `n_φ={x : φ(x* x)<∞}`, and let `Λ : n_φ → H_φ` be the dense GNS map into
+the weight Hilbert completion. Its representation `π` satisfies `π(a)Λ(x)=Λ(a*x)`. Assume
+`φ` preserves least upper bounds of nonempty norm-bounded directed positive sets. for `x ∈
+n_φ`, the continuous functional underlying `normalWeightGNSDiagonalFunctional M φ x`
+equals `representationCoefficient π (Λ x) (Λ x)`. -/
 @[simp]
 theorem normalWeightGNSDiagonalFunctional_coe (M : VonNeumannAlgebra H) (φ : Weight M)
     (hφ : IsNormalWeight M φ) (x : φ.finiteSquareSubmodule) :
@@ -62,7 +76,13 @@ theorem normalWeightGNSDiagonalFunctional_coe (M : VonNeumannAlgebra H) (φ : We
         φ.gnsLeftStarAlgHom (φ.gnsMap x) (φ.gnsMap x) :=
   rfl
 
-/-- The actual normal diagonal member has its original completed GNS vector value. -/
+/-- **Value of a normal diagonal GNS functional.** Let `H` be a complete complex Hilbert space
+and `M ⊆ B(H)` a concrete von Neumann algebra. Let `φ : M₊ → [0,∞]` be an extended
+positive weight: additive, homogeneous for finite nonnegative real scalars, and zero at
+zero. Put `n_φ={x : φ(x* x)<∞}`, and let `Λ : n_φ → H_φ` be the dense GNS map into the
+weight Hilbert completion. Its representation `π` satisfies `π(a)Λ(x)=Λ(a*x)`. Assume `φ`
+preserves least upper bounds of nonempty norm-bounded directed positive sets. for `x ∈
+n_φ` and `a ∈ M`, `(normalWeightGNSDiagonalFunctional M φ x)(a)=⟨Λ(x),π(a)Λ(x)⟩`. -/
 theorem normalWeightGNSDiagonalFunctional_apply (M : VonNeumannAlgebra H) (φ : Weight M)
     (hφ : IsNormalWeight M φ) (x : φ.finiteSquareSubmodule) (a : M) :
     (normalWeightGNSDiagonalFunctional M φ hφ x : StrongDual ℂ M) a =

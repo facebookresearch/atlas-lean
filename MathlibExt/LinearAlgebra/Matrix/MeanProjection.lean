@@ -16,13 +16,14 @@ public import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.Data.Fintype.BigOperators
 
 /-!
-# The ordinary vertex-mean projection
+# Orthogonal removal of the vertex mean
 
-The matrix is I minus the all-ones outer product divided by the finite vertex count.
-Its action subtracts the ordinary mean, without degree weights. The empty finite type is
-included: its unique matrix and vector are zero.
+Let V be a finite index type and 1 the constant-one vector in ℝ^V. Put P=I-|V|⁻¹11ᵀ; for
+nonempty V, Px=x-(∑v x_v/|V|)1. For empty V, the unique vector and matrix are zero. The matrix
+P is the orthogonal projection onto {x:∑v x_v=0}. For a symmetric A with A1=0,
+(Px)ᵀA(Px)=xᵀAx.
 
-This is the mean removal in Spielman and Teng, arXiv cs/0607105v5, §3.2.
+Source: Spielman and Teng, arXiv cs/0607105v5, §3.2.
 -/
 
 @[expose] public section
@@ -36,7 +37,12 @@ namespace Matrix
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
-/-- Orthogonal projection onto the ordinary zero-sum subspace of a finite real vector space. -/
+/-- **Projection onto the zero-sum real subspace.**
+
+Let V be a finite index type and 1 the constant-one vector in ℝ^V. Put P=I-|V|⁻¹11ᵀ; for
+nonempty V, Px=x-(∑v x_v/|V|)1. For empty V, the unique vector and matrix are zero. The matrix
+meanProjection is P, acting by subtracting the unweighted coordinate mean.
+-/
 def meanProjection : Matrix V V ℝ :=
   1 - (Fintype.card V : ℝ)⁻¹ • vecMulVec (1 : V → ℝ) 1
 
@@ -114,8 +120,12 @@ theorem sum_mulVec_eq_zero {A : Matrix V V ℝ} (hA : A.IsHermitian)
     rw [dotProduct_mulVec, hrow, zero_dotProduct]
   simpa only [dotProduct, Pi.one_apply, one_mul] using h
 
-/-- Subtracting the ordinary mean preserves the energy of a Hermitian matrix
-that annihilates constants. -/
+/-- **Mean removal preserves energy when constants are annihilated.**
+
+Let V be a finite index type and 1 the constant-one vector in ℝ^V. Put P=I-|V|⁻¹11ᵀ; for
+nonempty V, Px=x-(∑v x_v/|V|)1. For empty V, the unique vector and matrix are zero. If A is a
+real symmetric V×V matrix with A1=0, then (Px)ᵀA(Px)=xᵀAx for every x∈ℝ^V.
+-/
 theorem meanProjection_energy {A : Matrix V V ℝ} (hA : A.IsHermitian)
     (hA1 : A *ᵥ (1 : V → ℝ) = 0) (x : V → ℝ) :
     (meanProjection *ᵥ x) ⬝ᵥ (A *ᵥ (meanProjection *ᵥ x)) = x ⬝ᵥ (A *ᵥ x) := by

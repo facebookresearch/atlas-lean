@@ -1,17 +1,17 @@
-# Arens Weak Dual
+# Weak-star Arens maps and the continuous dual involution
 
-## Continuous Linear Map
+## Weak-star continuity of Arens extensions
 
-- [Arens First Weak Left](arens-first-weak-left.md)
-- [Arens First Weak Left apply](arens-first-weak-left-apply.md)
-- [Arens First Weak Left apply apply](arens-first-weak-left-apply-apply.md)
-- [Arens Second Weak Right](arens-second-weak-right.md)
-- [Arens Second Weak Right apply](arens-second-weak-right-apply.md)
-- [Arens Second Weak Right apply apply](arens-second-weak-right-apply-apply.md)
+- [Weak-star continuous first Arens map](arens-first-weak-left.md)
+- [First Arens value in weak-star biduals](arens-first-weak-left-apply.md)
+- [Nested evaluation of the weak-star first Arens map](arens-first-weak-left-apply-apply.md)
+- [Weak-star continuous second Arens map](arens-second-weak-right.md)
+- [Second Arens value in weak-star biduals](arens-second-weak-right-apply.md)
+- [Nested evaluation of the weak-star second Arens map](arens-second-weak-right-apply-apply.md)
 
-## Weak Dual
+## Involutions on weak-star duals
 
-- [Intrinsic Star Continuous Linear Equiv](intrinsic-star-continuous-linear-equiv.md)
-- [Intrinsic Star Continuous Linear Equiv apply](intrinsic-star-continuous-linear-equiv-a.md)
-- [Intrinsic Star Continuous Linear Equiv to Strong Dual](intrinsic-star-continuous-linear-equiv-t.md)
-- [Intrinsic Star Continuous Linear Equiv norm](intrinsic-star-continuous-linear-equiv-n.md)
+- [Weak-star continuous conjugate-linear dual involution](intrinsic-star-continuous-linear-equiv.md)
+- [Evaluation of the weak-star dual involution](intrinsic-star-continuous-linear-equiv-a.md)
+- [Dual involution in the operator-norm view](intrinsic-star-continuous-linear-equiv-t.md)
+- [Operator norm preserved by the weak-star dual involution](intrinsic-star-continuous-linear-equiv-n.md)

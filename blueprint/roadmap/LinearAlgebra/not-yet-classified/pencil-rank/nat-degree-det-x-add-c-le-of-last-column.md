@@ -1,3 +1,4 @@
-# Nat Degree det X add C le of last column zero
+# A determinant degree bound with one constant column
 
-A constant last column lowers the degree bound of an affine determinant by one.
+Let R be a commutative ring and A,B square matrices of size r+1. If the last column of A is
+zero, then the polynomial det(XA+B) has natural degree at most r.

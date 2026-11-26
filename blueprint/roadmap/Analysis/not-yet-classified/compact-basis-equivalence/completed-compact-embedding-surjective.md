@@ -1,5 +1,9 @@
-# Completed Compact Embedding surjective
+# Surjectivity of the completed basis compact map
 
-The single completed compact embedding is surjective for a genuine
-natural-number Hilbert basis. Completeness is derived from its representation;
-the closed-range argument applies to the completion, not to the raw limit.
+Let `H` be a complex normed
+inner-product space with a Hilbert basis `b : HilbertBasis ℕ ℂ H`; this basis implies
+completeness. Let `D=lim_n M_(n+1)(ℂ)` be the algebraic direct limit along top-left zero
+padding, with norm `‖[n,X]‖=‖X‖`. Put `C=Completion D`, with the extended C-star norm, and
+`Φ : C → K(H)` the extension of `[n,X] ↦ Σ_i,j<n+1 X_ij θ_(b_i,b_j)`, where
+`θ_(x,y)z=⟨y,z⟩x`. the completed map `Φ=b.orthonormal.completedCompactEmbedding` is
+surjective onto `K(H)`.

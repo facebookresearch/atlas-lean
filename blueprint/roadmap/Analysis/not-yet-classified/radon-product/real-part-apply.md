@@ -1,3 +1,4 @@
-# Real Part apply
+# Value of a compact-support real component
 
-The compact-support real component retains every original pointwise value.
+For topological `X`, `f∈C_c(X,ℂ)` and
+`x∈X`, `realPart f x=Re f(x)`.

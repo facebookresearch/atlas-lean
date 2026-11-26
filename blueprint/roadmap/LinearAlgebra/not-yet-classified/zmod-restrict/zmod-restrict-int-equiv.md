@@ -1,4 +1,5 @@
-# Zmod Restrict Int Equiv
+# Canonical equivalence of integer and residue tensors
 
-Canonical comparison between tensoring two `ZMod n`-modules over `ℤ`
-and tensoring them over `ZMod n`, with the latter restricted to `ℤ`.
+Let n∈ℕ and M,N be ZMod n-modules, regarded as integer modules on their additive groups. For
+n=0, ZMod 0=ℤ. Let Θ:M⊗_ℤN≃ₗ[ℤ]M⊗_(ZMod n)N be the comparison preserving pure tensors. This
+pure-preserving equivalence is zmodRestrictIntEquiv n M N.

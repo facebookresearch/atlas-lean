@@ -1,3 +1,5 @@
-# Comap comp
+# Composition law of continuous open-normal preimages
 
-Open-normal preimages compose in source-first homomorphism order.
+Let `G,H` be groups with
+topologies and `φ : H →ₜ* G` a continuous homomorphism. for a group `K` with topology and
+continuous homomorphism `ψ : K → H`, `comap (φ∘ψ) U=comap ψ (comap φ U)`.

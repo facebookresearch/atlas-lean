@@ -15,29 +15,21 @@ public import Mathlib.Algebra.Module.Submodule.Bilinear
 public import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
 
 /-!
-# The second Wong sequence of a space of linear maps
+# The second Wong sequence and shrunk subspaces
 
-For `A : V →ₗ[R] W` and `B : Submodule R (V →ₗ[R] W)`, the second Wong sequence starts
-at zero and sends a subspace `P` to `B(A⁻¹(P))`. Here `A⁻¹(P)` is the linear preimage
-`P.comap A`, including when `A` is singular. The image `B(U)` is the existing bilinear
-image `Submodule.map₂ LinearMap.id B U`, the span of all `f u` with `f ∈ B` and `u ∈ U`.
-
-The chain is monotone. If `W` is finite-dimensional, its dimension-th term is the stable
-value, and is the least pre-fixed subspace. Containment of that value in `A.range` gives
-an actual subspace of deficiency `finrank R A.ker`. When `A ∈ B`, this containment is
-equivalent to the existence of such a shrunk space, and implies that `A` has maximum rank
-among the elements of `B`.
-
-Finite matrix spaces use these constructions through the native `Matrix.toLin'` equivalence;
-the results also apply to rectangular spaces of linear maps. No computational cost bound
-or assertion about blow-ups is included here.
+Let R be a commutative semiring, V,W R-modules, A : V → W an R-linear map and B an R-submodule
+of linear maps V → W. Define W₀ = 0 and Wⱼ₊₁ = B(A⁻¹Wⱼ), where B(U) is the span of f(u) for f
+∈ B, u ∈ U. The sequence is increasing. Over a field with finite-dimensional W, its
+dimension-th term W∞ is a fixed point. If V is also finite-dimensional and W∞ ⊆ im A, its
+preimage has deficiency dim ker A. When A ∈ B, containment is equivalent to the existence of a
+subspace with at least that deficiency and makes A a maximum-rank member of B.
 
 ## References
 
-Gábor Ivanyos, Youming Qiao and K. V. Subrahmanyam, *Non-commutative Edmonds' problem
-and matrix semi-invariants*, §2.2 and Fact 2.1. The stable-space branch is also used in
-their *Constructive noncommutative rank computation in deterministic polynomial time
-over fields of arbitrary characteristics*, Theorem 5.
+Gábor Ivanyos, Youming Qiao and K. V. Subrahmanyam, *Non-commutative Edmonds' problem and
+matrix semi-invariants*, §2.2 and Fact 2.1. The stable-space branch is also used in their
+*Constructive noncommutative rank computation in deterministic polynomial time over fields of
+arbitrary characteristics*, Theorem 5.
 -/
 
 @[expose] public section
@@ -52,7 +44,12 @@ variable {R : Type u} [CommSemiring R]
 variable {V : Type v} {W : Type w}
 variable [AddCommMonoid V] [AddCommMonoid W] [Module R V] [Module R W]
 
-/-- The second Wong sequence, using linear preimages and the span of the space's images. -/
+/-- **The second Wong sequence.**
+
+Let R be a commutative semiring, V,W R-modules, A : V → W an R-linear map and B an R-submodule
+of linear maps V → W. Define W₀ = 0 and Wⱼ₊₁ = B(A⁻¹Wⱼ), where B(U) is the span of f(u) for f
+∈ B, u ∈ U. The inverse image A⁻¹Wⱼ is the linear preimage, including when A is singular.
+-/
 def secondWongSeq (A : V →ₗ[R] W) (B : Submodule R (V →ₗ[R] W)) : ℕ → Submodule R W
   | 0 => ⊥
   | j + 1 => Submodule.map₂ LinearMap.id B ((secondWongSeq A B j).comap A)
@@ -71,7 +68,12 @@ theorem secondWongSeq_one (A : V →ₗ[R] W) (B : Submodule R (V →ₗ[R] W)) 
     secondWongSeq A B 1 = Submodule.map₂ LinearMap.id B A.ker := by
   simp only [secondWongSeq_succ, secondWongSeq_zero, Submodule.comap_bot]
 
-/-- Every term is contained in the next, without any assumption that `A ∈ B`. -/
+/-- **Monotonicity of the second Wong sequence.**
+
+Let R be a commutative semiring, V,W R-modules, A : V → W an R-linear map and B an R-submodule
+of linear maps V → W. Define W₀ = 0 and Wⱼ₊₁ = B(A⁻¹Wⱼ), where B(U) is the span of f(u) for f
+∈ B, u ∈ U. For every j ≥ 0, Wⱼ ⊆ Wⱼ₊₁.
+-/
 theorem secondWongSeq_le_succ (A : V →ₗ[R] W) (B : Submodule R (V →ₗ[R] W)) (j : ℕ) :
     secondWongSeq A B j ≤ secondWongSeq A B (j + 1) := by
   induction j with
@@ -83,14 +85,24 @@ theorem secondWongSeq_monotone (A : V →ₗ[R] W) (B : Submodule R (V →ₗ[R]
     Monotone (secondWongSeq A B) :=
   monotone_nat_of_le_succ (secondWongSeq_le_succ A B)
 
-/-- Enlarging the space of maps enlarges each term of the Wong sequence. -/
+/-- **Monotonicity in the space of maps.**
+
+Let R be a commutative semiring, V,W R-modules, A : V → W an R-linear map and B an R-submodule
+of linear maps V → W. Let C be another submodule of maps V → W with B ⊆ C. The sequences
+W₀(A,B) = 0 and Wⱼ₊₁(A,B) = B(A⁻¹Wⱼ(A,B)) satisfy Wⱼ(A,B) ⊆ Wⱼ(A,C) for every j.
+-/
 theorem secondWongSeq_le_of_le (A : V →ₗ[R] W) {B C : Submodule R (V →ₗ[R] W)}
     (hBC : B ≤ C) (j : ℕ) : secondWongSeq A B j ≤ secondWongSeq A C j := by
   induction j with
   | zero => exact le_rfl
   | succ j ih => exact Submodule.map₂_le_map₂ hBC (Submodule.comap_mono ih)
 
-/-- A pre-fixed subspace bounds every term of the sequence. -/
+/-- **A subspace bounding the Wong sequence.**
+
+Let R be a commutative semiring, V,W R-modules, A : V → W an R-linear map and B an R-submodule
+of linear maps V → W. Define W₀ = 0 and Wⱼ₊₁ = B(A⁻¹Wⱼ), where B(U) is the span of f(u) for f
+∈ B, u ∈ U. If P ⊆ W satisfies B(A⁻¹P) ⊆ P, then Wⱼ ⊆ P for every j.
+-/
 theorem secondWongSeq_le_of_prefixed (A : V →ₗ[R] W) (B : Submodule R (V →ₗ[R] W))
     {P : Submodule R W} (hP : Submodule.map₂ LinearMap.id B (P.comap A) ≤ P) (j : ℕ) :
     secondWongSeq A B j ≤ P := by
@@ -99,7 +111,12 @@ theorem secondWongSeq_le_of_prefixed (A : V →ₗ[R] W) (B : Submodule R (V →
   | succ j ih =>
     exact (Submodule.map₂_le_map₂_right (Submodule.comap_mono ih)).trans hP
 
-/-- An adjacent equality propagates to all subsequent terms. -/
+/-- **Propagation of a Wong stabilization.**
+
+Let R be a commutative semiring, V,W R-modules, A : V → W an R-linear map and B an R-submodule
+of linear maps V → W. Define W₀ = 0 and Wⱼ₊₁ = B(A⁻¹Wⱼ), where B(U) is the span of f(u) for f
+∈ B, u ∈ U. If Wⱼ₊₁ = Wⱼ at some j, then Wⱼ₊ₖ = Wⱼ for every k ≥ 0.
+-/
 theorem secondWongSeq_add_eq_of_eq_succ (A : V →ₗ[R] W) (B : Submodule R (V →ₗ[R] W))
     {j : ℕ} (hj : secondWongSeq A B (j + 1) = secondWongSeq A B j) (k : ℕ) :
     secondWongSeq A B (j + k) = secondWongSeq A B j := by
@@ -113,7 +130,12 @@ theorem secondWongSeq_bot (A : V →ₗ[R] W) (j : ℕ) :
     secondWongSeq A ⊥ j = ⊥ := by
   cases j <;> simp only [secondWongSeq_zero, secondWongSeq_succ, Submodule.map₂_bot_left]
 
-/-- An injective starting map has no unmatched vectors, so the sequence stays zero. -/
+/-- **The Wong sequence of an injective starting map.**
+
+Let R be a commutative semiring, V,W R-modules, A : V → W an R-linear map and B an R-submodule
+of linear maps V → W. Define W₀ = 0 and Wⱼ₊₁ = B(A⁻¹Wⱼ), where B(U) is the span of f(u) for f
+∈ B, u ∈ U. If ker A = 0, then Wⱼ = 0 for every j.
+-/
 theorem secondWongSeq_eq_bot_of_ker_eq_bot (A : V →ₗ[R] W)
     (B : Submodule R (V →ₗ[R] W)) (hA : A.ker = ⊥) (j : ℕ) :
     secondWongSeq A B j = ⊥ := by
@@ -134,7 +156,12 @@ section FiniteTarget
 
 variable [FiniteDimensional K W]
 
-/-- The second Wong sequence stabilizes in at most the dimension of its target. -/
+/-- **A dimension bound for Wong stabilization.**
+
+Let K be a field, V,W K-vector spaces, A : V → W linear and B a subspace of linear maps V → W.
+Assume W is finite-dimensional. For W₀ = 0 and Wⱼ₊₁ = B(A⁻¹Wⱼ), there exists j ≤ dim W with
+Wⱼ₊₁ = Wⱼ.
+-/
 theorem exists_secondWongSeq_eq_succ (A : V →ₗ[K] W) (B : Submodule K (V →ₗ[K] W)) :
     ∃ j, j ≤ Module.finrank K W ∧ secondWongSeq A B (j + 1) = secondWongSeq A B j := by
   by_contra h
@@ -156,7 +183,13 @@ theorem exists_secondWongSeq_eq_succ (A : V →ₗ[K] W) (B : Submodule K (V →
   exact Nat.not_succ_le_self (Module.finrank K W)
     ((hdim _ le_rfl).trans (secondWongSeq A B (Module.finrank K W + 1)).finrank_le)
 
-/-- The dimension-th term is the stable value of the second Wong sequence. -/
+/-- **The stable second Wong subspace.**
+
+Let K be a field, V,W K-vector spaces, A : V → W linear and B a subspace of linear maps V → W.
+For finite-dimensional W, let W∞ = W_dim W for the sequence W₀ = 0, Wⱼ₊₁ = B(A⁻¹Wⱼ), with B(U)
+the span of f(u) for f ∈ B and u ∈ U. This dimension-th term is the stable value of the
+increasing sequence.
+-/
 noncomputable def secondWongLimit (A : V →ₗ[K] W) (B : Submodule K (V →ₗ[K] W)) :
     Submodule K W :=
   secondWongSeq A B (Module.finrank K W)
@@ -176,7 +209,12 @@ theorem secondWongSeq_le_limit (A : V →ₗ[K] W) (B : Submodule K (V →ₗ[K]
   · exact secondWongSeq_monotone A B hj
   · exact (secondWongSeq_eq_limit A B hj).le
 
-/-- The stable space is a genuine fixed point of the Wong step. -/
+/-- **The stable Wong subspace is a fixed point.**
+
+Let K be a field, V,W K-vector spaces, A : V → W linear and B a subspace of linear maps V → W.
+For finite-dimensional W, let W∞ = W_dim W for the sequence W₀ = 0, Wⱼ₊₁ = B(A⁻¹Wⱼ), with B(U)
+the span of f(u) for f ∈ B and u ∈ U. One has B(A⁻¹W∞) = W∞.
+-/
 theorem secondWongLimit_fixed (A : V →ₗ[K] W) (B : Submodule K (V →ₗ[K] W)) :
     Submodule.map₂ LinearMap.id B ((secondWongLimit A B).comap A) = secondWongLimit A B :=
   secondWongSeq_eq_limit A B (Nat.le_succ (Module.finrank K W))
@@ -201,8 +239,12 @@ private theorem finrank_map_add_finrank_inf_ker (A : V →ₗ[K] W) (U : Submodu
 
 variable [FiniteDimensional K V] [FiniteDimensional K W]
 
-/-- If the stable space stays in the range of `A`, its linear preimage has exact
-deficiency `dim ker A`. For a square matrix this is the corank of `A`. -/
+/-- **The deficiency of the stable Wong preimage.**
+
+Let K be a field, V,W K-vector spaces, A : V → W linear and B a subspace of linear maps V → W.
+Assume V and W are finite-dimensional. Let W∞ be the stable value of W₀ = 0, Wⱼ₊₁ = B(A⁻¹Wⱼ),
+and suppose W∞ ⊆ im A. Then dim B(A⁻¹W∞) + dim ker A = dim(A⁻¹W∞).
+-/
 theorem secondWongLimit_deficiency (A : V →ₗ[K] W) (B : Submodule K (V →ₗ[K] W))
     (hW : secondWongLimit A B ≤ A.range) :
     Module.finrank K (Submodule.map₂ LinearMap.id B ((secondWongLimit A B).comap A)) +
@@ -218,7 +260,12 @@ theorem secondWongLimit_deficiency (A : V →ₗ[K] W) (B : Submodule K (V →�
   rw [hmap, inf_eq_right.mpr hker] at hd
   rwa [secondWongLimit_fixed]
 
-/-- Any actual shrunk subspace gives an upper rank bound on every member of the space. -/
+/-- **A rank bound from a shrunk subspace.**
+
+Let K be a field, V,W K-vector spaces, A : V → W linear and B a subspace of linear maps V → W.
+Assume V and W are finite-dimensional. Let U ⊆ V satisfy dim B(U) + s ≤ dim U for s ∈ ℕ, where
+B(U) is the span of f(u) with f ∈ B and u ∈ U. Then every C ∈ B satisfies rank C + s ≤ dim V.
+-/
 theorem finrank_range_add_le_of_shrunkSpace (B : Submodule K (V →ₗ[K] W))
     {U : Submodule K V} {s : ℕ}
     (hU : Module.finrank K (Submodule.map₂ LinearMap.id B U) + s ≤ Module.finrank K U)
@@ -233,8 +280,12 @@ theorem finrank_range_add_le_of_shrunkSpace (B : Submodule K (V →ₗ[K] W))
   have hr := C.finrank_range_add_finrank_ker
   omega
 
-/-- For `A ∈ B`, the stable Wong space stays in `A.range` exactly when a subspace of
-deficiency at least `dim ker A` exists. The forward witness is its linear preimage. -/
+/-- **Shrunk subspaces and containment of the Wong limit.**
+
+Let K be a field, V,W K-vector spaces, A : V → W linear and B a subspace of linear maps V → W.
+Assume V,W are finite-dimensional and A ∈ B. Let W∞ be the stable value of W₀ = 0, Wⱼ₊₁ =
+B(A⁻¹Wⱼ). There exists U ⊆ V with dim B(U) + dim ker A ≤ dim U if and only if W∞ ⊆ im A.
+-/
 theorem exists_shrunkSpace_iff_secondWongLimit_le_range (A : V →ₗ[K] W)
     (B : Submodule K (V →ₗ[K] W)) (hA : A ∈ B) :
     (∃ U : Submodule K V,
@@ -266,7 +317,12 @@ theorem exists_shrunkSpace_iff_secondWongLimit_le_range (A : V →ₗ[K] W)
   · intro hW
     exact ⟨(secondWongLimit A B).comap A, (secondWongLimit_deficiency A B hW).le⟩
 
-/-- Containment of the stable Wong space bounds every member's rank in `B` by the rank of `A`. -/
+/-- **The rank bound from a contained Wong limit.**
+
+Let K be a field, V,W K-vector spaces, A : V → W linear and B a subspace of linear maps V → W.
+Assume V,W are finite-dimensional. Let W∞ be the stable value of W₀ = 0, Wⱼ₊₁ = B(A⁻¹Wⱼ), and
+suppose W∞ ⊆ im A. Then rank C ≤ rank A for every C ∈ B.
+-/
 theorem finrank_range_le_of_secondWongLimit_le_range (A : V →ₗ[K] W)
     (B : Submodule K (V →ₗ[K] W)) (hW : secondWongLimit A B ≤ A.range)
     {C : V →ₗ[K] W} (hC : C ∈ B) :

@@ -1,10 +1,10 @@
-# Scalar Cokernel Pi
+# Scalar cokernels on arbitrary products
 
-- [Scalar Cokernel Pi Equiv](scalar-cokernel-pi-equiv.md)
-- [Scalar Cokernel Pi Equiv apply mk](scalar-cokernel-pi-equiv-apply-mk.md)
-- [Scalar Cokernel Pi Equiv apply mk Q](scalar-cokernel-pi-equiv-apply-mk-q.md)
-- [Scalar Cokernel Pi Equiv apply mk Q apply](scalar-cokernel-pi-equiv-apply-mk-q-appl.md)
-- [Length scalar coker pi](length-scalar-coker-pi.md)
-- [Length scalar coker eq ord](length-scalar-coker-eq-ord.md)
-- [Length scalar coker ne top](length-scalar-coker-ne-top.md)
-- [Length scalar coker pi eq ord](length-scalar-coker-pi-eq-ord.md)
+- [Product of full scalar quotient modules](scalar-cokernel-pi-equiv.md)
+- [Scalar quotient equivalence on a product representative](scalar-cokernel-pi-equiv-apply-mk.md)
+- [Scalar product quotient map intertwining](scalar-cokernel-pi-equiv-apply-mk-q.md)
+- [Coordinate of the scalar product quotient equivalence](scalar-cokernel-pi-equiv-apply-mk-q-appl.md)
+- [Length of a scalar cokernel on a finite product](length-scalar-coker-pi.md)
+- [Scalar quotient length is the order of vanishing](length-scalar-coker-eq-ord.md)
+- [Finite scalar cokernel length in a one-dimensional domain](length-scalar-coker-ne-top.md)
+- [Order formula for a finite product scalar cokernel](length-scalar-coker-pi-eq-ord.md)

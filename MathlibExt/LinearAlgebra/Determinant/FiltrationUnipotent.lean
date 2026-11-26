@@ -13,93 +13,13 @@ public import MathlibExt.LinearAlgebra.Basis.FiniteFiltration
 public import MathlibExt.LinearAlgebra.Determinant.FiniteFiltration
 
 /-!
-# Determinants of filtration-unipotent endomorphisms
+# Determinant one from a filtration-unipotent basis condition
 
-Let
-
-```text
-F 0 ≤ F 1 ≤ ... ≤ F n = M
-```
-
-be a finite filtration from zero to the whole module.  Choose a basis of
-every successive quotient and assemble them into
-`Module.Basis.ofFiltration`.  This file proves that an endomorphism has
-determinant one if it fixes every assembled graded basis vector modulo the
-preceding stage.
-
-More precisely, write `B` for the assembled basis and suppose
-
-```text
-U (B ⟨i,a⟩) - B ⟨i,a⟩ ∈ F i
-```
-
-for every grade `i` and graded basis index `a`.  Then `U.det = 1`.
-
-## Informal proof
-
-### Prefix agreement
-
-For `j ≤ n`, an index `i : Fin j` also defines an index of the final
-assembled basis.  Repeated use of `Module.Basis.ofFiltrationStage_castSucc`
-shows that the `i`-th vector of the stage-`j` basis and the corresponding
-ambient vector have the same underlying element of `M`.  The proof is by
-induction on the final cutoff.  At a successor cutoff, either `j` is already
-below the previous cutoff, in which case apply the induction hypothesis and
-one cast-successor identity, or `j` is the new final cutoff, in which case
-the statement is reflexive.
-
-### Derived stage stability
-
-Fix `j ≤ n` and expand `x : F j` in the explicit basis
-`ofFiltrationStage ... j`.  For a basis vector introduced in grade `i < j`,
-prefix agreement identifies its ambient value with `B ⟨i,a⟩`.  The
-hypothesis places its error under `U` in `F i`, hence in `F j`; the vector
-itself already belongs to `F j`.  Thus its image under `U` belongs to `F j`.
-Linearity and the finite basis expansion prove `F j ≤ (F j).comap U`.
-
-### Adjacent quotients
-
-Restrict `U` to every stable stage.  For adjacent stages, identify `F i`
-with its copy inside `F (i+1)` by
-`Submodule.comapSubtypeEquivOfLe`.  The restricted maps intertwine on
-underlying values, producing a `LinearMap.InvariantExtension`.
-
-The quotient basis vector `b i a` is represented by
-`Module.Basis.ofFiltrationStageVector ... i a`.  Its ambient value is exactly
-the assembled grade-`i` basis vector.  The error hypothesis therefore says
-that the induced quotient map fixes this representative modulo `F i`.
-Basis extensionality proves that every successive quotient map is
-`LinearMap.id`; its determinant is one.
-
-### Determinant product
-
-The explicit stage bases and quotient bases install finite-free structures
-on all modules used by
-`LinearMap.det_eq_prod_graded_of_bottom_subsingleton`.  The bottom equality
-`F 0 = ⊥` makes the first stage subsingleton.  The determinant product is
-therefore a product of ones.  Finally, the canonical equivalence `F n ≃ M`
-conjugates the last restricted endomorphism to `U`, so determinant invariance
-under conjugacy gives `U.det = 1`.
-
-The proof includes `n = 0`: then the bottom is also the top, so the ambient
-module is subsingleton and the empty determinant product is one.  Empty
-graded index types are harmless.  No field hypothesis is used.
-
-## API novelty
-
-The closest existing APIs are:
-
-* `Module.Basis.ofFiltrationStage_castSucc` and
-  `Module.Basis.ofFiltrationStageVector_mk`, which provide the exact basis
-  representatives but do not prove stability of an arbitrary endomorphism;
-* `LinearMap.det_eq_prod_graded_of_bottom_subsingleton`, which factors a
-  determinant once invariant stages and quotient maps are already supplied;
-* matrix triangular determinant lemmas, which would require an additional
-  order on the dependent basis index and would duplicate the filtration
-  infrastructure.
-
-The theorem below is therefore the missing bridge: it derives both stage
-stability and graded identity from the basis-level error hypothesis.
+Let R be a commutative ring and 0=F_0⊆⋯⊆F_n a finite filtration in M, with quotient bases b_i
+indexed by κ_i. Write B for the assembled basis whose grade-i vector represents b_i in
+F_(i+1)/F_i. Assume F_n=M. Suppose every κ_i is finite and U(B_(i,a))-B_(i,a)∈F_i for each
+grade and basis index. Then all stages are U-invariant, every graded quotient action is the
+identity, and det(U)=1.
 -/
 
 @[expose] public section
@@ -118,8 +38,13 @@ variable {R : Type uR} {M : Type uM} [CommRing R]
 variable [AddCommGroup M] [Module R M]
 variable {κ : ℕ → Type uι}
 
-/-- Passing an early filtration basis vector through any number of later
-stages does not change its underlying ambient value. -/
+/-- **Earlier stage-basis vectors retain their ambient values.**
+
+Let R be a commutative ring and 0=F_0⊆⋯⊆F_n a finite filtration in M, with quotient bases b_i
+indexed by κ_i. Write B for the assembled basis whose grade-i vector represents b_i in
+F_(i+1)/F_i. For j≤n and i<j, the grade-i vector assembled in F_j equals its counterpart
+assembled in F_n as an element of M. F_n need not equal M for this stage comparison.
+-/
 private theorem coe_ofFiltrationStage_eq_of_le
     (F : ℕ → Submodule R M) (hzero : F 0 = ⊥)
     (n : ℕ)
@@ -165,8 +90,13 @@ private theorem filtration_mono_of_succ
     exact (ih (Nat.le_trans (Nat.le_succ k) hk1n)).trans
       (hF ⟨k, Nat.lt_of_succ_le hk1n⟩)
 
-/-- A vector in a prefix filtration basis agrees in `M` with the
-corresponding vector of the final assembled basis. -/
+/-- **Prefix stage basis equals the corresponding final ambient basis.**
+
+Let R be a commutative ring and 0=F_0⊆⋯⊆F_n a finite filtration in M, with quotient bases b_i
+indexed by κ_i. Write B for the assembled basis whose grade-i vector represents b_i in
+F_(i+1)/F_i. Assume F_n=M. For j≤n and i<j, the vector of the assembled ambient basis at (i,a)
+equals the stage-F_j vector with the same graded index.
+-/
 theorem ofFiltration_apply_eq_ofFiltrationStage
     (F : ℕ → Submodule R M) (hzero : F 0 = ⊥)
     (n : ℕ)
@@ -183,8 +113,13 @@ theorem ofFiltration_apply_eq_ofFiltrationStage
   rw [ofFiltration_apply]
   exact (coe_ofFiltrationStage_eq_of_le F hzero n hF b hj i a).symm
 
-/-- The basis-level condition `U b - b ∈ F i` on every vector introduced at
-grade `i` forces every filtration stage to be `U`-stable. -/
+/-- **Basis-level lower-stage errors force stage invariance.**
+
+Let R be a commutative ring and 0=F_0⊆⋯⊆F_n a finite filtration in M, with quotient bases b_i
+indexed by κ_i. Write B for the assembled basis whose grade-i vector represents b_i in
+F_(i+1)/F_i. Assume F_n=M. If the κ_i are finite and U(B_(i,a))-B_(i,a)∈F_i for all i,a, then
+U(F_j)⊆F_j for every j≤n.
+-/
 theorem ofFiltration_stable
     (F : ℕ → Submodule R M) (hzero : F 0 = ⊥)
     (n : ℕ)
@@ -244,10 +179,13 @@ variable {R : Type uR} {M : Type uM} [CommRing R]
 variable [AddCommGroup M] [Module R M]
 variable {κ : ℕ → Type uι}
 
-/-- An endomorphism that fixes each assembled filtration-basis vector modulo
-the preceding filtration stage has determinant one.  Stage stability and
-identity on the successive quotients are conclusions of the proof, not
-inputs. -/
+/-- **Filtration-unipotent endomorphism has determinant one.**
+
+Let R be a commutative ring and 0=F_0⊆⋯⊆F_n a finite filtration in M, with quotient bases b_i
+indexed by κ_i. Write B for the assembled basis whose grade-i vector represents b_i in
+F_(i+1)/F_i. Assume F_n=M. If every κ_i is finite and U(B_(i,a))-B_(i,a)∈F_i for all i,a, then
+det(U)=1, including n=0.
+-/
 theorem det_eq_one_of_sub_mem_ofFiltration
     (F : ℕ → Submodule R M) (hzero : F 0 = ⊥)
     (n : ℕ)

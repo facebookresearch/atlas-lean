@@ -1,3 +1,7 @@
-# Ext
+# Normal equivalence equality from its star-algebra map
 
-The original star equivalence determines both maps of a normal equivalence.
+Let `M,N` be concrete von
+Neumann algebras on complete complex Hilbert spaces. Their normal-functional Banach spaces
+`M_*,N_*` are the norm-closed spans of vector functionals, and their ultraweak topologies
+are `σ(M,M_*)`, `σ(N,N_*)`. normal equivalences with equal underlying complex star-algebra
+equivalences are equal.

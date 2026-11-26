@@ -1,3 +1,3 @@
-# Det residue Cyclic Reindex
+# Determinant of a forward cyclic block permutation
 
-Reindexing `r + 1` scalar coordinates cyclically has sign `(-1)^r`.
+Let l be a field and r∈ℕ. Over l, det(residueCyclicReindex l r)=(-1)^r.

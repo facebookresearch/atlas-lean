@@ -15,14 +15,14 @@ public import MathlibExt.Analysis.VonNeumannAlgebra.NormalHom.FaithfulPredualQuo
 public import Mathlib.LinearAlgebra.Isomorphisms
 
 /-!
-# The actual faithful normal range is the annihilator of its predual kernel
+# Normal-map range as the annihilator of a predual kernel
 
-An original target element defines actual evaluation on its normal predual.
-If this evaluation vanishes on the literal predual-pullback kernel, the
-proved surjective quotient descends it to a continuous functional on the
-original source predual. The actual evaluation isometry gives a source
-operator whose original map value is the target element. No predual,
-quotient, range-closure or inverse/model certificate is supplied.
+For an injective normal unital complex star homomorphism `f : M → N`, let `B : N_* → M_*`,
+`B(φ)=φ∘f`, be its predual pullback. An element `y ∈ N` belongs to `range f` exactly when
+`φ(y)=0` for every `φ ∈ ker B`.
+
+Thus annihilation of the predual kernel produces a source preimage. No prior range-closedness or
+inverse map is a premise.
 -/
 
 @[expose] public section
@@ -40,7 +40,13 @@ variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [Complete
 variable {K : Type v} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
 variable {M : VonNeumannAlgebra H} {N : VonNeumannAlgebra K}
 
-/-- Literal annihilation of the actual predual kernel constructs an original operator preimage. -/
+/-- **Operator preimage from annihilating the predual kernel.** Let `M,N` be concrete von
+Neumann algebras on complete complex Hilbert spaces. Their normal-functional Banach spaces
+`M_*,N_*` are the norm-closed spans of vector functionals, and their ultraweak topologies
+are `σ(M,M_*)`, `σ(N,N_*)`. Let `f : M → N` be a unital complex star homomorphism that is
+ultraweakly continuous. Assume `f` is injective. Let `B=f.predualPullback : N_* → M_*`,
+`B(φ)=φ∘f`, and `B*(F)=F∘B`. if `y ∈ N` satisfies `φ(y)=0` for every `φ ∈ N_*` with
+`B(φ)=0`, then there exists `x ∈ M` with `f(x)=y`. -/
 theorem exists_preimage_of_predual_kernel (f : NormalStarAlgHom M N)
     (hf : Function.Injective f) (y : N)
     (hy : ∀ φ : normalFunctionalSpace N, f.predualPullback φ = 0 → (φ : StrongDual ℂ N) y = 0) :
@@ -77,7 +83,13 @@ theorem exists_preimage_of_predual_kernel (f : NormalStarAlgHom M N)
     _ = F φ := hvalue φ
     _ = normalFunctionalEvaluationEquiv N y φ := rfl
 
-/-- The original operator range is exactly the literal annihilator of the actual predual kernel. -/
+/-- **Range membership exactly by predual-kernel annihilation.** Let `M,N` be concrete von
+Neumann algebras on complete complex Hilbert spaces. Their normal-functional Banach spaces
+`M_*,N_*` are the norm-closed spans of vector functionals, and their ultraweak topologies
+are `σ(M,M_*)`, `σ(N,N_*)`. Let `f : M → N` be a unital complex star homomorphism that is
+ultraweakly continuous. Assume `f` is injective. Let `B=f.predualPullback : N_* → M_*`,
+`B(φ)=φ∘f`, and `B*(F)=F∘B`. for `y ∈ N`, `y∈range f` if and only if `φ(y)=0` whenever `φ
+∈ N_*` and `B(φ)=0`. -/
 theorem mem_range_iff_predual_kernel (f : NormalStarAlgHom M N)
     (hf : Function.Injective f) (y : N) :
     y ∈ Set.range f ↔ ∀ φ : normalFunctionalSpace N,

@@ -15,18 +15,13 @@ public import MathlibExt.Analysis.VonNeumannAlgebra.PositiveCutoffProjection
 public import Mathlib.Analysis.CStarAlgebra.Projection
 
 /-!
-# The actual positive cutoff lies inside its original comparison projection
+# Positive spectral cutoffs inside a bounding projection
 
-A positive threshold times the actual cutoff lies below the original
-positive comparison operator. If that operator lies below a projection,
-the stock projection multiplication law and scalar cancellation show the
-same cutoff lies below that projection. A nonzero positive comparison
-operator therefore gives a genuine nonzero cutoff inside the original
-projection, with its exact threshold retained.
+Let positive `a` lie below a star projection `e` in a concrete von Neumann algebra. For a
+strictly positive threshold `r`, the cutoff `p_r(a)=s((a-rI)⁺)` lies below `e`.
 
-This supplies localization prerequisites for the actual positive
-order-normal/predual construction, without a supplied cutoff, normal
-functional or representation model.
+If `a≠0`, some `r>0` gives a nonzero cutoff satisfying both `p_r(a)≤e` and `r p_r(a)≤a`. These
+are order and support properties on the given operator algebra.
 -/
 
 @[expose] public section
@@ -44,7 +39,10 @@ universe u
 
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- A positive threshold cutoff is below the original projection bounding its positive operator. -/
+/-- **Positive-threshold cutoff lies in the bounding projection.** Let `H` be a complete
+complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. For positive `a∈M`
+and `r : ℝ`, put `p_r(a)=s((a-rI)⁺)`, the support of the positive part. if `e∈M` is a star
+projection, `a≤e` and `r>0`, then `p_r(a)≤e`. -/
 theorem positiveCutoffProjection_le_projection (M : VonNeumannAlgebra H)
     (a : PositiveElement M) (e : M) (he : IsStarProjection e) (r : ℝ) (hr : 0 < r)
     (hae : @LE.le M (CStarAlgebra.spectralOrder M).toLE (a : M) e) :
@@ -64,7 +62,10 @@ theorem positiveCutoffProjection_le_projection (M : VonNeumannAlgebra H)
     simpa only [smul_smul, inv_mul_cancel₀ hr.ne', one_smul] using h
   exact (hp.le_iff_mul_eq_right he).mpr hfix
 
-/-- A nonzero positive comparison operator gives a nonzero actual cutoff inside its source projection. -/
+/-- **Nonzero localized cutoff with its scalar threshold.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. For positive `a∈M` and `r :
+ℝ`, put `p_r(a)=s((a-rI)⁺)`, the support of the positive part. if `a≠0` and `a≤e` for a
+star projection `e`, there exists `t>0` with `p_t(a)≠0`, `p_t(a)≤e` and `t • p_t(a)≤a`. -/
 theorem exists_positiveCutoffProjection_below_projection (M : VonNeumannAlgebra H)
     (a : PositiveElement M) (e : M) (he : IsStarProjection e)
     (hne : (a : M) ≠ 0)

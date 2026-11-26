@@ -1,6 +1,4 @@
-# Lmul charpoly eq of alg Equiv
+# Left-multiplication characteristic polynomial under algebra equivalence
 
-The characteristic polynomial of left multiplication is invariant under
-algebra equivalence: an algebra equivalence conjugates left multiplication
-by `x` to left multiplication by the image of `x`.  This parallels
-`Algebra.norm_eq_of_algEquiv`.
+Let R be a commutative ring, S,T R-algebras finite free over R, e:S≃ₐ[R]T and x∈S. Then
+χ_(L_(e(x)) on T)=χ_(L_x on S). The algebras need not be commutative.

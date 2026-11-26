@@ -1,3 +1,6 @@
-# Comp closed Range Projection eq zero
+# Annihilation passes to the range-closure projection
 
-A continuous linear map annihilating T also annihilates its closed-range projection.
+Let `H` be a complete complex
+Hilbert space and `T : H →L[ℂ] H`. Write `P_T` for the orthogonal projection onto the norm
+closure of `range T`. for any complex normed space `K` and `B : H →L[ℂ] K`, `B∘T=0`
+implies `B∘closedRangeProjection T=0`; `K` may be incomplete.

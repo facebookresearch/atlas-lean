@@ -1,3 +1,4 @@
-# Diagonal Shear Pullback apply
+# Pointwise value of inverse-shear pullback
 
-The compact-support pullback retains the exact original inverse-shear vector coordinates.
+Let `G` be a topological group, `H` a
+complex normed space and `f∈C_c(G×G,H)`. Then `diagonalShearPullback f (s,t)=f(st,t)`.

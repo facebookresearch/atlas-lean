@@ -17,9 +17,11 @@ public import Mathlib.Algebra.BigOperators.Ring.Finset
 /-!
 # Finite sums of orthogonal star projections
 
-A finite family of star projections with pairwise zero products has a
-star-projection sum. This constructs the actual finite projection cutoffs
-used with finite localizations; no projection-sum certificate is supplied.
+In a nonunital semiring with star-ring laws, let `p_i` be star projections indexed by a finite
+subset `s`. If `p_i p_j=0` for distinct `i,j ∈ s`, then `Σ_i∈s p_i` is a star projection.
+
+Only algebraic multiplication, addition and involution are used. The index type may be
+arbitrary, and the empty finite sum is allowed.
 -/
 
 @[expose] public section
@@ -35,7 +37,10 @@ universe u v
 
 variable {R : Type u} [NonUnitalSemiring R] [StarRing R] {I : Type v}
 
-/-- A literal finite sum of pairwise orthogonal star projections is a star projection. -/
+/-- **Star projection from a finite orthogonal sum.** Let `R` be a nonunital semiring with
+star-ring involution, `I` any index type, `s : Finset I` and `p : I → R`. If each `p_i`
+with `i∈s` satisfies `p_i²=p_i`, `p_i*=p_i`, and `p_i p_j=0` for distinct indices in `s`,
+then `Σ_i∈s p_i` is also a star projection. The empty sum is included. -/
 theorem finset_sum_of_pairwise_mul_eq_zero (s : Finset I) (p : I → R)
     (hp : ∀ i ∈ s, IsStarProjection (p i))
     (horthogonal : ∀ i ∈ s, ∀ j ∈ s, i ≠ j → p i * p j = 0) :

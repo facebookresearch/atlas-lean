@@ -18,12 +18,16 @@ public import Mathlib.Topology.MetricSpace.UniformConvergence
 public import Mathlib.Analysis.Normed.Operator.BoundedLinearMaps
 
 /-!
-# The normal action of an actual normalizing unitary representation
+# Normal action of a strongly continuous normalizing representation
 
-The original unitary conjugations form their actual normal automorphism
-homomorphism. Strong vector continuity supplies norm-continuous vector
-functional inverse orbits; bounded functional pullbacks and the original
-closed normal span extend this to the actual predual.
+Let `G` be a group with a topology, `H` a complete complex Hilbert space and `ρ : G → U(H)`
+strongly continuous. Suppose each `ρ_g` normalizes a concrete von Neumann algebra `M`, so `ρ_g M
+ρ_g*=M`.
+
+Conjugation gives the normal action `α_g(x)=ρ_g x ρ_g*`. Its inverse predual action takes the
+vector functional `ω_(ξ,η)` to `ω_(ρ_g ξ,ρ_g η)`. These vector orbits and then all
+normal-functional orbits are norm-continuous in `M_*`. Continuity of the group operations is not
+an additional hypothesis.
 -/
 
 @[expose] public section
@@ -46,7 +50,13 @@ variable (hEq : ∀ g : G,
   (fun T : H →L[ℂ] H => (ρ g : H →L[ℂ] H) * T * star (ρ g : H →L[ℂ] H)) ''
     (M : Set (H →L[ℂ] H)) = (M : Set (H →L[ℂ] H)))
 
-/-- Actual normalizing unitary conjugations form the original normal automorphism group homomorphism. -/
+/-- **Normal-automorphism homomorphism of a unitary representation.** Let `H` be a complete
+complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write
+`ω_(ξ,η)(x)=⟨ξ,xη⟩` for its vector functionals. Let `M_*` be their norm-closed complex
+span in the continuous dual `M*`. Equip `M` with the ultraweak topology `σ(M,M_*)`,
+induced by `x ↦ φ(x)` for `φ ∈ M_*`. Let `G` be a group with a topology and `ρ : G → U(H)`
+a strongly continuous unitary representation satisfying `ρ_g M ρ_g*=M` for every `g`.
+`unitaryConjugationNormalHom M ρ : G → Aut_normal(M)` is `g ↦ (x ↦ ρ_g x ρ_g*)`. -/
 def unitaryConjugationNormalHom : G →* NormalStarAlgEquiv M M where
   toFun g := unitaryConjugationNormalEquivOfEq M (ρ g) (hEq g)
   map_one' := by
@@ -75,14 +85,28 @@ def unitaryConjugationNormalHom : G →* NormalStarAlgEquiv M M where
     rw [hU]
     simp only [Submonoid.coe_mul, star_mul, mul_assoc]
 
-/-- The normal automorphism group map keeps the literal original unitary conjugation value. -/
+/-- **Operator value of the representation's normal automorphism.** Let `H` be a complete
+complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write
+`ω_(ξ,η)(x)=⟨ξ,xη⟩` for its vector functionals. Let `M_*` be their norm-closed complex
+span in the continuous dual `M*`. Equip `M` with the ultraweak topology `σ(M,M_*)`,
+induced by `x ↦ φ(x)` for `φ ∈ M_*`. Let `G` be a group with a topology and `ρ : G → U(H)`
+a strongly continuous unitary representation satisfying `ρ_g M ρ_g*=M` for every `g`. for
+`g ∈ G` and `x ∈ M`, `unitaryConjugationNormalHom M ρ g x` has bounded-operator value `ρ_g
+x ρ_g*`. -/
 @[simp]
 theorem unitaryConjugationNormalHom_apply (g : G) (x : M) :
     (unitaryConjugationNormalHom M ρ hEq g x : H →L[ℂ] H) =
       (ρ g : H →L[ℂ] H) * (x : H →L[ℂ] H) * star (ρ g : H →L[ℂ] H) :=
   rfl
 
-/-- The inverse predual action sends original vector functionals to the actual represented vectors. -/
+/-- **Covariant predual action on a vector functional.** Let `H` be a complete complex Hilbert
+space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for its
+vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. Equip `M` with the ultraweak topology `σ(M,M_*)`, induced by `x ↦ φ(x)` for `φ ∈
+M_*`. Let `G` be a group with a topology and `ρ : G → U(H)` a strongly continuous unitary
+representation satisfying `ρ_g M ρ_g*=M` for every `g`. for `g ∈ G` and `ξ,η ∈ H`,
+inverse-automorphism pullback sends `ω_(ξ,η)` to `ω_(ρ_g ξ,ρ_g η)`, that is,
+`ω_(ξ,η)∘α_g⁻¹=ω_(ρ_g ξ,ρ_g η)`. -/
 theorem unitaryConjugation_predual_vectorFunctional (g : G) (ξ η : H) :
     (NormalStarAlgEquiv.predualActionHom M (unitaryConjugationNormalHom M ρ hEq g)
       ⟨vectorFunctional M ξ η, vectorFunctional_mem_normalFunctionalSpace M ξ η⟩ : StrongDual ℂ M) =
@@ -112,7 +136,14 @@ theorem unitaryConjugation_predual_vectorFunctional (g : G) (ξ η : H) :
         ((x : H →L[ℂ] H) ((ρ g : H →L[ℂ] H) η)) ξ).symm
     _ = _ := by rw [star_star]
 
-/-- Every original predual inverse orbit is norm continuous for the actual unitary representation. -/
+/-- **Norm continuity of the unitary action on normal functionals.** Let `H` be a complete
+complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write
+`ω_(ξ,η)(x)=⟨ξ,xη⟩` for its vector functionals. Let `M_*` be their norm-closed complex
+span in the continuous dual `M*`. Equip `M` with the ultraweak topology `σ(M,M_*)`,
+induced by `x ↦ φ(x)` for `φ ∈ M_*`. Let `G` be a group with a topology and `ρ : G → U(H)`
+a strongly continuous unitary representation satisfying `ρ_g M ρ_g*=M` for every `g`. for
+every `φ ∈ M_*`, the inverse orbit `g ↦ φ∘(x ↦ ρ_g x ρ_g*)⁻¹` is continuous in the Banach
+norm of `M_*`. -/
 theorem unitaryConjugation_predual_continuous (φ : normalFunctionalSpace M) :
     Continuous fun g : G =>
       NormalStarAlgEquiv.predualActionHom M (unitaryConjugationNormalHom M ρ hEq g) φ := by
@@ -222,7 +253,14 @@ theorem unitaryConjugation_predual_continuous (φ : normalFunctionalSpace M) :
   change Continuous fun g : G => A g (φ : StrongDual ℂ M)
   exact hAll φ.property
 
-/-- The actual normalized strongly continuous unitary representation defines its original normal action. -/
+/-- **Normal action induced by unitary normalization.** Let `H` be a complete complex Hilbert
+space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for its
+vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. Equip `M` with the ultraweak topology `σ(M,M_*)`, induced by `x ↦ φ(x)` for `φ ∈
+M_*`. Let `G` be a group with a topology and `ρ : G → U(H)` a strongly continuous unitary
+representation satisfying `ρ_g M ρ_g*=M` for every `g`. `unitaryConjugationNormalAction M
+ρ : NormalAction G M` has primal action `α_g(x)=ρ_g x ρ_g*` and norm-continuous predual
+action `φ ↦ φ∘α_g⁻¹`. -/
 def unitaryConjugationNormalAction : NormalAction G M where
   toMonoidHom := unitaryConjugationNormalHom M ρ hEq
   continuous_predual_orbit := unitaryConjugation_predual_continuous M ρ hEq

@@ -1,15 +1,15 @@
-# Quotient Base Change
+# Quotient base change and determinant units
 
-- [Quotient Base Change](quotient-base-change.md)
-- [Quotient Base Change mk](quotient-base-change-mk.md)
+- [Linear endomorphism after quotient base change](quotient-base-change.md)
+- [Value of quotient base change on a representative](quotient-base-change-mk.md)
 
-## Finite
+## Determinants after quotient base change
 
-- [Det quotient Base Change](det-quotient-base-change.md)
+- [Determinant reduced under quotient base change](det-quotient-base-change.md)
 
-## Local
+## Invertibility from quotient base change
 
-- [Is Unit det of bijective quotient Base Change](is-unit-det-of-bijective-quotient-base-c.md)
-- [Det Unit Of Bijective Quotient Base Change](det-unit-of-bijective-quotient-base-chan.md)
-- [Coe det Unit Of Bijective Quotient Base Change](coe-det-unit-of-bijective-quotient-base.md)
-- [Residue det Unit Of Bijective Quotient Base Change](residue-det-unit-of-bijective-quotient-b.md)
+- [Bijective residue endomorphism gives a determinant unit](is-unit-det-of-bijective-quotient-base-c.md)
+- [Determinant unit defined by a bijective residue map](det-unit-of-bijective-quotient-base-chan.md)
+- [Underlying value of the residue-detected determinant unit](coe-det-unit-of-bijective-quotient-base.md)
+- [Residue of the determinant unit](residue-det-unit-of-bijective-quotient-b.md)

@@ -1,22 +1,22 @@
-# Positive Normal Functional
+# Positive bounded normal functionals
 
-## Von Neumann Algebra
+## Positive normal functionals on von Neumann algebras
 
-- [Positive Normal Functional](positive-normal-functional.md)
+- [Positive continuous functional with normal membership](positive-normal-functional.md)
 
-## Positive Normal Functional
+## Values and bounds of positive normal functionals
 
-- [To Positive Continuous Linear Map](to-positive-continuous-linear-map.md)
-- [To Continuous Linear Map](to-continuous-linear-map.md)
-- [To Normal Functional Space](to-normal-functional-space.md)
-- [To Continuous Linear Map apply](to-continuous-linear-map-apply.md)
-- [To Normal Functional Space apply](to-normal-functional-space-apply.md)
-- [To Positive Continuous Linear Map to Continuous Linear Map](to-positive-continuous-linear-map-to-con.md)
-- [Norm to Normal Functional Space](norm-to-normal-functional-space.md)
-- [Monotone](monotone.md)
-- [Apply nonneg](apply-nonneg.md)
-- [Of Positive Continuous Linear Map](of-positive-continuous-linear-map.md)
-- [Of Normal Functional](of-normal-functional.md)
-- [To Continuous Linear Map of Normal Functional](to-continuous-linear-map-of-normal-funct.md)
-- [To Normal Functional Space of Normal Functional](to-normal-functional-space-of-normal-fun.md)
-- [Equiv Normal Monotone](equiv-normal-monotone.md)
+- [Positive continuous map of a normal functional](to-positive-continuous-linear-map.md)
+- [Underlying bounded positive normal functional](to-continuous-linear-map.md)
+- [Positive normal functional as a predual element](to-normal-functional-space.md)
+- [Value of the bounded positive normal map](to-continuous-linear-map-apply.md)
+- [Predual evaluation of a positive normal functional](to-normal-functional-space-apply.md)
+- [Agreement of positive and bounded map views](to-positive-continuous-linear-map-to-con.md)
+- [Inherited dual norm of a positive normal predual element](norm-to-normal-functional-space.md)
+- [Spectral-order monotonicity of a positive normal functional](monotone.md)
+- [Positive element has a nonnegative normal-functional value](apply-nonneg.md)
+- [Positive normal functional from a positive bounded map](of-positive-continuous-linear-map.md)
+- [Positive normal map from a monotone predual member](of-normal-functional.md)
+- [Bounded value of a monotone-predual construction](to-continuous-linear-map-of-normal-funct.md)
+- [Recovery of the monotone normal-space element](to-normal-functional-space-of-normal-fun.md)
+- [Positive normal functionals are monotone predual members](equiv-normal-monotone.md)

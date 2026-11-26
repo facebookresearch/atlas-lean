@@ -1,3 +1,4 @@
-# Of Binary one
+# The first split gives the binary entries
 
-The first split recovers the supplied binary family in its original order.
+Let R have multiplication with a two-sided unit and v∈R². Then ofBinary v 1=(v₀,v₁), in that
+order.

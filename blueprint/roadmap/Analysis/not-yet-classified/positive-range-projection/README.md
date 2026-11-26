@@ -1,8 +1,8 @@
-# Positive Range Projection
+# Support projection of a positive von Neumann operator
 
-- [Positive Range Projection](positive-range-projection.md)
-- [Positive Range Projection coe](positive-range-projection-coe.md)
-- [Positive Range Projection is Star Projection](positive-range-projection-is-star-projec.md)
-- [Positive Range Projection range](positive-range-projection-range.md)
-- [Positive Range Projection mul self](positive-range-projection-mul-self.md)
-- [Mul positive Range Projection eq zero](mul-positive-range-projection-eq-zero.md)
+- [Support projection as an element of the von Neumann algebra](positive-range-projection.md)
+- [Operator formula of a positive support projection](positive-range-projection-coe.md)
+- [Star projection equations for a positive support](positive-range-projection-is-star-projec.md)
+- [Range of the positive support projection](positive-range-projection-range.md)
+- [Support projection fixes its positive operator](positive-range-projection-mul-self.md)
+- [Annihilation of a positive operator passes to its support](mul-positive-range-projection-eq-zero.md)

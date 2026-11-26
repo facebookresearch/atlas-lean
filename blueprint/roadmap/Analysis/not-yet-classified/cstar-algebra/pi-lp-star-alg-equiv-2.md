@@ -1,4 +1,5 @@
-# Pi Lp Star Alg Equiv
+# Complex C-star matrix equivalence on a finite Hilbert product
 
-The actual C-star operator-matrix equivalence on the finite Hilbert product.
-The type-copy transport is algebraic; the norm comparison is proved separately.
+Let H be a complex Hilbert space,I finite and H^I the ℓ² Hilbert product. The equivalence
+CStarMatrix.piLpStarAlgEquiv:CStarMatrix I I B(H)≃⋆ₐ[ℂ]B(H^I) acts by column sums
+(Θ(X)v)_i=∑jX_ij(v_j).

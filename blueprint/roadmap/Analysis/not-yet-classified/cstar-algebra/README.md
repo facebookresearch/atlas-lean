@@ -1,15 +1,15 @@
-# CStar Algebra
+# Operator matrices on finite Hilbert products
 
-## Matrix
+## Matrix coefficient algebras
 
-- [Pi Lp Star Alg Equiv](pi-lp-star-alg-equiv.md)
-- [Pi Lp Star Alg Equiv apply](pi-lp-star-alg-equiv-apply.md)
-- [Pi Lp Star Alg Equiv symm apply entry](pi-lp-star-alg-equiv-symm-apply-entry.md)
+- [Star-algebra equivalence of operator matrices and finite block operators](pi-lp-star-alg-equiv.md)
+- [Column formula of the operator-matrix equivalence](pi-lp-star-alg-equiv-apply.md)
+- [Inverse entries of the finite Hilbert block equivalence](pi-lp-star-alg-equiv-symm-apply-entry.md)
 
-## CStar Matrix
+## C-star matrix algebras
 
-- [Pi Lp Star Alg Equiv](pi-lp-star-alg-equiv-2.md)
-- [Pi Lp Star Alg Equiv apply](pi-lp-star-alg-equiv-apply-2.md)
-- [Pi Lp Star Alg Equiv symm apply entry](pi-lp-star-alg-equiv-symm-apply-entry-2.md)
-- [Pi Lp Star Alg Equiv isometry](pi-lp-star-alg-equiv-isometry.md)
-- [Pi Lp Star Alg Equiv norm map](pi-lp-star-alg-equiv-norm-map.md)
+- [Complex C-star matrix equivalence on a finite Hilbert product](pi-lp-star-alg-equiv-2.md)
+- [Column formula of the C-star matrix equivalence](pi-lp-star-alg-equiv-apply-2.md)
+- [Recovered entries of the C-star matrix inverse](pi-lp-star-alg-equiv-symm-apply-entry-2.md)
+- [Isometry of the finite Hilbert operator-matrix equivalence](pi-lp-star-alg-equiv-isometry.md)
+- [Norm of a C-star operator matrix equals its block operator norm](pi-lp-star-alg-equiv-norm-map.md)

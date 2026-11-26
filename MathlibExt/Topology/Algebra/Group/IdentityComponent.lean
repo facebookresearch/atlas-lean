@@ -14,11 +14,12 @@ module
 public import Mathlib.Topology.Algebra.Group.Subgroup
 
 /-!
-# Normality of the identity component
+# Normal subgroup given by the identity component
 
-The connected component of the identity in a topological group is a normal
-subgroup.  This file packages the existing continuity and connected-component
-APIs as a theorem, without registering a new global instance.
+In a topological group, the connected component of the identity is a subgroup stable under
+conjugation by every group element. It is therefore a normal subgroup.
+
+No compactness, separation or commutativity is assumed.
 -/
 
 @[expose] public section
@@ -27,9 +28,9 @@ namespace Subgroup
 
 universe u
 
-/-- The connected component of the identity is normal in every topological
-group.  This is a theorem rather than a global instance, so consumers may
-activate it only for the subgroup they own. -/
+/-- **Identity component is normal in a topological group.** For every topological group `G`,
+`connectedComponentOfOne G` is a normal subgroup: conjugation preserves the connected
+component of the identity. -/
 theorem connectedComponentOfOne_normal
     (G : Type u) [Group G] [TopologicalSpace G] [IsTopologicalGroup G] :
     (connectedComponentOfOne G).Normal := by

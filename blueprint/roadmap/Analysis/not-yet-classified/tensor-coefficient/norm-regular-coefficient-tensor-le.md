@@ -1,3 +1,10 @@
-# Norm regular Coefficient Tensor le
+# Operator norm of the Hilbert-first tensor coefficient
 
-The actual source algebra norm bounds the original tensor coefficient operator.
+Let `G` be a group with a
+topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann algebra,
+and `α` a normal action with norm-continuous inverse predual orbits. Assume `G` is a
+topological group. Assume `G` is locally compact with its Borel measurable structure, and
+`μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`. Haar invariance
+is not assumed. Let `T=Completion(H ⊗[ℂ] Lp ℂ 2 μ)` and `U : T ≃ₗᵢ[ℂ] L` be
+`tensorToLpRight μ`, with `U(ξ⊗f)(s)=f(s) • ξ`. Set `Q_x=U⁻¹ P_x U`. for `x∈M`,
+`‖Q_x‖≤‖x‖`.

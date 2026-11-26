@@ -15,18 +15,18 @@ public import Mathlib.Algebra.Module.TransferInstance
 public import Mathlib.LinearAlgebra.Matrix.ToLin
 
 /-!
-# Regular matrices from actual right subfield actions
+# Regular matrices from right coefficient actions
 
-The subfield acts on a division algebra by right multiplication. Left matrices
-preserve both this action and the native right opposite-algebra action. Actual
-subfield coordinates give matrices over the subfield, with the opposite action
-transported through the common base field rather than assumed subfield-linear.
+Let L be a commutative semiring, D a semiring and ι:L→D a coefficient homomorphism. Give D the
+right L-action a•x=x*ι(a). For finite n, a matrix A∈M_n(D) acts by left multiplication on D^n.
+With a finite right-L basis b of D, coordinates turn left matrix action into a faithful
+representation M_n(D)→M_(n×κ)(L). The opposite D-action transports to the coordinate module. Compatible actions over a common
+central base support the dimension and rank comparisons. If F,L are fields, D a division
+F-algebra, ι is F-linear, d>0, [L:F]=d and [D:F]=d², these matrices have rank divisible by d.
 
-Reference: Ivanyos, Qiao and Subrahmanyam, *Constructive noncommutative rank
-computation in deterministic polynomial time over fields of arbitrary
-characteristics*, 20 January 2016 addendum, Claim 11. Cyclic division algebra
-construction, source splitting/density, regularity and computational bounds
-remain separate.
+Reference: Ivanyos, Qiao and Subrahmanyam, Constructive noncommutative rank computation in
+deterministic polynomial time over fields of arbitrary characteristics, 20 January 2016
+addendum, Claim 11.
 -/
 
 @[expose] public section
@@ -48,11 +48,21 @@ private theorem commute_range (ι : L →+* D) (x y : L) : Commute (ι x) (ι y)
   change ι x * ι y = ι y * ι x
   rw [← map_mul, ← map_mul, mul_comm]
 
-/-- The named right subfield module, using the native opposite-module action. -/
+/-- **Right coefficient scalar module.**
+
+Let L be a commutative semiring, D a semiring and ι:L→D a coefficient homomorphism. Give D the
+right L-action a•x=x*ι(a). For finite n, a matrix A∈M_n(D) acts by left multiplication on D^n.
+The L-module rightModule ι on D is a•x=xι(a).
+-/
 @[instance_reducible] def rightModule (ι : L →+* D) : Module L D :=
   Module.compHom D (ι.toOpposite (by exact commute_range ι))
 
-/-- The chosen subfield action is actual multiplication on the right. -/
+/-- **Value of the right coefficient scalar action.**
+
+Let L be a commutative semiring, D a semiring and ι:L→D a coefficient homomorphism. Give D the
+right L-action a•x=x*ι(a). For finite n, a matrix A∈M_n(D) acts by left multiplication on D^n.
+For a∈L,x∈D, the action of rightModule ι is a•x=x*ι(a).
+-/
 @[simp] theorem rightModule_smul (ι : L →+* D) (a : L) (x : D) :
     letI := ι.rightModule
     a • x = x * ι a := rfl
@@ -63,7 +73,12 @@ namespace Matrix
 
 variable {n : Type uN} [Fintype n] [DecidableEq n]
 
-/-- Actual left matrices act linearly on the chosen right subfield module. -/
+/-- **Left matrix regular representation over right scalars.**
+
+Let L be a commutative semiring, D a semiring and ι:L→D a coefficient homomorphism. Give D the
+right L-action a•x=x*ι(a). For finite n, a matrix A∈M_n(D) acts by left multiplication on D^n.
+The ring homomorphism leftRegular ι:M_n(D)→End_L(D^n) sends A to x↦A*x.
+-/
 def leftRegular (ι : L →+* D) :
     letI := ι.rightModule
     Matrix n n D →+* Module.End L (n → D) := by
@@ -103,19 +118,34 @@ def leftRegular (ι : L →+* D) :
         rw [map_add]
         rfl }
 
-/-- The regular action is the literal left matrix-vector product over the original algebra. -/
+/-- **Value of left regular matrix multiplication.**
+
+Let L be a commutative semiring, D a semiring and ι:L→D a coefficient homomorphism. Give D the
+right L-action a•x=x*ι(a). For finite n, a matrix A∈M_n(D) acts by left multiplication on D^n.
+For A∈M_n(D),x∈D^n, leftRegular ι A x=A.mulVec x.
+-/
 @[simp] theorem leftRegular_apply (ι : L →+* D) (A : Matrix n n D) (x : n → D) :
     letI := ι.rightModule
     leftRegular ι A x = A *ᵥ x := rfl
 
-/-- Actual left matrices also preserve the native right opposite-algebra action. -/
+/-- **Left matrix action preserves right multiplication by D.**
+
+Let L be a commutative semiring, D a semiring and ι:L→D a coefficient homomorphism. Give D the
+right L-action a•x=x*ι(a). For finite n, a matrix A∈M_n(D) acts by left multiplication on D^n.
+For t∈Dᵒᵖ and x∈D^n, leftRegular(A)(x*unop(t))=leftRegular(A)(x)*unop(t), coordinatewise.
+-/
 theorem leftRegular_smul_op (ι : L →+* D) (A : Matrix n n D) (a : Dᵐᵒᵖ) (x : n → D) :
     letI := ι.rightModule
     leftRegular ι A (a • x) = a • leftRegular ι A x := by
   simp only [leftRegular_apply]
   exact A.mulVec_smul a x
 
-/-- The actual regular action is faithful, including an empty matrix index type. -/
+/-- **Faithfulness of the left regular matrix action.**
+
+Let L be a commutative semiring, D a semiring and ι:L→D a coefficient homomorphism. Give D the
+right L-action a•x=x*ι(a). For finite n, a matrix A∈M_n(D) acts by left multiplication on D^n.
+The map leftRegular ι is injective, including an empty finite matrix index.
+-/
 theorem leftRegular_injective (ι : L →+* D) :
     letI := ι.rightModule
     Function.Injective (leftRegular (n := n) ι) := by
@@ -135,7 +165,13 @@ variable {κ : Type uK} [Fintype κ]
 
 namespace RingHom
 
-/-- Actual finite right-subfield basis coordinates on tuples of algebra elements. -/
+/-- **Right-basis coordinates of tuples.**
+
+Let L be a commutative semiring,D a semiring,ι:L→D, with right action xι(a), and b:κ→D a
+finite L-basis. Let b:κ→D be a finite basis for this right L-module. For any tuple index n,
+C_b:D^n≃ₗ[L]L^(n×κ) has C_b(x)_(i,a)=b.repr(x_i)_a. The transported right D-action is
+t•z=C_b(C_b⁻¹(z)*unop(t)) for t∈Dᵒᵖ. The equivalence rightCoordinates ι b n is C_b.
+-/
 def rightCoordinates (ι : L →+* D) (b : letI := ι.rightModule; Basis κ L D)
     (n : Type uN) :
     letI := ι.rightModule
@@ -144,19 +180,36 @@ def rightCoordinates (ι : L →+* D) (b : letI := ι.rightModule; Basis κ L D)
   exact (LinearEquiv.piCongrRight fun _ : n => b.equivFun).trans
     (LinearEquiv.curry L L n κ).symm
 
-/-- Every coordinate is the genuine coordinate of the corresponding tuple entry. -/
+/-- **Coordinate value of a right-basis tuple.**
+
+Let L be a commutative semiring,D a semiring,ι:L→D a coefficient homomorphism and b a finite
+basis of the right L-action xι(a); let n be any tuple index. Then rightCoordinates ι b n x
+(i,a)=b.repr(x_i)_a.
+-/
 @[simp] theorem rightCoordinates_apply (ι : L →+* D)
     (b : letI := ι.rightModule; Basis κ L D) (n : Type uN) (x : n → D) (p : n × κ) :
     letI := ι.rightModule
     ι.rightCoordinates b n x p = b.equivFun (x p.1) p.2 := rfl
 
-/-- Transport the native opposite action across the actual basis-coordinate equivalence. -/
+/-- **Right opposite action transported into basis coordinates.**
+
+Let L be a commutative semiring,D a semiring and b a finite basis of D under right L-action
+through ι:L→D. Let b:κ→D be a finite basis for this right L-module. For any tuple index n,
+C_b:D^n≃ₗ[L]L^(n×κ) has C_b(x)_(i,a)=b.repr(x_i)_a. The transported right D-action is
+t•z=C_b(C_b⁻¹(z)*unop(t)) for t∈Dᵒᵖ. This action is rightCoordinateModule ι b n.
+-/
 @[instance_reducible] def rightCoordinateModule (ι : L →+* D)
     (b : letI := ι.rightModule; Basis κ L D) (n : Type uN) : Module Dᵐᵒᵖ (n × κ → L) := by
   letI := ι.rightModule
   exact (ι.rightCoordinates b n).symm.toAddEquiv.module Dᵐᵒᵖ
 
-/-- The coordinate opposite action is the actual transported right multiplication. -/
+/-- **Value of the coordinate right opposite action.**
+
+Let L be a commutative semiring,D a semiring,ι:L→D and b a finite right-L basis. Let b:κ→D be
+a finite basis for this right L-module. For any tuple index n, C_b:D^n≃ₗ[L]L^(n×κ) has
+C_b(x)_(i,a)=b.repr(x_i)_a. The transported right D-action is t•z=C_b(C_b⁻¹(z)*unop(t)) for
+t∈Dᵒᵖ. For t∈Dᵒᵖ,z∈L^(n×κ), t•z=C_b(t•C_b⁻¹(z)).
+-/
 theorem rightCoordinateModule_smul (ι : L →+* D)
     (b : letI := ι.rightModule; Basis κ L D) (n : Type uN) (a : Dᵐᵒᵖ) (x : n × κ → L) :
     letI := ι.rightModule
@@ -169,7 +222,15 @@ namespace Matrix
 
 variable {n : Type uN} [Fintype n] [DecidableEq n] [DecidableEq κ]
 
-/-- The actual coordinate matrix ring representation with a specified genuine right-subfield basis. -/
+/-- **Faithful matrix representation in right-basis coordinates.**
+
+Let L be a commutative semiring, D a semiring and ι:L→D a coefficient homomorphism. Give D the
+right L-action a•x=x*ι(a). For finite n, a matrix A∈M_n(D) acts by left multiplication on D^n.
+Let b:κ→D be a finite basis for this right L-module. For any tuple index n,
+C_b:D^n≃ₗ[L]L^(n×κ) has C_b(x)_(i,a)=b.repr(x_i)_a. The transported right D-action is
+t•z=C_b(C_b⁻¹(z)*unop(t)) for t∈Dᵒᵖ. The ring homomorphism regularRepresentationWithBasis ι b
+sends A to the matrix of C_b∘leftRegular(A)∘C_b⁻¹.
+-/
 def regularRepresentationWithBasis (ι : L →+* D)
     (b : letI := ι.rightModule; Basis κ L D) :
     Matrix n n D →+* Matrix (n × κ) (n × κ) L := by
@@ -177,8 +238,15 @@ def regularRepresentationWithBasis (ι : L →+* D)
   exact (LinearMap.toMatrixAlgEquiv' (R := L) (n := n × κ)).toRingHom.comp
     ((ι.rightCoordinates b n).conjRingEquiv.toRingHom.comp (leftRegular ι))
 
-/-- The coordinate matrix acts by taking an actual preimage, applying the left matrix, and reading
-the actual basis coordinates back. -/
+/-- **Action of the regular coordinate matrix.**
+
+Let L be a commutative semiring, D a semiring and ι:L→D a coefficient homomorphism. Give D the
+right L-action a•x=x*ι(a). For finite n, a matrix A∈M_n(D) acts by left multiplication on D^n.
+Let b:κ→D be a finite basis for this right L-module. For any tuple index n,
+C_b:D^n≃ₗ[L]L^(n×κ) has C_b(x)_(i,a)=b.repr(x_i)_a. The transported right D-action is
+t•z=C_b(C_b⁻¹(z)*unop(t)) for t∈Dᵒᵖ. For z∈L^(n×κ),
+regularRepresentationWithBasis(A)*z=C_b(A*C_b⁻¹(z)).
+-/
 theorem regularRepresentationWithBasis_mulVec (ι : L →+* D)
     (b : letI := ι.rightModule; Basis κ L D) (A : Matrix n n D) (x : n × κ → L) :
     letI := ι.rightModule
@@ -190,7 +258,15 @@ theorem regularRepresentationWithBasis_mulVec (ι : L →+* D)
   rw [← Matrix.toLinAlgEquiv'_apply, Matrix.toLinAlgEquiv'_toMatrixAlgEquiv']
   rfl
 
-/-- Each actual matrix entry is the actual basis coordinate of left multiplication. -/
+/-- **Entry of a right-basis regular matrix.**
+
+Let L be a commutative semiring, D a semiring and ι:L→D a coefficient homomorphism. Give D the
+right L-action a•x=x*ι(a). For finite n, a matrix A∈M_n(D) acts by left multiplication on D^n.
+Let b:κ→D be a finite basis for this right L-module. For any tuple index n,
+C_b:D^n≃ₗ[L]L^(n×κ) has C_b(x)_(i,a)=b.repr(x_i)_a. The transported right D-action is
+t•z=C_b(C_b⁻¹(z)*unop(t)) for t∈Dᵒᵖ. For p=(i,a),q=(j,b), the entry of
+regularRepresentationWithBasis(A) is the a-coordinate of A_ij*b_b in the right-L basis.
+-/
 theorem regularRepresentationWithBasis_apply (ι : L →+* D)
     (b : letI := ι.rightModule; Basis κ L D) (A : Matrix n n D) (p q : n × κ) :
     letI := ι.rightModule
@@ -212,7 +288,15 @@ theorem regularRepresentationWithBasis_apply (ι : L →+* D)
   rw [hsingle q.1 q.2, RingHom.rightCoordinates_apply, Matrix.mulVec_single]
   rfl
 
-/-- This matrix representation is faithful, including empty matrix indices. -/
+/-- **Injectivity of the regular coordinate matrix representation.**
+
+Let L be a commutative semiring, D a semiring and ι:L→D a coefficient homomorphism. Give D the
+right L-action a•x=x*ι(a). For finite n, a matrix A∈M_n(D) acts by left multiplication on D^n.
+Let b:κ→D be a finite basis for this right L-module. For any tuple index n,
+C_b:D^n≃ₗ[L]L^(n×κ) has C_b(x)_(i,a)=b.repr(x_i)_a. The transported right D-action is
+t•z=C_b(C_b⁻¹(z)*unop(t)) for t∈Dᵒᵖ. The representation regularRepresentationWithBasis ι b is
+injective.
+-/
 theorem regularRepresentationWithBasis_injective (ι : L →+* D)
     (b : letI := ι.rightModule; Basis κ L D) :
     Function.Injective (regularRepresentationWithBasis (n := n) ι b) := by
@@ -220,7 +304,15 @@ theorem regularRepresentationWithBasis_injective (ι : L →+* D)
   exact (LinearMap.toMatrixAlgEquiv' (R := L) (n := n × κ)).injective.comp
     ((ι.rightCoordinates b n).conjRingEquiv.injective.comp (leftRegular_injective ι))
 
-/-- The actual coordinate matrices preserve the transported opposite action. -/
+/-- **Regular coordinate matrices preserve the right opposite action.**
+
+Let L be a commutative semiring, D a semiring and ι:L→D a coefficient homomorphism. Give D the
+right L-action a•x=x*ι(a). For finite n, a matrix A∈M_n(D) acts by left multiplication on D^n.
+Let b:κ→D be a finite basis for this right L-module. For any tuple index n,
+C_b:D^n≃ₗ[L]L^(n×κ) has C_b(x)_(i,a)=b.repr(x_i)_a. The transported right D-action is
+t•z=C_b(C_b⁻¹(z)*unop(t)) for t∈Dᵒᵖ. For t∈Dᵒᵖ,z∈L^(n×κ), ρ_b(A)(t•z)=t•ρ_b(A)(z), where
+ρ_b=regularRepresentationWithBasis.
+-/
 theorem regularRepresentationWithBasis_smul_op (ι : L →+* D)
     (b : letI := ι.rightModule; Basis κ L D) (A : Matrix n n D) (a : Dᵐᵒᵖ)
     (x : n × κ → L) :
@@ -247,7 +339,11 @@ variable {F : Type uF} [CommSemiring F] {L : Type uL} [CommSemiring L]
 
 namespace AlgHom
 
-/-- A base-compatible embedding makes the right subfield action extend the same base action. -/
+/-- **Right subfield scalar action agrees with the common base.**
+
+Let F,L be commutative semirings,D an F-algebra and ι:L→ₐ[F]D. On D with right L-action xι(a),
+the F-action agrees with restriction through F→L, giving the scalar tower F→L→D.
+-/
 theorem rightModule_isScalarTower (ι : L →ₐ[F] D) :
     letI := ι.toRingHom.rightModule
     IsScalarTower F L D := by
@@ -257,8 +353,12 @@ theorem rightModule_isScalarTower (ι : L →ₐ[F] D) :
   change x * ι (r • l) = r • (x * ι l)
   rw [map_smul, mul_smul_comm]
 
-/-- The transported opposite action on coordinates extends the common base field action.
-It is not assumed linear over the embedded subfield. -/
+/-- **Coordinate opposite action agrees over the common base.**
+
+Let F,L be commutative semirings,D an F-algebra,ι:L→ₐ[F]D and b a finite right-L basis. The
+transported right D-action on L^(n×κ) extends the same F-action, giving a scalar tower
+F→Dᵒᵖ→L^(n×κ).
+-/
 theorem rightCoordinateModule_isScalarTower (ι : L →ₐ[F] D)
     {κ : Type uK} [Fintype κ]
     (b : letI := ι.toRingHom.rightModule; Basis κ L D) (n : Type uN) :
@@ -281,8 +381,12 @@ variable {κ : Type uK} [Fintype κ] [DecidableEq κ]
 
 namespace Matrix
 
-/-- Actual coordinates of left matrices over the division algebra have subfield rank divisible by
-`d`, when the two scalar dimensions over the common base field are `d` and `d²`. -/
+/-- **Rank divisibility of a basis-coordinate regular representation.**
+
+Let F,L be fields, D a division F-algebra and ι:L→ₐ[F]D. For d>0 assume dim_F L=d and dim_F
+D=d². Then D with right L-action has L-dimension d. For a finite right-L basis b and A∈M_n(D),
+d divides rank_L(regularRepresentationWithBasis ι b A).
+-/
 theorem dvd_rank_regularRepresentationWithBasis (ι : L →ₐ[F] D)
     (b : letI := ι.toRingHom.rightModule; Basis κ L D) (A : Matrix n n D)
     {d : ℕ} (hd : 0 < d) (hL : Module.finrank F L = d) (hD : Module.finrank F D = d ^ 2) :
@@ -309,7 +413,12 @@ variable {F : Type uF} [Field F] {L : Type uL} [Field L]
 
 namespace AlgHom
 
-/-- Construct the actual degree-`d` right-subfield basis from the two base-field dimensions. -/
+/-- **Right subfield basis from the two base dimensions.**
+
+Let F,L be fields, D a division F-algebra and ι:L→ₐ[F]D. For d>0 assume dim_F L=d and dim_F
+D=d². Then D with right L-action has L-dimension d. The constructor rightSubfieldBasis ι hd hL
+hD gives a basis Fin d→D for the right L-action.
+-/
 def rightSubfieldBasis (ι : L →ₐ[F] D) {d : ℕ} (hd : 0 < d)
     (hL : Module.finrank F L = d) (hD : Module.finrank F D = d ^ 2) :
     letI := ι.toRingHom.rightModule
@@ -332,20 +441,35 @@ namespace Matrix
 
 variable {n : Type uN} [Fintype n] [DecidableEq n]
 
-/-- The actual regular matrix representation with its right-subfield basis constructed from the
-given scalar dimensions, rather than supplied as an additional input. -/
+/-- **Regular representation from a degree-d subfield.**
+
+Let F,L be fields, D a division F-algebra and ι:L→ₐ[F]D. For d>0 assume dim_F L=d and dim_F
+D=d². Then D with right L-action has L-dimension d. For finite n, regularRepresentation ι hd
+hL hD:M_n(D)→M_(n×Fin d)(L) uses this right subfield basis to represent left matrix
+multiplication.
+-/
 def regularRepresentation (ι : L →ₐ[F] D) {d : ℕ} (hd : 0 < d)
     (hL : Module.finrank F L = d) (hD : Module.finrank F D = d ^ 2) :
     Matrix n n D →+* Matrix (n × Fin d) (n × Fin d) L :=
   regularRepresentationWithBasis ι.toRingHom (ι.rightSubfieldBasis hd hL hD)
 
-/-- The actual dimension-based regular representation is faithful. -/
+/-- **Faithfulness of the dimension-based regular representation.**
+
+Let F,L be fields, D a division F-algebra and ι:L→ₐ[F]D. For d>0 assume dim_F L=d and dim_F
+D=d². Then D with right L-action has L-dimension d. The representation regularRepresentation ι
+hd hL hD is injective for every finite matrix index.
+-/
 theorem regularRepresentation_injective (ι : L →ₐ[F] D) {d : ℕ} (hd : 0 < d)
     (hL : Module.finrank F L = d) (hD : Module.finrank F D = d ^ 2) :
     Function.Injective (regularRepresentation (n := n) ι hd hL hD) :=
   regularRepresentationWithBasis_injective ι.toRingHom (ι.rightSubfieldBasis hd hL hD)
 
-/-- The constructed regular representation has genuine subfield rank divisible by its degree. -/
+/-- **Rank divisibility of the dimension-based regular matrices.**
+
+Let F,L be fields, D a division F-algebra and ι:L→ₐ[F]D. For d>0 assume dim_F L=d and dim_F
+D=d². Then D with right L-action has L-dimension d. For A∈M_n(D), d divides
+rank_L(regularRepresentation ι hd hL hD A).
+-/
 theorem dvd_rank_regularRepresentation (ι : L →ₐ[F] D) {d : ℕ} (hd : 0 < d)
     (hL : Module.finrank F L = d) (hD : Module.finrank F D = d ^ 2)
     (A : Matrix n n D) : d ∣ (regularRepresentation ι hd hL hD A).rank :=

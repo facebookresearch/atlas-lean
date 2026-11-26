@@ -14,12 +14,13 @@ module
 public import Mathlib.Analysis.Normed.Operator.Compact.FiniteDimension
 
 /-!
-# Compact open operators have finite-dimensional targets
+# Finite-dimensional target of an open compact map
 
-An open compact continuous linear map has finite-dimensional target over a
-complete nontrivially normed scalar field. Neither ambient space is assumed
-complete, and surjectivity is unnecessary. The proof uses the stock Riesz
-criterion on an actual compact neighborhood of zero in the target.
+Let `𝕜` be a complete nontrivially normed field and `E,F` normed `𝕜`-spaces. A bounded linear
+map `f : E → F` that is both compact and open has finite-dimensional target `F` over `𝕜`.
+
+Completeness of `E` or `F` and surjectivity of `f` are not premises. The conclusion follows from
+a compact neighborhood of zero in `F`.
 -/
 
 @[expose] public section
@@ -34,8 +35,9 @@ variable {𝕜 : Type u𝕜} [NontriviallyNormedField 𝕜] [CompleteSpace 𝕜]
 variable {E : Type uE} [NormedAddCommGroup E] [NormedSpace 𝕜 E]
 variable {F : Type uF} [NormedAddCommGroup F] [NormedSpace 𝕜 F]
 
-/-- An open compact continuous linear map has finite-dimensional target.
-Only the scalar field, not either ambient space, is assumed complete. -/
+/-- **An open compact linear map has finite-dimensional target.** Let `𝕜` be a complete
+nontrivially normed field and `E,F` normed `𝕜`-spaces, possibly incomplete. If `f : E
+→L[𝕜] F` is compact and open, then `FiniteDimensional 𝕜 F`. Surjectivity is not assumed. -/
 theorem of_isCompactOperator_of_isOpenMap (f : E →L[𝕜] F)
     (hCompact : IsCompactOperator f) (hOpen : IsOpenMap f) : FiniteDimensional 𝕜 F := by
   obtain ⟨K, hK, hPre⟩ := hCompact

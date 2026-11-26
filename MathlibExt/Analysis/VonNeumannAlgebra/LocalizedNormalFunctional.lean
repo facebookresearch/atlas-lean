@@ -14,16 +14,14 @@ module
 public import MathlibExt.Analysis.VonNeumannAlgebra.LocalizedVectorRealization
 
 /-!
-# The original localized functional is an actual normal vector functional
+# Normality of projection-localized positive functionals
 
-The constructed Riesz vector η represents ψ(a*p) at (a*p)ξ. The original
-operator product rewrites this as the vector coefficient at a of η and pξ.
-That coefficient belongs to the existing closed normal-functional span.
-The resulting normal-functional data have the original localized values;
-no normal membership, vector witness or norm certificate is supplied.
+Suppose a positive bounded functional `ψ` is dominated by the vector coefficient of `ξ` on the
+positive interval below a star projection `p`. The localization `a ↦ ψ(ap)` is a normal
+functional in `M_*`.
 
-This is a local constructor. The global order-normal criterion and the
-computed normal GNS homomorphism require separate remaining prerequisites.
+Its representing vector identity `ψ(ap)=⟨η,apξ⟩` identifies it with the vector functional `a ↦
+⟨η,a(pξ)⟩`. Global normality of `ψ` is not required.
 -/
 
 @[expose] public section
@@ -41,7 +39,11 @@ universe u
 
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- Construct the original localized functional in the actual normal-functional space. -/
+/-- **Normal-functional member of a projection localization.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Let `ψ : M → ℂ` be a positive
+bounded complex-linear functional for the spectral orders. Let `p ∈ M` be a star
+projection and `ξ ∈ H` satisfy `Re ψ(b)≤Re ⟨ξ,bξ⟩` for every positive `b≤p`.
+`localizedNormalFunctional M ψ p ξ` returns `ρ∈M_*` with `ρ(a)=ψ(ap)` for every `a∈M`. -/
 def localizedNormalFunctional (M : VonNeumannAlgebra H) :
     letI : PartialOrder M := CStarAlgebra.spectralOrder M
     letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ

@@ -14,13 +14,11 @@ public import Mathlib.LinearAlgebra.Quotient.Basic
 public import Mathlib.Algebra.Exact.Basic
 
 /-!
-# Length of the literal cokernel of a composite
+# Cokernel length of a composite with an injective second map
 
-The quotient maps are induced by the actual linear maps. If the second map
-is injective, its induced map from the first cokernel is injective and the
-next quotient map is surjective. Their exact sequence earns the length sum
-without any finite-length premise. This is a prerequisite for determinant
-length and arbitrary-source norm orders over singular one-dimensional rings.
+Let R be a ring, f:M→N and g:N→P linear maps of left R-modules, and write coker(f)=N/range(f)
+with length ℓ_R in ℕ∪{∞}. If g is injective, 0→coker(f)→coker(gf)→coker(g)→0 is exact, so
+ℓ_R(coker(gf))=ℓ_R(coker f)+ℓ_R(coker g), including infinite lengths.
 -/
 
 @[expose] public section
@@ -47,9 +45,11 @@ private def cokerCompRight (f : M →ₗ[R] N) (g : N →ₗ[R] P) :
     rintro p ⟨m, rfl⟩
     exact ⟨f m, rfl⟩)
 
-/-- An injective second map earns the full cokernel-length composition law.
-The literal quotient modules may have infinite length or nilpotent scalar
-actions; neither finite length nor a determinant/order equality is assumed. -/
+/-- **Additivity of full cokernel lengths under an injective second map.**
+
+Let R be a ring, f:M→N and g:N→P linear maps of left R-modules, and write coker(f)=N/range(f)
+with length ℓ_R in ℕ∪{∞}. For injective g, ℓ_R(P/range(gf))=ℓ_R(N/range f)+ℓ_R(P/range g).
+-/
 theorem length_coker_comp_of_injective (f : M →ₗ[R] N) (g : N →ₗ[R] P)
     (hg : Function.Injective g) :
     Module.length R (P ⧸ (g.comp f).range) =
@@ -93,9 +93,12 @@ private def upperBlockMap (f : M →ₗ[R] M) (r : N →ₗ[R] M) (g : N →ₗ[
   (f.comp (LinearMap.fst R M N) + r.comp (LinearMap.snd R M N)).prod
     (g.comp (LinearMap.snd R M N))
 
-/-- A genuine upper block map has the sum of its diagonal cokernel
-lengths when its lower diagonal map is injective. The full quotient modules
-and arbitrary off-diagonal map are retained; no finite length is assumed. -/
+/-- **Cokernel length of an upper block map.**
+
+Let R be a ring, M,N R-modules, f:M→M, r:N→M and injective g:N→N linear. The map
+T(x,y)=(f(x)+r(y),g(y)) has ℓ_R(coker T)=ℓ_R(coker f)+ℓ_R(coker g), with no finite-length
+hypothesis.
+-/
 theorem length_coker_upper_block_of_injective
     (f : M →ₗ[R] M) (r : N →ₗ[R] M) (g : N →ₗ[R] N) (hg : Function.Injective g) :
     Module.length R ((M × N) ⧸
@@ -151,8 +154,11 @@ theorem length_coker_upper_block_of_injective
       exact map_zero _
   exact Module.length_eq_add_of_exact i j hi hj hseq
 
-/-- An actual change of basis in the domain leaves the literal image
-submodule and hence the full quotient cokernel length unchanged. -/
+/-- **Domain equivalence preserves cokernel length.**
+
+Let R be a ring, f:M→N and g:N→P linear maps of left R-modules, and write coker(f)=N/range(f)
+with length ℓ_R in ℕ∪{∞}. For a linear equivalence e:Q≃M, ℓ_R(N/range(f∘e))=ℓ_R(N/range f).
+-/
 theorem length_coker_precompose_equiv (f : M →ₗ[R] N) (e : P ≃ₗ[R] M) :
     Module.length R (N ⧸ (f.comp e.toLinearMap).range) = Module.length R (N ⧸ f.range) := by
   have hr : (f.comp e.toLinearMap).range = f.range := by
@@ -164,8 +170,11 @@ theorem length_coker_precompose_equiv (f : M →ₗ[R] N) (e : P ≃ₗ[R] M) :
       exact ⟨e.symm m, by simp⟩
   exact congrArg (fun Q : Submodule R N => Module.length R (N ⧸ Q)) hr
 
-/-- An actual change of basis in the codomain transports the full
-cokernel without changing its length, including infinite-length cases. -/
+/-- **Codomain equivalence preserves cokernel length.**
+
+Let R be a ring, f:M→N and g:N→P linear maps of left R-modules, and write coker(f)=N/range(f)
+with length ℓ_R in ℕ∪{∞}. For a linear equivalence e:N≃Q, ℓ_R(Q/range(e∘f))=ℓ_R(N/range f).
+-/
 theorem length_coker_postcompose_equiv (f : M →ₗ[R] N) (e : N ≃ₗ[R] P) :
     Module.length R (P ⧸ (e.toLinearMap.comp f).range) = Module.length R (N ⧸ f.range) := by
   have hz : Module.length R (P ⧸ e.toLinearMap.range) = 0 := by

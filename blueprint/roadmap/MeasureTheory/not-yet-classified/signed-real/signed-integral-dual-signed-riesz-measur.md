@@ -1,3 +1,5 @@
-# Signed Integral Dual signed Riesz Measure
+# Signed Riesz integration recovers the bounded real functional
 
-Integrating against the constructed signed measure recovers the original functional.
+Let `X` be a compact
+Hausdorff space with its Borel measurable structure. Let `F∈C(X,ℝ)*` be a bounded
+real-linear functional. `signedIntegralDual(signedRieszMeasure F)=F`.

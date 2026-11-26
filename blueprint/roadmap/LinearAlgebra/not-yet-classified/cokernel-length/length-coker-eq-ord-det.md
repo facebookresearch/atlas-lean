@@ -1,6 +1,6 @@
-# Length coker eq ord det
+# Full matrix cokernel length equals determinant order
 
-The full cokernel of every square matrix with nonzero determinant over
-a one-dimensional Noetherian domain has length equal to the existing order
-of its determinant. The proof includes the empty matrix, singular domains,
-and all nonreduced principal quotients, with no finite-length premise.
+Let R be a commutative Noetherian domain of Krull dimension at most one, I a finite index type
+and A an I×I matrix over R. Its full cokernel is coker(A)=R^I/range(A.mulVecLin), and
+ord_R(a)=length_R(R/(a)) is the order of vanishing in ℕ∪{∞}. Under det(A)≠0,
+length_R(R^I/range(A.mulVecLin))=Ring.ord R det(A).

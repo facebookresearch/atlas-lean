@@ -1,3 +1,5 @@
-# Continuous Equivariant Retraction one
+# Identity normalization of the closed-subgroup retraction
 
-The normalization fixes the identity element.
+Let `G` be a compact
+Hausdorff totally disconnected topological group. Let `H≤G` be a closed subgroup, without
+a normality or finite-index condition. `continuousEquivariantRetraction H (1_G)=1_H`.

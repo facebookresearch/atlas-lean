@@ -1,4 +1,5 @@
-# R Tensor Hom Equiv Of Surjective Scalars to Linear Map
+# Forward map of the quotient-scalar tensor–Hom equivalence
 
-The forward linear map is the exact original R coefficient map, independent of
-the quotient/transport used to earn its inverse.
+Let R,S be commutative rings with surjective algebra map R→S, and M,J,U S-modules with
+compatible restricted R-actions. For M finitely generated projective over S, the forward map
+is rTensorHomToHomRTensor(.id R) M J U, the evaluation f⊗u↦(m↦f(m)⊗u).

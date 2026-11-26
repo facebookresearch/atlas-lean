@@ -1,16 +1,16 @@
-# Normal Action
+# Normal automorphism actions with norm-continuous predual orbits
 
-## Von Neumann Algebra
+## Normal actions on von Neumann algebras
 
-- [Normal Action](normal-action.md)
+- [Normal action with norm-continuous inverse predual orbits](normal-action.md)
 
-## Normal Action
+## Orbit maps of normal actions
 
-- [Ext](ext.md)
-- [To Monoid Hom apply](to-monoid-hom-apply.md)
-- [To Star Alg Aut Hom](to-star-alg-aut-hom.md)
-- [To Star Alg Aut Hom apply](to-star-alg-aut-hom-apply.md)
-- [Continuous ultraweak](continuous-ultraweak.md)
-- [Predual Action](predual-action.md)
-- [Predual Action apply](predual-action-apply.md)
-- [Predual Action continuous](predual-action-continuous.md)
+- [Normal action equality from its automorphism homomorphism](ext.md)
+- [Value of the normal action homomorphism](to-monoid-hom-apply.md)
+- [Underlying complex star-automorphism action](to-star-alg-aut-hom.md)
+- [Algebra value of the normal group action](to-star-alg-aut-hom-apply.md)
+- [Ultraweak continuity of each action automorphism](continuous-ultraweak.md)
+- [Covariant action on the normal-functional Banach space](predual-action.md)
+- [Inverse-automorphism evaluation of the predual action](predual-action-apply.md)
+- [Norm-continuous orbit of every normal functional](predual-action-continuous.md)

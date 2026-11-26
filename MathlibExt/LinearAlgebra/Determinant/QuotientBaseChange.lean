@@ -14,55 +14,12 @@ public import Mathlib.RingTheory.LocalRing.ResidueField.Basic
 public import Mathlib.RingTheory.TensorProduct.Quotient
 
 /-!
-# Linear endomorphisms after quotient base change
+# Quotient base change and determinant units
 
-Let `S` be a finite free algebra over a commutative ring `R`, let `I` be an
-ideal of `R`, and let `f : S →ₗ[R] S`.  This file transports the ordinary
-scalar extension of `f` across the canonical algebra equivalence
-
-```text
-S / I S  ≃  (R / I) ⊗[R] S.
-```
-
-The resulting endomorphism `f.quotientBaseChange I` sends the class
-of `x` to the class of `f x`, and its determinant is the reduction of
-`det f` modulo `I`.
-
-For a local base ring, bijectivity of the residue endomorphism therefore
-shows that `det f` is a unit.  The bundled determinant unit has residue equal
-to the determinant unit of the induced residue equivalence.
-
-## Main declarations
-
-* `LinearMap.quotientBaseChange`: quotient-valued scalar extension of an
-  arbitrary finite-free algebra endomorphism.
-* `LinearMap.quotientBaseChange_mk`: representative formula.
-* `LinearMap.det_quotientBaseChange`: determinant commutes with reduction.
-* `LinearMap.isUnit_det_of_bijective_quotientBaseChange`: local unit
-  detection from a bijective residue map.
-* `LinearMap.detUnitOfBijectiveQuotientBaseChange`: the resulting determinant
-  unit, with its value and residue formulas.
-
-## Informal proof
-
-The canonical equivalence
-`Algebra.TensorProduct.quotIdealMapEquivQuotTensor S I` sends the class of
-`x : S` to `1 ⊗ x`.  Conjugate the scalar extension
-`f.baseChange (R / I)` by the inverse of this equivalence.  Since scalar
-extension sends `1 ⊗ x` to `1 ⊗ f x`, conjugation gives the representative
-formula.
-
-Determinants are invariant under conjugation, and
-`LinearMap.det_baseChange` identifies the determinant of the scalar extension
-with `Ideal.Quotient.mk I (det f)`.  This proves determinant reduction without
-choosing a basis of either quotient presentation.
-
-Now suppose `R` is local and use its maximal ideal.  If the quotient map is
-bijective, it is a linear equivalence, so its determinant is a unit and in
-particular is nonzero in the residue field.  Determinant reduction says that
-this nonzero element is the residue of `det f`.  An element of a local ring
-has nonzero residue exactly when it is a unit.  Bundling that unit and applying
-the same determinant equality proves the final residue formula.
+Let R,S be commutative rings with an R-algebra structure on S, I an ideal of R and f:S→S
+R-linear. Put S_I=S/IS. The quotient base-change map f_I:S_I→S_I is R/I-linear with
+f_I([x])=[f(x)]. If S is finite free over R, det(f_I) is det(f) reduced modulo I. For local R,
+a bijective residue map makes det(f) a unit.
 -/
 
 @[expose] public section
@@ -78,19 +35,24 @@ namespace LinearMap
 variable {R : Type uR} {S : Type uS}
 variable [CommRing R] [CommRing S] [Algebra R S]
 
-/-- Scalar extension of an algebra endomorphism to `R / I`, transported from
-the tensor-product presentation to the quotient presentation `S / I S`.
+/-- **Linear endomorphism after quotient base change.**
 
-This is the arbitrary-linear-map analogue of quotient base change for
-algebra norms; it reuses the same canonical tensor/quotient equivalence. -/
+Let R,S be commutative rings with an R-algebra structure on S, I an ideal of R and f:S→S
+R-linear. Put S_I=S/IS. The quotient base-change map f_I:S_I→S_I is R/I-linear with
+f_I([x])=[f(x)]. The map quotientBaseChange f I is f_I, using S/IS≃(R/I)⊗_RS.
+-/
 noncomputable def quotientBaseChange (f : S →ₗ[R] S) (I : Ideal R) :
     (S ⧸ I.map (algebraMap R S)) →ₗ[R ⧸ I]
       (S ⧸ I.map (algebraMap R S)) := by
   let e := Algebra.TensorProduct.quotIdealMapEquivQuotTensor S I
   exact e.symm.toLinearEquiv.conj (f.baseChange (R ⧸ I))
 
-/-- Quotient base change sends a represented class to the class of its image
-under the original endomorphism. -/
+/-- **Value of quotient base change on a representative.**
+
+Let R,S be commutative rings with an R-algebra structure on S, I an ideal of R and f:S→S
+R-linear. Put S_I=S/IS. The quotient base-change map f_I:S_I→S_I is R/I-linear with
+f_I([x])=[f(x)]. For x∈S, quotientBaseChange f I ([x])=[f(x)].
+-/
 @[simp]
 theorem quotientBaseChange_mk (f : S →ₗ[R] S) (I : Ideal R) (x : S) :
     f.quotientBaseChange I
@@ -104,8 +66,13 @@ section Finite
 
 variable [Module.Free R S] [Module.Finite R S]
 
-/-- The determinant of quotient base change is the reduction of the original
-determinant modulo the base ideal. -/
+/-- **Determinant reduced under quotient base change.**
+
+Let R,S be commutative rings with an R-algebra structure on S, I an ideal of R and f:S→S
+R-linear. Put S_I=S/IS. The quotient base-change map f_I:S_I→S_I is R/I-linear with
+f_I([x])=[f(x)]. If S is finite free over R, det_(R/I)(f_I)=q_I(det_R f), where q_I:R→R/I is
+the quotient map.
+-/
 theorem det_quotientBaseChange (f : S →ₗ[R] S) (I : Ideal R) :
     (f.quotientBaseChange I).det = Ideal.Quotient.mk I f.det := by
   let e := Algebra.TensorProduct.quotIdealMapEquivQuotTensor S I
@@ -122,8 +89,12 @@ section Local
 
 variable [IsLocalRing R]
 
-/-- If the endomorphism induced on the closed fiber of a finite free algebra
-is bijective, then the original determinant is a unit of the local base. -/
+/-- **Bijective residue endomorphism gives a determinant unit.**
+
+Let R be a commutative local ring with maximal ideal 𝔪 and S a commutative finite free
+R-algebra. If f:S→S is R-linear and its induced residue map f̄:S/𝔪S→S/𝔪S is bijective, then
+det(f) is a unit in R. This is isUnit_det_of_bijective_quotientBaseChange.
+-/
 theorem isUnit_det_of_bijective_quotientBaseChange
     (f : S →ₗ[R] S)
     (hf : Function.Bijective
@@ -134,16 +105,25 @@ theorem isUnit_det_of_bijective_quotientBaseChange
   rw [← det_quotientBaseChange]
   exact (LinearEquiv.ofBijective _ hf).isUnit_det'.ne_zero
 
-/-- The determinant unit supplied by bijectivity of the closed-fiber
-endomorphism. -/
+/-- **Determinant unit defined by a bijective residue map.**
+
+Let R be a commutative local ring with maximal ideal 𝔪 and S a commutative finite free
+R-algebra. If f:S→S is R-linear and its induced residue map f̄:S/𝔪S→S/𝔪S is bijective, then
+det(f) is a unit in R. The unit detUnitOfBijectiveQuotientBaseChange f hf∈Rˣ has underlying
+value det(f).
+-/
 noncomputable def detUnitOfBijectiveQuotientBaseChange
     (f : S →ₗ[R] S)
     (hf : Function.Bijective
       (f.quotientBaseChange (IsLocalRing.maximalIdeal R))) : Rˣ :=
   (isUnit_det_of_bijective_quotientBaseChange f hf).unit
 
-/-- The underlying value of the determinant unit is the original
-determinant. -/
+/-- **Underlying value of the residue-detected determinant unit.**
+
+Let R be a commutative local ring with maximal ideal 𝔪 and S a commutative finite free
+R-algebra. If f:S→S is R-linear and its induced residue map f̄:S/𝔪S→S/𝔪S is bijective, then
+det(f) is a unit in R. For D=detUnitOfBijectiveQuotientBaseChange f hf, (D:R)=det(f).
+-/
 @[simp]
 theorem coe_detUnitOfBijectiveQuotientBaseChange
     (f : S →ₗ[R] S)
@@ -152,8 +132,13 @@ theorem coe_detUnitOfBijectiveQuotientBaseChange
     (detUnitOfBijectiveQuotientBaseChange f hf : R) = f.det :=
   (isUnit_det_of_bijective_quotientBaseChange f hf).unit_spec
 
-/-- The residue of the bundled determinant unit is the determinant unit of
-the induced closed-fiber equivalence. -/
+/-- **Residue of the determinant unit.**
+
+Let R be a commutative local ring with maximal ideal 𝔪 and S a commutative finite free
+R-algebra. If f:S→S is R-linear and its induced residue map f̄:S/𝔪S→S/𝔪S is bijective, then
+det(f) is a unit in R. The image of D=detUnitOfBijectiveQuotientBaseChange f hf in (R/𝔪)ˣ
+equals the determinant unit of the linear equivalence defined by f̄.
+-/
 theorem residue_detUnitOfBijectiveQuotientBaseChange
     (f : S →ₗ[R] S)
     (hf : Function.Bijective

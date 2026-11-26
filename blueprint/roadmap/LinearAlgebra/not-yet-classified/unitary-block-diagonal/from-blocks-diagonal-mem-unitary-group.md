@@ -1,3 +1,4 @@
-# From Blocks diagonal mem unitary Group
+# Block diagonal of two unitaries
 
-Block diagonal of two unitaries is unitary on the sum type.
+Let R be a commutative star ring, n,m finite index types and U,V unitary matrices over R of
+those sizes. Then [[U,0],[0,V]] belongs to U(n⊕m,R).

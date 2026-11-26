@@ -1,3 +1,5 @@
-# Regular Signed Measure
+# Signed measure with regular total variation
 
-A real signed measure whose total variation is regular.
+Let `X` be an R₁ topological space with
+its Borel measurable structure. `RegularSignedMeasure X` is the carrier of that real
+submodule; it stores the signed measure and regularity of `|s|`.

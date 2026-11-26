@@ -15,15 +15,15 @@ public import MathlibExt.Analysis.InnerProductSpace.Operator.CompactCompletion
 public import MathlibExt.Analysis.InnerProductSpace.Operator.BasisCornerDensity
 
 /-!
-# Surjectivity of the completed compact map for a Hilbert basis
+# Compact operators as the completion of basis matrix corners
 
-A genuine natural-number complex Hilbert basis derives ambient completeness.
-The positive matrix corners lie in the original completed compact map's range,
-so their proved density makes that range dense. The same completed isometry
-has closed range because its source is the ordinary completion.
+For a natural-number complex Hilbert basis `b`, let `D` be the algebraic direct limit of
+`M_(n+1)(ℂ)` under top-left zero padding, with its stage matrix norm, and let `C=Completion D`.
 
-All raw, metric, scalar, completion and compact-ideal dictionaries are retained.
-No raw completeness, target density, inverse or replacement carrier is assumed.
+The completed corner map `Φ : C → K(H)` is surjective, hence gives the complex star-algebra
+equivalence `C ≃ K(H)`. Its forward value on a matrix representative is `Σ_i,j<n+1 X_ij
+θ_(b_i,b_j)`. Hilbert-space completeness follows from the basis; completeness of the algebraic
+direct limit is not assumed.
 -/
 
 @[expose] public section
@@ -36,9 +36,13 @@ namespace HilbertBasis
 
 universe uH
 
-/-- The single completed compact embedding is surjective for a genuine
-natural-number Hilbert basis. Completeness is derived from its representation;
-the closed-range argument applies to the completion, not to the raw limit. -/
+/-- **Surjectivity of the completed basis compact map.** Let `H` be a complex normed
+inner-product space with a Hilbert basis `b : HilbertBasis ℕ ℂ H`; this basis implies
+completeness. Let `D=lim_n M_(n+1)(ℂ)` be the algebraic direct limit along top-left zero
+padding, with norm `‖[n,X]‖=‖X‖`. Put `C=Completion D`, with the extended C-star norm, and
+`Φ : C → K(H)` the extension of `[n,X] ↦ Σ_i,j<n+1 X_ij θ_(b_i,b_j)`, where
+`θ_(x,y)z=⟨y,z⟩x`. the completed map `Φ=b.orthonormal.completedCompactEmbedding` is
+surjective onto `K(H)`. -/
 theorem completedCompactEmbedding_surjective
     {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
     (b : HilbertBasis ℕ ℂ H) :
@@ -161,7 +165,7 @@ end
 
 end
 
-/-! ## The equivalence determined by the same completed map -/
+/-! ## Compact matrix completion equivalence -/
 
 @[expose] public section
 
@@ -171,10 +175,14 @@ namespace HilbertBasis
 
 universe uH
 
-/-- The actual positive matrix completion is star-algebra equivalent to the
-compact ideal for a genuine natural-number Hilbert basis. The forward function
-is the original completed compact embedding; its inverse uses only that map's
-proved injectivity and surjectivity. All norm and completion parents remain fixed. -/
+/-- **Star equivalence between completed basis matrices and compacts.** Let `H` be a complex
+normed inner-product space with a Hilbert basis `b : HilbertBasis ℕ ℂ H`; this basis
+implies completeness. Let `D=lim_n M_(n+1)(ℂ)` be the algebraic direct limit along
+top-left zero padding, with norm `‖[n,X]‖=‖X‖`. Put `C=Completion D`, with the extended
+C-star norm, and `Φ : C → K(H)` the extension of `[n,X] ↦ Σ_i,j<n+1 X_ij θ_(b_i,b_j)`,
+where `θ_(x,y)z=⟨y,z⟩x`. `compactMatrixCompletionEquiv b : C ≃⋆ₐ[ℂ] K(H)` is the
+star-algebra equivalence whose forward map is `Φ`, the norm-preserving completed
+matrix-corner embedding. -/
 noncomputable def compactMatrixCompletionEquiv
     {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
     (b : HilbertBasis ℕ ℂ H) :

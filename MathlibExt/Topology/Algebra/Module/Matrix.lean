@@ -16,18 +16,15 @@ public import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.PiProd
 public import Mathlib.Data.Matrix.Mul
 
 /-!
-# Rectangular matrices of continuous linear maps on PiLp
+# Rectangular continuous operator matrices on product spaces
 
-An operator-valued matrix acts by finite column summation on the existing
-product-topological `PiLp 2` carrier. The row index may be arbitrary.
-Coordinate recovery uses the existing single-coordinate injections and
-projections; it requires neither finite indices nor continuity of addition.
-
-The action and recovery are inverse when the column index is finite and
-addition is continuous in the target. They give a bare equivalence, without
-a commutative-scalar, norm, completeness or separation hypothesis.
-For arbitrary row indices, the topology here is still the product topology,
-not the topology of an infinite square-summable space.
+Let R be a semiring and E,F additive groups with topologies and R-module structures. For
+arbitrary row type m and finite column type n, A_ij:E→F continuous linear and continuous
+addition on F, let T_A:E^n→F^m be (T_A v)_i=∑jA_ij(v_j), on the product topology of PiLp 2.
+For any row and column index types, a continuous linear T:E^n→F^m has recovered coefficients
+A_ij(x)=proj_i(T(single_j x)). Recovery needs no continuous-addition or finite-index premise.
+When columns are finite and addition on F continuous, action and recovery are inverse. For
+arbitrary rows the topology is the product topology, not an infinite square-summable norm.
 -/
 
 @[expose] public section
@@ -46,8 +43,13 @@ variable [AddCommGroup F] [TopologicalSpace F] [Module R F]
 
 namespace Matrix
 
-/-- A rectangular matrix of continuous linear maps acts by finite column
-summation on the existing PiLp product topology. Rows need not be finite. -/
+/-- **Finite-column continuous matrix action.**
+
+Let R be a semiring and E,F additive groups with topologies and R-module structures. For
+arbitrary row type m and finite column type n, A_ij:E→F continuous linear and continuous
+addition on F, let T_A:E^n→F^m be (T_A v)_i=∑jA_ij(v_j), on the product topology of PiLp 2.
+The map toPiLpContinuousLinearMap A is T_A.
+-/
 def toPiLpContinuousLinearMap [Fintype n] [ContinuousAdd F]
     (M : Matrix m n (E →L[R] F)) :
     PiLp 2 (fun _ : n => E) →L[R] PiLp 2 (fun _ : m => F) :=
@@ -57,7 +59,13 @@ def toPiLpContinuousLinearMap [Fintype n] [ContinuousAdd F]
         ((ContinuousLinearMap.proj j : (n → E) →L[R] E).comp
           (PiLp.continuousLinearEquiv 2 R (fun _ : n => E)).toContinuousLinearMap))
 
-/-- Evaluation of the column action at a target row. -/
+/-- **Row value of a continuous column action.**
+
+Let R be a semiring and E,F additive groups with topologies and R-module structures. For
+arbitrary row type m and finite column type n, A_ij:E→F continuous linear and continuous
+addition on F, let T_A:E^n→F^m be (T_A v)_i=∑jA_ij(v_j), on the product topology of PiLp 2.
+For v∈E^n and i∈m, toPiLpContinuousLinearMap A v i=∑jA_ij(v_j).
+-/
 @[simp]
 theorem toPiLpContinuousLinearMap_apply [Fintype n] [ContinuousAdd F]
     (M : Matrix m n (E →L[R] F)) (v : PiLp 2 (fun _ : n => E)) (i : m) :
@@ -73,9 +81,13 @@ end Matrix
 
 namespace ContinuousLinearMap
 
-/-- Recover a rectangular operator matrix by injecting a source coordinate,
-applying the map and projecting a target coordinate. No finiteness or
-continuity of addition is required. -/
+/-- **Coordinate recovery of a continuous rectangular operator.**
+
+Let R be a semiring,E,F topological R-module additive groups and m,n arbitrary index types.
+For any row and column index types, a continuous linear T:E^n→F^m has recovered coefficients
+A_ij(x)=proj_i(T(single_j x)). Recovery needs no continuous-addition or finite-index premise.
+The map toPiLpMatrix T gives these coefficients.
+-/
 def toPiLpMatrix [DecidableEq n]
     (T : PiLp 2 (fun _ : n => E) →L[R] PiLp 2 (fun _ : m => F)) :
     Matrix m n (E →L[R] F) :=
@@ -86,7 +98,11 @@ def toPiLpMatrix [DecidableEq n]
         ((PiLp.continuousLinearEquiv 2 R (fun _ : n => E)).symm.toContinuousLinearMap.comp
           (ContinuousLinearMap.single R (fun _ : n => E) j)))
 
-/-- Evaluation of a recovered coefficient on a source vector. -/
+/-- **Value of a recovered operator coefficient.**
+
+Let R be a semiring,E,F topological R-module additive groups,m,n arbitrary,T:E^n→F^m
+continuous linear,i∈m,j∈n,x∈E. Then toPiLpMatrix T i j x=T(single_j x)_i.
+-/
 @[simp]
 theorem toPiLpMatrix_apply [DecidableEq n]
     (T : PiLp 2 (fun _ : n => E) →L[R] PiLp 2 (fun _ : m => F))
@@ -94,8 +110,13 @@ theorem toPiLpMatrix_apply [DecidableEq n]
     toPiLpMatrix T i j x = T (PiLp.single 2 j x) i :=
   rfl
 
-/-- Recovering the coefficients of the finite-column action returns the
-original operator-valued matrix. -/
+/-- **Recovering the finite-column action gives its coefficients.**
+
+Let R be a semiring and E,F additive groups with topologies and R-module structures. For
+arbitrary row type m and finite column type n, A_ij:E→F continuous linear and continuous
+addition on F, let T_A:E^n→F^m be (T_A v)_i=∑jA_ij(v_j), on the product topology of PiLp 2.
+The equality toPiLpMatrix(T_A)=A holds.
+-/
 @[simp]
 theorem toPiLpMatrix_toPiLpContinuousLinearMap [Fintype n] [DecidableEq n]
     [ContinuousAdd F] (M : Matrix m n (E →L[R] F)) :
@@ -116,8 +137,13 @@ end ContinuousLinearMap
 
 namespace Matrix
 
-/-- Finite source-coordinate reconstruction recovers the original map from
-its operator-valued matrix. -/
+/-- **Reconstructing a continuous map from finitely many columns.**
+
+Let R be a semiring and E,F additive groups with topologies and R-module structures. For
+arbitrary row type m and finite column type n, A_ij:E→F continuous linear and continuous
+addition on F, let T_A:E^n→F^m be (T_A v)_i=∑jA_ij(v_j), on the product topology of PiLp 2.
+For any continuous linear T:E^n→F^m, the column action of toPiLpMatrix T equals T.
+-/
 @[simp]
 theorem toPiLpContinuousLinearMap_toPiLpMatrix [Fintype n] [DecidableEq n]
     [ContinuousAdd F]
@@ -138,8 +164,14 @@ theorem toPiLpContinuousLinearMap_toPiLpMatrix [Fintype n] [DecidableEq n]
       U (WithLp.ofLp v)
   exact ContinuousLinearMap.sum_comp_single R (fun _ : n => E) U (WithLp.ofLp v)
 
-/-- Rectangular operator matrices and continuous linear maps on the actual
-PiLp products are equivalent when source coordinates are finite. -/
+/-- **Equivalence of rectangular operator matrices and continuous product maps.**
+
+Let R be a semiring and E,F additive groups with topologies and R-module structures. For
+arbitrary row type m and finite column type n, A_ij:E→F continuous linear and continuous
+addition on F, let T_A:E^n→F^m be (T_A v)_i=∑jA_ij(v_j), on the product topology of PiLp 2.
+The equivalence piLpContinuousLinearMapEquiv identifies Matrix m n(E→L[R]F) with E^n→L[R]F^m
+by action and recovery.
+-/
 def piLpContinuousLinearMapEquiv [Fintype n] [DecidableEq n] [ContinuousAdd F] :
     Matrix m n (E →L[R] F) ≃
       (PiLp 2 (fun _ : n => E) →L[R] PiLp 2 (fun _ : m => F)) where
@@ -153,8 +185,12 @@ section Composition
 variable {k : Type uK}
 variable {G : Type uG} [AddCommGroup G] [TopologicalSpace G] [Module R G]
 
-/-- Rectangular composition acts in the same order as the corresponding
-continuous linear maps: the right matrix acts first. -/
+/-- **Composition of rectangular continuous column actions.**
+
+Let R be a semiring,E,F,G topological module additive groups, m arbitrary and n,k finite.
+Assume addition continuous on F,G. For A_ij:F→LG and B_jl:E→LF, the matrix C_il=∑j A_ij∘B_jl
+satisfies T_C=T_A∘T_B.
+-/
 theorem toPiLpContinuousLinearMap_comp [Fintype n] [Fintype k]
     [ContinuousAdd F] [ContinuousAdd G]
     (M : Matrix m n (F →L[R] G)) (N : Matrix n k (E →L[R] F)) :
@@ -177,8 +213,11 @@ section Square
 
 open scoped Matrix
 
-/-- The square operator-matrix action preserves actual ordered matrix
-multiplication, where operator multiplication is composition. -/
+/-- **Multiplication of square continuous operator matrices.**
+
+Let R be a semiring,E a topological module additive group with continuous addition and n
+finite. For matrices A,B of continuous linear endomorphisms, T_(AB)=T_A∘T_B.
+-/
 theorem toPiLpContinuousLinearMap_mul [Fintype n] [ContinuousAdd E]
     (M N : Matrix n n (E →L[R] E)) :
     toPiLpContinuousLinearMap (M * N) =
@@ -189,8 +228,11 @@ theorem toPiLpContinuousLinearMap_mul [Fintype n] [ContinuousAdd E]
   rw [← hMul, ContinuousLinearMap.mul_def]
   exact toPiLpContinuousLinearMap_comp M N
 
-/-- The action of the identity matrix is the actual identity map, including
-an empty index type. -/
+/-- **Identity matrix acts as the identity on a finite product.**
+
+Let R be a semiring,E a topological R-module additive group with continuous addition and n
+finite. The identity operator matrix acts as id on PiLp 2(E^n), including empty n.
+-/
 theorem toPiLpContinuousLinearMap_one [Fintype n] [DecidableEq n] [ContinuousAdd E] :
     toPiLpContinuousLinearMap (1 : Matrix n n (E →L[R] E)) =
       (1 : PiLp 2 (fun _ : n => E) →L[R] PiLp 2 (fun _ : n => E)) := by

@@ -1,3 +1,4 @@
-# Column Insert
+# Insertion into a chosen column
 
-Insert a vector in one column of the product-indexed vector space.
+Let R be a commutative semiring. For sets J,D and a ∈ D, define the R-linear insertion Iₐ :
+R^J → R^(J × D) by Iₐ(y)(j,b) = y(j) when b = a and zero otherwise.

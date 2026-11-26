@@ -15,53 +15,13 @@ public import Mathlib.LinearAlgebra.Matrix.Charpoly.Basic
 public import MathlibExt.LinearAlgebra.Determinant.FiniteFiltration
 
 /-!
-# Characteristic polynomials along finite invariant filtrations
+# Characteristic polynomials along invariant finite filtrations
 
-This file is the characteristic-polynomial analogue of
-`MathlibExt.LinearAlgebra.Determinant.FiniteFiltration`.  It packages and
-iterates the characteristic-polynomial factorization for an endomorphism
-preserving a submodule, for finite filtrations whose stages and successive
-quotients are finite free modules.
-
-## Main declarations
-
-* `LinearMap.charpoly_eq_one_of_subsingleton` computes the characteristic
-  polynomial on a zero module.
-* `LinearMap.charpoly_eq_charpoly_mul_charpoly` is the raw one-step
-  factorization for an invariant submodule, the characteristic-polynomial
-  analogue of Mathlib's `LinearMap.det_eq_det_mul_det`.
-* `LinearMap.InvariantExtension.charpoly_eq_charpoly_mul_charpoly_quotientMap`
-  is the one-step factorization packaged by an invariant extension.
-* `LinearMap.charpoly_eq_charpoly_mul_prod_graded` iterates the factorization
-  through a finite tower.
-* `LinearMap.charpoly_eq_prod_graded_of_bottom_subsingleton` removes the
-  bottom factor when the initial stage is zero.
-
-## Informal proof
-
-For one step, choose a basis of the invariant submodule `S` and a basis of
-`W / S`, and combine them into a basis of `W` with `Module.Basis.sumQuot`.
-Exactly as in Mathlib's proof of `LinearMap.det_eq_det_mul_det`, the matrix
-of the endomorphism in this basis is block upper-triangular, with diagonal
-blocks the matrices of the restriction and of the quotient map.  The matrix
-characteristic polynomial of a block upper-triangular matrix is the product
-of the characteristic polynomials of its diagonal blocks
-(`Matrix.charpoly_fromBlocks_zero₂₁`), which gives the raw factorization.
-
-The stored intertwining equality in an invariant extension says that the
-restriction is conjugate to the lower-stage endomorphism, and characteristic
-polynomials are invariant under conjugation, giving the packaged one-step
-formula.  The finite-tower formula is then the same `Fin n` induction as in
-the determinant file: if `p_{i+1} = p_i * q_i`, then
-`p_n = p_0 * ∏ i, q_i`.  When the bottom stage is a zero module, its
-characteristic polynomial is `1` (the empty matrix), leaving only the
-product over the graded quotients.
-
-The freeness of every successive quotient is explicit, as in the determinant
-file: over an arbitrary commutative ring it does not follow merely from
-freeness of the two adjacent stages.  The upper stage is also assumed free;
-unlike `LinearMap.det`, the characteristic polynomial is only defined on
-finite free modules.
+Let R be a commutative ring and (M_i,f_i)_(i=0)^n a finite tower of finite free modules with
+invariant inclusions M_i→M_(i+1). Assume each quotient Q_i is free; it is finite since M_(i+1)
+is finite. Let q_i be the induced quotient endomorphism. The factorization is
+χ_(f_n)=χ_(f_0)∏_{i<n}χ_(q_i). If M_0=0, only the quotient factors remain. Freeness of the
+successive quotients is part of the hypotheses.
 -/
 
 @[expose] public section
@@ -78,8 +38,11 @@ variable {V : Type v} {W : Type w}
 variable [AddCommGroup V] [Module R V]
 variable [AddCommGroup W] [Module R W]
 
-/-- The characteristic polynomial of an endomorphism of a zero module is
-`1`, paralleling `LinearMap.det_eq_one_of_subsingleton`. -/
+/-- **Characteristic polynomial on a zero module.**
+
+Let R be a commutative ring and M a finite free R-module with only the zero element. Every
+endomorphism f of M has χ_f=1.
+-/
 theorem charpoly_eq_one_of_subsingleton {M : Type*} [AddCommGroup M]
     [Module R M] [Module.Free R M] [Module.Finite R M] [Subsingleton M]
     (f : M →ₗ[R] M) : f.charpoly = 1 := by
@@ -88,11 +51,12 @@ theorem charpoly_eq_one_of_subsingleton {M : Type*} [AddCommGroup M]
   exact Matrix.charpoly_isEmpty
 
 open Module.Basis in
-/-- Characteristic-polynomial factorization for an endomorphism preserving
-a submodule: the characteristic polynomial is the product of those of the
-restriction and of the induced quotient map.  This is the
-characteristic-polynomial analogue of `LinearMap.det_eq_det_mul_det`, with
-the same block upper-triangular matrix proof. -/
+/-- **Characteristic polynomial factors across an invariant submodule.**
+
+Let R be a commutative ring, W a finite free R-module, U⊆W an invariant submodule for f:W→W,
+and assume U and W/U are free with U finitely generated. Write f_U,f_Q for the restriction and
+quotient endomorphisms. Then χ_f=χ_(f_U)χ_(f_Q).
+-/
 theorem charpoly_eq_charpoly_mul_charpoly (e : W →ₗ[R] W) (S : Submodule R W)
     (he : S ≤ S.comap e) [Module.Free R W] [Module.Finite R W]
     [Module.Free R S] [Module.Finite R S] [Module.Free R (W ⧸ S)] :
@@ -135,13 +99,12 @@ namespace InvariantExtension
 
 variable {f : V →ₗ[R] V} {g : W →ₗ[R] W}
 
-/-- Characteristic-polynomial factorization for one invariant extension.
+/-- **Characteristic polynomial factorization for an invariant extension.**
 
-This is the reusable one-step block-triangular formula, the
-characteristic-polynomial analogue of
-`LinearMap.InvariantExtension.det_eq_det_mul_det_quotientMap`.  The upper
-stage is assumed free because `LinearMap.charpoly`, unlike `LinearMap.det`,
-is only defined on finite free modules. -/
+Let R be a commutative ring, V,W finite free R-modules with endomorphisms f,g, and E an
+invariant extension identifying V with a g-invariant submodule of W and intertwining f with
+the restriction. If its quotient Q is free, χ_g=χ_fχ_(E.quotientMap).
+-/
 theorem charpoly_eq_charpoly_mul_charpoly_quotientMap
     (E : InvariantExtension f g) [Module.Free R V] [Module.Finite R V]
     [Module.Free R W] [Module.Finite R W]
@@ -190,12 +153,13 @@ variable {n : ℕ} {M : Fin (n + 1) → Type v}
 variable [∀ i, AddCommGroup (M i)] [∀ i, Module R (M i)]
 variable [∀ i, Module.Free R (M i)] [∀ i, Module.Finite R (M i)]
 
-/-- The characteristic polynomial on the final stage of a finite invariant
-filtration is the characteristic polynomial on the initial stage times the
-product of the characteristic polynomials on all successive graded
-quotients.  This is the characteristic-polynomial analogue of
-`LinearMap.det_eq_det_mul_prod_graded`, with the same interface: each
-`step i` identifies stage `i` with an invariant submodule of stage `i+1`. -/
+/-- **Product formula through an invariant finite tower.**
+
+Let R be a commutative ring and (M_i,f_i)_(i=0)^n a finite tower of finite free modules with
+invariant inclusions M_i→M_(i+1). Assume each quotient Q_i is free; it is finite since M_(i+1)
+is finite. Let q_i be the induced quotient endomorphism. The final characteristic polynomial
+satisfies χ_(f_n)=χ_(f_0)∏_{i<n}χ_(q_i).
+-/
 theorem charpoly_eq_charpoly_mul_prod_graded
     (endomorphism : ∀ i, M i →ₗ[R] M i)
     (step : ∀ i : Fin n,
@@ -210,9 +174,13 @@ theorem charpoly_eq_charpoly_mul_prod_graded
   let _ : Module.Free R (M i.succ ⧸ (step i).submodule) := quotientFree i
   exact (step i).charpoly_eq_charpoly_mul_charpoly_quotientMap
 
-/-- Version of `LinearMap.charpoly_eq_charpoly_mul_prod_graded` for a
-filtration whose bottom characteristic polynomial has already been
-identified with one. -/
+/-- **Graded characteristic-polynomial product when the bottom factor is one.**
+
+Let R be a commutative ring and (M_i,f_i)_(i=0)^n a finite tower of finite free modules with
+invariant inclusions M_i→M_(i+1). Assume each quotient Q_i is free; it is finite since M_(i+1)
+is finite. Let q_i be the induced quotient endomorphism. If χ_(f_0)=1, then
+χ_(f_n)=∏_{i<n}χ_(q_i).
+-/
 theorem charpoly_eq_prod_graded_of_bottom_charpoly_eq_one
     (endomorphism : ∀ i, M i →ₗ[R] M i)
     (step : ∀ i : Fin n,
@@ -224,8 +192,13 @@ theorem charpoly_eq_prod_graded_of_bottom_charpoly_eq_one
   rw [charpoly_eq_charpoly_mul_prod_graded endomorphism step quotientFree,
     hbottom, one_mul]
 
-/-- Characteristic-polynomial product formula for a finite invariant
-filtration starting at a zero module. -/
+/-- **Graded characteristic-polynomial product from a zero bottom stage.**
+
+Let R be a commutative ring and (M_i,f_i)_(i=0)^n a finite tower of finite free modules with
+invariant inclusions M_i→M_(i+1). Assume each quotient Q_i is free; it is finite since M_(i+1)
+is finite. Let q_i be the induced quotient endomorphism. If M_0=0, then
+χ_(f_n)=∏_{i<n}χ_(q_i).
+-/
 theorem charpoly_eq_prod_graded_of_bottom_subsingleton
     (endomorphism : ∀ i, M i →ₗ[R] M i)
     (step : ∀ i : Fin n,

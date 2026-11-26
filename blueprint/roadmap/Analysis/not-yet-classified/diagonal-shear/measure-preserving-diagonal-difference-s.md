@@ -1,3 +1,6 @@
-# Measure Preserving diagonal Difference Shear radon Prod
+# Measure preservation of the difference-coordinate shear
 
-The actual forward coordinate shear is measure preserving on the full Borel Radon square.
+Let `G` be a Hausdorff
+locally compact abelian topological group with Borel structure and Haar measure `μ`. Put
+`R=radonProd μ μ` on the Borel square and `S(s,t)=(st⁻¹,t)`. `S : G×G → G×G` is measure
+preserving for `R`.

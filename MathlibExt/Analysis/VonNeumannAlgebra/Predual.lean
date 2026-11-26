@@ -17,18 +17,17 @@ public import Mathlib.Analysis.Normed.Group.Submodule
 public import Mathlib.Analysis.Normed.Module.Basic
 
 /-!
-# The actual normal functional space is a concrete predual
+# Isometric predual realization by normal vector functionals
 
-Evaluation identifies the original concrete von Neumann algebra with the
-continuous dual of its norm-closed vector-functional span. For a functional
-on that span, Fréchet–Riesz constructs the bounded operator having its actual
-vector coefficients. Commutation with the original commutant places this
-operator in the original algebra. Continuity extends coefficient agreement
-to the complete closed span.
+For a concrete von Neumann algebra `M ⊆ B(H)` on a complete complex Hilbert space, let `M_*` be
+the norm-closed complex span of vector functionals `ω_(ξ,η)(x)=⟨ξ,xη⟩`. Evaluation defines `J_M
+: M → (M_*)*`, `J_M(x)(φ)=φ(x)`.
 
-The pairing and norm are the original functional evaluation and operator
-norm. The stock involution supplies the conjugate-linear convention of the
-existing abstract `WStarAlgebra` predicate.
+This map is a surjective linear isometry. A bounded functional `F` on `M_*` is represented by an
+operator `T_F ∈ M` with `⟨ξ,T_F η⟩=F(ω_(ξ,η))` and `‖T_F‖≤‖F‖`.
+
+Composing the inverse evaluation with the algebra involution gives the conjugate-linear
+isometric equivalence `(M_*)* ≃ M` that witnesses the abstract W-star-algebra predual property.
 -/
 
 @[expose] public section
@@ -46,22 +45,37 @@ universe u
 
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- The normal-functional carrier has the original restricted normed additive-group structure. -/
+/-- **Inherited normed additive group of normal functionals.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for
+its vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. the norm and additive operations on `M_*` are the restrictions of the
+continuous-dual operator norm and operations on `M*`. -/
 noncomputable instance normalFunctionalSpaceNormedAddCommGroup (M : VonNeumannAlgebra H) :
     NormedAddCommGroup (normalFunctionalSpace M) :=
   Submodule.normedAddCommGroup (𝕜 := ℂ) (E := StrongDual ℂ M) (normalFunctionalSpace M)
 
-/-- The normal-functional carrier has the original restricted complex normed-space structure. -/
+/-- **Inherited complex normed space of normal functionals.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for
+its vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. `M_*` is a complex normed space with the scalar action and operator norm inherited
+from `M*`. -/
 noncomputable instance normalFunctionalSpaceNormedSpace (M : VonNeumannAlgebra H) :
     NormedSpace ℂ (normalFunctionalSpace M) :=
   Submodule.normedSpace (𝕜 := ℂ) (R := ℂ) (E := StrongDual ℂ M) (normalFunctionalSpace M)
 
-/-- An actual vector coefficient viewed in the canonical closed normal-functional space. -/
+/-- **Vector coefficient as a normal-functional element.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for
+its vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. for `ξ,η ∈ H`, `normalVectorFunctional M ξ η` is the element `ω_(ξ,η)` of `M_*`,
+with evaluation `x ↦ ⟨ξ,xη⟩`. -/
 noncomputable def normalVectorFunctional (M : VonNeumannAlgebra H) (ξ η : H) :
     normalFunctionalSpace M :=
   ⟨vectorFunctional M ξ η, vectorFunctional_mem_normalFunctionalSpace M ξ η⟩
 
-/-- Evaluation restricted to the actual closed normal-functional space. -/
+/-- **Bounded evaluation into the dual of normal functionals.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for
+its vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. `normalFunctionalEvaluation M : M →L[ℂ] (M_*)*` is `J_M(x)(φ)=φ(x)`. -/
 noncomputable def normalFunctionalEvaluation (M : VonNeumannAlgebra H) :
     M →L[ℂ] StrongDual ℂ (normalFunctionalSpace M) :=
   let ev : M → StrongDual ℂ (normalFunctionalSpace M) := fun x =>
@@ -110,14 +124,20 @@ noncomputable def normalFunctionalEvaluation (M : VonNeumannAlgebra H) :
       ‖(φ : StrongDual ℂ M) x‖ ≤ ‖φ‖ * ‖x‖ := (φ : StrongDual ℂ M).le_opNorm x
       _ = ‖x‖ * ‖φ‖ := mul_comm _ _)
 
-/-- The restricted evaluation pairing is ordinary evaluation in the original dual. -/
+/-- **Value of normal-functional evaluation.** Let `H` be a complete complex Hilbert space and
+`M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for its vector
+functionals. Let `M_*` be their norm-closed complex span in the continuous dual `M*`. for
+`x ∈ M` and `φ ∈ M_*`, `normalFunctionalEvaluation M x φ=φ(x)`. -/
 @[simp]
 theorem normalFunctionalEvaluation_apply (M : VonNeumannAlgebra H) (x : M)
     (φ : normalFunctionalSpace M) :
     normalFunctionalEvaluation M x φ = (φ : StrongDual ℂ M) x :=
   rfl
 
-/-- Vector coefficients determine every original operator in the concrete algebra. -/
+/-- **Injectivity of evaluation against normal functionals.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for
+its vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. the map `J_M : x ↦ (φ ↦ φ(x))` is injective on `M`. -/
 theorem normalFunctionalEvaluation_injective (M : VonNeumannAlgebra H) :
     Function.Injective (normalFunctionalEvaluation M) := by
   intro x y h
@@ -131,12 +151,18 @@ theorem normalFunctionalEvaluation_injective (M : VonNeumannAlgebra H) :
   change vectorFunctional M ξ η x = vectorFunctional M ξ η y at hc
   simpa only [vectorFunctional_apply] using hc
 
-/-- The normal vector coefficient has its inherited continuous-dual norm bound. -/
+/-- **Norm bound for a normal vector-functional element.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for
+its vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. for `ξ,η ∈ H`, `‖normalVectorFunctional M ξ η‖≤‖ξ‖‖η‖`. -/
 private theorem normalVectorFunctional_norm_le (M : VonNeumannAlgebra H) (ξ η : H) :
     ‖normalVectorFunctional M ξ η‖ ≤ ‖ξ‖ * ‖η‖ :=
   norm_vectorFunctional_le M ξ η
 
-/-- Normal vector coefficients are additive in the first Hilbert argument. -/
+/-- **Addition in the first vector-functional argument.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for
+its vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. for `ξ,ζ,η ∈ H`, `ω_(ξ+ζ,η)=ω_(ξ,η)+ω_(ζ,η)` as elements of `M_*`. -/
 private theorem normalVectorFunctional_add_left (M : VonNeumannAlgebra H) (ξ ζ η : H) :
     normalVectorFunctional M (ξ + ζ) η =
       normalVectorFunctional M ξ η + normalVectorFunctional M ζ η := by
@@ -145,7 +171,11 @@ private theorem normalVectorFunctional_add_left (M : VonNeumannAlgebra H) (ξ ζ
   simpa only [vectorFunctional] using
     representationCoefficient_add_right (A := M) M.toStarSubalgebra.subtype η ξ ζ
 
-/-- Normal vector coefficients are conjugate-linear in the first Hilbert argument. -/
+/-- **Conjugate scalar in the first vector-functional argument.** Let `H` be a complete
+complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write
+`ω_(ξ,η)(x)=⟨ξ,xη⟩` for its vector functionals. Let `M_*` be their norm-closed complex
+span in the continuous dual `M*`. for `c : ℂ`, `ξ,η ∈ H`, `ω_(cξ,η)=conj(c) ω_(ξ,η)` in
+`M_*`. -/
 private theorem normalVectorFunctional_smul_left (M : VonNeumannAlgebra H)
     (c : ℂ) (ξ η : H) :
     normalVectorFunctional M (c • ξ) η = star c • normalVectorFunctional M ξ η := by
@@ -154,7 +184,10 @@ private theorem normalVectorFunctional_smul_left (M : VonNeumannAlgebra H)
   simpa only [vectorFunctional] using
     representationCoefficient_smul_right (A := M) M.toStarSubalgebra.subtype c η ξ
 
-/-- Normal vector coefficients are additive in the second Hilbert argument. -/
+/-- **Addition in the second vector-functional argument.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for
+its vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. for `ξ,η,ζ ∈ H`, `ω_(ξ,η+ζ)=ω_(ξ,η)+ω_(ξ,ζ)` in `M_*`. -/
 private theorem normalVectorFunctional_add_right (M : VonNeumannAlgebra H) (ξ η ζ : H) :
     normalVectorFunctional M ξ (η + ζ) =
       normalVectorFunctional M ξ η + normalVectorFunctional M ξ ζ := by
@@ -163,7 +196,10 @@ private theorem normalVectorFunctional_add_right (M : VonNeumannAlgebra H) (ξ �
   simpa only [vectorFunctional] using
     representationCoefficient_add_left (A := M) M.toStarSubalgebra.subtype η ζ ξ
 
-/-- Normal vector coefficients are linear in the second Hilbert argument. -/
+/-- **Linear scalar in the second vector-functional argument.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for
+its vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. for `c : ℂ`, `ξ,η ∈ H`, `ω_(ξ,cη)=c ω_(ξ,η)` in `M_*`. -/
 private theorem normalVectorFunctional_smul_right (M : VonNeumannAlgebra H)
     (c : ℂ) (ξ η : H) :
     normalVectorFunctional M ξ (c • η) = c • normalVectorFunctional M ξ η := by
@@ -172,7 +208,12 @@ private theorem normalVectorFunctional_smul_right (M : VonNeumannAlgebra H)
   simpa only [vectorFunctional] using
     representationCoefficient_smul_left (A := M) M.toStarSubalgebra.subtype c η ξ
 
-/-- Riesz receives the actual conjugated coefficient functional at a fixed second vector. -/
+/-- **Fixed-vector Riesz functional of a normal predual dual element.** Let `H` be a complete
+complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write
+`ω_(ξ,η)(x)=⟨ξ,xη⟩` for its vector functionals. Let `M_*` be their norm-closed complex
+span in the continuous dual `M*`. Let `F ∈ (M_*)*` be a bounded complex-linear functional
+on the normal-functional space. for `η ∈ H`, `predualRieszForm M F η ∈ H*` is the linear
+functional `ξ ↦ conj(F(ω_(ξ,η)))`. -/
 private noncomputable def predualRieszForm (M : VonNeumannAlgebra H)
     (F : StrongDual ℂ (normalFunctionalSpace M)) (η : H) : StrongDual ℂ H :=
   let f : H →ₗ[ℂ] ℂ :=
@@ -192,7 +233,11 @@ private noncomputable def predualRieszForm (M : VonNeumannAlgebra H)
         mul_le_mul_of_nonneg_left (normalVectorFunctional_norm_le M ξ η) (norm_nonneg F)
       _ = (‖F‖ * ‖η‖) * ‖ξ‖ := by ring)
 
-/-- The fixed-vector Riesz functional retains the actual product norm bound. -/
+/-- **Norm bound for the fixed-vector Riesz functional.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for
+its vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. Let `F ∈ (M_*)*` be a bounded complex-linear functional on the normal-functional
+space. for `η ∈ H`, `‖predualRieszForm M F η‖≤‖F‖‖η‖`. -/
 private theorem predualRieszForm_norm_le (M : VonNeumannAlgebra H)
     (F : StrongDual ℂ (normalFunctionalSpace M)) (η : H) :
     ‖predualRieszForm M F η‖ ≤ ‖F‖ * ‖η‖ := by
@@ -206,7 +251,12 @@ private theorem predualRieszForm_norm_le (M : VonNeumannAlgebra H)
       mul_le_mul_of_nonneg_left (normalVectorFunctional_norm_le M ξ η) (norm_nonneg F)
     _ = (‖F‖ * ‖η‖) * ‖ξ‖ := by ring
 
-/-- The actual bounded sesquilinear family supplied to the stock Riesz construction. -/
+/-- **Bounded conjugate-linear family of Riesz functionals.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for
+its vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. Let `F ∈ (M_*)*` be a bounded complex-linear functional on the normal-functional
+space. `predualRieszFormMap M F : H →L⋆[ℂ] H*` sends `η` to the functional `ξ ↦
+conj(F(ω_(ξ,η)))`. -/
 private noncomputable def predualRieszFormMap (M : VonNeumannAlgebra H)
     (F : StrongDual ℂ (normalFunctionalSpace M)) : H →L⋆[ℂ] StrongDual ℂ H :=
   let f : H →ₗ⋆[ℂ] StrongDual ℂ H :=
@@ -227,12 +277,21 @@ private noncomputable def predualRieszFormMap (M : VonNeumannAlgebra H)
         simp only [normalVectorFunctional_smul_right, map_smul, star_smul] }
   f.mkContinuous ‖F‖ (predualRieszForm_norm_le M F)
 
-/-- The stock Riesz representation reconstructs the actual bounded Hilbert operator. -/
+/-- **Hilbert operator represented by a functional on normal functionals.** Let `H` be a
+complete complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write
+`ω_(ξ,η)(x)=⟨ξ,xη⟩` for its vector functionals. Let `M_*` be their norm-closed complex
+span in the continuous dual `M*`. Let `F ∈ (M_*)*` be a bounded complex-linear functional
+on the normal-functional space. `reconstructedOperator M F : H →L[ℂ] H` is the bounded
+operator `T_F` characterized by `⟨ξ,T_F η⟩=F(ω_(ξ,η))` for all `ξ,η ∈ H`. -/
 private noncomputable def reconstructedOperator (M : VonNeumannAlgebra H)
     (F : StrongDual ℂ (normalFunctionalSpace M)) : H →L[ℂ] H :=
   InnerProductSpace.continuousLinearMapOfBilin (predualRieszFormMap M F)
 
-/-- The reconstructed operator has exactly the supplied normal vector coefficients. -/
+/-- **Vector coefficients of the predual reconstruction.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for
+its vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. Let `F ∈ (M_*)*` be a bounded complex-linear functional on the normal-functional
+space. for `ξ,η ∈ H`, `⟨ξ,reconstructedOperator M F η⟩=F(normalVectorFunctional M ξ η)`. -/
 private theorem reconstructedOperator_inner (M : VonNeumannAlgebra H)
     (F : StrongDual ℂ (normalFunctionalSpace M)) (ξ η : H) :
     ⟪ξ, reconstructedOperator M F η⟫_ℂ = F (normalVectorFunctional M ξ η) := by
@@ -246,7 +305,12 @@ private theorem reconstructedOperator_inner (M : VonNeumannAlgebra H)
       (inner_conj_symm (𝕜 := ℂ) ξ (reconstructedOperator M F η))
   exact hscalar.symm.trans (by simpa only [star_star] using hs)
 
-/-- The actual reconstructed operator is bounded by the original functional norm. -/
+/-- **Operator-norm bound of the predual reconstruction.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for
+its vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. Let `F ∈ (M_*)*` be a bounded complex-linear functional on the normal-functional
+space. `‖reconstructedOperator M F‖≤‖F‖`, with the operator norm and continuous-dual norm
+respectively. -/
 private theorem norm_reconstructedOperator_le (M : VonNeumannAlgebra H)
     (F : StrongDual ℂ (normalFunctionalSpace M)) : ‖reconstructedOperator M F‖ ≤ ‖F‖ := by
   apply ContinuousLinearMap.opNorm_le_bound _ (norm_nonneg F)
@@ -256,7 +320,11 @@ private theorem norm_reconstructedOperator_le (M : VonNeumannAlgebra H)
       (InnerProductSpace.toDual ℂ H).symm.norm_map _
     _ ≤ ‖F‖ * ‖η‖ := predualRieszForm_norm_le M F η
 
-/-- The original commutant transports both vector arguments of every coefficient. -/
+/-- **Commutant operator balancing in vector functionals.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for
+its vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. if `S ∈ B(H)` commutes with every element of `M`, then `ω_(S*ξ,η)=ω_(ξ,Sη)` in `M_*`
+for all `ξ,η ∈ H`. -/
 private theorem normalVectorFunctional_commutant (M : VonNeumannAlgebra H)
     (S : H →L[ℂ] H) (hS : S ∈ Set.centralizer (M : Set (H →L[ℂ] H))) (ξ η : H) :
     normalVectorFunctional M ((star S) ξ) η = normalVectorFunctional M ξ (S η) := by
@@ -270,7 +338,11 @@ private theorem normalVectorFunctional_commutant (M : VonNeumannAlgebra H)
   change ⟪ξ, (S * (x : H →L[ℂ] H)) η⟫_ℂ = ⟪ξ, ((x : H →L[ℂ] H) * S) η⟫_ℂ
   rw [hcomm]
 
-/-- Commutation with the original commutant places the reconstruction in the original algebra. -/
+/-- **Predual reconstruction belongs to the concrete algebra.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for
+its vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. Let `F ∈ (M_*)*` be a bounded complex-linear functional on the normal-functional
+space. the bounded operator `reconstructedOperator M F` belongs to `M`. -/
 private theorem reconstructedOperator_mem (M : VonNeumannAlgebra H)
     (F : StrongDual ℂ (normalFunctionalSpace M)) : reconstructedOperator M F ∈ M := by
   change reconstructedOperator M F ∈ (M : Set (H →L[ℂ] H))
@@ -292,7 +364,11 @@ private theorem reconstructedOperator_mem (M : VonNeumannAlgebra H)
       congrArg F (normalVectorFunctional_commutant M S hS ξ η)
     _ = ⟪ξ, reconstructedOperator M F (S η)⟫_ℂ := (reconstructedOperator_inner M F _ _).symm
 
-/-- Continuous functionals on the actual closed span are determined by its vector coefficients. -/
+/-- **Dual functionals determined by vector-functional values.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for
+its vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. bounded complex-linear functionals `F,G ∈ (M_*)*` are equal if
+`F(ω_(ξ,η))=G(ω_(ξ,η))` for every `ξ,η ∈ H`. -/
 private theorem normalFunctionalDual_ext (M : VonNeumannAlgebra H)
     (f g : StrongDual ℂ (normalFunctionalSpace M))
     (hvec : ∀ ξ η : H, f (normalVectorFunctional M ξ η) = g (normalVectorFunctional M ξ η)) :
@@ -322,7 +398,12 @@ private theorem normalFunctionalDual_ext (M : VonNeumannAlgebra H)
   rw [sub_apply, heq] at hz
   exact sub_eq_zero.mp hz
 
-/-- Every actual functional on the closed normal span is evaluation at an original norm-bounded operator. -/
+/-- **Norm-controlled operator representing a normal-predual functional.** Let `H` be a
+complete complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write
+`ω_(ξ,η)(x)=⟨ξ,xη⟩` for its vector functionals. Let `M_*` be their norm-closed complex
+span in the continuous dual `M*`. Let `F ∈ (M_*)*` be a bounded complex-linear functional
+on the normal-functional space. there exists `x ∈ M` with `normalFunctionalEvaluation M
+x=F` and `‖x‖≤‖F‖`. -/
 theorem normalFunctionalEvaluation_surjective_norm (M : VonNeumannAlgebra H)
     (F : StrongDual ℂ (normalFunctionalSpace M)) :
     ∃ x : M, normalFunctionalEvaluation M x = F ∧ ‖x‖ ≤ ‖F‖ := by
@@ -335,14 +416,21 @@ theorem normalFunctionalEvaluation_surjective_norm (M : VonNeumannAlgebra H)
     exact reconstructedOperator_inner M F ξ η
   · exact norm_reconstructedOperator_le M F
 
-/-- The original evaluation map is onto the actual normal-functional continuous dual. -/
+/-- **Surjectivity of normal-functional evaluation.** Let `H` be a complete complex Hilbert
+space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for its
+vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. every bounded complex-linear functional on `M_*` is evaluation at an element of `M`;
+thus `normalFunctionalEvaluation M` is surjective. -/
 theorem normalFunctionalEvaluation_surjective (M : VonNeumannAlgebra H) :
     Function.Surjective (normalFunctionalEvaluation M) := by
   intro F
   obtain ⟨x, hx, _⟩ := normalFunctionalEvaluation_surjective_norm M F
   exact ⟨x, hx⟩
 
-/-- Evaluation has the original operator-norm upper bound. -/
+/-- **Operator norm bounds the normal evaluation norm.** Let `H` be a complete complex Hilbert
+space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for its
+vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. for `x ∈ M`, `‖normalFunctionalEvaluation M x‖≤‖x‖`. -/
 private theorem normalFunctionalEvaluation_norm_le (M : VonNeumannAlgebra H) (x : M) :
     ‖normalFunctionalEvaluation M x‖ ≤ ‖x‖ := by
   apply ContinuousLinearMap.opNorm_le_bound _ (norm_nonneg x)
@@ -352,7 +440,10 @@ private theorem normalFunctionalEvaluation_norm_le (M : VonNeumannAlgebra H) (x 
     ‖(φ : StrongDual ℂ M) x‖ ≤ ‖φ‖ * ‖x‖ := (φ : StrongDual ℂ M).le_opNorm x
     _ = ‖x‖ * ‖φ‖ := mul_comm _ _
 
-/-- Actual evaluation preserves the original operator norm, including the zero Hilbert space. -/
+/-- **Isometric normal-functional evaluation.** Let `H` be a complete complex Hilbert space
+and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for its vector
+functionals. Let `M_*` be their norm-closed complex span in the continuous dual `M*`. for
+`x ∈ M`, `‖normalFunctionalEvaluation M x‖=‖x‖`, with the inherited operator norm on `M`. -/
 theorem normalFunctionalEvaluation_norm (M : VonNeumannAlgebra H) (x : M) :
     ‖normalFunctionalEvaluation M x‖ = ‖x‖ := by
   obtain ⟨y, hy, hnorm⟩ :=
@@ -361,7 +452,11 @@ theorem normalFunctionalEvaluation_norm (M : VonNeumannAlgebra H) (x : M) :
   apply le_antisymm (normalFunctionalEvaluation_norm_le M x)
   simpa only [hyx] using hnorm
 
-/-- The canonical linear isometric equivalence uses the actual evaluation map and its proved surjectivity. -/
+/-- **Linear isometric equivalence with the normal-predual dual.** Let `H` be a complete
+complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write
+`ω_(ξ,η)(x)=⟨ξ,xη⟩` for its vector functionals. Let `M_*` be their norm-closed complex
+span in the continuous dual `M*`. `normalFunctionalEvaluationEquiv M : M ≃ₗᵢ[ℂ] (M_*)*` is
+`x ↦ (φ ↦ φ(x))`. -/
 noncomputable def normalFunctionalEvaluationEquiv (M : VonNeumannAlgebra H) :
     M ≃ₗᵢ[ℂ] StrongDual ℂ (normalFunctionalSpace M) :=
   LinearIsometryEquiv.ofSurjective
@@ -369,20 +464,31 @@ noncomputable def normalFunctionalEvaluationEquiv (M : VonNeumannAlgebra H) :
       norm_map' := normalFunctionalEvaluation_norm M }
     (normalFunctionalEvaluation_surjective M)
 
-/-- The canonical isometric equivalence retains ordinary evaluation of the original functionals. -/
+/-- **Pairing of the isometric predual evaluation equivalence.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for
+its vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. for `x ∈ M` and `φ ∈ M_*`, `(normalFunctionalEvaluationEquiv M x)(φ)=φ(x)`. -/
 @[simp]
 theorem normalFunctionalEvaluationEquiv_apply (M : VonNeumannAlgebra H) (x : M)
     (φ : normalFunctionalSpace M) :
     normalFunctionalEvaluationEquiv M x φ = (φ : StrongDual ℂ M) x :=
   rfl
 
-/-- The original concrete algebra is the actual continuous dual of its normal functional space. -/
+/-- **Existence of the evaluation isometric dual realization.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for
+its vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. there is a linear isometric equivalence `e : M ≃ₗᵢ[ℂ] (M_*)*` satisfying
+`e(x)(φ)=φ(x)` for every `x ∈ M`, `φ ∈ M_*`. -/
 theorem normalFunctionalEvaluation_isometricEquivalence (M : VonNeumannAlgebra H) :
     ∃ e : M ≃ₗᵢ[ℂ] StrongDual ℂ (normalFunctionalSpace M),
       ∀ x : M, ∀ φ : normalFunctionalSpace M, e x φ = (φ : StrongDual ℂ M) x :=
   ⟨normalFunctionalEvaluationEquiv M, fun _ _ => rfl⟩
 
-/-- The original involution supplies the conjugate-linear convention of the stock predual predicate. -/
+/-- **Conjugate-linear predual equivalence from the algebra involution.** Let `H` be a
+complete complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write
+`ω_(ξ,η)(x)=⟨ξ,xη⟩` for its vector functionals. Let `M_*` be their norm-closed complex
+span in the continuous dual `M*`. `normalFunctionalPredualConjugateEquiv M : (M_*)*
+≃ₗᵢ⋆[ℂ] M` sends `F` to `(J_M⁻¹ F)*`, where `J_M(x)(φ)=φ(x)`. -/
 noncomputable def normalFunctionalPredualConjugateEquiv (M : VonNeumannAlgebra H) :
     StrongDual ℂ (normalFunctionalSpace M) ≃ₗᵢ⋆[ℂ] M where
   toLinearEquiv := (normalFunctionalEvaluationEquiv M).symm.toLinearEquiv.trans
@@ -393,7 +499,12 @@ noncomputable def normalFunctionalPredualConjugateEquiv (M : VonNeumannAlgebra H
     rw [norm_star]
     exact (normalFunctionalEvaluationEquiv M).symm.norm_map F
 
-/-- The explicit original normal-functional Banach space witnesses the existing abstract von Neumann predicate. -/
+/-- **W-star-algebra structure from the normal-functional Banach space.** Let `H` be a
+complete complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write
+`ω_(ξ,η)(x)=⟨ξ,xη⟩` for its vector functionals. Let `M_*` be their norm-closed complex
+span in the continuous dual `M*`. `M_*` witnesses the predual property of `M`: it is a
+complex Banach space whose continuous dual is conjugate-linearly isometrically equivalent
+to `M` via `F ↦ (J_M⁻¹F)*`. -/
 noncomputable instance normalFunctionalInstWStarAlgebra (M : VonNeumannAlgebra H) : WStarAlgebra M where
   exists_predual :=
     ⟨normalFunctionalSpace M, inferInstance, inferInstance, inferInstance,

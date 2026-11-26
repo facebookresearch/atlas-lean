@@ -1,4 +1,4 @@
-# Pfister Weight lower Index
+# Weights on the lower Pfister block
 
-The full Pfister coefficient on a lower-block coordinate is the
-lower-rank Pfister coefficient.
+Let F be a field and a₀,…,aₙ ∈ Fˣ, with lower tuple bᵢ = aᵢ for i < n. For wₐ(s) = ∏ᵢ∈s (−aᵢ)
+and L(s) the image of s ⊆ Fin n in Fin(n+1) omitting n, one has wₐ(L(s)) = w_b(s).

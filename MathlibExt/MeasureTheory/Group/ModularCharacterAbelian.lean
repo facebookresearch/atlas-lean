@@ -14,11 +14,13 @@ module
 public import Mathlib.MeasureTheory.Group.ModularCharacter
 
 /-!
-# Trivial modular character of a locally compact abelian group
+# Modular character of a locally compact abelian group
 
-Commutativity makes the canonical left Haar measure invariant under right
-translations. Its modular character is therefore identically one. This
-measure-theoretic fact is independent of Hilbert regular representations.
+Commutativity makes the left Haar measure of a locally compact abelian topological group
+invariant under right translations. Its modular character is therefore identically one.
+
+No chosen Hilbert representation or measurable structure is an input to this group-theoretic
+statement.
 -/
 
 @[expose] public section
@@ -35,7 +37,8 @@ universe uG
 variable {G : Type uG} [CommGroup G] [TopologicalSpace G] [IsTopologicalGroup G]
   [LocallyCompactSpace G]
 
-/-- The modular character of a locally compact abelian group is identically one. -/
+/-- **Trivial modular character of a locally compact abelian group.** Let `G` be a locally
+compact abelian topological group. For every `g∈G`, `Measure.modularCharacter g=1`. -/
 theorem modularCharacter_eq_one_of_comm (g : G) : modularCharacter g = 1 := by
   let : MeasurableSpace G := borel G
   let : BorelSpace G := ⟨rfl⟩

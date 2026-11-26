@@ -18,11 +18,11 @@ public import Mathlib.Tactic.NormNum
 public import Mathlib.Tactic.Ring
 
 /-!
-# The original complex tensor over the reals
+# Complex self-tensor over the real scalars
 
-The canonical finite-Galois self-tensor equivalence is reindexed by the
-actual identity and conjugation automorphisms of `ℂ/ℝ`. Its algebra
-structure retains `(z * w, z * conj w)` and the original twisted right action.
+The ℂ-algebra equivalence Θ:ℂ⊗_ℝℂ≃ℂ×ℂ sends z⊗w to (zw,z*conj(w)), with complex scalars acting
+on the first tensor factor. Its inverse sends (p,q) to ((p+q)/2)⊗1+((p-q)/(2i))⊗i. The two
+real-algebra automorphisms are identity and conjugation.
 -/
 
 @[expose] public section
@@ -39,7 +39,11 @@ private theorem realTensorIdentity_ne_conjugation :
   have hI := congrArg (fun e : ℂ ≃ₐ[ℝ] ℂ => (e Complex.I).im) h
   norm_num at hI
 
-/-- Number the actual real algebra automorphisms by identity and conjugation. -/
+/-- **Indexing the real-algebra automorphisms of ℂ.**
+
+The equivalence realTensorAutomorphismIndex:Fin 2≃Aut_ℝ(ℂ) sends 0 to the identity and 1 to
+complex conjugation.
+-/
 def realTensorAutomorphismIndex : Fin 2 ≃ (ℂ ≃ₐ[ℝ] ℂ) :=
   Equiv.ofBijective
     (fun j => if j = 0 then (AlgEquiv.refl : ℂ ≃ₐ[ℝ] ℂ) else Complex.conjAe) (by
@@ -56,7 +60,11 @@ def realTensorAutomorphismIndex : Fin 2 ≃ (ℂ ≃ₐ[ℝ] ℂ) :=
           ext z
           exact (DFunLike.congr_fun h z).symm)
 
-/-- The actual finite-Galois tensor decomposition retains its full complex algebra structure. -/
+/-- **Complex algebra equivalence of the real self-tensor.**
+
+With the usual real scalar structure on ℂ, tensorProductRealAlgEquiv:ℂ⊗_ℝℂ≃ₐ[ℂ]ℂ×ℂ has pure
+value z⊗w↦(zw,z*conj(w)).
+-/
 def tensorProductRealAlgEquiv :
     letI : Module ℝ ℂ := Complex.ofRealHom.toModule
     letI : Algebra ℝ ℂ := Complex.ofRealHom.toAlgebra
@@ -73,7 +81,11 @@ def tensorProductRealAlgEquiv :
         intro z
         rfl)))
 
-/-- The same original pure tensor has its identity and conjugation coordinates. -/
+/-- **Pure tensor coordinates of the complex algebra equivalence.**
+
+For z,w∈ℂ, tensorProductRealAlgEquiv(z⊗_ℝw)=(zw,z*conj(w)), using complex scalars on the left
+factor.
+-/
 @[simp]
 theorem tensorProductRealAlgEquiv_tmul (z w : ℂ) :
     letI : Module ℝ ℂ := Complex.ofRealHom.toModule
@@ -94,14 +106,21 @@ theorem tensorProductRealAlgEquiv_tmul (z w : ℂ) :
     rw [MilnorK.finiteGaloisTensorProductEquiv_tmul]
     rfl
 
-/-- Additive coercion of the same canonical algebra equivalence. -/
+/-- **Additive equivalence of the real complex self-tensor.**
+
+The additive equivalence tensorProductRealAddEquiv:ℂ⊗_ℝℂ≃+ℂ×ℂ is Θ, with
+Θ(z⊗w)=(zw,z*conj(w)).
+-/
 def tensorProductRealAddEquiv :
     letI : Module ℝ ℂ := Complex.ofRealHom.toModule
     letI : Algebra ℝ ℂ := Complex.ofRealHom.toAlgebra
     (ℂ ⊗[ℝ] ℂ) ≃+ ℂ × ℂ :=
   tensorProductRealAlgEquiv.toAddEquiv
 
-/-- The additive coercion retains the original pure tensor coordinates. -/
+/-- **Pure tensor coordinates of the additive self-tensor map.**
+
+For z,w∈ℂ, tensorProductRealAddEquiv(z⊗_ℝw)=(zw,z*conj(w)).
+-/
 @[simp]
 theorem tensorProductRealAddEquiv_tmul (z w : ℂ) :
     letI : Module ℝ ℂ := Complex.ofRealHom.toModule
@@ -109,14 +128,21 @@ theorem tensorProductRealAddEquiv_tmul (z w : ℂ) :
     tensorProductRealAddEquiv (z ⊗ₜ[ℝ] w) = (z * w, z * conj w) :=
   tensorProductRealAlgEquiv_tmul z w
 
-/-- The original field K₀ client uses the actual complex-linear coercion. -/
+/-- **Complex-linear equivalence of the real self-tensor.**
+
+The ℂ-linear equivalence tensorProductRealEquiv:ℂ⊗_ℝℂ≃ₗ[ℂ]ℂ×ℂ is Θ(z⊗w)=(zw,z*conj(w)), with
+the left-factor complex action.
+-/
 def tensorProductRealEquiv :
     letI : Module ℝ ℂ := Complex.ofRealHom.toModule
     letI : Algebra ℝ ℂ := Complex.ofRealHom.toAlgebra
     (ℂ ⊗[ℝ] ℂ) ≃ₗ[ℂ] ℂ × ℂ :=
   tensorProductRealAlgEquiv.toLinearEquiv
 
-/-- The complex-linear coercion retains the original pure tensor map. -/
+/-- **Pure tensor coordinates of the complex-linear map.**
+
+For z,w∈ℂ, tensorProductRealEquiv(z⊗_ℝw)=(zw,z*conj(w)).
+-/
 @[simp]
 theorem tensorProductRealEquiv_tmul (z w : ℂ) :
     letI : Module ℝ ℂ := Complex.ofRealHom.toModule
@@ -124,7 +150,10 @@ theorem tensorProductRealEquiv_tmul (z w : ℂ) :
     tensorProductRealEquiv (z ⊗ₜ[ℝ] w) = (z * w, z * conj w) :=
   tensorProductRealAlgEquiv_tmul z w
 
-/-- The whole original inverse is verified against the same canonical coordinate map. -/
+/-- **Inverse coordinates of the real complex self-tensor.**
+
+For (p,q)∈ℂ×ℂ, tensorProductRealEquiv⁻¹(p,q)=((p+q)/2)⊗_ℝ1+((p-q)/(2i))⊗_ℝi.
+-/
 theorem tensorProductRealEquiv_symm_apply (p : ℂ × ℂ) :
     letI : Module ℝ ℂ := Complex.ofRealHom.toModule
     letI : Algebra ℝ ℂ := Complex.ofRealHom.toAlgebra
@@ -142,7 +171,10 @@ theorem tensorProductRealEquiv_symm_apply (p : ℂ × ℂ) :
     simp [Complex.I_sq]
     ring
 
-/-- Algebra multiplicativity gives the same twisted action on every original tensor. -/
+/-- **Twisted right complex action in tensor coordinates.**
+
+For t∈ℂ⊗_ℝℂ and s∈ℂ, Θ(t*(1⊗s))=(Θ(t)_1*s,Θ(t)_2*conj(s)), where Θ=tensorProductRealEquiv.
+-/
 theorem tensorProductRealEquiv_right_action :
     letI : Module ℝ ℂ := Complex.ofRealHom.toModule
     letI : Algebra ℝ ℂ := Complex.ofRealHom.toAlgebra

@@ -15,11 +15,14 @@ public import Mathlib.Analysis.InnerProductSpace.Completion
 public import Mathlib.Analysis.InnerProductSpace.TensorProduct
 
 /-!
-# Bounded maps on completed Hilbert tensors
+# Bounded maps on Hilbert tensor completions
 
-The carrier is the stock uniform completion of the algebraic tensor equipped
-with its stock inner-product norm. Bounded maps on the factors act on this
-completion through `ContinuousLinearMap.completion`.
+Let E₁,E₂,F₁,F₂ be inner product spaces over an RCLike field 𝕜, with independent universes.
+Write E⊗̂F for the completion of their algebraic tensor with the inner-product tensor norm.
+For bounded 𝕜-linear f:E₁→E₂ and g:F₁→F₂, write f⊗̂g for the completed tensor map sending x⊗y
+to f(x)⊗g(y). The operator norm satisfies ‖f⊗̂g‖≤‖f‖‖g‖. This operation is bilinear in f,g,
+preserves identities and zero factors, and respects factorwise composition. Completeness is
+supplied by the tensor completions.
 -/
 
 @[expose] public section
@@ -42,12 +45,25 @@ variable {E₂ : Type uE₂} [NormedAddCommGroup E₂] [InnerProductSpace 𝕜 E
 variable {F₁ : Type uF₁} [NormedAddCommGroup F₁] [InnerProductSpace 𝕜 F₁]
 variable {F₂ : Type uF₂} [NormedAddCommGroup F₂] [InnerProductSpace 𝕜 F₂]
 
-/-- The bounded tensor map between the literal stock Hilbert completions. -/
+/-- **Completed tensor map of two bounded operators.**
+
+Let E₁,E₂,F₁,F₂ be inner product spaces over an RCLike field 𝕜, with independent universes.
+Write E⊗̂F for the completion of their algebraic tensor with the inner-product tensor norm.
+For bounded 𝕜-linear f:E₁→E₂ and g:F₁→F₂, write f⊗̂g for the completed tensor map sending x⊗y
+to f(x)⊗g(y). The bounded linear map mapLCompletion f g:E₁⊗̂F₁→E₂⊗̂F₂ is f⊗̂g.
+-/
 def mapLCompletion (f : E₁ →L[𝕜] E₂) (g : F₁ →L[𝕜] F₂) :
     Completion (E₁ ⊗[𝕜] F₁) →L[𝕜] Completion (E₂ ⊗[𝕜] F₂) :=
   (mapL f g).completion
 
-/-- The completed map extends the original bounded algebraic tensor map. -/
+/-- **Completed tensor map on an algebraic tensor.**
+
+Let E₁,E₂,F₁,F₂ be inner product spaces over an RCLike field 𝕜, with independent universes.
+Write E⊗̂F for the completion of their algebraic tensor with the inner-product tensor norm.
+For bounded 𝕜-linear f:E₁→E₂ and g:F₁→F₂, write f⊗̂g for the completed tensor map sending x⊗y
+to f(x)⊗g(y). For z∈E₁⊗F₁ and the canonical tensor inclusions ι₁,ι₂, mapLCompletion f g
+(ι₁(z))=ι₂((f⊗g)(z)).
+-/
 @[simp]
 theorem mapLCompletion_coe (f : E₁ →L[𝕜] E₂) (g : F₁ →L[𝕜] F₂)
     (u : E₁ ⊗[𝕜] F₁) :
@@ -55,14 +71,27 @@ theorem mapLCompletion_coe (f : E₁ →L[𝕜] E₂) (g : F₁ →L[𝕜] F₂)
       (mapL f g u : Completion (E₂ ⊗[𝕜] F₂)) :=
   ContinuousLinearMap.completion_apply_coe (mapL f g) u
 
-/-- On a pure tensor, the completed map applies the two factor maps. -/
+/-- **Pure tensor formula for a completed operator tensor.**
+
+Let E₁,E₂,F₁,F₂ be inner product spaces over an RCLike field 𝕜, with independent universes.
+Write E⊗̂F for the completion of their algebraic tensor with the inner-product tensor norm.
+For bounded 𝕜-linear f:E₁→E₂ and g:F₁→F₂, write f⊗̂g for the completed tensor map sending x⊗y
+to f(x)⊗g(y). For x∈E₁ and y∈F₁, mapLCompletion f g (x⊗y)=f(x)⊗g(y), with both pure tensors
+viewed in their completions.
+-/
 theorem mapLCompletion_tmul (f : E₁ →L[𝕜] E₂) (g : F₁ →L[𝕜] F₂)
     (x : E₁) (y : F₁) :
     mapLCompletion f g (x ⊗ₜ[𝕜] y : Completion (E₁ ⊗[𝕜] F₁)) =
       (f x ⊗ₜ[𝕜] g y : Completion (E₂ ⊗[𝕜] F₂)) := by
   rw [mapLCompletion_coe, mapL_tmul]
 
-/-- Completion retains the product upper bound for the operator norm. -/
+/-- **Product upper bound for the completed tensor operator norm.**
+
+Let E₁,E₂,F₁,F₂ be inner product spaces over an RCLike field 𝕜, with independent universes.
+Write E⊗̂F for the completion of their algebraic tensor with the inner-product tensor norm.
+For bounded 𝕜-linear f:E₁→E₂ and g:F₁→F₂, write f⊗̂g for the completed tensor map sending x⊗y
+to f(x)⊗g(y). The norm estimate is ‖mapLCompletion f g‖≤‖f‖‖g‖.
+-/
 theorem norm_mapLCompletion_le (f : E₁ →L[𝕜] E₂) (g : F₁ →L[𝕜] F₂) :
     ‖mapLCompletion f g‖ ≤ ‖f‖ * ‖g‖ := by
   refine (mapLCompletion f g).opNorm_le_bound
@@ -74,7 +103,11 @@ theorem norm_mapLCompletion_le (f : E₁ →L[𝕜] E₂) (g : F₁ →L[𝕜] F
     (mapL f g).le_of_opNorm_le (norm_mapL_le f g) u
 
 variable (𝕜 E₁ F₁) in
-/-- Identity factor maps induce the identity on the completed tensor. -/
+/-- **Identity maps on the tensor completion.**
+
+Let E,F be inner product spaces over an RCLike field 𝕜, and let E⊗̂F be their Hilbert tensor
+completion. Then mapLCompletion id_E id_F=id_(E⊗̂F).
+-/
 @[simp]
 theorem mapLCompletion_id_id :
     mapLCompletion (ContinuousLinearMap.id 𝕜 E₁) (ContinuousLinearMap.id 𝕜 F₁) =
@@ -84,7 +117,13 @@ theorem mapLCompletion_id_id :
   intro u
   simp only [mapLCompletion_coe, mapL_id_id, ContinuousLinearMap.id_apply]
 
-/-- A zero first factor induces the zero completed tensor map. -/
+/-- **Zero in the first completed operator tensor factor.**
+
+Let E₁,E₂,F₁,F₂ be inner product spaces over an RCLike field 𝕜, with independent universes.
+Write E⊗̂F for the completion of their algebraic tensor with the inner-product tensor norm.
+For bounded 𝕜-linear f:E₁→E₂ and g:F₁→F₂, write f⊗̂g for the completed tensor map sending x⊗y
+to f(x)⊗g(y). For g:F₁→F₂, mapLCompletion (0:E₁→E₂) g=0.
+-/
 @[simp]
 theorem mapLCompletion_zero_left (g : F₁ →L[𝕜] F₂) :
     mapLCompletion (0 : E₁ →L[𝕜] E₂) g = 0 := by
@@ -94,7 +133,13 @@ theorem mapLCompletion_zero_left (g : F₁ →L[𝕜] F₂) :
   simp only [mapLCompletion_coe, mapL_zero_left, zero_apply,
     Completion.coe_zero]
 
-/-- A zero second factor induces the zero completed tensor map. -/
+/-- **Zero in the second completed operator tensor factor.**
+
+Let E₁,E₂,F₁,F₂ be inner product spaces over an RCLike field 𝕜, with independent universes.
+Write E⊗̂F for the completion of their algebraic tensor with the inner-product tensor norm.
+For bounded 𝕜-linear f:E₁→E₂ and g:F₁→F₂, write f⊗̂g for the completed tensor map sending x⊗y
+to f(x)⊗g(y). For f:E₁→E₂, mapLCompletion f (0:F₁→F₂)=0.
+-/
 @[simp]
 theorem mapLCompletion_zero_right (f : E₁ →L[𝕜] E₂) :
     mapLCompletion f (0 : F₁ →L[𝕜] F₂) = 0 := by
@@ -104,7 +149,13 @@ theorem mapLCompletion_zero_right (f : E₁ →L[𝕜] E₂) :
   simp only [mapLCompletion_coe, mapL_zero_right, zero_apply,
     Completion.coe_zero]
 
-/-- The completed tensor map is additive in its first operator. -/
+/-- **Additivity in the first completed operator tensor factor.**
+
+Let E₁,E₂,F₁,F₂ be inner product spaces over an RCLike field 𝕜, with independent universes.
+Write E⊗̂F for the completion of their algebraic tensor with the inner-product tensor norm.
+For bounded 𝕜-linear f:E₁→E₂ and g:F₁→F₂, write f⊗̂g for the completed tensor map sending x⊗y
+to f(x)⊗g(y). For bounded f₁,f₂:E₁→E₂, (f₁+f₂)⊗̂g=f₁⊗̂g+f₂⊗̂g.
+-/
 theorem mapLCompletion_add_left (f₁ f₂ : E₁ →L[𝕜] E₂) (g : F₁ →L[𝕜] F₂) :
     mapLCompletion (f₁ + f₂) g = mapLCompletion f₁ g + mapLCompletion f₂ g := by
   ext z
@@ -113,7 +164,13 @@ theorem mapLCompletion_add_left (f₁ f₂ : E₁ →L[𝕜] E₂) (g : F₁ →
   simp only [mapLCompletion_coe, mapL_add_left, add_apply,
     Completion.coe_add]
 
-/-- The completed tensor map is additive in its second operator. -/
+/-- **Additivity in the second completed operator tensor factor.**
+
+Let E₁,E₂,F₁,F₂ be inner product spaces over an RCLike field 𝕜, with independent universes.
+Write E⊗̂F for the completion of their algebraic tensor with the inner-product tensor norm.
+For bounded 𝕜-linear f:E₁→E₂ and g:F₁→F₂, write f⊗̂g for the completed tensor map sending x⊗y
+to f(x)⊗g(y). For bounded g₁,g₂:F₁→F₂, f⊗̂(g₁+g₂)=f⊗̂g₁+f⊗̂g₂.
+-/
 theorem mapLCompletion_add_right (f : E₁ →L[𝕜] E₂) (g₁ g₂ : F₁ →L[𝕜] F₂) :
     mapLCompletion f (g₁ + g₂) = mapLCompletion f g₁ + mapLCompletion f g₂ := by
   ext z
@@ -122,7 +179,13 @@ theorem mapLCompletion_add_right (f : E₁ →L[𝕜] E₂) (g₁ g₂ : F₁ �
   simp only [mapLCompletion_coe, mapL_add_right, add_apply,
     Completion.coe_add]
 
-/-- The completed tensor map is scalar linear in its first operator. -/
+/-- **Scalar linearity in the first completed operator tensor factor.**
+
+Let E₁,E₂,F₁,F₂ be inner product spaces over an RCLike field 𝕜, with independent universes.
+Write E⊗̂F for the completion of their algebraic tensor with the inner-product tensor norm.
+For bounded 𝕜-linear f:E₁→E₂ and g:F₁→F₂, write f⊗̂g for the completed tensor map sending x⊗y
+to f(x)⊗g(y). For c∈𝕜, (c•f)⊗̂g=c•(f⊗̂g).
+-/
 theorem mapLCompletion_smul_left (c : 𝕜) (f : E₁ →L[𝕜] E₂) (g : F₁ →L[𝕜] F₂) :
     mapLCompletion (c • f) g = c • mapLCompletion f g := by
   change (mapL (c • f) g).completion = c • (mapL f g).completion
@@ -135,7 +198,13 @@ theorem mapLCompletion_smul_left (c : 𝕜) (f : E₁ →L[𝕜] E₂) (g : F₁
   exact (congr_fun (Completion.map_comp
     (uniformContinuous_const_smul c) (mapL f g).uniformContinuous) z).symm
 
-/-- The completed tensor map is scalar linear in its second operator. -/
+/-- **Scalar linearity in the second completed operator tensor factor.**
+
+Let E₁,E₂,F₁,F₂ be inner product spaces over an RCLike field 𝕜, with independent universes.
+Write E⊗̂F for the completion of their algebraic tensor with the inner-product tensor norm.
+For bounded 𝕜-linear f:E₁→E₂ and g:F₁→F₂, write f⊗̂g for the completed tensor map sending x⊗y
+to f(x)⊗g(y). For c∈𝕜, f⊗̂(c•g)=c•(f⊗̂g).
+-/
 theorem mapLCompletion_smul_right (c : 𝕜) (f : E₁ →L[𝕜] E₂) (g : F₁ →L[𝕜] F₂) :
     mapLCompletion f (c • g) = c • mapLCompletion f g := by
   change (mapL f (c • g)).completion = c • (mapL f g).completion
@@ -153,7 +222,12 @@ section Composition
 variable {E₃ : Type uE₃} [NormedAddCommGroup E₃] [InnerProductSpace 𝕜 E₃]
 variable {F₃ : Type uF₃} [NormedAddCommGroup F₃] [InnerProductSpace 𝕜 F₃]
 
-/-- Composition is performed separately in the two factors. -/
+/-- **Factorwise composition of completed tensor operators.**
+
+Let E₁,E₂,E₃,F₁,F₂,F₃ be inner product spaces over an RCLike field 𝕜 in independent universes.
+For bounded linear maps f₁:E₁→E₂, f₂:E₂→E₃, g₁:F₁→F₂ and g₂:F₂→F₃,
+(f₂∘f₁)⊗̂(g₂∘g₁)=(f₂⊗̂g₂)∘(f₁⊗̂g₁) on the Hilbert tensor completions.
+-/
 theorem mapLCompletion_comp (f₂ : E₂ →L[𝕜] E₃) (f₁ : E₁ →L[𝕜] E₂)
     (g₂ : F₂ →L[𝕜] F₃) (g₁ : F₁ →L[𝕜] F₂) :
     mapLCompletion (f₂.comp f₁) (g₂.comp g₁) =
@@ -165,7 +239,12 @@ theorem mapLCompletion_comp (f₂ : E₂ →L[𝕜] E₃) (f₁ : E₁ →L[𝕜
 
 end Composition
 
-/-- Multiplication of factor endomorphisms becomes composition of completed maps. -/
+/-- **Multiplication of completed tensor endomorphisms.**
+
+Let E,F be inner product spaces over an RCLike field 𝕜. For bounded endomorphisms f₁,f₂ of E
+and g₁,g₂ of F, mapLCompletion(f₁*f₂)(g₁*g₂)=mapLCompletion f₁ g₁*mapLCompletion f₂ g₂, where
+* is operator composition.
+-/
 theorem mapLCompletion_mul (f₁ f₂ : E₁ →L[𝕜] E₁) (g₁ g₂ : F₁ →L[𝕜] F₁) :
     mapLCompletion (f₁ * f₂) (g₁ * g₂) =
       mapLCompletion f₁ g₁ * mapLCompletion f₂ g₂ :=

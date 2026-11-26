@@ -17,14 +17,16 @@ public import Mathlib.Analysis.Normed.Group.Continuity
 public import Mathlib.MeasureTheory.Integral.Bochner.Set
 
 /-!
-# Actual compact-support Lp-valued sections of the Borel product
+# Compact-support L²-valued sections of a Radon product
 
-A continuous compact-support product function determines its actual scalar
-L2 section in the second coordinate. Uniform compact support makes the
-section map continuous in the original Lp norm without countability or
-sigma-finiteness. The resulting compact-support Hilbert-valued function has
-the exact original iterated square integral. The existing one-measure tensor
-unitary then gives a literal full factor-tensor representative of equal norm.
+A complex compact-support function `F` on a product has second-coordinate sections `S_F(x)=i_ν(y
+↦ F(x,y))`. These are norm-continuous, and for Hausdorff `X` form a compact-support function
+with values in `Lp ℂ 2 ν`.
+
+For locally compact Hausdorff Borel factors with regular measures, the iterated L² vector `J(F)`
+has the same squared norm as `i_R(F)`. The inverse one-measure tensor comparison gives a
+factor-tensor representative `K(F)` with this norm. No countability or s-finiteness assumption
+is required.
 -/
 
 @[expose] public section
@@ -46,7 +48,8 @@ section Sections
 variable {X : Type uX} [TopologicalSpace X]
 variable {Y : Type uY} [TopologicalSpace Y] [T2Space Y]
 
-/-- The literal compact-support complex section in the original second coordinate. -/
+/-- **Complex compact-support section in the second coordinate.** For topological `X`,
+Hausdorff `Y` and `F∈C_c(X×Y,ℂ)`, `sectionRightComplex F x∈C_c(Y,ℂ)` is `y ↦ F(x,y)`. -/
 def sectionRightComplex (F : C_c(X × Y, ℂ)) (x : X) : C_c(Y, ℂ) where
   toFun y := F (x, y)
   continuous_toFun := F.continuous.comp (continuous_const.prodMk continuous_id)
@@ -55,28 +58,38 @@ def sectionRightComplex (F : C_c(X × Y, ℂ)) (x : X) : C_c(Y, ℂ) where
     intro y hy
     exact image_eq_zero_of_notMem_tsupport (fun hxy => hy ⟨(x, y), hxy, rfl⟩)
 
-/-- The complex section retains each original pointwise value. -/
+/-- **Pointwise value of a complex compact-support section.** For topological `X`, Hausdorff
+`Y`, `F∈C_c(X×Y,ℂ)` and `x,y`, `sectionRightComplex F x y=F(x,y)`. -/
 @[simp]
 theorem sectionRightComplex_apply (F : C_c(X × Y, ℂ)) (x : X) (y : Y) :
     sectionRightComplex F x y = F (x, y) := rfl
 
 variable [MeasurableSpace Y] [BorelSpace Y] (ν : Measure Y) [ν.Regular]
 
-/-- The actual original L2 vector of a compact-support section. -/
+/-- **Scalar L² vector of a compact-support product section.** Let `X` be topological, `Y`
+Hausdorff with its Borel structure and regular measure `ν`, and `F∈C_c(X×Y,ℂ)`. Write
+`S_F(x)=i_ν(y ↦ F(x,y)) ∈ Lp ℂ 2 ν`. `sectionRightLp ν F x=S_F(x)`. -/
 def sectionRightLp (F : C_c(X × Y, ℂ)) (x : X) : Lp ℂ 2 ν :=
   HaarL2.compactSupportInclusion ν (sectionRightComplex F x)
 
-/-- Every section has its original pointwise values almost everywhere. -/
+/-- **Almost-everywhere representative of an L² section.** Let `X` be topological, `Y`
+Hausdorff with its Borel structure and regular measure `ν`, and `F∈C_c(X×Y,ℂ)`. Write
+`S_F(x)=i_ν(y ↦ F(x,y)) ∈ Lp ℂ 2 ν`. for `x∈X`, `S_F(x)(y)=F(x,y)` for `ν`-almost every
+`y`. -/
 theorem sectionRightLp_ae_eq (F : C_c(X × Y, ℂ)) (x : X) :
     sectionRightLp ν F x =ᵐ[ν] fun y => F (x, y) :=
   HaarL2.compactSupportInclusion_ae_eq ν (sectionRightComplex F x)
 
-/-- The section's squared L2 norm is its actual original square integral. -/
+/-- **Squared L² norm of a compact-support section.** Let `X` be topological, `Y` Hausdorff
+with its Borel structure and regular measure `ν`, and `F∈C_c(X×Y,ℂ)`. Write `S_F(x)=i_ν(y
+↦ F(x,y)) ∈ Lp ℂ 2 ν`. for `x∈X`, `‖S_F(x)‖²=∫ |F(x,y)|² dν(y)`. -/
 theorem norm_sectionRightLp_sq (F : C_c(X × Y, ℂ)) (x : X) :
     ‖sectionRightLp ν F x‖ ^ 2 = ∫ y : Y, ‖F (x, y)‖ ^ 2 ∂ν :=
   HaarL2.norm_compactSupportInclusion_sq ν (sectionRightComplex F x)
 
-/-- Differences of sections have the actual integral squared-distance norm. -/
+/-- **Squared distance between scalar L² sections.** Let `X` be topological, `Y` Hausdorff
+with its Borel structure and regular measure `ν`, and `F∈C_c(X×Y,ℂ)`. Write `S_F(x)=i_ν(y
+↦ F(x,y)) ∈ Lp ℂ 2 ν`. for `x,x'∈X`, `‖S_F(x)-S_F(x')‖²=∫ |F(x,y)-F(x',y)|² dν(y)`. -/
 theorem norm_sectionRightLp_sub_sq (F : C_c(X × Y, ℂ)) (x x' : X) :
     ‖sectionRightLp ν F x - sectionRightLp ν F x'‖ ^ 2 =
       ∫ y : Y, ‖F (x, y) - F (x', y)‖ ^ 2 ∂ν := by
@@ -85,7 +98,10 @@ theorem norm_sectionRightLp_sub_sq (F : C_c(X × Y, ℂ)) (x x' : X) :
   rw [← map_sub, HaarL2.norm_compactSupportInclusion_sq]
   simp only [CompactlySupportedContinuousMap.sub_apply, sectionRightComplex_apply]
 
-/-- Uniform compact support makes the actual Lp-valued section map norm-continuous. -/
+/-- **Norm-continuity of the compact-support L² section map.** Let `X` be topological, `Y`
+Hausdorff with its Borel structure and regular measure `ν`, and `F∈C_c(X×Y,ℂ)`. Write
+`S_F(x)=i_ν(y ↦ F(x,y)) ∈ Lp ℂ 2 ν`. the function `x ↦ S_F(x)` is continuous in the L²
+norm. -/
 theorem continuous_sectionRightLp (F : C_c(X × Y, ℂ)) : Continuous (sectionRightLp ν F) := by
   apply continuous_iff_continuousAt.mpr
   intro x₀
@@ -117,7 +133,10 @@ theorem continuous_sectionRightLp (F : C_c(X × Y, ℂ)) : Continuous (sectionRi
 
 variable [T2Space X]
 
-/-- The actual section map as an original compact-support Hilbert-valued function. -/
+/-- **Compact-support function of scalar L² sections.** Let `X` be topological, `Y` Hausdorff
+with its Borel structure and regular measure `ν`, and `F∈C_c(X×Y,ℂ)`. Write `S_F(x)=i_ν(y
+↦ F(x,y)) ∈ Lp ℂ 2 ν`. assume additionally that `X` is Hausdorff. `sectionToLp ν
+F∈C_c(X,Lp ℂ 2 ν)` sends `x` to `S_F(x)`. -/
 def sectionToLp (F : C_c(X × Y, ℂ)) : C_c(X, Lp ℂ 2 ν) where
   toFun := sectionRightLp ν F
   continuous_toFun := continuous_sectionRightLp ν F
@@ -132,12 +151,18 @@ def sectionToLp (F : C_c(X × Y, ℂ)) : C_c(X, Lp ℂ 2 ν) where
     change HaarL2.compactSupportInclusion ν (sectionRightComplex F x) = 0
     rw [hzero, map_zero]
 
-/-- The compact-support section constructor retains its computed Lp section at every point. -/
+/-- **Value of the compact-support L² section constructor.** Let `X` be topological, `Y`
+Hausdorff with its Borel structure and regular measure `ν`, and `F∈C_c(X×Y,ℂ)`. Write
+`S_F(x)=i_ν(y ↦ F(x,y)) ∈ Lp ℂ 2 ν`. for Hausdorff `X`, `sectionToLp ν F x=sectionRightLp
+ν F x`. -/
 @[simp]
 theorem sectionToLp_apply (F : C_c(X × Y, ℂ)) (x : X) :
     sectionToLp ν F x = sectionRightLp ν F x := rfl
 
-/-- The actual compact-support section construction is complex linear. -/
+/-- **Complex-linear construction of compact-support L² sections.** Let `X` be topological,
+`Y` Hausdorff with its Borel structure and regular measure `ν`, and `F∈C_c(X×Y,ℂ)`. Write
+`S_F(x)=i_ν(y ↦ F(x,y)) ∈ Lp ℂ 2 ν`. for Hausdorff `X`, `sectionToLpLinearMap ν :
+C_c(X×Y,ℂ) →ₗ[ℂ] C_c(X,Lp ℂ 2 ν)` sends each product function to its section map. -/
 def sectionToLpLinearMap : C_c(X × Y, ℂ) →ₗ[ℂ] C_c(X, Lp ℂ 2 ν) where
   toFun := sectionToLp ν
   map_add' F G := CompactlySupportedContinuousMap.ext (fun x => by
@@ -159,7 +184,10 @@ def sectionToLpLinearMap : C_c(X × Y, ℂ) →ₗ[ℂ] C_c(X, Lp ℂ 2 ν) wher
       rfl
     rw [hsection, map_smul])
 
-/-- A pure compact-support product has the original scalar-times-vector section. -/
+/-- **Section of a pure compact-support scalar product.** Let `X` be topological, `Y`
+Hausdorff with its Borel structure and regular measure `ν`, and `F∈C_c(X×Y,ℂ)`. Write
+`S_F(x)=i_ν(y ↦ F(x,y)) ∈ Lp ℂ 2 ν`. for Hausdorff `X` and compact-support factors `f,g`,
+`S_(f⊠g)(x)=f(x) • i_ν(g)`. -/
 theorem sectionRightLp_mulProd (f : C_c(X, ℂ)) (g : C_c(Y, ℂ)) (x : X) :
     sectionRightLp ν (mulProd f g) x = f x • HaarL2.compactSupportInclusion ν g := by
   change HaarL2.compactSupportInclusion ν (sectionRightComplex (mulProd f g) x) =
@@ -181,23 +209,36 @@ variable {Y : Type uY} [TopologicalSpace Y] [T2Space Y] [LocallyCompactSpace Y]
   [MeasurableSpace Y] [BorelSpace Y]
 variable (μ : Measure X) (ν : Measure Y) [μ.Regular] [ν.Regular]
 
-/-- The Borel measurable space of the literal product used by the section square-integral comparison. -/
+/-- **Borel topological product for L² section comparisons.** For topological `X,Y`, the
+product measurable structure is `borel(X×Y)`. -/
 local instance instSectionsProductBorelMeasurableSpace : MeasurableSpace (X × Y) := borel (X × Y)
 local instance instSectionsProductBorelSpace : BorelSpace (X × Y) := ⟨rfl⟩
 
-/-- The original Hilbert-valued L2 inclusion of the actual compact-support Lp-valued sections. -/
+/-- **Iterated L² vector of compact-support sections.** Let `X,Y` be Hausdorff Borel spaces,
+`μ,ν` regular measures and `F∈C_c(X×Y,ℂ)`. Write `S_F(x)=i_ν(y ↦ F(x,y))`, `J(F)=i_μ(S_F)
+∈ Lp (Lp ℂ 2 ν) 2 μ`, and `K(F)=tensorToLp μ⁻¹(J(F)) ∈ Completion(Lp ℂ 2 μ⊗Lp ℂ 2 ν)`.
+`productToIteratedLp μ ν F=J(F)` is the L² inclusion of the compact-support section map `x
+↦ S_F(x)`; local compactness is not required for this constructor. -/
 def productToIteratedLp : C_c(X × Y, ℂ) →ₗ[ℂ] Lp (Lp ℂ 2 ν) 2 μ :=
   (compactSupportInclusion (H := Lp ℂ 2 ν) μ).comp (sectionToLpLinearMap ν)
 
 omit [LocallyCompactSpace X] [LocallyCompactSpace Y] in
-/-- The iterated L2 construction has the original section values almost everywhere. -/
+/-- **Almost-everywhere section values of the iterated L² construction.** Let `X,Y` be
+Hausdorff Borel spaces, `μ,ν` regular measures and `F∈C_c(X×Y,ℂ)`. Write `S_F(x)=i_ν(y ↦
+F(x,y))`, `J(F)=i_μ(S_F) ∈ Lp (Lp ℂ 2 ν) 2 μ`, and `K(F)=tensorToLp μ⁻¹(J(F)) ∈
+Completion(Lp ℂ 2 μ⊗Lp ℂ 2 ν)`. `J(F)(x)=S_F(x)` for `μ`-almost every `x`, without local
+compactness of either factor. -/
 theorem productToIteratedLp_ae_eq (F : C_c(X × Y, ℂ)) :
     productToIteratedLp μ ν F =ᵐ[μ] sectionRightLp ν F := by
   change compactSupportInclusion (H := Lp ℂ 2 ν) μ (sectionToLp ν F) =ᵐ[μ] sectionRightLp ν F
   filter_upwards [compactSupportInclusion_ae_eq (H := Lp ℂ 2 ν) μ (sectionToLp ν F)] with x hx
   simpa only [sectionToLp_apply] using hx
 
-/-- The actual iterated section L2 norm has the original Borel product square integral. -/
+/-- **Iterated section norm equals the Borel Radon L² norm.** Let `X,Y` be locally compact
+Hausdorff Borel spaces and `μ,ν` regular measures. Write `R=radonProd μ ν` on
+`borel(X×Y)`, `i_μ,i_ν,i_R` for compact-support L² inclusions, `T=Completion(Lp ℂ 2 μ ⊗[ℂ]
+Lp ℂ 2 ν)`, `A(z)` for the algebraic factor tensor inclusion into `T`, and
+`F(f⊗g)=i_R((x,y) ↦ f(x)g(y))`. for `J(F)=i_μ(x ↦ i_ν(F(x,·)))`, `‖J(F)‖²=‖i_R F‖²`. -/
 theorem norm_productToIteratedLp_sq (F : C_c(X × Y, ℂ)) :
     ‖productToIteratedLp μ ν F‖ ^ 2 = ‖compactSupportInclusion (Measure.radonProd μ ν) F‖ ^ 2 := by
   change ‖compactSupportInclusion μ (sectionToLp ν F)‖ ^ 2 = _
@@ -209,12 +250,21 @@ theorem norm_productToIteratedLp_sq (F : C_c(X × Y, ℂ)) :
       simpa only [CompactlySupportedContinuousMap.normSq_apply] using
         (Measure.integral_radonProd μ ν (normSq F)).symm
 
-/-- The actual full factor-tensor vector supplied by the proved one-measure Hilbert-valued tensor unitary. -/
+/-- **Factor-tensor representative of a compact-support product function.** Let `X,Y` be
+Hausdorff Borel spaces, `μ,ν` regular measures and `F∈C_c(X×Y,ℂ)`. Write `S_F(x)=i_ν(y ↦
+F(x,y))`, `J(F)=i_μ(S_F) ∈ Lp (Lp ℂ 2 ν) 2 μ`, and `K(F)=tensorToLp μ⁻¹(J(F)) ∈
+Completion(Lp ℂ 2 μ⊗Lp ℂ 2 ν)`. `compactProductTensorRepresentative μ ν F=K(F)` is
+obtained by applying the inverse scalar-to-vector one-measure tensor unitary to `J(F)`. -/
 def compactProductTensorRepresentative :
     C_c(X × Y, ℂ) →ₗ[ℂ] UniformSpace.Completion ((Lp ℂ 2 μ) ⊗[ℂ] (Lp ℂ 2 ν)) :=
   (L2.tensorToLp (𝕜 := ℂ) (H := Lp ℂ 2 ν) μ).symm.toLinearMap.comp (productToIteratedLp μ ν)
 
-/-- The full factor-tensor representative has the exact original product L2 squared norm. -/
+/-- **Squared norm of a compact product's factor-tensor representative.** Let `X,Y` be locally
+compact Hausdorff Borel spaces and `μ,ν` regular measures. Write `R=radonProd μ ν` on
+`borel(X×Y)`, `i_μ,i_ν,i_R` for compact-support L² inclusions, `T=Completion(Lp ℂ 2 μ ⊗[ℂ]
+Lp ℂ 2 ν)`, `A(z)` for the algebraic factor tensor inclusion into `T`, and
+`F(f⊗g)=i_R((x,y) ↦ f(x)g(y))`. for `K(F)=tensorToLp μ⁻¹(i_μ(x ↦ i_ν(F(x,·))))`,
+`‖K(F)‖²=‖i_R F‖²`. -/
 theorem norm_compactProductTensorRepresentative_sq (F : C_c(X × Y, ℂ)) :
     ‖compactProductTensorRepresentative μ ν F‖ ^ 2 =
       ‖compactSupportInclusion (Measure.radonProd μ ν) F‖ ^ 2 := by
@@ -222,7 +272,12 @@ theorem norm_compactProductTensorRepresentative_sq (F : C_c(X × Y, ℂ)) :
   rw [LinearIsometryEquiv.norm_map]
   exact norm_productToIteratedLp_sq μ ν F
 
-/-- The full factor-tensor representative preserves the original product L2 norm. -/
+/-- **Norm of a compact product's factor-tensor representative.** Let `X,Y` be locally compact
+Hausdorff Borel spaces and `μ,ν` regular measures. Write `R=radonProd μ ν` on
+`borel(X×Y)`, `i_μ,i_ν,i_R` for compact-support L² inclusions, `T=Completion(Lp ℂ 2 μ ⊗[ℂ]
+Lp ℂ 2 ν)`, `A(z)` for the algebraic factor tensor inclusion into `T`, and
+`F(f⊗g)=i_R((x,y) ↦ f(x)g(y))`. for the factor-tensor representative `K(F)` of
+`F∈C_c(X×Y,ℂ)`, `‖K(F)‖=‖i_R F‖`. -/
 theorem norm_compactProductTensorRepresentative (F : C_c(X × Y, ℂ)) :
     ‖compactProductTensorRepresentative μ ν F‖ =
       ‖compactSupportInclusion (Measure.radonProd μ ν) F‖ := by

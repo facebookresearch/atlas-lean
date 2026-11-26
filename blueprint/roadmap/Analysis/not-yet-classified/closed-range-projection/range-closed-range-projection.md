@@ -1,3 +1,5 @@
-# Range closed Range Projection
+# Range of the range-closure projection
 
-Its actual operator range equals the closure of the original range.
+Let `H` be a complete complex Hilbert space and
+`T : H →L[ℂ] H`. Write `P_T` for the orthogonal projection onto the norm closure of `range
+T`. `range(closedRangeProjection T)=closure(range T)`.

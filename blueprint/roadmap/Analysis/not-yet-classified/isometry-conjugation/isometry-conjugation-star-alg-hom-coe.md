@@ -1,3 +1,6 @@
-# Isometry Conjugation Star Alg Hom coe
+# Bounded-operator value of spatial conjugation
 
-The restricted spatial map has the exact original bounded-operator value.
+Let `H,K` be complete complex Hilbert
+spaces, `e : H ≃ₗᵢ[ℂ] K` a unitary equivalence and `M ⊆ B(H)` a concrete von Neumann
+algebra. for `x ∈ M`, the operator underlying `isometryConjugationStarAlgHom e M x` is
+`e.conjStarAlgEquiv x=e x e⁻¹`.

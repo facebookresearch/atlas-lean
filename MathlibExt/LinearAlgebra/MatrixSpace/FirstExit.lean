@@ -20,25 +20,19 @@ public import Mathlib.Logic.Equiv.Fin.Rotate
 import Mathlib.Tactic.Push
 
 /-!
-# First escaping chains in the second Wong sequence
+# Escaping chains in the second Wong sequence
 
-An actual first exit of the second Wong sequence supplies a finite chain of vectors
-and operators from the given space. The first vector lies in the starting map's kernel,
-the adjacent equations are literal linear-map equations, and the final image lies
-outside its range. The construction uses linear preimages, a native section on the range,
-and linear observations of the image spans.
-
-For a finite-dimensional target, failure of stable containment gives a chain with
-length at most `dim range A + 1`. For an actual square blow-up and starting rank
-`r * card d`, the amplified Wong images give the faster bound `r + 1`. These are
-algebraic existence statements over arbitrary fields; no larger ordinary rank or
-arithmetic cost bound is concluded from a chain. Literal shift units also lift the
-extracted escape to the independent-column amplification `A ⊗ I`.
+Let K be a field, V,W K-vector spaces, A : V → W linear and B a subspace of linear maps V → W.
+Define W₀ = 0 and Wⱼ₊₁ = B(A⁻¹Wⱼ), where B(U) is the span of f(u) with f ∈ B and u ∈ U. If Wₖ
+⊆ im A but Wₖ₊₁ is not contained in im A, there are C₀,…,Cₖ ∈ B and v₀,…,vₖ ∈ V with Av₀ = 0,
+Avᵢ₊₁ = Cᵢvᵢ, and Cₖvₖ outside im A. For finite-dimensional W, failure of stable containment
+gives k ≤ rank A. For a square blow-up and rank A = r|D| with D nonempty, k ≤ r; Kronecker
+shift matrices lift the chain to A ⊗ I_q for q > r.
 
 ## References
 
-Gábor Ivanyos, Youming Qiao and K. V. Subrahmanyam, *Non-commutative Edmonds' problem
-and matrix semi-invariants*, §2.2 and Algorithm 2, lines 9–12.
+Gábor Ivanyos, Youming Qiao and K. V. Subrahmanyam, *Non-commutative Edmonds' problem and
+matrix semi-invariants*, §2.2 and Algorithm 2, lines 9–12.
 -/
 
 @[expose] public section
@@ -148,7 +142,13 @@ private theorem exists_observed_wong_chain {T : Type z} [AddCommGroup T] [Module
       | cast i => simpa only [Fin.snoc_castSucc, Fin.val_castSucc] using hmem i
     · simpa only [Fin.snoc_last, L, lastV, LinearMap.comp_apply] using hlast
 
-/-- An actual first exit supplies linked vectors and operators from the original map space. -/
+/-- **A chain from the first escaping Wong step.**
+
+Let K be a field, V,W K-vector spaces, A : V → W linear and B a subspace of linear maps V → W.
+Define W₀ = 0 and Wⱼ₊₁ = B(A⁻¹Wⱼ), where B(U) is the span of f(u) with f ∈ B and u ∈ U. Assume
+Wₖ ⊆ im A and Wₖ₊₁ is not contained in im A. Then there exist C₀,…,Cₖ ∈ B and v₀,…,vₖ ∈ V such
+that Av₀ = 0, Avᵢ₊₁ = Cᵢvᵢ for i < k, Avᵢ ∈ Wᵢ for i ≤ k, and Cₖvₖ ∉ im A.
+-/
 theorem exists_secondWongSeq_escape_chain (A : V →ₗ[K] W) (B : Submodule K (V →ₗ[K] W))
     (k : ℕ) (hRange : secondWongSeq A B k ≤ A.range)
     (hExit : ¬secondWongSeq A B (k + 1) ≤ A.range) :
@@ -236,7 +236,14 @@ private theorem exists_first_exit_index (A : V →ₗ[K] W) (B : Submodule K (V 
     · obtain ⟨k, hk, hprev, hexit⟩ := ih hprev
       exact ⟨k, hk.trans (Nat.lt_succ_self j), hprev, hexit⟩
 
-/-- Failure of stable containment gives an actual chain of length at most `dim range A + 1`. -/
+/-- **An escaping chain bounded by the starting rank.**
+
+Let K be a field, V,W K-vector spaces, A : V → W linear and B a subspace of linear maps V → W.
+Define W₀ = 0 and Wⱼ₊₁ = B(A⁻¹Wⱼ), where B(U) is the span of f(u) with f ∈ B and u ∈ U. Assume
+W is finite-dimensional and the stable value W∞ is not contained in im A. There exist k ≤ rank
+A, C₀,…,Cₖ ∈ B and v₀,…,vₖ ∈ V with Av₀ = 0, Avᵢ₊₁ = Cᵢvᵢ for i < k, Avᵢ ∈ Wᵢ, and Cₖvₖ ∉ im
+A.
+-/
 theorem exists_secondWongLimit_escape_chain [FiniteDimensional K W]
     (A : V →ₗ[K] W) (B : Submodule K (V →ₗ[K] W))
     (hExit : ¬secondWongLimit A B ≤ A.range) :
@@ -260,7 +267,12 @@ namespace Matrix
 variable {K : Type u} [Field K] {n : Type v} {d : Type w}
 variable [Fintype n] [Fintype d]
 
-/-- Every actual Wong image of a square blow-up has dimension divisible by the block degree. -/
+/-- **Divisibility of blow-up Wong dimensions.**
+
+Let K be a field, N,D finite index types and B ⊆ Mat(N,N;K) a subspace. Put E = B^[D] = span{X
+⊗ T : X ∈ B, T ∈ Mat(D,D;K)} and let A be a matrix on N × D. Define W₀ = 0 and Wⱼ₊₁ =
+E(A⁻¹Wⱼ). For every j, the dimension of Wⱼ is divisible by |D|.
+-/
 theorem secondWongSeq_blowup_finrank_dvd (A : Matrix (n × d) (n × d) K)
     (B : Submodule K (Matrix n n K)) (j : ℕ) :
     Fintype.card d ∣ Module.finrank K
@@ -275,7 +287,12 @@ theorem secondWongSeq_blowup_finrank_dvd (A : Matrix (n × d) (n × d) K)
       kroneckerBlowup_image, Submodule.finrank_columnAmplification]
     exact ⟨_, mul_comm _ _⟩
 
-/-- Containment through step `r + 1` forces stabilization for a rank-`r * card d` starting matrix. -/
+/-- **A stabilization bound inside a blow-up range.**
+
+Let K be a field, N,D finite index types and B ⊆ Mat(N,N;K) a subspace. Put E = B^[D] = span{X
+⊗ T : X ∈ B, T ∈ Mat(D,D;K)} and let A be a matrix on N × D. Define W₀ = 0 and Wⱼ₊₁ =
+E(A⁻¹Wⱼ). Assume D is nonempty, rank A = r|D| and Wᵣ₊₁ ⊆ im A. Then Wᵣ₊₁ = Wᵣ.
+-/
 theorem secondWongSeq_blowup_stable_of_contained [Nonempty d]
     (A : Matrix (n × d) (n × d) K) (B : Submodule K (Matrix n n K)) (r : ℕ)
     (hRank : A.rank = r * Fintype.card d)
@@ -289,7 +306,13 @@ theorem secondWongSeq_blowup_stable_of_contained [Nonempty d]
     ((kroneckerBlowup B d).map (Matrix.mulVecBilin K K)) (Fintype.card d) r
     Fintype.card_pos hRank (secondWongSeq_blowup_finrank_dvd A B) hRange
 
-/-- If the stable space escapes, the actual first exit in a square blow-up occurs by `r + 1`. -/
+/-- **The first blow-up exit occurs within the rank bound.**
+
+Let K be a field, N,D finite index types and B ⊆ Mat(N,N;K) a subspace. Put E = B^[D] = span{X
+⊗ T : X ∈ B, T ∈ Mat(D,D;K)} and let A be a matrix on N × D. Define W₀ = 0 and Wⱼ₊₁ =
+E(A⁻¹Wⱼ). Assume D is nonempty, rank A = r|D| and W∞ is not contained in im A. There exists k
+≤ r with Wₖ ⊆ im A but Wₖ₊₁ not contained in im A.
+-/
 theorem exists_secondWongSeq_blowup_first_exit [Nonempty d]
     (A : Matrix (n × d) (n × d) K) (B : Submodule K (Matrix n n K)) (r : ℕ)
     (hRank : A.rank = r * Fintype.card d)
@@ -310,7 +333,14 @@ theorem exists_secondWongSeq_blowup_first_exit [Nonempty d]
     ((kroneckerBlowup B d).map (Matrix.mulVecBilin K K)) (r + 1) hnext
   exact ⟨k, Nat.le_of_lt_succ hk, hprev, hexit⟩
 
-/-- Actual first-exit matrices and vectors in a square blow-up have length at most `r + 1`. -/
+/-- **A bounded escaping chain in a blow-up.**
+
+Let K be a field, N,D finite index types and B ⊆ Mat(N,N;K) a subspace. Put E = B^[D] = span{X
+⊗ T : X ∈ B, T ∈ Mat(D,D;K)} and let A be a matrix on N × D. Define W₀ = 0 and Wⱼ₊₁ =
+E(A⁻¹Wⱼ). Assume D is nonempty, rank A = r|D| and W∞ is not contained in im A. There exist k ≤
+r, C₀,…,Cₖ ∈ E and v₀,…,vₖ ∈ K^(N × D) with Wₖ ⊆ im A, Wₖ₊₁ not contained in im A, Av₀ = 0,
+Avᵢ₊₁ = Cᵢvᵢ, Avᵢ ∈ Wᵢ and Cₖvₖ ∉ im A.
+-/
 theorem exists_secondWong_blowup_escape_chain [Nonempty d]
     (A : Matrix (n × d) (n × d) K) (B : Submodule K (Matrix n n K)) (r : ℕ)
     (hRank : A.rank = r * Fintype.card d)
@@ -357,11 +387,20 @@ section Shift
 
 variable {R : Type u} [CommSemiring R] {n : Type v} {k q r : ℕ}
 
-/-- The actual source shift: one matrix unit between successive slots, wrapping at the last slot. -/
+/-- **A cyclic shift matrix unit.**
+
+Let R be a commutative semiring, k,q ∈ ℕ and k+1 ≤ q. Embed i ∈ Fin(k+1) in Fin q and write
+σ(i) = i+1 modulo q. Define Sᵢ = E_{σ(i),i} ∈ Mat(q,q;R), the matrix unit taking slot i to its
+successor and annihilating the other slots.
+-/
 def wongShift (h : k + 1 ≤ q) (i : Fin (k + 1)) : Matrix (Fin q) (Fin q) R :=
   Matrix.single (finRotate q (Fin.castLE h i)) (Fin.castLE h i) 1
 
-/-- With the source length and degree bounds, wrapping occurs exactly at `length = r + 1 = q`. -/
+/-- **When a bounded chain shift wraps around.**
+
+Let R be a commutative semiring, k,q ∈ ℕ and k+1 ≤ q. Embed i ∈ Fin(k+1) in Fin q and write
+σ(i) = i+1 modulo q. Suppose k ≤ r < q. Then σ(i) = 0 if and only if i = k, k = r and q = r+1.
+-/
 theorem wongShift_wrap_iff (h : k + 1 ≤ q) (hk : k ≤ r) (hq : r < q) (i : Fin (k + 1)) :
     (finRotate q (Fin.castLE h i)).val = 0 ↔ i = Fin.last k ∧ k = r ∧ q = r + 1 := by
   cases q with
@@ -405,7 +444,12 @@ theorem wongShift_full_last (k : ℕ) :
 
 open scoped Kronecker
 
-/-- The literal sum of extracted operators tensored with their source shift units. -/
+/-- **The Kronecker shift sum of a chain.**
+
+Let R be a commutative semiring, k,q ∈ ℕ and k+1 ≤ q. Embed i ∈ Fin(k+1) in Fin q and write
+σ(i) = i+1 modulo q. For matrices C₀,…,Cₖ on an index set N, define D_C = ∑ᵢ₌₀ᵏ Cᵢ ⊗
+E_{σ(i),i}, a matrix on N × Fin q.
+-/
 def wongShiftSum (C : Fin (k + 1) → Matrix n n R) (h : k + 1 ≤ q) :
     Matrix (n × Fin q) (n × Fin q) R :=
   ∑ i : Fin (k + 1), C i ⊗ₖ wongShift h i
@@ -418,7 +462,12 @@ theorem wongShiftSum_mem_kroneckerBlowup (B : Submodule R (Matrix n n R))
   intro i _
   exact kronecker_mem_kroneckerBlowup (hC i) _
 
-/-- The full tensor sum selects the matching operator on an inserted slot vector. -/
+/-- **Action of the chain shift sum on a single slot.**
+
+Let R be a commutative semiring, k,q ∈ ℕ and k+1 ≤ q. Embed i ∈ Fin(k+1) in Fin q and write
+σ(i) = i+1 modulo q. Let N be finite and C₀,…,Cₖ ∈ Mat(N,N;R). For D_C = ∑ᵢ Cᵢ ⊗ E_{σ(i),i}
+and the insertion Iⱼ(x) into slot j, one has D_C Iⱼ(x) = I_{σ(j)}(Cⱼx).
+-/
 theorem wongShiftSum_columnInsert [Fintype n] (C : Fin (k + 1) → Matrix n n R)
     (h : k + 1 ≤ q) (j : Fin (k + 1)) (x : n → R) :
     wongShiftSum C h *ᵥ LinearMap.columnInsert (Fin.castLE h j) x =
@@ -502,8 +551,15 @@ variable [Fintype n] [Fintype d] [Nonempty d]
 
 open scoped Kronecker
 
-/-- The actual first Wong exit constructs a shift sum in the further blow-up and a lifted escape.
-This proves the kernel/adjacent/range identities, with no ordinary rank-increment conclusion. -/
+/-- **Lifting a Wong escape to a uniform shift chain.**
+
+Let K be a field, N,D finite index types and B ⊆ Mat(N,N;K) a subspace. Put E = B^[D] = span{X
+⊗ T : X ∈ B, T ∈ Mat(D,D;K)} and let A be a matrix on N × D. Define W₀ = 0 and Wⱼ₊₁ =
+E(A⁻¹Wⱼ). Assume D is nonempty, A ∈ E, rank A = r|D|, W∞ is not contained in im A, and q > r.
+There exist k ≤ r, matrices C₀,…,Cₖ ∈ E, and vectors w₀,…,wₖ on (N × D) × Fin q. Put A′ = A ⊗
+I_q and D_C = ∑ᵢ Cᵢ ⊗ E_{i+1 mod q,i}. Both A′ and D_C belong to E^[Fin q], and A′w₀ = 0,
+A′wᵢ₊₁ = D_Cwᵢ, and D_Cwₖ ∉ im A′.
+-/
 theorem exists_wongShift_blowup_escape (A : Matrix (n × d) (n × d) K)
     (B : Submodule K (Matrix n n K)) (r q : ℕ) (hA : A ∈ kroneckerBlowup B d)
     (hRank : A.rank = r * Fintype.card d)

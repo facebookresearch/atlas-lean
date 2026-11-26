@@ -16,19 +16,14 @@ public import MathlibExt.Analysis.VonNeumannAlgebra.LocalVectorComparison
 public import MathlibExt.Analysis.VonNeumannAlgebra.PositiveCutoffLocalization
 
 /-!
-# An actual nonzero projection and vector with literal local positive domination
+# Nonzero projection with a locally dominating vector coefficient
 
-The original nonzero source projection gives an actual range vector whose
-coefficient dominates the original positive functional value. The actual
-local comparison operator is then constructed by its verified vector/Zorn
-route. Its genuine nonzero cutoff stays below the source projection and
-has a strictly positive threshold times the cutoff below that comparison
-operator. Scaling original positive test operators by that threshold and
-cancelling it proves the literal local domination, including zero tests.
+For a positive bounded functional `ψ` on a concrete von Neumann algebra and nonzero star
+projection `e`, there is a nonzero star projection `p≤e` and vector `ξ∈H` such that `Re ψ(b)≤Re
+⟨ξ,bξ⟩` for every positive `b≤p`.
 
-No local-domination, vector/norm, normal member or source-output certificate
-is an input. These actual data feed the localized-functional vector bound
-and the normal-functional realization constructor.
+The projection and vector are constructed from `ψ,e`; normality of the functional or a vector
+domination bound is not an input.
 -/
 
 @[expose] public section
@@ -46,7 +41,11 @@ universe u
 
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- Construct actual nonzero source-local projection/vector data with proved local domination. -/
+/-- **Nonzero local projection and vector dominating its positive corner.** Let `H` be a
+complete complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Let `ψ : M →
+ℂ` be a positive bounded complex-linear functional for the spectral orders. for a nonzero
+star projection `e∈M`, the construction returns `(p,ξ)` with `p` a nonzero star
+projection, `p≤e`, and `Re ψ(b)≤Re ⟨ξ,bξ⟩` whenever `0≤b≤p`. -/
 def localVectorDominatedProjection (M : VonNeumannAlgebra H) :
     letI : PartialOrder M := CStarAlgebra.spectralOrder M
     letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ

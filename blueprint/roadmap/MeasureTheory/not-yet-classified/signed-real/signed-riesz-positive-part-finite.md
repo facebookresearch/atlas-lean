@@ -1,3 +1,5 @@
-# Signed Riesz Positive Part finite
+# Finiteness of the signed Riesz positive part
 
-The positive representing measure in the signed Riesz construction is finite.
+Let `X` be a compact Hausdorff space
+with its Borel measurable structure. Let `F∈C(X,ℝ)*` be a bounded real-linear functional.
+`signedRieszPositivePart F` has finite total mass.

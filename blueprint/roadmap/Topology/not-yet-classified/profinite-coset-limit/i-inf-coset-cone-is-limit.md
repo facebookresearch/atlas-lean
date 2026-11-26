@@ -1,4 +1,6 @@
-# I Inf Coset Cone Is Limit
+# Limit property of a compact closed-subgroup intersection cone
 
-The canonical cone from the quotient by an infimum of a nonempty
-directed antitone family of closed subgroups is limiting in `TopCat`.
+Let `G` be a group with
+a topology, `I` a preorder and `S_i≤G` an antitone subgroup family. assume additionally
+that `G` is a compact topological group, `I` is nonempty and directed, and each `S_i` is
+closed. Then `iInfCosetCone S` is a limit of the coset system in `TopCat`.

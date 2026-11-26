@@ -15,13 +15,13 @@ public import MathlibExt.Analysis.VonNeumannAlgebra.NormalHom.ImageVonNeumannAlg
 public import MathlibExt.Analysis.VonNeumannAlgebra.NormalHom.VectorFunctionalCriterion
 
 /-!
-# The computed normal map onto the literal von Neumann image
+# Normal homomorphism onto the concrete image algebra
 
-The original operator star map is restricted to its actual range carrier.
-Its vector-functional pullbacks are the same original normal-map
-pullbacks, so the computed map is normal. Original injectivity and literal
-range membership prove it is bijective. No surjectivity, normality, image,
-predual or inverse certificate is supplied.
+Let `f : M → N` be an injective normal unital complex star homomorphism. Restricting its
+codomain to the von Neumann algebra `R={f(x) : x ∈ M}` gives a normal homomorphism `M → R`.
+
+This map is injective and surjective, and its operator value at `x` is `f(x)`. Its normality and
+surjectivity are conclusions, not extra assumptions on the image map.
 -/
 
 @[expose] public section
@@ -41,7 +41,13 @@ variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [Complete
 variable {K : Type v} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
 variable {M : VonNeumannAlgebra H} {N : VonNeumannAlgebra K}
 
-/-- Restrict the original normal operator map to its literal constructed VN range. -/
+/-- **Normal range restriction of an injective homomorphism.** Let `M,N` be concrete von
+Neumann algebras on complete complex Hilbert spaces. Their normal-functional Banach spaces
+`M_*,N_*` are the norm-closed spans of vector functionals, and their ultraweak topologies
+are `σ(M,M_*)`, `σ(N,N_*)`. Let `f : M → N` be a unital complex star homomorphism that is
+ultraweakly continuous. Assume `f` is injective. Write `R={ (f(x) : B(K)) : x ∈ M }` for
+its operator range on the target Hilbert space `K`. `f.toImage : NormalStarAlgHom M R`
+sends `x` to the element represented by `f(x)` in the von Neumann image algebra `R`. -/
 def toImage (f : NormalStarAlgHom M N) (hf : Function.Injective f) :
     NormalStarAlgHom M (f.imageVonNeumannAlgebra hf) := by
   let g : M →⋆ₐ[ℂ] (K →L[ℂ] K) := N.toStarSubalgebra.subtype.comp f.toStarAlgHom
@@ -60,12 +66,24 @@ def toImage (f : NormalStarAlgHom M N) (hf : Function.Injective f) :
   rw [heq]
   exact (f.predualPullback (normalVectorFunctional N ξ η)).property
 
-/-- The computed normal range restriction keeps every original operator value. -/
+/-- **Operator value of the normal image map.** Let `M,N` be concrete von Neumann algebras on
+complete complex Hilbert spaces. Their normal-functional Banach spaces `M_*,N_*` are the
+norm-closed spans of vector functionals, and their ultraweak topologies are `σ(M,M_*)`,
+`σ(N,N_*)`. Let `f : M → N` be a unital complex star homomorphism that is ultraweakly
+continuous. Assume `f` is injective. Write `R={ (f(x) : B(K)) : x ∈ M }` for its operator
+range on the target Hilbert space `K`. for `x ∈ M`, the bounded operator underlying
+`f.toImage x` is `(f(x) : B(K))`. -/
 @[simp]
 theorem toImage_apply (f : NormalStarAlgHom M N) (hf : Function.Injective f) (a : M) :
     (f.toImage hf a : K →L[ℂ] K) = (f a : K →L[ℂ] K) := rfl
 
-/-- Original injectivity proves injectivity of the same computed image map. -/
+/-- **Injectivity of the normal map into its image.** Let `M,N` be concrete von Neumann
+algebras on complete complex Hilbert spaces. Their normal-functional Banach spaces
+`M_*,N_*` are the norm-closed spans of vector functionals, and their ultraweak topologies
+are `σ(M,M_*)`, `σ(N,N_*)`. Let `f : M → N` be a unital complex star homomorphism that is
+ultraweakly continuous. Assume `f` is injective. Write `R={ (f(x) : B(K)) : x ∈ M }` for
+its operator range on the target Hilbert space `K`. the range-restricted map `f.toImage :
+M → R` is injective. -/
 theorem toImage_injective (f : NormalStarAlgHom M N) (hf : Function.Injective f) :
     Function.Injective (f.toImage hf) := by
   intro a b h
@@ -74,7 +92,13 @@ theorem toImage_injective (f : NormalStarAlgHom M N) (hf : Function.Injective f)
   have hvalue := congrArg (fun p : f.imageVonNeumannAlgebra hf => (p : K →L[ℂ] K)) h
   simpa only [toImage_apply] using hvalue
 
-/-- Every actual image carrier element has an original source preimage under the computed map. -/
+/-- **Surjectivity of the normal map into its image.** Let `M,N` be concrete von Neumann
+algebras on complete complex Hilbert spaces. Their normal-functional Banach spaces
+`M_*,N_*` are the norm-closed spans of vector functionals, and their ultraweak topologies
+are `σ(M,M_*)`, `σ(N,N_*)`. Let `f : M → N` be a unital complex star homomorphism that is
+ultraweakly continuous. Assume `f` is injective. Write `R={ (f(x) : B(K)) : x ∈ M }` for
+its operator range on the target Hilbert space `K`. the range-restricted map `f.toImage :
+M → R` is surjective; every element of the image algebra has a source preimage. -/
 theorem toImage_surjective (f : NormalStarAlgHom M N) (hf : Function.Injective f) :
     Function.Surjective (f.toImage hf) := by
   intro b

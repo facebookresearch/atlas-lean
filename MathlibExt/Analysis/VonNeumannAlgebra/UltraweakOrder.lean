@@ -19,17 +19,14 @@ public import Mathlib.Analysis.Normed.Module.WeakDual
 public import Mathlib.Topology.Order.OrderClosed
 
 /-!
-# The original spectral order and bounded compact sets in the ultraweak view
+# Spectral order and compact norm balls in ultraweak topology
 
-The ultraweak copy carries exactly the original concrete algebra's spectral
-order. Original vector evaluations express operator positivity, so its order
-relation is closed for the actual ultraweak topology. The proved original
-normal-evaluation isometry and homeomorphism transport stock weak-star
-compact dual balls to the same original norm bounds.
+For a concrete von Neumann algebra `M ⊆ B(H)` on a complete complex Hilbert space, its ultraweak
+topology is `σ(M,M_*)`. Its spectral order is the operator order: `a≤b` when `b-a` is positive.
 
-These are actual order/topology prerequisites for a bounded positive
-family with a provided original LUB. No supremum, normal representation or
-predual/norm certificate is supplied or selected as a new model.
+The relation `{(a,b) : a≤b}` is closed in the ultraweak product topology. For every real `r`,
+the set `{x ∈ M : ‖x‖≤r}` is ultraweakly compact; negative radii give the empty set. The norm is
+the inherited operator norm, and no supremum element is assumed.
 -/
 
 @[expose] public section
@@ -47,20 +44,34 @@ universe u
 
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- The ultraweak view has exactly the original algebra's canonical spectral order. -/
+/-- **Operator spectral order in the ultraweak algebra.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for
+its vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. Equip `M` with the ultraweak topology `σ(M,M_*)`, induced by `x ↦ φ(x)` for `φ ∈
+M_*`. `ultraweakPartialOrder M` is the order `a≤b` exactly when the bounded operator `b-a`
+is positive, with algebra elements regarded in the ultraweak topology. -/
 @[instance_reducible]
 def ultraweakPartialOrder (M : VonNeumannAlgebra H) : PartialOrder (Ultraweak M) :=
   @PartialOrder.lift (Ultraweak M) M (CStarAlgebra.spectralOrder M)
     (ultraweakLinearEquiv M) (ultraweakLinearEquiv M).injective
 
-/-- The constructed order compares exactly the original algebra elements. -/
+/-- **Order comparison agrees across the ultraweak and normed algebras.** Let `H` be a
+complete complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write
+`ω_(ξ,η)(x)=⟨ξ,xη⟩` for its vector functionals. Let `M_*` be their norm-closed complex
+span in the continuous dual `M*`. Equip `M` with the ultraweak topology `σ(M,M_*)`,
+induced by `x ↦ φ(x)` for `φ ∈ M_*`. two elements satisfy `a≤b` in the ultraweak algebra
+exactly when their corresponding elements of `M` satisfy the spectral order relation. -/
 theorem ultraweak_le_iff (M : VonNeumannAlgebra H) (a b : Ultraweak M) :
     @LE.le (Ultraweak M) (ultraweakPartialOrder M).toLE a b ↔
       @LE.le M (CStarAlgebra.spectralOrder M).toLE
         (ultraweakLinearEquiv M a) (ultraweakLinearEquiv M b) :=
   Iff.rfl
 
-/-- Original operator positivity makes the actual ultraweak spectral order closed. -/
+/-- **Ultraweak closedness of the spectral order relation.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for
+its vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. Equip `M` with the ultraweak topology `σ(M,M_*)`, induced by `x ↦ φ(x)` for `φ ∈
+M_*`. the set `{(a,b) ∈ M×M : a≤b}` is closed for the product of the ultraweak topologies. -/
 theorem ultraweakOrderClosedTopology (M : VonNeumannAlgebra H) :
     @OrderClosedTopology (Ultraweak M) inferInstance (ultraweakPartialOrder M).toPreorder := by
   let : PartialOrder M := CStarAlgebra.spectralOrder M
@@ -117,7 +128,12 @@ theorem ultraweakOrderClosedTopology (M : VonNeumannAlgebra H) :
     simp only [hvalue, RCLike.re_eq_complex_re]
   exact { isClosed_le' := hset.symm ▸ hclosed }
 
-/-- Original norm-bounded closed balls are compact in the actual ultraweak view. -/
+/-- **Ultraweak compactness of inherited operator-norm balls.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for
+its vector functionals. Let `M_*` be their norm-closed complex span in the continuous dual
+`M*`. Equip `M` with the ultraweak topology `σ(M,M_*)`, induced by `x ↦ φ(x)` for `φ ∈
+M_*`. for every `r : ℝ`, `{x ∈ M : ‖x‖≤r}` is compact in the ultraweak topology; no
+nonnegativity of `r` is required. -/
 theorem ultraweakClosedBall_isCompact (M : VonNeumannAlgebra H) (r : ℝ) :
     IsCompact {x : Ultraweak M | ‖ultraweakLinearEquiv M x‖ ≤ r} := by
   let e := ultraweakWeakDualHomeomorph M

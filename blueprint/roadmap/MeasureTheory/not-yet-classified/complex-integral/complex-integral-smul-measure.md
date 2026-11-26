@@ -1,5 +1,5 @@
-# Complex Integral smul measure
+# Complex homogeneity in the measure
 
-Complex homogeneity in the measure.  The proof uses
-`variation (c • μ) = ‖c‖₊ • variation μ` to change the reference measure, then applies the local
-complex scalar extension lemma to the transposed set-function.
+Let `X` be a measurable space, `μ : ComplexMeasure
+X` and `f : X → ℂ` bounded measurable with pointwise supremum norm. Write `I_μ(f)=∫ f dμ`;
+the total variation `|μ|` is finite. for `z∈ℂ`, `I_(z • μ)(f)=z • I_μ(f)`.

@@ -1,3 +1,3 @@
-# Det residue Cyclic Diagonal
+# Determinant of the final-block inverse weight
 
-The final-block diagonal factor has determinant `q⁻¹`.
+Let l be a field,r∈ℕ,q∈lˣ. Over l, det(residueCyclicDiagonal l r q)=q⁻¹.

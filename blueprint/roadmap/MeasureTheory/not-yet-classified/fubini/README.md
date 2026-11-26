@@ -1,4 +1,4 @@
-# Fubini
+# Reverse-order compact-support Radon integration
 
-- [Integral integral radon Prod swap](integral-integral-radon-prod-swap.md)
-- [Integral radon Prod swap](integral-radon-prod-swap.md)
+- [Equality of both iterated compact-support integral orders](integral-integral-radon-prod-swap.md)
+- [Reverse coordinate formula for the Borel Radon integral](integral-radon-prod-swap.md)

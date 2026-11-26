@@ -1,3 +1,6 @@
-# Norm compact Support Factor Tensor Completion
+# Norm retained by the factor-tensor completion inclusion
 
-The named stock completion inclusion preserves the original compact-support factor-tensor norm.
+Let `X,Y` be topological
+Borel spaces and `μ,ν` regular measures. For compact-support functions, let `A :
+C_c(X,ℂ)⊗C_c(Y,ℂ) → T` be the tensor of their L² inclusions followed by completion. for
+algebraic compact-support `z`, `‖A(z)‖=‖compactSupportFactorTensor μ ν z‖`.

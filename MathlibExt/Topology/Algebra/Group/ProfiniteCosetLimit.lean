@@ -17,23 +17,15 @@ import Mathlib.Topology.Compactness.Compact
 import Mathlib.Topology.Homeomorph.Lemmas
 
 /-!
-# Intersections of closed subgroups as limits of coset spaces
+# Coset space of a subgroup intersection as an inverse limit
 
-For a nonempty directed antitone family of closed subgroups of a compact
-topological group, the left-coset space by their infimum is the
-inverse limit of the individual coset spaces.  No subgroup normality or
-total-disconnectedness assumption is used.
+An antitone subgroup family `S_i` indexed by a preorder gives the inverse system of left-coset
+spaces `G/S_i`, with the nested coset projection maps. The quotient by `∩_i S_i` has a natural
+cone to this system.
 
-The comparison with the chosen `TopCat` limit is proved bijective by a
-compact directed-intersection argument and hence is a homeomorphism.  The
-comparison, its fiber construction, and the homeomorphism remain private.
-
-## Main declarations
-
-* `QuotientGroup.antitoneCosetSystem`
-* `QuotientGroup.iInfCosetCone`
-* `QuotientGroup.iInfCosetCone_π_app`
-* `QuotientGroup.iInfCosetConeIsLimit`
+If `G` is a compact topological group, the indices are nonempty and directed, and each `S_i` is
+closed, this cone is a limit in topological spaces. No subgroup normality, total
+disconnectedness or Hausdorffness of `G` is required.
 -/
 
 @[expose] public section
@@ -51,9 +43,10 @@ universe u
 variable {G : Type u} [Group G] [TopologicalSpace G]
 variable {ι : Type u} [Preorder ι]
 
-/-- The inverse system of left-coset spaces associated to an antitone
-family of subgroups.  An arrow `op k ⟶ op i` maps `G / S k` to
-`G / S i`. -/
+/-- **Inverse system of antitone subgroup coset spaces.** Let `G` be a group with a topology,
+`I` a preorder and `S_i≤G` an antitone subgroup family. `antitoneCosetSystem S : Iᵒᵖ ⥤
+TopCat` has object `G/S_i`; an arrow from `op k` to `op i` for `i≤k` maps `[g]_(S_k)` to
+`[g]_(S_i)`. -/
 def antitoneCosetSystem (S : ι → Subgroup G) (hS : Antitone S) :
     ιᵒᵖ ⥤ TopCat.{u} where
   obj i := TopCat.of (G ⧸ S i.unop)
@@ -68,8 +61,9 @@ def antitoneCosetSystem (S : ι → Subgroup G) (hS : Antitone S) :
     obtain ⟨x, rfl⟩ := QuotientGroup.mk_surjective q
     rfl
 
-/-- The canonical cone from the coset space by the subgroup infimum to the
-antitone coset system. -/
+/-- **Coset cone from the subgroup intersection.** Let `G` be a group with a topology, `I` a
+preorder and `S_i≤G` an antitone subgroup family. `iInfCosetCone S` has vertex `G/(∩_i
+S_i)` and component maps `[g]_(∩S) ↦ [g]_(S_i)`. -/
 def iInfCosetCone (S : ι → Subgroup G) (hS : Antitone S) :
     Cone (antitoneCosetSystem S hS) where
   pt := TopCat.of (G ⧸ (⨅ i, S i))
@@ -81,8 +75,9 @@ def iInfCosetCone (S : ι → Subgroup G) (hS : Antitone S) :
         obtain ⟨g, rfl⟩ := QuotientGroup.mk_surjective q
         rfl }
 
-/-- A component of the canonical intersection cone is the corresponding
-nested coset projection. -/
+/-- **Component of the subgroup-intersection coset cone.** Let `G` be a group with a topology,
+`I` a preorder and `S_i≤G` an antitone subgroup family. the component at `op i` is the
+nested coset projection `G/(∩_j S_j) → G/S_i` induced by `∩_j S_j≤S_i`. -/
 @[simp]
 theorem iInfCosetCone_π_app
     (S : ι → Subgroup G) (hS : Antitone S) (i : ιᵒᵖ) :
@@ -90,8 +85,10 @@ theorem iInfCosetCone_π_app
       TopCat.ofHom (cosetProjection (iInf_le S i.unop)) :=
   rfl
 
-/-- The canonical cone from the quotient by an infimum of a nonempty
-directed antitone family of closed subgroups is limiting in `TopCat`. -/
+/-- **Limit property of a compact closed-subgroup intersection cone.** Let `G` be a group with
+a topology, `I` a preorder and `S_i≤G` an antitone subgroup family. assume additionally
+that `G` is a compact topological group, `I` is nonempty and directed, and each `S_i` is
+closed. Then `iInfCosetCone S` is a limit of the coset system in `TopCat`. -/
 noncomputable def iInfCosetConeIsLimit
     [IsDirectedOrder ι] [Nonempty ι]
     [IsTopologicalGroup G] [CompactSpace G]

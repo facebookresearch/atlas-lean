@@ -1,4 +1,7 @@
-# Continuous arens First weak Dual left
+# Weak-star continuity in the first Arens variable
 
-The first Arens product is weak-star continuous in its first variable,
-using precisely the original first duals as the fixed pairing spaces.
+Let `𝕜` be a nontrivially normed
+field. Let `E,F,G` be seminormed `𝕜`-spaces in independent universes, and write `E*`,
+`E**` for the continuous dual and bidual, with their operator norms. Let `m : E →L[𝕜] F
+→L[𝕜] G` be a bounded bilinear map. for fixed `q ∈ F**`, the map `p ↦ m.arensFirst p q` is
+continuous from `E**` with `σ(E**,E*)` to `G**` with `σ(G**,G*)`.

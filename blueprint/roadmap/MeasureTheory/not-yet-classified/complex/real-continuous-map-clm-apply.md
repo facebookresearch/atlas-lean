@@ -1,3 +1,4 @@
-# Real Continuous Map CLM apply
+# Pointwise value of real continuous-function complexification
 
-The real-to-complex continuous-map inclusion evaluates by the original real scalar inclusion.
+For a topological space
+`X`, `f∈C(X,ℝ)` and `x∈X`, `realContinuousMapCLM f x=(f(x) : ℂ)`.

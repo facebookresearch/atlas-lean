@@ -1,4 +1,5 @@
-# Is Unit det of bijective quotient Base Change
+# Bijective residue endomorphism gives a determinant unit
 
-If the endomorphism induced on the closed fiber of a finite free algebra
-is bijective, then the original determinant is a unit of the local base.
+Let R be a commutative local ring with maximal ideal 𝔪 and S a commutative finite free
+R-algebra. If f:S→S is R-linear and its induced residue map f̄:S/𝔪S→S/𝔪S is bijective, then
+det(f) is a unit in R. This is isUnit_det_of_bijective_quotientBaseChange.

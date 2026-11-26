@@ -1,3 +1,6 @@
-# Coe im
+# Underlying signed imaginary part of a regular complex measure
 
-The regular signed imaginary component has the imaginary part of the underlying complex measure.
+Let `X` be an R₁
+topological space with its Borel measurable structure. Let `μ` be a complex measure with
+regular total variation. the signed measure underlying `RegularComplexMeasure.im μ` equals
+`Im μ`.

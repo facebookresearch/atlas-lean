@@ -18,23 +18,19 @@ public import MathlibExt.Analysis.Normed.Module.StrongDualStar
 public import Mathlib.Topology.Algebra.Module.Spaces.ContinuousLinearMap
 
 /-!
-# The original universal representation on the actual bidual
+# Bounded bidual extension of the universal-state representation
 
-The canonical operator-bidual retraction is composed with the two bounded
-strong-dual precomposition maps of the original all-state representation.
-Its coefficient is exactly F(a ↦ ⟪η, π(a)ξ⟫), with the original A* and A**
-operator norms. Both Arens products and the intrinsic bidual involution are
-preserved by evaluating these original vector functionals.
+For a nonunital complex C-star algebra `A`, let `π_u` be its all-normalized-state GNS
+representation on `H_u`. The coefficient `κ_(ξ,η)(a)=⟨η,π_u(a)ξ⟩` belongs to `A*` with
+`‖κ_(ξ,η)‖≤‖ξ‖‖η‖`.
 
-No C-star or W-star structure on A** is assumed or selected. The original
-algebra may be nonunital or zero, and its universal Hilbert sum is the existing
-arbitrary-state-index completion. The future compatible bidual C-star/W-star
-existence theorem remains a separate whole source obligation.
+The bounded extension `Ω : A** → B(H_u)` satisfies `⟨η,Ω(p)ξ⟩=p(κ_(ξ,η))`, `Ω(J_A(a))=π_u(a)`
+and `‖Ω‖≤1`. Both Arens products map to operator multiplication, and the intrinsic bidual
+involution maps to adjoint.
 
-These constructors and characteristics provide the canonical operator-bidual
-map used in Blackadar, *K-Theory for Operator Algebras*, Section 15.8.1(3).
-The iterated Arens/coefficient formulas unpack that construction; they are
-not additional formulas quoted verbatim from the printed theorem.
+No C-star or W-star structure on `A**`, equality of its two Arens products or bijectivity of `Ω`
+is assumed. The bidual uses its iterated continuous-dual norm; the target uses the Hilbert
+operator norm.
 -/
 
 @[expose] public section
@@ -67,7 +63,11 @@ universe uA
 
 variable (A : Type uA) [NonUnitalCStarAlgebra A]
 
-/-- The original all-state coefficient map, bundled with its existing contraction bound. -/
+/-- **Bounded linear all-state GNS representation.** Let `A` be a nonunital complex C-star
+algebra. Let `H_u` be the Hilbert direct sum of the GNS spaces of all positive bounded
+functionals of norm one, and `π_u : A →⋆ₙₐ[ℂ] B(H_u)` their coordinatewise GNS
+representation. `universalStateGNSRepresentationCLM A : A →L[ℂ] B(H_u)` is `a ↦ π_u(a)`,
+with operator norm at most one. -/
 def universalStateGNSRepresentationCLM :
     A →L[ℂ] (UniversalStateGNSpace A →L[ℂ] UniversalStateGNSpace A) :=
   LinearMap.mkContinuous
@@ -79,12 +79,18 @@ def universalStateGNSRepresentationCLM :
       change ‖universalStateGNSRepresentation A a‖ ≤ 1 * ‖a‖
       simpa only [one_mul] using norm_universalStateGNSRepresentation_le A a
 
-/-- The bounded coefficient map retains the original nonunital star-homomorphism value. -/
+/-- **Value of the bounded universal-state map.** Let `A` be a nonunital complex C-star
+algebra. Let `H_u` be the Hilbert direct sum of the GNS spaces of all positive bounded
+functionals of norm one, and `π_u : A →⋆ₙₐ[ℂ] B(H_u)` their coordinatewise GNS
+representation. for `a∈A`, `universalStateGNSRepresentationCLM A a=π_u(a)`. -/
 @[simp]
 theorem universalStateGNSRepresentationCLM_apply (a : A) :
     universalStateGNSRepresentationCLM A a = universalStateGNSRepresentation A a := rfl
 
-/-- The original universal coefficient map has operator norm at most one. -/
+/-- **Contractive norm of the universal-state representation.** Let `A` be a nonunital complex
+C-star algebra. Let `H_u` be the Hilbert direct sum of the GNS spaces of all positive
+bounded functionals of norm one, and `π_u : A →⋆ₙₐ[ℂ] B(H_u)` their coordinatewise GNS
+representation. `‖universalStateGNSRepresentationCLM A‖≤1`. -/
 theorem norm_universalStateGNSRepresentationCLM_le :
     ‖universalStateGNSRepresentationCLM A‖ ≤ 1 := by
   apply ContinuousLinearMap.opNorm_le_bound (universalStateGNSRepresentationCLM A) zero_le_one
@@ -92,12 +98,19 @@ theorem norm_universalStateGNSRepresentationCLM_le :
   rw [universalStateGNSRepresentationCLM_apply, one_mul]
   exact norm_universalStateGNSRepresentation_le A a
 
-/-- The actual A* vector coefficient, formed by original bounded precomposition. -/
+/-- **Continuous-dual coefficient of the universal-state representation.** Let `A` be a
+nonunital complex C-star algebra. Let `H_u` be the Hilbert direct sum of the GNS spaces of
+all positive bounded functionals of norm one, and `π_u : A →⋆ₙₐ[ℂ] B(H_u)` their
+coordinatewise GNS representation. for `ξ,η∈H_u`, `universalStateGNSCoefficient A ξ η ∈
+A*` is `a ↦ ⟨η,π_u(a)ξ⟩`. -/
 def universalStateGNSCoefficient (ξ η : UniversalStateGNSpace A) : StrongDual ℂ A :=
   (MathlibExt.Analysis.InnerProductSpace.operatorCoefficient ξ η).comp
     (universalStateGNSRepresentationCLM A)
 
-/-- The actual coefficient functional evaluates the original representation and vectors. -/
+/-- **Value of a universal-state vector coefficient.** Let `A` be a nonunital complex C-star
+algebra. Let `H_u` be the Hilbert direct sum of the GNS spaces of all positive bounded
+functionals of norm one, and `π_u : A →⋆ₙₐ[ℂ] B(H_u)` their coordinatewise GNS
+representation. for `ξ,η∈H_u`, `a∈A`, `universalStateGNSCoefficient A ξ η a=⟨η,π_u(a)ξ⟩`. -/
 @[simp]
 theorem universalStateGNSCoefficient_apply (ξ η : UniversalStateGNSpace A) (a : A) :
     universalStateGNSCoefficient A ξ η a = ⟪η, universalStateGNSRepresentation A a ξ⟫_ℂ := by
@@ -105,7 +118,10 @@ theorem universalStateGNSCoefficient_apply (ξ η : UniversalStateGNSpace A) (a 
     universalStateGNSRepresentationCLM_apply,
     MathlibExt.Analysis.InnerProductSpace.operatorCoefficient_apply]
 
-/-- The original coefficient-functional norm is bounded by the original two vector norms. -/
+/-- **Dual norm bound of a universal-state coefficient.** Let `A` be a nonunital complex
+C-star algebra. Let `H_u` be the Hilbert direct sum of the GNS spaces of all positive
+bounded functionals of norm one, and `π_u : A →⋆ₙₐ[ℂ] B(H_u)` their coordinatewise GNS
+representation. for `ξ,η∈H_u`, `‖universalStateGNSCoefficient A ξ η‖≤‖ξ‖‖η‖`. -/
 theorem norm_universalStateGNSCoefficient_le (ξ η : UniversalStateGNSpace A) :
     ‖universalStateGNSCoefficient A ξ η‖ ≤ ‖ξ‖ * ‖η‖ := by
   calc
@@ -123,15 +139,23 @@ theorem norm_universalStateGNSCoefficient_le (ξ η : UniversalStateGNSpace A) :
         (mul_nonneg (norm_nonneg ξ) (norm_nonneg η))
     _ = ‖ξ‖ * ‖η‖ := mul_one _
 
-/-- The canonical continuous linear extension on the literal original strong bidual.
-`precomp` is the pinned Mathlib strong-dual map; applying it twice is π**. -/
+/-- **Bounded operator extension to the continuous bidual.** Let `A` be a nonunital complex
+C-star algebra. Let `H_u` be the Hilbert direct sum of the GNS spaces of all positive
+bounded functionals of norm one, and `π_u : A →⋆ₙₐ[ℂ] B(H_u)` their coordinatewise GNS
+representation. `universalBidualExtension A : A** →L[ℂ] B(H_u)` is characterized by
+`⟨η,Ω(p)ξ⟩=p(κ_(ξ,η))`, where `κ_(ξ,η)(a)=⟨η,π_u(a)ξ⟩`. -/
 def universalBidualExtension :
     StrongDual ℂ (StrongDual ℂ A) →L[ℂ]
       (UniversalStateGNSpace A →L[ℂ] UniversalStateGNSpace A) :=
   MathlibExt.Analysis.InnerProductSpace.operatorBidualRetraction.comp
     (((universalStateGNSRepresentationCLM A).precomp (G := ℂ)).precomp (G := ℂ))
 
-/-- Every original bidual coefficient is the literal original A* evaluation. -/
+/-- **Scalar coefficient of a universal bidual operator.** Let `A` be a nonunital complex
+C-star algebra. Let `H_u` be the Hilbert direct sum of the GNS spaces of all positive
+bounded functionals of norm one, and `π_u : A →⋆ₙₐ[ℂ] B(H_u)` their coordinatewise GNS
+representation. Write `κ_(ξ,η)(a)=⟨η,π_u(a)ξ⟩ ∈ A*` and `Ω : A** → B(H_u)` for the bounded
+bidual extension with `⟨η,Ω(p)ξ⟩=p(κ_(ξ,η))`. for `p∈A**`, `ξ,η∈H_u`,
+`⟨η,universalBidualExtension A p ξ⟩=p(universalStateGNSCoefficient A ξ η)`. -/
 theorem universalBidualExtension_inner (p : StrongDual ℂ (StrongDual ℂ A))
     (ξ η : UniversalStateGNSpace A) :
     ⟪η, universalBidualExtension A p ξ⟫_ℂ = p (universalStateGNSCoefficient A ξ η) := by
@@ -142,7 +166,12 @@ theorem universalBidualExtension_inner (p : StrongDual ℂ (StrongDual ℂ A))
   simp only [ContinuousLinearMap.precomp_apply, ContinuousLinearMap.comp_apply]
   rfl
 
-/-- The canonical extension restricts to the original representation under η(a)(φ)=φ(a). -/
+/-- **Universal bidual extension on evaluation vectors.** Let `A` be a nonunital complex
+C-star algebra. Let `H_u` be the Hilbert direct sum of the GNS spaces of all positive
+bounded functionals of norm one, and `π_u : A →⋆ₙₐ[ℂ] B(H_u)` their coordinatewise GNS
+representation. Write `κ_(ξ,η)(a)=⟨η,π_u(a)ξ⟩ ∈ A*` and `Ω : A** → B(H_u)` for the bounded
+bidual extension with `⟨η,Ω(p)ξ⟩=p(κ_(ξ,η))`. for `J_A(a)(φ)=φ(a)`, `Ω(J_A(a))=π_u(a)` for
+every `a∈A`. -/
 @[simp]
 theorem universalBidualExtension_inclusionInDoubleDual (a : A) :
     universalBidualExtension A (NormedSpace.inclusionInDoubleDual ℂ A a) =
@@ -160,7 +189,11 @@ theorem universalBidualExtension_inclusionInDoubleDual (a : A) :
     _ = ⟪η, universalStateGNSRepresentation A a ξ⟫_ℂ :=
       universalStateGNSCoefficient_apply A ξ η a
 
-/-- Every extension value is contractive for the original iterated-dual operator norm. -/
+/-- **Pointwise norm bound of the universal bidual extension.** Let `A` be a nonunital complex
+C-star algebra. Let `H_u` be the Hilbert direct sum of the GNS spaces of all positive
+bounded functionals of norm one, and `π_u : A →⋆ₙₐ[ℂ] B(H_u)` their coordinatewise GNS
+representation. Write `κ_(ξ,η)(a)=⟨η,π_u(a)ξ⟩ ∈ A*` and `Ω : A** → B(H_u)` for the bounded
+bidual extension with `⟨η,Ω(p)ξ⟩=p(κ_(ξ,η))`. for every `p∈A**`, `‖Ω(p)‖≤‖p‖`. -/
 theorem norm_universalBidualExtension_apply_le (p : StrongDual ℂ (StrongDual ℂ A)) :
     ‖universalBidualExtension A p‖ ≤ ‖p‖ := by
   apply ContinuousLinearMap.opNorm_le_bound _ (norm_nonneg p)
@@ -180,13 +213,22 @@ theorem norm_universalBidualExtension_apply_le (p : StrongDual ℂ (StrongDual �
       mul_le_mul_of_nonneg_left (norm_universalStateGNSCoefficient_le A ξ η) (norm_nonneg p)
     _ = (‖p‖ * ‖ξ‖) * ‖η‖ := by rw [mul_assoc]
 
-/-- The canonical continuous linear extension has operator norm at most one. -/
+/-- **Operator norm of the universal bidual extension.** Let `A` be a nonunital complex C-star
+algebra. Let `H_u` be the Hilbert direct sum of the GNS spaces of all positive bounded
+functionals of norm one, and `π_u : A →⋆ₙₐ[ℂ] B(H_u)` their coordinatewise GNS
+representation. Write `κ_(ξ,η)(a)=⟨η,π_u(a)ξ⟩ ∈ A*` and `Ω : A** → B(H_u)` for the bounded
+bidual extension with `⟨η,Ω(p)ξ⟩=p(κ_(ξ,η))`. `‖universalBidualExtension A‖≤1`. -/
 theorem norm_universalBidualExtension_le : ‖universalBidualExtension A‖ ≤ 1 := by
   apply ContinuousLinearMap.opNorm_le_bound _ zero_le_one
   intro p
   simpa only [one_mul] using norm_universalBidualExtension_apply_le A p
 
-/-- Original left multiplication translates a vector functional through the actual adjoint. -/
+/-- **Left multiplication acts on the adjoint coefficient vector.** Let `A` be a nonunital
+complex C-star algebra. Let `H_u` be the Hilbert direct sum of the GNS spaces of all
+positive bounded functionals of norm one, and `π_u : A →⋆ₙₐ[ℂ] B(H_u)` their
+coordinatewise GNS representation. Write `κ_(ξ,η)(a)=⟨η,π_u(a)ξ⟩ ∈ A*` and `Ω : A** →
+B(H_u)` for the bounded bidual extension with `⟨η,Ω(p)ξ⟩=p(κ_(ξ,η))`. for `a∈A`,
+`ξ,η∈H_u`, the functional `b ↦ κ_(ξ,η)(ab)` equals `κ_(ξ,π_u(a)*η)`. -/
 theorem universalStateGNSCoefficient_mul_left (a : A) (ξ η : UniversalStateGNSpace A) :
     (ContinuousLinearMap.mul ℂ A).dualBilinear (universalStateGNSCoefficient A ξ η) a =
       universalStateGNSCoefficient A ξ (star (universalStateGNSRepresentation A a) η) := by
@@ -202,7 +244,12 @@ theorem universalStateGNSCoefficient_mul_left (a : A) (ξ η : UniversalStateGNS
   exact (ContinuousLinearMap.adjoint_inner_left (universalStateGNSRepresentation A a)
     (universalStateGNSRepresentation A b ξ) η).symm
 
-/-- Original right multiplication translates the original first vector, with no adjoint change. -/
+/-- **Right multiplication acts on the first coefficient vector.** Let `A` be a nonunital
+complex C-star algebra. Let `H_u` be the Hilbert direct sum of the GNS spaces of all
+positive bounded functionals of norm one, and `π_u : A →⋆ₙₐ[ℂ] B(H_u)` their
+coordinatewise GNS representation. Write `κ_(ξ,η)(a)=⟨η,π_u(a)ξ⟩ ∈ A*` and `Ω : A** →
+B(H_u)` for the bounded bidual extension with `⟨η,Ω(p)ξ⟩=p(κ_(ξ,η))`. for `b∈A`,
+`ξ,η∈H_u`, the functional `a ↦ κ_(ξ,η)(ab)` equals `κ_(π_u(b)ξ,η)`. -/
 theorem universalStateGNSCoefficient_mul_right (b : A) (ξ η : UniversalStateGNSpace A) :
     (ContinuousLinearMap.mul ℂ A).flip.dualBilinear
         (universalStateGNSCoefficient A ξ η) b =
@@ -216,7 +263,12 @@ theorem universalStateGNSCoefficient_mul_right (b : A) (ξ η : UniversalStateGN
   rw [map_mul]
   rfl
 
-/-- The first literal Arens product maps to the original operator product. -/
+/-- **First Arens product mapped to universal operator multiplication.** Let `A` be a
+nonunital complex C-star algebra. Let `H_u` be the Hilbert direct sum of the GNS spaces of
+all positive bounded functionals of norm one, and `π_u : A →⋆ₙₐ[ℂ] B(H_u)` their
+coordinatewise GNS representation. Write `κ_(ξ,η)(a)=⟨η,π_u(a)ξ⟩ ∈ A*` and `Ω : A** →
+B(H_u)` for the bounded bidual extension with `⟨η,Ω(p)ξ⟩=p(κ_(ξ,η))`. for `p,q∈A**`, `Ω(p
+□ q)=Ω(p)Ω(q)`, where `□` is the first Arens product of multiplication on `A`. -/
 theorem universalBidualExtension_arensFirst (p q : StrongDual ℂ (StrongDual ℂ A)) :
     universalBidualExtension A ((ContinuousLinearMap.mul ℂ A).arensFirst p q) =
       universalBidualExtension A p * universalBidualExtension A q := by
@@ -261,7 +313,12 @@ theorem universalBidualExtension_arensFirst (p q : StrongDual ℂ (StrongDual �
     _ = ⟪η, (universalBidualExtension A p * universalBidualExtension A q) ξ⟫_ℂ := by
       rw [mul_apply_eq_comp]
 
-/-- The second literal Arens product has the same original operator-product image. -/
+/-- **Second Arens product mapped to universal operator multiplication.** Let `A` be a
+nonunital complex C-star algebra. Let `H_u` be the Hilbert direct sum of the GNS spaces of
+all positive bounded functionals of norm one, and `π_u : A →⋆ₙₐ[ℂ] B(H_u)` their
+coordinatewise GNS representation. Write `κ_(ξ,η)(a)=⟨η,π_u(a)ξ⟩ ∈ A*` and `Ω : A** →
+B(H_u)` for the bounded bidual extension with `⟨η,Ω(p)ξ⟩=p(κ_(ξ,η))`. for `p,q∈A**`, `Ω(p
+◇ q)=Ω(p)Ω(q)`, where `◇` is the second Arens product. -/
 theorem universalBidualExtension_arensSecond (p q : StrongDual ℂ (StrongDual ℂ A)) :
     universalBidualExtension A ((ContinuousLinearMap.mul ℂ A).arensSecond p q) =
       universalBidualExtension A p * universalBidualExtension A q := by
@@ -311,7 +368,12 @@ theorem universalBidualExtension_arensSecond (p q : StrongDual ℂ (StrongDual �
     _ = ⟪η, (universalBidualExtension A p * universalBidualExtension A q) ξ⟫_ℂ := by
       rw [mul_apply_eq_comp]
 
-/-- The original intrinsic A* involution interchanges the two actual vector coefficients. -/
+/-- **Intrinsic dual star swaps universal coefficient vectors.** Let `A` be a nonunital
+complex C-star algebra. Let `H_u` be the Hilbert direct sum of the GNS spaces of all
+positive bounded functionals of norm one, and `π_u : A →⋆ₙₐ[ℂ] B(H_u)` their
+coordinatewise GNS representation. Write `κ_(ξ,η)(a)=⟨η,π_u(a)ξ⟩ ∈ A*` and `Ω : A** →
+B(H_u)` for the bounded bidual extension with `⟨η,Ω(p)ξ⟩=p(κ_(ξ,η))`. for `ξ,η∈H_u`,
+`κ_(ξ,η)*=κ_(η,ξ)`, with dual star `φ*(a)=conj(φ(a*))`. -/
 @[simp]
 theorem universalStateGNSCoefficient_star (ξ η : UniversalStateGNSpace A) :
     star (universalStateGNSCoefficient A ξ η) = universalStateGNSCoefficient A η ξ := by
@@ -323,7 +385,12 @@ theorem universalStateGNSCoefficient_star (ξ η : UniversalStateGNSpace A) :
   simpa only [RCLike.star_def] using
     (inner_conj_symm ξ (universalStateGNSRepresentation A a η))
 
-/-- The literal original bidual involution maps to the original Hilbert-operator adjoint. -/
+/-- **Bidual involution mapped to the Hilbert adjoint.** Let `A` be a nonunital complex C-star
+algebra. Let `H_u` be the Hilbert direct sum of the GNS spaces of all positive bounded
+functionals of norm one, and `π_u : A →⋆ₙₐ[ℂ] B(H_u)` their coordinatewise GNS
+representation. Write `κ_(ξ,η)(a)=⟨η,π_u(a)ξ⟩ ∈ A*` and `Ω : A** → B(H_u)` for the bounded
+bidual extension with `⟨η,Ω(p)ξ⟩=p(κ_(ξ,η))`. for every `p∈A**`, `Ω(p*)=Ω(p)*`, using the
+intrinsic continuous-bidual involution. -/
 theorem universalBidualExtension_star (p : StrongDual ℂ (StrongDual ℂ A)) :
     universalBidualExtension A (star p) = star (universalBidualExtension A p) := by
   apply ContinuousLinearMap.ext

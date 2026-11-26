@@ -16,28 +16,14 @@ import Mathlib.Topology.Algebra.ClopenNhdofOne
 import Mathlib.Tactic.Push
 
 /-!
-# Continuous sections of nested closed coset spaces
+# Continuous sections of arbitrary nested closed coset spaces
 
-For closed subgroups `K ≤ H` of a profinite group `G`, the canonical
-projection from left `K`-cosets to left `H`-cosets admits a continuous
-set-theoretic section.
+For closed subgroups `K≤H` of a compact Hausdorff totally disconnected topological group, the
+projection `G/K → G/H` admits a continuous right inverse.
 
-The proof orders compatible sections over intermediate closed subgroups by
-reverse inclusion.  Nonempty chains are bounded using the canonical limit
-of coset spaces by subgroup intersections.  A maximal approximation is
-forced down to `K` by intersecting with an open subgroup and applying the
-finite-relative-index section theorem.
-
-No subgroup normality is required.  The section is neither homomorphic,
-canonical, nor natural, and no section instance is installed.
-
-## Main declaration
-
-* `QuotientGroup.exists_continuous_section_of_closedSubgroup_le`
-
-## Reference
-
-J.-P. Serre, *Galois Cohomology*, Chapter I, Section 1, Proposition 1.
+Compatible partial sections over intermediate closed subgroups are refined by reverse inclusion;
+chain intersections use the coset inverse-limit theorem. Neither subgroup normality nor finite
+relative index is required for this general section.
 -/
 
 @[expose] public section
@@ -223,8 +209,10 @@ private def initialApproximation
     rw [cosetProjection_id]
     rfl
 
-/-- For closed subgroups `K ≤ H` of a profinite group, the canonical
-projection `G / K → G / H` admits a continuous set-theoretic section. -/
+/-- **Continuous section between nested closed profinite coset spaces.** Let `G` be a compact
+Hausdorff totally disconnected topological group. for closed subgroups `K≤H`, there is
+continuous `s : G/H → G/K` satisfying `cosetProjection∘s=id_(G/H)`. No normality or
+finite-index assumption is required. -/
 theorem exists_continuous_section_of_closedSubgroup_le
     [IsTopologicalGroup G] [CompactSpace G] [T2Space G]
     [TotallyDisconnectedSpace G]

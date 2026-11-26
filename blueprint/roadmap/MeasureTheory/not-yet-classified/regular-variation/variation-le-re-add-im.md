@@ -1,4 +1,5 @@
-# Variation le re add im
+# Complex variation bounded by real and imaginary variations
 
-Total variation of a complex measure is bounded by the sum of the variations of its real and
-imaginary parts.
+Let `X` be a measurable
+space and `c : ComplexMeasure X`. as positive measures, `|c|≤|Re c|+|Im c|`. No topology
+is required.

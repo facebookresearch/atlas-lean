@@ -1,4 +1,4 @@
-# Unitary Block Diagonal
+# Block diagonal and reindexing of unitary matrices
 
-- [From Blocks diagonal mem unitary Group](from-blocks-diagonal-mem-unitary-group.md)
-- [Reindex mem unitary Group](reindex-mem-unitary-group.md)
+- [Block diagonal of two unitaries](from-blocks-diagonal-mem-unitary-group.md)
+- [Unitarity under an index equivalence](reindex-mem-unitary-group.md)

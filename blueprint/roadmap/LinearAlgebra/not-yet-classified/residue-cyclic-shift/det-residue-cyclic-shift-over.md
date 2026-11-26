@@ -1,3 +1,3 @@
-# Det residue Cyclic Shift Over
+# Coefficient-field determinant of the weighted shift
 
-The weighted cyclic shift has determinant `(-1)^r * q⁻¹` over `l`.
+Let l be a field,r∈ℕ,q∈lˣ. Over l, det(residueCyclicShiftOver l r q)=(-1)^r*q⁻¹.

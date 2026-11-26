@@ -20,11 +20,10 @@ public import Mathlib.Topology.Algebra.Star.Unitary
 public import Mathlib.Topology.MetricSpace.ProperSpace
 
 /-!
-# Local compactness of classical matrix groups
+# Local compactness of classical finite matrix groups
 
-The standard finite-Pi instances make the ambient finite-index matrix spaces
-locally compact.  Closedness of the unitary locus then gives the corresponding
-instances for rank-`n` complex unitary and real orthogonal groups.
+For every n∈ℕ, the complex unitary group U(n,ℂ) and real orthogonal group O(n,ℝ) are locally
+compact in their induced finite-matrix topologies, including the singleton groups at n=0.
 -/
 
 @[expose] public section
@@ -33,8 +32,11 @@ noncomputable section
 
 namespace Matrix
 
-/-- The rank-`n` complex unitary group is locally compact in its induced
-topology. -/
+/-- **Local compactness of the finite complex unitary group.**
+
+For n∈ℕ, the matrix group unitaryGroup(Fin n,ℂ)=U(n,ℂ) is locally compact in its induced
+topology.
+-/
 instance unitaryGroupLocallyCompactSpace (n : ℕ) :
     LocallyCompactSpace (unitaryGroup (Fin n) ℂ) := by
   exact @IsClosed.locallyCompactSpace
@@ -42,8 +44,11 @@ instance unitaryGroupLocallyCompactSpace (n : ℕ) :
     (inferInstanceAs (LocallyCompactSpace (Fin n → Fin n → ℂ))) _
     (isClosed_unitary (R := Matrix (Fin n) (Fin n) ℂ))
 
-/-- The rank-`n` real orthogonal group is locally compact in its induced
-topology. -/
+/-- **Local compactness of the finite real orthogonal group.**
+
+For n∈ℕ, the matrix group orthogonalGroup(Fin n,ℝ)=O(n,ℝ) is locally compact in its induced
+topology.
+-/
 instance orthogonalGroupLocallyCompactSpace (n : ℕ) :
     LocallyCompactSpace (orthogonalGroup (Fin n) ℝ) := by
   exact @IsClosed.locallyCompactSpace

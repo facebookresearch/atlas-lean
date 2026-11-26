@@ -1,3 +1,5 @@
-# Pi Lp Star Alg Equiv apply
+# Column formula of the operator-matrix equivalence
 
-The bundled map retains the literal column-sum value.
+Let H be a Hilbert space over an RCLike field 𝕜 and I finite. The operator-valued matrix
+action Θ(A):H^I→H^I is (Θ(A)v)_i=∑j A_ij(v_j), with the Hilbert ℓ² product norm. Its inverse
+reads A_ij=proj_i∘T∘single_j. For A and v∈H^I, piLpStarAlgEquiv A v i=∑j A_ij(v_j).

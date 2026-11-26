@@ -1,3 +1,5 @@
-# Pi Lp Star Alg Equiv norm map
+# Norm of a C-star operator matrix equals its block operator norm
 
-The norm here is the CStarMatrix operator norm, not a plain matrix row norm.
+Let H be a complex Hilbert space,I finite and X∈CStarMatrix I I B(H). Then
+‖CStarMatrix.piLpStarAlgEquiv X‖=‖X‖, using the operator norm on H^I and canonical C-star
+matrix norm.

@@ -1,4 +1,6 @@
-# Vector Functional
+# Vector functional on a concrete von Neumann algebra
 
-The concrete-algebra specialization of representation coefficients,
-with the original vector order and literal subtype representation.
+Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Write `ω_(ξ,η)(x)=⟨ξ,xη⟩` for
+its vector functionals. `vectorFunctional M ξ η : M →L[ℂ] ℂ` is `ω_(ξ,η)`, linear in the
+operator argument and using the inner product linear in its second vector argument.

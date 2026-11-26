@@ -15,13 +15,14 @@ public import MathlibExt.Analysis.VonNeumannAlgebra.NormalHom.PredualDualMap
 public import MathlibExt.Analysis.VonNeumannAlgebra.NormalHom.FaithfulBallImage
 
 /-!
-# Faithfulness makes the actual bounded dual of predual pullback isometric
+# Isometric dual of the predual pullback of an injective normal map
 
-The existing evaluation equivalences identify every source predual-dual
-functional with an original algebra element x. The actual dual pullback
-sends it to evaluation at f(x), and the faithful original star map preserves
-its C-star norm. Thus the literal bounded dual is isometric. No quotient,
-surjectivity, image-closedness or inverse/model certificate is an input.
+Let `f : M → N` be an injective normal unital complex star homomorphism and `B : N_* → M_*`,
+`B(φ)=φ∘f`, its predual pullback. The bounded dual map `B* : (M_*)* → (N_*)*` is `F ↦ F∘B`.
+
+It preserves the continuous-dual norm and is an isometry. Under the evaluation identifications
+`x ↦ (φ ↦ φ(x))`, this is the norm preservation of the injective C-star map `f`. No predual
+quotient property is assumed.
 -/
 
 @[expose] public section
@@ -39,7 +40,13 @@ variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [Complete
 variable {K : Type v} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
 variable {M : VonNeumannAlgebra H} {N : VonNeumannAlgebra K}
 
-/-- The literal dual of predual pullback preserves every original dual norm under faithfulness. -/
+/-- **Norm preserved by the dual of injective normal predual pullback.** Let `M,N` be concrete
+von Neumann algebras on complete complex Hilbert spaces. Their normal-functional Banach
+spaces `M_*,N_*` are the norm-closed spans of vector functionals, and their ultraweak
+topologies are `σ(M,M_*)`, `σ(N,N_*)`. Let `f : M → N` be a unital complex star
+homomorphism that is ultraweakly continuous. Assume `f` is injective. Let
+`B=f.predualPullback : N_* → M_*`, `B(φ)=φ∘f`, and `B*(F)=F∘B`. for every bounded
+functional `F ∈ (M_*)*`, `‖B*(F)‖=‖F‖`, with the continuous-dual operator norms. -/
 theorem predualPullback_dual_norm (f : NormalStarAlgHom M N) (hf : Function.Injective f)
     (F : StrongDual ℂ (normalFunctionalSpace M)) :
     ‖((ContinuousLinearMap.compL ℂ (normalFunctionalSpace N) (normalFunctionalSpace M) ℂ).flip
@@ -51,7 +58,12 @@ theorem predualPullback_dual_norm (f : NormalStarAlgHom M N) (hf : Function.Inje
   rw [(normalFunctionalEvaluationEquiv N).norm_map, (normalFunctionalEvaluationEquiv M).norm_map]
   exact NonUnitalStarAlgHom.norm_map f.toStarAlgHom hf x
 
-/-- The same literal bounded dual map is isometric; no predual quotient property is assumed. -/
+/-- **Isometry of the dual precomposition map.** Let `M,N` be concrete von Neumann algebras on
+complete complex Hilbert spaces. Their normal-functional Banach spaces `M_*,N_*` are the
+norm-closed spans of vector functionals, and their ultraweak topologies are `σ(M,M_*)`,
+`σ(N,N_*)`. Let `f : M → N` be a unital complex star homomorphism that is ultraweakly
+continuous. Assume `f` is injective. Let `B=f.predualPullback : N_* → M_*`, `B(φ)=φ∘f`,
+and `B*(F)=F∘B`. `B* : (M_*)* → (N_*)*` is an isometry for the operator-norm metrics. -/
 theorem predualPullback_dual_isometry (f : NormalStarAlgHom M N) (hf : Function.Injective f) :
     Isometry ((ContinuousLinearMap.compL ℂ (normalFunctionalSpace N) (normalFunctionalSpace M) ℂ).flip
       f.predualPullback) :=

@@ -14,26 +14,14 @@ public import Mathlib.Topology.Separation.Connected
 public import Mathlib.Topology.Separation.Regular
 
 /-!
-# Total disconnectedness of closed coset quotients
+# Total disconnectedness of a closed-subgroup coset quotient
 
-If `H` is a closed subgroup of a compact totally disconnected topological
-group `G`, then the left-coset quotient `G/H` is totally disconnected.  No
-normality hypothesis is needed: the proof separates two cosets by mapping
-to the discrete coset quotient by an auxiliary open subgroup.
+For a compact totally disconnected topological group `G` and any closed subgroup `H`, the
+left-coset quotient `G/H` is totally disconnected.
 
-The result is theorem-valued and installs no global instance.  It is a
-topological precursor for continuous-section theorems; this file constructs
-no section and makes no Shapiro, Hochschild--Serre, residue, or norm-residue
-claim.
-
-## Main declaration
-
-* `QuotientGroup.totallyDisconnectedSpace_of_isClosed`
-
-## Reference
-
-The motivating closed-coset section theorem is J.-P. Serre,
-*Galois Cohomology*, Chapter I, Section 1, Proposition 1.
+The subgroup need not be normal. Nested subgroup inclusions induce continuous maps of their
+coset quotients; these are maps of topological spaces, not quotient-group homomorphisms in
+general.
 -/
 
 @[expose] public section
@@ -53,8 +41,9 @@ universe u
 variable {G : Type u} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
 variable [CompactSpace G] [TotallyDisconnectedSpace G]
 
-/-- The continuous map from left `H`-cosets to left `P`-cosets induced by
-an inclusion `H ≤ P`. -/
+/-- **Continuous projection between nested left-coset quotients.** Let `G` be a group with a
+topology and `H≤P` subgroups. The map `G/H → G/P` sends the coset of `g` to its coset
+modulo `P` and is continuous. Closedness or normality of the subgroups is not required. -/
 private def cosetProjection {H P : Subgroup G} (h : H ≤ P) :
     C(G ⧸ H, G ⧸ P) :=
   ⟨Quotient.map' id fun _ _ hab =>
@@ -64,10 +53,9 @@ private def cosetProjection {H P : Subgroup G} (h : H ≤ P) :
       QuotientGroup.leftRel_apply.mpr
         (h (QuotientGroup.leftRel_apply.mp hab))⟩
 
-/-- A left-coset quotient of a compact totally disconnected topological
-group by any closed subgroup is totally disconnected.  This theorem does
-not install a global instance and does not require the subgroup to be
-normal. -/
+/-- **Closed-subgroup left-coset quotient is totally disconnected.** Let `G` be a compact
+totally disconnected topological group. for every closed subgroup `H≤G`, `G/H` with its
+quotient topology is totally disconnected, without normality of `H`. -/
 theorem totallyDisconnectedSpace_of_isClosed
     (H : Subgroup G) [IsClosed (H : Set G)] :
     TotallyDisconnectedSpace (G ⧸ H) := by

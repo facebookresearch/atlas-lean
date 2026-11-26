@@ -20,16 +20,15 @@ import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Order.Filter.AtTopBot.Finset
 
 /-!
-# Initial-segment coefficient corners and compact density
+# Initial-segment matrix coefficients and compact density
 
-For a genuine natural-number Hilbert basis, the literal finite matrix of
-operator coefficients maps to the corresponding finite projection sandwich.
-The finite identity applies to every bounded operator, including empty
-coordinates. Positive-size corner images are dense only in the actual compact
-ideal, using the existing operator-norm compact-sandwich convergence.
+For a natural-number Hilbert basis `b` of a complex inner-product space, write `P_N` for the
+projection onto `b_0,…,b_(N-1)`. For every bounded operator `T`, the matrix `X_ij=⟨b_i,Tb_j⟩`,
+`i,j<N`, has compact corner `Φ_N(X)=P_N T P_N`; this includes `N=0`.
 
-Completeness is derived from the basis representation before constructing the
-compact C-star target. No new projection, norm, raw limit or completion is used.
+The union of the positive-size matrix corner ranges is norm-dense in `K(H)`. Completeness of the
+Hilbert space follows from the given basis; no separate completeness or compactness of `T` is
+required for the coefficient identity.
 -/
 
 @[expose] public section
@@ -43,9 +42,11 @@ universe uH
 
 variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
 
-/-- The literal target-row/source-column coefficient matrix maps to the actual
-initial-segment sandwich of an arbitrary bounded operator. Empty size is legal;
-compactness and separate ambient completeness are not assumptions. -/
+/-- **Initial matrix coefficients give the projection sandwich.** Let `H` be a complex normed
+inner-product space with a Hilbert basis `b : HilbertBasis ℕ ℂ H`; this basis implies
+completeness. for `N : ℕ` and bounded `T` on `H`, put `X_ij=⟨b_i,Tb_j⟩` for `i,j<N`. Then
+the finite corner of `X` is `P_N T P_N`, where `P_N` projects onto the first `N` basis
+vectors. This holds at `N=0` and without compactness of `T`. -/
 theorem compactCorner_coefficients
     (b : HilbertBasis ℕ ℂ H) (N : ℕ) (T : H →L[ℂ] H) :
     letI : CompleteSpace H := b.repr.toIsometryEquiv.completeSpace;
@@ -115,9 +116,10 @@ theorem compactCorner_coefficients
       (Finset.range N) (Finset.range N)
   exact hCorner.trans (hSum.trans hProj.symm)
 
-/-- The positive initial-segment corner images are dense in the existing
-compact closed star ideal with its inherited operator norm. The basis derives
-completeness; no density or convergence statement is supplied by the caller. -/
+/-- **Norm density of positive basis matrix corners.** Let `H` be a complex normed
+inner-product space with a Hilbert basis `b : HilbertBasis ℕ ℂ H`; this basis implies
+completeness. let `Φ_n : M_(n+1)(ℂ) → K(H)` be the compact corner of the first `n+1` basis
+vectors. Then `⋃n range Φ_n` is dense in `K(H)` for the operator norm. -/
 theorem dense_iUnion_range_compactCorner
     (b : HilbertBasis ℕ ℂ H) :
     letI : CompleteSpace H := b.repr.toIsometryEquiv.completeSpace;

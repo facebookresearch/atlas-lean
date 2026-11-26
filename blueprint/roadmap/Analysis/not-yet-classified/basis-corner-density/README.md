@@ -1,4 +1,4 @@
-# Basis Corner Density
+# Initial-segment matrix coefficients and compact density
 
-- [Compact Corner coefficients](compact-corner-coefficients.md)
-- [Dense i Union range compact Corner](dense-i-union-range-compact-corner.md)
+- [Initial matrix coefficients give the projection sandwich](compact-corner-coefficients.md)
+- [Norm density of positive basis matrix corners](dense-i-union-range-compact-corner.md)

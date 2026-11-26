@@ -18,16 +18,17 @@ public import Mathlib.Tactic.FieldSimp
 public import Mathlib.Tactic.LinearCombination
 
 /-!
-# SDDM elimination with two retained neighbors
+# Eliminating a vertex with two neighbors
 
-For two distinct retained neighbor indices, the primitive computes four matrix-entry
-corrections, two right-hand-side corrections, and back substitution from the original matrix.
-Every denominator is the full original pivot diagonal, including its diagonal surplus.
+Let A be a real matrix on a finite set V, r ∈ V and u,v ∈ I = V ∖ {r}. Put p = Aᵣᵣ, c = Aᵣᵤ
+and d = Aᵣᵥ. When u ≠ v, write w = c eᵤ + d eᵥ. The retained matrix is S = A|I − p⁻¹ w wᵀ,
+forward substitution gives b′ = b|I − (bᵣ/p)w, and back substitution restores xᵣ = (bᵣ − c zᵤ
+− d zᵥ)/p. For a positive definite symmetric matrix with nonpositive off-diagonal entries and
+nonnegative row sums, elimination preserves those properties when r has no other neighbors.
 
-The construction is the degree-two step of Spielman and Teng, *Nearly-Linear Time Algorithms
-for Preconditioning and Solving Symmetric, Diagonally Dominant Linear Systems*, arXiv
-cs/0607105v5, current typesetting 26 November 2024, §§1.1, 3.1, 4.1 and 5. This is one
-numerical primitive, not the complete sparse state, pivot queue, factor chain or cost proof.
+Reference: Spielman and Teng, Nearly-Linear Time Algorithms for Preconditioning and Solving
+Symmetric, Diagonally Dominant Linear Systems, arXiv:cs/0607105v5, typesetting dated 26
+November 2024, §§1.1, 3.1, 4.1 and 5.
 -/
 
 @[expose] public section
@@ -41,7 +42,13 @@ namespace Matrix
 
 variable {V : Type*} [DecidableEq V]
 
-/-- The four retained-entry corrections for two distinct neighbor indices. -/
+/-- **The retained matrix for two-neighbor elimination.**
+
+For a real matrix A on V, r ∈ V and u,v ∈ I = V ∖ {r}, put p = Aᵣᵣ, c = Aᵣᵤ and d = Aᵣᵥ.
+Define Sᵢⱼ by subtracting c²/p when i = j = u, otherwise d²/p when i = j = v, otherwise cd/p
+when (i,j) is (u,v) or (v,u), and otherwise zero, from Aᵢⱼ. This ordered definition applies
+also to u = v or p = 0.
+-/
 def degreeTwoPivot (A : Matrix V V ℝ) (r : V) (u v : {i : V // i ≠ r}) :
     Matrix {i : V // i ≠ r} {i : V // i ≠ r} ℝ :=
   fun i j => A i.val j.val -
@@ -50,7 +57,12 @@ def degreeTwoPivot (A : Matrix V V ℝ) (r : V) (u v : {i : V // i ≠ r}) :
     else if (i = u ∧ j = v) ∨ (i = v ∧ j = u) then A r u.val * A r v.val / A r r
     else 0
 
-/-- Forward substitution computes the two retained right-hand-side corrections. -/
+/-- **Forward substitution at two neighbors.**
+
+For a real matrix A on V, r ∈ V, u,v ∈ I = V ∖ {r}, p = Aᵣᵣ, c = Aᵣᵤ and d = Aᵣᵥ, define b′ᵢ =
+bᵢ − 1_{i=u} c bᵣ/p − 1_{i=v} d bᵣ/p. This is a linear map in b and uses both corrections even
+when u = v.
+-/
 def degreeTwoRHS (A : Matrix V V ℝ) (r : V) (u v : {i : V // i ≠ r}) :
     (V → ℝ) →ₗ[ℝ] ({i : V // i ≠ r} → ℝ) where
   toFun b i := b i.val - (if i = u then A r u.val * b r / A r r else 0) -
@@ -64,7 +76,12 @@ def degreeTwoRHS (A : Matrix V V ℝ) (r : V) (u v : {i : V // i ≠ r}) :
     simp only [Pi.smul_apply, smul_eq_mul, RingHom.id_apply]
     split_ifs <;> ring
 
-/-- Back substitution is linear in the original right-hand side and retained candidate. -/
+/-- **Back substitution at two neighbors.**
+
+For a real matrix A on V, r ∈ V, u,v ∈ I = V ∖ {r}, p = Aᵣᵣ, c = Aᵣᵤ and d = Aᵣᵥ, define
+L(b,z)ᵣ = (bᵣ − c zᵤ − d zᵥ)/p and L(b,z)|I = z. The map is linear jointly in b and z and is
+defined for all p.
+-/
 def degreeTwoLift (A : Matrix V V ℝ) (r : V) (u v : {i : V // i ≠ r}) :
     (V → ℝ) × ({i : V // i ≠ r} → ℝ) →ₗ[ℝ] (V → ℝ) where
   toFun bz i := if hi : i = r then
@@ -85,7 +102,11 @@ def degreeTwoLift (A : Matrix V V ℝ) (r : V) (u v : {i : V // i ≠ r}) :
       ring
     · simp [hi]
 
-/-- The normalized source column, computed from the original pivot and couplings. -/
+/-- **The two-neighbor factor column.**
+
+For a real matrix A on V, r ∈ V and u,v ∈ V ∖ {r}, put p = Aᵣᵣ, c = Aᵣᵤ and d = Aᵣᵥ. Define l
+= √p eᵣ + (c/√p)eᵤ + (d/√p)eᵥ, using the real square root and real division.
+-/
 def degreeTwoColumn (A : Matrix V V ℝ) (r : V) (u v : {i : V // i ≠ r}) : V → ℝ :=
   Real.sqrt (A r r) • Pi.single r 1 +
     (A r u.val / Real.sqrt (A r r)) • Pi.single u.val 1 +
@@ -153,7 +174,13 @@ private theorem pivot_rank (hne : u ≠ v) : degreeTwoPivot A r u v =
     simp_all [degreeTwoPivot, coupling_apply, Matrix.sub_apply, Matrix.smul_apply,
       vecMulVec_apply, div_eq_mul_inv] <;> ring
 
-/-- Express the four sparse corrections as one rank-one matrix correction. -/
+/-- **Two-neighbor elimination as a rank-one correction.**
+
+Let A be a real matrix on a finite set V, r ∈ V and u,v ∈ I = V ∖ {r}. Put p = Aᵣᵣ, c = Aᵣᵤ
+and d = Aᵣᵥ. Assume u ≠ v and put w = c eᵤ + d eᵥ. The piecewise retained matrix S obtained by
+subtracting c²/p at (u,u), d²/p at (v,v), and cd/p at the two cross entries satisfies S = A|I
+− p⁻¹ w wᵀ.
+-/
 theorem degreeTwoPivot_eq_sub_rankOne (hne : u ≠ v) : degreeTwoPivot A r u v =
     A.submatrix Subtype.val Subtype.val -
       (A r r)⁻¹ • vecMulVec
@@ -257,7 +284,13 @@ private theorem pivot_action (hne : u ≠ v) (z : {i : V // i ≠ r} → ℝ) :
   ext i
   simp [div_eq_mul_inv, mul_comm, mul_left_comm]
 
-/-- The computed numerical primitive transports the full residual for every candidate. -/
+/-- **Residual after two-neighbor back substitution.**
+
+Let A be a real matrix on a finite set V, r ∈ V and u,v ∈ I = V ∖ {r}. Put p = Aᵣᵣ, c = Aᵣᵤ
+and d = Aᵣᵥ. Assume u ≠ v, A is symmetric, Aᵣⱼ = 0 outside {r,u,v}, and p ≠ 0. Put w = c eᵤ +
+d eᵥ, S = A|I − p⁻¹ w wᵀ and b′ = b|I − (bᵣ/p)w. For L(b,z)ᵣ = (bᵣ − c zᵤ − d zᵥ)/p and
+L(b,z)|I = z, one has A L(b,z) − b = J(Sz − b′), where J inserts a zero at r.
+-/
 theorem degreeTwoLift_residual (hne : u ≠ v) (hA : A.IsHermitian)
     (hs : ∀ j, j ≠ r → j ≠ u.val → j ≠ v.val → A r j = 0) (hp : A r r ≠ 0)
     (b : V → ℝ) (z : {i : V // i ≠ r} → ℝ) :
@@ -272,7 +305,12 @@ theorem degreeTwoLift_residual (hne : u ≠ v) (hA : A.IsHermitian)
   field_simp [hp]
   ring
 
-/-- Reconstruction preserves every retained candidate coordinate. -/
+/-- **Restriction of two-neighbor back substitution.**
+
+Let A be a real matrix on a finite set V, r ∈ V and u,v ∈ I = V ∖ {r}. Put p = Aᵣᵣ, c = Aᵣᵤ
+and d = Aᵣᵥ. For L(b,z)ᵣ = (bᵣ − c zᵤ − d zᵥ)/p and L(b,z)|I = z, coordinate restriction C
+satisfies C L(b,z) = z. This holds for every b,z,u,v,p.
+-/
 theorem degreeTwoLift_restrict (b : V → ℝ) (z : {i : V // i ≠ r} → ℝ) :
     groundRestriction r *ᵥ degreeTwoLift A r u v (b, z) = z := by
   rw [groundRestriction_mulVec]
@@ -321,7 +359,13 @@ private theorem pivot_posDef [Finite V] (hne : u ≠ v) (hA : A.PosDef)
   have h := hA.conjTranspose_mul_mul_same hinj
   rwa [liftMatrix_congruence A r u v hne hA.isHermitian hs (ne_of_gt hA.diag_pos)] at h
 
-/-- Two reconstructions with the same right-hand side have exactly the reduced error energy. -/
+/-- **Energy of a two-neighbor lifted error.**
+
+Let A be a real matrix on a finite set V, r ∈ V and u,v ∈ I = V ∖ {r}. Put p = Aᵣᵣ, c = Aᵣᵤ
+and d = Aᵣᵥ. Assume u ≠ v, A is symmetric, Aᵣⱼ = 0 outside {r,u,v}, and p ≠ 0. Put S = A|I −
+p⁻¹(c eᵤ + d eᵥ)(c eᵤ + d eᵥ)ᵀ. For e = L(b,z) − L(b,w), where L restores the root coordinate
+by two-neighbor back substitution, one has eᵀ A e = (z − w)ᵀ S(z − w).
+-/
 theorem degreeTwoLift_error_energy (hne : u ≠ v) (hA : A.IsHermitian)
     (hs : ∀ j, j ≠ r → j ≠ u.val → j ≠ v.val → A r j = 0) (hp : A r r ≠ 0)
     (b : V → ℝ) (z w : {i : V // i ≠ r} → ℝ) :
@@ -355,7 +399,11 @@ private theorem coupling_sum :
   simp [coupling, Finset.sum_add_distrib, Pi.single_apply]
 
 omit [DecidableEq V] in
-/-- The actual original pivot surplus includes both off-diagonal couplings. -/
+/-- **Row sum at a two-neighbor pivot.**
+
+Let A be a real matrix on a finite set V, r ∈ V and u,v ∈ I = V ∖ {r}. Put p = Aᵣᵣ, c = Aᵣᵤ
+and d = Aᵣᵥ. Assume u ≠ v and Aᵣⱼ = 0 outside {r,u,v}. Then ∑ⱼ Aᵣⱼ = p + c + d.
+-/
 theorem degreeTwoPivot_surplus (hne : u ≠ v)
     (hs : ∀ j, j ≠ r → j ≠ u.val → j ≠ v.val → A r j = 0) :
     (∑ j, A r j) = A r r + A r u.val + A r v.val := by
@@ -385,8 +433,13 @@ private theorem rowSum_internal (hne : u ≠ v) (hA : A.IsHermitian)
   field_simp [hp]
   ring
 
-/-- Both neighbor row sums retain their original surplus and receive their share of the
-eliminated pivot surplus. All other retained row sums are unchanged. -/
+/-- **Retained row sums after two-neighbor elimination.**
+
+Let A be a real matrix on a finite set V, r ∈ V and u,v ∈ I = V ∖ {r}. Put p = Aᵣᵣ, c = Aᵣᵤ
+and d = Aᵣᵥ. Assume u ≠ v, A is symmetric, Aᵣⱼ = 0 outside {r,u,v}, and p ≠ 0. For S = A|I −
+p⁻¹(c eᵤ + d eᵥ)(c eᵤ + d eᵥ)ᵀ and i ∈ I, one has ∑ⱼ∈I Sᵢⱼ = ∑ⱼ∈V Aᵢⱼ − (1_{i=u}c/p +
+1_{i=v}d/p)∑ⱼ∈V Aᵣⱼ.
+-/
 theorem degreeTwoPivot_rowSum (hne : u ≠ v) (hA : A.IsHermitian)
     (hs : ∀ j, j ≠ r → j ≠ u.val → j ≠ v.val → A r j = 0) (hp : A r r ≠ 0)
     (i : {j : V // j ≠ r}) :
@@ -396,7 +449,14 @@ theorem degreeTwoPivot_rowSum (hne : u ≠ v) (hA : A.IsHermitian)
   rw [rowSum_internal A r u v hne hA hs hp i, coupling_apply]
   split_ifs <;> ring
 
-/-- The computed two-neighbor update preserves the native matrix conditions of SDDM. -/
+/-- **Preservation of diagonal dominance with two neighbors.**
+
+Let A be a real matrix on a finite set V, r ∈ V and u,v ∈ I = V ∖ {r}. Put p = Aᵣᵣ, c = Aᵣᵤ
+and d = Aᵣᵥ. Assume u ≠ v, A is positive definite, its off-diagonal entries are nonpositive,
+its row sums are nonnegative, and Aᵣⱼ = 0 outside {r,u,v}. Then S = A|I − p⁻¹(c eᵤ + d eᵥ)(c
+eᵤ + d eᵥ)ᵀ is positive definite, has nonpositive off-diagonal entries and has nonnegative row
+sums.
+-/
 theorem degreeTwoPivot_preserves_sddm (hne : u ≠ v) (hA : A.PosDef)
     (hoff : ∀ i j, i ≠ j → A i j ≤ 0) (hrows : ∀ i, 0 ≤ ∑ j, A i j)
     (hs : ∀ j, j ≠ r → j ≠ u.val → j ≠ v.val → A r j = 0) :
@@ -467,8 +527,13 @@ private theorem embedding_apply (M : Matrix {i : V // i ≠ r} {i : V // i ≠ r
       simp only [dite_eq_right hi, dite_eq_right hj]
       rfl
 
-/-- The actual normalized three-coordinate column and actual reduced matrix factor the
-original input matrix in its original coordinates. -/
+/-- **The two-neighbor matrix factorization.**
+
+Let A be a real matrix on a finite set V, r ∈ V and u,v ∈ I = V ∖ {r}. Put p = Aᵣᵣ, c = Aᵣᵤ
+and d = Aᵣᵥ. Assume u ≠ v, A is symmetric, Aᵣⱼ = 0 outside {r,u,v}, and p > 0. Put l = √p eᵣ +
+(c/√p)eᵤ + (d/√p)eᵥ and S = A|I − p⁻¹(c eᵤ + d eᵥ)(c eᵤ + d eᵥ)ᵀ. For zero insertion J and
+restriction C, A = l lᵀ + J S C.
+-/
 theorem degreeTwoPivot_factor (hne : u ≠ v) (hA : A.IsHermitian)
     (hs : ∀ j, j ≠ r → j ≠ u.val → j ≠ v.val → A r j = 0) (hp : 0 < A r r) :
     A = vecMulVec (degreeTwoColumn A r u v) (degreeTwoColumn A r u v) +
@@ -511,7 +576,12 @@ theorem degreeTwoPivot_factor (hne : u ≠ v) (hA : A.IsHermitian)
         coupling A r u v ⟨j, hjr⟩) hratio
       linear_combination -h
 
-/-- The cardinality bound is for the actual factor column in `degreeTwoPivot_factor`. -/
+/-- **Support of the two-neighbor factor column.**
+
+Let A be a real matrix on a finite set V, r ∈ V and u,v ∈ I = V ∖ {r}. Put p = Aᵣᵣ, c = Aᵣᵤ
+and d = Aᵣᵥ. For l = √p eᵣ + (c/√p)eᵤ + (d/√p)eᵥ, the number of coordinates i with lᵢ ≠ 0 is
+at most three.
+-/
 theorem degreeTwoColumn_support_card :
     ((univ : Finset V).filter fun i => degreeTwoColumn A r u v i ≠ 0).card ≤ 3 := by
   have hsub : (univ : Finset V).filter (fun i => degreeTwoColumn A r u v i ≠ 0) ⊆

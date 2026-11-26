@@ -1,4 +1,6 @@
-# Compact Corner zero Extend
+# Top-left padding agrees with restricting an orthonormal family
 
-Top-left zero padding is compatible with restriction of the same
-orthonormal family along the actual finite index embedding.
+Let `H` be a complete
+complex Hilbert space, `r≤s` natural numbers and `γ : Fin s → H` orthonormal. If `γ_r` is
+its restriction along `Fin.castLE`, then for `X ∈ M_r(ℂ)`, `Φ_γ(zeroExtend X)=Φ_(γ_r)(X)`.
+The case `r=0` is allowed.

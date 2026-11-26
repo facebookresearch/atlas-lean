@@ -1,4 +1,4 @@
-# Round
+# Round forms and binary Pfister factors
 
-- [Map isometry Equiv](map-isometry-equiv.md)
-- [Prod neg smul](prod-neg-smul.md)
+- [Isometry invariance of roundness](map-isometry-equiv.md)
+- [Adjoining a binary factor preserves roundness](prod-neg-smul.md)

@@ -16,14 +16,13 @@ public import MathlibExt.Analysis.CStarAlgebra.RepresentationCoefficientContinui
 public import Mathlib.Topology.DenseEmbedding
 
 /-!
-# All original GNS vector coefficients of a normal weight are normal functionals
+# Normality of all completed GNS vector coefficients
 
-The actual original-domain GNS map is dense in its constructed Hilbert
-completion. Its finite-square off-diagonal coefficients are already actual
-normal-functional members. Original coefficient continuity in each vector
-makes membership a closed property. Two dense-range extensions therefore
-give normal membership for every pair of original completed GNS vectors.
-No density, normality, GNS model or coefficient-bound certificate is input.
+Let `φ` be a normal extended weight on a concrete von Neumann algebra. For all vectors `g,h` in
+its completed GNS Hilbert space, the bounded coefficient `a ↦ ⟨h,π(a)g⟩` belongs to `M_*`.
+
+Normality of finite square coefficients extends to all GNS vectors through the norm-dense GNS
+domain and coefficient continuity. The weight need not be faithful or semifinite.
 -/
 
 @[expose] public section
@@ -42,7 +41,14 @@ universe u
 
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- Original normal weight gives actual normal-functional membership for all completed GNS vector coefficients. -/
+/-- **Every completed GNS vector coefficient is normal.** Let `H` be a complete complex
+Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Let `φ : M₊ → [0,∞]` be an
+extended positive weight: additive, homogeneous for finite nonnegative real scalars, and
+zero at zero. Put `n_φ={x : φ(x* x)<∞}`, and let `Λ : n_φ → H_φ` be the dense GNS map into
+the weight Hilbert completion. Its representation `π` satisfies `π(a)Λ(x)=Λ(a*x)`. Assume
+`φ` preserves least upper bounds of nonempty norm-bounded directed positive sets. for
+arbitrary `g,h ∈ H_φ`, `representationCoefficient π g h ∈ M_*`, with value `a ↦
+⟨h,π(a)g⟩`. -/
 theorem normalWeightGNSCoefficient_mem (M : VonNeumannAlgebra H) (φ : Weight M)
     (hφ : IsNormalWeight M φ) (g h : φ.GNS) :
     representationCoefficient φ.gnsLeftStarAlgHom g h ∈ normalFunctionalSpace M := by

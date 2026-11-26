@@ -15,13 +15,14 @@ public import Mathlib.Analysis.Normed.Module.Completion
 public import Mathlib.Analysis.Normed.Operator.Extend
 
 /-!
-# Actual completion of a linear isometry equivalence
+# Completion of a linear isometric equivalence
 
-Complete the original forward and inverse stock isometries. Dense original
-coefficients and continuity prove their inverse laws on the full completions.
-The actual maps and norms are retained, with independent universes and zero
-spaces allowed. This supplies completion of the actual tensor congruence and
-associator used by the original mixed-factor Radon product constructor.
+For normed spaces `E,F` over a normed field `𝕜`, a linear isometric equivalence `e : E ≃ₗᵢ[𝕜] F`
+extends to a linear isometric equivalence `ê : Completion E ≃ₗᵢ[𝕜] Completion F`.
+
+On the dense inclusions it satisfies `ê(ι_E x)=ι_F(e x)` and `ê⁻¹(ι_F y)=ι_E(e⁻¹y)`. Its forward
+and inverse linear maps are the completed forward and inverse isometries. Neither
+coefficient-space completeness nor nonzero spaces are required.
 -/
 
 @[expose] public section
@@ -41,7 +42,10 @@ variable {𝕜 : Type u𝕜} [NormedField 𝕜]
 variable {E : Type uE} [NormedAddCommGroup E] [NormedSpace 𝕜 E]
 variable {F : Type uF} [NormedAddCommGroup F] [NormedSpace 𝕜 F]
 
-/-- Complete an actual linear isometry equivalence using its stock forward and inverse completion maps. -/
+/-- **Completed linear isometric equivalence.** Let `𝕜` be a normed field, `E,F` normed
+`𝕜`-spaces in independent universes, and `e : E ≃ₗᵢ[𝕜] F` a linear isometric equivalence.
+`e.completion : Completion E ≃ₗᵢ[𝕜] Completion F` is the isometric extension satisfying
+`ê(ι_E x)=ι_F(e x)` and inverse value `ê⁻¹(ι_F y)=ι_E(e⁻¹y)`. -/
 def completion (e : E ≃ₗᵢ[𝕜] F) : Completion E ≃ₗᵢ[𝕜] Completion F := by
   let _ : UniformContinuousConstSMul 𝕜 E :=
     uniformContinuousConstSMul_of_continuousConstSMul 𝕜 E
@@ -73,7 +77,9 @@ def completion (e : E ≃ₗᵢ[𝕜] F) : Completion E ≃ₗᵢ[𝕜] Completi
     exact congrArg (fun z : E => (z : Completion E)) (e.symm_apply_apply z)
   exact LinearIsometryEquiv.ofLinearIsometry f g.toLinearMap hfg hgf
 
-/-- The actual completed equivalence retains the literal original coefficient value. -/
+/-- **Completion equivalence on a source vector.** Let `𝕜` be a normed field, `E,F` normed
+`𝕜`-spaces in independent universes, and `e : E ≃ₗᵢ[𝕜] F` a linear isometric equivalence.
+for `x ∈ E`, `e.completion (x : Completion E)=(e x : Completion F)`. -/
 theorem completion_apply_coe (e : E ≃ₗᵢ[𝕜] F) (z : E) :
     completion e (z : Completion E) = (e z : Completion F) := by
   let _ : UniformContinuousConstSMul 𝕜 E :=
@@ -83,7 +89,10 @@ theorem completion_apply_coe (e : E ≃ₗᵢ[𝕜] F) (z : E) :
   change e.toLinearIsometry.completion (z : Completion E) = (e z : Completion F)
   exact LinearIsometry.completion_apply_coe _ _
 
-/-- The inverse completed equivalence retains the literal original inverse coefficient value. -/
+/-- **Inverse completion equivalence on a target vector.** Let `𝕜` be a normed field, `E,F`
+normed `𝕜`-spaces in independent universes, and `e : E ≃ₗᵢ[𝕜] F` a linear isometric
+equivalence. for `y ∈ F`, `(e.completion).symm (y : Completion F)=(e.symm y : Completion
+E)`. -/
 theorem completion_symm_apply_coe (e : E ≃ₗᵢ[𝕜] F) (z : F) :
     (completion e).symm (z : Completion F) = (e.symm z : Completion E) := by
   let _ : UniformContinuousConstSMul 𝕜 E :=
@@ -94,7 +103,10 @@ theorem completion_symm_apply_coe (e : E ≃ₗᵢ[𝕜] F) (z : F) :
   exact LinearIsometry.completion_apply_coe _ _
 
 
-/-- The actual completed equivalence has the stock forward completion linear-map DATA. -/
+/-- **Forward linear map of the completed equivalence.** Let `𝕜` be a normed field, `E,F`
+normed `𝕜`-spaces in independent universes, and `e : E ≃ₗᵢ[𝕜] F` a linear isometric
+equivalence. the linear map underlying `e.completion` equals the completion of
+`e.toLinearIsometry`, with value `ι_E x ↦ ι_F(e x)` on the dense domain. -/
 theorem completion_toLinearMap (e : E ≃ₗᵢ[𝕜] F) :
     letI : UniformContinuousConstSMul 𝕜 E :=
       uniformContinuousConstSMul_of_continuousConstSMul 𝕜 E
@@ -102,7 +114,10 @@ theorem completion_toLinearMap (e : E ≃ₗᵢ[𝕜] F) :
       uniformContinuousConstSMul_of_continuousConstSMul 𝕜 F
     (e.completion).toLinearMap = e.toLinearIsometry.completion.toLinearMap := rfl
 
-/-- The actual inverse completed equivalence has the stock inverse completion linear-map DATA. -/
+/-- **Inverse linear map of the completed equivalence.** Let `𝕜` be a normed field, `E,F`
+normed `𝕜`-spaces in independent universes, and `e : E ≃ₗᵢ[𝕜] F` a linear isometric
+equivalence. the linear map underlying `(e.completion).symm` equals the completion of
+`e.symm.toLinearIsometry`, with value `ι_F y ↦ ι_E(e⁻¹y)`. -/
 theorem completion_symm_toLinearMap (e : E ≃ₗᵢ[𝕜] F) :
     letI : UniformContinuousConstSMul 𝕜 E :=
       uniformContinuousConstSMul_of_continuousConstSMul 𝕜 E

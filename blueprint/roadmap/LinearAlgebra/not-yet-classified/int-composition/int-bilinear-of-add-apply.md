@@ -1,3 +1,4 @@
-# Int Bilinear Of Add apply
+# Value of the bilinear map constructed from additive laws
 
-Constructing integer bilinearity preserves the supplied function.
+For additive commutative groups A,B,D and separately additive f:A×B→D, intBilinearOfAdd f
+hLeft hRight x y=f(x,y).

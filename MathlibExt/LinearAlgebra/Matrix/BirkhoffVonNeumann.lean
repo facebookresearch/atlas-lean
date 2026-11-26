@@ -18,32 +18,35 @@ import MathlibExt.LinearAlgebra.Matrix.PermutationEntry
 @[expose] public section
 
 /-!
-# Birkhoff–von Neumann: permutation-matrix entries and the 2×2 classification
+# Doubly stochastic matrices in dimension two
 
-The Birkhoff–von Neumann theorem says every doubly stochastic matrix is a convex combination
-of permutation matrices. The general theorem is proved in Mathlib proper
-(`Mathlib.Analysis.Convex.Birkhoff`): `doublyStochastic_eq_convexHull_permMatrix`,
-`exists_eq_sum_perm_of_mem_doublyStochastic`, and `extremePoints_doublyStochastic`, via the
-Kőnig–Hall induction on the number of nonzero entries. This module adds the explicit 2×2
-classification, which is convenient for concrete small-matrix computations; the entry
-formula for permutation matrices is `Matrix.permMatrix_entry_eq`.
+A real doubly stochastic matrix has nonnegative entries and every row and column sum equal to
+1. The Birkhoff–von Neumann theorem expresses finite doubly stochastic matrices as convex
+combinations of permutation matrices. In size 2, A=[[t,1-t],[1-t,t]] with 0≤t≤1, hence
+A=tI+(1-t)P_swap.
 
-Source: G. Birkhoff, Tres observaciones sobre el algebra lineal, Rev. Univ. Nac. Tucumán
-Ser. A 5 (1946), 147–151; J. von Neumann (1953); see also D. B. West, Introduction to Graph
-Theory, and Bondy–Murty, Graph Theory (2008), for the Hall's-theorem proof.
+Source: G. Birkhoff, Tres observaciones sobre el algebra lineal, Rev. Univ. Nac. Tucumán Ser.
+A 5 (1946), 147–151; J. von Neumann (1953); see also D. B. West, Introduction to Graph Theory,
+and Bondy–Murty, Graph Theory (2008), for the Hall's-theorem proof.
 -/
 
 open Matrix
 
 namespace MathlibExt.LinearAlgebra.Matrix.BirkhoffVonNeumann
 
-/-- The two permutation matrices of size 2: the identity and the swap. -/
+/-- **Values of the two-coordinate swap.**
+
+For σ=Equiv.swap 0 1 on Fin 2, σ(0)=1 and σ(1)=0. Its permutation matrix is [[0,1],[1,0]].
+-/
 private lemma bvn_swap_vals :
     (Equiv.swap (0 : Fin 2) 1) 0 = 1 ∧ (Equiv.swap (0 : Fin 2) 1) 1 = 0 := by
   constructor <;> decide
 
-/-- Explicit 2×2 classification: every `2 × 2` doubly stochastic matrix is the convex
-combination `t • P(1) + (1 - t) • P(swap)` with `t = A 0 0`. -/
+/-- **Convex-combination classification of a doubly stochastic two-by-two matrix.**
+
+Let A be a real 2×2 matrix with nonnegative entries and row and column sums 1. There exists
+t∈[0,1], namely A_(0,0), with A=tI+(1-t)[[0,1],[1,0]].
+-/
 public theorem doublyStochastic_fin_two {A : Matrix (Fin 2) (Fin 2) ℝ}
     (hA : A ∈ doublyStochastic ℝ (Fin 2)) :
     ∃ t : ℝ, 0 ≤ t ∧ t ≤ 1 ∧

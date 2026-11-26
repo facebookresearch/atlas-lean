@@ -13,12 +13,12 @@ public import Mathlib.RingTheory.IsTensorProduct
 public import Mathlib.LinearAlgebra.TensorProduct.Tower
 
 /-!
-# Mixed base change over an original integer tensor product
+# Mixed base change across two independent coefficient rings
 
-Two independent coefficient rings act through their original inclusions in
-their integer tensor product. Cancelling the two scalar extensions gives
-the actual original tensor of the two coefficient modules. The construction
-uses canonical tensor pushouts and does not require flatness or freeness.
+Let R,S be commutative rings, M an R-module and N an S-module, with independently sized
+carriers. Set T=R⊗_ℤS, L=T⊗_R M and Q=T⊗_S N, using the canonical coefficient inclusions into
+T. The ℤ-linear equivalence θ:L⊗_TQ≃M⊗_ℤN sends (1_T⊗_Rm)⊗_T(1_T⊗_Sn) to m⊗_ℤn, with inverse
+inserting the two unit coefficients.
 -/
 
 @[expose] public section
@@ -53,7 +53,13 @@ private def mixedCancelLeft : L ⊗[S] N ≃ₗ[S] N ⊗[ℤ] M :=
   (TensorProduct.congr (Algebra.IsPushout.cancelBaseChange ℤ S R T M) (LinearEquiv.refl S N)).trans
     ((TensorProduct.comm S (S ⊗[ℤ] M) N).trans (cancelBaseChange ℤ S S N M))
 
-/-- The mixed scalar extensions cancel to the original integer tensor of the modules. -/
+/-- **Cancellation of mixed tensor scalar extensions.**
+
+Let R,S be commutative rings, M an R-module and N an S-module, with independently sized
+carriers. Set T=R⊗_ℤS, L=T⊗_R M and Q=T⊗_S N, using the canonical coefficient inclusions into
+T. The equivalence mixedBaseChangeEquiv R S M N:(T⊗_RM)⊗_T(T⊗_SN)≃ₗ[ℤ]M⊗_ℤN has inverse
+m⊗n↦(1_T⊗m)⊗(1_T⊗n).
+-/
 @[no_expose]
 def mixedBaseChangeEquiv : L ⊗[T] Q ≃ₗ[ℤ] M ⊗[ℤ] N :=
   ((mixedCancelRight R S M N).restrictScalars ℤ).trans
@@ -74,7 +80,12 @@ private theorem mixedCancelLeft_symm_tmul (m : M) (n : N) :
     TensorProduct.congr_symm, TensorProduct.congr_tmul,
     LinearEquiv.refl_symm, LinearEquiv.refl_apply, Algebra.IsPushout.cancelBaseChange_symm_tmul, map_one]
 
-/-- The inverse retains the literal original tensor, inserting only the two unit coefficients. -/
+/-- **Inverse mixed-base-change value on a pure tensor.**
+
+Let R,S be commutative rings, M an R-module and N an S-module, with independently sized
+carriers. Set T=R⊗_ℤS, L=T⊗_R M and Q=T⊗_S N, using the canonical coefficient inclusions into
+T. For m∈M and n∈N, (mixedBaseChangeEquiv R S M N)⁻¹(m⊗_ℤn)=(1_T⊗_Rm)⊗_T(1_T⊗_Sn).
+-/
 theorem mixedBaseChangeEquiv_symm_tmul (m : M) (n : N) :
     (mixedBaseChangeEquiv R S M N).symm (m ⊗ₜ[ℤ] n) =
       ((1 : T) ⊗ₜ[R] m) ⊗ₜ[T] ((1 : T) ⊗ₜ[S] n) := by
@@ -85,7 +96,12 @@ theorem mixedBaseChangeEquiv_symm_tmul (m : M) (n : N) :
   rw [TensorProduct.comm_symm, TensorProduct.comm_tmul, mixedCancelLeft_symm_tmul,
     mixedCancelRight_symm_tmul]
 
-/-- The canonical unit tensors recover the original module tensor. -/
+/-- **Unit tensor value of the mixed-base-change equivalence.**
+
+Let R,S be commutative rings, M an R-module and N an S-module, with independently sized
+carriers. Set T=R⊗_ℤS, L=T⊗_R M and Q=T⊗_S N, using the canonical coefficient inclusions into
+T. For m∈M and n∈N, mixedBaseChangeEquiv R S M N ((1_T⊗_Rm)⊗_T(1_T⊗_Sn))=m⊗_ℤn.
+-/
 theorem mixedBaseChangeEquiv_unit_tmul (m : M) (n : N) :
     mixedBaseChangeEquiv R S M N
       (((1 : T) ⊗ₜ[R] m) ⊗ₜ[T] ((1 : T) ⊗ₜ[S] n)) = m ⊗ₜ[ℤ] n := by

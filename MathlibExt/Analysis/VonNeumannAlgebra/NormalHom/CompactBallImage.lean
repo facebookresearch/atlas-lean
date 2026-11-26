@@ -15,13 +15,14 @@ public import MathlibExt.Analysis.VonNeumannAlgebra.NormalHom
 public import MathlibExt.Analysis.VonNeumannAlgebra.UltraweakOrder
 
 /-!
-# Original normal homomorphisms have compact images of ultraweak norm balls
+# Compact ultraweak images of source norm balls
 
-The source's actual original norm ball is compact in its ultraweak view.
-The given actual normal homomorphism is continuous between those views,
-so its literal image of that same ball is compact. No weakly closed range,
-normal inverse, predual or representation model is an input. This supplies
-the compact-ball prerequisite for the actual faithful normal range constructor.
+For a normal unital complex star homomorphism `f : M → N` of concrete von Neumann algebras, the
+image of every closed operator-norm ball `{x ∈ M : ‖x‖≤r}` is compact in the ultraweak topology
+of `N`.
+
+This uses ultraweak compactness of the source ball and continuity of `f`. Injectivity is not
+required, and the radius `r` is any real number; negative radii give empty sets.
 -/
 
 @[expose] public section
@@ -39,7 +40,12 @@ variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [Complete
 variable {K : Type v} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
 variable {M : VonNeumannAlgebra H} {N : VonNeumannAlgebra K}
 
-/-- The literal image of each original ultraweak norm ball under an actual normal map is compact. -/
+/-- **Ultraweak compact image of a normal map's norm ball.** Let `M,N` be concrete von Neumann
+algebras on complete complex Hilbert spaces. Their normal-functional Banach spaces
+`M_*,N_*` are the norm-closed spans of vector functionals, and their ultraweak topologies
+are `σ(M,M_*)`, `σ(N,N_*)`. Let `f : M → N` be a unital complex star homomorphism that is
+ultraweakly continuous. for every `r : ℝ`, `f({x ∈ M : ‖x‖≤r})` is compact in the
+ultraweak topology of `N`. Injectivity and nonnegativity of `r` are not assumed. -/
 theorem ultraweak_ball_image_isCompact (f : NormalStarAlgHom M N) (r : ℝ) :
     IsCompact ((fun x : Ultraweak M =>
       (ultraweakLinearEquiv N).symm (f (ultraweakLinearEquiv M x))) ''

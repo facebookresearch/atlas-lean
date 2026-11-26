@@ -1,7 +1,7 @@
-# Two Directed Systems
+# Tensoring two directed module systems
 
-- [Exists eq zero of map to two direct Limits tensor eq zero](exists-eq-zero-of-map-to-two-direct-limi.md)
-- [Directed Tensor Transition](directed-tensor-transition.md)
-- [Diagonal Direct Limit To Tensor](diagonal-direct-limit-to-tensor.md)
-- [Diagonal Direct Limit To Tensor bijective](diagonal-direct-limit-to-tensor-bijectiv.md)
-- [Diagonal Direct Limit Equiv Tensor](diagonal-direct-limit-equiv-tensor.md)
+- [Vanishing in two module limits is detected at a later stage](exists-eq-zero-of-map-to-two-direct-limi.md)
+- [Tensor transition for two module systems](directed-tensor-transition.md)
+- [Forward map from the limit of tensor stages](diagonal-direct-limit-to-tensor.md)
+- [Bijectivity of the two-system tensor comparison](diagonal-direct-limit-to-tensor-bijectiv.md)
+- [Linear equivalence of diagonal and factor tensor limits](diagonal-direct-limit-equiv-tensor.md)

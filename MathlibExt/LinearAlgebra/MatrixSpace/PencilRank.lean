@@ -20,26 +20,17 @@ import Mathlib.Tactic.Ring
 import Mathlib.Tactic.Push
 
 /-!
-# Rank increments of matrix pencils from uniform chains
+# Rank increments from uniform matrix chains
 
-A uniform single-operator chain satisfies `A v₀ = 0` and `A vᵢ₊₁ = C vᵢ`.
-Its literal polynomial vector is `∑ i, (-X)^i vᵢ`. Applying `A + X C` cancels
-the adjacent terms and leaves `(-1)^k X^(k+1) C vₖ` for a chain of length `k+1`.
-
-The matrices, vectors, and equations are actual native data. A varying-operator
-chain must first be converted to a uniform chain before these identities apply.
-
-If the final uniform-chain image escapes the actual range of `A`, a prescribed
-distinct scalar grid with cardinality greater than the matrix dimension contains
-`t` with `rank (A + t C) > rank A`. The proof constructs an actual image-column
-minor, retains its constant last column for the tight degree bound, and specializes
-the nonzero polynomial on that grid. Cyclic rank rounding and arithmetic costs
-are separate conclusions.
+Let R be a commutative ring, N a finite index type, A,C ∈ Mat(N,N;R), and v₀,…,vₖ ∈ R^N with
+Av₀ = 0 and Avᵢ₊₁ = Cvᵢ for i < k. For p(X) = ∑ᵢ₌₀ᵏ (−X)^i vᵢ, the polynomial pencil satisfies
+(A + XC)p(X) = (−1)^k X^(k+1) Cvₖ. Over a field, if Cvₖ ∉ im A, every finite scalar set S with
+|S| > |N| contains t with rank(A+tC) > rank A.
 
 ## References
 
-Gábor Ivanyos, Youming Qiao and K. V. Subrahmanyam, *Non-commutative Edmonds'
-problem and matrix semi-invariants*, Fact 2.2 and Algorithm 2, lines 19–25.
+Gábor Ivanyos, Youming Qiao and K. V. Subrahmanyam, *Non-commutative Edmonds' problem and
+matrix semi-invariants*, Fact 2.2 and Algorithm 2, lines 19–25.
 -/
 
 @[expose] public section
@@ -86,7 +77,11 @@ private theorem weightedChainVector_spec (A C : Matrix n n R) (t : R)
     simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, pow_succ]
     ring
 
-/-- The literal polynomial vector of a uniform chain, with every vector entry mapped as a constant. -/
+/-- **The polynomial vector of a uniform chain.**
+
+Let R be a commutative ring, N finite and v₀,…,vₖ ∈ R^N. Define p(X) ∈ (R[X])^N by p(X)ⱼ =
+∑ᵢ₌₀ᵏ (−X)^i ι(vᵢⱼ), where ι : R → R[X] includes coefficients as constant polynomials.
+-/
 noncomputable def pencilChainPolynomial (v : Fin (k + 1) → (n → R)) : n → R[X] :=
   ∑ i : Fin (k + 1), (-(Polynomial.X : R[X])) ^ i.val • (fun j : n => Polynomial.C (v i j))
 
@@ -96,7 +91,13 @@ private theorem C_mulVec (A : Matrix n n R) (v : n → R) :
   funext i
   exact ((Polynomial.C : R →+* R[X]).map_mulVec A v i).symm
 
-/-- The actual polynomial pencil applied to its chain vector leaves precisely the final image term. -/
+/-- **The uniform-chain polynomial identity.**
+
+Let R be a commutative ring, N a finite index type, A,C ∈ Mat(N,N;R), and v₀,…,vₖ ∈ R^N with
+Av₀ = 0 and Avᵢ₊₁ = Cvᵢ for i < k. Let ι : R → R[X] be constant-polynomial inclusion, applied
+entrywise to matrices and vectors. For p(X) = ∑ᵢ₌₀ᵏ (−X)^i ι(vᵢ), one has (ι(A)+Xι(C))p(X) =
+(−1)^k X^(k+1)ι(Cvₖ).
+-/
 theorem pencilChainPolynomial_spec (A C : Matrix n n R)
     (v : Fin (k + 1) → (n → R)) (h0 : A *ᵥ v 0 = 0)
     (hstep : ∀ i : Fin k, A *ᵥ v i.succ = C *ᵥ v i.castSucc) :
@@ -123,7 +124,12 @@ theorem pencilChainPolynomial_spec (A C : Matrix n n R)
     ring
   rwa [hc] at h
 
-/-- Evaluation of the literal chain polynomial gives the actual specialized pencil identity. -/
+/-- **Specialization of the uniform-chain polynomial.**
+
+Let R be a commutative ring, N a finite index type, A,C ∈ Mat(N,N;R), and v₀,…,vₖ ∈ R^N with
+Av₀ = 0 and Avᵢ₊₁ = Cvᵢ for i < k. Let p(X) = ∑ᵢ₌₀ᵏ (−X)^i vᵢ, with constant-polynomial vector
+coefficients. For every t ∈ R, one has (A+tC)p(t) = (−1)^k t^(k+1) Cvₖ.
+-/
 theorem pencilChainPolynomial_eval_spec (A C : Matrix n n R)
     (v : Fin (k + 1) → (n → R)) (h0 : A *ᵥ v 0 = 0)
     (hstep : ∀ i : Fin k, A *ᵥ v i.succ = C *ᵥ v i.castSucc) (t : R) :
@@ -150,7 +156,11 @@ namespace Polynomial
 
 variable {R : Type u} [CommRing R]
 
-/-- A constant last column lowers the degree bound of an affine determinant by one. -/
+/-- **A determinant degree bound with one constant column.**
+
+Let R be a commutative ring and A,B square matrices of size r+1. If the last column of A is
+zero, then the polynomial det(XA+B) has natural degree at most r.
+-/
 theorem natDegree_det_X_add_C_le_of_last_column_zero (r : ℕ)
     (A B : Matrix (Fin (r + 1)) (Fin (r + 1)) R)
     (hA : ∀ i, A i (Fin.last r) = 0) :
@@ -306,8 +316,12 @@ private theorem exists_affine_image_minor (A C : Matrix n n K) (y : n → K)
   exact ⟨V, u, row, P, Q, hr, hQdet, hPlast, hformula⟩
 
 omit [DecidableEq n] in
-/-- A uniform actual chain escaping `range A` forces a rank increment at a scalar in the
-prescribed distinct grid. The grid cardinality exceeds the original matrix dimension. -/
+/-- **A higher-rank pencil at a prescribed scalar.**
+
+Let K be a field, N finite, A,C ∈ Mat(N,N;K), and v₀,…,vₖ ∈ K^N with Av₀ = 0 and Avᵢ₊₁ = Cvᵢ
+for i < k. Suppose Cvₖ ∉ im A. For any finite set S ⊆ K with |S| > |N|, there exists t ∈ S
+such that rank A < rank(A+tC).
+-/
 theorem exists_rank_lt_add_smul_of_uniform_chain (A C : Matrix n n K)
     (k : ℕ) (v : Fin (k + 1) → (n → K)) (h0 : A *ᵥ v 0 = 0)
     (hstep : ∀ i : Fin k, A *ᵥ v i.succ = C *ᵥ v i.castSucc)

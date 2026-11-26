@@ -1,5 +1,5 @@
-# Regular Dominated
+# Regularity inherited from finite measure domination
 
-- [Of le](of-le.md)
-- [Add of finite](add-of-finite.md)
-- [Of le nnreal smul](of-le-nnreal-smul.md)
+- [Regular measure under domination by a finite regular measure](of-le.md)
+- [Regularity of the sum of finite regular measures](add-of-finite.md)
+- [Regularity under finite nonnegative scalar domination](of-le-nnreal-smul.md)

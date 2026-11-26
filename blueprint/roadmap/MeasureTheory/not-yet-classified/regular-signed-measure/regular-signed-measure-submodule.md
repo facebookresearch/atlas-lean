@@ -1,4 +1,5 @@
-# Regular Signed Measure Submodule
+# Real submodule of signed measures with regular total variation
 
-Signed measures with regular total variation, as a real submodule of all
-signed measures.
+Let `X` be an R₁
+topological space with its Borel measurable structure. `regularSignedMeasureSubmodule X`
+consists of signed measures `s` whose positive total-variation measure `|s|` is regular.

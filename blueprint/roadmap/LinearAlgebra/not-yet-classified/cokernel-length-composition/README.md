@@ -1,6 +1,6 @@
-# Cokernel Length Composition
+# Cokernel length of a composite with an injective second map
 
-- [Length coker comp of injective](length-coker-comp-of-injective.md)
-- [Length coker upper block of injective](length-coker-upper-block-of-injective.md)
-- [Length coker precompose equiv](length-coker-precompose-equiv.md)
-- [Length coker postcompose equiv](length-coker-postcompose-equiv.md)
+- [Additivity of full cokernel lengths under an injective second map](length-coker-comp-of-injective.md)
+- [Cokernel length of an upper block map](length-coker-upper-block-of-injective.md)
+- [Domain equivalence preserves cokernel length](length-coker-precompose-equiv.md)
+- [Codomain equivalence preserves cokernel length](length-coker-postcompose-equiv.md)

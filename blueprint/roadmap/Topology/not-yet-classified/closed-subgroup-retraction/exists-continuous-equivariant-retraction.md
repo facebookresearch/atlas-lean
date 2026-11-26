@@ -1,4 +1,6 @@
-# Exists continuous equivariant retraction
+# Continuous left-equivariant retraction onto a closed subgroup
 
-Every closed subgroup of a profinite group has a continuous,
-left-equivariant retraction, with no normality or index restriction.
+Let `G` be a compact
+Hausdorff totally disconnected topological group. Let `H≤G` be a closed subgroup, without
+a normality or finite-index condition. there exists `r∈C(G,H)` with `r(hg)=h r(g)` for
+every `h∈H`, `g∈G`, and `r(h)=h` on `H`.

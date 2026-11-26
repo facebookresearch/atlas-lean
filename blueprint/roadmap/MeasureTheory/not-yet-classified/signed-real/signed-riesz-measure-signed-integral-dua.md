@@ -1,3 +1,5 @@
-# Signed Riesz Measure signed Integral Dual
+# Riesz inversion recovers a regular signed measure
 
-Applying the inverse construction to signed integration recovers the signed measure.
+Let `X` be a compact Hausdorff
+space with its Borel measurable structure. for regular signed `s`,
+`signedRieszMeasure(signedIntegralDual s)=s`.

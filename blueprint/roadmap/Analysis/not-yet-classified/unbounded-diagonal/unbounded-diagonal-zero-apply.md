@@ -1,3 +1,6 @@
-# Unbounded Diagonal zero apply
+# Zero diagonal weights give zero output
 
-Zero weights give the zero vector at every point of the actual domain.
+Let `𝕜` be real or complex, `H` a normed
+inner-product `𝕜`-space, `e : HilbertBasis ι 𝕜 H` and `α : ι → 𝕜` any scalar family. Write
+`D_α={x ∈ H : Σ_i ‖α_i⟨e_i,x⟩‖² < ∞}`. for zero weights and every vector in the resulting
+whole-space domain, `unboundedDiagonal e 0 x=0`.

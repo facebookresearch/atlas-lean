@@ -16,20 +16,15 @@ public import MathlibExt.Analysis.VonNeumannAlgebra.Weight.GNSFaithfulDomain
 public import MathlibExt.Analysis.CStarAlgebra.Weight.GNSLeftUnital
 
 /-!
-# The actual source-faithful semifinite GNS coefficient map is injective
+# Injective GNS representation of a faithful semifinite weight
 
-A zero coefficient operator annihilates the actual dense-domain map.
-Original weight faithfulness makes that map injective, hence original
-left multiplication annihilates the literal finite-square domain.
-Source semifiniteness supplies that domain's actual ultraweak density,
-and proved fixed-left ultraweak continuity extends the annihilation to
-the original algebra. Original multiplication by one gives zero coefficient.
+Let `φ` be a faithful extended positive weight on a concrete von Neumann algebra whose
+finite-positive span is ultraweakly dense. Its bounded GNS left representation `π : M → B(H_φ)`
+is injective.
 
-These proofs supply the actual representation-injectivity prerequisite
-for the faithful normal-range constructor. No source existence, range or
-normality output and no extra density/model certificate is selected.
-Representation normality, full scalar extension and Tomita/modular/polar
-objects remain separate; original source theorem proofs stay wholly open.
+If `π(a)=0`, then `a` annihilates the finite square domain. Its ultraweak density and continuity
+of fixed multiplication give `a=0`. Normality of the weight is not needed for this injectivity
+result.
 -/
 
 @[expose] public section
@@ -45,7 +40,14 @@ universe u
 
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- A zero actual source-faithful semifinite coefficient operator has zero original coefficient. -/
+/-- **Zero GNS coefficient operator forces zero algebra element.** Let `H` be a complete
+complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Let `φ : M₊ → [0,∞]`
+be an extended positive weight: additive, homogeneous for finite nonnegative real scalars,
+and zero at zero. Put `n_φ={x : φ(x* x)<∞}`, and let `Λ : n_φ → H_φ` be the dense GNS map
+into the weight Hilbert completion. Its representation `π` satisfies `π(a)Λ(x)=Λ(a*x)`.
+Assume the complex span of finite-weight positive elements is ultraweakly dense in `M`,
+and `φ(a)=0 → a=0` for positive `a`. for `a ∈ M`, `π(a)=φ.gnsLeftStarAlgHom a=0` implies
+`a=0`. Normality of `φ` is not assumed. -/
 theorem Weight.gnsLeftStarAlgHom_eq_zero_implies (M : VonNeumannAlgebra H) (φ : Weight M)
     (hsem : VonNeumannAlgebra.IsSemifiniteWeight M φ)
     (hfaith : VonNeumannAlgebra.IsFaithfulWeight M φ) (a : M)
@@ -87,7 +89,14 @@ theorem Weight.gnsLeftStarAlgHom_eq_zero_implies (M : VonNeumannAlgebra H) (φ :
   rw [LinearEquiv.apply_symm_apply, mul_one, map_zero] at horiginal
   exact horiginal
 
-/-- Source semifiniteness and original weight faithfulness make the computed coefficient map injective. -/
+/-- **Faithful semifinite weight gives an injective GNS star map.** Let `H` be a complete
+complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Let `φ : M₊ → [0,∞]`
+be an extended positive weight: additive, homogeneous for finite nonnegative real scalars,
+and zero at zero. Put `n_φ={x : φ(x* x)<∞}`, and let `Λ : n_φ → H_φ` be the dense GNS map
+into the weight Hilbert completion. Its representation `π` satisfies `π(a)Λ(x)=Λ(a*x)`.
+Assume the complex span of finite-weight positive elements is ultraweakly dense in `M`,
+and `φ(a)=0 → a=0` for positive `a`. the unital star homomorphism `π=φ.gnsLeftStarAlgHom :
+M → B(H_φ)` is injective. -/
 theorem Weight.gnsLeftStarAlgHom_injective (M : VonNeumannAlgebra H) (φ : Weight M)
     (hsem : VonNeumannAlgebra.IsSemifiniteWeight M φ)
     (hfaith : VonNeumannAlgebra.IsFaithfulWeight M φ) : Function.Injective φ.gnsLeftStarAlgHom := by

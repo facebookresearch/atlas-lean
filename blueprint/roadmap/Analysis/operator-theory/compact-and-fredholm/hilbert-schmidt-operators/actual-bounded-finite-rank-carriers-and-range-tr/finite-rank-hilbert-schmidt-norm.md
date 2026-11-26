@@ -1,3 +1,7 @@
-# Finite Rank Hilbert Schmidt Norm
+# Square-root finite-rank Hilbert–Schmidt function
 
-The printed square-root of the diagonal trace, with no assumed norm law or completed model.
+Let H be a complete complex inner product space and K a complex inner product space, possibly
+incomplete. For a bounded S:H→K, let S†:K→H be its complete-source adjoint, characterized by
+⟪Sx,y⟫=⟪x,S†y⟫. Let F(H,K) denote the bounded finite-rank maps. For T∈F(H,K),
+finiteRankHilbertSchmidtNorm T=√Re(finiteRankHilbertSchmidtInner T T)=√Re(tr(T†∘T)), using the
+nonnegative real square root.

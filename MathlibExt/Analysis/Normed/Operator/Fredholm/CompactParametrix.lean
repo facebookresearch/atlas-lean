@@ -20,17 +20,15 @@ public import Mathlib.Analysis.Normed.Group.Quotient
 import Mathlib.Tactic.Abel
 
 /-!
-# Compact parametrices on normed spaces
+# Two-sided compact parametrices imply Fredholmness
 
-An actual two-sided compact parametrix implies all five strong Fredholm
-properties on independently typed real-like or complex-like normed spaces.
-Neither ambient space needs completeness or an inner product. The scalar
-dictionary is derived from the original normed field without changing its norm.
+Let `𝕜` be a normed field with a compatible real-like or complex-like structure, and `E,F`
+normed `𝕜`-spaces. For bounded maps `T : E → F` and `U : F → E`, assume both `UT-I_E` and
+`TU-I_F` are compact.
 
-The kernel is finite-dimensional and continuously complemented. The actual
-restriction to a complement is closed embedded, and projection factorization
-transfers strictness and closed range. The actual range quotient is compact
-and open, hence finite-dimensional. No approximation property is assumed.
+Then `T` is strict, has closed range of finite codimension, and has a finite-dimensional kernel
+with a closed topological complement. These are the five conditions of the Fredholm predicate.
+No completeness or inner product on `E,F`, and no approximation property, is required.
 -/
 
 namespace ContinuousLinearMap.IsFredholm
@@ -76,9 +74,11 @@ variable {𝕜 : Type u𝕜} [NormedField 𝕜] [IsRCLikeNormedField 𝕜]
 variable {E : Type uE} [NormedAddCommGroup E] [NormedSpace 𝕜 E]
 variable {F : Type uF} [NormedAddCommGroup F] [NormedSpace 𝕜 F]
 
-/-- A two-sided compact parametrix gives the actual strong Fredholm predicate.
-The compatible scalar structure preserves the original normed field; no
-completeness or inner product on either ambient space is required. -/
+/-- **Fredholm operator from a two-sided compact parametrix.** Let `𝕜` be a normed field with
+compatible real-like or complex-like normed-field structure, and `E,F` normed `𝕜`-spaces,
+possibly incomplete. If bounded `T : E → F` and `U : F → E` have compact errors `UT-I_E`
+and `TU-I_F`, then `T` is Fredholm: strict, with closed finite-codimension range and
+finite-dimensional, topologically complemented kernel. No inner product is required. -/
 theorem of_compactParametrix (T : E →L[𝕜] F) (U : F →L[𝕜] E)
     (hUT : IsCompactOperator (U.comp T - (1 : E →L[𝕜] E)))
     (hTU : IsCompactOperator (T.comp U - (1 : F →L[𝕜] F))) :

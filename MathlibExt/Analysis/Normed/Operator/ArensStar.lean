@@ -15,12 +15,15 @@ public import MathlibExt.Analysis.Normed.Module.StrongDualStar
 public import MathlibExt.Analysis.Normed.Operator.ArensAlgebra
 
 /-!
-# Involution interchanges the two original Arens products
+# Involution reverses the two Arens extensions
 
-The first product reverses into the second product under the original
-dual involution. This uses only the original coefficient multiplication's
-star-reversal law. No equality of the Arens products and no StarRing
-structure on the first-Arens bidual is assumed or installed.
+Let `𝕜` be a nontrivially normed star field and `A` a seminormed `𝕜`-space with compatible
+isometric additive involution. If a bounded bilinear map `m` obeys `m(a,b)*=m(b*,a*)`, its
+bidual extensions satisfy `m₁(p,q)*=m₂(q*,p*)` and `m₂(p,q)*=m₁(q*,p*)`.
+
+In a nonunital seminormed star ring these are the involution laws for the first and second Arens
+products. Equality of those products is not assumed. Coefficient spaces may be incomplete or
+zero.
 -/
 
 @[expose] public section
@@ -56,7 +59,12 @@ variable {𝕜 : Type u} [NontriviallyNormedField 𝕜] [StarRing 𝕜] [NormedS
 variable {A : Type v} [SeminormedAddCommGroup A] [StarAddMonoid A]
 variable [NormedSpace 𝕜 A] [StarModule 𝕜 A] [NormedStarGroup A]
 
-/-- The original dual involution reverses the first Arens product into the second. -/
+/-- **Star reversal of the first Arens extension.** Let `𝕜` be a nontrivially normed field
+with an isometric star-ring involution. Let `A` be a seminormed `𝕜`-space with an
+isometric additive involution satisfying `(c • a)*=c* • a*`. The bidual involution is
+`p*(φ)=star(p(φ*))`, where `φ*(a)=star(φ(a*))`. for a bounded bilinear `m : A×A → A`
+satisfying `m(a,b)*=m(b*,a*)`, `star(m.arensFirst p q)=m.arensSecond (star q) (star p)`
+for `p,q ∈ A**`. -/
 theorem arensFirst_star (m : A →L[𝕜] A →L[𝕜] A)
     (h : ∀ a b, star (m a b) = m (star b) (star a))
     (p q : StrongDual 𝕜 (StrongDual 𝕜 A)) :
@@ -78,7 +86,12 @@ theorem arensFirst_star (m : A →L[𝕜] A →L[𝕜] A)
   change star (phi (star (m a b))) = star (phi (m (star b) (star a)))
   rw [h a b]
 
-/-- The same involution reverses the second Arens product into the first. -/
+/-- **Star reversal of the second Arens extension.** Let `𝕜` be a nontrivially normed field
+with an isometric star-ring involution. Let `A` be a seminormed `𝕜`-space with an
+isometric additive involution satisfying `(c • a)*=c* • a*`. The bidual involution is
+`p*(φ)=star(p(φ*))`, where `φ*(a)=star(φ(a*))`. for a bounded bilinear `m : A×A → A`
+satisfying `m(a,b)*=m(b*,a*)`, `star(m.arensSecond p q)=m.arensFirst (star q) (star p)`
+for `p,q ∈ A**`. -/
 theorem arensSecond_star (m : A →L[𝕜] A →L[𝕜] A)
     (h : ∀ a b, star (m a b) = m (star b) (star a))
     (p q : StrongDual 𝕜 (StrongDual 𝕜 A)) :
@@ -95,13 +108,24 @@ variable (A : Type v) [NonUnitalSeminormedRing A] [StarRing A] [NormedStarGroup 
 variable [NormedSpace 𝕜 A] [StarModule 𝕜 A]
 variable [IsScalarTower 𝕜 A A] [SMulCommClass 𝕜 A A]
 
-/-- Original nonunital star multiplication gives the exact first-to-second reversal. -/
+/-- **Involution changes the first Arens product to the second.** Let `𝕜` be a nontrivially
+normed field with an isometric star-ring involution. Let `A` be a seminormed `𝕜`-space
+with an isometric additive involution satisfying `(c • a)*=c* • a*`. The bidual involution
+is `p*(φ)=star(p(φ*))`, where `φ*(a)=star(φ(a*))`. Assume `A` is a nonunital seminormed
+star ring and its scalar action is compatible with both multiplication factors. for `p,q ∈
+A**`, `(p □ q)*=q* ◇ p*`, where `□,◇` are the first and second Arens extensions of
+multiplication. -/
 theorem firstArens_star_mul (p q : StrongDual 𝕜 (StrongDual 𝕜 A)) :
     star ((ContinuousLinearMap.mul 𝕜 A).arensFirst p q) =
       (ContinuousLinearMap.mul 𝕜 A).arensSecond (star q) (star p) :=
   (ContinuousLinearMap.mul 𝕜 A).arensFirst_star (fun a b => star_mul a b) p q
 
-/-- Original nonunital star multiplication gives the exact second-to-first reversal. -/
+/-- **Involution changes the second Arens product to the first.** Let `𝕜` be a nontrivially
+normed field with an isometric star-ring involution. Let `A` be a seminormed `𝕜`-space
+with an isometric additive involution satisfying `(c • a)*=c* • a*`. The bidual involution
+is `p*(φ)=star(p(φ*))`, where `φ*(a)=star(φ(a*))`. Assume `A` is a nonunital seminormed
+star ring and its scalar action is compatible with both multiplication factors. for `p,q ∈
+A**`, `(p ◇ q)*=q* □ p*`, where `□,◇` are the first and second Arens products. -/
 theorem secondArens_star_mul (p q : StrongDual 𝕜 (StrongDual 𝕜 A)) :
     star ((ContinuousLinearMap.mul 𝕜 A).arensSecond p q) =
       (ContinuousLinearMap.mul 𝕜 A).arensFirst (star q) (star p) :=

@@ -1,4 +1,8 @@
-# Is Semifinite Weight
+# Semifiniteness by ultraweak totality of finite positive elements
 
-Semifiniteness is ultraweak totality of the literal finite-positive set.
-The span and the identity into the ultraweak view are the existing actual objects.
+Let `H` be a
+complete complex Hilbert space and `M ⊆ B(H)` a concrete von Neumann algebra. Let `φ : M₊
+→ [0,∞]` be an extended positive weight: additive, homogeneous for finite nonnegative real
+scalars, and zero at zero. `IsSemifiniteWeight M φ` means `span ℂ {a ∈ M₊ : φ(a)<∞}` is
+dense in `M` for the ultraweak topology. This is the finite-positive integration span, not
+the finite-square domain.

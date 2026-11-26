@@ -1,5 +1,4 @@
-# Length scalar coker ne top
+# Finite scalar cokernel length in a one-dimensional domain
 
-The full nonzero scalar quotient has finite length under the actual
-one-dimensional Noetherian domain hypotheses; no finite-length premise or
-unit-pivot restriction is supplied.
+Let R be a commutative Noetherian domain with Krull dimension at most one and a≠0. Then
+ℓ_R(R/aR) is finite.

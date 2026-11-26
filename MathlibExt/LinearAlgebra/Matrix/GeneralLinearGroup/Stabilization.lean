@@ -17,11 +17,13 @@ public import Mathlib.Logic.Equiv.Fin.Basic
 public import Mathlib.GroupTheory.NoncommCoprod
 
 /-!
-# GL stabilization via `diag(A,1)`
+# Block-diagonal inclusions and general linear stabilization
 
-The block embedding `A ↦ fromBlocks A 0 0 1` as a `MonoidHom` and the
-successor stabilization `GL (Fin n) → GL (Fin (n+1))` via the `Fin 1` block
-and reindexing along `finSumFinEquiv`.
+Let R be a semiring and n,m finite index types in independent universes. Write
+ιL(g)=diag(g,I_m) and ιR(h)=diag(I_n,h) in GL(n⊕m,R), and D(g,h)=diag(g,h). The left and right
+inclusions have commuting images, so D is a group homomorphism GL(n,R)×GL(m,R)→GL(n⊕m,R). For
+n=Fin k and m=Fin 1, reindexing gives the injective successor map GL(k,R)→GL(k+1,R),
+g↦diag(g,1).
 -/
 
 @[expose] public section
@@ -30,7 +32,11 @@ namespace Matrix
 
 universe u v w
 
-/-- Matrix `MonoidHom` `A ↦ fromBlocks A 0 0 1`. -/
+/-- **Matrix monoid homomorphism adjoining an identity block.**
+
+Let R be a semiring and n,m finite index types. The multiplicative map fromBlocksOneMonoidHom
+R n m sends a square matrix A to diag(A,I_m) on n⊕m.
+-/
 def fromBlocksOneMonoidHom (R : Type w) [Semiring R] (n : Type u) (m : Type v)
     [DecidableEq n] [DecidableEq m] [Fintype n] [Fintype m] :
     Matrix n n R →* Matrix (n ⊕ m) (n ⊕ m) R where
@@ -62,7 +68,12 @@ section BlockInclusion
 variable {n : Type u} {m : Type v} [DecidableEq n] [DecidableEq m] [Fintype n] [Fintype m]
 variable {R : Type uR} [Semiring R] {S : Type vR} [Semiring S]
 
-/-- `GL` inclusion `A ↦ fromBlocks A 0 0 1` via `Units.map`. -/
+/-- **Left block inclusion of a general linear group.**
+
+Let R be a semiring and n,m finite index types in independent universes. Write
+ιL(g)=diag(g,I_m) and ιR(h)=diag(I_n,h) in GL(n⊕m,R), and D(g,h)=diag(g,h). The group
+homomorphism blockDiagonalOne n m R:GL(n,R)→GL(n⊕m,R) is g↦ιL(g)=diag(g,I_m).
+-/
 def blockDiagonalOne (n : Type u) (m : Type v) (R : Type uR) [Semiring R]
     [DecidableEq n] [DecidableEq m] [Fintype n] [Fintype m] :
     GL n R →* GL (n ⊕ m) R :=
@@ -74,15 +85,23 @@ lemma coe_blockDiagonalOne (g : GL n R) :
       fromBlocks (↑g : Matrix n n R) 0 0 1 :=
   rfl
 
-/-- The actual right block inclusion, obtained from the existing left
-block inclusion by exchanging the two index summands. -/
+/-- **Right block inclusion of a general linear group.**
+
+Let R be a semiring and n,m finite index types in independent universes. Write
+ιL(g)=diag(g,I_m) and ιR(h)=diag(I_n,h) in GL(n⊕m,R), and D(g,h)=diag(g,h). The group
+homomorphism blockDiagonalRight n m R:GL(m,R)→GL(n⊕m,R) is h↦ιR(h)=diag(I_n,h).
+-/
 def blockDiagonalRight (n : Type u) (m : Type v) (R : Type uR) [Semiring R]
     [DecidableEq n] [DecidableEq m] [Fintype n] [Fintype m] :
     GL m R →* GL (n ⊕ m) R :=
   (reindexMulEquiv (Equiv.sumComm m n)).toMonoidHom.comp (blockDiagonalOne m n R)
 
-/-- Its original matrix is the identity on the left block and the given
-matrix on the right block, with zero cross terms. -/
+/-- **Underlying matrix of the right block inclusion.**
+
+Let R be a semiring and n,m finite index types in independent universes. Write
+ιL(g)=diag(g,I_m) and ιR(h)=diag(I_n,h) in GL(n⊕m,R), and D(g,h)=diag(g,h). For h∈GL(m,R), the
+matrix underlying blockDiagonalRight n m R h is [[I_n,0],[0,h]].
+-/
 @[simp]
 lemma coe_blockDiagonalRight (g : GL m R) :
     (↑(blockDiagonalRight n m R g) : Matrix (n ⊕ m) (n ⊕ m) R) =
@@ -92,7 +111,12 @@ lemma coe_blockDiagonalRight (g : GL m R) :
   ext i j
   rcases i with i | i <;> rcases j with j | j <;> rfl
 
-/-- Both whole block groups commute in the original general linear group. -/
+/-- **Disjoint block general linear groups commute.**
+
+Let R be a semiring and n,m finite index types in independent universes. Write
+ιL(g)=diag(g,I_m) and ιR(h)=diag(I_n,h) in GL(n⊕m,R), and D(g,h)=diag(g,h). For g∈GL(n,R) and
+h∈GL(m,R), ιL(g)*ιR(h)=ιR(h)*ιL(g).
+-/
 theorem commute_blockDiagonalOne_blockDiagonalRight (g : GL n R) (h : GL m R) :
     Commute (blockDiagonalOne n m R g) (blockDiagonalRight n m R h) := by
   change blockDiagonalOne n m R g * blockDiagonalRight n m R h =
@@ -101,16 +125,24 @@ theorem commute_blockDiagonalOne_blockDiagonalRight (g : GL n R) (h : GL m R) :
   simp only [Units.val_mul, coe_blockDiagonalOne, coe_blockDiagonalRight,
     fromBlocks_multiply, Matrix.mul_zero, Matrix.zero_mul, add_zero, zero_add, one_mul, mul_one]
 
-/-- The actual finite two-block diagonal homomorphism. Its source groups
-commute in the target by the proved whole-block calculation. -/
+/-- **Two-block diagonal group homomorphism.**
+
+Let R be a semiring and n,m finite index types in independent universes. Write
+ιL(g)=diag(g,I_m) and ιR(h)=diag(I_n,h) in GL(n⊕m,R), and D(g,h)=diag(g,h). The map
+blockDiagonalHom n m R:GL(n,R)×GL(m,R)→GL(n⊕m,R) sends (g,h) to D(g,h)=diag(g,h).
+-/
 def blockDiagonalHom (n : Type u) (m : Type v) (R : Type uR) [Semiring R]
     [DecidableEq n] [DecidableEq m] [Fintype n] [Fintype m] :
     (GL n R × GL m R) →* GL (n ⊕ m) R :=
   (blockDiagonalOne n m R).noncommCoprod (blockDiagonalRight n m R)
     (fun g h => commute_blockDiagonalOne_blockDiagonalRight g h)
 
-/-- The finite pair homomorphism is the literal diagonal matrix with both
-original blocks and zero cross terms. -/
+/-- **Underlying matrix of the two-block diagonal homomorphism.**
+
+Let R be a semiring and n,m finite index types in independent universes. Write
+ιL(g)=diag(g,I_m) and ιR(h)=diag(I_n,h) in GL(n⊕m,R), and D(g,h)=diag(g,h). For g∈GL(n,R) and
+h∈GL(m,R), blockDiagonalHom n m R (g,h) has matrix [[g,0],[0,h]].
+-/
 @[simp]
 theorem coe_blockDiagonalHom (g : GL n R) (h : GL m R) :
     (↑(blockDiagonalHom n m R (g, h)) : Matrix (n ⊕ m) (n ⊕ m) R) =
@@ -120,14 +152,24 @@ theorem coe_blockDiagonalHom (g : GL n R) (h : GL m R) :
   simp only [Units.val_mul, coe_blockDiagonalOne, coe_blockDiagonalRight,
     fromBlocks_multiply, Matrix.mul_zero, Matrix.zero_mul, add_zero, zero_add, one_mul, mul_one]
 
-/-- Inserting the second identity gives the original first block inclusion. -/
+/-- **Second identity block recovers the left inclusion.**
+
+Let R be a semiring and n,m finite index types in independent universes. Write
+ιL(g)=diag(g,I_m) and ιR(h)=diag(I_n,h) in GL(n⊕m,R), and D(g,h)=diag(g,h). For g∈GL(n,R),
+D(g,1)=ιL(g), or blockDiagonalHom n m R (g,1)=blockDiagonalOne n m R g.
+-/
 @[simp]
 theorem blockDiagonalHom_one_right (g : GL n R) :
     blockDiagonalHom n m R (g, 1) = blockDiagonalOne n m R g := by
   change blockDiagonalOne n m R g * blockDiagonalRight n m R 1 = _
   rw [map_one, mul_one]
 
-/-- Inserting the first identity gives the original second block inclusion. -/
+/-- **First identity block recovers the right inclusion.**
+
+Let R be a semiring and n,m finite index types in independent universes. Write
+ιL(g)=diag(g,I_m) and ιR(h)=diag(I_n,h) in GL(n⊕m,R), and D(g,h)=diag(g,h). For h∈GL(m,R),
+D(1,h)=ιR(h), or blockDiagonalHom n m R (1,h)=blockDiagonalRight n m R h.
+-/
 @[simp]
 theorem blockDiagonalHom_one_left (h : GL m R) :
     blockDiagonalHom n m R (1, h) = blockDiagonalRight n m R h := by
@@ -168,7 +210,11 @@ section SuccStabilization
 
 variable {R : Type uR} [Semiring R] {S : Type vR} [Semiring S]
 
-/-- Successor stabilization `GL (Fin n) → GL (Fin (n+1))`. -/
+/-- **Successor stabilization of finite general linear groups.**
+
+Let R be a semiring and k∈ℕ. The group homomorphism stabilization R:GL(Fin k,R)→GL(Fin(k+1),R)
+sends g to diag(g,1), with the identity in the new last coordinate.
+-/
 def stabilization (R : Type uR) [Semiring R] {n : ℕ} :
     GL (Fin n) R →* GL (Fin (n + 1)) R :=
   (reindexMulEquiv (finSumFinEquiv (m := n) (n := 1))).toMonoidHom.comp
@@ -215,7 +261,12 @@ theorem stabilization_mapRingHom_apply {n : ℕ} (f : R →+* S) (g : GL (Fin n)
 
 end SuccStabilization
 
-/-- `blockDiagonalOne` is injective: equality on the top-left block determines equality. -/
+/-- **Injectivity of the block identity inclusion.**
+
+Let R be a semiring and n,m finite index types in independent universes. Write
+ιL(g)=diag(g,I_m) and ιR(h)=diag(I_n,h) in GL(n⊕m,R), and D(g,h)=diag(g,h). The group
+homomorphism blockDiagonalOne n m R:g↦diag(g,I_m) is injective.
+-/
 private theorem blockDiagonalOne_injective {R : Type u} [Semiring R]
     {n : Type*} {m : Type*} [DecidableEq n] [DecidableEq m] [Fintype n] [Fintype m] :
     Function.Injective (blockDiagonalOne n m R) := by
@@ -230,7 +281,11 @@ private theorem blockDiagonalOne_injective {R : Type u} [Semiring R]
   simp only [Matrix.fromBlocks_apply₁₁] at h_ij
   exact h_ij
 
-/-- The successor stabilization `GL (Fin n) → GL (Fin (n+1))` is injective. -/
+/-- **Injectivity of successor general-linear stabilization.**
+
+Let R be a semiring and k∈ℕ. The map stabilization R:GL(Fin k,R)→GL(Fin(k+1),R), g↦diag(g,1),
+is injective, including k=0.
+-/
 theorem stabilization_injective {R : Type u} [Semiring R] {n : ℕ} :
     Function.Injective (stabilization (R := R) (n := n)) := by
   intro g₁ g₂ h
@@ -250,7 +305,11 @@ variable [DecidableEq α] [DecidableEq β] [DecidableEq γ]
 variable [Fintype α] [Fintype β] [Fintype γ]
 variable {R : Type uScalar} [Semiring R]
 
-/-- Exchanging the index summands exchanges both complete diagonal blocks. -/
+/-- **Exchanging two complete diagonal blocks.**
+
+Let R be a semiring, α,β finite index types and g∈GL(α,R), h∈GL(β,R). Reindexing diag(g,h)
+along α⊕β≃β⊕α gives diag(h,g).
+-/
 public theorem blockDiagonalHom_sumComm (g : GL α R) (h : GL β R) :
     reindexMulEquiv (Equiv.sumComm α β) (blockDiagonalHom α β R (g, h)) =
       blockDiagonalHom β α R (h, g) := by
@@ -260,7 +319,11 @@ public theorem blockDiagonalHom_sumComm (g : GL α R) (h : GL β R) :
   intro i j
   rcases i with i | i <;> rcases j with j | j <;> rfl
 
-/-- The sum associator compares all three complete diagonal blocks. -/
+/-- **Associating three complete diagonal blocks.**
+
+Let R be a semiring, α,β,γ finite index types and g,h,k invertible matrices on them.
+Reindexing diag(diag(g,h),k) from (α⊕β)⊕γ to α⊕(β⊕γ) gives diag(g,diag(h,k)).
+-/
 public theorem blockDiagonalHom_sumAssoc
     (g : GL α R) (h : GL β R) (k : GL γ R) :
     reindexMulEquiv (Equiv.sumAssoc α β γ)
@@ -278,9 +341,12 @@ universe uActive₁ uActive₂ uInactive₁ uInactive₂ uCoeff
 
 namespace Matrix.GeneralLinearGroup
 
-/-- The original block stabilization is natural under both index
-equivalences. In particular any enumeration of the inactive identity
-coordinates preserves the whole active matrix, over arbitrary semirings. -/
+/-- **Block stabilization is natural under both index equivalences.**
+
+Let R be a semiring, A₁,A₂,I₁,I₂ finite index types, eA:A₁≃A₂, eI:I₁≃I₂ and g∈GL(A₁,R).
+Reindexing diag(g,I_(I₁)) along eA⊕eI gives diag(reindex_eA(g),I_(I₂)). All four index types
+and R may have independent universes.
+-/
 public theorem blockDiagonalOne_reindex
     {Active₁ : Type uActive₁} {Active₂ : Type uActive₂}
     {Inactive₁ : Type uInactive₁} {Inactive₂ : Type uInactive₂}

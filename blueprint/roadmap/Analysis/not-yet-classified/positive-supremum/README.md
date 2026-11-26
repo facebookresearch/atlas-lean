@@ -1,5 +1,5 @@
-# Positive Supremum
+# Bounded suprema of directed positive operator sets
 
-- [Bounded Positive Supremum](bounded-positive-supremum.md)
-- [Bounded Positive Supremum is LUB](bounded-positive-supremum-is-lub.md)
-- [Bounded Positive Supremum norm le](bounded-positive-supremum-norm-le.md)
+- [Positive supremum with its given operator-norm bound](bounded-positive-supremum.md)
+- [Least-upper-bound property of the bounded positive supremum](bounded-positive-supremum-is-lub.md)
+- [Norm estimate for the bounded positive supremum](bounded-positive-supremum-norm-le.md)

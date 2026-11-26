@@ -17,12 +17,13 @@ public import Mathlib.Data.Fin.Tuple.Basic
 public import Mathlib.Data.PNat.Basic
 
 /-!
-# Finite Cuntz families from a binary family
+# Finite Cuntz families by binary leaf splitting
 
-The singleton family is `1`. Each step splits only the last leaf `u` into
-`u * v₀, u * v₁`, retaining every earlier leaf. Both Cuntz laws are proved
-over a unital star semiring, including its zero case. No norm, completion,
-representation, finite-family outcome assumption or global instance is used.
+Let R be a type with multiplication and a distinguished element 1, and v=(v₀,v₁)∈R². Define
+u^(0)=(1), and obtain u^(n+1) by retaining all but the last leaf of u^(n), then replacing its
+last leaf u by (u*v₀,u*v₁). The family has n+1 leaves at index n. If R is a unital star
+semiring, star(v_i)*v_j=δ_ij and v₀*star(v₀)+v₁*star(v₁)=1, then every constructed family
+satisfies star(u_i)*u_j=δ_ij and ∑i u_i*star(u_i)=1.
 -/
 
 @[expose] public section
@@ -35,7 +36,13 @@ universe u
 
 variable {R : Type u}
 
-/-- The actual binary leaf-splitting family, with positive size `n+1`. -/
+/-- **Binary last-leaf splitting family.**
+
+Let R be a type with multiplication and a distinguished element 1, and v=(v₀,v₁)∈R². Define
+u^(0)=(1), and obtain u^(n+1) by retaining all but the last leaf of u^(n), then replacing its
+last leaf u by (u*v₀,u*v₁). The family has n+1 leaves at index n. The family ofBinary v n is
+u^(n).
+-/
 def ofBinary [Mul R] [One R] (v : Fin 2 → R) : (n : ℕ) → Fin (n + 1) → R
   | 0 => fun _ => 1
   | n + 1 =>
@@ -43,16 +50,30 @@ def ofBinary [Mul R] [One R] (v : Fin 2 → R) : (n : ℕ) → Fin (n + 1) → R
       let u := f (Fin.last n)
       Fin.snoc (Fin.snoc (fun i : Fin n => f i.castSucc) (u * v 0)) (u * v 1)
 
-/-- The same computed family on an explicitly positive finite index. -/
+/-- **Binary splitting family of a positive prescribed size.**
+
+Let R be a type with multiplication and a distinguished element 1, and v=(v₀,v₁)∈R². Define
+u^(0)=(1), and obtain u^(n+1) by retaining all but the last leaf of u^(n), then replacing its
+last leaf u by (u*v₀,u*v₁). The family has n+1 leaves at index n. For N>0, ofBinaryPositive v
+N is u^(N-1), indexed by Fin N.
+-/
 def ofBinaryPositive [Mul R] [One R] (v : Fin 2 → R) (N : ℕ+) : Fin N → R :=
   ofBinary v N.natPred ∘ (finCongr N.natPred_add_one).symm
 
-/-- Positive size one is the literal singleton family `1`. -/
+/-- **Singleton binary-splitting family.**
+
+For a type R with multiplication and a distinguished element 1 and v∈R², ofBinaryPositive v 1
+has its single value 1.
+-/
 theorem ofBinaryPositive_one [Mul R] [One R] (v : Fin 2 → R) (i : Fin 1) :
     ofBinaryPositive v 1 i = 1 :=
   rfl
 
-/-- The first split recovers the supplied binary family in its original order. -/
+/-- **The first split gives the binary entries.**
+
+Let R have multiplication with a two-sided unit and v∈R². Then ofBinary v 1=(v₀,v₁), in that
+order.
+-/
 theorem ofBinary_one [MulOneClass R] (v : Fin 2 → R) (i : Fin 2) :
     ofBinary v 1 i = v i := by
   cases i using Fin.lastCases with
@@ -69,13 +90,24 @@ theorem ofBinary_one [MulOneClass R] (v : Fin 2 → R) (i : Fin 2) :
       rw [Fin.snoc_castSucc, Fin.snoc_last, one_mul]
       rfl
 
-/-- Positive size two recovers the supplied binary family. -/
+/-- **Positive size two gives the binary family.**
+
+Let R have multiplication with a two-sided unit and v∈R². Then ofBinaryPositive v 2 has value
+v_i at each i∈Fin 2.
+-/
 theorem ofBinaryPositive_two [MulOneClass R] (v : Fin 2 → R) (i : Fin 2) :
     ofBinaryPositive v 2 i = v i := by
   change ofBinary v 1 i = v i
   exact ofBinary_one v i
 
-/-- Both finite Cuntz laws are preserved by the constructive last-leaf split. -/
+/-- **Cuntz identities after repeated last-leaf splitting.**
+
+Let R be a type with multiplication and a distinguished element 1, and v=(v₀,v₁)∈R². Define
+u^(0)=(1), and obtain u^(n+1) by retaining all but the last leaf of u^(n), then replacing its
+last leaf u by (u*v₀,u*v₁). The family has n+1 leaves at index n. Assume R is a star semiring,
+star(v_i)v_j=δ_ij and v₀star(v₀)+v₁star(v₁)=1. Then for u=ofBinary v n, star(u_i)u_j=δ_ij and
+∑i u_i star(u_i)=1.
+-/
 theorem ofBinary_relations [Semiring R] [StarRing R] (v : Fin 2 → R)
     (hOrth : ∀ i j : Fin 2, star (v i) * v j = if i = j then 1 else 0)
     (hPartition : v 0 * star (v 0) + v 1 * star (v 1) = 1) (n : ℕ) :
@@ -171,8 +203,14 @@ theorem ofBinary_relations [Semiring R] [StarRing R] (v : Fin 2 → R)
             rw [add_assoc, hSplitSum]
           _ = 1 := hPrefix
 
-/-- The actual positive-size family has both Cuntz laws, without any output
-family assumption. -/
+/-- **Cuntz identities at any positive family size.**
+
+Let R be a type with multiplication and a distinguished element 1, and v=(v₀,v₁)∈R². Define
+u^(0)=(1), and obtain u^(n+1) by retaining all but the last leaf of u^(n), then replacing its
+last leaf u by (u*v₀,u*v₁). The family has n+1 leaves at index n. Under the binary Cuntz
+identities in a star semiring, u=ofBinaryPositive v N satisfies star(u_i)u_j=δ_ij and ∑i u_i
+star(u_i)=1 for every N>0.
+-/
 theorem ofBinaryPositive_relations [Semiring R] [StarRing R] (v : Fin 2 → R)
     (hOrth : ∀ i j : Fin 2, star (v i) * v j = if i = j then 1 else 0)
     (hPartition : v 0 * star (v 0) + v 1 * star (v 1) = 1) (N : ℕ+) :

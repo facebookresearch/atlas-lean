@@ -16,15 +16,16 @@ public import Mathlib.Analysis.InnerProductSpace.Dual
 public import Mathlib.Analysis.Normed.Operator.Bilinear
 
 /-!
-# Actual bounded coefficient operators of a normal CFC
+# Bounded set operators from normal CFC coefficient measures
 
-The original normal T and its computed complex coefficient measures determine
-an operator on the same original H for every measurable spectrum set. The
-norm bound comes from the proved coefficient Cauchy--Schwarz estimate, and
-Hilbert Riesz representation gives its exact coefficient identity. All
-nonmeasurable sets are zero. These objects serve resolutionOfIdentity/BFC;
-projection, intersection and strong countable-additivity fields remain
-separate required proofs. No PVM, form, bound or output certificate is an input.
+For a normal bounded operator `T` on a complete complex Hilbert space, let `μ_(g,h)` be its
+regular continuous-functional-calculus coefficient measure on `K=σ_ℂ(T)`. On a measurable set `s
+⊆ K`, the form `F_s(h,g)=μ_(g,h)(s)` is bounded sesquilinear with norm at most one.
+
+The Hilbert representation of this form gives the bounded operator `P_s` with `⟨h,P_s
+g⟩=μ_(g,h)(s)` and `‖P_s‖≤1`. Set `P_s=0` for nonmeasurable `s`. These coefficient operators are
+defined without a supplied PVM; their projection and countable-additivity properties are proved
+separately.
 -/
 
 @[expose] public section
@@ -37,12 +38,21 @@ namespace MathlibExt.Analysis.InnerProductSpace.ProjectionValuedMeasure
 universe uH
 variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- The same computed coefficient form, norm-bundled from its actual derived bound. -/
+/-- **Bounded sesquilinear form of a CFC set coefficient.** Let `H` be a complete complex
+Hilbert space and `T : H →L[ℂ] H` a normal operator, so `T* T=T T*`. Put `K=σ_ℂ(T)` with
+its Borel measurable structure. Let `μ_(g,h)` be the regular complex measure on `K`
+characterized by `∫ f dμ_(g,h)=⟨h,f(T)g⟩` for `f ∈ C(K,ℂ)`. for measurable `s ⊆ K`,
+`normalCFCCoefficientBilin T hT s hs (h,g)=μ_(g,h)(s)`, conjugate-linear in `h` and linear
+in `g`, with bound `|F_s(h,g)|≤‖h‖‖g‖`. -/
 def normalCFCCoefficientBilin (T : H →L[ℂ] H) (hT : IsStarNormal T)
     (s : Set (spectrum ℂ T)) (hs : MeasurableSet s) : H →L⋆[ℂ] H →L[ℂ] ℂ :=
   (normalCFCCoefficientFormLinear T hT s).mkContinuous₂ 1 (normalCFCCoefficientFormLinear_norm_apply_le T hT s hs)
 
-/-- The continuous form has the original matrix coefficient, with anti-linear h first. -/
+/-- **Value of a continuous CFC coefficient form.** Let `H` be a complete complex Hilbert
+space and `T : H →L[ℂ] H` a normal operator, so `T* T=T T*`. Put `K=σ_ℂ(T)` with its Borel
+measurable structure. Let `μ_(g,h)` be the regular complex measure on `K` characterized by
+`∫ f dμ_(g,h)=⟨h,f(T)g⟩` for `f ∈ C(K,ℂ)`. for measurable `s ⊆ K` and `g,h ∈ H`,
+`normalCFCCoefficientBilin T hT s hs h g=μ_(g,h)(s)`. -/
 theorem normalCFCCoefficientBilin_apply (T : H →L[ℂ] H) (hT : IsStarNormal T)
     (s : Set (spectrum ℂ T)) (hs : MeasurableSet s) (h g : H) :
     normalCFCCoefficientBilin T hT s hs h g =
@@ -50,7 +60,11 @@ theorem normalCFCCoefficientBilin_apply (T : H →L[ℂ] H) (hT : IsStarNormal T
   rw [normalCFCCoefficientBilin, LinearMap.mkContinuous₂_apply,
     normalCFCCoefficientFormLinear_apply]
 
-/-- The norm of the actual continuous coefficient form is at most one. -/
+/-- **Norm bound for a CFC set coefficient form.** Let `H` be a complete complex Hilbert space
+and `T : H →L[ℂ] H` a normal operator, so `T* T=T T*`. Put `K=σ_ℂ(T)` with its Borel
+measurable structure. Let `μ_(g,h)` be the regular complex measure on `K` characterized by
+`∫ f dμ_(g,h)=⟨h,f(T)g⟩` for `f ∈ C(K,ℂ)`. for measurable `s ⊆ K`, the bounded
+sesquilinear form `F_s(h,g)=μ_(g,h)(s)` has bilinear operator norm at most one. -/
 theorem normalCFCCoefficientBilin_norm_le (T : H →L[ℂ] H) (hT : IsStarNormal T)
     (s : Set (spectrum ℂ T)) (hs : MeasurableSet s) :
     ‖normalCFCCoefficientBilin T hT s hs‖ ≤ 1 :=
@@ -68,8 +82,12 @@ private theorem rieszCoefficientOperator_norm_le (T : H →L[ℂ] H) (hT : IsSta
   exact ((normalCFCCoefficientBilin T hT s hs).le_opNorm h).trans
     (mul_le_mul_of_nonneg_right (normalCFCCoefficientBilin_norm_le T hT s hs) (norm_nonneg h))
 
-/-- The coefficient operator is Riesz representation's adjoint on the same original H;
-nonmeasurable spectrum sets are canonically zero. -/
+/-- **Bounded operator representing a CFC set coefficient.** Let `H` be a complete complex
+Hilbert space and `T : H →L[ℂ] H` a normal operator, so `T* T=T T*`. Put `K=σ_ℂ(T)` with
+its Borel measurable structure. Let `μ_(g,h)` be the regular complex measure on `K`
+characterized by `∫ f dμ_(g,h)=⟨h,f(T)g⟩` for `f ∈ C(K,ℂ)`. for measurable `s ⊆ K`,
+`normalCFCCoefficientOperator T hT s=P_s` is characterized by `⟨h,P_s g⟩=μ_(g,h)(s)` for
+all `g,h`. Nonmeasurable sets have operator zero. -/
 def normalCFCCoefficientOperator (T : H →L[ℂ] H) (hT : IsStarNormal T)
     (s : Set (spectrum ℂ T)) : H →L[ℂ] H := by
   classical
@@ -78,7 +96,13 @@ def normalCFCCoefficientOperator (T : H →L[ℂ] H) (hT : IsStarNormal T)
       (normalCFCCoefficientBilin T hT s hs)).adjoint
   else 0
 
-/-- The measurable value is that same computed Riesz-Hilbert operator. -/
+/-- **Hilbert representation of a measurable CFC coefficient.** Let `H` be a complete complex
+Hilbert space and `T : H →L[ℂ] H` a normal operator, so `T* T=T T*`. Put `K=σ_ℂ(T)` with
+its Borel measurable structure. Let `μ_(g,h)` be the regular complex measure on `K`
+characterized by `∫ f dμ_(g,h)=⟨h,f(T)g⟩` for `f ∈ C(K,ℂ)`. for measurable `s ⊆ K`, let
+`A_s` be the bounded operator with `⟨A_s h,g⟩=μ_(g,h)(s)`. Then
+`normalCFCCoefficientOperator T hT s=A_s*`; equivalently its coefficient is `⟨h,P_s
+g⟩=μ_(g,h)(s)`. -/
 theorem normalCFCCoefficientOperator_of_measurable (T : H →L[ℂ] H) (hT : IsStarNormal T)
     (s : Set (spectrum ℂ T)) (hs : MeasurableSet s) :
     normalCFCCoefficientOperator T hT s =
@@ -86,13 +110,21 @@ theorem normalCFCCoefficientOperator_of_measurable (T : H →L[ℂ] H) (hT : IsS
         (normalCFCCoefficientBilin T hT s hs)).adjoint := by
   rw [normalCFCCoefficientOperator, dite_eq_left hs]
 
-/-- The all-set convention uses zero exactly when the original set is nonmeasurable. -/
+/-- **Zero CFC coefficient operator on a nonmeasurable set.** Let `H` be a complete complex
+Hilbert space and `T : H →L[ℂ] H` a normal operator, so `T* T=T T*`. Put `K=σ_ℂ(T)` with
+its Borel measurable structure. Let `μ_(g,h)` be the regular complex measure on `K`
+characterized by `∫ f dμ_(g,h)=⟨h,f(T)g⟩` for `f ∈ C(K,ℂ)`. if `s ⊆ K` is not measurable,
+`normalCFCCoefficientOperator T hT s=0`. -/
 theorem normalCFCCoefficientOperator_not_measurable (T : H →L[ℂ] H) (hT : IsStarNormal T)
     (s : Set (spectrum ℂ T)) (hs : ¬ MeasurableSet s) :
     normalCFCCoefficientOperator T hT s = 0 := by
   rw [normalCFCCoefficientOperator, dite_eq_right hs]
 
-/-- Exact original coefficient identity; no projection or PVM law is assumed. -/
+/-- **Matrix coefficient of a CFC set operator.** Let `H` be a complete complex Hilbert space
+and `T : H →L[ℂ] H` a normal operator, so `T* T=T T*`. Put `K=σ_ℂ(T)` with its Borel
+measurable structure. Let `μ_(g,h)` be the regular complex measure on `K` characterized by
+`∫ f dμ_(g,h)=⟨h,f(T)g⟩` for `f ∈ C(K,ℂ)`. for measurable `s ⊆ K` and `g,h ∈ H`,
+`⟨h,normalCFCCoefficientOperator T hT s g⟩=μ_(g,h)(s)`. -/
 theorem normalCFCCoefficientOperator_coefficient (T : H →L[ℂ] H) (hT : IsStarNormal T)
     (s : Set (spectrum ℂ T)) (hs : MeasurableSet s) (g h : H) :
     ⟪h, normalCFCCoefficientOperator T hT s g⟫_ℂ =
@@ -102,7 +134,12 @@ theorem normalCFCCoefficientOperator_coefficient (T : H →L[ℂ] H) (hT : IsSta
     _root_.InnerProductSpace.continuousLinearMapOfBilin_apply,
     normalCFCCoefficientBilin_apply]
 
-/-- The actual bounded operator has norm at most one, including zero H/empty spectrum. -/
+/-- **Contraction bound for every CFC set operator.** Let `H` be a complete complex Hilbert
+space and `T : H →L[ℂ] H` a normal operator, so `T* T=T T*`. Put `K=σ_ℂ(T)` with its Borel
+measurable structure. Let `μ_(g,h)` be the regular complex measure on `K` characterized by
+`∫ f dμ_(g,h)=⟨h,f(T)g⟩` for `f ∈ C(K,ℂ)`. for every set `s ⊆ K`,
+`‖normalCFCCoefficientOperator T hT s‖≤1`, including nonmeasurable sets and the zero
+Hilbert space. -/
 theorem normalCFCCoefficientOperator_norm_le (T : H →L[ℂ] H) (hT : IsStarNormal T)
     (s : Set (spectrum ℂ T)) : ‖normalCFCCoefficientOperator T hT s‖ ≤ 1 := by
   classical

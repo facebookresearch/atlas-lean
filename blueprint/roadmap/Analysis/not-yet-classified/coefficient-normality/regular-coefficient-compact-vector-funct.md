@@ -1,3 +1,9 @@
-# Regular Coefficient compact Vector Functional mem normal Functional Space
+# Normal pullback of a compact-support Haar vector coefficient
 
-The original compact-support vector coefficient is an actual normal functional by its predual integral.
+Let `G` be a group with
+a topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann algebra,
+and `α` a normal action with norm-continuous inverse predual orbits. Assume `G` is a
+topological group. Assume `G` is locally compact with its Borel measurable structure, and
+`μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`. Haar invariance
+is not assumed. Assume additionally that `μ` is a Haar measure. for `f,g∈C_c(G,H)` with L²
+inclusion `i_μ`, the bounded functional `x ↦ ⟨i_μ f,P_x(i_μ g)⟩` belongs to `M_*`.

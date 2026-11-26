@@ -1,5 +1,5 @@
-# Ground Coordinates
+# Ground-coordinate restriction and zero insertion
 
-- [Ground Restriction](ground-restriction.md)
-- [Zero Insertion](zero-insertion.md)
-- [Zero Insertion energy](zero-insertion-energy.md)
+- [Matrix deleting a root coordinate](ground-restriction.md)
+- [Matrix reinserting a zero root coordinate](zero-insertion.md)
+- [Quadratic energy of the grounded principal submatrix](zero-insertion-energy.md)

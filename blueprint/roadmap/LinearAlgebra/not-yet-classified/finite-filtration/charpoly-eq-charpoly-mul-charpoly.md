@@ -1,7 +1,5 @@
-# Charpoly eq charpoly mul charpoly
+# Characteristic polynomial factors across an invariant submodule
 
-Characteristic-polynomial factorization for an endomorphism preserving
-a submodule: the characteristic polynomial is the product of those of the
-restriction and of the induced quotient map.  This is the
-characteristic-polynomial analogue of `LinearMap.det_eq_det_mul_det`, with
-the same block upper-triangular matrix proof.
+Let R be a commutative ring, W a finite free R-module, U⊆W an invariant submodule for f:W→W,
+and assume U and W/U are free with U finitely generated. Write f_U,f_Q for the restriction and
+quotient endomorphisms. Then χ_f=χ_(f_U)χ_(f_Q).
