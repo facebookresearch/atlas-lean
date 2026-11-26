@@ -28,3 +28,5 @@ Mathematical models of allele frequencies in populations under random mating, se
 - [Effective population size](effective-population-size/README.md)
 
 - [Bernstein's law for the ABO blood groups](bernstein-s-law-for-the-abo-blood-groups/README.md)
+- [Gene diversity in samples of relatives](gene-diversity-in-samples-of-relatives/README.md)
+- [Rectangular order perturbations of fitness landscapes](rectangular-order-perturbations-of-fitness-landscapes/README.md)

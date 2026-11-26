@@ -14,3 +14,5 @@
 
 - [Origination–fixation dynamics](origination-fixation-dynamics/README.md)
 - [Mutation-rate modifiers and the drift-barrier hypothesis](mutation-rate-modifiers-and-the-drift-barrier-hy.md)
+- [Birth, death and innovation models of gene family size](birth-death-and-innovation-models-of-gene-family-size/README.md)
+- [Birth, death and innovation models of gene family size](birth-death-innovation-models-of-gene-family-size/README.md)
