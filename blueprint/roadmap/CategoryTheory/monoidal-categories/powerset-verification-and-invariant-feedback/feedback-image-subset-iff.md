@@ -5,3 +5,5 @@ In the category of sets and relations with the disjoint union as tensor, a relat
 $$f[P \sqcup I] \subseteq R \sqcup I.$$
 
 The invariant $I$ must contain every hidden successor of $P \sqcup I$, and every visible output reached in one step from $P \sqcup I$ must lie in $R$.
+
+Equivalently, the [powerset verification functor](verification.md) $F$ preserves the traces: it sends the [finite-path trace](../the-finite-path-symmetric-trace-on-disjoint-unio/symmetric-trace.md) on relations to the [existential trace](../preorders-and-monotone-relations/symmetric-trace.md) on monotone relations, $F(\operatorname{feedback}(f)) = \operatorname{Tr}^{FU}(\delta_{Y,U} \circ F(f) \circ \mu_{X,U})$ for every $f$. At a pair $(P, R)$ the left side holds when $\operatorname{feedback}(f)[P] \subseteq R$, and the right side when some $I \subseteq U$ has $f[P \sqcup I] \subseteq R \sqcup I$, by the [comparison relation](comparison-rel.md).

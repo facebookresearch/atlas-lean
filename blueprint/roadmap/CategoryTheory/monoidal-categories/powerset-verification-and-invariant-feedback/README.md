@@ -11,4 +11,3 @@
 - [Safe Invariant](safe-invariant.md)
 - [Partial correctness of feedback by a hidden invariant](feedback-image-subset-iff.md)
 - [Verification of a relation between disjoint unions](comparison-rel.md)
-- [Preserves trace](preserves-trace.md)
