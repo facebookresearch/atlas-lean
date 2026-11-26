@@ -18,8 +18,14 @@ import Mathlib.Data.ZMod.Basic
 /-!
 # Good sequences in elementary abelian `2`-groups
 
-A repeated entry guarantees a good subsequence. Counting injective sequences gives
-an upper bound on the threshold for a random sequence to be good.
+A repeated entry guarantees a good subsequence. Counting injective sequences gives an upper
+bound on the threshold when the labeled positions are sampled independently and uniformly.
+
+## References
+
+* Neal Bushaw and Glenn Hurlbert, *Thresholds for Zero-Sums with Small Cross Numbers in Abelian
+  Groups*, INTEGERS 24 (2024), Article A93, pp. 1–12. Section 3.1 defines the uniform multiset
+  model; Theorem 11 gives the corresponding threshold bound in that model.
 -/
 
 namespace MetaMathlibExt
@@ -177,12 +183,18 @@ private lemma threshold_le_three_quarters {t : ℕ → ℝ}
   exact (not_lt_of_ge hge) (by simpa only [f, ite_eq_left h] using hlt)
 
 /-- **Threshold for good sequences in $\mathbb{Z}_2^d$.** Write $\lg = \log_2$. Let $t$ be a
-threshold function, in $d$, for the probability that a uniformly random sequence of $s$ elements
-of $\mathbb{Z}_2^d$ is good, and write $n = 2^d$. Then for every $\varepsilon > 0$,
-$t(d) = O\left(n / (\lg \lg n)^{1-\varepsilon}\right)$ as $d \to \infty$.
+threshold function, in $d$, for the probability that a uniformly sampled labeled sequence of $s$
+elements of $\mathbb{Z}_2^d$ is good. The entries are independent uniform draws. Write $n = 2^d$.
+Then for every $\varepsilon > 0$, $t(d) = O\left(n / (\lg \lg n)^{1-\varepsilon}\right)$
+as $d \to \infty$.
+
+The cited paper uses a different law: its Section 3.1 configuration model is uniform over
+size-$s$ multisets, not over labeled sequences. Counting repeated entries gives the displayed
+bound directly in the labeled model.
 
 Source: Neal Bushaw and Glenn Hurlbert, *Thresholds for Zero-Sums with Small Cross Numbers in
-Abelian Groups*, INTEGERS 24 (2024), Article A93, Theorem 11 (`integers-2024-A93-thm-11`). -/
+Abelian Groups*, INTEGERS 24 (2024), Article A93, Theorem 11 (`integers-2024-A93-thm-11`),
+for the corresponding bound in the configuration model. -/
 public theorem zmod_two_pi_good_threshold_isBigO (ε : ℝ) (hε : 0 < ε) (t : ℕ → ℝ)
     (ht : IsThresholdFunction (fun d s => goodSequenceProb (Fin d → ZMod 2) s) t) :
     t =O[Filter.atTop]
