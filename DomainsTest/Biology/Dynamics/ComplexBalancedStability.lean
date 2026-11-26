@@ -33,10 +33,14 @@ open scoped Topology
 
 namespace DomainsTest.Biology.Dynamics.ComplexBalancedStability
 
+/-- **The reversible pair `A ⇌ B`.** Two species and the two reactions `A → B` and `B → A`, in
+that order (`0 = A`, `1 = B`). -/
 def reversiblePair : ReactionNetwork (Fin 2) (Fin 2) where
   src := ![![1, 0], ![0, 1]]
   prod := ![![0, 1], ![1, 0]]
 
+/-- **`(1, 1)` is complex balanced.** With unit rate constants, `![1, 1]` is a complex-balanced
+point of `A ⇌ B`. -/
 theorem reversiblePair_complexBalanced :
     reversiblePair.IsComplexBalanced (fun _ => 1) ![1, 1] := by
   classical
@@ -44,18 +48,24 @@ theorem reversiblePair_complexBalanced :
   simp only [Finset.sum_filter, Fin.sum_univ_two]
   simp [ReactionNetwork.rate, reversiblePair, add_comm]
 
+/-- **The field of `A ⇌ B`.** With unit rate constants, the mass-action field at `z` is
+`(z 1 - z 0, z 0 - z 1)`. -/
 theorem reversiblePair_field (z : Fin 2 → ℝ) :
     reversiblePair.massActionField (fun _ => 1) z = ![z 1 - z 0, z 0 - z 1] := by
   ext s
   fin_cases s <;> simp [ReactionNetwork.massActionField, reversiblePair,
     Fin.sum_univ_two, Fin.prod_univ_two] <;> ring
 
+/-- **Diagonal equilibria.** With unit rate constants, every `(a, a)` is an equilibrium of
+`A ⇌ B`. -/
 theorem reversiblePair_equilibrium (a : ℝ) :
     reversiblePair.massActionField (fun _ => 1) ![a, a] = 0 := by
   rw [reversiblePair_field]
   ext s
   fin_cases s <;> simp
 
+/-- **Forward solutions near `(1, 1)` in its class.** `exists_solution_of_near` for `A ⇌ B` with
+unit rate constants at the equilibrium `(1, 1)`. -/
 theorem reversiblePair_exists_solution_of_near :
     ∃ η > (0 : ℝ), ∀ z : Fin 2 → ℝ,
       z - ![1, 1] ∈ reversiblePair.stoichiometricSubspace → ‖z - ![1, 1]‖ < η →
@@ -65,6 +75,8 @@ theorem reversiblePair_exists_solution_of_near :
     ![1, 1] (by intro s; fin_cases s <;> norm_num) reversiblePair_complexBalanced
     ![1, 1] (by intro s; fin_cases s <;> norm_num) (reversiblePair_equilibrium 1)
 
+/-- **Lyapunov stability of `(1, 1)`.** `stable` for `A ⇌ B` with unit rate constants at the
+equilibrium `(1, 1)`. -/
 theorem reversiblePair_stable (ε : ℝ) (hε : 0 < ε) :
     ∃ η > (0 : ℝ), ∀ x : ℝ → Fin 2 → ℝ,
       (∀ t, 0 ≤ t → HasDerivAt x (reversiblePair.massActionField (fun _ => 1) (x t)) t) →
@@ -74,6 +86,8 @@ theorem reversiblePair_stable (ε : ℝ) (hε : 0 < ε) :
     ![1, 1] (by intro s; fin_cases s <;> norm_num) reversiblePair_complexBalanced
     ![1, 1] (by intro s; fin_cases s <;> norm_num) (reversiblePair_equilibrium 1) ε hε
 
+/-- **Attraction to `(1, 1)` within its class.** `attractive` for `A ⇌ B` with unit rate
+constants at the equilibrium `(1, 1)`. -/
 theorem reversiblePair_attractive :
     ∃ η > (0 : ℝ), ∀ x : ℝ → Fin 2 → ℝ,
       (∀ t, 0 ≤ t → HasDerivAt x (reversiblePair.massActionField (fun _ => 1) (x t)) t) →
@@ -83,6 +97,8 @@ theorem reversiblePair_attractive :
     ![1, 1] (by intro s; fin_cases s <;> norm_num) reversiblePair_complexBalanced
     ![1, 1] (by intro s; fin_cases s <;> norm_num) (reversiblePair_equilibrium 1)
 
+/-- **Conservation of `A + B`.** Every vector of the stoichiometric subspace of `A ⇌ B` has
+coordinate sum zero. -/
 theorem reversiblePair_conservation {v : Fin 2 → ℝ}
     (hv : v ∈ reversiblePair.stoichiometricSubspace) : v 0 + v 1 = 0 := by
   induction hv using Submodule.span_induction with
