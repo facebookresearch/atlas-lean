@@ -577,6 +577,7 @@
 "AlgebraicGeometry.GeneralStackGeometry.relativeSpacePresheaf": "2881641da3e98ace",
 "AlgebraicGeometry.GeneralStackGeometry.schemePointFibrePresheaf": "bde01a9af1d2d475",
 "AlgebraicGeometry.GeneralStackGeometry.twoFibreAt": "3a952a83f5e4dc5f",
+"AlgebraicGeometry.GeometricallyConnected.of_comp_of_surjective": "fca7f3a3e7a62ba4",
 "AlgebraicGeometry.GeometricallyIntegral.of_isIntegral_of_isAlgClosed": "5c9a992ad7606b83",
 "AlgebraicGeometry.GeometricallyIrreducible.geometricallyConnected": "4667bb36a7495a23",
 "AlgebraicGeometry.GeometricallyIrreducible.of_irreducibleSpace_of_isAlgClosed": "b049f66841ba5abe",
