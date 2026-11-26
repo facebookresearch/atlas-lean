@@ -13,3 +13,4 @@
 - [Self-stabilization of Dijkstra's token ring](self-stabilization-of-dijkstra-s-k-state-token.md)
 - [Legit at quadratic bound](legit-at-quadratic-bound.md)
 - [Luby's maximal independent set algorithm](luby-s-maximal-independent-set-algorithm.md)
+- [The LOCAL Model: Symmetry Breaking and LCL Problems](local-model-symmetry-and-lcl/README.md)

@@ -39,6 +39,7 @@ public import MathlibExt.NumberTheory.SZumkellerSixDvdOfIsSZumkeller
 public import MathlibExt.NumberTheory.SZumkellerThreeLeCardPrimeFactorsOfIsSZumkellerEven
 public import MathlibExt.NumberTheory.SZumkellerNotIsUnitarySZumkellerOfOdd
 public import MathlibExt.NumberTheory.SZumkellerIsUnitarySZumkellerBounds
+public import MathlibExt.NumberTheory.SZumkellerEightLeCardPrimeFactorsOfIsSZumkellerOdd
 public import MathlibExt.NumberTheory.SZumkellerTwelveLeCardDivisorsOfIsSZumkeller
 public import MathlibExt.NumberTheory.SZumkellerTwoDivMinFacSqAddOneLtProd
 
@@ -57,14 +58,6 @@ public theorem_wanted isSZumkeller_even_props (n : ℕ) (h : IsSZumkeller n) (he
     Even (ArithmeticFunction.sigma 2 n) ∧
       (∃ p ∈ n.primeFactors, Odd p ∧ Odd (n.factorization p)) ∧
       3 * n ^ 2 ≤ 2 * ArithmeticFunction.sigma 2 n
-
-/-- **Odd s-Zumkeller numbers divisible by $3$ have at least eight prime factors.** Every odd
-s-Zumkeller number divisible by $3$ has at least $8$ distinct prime factors.
-
-Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
-Numbers*, INTEGERS 24 (2024), Article A95, Proposition 6(ii). -/
-public theorem_wanted eight_le_card_primeFactors_of_isSZumkeller_odd (n : ℕ)
-    (h : IsSZumkeller n) (ho : Odd n) (h3 : 3 ∣ n) : 8 ≤ n.primeFactors.card
 
 /-- **Odd s-Zumkeller numbers are perfect squares.** Every odd s-Zumkeller number is a perfect
 square.
