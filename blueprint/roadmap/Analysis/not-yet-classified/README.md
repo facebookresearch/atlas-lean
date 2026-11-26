@@ -567,7 +567,6 @@ Topics added since this subject's fields were last revised.
 - [Evaluation Bound](norm-point-le.md)
 - [Local L2 Bound](norm-set-integral-le.md)
 - [Compact Approximation](exists-antitone-compact-convex-union.md)
-- [Auerbach Basis](auerbach-basis.md)
 - [Hermitian Pseudo Inverse Unique](eq-spectral-pseudo-inverse-of-penrose.md)
 - [Zero Extension](linfty-op-norm-zero-extend.md)
 - [Pos Semidef Unit Vector](not-pos-semidef-iff-exists-unit-vector-n.md)
