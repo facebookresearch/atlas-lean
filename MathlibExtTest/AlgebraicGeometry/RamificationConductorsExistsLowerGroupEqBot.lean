@@ -33,7 +33,7 @@ example (K : Type*) [Field K] [ValuativeRel K] [TopologicalSpace K]
     [Module.Finite K L] [IsGalois K L] :
     ∃ N : ℕ, 0 < N ∧ ∀ n : ℕ, N ≤ n → lowerGroup K L n = ⊥ := by
   obtain ⟨N, hN⟩ :=
-    MathlibExt.NumberTheory.FiniteRamificationConductors.exists_lowerGroup_eq_bot K L
+    WantedExt.AlgebraicGeometry.RamificationConductors.exists_lowerGroup_eq_bot K L
   refine ⟨N + 1, Nat.succ_pos N, fun n hn => ?_⟩
   exact lowerGroup_eq_bot_of_bound K L N hN n ((Nat.le_succ N).trans hn)
 

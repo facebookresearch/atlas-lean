@@ -29,7 +29,9 @@ open ValuativeRel
 
 universe u v
 
-namespace MathlibExt.NumberTheory.FiniteRamificationConductors
+namespace WantedExt.AlgebraicGeometry.RamificationConductors
+
+open MathlibExt.NumberTheory.FiniteRamificationConductors
 
 /-- The lower ramification filtration of a finite Galois extension of
 nonarchimedean local fields terminates: some `G_N` is trivial. -/
@@ -72,22 +74,5 @@ public theorem exists_lowerGroup_eq_bot
   intro σ hσ
   rw [Subgroup.mem_bot]
   exact hn σ (lowerGroup_antitone K L (by exact_mod_cast hN σ) hσ)
-
-end MathlibExt.NumberTheory.FiniteRamificationConductors
-
-namespace WantedExt.AlgebraicGeometry.RamificationConductors
-
-open MathlibExt.NumberTheory.FiniteRamificationConductors
-
-/-- The lower ramification filtration of a finite Galois extension of
-nonarchimedean local fields terminates: some `G_N` is trivial. -/
-public theorem exists_lowerGroup_eq_bot
-    (K : Type u) [Field K] [ValuativeRel K] [TopologicalSpace K]
-    [IsNonarchimedeanLocalField K]
-    (L : Type v) [Field L] [ValuativeRel L] [TopologicalSpace L]
-    [IsNonarchimedeanLocalField L] [Algebra K L] [ValuativeExtension K L]
-    [Module.Finite K L] [IsGalois K L] :
-    ∃ N : ℕ, lowerGroup K L N = ⊥ := by
-  exact MathlibExt.NumberTheory.FiniteRamificationConductors.exists_lowerGroup_eq_bot K L
 
 end WantedExt.AlgebraicGeometry.RamificationConductors
