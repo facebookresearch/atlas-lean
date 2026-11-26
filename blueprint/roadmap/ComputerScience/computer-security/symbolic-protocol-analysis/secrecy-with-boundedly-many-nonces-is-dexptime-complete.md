@@ -2,17 +2,13 @@
 
 **Theorem (Durgin, Lincoln, Mitchell and Scedrov).** For [protocol theories](protocol-theories-in-multiset-rewriting.md) with no disequality tests, the secrecy problem
 $S_{\mathrm{nonce}b}$, in which the number $n$ of protocol nonces and the fact size $k$ are given while the number of role instances is unbounded, is complete for
-deterministic exponential time (DEXPTIME).
-
-## Expansion
-
-This node states a precise result. A good expansion adds a page for the following prerequisite and links it under the dependency sections below:
-
-- Statement prerequisite: the complexity class DEXPTIME and completeness for it under polynomial-time reductions.
+deterministic exponential time: it belongs to [EXP](../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/exp.md) (DEXPTIME), and every decision problem in EXP reduces to it by a
+polynomial-time many-one reduction.
 
 ## Depends on
 
 - [Protocol theories in multiset rewriting](protocol-theories-in-multiset-rewriting.md)
+- [The class EXP](../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/exp.md)
 
 ## Sources
 

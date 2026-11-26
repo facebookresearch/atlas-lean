@@ -6,15 +6,10 @@ $ML(C)$.
 
 The proof bounds $I(X; Y) = \sum_{x, y} p(x, y) \log_2 \frac{p(y \mid x)}{p(y)}$ by Jensen's inequality and then by $\log_2 \sum_y \max_x C[x, y]$.
 
-## Expansion
-
-This node states a precise result. A good expansion adds a page for the following prerequisite and links it under the dependency sections below:
-
-- Statement prerequisite: mutual information of jointly distributed random variables on finite sets.
-
 ## Depends on
 
 - [g-leakage and g-capacity](g-leakage-and-g-capacity.md)
+- [Mutual information of a finite joint law](../../../InformationTheory/entropy-and-mutual-information/conditional-mutual-information/finite-mutual-information.md)
 
 ## Proof depends on
 

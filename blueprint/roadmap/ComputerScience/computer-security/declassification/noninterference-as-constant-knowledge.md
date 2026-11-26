@@ -5,7 +5,7 @@ variables), $\langle M_1, c\rangle \xrightarrow{\vec\ell_1}{}^{*} M'_1$ and $\la
 $M'_1 \sim_\Gamma M'_2$): terminating runs from low-equivalent memories produce the same low events.
 
 **Proposition.** $c$ satisfies noninterference if and only if $k_\downarrow(c, M^0_L, \vec\ell) = k(c, M^0_L)$ for every low projection $M^0_L$ and every
-$ec\ell \in L(c, M^0_L)$: observing a run never refines the attacker's initial knowledge.
+$\vec\ell \in L(c, M^0_L)$: observing a run never refines the attacker's initial knowledge.
 
 ## Depends on
 
