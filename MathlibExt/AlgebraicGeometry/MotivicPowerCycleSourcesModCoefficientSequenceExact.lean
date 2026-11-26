@@ -24,7 +24,8 @@ Exactness, injectivity and surjectivity are proved for the underlying `ZMod`
 maps and transferred to the lifted coefficient modules with
 `ModuleCat.shortComplex_shortExact`.
 
-Source: Voevodsky, arXiv:math/0107109v1, Construction 5.3 and Sections 6/9.
+Source: Voevodsky, *Reduced power operations in motivic cohomology*, arXiv:math/0107109v1,
+Section 8, p. 32, where the mod-`ℓ` coefficient sequence is stated at the opening of the section.
 -/
 
 @[expose] public section

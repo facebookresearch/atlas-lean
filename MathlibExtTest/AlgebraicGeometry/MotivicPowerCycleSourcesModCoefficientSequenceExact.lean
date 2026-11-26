@@ -39,4 +39,10 @@ example (ell : ℕ) [Fact ell.Prime] : Function.Injective ⇑(modSequence ell).f
 example (ell : ℕ) [Fact ell.Prime] : Function.Surjective ⇑(modSequence ell).g :=
   (ModuleCat.epi_iff_surjective _).mp (modCoefficientSequenceExact ell).epi_g
 
+/-- At `ℓ = 3`, the first map is multiplication by `3`: it sends `2` to `6` in `ZMod 9`. -/
+example : (modSequence 3).f (ULift.up 2) = ULift.up (6 : ZMod (3 * 3)) := rfl
+
+/-- At `ℓ = 3`, the second map is reduction modulo `3`: it sends `7` in `ZMod 9` to `1`. -/
+example : (modSequence 3).g (ULift.up 7) = ULift.up (1 : ZMod 3) := rfl
+
 end MathlibExtTest.AlgebraicGeometry.MotivicPowerCycleSourcesModCoefficientSequenceExact
