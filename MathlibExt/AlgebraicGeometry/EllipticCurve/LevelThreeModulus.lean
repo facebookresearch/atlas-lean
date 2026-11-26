@@ -37,8 +37,9 @@ public import Mathlib.AlgebraicGeometry.EllipticCurve.VariableChange
 # Level-three modulus and the Deuring form
 
 A point of order three on an elliptic curve is a flex: its tangent line meets the curve there to
-order three. Moving a flex `(x₁, y₁)` of `W` to the origin and its tangent line to `y = 0` puts
-`W` in the Deuring normal form `y² + αxy + βy = x³` (`WeierstrassCurve.deuringCurve`). This file
+order three. Over a field, moving a flex `(x₁, y₁)` of `W` at which `2y₁ + a₁x₁ + a₃ ≠ 0`, so
+that the tangent line is not vertical, to the origin, and its tangent line to `y = 0`, puts `W` in
+the Deuring normal form `y² + αxy + βy = x³` (`WeierstrassCurve.deuringCurve`). This file
 defines the quantities of that normalization (`deuringA₃`, `tangentSlopeNum`, `tangentSlope`,
 `deuringA₁`, `flexForm`, `deuringVariableChange`) and the level-three coordinates
 `levelThreeModulus`, `levelThreeAbscissa` and `levelThreeOrdinate` of the flex together with a
@@ -130,35 +131,41 @@ variable (W : WeierstrassCurve R)
 and $x, y$ in that ring, `W.deuringA₃ x y` is $2y + a_1x + a_3$. It is the partial derivative in
 $y$ of the Weierstrass polynomial at $(x, y)$ (`deuringA₃_eq_evalEval_polynomialY`), and the
 difference $y - y'$, where $y'$ is the ordinate of the negative of $(x, y)$
-(`deuringA₃_eq_sub_negY`). Once a flex $(x, y)$ is moved to the origin it is the coefficient $a_3$
-of the Deuring form before scaling (`deuringVariableChange_smul`). The quotients of this file
-divide by it. -/
+(`deuringA₃_eq_sub_negY`). At a point $(x, y)$ of $W$ over a field where it is nonzero and the
+flex form vanishes, it is the coefficient $a_3$ of the Deuring form before scaling
+(`deuringVariableChange_smul`). The quotients of this file divide by it. -/
 def deuringA₃ (x y : R) : R := 2 * y + W.a₁ * x + W.a₃
 
-/-- **Numerator of the tangent slope.** For a Weierstrass curve $W$ and $x, y$,
-`W.tangentSlopeNum x y` is $3x^2 + 2a_2x + a_4 - a_1y$, minus the partial derivative in $x$ of the
-Weierstrass polynomial at $(x, y)$ (`tangentSlopeNum_eq_neg_evalEval_polynomialX`). -/
+/-- **Numerator of the tangent-slope quotient.** For a Weierstrass curve $W$ and $x, y$,
+`W.tangentSlopeNum x y` is $3x^2 + 2a_2x + a_4 - a_1y$, the numerator of `tangentSlope`. It is
+minus the partial derivative in $x$ of the Weierstrass polynomial at $(x, y)$
+(`tangentSlopeNum_eq_neg_evalEval_polynomialX`). -/
 def tangentSlopeNum (x y : R) : R := 3 * x ^ 2 + 2 * W.a₂ * x + W.a₄ - W.a₁ * y
 
-/-- **Tangent slope, totalized.** For a Weierstrass curve $W$ and $x, y$, `W.tangentSlope x y` is
-$(3x^2 + 2a_2x + a_4 - a_1y)/(2y + a_1x + a_3)$, the slope of the tangent line at $(x, y)$, with
-the division taken by `Ring.inverse`: the value is $0$ when $2y + a_1x + a_3$ is not a unit. Over a
-field with $2y + a_1x + a_3 \ne 0$ it is `W.toAffine.slope x x y y` (`tangentSlope_eq_slope`). -/
+/-- **Totalized tangent-slope quotient.** For a Weierstrass curve $W$ and $x, y$,
+`W.tangentSlope x y` is $(3x^2 + 2a_2x + a_4 - a_1y)/(2y + a_1x + a_3)$ with the division taken by
+`Ring.inverse`, so the value is $0$ whenever $2y + a_1x + a_3$ is not a unit. When $(x, y)$ is a
+point of $W$ and $2y + a_1x + a_3$ is a unit, it is the slope of the tangent line to $W$ at
+$(x, y)$. At a point of $W$ where $2y + a_1x + a_3 = 0$ the tangent line is vertical and the
+value $0$ is not its slope: on $y^2 = x^3 - x$ at $(0, 0)$ the tangent line is $x = 0$. Over a
+field with $2y + a_1x + a_3 \ne 0$ it equals `W.toAffine.slope x x y y`
+(`tangentSlope_eq_slope`). -/
 noncomputable def tangentSlope (x y : R) : R := W.tangentSlopeNum x y * Ring.inverse (W.deuringA₃ x
   y)
 
 /-- **The coefficient $a_1 + 2m$.** For a Weierstrass curve $W$ and $x, y$, `W.deuringA₁ x y` is
-$a_1 + 2m$, where $m$ is `W.tangentSlope x y`. Once a flex $(x, y)$ is moved to the origin it is
-the coefficient $a_1$ of the Deuring form before scaling (`deuringVariableChange_smul`). Because
-`tangentSlope` is totalized, the value is $a_1$ when $2y + a_1x + a_3$ is not a unit. -/
+$a_1 + 2m$, where $m$ is `W.tangentSlope x y`. At a point $(x, y)$ of $W$ over a field where
+$2y + a_1x + a_3 \ne 0$ and the flex form vanishes, it is the coefficient $a_1$ of the Deuring form
+before scaling (`deuringVariableChange_smul`). Because `tangentSlope` is totalized, the value is
+$a_1$ when $2y + a_1x + a_3$ is not a unit. -/
 noncomputable def deuringA₁ (x y : R) : R := W.a₁ + 2 * W.tangentSlope x y
 
 /-- **Flex form.** For a Weierstrass curve $W$ and $x, y$, write $n$ for `W.tangentSlopeNum x y`
 and $d$ for `W.deuringA₃ x y`. Then `W.flexForm x y` is $n^2 + a_1nd - (a_2 + 3x)d^2$. When $d$ is
-invertible this is $d^2(m^2 + a_1m - a_2 - 3x)$ for the tangent slope $m = n/d$, and at a point
-$(x, y)$ of $W$ the factor $m^2 + a_1m - a_2 - 3x$ vanishes exactly when the tangent line meets
-$W$ to order three there, that is, when $(x, y)$ is a flex. On the curve the flex form is
-$-\Psi_3(x)$ (`flexForm_eq_neg_eval_Ψ₃`). -/
+invertible this is $d^2(m^2 + a_1m - a_2 - 3x)$ for $m = n/d$, and at a point $(x, y)$ of $W$,
+where $m$ is the slope of the tangent line, the factor $m^2 + a_1m - a_2 - 3x$ vanishes exactly
+when the tangent line meets $W$ to order three there, that is, when $(x, y)$ is a flex. On the
+curve the flex form is $-\Psi_3(x)$ (`flexForm_eq_neg_eval_Ψ₃`). -/
 def flexForm (x y : R) : R :=
   W.tangentSlopeNum x y ^ 2 + W.a₁ * W.tangentSlopeNum x y * W.deuringA₃ x y
     - (W.a₂ + 3 * x) * W.deuringA₃ x y ^ 2
@@ -166,18 +173,20 @@ def flexForm (x y : R) : R :=
 /-- **Variable change to Deuring form.** For a Weierstrass curve $W$, a point $(x_1, y_1)$ and a
 unit $u$, `W.deuringVariableChange x₁ y₁ u` is the variable change
 $(u, r, s, t) = (u, x_1, m, y_1)$, where $m$ is `W.tangentSlope x₁ y₁`; in coordinates,
-$x = u^2x' + x_1$ and $y = u^3y' + u^2mx' + y_1$. It moves $(x_1, y_1)$ to the origin and, when
-$2y_1 + a_1x_1 + a_3$ is a unit, the tangent line there to $y' = 0$; at a flex it gives the Deuring
-form (`deuringVariableChange_smul`). -/
+$x = u^2x' + x_1$ and $y = u^3y' + u^2mx' + y_1$. It moves $(x_1, y_1)$ to the origin. When
+$(x_1, y_1)$ is a point of $W$ at which $2y_1 + a_1x_1 + a_3$ is a unit, it also moves the tangent
+line there to $y' = 0$; over a field, at such a point where the flex form vanishes, it gives the
+Deuring form (`deuringVariableChange_smul`). -/
 noncomputable def deuringVariableChange (x₁ y₁ : R) (u : Rˣ) : VariableChange R :=
   ⟨u, x₁, W.tangentSlope x₁ y₁, y₁⟩
 
 /-- **Level-three modulus.** For a Weierstrass curve $W$, a point $(x_1, y_1)$ and an abscissa
 $x_2$, `W.levelThreeModulus x₁ y₁ x₂` is $a(x_2 - x_1)/d$, where $a$ is `W.deuringA₁ x₁ y₁` and $d$
 is `W.deuringA₃ x₁ y₁`, with the division taken by `Ring.inverse`: the value is $0$ when $d$ is not
-a unit. When $(x_1, y_1)$ is a flex of $W$ over a field with $d \ne 0$ and $x_2 \ne x_1$, it is the
-coefficient $\alpha$ of the Deuring form $y^2 + \alpha xy + \beta y = x^3$ reached with the scaling
-$u = d/(x_2 - x_1)$ (`deuringVariableChange_smul_eq_deuringCurve_levelThreeModulus`). -/
+a unit. When $(x_1, y_1)$ is a point of $W$ over a field at which $d \ne 0$ and the flex form
+vanishes, and $x_2 \ne x_1$, it is the coefficient $\alpha$ of the Deuring form
+$y^2 + \alpha xy + \beta y = x^3$ reached with the scaling $u = d/(x_2 - x_1)$
+(`deuringVariableChange_smul_eq_deuringCurve_levelThreeModulus`). -/
 noncomputable def levelThreeModulus (x₁ y₁ x₂ : R) : R :=
   W.deuringA₁ x₁ y₁ * (x₂ - x₁) * Ring.inverse (W.deuringA₃ x₁ y₁)
 
@@ -185,7 +194,8 @@ noncomputable def levelThreeModulus (x₁ y₁ x₂ : R) : R :=
 $x_2$, `W.levelThreeAbscissa x₁ y₁ x₂` is $(x_2 - x_1)^3/d^2$, where $d$ is `W.deuringA₃ x₁ y₁`,
 with the division taken by `Ring.inverse`: the value is $0$ when $d$ is not a unit. Over a field
 with $d \ne 0$ and $x_2 \ne x_1$ it is the abscissa that the scaling $u = d/(x_2 - x_1)$ of
-`levelThreeModulus` gives to $x_2$, and at a flex it is the coefficient $\beta$ of the Deuring form
+`levelThreeModulus` gives to $x_2$. When moreover $(x_1, y_1)$ is a point of $W$ at which the flex
+form vanishes, it is the coefficient $\beta$ of the Deuring form
 (`deuringVariableChange_smul_eq_deuringCurve_levelThreeModulus`). -/
 noncomputable def levelThreeAbscissa (x₁ y₁ x₂ : R) : R :=
   (x₂ - x₁) ^ 3 * Ring.inverse (W.deuringA₃ x₁ y₁) ^ 2
@@ -273,13 +283,6 @@ section map
 
 variable {S : Type*} [CommRing S] (f : R →+* S)
 
-theorem map_ringInverse_of_isUnit {a : R} (h : IsUnit a) : f (Ring.inverse a) = Ring.inverse (f a)
-  := by
-  obtain ⟨u, rfl⟩ := h
-  rw [Ring.inverse_unit, show f (u : R) = ((Units.map (f : R →* S) u : Sˣ) : S) from rfl,
-    Ring.inverse_unit]
-  rfl
-
 theorem deuringA₃_map (x y : R) : (W.map f).deuringA₃ (f x) (f y) = f (W.deuringA₃ x y) := by
   simp [deuringA₃_def, map_ofNat]
 
@@ -293,7 +296,7 @@ theorem flexForm_map (x y : R) : (W.map f).flexForm (f x) (f y) = f (W.flexForm 
 theorem tangentSlope_map_of_isUnit {x y : R} (h : IsUnit (W.deuringA₃ x y)) :
     (W.map f).tangentSlope (f x) (f y) = f (W.tangentSlope x y) := by
   rw [tangentSlope_def, tangentSlope_def, tangentSlopeNum_map, deuringA₃_map, map_mul,
-    map_ringInverse_of_isUnit f h]
+    h.map_ringInverse f]
 
 theorem deuringA₁_map_of_isUnit {x y : R} (h : IsUnit (W.deuringA₃ x y)) :
     (W.map f).deuringA₁ (f x) (f y) = f (W.deuringA₁ x y) := by
@@ -307,7 +310,7 @@ nonunit denominator, where the totalized value is $0$, to a unit. -/
 theorem levelThreeModulus_map_of_isUnit {x₁ y₁ : R} (h : IsUnit (W.deuringA₃ x₁ y₁)) (x₂ : R) :
     (W.map f).levelThreeModulus (f x₁) (f y₁) (f x₂) = f (W.levelThreeModulus x₁ y₁ x₂) := by
   rw [levelThreeModulus_def, levelThreeModulus_def, deuringA₁_map_of_isUnit f h, deuringA₃_map,
-    ← map_ringInverse_of_isUnit f h]
+    ← h.map_ringInverse f]
   simp
 
 /-- **Base change of the level-three abscissa over rings.** Let $f : R \to S$ be a ring
@@ -317,8 +320,7 @@ abscissa of $W$ at $(x_1, y_1)$ and $x_2$. As for `levelThreeModulus_map_of_isUn
 hypothesis cannot be dropped. -/
 theorem levelThreeAbscissa_map_of_isUnit {x₁ y₁ : R} (h : IsUnit (W.deuringA₃ x₁ y₁)) (x₂ : R) :
     (W.map f).levelThreeAbscissa (f x₁) (f y₁) (f x₂) = f (W.levelThreeAbscissa x₁ y₁ x₂) := by
-  rw [levelThreeAbscissa_def, levelThreeAbscissa_def, deuringA₃_map, ← map_ringInverse_of_isUnit f
-    h]
+  rw [levelThreeAbscissa_def, levelThreeAbscissa_def, deuringA₃_map, ← h.map_ringInverse f]
   simp
 
 /-- **Base change of the level-three ordinate over rings.** Let $f : R \to S$ be a ring
@@ -330,7 +332,7 @@ theorem levelThreeOrdinate_map_of_isUnit {x₁ y₁ : R} (h : IsUnit (W.deuringA
     (W.map f).levelThreeOrdinate (f x₁) (f y₁) (f x₂) (f y₂) = f (W.levelThreeOrdinate x₁ y₁ x₂ y₂)
       := by
   rw [levelThreeOrdinate_def, levelThreeOrdinate_def, deuringA₃_map, tangentSlope_map_of_isUnit f h,
-    ← map_ringInverse_of_isUnit f h]
+    ← h.map_ringInverse f]
   simp
 
 end map

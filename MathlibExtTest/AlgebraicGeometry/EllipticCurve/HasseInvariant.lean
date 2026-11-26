@@ -10,6 +10,7 @@ module
 
 import MathlibExt.AlgebraicGeometry.EllipticCurve.HasseInvariant
 import Mathlib.Algebra.Field.ZMod
+import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Basic
 import Mathlib.AlgebraicGeometry.EllipticCurve.ModelsWithJ
 
 open WeierstrassCurve
@@ -18,6 +19,32 @@ example {R : Type*} [CommRing R] (t : R) : legendreCurve t = ⟨0, -(1 + t), 0, 
 
 example {F : Type*} [Field F] (q : ℕ) (W : WeierstrassCurve F) :
     W.hasseInvariant q = (W.twoTorsionPolynomial.toPoly ^ ((q - 1) / 2)).coeff (q - 1) := rfl
+
+/-! The completed square: a polynomial identity over every ring, but a change of curve model only
+when `2` is invertible. -/
+
+-- `(2y + a₁x + a₃)² - Ψ(x)` is `4` times the Weierstrass polynomial, over any commutative ring.
+example {R : Type*} [CommRing R] (W : WeierstrassCurve R) (x y : R) :
+    (2 * y + W.a₁ * x + W.a₃) ^ 2 - W.twoTorsionPolynomial.toPoly.eval x =
+      4 * W.toAffine.polynomial.evalEval x y := by
+  rw [eval_toPoly_twoTorsionPolynomial, Affine.evalEval_polynomial]
+  simp only [b₂, b₄, b₆]
+  ring
+
+private def charTwoCurve : WeierstrassCurve (ZMod 2) := ⟨0, 0, 1, 0, 0⟩
+
+-- Over `ZMod 2` the identity says nothing: for `y² + y = x³` it holds at `(1, 0)`, which is not a
+-- point of the curve.
+example : (2 * 0 + charTwoCurve.a₁ * 1 + charTwoCurve.a₃) ^ 2 =
+      charTwoCurve.twoTorsionPolynomial.toPoly.eval 1 ∧
+    ¬charTwoCurve.toAffine.Equation 1 0 := by
+  refine ⟨?_, ?_⟩
+  · rw [eval_toPoly_twoTorsionPolynomial]
+    simp only [charTwoCurve, b₂, b₄, b₆]
+    decide
+  · rw [Affine.equation_iff]
+    simp only [charTwoCurve]
+    decide
 
 /-! Small primes: the Hasse coefficient in closed form. -/
 

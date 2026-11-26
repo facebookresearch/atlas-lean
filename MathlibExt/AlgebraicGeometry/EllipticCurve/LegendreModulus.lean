@@ -36,13 +36,14 @@ public import MathlibExt.AlgebraicGeometry.EllipticCurve.HasseInvariant
 /-!
 # Legendre modulus of a Weierstrass curve
 
-Given two roots `x₁` and `x₂` of the 2-torsion polynomial `4X³ + b₂X² + 2b₄X + b₆` of a
-Weierstrass curve `W`, this file defines the third root `thirdTwoTorsionX`, the Legendre parameter
-`legendreLambda`, which is `(x₃ - x₁) / (x₂ - x₁)` for the third root `x₃`, and the variable change
-`legendreVariableChange`, which completes the square and moves `x₁` to `0`. In characteristic
-different from two, the Legendre curve `y² = x(x - 1)(x - t)` has parameter `t` at the roots `0`
-and `1`, and the parameter is invariant under change of variables; it is compatible with field
-homomorphisms in every characteristic.
+For a Weierstrass curve `W` and abscissas `x₁` and `x₂`, this file defines `thirdTwoTorsionX`,
+which is `-b₂/4 - x₁ - x₂`, the Legendre parameter `legendreLambda`, which is
+`(x₃ - x₁) / (x₂ - x₁)` for `x₃ = thirdTwoTorsionX x₁ x₂`, and the variable change
+`legendreVariableChange`. When `2 ≠ 0` and `x₁`, `x₂` are two roots of the 2-torsion polynomial
+`4X³ + b₂X² + 2b₄X + b₆`, `x₃` is its third root, and `legendreVariableChange` completes the
+square and moves `x₁` to `0`. In characteristic different from two, the Legendre curve
+`y² = x(x - 1)(x - t)` has parameter `t` at the roots `0` and `1`, and the parameter is invariant
+under change of variables; it is compatible with field homomorphisms in every characteristic.
 -/
 
 namespace WeierstrassCurve
