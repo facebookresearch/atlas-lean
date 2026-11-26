@@ -23,6 +23,19 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
+set_option linter.unusedVariables false in
+/-- **When the singleton $\{1\}$ is sum-free.** Let $m \ge 1$ and $l$ be natural
+numbers. The singleton $\{1\}$ is not $l$-sum-free modulo $m$ if and only if
+$l \equiv 1 \pmod{m}$.
+
+Source: Jourdan D'orville, Kai An Sim, Kok Bin Wong, and Chee Kit Ho, *Modular
+Generalizations of Schur Numbers*, INTEGERS 25 (2025), Article A62, Corollary 1
+(`integers-2025-A62-cor-1`). -/
+public theorem not_isSumFreeMod_singleton_one_iff (m l : ℕ) (hm : 0 < m) :
+    ¬ IsSumFreeMod m l {1} ↔ l ≡ 1 [MOD m] := by
+  rw [← Int.natCast_modEq_iff]
+  simp [IsSumFreeMod, ← funext_iff (g := fun _ : Fin l => (1 : ℤ))]
+
 /-- **Singletons are sum-free modulo a prime power.** Let $p$ be a prime, let $i$ and $l$ be
 positive integers with $l \not\equiv 1 \pmod{p}$, and let $a$ be a natural number not divisible
 by $p^i$. Then the singleton $\{a\}$ is $l$-sum-free modulo $p^i$.

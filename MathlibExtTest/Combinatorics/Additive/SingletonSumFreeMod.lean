@@ -12,6 +12,17 @@ import MathlibExt.Combinatorics.Additive.SingletonSumFreeMod
 
 namespace MetaMathlibExt
 
+-- A singleton obstructs sum-freeness exactly in the congruent case, including modulus one.
+example : ¬ IsSumFreeMod 3 4 {1} :=
+  (not_isSumFreeMod_singleton_one_iff 3 4 (by decide)).2 (by decide)
+
+example : IsSumFreeMod 3 0 {1} := by
+  by_contra h
+  exact (by decide : ¬ 0 ≡ 1 [MOD 3]) ((not_isSumFreeMod_singleton_one_iff 3 0 (by decide)).1 h)
+
+example : ¬ IsSumFreeMod 1 0 {1} :=
+  (not_isSumFreeMod_singleton_one_iff 1 0 (by decide)).2 (by decide)
+
 -- `a = 2` is divisible by the prime but not by the modulus `2 ^ 2`.
 example : IsSumFreeMod (2 ^ 2) 2 {(2 : ℤ)} :=
   isSumFreeMod_singleton_prime_pow 2 2 2 2 (by decide) (by decide) (by decide)
