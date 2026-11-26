@@ -17,9 +17,10 @@ import Lean.ToExpr
 /-!
 # Four-state Busy Beaver certificate checker
 
-The finite search over partial transition tables reduces the upper bound to checked batches.
-The search uses tape reflection and renames unused states. Repeated configurations, finite
-tape windows and finite automata certify nonhalting branches.
+The finite search over partial transition tables reduces both upper bounds to checked batches.
+At every possible halt it counts the ones after the last write. The search uses tape reflection
+and renames unused states. Repeated configurations, finite tape windows and finite automata
+certify nonhalting branches.
 -/
 
 namespace Cslib.BusyBeaverWanted
@@ -85,6 +86,41 @@ private theorem Tape.read_move (z : Tape) (w : Sym) (d : Move) (i : ℤ) :
         simp [Tape.read, Tape.move, Nat.testBit_bit_succ,
           show Int.negSucc k ≠ 0 from Int.noConfusion]
 
+private def Tape.ones (z : Tape) : Finset ℤ :=
+  (Finset.Icc (-((z.left.log2 + 1 : Nat) : ℤ)) ((z.right.log2 + 1 : Nat) : ℤ)).filter
+    fun i => z.read i = 1
+
+private theorem Tape.mem_ones (z : Tape) (i : ℤ) : i ∈ z.ones ↔ z.read i = 1 := by
+  have bounded {n k : Nat} (hb : symbol (n.testBit k) = 1) : k ≤ n.log2 := by
+    by_contra! hk
+    have hz := Nat.testBit_lt_two_pow (Nat.lt_log2_self.trans_le
+      (Nat.pow_le_pow_right (by decide) hk) : n < 2 ^ k)
+    simp [hz, symbol] at hb
+  rw [Tape.ones, Finset.mem_filter, Finset.mem_Icc]
+  refine ⟨And.right, fun hi => ⟨?_, hi⟩⟩
+  cases i with
+  | ofNat n =>
+    cases n with
+    | zero =>
+      change -((z.left.log2 + 1 : Nat) : ℤ) ≤ 0 ∧ 0 ≤ ((z.right.log2 + 1 : Nat) : ℤ)
+      omega
+    | succ n =>
+      have hb := bounded (show symbol (z.right.testBit n) = 1 from hi)
+      change -((z.left.log2 + 1 : Nat) : ℤ) ≤ (n + 1 : Nat) ∧
+        ((n + 1 : Nat) : ℤ) ≤ ((z.right.log2 + 1 : Nat) : ℤ)
+      omega
+  | negSucc n =>
+    have hb := bounded (show symbol (z.left.testBit n) = 1 from hi)
+    omega
+
+private def Tape.write (z : Tape) (w : Sym) : Tape := { z with scan := w }
+
+private theorem Tape.read_write (z : Tape) (w : Sym) (i : ℤ) :
+    (z.write w).read i = if i = 0 then w else z.read i := by
+  cases i with
+  | ofNat n => cases n <;> rfl
+  | negSucc _ => rfl
+
 private structure Point where
   state : State
   tape : Tape
@@ -133,6 +169,61 @@ private theorem Fits.halts_next {M : Machine 4} {p h} (hf : Fits M p h)
   unfold HaltsWithin
   rw [run_succ, step_state_of_some _ hs, hh, readHead, ha]
 
+/-- Count the complete support of a run in any bijective coordinate system. -/
+private theorem onesAt_eq_card {M : Machine 4} {t : Nat} (e : ℤ ≃ ℤ) (s : Finset ℤ)
+    (hs : ∀ i, i ∈ s ↔ (run M t).tape (e i) = 1) : onesAt M t = s.card := by
+  symm
+  apply Finset.card_equiv e
+  intro i
+  rw [hs, Finset.mem_filter]
+  exact ⟨fun hi => ⟨mem_window_of_tape_eq_one M t hi, hi⟩, And.right⟩
+
+private theorem Fits.halt_values {M : Machine 4} {p h} (hf : Fits M p h)
+    {w d} (ha : M p.state p.tape.scan = (w, d, none)) :
+    stepsOf M = p.time + 1 ∧ scoreOf M = (p.tape.write w).ones.card := by
+  have hnext := hf.halts_next ha
+  have halts : Halts M := ⟨_, hnext⟩
+  obtain ⟨hs, hh, ht⟩ := hf
+  have htime : haltTime M halts = p.time + 1 := by
+    refine le_antisymm (haltTime_le M halts hnext) (Nat.succ_le_of_lt ?_)
+    by_contra! hle
+    exact Option.some_ne_none _ (hs.symm.trans
+      (haltsWithin_mono (haltsWithin_haltTime M halts) hle))
+  have readHead := ht h
+  rw [sub_self] at readHead
+  change (run M p.time).tape h = p.tape.scan at readHead
+  have hstep : (run M (p.time + 1)).tape = Function.update (run M p.time).tape h w := by
+    rw [run_succ, step_tape_of_some M hs, hh, readHead, ha]
+  rw [stepsOf, scoreOf, dite_eq_left halts, dite_eq_left halts, htime]
+  refine ⟨rfl, onesAt_eq_card (Equiv.addRight h) _ fun i => ?_⟩
+  rw [Tape.mem_ones, Tape.read_write, hstep]
+  change (if i = 0 then w else p.tape.read i) = 1 ↔
+    Function.update (run M p.time).tape h w (i + h) = 1
+  by_cases hi : i = 0
+  · subst i
+    simp
+  · rw [ite_eq_right hi, Function.update_of_ne (show i + h ≠ h by omega), ht,
+      add_sub_cancel_right]
+
+private def Limits (M : Machine 4) : Prop := stepsOf M ≤ 107 ∧ scoreOf M ≤ 13
+
+private theorem limits_of_not_halts {M : Machine 4} (hn : ¬ Halts M) : Limits M := by
+  simp [Limits, stepsOf, scoreOf, hn]
+
+private def haltScoreOK (p : Point) : Bool :=
+  decide ((p.tape.write 0).ones.card ≤ 13) && decide ((p.tape.write 1).ones.card ≤ 13)
+
+private theorem Fits.halt_limits {M : Machine 4} {p h} (hf : Fits M p h)
+    (ht : p.time < 107) (hscore : haltScoreOK p = true)
+    {w d} (ha : M p.state p.tape.scan = (w, d, none)) : Limits M := by
+  obtain ⟨htime, hones⟩ := hf.halt_values ha
+  obtain ⟨hzero, hone⟩ := Bool.and_eq_true_iff.mp hscore
+  refine ⟨htime ▸ (show p.time + 1 ≤ 107 by omega), hones ▸ ?_⟩
+  have cases_sym : ∀ x : Sym, x = 0 ∨ x = 1 := by decide +kernel
+  rcases cases_sym w with rfl | rfl
+  · exact of_decide_eq_true hzero
+  · exact of_decide_eq_true hone
+
 private def rename (e : Equiv.Perm State) (M : Machine 4) : Machine 4 :=
   fun q x => let (w, d, next) := M (e.symm q) x; (w, d, next.map e)
 
@@ -164,17 +255,24 @@ private theorem haltsWithin_rename (e : Equiv.Perm State) (he : e 0 = 0) (M : Ma
   rw [run_rename e he]
   cases h : (run M t).state <;> simp [renameConfig, h]
 
-private theorem steps_le (M : Machine 4) (b : Nat)
-    (h : Halts M → HaltsWithin M b) : stepsOf M ≤ b := by
-  by_cases hh : Halts M
-  · rw [stepsOf, dite_eq_left hh]
-    exact haltTime_le M hh (h hh)
-  · simp [stepsOf, hh]
+private theorem limits_of_run_eq {N M : Machine 4}
+    (hwithin : ∀ t, HaltsWithin N t ↔ HaltsWithin M t)
+    (hones : ∀ t, onesAt N t = onesAt M t) (hb : Limits N) : Limits M := by
+  by_cases hM : Halts M
+  · have hN : Halts N := by
+      obtain ⟨t, ht⟩ := hM
+      exact ⟨t, (hwithin t).mpr ht⟩
+    have heq : haltTime N hN = haltTime M hM := le_antisymm
+      (haltTime_le N hN ((hwithin _).mpr (haltsWithin_haltTime M hM)))
+      (haltTime_le M hM ((hwithin _).mp (haltsWithin_haltTime N hN)))
+    simpa only [Limits, stepsOf, scoreOf, dite_eq_left hM, dite_eq_left hN, heq, hones] using hb
+  · exact limits_of_not_halts hM
 
-private theorem haltsWithin_of_steps_le {M : Machine 4} {b : Nat}
-    (h : Halts M) (hb : stepsOf M ≤ b) : HaltsWithin M b := by
-  rw [stepsOf, dite_eq_left h] at hb
-  exact haltsWithin_mono (haltsWithin_haltTime M h) hb
+private theorem onesAt_rename (e : Equiv.Perm State) (he : e 0 = 0) (M : Machine 4) (t : Nat) :
+    onesAt (rename e M) t = onesAt M t := by
+  unfold onesAt
+  rw [run_rename e he]
+  rfl
 
 private structure Table where
   entries : List (Option Action)
@@ -278,17 +376,16 @@ private theorem full_not_halts {T : Table} {M : Machine 4} (hm : Supports T M)
   exact fun ⟨t, ht⟩ => live t ht
 
 private theorem last_bound {T : Table} {p : Point} (htime : p.time < 107)
-    (hlast : last T p = true) {M : Machine 4} (hm : Supports T M) {h : ℤ} (hf : Fits M p h) :
-    stepsOf M ≤ 107 := by
+    (hscore : haltScoreOK p = true) (hlast : last T p = true) {M : Machine 4}
+    (hm : Supports T M) {h : ℤ} (hf : Fits M p h) : Limits M := by
   obtain ⟨w, d, next, ha⟩ : ∃ w d q, M p.state p.tape.scan = (w, d, q) := ⟨_, _, _, rfl⟩
   cases next with
-  | none => apply steps_le; exact fun _ => haltsWithin_mono (hf.halts_next ha) (by omega)
+  | none => exact hf.halt_limits htime hscore ha
   | some q =>
-    have nonhalt := full_not_halts (supports_extend hm ha) (last_full hlast (w, d, q))
-    simp [stepsOf, nonhalt]
+    exact limits_of_not_halts (full_not_halts (supports_extend hm ha) (last_full hlast (w, d, q)))
 
 private def Bounded (T : Table) (p : Point) : Prop :=
-  ∀ M, Supports T M → ∀ h, Fits M p h → stepsOf M ≤ 107
+  ∀ M, Supports T M → ∀ h, Fits M p h → Limits M
 
 private def actions (T : Table) : List Action :=
   (List.finRange 2).flatMap fun w => [Move.right, Move.left].flatMap fun d =>
@@ -341,21 +438,34 @@ private theorem step_reflect (M : Machine 4) (c : Config 4) :
     · have ei : -i ≠ c.head := by omega
       simp [Function.update_of_ne e, Function.update_of_ne ei]
 
+private theorem run_reflect (M : Machine 4) (t : Nat) :
+    run (reflect M) t = reflectConfig (run M t) := by
+  induction t with
+  | zero => rfl
+  | succ t ih => rw [run_succ, run_succ, ih, step_reflect]
+
 private theorem haltsWithin_reflect (M : Machine 4) (t : Nat) :
     HaltsWithin (reflect M) t ↔ HaltsWithin M t := by
-  have hr : run (reflect M) t = reflectConfig (run M t) := by
-    induction t with
-    | zero => rfl
-    | succ t ih => rw [run_succ, run_succ, ih, step_reflect]
   unfold HaltsWithin
-  rw [hr]
+  rw [run_reflect]
   rfl
+
+private theorem onesAt_reflect (M : Machine 4) (t : Nat) :
+    onesAt (reflect M) t = onesAt M t := by
+  let e : ℤ ≃ ℤ := ⟨Neg.neg, Neg.neg, neg_neg, neg_neg⟩
+  refine onesAt_eq_card e _ fun i => ?_
+  change i ∈ (Finset.Icc (-(t : ℤ)) t).filter (fun j => (run M t).tape j = 1) ↔
+    (run (reflect M) t).tape (e i) = 1
+  rw [run_reflect, Finset.mem_filter]
+  change _ ∧ (run M t).tape i = 1 ↔ (run M t).tape (- -i) = 1
+  rw [neg_neg]
+  exact ⟨And.right, fun hi => ⟨mem_window_of_tape_eq_one M t hi, hi⟩⟩
 
 private theorem continue_bound {T : Table} {p : Point} {M : Machine 4} {w d q h}
     (hs : StatesBounded T) (hq : p.state ≤ T.maxState) (hm : Supports T M)
     (hf : Fits M p h) (ha : M p.state p.tape.scan = (w, d, some q))
     (kids : ∀ r, (w, d, r) ∈ actions T → Bounded (extend T p (w, d, r)) (p.next (w, d, r))) :
-    stepsOf M ≤ 107 := by
+    Limits M := by
   by_cases hq' : q.val ≤ T.maxState.val + 1
   · exact kids _ (action_mem T w d q hq') M (supports_extend hm ha) _ (hf.next ha)
   · let r : State := ⟨T.maxState.val + 1, by have := q.isLt; omega⟩
@@ -381,19 +491,15 @@ private theorem continue_bound {T : Table} {p : Point} {M : Machine 4} {w d q h}
       simpa [renameConfig, hf.1, fix p.state hq] using hf.2
     have hb' := kids _ (action_mem T w d r (Nat.le_refl _)) _
       (supports_extend hm' ha') _ (hf'.next ha')
-    apply steps_le
-    rintro ⟨t, hrun⟩
-    apply (haltsWithin_rename e e0 M 107).mp
-    exact haltsWithin_of_steps_le ⟨t, (haltsWithin_rename e e0 M t).mpr hrun⟩ hb'
-
+    exact limits_of_run_eq (haltsWithin_rename e e0 M) (onesAt_rename e e0 M) hb'
 
 private theorem branch_bound {T : Table} {p : Point} (hs : StatesBounded T)
-    (hq : p.state ≤ T.maxState) (ht : p.time < 107)
+    (hq : p.state ≤ T.maxState) (ht : p.time < 107) (hscore : haltScoreOK p = true)
     (kids : ∀ a ∈ actions T, Bounded (extend T p a) (p.next a)) : Bounded T p := by
   intro M hm h hf
   obtain ⟨w, d, next, ha⟩ : ∃ w d q, M p.state p.tape.scan = (w, d, q) := ⟨_, _, _, rfl⟩
   cases next with
-  | none => apply steps_le; exact fun _ => haltsWithin_mono (hf.halts_next ha) (by omega)
+  | none => exact hf.halt_limits ht hscore ha
   | some q => exact continue_bound hs hq hm hf ha (fun _ h => kids _ h)
 
 private theorem empty_states : StatesBounded empty := by
@@ -403,11 +509,11 @@ private theorem empty_states : StatesBounded empty := by
 
 private theorem root_bound (kids : ∀ (w : Sym) (q : Fin 2),
     let a : Action := (w, .right, q.castLE (by decide))
-    Bounded (extend empty start a) (start.next a)) (M : Machine 4) : stepsOf M ≤ 107 := by
+    Bounded (extend empty start a) (start.next a)) (M : Machine 4) : Limits M := by
   have hm (M : Machine 4) : Supports empty M :=
     fun q x _ _ _ h => by rw [empty_get q x] at h; contradiction
   have right (N : Machine 4) {w q}
-      (ha : N start.state start.tape.scan = (w, .right, some q)) : stepsOf N ≤ 107 := by
+      (ha : N start.state start.tape.scan = (w, .right, some q)) : Limits N := by
     apply continue_bound empty_states (le_refl _) (hm N) (fits_start N) ha
     intro r hr
     have onlyFirstTwo : ∀ (v : Sym) (r : State),
@@ -416,9 +522,7 @@ private theorem root_bound (kids : ∀ (w : Sym) (q : Fin 2),
     exact kids w ⟨r.val, hr'⟩
   obtain ⟨w, d, next, ha⟩ : ∃ w d q, M start.state start.tape.scan = (w, d, q) := ⟨_, _, _, rfl⟩
   cases next with
-  | none =>
-    apply steps_le
-    exact fun _ => haltsWithin_mono ((fits_start M).halts_next ha) (by decide)
+  | none => exact (fits_start M).halt_limits (by decide) (by decide +kernel) ha
   | some q =>
     cases d with
     | right => exact right M ha
@@ -427,11 +531,7 @@ private theorem root_bound (kids : ∀ (w : Sym) (q : Fin 2),
         unfold reflect
         rw [ha]
         rfl
-      have hb := right (reflect M) hr
-      apply steps_le
-      rintro ⟨t, ht⟩
-      exact (haltsWithin_reflect M 107).mp
-        (haltsWithin_of_steps_le ⟨t, (haltsWithin_reflect M t).mpr ht⟩ hb)
+      exact limits_of_run_eq (haltsWithin_reflect M) (onesAt_reflect M) (right _ hr)
 
 /-- A replay may use the whole tape, or stay on one side of its starting cell. -/
 private inductive Scope
@@ -559,7 +659,7 @@ private def verifiesCycle (T : Table) (p : Point) (s : Scope) (wait period : Nat
 private theorem cycle_bound {T : Table} {p : Point} {s : Scope} {wait period : Nat}
     (hc : verifiesCycle T p s wait period = true) : Bounded T p := by
   intro M hm h hf
-  apply steps_le
+  apply limits_of_not_halts
   rintro ⟨t, ht⟩
   unfold verifiesCycle at hc
   obtain ⟨hp, hc⟩ := Bool.and_eq_true_iff.mp hc
@@ -608,6 +708,27 @@ private theorem probe_sound {T : Table} {fuel : Nat} {p r : Point}
       obtain ⟨w, d, q⟩ := a
       obtain ⟨h', hf', hq, htime⟩ := ih hr (hf.next (hm _ _ _ _ _ ht)) (hs _ _ _ ht).2
       exact ⟨h', hf', hq, by simp only [Point.next] at htime; omega⟩
+
+/-- Find a branch point only if either halting write stays within the score bound. -/
+private def branchPoint (T : Table) (p : Point) : Option Point :=
+  match probe T (107 - p.time) p with
+  | none => none
+  | some r => if haltScoreOK r then some r else none
+
+private theorem branchPoint_sound {T : Table} {p r : Point}
+    (hr : branchPoint T p = some r) {M : Machine 4} (hm : Supports T M) {h : ℤ} (hf : Fits M p h)
+    (hs : StatesBounded T) (hp : p.state ≤ T.maxState) (ht : p.time ≤ 107) :
+    ∃ h', Fits M r h' ∧ r.state ≤ T.maxState ∧ r.time < 107 ∧ haltScoreOK r = true := by
+  unfold branchPoint at hr
+  split at hr
+  next => contradiction
+  next s he =>
+    split at hr
+    next hscore =>
+      cases hr
+      obtain ⟨h', hf', hq, htime⟩ := probe_sound he hm hf hs hp
+      exact ⟨h', hf', hq, by omega, hscore⟩
+    next => contradiction
 
 private structure ListTape where
   left : List Sym
@@ -1232,7 +1353,7 @@ private def champion : Machine 4
   | _, 0 => (1, .right, some 3)
   | _, _ => (0, .right, some 0)
 
-private theorem lower : 107 ≤ busyBeaverSteps 4 := by
+private theorem champion_haltTime : ∃ h : Halts champion, haltTime champion h = 107 := by
   have h₁₀₇ : HaltsWithin champion 107 := by
     change (run champion 107).state = none
     decide +kernel
@@ -1240,17 +1361,25 @@ private theorem lower : 107 ≤ busyBeaverSteps 4 := by
     change (run champion 106).state ≠ none
     decide +kernel
   have h : Halts champion := ⟨107, h₁₀₇⟩
-  have ht : 107 ≤ haltTime champion h := by
-    by_contra! hlt
-    exact h₁₀₆ (haltsWithin_mono (haltsWithin_haltTime _ h) (by omega))
-  exact ht.trans (haltTime_le_busyBeaverSteps _ h)
+  refine ⟨h, le_antisymm (haltTime_le _ h h₁₀₇) ?_⟩
+  by_contra! hlt
+  exact h₁₀₆ (haltsWithin_mono (haltsWithin_haltTime _ h) (by omega))
+
+private theorem lower : 107 ≤ busyBeaverSteps 4 := by
+  obtain ⟨h, ht⟩ := champion_haltTime
+  simpa only [ht] using haltTime_le_busyBeaverSteps champion h
+
+private theorem lower_ones : 13 ≤ busyBeaverOnes 4 := by
+  obtain ⟨h, ht⟩ := champion_haltTime
+  have hscore : onesAt champion 107 = 13 := by decide +kernel
+  simpa only [scoreOf, dite_eq_left h, ht, hscore] using scoreOf_le_busyBeaverOnes champion
 
 private def check : Nat → Table → Point → Hint → Bool
   | _, T, p, .cycle s wait period => verifiesCycle T p s wait period
   | _, T, _, .windows c => c.valid T
   | _, T, _, .automaton c => decide (c.Valid T)
   | n + 1, T, p, .branch kids =>
-    match probe T (107 - p.time) p with
+    match branchPoint T p with
     | none => false
     | some r => last T r || (List.finRange (actions T).length).all fun i =>
       let a := (actions T)[i.val]
@@ -1267,10 +1396,10 @@ private theorem check_sound {fuel : Nat} {T : Table} {p : Point} {hint : Hint}
     | cycle s wait period => exact cycle_bound hc
     | windows c =>
       intro M hm _ _
-      simp [stepsOf, Windows.not_halts hc hm]
+      exact limits_of_not_halts (Windows.not_halts hc hm)
     | automaton c =>
       intro M hm _ _
-      simp [stepsOf, (of_decide_eq_true hc : c.Valid T).not_halts hm]
+      exact limits_of_not_halts ((of_decide_eq_true hc : c.Valid T).not_halts hm)
     | branch kids =>
       first
       | contradiction
@@ -1279,11 +1408,10 @@ private theorem check_sound {fuel : Nat} {T : Table} {p : Point} {hint : Hint}
         next => contradiction
         next r he =>
           intro M hm h hf
-          obtain ⟨head, hr, hq, htime⟩ := probe_sound he hm hf hs hp
-          have htime : r.time < 107 := by omega
+          obtain ⟨head, hr, hq, htime, hscore⟩ := branchPoint_sound he hm hf hs hp ht
           rcases Bool.or_eq_true_iff.mp hc with hl | hk
-          · exact last_bound htime hl hm hr
-          · apply branch_bound hs hq htime _ M hm head hr
+          · exact last_bound htime hscore hl hm hr
+          · apply branch_bound hs hq htime hscore _ M hm head hr
             intro a ha
             obtain ⟨i, hidx, heq⟩ := List.getElem_of_mem ha
             have hcheck := List.all_eq_true.mp hk ⟨i, hidx⟩ (List.mem_finRange ⟨i, hidx⟩)
@@ -1302,7 +1430,8 @@ private def Job.Valid (j : Job) : Prop :=
 
 private def refine (job : Job) (i : Fin 16) : Option Job :=
   let ⟨T, p⟩ := job
-  match probe T (107 - p.time) p with
+  match branchPoint T p with
+  -- Keep the job for the checker when the probe cannot justify splitting it.
   | none => if i = 0 then some job else none
   | some r =>
     if last T r then none
@@ -1315,17 +1444,14 @@ private theorem refine_sound (job : Job)
     (kids : ∀ (i : Fin 16) (j : Job), refine job i = some j → j.Goal) : job.Goal := by
   obtain ⟨T, p⟩ := job
   intro ⟨hs, hp, ht⟩
-  cases he : probe T (107 - p.time) p with
+  cases he : branchPoint T p with
   | none => exact kids 0 _ (by simp [refine, he]) ⟨hs, hp, ht⟩
   | some r =>
     intro M hm h hf
-    obtain ⟨head, hr, hq, htime⟩ := probe_sound he hm hf hs hp
-    have htime : r.time < 107 := by
-      have : p.time ≤ 107 := ht
-      omega
+    obtain ⟨head, hr, hq, htime, hscore⟩ := branchPoint_sound he hm hf hs hp ht
     by_cases hl : last T r
-    · exact last_bound htime hl hm hr
-    · apply branch_bound hs hq htime _ M hm head hr
+    · exact last_bound htime hscore hl hm hr
+    · apply branch_bound hs hq htime hscore _ M hm head hr
       intro a ha
       obtain ⟨i, hi, hitem⟩ := List.getElem_of_mem ha
       have len : (actions T).length ≤ 16 := by
@@ -1381,10 +1507,8 @@ private theorem rightJob_sound
     exact hchild
   exact batch_sound hcheck hbatch
 
-private theorem upper_of_batches
-    (batches : ∀ w j k l, ∃ hs, batchCheck w j k l hs = true) : busyBeaverSteps 4 ≤ 107 := by
-  apply Finset.sup_le
-  intro M _
+private theorem limits_of_batches
+    (batches : ∀ w j k l, ∃ hs, batchCheck w j k l hs = true) (M : Machine 4) : Limits M := by
   apply root_bound _ M
   intro w q
   fin_cases q
@@ -1408,8 +1532,14 @@ private theorem certify_absent_row {w : Sym} {j : Fin 16}
   exact ⟨.bad, by simp [batchCheck, batch, h]⟩
 
 public theorem value_of_batches (checked : ∀ w j k, BatchCertified w j k) :
-    busyBeaverSteps 4 = 107 :=
-  le_antisymm (upper_of_batches checked) lower
+    busyBeaverSteps 4 = 107 := by
+  apply le_antisymm _ lower
+  exact Finset.sup_le fun M _ => (limits_of_batches checked M).1
+
+private theorem ones_value_of_batches (checked : ∀ w j k, BatchCertified w j k) :
+    busyBeaverOnes 4 = 13 := by
+  apply le_antisymm _ lower_ones
+  exact Finset.sup_le fun M _ => (limits_of_batches checked M).2
 
 -- Check separate subtrees so the kernel can release intermediate reductions between checks.
 open Lean in

@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
+public import CSLibExt.Computability.BusyBeaverOnesFour
 public import CSLibExt.Computability.BusyBeaverStepsThree
 public import CSLibExt.Computability.BusyBeaverStepsFour
 
@@ -58,14 +59,6 @@ treated differently:
   theory does not prove, blocks decidability at its size, for any
   consistent theory sound for that machine's halting sentence.
 -/
-
-/-- **Four-state Busy Beaver score value.** Rado's score function $\Sigma$ satisfies
-$\Sigma(4) = 13$: among the two-symbol Busy Beaver machines with $4$ working states that halt when
-started on the blank tape, the largest number of ones left on the tape at the halting time is $13$.
-
-Source: Brady (1983), determination of `Σ(4) = 13`. -/
-theorem_wanted busyBeaverOnes_four_wanted :
-    busyBeaverOnes 4 = 13
 
 /-- **Five-state Busy Beaver shift value.** Rado's shift function $S$ satisfies
 $S(5) = 47176870$: among the two-symbol Busy Beaver machines with $5$ working states that halt
