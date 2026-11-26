@@ -31,7 +31,7 @@ Statements from Samuel S. Wagstaff, Jr., *Pseudoprimes and Fermat Numbers*, INTE
 (2024), Article A23. The paper's `F_n` (pseudoprime bases `1 ≤ b < n`) is written with
 Mathlib's `Nat.FermatPsp`, and its `R_n` (strong pseudoprime bases `1 ≤ b < n`) with the
 predicate `MetaMathlibExt.IsStrongPseudoprime` (`MathlibExt/NumberTheory/StrongPseudoprime.lean`),
-which follows the paper's Congruences (2) and (3). Theorem 4
+which follows the paper's Congruences (2) and (3). Theorem 8
 (`MetaMathlibExt.fermatNumber_strongPseudoprime_bases_subgroup`) is proved in
 `MathlibExt.NumberTheory.PseudoprimeBasesFermatNumbersFermatNumberStrongPseudoprimeBasesSubgroup`.
 Theorems 1 and 9 (polynomial-time factoring algorithms) are not

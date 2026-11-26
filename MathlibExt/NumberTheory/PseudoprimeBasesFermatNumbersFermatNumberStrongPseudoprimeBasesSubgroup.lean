@@ -8,18 +8,12 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Algebra.IsPrimePow
 public import Mathlib.Data.Nat.Factorization.Basic
 public import Mathlib.Data.Set.Card
 public import Mathlib.NumberTheory.Fermat
-public import Mathlib.NumberTheory.FermatPsp
-public import Mathlib.RingTheory.Polynomial.Cyclotomic.Basic
-public import MathlibExt.Data.Set.Density
 public import MathlibExt.NumberTheory.FermatNumberStrongPseudoprimeAddSub
 public import MathlibExt.NumberTheory.FermatNumberStrongPseudoprimeTwoPow
 public import MathlibExt.NumberTheory.StrongPseudoprime
-public import MathlibExt.NumberTheory.StrongPseudoprimeBaseCount
-public import MathlibExt.NumberTheory.StrongPseudoprimeZPowNeg
 import Mathlib.Algebra.Ring.Parity
 import Mathlib.Data.ZMod.Basic
 import Mathlib.GroupTheory.OrderOfElement
