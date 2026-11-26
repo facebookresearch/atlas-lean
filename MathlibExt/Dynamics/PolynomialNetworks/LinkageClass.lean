@@ -25,9 +25,12 @@ Feinberg's deficiency-one theorem.
 * `linkageClassOf r`: the linkage class of the reaction `r` (that of its source complex);
 * `linkageClassNetwork θ`: the reactions of the linkage class `θ`, as a network on `S`;
 * `linkageClassStoichiometricSubspace θ`: the span `𝒮_θ` of their reaction vectors;
-* `linkageClassDeficiency θ`: `δ_θ = n_θ - 1 - s_θ`;
-* `linkageClassField θ k x`: the part of the mass-action field contributed by the reactions
-  of `θ`.
+* `linkageClassDeficiency θ`: for finitely many complexes (`[Finite N.complexes]`),
+  `δ_θ = n_θ - 1 - s_θ`;
+* `linkageClassField θ k x`: for finite species (`[Fintype S]`) and finite reactions
+  (`[Fintype ρ]`), the part
+  `∑_{r : ρ, linkageClassOf r = θ} k r (∏_{s : S} x_s ^ (src r s)) (prod r - src r)` of the
+  mass-action field contributed by the reactions of `θ`.
 
 Their linear algebra (`𝒮 = ∑_θ 𝒮_θ`, and for networks with finitely many species, reactions, and
 linkage classes, `∑_θ δ_θ ≤ δ` with equality iff the `𝒮_θ` are independent, together with the
@@ -84,8 +87,12 @@ noncomputable def linkageClassDeficiency [Finite N.complexes]
   (Nat.card θ.supp : ℤ) - 1 - finrank ℝ (N.linkageClassStoichiometricSubspace θ)
 
 open Classical in
-/-- The part of the mass-action field with rate constants `k` contributed by the reactions of
-the linkage class `θ`: `x ↦ ∑_{r ∈ θ} k r (∏_s x_s ^ (src r s)) (prod r - src r)`. -/
+/-- For a network with finite species set `S` (`[Fintype S]`) and finite reaction set `ρ`
+(`[Fintype ρ]`), the part of the mass-action field with rate constants `k` contributed by the
+reactions of the linkage class `θ`:
+`x ↦ ∑_{r : ρ, linkageClassOf r = θ} k r (∏_{s : S} x_s ^ (src r s)) (prod r - src r)`. It is
+defined for all real `k` and `x`; the powers are natural powers, so `x_s ^ 0 = 1` also at
+`x_s = 0`. -/
 noncomputable def linkageClassField [Fintype S] [Fintype ρ]
     (θ : N.linkageGraph.ConnectedComponent) (k : ρ → ℝ) (x : S → ℝ) : S → ℝ :=
   fun s => ∑ r ∈ univ.filter (fun r => N.linkageClassOf r = θ),

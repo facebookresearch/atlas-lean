@@ -67,7 +67,7 @@ open MathlibExt.Biology.Dynamics
 
 variable {S ρ : Type*} [Fintype S] (N : RealExponentNetwork S ρ)
 
-/-- The pairing `⟨w, y⟩ = ∑_s w_s y_s`. -/
+/-- For finite species `S` (`[Fintype S]`), the pairing `⟨w, y⟩ = ∑_{s : S} w_s y_s`. -/
 def pair (w y : S → ℝ) : ℝ :=
   ∑ s, w s * y s
 
@@ -80,14 +80,16 @@ def IsEssential (w : S → ℝ) (r : ρ) : Prop :=
 def InSupport (w : S → ℝ) (r : ρ) : Prop :=
   ∀ r', IsEssential N w r' → pair w (N.src r') ≤ pair w (N.src r)
 
-/-- The network is endotactic: for every `w`, every `w`-essential reaction whose reactant lies in
-the `w`-support has `⟨w, y' - y⟩ < 0`. -/
+/-- For finite species `S` (`[Fintype S]`), the network is endotactic: for every `w`, every
+`w`-essential reaction whose reactant lies in the `w`-support has `⟨w, y' - y⟩ < 0`, where
+`⟨w, y⟩ = ∑_{s : S} w_s y_s`. -/
 def IsEndotactic : Prop :=
   ∀ w r, IsEssential N w r → InSupport N w r → pair w (N.reactionVector r) < 0
 
-/-- The network is strongly endotactic: it is endotactic, and for every `w` not orthogonal to the
-stoichiometric subspace some reaction `y → y'` has `⟨w, y' - y⟩ < 0` and a reactant `y` that is
-`≤_w`-maximal among all reactants. -/
+/-- For finite species `S` (`[Fintype S]`), the network is strongly endotactic: it is endotactic,
+and for every `w` not orthogonal to the stoichiometric subspace some reaction `y → y'` has
+`⟨w, y' - y⟩ < 0` and a reactant `y` that is `≤_w`-maximal among all reactants, where
+`⟨w, y⟩ = ∑_{s : S} w_s y_s`. -/
 def IsStronglyEndotactic : Prop :=
   IsEndotactic N ∧ ∀ w, (∃ r, pair w (N.reactionVector r) ≠ 0) →
     ∃ r, pair w (N.reactionVector r) < 0 ∧ ∀ r', pair w (N.src r') ≤ pair w (N.src r)
@@ -97,10 +99,11 @@ by an undirected path of reactions. -/
 def HasOneLinkageClass : Prop :=
   N.complexes.Nonempty ∧ ∀ y ∈ N.complexes, ∀ y' ∈ N.complexes, Relation.EqvGen N.Reacts y y'
 
-/-- The fiber of the mass-action differential inclusion over `x`, for the tempering
-`[lo r, hi r]` and the invariant polyhedron of `x₀`: empty unless `x` lies in the relative
-interior `(x₀ + H) ∩ ℝ_{>0}^S`, and otherwise the set of mass-action vectors
-`∑_r k_r x^{src r} (prod r - src r)` with `k_r ∈ [lo r, hi r]`. -/
+/-- For finite species (`[Fintype S]`) and finite reactions (`[Fintype ρ]`), the fiber of the
+mass-action differential inclusion over `x`, for the tempering `[lo r, hi r]` and the invariant
+polyhedron of `x₀`: empty unless `x` lies in the relative interior `(x₀ + H) ∩ ℝ_{>0}^S`, and
+otherwise the set of mass-action vectors `∑_{r : ρ} k_r x^{src r} (prod r - src r)`, where
+`x^{src r} = ∏_{s : S} x_s ^ (src r s)` with real powers, for `k_r ∈ [lo r, hi r]`. -/
 def fiber [Fintype ρ] (lo hi : ρ → ℝ) (x₀ x : S → ℝ) : Set (S → ℝ) :=
   {v | (∀ s, 0 < x s) ∧ x - x₀ ∈ N.stoichiometricSubspace ∧
     ∃ k : ρ → ℝ, (∀ r, lo r ≤ k r ∧ k r ≤ hi r) ∧ v = N.massActionField k x}

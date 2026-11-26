@@ -55,17 +55,20 @@ namespace WantedExt.Biology.Biophysics.ToricSteadyStatesWanted
 
 variable {C S : Type*} [Fintype C] [Fintype S]
 
-/-- The mass-action vector field `f(x) = ∑_{c, c'} κ_{cc'} x^{y_c} (y_{c'} - y_c)` of complexes
-`y : C → S → ℕ` and rate constants `κ`, equal to `Σ Ψ(x)` with `Σ = Yᵗ A_κᵗ`. -/
+/-- For finitely many complexes (`[Fintype C]`) and species (`[Fintype S]`), the mass-action
+vector field `f(x) = ∑_{c, c' : C} κ_{cc'} x^{y_c} (y_{c'} - y_c)`, with
+`x^{y_c} = ∏_{s : S} x_s ^ (y_c s)`, of complexes `y : C → S → ℕ` and rate constants `κ`, equal
+to `Σ Ψ(x)` with `Σ = Yᵗ A_κᵗ`. -/
 noncomputable def massActionField (y : C → S → ℕ) (κ : C → C → ℝ) (x : S → ℝ) : S → ℝ :=
   fun s => ∑ c, ∑ c', κ c c' * (∏ s', x s' ^ y c s') * ((y c' s : ℝ) - y c s)
 
-/-- The matrix `Σ = Yᵗ A_κᵗ`, with entries `Σ_{sc} = ∑_{c'} κ_{cc'} (y_{c'} s - y_c s)`; the vector
-field is `Σ Ψ(x)`. -/
+/-- For finitely many complexes (`[Fintype C]`), the matrix `Σ = Yᵗ A_κᵗ`, with entries
+`Σ_{sc} = ∑_{c' : C} κ_{cc'} (y_{c'} s - y_c s)`; the vector field is `Σ Ψ(x)`. -/
 def sigmaMatrix (y : C → S → ℕ) (κ : C → C → ℝ) : Matrix S C ℝ :=
   fun s c => ∑ c', κ c c' * ((y c' s : ℝ) - y c s)
 
-/-- The linear map `Σ : ℝ^C → ℝ^S`. -/
+/-- For finitely many complexes (`[Fintype C]`), the linear map `Σ : ℝ^C → ℝ^S`,
+`v ↦ (∑_{c : C} Σ_{sc} v_c)_s`. -/
 noncomputable def sigmaMap (y : C → S → ℕ) (κ : C → C → ℝ) : (C → ℝ) →ₗ[ℝ] (S → ℝ) :=
   (sigmaMatrix y κ).mulVecLin
 
@@ -81,24 +84,27 @@ def Condition34 {M : Submodule ℝ (C → ℝ)} {ι : Type*} (b : Module.Basis �
     (part : C → ι) : Prop :=
   ∀ i c c', part c = i → part c' = i → 0 < (b i : C → ℝ) c * (b i : C → ℝ) c'
 
-/-- **Condition 3.6**: the linear system `(ln x) · (y_c - y_{c'}) = ln (b^i_c / b^i_{c'})`, for
-`c, c'` in the block of `i`, has a real solution `ln x = v`. -/
+/-- **Condition 3.6**: for finitely many species (`[Fintype S]`), the linear system
+`(ln x) · (y_c - y_{c'}) = ln (b^i_c / b^i_{c'})`, with `(ln x) · y = ∑_{s : S} (ln x)_s y_s`,
+for `c, c'` in the block of `i`, has a real solution `ln x = v`. -/
 def Condition36 (y : C → S → ℕ) {M : Submodule ℝ (C → ℝ)} {ι : Type*}
     (b : Module.Basis ι ℝ M) (part : C → ι) : Prop :=
   ∃ v : S → ℝ, ∀ i c c', part c = i → part c' = i →
     ∑ s, v s * ((y c s : ℝ) - y c' s) = Real.log ((b i : C → ℝ) c / (b i : C → ℝ) c')
 
-/-- `x` solves the binomial system (3.1): `b^i_c x^{y_{c'}} = b^i_{c'} x^{y_c}` for all `c, c'`
-in the block of `i`. -/
+/-- For finitely many species (`[Fintype S]`), `x` solves the binomial system (3.1):
+`b^i_c x^{y_{c'}} = b^i_{c'} x^{y_c}` for all `c, c'` in the block of `i`, where
+`x^{y_c} = ∏_{s : S} x_s ^ (y_c s)`. -/
 def SolvesBinomials (y : C → S → ℕ) {M : Submodule ℝ (C → ℝ)} {ι : Type*}
     (b : Module.Basis ι ℝ M) (part : C → ι) (x : S → ℝ) : Prop :=
   ∀ i c c', part c = i → part c' = i →
     (b i : C → ℝ) c * ∏ s, x s ^ y c' s = (b i : C → ℝ) c' * ∏ s, x s ^ y c s
 
 /-- **Existence of positive toric steady states** (Pérez Millán–Dickenstein–Shiu–Conradi 2012,
-Theorem 3.8). For complexes `y`, nonnegative rate constants `κ`, and a partition `part` with a
-basis `b` of `ker Σ` satisfying Condition 3.1, the mass-action system has a positive steady state
-if and only if Conditions 3.4 and 3.6 hold.
+Theorem 3.8). For finitely many complexes (`[Fintype C]`) and species (`[Fintype S]`), complexes
+`y`, nonnegative rate constants `κ`, and a partition `part` with a basis `b` of `ker Σ` satisfying
+Condition 3.1, the mass-action system has a positive steady state if and only if Conditions 3.4
+and 3.6 hold.
 
 Source: M. Pérez Millán, A. Dickenstein, A. Shiu, C. Conradi, Bull. Math. Biol. 74 (2012)
 1027–1065, Theorem 3.8. -/
@@ -109,11 +115,13 @@ theorem_wanted exists_pos_steadyState_iff (y : C → S → ℕ) {κ : C → C �
       Condition34 b part ∧ Condition36 y b part
 
 /-- **Monomial parametrization of the positive steady states** (Pérez Millán–Dickenstein–Shiu–
-Conradi 2012, Theorem 3.11). Assume Conditions 3.1, 3.4 and 3.6, let `A : W → S → ℤ` have
-linearly independent rows (rank `w = card W`) and kernel equal to the span of the differences
-`y_{c'} - y_c` for `c, c'` in a common block, and let `x̃` be a positive steady state. Then a
-positive `x` solves the binomial system (3.1) if and only if `x = (x̃_s ∏_w t_w ^ A_{ws})_s` for
-some positive `t : W → ℝ`, and this monomial map is injective on positive `t`.
+Conradi 2012, Theorem 3.11). For finitely many complexes (`[Fintype C]`) and species
+(`[Fintype S]`), assume Conditions 3.1, 3.4 and 3.6, let `A : W → S → ℤ`, for a finite index set
+`W` (`[Fintype W]`), have linearly independent rows (rank `w = card W`) and kernel equal to the
+span of the differences `y_{c'} - y_c` for `c, c'` in a common block, and let `x̃` be a positive
+steady state. Then a positive `x` solves the binomial system (3.1) if and only if
+`x = (x̃_s ∏_{w : W} t_w ^ A_{ws})_s` for some positive `t : W → ℝ`, and this monomial map is
+injective on positive `t`.
 
 Source: M. Pérez Millán, A. Dickenstein, A. Shiu, C. Conradi, Bull. Math. Biol. 74 (2012)
 1027–1065, Theorem 3.11. -/

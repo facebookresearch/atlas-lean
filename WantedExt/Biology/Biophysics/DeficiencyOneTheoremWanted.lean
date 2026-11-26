@@ -74,12 +74,13 @@ def OneTerminalClassPerLinkageClass : Prop :=
         IsTerminalComplex N c.1 → IsTerminalComplex N c'.1 →
           Relation.ReflTransGen N.Reacts c.1 c'.1
 
-/-- **Deficiency-one theorem, uniqueness** (Feinberg 1987, Theorem 6.2.1). Suppose each linkage
-class contains just one terminal strong linkage class, every linkage-class deficiency is at most
-one, and the linkage-class deficiencies sum to the deficiency of the network. Then for all
-positive rate constants `k`, two positive steady states `x` and `y` of the mass-action system
-whose difference lies in the stoichiometric subspace (the same positive stoichiometric
-compatibility class) are equal.
+/-- **Deficiency-one theorem, uniqueness** (Feinberg 1987, Theorem 6.2.1). Let the network have
+finitely many species (`[Fintype S]`), reactions (`[Fintype ρ]`) and linkage classes. Suppose
+each linkage class contains just one terminal strong linkage class, every linkage-class
+deficiency is at most one, and the linkage-class deficiencies sum to the deficiency of the
+network. Then for all positive rate constants `k`, two positive steady states `x` and `y` of the
+mass-action system whose difference lies in the stoichiometric subspace (the same positive
+stoichiometric compatibility class) are equal.
 
 Source: M. Feinberg, Chem. Eng. Sci. 42 (1987) 2229–2268, Theorem 6.2.1. -/
 theorem_wanted eq_of_pos_steadyState [Fintype S] [Fintype ρ]

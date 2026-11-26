@@ -56,9 +56,11 @@ open MathlibExt.Biology.Dynamics.ComplexBalanced MvPolynomial
 
 variable {S ρ : Type*} (N : ReactionNetwork S ρ)
 
-/-- The species-formation function of the network in a stirred-tank reactor, with rate constants
+/-- For finite species `S` (`[Fintype S]`) and finite reactions `ρ` (`[Fintype ρ]`), the
+species-formation function of the network in a stirred-tank reactor, with rate constants
 `k (Sum.inl r)` for the true reactions `r` and `k (Sum.inr s)` for the outflow reactions
-`s → 0`: `p_N(c, k)_s = ∑_r k_r c^{src r} (src r s - prod r s) + k_{s→0} c_s`. -/
+`s → 0`: `p_N(c, k)_s = ∑_{r : ρ} k_r c^{src r} (src r s - prod r s) + k_{s→0} c_s`, where
+`c^{src r} = ∏_{s' : S} c_{s'} ^ (src r s')`. -/
 noncomputable def formationRate [Fintype S] [Fintype ρ] (k : ρ ⊕ S → ℝ) (c : S → ℝ) :
     S → ℝ :=
   fun s => (∑ r, k (.inl r) * (∏ s', c s' ^ N.src r s') * ((N.src r s : ℝ) - N.prod r s)) +
@@ -69,16 +71,18 @@ reactions, the species-formation function is injective on positive concentration
 def IsInjective [Fintype S] [Fintype ρ] : Prop :=
   ∀ k : ρ ⊕ S → ℝ, (∀ i, 0 < k i) → Set.InjOn (formationRate N k) {c | ∀ s, 0 < c s}
 
-/-- The species-formation function as an integer polynomial in the concentrations `X (inl s)`
-and the rate constants `X (inr i)`. -/
+/-- For finite species (`[Fintype S]`) and finite reactions (`[Fintype ρ]`), the
+species-formation function as an integer polynomial in the concentrations `X (inl s)` and the
+rate constants `X (inr i)`. -/
 noncomputable def formationPoly [Fintype S] [Fintype ρ] (s : S) :
     MvPolynomial (S ⊕ (ρ ⊕ S)) ℤ :=
   (∑ r, X (.inr (.inl r)) * (∏ s', X (.inl s') ^ N.src r s') *
       C ((N.src r s : ℤ) - N.prod r s)) +
     X (.inr (.inr s)) * X (.inl s)
 
-/-- The determinant of the Jacobian matrix `∂p_N/∂c`, as an integer polynomial in the
-concentrations and the rate constants. -/
+/-- For finite species (`[Fintype S]`) and finite reactions (`[Fintype ρ]`), the determinant of
+the Jacobian matrix `∂p_N/∂c`, as an integer polynomial in the concentrations and the rate
+constants. -/
 noncomputable def jacobianDetPoly [Fintype S] [DecidableEq S] [Fintype ρ] :
     MvPolynomial (S ⊕ (ρ ⊕ S)) ℤ :=
   (Matrix.of fun s s' => pderiv (.inl s') (formationPoly N s)).det

@@ -1,3 +1,3 @@
 # Pair
 
-The pairing `⟨w, y⟩ = ∑_s w_s y_s`.
+For finite species `S` (`[Fintype S]`), the pairing `⟨w, y⟩ = ∑_{s : S} w_s y_s`.

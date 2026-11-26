@@ -77,7 +77,8 @@ namespace SRNetwork
 
 variable {S ρ : Type*} (N : SRNetwork S ρ)
 
-/-- The CFSTR mass-action vector field with flow rate per volume `flow`, feed concentrations `cf`,
+/-- For finite species (`[Fintype S]`) and finitely many reaction nodes (`[Fintype ρ]`), the
+CFSTR mass-action vector field with flow rate per volume `flow`, feed concentrations `cf`,
 forward rate constants `kf` and reverse rate constants `kb`. -/
 noncomputable def cfstrField [Fintype S] [Fintype ρ] (flow : ℝ) (cf : S → ℝ) (kf kb : ρ → ℝ)
     (c : S → ℝ) : S → ℝ :=

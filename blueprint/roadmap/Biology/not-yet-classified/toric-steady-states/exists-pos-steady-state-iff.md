@@ -1,9 +1,10 @@
 # Existence of positive toric steady states
 
 **Existence of positive toric steady states** (Pérez Millán–Dickenstein–Shiu–Conradi 2012,
-Theorem 3.8). For complexes `y`, nonnegative rate constants `κ`, and a partition `part` with a
-basis `b` of `ker Σ` satisfying Condition 3.1, the mass-action system has a positive steady state
-if and only if Conditions 3.4 and 3.6 hold.
+Theorem 3.8). For finitely many complexes (`[Fintype C]`) and species (`[Fintype S]`), complexes
+`y`, nonnegative rate constants `κ`, and a partition `part` with a basis `b` of `ker Σ` satisfying
+Condition 3.1, the mass-action system has a positive steady state if and only if Conditions 3.4
+and 3.6 hold.
 
 ## Sources
 

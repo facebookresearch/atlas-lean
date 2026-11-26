@@ -81,11 +81,13 @@ structure IsAdmissibleRate [Fintype S] [DecidableEq S] (R : (S → ℝ) → ρ �
   pos_of_reactants_pos : ∀ r, ∀ x ∈ nonnegOrthant S, (∀ j, 0 < N.src r j → 0 < x j) →
     0 < R x r
 
-/-- The vector field `S ↦ Γ R(S)`. -/
+/-- For finitely many reactions (`[Fintype ρ]`), the vector field `S ↦ Γ R(S)`, whose `j`-th
+coordinate is `∑_{r : ρ} Γ_{jr} R_r(S)`. -/
 noncomputable def field [Fintype ρ] (R : (S → ℝ) → ρ → ℝ) (x : S → ℝ) : S → ℝ :=
   fun j => ∑ r, stoich N j r * R x r
 
-/-- `φ` is a solution of `Ṡ = Γ R(S)` on `[0, ∞)` in `𝒪₊` starting at `x₀`. -/
+/-- For finitely many reactions (`[Fintype ρ]`), `φ` is a solution of `Ṡ = Γ R(S)` on `[0, ∞)`
+in `𝒪₊` starting at `x₀`. -/
 def IsSolution [Fintype ρ] (R : (S → ℝ) → ρ → ℝ) (x₀ : S → ℝ) (φ : ℝ → S → ℝ) : Prop :=
   φ 0 = x₀ ∧ ∀ t, 0 ≤ t → φ t ∈ nonnegOrthant S ∧
     HasDerivWithinAt φ (field N R (φ t)) (Set.Ici 0) t
@@ -97,16 +99,19 @@ def IsPersistent [Fintype ρ] (R : (S → ℝ) → ρ → ℝ) : Prop :=
   ∀ x₀ : S → ℝ, (∀ j, 0 < x₀ j) → ∀ φ, IsSolution N R x₀ φ →
     ∀ y, MapClusterPt y atTop φ → ∀ j, 0 < y j
 
-/-- A P-semiflow: a nonzero nonnegative vector `c` with `c Γ = 0`. -/
+/-- For finitely many species (`[Fintype S]`), a P-semiflow: a nonzero nonnegative vector `c`
+with `c Γ = 0`, that is, `∑_{j : S} c_j Γ_{jr} = 0` for every reaction `r`. -/
 def IsPSemiflow [Fintype S] (c : S → ℝ) : Prop :=
   (∀ j, 0 ≤ c j) ∧ c ≠ 0 ∧ ∀ r, ∑ j, c j * stoich N j r = 0
 
-/-- The associated Petri net is conservative: there is a P-semiflow with all entries positive. -/
+/-- For finitely many species (`[Fintype S]`), the associated Petri net is conservative: there
+is a P-semiflow with all entries positive. -/
 def IsConservative [Fintype S] : Prop :=
   ∃ c : S → ℝ, (∀ j, 0 < c j) ∧ ∀ r, ∑ j, c j * stoich N j r = 0
 
-/-- The associated Petri net is consistent: there is a vector `v` with all entries positive and
-`Γ v = 0`. -/
+/-- For finitely many reactions (`[Fintype ρ]`), the associated Petri net is consistent: there
+is a vector `v` with all entries positive and `Γ v = 0`, that is, `∑_{r : ρ} Γ_{jr} v_r = 0` for
+every species `j`. -/
 def IsConsistent [Fintype ρ] : Prop :=
   ∃ v : ρ → ℝ, (∀ r, 0 < v r) ∧ ∀ j, ∑ r, stoich N j r * v r = 0
 
