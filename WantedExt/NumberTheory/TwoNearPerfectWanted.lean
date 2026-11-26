@@ -32,6 +32,7 @@ public import MathlibExt.NumberTheory.TwoNearPerfectEquationSix
 public import MathlibExt.NumberTheory.TwoNearPerfectOddDivisor
 public import MathlibExt.NumberTheory.TwoNearPerfectOmittedDivisors
 public import MathlibExt.NumberTheory.TwoNearPerfectPowerOfTwoDivisors
+public import MathlibExt.NumberTheory.TwoNearPerfect
 
 namespace MetaMathlibExt
 
@@ -101,18 +102,6 @@ public theorem_wanted strong_two_near_perfect_two_pow_mul_prime_form {k p : ℕ}
     (hstrong : ∃ d, d ∣ 2 ^ k * p ∧
       ArithmeticFunction.sigma 1 (2 ^ k * p) = 2 * (2 ^ k * p) + d + 2 ^ k * p / d) :
     ∃ a ≤ k, (p : ℤ) * (1 + 2 ^ (k - a)) = 2 ^ (k + 1) - 2 ^ a - 1
-
-/-- **No $2$-near perfect $2^k p^2$ with omitted divisors $2^i$ and $p$ or $p^2$.** Let $p$ be an
-odd prime, let $k$ and $i$ be natural numbers with $i \le k$, let $m$ be $1$ or $2$, and let
-$n = 2^k p^2$. Then $\sigma(n) \ne 2n + 2^i + p^m$, where $\sigma$ is the sum-of-divisors
-function; that is, $n$ is not $2$-near perfect with omitted divisors $2^i$ and $p^m$.
-
-Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Zelinsky,
-*On 2-Near Perfect Numbers*, INTEGERS 24 (2024), Article A61, Proposition 2
-(`integers-2024-A61-prop-2`). -/
-public theorem_wanted not_two_near_perfect_two_pow_mul_prime_sq_case_two {k p i m : ℕ}
-    (hp : p.Prime) (hp2 : p ≠ 2) (hi : i ≤ k) (hm : m = 1 ∨ m = 2) :
-    ArithmeticFunction.sigma 1 (2 ^ k * p ^ 2) ≠ 2 * (2 ^ k * p ^ 2) + 2 ^ i + p ^ m
 
 /-- **$2$-near perfect $2^k p^2$ with omitted divisors $1$ and $2^b p^2$.** Let $p$ be an odd
 prime and let $b, k$ be integers with $1 \le b \le k$. If $n = 2^k p^2$ satisfies
