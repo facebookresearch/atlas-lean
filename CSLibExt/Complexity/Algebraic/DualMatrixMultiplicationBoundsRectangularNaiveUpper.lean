@@ -90,7 +90,7 @@ private theorem innerDimension_le_two_rpow (n : ℕ) (k : ℝ) (hn : 1 ≤ n) (h
 $k \ge 0$, the rectangular matrix multiplication exponent of the arithmetic-circuit model at
 aspect $k$ is at most $2 + k$.
 
-Source: CLLZ rectangular naive upper bound; a general finite circuit construction is missing. -/
+Source: CLLZ rectangular naive upper bound. -/
 public theorem rectangularNaiveUpper :
     ∀ (F : Type u) [Field F] (k : ℝ), 0 ≤ k →
       rectangularCircuitExponent F k ≤ ENNReal.ofReal (2 + k)
