@@ -88,9 +88,10 @@ $1 \le k \le n$, and let $\theta$ be a real number. Then
 $$\sum_{\nu=1}^{n} 2^\nu \left( \binom{n+k-\nu-1}{k-1} - \binom{n+k-\nu-1}{n-1} \right)
 \cos^\nu \theta \, \sin(\nu\theta) = 2^{n+k} \cos^{n+k} \theta \, \sin((n-k)\theta).$$
 
-Source: Horst Alzer and Man Kam Kwong, "Ramanujan and a
-Combinatorial Identity Involving Harmonic Numbers",
-Lemma 3. -/
+Source: D. C. Rung and S. A. Obaid, "Combinatorics and flexure", ZAMP 36 (1985),
+443–459; stated as Lemma 6 in Horst Alzer and Man Kam Kwong, "Ramanujan and a
+Combinatorial Identity Involving Harmonic Numbers", Journal of Integer Sequences 29 (2026),
+Article 26.4.8. -/
 public theorem sum_two_pow_choose_sub_mul_cos_pow_sin
     (k n : ℕ) (hk : 1 ≤ k) (hkn : k ≤ n) (θ : ℝ) :
     ∑ ν ∈ Finset.Icc 1 n,

@@ -17,9 +17,10 @@ The publisher TeX at
 <https://cs.uwaterloo.ca/journals/JIS/VOL29/Alzer/alzer22.tex>
 is the source used for the formulas below.
 
-The diagonal uniqueness theorem and Ramanujan's binomial sine series are proved in
-`MathlibExt.NumberTheory.RamanujanHarmonicIdentity` and
-`MathlibExt.NumberTheory.RamanujanBinomialSine`, respectively.
+The diagonal uniqueness theorem, Ramanujan's binomial sine series and the Rung-Obaid
+trigonometric identity are proved in `MathlibExt.NumberTheory.RamanujanHarmonicIdentity`,
+`MathlibExt.NumberTheory.RamanujanBinomialSine` and `MathlibExt.NumberTheory.RungObaid`,
+respectively.
 Three other records from this paper are already proved in MathlibExt and
 are not restated here: Theorem 1 is
 `MetaMathlibExt.binomial_harmonic_convolution`; Lemma 2

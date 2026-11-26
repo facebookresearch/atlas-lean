@@ -103,7 +103,8 @@ Hirschhorn's asymptotic expansion with divergent Bernoulli sums is not part of t
 
 Source: Bernd C. Kellner, *Asymptotic Products of Binomial and Multinomial Coefficients
 Revisited*, INTEGERS 24 (2024), Article A59, Theorem 12 (Hirschhorn) and the discussion
-after it. -/
+after it; the constant is defined in the Theorem of M. D. Hirschhorn, "The asymptotic
+behavior of $\prod_{k=0}^{n} \binom{n}{k}$", Fibonacci Quart. 51 (2013), 163–173. -/
 public theorem tendsto_hirschhorn_constant :
     Tendsto (fun n : ℕ => (n : ℝ) ^ (-(1 : ℝ) / 12) *
         ∏ k ∈ Finset.Icc 1 n, ((k.factorial : ℝ) /
