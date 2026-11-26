@@ -666,6 +666,48 @@ private theorem le_of_eq_second {n : ℕ} {w w' : Fin (2 * n) → ℕ}
 
 end ExtremelyLuckyDisplacement
 
+/-- **Basic properties of lucky cars.** Let $n \ge 1$ and let $w$ be a Stirling permutation of
+order $n$, read as a parking function of length $2n$. Then (a) car $1$ is lucky; (b) the first
+car $i$ with $w_i = 1$ is lucky; (c) the number of lucky cars of $w$ is at least $1$ and at
+most $n$.
+
+The hypothesis $n \ge 1$ is added: the only Stirling permutation of order $0$ is the empty
+word, which has no cars.
+
+Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
+Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
+Lemma 5 (`jis-2024-24.6.7-lem-5`). -/
+public theorem stirlingLuckySet_basic (n : ℕ) (hn : 1 ≤ n) (w : Fin (2 * n) → ℕ)
+    (hw : IsStirlingPermutation n w) :
+    1 ∈ stirlingLuckySet w ∧
+      (∀ i : Fin (2 * n), w i = 1 → (∀ j < i, w j ≠ 1) → i.val + 1 ∈ stirlingLuckySet w) ∧
+      1 ≤ (stirlingLuckySet w).card ∧ (stirlingLuckySet w).card ≤ n := by
+  have hfirst := (IsAdmissibleLuckySet.one_mem_and_two_mul_not_mem n hn _ ⟨w, hw, rfl⟩).1
+  refine ⟨hfirst, ?_, Finset.card_pos.mpr ⟨1, hfirst⟩, ?_⟩
+  · intro i hi hbefore
+    refine Finset.mem_image.mpr ⟨i, Finset.mem_filter.mpr ⟨Finset.mem_univ _, ?_⟩, rfl⟩
+    apply le_antisymm _ (stirlingTotalDisplacement_eq.pref_le_spot hw.1 i)
+    rw [hi]
+    by_contra! hspot
+    -- Skipping spot 1 would require an earlier car that also prefers spot 1.
+    let q : Fin (2 * n) := ⟨0, i.pos⟩
+    obtain ⟨j, hj⟩ := stirlingTotalDisplacement_eq.spots_surjective hw q
+    have hjspot : stirlingParkSpot w j = 1 := by simp [stirlingParkSpot, hj, q]
+    have hjlt : j < i := ExtremelyLuckyDisplacement.earlier_of_skipped hw
+      (by rw [hi, hjspot]) (by rwa [hjspot])
+    have hjle := stirlingTotalDisplacement_eq.pref_le_spot hw.1 j
+    rw [hjspot] at hjle
+    exact hbefore j hjlt (le_antisymm hjle (Finset.mem_Icc.mp (hw.1 j)).1)
+  · rw [stirlingLuckySet, Finset.card_image_of_injective _ (fun a b h =>
+      Fin.ext (Nat.add_right_cancel h))]
+    calc
+      _ ≤ (Finset.Icc 1 n).card := by
+        apply Finset.card_le_card_of_injOn w (fun i _ => hw.1 i)
+        intro i hi j hj hij
+        exact ExtremelyLuckyDisplacement.spot_injective hw
+          ((Finset.mem_filter.mp hi).2.trans (hij.trans (Finset.mem_filter.mp hj).2.symm))
+      _ = n := by simp [Nat.card_Icc]
+
 /-- **Extremely lucky Stirling permutations are determined by their displacements.** Let $w$ and
 $w'$ be Stirling permutations of order $n$, and suppose that $w$ is extremely lucky, that is, its
 set $\mathrm{Lucky}(w)$ of lucky cars has exactly $n$ elements. If every car has the same
