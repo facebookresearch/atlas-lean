@@ -11987,6 +11987,7 @@
   "MathlibExt/GameTheory/PebblingCompleteThree": {"to": "GameTheory/combinatorial-games", "title": "Impartial pebbling games"},
   "MathlibExt/GameTheory/PebblingCompleteTwo": {"to": "GameTheory/combinatorial-games", "title": "Impartial pebbling games"},
   "MathlibExt/GameTheory/PenultsOfTak": {"to": "GameTheory/combinatorial-games", "title": "Impartial placement games"},
+  "MathlibExt/GameTheory/PenultsOfTak/DualPenultBound": {"to": "GameTheory/combinatorial-games", "title": "Impartial placement games"},
   "MathlibExt/GameTheory/PenultsOfTak/FifthBound": {"to": "GameTheory/combinatorial-games", "title": "Impartial placement games"},
   "MathlibExt/GameTheory/PenultsOfTak/LargestPenult": {"to": "GameTheory/combinatorial-games", "title": "Impartial placement games"},
   "MathlibExt/GameTheory/PenultsOfTak/WeightedCrossBound": {"to": "GameTheory/combinatorial-games", "title": "Impartial placement games"},
