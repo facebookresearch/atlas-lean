@@ -19,11 +19,13 @@ import MathlibExt.Analysis.Complex.Rouche
 /-!
 # Hayman Research Problems in Function Theory (2018), Problem 2.28 [AMR-022-2028]
 
-The Jacobi theta function gives the counterexample in `conjecture_refuted`. Its
+The Jacobi theta function gives the counterexample in
+`exists_bounded_each_value_not_isBoundedValueDistribution` and `conjecture_refuted`. Its
 quasi-periodicity and Rouché's theorem give a bound on the number of preimages of each fixed
-finite value in discs of a given radius. On rescaling around $ni$, the functions
-$e^{-π n^2}θ(ni+z/n)-θ(0)$ converge on compact sets to $θ(0)(e^{-2πiz}-1)$. Its integer
-zeros force arbitrarily many preimages of $e^{π n^2}θ(0)$ in a unit disc.
+finite value in discs of a given radius, and it has no poles. On rescaling around $ni$, the
+functions $e^{-π n^2}θ(ni+z/n)-θ(0)$ converge on compact sets to $θ(0)(e^{-2πiz}-1)$. Its
+integer zeros force arbitrarily many preimages of $e^{π n^2}θ(0)$ in a unit disc. The proof of
+`conjecture_refuted` takes the three distinguished values to be the finite values `0`, `1`, `2`.
 
 Stable source: Hayman - Research Problems in Function Theory (2018), Problem 2.28,
 source URL `https://arxiv.org/abs/1809.07200`, extraction `source-tex`.
@@ -63,7 +65,12 @@ source URL `https://arxiv.org/abs/1809.07200`, extraction `source-tex`.
     `y⁽ⁿ⁾ + f₁(z)y⁽ⁿ⁻¹⁾ + ⋯ + fₙ(z)y = 0` with entire coefficients having only
     b.v.d. solutions implies the `f_ν` are constants, and conversely.
 11. Question hypothesis (P. Turán): the basic bound is assumed for only three
-    values `w₁, w₂, w₃ : ℂ`, pairwise distinct.
+    values `w₁, w₂, w₃`, pairwise distinct. The source says "three such values"
+    without saying whether `∞` may be one of them. As in clause 4, the formal
+    values lie on the Riemann sphere (`w₁, w₂, w₃ : Option ℂ`, with `none` for
+    `∞`). This weakens the hypothesis, so `conjecture` implies the reading in
+    which the three values are finite; the counterexample takes the finite
+    values `0`, `1`, `2`, so it refutes both readings.
 12. Question claim: does the three-value bound imply `f` is of bounded value
     distribution for all `w`?
 
@@ -530,6 +537,40 @@ private theorem not_bounded : ¬ IsBoundedValueDistribution theta := by
   rw [hcount] at hle
   linarith [model_count (C := C) (R := R) (by linarith)]
 
+/-- **Bounding each value separately does not give bounded value distribution.** There is a
+function $f : \mathbb{C} \to \mathbb{C}$, meromorphic on $\mathbb{C}$, such that for every
+$w \in \mathbb{C}$ there is a point at which $f - w$ has finite meromorphic order, and such that
+for every value $w$ of the Riemann sphere $\mathbb{C} \cup \{\infty\}$ and every real $r > 0$
+there is a natural number $C$, depending on $w$ and $r$, for which, for every open disc of
+radius $r$, the multiplicities of $w$ as a value of $f$ at the points of any finite subset of
+the disc add up to at most $C$; and yet $f$ does not have bounded value distribution. In
+particular, Turán's question has a negative answer even when the three values are required to
+be finite.
+
+Source: Hayman - Research Problems in Function Theory (2018), Problem 2.28 [AMR-022-2028],
+`https://arxiv.org/abs/1809.07200`, question by P. Turán. -/
+theorem exists_bounded_each_value_not_isBoundedValueDistribution :
+    ∃ f : ℂ → ℂ, MeromorphicOn f Set.univ ∧
+      (∀ w : ℂ, ∃ z : ℂ, meromorphicOrderAt (fun t => f t - w) z ≠ ⊤) ∧
+      (∀ (w : Option ℂ) (r : ℝ), r > 0 →
+        ∃ C : ℕ, ∀ (c : ℂ) (s : Finset ℂ),
+          (↑s ⊆ Metric.ball c r) → ∑ z ∈ s, rootMultSph f w z ≤ (C : ℕ∞)) ∧
+      ¬ IsBoundedValueDistribution f := by
+  refine ⟨theta, fun z _ => (theta_diff.analyticAt z).meromorphicAt,
+    fun w => ⟨0, theta_finite w 0⟩, fun w r hr => ?_, not_bounded⟩
+  cases w with
+  | some w => exact bounded_at w r hr
+  | none =>
+    have hp (z : ℂ) : poleMult theta z = 0 := by
+      have hn := (theta_diff.analyticAt z).meromorphicOrderAt_nonneg
+      unfold poleMult
+      cases ho : meromorphicOrderAt theta z with
+      | top => simp
+      | coe k =>
+        rw [ho, ← WithTop.coe_zero, WithTop.coe_le_coe] at hn
+        simp [Int.toNat_of_nonpos (neg_nonpos.mpr hn)]
+    exact ⟨0, fun c s _ => by simp [rootMultSph, hp]⟩
+
 /--
 **Turán's three-value question has a negative answer.** There is a function
 $f : \mathbb{C} \to \mathbb{C}$, meromorphic on $\mathbb{C}$, such that for every $w \in \mathbb{C}$
@@ -550,28 +591,17 @@ Theory (2018), arXiv:1809.07200, https://arxiv.org/abs/1809.07200. Moved from
 -/
 public theorem conjecture_refuted : ¬ conjecture := by
   intro h
-  apply not_bounded
-  apply h theta (fun z _ => (theta_diff.analyticAt z).meromorphicAt)
-    (fun w => ⟨0, theta_finite w 0⟩)
-  refine ⟨none, some 0, some 1, by simp, by simp, by simp, ?_⟩
-  intro r hr
-  obtain ⟨A, hA⟩ := bounded_at 0 r hr
-  obtain ⟨B, hB⟩ := bounded_at 1 r hr
-  refine ⟨max A B, fun c w hw s hs => ?_⟩
-  rcases hw with h | h | h
-  · subst w
-    have hp (z : ℂ) : poleMult theta z = 0 := by
-      have hn := (theta_diff.analyticAt z).meromorphicOrderAt_nonneg
-      unfold poleMult
-      cases ho : meromorphicOrderAt theta z with
-      | top => simp
-      | coe k =>
-        rw [ho, ← WithTop.coe_zero, WithTop.coe_le_coe] at hn
-        simp [Int.toNat_of_nonpos (neg_nonpos.mpr hn)]
-    simp [rootMultSph, hp]
-  · subst w
-    exact (hA c s hs).trans (by exact_mod_cast le_max_left A B)
-  · obtain rfl : w = some 1 := h
-    exact (hB c s hs).trans (by exact_mod_cast le_max_right A B)
+  obtain ⟨f, hf, hnc, hb, hnot⟩ := exists_bounded_each_value_not_isBoundedValueDistribution
+  refine hnot (h f hf hnc ⟨some 0, some 1, some 2, by norm_num, by norm_num, by norm_num,
+    fun r hr => ?_⟩)
+  obtain ⟨A, hA⟩ := hb (some 0) r hr
+  obtain ⟨B, hB⟩ := hb (some 1) r hr
+  obtain ⟨D, hD⟩ := hb (some 2) r hr
+  refine ⟨max A (max B D), fun c w hw s hs => ?_⟩
+  rcases hw with rfl | rfl | hw
+  · exact (hA c s hs).trans (by exact_mod_cast le_max_left _ _)
+  · exact (hB c s hs).trans (by exact_mod_cast (le_max_left B D).trans (le_max_right _ _))
+  · obtain rfl : w = some 2 := hw
+    exact (hD c s hs).trans (by exact_mod_cast (le_max_right B D).trans (le_max_right _ _))
 
 end MathlibExt.Analysis.TuranThreeValueBoundedDistributionWanted
