@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.GCDMonoid.Finset
 public import MathlibExt.NumberTheory.GeneralizedFrobeniusTriangular
+public import MathlibExt.NumberTheory.GeneralizedFrobeniusTriangularIsGenFrobeniusNumberConsMulOfGcd
 
 /-!
 Statements from Subwattanachai on the generalized Frobenius number of three consecutive triangular
@@ -24,24 +25,6 @@ generator vector below is positive, so the `ℕ∞`-valued representation count 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Beck–Kifer reduction by a common factor of all generators but the first.** Let $K \ge 2$,
-let $a_1$ and $\ell$ be positive integers, and let $a'_2, \dots, a'_K$ be positive integers with
-$\gcd(a'_2, \dots, a'_K) = 1$ such that $\gcd(a_1, \ell a'_2, \dots, \ell a'_K) = 1$. Let $s$ be a
-natural number. If $g'$ is the generalized Frobenius number $g(a_1, a'_2, \dots, a'_K; s)$, then
-$\ell g' + a_1(\ell - 1)$ is the generalized Frobenius number
-$g(a_1, \ell a'_2, \dots, \ell a'_K; s)$.
-
-Source: Kittipong Subwattanachai, *Formulas for the Generalized Frobenius Number of Triangular
-Numbers*, INTEGERS 26 (2026), Article A63, Lemma 1 (`integers-2026-A63-lem-1`), quoted from Beck
-and Kifer, Lemma 4. -/
-public theorem_wanted isGenFrobeniusNumber_cons_mul_of_gcd (k : ℕ) (a₁ ℓ : ℕ)
-    (a' : Fin (k + 1) → ℕ) (ha₁ : 0 < a₁) (ha' : ∀ i, 0 < a' i) (hℓ : 0 < ℓ)
-    (hgcd' : Finset.univ.gcd a' = 1)
-    (hgcd : Finset.univ.gcd (Fin.cons a₁ (fun i => ℓ * a' i) : Fin (k + 2) → ℕ) = 1)
-    (s : ℕ) (g' : ℤ) (hg' : IsGenFrobeniusNumber (Fin.cons a₁ a' : Fin (k + 2) → ℕ) s g') :
-    IsGenFrobeniusNumber (Fin.cons a₁ (fun i => ℓ * a' i) : Fin (k + 2) → ℕ) s
-      (ℓ * g' + a₁ * ((ℓ : ℤ) - 1))
 
 /-- **Representation counts between consecutive two-generator Frobenius numbers.** Let $a$ and $b$
 be coprime positive integers. For a natural number $r$ let $g(a, b; r)$ be the generalized

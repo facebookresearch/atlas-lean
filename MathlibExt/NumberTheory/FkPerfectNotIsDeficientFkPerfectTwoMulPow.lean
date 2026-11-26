@@ -8,14 +8,15 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import MathlibExt.NumberTheory.FkPerfect
 public import MathlibExt.NumberTheory.OddPrimeDeficientPerfect
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 /-!
 # Deficient `F_k`-perfect numbers of the form `2 * p ^ a`
 
-This module defines deficient `F_k`-perfect numbers and proves that `2 * p ^ a`
-is not deficient `F_k`-perfect when `k > 2` and `p` is an odd prime.
+This module proves that `2 * p ^ a` is not deficient `F_k`-perfect (`IsDeficientFkPerfect`,
+defined in `MathlibExt.NumberTheory.FkPerfect`) when `k > 2` and `p` is an odd prime.
 
 Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta, and Manjil P. Saikia,
 "On Near `F_k`-Perfect and Deficient `F_k`-Perfect Numbers", *INTEGERS* 25 (2025),
@@ -27,13 +28,6 @@ set_option autoImplicit false
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.FkPerfectWanted
-
-/-- **Deficient $F_k$-perfect numbers.** For natural numbers $k$ and $n$, write
-$\sigma_k(n) = \sum_{e \mid n} e^k$. The number $n$ is deficient $F_k$-perfect when it is
-$[k,3]$-deficient-perfect, that is, when there is a divisor $d$ of $n$ with $d < n$ such that
-$\sigma_k(n) + d^k = n^k + 3n$. -/
-def IsDeficientFkPerfect (k n : ℕ) : Prop :=
-  IsKLDeficientPerfect k 3 n
 
 /-- **No deficient $F_k$-perfect number of the form $2p^a$ for $k > 2$.** Let $k > 2$, let $p$ be
 an odd prime and let $a$ be a natural number. Then $2p^a$ is not deficient $F_k$-perfect.
