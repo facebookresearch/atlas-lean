@@ -138,18 +138,6 @@ public theorem_wanted exactSlowNimBasicValue_of_supports_basicA1 {k : ℕ} (hk :
     (∀ x' ∈ slowANimMoves {k} x, exactSlowNimBasicValue k x - 2 ≤ exactSlowNimBasicValue k x') ∧
       exactSlowNimBasicValue k (exactSlowNimMRuleMove x) = exactSlowNimBasicValue k x - 1
 
-/-- **Basic-vector value equals Smith's remoteness (Lemma 4).** Let $k \ge 1$ and consider
-Slow$\{k\}$-Nim on $k + 1$ stacks, in which a move removes one token from each of exactly $k$
-nonempty stacks. For every position $x \in \mathbb{N}^{k+1}$, the basic-vector value $B(x)$
-equals Smith's remoteness of $x$ in this game.
-
-Source: Vladimir Gurvich, Denis Martynov, Vladislav Maximchuk, and Michael Vyalyi, *On
-Remoteness Functions of Exact Slow k-NIM with k+1 Piles*, INTEGERS 24 (2024), Article G1,
-Lemma 4. -/
-public theorem_wanted exactSlowNimBasicValue_eq_smithRemoteness {k : ℕ} (hk : 0 < k)
-    (x : Fin (k + 1) → ℕ) :
-    exactSlowNimBasicValue k x = SpragueGrundy.smithRemoteness (slowANimGame (k + 1) {k}) x
-
 /-- **Theorem 3 (Smith's remoteness of exact slow k-NIM is polynomial-time computable).** The map
 sending a list $(x_0, \dots, x_{n-1})$ of natural numbers of length $n$ to Smith's remoteness of
 the position $(x_0, \dots, x_{n-1})$ of Slow$A$-Nim on $n$ stacks with $A = \{n - 1\}$ (where

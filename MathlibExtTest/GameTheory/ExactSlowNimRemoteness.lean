@@ -55,6 +55,35 @@ example : exactSlowNimBasicValue 2 ![2, 3, 2] = 3 := by
 
 end MetaMathlibExt.exactSlowNimBasicValue_of_supports_basicB
 
+namespace MetaMathlibExt.exactSlowNimBasicValue_eq_smithRemoteness
+
+-- The type (B) vector (3, 3, 3) has basic-vector value four, so its Smith remoteness in NIM(3, 2)
+-- is four, the M-rule length that `exactSlowNimMRuleLength_three_three_three` computes.
+example : SpragueGrundy.smithRemoteness (slowANimGame 3 {2}) ![3, 3, 3] =
+    exactSlowNimMRuleLength 2 ![3, 3, 3] := by
+  let x : Fin 3 → ℕ := ![3, 3, 3]
+  have hb : IsExactSlowNimBasicB 2 4 x := by
+    unfold IsExactSlowNimBasicB
+    decide
+  have hsum : ∑ i, x i = 9 := by decide
+  have hx : exactSlowNimBasicValue 2 x = 4 := by
+    classical
+    unfold exactSlowNimBasicValue
+    rw [hsum, Nat.findGreatest_eq_iff]
+    refine ⟨by decide, fun _ => ⟨x, le_rfl, Or.inr (Or.inr hb)⟩, ?_⟩
+    rintro n hn _ ⟨y, hyx, ha | ha | hB⟩ <;>
+      have hle := (Finset.sum_le_sum fun i _ => hyx i).trans_eq hsum
+    · have := ha.1
+      omega
+    · have := ha.1
+      omega
+    · have := hB.1
+      omega
+  rw [exactSlowNimMRuleLength_three_three_three]
+  exact (exactSlowNimBasicValue_eq_smithRemoteness (k := 2) (by decide) x).symm.trans hx
+
+end MetaMathlibExt.exactSlowNimBasicValue_eq_smithRemoteness
+
 namespace MetaMathlibExt.exactSlowNim_critical_of_even
 
 private theorem remoteness_of_singleton_moves (G : SpragueGrundy.ImpartialGame) (p q : G.Pos)

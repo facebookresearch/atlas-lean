@@ -18,7 +18,8 @@ public import MathlibExt.GameTheory.SmithRemoteness
 # Remoteness of Exact Slow `k`-NIM with `k + 1` piles
 
 A position supported by a type (B) basic vector equals that vector, and each move lowers
-its basic-vector value by one. For positive even remoteness, critical positions have uniform
+its basic-vector value by one. When `0 < k`, the basic-vector value of every position equals its
+Smith remoteness. For positive even remoteness, critical positions have uniform
 pile parity. Moves from an all-even critical position that lower every pile of size equal to its
 remoteness give a critical position at the preceding parameter.
 
@@ -1296,6 +1297,20 @@ private theorem critical_of_a1 {k b : ℕ} (hk : 0 < k) {y : Fin (k + 1) → ℕ
       exact hz.not_ge (fun i => h i (Finset.mem_univ _))
     exact (Nat.lt_of_mul_lt_mul_left ((mul_value_le_sum hk z).trans_lt (hsum.trans_eq hy.1))).ne
 end exactSlowNim_critical_of_even
+
+open exactSlowNim_critical_of_even in
+/-- **Basic-vector value equals Smith's remoteness (Lemma 4).** Let $k \ge 1$ and consider
+Slow$\{k\}$-Nim on $k + 1$ stacks, in which a move removes one token from each of exactly $k$
+nonempty stacks. For every position $x \in \mathbb{N}^{k+1}$, the basic-vector value $B(x)$
+equals Smith's remoteness of $x$ in this game.
+
+Source: Vladimir Gurvich, Denis Martynov, Vladislav Maximchuk, and Michael Vyalyi, *On
+Remoteness Functions of Exact Slow k-NIM with k+1 Piles*, INTEGERS 24 (2024), Article G1,
+Lemma 4. -/
+public theorem exactSlowNimBasicValue_eq_smithRemoteness {k : ℕ} (hk : 0 < k)
+    (x : Fin (k + 1) → ℕ) :
+    exactSlowNimBasicValue k x = SpragueGrundy.smithRemoteness (slowANimGame (k + 1) {k}) x :=
+  (smith_eq_value hk x).symm
 
 open exactSlowNim_critical_of_even in
 /-- **Moves from critical positions with even parameter (Corollary 1 (i)).** Let $k \ge 1$, let
