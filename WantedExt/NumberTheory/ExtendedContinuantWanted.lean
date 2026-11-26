@@ -13,6 +13,7 @@ public import Mathlib.Algebra.ContinuedFractions.Computation.Basic
 public import Mathlib.Algebra.Ring.NegOnePow
 public import Mathlib.Analysis.Real.Sqrt
 public import MathlibExt.NumberTheory.ExtendedContinuant
+public import MathlibExt.NumberTheory.ExtendedContinuantExtendedContinuantEuler
 public import MathlibExt.NumberTheory.ExtendedContinuantExtendedContinuantBennett
 
 /-!
@@ -57,20 +58,6 @@ public theorem_wanted extendedContinuant_bennett_nat (x : ℤ → ℤ) (k ℓ m 
         extendedContinuant x ((k : ℤ) - m - 2) m +
       ((m + k : ℤ).negOnePow : ℤ) * extendedContinuant x ((n : ℤ) - m - 2) m *
         extendedContinuant x ((ℓ : ℤ) - k - 2) k = 0
-
-/-- **Euler's continuant identity for extended continuants.** Let $x : \mathbb{Z} \to \mathbb{Z}$
-be an integer sequence and write $K_a(x)_b$ for its extended continuant of order $a$ with start
-index $b$. For all integers $h$, $k$, $\ell$, $m$,
-$$K_{\ell+m}(x)_h K_{k-1}(x)_{\ell+h+1} - K_{m-1}(x)_{\ell+h+1} K_{k+\ell}(x)_h =
-(-1)^k K_{m-k-2}(x)_{k+\ell+h+2} K_{\ell-1}(x)_h.$$
-
-Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
-INTEGERS 26 (2026), Article A73, Corollary 1. -/
-public theorem_wanted extendedContinuant_euler (x : ℤ → ℤ) (h k ℓ m : ℤ) :
-    extendedContinuant x (ℓ + m) h * extendedContinuant x (k - 1) (ℓ + h + 1) -
-        extendedContinuant x (m - 1) (ℓ + h + 1) * extendedContinuant x (k + ℓ) h =
-      (k.negOnePow : ℤ) * extendedContinuant x (m - k - 2) (k + ℓ + h + 2) *
-        extendedContinuant x (ℓ - 1) h
 
 /-- **Terms of a $1$-silent sequence.** Let $x, y, z : \mathbb{Z} \to \mathbb{Z}$ be bi-infinite
 integer sequences and write $K_a(x)_b$ for the extended continuant of order $a$ with start index
