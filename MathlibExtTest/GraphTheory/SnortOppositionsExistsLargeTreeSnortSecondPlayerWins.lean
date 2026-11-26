@@ -15,6 +15,8 @@ import MathlibExt.GraphTheory.SnortOppositionsExistsLargeTreeSnortSecondPlayerWi
 
 The existence theorem supplies a tree with at least one hundred vertices and
 implies that a winning tree can be chosen with more vertices than any given bound.
+The bounded outcome `snortMoverWins` is evaluated on the two graphs on two vertices: an
+edge blocks the reply, two isolated vertices do not.
 -/
 
 namespace MathlibExtTest.GraphTheory
@@ -30,6 +32,14 @@ example (N : ℕ) : ∃ n > N, ∃ T : SimpleGraph (Fin n), ∃ _ : DecidableRel
     T.IsTree ∧ SnortSecondPlayerWins T := by
   obtain ⟨n, hn, T, hdec, htree, hwin⟩ := exists_large_tree_snortSecondPlayerWins (N + 1)
   exact ⟨n, by omega, T, hdec, htree, hwin⟩
+
+-- On the complete graph on two vertices, the first player's opening blocks the other vertex,
+-- so the second player has no legal reply and the player to move wins.
+example : snortMoverWins (⊤ : SimpleGraph (Fin 2)) 2 ∅ ∅ = true := by decide
+
+-- On two isolated vertices the second player can always colour the other vertex, after which
+-- the first player has no move, so the player to move loses.
+example : snortMoverWins (⊥ : SimpleGraph (Fin 2)) 2 ∅ ∅ = false := by decide
 
 end SnortOppositionsExistsLargeTreeSnortSecondPlayerWins
 end MathlibExtTest.GraphTheory

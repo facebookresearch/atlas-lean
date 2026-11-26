@@ -23,7 +23,8 @@ fuel bound on the number of remaining moves; at fuel `Fintype.card V` from the
 empty position the fuel never runs out, so `SnortFirstPlayerWins` and
 `SnortSecondPlayerWins` (the latter also defined in
 `MathlibExt.GraphTheory.SnortOppositionsExistsLargeTreeSnortSecondPlayerWins`)
-are the outcomes of the game on the untinted graph.
+are the outcomes of the game on the untinted graph. The `n`-firework `firework G u v n`
+is defined in that module too.
 
 An *opposition* of `G` is an involutive automorphism `f` with `f v ∉ N[v]`
 for all `v`; `G` is *opposable* if it has one. A set `S` is *admissible* if
@@ -95,19 +96,6 @@ def IsCompatiblyAlmostOpposable (G : SimpleGraph V) : Prop :=
   ∃ u : V, ∃ S : Set V, u ∈ S ∧ S ⊆ insert u (G.neighborSet u) ∧
     ∃ α : G ≃g G, (∀ v, α (α v) = v) ∧
       ∃ f : G.induce Sᶜ ≃g G.induce Sᶜ, IsOpposition _ f ∧ ∀ x : ↥Sᶜ, α x = (f x : V)
-
-/-- **Firework of a graph.** For a graph $G$, vertices $u$ and $v$ of $G$ and a natural number $n$,
-the $n$-firework of $G$ at $(u, v)$ is the graph obtained from $G$ by adding $2n$ new vertices,
-$n$ of which are adjacent only to $u$ and the other $n$ adjacent only to $v$.
-
-Source: Ashmore, Austin, Davies, Dyer, Kellough, *On Graph Automorphisms
-Related to SNORT*, INTEGERS 26 (2026), Article G2, Section 3 (the `n`-firework). -/
-def firework (G : SimpleGraph V) (u v : V) (n : ℕ) : SimpleGraph (V ⊕ (Fin n × Bool)) :=
-  SimpleGraph.fromRel fun x y => match x, y with
-    | Sum.inl a, Sum.inl b => G.Adj a b
-    | Sum.inl a, Sum.inr (_, false) => a = u
-    | Sum.inl a, Sum.inr (_, true) => a = v
-    | _, _ => False
 
 /-- **Strong grid.** For $k \in \mathbb{N}$ and natural numbers $n_0, \dots, n_{k-1}$, the
 $k$-dimensional strong grid $P_{n_0} \boxtimes \cdots \boxtimes P_{n_{k-1}}$ is the simple

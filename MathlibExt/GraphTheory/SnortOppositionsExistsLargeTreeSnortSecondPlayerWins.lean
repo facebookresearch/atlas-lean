@@ -9,24 +9,19 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Combinatorics.SimpleGraph.Acyclic
-public import Mathlib.Combinatorics.SimpleGraph.Hasse
-public import Mathlib.Combinatorics.SimpleGraph.Metric
-public import Mathlib.Combinatorics.SimpleGraph.Prod
-public import Mathlib.Data.Fintype.Pi
-public import MathlibExt.Combinatorics.SimpleGraph.RookGraph
-public import MathlibExt.Combinatorics.SimpleGraph.SnortOppositions
 
 import Mathlib.Tactic.FinCases
 
 /-!
 # Arbitrarily large Snort second-player-winning trees
 
-This module defines the bounded Snort outcome and its second-player-win predicate,
-and proves the existence of arbitrarily large trees with that outcome.
+This module defines the bounded Snort outcome, its second-player-win predicate and the
+`n`-firework of a graph, and proves the existence of arbitrarily large trees with that outcome:
+fireworks of one fixed tree at two hubs.
 
 Source: Rylo Ashmore, Beth Ann Austin, Alfie M. Davies, Danny Dyer, and
 William Kellough, "On Graph Automorphisms Related to SNORT", *INTEGERS* 26
-(2026), Article G2 (arXiv:2506.20669), Corollary 2.
+(2026), Article G2 (arXiv:2506.20669), Corollary 2 (Corollary 3.6 in arXiv v1).
 -/
 
 namespace MetaMathlibExt
@@ -67,17 +62,27 @@ def SnortSecondPlayerWins [Fintype V] [DecidableEq V] (G : SimpleGraph V)
     [DecidableRel G.Adj] : Prop :=
   snortMoverWins G (Fintype.card V) ∅ ∅ = false
 
+/-- **Firework of a graph.** For a graph $G$, vertices $u$ and $v$ of $G$ and a natural number $n$,
+the $n$-firework of $G$ at $(u, v)$ is the graph obtained from $G$ by adding $2n$ new vertices,
+$n$ of which are adjacent only to $u$ and the other $n$ adjacent only to $v$.
+
+Source: Ashmore, Austin, Davies, Dyer, Kellough, *On Graph Automorphisms
+Related to SNORT*, INTEGERS 26 (2026), Article G2, Section 3 (the `n`-firework). -/
+def firework (G : SimpleGraph V) (u v : V) (n : ℕ) : SimpleGraph (V ⊕ (Fin n × Bool)) :=
+  SimpleGraph.fromRel fun x y => match x, y with
+    | Sum.inl a, Sum.inl b => G.Adj a b
+    | Sum.inl a, Sum.inr (_, false) => a = u
+    | Sum.inl a, Sum.inr (_, true) => a = v
+    | _, _ => False
+
 private def base : SimpleGraph (Fin 14) :=
   SimpleGraph.fromRel fun u v => (u, v) ∈ ([(0,1),(1,2),(2,3),(0,4),(4,5),(5,6),(6,7),
     (0,8),(8,9),(9,10),(10,11),(3,12),(3,13)] : List (Fin 14 × Fin 14))
 private instance : DecidableRel base.Adj := fun u v =>
   inferInstanceAs (Decidable (u ≠ v ∧ _))
 private def hub (b : Bool) : Fin 14 := if b then 3 else 0
-private def extension (m : ℕ) : SimpleGraph (Fin 14 ⊕ (Fin m × Bool)) :=
-  SimpleGraph.fromRel fun x y => match x, y with
-    | Sum.inl a, Sum.inl b => base.Adj a b
-    | Sum.inl a, Sum.inr (_, b) => a = hub b
-    | _, _ => False
+-- The witness tree: the `m`-firework of `base` at its two hubs `0` and `3`.
+local notation "extension " m:max => firework base 0 3 m
 private instance (m : ℕ) : DecidableRel (extension m).Adj := by
   intro x y
   cases x with
@@ -148,7 +153,7 @@ private theorem base_move (m : ℕ) (b : Bool) (A B : Finset (Fin 14))
 
 private theorem extension_base_adj (m : ℕ) (u v : Fin 14) :
     (extension m).Adj (Sum.inl u) (Sum.inl v) ↔ base.Adj u v := by
-  simp only [extension, SimpleGraph.fromRel_adj, ne_eq, Sum.inl.injEq]
+  simp only [firework, SimpleGraph.fromRel_adj, ne_eq, Sum.inl.injEq]
   rw [base.adj_comm v u, or_self]
   exact ⟨And.right, fun h => ⟨h.ne, h⟩⟩
 private theorem legal_base (m : ℕ) (b : Bool) (A B : Finset (Fin 14))
@@ -165,7 +170,7 @@ private theorem legal_base (m : ℕ) (b : Bool) (A B : Finset (Fin 14))
     refine ⟨ha, hb, hadj, ?_⟩
     have hne : v ≠ hub (!b) := fun h => hb (h ▸ hv)
     intro i _
-    simp [extension, hne]
+    cases b <;> simp_all [firework, hub]
 private theorem legal_leaf (m : ℕ) (b : Bool) (A B : Finset (Fin 14))
     (S T : Finset (Fin m)) (hu : hub b ∈ A) (hv : hub (!b) ∈ B)
     (hd : Disjoint A B) (i : Fin m) (c : Bool) :
@@ -173,7 +178,7 @@ private theorem legal_leaf (m : ℕ) (b : Bool) (A B : Finset (Fin 14))
       (∀ w ∈ position m (!b) B T, ¬ (extension m).Adj (Sum.inr (i, c)) w) ↔
     c = b ∧ i ∉ S := by
   have hnot : hub b ∉ B := fun h => (Finset.disjoint_left.mp hd) hu h
-  cases b <;> cases c <;> simp_all [position, extension, hub]
+  cases b <;> cases c <;> simp_all [position, firework, hub]
 private theorem insert_base (m : ℕ) (b : Bool) (A : Finset (Fin 14))
     (S : Finset (Fin m)) (v : Fin 14) :
     insert (Sum.inl v) (position m b A S) = position m b (insert v A) S := by
@@ -417,7 +422,7 @@ private theorem reservoir_loses {V : Type*} [Fintype V] [DecidableEq V]
 private theorem extension_leaf_adj (m : ℕ) (i : Fin m) (b : Bool)
     (x : Fin 14 ⊕ (Fin m × Bool)) :
     (extension m).Adj (Sum.inr (i, b)) x ↔ x = Sum.inl (hub b) := by
-  cases x <;> simp [extension, eq_comm]
+  cases x <;> cases b <;> simp [firework, hub, eq_comm]
 private theorem legal_leaf_any (m : ℕ) (b : Bool) (A B : Finset (Fin 14 ⊕ (Fin m × Bool)))
     (i : Fin m) :
     Legal (extension m) A B (Sum.inr (i, b)) ↔
@@ -710,7 +715,7 @@ private theorem hub_reply (m : ℕ) (x : Fin 14 ⊕ (Fin m × Bool)) :
   | inr p =>
     obtain ⟨i, c⟩ := p
     refine ⟨!c, ?_⟩
-    cases c <;> simp [Legal, extension, hub]
+    cases c <;> simp [Legal, firework, hub]
 private theorem extension_second (m : ℕ) (hm : 15 ≤ m) : SnortSecondPlayerWins (extension m) := by
   unfold SnortSecondPlayerWins
   simp only [Fintype.card_sum, Fintype.card_fin, Fintype.card_prod, Fintype.card_bool]
