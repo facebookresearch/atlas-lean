@@ -30,6 +30,11 @@ coordinate. We use two bumps per strip, with sine and cosine oscillations, so th
 second coordinate at least one of the two bump centers witnesses the jump. The construction
 is on all of `ℝ × ℝ`; only the set used to contradict the almost-everywhere claim is
 restricted to the open unit square.
+
+The claim retains its original `Set.Ioo (0, 0) (1, 1)` restriction in the product order
+for definitional compatibility. This interval includes some boundary points, but the
+boundary lies on four Lebesgue-null coordinate lines. The regression proves that its
+restricted measure agrees with the restriction to the product of the two open intervals.
 -/
 
 namespace MathlibExt.Analysis.Calculus.ScottishBook66Wanted
