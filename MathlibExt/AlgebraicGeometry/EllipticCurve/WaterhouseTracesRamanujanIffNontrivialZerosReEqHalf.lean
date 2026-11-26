@@ -28,9 +28,9 @@ import Mathlib.LinearAlgebra.Matrix.Hermitian
 /-!
 # Ihara's criterion for Ramanujan graphs
 
-This module proves Ihara's criterion: for a symmetric integer matrix, every complex
-characteristic root `μ ≠ q + 1` satisfies `‖μ‖ ≤ 2 * √q` if and only if every complex solution
-`s` of `1 - μ * q ^ (-s) + q ^ (1 - 2 * s) = 0` has real part `1 / 2`.
+For a natural number `q ≥ 2` and a symmetric integer matrix, this module proves Ihara's
+criterion: every complex characteristic root `μ ≠ q + 1` satisfies `‖μ‖ ≤ 2 * √q` if and only if
+every complex solution `s` of `1 - μ * q ^ (-s) + q ^ (1 - 2 * s) = 0` has real part `1 / 2`.
 
 Source: Daniel Vallières, *Elliptic Curves over Finite Fields and Ramanujan Graphs on Two
 Vertices*, INTEGERS 24 (2024), Article A8, Theorem 2 (`integers-2024-A8-thm-2`).

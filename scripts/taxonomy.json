@@ -9390,7 +9390,6 @@
   "MathlibExt/AlgebraicGeometry/EllipticCurve/RubinSilverberg": {"to": "AlgebraicGeometry/elliptic-curves", "title": "Rubin–Silverberg families"},
   "MathlibExt/AlgebraicGeometry/EllipticCurve/Supersingular": {"to": "AlgebraicGeometry/elliptic-curves", "title": "Supersingular elliptic curves"},
   "MathlibExt/AlgebraicGeometry/EllipticCurve/VariableChangePoint": {"to": "AlgebraicGeometry/elliptic-curves", "title": "Weierstrass curves"},
-  "MathlibExt/AlgebraicGeometry/EllipticCurve/WaterhouseTracesRamanujanIffNontrivialZerosReEqHalf": {"to": "AlgebraicGeometry/elliptic-curves", "title": "Point counts and Frobenius traces"},
   "MathlibExt/AlgebraicGeometry/EllipticCurve/XYIdeal": {"to": "AlgebraicGeometry/elliptic-curves", "title": "Weierstrass curves"},
   "MathlibExt/AlgebraicGeometry/FunctionFieldPlaces": {"to": "AlgebraicGeometry/arithmetic-geometry", "title": "Faltings's theorem"},
   "MathlibExt/AlgebraicGeometry/GeometricallyConnected": {"to": "AlgebraicGeometry/schemes-and-morphisms", "title": "Geometric properties of schemes over a field"},
