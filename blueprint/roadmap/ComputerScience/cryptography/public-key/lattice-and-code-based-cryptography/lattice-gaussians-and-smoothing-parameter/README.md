@@ -1,0 +1,16 @@
+# Lattice Gaussians and the Smoothing Parameter
+
+- [Gaussian function, Gaussian mass and discrete Gaussian on a lattice](discrete-gaussian-on-a-lattice.md)
+- [Expected squared norm of a linear combination of independent random vectors](independent-sum-squared-norm.md)
+- [Shortest vector, independent vectors and guaranteed distance decoding problems](svp-sivp-givp-and-gdd.md)
+- [Learning parity with noise](learning-parity-with-noise.md)
+- [Shifted lattice Gaussian mass is maximized at the origin](shifted-gaussian-mass-maximized-at-origin.md)
+- [Smoothing parameter of a lattice](smoothing-parameter.md)
+- [Shortening a set of independent vectors with an incremental GDD oracle](incgdd-basis-shortening-step.md)
+- [The q-ary kernel lattice and short integer solutions](q-ary-kernel-lattice.md)
+- [Banaszczyk's shifted Gaussian tail bound](banaszczyk-shifted-gaussian-tail.md)
+- [Mean and second-moment bounds for discrete Gaussians above twice the smoothing parameter](discrete-gaussian-moment-bounds.md)
+- [A Gaussian reduced modulo a lattice is close to uniform](gaussian-modulo-lattice-is-close-to-uniform.md)
+- [Smoothing parameter bound from the n-th successive minimum](smoothing-parameter-successive-minimum-bound.md)
+- [Norm tail of the discrete Gaussian above the smoothing parameter](discrete-gaussian-norm-tail.md)
+- [Smoothing parameter bound from the dual first minimum](smoothing-parameter-dual-minimum-bound.md)
