@@ -44,10 +44,13 @@ for `Γ₀(N)` already in this repository, instead of the source's argument.
 module
 
 public import MathlibExt.AlgebraicGeometry.EllipticCurve.ResidualModularity
-public import MathlibExt.NumberTheory.ModularForms.HeckeOperator.CuspForm
+public import MathlibExt.NumberTheory.ModularForms.HeckeOperator
 import Mathlib.Analysis.Complex.Polynomial.Basic
 import Mathlib.NumberTheory.ModularForms.CuspFormSubmodule
 import MathlibExt.LinearAlgebra.Eigenspace.CommonEigenvector
+import MathlibExt.NumberTheory.ModularForms.HeckeOperator.CoeffCommute
+import MathlibExt.NumberTheory.ModularForms.QCoeffExt
+import MathlibExt.NumberTheory.ModularForms.StrictPeriodsGamma0
 import MathlibExt.NumberTheory.ModularForms.SturmBoundGamma0
 
 /-!
@@ -58,16 +61,16 @@ eigenform: a cusp form whose `q`-expansion coefficients satisfy `a 1 = 1`,
 multiplicativity at coprime indices and the Hecke recurrences at prime powers.
 
 The space is finite-dimensional (by the Sturm bound) and the Hecke operators
-`T p` for primes `p ∤ N` and `U p` for primes `p ∣ N` act on it as pairwise
-commuting endomorphisms, so they have a common eigenvector `f₀`. The Hecke
-eigen-relations force `a 1 ≠ 0` for its coefficients `a`, and after dividing by
-`a 1` the eigenvalue of the operator at `p` is `a p`. The eigen-relations with
-these eigenvalues are equivalent to the defining coefficient identities of a
-normalized eigenform.
+`CuspForm.heckeTLin` (`T p` for primes `p ∤ N`) and `CuspForm.heckeULin`
+(`U p` for primes `p ∣ N`) act on it as pairwise commuting endomorphisms, so
+they have a common eigenvector `f₀`. The Hecke eigen-relations force `a 1 ≠ 0`
+for its coefficients `a`, and after dividing by `a 1` the eigenvalue of the
+operator at `p` is `a p`. The eigen-relations with these eigenvalues are
+equivalent to the defining coefficient identities of a normalized eigenform.
 
 ## Main results
 
-* `CuspForm.finiteDimensional_Gamma0`: `S_k(Γ₀(N))` is finite-dimensional.
+* `CuspForm.finiteDimensional_Gamma0`: `S_k(Γ₀(N))` is finite-dimensional (an instance).
 * `CuspForm.isNormalizedEigenform_iff_coeffHecke`: normalized eigenforms are
   characterized by the Hecke eigen-relations on their coefficients.
 * `CuspForm.exists_isNormalizedEigenform`: the main theorem.
@@ -82,24 +85,20 @@ open scoped ModularForm MatrixGroups
 
 namespace CuspForm
 
-private theorem one_mem_strictPeriods_Gamma0 (N : ℕ) :
-    (1 : ℝ) ∈ (CongruenceSubgroup.Gamma0 N : Subgroup (GL (Fin 2) ℝ)).strictPeriods := by
-  simp [CongruenceSubgroup.strictPeriods_Gamma0]
-
 /-- The constant `q`-expansion coefficient of a cusp form on `Γ₀(N)` vanishes. -/
 public theorem qCoeff_zero {N : ℕ} {k : ℤ} (f : CuspForm (CongruenceSubgroup.Gamma0 N) k) :
     ModularFormClass.qCoeff f 0 = 0 :=
-  CuspFormClass.qExpansion_coeff_zero f one_pos (one_mem_strictPeriods_Gamma0 N)
+  CuspFormClass.qExpansion_coeff_zero f one_pos
+    (CongruenceSubgroup.one_mem_strictPeriods_Gamma0 N)
 
 /-- The `q`-expansion coefficients of a cusp form on `Γ₀(N)` are linear in the form
 with respect to scalar multiplication. -/
 public theorem qCoeff_smul {N : ℕ} {k : ℤ} (c : ℂ)
     (f : CuspForm (CongruenceSubgroup.Gamma0 N) k) (n : ℕ) :
     ModularFormClass.qCoeff ⇑(c • f) n = c * ModularFormClass.qCoeff ⇑f n := by
-  have han := ModularFormClass.analyticAt_cuspFunction_zero f one_pos
-    (one_mem_strictPeriods_Gamma0 N)
   unfold ModularFormClass.qCoeff
-  rw [FunLike.coe_smul, UpperHalfPlane.qExpansion_smul han, map_smul, smul_eq_mul]
+  rw [FunLike.coe_smul, ModularForm.qExpansion_smul one_pos
+    (CongruenceSubgroup.one_mem_strictPeriods_Gamma0 N) c f, map_smul, smul_eq_mul]
 
 private theorem qCoeff_add {N : ℕ} {k : ℤ} (f g : CuspForm (CongruenceSubgroup.Gamma0 N) k)
     (n : ℕ) :
@@ -107,11 +106,11 @@ private theorem qCoeff_add {N : ℕ} {k : ℤ} (f g : CuspForm (CongruenceSubgro
       ModularFormClass.qCoeff ⇑f n + ModularFormClass.qCoeff ⇑g n := by
   unfold ModularFormClass.qCoeff
   rw [FunLike.coe_add, ModularForm.qExpansion_add one_pos
-    (one_mem_strictPeriods_Gamma0 N) f g, map_add]
+    (CongruenceSubgroup.one_mem_strictPeriods_Gamma0 N) f g, map_add]
 
 /-- The space `S_k(Γ₀(N))` of cusp forms of weight `k` on `Γ₀(N)` is
 finite-dimensional. -/
-public theorem finiteDimensional_Gamma0 (N : ℕ) [NeZero N] (k : ℤ) :
+public instance finiteDimensional_Gamma0 (N : ℕ) [NeZero N] (k : ℤ) :
     FiniteDimensional ℂ (CuspForm (CongruenceSubgroup.Gamma0 N) k) := by
   set B := (k * (CongruenceSubgroup.Gamma0 N).index).toNat / 12
   let Φ : CuspForm (CongruenceSubgroup.Gamma0 N) k →ₗ[ℂ] (Fin (B + 1) → ℂ) :=
@@ -381,30 +380,9 @@ public theorem isNormalizedEigenform_iff_coeffHecke {N : ℕ}
 
 section Operators
 
-/-- The Hecke operator at `p` on functions: `U p` when `p ∣ N`, `T p` otherwise. -/
-private def hk (N p : ℕ) (f : ℍ → ℂ) : ℍ → ℂ :=
-  if p ∣ N then heckeU 2 p f else heckeT 2 p f
-
-private theorem hk_add (N p : ℕ) (f g : ℍ → ℂ) : hk N p (f + g) = hk N p f + hk N p g := by
-  unfold hk; split_ifs
-  · exact heckeU_add 2 p f g
-  · exact heckeT_add 2 p f g
-
-private theorem hk_smul (N p : ℕ) (c : ℂ) (f : ℍ → ℂ) : hk N p (c • f) = c • hk N p f := by
-  unfold hk; split_ifs
-  · exact heckeU_smul 2 p c f
-  · exact heckeT_smul 2 p c f
-
 /-- The coefficient Hecke operator at `p`: `U p` when `p ∣ N`, `T p` otherwise. -/
 private def ck (N p : ℕ) (a : ℕ → ℂ) : ℕ → ℂ :=
   if p ∣ N then coeffHeckeU p a else coeffHeckeT 2 p a
-
-private theorem qCoeff_hk (N : ℕ) {p : ℕ} (hp : p ≠ 0)
-    (g : CuspForm (CongruenceSubgroup.Gamma0 N) 2) (n : ℕ) :
-    qCoeff (hk N p ⇑g) n = ck N p (qCoeff ⇑g) n := by
-  unfold hk ck; split_ifs
-  · exact qCoeff_heckeU g (one_mem_strictPeriods_Gamma0 N) hp n
-  · exact qCoeff_heckeT g (one_mem_strictPeriods_Gamma0 N) hp n
 
 private theorem ck_comm (N : ℕ) {p q : ℕ} (hp : p.Prime) (hq : q.Prime) (hpq : p ≠ q)
     (a : ℕ → ℂ) : ck N p (ck N q a) = ck N q (ck N p a) := by
@@ -422,61 +400,40 @@ private theorem qCoeff_zero' {N : ℕ} (n : ℕ) :
 
 variable {N : ℕ} [NeZero N]
 
-private theorem exists_coe_eq_hk (f : CuspForm (CongruenceSubgroup.Gamma0 N) 2) {p : ℕ}
-    (hp : p.Prime) : ∃ g : CuspForm (CongruenceSubgroup.Gamma0 N) 2, ⇑g = hk N p ⇑f := by
-  unfold hk; split_ifs with h
-  · exact exists_coe_eq_heckeU f h
-  · exact exists_coe_eq_heckeT f hp h
-
-/-- The Hecke operator at `p` on `S_2(Γ₀(N))`, and `0` when `p` is not prime. -/
-private def opFun (N : ℕ) [NeZero N] (p : ℕ) (f : CuspForm (CongruenceSubgroup.Gamma0 N) 2) :
-    CuspForm (CongruenceSubgroup.Gamma0 N) 2 :=
-  if hp : p.Prime then Classical.choose (exists_coe_eq_hk f hp) else 0
-
-private theorem coe_opFun {p : ℕ} (hp : p.Prime) (f : CuspForm (CongruenceSubgroup.Gamma0 N) 2) :
-    ⇑(opFun N p f) = hk N p ⇑f := by
-  unfold opFun; rw [dite_eq_left hp]; exact Classical.choose_spec (exists_coe_eq_hk f hp)
-
-private theorem opFun_of_not_prime {p : ℕ} (hp : ¬ p.Prime)
-    (f : CuspForm (CongruenceSubgroup.Gamma0 N) 2) : opFun N p f = 0 := by
-  unfold opFun; rw [dite_eq_right hp]
-
-/-- The Hecke operator at `p` on `S_2(Γ₀(N))`, as an endomorphism. -/
+/-- The Hecke operator at `p` on `S_2(Γ₀(N))`: `CuspForm.heckeULin` when `p ∣ N`,
+`CuspForm.heckeTLin` for a prime `p ∤ N`, and `0` when `p` is not prime. -/
 private def op (N : ℕ) [NeZero N] (p : ℕ) :
-    Module.End ℂ (CuspForm (CongruenceSubgroup.Gamma0 N) 2) where
-  toFun := opFun N p
-  map_add' f g := by
-    by_cases hp : p.Prime
-    · exact DFunLike.ext' (by
-        rw [FunLike.coe_add, coe_opFun hp, coe_opFun hp, coe_opFun hp, FunLike.coe_add, hk_add])
-    · simp [opFun_of_not_prime hp]
-  map_smul' c f := by
-    by_cases hp : p.Prime
-    · exact DFunLike.ext' (by
-        rw [RingHom.id_apply, FunLike.coe_smul, coe_opFun hp, coe_opFun hp,
-          FunLike.coe_smul, hk_smul])
-    · simp [opFun_of_not_prime hp]
+    Module.End ℂ (CuspForm (CongruenceSubgroup.Gamma0 N) 2) :=
+  if hp : p.Prime then
+    if hpN : p ∣ N then CuspForm.heckeULin 2 hpN else CuspForm.heckeTLin 2 hp hpN
+  else 0
+
+private theorem op_of_not_prime {p : ℕ} (hp : ¬ p.Prime) : op N p = 0 := by
+  unfold op; rw [dite_eq_right hp]
 
 private theorem qCoeff_op {p : ℕ} (hp : p.Prime) (f : CuspForm (CongruenceSubgroup.Gamma0 N) 2) :
     qCoeff ⇑(op N p f) = ck N p (qCoeff ⇑f) := by
   funext n
-  change qCoeff ⇑(opFun N p f) n = _
-  rw [coe_opFun hp, qCoeff_hk N hp.ne_zero]
+  unfold op ck
+  rw [dite_eq_left hp]
+  by_cases hpN : p ∣ N
+  · rw [dite_eq_left hpN, ite_eq_left hpN, CuspForm.coe_heckeULin_apply]
+    exact qCoeff_heckeU f (CongruenceSubgroup.one_mem_strictPeriods_Gamma0 N) hp.ne_zero n
+  · rw [dite_eq_right hpN, ite_eq_right hpN, CuspForm.coe_heckeTLin_apply]
+    exact qCoeff_heckeT f (CongruenceSubgroup.one_mem_strictPeriods_Gamma0 N) hp.ne_zero n
 
 private theorem op_commute (p q : ℕ) : Commute (op N p) (op N q) := by
   by_cases hp : p.Prime
   swap
-  · have : op N p = 0 := LinearMap.ext fun f => opFun_of_not_prime hp f
-    rw [this]; exact Commute.zero_left _
+  · rw [op_of_not_prime hp]; exact Commute.zero_left _
   by_cases hq : q.Prime
   swap
-  · have : op N q = 0 := LinearMap.ext fun f => opFun_of_not_prime hq f
-    rw [this]; exact Commute.zero_right _
+  · rw [op_of_not_prime hq]; exact Commute.zero_right _
   rcases eq_or_ne p q with rfl | hpq
   · exact Commute.refl _
   refine LinearMap.ext fun f => ?_
   change op N p (op N q f) = op N q (op N p f)
-  apply eq_of_forall_qCoeff_eq (one_mem_strictPeriods_Gamma0 N)
+  apply eq_of_forall_qCoeff_eq (CongruenceSubgroup.one_mem_strictPeriods_Gamma0 N)
   intro n
   have h1 := congrFun (qCoeff_op hp (op N q f)) n
   have h2 := congrFun (qCoeff_op hq (op N p f)) n
@@ -490,8 +447,6 @@ public theorem exists_isNormalizedEigenform {N : ℕ} [NeZero N]
     (h : ∃ g : CuspForm (CongruenceSubgroup.Gamma0 N) 2, g ≠ 0) :
     ∃ f : CuspForm (CongruenceSubgroup.Gamma0 N) 2, f.IsNormalizedEigenform := by
   classical
-  have : FiniteDimensional ℂ (CuspForm (CongruenceSubgroup.Gamma0 N) 2) :=
-    finiteDimensional_Gamma0 N 2
   obtain ⟨g, hg⟩ := h
   have : Nontrivial (CuspForm (CongruenceSubgroup.Gamma0 N) 2) := nontrivial_of_ne g 0 hg
   obtain ⟨f₀, hf₀, heig⟩ := Module.End.exists_forall_apply_eq_smul_of_pairwise_commute (op N)
@@ -510,7 +465,7 @@ public theorem exists_isNormalizedEigenform {N : ℕ} [NeZero N]
   have ha1 : a 1 ≠ 0 := by
     intro h1
     apply hf₀
-    apply eq_of_forall_qCoeff_eq (one_mem_strictPeriods_Gamma0 N)
+    apply eq_of_forall_qCoeff_eq (CongruenceSubgroup.one_mem_strictPeriods_Gamma0 N)
     intro n
     rw [qCoeff_zero']
     rcases Nat.eq_zero_or_pos n with rfl | hn

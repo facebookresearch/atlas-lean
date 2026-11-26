@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.NumberTheory.ModularForms.HeckeOperator.Basic
+public import MathlibExt.NumberTheory.ModularForms.HeckeOperator.CoeffCommute
 
 @[expose] public section
 
@@ -33,8 +33,17 @@ example :
         (fun m => if m = 1 then 1 else 0)) 1 := by
   simp [ModularForm.coeffHeckeT_apply, ModularForm.coeffHeckeU_apply]
 
-/-- The `T`-type operator on functions is the `U`-type sum plus the diagonal term. -/
-example (k : ℤ) (p : ℕ) (f : UpperHalfPlane → ℂ) :
-    ModularForm.heckeT k p f =
-      ModularForm.heckeU k p f + SlashAction.map k (ModularForm.heckeDiagMatrix p) f :=
-  ModularForm.heckeT_eq_heckeU_add k p f
+/-- exactSource consumer: `U`-type coefficient operators commute. -/
+example (p q : ℕ) (a : ℕ → ℂ) :
+    ModularForm.coeffHeckeU p (ModularForm.coeffHeckeU q a) =
+      ModularForm.coeffHeckeU q (ModularForm.coeffHeckeU p a) :=
+  ModularForm.coeffHeckeU_comm p q a
+
+/-- Boundary: coprimality matters for `coeffHeckeT_comm`. At the non-coprime indices
+`2` and `4`, weight `2`, the operators `T 2` and `T 4` disagree at index `2` on the
+indicator of `1` (the values are `4` and `0`). -/
+example :
+    ModularForm.coeffHeckeT 2 2 (ModularForm.coeffHeckeT 2 4 (fun m => if m = 1 then 1 else 0)) 2 ≠
+      ModularForm.coeffHeckeT 2 4 (ModularForm.coeffHeckeT 2 2
+        (fun m => if m = 1 then 1 else 0)) 2 := by
+  norm_num [ModularForm.coeffHeckeT_apply]

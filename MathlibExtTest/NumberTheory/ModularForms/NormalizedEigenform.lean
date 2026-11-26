@@ -23,6 +23,25 @@ example (N : ℕ) [NeZero N] (k : ℤ) :
     FiniteDimensional ℂ (CuspForm (CongruenceSubgroup.Gamma0 N) k) :=
   CuspForm.finiteDimensional_Gamma0 N k
 
+/-- Finite-dimensionality of `S_k(Γ₀(N))` is found by instance search. -/
+example (N : ℕ) [NeZero N] (k : ℤ) :
+    FiniteDimensional ℂ (CuspForm (CongruenceSubgroup.Gamma0 N) k) :=
+  inferInstance
+
+/-- The source statement that `T p` preserves `S_k(Γ₀(N))` for a prime `p ∤ N` is met by
+`CuspForm.heckeTLin`. -/
+example {N : ℕ} {k : ℤ} (f : CuspForm (CongruenceSubgroup.Gamma0 N) k) {p : ℕ}
+    (hp : p.Prime) (hpN : ¬ p ∣ N) :
+    ∃ g : CuspForm (CongruenceSubgroup.Gamma0 N) k, ⇑g = ModularForm.heckeT k p ⇑f :=
+  ⟨CuspForm.heckeTLin k hp hpN f, CuspForm.coe_heckeTLin_apply k hp hpN f⟩
+
+/-- The source statement that `U p` preserves `S_k(Γ₀(N))` for `p ∣ N` is met by
+`CuspForm.heckeULin`. -/
+example {N : ℕ} [NeZero N] {k : ℤ} (f : CuspForm (CongruenceSubgroup.Gamma0 N) k) {p : ℕ}
+    (hpN : p ∣ N) :
+    ∃ g : CuspForm (CongruenceSubgroup.Gamma0 N) k, ⇑g = ModularForm.heckeU k p ⇑f :=
+  ⟨CuspForm.heckeULin k hpN f, CuspForm.coe_heckeULin_apply k hpN f⟩
+
 /-- exactSource consumer: the coefficient characterization of normalized eigenforms. -/
 example {N : ℕ} (f : CuspForm (CongruenceSubgroup.Gamma0 N) 2) :
     f.IsNormalizedEigenform ↔ (ModularFormClass.qCoeff f 1 = 1 ∧ ∀ p : ℕ, p.Prime →

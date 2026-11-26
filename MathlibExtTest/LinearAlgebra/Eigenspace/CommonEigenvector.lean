@@ -9,6 +9,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.LinearAlgebra.Eigenspace.CommonEigenvector
+import Mathlib.LinearAlgebra.Matrix.Notation
+import Mathlib.LinearAlgebra.Matrix.ToLin
+import Mathlib.Tactic.FinCases
 
 @[expose] public section
 
@@ -32,3 +35,26 @@ example {K : Type*} [Field K] {ι : Type*} (T : ι → Module.End K PUnit) :
     ¬ ∃ v : PUnit, v ≠ 0 ∧ ∀ i, ∃ c : K, T i v = c • v := by
   rintro ⟨v, hv, -⟩
   exact hv (Subsingleton.elim _ _)
+
+/-- Boundary: the family must commute. On `K²` the nilpotent shifts `e₁ ↦ e₀` and
+`e₀ ↦ e₁` (the matrices `!![0, 1; 0, 0]` and `!![0, 0; 1, 0]`) do not commute and have
+no common eigenvector, over any field. -/
+example {K : Type*} [Field K] : ¬ ∃ v : Fin 2 → K, v ≠ 0 ∧ ∀ i : Fin 2, ∃ c : K,
+    (![!![0, 1; 0, 0], !![0, 0; 1, 0]] i : Matrix (Fin 2) (Fin 2) K).mulVecLin v = c • v := by
+  rintro ⟨v, hv, hT⟩
+  obtain ⟨c, hc⟩ := hT 0
+  obtain ⟨d, hd⟩ := hT 1
+  have h0 := congrFun hc 0
+  have h1 := congrFun hc 1
+  have h2 := congrFun hd 0
+  have h3 := congrFun hd 1
+  simp [Matrix.mulVec, dotProduct, Fin.sum_univ_two] at h0 h1 h2 h3
+  apply hv
+  funext i
+  fin_cases i
+  · rcases h2 with rfl | h2
+    · simpa using h3
+    · exact h2
+  · rcases h1 with rfl | h1
+    · simpa using h0
+    · exact h1
