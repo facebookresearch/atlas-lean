@@ -1,0 +1,3 @@
+# The Fine–Gray curve is the model cumulative incidence
+
+Under proportional subdistribution hazards with a scalar covariate and at a covariate value $x$ whose law is a probability measure under which $T > 0$ almost surely ($T$ measurable, $\{J = c\}$ measurable): at each grid time $t_j \ge 0$ suppose $F_c(\cdot; x)$ is continuous on $[0, t_j]$, differentiable on $(0, t_j)$ with an interval-integrable derivative, and $F_c(t_j; x) < 1$. Then the cumulative incidence of cause $c$ at covariate value $x$ and times $t_j$ is $1 - \exp(-e^{\beta x}\Lambda_{0j})$ with $\Lambda_{0j} = \int_0^{t_j}\lambda_0$.
