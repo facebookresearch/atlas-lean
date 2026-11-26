@@ -55,6 +55,27 @@ import MathlibExt.RingTheory.WittVector.Lift
 
 universe u
 
+/-- If a proper ideal `I` of a commutative ring `R` contains the prime `r`, and every monic
+polynomial of positive degree over `R` has a root modulo `I`, then `R ⧸ I` has characteristic `r`
+and every element of `R ⧸ I` is an `r`-th power: a root of `X ^ r - C x` modulo `I` is an `r`-th
+root of the class of `x`. -/
+public theorem Ideal.charP_quotient_and_forall_exists_pow_eq {R : Type*} [CommRing R]
+    {I : Ideal R} {r : ℕ} [Fact r.Prime] (hI : I ≠ ⊤) (hr : (r : R) ∈ I)
+    (hroot : ∀ p : Polynomial R, p.Monic → 0 < p.natDegree → ∃ x : R, p.eval x ∈ I) :
+    CharP (R ⧸ I) r ∧ ∀ a : R ⧸ I, ∃ b : R ⧸ I, b ^ r = a := by
+  have : Nontrivial (R ⧸ I) := Ideal.Quotient.nontrivial_iff.mpr hI
+  have : Nontrivial R := (Ideal.Quotient.mk_surjective (I := I)).nontrivial
+  refine ⟨(CharP.charP_iff_prime_eq_zero Fact.out).mpr ?_, fun a => ?_⟩
+  · rw [← map_natCast (Ideal.Quotient.mk I), Ideal.Quotient.eq_zero_iff_mem]
+    exact hr
+  · obtain ⟨x, rfl⟩ := Ideal.Quotient.mk_surjective a
+    obtain ⟨y, hy⟩ := hroot _ (Polynomial.monic_X_pow_sub_C x (Fact.out : r.Prime).ne_zero)
+      (by rw [Polynomial.natDegree_X_pow_sub_C]; exact (Fact.out : r.Prime).pos)
+    refine ⟨Ideal.Quotient.mk I y, ?_⟩
+    rw [← map_pow, Ideal.Quotient.mk_eq_mk_iff_sub_mem]
+    simpa only [Polynomial.eval_sub, Polynomial.eval_pow, Polynomial.eval_X, Polynomial.eval_C]
+      using hy
+
 namespace IsDiscreteValuationRing
 
 set_option autoImplicit false
@@ -76,33 +97,11 @@ public theorem charP_residue_and_forall_exists_pow_eq
     CharP (Onr ⧸ Ideal.span {algebraMap 𝒪 Onr π}) r ∧
       ∀ a : Onr ⧸ Ideal.span {algebraMap 𝒪 Onr π}, ∃ b : Onr ⧸ Ideal.span {algebraMap 𝒪 Onr π}, b ^
         r = a := by
-  classical
-  haveI hmaxI : (Ideal.span {algebraMap 𝒪 Onr π}).IsMaximal := hOnr_max
-  haveI : Nontrivial (Onr ⧸ Ideal.span {algebraMap 𝒪 Onr π}) :=
-    Ideal.Quotient.nontrivial_iff.mpr hOnr_max.ne_top
-  refine ⟨?_, ?_⟩
-  · refine (CharP.charP_iff_prime_eq_zero Fact.out).mpr ?_
-    have hr : ((r : ℕ) : 𝒪) ∈ Ideal.span {π} := by
-      rw [← hunr]; exact Ideal.subset_span rfl
-    have hmem : ((r : ℕ) : Onr) ∈ Ideal.span {algebraMap 𝒪 Onr π} := by
-      obtain ⟨c, hc⟩ := Ideal.mem_span_singleton'.mp hr
-      have : algebraMap 𝒪 Onr (c * π) = ((r : ℕ) : Onr) := by rw [hc, map_natCast]
-      rw [← this, map_mul]
-      exact Ideal.mul_mem_left _ _ (Ideal.subset_span rfl)
-    rw [← map_natCast (Ideal.Quotient.mk (Ideal.span {algebraMap 𝒪 Onr π})),
-      Ideal.Quotient.eq_zero_iff_mem]
-    exact hmem
-  · intro a
-    obtain ⟨x, rfl⟩ := Ideal.Quotient.mk_surjective a
-    have hr0 : r ≠ 0 := (Fact.out : r.Prime).ne_zero
-    have hmonic : (Polynomial.X ^ r - Polynomial.C x : Polynomial Onr).Monic :=
-      Polynomial.monic_X_pow_sub_C x hr0
-    have hdeg : 0 < (Polynomial.X ^ r - Polynomial.C x : Polynomial Onr).natDegree := by
-      rw [Polynomial.natDegree_X_pow_sub_C]; exact (Fact.out : r.Prime).pos
-    obtain ⟨y, hy⟩ := hOnr_closed _ hmonic hdeg
-    refine ⟨Ideal.Quotient.mk _ y, ?_⟩
-    rw [← map_pow, Ideal.Quotient.mk_eq_mk_iff_sub_mem]
-    simpa [Polynomial.eval_sub, Polynomial.eval_pow, Polynomial.eval_X, Polynomial.eval_C] using hy
+  refine Ideal.charP_quotient_and_forall_exists_pow_eq hOnr_max.ne_top ?_ hOnr_closed
+  have hr : ((r : ℕ) : 𝒪) ∈ Ideal.span {π} := hunr ▸ Ideal.mem_span_singleton_self _
+  obtain ⟨c, hc⟩ := Ideal.mem_span_singleton'.mp hr
+  rw [← map_natCast (algebraMap 𝒪 Onr), ← hc, map_mul]
+  exact Ideal.mul_mem_left _ _ (Ideal.mem_span_singleton_self _)
 
 set_option autoImplicit false
 
