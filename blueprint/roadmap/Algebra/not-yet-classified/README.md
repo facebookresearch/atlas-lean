@@ -99,3 +99,4 @@ Topics added since this subject's fields were last revised.
 - [Affine Recurrence Convergence](affine-recurrence-convergence/README.md)
 - [Sum Range Drop](sum-range-drop/README.md)
 - [Two Sided](is-two-sided.md)
+- [Is Pushout Flat Gluing](exists-alg-equiv-slice-eq-of-flat.md)
