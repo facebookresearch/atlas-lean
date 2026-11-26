@@ -31,4 +31,4 @@ for all admissible $(\phi_0,\sigma_0)$, which drives a projected-gradient recons
 
 ## Sources
 
-- A. Agosti, E. Beretta, C. Cavaterra, M. Fornoni, *Identifying early tumour states in a Cahn-Hilliard-reaction-diffusion model*, arXiv:2409.15925 (Theorems 3.2 and 3.3, Theorem 4.4, Corollary 4.7, Theorems 5.2, 5.5, 5.6 and 5.8). <https://doi.org/10.48550/arXiv.2409.15925>
+- Abramo Agosti, Elena Beretta, Cecilia Cavaterra, Matteo Fornoni and Elisabetta Rocca, *Identifying early tumour states in a Cahn-Hilliard-reaction-diffusion model*, arXiv:2409.15925 (Theorems 3.2 and 3.3, Theorem 4.4, Corollary 4.7, Theorems 5.2, 5.5, 5.6 and 5.8). <https://doi.org/10.48550/arXiv.2409.15925> Published version: Mathematical Models and Methods in Applied Sciences 35 (2025) 2329–2394, <https://doi.org/10.1142/s0218202525500411>.

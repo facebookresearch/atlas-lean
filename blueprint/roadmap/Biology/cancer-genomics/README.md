@@ -26,6 +26,5 @@ Mathematical models for tumour sequencing data: purity and copy number, cancer c
 - [Parameter identification in nonlocal phase-field tumour models](parameter-identification-in-nonlocal-phase-field-tumour-models/README.md)
 - [Radiotherapy fractionation under the linear-quadratic model](radiotherapy-fractionation-under-the-linear-quadratic-model/README.md)
 - [Reconstruction of early tumour states from final measurements](reconstruction-of-early-tumour-states-from-final-measurements/README.md)
-- [State-constrained optimal chemotherapy](state-constrained-optimal-chemotherapy/README.md)
 - [Stochastic Luria–Delbrück birth–death model](stochastic-luria-delbruck-birth-death-model/README.md)
 - [Tumor containment versus maximum tolerated dose](tumor-containment-versus-maximum-tolerated-dose/README.md)

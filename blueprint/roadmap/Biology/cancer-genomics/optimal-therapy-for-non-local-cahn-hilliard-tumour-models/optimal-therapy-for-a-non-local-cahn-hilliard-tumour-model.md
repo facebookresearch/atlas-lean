@@ -30,4 +30,4 @@ over box constraints $u_{\min}\le u\le u_{\max}$, $v_{\min}\le v\le v_{\max}$, a
 
 ## Sources
 
-- M. Fornoni, *Maximal regularity and optimal control for a non-local Cahn-Hilliard tumour growth model*, arXiv:2402.04204 (Theorem 3.10, Theorems 4.7, 4.8 and 4.11, Theorems 5.2, 5.5, 5.7 and 5.9). <https://doi.org/10.48550/arXiv.2402.04204>
+- M. Fornoni, *Maximal regularity and optimal control for a non-local Cahn-Hilliard tumour growth model*, arXiv:2402.04204 (Theorem 3.10, Theorems 4.7, 4.8 and 4.11, Theorems 5.2, 5.5, 5.7 and 5.9). <https://doi.org/10.48550/arXiv.2402.04204> Published version: Journal of Differential Equations 410 (2024) 382–448, <https://doi.org/10.1016/j.jde.2024.07.036>.

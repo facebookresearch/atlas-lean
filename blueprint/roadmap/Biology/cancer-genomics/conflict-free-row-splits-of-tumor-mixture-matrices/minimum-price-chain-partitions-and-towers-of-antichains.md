@@ -18,10 +18,6 @@ The weak inequality is a pairing argument. A chain meets an antichain in at most
 
 In the conflict-free row split problem for tumor phylogenies, restricting to *linear* branchings (unions of disjoint paths) of the containment digraph, with weights given by support sizes, is exactly a minimum price chain partition, so the minimum uncovering linear branching can be solved optimally in time $\tilde O(|V|^{\omega+1})$.
 
-## Depends on
-
-- [Conflict-free row splits are minimum uncovering branchings](conflict-free-row-splits-are-minimum-uncovering-branchings.md)
-
 ## Sources
 
-- Ademir Hujdurović, Edin Husić, Martin Milanič, Romeo Rizzi, Alexandru I. Tomescu, "Perfect phylogenies via branchings in acyclic digraphs and a generalization of Dilworth's theorem", arXiv:1701.05492 (2017): Section 3.1 (Dilworth's theorem, the lower-bound lemma, the min-max theorem, the remark on monotonicity, the corollary on minimum price chain partitions) and Section 3.2 (the theorem on minimum uncovering linear branchings). <https://doi.org/10.48550/arXiv.1701.05492>
+- Ademir Hujdurović, Edin Husić, Martin Milanič, Romeo Rizzi, Alexandru I. Tomescu, "Perfect phylogenies via branchings in acyclic digraphs and a generalization of Dilworth's theorem", arXiv:1701.05492 (2017): Section 3.1 (Dilworth's theorem, the lower-bound lemma, the min-max theorem, the remark on monotonicity, the corollary on minimum price chain partitions) and Section 3.2 (the theorem on minimum uncovering linear branchings). <https://doi.org/10.48550/arXiv.1701.05492> Published version: , <https://doi.org/10.1145/3182178>.

@@ -28,4 +28,4 @@ The viscosity terms $\alpha\partial_t\mu$ and $\beta\partial_t\varphi$ give enou
 
 ## Sources
 
-- Pierluigi Colli, Andrea Signori and Jürgen Sprekels, "Second-order analysis of an optimal control problem in a phase field tumor growth model with singular potentials and chemotaxis", arXiv:2009.07574 (2020), Section 1 (problem (CP) and state system), Theorems 2.2, 3.1, 4.1–4.4, 5.1–5.3 and 6.1, <https://doi.org/10.48550/arXiv.2009.07574>.
+- Pierluigi Colli, Andrea Signori and Jürgen Sprekels, "Second-order analysis of an optimal control problem in a phase field tumor growth model with singular potentials and chemotaxis", arXiv:2009.07574 (2020), Section 1 (problem (CP) and state system), Theorems 2.2, 3.1, 4.1–4.4, 5.1–5.3 and 6.1, <https://doi.org/10.48550/arXiv.2009.07574>. Published version: ESAIM Control Optim. Calc. Var. 27 (2021), paper No. 73, pp. 1-46, <https://doi.org/10.1051/cocv/2021072>.

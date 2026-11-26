@@ -30,4 +30,4 @@ On survival, $A(\rho_n + t) \approx n e^{\lambda_A t}$, so the mutation intensit
 
 ## Sources
 
-- David Cheek and Tibor Antal, "Mutation frequencies in a birth–death branching process", arXiv:1710.09783 (2017), Section 4 (Proposition 4.1, Theorem 4.2, Proposition 4.3, Remark 4.4, Propositions 4.5–4.6) and Section 7 (Proposition 7.3), <https://doi.org/10.48550/arXiv.1710.09783>.
+- David Cheek and Tibor Antal, "Mutation frequencies in a birth–death branching process", arXiv:1710.09783 (2017), Section 4 (Proposition 4.1, Theorem 4.2, Proposition 4.3, Remark 4.4, Propositions 4.5–4.6) and Section 7 (Proposition 7.3), <https://doi.org/10.48550/arXiv.1710.09783>. Published version: The Annals of Applied Probability 28 (2018) 3922–3947, <https://doi.org/10.1214/18-aap1413>.

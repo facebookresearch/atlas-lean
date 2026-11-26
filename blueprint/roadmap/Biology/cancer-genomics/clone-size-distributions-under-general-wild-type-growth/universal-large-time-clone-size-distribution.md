@@ -32,4 +32,4 @@ The total mutant count $B_t=\sum_{i\le K_t}Y_t^{(i)}$ is compound Poisson, and w
 
 ## Sources
 
-- M. D. Nicholson, T. Antal, *Universal asymptotic clone size distribution for general population growth*, arXiv:1604.04936 (Section 2 model; Section 3 mapping to total mutant number; Section 5.2 mean and variance; Section 5.3 large-time generating-function theorem and its corollary). <https://doi.org/10.48550/arXiv.1604.04936>
+- M. D. Nicholson, T. Antal, *Universal asymptotic clone size distribution for general population growth*, arXiv:1604.04936 (Section 2 model; Section 3 mapping to total mutant number; Section 5.2 mean and variance; Section 5.3 large-time generating-function theorem and its corollary). <https://doi.org/10.48550/arXiv.1604.04936> Published version: Bulletin of Mathematical Biology 78 (2016) 2243–2276, <https://doi.org/10.1007/s11538-016-0221-x>.

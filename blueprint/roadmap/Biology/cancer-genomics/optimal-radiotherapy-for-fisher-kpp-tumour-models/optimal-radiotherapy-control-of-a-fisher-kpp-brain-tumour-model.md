@@ -35,4 +35,4 @@ Since $g\le0$ where $0\le u^*\le1$, the optimal dose is bang-bang: it is concent
 
 ## Sources
 
-- M. Chugunova, H. Ji, R. Taranets, N. Vasylyeva, *Analysis of a radiotherapy model for brain tumors*, arXiv:2409.17903 (Section 3, local solvability, local regularity, higher regularity and global solvability theorems; Section 8, existence of the optimal control and the necessary optimality condition). <https://doi.org/10.48550/arXiv.2409.17903>
+- M. Chugunova, H. Ji, R. Taranets, N. Vasylyeva, *Analysis of a radiotherapy model for brain tumors*, arXiv:2409.17903 (Section 3, local solvability, local regularity, higher regularity and global solvability theorems; Section 8, existence of the optimal control and the necessary optimality condition). <https://doi.org/10.48550/arXiv.2409.17903> Published version: Studies in Applied Mathematics 155 (2025) e70074, <https://doi.org/10.1111/sapm.70074>.

@@ -26,4 +26,4 @@ For fixed $N \in [\lambda_T, \rho_T)$ the tumor constraint is active at any opti
 
 ## Sources
 
-- L. A. Fernández and L. Fernández, *Analytical solution to the radiotherapy fractionation problem including dose bound constraints*, arXiv:2102.08237 (2021), Section "Minimizing the effect of radiation on the organs at risk", Theorems 9–13, Proposition 5, Corollary 2. <https://doi.org/10.48550/arXiv.2102.08237>
+- L. A. Fernández and L. Fernández, *Analytical solution to the radiotherapy fractionation problem including dose bound constraints*, arXiv:2102.08237 (2021), Section "Minimizing the effect of radiation on the organs at risk", Theorems 9–13, Proposition 5, Corollary 2. <https://doi.org/10.48550/arXiv.2102.08237> Published version: Operations Research Forum 3 (2022) 40, <https://doi.org/10.1007/s43069-022-00146-8>.

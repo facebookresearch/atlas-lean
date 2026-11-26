@@ -28,4 +28,4 @@ The singular potential keeps $\varphi$ in $[-1,1]$, but its derivative blows up 
 
 ## Sources
 
-- Marco Abatangelo, Cecilia Cavaterra, Maurizio Grasselli and Hao Wu, "Optimal Distributed Control for a Cahn-Hilliard-Darcy System with Mass Sources, Unmatched Viscosities and Singular Potential", arXiv:2308.01569 (2023), Section 2 assumptions (A1)–(A3), Theorem 3.1, Theorem 4.1, Theorems 5.1–5.2 and Theorem 6.1, <https://doi.org/10.48550/arXiv.2308.01569>.
+- Marco Abatangelo, Cecilia Cavaterra, Maurizio Grasselli and Hao Wu, "Optimal Distributed Control for a Cahn-Hilliard-Darcy System with Mass Sources, Unmatched Viscosities and Singular Potential", arXiv:2308.01569 (2023), Section 2 assumptions (A1)–(A3), Theorem 3.1, Theorem 4.1, Theorems 5.1–5.2 and Theorem 6.1, <https://doi.org/10.48550/arXiv.2308.01569>. Published version: ESAIM Control Optim. Calc. Var., 30 (2024), Article number: 52, 49 pages, <https://doi.org/10.1051/cocv/2024041>.

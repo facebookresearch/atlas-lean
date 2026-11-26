@@ -24,4 +24,4 @@ Because $\dot R=f_R(N,R)>0$, the resistant count is strictly increasing and can 
 
 ## Sources
 
-- Frank Alvarez, Yannick Viossat, "Tumor containment for Norton-Simon models", arXiv:2211.17041: Section 2 (model and treatments), Propositions 1–2 (dose ordering), Propositions 3–4 (containment minimizes resistance), Proposition 5 (ideal containment and ideal MTD), Propositions 6–7 (intermittent and reference treatments), Lemmas 9–11 (comparison along resistant population size). <https://doi.org/10.48550/arXiv.2211.17041>
+- Frank Alvarez, Yannick Viossat, "Tumor containment for Norton-Simon models", arXiv:2211.17041: Section 2 (model and treatments), Propositions 1–2 (dose ordering), Propositions 3–4 (containment minimizes resistance), Proposition 5 (ideal containment and ideal MTD), Propositions 6–7 (intermittent and reference treatments), Lemmas 9–11 (comparison along resistant population size). <https://doi.org/10.48550/arXiv.2211.17041> Published version: Journal of Mathematical Biology 88 (2024) 41, <https://doi.org/10.1007/s00285-024-02062-3>.

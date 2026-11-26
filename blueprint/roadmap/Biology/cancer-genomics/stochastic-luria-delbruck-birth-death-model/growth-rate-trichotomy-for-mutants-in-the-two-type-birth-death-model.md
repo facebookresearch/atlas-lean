@@ -28,4 +28,4 @@ Conditionally on the wildtype path, the mean mutant count is $\int_0^t \nu A(s)\
 
 ## Sources
 
-- David Cheek and Tibor Antal, "Mutation frequencies in a birth–death branching process", arXiv:1710.09783 (2017), Section 2 (model), Section 3 (Eq. for $W$, Theorem 3.2, Corollaries 3.3 and 3.4), <https://doi.org/10.48550/arXiv.1710.09783>.
+- David Cheek and Tibor Antal, "Mutation frequencies in a birth–death branching process", arXiv:1710.09783 (2017), Section 2 (model), Section 3 (Eq. for $W$, Theorem 3.2, Corollaries 3.3 and 3.4), <https://doi.org/10.48550/arXiv.1710.09783>. Published version: The Annals of Applied Probability 28 (2018) 3922–3947, <https://doi.org/10.1214/18-aap1413>.

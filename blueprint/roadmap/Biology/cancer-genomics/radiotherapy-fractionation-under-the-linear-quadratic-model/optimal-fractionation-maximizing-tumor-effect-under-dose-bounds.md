@@ -27,4 +27,4 @@ For fixed $N$ the problem maximizes a convex function, a nonconvex quadratically
 
 ## Sources
 
-- L. A. Fernández and L. Fernández, *Analytical solution to the radiotherapy fractionation problem including dose bound constraints*, arXiv:2102.08237 (2021), Section "Maximizing the effect of radiation on the tumor", Theorems 4–8, Proposition 3, Corollary 1. <https://doi.org/10.48550/arXiv.2102.08237>
+- L. A. Fernández and L. Fernández, *Analytical solution to the radiotherapy fractionation problem including dose bound constraints*, arXiv:2102.08237 (2021), Section "Maximizing the effect of radiation on the tumor", Theorems 4–8, Proposition 3, Corollary 1. <https://doi.org/10.48550/arXiv.2102.08237> Published version: Operations Research Forum 3 (2022) 40, <https://doi.org/10.1007/s43069-022-00146-8>.
