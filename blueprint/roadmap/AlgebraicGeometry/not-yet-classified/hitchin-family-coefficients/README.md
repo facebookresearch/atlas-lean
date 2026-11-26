@@ -5,3 +5,5 @@
 - [Basis Section](basis-section.md)
 - [Expansion](expansion.md)
 - [Family Map](family-map.md)
+- [Characteristic Sections](characteristic-sections.md)
+- [Hitchin Family Map](hitchin-family-map.md)
