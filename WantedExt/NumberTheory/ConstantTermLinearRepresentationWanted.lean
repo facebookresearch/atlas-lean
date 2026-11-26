@@ -16,6 +16,8 @@ public import Mathlib.Data.Matrix.Basis
 public import Mathlib.Data.ZMod.Basic
 public import MathlibExt.Data.Set.Density
 public import MathlibExt.NumberTheory.ConstantTermLinearRepresentation
+public import MathlibExt.NumberTheory.ConstantTermLinearRepresentationStep
+public import MathlibExt.NumberTheory.ConstantTermZeroDensity
 public import MathlibExt.NumberTheory.LaurentCartierCongruence
 
 namespace MetaMathlibExt
@@ -29,16 +31,6 @@ constant term `ct[f]` is `f.coeff 0`. Kohen's array `a^n_k = coef_{-k}[P^n]` is
 `Fintype.piFinset fun _ => Finset.Icc (-m) m`. Definitions follow Kohen's arXiv
 version (arXiv:2503.21988v1, Sections 1, 2 and 5), which matches the journal records. -/
 
-/-- **Occurrence of a sequence factor at a position.** Let $s = (s_n)_{n \ge 0}$ be a sequence and
-let $i$, $\ell$ and $i'$ be natural numbers. The factor of $s$ of length $\ell$ starting at
-position $i$ occurs at position $i'$ when $s_{i'+t} = s_{i+t}$ for every natural number $t < \ell$.
-
-Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
-Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
-Definition 1. -/
-public def SeqFactorOccursAt {α : Type*} (s : ℕ → α) (i ℓ i' : ℕ) : Prop :=
-  ∀ t < ℓ, s (i' + t) = s (i + t)
-
 /-- **Recurrent sequence.** A sequence $s : \mathbb{N} \to \alpha$ is recurrent if every
 occurrence of a factor is followed by a later occurrence: for all $i, \ell \in \mathbb{N}$ there
 is $j > 0$ such that $s(i + j + t) = s(i + t)$ for every $t < \ell$.
@@ -48,19 +40,6 @@ Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Art
 definition before Proposition 19. -/
 public def IsRecurrentSeq {α : Type*} (s : ℕ → α) : Prop :=
   ∀ i ℓ : ℕ, ∃ j, 0 < j ∧ SeqFactorOccursAt s i ℓ (i + j)
-
-/-- **Uniformly recurrent sequence.** A sequence $s : \mathbb{N} \to \alpha$ is uniformly
-recurrent if for every factor $w$ there is a constant $C_w$ such that every occurrence of $w$ is
-followed by another occurrence at distance at most $C_w$: for all $i, \ell \in \mathbb{N}$ there
-is $C \in \mathbb{N}$ such that for every $i'$ with $s(i' + t) = s(i + t)$ for all $t < \ell$,
-there is $j$ with $0 < j \le C$ and $s(i' + j + t) = s(i + t)$ for all $t < \ell$.
-
-Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
-Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
-Definition 1. -/
-public def IsUniformlyRecurrentSeq {α : Type*} (s : ℕ → α) : Prop :=
-  ∀ i ℓ : ℕ, ∃ C, ∀ i', SeqFactorOccursAt s i ℓ i' →
-    ∃ j, 0 < j ∧ j ≤ C ∧ SeqFactorOccursAt s i ℓ (i' + j)
 
 /-- **Linearly recurrent sequence.** A sequence $s = (s_n)_{n \in \mathbb{N}}$ with values in a
 set $\alpha$ is linearly recurrent if there is $K \in \mathbb{N}$ such that for all
@@ -113,49 +92,6 @@ public theorem isLinearlyRecurrentSeq_const {α : Type*} (c : α) :
     IsLinearlyRecurrentSeq fun _ : ℕ => c :=
   ⟨1, fun _ ℓ hℓ _ _ => ⟨1, one_pos, by omega, fun _ _ => rfl⟩⟩
 
-/-! ### Section 2: the Rowland–Zeilberger congruence and the degree bound -/
-
-/-- **Degree bound for the Rowland–Zeilberger states.** Let $p$ be a prime and let $P$ and $Q$
-be Laurent polynomials in $r$ variables with integer coefficients. Write $\deg F$ for the largest
-absolute value of an exponent of a variable occurring in $F$, and $\Lambda_p$ for the operator
-that keeps the terms whose exponents are all multiples of $p$ and substitutes $x_s^p \mapsto x_s$.
-For every finite list $k_1, \dots, k_n$ of natural numbers with each $k_t < p$, starting from $Q$
-and applying $R \mapsto \Lambda_p(P^{k_t} R)$ for $t = 1, \dots, n$ in turn gives a Laurent
-polynomial of degree at most $\max(\deg P - 1, \deg Q)$.
-
-Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
-Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
-Lemma 4 (`jis-2026-26.4.2-lem-4`). -/
-public theorem_wanted laurentDeg_foldl_laurentCartier_le {r p : ℕ} (hp : p.Prime)
-    (P Q : AddMonoidAlgebra ℤ (Fin r → ℤ)) (ks : List ℕ) (hks : ∀ k ∈ ks, k < p) :
-    laurentDeg (ks.foldl (fun R k => laurentCartier p (P ^ k * R)) Q) ≤
-      max (laurentDeg P - 1) (laurentDeg Q)
-
-/-! ### Section 3: the linear representation mod `p` -/
-
-/-- **Kohen's linear representation step modulo $p$.** Let $p$ be a prime, let $P$ be a Laurent
-polynomial in $r$ variables with integer coefficients, and write $\deg P$ for the largest absolute
-value of an exponent of a single variable in a monomial occurring in $P$ ($0$ if $P = 0$). Let $m$
-be a natural number with $\deg P \le m + 1$. Write $T = [-m, m]^r \subseteq \mathbb{Z}^r$ and
-$[x^e]F$ for the coefficient of $x^e$ in a Laurent polynomial $F$. Then for every natural number
-$k < p$, every natural number $n$ and every $i \in T$,
-$$[x^{-i}]P^{pn+k} \equiv \sum_{j \in T} [x^{pj - i}]P^k \cdot [x^{-j}]P^n \pmod{p}.$$
-
-With Kohen's $a^n_i = [x^{-i}]P^n$, $\gamma(k) = (a^k_{i-pj})_{i,j \in T}$ and
-$V(n) = (a^n_i)_{i \in T}$, this is the entrywise form of $\gamma(k) V(n) = V(pn + k)$ over
-$\mathbb{F}_p$.
-
-Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
-Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
-Lemma 9 (`jis-2026-26.4.2-lem-9`). -/
-public theorem_wanted coeff_pow_modEq_sum_gamma_mul_V {r p : ℕ} (hp : p.Prime)
-    (P : AddMonoidAlgebra ℤ (Fin r → ℤ)) (m : ℕ) (hm : laurentDeg P ≤ m + 1) (k : ℕ)
-    (hk : k < p) (n : ℕ) (i : Fin r → ℤ)
-    (hi : i ∈ Fintype.piFinset fun _ : Fin r => Finset.Icc (-(m : ℤ)) m) :
-    (P ^ (p * n + k)).coeff (-i) ≡
-      ∑ j ∈ Fintype.piFinset (fun _ : Fin r => Finset.Icc (-(m : ℤ)) m),
-        (P ^ k).coeff (p • j - i) * (P ^ n).coeff (-j) [ZMOD p]
-
 /-! ### Section 4: classification mod `p` -/
 
 /-- **Divisibility of constant terms of powers is decided on a bounded prefix.** Let $p$ be a
@@ -172,27 +108,6 @@ Proposition 12 (`jis-2026-26.4.2-prop-12`). -/
 public theorem_wanted exists_bound_constantTerm_pow_dvd {p : ℕ} (hp : p.Prime) (r d : ℕ) :
     ∃ B : ℕ, ∀ P : AddMonoidAlgebra ℤ (Fin r → ℤ), laurentDeg P ≤ d →
       (∃ n, (p : ℤ) ∣ (P ^ n).coeff 0) → ∃ n₀ < B, (p : ℤ) ∣ (P ^ n₀).coeff 0
-
-/-- **Density-one zeros of constant terms modulo $p$.** Let $p$ be a prime, let $P$ be a Laurent
-polynomial in $r$ variables with integer coefficients, write $\operatorname{ct}[F]$ for the
-constant term of a Laurent polynomial $F$, and suppose that $p$ divides $\operatorname{ct}[P^n]$
-for some natural number $n$. Then for every Laurent polynomial $Q$ in $r$ variables with integer
-coefficients, the set of natural numbers $n$ with $p \mid \operatorname{ct}[P^n Q]$ has natural
-density $1$; for every natural number $L$ there is a natural number $i$ such that
-$p \mid \operatorname{ct}[P^{i+t} Q]$ for all $t < L$; and either
-$p \mid \operatorname{ct}[P^n Q]$ for every $n$, or the sequence of residues
-$\operatorname{ct}[P^n Q] \bmod p$ in $\mathbb{Z}/p\mathbb{Z}$ is not uniformly recurrent.
-
-Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
-Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
-Theorem 14 (`jis-2026-26.4.2-thm-14`). -/
-public theorem_wanted constantTerm_zero_density_mod_prime {r p : ℕ} (hp : p.Prime)
-    (P : AddMonoidAlgebra ℤ (Fin r → ℤ)) (hP : ∃ n, (p : ℤ) ∣ (P ^ n).coeff 0)
-    (Q : AddMonoidAlgebra ℤ (Fin r → ℤ)) :
-    ({n : ℕ | (p : ℤ) ∣ (P ^ n * Q).coeff 0} : Set ℕ).HasDensity 1 ∧
-      (∀ L : ℕ, ∃ i, ∀ t < L, (p : ℤ) ∣ (P ^ (i + t) * Q).coeff 0) ∧
-      ((∀ n, (p : ℤ) ∣ (P ^ n * Q).coeff 0) ∨
-        ¬ IsUniformlyRecurrentSeq fun n => ((P ^ n * Q).coeff 0 : ZMod p))
 
 /-- **Return to the initial coefficient vector modulo $p$.** Let $p$ be a prime, let
 $m \in \mathbb{N}$, and let $P$ be a Laurent polynomial with integer coefficients in variables
@@ -324,26 +239,6 @@ public theorem_wanted coeff_tilde_pow_modEq_sum_gamma_mul_V {r p a : ℕ} (hp : 
     (Pt ^ (p * n + k)).coeff (-i) ≡
       ∑ j ∈ Fintype.piFinset (fun _ : Fin r => Finset.Icc (-(m : ℤ)) m),
         (Pt ^ k).coeff (p • j - i) * (Pt ^ n).coeff (-j) [ZMOD (p : ℤ) ^ a]
-
-/-- **Powers of $\tilde\gamma(0)$ modulo $p^a$ stabilize at a matrix unit.** Let $p$ be a prime,
-let $a \ge 1$, $r$ and $m$ be natural numbers, let $T = \{-m, \dots, m\}^r \subseteq \mathbb{Z}^r$,
-and let $\tilde\gamma(0)$ be the $T \times T$ matrix over $\mathbb{Z}/p^a\mathbb{Z}$ whose
-$(i, j)$ entry is $1$ if $i = p j$ and $0$ otherwise. Then there is $s \in \mathbb{N}$ such that for
-every $s' \ge s$, $\tilde\gamma(0)^{s'}$ is the matrix whose $(0, 0)$ entry is $1$ and whose other
-entries are $0$.
-
-Kohen's Lemma 30 prints $\tilde\gamma(0)^s$; as in Lemma 11, it is read for every exponent
-$s' \ge s$.
-
-Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
-Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
-Lemma 30 (`jis-2026-26.4.2-lem-30`). -/
-public theorem_wanted exists_gammaZero_pow_eq_single_zmod {p : ℕ} (hp : p.Prime)
-    (a : ℕ) (ha : 0 < a) (r m : ℕ) :
-    ∃ s : ℕ, ∀ s' ≥ s,
-      (Matrix.of fun i j : ↥(Fintype.piFinset fun _ : Fin r => Finset.Icc (-(m : ℤ)) m) =>
-        if (i : Fin r → ℤ) = p • (j : Fin r → ℤ) then (1 : ZMod (p ^ a)) else 0) ^ s' =
-        Matrix.single ⟨0, by simp⟩ ⟨0, by simp⟩ 1
 
 /-- **Density-one zeros of constant terms modulo $p^a$.** Let $p$ be a prime, let $a$ be a natural
 number, and let $\tilde P$ be a Laurent polynomial in $r$ variables with integer coefficients such
