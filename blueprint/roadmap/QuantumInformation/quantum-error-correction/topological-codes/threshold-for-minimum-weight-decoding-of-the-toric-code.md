@@ -11,7 +11,7 @@ empty syndrome and an odd winding in both directions, so decoding fails with cer
 
 With faulty syndrome measurements, each readout wrong independently with probability $q$, and decoding by matching in the
 spacetime syndrome history as described on the decoding page, the failure probability over a storage time $T$ is at most
-$L^2 T \cdot e^{o(L)} \cdot (4\mu_3^2 \tilde p)^{L/2}$ when $\tilde p = \max(p(1 - p), q(1 - q)) < (4\mu_3^2)^{-1}$,
+$L^2 T \cdot e^{o(L)} \cdot (4\mu_3^2 \tilde p)^{L/2}$ when $0 \le p, q < 1/2$ and $\tilde p = \max(p(1 - p), q(1 - q)) < (4\mu_3^2)^{-1}$,
 which holds for $p, q < 0.0114$; here $\mu_3 \approx 4.684$ is the connective constant of the cubic lattice. For $T$ at most
 polynomial in $L$ this falls exponentially in $L$.
 
