@@ -15,7 +15,9 @@ public import Mathlib.Analysis.Calculus.Deriv.Slope
 public import Mathlib.Analysis.InnerProductSpace.Basic
 public import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
 public import Mathlib.Analysis.Normed.Group.AddTorsor
+public import Mathlib.Probability.Distributions.Binomial
 public import Mathlib.Topology.Algebra.Module.ModuleTopology
+public import MathlibExt.Probability.BranchingProcess.GaltonWatson
 
 /-!
 # Bond percolation on the rooted `b`-ary tree, via the generating function
@@ -27,13 +29,16 @@ function directly: it defines the extinction probability as the least fixed poin
 in `[0, 1]`, the survival probability as its complement, and the critical parameter `treePc b` as
 the supremum of the parameters with survival probability `0`, and proves `treePc b = 1 / b`.
 
-The identification of `survivalProb b p` with the probability that the root's open cluster is
-infinite (the Galton–Watson extinction theorem applied to the percolation cluster) is not
-formalized here. For a general offspring law, the Galton–Watson process and its extinction
-probability as a least fixed point are in `MathlibExt.Probability.BranchingProcess.GaltonWatson`
-(`MathlibExt.Probability.GaltonWatson.isLeast_extinctionProb`,
-`MathlibExt.Probability.GaltonWatson.extinctionProb_eq_one_iff`); no bridge between the two is
-proved.
+For `p ∈ [0, 1]` these are the quantities of the Galton–Watson process of
+`MathlibExt.Probability.BranchingProcess.GaltonWatson` whose offspring law is Mathlib's
+`ProbabilityTheory.binomial b p`. Its offspring generating function is `treeGF b p`
+(`StatMech.Percolation.pgf_binomial_eq_treeGF`), so `extinctionProb b p` is its extinction
+probability `MathlibExt.Probability.GaltonWatson.extinctionProb`
+(`StatMech.Percolation.extinctionProb_eq_galtonWatson_extinctionProb`), and the survival
+criterion `StatMech.Percolation.survivalProb_eq_zero_iff`, from which the sub- and supercritical
+lemmas follow, comes from `MathlibExt.Probability.GaltonWatson.extinctionProb_eq_one_iff`. The
+identification of the root's open cluster with this Galton–Watson tree, and so of
+`survivalProb b p` with the probability that the cluster is infinite, is not formalized here.
 
 ## Main definitions
 
@@ -45,6 +50,11 @@ proved.
 
 ## Main results
 
+* `StatMech.Percolation.extinctionProb_eq_galtonWatson_extinctionProb`: for `p ∈ [0, 1]`,
+  `extinctionProb b p` is the extinction probability of the Galton–Watson process with offspring
+  law `Binomial(b, p)`.
+* `StatMech.Percolation.survivalProb_eq_zero_iff`: for `p ∈ [0, 1]`, the survival probability is
+  `0` iff the mean `b p` is at most `1`, except in the deterministic case `b = p = 1`.
 * `StatMech.Percolation.survivalProb_eq_zero_of_subcritical`,
   `StatMech.Percolation.survivalProb_pos_of_supercritical`: the survival probability is `0` when
   the mean `b p` is below `1` and positive when it is above `1`.
@@ -54,6 +64,7 @@ proved.
 
 * G. Grimmett, *Percolation*, 2nd ed., Springer (1999), Section 10.1.
 * R. Lyons, Y. Peres, *Probability on Trees and Networks*, Cambridge (2016), Chapter 5.
+* K. B. Athreya, P. E. Ney, *Branching Processes*, Springer (1972), ch. I.
 -/
 
 @[expose] public section
@@ -131,9 +142,10 @@ lemma fixedSet_bddBelow (b : ℕ) (p : ℝ) : BddBelow (fixedSet b p) :=
 lemma fixedSet_isClosed (b : ℕ) (p : ℝ) : IsClosed (fixedSet b p) :=
   isClosed_Icc.inter (isClosed_eq (treeGF_continuous b p) continuous_id)
 
-/-- The extinction probability: the least fixed point of `treeGF b p` in `[0, 1]`. See also
-`MathlibExt.Probability.GaltonWatson.extinctionProb` (defined from the process; least fixed point
-by `MathlibExt.Probability.GaltonWatson.isLeast_extinctionProb`). -/
+/-- The extinction probability: the least fixed point of `treeGF b p` in `[0, 1]`. For
+`p ∈ [0, 1]` it is the extinction probability
+`MathlibExt.Probability.GaltonWatson.extinctionProb` of the Galton–Watson process with offspring
+law `Binomial(b, p)` (`extinctionProb_eq_galtonWatson_extinctionProb`). -/
 noncomputable def extinctionProb (b : ℕ) (p : ℝ) : ℝ := sInf (fixedSet b p)
 
 /-- The extinction probability is a fixed point in `[0, 1]`. -/
@@ -162,6 +174,103 @@ lemma survivalProb_nonneg (b : ℕ) (p : ℝ) : 0 ≤ survivalProb b p := by
 lemma survivalProb_pos_iff (b : ℕ) (p : ℝ) :
     0 < survivalProb b p ↔ extinctionProb b p < 1 := by
   unfold survivalProb; constructor <;> intro h <;> linarith
+
+/-! ### The Galton–Watson process with binomial offspring law -/
+
+section GaltonWatsonBridge
+
+open MeasureTheory ProbabilityTheory MathlibExt.Probability
+
+/-- `treeGF b p` is the generating function of Mathlib's binomial law
+`ProbabilityTheory.binomial b p`, at every real `s`. -/
+lemma pgf_binomial_eq_treeGF (b : ℕ) (p : unitInterval) (s : ℝ) :
+    pgf id (binomial b p) s = treeGF b p s := by
+  rw [pgf, integral_binomial, treeGF_eq_pgf, Nat.range_succ_eq_Iic]
+  simp only [id_eq, smul_eq_mul, binomialOffspringPMF]
+
+/-- For `p ∈ [0, 1]`, `extinctionProb b p` is the extinction probability of the Galton–Watson
+process with offspring law `Binomial(b, p)`: the limit of the probabilities `P(Z_n = 0)` of
+extinction by generation `n` (`MathlibExt.Probability.GaltonWatson.extinctionProb`). -/
+theorem extinctionProb_eq_galtonWatson_extinctionProb (b : ℕ) (p : unitInterval) :
+    extinctionProb b p = GaltonWatson.extinctionProb (binomial b p) := by
+  have h := GaltonWatson.isLeast_extinctionProb (binomial b p)
+  simp_rw [pgf_binomial_eq_treeGF] at h
+  exact h.csInf_eq
+
+/-- For `p ∈ [0, 1]`, `survivalProb b p` is the survival probability of the Galton–Watson process
+with offspring law `Binomial(b, p)`. -/
+theorem survivalProb_eq_one_sub_galtonWatson_extinctionProb (b : ℕ) (p : unitInterval) :
+    survivalProb b p = 1 - GaltonWatson.extinctionProb (binomial b p) := by
+  rw [survivalProb, extinctionProb_eq_galtonWatson_extinctionProb]
+
+/-- `treeMean b p` is the mean `MathlibExt.Probability.GaltonWatson.mean` of the offspring law
+`Binomial(b, p)`. -/
+theorem galtonWatson_mean_binomial (b : ℕ) (p : unitInterval) :
+    GaltonWatson.mean (binomial b p) = ENNReal.ofReal (treeMean b p) := by
+  have h := integral_of_hasLaw_binomial
+    (hasLaw_map (P := binomial b p) (measurable_from_nat (f := (Nat.cast : ℕ → ℝ))).aemeasurable)
+  rw [GaltonWatson.mean, treeMean, mul_comm (b : ℝ), ← h, ofReal_integral_eq_lintegral_ofReal
+    (integrable_binomial _) (ae_of_all _ fun k => Nat.cast_nonneg k)]
+  simp_rw [ENNReal.ofReal_natCast]
+
+/-- The offspring number is almost surely `1` only in the deterministic case `b = p = 1`: for
+`b ≥ 2` the masses `(1 - p)^b` at `0` and `p^b` at `b` cannot both vanish. -/
+private lemma binomial_singleton_one_ne_one (b : ℕ) (p : unitInterval)
+    (h : ¬(b = 1 ∧ (p : ℝ) = 1)) : binomial b p {1} ≠ 1 := by
+  rw [binomial_singleton, Ne, ENNReal.ofReal_eq_one]
+  change binomialOffspringPMF b p 1 ≠ 1
+  intro h1
+  have hp0 := unitInterval.nonneg p
+  have hp1 := unitInterval.le_one p
+  rcases Nat.lt_or_ge b 2 with hb | hb
+  · interval_cases b
+    · simp [binomialOffspringPMF] at h1
+    · exact h ⟨rfl, by simpa [binomialOffspringPMF] using h1⟩
+  · have hnn : ∀ k, 0 ≤ binomialOffspringPMF b p k := fun k => by
+      have : (0 : ℝ) ≤ 1 - p := by linarith
+      unfold binomialOffspringPMF; positivity
+    have hsub : ({0, 1, b} : Finset ℕ) ⊆ range (b + 1) := by
+      intro k hk
+      simp only [Finset.mem_insert, Finset.mem_singleton] at hk
+      simp only [Finset.mem_range]
+      omega
+    have hle := Finset.sum_le_sum_of_subset_of_nonneg hsub fun k _ _ => hnn k
+    rw [binomialOffspringPMF_sum,
+      Finset.sum_insert (by simp only [Finset.mem_insert, Finset.mem_singleton]; omega),
+      Finset.sum_insert (by simp only [Finset.mem_singleton]; omega), Finset.sum_singleton,
+      h1] at hle
+    have h0 : binomialOffspringPMF b p 0 = 0 := by linarith [hnn 0, hnn b]
+    have hbb : binomialOffspringPMF b p b = 0 := by linarith [hnn 0, hnn b]
+    simp only [binomialOffspringPMF, Nat.choose_zero_right, Nat.choose_self, Nat.cast_one,
+      pow_zero, one_mul, mul_one, Nat.sub_zero, Nat.sub_self] at h0 hbb
+    have hq : 1 - (p : ℝ) = 0 := (pow_eq_zero_iff (by omega)).1 h0
+    have hp : (p : ℝ) = 0 := (pow_eq_zero_iff (by omega)).1 hbb
+    linarith
+
+/-- **Survival criterion.** For `p ∈ [0, 1]`, the survival probability is `0` iff the mean `b p`
+is at most `1`, except in the deterministic case `b = p = 1` (every vertex has exactly one open
+child), where the mean is `1` but the survival probability is positive. Away from that case this
+is `MathlibExt.Probability.GaltonWatson.extinctionProb_eq_one_iff` for the offspring law
+`Binomial(b, p)`. -/
+theorem survivalProb_eq_zero_iff (b : ℕ) (p : unitInterval) :
+    survivalProb b p = 0 ↔ (b : ℝ) * p ≤ 1 ∧ ¬(b = 1 ∧ (p : ℝ) = 1) := by
+  by_cases hdet : b = 1 ∧ (p : ℝ) = 1
+  · obtain ⟨rfl, hp⟩ := hdet
+    have h0 : extinctionProb 1 p = 0 :=
+      le_antisymm (csInf_le (fixedSet_bddBelow 1 p) ⟨⟨le_rfl, zero_le_one⟩, by simp [treeGF, hp]⟩)
+        (extinctionProb_nonneg 1 p)
+    rw [survivalProb, h0]
+    simp [hp]
+  · have key := GaltonWatson.extinctionProb_eq_one_iff (binomial b p)
+      (binomial_singleton_one_ne_one b p hdet)
+    rw [← extinctionProb_eq_galtonWatson_extinctionProb, galtonWatson_mean_binomial,
+      ENNReal.ofReal_le_one, treeMean] at key
+    have hsurv : survivalProb b p = 0 ↔ extinctionProb b p = 1 := by
+      unfold survivalProb; constructor <;> intro h <;> linarith
+    rw [hsurv, key]
+    exact (and_iff_left hdet).symm
+
+end GaltonWatsonBridge
 
 /-- `treeGF b p 0 = (1 - p)^b ≥ 0` for `p ≤ 1`. -/
 lemma treeGF_zero_nonneg (b : ℕ) {p : ℝ} (hp1 : p ≤ 1) : 0 ≤ treeGF b p 0 := by
@@ -232,21 +341,21 @@ lemma subcritical_no_fixed (b : ℕ) {p s : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1)
 /-- Subcritical case: `b p < 1` implies survival probability `0`. -/
 lemma survivalProb_eq_zero_of_subcritical (b : ℕ) {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1)
     (hmean : (b : ℝ) * p < 1) : survivalProb b p = 0 := by
-  have hext : extinctionProb b p = 1 := by
-    rcases lt_or_eq_of_le (extinctionProb_le_one b p) with hlt | heq
-    · exact absurd (extinctionProb_isFixed b p)
-        (ne_of_gt (subcritical_no_fixed b hp0 hp1 hmean (extinctionProb_nonneg b p) hlt))
-    · exact heq
-  unfold survivalProb; rw [hext]; ring
+  refine (survivalProb_eq_zero_iff b ⟨p, hp0, hp1⟩).2 ⟨hmean.le, ?_⟩
+  rintro ⟨rfl, hp⟩
+  change p = 1 at hp
+  subst hp
+  norm_num at hmean
 
 /-- Supercritical case: `b p > 1` implies positive survival probability. -/
 lemma survivalProb_pos_of_supercritical (b : ℕ) {p : ℝ} (hp1 : p ≤ 1)
     (hmean : 1 < (b : ℝ) * p) : 0 < survivalProb b p := by
-  rw [survivalProb_pos_iff]
-  obtain ⟨q, hq_mem, hq_fix⟩ := supercritical_fixed b hp1 hmean
-  have hqmem : q ∈ fixedSet b p := ⟨⟨hq_mem.1, le_of_lt hq_mem.2⟩, hq_fix⟩
-  have : extinctionProb b p ≤ q := csInf_le (fixedSet_bddBelow b p) hqmem
-  linarith [hq_mem.2]
+  have hp0 : 0 ≤ p := by
+    by_contra hp
+    have hb : (0 : ℝ) ≤ b := b.cast_nonneg
+    nlinarith
+  refine (survivalProb_nonneg b p).lt_of_ne fun h => ?_
+  exact not_le.2 hmean ((survivalProb_eq_zero_iff b ⟨p, hp0, hp1⟩).1 h.symm).1
 
 /-- The parameters `p ∈ [0, 1]` with survival probability `0`. -/
 def subcriticalSetTree (b : ℕ) : Set ℝ := {p | p ∈ Icc (0 : ℝ) 1 ∧ survivalProb b p = 0}
