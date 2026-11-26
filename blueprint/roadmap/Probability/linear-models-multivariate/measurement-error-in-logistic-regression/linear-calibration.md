@@ -1,3 +1,5 @@
 # Linear calibration function
 
-For a mean $\mu_x$ and a reliability ratio $\rho$, the linear calibration function is $w \mapsto \mu_x + \rho(w - \mu_x)$, the conditional mean $\mathbb{E}[X \mid W = w]$ in the classical Gaussian measurement-error model $W = X + U$.
+For real numbers $\mu_x$ and $\rho$, the linear calibration function is the affine map $w \mapsto \mu_x + \rho(w - \mu_x)$.
+
+In the classical Gaussian measurement-error model, with independent $X \sim \mathcal N(\mu_x, \sigma_x^2)$ and $U \sim \mathcal N(0, \sigma_u^2)$, positive total variance $\sigma_x^2 + \sigma_u^2 > 0$, $W = X + U$ and the reliability ratio $\rho = \sigma_x^2/(\sigma_x^2 + \sigma_u^2)$, it is the conditional mean $\mathbb{E}[X \mid W = w]$. In other models with $W = X + U$ the conditional mean need not be affine: in the normal discriminant class mixture it is not affine in $w$ when the class means differ and $\rho < 1$.
