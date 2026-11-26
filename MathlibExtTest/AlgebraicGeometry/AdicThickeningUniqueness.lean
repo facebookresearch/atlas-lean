@@ -35,7 +35,7 @@ private theorem exactSource
   AlgebraicGeometry.eq_of_forall_adicThickening_comp_eq_of_isAdicComplete_of_isClosedImmersion_proj
     I f g N ιX hιX hιXf N' ιY hιY hιYg ψ ψ' hψ hψ' h
 
-theorem exactSource_separated
+private theorem exactSource_separated
     {H S T : Scheme.{u}} (q : H ⟶ S) [IsSeparated q] (t : T ⟶ S) (u v : T ⟶ H)
     (hu : u ≫ q = t) (hv : v ≫ q = t) :
     ∃ (Z : Scheme.{u}) (j : Z ⟶ T), IsClosedImmersion j ∧
