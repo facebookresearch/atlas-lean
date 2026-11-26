@@ -1634,25 +1634,33 @@ class GitTests(unittest.TestCase):
         self.assertEqual(set(self.git.signatures[heads[0]]), {"docs/h0.md", "glob:docs/*.md"})  # watched entries only
 
     def test_the_repositorys_own_checks_can_be_followed(self):
-        """The code and inputs of this repository's required workflows, at its own HEAD, stay within the
-        limit: an incomplete closure would make every pull request NOT READY."""
+        """The staged workflows and their inputs stay within the dependency limit.
+        An incomplete closure would make every pull request NOT READY."""
         root = Path(__file__).resolve().parents[2]
-        found = subprocess.run(["git", "-C", str(root), "rev-parse", "--absolute-git-dir"], capture_output=True, text=True)
-        workflows = [w for w in (".github/workflows/ci.yml", ".github/workflows/bump-guard.yml",
-                                 ".github/workflows/source-diagnostics.yml") if (root / w).exists()]
-        if found.returncode != 0 or not workflows:
+        objects = subprocess.run(["git", "-C", str(root), "rev-parse", "--path-format=absolute",
+                                  "--git-path", "objects"], capture_output=True, text=True)
+        if objects.returncode != 0:
             self.skipTest("not in a checkout of the repository")
-        own = preflight.Git(Path(found.stdout.strip()), "https://github.com/facebookresearch/atlas-lean.git")
-        head = own.out("rev-parse", "HEAD")
+        # During a pending merge the index contains the merged checks, while HEAD names one parent.
+        # Build the index tree in the temporary repository so the checkout is only read.
+        self.git.env["GIT_ALTERNATE_OBJECT_DIRECTORIES"] = objects.stdout.strip()
+        entries = git(root, "ls-files", "--stage", "-z")
+        self.git.out("update-index", "-z", "--index-info", input=entries)
+        tree = self.git.out("write-tree")
+        workflows = self.git.out(
+            "ls-tree", "--name-only", tree, "--", ".github/workflows/ci.yml",
+            ".github/workflows/bump-guard.yml", ".github/workflows/source-diagnostics.yml",
+        ).splitlines()
+        self.assertTrue(workflows, "no required workflows in the index")
         for workflow in workflows:
-            code = preflight.workflow_code(own, head, [workflow])
+            code = preflight.workflow_code(self.git, tree, [workflow])
             self.assertNotIn("?incomplete", code, workflow)
             self.assertLess(len(code), 300, workflow)
-            named = (root / workflow).read_text()  # a module the workflow names itself is its input; others are not
+            named = self.git.out("show", f"{tree}:{workflow}")
             self.assertFalse([c for c in code if c.endswith(".lean") and c.split("/", 1)[0] in preflight.LIBRARIES
                               and c not in named], workflow)
         # The paths that scripts/ci_scope.py and its test name are rules and examples, not inputs (NAMES_ONLY).
-        self.assertEqual(preflight._code_closure(own, head, {"scripts/test_ci_scope.py"}),
+        self.assertEqual(preflight._code_closure(self.git, tree, {"scripts/test_ci_scope.py"}),
                          {"scripts/test_ci_scope.py", "scripts/ci_scope.py"})
 
     def test_a_script_that_only_names_paths(self):
