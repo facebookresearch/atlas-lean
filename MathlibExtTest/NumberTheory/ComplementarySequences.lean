@@ -76,6 +76,19 @@ example :
   exact ⟨(result 1 (by decide)).trans (by decide), (result 3 (by decide)).trans (by decide),
     (result 4 (by decide)).trans (by decide)⟩
 
+-- The second count is unchanged at n = 2 and n = 4, but grows at n = 5 and n = 10.
+-- At n = 2 the count is zero despite f 0 = 2; at n = 5 the next value hits the cutoff exactly.
+example :
+    let f := fun m : ℕ => m ^ 2 + 2
+    nthNonValue f 2 = 2 ∧ nthNonValue f 4 = 5 ∧ nthNonValue f 5 = 7 ∧ nthNonValue f 10 = 13 := by
+  let f (m : ℕ) := m ^ 2 + 2
+  have hgap (m : ℕ) (_ : 1 ≤ m) : f m + m ≤ f (m + 1) := by
+    dsimp [f]
+    nlinarith
+  have result := nthNonValue_eq_two_step f (by decide) hgap
+  exact ⟨(result 2 (by decide)).trans (by decide), (result 4 (by decide)).trans (by decide),
+    (result 5 (by decide)).trans (by decide), (result 10 (by decide)).trans (by decide)⟩
+
 -- Non-triangular numbers: 2, 4, 5, 7, ... At n = 4 the rounded root of 2n jumps from 2 to 3
 -- and the formula skips the triangular number 6.
 example : nthNonValue (fun j => j * (j + 1) / 2) 4 = 7 := by
