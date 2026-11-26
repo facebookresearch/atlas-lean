@@ -3952,23 +3952,31 @@ theorem stage_compat (c : ℕ) : ∀ (e : ℕ) (i j k : Fin (n + 1)),
     rw [h3]
     exact stage_compat c e i j k
 
-def wlim (i j k : Fin (n + 1)) (t : ℕ) : 𝕎 K :=
-  WittVector.mk p fun m => TruncatedWittVector.coeff (Fin.last m) (((stage p D m).1 i j k).coeff t)
+-- At each truncation length, the map out of `ℕ[X]` that sends `X` to the `t`-th coefficient of
+-- the stage's `(i, j, k)` structure constant; at length zero any map is the unique one.
+def coeffMaps (i j k : Fin (n + 1)) (t : ℕ) : ∀ m : ℕ, ℕ[X] →+* TruncatedWittVector p m K
+  | 0 => Polynomial.eval₂RingHom (Nat.castRingHom _) 0
+  | m + 1 => Polynomial.eval₂RingHom (Nat.castRingHom _) (((stage p D m).1 i j k).coeff t)
 
-theorem coeff_stage_eq (c e : ℕ) (i j k : Fin (n + 1)) (t : ℕ) :
-    TruncatedWittVector.coeff ⟨c, by omega⟩ (((stage p D (c + e)).1 i j k).coeff t) =
-      TruncatedWittVector.coeff (Fin.last c) (((stage p D c).1 i j k).coeff t) := by
-  have h := congrArg (fun P : (TruncatedWittVector p (c + 1) K)[X] =>
-    TruncatedWittVector.coeff (Fin.last c) (P.coeff t)) (stage_compat p D c e i j k)
-  simp only [Polynomial.coeff_map, TruncatedWittVector.coeff_truncate] at h
-  exact h
+theorem coeffMaps_compat (i j k : Fin (n + 1)) (t : ℕ) (m₁ m₂ : ℕ) (hm : m₁ ≤ m₂) :
+    (TruncatedWittVector.truncate hm).comp (coeffMaps p D i j k t m₂) =
+      coeffMaps p D i j k t m₁ := by
+  refine Polynomial.ringHom_ext' (ext_nat _ _) ?_
+  rcases m₁ with _ | c
+  · exact TruncatedWittVector.ext fun a => a.elim0
+  · obtain ⟨e, rfl⟩ : ∃ e, m₂ = c + e + 1 := ⟨m₂ - c - 1, by omega⟩
+    have h := congrArg (fun P => P.coeff t) (stage_compat p D c e i j k)
+    simpa [coeffMaps, Polynomial.coeff_map] using h
+
+-- The Witt vector whose truncations are the `t`-th coefficients of the stages, as Mathlib's
+-- `WittVector.liftFun` of the compatible maps `coeffMaps` applied to `X`.
+def wlim (i j k : Fin (n + 1)) (t : ℕ) : 𝕎 K :=
+  WittVector.liftFun (coeffMaps p D i j k t) X
 
 theorem truncate_wlim (m : ℕ) (i j k : Fin (n + 1)) (t : ℕ) :
     WittVector.truncate (m + 1) (wlim p D i j k t) = ((stage p D m).1 i j k).coeff t := by
-  ext ⟨c, hc⟩
-  rw [WittVector.coeff_truncate, wlim, WittVector.coeff_mk]
-  obtain ⟨e, rfl⟩ : ∃ e, m = c + e := ⟨m - c, by omega⟩
-  exact (coeff_stage_eq p D c e i j k t).symm
+  rw [wlim, WittVector.truncate_liftFun (m + 1) (coeffMaps_compat p D i j k t)]
+  simp [coeffMaps]
 
 def Γlim (i j k : Fin (n + 1)) : (𝕎 K)[X] :=
   ∑ t ∈ Finset.range 5, C (wlim p D i j k t) * X ^ t
@@ -4037,11 +4045,12 @@ theorem natDegree_Γlim_le (i j k : Fin (n + 1)) (hi : i ≠ 0) (hj : j ≠ 0) :
   rw [coeff_Γlim]
   split_ifs with h5
   · ext m
-    rw [wlim, WittVector.coeff_mk, WittVector.zero_coeff]
     have hlt : ((stage p D m).1 i j k).natDegree < t :=
       lt_of_le_of_lt ((stage p D m).2.deg i j k hi hj) (by exact_mod_cast ht)
-    rw [Polynomial.coeff_eq_zero_of_natDegree_lt hlt]
-    exact TruncatedWittVector.coeff_zero (p := p) _ _ _
+    have h := congrArg (TruncatedWittVector.coeff (Fin.last m)) (truncate_wlim p D m i j k t)
+    rw [WittVector.coeff_truncate, Polynomial.coeff_eq_zero_of_natDegree_lt hlt,
+      TruncatedWittVector.coeff_zero, Fin.val_last] at h
+    rw [h, WittVector.zero_coeff]
   · rfl
 
 theorem map_constantCoeff_Γlim (i j k : Fin (n + 1)) :
