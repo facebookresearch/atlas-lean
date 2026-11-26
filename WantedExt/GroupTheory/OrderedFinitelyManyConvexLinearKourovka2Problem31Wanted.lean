@@ -44,15 +44,13 @@ def orderableFinitelyManyConvexIsLinear : Prop :=
     ∃ (K : Type) (_ : Field K) (n : ℕ) (f : G →* GL (Fin n) K), Function.Injective f
 
 /--
-Resolved false: the Kourovka Archive answers 2.31 "No, not every" with Churkin's group `⟨aₙ, bₙ (n ∈
-ℤ), c, d | [aₙ, bₙ] = c, aₙ^d = aₙ₊₁, bₙ^d = bₙ₊₁, [aₙ, aₘ] = [bₙ, bₘ] = [aₙ, c] = [bₙ, c] = 1⟩`,
-which is soluble and orderable with finitely many convex subgroups but not residually finite, hence
-not linear over a field. Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group
-Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems,
-Problem 2.31 (V. M. Kopytov); resolution: V. A. Churkin (1969), Kourovka Archive, Problem 2.31: No,
-not every; the group ⟨aₙ, bₙ (n ∈ ℤ), c, d | [aₙ, bₙ] = c, aₙ^d = aₙ₊₁, bₙ^d = bₙ₊₁, [aₙ, aₘ] = [bₙ,
-bₘ] = [aₙ, c] = [bₙ, c] = 1⟩ is soluble and orderable with finitely many convex subgroups but not
-residually finite, hence not linear, https://arxiv.org/abs/1401.0300v49.
+Resolved false: the Kourovka Archive answers 2.31 "No, not every", with a group of V. A. Churkin
+(1969) that is orderable with finitely many convex subgroups but not residually finite, hence not
+linear over a field. The statement only negates the universal claim. Source: E. I. Khukhro and
+V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue,
+arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 2.31 (V. M. Kopytov); resolution:
+V. A. Churkin (1969), Kourovka Archive, Problem 2.31: No, not every,
+https://arxiv.org/abs/1401.0300v49.
 -/
 public theorem_wanted orderableFinitelyManyConvexIsLinear_refuted :
     ¬ orderableFinitelyManyConvexIsLinear

@@ -50,8 +50,8 @@ noncomputable def wordDist {G : Type*} [Group G] (S : Finset G) (g h : G) : ℝ 
 
 /-- The exponent `α` is attained by a uniform embedding of `(G, d_S)` into a separable real Hilbert
 space: some `1`-Lipschitz `f : G → H` and constants `C > 0`, `D` satisfy
-`C d_S(g, h)^α - D ≤ ‖f g - f h‖` for all `g, h`. The Hilbert space compression of `G` is the
-supremum of the attained exponents. -/
+`C d_S(g, h)^α - D ≤ ‖f g - f h‖` for all `g, h`. When `S` generates `G`, the Hilbert space
+compression of `G` is the supremum of the attained exponents. -/
 def AttainsCompression (G : Type*) [Group G] (S : Finset G) (α : ℝ) : Prop :=
   ∃ (H : Type) (_ : NormedAddCommGroup H) (_ : InnerProductSpace ℝ H) (_ : CompleteSpace H)
     (_ : TopologicalSpace.SeparableSpace H) (f : G → H) (C D : ℝ),

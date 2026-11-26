@@ -53,10 +53,11 @@ def AbelianSubgroupsRankLE (G : Type*) [Group G] (n : ℕ) : Prop :=
   ∀ x : Fin (n + 1) → G, (∀ i j, Commute (x i) (x j)) →
     ∃ m : Fin (n + 1) → ℤ, m ≠ 0 ∧ (List.ofFn fun i => x i ^ m i).prod = 1
 
-/-- `G` has torsion-free rank (Hirsch length) at least `h`: it has a cyclic series
-`1 = G₀ ≤ G₁ ≤ ⋯ ≤ Gₘ = G`, each `Gᵢ` normal in `Gᵢ₊₁ = Gᵢ ⊔ ⟨gᵢ⟩`, with at least `h` infinite
-factors (`Gᵢ` of infinite index in `Gᵢ₊₁`). For a polycyclic group, e.g. a finitely generated
-nilpotent group, every cyclic series has the same number of infinite factors, the Hirsch length. -/
+/-- `G` has a finite cyclic series `1 = G₀ ≤ G₁ ≤ ⋯ ≤ Gₘ = G`, each `Gᵢ` normal in
+`Gᵢ₊₁ = Gᵢ ⊔ ⟨gᵢ⟩`, with at least `h` infinite factors (`Gᵢ` of infinite index in `Gᵢ₊₁`). For a
+polycyclic group, e.g. a finitely generated nilpotent group, every cyclic series has the same
+number of infinite factors, the Hirsch length, so this says that the Hirsch length is at least
+`h`. -/
 def HirschLengthGE (G : Type*) [Group G] (h : ℕ) : Prop :=
   ∃ (m : ℕ) (s : ℕ → Subgroup G) (g : ℕ → G), s 0 = ⊥ ∧ s m = ⊤ ∧
     (∀ i < m, ((s i).subgroupOf (s (i + 1))).Normal ∧ s (i + 1) = s i ⊔ Subgroup.zpowers (g i)) ∧
