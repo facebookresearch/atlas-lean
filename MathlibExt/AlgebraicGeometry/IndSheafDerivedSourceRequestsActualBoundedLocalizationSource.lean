@@ -5,6 +5,21 @@ All rights reserved.
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
+
+/-
+Portions of this file are adapted from:
+
+`Mathlib/Algebra/Homology/HomotopyCategory/Plus.lean` (Mathlib):
+Copyright (c) 2026 Joël Riou. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Joël Riou
+
+`Mathlib/Algebra/Homology/DerivedCategory/Plus.lean` (Mathlib):
+Copyright (c) 2026 Joël Riou. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Joël Riou
+-/
+
 module
 
 public import MathlibExt.AlgebraicGeometry.IndSheafBoundedTensorModels
@@ -34,7 +49,8 @@ open CategoryTheory Category Limits ZeroObject Pretriangulated CochainComplex
 open MathlibExt.AlgebraicGeometry.CompactSupportIndSheaves
 open MathlibExt.AlgebraicGeometry.IndSheafBoundedTensorModels
 
-private instance sourceAbelianPreadditive (k : Type) [Field k] (X : TopCat.{0})
+/-- Use the zero morphisms of the abelian structure of `IndSheaf k X`. -/
+local instance boundedLocalizationPreadditive (k : Type) [Field k] (X : TopCat.{0})
     [CompactSheafSource k X] : Preadditive (IndSheaf k X) := Abelian.toPreadditive
 
 attribute [local instance] HasDerivedCategory.standard
