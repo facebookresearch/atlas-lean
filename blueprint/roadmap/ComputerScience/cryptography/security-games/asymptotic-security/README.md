@@ -43,3 +43,9 @@
 
 - [Efficient adversaries](efficient-adversaries.md)
 - [Probabilistic polynomial-time Turing machines](probabilistic-polynomial-time-turing-machines.md)
+
+## Interactive running time and interfaces
+
+- [Efficient interactive machines](efficient-interactive-machines.md)
+- [Efficient interfaces](efficient-interfaces.md)
+- [Elementary wrappers](elementary-wrappers.md)
