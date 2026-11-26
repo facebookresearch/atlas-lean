@@ -49,26 +49,6 @@ local notation "𝔰[" k ", " r "]" => ite (Odd k) (2 * r - 1) (2 * r)
 /-- The paper's index `t`: `2r` for odd `k`, `2r - 1` for even `k`. -/
 local notation "𝔱[" k ", " r "]" => ite (Odd k) (2 * r) (2 * r - 1)
 
-/-- **Catalan-type identities for Fibonacci and Lucas polynomials.** Let $f_i$ and $\ell_i$ be
-the Fibonacci and Lucas polynomials in $\mathbb{Z}[x]$, defined by $f_0 = 0$, $f_1 = 1$,
-$\ell_0 = 2$, $\ell_1 = x$ and $g_{i+2} = x g_{i+1} + g_i$ for $g = f, \ell$. For all natural
-numbers $k \le n$,
-$$
-f_{n+k} f_{n-k} - f_n^2 = (-1)^{n+k+1} f_k^2
-\quad\text{and}\quad
-\ell_{n+k} \ell_{n-k} - \ell_n^2 = (-1)^{n+k} (x^2 + 4) f_k^2
-$$
-in $\mathbb{Z}[x]$.
-
-The source quotes this lemma from Koshy.
-
-Source: Yinqi Lin and Bo Zhou, *Infinite Sums Involving Powers of Gibonacci Polynomials*,
-The Fibonacci Quarterly 62 (2024), Article linzhou02172024,
-Lemma 2.1 (`fq-2024-linzhou02172024-lem-2.1`). -/
-public theorem_wanted gibonacciPoly_mul_sub_sq {n k : ℕ} (hk : k ≤ n) :
-    𝔣 (n + k) * 𝔣 (n - k) - 𝔣 n ^ 2 = (-1) ^ (n + k + 1) * 𝔣 k ^ 2 ∧
-      𝔩 (n + k) * 𝔩 (n - k) - 𝔩 n ^ 2 = (-1) ^ (n + k) * (X ^ 2 + 4) * 𝔣 k ^ 2
-
 /-- **Telescoping inverse-power series of gibonacci polynomials at even indices, even shift.**
 Let $x > 0$ be real, and let $g_n$ denote either the Fibonacci polynomials, given by $g_0 = 0$ and
 $g_1 = 1$, or the Lucas polynomials, given by $g_0 = 2$ and $g_1 = x$, both satisfying
