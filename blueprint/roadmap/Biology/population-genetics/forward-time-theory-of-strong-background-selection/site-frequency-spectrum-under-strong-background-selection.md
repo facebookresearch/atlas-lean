@@ -5,6 +5,7 @@ In the model of [lineage trajectories under linked deleterious mutations](lineag
 **Weak load ($\lambda \ll 1$).** To leading order in $\lambda$, background selection has no effect: $p(f) \approx 2 N U_n / f$, the neutral spectrum of a population of census size $N$.
 
 **Strong load ($\lambda \gg 1$).** The spectrum has five regimes:
+
 $$p(f) \approx \begin{cases}
 \dfrac{2 N U_n}{f}, & f \ll \dfrac{1}{N\sigma},\\[2ex]
 \dfrac{N U_n}{N s f^2 \lambda \,\log_\lambda\!\left(\dfrac{e^{\lambda}}{N s f}\right)}, & \dfrac{1}{N\sigma} \ll f \ll \dfrac{e^{\lambda}}{N s},\\[2ex]
@@ -12,6 +13,7 @@ $$p(f) \approx \begin{cases}
 \dfrac{N U_n}{N s (1-f) \,\log_\lambda\!\left(\dfrac{e^{\lambda}}{N s (1-f)}\right)}, & \dfrac{1}{N\sigma} \ll 1-f \ll \dfrac{e^{\lambda}}{N s},\\[2ex]
 \dfrac{2 N U_n}{f}, & 1 - f \ll \dfrac{1}{N\sigma},
 \end{cases}$$
+
 where $\log_\lambda$ is the logarithm to base $\lambda$ and the second line holds up to a constant factor.
 
 So the spectrum is neutral with the reduced size $N_e = N e^{-\lambda}$ only for $1/(N s e^{-\lambda}) < f < 1 - 1/(N s e^{-\lambda})$. Below that window there is a large excess of rare alleles over the $N_e$ prediction (falling off faster than $1/f$ from the census-size line at $f \approx 1/(N\sigma)$), and above it the spectrum rises again to the census-size line, so it is non-monotone. Summary statistics of the spectrum therefore start to deviate from the reduced-$N_e$ neutral expectation in samples larger than about $N s e^{-\lambda}$ ("$N_e s$") individuals, but not in smaller samples. Whenever pairwise diversity is reduced at all ($\pi/\pi_0 < 1$, i.e. McVicker's $B < 1$), these distortions are present.
