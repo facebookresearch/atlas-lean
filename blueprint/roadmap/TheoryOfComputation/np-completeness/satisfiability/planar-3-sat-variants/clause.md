@@ -1,0 +1,3 @@
+# Clause in PLANAR MONOTONE RECTILINEAR 3SAT
+
+In PLANAR MONOTONE RECTILINEAR 3SAT: the clause `c` of the formula.

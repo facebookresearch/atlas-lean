@@ -1,0 +1,3 @@
+# With bound in PARTIAL FEEDBACK EDGE SET with fixed `L ≥ 3`
+
+In PARTIAL FEEDBACK EDGE SET with a fixed cycle-length bound: the PARTIAL FEEDBACK EDGE SET instance obtained from the instance `i`, which carries no cycle-length bound, by setting that bound to `L`.
