@@ -61,7 +61,7 @@ lemma norm_mulVec_one (A : Matrix α α ℝ) (hA : ∀ i j, 0 ≤ A i j) :
   apply Finset.sup_congr rfl
   intro i hi
   simp only [Matrix.mulVec, dotProduct, mul_one]
-  rw [Real.nnnorm_of_nonneg (Finset.sum_nonneg fun j _ => hA i j)]
+  rw [Real.nnNorm_of_nonneg (Finset.sum_nonneg fun j _ => hA i j)]
   apply NNReal.eq
   simp [Real.norm_eq_abs, abs_of_nonneg, hA]
 
