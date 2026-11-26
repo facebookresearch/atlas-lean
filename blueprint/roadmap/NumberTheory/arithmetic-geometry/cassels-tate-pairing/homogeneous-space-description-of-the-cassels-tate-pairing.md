@@ -89,5 +89,6 @@ A good expansion has pages for:
   of $\mathrm{Br}(K_v) \to H^2(G_v, K_{v,s}(X)^\times)$ for a locally trivial $X$), and Remark 6.12 with footnote 16
   (pp. 81–82, a fourth description for Jacobians, and the reference to C. D. Gonzalez-Aviles, J. Math. Sci. Univ.
   Tokyo 10 (2003), 391–419, for its agreement with Proposition 6.9).
-- S. Lang, *Abelian Varieties*, Interscience, 1959: Chapter VI, §4, Theorem 10, p. 171 (the reciprocity law), not
-  read here; cited as stated by Poonen and Stoll, §2, p. 1114, and by Milne, Remark I.3.5, p. 44.
+- S. Lang, *Abelian Varieties*, Chapter VI, §4, Theorem 10 (the reciprocity law), not read here: p. 171 of the
+  Springer-Verlag edition of 1983, as cited by Poonen and Stoll ([La1], §2, p. 1114); Milne, Remark I.3.5, p. 44,
+  cites the same theorem in the Interscience edition of 1959.

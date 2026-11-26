@@ -18,10 +18,20 @@ The **Cassels–Tate pairing** is the biadditive map
 $$\langle\,,\rangle \colon \text{Ш}(K, A) \times \text{Ш}(K, A^\vee) \to \mathbb{Q}/\mathbb{Z}$$
 
 defined as follows (the Weil pairing definition). Let $a \in \text{Ш}(K, A)$ and $a' \in \text{Ш}(K, A^\vee)$, and
-choose $m \ge 1$ killing both. Let $e_m \colon A[m] \times A^\vee[m] \to \mu_m \subseteq \bar K^\times$ be the Weil pairing as
-Poonen and Stoll define it in §12.2, through a Poincaré divisor on $A \times A^\vee$ (the inverse of Lang's, their
-footnote 21); it is a perfect $G_K$-equivariant pairing, which identifies $A^\vee[m]$ with the Cartier dual of
-$A[m]$. Let $\vee$ be the cup product of cochains it induces.
+choose $m \ge 1$ killing both. Let $e_m \colon A[m] \times A^\vee[m] \to \bar K^\times$ be the Weil pairing as Poonen and Stoll
+define it in §12.2, the inverse of Lang's (their footnote 21). Fix a Poincaré divisor $\mathcal{P}$ on $A \times A^\vee$,
+a divisor of the Poincaré bundle. For a $0$-cycle $y$ of degree $0$ on $A_{\bar K}$ summing to $0$ in $A(\bar K)$, the
+divisor $\mathcal{P}(y)$ on $A^\vee_{\bar K}$ is that of a function $f_y$, and for a $0$-cycle $z'$ of degree $0$ on $A^\vee_{\bar K}$
+put $\mathcal{P}(y, z') = f_y(z')$; define ${}^t\mathcal{P}(y', z)$ in the same way with the transpose
+${}^t\mathcal{P}$ on $A^\vee \times A$, for $y'$ summing to $0$ in $A^\vee(\bar K)$ (Poonen–Stoll, §2, p. 1114). For
+$x \in A[m]$ and $x' \in A^\vee[m]$, choose $0$-cycles $\mathfrak{a}$ on $A_{\bar K}$ and $\mathfrak{a}'$ on
+$A^\vee_{\bar K}$ of degree $0$ summing to $x$ and $x'$, with supports such that the values below are defined, and
+put
+
+$$e_m(x, x') = \frac{\mathcal{P}(m\mathfrak{a}, \mathfrak{a}')}{{}^t\mathcal{P}(m\mathfrak{a}', \mathfrak{a})},$$
+
+which Poonen and Stoll write additively as $(m\mathfrak{a}) \cup \mathfrak{a}' - \mathfrak{a} \cup (m\mathfrak{a}')$. Let $\vee$
+be the cup product of cochains that $e_m$ induces.
 
 1. Choose cocycles $\tau \in Z^1(G_K, A[m])$ and $\tau' \in Z^1(G_K, A^\vee[m])$ whose classes map to $a$ and $a'$ under
    the maps induced by $A[m] \subseteq A(\bar K)$ and $A^\vee[m] \subseteq A^\vee(\bar K)$, which are onto
@@ -41,12 +51,13 @@ $A[m]$. Let $\vee$ be the cup product of cochains it induces.
 
 All but finitely many $\bar c_v$ vanish, for suitable local choices. The cochains $\sigma$, $\tau'$ and
 $\bar\varepsilon$ are continuous, so they factor through $\operatorname{Gal}(L/K)$ for a finite Galois extension $L$ of
-$K$ and take finitely many values. Let $T$ be the finite set of places consisting of the archimedean places, the
+$K$ and take finitely many values; take $L$ to contain also the values of $\bar\varepsilon$ and the finitely many values
+of $e_m$ on $A[m] \times A^\vee[m]$. Let $T$ be the finite set of places consisting of the archimedean places, the
 places of bad reduction of $A$, the places above the primes dividing $m$, the places ramified in $L$, and the places
-at which some value of $\bar\varepsilon$ is not a unit. For $v \notin T$, $a$ is unramified at $v$, $\beta_v$ and
+at which some value of $\bar\varepsilon$ or of $e_m$ is not a unit. For $v \notin T$, $a$ is unramified at $v$, $\beta_v$ and
 $Q_v$ may be chosen in $A(K_v^{\mathrm{un}})$, and then $\bar\gamma_v$ is inflated from a $2$-cocycle of the Galois group
 of a finite unramified extension $L'_w/K_v$ with values in the units $U_{L'_w}$: the term $(\sigma_v - \rho_v) \vee \tau'_v$
-takes values in $\mu_m$ and $\bar\varepsilon_v$ in units. As $H^2(\operatorname{Gal}(L'_w/K_v), U_{L'_w}) = 0$ for an
+takes values among the values of $e_m$, and $\bar\varepsilon_v$ among those of $\bar\varepsilon$, all units at $v$. As $H^2(\operatorname{Gal}(L'_w/K_v), U_{L'_w}) = 0$ for an
 unramified extension, $\bar c_v = 0$.
 
 The value does not depend on the choices made, nor on $m$ (replacing $m$ by a multiple gives the same value), and
@@ -63,10 +74,21 @@ result is biadditive. Poonen and Stoll state these facts ("One checks that the v
 $m$ is replaced by a prime-to-$p$ multiple", p. 1144) and refer to Flach for an outline of the proof; Milne leaves
 them to the reader (proof of Proposition I.6.9, p. 79).
 
+It also has a page for the Weil pairing $e_m$ used above: that $e_m(x, x')$ does not depend on the choices of
+$\mathfrak{a}$, $\mathfrak{a}'$ and of the Poincaré divisor, by Lang's reciprocity law (the hypothesis
+$\operatorname{supp}(\mathfrak{a} \times \mathfrak{a}') \cap \operatorname{supp}(\mathcal{P}) = \varnothing$ in
+$A \times A^\vee$ of Poonen–Stoll, §2, p. 1114) and because changing $\mathcal{P}$ by a principal divisor or by the
+pull-back of a divisor on one factor does not change it; that $e_m$ takes values in $\mu_m$, is biadditive, perfect
+and $G_K$-equivariant; and its comparison, with its sign, with the identification of $A^\vee[m]$ with the Cartier
+dual of $A[m]$ in item 3 of the page on the dual abelian variety. Poonen and Stoll take this definition from Lang,
+*Abelian Varieties*, Springer-Verlag, 1983, p. 173 (cited by Poonen–Stoll, §12.2, p. 1143; not read here), with the
+opposite sign, and note in their footnote 21 the value $e_m(P, Q) = e^{-2\pi i/m}$ for $P$, $Q$ corresponding to
+$1/m$, $\tau/m$ on $\mathbb{C}/(\mathbb{Z} + \mathbb{Z}\tau)$, with $E$ identified with its dual.
+
 ## Depends on
 
 - [Abelian scheme](../../../AlgebraicGeometry/abelian-varieties/abelian-scheme.md), for abelian varieties over a field
-- [Dual abelian variety](../../../AlgebraicGeometry/abelian-varieties/dual-abelian-variety.md), for $A^\vee$ and the Cartier duality of $A[m]$ and $A^\vee[m]$ (its item 3) that defines $e_m$
+- [Dual abelian variety](../../../AlgebraicGeometry/abelian-varieties/dual-abelian-variety.md), for $A^\vee$, the Poincaré bundle through which $e_m$ is defined (its item 1), and the Cartier duality of $A[m]$ and $A^\vee[m]$ (its item 3)
 - [Selmer groups and the torsion of the Shafarevich–Tate group of an abelian variety](selmer-groups-of-abelian-varieties.md), for $\text{Ш}(K, A)$ and the local groups
 - [Vanishing of the third cohomology of the multiplicative group of a number field](../../algebraic-number-theory/galois-representations/galois-cohomology-of-number-fields/vanishing-of-h3-of-the-multiplicative-group.md), for the cochain $\bar\varepsilon$ in step 2
 - [Local class field theory: cohomology and the existence theorem](../../p-adic-numbers/local-class-field-theory-cohomology.md), for the local invariant maps (its item 2)
@@ -82,8 +104,9 @@ them to the reader (proof of Proposition I.6.9, p. 79).
 ## Sources
 
 - B. Poonen and M. Stoll, *The Cassels-Tate pairing on polarized abelian varieties*, Ann. of Math. (2) 150 (1999),
-  1109–1149, doi:10.2307/121064: §12.2, "The Weil pairing definition", pp. 1143–1144 (the construction above,
-  with the normalization of $e_m$ in footnote 21; "One checks that the value is well-defined, and unchanged if $m$ is
+  1109–1149, doi:10.2307/121064: §2, p. 1114 (the values $D(a, a')$ and Lang's reciprocity law); §12.2, "The Weil
+  pairing definition", pp. 1143–1144 (the definition of $e_m$ and the construction above, with the normalization of
+  $e_m$ in footnote 21; "One checks that the value is well-defined, and unchanged if $m$ is
   replaced by a prime-to-$p$ multiple"), and §3, pp. 1115–1117, for two other definitions.
 - J. S. Milne, *Arithmetic Duality Theorems*, 2nd ed., 2006, <https://www.jmilne.org/math/Books/ADTnot.pdf>:
   Chapter I, Proposition 6.9 and its proof (pp. 78–79, the case $r = 1$, with footnote 14 correcting the order of the

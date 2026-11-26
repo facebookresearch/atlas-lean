@@ -49,6 +49,11 @@ the final count:
 For elliptic curves and $m$ prime, $\text{Ш}^2_S(K, A_m) = 0$, so $\text{Ш}_0 = \text{Ш}$ and the argument is
 shorter (Milne, Remark I.6.18).
 
+Milne builds the pairing from the $e_m$-pairing of the Cartier duality of $A[m]$ and $A^\vee[m]$, while the
+[construction page](cassels-tate-pairing-of-an-abelian-variety.md) uses the Weil pairing as Poonen and Stoll define it;
+transferring the proof uses the comparison of the two, listed in the expansion of that page. Replacing $e_m$ by its
+inverse changes the pairing by a sign, which does not change its kernels.
+
 ## Depends on
 
 - [The Cassels–Tate pairing of an abelian variety](cassels-tate-pairing-of-an-abelian-variety.md)
