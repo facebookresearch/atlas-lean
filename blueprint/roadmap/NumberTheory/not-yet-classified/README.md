@@ -6,6 +6,7 @@ Topics added since this subject's fields were last revised.
 - [Adelic Periodization](adelic-periodization/README.md)
 - [Finite Ramification Conductors](finite-ramification-conductors/README.md)
 - [Hecke Operator](hecke-operator/README.md)
+- [Hecke UGamma H](hecke-ugamma-h/README.md)
 - [Level NStructure](level-nstructure/README.md)
 - [Local Level One](local-level-one/README.md)
 - [Period Map Hecke](period-map-hecke/README.md)

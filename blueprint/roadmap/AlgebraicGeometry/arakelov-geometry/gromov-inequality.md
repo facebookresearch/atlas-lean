@@ -1,9 +1,10 @@
 # Gromov's inequality
 
-Let $M$ be a compact complex manifold of dimension $n$, $\Omega$ a smooth volume form on $M$, and
+Let $M$ be a nonempty compact complex manifold of dimension $n$, $\Omega$ a smooth positive
+volume form on $M$, and
 $\bar H_1, \dots, \bar H_l$ holomorphic line bundles on $M$ with smooth hermitian metrics. For integers
 $m_1, \dots, m_l \ge 0$ give $m_1 H_1 + \dots + m_l H_l = H_1^{\otimes m_1} \otimes \dots \otimes
-H_l^{\otimes m_l}$ the tensor product metric, with pointwise norm $|\cdot|$. There is a constant $C$,
+H_l^{\otimes m_l}$ the tensor product metric, with pointwise norm $|\cdot|$. There is a constant $C > 0$,
 depending only on $M$, $\Omega$ and $\bar H_1, \dots, \bar H_l$, such that for every real number
 $p > 0$, all integers $m_1, \dots, m_l \ge 0$ and every $s \in H^0(M, m_1 H_1 + \dots + m_l H_l)$,
 
@@ -24,11 +25,7 @@ $\exp(p \, \cdot)$ turns it into the same inequality for $\max(|f|, \delta)^p$, 
 \frac{1}{2\pi} \int_0^{2\pi} |f(c + r e^{i\theta})|^p \, d\theta$ for every $p > 0$. Applying it in
 each variable in turn gives the polycircle form.
 
-## Depends on
-
-This node has no prerequisites.
-
-## Proof depends on
+## Informally uses
 
 - [Sub-mean-value inequality for the positive logarithm of a holomorphic function](../../Analysis/complex-analysis/several-complex-variables/hartogs-theorem-on-separate-analyticity/hartogs-pos-log-norm-le-circle-average.md),
   applied to $f / \delta$, for the sub-mean-value inequality of $|f|^p$ on circles, through Jensen's
