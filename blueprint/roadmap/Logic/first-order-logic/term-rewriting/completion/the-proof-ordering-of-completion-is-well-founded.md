@@ -23,4 +23,4 @@ Then $\succ_C$ is a well-founded ordering.
 
 ## Sources
 
-- U. Waldmann, *Automated Reasoning*, lecture notes, Max Planck Institute for Informatics, winter semester 2019/20, <https://rg1-teaching.mpi-inf.mpg.de/autrea-ws19/script.pdf>, Section 4.6, the costs of proof steps, the proof ordering, and Lemma 4.35, p. 125; Section 1.4, Theorem 1.10, p. 9, for the well-foundedness of lexicographic combinations and multiset extensions.
+- U. Waldmann, *Automated Reasoning*, lecture notes, Max Planck Institute for Informatics, winter semester 2019/20, <https://rg1-teaching.mpi-inf.mpg.de/autrea-ws19/script.pdf>, Section 4.6, the costs of proof steps, the proof ordering, and Lemma 4.35, p. 125; Section 1.3, Lemma 1.5, p. 6, for the well-foundedness of lexicographic combinations, and Section 1.4, Theorem 1.10 (c), p. 9, for that of multiset extensions.
