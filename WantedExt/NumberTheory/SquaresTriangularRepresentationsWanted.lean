@@ -16,6 +16,7 @@ public import Mathlib.NumberTheory.Divisors
 public import Mathlib.RingTheory.PowerSeries.Inverse
 
 public import MathlibExt.NumberTheory.SquareRepresentationCongruences
+public import MathlibExt.NumberTheory.SquareTriangularRepresentationDivisibility
 public import MathlibExt.NumberTheory.TriangularRepresentationWindow
 
 /-!
@@ -91,19 +92,6 @@ public theorem_wanted sumOfTriangularRepCount_ne_zero_of_window {n p : ℕ} (hn 
     (hp : p.Prime) (hp2 : p ≠ 2) (hpn : n + 1 ≤ p - 1) (s : ℤ)
     (h : ¬ (p : ℤ) ∣ ∑ i ∈ Finset.Icc 1 (p - 1), sumOfTriangularRepCount (s - i) n) :
     sumOfTriangularRepCount s n ≠ 0
-
-/-- **A prime between $p/2$ and $p$ divides the representation counts of $p$.** For integers
-$k, n \ge 1$, let $r_k(n)$ be the number of representations of $n$ as an ordered sum of $k$ squares
-of integers and $t_k(n)$ the number of representations of $n$ as an ordered sum of $k$ triangular
-numbers $m(m+1)/2$ with $m \ge 0$. Let $p$ be an odd prime and $\ell$ a prime with
-$p/2 < \ell < p$. Then $\ell$ divides both $r_\ell(p)$ and $t_\ell(p)$.
-
-Source: Alegri and Christopher, *On Formulas, Recurrences, and Congruences for
-Representations of Integers as Sums of Squares and Triangular Numbers*, INTEGERS
-26 (2026), Article A93, Theorem 11 (`integers-2026-A93-thm-11`). -/
-public theorem_wanted prime_dvd_repCount_of_half_lt {p q : ℕ} (hp : p.Prime) (hp2 : p ≠ 2)
-    (hq : q.Prime) (hpq : p < 2 * q) (hqp : q < p) :
-    (q : ℤ) ∣ sumOfSquaresRepCount q p ∧ (q : ℤ) ∣ sumOfTriangularRepCount q p
 
 /-- **Logarithmic coefficients of the triangular theta series.** For a natural number $n$, let
 $b_n$ be the rational number
