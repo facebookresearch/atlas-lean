@@ -1,4 +1,4 @@
 # Fusion categories
 
-- [Fusion category over a field](let-k-be-a-field.md)
-- [Rank of a fusion category](the-rank-of-a-fusion-category-is-the-num.md)
+- [Fusion category over a field](fusion-category-over-a-field.md)
+- [Rank of a fusion category](rank-of-a-fusion-category.md)

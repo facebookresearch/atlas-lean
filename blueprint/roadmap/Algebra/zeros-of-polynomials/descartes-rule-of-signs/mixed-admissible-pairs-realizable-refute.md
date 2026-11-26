@@ -4,4 +4,6 @@ It is not the case that for every degree $d$, every sign pattern $\sigma$ of deg
 
 ## Sources
 
-- B. Shapiro, *Problems around polynomials: the good, the bad and the ugly...*, Arnold Math. J. 1 (2015), arXiv:1503.05295, Conjecture 7 (J. Forsgård, V. Kostov, B. Shapiro).\n- H. Cheriha, Y. Gati and V. P. Kostov, *A non-realization theorem in the context of Descartes' rule of signs*, Annual of Sofia University, Fac. Math. Inform. 106 (2019), 25–51, arXiv:1911.12255.\n- V. P. Kostov, Math. Bohem. 144 (2019), Theorem 1(1) (a degree-11 counterexample).
+- B. Shapiro, *Problems around polynomials: the good, the bad and the ugly...*, Arnold Math. J. 1 (2015), arXiv:1503.05295, Conjecture 7 (J. Forsgård, V. Kostov, B. Shapiro).
+- H. Cheriha, Y. Gati and V. P. Kostov, *A non-realization theorem in the context of Descartes' rule of signs*, Annual of Sofia University, Fac. Math. Inform. 106 (2019), 25–51, arXiv:1911.12255.
+- V. P. Kostov, Math. Bohem. 144 (2019), Theorem 1(1) (a degree-11 counterexample).

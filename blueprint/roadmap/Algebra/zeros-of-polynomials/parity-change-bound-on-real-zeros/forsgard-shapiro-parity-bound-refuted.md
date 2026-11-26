@@ -4,4 +4,5 @@ It is not the case that every real polynomial $f = \sum_{k=0}^{n} a_k x^k$ of de
 
 ## Sources
 
-- B. Shapiro, *Problems around polynomials: the good, the bad and the ugly...*, Arnold Math. J. 1 (2015), arXiv:1503.05295, Conjecture 10 (J. Forsgård, B. Shapiro).\n- O. Katkova, B. Shapiro and A. Vishnyakova, *In search of Newton-type inequalities*, J. Math. Anal. Appl. 538 (2024), 128349, arXiv:2403.12200, Section 5.
+- B. Shapiro, *Problems around polynomials: the good, the bad and the ugly...*, Arnold Math. J. 1 (2015), arXiv:1503.05295, Conjecture 10 (J. Forsgård, B. Shapiro).
+- O. Katkova, B. Shapiro and A. Vishnyakova, *In search of Newton-type inequalities*, J. Math. Anal. Appl. 538 (2024), 128349, arXiv:2403.12200, Section 5.
