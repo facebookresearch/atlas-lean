@@ -23,19 +23,26 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Combinatorics.StrongMason` — strong_mason_conjecture (manifest `manifests/problems/strong_mason_conjecture.toml`, rev 1, submitter Kim Morrison, status archived) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Combinatorics.StrongMason` —
+strong_mason_conjecture (manifest `manifests/problems/strong_mason_conjecture.toml`, rev 1,
+submitter Kim Morrison, status archived) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.Combinatorics.StrongMasonWanted` namespace. Mathematical
-statements are unchanged. Source: P. Branden and J. Huh, 'Lorentzian polynomials', Ann. of Math. 192 (2020), 821-891, Theorem 4.14, https://doi.org/10.4007/annals.2020.192.3.4; independently N. Anari, K. Liu, S. Oveis Gharan, and C. Vinzant, 'Log-concave polynomials III: Mason's ultra-log-concavity conjecture for independent sets of matroids', https://arxiv.org/abs/1811.01600.
+and placed the declarations in the `MathlibExt.Combinatorics.StrongMasonWanted` namespace.
+Mathematical statements are unchanged. Source: P. Branden and J. Huh, 'Lorentzian polynomials',
+Ann. of Math. 192 (2020), 821-891, Theorem 4.14, https://doi.org/10.4007/annals.2020.192.3.4;
+independently N. Anari, K. Liu, S. Oveis Gharan, and C. Vinzant, 'Log-concave polynomials III:
+Mason's ultra-log-concavity conjecture for independent sets of matroids',
+https://arxiv.org/abs/1811.01600.
 -/
 module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib
+public import MathlibExt.Combinatorics.Matroid.WeakMason
 
 @[expose] public section
 
@@ -55,12 +62,6 @@ Mathlib supplies the matroid axioms and their independent-set API. The
 inequality below clears the binomial denominators, so it can be stated
 entirely in `Nat`.
 -/
-
-/-- **Number of independent sets of a given size.** For a finite matroid $M$ and a natural
-number $k$, this is the number of independent sets of $M$ with exactly $k$ elements. -/
-noncomputable def independentSetCount {α : Type*} (M : Matroid α) [M.Finite]
-    (k : ℕ) : ℕ :=
-  {I ∈ Set.powersetCard α k | M.Indep I}.ncard
 
 /- **The strong Mason conjecture** (Branden-Huh; independently
 Anari-Liu-Oveis Gharan-Vinzant). If `I k` counts the independent sets of
