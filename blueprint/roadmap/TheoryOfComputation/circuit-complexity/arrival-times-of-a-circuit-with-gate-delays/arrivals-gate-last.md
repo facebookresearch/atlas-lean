@@ -1,0 +1,3 @@
+# Arrival time of the last gate of a program
+
+A straight-line circuit program over a gate signature has a fixed number of input wires and a sequence of gates; each gate applies an operation of the signature to a list of wires (inputs or earlier gates), one for each argument position of the operation. Let a program with $g$ gates be extended by one more gate, with real delays for all $g + 1$ gates and real arrival times for the inputs. The arrival time of the new last gate is the arrival time of its output, computed with its own delay from the arrival times of the wires of the original program (with the delays of the first $g$ gates): its delay plus the maximum of $0$ and the arrival times of the wires it reads.

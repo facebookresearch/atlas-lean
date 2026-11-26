@@ -1,0 +1,3 @@
+# Arrival times of the gates of a program
+
+A straight-line circuit program over a gate signature has a fixed number of input wires and a sequence of gates; each gate applies an operation of the signature to a list of wires (inputs or earlier gates), one for each argument position of the operation. Given a real delay for every gate and a real arrival time for every input, the arrival times of the gates are defined gate by gate: a program with no gates has none, and in a program extended by one gate the earlier gates keep the arrival times they have in the shorter program (with their own delays), while the new gate arrives at its delay plus the maximum of $0$ and the arrival times of the wires it reads (inputs at their given times, earlier gates at their computed times).

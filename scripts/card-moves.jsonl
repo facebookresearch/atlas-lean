@@ -898,3 +898,5 @@
 {"page": "AlgebraicGeometry/not-yet-classified/cassels-tate-pairing/elliptic-points-top-rep", "to": "NumberTheory/arithmetic-geometry/cassels-tate-pairing/elliptic-points-top-rep", "article_id": "af_43a8413d60720aa677c01690"}
 {"page": "AlgebraicGeometry/not-yet-classified/cassels-tate-pairing/elliptic-tate-shafarevich", "to": "NumberTheory/arithmetic-geometry/cassels-tate-pairing/elliptic-tate-shafarevich", "article_id": "af_29b9d1c45f039d9e01131982"}
 {"page": "Probability/stochastic-calculus/blumenthal-zero-one-law/gaussian-real-ioi-zero", "to": "Probability/distributions/continuous/gaussian-real-ioi-zero", "article_id": "af_a7cf73e1726dc09baac90a88"}
+{"folder": "TheoryOfComputation/not-yet-classified/part-01/part-02/basic", "to": "TheoryOfComputation/complexity-classes/resource-annotations-via-cslib-s-timem", "article_id": "af_e55310657e1d967d0000065c"}
+{"page": "TheoryOfComputation/not-yet-classified/part-01/part-02/basic/cost-m", "to": "TheoryOfComputation/complexity-classes/resource-annotations-via-cslib-s-timem/cost-m", "article_id": "af_ad74eb9ed0916afa7418f8da"}

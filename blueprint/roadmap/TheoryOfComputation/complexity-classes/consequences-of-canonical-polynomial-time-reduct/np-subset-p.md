@@ -1,0 +1,3 @@
+# An NP-hard problem in P puts all of NP in P
+
+Decision problems are predicates on finite bit strings. The classes P and NP and polynomial-time computable functions are the canonical ones defined by finite multi-stack Turing machines. A polynomial-time many-one reduction from $A$ to $B$ is a polynomial-time computable function $r$ on bit strings with $x \in A$ if and only if $r(x) \in B$ for every string $x$; a problem $L$ is NP-hard when every problem in NP reduces to $L$ in this way, and NP-complete when it is in NP and NP-hard. If a decision problem $L$ is NP-hard and belongs to P, then every decision problem in NP belongs to P.

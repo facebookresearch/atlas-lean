@@ -1,0 +1,3 @@
+# Polynomial-time single-tape functions decide problems in single-tape P
+
+Let $L$ be a decision problem on finite bit strings and let $\Sigma$ be a finite, nonempty tape alphabet with a designated default symbol. Let $\iota$ be an injective map from the Booleans to $\Sigma$. Suppose $f$ is a function on words over $\Sigma$ computable in polynomial time by a single-tape Turing machine, and that for every bit string $w$, applying $f$ to the encoded word $\iota(w)$ (each bit replaced by its symbol) gives the one-symbol word consisting of $\iota$ of the answer of $L$ on $w$. Then $L$ belongs to single-tape P, decided by the same machine within the same polynomial time bound.

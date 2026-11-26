@@ -2,7 +2,6 @@
 
 ## [Part 2 of 20](part-02/README.md)
 
-- [Basic](part-02/basic/README.md)
 - [Binary Tree Address Law](part-02/binary-tree-address-law/README.md)
 
 ## [Part 4 of 20](part-04/README.md)

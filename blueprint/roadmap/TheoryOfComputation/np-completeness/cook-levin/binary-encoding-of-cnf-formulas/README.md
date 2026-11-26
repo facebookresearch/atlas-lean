@@ -18,3 +18,7 @@
 - [The SAT language](satlang.md)
 - [SAT as a decision problem](sat-dec.md)
 - [Polynomial-time many-one reduction](poly-many-one-red.md)
+- [NP-hardness](nphard.md)
+- [NP-completeness](npcomplete.md)
+- [Characterizing NP-hardness](np-hard-iff.md)
+- [Characterizing NP-completeness](np-complete-iff.md)

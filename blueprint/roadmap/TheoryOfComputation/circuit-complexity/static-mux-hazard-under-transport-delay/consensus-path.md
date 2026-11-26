@@ -1,0 +1,3 @@
+# Consensus-path signal of the repaired multiplexer
+
+This example models a two-path multiplexer with data inputs $b = c = \mathrm{true}$ under transport delay: at time $0$ the select signal switches, so that the positive path becomes true after its delay $d_1 \ge 0$ and the complemented path becomes false after its delay $d_2 \ge 0$, and the two paths are combined by an output OR gate with delay $d_{\mathrm{or}} \ge 0$. Signals are Boolean functions of real time. The consensus path computes $b \wedge c$ with $b = c = \mathrm{true}$ and is initialized before time zero, so its signal is the function of time that is true at every $t \in \mathbb{R}$.

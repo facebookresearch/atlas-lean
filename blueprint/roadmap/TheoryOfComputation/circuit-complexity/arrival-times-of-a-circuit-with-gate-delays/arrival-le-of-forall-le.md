@@ -1,0 +1,3 @@
+# Bounding a gate's arrival by a common bound on its inputs
+
+A straight-line circuit program over a gate signature has a fixed number of input wires and a sequence of gates; each gate applies an operation of the signature to a list of wires (inputs or earlier gates), one for each argument position of the operation. Fix real arrival times for all wires, a real delay $d$ for a gate, and a real $t \ge 0$. If every wire read by the gate arrives at time at most $t$, then the gate's output arrives at time at most $d + t$. Together with the lower bound by each input plus $d$, this says the gate's arrival is $d$ plus the maximum of $0$ and its input arrivals.
