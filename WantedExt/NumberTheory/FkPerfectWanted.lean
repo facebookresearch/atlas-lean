@@ -42,18 +42,13 @@ public import Mathlib.NumberTheory.Divisors
 public import MathlibExt.NumberTheory.NearPerfectTwoPrimePower
 public import MathlibExt.NumberTheory.OddPrimeDeficientPerfect
 public import MathlibExt.NumberTheory.FkPerfect
+public import MathlibExt.NumberTheory.FkPerfectNotIsNearFPerfectTwoPowMulPrime
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.FkPerfectWanted
-
-/-- **$[k,\ell]$-near-perfect numbers.** For natural numbers $k$, $\ell$ and $n$, write
-$\sigma_k(n) = \sum_{e \mid n} e^k$. The number $n$ is $[k,\ell]$-near-perfect when there is a
-divisor $d$ of $n$ with $d < n$ such that $\sigma_k(n) = n^k + d^k + \ell n$. -/
-def IsKLNearPerfect (k l n : ℕ) : Prop :=
-  ∃ d, KLNearPerfectWith k l n d
 
 /-- **Deficient $F_k$-perfect numbers.** For natural numbers $k$ and $n$, write
 $\sigma_k(n) = \sum_{e \mid n} e^k$. The number $n$ is deficient $F_k$-perfect when it is
@@ -77,13 +72,6 @@ $[2,3]$-deficient-perfect, that is, when there is a divisor $d$ of $n$ with $d <
 $\sigma_2(n) + d^2 = n^2 + 3n$. -/
 def IsDeficientFPerfect (n : ℕ) : Prop :=
   IsKLDeficientPerfect 2 3 n
-
-/-- **Near $F$-perfect numbers.** A natural number $n$ is near $F$-perfect when it is
-$[2,3]$-near-perfect, that is, when some proper divisor $d$ of $n$ ($d \mid n$ and $d < n$)
-satisfies $\sigma_2(n) = n^2 + d^2 + 3n$, where $\sigma_2(n) = \sum_{e \mid n} e^2$ is the sum
-of the squares of the divisors of $n$. -/
-def IsNearFPerfect (n : ℕ) : Prop :=
-  IsKLNearPerfect 2 3 n
 
 /-- **No prime is deficient $F$-perfect.** If $p$ is a prime, then $p$ is not deficient
 $F$-perfect.
@@ -213,18 +201,6 @@ theorem_wanted not_klDeficientPerfectWith_two_pow_mul
     (k l p a : ℕ) (hl : 1 ≤ l) (hp : p.Prime) (hpo : Odd p) :
     ¬ KLDeficientPerfectWith k l (2 ^ a * p) 1 ∧
       ¬ KLDeficientPerfectWith k l (2 ^ a * p) p
-
-/-- **No near $F$-perfect number of the form $2^a p$.** For every prime $p$ and every natural
-number $a$, the number $n = 2^a p$ is not near $F$-perfect: there is no divisor $d$ of $n$ with
-$d < n$ and $\sigma_2(n) = n^2 + d^2 + 3n$, where $\sigma_2(n)$ is the sum of the squares of the
-divisors of $n$.
-
-Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
-and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
-`F_k`-Perfect Numbers", Theorem 9. -/
-theorem_wanted not_isNearFPerfect_two_pow_mul_prime
-    (p a : ℕ) (hp : p.Prime) :
-    ¬ IsNearFPerfect (2 ^ a * p)
 
 /-- **No $[2,\ell]$-near-perfect number of the form $2^a p$.** Let $\ell$ and $a$ be natural
 numbers with $\ell \ge 1$, and let $p$ be an odd prime. Then $2^a p$ is not
