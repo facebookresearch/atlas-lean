@@ -13,7 +13,8 @@ public import MathlibExt.AlgebraicGeometry.InvertibleBaseScalar
 @[expose] public section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry
-  AlgebraicGeometry.DescentCharacter
+open AlgebraicGeometry.Scheme.Modules (baseSection IsBaseScalar
+  existsUnique_isBaseScalar_of_isLineBundle_of_bijective)
 open MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
 
 universe u v
@@ -42,6 +43,24 @@ example {X : Scheme.{u}} {M : X.Modules} (hM : IsLineBundle M) (g : M ⟶ M) :
     ∃! s : Γ(X, ⊤), ∀ (U : X.Opens) (x : Γ(M, U)),
       g.app U x = X.presheaf.map (homOfLE (le_top : U ≤ ⊤)).op s • x :=
   hM.existsUnique_app_eq_smul g
+
+/-- A concrete instance: over `Spec ℤ` itself, where the map from `ℤ` to the global sections is
+bijective, twice the identity of the structure sheaf acts by the base scalar `2`, and by the
+theorem by no other integer. -/
+example (c : ℤ) :
+    IsBaseScalar (𝟙 (Spec (.of ℤ))) (𝟙 (structureModule (Spec (.of ℤ))) + 𝟙 _) c ↔ c = 2 := by
+  have hbij : Function.Bijective fun c : ℤ =>
+      Scheme.Hom.appTop (𝟙 (Spec (.of ℤ))) ((Scheme.ΓSpecIso (.of ℤ)).inv c) := by
+    rw [Scheme.Hom.id_appTop]
+    exact ConcreteCategory.bijective_of_isIso (Scheme.ΓSpecIso (CommRingCat.of ℤ)).inv
+  have h2 : IsBaseScalar (𝟙 (Spec (.of ℤ))) (𝟙 (structureModule (Spec (.of ℤ))) + 𝟙 _) 2 :=
+    fun U s => by
+      simp only [baseSection, Scheme.Modules.Hom.add_app, Scheme.Modules.Hom.id_app]
+      rw [map_ofNat, map_ofNat, map_ofNat, two_smul]
+      rfl
+  obtain ⟨_, -, huniq⟩ := existsUnique_isBaseScalar_of_isLineBundle_of_bijective _ hbij
+    (isLineBundle_structureModule _) (𝟙 (structureModule (Spec (.of ℤ))) + 𝟙 _)
+  exact ⟨fun hc => (huniq c hc).trans (huniq 2 h2).symm, fun hc => hc ▸ h2⟩
 
 /-- Boundary: the injectivity half of the bijectivity hypothesis cannot be
 dropped. The cast `ℤ → ZMod 2` is surjective but not injective. Along the

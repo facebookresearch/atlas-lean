@@ -13,8 +13,11 @@ Portions of this file are adapted from:
 `Definitions/Def_AlgebraicGeometry_RelativePicardFunctor.lean`,
 `Theorems/Thm_AlgebraicGeometry_Scheme_Modules_IsInvertible_existsUnique_app_eq_smul.lean`,
 `P2M/Sol/S_AlgebraicGeometry_Scheme_Modules_IsInvertible_existsUnique_app_eq_smul.lean`,
-the DescentCharacter existsUnique theorem file in `Theorems/`
-and its proof file in `P2M/Sol/`
+`Theorems/Thm_AlgebraicGeometry_DescentCharacter_existsUnique_isBaseScalar_of_isInvertible_
+of_bijective.lean`
+and
+`P2M/Sol/S_AlgebraicGeometry_DescentCharacter_existsUnique_isBaseScalar_of_isInvertible_
+of_bijective.lean`
 (https://github.com/anthropics/fermats-last-theorem):
 Compared with the source files at commit
 `6e837e75355538c7f80bab5b956861e86c4eacc2`.
@@ -57,12 +60,8 @@ namespace AlgebraicGeometry.Scheme.Modules
 variable {X : Scheme.{u}}
 
 lemma Hom.app_naturality {M N : X.Modules} (φ : M ⟶ N) {U V : X.Opens} (i : U ⟶ V) (x : Γ(M, V)) :
-    φ.app U (M.presheaf.map i.op x) = N.presheaf.map i.op (φ.app V x) := by
-  have h := φ.mapPresheaf.naturality i.op
-  simp only [mapPresheaf_app] at h
-  have h' := ConcreteCategory.congr_hom h x
-  simp only [ConcreteCategory.comp_apply] at h'
-  exact h'
+    φ.app U (M.presheaf.map i.op x) = N.presheaf.map i.op (φ.app V x) :=
+  NatTrans.naturality_apply φ.mapPresheaf i.op x
 
 noncomputable def unitOne (U : X.Opens) : Γ(structureModule X, U) := (1 : Γ(X, U))
 
@@ -185,14 +184,19 @@ lemma trivOn_of_iso (U : X.Opens) (τ : (Modules.pullback U.ι).obj M ≅ struct
 
 end AlgebraicGeometry.Scheme.Modules
 
+/-! ## Endomorphisms of invertible sheaves -/
+
 namespace MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
 
 open _root_.AlgebraicGeometry _root_.AlgebraicGeometry.Scheme.Modules
 
 variable {X : Scheme.{u}}
 
-/-- Every endomorphism of an invertible sheaf is multiplication by a
-unique global section of the structure sheaf. -/
+/-- **Endomorphisms of invertible sheaves are global functions.** Let `M` be an invertible sheaf
+on a scheme `X`, that is, a sheaf of modules that is locally isomorphic to the structure sheaf.
+Every endomorphism `g` of `M` is multiplication by a unique global section `s` of the structure
+sheaf: on every open `U`, `g` multiplies each section of `M` over `U` by the restriction of `s`
+to `U`. -/
 public theorem IsLineBundle.existsUnique_app_eq_smul {M : X.Modules}
     (hM : IsLineBundle M) (g : M ⟶ M) :
     ∃! s : Γ(X, ⊤), ∀ (U : X.Opens) (x : Γ(M, U)),
@@ -218,23 +222,31 @@ public theorem IsLineBundle.existsUnique_app_eq_smul {M : X.Modules}
 
 end MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
 
-namespace AlgebraicGeometry.DescentCharacter
+/-! ## Base scalars -/
+
+namespace AlgebraicGeometry.Scheme.Modules
 
 variable {X : Scheme.{u}} {R : Type u} [CommRing R]
 
-/-- The section of the structure sheaf over `U` coming from `c : R`. -/
+/-- **Section of a base scalar.** Given a morphism of schemes `f : X ⟶ Spec R`, a scalar `c : R`
+and an open `U` of `X`, this is the image of `c` under the map from `R` to the global sections
+of the structure sheaf of `X` that `f` induces, restricted to `U`. -/
 @[expose] public noncomputable def baseSection (f : X ⟶ Spec (CommRingCat.of R)) (c : R)
     (U : X.Opens) : Γ(X, U) :=
   X.presheaf.map (homOfLE (le_top (a := U))).op
     (f.appTop ((Scheme.ΓSpecIso (CommRingCat.of R)).inv c))
 
-/-- `σ` is multiplication by the base scalar `c` on every open. -/
+/-- **Endomorphism acting by a base scalar.** Given a morphism of schemes `f : X ⟶ Spec R`, an
+endomorphism `σ` of a sheaf of modules `M` on `X` acts by the scalar `c : R` when, on every
+open `U` of `X`, it multiplies each section of `M` over `U` by `baseSection f c U`. -/
 @[expose] public noncomputable def IsBaseScalar (f : X ⟶ Spec (CommRingCat.of R))
     {M : X.Modules} (σ : M ⟶ M) (c : R) : Prop :=
   ∀ (U : X.Opens) (s : Γ(M, U)), σ.app U s = baseSection f c U • s
 
-/-- An endomorphism of an invertible sheaf is uniquely multiplication
-by a base scalar when global functions equal the base ring. -/
+/-- **Endomorphisms of invertible sheaves are base scalars.** Let `f : X ⟶ Spec R` be a morphism
+of schemes for which the map from `R` to the global sections of the structure sheaf of `X` that
+`f` induces is bijective. Then every endomorphism `σ` of an invertible sheaf `M` on `X` acts by a
+unique scalar `c : R`, in the sense of `IsBaseScalar`. -/
 public theorem existsUnique_isBaseScalar_of_isLineBundle_of_bijective
     (f : X ⟶ Spec (CommRingCat.of R))
     (hH0 : Function.Bijective fun c : R =>
@@ -260,4 +272,4 @@ public theorem existsUnique_isBaseScalar_of_isLineBundle_of_bijective
     rw [h1]
     exact hc.symm
 
-end AlgebraicGeometry.DescentCharacter
+end AlgebraicGeometry.Scheme.Modules
