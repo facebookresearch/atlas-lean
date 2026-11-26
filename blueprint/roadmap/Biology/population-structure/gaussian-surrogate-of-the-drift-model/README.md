@@ -15,3 +15,5 @@
 - [Gaussian drift model with one edge and one population](gaussian-drift-model.md)
 - [Frequency of the Gaussian drift model](gaussian-drift-model-freq.md)
 - [Gaussian drift model exits the unit interval with positive probability](gaussian-drift-model-freq-not-mem-icc.md)
+- [TreeMix composite likelihood](treemix-composite-likelihood.md)
+- [TreeMix covariance relative to the mean population](treemix-mean-centred-covariance.md)

@@ -35,52 +35,12 @@ public import MathlibExt.NumberTheory.TwoNearPerfectPowerOfTwoDivisors
 public import MathlibExt.NumberTheory.TwoNearPerfect
 public import MathlibExt.NumberTheory.TwoNearPerfectTwoNearPerfectTwoPowMulPrimeSq
 public import MathlibExt.NumberTheory.TwoNearPerfectTwoNearPerfectTwoPowMulPrimeSqCaseThree
+public import MathlibExt.NumberTheory.TwoNearPerfectTwoNearPerfectTwoPowMulPrimeCases
+public import MathlibExt.NumberTheory.TwoNearPerfectTwoNearPerfectTwoPowMulPrimeSqCaseFive
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **$2$-near perfect numbers of the form $2^k p$.** Let $k \ge 1$, let $p$ be a prime and let
-$n = 2^k p$. Suppose $d_1 \ne d_2$ are divisors of $n$ with $\sigma(n) = 2n + d_1 + d_2$, where
-$\sigma$ is the sum-of-divisors function (that is, $n$ is $2$-near perfect with omitted divisors
-$d_1, d_2$). Then, after possibly swapping $d_1$ and $d_2$, one of the following holds, where
-all equations are between integers: (1) $p = 2^k - 1$, $d_1 = 1$ and $d_2 = p$; (2) for some
-natural numbers $a, b$, $p = 2^{k+1} - 2^a - 2^b - 1$, $d_1 = 2^a$ and $d_2 = 2^b$; (3) for some
-natural numbers $a, b$, $p(1 + 2^b) = 2^{k+1} - 2^a - 1$, $d_1 = 2^a$ and $d_2 = 2^b p$; (4) for
-some natural numbers $a, b$, $p(1 + 2^a + 2^b) = 2^{k+1} - 1$, $d_1 = 2^a p$ and $d_2 = 2^b p$.
-
-The paper states only this necessary direction; the four situations are not sufficient as
-printed ($k = 3$, $a = b = 1$ gives the prime $p = 11$ in situation 2, but $d_1 = d_2 = 2$).
-
-Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Zelinsky,
-*On 2-Near Perfect Numbers*, INTEGERS 24 (2024), Article A61, Theorem 1
-(`integers-2024-A61-thm-1`). -/
-public theorem_wanted two_near_perfect_two_pow_mul_prime_cases {k p d₁ d₂ : ℕ} (hk : 0 < k)
-    (hp : p.Prime) (hd₁ : d₁ ∣ 2 ^ k * p) (hd₂ : d₂ ∣ 2 ^ k * p) (hne : d₁ ≠ d₂)
-    (hσ : ArithmeticFunction.sigma 1 (2 ^ k * p) = 2 * (2 ^ k * p) + d₁ + d₂) :
-    ∃ e₁ e₂ : ℕ, ((e₁ = d₁ ∧ e₂ = d₂) ∨ (e₁ = d₂ ∧ e₂ = d₁)) ∧
-      (((p : ℤ) = 2 ^ k - 1 ∧ e₁ = 1 ∧ e₂ = p) ∨
-        (∃ a b : ℕ, (p : ℤ) = 2 ^ (k + 1) - 2 ^ a - 2 ^ b - 1 ∧ e₁ = 2 ^ a ∧ e₂ = 2 ^ b) ∨
-        (∃ a b : ℕ, (p : ℤ) * (1 + 2 ^ b) = 2 ^ (k + 1) - 2 ^ a - 1 ∧
-          e₁ = 2 ^ a ∧ e₂ = 2 ^ b * p) ∨
-        (∃ a b : ℕ, (p : ℤ) * (1 + 2 ^ a + 2 ^ b) = 2 ^ (k + 1) - 1 ∧
-          e₁ = 2 ^ a * p ∧ e₂ = 2 ^ b * p))
-
-/-- **$2$-near perfect $2^k p^2$ with omitted divisors $p^m$ and $2^b p^j$.** Let $p$ be an odd
-prime, let each of $m$ and $j$ be $1$ or $2$, and let $b, k$ be integers with $1 \le b \le k$.
-If $n = 2^k p^2$ satisfies $\sigma(n) = 2n + p^m + 2^b p^j$, where $\sigma$ is the
-sum-of-divisors function (that is, $n$ is $2$-near perfect with omitted divisors $p^m$ and
-$2^b p^j$), then $n = 200$.
-
-Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Zelinsky,
-*On 2-Near Perfect Numbers*, INTEGERS 24 (2024), Article A61, Proposition 4
-(`integers-2024-A61-prop-4`). -/
-public theorem_wanted two_near_perfect_two_pow_mul_prime_sq_case_five {k p m b j : ℕ}
-    (hp : p.Prime) (hp2 : p ≠ 2) (hm : m = 1 ∨ m = 2) (hb : 1 ≤ b) (hbk : b ≤ k)
-    (hj : j = 1 ∨ j = 2)
-    (hσ : ArithmeticFunction.sigma 1 (2 ^ k * p ^ 2) =
-      2 * (2 ^ k * p ^ 2) + p ^ m + 2 ^ b * p ^ j) :
-    2 ^ k * p ^ 2 = 200
 
 /-- **Classification of prime solutions of $p(1 + 2^{k-a}) = 2^{k+1} - 2^a - 1$.** Let $a \le k$
 be natural numbers and let $p$ be a prime with $p(1 + 2^{k-a}) = 2^{k+1} - 2^a - 1$, that is,

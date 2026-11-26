@@ -31,6 +31,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Fib.Basic
 public import MathlibExt.Combinatorics.Enumerative.FloorNonMultiples
+public import MathlibExt.Combinatorics.Enumerative.SchreierParentDBinomial
 public import WantedExt.Combinatorics.Enumerative.SchreierTypeSetsWanted
 
 namespace MetaMathlibExt
@@ -204,21 +205,6 @@ theorem schreierParentB_rec {s p n : ℕ} (hn : p * s + 2 ≤ n) :
   rw [schreierParentB]
   split_ifs <;> first | rfl | omega
 
-/-- **The parent sequence $d_{u,n}$.** For natural numbers $u$ and $n$, define $d_{u,n}$ by
-recursion on $n$: $d_{u,n} = 1$ if $n < 2u$ or $u = 0$, and otherwise
-$d_{u,n} = d_{u,n-u} + d_{u,n-2u+1}$.
-
-The paper takes $u \ge 2$ and indexes from $n = 1$, with $d_{u,n} = 1$ for $1 \le n \le 2u - 1$;
-here $d_{u,0} = 1$ as well, and the degenerate case $u = 0$ is set to $1$.
-
-Source: Hùng Việt Chu, Yubo Geng, Julian King, Steven J. Miller, Garrett Tresch and Zachary Louis
-Vasseur, *Linear Recurrences from Counting Schreier-Type Multisets*, INTEGERS 26 (2026),
-Article A53, Section 4 (definition of `d_{u,n}`). -/
-def schreierParentD (u : ℕ) (n : ℕ) : ℕ :=
-  if _h : n < 2 * u ∨ u = 0 then 1
-  else schreierParentD u (n - u) + schreierParentD u (n - 2 * u + 1)
-decreasing_by all_goals omega
-
 /-- **Initial values of the parent sequence.** For all natural numbers $u$ and $n$ with $n < 2u$,
 the parent sequence $d_{u,n}$ satisfies $d_{u,n} = 1$.
 
@@ -264,7 +250,8 @@ public theorem_wanted schreierMultisetCount_formula_and_recurrence {s p : ℕ} (
       schreierMultisetCount s p n =
         ∑ k ∈ Finset.Icc 1 ((s * n + 1) / (s * p + 1)), (n - p * k + k - 2).choose (k - 1)) ∧
     ∀ n, s * p + 2 ≤ n →
-      schreierMultisetCount s p n = ∑ i ∈ Finset.range (s + 1), schreierMultisetCount s p (n - 1 - i * p)
+      schreierMultisetCount s p n =
+        ∑ i ∈ Finset.range (s + 1), schreierMultisetCount s p (n - 1 - i * p)
 
 /-- **Closed form and recurrence for colored Schreier multiset counts.** Let $s \ge 1$ and
 $p \ge 1$, and write $|B^{(s)}_{p,n}|$ for the number of colored Schreier-type multisets. For
@@ -314,23 +301,6 @@ Article A53, Lemma 1 (`integers-2026-A53-lem-1`). -/
 public theorem_wanted coloredSchreierMultisetCount_eq_schreierParentB {s p n : ℕ} (hs : 1 ≤ s)
     (hp : 1 ≤ p) (hn : 1 ≤ n) :
     coloredSchreierMultisetCount s p n = schreierParentB s p (n * s - s + 1)
-
-/-- **Binomial sum formula for the parent sequence.** For all natural numbers $u \ge 2$ and
-$n \ge 1$, the parent sequence $d_{u,n}$ satisfies
-$$
-d_{u,n} = \sum_{i=0}^{\lfloor (n-1)/u \rfloor} \binom{\lfloor (n + (u-1)i - u)/(2u-1) \rfloor}{i}.
-$$
-
-The numerator $n + (u-1)i - u$ is negative only when $i = 0$ and $n < u$. There it is read as
-$0$ (truncated subtraction), so the term is $\binom{0}{0} = 1$, which agrees with the paper's
-$\binom{-1}{0} = 1$.
-
-Source: Hùng Việt Chu, Yubo Geng, Julian King, Steven J. Miller, Garrett Tresch and Zachary Louis
-Vasseur, *Linear Recurrences from Counting Schreier-Type Multisets*, INTEGERS 26 (2026),
-Article A53, Proposition 2 (`integers-2026-A53-prop-2`). -/
-public theorem_wanted schreierParentD_eq_sum_choose {u n : ℕ} (hu : 2 ≤ u) (hn : 1 ≤ n) :
-    schreierParentD u n =
-      ∑ i ∈ Finset.range ((n - 1) / u + 1), ((n + (u - 1) * i - u) / (2 * u - 1)).choose i
 
 /-- **Schreier sets avoiding multiples are counted by a subsequence of the parent sequence.**
 For every integer $u \ge 2$ and every integer $n \ge 1$, the number $|D_{u,n}|$ of Schreier-type

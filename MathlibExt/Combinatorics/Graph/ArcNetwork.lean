@@ -195,9 +195,12 @@ theorem flowValue_aggregate_eq_neg_mulVec {V : Type*} [Fintype V] [DecidableEq V
   rw [aggregate_sum_outgoing, aggregate_sum_incoming, incidence_mulVec]
   ring
 
-/-- Explicit proportional real lift (C4): in a positive-total-capacity endpoint class,
-`F (tail e) (head e) * u e / aggregate u (tail e) (head e)`; in a zero-total-capacity
-class, `0` explicitly. No positivity, parallel-arc, loop, or surjectivity assumptions. -/
+/-- Explicit proportional real lift (C4): on an endpoint class of nonzero total capacity,
+`F (tail e) (head e) * u e / aggregate u (tail e) (head e)`; on a zero-total-capacity class,
+`0` explicitly. The lift therefore splits the flow `F p q` among the arcs from `p` to `q` only on
+pairs of nonzero (for nonnegative capacities, positive) total capacity, and carries no flow on a
+pair of zero total capacity whatever `F p q` is. No positivity, parallel-arc, loop, or
+surjectivity assumptions. -/
 noncomputable def proportionalLift {V : Type*} [Fintype V] [DecidableEq V] {E : Type*} [Fintype E]
     [DecidableEq E] (tail head : E → V) (u : E → ℝ) (F : V → V → ℝ) (e : E) : ℝ :=
   if aggregate tail head u (tail e) (head e) = 0 then 0
