@@ -17,6 +17,5 @@ Distribution-free and semiparametric methods: empirical distribution functions (
 - [Potential outcomes and causal identification](potential-outcomes-and-causal-identification/README.md)
 - [Product integrals and the functional delta method](product-integrals-and-the-functional-delta-metho/README.md)
 - [Simultaneous confidence bands for survival curves](simultaneous-confidence-bands-for-survival-curve/README.md)
-- [Single-epoch conditional physical failure probability](single-epoch-conditional-physical-failure-probab/README.md)
 - [U-statistics](u-statistics/README.md)
 - [Reliability and monitoring](reliability-and-monitoring/README.md)

@@ -59,13 +59,16 @@ Source: Oscar Quester, *On Some Properties of Accessible Sets*, INTEGERS 25 (202
 public theorem_wanted two_large_contains_multiples (D : Set ℕ) (h : IsRLarge 2 D) :
     ∀ m : ℕ, 0 < m → ∃ d ∈ D, m ∣ d
 
-/-- **Finite removal preserves $r$-largeness.** Let $r$ be a natural number. If a set
+/-- **Finite removal preserves $r$-largeness.** Let $r \ge 2$. If a set
 $D \subseteq \mathbb{N}$ is $r$-large and $F \subseteq \mathbb{N}$ is finite, then $D \setminus F$
 is $r$-large.
 
+The source states this for every $r$, but it fails for $r = 1$: $D = F = \{1\}$ is a
+counterexample, since $\{1\}$ is $1$-large and $\emptyset$ is not.
+
 Source: Oscar Quester, *On Some Properties of Accessible Sets*, INTEGERS 25 (2025), Article A64,
         Theorem 3. -/
-public theorem_wanted rLarge_sdiff_finite (r : ℕ) (D F : Set ℕ)
+public theorem_wanted rLarge_sdiff_finite (r : ℕ) (D F : Set ℕ) (hr : 2 ≤ r)
     (hD : IsRLarge r D) (hF : F.Finite) :
     IsRLarge r (D \ F)
 
