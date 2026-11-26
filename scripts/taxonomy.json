@@ -11174,6 +11174,7 @@
   "MathlibExt/Combinatorics/Enumerative/ToeplitzHessenbergDetFussCatalanSpecial": {"to": "Combinatorics/riordan-arrays-transforms/hankel-continued-fractions", "title": "Toeplitz–Hessenberg determinants of Fuss–Catalan numbers"},
   "MathlibExt/Combinatorics/Enumerative/ToeplitzHessenbergDetGenFun": {"to": "Combinatorics/riordan-arrays-transforms/hankel-continued-fractions", "title": "Toeplitz–Hessenberg determinants of Fuss–Catalan numbers"},
   "MathlibExt/Combinatorics/Enumerative/TotalDescentsParkingFunctions": {"to": "Combinatorics/parking-functions", "title": "Descents, peaks and valleys of parking functions"},
+  "MathlibExt/Combinatorics/Enumerative/TwoMeteredParkingFunctions": {"to": "Combinatorics/parking-functions", "title": "Metered parking functions"},
   "MathlibExt/Combinatorics/Enumerative/TotienomialCoefficient": {"to": "Combinatorics/binomial-coefficients/generalized-binomial-coefficients", "title": "Totienomial coefficients"},
   "MathlibExt/Combinatorics/Enumerative/TotientWeightedDivisorSum": {"to": "Combinatorics/elementary-enumeration", "title": "Necklaces over a group with identity product"},
   "MathlibExt/Combinatorics/Enumerative/TouchardCatalanIdentity": {"to": "Combinatorics/catalan-numbers-lattice-paths/catalan-numbers", "title": "Touchard's Catalan identity"},
