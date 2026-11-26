@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Choose.Central
 public import MathlibExt.Data.Set.Density
 public import MathlibExt.NumberTheory.Padics.FactorialQuotient
+public import MathlibExt.NumberTheory.Padics.ShortRunValuationDensity
 public import MathlibExt.NumberTheory.Padics.ShortRunValuations
 
 namespace MetaMathlibExt
@@ -52,19 +53,6 @@ public theorem_wanted factorial_div_factorial_dvd_centralBinom_density_one (η :
     (hη : η < 1 / Real.log 4) :
     ({m : ℕ | ∀ k : ℕ, 1 ≤ k → (k : ℝ) ≤ η * Real.log m → (m + k)! / m ! ∣ centralBinom m} :
       Set ℕ).HasDensity 1
-
-/-- **Short runs of consecutive integers have small valuations almost always.** Write $v_p(n)$
-for the exponent of a prime $p$ in a positive integer $n$. The set of natural numbers $m$ such
-that $\max \{ v_p(m + i) : 1 \le i \le k \} \le 3 \log k / \log p$ for every integer $k$ with
-$\frac{1}{2} \log m < k < \log m$ and every prime $p \le 2k$ has natural density $1$.
-
-Source: Carl Pomerance, *Remarks on the Middle Binomial Coefficient*, INTEGERS 26 (2026),
-Article A47, Lemma 2 (`integers-2026-A47-lem-2`). -/
-public theorem_wanted max_padicValNat_add_le_density_one :
-    ({m : ℕ | ∀ k : ℕ, Real.log m / 2 < k → (k : ℝ) < Real.log m → ∀ p : ℕ, p.Prime →
-        p ≤ 2 * k →
-          (((Finset.Icc 1 k).sup fun i => padicValNat p (m + i) : ℕ) : ℝ) ≤
-            3 * Real.log k / Real.log p} : Set ℕ).HasDensity 1
 
 open scoped Classical in
 /-- **Small valuations of the middle binomial coefficient are rare.** For a natural number $x$

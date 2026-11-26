@@ -45,6 +45,7 @@ public import Mathlib.Topology.Algebra.InfiniteSum.Basic
 public import MathlibExt.NumberTheory.GouldReciprocalBinomial
 public import MathlibExt.NumberTheory.RamanujanBinomialSine
 public import MathlibExt.NumberTheory.RamanujanHarmonicIdentity
+public import MathlibExt.NumberTheory.RungObaid
 
 set_option autoImplicit false
 
@@ -90,24 +91,5 @@ theorem_wanted sum_choose_sub_choose_mul_harmonic_eq_add
           (Nat.choose (n + k - ν - 1) k : ℚ)) * harmonic ν =
       (Nat.choose (n + k) (k + 1) : ℚ) * (harmonic k - harmonic n) +
         (1 / ((k : ℚ) + 1)) * (Nat.choose (n + k + 1) (k + 1) : ℚ)
-
-/-- **The Rung-Obaid trigonometric identity.** Let $k$ and $n$ be natural numbers with
-$1 \le k \le n$, and let $\theta$ be a real number. Then
-
-$$\sum_{\nu=1}^{n} 2^\nu \left( \binom{n+k-\nu-1}{k-1} - \binom{n+k-\nu-1}{n-1} \right)
-\cos^\nu \theta \, \sin(\nu\theta) = 2^{n+k} \cos^{n+k} \theta \, \sin((n-k)\theta).$$
-
-Source: Horst Alzer and Man Kam Kwong, "Ramanujan and a
-Combinatorial Identity Involving Harmonic Numbers",
-Lemma 3. -/
-theorem_wanted sum_two_pow_choose_sub_mul_cos_pow_sin
-    (k n : ℕ) (hk : 1 ≤ k) (hkn : k ≤ n) (θ : ℝ) :
-    ∑ ν ∈ Finset.Icc 1 n,
-        (2 : ℝ) ^ ν *
-          ((Nat.choose (n + k - ν - 1) (k - 1) : ℝ) -
-            (Nat.choose (n + k - ν - 1) (n - 1) : ℝ)) *
-          Real.cos θ ^ ν * Real.sin ((ν : ℝ) * θ) =
-      (2 : ℝ) ^ (n + k) * Real.cos θ ^ (n + k) *
-        Real.sin (((n : ℝ) - (k : ℝ)) * θ)
 
 end MathlibExt.NumberTheory.RamanujanHarmonicIdentityWanted
