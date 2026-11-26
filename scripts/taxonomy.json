@@ -12354,6 +12354,7 @@
   "MathlibExt/GroupTheory/TwoPowerRank": {"to": "GroupTheory/abelian-groups", "title": "Two-power ranks of finite abelian groups"},
   "MathlibExt/GroupTheory/UnitConjecture": {"to": "GroupTheory/group-rings", "title": "Kaplansky's unit conjecture"},
   "MathlibExt/GroupTheory/VarietyCategoryOuterAutomorphismKourovka20Problem72": {"to": "GroupTheory/varieties-and-equations", "title": "Automorphisms of categories of relatively free groups"},
+  "MathlibExt/GroupTheory/VirtuallyNilpotentGrowth": {"to": "GroupTheory/geometric-group-theory", "title": "Growth of groups"},
   "MathlibExt/GroupTheory/WordMapsSurjectivityKourovka16Problem68": {"to": "GroupTheory/commutators-and-engel-conditions", "title": "Word maps on Lie groups"},
   "MathlibExt/GroupTheory/WordMapTraceRangeKourovka16Problem69": {"to": "GroupTheory/commutators-and-engel-conditions", "title": "Word maps on Lie groups"},
   "MathlibExt/GroupTheory/WordMetricComparison": {"to": "GroupTheory/geometric-group-theory", "title": "Word metrics and quasi-isometries"},
