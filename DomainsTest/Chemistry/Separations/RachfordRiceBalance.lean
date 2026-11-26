@@ -40,3 +40,17 @@ example : ¬ (∑ i : Bool, if i then (2 : ℝ) else 0) = 1 := by
   intro hy
   have hzero := h.2.mp ⟨by norm_num [Fintype.sum_bool, z], hy⟩
   norm_num [Fintype.sum_bool, ratios, z] at hzero
+
+-- At the other endpoint, use the converse: a zero objective normalizes both phases,
+-- even though the balance by itself fixes only the vapour composition.
+example :
+    let x : Bool → ℝ := fun i => if i then 1 / 3 else 2 / 3
+    let y : Bool → ℝ := fun i => if i then 2 / 3 else 1 / 3
+    (∑ i, x i) = 1 ∧ (∑ i, y i) = 1 := by
+  intro x y
+  have h := flash_balance_rachford_rice 1 0 1 y ratios x y
+    (by norm_num) (by norm_num) (by norm_num) (by intro i; cases i <;> norm_num [y])
+    (by norm_num [Fintype.sum_bool, y]) (by intro i; cases i <;> norm_num [ratios])
+    (by intro i; simp) (by intro i; cases i <;> norm_num [ratios, x, y])
+  apply h.2.mpr
+  norm_num [Fintype.sum_bool, ratios, y]
