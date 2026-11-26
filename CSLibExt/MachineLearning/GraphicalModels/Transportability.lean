@@ -10,6 +10,7 @@ module
 
 public import CSLibExt.MachineLearning.GraphicalModels.DoCalculus
 public import CSLibExt.MachineLearning.GraphicalModels.Identifiability
+public import Mathlib.Data.Finset.Update
 import Mathlib.Tactic.NormNum
 
 /-!
@@ -105,6 +106,7 @@ naming the lemma they adapt.
 namespace Cslib.MachineLearning.GraphicalModels
 
 open Finset MetaMathlibExt.FiniteWeight
+open Function (updateFinset)
 
 variable {α : Type*}
 
@@ -206,11 +208,6 @@ def source (M : DomainPair α D) : BayesNet α n := ⟨D.pa, M.cpt⟩
 def target (M : DomainPair α D) : BayesNet α n := ⟨D.pa, M.cpt'⟩
 
 end DomainPair
-
-/-- The assignment equal to `z` on `Z` and to `x` elsewhere. (Adapted from the private definition
-`fill` of `CSLibExt/MachineLearning/GraphicalModels/CausalAdjustment.lean`.) -/
-def fill {n : ℕ} (Z : Finset (Fin n)) (x : Fin n → α) (z : Z → α) : Fin n → α :=
-  fun i => if h : i ∈ Z then z ⟨i, h⟩ else x i
 
 /-- The prior of the selection node: weight `1/2` on `a` and weight `1/2` on `c`. (Adapted from
 the private definition `switchPrior_r3` of `DoCalculus.lean`.) -/
@@ -673,21 +670,21 @@ end DomainPair
 /-- Summing out `Z`: for `Y` disjoint from `Z`, the marginal over `Y` at `x` is the sum over the
 values `z` of `Z` of the marginal over `Y ∪ Z` at the assignment equal to `z` on `Z` and to `x`
 elsewhere. -/
-theorem marginal_eq_sum_fill [Fintype α] {n : ℕ} (P : (Fin n → α) → ℝ) {Y Z : Finset (Fin n)}
-    (hYZ : Disjoint Y Z) (x : Fin n → α) :
-    marginal P ↑Y x = ∑ z : Z → α, marginal P ↑(Y ∪ Z) (fill Z x z) := by
+theorem marginal_eq_sum_updateFinset [Fintype α] {n : ℕ} (P : (Fin n → α) → ℝ)
+    {Y Z : Finset (Fin n)} (hYZ : Disjoint Y Z) (x : Fin n → α) :
+    marginal P ↑Y x = ∑ z : Z → α, marginal P ↑(Y ∪ Z) (updateFinset x Z z) := by
   classical
   simp only [marginal_coe]
-  have hfill_eq : ∀ (z : Z → α) (i : Fin n) (h : i ∈ Z), fill Z x z i = z ⟨i, h⟩ := by
+  have hfill_eq : ∀ (z : Z → α) (i : Fin n) (h : i ∈ Z), updateFinset x Z z i = z ⟨i, h⟩ := by
     intro z i h
     exact dite_eq_left h
-  have hfill_ne : ∀ (z : Z → α) (i : Fin n) (h : i ∉ Z), fill Z x z i = x i := by
+  have hfill_ne : ∀ (z : Z → α) (i : Fin n) (h : i ∉ Z), updateFinset x Z z i = x i := by
     intro z i h
     exact dite_eq_right h
   have hfib : ∀ z : Z → α,
       (univ.filter (fun x' : Fin n → α => ∀ i ∈ Y, x' i = x i)).filter
         (fun x' => (fun j : Z => x' j) = z) =
-        univ.filter (fun x' : Fin n → α => ∀ i ∈ Y ∪ Z, x' i = fill Z x z i) := by
+        univ.filter (fun x' : Fin n → α => ∀ i ∈ Y ∪ Z, x' i = updateFinset x Z z i) := by
     intro z
     ext x'
     simp only [Finset.mem_filter, Finset.mem_univ, true_and]
@@ -1032,24 +1029,24 @@ dropped. -/
 theorem transport_formula [Fintype α] [Nonempty α] (M : DomainPair α D)
     {X Y Z : Finset (Fin n)} (x : Fin n → α) (hXY : Disjoint X Y) (hXZ : Disjoint X Z)
     (hYZ : Disjoint Y Z) (hadm : D.SAdmissible X Y Z) (hpre : D.PreTreatment X Z)
-    (hov : ∀ z : Z → α, marginal M.target.joint ↑Z (fill Z x z) ≠ 0 →
-      marginal M.source.joint ↑Z (fill Z x z) ≠ 0) :
+    (hov : ∀ z : Z → α, marginal M.target.joint ↑Z (updateFinset x Z z) ≠ 0 →
+      marginal M.source.joint ↑Z (updateFinset x Z z) ≠ 0) :
     marginal (M.target.mutilateSet X x).joint ↑Y x =
       ∑ z : Z → α,
-        marginal (M.source.mutilateSet X x).joint ↑(Y ∪ Z) (fill Z x z) /
-            marginal (M.source.mutilateSet X x).joint ↑Z (fill Z x z) *
-          marginal M.target.joint ↑Z (fill Z x z) := by
+        marginal (M.source.mutilateSet X x).joint ↑(Y ∪ Z) (updateFinset x Z z) /
+            marginal (M.source.mutilateSet X x).joint ↑Z (updateFinset x Z z) *
+          marginal M.target.joint ↑Z (updateFinset x Z z) := by
   classical
-  rw [marginal_eq_sum_fill _ hYZ x]
+  rw [marginal_eq_sum_updateFinset _ hYZ x]
   refine Finset.sum_congr rfl (fun z _ => ?_)
-  have hfillX : ∀ i ∈ X, fill Z x z i = x i := by
+  have hfillX : ∀ i ∈ X, updateFinset x Z z i = x i := by
     intro i hi
     have hni : i ∉ Z := fun hz => Finset.disjoint_left.mp hXZ hi hz
-    unfold fill
+    unfold updateFinset
     exact dite_eq_right hni
-  have hTm : M.target.mutilateSet X x = M.target.mutilateSet X (fill Z x z) :=
+  have hTm : M.target.mutilateSet X x = M.target.mutilateSet X (updateFinset x Z z) :=
     BayesNet.mutilateSet_congr _ _ (fun j hj => (hfillX j hj).symm)
-  have hSm : M.source.mutilateSet X x = M.source.mutilateSet X (fill Z x z) :=
+  have hSm : M.source.mutilateSet X x = M.source.mutilateSet X (updateFinset x Z z) :=
     BayesNet.mutilateSet_congr _ _ (fun j hj => (hfillX j hj).symm)
   have preT : ∀ k ∈ X, ∀ z' ∈ Z, ¬M.target.IsDescendant k z' := by
     intro k hk z' hz'
@@ -1060,42 +1057,44 @@ theorem transport_formula [Fintype α] [Nonempty α] (M : DomainPair α D)
     rw [M.isDescendant_source]
     exact hpre k hk z' hz'
   rw [hTm, hSm]
-  by_cases hTf : marginal (M.target.mutilateSet X (fill Z x z)).joint ↑Z (fill Z x z) = 0
-  · have hT0 : marginal M.target.joint ↑Z (fill Z x z) = 0 := by
-      have e := M.target.marginal_mutilateSet_of_preTreatment (fill Z x z) hXZ preT
+  by_cases hTf :
+      marginal (M.target.mutilateSet X (updateFinset x Z z)).joint ↑Z (updateFinset x Z z) = 0
+  · have hT0 : marginal M.target.joint ↑Z (updateFinset x Z z) = 0 := by
+      have e := M.target.marginal_mutilateSet_of_preTreatment (updateFinset x Z z) hXZ preT
       rw [← e]
       exact hTf
-    have hnum0 : marginal (M.target.mutilateSet X (fill Z x z)).joint ↑(Y ∪ Z)
-        (fill Z x z) = 0 := by
-      have hle : marginal (M.target.mutilateSet X (fill Z x z)).joint ↑(Y ∪ Z)
-          (fill Z x z) ≤
-          marginal (M.target.mutilateSet X (fill Z x z)).joint ↑Z (fill Z x z) :=
+    have hnum0 : marginal (M.target.mutilateSet X (updateFinset x Z z)).joint ↑(Y ∪ Z)
+        (updateFinset x Z z) = 0 := by
+      have hle : marginal (M.target.mutilateSet X (updateFinset x Z z)).joint ↑(Y ∪ Z)
+          (updateFinset x Z z) ≤
+          marginal (M.target.mutilateSet X (updateFinset x Z z)).joint ↑Z (updateFinset x Z z) :=
         marginal_le_of_subset (fun t => Chain.joint_nonneg _ _ t)
           Finset.subset_union_right _
       rw [hTf] at hle
-      have hnn : 0 ≤ marginal (M.target.mutilateSet X (fill Z x z)).joint ↑(Y ∪ Z)
-          (fill Z x z) :=
+      have hnn : 0 ≤ marginal (M.target.mutilateSet X (updateFinset x Z z)).joint ↑(Y ∪ Z)
+          (updateFinset x Z z) :=
         marginal_nonneg (fun t => Chain.joint_nonneg _ _ t) _ _
       exact le_antisymm hle hnn
     rw [hnum0, hT0, mul_zero]
-  · have hSf : marginal (M.source.mutilateSet X (fill Z x z)).joint ↑Z (fill Z x z) ≠ 0 := by
-      have eT := M.target.marginal_mutilateSet_of_preTreatment (fill Z x z) hXZ preT
-      have eS := M.source.marginal_mutilateSet_of_preTreatment (fill Z x z) hXZ preS
-      have hTpl : marginal M.target.joint ↑Z (fill Z x z) ≠ 0 := by
+  · have hSf : marginal (M.source.mutilateSet X (updateFinset x Z z)).joint ↑Z
+        (updateFinset x Z z) ≠ 0 := by
+      have eT := M.target.marginal_mutilateSet_of_preTreatment (updateFinset x Z z) hXZ preT
+      have eS := M.source.marginal_mutilateSet_of_preTreatment (updateFinset x Z z) hXZ preS
+      have hTpl : marginal M.target.joint ↑Z (updateFinset x Z z) ≠ 0 := by
         rw [← eT]
         exact hTf
-      have hSpl : marginal M.source.joint ↑Z (fill Z x z) ≠ 0 := hov z hTpl
+      have hSpl : marginal M.source.joint ↑Z (updateFinset x Z z) ≠ 0 := hov z hTpl
       rw [eS]
       exact hSpl
-    have hce := M.condEffect_eq_of_sAdmissible (fill Z x z) hXY hXZ hYZ hadm hTf hSf
-    have hdecomp : marginal (M.target.mutilateSet X (fill Z x z)).joint ↑(Y ∪ Z)
-          (fill Z x z) =
-        marginal (M.target.mutilateSet X (fill Z x z)).joint ↑(Y ∪ Z) (fill Z x z) /
-          marginal (M.target.mutilateSet X (fill Z x z)).joint ↑Z (fill Z x z) *
-          marginal (M.target.mutilateSet X (fill Z x z)).joint ↑Z (fill Z x z) :=
+    have hce := M.condEffect_eq_of_sAdmissible (updateFinset x Z z) hXY hXZ hYZ hadm hTf hSf
+    have hdecomp : marginal (M.target.mutilateSet X (updateFinset x Z z)).joint ↑(Y ∪ Z)
+          (updateFinset x Z z) =
+        marginal (M.target.mutilateSet X (updateFinset x Z z)).joint ↑(Y ∪ Z) (updateFinset x Z z) /
+          marginal (M.target.mutilateSet X (updateFinset x Z z)).joint ↑Z (updateFinset x Z z) *
+          marginal (M.target.mutilateSet X (updateFinset x Z z)).joint ↑Z (updateFinset x Z z) :=
       (div_mul_cancel₀ _ hTf).symm
     rw [hdecomp, hce,
-      M.target.marginal_mutilateSet_of_preTreatment (fill Z x z) hXZ preT]
+      M.target.marginal_mutilateSet_of_preTreatment (updateFinset x Z z) hXZ preT]
 
 end DomainPair
 
@@ -1113,11 +1112,12 @@ theorem identifiedOn_transport [Fintype α] [Nonempty α] {X Y Z : Finset (Fin n
     (x : Fin n → α) (hXY : Disjoint X Y) (hXZ : Disjoint X Z) (hYZ : Disjoint Y Z)
     (hadm : D.SAdmissible X Y Z) (hpre : D.PreTreatment X Z) :
     IdentifiedOn
-      {M : DomainPair α D | ∀ z : Z → α, marginal M.target.joint ↑Z (fill Z x z) ≠ 0 →
-        marginal M.source.joint ↑Z (fill Z x z) ≠ 0}
+      {M : DomainPair α D | ∀ z : Z → α, marginal M.target.joint ↑Z (updateFinset x Z z) ≠ 0 →
+        marginal M.source.joint ↑Z (updateFinset x Z z) ≠ 0}
       (fun M => ((fun z : Z → α => (marginal (M.source.mutilateSet X x).joint ↑(Y ∪ Z)
-            (fill Z x z), marginal (M.source.mutilateSet X x).joint ↑Z (fill Z x z))),
-        fun z : Z → α => marginal M.target.joint ↑Z (fill Z x z)))
+            (updateFinset x Z z),
+          marginal (M.source.mutilateSet X x).joint ↑Z (updateFinset x Z z))),
+        fun z : Z → α => marginal M.target.joint ↑Z (updateFinset x Z z)))
       (fun M => marginal (M.target.mutilateSet X x).joint ↑Y x) := by
   refine IdentifiedOn.of_eq_comp
     (F := fun p : ((Z → α) → ℝ × ℝ) × ((Z → α) → ℝ) =>

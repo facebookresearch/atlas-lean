@@ -12,6 +12,19 @@ import MathlibExt.Combinatorics.Enumerative.DelannoyConstructions
 
 namespace MetaMathlibExt.DelannoyConstructions
 
+-- At the boundary n = 0, the formula has only its constant term.
+example (m : ℕ) : ordinaryRiordanPascalLikeMatrix m m 1 = 1 := by
+  simpa using delannoy_eq_sum_choose_mul_choose_two_pow m 0
+
+-- With m > n, the right-hand sum stops strictly before the triangle entry's sum.
+example : ordinaryRiordanPascalLikeMatrix 5 3 1 = 25 := by
+  rw [delannoy_eq_sum_choose_mul_choose_two_pow 3 2]
+  decide +kernel
+
+-- Independently evaluate the original entry with the two coordinates reversed.
+example : ordinaryRiordanPascalLikeMatrix 5 2 1 = 25 := by
+  decide +kernel
+
 -- On row zero only the initial summand contributes.
 example : genDelannoyUpper 3 0 4 = 1 := by decide
 
@@ -33,6 +46,16 @@ example : genDelannoyUpper 1 0 0 + genDelannoyUpper 1 1 0 = 3 := by
 -- The two upper-index-two entries are 14 and 30; their sum is D^1(3, 2).
 example : genDelannoyUpper 2 2 1 + genDelannoyUpper 2 3 1 = 44 := by
   rw [genDelannoyUpper_add_succ_left 2 2 1 (by decide)]
+  decide
+
+-- At the least positive upper index, the difference gives the index-zero family.
+example (m n : ℕ) : (genDelannoyUpper 1 (m + 1) n : ℤ) - genDelannoyUpper 1 m n =
+    genDelannoyUpper 0 (m + 1) n :=
+  genDelannoyUpper_succ_left_sub 1 m n le_rfl
+
+-- The adjacent entries 14 and 30 have difference 16, the index-one entry at (3, 1).
+example : (genDelannoyUpper 2 3 1 : ℤ) - genDelannoyUpper 2 2 1 = 16 := by
+  rw [genDelannoyUpper_succ_left_sub 2 2 1 (by decide)]
   decide
 
 -- At the first positive row and column zero, the difference is always two.

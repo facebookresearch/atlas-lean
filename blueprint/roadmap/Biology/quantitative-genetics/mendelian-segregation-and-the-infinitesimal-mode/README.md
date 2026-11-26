@@ -15,3 +15,5 @@
 
 - [The infinitesimal model of inheritance](infinitesimal-model-definition.md)
 - [The Bulmer effect: selection reduces additive variance](bulmer-effect.md)
+
+- [Neutral drift of the mean of an additive trait under the infinitesimal model](neutral-drift-of-a-quantitative-trait-mean.md)

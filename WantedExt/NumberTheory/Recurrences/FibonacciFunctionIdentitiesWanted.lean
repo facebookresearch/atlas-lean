@@ -17,6 +17,7 @@ public import Mathlib.Topology.Algebra.InfiniteSum.Defs
 public import Mathlib.Topology.Instances.Real.Lemmas
 public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.Recurrences.GelinCesaroAlternatingSum
+public import MathlibExt.NumberTheory.Recurrences.GibonacciCatalanIdentity
 public import MathlibExt.NumberTheory.Recurrences.GibonacciDOcagneIdentity
 public import MathlibExt.NumberTheory.Recurrences.GibonacciFibonacciFactorIdentity
 public import MathlibExt.NumberTheory.Recurrences.GibonacciFibonacciLucasIdentity
@@ -24,6 +25,7 @@ public import MathlibExt.NumberTheory.Recurrences.GibonacciIndexDoubling
 public import MathlibExt.NumberTheory.Recurrences.GibonacciLucasLikeSum
 public import MathlibExt.NumberTheory.Recurrences.GibonacciLucasMultiplier
 public import MathlibExt.NumberTheory.Recurrences.GibonacciProductSum
+public import MathlibExt.NumberTheory.Recurrences.GibonacciShiftedProduct
 public import MathlibExt.NumberTheory.Recurrences.GibonacciTripleProduct
 public import MathlibExt.NumberTheory.Recurrences.LucasFibonacciTelescoping
 
@@ -305,22 +307,6 @@ public theorem_wanted five_gibonacci_mul_sub_two_gibonacci
         (-1 : ℝ) ^ (k - r) * 2 *
           (G 0 * (H (r + s) + H (r + s - 2)) + G 1 * (H (r + s + 1) + H (r + s - 1)))
 
-/-- **Shifted product identity for two gibonacci sequences.** Let
-$G, H : \mathbb{Z} \to \mathbb{R}$, written $j \mapsto G_j$ and $j \mapsto H_j$, satisfy
-$G_{j+2} = G_{j+1} + G_j$ and $H_{j+2} = H_{j+1} + H_j$ for every integer $j$. Then for all
-integers $s$ and $k$,
-$$
-G_{k+1} H_{s+1} + G_{k-2} H_{s-2} = 2 G_k H_s + 2 G_{k-1} H_{s-1}.
-$$
-
-Source: Kunle Adegoke, *Fibonacci Identities via Fibonacci Functions*, Journal of
-Integer Sequences 27 (2024), Article 24.6.2, Proposition 24
-(`jis-2024-24.6.2-prop-24`). -/
-public theorem_wanted gibonacci_product_shift_identity
-    (G H : ℤ → ℝ) (hG : ∀ j : ℤ, G (j + 2) = G (j + 1) + G j)
-    (hH : ∀ j : ℤ, H (j + 2) = H (j + 1) + H j) (s k : ℤ) :
-    G (k + 1) * H (s + 1) + G (k - 2) * H (s - 2) = 2 * G k * H s + 2 * G (k - 1) * H (s - 1)
-
 /-- **Seed expansion of a triple gibonacci product.** Let $G, H, I \colon \mathbb{Z} \to \mathbb{R}$
 satisfy $G_{j+2} = G_{j+1} + G_j$, $H_{j+2} = H_{j+1} + H_j$ and $I_{j+2} = I_{j+1} + I_j$ for
 every integer $j$. Then for all integers $k$, $r$, $s$,
@@ -563,24 +549,6 @@ public theorem_wanted gibonacci_gelin_cesaro_two_sequence
       4 * H (k + r) * G k ^ 3 -
         2 * (G 0 ^ 2 - G 1 ^ 2 + G 0 * G 1) * G 0 * (H (r + 2) + H r) +
         2 * (G 0 ^ 2 - G 1 ^ 2 + G 0 * G 1) * G 1 * (H (r + 1) + H (r - 1))
-
-/-- **Catalan-type identity for Fibonacci and gibonacci numbers.** Let $F_m$ denote the Fibonacci
-numbers, extended to all integers $m$ by $F_{-m} = (-1)^{m+1} F_m$. If
-$G : \mathbb{Z} \to \mathbb{R}$ satisfies $G_{j+2} = G_{j+1} + G_j$ for every integer $j$, then
-for all integers $k$, $r$ and $s$,
-$$
-F_{k+r} G_{k-r+s} + F_{k-r} G_{k+r+s}
-= 2 F_k G_{k+s} + (-1)^{k+r+1} F_r^2 \left(G_{s+1} + G_{s-1}\right).
-$$
-
-Source: Kunle Adegoke, *Fibonacci Identities via Fibonacci Functions*, Journal of
-Integer Sequences 27 (2024), Article 24.6.2, Proposition 43
-(`jis-2024-24.6.2-prop-43`). -/
-public theorem_wanted fib_gibonacci_catalan_type_identity
-    (G : ℤ → ℝ) (hG : ∀ j : ℤ, G (j + 2) = G (j + 1) + G j) (k r s : ℤ) :
-    (Int.fib (k + r) : ℝ) * G (k - r + s) + (Int.fib (k - r) : ℝ) * G (k + r + s) =
-      2 * (Int.fib k : ℝ) * G (k + s) +
-        (-1 : ℝ) ^ (k + r + 1) * (Int.fib r : ℝ) ^ 2 * (G (s + 1) + G (s - 1))
 
 /-- **Lucas-weighted identity for two gibonacci sequences.** Let $F_m$ be the Fibonacci numbers
 extended to all integers $m$ ($F_0 = 0$, $F_1 = 1$, $F_{m+2} = F_{m+1} + F_m$) and
