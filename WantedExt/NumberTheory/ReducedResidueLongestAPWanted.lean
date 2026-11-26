@@ -15,6 +15,9 @@ public import MathlibExt.NumberTheory.ReducedResiduePrimeBound
 public import MathlibExt.NumberTheory.ReducedResidueAverage
 public import MathlibExt.NumberTheory.ReducedResidueLongestAPAbsLeastAPLengthPrimeOfModFourEqOne
 public import MathlibExt.NumberTheory.ReducedResidueLongestAPIsLeastLongestAPLengthPrimeOfModFourEqOne
+public import MathlibExt.NumberTheory.ReducedResidueLongestAPLongestAPLengthMinOfNotSquarefreeOfNotIsPrimePow
+public import MathlibExt.NumberTheory.ReducedResidueLongestAPIsLeastLongestAPLengthPrimePow
+public import MathlibExt.NumberTheory.ReducedResidueLongestAPIsGreatestLongestAPLength
 
 /-!
 # Longest arithmetic progressions in the reduced residue systems `R_m(n)`
@@ -98,52 +101,6 @@ public theorem_wanted absLeastAPLength_even_squarefree_bounds {n : ℕ} (heven :
       absLeastAPLength n ≤ n.primeFactors.sup id - 1) ∧
     (2 * n.primeFactors.sup id ≤ n / n.primeFactors.sup id →
       absLeastAPLength n = n.primeFactors.sup id - 1)
-
-/-- **Maximum longest progression length over all reduced residue windows.** Let $n > 1$ be a
-natural number, $\operatorname{rad}(n)$ the product of its distinct prime factors and
-$\operatorname{gpf}(n)$ its largest prime factor. For an integer $m$ let $f_m(n)$ be the length of
-the longest arithmetic progression with positive common difference contained in the set $R_m(n)$
-of integers $a$ with $m + 1 \le a \le m + n$ and $\gcd(a, n) = 1$. Then the largest value of
-$f_m(n)$ over all integers $m$ is $\max(n / \operatorname{rad}(n), \operatorname{gpf}(n) - 1)$.
-
-Source: Chaninat Phothila, Natthakan Thoket and Narakorn Rompurk Kanasri, *Length of the Longest
-Arithmetic Progressions in a Certain Reduced Residue System*, INTEGERS 26 (2026), Article A6,
-Theorem 2 (`integers-2026-A6-thm-2`). -/
-public theorem_wanted isGreatest_longestAPLength {n : ℕ} (hn : 1 < n) :
-    IsGreatest (Set.range fun m : ℤ => longestAPLength m n)
-      (max (n / radical n) (n.primeFactors.sup id - 1))
-
-/-- **Minimum longest progression length modulo a prime power.** Let $p$ be a prime and $r > 1$ a
-natural number. For an integer $m$ let $f_m(p^r)$ be the length of the longest arithmetic
-progression with positive common difference contained in the set $R_m(p^r)$ of integers $a$ with
-$m + 1 \le a \le m + p^r$ and $\gcd(a, p^r) = 1$. Then the least value of $f_m(p^r)$ over all
-integers $m$ is $p^{r-1}$.
-
-Source: Chaninat Phothila, Natthakan Thoket and Narakorn Rompurk Kanasri, *Length of the Longest
-Arithmetic Progressions in a Certain Reduced Residue System*, INTEGERS 26 (2026), Article A6,
-Theorem 3 (`integers-2026-A6-thm-3`). -/
-public theorem_wanted isLeast_longestAPLength_prime_pow {p r : ℕ} (hp : p.Prime) (hr : 1 < r) :
-    IsLeast (Set.range fun m : ℤ => longestAPLength m (p ^ r)) (p ^ (r - 1))
-
-/-- **Minimum longest progression length when $n$ is neither squarefree nor a prime power.** Let
-$n > 1$ be a natural number that is neither squarefree nor a prime power, $\operatorname{rad}(n)$
-the product of its distinct prime factors and $\operatorname{gpf}(n)$ its largest prime factor.
-For an integer $m$ let $f_m(n)$ be the length of the longest arithmetic progression with positive
-common difference contained in the set $R_m(n)$ of integers $a$ with $m + 1 \le a \le m + n$ and
-$\gcd(a, n) = 1$. Then $f_m(n) \ge n / \operatorname{rad}(n)$ for every integer $m$, and
-$f_m(n) \le \max(n / \operatorname{rad}(n), \operatorname{gpf}(n) - 1)$ for some integer $m$.
-If moreover $\operatorname{gpf}(n) - 1 \le n / \operatorname{rad}(n)$, then the least value of
-$f_m(n)$ over all integers $m$ is $n / \operatorname{rad}(n)$.
-
-Source: Chaninat Phothila, Natthakan Thoket and Narakorn Rompurk Kanasri, *Length of the Longest
-Arithmetic Progressions in a Certain Reduced Residue System*, INTEGERS 26 (2026), Article A6,
-Theorem 3 (`integers-2026-A6-thm-3`). -/
-public theorem_wanted longestAPLength_min_of_not_squarefree_of_not_isPrimePow {n : ℕ}
-    (hn : 1 < n) (hsq : ¬ Squarefree n) (hpp : ¬ IsPrimePow n) :
-    ((∀ m : ℤ, n / radical n ≤ longestAPLength m n) ∧
-      ∃ m : ℤ, longestAPLength m n ≤ max (n / radical n) (n.primeFactors.sup id - 1)) ∧
-    (n.primeFactors.sup id - 1 ≤ n / radical n →
-      IsLeast (Set.range fun m : ℤ => longestAPLength m n) (n / radical n))
 
 end
 
