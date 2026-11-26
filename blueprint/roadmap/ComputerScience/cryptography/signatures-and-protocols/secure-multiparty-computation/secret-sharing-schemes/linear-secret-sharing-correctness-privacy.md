@@ -12,4 +12,4 @@ For a monotone span program $\{M_P\}$ over a finite field: (i) every accepted co
 
 ## Sources
 
-- Dan Boneh and Victor Shoup, "A Graduate Course in Applied Cryptography", Version 0.6, 2023.
+- Amos Beimel, "Secret-Sharing Schemes: A Survey", Coding and Cryptology, Lecture Notes in Computer Science, Springer, 2011, pp. 11–46, Section 3.5, Claim 2 and its proof; Section 3.1 (Shamir's scheme).

@@ -1,6 +1,6 @@
 # ElGamal is not CCA secure
 
-Multiplicative ElGamal is not CCA secure: given a challenge $(v, e)$ encrypting $m_b$, the adversary queries the decryption of $(v, e \cdot z)$ for a fixed $z \ne 1$, which is a different ciphertext, obtains $m_b z$, and recovers $b$ with advantage $1$. The same holds for every public-key scheme admitting an efficient ciphertext transformation whose decryption reveals the challenge bit.
+Multiplicative ElGamal is not CCA secure: given a challenge $(v, e)$ encrypting $m_b$, the adversary queries the decryption of $(v, e \cdot z)$ for a fixed $z \ne 1$, which is a different ciphertext, obtains $m_b z$, and recovers $b$ with advantage $1$.
 
 ## Proof sketch
 
@@ -16,4 +16,4 @@ Use the homomorphism with an encryption of $z$ under randomness $0$; the modifie
 
 ## Sources
 
-- D. Boneh and V. Shoup, "A Graduate Course in Applied Cryptography", draft textbook, version 0.6, 2023.
+- R. Cramer and V. Shoup, "Design and Analysis of Practical Public-Key Encryption Schemes Secure against Adaptive Chosen Ciphertext Attack", SIAM Journal on Computing 33(1), 2003.

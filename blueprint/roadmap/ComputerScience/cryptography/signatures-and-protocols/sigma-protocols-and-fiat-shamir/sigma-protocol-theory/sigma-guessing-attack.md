@@ -13,4 +13,5 @@ The guessed challenge matches the uniform verifier challenge with probability $1
 
 ## Sources
 
-- Dan Boneh and Victor Shoup, "A Graduate Course in Applied Cryptography", Version 0.6, 2023.
+- C. P. Schnorr, "Efficient Signature Generation by Smart Cards", Journal of Cryptology 4, 1991, pp. 161–174.
+- Thomas Attema, Ronald Cramer and Lisa Kohl, "A Compressed Σ-Protocol Theory for Lattices", Advances in Cryptology – CRYPTO 2021, Springer, 2021, Section 3.3.

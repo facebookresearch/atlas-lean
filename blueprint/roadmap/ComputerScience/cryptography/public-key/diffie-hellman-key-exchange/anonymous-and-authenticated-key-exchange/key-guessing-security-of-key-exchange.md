@@ -8,4 +8,4 @@ An *anonymous key exchange* protocol is a pair of interacting probabilistic algo
 
 ## Sources
 
-- D. Boneh and V. Shoup, "A Graduate Course in Applied Cryptography", draft textbook, version 0.6, 2023.
+- J. Katz and Y. Lindell, "Introduction to Modern Cryptography", 3rd ed., CRC Press, 2020, Section 11.3.

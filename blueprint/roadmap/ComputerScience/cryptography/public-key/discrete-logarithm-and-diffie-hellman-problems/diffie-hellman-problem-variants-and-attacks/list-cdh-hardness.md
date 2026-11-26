@@ -12,4 +12,4 @@ The CDH adversary runs the list adversary and outputs a uniformly random element
 
 ## Sources
 
-- D. Boneh and V. Shoup, "A Graduate Course in Applied Cryptography", draft textbook, version 0.6, 2023.
+- D. Cash, E. Kiltz and V. Shoup, "The Twin Diffie–Hellman Problem and Applications", Journal of Cryptology 22(4), 2009, pp. 470–504.

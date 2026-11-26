@@ -17,4 +17,4 @@ $u g^r$ is uniform and independent of $u$, so each attempt succeeds with probabi
 
 ## Sources
 
-- D. Boneh and V. Shoup, "A Graduate Course in Applied Cryptography", draft textbook, version 0.6, 2023.
+- S. D. Galbraith, "Mathematics of Public Key Cryptography", Cambridge University Press, 2012, Chapter 2 (random self-reducibility of the discrete logarithm problem and amplification) and Section 21.3.

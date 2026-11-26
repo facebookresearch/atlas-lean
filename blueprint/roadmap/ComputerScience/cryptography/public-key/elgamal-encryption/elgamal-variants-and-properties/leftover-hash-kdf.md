@@ -16,4 +16,5 @@ The matrix family is $2^{-\ell}$-universal and a uniform group element has min-e
 
 ## Sources
 
-- D. Boneh and V. Shoup, "A Graduate Course in Applied Cryptography", draft textbook, version 0.6, 2023.
+- V. Shoup, "A Computational Introduction to Number Theory and Algebra", 2nd edition, Cambridge University Press, 2009, Section 8.9 (leftover hash lemma).
+- D. Boneh and V. Shoup, "A Graduate Course in Applied Cryptography", draft textbook, version 0.6, 2023 (universality of the binary-matrix family).

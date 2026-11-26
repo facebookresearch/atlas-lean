@@ -13,4 +13,4 @@ Conditioned on the answer $y_0 = H(k, m_0)$ to the query, the forgery is correct
 
 ## Sources
 
-- Dan Boneh and Victor Shoup, "A Graduate Course in Applied Cryptography", Version 0.6, 2023.
+- Mark N. Wegman and J. Lawrence Carter, "New Hash Functions and Their Use in Authentication and Set Equality", Journal of Computer and System Sciences 22(3), 1981, pp. 265–279, Sections 2 and 3 (an authentication system is unbreakable with certainty $p$ if, after seeing the tag of any message, possibly chosen by the forger, the forger guesses the tag of a different message with probability at most $p$; this holds when, among the keys consistent with the observed pair, the fraction mapping any other message to any given tag is at most $p$: $1/|T|$ for strongly universal$_2$ classes and $2/|B'|$ for their almost strongly universal$_2$ class).

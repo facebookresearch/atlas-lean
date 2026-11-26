@@ -1,14 +1,14 @@
 # CBC-MAC from a secure PRF is computationally universal
 
-If $F$ is a PRF on $n$-bit blocks with $2^{-n}$ negligible, then raw CBC-MAC on messages of $0$ to $\ell(n)$ blocks is a computational universal hash function and multi-query secure, with advantage at most
+If $F$ is a PRF on $n$-bit blocks with $2^{-n}$ negligible, then raw CBC-MAC on nonempty messages of $1$ to $\ell(n)$ blocks is a computational universal hash function and multi-query secure. For an adversary outputting $Q$ messages the advantage is at most
 
-$$\mathrm{PRFadv}(F) + \frac{Q^2(\ell+1)^2}{2 \cdot 2^n} + \frac{\binom{Q}{2}}{2^n}$$
+$$\mathrm{PRFadv}(F) + \binom{Q}{2}\frac{\ell^2 + \ell}{2^n},$$
 
-for an adversary outputting $Q$ messages.
+where the PRF distinguisher makes at most $Q\ell$ queries.
 
 ## Proof sketch
 
-CBC-MAC is an extendable prefix-free PRF on messages of up to $\ell+1$ blocks; apply the general prefix-free-PRF universality theorem with the CBC-MAC prefix-free bound.
+A PRF distinguisher runs the adversary, evaluates raw CBC-MAC with its oracle on the $Q$ output messages and outputs $1$ iff two distinct messages get equal values. With a truly random function in place of $F$, two distinct messages of $m$ and $m'$ blocks ($1 \le m, m' \le \ell$, one possibly a prefix of the other) collide with probability at most $mm'/2^n + \max(m, m')/2^n \le (\ell^2 + \ell)/2^n$ by the CBC collision bound; a union bound over the $\binom{Q}{2}$ pairs finishes.
 
 ## Depends on
 
@@ -17,9 +17,9 @@ CBC-MAC is an extendable prefix-free PRF on messages of up to $\ell+1$ blocks; a
 
 ## Proof depends on
 
-- [An extendable prefix-free PRF is a computational universal hash](extendable-prefix-free-prf-is-universal.md)
-- [CBC-MAC is a prefix-free PRF](../cbc-mac-and-mac-security/cbc-mac-is-a-prefix-free-prf.md)
+- [PRF advantage](../pseudorandom-functions/prf-advantage.md)
 
 ## Sources
 
-- D. Boneh and V. Shoup, "A Graduate Course in Applied Cryptography", draft textbook, version 0.6, 2023.
+- J. Black and P. Rogaway, "CBC MACs for Arbitrary-Length Messages: The Three-Key Constructions", Journal of Cryptology 18(2), 2005 (CBC collision bound for a random function and distinct messages of possibly different lengths).
+- M. Bellare, "New Proofs for NMAC and HMAC: Security without Collision-Resistance", Journal of Cryptology 28(4), 2015 (the cAU notion and the reduction from a PRF distinguisher that queries both messages and tests for equal replies).

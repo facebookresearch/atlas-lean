@@ -1,10 +1,10 @@
 # Baby-step giant-step computes generic discrete logarithms
 
-In a cyclic group of order $q$ (prime or not), with $m, n$ satisfying $q \le mn$, the baby-step giant-step algorithm computes the discrete logarithm of every element using at most $m + n - 2$ group operations: it tabulates the labels of $g^{0}, \dots, g^{m-1}$ (baby steps) and compares them with $u \cdot g^{-mj}$ for $j = 0, \dots, n-1$ (giant steps). With $m = n = \lceil\sqrt{q}\,\rceil$ this uses at most $2\lfloor\sqrt{q-1}\rfloor$ operations.
+Let $G$ be a cyclic group of order $q$ (prime or not) with generator $g$, and let $m = \lceil\sqrt{q}\,\rceil$. The baby-step giant-step algorithm tabulates $g^{0}, \dots, g^{m-1}$ (baby steps) and compares $u \cdot g^{-mi}$ for $i = 0, \dots, m-1$ with the table (giant steps); a match $g^{j} = u \cdot g^{-mi}$ gives $\log_g u = im + j$. It computes the discrete logarithm of every element of $G$ using $O(\sqrt{q})$ group multiplications and storage for $O(\sqrt{q})$ group elements.
 
 ## Proof sketch
 
-Write $\alpha = jm + i$ with $0 \le i < m$, $0 \le j < n$, possible since $q \le mn$; the match $g^i = u g^{-mj}$ identifies $\alpha$. Table lookups and index arithmetic are not group operations.
+Write $\alpha = \log_g u = im + j$ with $0 \le i, j < m$, possible since $q \le m^2$; then $u \cdot g^{-mi} = g^{j}$ is in the table. The table takes $m$ multiplications to build, and computing $g^{-m}$ and the at most $m$ giant steps takes $O(\sqrt{q})$ more. Table lookups are not group operations.
 
 ## Depends on
 
@@ -12,4 +12,4 @@ Write $\alpha = jm + i$ with $0 \le i < m$, $0 \le j < n$, possible since $q \le
 
 ## Sources
 
-- D. Boneh and V. Shoup, "A Graduate Course in Applied Cryptography", draft textbook, version 0.6, 2023.
+- A. J. Menezes, P. C. van Oorschot and S. A. Vanstone, "Handbook of Applied Cryptography", CRC Press, 1996, Section 3.6.2, Algorithm 3.56 and Fact 3.57.

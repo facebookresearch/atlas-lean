@@ -8,4 +8,4 @@ A (possibly keyed, with a public seed) function $H$ from group elements to $\ell
 
 ## Sources
 
-- D. Boneh and V. Shoup, "A Graduate Course in Applied Cryptography", draft textbook, version 0.6, 2023.
+- H. Krawczyk, "Cryptographic Extraction and Key Derivation: The HKDF Scheme", Advances in Cryptology – CRYPTO 2010, LNCS 6223, 2010, Definitions 6 and 7.

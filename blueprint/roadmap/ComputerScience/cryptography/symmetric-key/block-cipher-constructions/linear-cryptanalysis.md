@@ -18,4 +18,5 @@ The votes are independent Bernoulli variables with mean at least $1/2 + \varepsi
 
 ## Sources
 
-- Dan Boneh and Victor Shoup, "A Graduate Course in Applied Cryptography", Version 0.6, 2023.
+- Mitsuru Matsui, "Linear Cryptanalysis Method for DES Cipher", Advances in Cryptology – EUROCRYPT '93, LNCS 765, Springer, 1994, pp. 386–397, Algorithm 1.
+- Wassily Hoeffding, "Probability Inequalities for Sums of Bounded Random Variables", Journal of the American Statistical Association 58, 1963, pp. 13–30.

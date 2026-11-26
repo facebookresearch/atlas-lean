@@ -12,4 +12,4 @@ The true password is in $D$, so the search stops at or before it.
 
 ## Sources
 
-- D. Boneh and V. Shoup, "A Graduate Course in Applied Cryptography", draft textbook, version 0.6, 2023.
+- A. J. Menezes, P. C. van Oorschot and S. A. Vanstone, "Handbook of Applied Cryptography", CRC Press, 1996, §10.2.2(ii)–(iii).

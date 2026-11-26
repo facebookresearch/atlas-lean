@@ -8,4 +8,4 @@ A keyed hash family $H$ is *enhanced target collision resistant* if every probab
 
 ## Sources
 
-- D. Boneh and V. Shoup, "A Graduate Course in Applied Cryptography", draft textbook, version 0.6, 2023.
+- S. Halevi and H. Krawczyk, "Strengthening Digital Signatures via Randomized Hashing", Advances in Cryptology – CRYPTO 2006, Lecture Notes in Computer Science, Springer, 2006, pp. 41–59.

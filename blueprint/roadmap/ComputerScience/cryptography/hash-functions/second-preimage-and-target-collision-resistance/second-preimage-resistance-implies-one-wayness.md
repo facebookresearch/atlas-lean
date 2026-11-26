@@ -4,7 +4,7 @@ Let $H$ map $n$-bit inputs to $\mathrm{out}(n)$-bit digests with $2^{\mathrm{out
 
 ## Proof sketch
 
-Apply the counting bound with $s = 2^{n - \mathrm{out}(n)}$: an inverter with success $\varepsilon$ gives a second-preimage finder with success at least $(\varepsilon - 1/s)/2$, and $1/s$ is negligible.
+Apply the counting bound at input length $n$: an inverter with success $\varepsilon$ gives a second-preimage finder with success at least $(\varepsilon - 2^{\mathrm{out}(n) - n})/2$, and $2^{\mathrm{out}(n) - n}$ is negligible.
 
 ## Depends on
 
@@ -17,4 +17,4 @@ Apply the counting bound with $s = 2^{n - \mathrm{out}(n)}$: an inverter with su
 
 ## Sources
 
-- D. Boneh and V. Shoup, "A Graduate Course in Applied Cryptography", draft textbook, version 0.6, 2023.
+- P. Rogaway and T. Shrimpton, "Cryptographic Hash-Function Basics: Definitions, Implications, and Separations for Preimage Resistance, Second-Preimage Resistance, and Collision Resistance", Fast Software Encryption (FSE 2004), Lecture Notes in Computer Science, Springer, 2004, pp. 371–388; Theorem 7(1) (numbering of the authors' full version).

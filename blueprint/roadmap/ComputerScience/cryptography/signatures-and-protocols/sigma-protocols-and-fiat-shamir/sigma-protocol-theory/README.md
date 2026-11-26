@@ -7,5 +7,5 @@
 - [AND, OR and parallel composition preserve efficient extraction and simulation](sigma-composition-preserves-efficiency.md)
 - [Special-sound Sigma protocols are proofs of knowledge with a PPT rewinding extractor](sigma-protocol-proof-of-knowledge.md)
 - [Sigma protocols are round-by-round sound public-coin interactive proofs](sigma-protocols-round-by-round-sound.md)
-- [Completeness, special soundness, HVZK and unique responses of linear Sigma protocols](linear-sigma-protocol-properties.md)
+- [Completeness, special soundness and special HVZK of linear Sigma protocols](linear-sigma-protocol-properties.md)
 - [Chaum–Pedersen proofs of equal ElGamal plaintexts](chaum-pedersen-equal-plaintexts.md)

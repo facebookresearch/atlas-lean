@@ -12,4 +12,4 @@ If the verifier's challenge equals the guess, the conversation $(t, c, z)$ is ac
 
 ## Sources
 
-- D. Boneh and V. Shoup, "A Graduate Course in Applied Cryptography", draft textbook, version 0.6, 2023.
+- C. P. Schnorr, "Efficient Signature Generation by Smart Cards", Journal of Cryptology 4 (1991), 161–174.

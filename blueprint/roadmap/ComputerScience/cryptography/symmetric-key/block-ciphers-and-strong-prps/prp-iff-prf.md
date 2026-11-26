@@ -18,4 +18,5 @@ Both directions follow from the PRP/PRF switching lemma: the ideal permutation a
 
 ## Sources
 
-- D. Boneh and V. Shoup, "A Graduate Course in Applied Cryptography", draft textbook, version 0.6, 2023.
+- M. Bellare and P. Rogaway, "The Security of Triple Encryption and a Framework for Code-Based Game-Playing Proofs", Advances in Cryptology (EUROCRYPT 2006), LNCS 4004, Springer, 2006, pp. 409–426, the PRP/PRF Switching Lemma, bound $q(q-1)/2^{n+1}$ (Lemma 1 of the full version).
+- M. Bellare, J. Kilian and P. Rogaway, "The Security of the Cipher Block Chaining Message Authentication Code", Journal of Computer and System Sciences 61(3), 2000, pp. 362–399, Proposition 2.5 (PRF insecurity of a family of permutations is at most its PRP insecurity plus $q(q-1)/2^{l+1}$).

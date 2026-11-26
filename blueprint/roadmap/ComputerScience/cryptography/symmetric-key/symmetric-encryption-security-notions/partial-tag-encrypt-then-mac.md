@@ -13,4 +13,4 @@ The tag verifies on the unchanged body, so decryption accepts the modified ciphe
 
 ## Sources
 
-- D. Boneh and V. Shoup, "A Graduate Course in Applied Cryptography", draft textbook, version 0.6, 2023.
+- Chanathip Namprempre, Phillip Rogaway and Thomas Shrimpton, "Reconsidering Generic Composition", Advances in Cryptology - EUROCRYPT 2014, Lecture Notes in Computer Science, Springer, 2014.

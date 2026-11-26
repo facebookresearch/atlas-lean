@@ -8,4 +8,4 @@ In the *strong unforgeability game with verification queries*, the adversary int
 
 ## Sources
 
-- D. Boneh and V. Shoup, "A Graduate Course in Applied Cryptography", draft textbook, version 0.6, 2023.
+- M. Bellare and C. Namprempre, "Authenticated Encryption: Relations among Notions and Analysis of the Generic Composition Paradigm", Journal of Cryptology 21(4), 2008, pp. 469–491, Section 2, game SUF-CMA (tagging oracle and verification oracle; the adversary wins when a verification query accepts a message-tag pair not returned by the tagging oracle).

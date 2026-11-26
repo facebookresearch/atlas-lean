@@ -13,4 +13,5 @@ The CPA experiment is the CCA experiment restricted to adversaries that never qu
 
 ## Sources
 
-- D. Boneh and V. Shoup, "A Graduate Course in Applied Cryptography", draft textbook, version 0.6, 2023.
+- M. Bellare, A. Desai, D. Pointcheval and P. Rogaway, "Relations among Notions of Security for Public-Key Encryption Schemes", Advances in Cryptology – CRYPTO '98, LNCS 1462, Springer, 1998, pp. 26–45.
+- M. Bellare, A. Boldyreva and S. Micali, "Public-Key Encryption in a Multi-user Setting: Security Proofs and Improvements", Advances in Cryptology – EUROCRYPT 2000, LNCS 1807, Springer, 2000, pp. 259–274, Remark 1.

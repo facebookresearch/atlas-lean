@@ -16,4 +16,4 @@ Hybrid over the challenges: the reduction encrypts the non-planted challenges it
 
 ## Sources
 
-- D. Boneh and V. Shoup, "A Graduate Course in Applied Cryptography", draft textbook, version 0.6, 2023.
+- M. Bellare, A. Boldyreva and S. Micali, "Public-Key Encryption in a Multi-user Setting: Security Proofs and Improvements", Advances in Cryptology – EUROCRYPT 2000, LNCS 1807, Springer, 2000, pp. 259–274, Theorem 1 (the case of one user).

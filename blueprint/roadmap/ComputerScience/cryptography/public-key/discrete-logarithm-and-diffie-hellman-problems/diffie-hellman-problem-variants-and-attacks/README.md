@@ -4,7 +4,7 @@
 - [Gap computational Diffie–Hellman assumption](gap-cdh-assumption.md)
 - [Under CDH, no efficient adversary lists the Diffie–Hellman value among polynomially many candidates](list-cdh-hardness.md)
 - [Under CDH the inverse group order is negligible](cdh-implies-inverse-order-negligible.md)
-- [DDH does not hold in cyclic groups of even order](ddh-fails-in-even-order-groups.md)
+- [DDH does not hold in the even-order group $\mathbb{Z}_p^*$](ddh-fails-in-even-order-groups.md)
 - [DDH fails when the group order has a small prime factor](ddh-fails-with-small-prime-factor.md)
 - [Lagrange interpolation in the exponent](lagrange-interpolation-in-the-exponent.md)
 - [Hardness of the blinded Diffie–Hellman problems](blinded-cdh-hardness.md)

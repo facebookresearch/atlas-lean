@@ -1,10 +1,10 @@
-# DDH does not hold in cyclic groups of even order
+# DDH does not hold in the even-order group $\mathbb{Z}_p^*$
 
-In a cyclic group of even order $q$, an element $g^{x}$ is a square iff $x$ is even, which is tested by $(g^{x})^{q/2} = 1$. The distinguisher that accepts $(g^a, g^b, w)$ iff [$w^{q/2} = 1$] equals [$(g^a)^{q/2} = 1$ or $(g^b)^{q/2} = 1$] accepts every Diffie–Hellman triple and a random triple with probability exactly $1/2$, so its DDH advantage is $1/2$; it runs in polynomial time.
+Let $p$ be an odd prime and $g$ a generator of $\mathbb{Z}_p^*$, a cyclic group of even order $p - 1$. An element $g^{x}$ is a quadratic residue iff $x$ is even, which is tested by $(g^{x})^{(p-1)/2} = 1$. The distinguisher that accepts $(g^a, g^b, w)$ iff [$w^{(p-1)/2} = 1$] equals [$(g^a)^{(p-1)/2} = 1$ or $(g^b)^{(p-1)/2} = 1$] accepts every Diffie–Hellman triple and a random triple with probability exactly $1/2$, so its DDH advantage is $1/2$; it runs in polynomial time. Hence DDH does not hold in $\mathbb{Z}_p^*$, although CDH is believed to.
 
 ## Proof sketch
 
-$ab$ is even iff $a$ or $b$ is even; for a random third element the parity of its exponent is an independent fair coin.
+The quadratic character of $g^{ab}$ is determined by those of $g^a$ and $g^b$: $ab$ is even iff $a$ or $b$ is even. For a random third element the parity of its exponent is an independent fair coin.
 
 ## Depends on
 
@@ -13,4 +13,5 @@ $ab$ is even iff $a$ or $b$ is even; for a random third element the parity of it
 
 ## Sources
 
-- D. Boneh and V. Shoup, "A Graduate Course in Applied Cryptography", draft textbook, version 0.6, 2023.
+- D. Boneh, "The Decision Diffie–Hellman Problem", Algorithmic Number Theory (ANTS-III), LNCS 1423, Springer, 1998, pp. 48–63, Section 1.1.
+- J. Katz and Y. Lindell, "Introduction to Modern Cryptography", 3rd ed., CRC Press, 2020, Section 15.4.1 and Exercise 15.16.

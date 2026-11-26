@@ -23,4 +23,5 @@ Apply the rewinding lemma to the prover's coins and the challenge: two accepting
 
 ## Sources
 
-- Dan Boneh and Victor Shoup, "A Graduate Course in Applied Cryptography", Version 0.6, 2023.
+- Mihir Bellare and Gregory Neven, "Multi-Signatures in the Plain Public-Key Model and a General Forking Lemma", Proceedings of the 13th ACM Conference on Computer and Communications Security (CCS 2006), ACM, 2006, pp. 390–399, Lemma 1.
+- Thomas Attema, Ronald Cramer and Lisa Kohl, "A Compressed Σ-Protocol Theory for Lattices", Advances in Cryptology – CRYPTO 2021, Springer, 2021, Corollary 1.

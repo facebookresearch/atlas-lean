@@ -1,6 +1,6 @@
 # ElGamal is one-way under CDH
 
-Multiplicative ElGamal over a prime-order group family is one-way if CDH holds: an adversary recovering a uniform message from $(g^{\beta}, u^{\beta} m)$ yields a CDH solver with the same success probability.
+Multiplicative ElGamal over a prime-order group family is one-way if CDH holds: an adversary recovering a uniform message from $(g^{\beta}, u^{\beta} m)$ yields a CDH solver.
 
 ## Proof sketch
 
@@ -13,4 +13,5 @@ Given a CDH instance $(g^\alpha, g^\beta)$, publish $u = g^\alpha$ and the ciphe
 
 ## Sources
 
-- D. Boneh and V. Shoup, "A Graduate Course in Applied Cryptography", draft textbook, version 0.6, 2023.
+- D. Pointcheval, "Chosen-Ciphertext Security for Any One-Way Cryptosystem", Public Key Cryptography (PKC 2000), LNCS 1751, 2000, Section 2.1.
+- A. Menezes, P. van Oorschot and S. Vanstone, "Handbook of Applied Cryptography", CRC Press, 1996, Note 8.23.

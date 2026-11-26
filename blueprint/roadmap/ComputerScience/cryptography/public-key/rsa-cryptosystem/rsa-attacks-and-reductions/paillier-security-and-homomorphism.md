@@ -12,10 +12,6 @@
 - [Public-key eavesdropping experiment](../../../security-games/generic-security-games/pub-cpa-game.md)
 - [Homomorphic encryption: correctness and compactness](../../homomorphic-encryption/homomorphic-encryption-correctness-and.md)
 
-## Proof depends on
-
-- [ElGamal is not CCA secure](../../elgamal-encryption/elgamal-variants-and-properties/elgamal-not-cca-secure.md)
-
 ## Sources
 
 - P. Paillier, "Public-Key Cryptosystems Based on Composite Degree Residuosity Classes", Advances in Cryptology (EUROCRYPT 1999), LNCS 1592, 1999.

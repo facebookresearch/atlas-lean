@@ -12,4 +12,4 @@ If the $y_i$ are distinct, the permutations extending the assignment correspond 
 
 ## Sources
 
-- D. Boneh and V. Shoup, "A Graduate Course in Applied Cryptography", draft textbook, version 0.6, 2023.
+- S. Chen and J. Steinberger, "Tight Security Bounds for Key-Alternating Ciphers", Advances in Cryptology, EUROCRYPT 2014, LNCS 8441, Springer, 2014, pp. 327-350 (the fraction of permutations of an $N$-element set extending a partial permutation with $k$ pairs is $(N-k)!/N!$).

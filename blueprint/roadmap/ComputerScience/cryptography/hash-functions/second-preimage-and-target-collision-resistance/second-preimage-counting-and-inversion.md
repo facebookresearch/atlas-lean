@@ -1,12 +1,12 @@
 # Few inputs lack a second preimage, and inversion is at most twice as easy as second preimages
 
-Let $H : M \to T$ with $M, T$ finite and $s \cdot |T| \le |M|$ for some $s > 0$. (a) At most a $1/s$ fraction of inputs $m$ have no $m' \ne m$ with $H(m') = H(m)$. (b) For every inverter $A$ and the second-preimage finder $B(m) = A(H(m))$,
+Let $H : \{0,1\}^m \to \{0,1\}^n$ with $m \ge n$. (a) At most a $2^{n-m}$ fraction of inputs $x$ have no $x' \ne x$ with $H(x') = H(x)$. (b) For every inverter $A$ and the second-preimage finder $B(x) = A(H(x))$,
 
-$$\Pr_m[A(H(m)) \in H^{-1}(H(m))] \le 2\,\Pr_m[B(m) \ne m,\ H(B(m)) = H(m)] + \frac{1}{s}.$$
+$$\Pr_x[A(H(x)) \in H^{-1}(H(x))] \le 2\,\Pr_x[B(x) \ne x,\ H(B(x)) = H(x)] + 2^{n-m}.$$
 
 ## Proof sketch
 
-(a) Inputs without a sibling are alone in their fiber, so there are at most $|T| \le |M|/s$ of them. (b) For $m$ in a fiber of size $c \ge 2$, the inverter's answer is independent of which element of the fiber was sampled, so it differs from $m$ with probability at least $1 - 1/c \ge 1/2$ times the inversion probability.
+(a) Inputs without a sibling are alone in their fiber, so there are at most $2^n$ of them among $2^m$ inputs. (b) For $x$ in a fiber of size $c \ge 2$, the inverter's answer is independent of which element of the fiber was sampled, so it differs from $x$ with probability at least $1 - 1/c \ge 1/2$ times the inversion probability.
 
 ## Depends on
 
@@ -15,4 +15,4 @@ $$\Pr_m[A(H(m)) \in H^{-1}(H(m))] \le 2\,\Pr_m[B(m) \ne m,\ H(B(m)) = H(m)] + \f
 
 ## Sources
 
-- D. Boneh and V. Shoup, "A Graduate Course in Applied Cryptography", draft textbook, version 0.6, 2023.
+- P. Rogaway and T. Shrimpton, "Cryptographic Hash-Function Basics: Definitions, Implications, and Separations for Preimage Resistance, Second-Preimage Resistance, and Collision Resistance", Fast Software Encryption (FSE 2004), Lecture Notes in Computer Science, Springer, 2004, pp. 371–388; Theorem 7(1) and its proof in Appendix B.1 (numbering of the authors' full version).

@@ -13,4 +13,4 @@ XOR commutes: $(\mathrm{ks} \oplus m) \oplus \Delta = \mathrm{ks} \oplus (m \opl
 
 ## Sources
 
-- D. Boneh and V. Shoup, "A Graduate Course in Applied Cryptography", draft textbook, version 0.6, 2023.
+- Jonathan Katz and Moti Yung, "Unforgeable Encryption and Chosen Ciphertext Secure Modes of Operation", Fast Software Encryption (FSE 2000), LNCS 1978, Springer, 2001, pp. 284–299, Sections 2 and 3.3.

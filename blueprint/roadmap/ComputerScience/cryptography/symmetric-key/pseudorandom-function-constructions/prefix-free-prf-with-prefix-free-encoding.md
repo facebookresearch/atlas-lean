@@ -1,6 +1,6 @@
 # A prefix-free PRF composed with a prefix-free encoding is a variable-length PRF
 
-If $F$ is a prefix-free PRF on $X^{\le \ell}$ and $\mathrm{pf} : M \to X^{\le \ell}$ is an efficiently computable prefix-free encoding, then $F'(k, m) = F(k, \mathrm{pf}(m))$ is a PRF on $M$ against arbitrary (not necessarily prefix-free) adversaries, with the same advantage.
+If $F$ is a prefix-free PRF on $X^{\le \ell}$ and $\mathrm{pf} : M \to X^{\le \ell}$ is an efficiently computable prefix-free encoding, then $F'(k, m) = F(k, \mathrm{pf}(m))$ is a PRF on $M$ against arbitrary (not necessarily prefix-free) adversaries.
 
 ## Proof sketch
 
@@ -13,4 +13,4 @@ Any adversary for $F'$ becomes a prefix-free adversary for $F$ by encoding its q
 
 ## Sources
 
-- D. Boneh and V. Shoup, "A Graduate Course in Applied Cryptography", draft textbook, version 0.6, 2023.
+- M. Bellare, R. Canetti and H. Krawczyk, "Pseudorandom Functions Revisited: The Cascade Construction and its Concrete Security", Proceedings of the 37th Annual Symposium on Foundations of Computer Science (FOCS 1996), IEEE, 1996, pp. 514–523, Section 3 ("Prefix-freeness": pseudorandomness against prefix-free distinguishers implies that any prefix-free encoding suffices against arbitrary distinguishers).

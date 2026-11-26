@@ -17,4 +17,4 @@ For a fixed $n$ and fixed coins of $D$, the event that $D$ outputs $1$ is an eve
 
 ## Sources
 
-- D. Boneh and V. Shoup, "A Graduate Course in Applied Cryptography", draft textbook, version 0.6, 2023.
+- O. Goldreich, "Foundations of Cryptography, Volume 1: Basic Tools", Cambridge University Press, 2001, Section 3.2.2.

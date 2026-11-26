@@ -12,4 +12,4 @@ Unique factorization: the common prime factors of $p q_1$ and $p q_2$ are exactl
 
 ## Sources
 
-- D. Boneh and V. Shoup, "A Graduate Course in Applied Cryptography", draft textbook, version 0.6, 2023.
+- N. Heninger, Z. Durumeric, E. Wustrow and J. A. Halderman, "Mining Your Ps and Qs: Detection of Widespread Weak Keys in Network Devices", Proceedings of the 21st USENIX Security Symposium, 2012, Sections 2.1 and 3.3.

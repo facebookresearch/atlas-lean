@@ -1,6 +1,6 @@
 # Two-sided switching lemma against the forgetful sampler
 
-Let $D$ be a finite block set of size $N$. Consider an adversary making at most $Q$ forward or inverse queries and no redundant query: it never repeats a query, never makes an inverse query at an earlier forward answer, and never makes a forward query at an earlier inverse answer. It distinguishes a uniform permutation with its inverse from the *forgetful* oracle (which answers every forward and every inverse query with an independent uniform element of $D$) with advantage at most $\binom{Q}{2}/N$.
+Let $D = \{0,1\}^n$ be the block set, of size $N = 2^n$. Consider an adversary making at most $Q$ forward or inverse queries and no redundant query: it never repeats a query, never makes an inverse query at an earlier forward answer, and never makes a forward query at an earlier inverse answer. It distinguishes a uniform permutation with its inverse from the *forgetful* oracle (which answers every forward and every inverse query with an independent uniform element of $D$) with advantage at most $\binom{Q}{2}/N$.
 
 ## Proof sketch
 
@@ -17,4 +17,4 @@ Sample the permutation lazily in both directions. Since no query is redundant, e
 
 ## Sources
 
-- D. Boneh and V. Shoup, "A Graduate Course in Applied Cryptography", draft textbook, version 0.6, 2023, the no-redundant-query convention in the proof of Theorem 8.6.
+- S. Halevi and P. Rogaway, "A Tweakable Enciphering Mode", Advances in Cryptology (CRYPTO 2003), LNCS 2729, Springer, 2003, pp. 482–499; Lemma 6 of the full version ($\pm$prp security $\approx$ $\pm$rnd security: for an adversary making at most $q$ queries, none pointless, a random permutation with its inverse and a pair of oracles returning independent random strings are distinguished with advantage at most $q(q-1)/2^{n+1}$), applied with a single tweak. Its pointless queries are exactly the redundant queries excluded here.

@@ -17,5 +17,4 @@ For $h$ of order $\ell$, $h^\alpha = h^{\alpha \bmod \ell}$ and the $\ell$ candi
 
 ## Sources
 
-- D. R. L. Brown and R. P. Gallant, "The Static Diffie-Hellman Problem", IACR Cryptology ePrint Archive, Report 2004/306, 2004.
-- D. Boneh and V. Shoup, "A Graduate Course in Applied Cryptography", draft textbook, version 0.6, 2023.
+- C. H. Lim and P. J. Lee, "A Key Recovery Attack on Discrete Log-based Schemes Using a Prime Order Subgroup", Advances in Cryptology – CRYPTO '97, LNCS 1294, Springer, 1997, pp. 249–263.
