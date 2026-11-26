@@ -2,7 +2,7 @@
 
 For every variance $v > 0$, the centered Gaussian law $N(0, v)$ gives mass $1/2$ to $(0, \infty)$, by symmetry
 and because it has no atoms. This is the value $P(B_t > 0) = 1/2$ used in the proof that [Brownian motion
-oscillates immediately after time zero](ae-exists-pos-and-neg.md).
+oscillates immediately after time zero](../../stochastic-calculus/blumenthal-zero-one-law/ae-exists-pos-and-neg.md).
 
 ## Sources
 
