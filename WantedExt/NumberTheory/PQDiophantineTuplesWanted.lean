@@ -16,6 +16,7 @@ public import Mathlib.Data.Nat.Factorization.Basic
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 public import MathlibExt.NumberTheory.PQDiophantineTuples
 public import MathlibExt.NumberTheory.PadicValuationMinTwice
+public import MathlibExt.NumberTheory.SDiophantineSystemFour
 
 /-!
 # `{p, q}`-Diophantine quadruples and quintuples
@@ -26,13 +27,15 @@ distinct positive integers whose pairwise products plus one are `S`-units
 (`MetaMathlibExt.IsSDiophantineTuple`). For a quadruple `(a, b, c, d)` the paper writes
 `s₁ = ab + 1`, `s₂ = ac + 1`, `s₃ = ad + 1`, `s₄ = bc + 1`, `s₅ = bd + 1`, `s₆ = cd + 1`,
 `sᵢ = p ^ αᵢ * q ^ βᵢ`; here `αᵢ` and `βᵢ` are `padicValNat p sᵢ` and `padicValNat q sᵢ`.
-Lemmas 4-7, Proposition 1 and Theorems 1 and 2 are stated as wanted theorems; Lemmas 1-5 quote
+Lemmas 5-7, Proposition 1 and Theorems 1 and 2 are stated as wanted theorems; Lemmas 1-5 quote
 earlier results.
 
 Proved in `MathlibExt.NumberTheory.PQDiophantineTuples`: Lemmas 1 and 3
 (`MetaMathlibExt.not_mul_add_one_dvd_mul_add_one` and `MetaMathlibExt.dvd_gcd_sub_div_gcd`).
 Proved in `MathlibExt.NumberTheory.PadicValuationMinTwice`: Lemma 2
 (`MetaMathlibExt.padicValNat_two_smallest_eq`).
+Proved in `MathlibExt.NumberTheory.SDiophantineSystemFour`: Lemma 4
+(`MetaMathlibExt.not_exists_sDiophantine_system_four`).
 -/
 
 namespace MetaMathlibExt
@@ -87,24 +90,6 @@ theorem isSDiophantineTuple_two_three_five_one_three_eight :
     simp
   rcases ha with rfl | rfl | rfl <;> rcases hb with rfl | rfl | rfl <;>
     first | exact absurd rfl hab | exact h4 | exact h9 | exact h25
-
-/-- **The Szalay–Ziegler system (4) has no solutions.** Let $p \ne q$ be odd primes and let
-$a, b, c, d$ be integers with $0 < a < b < c < d$. Then there are no natural numbers
-$\beta_1, \alpha_4, \beta_4, \alpha_2, \alpha_5, \alpha_3, \beta_3, \beta_6$ with
-$ab + 1 = q^{\beta_1}$, $bc + 1 = p^{\alpha_4} q^{\beta_4}$, $ac + 1 = p^{\alpha_2}$,
-$bd + 1 = p^{\alpha_5}$, $ad + 1 = p^{\alpha_3} q^{\beta_3}$ and $cd + 1 = q^{\beta_6}$.
-
-Any solution would make $\{a, b, c, d\}$ a $\{p, q\}$-Diophantine quadruple.
-
-Source: Volker Ziegler, *On the Existence of `{p, q}`-Diophantine Quadruples and Quintuples*,
-INTEGERS 25 (2025), Article A92, Lemma 4, System (4), quoting Szalay and Ziegler, INTEGERS 13
-(2013), Section 4 (`integers-2025-A92-lem-4`). -/
-public theorem_wanted not_exists_sDiophantine_system_four {p q a b c d : ℕ} (hp : p.Prime)
-    (hq : q.Prime) (hp2 : p ≠ 2) (hq2 : q ≠ 2) (hpq : p ≠ q) (ha : 0 < a) (hab : a < b)
-    (hbc : b < c) (hcd : c < d) :
-    ¬∃ β₁ α₄ β₄ α₂ α₅ α₃ β₃ β₆ : ℕ, a * b + 1 = q ^ β₁ ∧ b * c + 1 = p ^ α₄ * q ^ β₄ ∧
-      a * c + 1 = p ^ α₂ ∧ b * d + 1 = p ^ α₅ ∧ a * d + 1 = p ^ α₃ * q ^ β₃ ∧
-      c * d + 1 = q ^ β₆
 
 /-- **Exponent cases for $\{p, q\}$-Diophantine quadruples with $p \equiv 3 \pmod 4$.** Let
 $p \ne q$ be primes with $p \equiv 3 \pmod 4$, and let $a < b < c < d$ be natural numbers such

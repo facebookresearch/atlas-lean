@@ -125,6 +125,18 @@ example : maximumNimH 3 0 < maximumNimH 3 1 ∧ maximumNimH 3 1 < maximumNimH 3 
   ⟨maximumNimH_strictMono 3 0 1 (by decide) (by decide),
    maximumNimH_strictMono 3 1 2 (by decide) (by decide)⟩
 
+-- At `x = 0` the bound is attained, including at the smallest permitted step.
+example : 0 < 1 ∧ 1 ≤ maximumNimH 2 0 :=
+  maximumNimH_succ_le (k := 2) (x := 0) (hk := le_rfl)
+
+example : maximumNimH 2 0 = 1 := by decide
+
+-- At `k = 3` and `x = 2`, the quotient contributes an additional unit.
+example : 2 < 3 ∧ 3 ≤ maximumNimH 3 2 :=
+  maximumNimH_succ_le 3 2 (by decide)
+
+example : 3 < maximumNimH 3 2 := by decide
+
 -- Zero iterations leave both real maps at the starting position.
 example (x : ℕ) :
     Nat.iterate (fun y : ℝ => y + y / 2) 0 (x : ℝ) = x ∧

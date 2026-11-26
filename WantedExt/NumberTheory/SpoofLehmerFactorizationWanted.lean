@@ -19,12 +19,15 @@ public import MathlibExt.NumberTheory.SpoofLehmerFactorization
 public import MathlibExt.NumberTheory.SpoofLehmerResidues
 public import MathlibExt.NumberTheory.SpoofLehmerFactorizationSpoofLehmerBaseNotModEqOnePrime
 public import MathlibExt.NumberTheory.SpoofLehmerFactorizationLehmerEquationSolutionsFinite
+public import MathlibExt.NumberTheory.SpoofLehmerFactorizationSpoofLehmerLowerLeLeUpper
 
 /-!
 # Spoof Lehmer factorizations (wanted statements)
 
 Statements from Grant Molnar and Guntas Singh, *Spoof Lehmer Factorizations*, INTEGERS 26
-(2026), Article A33. A spoof factorization `x_1^{a_1} ⋯ x_r^{a_r}` is a multiset of pairs
+(2026), Article A33. The statement `spoofLehmer_lower_le_le_upper` is in
+`MathlibExt.NumberTheory.SpoofLehmerFactorizationSpoofLehmerLowerLeLeUpper`. A spoof
+factorization `x_1^{a_1} ⋯ x_r^{a_r}` is a multiset of pairs
 `(x_i, a_i)` of positive integers; `x_1 ⋯ x_r` denotes the factorization with all exponents `1`,
 encoded as `Multiset.map (fun a => (a, 1)) x`.
 -/
@@ -52,28 +55,6 @@ public theorem_wanted spoofLehmer_base_not_modEq_one_base (x : Multiset ℕ) (k 
     (hL : IsSpoofLehmer k (spoofOfBases x))
     (hnt : ¬ IsTrivialSpoof (spoofOfBases x)) :
     ∀ a ∈ x, ∀ b ∈ x, ¬ a ≡ 1 [MOD b]
-
-/-- **Lehmer bounds at the initial segments of a spoof Lehmer factorization.** Let
-$x_1 \le \dots \le x_r$ be natural numbers and let $F = x_1 \cdots x_r$ be the spoof factorization
-with these bases, all with exponent $1$. Suppose $F$ is a nontrivial spoof $k$-Lehmer factorization
-for an integer $k$. For a list $t = (t_1, \dots, t_s)$ of real numbers, let $L(t; r)$ and $U(t; r)$
-be the lower and upper Lehmer bounds: the infimum and the supremum in $\mathbb{R}$ of
-$\kappa_r(t_1, \dots, t_s, u_{s+1}, \dots, u_r)$ over all real numbers $u_{s+1}, \dots, u_r \ge 2$
-such that $t_1, \dots, t_s, u_{s+1}, \dots, u_r$ is nondecreasing, where
-$\kappa_r(y_1, \dots, y_r) = (y_1 \cdots y_r - 1) / ((y_1 - 1) \cdots (y_r - 1))$. Then for every
-$s$ with $0 \le s \le r$ we have $L(x_1, \dots, x_s; r) \le k \le U(x_1, \dots, x_s; r)$, and
-$L(x_1, \dots, x_s; r) = k$ if and only if $s = r$. Moreover $1 < k \le 2^r - 1$.
-
-Source: Grant Molnar and Guntas Singh, *Spoof Lehmer Factorizations*, INTEGERS 26 (2026),
-Article A33, Lemma 3 (`integers-2026-A33-lem-3`). -/
-public theorem_wanted spoofLehmer_lower_le_le_upper (x : List ℕ) (hsorted : x.Pairwise (· ≤ ·))
-    (k : ℤ) (hL : IsSpoofLehmer k (spoofOfBases x))
-    (hnt : ¬ IsTrivialSpoof (spoofOfBases x)) :
-    (∀ s ≤ x.length,
-      lehmerLower ((x.take s).map (fun a : ℕ => (a : ℝ))) x.length ≤ k ∧
-      (k : ℝ) ≤ lehmerUpper ((x.take s).map (fun a : ℕ => (a : ℝ))) x.length ∧
-      (lehmerLower ((x.take s).map (fun a : ℕ => (a : ℝ))) x.length = k ↔ s = x.length)) ∧
-    1 < k ∧ k ≤ 2 ^ x.length - 1
 
 /-- **Solutions of the Lehmer equation with at most six variables.** Call a finite multiset
 $\{x_1, \dots, x_r\}$ of natural numbers a solution of the Lehmer equation if $x_i \ge 2$ for
