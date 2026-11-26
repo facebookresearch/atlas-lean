@@ -8,7 +8,7 @@ $k = 1$ and $d = 3$, so the five-qubit code is the shortest code encoding one qu
 single-qubit error.
 
 Proof: the weight-$1$ and weight-$2$ cases are a finite check of [syndromes](../stabilizer-formalism/error-syndrome.md)
-(for example, an operator on qubits $1, 2$ commuting with $M_2$ and $M_3$ must be $XX$, which anticommutes with $M_1$);
+(for example, a weight-$2$ operator on qubits $1, 2$ commuting with $M_2$ and $M_3$ must be $X_1 X_2$, which anticommutes with $M_1$);
 the [correctability criterion](../stabilizer-codes-correctability-criterion-and-distance.md) then gives distance at
 least $3$, and $Y_1 Z_2 Y_3 \in N(S) \setminus \langle iI \rangle S$ gives distance exactly $3$.
 
