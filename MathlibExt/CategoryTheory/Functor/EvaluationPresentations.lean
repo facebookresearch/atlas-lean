@@ -225,7 +225,7 @@ theorem evaluationCoproductMap_naturality {F G : I ⥤ C} {A B : I → C}
     (w : ∀ k, a k ≫ e' k = e k ≫ φ.app k)
     [HasCoproduct (fun k => (evaluationLeftAdjoint C k).obj (A k))]
     [HasCoproduct (fun k => (evaluationLeftAdjoint C k).obj (B k))] :
-    Sigma.map (fun k => (evaluationLeftAdjoint C k).map (a k)) ≫
+    Limits.Sigma.map (fun k => (evaluationLeftAdjoint C k).map (a k)) ≫
         evaluationCoproductMap G B e' =
       evaluationCoproductMap F A e ≫ φ := by
   apply Sigma.hom_ext
@@ -236,7 +236,7 @@ theorem evaluationCoproductMap_naturality {F G : I ⥤ C} {A B : I → C}
     (evaluationAdjunctionRight C k).counit.naturality φ
   calc
     Sigma.ι (fun k => (evaluationLeftAdjoint C k).obj (A k)) k ≫
-        (Sigma.map (fun k => (evaluationLeftAdjoint C k).map (a k)) ≫
+        (Limits.Sigma.map (fun k => (evaluationLeftAdjoint C k).map (a k)) ≫
           evaluationCoproductMap G B e') =
         (evaluationLeftAdjoint C k).map (a k) ≫
           ((evaluationLeftAdjoint C k).map (e' k) ≫

@@ -167,7 +167,7 @@ private def columnsCoconeIsColimit : IsColimit (columnsCocone R A Q) := by
   refine
     { desc := fun s => HomologicalComplex.mapBifunctorDesc
         (K₁ := zeroDifferentialComplex R A) (K₂ := Q)
-        (F := ModuleCat.BalancedTensor.groupBifunctor R) (c := c) (j := n)
+        (F := ModuleCat.BalancedTensor.groupBifunctor R) («c» := c) (j := n)
         (fun p q h => (columnXIso R A Q p n q (by change p + q = n at h; omega)).inv ≫
           s.ι.app ⟨p⟩)
       fac := ?_
@@ -180,7 +180,7 @@ private def columnsCoconeIsColimit : IsColimit (columnsCocone R A Q) := by
   · intro s m hm
     apply HomologicalComplex.mapBifunctor.hom_ext
       (K₁ := zeroDifferentialComplex R A) (K₂ := Q)
-      (F := ModuleCat.BalancedTensor.groupBifunctor R) (c := c)
+      (F := ModuleCat.BalancedTensor.groupBifunctor R) («c» := c)
     intro p q h
     have hq : q = n - p := by change p + q = n at h; omega
     subst q
