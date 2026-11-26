@@ -1,0 +1,18 @@
+# Rounding in a bounded format
+
+Let $p$ be a natural number, $q_{\min}$ an integer and $r$ a
+rounding mode. For $x$ in a linearly ordered field with a floor function, let
+$e = \max(\lfloor \log_2 |x| \rfloor - (p - 1), q_{\min})$, where
+$\lfloor \log_2 |x| \rfloor$ is the largest integer $n$ with $2^n \le |x|$ for $x \ne 0$ and is
+$0$ for $x = 0$. The rounding of $x$ in mode $r$ is $R_r(x / 2^e) \cdot 2^e$, where $R_r$ rounds
+to an integer in mode $r$: scale $x$ so that the last place of its $p$-bit significand, but no
+place below $2^{q_{\min}}$, is the units digit, round to an integer in the mode, and scale back.
+
+Capping $e$ below at $q_{\min}$ gives gradual underflow: below the smallest normal number
+$2^{q_{\min} + p - 1}$ the result is rounded to a multiple of $2^{q_{\min}}$, a subnormal number
+or zero. The exponent is not bounded above, so the result can exceed the largest finite number;
+in the mode to nearest and from the smallest normal number on, this is $\mathrm{fl}_p(x)$.
+
+## Sources
+
+- Boldo, Jourdan, Leroy and Melquiond, *Verified compilation of floating-point computations*, Journal of Automated Reasoning, Section 5.2 (Flocq's rounding, with no upper bound on the exponent).
