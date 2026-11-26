@@ -11472,6 +11472,7 @@
   "MathlibExt/Combinatorics/ProgressionFreeRamseySetErdosProblem966": {"to": "Combinatorics/ramsey-theory/van-der-waerden-theorems", "title": "Progression-free Ramsey sets"},
   "MathlibExt/Combinatorics/Ramsey": {"to": "Combinatorics/ramsey-theory/structural-ramsey", "title": "Ramsey's theorem"},
   "MathlibExt/Combinatorics/RamseyFamily": {"to": "Combinatorics/ramsey-theory/structural-ramsey", "title": "Arithmetic progressions in CR-sets"},
+  "MathlibExt/Combinatorics/RamseyFamilyIdempotent": {"to": "Combinatorics/ramsey-theory/structural-ramsey", "title": "Arithmetic progressions in CR-sets"},
   "MathlibExt/Combinatorics/RamseyWitnessTensorSquare": {"to": "Combinatorics/ramsey-theory/structural-ramsey", "title": "Pairwise sum theorem"},
   "MathlibExt/Combinatorics/RationalSimplicialHomologyShared": {"to": "Combinatorics/polytopes-simplicial-complexes", "title": "Rational homology of simplicial complexes"},
   "MathlibExt/Combinatorics/ReducedComplexities": {"to": "Combinatorics/combinatorics-on-words/morphic-sturmian-words", "title": "Reduced factor complexity"},
