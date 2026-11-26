@@ -15,7 +15,8 @@ import CSLibExt.Crypto.Privacy.Renyi
 * The mechanism stated as the law of `f x + Z` with `Z ∼ N(0, v)`.
 * The budget is attained: for the identity query on neighbours at distance `1`, a smaller `ε`
   fails.
-* At order `1` no mechanism is Rényi differentially private once two inputs are neighbours.
+* At order `1`, under the convention that `renyiDiv` is `⊤` at orders `α ≤ 1`, no mechanism is
+  Rényi differentially private once two inputs are neighbours.
 -/
 
 open MeasureTheory ProbabilityTheory MathlibExt.InformationTheory.RenyiDivergence
@@ -54,7 +55,8 @@ example : ¬RenyiDifferentiallyPrivate (fun x y : ℝ ↦ |x - y| ≤ 1) (fun x 
   rw [renyiDiv_gaussianReal 1 0 one_ne_zero (by norm_num), EReal.coe_le_coe_iff] at h₁
   norm_num at h₁
 
--- At order `1` the divergence is `⊤`, so no budget works once two inputs are neighbours.
+-- At order `1` the divergence is `⊤` by the convention of `renyiDiv` at orders `α ≤ 1`, so no
+-- budget works once two inputs are neighbours.
 example (ε : ℝ) :
     ¬RenyiDifferentiallyPrivate (fun _ _ : Unit ↦ True) (fun _ ↦ gaussianReal 0 1) 1 ε := by
   intro h

@@ -11,9 +11,13 @@ $$
 
 where $D_\alpha$ is the [Rényi divergence](../../../InformationTheory/information-inequalities/r-nyi-divergence/renyi-div.md)
 of order $\alpha$. As for [differential privacy](differentially-private.md), the relation
-$\mathrm{Adj}$ is arbitrary. Mironov takes orders $\alpha > 1$. The Rényi divergence is set to
-$\infty$ at orders $\alpha \le 1$, so at those orders the condition holds only when no two
-databases are neighbours.
+$\mathrm{Adj}$ is arbitrary.
+
+This agrees with Mironov's Definition 4 for real orders $\alpha > 1$. Mironov also admits
+$\alpha = 1$, where $D_1$ is the Kullback–Leibler divergence, and $\alpha = \infty$, where
+$(\infty, \varepsilon)$-Rényi differential privacy is $\varepsilon$-differential privacy. Neither is
+captured here: the divergence used here is $\infty$ at every $\alpha \le 1$, so at those orders the
+condition holds only when no two databases are neighbours.
 
 ## Background
 
@@ -21,4 +25,4 @@ databases are neighbours.
 
 ## Sources
 
-- I. Mironov, "Rényi differential privacy", *2017 IEEE 30th Computer Security Foundations Symposium (CSF)*, 263–275, <https://doi.org/10.1109/CSF.2017.11>; numbering of arXiv:1702.07476v3, <https://arxiv.org/abs/1702.07476v3>: Definition 4.
+- I. Mironov, "Rényi differential privacy", *2017 IEEE 30th Computer Security Foundations Symposium (CSF)*, 263–275, <https://doi.org/10.1109/CSF.2017.11>; numbering of arXiv:1702.07476v3, <https://arxiv.org/abs/1702.07476v3>: Definition 4, with the orders $1$ and $\infty$ defined by continuity after Definition 3.

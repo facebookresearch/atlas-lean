@@ -16,9 +16,10 @@ with the natural logarithm, when $P$ is absolutely continuous with respect to $Q
 otherwise. It is defined for arbitrary measures through the Radon–Nikodym
 derivative $dP/dQ$, which for these Gaussian laws is the ratio of their densities.
 
-With sensitivity $\Delta = 1$ and variance $v = \sigma^2$ this is Mironov's Corollary 3: the
-Gaussian mechanism is $(\alpha, \alpha / (2\sigma^2))$-Rényi differentially private for every
-$\alpha > 1$. The statement here allows any bound $\Delta$ and any neighbouring relation.
+With sensitivity $\Delta = 1$ and variance $v = \sigma^2$ this is Mironov's Corollary 3 at orders
+$\alpha > 1$: the Gaussian mechanism is $(\alpha, \alpha / (2\sigma^2))$-Rényi differentially
+private for every $\alpha > 1$. The statement here allows any bound $\Delta$ and any neighbouring
+relation.
 
 ## Proof
 
