@@ -42,18 +42,13 @@ public import Mathlib.NumberTheory.Divisors
 public import MathlibExt.NumberTheory.NearPerfectTwoPrimePower
 public import MathlibExt.NumberTheory.OddPrimeDeficientPerfect
 public import MathlibExt.NumberTheory.FkPerfect
+public import MathlibExt.NumberTheory.FkPerfectNotIsKLNearPerfectTwoMulPrime
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.FkPerfectWanted
-
-/-- **$[k,\ell]$-near-perfect numbers.** For natural numbers $k$, $\ell$ and $n$, write
-$\sigma_k(n) = \sum_{e \mid n} e^k$. The number $n$ is $[k,\ell]$-near-perfect when there is a
-divisor $d$ of $n$ with $d < n$ such that $\sigma_k(n) = n^k + d^k + \ell n$. -/
-def IsKLNearPerfect (k l n : ℕ) : Prop :=
-  ∃ d, KLNearPerfectWith k l n d
 
 /-- **Deficient $F_k$-perfect numbers.** For natural numbers $k$ and $n$, write
 $\sigma_k(n) = \sum_{e \mid n} e^k$. The number $n$ is deficient $F_k$-perfect when it is
@@ -176,16 +171,6 @@ and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
 theorem_wanted isKLDeficientPerfect_prime_pow_imp
     (p a k l : ℕ) (hp : p.Prime) (hk : 2 ≤ k) :
     IsKLDeficientPerfect k l (p ^ a) → p = 2 ∧ a = 1
-
-/-- **Twice an odd prime is not $[k,\ell]$-near-perfect.** Let $k$ and $\ell$ be natural numbers
-with $\ell \ge 1$ and let $p$ be an odd prime. Then $2p$ is not $[k,\ell]$-near-perfect.
-
-Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
-and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
-`F_k`-Perfect Numbers", Theorem 6. -/
-theorem_wanted not_isKLNearPerfect_two_mul_prime (k l p : ℕ)
-    (hl : 1 ≤ l) (hp : p.Prime) (hpo : Odd p) :
-    ¬ IsKLNearPerfect k l (2 * p)
 
 /-- **Deficient $F$-perfect numbers of the form $2^a p$.** Let $p$ be a prime and $a$ a natural
 number. If $2^a p$ is deficient $F$-perfect, then $p = 3$ and $a = 1$, so the number is $6$.
