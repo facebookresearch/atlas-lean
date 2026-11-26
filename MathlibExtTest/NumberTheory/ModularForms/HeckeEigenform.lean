@@ -11,22 +11,8 @@ module
 public import Mathlib.FieldTheory.IsAlgClosed.Basic
 public import MathlibExt.NumberTheory.ModularForms.HeckeEigenform
 import MathlibExt.LinearAlgebra.Eigenspace.CommonEigenvector
-import MathlibExt.NumberTheory.ModularForms.StrictPeriodsGamma0
 
 @[expose] public section
-
-/-- exactSource consumer: the original binders apply verbatim. -/
-example (N : ℕ) [NeZero N] (k : ℤ) :
-    FiniteDimensional ℂ (CuspForm (CongruenceSubgroup.Gamma0 N) k) :=
-  CuspForm.finiteDimensional_Gamma0 N k
-
-/-- The finite-dimensionality is found by instance search, here at level `11`. -/
-example : FiniteDimensional ℂ (CuspForm (CongruenceSubgroup.Gamma0 11) 2) := inferInstance
-
-/-- exactSource restatement, from Mathlib's `CuspFormClass.qExpansion_coeff_zero`. -/
-example {N : ℕ} {k : ℤ} (f : CuspForm (CongruenceSubgroup.Gamma0 N) k) :
-    ModularFormClass.qCoeff f 0 = 0 :=
-  CuspFormClass.qExpansion_coeff_zero f one_pos (CongruenceSubgroup.one_mem_strictPeriods_Gamma0 N)
 
 /-- exactSource consumer: the original binders apply verbatim. -/
 example {F : Type*} [FunLike F UpperHalfPlane ℂ]
@@ -47,16 +33,6 @@ example {F : Type*} [FunLike F UpperHalfPlane ℂ]
   ModularFormClass.heckeU_eq_smul_iff f hΓ hp c
 
 /-- exactSource consumer: the original binders apply verbatim. -/
-example {N : ℕ} (f : CuspForm (CongruenceSubgroup.Gamma0 N) 2) :
-    f.IsNormalizedEigenform ↔
-      (ModularFormClass.qCoeff f 1 = 1 ∧ ∀ p : ℕ, p.Prime →
-        ((¬ p ∣ N → ∀ n : ℕ, ModularForm.coeffHeckeT 2 p (ModularFormClass.qCoeff f) n
-            = ModularFormClass.qCoeff f p * ModularFormClass.qCoeff f n) ∧
-          (p ∣ N → ∀ n : ℕ, ModularForm.coeffHeckeU p (ModularFormClass.qCoeff f) n
-            = ModularFormClass.qCoeff f p * ModularFormClass.qCoeff f n))) :=
-  CuspForm.isNormalizedEigenform_iff_coeffHecke f
-
-/-- exactSource consumer: the original binders apply verbatim. -/
 example {N : ℕ} [NeZero N] (f : CuspForm (CongruenceSubgroup.Gamma0 N) 2) :
     f.IsNormalizedEigenform ↔
       (ModularFormClass.qCoeff f 1 = 1 ∧ ∀ p : ℕ, p.Prime →
@@ -70,27 +46,6 @@ example {N : ℕ} [NeZero N] (f : CuspForm (CongruenceSubgroup.Gamma0 N) 2) :
       ((hpN : ¬ p ∣ N) → CuspForm.heckeTLin 2 hp hpN f = ModularFormClass.qCoeff f p • f) ∧
       ((hpN : p ∣ N) → CuspForm.heckeULin 2 hpN f = ModularFormClass.qCoeff f p • f)) :=
   CuspForm.isNormalizedEigenform_iff_heckeTLin f
-
-/-- exactSource consumer: the original binders apply verbatim. -/
-example (k : ℤ) (N : ℕ) (a c : ℕ → ℂ)
-    (hT : ∀ p : ℕ, p.Prime → ¬ p ∣ N → ∀ n : ℕ, ModularForm.coeffHeckeT k p a n = c p * a n)
-    (hU : ∀ p : ℕ, p.Prime → p ∣ N → ∀ n : ℕ, ModularForm.coeffHeckeU p a n = c p * a n)
-    (h1 : a 1 = 1) : ∀ p : ℕ, p.Prime → c p = a p :=
-  ModularForm.coeffHecke_eigenvalue_eq_apply_of_apply_one_eq_one k N a c hT hU h1
-
-/-- exactSource consumer: the original binders apply verbatim. -/
-example (k : ℤ) (N : ℕ) (a c : ℕ → ℂ)
-    (hT : ∀ p : ℕ, p.Prime → ¬ p ∣ N → ∀ n : ℕ, ModularForm.coeffHeckeT k p a n = c p * a n)
-    (hU : ∀ p : ℕ, p.Prime → p ∣ N → ∀ n : ℕ, ModularForm.coeffHeckeU p a n = c p * a n)
-    (h1 : a 1 = 0) : ∀ n : ℕ, n ≠ 0 → a n = 0 :=
-  ModularForm.eq_zero_of_coeffHecke_eigen_of_apply_one_eq_zero k N a c hT hU h1
-
-/-- Boundary case: the zero sequence is a Hecke eigenvector for every eigenvalue, and it
-vanishes away from `0`. -/
-example (k : ℤ) (N : ℕ) (c : ℕ → ℂ) : ∀ n : ℕ, n ≠ 0 → (fun _ : ℕ ↦ (0 : ℂ)) n = 0 :=
-  ModularForm.eq_zero_of_coeffHecke_eigen_of_apply_one_eq_zero k N (fun _ ↦ 0) c
-    (fun _ _ _ n ↦ by simp [ModularForm.coeffHeckeT_apply])
-    (fun _ _ _ n ↦ by simp [ModularForm.coeffHeckeU_apply]) rfl
 
 /-- exactSource restatement, from `Module.End.exists_common_eigenvector_of_commute` on `main`:
 the source's pairwise hypothesis and per-member eigenvalues are that theorem's form. -/

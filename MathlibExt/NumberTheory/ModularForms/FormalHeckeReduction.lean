@@ -47,6 +47,7 @@ public import MathlibExt.NumberTheory.ModularForms.HeckeAlgebra
 import Mathlib.Algebra.Module.Torsion.Basic
 import Mathlib.LinearAlgebra.Quotient.Basic
 import Mathlib.Tactic.LinearCombination
+import MathlibExt.NumberTheory.ModularForms.NormalizedEigenform
 import MathlibExt.NumberTheory.ModularForms.StrictPeriodsGamma0
 
 /-!
@@ -324,16 +325,9 @@ private theorem qCoeff_zero (n : ℕ) : qCoeff ⇑(0 : CuspForm Γ₀(N) k) n = 
   simp only [qCoeff_eq, FunLike.coe_zero]
   rw [UpperHalfPlane.qExpansion_zero, map_zero]
 
-private theorem qCoeff_smul (c : ℂ) (f : CuspForm Γ₀(N) k) (n : ℕ) :
-    qCoeff ⇑(c • f) n = c * qCoeff ⇑f n := by
-  simp only [qCoeff_eq, FunLike.coe_smul]
-  rw [ModularForm.qExpansion_smul one_pos (CongruenceSubgroup.one_mem_strictPeriods_Gamma0 N)
-    c f]
-  simp
-
 private theorem qCoeff_zsmul (c : ℤ) (f : CuspForm Γ₀(N) k) (n : ℕ) :
     qCoeff ⇑(c • f) n = c * qCoeff ⇑f n := by
-  rw [← Int.cast_smul_eq_zsmul ℂ c f, qCoeff_smul]
+  rw [← Int.cast_smul_eq_zsmul ℂ c f, CuspForm.qCoeff_smul]
 
 private abbrev Lat (N : ℕ) : Submodule ℤ (CuspForm Γ₀(N) 2) := CuspForm.intLattice N 2
 
@@ -409,7 +403,7 @@ private theorem mem_threeMultiples_iff_dvd {f : Lat N} :
       have hcoeff := intQExpansion_cast f n
       rw [hm] at hcoeff
       push_cast at hcoeff
-      rw [← qCoeff_eq, qCoeff_smul, ← hcoeff, ← mul_assoc,
+      rw [← qCoeff_eq, CuspForm.qCoeff_smul, ← hcoeff, ← mul_assoc,
         inv_mul_cancel₀ (by norm_num : (3 : ℂ) ≠ 0), one_mul]
     refine mem_threeMultiples_iff.mpr ⟨⟨(3⁻¹ : ℂ) • (f : CuspForm Γ₀(N) 2), hmem⟩, ?_⟩
     ext1

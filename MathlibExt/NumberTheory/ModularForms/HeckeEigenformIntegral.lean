@@ -44,6 +44,7 @@ import Mathlib.RingTheory.Algebraic.Integral
 import Mathlib.RingTheory.Ideal.GoingUp
 import Mathlib.RingTheory.Localization.FractionRing
 import MathlibExt.NumberTheory.ModularForms.HeckeEigenform
+import MathlibExt.NumberTheory.ModularForms.NormalizedEigenform
 import MathlibExt.NumberTheory.ModularForms.StrictPeriodsGamma0
 import MathlibExt.RingTheory.Ideal.MinimalPrime.CharZeroEigenvector
 
@@ -88,17 +89,11 @@ private theorem qCoeff_add_aux {k : ℤ} (f g : CuspForm (CongruenceSubgroup.Gam
   rw [ModularForm.qExpansion_add one_pos (CongruenceSubgroup.one_mem_strictPeriods_Gamma0 N)
     f g, map_add]
 
-private theorem qCoeff_smul_aux {k : ℤ} (c : ℂ) (f : CuspForm (CongruenceSubgroup.Gamma0 N) k)
-    (n : ℕ) : qCoeff ⇑(c • f) n = c * qCoeff ⇑f n := by
-  simp only [qCoeff_eq, FunLike.coe_smul]
-  rw [ModularForm.qExpansion_smul one_pos (CongruenceSubgroup.one_mem_strictPeriods_Gamma0 N)
-    c f, map_smul, smul_eq_mul]
-
 private theorem IsNormalizedEigenform.ne_zero_aux
     {f : CuspForm (CongruenceSubgroup.Gamma0 N) 2} (hf : f.IsNormalizedEigenform) : f ≠ 0 := by
   rintro rfl
   have h1 := hf.qCoeff_one
-  have h0 := qCoeff_smul_aux (N := N) (k := 2) 0 0 1
+  have h0 := CuspForm.qCoeff_smul (N := N) (k := 2) 0 0 1
   rw [zero_smul, zero_mul] at h0
   exact zero_ne_one (h0.symm.trans h1)
 
@@ -136,16 +131,16 @@ private theorem apply_eq_qCoeff_one_smul_of_mem [NeZero N] {S : Set ℕ}
       t f = qCoeff ⇑(t f) 1 • f) ?_ ?_ ?_ ?_ ht
   · rintro x (⟨ℓ, hℓ, hℓN, -, rfl⟩ | ⟨q, hqN, hq, -, rfl⟩)
     · have h := (hgen.2 ℓ hℓ).1 hℓN
-      rw [h, qCoeff_smul_aux, h1, mul_one]
+      rw [h, CuspForm.qCoeff_smul, h1, mul_one]
     · have h := (hgen.2 q hq).2 hqN
-      rw [h, qCoeff_smul_aux, h1, mul_one]
+      rw [h, CuspForm.qCoeff_smul, h1, mul_one]
   · intro r
     rw [Algebra.algebraMap_eq_smul_one, LinearMap.smul_apply, one_apply_eq_self,
-      ← Int.cast_smul_eq_zsmul ℂ, qCoeff_smul_aux, h1, mul_one]
+      ← Int.cast_smul_eq_zsmul ℂ, CuspForm.qCoeff_smul, h1, mul_one]
   · intro x y _ _ hx hy
     rw [LinearMap.add_apply, qCoeff_add_aux, add_smul, ← hx, ← hy]
   · intro x y _ _ hx hy
-    rw [mul_apply_eq_comp, hy, map_smul, hx, smul_smul, qCoeff_smul_aux, h1, mul_one]
+    rw [mul_apply_eq_comp, hy, map_smul, hx, smul_smul, CuspForm.qCoeff_smul, h1, mul_one]
 
 /-- For `N ≠ 0`, the Hecke eigenvalues of a weight-two normalized eigenform `f` on `Γ₀(N)` form a
 ring homomorphism `χ` on the Hecke algebra away from `S`, with `χ(T_ℓ) = a_ℓ(f)` and
@@ -175,12 +170,12 @@ theorem IsNormalizedEigenform.exists_ringHom_heckeAlgebra [NeZero N]
       map_mul' := fun t t' => by
         change qCoeff ⇑(((t : Module.End ℂ (CuspForm (CongruenceSubgroup.Gamma0 N) 2)) *
           (t' : Module.End ℂ (CuspForm (CongruenceSubgroup.Gamma0 N) 2))) f) 1 = e t * e t'
-        rw [mul_apply_eq_comp, key t', map_smul, key t, smul_smul, qCoeff_smul_aux, h1,
+        rw [mul_apply_eq_comp, key t', map_smul, key t, smul_smul, CuspForm.qCoeff_smul, h1,
           mul_one, mul_comm]
       map_zero' := by
         change qCoeff ⇑((0 : Module.End ℂ (CuspForm (CongruenceSubgroup.Gamma0 N) 2)) f) 1 = 0
         rw [LinearMap.zero_apply]
-        have := qCoeff_smul_aux (0 : ℂ) f 1
+        have := CuspForm.qCoeff_smul (0 : ℂ) f 1
         rwa [zero_smul, zero_mul] at this
       map_add' := fun t t' => by
         change qCoeff ⇑(((t : Module.End ℂ (CuspForm (CongruenceSubgroup.Gamma0 N) 2)) +
@@ -188,9 +183,9 @@ theorem IsNormalizedEigenform.exists_ringHom_heckeAlgebra [NeZero N]
         rw [LinearMap.add_apply, qCoeff_add_aux] }
   refine ⟨χ, key, fun ℓ hℓ hℓN hℓS => ?_, fun q hq hqN hqS => ?_⟩
   · change qCoeff ⇑((heckeTLin 2 hℓ hℓN) f) 1 = qCoeff ⇑f ℓ
-    rw [(hgen.2 ℓ hℓ).1 hℓN, qCoeff_smul_aux, h1, mul_one]
+    rw [(hgen.2 ℓ hℓ).1 hℓN, CuspForm.qCoeff_smul, h1, mul_one]
   · change qCoeff ⇑((heckeULin 2 hqN) f) 1 = qCoeff ⇑f q
-    rw [(hgen.2 q hq).2 hqN, qCoeff_smul_aux, h1, mul_one]
+    rw [(hgen.2 q hq).2 hqN, CuspForm.qCoeff_smul, h1, mul_one]
 
 /-- For `N ≠ 0`, under an integral structure, the Hecke eigenvalues of a weight-two normalized
 eigenform on `Γ₀(N)` form a ring homomorphism from the Hecke algebra to the algebraic integers. -/
