@@ -9,11 +9,14 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicFrameModels
+public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicBarMultiplication
 
 /-!
 # Wanted native holomorphic-kernel, cotangent and Higgs constructions
 
 All ordinary support requests concern the fixed public section formulas.
+The theorem `holomorphic_bar_multiplication` is proved in
+`MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicBarMultiplication`.
 Integrability produces new holomorphic frames and the actual O-linear
 Higgs map; it does not declare the original smooth frames holomorphic.
 Polystability, Chern vanishing and the full correspondence are separate
@@ -32,12 +35,6 @@ open scoped Manifold ContDiff
 
 variable {n : ℕ} {M : Type} [TopologicalSpace M] [ChartedSpace (Coordinates n) M]
   {r : ℕ}
-
-/-- Holomorphic multiplication satisfies the actual full bar-derivative Leibniz rule. -/
-theorem_wanted holomorphic_bar_multiplication
-    [IsManifold 𝓘(ℝ, Coordinates n) ∞ M] [IsManifold 𝓘(ℂ, Coordinates n) ∞ M]
-    (B : SmoothComplexBundle n M r)
-    (h : HermitianMetric B) (A : SmoothConnection B) : BarMultiplicationCalculus B h A
 
 /-- The actual holomorphic scalar ring has the ordinary local sheaf condition. -/
 theorem_wanted holomorphic_coefficient_sheaf_condition [IsManifold 𝓘(ℂ, Coordinates n) ∞ M] :
