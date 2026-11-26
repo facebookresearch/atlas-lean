@@ -26,9 +26,6 @@ The [revelation principle](revelation-principle/README.md) reduces the design pr
 - [Single-Parameter Auctions](single-parameter-auctions/README.md)
 - [Standard Proper Scoring Rules](standard-scoring-rules/README.md)
 - [Truthful Scheduling and Budget-Constrained Auctions](truthful-scheduling-and-budgets/README.md)
-- [Combinatorial and Multi-Agent Contracts](combinatorial-and-multi-agent-contracts/README.md)
-- [Hidden-Action Principal-Agent Contracts](hidden-action-principal-agent-contracts/README.md)
-- [Multi-Item Revenue Maximization and Simple Mechanisms](multi-item-revenue-maximization/README.md)
 
 ## Related topics
 

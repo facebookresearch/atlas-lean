@@ -20,11 +20,7 @@ Cryptographic schemes and their correctness and security reductions: the game-ba
 - [Privacy-loss random variable and KL bound](privacy-loss-random-variable-and-kl-bound/README.md)
 - [Renyi differential privacy](renyi-differential-privacy/README.md)
 - [Laplace and exponential mechanisms](laplace-and-exponential-mechanisms/README.md)
-- [Fingerprinting Lower Bounds and Adaptive Data Analysis](fingerprinting-lower-bounds-and-adaptive-data-analysis/README.md)
-- [Private Convex Optimization and Noisy SGD](private-convex-optimization-and-noisy-sgd/README.md)
-- [Shuffle Model and Privacy Amplification](shuffle-model-and-privacy-amplification/README.md)
-- [Trade-off Functions and Gaussian Differential Privacy](trade-off-functions-and-gaussian-differential-privacy/README.md)
-- [Zero-Concentrated Differential Privacy](zero-concentrated-differential-privacy/README.md)
+- [Privacy Accounting, Lower Bounds and Private Learning](privacy-accounting-lower-bounds-and-private-learning/README.md)
 
 ## Related topics
 
