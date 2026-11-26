@@ -40,6 +40,8 @@ example : mci_FourThin ksd_stair ∧ mci_KingRowLinked ksd_stair (![1, 1] : Site
 example : ∀ z ∈ (SimpleGraph.Walk.nil : (hypercubicLattice 2).Walk (![1, 1] : Site 2) _).support,
     z ∈ jil_offSupportInterior ksd_stair :=
   mci_offSupport_walk_interior ksd_stair _
-    (fun z hz => by simp at hz; subst hz; exact ksd_off_11) ksd_mem_interior_11
+    (fun z hz => by
+      rw [SimpleGraph.Walk.support_nil, List.mem_singleton] at hz; subst hz; exact ksd_off_11)
+    ksd_mem_interior_11
 
 end MathlibExtTest.StatMech.Combinatorics.SimpleGraph.Lattice.KingInteriorConnectivity

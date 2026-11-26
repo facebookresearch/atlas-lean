@@ -9,6 +9,7 @@ module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.JordanExteriorClosure
 public import MathlibExt.Probability.Percolation.Universality.KestenHalf
+import MathlibExt.Probability.Percolation.Universality.FrameChangeIso
 
 /-!
 # Gluing crossings, measurability of crossing events, and self-duality bounds
@@ -19,8 +20,9 @@ Building blocks for Russo–Seymour–Welsh arguments on `ℤ²` for a positivel
 * gluing: `μ(H[a, m']) μ(V[m, m']) μ(H[m, b]) ≤ μ(H[a, b])` for horizontal crossings `H` and the
   vertical crossing `V` of the overlap (`StatMech.Lattice.jec_rsw_strip_glue`), iterated once;
 * the square-root trick for two equiprobable increasing events;
-* at `p = 1/2`, `dualConfig` crossings have the same law as primal crossings, and a uniform lower
-  bound on crossings of `ρn × n` rectangles gives the box-crossing property.
+* at `p = 1/2`, dual crossings (bottom–top in `dualConfig`, left–right on the shifted dual
+  lattice) have the same law as primal crossings, and a uniform lower bound on crossings of
+  `ρn × n` rectangles gives the box-crossing property.
 
 The self-duality bound that derived `ℙ_{1/2}(H) ≥ 1/2` for a square from a separation hypothesis
 `hsep` was removed: `hsep` is not planar duality and is false for `[0, 2]²`, so the bound had no
@@ -172,17 +174,29 @@ theorem rba_dualVerticalCrossing_eq (a b c d : ℤ)
     bernoulliProductMeasure_selfDual_half]
   rfl
 
-/-- Under `ℙ_{1/2}` the `dualConfig` left–right crossing has the probability of the primal one. -/
+/-- Under `ℙ_{1/2}` the left–right crossing on the shifted dual lattice
+(`DualHorizontalCrossing`: dual steps across closed primal edges) has the probability of the
+primal left–right crossing. -/
 theorem rba_dualHorizontalCrossing_eq (a b c d : ℤ)
     (hmeasH : MeasurableSet (horizontalCrossingEvent a b c d)) :
     halfMeasure.real (dualHorizontalCrossingEvent a b c d)
       = halfMeasure.real (horizontalCrossingEvent a b c d) := by
   have hpre : dualHorizontalCrossingEvent a b c d
-      = dualConfig ⁻¹' horizontalCrossingEvent a b c d := rfl
+      = fci_faceDualConfig ⁻¹' horizontalCrossingEvent a b c d := by
+    ext ω
+    have hsteps : (openSubgraphInduce 2 (fci_faceDualConfig ω) (rect a b c d)).Adj =
+        fun f g : rect a b c d => dualLattice.Adj f g ∧ ω (sharedPrimalEdge f g) = false := by
+      funext f g
+      refine propext ?_
+      change _ ↔ (hypercubicLattice 2).Adj f g ∧ ω (sharedPrimalEdge f g) = false
+      rw [openSubgraphInduce_adj, ← fci_faceOpenDual_eq_openSubgraph, fci_faceOpenDual_adj]
+    rw [Set.mem_preimage, mem_horizontalCrossingEvent, mem_dualHorizontalCrossingEvent,
+      dualHorizontalCrossing_iff]
+    simp only [HorizontalCrossing, ConnectedWithin, SimpleGraph.reachable_iff_reflTransGen,
+      hsteps]
   unfold halfMeasure
-  rw [hpre, Measure.real, ← Measure.map_apply measurable_dualConfig hmeasH,
-    bernoulliProductMeasure_selfDual_half]
-  rfl
+  rw [hpre, fci_faceDualConfig_measurePreserving.measureReal_preimage
+    hmeasH.nullMeasurableSet]
 
 /-- If the two overlapping horizontal crossings have probability at least `1/2` and the vertical
 crossing of the overlap at least `v₀`, the glued horizontal crossing has probability at least

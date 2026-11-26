@@ -114,25 +114,33 @@ theorem wpc_fig8_mem_interior_11 : (![1, 1] : Site 2) ∈ jil_offSupportInterior
 theorem wpc_fig8_mem_interior_33 : (![3, 3] : Site 2) ∈ jil_offSupportInterior wpc_fig8 :=
   (jil_mem_offSupportInterior wpc_fig8 _).mpr ⟨wpc_fig8_off_33, wpc_fig8_interior_33⟩
 
--- The 15-way case split, each case closing a 15-term disjunction, needs about 430000 heartbeats.
 /-- Every site of the figure-eight walk is one of the fifteen listed sites. -/
 theorem wpc_support_cells (p : Site 2) (hp : p ∈ wpc_fig8.support) :
     p = (![0,0]:Site 2) ∨ p = (![1,0]:Site 2) ∨ p = (![2,0]:Site 2) ∨ p = (![0,1]:Site 2) ∨
     p = (![2,1]:Site 2) ∨ p = (![0,2]:Site 2) ∨ p = (![1,2]:Site 2) ∨ p = (![2,2]:Site 2) ∨
     p = (![3,2]:Site 2) ∨ p = (![4,2]:Site 2) ∨ p = (![2,3]:Site 2) ∨ p = (![4,3]:Site 2) ∨
     p = (![2,4]:Site 2) ∨ p = (![3,4]:Site 2) ∨ p = (![4,4]:Site 2) := by
-  have hl := wpc_fig8_support_locus p hp
   have toCell : ∀ a b : ℤ, p 0 = a → p 1 = b → p = (![a, b] : Site 2) := by
     intro a b h0 h1; ext i; fin_cases i <;> simp [h0, h1]
-  have hpair : (p 0 = 0 ∧ p 1 = 0) ∨ (p 0 = 1 ∧ p 1 = 0) ∨ (p 0 = 2 ∧ p 1 = 0) ∨
-      (p 0 = 0 ∧ p 1 = 1) ∨ (p 0 = 2 ∧ p 1 = 1) ∨ (p 0 = 0 ∧ p 1 = 2) ∨
-      (p 0 = 1 ∧ p 1 = 2) ∨ (p 0 = 2 ∧ p 1 = 2) ∨ (p 0 = 3 ∧ p 1 = 2) ∨
-      (p 0 = 4 ∧ p 1 = 2) ∨ (p 0 = 2 ∧ p 1 = 3) ∨ (p 0 = 4 ∧ p 1 = 3) ∨
-      (p 0 = 2 ∧ p 1 = 4) ∨ (p 0 = 3 ∧ p 1 = 4) ∨ (p 0 = 4 ∧ p 1 = 4) := by
-    rcases hl with h|h|h|h|h|h|h|h <;> omega
-  rcases hpair with ⟨h0, h1⟩ | ⟨h0, h1⟩ | ⟨h0, h1⟩ | ⟨h0, h1⟩ | ⟨h0, h1⟩ | ⟨h0, h1⟩ | ⟨h0, h1⟩ |
-      ⟨h0, h1⟩ | ⟨h0, h1⟩ | ⟨h0, h1⟩ | ⟨h0, h1⟩ | ⟨h0, h1⟩ | ⟨h0, h1⟩ | ⟨h0, h1⟩ | ⟨h0, h1⟩ <;>
-    rw [toCell _ _ h0 h1] <;> simp only [true_or, or_true]
+  -- Each of the eight segments has three sites: split on its free coordinate.
+  rcases wpc_fig8_support_locus p hp with ⟨h1, ha, hb⟩ | ⟨h0, ha, hb⟩ | ⟨h1, ha, hb⟩ |
+      ⟨h0, ha, hb⟩ | ⟨h1, ha, hb⟩ | ⟨h0, ha, hb⟩ | ⟨h1, ha, hb⟩ | ⟨h0, ha, hb⟩
+  · rcases (show p 0 = 0 ∨ p 0 = 1 ∨ p 0 = 2 by omega) with h0 | h0 | h0 <;>
+      rw [toCell _ _ h0 h1] <;> simp only [true_or, or_true]
+  · rcases (show p 1 = 0 ∨ p 1 = 1 ∨ p 1 = 2 by omega) with h1 | h1 | h1 <;>
+      rw [toCell _ _ h0 h1] <;> simp only [true_or, or_true]
+  · rcases (show p 0 = 0 ∨ p 0 = 1 ∨ p 0 = 2 by omega) with h0 | h0 | h0 <;>
+      rw [toCell _ _ h0 h1] <;> simp only [true_or, or_true]
+  · rcases (show p 1 = 0 ∨ p 1 = 1 ∨ p 1 = 2 by omega) with h1 | h1 | h1 <;>
+      rw [toCell _ _ h0 h1] <;> simp only [true_or, or_true]
+  · rcases (show p 0 = 2 ∨ p 0 = 3 ∨ p 0 = 4 by omega) with h0 | h0 | h0 <;>
+      rw [toCell _ _ h0 h1] <;> simp only [true_or, or_true]
+  · rcases (show p 1 = 2 ∨ p 1 = 3 ∨ p 1 = 4 by omega) with h1 | h1 | h1 <;>
+      rw [toCell _ _ h0 h1] <;> simp only [true_or, or_true]
+  · rcases (show p 0 = 2 ∨ p 0 = 3 ∨ p 0 = 4 by omega) with h0 | h0 | h0 <;>
+      rw [toCell _ _ h0 h1] <;> simp only [true_or, or_true]
+  · rcases (show p 1 = 2 ∨ p 1 = 3 ∨ p 1 = 4 by omega) with h1 | h1 | h1 <;>
+      rw [toCell _ _ h0 h1] <;> simp only [true_or, or_true]
 
 /-- The sixteen unit edges of the two square boundaries are edges of the figure-eight walk. -/
 theorem wpc_edges_mem : ∀ e : Sym2 (Site 2),

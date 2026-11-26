@@ -56,7 +56,7 @@ open StatMech.Lattice StatMech.Percolation StatMech.Universality
 
 /-- The event that the site `x` is joined by an open path to a site at `ℓ^∞`-distance at least `n`
 from `x` (the one-arm event of radius `n` translated to `x`). -/
-def kcd_localOneArm (x : Site 2) (n : ℕ) : Set (ConfigSpace (Sym2 (Site 2))) :=
+noncomputable def kcd_localOneArm (x : Site 2) (n : ℕ) : Set (ConfigSpace (Sym2 (Site 2))) :=
   (ConfigSpace.shift (Multiplicative.ofAdd (-x))) ⁻¹' crossingEvent 2 n
 
 /-- Translation invariance: the translated one-arm event has probability `crossProb 2 p hp n`. -/

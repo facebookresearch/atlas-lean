@@ -47,7 +47,7 @@ theorem map_R : Measure.map R halfMeasure = halfMeasure := by
 noncomputable def e₀ : Sym2 (Site 2) := s(![0, 0], ![1, 0])
 
 /-- The event that `e₀` is open. -/
-def H : Set (ConfigSpace (Sym2 (Site 2))) := (fun ω => ω e₀) ⁻¹' {true}
+noncomputable def H : Set (ConfigSpace (Sym2 (Site 2))) := (fun ω => ω e₀) ⁻¹' {true}
 
 theorem dich : Hᶜ = (R ∘ dualConfig) ⁻¹' H := by
   ext ω

@@ -82,12 +82,13 @@ theorem zrs_rotPreimage_measureReal {A : Set (ConfigSpace (Sym2 (Site 2)))}
   kdi_rotConfig_measurePreserving.measureReal_preimage hA.nullMeasurableSet
 
 /-- The preimage of an event under the quarter-turn rotation of configurations. -/
-def zrs_rot (A : Set (ConfigSpace (Sym2 (Site 2)))) : Set (ConfigSpace (Sym2 (Site 2))) :=
+noncomputable def zrs_rot (A : Set (ConfigSpace (Sym2 (Site 2)))) :
+    Set (ConfigSpace (Sym2 (Site 2))) :=
   kdi_rotConfig ⁻¹' A
 
 /-- The four rotated copies `base, ρ² base, ρ base, ρ³ base` of a base event, indexed so that
 copies `0` and `1` are opposite. -/
-def zrs_sideFamily (base : Set (ConfigSpace (Sym2 (Site 2)))) :
+noncomputable def zrs_sideFamily (base : Set (ConfigSpace (Sym2 (Site 2)))) :
     Fin 4 → Set (ConfigSpace (Sym2 (Site 2))) :=
   ![base, zrs_rot (zrs_rot base), zrs_rot base, zrs_rot (zrs_rot (zrs_rot base))]
 
@@ -141,7 +142,7 @@ theorem zrs_side_symmetry {base : Set (ConfigSpace (Sym2 (Site 2)))}
 
 /-- `ZhangGeometricData` built from the rotated copies of `base n`; the hypotheses `herr`, `hunion`
 and `hmerge` are the remaining inputs (with `hunion` unconditional, see the module docstring). -/
-def zrs_geometricData_of_remaining
+noncomputable def zrs_geometricData_of_remaining
     {A B : ℕ → Set (ConfigSpace (Sym2 (Site 2)))}
     (base : ℕ → Set (ConfigSpace (Sym2 (Site 2))))
     (Err : ℕ → Set (ConfigSpace (Sym2 (Site 2))))

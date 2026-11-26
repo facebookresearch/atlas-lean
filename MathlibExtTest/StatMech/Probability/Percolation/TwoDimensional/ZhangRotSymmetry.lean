@@ -63,7 +63,7 @@ theorem sideFamily_univ (i : Fin 4) :
     zrs_sideFamily (Set.univ : Set (ConfigSpace (Sym2 (Site 2)))) i = Set.univ := by
   fin_cases i <;> rfl
 
-example : ZhangGeometricData halfMeasure (fun _ => Set.univ) (fun _ => Set.univ) :=
+noncomputable example : ZhangGeometricData halfMeasure (fun _ => Set.univ) (fun _ => Set.univ) :=
   zrs_geometricData_of_remaining (fun _ => Set.univ) (fun _ => ∅) (fun _ => isUpperSet_univ)
     (fun _ => MeasurableSet.univ) (by simp)
     (by simp only [sideFamily_univ, Set.union_self, probReal_univ]; exact tendsto_const_nhds)

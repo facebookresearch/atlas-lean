@@ -39,7 +39,8 @@ example : fsv_RegionSingleFace ({(0 : Site 2)} : Set (Site 2)) := fsv_RegionSing
 
 example : {d : Dart | IsBoundaryDart ({(0 : Site 2)} : Set (Site 2)) d} =
     {d : Dart | SameOrbit ({(0 : Site 2)} : Set (Site 2)) e0 d} :=
-  fsv_boundaryDartSet_eq_orbit _ e0_boundary fun d hd => ifc_singleton_sameOrbit 0 e0 d e0_boundary hd
+  fsv_boundaryDartSet_eq_orbit _ e0_boundary fun d hd =>
+    ifc_singleton_sameOrbit 0 e0 d e0_boundary hd
 
 /-- The one-vertex closed walk at the origin. -/
 abbrev W0 : (hypercubicLattice 2).Walk ![0, 0] ![0, 0] := Walk.nil
