@@ -35,12 +35,20 @@
 - [Parsing inverts the token encoding](parse-fuel-tokens.md)
 - [Decoding a token list](decode-list.md)
 - [Decoding inverts the token encoding](decode-list-tokens.md)
+- [Parsing reads only token encodings](tokens-append-of-parse-fuel-eq-some.md)
+- [Decoding reads only token encodings](tokens-eq-of-decode-list-eq-some.md)
+- [Decoding accepts exactly the token encodings](decode-list-eq-some-iff.md)
 
 ## Linear temporal logic on runs
 
 - [Satisfaction of LTL formulas on runs](satisfies-2.md)
 - [Satisfaction at a position of a run](satisfies-at-2.md)
+- [An atom at a position is the valuation at that state](atom-at-iff.md)
 - [Expansion law for until on runs](until-expansion-2.md)
+- [Universal path quantifier over runs](forall-runs.md)
+- [Existential path quantifier over runs](exists-run.md)
+- [Safety from reachability](forall-runs-always-atom-of-reachable.md)
+- [Reachability from safety on infinite runs](reachable-of-forall-runs-always-atom.md)
 
 ## Related topics
 

@@ -1,0 +1,3 @@
+# Büchi automata for the general safety fragment
+
+For every formula of the general safety fragment of LTL (propositional formulas closed under conjunction, disjunction, next, and `always` applied to a safety formula), there is a nondeterministic Büchi automaton with a finite set of states, over the alphabet of atom valuations, whose ω-language is the set of words satisfying the formula. This follows from the automaton construction for full LTL. It is weaker than the safety-automaton form of O. Kupferman and M. Y. Vardi, "Model checking of safety properties", Formal Methods in System Design 19 (2001), 291-314, in which every state of the automaton is accepting.

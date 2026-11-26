@@ -1,0 +1,3 @@
+# Distance of an interpretation to a belief set
+
+Let `σ` be a finite set of atoms with decidable equality, and represent each propositional formula over `σ` by its finite set of models (interpretations `σ → Bool`). The Dalal key of an interpretation `J` relative to a model set `A` is the least Hamming distance from `J` to a model in `A`. Dalal's original construction (AAAI 1988) assumes a consistent knowledge base, so the empty case needs a convention: the key of every interpretation is `0` when `A` is empty, so that every two interpretations are then Dalal-equivalent. This totalization is an explicit extension of Dalal's definition, chosen so that Dalal's revision operator satisfies the Katsuno–Mendelzon postulates also for the empty base.

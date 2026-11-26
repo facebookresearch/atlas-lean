@@ -1,0 +1,3 @@
+# Vardi-Wolper bound
+
+For every LTL formula `φ` over a set of atoms, there is a nondeterministic Büchi automaton with a finite set of states, over the alphabet of atom valuations (sets of atoms), whose ω-language is the set of words satisfying `φ` and whose number of states is at most `2 ^ (2 * formulaSize φ)`, where `formulaSize φ` counts the connective and atom occurrences in `φ`. Source: M. Y. Vardi and P. Wolper, "An automata-theoretic approach to automatic program verification", Proceedings of LICS 1986, 332-344. The concrete constant in the exponent belongs to an encoding with one Boolean per syntactic occurrence; the source states the bound in asymptotic form.

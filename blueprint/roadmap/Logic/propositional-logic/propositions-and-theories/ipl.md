@@ -1,0 +1,3 @@
+# Intuitionistic propositional logic
+
+Intuitionistic propositional logic adds the principle of explosion (ex falso quodlibet).
