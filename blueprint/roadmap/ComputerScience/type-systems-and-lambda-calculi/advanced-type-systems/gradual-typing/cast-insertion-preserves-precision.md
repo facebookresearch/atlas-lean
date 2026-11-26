@@ -1,14 +1,14 @@
 # Cast insertion preserves precision
 
 If $\Gamma \vdash e \rightsquigarrow f : T$ and $\Gamma' \vdash e' \rightsquigarrow f' : T'$ by [cast insertion](cast-calculus-and-cast-insertion.md), $\Gamma \sqsubseteq \Gamma'$ pointwise and $e \sqsubseteq e'$ in
-[term precision](precision-of-gradual-types-and-terms.md), then $\Gamma, \Gamma' \vdash f \sqsubseteq f'$ in [cast-calculus precision](term-precision-for-the-cast-calculus.md) and $T \sqsubseteq T'$.
+[term precision](precision-of-gradual-types-and-terms.md), then $\Gamma, \Gamma' \vdash f \sqsubseteq f'$ in [cast-calculus precision](precision-of-gradual-types-and-terms.md) and $T \sqsubseteq T'$.
 
 The lemma fails for the original formulation of the GTLC, whose cast insertion had a separate rule for applying a term of type $?$, casting it to $T \to ?$:
 $e_1 = ((\lambda g{:}? \to ?.\, g)\, (\lambda x{:}?.\, x))\, 42 \sqsubseteq e_2 = ((\lambda g{:}?.\, g)\, (\lambda x{:}?.\, x))\, 42$, but their translations are not related.
 
 ## Depends on
 
-- [Term precision for the cast calculus](term-precision-for-the-cast-calculus.md)
+- [Precision of gradual types and terms](precision-of-gradual-types-and-terms.md)
 
 ## Sources
 

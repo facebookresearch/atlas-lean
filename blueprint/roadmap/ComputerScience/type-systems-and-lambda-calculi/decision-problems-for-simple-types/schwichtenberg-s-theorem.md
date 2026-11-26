@@ -19,7 +19,7 @@ Representing numbers by terms of different types, rather than uniformly by $\mat
 
 This page becomes ready once:
 
-- H. Schwichtenberg, "Definierbare Funktionen im λ-Kalkül mit Typen", *Archiv für mathematische Logik und Grundlagenforschung* 17:113–114, 1976, as listed in the bibliography of the lecture notes below, to be checked for the hard direction (source check)
+- H. Schwichtenberg, "Definierbare Funktionen im λ-Kalkül mit Typen", *Archiv für mathematische Logik und Grundlagenforschung* 17:113–114, 1975, <https://doi.org/10.1007/BF02276799> (dated 1976 in the bibliography of the lecture notes below), to be checked for the hard direction (source check)
 
 ## Sources
 

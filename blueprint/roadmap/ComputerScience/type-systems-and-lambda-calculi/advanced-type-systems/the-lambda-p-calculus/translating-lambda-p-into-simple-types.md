@@ -1,6 +1,6 @@
 # Translating λP into simple types
 
-Erase dependencies from [λP](the-calculus-lambda-p.md) types by $\overline{\alpha} = \alpha$, $\overline{(\forall x{:}\tau)\sigma} = \overline{\tau} \to \overline{\sigma}$ and $\overline{\varphi M} = \overline{\varphi}$, and translate both
+In the presentation of [λP](the-calculus-lambda-p.md) without λ-abstractions in constructors, erase dependencies from types by $\overline{\alpha} = \alpha$, $\overline{(\forall x{:}\tau)\sigma} = \overline{\tau} \to \overline{\sigma}$ and $\overline{\varphi M} = \overline{\varphi}$, and translate both
 types and terms of λP into simply typed terms, with a fixed type variable $0$ and fresh variables $x_\alpha$, $x_\tau$, $y$:
 
 $$(\alpha M_1 \cdots M_n)^\bullet = x_\alpha\, M_1^\bullet \cdots M_n^\bullet, \quad ((\forall x{:}\tau)\sigma)^\bullet = x_\tau\, \tau^\bullet\, (\lambda x{:}\overline{\tau}.\, \sigma^\bullet),$$

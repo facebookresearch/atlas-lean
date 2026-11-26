@@ -13,6 +13,11 @@ diagonal argument gives a total recursive function that is not definable in Syst
 
 - [Gödel's System T](godel-s-system-t.md)
 
+## Proof depends on
+
+- [Strong normalization of System T](strong-normalization-of-system-t.md)
+- [Closed normal forms of System T](closed-normal-forms-of-system-t.md)
+
 ## Sources
 
 - M. H. B. Sørensen and P. Urzyczyn, *Lectures on the Curry–Howard Isomorphism*, lecture notes, University of Copenhagen, May 1998: Example 11.6.7, Definition 11.6.8 and the remarks after Remark 11.6.9 (primitive recursive functions are definable; the diagonal argument).

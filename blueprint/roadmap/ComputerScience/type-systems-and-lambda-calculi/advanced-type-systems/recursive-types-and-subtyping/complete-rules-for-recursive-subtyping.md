@@ -14,6 +14,7 @@ Write $\alpha \le_R \beta$ if $\emptyset \supset \alpha \le \beta$ is derivable.
 
 - [Complete rules for equality of recursive types](complete-rules-for-recursive-type-equality.md)
 - [The tree ordering on recursive types](tree-ordering-on-recursive-types.md)
+- [The Amadio–Cardelli subtyping algorithm](the-amadio-cardelli-subtyping-algorithm.md)
 
 ## Proof depends on
 

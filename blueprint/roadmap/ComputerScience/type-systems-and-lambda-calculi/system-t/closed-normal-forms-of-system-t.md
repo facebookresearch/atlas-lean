@@ -12,6 +12,11 @@ With strong normalization, every closed term of type $\mathrm{nat}$ reduces to a
 
 - [Gödel's System T](godel-s-system-t.md)
 
+## Proof depends on
+
+- [Strong normalization of System T](strong-normalization-of-system-t.md)
+- [Church–Rosser property of System T](church-rosser-property-of-system-t.md)
+
 ## Sources
 
 - M. H. B. Sørensen and P. Urzyczyn, *Lectures on the Curry–Howard Isomorphism*, lecture notes, University of Copenhagen, May 1998: Proposition 11.6.6, stated there for the presentation with the recursor $\mathrm{r}(M, N, L)$ as a term former, where a closed normal term of function type is an abstraction; with the recursor as a constant, as in the definition linked above, the same induction on normal forms gives the constant and partial-application cases.

@@ -1,11 +1,11 @@
 # Catch-up to a value on the left
 
-In the [cast calculus](cast-calculus-and-cast-insertion.md), suppose $\vdash v : T$ for a value $v$, $\vdash f' : T'$, and $v \sqsubseteq f'$ in [cast-calculus precision](term-precision-for-the-cast-calculus.md).
+In the [cast calculus](cast-calculus-and-cast-insertion.md), suppose $\vdash v : T$ for a value $v$, $\vdash f' : T'$, and $v \sqsubseteq f'$ in [cast-calculus precision](precision-of-gradual-types-and-terms.md).
 Then $f' \longmapsto^* v'$ for some value $v'$ with $v \sqsubseteq v'$. The proof is by induction on the derivation of $v \sqsubseteq f'$.
 
 ## Depends on
 
-- [Term precision for the cast calculus](term-precision-for-the-cast-calculus.md)
+- [Precision of gradual types and terms](precision-of-gradual-types-and-terms.md)
 
 ## Proof depends on
 

@@ -4,7 +4,7 @@ For every untyped λ-term $t$ the following are equivalent:
 
 1. $t$ is β-normalizable;
 2. leftmost β-reduction of $t$ terminates;
-3. $\Gamma \vdash_{D\Omega} t : A$ for some type $A$ and context $\Gamma$ in which $\Omega$ does not occur;
+3. $\Gamma \vdash_{D\Omega} t : A$ for some type $A$ and context $\Gamma$ such that neither $A$ nor any type in $\Gamma$ contains $\Omega$;
 4. $\Gamma \vdash_{D\Omega} t : A$ for some type $A$ with no positive occurrence of $\Omega$ and some context $\Gamma$ with no negative occurrence of $\Omega$.
 
 In particular leftmost reduction is a normalizing strategy: it reaches the β-normal form of every normalizable term.
@@ -12,6 +12,7 @@ In particular leftmost reduction is a normalizing strategy: it reaches the β-no
 ## Depends on
 
 - [The intersection type system DΩ](intersection-type-system-d-omega.md)
+- [Named, de Bruijn and locally nameless lambda terms](../../syntax-with-binders/named-de-bruijn-and-locally-nameless-lambda-terms.md)
 - [β-reduction](../beta-reduction-and-confluence/beta-reduction.md)
 
 ## Proof depends on

@@ -13,6 +13,7 @@ Let $\vdash$ be the typing judgment of [system D](intersection-type-system-d.md)
 - [Beta equivalence in the untyped term model](../../system-f/the-existing-untyped-beta-conversion-term-model/beta-eq.md)
 - [The intersection type system D](intersection-type-system-d.md)
 - [The intersection type system DΩ](intersection-type-system-d-omega.md)
+- [Named, de Bruijn and locally nameless lambda terms](../../syntax-with-binders/named-de-bruijn-and-locally-nameless-lambda-terms.md)
 - [β-reduction](../beta-reduction-and-confluence/beta-reduction.md)
 
 ## Proof depends on

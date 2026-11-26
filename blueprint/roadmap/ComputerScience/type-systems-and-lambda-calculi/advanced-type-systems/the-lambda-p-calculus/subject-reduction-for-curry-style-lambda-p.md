@@ -1,6 +1,6 @@
 # Subject reduction for Curry-style λP
 
-For a pure λ-term $N$ write $\Gamma \vdash_P N : \tau$ if $N$ is the type erasure $|M|$ of a [λP](the-calculus-lambda-p.md) term $M$ with $\Gamma \vdash M : \tau$. Curry-style λP has the
+For a pure λ-term $N$ write $\Gamma \vdash_P N : \tau$ if $N$ is the type erasure $|M|$ of a term $M$ with $\Gamma \vdash M : \tau$ in [λP](the-calculus-lambda-p.md), in its presentation without λ-abstractions in constructors. Curry-style λP has the
 subject-reduction property: if $\Gamma \vdash_P N : \tau$ and $N \twoheadrightarrow_\beta N'$, then $\Gamma \vdash_P N' : \tau$.
 
 ## Depends on

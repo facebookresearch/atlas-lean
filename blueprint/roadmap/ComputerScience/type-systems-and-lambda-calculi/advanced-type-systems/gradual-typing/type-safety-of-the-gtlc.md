@@ -2,7 +2,7 @@
 
 If $\vdash e : T$ in the [GTLC](the-gradually-typed-lambda-calculus.md), then one of the following holds for the [evaluation](cast-calculus-and-cast-insertion.md) of $e$:
 
-- $e \Downarrow v$ for a value $v$ with $\vdash v : T$;
+- $e \Downarrow v$ for a value $v$ of the cast calculus with $\vdash_C v : T$ in the cast calculus's typing;
 - $e \Downarrow \mathrm{blame}_T\, \ell$ for some label $\ell$, a trapped cast error;
 - $e \Uparrow$, evaluation diverges.
 

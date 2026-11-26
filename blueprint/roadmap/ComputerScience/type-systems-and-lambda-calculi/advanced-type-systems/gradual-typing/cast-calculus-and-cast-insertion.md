@@ -12,8 +12,8 @@ A cast $f : T_1 \Rightarrow^\ell T_2$ has type $T_2$ when $f : T_1$ and $T_1 \si
   $T_{11}$, both with the application's label.
 - **Reduction.** $(\lambda x{:}T.\, f)\, v \longmapsto [x := v]f$; identity casts at a base type or at $?$ vanish; $v : G \Rightarrow^{\ell_1} ? \Rightarrow^{\ell_2} G \longmapsto v$, while
   $v : G_1 \Rightarrow^{\ell_1} ? \Rightarrow^{\ell_2} G_2 \longmapsto \mathrm{blame}_{G_2}\, \ell_2$ when $G_1 \ne G_2$; a function cast distributes over application,
-  $(v_1 : T_1 \to T_2 \Rightarrow^\ell T_3 \to T_4)\, v_2 \longmapsto v_1\, (v_2 : T_3 \Rightarrow^\ell T_1) : T_2 \Rightarrow^\ell T_4$; casts to or from $?$ at a non-ground type
-  $T \sim G$, $T \ne G$, factor through the ground type $G$; reduction proceeds under evaluation frames, and blame propagates to the top.
+  $(v_1 : T_1 \to T_2 \Rightarrow^\ell T_3 \to T_4)\, v_2 \longmapsto v_1\, (v_2 : T_3 \Rightarrow^\ell T_1) : T_2 \Rightarrow^\ell T_4$; a cast from $T$ to $?$ or from $?$ to $T$, where
+  $T \ne ?$, $T \ne G$ and $T \sim G$ for a ground type $G$, factors through $G$ (rules Ground and Expand); reduction proceeds under evaluation frames, and blame propagates to the top.
 - **Evaluation of the GTLC.** $e \Downarrow r$ if $\emptyset \vdash e \rightsquigarrow f : T$ and $f \longmapsto^* r$; $e \Uparrow$ if the reduction of $f$ does not terminate.
 
 ## Depends on

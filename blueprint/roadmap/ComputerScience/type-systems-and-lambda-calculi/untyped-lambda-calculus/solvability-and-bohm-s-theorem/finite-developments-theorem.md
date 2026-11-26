@@ -11,6 +11,7 @@ The theorem is the main step in the proof of the standardization theorem.
 ## Depends on
 
 - [Residuals and developments](residuals-and-developments.md)
+- [Named, de Bruijn and locally nameless lambda terms](../../syntax-with-binders/named-de-bruijn-and-locally-nameless-lambda-terms.md)
 - [β-reduction](../beta-reduction-and-confluence/beta-reduction.md)
 
 ## Proof depends on

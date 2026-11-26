@@ -15,11 +15,16 @@ $:\supset(p)(x)(y) = x$ if $p = \mathit{tt}$, $= y$ if $p = \mathit{ff}$, $= x$ 
 denotation of a term in this model.
 
 **Operational preorder.** For terms $M$, $N$ of the same type, $M \sqsubseteq_{PA} N$ if for every context $C$ such that $C[M]$ and $C[N]$ are programs,
-$\mathrm{Eval}_{PA}(C[M]) = c$ implies $\mathrm{Eval}_{PA}(C[N]) = c$; and $M \simeq_{PA} N$ if both hold. They extend [contextual approximation in PCF](../pcf-and-computational-adequacy/ctx-approx.md) to this language.
+$\mathrm{Eval}_{PA}(C[M]) = c$ implies $\mathrm{Eval}_{PA}(C[N]) = c$; and $M \simeq_{PA} N$ if both hold. This is the same kind of preorder as
+[contextual approximation](../pcf-and-computational-adequacy/ctx-approx.md) for the sequential PCF formalized elsewhere in the wiki, but that language differs: it has the single
+ground type of natural numbers, and its predecessor of zero is zero, whereas here $(-1)\, k_0$ has no value.
 
 ## Depends on
 
 - [Least fixed point of a Scott-continuous map](../../../Order/fixed-points-domain-theory/scott-continuous-maps-and-least-fixed-points/lfp.md)
+
+## Background
+
 - [Contextual approximation in PCF](../pcf-and-computational-adequacy/ctx-approx.md)
 
 ## Sources
