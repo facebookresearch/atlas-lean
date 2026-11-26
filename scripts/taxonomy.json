@@ -11045,6 +11045,7 @@
   "MathlibExt/Combinatorics/Enumerative/RParameterGeneralizedFibonacciSequence": {"to": "Combinatorics/riordan-arrays-transforms/riordan-arrays", "title": "Barry–Hennessy generalized Fibonacci numbers"},
   "MathlibExt/Combinatorics/Enumerative/RStirlingFirstAlternatingExpansion": {"to": "Combinatorics/stirling-bell-eulerian/generalized-stirling-numbers", "title": "r-Stirling numbers"},
   "MathlibExt/Combinatorics/Enumerative/RStirlingSecond": {"to": "Combinatorics/stirling-bell-eulerian/generalized-stirling-numbers", "title": "r-Stirling numbers"},
+  "MathlibExt/Combinatorics/Enumerative/RascalNumberIdentities": {"to": "Combinatorics/binomial-coefficients/generalized-binomial-coefficients", "title": "Rascal triangle"},
   "MathlibExt/Combinatorics/Enumerative/RascalNumbers": {"to": "Combinatorics/binomial-coefficients/generalized-binomial-coefficients", "title": "Rascal triangle"},
   "MathlibExt/Combinatorics/Enumerative/RascalWordEnds": {"to": "Combinatorics/binomial-coefficients/generalized-binomial-coefficients", "title": "Rascal triangle"},
   "MathlibExt/Combinatorics/Enumerative/RascalWords": {"to": "Combinatorics/binomial-coefficients/generalized-binomial-coefficients", "title": "Rascal triangle"},
