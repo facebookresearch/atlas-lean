@@ -16,12 +16,18 @@ public import Mathlib.CategoryTheory.Limits.FunctorCategory.Basic
 public import Mathlib.CategoryTheory.Limits.Preserves.Shapes.Zero
 
 /-!
-# Right derivation and exact colimits of additive functor diagrams
+# Right derivation commutes with exact diagram colimits
 
-The comparison is a composition of pointwise colimit/flip dictionaries, right-derived isomorphism
-transport, the existing exact-target comparison and the canonical derived-diagram evaluation
-comparison. Only the source category needs injective resolutions. The colimit shape and all
-category object/morphism universes remain independent.
+Let `C,E` be abelian, with injective resolutions in `C`, and let `J` be
+a category. Suppose `E` has colimits of shape `J` and its colimit functor
+preserves finite limits. For a diagram `Φ : J → (C → E)` of additive
+functors, there is a natural comparison
+`R^n(colim_j Φ_j) ≅ colim_j R^nΦ_j`.
+It sends each derived diagram injection to the corresponding injection
+and commutes with maps of additive-functor diagrams.
+
+The diagram shape and all category object and morphism universes are
+independent.
 -/
 
 @[expose] public section
@@ -39,7 +45,9 @@ variable {C : Type uC} [Category.{vC} C] [Abelian C]
   [HasInjectiveResolutions C]
   [HasColimitsOfShape J E] [HasExactColimitsOfShape J E]
 
-/-- The Abelian functor-category preadditive structure used by right derivation. -/
+/-- For an abelian category `E` and a category `J`, the category of
+`J`-diagrams in `E` is preadditive: morphisms add at each diagram object,
+and composition is bilinear. -/
 @[implicit_reducible]
 local instance functorColimitPreadditive : Preadditive (J ⥤ E) :=
   (inferInstance : Abelian (J ⥤ E)).toPreadditive
@@ -59,18 +67,25 @@ private theorem colim_preservesHomology : (colim : (J ⥤ E) ⥤ E).PreservesHom
 
 local instance : (colim : (J ⥤ E) ⥤ E).PreservesHomology := colim_preservesHomology
 
-/-- The underlying diagram retains additive-functor maps. -/
+/-- For abelian `C,E` and a category `J`, a diagram of additive functors
+`Φ : J → (C → E)` has an underlying diagram of ordinary functors,
+with the same objects and natural transformations. -/
 abbrev underlying (Φ : J ⥤ (C ⥤+ E)) : J ⥤ (C ⥤ E) := Φ ⋙ AdditiveFunctor.forget C E
 
 omit [HasExactColimitsOfShape J E] in
-/-- The chosen colimit functor is additive by the pointwise dictionary. -/
+/-- For abelian `C,E` and a category `J`, suppose `E` has `J`-colimits.
+The pointwise colimit of a diagram of additive functors `C → E` is
+again additive. -/
 instance underlying_colimit_additive (Φ : J ⥤ (C ⥤+ E)) : (colimit (underlying Φ)).Additive := by
   let e : colimit (underlying Φ) ≅
       RightDerivedDiagram.flipped Φ ⋙ (colim : (J ⥤ E) ⥤ E) :=
     colimitIsoFlipCompColim (underlying Φ)
   exact Functor.additive_of_iso e.symm
 
-/-- The canonical coprojection is the evaluation component of the colimit adjunction unit. -/
+/-- For abelian `E` with colimits of shape `J` and `j : J`, the diagram
+injections give a natural transformation from evaluation at `j` to the
+colimit functor `J → E → E`. At a diagram `K`, its map is
+`K_j → colim K`. -/
 def targetCoprojection (j : J) : (evaluation J E).obj j ⟶ (colim : (J ⥤ E) ⥤ E) :=
   Functor.whiskerRight (colimConstAdj (J := J) (C := E)).unit ((evaluation J E).obj j)
 
@@ -79,7 +94,10 @@ theorem targetCoprojection_app (j : J) (D : J ⥤ E) :
     (targetCoprojection (E := E) j).app D = colimit.ι D j := rfl
 
 omit [Abelian C] [Abelian E] [HasInjectiveResolutions C] [HasExactColimitsOfShape J E] in
-/-- The pointwise dictionary carries functor-category coprojections. -/
+/-- Let `C,E` be abelian, `E` have `J`-colimits, and `P : J → (C → E)`.
+The injection `P_j → colim P`, followed by the pointwise-colimit
+comparison, equals the natural family of injections
+`P_j(X) → colim_k P_k(X)`. -/
 theorem pointwiseColimit_ι (P : J ⥤ (C ⥤ E)) (j : J) :
     colimit.ι P j ≫ (colimitIsoFlipCompColim P).hom =
       Functor.whiskerLeft P.flip (targetCoprojection (E := E) j) := by
@@ -87,7 +105,10 @@ theorem pointwiseColimit_ι (P : J ⥤ (C ⥤ E)) (j : J) :
   funext X
   simp [colimitIsoFlipCompColim, targetCoprojection, colimConstAdj]
 
-/-- The canonical comparison uses exact target composition and pointwise choices. -/
+/-- Let `C,E` be abelian, with injective resolutions in `C`, and suppose
+`E` has exact colimits of shape `J`. For a diagram `Φ` of additive
+functors `C → E`, right derivation has the natural comparison
+`R^n(colim_j Φ_j) ≅ colim_j R^nΦ_j`. -/
 def comparison (Φ : J ⥤ (C ⥤+ E)) (n : ℕ) :
     (colimit (underlying Φ)).rightDerived n ≅ colimit (RightDerivedDiagram.diagram Φ n) := by
   let σ : colimit (underlying Φ) ≅
@@ -99,7 +120,11 @@ def comparison (Φ : J ⥤ (C ⥤+ E)) (n : ℕ) :
     Functor.isoWhiskerRight (RightDerivedDiagram.flippedIso Φ n) (colim : (J ⥤ E) ⥤ E) ≪≫
     (colimitIsoFlipCompColim (RightDerivedDiagram.diagram Φ n)).symm
 
-/-- Its hom is the sequence of four comparison factors. -/
+/-- Let `C,E` be abelian, with injective resolutions in `C`, and suppose
+`E` has exact `J`-colimits. For an additive-functor diagram `Φ`, the
+forward derived-colimit comparison first identifies its pointwise colimit,
+then commutes right derivation with the exact colimit functor, identifies
+the derived diagram objectwise, and returns to its pointwise colimit. -/
 theorem comparison_hom (Φ : J ⥤ (C ⥤+ E)) (n : ℕ) :
     let σ : colimit (underlying Φ) ≅
         RightDerivedDiagram.flipped Φ ⋙ (colim : (J ⥤ E) ⥤ E) :=
@@ -120,7 +145,10 @@ local instance (Φ : J ⥤ (C ⥤+ E)) :
   change (colimit (underlying Φ)).Additive
   infer_instance
 
-/-- Every derived coprojection is carried to the chosen derived-diagram coprojection. -/
+/-- Let `C,E` be abelian, with injective resolutions in `C`, and suppose
+`E` has exact `J`-colimits. For an additive-functor diagram `Φ` and
+`j : J`, deriving the injection `Φ_j → colim Φ` and following the
+forward comparison gives the injection `R^nΦ_j → colim_k R^nΦ_k`. -/
 theorem rightDerived_ι_comparison_hom (Φ : J ⥤ (C ⥤+ E)) (n : ℕ) (j : J) :
     NatTrans.rightDerived (colimit.ι (underlying Φ) j) n ≫ (comparison Φ n).hom =
       colimit.ι (RightDerivedDiagram.diagram Φ n) j := by
@@ -188,14 +216,20 @@ theorem rightDerived_ι_comparison_hom (Φ : J ⥤ (C ⥤+ E)) (n : ℕ) (j : J)
     exact h4
   exact hstep1.trans (hstep2.trans (hstep3.trans hstep4))
 
-/-- The inverse comparison has the same derived-coprojection value. -/
+/-- Let `C,E` be abelian, with injective resolutions in `C`, and suppose
+`E` has exact `J`-colimits. For an additive-functor diagram `Φ`, the
+injection `R^nΦ_j → colim_k R^nΦ_k` followed by the inverse comparison
+is the derived map of `Φ_j → colim Φ`. -/
 theorem ι_comparison_inv (Φ : J ⥤ (C ⥤+ E)) (n : ℕ) (j : J) :
     colimit.ι (RightDerivedDiagram.diagram Φ n) j ≫ (comparison Φ n).inv =
       NatTrans.rightDerived (colimit.ι (underlying Φ) j) n := by
   exact (Iso.comp_inv_eq (comparison Φ n)).2
     (rightDerived_ι_comparison_hom Φ n j).symm
 
-/-- The comparison is natural in maps of additive functor diagrams. -/
+/-- Let `C,E` be abelian, with injective resolutions in `C`, and suppose
+`E` has exact `J`-colimits. A map `α : Φ → Ψ` of additive-functor
+diagrams commutes with the inverse comparisons from the colimits of
+the degree-`n` derived diagrams to the derived colimit functors. -/
 theorem comparison_inv_naturality_diagramMap {Φ Ψ : J ⥤ (C ⥤+ E)} (α : Φ ⟶ Ψ) (n : ℕ) :
     colim.map (Functor.whiskerRight α (RightDerivedDiagram.degreeFamily n)) ≫
         (comparison Ψ n).inv =
@@ -251,7 +285,10 @@ theorem comparison_inv_naturality_diagramMap {Φ Ψ : J ⥤ (C ⥤+ E)} (α : Φ
       (Category.assoc ρΦ (comparison Φ n).inv (NatTrans.rightDerived f n))
   exact hstep1.trans (hstep2.trans (hNative.trans hstep3))
 
-/-- The forward comparison is natural for the same diagram map. -/
+/-- Let `C,E` be abelian, with injective resolutions in `C`, and suppose
+`E` has exact `J`-colimits. A map `α : Φ → Ψ` of additive-functor
+diagrams commutes with the forward comparisons from the derived colimit
+functors to the colimits of their degree-`n` derived diagrams. -/
 theorem comparison_hom_naturality_diagramMap {Φ Ψ : J ⥤ (C ⥤+ E)} (α : Φ ⟶ Ψ) (n : ℕ) :
     NatTrans.rightDerived (colim.map (Functor.whiskerRight α (AdditiveFunctor.forget C E))) n ≫
         (comparison Ψ n).hom =

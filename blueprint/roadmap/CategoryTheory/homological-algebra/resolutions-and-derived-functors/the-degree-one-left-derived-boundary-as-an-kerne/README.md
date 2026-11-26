@@ -1,4 +1,4 @@
 # The degree-one left-derived boundary as an kernel
 
-- [Left Derived One Iso Kernel](left-derived-one-iso-kernel.md)
-- [Left Derived One Iso Kernel hom ι](left-derived-one-iso-kernel-hom.md)
+- [First left-derived value as the kernel of a mapped first arrow](left-derived-one-iso-kernel.md)
+- [Kernel inclusion formula for the dimension-shift isomorphism](left-derived-one-iso-kernel-hom.md)

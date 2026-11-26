@@ -1,4 +1,6 @@
-# From Left Derived Zero naturality functor
+# Degree-zero derived augmentations are natural in the functor
 
-Left derivation and the augmentation comparison commute with every natural transformation of
-additive functors.
+Let `C`, `D` be abelian, with projective resolutions in `C`,
+and let `F,G : C → D` be additive. For `α : F → G`, the
+native degree-zero augmentation transformations satisfy
+`L₀(α) ≫ G.fromLeftDerivedZero = F.fromLeftDerivedZero ≫ α`.

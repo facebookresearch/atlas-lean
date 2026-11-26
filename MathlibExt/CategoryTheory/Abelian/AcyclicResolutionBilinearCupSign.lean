@@ -15,7 +15,11 @@ public import Mathlib.Algebra.Module.LinearMap.Basic
 public import Mathlib.Tactic.Ring
 
 /-!
-# The forced degree sign in the bilinear cup comparison
+# Cross-degree sign of an integer-bilinear cup pairing
+
+The triangular normalization scalar is `σ_n = (-1)^(n(n+1)/2)`.
+For an integer-bilinear pairing, comparing the normalizations in
+degrees `p`, `q`, and `p+q` gives the cross-degree sign `(-1)^(pq)`.
 -/
 
 @[expose] public section
@@ -26,10 +30,15 @@ open CategoryTheory.ProjectiveResolution
 
 namespace CategoryTheory
 
-/--
+/- Proof implementation note.
 A bilinear pairing transports the two triangular normalization signs with precisely the original
 cross-degree sign.
 -/
+
+/-- Let `A,B,C` be abelian groups with their integer module actions
+and `cup : A →ₗ[ℤ] B →ₗ[ℤ] C`. For `p,q ∈ ℕ`, if
+`σ_(p+q) • z = cup(σ_p • x, σ_q • y)`, where
+`σ_n = (-1)^(n(n+1)/2)`, then `z = (-1)^(pq) • cup(x,y)`. -/
 theorem bilinearCup_normalization_sign
     {A : Type a} {B : Type b} {C : Type c}
     [AddCommGroup A] [AddCommGroup B] [AddCommGroup C]

@@ -1,4 +1,6 @@
-# Cokernel Shift Generator reconstruction vanish
+# Projection-unshift reconstruction annihilates the source map
 
-Unshifting any raw generator and precomposing with the projection gives a source-vanishing
-cochain. This is the converse to raw descent.
+Let `D` be preadditive with cokernels, `η : U → C` an integer
+cochain map, `Q=coker(η)`, `π : C → Q`, and `d ∈ ℤ`. For any degree-zero cochain `γ : Q[-d] → A`, signed
+unshifting followed by `π` gives a degree-`d` cochain on `C`
+that annihilates `η`.

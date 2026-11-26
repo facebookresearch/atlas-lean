@@ -1,4 +1,6 @@
-# PInfty comp η alternating Face Map Complex
+# Normalization preserves the alternating-face-chain counit
 
-The projection `PInfty` onto normalized chains does not change the counit of the alternating
-face map complex functor, which lives in degree zero where `PInfty` is the identity.
+Let `C` be preadditive and monoidal with biadditive tensor and
+finite coproducts. On the constant simplicial unit, the normalization
+idempotent `P∞` followed by the alternating-face-chain counit equals
+that counit, since its nonzero component is in degree zero.

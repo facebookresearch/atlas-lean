@@ -25,10 +25,11 @@ variable {S : ShortComplex C} {hS : S.ShortExact}
 
 set_option backward.isDefEq.respectTransparency false in
 omit [HasInjectiveResolutions C] in
-/--
-The SAME Coyoneda homology connector corresponds to composition with the original covariant Yoneda
-class on arbitrary chosen horseshoes.
--/
+/-- Let `C` be abelian with hom-set universe `v`, injective
+resolutions, and Ext in universe `v`. For short exact `S : X₁ → X₂ → X₃`, compatible injective
+horseshoe data `H`, and `Z : C`, the boundary on `Hom(Z,H)` corresponds,
+under the resolution cohomology-to-Ext comparisons, to composition
+`Ext^q(Z,X₃) → Ext^(q+1)(Z,X₁)` with the extension class of `S`. -/
 theorem original_coyoneda_horseshoe_delta (Z : C)
     (H : Functor.RightDerived.HorseshoeData S hS) (q : ℕ) :
     (H.mapped_shortExact (preadditiveCoyoneda.obj (op Z))).δ q (q + 1) rfl ≫
@@ -143,7 +144,10 @@ namespace CategoryTheory.DerivedCoyoneda
 variable {C : Type u} [Category.{v} C] [Abelian C] [HasExt.{v} C] [HasInjectiveResolutions C]
 variable {S : ShortComplex C} {hS : S.ShortExact}
 
-/-- The original chosen-resolution Coyoneda comparison as the SAME additive-group isomorphism. -/
+/-- Let `C` be abelian with hom-set universe `v`, injective
+resolutions, and Ext in universe `v`. For `Z,Y : C` and an injective resolution `I` of `Y`, its
+cohomology-to-Ext comparison gives the additive-group isomorphism
+`R^qHom(Z,-)(Y) ≅ Ext^q(Z,Y)`. -/
 def chosenCoyonedaExtIso (Z : C) {Y : C} (R : InjectiveResolution Y) (q : ℕ) :
     ((preadditiveCoyoneda.obj (op Z)).rightDerived q).obj Y ≅
       AddCommGrpCat.of (Abelian.Ext.{v} Z Y q) :=
@@ -151,10 +155,11 @@ def chosenCoyonedaExtIso (Z : C) {Y : C} (R : InjectiveResolution Y) (q : ℕ) :
     (homologyDataExt Z R q).homologyIso
 
 set_option backward.isDefEq.respectTransparency false in
-/--
-The SAME chosen-resolution right-derived comparison intertwines every horseshoe connector with the
-original covariant Ext-class composition.
--/
+/-- Let `C` be abelian with hom-set universe `v`, injective
+resolutions, and Ext in universe `v`. For short exact `S`, compatible injective horseshoe data `H`,
+and `Z : C`, its derived Coyoneda boundary commutes with the supplied-
+resolution Ext comparisons and postcomposition with the Yoneda class
+of `S`. -/
 theorem chosenCoyonedaExtIso_delta (Z : C)
     (H : Functor.RightDerived.HorseshoeData S hS) (q : ℕ) :
     H.delta (preadditiveCoyoneda.obj (op Z)) q (q + 1) rfl ≫
@@ -179,18 +184,21 @@ variable {C : Type u} [Category.{v} C] [Abelian C] [HasExt.{v} C]
 variable [HasInjectiveResolutions C]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The existing canonical functor-level comparison is exactly the original
-chosen-resolution comparison on the canonical resolution. -/
+/-- Let `C` be abelian with hom-set universe `v`, injective
+resolutions, and Ext in universe `v`. The canonical functor comparison at `Y` is the comparison
+`R^qHom(Z,-)(Y) ≅ Ext^q(Z,Y)` computed from the chosen injective
+resolution of `Y`. -/
 theorem canonicalCoyonedaExtIso_app (Z Y : C) (q : ℕ) :
     (Abelian.rightDerivedCoyonedaIsoExtFunctorObj Z q).app Y =
       chosenCoyonedaExtIso Z (injectiveResolution Y) q := by
   rfl
 
 set_option backward.isDefEq.respectTransparency false in
-/--
-The SAME existing canonical RD-Coyoneda/Ext family preserves its horseshoe connector and the
-original covariant Yoneda boundary.
--/
+/-- Let `C` be abelian with hom-set universe `v`, injective
+resolutions, and Ext in universe `v`. For short exact `S : X₁ → X₂ → X₃` and `Z : C`, the
+canonical derived Coyoneda-to-Ext comparisons take the connecting map
+from degree `q` at `X₃` to degree `q+1` at `X₁` to postcomposition
+with the extension class of `S`. -/
 theorem canonicalCoyonedaExtIso_connecting (Z : C) (q : ℕ)
     (S : ShortComplex C) (hS : S.ShortExact) :
     (Functor.rightDerivedConnecting (preadditiveCoyoneda.obj (op Z)) q).app ⟨S, hS⟩ ≫

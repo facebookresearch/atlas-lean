@@ -1,4 +1,5 @@
-# Iso To Add Equiv
+# Additive equivalence underlying an additive-group isomorphism
 
-An isomorphism in `AddCommGrpCat` induces an additive equivalence of the
-underlying groups. Alias of `_root_.CategoryTheory.Iso.addCommGroupIsoToAddEquiv`.
+An isomorphism `M ≅ N` of additive-group objects in `Ab_v`
+gives an additive equivalence of the underlying groups, with forward
+and inverse maps those of the isomorphism.

@@ -15,11 +15,12 @@ public import Mathlib.Algebra.Homology.ShortComplex.HomologicalComplex
 public import Mathlib.Algebra.Homology.ShortComplex.ShortExact
 
 /-!
-# Canonical boundary and cycle sequences of a chain complex
+# Boundaries and cycles of a nonnegative chain complex
 
-This file defines the image of each outgoing differential and packages the
-two canonical short exact sequences relating boundaries, cycles, terms, and
-homology.  All constructions are functorial in chain maps.
+Let C be abelian and L a chain complex indexed by ℕ. Its outgoing image Bⱼ⁽out⁾=im(dFrom_L(j))
+gives the two canonical short exact sequences 0 → Bⱼ₊₁⁽out⁾ → Zⱼ(L) → Hⱼ(L) → 0 and 0 → Zⱼ(L) →
+Lⱼ → Bⱼ⁽out⁾ → 0. The degree-zero outgoing image is zero. Every chain map acts on these images,
+cycles, terms and homology objects and gives commuting maps of both short exact sequences.
 -/
 
 @[expose] public section
@@ -37,17 +38,23 @@ namespace HomologicalComplex
 
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
-/-- The canonical successor relation in the natural-number chain shape. -/
+/-- For every natural number j, the down-ℕ chain-complex shape allows a differential from degree j+1
+to degree j: its relation satisfies Rel(j+1,j). -/
 theorem chainComplexSuccRel (j : ℕ) :
     (ComplexShape.down ℕ).Rel (j + 1) j :=
   rfl
 
-/-- The image of the outgoing differential from degree `j`. -/
+/-- Let C be abelian and L a natural-number-indexed chain complex. Write Bⱼ⁽out⁾=im(dFrom_L(j)) for
+the image of its outgoing differential, Zⱼ(L) for cycles and Hⱼ(L) for homology. For j ∈ ℕ,
+boundaryFrom(L,j) is the outgoing image Bⱼ⁽out⁾. In positive degree j+1 it is the incoming
+boundary of degree j; in degree zero it is zero. -/
 noncomputable abbrev boundaryFrom (L : ChainComplex C ℕ) (j : ℕ) : C :=
   image (L.dFrom j)
 
-/-- The image of the outgoing differential from degree `j+1`, expressed
-using the canonical differential `L.d (j+1) j`. -/
+/-- Let C be abelian and L a natural-number-indexed chain complex. Write Bⱼ⁽out⁾=im(dFrom_L(j)) for
+the image of its outgoing differential, Zⱼ(L) for cycles and Hⱼ(L) for homology. For every j ∈ ℕ
+there is a canonical isomorphism Bⱼ₊₁⁽out⁾ ≅ im(d_L^{j+1,j}), retaining the original
+differential into degree j. -/
 noncomputable def boundaryFromSuccToCanonicalImageIso
     (L : ChainComplex C ℕ) (j : ℕ) :
     L.boundaryFrom (j + 1) ≅ image (L.d (j + 1) j) :=
@@ -75,8 +82,10 @@ theorem boundaryFromSuccToCanonicalImageIso_hom_ι
   exact congrArg (image.ι (L.dFrom (j + 1)) ≫ ·)
     (IsIso.Iso.inv_inv (L.xNextIso (chainComplexSuccRel j)))
 
-/-- The boundary sourced in degree `j+1` is the image of the differential
-into degree `j`. -/
+/-- Let C be abelian and L a natural-number-indexed chain complex. Write Bⱼ⁽out⁾=im(dFrom_L(j)) for
+the image of its outgoing differential, Zⱼ(L) for cycles and Hⱼ(L) for homology. The boundary
+image sourced in degree j+1 is canonically isomorphic to im(dTo_L(j)), the incoming differential
+image used to compute Hⱼ(L). -/
 noncomputable def boundaryFromSuccIso (L : ChainComplex C ℕ) (j : ℕ) :
     L.boundaryFrom (j + 1) ≅ image (L.dTo j) := by
   let eTo : image (L.dTo j) ≅ image (L.d (j + 1) j) :=
@@ -85,13 +94,16 @@ noncomputable def boundaryFromSuccIso (L : ChainComplex C ℕ) (j : ℕ) :
         (L.d (j + 1) j))
   exact L.boundaryFromSuccToCanonicalImageIso j ≪≫ eTo.symm
 
-/-- The degree-zero outgoing boundary is literally the image of a zero
-differential. -/
+/-- Let C be abelian and L a natural-number-indexed chain complex. Write Bⱼ⁽out⁾=im(dFrom_L(j)) for
+the image of its outgoing differential, Zⱼ(L) for cycles and Hⱼ(L) for homology. The outgoing
+boundary in degree zero is a zero object: B₀⁽out⁾ ≅ 0, since a nonnegative chain complex has no
+differential out of degree zero. -/
 noncomputable def boundaryFromZeroIso (L : ChainComplex C ℕ) :
     L.boundaryFrom 0 ≅ 0 :=
   imageZero' (L.dFrom_eq_zero (i := 0) (by simp))
 
-/-- The map on outgoing boundary images induced by a chain map. -/
+/-- Let C be abelian, f : L → L′ a map of ℕ-indexed chain complexes, and j ∈ ℕ. The commuting
+differential square induces a morphism Bⱼ⁽out⁾(L) → Bⱼ⁽out⁾(L′) of outgoing images. -/
 noncomputable def boundaryFromMap {L L' : ChainComplex C ℕ}
     (f : L ⟶ L') (j : ℕ) :
     L.boundaryFrom j ⟶ L'.boundaryFrom j :=
@@ -126,8 +138,9 @@ theorem boundaryFromMap_comp {L L' L'' : ChainComplex C ℕ}
     image.map (f.sqFrom j) ≫ image.map (g.sqFrom j)
   rw [Hom.sqFrom_comp, image.map_comp]
 
-/-- The chosen kernel of the outgoing differential identifies canonically
-with the selected cycles object. -/
+/-- Let C be abelian and L a natural-number-indexed chain complex. Write Bⱼ⁽out⁾=im(dFrom_L(j)) for
+the image of its outgoing differential, Zⱼ(L) for cycles and Hⱼ(L) for homology. For each j ∈ ℕ,
+the kernel of the actual outgoing differential dFrom_L(j) is canonically isomorphic to Zⱼ(L). -/
 noncomputable def kernelDFromIsoCycles (L : ChainComplex C ℕ) (j : ℕ) :
     kernel (L.dFrom j) ≅ L.cycles j :=
   IsLimit.conePointUniqueUpToIso (kernelIsKernel (L.dFrom j))
@@ -142,7 +155,10 @@ theorem kernelDFromIsoCycles_hom_iCycles
     (kernelIsKernel (L.dFrom j)) (L.cyclesIsKernel j _ rfl)
       WalkingParallelPair.zero
 
-/-- The canonical inclusion of boundaries into cycles. -/
+/-- Let C be abelian and L a natural-number-indexed chain complex. Write Bⱼ⁽out⁾=im(dFrom_L(j)) for
+the image of its outgoing differential, Zⱼ(L) for cycles and Hⱼ(L) for homology. The incoming
+boundary Bⱼ₊₁⁽out⁾ maps canonically into Zⱼ(L), with composite to Lⱼ equal to its
+differential-image inclusion. -/
 noncomputable def boundaryToCycles (L : ChainComplex C ℕ) (j : ℕ) :
     L.boundaryFrom (j + 1) ⟶ L.cycles j :=
   (L.boundaryFromSuccToCanonicalImageIso j).hom ≫
@@ -228,7 +244,10 @@ theorem boundaryToCycles_naturality {L L' : ChainComplex C ℕ}
           L'.iCycles j := by
       rw [Category.assoc, cyclesMap_i]
 
-/-- Boundaries, cycles, and homology in degree `j`. -/
+/-- Let C be abelian and L a natural-number-indexed chain complex. Write Bⱼ⁽out⁾=im(dFrom_L(j)) for
+the image of its outgoing differential, Zⱼ(L) for cycles and Hⱼ(L) for homology. The degree-j
+short complex is Bⱼ₊₁⁽out⁾ → Zⱼ(L) → Hⱼ(L), using boundary inclusion and the canonical homology
+quotient. -/
 noncomputable def boundaryCyclesHomologyShortComplex
     (L : ChainComplex C ℕ) (j : ℕ) : ShortComplex C :=
   ShortComplex.mk (L.boundaryToCycles j) (L.homologyπ j) (by
@@ -244,7 +263,10 @@ noncomputable def boundaryCyclesHomologyShortComplex
       _ = 0 := L.toCycles_comp_homologyπ (j + 1) j
       _ = factorThruImage (L.dFrom (j + 1)) ≫ 0 := by simp)
 
-/-- Cycles, the chain object, and outgoing boundaries in degree `j`. -/
+/-- Let C be abelian and L a natural-number-indexed chain complex. Write Bⱼ⁽out⁾=im(dFrom_L(j)) for
+the image of its outgoing differential, Zⱼ(L) for cycles and Hⱼ(L) for homology. The degree-j
+short complex is Zⱼ(L) → Lⱼ → Bⱼ⁽out⁾, using the cycle inclusion and factorization of the
+outgoing differential onto its image. -/
 noncomputable def cyclesTermBoundaryShortComplex
     (L : ChainComplex C ℕ) (j : ℕ) : ShortComplex C :=
   ShortComplex.mk (L.iCycles j) (factorThruImage (L.dFrom j)) (by
@@ -257,7 +279,9 @@ noncomputable def cyclesTermBoundaryShortComplex
       _ = 0 := L.iCycles_d j _
       _ = 0 ≫ image.ι (L.dFrom j) := by simp)
 
-/-- The boundary--cycles--homology sequence is short exact. -/
+/-- Let C be abelian and L a natural-number-indexed chain complex. Write Bⱼ⁽out⁾=im(dFrom_L(j)) for
+the image of its outgoing differential, Zⱼ(L) for cycles and Hⱼ(L) for homology. For every j ∈
+ℕ, the canonical sequence 0 → Bⱼ₊₁⁽out⁾ → Zⱼ(L) → Hⱼ(L) → 0 is short exact. -/
 theorem boundaryCyclesHomologyShortExact
     (L : ChainComplex C ℕ) (j : ℕ) :
     (L.boundaryCyclesHomologyShortComplex j).ShortExact := by
@@ -280,7 +304,9 @@ theorem boundaryCyclesHomologyShortExact
     (ShortComplex.exact_of_g_is_cokernel S hCokernel)
       inferInstance inferInstance
 
-/-- The cycles--term--boundary sequence is short exact. -/
+/-- Let C be abelian and L a natural-number-indexed chain complex. Write Bⱼ⁽out⁾=im(dFrom_L(j)) for
+the image of its outgoing differential, Zⱼ(L) for cycles and Hⱼ(L) for homology. For every j ∈
+ℕ, the canonical sequence 0 → Zⱼ(L) → Lⱼ → Bⱼ⁽out⁾ → 0 is short exact. -/
 theorem cyclesTermBoundaryShortExact
     (L : ChainComplex C ℕ) (j : ℕ) :
     (L.cyclesTermBoundaryShortComplex j).ShortExact := by
@@ -300,8 +326,9 @@ theorem cyclesTermBoundaryShortExact
     (ShortComplex.exact_of_f_is_kernel S hKernel)
       inferInstance inferInstance
 
-/-- A chain map induces a map of the boundary--cycles--homology short
-complexes. -/
+/-- Let C be abelian and f : L → L′ a map of nonnegative chain complexes. For each j, the induced
+maps on Bⱼ₊₁⁽out⁾, Zⱼ and Hⱼ give a morphism of the two boundary–cycle–homology short exact
+sequences. -/
 noncomputable def boundaryCyclesHomologyMap
     {L L' : ChainComplex C ℕ} (f : L ⟶ L') (j : ℕ) :
     L.boundaryCyclesHomologyShortComplex j ⟶
@@ -312,8 +339,9 @@ noncomputable def boundaryCyclesHomologyMap
   comm₁₂ := boundaryToCycles_naturality f j
   comm₂₃ := (homologyπ_naturality f j).symm
 
-/-- A chain map induces a map of the cycles--term--boundary short
-complexes. -/
+/-- Let C be abelian and f : L → L′ a map of nonnegative chain complexes. For each j, the cycle map
+Zⱼ(f), term map fⱼ and outgoing-image map give a morphism of the short exact sequences 0 → Zⱼ →
+Lⱼ → Bⱼ⁽out⁾ → 0. -/
 noncomputable def cyclesTermBoundaryMap
     {L L' : ChainComplex C ℕ} (f : L ⟶ L') (j : ℕ) :
     L.cyclesTermBoundaryShortComplex j ⟶

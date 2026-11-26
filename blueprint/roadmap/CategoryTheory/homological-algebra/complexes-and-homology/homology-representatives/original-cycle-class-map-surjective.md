@@ -1,3 +1,5 @@
-# Original Cycle Class Map surjective
+# Every Hom-complex homology class has a cocycle representative
 
-Every original homology class has an cocycle representative.
+Let C be abelian, K,L integer cochain complexes and q ∈ ℤ. The canonical class map from degree-q
+cocycles to H^q(HomComplex(K,L)) is surjective: every homology class is represented by a cocycle
+z.

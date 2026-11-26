@@ -1,4 +1,5 @@
-# To Projective Resolution Hom comp
+# Composition on the middle projective resolution
 
-The middle resolution morphism of a composite horseshoe comparison
-is the composite of the middle resolution morphisms.
+For composable horseshoe comparisons in an abelian category `C`,
+the projective-resolution morphism induced on the middle objects
+is the composite of the two induced middle resolution morphisms.

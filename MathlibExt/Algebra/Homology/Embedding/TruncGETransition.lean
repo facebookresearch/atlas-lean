@@ -12,11 +12,11 @@ module
 public import Mathlib.Algebra.Homology.Embedding.CochainComplex
 
 /-!
-# Transitions between good lower truncations
+# Canonical transitions between good lower cochain truncations
 
-A lower cutoff maps to a higher cutoff through the original good truncations.
-The map is determined by the two canonical projections. At the higher cutoff,
-its actual component is the quotient by the incoming differential.
+For lo≤hi, the good cochain truncations have a canonical epimorphism
+τ≥lo K→τ≥hi K factoring the projection from K. It is natural in K and
+induces isomorphisms on homology at all degrees q≥hi.
 -/
 
 @[expose] public section
@@ -33,12 +33,20 @@ namespace CochainComplex
 
 variable {A : Type u} [Category.{v} A] [Abelian A] (K : CochainComplex A ℤ)
 
-/-- The canonical map from a good lower truncation to one with a higher cutoff. -/
+/--
+Let K be an integer cochain complex in an abelian category A, let lo≤hi be integers, and write
+τ≥m K for good truncation below m. The canonical transition T:τ≥lo K→τ≥hi K is determined by
+π_lo ≫ T = π_hi, where π_m:K→τ≥m K is the good-truncation projection.
+-/
 def truncGETransition (lo hi : ℤ) (h : lo ≤ hi) : K.truncGE lo ⟶ K.truncGE hi := by
   letI : (K.truncGE hi).IsStrictlyGE lo := (K.truncGE hi).isStrictlyGE_of_ge lo hi h
   exact CochainComplex.truncGEMap (K.πTruncGE hi) lo ≫ inv ((K.truncGE hi).πTruncGE lo)
 
-/-- The transition factors the canonical projection at the higher cutoff. -/
+/--
+Let K be an integer cochain complex in an abelian category A, let lo≤hi be integers, and write
+τ≥m K for good truncation below m. The transition factors the higher-cutoff projection:
+K.πTruncGE lo ≫ K.truncGETransition lo hi = K.πTruncGE hi.
+-/
 @[reassoc (attr := simp)]
 theorem πTruncGE_comp_truncGETransition (lo hi : ℤ) (h : lo ≤ hi) :
     K.πTruncGE lo ≫ K.truncGETransition lo hi h = K.πTruncGE hi := by
@@ -53,13 +61,21 @@ private theorem πTruncGE_epi_native (n : ℤ) : Epi (K.πTruncGE n) := by
   change Epi (HomologicalComplex.πTruncGE K (ComplexShape.embeddingUpIntGE n))
   infer_instance
 
-/-- The transition between the original good truncations is an epimorphism. -/
+/--
+Let K be an integer cochain complex in an abelian category A, let lo≤hi be integers, and write
+τ≥m K for good truncation below m. The transition T:τ≥lo K→τ≥hi K is an epimorphism, since the
+projection π_hi factors through π_lo followed by T.
+-/
 instance truncGETransition_epi (lo hi : ℤ) (h : lo ≤ hi) :
     Epi (K.truncGETransition lo hi h) := by
   let : Epi (K.πTruncGE hi) := πTruncGE_epi_native K hi
   exact epi_of_epi_fac (K.πTruncGE_comp_truncGETransition lo hi h)
 
-/-- The original projection triangle determines the transition uniquely. -/
+/--
+Let K be an integer cochain complex in an abelian category A, let lo≤hi be integers, and write
+τ≥m K for good truncation below m. If f:τ≥lo K→τ≥hi K satisfies π_lo ≫ f = π_hi, then f equals
+the canonical transition T.
+-/
 theorem truncGETransition_unique (lo hi : ℤ) (h : lo ≤ hi)
     {f : K.truncGE lo ⟶ K.truncGE hi} (hf : K.πTruncGE lo ≫ f = K.πTruncGE hi) :
     f = K.truncGETransition lo hi h := by
@@ -67,7 +83,12 @@ theorem truncGETransition_unique (lo hi : ℤ) (h : lo ≤ hi)
   exact (cancel_epi (K.πTruncGE lo)).1
     (hf.trans (K.πTruncGE_comp_truncGETransition lo hi h).symm)
 
-/-- The original lower-cutoff transition preserves homology at and above its target cutoff. -/
+/--
+Let K be an integer cochain complex in an abelian category A, let lo≤hi be integers, and write
+τ≥m K for good truncation below m. For any integer q≥hi, the transition T induces an
+isomorphism H^q(τ≥lo K)→H^q(τ≥hi K). Thus it is a quasi-isomorphism at every retained target
+degree.
+-/
 theorem quasiIsoAt_truncGETransition (lo hi q : ℤ) (h : lo ≤ hi) (hq : hi ≤ q) :
     QuasiIsoAt (K.truncGETransition lo hi h) q := by
   let : QuasiIsoAt (K.πTruncGE lo) q := K.quasiIsoAt_πTruncGE lo q (h.trans hq)
@@ -77,7 +98,10 @@ theorem quasiIsoAt_truncGETransition (lo hi q : ℤ) (h : lo ≤ hi) (hq : hi �
   exact _root_.quasiIsoAt_of_comp_left
     (K.πTruncGE lo) (K.truncGETransition lo hi h) q
 
-/-- Changing cutoff commutes with the truncation of the original cochain map. -/
+/--
+Let f:K→L be a morphism of integer cochain complexes in an abelian category A, and let lo≤hi.
+The transition square commutes: T_K ≫ τ≥hi(f) = τ≥lo(f) ≫ T_L.
+-/
 theorem truncGETransition_naturality {L : CochainComplex A ℤ} (f : K ⟶ L)
     (lo hi : ℤ) (h : lo ≤ hi) :
     K.truncGETransition lo hi h ≫ CochainComplex.truncGEMap f hi =
@@ -125,8 +149,11 @@ private theorem πTruncGE_f_at_cutoff (hi : ℤ) :
   simp only [HomologicalComplex.truncGEXIsoOpcycles, Category.assoc, Iso.inv_hom_id_assoc]
   rfl
 
-/-- At the higher cutoff, the transition is the original projection onto opcycles,
-under the native coordinate isomorphisms of both truncations. -/
+/--
+Let K be an integer cochain complex in an abelian category A and let lo<hi. In degree hi, the
+lower truncation identifies with K^hi and the higher truncation with its opcycles quotient.
+Under these coordinate isomorphisms, the transition is K.pOpcycles hi:K^hi→opcycles^hi(K).
+-/
 @[reassoc]
 theorem truncGETransition_f_comp_truncGEXIsoOpcycles_hom (lo hi : ℤ) (h : lo < hi) :
     (K.truncGETransition lo hi h.le).f hi ≫ (K.truncGEXIsoOpcycles hi).hom =

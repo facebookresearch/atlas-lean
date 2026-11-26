@@ -1,4 +1,6 @@
-# Horseshoe I
+# Transported left horseshoe inclusion
 
-The unop'd horseshoe inclusion (from the op-side projection, since `unop`
-reverses arrows), with the transported endpoint identified with `I₁`.
+For a short exact sequence `S` in an abelian category `C` with injective
+endpoint resolutions `I₁`, `I₃`, the opposite of the projective horseshoe
+projection gives a cochain map from `I₁.cocomplex` to the transported middle
+resolution complex. The endpoint comparison identifies its source with `I₁`.

@@ -1,4 +1,6 @@
-# Vertical Homology Complex Of Shapes
+# Horizontal complex of vertical homology in arbitrary shapes
 
-The horizontal homological complex of vertical homology objects in fixed
-vertical degree `q`.
+Let `C` be a category with zero morphisms and chosen homology,
+and `B` a bicomplex of independent shapes `c₁,c₂` on index types
+`I₁,I₂`. For fixed vertical `q : I₂`, the row homology objects
+`H_q(B_p)` form a horizontal homological complex of shape `c₁`.

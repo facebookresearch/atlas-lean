@@ -2,18 +2,18 @@
 
 ## Functor
 
-- [Kernel Lift](kernel-lift.md)
-- [Kernel Resolving Data](kernel-resolving-data.md)
-- [Finite Resolving Data](finite-resolving-data.md)
-- [Projective Resolving Data](projective-resolving-data.md)
-- [Finite Projective Resolving Data](finite-projective-resolving-data.md)
+- [Representing an ambient kernel in the source](kernel-lift.md)
+- [Kernel closure of an additive resolving functor](kernel-resolving-data.md)
+- [Finite resolving additive functors](finite-resolving-data.md)
+- [Projective resolving additive functors](projective-resolving-data.md)
+- [Finite projective-resolving additive functors](finite-projective-resolving-data.md)
 
 ## Finite Projective Resolving Data
 
-- [To Finite Resolving Data](to-finite-resolving-data.md)
+- [Retaining finite resolutions and kernel closure](to-finite-resolving-data.md)
 
 ## Kernel Lift
 
-- [Short Complex](short-complex.md)
-- [Mapped Short Exact](mapped-short-exact.md)
-- [Is Admissible Exact](is-admissible-exact.md)
+- [Short complex of a represented kernel](short-complex.md)
+- [Exact mapped kernel sequence](mapped-short-exact.md)
+- [Admissible exactness of a represented source kernel](is-admissible-exact.md)

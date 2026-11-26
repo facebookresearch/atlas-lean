@@ -1,3 +1,6 @@
-# Of Nat Iso whisker Left
+# Section transport commutes with source whiskering
 
-Source whiskering evaluates the same conjugation at the original image arrow.
+Let `E,D,C` be categories, `K : E → D`, `U,U′ : D → C`,
+and `e : U ≅ U′`. Transport of a section over `g : Y → Z` in `E`
+by the source-whiskered isomorphism equals transport by `e` over
+`K(g)`.

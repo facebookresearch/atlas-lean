@@ -2,38 +2,38 @@
 
 ## Hom
 
-- [Comparison Homotopy](comparison-homotopy.md)
-- [Nonempty comparison Homotopy](nonempty-comparison-homotopy.md)
-- [Nonempty boundary Homotopy](nonempty-boundary-homotopy.md)
-- [Nonempty homology Homotopy](nonempty-homology-homotopy.md)
-- [Nonempty cycles Homotopy](nonempty-cycles-homotopy.md)
-- [Nonempty term Homotopy](nonempty-term-homotopy.md)
+- [Compatible homotopies of Cartan–Eilenberg comparisons](comparison-homotopy.md)
+- [Existence of a compatible Cartan–Eilenberg comparison homotopy](nonempty-comparison-homotopy.md)
+- [Homotopy uniqueness of boundary-resolution comparison maps](nonempty-boundary-homotopy.md)
+- [Homotopy uniqueness of homology-resolution comparison maps](nonempty-homology-homotopy.md)
+- [Homotopy uniqueness of cycle-horseshoe comparisons](nonempty-cycles-homotopy.md)
+- [Homotopy uniqueness of term-horseshoe comparisons](nonempty-term-homotopy.md)
 
 ## Comparison Homotopy
 
-- [Bicomplex Homotopy Hom](bicomplex-homotopy-hom.md)
-- [Bicomplex Homotopy](bicomplex-homotopy.md)
+- [The original-degree chain maps of a bicomplex homotopy](bicomplex-homotopy-hom.md)
+- [The bicomplex homotopy of compatible comparison data](bicomplex-homotopy.md)
 
 ## Hom
 
-- [Nonempty bicomplex Homotopy](nonempty-bicomplex-homotopy.md)
-- [Homotopy Class](homotopy-class.md)
-- [Homotopy Class eq](homotopy-class-eq.md)
+- [Homotopy uniqueness of Cartan–Eilenberg bicomplex maps](nonempty-bicomplex-homotopy.md)
+- [The homotopy class of a Cartan–Eilenberg comparison](homotopy-class.md)
+- [Independence of the Cartan–Eilenberg comparison homotopy class](homotopy-class-eq.md)
 
 ## Cartan Eilenberg Resolution
 
-- [Homotopy Class Map](homotopy-class-map.md)
-- [Homotopy Class Map eq](homotopy-class-map-eq.md)
-- [Homotopy Class Map id](homotopy-class-map-id.md)
-- [Homotopy Class Map comp](homotopy-class-map-comp.md)
-- [Bicomplex Homotopy Equiv](bicomplex-homotopy-equiv.md)
-- [Homotopy Category Iso](homotopy-category-iso.md)
-- [Homotopy Category Iso hom](homotopy-category-iso-hom.md)
-- [Homotopy Category Iso inv](homotopy-category-iso-inv.md)
+- [The canonical homotopy-category map of a base chain map](homotopy-class-map.md)
+- [Every comparison represents the canonical homotopy-category map](homotopy-class-map-eq.md)
+- [Identity law for canonical Cartan–Eilenberg homotopy maps](homotopy-class-map-id.md)
+- [Composition law for canonical Cartan–Eilenberg homotopy maps](homotopy-class-map-comp.md)
+- [Homotopy equivalence of two Cartan–Eilenberg bicomplexes](bicomplex-homotopy-equiv.md)
+- [The canonical homotopy-category isomorphism of two resolutions](homotopy-category-iso.md)
+- [The forward map of the Cartan–Eilenberg homotopy-category isomorphism](homotopy-category-iso-hom.md)
+- [The inverse map of the Cartan–Eilenberg homotopy-category isomorphism](homotopy-category-iso-inv.md)
 
 ## Homological Complex
 
-- [Cartan Eilenberg Resolutions](cartan-eilenberg-resolutions.md)
-- [Cartan Eilenberg Resolutions obj](cartan-eilenberg-resolutions-obj.md)
-- [Cartan Eilenberg Resolutions map](cartan-eilenberg-resolutions-map.md)
-- [Cartan Eilenberg Resolutions obj iso](cartan-eilenberg-resolutions-obj-iso.md)
+- [The Cartan–Eilenberg resolution functor to the homotopy category](cartan-eilenberg-resolutions.md)
+- [Objects of the Cartan–Eilenberg resolution functor](cartan-eilenberg-resolutions-obj.md)
+- [Morphisms of the Cartan–Eilenberg resolution functor](cartan-eilenberg-resolutions-map.md)
+- [Any chosen resolution represents the Cartan–Eilenberg functor object](cartan-eilenberg-resolutions-obj-iso.md)

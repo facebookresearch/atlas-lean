@@ -1,13 +1,8 @@
-# Hom
+# Comparison data for Cartan–Eilenberg resolutions
 
-A supplied comparison of Cartan--Eilenberg resolutions over a chain map.
-
-The four families are the boundary and homology endpoint lifts and the
-strict horseshoe comparisons of the cycle and term rows.  In degree `j`
-the cycle comparison has left endpoint `boundaryHom (j + 1)` and right
-endpoint `homologyHom j`; the term comparison has left endpoint the cycle
-comparison bundled as a morphism of cycle resolutions and right endpoint
-`boundaryHom j`.  Lower-triangular coordinate formulas in Mathlib's
-`Biprod.ofComponents` convention (vanishing left-endpoint-to-right-endpoint'
-component, free right-endpoint-to-left-endpoint' cross component) are not
-stored: they are derived by `Hom.cyclesHom_spec` and `Hom.termHom_spec`.
+Let C be abelian, L,L′ nonnegative chain complexes, P and Q chosen Cartan–Eilenberg resolutions
+of L and L′, and g : L → L′ a chain map. A comparison specifies projective-resolution lifts of
+the outgoing-boundary maps and homology maps, and strict comparisons of the two horseshoe rows.
+At original degree j, the cycle comparison has boundary endpoint in degree j+1 and homology
+endpoint in degree j; the term comparison uses that same cycle comparison and boundary endpoint
+j.

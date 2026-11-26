@@ -13,6 +13,19 @@ public import Mathlib.Algebra.Homology.DerivedCategory.ShortExact
 public import MathlibExt.Algebra.Homology.HomComplex.CocycleBoundary
 public import MathlibExt.CategoryTheory.Abelian.RightDerived.HorseshoeExtendedDiagram
 
+/-!
+# Boundary representatives for degreewise split sequences
+
+For S=(A→B→D) split at each cochain degree, choose sections s_q and
+retractions r_q. A cycle f:Z→D^q lifts to u_q=f s_q in B^q, and its
+connecting representative is ρ_q=u_q d_B^q r_{q+1} in A^{q+1}.
+
+The pair (−ρ_q,u_q) is the corresponding cone cocycle. Its descent returns
+f, and its cone-triangle boundary returns ρ_q. The same representative
+computes both the homology connecting map and the derived short-exact
+triangle connector under the stated hypotheses.
+-/
+
 @[expose] public section
 
 noncomputable section
@@ -22,14 +35,23 @@ universe u v
 namespace HomologicalComplex
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
-/-- The actual degreewise section lifts an original cycle to the middle term. -/
+/--
+Let C be an abelian category and S=(A→B→D) a short complex of natural cochain complexes, split
+at every degree. Write rₙ:Bⁿ→Aⁿ and sₙ:Dⁿ→Bⁿ for the retraction and section of the degree-n
+splitting. For any object Z, degree n∈ℕ and morphism f:Z→Dⁿ, the section lift to Bⁿ is u=f≫sₙ.
+No cocycle hypothesis on f is needed to define this lift.
+-/
 def splitCycleLift (S : ShortComplex (CochainComplex C ℕ))
     (s : ∀ n : ℕ, (S.map (eval C (.up ℕ) n)).Splitting)
     {Z : C} (n : ℕ) (f : Z ⟶ S.X₃.X n) : Z ⟶ S.X₂.X n :=
   f ≫ (s n).s
 
-/-- The actual connecting representative uses the SAME middle differential
-and the next degree's retraction. -/
+/--
+Let C be an abelian category and S=(A→B→D) a short complex of natural cochain complexes, split
+at every degree. Write rₙ:Bⁿ→Aⁿ and sₙ:Dⁿ→Bⁿ for the retraction and section of the degree-n
+splitting. For f:Z→Dⁿ, the connecting representative in Aⁿ⁺¹ is ρ=f≫sₙ≫d_Bⁿ≫r_{n+1}. It uses
+the middle differential and the next degree's retraction.
+-/
 def splitConnectingRepresentative (S : ShortComplex (CochainComplex C ℕ))
     (s : ∀ n : ℕ, (S.map (eval C (.up ℕ) n)).Splitting)
     {Z : C} (n : ℕ) (f : Z ⟶ S.X₃.X n) : Z ⟶ S.X₁.X (n + 1) :=
@@ -82,15 +104,25 @@ universe u v
 namespace HomologicalComplex
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
-/-- The original degreewise splittings give the actual short exact complex. -/
+/--
+Let C be an abelian category and S=(A→B→D) a short complex of natural cochain complexes, split
+at every degree. Write rₙ:Bⁿ→Aⁿ and sₙ:Dⁿ→Bⁿ for the retraction and section of the degree-n
+splitting. The degreewise split short exact sequences make S a short exact sequence of cochain
+complexes.
+-/
 theorem splitDiagram_shortExact (S : ShortComplex (CochainComplex C ℕ))
     (s : ∀ n : ℕ, (S.map (eval C (.up ℕ) n)).Splitting) : S.ShortExact := by
   apply shortExact_of_degreewise_shortExact
   exact fun n => (s n).shortExact
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The SAME original homology connector is computed on every cycle by the
-actual chosen middle lift, differential and next retraction. -/
+/--
+Let C be an abelian category and S=(A→B→D) a short complex of natural cochain complexes, split
+at every degree. Write rₙ:Bⁿ→Aⁿ and sₙ:Dⁿ→Bⁿ for the retraction and section of the degree-n
+splitting. Let j_D:Zⁿ(D)→Dⁿ and π_D:Zⁿ(D)→Hⁿ(D) be the cycle inclusion and quotient. The
+connecting map satisfies π_D≫δ_S = π_A applied to the cycle represented by
+j_D≫sₙ≫d_Bⁿ≫r_{n+1}, in degree n+1.
+-/
 theorem splitDiagram_delta_cycles (S : ShortComplex (CochainComplex C ℕ))
     (s : ∀ n : ℕ, (S.map (eval C (.up ℕ) n)).Splitting) (n : ℕ) :
     S.X₃.homologyπ n ≫ (splitDiagram_shortExact S s).δ n (n + 1) rfl =
@@ -126,13 +158,21 @@ namespace HomologicalComplex.SplitBoundary
 variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {ι : Type*} {c : ComplexShape ι}
 
-/-- The actual degreewise section lifts an original cycle. -/
+/--
+Let C be an abelian category and S=(A→B→D) a short complex of complexes of shape c on ι, with
+a splitting at each degree. Write rᵢ:Bᵢ→Aᵢ and sᵢ:Dᵢ→Bᵢ for its retractions and sections. For
+an object Z and any f:Z→Dᵢ, the chosen degreewise lift is f≫sᵢ:Z→Bᵢ.
+-/
 def cycleLift (S : ShortComplex (HomologicalComplex C c))
     (s : ∀ i : ι, (S.map (eval C c i)).Splitting)
     {Z : C} (i : ι) (f : Z ⟶ S.X₃.X i) : Z ⟶ S.X₂.X i := f ≫ (s i).s
 
-/-- The same representative, in any complex shape, uses the actual middle
-differential and the next selected retraction. -/
+/--
+Let C be an abelian category and S=(A→B→D) a short complex of complexes of shape c on ι, with
+a splitting at each degree. Write rᵢ:Bᵢ→Aᵢ and sᵢ:Dᵢ→Bᵢ for its retractions and sections. For
+indices i,j and f:Z→Dᵢ, the representative in Aⱼ is f≫sᵢ≫B.d i j≫rⱼ. It is zero on disallowed
+differential pairs because B.d i j is zero there.
+-/
 def representative (S : ShortComplex (HomologicalComplex C c))
     (s : ∀ i : ι, (S.map (eval C c i)).Splitting)
     {Z : C} (i j : ι) (f : Z ⟶ S.X₃.X i) : Z ⟶ S.X₁.X j :=
@@ -180,7 +220,12 @@ namespace HomologicalComplex.SplitBoundary
 open CochainComplex.HomComplex
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
-/-- The literal connecting representative is a cocycle in the SAME left complex. -/
+/--
+Let C be an abelian category and S=(A→B→D) a short complex of integer cochain complexes, split
+degreewise with maps r_q:B^q→A^q and s_q:D^q→B^q. Fix an object Z, q∈ℤ and f:Z→D^q. Put
+u_q=f≫s_q and ρ_q=u_q≫d_B^q≫r_{q+1}. If f≫d_D^q=0, then ρ_q is a cycle in A^{q+1}. It
+determines a degree-(q+1) cocycle from the complex concentrated at Z in degree zero to A.
+-/
 def representativeCocycle (S : ShortComplex (CochainComplex C ℤ))
     (s : ∀ i : ℤ, (S.map (eval C (.up ℤ) i)).Splitting)
     {Z : C} (q : ℤ) (f : Z ⟶ S.X₃.X q) (hf : f ≫ S.X₃.d q (q + 1) = 0) :
@@ -188,7 +233,13 @@ def representativeCocycle (S : ShortComplex (CochainComplex C ℤ))
   Cocycle.fromSingleMk (representative S s q (q + 1) f) (zero_add _)
     (q + 2) (by omega) (representative_cycle S s q (q + 1) (q + 2) f hf)
 
-/-- The original middle section is encoded as its original from-single cochain. -/
+/--
+Let C be an abelian category and S=(A→B→D) a short complex of integer cochain complexes, split
+degreewise with maps r_q:B^q→A^q and s_q:D^q→B^q. Fix an object Z, q∈ℤ and f:Z→D^q. Put
+u_q=f≫s_q and ρ_q=u_q≫d_B^q≫r_{q+1}. The section lift u_q:Z→B^q determines a degree-q Hom
+cochain from the complex concentrated at Z in degree zero to B, without requiring f to be
+closed.
+-/
 def middleCochain (S : ShortComplex (CochainComplex C ℤ))
     (s : ∀ i : ℤ, (S.map (eval C (.up ℤ) i)).Splitting)
     {Z : C} (q : ℤ) (f : Z ⟶ S.X₃.X q) :
@@ -196,7 +247,13 @@ def middleCochain (S : ShortComplex (CochainComplex C ℤ))
   Cochain.fromSingleMk (cycleLift S s q f) (zero_add _)
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The actual cone cocycle relation includes the stock minus on its left coordinate. -/
+/--
+Let C be an abelian category and S=(A→B→D) a short complex of integer cochain complexes, split
+degreewise with r_q:B^q→A^q and s_q:D^q→B^q. Fix Z, q∈ℤ and f:Z→D^q. Put u_q=f≫s_q and
+ρ_q=u_q≫d_B^q≫r_{q+1}. Assume f≫d_D^q=0. In the Hom complex from the complex Z[0] concentrated
+at Z in degree zero, δ(u_q)+((−ρ_q)≫S.f)=0. The negative sign is the shifted-source coordinate
+of the cone cocycle.
+-/
 theorem middleCochain_cone_relation (S : ShortComplex (CochainComplex C ℤ))
     (s : ∀ i : ℤ, (S.map (eval C (.up ℤ) i)).Splitting)
     {Z : C} (q : ℤ) (f : Z ⟶ S.X₃.X q) (hf : f ≫ S.X₃.d q (q + 1) = 0) :
@@ -210,8 +267,12 @@ theorem middleCochain_cone_relation (S : ShortComplex (CochainComplex C ℤ))
     representative_lift S s q (q + 1) f hf]
   exact add_neg_cancel _
 
-/-- The SAME original cycle has an actual mapping-cone cocycle lift, built
-from the real section and connecting representative rather than supplied data. -/
+/--
+Let C be an abelian category and S=(A→B→D) a short complex of integer cochain complexes, split
+degreewise with maps r_q:B^q→A^q and s_q:D^q→B^q. Fix an object Z, q∈ℤ and f:Z→D^q. Put
+u_q=f≫s_q and ρ_q=u_q≫d_B^q≫r_{q+1}. If f is closed, the pair (−ρ_q,u_q) defines a degree-q
+cocycle from Z[0] to Cone(S.f), with shifted A-coordinate −ρ_q and middle B-coordinate u_q.
+-/
 def originalConeCocycle (S : ShortComplex (CochainComplex C ℤ))
     (s : ∀ i : ℤ, (S.map (eval C (.up ℤ) i)).Splitting)
     {Z : C} (q : ℤ) (f : Z ⟶ S.X₃.X q) (hf : f ≫ S.X₃.d q (q + 1) = 0) :
@@ -232,8 +293,12 @@ open CochainComplex.HomComplex
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The actual cone projection recovers the SAME original cycle in every
-integer degree, with the actual degreewise section cancelled. -/
+/--
+Let C be an abelian category and S=(A→B→D) a short complex of integer cochain complexes, split
+degreewise with maps r_q:B^q→A^q and s_q:D^q→B^q. Fix an object Z, q∈ℤ and f:Z→D^q. Put
+u_q=f≫s_q and ρ_q=u_q≫d_B^q≫r_{q+1}. For closed f, postcomposing the cone cocycle (−ρ_q,u_q)
+with the canonical map Cone(S.f)→D recovers the original degree-q cocycle represented by f.
+-/
 theorem originalConeCocycle_desc (S : ShortComplex (CochainComplex C ℤ))
     (s : ∀ i : ℤ, (S.map (eval C (.up ℤ) i)).Splitting)
     {Z : C} (q : ℤ) (f : Z ⟶ S.X₃.X q) (hf : f ≫ S.X₃.d q (q + 1) = 0) :
@@ -264,8 +329,13 @@ open CochainComplex.HomComplex
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The actual cone triangle sends the lifted cycle to the SAME original
-connecting cocycle; both stock minus signs cancel in the original convention. -/
+/--
+Let C be an abelian category and S=(A→B→D) a short complex of integer cochain complexes, split
+degreewise with maps r_q:B^q→A^q and s_q:D^q→B^q. Fix an object Z, q∈ℤ and f:Z→D^q. Put
+u_q=f≫s_q and ρ_q=u_q≫d_B^q≫r_{q+1}. For closed f, postcomposing (−ρ_q,u_q) with the third
+cone-triangle arrow Cone(S.f)→A⟦1⟧ and removing the shift gives the positive connecting
+cocycle ρ_q in A^{q+1}.
+-/
 theorem originalConeCocycle_boundary (S : ShortComplex (CochainComplex C ℤ))
     (s : ∀ i : ℤ, (S.map (eval C (.up ℤ) i)).Splitting)
     {Z : C} (q : ℤ) (f : Z ⟶ S.X₃.X q) (hf : f ≫ S.X₃.d q (q + 1) = 0) :
@@ -299,8 +369,14 @@ open CochainComplex.HomComplex
 variable {C : Type u} [Category.{v} C] [Abelian C] [HasDerivedCategory C]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The original derived-category SES connector acts on the SAME original
-cocycle by the computed connecting representative, with its actual cone lift. -/
+/--
+Let C be an abelian category and S=(A→B→D) a short complex of integer cochain complexes, split
+degreewise with r_q:B^q→A^q and s_q:D^q→B^q. Fix Z, q∈ℤ and f:Z→D^q. Put u_q=f≫s_q and
+ρ_q=u_q≫d_B^q≫r_{q+1}. Assume C has a derived category, S is short exact and f is closed. Let
+Z[0] be the complex concentrated at Z in degree zero and Q the canonical derived-category
+functor. In the long exact Hom(Q(Z[0]),−) sequence of the derived short-exact triangle, the
+connecting map sends the shifted class of f to the shifted class of ρ_q.
+-/
 theorem derived_SES_original_cocycle_boundary
     (S : ShortComplex (CochainComplex C ℤ)) (hS : S.ShortExact)
     (s : ∀ i : ℤ, (S.map (eval C (.up ℤ) i)).Splitting)

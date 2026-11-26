@@ -1,3 +1,6 @@
-# Mapped Free Bar Resolution Comparison
+# Mapped comparison from an adjunction bar complex
 
-Apply T to the constructed original Bar comparison over the endpoint map.
+Let `C,D` be preadditive with zero objects, let `D` have kernels,
+and let `F : C → D` be left adjoint to additive `U : D → C`. Let `E` be preadditive and `T : D → E` additive. Let `P → Y[0]` be an augmentation contractingly split after `U`,
+and `f : M → Y`. Applying `T` to the comparison from `Bar(M)` gives a
+chain map `T(Bar(M)) → T(P)` over the mapped endpoint arrow.

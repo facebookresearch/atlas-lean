@@ -17,9 +17,13 @@ public import MathlibExt.CategoryTheory.Abelian.RightDerived.FunctorDiagram
 /-!
 # First-argument naturality of Ext comparisons
 
-The injective and projective comparisons use cocycle classes. Composition with `Ext.mk₀` and
-naturality of resolution lifts give naturality in the first argument. The Ext universe remains
-the morphism universe required by the comparisons.
+In an `R`-linear abelian category, the injective derived-Hom and
+projective Ext comparisons commute with precomposition in the first
+object. A map `f : M → N` therefore gives maps from the comparisons
+at `N` to those at `M`. With both resolution constructions available,
+the bridge is an isomorphism of bifunctors, contravariant in the first
+object and covariant in the second. Ext retains the category's
+hom-set universe.
 -/
 
 @[expose] public section
@@ -182,7 +186,11 @@ private theorem forgetComparison_hom_naturality_first
     exact hCore
   exact h
 
-/-- The existing linear derived-Hom comparison respects arbitrary precomposition. -/
+/-- Let `R` be a commutative ring and `C` an `R`-linear abelian
+category with hom-set universe `v`, injective resolutions, and
+Ext in universe `v`. For `f : M → N`, the canonical linear comparisons commute
+with the derived map `R^nHom(N,-) → R^nHom(M,-)` and Ext
+precomposition `Ext^n(N,-) → Ext^n(M,-)`. -/
 theorem rightDerivedLinearCoyonedaIsoExtFunctorObj_hom_naturality_first
     {M N : C} (f : M ⟶ N) (n : ℕ) :
     NatTrans.rightDerived ((linearCoyoneda R C).map f.op) n ≫
@@ -370,7 +378,11 @@ namespace CategoryTheory.Abelian
 variable (R : Type t) [CommRing R] [Linear R C] [HasExt.{v} C]
   [EnoughProjectives C]
 
-/-- The existing projective/Ext balance factor respects arbitrary first maps. -/
+/-- Let `R` be a commutative ring and `C` an `R`-linear abelian
+category with enough projectives, hom-set universe `v`, and Ext
+in universe `v`. For `f : M → N`, the comparison from projective first-variable
+Ext to native linear Ext commutes with the contravariant
+precomposition maps induced by `f`. -/
 theorem firstVariableLinearExtIso_hom_naturality_first {M N : C} (f : M ⟶ N) (n : ℕ) :
     (_root_.Ext R C n).map f.op ≫ (firstVariableLinearExtIso R M n).hom =
       (firstVariableLinearExtIso R N n).hom ≫ (linearExtFunctor R C n).map f.op := by
@@ -405,7 +417,11 @@ theorem firstVariableLinearExtIso_hom_naturality_first {M N : C} (f : M ⟶ N) (
 
 variable [HasInjectiveResolutions C]
 
-/-- Right-derived precomposition commutes with the existing balanced Ext isomorphism. -/
+/-- Let `R` be a commutative ring and `C` an `R`-linear abelian
+category with enough projectives, hom-set universe `v`, and Ext
+in universe `v`. Suppose `C` also has injective resolutions. For `f : M → N`, the forward bridge from right-derived linear
+Hom to projective first-variable Ext commutes with the derived
+precomposition map and the first-variable Ext map. -/
 theorem rightDerivedLinearCoyonedaIsoFirstVariableExt_hom_naturality_first
     {M N : C} (f : M ⟶ N) (n : ℕ) :
     NatTrans.rightDerived ((linearCoyoneda R C).map f.op) n ≫
@@ -433,7 +449,10 @@ theorem rightDerivedLinearCoyonedaIsoFirstVariableExt_hom_naturality_first
     _ = aN.hom ≫ (bN.inv ≫ h) := congrArg (fun k => aN.hom ≫ k) hbi
     _ = (aN.hom ≫ bN.inv) ≫ h := (Category.assoc _ _ _).symm
 
-/-- The inverse balanced comparison obeys the same noninvertible first map. -/
+/-- Let `R` be a commutative ring and `C` an `R`-linear abelian
+category with enough projectives, hom-set universe `v`, and Ext
+in universe `v`. Suppose `C` also has injective resolutions. For `f : M → N`, the inverse projective-Ext-to-derived-Hom
+bridge commutes with the same contravariant first-argument maps. -/
 theorem rightDerivedLinearCoyonedaIsoFirstVariableExt_inv_naturality_first
     {M N : C} (f : M ⟶ N) (n : ℕ) :
     (_root_.Ext R C n).map f.op ≫
@@ -448,7 +467,11 @@ theorem rightDerivedLinearCoyonedaIsoFirstVariableExt_inv_naturality_first
       (Category.assoc eN.inv (NatTrans.rightDerived ((linearCoyoneda R C).map f.op) n)
         eM.hom).symm)
 
-/-- The degree-n derived-Hom functor family, contravariant in its first object. -/
+/-- Let `R` be a commutative ring and `C` an `R`-linear abelian
+category with hom-set universe `v`, injective resolutions, and
+Ext in universe `v`. For fixed degree `n`, the assignment
+`X ↦ R^nHom_C(X,-)` is a functor from `Cᵒᵖ` to module-valued
+functors on `C`, with maps given by derived precomposition. -/
 def rightDerivedLinearCoyonedaFamily (n : ℕ) : Cᵒᵖ ⥤ (C ⥤ ModuleCat.{v} R) :=
   (additiveFunctor C (ModuleCat.{v} R)).lift (linearCoyoneda R C)
       (fun X => by
@@ -457,7 +480,11 @@ def rightDerivedLinearCoyonedaFamily (n : ℕ) : Cᵒᵖ ⥤ (C ⥤ ModuleCat.{v
     rightDerivedDeltaFunctorFamily C (ModuleCat.{v} R) ⋙
       CohomologicalDeltaFunctor.evaluation C (ModuleCat.{v} R) n
 
-/-- All existing pointwise balance isomorphisms form the natural family. -/
+/-- Let `R` be a commutative ring and `C` an `R`-linear abelian
+category with enough projectives, hom-set universe `v`, and Ext
+in universe `v`. Suppose `C` also has injective resolutions. The pointwise bridge comparisons form a natural isomorphism
+from the contravariant family of right-derived linear Hom functors
+to the projective first-variable Ext bifunctor in degree `n`. -/
 def rightDerivedLinearCoyonedaFamilyIsoFirstVariableExt (n : ℕ) :
     rightDerivedLinearCoyonedaFamily R n ≅ _root_.Ext R C n :=
   NatIso.ofComponents
@@ -473,7 +500,11 @@ def rightDerivedLinearCoyonedaFamilyIsoFirstVariableExt (n : ℕ) :
       simpa only [Quiver.Hom.op_unop, Opposite.op_unop] using
         rightDerivedLinearCoyonedaIsoFirstVariableExt_hom_naturality_first R f.unop n)
 
-/-- The family component is the unchanged original comparison, with its maps. -/
+/-- Let `R` be a commutative ring and `C` an `R`-linear abelian
+category with enough projectives, hom-set universe `v`, and Ext
+in universe `v`. Suppose `C` also has injective resolutions. At the opposite object `Mᵒᵖ`, the family isomorphism is the
+canonical degree-`n` bridge from `R^nHom_C(M,-)` to projective
+first-variable Ext. -/
 lemma rightDerivedLinearCoyonedaFamilyIsoFirstVariableExt_app (M : C) (n : ℕ) :
     (rightDerivedLinearCoyonedaFamilyIsoFirstVariableExt R n).app (op M) =
       rightDerivedLinearCoyonedaIsoFirstVariableExt R M n := rfl

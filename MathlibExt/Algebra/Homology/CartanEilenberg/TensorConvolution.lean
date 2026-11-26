@@ -19,12 +19,15 @@ public import Mathlib.Algebra.Category.ModuleCat.Abelian
 public import Mathlib.Algebra.Category.ModuleCat.Monoidal.Basic
 
 /-!
-# Tensor convolution of a Cartan--Eilenberg bicomplex
+# Tensor convolution of a Cartan–Eilenberg bicomplex
 
-Tensoring each row of the resolution-first Cartan--Eilenberg bicomplex with a
-fixed chain complex gives the bicomplex used to construct the Künneth spectral
-sequence.  This file only constructs that bicomplex and its strict map API; it
-makes no homology or Tor identification.
+Let R be commutative, K,L nonnegative R-module complexes and P a Cartan–Eilenberg resolution of
+L. Tensoring K with every resolution-degree row of P gives a bicomplex. Its entry (a,q) is the
+finite sum of Kᵢ ⊗ PTⱼ,ₐ over i+j=q.
+
+The outer differential tensors the resolution differential with id_K. The inner differential is
+d_K ⊗ id + (-1)^i id ⊗ d_row on an (i,j) summand, with the degree-zero terms omitted. Specified
+maps in both factors give strict maps of these bicomplexes.
 -/
 
 @[expose] public section
@@ -44,8 +47,10 @@ variable {R : Type u} [CommRing R]
 variable {K K' K₁ K₂ K₃ L L' L₁ L₂ L₃ :
   ChainComplex (ModuleCat.{u} R) ℕ}
 
-/-- Tensor a fixed chain complex with every resolution-degree row of a
-Cartan--Eilenberg bicomplex. -/
+/-- Let R be a commutative ring, K,L nonnegative chain complexes of R-modules, and P a
+Cartan–Eilenberg resolution of L. The bicomplex has resolution index a and inner tensor degree
+q. For each a, its row is the ordinary tensor complex K ⊗ P.bicomplex.Xₐ. The degree-q entry is
+the finite direct sum of Kᵢ ⊗ PTⱼ,ₐ over i+j=q, with both axes shaped as down-ℕ. -/
 noncomputable def kunnethCEBicomplex (K : ChainComplex (ModuleCat.{u} R) ℕ)
     {L : ChainComplex (ModuleCat.{u} R) ℕ}
     (P : CartanEilenbergResolution L) :
@@ -79,8 +84,9 @@ theorem kunnethCEBicomplex_X_X (K : ChainComplex (ModuleCat.{u} R) ℕ)
   rfl
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Tensor a chain map with an explicitly supplied map of
-Cartan--Eilenberg bicomplexes. -/
+/-- Let R be commutative, f : K → K′ a map of nonnegative R-module complexes, and g : P.bicomplex →
+P′.bicomplex a specified map of Cartan–Eilenberg bicomplexes. Tensoring f and each row map of g
+gives a strict map of the two tensor-convolution bicomplexes. -/
 noncomputable def kunnethCEBicomplexMap
     {P : CartanEilenbergResolution L}
     {P' : CartanEilenbergResolution L'}
@@ -130,8 +136,10 @@ theorem kunnethCEBicomplexMap_comp
   exact tensorHom_comp_tensorHom f₁ f₂ (g₁.f p) (g₂.f p)
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Formula for the resolution-direction differential on each homogeneous
-tensor summand. -/
+/-- Let R be a commutative ring, K,L nonnegative chain complexes of R-modules, and P a
+Cartan–Eilenberg resolution of L. The bicomplex has resolution index a and inner tensor degree
+q. On a homogeneous inner summand Kᵢ ⊗ PTⱼ,ₐ₊₁ with i+j=q, the resolution differential a+1 → a
+is id_{Kᵢ} ⊗ d_PTⱼ^{a+1,a}, followed by its injection into the degree-q row. -/
 @[reassoc]
 theorem ιTensorObj_comp_kunnethCEBicomplex_d
     (K : ChainComplex (ModuleCat.{u} R) ℕ)
@@ -147,7 +155,11 @@ theorem ιTensorObj_comp_kunnethCEBicomplex_d
       (𝟙 K) (P.bicomplex.d (p + 1) p) i j q hij
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The inner differential is the ordinary signed tensor differential. -/
+/-- Let R be a commutative ring, K,L nonnegative chain complexes of R-modules, and P a
+Cartan–Eilenberg resolution of L. The bicomplex has resolution index a and inner tensor degree
+q. On the inner summand of degrees i,j with i+j=n+1, the inner differential is d_K ⊗ id plus
+(-1)^i times id ⊗ d_row. The first term is zero if i=0 and the second is zero if j=0; otherwise
+they inject into degrees (i-1,j) and (i,j-1) of total n. -/
 theorem ιTensorObj_comp_kunnethCEBicomplex_X_d
     (K : ChainComplex (ModuleCat.{u} R) ℕ)
     {L : ChainComplex (ModuleCat.{u} R) ℕ}

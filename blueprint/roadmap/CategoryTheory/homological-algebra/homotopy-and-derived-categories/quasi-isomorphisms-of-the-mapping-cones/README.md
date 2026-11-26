@@ -2,8 +2,8 @@
 
 ## Components
 
-- [Map Of Homotopy f](map-of-homotopy-f.md)
+- [Degree components of a cone map from a square homotopy](map-of-homotopy-f.md)
 
 ## Quasi Iso
 
-- [Quasi Iso map Of Homotopy](quasi-iso-map-of-homotopy.md)
+- [Quasi-isomorphic vertices give a quasi-isomorphic cone map](quasi-iso-map-of-homotopy.md)

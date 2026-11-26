@@ -25,12 +25,12 @@ public import MathlibExt.Algebra.Homology.TensorSignsUpNat
 public import MathlibExt.Algebra.Homology.TotalComplexExact
 
 /-!
-# Total complexes of natural cochain bicomplexes
+# Total complexes of nonnegative cochain bicomplexes
 
-The fibers of `(p, q) ↦ p + q` are finite for nonnegative cochain shapes.
-This supplies totalization from finite coproducts for both the canonical
-`up ℕ` shape and its definitionally equal `up' 1` spelling. The file also
-provides the canonical symmetry signs for these first-quadrant totals.
+For the nonnegative cochain shape, the total degree of a bidegree (p,q) is p+q. Each
+antidiagonal p+q=n is finite, so finite coproducts in a preadditive category suffice to form the
+direct-sum total. Interchanging the two directions of the bicomplex uses the symmetry sign
+(−1)^{pq}. The same totalization applies to the unit-step nonnegative cochain shape.
 -/
 
 @[expose] public section
@@ -47,7 +47,10 @@ open CategoryTheory CategoryTheory.Limits
 namespace ComplexShape
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Symmetry signs for totals of nonnegative cochain bicomplexes. -/
+/-- For nonnegative cochain bicomplexes, transposition of bidegrees (p,q) ↦ (q,p) preserves the
+total degree p+q and uses the unit sign σ(p,q) = (−1)^{pq}. These signs satisfy the
+compatibility equations with the two cochain total-differential signs, giving the total-shape
+symmetry. -/
 instance upNatTotalComplexShapeSymmetry :
     TotalComplexShapeSymmetry (up ℕ) (up ℕ) (up ℕ) where
   symm p q := Nat.add_comm q p
@@ -63,14 +66,15 @@ instance upNatTotalComplexShapeSymmetry :
     dsimp
     rw [one_mul, Nat.mul_add, mul_one, pow_add]
 
-/-- The `up' 1` spelling of the nonnegative cochain shape uses the canonical
-`up ℕ` total-complex structure. -/
+/-- The unit-step cochain shape on the natural numbers, with relation p+1=q, admits the
+total-complex shape taking (p,q) to p+q in the nonnegative cochain shape. It uses the canonical
+total-differential signs for the two cochain directions. -/
 instance totalComplexShapeUp'Nat :
     TotalComplexShape (up' (1 : ℕ)) (up' (1 : ℕ)) (up ℕ) :=
   inferInstanceAs (TotalComplexShape (up ℕ) (up ℕ) (up ℕ))
 
-/-- The fiber of `(p, q) ↦ p + q` over a natural cochain total degree is a
-finite set. -/
+/-- For every natural number n, the set of bidegrees (p,q) ∈ ℕ² satisfying p+q=n is finite. This is
+the fiber over n of the total-shape projection for two nonnegative cochain directions. -/
 theorem upNatTotalFiberSetFinite (n : ℕ) :
     (ComplexShape.π (up ℕ) (up ℕ) (up ℕ) ⁻¹' ({n} : Set ℕ)).Finite := by
   apply Set.Finite.subset (Finset.finite_toSet
@@ -80,20 +84,22 @@ theorem upNatTotalFiberSetFinite (n : ℕ) :
   exact Finset.mem_coe.mpr (Finset.mem_product.mpr
     ⟨Finset.mem_range.mpr (by omega), Finset.mem_range.mpr (by omega)⟩)
 
-/-- The fiber of the nonnegative cochain total-shape projection is finite. -/
+/-- For n ∈ ℕ, the fiber of the nonnegative cochain total projection (p,q) ↦ p+q over {n} is a
+finite type. Thus total degree n has finitely many bidegree summands. -/
 instance upNatTotalFiberFinite (n : ℕ) :
     Finite ((ComplexShape.π (up ℕ) (up ℕ) (up ℕ)) ⁻¹' {n}) := by
   let _ := (upNatTotalFiberSetFinite n).fintype
   infer_instance
 
-/-- The nonnegative cochain total-shape projection has finite fibers. -/
+/-- The total-shape projection ℕ² → ℕ, (p,q) ↦ p+q, for two nonnegative cochain directions has
+finite fibers in every total degree. -/
 instance upNatTotalFiniteFibers :
     GradedObject.FiniteFibers
       (ComplexShape.π (up ℕ) (up ℕ) (up ℕ)) :=
   fun _ => inferInstance
 
-/-- The `up' 1` spelling of the nonnegative cochain total-shape projection
-has finite fibers. -/
+/-- The total projection for two unit-step nonnegative cochain shapes, taking (p,q) to p+q in the
+nonnegative cochain shape, has finite fibers in every natural-number degree. -/
 instance up'NatTotalFiniteFibers :
     GradedObject.FiniteFibers
       (ComplexShape.π (up' (1 : ℕ)) (up' (1 : ℕ)) (up ℕ)) := by
@@ -105,8 +111,9 @@ end ComplexShape
 
 namespace HomologicalComplex₂
 
-/-- Every nonnegative cochain bicomplex in a category with finite coproducts
-has a total complex. -/
+/-- Let C be preadditive with finite coproducts and B a bicomplex with both cochain directions
+indexed by ℕ. Then B has a total cochain complex with degree-n term the finite coproduct of
+B_{p,q} over p+q=n and differential the sum of the two signed total contributions. -/
 theorem hasTotalUpNat
     {C : Type u} [Category.{v} C] [Preadditive C]
     [HasFiniteCoproducts C]
@@ -115,8 +122,9 @@ theorem hasTotalUpNat
     B.HasTotal (ComplexShape.up ℕ) :=
   inferInstance
 
-/-- Every bicomplex using the `up' 1` spelling in a category with finite
-coproducts has a nonnegative cochain total complex. -/
+/-- Let C be preadditive with finite coproducts and B a bicomplex whose two shapes are the unit-step
+cochain shape on ℕ. It has a nonnegative total cochain complex with degree-n term ⨁_{p+q=n}
+B_{p,q} and the canonical signed total differential. -/
 theorem hasTotalUp'Nat
     {C : Type u} [Category.{v} C] [Preadditive C]
     [HasFiniteCoproducts C]

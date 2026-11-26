@@ -13,6 +13,14 @@ public import MathlibExt.Algebra.Homology.Embedding.MapExtend
 public import MathlibExt.Algebra.Homology.Embedding.ExtendHomologyFunctor
 public import MathlibExt.Algebra.Homology.Functor
 
+/-!
+# Components of the extension–homology comparison
+
+For a shape embedding e and a selected degree j'=e(j), the natural
+comparison between homology after extension by zero and original homology
+has the same component as the canonical objectwise homology isomorphism.
+-/
+
 @[expose] public section
 
 set_option autoImplicit false
@@ -75,7 +83,12 @@ private theorem mapHomologicalComplex_mapCyclesIso_hom_iCycles
       ((F.mapHomologicalComplex c).obj K).iCycles i := by
   exact ShortComplex.mapCyclesIso_hom_iCycles (S := K.sc i) F
 
-/-- The extended-homology functor isomorphism component is `K.extendHomologyIso`. -/
+/--
+Let C have zero morphisms, a zero object and homology for short complexes. Let e:c→c' be a
+shape embedding, K a c-complex, and j,j' degrees with e(j)=j'. The forward component at K of
+the natural extension–homology comparison is exactly (K.extendHomologyIso e hj).hom, from
+H_{j'}(K.extend e) to H_j(K).
+-/
 @[deprecated HomologicalComplex.extendHomologyFunctorIso_hom_app
   +typeChanged (since := "2026-10-21")]
 theorem extendHomologyFunctorIso_hom_app

@@ -1,4 +1,5 @@
-# Comparison Homotopy Equiv
+# Homotopy equivalence of two finite resolutions of one object
 
-Two finite resolutions of the same object are homotopy equivalent in the
-source when their mapped terms are projective and `i` is fully faithful.
+Let P be preadditive, A abelian and i : P → A additive full faithful, with every i(P₀)
+projective. Two finite resolutions R₁,R₂ of the same object X have homotopy-equivalent resolving
+complexes in P.

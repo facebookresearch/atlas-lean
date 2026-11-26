@@ -1,25 +1,25 @@
 # Additivity of augmented comparison maps and resolution functors
 
-- [Zero](zero.md)
-- [Add](add.md)
-- [Zero map](zero-map.md)
-- [Zero map f](zero-map-f.md)
-- [Add map](add-map.md)
-- [Add map f](add-map-f.md)
+- [The zero augmented finite-resolution comparison](zero.md)
+- [Addition of augmented finite-resolution comparisons](add.md)
+- [The chain map of the zero finite-resolution comparison](zero-map.md)
+- [Degree components of the zero finite-resolution comparison](zero-map-f.md)
+- [The chain map of a sum of finite-resolution comparisons](add-map.md)
+- [Degree components of a sum of finite-resolution comparisons](add-map-f.md)
 
 ## Source Change
 
-- [Map Source zero](map-source-zero.md)
-- [Map Source add](map-source-add.md)
+- [Source transport preserves zero finite-resolution comparisons](map-source-zero.md)
+- [Source transport preserves addition of finite-resolution comparisons](map-source-add.md)
 
 ## Target Change
 
-- [Map Target zero](map-target-zero.md)
-- [Map Target add](map-target-add.md)
+- [Target transport preserves zero finite-resolution comparisons](map-target-zero.md)
+- [Target transport preserves addition of finite-resolution comparisons](map-target-add.md)
 
 ## Chosen Comparisons
 
-- [Comparison Homotopy Zero](comparison-homotopy-zero.md)
-- [Comparison Homotopy Add](comparison-homotopy-add.md)
-- [Comparison Hom quotient zero](comparison-hom-quotient-zero.md)
-- [Comparison Hom quotient add](comparison-hom-quotient-add.md)
+- [The chosen zero comparison is homotopic to zero](comparison-homotopy-zero.md)
+- [The chosen comparison of a sum is homotopic to the sum](comparison-homotopy-add.md)
+- [Chosen zero comparisons vanish in the homotopy category](comparison-hom-quotient-zero.md)
+- [Chosen comparisons are additive in the homotopy category](comparison-hom-quotient-add.md)

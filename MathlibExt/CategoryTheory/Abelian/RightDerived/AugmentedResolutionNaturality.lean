@@ -12,7 +12,13 @@ module
 public import MathlibExt.CategoryTheory.Abelian.RightDerived.AugmentedResolutionComparison
 
 /-!
-## Augmentation comparisons compute the same derived map for arbitrary injective targets
+# Naturality of cohomology-to-derived augmented comparisons
+
+Let `C,D` be abelian, with injective resolutions in `C`, and
+`F : C → D` additive. Any coaugmentation-preserving map from an exact
+coaugmented complex into an injective resolution computes its canonical
+map to `R^nF`. A map between coaugmented complexes over `f : X → Y`
+gives the corresponding square with `R^nF(f)`.
 -/
 @[expose] public section
 noncomputable section
@@ -24,10 +30,11 @@ namespace CategoryTheory.Functor
 variable {C : Type u} [Category.{v} C] [Abelian C] [HasInjectiveResolutions C]
 variable {D : Type u'} [Category.{v'} D] [Abelian D]
 
-/--
-Any augmentation-preserving map into an injective resolution computes the SAME
-cohomology-to-derived map, even when the target resolution is an arbitrary choice.
--/
+/-- Let `C,D` be abelian, with injective resolutions in `C`,
+and `F : C → D` additive. For a quasi-isomorphism `ι : X[0] → I`, any map
+`a : I → J` to any injective resolution `J` of `X` with `ι ≫ a = ι_J`
+computes `Hⁿ(F(I)) → R^nF(X)` by `Hⁿ(F(a))` followed by the inverse
+comparison for `J`. -/
 theorem augmentedResolutionToRightDerivedHom_eq_of_injectiveTarget
     (F : C ⥤ D) [F.Additive] {X : C} (I : CochainComplex C ℕ)
     (ι : (CochainComplex.single₀ C).obj X ⟶ I) [QuasiIso ι]
@@ -59,10 +66,10 @@ theorem augmentedResolutionToRightDerivedHom_eq_of_injectiveTarget
     (H.map_comp a b)).trans
       ((Category.assoc _ _ _).trans (congrArg (fun q => H.map a ≫ q) h'))
 
-/--
-A map preserving both coaugmentations gives coefficient naturality of the comparison computed by
-the original injective resolution.
--/
+/-- Let `C,D` be abelian, with injective resolutions in `C`,
+and `F : C → D` additive. Let `ι : X[0] → I`, `κ : Y[0] → J` be quasi-isomorphisms.
+If `a : I → J` lies over `f : X → Y`, so `ι ≫ a = f[0] ≫ κ`,
+then `Hⁿ(F(a)) ≫ comparison_J = comparison_I ≫ R^nF(f)`. -/
 theorem augmentedResolutionToRightDerivedHom_naturality
     (F : C ⥤ D) [F.Additive] {X Y : C} {I J : CochainComplex C ℕ}
     (ι : (CochainComplex.single₀ C).obj X ⟶ I)

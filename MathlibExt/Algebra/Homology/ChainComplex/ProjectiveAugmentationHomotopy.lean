@@ -14,16 +14,12 @@ public import Mathlib.Algebra.Homology.HomotopyCategory.KProjective
 public import Mathlib.Algebra.Homology.Embedding.ExtendHomotopy
 
 /-!
-# Uniqueness of projective chain lifts into an arbitrary resolution
+# Uniqueness of projective lifts through a quasi-isomorphism
 
-Two maps from a nonnegative projective complex which agree after an actual
-quasi-isomorphism are homotopic. The target terms need not be projective.
-This applies to a resolving complex after restriction of its scalar ring.
-
-Extension to the nonpositive integer complex earns K-projectivity from the
-original projective terms. The native localization bijection then gives
-the homotopy, which the native shape-embedding equivalence returns to the
-original nonnegative complexes.
+Let C be abelian and let P,Q,T be natural-number-indexed chain complexes. If every Pₙ is
+projective and q : Q → T is a quasi-isomorphism, then two chain maps f,g : P → Q satisfying q ∘
+f = q ∘ g are homotopic. Hence their maps on every homology object agree. No projectivity of Q
+or T is assumed.
 -/
 
 @[expose] public section
@@ -38,8 +34,9 @@ namespace ChainComplex
 variable {C : Type u} [Category.{v} C] [Abelian C]
   {P Q T : ChainComplex C ℕ} [∀ n, Projective (P.X n)]
 
-/-- Cancellation of an actual quasi-isomorphism on homotopy classes of
-maps from an original nonnegative projective complex. -/
+/-- Let C be an abelian category. Let P,Q,T be chain complexes indexed by ℕ, and assume every Pₙ is
+projective. For a quasi-isomorphism q : Q → T and maps f,g : P → Q with q ∘ f=q ∘ g, there is a
+chain homotopy f ≃ g. The terms of Q and T need not be projective. -/
 def projectiveHomotopyOfCompQuasiIso
     (q : Q ⟶ T) (hq : QuasiIso q) (f g : P ⟶ Q)
     (h : f ≫ q = g ≫ q) : Homotopy f g := by
@@ -63,8 +60,9 @@ def projectiveHomotopyOfCompQuasiIso
     (CochainComplex.IsKProjective.Qh_map_bijective (E.obj P) (U.obj (E.obj Q))).injective hD
   exact (HomotopyCategory.homotopyOfEq (E.map f) (E.map g) hU).ofExtend
 
-/-- Maps into any actual augmentation resolution have equal homology maps
-when they cover the same original augmentation. -/
+/-- Let C be an abelian category. Let P,Q,T be ℕ-indexed chain complexes with every Pₙ projective.
+If q : Q → T is a quasi-isomorphism and f,g : P → Q satisfy q ∘ f=q ∘ g, then Hₙ(f)=Hₙ(g) for
+every n ∈ ℕ, by the resulting homotopy. -/
 theorem homologyMap_eq_of_comp_quasiIso
     (q : Q ⟶ T) (hq : QuasiIso q) (f g : P ⟶ Q)
     (h : f ≫ q = g ≫ q) (n : ℕ) :

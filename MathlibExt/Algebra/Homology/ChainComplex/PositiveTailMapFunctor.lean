@@ -13,11 +13,12 @@ public import MathlibExt.Algebra.Homology.ChainComplex.PositiveTailFunctor
 public import Mathlib.Algebra.Homology.Additive
 
 /-!
-# Positive tails commute with functors on complexes
+# Positive tails commute with zero-preserving functors
 
-Applying a functor to the positive tail agrees with taking the positive
-tail after applying the functor. Both constructions use the same shifted
-objects and differentials, and the comparison components are identities.
+Let C and D have zero morphisms and let F : C → D preserve zero morphisms. Mapping a nonnegative
+chain complex and then taking its positive tail is naturally isomorphic to first taking its tail
+and then mapping it. In degree n both complexes have term F(K_{n+1}) and differential
+F(d_K,n+2,n+1); the comparison has identity components.
 -/
 
 @[expose] public section
@@ -30,7 +31,9 @@ variable {C D : Type*} [Category* C] [Category* D]
   [HasZeroMorphisms C] [HasZeroMorphisms D]
   (F : C ⥤ D) [F.PreservesZeroMorphisms]
 
-/-- The actual positive tail of the mapped complex is the mapped original positive tail. -/
+/-- Let C and D be categories with zero morphisms and F : C → D a functor preserving zero morphisms.
+There is a canonical natural isomorphism T_D ∘ F_* ≅ F_* ∘ T_C on nonnegative chain complexes,
+where F_* applies F termwise. Its component at K in degree n is the identity of F(K_{n+1}). -/
 def positiveTailMapFunctorIso :
     F.mapHomologicalComplex (ComplexShape.down ℕ) ⋙ positiveTailFunctor D ≅
       positiveTailFunctor C ⋙ F.mapHomologicalComplex (ComplexShape.down ℕ) :=

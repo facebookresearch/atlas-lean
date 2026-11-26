@@ -14,7 +14,13 @@ public import Mathlib.Algebra.Homology.SingleHomology
 public import Mathlib.Algebra.Homology.ShortComplex.ShortExact
 
 /-!
-## Source exactness of a coaugmentation that is a quasi-isomorphism
+# Exact rows of a quasi-isomorphic coaugmentation
+
+In an abelian category, a coaugmentation `X[0] → I` that is a
+quasi-isomorphism in degree zero gives an exact row `X → I⁰ → I¹`
+and a monic first map. A full coaugmentation quasi-isomorphism also
+gives exactness of all positive rows. Compatibility with a map of
+cochain complexes is determined by the degree-zero coaugmentation equation.
 -/
 @[expose] public section
 noncomputable section
@@ -25,7 +31,9 @@ open CategoryTheory CategoryTheory.Limits
 namespace CochainComplex
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
-/-- A degree-zero quasi-isomorphic coaugmentation gives its exact first row and mono. -/
+/-- In an abelian category `C`, let `ι : X[0] → I` be a
+coaugmentation of a nonnegative cochain complex and a quasi-isomorphism
+in degree zero. The row `X → I⁰ → I¹` is exact, and `ι⁰` is mono. -/
 theorem coaugmentation_exact_and_mono {X : C} {I : CochainComplex C ℕ}
     (ι : (single₀ C).obj X ⟶ I) [QuasiIsoAt ι 0] :
     (ShortComplex.mk (ι.f 0) (I.d 0 1)
@@ -37,7 +45,9 @@ theorem coaugmentation_exact_and_mono {X : C} {I : CochainComplex C ℕ}
     (HomologicalComplex.single_obj_d (ComplexShape.up ℕ) 0 X 0 1)
     (I.shape 0 0 (by simp [ComplexShape.up_Rel]))).mp h
 
-/-- Positive rows of an original quasi-isomorphic coaugmentation are exact. -/
+/-- In an abelian category `C`, a coaugmentation quasi-isomorphism
+`ι : X[0] → I` makes each row `Iⁿ → I^(n+1) → I^(n+2)` exact
+at `I^(n+1)` for every `n ∈ ℕ`. -/
 theorem coaugmentation_exact_succ {X : C} {I : CochainComplex C ℕ}
     (ι : (single₀ C).obj X ⟶ I) [QuasiIso ι] (n : ℕ) :
     (ShortComplex.mk (I.d n (n + 1)) (I.d (n + 1) (n + 2))
@@ -48,10 +58,10 @@ theorem coaugmentation_exact_succ {X : C} {I : CochainComplex C ℕ}
   exact (HomologicalComplex.exactAt_iff' I n (n + 1) (n + 2)
     (by simp) (by simp)).mp hI
 
-/--
-A cochain map's degree-zero augmentation equation determines the whole coaugmentation equation
-from the original single object.
--/
+/-- In an abelian category `C`, let `ι : X[0] → I`, `κ : X[0] → J`
+be coaugmentations of nonnegative cochain complexes and `a : I → J`
+a cochain map. If `ι⁰ ≫ a⁰ = κ⁰`, then `ι ≫ a = κ` as full
+cochain maps. -/
 theorem coaugmentation_comp_eq_of_f_zero {X : C} {I J : CochainComplex C ℕ}
     (ι : (single₀ C).obj X ⟶ I) (κ : (single₀ C).obj X ⟶ J) (a : I ⟶ J)
     (h : ι.f 0 ≫ a.f 0 = κ.f 0) : ι ≫ a = κ := by

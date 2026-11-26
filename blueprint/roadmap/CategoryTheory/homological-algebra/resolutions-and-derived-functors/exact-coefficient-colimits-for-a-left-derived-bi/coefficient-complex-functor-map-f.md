@@ -1,3 +1,5 @@
-# Coefficient Complex Functor map f
+# Degree maps of a coefficient-complex transformation
 
-Each component is the coefficient map at the original stage.
+Let `C₁`, `D` be abelian, `C₂` a category, and
+`F : C₁ → C₂ → D` have additive partials `F(-,B)`. For a chain complex `P` in `C₁`, a map `b : B → B′`
+has degree-`i` component `F(P^i,b)` between its coefficient complexes.

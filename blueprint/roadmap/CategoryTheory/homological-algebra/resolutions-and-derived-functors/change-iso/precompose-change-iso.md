@@ -1,3 +1,7 @@
-# Precompose Change Iso
+# Comparison under an isomorphism of exact input functors
 
-An exact-input coefficient isomorphism gives the same original delta comparison.
+Let `A`, `B`, `D` be preadditive categories, `R,R′ : A → B`
+additive functors preserving short exact sequences, and `e : R ≅ R′`.
+For a cohomological δ-functor `T : B → D`, the two precomposed
+δ-functors along `R` and `R′` are isomorphic, through the comparisons
+induced by `e` in every degree.

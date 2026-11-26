@@ -14,13 +14,15 @@ public import MathlibExt.CategoryTheory.Abelian.LeftDerived.PrecompositionNatura
 public import MathlibExt.CategoryTheory.Abelian.LeftDerived.BoundaryIsomorphism
 
 /-!
-# Derived transport of underived comparisons
+# Left-derived transport of an underlying functor comparison
 
-Exact target postcomposition, derivation of an underived isomorphism, and projective-preserving
-source precomposition give one comparison. The characteristic augmentation, boundary and
-coefficient equations below compose the existing three equations. No resolution or colimit
-construction is replaced. Only the two resolution-source categories have projective resolutions;
-the output categories need only be Abelian.
+Let `C,D,E,E′` be abelian, with projective resolutions in `C,D`.
+For additive projective- and homology-preserving `U : C → D`, additive
+homology-preserving `V : E → E′`, additive `F : C → E`, `G : D → E′`,
+and `U ⋙ G ≅ F ⋙ V`, postcomposition and precomposition give
+`L_nF ⋙ V ≅ U ⋙ L_nG`. The augmentation, connecting and coefficient
+squares follow the same three comparison factors. All four category
+object and morphism universes are independent.
 -/
 
 @[expose] public section
@@ -41,18 +43,32 @@ variable {C : Type uC} [Category.{vC} C] [Abelian C] [HasProjectiveResolutions C
   (F : C ⥤ E) [F.Additive] (G : D ⥤ E') [G.Additive]
   (e : U ⋙ G ≅ F ⋙ V)
 
-/-- The three-factor derived comparison. -/
+/-- Let `C,D,E,E′` be abelian, with projective resolutions in `C,D`,
+`U : C → D` additive and preserving projectives and homology,
+`V : E → E′` additive and preserving homology, `F : C → E`,
+`G : D → E′` additive, and `e : U ⋙ G ≅ F ⋙ V`. The underlying comparison induces a natural isomorphism
+`L_nF ⋙ V ≅ U ⋙ L_nG` in every degree `n`. -/
 def leftDerivedTransportIso (n : ℕ) : F.leftDerived n ⋙ V ≅ U ⋙ G.leftDerived n :=
   F.leftDerivedCompIsoOfPreservesHomology V n ≪≫
     NatIso.leftDerived e.symm n ≪≫ leftDerivedPrecompIso U G n
 
-/-- Its hom consists of the three existing comparison maps. -/
+/-- Let `C,D,E,E′` be abelian, with projective resolutions in `C,D`,
+`U : C → D` additive and preserving projectives and homology,
+`V : E → E′` additive and preserving homology, `F : C → E`,
+`G : D → E′` additive, and `e : U ⋙ G ≅ F ⋙ V`. The forward transport is the postcomposition comparison for
+`V`, followed by the derived inverse of `e`, and then the
+precomposition comparison for `U`. -/
 theorem leftDerivedTransportIso_hom (n : ℕ) :
     (leftDerivedTransportIso U V F G e n).hom =
       (F.leftDerivedCompIsoOfPreservesHomology V n).hom ≫
         (NatIso.leftDerived e.symm n).hom ≫ (leftDerivedPrecompIso U G n).hom := rfl
 
-/-- Its inverse has the canonical source, underived map and output comparison order. -/
+/-- Let `C,D,E,E′` be abelian, with projective resolutions in `C,D`,
+`U : C → D` additive and preserving projectives and homology,
+`V : E → E′` additive and preserving homology, `F : C → E`,
+`G : D → E′` additive, and `e : U ⋙ G ≅ F ⋙ V`. The inverse transport is inverse precomposition for `U`,
+followed by the derived map of `e`, and then inverse postcomposition
+for `V`. -/
 theorem leftDerivedTransportIso_inv (n : ℕ) :
     (leftDerivedTransportIso U V F G e n).inv =
       (leftDerivedPrecompIso U G n).inv ≫
@@ -60,7 +76,12 @@ theorem leftDerivedTransportIso_inv (n : ℕ) :
   simp only [leftDerivedTransportIso, Iso.trans_inv, NatIso.leftDerived_inv,
     Iso.symm_inv, NatIso.leftDerived_hom, Category.assoc]
 
-/-- The comparison preserves the augmentation and the underived inverse. -/
+/-- Let `C,D,E,E′` be abelian, with projective resolutions in `C,D`,
+`U : C → D` additive and preserving projectives and homology,
+`V : E → E′` additive and preserving homology, `F : C → E`,
+`G : D → E′` additive, and `e : U ⋙ G ≅ F ⋙ V`. In degree zero, the forward transport followed by the
+augmentation `U ⋙ L₀G → U ⋙ G` equals the augmentation
+`L₀F ⋙ V → F ⋙ V` followed by `e⁻¹`. -/
 theorem leftDerivedTransportIso_hom_fromLeftDerivedZero :
     (leftDerivedTransportIso U V F G e 0).hom ≫ whiskerLeft U G.fromLeftDerivedZero =
       whiskerRight F.fromLeftDerivedZero V ≫ e.inv := by
@@ -84,7 +105,12 @@ theorem leftDerivedTransportIso_hom_fromLeftDerivedZero :
     _ = σ.hom ≫ (F ⋙ V).fromLeftDerivedZero ≫ e.inv := by rw [hθ]
     _ = _ := by rw [← Category.assoc, hσ]
 
-/-- The inverse preserves the same augmentation. -/
+/-- Let `C,D,E,E′` be abelian, with projective resolutions in `C,D`,
+`U : C → D` additive and preserving projectives and homology,
+`V : E → E′` additive and preserving homology, `F : C → E`,
+`G : D → E′` additive, and `e : U ⋙ G ≅ F ⋙ V`. In degree zero, the inverse transport followed by the
+augmentation `L₀F ⋙ V → F ⋙ V` equals the augmentation
+`U ⋙ L₀G → U ⋙ G` followed by `e`. -/
 theorem leftDerivedTransportIso_inv_fromLeftDerivedZero :
     (leftDerivedTransportIso U V F G e 0).inv ≫ whiskerRight F.fromLeftDerivedZero V =
       whiskerLeft U G.fromLeftDerivedZero ≫ e.hom := by
@@ -93,7 +119,12 @@ theorem leftDerivedTransportIso_inv_fromLeftDerivedZero :
   rw [← Category.assoc, leftDerivedTransportIso_hom_fromLeftDerivedZero]
   rw [Category.assoc, e.inv_hom_id, Category.comp_id]
 
-/-- The comparison carries the connecting morphism through all three factors. -/
+/-- Let `C,D,E,E′` be abelian, with projective resolutions in `C,D`,
+`U : C → D` additive and preserving projectives and homology,
+`V : E → E′` additive and preserving homology, `F : C → E`,
+`G : D → E′` additive, and `e : U ⋙ G ≅ F ⋙ V`. For short exact `S : X₁ → X₂ → X₃`, the forward transport
+in degree `n+1` followed by the boundary of `G` on `U(S)` equals
+`V` of the boundary of `F` on `S` followed by transport in degree `n`. -/
 theorem leftDerivedTransportIso_hom_LDdelta (n : ℕ)
     (S : ShortComplex C) (hS : S.ShortExact) :
     letI : PreservesFiniteLimits U := preservesFiniteLimits_of_preservesHomology U
@@ -134,7 +165,13 @@ theorem leftDerivedTransportIso_hom_LDdelta (n : ℕ)
       have h := congrArg (fun f => f ≫ θ₁.hom.app S.X₁ ≫ τ₁.hom.app S.X₁) hσ
       simpa only [Category.assoc] using h
 
-/-- Underived coefficient squares determine the derived coefficient square. -/
+/-- Let `C,D,E,E′` be abelian, with projective resolutions in `C,D`,
+`U : C → D` additive and preserving projectives and homology,
+`V : E → E′` additive and preserving homology, `F : C → E`,
+`G : D → E′` additive, and `e : U ⋙ G ≅ F ⋙ V`. For additive `F′,G′`, maps `α : F → F′`, `β : G → G′`,
+and `e′ : U ⋙ G′ ≅ F′ ⋙ V` satisfying
+`(U ⋙ β) ≫ e′ = e ≫ (α ⋙ V)`, the corresponding derived
+transport comparisons commute with `L_nα ⋙ V` and `U ⋙ L_nβ`. -/
 theorem leftDerivedTransportIso_naturality
     {F' : C ⥤ E} [F'.Additive] {G' : D ⥤ E'} [G'.Additive]
     (α : F ⟶ F') (β : G ⟶ G') (e' : U ⋙ G' ≅ F' ⋙ V)

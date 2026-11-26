@@ -1,9 +1,9 @@
 # Splitting transport along homotopy retracts
 
-- [Of Homotopy Retract](of-homotopy-retract.md)
-- [Of Homotopy Retract hom](of-homotopy-retract-hom.md)
-- [Of Homotopy Equiv](of-homotopy-equiv.md)
-- [Of Homotopy Equiv hom](of-homotopy-equiv-hom.md)
-- [Is Split of homotopy Retract](is-split-of-homotopy-retract.md)
-- [Is Split iff of homotopy Equiv](is-split-iff-of-homotopy-equiv.md)
-- [Of Homotopy Equiv of Zero hom](of-homotopy-equiv-of-zero-hom.md)
+- [Splitting inherited by a homotopy retract](of-homotopy-retract.md)
+- [Components of the homotopy-retract splitting](of-homotopy-retract-hom.md)
+- [Splitting transported along a homotopy equivalence](of-homotopy-equiv.md)
+- [Sign and components of homotopy-equivalence transport](of-homotopy-equiv-hom.md)
+- [Homotopy retracts preserve splitness](is-split-of-homotopy-retract.md)
+- [Splitness is invariant under homotopy equivalence](is-split-iff-of-homotopy-equiv.md)
+- [Splitting correction from a zero-differential source](of-homotopy-equiv-of-zero-hom.md)

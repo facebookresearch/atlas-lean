@@ -1,4 +1,5 @@
-# Has Projective Dimension LE of bound le
+# Enlarging the projective-dimension bound of a finite resolution
 
-Any larger supplied bound is an bound for the original projective dimension, derived from the same
-finite resolution.
+Let P be preadditive, A abelian, and i : P → A additive with projective object images. If Q is a
+finite resolution of X and n is a natural number satisfying Q.bound ≤ n, then X has projective
+dimension at most n.

@@ -1,3 +1,5 @@
-# Is Relative Projective comp equivalence iff
+# Target equivalence preserves relative projectivity
 
-Equivalence of target categories is a particular full faithful transport.
+For categories `D,C,B`, functor `U : D → C`, equivalence
+`e : C ≌ B`, and `P : D`, relative projectivity for `U ⋙ e` is
+equivalent to relative projectivity for `U`.

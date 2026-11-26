@@ -13,7 +13,13 @@ public import MathlibExt.CategoryTheory.Abelian.RightDerived.AugmentedResolution
 public import MathlibExt.CategoryTheory.ComparisonArrows
 
 /-!
-# The augmentation-derived precomposition arrows keep their inferred endpoints
+# Two comparisons from augmented cohomology after source change
+
+For abelian `C,D,A`, an additive injective- and homology-preserving
+`J : C → D`, additive `P : C → A`, `B : D → A`, and `P ≅ J ⋙ B`,
+coaugmented complexes resolving `X` and `J(X)` give two maps
+`Hⁿ(P(I)) → R^nB(J(X))`. They agree when the identification of the
+mapped complex with the second complex preserves its coaugmentation.
 -/
 
 @[expose] public section
@@ -28,7 +34,12 @@ variable {C : Type u₁} [Category.{v₁} C] [Abelian C] [HasInjectiveResolution
 variable (J : C ⥤ D) [J.Additive] [J.PreservesInjectiveObjects] [J.PreservesHomology]
   (B : D ⥤ A) [B.Additive] {P : C ⥤ A} [P.Additive]
 
-/-- The two comparison maps, with their original inferred homology and derived-object endpoints. -/
+/-- Let `C,D,A` be abelian, with injective resolutions in `C,D`,
+`J : C → D` additive and preserving injectives and homology,
+`B : D → A`, `P : C → A` additive, and `α : P ≅ J ⋙ B`. Suppose `ι : X[0] → I`, `κ : J(X)[0] → K` are quasi-isomorphisms
+and `e : J(I) ≅ K`. The two maps `Hⁿ(P(I)) → R^nB(J(X))` are:
+transport cohomology along `α_I` and `B(e)` then use the comparison
+for `K`; or use the comparison for `I` then right-derived precomposition. -/
 def augmentedComplexComparisonArrows (α : P ≅ J ⋙ B) {X : C}
     (I : CochainComplex C ℕ) (ι : (CochainComplex.single₀ C).obj X ⟶ I) (hι : QuasiIso ι)
     (K : CochainComplex D ℕ) (κ : (CochainComplex.single₀ D).obj (J.obj X) ⟶ K) (hκ : QuasiIso κ)
@@ -43,7 +54,11 @@ def augmentedComplexComparisonArrows (α : P ≅ J ⋙ B) {X : C}
     (P.augmentedResolutionToRightDerivedHom I ι n ≫
       (rightDerivedPrecompIsoOfIso J B α n).hom.app X)
 
-/-- Augmentation preservation proves equality of those literal inferred comparison arrows. -/
+/-- Let `C,D,A` be abelian, with injective resolutions in `C,D`,
+`J : C → D` additive and preserving injectives and homology,
+`B : D → A`, `P : C → A` additive, and `α : P ≅ J ⋙ B`. For coaugmentation quasi-isomorphisms `ι : X[0] → I`,
+`κ : J(X)[0] → K`, if `e : J(I) ≅ K` carries the mapped `ι` to `κ`,
+the two comparison maps `Hⁿ(P(I)) → R^nB(J(X))` are equal. -/
 theorem augmentedComplexComparisonArrows_eq (α : P ≅ J ⋙ B) {X : C}
     (I : CochainComplex C ℕ) (ι : (CochainComplex.single₀ C).obj X ⟶ I) (hι : QuasiIso ι)
     (K : CochainComplex D ℕ) (κ : (CochainComplex.single₀ D).obj (J.obj X) ⟶ K) (hκ : QuasiIso κ)

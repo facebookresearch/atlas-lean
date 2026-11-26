@@ -1,5 +1,5 @@
-# Assoc
+# Associativity of horseshoe comparisons
 
-Associativity for horseshoe comparisons, transported along
-`Category.assoc` of the underlying maps of short complexes, for every
-choice of the endpoint transport equalities.
+In an abelian category `C`, composition of three strict horseshoe
+comparisons is associative after the canonical identification of
+the sequence-map composites and supplied endpoint-resolution composites.

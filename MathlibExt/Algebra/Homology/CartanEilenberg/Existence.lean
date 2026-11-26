@@ -13,11 +13,11 @@ module
 public import MathlibExt.Algebra.Homology.CartanEilenberg.Basic
 
 /-!
-# Existence of Cartan--Eilenberg resolution data
+# Existence of Cartan–Eilenberg resolution data
 
-In an abelian category with chosen projective resolutions, every
-nonnegatively graded chain complex has the explicit resolution data packaged
-by `CartanEilenbergResolution`.
+Let C be an abelian category in which every object has a projective resolution. Every
+nonnegative chain complex L admits Cartan–Eilenberg resolution data: chosen boundary and
+homology resolutions and the two compatible horseshoes resolving cycles and terms.
 -/
 
 @[expose] public section
@@ -37,8 +37,9 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 
 namespace CartanEilenbergResolution
 
-/-- Chosen Cartan--Eilenberg resolution data from globally available
-projective resolutions. -/
+/-- Let C be abelian and assume every object of C has a projective resolution. For each ℕ-indexed
+chain complex L, the chosen boundary and homology resolutions, followed by the two horseshoe
+constructions, define a Cartan–Eilenberg resolution of L. -/
 noncomputable def of [HasProjectiveResolutions C]
     (L : ChainComplex C ℕ) : CartanEilenbergResolution L :=
   ofResolutions L
@@ -63,8 +64,8 @@ theorem of_homologyResolution [HasProjectiveResolutions C]
       CategoryTheory.projectiveResolution (L.homology j) := by
   simp [of]
 
-/-- Cartan--Eilenberg resolution data exists whenever the ambient category
-has projective resolutions. -/
+/-- Let C be abelian with projective resolutions for all objects. Every nonnegative chain complex L
+has Cartan–Eilenberg resolution data; equivalently the type of such resolution data is nonempty. -/
 theorem nonempty [HasProjectiveResolutions C]
     (L : ChainComplex C ℕ) :
     Nonempty (CartanEilenbergResolution L) :=

@@ -1,30 +1,13 @@
-# Hom Fixed Coefficient Universal Coefficient Sequence short Exact
+# The fixed-coefficient universal coefficient short exact sequence
 
-Let `C : Type u` be an abelian category with morphisms in universe `v` and
-`HasExt.{w} C`. Let `P : ChainComplex C ℤ`, let `M : C`, and let `n : ℤ` be arbitrary.
-Assume that, **for every integer `p`**, both
-
-- `P.X p` is projective;
-- `Abelian.image (P.d p (p - 1))` is projective.
-
-Write \(P_p=P.X\,p\), \(H_p(P)=P.\mathrm{homology}\,p\), and
-\(K=\operatorname{Hom}_C(P,M)\). The cochain group of \(K\) in degree \(p\) is
-\(\operatorname{Hom}_C(P_p,M)\), with differential
-\(a\mapsto a\circ d_{p+1}\), given by positive precomposition.
-
-The universal coefficient sequence is
-
-\[
-0\longrightarrow \operatorname{Ext}^{1}_C(H_{n-1}(P),M)
-\xrightarrow{\iota} H^{n}(K)
-\xrightarrow{\rho} \operatorname{Hom}_C(H_n(P),M)
-\longrightarrow 0.
-\]
-
-In Lean, the Ext term is lifted by `AddCommGrpCat.uliftFunctor.{v, w}` and the
-middle and right terms by `AddCommGrpCat.uliftFunctor.{w, v}`. Thus all three
-terms belong to `AddCommGrpCat.{max v w}`; the object, morphism, and Ext
-universes remain independent.
+Let C be an abelian category with objects in universe u and morphisms in universe v, P an
+integer-indexed chain complex, M an object, and n an integer. Suppose the groups Ext¹_C(-,-) are
+available in a universe w independent of C's object and morphism universes. Assume that Pₚ and
+im(dₚ : Pₚ → Pₚ₋₁) are projective for every integer p. For every integer n there is a short
+exact sequence 0 → Ext¹_C(Hₙ₋₁(P),M) → Hⁿ Hom(P,M) → Hom_C(Hₙ(P),M) → 0. The first arrow is the
+positive Yoneda-extension injection and the second is canonical cycle restriction followed by
+homology descent. Canonical lifts place all groups in universe max(v,w); no support bound on P
+is assumed.
 
 ## Canonical maps
 
@@ -49,11 +32,10 @@ The map \(\rho\) sends the class of a cocycle \(a:P_n\to M\) to the induced
 map \(H_n(P)\to M\): restrict \(a\) to \(Z_n(P)\) and descend modulo boundaries.
 If \(\pi_n:Z_n(P)\to H_n(P)\) and \(i_n:Z_n(P)\to P_n\) are the homology
 projection and cycle inclusion, its value \(\bar a\) satisfies
-\(\bar a\circ\pi_n=a\circ i_n\). In Lean the second map is exactly
-`AddCommGrpCat.uliftFunctor.{w, v}.map (homFixedCoefficientRestriction P M n)`.
+\(\bar a\circ\pi_n=a\circ i_n\). The second map is this canonical cycle restriction,
+transported to the common universe of the three abelian groups.
 
 The theorem `homFixedCoefficientUniversalCoefficientSequence_shortExact`
 proves that the first map is a monomorphism, the second map is an epimorphism,
-and the image of the first is the kernel of the second. The proof transports
-short exactness of the Ext/Hom sequence through
-`homFixedCoefficientUniversalCoefficientSequenceIso`.
+and the image of the first is the kernel of the second. The canonical coordinate isomorphism identifies this short complex with the
+Ext/Hom universal coefficient sequence.

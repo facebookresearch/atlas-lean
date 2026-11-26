@@ -1,6 +1,6 @@
 # Homology Sequence Map
 
-- [Map Homology Functor Iso inv δ](map-homology-functor-iso-inv.md)
-- [Map Homology Functor Iso inv comp δ naturality](map-homology-functor-iso-inv-comp-natura.md)
-- [Δ eq comp of iso](eq-comp-of-iso.md)
-- [Δ eq comp of iso inv](eq-comp-of-iso-inv.md)
+- [Inverse homology comparison preserves a mapped connecting morphism](map-homology-functor-iso-inv.md)
+- [Mapped homology comparison and sequence map give a connecting square](map-homology-functor-iso-inv-comp-natura.md)
+- [Connecting morphism under a short-exact-complex isomorphism](eq-comp-of-iso.md)
+- [Inverse conjugation formula for a connecting morphism](eq-comp-of-iso-inv.md)

@@ -1,3 +1,6 @@
-# Preserves Cokernel split Complement
+# Additive functors preserve split-complement cokernels
 
-The mapped split pair proves preservation of the original cokernel diagram.
+Let `F : C → D` be additive between preadditive categories, and
+let `i : Y → X`, `r : X → Y` satisfy `i ≫ r = 𝟙 Y`,
+`q = 𝟙 X-r ≫ i`. The functor `F` preserves the cokernel of `q`,
+using the mapped inclusion and retraction.

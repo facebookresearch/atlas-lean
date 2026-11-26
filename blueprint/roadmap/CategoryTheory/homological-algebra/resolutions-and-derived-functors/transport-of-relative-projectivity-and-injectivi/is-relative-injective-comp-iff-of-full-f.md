@@ -1,3 +1,5 @@
-# Is Relative Injective comp iff of full faithful
+# Full faithful postcomposition preserves relative injectivity
 
-The dual full faithful law reuses projectivity of the opposite functor.
+Let `D,C,B` be categories, `U : D → C`, `V : C → B` functors,
+and `P : D`. If `V` is full and faithful, `P` is relative-injective for
+`U ⋙ V` if and only if it is relative-injective for `U`.

@@ -1,3 +1,9 @@
-# Hom Uct Hom Kernel Inclusion mono
+# Injectivity of the full homology-Hom inclusion
 
-The inclusion is mono because each original homology quotient is epi.
+Let C be an abelian category with object universe u and morphism universe v. Let P be an
+integer-indexed chain complex. Put Bₚ=im(d_P : Pₚ₊₁ → Pₚ), Zₚ=Zₚ(P), and Hₚ=Hₚ(P), with boundary
+inclusion βₚ : Bₚ → Zₚ and quotient πₚ : Zₚ → Hₚ. Let Y : ℤ → C be a coefficient family and
+assume Ext_C is available in universe w. The full presentation has terms ∏ₚ Hom_C(Zₚ,Yₚ) → ∏ₚ
+Hom_C(Bₚ,Yₚ) → ∏ₚ Ext¹_C(Hₚ,Yₚ), in the common group universe max(v,w). The map ∏ₚ Hom(Hₚ,Yₚ) →
+∏ₚ Hom(Zₚ,Yₚ), tₚ ↦ tₚ ∘ πₚ, is a monomorphism because every homology quotient πₚ is an
+epimorphism.

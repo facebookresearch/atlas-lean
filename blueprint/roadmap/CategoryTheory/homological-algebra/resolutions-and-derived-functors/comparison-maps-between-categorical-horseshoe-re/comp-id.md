@@ -1,6 +1,7 @@
-# Comp id
+# Right identity law for horseshoe comparisons
 
-Right unit law for horseshoe comparisons: composing a comparison
-with the identity comparison, transported along `Category.comp_id` of
-the underlying maps of short complexes, is the comparison itself, for
-every choice of the endpoint transport equalities.
+In an abelian category `C`, take short exact sequences `S,S′`,
+projective endpoint resolutions `P₁,P₃` and `P₁′,P₃′`, and
+horseshoe resolutions `H,H′`. Composing a comparison
+`F` with the target identity comparison gives `F` after the
+canonical identifications of the resolved sequence and endpoint maps.

@@ -1,4 +1,4 @@
 # Raw cochains through cokernels and kernels
 
-- [Exists unique factor cokernel kernel](exists-unique-factor-cokernel-kernel.md)
-- [Reconstruction cokernel kernel vanish](reconstruction-cokernel-kernel-vanish.md)
+- [Unique quotient-kernel factorization of a homogeneous Hom cochain](exists-unique-factor-cokernel-kernel.md)
+- [Quotient-kernel reconstruction satisfies both annihilator conditions](reconstruction-cokernel-kernel-vanish.md)

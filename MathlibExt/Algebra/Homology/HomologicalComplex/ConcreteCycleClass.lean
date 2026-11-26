@@ -14,12 +14,12 @@ public import Mathlib.Algebra.Homology.ShortComplex.HomologicalComplex
 public import MathlibExt.Algebra.Homology.ZeroDifferentialHomology
 
 /-!
-# Classes of module cycles in homology
+# Classes of concrete module cycles
 
-An element with zero differential defines a cycle and hence a homology
-class through the canonical homology projection. The element formulas are
-natural in chain maps and compatible with the coordinates for complexes
-whose differentials vanish.
+For a complex of modules over a ring k, an element killed by the outgoing
+differential determines a cycle and hence a homology class. These classes
+are compatible with lifted cycle maps, complex morphisms, zero elements
+and scalar multiplication.
 -/
 
 @[expose] public section
@@ -34,18 +34,33 @@ namespace HomologicalComplex
 variable {k : Type u} [Ring k] {ι : Type w} {c : ComplexShape ι}
   {K L : HomologicalComplex (ModuleCat.{v} k) c}
 
-/-- The native homology class of an actual original cycle element. -/
+/--
+Let k be a ring, K a module complex of shape c on ι, and i a degree with homology. Write
+dᵢ:Kᵢ→K_next(i), jᵢ:Zᵢ→Kᵢ and πᵢ:Zᵢ→Hᵢ for the outgoing differential, cycle inclusion and
+homology quotient. For x∈Kᵢ with dᵢ(x)=0, let z∈Zᵢ be the cycle whose image under jᵢ is x. The
+concrete class of x is πᵢ(z)∈Hᵢ.
+-/
 def moduleCatCycleClass (K : HomologicalComplex (ModuleCat.{v} k) c) (i : ι)
     [K.HasHomology i] (x : K.X i) (hx : (K.sc i).g x = 0) : K.homology i :=
   (K.sc i).homologyπ ((K.sc i).cyclesMk x hx)
 
-/-- The native cycles constructor retains its actual module middle element. -/
+/--
+Let k be a ring, K a module complex of shape c on ι, and i a degree with homology. Write
+dᵢ:Kᵢ→K_next(i), jᵢ:Zᵢ→Kᵢ and πᵢ:Zᵢ→Hᵢ for the outgoing differential, cycle inclusion and
+homology quotient. For x∈Kᵢ with dᵢ(x)=0, the cycle constructor z=cyclesMk(x) satisfies
+jᵢ(z)=x.
+-/
 theorem moduleCat_iCycles_cyclesMk (K : HomologicalComplex (ModuleCat.{v} k) c) (i : ι)
     [K.HasHomology i] (x : K.X i) (hx : (K.sc i).g x = 0) :
     (K.sc i).iCycles.hom ((K.sc i).cyclesMk x hx) = x := by
   exact ShortComplex.i_cyclesMk (K.sc i) x hx
 
-/-- Native cycles are determined by their actual original middle element. -/
+/--
+Let k be a ring, K a module complex of shape c on ι, and i a degree with homology. Write
+dᵢ:Kᵢ→K_next(i), jᵢ:Zᵢ→Kᵢ and πᵢ:Zᵢ→Hᵢ for the outgoing differential, cycle inclusion and
+homology quotient. Let f:N→Kᵢ be a module map with f≫dᵢ=0. For x∈N, the cycle constructed from
+f(x) is the value at x of the unique lift N→Zᵢ of f.
+-/
 theorem moduleCat_cyclesMk_liftCycles (K : HomologicalComplex (ModuleCat.{v} k) c) (i : ι)
     [K.HasHomology i] {N : ModuleCat.{v} k} (f : N ⟶ K.X i)
     (hf : f ≫ (K.sc i).g = 0) (x : N) :
@@ -55,7 +70,12 @@ theorem moduleCat_cyclesMk_liftCycles (K : HomologicalComplex (ModuleCat.{v} k) 
   rw [moduleCat_iCycles_cyclesMk]
   exact (ConcreteCategory.congr_hom (ShortComplex.liftCycles_i (K.sc i) f hf) x).symm
 
-/-- The concrete class is the literal canonical lifted-cycle projection. -/
+/--
+Let k be a ring, K a module complex of shape c on ι, and i a degree with homology. Write
+dᵢ:Kᵢ→K_next(i), jᵢ:Zᵢ→Kᵢ and πᵢ:Zᵢ→Hᵢ for the outgoing differential, cycle inclusion and
+homology quotient. For a module map f:N→Kᵢ satisfying f≫dᵢ=0 and x∈N, the concrete class
+[f(x)] equals (liftCycles(f)≫πᵢ)(x).
+-/
 theorem moduleCatCycleClass_liftCycles (K : HomologicalComplex (ModuleCat.{v} k) c) (i : ι)
     [K.HasHomology i] {N : ModuleCat.{v} k} (f : N ⟶ K.X i)
     (hf : f ≫ (K.sc i).g = 0) (x : N) :
@@ -64,7 +84,11 @@ theorem moduleCatCycleClass_liftCycles (K : HomologicalComplex (ModuleCat.{v} k)
   rw [moduleCatCycleClass, moduleCat_cyclesMk_liftCycles]
   rfl
 
-/-- Every actual chain map transports the native cycle class of its literal original element. -/
+/--
+Let f:K→L be a morphism of module complexes of the same shape c over a ring k. Assume homology
+exists for both at degree i. For a cycle x∈Kᵢ, the induced map satisfies Hᵢ(f)([x])=[fᵢ(x)] in
+Hᵢ(L).
+-/
 theorem moduleCatCycleClass_naturality (f : K ⟶ L) (i : ι)
     [K.HasHomology i] [L.HasHomology i] (x : K.X i) (hx : (K.sc i).g x = 0) :
     homologyMap f i (moduleCatCycleClass K i x hx) =
@@ -95,7 +119,13 @@ theorem moduleCatCycleClass_naturality (f : K ⟶ L) (i : ι)
   rw [hc] at h
   exact h
 
-/-- The existing original zero-differential class is the actual native class of its original element. -/
+/--
+Let k be a ring, K a module complex of shape c on ι, and i a degree with homology. Write
+dᵢ:Kᵢ→K_next(i), jᵢ:Zᵢ→Kᵢ and πᵢ:Zᵢ→Hᵢ for the outgoing differential, cycle inclusion and
+homology quotient. Assume every differential of K vanishes. For any x∈Kᵢ, the canonical
+zero-differential class map sends x to the same concrete homology class obtained from its
+cycle constructor.
+-/
 theorem zeroDifferentialClassMap_eq_moduleCatCycleClass
     (K : HomologicalComplex (ModuleCat.{v} k) c) (i : ι) [K.HasHomology i]
     (h : ∀ j l, K.d j l = 0) (x : K.X i) :
@@ -112,7 +142,12 @@ theorem zeroDifferentialClassMap_eq_moduleCatCycleClass
     (K.sc i).homologyπ.hom ((K.sc i).cyclesMk x _)
   exact congrArg (K.sc i).homologyπ.hom hc.symm
 
-/-- The actual native class of the zero cycle is zero. -/
+/--
+Let k be a ring, K a module complex of shape c on ι, and i a degree with homology. Write
+dᵢ:Kᵢ→K_next(i), jᵢ:Zᵢ→Kᵢ and πᵢ:Zᵢ→Hᵢ for the outgoing differential, cycle inclusion and
+homology quotient. The zero element is a cycle, and its concrete homology class is zero:
+[0]=0∈Hᵢ.
+-/
 theorem moduleCatCycleClass_zero (K : HomologicalComplex (ModuleCat.{v} k) c) (i : ι)
     [K.HasHomology i] (h : (K.sc i).g (0 : K.X i) = 0) :
     moduleCatCycleClass K i 0 h = 0 := by
@@ -124,7 +159,12 @@ theorem moduleCatCycleClass_zero (K : HomologicalComplex (ModuleCat.{v} k) c) (i
   change (K.sc i).homologyπ.hom y = 0
   exact (congrArg (K.sc i).homologyπ.hom hy).trans (K.sc i).homologyπ.hom.map_zero
 
-/-- Scalar multiplication of an original cycle gives scalar multiplication of its actual native class. -/
+/--
+Let k be a ring, K a module complex of shape c on ι, and i a degree with homology. Write
+dᵢ:Kᵢ→K_next(i), jᵢ:Zᵢ→Kᵢ and πᵢ:Zᵢ→Hᵢ for the outgoing differential, cycle inclusion and
+homology quotient. For r∈k and a cycle x∈Kᵢ, r•x is a cycle and its class satisfies
+[r•x]=r•[x] in Hᵢ.
+-/
 theorem moduleCatCycleClass_smul (K : HomologicalComplex (ModuleCat.{v} k) c) (i : ι)
     [K.HasHomology i] (r : k) (x : K.X i) (hx : (K.sc i).g x = 0) :
     moduleCatCycleClass K i (r • x)

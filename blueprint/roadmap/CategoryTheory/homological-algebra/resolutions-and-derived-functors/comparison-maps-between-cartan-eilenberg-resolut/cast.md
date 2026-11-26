@@ -1,7 +1,6 @@
-# Cast
+# Transporting a Cartan–Eilenberg comparison along equality of base maps
 
-Transport a supplied comparison along an equality of the underlying
-chain maps.  The underlying chain maps of all four constituent families
-are unchanged, as are the induced term-complex and bicomplex maps.  The
-resolutions and chain maps are implicit, as for
-`ProjectiveResolution.Hom.cast`, so transport is used as `F.cast h`.
+Let C be abelian, L,L′ nonnegative chain complexes, P and Q chosen Cartan–Eilenberg resolutions
+of L and L′, and g : L → L′ a chain map. If g=g′, a comparison F over g transports to a
+comparison over g′. This identification leaves the underlying boundary, homology, cycle and term
+chain maps, and hence the induced term-complex and bicomplex maps, unchanged.

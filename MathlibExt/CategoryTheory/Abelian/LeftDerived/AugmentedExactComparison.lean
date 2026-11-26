@@ -13,13 +13,15 @@ public import MathlibExt.CategoryTheory.Abelian.Projective.AugmentedExactCompari
 public import MathlibExt.CategoryTheory.Abelian.LeftDerived.ResolutionComparison
 
 /-!
-# Canonical left-derived maps to exact augmented complexes
+# Left-derived maps into exact augmented complexes
 
-A projective source resolution maps into any augmented quasi-isomorphism. Its mapped homology
-gives a canonical map from left derivation, without projectivity or acyclicity of the target
-terms. The comparison is independent of its lift and of the source resolution. Source,
-target-augmentation, and additive-functor naturality are constructed from the augmentation
-equations and the existing comparisons.
+In an abelian category, a projective resolution of `X` maps into any
+augmentation quasi-isomorphism `Q → Y[0]` over any `f : X → Y`.
+For an additive functor into an abelian category, mapped homology gives
+`L_nF(X) → H_n(F(Q))`, independently of the chosen lift and source
+resolution. The target terms need neither projectivity nor `F`-acyclicity.
+These maps are natural in the source, augmented target complex, and
+additive coefficient functor, and preserve degree-zero augmentations.
 -/
 
 @[expose] public section
@@ -35,10 +37,10 @@ namespace CategoryTheory.ProjectiveResolution
 
 variable {C : Type u} [Category.{v} C] [Abelian C] {X Y : C}
 
-/--
-A chosen comparison to the exact augmented target. Choice precedes the additive functor and its
-homology, so the lift does not depend on that functor.
--/
+/-- In an abelian category `C`, let `P` be a projective resolution of
+`X`, `ρ : Q → Y[0]` a quasi-isomorphism of nonnegative chain
+complexes, and `f : X → Y`. There is a chain map `a : P → Q`
+satisfying `a ≫ ρ = π_P ≫ f[0]`. -/
 def comparisonToAugmentedExact (P : ProjectiveResolution X) (Q : ChainComplex C ℕ)
     (ρ : Q ⟶ (ChainComplex.single₀ C).obj Y) [QuasiIso ρ] (f : X ⟶ Y) :
     {a : P.complex ⟶ Q // a ≫ ρ = P.π ≫ (ChainComplex.single₀ C).map f} :=
@@ -53,10 +55,10 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
   {D : Type u'} [Category.{v'} D] [Abelian D]
   {X : C} {Q : ChainComplex C ℕ}
 
-/--
-The mapped augmentation descends through the original opcycles. This map requires only additivity,
-not exactness of its image.
--/
+/-- Let `C,D` be abelian, `F : C → D` additive, and
+`ρ : Q → X[0]` a chain augmentation. Its mapped degree-zero map
+descends to `opcycles₀(F(Q)) → F(X)`, without requiring exactness
+of the mapped complex. -/
 def mappedAugmentationDesc (F : C ⥤ D) [F.Additive]
     (ρ : Q ⟶ (single₀ C).obj X) :
     ((F.mapHomologicalComplex (ComplexShape.down ℕ)).obj Q).opcycles 0 ⟶ F.obj X :=
@@ -65,14 +67,20 @@ def mappedAugmentationDesc (F : C ⥤ D) [F.Additive]
     rw [← F.map_comp, ← ρ.comm 1 0, HomologicalComplex.single_obj_d,
       comp_zero, F.map_zero])
 
-/-- Its original quotient projection gives the mapped degree-zero augmentation. -/
+/-- Let `C,D` be abelian, `F : C → D` additive, and
+`ρ : Q → X[0]` a chain augmentation. The quotient
+`F(Q₀) → opcycles₀(F(Q))` followed by augmentation descent equals
+`F(ρ₀)`. -/
 theorem pOpcycles_comp_mappedAugmentationDesc (F : C ⥤ D) [F.Additive]
     (ρ : Q ⟶ (single₀ C).obj X) :
     ((F.mapHomologicalComplex (ComplexShape.down ℕ)).obj Q).pOpcycles 0 ≫
       mappedAugmentationDesc F ρ = F.map (ρ.f 0) :=
   HomologicalComplex.p_descOpcycles _ _ _ _ _
 
-/-- The degree-zero homology augmentation of the mapped complex. -/
+/-- Let `C,D` be abelian, `F : C → D` additive, and
+`ρ : Q → X[0]` a chain augmentation. The opcycles descent gives
+a map `H₀(F(Q)) → F(X)` through the degree-zero homology-to-opcycles
+identification. -/
 def mappedAugmentationHomologyZero (F : C ⥤ D) [F.Additive]
     (ρ : Q ⟶ (single₀ C).obj X) :
     ((F.mapHomologicalComplex (ComplexShape.down ℕ)).obj Q).homology 0 ⟶ F.obj X :=
@@ -86,7 +94,10 @@ namespace CategoryTheory.Functor
 variable {C : Type u} [Category.{v} C] [Abelian C] [HasProjectiveResolutions C]
   {D : Type u'} [Category.{v'} D] [Abelian D]
 
-/-- Compute the canonical derived-to-exact-complex map using a source resolution. -/
+/-- Let `C,D` be abelian, with projective resolutions in `C`,
+`F : C → D` additive, `ρ : Q → Y[0]` a quasi-isomorphism of
+nonnegative chain complexes, and `f : X → Y`. A projective resolution `P` of `X` and an augmented comparison
+`P → Q` give the map `L_nF(X) → H_n(F(Q))`. -/
 def leftDerivedObjToAugmentedHomWithResolution (F : C ⥤ D) [F.Additive]
     {X Y : C} (P : ProjectiveResolution X) (Q : ChainComplex C ℕ)
     (ρ : Q ⟶ (ChainComplex.single₀ C).obj Y) [QuasiIso ρ] (f : X ⟶ Y) (n : ℕ) :
@@ -97,7 +108,11 @@ def leftDerivedObjToAugmentedHomWithResolution (F : C ⥤ D) [F.Additive]
       HomologicalComplex.homologyFunctor D (ComplexShape.down ℕ) n).map
         (P.comparisonToAugmentedExact Q ρ f).val
 
-/-- Every augmentation-preserving comparison gives the same mapped homology arrow. -/
+/-- Let `C,D` be abelian, with projective resolutions in `C`,
+`F : C → D` additive, `ρ : Q → Y[0]` a quasi-isomorphism of
+nonnegative chain complexes, and `f : X → Y`. For any resolution `P` of `X` and chain map `a : P → Q`
+over `f`, the comparison is the canonical map to `H_n(F(P))`
+followed by `H_n(F(a))`. -/
 theorem leftDerivedObjToAugmentedHomWithResolution_eq (F : C ⥤ D) [F.Additive]
     {X Y : C} (P : ProjectiveResolution X) (Q : ChainComplex C ℕ)
     (ρ : Q ⟶ (ChainComplex.single₀ C).obj Y) [QuasiIso ρ] (f : X ⟶ Y)
@@ -114,7 +129,10 @@ theorem leftDerivedObjToAugmentedHomWithResolution_eq (F : C ⥤ D) [F.Additive]
   change H.map (P.comparisonToAugmentedExact Q ρ f).val = H.map a at h
   exact congrArg (fun g => (P.isoLeftDerivedObj F n).hom ≫ g) h
 
-/-- Changing the original source projective resolution does not change the canonical arrow. -/
+/-- Let `C,D` be abelian, with projective resolutions in `C`,
+`F : C → D` additive, `ρ : Q → Y[0]` a quasi-isomorphism of
+nonnegative chain complexes, and `f : X → Y`. Any two source projective resolutions of `X` give the same
+comparison `L_nF(X) → H_n(F(Q))`. -/
 theorem leftDerivedObjToAugmentedHomWithResolution_independent
     (F : C ⥤ D) [F.Additive] {X Y : C}
     (P P' : ProjectiveResolution X) (Q : ChainComplex C ℕ)
@@ -143,7 +161,10 @@ theorem leftDerivedObjToAugmentedHomWithResolution_independent
     (P'.isoLeftDerivedObj F n).hom ≫ H.map a
   rw [H.map_comp, ← Category.assoc, hI]
 
-/-- The derived-to-exact-complex map, defined with the canonical source resolution. -/
+/-- Let `C,D` be abelian, with projective resolutions in `C`,
+`F : C → D` additive, `ρ : Q → Y[0]` a quasi-isomorphism of
+nonnegative chain complexes, and `f : X → Y`. Using the chosen source resolution defines the canonical
+map `L_nF(X) → H_n(F(Q))`. -/
 def leftDerivedObjToAugmentedHom (F : C ⥤ D) [F.Additive]
     {X Y : C} (Q : ChainComplex C ℕ)
     (ρ : Q ⟶ (ChainComplex.single₀ C).obj Y) [QuasiIso ρ] (f : X ⟶ Y) (n : ℕ) :
@@ -151,7 +172,11 @@ def leftDerivedObjToAugmentedHom (F : C ⥤ D) [F.Additive]
       ((F.mapHomologicalComplex (ComplexShape.down ℕ)).obj Q).homology n :=
   leftDerivedObjToAugmentedHomWithResolution F (projectiveResolution X) Q ρ f n
 
-/-- Any source resolution and its comparison compute the canonical map. -/
+/-- Let `C,D` be abelian, with projective resolutions in `C`,
+`F : C → D` additive, `ρ : Q → Y[0]` a quasi-isomorphism of
+nonnegative chain complexes, and `f : X → Y`. Any projective resolution `P` of `X` and any lift
+`a : P → Q` over `f` compute the canonical comparison by
+`L_nF(X) → H_n(F(P)) → H_n(F(Q))`. -/
 theorem leftDerivedObjToAugmentedHom_eq (F : C ⥤ D) [F.Additive]
     {X Y : C} (P : ProjectiveResolution X) (Q : ChainComplex C ℕ)
     (ρ : Q ⟶ (ChainComplex.single₀ C).obj Y) [QuasiIso ρ] (f : X ⟶ Y)
@@ -164,7 +189,11 @@ theorem leftDerivedObjToAugmentedHom_eq (F : C ⥤ D) [F.Additive]
       (projectiveResolution X) P Q ρ f n).trans
     (leftDerivedObjToAugmentedHomWithResolution_eq F P Q ρ f a ha n)
 
-/-- Maps of exact augmentations give target-complex naturality. -/
+/-- Let `C,D` be abelian, with projective resolutions in `C`,
+`F : C → D` additive, `ρ : Q → Y[0]` a quasi-isomorphism of
+nonnegative chain complexes, and `f : X → Y`. If `a : Q → Q′` lies over `g : Y → Z`, with exact
+augmentation `Q′ → Z[0]`, then the comparison followed by
+`H_n(F(a))` equals the comparison for `Q′` over `f ≫ g`. -/
 theorem leftDerivedObjToAugmentedHom_naturality_target (F : C ⥤ D) [F.Additive]
     {X Y Z : C} {Q Q' : ChainComplex C ℕ}
     (ρ : Q ⟶ (ChainComplex.single₀ C).obj Y)
@@ -190,7 +219,10 @@ theorem leftDerivedObjToAugmentedHom_naturality_target (F : C ⥤ D) [F.Additive
   exact (Category.assoc _ _ _).trans
     (congrArg (fun z => (P.isoLeftDerivedObj F n).hom ≫ z) (H.map_comp r a).symm)
 
-/-- The canonical map is natural in the original resolved object and its arrow. -/
+/-- Let `C,D` be abelian, with projective resolutions in `C`,
+`F : C → D` additive, and `ρ : Q → Z[0]` a quasi-isomorphism.
+For `f : X → Y`, `g : Y → Z`, the map `L_nF(f)` followed by the
+comparison for `g` equals the comparison for `f ≫ g`. -/
 theorem leftDerivedObjToAugmentedHom_naturality_source (F : C ⥤ D) [F.Additive]
     {X Y Z : C} (Q : ChainComplex C ℕ)
     (ρ : Q ⟶ (ChainComplex.single₀ C).obj Z) [QuasiIso ρ]
@@ -216,7 +248,10 @@ theorem leftDerivedObjToAugmentedHom_naturality_source (F : C ⥤ D) [F.Additive
     (P.isoLeftDerivedObj F n).hom ≫ H.map (r ≫ a)
   rw [← Category.assoc, hI, H.map_comp, Category.assoc]
 
-/-- A projective target recovers the derived map and resolution iso. -/
+/-- Let `C,D` be abelian, with projective resolutions in `C`,
+`F : C → D` additive, `Q` a projective resolution of `Y`, and
+`f : X → Y`. The canonical comparison to `H_n(F(Q))` is
+`L_nF(f)` followed by the canonical resolution isomorphism for `Q`. -/
 theorem leftDerivedObjToAugmentedHom_projective_target (F : C ⥤ D) [F.Additive]
     {X Y : C} (Q : ProjectiveResolution Y) (f : X ⟶ Y) (n : ℕ) :
     leftDerivedObjToAugmentedHom F Q.complex Q.π f n =
@@ -240,7 +275,10 @@ theorem leftDerivedObjToAugmentedHom_projective_target (F : C ⥤ D) [F.Additive
     (P.comparisonToAugmentedExact Q.complex Q.π f).property n]
   exact (ProjectiveResolution.isoLeftDerivedObj_hom_naturality f P Q a ha₀ F n).symm
 
-/-- Transformations of additive functors commute with the same canonical comparison. -/
+/-- Let `C,D` be abelian, with projective resolutions in `C`,
+`F,G : C → D` additive, `τ : F → G`, `ρ : Q → Y[0]` a
+quasi-isomorphism, and `f : X → Y`. The comparisons commute with
+`L_nτ_X` and the homology map of the termwise transformation `τ_Q`. -/
 theorem leftDerivedObjToAugmentedHom_naturality_functor
     {F G : C ⥤ D} [F.Additive] [G.Additive] (τ : F ⟶ G)
     {X Y : C} (Q : ChainComplex C ℕ)
@@ -272,7 +310,11 @@ theorem leftDerivedObjToAugmentedHom_naturality_functor
     ((P.isoLeftDerivedObj F n).hom ≫ HF.map a) ≫ H.map TQ
   rw [← Category.assoc, hI, Category.assoc, ← hSquare, ← Category.assoc]
 
-/-- The comparison carries the degree-zero augmentation, with no right exactness of F. -/
+/-- Let `C,D` be abelian, with projective resolutions in `C`,
+`F : C → D` additive, `ρ : Q → Y[0]` a quasi-isomorphism of
+nonnegative chain complexes, and `f : X → Y`. In degree zero, the comparison followed by the homology
+augmentation `H₀(F(Q)) → F(Y)` equals the canonical augmentation
+`L₀F(X) → F(X)` followed by `F(f)`. -/
 theorem leftDerivedObjToAugmentedHom_zero_augmentation (F : C ⥤ D) [F.Additive]
     {X Y : C} (Q : ChainComplex C ℕ)
     (ρ : Q ⟶ (ChainComplex.single₀ C).obj Y) [QuasiIso ρ] (f : X ⟶ Y) :

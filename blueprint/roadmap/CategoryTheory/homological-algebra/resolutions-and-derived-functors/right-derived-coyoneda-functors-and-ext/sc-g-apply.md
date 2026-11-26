@@ -1,5 +1,6 @@
-# Sc g apply
+# Outgoing Coyoneda differential is postcomposition
 
-The differential out of degree `n` acts by postcomposition. The right-hand
-side is stated with plain type ascriptions (which are transparent to
-rewriting) rather than `show ... from ...` (which is not).
+Let `C` be abelian with hom-set universe `v`, `X : C`, and
+`I` an injective resolution of `Y`. The outgoing differential in degree `n` of the mapped
+Coyoneda short complex takes `f : X → I^n` to
+`f ≫ d_I(n,next(n))`.

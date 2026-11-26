@@ -1,3 +1,6 @@
-# Right Derived Comp Iso Of Preserves Homology inv naturality target
+# Inverse postcomposition comparison is natural in the target functor
 
-The inverse comparison is natural for the same noninvertible transformation.
+Let `C`, `D`, `E` be abelian, with injective resolutions in `C`,
+`F : C → D` additive and `U,V : D → E` additive and preserving homology.
+For `τ : U → V`, the inverse comparisons satisfy
+`R^n(F ⋙ τ) ≫ e_V⁻¹ = e_U⁻¹ ≫ τ_(R^nF)`.

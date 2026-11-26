@@ -2,9 +2,9 @@
 
 ## Complex Shape
 
-- [Up Nat Total Fiber Set Finite](up-nat-total-fiber-set-finite.md)
+- [Finiteness of a nonnegative total-degree antidiagonal](up-nat-total-fiber-set-finite.md)
 
 ## Homological Complex₂
 
-- [Has Total Up Nat](has-total-up-nat.md)
-- [Has Total Up'Nat](has-total-up-nat-2.md)
+- [Existence of nonnegative cochain totals from finite coproducts](has-total-up-nat.md)
+- [Existence of totals for unit-step nonnegative cochain bicomplexes](has-total-up-nat-2.md)

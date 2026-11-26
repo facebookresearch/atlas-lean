@@ -1,5 +1,6 @@
-# ΙTotal comp single Map Total Iso Up Nat hom single
+# Single-complex identification on a cochain total summand
 
-Type-stable form of
-` ιTotal_comp_singleMapTotalIsoUpNat_hom`, retaining the canonical
-single-complex identification instead of reducing it to an identity.
+Let C be preadditive with a zero object and finite coproducts. Let L be a nonnegative cochain
+complex, B its componentwise degree-zero bicomplex and e : Tot(B) ≅ L. For j ∈ ℕ, ι_{j,0} ≫
+e.hom_j is the canonical identification from the degree-zero term of the single complex on L_j
+to L_j.

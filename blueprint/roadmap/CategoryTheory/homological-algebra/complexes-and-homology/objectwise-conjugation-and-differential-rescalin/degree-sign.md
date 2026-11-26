@@ -1,3 +1,4 @@
-# Degree Sign
+# Alternating sign of a nonnegative chain degree
 
-The scalar sign in an original natural-number degree.
+For a nonnegative chain degree `n`, the integer degree sign
+is `ε_n=(-1)^n`.

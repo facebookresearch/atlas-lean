@@ -13,11 +13,14 @@ public import MathlibExt.CategoryTheory.Abelian.Ext.ProjectiveLinearComparison
 public import MathlibExt.CategoryTheory.Abelian.Ext.DerivedLinearCoyoneda
 
 /-!
-# Right-derived linear Hom and the existing first-variable Ext functor
+# Derived linear Hom and the projective Ext construction
 
-The comparison passes through the derived-category Ext module. Both comparison factors have
-cocycle representatives and proved naturality. The two Ext implementations are connected by a
-constructed natural isomorphism.
+For a commutative ring `R` and an `R`-linear abelian category `C`
+with enough projectives, injective resolutions and Ext in its hom-set
+universe, right derivation of `Hom_C(X,-)` as an `R`-module-valued
+functor is naturally isomorphic to the projective first-variable
+Ext construction. The comparison factors through native linear Ext,
+with the same cocycle representatives and coefficient maps.
 -/
 
 @[expose] public section
@@ -34,17 +37,22 @@ variable (R : Type r) [CommRing R]
 variable {C : Type u} [Category.{v} C] [Abelian C] [Linear R C]
 variable [EnoughProjectives C] [HasInjectiveResolutions C] [HasExt.{v} C]
 
-/-- Right-derived linear Hom computes the existing first-variable Ext functor. -/
+/-- Let `R` be a commutative ring and `C` an `R`-linear abelian
+category with enough projectives, hom-set universe `v`, and Ext
+in universe `v`. Suppose `C` also has injective resolutions. For `X : C`, the module-valued functor obtained by right
+ deriving `Hom_C(X,-)` in degree `n` is naturally isomorphic to the
+projective first-variable Ext functor at `X`. -/
 def rightDerivedLinearCoyonedaIsoFirstVariableExt (X : C) (n : ℕ) :
     ((linearCoyoneda R C).obj (op X)).rightDerived n ≅
       (_root_.Ext R C n).obj (op X) :=
   rightDerivedLinearCoyonedaIsoExtFunctorObj R X n ≪≫
     (firstVariableLinearExtIso R X n).symm
 
-/--
-The bridge agrees with the Ext comparison after applying the constructed comparison for the old
-first-variable model.
--/
+/-- Let `R` be a commutative ring and `C` an `R`-linear abelian
+category with enough projectives, hom-set universe `v`, and Ext
+in universe `v`. Suppose `C` also has injective resolutions. The forward comparison to projective first-variable Ext,
+followed by its comparison to native linear Ext, equals the canonical
+right-derived linear-Hom-to-Ext comparison at every `X,Y,n`. -/
 @[reassoc]
 theorem rightDerivedLinearCoyonedaIsoFirstVariableExt_hom_comp
     (X Y : C) (n : ℕ) :

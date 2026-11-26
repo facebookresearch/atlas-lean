@@ -15,13 +15,12 @@ public import Mathlib.CategoryTheory.Adjunction.Basic
 public import Mathlib.Algebra.Homology.HomologicalComplexLimits
 
 /-!
-# Restriction and extension by zero
+# Restriction left adjoint to extension by zero
 
-For an embedding whose image is closed under incoming differentials,
-restriction is left adjoint to extension by zero. The unit is the brutal
-cotruncation projection; its components are the canonical projection on
-supported degrees and the map to zero elsewhere. These projections are
-epimorphisms, and the category and index universes remain independent.
+For an incoming-closed embedding of complex shapes, every map from a
+restriction satisfies the boundary condition needed to lift into an
+extension by zero. Restriction is therefore left adjoint to extension.
+The unit is the canonical projection onto the stupid truncation.
 -/
 
 @[expose] public section
@@ -38,14 +37,25 @@ variable {I : Type i} {J : Type j} {c : ComplexShape I} {d : ComplexShape J}
   {C : Type u} [Category.{v} C] [HasZeroMorphisms C] [HasZeroObject C]
 
 omit [HasZeroObject C] in
-/-- Actual incoming-closure eliminates the native boundary obstruction. -/
+/--
+Let e:c→d be a relation-reflecting shape embedding whose image is closed under incoming
+differentials (IsTruncLE). In a category C with zero morphisms, let K be a d-complex and L a
+c-complex. Every f:K.restriction e→L satisfies the lift condition: for each incoming boundary
+j and every edge i'→e(j), K.d i' (e(j)) ≫ f.f j = 0. Incoming closure eliminates these
+boundary obstructions.
+-/
 theorem hasLift_of_isTruncLE {K : HomologicalComplex C d} {L : HomologicalComplex C c}
     (f : K.restriction e ⟶ L) : e.HasLift f := by
   intro q hq p hpq
   obtain ⟨r, hr⟩ := e.mem_prev hpq
   exact (hq.notMem hpq r hr).elim
 
-/-- Native restriction and extension maps give the genuine unrestricted Hom equivalence. -/
+/--
+Let e:c→d be a relation-reflecting shape embedding whose image is closed under incoming
+differentials (IsTruncLE). Let C have zero morphisms and a zero object. For K of shape d and L
+of shape c, maps K.restriction e→L correspond bijectively to maps K→L.extend e. The forward
+correspondence lifts by zero outside the image, and the inverse restricts the map.
+-/
 def restrictionExtendHomEquiv (K : HomologicalComplex C d) (L : HomologicalComplex C c) :
     (K.restriction e ⟶ L) ≃ (K ⟶ L.extend e) where
   toFun f := e.liftExtend f (e.hasLift_of_isTruncLE f)
@@ -63,7 +73,12 @@ theorem restrictionExtendHomEquiv_symm_apply {K : HomologicalComplex C d}
     {L : HomologicalComplex C c} (f : K ⟶ L.extend e) :
     (e.restrictionExtendHomEquiv K L).symm f = e.homRestrict f := rfl
 
-/-- The original range condition earns a genuine categorical adjunction. -/
+/--
+Let e:c→d be a relation-reflecting shape embedding whose image is closed under incoming
+differentials (IsTruncLE). Let C have zero morphisms and a zero object. Restriction
+e*:Complexes(d,C)→Complexes(c,C) is left adjoint to extension by zero
+e_*:Complexes(c,C)→Complexes(d,C), with Hom(e*K,L)≅Hom(K,e_*L).
+-/
 def restrictionExtendAdjunction : e.restrictionFunctor C ⊣ e.extendFunctor C :=
   Adjunction.mkOfHomEquiv
     { homEquiv := fun K L => e.restrictionExtendHomEquiv K L
@@ -87,7 +102,11 @@ variable {I : Type i} {J : Type j} {c : ComplexShape I} {d : ComplexShape J}
   {C : Type u} [Category.{v} C] [HasZeroMorphisms C] [HasZeroObject C]
   (K : HomologicalComplex C d) (e : c.Embedding d) [e.IsTruncLE]
 
-/-- The projection is the genuine unit of the earned restriction/extension adjunction. -/
+/--
+Let e:c→d be a relation-reflecting shape embedding whose image is closed under incoming
+differentials (IsTruncLE). Let C have zero morphisms and a zero object. For a d-complex K, the
+canonical projection K→K.stupidTrunc e is exactly the component at K of the unit of e*⊣e_*.
+-/
 theorem πStupidTrunc_eq_unit :
     K.πStupidTrunc e = (e.restrictionExtendAdjunction (C := C)).unit.app K := by
   change K.πStupidTrunc e =
@@ -102,14 +121,24 @@ theorem πStupidTrunc_eq_unit :
     simp only [Category.id_comp]
   · exact (K.isZero_stupidTrunc_X e q (by simpa using hq)).eq_of_tgt _ _
 
-/-- On the retained original range, the projection is the inverse actual coordinate. -/
+/--
+Let e:c→d be a relation-reflecting shape embedding whose image is closed under incoming
+differentials (IsTruncLE). Let C have zero morphisms and a zero object. For a d-complex K and
+q=e(p) in the image, the projection K→K.stupidTrunc e has component θ_q.inv, where θ_q
+identifies the retained truncated term with K_q.
+-/
 theorem πStupidTrunc_f_eq {p : I} {q : J} (h : e.f p = q) :
     (K.πStupidTrunc e).f q = (K.stupidTruncXIso e h).inv := by
   subst q
   rw [HomologicalComplex.πStupidTrunc_f, HomologicalComplex.πStupidTruncf_eq,
     HomologicalComplex.stupidTruncXIso_rfl]
 
-/-- Off the original range, the projection has the actual zero target. -/
+/--
+Let e:c→d be a relation-reflecting shape embedding whose image is closed under incoming
+differentials (IsTruncLE). Let C have zero morphisms and a zero object. For a d-complex K and
+q outside the image of e, the component of K→K.stupidTrunc e is the zero morphism to the zero
+truncated term.
+-/
 theorem πStupidTrunc_f_zero (q : J) (h : ∀ p, e.f p ≠ q) :
     (K.πStupidTrunc e).f q = 0 :=
   (K.isZero_stupidTrunc_X e q h).eq_of_tgt _ _
@@ -120,7 +149,12 @@ instance πStupidTrunc_epi : Epi (K.πStupidTrunc e) := inferInstance
 
 variable {K}
 
-/-- Agreement after the actual projection determines a map out of the cotruncation. -/
+/--
+Let e:c→d be a relation-reflecting shape embedding whose image is closed under incoming
+differentials (IsTruncLE). Let C have zero morphisms and a zero object. For a d-complex K and
+morphisms f,g:K.stupidTrunc e→X, equality after precomposition with the canonical projection
+K→K.stupidTrunc e implies f=g.
+-/
 theorem πStupidTrunc_hom_ext {X : HomologicalComplex C d}
     {f g : K.stupidTrunc e ⟶ X} (h : K.πStupidTrunc e ≫ f = K.πStupidTrunc e ≫ g) :
     f = g := (cancel_epi (K.πStupidTrunc e)).1 h

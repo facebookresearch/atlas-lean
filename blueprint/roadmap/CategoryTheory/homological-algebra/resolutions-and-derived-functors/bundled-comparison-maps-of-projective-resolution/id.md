@@ -1,4 +1,5 @@
-# Id
+# Identity projective-resolution morphism
 
-The identity morphism of a projective resolution, over the identity
-of the resolved object.
+For a projective resolution `P` of `Z` in a category `C` with
+a zero object and zero morphisms, the identity chain map is an
+augmentation-compatible resolution morphism over `𝟙 Z`.

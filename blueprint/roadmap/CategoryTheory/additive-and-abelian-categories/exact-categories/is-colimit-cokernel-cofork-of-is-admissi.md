@@ -1,3 +1,5 @@
-# Is Colimit cokernel Cofork of is Admissible Exact
+# Cokernel universal property of an admissible pair
 
-Cokernel universal property of an admissible exact sequence (chosen witness).
+In an additive category `C` with a chosen Quillen exact structure, an
+admissible exact short complex `S` determines a cokernel universal
+property for `S.g` against `S.f`, with the given zero composite.

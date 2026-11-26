@@ -1,4 +1,6 @@
-# Left Derived Comp Iso Of Preserves Homology hom naturality postcomposition
+# Forward left-derived postcomposition comparison is natural in the target
 
-The postcomposition comparison commutes with a transformation of the postcomposing
-homology-preserving functor.
+Let `C,D,E` be abelian, with projective resolutions in `C`,
+`F : C → D` additive, and `U,V : D → E` additive and preserving
+homology. For `τ : U → V`, the forward comparisons satisfy
+`τ_(L_nF) ≫ e_V = e_U ≫ L_n(F ⋙ τ)`.

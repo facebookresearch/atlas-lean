@@ -1,5 +1,7 @@
-# Bicomplex Homotopy
+# The bicomplex homotopy of compatible comparison data
 
-The induced homotopy between the bicomplex maps of two supplied
-comparisons, in the resolution direction: the bicomplex is regarded as
-a chain complex of chain complexes indexed first by resolution degree.
+Let C be abelian, L,L′ chain complexes indexed by ℕ, P and Q chosen Cartan–Eilenberg
+resolutions, and g : L → L′. Let F,G be comparisons of P and Q over the same map g. Let Θ be a
+comparison homotopy, consisting of compatible boundary, homology, cycle and term resolution
+homotopies. These component maps give a homotopy F.bicomplexHom ≃ G.bicomplexHom in resolution
+degree, regarding each bicomplex as a chain complex of original-degree chain complexes.

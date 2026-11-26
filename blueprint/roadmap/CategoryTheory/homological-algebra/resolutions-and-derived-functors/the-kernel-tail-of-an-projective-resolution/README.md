@@ -1,5 +1,5 @@
 # The kernel tail of an projective resolution
 
-- [Normalization Kernel Tail](normalization-kernel-tail.md)
-- [Normalization Kernel Tail XIso](normalization-kernel-tail-xiso.md)
-- [Normalization Kernel Tail π f zero](normalization-kernel-tail-f-zero.md)
+- [Projective kernel-tail resolution of an augmentation](normalization-kernel-tail.md)
+- [Kernel-tail terms are the next original resolution terms](normalization-kernel-tail-xiso.md)
+- [Kernel-tail augmentation is the lift of the first differential](normalization-kernel-tail-f-zero.md)

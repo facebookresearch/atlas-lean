@@ -2,20 +2,20 @@
 
 ## Projective Resolution
 
-- [Homology Comparison Iso](homology-comparison-iso.md)
-- [Homology Comparison Iso naturality](homology-comparison-iso-naturality.md)
-- [Iso Left Derived Obj inv naturality functor](iso-left-derived-obj-inv-naturality-func.md)
-- [Iso Left Derived Obj hom naturality functor](iso-left-derived-obj-hom-naturality-func.md)
+- [Homology comparison between projective resolutions](homology-comparison-iso.md)
+- [Resolution-choice comparisons commute with lifted maps](homology-comparison-iso-naturality.md)
+- [Inverse resolution comparison is natural in the functor](iso-left-derived-obj-inv-naturality-func.md)
+- [Forward resolution comparison is natural in the functor](iso-left-derived-obj-hom-naturality-func.md)
 
 ## Functor
 
-- [Left Derived Comp Iso Of Preserves Homology](left-derived-comp-iso-of-preserves-homol.md)
-- [Left Derived Precomp Iso With Resolution](left-derived-precomp-iso-with-resolution.md)
-- [Left Derived Precomp Iso With Resolution naturality](left-derived-precomp-iso-with-resolution-2.md)
-- [Left Derived Precomp Iso With Resolution eq](left-derived-precomp-iso-with-resolution-3.md)
-- [Left Derived Precomp Iso](left-derived-precomp-iso.md)
-- [Left Derived Precomp Iso app](left-derived-precomp-iso-app.md)
-- [Left Derived Precomp Iso hom app](left-derived-precomp-iso-hom-app.md)
-- [Left Derived Precomp Iso inv app](left-derived-precomp-iso-inv-app.md)
-- [Left Derived Precomp Iso hom naturality functor](left-derived-precomp-iso-hom-naturality.md)
-- [Left Derived Precomp Iso inv naturality functor](left-derived-precomp-iso-inv-naturality.md)
+- [Left derivation commutes with homology-preserving postcomposition](left-derived-comp-iso-of-preserves-homol.md)
+- [Precomposition comparison from a supplied projective resolution](left-derived-precomp-iso-with-resolution.md)
+- [Resolution-based precomposition comparison is natural in the object](left-derived-precomp-iso-with-resolution-2.md)
+- [Precomposition comparison is independent of the resolution](left-derived-precomp-iso-with-resolution-3.md)
+- [Left derivation commutes with projective-preserving precomposition](left-derived-precomp-iso.md)
+- [Precomposition components can use any projective resolution](left-derived-precomp-iso-app.md)
+- [Forward precomposition comparison through mapped homology](left-derived-precomp-iso-hom-app.md)
+- [Inverse precomposition comparison through mapped homology](left-derived-precomp-iso-inv-app.md)
+- [Forward precomposition comparison is natural in the coefficient functor](left-derived-precomp-iso-hom-naturality.md)
+- [Inverse precomposition comparison is natural in the coefficient functor](left-derived-precomp-iso-inv-naturality.md)

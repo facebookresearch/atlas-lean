@@ -1,3 +1,5 @@
-# Of comp
+# Composite-relative projectivity implies the intermediate lifting property
 
-Every original U-section remains split after V, so the composite property implies the U-property.
+Let `D,C,B` be categories, `U : D → C`, `V : C → B` functors,
+and `P : D`. Relative projectivity of `P` for `U ⋙ V` implies relative
+projectivity for `U`, since functors preserve split epimorphisms.

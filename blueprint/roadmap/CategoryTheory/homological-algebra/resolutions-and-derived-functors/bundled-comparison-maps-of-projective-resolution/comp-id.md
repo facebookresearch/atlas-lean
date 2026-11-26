@@ -1,5 +1,5 @@
-# Comp id
+# Right identity law for projective-resolution maps
 
-Right unit law for morphisms of projective resolutions: composing a
-morphism with the identity morphism, transported along
-`Category.comp_id`, is the morphism itself.
+For projective-resolution maps in a category `C` with a zero
+object and zero morphisms, composing a map `φ` with the identity
+of its target resolution gives `φ`, after identifying `f ≫ 𝟙` with `f`.

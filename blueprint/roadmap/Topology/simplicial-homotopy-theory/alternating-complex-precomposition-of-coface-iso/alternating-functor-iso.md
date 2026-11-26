@@ -1,3 +1,5 @@
-# Alternating Functor Iso
+# Alternating-complex isomorphism for an additive functor
 
-The additive alternating-complex comparison has literal identity components.
+Let C,D be preadditive, F : C → D additive, and A a cosimplicial C-object. The identity degree
+components define the canonical isomorphism β_F,A : Alt(F(A)) ≅ F(Alt(A)) of nonnegative cochain
+complexes.

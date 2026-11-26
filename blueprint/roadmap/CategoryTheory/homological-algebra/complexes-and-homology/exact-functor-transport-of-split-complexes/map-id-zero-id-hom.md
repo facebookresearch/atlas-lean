@@ -1,3 +1,4 @@
-# Map Id Zero id hom
+# Identity functor preserves contraction components
 
-The actual contraction components are unchanged by the identity functor.
+Let K be a c-complex in a preadditive category C and H:1_K∼0 a contraction. Mapping H by the
+identity functor leaves every component unchanged: (H.mapIdZero(𝟭C)).hom i j=H.hom i j.

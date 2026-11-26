@@ -43,6 +43,7 @@ public import Mathlib.RingTheory.Polynomial.Pochhammer
 public import Mathlib.RingTheory.PowerSeries.Log
 public import MathlibExt.Combinatorics.Enumerative.SignedStirlingFirst
 public import MathlibExt.NumberTheory.Bernoulli.BernoulliSecondKindStirling
+public import MathlibExt.NumberTheory.Bernoulli.BernoulliStirlingSum
 public import MathlibExt.NumberTheory.Bernoulli.WeightedStirlingSum
 
 set_option autoImplicit false
@@ -127,19 +128,6 @@ theorem_wanted sum_stirlingSecond_signed_div (n k : ℕ)
         (Nat.stirlingSecond (n - 1) (i - 1) : ℚ) *
           (MetaMathlibExt.signedStirlingFirst i k : ℚ) / i =
       (1 / (n : ℚ)) * (Nat.choose n k : ℚ) * bernoulli (n - k)
-
-/-- **Bernoulli numbers via Stirling numbers of the second kind.** Let $B_m$ be the Bernoulli
-numbers (with $B_1 = -1/2$) and $S(m, j)$ the Stirling numbers of the second kind. For every
-natural number $n$,
-$$B_n = \sum_{i=0}^{n} (-1)^i \, \frac{i!}{i+1} \, S(n, i).$$
-
-Source: Bakir Farhi, "Formulas Involving Bernoulli and
-Stirling Numbers of Both Kinds", Corollary 9. -/
-theorem_wanted bernoulli_eq_sum_stirlingSecond (n : ℕ) :
-    bernoulli n =
-      ∑ i ∈ Finset.range (n + 1), (-1 : ℚ) ^ i *
-        ((i.factorial : ℚ) / (i + 1)) *
-        (Nat.stirlingSecond n i : ℚ)
 
 /-- **Unshifted Stirling convolution formula for Bernoulli numbers.** For natural numbers $k$
 and $n$ with $1 \le k \le n$, write $S(m,j)$ for the Stirling numbers of the second kind,

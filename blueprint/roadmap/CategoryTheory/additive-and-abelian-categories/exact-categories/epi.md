@@ -1,3 +1,5 @@
-# Epi
+# Admissible quotient maps are epimorphisms
 
-An admissible epimorphism is an epimorphism
+In an additive category `C` with a chosen Quillen exact structure, every
+admissible epimorphism `p : Y → Z` is an epimorphism in the
+underlying category `C`.

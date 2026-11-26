@@ -1,3 +1,5 @@
-# Original Cycle Class Map
+# Canonical homology class map for Hom-complex cocycles
 
-The original Hom-complex cycle class, through its homology data.
+Let C be abelian, K,L integer cochain complexes and q ∈ ℤ. The additive map
+originalCycleClassMap sends a degree-q cocycle z in HomComplex(K,L) to its canonical class in
+H^q(HomComplex(K,L)), using the cycle inclusion and cycle-to-homology projection.

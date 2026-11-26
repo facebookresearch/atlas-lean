@@ -1,3 +1,5 @@
-# Finite Resolution Homotopy Functor Naturality target obj as
+# The target complex represented by finite-resolution functor naturality
 
-The represented target complex is the original target-family complex at the image object.
+Let A be a category, B abelian, Q preadditive and j : Q → B additive full faithful with
+projective resolving images. For any functor H : A → B and a resolution family S, the target
+homotopy functor at X represents S(H(X)).complex.
