@@ -17,6 +17,7 @@
 - [TWO-PROCESSOR OPEN-SHOP MEAN FLOW TIME as a decision problem](two-processor-open-shop-mean-flow-time-d.md)
 - [TWO-PROCESSOR OPEN-SHOP MEAN FLOW TIME is NP-complete](two-processor-open-shop-mean-flow-time-n.md)
 - [Instances of UNIT-TIME OPEN SHOP WITH SYMMETRIC TRANSPORTATION DELAYS](unit-open-shop-symmetric-transportation.md)
+- [Transportation delay between two machines in UNIT-TIME OPEN SHOP WITH SYMMETRIC TRANSPORTATION DELAYS](delay.md)
 - [Well-formed instances of UNIT-TIME OPEN SHOP WITH SYMMETRIC TRANSPORTATION DELAYS](well-formed-5.md)
 - [Feasible instances of UNIT-TIME OPEN SHOP WITH SYMMETRIC TRANSPORTATION DELAYS](unit-open-shop-symmetric-transportation-2.md)
 - [UNIT-TIME OPEN SHOP WITH SYMMETRIC TRANSPORTATION DELAYS as a decision problem](unit-open-shop-symmetric-transportation-3.md)
