@@ -789,6 +789,121 @@ public theorem boolFunClassCount_varPerm_unate_le (n : ℕ) :
     obtain ⟨a, hm⟩ := exists_monotone_flip hu
     exact ⟨a, hm, by rwa [weight_flip]⟩
 
+namespace card_unate_boolFun_relations
+
+open Function
+open boolFunClassCount_varPerm_unate_le (flip_update exists_monotone_flip)
+open boolFunClassCount_varPerm_unate_le renaming
+  flip → flipInputs, flip_flip → flipInputs_involutive
+
+variable {n : ℕ}
+
+private theorem unate_flip_of_monotone {g : (Fin n → Bool) → Bool} (hg : Monotone g)
+    (a : Fin n → Bool) : IsUnateBoolFun (g ∘ flipInputs a) := by
+  intro i
+  cases ha : a i
+  · left
+    intro x hx
+    have hy : flipInputs a x i = false := by simp [flipInputs, ha, hx]
+    simp only [comp_apply, flip_update, ha, Bool.xor_false]
+    apply hg
+    calc
+      flipInputs a x = update (flipInputs a x) i false := by rw [← hy, update_eq_self]
+      _ ≤ update (flipInputs a x) i true := update_le_update_iff'.2 (Bool.false_le true)
+  · right
+    intro x hx
+    have hy : flipInputs a x i = true := by simp [flipInputs, ha, hx]
+    simp only [comp_apply, flip_update, ha, Bool.xor_true, Bool.not_true]
+    apply hg
+    calc
+      update (flipInputs a x) i false ≤ update (flipInputs a x) i true :=
+        update_le_update_iff'.2 (Bool.false_le true)
+      _ = flipInputs a x := by rw [← hy, update_eq_self]
+
+/-- Input flips of monotone functions cover the unate functions. When every input matters,
+the mask and the original monotone function are uniquely determined. -/
+private theorem count_flips (P : ((Fin n → Bool) → Bool) → Prop)
+    (hP : ∀ f a, P f → P (f ∘ flipInputs a)) :
+    let unate := Nat.card {f // IsUnateBoolFun (n := n) f ∧ P f}
+    let monotone := 2 ^ n * Nat.card {f // Monotone f ∧ P f}
+    unate ≤ monotone ∧ ((∀ f, P f → IsNondegenerateBoolFun f) → unate = monotone) := by
+  dsimp only
+  let toUnate : (Fin n → Bool) × {f // Monotone f ∧ P f} → {f // IsUnateBoolFun f ∧ P f} :=
+    fun ⟨a, g⟩ => ⟨g.val ∘ flipInputs a, unate_flip_of_monotone g.prop.1 a, hP _ a g.prop.2⟩
+  have hsurj : Surjective toUnate := by
+    intro f
+    obtain ⟨a, ha⟩ := exists_monotone_flip f.prop.1
+    refine ⟨⟨a, ⟨f.val ∘ flipInputs a, ha, hP _ a f.prop.2⟩⟩, Subtype.ext ?_⟩
+    funext x
+    exact congrArg f.val (flipInputs_involutive a x)
+  have hcard : Nat.card ((Fin n → Bool) × {f // Monotone f ∧ P f}) =
+      2 ^ n * Nat.card {f // Monotone f ∧ P f} := by
+    simp [Nat.card_prod, Nat.card_eq_fintype_card]
+  have hle := Nat.card_le_card_of_surjective toUnate hsurj
+  rw [hcard] at hle
+  refine ⟨hle, fun hnd => le_antisymm hle ?_⟩
+  rw [← hcard]
+  refine Nat.card_le_card_of_injective toUnate ?_
+  rintro ⟨a, g⟩ ⟨b, h⟩ heq
+  have hcomp : g.val ∘ flipInputs a = h.val ∘ flipInputs b := congrArg Subtype.val heq
+  -- Equal flipped functions relate the monotone functions by the XOR of the two masks.
+  have hmask (x : Fin n → Bool) :
+      h.val x = xor (g.val (fun i => xor (x i) (xor (b i) (a i)))) false := by
+    rw [Bool.xor_false]
+    calc
+      h.val x = h.val (flipInputs b (flipInputs b x)) :=
+        congrArg h.val (flipInputs_involutive b x).symm
+      _ = g.val (flipInputs a (flipInputs b x)) := (congrFun hcomp (flipInputs b x)).symm
+      _ = _ := congrArg g.val (funext fun i => Bool.xor_assoc (x i) (b i) (a i))
+  have hab : a = b := by
+    funext i
+    have hi := isBoolFunNNEquiv_monotone_iff.mask_eq_output
+      g.prop.1 h.prop.1 hmask i (hnd _ g.prop.2 i)
+    exact Bool.xor_right_inj.mp (hi.trans (Bool.xor_self (b i)).symm)
+  subst b
+  exact congrArg (Prod.mk a)
+    (Subtype.ext ((flipInputs_involutive a).surjective.injective_comp_right hcomp))
+
+end card_unate_boolFun_relations
+
+open card_unate_boolFun_relations in
+open boolFunClassCount_varPerm_unate_le (nondegenerate_flip weight_flip) in
+open boolFunClassCount_varPerm_unate_le renaming flip → flipInputs in
+/-- **Unate versus monotone Boolean function counts.** For $n \ge 0$, write $U_n$ and $M_n$ for
+the numbers of unate and of monotone $n$-variable Boolean functions, $BU_n$ and $BM_n$ for the
+numbers of those that are moreover balanced, that is, twice their weight equals $2^n$, and write
+the prefix $\mathrm{nd}\text{-}$ for the same counts restricted to non-degenerate functions.
+Then $\mathrm{nd}\text{-}U_n = 2^n \, \mathrm{nd}\text{-}M_n$,
+$\mathrm{nd}\text{-}BU_n = 2^n \, \mathrm{nd}\text{-}BM_n$, $U_n \le 2^n M_n$ and
+$BU_n \le 2^n BM_n$.
+
+Source: Biswas and Sarkar, *Counting Unate and Monotone Boolean Functions
+under Restrictions of Balancedness and Non-Degeneracy*, Journal of Integer
+Sequences 28 (2025), Article 25.3.4, Proposition 3 (`jis-2025-25.3.4-prop-3`). -/
+public theorem card_unate_boolFun_relations (n : ℕ) :
+    Nat.card {f : (Fin n → Bool) → Bool // IsNondegenerateBoolFun f ∧ IsUnateBoolFun f}
+        = 2 ^ n * Nat.card {f : (Fin n → Bool) → Bool //
+            IsNondegenerateBoolFun f ∧ Monotone f} ∧
+      Nat.card {f : (Fin n → Bool) → Bool //
+          IsNondegenerateBoolFun f ∧ IsUnateBoolFun f ∧ 2 * boolFunWeight f = 2 ^ n}
+        = 2 ^ n * Nat.card {f : (Fin n → Bool) → Bool //
+            IsNondegenerateBoolFun f ∧ Monotone f ∧ 2 * boolFunWeight f = 2 ^ n} ∧
+      Nat.card {f : (Fin n → Bool) → Bool // IsUnateBoolFun f}
+        ≤ 2 ^ n * Nat.card {f : (Fin n → Bool) → Bool // Monotone f} ∧
+      Nat.card {f : (Fin n → Bool) → Bool // IsUnateBoolFun f ∧ 2 * boolFunWeight f = 2 ^ n}
+        ≤ 2 ^ n * Nat.card {f : (Fin n → Bool) → Bool //
+            Monotone f ∧ 2 * boolFunWeight f = 2 ^ n} := by
+  let balanced (f : (Fin n → Bool) → Bool) : Prop := 2 * boolFunWeight f = 2 ^ n
+  have hbalanced (f : (Fin n → Bool) → Bool) (a : Fin n → Bool) (hf : balanced f) :
+      balanced (f ∘ flipInputs a) := by simpa only [balanced, weight_flip] using hf
+  refine ⟨?_, ?_, ?_, (count_flips balanced hbalanced).1⟩
+  · simpa only [and_comm] using
+      (count_flips IsNondegenerateBoolFun (fun _ a h => nondegenerate_flip h a)).2 fun _ h => h
+  · simpa only [and_left_comm] using
+      (count_flips (fun f => IsNondegenerateBoolFun f ∧ balanced f)
+        (fun f a h => ⟨nondegenerate_flip h.1 a, hbalanced f a h.2⟩)).2 fun _ h => h.1
+  · simpa only [and_true] using (count_flips (fun _ => True) (fun _ _ h => h)).1
+
 /-- **Weight symmetry of monotone Boolean functions.** For all $n \ge 0$ and all $w$ with
 $0 \le w \le 2^n$, the number of monotone $n$-variable Boolean functions of weight $w$ equals
 the number of monotone $n$-variable Boolean functions of weight $2^n - w$.
