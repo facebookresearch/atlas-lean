@@ -19,6 +19,15 @@ import Mathlib.FieldTheory.Finite.Basic
 The repinteger obtained by repeating the base-$b$ digits of $k$ has the same residues as $k$
 modulo the covering primes along an arithmetic progression of repetition counts. Once the
 repinteger exceeds all covering primes, each exponent has a proper divisor from the covering.
+
+## References
+
+* Chris Bispels, Matthew Cohen, Joshua Harrington, Joshua Lowrance, Kaelyn Pontes,
+  Leif Schaumann, and Tony W. H. Wong, *On Sierpiński and Riesel Repdigits and Repintegers*,
+  INTEGERS 26 (2026), [Article A12](https://math.colgate.edu/~integers/aa12/aa12.pdf), pp. 1–13.
+  The residue-preservation argument adapts the proof of Theorem 3.3 (p. 5), which the authors
+  identify as the model for Theorem 3.4. The Riesel divisibility step uses Section 2,
+  Equation (3) (p. 4).
 -/
 
 namespace MetaMathlibExt
