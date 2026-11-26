@@ -5,3 +5,6 @@
 - [Connected strongly regular graphs with μ = 0 are complete](srg-connected-mu-zero-complete.md)
 - [Components of a strongly regular graph with μ = 0 are cliques](srg-reachable-eq-or-adj-mu-zero.md)
 - [Non-principal eigenvalues of a connected non-complete strongly regular graph](srg-nonprincipal-eigenvalue-quadratic.md)
+- [Rank-three graph](is-rank-three.md)
+- [Kourovka Problem 10.28 (Makhnëv)](lambda-one-strongly-regular-is-rank-thre.md)
+- [Resolution of Kourovka Problem 10.28](lambda-one-strongly-regular-is-rank-thre-2.md)

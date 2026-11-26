@@ -1,0 +1,3 @@
+# Lazy-walk quadratic-form bound rho
+
+Let $G$ be a simple graph on a finite vertex set $V$, with the lazy walk $P(x, y)$ equal to $1/2$ if $x = y$, to $1/(2\deg x)$ if $y$ is adjacent to $x$, and to $0$ otherwise. For a real $\rho$, the condition holds when for every $f : V \to \mathbb{R}$ with $\sum_x \deg(x) f(x) = 0$, $\sum_x \deg(x) f(x) \sum_y P(x, y) f(y) \le \rho \sum_x \deg(x) f(x)^2$. For a connected graph on at least two vertices this says that the second-largest eigenvalue of $P$ is at most $\rho$. In general the two differ: for $K_2$ plus an isolated vertex, $P$ has eigenvalues $1, 1/2, 0$, but every degree-centred $f$ takes opposite values on the edge, so both sides vanish and the condition holds already for $\rho = 0$.
