@@ -1,0 +1,3 @@
+# Decoding a Gaussian-rational encoding
+
+A rational encoding is a triple $(s, p, q)$ of a Boolean sign $s$ and natural numbers $p, q$, standing for $-p/q$ if $s$ is true and $p/q$ otherwise (with value $0$ when $q = 0$). A Gaussian-rational encoding is a pair of rational encodings, standing for the complex number whose real and imaginary parts they encode. The encoding of a rational $r$ is (true if $r < 0$, the absolute value of its reduced numerator, its reduced denominator); the encoding of $a + bi$ with $a, b$ rational is the pair of the encodings of $a$ and $b$. For all rationals $a$ and $b$, the complex number encoded by the encoding of $a + bi$ is $a + bi$.

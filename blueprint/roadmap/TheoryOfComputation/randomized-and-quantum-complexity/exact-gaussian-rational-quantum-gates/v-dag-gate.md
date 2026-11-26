@@ -1,0 +1,7 @@
+# The adjoint square root of X
+
+A rational encoding is a triple $(s, p, q)$ of a Boolean sign $s$ and natural numbers $p, q$, standing for $-p/q$ if $s$ is true and $p/q$ otherwise (with value $0$ when $q = 0$). A Gaussian-rational encoding is a pair of rational encodings, standing for the complex number whose real and imaginary parts they encode. The encoding of a rational $r$ is (true if $r < 0$, the absolute value of its reduced numerator, its reduced denominator); the encoding of $a + bi$ with $a, b$ rational is the pair of the encodings of $a$ and $b$. The gate $V^\dagger$ is the $2 \times 2$ matrix of encodings
+
+$$\begin{pmatrix} \tfrac12 - \tfrac12 i & \tfrac12 + \tfrac12 i \\ \tfrac12 + \tfrac12 i & \tfrac12 - \tfrac12 i \end{pmatrix},$$
+
+the conjugate transpose of $V$.
