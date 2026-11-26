@@ -20,4 +20,5 @@ Follow Physlib's conventions:
 Keep imports narrow and put tests and diagnostics in `PhyslibExtTest`. Every
 module must be free of `sorry`, `sorryAx`, `admit`, custom axioms, and
 `native_decide`, and may use only Lean's standard logical axioms. It may import
-`MathlibExt` and `CSLibExt`, but not `WantedExt` or any test library.
+`MathlibExt` and `CSLibExt`, but not `Domains`, `WantedExt`, or any test
+library.

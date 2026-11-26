@@ -18,6 +18,15 @@ compiled artifacts using the normal
 ATLAS build setup before optimizing library modules. No dependency versions are
 changed by these scripts.
 
+Build every dependency package before optimizing. Each Lake preparation watches
+the module paths it may add under every captured `LEAN_PATH` entry, including
+entries that do not exist yet, so a preparation that creates a dependency's
+artifact root is rejected, and the output directory refuses later preparations.
+Build the root package's own modules up to date as well: a preparation may
+rebuild an existing artifact of a requested module only while nothing has pinned
+it, so a stale root artifact that an earlier batch pinned blocks the run when a
+later batch's Lake rebuilds it.
+
 Run from the repository root. The inventory includes tracked root-package Lean
 sources and read-only helpers under `scripts/`. It excludes `Atlas/`, `v1/`, and
 Lean examples under `docs/`: those are not part of the root Lake build.
@@ -67,6 +76,89 @@ closures, and a later ordinary build can rebuild them again. Use a separate
 worktree for optimization runs if preserving a developer's warm cache matters.
 Compatible modules share snapshot
 processes; failed groups fall back to singleton verification.
+
+A later batch's Lake preparation may add artifacts to root-package namespaces
+an earlier batch pinned. Around each preparation (batched or per row):
+
+- Before it, every cached inventory is checked again; every root-package
+  artifact pinned so far in this process must keep the device, inode, ctime,
+  mtime, size, mode and bytes it had when first pinned; and the root artifact
+  root's top-level namespaces and module files must be those the last accepted
+  preparation left.
+- Also before it, whatever is cached, every artifact path of each module the
+  build may add is probed under every searched root: each captured `LEAN_PATH`
+  entry as written and resolved (missing entries included), the root artifact
+  root and the compiler library.
+- During it, on Linux, the root namespaces and the artifact root's ancestors
+  are watched for moves and attribute changes, and the nearest existing
+  directory of each probed path outside the root artifact root is watched for
+  that name.
+- After it, each root namespace keeps its directory node and resolved path,
+  pinned artifacts are checked again, compiler and dependency inventories must
+  be unchanged, probed paths outside the root artifact root keep their state,
+  and Lake may remove nothing. It may only add artifacts of new modules among
+  the requested targets and their frozen local dependencies, in existing or new
+  namespaces or at the top level. An addition's module must have had no
+  artifact under any searched root, and the addition may not be visible as
+  another module under a nested or enclosing searched root. Every existing root
+  artifact is stated before the build (no hashing); one whose identity changed,
+  even with the same bytes, was rewritten. The state of a symlink, here and for
+  probed paths, includes the file it resolves to, so a write through the link
+  or a change of where it leads counts. Only artifacts of the requested
+  targets and their frozen local dependencies may be rewritten, never a pinned
+  one, and a rewritten artifact may not be visible as another module. A root
+  namespace that resolves outside the root artifact root is checked like the
+  compiler and dependency libraries, by its directories, not file by file.
+
+The first rejection blocks that batch, and every later preparation is refused,
+in this invocation and in later `--resume` invocations of the same output
+directory; nothing taken during the rejected attempt is trusted. The rejection
+and the top-level listing after the last accepted preparation are recorded
+under `lake-custody/`, and accepted additions and rewrites under `lake-growth/`,
+in the output directory. Accepted additions and rewrites are under custody from
+their preparation on, like pinned artifacts. A root artifact present before the
+run that nothing pinned or rewrote is trusted when first used, as at the start
+of a run. A resumed invocation starts from that listing, and
+before any child process runs, whatever its journal holds, every root-package
+artifact an earlier invocation recorded under `lake-growth/` or pinned in a
+compilation input manifest under `inputs/` must still have its saved bytes; the
+identities read then are this invocation's custody. On resume, a
+saved row's inputs may differ from the current tree only by recorded additions
+with their recorded bytes, for modules none of its inputs provided and no searched root
+outside the root artifact root provides now. Custody and
+growth records are trusted run state: removing or changing them invalidates
+these record-based checks. Recover from a rejection with a new output directory.
+
+Each preparation writes `lake-custody/pending.json` before its Lake process
+starts and removes it only after its listing and growth records, or its
+rejection record, are saved. If the optimizer stops in between, for example on
+SIGTERM or SIGKILL, the marker remains: a resume stops before running any child
+process, and the output directory runs no further preparation. This covers the
+optimizer process being terminated; it relies on atomic file replacement and
+makes no claim about host crashes, power loss, or filesystems without atomic
+rename. A killed optimizer can leave its Lake process group running. Make sure
+that group has exited before using the worktree for another run; a new output
+directory does not check artifacts that an interrupted preparation wrote.
+`--retry-blocked` does not relax custody: if Lake rebuilds a stale or partial
+artifact that an earlier row pinned, the retry is rejected too.
+
+Each resume parses every saved compilation input manifest to recover root
+receipts, then hashes each distinct root artifact. Startup cost therefore grows
+with accumulated manifest data. Repeated short `--max-batches` invocations pay
+that cost each time; avoid unnecessary resumes in long campaigns.
+
+These checks compare identities and listings at the boundaries of each Lake
+window, plus the Linux watch during it. They do not see a new file name created
+and removed inside one window under the root artifact root, or for a probed
+module on platforms without inotify; unpinned sidecars such as `.hash` and
+`.trace`; changes by a privileged clock or on filesystems without stable inode
+or ctime; a namespace, or a symlinked searched root, moved and restored inside
+a window where only endpoints are compared; module search paths other than the
+captured `LEAN_PATH` and the compiler library; or identity changes between
+processes (a resume compares bytes, so a same-byte replacement between
+invocations is accepted). Another output directory's run on the same worktree
+can cause resume to fail closed. Use a new output directory after such a
+rejection.
 
 During validation, a phase retains compilation-input derivations and the
 filesystem facts used to derive them. The facts are reread at native-command
@@ -164,7 +256,10 @@ runs inventory generation and optimization, requires a populated verified result
 and a patch removing unused imports, checks that the source stays unchanged, and
 resumes the saved run. It then checks that a resume with other thread settings
 is refused, and repeats the optimization and resume with `--lean-threads 3
---lake-jobs 2`. It performs real compilation and declaration comparison;
+--lake-jobs 2`. A second project runs three batches whose preparations build
+into a namespace the first batch pinned, requires each to verify, resumes, and
+checks that a resume refuses an artifact no preparation recorded. It performs
+real compilation and declaration comparison;
 it does not download packages or rewrite any ATLAS library.
 
 To also exercise the legacy ImportGraph API, first build the pinned dependency
