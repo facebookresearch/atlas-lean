@@ -4,7 +4,7 @@ Consider a synchronous system whose links may lose any message, with a set of pr
 
 ## Idea
 
-Two generals who can only communicate by messengers that may be captured can never be sure of attacking together. If a message of the last round is lost, only its receiver notices, and it has no later message to pass the news on; by agreement, the receiver decides as everyone else does, and everyone else decides as before. Deleting the messages one round at a time, from the last back to the first, then changing the inputs one batch at a time, links the execution in which all inputs are $a$ and nothing is lost, where validity forces the decision $a$, to the one in which all inputs are $b$, where it forces $b$: no protocol can decide both ways.
+Two generals who can only communicate by messengers that may be captured can never be sure of attacking together. If a message of the last round is lost, only its receiver notices, and it has no later message to pass the news on; by agreement, the receiver decides as everyone else does, and everyone else decides as before. Deleting the messages of each round, from the last back to the first, in two batches (first those to every process but one, then those to that one), then changing the inputs in two batches in the same way, links the execution in which all inputs are $a$ and nothing is lost, where validity forces the decision $a$, to the one in which all inputs are $b$, where it forces $b$: no protocol can decide both ways.
 
 ## Statements
 
