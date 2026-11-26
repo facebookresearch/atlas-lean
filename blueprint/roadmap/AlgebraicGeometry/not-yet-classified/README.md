@@ -1199,3 +1199,4 @@ Topics added since this subject's fields were last revised.
 - [Faltings Height](faltings-height/README.md)
 - [Gaudron Remond Isogeny](gaudron-remond-isogeny/README.md)
 - [Javanpeykar Belyi](javanpeykar-belyi/README.md)
+- [Modular Model Conductor](modular-model-conductor/README.md)

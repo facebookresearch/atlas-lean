@@ -43,40 +43,37 @@ public import MathlibExt.NumberTheory.ModularForms.CuspFormConj
 
 @[expose] public section
 
-open UpperHalfPlane
-
 namespace WeierstrassCurve
 
-theorem apOfModel_def (W : WeierstrassCurve ℤ) (p : ℕ) [Fact p.Prime] :
-    W.apOfModel p = (W.reductionMod p).toAffine.frobeniusTrace := rfl
-
-/-- An integral Weierstrass curve is a modular model of level `N` when
-some normalized eigenform of weight `2` on `Γ₀ N` has `q`-coefficients
-agreeing with its Frobenius traces at good primes outside `N`. -/
+/-- **Modular model of level $N$.** An integral Weierstrass curve is a
+modular model of level `N` when some normalized eigenform of weight `2`
+on `Γ₀ N` has `q`-coefficients agreeing with its Frobenius traces at good
+primes outside `N`. -/
 def IsModularModelOfLevel (W : WeierstrassCurve ℤ) (N : ℕ) : Prop :=
   ∃ f : CuspForm (CongruenceSubgroup.Gamma0 N) 2, f.IsNormalizedEigenform ∧
     ∀ p : ℕ, ∀ hp : p.Prime, W.IsGoodPrimeFor p → ¬ p ∣ N →
       ModularFormClass.qCoeff f p = (W.apOfModel p (hp := ⟨hp⟩) : ℂ)
 
-/-- An integral Weierstrass curve is a modular model of its exact
-conductor level when it is a modular model of some squarefree level
-`N` whose prime divisors are exactly the primes dividing the
-discriminant. -/
+/-- **Modular model of exact conductor level.** An integral Weierstrass
+curve is a modular model of its exact conductor level when it is a
+modular model of some squarefree level `N` whose prime divisors are
+exactly the primes dividing the discriminant. -/
 def IsModularModelOfExactConductorLevel (W : WeierstrassCurve ℤ) : Prop :=
   ∃ N : ℕ, 0 < N ∧ Squarefree N ∧
     (∀ q : ℕ, q.Prime → (q ∣ N ↔ (q : ℤ) ∣ W.Δ)) ∧
     W.IsModularModelOfLevel N
 
-/-- An integral Weierstrass curve is a modular model of conductor level
-when it is a modular model of some positive level `N` divisible by
-every prime dividing the discriminant. -/
+/-- **Modular model of conductor level.** An integral Weierstrass curve
+is a modular model of conductor level when it is a modular model of some
+positive level `N` divisible by every prime dividing the discriminant. -/
 def IsModularModelOfConductorLevel (W : WeierstrassCurve ℤ) : Prop :=
   ∃ N : ℕ, 0 < N ∧ W.IsModularModelOfLevel N ∧
     ∀ ℓ : ℕ, ℓ.Prime → (ℓ : ℤ) ∣ W.Δ → ℓ ∣ N
 
-/-- A modular model of exact conductor level is a modular model of
-conductor level: the same level works, and a prime dividing the
-discriminant divides the level by the exactness equivalence. -/
+/-- **Exact conductor level gives conductor level.** A modular model of
+exact conductor level is a modular model of conductor level: the same
+level works, and a prime dividing the discriminant divides the level by
+the exactness equivalence. -/
 theorem IsModularModelOfExactConductorLevel.isModularModelOfConductorLevel
     {W : WeierstrassCurve ℤ}
     (h : W.IsModularModelOfExactConductorLevel) :

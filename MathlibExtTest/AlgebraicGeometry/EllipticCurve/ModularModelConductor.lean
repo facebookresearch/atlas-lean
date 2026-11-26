@@ -38,13 +38,13 @@ example {W : WeierstrassCurve ℤ}
 -- `ZMod p`, taken from the shared point-count API.
 example (W : WeierstrassCurve ℤ) (p : ℕ) [Fact p.Prime] :
     W.apOfModel p = (W.reductionMod p).toAffine.frobeniusTrace :=
-  W.apOfModel_def p
+  rfl
 
 -- The point count behind `apOfModel` includes the point at infinity:
 -- `#W(𝔽_p) = p + 1 - a_p`.
 example (W : WeierstrassCurve ℤ) (p : ℕ) [Fact p.Prime] :
     (Nat.card (W.reductionMod p).toAffine.Point : ℤ) = p + 1 - W.apOfModel p := by
-  rw [W.apOfModel_def,
+  rw [show W.apOfModel p = (W.reductionMod p).toAffine.frobeniusTrace from rfl,
     (W.reductionMod p).toAffine.natCard_point_eq_natCard_add_one_sub_frobeniusTrace,
     Nat.card_zmod]
 
