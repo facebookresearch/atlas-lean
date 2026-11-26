@@ -9,30 +9,25 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.Combinatorics.Additive.UnionTwoAPNotMSTD
-import Mathlib.Tactic.NormNum
 
 namespace MathlibExtTest.Combinatorics.Additive.UnionTwoAPNotMSTD
 
 open MetaMathlibExt
 
-example : ¬ IsMSTDSet (realIntervalSet 3 ∪ realAPSet (1 / 2) 2 3) := by
-  apply not_isMSTDSet_intervalAP_overlap_large_diff 3 2 3 (1 / 2)
-    (by decide) (by decide) (by decide) _ (by norm_num) (by norm_num)
-  rintro ⟨k, hk⟩
-  have heq : 2 * k = 1 := by
-    exact_mod_cast (show 2 * (k : ℝ) = 1 by rw [hk]; norm_num)
-  omega
+-- Smallest case: `I_3 ∪ {4, 6, 8}`.
+example : ¬ IsMSTDSet (realIntervalSet 3 ∪ realAPSet ((4 : ℕ) : ℝ) 2 ((2 : ℕ) : ℝ)) :=
+  not_isMSTDSet_intervalAP_nat_of_le_two_mul_sub_two 3 2 2 4
+    (by decide) (by decide) (by decide) (by decide) (by decide)
 
-example (m d : ℕ) (hm : 2 ≤ m) (hd : 3 ≤ d) :
-    ¬ IsMSTDSet (realIntervalSet 3 ∪ realAPSet (1 / 3) m (d : ℝ)) := by
-  apply not_isMSTDSet_intervalAP_overlap_large_diff 3 m d (1 / 3)
-    (by decide) hm hd _ (by norm_num) (by norm_num)
-  rintro ⟨k, hk⟩
-  have heq : 3 * k = 1 := by
-    exact_mod_cast (show 3 * (k : ℝ) = 1 by rw [hk]; norm_num)
-  omega
+-- Larger gap and step: `I_5 ∪ {8, 12, 16, 20}`.
+example : ¬ IsMSTDSet (realIntervalSet 5 ∪ realAPSet ((8 : ℕ) : ℝ) 3 ((4 : ℕ) : ℝ)) :=
+  not_isMSTDSet_intervalAP_nat_of_le_two_mul_sub_two 5 3 4 8
+    (by decide) (by decide) (by decide) (by decide) (by decide)
 
-#check @MetaMathlibExt.not_isMSTDSet_intervalAP_overlap_large_diff
-#print axioms MetaMathlibExt.not_isMSTDSet_intervalAP_overlap_large_diff
+-- Start strictly inside the window `[6, 8]`, with disjoint cross-sum blocks:
+-- `I_5 ∪ {7, 12, 17}`.
+example : ¬ IsMSTDSet (realIntervalSet 5 ∪ realAPSet ((7 : ℕ) : ℝ) 2 ((5 : ℕ) : ℝ)) :=
+  not_isMSTDSet_intervalAP_nat_of_le_two_mul_sub_two 5 2 5 7
+    (by decide) (by decide) (by decide) (by decide) (by decide)
 
 end MathlibExtTest.Combinatorics.Additive.UnionTwoAPNotMSTD
