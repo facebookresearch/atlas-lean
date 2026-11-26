@@ -10706,7 +10706,6 @@
   "MathlibExt/Combinatorics/Additive/ThickBhSets": {"to": "Combinatorics/additive-combinatorics/sidon-sets-difference-sets", "title": "Constructions of thick B_h-sets"},
   "MathlibExt/Combinatorics/Additive/ThreeAPFreeComplementProgression": {"to": "Combinatorics/additive-combinatorics/progressions-dense-sets", "title": "Progression-free sets meeting every infinite progression"},
   "MathlibExt/Combinatorics/Additive/UnionTwoAPNotMSTD": {"to": "Combinatorics/additive-combinatorics/more-sums-than-differences", "title": "Unions of two progressions are not sum-dominant"},
-  "MathlibExt/Combinatorics/Additive/UnionTwoAPNotMSTDNotIsMSTDSetIntervalAPNatOfTwoMulSubOneLe": {"to": "Combinatorics/additive-combinatorics/more-sums-than-differences", "title": "Unions of two progressions are not sum-dominant"},
   "MathlibExt/Combinatorics/Additive/UnionTwoAPNotMSTDNotIsMSTDSetIntervalAPOverlapHalf": {"to": "Combinatorics/additive-combinatorics/more-sums-than-differences", "title": "Unions of two progressions are not sum-dominant"},
   "MathlibExt/Combinatorics/Additive/UnionTwoAPNotMSTDNotIsMSTDSetIntervalAPOverlapLargeDiff": {"to": "Combinatorics/additive-combinatorics/more-sums-than-differences", "title": "Unions of two progressions are not sum-dominant"},
   "MathlibExt/Combinatorics/Additive/UpperDensitySumsetPartition": {"to": "Combinatorics/additive-combinatorics/additive-bases", "title": "Splitting sets with dense sumsets"},
