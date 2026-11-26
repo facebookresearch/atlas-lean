@@ -1,12 +1,12 @@
 # The Solovay–Kitaev theorem
 
 Let $\mathcal{G}$ be an [instruction set](instruction-set.md) for $SU(d)$. There is a constant $c$ such that for every
-$U \in SU(d)$ and every $\varepsilon > 0$ (with $\varepsilon < 1/2$, say) there is a finite sequence $g_1, \dots, g_m$ of
+$U \in SU(d)$ and every $\varepsilon > 0$ there is a finite sequence $g_1, \dots, g_m$ of
 elements of $\mathcal{G}$ with
 
 $$m = O\big(\log^{c} (1/\varepsilon)\big) \qquad\text{and}\qquad \| U - g_1 \cdots g_m \| < \varepsilon ,$$
 
-the implied constant depending on $\mathcal{G}$ only. The Dawson–Nielsen proof gives $c = \ln 5 / \ln (3/2) \approx 3.97$,
+the implied constant depending on $\mathcal{G}$ only (the bound concerns $\varepsilon \to 0$). The Dawson–Nielsen proof gives $c = \ln 5 / \ln (3/2) \approx 3.97$,
 and their algorithm finds the sequence classically in time $O(\log^{\ln 3/\ln(3/2)} (1/\varepsilon)) \approx O(\log^{2.71}(1/\varepsilon))$.
 Combined with a universal gate set closed under inverses, a circuit of $N$ arbitrary gates is approximated to accuracy
 $\varepsilon$ by $O(N \log^{c}(N/\varepsilon))$ gates from the set.

@@ -17,10 +17,6 @@ $T|\psi\rangle$, the second is $e^{i\pi/4} T^{*}|\psi\rangle$, both of norm $1$,
 - [Unitary evolution and elementary gates](../../quantum-foundations/unitary-evolution-and-elementary-gates.md)
 - [Partial measurement and the principle of deferred measurement](../../quantum-foundations/partial-measurement-and-the-principle-of-deferred-measuremen.md)
 
-## Proof depends on
-
-- [The $T$ gate is in the third level of the Clifford hierarchy](../clifford-group/t-gate-is-in-the-third-level-of-the-clifford-hierarchy.md)
-
 ## Sources
 
 - P. O. Boykin, T. Mor, M. Pulver, V. Roychowdhury and F. Vatan, *A new universal and fault-tolerant quantum basis*, Inform. Process. Lett. 75 (2000), 101–107, arXiv:quant-ph/9906054, Section 4, equation (15) and Figure 1.
