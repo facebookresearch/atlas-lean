@@ -11971,6 +11971,7 @@
   "MathlibExt/GameTheory/BoutonNim": {"to": "GameTheory/combinatorial-games", "title": "Nim"},
   "MathlibExt/GameTheory/Calibration": {"to": "GameTheory/noncooperative-games", "title": "Adaptive heuristics"},
   "MathlibExt/GameTheory/ChocolateBarNSProperty": {"to": "GameTheory/combinatorial-games", "title": "Chocolate bar games"},
+  "MathlibExt/GameTheory/ChocolateBarNSPropertyExistsOfLtXor": {"to": "GameTheory/combinatorial-games", "title": "Chocolate bar games"},
   "MathlibExt/GameTheory/CorrelatedEquilibrium": {"to": "GameTheory/noncooperative-games", "title": "Correlated equilibria"},
   "MathlibExt/GameTheory/EuclidGameCalkinWilf": {"to": "GameTheory/combinatorial-games", "title": "Game of Euclid"},
   "MathlibExt/GameTheory/ExactSlowNimRemoteness": {"to": "GameTheory/combinatorial-games", "title": "Slow Nim"},
