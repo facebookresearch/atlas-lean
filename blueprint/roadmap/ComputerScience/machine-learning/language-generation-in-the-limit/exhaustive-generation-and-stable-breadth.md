@@ -21,4 +21,4 @@ For (i), choose two nested languages $L_1 \supsetneq L_2$ with infinite differen
 ## Sources
 
 - M. Charikar, C. Pabbaraju, "Exploring Facets of Language Generation in the Limit", COLT (2025), arXiv:2411.15364.
-- A. Kalavasis, A. Mehrotra, G. Velegkas, "On Characterizations for Language Generation: Interplay of Hallucinations, Breadth, and Stability", arXiv:2412.18530 (2024).
+- A. Kalavasis, A. Mehrotra, G. Velegkas, "On Characterizations for Language Generation: Interplay of Hallucinations, Breadth, and Stability", ALT (2026), arXiv:2412.18530.

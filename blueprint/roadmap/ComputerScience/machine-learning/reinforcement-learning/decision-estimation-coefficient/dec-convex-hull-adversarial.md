@@ -19,7 +19,7 @@ For the upper bound, run exponential weights over decisions as the estimation or
 ## Proof depends on
 
 - [Estimation-to-decisions regret is bounded by the DEC plus the estimation error](e2d-regret-upper-bound.md)
-- [The localized DEC lower bounds the regret of every algorithm](dec-regret-lower-bound.md)
+- [The constrained DEC lower bounds the regret of every algorithm](dec-regret-lower-bound.md)
 - [Regret of Exp3 for adversarial bandits](../multi-armed-bandits/regret-of-exp3-for-adversarial-bandits.md)
 
 ## Sources

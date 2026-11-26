@@ -10,10 +10,6 @@ Simulate the randomized greedy MIS process (processing vertices in a random orde
 
 - [The massively parallel computation model](massively-parallel-computation-model.md)
 
-## Proof depends on
-
-- [MPC with linear memory simulates the congested clique](mpc-simulates-congested-clique.md)
-
 ## Sources
 
 - M. Ghaffari, T. Gouleakis, C. Konrad, S. Mitrović, R. Rubinfeld, "Improved Massively Parallel Computation Algorithms for MIS, Matching, and Vertex Cover", PODC 2018, arXiv:1802.08237.

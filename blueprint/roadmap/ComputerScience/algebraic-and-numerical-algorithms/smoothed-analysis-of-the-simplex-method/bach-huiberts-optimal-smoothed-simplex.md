@@ -30,5 +30,5 @@ The upper bound designs the pivot path more carefully than a single shadow path,
 
 ## Sources
 
-- E. Bach, S. Huiberts, "Optimal Smoothed Analysis of the Simplex Method", arXiv preprint (2025), arXiv:2504.04197.
+- E. Bach, S. Huiberts, "Optimal Smoothed Analysis of the Simplex Method", FOCS (2025), arXiv:2504.04197.
 - S. Huiberts, Y. T. Lee, X. Zhang, "Upper and Lower Bounds on the Smoothed Complexity of the Simplex Method", STOC (2023), TheoretiCS 4 (2025), arXiv:2211.11860.

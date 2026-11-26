@@ -1,16 +1,16 @@
-# Online Hellinger estimation for finite model classes by tempered aggregation
+# Online Hellinger estimation for finite model classes by exponential weights with the logarithmic loss
 
-For a finite model class $\mathcal{M}$ with densities bounded away from zero (or after mixing with a small uniform component), the exponential-weights estimator that, at each round, predicts the posterior-tempered mixture $\hat M_t = \sum_M w_t(M)\,M$ with weights proportional to $\exp\big(\eta\sum_{s < t}\log M(\pi_s)(r_s, o_s)\big)$ and $\eta = 1/2$ achieves
+Let $\mathcal{M}$ be a finite model class containing $M^\star$, and write $m_M(r, o \mid \pi)$ for the conditional density of $(r, o)$ under $M(\pi)$. The averaged exponential weights estimator for the logarithmic loss $\ell^t_{\log}(M) = \log\big(1/m_M(r_t, o_t \mid \pi_t)\big)$ predicts the mixture $\hat M_t = \sum_{M} w_t(M)\,M$ with weights $w_t(M) \propto \prod_{s < t} m_M(r_s, o_s \mid \pi_s)$ (the Bayesian posterior under the uniform prior). Its log-loss regret against the best model in $\mathcal{M}$ is at most $\log|\mathcal{M}|$, and consequently, for every adaptively chosen sequence of decision distributions $p_t$,
 
 $$
-\mathrm{Est}_H = \sum_{t=1}^T \mathbb{E}_{\pi_t \sim p_t} D_H^2\big(M^\star(\pi_t), \hat M_t(\pi_t)\big) \le O\big(\log(|\mathcal{M}|/\delta)\big)
+\mathbb{E}[\mathrm{Est}_H] \le \log|\mathcal{M}| \qquad\text{and}\qquad \mathrm{Est}_H = \sum_{t=1}^T \mathbb{E}_{\pi_t \sim p_t} D_H^2\big(M^\star(\pi_t), \hat M_t(\pi_t)\big) \le \log|\mathcal{M}| + 2\log(1/\delta)
 $$
 
-with probability at least $1-\delta$, for every adaptively chosen sequence of decisions; the estimates lie in the convex hull of $\mathcal{M}$.
+with probability at least $1-\delta$; the estimates lie in the convex hull of $\mathcal{M}$.
 
 ## Proof sketch
 
-With $\eta = 1/2$, the tempered log-likelihood ratio of $\hat M_t$ against $M^\star$ is a supermartingale whose expected increment is $-\log(1 - D_H^2/2) \ge D_H^2/2$ (the Bhattacharyya coefficient appears because of the square root). Summing over rounds, the cumulative Hellinger error is bounded by the log of the prior mass of $M^\star$, namely $\log|\mathcal{M}|$, plus a martingale deviation term of order $\log(1/\delta)$ by Freedman's inequality.
+The log-loss regret of the Bayesian mixture is at most $-\log w_1(M^\star) = \log|\mathcal{M}|$, since the mixture's cumulative likelihood is at least $w_1(M^\star)$ times that of $M^\star$. Under realizability, the expected log-loss regret dominates the expected cumulative Kullback–Leibler divergence $\sum_t \mathbb{E}_{\pi_t \sim p_t} D_{\mathrm{KL}}(M^\star(\pi_t) \,\|\, \hat M_t(\pi_t))$, which dominates the Hellinger estimation error. The high-probability bound uses the moment generating function of the log-likelihood ratio, whose square root has conditional expectation equal to the Bhattacharyya coefficient $1 - D_H^2/2$, so the deviation term is $2\log(1/\delta)$ regardless of $T$.
 
 ## Depends on
 
@@ -19,4 +19,4 @@ With $\eta = 1/2$, the tempered log-likelihood ratio of $\hat M_t$ against $M^\s
 
 ## Sources
 
-- D. J. Foster, S. M. Kakade, J. Qian, A. Rakhlin, "The Statistical Complexity of Interactive Decision Making", arXiv:2112.13487 (2021).
+- D. J. Foster, A. Rakhlin, "Foundations of Reinforcement Learning and Interactive Decision Making", lecture notes (2023), arXiv:2312.16730, Section 7.4.1 (Lemma 7.3 and the averaged exponential weights example following it).

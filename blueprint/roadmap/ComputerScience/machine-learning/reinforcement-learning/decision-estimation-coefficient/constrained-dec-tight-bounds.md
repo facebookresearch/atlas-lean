@@ -1,16 +1,26 @@
 # Constrained DEC gives tight expected-regret bounds with improper reference models
 
-Define the **constrained DEC**
+Let $\mathrm{dec}^c_\varepsilon(\mathcal{M}, \bar M)$ be the constrained DEC and $\mathrm{dec}^c_\varepsilon(\mathcal{M}) = \sup_{\bar M \in \mathrm{co}(\mathcal{M})} \mathrm{dec}^c_\varepsilon(\mathcal{M} \cup \{\bar M\}, \bar M)$, for a model class $\mathcal{M}$ with rewards in $[0,1]$ that contains the true model. Let $V(\mathcal{M}) \ge e$ bound the density ratios $M'(E \mid \pi)/M(E \mid \pi)$ over $M, M' \in \mathcal{M}$, decisions $\pi$ and events $E$, and let $\mathcal{M}^+ \supseteq \mathrm{co}(\mathcal{M})$ be the set of all models with rewards in $[0,1]$ whose density ratios relative to every $M \in \mathcal{M}$ are bounded by $V(\mathcal{M})$.
+
+**Lower bound.** There are absolute constants $c, c', C, C' > 0$ such that, with $\varepsilon(T) = c/\big(\sqrt{T}\,\log(T \wedge V(\mathcal{M}))\big)$, for every $T$ satisfying the regime condition $\mathrm{dec}^c_{\varepsilon(T)}(\mathcal{M}) \ge C\,\varepsilon(T)$, every algorithm has, under some model in $\mathcal{M}$,
 
 $$
-\mathrm{dec}^{c}_{\varepsilon}(\mathcal{M}, \bar M) = \inf_{p \in \Delta(\Pi)} \sup_{M \in \mathcal{M}} \Big\{ \mathbb{E}_{\pi \sim p}\big[f^M(\pi_M) - f^M(\pi)\big] \;:\; \mathbb{E}_{\pi \sim p} D_H^2\big(M(\pi), \bar M(\pi)\big) \le \varepsilon^2 \Big\},
+\mathbb{E}[\mathrm{Reg}_T] \ge c'\,\frac{T}{\log T}\,\sup_{\bar M \in \mathcal{M}^+} \mathrm{dec}^c_{\varepsilon(T)}\big(\mathcal{M} \cup \{\bar M\}, \bar M\big) - C'\,\frac{\sqrt{T}}{\log T} \ge c'\,\frac{T}{\log T}\,\mathrm{dec}^c_{\varepsilon(T)}(\mathcal{M}) - C'\,\frac{\sqrt{T}}{\log T}.
 $$
 
-and $\mathrm{dec}^c_\varepsilon(\mathcal{M}) = \sup_{\bar M} \mathrm{dec}^c_\varepsilon(\mathcal{M} \cup \{\bar M\}, \bar M)$ over arbitrary (possibly improper) reference models $\bar M$. Then every algorithm has expected regret $\Omega\big(T\cdot\mathrm{dec}^c_{\varepsilon_T}(\mathcal{M})\big)$ with $\varepsilon_T \asymp 1/\sqrt{T}$, without localization and with no restriction on the algorithm, and there is an algorithm with regret $O\big(T\cdot\mathrm{dec}^c_{\bar\varepsilon_T}(\mathcal{M})\big)$ with $\bar\varepsilon_T \asymp \sqrt{\log|\mathcal{M}|/T}$ up to logarithmic factors, in both the regret and the PAC frameworks. Improper reference models are necessary: restricting to $\bar M \in \mathcal{M}$ can make the lower bound vacuous.
+**Upper bound.** Suppose $\mathcal{M}$ is finite and the coefficient satisfies the growth condition $\mathrm{dec}^c_\varepsilon(\mathcal{M}) \le C_{\mathrm{reg}}^2\,\mathrm{dec}^c_{\varepsilon/C_{\mathrm{reg}}}(\mathcal{M})$ for all $\varepsilon \in (0, 2)$ and some constant $C_{\mathrm{reg}} > 1$. Then for every $\delta \in (0,1)$ there is an algorithm (a constrained version of E2D) such that, with probability at least $1 - \delta$,
+
+$$
+\mathrm{Reg}_T \le O(T\log T)\cdot\mathrm{dec}^c_{\bar\varepsilon(T)}(\mathcal{M}) + O\Big(\sqrt{T\log(1/\delta)\log(|\mathcal{M}|/\delta)}\Big), \qquad \bar\varepsilon(T) = C''\sqrt{\frac{\log(|\mathcal{M}|/\delta)\log(1/\delta)}{T}},
+$$
+
+with a numerical constant $C''$ and constants in $O(\cdot)$ depending only on $C_{\mathrm{reg}}$.
+
+The two bounds use reference models in $\mathcal{M}^+ \supseteq \mathrm{co}(\mathcal{M})$ and in $\mathrm{co}(\mathcal{M})$ respectively, and differ in radius by the estimation factor. The lower bound needs no localization and holds for every algorithm; since it holds with improper reference models $\bar M \in \mathrm{co}(\mathcal{M})$ and not only $\bar M \in \mathcal{M}$, such reference models are not an artifact of the upper bound.
 
 ## Proof sketch
 
-The lower bound is a two-point argument with the reference model as the null: if the algorithm's decision distribution under $\bar M$ gathers less than $\varepsilon_T^2$ Hellinger information against each alternative per round, the alternative cannot be detected in $T$ rounds, and the constrained DEC guarantees an alternative with large regret. The upper bound runs a constrained version of E2D that keeps a confidence set of models consistent with the data in Hellinger distance and plays the constrained minimax distribution against the oracle's estimate.
+The lower bound first proves the analogous bound with proper reference models $\bar M \in \mathcal{M}$ by a change-of-measure argument under $\bar M$, and then extends it to an arbitrary $\bar M \in \mathcal{M}^+$ by showing that an algorithm with regret $R$ on $\mathcal{M}$ yields one with regret $O(R\log T)$ on $\mathcal{M} \cup \{\bar M\}$. The upper bound runs E2D with the constrained min-max problem over epochs of doubling length; the estimation oracle is restricted to a confidence set of models carried over from the previous epoch, and a Hellinger test on a few sampled rounds keeps the true model in that set.
 
 ## Depends on
 
@@ -19,9 +29,10 @@ The lower bound is a two-point argument with the reference model as the null: if
 
 ## Proof depends on
 
-- [The localized DEC lower bounds the regret of every algorithm](dec-regret-lower-bound.md)
+- [The constrained DEC lower bounds the regret of every algorithm](dec-regret-lower-bound.md)
 - [Estimation-to-decisions regret is bounded by the DEC plus the estimation error](e2d-regret-upper-bound.md)
 
 ## Sources
 
-- D. J. Foster, N. Golowich, Y. Han, "Tight Guarantees for Interactive Decision Making with the Decision-Estimation Coefficient", COLT (2023), arXiv:2301.08215.
+- D. J. Foster, N. Golowich, Y. Han, "Tight Guarantees for Interactive Decision Making with the Decision-Estimation Coefficient", COLT (2023), PMLR 195, Eqs. (7)–(9), Appendix C.1 (Theorem C.1, Eqs. (15)–(16)) and Appendix C.2 (Theorem C.2, Assumptions C.1 and C.2).
+- D. J. Foster, A. Rakhlin, "Foundations of Reinforcement Learning and Interactive Decision Making", lecture notes (2023), arXiv:2312.16730, Section 7.5 (Proposition 7.2).

@@ -19,6 +19,6 @@ Build equal-revenue instances: families of success functions for which the princ
 
 ## Sources
 
-- P. Dütting, M. Feldman, Y. Gal-Tzur, A. Rubinstein, "When Contracts Get Complex: Information-Theoretic Barriers", arXiv:2403.09794 (2024).
+- P. Dütting, M. Feldman, Y. Gal-Tzur, A. Rubinstein, "When Contracts Get Complex: Information-Theoretic Barriers", SODA 2026, arXiv:2403.09794.
 - T. Ezra, M. Feldman, M. Schlesinger, "On the (In)approximability of Combinatorial Contracts", ITCS 2024.
 - P. Dütting, T. Ezra, M. Feldman, T. Kesselheim, "Combinatorial Contracts", FOCS 2021, arXiv:2109.14260.

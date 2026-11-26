@@ -1,10 +1,10 @@
 # The DEC lower bound recovers the square-root lower bound for multi-armed bandits
 
-For the class of $K$-armed bandits with Gaussian rewards of unit variance and means in $[0,1]$, $\mathrm{dec}_{\gamma}(\mathcal{M}) \ge c\,K/\gamma$ for all $\gamma \ge C K$, and the localized version satisfies the same bound with radius $\varepsilon_\gamma \approx \gamma/T$. Plugging into the DEC lower bound with $\gamma \asymp \sqrt{KT}$ gives the minimax lower bound $\Omega(\sqrt{KT})$ on the regret, matching the inverse-gap-weighting upper bound up to the estimation term.
+Let $K \ge 2$ and let $\mathcal{M}$ be the $K$-armed bandit class with unit-variance Gaussian rewards and means in $[0,1]$. For every $\varepsilon > 0$ with $\varepsilon\sqrt{2K} \le 1/2$, the constrained DEC satisfies $\mathrm{dec}^c_\varepsilon(\mathcal{M}) \ge \varepsilon\sqrt{K/2}$. Applying the constrained-DEC lower bound at radius $\varepsilon \propto 1/\sqrt{T}$, extended to Gaussian rewards at the cost of absolute constants, gives absolute constants $c, c', K_0 > 0$ such that for all $K$ and $T$ with $K_0 \le K \le c'T$ every algorithm has expected regret at least $c\sqrt{KT}$ on some model in $\mathcal{M}$. This matches the inverse-gap-weighting upper bound $O(\sqrt{KT\cdot\mathrm{Est}_H})$ up to the estimation term. (Outside this regime only the capped rate $\Omega(\min\{\sqrt{KT}, T\})$ holds, which a direct two-point argument gives for every $K \ge 2$.)
 
 ## Proof sketch
 
-Take the reference model with all means equal to $\tfrac12$ and alternatives raising one arm's mean by $\Delta = K/\gamma$. For any decision distribution $p$, some arm $a$ has $p(a) \le 1/K$; on the alternative boosting $a$, the regret of $p$ is at least $\Delta(1 - 1/K)$ while the Hellinger penalty is $\gamma\,p(a)\,O(\Delta^2) \le O(\gamma\Delta^2/K) = O(K/\gamma)$ with a small constant, leaving $\Omega(K/\gamma)$.
+Take the reference model $\bar M \in \mathcal{M}$ with all means equal to $\tfrac12$ and the alternatives $M_i$ raising the mean of arm $i$ by $\Delta = \varepsilon\sqrt{2K} \le \tfrac12$, so that their means stay in $[0,1]$. For any decision distribution $p$, some arm $i$ has $p(i) \le 1/K \le 1/2$. Since $D_H^2 \le D_{\mathrm{KL}} = \Delta^2/2$ for the two Gaussians on arm $i$, the alternative $M_i$ satisfies $\mathbb{E}_{\pi \sim p} D_H^2(M_i(\pi), \bar M(\pi)) \le p(i)\Delta^2/2 \le \varepsilon^2$, while the regret of $p$ on $M_i$ is $(1 - p(i))\Delta \ge \Delta/2 = \varepsilon\sqrt{K/2}$. With $\varepsilon \propto 1/\sqrt{T}$, the constraint $\Delta \le 1/2$ is the condition $K \le c'T$, and the lower bound is $T(\varepsilon\sqrt{K/2}/C - C\varepsilon - 1/T)$ for an absolute constant $C$, which is of order $\sqrt{KT}$ once $K \ge K_0$.
 
 ## Depends on
 
@@ -13,8 +13,8 @@ Take the reference model with all means equal to $\tfrac12$ and alternatives rai
 
 ## Proof depends on
 
-- [The localized DEC lower bounds the regret of every algorithm](dec-regret-lower-bound.md)
+- [The constrained DEC lower bounds the regret of every algorithm](dec-regret-lower-bound.md)
 
 ## Sources
 
-- D. J. Foster, S. M. Kakade, J. Qian, A. Rakhlin, "The Statistical Complexity of Interactive Decision Making", arXiv:2112.13487 (2021).
+- D. J. Foster, A. Rakhlin, "Foundations of Reinforcement Learning and Interactive Decision Making", lecture notes (2023), arXiv:2312.16730, Proposition 8.1, Remark 8.2 and Section 8.5 (Example 7.4, continued).

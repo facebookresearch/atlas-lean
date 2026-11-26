@@ -2,7 +2,7 @@
 
 Let $G$ be an $n$-vertex graph.
 
-1. For every $\varepsilon > 0$, if each vertex $v$ has an arbitrary list of $\lceil (1 + \varepsilon)\deg(v)\rceil$ colors and samples $O_\varepsilon(\log n)$ of them uniformly and independently, then with high probability $G$ is colorable from the samples; the same holds with lists $\{1, \dots, \deg(v) + 1\}$ and $O(\log n)$ samples.
+1. For every $\varepsilon > 0$, if $G$ has no isolated vertices and each vertex $v$ (so $\deg(v) \ge 1$) has an arbitrary list of $\lceil (1 + \varepsilon)\deg(v)\rceil$ colors and samples $O_\varepsilon(\log n)$ of them uniformly and independently, then with high probability $G$ is colorable from the samples (an isolated vertex can instead be given a single color and removed before sampling); the same holds, for every graph, with lists $\{1, \dots, \deg(v) + 1\}$ and $O(\log n)$ samples.
 2. For arbitrary D1LC lists $S(v)$, sampling $O(\log^2 n)$ colors uniformly and independently from each $S(v)$ makes $G$ colorable from the samples with high probability.
 
 As in the $(\Delta + 1)$ case, this yields a single-pass semi-streaming algorithm for D1LC in dynamic streams, an $O(1)$-round algorithm in the massively parallel computation model with $\widetilde{O}(n)$ memory per machine, and an $\widetilde{O}(n\sqrt{n})$-time algorithm in the query model.

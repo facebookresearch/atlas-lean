@@ -10,4 +10,4 @@ Let $U$ be a countable set of strings and $\mathcal{C} = \{L_1, L_2, \dots\}$ a 
 ## Sources
 
 - A. Kalavasis, A. Mehrotra, G. Velegkas, "On the Limits of Language Generation: Trade-Offs Between Hallucination and Mode Collapse", STOC (2025), arXiv:2411.09642.
-- A. Kalavasis, A. Mehrotra, G. Velegkas, "On Characterizations for Language Generation: Interplay of Hallucinations, Breadth, and Stability", arXiv:2412.18530 (2024).
+- A. Kalavasis, A. Mehrotra, G. Velegkas, "On Characterizations for Language Generation: Interplay of Hallucinations, Breadth, and Stability", ALT (2026), arXiv:2412.18530.

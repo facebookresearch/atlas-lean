@@ -6,7 +6,7 @@ $$
 \big| \mathbb{E}[\ell(A(S), z)] - \mathbb{E}[\ell(A(S'), z)] \big| \le e^{\varepsilon} - 1 .
 $$
 
-For $(\varepsilon,\delta)$-privacy the bound is $e^\varepsilon - 1 + \delta$. Hence the sharp stability bound, applied to this averaged loss, gives with probability at least $1 - \delta'$ over the sample a generalization gap of order $\varepsilon \log n \log(e/\delta') + \sqrt{\log(e/\delta')/n}$ for private learners with $\varepsilon \le 1$ (logarithms of the confidence parameter floored at $1$, as in the sharp bound).
+For $(\varepsilon,\delta)$-privacy the stability parameter is $e^\varepsilon - 1 + \delta$. Hence the sharp stability bound, applied to this averaged loss with stability parameter $e^\varepsilon - 1 + \delta$, gives with probability at least $1 - \delta'$ over the sample a generalization gap of order $(e^\varepsilon - 1 + \delta) \log n \log(e/\delta') + \sqrt{\log(e/\delta')/n}$, which is of order $(\varepsilon + \delta) \log n \log(e/\delta') + \sqrt{\log(e/\delta')/n}$ when $\varepsilon \le 1$, and of order $\varepsilon \log n \log(e/\delta') + \sqrt{\log(e/\delta')/n}$ for pure $(\varepsilon, 0)$-privacy with $\varepsilon \le 1$. Here $\delta'$ is the confidence parameter over the sample, distinct from the privacy parameter $\delta$, and logarithms of it are floored at $1$, as in the sharp bound.
 
 ## Proof sketch
 
