@@ -39,14 +39,20 @@ namespace ModuleCat.TensorFold
 
 variable (R : Type u) [CommRing R]
 
-/-- The left-associated tensor fold of a prefix and an ordered list of modules. -/
+/-- Let `R` be a commutative ring in universe `u`, `P` an `R`-module with carrier
+in `max(v,w)`, and `Ms` an ordered list of `R`-modules with carriers in `w`.
+The left tensor fold starts at `P` and tensors each successive factor onto
+the right, retaining carrier height `max(v,w)` and the given factor order. -/
 abbrev objAt (P : ModuleCat.{max v w} R) (Ms : List (ModuleCat.{w} R)) :
     ModuleCat.{max v w} R :=
   Functor.BifunctorFold.obj
     (tensorBifunctorAt R : ModuleCat.{max v w} R ⥤ ModuleCat.{w} R ⥤
       ModuleCat.{max v w} R) P Ms
 
-/-- Tensor a prefix map with identities on all remaining coefficient factors. -/
+/-- For a commutative ring `R`, an `R`-linear map `f : P → Q` between modules
+with carriers in `max(v,w)`, and an ordered list `Ms` of modules in `w`, tensor
+`f` successively with the identity maps of the factors. This gives a morphism
+between the left tensor folds with prefixes `P` and `Q`. -/
 abbrev mapAt {P Q : ModuleCat.{max v w} R} (f : P ⟶ Q)
     (Ms : List (ModuleCat.{w} R)) : objAt R P Ms ⟶ objAt R Q Ms :=
   Functor.BifunctorFold.map
@@ -66,7 +72,11 @@ abbrev mapAt {P Q : ModuleCat.{max v w} R} (f : P ⟶ Q)
     (M : ModuleCat.{w} R) (Ms : List (ModuleCat.{w} R)) :
     mapAt R f (M :: Ms) = mapAt R (tensorHomAt R f (𝟙 M)) Ms := rfl
 
-/-- Isomorphisms of the prefix and all coefficient factors act by native tensor congruence. -/
+/-- For a commutative ring `R`, an isomorphism `e : P ≅ Q` of modules in
+`max(v,w)`, ordered families `M`, `N : Fin n → ModuleCat_w(R)`, and
+isomorphisms `h(j) : M(j) ≅ N(j)`, there is an isomorphism between the two
+left tensor folds. It applies the tensor congruence at each factor and
+retains their index order; for the empty family it is `e`. -/
 def isoAt (R : Type u) [CommRing R] :
     ∀ {n : ℕ} {P Q : ModuleCat.{max v w} R} (_e : P ≅ Q)
       (M N : Fin n → ModuleCat.{w} R) (_h : ∀ j, M j ≅ N j),
@@ -92,7 +102,11 @@ private theorem tensorIso_eq {P Q : ModuleCat.{max v w} R} {M N : ModuleCat.{w} 
         ModuleCat.{max v w} R)).map (Prod.mkHom e.hom h.hom)
   exact (tensorBifunctorAt_uncurry_map R (Prod.mkHom e.hom h.hom)).symm
 
-/-- Native tensor congruences agree with the general functorial fold isomorphism. -/
+/-- For a commutative ring `R`, a prefix isomorphism `e : P ≅ Q` in carrier
+height `max(v,w)`, and ordered coefficient families in `w` with pointwise
+isomorphisms, the isomorphism built from tensor congruences equals the
+isomorphism obtained by the general bifunctor-fold construction applied
+to the independently sized tensor bifunctor. -/
 theorem isoAt_eq_bifunctorFold {n : ℕ} {P Q : ModuleCat.{max v w} R}
     (e : P ≅ Q) (M N : Fin n → ModuleCat.{w} R) (h : ∀ j, M j ≅ N j) :
     isoAt R e M N h =
@@ -105,7 +119,12 @@ theorem isoAt_eq_bifunctorFold {n : ℕ} {P Q : ModuleCat.{max v w} R}
   | succ n ih =>
       simp only [isoAt, Functor.BifunctorFold.iso, tensorIso_eq, ih]
 
-/-- A prefix square commutes after tensoring all coefficient isomorphisms. -/
+/-- For a commutative ring `R`, let `f : P → P′`, `g : Q → Q′`,
+`e : P ≅ Q` and `e′ : P′ ≅ Q′` be module maps/isomorphisms at height
+`max(v,w)` satisfying `f ≫ e′.hom = e.hom ≫ g`. Fix ordered coefficient
+families `M`, `N` in `w` and pointwise isomorphisms between them. The
+square obtained from the two prefix maps and the two tensor-fold
+isomorphisms commutes, with the same factor order. -/
 theorem isoAt_naturality {n : ℕ} {P Q P' Q' : ModuleCat.{max v w} R}
     (f : P ⟶ P') (g : Q ⟶ Q') (e : P ≅ Q) (e' : P' ≅ Q')
     (M N : Fin n → ModuleCat.{w} R) (h : ∀ j, M j ≅ N j)
