@@ -111841,7 +111841,7 @@
 "VonNeumannAlgebra.NormalAction.characterConjugation_predual_vectorFunctional": "95b022070e03c069",
 "VonNeumannAlgebra.NormalAction.characterMultiplierTensor_fix_regularCoefficientTensor": "23ab8388d88e8ebc",
 "VonNeumannAlgebra.NormalAction.characterMultiplierTensor_scale_haarLeftRegularTensor": "aee4df27bb74f954",
-"VonNeumannAlgebra.NormalAction.characterMultiplier_fix_regularCoefficient": "4df1b0daac57e827",
+"VonNeumannAlgebra.NormalAction.characterMultiplier_fix_regularCoefficient": "80a678436e9f15ca",
 "VonNeumannAlgebra.NormalAction.characterMultiplier_scale_haarLeftRegular": "e271247d2739f9ec",
 "VonNeumannAlgebra.NormalAction.comp": "91f69a177817ce35",
 "VonNeumannAlgebra.NormalAction.comp_apply": "4f9640a553989b25",
