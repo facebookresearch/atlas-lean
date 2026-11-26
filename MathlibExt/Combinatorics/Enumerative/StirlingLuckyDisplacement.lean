@@ -20,11 +20,6 @@ public import MathlibExt.Combinatorics.Enumerative.StirlingPermutation
 /-!
 # Lucky and displacement statistics of Stirling permutations
 
-This file follows L. Colmenarejo, A. Dawkins, J. Elder, P. E. Harris, K. J. Harry,
-S. Kara, D. Smith, and B. E. Tenner, *On the Lucky and Displacement Statistics of
-Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7
-(arXiv:2403.03280).
-
 A Stirling permutation of order `n` is MathlibExt's
 `MetaMathlibExt.IsStirlingPermutation n w` for a word `w : Fin (2 * n) → ℕ`
 (`w(1) ⋯ w(2n)` is `w 0, …, w (2n-1)`). It is read as a parking function of
@@ -34,6 +29,13 @@ outcome `MathlibExt.Combinatorics.Enumerative.LuckyCarsWanted.parkSpots`
 spot numbers in the statements below are the paper's one-based numbers: the car
 at index `i : Fin (2 * n)` is car `i + 1`, and `stirlingParkSpot w i` is its
 one-based spot `p(i + 1)`.
+
+## References
+
+* L. Colmenarejo, A. Dawkins, J. Elder, P. E. Harris, K. J. Harry, S. Kara, D. Smith, and
+  B. E. Tenner, *On the Lucky and Displacement Statistics of Stirling Permutations*,
+  Journal of Integer Sequences 27 (2024), Article 24.6.7, pp. 1–24. The penultimate-car
+  characterization follows Theorem 31 (p. 13).
 -/
 
 open MathlibExt.Combinatorics.Enumerative.LuckyCarsWanted (parkSpots)
@@ -707,6 +709,83 @@ public theorem stirlingLuckySet_basic (n : ℕ) (hn : 1 ≤ n) (w : Fin (2 * n) 
         exact ExtremelyLuckyDisplacement.spot_injective hw
           ((Finset.mem_filter.mp hi).2.trans (hij.trans (Finset.mem_filter.mp hj).2.symm))
       _ = n := by simp [Nat.card_Icc]
+
+/-- **When the penultimate car is lucky.** Let $n \ge 1$ and let $w = w_1 \cdots w_{2n}$ be a
+Stirling permutation of order $n$, read as a parking function of length $2n$. Then car $2n - 1$
+is lucky, that is, belongs to the lucky set $\mathrm{Lucky}(w)$, if and only if $w_{2n-1} = 1$.
+
+Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
+Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
+Theorem 31 (`jis-2024-24.6.7-thm-31`). -/
+public theorem stirling_penultimate_lucky_iff (n : ℕ) (w : Fin (2 * n) → ℕ)
+    (hw : IsStirlingPermutation n w) (i : Fin (2 * n)) (hi : i.val + 1 = 2 * n - 1) :
+    2 * n - 1 ∈ stirlingLuckySet w ↔ w i = 1 := by
+  let last : Fin (2 * n) := ⟨2 * n - 1, by omega⟩
+  have hlast : last.val = 2 * n - 1 := rfl
+  have hilast : i < last := Fin.lt_def.mpr (by omega)
+  have before {j : Fin (2 * n)} (hji : j ≠ i) (hjl : j ≠ last) : j < i := by
+    have hj := j.isLt
+    have hvi : j.val ≠ i.val := fun h => hji (Fin.ext h)
+    have hvl : j.val ≠ last.val := fun h => hjl (Fin.ext h)
+    exact Fin.lt_def.mpr (by omega)
+  rw [← hi]
+  constructor
+  · intro hl
+    obtain ⟨k, hk, hki⟩ := Finset.mem_image.mp hl
+    have hki' : k = i := Fin.ext (Nat.add_right_cancel hki)
+    subst k
+    have hlucky := (Finset.mem_filter.mp hk).2
+    have spot_lt {j : Fin (2 * n)} (hj : j < i) (hp : w j ≤ w i) :
+        stirlingParkSpot w j < w i := by
+      rw [← hlucky] at hp ⊢
+      exact lt_of_le_of_ne (ExtremelyLuckyDisplacement.spot_le_of_later hw hj hp)
+        (fun h => hj.ne (ExtremelyLuckyDisplacement.spot_injective hw h))
+    -- An earlier car with the same preference would have taken this spot.
+    have hlast_eq : w last = w i := by
+      obtain ⟨j, hj, hji⟩ := ExtremelyLuckyDisplacement.other_occurrence hw i
+      by_cases hjl : j = last
+      · exact hjl ▸ hj
+      · have hlo := stirlingTotalDisplacement_eq.pref_le_spot hw.1 j
+        exact (not_lt_of_ge (hj.ge.trans hlo) (spot_lt (before hji hjl) hj.le)).elim
+    -- If the preference is above 1, both cars preferring the preceding spot arrive earlier.
+    -- Neither can pass the free spot, so both would have to park in its predecessor.
+    by_contra hone
+    obtain ⟨hpos, hbound⟩ := Finset.mem_Icc.mp (hw.1 i)
+    have hprev : w i - 1 ∈ Finset.Icc 1 n := Finset.mem_Icc.mpr ⟨by omega, by omega⟩
+    obtain ⟨a, ha⟩ := stirlingTotalDisplacement_eq.letters_covered hw _ hprev
+    obtain ⟨b, hb, hba⟩ := ExtremelyLuckyDisplacement.other_occurrence hw a
+    rw [ha] at hb
+    have parked {j : Fin (2 * n)} (hj : w j = w i - 1) :
+        stirlingParkSpot w j = w i - 1 := by
+      have hbefore : j < i := before (j := j) (fun h => by subst j; omega)
+        (fun h => by subst j; omega)
+      have hlo := stirlingTotalDisplacement_eq.pref_le_spot hw.1 j
+      have hhi := spot_lt hbefore (by omega)
+      omega
+    exact hba (ExtremelyLuckyDisplacement.spot_injective hw ((parked hb).trans (parked ha).symm))
+  · intro hone
+    -- If the last letter were not 1, its two copies would straddle the penultimate 1.
+    have hlast_eq : w last = 1 := by
+      by_contra hne
+      obtain ⟨j, hj, hjl⟩ := ExtremelyLuckyDisplacement.other_occurrence hw last
+      have hji : j ≠ i := fun h => hne (hj.symm.trans (h ▸ hone))
+      have hlt := hw.2.2 _ (hw.1 last) j i last (before hji hjl) hilast hj rfl
+      rw [hone] at hlt
+      exact (not_lt_of_ge (Finset.mem_Icc.mp (hw.1 last)).1) hlt
+    refine (stirlingLuckySet_basic n (by omega) w hw).2.1 i hone ?_
+    intro j hji hjone
+    have hcard := hw.2.1 1 (hone ▸ hw.1 i)
+    have hsub : ({j, i, last} : Finset (Fin (2 * n))) ⊆
+        Finset.univ.filter (fun k => w k = 1) := by
+      intro k hk
+      rcases Finset.mem_insert.mp hk with rfl | hk
+      · simp [hjone]
+      rcases Finset.mem_insert.mp hk with rfl | hk
+      · simp [hone]
+      obtain rfl := Finset.mem_singleton.mp hk
+      simp [hlast_eq]
+    have hle := Finset.card_le_card hsub
+    simp [hcard, hji.ne, (hji.trans hilast).ne, hilast.ne] at hle
 
 /-- **Extremely lucky Stirling permutations are determined by their displacements.** Let $w$ and
 $w'$ be Stirling permutations of order $n$, and suppose that $w$ is extremely lucky, that is, its

@@ -83,6 +83,30 @@ example : 1 ∈ stirlingLuckySet (n := 2) ![2, 2, 1, 1] ∧
 example : (stirlingLuckySet (n := 2) ![1, 1, 2, 2]).card = 1 ∧
     (stirlingLuckySet (n := 2) ![2, 2, 1, 1]).card = 2 := by decide
 
+-- At order one, the penultimate car is the first car.
+example : 1 ∈ stirlingLuckySet (n := 1) ![1, 1] :=
+  (stirling_penultimate_lucky_iff 1 ![1, 1] (by unfold IsStirlingPermutation; decide)
+    0 (by decide)).mpr (by decide)
+
+-- The first 1 is lucky even when all earlier cars prefer higher spots.
+example : 3 ∈ stirlingLuckySet (n := 2) ![2, 2, 1, 1] :=
+  (stirling_penultimate_lucky_iff 2 ![2, 2, 1, 1] (by unfold IsStirlingPermutation; decide)
+    2 (by decide)).mpr (by decide)
+
+-- A penultimate 2 can be either its first occurrence (1122) or its second (1221).
+example : 3 ∉ stirlingLuckySet (n := 2) ![1, 1, 2, 2] :=
+  mt (stirling_penultimate_lucky_iff 2 ![1, 1, 2, 2] (by unfold IsStirlingPermutation; decide)
+    2 (by decide)).mp (by decide)
+
+example : 3 ∉ stirlingLuckySet (n := 2) ![1, 2, 2, 1] :=
+  mt (stirling_penultimate_lucky_iff 2 ![1, 2, 2, 1] (by unfold IsStirlingPermutation; decide)
+    2 (by decide)).mp (by decide)
+
+-- Here the two earlier preferences for spot 2 force spot 3 to be occupied.
+example : 5 ∉ stirlingLuckySet (n := 3) ![1, 1, 2, 2, 3, 3] :=
+  mt (stirling_penultimate_lucky_iff 3 ![1, 1, 2, 2, 3, 3] (by unfold IsStirlingPermutation; decide)
+    4 (by decide)).mp (by decide)
+
 -- An extremely lucky word with a nested pair and nonconsecutive lucky positions.
 example (v : Fin (2 * 3) → ℕ) (hv : IsStirlingPermutation 3 v)
     (hd : ∀ i, stirlingDisplacement v i = (![0, 0, 1, 0, 3, 5] : Fin (2 * 3) → ℕ) i) :
