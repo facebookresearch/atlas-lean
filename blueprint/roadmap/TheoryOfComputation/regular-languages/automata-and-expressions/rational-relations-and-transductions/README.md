@@ -4,7 +4,7 @@ Rational relations are the rational subsets of a product $A^* \times B^*$ of fre
 by finite transducers that read and write words. They are closed under composition (Elgot and Mezei) and decompose into an
 inverse morphism, an intersection with a regular language and a morphism (Nivat), so they preserve regular and context-free
 languages; their equivalence and intersection problems are undecidable. Rational functions, the single-valued ones, have
-decidable equivalence and factor into a left and a right sequential function. Sequential transducers that output one letter per
+decidable equivalence, and those mapping the empty word to the empty word factor into a left and a right sequential function. Sequential transducers that output one letter per
 step are in [sequential transducers, Mealy and Moore machines](../sequential-transducers-mealy-and-moore-machines/README.md).
 
 - [Rational relations and transducers](rational-relations-and-transducers.md)

@@ -1,9 +1,9 @@
 # Injective cellular automata are surjective
 
 Every injective [cellular automaton](cellular-automata-on-z-d.md) on $\mathbb{Z}^d$ is surjective. Hence for cellular automata
-injectivity, bijectivity and reversibility are equivalent. Injectivity of $G$ gives injectivity of its restriction to
-finite configurations, with respect to any quiescent state, and the Garden-of-Eden theorem turns this into surjectivity of
-$G$. The converse fails: there are surjective cellular automata that are not injective.
+injectivity, bijectivity and reversibility are equivalent. An injective $G$ permutes the finitely many homogeneous configurations, so some
+positive power $G^k$, again an injective cellular automaton, fixes all of them and therefore has a quiescent state; $G^k$ is injective on
+finite configurations, so it is surjective by the Garden-of-Eden theorem, and hence so is $G$. The converse fails: there are surjective cellular automata that are not injective.
 
 ## Depends on
 

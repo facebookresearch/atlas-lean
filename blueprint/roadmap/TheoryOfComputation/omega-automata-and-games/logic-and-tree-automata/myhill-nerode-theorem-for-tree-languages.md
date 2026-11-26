@@ -23,3 +23,4 @@ $T(\mathcal{F})$ to a finite $\mathcal{F}$-algebra $A$ and a subset $A'$ of its 
 ## Sources
 
 - H. Comon, M. Dauchet, R. Gilleron, F. Jacquemard, D. Lugiez, C. Löding, S. Tison and M. Tommasi, *Tree Automata Techniques and Applications*, 2008, <https://inria.hal.science/hal-03367725>: Section 1.5, the Myhill–Nerode Theorem with its proof, and the algebraic characterization stated after it.
+- F. Gécseg and M. Steinby, *Tree Automata*, Akadémiai Kiadó, Budapest, 1984; reissued with a preface to the second edition as arXiv:1509.06233, 2015, with the original numbering: Section 2.7, Theorem 2.7.1 and Corollary 2.7.2.

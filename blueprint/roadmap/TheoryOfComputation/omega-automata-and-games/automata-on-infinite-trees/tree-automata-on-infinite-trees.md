@@ -11,8 +11,8 @@ accepts $t$ if some run on $t$ is successful; $T^\omega(\mathcal{A})$ is the set
 Büchi, Rabin and Streett tree automata replace $\mathcal{F}$ by the corresponding condition on $\mathrm{In}(\rho|\pi)$ for every path. A
 *parity* (Rabin chain) tree automaton has a chain $E_1 \subset F_1 \subset E_2 \subset \dots \subset E_n \subset F_n$ of sets of states, and a
 run is successful if on every path $\pi$ some $k$ has $\mathrm{In}(\rho|\pi) \cap E_k = \emptyset$ and $\mathrm{In}(\rho|\pi) \cap F_k \ne \emptyset$;
-equivalently, indexing the states of $E_i \setminus F_{i-1}$ by $2i - 1$ and those of $F_i \setminus E_i$ by $2i$, the least index occurring
-infinitely often on every path is even. A set of trees is *recognizable* if it is $T^\omega(\mathcal{A})$ for a Muller tree automaton
+equivalently, with $F_0 = \emptyset$, indexing the states of $E_i \setminus F_{i-1}$ by $2i - 1$, those of $F_i \setminus E_i$ by $2i$ and those outside $F_n$ by
+$2n + 1$, the least index occurring infinitely often on every path is even. A set of trees is *recognizable* if it is $T^\omega(\mathcal{A})$ for a Muller tree automaton
 $\mathcal{A}$; Muller, Rabin and Streett tree automata recognize the same sets.
 
 ## Sources

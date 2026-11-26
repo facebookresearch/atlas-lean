@@ -1,8 +1,8 @@
 # Muller, Rabin and Streett games
 
 Two-player games on graphs whose winning condition depends on the set of colors seen infinitely often. Muller games
-are determined with finite-memory strategies, and the Zielonka tree of the condition gives the exact amount of memory
-needed; Rabin conditions are the Muller conditions that the first player can always win positionally, and parity
+are determined with finite-memory strategies, and the Zielonka tree of the condition gives an amount of memory that suffices and,
+for conditions that some play satisfies, is needed; Rabin conditions are the Muller conditions that the first player can always win positionally, and parity
 conditions those that both players can. Solving Rabin games is NP-complete and solving Muller games PSPACE-complete.
 Parity games, the special case with priorities, are in [parity games](../parity-games/README.md) and
 [parity game algorithms](../parity-game-algorithms/README.md).

@@ -1,13 +1,15 @@
 # Characteristic series of a language are recognizable exactly when it is regular
 
-Let $S$ be a commutative [semiring](semirings-and-formal-power-series.md) and $L \subseteq \Sigma^*$. Then the characteristic series $1_L$ is
+Let $S$ be a commutative [semiring](semirings-and-formal-power-series.md) with $0 \ne 1$ and $L \subseteq \Sigma^*$. Then the characteristic series $1_L$ is
 [recognizable](weighted-automata-over-a-semiring.md) over $S$ if and only if $L$ is regular (Wang). For an arbitrary semiring, $1_L$ is recognizable
 whenever $L$ is regular, by weighting a deterministic automaton for $L$ with $0$ and $1$; the converse uses, for commutative rings, that
 recognizable series with finite image have recognizable level sets (Schützenberger; Sontag), and otherwise a semiring homomorphism onto the
-Boolean semiring. Without commutativity the converse fails: some semiring makes $1_L$ recognizable for every language $L$.
+Boolean semiring. Without commutativity the converse fails: some semiring makes $1_L$ recognizable for every language $L$; it also fails when $0 = 1$, since then
+every series is the zero series.
 
 ## Depends on
 
+- [Semirings and formal power series on a free monoid](semirings-and-formal-power-series.md)
 - [Weighted automata over a semiring](weighted-automata-over-a-semiring.md)
 
 ## Sources

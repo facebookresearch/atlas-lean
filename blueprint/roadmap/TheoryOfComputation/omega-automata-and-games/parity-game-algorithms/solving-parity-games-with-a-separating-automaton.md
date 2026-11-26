@@ -24,4 +24,4 @@ This page becomes ready once:
 
 ## Sources
 
-- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, arXiv:2305.10546v2, 2025, Chapter 2 (J. Fearnley and N. Fijalkow, "Parity games"): Lemma 2.8 (game equivalence using separating automata) and Theorem 2.4 with its proof, which uses Theorem 1.1 of Chapter 1 for safety games.
+- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, Cambridge University Press, 2026, doi:10.1017/9781009500678 (numbering of the version arXiv:2305.10546v2, 2025), Chapter 2 (J. Fearnley and N. Fijalkow, "Parity games"): Lemma 2.8 (game equivalence using separating automata) and Theorem 2.4 with its proof, which uses Theorem 1.1 of Chapter 1 for safety games.

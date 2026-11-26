@@ -1,14 +1,16 @@
 # Quasipolynomial lower bound on separating safety automata
 
-Call a nondeterministic safety automaton over the priorities $\{1, \dots, d\}$ a *strong $(n, d)$-separator* if it accepts every word that
+Let $d$ be even, padding an odd maximal priority by an unused even one. Call a nondeterministic safety automaton over the priorities
+$\{1, \dots, d\}$ a *strong $(n, d)$-separator* if it accepts every word that
 encodes an infinite path in a parity graph with at most $n$ vertices and priorities in $\{1, \dots, d\}$ all of whose cycles have even
 largest priority, and rejects every word whose largest priority occurring infinitely often is odd. Every strong
 $(n, d)$-separator has at least
 
 $$\binom{\lfloor \lg n \rfloor + d/2 - 1}{\lfloor \lg n \rfloor}$$
 
-states, a quasipolynomial lower bound that nearly matches the known upper bounds, so the separating-automata approach cannot
-by itself solve parity games in polynomial time (Czerwiński, Daviaud, Fijalkow, Jurdziński, Lazić and Parys).
+states, a quasipolynomial lower bound that nearly matches the known upper bounds, so polynomial-size strong safety separators
+cannot be used to solve parity games in polynomial time by the reduction to safety games (Czerwiński, Daviaud, Fijalkow, Jurdziński,
+Lazić and Parys). The corresponding question for separators of the even-cycle and odd-cycle languages is left open.
 
 ## Depends on
 

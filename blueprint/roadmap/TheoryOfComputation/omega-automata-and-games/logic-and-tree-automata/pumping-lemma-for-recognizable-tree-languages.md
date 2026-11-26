@@ -16,3 +16,4 @@ that $C[C'^n[u]] \in L$ for every $n \ge 0$. One can take $k$ to be the number o
 ## Sources
 
 - H. Comon, M. Dauchet, R. Gilleron, F. Jacquemard, D. Lugiez, C. Löding, S. Tison and M. Tommasi, *Tree Automata Techniques and Applications*, 2008, <https://inria.hal.science/hal-03367725>: the Preliminaries (heights of terms and contexts) and Section 1.2, the Pumping Lemma and its proof.
+- F. Gécseg and M. Steinby, *Tree Automata*, Akadémiai Kiadó, Budapest, 1984; reissued with a preface to the second edition as arXiv:1509.06233, 2015, with the original numbering: Section 2.10, Lemma 2.10.1 (with height counted from $0$ at the leaves, so its hypothesis $\mathrm{hg}(t) \ge k$ is $\mathrm{Height}(t) > k$ here).

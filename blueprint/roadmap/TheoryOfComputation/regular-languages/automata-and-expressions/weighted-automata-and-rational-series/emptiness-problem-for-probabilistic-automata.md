@@ -1,9 +1,8 @@
 # The emptiness problem for probabilistic automata is undecidable
 
-There is no algorithm that decides, given a [probabilistic automaton](probabilistic-automata-and-cut-point-languages.md) $\mathcal{A}$ and a cut-point $\lambda$,
-whether some word $w$ has $P_{\mathcal{A}}(w) \ge \lambda$ (Paz); the same holds for the strict version $P_{\mathcal{A}}(w) > \lambda$, already for automata whose
-transition probabilities lie in $\{0, 1/2, 1\}$. Emptiness becomes decidable, and PSPACE-complete, for automata with a single
-probabilistic transition, and stays undecidable for automata with two.
+There is no algorithm that decides, given a [probabilistic automaton](probabilistic-automata-and-cut-point-languages.md) $\mathcal{A}$, whether some word $w$ has
+$P_{\mathcal{A}}(w) > \lambda$, for any fixed cut-point $\lambda$ with $0 < \lambda < 1$; the same holds with $P_{\mathcal{A}}(w) \ge \lambda$ (Nasu and Honda; Paz). The first proofs
+reduce the Post correspondence problem, and an independent proof reduces the halting problem for two-counter machines (Condon and Lipton).
 
 ## Depends on
 
@@ -13,8 +12,8 @@ probabilistic transition, and stays undecidable for automata with two.
 
 This page becomes ready once:
 
-- Undecidability of the equality problem for probabilistic automata (Bertoni), from which the cited proof reduces (proof prerequisite; not yet stated)
+- The reduction from the Post correspondence problem to emptiness of probabilistic automata, from Section 1.4 of the cited paper and the works it cites (proof prerequisite; not yet stated)
 
 ## Sources
 
-- H. Gimbert and Y. Oualhadj, "Probabilistic automata on finite words: decidable and undecidable problems", *Proceedings of ICALP 2010*, Lecture Notes in Computer Science 6199, Springer, 2010 (version <https://hal.science/hal-00456538v2>): Section 2, Definition 2 (simple automata), Proposition 1 (Bertoni), Proposition 2, Theorem 1 (Paz), and Propositions 3–5.
+- G. Rote, "Probabilistic finite automaton emptiness is undecidable for a fixed automaton", *50th International Symposium on Mathematical Foundations of Computer Science (MFCS 2025)*, LIPIcs 345, 2025, paper 86, doi:10.4230/LIPIcs.MFCS.2025.86: Section 1.1 (the emptiness problem, undecidable for every fixed cut-point in $(0, 1)$, with $>$ or $\ge$), Section 1.2 (the history of the proofs, crediting Nasu and Honda, Claus, and Condon and Lipton, with the footnote on the attribution to Paz) and Section 1.4.

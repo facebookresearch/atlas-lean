@@ -8,6 +8,7 @@ if and only if it has finitely many left quotients.
 
 ## Depends on
 
+- [Semirings and formal power series on a free monoid](semirings-and-formal-power-series.md)
 - [Weighted automata over a semiring](weighted-automata-over-a-semiring.md)
 
 ## Sources

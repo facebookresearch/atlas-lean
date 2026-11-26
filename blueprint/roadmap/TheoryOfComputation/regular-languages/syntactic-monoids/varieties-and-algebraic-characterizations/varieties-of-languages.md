@@ -1,12 +1,14 @@
 # Varieties of languages
 
-A *class of recognizable languages* $\mathcal{V}$ assigns to each finite alphabet $A$ a set $\mathcal{V}(A^*)$ of regular languages over $A$,
-compatibly with bijections between alphabets. It is a *variety of languages* if, for all alphabets $A$ and $B$:
-
+A *$*$-class of recognizable languages* $\mathcal{V}$ assigns to each finite alphabet $A$ a set $\mathcal{V}(A^*)$ of recognizable languages of $A^*$. It is a
+*$*$-variety of languages* if, for all finite alphabets $A$ and $B$:
 1. $\mathcal{V}(A^*)$ is a Boolean algebra of languages;
-2. for every monoid morphism $\varphi : A^* \to B^*$, $X \in \mathcal{V}(B^*)$ implies $\varphi^{-1}(X) \in \mathcal{V}(A^*)$;
-3. if $X \in \mathcal{V}(A^*)$ and $u \in A^*$, then the quotients $u^{-1} X = \{w : uw \in X\}$ and $X u^{-1} = \{w : wu \in X\}$ belong to $\mathcal{V}(A^*)$.
+2. for every monoid morphism $\varphi : A^* \to B^*$, $L \in \mathcal{V}(B^*)$ implies $\varphi^{-1}(L) \in \mathcal{V}(A^*)$;
+3. if $L \in \mathcal{V}(A^*)$ and $a \in A$, then the quotients $a^{-1} L = \{w : aw \in L\}$ and $L a^{-1} = \{w : wa \in L\}$ belong to $\mathcal{V}(A^*)$.
+
+Dropping closure under complement in 1 gives *positive* $*$-varieties, and the same definitions over $A^+$ with semigroup morphisms give
+$+$-varieties.
 
 ## Sources
 
-- J.-É. Pin, *Mathematical Foundations of Automata Theory*, lecture notes, version of March 24, 2025, <https://www.irif.fr/~jep/PDF/MPRI/MPRI.pdf>: Section XIII.1 (classes of recognisable languages) and Section XIII.3 (positive varieties and varieties of languages).
+- J.-É. Pin, "Syntactic semigroups", in G. Rozenberg and A. Salomaa (eds.), *Handbook of Formal Languages*, vol. 1, Springer, 1997, pp. 679–746, author's copy <https://www.irif.fr/~jep/PDF/HandBook.pdf>: Section 4.2, the definitions of classes of recognizable languages, positive varieties and varieties, and of $*$-classes and $*$-varieties.

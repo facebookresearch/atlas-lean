@@ -1,10 +1,9 @@
 # Piecewise testable languages
 
-A word $u = a_1 \cdots a_k$ is a *subword* of $v$ if $v = v_0 a_1 v_1 \cdots a_k v_k$ for some words $v_i$. For $n > 0$, words $u$ and $v$ over $A$ are
-$\sim_n$-equivalent if they have the same subwords of length at most $n$; $\sim_n$ is a congruence of finite index on $A^*$. A language is *piecewise
-testable* if it is a union of $\sim_n$-classes for some $n > 0$, equivalently a Boolean combination of languages $A^* a_1 A^* a_2 \cdots A^* a_k A^*$ of the
-words that contain a given subword $a_1 \cdots a_k$.
+A word $a_1 \cdots a_k$, with letters $a_i$, is a *subword* of $u$ if $u = u_0 a_1 u_1 \cdots a_k u_k$ for some words $u_i$. A language of $A^*$ is *piecewise
+testable* if it is a finite Boolean combination of languages $A^* a_1 A^* a_2 \cdots a_k A^*$, the sets of words that contain $a_1 \cdots a_k$ as a subword.
+These are the languages of level $1$ of the Straubing–Thérien hierarchy; all finite languages are piecewise testable.
 
 ## Sources
 
-- J.-É. Pin, *Mathematical Foundations of Automata Theory*, lecture notes, version of March 24, 2025, <https://www.irif.fr/~jep/PDF/MPRI/MPRI.pdf>: Section VII.1 (the subword ordering, the congruence $\sim_n$ and Proposition VII.1.2), Section VII.3 (the definition of piecewise testable languages) and Proposition VII.3.11.
+- J.-É. Pin, "Syntactic semigroups", in G. Rozenberg and A. Salomaa (eds.), *Handbook of Formal Languages*, vol. 1, Springer, 1997, pp. 679–746, author's copy <https://www.irif.fr/~jep/PDF/HandBook.pdf>: Section 2.5 (the definition of subwords), the introduction (piecewise testable languages) and Section 8.1 (the languages of level 1).

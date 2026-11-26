@@ -3,7 +3,8 @@
 For every parity tree automaton $\mathcal{A}$ over an alphabet $A$ one can effectively construct a Muller tree automaton, and hence a
 parity tree automaton, that accepts exactly the infinite trees in $T^\omega_A \setminus T^\omega(\mathcal{A})$, in the sense of
 [tree automata on infinite trees](tree-automata-on-infinite-trees.md) (Rabin). Thus the recognizable sets of infinite trees are closed
-under complementation. If $\mathcal{A}$ rejects $t$, Automaton has no winning strategy in the acceptance game, so by positional
+under complementation. After completing $\mathcal{A}$ by a rejecting sink state, so that every play of the acceptance game is infinite: if $\mathcal{A}$ rejects $t$,
+Automaton has no winning strategy in the acceptance game, so by positional
 determinacy Pathfinder has a positional one; such a strategy is a labelling of the tree by finitely many local instructions, and the
 complement automaton guesses this labelling and checks, by a deterministic automaton on infinite words run along every path, that no
 path consistent with it satisfies the acceptance condition of $\mathcal{A}$.
