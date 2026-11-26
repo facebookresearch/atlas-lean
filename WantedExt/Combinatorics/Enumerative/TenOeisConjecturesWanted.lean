@@ -14,7 +14,7 @@ Sequences* 29 (2026), Article 26.1.8
 (<https://cs.uwaterloo.ca/journals/JIS/VOL29/Fried/fried21.html>).
 
 Stated: Theorem 2 (a diagonal coefficient), Theorem 5 (arithmetic progressions of `[n]`),
-Theorem 6 (digit insertion and the digit sum), Theorem 7 (a binomial sum modulo `4`), Theorem 8
+Theorem 6 (digit insertion and the digit sum), Theorem 8
 (the Bala-Somos parity conjectures from A067567 and A305123), Lemmas 9-11 and Theorem 12 (the
 ceiling of `cot (π / (2m))`), Theorem 14 and Corollary 15 (cevians), and Theorem 16 and
 Corollaries 17 and 21 (intersections and regions in the two-fan construction). Theorems 18 and 20
@@ -22,6 +22,9 @@ and Corollary 19 stay blocked (see the source audit table).
 
 Proved in `MathlibExt.Combinatorics.Enumerative.FriedAlternatingBinomialIdentity`, which this
 module imports: Lemma 1 (`fried_alternating_binomial_identity`).
+Theorem 7 (a binomial sum modulo `4`, `bala_binomial_sum_odd_imp_mod_four`) is proved in
+`MathlibExt.Combinatorics.Enumerative.TenOeisConjecturesBalaBinomialSumOddImpModFour`, which this
+module imports.
 Theorem 13 (A285273) is proved in `MathlibExt.Combinatorics.Enumerative.RepeatingDecimalRatio`.
 `exists_sq_near_triangular_beatty_sqrt_two` (triangular numbers near squares along `⌊n√2⌋`) is
 proved in `MathlibExt.Combinatorics.Enumerative.TriangularNearSquareBeattySqrtTwo`, which this
@@ -47,6 +50,7 @@ public import MathlibExt.Combinatorics.AP.Basic
 public import MathlibExt.Combinatorics.Enumerative.FriedAlternatingBinomialIdentity
 public import MathlibExt.Combinatorics.Enumerative.RepeatingDecimalRatio
 public import MathlibExt.Combinatorics.Enumerative.TriangularNearSquareBeattySqrtTwo
+public import MathlibExt.Combinatorics.Enumerative.TenOeisConjecturesBalaBinomialSumOddImpModFour
 
 namespace MetaMathlibExt
 
@@ -121,19 +125,6 @@ public theorem_wanted card_digitInsertion_le_ten_mul_eq_digitSum (n : ℕ) (hn :
     let S : Finset ℕ := (((Finset.range (L.length + 1)) ×ˢ Finset.range 10).filter
         fun p => ¬(p.1 = L.length ∧ p.2 = 0)).image fun p => Nat.ofDigits 10 (L.insertIdx p.1 p.2)
     (S.filter (· ≤ 10 * n)).card = L.sum
-
-/-- **Odd values of Bala's binomial sum are $1$ modulo $4$.** For a natural number $n$, let
-$a(n) = \sum_{k=0}^{n} \binom{2n+1}{n+k+1} (-2)^k$. If $a(n)$ is odd, then $a(n) \equiv 1 \pmod 4$.
-
-The paper's $a(n)$ is A026641 (the number of even-outdegree nodes in all ordered trees with $n$
-edges); its proof works with this binomial sum (Bala's formula, display (13)), which is taken as
-the definition here.
-
-Source: Sela Fried, *Proofs of Ten Conjectures From the OEIS*, Journal of Integer Sequences 29
-(2026), Article 26.1.8, Theorem 7 (`jis-2026-26.1.8-thm-7`). -/
-public theorem_wanted bala_binomial_sum_odd_imp_mod_four (n : ℕ)
-    (h : Odd (∑ k ∈ Finset.range (n + 1), ((2 * n + 1).choose (n + k + 1) : ℤ) * (-2) ^ k)) :
-    (∑ k ∈ Finset.range (n + 1), ((2 * n + 1).choose (n + k + 1) : ℤ) * (-2) ^ k) % 4 = 1
 
 /-- **The ceiling of $\cot(\pi/(2m))$ rises in steps of $0$ or $1$.** For $m \ge 1$ let
 $g(m) = \lceil \cot(\pi/(2m)) \rceil$. Then for every $m \ge 1$, $g(m) \le g(m+1)$ and
