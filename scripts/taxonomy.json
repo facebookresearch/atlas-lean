@@ -10660,6 +10660,7 @@
   "MathlibExt/Combinatorics/Additive/CauchyDavenportChowla": {"to": "Combinatorics/additive-combinatorics/sumsets-inverse-theorems", "title": "Cauchy–Davenport–Chowla theorem"},
   "MathlibExt/Combinatorics/Additive/ChuMSTDFamilies": {"to": "Combinatorics/additive-combinatorics/more-sums-than-differences", "title": "Chu's constructions of sum-dominant sets"},
   "MathlibExt/Combinatorics/Additive/ChuMSTDFamiliesChuFamilyDifferenceDominated": {"to": "Combinatorics/additive-combinatorics/more-sums-than-differences", "title": "Chu's constructions of sum-dominant sets"},
+  "MathlibExt/Combinatorics/Additive/ChuMSTDFamiliesChuFamilyKLTAddSupsetSixFamilies": {"to": "Combinatorics/additive-combinatorics/more-sums-than-differences", "title": "Chu's constructions of sum-dominant sets"},
   "MathlibExt/Combinatorics/Additive/ChuMSTDFamiliesChuFamilyKLTCardAdd": {"to": "Combinatorics/additive-combinatorics/more-sums-than-differences", "title": "Chu's constructions of sum-dominant sets"},
   "MathlibExt/Combinatorics/Additive/ChuMSTDFamiliesChuFamilyMstdIncreasing": {"to": "Combinatorics/additive-combinatorics/more-sums-than-differences", "title": "Chu's constructions of sum-dominant sets"},
   "MathlibExt/Combinatorics/Additive/CombinatorialNullstellensatz": {"to": "Combinatorics/additive-combinatorics", "title": "Combinatorial Nullstellensatz"},
