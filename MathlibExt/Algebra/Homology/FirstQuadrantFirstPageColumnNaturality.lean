@@ -13,14 +13,19 @@ module
 public import MathlibExt.Algebra.Homology.FirstQuadrantFirstPageColumn
 
 /-!
-# Naturality of the direct first-page column
+# Naturality of signed direct columns and their vertical homology
 
-A bicomplex map induces a map between the signed direct-column
-presentations.  This map commutes with the sign-removing comparison to the
-extended vertical column, and hence with the resulting vertical-homology
-comparison.
+Let C be preadditive with a zero object, and let f : K → L be a map
+of nonnegative homological bicomplexes. The direct column D_p is the
+extension of K_p along q ↦ −p−q, with differential multiplied by
+(−1)^p. Extending f_p gives D_p(f), preserving the same scalar sign.
 
-No spectral-page comparison is constructed here.
+In degree −p−q this map is the component f_(p,q) transported through
+the extension identifications. It preserves identities and composition.
+For abelian C, the degreewise sign-removing isomorphism
+D_p ≅ extend(K_p) and the homology comparison
+H_(−p−q)(D_p) ≅ H_q(K_p)
+are natural in f. The category object and morphism worlds are independent.
 -/
 
 @[expose] public section
@@ -43,8 +48,11 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
 variable {K L M : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ)}
 
-/-- The map between signed direct-column presentations induced by a
-bicomplex map. -/
+/-- For a nonnegative homological bicomplex map f : K → L in
+a preadditive category with a zero object, extending its column-p
+chain map along q ↦ −p−q gives D_p(f) : D_p(K) → D_p(L).
+Both column differentials carry the multiplier (−1)^p, so the
+extended component maps commute with them. -/
 noncomputable def horizontalDirectColumnCochainMap
     (f : K ⟶ L) (p : ℕ) :
     horizontalDirectColumnCochain K p ⟶
@@ -69,9 +77,12 @@ noncomputable def horizontalDirectColumnCochainMap
       (HomologicalComplex.extendMap (f.f p)
         (ComplexShape.embeddingUpIntLE (-(p : ℤ)))).comm]
 
-/-- In a supported degree, the direct-column map is the corresponding
-bicomplex-map component transported through the canonical extension
-isomorphisms. -/
+/-- For a nonnegative homological bicomplex map f : K → L,
+p,q ≥ 0 and i=−p−q, the component of D_p(f) is
+α_L⁻¹ ∘ f_(p,q) ∘ α_K.
+Here α_K : D_p(K)_i ≅ K_(p,q) and α_L are the canonical
+extension object identifications in the preadditive target
+category with a zero object. -/
 @[simp]
 theorem horizontalDirectColumnCochainMap_f
     (f : K ⟶ L) (p q : ℕ) :
@@ -123,8 +134,10 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {K L : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ)}
 
-/-- The sign-removing direct-column isomorphism is natural in the
-bicomplex. -/
+/-- For a map f : K → L of nonnegative homological bicomplexes
+in an abelian category and p ≥ 0, let u_K,u_L remove the
+constant column sign by degreewise multiplication (−1)^(p i).
+Then u_L ∘ D_p(f) = extend(f_p) ∘ u_K as cochain maps. -/
 @[reassoc]
 theorem horizontalDirectColumnUntwistIso_hom_naturality
     (f : K ⟶ L) (p : ℕ) :
@@ -146,8 +159,11 @@ theorem horizontalDirectColumnUntwistIso_hom_naturality
     Linear.units_smul_comp (R := ℤ),
     Category.comp_id, Category.id_comp]
 
-/-- Direct-column homology identifies naturally with vertical-column
-homology under a bicomplex map. -/
+/-- For a nonnegative homological bicomplex map f : K → L
+in an abelian category, the comparisons
+χ_K : H_(−p−q)(D_p(K)) ≅ H_q(K_p) and χ_L satisfy
+χ_L ∘ H_(−p−q)(D_p(f)) = H_q(f_p) ∘ χ_K.
+This is a square between direct-column and vertical-column homology. -/
 @[reassoc]
 theorem horizontalDirectColumnHomologyIso_hom_naturality
     (f : K ⟶ L) (p q : ℕ) :

@@ -12,11 +12,19 @@ public import Mathlib.Algebra.Category.ModuleCat.ChangeOfRings
 public import Mathlib.Algebra.Category.ModuleCat.Ulift
 
 /-!
-# Native scalar restriction and module universe lifting
+# Scalar restriction commutes with module carrier lifting
 
-The comparison uses the actual module actions and the identity on lifted
-values. Both ring worlds and the original carrier world remain independent.
-The direct imports are the native scalar-restriction and module-lift owners.
+Let P,Q be rings, f : P → Q a ring homomorphism, and X a Q-module
+in carrier world v. For an additional height t, put H = max(v,t).
+Restricting X along f and then lifting its carrier gives the same
+P-action as lifting X and then restricting:
+p • up(x) = up(f(p) • x).
+
+The identity on the lifted carrier defines a natural isomorphism
+U_P ∘ Res_f ≅ Res_f ∘ U_Q from ModuleCat^v(Q) to ModuleCat^H(P).
+Its forward and inverse components both preserve the lifted value.
+The ring worlds of P,Q and the module and extra-height worlds are
+independent; the rings may be noncommutative.
 -/
 
 @[expose] public section
@@ -27,7 +35,11 @@ open CategoryTheory
 
 namespace ModuleCat
 
-/-- Native scalar restriction commutes with native carrier lifting on the actual module actions. -/
+/-- For rings P,Q, a ring homomorphism f : P → Q and
+H = max(v,t), carrier lift and scalar restriction satisfy
+U_P ∘ Res_f ≅ Res_f ∘ U_Q on Q-modules in world v.
+The component at X is the identity on ULift^H X with P-action
+p • up(x) = up(f(p) • x). All ring and carrier worlds are independent. -/
 def uliftRestrictionIso.{t, v, r, r'}
     {P : Type r} {Q : Type r'} [Ring P] [Ring Q] (f : P →+* Q) :
     ModuleCat.restrictScalars.{v} f ⋙ ModuleCat.uliftFunctor.{max v t, v} P ≅
@@ -63,13 +75,19 @@ def uliftRestrictionIso.{t, v, r, r'}
     intro x
     rfl
 
-/-- Its forward comparison leaves the actual lifted value unchanged. -/
+/-- For rings P,Q, f : P → Q, X ∈ ModuleCat^v(Q) and
+x ∈ ULift^max(v,t) X, the forward component of
+U_P ∘ Res_f ≅ Res_f ∘ U_Q at X sends x to itself.
+The actions on both endpoints are induced by f. -/
 theorem uliftRestrictionIso_hom_apply.{t, v, r, r'}
     {P : Type r} {Q : Type r'} [Ring P] [Ring Q] (f : P →+* Q)
     (X : ModuleCat.{v} Q) (x : ULift.{max v t} X) :
     ((uliftRestrictionIso.{t, v, r, r'} f).hom.app X).hom x = x := rfl
 
-/-- The inverse comparison has the same original carrier identity. -/
+/-- For rings P,Q, f : P → Q, X ∈ ModuleCat^v(Q) and
+x ∈ ULift^max(v,t) X, the inverse component of the scalar
+restriction/carrier-lift comparison at X sends x to itself.
+The ring worlds and the module and lift worlds remain independent. -/
 theorem uliftRestrictionIso_inv_apply.{t, v, r, r'}
     {P : Type r} {Q : Type r'} [Ring P] [Ring Q] (f : P →+* Q)
     (X : ModuleCat.{v} Q) (x : ULift.{max v t} X) :

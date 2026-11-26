@@ -1,3 +1,5 @@
-# Unitization Scalar Complex Augmentation
+# The lifted scalar augmentation on regular Hochschild complexes
 
-The augmentation acts on the same original coefficient and tensor factors.
+The lifted scalar augmentation on regular Hochschild complexes.
+
+Apply the lifted augmentation to each tensor entry to obtain `b(A⁺) → b(ULift.{v} k)`.

@@ -1,3 +1,6 @@
-# Small Etale Godement Coresolution
+# Cosimplicial Godement sheaf
 
-The underlying actual Godement cosimplicial object.
+Cosimplicial Godement sheaf.
+
+The monad coresolution has objects the successive positive powers of the Godement monad on
+`Q`.

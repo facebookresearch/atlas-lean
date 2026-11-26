@@ -1,3 +1,6 @@
-# Field Finite Galois Algebra point inverse
+# Inverse geometric fiber coordinate gives the finite Galois point
 
-The actual inverse pointing is fixed by the accepted original finite-algebra comparison.
+Inverse geometric fiber coordinate gives the finite Galois point.
+
+The inverse fiber isomorphism sends the canonical finite-field embedding to the specified
+geometric point.

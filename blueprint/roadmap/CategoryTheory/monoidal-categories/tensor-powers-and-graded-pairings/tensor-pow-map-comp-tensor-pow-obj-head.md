@@ -1,3 +1,6 @@
-# Tensor Pow Map comp tensor Pow Obj Head Tail Iso hom
+# Head tail coordinates are natural under power maps
 
-Naturality of the positive tensor-power head--tail decomposition.
+Head tail coordinates are natural under power maps.
+
+The power map in degree `n+2` becomes `f ⊗ tensorPowMap f (n+1)` under the head-tail
+coordinates.

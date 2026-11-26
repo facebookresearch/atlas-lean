@@ -1,3 +1,6 @@
-# Field Geometric Fiber Continuous Delta Functor T
+# Degree functor of geometric fiber continuous cohomology
 
-Every degree uses the same geometric fiber followed by original continuous cohomology.
+Degree functor of geometric fiber continuous cohomology.
+
+In degree `q`, the delta functor is the geometric-stalk Galois functor followed by degree-`q`
+continuous cohomology.

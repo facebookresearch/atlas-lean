@@ -1,4 +1,6 @@
-# Primitive One inclusion
+# The exterior coordinate of a primitive degree-one chain
 
-The primitive inclusion in degree one has exactly the exterior degree-one coordinate, without
-any basis hypothesis.
+The exterior coordinate of a primitive degree-one chain.
+
+The primitive inclusion sends a degree-one primitive coordinate to its exterior-degree-one
+representative under the inverse exterior equivalence.

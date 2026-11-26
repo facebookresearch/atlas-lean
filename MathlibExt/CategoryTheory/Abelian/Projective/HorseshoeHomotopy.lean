@@ -13,7 +13,7 @@ public import MathlibExt.CategoryTheory.Abelian.Projective.HorseshoeComparison
 public import Mathlib.CategoryTheory.Abelian.Projective.Resolution
 public import Mathlib.Algebra.Homology.Homotopy
 
-/-!
+/- Proof implementation note.
 # Homotopies between comparisons of projective and horseshoe resolutions
 
 Two morphisms of projective resolutions over the same morphism are
@@ -27,6 +27,16 @@ endpoint compatibility is essential for assembling homotopies of nested
 horseshoe constructions, such as Cartan--Eilenberg bicomplexes; a bare
 homotopy of the middle maps, which already follows from the
 projective-resolution statement, does not suffice for that purpose.
+-/
+
+/-!
+# Homotopies of projective and horseshoe comparisons
+
+In an abelian category `C`, two projective-resolution morphisms over
+the same resolved-object map have homotopic chain maps. For horseshoe
+comparisons over the same short-exact-sequence map, prescribed homotopies
+at both projective endpoints extend to a middle homotopy preserving
+the endpoint inclusion and projection squares.
 -/
 
 @[expose] public section
@@ -49,8 +59,10 @@ section HomHomotopy
 variable {Z Z' : C} {P : ProjectiveResolution Z}
   {Q : ProjectiveResolution Z'} {f : Z ⟶ Z'}
 
-/-- Two morphisms of projective resolutions over the same morphism of
-resolved objects have homotopic underlying chain maps. -/
+/-- In an abelian category `C`, let `P`, `Q` be projective resolutions
+of `Z`, `Z′` and `f : Z → Z′`. Any two augmentation-compatible
+resolution maps `φ,ψ : P → Q` over `f` have homotopic chain maps
+`φ.hom ~ ψ.hom`. -/
 noncomputable def Hom.homotopy (φ ψ : Hom P Q f) : Homotopy φ.hom ψ.hom :=
   ProjectiveResolution.liftHomotopy f _ _ φ.hom_comp_π ψ.hom_comp_π
 
@@ -710,11 +722,13 @@ private theorem homotopySubZero_hom_succ (a : ℕ) :
 namespace Hom
 
 include sH sH' in
-/-- Two strict horseshoe comparisons over the same map of short exact
-sequences, whose endpoint resolution maps are related by specified
-homotopies, are related by a homotopy of the middle chain maps
-compatible with the endpoint homotopies through the horseshoe
-inclusions and projections. -/
+/-- In an abelian category `C`, let `H,H′` be horseshoes with chosen
+endpoint biproduct specifications, and let `F,G` be comparisons
+over the same short-exact-sequence map. If their left and right
+endpoint maps have supplied homotopies `hu`, `hw`, a middle
+homotopy `h : F.hom ~ G.hom` exists with
+`H.i_a ≫ h_ab = hu_ab ≫ H′.i_b` and
+`h_ab ≫ H′.p_b = H.p_a ≫ hw_ab` for every `a,b ∈ ℕ`. -/
 theorem nonempty_homotopy :
     ∃ h : Homotopy F.hom G.hom,
       (∀ a b : ℕ, H.i.f a ≫ h.hom a b = hu.hom a b ≫ H'.i.f b) ∧

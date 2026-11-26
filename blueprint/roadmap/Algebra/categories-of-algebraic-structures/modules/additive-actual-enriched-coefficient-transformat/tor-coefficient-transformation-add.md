@@ -1,3 +1,6 @@
-# Tor Coefficient Transformation add
+# Tor coefficient transformations preserve addition
 
-Native derived addition applies to the same actual coefficient transformations.
+Tor coefficient transformations preserve addition.
+
+For compatible coefficient maps `f` and `g`, the degree-`n` Tor coefficient transformation of
+`f + g` equals the sum of their degree-`n` transformations.

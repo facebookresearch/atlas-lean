@@ -18,15 +18,16 @@ public import Mathlib.Algebra.Homology.HomotopyCategory.HomComplexShift
 public import Mathlib.Algebra.Homology.HomotopyCategory.ShiftSequence
 
 /-!
-# The horizontal degree-one cocycle between adjacent total rows
+# Horizontal row cocycles and their homology maps
 
-The horizontal components between adjacent signed rows anticommute with the
-row differentials.  After regrading natural chain degree `n` as cochain
-degree `-n`, they therefore form a canonical degree-one cocycle and an
-honest shifted homology map.
+Let `B` be a first-quadrant bicomplex in a preadditive category with finite coproducts. The
+horizontal components `F_m(n)` from signed row `m + 1` in degree `n + 1` to signed row `m` in
+degree `n` satisfy `d F_m + F_m d = 0`.
 
-No connecting-morphism, spectral-page, E₂, Tor, abutment, or convergence
-comparison is made here.
+Regrade natural chain degree `n` as integer cochain degree `-n`. The components then define a
+degree-one cocycle, and hence a morphism from the extended source row to the target row
+shifted by one. In an abelian category this induces `H_(m+1+q)(B.totalRow (m+1)) ⟶
+H_(m+q)(B.totalRow m)`.
 -/
 
 @[expose] public section
@@ -53,8 +54,11 @@ local instance : HasFiniteBiproducts C :=
 variable (B : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ))
 
-/-- The horizontal row components anticommute with the signed row
-differentials. -/
+/-- Adjacent horizontal row components anticommute with row differentials.
+
+For natural `m` and `n`, the composite of the source differential from `n + 2` to `n + 1` with
+`F_m(n)`, plus the composite of `F_m(n + 1)` with the target differential from `n + 1` to `n`,
+is zero. -/
 theorem partialTotalHorizontalRowF_anticomm (m n : ℕ) :
     (B.totalRow (m + 1)).d (n + 2) (n + 1) ≫
           B.partialTotalHorizontalRowF m n +
@@ -94,8 +98,11 @@ theorem partialTotalHorizontalRowF_anticomm (m n : ℕ) :
       comp_zero, zero_add]
     exact (B.totalRow_isZero_X m n hnm).eq_of_tgt _ _
 
-/-- The horizontal row family as a degree-one cochain after the canonical
-Nat-to-Int regrading. -/
+/-- Horizontal row components as a degree-one cochain.
+
+Extend the two signed total rows along the embedding `n ↦ -n`. The component from degree `-(n
++ 1)` to `-n` is `B.partialTotalHorizontalRowF m n` in extension coordinates. Components with
+source outside the embedding, and the component from degree zero to one, are zero. -/
 noncomputable def partialTotalHorizontalRowCochain (m : ℕ) :
     CochainComplex.HomComplex.Cochain
       ((B.totalRow (m + 1)).extend ComplexShape.embeddingDownNat)
@@ -116,7 +123,11 @@ noncomputable def partialTotalHorizontalRowCochain (m : ℕ) :
           B.partialTotalHorizontalRowF m n ≫
           ((B.totalRow m).extendXIso e hq).inv
 
-/-- Supported component of the extended horizontal cochain. -/
+/-- Supported component of the regraded horizontal cochain.
+
+At source degree `-(n + 1)` and target degree `-n`, the horizontal cochain is the source
+extension-coordinate map followed by `B.partialTotalHorizontalRowF m n` and the inverse target
+extension-coordinate map. -/
 theorem partialTotalHorizontalRowCochain_v (m n : ℕ) :
     (B.partialTotalHorizontalRowCochain m).v
         (ComplexShape.embeddingDownNat.f (n + 1))
@@ -150,8 +161,10 @@ theorem partialTotalHorizontalRowCochain_v (m n : ℕ) :
     subst k
     rfl
 
-/-- The horizontal cochain is zero when its source degree lies outside the
-regrading embedding. -/
+/-- Horizontal cochain vanishes outside the chain-degree embedding.
+
+If the inverse index of an integer source degree `p` under `n ↦ -n` is absent, every degree-
+one horizontal cochain component from `p` to `q = p + 1` is zero. -/
 theorem partialTotalHorizontalRowCochain_v_of_r_eq_none
     (m : ℕ) {p q : ℤ} (hpq : p + 1 = q)
     (hp : ComplexShape.embeddingDownNat.r p = none) :
@@ -168,7 +181,10 @@ theorem partialTotalHorizontalRowCochain_v_of_r_eq_none
     have hbad : (none : Option ℕ) = some (k + 1) := hp.symm.trans hr
     cases hbad
 
-/-- The boundary component at natural source degree zero vanishes. -/
+/-- Horizontal degree-one cochain has zero component from zero to one.
+
+For every row index `m`, the component of `B.partialTotalHorizontalRowCochain m` from cochain
+degree zero to degree one is zero. -/
 theorem partialTotalHorizontalRowCochain_v_zero (m : ℕ) :
     (B.partialTotalHorizontalRowCochain m).v 0 1 rfl = 0 := by
   have h01 : ComplexShape.embeddingDownNat.f 0 + 1 = (1 : ℤ) := by
@@ -191,7 +207,11 @@ theorem partialTotalHorizontalRowCochain_v_zero (m : ℕ) :
         (hr.symm.trans (ComplexShape.embeddingDownNat.r_f 0))
     omega
 
-/-- The extended horizontal row cochain is a degree-one cocycle. -/
+/-- Horizontal row cocycle of degree one.
+
+The regraded horizontal cochain is closed because its row components satisfy `d F_m + F_m d =
+0`. It therefore defines a degree-one cocycle from the extended signed row `m + 1` to the
+extended signed row `m`. -/
 noncomputable def partialTotalHorizontalRowCocycle (m : ℕ) :
     CochainComplex.HomComplex.Cocycle
       ((B.totalRow (m + 1)).extend ComplexShape.embeddingDownNat)
@@ -282,7 +302,11 @@ noncomputable def partialTotalHorizontalRowCocycle (m : ℕ) :
               Category.assoc, comp_zero, zero_comp] at h
             simpa only [add_comm] using h)
 
-/-- Supported component of the bundled horizontal cocycle. -/
+/-- Supported component of the horizontal row cocycle.
+
+The underlying degree-one cochain of `B.partialTotalHorizontalRowCocycle m` has component from
+`-(n + 1)` to `-n` equal to `B.partialTotalHorizontalRowF m n`, conjugated by the source and
+target extension-coordinate isomorphisms. -/
 theorem partialTotalHorizontalRowCocycle_v (m n : ℕ) :
     (B.partialTotalHorizontalRowCocycle m :
       CochainComplex.HomComplex.Cochain _ _ 1).v
@@ -299,16 +323,22 @@ theorem partialTotalHorizontalRowCocycle_v (m n : ℕ) :
     CochainComplex.HomComplex.Cocycle.mk_coe] using
       B.partialTotalHorizontalRowCochain_v m n
 
-/-- The degree-one horizontal cocycle as a morphism to the shifted target
-cochain complex. -/
+/-- Horizontal row cocycle as a morphism to a shifted row.
+
+The degree-one cocycle gives a cochain-complex morphism from the extension of `B.totalRow (m +
+1)` to the extension of `B.totalRow m` shifted by `1`. The shift incorporates the sign in the
+cocycle equation. -/
 noncomputable def partialTotalHorizontalRowShift (m : ℕ) :
     (B.totalRow (m + 1)).extend ComplexShape.embeddingDownNat ⟶
       ((B.totalRow m).extend ComplexShape.embeddingDownNat)⟦(1 : ℤ)⟧ :=
   CochainComplex.HomComplex.Cocycle.equivHomShift.symm
     (B.partialTotalHorizontalRowCocycle m)
 
-/-- Supported component of the shifted horizontal row morphism, with the
-canonical target-shift coordinate cancelled. -/
+/-- Shifted horizontal morphism in unshifted target coordinates.
+
+Compose the component of `B.partialTotalHorizontalRowShift m` in degree `-(n + 1)` with the
+target shift-coordinate isomorphism to degree `-n`. The resulting map is
+`B.partialTotalHorizontalRowF m n` conjugated by the two extension coordinates. -/
 theorem partialTotalHorizontalRowShift_f_comp_shiftIso (m n : ℕ) :
     (B.partialTotalHorizontalRowShift m).f
         (ComplexShape.embeddingDownNat.f (n + 1)) ≫
@@ -351,8 +381,11 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable (B : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ))
 
-/-- The homology map induced by the horizontal degree-one cocycle between
-adjacent signed rows. -/
+/-- Homology map induced by the horizontal row cocycle.
+
+In an abelian category, the shifted horizontal morphism induces a map from
+`H_(m+1+q)(B.totalRow (m+1))` to `H_(m+q)(B.totalRow m)`. The definition uses extension
+homology coordinates and the homology functor's shift map. -/
 noncomputable def partialTotalHorizontalRowHomology (m q : ℕ) :
     (B.totalRow (m + 1)).homology (m + 1 + q) ⟶
       (B.totalRow m).homology (m + q) :=
@@ -368,8 +401,11 @@ noncomputable def partialTotalHorizontalRowHomology (m q : ℕ) :
         ComplexShape.embeddingDownNat.f (m + q) =
           -((m + q : ℕ) : ℤ) by rfl)).hom
 
-/-- Expansion of the horizontal row homology map into its regrading,
-shift-map, and inverse-regrading legs. -/
+/-- Regrading formula for the horizontal row homology map.
+
+The horizontal row homology map is the inverse source extension-homology isomorphism, followed
+by the shift map in cochain degrees `-(m + 1 + q)` and `-(m + q)`, followed by the target
+extension-homology isomorphism. -/
 theorem partialTotalHorizontalRowHomology_eq (m q : ℕ) :
     B.partialTotalHorizontalRowHomology m q =
       ((B.totalRow (m + 1)).extendHomologyIso

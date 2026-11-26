@@ -1,3 +1,6 @@
-# Cyclic Exterior Chain Map naturality
+# Naturality of the positive-bracket cyclic exterior map
 
-Positive-convention chain naturality uses the coefficient/exterior and Connes maps.
+Naturality of the positive-bracket cyclic exterior map.
+
+The source map induced by a nonunital algebra homomorphism commutes with the tail-alternating
+chain map and the induced cyclic quotient map.

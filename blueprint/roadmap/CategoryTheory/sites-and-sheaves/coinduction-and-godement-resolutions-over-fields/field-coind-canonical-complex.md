@@ -1,3 +1,6 @@
-# Field Coind Canonical Complex
+# Canonical coinduction cochain complex
 
-The same original canonical alternating coinduction complex in the actual field action category.
+Canonical coinduction cochain complex.
+
+Take the alternating coface complex of the coinduction-monad coresolution of a discrete Galois
+module.

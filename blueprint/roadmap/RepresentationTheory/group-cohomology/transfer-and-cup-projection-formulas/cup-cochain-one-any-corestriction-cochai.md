@@ -1,4 +1,6 @@
-# Cup Cochain One Any corestriction Cochain
+# The one-by-q cup with a transferred cochain
 
-The explicit `(1,q)` cup with a transferred right cochain, reindexed by
-the first group coordinate.
+The one-by-q cup with a transferred cochain.
+
+The cup x ∪ cor_Tᵠ(y) on g is the sum of x(g₀) ⊗ ρ_B(g₀r(t,g₀)⁻¹)y on the factor tuple of the
+tail starting at r(t,g₀).

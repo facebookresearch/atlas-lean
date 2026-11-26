@@ -1,3 +1,6 @@
-# Bimodule Tensor Morita Derived Functor
+# Forward Morita tensor functor on bounded localizations
 
-The actual forward tensor functor on the original bounded-derived model.
+Forward Morita tensor functor on bounded localizations.
+
+Localize the forward bounded finite-module tensor functor to obtain `FGModuleDerived R ⥤
+FGModuleDerived S`.

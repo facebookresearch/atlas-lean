@@ -1,3 +1,6 @@
-# Source Coalgebra
+# The CE chain coalgebra with a lifted scalar unit
 
-The constructed CE coalgebra with its fixed common-universe lifted scalar-unit structure.
+The CE chain coalgebra with a lifted scalar unit.
+
+The canonical CE complex and its comonoid structure define a coalgebra in the common-universe
+chain category with the lifted regular unit.

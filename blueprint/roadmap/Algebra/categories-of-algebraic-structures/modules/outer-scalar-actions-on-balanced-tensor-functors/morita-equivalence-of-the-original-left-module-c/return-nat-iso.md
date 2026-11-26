@@ -1,3 +1,6 @@
-# Return Nat Iso
+# Left-module return isomorphism is natural
 
-The actual contraction is natural in the original native module morphisms.
+Left-module return isomorphism is natural.
+
+The contraction-based return maps give a natural isomorphism from tensoring by `Q` and then by
+`P` to the identity on left `R`-modules.

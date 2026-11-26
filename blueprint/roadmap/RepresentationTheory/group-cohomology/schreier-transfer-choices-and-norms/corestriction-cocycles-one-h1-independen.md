@@ -1,4 +1,5 @@
-# Corestriction Cocycles One H1π independent
+# Transferred one-cocycles have transversal-independent classes
 
-The `H¹` classes of a transferred one-cocycle do not depend on the
-chosen finite right transversal.
+Transferred one-cocycles have transversal-independent classes.
+
+For every H-one-cocycle c, its transfers with T and U have the same class in H¹(G,A).

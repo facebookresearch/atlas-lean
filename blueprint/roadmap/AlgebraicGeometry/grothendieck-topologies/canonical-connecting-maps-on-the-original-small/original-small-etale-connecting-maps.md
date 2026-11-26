@@ -1,4 +1,7 @@
-# Original small etale connecting maps
+# Yoneda connecting maps and their naturality in every degree
 
-The complete canonical family, its actual Yoneda formula and naturality
-on every original sequence, every degree and every sequence morphism.
+For a scheme X in universe u and c = max(u, w), every short exact
+sequence S of AddCommGrpCat c-valued sheaves on the small étale site has
+δ_S(x) = [S] ∘ x in every nonnegative degree. For every morphism α : S → T
+between two such short exact sequences, these maps obey
+δ_T ∘ Hⁿ(α₃) = Hⁿ⁺¹(α₁) ∘ δ_S.

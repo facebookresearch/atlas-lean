@@ -1,3 +1,4 @@
-# Map Of Hom id
+# Identity law for homogeneous Hom complex maps
 
-Identity whiskering is the identity of the entire Hom complex.
+In a preadditive category D, the identity source and target maps induce the identity on the Hom
+complex of any two integer cochain complexes C,A.

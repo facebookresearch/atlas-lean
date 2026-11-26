@@ -1,4 +1,6 @@
-# Field Etale Continuous Equiv native model
+# Continuous field cohomology uses the homogeneous cochain model
 
-The right-hand object is the original homogeneous-cochain homology of the
-same fiber module, with the original scalar, group, and coefficient universe indices.
+Continuous field cohomology uses the homogeneous cochain model.
+
+The target group is the underlying additive group of degree-`q` homology of continuous
+homogeneous cochains of the geometric-fiber discrete representation.

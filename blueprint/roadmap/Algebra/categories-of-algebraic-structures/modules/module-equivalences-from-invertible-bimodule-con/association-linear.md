@@ -1,3 +1,6 @@
-# Association Linear
+# Right-linear balanced associator for the return tensor
 
-The given raw associator is right-linear for the actual outer actions.
+Right-linear balanced associator for the return tensor.
+
+The balanced associator is an `Rᵐᵒᵖ`-linear equivalence from `(A ⊗_R P) ⊗_S Q` to `A ⊗_R (P
+⊗_S Q)` with the induced outer actions.

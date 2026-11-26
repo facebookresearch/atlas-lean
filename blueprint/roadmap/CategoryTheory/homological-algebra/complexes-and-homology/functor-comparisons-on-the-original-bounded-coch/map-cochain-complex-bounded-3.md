@@ -1,3 +1,6 @@
-# Map Cochain Complex Bounded
+# An equivalence restricts to bounded cochain categories
 
-Restrict the canonical degreewise equivalence to the original finite-support cochains.
+Let C,D have zero morphisms and e : C ≌ D be an equivalence whose forward functor preserves
+zero morphisms. Degreewise prolongation induces Bounded C ≌ Bounded D, because the forward
+functor preserves and reflects finite term support. Its inverse is the bounded lift of
+e.inverse.

@@ -1,4 +1,5 @@
-# Tensor Monad Hom app
+# Tensor monad morphism component is tensoring the monoid map
 
-The component of the induced tensor-monad morphism is the monoid morphism tensored with the
-identity.
+Tensor monad morphism component is tensoring the monoid map.
+
+At object `X`, the component is `f.hom ▷ X`.

@@ -1,3 +1,6 @@
-# The independent-carrier tensor is naturally the...
+# The independent-carrier tensor functor equals the lifted unlifted quotient functor
 
-The independent-carrier tensor is naturally the whole-output lift of the original model.
+For rings R,S and an (R,S)-bimodule B, the
+height-Γ tensor functor is naturally isomorphic to the
+unlifted functor X↦X⊗_R B followed by whole-output lifting.
+The component sends [up(x)⊗up(b)] to up([x⊗b]).

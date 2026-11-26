@@ -1,3 +1,6 @@
-# Quotient Hom Cocone comp gamma Iso hom
+# Power-torsion colimit isomorphism sends evaluation to the colimit injection
 
-Its forward map takes each evaluation leg to the native colimit inclusion.
+Power-torsion colimit isomorphism sends evaluation to the colimit injection.
+
+The degree-`n` evaluation cocone map followed by the forward power-torsion colimit isomorphism
+equals the colimit injection at `n`.

@@ -16,12 +16,20 @@ public import MathlibExt.LinearAlgebra.TensorProduct.Balanced.MoritaLeft
 public import Mathlib.CategoryTheory.Equivalence
 
 /-!
-# Morita equivalence of the original left-module categories
+# Morita equivalences of left-module tensor functors
 
-The functors are the existing `Q ⊗_R −` and `P ⊗_S −` functors. Their
-return maps use the actual associator, contractions and unitors. The
-bundled inner ground action is compared with the original quotient action
-by the proved ground-action equation, for arbitrary k.
+Let `R` and `S` be associative algebras over a commutative ring `k`. Let `P` be an `R`-left,
+`S`-right bimodule and `Q` an `S`-left, `R`-right bimodule, with commuting actions and the
+compatible `k`-scalar towers. The rings and ground ring have independent universes, while
+coefficient and module carriers share universe `v`.
+
+Tensoring by `Q` and by `P` gives functors between left `R`- and left `S`-modules. The
+associator identifies their return composite with tensoring by `P ⊗_S Q`. A bimodule
+equivalence `u : P ⊗_S Q ≅ R` then gives the return map `[p ⊗ [q ⊗ x]] ↦ u([p ⊗ q]) • x`.
+
+A second bimodule equivalence `Q ⊗_R P ≅ S` gives the opposite return map. These natural
+isomorphisms construct a categorical equivalence, with the specified return map as counit and
+the adjointified inverse return map as unit.
 -/
 
 @[expose] public section
@@ -51,21 +59,29 @@ local notation "F" =>
 local notation "G" =>
   (ModuleCat.BalancedTensor.Left.functor k S R P)
 
-/-- Bundle the original right-parenthesized tensor with its computed R action. -/
+/-- Left-module return object with the composite coefficient.
+
+For a left `R`-module `X`, the object `rawObject` is `(P ⊗_S Q) ⊗_R X`, bundled with its
+induced left `R`-action. -/
 def rawObject (X : ModuleCat.{v} R) : ModuleCat.{v} R := by
   letI : Module k X := Module.compHom X (algebraMap k R)
   letI : IsScalarTower k R X := IsScalarTower.of_algebraMap_smul (fun _ _ => rfl)
   letI := TensorProduct.Balanced.Morita.leftReturnModule k R S P Q X
   exact ModuleCat.of R (TensorProduct.Balanced.Morita.leftReturnSource k R S P Q X)
 
-/-- The actual ordered pure class in the composite existing functor. -/
+/-- Pure triple in the successive left-module tensor functors.
+
+For `p : P`, `q : Q`, and `x : X`, this is the class `[p ⊗ [q ⊗ x]]` in the composite that
+tensors first by `Q` and then by `P`. -/
 def compositeMk (X : ModuleCat.{v} R) (p : P) (q : Q) (x : X) : (F ⋙ G).obj X := by
   letI : Module k X := Module.compHom X (algebraMap k R)
   let A := ModuleCat.BalancedTensor.Left.obj k R S Q X
   letI : Module k A := Module.compHom A (algebraMap k S)
   exact mk k S P A p (mk k R Q X q x)
 
-/-- The same pure factors in the original ground-module parentheses. -/
+/-- Pure triple in the left-module composite coefficient object.
+
+For `p : P`, `q : Q`, and `x : X`, this is `[[p ⊗ q] ⊗ x]` in `(P ⊗_S Q) ⊗_R X`. -/
 def rawMk (X : ModuleCat.{v} R) (p : P) (q : Q) (x : X) : rawObject k R S P Q X := by
   letI : Module k X := Module.compHom X (algebraMap k R)
   letI : IsScalarTower k R X := IsScalarTower.of_algebraMap_smul (fun _ _ => rfl)
@@ -73,7 +89,10 @@ def rawMk (X : ModuleCat.{v} R) (p : P) (q : Q) (x : X) : rawObject k R S P Q X 
   exact mk k S P (TensorProduct.Balanced k R Q X) p (mk k R Q X q x)
 
 omit [IsScalarTower k Sᵐᵒᵖ P] [IsScalarTower k Rᵐᵒᵖ Q] in
-/-- Pure ordered factors determine an additive map on the actual composite. -/
+/-- Pure triples determine additive maps from the left return composite.
+
+Two additive maps from the successive left-module tensor object are equal if they agree on `[p
+⊗ [q ⊗ x]]` for every triple `p, q, x`. -/
 theorem compositeHom_ext (X : ModuleCat.{v} R)
     {C' : Type*} [AddCommMonoid C'] {f g : (F ⋙ G).obj X →+ C'}
     (h : ∀ (p : P) (q : Q) (x : X),
@@ -92,7 +111,10 @@ theorem compositeHom_ext (X : ModuleCat.{v} R)
   exact DFunLike.congr_fun ha a
 
 omit [IsScalarTower k Sᵐᵒᵖ P] [IsScalarTower k Rᵐᵒᵖ Q] in
-/-- The composite acts on the original module coefficient only. -/
+/-- Left return composite map on pure triples.
+
+For a left-module morphism `f : X ⟶ Y`, the return composite functor sends `[p ⊗ [q ⊗ x]]` to
+`[p ⊗ [q ⊗ f x]]`. -/
 @[simp, nolint simpNF] -- composite-functor form for rw; Functor.comp_map simplifies LHS
 theorem compositeMap_mk {X Y : ModuleCat.{v} R} (f : X ⟶ Y)
     (p : P) (q : Q) (x : X) :
@@ -121,7 +143,10 @@ theorem compositeMap_mk {X Y : ModuleCat.{v} R} (f : X ⟶ Y)
       (mk k S P A p a₀) = mk k S P B p a₁
   exact houter.trans (congrArg (fun y : B => mk k S P B p y) hinner)
 
-/-- The complete computed comparison and its actual pure-coordinate equation. -/
+/-- Left return associator with its pure-triple formula.
+
+For each left module `X`, this data constructs an isomorphism from the successive tensor
+object to `(P ⊗_S Q) ⊗_R X` and records `[p ⊗ [q ⊗ x]] ↦ [[p ⊗ q] ⊗ x]`. -/
 def coordinateData (X : ModuleCat.{v} R) :
     {e : (F ⋙ G).obj X ≅ rawObject k R S P Q X //
       ∀ (p : P) (q : Q) (x : X),
@@ -154,12 +179,19 @@ def coordinateData (X : ModuleCat.{v} R) :
     exact ⟨Iso.refl _, fun _ _ _ => rfl⟩
   exact compare d₀ d₁ hd
 
-/-- The actual composite-to-raw module comparison, preserving original factors. -/
+/-- Left return composite in composite-coefficient coordinates.
+
+The balanced tensor associator gives an isomorphism from `P ⊗_S (Q ⊗_R X)` to `(P ⊗_S Q) ⊗_R
+X`, with the induced left `R`-module structures. -/
 def coordinates (X : ModuleCat.{v} R) :
     (F ⋙ G).obj X ≅ rawObject k R S P Q X :=
   (coordinateData k R S P Q X).1
 
 omit [IsScalarTower k Sᵐᵒᵖ P] [IsScalarTower k Rᵐᵒᵖ Q] in
+/-- Left return coordinate on pure triples.
+
+The forward coordinate map sends `compositeMk ... p q x` to `rawMk ... p q x`, preserving the
+factor order `p, q, x`. -/
 @[simp, nolint simpNF] -- composite-functor form for rw; Functor.comp_obj simplifies LHS
 theorem coordinates_mk (X : ModuleCat.{v} R) (p : P) (q : Q) (x : X) :
     (coordinates k R S P Q X).hom.hom (compositeMk k R S P Q X p q x) =
@@ -175,14 +207,20 @@ variable
     ∀ (r : R) (b : TensorProduct.Balanced k S P Q), u (r • b) = r * u b)
 
 include u hu in
-/-- The actual return to the original native left R-module. -/
+/-- Return isomorphism for left modules from a bimodule contraction.
+
+Given a right-`R`-linear equivalence `u : P ⊗_S Q ≅ R` that also preserves the left
+`R`-action, the associator, contraction, and regular unitor give an isomorphism from the
+return composite at `X` to `X`. -/
 def returnIso (X : ModuleCat.{v} R) : (F ⋙ G).obj X ≅ X := by
   letI : Module k X := Module.compHom X (algebraMap k R)
   letI : IsScalarTower k R X := IsScalarTower.of_algebraMap_smul (fun _ _ => rfl)
   exact (coordinates k R S P Q X).trans
     (TensorProduct.Balanced.Morita.leftReturn k R S P Q X u hu).toModuleIso
 
-/-- The returned ordered pure class is the original contraction acting on X. -/
+/-- Left-module return isomorphism on pure triples.
+
+The return map from `P ⊗_S (Q ⊗_R X)` to `X` sends `[p ⊗ [q ⊗ x]]` to `u([p ⊗ q]) • x`. -/
 @[simp, nolint simpNF] -- composite-functor form for rw; Functor.comp_obj simplifies LHS
 theorem returnIso_mk (X : ModuleCat.{v} R) (p : P) (q : Q) (x : X) :
     (returnIso k R S P Q u hu X).hom.hom (compositeMk k R S P Q X p q x) =
@@ -195,7 +233,10 @@ theorem returnIso_mk (X : ModuleCat.{v} R) (p : P) (q : Q) (x : X) :
   exact TensorProduct.Balanced.Morita.leftReturn_mk k R S P Q X u hu p q x
 
 include u hu in
-/-- The actual contraction is natural in the original native module morphisms. -/
+/-- Left-module return isomorphism is natural.
+
+The contraction-based return maps give a natural isomorphism from tensoring by `Q` and then by
+`P` to the identity on left `R`-modules. -/
 def returnNatIso : F ⋙ G ≅ 𝟭 (ModuleCat.{v} R) :=
   NatIso.ofComponents (returnIso k R S P Q u hu) (by
     intro X Y f
@@ -219,27 +260,45 @@ variable
     ∀ (s : S) (b : TensorProduct.Balanced k R Q P), w (s • b) = s * w b)
 
 include u hu w hw in
-/-- The source's actual left-module tensor equivalence, without normalized inputs. -/
+/-- Left-module Morita equivalence from two bimodule contractions.
+
+Bimodule equivalences `P ⊗_S Q ≅ R` and `Q ⊗_R P ≅ S` construct `ModuleCat R ≌ ModuleCat S`.
+Its forward functor tensors by `Q`, and its inverse tensors by `P`. -/
 def equivalence : ModuleCat.{v} R ≌ ModuleCat.{v} S :=
   CategoryTheory.Equivalence.mk F G
     (returnNatIso k R S P Q u hu).symm (returnNatIso k S R Q P w hw)
 
+/-- Forward left-module Morita functor is tensor by Q.
+
+The forward functor of the contraction-based equivalence is `Q ⊗_R -`. -/
 @[simp]
 theorem equivalence_functor : (equivalence k R S P Q u hu w hw).functor = F := rfl
 
+/-- Inverse left-module Morita functor is tensor by P.
+
+The inverse functor of the contraction-based equivalence is `P ⊗_S -`. -/
 @[simp]
 theorem equivalence_inverse : (equivalence k R S P Q u hu w hw).inverse = G := rfl
 
-/-- Native adjointification retains the actual symmetric return counit. -/
+/-- Counit of the left-module Morita equivalence is its S-return map.
+
+The counit is the natural return isomorphism constructed from the bimodule contraction `Q ⊗_R
+P ≅ S`. -/
 theorem equivalence_counitIso : (equivalence k R S P Q u hu w hw).counitIso =
     returnNatIso k S R Q P w hw := rfl
 
-/-- The chosen unit is the native refinement of the actual original return. -/
+/-- Unit of the left-module Morita equivalence is the adjointified return inverse.
+
+The unit is `Equivalence.adjointifyη` applied to the inverse `R`-return isomorphism and the
+`S`-return counit. This retains the tensor functors and the specified counit. -/
 theorem equivalence_unitIso : (equivalence k R S P Q u hu w hw).unitIso =
     Equivalence.adjointifyη (returnNatIso k R S P Q u hu).symm
       (returnNatIso k S R Q P w hw) := rfl
 
-/-- The actual counit applies w to q⊗p in that order. -/
+/-- Left-module Morita counit evaluates the S-contraction.
+
+For a left `S`-module `Y`, the counit sends `[q ⊗ [p ⊗ y]]` to `w([q ⊗ p]) • y`, where `w : Q
+⊗_R P ≅ S` is the second bimodule contraction. -/
 @[simp, nolint simpNF] -- stated with the equivalence for rw; equivalence_functor simplifies LHS
 theorem equivalence_counitIso_mk (Y : ModuleCat.{v} S) (q : Q) (p : P) (y : Y) :
     ((equivalence k R S P Q u hu w hw).counitIso.hom.app Y).hom

@@ -1,3 +1,6 @@
-# Cyclic BComplex Hom comp
+# Composition of regular Hochschild algebra maps
 
-Composition retains the original nonunital-map order on the b-complex.
+Composition of regular Hochschild algebra maps.
+
+For composable nonunital algebra homomorphisms, their regular `b`-complex maps compose in the
+same order.

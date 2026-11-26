@@ -1,4 +1,5 @@
-# Comap Surjective
+# The right transversal pulled back along a surjection
 
-Pull a right transversal back along a surjective group homomorphism by
-choosing one lift of each selected target representative.
+The right transversal pulled back along a surjection.
+
+The chosen lifts of the T-representatives form a right transversal for H.comap π in G′.

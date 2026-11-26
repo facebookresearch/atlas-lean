@@ -17,13 +17,22 @@ public import Mathlib.Algebra.Category.ModuleCat.Projective
 public import Mathlib.LinearAlgebra.TensorProduct.Basis
 
 /-!
-# Scalar tensor and restriction for an arbitrary acting algebra
+# Scalar extension and restriction for an associative algebra
 
-The acting algebra need not be commutative. Native algebra tensor maps and
-the native ground-linear tensor Hom universal property give the free-module
-functor and its restriction adjunction. A ground basis gives actual free
-acting-algebra terms. The exact scalar dictionary on the restricted free
-object is compared with its original ground tensor dictionary.
+Let R be a commutative ring and A an associative unital R-algebra.
+At a common module height H = max(u,v,w), scalar extension
+F(X) = A ⊗[R] X carries the left A-action
+a • (b ⊗ x) = ab ⊗ x. It is left adjoint to restriction G along R → A.
+
+The Hom correspondence sends g : A ⊗[R] X →ₗ[A] Y to
+x ↦ g(1 ⊗ x), with inverse h ↦ (a ⊗ x ↦ a • h(x)).
+Thus the unit is x ↦ 1 ⊗ x and the counit is a ⊗ y ↦ a • y.
+The restricted scalar-extension object has the same ground R-action
+as the tensor product A ⊗[R] X.
+
+If X is R-free, F(X) is A-free. If A is also R-free, G(F(X)) is
+R-free. These statements allow a noncommutative A and retain the
+independent ring worlds u,v and the additional height w.
 -/
 
 @[expose] public section
@@ -40,11 +49,18 @@ namespace ModuleCat.AlgebraTensor
 variable (R : Type u) [CommRing R] (A : Type v) [Ring A] [Algebra R A]
 
 
-/-- The original scalar tensor with its actual left acting-algebra action. -/
+/-- For a commutative ring R, an associative unital R-algebra A
+and X ∈ ModuleCat^H(R), scalar extension is A ⊗[R] X with
+left A-action a • (b ⊗ x) = ab ⊗ x.
+It is an A-module at the common height H = max(u,v,w). -/
 @[implicit_reducible]
 def obj (X : (ModuleCat.{max u v w} R)) : (ModuleCat.{max u v w} A) := ModuleCat.of A (A ⊗[R] X)
 
-/-- The original tensor map has native acting-algebra linearity. -/
+/-- For a commutative ring R, an associative unital R-algebra A
+and an R-module morphism f : X → Y, the scalar-extension map
+A ⊗[R] X → A ⊗[R] Y is id_A ⊗ f.
+It is A-linear for the action on the first tensor factor and sends
+a ⊗ x to a ⊗ f(x). -/
 @[implicit_reducible]
 def map {X Y : (ModuleCat.{max u v w} R)} (f : X ⟶ Y) : obj R A X ⟶ obj R A Y :=
   ModuleCat.ofHom (TensorProduct.AlgebraTensorModule.map (LinearMap.id : A →ₗ[A] A) f.hom)
@@ -53,7 +69,10 @@ def map {X Y : (ModuleCat.{max u v w} R)} (f : X ⟶ Y) : obj R A X ⟶ obj R A 
 theorem map_tmul {X Y : (ModuleCat.{max u v w} R)} (f : X ⟶ Y) (a : A) (x : X) :
     (map R A f).hom (a ⊗ₜ[R] x) = a ⊗ₜ[R] f.hom x := rfl
 
-/-- The actual scalar tensor functor into modules over an arbitrary algebra. -/
+/-- For a commutative ring R and an associative unital
+R-algebra A, scalar extension defines
+ModuleCat^H(R) → ModuleCat^H(A), X ↦ A ⊗[R] X.
+It sends a morphism f to id_A ⊗ f, with H = max(u,v,w). -/
 @[implicit_reducible]
 def functor : (ModuleCat.{max u v w} R) ⥤ (ModuleCat.{max u v w} A) where
   obj := obj R A
@@ -83,7 +102,11 @@ instance : (functor.{u, v, w} R A).Additive where
         rw [ModuleCat.hom_add, LinearMap.add_apply, TensorProduct.tmul_add]
       _ = _ := congrArg₂ (· + ·) (map_tmul R A f a x).symm (map_tmul R A g a x).symm
 
-/-- The actual unit-evaluation equivalence between the original Hom sets. -/
+/-- For a commutative ring R, an associative unital R-algebra A,
+an R-module X and an A-module Y at height H, there is a bijection
+Hom_A(A ⊗[R] X,Y) ≃ Hom_R(X,GY).
+It sends g to x ↦ g(1 ⊗ x), with inverse h sending a ⊗ x to
+a • h(x), where G restricts scalars along R → A. -/
 @[implicit_reducible]
 def homEquiv (X : (ModuleCat.{max u v w} R)) (Y : (ModuleCat.{max u v w} A)) :
     (obj R A X ⟶ Y) ≃ (X ⟶ (ModuleCat.restrictScalars (algebraMap R A)).obj Y) := by
@@ -104,7 +127,11 @@ theorem homEquiv_symm_tmul (X : (ModuleCat.{max u v w} R)) (Y : (ModuleCat.{max 
     (f : X ⟶ (ModuleCat.restrictScalars (algebraMap R A)).obj Y) (a : A) (x : X) :
     ((homEquiv R A X Y).symm f).hom (a ⊗ₜ[R] x) = a • f.hom x := rfl
 
-/-- The original noncommutative scalar tensor/restriction adjunction. -/
+/-- For a commutative ring R and an associative unital
+R-algebra A, the functor F = A ⊗[R] − is left adjoint to
+G = restriction along R → A in the module categories at
+height H = max(u,v,w). The unit is x ↦ 1 ⊗ x and the counit
+is a ⊗ y ↦ a • y. -/
 def adjunction : functor.{u, v, w} R A ⊣ ModuleCat.restrictScalars (algebraMap R A) :=
   Adjunction.mkOfHomEquiv
     { homEquiv := homEquiv R A
@@ -130,7 +157,11 @@ theorem adjunction_counit_tmul (Y : (ModuleCat.{max u v w} A)) (a : A)
     (y : (ModuleCat.restrictScalars (algebraMap R A)).obj Y) :
     ((adjunction.{u, v, w} R A).counit.app Y).hom (a ⊗ₜ[R] y) = a • (show Y from y) := rfl
 
-/-- Native scalar restriction recovers the original ground tensor action. -/
+/-- For a commutative ring R, an associative unital R-algebra A
+and an R-module X, the identity on the tensor carrier gives an
+R-linear equivalence G(F(X)) ≃ₗ[R] A ⊗[R] X.
+The R-action induced from the left A-action agrees with the
+ground tensor-product action. -/
 def groundEquiv (X : (ModuleCat.{max u v w} R)) :
     (ModuleCat.restrictScalars (algebraMap R A)).obj (obj R A X) ≃ₗ[R] A ⊗[R] X :=
   { AddEquiv.refl _ with
@@ -146,15 +177,21 @@ def groundEquiv (X : (ModuleCat.{max u v w} R)) :
           change algebraMap R A r • (a ⊗ₜ[R] x) = r • (a ⊗ₜ[R] x)
           rw [TensorProduct.smul_tmul', TensorProduct.smul_tmul', smul_eq_mul, ← Algebra.smul_def] }
 
-/-- A ground basis gives a genuine free acting-algebra scalar tensor module. -/
+/-- For a commutative ring R, an associative unital R-algebra A
+and an R-free module X, the module A ⊗[R] X is free over A.
+A ground basis of X gives its A-basis after scalar extension;
+A need not be free over R for this conclusion. -/
 instance obj_moduleFree (X : (ModuleCat.{max u v w} R)) [Module.Free R X] : Module.Free A (obj R A X) :=
   Module.Free.of_basis ((Module.Free.chooseBasis R X).baseChange A)
 
 instance obj_projective (X : (ModuleCat.{max u v w} R)) [Module.Free R X] : Projective (obj R A X) := by
   infer_instance
 
-/-- Freeness of the original algebra and original input gives freeness of
-the exact native restricted free object. -/
+/-- For a commutative ring R and an associative unital
+R-algebra A, if both A and X are free over R, then
+G(A ⊗[R] X) is free over R. The restricted scalar action is the
+ground action of the tensor product, and the common carrier
+height is max(u,v,w). -/
 instance groundObj_moduleFree [Module.Free R A] (X : (ModuleCat.{max u v w} R)) [Module.Free R X] :
     Module.Free R ((ModuleCat.restrictScalars (algebraMap R A)).obj (obj R A X)) := by
   letI : Module.Free R (A ⊗[R] X) := inferInstance

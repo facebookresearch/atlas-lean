@@ -1,4 +1,6 @@
-# Horizontal First Page Row Homology Iso inv naturality of bicomplex
+# Naturality of the inverse first-page row-homology comparison
 
-Homology of a restricted first-page row is naturally identified with
-homology of the full first page at the corresponding bidegree.
+Naturality of the inverse first-page row-homology comparison.
+
+The full first-page homology map at `(p,q)` commutes with the inverse comparison to row
+homology and the degree-`p` row homology map.

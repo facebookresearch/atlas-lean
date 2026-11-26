@@ -1,3 +1,6 @@
-# Cyclic BTo First Two Homotopy Equiv Of Left Unit hom
+# The forward map of the left-unit two-column equivalence
 
-The homotopy equivalence has the unit-independent canonical forward map.
+The forward map of the left-unit two-column equivalence.
+
+The forward homotopy-equivalence map is the first-column inclusion, independently of which
+left unit is used for the contraction.

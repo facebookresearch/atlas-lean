@@ -1,3 +1,6 @@
-# Ext Coefficient Transformation id
+# Identity coefficient gives the identity Ext transformation
 
-Identity coefficients induce the identity on the existing native Ext functor.
+Identity coefficient gives the identity Ext transformation.
+
+The degree-`n` Ext coefficient transformation induced by the identity map on `B` is the
+identity of `extFunctor R S B n`.

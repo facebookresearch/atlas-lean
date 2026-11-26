@@ -1,4 +1,7 @@
-# The adjacent connecting map on cycles
+# The boundary-cycle formula for an adjacent-column connecting map
 
-The adjacent-column connecting homomorphism sends a homology class to the
-class represented by its canonical boundary cycle.
+The boundary-cycle formula for an adjacent-column connecting map.
+
+The source homology projection followed by the adjacent connecting morphism equals the
+canonical boundary-cycle lift followed by the target homology projection, at cochain degrees
+`-(p+1)-q` and `-p-q`.

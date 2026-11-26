@@ -1,3 +1,7 @@
-# Unitization Hochschild Relative Iso π hom
+# The cokernel projection in relative homology coordinates
 
-The source cokernel projection computes the original complementary retraction on homology.
+The cokernel projection in relative homology coordinates.
+
+The cokernel projection followed by the relative comparison is the homology map of the
+complementary chain retraction from the unitization complex to the kernel of its scalar
+projector.

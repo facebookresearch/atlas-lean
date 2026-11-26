@@ -1,4 +1,6 @@
-# H3 subsingleton of card is Unit
+# Degree-three finite-group cohomology vanishes by signed averaging
 
-Degree-three cohomology of a finite group vanishes when its order is a
-unit in the coefficient ring.
+Let R be a commutative ring, G a finite group, and A an R-linear G-representation, in the given
+universe u. Assume m=|G| is a unit in R and write m⁻¹ for the coefficient of its inverse unit.
+The module H³(G,A) is subsingleton. Each three-cocycle z is the boundary of the two-cochain
+(g,h)↦-m⁻¹Σ_t z(g,h,t), so every degree-three class is zero.

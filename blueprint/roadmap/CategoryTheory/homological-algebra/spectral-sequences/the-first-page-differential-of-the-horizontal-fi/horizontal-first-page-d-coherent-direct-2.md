@@ -1,4 +1,6 @@
-# Horizontal First Page d coherent Direct Column eq adjacent
+# The adjacent-column formula for the first-page differential
 
-Under the coherent direct-column identifications, the first-page
-differential is the adjacent-column connecting map.
+The adjacent-column formula for the first-page differential.
+
+In coherent direct-column homology coordinates, the first-page differential is the adjacent-
+column connecting morphism for every `p,q ≥ 0`.

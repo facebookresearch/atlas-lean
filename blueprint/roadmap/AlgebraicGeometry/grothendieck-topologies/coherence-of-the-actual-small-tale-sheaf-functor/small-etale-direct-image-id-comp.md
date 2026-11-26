@@ -1,3 +1,6 @@
-# Small Etale Direct Image id comp
+# Direct image left identity comparison is its unitor path
 
-The actual direct-image comparison satisfies left identity coherence.
+Direct image left identity comparison is its unitor path.
+
+Identity direct image composed before direct image agrees with the whiskered identity
+comparison and the left functor unitor.

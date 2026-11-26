@@ -1,4 +1,6 @@
-# Field Coind Invariant Complex short Exact
+# Coefficient exactness gives an exact invariant coinduction sequence
 
-Genuine original coefficient exactness gives a true short exact sequence of the
-actual coinduction invariant complexes, through the fixed natural comparison.
+Coefficient exactness gives an exact invariant coinduction sequence.
+
+A sequence satisfying the continuous-coefficient exactness predicate maps to a short exact
+sequence of invariant-coinduction cochain complexes.

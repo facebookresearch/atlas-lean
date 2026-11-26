@@ -1,4 +1,6 @@
-# Nerve Homotopy Map Common Hom const apply of app eq To Hom
+# Constant chains in the larger-source cylinder
 
-An equality-transport component makes the native cylinder constant
-on every constant source chain, including every interval crossing.
+Constant chains in the larger-source cylinder.
+
+If F(c) = G(c) and α_c is the equality transport, the common-morphism-universe cylinder sends
+a constant chain at c, for every interval simplex, to its image under the nerve map of F.

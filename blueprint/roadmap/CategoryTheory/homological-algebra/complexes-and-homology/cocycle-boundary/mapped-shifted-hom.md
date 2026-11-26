@@ -1,3 +1,5 @@
-# Mapped Shifted Hom
+# Cocycle representative mapped through a shift-compatible functor
 
-The SAME original cocycle representative mapped through a functor with its shift transport.
+Let C be preadditive, D a category with integer shifts, and F : CochainComplex C ℤ → D commute
+with shifts. For a degree-q cocycle z from K to L, mappedShiftedHom is F(K) → F(L)[q], obtained
+by applying F to its corresponding cochain map K → L[q] and composing with F(L[q]) ≅ F(L)[q].

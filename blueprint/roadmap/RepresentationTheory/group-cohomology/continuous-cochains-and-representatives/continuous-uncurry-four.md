@@ -1,4 +1,6 @@
-# Continuous uncurry four
+# Joint evaluation of a continuous quaternary family
 
-Joint continuity obtained by uncurrying a continuous four-variable
-family over locally compact parameter spaces.
+Joint evaluation of a continuous quaternary family.
+
+For locally compact G, a continuous fourfold curried family gives the continuous function
+(x,(y,(z,t))) ↦ f(x)(y)(z)(t).

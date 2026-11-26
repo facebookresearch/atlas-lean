@@ -16,16 +16,17 @@ public import Mathlib.Algebra.Module.TransferInstance
 public import Mathlib.RepresentationTheory.Homological.GroupCohomology.LowDegree
 
 /-!
-# Low-degree group cohomology under `ZMod n` scalar restriction
+# First and second cohomology under integral scalar restriction
 
-For a `ZMod n` representation, the inhomogeneous cocycle and coboundary
-conditions in degrees one and two are unchanged after restricting the
-coefficient representation to `ℤ`.  This file uses the explicit low-degree
-quotient APIs to identify the resulting `H¹` and `H²` additively, with
-representative formulas.
+Let n∈ℕ, G be a group and A a ZMod n-representation.
+Restriction to ℤ retains the coefficient group and G-action.
+The one- and two-cocycle conditions and coboundary subgroups therefore
+agree under the pointwise coefficient comparison.
 
-The construction includes `n = 0`.  No continuous or etale comparison is
-asserted.
+The resulting H¹ and H² comparisons are additive and preserve
+cocycle representatives. Their inverses return the same cochains.
+Transporting each ZMod n-action to its integral cohomology group
+gives linear versions of the comparisons. The case n=0 is included.
 -/
 
 @[expose] public section
@@ -40,8 +41,11 @@ namespace groupCohomology
 
 variable {G : Type} [Group G]
 
-/-- Identity-on-values additive equivalence between a `ZMod n`
-representation carrier and its integral scalar restriction. -/
+/-- Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+The underlying coefficient comparison A≅+Res(A) is the identity
+on the additive group. It preserves the values of all G-actions. -/
 noncomputable def zmodRestrictIntCoefficientAddEquiv
     (n : ℕ) (A : Rep (ZMod n) G) :
     A ≃+ Rep.zmodRestrictInt n A where
@@ -85,7 +89,12 @@ theorem zmodRestrictIntCoefficientAddEquiv_symm_action
       A.ρ g ((zmodRestrictIntCoefficientAddEquiv n A).symm x) :=
   rfl
 
-/-- Degree-one cocycles are unchanged by scalar restriction. -/
+/-- Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+The pointwise coefficient map identifies one-cocycles:
+Z¹(G,A)≅+Z¹(G,Res(A)). The condition
+x(gh)=x(g)+g•x(h) is unchanged. -/
 noncomputable def cocycles₁ZModRestrictIntEquiv
     (n : ℕ) (A : Rep (ZMod n) G) :
     cocycles₁ A ≃+ cocycles₁ (Rep.zmodRestrictInt n A) where
@@ -135,7 +144,12 @@ theorem cocycles₁ZModRestrictIntEquiv_symm_apply
     (cocycles₁ZModRestrictIntEquiv n A).symm z g = z g :=
   by rfl
 
-/-- Degree-two cocycles are unchanged by scalar restriction. -/
+/-- Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+The pointwise coefficient map identifies two-cocycles:
+Z²(G,A)≅+Z²(G,Res(A)), with the same two-cocycle equation
+and underlying values. -/
 noncomputable def cocycles₂ZModRestrictIntEquiv
     (n : ℕ) (A : Rep (ZMod n) G) :
     cocycles₂ A ≃+ cocycles₂ (Rep.zmodRestrictInt n A) where
@@ -178,8 +192,11 @@ theorem cocycles₂ZModRestrictIntEquiv_apply
     cocycles₂ZModRestrictIntEquiv n A z (g, h) = z (g, h) :=
   by rfl
 
-/-- A degree-one cochain is a coboundary before scalar restriction iff it is
-a coboundary afterwards. -/
+/-- Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+A function x:G→A is a one-coboundary exactly when its integral
+image is. Both are of the form x(g)=g•a-a for a coefficient a. -/
 theorem mem_coboundaries₁_zmodRestrictInt_iff
     (n : ℕ) (A : Rep (ZMod n) G) (f : G → A) :
     f ∈ coboundaries₁ A ↔
@@ -230,8 +247,11 @@ theorem mem_coboundaries₁_zmodRestrictInt_iff
       _ = f g :=
         (zmodRestrictIntCoefficientAddEquiv n A).symm_apply_apply (f g)
 
-/-- A degree-two cochain is a coboundary before scalar restriction iff it is
-a coboundary afterwards. -/
+/-- Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+A function z:G²→A is a two-coboundary exactly when its integral
+image is. The coboundary formula g•x(h)-x(gh)+x(g) is unchanged. -/
 theorem mem_coboundaries₂_zmodRestrictInt_iff
     (n : ℕ) (A : Rep (ZMod n) G) (f : G × G → A) :
     f ∈ coboundaries₂ A ↔
@@ -294,9 +314,15 @@ theorem mem_coboundaries₂_zmodRestrictInt_iff
       _ = f gh :=
         (zmodRestrictIntCoefficientAddEquiv n A).symm_apply_apply (f gh)
 
-/-! ## Degree-one cohomology -/
+/-!
+# First cohomology classes
 
-/-- A chosen degree-one cocycle representative of a cohomology class. -/
+The quotient of one-cocycles by the coboundaries g↦g•a-a is compared
+by preserving cocycle coefficient values under integral restriction.
+-/
+
+/-- For a commutative ring k, a group G, a k-representation A and
+x∈H¹(G,A), this chooses a one-cocycle whose class is x. -/
 noncomputable def H1Representative {k : Type} [CommRing k]
     (A : Rep k G) (x : H1 A) : cocycles₁ A :=
   Function.surjInv
@@ -309,15 +335,22 @@ theorem H1Representative_spec {k : Type} [CommRing k]
   Function.rightInverse_surjInv
     ((ModuleCat.epi_iff_surjective (H1π A)).mp inferInstance) x
 
-/-- Underlying function from `ZMod n`-linear H1 to integral H1 after
-coefficient scalar restriction. -/
+/-- Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+The forward H¹ scalar map projects the integral image of a
+chosen one-cocycle representative of the input class. -/
 noncomputable def H1ZModRestrictIntToFun
     (n : ℕ) (A : Rep (ZMod n) G) :
     H1 A → H1 (Rep.zmodRestrictInt n A) := fun x =>
   H1π (Rep.zmodRestrictInt n A)
     (cocycles₁ZModRestrictIntEquiv n A (H1Representative A x))
 
-/-- Computation of the degree-one comparison on a presented cocycle class. -/
+/-- Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+For a one-cocycle z, the forward class formula is
+χ₁([z])=[χ_Z¹(z)]. -/
 theorem H1ZModRestrictIntToFun_H1π
     (n : ℕ) (A : Rep (ZMod n) G) (z : cocycles₁ A) :
     H1ZModRestrictIntToFun n A (H1π A z) =
@@ -337,8 +370,11 @@ theorem H1ZModRestrictIntToFun_H1π
       coboundaries₁ (Rep.zmodRestrictInt n A)
   simpa only [Pi.sub_apply, map_sub] using htarget
 
-/-- Additive degree-one comparison from `ZMod n` coefficients to integral
-scalar-restricted coefficients. -/
+/-- Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+The forward map χ₁:H¹(G,A)→+H¹(G,Res(A)) is additive and
+preserves the corresponding one-cocycle classes. -/
 noncomputable def H1ZModRestrictIntAddHom
     (n : ℕ) (A : Rep (ZMod n) G) :
     H1 A →+ H1 (Rep.zmodRestrictInt n A) where
@@ -354,14 +390,22 @@ noncomputable def H1ZModRestrictIntAddHom
           map_add, H1ZModRestrictIntToFun_H1π,
           H1ZModRestrictIntToFun_H1π, map_add]
 
-/-- Underlying inverse degree-one comparison. -/
+/-- Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+The return H¹ map selects an integral one-cocycle representative,
+applies the inverse cocycle comparison, and takes its class over ZMod n. -/
 noncomputable def H1ZModRestrictIntInvToFun
     (n : ℕ) (A : Rep (ZMod n) G) :
     H1 (Rep.zmodRestrictInt n A) → H1 A := fun x =>
   H1π A ((cocycles₁ZModRestrictIntEquiv n A).symm
     (H1Representative (Rep.zmodRestrictInt n A) x))
 
-/-- Computation of the inverse degree-one comparison on a representative. -/
+/-- Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+For an integral one-cocycle z, the return class has value
+[z]↦[(χ_Z¹)⁻¹(z)]. -/
 theorem H1ZModRestrictIntInvToFun_H1π
     (n : ℕ) (A : Rep (ZMod n) G)
     (z : cocycles₁ (Rep.zmodRestrictInt n A)) :
@@ -406,7 +450,11 @@ theorem H1ZModRestrictIntInvToFun_H1π
         (zmodRestrictIntCoefficientAddEquiv n A).symm (z g) := by
       rw [hxg, map_sub]
 
-/-- Additive inverse degree-one comparison. -/
+/-- Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+The return H¹ map is additive and uses the inverse pointwise
+cocycle comparison. -/
 noncomputable def H1ZModRestrictIntInvAddHom
     (n : ℕ) (A : Rep (ZMod n) G) :
     H1 (Rep.zmodRestrictInt n A) →+ H1 A where
@@ -423,8 +471,12 @@ noncomputable def H1ZModRestrictIntInvAddHom
           map_add, H1ZModRestrictIntInvToFun_H1π,
           H1ZModRestrictIntInvToFun_H1π, map_add]
 
-/-- Additive equivalence on degree-one group cohomology under scalar
-restriction. -/
+/-- Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+The forward and return maps give
+χ₁:H¹(G,A)≅+H¹(G,Res(A)), with the corresponding cocycle-class
+formulas in both directions. -/
 noncomputable def H1ZModRestrictIntAddEquiv
     (n : ℕ) (A : Rep (ZMod n) G) :
     H1 A ≃+ H1 (Rep.zmodRestrictInt n A) where
@@ -457,15 +509,22 @@ theorem H1ZModRestrictIntAddEquiv_H1π
         (cocycles₁ZModRestrictIntEquiv n A z) :=
   H1ZModRestrictIntToFun_H1π n A z
 
-/-- Canonical `ZMod n`-module structure on integral H1, transported from
-the original H1 through the additive comparison. -/
+/-- Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+The transported ZMod n-action on integral H¹ is
+r•y=χ₁(r•χ₁⁻¹(y)). -/
 @[instance_reducible]
 noncomputable def H1ZModRestrictIntModule
     (n : ℕ) (A : Rep (ZMod n) G) :
     Module (ZMod n) (H1 (Rep.zmodRestrictInt n A)) :=
   (H1ZModRestrictIntAddEquiv n A).symm.module (ZMod n)
 
-/-- `ZMod n`-linear form of the degree-one scalar-restriction comparison. -/
+/-- Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+For the transported target action, χ₁ gives the linear equivalence
+H¹(G,A)≅ₗ[ZMod n]H¹(G,Res(A)). -/
 noncomputable def H1ZModRestrictIntLinearEquiv
     (n : ℕ) (A : Rep (ZMod n) G) :
     let _ : Module (ZMod n) (H1 (Rep.zmodRestrictInt n A)) :=
@@ -482,9 +541,15 @@ theorem H1ZModRestrictIntLinearEquiv_apply
       H1ZModRestrictIntAddEquiv n A x :=
   rfl
 
-/-! ## Degree-two cohomology -/
+/-!
+# Second cohomology classes
 
-/-- A chosen degree-two cocycle representative of a cohomology class. -/
+The quotient of two-cocycles by g•x(h)-x(gh)+x(g) is unchanged
+additively by restricting coefficient scalars to ℤ.
+-/
+
+/-- For a commutative ring k, a group G, a k-representation A and
+x∈H²(G,A), this chooses a two-cocycle whose class is x. -/
 noncomputable def H2Representative {k : Type} [CommRing k]
     (A : Rep k G) (x : H2 A) : cocycles₂ A :=
   Function.surjInv
@@ -497,14 +562,22 @@ theorem H2Representative_spec {k : Type} [CommRing k]
   Function.rightInverse_surjInv
     ((ModuleCat.epi_iff_surjective (H2π A)).mp inferInstance) x
 
-/-- Underlying degree-two scalar-restriction comparison. -/
+/-- Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+The forward H² scalar function takes the integral class of a
+chosen two-cocycle representative. -/
 noncomputable def H2ZModRestrictIntToFun
     (n : ℕ) (A : Rep (ZMod n) G) :
     H2 A → H2 (Rep.zmodRestrictInt n A) := fun x =>
   H2π (Rep.zmodRestrictInt n A)
     (cocycles₂ZModRestrictIntEquiv n A (H2Representative A x))
 
-/-- Computation of the degree-two comparison on a presented cocycle class. -/
+/-- Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+For a two-cocycle z, the forward map satisfies
+χ₂([z])=[χ_Z²(z)]. -/
 theorem H2ZModRestrictIntToFun_H2π
     (n : ℕ) (A : Rep (ZMod n) G) (z : cocycles₂ A) :
     H2ZModRestrictIntToFun n A (H2π A z) =
@@ -524,7 +597,11 @@ theorem H2ZModRestrictIntToFun_H2π
       coboundaries₂ (Rep.zmodRestrictInt n A)
   simpa only [Pi.sub_apply, map_sub] using htarget
 
-/-- Additive degree-two scalar-restriction comparison. -/
+/-- Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+The forward H² comparison H²(G,A)→+H²(G,Res(A)) is additive,
+with the pointwise two-cocycle class formula. -/
 noncomputable def H2ZModRestrictIntAddHom
     (n : ℕ) (A : Rep (ZMod n) G) :
     H2 A →+ H2 (Rep.zmodRestrictInt n A) where
@@ -540,14 +617,23 @@ noncomputable def H2ZModRestrictIntAddHom
           map_add, H2ZModRestrictIntToFun_H2π,
           H2ZModRestrictIntToFun_H2π, map_add]
 
-/-- Underlying inverse degree-two comparison. -/
+/-- Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+The return H² function takes a selected integral two-cocycle,
+returns it through the inverse cocycle comparison, and projects
+to H²(G,A). -/
 noncomputable def H2ZModRestrictIntInvToFun
     (n : ℕ) (A : Rep (ZMod n) G) :
     H2 (Rep.zmodRestrictInt n A) → H2 A := fun x =>
   H2π A ((cocycles₂ZModRestrictIntEquiv n A).symm
     (H2Representative (Rep.zmodRestrictInt n A) x))
 
-/-- Computation of the inverse degree-two comparison on a representative. -/
+/-- Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+For an integral two-cocycle z, the return map sends its class
+to [(χ_Z²)⁻¹(z)]. -/
 theorem H2ZModRestrictIntInvToFun_H2π
     (n : ℕ) (A : Rep (ZMod n) G)
     (z : cocycles₂ (Rep.zmodRestrictInt n A)) :
@@ -603,7 +689,11 @@ theorem H2ZModRestrictIntInvToFun_H2π
         (zmodRestrictIntCoefficientAddEquiv n A).symm (z gh) :=
       map_sub (zmodRestrictIntCoefficientAddEquiv n A).symm _ _
 
-/-- Additive inverse degree-two comparison. -/
+/-- Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+The return H² map is additive and uses the inverse two-cocycle
+comparison on representatives. -/
 noncomputable def H2ZModRestrictIntInvAddHom
     (n : ℕ) (A : Rep (ZMod n) G) :
     H2 (Rep.zmodRestrictInt n A) →+ H2 A where
@@ -620,8 +710,11 @@ noncomputable def H2ZModRestrictIntInvAddHom
           map_add, H2ZModRestrictIntInvToFun_H2π,
           H2ZModRestrictIntInvToFun_H2π, map_add]
 
-/-- Additive equivalence on degree-two group cohomology under scalar
-restriction. -/
+/-- Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+The maps give the additive equivalence
+χ₂:H²(G,A)≅+H²(G,Res(A)), preserving two-cocycle classes. -/
 noncomputable def H2ZModRestrictIntAddEquiv
     (n : ℕ) (A : Rep (ZMod n) G) :
     H2 A ≃+ H2 (Rep.zmodRestrictInt n A) where
@@ -654,15 +747,22 @@ theorem H2ZModRestrictIntAddEquiv_H2π
         (cocycles₂ZModRestrictIntEquiv n A z) :=
   H2ZModRestrictIntToFun_H2π n A z
 
-/-- Canonical `ZMod n`-module structure on integral H2, transported from
-the original H2 through the additive comparison. -/
+/-- Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+The transported target ZMod n-action on integral H² is
+r•y=χ₂(r•χ₂⁻¹(y)). -/
 @[instance_reducible]
 noncomputable def H2ZModRestrictIntModule
     (n : ℕ) (A : Rep (ZMod n) G) :
     Module (ZMod n) (H2 (Rep.zmodRestrictInt n A)) :=
   (H2ZModRestrictIntAddEquiv n A).symm.module (ZMod n)
 
-/-- `ZMod n`-linear form of the degree-two scalar-restriction comparison. -/
+/-- Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+For that transported target action, the additive χ₂ becomes
+H²(G,A)≅ₗ[ZMod n]H²(G,Res(A)). -/
 noncomputable def H2ZModRestrictIntLinearEquiv
     (n : ℕ) (A : Rep (ZMod n) G) :
     let _ : Module (ZMod n) (H2 (Rep.zmodRestrictInt n A)) :=

@@ -1,4 +1,6 @@
-# Partial Total Stage Zero Source Iso hom eq To Hom
+# Stage-zero spectral source map is equality transport
 
-The StageZero source presentation is the canonical equality transport
-from the literal bottom-to-zero H-object to the increasing-core H-object.
+Stage-zero spectral source map is equality transport.
+
+The forward map of `B.partialTotalStageZeroSourceIso q` equals the canonical equality morphism
+obtained from `core.deg (0, q) = -q` and `core.i₂ (0, q) = 0`.

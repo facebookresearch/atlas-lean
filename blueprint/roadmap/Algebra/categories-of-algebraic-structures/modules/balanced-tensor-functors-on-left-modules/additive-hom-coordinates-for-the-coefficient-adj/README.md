@@ -1,6 +1,7 @@
 # Additive Hom coordinates for the coefficient adjunction
 
-- [Hom Coordinates](hom-coordinates.md)
-- [Hom Coordinates apply](hom-coordinates-apply.md)
-- [Hom Coordinates symm apply](hom-coordinates-symm-apply.md)
-- [Hom Group Precomp](hom-group-precomp.md)
+- [Coefficient Hom as the additive Hom group with right R action](hom-coordinates.md)
+- [Forward coefficient Hom coordinate preserves evaluation](hom-coordinates-apply.md)
+- [Inverse coefficient Hom coordinate preserves evaluation](hom-coordinates-symm-apply.md)
+- [Right-linear precomposition on additive Hom groups](hom-group-precomp.md)
+- [Evaluation formula for additive Hom precomposition](hom-group-precomp-apply.md)

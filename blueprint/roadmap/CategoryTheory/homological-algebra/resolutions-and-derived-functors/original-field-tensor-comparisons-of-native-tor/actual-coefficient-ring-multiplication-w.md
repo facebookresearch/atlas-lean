@@ -1,4 +1,5 @@
-# Actual coefficient-ring multiplication with its original...
+# A restricted ring coefficient has its multiplication endomorphism
 
-Actual coefficient-ring multiplication with its original scalar map;
-the native carrier and native scalar action are retained.
+For a commutative-ring map f:R→Q and d∈Q,
+multiplication by d is an R-linear endomorphism of the
+lifted Q-module restricted along f.

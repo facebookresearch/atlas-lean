@@ -2,18 +2,18 @@
 
 ## Preadditive
 
-- [Normalization sign hom source](normalization-sign-hom-source.md)
-- [Normalization sign hom target](normalization-sign-hom-target.md)
-- [Normalization iso eq refl](normalization-iso-eq-refl.md)
+- [Normalization fixes maps from two-torsion objects](normalization-sign-hom-source.md)
+- [Normalization fixes maps to two-torsion objects](normalization-sign-hom-target.md)
+- [Identity normalization of a two-torsion object](normalization-iso-eq-refl.md)
 
 ## Functor
 
-- [Right Derived normalization Iso app eq refl](right-derived-normalization-iso-app-eq-r.md)
-- [Right Derived Normalized Acyclic Comparison eq retained](right-derived-normalized-acyclic-compari.md)
-- [Right Derived Acyclic Comparison to Injective of two Torsion](right-derived-acyclic-comparison-to-inje.md)
-- [Right Derived Acyclic Comparison injective of two Torsion](right-derived-acyclic-comparison-injecti.md)
-- [Augmented Resolution To Right Derived Hom eq retained inv of two Torsion](augmented-resolution-to-right-derived-ho.md)
-- [Augmented Resolution To Right Derived Hom retained composition of two Torsion](augmented-resolution-to-right-derived-ho-2.md)
-- [Right Derived Acyclic Homology is Killed By](right-derived-acyclic-homology-is-killed.md)
-- [Right Derived Connecting sign of two Torsion](right-derived-connecting-sign-of-two-tor.md)
-- [Right Derived Connecting normalization conjugate of two Torsion](right-derived-connecting-normalization-c.md)
+- [Right-derived normalization on a two-torsion object](right-derived-normalization-iso-app-eq-r.md)
+- [Acyclic comparison needs no sign correction on two-torsion objects](right-derived-normalized-acyclic-compari.md)
+- [Unsigned comparison with an injective resolution](right-derived-acyclic-comparison-to-inje.md)
+- [Unsigned comparison agrees with the injective-resolution comparison](right-derived-acyclic-comparison-injecti.md)
+- [Unsigned acyclic comparison has the computed inverse](augmented-resolution-to-right-derived-ho.md)
+- [Unsigned acyclic comparison followed by its inverse](augmented-resolution-to-right-derived-ho-2.md)
+- [Acyclic-resolution homology inherits annihilation by an integer](right-derived-acyclic-homology-is-killed.md)
+- [Connecting signs disappear for two-torsion sources](right-derived-connecting-sign-of-two-tor.md)
+- [Normalization leaves two-torsion connecting maps unchanged](right-derived-connecting-normalization-c.md)

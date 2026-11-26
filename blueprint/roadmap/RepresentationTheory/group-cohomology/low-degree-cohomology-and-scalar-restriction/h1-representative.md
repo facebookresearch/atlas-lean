@@ -1,3 +1,4 @@
-# H1 Representative
+# Chosen first-cohomology cocycle representative
 
-A chosen degree-one cocycle representative of a cohomology class.
+For a commutative ring k, a group G, a k-representation A and
+x∈H¹(G,A), this chooses a one-cocycle whose class is x.

@@ -7,7 +7,7 @@ Projective, free and finitely generated modules over commutative rings and modul
 - [Finite](finite/README.md)
 - [Finite length from an annihilating quotient](finite-length-from-an-annihilating-quotient/README.md)
 - [Submodules of projective modules over a PID](submodules-of-projective-modules-over-a-pid/README.md)
-- [Actual local isomorphisms of flat quotient maps](local-ring-hom-bijective-of-flat-of-surj.md)
+- [A flat surjective ring map becomes a bijective canonical local map at every target prime](local-ring-hom-bijective-of-flat-of-surj.md)
 - [Eakin–Nagata theorem](eakin-nagata.md)
 - [Faithfully flat algebras inside a localization equal the base ring](bijective-algebra-map-of-faithfully-flat.md)
 - [Finite projective modules of fiberwise rank one are invertible](of-projective-of-forall-finrank-eq-one.md)

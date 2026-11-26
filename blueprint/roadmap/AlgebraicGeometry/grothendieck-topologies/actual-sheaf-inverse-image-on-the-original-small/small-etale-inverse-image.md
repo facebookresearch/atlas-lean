@@ -1,4 +1,6 @@
-# Small Etale Inverse Image
+# Inverse image through affine restriction and sheafification
 
-The actual original-site inverse-image functor, with the same affine Lan
-and the fixed original affine restriction equivalence.
+Inverse image through affine restriction and sheafification.
+
+Compose affine étale restriction on `Y` with affine sheaf pullback to define `f^*` on common-
+universe abelian sheaves.

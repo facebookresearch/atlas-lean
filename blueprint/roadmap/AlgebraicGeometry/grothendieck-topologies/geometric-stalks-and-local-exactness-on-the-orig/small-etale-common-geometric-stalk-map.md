@@ -1,3 +1,6 @@
-# Small Etale Common Geometric Stalk map
+# Geometric stalk morphism is the map on neighborhood colimits
 
-Its morphism is the actual induced colimit map of the original components.
+Geometric stalk morphism is the map on neighborhood colimits.
+
+A sheaf morphism acts on geometric stalks by the colimit map of its section components over
+geometric neighborhoods.

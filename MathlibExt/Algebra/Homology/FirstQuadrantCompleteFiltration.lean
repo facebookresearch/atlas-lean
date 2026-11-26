@@ -15,14 +15,20 @@ public import MathlibExt.Algebra.Homology.FirstQuadrantSpectralObject
 public import MathlibExt.Algebra.Homology.MappingConeCokernelConnecting
 
 /-!
-# Complete indexing of a first-quadrant filtration
+# Complete horizontal filtration and its mapping-cone spectral object
 
-The horizontal filtration of a first-quadrant total complex extends from
-natural stages to the extended integers. The bottom and every negative
-finite stage are zero, a nonnegative finite stage is the corresponding
-horizontal filtration stage, and the top stage is the full total complex.
+Let C be a preadditive category with a zero object and finite coproducts, and K a bicomplex of
+shape (down ℕ,down ℕ). Its total complex T has an increasing horizontal filtration G_a for a∈ℕ.
+Extend the index to ℤ∪{⊥,⊤} by G_⊥=0, G_a=0 for finite a<0, G_a the horizontal stage for finite
+a≥0, and G_⊤=T. Each G_i→T is monic, and the transition G_i→G_j for i≤j commutes with these
+inclusions. For finite a≥0, the inclusion is an isomorphism on terms in degrees n≤a.
 
-This filtration defines a canonical `EInt`-indexed mapping-cone spectral object.
+Place chain degree n in cochain degree -n and extend by zero to obtain a complete cochain
+filtration F. The relative object for i≤j is Cone(F_i→F_j) in the homotopy category. Cone
+composition triangles supply a triangulated spectral object. When C is abelian, cochain homology
+gives the abelian spectral object, with connecting maps
+H^n(Cone(F_j→F_k))→H^{n+1}(Cone(F_i→F_j)) for n+1=n′. Object and morphism universes remain
+arbitrary.
 -/
 
 @[expose] public section
@@ -46,7 +52,10 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
   (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
     (ComplexShape.down ℕ))
 
-/-- The zero subcomplex of the total complex. -/
+/-- Let C be preadditive with a zero object and finite coproducts, and K a bicomplex of shape (down
+ℕ,down ℕ). The zero chain complex with its unique map 0→Tot K is a monic subcomplex of Tot K.
+This object over Tot K is the bottom stage and every negative finite stage of the complete
+horizontal filtration. -/
 noncomputable def horizontalCompleteFilteredTotalZeroMonoOver :
     MonoOver (K.total (ComplexShape.down ℕ)) :=
   MonoOver.mk
@@ -55,9 +64,10 @@ noncomputable def horizontalCompleteFilteredTotalZeroMonoOver :
     (hf := { right_cancellation := fun g h _ =>
       HomologicalComplex.isZero_zero.eq_of_tgt g h })
 
-/-- The subcomplex at an extended filtration index.  Bottom and negative
-finite indices give zero, nonnegative indices give the corresponding finite
-stage, and top gives the full total complex. -/
+/-- For a first-quadrant bicomplex K in a preadditive category with a zero object and finite
+coproducts, this is the monic subcomplex G_i→Tot K at i∈ℤ∪{⊥,⊤}. It is 0→Tot K for i=⊥ or finite
+i<0, the horizontal filtration subcomplex G_a→Tot K for finite i=a≥0, and the identity Tot K→Tot
+K for i=⊤. -/
 noncomputable def horizontalCompleteFilteredTotalMonoOver (i : EInt) :
     MonoOver (K.total (ComplexShape.down ℕ)) :=
   WithBotTop.rec
@@ -67,19 +77,28 @@ noncomputable def horizontalCompleteFilteredTotalMonoOver (i : EInt) :
     else horizontalCompleteFilteredTotalZeroMonoOver K)
     (MonoOver.mk (𝟙 (K.total (ComplexShape.down ℕ)))) i
 
-/-- The chain complex at an extended horizontal-filtration index. -/
+/-- Let C be preadditive with a zero object and finite coproducts, and K a bicomplex of shape (down
+ℕ,down ℕ). At i∈ℤ∪{⊥,⊤}, G_i is the underlying chain complex of the complete horizontal
+subcomplex of Tot K. Bottom and negative finite cuts give the zero complex; a finite a≥0 gives
+the ath horizontal stage; the top cut gives Tot K. -/
 abbrev horizontalCompleteFilteredTotalComplex (i : EInt) :
     ChainComplex C ℕ :=
   (horizontalCompleteFilteredTotalMonoOver K i).obj.left
 
-/-- The inclusion of an extended filtration stage into the total complex. -/
+/-- For a first-quadrant bicomplex K in a preadditive category with a zero object and finite
+coproducts and i∈ℤ∪{⊥,⊤}, this is the monic chain map ι_i:G_i→Tot K of the complete horizontal
+filtration. It is zero at bottom and negative finite cuts, the horizontal-stage inclusion at
+finite a≥0, and the identity at top. -/
 abbrev horizontalCompleteFilteredTotalToTotal (i : EInt) :
     horizontalCompleteFilteredTotalComplex K i ⟶
       K.total (ComplexShape.down ℕ) :=
   (horizontalCompleteFilteredTotalMonoOver K i).arrow
 
-/-- The morphism of subcomplexes induced by an inequality of extended
-filtration indices. -/
+/-- Let K be a bicomplex of shape (down ℕ,down ℕ) in a preadditive category with a zero object and
+finite coproducts. For i≤j in ℤ∪{⊥,⊤}, this is the morphism from the monic subcomplex G_i→Tot K
+to G_j→Tot K. Its underlying chain map t_{i,j}:G_i→G_j satisfies t_{i,j}≫ι_j=ι_i. Between
+nonnegative finite cuts it is the horizontal-stage transition, from a zero stage it is zero, and
+into top it is the inclusion. -/
 noncomputable def horizontalCompleteFilteredTotalMonoOverMap
     {i j : EInt} (h : i ≤ j) :
     horizontalCompleteFilteredTotalMonoOver K i ⟶
@@ -141,7 +160,10 @@ noncomputable def horizontalCompleteFilteredTotalMonoOverMap
       subst j
       exact 𝟙 _
 
-/-- The underlying chain map between two extended filtration stages. -/
+/-- For a first-quadrant bicomplex K in a preadditive category with a zero object and finite
+coproducts and i≤j in ℤ∪{⊥,⊤}, this is the chain map t_{i,j}:G_i→G_j underlying the morphism of
+complete horizontal subcomplexes. The map commutes with the total inclusions, t_{i,j}≫ι_j=ι_i,
+and agrees with the finite horizontal transition when both cuts are nonnegative integers. -/
 noncomputable def horizontalCompleteFilteredTotalMap
     {i j : EInt} (h : i ≤ j) :
     horizontalCompleteFilteredTotalComplex K i ⟶
@@ -156,7 +178,11 @@ theorem horizontalCompleteFilteredTotalMap_toTotal
       horizontalCompleteFilteredTotalToTotal K i :=
   MonoOver.w (horizontalCompleteFilteredTotalMonoOverMap K h)
 
-/-- The complete extended-integer horizontal filtration. -/
+/-- Let C be preadditive with a zero object and finite coproducts and K a bicomplex of shape (down
+ℕ,down ℕ). The monic subcomplexes G_i→Tot K and their canonical transitions for i≤j define an
+increasing filtration of Tot K indexed by ℤ∪{⊥,⊤}. The bottom and every negative finite stage
+are zero, the nonnegative finite stages are the horizontal filtration stages, and the top stage
+is Tot K. -/
 noncomputable def horizontalCompleteTotalFiltration :
     CategoryTheory.Filtration (K.total (ComplexShape.down ℕ)) EInt where
   toMonoOver :=
@@ -226,8 +252,10 @@ theorem horizontalCompleteTotalFiltration_ι_app (i : EInt) :
       horizontalCompleteFilteredTotalToTotal K i :=
   rfl
 
-/-- A nonnegative finite complete-filtration stage is already the full total
-in every total degree not exceeding that stage. -/
+/-- For a bicomplex K of shape (down ℕ,down ℕ) in a preadditive category with a zero object and
+finite coproducts, let a∈ℤ satisfy a≥0 and n∈ℕ satisfy n≤a. The complete horizontal stage at a
+has a canonical isomorphism (G_a)_n≅(Tot K)_n. The horizontal truncation retains every component
+on the total-degree n antidiagonal because each of its horizontal indices is at most n≤a. -/
 noncomputable def horizontalCompleteFilteredTotalEvalIsoOfLE
     (a : ℤ) (ha : 0 ≤ a) (n : ℕ) (h : n ≤ a.toNat) :
     (horizontalCompleteFilteredTotalComplex K (a : EInt)).X n ≅
@@ -236,16 +264,20 @@ noncomputable def horizontalCompleteFilteredTotalEvalIsoOfLE
       (eqToIso (horizontalCompleteFilteredTotalComplex_coe_of_nonneg K a ha)) ≪≫
     horizontalFilteredTotalIsoOfLE K a.toNat n h
 
-/-- The complete filtration diagram reindexed as integer cochain complexes. -/
+/-- Let K be a first-quadrant bicomplex in a preadditive category with a zero object and finite
+coproducts. Reindex each complete horizontal chain stage G_i by placing its term of degree n∈ℕ
+in cochain degree -n and setting positive cochain degrees to zero. This gives a functor
+F:ℤ∪{⊥,⊤}→CochainComplex(C,ℤ), with transitions induced by G_i→G_j for i≤j. -/
 noncomputable def horizontalCompleteFiltrationCochainDiagram :
     EInt ⥤ CochainComplex C ℤ :=
   (horizontalCompleteTotalFiltration K).diagram ⋙
     ComplexShape.embeddingDownNat.extendFunctor C
 
-/-- Mapping-cone composition triangle for the images under a functor.  Its
-middle object uses `F.map (f ≫ g)` literally, matching the functor on
-composable arrows; it is canonically isomorphic to the usual triangle whose
-middle map is `F.map f ≫ F.map g`. -/
+/-- Let C be preadditive with a zero object and finite coproducts, F:ℤ∪{⊥,⊤}→CochainComplex(C,ℤ),
+and f:X→Y, g:Y→Z composable index arrows. This triangle has objects Cone(Ff), Cone(F(f≫g)) and
+Cone(Fg). Its first two arrows are the cone maps induced by (id_{FX},Fg) and (Ff,id_{FZ}). Its
+third arrow is Cone(Fg)→FY[1] from the cone triangle of Fg, followed by the shifted inclusion
+FY[1]→Cone(Ff)[1]. Functoriality identifies F(f≫g) with Ff≫Fg. -/
 noncomputable def functorMappingConeCompTriangle
     (F : EInt ⥤ CochainComplex C ℤ)
     {X Y Z : EInt} (f : X ⟶ Y) (g : Y ⟶ Z) :
@@ -258,8 +290,11 @@ noncomputable def functorMappingConeCompTriangle
     ((CochainComplex.mappingCone.triangle (F.map g)).mor₃ ≫
       (CochainComplex.mappingCone.inr (F.map f))⟦1⟧')
 
-/-- Mapping-cone functor on arrows of the complete filtration, normalized so
-its object is definitionally the cone of the mapped filtration morphism. -/
+/-- For a first-quadrant bicomplex K in a preadditive category with a zero object and finite
+coproducts, let F be its complete horizontal cochain filtration. The arrow i→j is sent to
+Cone(F_i→F_j). A commutative square between i→j and i′→j′ is sent to the cone map induced by
+F_i→F_{i′} and F_j→F_{j′}. These assignments define a functor from arrows of ℤ∪{⊥,⊤} to
+integer-indexed cochain complexes. -/
 noncomputable def horizontalCompleteFiltrationMappingConeFunctor :
     ComposableArrows EInt 1 ⥤ CochainComplex C ℤ where
   obj D := CochainComplex.mappingCone
@@ -286,7 +321,12 @@ noncomputable def horizontalCompleteFiltrationMappingConeFunctor :
     simp
 
 set_option backward.defeqAttrib.useBackward true in
-/-- The mapping-cone spectral object of the complete horizontal filtration. -/
+/-- Let K be a bicomplex of shape (down ℕ,down ℕ) in a preadditive category with a zero object and
+finite coproducts, and F its complete horizontal cochain filtration. This triangulated spectral
+object in the cochain homotopy category, indexed by ℤ∪{⊥,⊤}, assigns i→j the relative cone
+Cone(F_i→F_j). For i≤j≤k, the connecting arrow Cone(F_j→F_k)→Cone(F_i→F_j)[1] is the third
+morphism of the cone composition triangle
+Cone(F_i→F_j)→Cone(F_i→F_k)→Cone(F_j→F_k)→Cone(F_i→F_j)[1]. -/
 noncomputable def horizontalCompleteFiltrationTriangulatedSpectralObject :
     CategoryTheory.Triangulated.SpectralObject
       (HomotopyCategory C (ComplexShape.up ℤ)) EInt where
@@ -374,15 +414,22 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
   (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
     (ComplexShape.down ℕ))
 
-/-- The abelian spectral object of the complete horizontal filtration. -/
+/-- Let C be an abelian category and K a bicomplex of shape (down ℕ,down ℕ). Apply the degree-zero
+homological functor on the cochain homotopy category to the complete-filtration triangulated
+spectral object. The resulting abelian spectral object is indexed by ℤ∪{⊥,⊤}; its degree-n value
+on i→j is the cochain homology H^n(Cone(F_i→F_j)), where chain degree r of the complete stage is
+placed in cochain degree -r. -/
 noncomputable def horizontalCompleteFiltrationSpectralObject :
     CategoryTheory.Abelian.SpectralObject C EInt :=
   (horizontalCompleteFiltrationTriangulatedSpectralObject K).mapHomologicalFunctor
     (HomotopyCategory.homologyFunctor C (ComplexShape.up ℤ) 0)
 
-/-- The connecting morphism of the complete-filtration spectral object is
-definitionally the connecting morphism of the standard mapping-cone
-composition triangle on the two mapped filtration arrows. -/
+/-- For a first-quadrant bicomplex K in an abelian category, let F be its complete horizontal
+cochain filtration. For index arrows f:i→j and g:j→k and integers n,n′ with n+1=n′, the spectral
+connecting map δ:H^n(Cone(Fg))→H^{n′}(Cone(Ff)) equals the connecting homology map of the
+standard cone composition triangle Cone(Ff)→Cone(Ff≫Fg)→Cone(Fg)→Cone(Ff)[1]. The equality
+identifies the specified connecting arrows with the same cochain degree increase and
+cone-triangle sign convention. -/
 theorem horizontalCompleteFiltrationSpectralObject_δ
     {i j k : EInt} (f : i ⟶ j) (g : j ⟶ k)
     (n n' : ℤ) (h : n + 1 = n') :

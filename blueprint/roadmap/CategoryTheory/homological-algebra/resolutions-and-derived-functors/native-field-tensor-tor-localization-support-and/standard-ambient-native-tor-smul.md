@@ -1,4 +1,6 @@
-# Standard Ambient Native Tor smul
+# The standard ambient action is restriction of the balanced support action
 
-The native ambient action is the restriction of the earned balanced
-support action. This identity is derived from the actual coefficient maps.
+If A,C are flat over K, the standard ambient Tor
+carries its canonical T=V⊗B W action.
+For s∈S and z in that Tor module, the ambient scalar
+action satisfies s•z=σ_S(s)•_T z.

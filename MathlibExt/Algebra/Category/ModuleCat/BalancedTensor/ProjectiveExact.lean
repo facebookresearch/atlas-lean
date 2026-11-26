@@ -21,12 +21,16 @@ public import Mathlib.Algebra.Category.Grp.Abelian
 public import Mathlib.CategoryTheory.Adjunction.Limits
 
 /-!
-# Projective factors make the actual balanced tensor exact
+# Exact balanced tensor functors with projective factors
 
-Native character separation and native projective lifting act on the
-existing tensor–Hom adjunction. The quotient and both scalar structures are
-retained. Projectivity is a hypothesis on this auxiliary exactness lemma;
-the final resolution application earns it from the native resolution terms.
+For an associative ring `R`, let `P` be categorically projective in a module category. If `P`
+is a right `R`-module, tensoring `P ⊗_R -` sends monomorphisms of left modules to
+monomorphisms of additive groups. If `P` is a left module, the same holds for `- ⊗_R P` on
+right modules.
+
+Together with the tensor adjunctions, these statements give preservation of homology in either
+variable when the fixed factor is projective. The ring and common module-carrier universes are
+independent.
 -/
 
 @[expose] public section
@@ -71,8 +75,10 @@ private theorem homGroupPrecomp_surjective_of_injective
   apply ULift.ext
   exact DFunLike.congr_fun hψ' n
 
-/-- Tensoring with an actual projective right module preserves monomorphisms
-of left modules, without a flatness or finite-generation premise. -/
+/-- Tensoring a monomorphism with a projective right module remains monic.
+
+Let `P` be categorically projective in `ModuleCat Rᵐᵒᵖ` and `g : N ⟶ N'` a monomorphism of
+left `R`-modules. The induced additive-group map `P ⊗_R g` is a monomorphism. -/
 theorem mono_groupBifunctor_obj_map_of_projective
     (P : ModuleCat.{v} Rᵐᵒᵖ) [Projective P]
     {N N' : ModuleCat.{v} R} (g : N ⟶ N') [Mono g] :
@@ -118,8 +124,10 @@ theorem mono_groupBifunctor_obj_map_of_projective
   have hχ : ULift.up (χ x) = (0 : ULift.{v} (AddCircle (1 : ℚ))) := hzero
   exact congrArg ULift.down hχ
 
-/-- Tensoring with an actual projective left module preserves monomorphisms
-of right modules by the same original character/currying/lifting argument. -/
+/-- Tensoring a monomorphism with a projective left module remains monic.
+
+Let `P` be categorically projective in `ModuleCat R` and `g : A ⟶ A'` a monomorphism of right
+`R`-modules. The induced additive-group map `g ⊗_R P` is a monomorphism. -/
 theorem mono_groupBifunctor_flip_obj_map_of_projective
     (P : ModuleCat.{v} R) [Projective P]
     {A A' : ModuleCat.{v} Rᵐᵒᵖ} (g : A ⟶ A') [Mono g] :
@@ -171,9 +179,10 @@ theorem mono_groupBifunctor_flip_obj_map_of_projective
   have hχ : ULift.up (χ x) = (0 : ULift.{v} (AddCircle (1 : ℚ))) := hzero
   exact congrArg ULift.down hχ
 
-/-- The actual tensor functor in its second variable preserves homology when
-its first factor is projective. Its finite-colimit property comes from the
-constructed adjunction, and its monomorphism property from projective lifting. -/
+/-- Tensor functor with a projective right factor preserves homology.
+
+For a categorically projective right `R`-module `P`, the group-valued balanced tensor functor
+`P ⊗_R -` preserves homology. -/
 theorem groupBifunctor_obj_preservesHomology_of_projective
     (P : ModuleCat.{v} Rᵐᵒᵖ) [Projective P] :
     ((groupBifunctor R).obj P).PreservesHomology := by
@@ -194,8 +203,10 @@ theorem groupBifunctor_obj_preservesHomology_of_projective
     infer_instance
   exact ⟨h.1⟩
 
-/-- The same exactness statement for a projective second factor retains the
-original right-module first variable and its actual group tensor functor. -/
+/-- Tensor functor with a projective left factor preserves homology.
+
+For a categorically projective left `R`-module `P`, the group-valued balanced tensor functor
+`- ⊗_R P` preserves homology. -/
 theorem groupBifunctor_flip_obj_preservesHomology_of_projective
     (P : ModuleCat.{v} R) [Projective P] :
     ((groupBifunctor R).flip.obj P).PreservesHomology := by

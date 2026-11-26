@@ -1,4 +1,6 @@
-# Field Module Restriction Top Rep Hom
+# Restricted coefficient representation has its identity coordinate map
 
-The original coefficient representation is unchanged under restriction,
-with the original group action precomposed by the original group map.
+Restricted coefficient representation has its identity coordinate map.
+
+The restricted topological representation and the representation of the restricted coefficient
+are connected by the identity underlying map.

@@ -1,4 +1,8 @@
-# Partial Total Zero Row To Partial Total homology Map comp step Zero To First Page
+# Row-zero homology inclusion agrees with the first-page row coordinate
 
-The fixed row-zero first-page coordinate is the stage-zero spectral
-homology coordinate induced by the canonical row inclusion.
+Row-zero homology inclusion agrees with the first-page row coordinate.
+
+The homology map of `B.X 0 ⟶ B.partialTotal 0`, followed by the inverse spectral-step homology
+coordinate and the map to the first-page object at `(0, q)`, equals the inverse total-row
+homology coordinate followed by the inverse first-page row coordinate. Both sides have source
+`H_q(B.X 0)`.

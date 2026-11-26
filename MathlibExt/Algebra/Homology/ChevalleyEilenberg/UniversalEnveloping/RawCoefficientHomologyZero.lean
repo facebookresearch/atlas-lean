@@ -15,15 +15,17 @@ public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.UniversalEnveloping
 public import MathlibExt.Algebra.Homology.ShortComplex.MapHomologyOpcycles
 
 /-!
-# Degree-zero coefficient classes and enveloping tensors
+# Degree-zero Lie homology and the augmentation tensor
 
-Degree-zero Chevalley–Eilenberg homology with Lie coefficients identifies with the balanced
-tensor of their right enveloping representation and the trivial enveloping module. The
-empty-exterior class of m maps to `m ⊗ 1`.
+Let R be a commutative ring, L an R-Lie algebra, and M an L-module. Write U = U_R(L), let N be
+the right U-module with m·ι(x) = −[x,m], and let T be the augmentation module, with scalar
+carrier ULift(R). The degree-zero Chevalley–Eilenberg class of 1 ⊗ m corresponds to the
+balanced class [m,up(1)] in N ⊗_U T.
 
-This comparison commutes with coefficient and output universe lifts. For a free underlying Lie
-module, the degree-zero homology-to-Tor comparison agrees with the canonical derived-zero
-augmentation.
+This identification holds without freeness of L and is compatible with coefficient and
+whole-output universe lifts. When L is free over R, the degree-zero homology-to-Tor comparison
+followed by the derived-zero map and the input and coefficient lift cancellations equals this
+identification.
 -/
 
 @[expose] public section
@@ -45,8 +47,12 @@ variable (R : Type u) [CommRing R] (L : Type v) [LieRing L] [LieAlgebra R L]
 
 local notation "U" => UniversalEnvelopingAlgebra R L
 
-/-- The raw CE input transport carries the empty-exterior class to the empty-exterior class of the
-lifted coefficient. -/
+/-- Let R be a commutative ring, L an R-Lie algebra, and M an L-module. Put H =
+max(u,v,v′,w,w′,z), where R, L, and M have universes u, v, and w. Let cl_M(m) ∈ H₀(C_*(L;M))
+be the class of 1 ⊗ m, where 1 is the empty exterior product in Λ⁰_R L. The homology transport
+T_H : ULift_H(H₀(C_*(L;M))) ≅ H₀(C_*(L;M_H)) sends up(cl_M(m)) to cl_M_H(up(m)). The class is
+formed using the degree-zero opcycles projection and the canonical identification of opcycles
+with homology. -/
 theorem rawCoefficientHomologyTransportAt_zero_class (m : M) :
     (rawCoefficientHomologyTransportAt.{u, v, v', w, w', z} R L M 0).hom
       (ULift.up ((coefficientComplex R L M).isoHomologyι₀.inv
@@ -117,8 +123,12 @@ theorem rawCoefficientHomologyTransportAt_zero_class (m : M) :
       (fun a => ((coefficientComplex R L (rawLieCoefficientLiftAt.{u, v, v', w, w', z} R L M)).pOpcycles 0).hom a)
       hEx)))
 
-/-- Coefficient down on the trivial-module tensor returns the raw right-representation balanced
-quotient. -/
+/-- Let R be a commutative ring, L an R-Lie algebra, and M an L-module. Write U = U_R(L), N for
+the right U-module satisfying m·ι(x) = −[x,m], and T for its augmentation left module. For H =
+max(u,v,v′,w,w′,z), let N_H represent the coefficient lift M_H. The coefficient equivalence
+N_H ≃ N induces an R-linear equivalence N_H ⊗_U T ≃ₗ[R] N ⊗_U T. It sends [up(m),s] to [m,s]
+and leaves the augmentation-module factor unchanged; its inverse lifts the coefficient
+representative. -/
 def rawCoefficientTrivialTensorEquiv :
     (ModuleCat.BalancedTensor.functor R U
       (LieModuleCat.RightUniversalEnveloping.representObj R L
@@ -166,8 +176,11 @@ theorem rawCoefficientTrivialTensorEquiv_mk_up (m : M) (x : envelopingTrivialObj
     (show (ModuleCat.restrictScalars (algebraMap R Uᵐᵒᵖ)).obj N₁ from ULift.up m)
     (show T from x)
 
-/-- Coefficient down followed by up of the whole balanced output places that output in the
-sufficient working universe. -/
+/-- Let R be a commutative ring, L an R-Lie algebra, and M an L-module. Put U = U_R(L), and let N
+and N_H be the right enveloping representations of M and its coefficient lift to H =
+max(u,v,v′,w,w′,z). For the augmentation module T, coefficient flattening followed by
+whole-output lifting gives N_H ⊗_U T ≃ₗ[R] ULift_H(N ⊗_U T). The forward map is [up(m),s] ↦
+up([m,s]); the inverse removes the outer output lift and lifts the coefficient representative. -/
 def rawCoefficientTrivialTensorOutputLiftEquiv :
     (ModuleCat.BalancedTensor.functor R U
       (LieModuleCat.RightUniversalEnveloping.representObj R L
@@ -194,8 +207,13 @@ theorem rawCoefficientTrivialTensorOutputLiftEquiv_mk_up (m : M) (x : enveloping
       ((ModuleCat.restrictScalars (algebraMap R U)).obj (envelopingTrivialObject R L)) m x) := by
   exact congrArg ULift.up (rawCoefficientTrivialTensorEquiv_mk_up.{u, v, v', w, w', z} R L M m x)
 
-/-- The canonical raw coefficient H₀/unit isomorphism, including output down to the lower-universe
-balanced quotient carrier. -/
+/-- Let R be a commutative ring, L an R-Lie algebra, and M an L-module. Set U = U_R(L), let N
+represent the right action m·ι(x) = −[x,m], and let T be the augmentation module with carrier
+ULift(R). For H = max(u,v,v′,w,w′,z), there is an isomorphism ULift_H(H₀(C_*(L;M))) ≅
+ULift_H(N ⊗_U T) in ModuleCat_H(R). It sends the lifted class of the empty-exterior tensor 1 ⊗
+m to up([m,up(1)]). The construction first transports homology to the lifted coefficient
+complex, then identifies its H₀ with the augmentation tensor, and finally removes the
+coefficient lift while lifting the output. -/
 def rawCoefficientHomologyZeroTensorIsoAt :
     (ModuleCat.uliftFunctor.{max u v v' w w' z, max u v w} R).obj
       ((coefficientComplex R L M).homology 0) ≅
@@ -207,8 +225,11 @@ def rawCoefficientHomologyZeroTensorIsoAt :
       (rawLieCoefficientLiftAt.{u, v, v', w, w', z} R L M) ≪≫
       (rawCoefficientTrivialTensorOutputLiftEquiv.{u, v, v', w, w', z} R L M).toModuleIso
 
-/-- Canonical H₀ comparison between the exact raw homology and the exact raw balanced quotient, as
-an independent-universe linear equivalence. -/
+/-- Let R be a commutative ring, L an R-Lie algebra, and M an L-module. If U = U_R(L), N is the
+right representation with m·ι(x) = −[x,m], and T is the augmentation left U-module, then
+H₀(C_*(L;M)) ≃ₗ[R] N ⊗_U T. This equivalence uses the unlifted homology and balanced-quotient
+carriers, with no equality required between their universes. It maps the class of 1 ⊗ m, with
+1 ∈ Λ⁰_R L the empty exterior product, to [m,up(1)]. No freeness assumption on L is required. -/
 def rawCoefficientHomologyZeroTensorEquivAt : (coefficientComplex R L M).homology 0 ≃ₗ[R]
   ((ModuleCat.BalancedTensor.functor R U (LieModuleCat.RightUniversalEnveloping.representObj R L M)).obj
   (envelopingTrivialObject R L)) :=
@@ -220,8 +241,12 @@ def rawCoefficientHomologyZeroTensorEquivAt : (coefficientComplex R L M).homolog
         ((ModuleCat.BalancedTensor.functor R U (LieModuleCat.RightUniversalEnveloping.representObj R L M)).obj
         (envelopingTrivialObject R L))))
 
-/-- The empty-exterior class keeps the raw coefficient and scalar unit after both carrier
-transports. -/
+/-- Let R be a commutative ring, L an R-Lie algebra, and M an L-module. Write cl_M(m) for the H₀
+class of the empty-exterior tensor 1 ⊗ m. With U = U_R(L), N the right enveloping
+representation of M, T the augmentation module, and H = max(u,v,v′,w,w′,z), the isomorphism
+ULift_H(H₀(C_*(L;M))) ≅ ULift_H(N ⊗_U T) satisfies up(cl_M(m)) ↦ up([m,up(1)]). The
+coefficient representative remains m and the augmentation representative is the scalar unit of
+R. -/
 theorem rawCoefficientHomologyZeroTensorIsoAt_class (m : M) :
     (rawCoefficientHomologyZeroTensorIsoAt.{u, v, v', w, w', z} R L M).hom
       (ULift.up ((coefficientComplex R L M).isoHomologyι₀.inv
@@ -240,8 +265,11 @@ theorem rawCoefficientHomologyZeroTensorIsoAt_class (m : M) :
   rw [rawCoefficientHomologyTransportAt_zero_class, nativeCoefficientHomologyZeroTensorIso_class,
     rawCoefficientTrivialTensorOutputLiftEquiv_mk_up]
 
-/-- The raw empty-exterior class keeps the raw coefficient and scalar unit after explicit input up
-and output down. -/
+/-- Let R be a commutative ring, L an R-Lie algebra, and M an L-module. Let N be its right
+U_R(L)-representation and T the augmentation module with scalar carrier ULift(R). The R-linear
+equivalence H₀(C_*(L;M)) ≃ₗ[R] N ⊗_{U_R(L)} T sends cl_M(m), the class of 1 ⊗ m in degree
+zero, to [m,up(1)]. Here 1 is the empty exterior product, and the balanced class is formed
+using the right enveloping action m·ι(x) = −[x,m]. -/
 theorem rawCoefficientHomologyZeroTensorEquivAt_class (m : M) :
     rawCoefficientHomologyZeroTensorEquivAt.{u, v, v', w, w', z} R L M
       ((coefficientComplex R L M).isoHomologyι₀.inv
@@ -260,8 +288,13 @@ local instance rawCoefficientZeroTensor_additive {A : Type a} [Ring A] [Algebra 
     (N : ModuleCat.{b} Aᵐᵒᵖ) : (ModuleCat.BalancedTensor.functor.{u, a, b, c} R A N).Additive :=
   ModuleCat.BalancedTensor.additive R A N
 
-/-- Full raw-carrier canonical H₀ agreement with derived zero, including trivial-input down and
-raw coefficient-output down. -/
+/-- Let R be a commutative ring, L a free R-Lie module, and M an L-module. Put H =
+max(u,v,v′,w,w′,z), U = U_R(L), and F_H(X) = N_H ⊗_U X for the right enveloping representation
+N_H of the lifted coefficient. Let Φ_H : ULift_H(H₀(C_*(L;M))) ≅ (L₀F_H)(T_H) be the
+homology-to-Tor comparison. Composing Φ_H.hom with F_H.fromLeftDerivedZero at the lifted
+augmentation module T_H, the trivial-input lift cancellation, and the coefficient-to-output
+lift equivalence gives exactly the map ULift_H(H₀(C_*(L;M))) → ULift_H(N ⊗_U T) that sends
+up(cl_M(m)) to up([m,up(1)]). -/
 theorem rawCoefficientHomologyIsoTorAt_zero_original [Module.Free R L] :
     (rawCoefficientHomologyIsoTorAt.{u, v, v', w, w', z} R L M 0).hom ≫
       (ModuleCat.BalancedTensor.functor R U
@@ -282,8 +315,13 @@ theorem rawCoefficientHomologyIsoTorAt_zero_original [Module.Free R L] :
           (rawLieCoefficientLiftAt.{u, v, v', w, w', z} R L M)).hom ≫ q := rfl
   exact (Category.assoc _ _ _).symm.trans ((congrArg (fun f => f ≫ q) h).trans hOut.symm)
 
-/-- Canonical H₀ agreement on the exact raw input and output carriers, with the derived-zero map
-between the explicit transports. -/
+/-- Let R be a commutative ring, L a free R-Lie module, and M an L-module. Put U = U_R(L), H =
+max(u,v,v′,w,w′,z), and F_H(X) = N_H ⊗_U X, where N_H represents the lifted coefficient and
+T_H is the lifted augmentation module. For a ∈ H₀(C_*(L;M)), apply the R-linear
+homology-to-Tor equivalence at H, then the map (L₀F_H)(T_H) → F_H(T_H), then cancel the
+trivial-input lift and the coefficient lift. The resulting element of N ⊗_U T equals the
+canonical degree-zero tensor equivalence applied to a. Thus the equality holds on the unlifted
+homology and tensor carriers, without an outer output lift. -/
 theorem rawCoefficientHomologyEquivTorAt_zero_original [Module.Free R L]
     (a : (coefficientComplex R L M).homology 0) :
     rawCoefficientTrivialTensorEquiv.{u, v, v', w, w', z} R L M

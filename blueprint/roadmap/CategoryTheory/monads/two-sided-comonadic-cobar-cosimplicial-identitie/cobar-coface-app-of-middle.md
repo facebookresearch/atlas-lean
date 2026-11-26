@@ -1,3 +1,6 @@
-# Cobar Coface App of middle
+# The cobar coface component at an interior index
 
-Interior coface at public index `k + 1` inserts comultiplication.
+The cobar coface component at an interior index.
+
+For an index of value `k+1` with `k : Fin n`, its component is `R` applied to comultiplication
+insertion at reversed position `k.rev`.

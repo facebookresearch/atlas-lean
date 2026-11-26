@@ -1,3 +1,6 @@
-# Skyscraper sheaves and Galois invariants
+# Point adjunction unit projects to the geometric germ
 
-Each coordinate of the actual point-adjunction unit is its original germ map.
+Point adjunction unit projects to the geometric germ.
+
+At object `U` and point-fiber element `z`, the unit section map followed by the product
+projection at `z` equals `Φ.toPresheafFiber U z Q.obj`.

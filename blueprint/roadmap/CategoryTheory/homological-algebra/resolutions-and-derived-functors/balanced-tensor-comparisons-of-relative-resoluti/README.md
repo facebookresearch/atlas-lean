@@ -1,10 +1,10 @@
 # Balanced tensor comparisons of relative resolutions
 
-- [Balanced Free Bar Chain](balanced-free-bar-chain.md)
-- [Balanced Original Free Bar Chain](balanced-original-free-bar-chain.md)
-- [Balanced Free Bar augmentation zero](balanced-free-bar-augmentation-zero.md)
-- [Balanced Bar Comparison Homology Map](balanced-bar-comparison-homology-map.md)
-- [Balanced Bar Comparison Homology Map eq of augmentation](balanced-bar-comparison-homology-map-eq.md)
-- [Balanced Bar Comparison Homology Iso](balanced-bar-comparison-homology-iso.md)
-- [Balanced Bar Comparison Homology Iso hom](balanced-bar-comparison-homology-iso-hom.md)
-- [Balanced Original Bar Comparison Homology Iso](balanced-original-bar-comparison-homolog.md)
+- [Balanced tensor chain complex of the induction bar resolution](balanced-free-bar-chain.md)
+- [Balanced bar chain with an independently sized original left carrier](balanced-original-free-bar-chain.md)
+- [Degree-zero bar augmentation on a balanced tensor](balanced-free-bar-augmentation-zero.md)
+- [Balanced bar comparison map to a split relative augmented complex](balanced-bar-comparison-homology-map.md)
+- [Any augmented relative lift computes the balanced bar homology map](balanced-bar-comparison-homology-map-eq.md)
+- [Balanced homology isomorphism between the bar and a split relative resolution](balanced-bar-comparison-homology-iso.md)
+- [Forward balanced bar isomorphism is the identity-endpoint comparison](balanced-bar-comparison-homology-iso-hom.md)
+- [Balanced relative comparison for an independently sized original left carrier](balanced-original-bar-comparison-homolog.md)

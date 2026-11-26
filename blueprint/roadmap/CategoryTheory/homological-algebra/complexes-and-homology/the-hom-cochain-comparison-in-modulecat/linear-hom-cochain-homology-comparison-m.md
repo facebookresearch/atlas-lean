@@ -1,9 +1,7 @@
-# Linear Hom Cochain Homology Comparison Module Cat
+# Hom cohomology comparison for module complexes
 
-The canonical comparison from linear Hom-cochain cohomology to the
-linear dual of homology, in `ModuleCat` with the canonical linear
-structure `ModuleCat.instLinear` fixed.  Unlike the generic comparison
-written directly at `ModuleCat R`, this term does not depend on instance
-synthesis for `Linear R (ModuleCat R)` (which over `ℤ` selects
-`Linear.preadditiveIntLinear`), so it composes with the `ModuleCat`
-evaluation pairing for every `R`, including `ℤ`.
+For a commutative ring R, a nonnegative chain complex K of R-modules, an
+R-module M, and n ∈ ℕ, this is the R-linear comparison
+α_n : Hⁿ(Hom_R(K; M)) → Hom_R(H_n(K), M).
+A cocycle φ : K_n → M vanishes on boundaries and induces
+α_n([φ])([x]) = φ(x) for a cycle x ∈ K_n.

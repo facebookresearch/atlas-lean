@@ -1,3 +1,5 @@
-# Normalized Eulerian Chain Map support
+# The degree support of a normalized Eulerian chain projector
 
-Every normalized component has its original tensor-degree support.
+The degree support of a normalized Eulerian chain projector.
+
+The degree-`n` component of weight `i` is zero whenever `n<i`.

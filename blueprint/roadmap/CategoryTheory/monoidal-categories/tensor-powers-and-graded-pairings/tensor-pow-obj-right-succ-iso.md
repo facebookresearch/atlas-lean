@@ -1,4 +1,6 @@
-# Tensor Pow Obj Right Succ Iso
+# Left and right associated positive powers are isomorphic
 
-Canonical reassociation from the left-associated positive tensor power
-to the nonempty right-associated tensor power.
+Left and right associated positive powers are isomorphic.
+
+The recursive head-tail coordinates identify the left-associated power `n+1` with the right-
+associated positive power.

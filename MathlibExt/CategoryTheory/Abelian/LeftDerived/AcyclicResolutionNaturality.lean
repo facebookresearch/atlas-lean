@@ -16,9 +16,12 @@ public import MathlibExt.Algebra.Homology.Embedding.RestrictionHomology
 /-!
 # Naturality of left-derived acyclic-resolution comparisons
 
-The augmentation, kernel-tail and higher comparisons commute with maps of augmented acyclic
-resolutions. Their original objects, arrows and comparison isomorphisms are retained. This layer
-uses the left-derived API.
+For an additive right-exact functor between abelian categories with
+projective resolutions in the source, a map of exact augmented
+termwise acyclic complexes gives a naturality square between their
+`L_nF` comparisons. In degree one, the square passes through the
+kernel of the mapped augmentation-kernel inclusion. Higher degrees
+pass through kernel-tail augmentations and restriction homology.
 -/
 
 @[expose] public section
@@ -83,7 +86,11 @@ private theorem augmentationHomologyZero_naturality
     (hmid.trans (haug.trans hend))
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The acyclic-resolution comparison is natural in degree zero. -/
+/-- Let `C,D` be abelian, with projective resolutions in `C`,
+and `F : C → D` additive and preserving finite colimits. Let
+`π : Q → M[0]`, `ρ : R → N[0]` be quasi-isomorphisms of nonnegative
+chain complexes with all positive left-derived term values zero. For `a : Q → R` over `f : M → N`, the degree-zero
+comparisons satisfy `L₀F(f) ≫ comparison_R = comparison_Q ≫ H₀(F(a))`. -/
 theorem leftDerivedObjIsoHomologyOfAcyclicResolution_zero_naturality
     {C : Type u₁} [Category.{v₁} C] [Abelian C] [HasProjectiveResolutions C]
     {D : Type u₂} [Category.{v₂} D] [Abelian D]
@@ -117,7 +124,10 @@ theorem leftDerivedObjIsoHomologyOfAcyclicResolution_zero_naturality
 
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The restricted chain map commutes with the canonical kernel-tail augmentations. -/
+/-- In an abelian category `C`, let `π : Q → M[0]`, `ρ : R → N[0]`
+be chain augmentations and `a : Q → R`, `f : M → N` satisfy
+`a₀ ≫ ρ₀ = π₀ ≫ f`. Restricting `a` to the kernel tails commutes
+with their augmentations over the induced map `ker(π₀) → ker(ρ₀)`. -/
 theorem acyclicAugmentationKernelTailMap_comm
     {C : Type u₁} [Category.{v₁} C] [Abelian C]
     {M N : C} {Q R : ChainComplex C ℕ}
@@ -151,7 +161,12 @@ theorem acyclicAugmentationKernelTailMap_comm
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.defeqAttrib.useBackward true in
-/-- The higher comparison factors through its kernel tail and restriction homology. -/
+/-- Let `C,D` be abelian, with projective resolutions in `C`,
+`F : C → D` additive and preserving finite colimits, and
+`π : Q → M[0]` a quasi-isomorphism whose terms have vanishing
+positive left-derived values. The degree-`n+2` acyclic comparison
+factors through the kernel-sequence boundary, the degree-`n+1`
+comparison for the kernel tail, and its restriction homology isomorphism. -/
 theorem leftDerivedAcyclicComparison_higher_hom
     {C : Type u₁} [Category.{v₁} C] [Abelian C] [HasProjectiveResolutions C]
     {D : Type u₂} [Category.{v₂} D] [Abelian D]
@@ -195,7 +210,12 @@ namespace CategoryTheory.Functor
 variable {C : Type u₁} [Category.{v₁} C] [Abelian C] [HasProjectiveResolutions C]
 variable {D : Type u₂} [Category.{v₂} D] [Abelian D]
 
-/-- The boundary-as-kernel comparison commutes with the map of short exact sequences. -/
+/-- Let `C,D` be abelian, with projective resolutions in `C`,
+`F : C → D` additive and preserving finite colimits, and
+`φ : S → T` a map of short exact sequences whose middle objects
+have zero `L₁F`. The isomorphisms
+`L₁F(S.X₃) ≅ ker(F(S.f))`, `L₁F(T.X₃) ≅ ker(F(T.f))`
+commute with `L₁F(φ₃)` and the induced kernel map. -/
 lemma leftDerivedOneIsoKernel_naturality
     (F : C ⥤ D) [F.Additive] [PreservesFiniteColimits F]
     (S T : ShortComplex.ShortExactSequences C) (φ : S.obj ⟶ T.obj)
@@ -225,7 +245,10 @@ variable {C : Type u₁} [Category.{v₁} C] [Abelian C]
 variable {D : Type u₂} [Category.{v₂} D] [Abelian D]
 variable {Q R : ChainComplex C ℕ} {M N : C}
 
-/-- The mapped augmentation-kernel inclusion square induces the map between its two kernels. -/
+/-- Let `C,D` be abelian and `F : C → D` any functor. For chain
+augmentations `π : Q → M[0]`, `ρ : R → N[0]` and maps `a : Q → R`,
+`f : M → N` with `a₀ ≫ ρ₀ = π₀ ≫ f`, the mapped kernel-inclusion
+square induces a map `ker(F(ker(π₀) → Q₀)) → ker(F(ker(ρ₀) → R₀))`. -/
 noncomputable def augmentationMappedKernelMap
     (F : C ⥤ D)
     (π : Q ⟶ (single₀ C).obj M) (ρ : R ⟶ (single₀ C).obj N)
@@ -238,10 +261,13 @@ noncomputable def augmentationMappedKernelMap
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.defeqAttrib.useBackward true in
-/--
-The homology map data are constructed from the augmentation map, the chain-map equation, and the
-mapped kernel square.
--/
+/-- Let `C,D` be abelian, `F : C → D` additive, and
+`π : Q → M[0]`, `ρ : R → N[0]` chain augmentations that are
+quasi-isomorphisms in degrees zero and one. Suppose `F` preserves
+the cokernels of `Q₂ → Q₁` and `R₂ → R₁`. For a chain map
+`a : Q → R` and `f : M → N`, assume `a₀ ≫ ρ₀ = π₀ ≫ f`. The chain-map and augmentation squares induce right-homology
+map data in degree one, using the kernel-tail homology presentations
+of `F(Q)` and `F(R)`. -/
 noncomputable def augmentationRightHomologyMapData
     (F : C ⥤ D) [F.Additive]
     (π : Q ⟶ (single₀ C).obj M) (ρ : R ⟶ (single₀ C).obj N)
@@ -277,8 +303,13 @@ noncomputable def augmentationRightHomologyMapData
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.defeqAttrib.useBackward true in
-/-- The exact original degree-one homology comparison commutes with the map of
-augmented complexes. -/
+/-- Let `C,D` be abelian, `F : C → D` additive, and
+`π : Q → M[0]`, `ρ : R → N[0]` chain augmentations that are
+quasi-isomorphisms in degrees zero and one. Suppose `F` preserves
+the cokernels of `Q₂ → Q₁` and `R₂ → R₁`. For a chain map
+`a : Q → R` and `f : M → N`, assume `a₀ ≫ ρ₀ = π₀ ≫ f`. The degree-one homology map `H₁(F(a))` commutes with the
+isomorphisms to `ker(F(ker(π₀) → Q₀))` and
+`ker(F(ker(ρ₀) → R₀))`, and the induced map between these kernels. -/
 lemma homologyOneIsoOfPreservedKernelTail_naturality
     (F : C ⥤ D) [F.Additive]
     (π : Q ⟶ (single₀ C).obj M) (ρ : R ⟶ (single₀ C).obj N)
@@ -330,7 +361,10 @@ namespace ChainComplex
 variable {C : Type u₁} [Category.{v₁} C] [Abelian C]
 variable {Q R : ChainComplex C ℕ} {M N : C}
 
-/-- The augmentation-kernel square defines the map of kernel sequences. -/
+/-- In an abelian category `C`, let `π : Q → M[0]`, `ρ : R → N[0]`
+be chain augmentations and `a : Q → R`, `f : M → N` satisfy
+`a₀ ≫ ρ₀ = π₀ ≫ f`. Their kernel maps, `a₀`, and `f` give a
+morphism from `ker(π₀) → Q₀ → M` to `ker(ρ₀) → R₀ → N`. -/
 noncomputable def augmentationKernelSequenceMap
     (π : Q ⟶ (single₀ C).obj M) (ρ : R ⟶ (single₀ C).obj N)
     (a : Q ⟶ R) (f : M ⟶ N)
@@ -351,10 +385,12 @@ variable {D : Type u₂} [Category.{v₂} D] [Abelian D]
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.defeqAttrib.useBackward true in
-/--
-In degree one the original acyclic comparison uses exactly the boundary-as-kernel and mapped
-augmentation-kernel homology comparisons.
--/
+/-- Let `C,D` be abelian, with projective resolutions in `C`,
+`F : C → D` additive and preserving finite colimits, and
+`π : Q → M[0]` a quasi-isomorphism with all positive left-derived
+term values zero. The degree-one acyclic comparison factors through
+the boundary isomorphism `L₁F(M) ≅ ker(F(ker(π₀) → Q₀))` and
+the inverse kernel-tail homology comparison to `H₁(F(Q))`. -/
 lemma leftDerivedAcyclicComparison_one_hom
     (F : C ⥤ D) [F.Additive] [PreservesFiniteColimits F]
     {M : C} (Q : ChainComplex C ℕ) (π : Q ⟶ (ChainComplex.single₀ C).obj M)
@@ -374,10 +410,12 @@ lemma leftDerivedAcyclicComparison_one_hom
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.defeqAttrib.useBackward true in
 
-/--
-A degree-zero augmentation square gives naturality of the exact original acyclic-resolution
-comparison in degree one.
--/
+/-- Let `C,D` be abelian, with projective resolutions in `C`,
+and `F : C → D` additive and preserving finite colimits. Let
+`π : Q → M[0]`, `ρ : R → N[0]` be quasi-isomorphisms of nonnegative
+chain complexes with all positive left-derived term values zero. For `a : Q → R`, `f : M → N` with
+`a₀ ≫ ρ₀ = π₀ ≫ f`, the degree-one acyclic comparisons satisfy
+`L₁F(f) ≫ comparison_R = comparison_Q ≫ H₁(F(a))`. -/
 lemma leftDerivedAcyclicComparison_one_naturality_of_f_zero
     (F : C ⥤ D) [F.Additive] [PreservesFiniteColimits F]
     {M N : C} (Q R : ChainComplex C ℕ)
@@ -430,10 +468,12 @@ lemma leftDerivedAcyclicComparison_one_naturality_of_f_zero
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.defeqAttrib.useBackward true in
-/--
-Every map of augmentations gives naturality of the exact original acyclic-resolution comparison in
-degree one.
--/
+/-- Let `C,D` be abelian, with projective resolutions in `C`,
+and `F : C → D` additive and preserving finite colimits. Let
+`π : Q → M[0]`, `ρ : R → N[0]` be quasi-isomorphisms of nonnegative
+chain complexes with all positive left-derived term values zero. For a map of augmented complexes `a : Q → R` over
+`f : M → N`, the degree-one acyclic comparisons satisfy
+`L₁F(f) ≫ comparison_R = comparison_Q ≫ H₁(F(a))`. -/
 lemma leftDerivedAcyclicComparison_one_naturality
     (F : C ⥤ D) [F.Additive] [PreservesFiniteColimits F]
     {M N : C} (Q R : ChainComplex C ℕ)
@@ -457,7 +497,12 @@ lemma leftDerivedAcyclicComparison_one_naturality
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.defeqAttrib.useBackward true in
-/-- The original comparison is natural for every map of augmented acyclic resolutions. -/
+/-- Let `C,D` be abelian, with projective resolutions in `C`,
+and `F : C → D` additive and preserving finite colimits. Let
+`π : Q → M[0]`, `ρ : R → N[0]` be quasi-isomorphisms of nonnegative
+chain complexes with all positive left-derived term values zero. For a map of augmented complexes `a : Q → R` over
+`f : M → N`, the comparisons satisfy
+`L_nF(f) ≫ comparison_R = comparison_Q ≫ H_n(F(a))` in every degree. -/
 theorem leftDerivedObjIsoHomologyOfAcyclicResolution_naturality
     {C : Type u₁} [Category.{v₁} C] [Abelian C] [HasProjectiveResolutions C]
     {D : Type u₂} [Category.{v₂} D] [Abelian D]

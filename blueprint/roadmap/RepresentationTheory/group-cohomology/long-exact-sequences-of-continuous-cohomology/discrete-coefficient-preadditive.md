@@ -1,3 +1,5 @@
-# Discrete Coefficient preadditive
+# Preadditivity of discrete continuous coefficient actions
 
-Compatibility with the original profinite instance name, using the same canonical data.
+For a profinite G in universe v, the category of discrete
+continuous G-actions on topological ℤ-modules with carrier universe w
+is preadditive. Morphism addition and zero are pointwise.

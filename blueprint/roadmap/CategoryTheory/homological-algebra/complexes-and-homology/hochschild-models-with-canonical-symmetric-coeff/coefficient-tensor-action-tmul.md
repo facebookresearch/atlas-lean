@@ -1,3 +1,6 @@
-# Coefficient Tensor Action tmul
+# The value of the coefficient tensor action on a pure tensor
 
-A pure coefficient tensor is sent to the original algebra action.
+The value of the coefficient tensor action on a pure tensor.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M,
+coefficientTensorAction(a ⊗ m) = a • m.

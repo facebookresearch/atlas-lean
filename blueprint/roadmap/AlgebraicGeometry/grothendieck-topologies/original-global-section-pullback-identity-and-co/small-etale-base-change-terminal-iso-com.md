@@ -1,3 +1,6 @@
-# Small Etale Base Change Terminal Iso comp
+# Terminal object base change comparisons compose
 
-Terminal uniqueness supplies the actual base-change composition equality.
+Terminal object base change comparisons compose.
+
+The base-change composition comparison at the terminal object, followed by the two terminal
+identifications, equals the terminal identification for the composite scheme map.

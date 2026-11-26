@@ -1,4 +1,6 @@
-# Schreier Transfer Induced Bar Component zero augmentation
+# The augmented universal transfer on the degree-zero generator
 
-On the normalized degree-zero basis, the universal transfer followed by
-the induced bar augmentation is the canonical finite-index norm map.
+The augmented universal transfer on the degree-zero generator.
+
+The degree-zero universal transfer, followed by induced augmentation, sends the empty-tuple
+G-bar basis vector to the induced trivial norm of 1.

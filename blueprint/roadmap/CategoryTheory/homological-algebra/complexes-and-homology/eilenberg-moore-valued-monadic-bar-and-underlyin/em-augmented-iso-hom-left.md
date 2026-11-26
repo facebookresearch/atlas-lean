@@ -1,6 +1,5 @@
-# Em Augmented Iso hom left
+# The regular augmented comparison has the underlying bar isomorphism
 
-The model comparison acts as the underlying bar iso on simplicial
-components, definitionally: both transport the same reflexive module iso
-through evaluation. This is the postcomposed-module model comparison,
-not the literal forgetful image.
+For a monad T on C and a T-algebra alg, the simplicial projection of emAugmentedIso(alg).hom
+equals emUnderlyingBarIso(alg).hom. Thus the augmented comparison retains the specified
+forgotten-free-to-regular bar isomorphism.

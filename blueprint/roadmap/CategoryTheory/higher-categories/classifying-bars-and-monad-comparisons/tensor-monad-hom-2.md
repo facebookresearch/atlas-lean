@@ -1,3 +1,5 @@
-# Tensor Monad Hom η
+# Tensor monad morphism respects the unit
 
-Explicit unit compatibility of the induced tensor-monad morphism.
+Tensor monad morphism respects the unit.
+
+The source unit followed by the component equals the target unit.

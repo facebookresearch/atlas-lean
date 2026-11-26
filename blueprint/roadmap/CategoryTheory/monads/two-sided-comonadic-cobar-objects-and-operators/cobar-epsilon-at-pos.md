@@ -1,4 +1,6 @@
-# Cobar Epsilon At Pos
+# The right-end indexing of a cobar codegeneracy
 
-Public reversed-position wrapper for cobar codegeneracies:
-`cobarEpsilonAtPos n i = epsilonAtPos n i.rev`.
+The right-end indexing of a cobar codegeneracy.
+
+The codegeneracy insertion at `i : Fin (n+1)` is the counit insertion at the reversed position
+`i.rev`.

@@ -1,8 +1,7 @@
-# Comparison Homotopy
+# Compatible homotopies of Cartan–Eilenberg comparisons
 
-A supplied homotopy between two comparisons of Cartan--Eilenberg
-resolutions over the same chain map: homotopies of the four constituent
-families, compatible with the horseshoe inclusions and projections.
-The cycles compatibility in degree `j` involves the boundary homotopy
-in degree `j + 1`, matching the asymmetric endpoints of the cycle
-horseshoe.
+Let C be abelian, L,L′ chain complexes indexed by ℕ, P and Q chosen Cartan–Eilenberg
+resolutions, and g : L → L′. Let F,G be comparisons of P and Q over the same map g. A comparison
+homotopy specifies homotopies between all four resolution-map families, commuting with the cycle
+and term horseshoe inclusions and projections. In degree j, cycle inclusion compatibility uses
+the boundary homotopy in degree j+1; term projection compatibility uses boundary degree j.

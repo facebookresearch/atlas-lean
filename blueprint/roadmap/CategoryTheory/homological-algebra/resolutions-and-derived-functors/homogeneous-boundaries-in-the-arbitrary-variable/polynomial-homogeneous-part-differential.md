@@ -1,4 +1,7 @@
-# Polynomial Homogeneous Part differential
+# Homogeneous projection commutes with the shifted coefficient degree
 
-The actual variable Koszul differential raises polynomial coefficient
-degree by one and commutes with the corresponding homogeneous projections.
+For a commutative ring R and linearly ordered I, let
+π_(n,d) project the polynomial coefficients in exterior degree n.
+Then π_(n,d+1)(∂_n z) = ∂_n(π_(n+1,d) z) for every
+z ∈ ⋀_P^(n+1)(I →₀ P), n,d ≥ 0. The differential multiplies
+a coefficient by one variable in each signed deletion term.

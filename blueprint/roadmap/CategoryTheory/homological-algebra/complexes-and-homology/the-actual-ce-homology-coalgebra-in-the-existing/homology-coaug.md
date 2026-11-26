@@ -1,3 +1,6 @@
-# Homology Coaug
+# The coaugmentation of graded CE homology
 
-The canonical CE homology coaugmentation uses the two unit maps.
+The coaugmentation of graded CE homology.
+
+The chain coaugmentation and the homology unit comparison define the map from the graded
+tensor unit into CE homology.

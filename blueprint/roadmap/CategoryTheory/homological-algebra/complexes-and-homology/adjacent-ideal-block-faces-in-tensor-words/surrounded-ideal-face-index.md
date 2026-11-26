@@ -1,3 +1,4 @@
-# Surrounded Ideal Face Index
+# An internal ideal pair has ambient index equal to prefix length plus its index
 
-The original internal pair lies at the prefix length plus its internal position.
+For l,r,n : ℕ and i : Fin (n + 1), surroundedIdealFaceIndex l r n i is the element of
+Fin(l+r+n+1) with value l+i.val.

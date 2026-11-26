@@ -20,7 +20,25 @@ public import MathlibExt.CategoryTheory.Abelian.RightDerived.ResolutionRealizati
 public import MathlibExt.CategoryTheory.NatIso.ComparisonCoherence
 
 /-!
-# Original field, site and module cohomology maps on the same cochains and resolutions
+# Naturality of field étale and continuous cohomology comparisons
+
+Let Ω/k and Ψ/K be separable closures of fields in universe u, with
+compatible embeddings β : k → K and σ : Ω → Ψ. Put c = max(u, w),
+G = Gal(Ω/k), H = Gal(Ψ/K), f = Spec β and φ = res_e : H → G.
+The Galois stalk change identifies Res_φ(E(Q)) with E′(f*Q).
+
+The continuous pullback b_e first restricts the homogeneous cochains along
+φ and then changes coefficients by this stalk isomorphism.
+The derived-section comparison χ identifies it with étale pullback a_e:
+χ_K ∘ a_e = b_e ∘ χ_k in every degree.
+The degree-zero normalization is the global-section/invariant comparison.
+
+The same square holds on any chosen source and target injective resolutions,
+naturally under augmented coefficient maps and changes of resolution.
+Both pullbacks commute with connecting maps and satisfy identity and
+composition laws using the inverse-image comparisons.
+The invariant-cohomology factorization is described on the mapped stalk
+resolution. Coefficients originally in universe w are lifted once to c.
 -/
 
 @[expose] public section
@@ -54,9 +72,15 @@ theorem fieldNativeInverseImageShortExact (e : GaloisUnits.FieldMap k Ω K Ψ)
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
--- V1/V2 recorded dictionary mismatches at the same field/module functor aliases.
-/-- The old original cochain restriction followed by its actual ξ coefficient map,
-as one whole morphism of delta functors. -/
+
+/-- Let Ω/k and Ψ/K be separable closures of fields in universe u,
+e = (β, σ) compatible base and closure embeddings, G = Gal(Ω/k),
+H = Gal(Ψ/K), c = max(u, w), and f = Spec β.
+Let L = f*, E and E′ the Galois stalk functors, and φ = res_e : H → G.
+Group-cochain restriction along φ followed by the stalk-change map
+χ : Res_φ E ≅ E′L gives a morphism of cohomological delta functors
+H_cts^*(G, E(-)) → H_cts^*(H, E′L(-)).
+It commutes with the connecting maps of short exact coefficient sheaves. -/
 def fieldNativePullbackDeltaHom (e : GaloisUnits.FieldMap k Ω K Ψ) :
     CohomologicalDeltaFunctor.precompose (fieldGeometricStalkGaloisFunctor.{u, w} k Ω)
         (Functor.RightDerived.precompShortExact (fieldGeometricStalkGaloisFunctor.{u, w} k Ω))
@@ -91,8 +115,13 @@ def fieldNativePullbackDeltaHom (e : GaloisUnits.FieldMap k Ω K Ψ) :
     (CohomologicalDeltaFunctor.precomposeCompShortExact L T' hL hT') χ.hom H
   exact g ≫ a.hom ≫ c ≫ b.inv
 
-/-- The native cohomology map in degree n obtained from the field change morphism
-of delta functors. -/
+/-- Let Ω/k and Ψ/K be separable closures of fields in universe u,
+e = (β, σ) compatible base and closure embeddings, G = Gal(Ω/k),
+H = Gal(Ψ/K), c = max(u, w), and f = Spec β.
+Let L = f*, E and E′ the Galois stalk functors, and φ = res_e : H → G.
+For n ∈ ℕ, the continuous pullback is the natural additive map
+b_e^n(Q) : Hⁿ_cts(G, E(Q)) → Hⁿ_cts(H, E′(LQ)),
+obtained from group restriction followed by the equivariant stalk change. -/
 def fieldNativePullback (e : GaloisUnits.FieldMap k Ω K Ψ) (n : ℕ) :
     fieldGeometricStalkGaloisFunctor.{u, w} k Ω ⋙ fieldContinuousCohomologyFunctor.{u, w} k Ω n ⟶
       smallEtaleInverseImage.{u, w} (fieldOriginalPullback k Ω K Ψ e) ⋙
@@ -102,7 +131,7 @@ def fieldNativePullback (e : GaloisUnits.FieldMap k Ω K Ψ) (n : ℕ) :
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
--- V1/V2 recorded whnf failures for the same actual precomposition components.
+
 theorem fieldNativePullback_app (e : GaloisUnits.FieldMap k Ω K Ψ) (n : ℕ)
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     (fieldNativePullback.{u, w} k Ω K Ψ e n).app Q =
@@ -118,7 +147,14 @@ theorem fieldNativePullback_app (e : GaloisUnits.FieldMap k Ω K Ψ) (n : ℕ)
     CohomologicalDeltaFunctor.precomposeChangeHom_app]
   rfl
 
-/-- Transport the original native map through the SAME accepted field comparison. -/
+/-- Let Ω/k and Ψ/K be separable closures of fields in universe u,
+e = (β, σ) compatible base and closure embeddings, G = Gal(Ω/k),
+H = Gal(Ψ/K), c = max(u, w), and f = Spec β.
+Let L = f*, E and E′ the Galois stalk functors, and φ = res_e : H → G.
+Let χ_k and χ_K be the delta-functor comparisons from derived
+global sections to continuous Galois cohomology.
+Conjugating continuous pullback gives the derived-section delta morphism
+χ_K⁻¹ ∘ b_e ∘ χ_k : R*Γ_k → R*Γ_K ∘ L. -/
 def fieldNativeTransportedGammaDeltaHom (e : GaloisUnits.FieldMap k Ω K Ψ) :
     fieldOriginalGammaDeltaFunctor.{u, w} k ⟶
       fieldInverseImageGammaDeltaFunctor.{u, w} k Ω K Ψ e :=
@@ -190,7 +226,12 @@ attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω K Ψ : Type u) [Field k] [Field Ω] [Field K] [Field Ψ]
 variable [Algebra k Ω] [Algebra K Ψ] [IsSepClosure k Ω] [IsSepClosure K Ψ]
 
-/-- The SAME accepted Γ/native comparison retains the actual original invariant normalization. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), c = max(u, w), E the Galois stalk functor on abelian
+étale sheaves over k with coefficients in c, and Γ_k global sections.
+For every coefficient sheaf Q, the degree-zero comparison obeys
+z_G ∘ χ_k^0 = λ_Q ∘ z_Γ, where z_G : H⁰_cts(G,E(Q)) ≅ E(Q)^G,
+z_Γ : R⁰Γ_k(Q) ≅ Γ_k(Q), and λ_Q : Γ_k(Q) ≅ E(Q)^G. -/
 theorem fieldGammaContinuousIso_zero
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     (fieldDerivedSectionsContinuousCohomologyIso.{u, w} k Ω 0).hom.app Q ≫
@@ -213,7 +254,7 @@ theorem fieldGammaContinuousIso_zero
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
--- The full unchanged field-native zero statement/proof hit whnf200000 in retained V2/V3.
+
 -- This finite declaration scope keeps every original field, coefficient object and map.
 -- The proved native map uses the fixed old-rank cochains and actual ξ coefficient arrow.
 theorem fieldNativePullback_zero_invariants
@@ -263,7 +304,12 @@ attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω K Ψ : Type u) [Field k] [Field Ω] [Field K] [Field Ψ]
 variable [Algebra k Ω] [Algebra K Ψ] [IsSepClosure k Ω] [IsSepClosure K Ψ]
 
-/-- The inverse component is the inverse of the same accepted all-degree comparison. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), c = max(u, w), E the Galois stalk functor on abelian
+étale sheaves over k with coefficients in c, and Γ_k global sections.
+The degree q component of the inverse delta-functor comparison
+is the inverse natural map of the degree q derived-sections/continuous
+cohomology isomorphism χ_k^q. -/
 theorem fieldGammaContinuousDeltaIso_inv_app (q : ℕ) :
     CohomologicalDeltaFunctor.Hom.app (fieldGammaContinuousDeltaIso.{u, w} k Ω).inv q =
       (fieldDerivedSectionsContinuousCohomologyIso.{u, w} k Ω q).inv := by
@@ -292,11 +338,18 @@ theorem fieldNativeTransportedGammaDeltaHom_app
   rfl
 
 set_option linter.defProp false in
--- Actual typed restatements reached whnf200000/400000 in AgreementV1/V2.
--- Cache the complete generic proof with the same explicit original field objects; no premise is
--- added.
-/-- The normalization proof for transported native pullback in degree zero,
-using the fixed sections–invariants and cohomology comparisons. -/
+
+
+
+/-- Let Ω/k and Ψ/K be separable closures of fields in universe u,
+e = (β, σ) compatible base and closure embeddings, G = Gal(Ω/k),
+H = Gal(Ψ/K), c = max(u, w), and f = Spec β.
+Let L = f*, E and E′ the Galois stalk functors, and φ = res_e : H → G.
+For a coefficient sheaf Q, continuous pullback conjugated by
+χ_k^0 and χ_K^0 has degree-zero normalization
+z_Γ,K ∘ χ_K⁻¹ ∘ b_e^0 ∘ χ_k =
+pullback_Γ ∘ z_Γ,k.
+Here pullback_Γ sends Γ_k(Q) to Γ_K(LQ). -/
 def fieldNativeGammaZeroProof (e : GaloisUnits.FieldMap k Ω K Ψ)
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :=
   normalized_conjugate_map
@@ -345,7 +398,7 @@ variable [Algebra k Ω] [Algebra K Ψ] [IsSepClosure k Ω] [IsSepClosure K Ψ]
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
--- ComponentsV1 caches the complete generic normalization proof on the same field objects.
+
 theorem fieldNativeTransportedGammaDeltaHom_zero
     (e : GaloisUnits.FieldMap k Ω K Ψ) :
     CohomologicalDeltaFunctor.Hom.app
@@ -378,7 +431,7 @@ theorem fieldNativeTransportedGammaDeltaHom_eq
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
--- The same accepted comparison families and literal original native maps occur in every degree.
+
 theorem fieldDerivedPullback_native_square
     (e : GaloisUnits.FieldMap k Ω K Ψ) (q : ℕ) :
     fieldDerivedPullback.{u, w} k Ω K Ψ e q ≫
@@ -409,13 +462,18 @@ open CategoryTheory CategoryTheory.Limits
 
 namespace AlgebraicGeometry.Scheme.DerivedSections
 
-/-- Actual field identity gives the original identity scheme morphism. -/
+/-- For fields k, Ω in universe u with k-algebra Ω, the compatible
+identity field map induces the identity scheme map on Spec k:
+Spec(id_k) = id_(Spec k). -/
 theorem fieldOriginalPullback_id (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] :
     fieldOriginalPullback k Ω k Ω (GaloisUnits.FieldMap.id k Ω) = 𝟙 (Spec (.of k)) := by
   change Spec.map (𝟙 (CommRingCat.of k)) = 𝟙 (Spec (.of k))
   exact Spec.map_id _
 
-/-- Actual compatible field squares give the original contravariant scheme composition. -/
+/-- For compatible field maps e₁ : (k,Ω) → (K,Ψ) and
+e₂ : (K,Ψ) → (l,Λ), with all fields in universe u, the induced
+spectrum maps satisfy f_(e₂∘e₁) = f_e₁ ∘ f_e₂.
+This is contravariance of the spectrum construction on the base embeddings. -/
 theorem fieldOriginalPullback_comp
     (k Ω K Ψ L Φ : Type u) [Field k] [Field Ω] [Field K] [Field Ψ] [Field L] [Field Φ]
     [Algebra k Ω] [Algebra K Ψ] [Algebra L Φ]
@@ -425,8 +483,10 @@ theorem fieldOriginalPullback_comp
   change Spec.map ((CommRingCat.ofHom e₁.base) ≫ (CommRingCat.ofHom e₂.base)) = _
   exact Spec.map_comp _ _
 
-/-- Naming the original identity changes the same LF comparison only by actual
-equality transport. -/
+/-- For a scheme X in universe u, c = max(u, w), an endomorphism
+f : X → X with f = id_X, and q ∈ ℕ, derived global-section pullback
+along f followed by the inverse-image comparison f* ≅ id is
+id_(RᑫΓ_X). The comparison includes the given equality f = id_X. -/
 theorem smallEtaleDerivedGammaPullback_id_to (X : Scheme.{u}) (f : X ⟶ X)
     (hf : f = 𝟙 X) (q : ℕ) :
     smallEtaleDerivedGammaPullback.{u, w} f q ≫
@@ -438,7 +498,11 @@ theorem smallEtaleDerivedGammaPullback_id_to (X : Scheme.{u}) (f : X ⟶ X)
   simpa only [smallEtaleInverseImageCongr, eqToIso_refl, Iso.refl_trans] using
     smallEtaleDerivedGammaPullback_id.{u, w} X q
 
-/-- Naming the genuine composite preserves the same every-degree canonical LF square. -/
+/-- For f : X → Y, g : Y → Z and h : X → Z with h = g ∘ f,
+all schemes in universe u, derived-section pullback in degree q
+composes as pullback along g then along f, followed by
+f*g* ≅ h*. The result is pullback along h on AddCommGrpCat max(u,w)-valued
+étale sheaves. -/
 theorem smallEtaleDerivedGammaPullback_comp_to
     {X Y Z : Scheme.{u}} (f : X ⟶ Y) (g : Y ⟶ Z) (fg : X ⟶ Z)
     (hfg : fg = f ≫ g) (q : ℕ) :
@@ -457,7 +521,12 @@ theorem smallEtaleDerivedGammaPullback_comp_to
 variable (k Ω K Ψ : Type u) [Field k] [Field Ω] [Field K] [Field Ψ]
 variable [Algebra k Ω] [Algebra K Ψ]
 
-/-- The field map is the SAME original unit/terminal Γ construction. -/
+/-- Let k, Ω, K, Ψ be fields in universe u with k-algebra Ω,
+K-algebra Ψ and compatible embeddings e = (β, σ).
+Put c = max(u, w), f = Spec β : Spec K → Spec k and L = f*.
+The field global-section map Γ_k(Q) → Γ_K(LQ) is the canonical
+small étale scheme pullback map for f. Both come from the same
+inverse-image adjunction unit and terminal-section comparison. -/
 theorem fieldPullbackGlobalSections_eq_scheme (e : GaloisUnits.FieldMap k Ω K Ψ) :
     fieldPullbackGlobalSections.{u, w} k Ω K Ψ e =
       smallEtalePullbackGlobalSections.{u, w} (fieldOriginalPullback k Ω K Ψ e) := rfl
@@ -477,14 +546,20 @@ theorem fieldDerivedPullback_eq_scheme (e : GaloisUnits.FieldMap k Ω K Ψ) (q :
   congrArg (fun a => CohomologicalDeltaFunctor.Hom.app a q)
     (fieldDerivedPullbackDeltaHom_eq_scheme.{u, w} k Ω K Ψ e)
 
-/-- The actual identity comparison uses only the proved original field/Spec equality. -/
+/-- For fields k, Ω in universe u with k-algebra Ω and c = max(u,w),
+inverse image along the compatible identity field map is naturally
+isomorphic to the identity on abelian étale sheaves over k.
+The comparison uses Spec(id_k) = id_(Spec k). -/
 def fieldInverseImageIdentityIso :
     smallEtaleInverseImage.{u, w} (fieldOriginalPullback k Ω k Ω (GaloisUnits.FieldMap.id k Ω)) ≅
       𝟭 (Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :=
   smallEtaleInverseImageCongr.{u, w} (fieldOriginalPullback_id k Ω) ≪≫
     smallEtaleInverseImageIdIso.{u, w} (Spec (.of k))
 
-/-- Every degree of the SAME original field pullback respects canonical identity. -/
+/-- For fields k, Ω in universe u with k-algebra Ω, c = max(u,w)
+and q ∈ ℕ, the derived-section pullback along the identity field map,
+followed by the inverse-image identity comparison, is
+id_(RᑫΓ_k). -/
 theorem fieldDerivedPullback_id (q : ℕ) :
     fieldDerivedPullback.{u, w} k Ω k Ω (GaloisUnits.FieldMap.id k Ω) q ≫
       Functor.whiskerRight (fieldInverseImageIdentityIso.{u, w} k Ω).hom
@@ -496,7 +571,10 @@ theorem fieldDerivedPullback_id (q : ℕ) :
 
 variable (L Φ : Type u) [Field L] [Field Φ] [Algebra L Φ]
 
-/-- The actual field composite uses the same canonical LF composition mate. -/
+/-- For compatible field maps e₁ : (k,Ω) → (K,Ψ) and
+e₂ : (K,Ψ) → (l,Λ) in universe u and c = max(u,w),
+the iterated inverse image L_e₂ L_e₁ is naturally isomorphic to
+L_(e₂∘e₁) on the small étale coefficient categories. -/
 def fieldInverseImageCompositionIso
     (e₁ : GaloisUnits.FieldMap k Ω K Ψ) (e₂ : GaloisUnits.FieldMap K Ψ L Φ) :
     smallEtaleInverseImage.{u, w} (fieldOriginalPullback k Ω K Ψ e₁) ⋙
@@ -508,7 +586,11 @@ def fieldInverseImageCompositionIso
     (fieldOriginalPullback k Ω L Φ (GaloisUnits.FieldMap.comp e₂ e₁))
     (fieldOriginalPullback_comp k Ω K Ψ L Φ e₁ e₂)
 
-/-- Every degree and every original sheaf obey the actual field composition square. -/
+/-- For compatible field maps e₁ : (k,Ω) → (K,Ψ),
+e₂ : (K,Ψ) → (l,Λ) in universe u, c = max(u,w), and q ∈ ℕ,
+field derived-section pullbacks satisfy
+a_(e₂∘e₁) = RᑫΓ_l(c₁₂) ∘ a_e₂(L_e₁(-)) ∘ a_e₁,
+where c₁₂ : L_e₂ L_e₁ ≅ L_(e₂∘e₁) is the inverse-image comparison. -/
 theorem fieldDerivedPullback_comp
     (e₁ : GaloisUnits.FieldMap k Ω K Ψ) (e₂ : GaloisUnits.FieldMap K Ψ L Φ) (q : ℕ) :
     fieldDerivedPullback.{u, w} k Ω K Ψ e₁ q ≫
@@ -541,7 +623,12 @@ namespace AlgebraicGeometry.Scheme.DerivedSections
 attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 
-/-- The SAME old-rank original native family respects canonical identity in every degree. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), c = max(u, w), E the Galois stalk functor on abelian
+étale sheaves over k with coefficients in c, and Γ_k global sections.
+In degree q, continuous field pullback along the identity map,
+followed by the inverse-image identity comparison, is the identity
+on Hᑫ_cts(G,E(-)). -/
 theorem fieldNativePullback_id (q : ℕ) :
     fieldNativePullback.{u, w} k Ω k Ω (GaloisUnits.FieldMap.id k Ω) q ≫
       Functor.whiskerRight (fieldInverseImageIdentityIso.{u, w} k Ω).hom
@@ -560,7 +647,14 @@ theorem fieldNativePullback_id (q : ℕ) :
 variable (K Ψ L Φ : Type u) [Field K] [Field Ψ] [Field L] [Field Φ]
 variable [Algebra K Ψ] [Algebra L Φ] [IsSepClosure K Ψ] [IsSepClosure L Φ]
 
-/-- The literal old-rank native pullbacks respect the SAME canonical field/LF composition. -/
+/-- Let Ω/k and Ψ/K be separable closures of fields in universe u,
+e = (β, σ) compatible base and closure embeddings, G = Gal(Ω/k),
+H = Gal(Ψ/K), c = max(u, w), and f = Spec β.
+Let L = f*, E and E′ the Galois stalk functors, and φ = res_e : H → G.
+For a further compatible map (K,Ψ) → (l,Λ) of separable closures
+in universe u, the continuous pullbacks compose in field-map order:
+first e, then the further map. After identifying the iterated inverse
+image with the composite inverse image, this is b_(eNext∘e) in every degree q. -/
 theorem fieldNativePullback_comp
     (e₁ : GaloisUnits.FieldMap k Ω K Ψ) (e₂ : GaloisUnits.FieldMap K Ψ L Φ) (q : ℕ) :
     fieldNativePullback.{u, w} k Ω K Ψ e₁ q ≫
@@ -610,7 +704,13 @@ attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω K Ψ : Type u) [Field k] [Field Ω] [Field K] [Field Ψ]
 variable [Algebra k Ω] [Algebra K Ψ] [IsSepClosure k Ω] [IsSepClosure K Ψ]
 
-/-- The SAME accepted Γ/native family realized on each actual original Γ resolution. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), c = max(u, w), E the Galois stalk functor on abelian
+étale sheaves over k with coefficients in c, and Γ_k global sections.
+For any injective resolution I of Q and q ∈ ℕ, the resolution
+comparison and χ_k give
+Hᑫ(Γ_k(I)) ≅ Hᑫ_cts(G,E(Q)).
+Its forward map first returns to RᑫΓ_k(Q), then applies χ_k^q. -/
 def fieldGammaNativeResolutionIso (q : ℕ)
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (I : InjectiveResolution Q) :
@@ -622,7 +722,13 @@ def fieldGammaNativeResolutionIso (q : ℕ)
     (Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) q).symm ≪≫
     (fieldDerivedSectionsContinuousCohomologyIso.{u, w} k Ω q).app Q
 
-/-- Realize the actual derived field map in the two chosen actual Γ resolutions. -/
+/-- Let k, Ω, K, Ψ be fields in universe u with k-algebra Ω,
+K-algebra Ψ and compatible embeddings e = (β, σ).
+Put c = max(u, w), f = Spec β : Spec K → Spec k and L = f*.
+For injective resolutions I of Q and J of LQ, the realized
+derived pullback is Hᑫ(Γ_k(I)) → Hᑫ(Γ_K(J)).
+It returns from the source resolution to RᑫΓ_k(Q), applies a_e^q,
+then maps into the target resolution cohomology. -/
 def fieldDerivedPullbackResolutionMap (e : GaloisUnits.FieldMap k Ω K Ψ) (q : ℕ)
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (I : InjectiveResolution Q)
@@ -639,9 +745,15 @@ def fieldDerivedPullbackResolutionMap (e : GaloisUnits.FieldMap k Ω K Ψ) (q : 
       (Sheaf.Γ (Spec (.of K)).smallEtaleTopology AddCommGrpCat.{max u w}) q).hom
 
 set_option linter.defProp false in
--- V2 hit whnf200000 while restating the unchanged full field resolution square.
-/-- The proof comparing field pullback on the chosen injective resolutions
-with the native cohomology map. -/
+
+/-- Let Ω/k and Ψ/K be separable closures of fields in universe u,
+e = (β, σ) compatible base and closure embeddings, G = Gal(Ω/k),
+H = Gal(Ψ/K), c = max(u, w), and f = Spec β.
+Let L = f*, E and E′ the Galois stalk functors, and φ = res_e : H → G.
+For injective resolutions I of Q and J of LQ, let a_IJ be the
+realized derived pullback and χ_I, χ_J their continuous comparisons.
+Then χ_J ∘ a_IJ = b_e^q(Q) ∘ χ_I.
+The equality holds for the independently chosen two resolutions. -/
 def fieldResolutionNativeSquareProof
     (e : GaloisUnits.FieldMap k Ω K Ψ) (q : ℕ)
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
@@ -659,7 +771,13 @@ def fieldResolutionNativeSquareProof
       (fieldDerivedPullback_native_square.{u, w} k Ω K Ψ e q))
 
 
-/-- EVERY pair of original resolution choices realizes the SAME literal native field map. -/
+/-- Let Ω/k and Ψ/K be separable closures of fields in universe u,
+e = (β, σ) compatible base and closure embeddings, G = Gal(Ω/k),
+H = Gal(Ψ/K), c = max(u, w), and f = Spec β.
+Let L = f*, E and E′ the Galois stalk functors, and φ = res_e : H → G.
+For any injective resolutions I of Q and J of LQ, the section
+resolution pullback square commutes:
+χ_J ∘ a_IJ = b_e^q(Q) ∘ χ_I in degree q. -/
 theorem fieldDerivedPullbackResolutionMap_native_square
     (e : GaloisUnits.FieldMap k Ω K Ψ) (q : ℕ)
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
@@ -673,7 +791,13 @@ theorem fieldDerivedPullbackResolutionMap_native_square
   exact fieldResolutionNativeSquareProof.{u, w} k Ω K Ψ e q I J
 
 omit [IsSepClosure k Ω] [IsSepClosure K Ψ] in
-/-- Changing either actual resolution uses the canonical stock comparison, not supplied isos. -/
+/-- Let k, Ω, K, Ψ be fields in universe u with k-algebra Ω,
+K-algebra Ψ and compatible embeddings e = (β, σ).
+Put c = max(u, w), f = Spec β : Spec K → Spec k and L = f*.
+For choices I, I′ resolving Q and J, J′ resolving LQ, the
+realized pullbacks satisfy a_I′J′ ∘ comp_(I,I′) =
+comp_(J,J′) ∘ a_IJ, where the comparisons are the canonical
+cohomology isomorphisms of the two injective resolutions. -/
 theorem fieldDerivedPullbackResolutionMap_choice
     (e : GaloisUnits.FieldMap k Ω K Ψ) (q : ℕ)
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
@@ -693,7 +817,13 @@ theorem fieldDerivedPullbackResolutionMap_choice
     (J'.isoRightDerivedObj (Sheaf.Γ (Spec (.of K)).smallEtaleTopology AddCommGrpCat.{max u w}) q)
     ((fieldDerivedPullback.{u, w} k Ω K Ψ e q).app Q)
 
-/-- Every original smaller coefficient enters the full field comparison through exactly ONE L. -/
+/-- Let Ω/k and Ψ/K be separable closures of fields in universe u,
+e = (β, σ) compatible base and closure embeddings, G = Gal(Ω/k),
+H = Gal(Ψ/K), c = max(u, w), and f = Spec β.
+Let L = f*, E and E′ the Galois stalk functors, and φ = res_e : H → G.
+For a sheaf F with coefficient universe w, set Q = Lift(F) in c.
+The comparison square χ_K ∘ a_e^q(Q) = b_e^q(Q) ∘ χ_k holds
+on this lifted sheaf in every q ∈ ℕ. -/
 theorem original_field_derived_pullback_native_square
     (e : GaloisUnits.FieldMap k Ω K Ψ) (q : ℕ)
     (F : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{w}) :
@@ -726,8 +856,14 @@ variable [Algebra k Ω] [Algebra K Ψ]
 
 set_option linter.defProp false in
 -- Bind the SAME actual source/target augmentation equations and existing Γ naturality first.
-/-- The naturality proof for field pullback realized on resolutions, with prescribed
-augmented comparison maps over a sheaf morphism. -/
+/-- Let k, Ω, K, Ψ be fields in universe u with k-algebra Ω,
+K-algebra Ψ and compatible embeddings e = (β, σ).
+Put c = max(u, w), f = Spec β : Spec K → Spec k and L = f*.
+Let t : Q → Q′, injective resolutions I, I′ of Q, Q′ and
+J, J′ of LQ, LQ′, and cochain maps α : I → I′, β : J → J′
+extending t and L(t) on augmentations be given.
+The realized maps obey
+a_I′J′ ∘ Hᑫ(Γ_k(α)) = Hᑫ(Γ_K(β)) ∘ a_IJ. -/
 def fieldResolutionCoefficientNaturalityProof
     (e : GaloisUnits.FieldMap k Ω K Ψ) (q : ℕ)
     {Q Q' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}} (f : Q ⟶ Q')
@@ -764,7 +900,14 @@ def fieldResolutionCoefficientNaturalityProof
       (Sheaf.Γ (Spec (.of K)).smallEtaleTopology AddCommGrpCat.{max u w}) q)
     (fieldDerivedPullback_naturality.{u, w} k Ω K Ψ e q f)
 
-/-- Every ACTUAL augmented source and target resolution map respects the SAME field map. -/
+/-- Let k, Ω, K, Ψ be fields in universe u with k-algebra Ω,
+K-algebra Ψ and compatible embeddings e = (β, σ).
+Put c = max(u, w), f = Spec β : Spec K → Spec k and L = f*.
+For t : Q → Q′ and augmented cochain comparisons
+α : I_Q → I_Q′ over t and β : J_LQ → J_LQ′ over L(t),
+the chosen-resolution pullbacks satisfy
+a_I′J′ ∘ Hᑫ(Γ_k(α)) = Hᑫ(Γ_K(β)) ∘ a_IJ.
+Both augmentation compatibility equations are hypotheses. -/
 theorem fieldDerivedPullbackResolutionMap_naturality
     (e : GaloisUnits.FieldMap k Ω K Ψ) (q : ℕ)
     {Q Q' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}} (f : Q ⟶ Q')
@@ -804,7 +947,14 @@ attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω K Ψ : Type u) [Field k] [Field Ω] [Field K] [Field Ψ]
 variable [Algebra k Ω] [Algebra K Ψ] [IsSepClosure k Ω] [IsSepClosure K Ψ]
 
-/-- EVERY actual class uses the OLD original group cochain homology map and SAME ξ arrow. -/
+/-- Let Ω/k and Ψ/K be separable closures of fields in universe u,
+e = (β, σ) compatible base and closure embeddings, G = Gal(Ω/k),
+H = Gal(Ψ/K), c = max(u, w), and f = Spec β.
+Let L = f*, E and E′ the Galois stalk functors, and φ = res_e : H → G.
+For a coefficient sheaf Q, b_e^q is the cohomology map of
+homogeneous cochain restriction along φ, followed by the cohomology
+map of Res_φ(E(Q)) ≅ E′(LQ).
+Restriction precomposes each group coordinate with φ. -/
 theorem fieldNativePullback_original_map (e : GaloisUnits.FieldMap k Ω K Ψ) (q : ℕ)
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     (fieldNativePullback.{u, w} k Ω K Ψ e q).app Q =
@@ -822,16 +972,34 @@ theorem fieldNativePullback_original_map (e : GaloisUnits.FieldMap k Ω K Ψ) (q
         (GaloisUnits.FieldMap.restrictContinuous e) q
         ((fieldGeometricStalkGaloisFunctor.{u, w} k Ω).obj Q)))
 
-/-- Source and target are extracted from the SAME already constructed actual delta morphism. -/
+/-- Let Ω/k and Ψ/K be separable closures of fields in universe u,
+e = (β, σ) compatible base and closure embeddings, G = Gal(Ω/k),
+H = Gal(Ψ/K), c = max(u, w), and f = Spec β.
+Let L = f*, E and E′ the Galois stalk functors, and φ = res_e : H → G.
+The source delta system has degree q functor
+Q ↦ Hᑫ_cts(G,E(Q)), with the continuous connecting maps on stalk
+images of short exact coefficient sheaves. -/
 def fieldNativeSourceDeltaSystem (e : GaloisUnits.FieldMap k Ω K Ψ) :=
   (Arrow.mk (fieldNativePullbackDeltaHom.{u, w} k Ω K Ψ e)).left
 
-/-- The target delta functor of the constructed native field pullback morphism. -/
+/-- Let Ω/k and Ψ/K be separable closures of fields in universe u,
+e = (β, σ) compatible base and closure embeddings, G = Gal(Ω/k),
+H = Gal(Ψ/K), c = max(u, w), and f = Spec β.
+Let L = f*, E and E′ the Galois stalk functors, and φ = res_e : H → G.
+The target delta system has degree q functor
+Q ↦ Hᑫ_cts(H,E′(LQ)), with connecting maps after exact inverse
+image and the target Galois stalk functor. -/
 def fieldNativeTargetDeltaSystem (e : GaloisUnits.FieldMap k Ω K Ψ) :=
   (Arrow.mk (fieldNativePullbackDeltaHom.{u, w} k Ω K Ψ e)).right
 
--- V1-V3 retained actual200000-heartbeat failures matching the same original connector systems.
-/-- The SAME actual native field map respects both actual connector systems in every degree. -/
+
+/-- Let Ω/k and Ψ/K be separable closures of fields in universe u,
+e = (β, σ) compatible base and closure embeddings, G = Gal(Ω/k),
+H = Gal(Ψ/K), c = max(u, w), and f = Spec β.
+Let L = f*, E and E′ the Galois stalk functors, and φ = res_e : H → G.
+For a short exact coefficient sequence S, continuous pullback
+commutes with the two connecting families:
+b_e^(q+1)(S₁) ∘ δ_source = δ_target ∘ b_e^q(S₃). -/
 theorem fieldNativePullback_connecting (e : GaloisUnits.FieldMap k Ω K Ψ) (q : ℕ)
     (S : ShortComplex.ShortExactSequences
       (Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})) :
@@ -841,7 +1009,13 @@ theorem fieldNativePullback_connecting (e : GaloisUnits.FieldMap k Ω K Ψ) (q :
       ((fieldNativeTargetDeltaSystem.{u, w} k Ω K Ψ e).connecting q).app S :=
   DeltaFunctor.System.comm (fieldNativePullbackDeltaHom.{u, w} k Ω K Ψ e).hom q S
 
-/-- EVERY original smaller-coefficient arrow uses the SAME single lifted input in every degree. -/
+/-- Let Ω/k and Ψ/K be separable closures of fields in universe u,
+e = (β, σ) compatible base and closure embeddings, G = Gal(Ω/k),
+H = Gal(Ψ/K), c = max(u, w), and f = Spec β.
+Let L = f*, E and E′ the Galois stalk functors, and φ = res_e : H → G.
+For a map t : F → F′ of sheaves with coefficients in w, lift
+both to c. The maps b_e^q are natural with respect to the source
+cohomology of E(Lift(t)) and target cohomology of E′(L(Lift(t))). -/
 theorem original_field_native_pullback_naturality
     (e : GaloisUnits.FieldMap k Ω K Ψ) (q : ℕ)
     {F F' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{w}} (f : F ⟶ F') :
@@ -874,7 +1048,13 @@ attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω K Ψ : Type u) [Field k] [Field Ω] [Field K] [Field Ψ]
 variable [Algebra k Ω] [Algebra K Ψ] [IsSepClosure k Ω] [IsSepClosure K Ψ]
 
-/-- The extracted source is exactly the existing old-rank original native system. -/
+/-- Let Ω/k and Ψ/K be separable closures of fields in universe u,
+e = (β, σ) compatible base and closure embeddings, G = Gal(Ω/k),
+H = Gal(Ψ/K), c = max(u, w), and f = Spec β.
+Let L = f*, E and E′ the Galois stalk functors, and φ = res_e : H → G.
+The source delta system is exactly the continuous G-cohomology
+delta functor precomposed with E, including its connecting maps
+on stalk images of short exact sheaf sequences. -/
 theorem fieldNativeSourceDeltaSystem_eq (e : GaloisUnits.FieldMap k Ω K Ψ) :
     fieldNativeSourceDeltaSystem.{u, w} k Ω K Ψ e =
       CohomologicalDeltaFunctor.precompose (fieldGeometricStalkGaloisFunctor.{u, w} k Ω)
@@ -886,7 +1066,13 @@ local instance nativeSystemIdentification_inverseImage_additive
     (smallEtaleInverseImage.{u, w} (fieldOriginalPullback k Ω K Ψ e)).Additive :=
   smallEtaleInverseImage_additive.{u, w} (fieldOriginalPullback k Ω K Ψ e)
 
-/-- The extracted target is exactly actual LF and original T/native precomposition. -/
+/-- Let Ω/k and Ψ/K be separable closures of fields in universe u,
+e = (β, σ) compatible base and closure embeddings, G = Gal(Ω/k),
+H = Gal(Ψ/K), c = max(u, w), and f = Spec β.
+Let L = f*, E and E′ the Galois stalk functors, and φ = res_e : H → G.
+The target delta system is exactly continuous H-cohomology
+precomposed with E′ and then L, including the connecting maps
+on the inverse images of short exact sheaf sequences. -/
 theorem fieldNativeTargetDeltaSystem_eq (e : GaloisUnits.FieldMap k Ω K Ψ) :
     fieldNativeTargetDeltaSystem.{u, w} k Ω K Ψ e =
       CohomologicalDeltaFunctor.precompose
@@ -896,7 +1082,13 @@ theorem fieldNativeTargetDeltaSystem_eq (e : GaloisUnits.FieldMap k Ω K Ψ) :
           (Functor.RightDerived.precompShortExact (fieldGeometricStalkGaloisFunctor.{u, w} K Ψ))
           (fieldContinuousCohomologyDeltaFunctor.{u, w} K Ψ)) := rfl
 
-/-- Original source connector identification retains its dependent original degree objects. -/
+/-- Let Ω/k and Ψ/K be separable closures of fields in universe u,
+e = (β, σ) compatible base and closure embeddings, G = Gal(Ω/k),
+H = Gal(Ψ/K), c = max(u, w), and f = Spec β.
+Let L = f*, E and E′ the Galois stalk functors, and φ = res_e : H → G.
+For a short exact sheaf sequence S, the source connecting map
+equals the canonical continuous G-cohomology connector on E(S),
+under the source delta-functor identification. -/
 theorem fieldNativeSourceConnecting_identification (e : GaloisUnits.FieldMap k Ω K Ψ) (q : ℕ)
     (S : ShortComplex.ShortExactSequences
       (Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})) :
@@ -907,7 +1099,13 @@ theorem fieldNativeSourceConnecting_identification (e : GaloisUnits.FieldMap k �
   CohomologicalDeltaFunctor.equal_system_connecting
     (fieldNativeSourceDeltaSystem_eq.{u, w} k Ω K Ψ e) q S
 
-/-- Original target connector identification uses the same actual LF-then-T source sequence. -/
+/-- Let Ω/k and Ψ/K be separable closures of fields in universe u,
+e = (β, σ) compatible base and closure embeddings, G = Gal(Ω/k),
+H = Gal(Ψ/K), c = max(u, w), and f = Spec β.
+Let L = f*, E and E′ the Galois stalk functors, and φ = res_e : H → G.
+For a short exact sheaf sequence S, the target connecting map
+equals the canonical continuous H-cohomology connector on E′(L(S)),
+under the target delta-functor identification. -/
 theorem fieldNativeTargetConnecting_identification (e : GaloisUnits.FieldMap k Ω K Ψ) (q : ℕ)
     (S : ShortComplex.ShortExactSequences
       (Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})) :
@@ -921,21 +1119,36 @@ theorem fieldNativeTargetConnecting_identification (e : GaloisUnits.FieldMap k �
   CohomologicalDeltaFunctor.equal_system_connecting
     (fieldNativeTargetDeltaSystem_eq.{u, w} k Ω K Ψ e) q S
 
-/-- Source degree functors are the SAME original old-rank native functions. -/
+/-- Let Ω/k and Ψ/K be separable closures of fields in universe u,
+e = (β, σ) compatible base and closure embeddings, G = Gal(Ω/k),
+H = Gal(Ψ/K), c = max(u, w), and f = Spec β.
+Let L = f*, E and E′ the Galois stalk functors, and φ = res_e : H → G.
+In degree q, the source system's functor is
+E followed by Hᑫ_cts(G,-) on the common coefficient sheaf category. -/
 theorem fieldNativeSourceDeltaSystem_T (e : GaloisUnits.FieldMap k Ω K Ψ) (q : ℕ) :
     (fieldNativeSourceDeltaSystem.{u, w} k Ω K Ψ e).T q =
       fieldGeometricStalkGaloisFunctor.{u, w} k Ω ⋙
         fieldContinuousCohomologyFunctor.{u, w} k Ω q := rfl
 
-/-- Target degree functors use only actual LF and SAME original target native functions. -/
+/-- Let Ω/k and Ψ/K be separable closures of fields in universe u,
+e = (β, σ) compatible base and closure embeddings, G = Gal(Ω/k),
+H = Gal(Ψ/K), c = max(u, w), and f = Spec β.
+Let L = f*, E and E′ the Galois stalk functors, and φ = res_e : H → G.
+In degree q, the target system's functor is
+L followed by E′ and Hᑫ_cts(H,-) on the common coefficient sheaf category. -/
 theorem fieldNativeTargetDeltaSystem_T (e : GaloisUnits.FieldMap k Ω K Ψ) (q : ℕ) :
     (fieldNativeTargetDeltaSystem.{u, w} k Ω K Ψ e).T q =
       smallEtaleInverseImage.{u, w} (fieldOriginalPullback k Ω K Ψ e) ⋙
         fieldGeometricStalkGaloisFunctor.{u, w} K Ψ ⋙
           fieldContinuousCohomologyFunctor.{u, w} K Ψ q := rfl
 
-/-- The old native field connector is literally the original coefficient boundary, not a new
-  system. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), c = max(u, w), E the Galois stalk functor on abelian
+étale sheaves over k with coefficients in c, and Γ_k global sections.
+For a short exact sequence S of discrete continuous G-modules,
+the delta-functor connecting map Hᑫ_cts(G,S₃) → Hᑫ⁺¹_cts(G,S₁)
+equals the continuous coefficient-sequence connecting map obtained
+from the exact underlying abelian-group sequence. -/
 theorem fieldOldNativeDelta_connector (q : ℕ)
     (S : ShortComplex.ShortExactSequences (FieldCohomologyModule.{u, w} k Ω)) :
     ((fieldContinuousCohomologyDeltaFunctor.{u, w} k Ω).connecting q).app S =
@@ -957,7 +1170,13 @@ namespace AlgebraicGeometry.Scheme.DerivedSections
 attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 
-/-- The actual old native resolution comparison equals the generic actual-homology family. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), c = max(u, w), E the Galois stalk functor on abelian
+étale sheaves over k with coefficients in c, and Γ_k global sections.
+For M a discrete continuous G-module, the comparison family
+Hᑫ_cts(G,M) ≅ Hᑫ(Inv_G(I)) over injective resolutions I of M
+equals the family obtained from Hᑫ_cts(G,M) ≅ RᑫInv_G(M)
+and the injective-resolution realization. -/
 theorem fieldNativeActualResolutionFamily (q : ℕ) (M : FieldCohomologyModule.{u, w} k Ω) :
     (fun R : InjectiveResolution M => fieldContinuousDerivedInvariantsResolutionIso.{u, w} k Ω q R)
       =
@@ -965,7 +1184,16 @@ theorem fieldNativeActualResolutionFamily (q : ℕ) (M : FieldCohomologyModule.{
         (fieldInvariantFunctor.{u, w} k Ω) q R
         ((fieldContinuousDerivedInvariantsIso.{u, w} k Ω q).app M)) := rfl
 
-/-- The canonical presentation comparison is computed from the actual original mapped resolution. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), c = max(u, w), E the Galois stalk functor on abelian
+étale sheaves over k with coefficients in c, and Γ_k global sections.
+For q ∈ ℕ and an injective resolution I of Q, put
+A_I = Hᑫ(Γ_k(I)), B_I = Hᑫ(Inv_G(E(I))), and C_Q = Hᑫ_cts(G, E(Q)),
+where Inv_G(M) = M^G.
+The canonical presentation isomorphism identifies invariant
+cohomology of the specified mapped stalk resolution with B_I,
+the cohomology of the functorially mapped resolution E(I).
+It uses the equality of their resolution complexes. -/
 def fieldMappedNativePresentationIso (q : ℕ)
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (I : InjectiveResolution Q) :=
@@ -974,8 +1202,16 @@ def fieldMappedNativePresentationIso (q : ℕ)
     ((fieldGeometricStalkGaloisFunctor.{u, w} k Ω).mapInjectiveResolution I) rfl
 
 set_option linter.defProp false in
-/-- The proof relating the native comparison for a mapped injective resolution
-to its canonical homology presentation. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), c = max(u, w), E the Galois stalk functor on abelian
+étale sheaves over k with coefficients in c, and Γ_k global sections.
+For q ∈ ℕ and an injective resolution I of Q, put
+A_I = Hᑫ(Γ_k(I)), B_I = Hᑫ(Inv_G(E(I))), and C_Q = Hᑫ_cts(G, E(Q)),
+where Inv_G(M) = M^G.
+Following the continuous-cohomology comparison for the specified
+mapped resolution by its presentation isomorphism gives the comparison
+for E(I). This is the compatibility equality of the two invariant
+resolution presentations. -/
 def fieldMappedNativePresentationProof (q : ℕ)
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (I : InjectiveResolution Q) :=
@@ -986,14 +1222,30 @@ def fieldMappedNativePresentationProof (q : ℕ)
     ((fieldContinuousDerivedInvariantsIso.{u, w} k Ω q).app
       ((fieldGeometricStalkGaloisFunctor.{u, w} k Ω).obj Q))
 
-/-- The right factor is the SAME old resolution comparison followed by constructed canonical p. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), c = max(u, w), E the Galois stalk functor on abelian
+étale sheaves over k with coefficients in c, and Γ_k global sections.
+For q ∈ ℕ and an injective resolution I of Q, put
+A_I = Hᑫ(Γ_k(I)), B_I = Hᑫ(Inv_G(E(I))), and C_Q = Hᑫ_cts(G, E(Q)),
+where Inv_G(M) = M^G.
+The right comparison C_Q ≅ B_I is the continuous-to-invariant
+resolution isomorphism followed by the canonical presentation
+comparison to E(I). -/
 def fieldMappedNativeRightIso (q : ℕ)
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (I : InjectiveResolution Q) :=
   fieldContinuousDerivedInvariantsResolutionIso.{u, w} k Ω q
     (fieldMappedInjectiveResolution.{u, w} k Ω I) ≪≫ fieldMappedNativePresentationIso.{u, w} k Ω q I
 
-/-- The actual generic right factor uses the same native comparison and mapped-T resolution. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), c = max(u, w), E the Galois stalk functor on abelian
+étale sheaves over k with coefficients in c, and Γ_k global sections.
+For q ∈ ℕ and an injective resolution I of Q, put
+A_I = Hᑫ(Γ_k(I)), B_I = Hᑫ(Inv_G(E(I))), and C_Q = Hᑫ_cts(G, E(Q)),
+where Inv_G(M) = M^G.
+The right comparison C_Q ≅ B_I can also be written as
+C_Q ≅ RᑫInv_G(E(Q)) followed by the realization
+RᑫInv_G(E(Q)) ≅ Hᑫ(Inv_G(E(I))). -/
 def fieldMappedNativeRawRightIso (q : ℕ)
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (I : InjectiveResolution Q) :=
@@ -1002,7 +1254,14 @@ def fieldMappedNativeRawRightIso (q : ℕ)
     ((fieldGeometricStalkGaloisFunctor.{u, w} k Ω).mapInjectiveResolution I).isoRightDerivedObj
       (fieldInvariantFunctor.{u, w} k Ω) q
 
-/-- Canonical p transports the SAME old native right factor to the cut3 homology presentation. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), c = max(u, w), E the Galois stalk functor on abelian
+étale sheaves over k with coefficients in c, and Γ_k global sections.
+For q ∈ ℕ and an injective resolution I of Q, put
+A_I = Hᑫ(Γ_k(I)), B_I = Hᑫ(Inv_G(E(I))), and C_Q = Hᑫ_cts(G, E(Q)),
+where Inv_G(M) = M^G.
+The comparison through the mapped-resolution presentation equals
+the comparison through RᑫInv_G(E(Q)), as isomorphisms C_Q ≅ B_I. -/
 theorem fieldMappedNativeRightIso_presentation (q : ℕ)
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (I : InjectiveResolution Q) :
@@ -1028,7 +1287,16 @@ namespace AlgebraicGeometry.Scheme.DerivedSections
 attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 
-/-- The SAME fixed Γ/native comparison in its generic precomposition presentation. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), c = max(u, w), E the Galois stalk functor on abelian
+étale sheaves over k with coefficients in c, and Γ_k global sections.
+For q ∈ ℕ and an injective resolution I of Q, put
+A_I = Hᑫ(Γ_k(I)), B_I = Hᑫ(Inv_G(E(I))), and C_Q = Hᑫ_cts(G, E(Q)),
+where Inv_G(M) = M^G.
+The section-resolution comparison A_I ≅ C_Q is the composite
+A_I ≅ RᑫΓ_k(Q) ≅ RᑫInv_G(E(Q)) ≅ C_Q,
+using global sections as Galois invariants and the continuous/derived
+invariant comparison. -/
 def fieldMappedNativeRawGammaIso (q : ℕ)
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (I : InjectiveResolution Q) :=
@@ -1039,7 +1307,15 @@ def fieldMappedNativeRawGammaIso (q : ℕ)
       ((fieldContinuousDerivedInvariantsIso.{u, w} k Ω q).app
         ((fieldGeometricStalkGaloisFunctor.{u, w} k Ω).obj Q)).symm)
 
-/-- The same mapped-T cut3 homology comparison, named before dependent typing. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), c = max(u, w), E the Galois stalk functor on abelian
+étale sheaves over k with coefficients in c, and Γ_k global sections.
+For q ∈ ℕ and an injective resolution I of Q, put
+A_I = Hᑫ(Γ_k(I)), B_I = Hᑫ(Inv_G(E(I))), and C_Q = Hᑫ_cts(G, E(Q)),
+where Inv_G(M) = M^G.
+The canonical left comparison A_I ≅ B_I is induced by the
+global-section/invariant natural isomorphism Γ_k ≅ Inv_G ∘ E,
+applied to I and then to degree q homology. -/
 def fieldMappedNativeRawLeftIso (q : ℕ)
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (I : InjectiveResolution Q) :=
@@ -1047,7 +1323,15 @@ def fieldMappedNativeRawLeftIso (q : ℕ)
     (fieldGeometricStalkGaloisFunctor.{u, w} k Ω) (fieldInvariantFunctor.{u, w} k Ω)
     (fieldGlobalSectionsInvariantsIso.{u, w} k Ω) q I
 
-/-- Actual source-wrapper identity, from the generic NatIso app/whisker law. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), c = max(u, w), E the Galois stalk functor on abelian
+étale sheaves over k with coefficients in c, and Γ_k global sections.
+For q ∈ ℕ and an injective resolution I of Q, put
+A_I = Hᑫ(Γ_k(I)), B_I = Hᑫ(Inv_G(E(I))), and C_Q = Hᑫ_cts(G, E(Q)),
+where Inv_G(M) = M^G.
+The field section-resolution/continuous comparison equals its
+factorization through derived global sections and derived invariants,
+as an isomorphism A_I ≅ C_Q. -/
 theorem fieldMappedNativeGammaIso_eq (q : ℕ)
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (I : InjectiveResolution Q) :
@@ -1057,7 +1341,14 @@ theorem fieldMappedNativeGammaIso_eq (q : ℕ)
     (fieldContinuousDerivedInvariantsIso.{u, w} k Ω q) Q
     (I.isoRightDerivedObj (Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) q)
 
-/-- Actual left-wrapper identity, with no change of resolution or map. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), c = max(u, w), E the Galois stalk functor on abelian
+étale sheaves over k with coefficients in c, and Γ_k global sections.
+For q ∈ ℕ and an injective resolution I of Q, put
+A_I = Hᑫ(Γ_k(I)), B_I = Hᑫ(Inv_G(E(I))), and C_Q = Hᑫ_cts(G, E(Q)),
+where Inv_G(M) = M^G.
+The canonical section-to-invariant resolution comparison equals
+the homology isomorphism of Γ_k(I) ≅ Inv_G(E(I)). -/
 theorem fieldMappedNativeLeftIso_eq (q : ℕ)
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (I : InjectiveResolution Q) :
@@ -1066,8 +1357,15 @@ theorem fieldMappedNativeLeftIso_eq (q : ℕ)
 
 set_option linter.defProp false in
 -- The complete actual generic formula is an iso equality, avoiding repeated hom-codomain inference.
-/-- The isomorphism equality expressing the native resolution comparison through
-the fixed stalk functor and invariants comparison. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), c = max(u, w), E the Galois stalk functor on abelian
+étale sheaves over k with coefficients in c, and Γ_k global sections.
+For q ∈ ℕ and an injective resolution I of Q, put
+A_I = Hᑫ(Γ_k(I)), B_I = Hᑫ(Inv_G(E(I))), and C_Q = Hᑫ_cts(G, E(Q)),
+where Inv_G(M) = M^G.
+If ℓ_I : A_I ≅ B_I is the section/invariant comparison and
+r_I : C_Q ≅ B_I the continuous/invariant comparison, then the
+section/continuous comparison is r_I⁻¹ ∘ ℓ_I. -/
 def fieldMappedNativeRawIsoProof (q : ℕ)
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (I : InjectiveResolution Q) :=
@@ -1077,7 +1375,15 @@ def fieldMappedNativeRawIsoProof (q : ℕ)
     ((fieldContinuousDerivedInvariantsIso.{u, w} k Ω q).app
       ((fieldGeometricStalkGaloisFunctor.{u, w} k Ω).obj Q))
 
-/-- The same original Γ/native resolution iso is cut3 followed by old-C6 inverse and canonical p. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), c = max(u, w), E the Galois stalk functor on abelian
+étale sheaves over k with coefficients in c, and Γ_k global sections.
+For q ∈ ℕ and an injective resolution I of Q, put
+A_I = Hᑫ(Γ_k(I)), B_I = Hᑫ(Inv_G(E(I))), and C_Q = Hᑫ_cts(G, E(Q)),
+where Inv_G(M) = M^G.
+The canonical field section/continuous resolution isomorphism equals
+ℓ_I followed by r_I⁻¹, where ℓ_I : A_I ≅ B_I and
+r_I : C_Q ≅ B_I are the mapped invariant comparisons. -/
 theorem fieldGammaNativeResolutionIso_mapped_T_iso (q : ℕ)
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (I : InjectiveResolution Q) :
@@ -1097,7 +1403,15 @@ theorem fieldGammaNativeResolutionIso_mapped_T_iso (q : ℕ)
       (fieldMappedNativeLeftIso_eq.{u, w} k Ω q I).symm
       (fieldMappedNativeRightIso_presentation.{u, w} k Ω q I).symm))
 
-/-- The fully identified canonical mapped-T homology formula, in every original degree. -/
+/-- Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), c = max(u, w), E the Galois stalk functor on abelian
+étale sheaves over k with coefficients in c, and Γ_k global sections.
+For q ∈ ℕ and an injective resolution I of Q, put
+A_I = Hᑫ(Γ_k(I)), B_I = Hᑫ(Inv_G(E(I))), and C_Q = Hᑫ_cts(G, E(Q)),
+where Inv_G(M) = M^G.
+The forward section/continuous comparison is
+A_I → B_I → C_Q, namely the forward section/invariant map
+followed by the inverse continuous/invariant map. -/
 theorem fieldGammaNativeResolutionIso_mapped_T (q : ℕ)
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (I : InjectiveResolution Q) :
@@ -1125,8 +1439,13 @@ local instance fieldOriginalConnecting_inverseImage_additive
     (smallEtaleInverseImage.{u, w} (fieldOriginalPullback k Ω K Ψ e)).Additive :=
   smallEtaleInverseImage_additive.{u, w} (fieldOriginalPullback k Ω K Ψ e)
 
-/-- The same actual field pullback respects the original transported étale
-Yoneda boundary on every genuine common sequence and in every degree. -/
+/-- Let k, Ω, K, Ψ be fields in universe u with k-algebra Ω,
+K-algebra Ψ and compatible embeddings e = (β, σ).
+Put c = max(u, w), f = Spec β : Spec K → Spec k and L = f*.
+For a short exact sequence S of common-universe étale sheaves,
+derived-section pullback commutes with the étale connecting maps:
+a_e^(q+1)(S₁) ∘ δ_S = δ_(L(S)) ∘ a_e^q(S₃).
+The target sequence is short exact by exactness of L. -/
 theorem fieldDerivedPullback_etale_connecting
     (e : GaloisUnits.FieldMap k Ω K Ψ) (q : ℕ)
     (S : ShortComplex (Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}))
@@ -1156,8 +1475,14 @@ theorem fieldDerivedPullback_etale_connecting
       (Spec (.of K)) (S.map L) hL q)
     (fieldDerivedPullback_connecting.{u, w} k Ω K Ψ e q ⟨S, hS⟩)
 
-/-- Every original smaller-coefficient local sequence is lifted exactly once;
-the source and target boundaries are those of this same actual lifted sequence. -/
+/-- Let k, Ω, K, Ψ be fields in universe u with k-algebra Ω,
+K-algebra Ψ and compatible embeddings e = (β, σ).
+Put c = max(u, w), f = Spec β : Spec K → Spec k and L = f*.
+Let F′ → F → F″ have coefficients in universe w, with the first
+map injective and image equal to the second map's kernel on each
+étale section group, and the second map locally surjective.
+After lifting to c, derived pullback commutes with the connecting
+map of this short exact sequence and its inverse image. -/
 theorem original_field_derived_pullback_etale_connecting
     (e : GaloisUnits.FieldMap k Ω K Ψ) (q : ℕ)
     {F' F F'' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{w}}
@@ -1191,10 +1516,20 @@ local instance fullFieldNaturality_inverseImage_additive (e : GaloisUnits.FieldM
     (smallEtaleInverseImage.{u, w} (fieldOriginalPullback k Ω K Ψ e)).Additive :=
   smallEtaleInverseImage_additive.{u, w} (fieldOriginalPullback k Ω K Ψ e)
 
-/-- The same actual field/site/module comparison, on every original object,
-map, degree and connecting family. Coefficients enter through ONE actual lift.
-All equations below are literal existing equations; no comparison, universality,
-injective-preservation or desired-square certificate is an input. -/
+/-- Let Ω/k and Ψ/K be separable closures of fields in universe u,
+e = (β, σ) compatible base and closure embeddings, G = Gal(Ω/k),
+H = Gal(Ψ/K), c = max(u, w), and f = Spec β.
+Let L = f*, E and E′ the Galois stalk functors, and φ = res_e : H → G.
+This proposition records the base-changed geometric-point projections,
+germ formula through the adjunction unit, equivariant stalk change and
+terminal-section/invariant degree-zero maps. It includes naturality,
+all-degree derived/continuous comparison, the homogeneous restriction map,
+the identified delta systems and connectors, and their compatibility
+with étale connecting maps after coefficient lifting.
+It also records arbitrary resolution squares, choice and augmented-map
+naturality, the mapped invariant-cohomology factorization, identity and
+composition laws, and the bijection of finite étale algebra embeddings
+under σ. All these properties use the specified maps for e. -/
 structure FieldSiteModuleCohomologyNaturalityLaws (e : GaloisUnits.FieldMap k Ω K Ψ) : Prop where
   point_fst : ∀ (U : (Spec (.of k)).Etale) (z : (fieldGeometricPoint k Ω).fiber.obj U),
       (fieldChangeOriginalPoint k Ω K Ψ e U z).left ≫
@@ -1507,7 +1842,15 @@ structure FieldSiteModuleCohomologyNaturalityLaws (e : GaloisUnits.FieldMap k Ω
             fieldContinuousCohomologyFunctor.{u, w} L Φ q) =
       fieldNativePullback.{u, w} k Ω L Φ (GaloisUnits.FieldMap.comp eNext e) q
 
-/-- The complete original field/site/module law family is constructed from the same actual maps. -/
+/-- Let Ω/k and Ψ/K be separable closures of fields in universe u,
+e = (β, σ) compatible base and closure embeddings, G = Gal(Ω/k),
+H = Gal(Ψ/K), c = max(u, w), and f = Spec β.
+Let L = f*, E and E′ the Galois stalk functors, and φ = res_e : H → G.
+The stated point, germ, coefficient, invariant, derived-section and
+continuous-cohomology properties hold for e in every degree.
+They include arbitrary injective-resolution choices and comparisons,
+connecting maps for lifted local short exact sequences, and the
+identity/composition laws of both pullback constructions. -/
 theorem original_field_site_module_cohomology_naturality (e : GaloisUnits.FieldMap k Ω K Ψ) :
     FieldSiteModuleCohomologyNaturalityLaws.{u, w} k Ω K Ψ e where
   point_fst := fieldChangeOriginalPoint_fst.{u} k Ω K Ψ e

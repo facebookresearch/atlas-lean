@@ -1,4 +1,6 @@
-# Closed
+# The right adjoint to tensoring with a universe scalar module
 
-The actual original-ring tensor-left adjunction is transported from
-the native lifted-ring tensor-left adjunction through an actual functor isomorphism.
+The right adjoint to tensoring with a universe scalar module.
+
+For `M`, the lifted-ring tensor–Hom adjunction and the scalar-lifting comparison give a right
+adjoint to `M ⊗[R] -` in the ground-scalar module category.

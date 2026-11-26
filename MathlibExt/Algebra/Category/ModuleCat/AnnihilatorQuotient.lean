@@ -20,12 +20,16 @@ public import Mathlib.RingTheory.Ideal.Quotient.Operations
 public import Mathlib.Logic.Small.Basic
 
 /-!
-# Small annihilator quotients
+# Quotient scalars acting through a module annihilator
 
-The scalar action maps into the small additive endomorphism ring. Its kernel
-is the annihilator, so the first isomorphism theorem gives smallness of the
-quotient ring. The module actions descend through this quotient with the
-same scalar values.
+Let `R` be a commutative ring and `M` an `R`-module with an independently chosen carrier
+universe. If an ideal `I` annihilates `M`, its scalar action descends to `R ⧸ I` with `[r] • m
+= r • m`. Restricting this action along the quotient map gives the same `R`-module.
+
+The quotient by the full annihilator embeds in the additive endomorphism ring of `M`, so it is
+small in the carrier universe of `M`. Restriction along a surjective ring map is full, and
+restriction along any ring map preserves epimorphisms. These facts transfer categorical
+projectivity to the annihilator quotient; finite generation also descends.
 -/
 
 @[expose] public section
@@ -41,12 +45,19 @@ universe u v w
 
 variable (R : Type u) [CommRing R]
 
-/-- Native scalar action and the first isomorphism theorem earn quotient smallness. -/
+/-- Annihilator quotient is small in the module-carrier universe.
+
+For a commutative ring `R` and an `R`-module `M : Type v`, the quotient `R ⧸
+Module.annihilator R M` is `Small.{v}`. The quotient embeds in the additive endomorphism ring
+of `M` through the scalar action. -/
 theorem small_annihilatorQuotient (M : Type v) [AddCommGroup M] [Module R M] :
     Small.{v} (R ⧸ Module.annihilator R M) :=
   small_of_injective (RingHom.quotientKerEquivRange (Module.toAddMonoidEnd R M)).injective
 
-/-- The actual tuple annihilator is the intersection of the three original annihilators. -/
+/-- Annihilator of a triple product is the intersection.
+
+For `R`-modules `P`, `J`, and `U`, the annihilator of `P × J × U` is `ann(P) ⊓ ann(J) ⊓
+ann(U)`. -/
 theorem annihilator_tuple (P J U : ModuleCat.{v} R) :
     Module.annihilator R (P × J × U) =
       Module.annihilator R P ⊓ Module.annihilator R J ⊓ Module.annihilator R U := by
@@ -64,19 +75,28 @@ theorem annihilator_tuple (P J U : ModuleCat.{v} R) :
   · rintro ⟨⟨hP, hJ⟩, hU⟩ ⟨p, j, u⟩
     exact Prod.ext (hP p) (Prod.ext (hJ j) (hU u))
 
-/-- Descend the original module action along a genuinely annihilating ideal. -/
+/-- Module action descended through an annihilating ideal.
+
+If `I ≤ Module.annihilator R M`, the scalar-action homomorphism factors through `R ⧸ I` and
+gives a quotient-ring module structure on the same carrier `M`. -/
 def annihilatorQuotientModule (I : Ideal R) (M : Type v)
     [AddCommGroup M] [Module R M] (hI : I ≤ Module.annihilator R M) :
     Module (R ⧸ I) M :=
   Module.compHom M (Ideal.Quotient.lift I (Module.toAddMonoidEnd R M) hI)
 
-/-- Every original R scalar value is retained by the actual descended action. -/
+/-- Quotient scalar class acts by its representative.
+
+With the quotient action defined by `annihilatorQuotientModule`, `(Ideal.Quotient.mk I r) • m
+= r • m` for every `r : R` and `m : M`. -/
 theorem annihilatorQuotientModule_mk_smul (I : Ideal R) (M : Type v)
     [AddCommGroup M] [Module R M] (hI : I ≤ Module.annihilator R M) (r : R) (m : M) :
     letI : Module (R ⧸ I) M := annihilatorQuotientModule R I M hI
     (Ideal.Quotient.mk I r) • m = r • m := rfl
 
-/-- The actual descended action and original R action form the native scalar tower. -/
+/-- Annihilator quotient action forms a scalar tower.
+
+For an annihilating ideal `I`, the `R`-action, quotient-ring action, and carrier `M` satisfy
+`IsScalarTower R (R ⧸ I) M`. -/
 def annihilatorQuotientTower (I : Ideal R) (M : Type v)
     [AddCommGroup M] [Module R M] (hI : I ≤ Module.annihilator R M) :
     letI : Module (R ⧸ I) M := annihilatorQuotientModule R I M hI
@@ -85,8 +105,10 @@ def annihilatorQuotientTower (I : Ideal R) (M : Type v)
   exact IsScalarTower.of_algebraMap_smul
     (annihilatorQuotientModule_mk_smul R I M hI)
 
-/-- The native restriction of the actual descended action has the original carrier
-and original R scalar values; both identity components are earned directly. -/
+/-- Restriction of the quotient action gives the same module.
+
+For `I ≤ ann(M)`, restrict the descended `R ⧸ I`-module along `R → R ⧸ I`. It is isomorphic to
+`ModuleCat.of R M` on the same carrier. -/
 def annihilatorQuotientRestrictIso (I : Ideal R) (M : Type v)
     [AddCommGroup M] [Module R M] (hI : I ≤ Module.annihilator R M) :
     (letI : Module (R ⧸ I) M := annihilatorQuotientModule R I M hI;
@@ -113,8 +135,11 @@ universe u v w
 
 variable {R : Type u} {S : Type w} [Ring R] [Ring S]
 
-/-- Surjectivity of the actual ring map earns full restriction of scalars, by
-original scalar-map compatibility; no full-faithfulness premise is supplied. -/
+/-- Surjective ring maps give full restriction of scalars.
+
+For arbitrary rings `R` and `S`, a surjective ring homomorphism `f : R →+* S` makes
+`ModuleCat.restrictScalars f` full. Every `R`-linear map between restricted `S`-modules is
+`S`-linear. -/
 theorem restrictScalars_full_of_surjective (f : R →+* S) (hf : Function.Surjective f) :
     (ModuleCat.restrictScalars.{v} f).Full where
   map_surjective {M N} g := by
@@ -126,7 +151,10 @@ theorem restrictScalars_full_of_surjective (f : R →+* S) (hf : Function.Surjec
         exact g.hom.map_smul r m }
     exact ⟨h, ModuleCat.hom_ext rfl⟩
 
-/-- Restriction preserves epis because its map has the original underlying function. -/
+/-- Restriction of module scalars preserves epimorphisms.
+
+For any ring homomorphism `f : R →+* S`, restriction from `S`-modules to `R`-modules preserves
+epimorphisms, since it retains the underlying surjective map. -/
 theorem restrictScalars_preservesEpimorphisms (f : R →+* S) :
     (ModuleCat.restrictScalars.{v} f).PreservesEpimorphisms where
   preserves {M N} g := by
@@ -142,8 +170,10 @@ universe u v
 
 variable (R : Type u) [CommRing R]
 
-/-- Original categorical projectivity transfers to the actual quotient action through
-earned full/faithful restriction, original epis and the actual identity-component Iso. -/
+/-- Categorical projectivity descends to annihilator quotient scalars.
+
+Let `M : ModuleCat R` be categorically projective and let `I ≤ ann(M)`. With the descended
+action, `ModuleCat.of (R ⧸ I) M` is categorically projective. -/
 theorem annihilatorQuotient_projective (I : Ideal R) (M : ModuleCat.{v} R)
     [CategoryTheory.Projective M] (hI : I ≤ Module.annihilator R M) :
     letI : Module (R ⧸ I) M := annihilatorQuotientModule R I M hI
@@ -157,7 +187,10 @@ theorem annihilatorQuotient_projective (I : Ideal R) (M : ModuleCat.{v} R)
       inferInstance
   exact F.projective_of_map_projective hM
 
-/-- The original finite generating family also generates for the actual quotient action. -/
+/-- Finite generation descends to annihilator quotient scalars.
+
+If `M` is finitely generated over `R` and `I ≤ ann(M)`, then the same carrier with its
+descended quotient action is finitely generated over `R ⧸ I`. -/
 theorem annihilatorQuotient_finite (I : Ideal R) (M : ModuleCat.{v} R)
     [Module.Finite R M] (hI : I ≤ Module.annihilator R M) :
     letI : Module (R ⧸ I) M := annihilatorQuotientModule R I M hI

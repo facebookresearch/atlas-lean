@@ -1,4 +1,5 @@
-# Cup Cocycle One Two
+# Bilinear cup pairing of one- and two-cocycles
 
-Representative-level `(1,2)` cup product, linear in both cocycle
-variables.
+For representations `A,B` of a group `G` over a commutative ring `k`, the `k`-bilinear map
+`Z¹(G,A) →ₗ[k] Z²(G,B) →ₗ[k] Z³(G,A ⊗ B)` sends `(x,y)` to the cocycle `(g,h,j) ↦ x(g) ⊗ₜ[k]
+g·y(h,j)`.

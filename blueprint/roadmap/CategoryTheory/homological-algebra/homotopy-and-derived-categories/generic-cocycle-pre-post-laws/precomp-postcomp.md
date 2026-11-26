@@ -1,5 +1,5 @@
-# Precomp postcomp
+# Source and target actions commute on Hom cocycles
 
-Independent contravariant source precomposition and covariant target
-postcomposition commute at fixed degree; no identity, zero, shift, or
-cohomology-level claim.
+Let C be a preadditive category and F,G,H,K,L be integer-indexed cochain complexes in C. For a
+degree-n cocycle z from G to K, a source map f : F → G and target map g : K → L, precomposition
+by f and postcomposition by g commute.

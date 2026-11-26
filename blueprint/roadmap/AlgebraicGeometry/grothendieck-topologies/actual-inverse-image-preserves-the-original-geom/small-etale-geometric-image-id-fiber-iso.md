@@ -1,3 +1,5 @@
-# Small Etale Geometric Image Id Fiber Iso
+# Geometric image of the identity has the same fiber
 
-The canonical original image-point comparison for the identity morphism.
+Geometric image of the identity has the same fiber.
+
+The geometric fiber at `x ≫ 𝟙 X` is naturally isomorphic to the fiber at `x`.

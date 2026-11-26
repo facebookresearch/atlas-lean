@@ -1,4 +1,6 @@
-# Cup Projection Homotopy One Any
+# The degree-q projection comparison cochain
 
-The uniform degree-`q` homotopy comparing transfer of a restricted
-`(1,q)` cup with the cup against the transferred right factor.
+The degree-q projection comparison cochain.
+
+Sum the inverse-weighted tensor summands over t ∈ T to define Kᵠ : Gᵠ → A ⊗ B for arbitrary
+cochains x and y.

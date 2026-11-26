@@ -1,9 +1,6 @@
-# Tuple Iso face
+# The bar-to-nerve comparison commutes with every face
 
-Face compatibility of the degreewise equivalence.
+The bar-to-nerve comparison commutes with every face.
 
-After unfolding both isos to tuple functions, the zeroth face drops the head
-(`Fin.tail`), the last face drops the tail, and interior faces multiply the
-two adjacent entries in order. The `Gᵐᵒᵖ` order makes nerve composition agree
-with bar multiplication via `SingleObj.comp_as_mul`; the bar side uses the
-accepted `barFaceApp_of_val_zero/val_last/middle` with `tensorMonad_mu_app`.
+For each i : Fin (n+2), applying the degree-(n+1) comparison then the nerve face equals
+applying the bar face then the degree-n comparison.

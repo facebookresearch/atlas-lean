@@ -14,18 +14,21 @@ public import MathlibExt.LinearAlgebra.TensorPower.PermutationRepresentation
 public import MathlibExt.LinearAlgebra.TensorPower.ShuffleCutDescents
 
 /-!
-# Rational Eulerian elements and the two-cut sum
+# Eulerian coefficients and the convolution family
 
-The descent polynomial defines a rational signed group-ring element.
-Its polynomial coefficients are the Eulerian elements; evaluation at one
-is the unit and coefficients beyond the exterior degree vanish. Evaluation
-at two is the full signed shuffle-cut sum.
+For `σ ∈ S_n`, write `d(σ)` for its ordinary descent count and `P_(n,d)(X) = (1/n!)
+∏_(j=0)^(n-1)(X+j-d)`. The Eulerian element `ε_(n,i)` has coefficient `coeff_i(P_(n,d(σ))) *
+sign(σ)` at `σ`. Its evaluation family is `Λ_n(t) = ∑_(i=0)^n t^i ε_(n,i)` in `ℚ[S_n]`.
 
-Here `eulerianLambda n a` denotes the convolution family `∑ i, a^i eₙⁱ`.
-At a positive integer parameter `m`, the signed lambda operation has the
-additional scalar `(-1)^(m - 1)`. In particular the signed second operation
-is the negative of the convolution value at two. Rational parameters
-interpolate only the convolution family; degree zero keeps its unit value.
+The elements sum to the unit, and the top element is the antisymmetrizer divided by `n!`.
+Degree zero has only `ε_(0,0)=1`; positive degrees have zero constant weight. Under the
+coefficient tensor representation, `Λ_n(2)` is the full signed shuffle-cut sum, including the
+two unit cuts when `n>0`.
+
+The positive-integer lambda element additionally multiplies this convolution by `(-1)^(m-1)`
+at parameter `m`. The rational family `Λ_n(t)` uses only its displayed polynomial evaluation.
+
+Reference: Loday, *Cyclic Homology*, Section 4.5.
 -/
 
 @[expose] public section
@@ -37,20 +40,30 @@ universe u v w
 
 namespace Equiv.Perm
 
-/-- The actual signed coefficient of the homogeneous Eulerian polynomial. -/
+/-- For `n : ℕ`, let `S_n = Equiv.Perm (Fin n)` and `d(σ) = descentNumber σ`. Put `P_(n,d)(X) =
+(1/n!) ∏_(j=0)^(n-1)(X+j-d)` in `ℚ[X]`, with empty product `1`. For `i : ℕ` and `σ ∈ S_n`,
+`eulerianCoefficient n i σ = coeff_i(P_(n,d(σ))) * sign(σ)` in `ℚ`, with the sign coerced from
+`ℤˣ` through `ℤ`. -/
 def eulerianCoefficient (n i : ℕ) (σ : Perm (Fin n)) : ℚ :=
   (descentBinomialPolynomial n (descentNumber σ)).coeff i * ((σ.sign : ℤ) : ℚ)
 
-/-- The actual rational group-ring coefficient element in every homogeneous degree. -/
+/-- For `n : ℕ`, let `S_n = Equiv.Perm (Fin n)` and `d(σ) = descentNumber σ`. Put `P_(n,d)(X) =
+(1/n!) ∏_(j=0)^(n-1)(X+j-d)` in `ℚ[X]`, with empty product `1`. For `i : ℕ`, `eulerianElement
+n i` is `∑ σ ∈ S_n, coeff_i(P_(n,d(σ))) * sign(σ) [σ]` in `ℚ[S_n]`. -/
 def eulerianElement (n i : ℕ) : MonoidAlgebra ℚ (Perm (Fin n)) :=
   ∑ σ : Perm (Fin n), MonoidAlgebra.single σ (eulerianCoefficient n i σ)
 
-/-- Evaluation of the actual signed descent polynomial in the original group ring. -/
+/-- For `n : ℕ`, let `S_n = Equiv.Perm (Fin n)` and `d(σ) = descentNumber σ`. Put `P_(n,d)(X) =
+(1/n!) ∏_(j=0)^(n-1)(X+j-d)` in `ℚ[X]`, with empty product `1`. For `t : ℚ`, `eulerianLambda n
+t = ∑ σ ∈ S_n, P_(n,d(σ))(t) * sign(σ) [σ]` in `ℚ[S_n]`. -/
 def eulerianLambda (n : ℕ) (t : ℚ) : MonoidAlgebra ℚ (Perm (Fin n)) :=
   ∑ σ : Perm (Fin n), MonoidAlgebra.single σ
     ((descentBinomialPolynomial n (descentNumber σ)).eval t * ((σ.sign : ℤ) : ℚ))
 
-/-- The finite coefficient expansion of the actual evaluated element. -/
+/-- For `n : ℕ`, let `S_n = Equiv.Perm (Fin n)` and `d(σ) = descentNumber σ`. Put `P_(n,d)(X) =
+(1/n!) ∏_(j=0)^(n-1)(X+j-d)` in `ℚ[X]`, with empty product `1`. Write `ε_(n,i) = ∑ σ ∈ S_n,
+coeff_i(P_(n,d(σ))) * sign(σ) [σ]` and `Λ_n(t) = ∑ σ ∈ S_n, P_(n,d(σ))(t) * sign(σ) [σ]` in
+`ℚ[S_n]`. For `t : ℚ`, `Λ_n(t) = ∑ i : Fin(n+1), t^i.val • ε_(n,i.val)`. -/
 theorem eulerianLambda_eq_sum (n : ℕ) (t : ℚ) :
     eulerianLambda n t = ∑ i : Fin (n + 1), t ^ i.val • eulerianElement n i.val := by
   classical
@@ -66,12 +79,17 @@ theorem eulerianLambda_eq_sum (n : ℕ) (t : ℚ) :
   simp only [eulerianCoefficient, smul_eq_mul]
   ring
 
-/-- The original top Eulerian coefficient is the actual alternating coefficient divided by the original factorial. -/
+/-- For `n : ℕ`, let `S_n = Equiv.Perm (Fin n)` and `d(σ) = descentNumber σ`. Put `P_(n,d)(X) =
+(1/n!) ∏_(j=0)^(n-1)(X+j-d)` in `ℚ[X]`, with empty product `1`. For `σ ∈ S_n`,
+`eulerianCoefficient n n σ = (n!:ℚ)⁻¹ * sign(σ)`. -/
 theorem eulerianCoefficient_top (n : ℕ) (σ : Perm (Fin n)) :
     eulerianCoefficient n n σ = (Nat.factorial n : ℚ)⁻¹ * ((σ.sign : ℤ) : ℚ) := by
   rw [eulerianCoefficient, descentBinomialPolynomial_coeff_degree]
 
-/-- The actual highest Eulerian element is the original finite antisymmetrizer divided by factorial. -/
+/-- For `n : ℕ`, let `S_n = Equiv.Perm (Fin n)` and `d(σ) = descentNumber σ`. Put `P_(n,d)(X) =
+(1/n!) ∏_(j=0)^(n-1)(X+j-d)` in `ℚ[X]`, with empty product `1`. Write `ε_(n,i) = ∑ σ ∈ S_n,
+coeff_i(P_(n,d(σ))) * sign(σ) [σ]` and `Λ_n(t) = ∑ σ ∈ S_n, P_(n,d(σ))(t) * sign(σ) [σ]` in
+`ℚ[S_n]`. `ε_(n,n) = (n!:ℚ)⁻¹ • ∑ σ ∈ S_n, sign(σ) [σ]`, including `n=0`. -/
 theorem eulerianElement_top (n : ℕ) :
     eulerianElement n n = (Nat.factorial n : ℚ)⁻¹ •
       (∑ σ : Perm (Fin n), MonoidAlgebra.single σ ((σ.sign : ℤ) : ℚ)) := by
@@ -80,27 +98,35 @@ theorem eulerianElement_top (n : ℕ) :
   rw [Finset.smul_sum]
   simp_rw [eulerianCoefficient_top, MonoidAlgebra.smul_single, smul_eq_mul]
 
-/-- Actual coefficients beyond the original homogeneous degree are zero. -/
+/-- For `n : ℕ`, let `S_n = Equiv.Perm (Fin n)` and `d(σ) = descentNumber σ`. Put `P_(n,d)(X) =
+(1/n!) ∏_(j=0)^(n-1)(X+j-d)` in `ℚ[X]`, with empty product `1`. For `i : ℕ`, `σ ∈ S_n`, and
+`n<i`, `eulerianCoefficient n i σ = 0`. -/
 theorem eulerianCoefficient_outside (n i : ℕ) (σ : Perm (Fin n)) (hi : n < i) :
     eulerianCoefficient n i σ = 0 := by
   rw [eulerianCoefficient,
     Polynomial.coeff_eq_zero_of_natDegree_lt
       ((descentBinomialPolynomial_natDegree_le n (descentNumber σ)).trans_lt hi), zero_mul]
 
-/-- The original degree-zero polynomial gives exactly one zero-weight coefficient and no others. -/
+/-- For `i : ℕ` and `σ ∈ S_0`, `eulerianCoefficient 0 i σ = if i=0 then 1 else 0`. The empty-word
+polynomial is the constant `1`. -/
 theorem eulerianCoefficient_degree_zero (i : ℕ) (σ : Perm (Fin 0)) :
     eulerianCoefficient 0 i σ = if i = 0 then 1 else 0 := by
   have hσ : σ = 1 := Subsingleton.elim _ _
   subst σ
   simp [eulerianCoefficient, descentBinomialPolynomial, Polynomial.coeff_one]
 
-/-- Every positive degree has no zero-weight coefficient. -/
+/-- For `n : ℕ`, let `S_n = Equiv.Perm (Fin n)` and `d(σ) = descentNumber σ`. Put `P_(n,d)(X) =
+(1/n!) ∏_(j=0)^(n-1)(X+j-d)` in `ℚ[X]`, with empty product `1`. If `0<n`, then for every `σ ∈
+S_n`, `eulerianCoefficient n 0 σ = 0`. -/
 theorem eulerianCoefficient_zero_weight (n : ℕ) (σ : Perm (Fin n)) (hn : 0 < n) :
     eulerianCoefficient n 0 σ = 0 := by
   rw [eulerianCoefficient, descentBinomialPolynomial_coeff_zero n (descentNumber σ)
     hn (descentNumber_lt σ hn), zero_mul]
 
-/-- At one the actual rational element is the original group-ring unit. -/
+/-- For `n : ℕ`, let `S_n = Equiv.Perm (Fin n)` and `d(σ) = descentNumber σ`. Put `P_(n,d)(X) =
+(1/n!) ∏_(j=0)^(n-1)(X+j-d)` in `ℚ[X]`, with empty product `1`. Write `ε_(n,i) = ∑ σ ∈ S_n,
+coeff_i(P_(n,d(σ))) * sign(σ) [σ]` and `Λ_n(t) = ∑ σ ∈ S_n, P_(n,d(σ))(t) * sign(σ) [σ]` in
+`ℚ[S_n]`. For every `n : ℕ`, `Λ_n(1) = 1` in `ℚ[S_n]`. -/
 theorem eulerianLambda_one (n : ℕ) : eulerianLambda n 1 = 1 := by
   classical
   cases n with
@@ -126,7 +152,10 @@ theorem eulerianLambda_one (n : ℕ) : eulerianLambda n 1 = 1 := by
     simp only [apply_ite, MonoidAlgebra.single_zero, Finset.sum_ite_eq',
       Finset.mem_univ, ite_true, MonoidAlgebra.one_def]
 
-/-- The actual homogeneous coefficient elements sum to the original unit. -/
+/-- For `n : ℕ`, let `S_n = Equiv.Perm (Fin n)` and `d(σ) = descentNumber σ`. Put `P_(n,d)(X) =
+(1/n!) ∏_(j=0)^(n-1)(X+j-d)` in `ℚ[X]`, with empty product `1`. Write `ε_(n,i) = ∑ σ ∈ S_n,
+coeff_i(P_(n,d(σ))) * sign(σ) [σ]` and `Λ_n(t) = ∑ σ ∈ S_n, P_(n,d(σ))(t) * sign(σ) [σ]` in
+`ℚ[S_n]`. `∑ i : Fin(n+1), ε_(n,i.val) = 1` in `ℚ[S_n]`. -/
 theorem sum_eulerianElement (n : ℕ) : (∑ i : Fin (n + 1), eulerianElement n i.val) = 1 := by
   simpa only [one_pow, one_smul] using (eulerianLambda_eq_sum n 1).symm.trans (eulerianLambda_one n)
 
@@ -138,7 +167,11 @@ variable {k : Type u} [CommRing k] [Algebra ℚ k]
   {V : Type v} [AddCommGroup V] [Module k V]
   {M : Type w} [AddCommGroup M] [Module k M]
 
-/-- Evaluation at two in the actual coefficient representation is the actual full shuffle-cut operation. -/
+/-- Let `k` be a commutative `ℚ`-algebra, `M,V` be `k`-modules, and `0<n`. Let `A_n : ℚ[S_n] →
+End_k(M ⊗[k] TensorPower k n V)` be `coefficientRationalPermutationAction`, fixing the
+coefficient factor and permuting the tensor factors. Then `A_n(eulerianLambda n 2) = id_M ⊗
+shuffleConvolutionTwo n`, where the latter operator sums every cut of the tensor word followed
+by the corresponding signed shuffle product. -/
 theorem coefficientEulerianLambda_two_eq_shuffleCuts (n : ℕ) (hn : 0 < n) :
     coefficientRationalPermutationAction (M := M) (V := V) n (Equiv.Perm.eulerianLambda n 2) =
       TensorProduct.map (LinearMap.id : M →ₗ[k] M) (shuffleConvolutionTwo (k := k) (V := V) n) := by
@@ -157,7 +190,12 @@ theorem coefficientEulerianLambda_two_eq_shuffleCuts (n : ℕ) (hn : 0 < n) :
       ((σ.sign : ℤ) • (PiTensorProduct.reindex k (fun _ : Fin n => V) σ).toLinearMap)
   rw [map_mul, map_intCast, ← Int.cast_smul_eq_zsmul (R := k), smul_smul]
 
-/-- The actual Eulerian evaluation has two unit cuts and exactly the proper cuts in positive degree. -/
+/-- Let `k` be a commutative `ℚ`-algebra, `M,V` be `k`-modules, and `0<n`. Let `A_n : ℚ[S_n] →
+End_k(M ⊗[k] TensorPower k n V)` be `coefficientRationalPermutationAction`, fixing the
+coefficient factor and permuting the tensor factors. The coefficient action satisfies
+`A_n(eulerianLambda n 2) = 2 • id + id_M ⊗ properShuffleConvolutionTwo n`. The proper sum uses
+cuts with both factor lengths positive; the two endpoint cuts contribute the two identity
+terms. -/
 theorem coefficientEulerianLambda_two_eq_properCuts (n : ℕ) (hn : 0 < n) :
     coefficientRationalPermutationAction (M := M) (V := V) n (Equiv.Perm.eulerianLambda n 2) =
       (2 : k) • (LinearMap.id : Module.End k (M ⊗[k] TensorPower k n V)) +

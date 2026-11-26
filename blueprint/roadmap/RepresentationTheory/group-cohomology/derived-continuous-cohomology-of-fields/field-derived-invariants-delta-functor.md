@@ -1,3 +1,5 @@
-# Field Derived Invariants Delta Functor
+# Right derived field invariants delta functor
 
-The actual invariants-derived delta functor, with genuine horseshoe connectors.
+Right derived field invariants delta functor.
+
+Take the right-derived delta functor of field invariants.

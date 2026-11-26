@@ -12,13 +12,14 @@ module
 public import Mathlib.Algebra.Homology.ShortComplex.PreservesHomology
 
 /-!
-# Homology and opcycles maps under functors
+# Homology and opcycles comparisons under functors
 
-Preservation of the homology data of a particular short complex gives
-canonical homology and opcycles comparison maps. Their characteristic
-formulas describe the cycle inclusions and quotient projections. Global
-abelian, finite-limit and finite-colimit preservation assumptions are
-unnecessary.
+Let U : C → D preserve zero morphisms. For a short complex S, preservation of its right homology
+data gives the canonical opcycles comparison opcycles(U(S)) ≅ U(opcycles(S)). Preservation of
+both left and right homology data gives H(U(S)) ≅ U(H(S)).
+
+These comparisons preserve the quotient from the middle object and the homology inclusion into
+opcycles. Homology preservation also transfers through a natural isomorphism of functors.
 -/
 
 @[expose] public section
@@ -34,7 +35,10 @@ namespace CategoryTheory.ShortComplex
 variable {C : Type u₁} [Category.{v₁} C] [HasZeroMorphisms C]
   {D : Type u₂} [Category.{v₂} D] [HasZeroMorphisms D]
 
-/-- The canonical mapped opcycles comparison carries the original quotient map. -/
+/-- Let C,D be categories with zero morphisms, S a short complex in C, and U : C → D a functor
+preserving zero morphisms. Assume S has right homology and U preserves that right homology data.
+The quotient U(S₂) → opcycles(U(S)), followed by opcycles(U(S)) ≅ U(opcycles(S)), equals U of
+the original quotient S₂ → opcycles(S). -/
 @[reassoc]
 theorem pOpcycles_comp_mapOpcyclesIso_hom (S : ShortComplex C)
     [S.HasRightHomology] (U : C ⥤ D) [U.PreservesZeroMorphisms]
@@ -45,7 +49,10 @@ theorem pOpcycles_comp_mapOpcyclesIso_hom (S : ShortComplex C)
     RightHomologyData.map_p]
   rfl
 
-/-- The canonical homology comparison commutes with inclusion into opcycles. -/
+/-- Let C,D be categories with zero morphisms, S a short complex in C, and U : C → D a functor
+preserving zero morphisms. Assume S and U(S) have homology, and U preserves both homology data
+of S. The comparison H(U(S)) ≅ U(H(S)) followed by U of H(S) → opcycles(S) equals H(U(S)) →
+opcycles(U(S)) followed by the opcycles comparison. -/
 @[reassoc]
 theorem mapHomologyIso_hom_comp_homologyι (S : ShortComplex C)
     [S.HasHomology] (U : C ⥤ D) [U.PreservesZeroMorphisms]
@@ -65,7 +72,10 @@ theorem mapHomologyIso_hom_comp_homologyι (S : ShortComplex C)
   simpa only [Category.assoc] using
     congrArg (fun f => f ≫ U.map h.opcyclesIso.inv) hι
 
-/-- The inverse homology comparison retains the same opcycles inclusion. -/
+/-- Let C,D be categories with zero morphisms, S a short complex in C, and U : C → D a functor
+preserving zero morphisms. Assume S and U(S) have homology and U preserves both left and right
+homology data of S. The inverse comparison U(H(S)) → H(U(S)) followed by the opcycles inclusion
+equals U of the original inclusion followed by the inverse opcycles comparison. -/
 @[reassoc]
 theorem mapHomologyIso_inv_comp_homologyι (S : ShortComplex C)
     [S.HasHomology] (U : C ⥤ D) [U.PreservesZeroMorphisms]
@@ -87,7 +97,9 @@ variable {C : Type u₁} [Category.{v₁} C] [HasZeroMorphisms C]
   {F G : C ⥤ D} [F.PreservesZeroMorphisms]
   [F.PreservesHomology]
 
-/-- Preservation of homology transfers along an actual natural isomorphism. -/
+/-- Let C,D have zero morphisms and let e : F ≅ G be a natural isomorphism of functors C → D. If F
+preserves zero morphisms and the homology of every short complex, then G preserves zero
+morphisms and homology as well. -/
 theorem preservesHomology_of_iso (e : F ≅ G) :
     letI : G.PreservesZeroMorphisms := preservesZeroMorphisms_of_iso e
     G.PreservesHomology := by

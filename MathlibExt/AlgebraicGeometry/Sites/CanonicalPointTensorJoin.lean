@@ -12,7 +12,13 @@ module
 public import MathlibExt.AlgebraicGeometry.Sites.CanonicalPointClosureJoin
 public import MathlibExt.AlgebraicGeometry.Sites.FieldPointTensorCoefficients
 
-/-! # Actual canonical and prescribed field point tensor squares -/
+/-!
+# Tensor coordinates of field stalk comparisons
+
+The canonical-to-prescribed geometric-point comparison induces an isomorphism of stalk
+functors. With integer tensor products of additive coefficients, the forward and inverse stalk
+comparisons commute with the tensor-sheaf stalk coordinates.
+-/
 
 @[expose] public section
 noncomputable section
@@ -25,8 +31,10 @@ attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The genuine prescribed-to-canonical stalk comparison preserves the same original binary
-tensor. -/
+/-- Forward field stalk comparison preserves tensor coordinates.
+
+The comparison on the tensor sheaf followed by its canonical stalk-tensor coordinate equals
+the prescribed coordinate followed by tensoring the two forward stalk comparisons. -/
 theorem fieldCanonicalCommonStalkIso_tensor (x : Spec (.of k))
     (F G : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     let p := smallEtaleGeometricPointCommon.{u, w}
@@ -43,8 +51,10 @@ theorem fieldCanonicalCommonStalkIso_tensor (x : Spec (.of k))
     (fieldCanonicalCommonPointIso.{u, w} k Ω x).hom F G
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The inverse genuine canonical-to-prescribed stalk comparison preserves the same original binary
-tensor. -/
+/-- Inverse field stalk comparison preserves tensor coordinates.
+
+The inverse comparison on the tensor sheaf commutes with tensoring the two inverse stalk
+comparisons, using the prescribed and canonical stalk-tensor coordinates. -/
 theorem fieldCanonicalCommonStalkIso_inv_tensor (x : Spec (.of k))
     (F G : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     let p := smallEtaleGeometricPointCommon.{u, w}

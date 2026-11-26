@@ -1,3 +1,6 @@
-# Cobar Coface App of val zero
+# The cobar coface component at a zero-valued index
 
-Coface with public index `0` is the iterated right coaction.
+The cobar coface component at a zero-valued index.
+
+If the coface index has value zero, its component is the iterated right-comodule coaction at
+`L(a)`.

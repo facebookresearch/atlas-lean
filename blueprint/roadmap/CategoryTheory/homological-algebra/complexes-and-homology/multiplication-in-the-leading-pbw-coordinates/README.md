@@ -1,6 +1,6 @@
 # Multiplication in the leading PBW coordinates
 
-- [Polynomial Coordinates mul basis Word leading](polynomial-coordinates-mul-basis-word-le.md)
-- [Multiplication Defect](multiplication-defect.md)
-- [Multiplication Defect mem strict](multiplication-defect-mem-strict.md)
-- [Homogeneous polynomial Coordinates mul](homogeneous-polynomial-coordinates-mul.md)
+- [Right multiplication by a basis word preserves the leading coordinate](polynomial-coordinates-mul-basis-word-le.md)
+- [The defect of multiplication in PBW polynomial coordinates](multiplication-defect.md)
+- [The PBW multiplication defect has strictly lower degree](multiplication-defect-mem-strict.md)
+- [Top homogeneous PBW coordinates multiply](homogeneous-polynomial-coordinates-mul.md)

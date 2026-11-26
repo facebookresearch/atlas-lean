@@ -1,5 +1,5 @@
-# Diagonal Direct Limit To Tensor bijective
+# The canonical simultaneous tensor-limit map is bijective for two directed systems
 
-The canonical diagonal direct-limit map is bijective.  Thus filtered
-direct limits commute with a stagewise binary tensor product even when both
-factors vary over the same directed index.
+Let R be commutative, ι a directed preorder with decidable equality and (G,f),(H,g) directed
+R-module systems on ι. The canonical map colim_i(G_i⊗_RH_i)→(colim_iG_i)⊗_R(colim_iH_i) is
+bijective. The same directed index controls both factor transitions.

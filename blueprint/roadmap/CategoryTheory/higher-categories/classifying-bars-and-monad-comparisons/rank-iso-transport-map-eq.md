@@ -1,3 +1,5 @@
-# Rank Iso transport map eq
+# Coordinate square determines the conjugated morphism
 
-The proved original-model square identifies the literal old map after transport.
+Coordinate square determines the conjugated morphism.
+
+A commutative square `a ≫ f.hom = e.hom ≫ b` gives `e.hom ≫ b ≫ f.inv = a`.

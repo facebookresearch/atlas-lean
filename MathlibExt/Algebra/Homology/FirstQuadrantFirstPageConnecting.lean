@@ -13,16 +13,16 @@ module
 public import MathlibExt.Algebra.Homology.FirstQuadrantFirstPageAdjacentCokernel
 
 /-!
-# Connecting maps for the first horizontal-filtration page
+# Adjacent-column connecting maps and the horizontal boundary
 
-The total differential of a top-column summand is computed after projection
-onto the preceding column.  Its surviving term is exactly the horizontal
-bicomplex differential.  The connecting homomorphism of the adjacent-column
-short exact sequence is also named, both before and after the direct columns
-are identified with ordinary vertical homology.
+Let `K` be a first-quadrant bicomplex in a preadditive category with finite coproducts.
+Include bidegree `(p+1,q)` into the total, take its boundary, and project to `(p,q)`. Only the
+horizontal differential survives, with first-coordinate total sign `ε₁`; for the standard
+totalization this sign is one.
 
-Comparison of this connecting map with the spectral-object differential is a
-separate theorem.
+In an abelian category, the adjacent-column short exact sequence gives a connecting map from
+direct-column cohomology in degree `-(p+1)-q` to degree `-p-q`. Its vertical-homology
+coordinates and the homology map of `K.d(p+1,p)` are defined separately.
 -/
 
 @[expose] public section
@@ -44,8 +44,10 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
     (ComplexShape.down ℕ))
 
 omit [HasZeroObject C] in
-/-- In the full total complex, the differential from bidegree `(p+1,q)`
-followed by projection onto `(p,q)` is the horizontal differential. -/
+/-- The horizontal component of a total boundary.
+
+The total inclusion from `(p+1,q)` followed by the total differential and projection to
+`(p,q)` is `ε₁(p+1,q)` times the horizontal bicomplex map. -/
 theorem ιTotal_d_horizontalTotalTopProjection_succ (p q : ℕ) :
     K.ιTotal (ComplexShape.down ℕ) (p + 1) q (p + 1 + q)
         (by simp) ≫
@@ -81,16 +83,19 @@ theorem ιTotal_d_horizontalTotalTopProjection_succ (p q : ℕ) :
           comp_zero, smul_zero]
   rw [h₂]
 
-/-- Projection from filtration stage `p+1` onto its preceding column `p`. -/
+/-- The projection to a preceding column in a finite filtration stage.
+
+Project total degree `p+q` of stage `p+1` onto its column-`p`, vertical-degree-`q` summand. -/
 noncomputable def horizontalFilteredPreviousColumnProjection (p q : ℕ) :
     horizontalFilteredTotalObj K (p + 1) (p + q) ⟶ (K.X p).X q :=
   horizontalFilteredTotalToTotal K (p + 1) (p + q) ≫
     horizontalTotalTopProjection K p q
 
 omit [HasZeroObject C] in
-/-- The filtered total differential from the top column to the preceding
-column is the horizontal bicomplex differential, with the totalization's
-explicit first-coordinate sign. -/
+/-- The signed previous-column component of a filtered top boundary.
+
+The top section of column `p+1`, followed by the filtered total differential and preceding-
+column projection, is the horizontal map multiplied by the first-coordinate total sign. -/
 theorem horizontalFilteredTopSection_d_previousColumnProjection (p q : ℕ) :
     horizontalFilteredTopSection K p q ≫
         horizontalFilteredTotalD K (p + 1) (p + 1 + q) (p + q) ≫
@@ -134,8 +139,10 @@ theorem horizontalFilteredTopSection_d_previousColumnProjection (p q : ℕ) :
     _ = _ := ιTotal_d_horizontalTotalTopProjection_succ K p q
 
 omit [HasZeroObject C] in
-/-- For the standard first-quadrant totalization, the first-coordinate sign
-is one, so the previous-column component is literally the horizontal map. -/
+/-- The standard horizontal component of a filtered top boundary.
+
+For the standard first-quadrant total signs, the preceding-column boundary component is
+exactly `(K.d(p+1,p)).f q`. -/
 theorem horizontalFilteredTopSection_d_previousColumnProjection_eq
     (p q : ℕ) :
     horizontalFilteredTopSection K p q ≫
@@ -152,7 +159,10 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
   (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
     (ComplexShape.down ℕ))
 
-/-- Connecting homomorphism of the adjacent-column short exact sequence. -/
+/-- The connecting map of adjacent direct columns.
+
+The adjacent-column short exact sequence gives a map from column `p+1` homology at degree
+`-(p+1)-q` to column `p` homology at degree `-p-q`. -/
 noncomputable def horizontalFirstPageAdjacentConnectingMap (p q : ℕ) :
     (horizontalDirectColumnCochain K (p + 1)).homology
         (-((p + 1 : ℕ) : ℤ) - q) ⟶
@@ -161,15 +171,19 @@ noncomputable def horizontalFirstPageAdjacentConnectingMap (p q : ℕ) :
     (-((p + 1 : ℕ) : ℤ) - q) (-(p : ℤ) - q)
     (by simp only [ComplexShape.up_Rel]; push_cast; omega)
 
-/-- The adjacent-column connecting map, transported to ordinary vertical
-homology objects. -/
+/-- The adjacent connecting map in vertical-homology coordinates.
+
+Transport the direct-column connecting morphism to a map `H_q(K_(p+1)) → H_q(K_p)` through the
+direct-column homology isomorphisms. -/
 noncomputable def horizontalFirstPageAdjacentVerticalConnectingMap (p q : ℕ) :
     (K.X (p + 1)).homology q ⟶ (K.X p).homology q :=
   (horizontalDirectColumnHomologyIso K (p + 1) q).inv ≫
     horizontalFirstPageAdjacentConnectingMap K p q ≫
     (horizontalDirectColumnHomologyIso K p q).hom
 
-/-- Homology map induced by the horizontal bicomplex differential. -/
+/-- The vertical-homology map of a horizontal bicomplex differential.
+
+Take `H_q` of the chain map `K.d(p+1,p)` between the two vertical columns. -/
 noncomputable def horizontalFirstPageHorizontalHomologyMap (p q : ℕ) :
     (K.X (p + 1)).homology q ⟶ (K.X p).homology q :=
   HomologicalComplex.homologyMap (K.d (p + 1) p) q

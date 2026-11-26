@@ -13,13 +13,17 @@ module
 public import MathlibExt.Algebra.Homology.FirstQuadrantFirstPageFiniteBoundary
 
 /-!
-# The complete-stage horizontal first-page boundary
+# Complete-filtration boundaries of first-page column sections
 
-The finite-stage calculation of the first-page boundary is transported
-through the canonical comparison isomorphisms for the complete filtration.
-The resulting formula identifies the differential of a positive-column
-section with the horizontal bicomplex differential followed by the preceding
-column section and the next filtration map.
+Let `K` be a first-quadrant bicomplex in an abelian category. Finite filtration stage `p`
+retains columns through `p`. A direct column at `(p,q)` is represented in total degree `p+q`
+and cochain degree `-p-q`.
+
+On vertical cycles, the differential of a top-column inclusion is its horizontal bicomplex
+differential followed by the preceding-column inclusion. Transport through the finite-to-
+complete filtration comparisons gives the corresponding complete-stage section formula. For
+the section of column `p+2`, the target is column `p+1`, followed by that column's section and
+next filtration map.
 -/
 
 @[expose] public section
@@ -39,31 +43,38 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
   (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
     (ComplexShape.down ℕ))
 
-/-- The top-column inclusion with its codomain displayed as the corresponding
-filtered-complex object. -/
+/-- The top-column inclusion into a finite filtered complex term.
+
+Include `K_(p,q)` into total degree `p+q` of filtration stage `p`, with the target written as
+the bundled filtered complex term. -/
 noncomputable def horizontalFilteredTopInclusionComplex (p q : ℕ) :
     (K.X p).X q ⟶ (horizontalFilteredTotalComplex K p).X (p + q) := by
   change (K.X p).X q ⟶ horizontalFilteredTotalObj K p (p + q)
   exact horizontalFilteredTopInclusion K p q
 
-/-- The filtered total differential with both objects displayed through the
-bundled filtered complex. -/
+/-- The differential between finite filtered-complex terms.
+
+For stage `k`, use its filtered total differential from total degree `n` to degree `m`. -/
 noncomputable def horizontalFilteredTotalDComplex (k n m : ℕ) :
     (horizontalFilteredTotalComplex K k).X n ⟶
       (horizontalFilteredTotalComplex K k).X m := by
   change horizontalFilteredTotalObj K k n ⟶ horizontalFilteredTotalObj K k m
   exact horizontalFilteredTotalD K k n m
 
-/-- The preceding-column inclusion with its codomain displayed as the
-corresponding filtered-complex object. -/
+/-- The preceding-column inclusion into the next finite stage.
+
+Include `K_(p,q)` into total degree `p+q` of filtration stage `p+1`. -/
 noncomputable def horizontalFilteredPreviousColumnInclusionComplex
     (p q : ℕ) :
     (K.X p).X q ⟶ (horizontalFilteredTotalComplex K (p + 1)).X (p + q) := by
   change (K.X p).X q ⟶ horizontalFilteredTotalObj K (p + 1) (p + q)
   exact horizontalFilteredPreviousColumnInclusion K p q
 
-/-- The finite-stage boundary formula in the bundled filtered-complex
-presentation used by the complete-stage comparisons. -/
+/-- The finite-stage top-column boundary on vertical cycles.
+
+For cycles in column `p+1` at vertical degree `q`, top inclusion followed by the filtered
+differential from `p+1+q` to `p+q` equals the horizontal map to column `p` followed by its
+preceding-column inclusion. -/
 theorem horizontalDirectColumnTopInclusionComplex_d_eq_previous
     (p q : ℕ) :
     (horizontalDirectColumnCochain K (p + 1)).iCycles
@@ -83,8 +94,11 @@ theorem horizontalDirectColumnTopInclusionComplex_d_eq_previous
       horizontalFilteredTotalD K (p + 1) (p + 1 + q) (p + q) = _
   exact horizontalDirectColumnTopInclusion_d_eq_previous K p q
 
-/-- Commuting a positive-column complete-stage section past the cochain
-differential recovers the finite-stage filtered total differential. -/
+/-- The finite-total formula for a complete-stage section boundary.
+
+The complete section of column `p+1` on direct-column cycles at cochain degree `-(p+1)-q` has
+differential equal to the finite-stage top inclusion and filtered total boundary, followed by
+the extension and complete-stage comparisons. -/
 theorem horizontalCompleteSuccSection_d_eq_filtered (p q : ℕ) :
     (horizontalDirectColumnCochain K (p + 1)).iCycles
         (-((p + 1 : ℕ) : ℤ) - q) ≫
@@ -148,8 +162,10 @@ theorem horizontalCompleteSuccSection_d_eq_filtered (p q : ℕ) :
   rw [hExt]
   rw [hCancel]
 
-/-- A positive-column section followed by the next complete filtration map is
-the finite-stage inclusion of that column into the next filtration stage. -/
+/-- The next-filtration formula for a complete-stage section.
+
+The complete section of column `p+1` followed by the next filtration map is its finite
+inclusion into stage `p+2`, transported to cochain degree `-(p+1)-q`. -/
 theorem horizontalCompleteSuccSection_nextMap_eq_filtered (p q : ℕ) :
     (horizontalDirectColumnCochainXIso K (p + 1) q).inv ≫
       horizontalCompleteSuccDirectColumnSection K p q ≫
@@ -249,9 +265,11 @@ theorem horizontalCompleteSuccSection_nextMap_eq_filtered (p q : ℕ) :
   exact horizontalFilteredTotalι_map K (Nat.le_succ (p + 1))
     (p + 1 + q) (horizontalFilteredTopIndex (p + 1) q)
 
-/-- On vertical cycles, the cochain differential of the complete-stage
-section is the horizontal bicomplex differential followed by the preceding
-column section and the next complete filtration map. -/
+/-- The horizontal boundary formula for successive complete-stage sections.
+
+On direct-column cycles from column `p+2`, the complete-stage differential is the horizontal
+map to column `p+1`, followed by that column's section and next complete filtration map. The
+cochain degrees are `-(p+2)-q` and `-(p+1)-q`. -/
 theorem horizontalCompleteSuccDirectColumnSection_d (p q : ℕ) :
     (horizontalDirectColumnCochain K (p + 2)).iCycles
         (-((p + 2 : ℕ) : ℤ) - q) ≫

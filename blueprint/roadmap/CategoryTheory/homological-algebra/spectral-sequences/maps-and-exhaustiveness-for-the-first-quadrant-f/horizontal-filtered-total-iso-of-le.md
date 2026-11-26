@@ -1,4 +1,6 @@
-# Horizontal Filtered Total Iso Of LE
+# The stage and total objects are isomorphic in each exhausted degree
 
-Eventual degreewise isomorphism from a filtration stage to the full
-total.
+For a nonnegative homological bicomplex K in a preadditive
+category with finite coproducts and n≤k, the explicit isomorphism
+F_k T_n ≅ Tot(K)_n has forward map i_(k,n), the coordinate inclusion,
+and inverse r_(k,n), the total-to-stage projection.

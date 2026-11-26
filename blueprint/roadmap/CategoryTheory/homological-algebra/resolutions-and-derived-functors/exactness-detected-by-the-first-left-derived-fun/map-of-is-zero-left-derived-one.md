@@ -1,4 +1,5 @@
-# Map of is Zero left Derived one
+# Vanishing on the quotient makes a right-exact functor preserve the sequence
 
-A right-exact additive functor preserves a short exact sequence when its first derived value on
-that sequence's quotient is zero.
+Let `C,D` be abelian, with projective resolutions in `C`,
+and `F : C → D` additive. Suppose `F` preserves finite colimits. For short exact `S : X₁ → X₂ → X₃`, if `L₁F(X₃)=0`,
+the sequence `F(X₁) → F(X₂) → F(X₃)` is short exact.

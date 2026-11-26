@@ -1,7 +1,7 @@
-# Partial Total Spectral Sequence First Page Row Iso
+# First-page homology in signed-row coordinates
 
-The actual first-page object at `(p,q)` is canonically the homology of
-the signed `p`th row in total degree `p+q`.
+First-page homology in signed-row coordinates.
 
-The only hypothesis beyond abelianness is Mathlib's exact
-`HasSpectralSequence` condition for the custom increasing core.
+Assume the partial-total spectral object has a spectral sequence for the increasing
+homological core. Its first-page object at `(p, q)` is isomorphic to `H_(p+q)(B.totalRow p)`,
+with the vertical sign and the total-degree placement carried by `B.totalRow p`.

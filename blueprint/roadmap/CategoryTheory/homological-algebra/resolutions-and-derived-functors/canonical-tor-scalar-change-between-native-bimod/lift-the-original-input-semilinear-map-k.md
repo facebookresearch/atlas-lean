@@ -1,3 +1,6 @@
-# Lift the original input semilinear map, keeping the two raw...
+# An independent-carrier source map lifts to a restricted common-height map
 
-Lift the original input semilinear map, keeping the two raw input categories distinct.
+For φ:R→R′ and a φᵒᵖ-semilinear g:A→A′, the
+common-height lift gives
+ULift^Γ A→Res_(φᵒᵖ)(ULift^Γ A′).
+Here Γ=max(r,r′,a,a′,b,b′,z), with independent source worlds a,a′.

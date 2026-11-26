@@ -1,4 +1,7 @@
-# Corestriction Cochain Three d₂₃ term
+# An inverse-weighted degree-two differential term
 
-A single summand in the compatibility of degree-three transfer with
-`d₂₃`.
+An inverse-weighted degree-two differential term.
+
+Evaluating d²b on the three successive Schreier factors and applying ρ(t⁻¹) gives the leading
+translated term and the three remaining terms with signs +,−,+,−. The middle terms correspond
+to the products g₁g₂ and g₂g₃.

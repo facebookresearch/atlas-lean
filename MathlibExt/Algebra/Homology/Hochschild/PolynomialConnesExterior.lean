@@ -16,10 +16,16 @@ public import MathlibExt.LinearAlgebra.TensorPower.AntisymmetrizationTwo
 /-!
 # Polynomial Connes classes in degrees one and two
 
-On the normalized regular coefficient complex, Connes B sends
-X s ⊗ q(X t) to the signed two-term tensor. Its polynomial
-exterior homology coordinate is d(X s) ∧ d(X t). This degree-one
-to degree-two formula holds over every commutative ground ring.
+Let k be a commutative ring, A = k[σ] and q : A → A/(k·1). In the normalized Hochschild complex
+with regular coefficients A, the Connes operator satisfies B₁(Xₛ ⊗ q(Xₜ)) = 1 ⊗ q(Xₛ) ⊗ q(Xₜ) −
+1 ⊗ q(Xₜ) ⊗ q(Xₛ). Both tensors are Hochschild cycles. The induced homology map sends [Xₛ ⊗
+q(Xₜ)] to this signed degree-two class, whose polynomial differential-form coordinate is 1
+⊗_A(dXₛ∧dXₜ).
+
+This calculation uses polynomial exterior coordinates and holds over every commutative ground
+ring. For the relation between Connes' operator and differential forms, see J.-L. Loday, Cyclic
+Homology, second edition, §2.1, and the Hochschild–Kostant–Rosenberg differential-form
+comparison.
 -/
 
 @[expose] public section
@@ -43,23 +49,31 @@ local notation "q" => Submodule.mkQ (ModuleCat.Algebra.Hochschild.unitSubmodule 
 attribute [local instance] Symmetric.opModule Symmetric.actionsComm
   Symmetric.kOpComm Symmetric.kOpTower
 
-/-- The free exterior input for the original polynomial one-form X s d(X t). -/
+/-- Let k be a commutative ring, σ a variable set and A = k[σ]. Put V = ⊕ᵢ∈σ k·eᵢ and q : A →
+A/(k·1). For s,t ∈ σ, polynomialConnesInputExterior is Xₛ ⊗ eₜ ∈ A ⊗[k] ∧¹ₖV, the free exterior
+coordinate of the one-form Xₛ dXₜ. -/
 def polynomialConnesInputExterior (s t : σ) : A ⊗[k] (⋀[k]^1 V) := by
   classical
   exact MvPolynomial.X s ⊗ₜ[k] exteriorPower.ιMulti k 1
     (fun _ : Fin 1 => Finsupp.single t (1 : k))
 
-/-- The independently specified original polynomial two-form generator. -/
+/-- Let k be a commutative ring, σ a variable set and A = k[σ]. Put V = ⊕ᵢ∈σ k·eᵢ and q : A →
+A/(k·1). For s,t ∈ σ, polynomialConnesOutputExterior is 1 ⊗ (eₛ∧eₜ) ∈ A ⊗[k] ∧²ₖV, corresponding
+to dXₛ∧dXₜ. -/
 def polynomialConnesOutputExterior (s t : σ) : A ⊗[k] (⋀[k]^2 V) := by
   classical
   exact (1 : A) ⊗ₜ[k] exteriorPower.ιMulti k 2
     (Fin.cons (Finsupp.single s (1 : k)) (fun _ : Fin 1 => Finsupp.single t (1 : k)))
 
-/-- The original normalized polynomial input tensor. -/
+/-- Let k be a commutative ring, σ a variable set and A = k[σ]. Put V = ⊕ᵢ∈σ k·eᵢ and q : A →
+A/(k·1). For s,t ∈ σ, polynomialConnesPairInput is Xₛ ⊗ q(Xₜ) in degree one of the normalized
+Hochschild complex with regular coefficients A. -/
 def polynomialConnesPairInput (s t : σ) : (Symmetric.normalizedChainComplex k A A).X 1 :=
   MvPolynomial.X s ⊗ₜ[k] PiTensorProduct.tprod k (fun _ : Fin 1 => q (MvPolynomial.X t))
 
-/-- The original descended regular Connes value of that original tensor. -/
+/-- Let k be a commutative ring, σ a variable set and A = k[σ]. Put V = ⊕ᵢ∈σ k·eᵢ and q : A →
+A/(k·1). For s,t ∈ σ, polynomialConnesPairOutput is B₁(Xₛ ⊗ q(Xₜ)) in degree two of the
+normalized regular Hochschild complex, where B is the descended Connes operator. -/
 def polynomialConnesPairOutput (s t : σ) : (Symmetric.normalizedChainComplex k A A).X 2 :=
   Symmetric.regularNormalizedConnes k A 1 (polynomialConnesPairInput k σ s t)
 
@@ -113,7 +127,9 @@ private theorem projection_f (n : ℕ) :
   exact congrArg ModuleCat.Hom.hom
     (ModuleCat.Algebra.Hochschild.normalizationProjection_f k A A n)
 
-/-- The literal original input is the independently computed normalized degree-one signed representative. -/
+/-- Let k be a commutative ring, σ a variable set and A = k[σ]. Put V = ⊕ᵢ∈σ k·eᵢ and q : A →
+A/(k·1). The normalized tensor Xₛ ⊗ q(Xₜ) equals the normalized signed representative of
+polynomialConnesInputExterior k σ s t in degree one. -/
 theorem polynomialConnesPairInput_eq_signed (s t : σ) :
     polynomialConnesPairInput k σ s t =
       normalizedPolynomialSignedRepresentative k σ A 1 (polynomialConnesInputExterior k σ s t) := by
@@ -125,7 +141,9 @@ theorem polynomialConnesPairInput_eq_signed (s t : σ) :
     (MvPolynomial.X s) (fun _ : Fin 1 => MvPolynomial.X t)
   exact (hSigned.trans (hProjection.trans hValue)).symm
 
-/-- The original B value is exactly the independently specified normalized degree-two signed representative. -/
+/-- Let k be a commutative ring, σ a variable set and A = k[σ]. Put V = ⊕ᵢ∈σ k·eᵢ and q : A →
+A/(k·1). The Connes image of Xₛ ⊗ q(Xₜ) equals the normalized signed representative of 1 ⊗
+(eₛ∧eₜ). This representative is 1 ⊗ q(Xₛ) ⊗ q(Xₜ) − 1 ⊗ q(Xₜ) ⊗ q(Xₛ). -/
 theorem polynomialConnesPairOutput_eq_signed (s t : σ) :
     polynomialConnesPairOutput k σ s t =
       normalizedPolynomialSignedRepresentative k σ A 2 (polynomialConnesOutputExterior k σ s t) := by
@@ -160,50 +178,66 @@ theorem polynomialConnesPairOutput_eq_signed (s t : σ) :
   exact (hB.trans (NonUnital.normalizedBoundary_one_tprod k A (MvPolynomial.X s) (MvPolynomial.X t))).trans
     hProjection.symm
 
-/-- The original input is a cycle, proved through the signed polynomial chain comparison. -/
+/-- Let k be a commutative ring, σ a variable set and A = k[σ]. Put V = ⊕ᵢ∈σ k·eᵢ and q : A →
+A/(k·1). For s,t ∈ σ, the degree-one Hochschild differential vanishes on
+polynomialConnesPairInput k σ s t = Xₛ ⊗ q(Xₜ). -/
 theorem polynomialConnesPairInput_cycle (s t : σ) :
     ((Symmetric.normalizedChainComplex k A A).sc 1).g (polynomialConnesPairInput k σ s t) = 0 := by
   rw [polynomialConnesPairInput_eq_signed]
   exact normalizedPolynomialSignedRepresentative_cycle k σ A 1 (polynomialConnesInputExterior k σ s t)
 
-/-- The original B value is a cycle in the original normalized complex. -/
+/-- Let k be a commutative ring, σ a variable set and A = k[σ]. Put V = ⊕ᵢ∈σ k·eᵢ and q : A →
+A/(k·1). For s,t ∈ σ, the degree-two Hochschild differential vanishes on
+polynomialConnesPairOutput k σ s t = B₁(Xₛ ⊗ q(Xₜ)). -/
 theorem polynomialConnesPairOutput_cycle (s t : σ) :
     ((Symmetric.normalizedChainComplex k A A).sc 2).g (polynomialConnesPairOutput k σ s t) = 0 := by
   rw [polynomialConnesPairOutput_eq_signed]
   exact normalizedPolynomialSignedRepresentative_cycle k σ A 2 (polynomialConnesOutputExterior k σ s t)
 
-/-- The original normalized Hochschild class of X s tensor q(X t). -/
+/-- Let k be a commutative ring, σ a variable set and A = k[σ]. Put V = ⊕ᵢ∈σ k·eᵢ and q : A →
+A/(k·1). For s,t ∈ σ, polynomialConnesPairInputClass is the degree-one normalized Hochschild
+homology class [Xₛ ⊗ q(Xₜ)]. -/
 def polynomialConnesPairInputClass (s t : σ) : (Symmetric.normalizedChainComplex k A A).homology 1 :=
   HomologicalComplex.moduleCatCycleClass (Symmetric.normalizedChainComplex k A A) 1
     (polynomialConnesPairInput k σ s t) (polynomialConnesPairInput_cycle k σ s t)
 
-/-- The homology class of the literal original Connes output. -/
+/-- Let k be a commutative ring, σ a variable set and A = k[σ]. Put V = ⊕ᵢ∈σ k·eᵢ and q : A →
+A/(k·1). For s,t ∈ σ, polynomialConnesPairOutputClass is the degree-two normalized Hochschild
+class [B₁(Xₛ ⊗ q(Xₜ))] = [1 ⊗ q(Xₛ) ⊗ q(Xₜ) − 1 ⊗ q(Xₜ) ⊗ q(Xₛ)]. -/
 def polynomialConnesPairOutputClass (s t : σ) : (Symmetric.normalizedChainComplex k A A).homology 2 :=
   HomologicalComplex.moduleCatCycleClass (Symmetric.normalizedChainComplex k A A) 2
     (polynomialConnesPairOutput k σ s t) (polynomialConnesPairOutput_cycle k σ s t)
 
-/-- The native Connes homology map sends the original input class to this literal output class. -/
+/-- Let k be a commutative ring, σ a variable set and A = k[σ]. Put V = ⊕ᵢ∈σ k·eᵢ and q : A →
+A/(k·1). In normalized regular Hochschild homology, B : HH₁(A,A) → HH₂(A,A) sends
+polynomialConnesPairInputClass k σ s t to polynomialConnesPairOutputClass k σ s t. -/
 theorem regularNormalizedConnesHomology_polynomialPair (s t : σ) :
     Symmetric.regularNormalizedConnesHomology k A 1 (polynomialConnesPairInputClass k σ s t) =
       polynomialConnesPairOutputClass k σ s t := by
   rw [polynomialConnesPairInputClass, Symmetric.regularNormalizedConnesHomology_cycle]
   rfl
 
-/-- The original output class is the class of the independently specified exterior word. -/
+/-- Let k be a commutative ring, σ a variable set and A = k[σ]. Put V = ⊕ᵢ∈σ k·eᵢ and q : A →
+A/(k·1). For s,t ∈ σ, polynomialConnesPairOutputClass equals normalizedPolynomialExteriorClass
+applied in degree two to 1 ⊗ (eₛ∧eₜ). -/
 theorem polynomialConnesPairOutputClass_eq_exterior (s t : σ) :
     polynomialConnesPairOutputClass k σ s t =
       normalizedPolynomialExteriorClass k σ A 2 (polynomialConnesOutputExterior k σ s t) := by
   simpa only [polynomialConnesPairOutputClass, polynomialConnesPairOutput_eq_signed] using
     (normalizedPolynomialExteriorClass_eq_cycle k σ A 2 (polynomialConnesOutputExterior k σ s t)).symm
 
-/-- The original input class has the independently specified degree-one exterior word. -/
+/-- Let k be a commutative ring, σ a variable set and A = k[σ]. Put V = ⊕ᵢ∈σ k·eᵢ and q : A →
+A/(k·1). For s,t ∈ σ, polynomialConnesPairInputClass equals normalizedPolynomialExteriorClass
+applied in degree one to Xₛ ⊗ eₜ. -/
 theorem polynomialConnesPairInputClass_eq_exterior (s t : σ) :
     polynomialConnesPairInputClass k σ s t =
       normalizedPolynomialExteriorClass k σ A 1 (polynomialConnesInputExterior k σ s t) := by
   simpa only [polynomialConnesPairInputClass, polynomialConnesPairInput_eq_signed] using
     (normalizedPolynomialExteriorClass_eq_cycle k σ A 1 (polynomialConnesInputExterior k σ s t)).symm
 
-/-- The canonical polynomial coordinates of B(X s tensor X t) are d(X s) wedge d(X t). -/
+/-- Let k be a commutative ring, σ a variable set and A = k[σ]. Put V = ⊕ᵢ∈σ k·eᵢ and q : A →
+A/(k·1). The normalized polynomial differential-form isomorphism sends the degree-two class of
+B₁(Xₛ ⊗ q(Xₜ)) to 1 ⊗_A (dXₛ∧dXₜ) in A ⊗_A ∧²_AΩ¹_{A/k}. -/
 theorem polynomialConnesPairOutputClass_coordinates (s t : σ) :
     normalizedPolynomialDifferentialFormEquiv k σ A 2 (polynomialConnesPairOutputClass k σ s t) =
       (1 : A) ⊗ₜ[A] exteriorPower.ιMulti A 2

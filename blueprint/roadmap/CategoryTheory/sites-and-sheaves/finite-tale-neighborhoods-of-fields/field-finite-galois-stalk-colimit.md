@@ -1,3 +1,5 @@
-# Field Finite Galois Stalk Colimit
+# The finite Galois section colimit is a functor of sheaves
 
-This construction is a functor on every literal common-universe sheaf and map.
+For k and prescribed separable closure Ω, the assignment Q ↦ colim_L Q(Spec L) defines a
+functor from small-étale additive-group sheaves of height max(u,w) to AddCommGrpCat of that
+height. Its maps are induced by the sectionwise sheaf-morphism components.

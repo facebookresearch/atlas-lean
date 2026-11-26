@@ -1,4 +1,6 @@
-# Corestriction Cochain Three mem cocycles₃
+# Ternary transfer preserves three-cocycles
 
-Degree-three chosen-transversal cochain transfer sends three-cocycles to
-three-cocycles.
+Ternary transfer preserves three-cocycles.
+
+The chosen-transversal transfer sends every H-three-cocycle for A|H to a G-three-cocycle for
+A.

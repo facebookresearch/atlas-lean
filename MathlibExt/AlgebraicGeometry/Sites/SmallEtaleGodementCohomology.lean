@@ -14,11 +14,14 @@ public import MathlibExt.AlgebraicGeometry.Sites.SmallEtaleDerivedHomSectionsCom
 public import MathlibExt.CategoryTheory.Abelian.RightDerived.AcyclicResolution
 
 /-!
-# Original étale cohomology computed by the actual Godement complex
+# Small étale cohomology from Godement sections
 
-The canonical coaugmentation is a quasi-isomorphism and every actual degree
-term is acyclic for positive right-derived global sections. The native
-acyclic-resolution comparison therefore computes the original groups.
+The Godement cochain coaugmentation resolves each common-universe abelian sheaf, and every
+term is acyclic for positive right-derived global sections. Apply global sections termwise to
+obtain an additive-group cochain complex.
+
+Its degree-`n` cohomology is isomorphic to `R^nΓ` of the sheaf. Composing with the small étale
+cohomology comparison gives an additive equivalence with `H^n(X,Q)` for every natural degree.
 -/
 
 @[expose] public section
@@ -29,14 +32,19 @@ open CategoryTheory CategoryTheory.Limits
 
 namespace AlgebraicGeometry.Scheme.DerivedSections
 
-/-- Global sections applied to the actual alternating Godement complex. -/
+/-- Global section complex of the Godement coresolution.
+
+Apply common-universe global sections to the Godement cochain complex termwise. -/
 def smallEtaleGodementSectionsComplex (X : Scheme.{u})
     (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :
     CochainComplex AddCommGrpCat.{max u w} ℕ :=
   ((Sheaf.Γ X.smallEtaleTopology AddCommGrpCat.{max u w}).mapHomologicalComplex
     (ComplexShape.up ℕ)).obj (smallEtaleGodementCochainComplex.{u, w} X Q)
 
-/-- Native right-derived global sections are the homology of the actual Godement complex. -/
+/-- Godement section cohomology computes derived global sections.
+
+For each sheaf and natural `n`, `R^nΓ(Q)` is isomorphic to degree-`n` cohomology of its
+Godement section complex. -/
 def smallEtaleGodementDerivedSectionsIso (X : Scheme.{u})
     (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (n : ℕ) :
     ((Sheaf.Γ X.smallEtaleTopology AddCommGrpCat.{max u w}).rightDerived n).obj Q ≅
@@ -49,7 +57,10 @@ def smallEtaleGodementDerivedSectionsIso (X : Scheme.{u})
         AddCommGrpCat.{max u w}).rightDerivedObjIsoHomologyOfAcyclicResolution
     K ι (fun q j => smallEtaleGodementCoresolutionTerm_derivedSections_succ_isZero.{u, w} X Q q j) n
 
-/-- The original étale cohomology group is computed by the genuine Godement resolution. -/
+/-- Godement section cohomology computes small étale cohomology.
+
+Compose the cohomology-to-derived section comparison with the Godement acyclic-resolution
+isomorphism to identify `H^n(X,Q)` with the section-complex cohomology. -/
 def smallEtaleGodementCohomologyAddEquiv (X : Scheme.{u})
     (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (n : ℕ) :
     Sheaf.H.{max u w, max u w, u, u + 1} Q n ≃+

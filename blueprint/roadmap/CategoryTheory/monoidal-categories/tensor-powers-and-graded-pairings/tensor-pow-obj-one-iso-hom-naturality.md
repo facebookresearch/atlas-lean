@@ -1,3 +1,6 @@
-# Tensor Pow Obj One Iso hom naturality
+# Forward one factor coordinate is natural
 
-Naturality of the canonical weight-one tensor-power isomorphism.
+Forward one factor coordinate is natural.
+
+The power-one map followed by the target coordinate equals the source coordinate followed by
+`f`.

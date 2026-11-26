@@ -1,3 +1,4 @@
-# Determinantal Ideal zero map succ
+# Positive minors of a zero map vanish
 
-Every positive-size determinantal ideal of the zero map is zero.
+For a commutative ring `R`, `R`-modules `M,N`, and `r : ℕ`, `determinantalIdeal (r+1) (0 : M
+→ₗ[R] N)=⊥`.

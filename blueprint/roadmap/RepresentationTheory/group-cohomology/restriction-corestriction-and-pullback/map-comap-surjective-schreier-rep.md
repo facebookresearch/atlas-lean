@@ -1,4 +1,5 @@
-# Map comap Surjective schreier Rep
+# Schreier representative updates commute with a surjection
 
-Schreier representative update commutes with a surjective homomorphism
-for the pulled-back transversal.
+Schreier representative updates commute with a surjection.
+
+Projecting the representative update of s by g ∈ G′ equals updating π(s) by π(g) in T.

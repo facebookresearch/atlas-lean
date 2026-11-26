@@ -1,4 +1,6 @@
-# Original Ambient Right Map comp include Left
+# The right ambient map restricts as identity on A and the middle map on B
 
-The actual first standard ambient inclusion restricts the original
-second support coefficient through precisely its original middle map.
+The composite of include-left A⊗K B→D with the right
+ambient evaluation equals id_A⊗β, where
+β:B→W is b↦i_W(b⊗1_C).
+This is an equality of K-algebra maps.

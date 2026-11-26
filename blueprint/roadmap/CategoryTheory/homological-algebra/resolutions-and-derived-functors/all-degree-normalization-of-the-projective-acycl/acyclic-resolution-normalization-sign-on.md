@@ -1,3 +1,3 @@
-# Acyclic Resolution Normalization Sign one
+# Degree-one normalization sign
 
-The original normalization sign is minus one in degree one.
+The triangular normalization scalar in degree one is `σ₁=-1`.

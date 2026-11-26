@@ -1,4 +1,6 @@
-# Hom Cochain Complex Coefficient Functor
+# Hom cochains as a functor of the coefficient object
 
-The cochain-complex functor in the coefficient variable associated to a
-fixed chain complex `K`.
+Hom cochains as a functor of the coefficient object.
+
+For fixed chain complex `K`, the functor takes `G` to its Hom cochain complex `Hom(K,G)` and
+acts by postcomposition.

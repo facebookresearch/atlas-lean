@@ -1,3 +1,5 @@
-# Horizontal First Page Horizontal Homology Map
+# The vertical-homology map of a horizontal bicomplex differential
 
-Homology map induced by the horizontal bicomplex differential.
+The vertical-homology map of a horizontal bicomplex differential.
+
+Take `H_q` of the chain map `K.d(p+1,p)` between the two vertical columns.

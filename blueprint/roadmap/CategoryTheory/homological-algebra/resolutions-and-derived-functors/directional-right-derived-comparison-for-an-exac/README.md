@@ -1,23 +1,23 @@
 # Directional right-derived comparison for an exact source change
 
-- [Map Cochain Coaugmentation](map-cochain-coaugmentation.md)
-- [Map Cochain Coaugmentation f zero](map-cochain-coaugmentation-f-zero.md)
-- [Map Cochain Coaugmentation quasi Iso](map-cochain-coaugmentation-quasi-iso.md)
-- [Map Cochain Coaugmentation naturality](map-cochain-coaugmentation-naturality.md)
+- [Mapping a cochain coaugmentation under an additive functor](map-cochain-coaugmentation.md)
+- [Degree-zero map of an induced coaugmentation](map-cochain-coaugmentation-f-zero.md)
+- [Homology preservation carries coaugmentations to quasi-isomorphisms](map-cochain-coaugmentation-quasi-iso.md)
+- [Source change preserves coaugmentation squares](map-cochain-coaugmentation-naturality.md)
 
 ## Derived
 
-- [Right Derived Precomp Hom With Resolution](right-derived-precomp-hom-with-resolutio.md)
-- [Right Derived Precomp Hom With Resolution naturality](right-derived-precomp-hom-with-resolutio-2.md)
-- [Right Derived Precomp Hom With Resolution independent](right-derived-precomp-hom-with-resolutio-3.md)
-- [Right Derived Precomp Hom Of Preserves Homology](right-derived-precomp-hom-of-preserves-h.md)
-- [Right Derived Precomp Hom Of Preserves Homology app](right-derived-precomp-hom-of-preserves-h-2.md)
-- [Right Derived Precomp Hom Of Preserves Homology eq hom](right-derived-precomp-hom-of-preserves-h-3.md)
+- [Directional precomposition comparison from an injective resolution](right-derived-precomp-hom-with-resolutio.md)
+- [Resolution-based directional comparison is natural in the object](right-derived-precomp-hom-with-resolutio-2.md)
+- [Directional precomposition comparison is independent of the resolution](right-derived-precomp-hom-with-resolutio-3.md)
+- [Right-derived precomposition under a homology-preserving source change](right-derived-precomp-hom-of-preserves-h.md)
+- [Directional comparison components can use any injective resolution](right-derived-precomp-hom-of-preserves-h-2.md)
+- [Injective preservation identifies the directional comparison with an isomorphism](right-derived-precomp-hom-of-preserves-h-3.md)
 
 ## Functor Naturality
 
-- [Right Derived Precomp Hom Of Preserves Homology naturality functor](right-derived-precomp-hom-of-preserves-h-4.md)
+- [Directional source comparison is natural in the coefficient functor](right-derived-precomp-hom-of-preserves-h-4.md)
 
 ## Augmented Source
 
-- [Augmented Resolution To Right Derived Hom precomp](augmented-resolution-to-right-derived-ho.md)
+- [Directional source comparison computes any exact coaugmented complex](augmented-resolution-to-right-derived-ho.md)

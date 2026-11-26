@@ -1,3 +1,5 @@
-# Field Prescribed Common Point fiber map
+# Common point maps are the lifted prescribed fiber maps
 
-Each common fiber restriction is the single lift of the original restriction.
+For a field k, prescribed separable closure Ω, an étale arrow g : V → U, and y in the
+prescribed fiber of V, the common fiber map sends up(y) to up(p_Ω(g)(y)). The point lift is
+ULift^w and the site arrow remains g.

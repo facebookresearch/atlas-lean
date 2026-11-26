@@ -13,14 +13,25 @@ public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.CanonicalStableMatr
 public import MathlibExt.Algebra.Homology.ChainComplex.PositiveTailHomologyMapFunctor
 
 /-!
-# Naturality of stable matrix cyclic homology comparisons
+# The stable Lie trace factorization and its lifted naturality
 
-The vanishing boundary from Chevalley–Eilenberg degree one to zero identifies positive-tail
-homology with homology in the next degree. Over a commutative rational algebra, the stable
-matrix trace map induces compatible maps to Connes and cyclic homology.
+Let k be a commutative ring and A an associative unital k-algebra.
+For C = C_*(Mat_∞(A)), the CE differential d₁ : C₁ → C₀ is zero.
+Consequently the positive-tail shift gives
+s_n : H_n(positiveTail(C)) ≅ H_(n+1)(C).
+The same statement holds after termwise lifting to H = max(u,v,z).
 
-These comparisons are natural in algebra homomorphisms between independent coefficient carrier
-universes and preserve the normalization and degree sign `(-1)^n`.
+If k is a ℚ-algebra, the signed positive-tail trace W into Cλ(A)
+defines Γ_n = H_n(W) ∘ s_n⁻¹ from stable matrix Lie homology
+in degree n+1 to H_n(Cλ(A)). The stable cyclic map Θ_n satisfies
+Ξ_n ∘ Θ_n = Γ_n, where Ξ_n : HC_n(A) ≅ H_n(Cλ(A)) is the rational
+Connes comparison.
+
+At a chosen height, Θ_n^H has target U(HC_n(A)) and Γ_n^H has
+target H_n(Cλ^H(A)); they satisfy the corresponding factorization
+through Ξ_n^H. Both maps are natural for unital algebra maps A → B
+across independent worlds, at H = max(u,v,w,z).
+Their normalization 1/(n+1) and degree sign (−1)^n are preserved.
 -/
 
 @[expose] public section
@@ -37,7 +48,10 @@ attribute [local instance 100] LieRing.ofAssociativeRing
 
 variable (k : Type u) [CommRing k] (A : Type v) [Ring A] [Algebra k A]
 
-/-- The degree-one vanishing is retained by the canonical stable CE model. -/
+/-- For a commutative ring k and an associative unital
+k-algebra A, the CE differential
+C₁(Mat_∞(A)) → C₀(Mat_∞(A)) is zero.
+There is no bracket pair in a degree-one wedge. -/
 theorem canonicalStableMatrixCEComplex_d_one_zero :
     (canonicalStableMatrixCEComplex k A).d 1 0 = 0 := by
   let e := canonicalStableMatrixCEIso k A
@@ -49,21 +63,30 @@ theorem canonicalStableMatrixCEComplex_d_one_zero :
     ((congrArg (fun f => f ≫ e.hom.f 0) (stableMatrixCEComplex_d_one_zero k A)).trans
       Limits.zero_comp)
 
-/-- The positive-tail homology shift on CE of the canonical stable Lie algebra. -/
+/-- For a commutative ring k, an associative unital k-algebra A
+and n ≥ 0, the zero degree-one CE differential gives
+H_n(positiveTail(C_*(Mat_∞(A)))) ≅ H_(n+1)(C_*(Mat_∞(A))).
+The positive tail has term C_(n+1) in degree n. -/
 def canonicalStableMatrixPositiveTailHomologyIso (n : ℕ) :
     (ChainComplex.positiveTail (canonicalStableMatrixCEComplex k A)).homology n ≅
       (canonicalStableMatrixCEComplex k A).homology (n + 1) :=
   ChainComplex.positiveTailHomologyIso (canonicalStableMatrixCEComplex k A)
     (canonicalStableMatrixCEComplex_d_one_zero k A) n
 
-/-- Additive lifting retains the degree-one zero differential. -/
+/-- For a commutative ring k, an associative unital k-algebra A
+and H = max(u,v,z), the termwise-lifted stable CE complex has
+d₁ : C₁^H → C₀^H equal to zero.
+The ring, algebra and additional-height worlds are independent. -/
 theorem canonicalStableMatrixCEComplexAtHeight_d_one_zero :
     (canonicalStableMatrixCEComplexAtHeight.{u,v,z} k A).d 1 0 = 0 :=
   ChainComplex.mapHomologicalComplex_d_one_zero
     (ModuleCat.uliftFunctor.{max u v z, max u v} k) (canonicalStableMatrixCEComplex k A)
       (canonicalStableMatrixCEComplex_d_one_zero k A)
 
-/-- The shifted-homology comparison on the common-height canonical stable CE model. -/
+/-- For a commutative ring k, an associative unital k-algebra A,
+H = max(u,v,z) and n ≥ 0, there is an isomorphism
+H_n(positiveTail(C_*^H(Mat_∞(A)))) ≅ H_(n+1)(C_*^H(Mat_∞(A))).
+It uses the zero degree-one differential of the lifted CE complex. -/
 def canonicalStableMatrixPositiveTailHomologyIsoAtHeight (n : ℕ) :
     (ChainComplex.positiveTail (canonicalStableMatrixCEComplexAtHeight.{u,v,z} k A)).homology n ≅
       (canonicalStableMatrixCEComplexAtHeight.{u,v,z} k A).homology (n + 1) :=
@@ -72,23 +95,33 @@ def canonicalStableMatrixPositiveTailHomologyIsoAtHeight (n : ℕ) :
 
 variable [Algebra ℚ k]
 
-/-- The cyclic trace map from stable matrix Lie homology in degree n + 1 to Connes homology in
-degree n. -/
+/-- For a commutative ℚ-algebra k, an associative unital
+k-algebra A and n ≥ 0, the map
+Γ_n : H_(n+1)(C_*(Mat_∞(A))) → H_n(Cλ(A))
+is H_n(W) ∘ s_n⁻¹, where W is the signed positive-tail trace
+and s_n is the positive-tail homology shift. -/
 def canonicalStableMatrixCyclicConnesHomologyMap (n : ℕ) :
     (canonicalStableMatrixCEComplex k A).homology (n + 1) ⟶
       ModuleCat.Algebra.Hochschild.NonUnital.connesHomology k A n :=
   (canonicalStableMatrixPositiveTailHomologyIso k A n).inv ≫
     HomologicalComplex.homologyMap (canonicalStableMatrixCyclicWeibelChainMap k A) n
 
-/-- The cyclic trace map from lifted stable matrix Lie homology in degree n + 1 to lifted Connes
-homology in degree n. -/
+/-- For a commutative ℚ-algebra k, an associative unital
+k-algebra A and H = max(u,v,z), the map
+Γ_n^H : H_(n+1)(C_*^H(Mat_∞(A))) → H_n(Cλ^H(A))
+is the homology map of W^H composed after the inverse
+positive-tail homology shift, for every n ≥ 0. -/
 def canonicalStableMatrixCyclicConnesHomologyMapAtHeight (n : ℕ) :
     (canonicalStableMatrixCEComplexAtHeight.{u,v,z} k A).homology (n + 1) ⟶
       ModuleCat.Algebra.Hochschild.NonUnital.connesHomologyAtHeight.{u,v,z} k A n :=
   (canonicalStableMatrixPositiveTailHomologyIsoAtHeight.{u,v,z} k A n).inv ≫
     HomologicalComplex.homologyMap (canonicalStableMatrixCyclicWeibelChainMapAtHeight.{u,v,z} k A) n
 
-/-- The canonical homology map followed by Connes' projection is this same shifted trace. -/
+/-- For a commutative ℚ-algebra k, an associative unital
+k-algebra A and n ≥ 0, the stable cyclic map Θ_n satisfies
+Ξ_n ∘ Θ_n = Γ_n.
+Here Ξ_n : HC_n(A) ≅ H_n(Cλ(A)) is the rational cyclic-to-Connes
+comparison, and Γ_n is the shifted homology map of the signed trace. -/
 theorem canonicalStableMatrixCyclicHomologyMap_comp_connes (n : ℕ) :
     canonicalStableMatrixCyclicHomologyMap k A n ≫
         ModuleCat.Algebra.Hochschild.NonUnital.cyclicToConnesHomology k A n =
@@ -118,7 +151,14 @@ theorem canonicalStableMatrixCyclicHomologyMap_comp_connes (n : ℕ) :
         ((congrArg (fun f => f ≫ hs) hInv).trans
           ((Category.assoc c.inv ht hs).trans (congrArg (fun f => c.inv ≫ f) hChain.symm)))))
 
-/-- The full-height shifted trace agrees with transport of the canonical trace homology map. -/
+/-- For a commutative ℚ-algebra k, an associative unital
+k-algebra A and H = max(u,v,z), let U lift k-modules to H.
+Let χ_C identify H_(n+1)(U(C)) with U(H_(n+1)(C)), and let χ_Q
+identify H_n(U(Cλ(A))) with U(H_n(Cλ(A))).
+If e_Q : U(Cλ(A)) ≅ Cλ^H(A) is the complex cokernel comparison,
+then Γ_n^H = H_n(e_Q) ∘ χ_Q⁻¹ ∘ U(Γ_n) ∘ χ_C.
+This gives the precise map from lifted stable Lie homology to
+the homology of the lifted Connes quotient. -/
 theorem canonicalStableMatrixCyclicConnesHomologyMapAtHeight_eq_lift (n : ℕ) :
     canonicalStableMatrixCyclicConnesHomologyMapAtHeight.{u,v,z} k A n =
       (((ModuleCat.uliftFunctor.{max u v z, max u v} k).mapHomologicalComplexHomologyIso
@@ -195,7 +235,11 @@ theorem canonicalStableMatrixCyclicConnesHomologyMapAtHeight_eq_lift (n : ℕ) :
           simp only [Category.assoc]).trans
           (congrArg (fun f => χK.hom ≫ f ≫ χQ.inv ≫ hq) hMap.symm))))
 
-/-- The full-height HC map has the same shifted Connes factorization. -/
+/-- For a commutative ℚ-algebra k, an associative unital
+k-algebra A, H = max(u,v,z) and n ≥ 0, the lifted maps satisfy
+Ξ_n^H ∘ Θ_n^H = Γ_n^H.
+The comparison Ξ_n^H has source U(HC_n(A)) and target H_n(Cλ^H(A)),
+while the common source of the trace maps is H_(n+1)(C_*^H(Mat_∞(A))). -/
 theorem canonicalStableMatrixCyclicHomologyMapAtHeight_comp_connes (n : ℕ) :
     canonicalStableMatrixCyclicHomologyMapAtHeight.{u,v,z} k A n ≫
         (ModuleCat.Algebra.Hochschild.NonUnital.cyclicToConnesHomologyIsoAtHeight.{u,v,z} k A n).hom =
@@ -220,7 +264,12 @@ theorem canonicalStableMatrixCyclicHomologyMapAtHeight_comp_connes (n : ℕ) :
 
 variable {B : Type w} [Ring B] [Algebra k B]
 
-/-- The full-height shifted Connes homology map preserves coefficient maps. -/
+/-- For a commutative ℚ-algebra k, a unital k-algebra map
+f : A → B and H = max(u,v,w,z), the chosen-height maps satisfy
+Γ_(B,n)^H ∘ H_(n+1)(C^H(f)) =
+H_n(Cλ^H(f)) ∘ Γ_(A,n)^H.
+The source is stable matrix Lie homology for A in degree n+1,
+and the target is H_n(Cλ^H(B)). -/
 @[reassoc]
 theorem canonicalStableMatrixCyclicConnesHomologyMapAtHeight_naturality (f : A →ₐ[k] B) (n : ℕ) :
     HomologicalComplex.homologyMap
@@ -259,7 +308,11 @@ theorem canonicalStableMatrixCyclicConnesHomologyMapAtHeight_naturality (f : A �
       ((Category.assoc _ _ _).trans
         ((congrArg (fun f => sA.inv ≫ f) hw).trans (Category.assoc _ _ _).symm)))
 
-/-- The canonical stable Lie CE-to-HC map is natural across independent coefficient universes. -/
+/-- For a commutative ℚ-algebra k, a unital k-algebra map
+f : A → B and H = max(u,v,w,z), the lifted cyclic maps satisfy
+Θ_(B,n)^H ∘ H_(n+1)(C^H(f)) = HC_n^H(f) ∘ Θ_(A,n)^H.
+The target is the lifted cyclic homology U(HC_n(B)).
+Both algebra carrier worlds and the extra height remain independent. -/
 @[reassoc]
 theorem canonicalStableMatrixCyclicHomologyMapAtHeight_naturality (f : A →ₐ[k] B) (n : ℕ) :
     HomologicalComplex.homologyMap

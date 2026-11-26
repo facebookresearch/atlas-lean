@@ -1,10 +1,7 @@
-# Homogeneous Cochains boundary class eq
+# Equal classes for cycles differing by a boundary
 
-Generic degree-one boundary equality corollary for continuous cohomology.
+Equal classes for cycles differing by a boundary.
 
-If two degree-one cycles differ by a boundary, `z₁ - z₂ = b ≫ d 0 1`,
-their classes under `homologyπ 1` agree. Uses the Mathlib boundary-vanishing
-lemma `HomologicalComplex.liftCycles_homologyπ_eq_zero_of_boundary` via
-subtraction and `sub_eq_zero`; no finite comparison or ordinary-H1 bridge is used.
-
-Nonclaims: no Kummer, motivic, étale, or isomorphism statement.
+Let z₁,z₂ : A → C¹ be degree-one cycle maps in the homogeneous continuous cochain complex. If
+z₁ − z₂ = b ≫ d⁰ for a map b : A → C⁰, their lifts to cycles have the same image under the
+degree-one homology projection.

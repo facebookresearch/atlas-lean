@@ -15,18 +15,17 @@ public import MathlibExt.CategoryTheory.Abelian.DeltaFunctor.Effaceable
 public import Mathlib.Algebra.Homology.ShortComplex.HomologicalComplex
 
 /-!
-# The universal cohomological δ-functor of the right-derived family
+# The universal cohomological delta-functor of right derivation
 
-The degree functors are exactly `F.rightDerived n`. Connecting maps on the category of short exact
-sequences are the existing `RightDerivedDelta.RDdelta` for the chosen endpoint resolutions.
-Naturality follows from the existing horseshoe comparison and its boundary square.
-
-Positive effaceability uses the degree-zero injective object and mono augmentation of the chosen
-resolution. No global reverse instance for enough injectives is introduced. The resulting
-universal property is outgoing, in the cohomological direction.
-
-This construction concerns `R⁰F` itself. Identifying `R⁰F` with `F` additionally requires
-finite-limit preservation.
+Let `C,D` be abelian categories, with injective resolutions in `C`,
+and let `F : C → D` be additive. The functors `R^nF`, with the
+horseshoe connecting maps `R^nF(X₃) → R^(n+1)F(X₁)` on short exact
+sequences, form a cohomological delta-functor. Each positive degree is
+effaceable by the mono coaugmentation of an injective resolution.
+Consequently this delta-functor has the outgoing universal property:
+a transformation in degree zero extends uniquely to a delta-functor
+morphism. Identifying `R⁰F` with `F` additionally requires preservation
+of finite limits.
 -/
 
 @[expose] public section
@@ -46,7 +45,10 @@ variable {D : Type u₂} [Category.{v₂} D] [Abelian D]
 
 namespace Functor.RightDerived.HorseshoeData
 
-/-- The derived degree-zero subobject map is mono, without exactness of `F`. -/
+/-- Let `C,D` be abelian, with injective resolutions in `C`, and
+`F : C → D` additive. For a short exact `S : X₁ → X₂ → X₃` and
+injective horseshoe data for `S`, the induced map
+`R⁰F(X₁) → R⁰F(X₂)` is a monomorphism. -/
 theorem mono_rightDerived_map_f_zero {S : ShortComplex C} {hS : S.ShortExact}
     (H : Functor.RightDerived.HorseshoeData S hS) (F : C ⥤ D) [F.Additive] :
     Mono ((F.rightDerived 0).map S.f) := by
@@ -73,7 +75,10 @@ end Functor.RightDerived.HorseshoeData
 
 namespace Functor
 
-/-- The existing canonical horseshoe boundary is natural on short exact sequences. -/
+/-- Let `C,D` be abelian, with injective resolutions in `C`, and
+`F : C → D` additive. The degree-`n` horseshoe boundaries define a
+natural transformation `R^nF(X₃) → R^(n+1)F(X₁)` on the category
+of short exact sequences `X₁ → X₂ → X₃`. -/
 def rightDerivedConnecting (F : C ⥤ D) [F.Additive] (n : ℕ) :
     (ShortComplex.isShortExact C).ι ⋙ ShortComplex.π₃ ⋙ F.rightDerived n ⟶
       (ShortComplex.isShortExact C).ι ⋙ ShortComplex.π₁ ⋙ F.rightDerived (n + 1) where
@@ -96,7 +101,10 @@ def rightDerivedConnecting (F : C ⥤ D) [F.Additive] (n : ℕ) :
         (injectiveResolution S.obj.X₃) (injectiveResolution S'.obj.X₃))
     exact (e.val.delta_naturality F n (n + 1) rfl).symm
 
-/-- The cohomological δ-functor with the right-derived degrees and boundaries. -/
+/-- Let `C,D` be abelian, with injective resolutions in `C`, and
+`F : C → D` additive. The degree functors `R^nF` and their canonical
+horseshoe connecting maps form a cohomological delta-functor from
+`C` to `D`. -/
 def rightDerivedDeltaFunctor (F : C ⥤ D) [F.Additive] : CohomologicalDeltaFunctor C D where
   T n := F.rightDerived n
   additive _ := inferInstance
@@ -111,19 +119,27 @@ def rightDerivedDeltaFunctor (F : C ⥤ D) [F.Additive] : CohomologicalDeltaFunc
     (RightDerived.HorseshoeData.ofEndpoints S.obj S.property
       (injectiveResolution S.obj.X₁) (injectiveResolution S.obj.X₃)) F
 
-/-- Every degree of the bundle is the right-derived functor. -/
+/-- Let `C,D` be abelian, with injective resolutions in `C`, and
+`F : C → D` additive. The degree-`n` functor of its cohomological
+delta-functor is exactly `R^nF`. -/
 @[simp]
 theorem rightDerivedDeltaFunctor_T (F : C ⥤ D) [F.Additive] (n : ℕ) :
     F.rightDerivedDeltaFunctor.T n = F.rightDerived n := rfl
 
-/-- The bundle uses the existing `RDdelta` without an intervening boundary choice. -/
+/-- Let `C,D` be abelian, with injective resolutions in `C`, and
+`F : C → D` additive. On a short exact sequence `S`, the connecting
+map of the derived delta-functor is the horseshoe boundary computed
+from the chosen injective resolutions of `S.X₁` and `S.X₃`. -/
 theorem rightDerivedDeltaFunctor_connecting_app (F : C ⥤ D) [F.Additive]
     (n : ℕ) (S : ShortComplex.ShortExactSequences C) :
     (F.rightDerivedDeltaFunctor.connecting n).app S =
       RightDerivedDelta.RDdelta F n S.obj S.property
         (injectiveResolution S.obj.X₁) (injectiveResolution S.obj.X₃) := rfl
 
-/-- Every positive right-derived functor is effaceable by a resolution augmentation. -/
+/-- Let `C,D` be abelian, with injective resolutions in `C`, and
+`F : C → D` additive. For every `n`, the functor `R^(n+1)F` is
+effaceable: the mono `X → I(X)⁰` from an injective resolution kills
+the induced degree-`n+1` map for each object `X`. -/
 theorem isEffaceable_rightDerived_succ (F : C ⥤ D) [F.Additive] (n : ℕ) :
     (F.rightDerived (n + 1)).IsEffaceable := by
   intro X
@@ -139,7 +155,11 @@ theorem isEffaceable_rightDerived_succ (F : C ⥤ D) [F.Additive] (n : ℕ) :
     F.isZero_rightDerived_obj_injective_succ n I
   exact ⟨I, ι, hι, hI.eq_of_tgt _ _⟩
 
-/-- The right-derived bundle is universal in the cohomological, outgoing direction. -/
+/-- Let `C,D` be abelian, with injective resolutions in `C`, and
+`F : C → D` additive. Its right-derived delta-functor is universal:
+for any cohomological delta-functor `T`, every natural transformation
+`R⁰F → T⁰` extends uniquely to a morphism of cohomological
+delta-functors. -/
 theorem isUniversal_rightDerivedDeltaFunctor (F : C ⥤ D) [F.Additive] :
     CohomologicalDeltaFunctor.IsUniversal C D F.rightDerivedDeltaFunctor := by
   apply CohomologicalDeltaFunctor.isUniversal_of_effaceable

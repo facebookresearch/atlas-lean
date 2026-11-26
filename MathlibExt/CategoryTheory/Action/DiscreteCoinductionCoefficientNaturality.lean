@@ -12,10 +12,28 @@ module
 public import MathlibExt.CategoryTheory.Action.DiscreteCoinductionCoresolution
 public import MathlibExt.RepresentationTheory.Homological.ContCohomology.DiscreteCoefficientLongExact
 
-/-! Actual original field native comparison proof components. -/
+/-!
+# Coefficient naturality of coinduction resolution comparisons
 
-/-! Original qualified proof block: CoindCoefficientNaturality -/
-/-! Actual coefficient maps of the original continuous coinduction coresolution. -/
+Let G be a compact totally disconnected topological group in u and coefficients lie in
+W=max(u,w). For the coinduction monad T and representation conversion J, the comparisons from
+J(T^nA) to the continuous-resolution term R_n(JA) preserve every equivariant additive
+coefficient map. Coresolution degree n is the corresponding power n+1.
+-/
+
+/-!
+# Naturality on coinduction powers
+
+For f:A→B, let r_n(f) be the continuous-resolution map under identity group change, with
+coefficient arrow obtained by restricting J(f) along id_G. The power comparison E_A^n satisfies
+J(T^n f)≫E_B^n.hom=E_A^n.hom≫r_n(f).
+-/
+/-!
+# Naturality on cosimplicial coresolution degrees
+
+The degree-n coresolution comparison identifies J(C^nA) with R_{n+1}(JA). The degree map C^n(f)
+commutes with that comparison and the same continuous-resolution coefficient map in degree n+1.
+-/
 
 @[expose] public section
 section
@@ -31,7 +49,14 @@ variable (G : Type u) [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The fixed power comparison preserves the actual stock coefficient maps. -/
+/-- Let G be a compact totally disconnected topological group in universe u and W=max(u,w) a
+coefficient universe with w independent. Write U for the forgetful functor to abelian groups in
+W, C for diagonal continuous coinduction and C₀(M)=C(trivial M) for left-shift coinduction. Let
+J convert discrete actions to continuous integer representations, T the coinduction monad, and
+I_G restriction along id_G. For f:A→B and n∈ℕ, let E_A^n:J(T^nA)≅R_n(JA). Let r_n(f) be the
+continuous-resolution coefficient map for id_G and I_G(J(f)). Then J(T^n
+f)≫E_B^n.hom=E_A^n.hom≫r_n(f). The identity-group restriction and its coefficient arrow are part
+of the specified map. -/
 theorem coindPowerToTopRepIso_coefficient_naturality
     {A B : DiscreteAbelianAction.{u, max u w} G} (f : A ⟶ B) (n : ℕ) :
     toTopRep.map ((Monad.monadPow (coindMonad.{u, w} G) n).map f) ≫
@@ -95,7 +120,13 @@ theorem coindPowerToTopRepIso_coefficient_naturality
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual canonical coresolution degree map preserves the original stock coefficient arrow. -/
+/-- Let G be a compact totally disconnected topological group in universe u and W=max(u,w) a
+coefficient universe with w independent. Write U for the forgetful functor to abelian groups in
+W, C for diagonal continuous coinduction and C₀(M)=C(trivial M) for left-shift coinduction. Let
+J convert discrete actions to continuous integer representations, T the coinduction monad, and
+I_G restriction along id_G. For f:A→B and n∈ℕ, the degree-n cosimplicial coresolution term C^nA
+is T^{n+1}A. Its comparison E_A,n:J(C^nA)≅R_{n+1}(JA) satisfies
+J(C^n(f))≫E_B,n.hom=E_A,n.hom≫r_{n+1}(f), where r uses id_G and I_G(J(f)). -/
 theorem coindCoresolutionTermIso_coefficient_naturality
     {A B : DiscreteAbelianAction.{u, max u w} G} (f : A ⟶ B) (n : ℕ) :
     toTopRep.map (((Monad.coresolutionFunctor (coindMonad.{u, w} G)).map f).app
@@ -119,8 +150,19 @@ theorem coindCoresolutionTermIso_coefficient_naturality
 end CategoryTheory.DiscreteAbelianAction
 end
 
-/-! Original qualified proof block: CoindInvariantTermNaturality -/
-/-! Original coinduction coefficient naturality after actual invariants and forgetting topology. -/
+/-!
+# Coefficient squares after invariants
+
+Taking G-invariants of the continuous integer representations and forgetting their topology
+gives a functor Q to coefficient abelian groups in W. It carries the termwise comparison square
+to a square of coefficient-group maps.
+-/
+/-!
+# The full invariant coefficient equation
+
+For every n∈ℕ, Q(J(C^n f))≫Q(E_B,n.hom)=Q(E_A,n.hom)≫Q(r_{n+1}(f)). Both the coresolution map
+and the identity-restricted continuous-resolution map are retained.
+-/
 @[expose] public section
 section
 noncomputable section
@@ -134,7 +176,14 @@ variable (G : Type u) [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual coefficient term square persists under original invariant evaluation. -/
+/-- Let G be a compact totally disconnected topological group in universe u and W=max(u,w) a
+coefficient universe with w independent. Write U for the forgetful functor to abelian groups in
+W, C for diagonal continuous coinduction and C₀(M)=C(trivial M) for left-shift coinduction. Let
+J convert discrete actions to continuous integer representations, T the coinduction monad, and
+I_G restriction along id_G. Let Q take invariants of the continuous integer representation and
+forget topology to abelian groups in W. For f:A→B and n∈ℕ,
+Q(J(C^n(f)))≫Q(E_B,n.hom)=Q(E_A,n.hom)≫Q(r_{n+1}(f)). This is the entire coresolution-term
+naturality equation after Q, retaining the identity-restricted coefficient map. -/
 theorem coindCoresolutionInvariantTerm_coefficient_naturality
     {A B : DiscreteAbelianAction.{u, max u w} G} (f : A ⟶ B) (n : ℕ) :
     (TopRep.invariantsFunctor ℤ G ⋙

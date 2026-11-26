@@ -1,3 +1,6 @@
-# Small Etale Common Geometric Image Comp Fiber Iso
+# Successive lifted geometric images have the composite fiber
 
-The same actual composition image comparison in the common fiber-element universe.
+Successive lifted geometric images have the composite fiber.
+
+The common-universe fibers of the two parenthesizations of the image geometric point are
+naturally isomorphic.

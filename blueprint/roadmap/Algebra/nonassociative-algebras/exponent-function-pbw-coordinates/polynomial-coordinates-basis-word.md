@@ -1,4 +1,6 @@
-# Polynomial Coordinates basis Word
+# The polynomial coordinates of a bracket-normalized basis word
 
-Polynomial coordinates compute the actual recursive word normalizer,
-including its finite lower-length bracket terms.
+The polynomial coordinates of a bracket-normalized basis word.
+
+For an arbitrary basis word, its polynomial coordinate is the finite sum of monomials indexed
+by its ordered normal-form words, with their normalization coefficients.

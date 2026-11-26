@@ -14,11 +14,15 @@ module
 public import MathlibExt.Algebra.Homology.ChainComplex.BalancedTensor.HomIso
 
 /-!
-# Naturality of the full signed tensor–Hom total adjunction
+# Naturality of the full integer tensor–Hom isomorphism
 
-The right and left module complexes vary contravariantly in Hom, and the
-abelian target varies covariantly. Every map below is the native tensor or
-Hom map already used to define the two actual total complexes.
+The right and left module complexes in `Hom(P ⊗_R Q, I)` vary contravariantly, and the target
+cochain complex `I` varies covariantly. Maps `f : P' → P`, `g : Q' → Q`, and `h : I → I'`
+therefore induce maps on the tensor-total and nested full-product Hom complexes.
+
+The inner Hom coordinate is postcomposition by `h` after precomposition by `g`. Signed
+currying commutes with these maps in every integer degree, and consequently the full
+tensor–Hom complex isomorphism is natural in all three variables.
 -/
 
 @[expose] public section
@@ -33,7 +37,10 @@ universe u v
 
 variable (R : Type u) [Ring R]
 
-/-- The earned enriched inner-Hom map has the original pointwise pre/postcomposition. -/
+/-- Inner module Hom map acts by precomposition and postcomposition.
+
+For `g : Q' ⟶ Q` and `h : I ⟶ I'`, the inner Hom map takes a coordinate `z_(c,d)` of degree
+`b`, where `c + b = d`, to the function `y ↦ (h.f d)(z_(c,d)((g.f (-c)) y))`. -/
 theorem moduleHomMap_v
     {Q Q' : ChainComplex (ModuleCat.{v} R) ℤ}
     {I I' : CochainComplex AddCommGrpCat.{v} ℤ}
@@ -85,7 +92,11 @@ theorem moduleHomMap_v
       (w.v c d hcd).hom y) hm
   exact hmPoint.trans he'
 
-/-- Signed currying commutes with the actual maps in all three original variables. -/
+/-- Signed currying is natural in both module complexes and the target.
+
+For chain maps `f : P' ⟶ P`, `g : Q' ⟶ Q`, and a cochain map `h : I ⟶ I'`, mapping a
+degree-`n` tensor Hom cochain and then currying equals currying first and then applying the
+outer Hom map of `f` and the inner module Hom map of `g` and `h`. -/
 theorem curryCochain_naturality
     {P P' : ChainComplex (ModuleCat.{v} Rᵐᵒᵖ) ℤ}
     {Q Q' : ChainComplex (ModuleCat.{v} R) ℤ}
@@ -222,7 +233,11 @@ theorem curryCochain_naturality
     simpa only [map_zsmul_unit, yq, w'] using hp
   exact hl.trans hr.symm
 
-/-- The native complex isomorphism is natural in the right module, left module, and target. -/
+/-- Full tensor–Hom complex isomorphism is natural in three variables.
+
+The Hom map induced by `map R f g` and `h`, followed by the tensor–Hom isomorphism for `(P',
+Q', I')`, equals the isomorphism for `(P, Q, I)` followed by the nested Hom map induced by
+`f`, `g`, and `h`. -/
 theorem homIso_naturality
     {P P' : ChainComplex (ModuleCat.{v} Rᵐᵒᵖ) ℤ}
     {Q Q' : ChainComplex (ModuleCat.{v} R) ℤ}

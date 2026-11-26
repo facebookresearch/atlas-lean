@@ -1,4 +1,6 @@
-# Field Continuous Derived Invariants Iso group coefficient naturality
+# Comparison respects simultaneous group and coefficient maps
 
-ALL original group and coefficient maps commute with the single normalized
-all-degree comparison; the right-hand map is independently constructed from RD universality.
+Comparison respects simultaneous group and coefficient maps.
+
+The continuous group-and-coefficient cohomology map followed by comparison equals comparison
+followed by its derived-invariant counterpart.

@@ -2,12 +2,12 @@
 
 ## Product Filtration
 
-- [Mixed Class](mixed-class.md)
+- [The mixed section gives a class in the associated grade](mixed-class.md)
 
 ## First Summand Map
 
-- [Stage Map](stage-map.md)
-- [Stage Map next](stage-map-next.md)
-- [Grade Map](grade-map.md)
-- [Grade Map mixed tmul](grade-map-mixed-tmul.md)
-- [Associated Graded Equiv grade Map](associated-graded-equiv-grade-map.md)
+- [A first-summand-preserving exterior map restricts to each filtration stage](stage-map.md)
+- [The stage map preserves the next-stage submodule](stage-map-next.md)
+- [The restricted exterior map descends to adjacent-stage quotients](grade-map.md)
+- [A mixed tensor class maps through the two diagonal exterior maps](grade-map-mixed-tmul.md)
+- [The associated-grade coordinate map is the diagonal exterior tensor map](associated-graded-equiv-grade-map.md)

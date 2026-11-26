@@ -16,9 +16,12 @@ public import Mathlib.Algebra.Homology.Augment
 /-!
 # Augmented projective resolutions
 
-This file packages the augmented chain complex of a projective resolution,
-proves it acyclic, and records the general implication from acyclicity of an
-augmented complex to quasi-isomorphism of its augmentation.
+Let P be a natural-number-indexed projective resolution of an object Z. Its augmented complex
+has Z in degree zero and Pₙ in degree n+1, with the augmentation P₀ → Z as the first
+differential. In an abelian category this augmented complex has zero homology in every degree.
+
+More generally, if a nonnegative complex K has an augmentation K₀ → X whose augmented complex is
+acyclic, the associated map K → X[0] is a quasi-isomorphism.
 -/
 
 @[expose] public section
@@ -37,7 +40,9 @@ namespace CategoryTheory.ProjectiveResolution
 variable {C : Type u} [Category.{v} C]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Insert the resolved object in degree zero below a projective resolution. -/
+/-- Let C have a zero object and zero morphisms, and let P be a projective resolution of Z indexed
+by ℕ. Its augmented complex has Z in degree zero and Pₙ in degree n+1. The first differential is
+the augmentation P₀ → Z, and the subsequent differentials are those of P. -/
 noncomputable def augmented [HasZeroObject C] [HasZeroMorphisms C]
     {Z : C} (P : ProjectiveResolution Z) : ChainComplex C ℕ :=
   P.complex.augment (P.π.f 0 : P.complex.X 0 ⟶ Z)
@@ -70,7 +75,9 @@ theorem augmented_d_succ_succ [HasZeroObject C] [HasZeroMorphisms C]
 variable [Abelian C]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The augmented chain complex of a projective resolution is acyclic. -/
+/-- Let C be an abelian category. For a natural-number-indexed projective resolution P of Z, the
+augmented complex with Z in degree zero and Pₙ in degree n+1 is acyclic: every homology object
+Hₙ(P.augmented), n ∈ ℕ, is zero. -/
 theorem augmented_acyclic {Z : C} (P : ProjectiveResolution Z) :
     P.augmented.Acyclic := by
   intro i
@@ -100,8 +107,9 @@ namespace ChainComplex
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- An augmentation is a quasi-isomorphism when its augmented complex is
-acyclic. -/
+/-- Let C be an abelian category. Let K be a natural-number-indexed chain complex, X an object, and
+f : K₀ → X with f ∘ d_K^{1,0}=0. If the augmented complex X ← K₀ ← K₁ ← ⋯ is acyclic, then the
+associated augmentation map K → X[0] is a quasi-isomorphism. -/
 theorem quasiIso_toSingle₀_of_augment_acyclic
     (K : ChainComplex C ℕ) (X : C) (f : K.X 0 ⟶ X)
     (w : K.d 1 0 ≫ f = 0) (h : (K.augment f w).Acyclic) :

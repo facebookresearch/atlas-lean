@@ -2,104 +2,104 @@
 
 ## Cobar Face Helpers
 
-- [Cobar Coface App of val zero](cobar-coface-app-of-val-zero.md)
-- [Cobar Coface App of val last](cobar-coface-app-of-val-last.md)
-- [Cobar Coface App of middle](cobar-coface-app-of-middle.md)
+- [The cobar coface component at a zero-valued index](cobar-coface-app-of-val-zero.md)
+- [The cobar coface component at the final index](cobar-coface-app-of-val-last.md)
+- [The cobar coface component at an interior index](cobar-coface-app-of-middle.md)
 
 ## Delta Calculus
 
-- [Delta At Pos zero eq](delta-at-pos-zero-eq.md)
-- [Delta At Pos succ eq](delta-at-pos-succ-eq.md)
-- [Delta At Pos adjacent](delta-at-pos-adjacent.md)
-- [Delta At Pos separated](delta-at-pos-separated.md)
-- [Delta At Pos face face](delta-at-pos-face-face.md)
+- [The innermost comultiplication insertion formula](delta-at-pos-zero-eq.md)
+- [The successor-position comultiplication insertion formula](delta-at-pos-succ-eq.md)
+- [The coassociativity identity of adjacent comultiplication insertions](delta-at-pos-adjacent.md)
+- [The interchange identity of separated comultiplication insertions](delta-at-pos-separated.md)
+- [The ordered comultiplication insertion identity](delta-at-pos-face-face.md)
 
 ## Epsilon Calculus
 
-- [Epsilon At Pos zero eq](epsilon-at-pos-zero-eq.md)
-- [Epsilon At Pos succ eq](epsilon-at-pos-succ-eq.md)
-- [Epsilon At Pos deg deg](epsilon-at-pos-deg-deg.md)
+- [The innermost counit insertion formula](epsilon-at-pos-zero-eq.md)
+- [The successor-position counit insertion formula](epsilon-at-pos-succ-eq.md)
+- [The ordered counit insertion identity](epsilon-at-pos-deg-deg.md)
 
 ## Delta Epsilon
 
-- [Delta At Pos epsilon At Pos cast Succ](delta-at-pos-epsilon-at-pos-cast-succ.md)
-- [Delta At Pos epsilon At Pos succ](delta-at-pos-epsilon-at-pos-succ.md)
+- [The first counit identity after a comultiplication insertion](delta-at-pos-epsilon-at-pos-cast-succ.md)
+- [The second counit identity after a comultiplication insertion](delta-at-pos-epsilon-at-pos-succ.md)
 
 ## Coaction Calculus
 
-- [Right Coaction Pow coassoc last](right-coaction-pow-coassoc-last.md)
-- [Right Coaction Pow counit last](right-coaction-pow-counit-last.md)
-- [Right Coaction Pow delta cast Succ](right-coaction-pow-delta-cast-succ.md)
-- [Left Coaction delta zero](left-coaction-delta-zero.md)
-- [Left Coaction epsilon zero](left-coaction-epsilon-zero.md)
-- [Left Coaction delta naturality](left-coaction-delta-naturality.md)
-- [Left Coaction epsilon naturality](left-coaction-epsilon-naturality.md)
+- [The right-coaction coassociativity identity at the outer insertion](right-coaction-pow-coassoc-last.md)
+- [The right-coaction counit identity at the outer contraction](right-coaction-pow-counit-last.md)
+- [Interchange of right coaction and an interior comultiplication](right-coaction-pow-delta-cast-succ.md)
+- [The left-coaction coassociativity identity at the innermost insertion](left-coaction-delta-zero.md)
+- [The left-coaction counit identity at the innermost contraction](left-coaction-epsilon-zero.md)
+- [Naturality of comultiplication insertion along a left coaction](left-coaction-delta-naturality.md)
+- [Naturality of counit insertion along a left coaction](left-coaction-epsilon-naturality.md)
 
 ## Coface Coface
 
-- [Cobar Coface App coface coface](cobar-coface-app-coface-coface.md)
-- [Cobar Coface coface coface](cobar-coface-coface-coface.md)
+- [The componentwise cobar coface identity](cobar-coface-app-coface-coface.md)
+- [The natural-transformation cobar coface identity](cobar-coface-coface-coface.md)
 
 ## Codeg Codeg
 
-- [Cobar Codegeneracy App deg deg](cobar-codegeneracy-app-deg-deg.md)
-- [Cobar Codegeneracy deg deg](cobar-codegeneracy-deg-deg.md)
+- [The componentwise cobar codegeneracy identity](cobar-codegeneracy-app-deg-deg.md)
+- [The natural-transformation cobar codegeneracy identity](cobar-codegeneracy-deg-deg.md)
 
 ## Right Coaction Epsilon
 
-- [Right Coaction Pow epsilon cast Succ](right-coaction-pow-epsilon-cast-succ.md)
+- [Interchange of right coaction and an interior counit contraction](right-coaction-pow-epsilon-cast-succ.md)
 
 ## Delta Epsilon Distant
 
-- [Delta At Pos epsilon At Pos succ cast Succ of le](delta-at-pos-epsilon-at-pos-succ-cast-su.md)
-- [Delta At Pos epsilon At Pos cast Succ succ of lt](delta-at-pos-epsilon-at-pos-cast-succ-su.md)
+- [The mixed insertion identity with counit before comultiplication](delta-at-pos-epsilon-at-pos-succ-cast-su.md)
+- [The mixed insertion identity with counit after comultiplication](delta-at-pos-epsilon-at-pos-cast-succ-su.md)
 
 ## Coface Codeg Self
 
-- [Cobar Coface App codegeneracy self](cobar-coface-app-codegeneracy-self.md)
-- [Cobar Coface codegeneracy self](cobar-coface-codegeneracy-self.md)
+- [The componentwise matching coface–codegeneracy identity](cobar-coface-app-codegeneracy-self.md)
+- [The matching coface–codegeneracy identity of cobar functors](cobar-coface-codegeneracy-self.md)
 
 ## Coface Codeg Succ
 
-- [Cobar Coface App codegeneracy succ](cobar-coface-app-codegeneracy-succ.md)
-- [Cobar Coface codegeneracy succ](cobar-coface-codegeneracy-succ.md)
+- [The componentwise successor coface–codegeneracy identity](cobar-coface-app-codegeneracy-succ.md)
+- [The successor coface–codegeneracy identity of cobar functors](cobar-coface-codegeneracy-succ.md)
 
 ## Coface Codeg Of Le
 
-- [Cobar Coface App codegeneracy of le](cobar-coface-app-codegeneracy-of-le.md)
-- [Cobar Coface codegeneracy of le](cobar-coface-codegeneracy-of-le.md)
+- [The componentwise mixed cobar identity for a preceding coface](cobar-coface-app-codegeneracy-of-le.md)
+- [The mixed cobar identity for a preceding coface](cobar-coface-codegeneracy-of-le.md)
 
 ## Coface Codeg Of Gt
 
-- [Cobar Coface App codegeneracy of gt](cobar-coface-app-codegeneracy-of-gt.md)
-- [Cobar Coface codegeneracy of gt](cobar-coface-codegeneracy-of-gt.md)
+- [The componentwise mixed cobar identity for a following coface](cobar-coface-app-codegeneracy-of-gt.md)
+- [The mixed cobar identity for a following coface](cobar-coface-codegeneracy-of-gt.md)
 
 ## Endpoint Trichotomy
 
-- [Cobar Coface Index trichotomy](cobar-coface-index-trichotomy.md)
-- [Cobar Delta At Pos rev zero](cobar-delta-at-pos-rev-zero.md)
-- [Cobar Delta At Pos rev last](cobar-delta-at-pos-rev-last.md)
+- [The endpoint and interior cases of a cobar coface index](cobar-coface-index-trichotomy.md)
+- [The reversed insertion position of the first interior cobar coface](cobar-delta-at-pos-rev-zero.md)
+- [The reversed insertion position of the last interior cobar coface](cobar-delta-at-pos-rev-last.md)
 
 ## Cobar Data
 
-- [Cobar Data Op](cobar-data-op.md)
-- [Cobar Data Op obj](cobar-data-op-obj.md)
-- [Cobar Data Op obj n](cobar-data-op-obj-n.md)
-- [Cobar Data Op δ](cobar-data-op-2.md)
-- [Cobar Data Op σ](cobar-data-op-3.md)
-- [Cobar Gen Rel Op](cobar-gen-rel-op.md)
-- [Cobar Gen Rel Op obj op mk](cobar-gen-rel-op-obj-op-mk.md)
-- [Cobar Gen Rel Op map δ op](cobar-gen-rel-op-map-op.md)
-- [Cobar Gen Rel Op map σ op](cobar-gen-rel-op-map-op-2.md)
+- [The opposite simplicial data of a two-sided cobar construction](cobar-data-op.md)
+- [The degree-object family of opposite cobar data](cobar-data-op-obj.md)
+- [The object in one degree of opposite cobar data](cobar-data-op-obj-n.md)
+- [The face maps of opposite cobar data](cobar-data-op-2.md)
+- [The degeneracy maps of opposite cobar data](cobar-data-op-3.md)
+- [The opposite cobar functor on the generated simplex category](cobar-gen-rel-op.md)
+- [The finite-ordinal value of the generated opposite cobar functor](cobar-gen-rel-op-obj-op-mk.md)
+- [The generated opposite cobar map of a coface generator](cobar-gen-rel-op-map-op.md)
+- [The generated opposite cobar map of a codegeneracy generator](cobar-gen-rel-op-map-op-2.md)
 
 ## Two Sided Cobar
 
-- [Two Sided Cobar](two-sided-cobar.md)
-- [Two Sided Cobar obj mk](two-sided-cobar-obj-mk.md)
-- [Two Sided Cobar obj](two-sided-cobar-obj.md)
-- [Two Sided Cobar map δ](two-sided-cobar-map.md)
-- [Two Sided Cobar map σ](two-sided-cobar-map-2.md)
-- [Two Sided Cobar obj obj](two-sided-cobar-obj-obj.md)
-- [Two Sided Cobar obj map](two-sided-cobar-obj-map.md)
-- [Two Sided Cobar map δ app](two-sided-cobar-map-app.md)
-- [Two Sided Cobar map σ app](two-sided-cobar-map-app-2.md)
+- [The two-sided comonadic cobar cosimplicial object](two-sided-cobar.md)
+- [The degree formula for the two-sided cobar cosimplicial object](two-sided-cobar-obj-mk.md)
+- [The ordinal-length formula for a two-sided cobar object](two-sided-cobar-obj.md)
+- [The cofaces of the two-sided cobar cosimplicial object](two-sided-cobar-map.md)
+- [The codegeneracies of the two-sided cobar cosimplicial object](two-sided-cobar-map-2.md)
+- [The pointwise object formula for two-sided cobar](two-sided-cobar-obj-obj.md)
+- [The pointwise carrier-map formula for two-sided cobar](two-sided-cobar-obj-map.md)
+- [The pointwise coface formula for two-sided cobar](two-sided-cobar-map-app.md)
+- [The pointwise codegeneracy formula for two-sided cobar](two-sided-cobar-map-app-2.md)

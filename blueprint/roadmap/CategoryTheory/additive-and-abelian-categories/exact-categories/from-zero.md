@@ -1,3 +1,5 @@
-# From Zero
+# Maps from zero are admissible monomorphisms
 
-Every map `0 ⟶ X` is an admissible mono, via `0 ⟶ 0 ⊞ X` and the zero biproduct iso.
+In an additive category `C` with a chosen Quillen exact structure, every
+morphism `0 → X` from a zero object is an admissible monomorphism,
+as in the split admissible sequence `0 → X → X`.

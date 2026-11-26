@@ -13,12 +13,16 @@ public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.CoefficientFunctor
 public import MathlibExt.Algebra.Category.LieModuleCat.End
 
 /-!
-# Commuting scalar actions on Chevalley–Eilenberg chains
+# Coefficient-ring actions commuting with the Lie action
 
-A coefficient-ring action commuting with the Lie action induces actions on
-coefficient chains and their homology. The degree actions make the
-Chevalley–Eilenberg differential linear over the coefficient ring, giving a
-complex with the same carriers and differential over that ring.
+Let X be a Lie module over an R-Lie algebra L, with R commutative. A ring homomorphism ρ : S →
+End_R(X) commuting with every L-action map gives an S-action on the CE complex. Its degree-n
+action is a ⊗ m ↦ a ⊗ ρ(s)(m), and the induced actions on homology are obtained from the
+coefficient homology functors.
+
+The CE boundary commutes with these degree actions. It is therefore S-linear, giving a chain
+complex over S with the same underlying terms and boundary functions. The ring S may be
+noncommutative and its carrier universe is independent of those of R, L and X.
 -/
 
 @[expose] public section
@@ -36,22 +40,34 @@ namespace ChevalleyEilenberg
 variable (R : Type u) [CommRing R] (L : Type v) [LieRing L] [LieAlgebra R L]
   (X : LieModuleCat.{w} R L) {S : Type z} [Ring S]
 
-/-- The existing coefficient functor sends a commuting action to the original CE complex. -/
+/-- Let R : Type u be a commutative ring and L : Type v an R-Lie algebra with its Lie ring
+structure. Let X be a Lie module over L with carrier universe w, let S be a ring, and let ρ :
+S →+* Module.End R X satisfy ρ(s)(⁅l, m⁆) = ⁅l, ρ(s)(m)⁆ for every s : S, l : L and m : X. The
+coefficient functor gives a ring homomorphism S → End(coefficientComplex R L X). Its action in
+each degree is identity on ⋀[R]^n L tensored with ρ(s) on X. -/
 def coefficientComplexRingAction (ρ : S →+* Module.End R X)
     (hρ : ∀ (s : S) (x : L) (m : X), ρ s ⁅x, m⁆ = ⁅x, ρ s m⁆) :
     S →+* End (coefficientComplex R L X) :=
   ((coefficientComplexFunctor R L).mapEndRingHom X).comp
     (LieModuleCat.endRingHomOfLinearAction R L X ρ hρ)
 
-/-- Native CE homology inherits the same commuting coefficient action in every degree. -/
+/-- Let R : Type u be a commutative ring and L : Type v an R-Lie algebra with its Lie ring
+structure. Let X be a Lie module over L with carrier universe w, let S be a ring, and let ρ :
+S →+* Module.End R X satisfy ρ(s)(⁅l, m⁆) = ⁅l, ρ(s)(m)⁆ for every s : S, l : L and m : X. For
+n : ℕ, the coefficient homology functor gives a ring homomorphism S →
+End(H_n(coefficientComplex R L X)). It is the action induced on homology by the coefficient
+chain endomorphisms. -/
 def coefficientHomologyRingAction (ρ : S →+* Module.End R X)
     (hρ : ∀ (s : S) (x : L) (m : X), ρ s ⁅x, m⁆ = ⁅x, ρ s m⁆) (n : ℕ) :
     S →+* End ((coefficientComplex R L X).homology n) :=
   ((coefficientHomologyFunctor R L n).mapEndRingHom X).comp
     (LieModuleCat.endRingHomOfLinearAction R L X ρ hρ)
 
-/-- The complex action retains identity on the exterior factor and the original coefficient
-action. -/
+/-- Let R : Type u be a commutative ring and L : Type v an R-Lie algebra with its Lie ring
+structure. Let X be a Lie module over L with carrier universe w, let S be a ring, and let ρ :
+S →+* Module.End R X satisfy ρ(s)(⁅l, m⁆) = ⁅l, ρ(s)(m)⁆ for every s : S, l : L and m : X. For
+s : S, n : ℕ, a : ⋀[R]^n L and m : X, the degree-n chain action sends a ⊗ₜ[R] m to a ⊗ₜ[R]
+ρ(s)(m). -/
 theorem coefficientComplexRingAction_f_tmul (ρ : S →+* Module.End R X)
     (hρ : ∀ (s : S) (x : L) (m : X), ρ s ⁅x, m⁆ = ⁅x, ρ s m⁆)
     (s : S) (n : ℕ) (a : ⋀[R]^n L) (m : X) :
@@ -60,7 +76,11 @@ theorem coefficientComplexRingAction_f_tmul (ρ : S →+* Module.End R X)
   coefficientComplexFunctor_map_f_tmul R L
     (LieModuleCat.endRingHomOfLinearAction R L X ρ hρ s).asHom n a m
 
-/-- The degree endomorphism on the original native module carrier. -/
+/-- Let R : Type u be a commutative ring and L : Type v an R-Lie algebra with its Lie ring
+structure. Let X be a Lie module over L with carrier universe w, let S be a ring, and let ρ :
+S →+* Module.End R X satisfy ρ(s)(⁅l, m⁆) = ⁅l, ρ(s)(m)⁆ for every s : S, l : L and m : X. For
+n : ℕ, coefficientDegreeRingAction is the ring homomorphism S → Module.End R
+((coefficientComplex R L X).X n) obtained by evaluating the chain action in degree n. -/
 def coefficientDegreeRingAction (ρ : S →+* Module.End R X)
     (hρ : ∀ (s : S) (x : L) (m : X), ρ s ⁅x, m⁆ = ⁅x, ρ s m⁆) (n : ℕ) :
     S →+* Module.End R ((coefficientComplex R L X).X n) :=
@@ -75,7 +95,12 @@ theorem coefficientDegreeRingAction_apply (ρ : S →+* Module.End R X)
     coefficientDegreeRingAction R L X ρ hρ n s p =
       ((coefficientComplexRingAction R L X ρ hρ s).asHom.f n).hom p := rfl
 
-/-- The original CE degree with the coefficient-ring module structure. -/
+/-- Let R : Type u be a commutative ring and L : Type v an R-Lie algebra with its Lie ring
+structure. Let X be a Lie module over L with carrier universe w, let S be a ring, and let ρ :
+S →+* Module.End R X satisfy ρ(s)(⁅l, m⁆) = ⁅l, ρ(s)(m)⁆ for every s : S, l : L and m : X. For
+n : ℕ, coefficientScalarChainObject is the carrier of ⋀[R]^n L ⊗[R] X equipped with the
+S-module action induced by coefficientDegreeRingAction. It is an object of ModuleCat.{max u v
+w} S. -/
 abbrev coefficientScalarChainObject (ρ : S →+* Module.End R X)
     (hρ : ∀ (s : S) (x : L) (m : X), ρ s ⁅x, m⁆ = ⁅x, ρ s m⁆) (n : ℕ) :
     ModuleCat.{max u v w} S :=
@@ -83,7 +108,12 @@ abbrev coefficientScalarChainObject (ρ : S →+* Module.End R X)
   letI : Module S M := Module.compHom M (coefficientDegreeRingAction R L X ρ hρ n)
   ModuleCat.of S M
 
-/-- The original differential is linear for every commuting coefficient-ring action. -/
+/-- Let R : Type u be a commutative ring and L : Type v an R-Lie algebra with its Lie ring
+structure. Let X be a Lie module over L with carrier universe w, let S be a ring, and let ρ :
+S →+* Module.End R X satisfy ρ(s)(⁅l, m⁆) = ⁅l, ρ(s)(m)⁆ for every s : S, l : L and m : X. For
+every n : ℕ, the CE boundary from degree n + 1 to n is an S-linear map between
+coefficientScalarChainObject in those degrees. Its underlying function is the
+coefficientComplex R L X boundary. -/
 def coefficientScalarDifferential (ρ : S →+* Module.End R X)
     (hρ : ∀ (s : S) (x : L) (m : X), ρ s ⁅x, m⁆ = ⁅x, ρ s m⁆) (n : ℕ) :
     coefficientScalarChainObject R L X ρ hρ (n + 1) →ₗ[S]
@@ -100,7 +130,12 @@ def coefficientScalarDifferential (ρ : S →+* Module.End R X)
         (((coefficientComplex R L X).d (n + 1) n).hom p)
     simpa only [ModuleCat.comp_apply] using hp
 
-/-- The CE complex over the commuting coefficient ring, with unchanged carriers/differential. -/
+/-- Let R : Type u be a commutative ring and L : Type v an R-Lie algebra with its Lie ring
+structure. Let X be a Lie module over L with carrier universe w, let S be a ring, and let ρ :
+S →+* Module.End R X satisfy ρ(s)(⁅l, m⁆) = ⁅l, ρ(s)(m)⁆ for every s : S, l : L and m : X. The
+coefficientScalarChainObject degrees and coefficientScalarDifferential boundaries define a
+chain complex in ModuleCat.{max u v w} S indexed by ℕ. Its underlying carriers and boundary
+functions are those of the R-linear CE coefficient complex. -/
 abbrev coefficientScalarComplex (ρ : S →+* Module.End R X)
     (hρ : ∀ (s : S) (x : L) (m : X), ρ s ⁅x, m⁆ = ⁅x, ρ s m⁆) :
     ChainComplex (ModuleCat.{max u v w} S) ℕ :=

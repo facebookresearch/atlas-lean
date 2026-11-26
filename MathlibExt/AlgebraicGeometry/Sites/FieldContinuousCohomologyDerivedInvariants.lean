@@ -18,9 +18,23 @@ public import MathlibExt.AlgebraicGeometry.Sites.FieldInjectiveContinuousCochain
 public import MathlibExt.RepresentationTheory.Homological.ContCohomology.DiscreteCoefficientLongExact
 
 /-!
-The same original continuous homogeneous cohomology computes the actual derived invariants. All
-original degrees, zero values, coefficients/groups, augmented resolutions/choices and one-copy
-native lifts are fixed by one normalized delta-functor isomorphism.
+# Continuous field cohomology as derived invariants
+
+Fix a field `k` with separable closure `Ω` and discrete Galois coefficients in universe `max u
+w`. Continuous homogeneous cohomology and right-derived invariants are universal cohomological
+delta functors. Their degree-zero invariant coordinates determine a normalized isomorphism in
+every natural degree.
+
+The comparison commutes with coefficient maps and connecting morphisms. Injective-resolution
+coordinates respect every coaugmentation-compatible resolution map and every change of
+resolution. A zero cocycle is evaluated at the group identity, and every degree-one class has
+a preimage under an injective-presentation cokernel boundary.
+
+Continuous homomorphisms of Galois groups, including groups in an independent field universe,
+give restriction maps. The comparison respects simultaneous group and coefficient change. For
+coefficients initially in different ranks, each is lifted once to the shared height `max u v
+w`, retaining the intertwiner's element values. Lifted field sheaves give the corresponding
+sheaf-natural comparison of derived sections and continuous cohomology.
 -/
 
 @[expose] public section
@@ -35,12 +49,18 @@ namespace AlgebraicGeometry.Scheme.DerivedSections
 attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 
-/-- The original continuous cohomology, with its topology and scalars forgotten. -/
+/-- Continuous cohomology functor of field coefficients.
+
+For a field with separable closure, take degree-`n` continuous homogeneous cohomology of a
+discrete Galois coefficient, valued in additive groups of universe `max u w`. -/
 abbrev fieldContinuousCohomologyFunctor (n : ℕ) :
     FieldCohomologyModule.{u, w} k Ω ⥤ AddCommGrpCat.{max u w} :=
   ContinuousCohomology.discreteCoefficientCohomologyFunctor.{u, w}
     (InfiniteGalois.profiniteGalGrp k Ω) n
 
+/-- Continuous field cohomology is additive in coefficients.
+
+Each degree functor preserves sums of discrete Galois coefficient maps. -/
 instance fieldContinuousCohomologyFunctor_additive (n : ℕ) :
     (fieldContinuousCohomologyFunctor.{u, w} k Ω n).Additive where
   map_add {M N} f g := by
@@ -65,7 +85,10 @@ instance fieldContinuousCohomologyFunctor_additive (n : ℕ) :
     exact (congrArg U.map hh).trans
       (U.map_add (f := H.map (C.map (P.map f))) (g := H.map (C.map (P.map g))))
 
-/-- Categorical short exactness gives the same literal original coefficient maps. -/
+/-- Short exact field coefficients satisfy the concrete exactness predicate.
+
+A categorical short exact sequence of field coefficient modules has the underlying map
+exactness required by continuous-coefficient cohomology. -/
 theorem fieldShortExact_discreteCoefficientExact
     (S : ShortComplex (FieldCohomologyModule.{u, w} k Ω)) (hS : S.ShortExact) :
     ContinuousCohomology.DiscreteCoefficientExact.{u, w}
@@ -73,7 +96,10 @@ theorem fieldShortExact_discreteCoefficientExact
   (fieldModule_shortExact_iff_original_maps.{u, w} k Ω S).mp hS
 
 -- The unchanged field-alias LES tuple exceeded 200000 in retained v5-v7 attempts.
-/-- The actual coefficient LES packages the original HG functors as a delta functor. -/
+/-- Continuous field cohomology forms a cohomological delta functor.
+
+The degree functors and continuous-coefficient connecting morphisms form a cohomological delta
+functor. -/
 def fieldContinuousCohomologyDeltaFunctor :
     CohomologicalDeltaFunctor (FieldCohomologyModule.{u, w} k Ω)
       AddCommGrpCat.{max u w} where
@@ -122,14 +148,19 @@ def fieldContinuousCohomologyDeltaFunctor :
     exact ContinuousCohomology.discreteCoefficient_cohomology_mono_zero.{u, w}
       (G := InfiniteGalois.profiniteGalGrp k Ω) S.obj h
 
-/-- Every actual injective has zero positive original HG in the additive category. -/
+/-- Injective field coefficients have zero positive continuous cohomology.
+
+For an injective coefficient object `I`, continuous cohomology in every degree `n + 1` is
+zero. -/
 theorem fieldContinuousCohomologyFunctor_isZero_injective
     (I : FieldCohomologyModule.{u, w} k Ω) [Injective I] (n : ℕ) :
     IsZero ((fieldContinuousCohomologyFunctor.{u, w} k Ω (n + 1)).obj I) := by
   let U := ContinuousCohomology.discreteCoefficientForget.{max u w}
   exact U.map_isZero (fieldInjectiveContinuousCohomology_succ_isZero.{u, w} k Ω I n)
 
-/-- The real injective effacement proves universality of the existing HG delta functor. -/
+/-- Continuous field cohomology delta functor is universal.
+
+The continuous-cohomology delta functor on field coefficient modules is universal. -/
 theorem fieldContinuousCohomologyDeltaFunctor_isUniversal :
     CohomologicalDeltaFunctor.IsUniversal
       (FieldCohomologyModule.{u, w} k Ω) AddCommGrpCat.{max u w}
@@ -152,7 +183,10 @@ open CategoryTheory CategoryTheory.Limits
 attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 
-/-- The original identity-evaluation zeroIso, with only topology/scalars forgotten. -/
+/-- Degree zero continuous field cohomology is invariants.
+
+The degree-zero continuous-cohomology functor is naturally isomorphic to the field invariant
+functor. -/
 def fieldContinuousCohomologyZeroIso :
     fieldContinuousCohomologyFunctor.{u, w} k Ω 0 ≅ fieldInvariantFunctor.{u, w} k Ω :=
   NatIso.ofComponents (fun M => ContinuousCohomology.discreteCoefficientZeroIso.{u, w}
@@ -170,11 +204,15 @@ def fieldContinuousCohomologyZeroIso :
         (h.trans (U.map_comp (ContinuousCohomology.zeroIso (P.obj _)).hom
           ((TopRep.invariantsFunctor ℤ Gal(Ω/k)).map (P.map f)))))
 
-/-- The actual invariants-derived delta functor, with genuine horseshoe connectors. -/
+/-- Right derived field invariants delta functor.
+
+Take the right-derived delta functor of field invariants. -/
 abbrev fieldDerivedInvariantsDeltaFunctor :=
   Functor.rightDerivedDeltaFunctor (fieldInvariantFunctor.{u, w} k Ω)
 
-/-- Genuine injective effacement makes this actual derived family universal. -/
+/-- Right derived field invariants are universal.
+
+The delta functor of right-derived field invariants is universal. -/
 theorem fieldDerivedInvariantsDeltaFunctor_isUniversal :
     CohomologicalDeltaFunctor.IsUniversal
       (FieldCohomologyModule.{u, w} k Ω) AddCommGrpCat.{max u w}
@@ -182,8 +220,10 @@ theorem fieldDerivedInvariantsDeltaFunctor_isUniversal :
   Functor.isUniversal_rightDerivedDeltaFunctor
     (fieldInvariantFunctor.{u, w} k Ω)
 
-/-- Both actual universal functors have one comparison, fixed by the original
-zeroIso and the actual right-derived augmentation at degree zero. -/
+/-- Normalized comparison of continuous cohomology and derived invariants.
+
+The degree-zero invariant coordinate extends to an isomorphism of the two universal delta
+functors. -/
 def fieldContinuousDerivedInvariantsDeltaIso :
     fieldContinuousCohomologyDeltaFunctor.{u, w} k Ω ≅
       fieldDerivedInvariantsDeltaFunctor.{u, w} k Ω :=
@@ -196,7 +236,10 @@ def fieldContinuousDerivedInvariantsDeltaIso :
     (fieldContinuousCohomologyZeroIso.{u, w} k Ω ≪≫
       (fieldInvariantFunctor.{u, w} k Ω).rightDerivedZeroIsoSelf.symm)
 
-/-- Every degree of the SAME canonical delta-functor isomorphism. -/
+/-- Continuous cohomology as derived invariants in each degree.
+
+Evaluate the delta-functor isomorphism in natural degree `q` to obtain a natural isomorphism
+with `R^q` of invariants. -/
 def fieldContinuousDerivedInvariantsIso (q : ℕ) :
     fieldContinuousCohomologyFunctor.{u, w} k Ω q ≅
       (fieldInvariantFunctor.{u, w} k Ω).rightDerived q :=
@@ -204,7 +247,10 @@ def fieldContinuousDerivedInvariantsIso (q : ℕ) :
     (FieldCohomologyModule.{u, w} k Ω) AddCommGrpCat.{max u w} q).mapIso
     (fieldContinuousDerivedInvariantsDeltaIso.{u, w} k Ω)
 
-/-- The fixed comparison agrees with the original zeroIso after the genuine RD0 normalization. -/
+/-- Derived invariant comparison has the degree zero normalization.
+
+The forward comparison in degree zero followed by the derived-zero coordinate equals the
+continuous-cohomology invariant coordinate. -/
 theorem fieldContinuousDerivedInvariantsIso_zero :
     (fieldContinuousDerivedInvariantsIso.{u, w} k Ω 0).hom ≫
         (fieldInvariantFunctor.{u, w} k Ω).rightDerivedZeroIsoSelf.hom =
@@ -225,7 +271,10 @@ theorem fieldContinuousDerivedInvariantsIso_zero :
       simp only [Iso.trans_hom, Iso.symm_hom, Category.assoc, Iso.inv_hom_id,
         Category.comp_id])
 
-/-- All original coefficient maps commute with the same comparison. -/
+/-- Continuous derived comparison is coefficient natural.
+
+Each coefficient map commutes with the degreewise comparison and its right-derived invariant
+map. -/
 theorem fieldContinuousDerivedInvariantsIso_naturality (q : ℕ)
     {M N : FieldCohomologyModule.{u, w} k Ω} (f : M ⟶ N) :
     (fieldContinuousCohomologyFunctor.{u, w} k Ω q).map f ≫
@@ -234,7 +283,11 @@ theorem fieldContinuousDerivedInvariantsIso_naturality (q : ℕ)
         ((fieldInvariantFunctor.{u, w} k Ω).rightDerived q).map f :=
   (fieldContinuousDerivedInvariantsIso.{u, w} k Ω q).hom.naturality f
 
-/-- The original continuous connector and actual right-derived horseshoe connector commute. -/
+/-- Continuous derived comparison respects coefficient connecting maps.
+
+For a short exact coefficient sequence, the continuous connecting map followed by comparison
+in degree `n+1` equals comparison in degree `n` followed by the derived-invariant connecting
+map. -/
 theorem fieldContinuousDerivedInvariantsIso_connecting (n : ℕ)
     (S : ShortComplex (FieldCohomologyModule.{u, w} k Ω)) (hS : S.ShortExact) :
     ContinuousCohomology.discreteCoefficientConnecting.{u, w}
@@ -247,8 +300,10 @@ theorem fieldContinuousDerivedInvariantsIso_connecting (n : ℕ)
   DeltaFunctor.System.comm (fieldContinuousDerivedInvariantsDeltaIso.{u, w} k Ω).hom.hom
     n ⟨S, hS⟩
 
-/-- On every actual injective resolution the comparison uses the actual mapped
-cocomplex and its stock right-derived homology isomorphism. -/
+/-- Continuous cohomology in injective resolution invariant coordinates.
+
+For any injective resolution, compare continuous cohomology with cohomology of its termwise
+invariant complex. -/
 def fieldContinuousDerivedInvariantsResolutionIso (q : ℕ)
     {M : FieldCohomologyModule.{u, w} k Ω} (I : InjectiveResolution M) :
     (fieldContinuousCohomologyFunctor.{u, w} k Ω q).obj M ≅
@@ -258,7 +313,10 @@ def fieldContinuousDerivedInvariantsResolutionIso (q : ℕ)
     I.isoRightDerivedObj (fieldInvariantFunctor.{u, w} k Ω) q
 
 -- The final field-resolution association reached 200000 in retained v4.
-/-- EVERY actual augmented resolution map has its literal mapped homology square. -/
+/-- Resolution comparison is natural for augmented resolution maps.
+
+A map of injective-resolution cochain complexes agreeing with the coefficient map in degree
+zero commutes with the continuous-to-resolution cohomology coordinates. -/
 theorem fieldContinuousDerivedInvariantsResolutionIso_naturality (q : ℕ)
     {M N : FieldCohomologyModule.{u, w} k Ω} (f : M ⟶ N)
     (I : InjectiveResolution M) (J : InjectiveResolution N)
@@ -292,7 +350,10 @@ theorem fieldContinuousDerivedInvariantsResolutionIso_naturality (q : ℕ)
       ((Category.assoc _ _ _).trans
         ((congrArg (fun x => c.hom.app M ≫ x) hR).trans (Category.assoc _ _ _).symm)))
 
-/-- The actual canonical resolution-choice isomorphism is respected in every degree. -/
+/-- Resolution comparison is independent of resolution choice.
+
+The comparison for one injective resolution followed by its canonical cohomology comparison
+equals the comparison for the other resolution. -/
 theorem fieldContinuousDerivedInvariantsResolutionIso_choice (q : ℕ)
     {M : FieldCohomologyModule.{u, w} k Ω} (I J : InjectiveResolution M) :
     fieldContinuousDerivedInvariantsResolutionIso.{u, w} k Ω q I ≪≫
@@ -307,7 +368,10 @@ theorem fieldContinuousDerivedInvariantsResolutionIso_choice (q : ℕ)
   simp only [Category.assoc, Iso.hom_inv_id_assoc]
   rfl
 
-/-- The normalization is literal evaluation of the original homogeneous cocycle at identity. -/
+/-- Degree zero comparison evaluates a cocycle at the group identity.
+
+For a continuous degree-zero cocycle, its compared invariant element has value equal to the
+included homogeneous cochain evaluated at `1`. -/
 theorem fieldContinuousDerivedInvariantsIso_zero_cycle_value
     (M : FieldCohomologyModule.{u, w} k Ω)
     (c : ContinuousCohomology.cocycles
@@ -323,7 +387,10 @@ theorem fieldContinuousDerivedInvariantsIso_zero_cycle_value
   exact hv.trans (ContinuousCohomology.homogeneousZeroIso_cycles_value.{0, u, w}
     _ c)
 
-/-- The actual cokernel effacement includes the initial q=1 case and every higher degree. -/
+/-- Connecting map of an injective cokernel sequence is epi.
+
+For a monomorphism into an injective coefficient, the continuous connecting map from cokernel
+cohomology to the next degree of the source is an epimorphism. -/
 theorem fieldContinuousCokerConnecting_epi (n : ℕ)
     {M I : FieldCohomologyModule.{u, w} k Ω} (i : M ⟶ I) [Mono i] [Injective I] :
     Epi (((fieldContinuousCohomologyDeltaFunctor.{u, w} k Ω).connecting n).app
@@ -337,8 +404,10 @@ theorem fieldContinuousCokerConnecting_epi (n : ℕ)
   exact (ShortComplex.exact_iff_epi _ hk).mp hex
 
 -- Instantiating the full original field-family uniqueness reached 200000 in retained v4.
-/-- A family is forced in every degree by naturality, original connector compatibility
-and the fixed identity-evaluation normalization at zero. No universality is assumed. -/
+/-- Connecting and zero normalization determine the comparison maps.
+
+Any family of natural transformations commuting with coefficient connecting maps and having
+the same degree-zero normalization equals the canonical comparison in every degree. -/
 theorem fieldContinuousDerivedInvariantsIso_unique
     (f : ∀ n, fieldContinuousCohomologyFunctor.{u, w} k Ω n ⟶
       (fieldInvariantFunctor.{u, w} k Ω).rightDerived n)
@@ -383,32 +452,47 @@ attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 variable (k' Ω' : Type v) [Field k'] [Field Ω'] [Algebra k' Ω'] [IsSepClosure k' Ω']
 
-/-- Compatibility with the original local override name, without an instance registration. -/
 -- Preserve the original public compatibility name and its signature, as recorded by the
 -- field-cohomology-cut6 validation; the `[IsSepClosure K L]` binder is unused.
+/-- Let `K` and `L` be fields in universe `u`, with a `K`-algebra structure on `L`
+and a specified separable-closure structure for `L/K`. The category of discrete continuous
+`Gal(L/K)`-actions on abelian coefficient groups in the independent universe `w` is
+preadditive: addition and zero on equivariant morphisms are computed componentwise. -/
 @[nolint defsWithUnderscore unusedArguments]
 abbrev fieldDiscreteModule_preadditive_raw
     (K L : Type u) [Field K] [Field L] [Algebra K L] [IsSepClosure K L] :
     Preadditive (DiscreteAbelianAction.{u, w} Gal(L/K)) :=
   DiscreteAbelianAction.instPreadditive.{u, w} (G := Gal(L/K))
 
-/-- The stock restriction on the original groups and same common coefficient carrier. -/
+/-- Coefficient restriction along a continuous Galois group homomorphism.
+
+For fields in universes `u` and `v`, restrict the action along a continuous group map, using
+common coefficient height `max u v w`. -/
 def fieldModuleRestriction
     (φ : InfiniteGalois.profiniteGalGrp k' Ω' →ₜ* InfiniteGalois.profiniteGalGrp k Ω) :
     FieldCohomologyModule.{u, max v w} k Ω ⥤ FieldCohomologyModule.{v, max u w} k' Ω' :=
   GaloisUnits.restrictModules.{u, v, max u (max v w)} φ
 
+/-- Field coefficient restriction is additive.
+
+Restriction of the Galois action preserves sums of coefficient morphisms. -/
 instance fieldModuleRestriction_additive
     (φ : InfiniteGalois.profiniteGalGrp k' Ω' →ₜ* InfiniteGalois.profiniteGalGrp k Ω) :
     (fieldModuleRestriction.{u, v, w} k Ω k' Ω' φ).Additive where
   map_add {_ _} f g := by rfl
 
+/-- Field coefficient restriction preserves zero maps.
+
+The restriction functor sends zero coefficient morphisms to zero morphisms. -/
 instance fieldModuleRestriction_preservesZeroMorphisms
     (φ : InfiniteGalois.profiniteGalGrp k' Ω' →ₜ* InfiniteGalois.profiniteGalGrp k Ω) :
     (fieldModuleRestriction.{u, v, w} k Ω k' Ω' φ).PreservesZeroMorphisms where
   map_zero _ _ := by rfl
 
-/-- Underlying original maps are unchanged, so actual categorical exactness is preserved. -/
+/-- Field coefficient restriction preserves short exact sequences.
+
+A short exact coefficient sequence remains short exact after restriction along a continuous
+Galois-group homomorphism. -/
 theorem fieldModuleRestriction_shortExact
     (φ : InfiniteGalois.profiniteGalGrp k' Ω' →ₜ* InfiniteGalois.profiniteGalGrp k Ω)
     (S : ShortComplex (FieldCohomologyModule.{u, max v w} k Ω)) (hS : S.ShortExact) :
@@ -417,8 +501,10 @@ theorem fieldModuleRestriction_shortExact
     (S.map (fieldModuleRestriction.{u, v, w} k Ω k' Ω' φ))).mpr
     ((fieldModule_shortExact_iff_original_maps.{u, max v w} k Ω S).mp hS)
 
-/-- The original coefficient representation is unchanged under restriction,
-with the original group action precomposed by the original group map. -/
+/-- Restricted coefficient representation has its identity coordinate map.
+
+The restricted topological representation and the representation of the restricted coefficient
+are connected by the identity underlying map. -/
 def fieldModuleRestrictionTopRepHom
     (φ : InfiniteGalois.profiniteGalGrp k' Ω' →ₜ* InfiniteGalois.profiniteGalGrp k Ω)
     (M : FieldCohomologyModule.{u, max v w} k Ω) :
@@ -429,7 +515,10 @@ def fieldModuleRestrictionTopRepHom
           ((fieldModuleRestriction.{u, v, w} k Ω k' Ω' φ).obj M) :=
   𝟙 _
 
-/-- Invariant vectors restrict by their literal original value. -/
+/-- Galois invariant elements restrict naturally.
+
+An element invariant under the source group is invariant under the target group acting through
+the continuous group homomorphism. -/
 def fieldInvariantRestriction
     (φ : InfiniteGalois.profiniteGalGrp k' Ω' →ₜ* InfiniteGalois.profiniteGalGrp k Ω) :
     fieldInvariantFunctor.{u, max v w} k Ω ⟶
@@ -444,7 +533,10 @@ def fieldInvariantRestriction
     apply Subtype.ext
     rfl
 
-/-- The original homogeneous group map is a natural map in every coefficient. -/
+/-- Restriction map on continuous field cohomology.
+
+Group restriction and the canonical coefficient intertwiner induce a natural map on continuous
+cohomology in every degree. -/
 def fieldContinuousCohomologyRestriction (n : ℕ)
     (φ : InfiniteGalois.profiniteGalGrp k' Ω' →ₜ* InfiniteGalois.profiniteGalGrp k Ω) :
     fieldContinuousCohomologyFunctor.{u, max v w} k Ω n ⟶
@@ -460,7 +552,10 @@ def fieldContinuousCohomologyRestriction (n : ℕ)
       (fieldModuleRestrictionTopRepHom.{u, v, w} k Ω k' Ω' φ N)
       (by apply TopRep.hom_ext; rfl) n
 
-/-- The same literal restricted coefficient sequence before passing to cochains. -/
+/-- Group restriction map of coefficient short complexes.
+
+The restriction functor gives the corresponding group-and-coefficient morphism from a short
+complex to its restricted short complex. -/
 def fieldModuleRestrictionGroupSequence
     (φ : InfiniteGalois.profiniteGalGrp k' Ω' →ₜ* InfiniteGalois.profiniteGalGrp k Ω)
     (S : ShortComplex (FieldCohomologyModule.{u, max v w} k Ω)) :
@@ -498,6 +593,10 @@ def fieldModuleRestrictionGroupSequence
       comm₂₃ := by apply TopRep.hom_ext; rfl }
 
 -- The direct two-field connector instantiation reached 200000/800000 in retained v6-v8.
+/-- Continuous restriction commutes with connecting maps.
+
+The coefficient connecting morphisms commute with restriction in adjacent cohomological
+degrees. -/
 theorem fieldContinuousRestriction_comm
     (φ : InfiniteGalois.profiniteGalGrp k' Ω' →ₜ* InfiniteGalois.profiniteGalGrp k Ω)
     (n : ℕ) (S : ShortComplex.ShortExactSequences
@@ -532,7 +631,10 @@ theorem fieldContinuousRestriction_comm
   exact h
 
 -- Bind the checked pointwise connector proof before constructing the delta morphism.
-/-- The original group cochain maps preserve the actual coefficient connectors. -/
+/-- Continuous field restriction as a delta functor morphism.
+
+The restriction maps in all degrees form a morphism to the target continuous delta functor
+precomposed with coefficient restriction. -/
 def fieldContinuousRestrictionDeltaHom
     (φ : InfiniteGalois.profiniteGalGrp k' Ω' →ₜ* InfiniteGalois.profiniteGalGrp k Ω) :
     fieldContinuousCohomologyDeltaFunctor.{u, max v w} k Ω ⟶
@@ -562,7 +664,10 @@ def fieldContinuousRestrictionDeltaHom
     fun n Z => fieldContinuousRestriction_comm.{u, v, w} k Ω k' Ω' φ n Z
   CohomologicalDeltaFunctor.homMk C A a h
 
-/-- The group map at degree zero is the same literal map of invariant values. -/
+/-- Continuous restriction agrees with invariant restriction in degree zero.
+
+The degree-zero restriction map commutes with the invariant coordinates and the natural
+inclusion of invariants under group restriction. -/
 theorem fieldContinuousCohomologyRestriction_zero
     (φ : InfiniteGalois.profiniteGalGrp k' Ω' →ₜ* InfiniteGalois.profiniteGalGrp k Ω) :
     fieldContinuousCohomologyRestriction.{u, v, w} k Ω k' Ω' 0 φ ≫
@@ -575,7 +680,10 @@ theorem fieldContinuousCohomologyRestriction_zero
   exact ContinuousCohomology.discreteCoefficientGroupZeroIso_naturality.{u, v, w} φ
     (fieldModuleRestrictionTopRepHom.{u, v, w} k Ω k' Ω' φ M)
 
-/-- The genuine right-derived degree-zero group map is normalized by both augmentations. -/
+/-- Degree zero restriction on derived invariants.
+
+Use the derived-zero invariant isomorphisms to transport invariant restriction to a map on
+degree-zero right-derived invariants. -/
 def fieldDerivedInvariantsRestrictionZero
     (φ : InfiniteGalois.profiniteGalGrp k' Ω' →ₜ* InfiniteGalois.profiniteGalGrp k Ω) :
     (fieldInvariantFunctor.{u, max v w} k Ω).rightDerived 0 ⟶
@@ -587,8 +695,10 @@ def fieldDerivedInvariantsRestrictionZero
         (fieldInvariantFunctor.{v, max u w} k' Ω').rightDerivedZeroIsoSelf.inv
 
 -- The dependent all-field universal extension reached 200000 in retained v6.
-/-- Universality constructs the canonical derived restriction for every original
-continuous group map. The target need not be universal; no injective preservation is used. -/
+/-- Universal extension of derived invariant restriction.
+
+The normalized universal extension of invariant restriction defines a morphism of right-
+derived invariant delta functors. -/
 def fieldDerivedInvariantsRestrictionDeltaHom
     (φ : InfiniteGalois.profiniteGalGrp k' Ω' →ₜ* InfiniteGalois.profiniteGalGrp k Ω) :
     fieldDerivedInvariantsDeltaFunctor.{u, max v w} k Ω ⟶
@@ -617,7 +727,9 @@ def fieldDerivedInvariantsRestrictionDeltaHom
   let f : I ⟶ R ⋙ I' := fieldInvariantRestriction.{u, v, w} k Ω k' Ω' φ
   CohomologicalDeltaFunctor.normalizedExtension S S' hS eS eS' f
 
-/-- Every degree of the same canonical derived restriction morphism. -/
+/-- Derived invariant restriction in a fixed degree.
+
+Evaluate the derived-invariant restriction delta morphism in natural degree `n`. -/
 def fieldDerivedInvariantsRestriction (n : ℕ)
     (φ : InfiniteGalois.profiniteGalGrp k' Ω' →ₜ* InfiniteGalois.profiniteGalGrp k Ω) :=
   let C := FieldCohomologyModule.{u, max v w} k Ω
@@ -639,8 +751,10 @@ def fieldDerivedInvariantsRestriction (n : ℕ)
 
 -- Retained direct degree-zero field headers reached 800000; assemble the abstract
 -- universal comparison first, with every actual functor and normalization fixed.
-/-- The independent right-derived restriction and the original cochain restriction
-commute with the fixed comparison as whole morphisms of delta functors. -/
+/-- Continuous and derived restriction comparison square.
+
+Restriction on continuous delta functors followed by the target comparison equals the source
+comparison followed by derived-invariant restriction. -/
 theorem fieldContinuousDerivedRestriction_delta_square
     (φ : InfiniteGalois.profiniteGalGrp k' Ω' →ₜ* InfiniteGalois.profiniteGalGrp k Ω) :
     fieldContinuousRestrictionDeltaHom.{u, v, w} k Ω k' Ω' φ ≫
@@ -701,8 +815,10 @@ theorem fieldContinuousDerivedRestriction_delta_square
   exact h
 
 -- The original all-degree field header reached 200000 in retained V1.
-/-- Every degree uses this same comparison square, not a family of arbitrarily
-chosen degreewise isomorphisms. -/
+/-- Degreewise comparison is natural in Galois group restriction.
+
+The continuous restriction map commutes with the degreewise comparisons to derived invariants,
+for independently ranked source and target fields. -/
 theorem fieldContinuousDerivedInvariantsIso_group_naturality (n : ℕ)
     (φ : InfiniteGalois.profiniteGalGrp k' Ω' →ₜ* InfiniteGalois.profiniteGalGrp k Ω) :
     fieldContinuousCohomologyRestriction.{u, v, w} k Ω k' Ω' n φ ≫
@@ -739,7 +855,10 @@ theorem fieldContinuousDerivedInvariantsIso_group_naturality (n : ℕ)
     CohomologicalDeltaFunctor.Hom.app (c.hom ≫ g) n
   exact h
 
-/-- Every original equivariant coefficient map is an actual arrow after restriction. -/
+/-- Equivariant coefficient map factors through action restriction.
+
+A map of restricted topological coefficient representations gives a morphism from the
+restricted discrete source module to the target module. -/
 def fieldRestrictedCoefficientHom
     (φ : InfiniteGalois.profiniteGalGrp k' Ω' →ₜ* InfiniteGalois.profiniteGalGrp k Ω)
     {M : FieldCohomologyModule.{u, max v w} k Ω}
@@ -754,8 +873,10 @@ def fieldRestrictedCoefficientHom
     (G := InfiniteGalois.profiniteGalGrp k Ω)
     (H := InfiniteGalois.profiniteGalGrp k' Ω') φ M N f).choose
 
-/-- The original group/coefficient cochain map factors through actual restriction
-and the original coefficient arrow, on the existing homology groups. -/
+/-- Group coefficient cohomology map factors through restriction.
+
+The map induced by a group homomorphism and coefficient intertwiner equals group restriction
+followed by the cohomology map of the factored coefficient morphism. -/
 theorem fieldGroupCoefficientCohomology_factorization (n : ℕ)
     (φ : InfiniteGalois.profiniteGalGrp k' Ω' →ₜ* InfiniteGalois.profiniteGalGrp k Ω)
     {M : FieldCohomologyModule.{u, max v w} k Ω}
@@ -775,8 +896,10 @@ theorem fieldGroupCoefficientCohomology_factorization (n : ℕ)
     (H := InfiniteGalois.profiniteGalGrp k' Ω') φ M N f
   exact h.choose_spec.2 n
 
-/-- The actual derived group/coefficient map comes from the canonical group
-restriction and the literal original coefficient arrow. -/
+/-- Derived invariant map for group and coefficient change.
+
+Compose derived group restriction with the derived-invariant map of the factored coefficient
+intertwiner. -/
 def fieldDerivedInvariantsGroupCoefficientMap (n : ℕ)
     (φ : InfiniteGalois.profiniteGalGrp k' Ω' →ₜ* InfiniteGalois.profiniteGalGrp k Ω)
     {M : FieldCohomologyModule.{u, max v w} k Ω}
@@ -791,8 +914,10 @@ def fieldDerivedInvariantsGroupCoefficientMap (n : ℕ)
       (fieldRestrictedCoefficientHom.{u, v, w} k Ω k' Ω' φ f)
 
 -- This full original coefficient-naturality header reached 200000 in retained V3.
-/-- ALL original group and coefficient maps commute with the single normalized
-all-degree comparison; the right-hand map is independently constructed from RD universality. -/
+/-- Comparison respects simultaneous group and coefficient maps.
+
+The continuous group-and-coefficient cohomology map followed by comparison equals comparison
+followed by its derived-invariant counterpart. -/
 theorem fieldContinuousDerivedInvariantsIso_group_coefficient_naturality (n : ℕ)
     (φ : InfiniteGalois.profiniteGalGrp k' Ω' →ₜ* InfiniteGalois.profiniteGalGrp k Ω)
     {M : FieldCohomologyModule.{u, max v w} k Ω}
@@ -854,8 +979,11 @@ theorem fieldContinuousDerivedInvariantsIso_group_coefficient_naturality (n : �
     _ = _ := Category.assoc _ _ _
 
 -- The exact native field one-lift header reached 200000 in retained V5.
-/-- An original diagram in the two native coefficient ranks enters the common
-rank through exactly one of the existing coefficient-lift functors per carrier. -/
+/-- Comparison for group maps with individually lifted coefficients.
+
+Lift each source and target coefficient once to the common height. The lifted intertwiner
+sends a lifted element to the lift of its given value, and the group-and-coefficient
+comparison square holds in every degree. -/
 theorem fieldContinuousDerivedInvariantsIso_native_group_naturality
     (φ : InfiniteGalois.profiniteGalGrp k' Ω' →ₜ* InfiniteGalois.profiniteGalGrp k Ω)
     (M : FieldCohomologyModule.{u, w} k Ω)
@@ -910,7 +1038,10 @@ open CategoryTheory CategoryTheory.Limits
 attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 
-/-- Every original coefficient-w sheaf enters the actual HG/RD family through ONE L.obj F. -/
+/-- Continuous derived comparison on lifted sheaf fibers.
+
+Evaluate the field comparison at the geometric fiber of a coefficient sheaf lifted to the
+common universe. -/
 def originalFieldContinuousDerivedInvariantsIso (q : ℕ)
     (F : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{w}) :
     (fieldContinuousCohomologyFunctor.{u, w} k Ω q).obj
@@ -923,7 +1054,9 @@ def originalFieldContinuousDerivedInvariantsIso (q : ℕ)
     ((fieldGeometricStalkGaloisFunctor.{u, w} k Ω).obj
       ((liftCoefficients.{u, w} (Spec (.of k))).obj F))
 
-/-- Every original smaller-coefficient sheaf map uses the same ONE lifted arrow. -/
+/-- Lifted sheaf fiber comparison is natural.
+
+The comparison commutes with the geometric-fiber map induced by a lifted sheaf morphism. -/
 theorem originalFieldContinuousDerivedInvariantsIso_naturality (q : ℕ)
     {F F' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{w}} (f : F ⟶ F') :
     (fieldContinuousCohomologyFunctor.{u, w} k Ω q).map
@@ -938,7 +1071,10 @@ theorem originalFieldContinuousDerivedInvariantsIso_naturality (q : ℕ)
     ((fieldGeometricStalkGaloisFunctor.{u, w} k Ω).map
       ((liftCoefficients.{u, w} (Spec (.of k))).map f))
 
-/-- Actual derived Gamma and the original continuous HG use the SAME common sheaf object. -/
+/-- Derived field sections as continuous geometric fiber cohomology.
+
+The derived section-invariant coordinate followed by the inverse continuous-to-derived-
+invariant comparison gives a natural isomorphism for every degree. -/
 def fieldDerivedSectionsContinuousCohomologyIso (q : ℕ) :
     (Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}).rightDerived q ≅
       fieldGeometricStalkGaloisFunctor.{u, w} k Ω ⋙
@@ -947,7 +1083,10 @@ def fieldDerivedSectionsContinuousCohomologyIso (q : ℕ) :
     Functor.isoWhiskerLeft (fieldGeometricStalkGaloisFunctor.{u, w} k Ω)
       (fieldContinuousDerivedInvariantsIso.{u, w} k Ω q).symm
 
-/-- The actual Gamma/HG maps for every original common sheaf arrow commute. -/
+/-- Derived section continuous comparison is sheaf natural.
+
+Every sheaf map commutes with the degreewise comparison to continuous cohomology of its
+geometric fiber. -/
 theorem fieldDerivedSectionsContinuousCohomologyIso_naturality (q : ℕ)
     {Q Q' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (f : Q ⟶ Q') :
@@ -967,8 +1106,10 @@ open CategoryTheory CategoryTheory.Limits
 attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 
-/-- An arbitrary original homogeneous zero-cycle evaluates literally at identity
-under the SAME all-degree comparison. -/
+/-- Invariant coordinate of a continuous zero cocycle.
+
+The compared degree-zero class has underlying invariant value equal to the homogeneous cocycle
+evaluated at the group identity. -/
 theorem original_zero_cycle_consumer
     (M : FieldCohomologyModule.{u, w} k Ω)
     (z : ContinuousCohomology.cocycles
@@ -980,8 +1121,10 @@ theorem original_zero_cycle_consumer
       ((TopRep.homogeneousCochains _).iCycles 0 z).val 1 :=
   fieldContinuousDerivedInvariantsIso_zero_cycle_value.{u, w} k Ω M z
 
-/-- This uses the actual chosen comparison map between arbitrary resolutions;
-the augmentation is provided by stock descHom, not an input hypothesis. -/
+/-- Comparison commutes with the canonical resolution map.
+
+For any coefficient map and injective resolutions of its source and target, the comparison
+square uses the canonical descended resolution map on invariant-complex cohomology. -/
 theorem actual_resolution_map_consumer (q : ℕ)
     {M N : FieldCohomologyModule.{u, w} k Ω} (f : M ⟶ N)
     (I : InjectiveResolution M) (J : InjectiveResolution N) :
@@ -997,8 +1140,10 @@ theorem actual_resolution_map_consumer (q : ℕ)
       simpa only [CochainComplex.single₀_map_f_zero] using φ.ι_f_zero_comp_hom_f_zero
     exact fieldContinuousDerivedInvariantsResolutionIso_naturality.{u, w} k Ω q f I J φ.hom hφ
 
-/-- The original continuous degree-one connector maps to the ACTUAL mapped-horseshoe
-right-derived connector with arbitrary original endpoint resolutions. -/
+/-- Connecting comparison with arbitrary endpoint resolutions.
+
+The continuous connecting map agrees through comparison with the right-derived invariant
+boundary defined using any injective resolutions of the sequence's endpoint objects. -/
 theorem actual_connector_resolution_consumer (n : ℕ)
     (S : ShortComplex (FieldCohomologyModule.{u, w} k Ω)) (hS : S.ShortExact)
     (I₁ : InjectiveResolution S.X₁) (I₃ : InjectiveResolution S.X₃) :
@@ -1020,23 +1165,38 @@ open CategoryTheory CategoryTheory.Limits
 attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 
-/-- The actual original H0 object on the actual initial cokernel. -/
+/-- Degree zero cohomology of the injective presentation cokernel.
+
+For a coefficient `M`, take continuous cohomology in degree zero of the cokernel of its
+canonical injective presentation. -/
 def fieldInitialCokernelDomain (M : FieldCohomologyModule.{u, w} k Ω) : AddCommGrpCat.{max u w} :=
   (fieldContinuousCohomologyFunctor.{u, w} k Ω 0).obj (cokernel (Injective.ι M))
 
-/-- The actual original H1 object of the original module. -/
+/-- Degree one cohomology of the coefficient.
+
+The initial cokernel boundary target is the degree-one continuous cohomology object of `M`. -/
 def fieldInitialCokernelCodomain (M : FieldCohomologyModule.{u, w} k Ω) : AddCommGrpCat.{max u w} :=
   (fieldContinuousCohomologyFunctor.{u, w} k Ω 1).obj M
 
+/-- Initial boundary domain has the specified cokernel cohomology.
+
+The named domain is degree-zero continuous cohomology of the canonical injective-presentation
+cokernel. -/
 theorem fieldInitialCokernelDomain_eq_original (M : FieldCohomologyModule.{u, w} k Ω) :
     fieldInitialCokernelDomain.{u, w} k Ω M =
       (fieldContinuousCohomologyFunctor.{u, w} k Ω 0).obj (cokernel (Injective.ι M)) := rfl
 
+/-- Initial boundary target has the specified coefficient cohomology.
+
+The named codomain is degree-one continuous cohomology of `M`. -/
 theorem fieldInitialCokernelCodomain_eq_original (M : FieldCohomologyModule.{u, w} k Ω) :
     fieldInitialCokernelCodomain.{u, w} k Ω M =
       (fieldContinuousCohomologyFunctor.{u, w} k Ω 1).obj M := rfl
 
-/-- The same original degree-one boundary on the actual initial cokernel sequence. -/
+/-- Initial connecting map of an injective presentation.
+
+The canonical injective cokernel sequence gives a boundary from its cokernel's degree-zero
+cohomology to degree-one cohomology of `M`. -/
 def fieldInitialCokernelBoundary (M : FieldCohomologyModule.{u, w} k Ω) :
     fieldInitialCokernelDomain.{u, w} k Ω M ⟶ fieldInitialCokernelCodomain.{u, w} k Ω M :=
   ContinuousCohomology.discreteCoefficientConnecting.{u, w}
@@ -1046,6 +1206,10 @@ def fieldInitialCokernelBoundary (M : FieldCohomologyModule.{u, w} k Ω) :
       (ShortComplex.cokernelSequence (Injective.ι M))
       (ShortComplex.shortExact_cokernelSequence (Injective.ι M))) 0
 
+/-- Initial injective cokernel boundary is epi.
+
+The initial boundary is an epimorphism because the middle coefficient of the presentation is
+injective. -/
 theorem fieldInitialCokernelBoundary_epi (M : FieldCohomologyModule.{u, w} k Ω) :
     Epi (fieldInitialCokernelBoundary.{u, w} k Ω M) :=
   by
@@ -1060,7 +1224,10 @@ theorem fieldInitialCokernelBoundary_epi (M : FieldCohomologyModule.{u, w} k Ω)
     change Epi ((T.connecting 0).app ⟨S, hS⟩)
     exact h
 
-/-- Every original H1 class has an actual H0 cokernel preimage under that SAME boundary. -/
+/-- Every degree one class has an initial boundary preimage.
+
+Every element of the initial boundary target is the image of an element in its cokernel
+cohomology domain. -/
 theorem original_initial_cokernel_preimage_consumer
     (M : FieldCohomologyModule.{u, w} k Ω)
     (a : fieldInitialCokernelCodomain.{u, w} k Ω M) :
@@ -1078,8 +1245,10 @@ open CategoryTheory CategoryTheory.Limits
 attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 
-/-- The named boundary is literally the original continuous coefficient boundary
-on the actual initial cokernel short exact sequence. -/
+/-- Initial boundary is the specified continuous connecting map.
+
+The named boundary equals the degree-zero continuous-coefficient connecting map of the
+canonical injective cokernel sequence. -/
 theorem fieldInitialCokernelBoundary_eq_original (M : FieldCohomologyModule.{u, w} k Ω) :
     fieldInitialCokernelBoundary.{u, w} k Ω M =
       ContinuousCohomology.discreteCoefficientConnecting.{u, w}
@@ -1090,22 +1259,47 @@ theorem fieldInitialCokernelBoundary_eq_original (M : FieldCohomologyModule.{u, 
           (ShortComplex.shortExact_cokernelSequence (Injective.ι M))) 0 := rfl
 
 -- The full original law structure reached200000 in retained final gateV3.
-/-- Every original obligation is tied to one fixed actual delta-functor comparison. -/
+/-- Full laws of the continuous derived invariant comparison.
+
+These laws record the fixed cohomology functors, universality, normalized comparison, all
+coefficient and resolution maps, endpoint boundaries, initial cokernel preimages, group maps
+with coefficient intertwiners and single lifts, uniqueness, and lifted-sheaf naturality. -/
 structure OriginalContinuousDerivedInvariantsLaws : Prop where
+/-- Comparison record identifies the continuous cohomology functors.
+
+Every degree functor is the continuous discrete-coefficient cohomology functor of the
+specified profinite Galois group. -/
   original_functor : ∀ q, fieldContinuousCohomologyFunctor.{u, w} k Ω q =
     ContinuousCohomology.discreteCoefficientCohomologyFunctor.{u, w}
       (InfiniteGalois.profiniteGalGrp k Ω) q
+/-- Comparison record gives continuous delta universality.
+
+The continuous cohomology delta functor on the field coefficient category is universal. -/
   actual_hg_universal : CohomologicalDeltaFunctor.IsUniversal
     (FieldCohomologyModule.{u, w} k Ω) AddCommGrpCat.{max u w}
     (fieldContinuousCohomologyDeltaFunctor.{u, w} k Ω)
+/-- Comparison record gives derived invariant delta universality.
+
+The right-derived invariant delta functor is universal. -/
   actual_rd_universal : CohomologicalDeltaFunctor.IsUniversal
     (FieldCohomologyModule.{u, w} k Ω) AddCommGrpCat.{max u w}
     (fieldDerivedInvariantsDeltaFunctor.{u, w} k Ω)
+/-- Comparison record has an all degree delta isomorphism.
+
+The continuous and right-derived invariant delta functors admit the normalized isomorphism. -/
   one_delta_comparison : Nonempty (fieldContinuousCohomologyDeltaFunctor.{u, w} k Ω ≅
     fieldDerivedInvariantsDeltaFunctor.{u, w} k Ω)
+/-- Comparison record fixes the zero degree invariant coordinate.
+
+The degree-zero comparison followed by the derived-zero coordinate equals the continuous
+invariant coordinate. -/
   zero_normalization : (fieldContinuousDerivedInvariantsIso.{u, w} k Ω 0).hom ≫
     (fieldInvariantFunctor.{u, w} k Ω).rightDerivedZeroIsoSelf.hom =
       (fieldContinuousCohomologyZeroIso.{u, w} k Ω).hom
+/-- Comparison record evaluates zero cocycles at the identity.
+
+For every coefficient and continuous zero cocycle, the compared invariant value is the
+homogeneous cochain value at `1`. -/
   original_zero_value : ∀ (M : FieldCohomologyModule.{u, w} k Ω)
     (c : ContinuousCohomology.cocycles
       ((ContinuousCohomology.discreteCoefficientTopRepFunctor.{u, w}
@@ -1114,11 +1308,18 @@ structure OriginalContinuousDerivedInvariantsLaws : Prop where
       ((fieldContinuousDerivedInvariantsIso.{u, w} k Ω 0).hom.app M
         (ContinuousCohomology.π _ 0 c))).val =
       ((TopRep.homogeneousCochains _).iCycles 0 c).val 1
+/-- Comparison record is natural for all coefficient arrows.
+
+The degreewise comparisons commute with every coefficient map and its derived-invariant map. -/
   coefficient_naturality : ∀ q (M N : FieldCohomologyModule.{u, w} k Ω) (f : M ⟶ N),
     (fieldContinuousCohomologyFunctor.{u, w} k Ω q).map f ≫
         (fieldContinuousDerivedInvariantsIso.{u, w} k Ω q).hom.app N =
       (fieldContinuousDerivedInvariantsIso.{u, w} k Ω q).hom.app M ≫
         ((fieldInvariantFunctor.{u, w} k Ω).rightDerived q).map f
+/-- Comparison record respects all coefficient boundaries.
+
+Every short exact coefficient connecting map commutes with the comparisons in adjacent
+degrees. -/
   coefficient_connectors : ∀ n (S : ShortComplex (FieldCohomologyModule.{u, w} k Ω))
     (hS : S.ShortExact),
     ContinuousCohomology.discreteCoefficientConnecting.{u, w}
@@ -1128,6 +1329,10 @@ structure OriginalContinuousDerivedInvariantsLaws : Prop where
     (fieldContinuousDerivedInvariantsIso.{u, w} k Ω n).hom.app S.X₃ ≫
       (Functor.rightDerivedConnecting (fieldInvariantFunctor.{u, w} k Ω) n).app
         ⟨S, hS⟩
+/-- Comparison record respects all augmented resolution morphisms.
+
+For any resolution cochain map agreeing with the coefficient map on coaugmentation, the
+continuous-to-invariant-resolution comparison square commutes. -/
   every_augmented_resolution_map : ∀ q (M N : FieldCohomologyModule.{u, w} k Ω)
     (f : M ⟶ N) (I : InjectiveResolution M) (J : InjectiveResolution N)
     (φ : I.cocomplex ⟶ J.cocomplex), I.ι.f 0 ≫ φ.f 0 = f ≫ J.ι.f 0 →
@@ -1137,11 +1342,19 @@ structure OriginalContinuousDerivedInvariantsLaws : Prop where
           HomologicalComplex.homologyMap
             (((fieldInvariantFunctor.{u, w} k Ω).mapHomologicalComplex
               (ComplexShape.up ℕ)).map φ) q
+/-- Comparison record is compatible with every resolution choice.
+
+The comparison coordinates for two injective resolutions agree through their canonical
+cohomology comparison. -/
   every_resolution_choice : ∀ q (M : FieldCohomologyModule.{u, w} k Ω)
     (I J : InjectiveResolution M),
     fieldContinuousDerivedInvariantsResolutionIso.{u, w} k Ω q I ≪≫
         InjectiveResolution.cohomologyComparisonIso I J (fieldInvariantFunctor.{u, w} k Ω) q =
       fieldContinuousDerivedInvariantsResolutionIso.{u, w} k Ω q J
+/-- Comparison record retains arbitrary endpoint boundary coordinates.
+
+For every short exact sequence and every pair of endpoint injective resolutions, continuous
+and right-derived invariant boundaries commute through the comparison. -/
   every_endpoint_connector : ∀ n
     (S : ShortComplex (FieldCohomologyModule.{u, w} k Ω)) (hS : S.ShortExact)
     (I₁ : InjectiveResolution S.X₁) (I₃ : InjectiveResolution S.X₃),
@@ -1151,15 +1364,27 @@ structure OriginalContinuousDerivedInvariantsLaws : Prop where
       (fieldContinuousDerivedInvariantsIso.{u, w} k Ω (n + 1)).hom.app S.X₁ =
     (fieldContinuousDerivedInvariantsIso.{u, w} k Ω n).hom.app S.X₃ ≫
       RightDerivedDelta.RDdelta (fieldInvariantFunctor.{u, w} k Ω) n S hS I₁ I₃
+/-- Comparison record supplies initial boundary preimages.
+
+Every degree-one coefficient cohomology element has a preimage under the initial injective-
+cokernel boundary. -/
   initial_cokernel_preimage : ∀ (M : FieldCohomologyModule.{u, w} k Ω)
     (a : fieldInitialCokernelCodomain.{u, w} k Ω M),
     ∃ c : fieldInitialCokernelDomain.{u, w} k Ω M,
       (fieldInitialCokernelBoundary.{u, w} k Ω M).hom c = a
+/-- Comparison record fixes initial boundary objects.
+
+The initial domain is degree-zero cohomology of the injective-presentation cokernel, and its
+codomain is degree-one cohomology of the coefficient. -/
   initial_original_objects : ∀ (M : FieldCohomologyModule.{u, w} k Ω),
     fieldInitialCokernelDomain.{u, w} k Ω M =
         (fieldContinuousCohomologyFunctor.{u, w} k Ω 0).obj (cokernel (Injective.ι M)) ∧
       fieldInitialCokernelCodomain.{u, w} k Ω M =
         (fieldContinuousCohomologyFunctor.{u, w} k Ω 1).obj M
+/-- Comparison record respects all continuous Galois group maps.
+
+For independently ranked source and target fields, every continuous Galois-group restriction
+commutes with the degreewise derived-invariant comparisons. -/
   every_group_map : ∀ (k' Ω' : Type v) [Field k'] [Field Ω'] [Algebra k' Ω']
     [IsSepClosure k' Ω'] (φ : InfiniteGalois.profiniteGalGrp k' Ω' →ₜ*
       InfiniteGalois.profiniteGalGrp k Ω) n,
@@ -1168,6 +1393,10 @@ structure OriginalContinuousDerivedInvariantsLaws : Prop where
           (fieldContinuousDerivedInvariantsIso.{v, max u w} k' Ω' n).hom =
       (fieldContinuousDerivedInvariantsIso.{u, max v w} k Ω n).hom ≫
         fieldDerivedInvariantsRestriction.{u, v, w} k Ω k' Ω' n φ
+/-- Comparison record respects all group coefficient intertwiners.
+
+The comparison square holds for every continuous group homomorphism together with an
+equivariant coefficient representation map. -/
   every_group_coefficient_map : ∀ (k' Ω' : Type v) [Field k'] [Field Ω'] [Algebra k' Ω']
     [IsSepClosure k' Ω'] (φ : InfiniteGalois.profiniteGalGrp k' Ω' →ₜ*
       InfiniteGalois.profiniteGalGrp k Ω)
@@ -1183,6 +1412,10 @@ structure OriginalContinuousDerivedInvariantsLaws : Prop where
       (fieldContinuousDerivedInvariantsIso.{v, max u w} k' Ω' n).hom.app N =
     (fieldContinuousDerivedInvariantsIso.{u, max v w} k Ω n).hom.app M ≫
       fieldDerivedInvariantsGroupCoefficientMap.{u, v, w} k Ω k' Ω' n φ f
+/-- Comparison record preserves all single lift coefficient values.
+
+For independently ranked coefficients, a single lift of each coefficient sends the intertwiner
+value to its lift and gives the comparison square in every degree. -/
   every_native_one_lift_map : ∀ (k' Ω' : Type v) [Field k'] [Field Ω'] [Algebra k' Ω']
     [IsSepClosure k' Ω'] (φ : InfiniteGalois.profiniteGalGrp k' Ω' →ₜ*
       InfiniteGalois.profiniteGalGrp k Ω)
@@ -1212,6 +1445,10 @@ structure OriginalContinuousDerivedInvariantsLaws : Prop where
       (fieldContinuousDerivedInvariantsIso.{v, max u w} k' Ω' n).hom.app N' =
     (fieldContinuousDerivedInvariantsIso.{u, max v w} k Ω n).hom.app M' ≫
       fieldDerivedInvariantsGroupCoefficientMap.{u, v, w} k Ω k' Ω' n φ f'
+/-- Comparison record gives uniqueness of normalized families.
+
+A family of natural transformations compatible with connecting maps and normalized in degree
+zero equals the canonical comparison in every degree. -/
   unique_normalized_family : ∀
     (f : ∀ n, fieldContinuousCohomologyFunctor.{u, w} k Ω n ⟶
       (fieldInvariantFunctor.{u, w} k Ω).rightDerived n),
@@ -1225,6 +1462,10 @@ structure OriginalContinuousDerivedInvariantsLaws : Prop where
     f 0 ≫ (fieldInvariantFunctor.{u, w} k Ω).rightDerivedZeroIsoSelf.hom =
       (fieldContinuousCohomologyZeroIso.{u, w} k Ω).hom →
     ∀ n, f n = (fieldContinuousDerivedInvariantsIso.{u, w} k Ω n).hom
+/-- Comparison record respects all lifted sheaf morphisms.
+
+The field comparison on lifted geometric fibers commutes with each coefficient sheaf morphism
+and its derived-invariant map. -/
   original_sheaf_map : ∀ q
     (F F' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{w}) (f : F ⟶ F'),
     (fieldContinuousCohomologyFunctor.{u, w} k Ω q).map
@@ -1236,8 +1477,10 @@ structure OriginalContinuousDerivedInvariantsLaws : Prop where
         ((fieldGeometricStalkGaloisFunctor.{u, w} k Ω).map
           ((liftCoefficients.{u, w} (Spec (.of k))).map f))
 
-/-- The complete original all-degree comparison is constructed from actual effacement,
-actual original complexes and the actual mapped-horseshoe derived family. -/
+/-- Continuous field cochains satisfy the full derived invariant laws.
+
+The continuous-cohomology comparison satisfies the complete coefficient, resolution,
+connecting, initial cokernel, group-map, single-lift, uniqueness, and lifted-sheaf laws. -/
 theorem original_continuous_cochains_compute_derived_invariants :
     OriginalContinuousDerivedInvariantsLaws.{u, v, w} k Ω where
   original_functor _ := rfl

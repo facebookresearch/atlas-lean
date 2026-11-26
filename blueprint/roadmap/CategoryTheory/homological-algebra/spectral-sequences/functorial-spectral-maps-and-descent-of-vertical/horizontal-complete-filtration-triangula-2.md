@@ -1,4 +1,8 @@
-# Horizontal Complete Filtration Triangulated Spectral Object Functor
+# The complete horizontal filtration as a triangulated spectral functor
 
-The actual complete horizontal filtration as a functor to triangulated
-spectral objects.
+For a preadditive category C with a zero object and finite
+coproducts, complete horizontal filtration defines a functor from
+nonnegative homological bicomplexes to triangulated spectral objects
+indexed by EInt in HomotopyCategory(C,up ℤ).
+Its interval values are the cones of the reindexed filtration maps,
+and bicomplex maps induce the interval-cone morphisms.

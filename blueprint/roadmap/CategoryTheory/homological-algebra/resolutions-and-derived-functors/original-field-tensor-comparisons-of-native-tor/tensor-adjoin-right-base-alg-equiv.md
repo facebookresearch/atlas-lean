@@ -1,4 +1,6 @@
-# Tensor Adjoin Right Base Alg Equiv
+# Right algebra adjoining identifies the scalar-extended coefficient algebra
 
-The original right adjoining coefficient algebra uses the canonical
-B-linear commutation and original scalar cancellation.
+For compatible commutative K-algebras A,B,W with B→W,
+there is a K-algebra equivalence
+(A⊗K B)⊗_B W≃A⊗K W,
+where B acts through the right tensor inclusion.

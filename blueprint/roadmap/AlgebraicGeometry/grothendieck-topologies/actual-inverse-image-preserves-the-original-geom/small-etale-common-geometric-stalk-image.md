@@ -1,3 +1,6 @@
-# Small Etale Common Geometric Stalk Image Id Iso
+# Geometric identity image stalk coordinate
 
-The same image-point identity comparison on actual common geometric stalks.
+Geometric identity image stalk coordinate.
+
+The identity-image point isomorphism induces a natural isomorphism from the common stalk at `x
+≫ 𝟙 X` to the common stalk at `x`.

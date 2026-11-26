@@ -14,10 +14,11 @@ public import MathlibExt.Algebra.Category.Grp.Monoidal
 public import Mathlib.CategoryTheory.Monoidal.Preadditive
 
 /-!
-# Additivity of the integer tensor product of abelian groups
+# Additivity of integer tensor products of abelian groups
 
-The tensor product over `ℤ` makes `AddCommGrpCat` monoidal preadditive.
-In particular, tensoring with an abelian group is an additive functor.
+In the integer-tensor monoidal category `Ab`, tensoring morphisms is
+additive in each variable. Thus each left and right tensor functor is
+additive, making the monoidal category monoidal preadditive.
 -/
 
 @[expose] public section
@@ -28,7 +29,9 @@ open CategoryTheory
 namespace AddCommGrpCat
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The integer tensor product of abelian groups is additive in each variable. -/
+/-- For abelian groups in universe `s`, tensor product over `ℤ` is
+additive in each morphism variable. The category `AddCommGrpCat.{s}`
+therefore has a monoidal preadditive structure for its integer tensor product. -/
 instance monoidalPreadditive.{s} : MonoidalPreadditive AddCommGrpCat.{s} where
   whiskerLeft_zero := by
     intros

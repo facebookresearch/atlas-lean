@@ -17,16 +17,26 @@ public import Mathlib.CategoryTheory.Monoidal.Comon_
 public import Mathlib.CategoryTheory.Comma.Over.Basic
 
 /-!
-# Canonical coalgebras on the homology of chain comonoids
+# Coalgebra structures on homology through canonical Künneth comparisons
 
-Every chain comonoid has a canonical diagonal into homology of its actual
-tensor square. If the canonical Künneth map for its square and for its
-right-associated tensor cube are isomorphisms, that diagonal is an actual
-graded comonoid. Only invertibility of named canonical maps is a hypothesis;
-associator, unit and braiding coherence are proved in `Kunneth.Coherence`
-and `Kunneth.Braiding`. Flat terms and flat homology in the original complex
-suffice, by the existing collapse theorem. Over a field the existing native
-comonoid transport is also packaged as a functor.
+Let R be a commutative ring and C a comonoid in nonnegative R-module
+chain complexes. Write H for graded homology, μ for its canonical
+cycle Künneth tensorator and e:𝟙_Gr≅H(𝟙_Ch) for the unit comparison.
+The counit is e⁻¹H(ε_C), and a unit-to-C chain map η gives the
+graded point H(η)e.
+
+If μ_(C,C) is invertible in every degree, the diagonal is
+Δ_H=μ_(C,C)⁻¹H(Δ_C). It satisfies both counit laws.
+If μ_(C,C⊗C) is also invertible in every degree, Δ_H is
+coassociative and defines a graded comonoid.
+These are the named square and right-associated cube comparisons.
+
+Flat terms and flat homology of C supply both comparisons.
+Over a field, the canonical graded homology functor is strong
+monoidal and transports chain comonoids functorially.
+Signed cocommutativity is expressed by the Koszul interchange
+(−1)^(pq) on graded summands. All module carriers here have the
+same world u as the coefficient ring.
 -/
 
 @[expose] public section
@@ -76,8 +86,10 @@ private theorem tensorator_natural_right (D : ChainComplex (ModuleCat.{u} R) ℕ
   rw [(Kunneth.homologyFunctor (R := R)).map_id D, id_tensorHom] at h
   simpa only [id_tensorHom] using h
 
-/-- The canonical homology counit uses the actual homology of the single
-scalar-unit complex. -/
+/-- For a chain comonoid C over a commutative ring R, the
+graded homology counit is H(C)→𝟙_Gr, obtained by H(ε_C) followed
+by the inverse unit comparison H(𝟙_Ch)≅𝟙_Gr.
+No square Künneth invertibility is needed for this definition. -/
 def counit : (Kunneth.homologyFunctor (R := R)).obj C ⟶ 𝟙_ (GradedObject ℕ (ModuleCat.{u} R)) :=
   (Kunneth.homologyFunctor (R := R)).map ε[C] ≫ (Kunneth.unitIso (R := R)).inv
 
@@ -85,8 +97,9 @@ def counit : (Kunneth.homologyFunctor (R := R)).obj C ⟶ 𝟙_ (GradedObject �
 theorem counit_unitMap : counit C ≫ Kunneth.unitMap = (Kunneth.homologyFunctor (R := R)).map ε[C] := by
   simp only [counit, unitMap_eq_unitIso_hom, Category.assoc, Iso.inv_hom_id, Category.comp_id]
 
-/-- The canonical coaugmentation of homology, from an actual chain
-coaugmentation. -/
+/-- For a nonnegative R-module chain complex C and a chain map
+η:𝟙_Ch→C, the graded map 𝟙_Gr→H(C) is H(η)∘e, where
+e:𝟙_Gr≅H(𝟙_Ch) is the scalar-unit homology comparison. -/
 def coaug (η : 𝟙_ (ChainComplex (ModuleCat.{u} R) ℕ) ⟶ C) : 𝟙_ (GradedObject ℕ (ModuleCat.{u} R)) ⟶
   (Kunneth.homologyFunctor (R := R)).obj C :=
   Kunneth.unitMap ≫ (Kunneth.homologyFunctor (R := R)).map η
@@ -106,8 +119,10 @@ section SquareIsIso
 
 variable [∀ n : ℕ, IsIso (kunnethHomologyTensorMap C C n)]
 
-/-- The inverse of the canonical cycle Künneth tensorator defines the
-graded homology diagonal. -/
+/-- For a chain comonoid C over a commutative ring R, assume
+the canonical square tensorator μ_(C,C) is invertible in every
+degree. The graded diagonal is
+Δ_H=μ_(C,C)⁻¹ ∘ H(Δ_C):H(C)→H(C)⊗H(C). -/
 def comul : (Kunneth.homologyFunctor (R := R)).obj C ⟶ (Kunneth.homologyFunctor (R := R)).obj C ⊗
   (Kunneth.homologyFunctor (R := R)).obj C :=
   canonicalToTensorHomology C ≫ inv (Kunneth.tensorator C C)
@@ -148,7 +163,10 @@ private theorem rightUnitComparison (C : (ChainComplex (ModuleCat.{u} R) ℕ)) :
   simpa only [laxMonoidal_ε, laxMonoidal_μ, Category.assoc, Iso.inv_hom_id_assoc] using
     Functor.LaxMonoidal.right_unitality_inv (Kunneth.homologyFunctor (R := R)) C
 
-/-- The transported diagonal satisfies the actual left counit law. -/
+/-- For a chain comonoid C over a commutative ring R with
+invertible square Künneth tensorator, its homology diagonal
+satisfies (ε_H⊗id) ∘ Δ_H=λ_(H(C))⁻¹.
+The counit ε_H uses the inverse scalar-unit homology comparison. -/
 theorem counit_comul : comul C ≫ counit C ▷ (Kunneth.homologyFunctor (R := R)).obj C = (λ_ ((Kunneth.homologyFunctor
   (R := R)).obj C)).inv := by
   letI : (Kunneth.homologyFunctor (R := R)).LaxMonoidal := Kunneth.laxMonoidal
@@ -177,7 +195,9 @@ theorem counit_comul : comul C ≫ counit C ▷ (Kunneth.homologyFunctor (R := R
   simpa only [laxMonoidal_ε, laxMonoidal_μ, unitMap_eq_unitIso_hom] using
     (Functor.LaxMonoidal.left_unitality_inv (Kunneth.homologyFunctor (R := R)) C).symm
 
-/-- The transported diagonal satisfies the actual right counit law. -/
+/-- For a chain comonoid C over a commutative ring R with
+invertible square Künneth tensorator, its homology diagonal
+satisfies (id⊗ε_H) ∘ Δ_H=ρ_(H(C))⁻¹. -/
 theorem comul_counit : comul C ≫ (Kunneth.homologyFunctor (R := R)).obj C ◁ counit C = (ρ_ ((Kunneth.homologyFunctor
   (R := R)).obj C)).inv := by
   letI : (Kunneth.homologyFunctor (R := R)).LaxMonoidal := Kunneth.laxMonoidal
@@ -206,8 +226,12 @@ theorem comul_counit : comul C ≫ (Kunneth.homologyFunctor (R := R)).obj C ◁ 
   simpa only [laxMonoidal_ε, laxMonoidal_μ, unitMap_eq_unitIso_hom] using
     (Functor.LaxMonoidal.right_unitality_inv (Kunneth.homologyFunctor (R := R)) C).symm
 
-/-- Coassociativity needs only the square comparison and the canonical
-right-associated cube comparison to be invertible. -/
+/-- For a chain comonoid C over a commutative ring R, assume
+μ_(C,C) and μ_(C,C⊗C) are invertible in every degree.
+Then (id⊗Δ_H) ∘ Δ_H =
+α_(H(C),H(C),H(C)) ∘ (Δ_H⊗id) ∘ Δ_H.
+These are precisely the square and right-associated cube
+canonical Künneth comparisons. -/
 theorem comul_assoc
     [∀ n : ℕ, IsIso (kunnethHomologyTensorMap C (C ⊗ C) n)] :
     comul C ≫ (Kunneth.homologyFunctor (R := R)).obj C ◁ comul C =
@@ -246,8 +270,10 @@ theorem comul_assoc
       IsIso.inv_hom_id_assoc, ← Functor.map_comp, ← Functor.map_comp]
   rw [hl, hr, ComonObj.comul_assoc]
 
-/-- The genuine graded comonoid on homology under invertibility hypotheses
-on the two relevant named canonical Künneth maps. -/
+/-- For a chain comonoid C over a commutative ring R, if
+μ_(C,C) and μ_(C,C⊗C) are invertible in every degree, the
+canonical homology diagonal and counit define a comonoid on H(C).
+The maps are μ_(C,C)⁻¹H(Δ_C) and e⁻¹H(ε_C). -/
 def comonObj [∀ n : ℕ, IsIso (kunnethHomologyTensorMap C (C ⊗ C) n)] : ComonObj ((Kunneth.homologyFunctor (R :=
   R)).obj C) where
   counit := counit C
@@ -256,9 +282,11 @@ def comonObj [∀ n : ℕ, IsIso (kunnethHomologyTensorMap C (C ⊗ C) n)] : Com
   comul_counit := comul_counit C
   comul_assoc := comul_assoc C
 
-/-- Signed cocommutativity is transported along the actual canonical cycle
-Künneth comparison. This uses the Koszul interchange, not the unsigned
-graded-object braiding. -/
+/-- For a chain comonoid C over a commutative ring R with
+invertible square tensorator, suppose β_Ch ∘ Δ_C=Δ_C
+for the signed chain Koszul interchange.
+Then β_Koszul ∘ Δ_H=Δ_H on graded homology, with coefficient
+(−1)^(pq) on a bidegree (p,q). -/
 theorem comul_cocommutative
     (hC : Δ[C] ≫ (koszulTensorBraidingIso C C).hom = Δ[C]) :
     comul C ≫ (Kunneth.koszulSwap ((Kunneth.homologyFunctor (R := R)).obj C) ((Kunneth.homologyFunctor (R := R)).obj
@@ -270,8 +298,11 @@ theorem comul_cocommutative
 
 end SquareIsIso
 
-/-- Flat terms and flat homology supply both necessary comparisons through
-the existing first-factor collapse theorem. -/
+/-- For a nonnegative R-module chain comonoid C, suppose
+every term C_n and every homology module H_n(C) is flat over R.
+The canonical Künneth maps for C⊗C and C⊗(C⊗C) are then
+invertible, so the canonical diagonal and counit define a
+graded homology comonoid. -/
 def comonObjOfFlatHomology
     (hC : ∀ n : ℕ, Module.Flat R (C.X n))
     (hHC : ∀ n : ℕ, Module.Flat R (C.homology n)) : ComonObj ((Kunneth.homologyFunctor (R := R)).obj C) := by
@@ -303,7 +334,10 @@ private theorem unitMap_comul :
       (𝟙_ (ChainComplex (ModuleCat.{u} R) ℕ)))
     (whisker_exchange (Kunneth.unitMap (R := R)) (Kunneth.unitMap (R := R)))
 
-/-- The canonical coaugmentation satisfies its actual counit equation. -/
+/-- For a chain comonoid C over a commutative ring R and a
+comonoid map η:𝟙_Ch→C, its graded point η_H=H(η)e satisfies
+ε_H ∘ η_H=id_(𝟙_Gr).
+This equation does not require square or cube Künneth invertibility. -/
 theorem coaug_counit (η : 𝟙_ (ChainComplex (ModuleCat.{u} R) ℕ) ⟶ C) [IsComonHom η] :
     coaug C η ≫ counit C = 𝟙 (𝟙_ (GradedObject ℕ (ModuleCat.{u} R))) := by
   simp only [coaug, counit, Category.assoc, ← Functor.map_comp_assoc,
@@ -312,7 +346,10 @@ theorem coaug_counit (η : 𝟙_ (ChainComplex (ModuleCat.{u} R) ℕ) ⟶ C) [Is
   rw [(Kunneth.homologyFunctor (R := R)).map_id, Category.id_comp]
   exact (Kunneth.unitIso (R := R)).hom_inv_id
 
-/-- The canonical coaugmentation satisfies its actual coproduct equation. -/
+/-- For a chain comonoid C over a commutative ring R with
+invertible square tensorator, a comonoid map η:𝟙_Ch→C gives
+Δ_H ∘ η_H=(η_H⊗η_H) ∘ Δ_(𝟙_Gr).
+The point is the unit homology comparison followed by H(η). -/
 theorem coaug_comul [∀ n : ℕ, IsIso (kunnethHomologyTensorMap C C n)]
     (η : 𝟙_ (ChainComplex (ModuleCat.{u} R) ℕ) ⟶ C) [IsComonHom η] :
     coaug C η ≫ comul C = Δ[𝟙_ (GradedObject ℕ (ModuleCat.{u} R))] ≫ (coaug C η ⊗ₘ coaug C η) := by
@@ -326,7 +363,11 @@ theorem coaug_comul [∀ n : ℕ, IsIso (kunnethHomologyTensorMap C C n)]
   rw [ht]
   simp only [← tensorHom_comp_tensorHom_assoc, Category.assoc]
 
-/-- The homology coaugmentation is a native comonoid morphism. -/
+/-- For a chain comonoid C over a commutative ring R, assume
+the square μ_(C,C) and right-cube μ_(C,C⊗C) comparisons are
+invertible in every degree. A comonoid map η:𝟙_Ch→C then
+induces a comonoid map η_H:𝟙_Gr→H(C) for the constructed
+graded homology comonoid. -/
 theorem coaugIsComonHom
     [∀ n : ℕ, IsIso (kunnethHomologyTensorMap C C n)]
     [∀ n : ℕ, IsIso (kunnethHomologyTensorMap C (C ⊗ C) n)]
@@ -336,8 +377,11 @@ theorem coaugIsComonHom
   letI : ComonObj ((Kunneth.homologyFunctor (R := R)).obj C) := comonObj C
   exact ⟨coaug_counit C η, coaug_comul C η⟩
 
-/-- A chain comonoid morphism induces a genuine graded homology comonoid
-morphism whenever both actual homology comonoids are defined. -/
+/-- For chain comonoids C,D over a commutative ring R, assume
+their respective square and right-associated cube Künneth maps
+are invertible in every degree. If f:C→D is a comonoid morphism,
+then H(f):H(C)→H(D) is a comonoid morphism for the canonical
+homology structures. -/
 theorem mapIsComonHom {D : (ChainComplex (ModuleCat.{u} R) ℕ)} [ComonObj D]
     [∀ n : ℕ, IsIso (kunnethHomologyTensorMap C C n)]
     [∀ n : ℕ, IsIso (kunnethHomologyTensorMap C (C ⊗ C) n)]
@@ -355,9 +399,11 @@ theorem mapIsComonHom {D : (ChainComplex (ModuleCat.{u} R) ℕ)} [ComonObj D]
         simp only [counit, Category.assoc, ← Functor.map_comp_assoc, IsComonHom.hom_counit]
       hom_comul := comul_naturality C f }
 
-/-- The native generic pointed-comonoid object: an actual comonoid map
-from the canonical trivial comonoid. The homology comonoid and its point
-are constructed from the input chain comonoid and its actual point. -/
+/-- For a chain comonoid C over a commutative ring R with
+invertible square and right-cube Künneth comparisons, a comonoid
+map η:𝟙_Ch→C gives the pointed graded comonoid
+η_H:𝟙_Gr→H(C).
+It is an object under the trivial graded unit comonoid. -/
 def coaugmentedComon
     [∀ n : ℕ, IsIso (kunnethHomologyTensorMap C C n)]
     [∀ n : ℕ, IsIso (kunnethHomologyTensorMap C (C ⊗ C) n)]
@@ -382,8 +428,11 @@ theorem coaugmentedComon_point
     (η : 𝟙_ (ChainComplex (ModuleCat.{u} R) ℕ) ⟶ C) [IsComonHom η] :
     (coaugmentedComon C η).hom.hom = coaug C η := rfl
 
-/-- Actual point-preserving chain comonoid morphisms induce native
-morphisms of the constructed pointed homology comonoids. -/
+/-- For chain comonoids C,D with invertible square and
+right-cube Künneth comparisons, let η,η′ be comonoid maps from
+the chain unit. A comonoid map f:C→D with f∘η=η′ induces
+the pointed graded homology map H(C)→H(D).
+The equality H(f)∘η_H=η′_H preserves the constructed points. -/
 def coaugmentedComonMap {D : (ChainComplex (ModuleCat.{u} R) ℕ)} [ComonObj D]
     [∀ n : ℕ, IsIso (kunnethHomologyTensorMap C C n)]
     [∀ n : ℕ, IsIso (kunnethHomologyTensorMap C (C ⊗ C) n)]
@@ -411,8 +460,10 @@ section Field
 variable {k : Type u} [Field k]
 
 
-/-- The canonical field Künneth maps give the earned native monoidal
-structure on graded homology. -/
+/-- For a field k and nonnegative chains in ModuleCat^u(k),
+the canonical cycle tensorator and scalar-unit homology map
+give the graded homology functor a strong monoidal structure.
+All canonical Künneth tensorators are invertible over k. -/
 def fieldMonoidal : (Kunneth.homologyFunctor (R := k)).Monoidal := by
   letI : (Kunneth.homologyFunctor (R := k)).LaxMonoidal := Kunneth.laxMonoidal
   letI : ∀ A B : (ChainComplex (ModuleCat.{u} k) ℕ), ∀ n : ℕ, IsIso (kunnethHomologyTensorMap A B n) :=
@@ -427,8 +478,10 @@ def fieldMonoidal : (Kunneth.homologyFunctor (R := k)).Monoidal := by
     infer_instance
   exact Functor.Monoidal.ofLaxMonoidal (Kunneth.homologyFunctor (R := k))
 
-/-- The existing native comonoid transport, applied to the earned field
-homology monoidal functor. -/
+/-- For a field k, the strong monoidal graded homology functor
+induces Comon(ChainComplex(ModuleCat^u(k),ℕ))→
+Comon(GradedObject(ℕ,ModuleCat^u(k))).
+It sends a chain comonoid to its canonical graded homology comonoid. -/
 def fieldComonFunctor : Comon (ChainComplex (ModuleCat.{u} k) ℕ) ⥤ Comon (GradedObject ℕ (ModuleCat.{u} k)) := by
   letI : (Kunneth.homologyFunctor (R := k)).Monoidal := fieldMonoidal
   exact (Kunneth.homologyFunctor (R := k)).mapComon
@@ -441,8 +494,10 @@ theorem fieldComonFunctor_carrier (C : Comon (ChainComplex (ModuleCat.{u} k) ℕ
 theorem fieldComonFunctor_map_hom {C D : Comon (ChainComplex (ModuleCat.{u} k) ℕ)} (f : C ⟶ D) :
     (fieldComonFunctor.map f).hom = (Kunneth.homologyFunctor (R := k)).map f.hom := rfl
 
-/-- Native functor transport retains the actual canonical tensorator
-specification, rather than substituting a chosen tensor comparison. -/
+/-- For a chain comonoid C over a field k, its transported
+homology diagonal satisfies μ_(C,C) ∘ Δ_H=H(Δ_C).
+Thus the image under the canonical tensorator is the homology
+map into the chain tensor square. -/
 @[reassoc]
 theorem fieldComonFunctor_comul_tensorator (C : Comon (ChainComplex (ModuleCat.{u} k) ℕ)) :
     Δ[(fieldComonFunctor.obj C).X] ≫ Kunneth.tensorator C.X C.X =
@@ -453,8 +508,9 @@ theorem fieldComonFunctor_comul_tensorator (C : Comon (ChainComplex (ModuleCat.{
     Functor.LaxMonoidal.μ (Kunneth.homologyFunctor (R := k)) C.X C.X = (Kunneth.homologyFunctor (R := k)).map Δ[C.X]
   rw [Category.assoc, Functor.Monoidal.δ_μ, Category.comp_id]
 
-/-- The actual native homology counit uses the inverse of the canonical
-single-complex unit map. -/
+/-- For a chain comonoid C over a field k, its transported
+homology counit satisfies e ∘ ε_H=H(ε_C),
+where e:𝟙_Gr≅H(𝟙_Ch) is the canonical unit comparison. -/
 @[reassoc]
 theorem fieldComonFunctor_counit_unitMap (C : Comon (ChainComplex (ModuleCat.{u} k) ℕ)) :
     ε[(fieldComonFunctor.obj C).X] ≫ Kunneth.unitMap = (Kunneth.homologyFunctor (R := k)).map ε[C.X] := by
@@ -463,7 +519,9 @@ theorem fieldComonFunctor_counit_unitMap (C : Comon (ChainComplex (ModuleCat.{u}
     Functor.LaxMonoidal.ε (Kunneth.homologyFunctor (R := k)) = (Kunneth.homologyFunctor (R := k)).map ε[C.X]
   rw [Category.assoc, Functor.Monoidal.η_ε, Category.comp_id]
 
-/-- A field specialization of the general pointwise transport. -/
+/-- For a field k and a nonnegative k-module chain comonoid C,
+the canonical Künneth comparisons give the graded comonoid
+on H(C), with diagonal μ_(C,C)⁻¹H(Δ_C) and counit e⁻¹H(ε_C). -/
 def comonObjOfField (C : (ChainComplex (ModuleCat.{u} k) ℕ)) [ComonObj C] : ComonObj ((Kunneth.homologyFunctor (R :=
   k)).obj C) := by
   letI : ∀ n : ℕ, IsIso (kunnethHomologyTensorMap C C n) :=
@@ -472,7 +530,10 @@ def comonObjOfField (C : (ChainComplex (ModuleCat.{u} k) ℕ)) [ComonObj C] : Co
     fun n => isIso_kunnethHomologyTensorMap_of_field C (C ⊗ C) n
   exact comonObj C
 
-/-- The field case of the native generic pointed-comonoid construction. -/
+/-- For a field k, a chain comonoid C and a comonoid map
+η:𝟙_Ch→C, the canonical homology comonoid with point H(η)e
+is an object under the trivial graded unit comonoid.
+The module carriers remain in world u. -/
 def coaugmentedComonOfField (C : (ChainComplex (ModuleCat.{u} k) ℕ)) [ComonObj C] (η : 𝟙_ (ChainComplex (ModuleCat.{u}
   k) ℕ) ⟶ C)
     [IsComonHom η] : Under (Comon.trivial (GradedObject ℕ (ModuleCat.{u} k))) := by

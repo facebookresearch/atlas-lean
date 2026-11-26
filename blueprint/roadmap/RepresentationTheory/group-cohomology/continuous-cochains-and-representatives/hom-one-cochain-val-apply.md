@@ -1,4 +1,6 @@
-# Hom One Cochain val apply
+# Values of the homogenized cochain
 
-Transparent values of `homOneCochain`. Needed downstream for kernel and
-comparison arguments.
+Values of the homogenized cochain.
+
+For x,y ∈ G, the homogeneous cochain associated to c has value ρ(x)c(x⁻¹y), under the
+specified joint-continuity hypothesis.

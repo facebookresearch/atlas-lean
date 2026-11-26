@@ -14,17 +14,22 @@ public import Mathlib.CategoryTheory.Whiskering
 public import Mathlib.CategoryTheory.Preadditive.AdditiveFunctor
 
 /-!
-# Tensor functors of bimodules with independent carrier universes
+# Balanced tensor functors of enveloping-ring bimodules
 
-An R–S coefficient is an enveloping-module object. Its balanced tensor
-functor sends carriers in universe a to universe max(a,b), where b is the
-coefficient universe. R and S have independent universes and need not fit
-inside either carrier universe.
+Let R,S be arbitrary rings and B an E_(R,S)=R⊗[ℤ]Sᵒᵖ-module in
+world b. Its endpoint actions make B an (R,S)-bimodule. Tensoring
+a right R-module A in world a gives A⊗_R B as a right S-module
+in world max(a,b), independently of the ring worlds.
 
-Coefficient maps define an additive functor to the functor category.
-Changing both rings uses scalar restriction and the semilinear balanced
-quotient map. Input and coefficient naturality, identity and composition
-follow on balanced classes; projectivity is not required.
+The pairing is biadditive and balanced, and input maps act on the
+first factor. Enveloping-module coefficient maps act on the second
+factor, giving an additive functor from bimodules to tensor functors.
+
+For φ:R→R′, ψ:S→S′ and a bimodule map B→Res_(φ,ψ)(B′),
+the balanced map Res_(φᵒᵖ)(A′)⊗_R B→
+Res_(ψᵒᵖ)(A′⊗_(R′)B′) sends [x⊗y] to [x⊗f(y)].
+It is natural in the input and coefficient and coherent with
+identity and composition of endpoint restrictions.
 -/
 
 @[expose] public section
@@ -40,7 +45,9 @@ namespace ModuleCat.Bimodule.Tensor
 
 variable (R : Type r) (S : Type s) [Ring R] [Ring S]
 
-/-- The original quotient with the right outer action earned from the native coefficient. -/
+/-- For an E_(R,S)-module B and a right R-module A,
+the object A⊗_R B carries its right S-action through B.
+Its carrier world is max(a,b), without a bound on the ring worlds. -/
 def obj (B : ModuleCat.{b} (R ⊗[ℤ] Sᵐᵒᵖ)) (A : ModuleCat.{a} Rᵐᵒᵖ) :
     ModuleCat.{max a b} Sᵐᵒᵖ := by
   letI := RingChange.leftModule R S B
@@ -49,9 +56,10 @@ def obj (B : ModuleCat.{b} (R ⊗[ℤ] Sᵐᵒᵖ)) (A : ModuleCat.{a} Rᵐᵒ�
   letI := TensorProduct.Balanced.rightModule ℤ R S A B
   exact ModuleCat.of Sᵐᵒᵖ (TensorProduct.Balanced ℤ R A B)
 
-/-- The original biadditive pairing into the native coefficient tensor object.
-The output requires only its actual additive structure, rather than an
-additional choice of an integer-module dictionary on the outer module object. -/
+/-- For a right R-module A and an (R,S)-bimodule B,
+the pairing (x,y)↦[x⊗y] is additive in both variables
+and satisfies [(x·r)⊗y]=[x⊗(r·y)].
+Its values lie in the right S-module A⊗_R B. -/
 def pairing (B : ModuleCat.{b} (R ⊗[ℤ] Sᵐᵒᵖ)) (A : ModuleCat.{a} Rᵐᵒᵖ) :
     A →+ B →+ (obj R S B A).carrier := by
   letI := RingChange.leftModule R S B
@@ -70,7 +78,9 @@ def pairing (B : ModuleCat.{b} (R ⊗[ℤ] Sᵐᵒᵖ)) (A : ModuleCat.{a} Rᵐ�
     intro y
     exact LinearMap.congr_fun (h.map_add x x') y
 
-/-- The actual input morphism acts on the first factor through the existing balanced map. -/
+/-- For a right R-linear map f:A→A′ and an (R,S)-bimodule B,
+the induced right S-linear map A⊗_R B→A′⊗_R B sends
+[x⊗y] to [f(x)⊗y]. -/
 def map (B : ModuleCat.{b} (R ⊗[ℤ] Sᵐᵒᵖ))
     {A A' : ModuleCat.{a} Rᵐᵒᵖ} (f : A ⟶ A') : obj R S B A ⟶ obj R S B A' := by
   letI := RingChange.leftModule R S B
@@ -86,13 +96,17 @@ def map (B : ModuleCat.{b} (R ⊗[ℤ] Sᵐᵒᵖ))
     (TensorProduct.Balanced.mapRight f₀ (LinearMap.id : B →ₗ[ℤ] B)
       hf (fun _ _ => rfl) (fun _ _ => rfl))
 
-/-- Input maps retain the original coefficient and change the original first factor. -/
+/-- For f:A→A′ right R-linear, the balanced pairing formula
+for the induced map is [x⊗y]↦[f(x)⊗y].
+The bimodule coefficient B is fixed. -/
 theorem map_pairing (B : ModuleCat.{b} (R ⊗[ℤ] Sᵐᵒᵖ))
     {A A' : ModuleCat.{a} Rᵐᵒᵖ} (f : A ⟶ A') (x : A) (y : B) :
     (map R S B f).hom (pairing R S B A x y) =
       pairing R S B A' (f.hom x) y := rfl
 
-/-- Pure original coefficient classes determine a native outer-linear morphism. -/
+/-- Two right S-linear maps from A⊗_R B to a module C
+are equal if they agree on [x⊗y] for every x∈A,y∈B.
+The source is a right R-module and B an (R,S)-bimodule. -/
 theorem hom_ext (B : ModuleCat.{b} (R ⊗[ℤ] Sᵐᵒᵖ)) (A : ModuleCat.{a} Rᵐᵒᵖ)
     {C : ModuleCat.{max a b} Sᵐᵒᵖ} {f g : obj R S B A ⟶ C}
     (h : ∀ (x : A) (y : B), f.hom (pairing R S B A x y) =
@@ -104,7 +118,9 @@ theorem hom_ext (B : ModuleCat.{b} (R ⊗[ℤ] Sᵐᵒᵖ)) (A : ModuleCat.{a} R
   apply LinearMap.toAddMonoidHom_injective
   exact TensorProduct.Balanced.addHom_ext ℤ R A B h
 
-/-- The native tensor functor with the two independent original carrier worlds. -/
+/-- For an E_(R,S)-module B in world b, balanced tensor
+defines ModuleCat^a(Rᵒᵖ)→ModuleCat^max(a,b)(Sᵒᵖ),
+A↦A⊗_R B. It sends input maps to their first-factor tensor maps. -/
 def functor (B : ModuleCat.{b} (R ⊗[ℤ] Sᵐᵒᵖ)) :
     ModuleCat.{a} Rᵐᵒᵖ ⥤ ModuleCat.{max a b} Sᵐᵒᵖ where
   obj := obj R S B
@@ -122,7 +138,9 @@ def functor (B : ModuleCat.{b} (R ⊗[ℤ] Sᵐᵒᵖ)) :
     rw [map_pairing, map_pairing, map_pairing]
     rfl
 
-/-- Additivity in the input is earned from the actual bilinear pairing. -/
+/-- For a fixed (R,S)-bimodule B, the functor A↦A⊗_R B
+preserves addition of right R-linear input morphisms.
+Its pure values are additive in the first factor. -/
 instance functor_additive (B : ModuleCat.{b} (R ⊗[ℤ] Sᵐᵒᵖ)) :
     (functor R S B).Additive where
   map_add {A A' f g} := by
@@ -138,7 +156,9 @@ section Coefficients
 
 variable {B B' B'' : ModuleCat.{b} (R ⊗[ℤ] Sᵐᵒᵖ)}
 
-/-- Native enveloping-linear coefficient morphisms earn both original endpoint equations. -/
+/-- For an enveloping-module morphism f:B→B′ and a right
+R-module A, the map A⊗_R B→A⊗_R B′ is right S-linear
+and applies f to the coefficient factor. -/
 def coefficientMap (f : B ⟶ B') (A : ModuleCat.{a} Rᵐᵒᵖ) :
     obj R S B A ⟶ obj R S B' A := by
   letI := RingChange.leftModule R S B
@@ -164,13 +184,17 @@ def coefficientMap (f : B ⟶ B') (A : ModuleCat.{a} Rᵐᵒᵖ) :
     (TensorProduct.Balanced.mapRight (LinearMap.id : A →ₗ[ℤ] A) f₀
       (fun _ _ => rfl) hL hR)
 
-/-- The coefficient map changes precisely the original coefficient factor. -/
+/-- For a bimodule morphism f:B→B′, the coefficient map
+sends the balanced class [x⊗y] to [x⊗f(y)].
+The right R-module input A is unchanged. -/
 theorem coefficientMap_pairing (f : B ⟶ B') (A : ModuleCat.{a} Rᵐᵒᵖ)
     (x : A) (y : B) :
     (coefficientMap R S f A).hom (pairing R S B A x y) =
       pairing R S B' A x (f.hom y) := rfl
 
-/-- The actual coefficient transformation is natural in the independent input category. -/
+/-- For an E_(R,S)-module map f:B→B′, the coefficient
+maps A⊗_R B→A⊗_R B′ are natural in the right R-module A.
+They define a transformation between the two tensor functors. -/
 def coefficientTransformation (f : B ⟶ B') : functor R S B ⟶ functor R S B' where
   app := coefficientMap R S f
   naturality {A A'} g := by
@@ -182,7 +206,9 @@ def coefficientTransformation (f : B ⟶ B') : functor R S B ⟶ functor R S B' 
         ((coefficientMap R S f A).hom (pairing R S B A x y))
     rw [map_pairing, coefficientMap_pairing, coefficientMap_pairing, map_pairing]
 
-/-- Identity native coefficient morphisms give the actual identity transformation. -/
+/-- The coefficient transformation of id_B is the identity
+on the balanced tensor functor −⊗_R B.
+It fixes every pure class [x⊗y]. -/
 theorem coefficientTransformation_id :
     coefficientTransformation R S (𝟙 B : B ⟶ B) = 𝟙 (functor R S B) := by
   apply NatTrans.ext
@@ -194,7 +220,9 @@ theorem coefficientTransformation_id :
   rw [coefficientMap_pairing]
   rfl
 
-/-- Composition acts by the original composed native coefficient map. -/
+/-- For bimodule morphisms f:B→B′ and g:B′→B″,
+the coefficient transformation of g∘f equals the
+transformation of f followed by that of g. -/
 theorem coefficientTransformation_comp (f : B ⟶ B') (g : B' ⟶ B'') :
     coefficientTransformation R S f ≫ coefficientTransformation R S g =
       coefficientTransformation R S (f ≫ g) := by
@@ -208,7 +236,9 @@ theorem coefficientTransformation_comp (f : B ⟶ B') (g : B' ⟶ B'') :
   rw [coefficientMap_pairing, coefficientMap_pairing, coefficientMap_pairing]
   rfl
 
-/-- Additivity in the coefficient uses the original second-factor linear map. -/
+/-- For bimodule morphisms f,g:B→B′, the natural
+transformation for f+g is the sum of those for f and g.
+This is additivity in the coefficient Hom group. -/
 theorem coefficientTransformation_add (f g : B ⟶ B') :
     coefficientTransformation R S (f + g) =
       coefficientTransformation R S f + coefficientTransformation R S g := by
@@ -225,7 +255,10 @@ theorem coefficientTransformation_add (f g : B ⟶ B') :
 
 end Coefficients
 
-/-- A genuine functor factory from the native bimodule category, with no additional carrier data. -/
+/-- The category ModuleCat^b(E_(R,S)) maps to the functor
+category from right R-modules in world a to right S-modules
+in world max(a,b), by B↦−⊗_R B.
+Its morphisms are the coefficient transformations. -/
 def functorFactory :
     ModuleCat.{b} (R ⊗[ℤ] Sᵐᵒᵖ) ⥤
       (ModuleCat.{a} Rᵐᵒᵖ ⥤ ModuleCat.{max a b} Sᵐᵒᵖ) where
@@ -234,7 +267,9 @@ def functorFactory :
   map_id _ := coefficientTransformation_id R S
   map_comp f g := (coefficientTransformation_comp R S f g).symm
 
-/-- The factory is additive on actual native bimodule morphisms. -/
+/-- The functor B↦−⊗_R B from E_(R,S)-modules to
+right-module tensor functors preserves addition of
+bimodule morphisms. -/
 instance functorFactory_additive : (functorFactory R S).Additive where
   map_add {B B' f g} := coefficientTransformation_add R S f g
 
@@ -246,7 +281,10 @@ variable {R' : Type r'} {S' : Type s'} [Ring R'] [Ring S']
   (B' : ModuleCat.{b} (R' ⊗[ℤ] S'ᵐᵒᵖ))
   (f : B ⟶ (RingChange.restrictFunctor φ ψ).obj B')
 
-/-- Both ring changes act through the native semilinear quotient map and native restriction. -/
+/-- For φ:R→R′, ψ:S→S′ and f:B→Res_(φ,ψ)(B′),
+the map on a right R′-module A′ is
+Res_(φᵒᵖ)(A′)⊗_R B→Res_(ψᵒᵖ)(A′⊗_(R′)B′).
+It applies f to B and leaves the underlying input A′ fixed. -/
 def ringChangeMap (A : ModuleCat.{a} R'ᵐᵒᵖ) :
     obj R S B ((ModuleCat.restrictScalars φ.op).obj A) ⟶
       (ModuleCat.restrictScalars ψ.op).obj (obj R' S' B' A) := by
@@ -275,13 +313,20 @@ def ringChangeMap (A : ModuleCat.{a} R'ᵐᵒᵖ) :
     TensorProduct.Balanced.mapSemilinearRight φ ψ.op x₀ f₀ hx hL hR
   exact ModuleCat.semilinearMapAddEquiv ψ.op (obj R S B X) (obj R' S' B' A) h
 
-/-- The scalar-change map has the two original carrier values, without any lift or shrink. -/
+/-- For endpoint ring maps φ,ψ and the restricted bimodule
+map f, the tensor ring-change map has value
+[x⊗y]↦[x⊗f(y)].
+The target class is balanced over R′ and viewed as a right S-module
+through ψᵒᵖ. -/
 theorem ringChangeMap_pairing (A : ModuleCat.{a} R'ᵐᵒᵖ) (x : A) (y : B) :
     (ringChangeMap R S φ ψ B B' f A).hom
         (pairing R S B ((ModuleCat.restrictScalars φ.op).obj A) x y) =
       pairing R' S' B' A x (f.hom y) := rfl
 
-/-- Ring change is natural in every module over the actual target balancing ring. -/
+/-- For φ:R→R′, ψ:S→S′ and f:B→Res_(φ,ψ)(B′),
+the maps Res_(φᵒᵖ)(A′)⊗_R B→Res_(ψᵒᵖ)(A′⊗_(R′)B′)
+form a natural transformation in A′.
+The rings need not be commutative. -/
 def ringChangeTransformation :
     ModuleCat.restrictScalars φ.op ⋙ functor R S B ⟶
       functor R' S' B' ⋙ ModuleCat.restrictScalars ψ.op where
@@ -299,7 +344,10 @@ def ringChangeTransformation :
       (map R' S' B' g).hom (pairing R' S' B' A (show A from x) (f.hom y))
     exact (map_pairing R' S' B' g (show A from x) (f.hom y)).symm
 
-/-- Postcomposition of the actual coefficient map commutes with scalar change. -/
+/-- For f:B→Res(B′) and a target bimodule map g:B′→B″,
+changing rings by f then applying g on the target coefficient
+equals the ring-change transformation for the composite
+B→Res(B″). -/
 theorem ringChangeTransformation_coefficient_right
     {B'' : ModuleCat.{b} (R' ⊗[ℤ] S'ᵐᵒᵖ)} (g : B' ⟶ B'') :
     ringChangeTransformation R S φ ψ B B' f ≫
@@ -322,7 +370,9 @@ theorem ringChangeTransformation_coefficient_right
     pairing R' S' B'' A (show A from x) (g.hom (f.hom y))
   exact coefficientMap_pairing R' S' g A (show A from x) (f.hom y)
 
-/-- Precomposition of native coefficients has the corresponding actual naturality square. -/
+/-- For a source bimodule map g:B₀→B and ring-change
+coefficient map f:B→Res(B′), applying g first then changing
+rings equals the ring-change transformation for f∘g. -/
 theorem ringChangeTransformation_coefficient_left
     {B₀ : ModuleCat.{b} (R ⊗[ℤ] Sᵐᵒᵖ)} (g : B₀ ⟶ B) :
     Functor.whiskerLeft (ModuleCat.restrictScalars φ.op)
@@ -354,7 +404,10 @@ section Coherence
 
 variable (B : ModuleCat.{b} (R ⊗[ℤ] Sᵐᵒᵖ))
 
-/-- Identity scalar change is exactly the map given by the two native restriction unitors. -/
+/-- For identity endpoint ring maps and the identity bimodule
+coefficient, the tensor ring-change map identifies with id
+on A⊗_R B after the canonical input and output restriction
+identity isomorphisms. Its pure value is [x⊗y]. -/
 theorem ringChangeMap_id (A : ModuleCat.{a} Rᵐᵒᵖ) :
     ringChangeMap R S (RingHom.id R) (RingHom.id S) B B
         ((RingChange.restrictId (R := R) (S := S)).inv.app B) A =
@@ -374,8 +427,11 @@ variable {R' : Type r'} {S' : Type s'} [Ring R'] [Ring S']
   (f : B ⟶ (RingChange.restrictFunctor φ ψ).obj B')
   (g : B' ⟶ (RingChange.restrictFunctor φ' ψ').obj B'')
 
-/-- Ring changes compose with the actual native input, coefficient, and output
-restriction comparisons. Equality is proved on every original pure class. -/
+/-- For composable endpoint ring maps and compatible
+coefficient maps f:B→B′ and g:B′→B″, the two tensor changes
+compose to the change for g∘f.
+The equality uses the canonical input, coefficient and output
+restriction-composition comparisons, and preserves [x⊗g(f(y))]. -/
 theorem ringChangeMap_comp (A : ModuleCat.{a} R''ᵐᵒᵖ) :
     let eA := ModuleCat.restrictScalarsComp' φ.op φ'.op (φ'.comp φ).op (by ext t; rfl)
     let eS := ModuleCat.restrictScalarsComp' ψ.op ψ'.op (ψ'.comp ψ).op (by ext t; rfl)

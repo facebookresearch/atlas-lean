@@ -1,3 +1,5 @@
-# Field Continuous Cohomology Delta Functor is Universal
+# Continuous field cohomology delta functor is universal
 
-The real injective effacement proves universality of the existing HG delta functor.
+Continuous field cohomology delta functor is universal.
+
+The continuous-cohomology delta functor on field coefficient modules is universal.

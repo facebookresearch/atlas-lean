@@ -12,12 +12,16 @@ module
 public import MathlibExt.CategoryTheory.Abelian.LeftDerived.Square
 
 /-!
-# Composition of the canonical derived maps of exact squares
+# Composition and cube coherence of left-derived square maps
 
-The underived composite is built from the two square maps and functor association and comparison
-isomorphisms. The projective-source lifts compose into the exact target. Homotopy uniqueness and
-the existing mapped-homology composition comparison give the derived composite, without requiring
-either source restriction to preserve projectives.
+Two underlying comparison squares between additive functors compose
+using their source and target functor identifications. If the source
+and target changes preserve homology and the source categories admit
+projective resolutions, their canonical derived square maps compose
+to the derived map of that underlying composite. Equality of two
+underlying pasted cube faces likewise gives equality of the derived
+pasted faces, without projective-preservation hypotheses on the
+source changes.
 -/
 
 @[expose] public section
@@ -45,7 +49,12 @@ variable {C : Type uC} [Category.{vC} C] [Abelian C]
   (H : D' ⥤ E'') [H.Additive]
   (α : U ⋙ F ⟶ G ⋙ V) (β : U' ⋙ G ⟶ H ⋙ V')
 
-/-- The composite underived square uses the two maps and comparison isos. -/
+/-- Let `C,D,D′,E,E′,E″` be abelian. Let `U : D → C`, `U′ : D′ → D`, `U₀ : D′ → C`,
+`V : E′ → E`, `V′ : E″ → E′`, `V₀ : E″ → E` be additive, with `e_U : U′ ⋙ U ≅ U₀`, `e_V : V′ ⋙ V ≅ V₀`.
+Let `F : C → E`, `G : D → E′`, `H : D′ → E″` be additive, with
+`α : U ⋙ F → G ⋙ V`, `β : U′ ⋙ G → H ⋙ V′`. Their composite square is the natural transformation
+`U₀ ⋙ F → H ⋙ V₀`, obtained by inverse source identification,
+`α`, the mapped `β`, and the forward target identification. -/
 def composeLeftDerivedSquare : U₀ ⋙ F ⟶ H ⋙ V₀ :=
   whiskerRight eU.inv F ≫ (Functor.associator U' U F).hom ≫ whiskerLeft U' α ≫
     (Functor.associator U' G V).inv ≫ whiskerRight β V ≫
@@ -54,7 +63,11 @@ def composeLeftDerivedSquare : U₀ ⋙ F ⟶ H ⋙ V₀ :=
 omit [Abelian C] [Abelian D] [Abelian D'] [Abelian E] [Abelian E'] [Abelian E'']
   [U.Additive] [U'.Additive] [U₀.Additive] [V.Additive] [V'.Additive] [V₀.Additive]
     [F.Additive] [G.Additive] [H.Additive] in
-/-- Its original component is the ordered four-map composite. -/
+/-- Let `C,D,D′,E,E′,E″` be abelian. Let `U : D → C`, `U′ : D′ → D`, `U₀ : D′ → C`,
+`V : E′ → E`, `V′ : E″ → E′`, `V₀ : E″ → E` be additive, with `e_U : U′ ⋙ U ≅ U₀`, `e_V : V′ ⋙ V ≅ V₀`.
+Let `F : C → E`, `G : D → E′`, `H : D′ → E″` be additive, with
+`α : U ⋙ F → G ⋙ V`, `β : U′ ⋙ G → H ⋙ V′`. At `Z : D′`, the composite square has component
+`F(e_U,Z⁻¹) ≫ α_(U′Z) ≫ V(β_Z) ≫ e_V,H(Z)`. -/
 theorem composeLeftDerivedSquare_app (Z : D') :
     (composeLeftDerivedSquare U U' U₀ eU V V' V₀ eV F G H α β).app Z =
       F.map (eU.inv.app Z) ≫ α.app (U'.obj Z) ≫ V.map (β.app Z) ≫ eV.hom.app (H.obj Z) := by
@@ -65,10 +78,11 @@ theorem composeLeftDerivedSquare_app (Z : D') :
 omit [Abelian C] [Abelian D] [Abelian D'] [Abelian E] [Abelian E'] [Abelian E'']
   [U.Additive] [U'.Additive] [U₀.Additive] [V.Additive] [V'.Additive] [V₀.Additive]
     [F.Additive] [G.Additive] [H.Additive] in
-/--
-The source comparison gives the forward component equation, with no universal property about
-derived maps supplied as a hypothesis.
--/
+/-- Let `C,D,D′,E,E′,E″` be abelian. Let `U : D → C`, `U′ : D′ → D`, `U₀ : D′ → C`,
+`V : E′ → E`, `V′ : E″ → E′`, `V₀ : E″ → E` be additive, with `e_U : U′ ⋙ U ≅ U₀`, `e_V : V′ ⋙ V ≅ V₀`.
+Let `F : C → E`, `G : D → E′`, `H : D′ → E″` be additive, with
+`α : U ⋙ F → G ⋙ V`, `β : U′ ⋙ G → H ⋙ V′`. The paste `α_(U′Z) ≫ V(β_Z) ≫ e_V,H(Z)` equals
+`F(e_U,Z)` followed by the composite square component at `Z`. -/
 theorem composeLeftDerivedSquare_forward (Z : D') :
     α.app (U'.obj Z) ≫ V.map (β.app Z) ≫ eV.hom.app (H.obj Z) =
       F.map (eU.hom.app Z) ≫
@@ -87,10 +101,15 @@ variable [HasProjectiveResolutions C] [HasProjectiveResolutions D] [HasProjectiv
   [U.PreservesHomology] [U'.PreservesHomology] [U₀.PreservesHomology]
   [V.PreservesHomology] [V'.PreservesHomology] [V₀.PreservesHomology]
 
-/--
-Two canonical derived square maps compose into the canonical map of their underived composite, in
-every original degree.
--/
+/-- Let `C,D,D′,E,E′,E″` be abelian, with projective resolutions
+in `C,D,D′`. Let `U : D → C`, `U′ : D′ → D`, `U₀ : D′ → C`,
+`V : E′ → E`, `V′ : E″ → E′`, `V₀ : E″ → E` be additive and
+preserve homology, with `e_U : U′ ⋙ U ≅ U₀`, `e_V : V′ ⋙ V ≅ V₀`.
+Let `F : C → E`, `G : D → E′`, `H : D′ → E″` be additive, with
+`α : U ⋙ F → G ⋙ V`, `β : U′ ⋙ G → H ⋙ V′`. For input maps `f : X → U(Y)`, `f′ : Y → U′(Z)`, the
+derived square for `α` followed by the mapped derived square for `β`
+and `e_V` equals the derived square of their composite after
+`L_nF(f ≫ U(f′) ≫ e_U,Z)`. -/
 theorem leftDerivedSquareHom_comp_with_input
     {X : C} {Y : D} {Z : D'} (f : X ⟶ U.obj Y) (f' : Y ⟶ U'.obj Z) (n : ℕ) :
     ((F.leftDerived n).map f ≫ (leftDerivedSquareHom U V F G α n).app Y) ≫
@@ -277,10 +296,16 @@ variable {C₀ : Type uC₀} [Category.{vC₀} C₀] [Abelian C₀] [HasProjecti
   (eF : I ⋙ F₁ ≅ F₀ ⋙ K) (eG : J ⋙ G₁ ≅ G₀ ⋙ L)
   (α₀ : U₀ ⋙ F₀ ⟶ G₀ ⋙ V₀) (α₁ : U₁ ⋙ F₁ ⟶ G₁ ⋙ V₁)
 
-/--
-A genuinely commuting underived restriction/height cube induces the canonical derived cube. The
-hypothesis concerns the underived maps only; every derived map is constructed.
--/
+/-- Let `C_i,D_i,E_i,E′_i` for `i=0,1` be abelian, with projective
+resolutions in `C_i,D_i`. Let `I : C₀ → C₁`, `J : D₀ → D₁`,
+`K : E₀ → E₁`, `L : E′₀ → E′₁`, `U_i : D_i → C_i`, and
+`V_i : E′_i → E_i` be additive and preserve homology. Let
+`F_i : C_i → E_i`, `G_i : D_i → E′_i` be additive, with isomorphisms
+`U₀ ⋙ I ≅ J ⋙ U₁`, `V₀ ⋙ K ≅ L ⋙ V₁`,
+`I ⋙ F₁ ≅ F₀ ⋙ K`, `J ⋙ G₁ ≅ G₀ ⋙ L`, and square maps
+`α_i : U_i ⋙ F_i → G_i ⋙ V_i`. If the two pasted underlying faces
+agree, their derived routes from `L_nF₁(I(U₀(Y)))` to
+`K(V₀(L_nG₀(Y)))` agree for every `n` and `Y : D₀`. -/
 theorem leftDerivedSquareHom_cube_inverse
     (hCube :
       composeLeftDerivedSquare I U₀ (U₀ ⋙ I) (Iso.refl _) K V₀ (V₀ ⋙ K) (Iso.refl _)

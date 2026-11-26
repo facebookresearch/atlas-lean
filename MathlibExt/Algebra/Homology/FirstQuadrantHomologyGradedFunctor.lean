@@ -14,16 +14,15 @@ public import
   MathlibExt.Algebra.Homology.FirstQuadrantHomologyGradedUnifiedPrevFunctoriality
 
 /-!
-# Functorial associated graded of first-quadrant total homology
+# Functorial associated graded total homology
 
-The preceding and current total-homology filtration stages form functors of
-the bicomplex.  Their consecutive-stage maps form a natural transformation,
-whose pointwise arrows give the filtration-step Arrow functor.  Composing
-with the cokernel functor packages the associated graded pieces and their
-landed maps into a functor.
+Let C be an abelian category, p,q ∈ ℕ, and n=p+q. For a bicomplex K of shape (down ℕ,down ℕ),
+the complete image stages F_{p−1}H_n(Tot(K)) and F_pH_n(Tot(K)) are functorial in K. Their
+inclusion defines a natural transformation and hence a functor to Arrow(C).
 
-Identity and composition of the associated-graded maps are inherited from
-this functor; no cokernel universal property is reopened here.
+Composing with the cokernel functor gives K ↦ Gr_pH_n(Tot(K)) = coker(F_{p−1} → F_p). The
+induced associated graded maps preserve identity morphisms and composition. The predecessor
+index is in ℤ, so at p=0 its stage is F_{−1}=0.
 -/
 
 @[expose] public section
@@ -43,8 +42,10 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {K L M : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ)}
 
-/-- The preceding complete total-homology filtration stage, functorial in
-the bicomplex. -/
+/-- Let C be an abelian category and p,q ∈ ℕ. The assignment K ↦ F_{(p:ℤ)−1}H_{p+q}(Tot(K)), for
+bicomplexes of shape (down ℕ,down ℕ), defines a functor to C. A bicomplex map acts by the
+finite predecessor image map transported to the complete stage when p>0, and by the zero map
+between the zero stages at index −1 when p=0. These maps preserve identities and composition. -/
 noncomputable def horizontalPrevTotalHomologyFiltrationFunctor
     (p q : ℕ) :
     HomologicalComplex₂ C (ComplexShape.down ℕ)
@@ -56,8 +57,10 @@ noncomputable def horizontalPrevTotalHomologyFiltrationFunctor
   map_comp f g :=
     horizontalPrevTotalHomologyFiltrationMapOfBicomplex_comp f g p q
 
-/-- The current complete total-homology filtration stage, functorial in the
-bicomplex. -/
+/-- Let C be an abelian category and p,q ∈ ℕ. Assign to a bicomplex K of shape (down ℕ,down ℕ) the
+stage F_pH_{p+q}(Tot(K)) of its complete image filtration. On a bicomplex map, use the finite
+stage-p image map conjugated by the complete-to-finite stage comparisons. This gives a functor
+to C for every p, including zero, with the stated current-stage identity and composition laws. -/
 noncomputable def horizontalCurrentTotalHomologyFiltrationFunctor
     (p q : ℕ) :
     HomologicalComplex₂ C (ComplexShape.down ℕ)
@@ -110,8 +113,10 @@ theorem horizontalCurrentTotalHomologyFiltrationFunctor_map
       horizontalPositiveCurrentTotalHomologyFiltrationMapOfBicomplex f p q :=
   rfl
 
-/-- Consecutive complete total-homology filtration steps form a natural
-transformation between the predecessor and current stage functors. -/
+/-- Let C be an abelian category and p,q ∈ ℕ. The inclusions s_K : F_{p−1}H_{p+q}(Tot(K)) →
+F_pH_{p+q}(Tot(K)) form a natural transformation from the predecessor-stage functor to the
+current-stage functor on bicomplexes of shape (down ℕ,down ℕ). If f : K → L, its naturality
+equation is a_prev(f) ≫ s_L = s_K ≫ a_current(f), with the predecessor index computed in ℤ. -/
 noncomputable def horizontalTotalHomologyFiltrationStepNatTrans
     (p q : ℕ) :
     horizontalPrevTotalHomologyFiltrationFunctor (C := C) p q ⟶
@@ -130,7 +135,10 @@ theorem horizontalTotalHomologyFiltrationStepNatTrans_app
       horizontalTotalHomologyFiltrationStepMap K p q :=
   rfl
 
-/-- The consecutive filtration step as a functor to the arrow category. -/
+/-- Let C be an abelian category and p,q ∈ ℕ. The consecutive-stage natural transformation defines
+a functor from bicomplexes of shape (down ℕ,down ℕ) to Arrow(C). Its object at K is
+F_{p−1}H_{p+q}(Tot(K)) → F_pH_{p+q}(Tot(K)), and its map on f : K → L is the commutative
+square with the induced predecessor and current-stage maps as its two components. -/
 noncomputable def horizontalTotalHomologyFiltrationStepArrowFunctor
     (p q : ℕ) :
     HomologicalComplex₂ C (ComplexShape.down ℕ)
@@ -155,8 +163,10 @@ theorem horizontalTotalHomologyFiltrationStepArrowFunctor_map
       horizontalTotalHomologyFiltrationStepSquareOfBicomplex f p q :=
   rfl
 
-/-- Associated graded pieces of total homology, functorial in the
-first-quadrant bicomplex. -/
+/-- Let C be an abelian category and p,q ∈ ℕ. Define a functor on bicomplexes of shape (down
+ℕ,down ℕ) by K ↦ Gr_pH_{p+q}(Tot(K)) = coker(F_{p−1}H_{p+q}(Tot(K)) → F_pH_{p+q}(Tot(K))). It
+is the consecutive-stage arrow functor followed by coker : Arrow(C) → C. A bicomplex map acts
+by the cokernel map of its predecessor/current filtration square. -/
 noncomputable def horizontalTotalHomologyGradedPieceFunctor
     (p q : ℕ) :
     HomologicalComplex₂ C (ComplexShape.down ℕ)
@@ -180,8 +190,10 @@ theorem horizontalTotalHomologyGradedPieceFunctor_map
       horizontalTotalHomologyGradedPieceMapOfBicomplex f p q :=
   rfl
 
-/-- The associated-graded map of an identity bicomplex morphism is the
-identity. -/
+/-- Let C be an abelian category, K a bicomplex of shape (down ℕ,down ℕ), and p,q ∈ ℕ. The
+cokernel map induced by the identity bicomplex morphism is the identity on
+Gr_pH_{p+q}(Tot(K)). Here the associated graded object is the cokernel of the complete-stage
+inclusion F_{p−1} → F_p, with p−1 computed in ℤ. The equality holds also at p=0. -/
 @[simp 1100]
 theorem horizontalTotalHomologyGradedPieceMapOfBicomplex_id
     (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
@@ -193,7 +205,10 @@ theorem horizontalTotalHomologyGradedPieceMapOfBicomplex_id
     (horizontalTotalHomologyGradedPieceFunctor
       (C := C) p q).map_id K
 
-/-- Associated-graded maps preserve composition of bicomplex morphisms. -/
+/-- Let C be an abelian category and f : K → L, g : L → M composable morphisms of bicomplexes of
+shape (down ℕ,down ℕ). For p,q ∈ ℕ, the induced associated graded maps satisfy Gr_{p,p+q}(f ≫
+g) = Gr_{p,p+q}(f) ≫ Gr_{p,p+q}(g). Each map is the cokernel map of the consecutive
+image-filtration square F_{p−1}H_{p+q} → F_pH_{p+q}. -/
 @[simp 1100]
 theorem horizontalTotalHomologyGradedPieceMapOfBicomplex_comp
     (f : K ⟶ L) (g : L ⟶ M) (p q : ℕ) :

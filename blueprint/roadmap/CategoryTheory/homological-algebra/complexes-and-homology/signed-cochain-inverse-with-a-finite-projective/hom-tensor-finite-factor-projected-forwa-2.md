@@ -1,3 +1,6 @@
-# Hom Tensor Finite Factor Projected forward eq zero
+# Projection of a different factor degree vanishes
 
-A different original U-degree is killed by the original total projection.
+Projection of a different factor degree vanishes.
+
+For a tensor in source cell `(a, b)` with `a + b = n`, the forward Hom–tensor comparison has
+zero projected family in factor degree `k` whenever `k ≠ b`.

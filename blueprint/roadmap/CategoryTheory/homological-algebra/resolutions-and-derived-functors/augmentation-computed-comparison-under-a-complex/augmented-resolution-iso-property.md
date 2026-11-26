@@ -1,3 +1,6 @@
-# Augmented Resolution Iso Property
+# Augmented cohomology comparison property of a complex isomorphism
 
-The literal computed-comparison equation on the given augmented complex isomorphism.
+Let `C,D` be abelian, with injective resolutions in `C`,
+and `F : C → D` additive. For quasi-isomorphisms `ι : X[0] → I`, `κ : X[0] → J`
+and `e : I ≅ J`, the comparison property in degree `n` is the equality
+`Hⁿ(F(e)) ≫ comparison_J = comparison_I` of maps to `R^nF(X)`.

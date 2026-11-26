@@ -1,5 +1,6 @@
-# Cobar Coface App coface coface
+# The componentwise cobar coface identity
 
-Objectwise coface-coface identity. Dual of `Monad.barFaceApp_face_face`
-with composition order dualized: interior insertions are read through `Fin.rev`
-so the raw `deltaAtPos_face_face` applies with the reversed inequality.
+The componentwise cobar coface identity.
+
+For `i ≤ j`, the component composites satisfy `δ_n^i ≫ δ_(n+1)^(j+1) = δ_n^j ≫ δ_(n+1)^i` at
+every object `a`.

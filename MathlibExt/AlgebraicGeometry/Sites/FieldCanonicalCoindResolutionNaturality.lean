@@ -10,7 +10,16 @@ LICENSE file in the root directory of this source tree.
 module
 public import MathlibExt.AlgebraicGeometry.Sites.FieldCanonicalCoindResolution
 
-/-! Actual canonical coinduction resolutions of every original field coefficient. -/
+/-!
+# Natural canonical coinduction resolutions
+
+Canonical coinduction complexes vary functorially in discrete Galois coefficients. Their maps
+are the coefficient maps of the monad coresolution in each degree, and the coaugmentation is
+natural.
+
+The coaugmentation is a quasi-isomorphism for every discrete Galois module in the common
+coefficient universe.
+-/
 @[expose] public section
 noncomputable section
 set_option autoImplicit false
@@ -21,7 +30,10 @@ namespace AlgebraicGeometry.Scheme.DerivedSections
 attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 
-/-- The actual original alternating coinduction complex, functorial in its same coefficient. -/
+/-- Functor of canonical coinduction complexes.
+
+The coinduction-monad coresolution functor followed by alternating cofaces gives the canonical
+cochain-complex functor. -/
 abbrev fieldCoindCanonicalComplexFunctor :
     DiscreteAbelianAction.{u, max u w} Gal(Ω/k) ⥤
       CochainComplex (DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) ℕ :=
@@ -29,7 +41,10 @@ abbrev fieldCoindCanonicalComplexFunctor :
     alternatingCofaceMapComplex _
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Its coefficient-map component is the actual stored canonical coresolution map. -/
+/-- Canonical coinduction map in a fixed degree.
+
+The degree-`n` map of a coefficient morphism is the monad-coresolution natural transformation
+evaluated at the simplex of degree `n`. -/
 theorem fieldCoindCanonicalComplexFunctor_map_f
     {M N : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)} (f : M ⟶ N) (n : ℕ) :
     ((fieldCoindCanonicalComplexFunctor.{u, w} k Ω).map f).f n =
@@ -37,7 +52,10 @@ theorem fieldCoindCanonicalComplexFunctor_map_f
         (SimplexCategory.mk n) := rfl
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The same actual coefficient map preserves the canonical degree-zero augmented unit. -/
+/-- Degree zero coaugmentation is natural in coefficients.
+
+The source coaugmentation component followed by the degree-zero coinduction map equals the
+coefficient map followed by the target coaugmentation component. -/
 theorem fieldCoindCanonicalCoaugmentation_coefficient_zero
     {M N : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)} (f : M ⟶ N) :
     (fieldCoindCanonicalCoaugmentation.{u, w} k Ω M).f 0 ≫
@@ -62,7 +80,10 @@ theorem fieldCoindCanonicalCoaugmentation_coefficient_zero
   exact (congrArg (fun q : T.obj M ⟶ T.obj N => T.η.app M ≫ q) h').trans (T.η.naturality f).symm
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The full actual augmented map is fixed by its degree-zero original unit square. -/
+/-- Coinduction coaugmentation is coefficient natural.
+
+The full coaugmentation square commutes with a coefficient map and its image under the
+canonical coinduction-complex functor. -/
 theorem fieldCoindCanonicalCoaugmentation_coefficient_naturality
     {M N : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)} (f : M ⟶ N) :
     fieldCoindCanonicalCoaugmentation.{u, w} k Ω M ≫
@@ -77,8 +98,10 @@ theorem fieldCoindCanonicalCoaugmentation_coefficient_naturality
   exact fieldCoindCanonicalCoaugmentation_coefficient_zero.{u, w} k Ω f
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual geometric equivalence counit transports the canonical coaugmentation
-quasi-isomorphism to every original coefficient, without a homology-reflection premise. -/
+/-- Every canonical coinduction coaugmentation is a quasi isomorphism.
+
+The canonical map from a discrete Galois module in degree zero to its coinduction complex is a
+quasi-isomorphism. -/
 theorem fieldCoindCanonicalCoaugmentation_quasiIso
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) :
     QuasiIso (fieldCoindCanonicalCoaugmentation.{u, w} k Ω M) := by

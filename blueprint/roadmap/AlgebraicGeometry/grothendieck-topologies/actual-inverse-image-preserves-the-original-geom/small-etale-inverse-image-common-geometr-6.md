@@ -1,4 +1,7 @@
-# Small Etale Inverse Image Common Geometric Stalk Iso comp
+# Inverse image stalk comparisons respect composition
 
-The same κ agrees with the accepted actual inverse-image composition
-and the canonical original image-point composition transport.
+Inverse image stalk comparisons respect composition.
+
+Successive inverse images and their stalk comparisons, with the functor associator and image-
+point composition coordinate, equal the inverse-image composition comparison followed by the
+stalk comparison for `f ≫ g`.

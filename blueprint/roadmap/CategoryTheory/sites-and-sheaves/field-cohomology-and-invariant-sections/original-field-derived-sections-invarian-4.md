@@ -1,3 +1,6 @@
-# Original Field Derived Sections Invariants Iso zero germ
+# Lifted terminal section comparison gives its geometric germ
 
-The normalized original class has the literal original chosen-point germ, with one lift.
+Lifted terminal section comparison gives its geometric germ.
+
+The underlying compared invariant element is the common geometric germ of the lifted terminal
+section.

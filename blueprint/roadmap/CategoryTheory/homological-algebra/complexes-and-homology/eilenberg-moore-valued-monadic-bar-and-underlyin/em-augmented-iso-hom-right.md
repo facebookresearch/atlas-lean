@@ -1,6 +1,5 @@
-# Em Augmented Iso hom right
+# The regular augmented comparison is identity on the target
 
-The target component of the model comparison is the identity: both
-constituent isomorphisms are the identity on targets, transported along
-evaluation whiskering. Postcomposed-module model, not the literal
-forgetful image.
+Let T be a monad on C and alg=(A,a) a T-algebra. The augmentation-target component of
+emAugmentedIso(alg).hom is the identity on A. Both augmented bar descriptions use the same
+algebra carrier as target.

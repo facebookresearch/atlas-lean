@@ -1,9 +1,6 @@
-# Universal Bundle
+# Simplicial bar map induced by a compatible augmentation
 
-Strict universal-bundle map from the total bar to the classifying bar.
+Simplicial bar map induced by a compatible augmentation.
 
-Given an augmentation datum `aug : M ⟶ Pt` compatible with the two right
-actions, the map is the existing `monoidalBarHom` (hence the existing
-`twoSidedBarHom`) with the identity point morphism on the inner factor.
-Its components are therefore computed by the
-`twoSidedBarHom` computation rules.
+A map `aug : M → Pt` satisfying the right-action compatibility gives a simplicial map from the
+regular bar to the classifying bar, with identity inner point map.

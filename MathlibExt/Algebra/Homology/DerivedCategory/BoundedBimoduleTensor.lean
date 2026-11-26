@@ -14,16 +14,22 @@ public import Mathlib.Algebra.Homology.DerivedCategory.ExactFunctor
 public import Mathlib.CategoryTheory.Localization.Equivalence
 
 /-!
-# Derived bounded bimodule tensor functors
+# Tensor functors on bounded finite-module localizations
 
-The bounded derived category localizes bounded finite-module cochains at
-ambient module quasi-isomorphisms. Exact tensor functors preserve this
-localizer. Invertible bimodule contractions give bounded tensor functors
-and their return isomorphisms, which descend to an equivalence.
+For an associative ring `R`, localize bounded finite-module cochain complexes at their ambient
+module quasi-isomorphisms. An `S`-left, `R`-right bimodule `E` finite over `S` and satisfying
+`Tor¹_R(E,N)=0` for every left module `N` gives an exact tensor functor preserving these
+morphisms. It therefore descends to the bounded localization, with a natural factorization
+through the quotient functors.
 
-The bounded cochains also map to the ambient derived category. Their tensor
-comparison is induced by the exact derived functor and ambient tensor
-square.
+Bimodule contractions `P ⊗_S Q ≅ R` and `Q ⊗_R P ≅ S` supply the finite and exact coefficients
+for both directions. The bounded tensor return isomorphisms descend to an equivalence of the
+two localizations, retaining the specified counit and its adjointified unit.
+
+These localizations also have canonical functors to the ambient derived categories. The
+bounded tensor square agrees with the ambient derived functor of exact tensor. Rings,
+coefficients, and underived module carriers here use universe `u`; the two ambient derived-
+category universes are independent.
 -/
 
 @[expose] public section
@@ -43,10 +49,16 @@ namespace CochainComplex.Bounded
 
 variable (R : Type u) [Ring R]
 
-/-- Localize the original bounded finite-module category at its ambient quasi-isomorphisms. -/
+/-- Localization of bounded finite-module cochains.
+
+For a ring `R`, localize `Bounded (FGModuleCat R)` at the morphisms that become quasi-
+isomorphisms in the ambient module cochain category. This defines `FGModuleDerived R`. -/
 abbrev FGModuleDerived := (fgModuleQuasiIsomorphisms R).Localization
 
-/-- The canonical original bounded-derived localization functor. -/
+/-- Localization functor for bounded finite-module cochains.
+
+The functor from bounded finite-module cochains to `FGModuleDerived R` is the canonical
+localization at ambient module quasi-isomorphisms. -/
 abbrev fgModuleDerivedQ : Bounded (FGModuleCat.{u} R) ⥤ FGModuleDerived R :=
   (fgModuleQuasiIsomorphisms R).Q
 
@@ -57,18 +69,28 @@ variable {S : Type u} [Ring S]
   (hE : ∀ N : ModuleCat.{u} R,
     IsZero (((ModuleCat.BalancedTensor.torFirst R 1).obj (ModuleCat.of Rᵐᵒᵖ E)).obj N))
 
-/-- Earn the bounded localizer morphism from the original right-flatness input. -/
+/-- Exact finite-coefficient tensor preserves the bounded localizer.
+
+Let `E` be an `S`-left, `R`-right bimodule finite over `S`, with `Tor¹_R(E,N)=0` for every
+left `R`-module `N`. Tensoring bounded finite-module cochains by `E` preserves their ambient
+quasi-isomorphisms and gives a localizer morphism. -/
 abbrev bimoduleTensorLocalizer :
     LocalizerMorphism (fgModuleQuasiIsomorphisms R) (fgModuleQuasiIsomorphisms S) where
   functor := bimoduleTensor (R := R) (S := S) E
   map := bimoduleTensor_map_quasiIsomorphisms E hE
 
-/-- Descend that same actual bounded tensor through the canonical localization. -/
+/-- Localized tensor functor on bounded finite-module cochains.
+
+The exact left-finite coefficient tensor functor descends to `FGModuleDerived R ⥤
+FGModuleDerived S` through the two localization functors. -/
 abbrev bimoduleTensorDerived : FGModuleDerived R ⥤ FGModuleDerived S :=
   (bimoduleTensorLocalizer (R := R) (S := S) E hE).localizedFunctor
     (fgModuleDerivedQ R) (fgModuleDerivedQ S)
 
-/-- Register the canonical lifting for this original bounded tensor, without new comparison data. -/
+/-- Factorization data for localized bounded tensor.
+
+The localized tensor functor has the canonical lifting data for the natural factorization `Q_R
+⋙ D_E ≅ F_E ⋙ Q_S`, where `F_E` is bounded tensor by `E`. -/
 instance bimoduleTensorDerivedLifting :
     Lifting (fgModuleDerivedQ R) (fgModuleQuasiIsomorphisms R)
       (bimoduleTensor (R := R) (S := S) E ⋙ fgModuleDerivedQ S)
@@ -77,7 +99,10 @@ instance bimoduleTensorDerivedLifting :
     (bimoduleTensorLocalizer (R := R) (S := S) E hE)
     (fgModuleDerivedQ R) (fgModuleDerivedQ S)
 
-/-- The original-Q square relates the actual tensor lift to the same original bounded functor. -/
+/-- Localized bounded tensor commutes with the localization functors.
+
+There is a natural isomorphism `fgModuleDerivedQ R ⋙ bimoduleTensorDerived E ≅ bimoduleTensor
+E ⋙ fgModuleDerivedQ S`. -/
 def bimoduleTensorDerivedFactors :
     fgModuleDerivedQ R ⋙ bimoduleTensorDerived (S := S) E hE ≅
       bimoduleTensor (R := R) (S := S) E ⋙ fgModuleDerivedQ S :=
@@ -85,7 +110,11 @@ def bimoduleTensorDerivedFactors :
     (bimoduleTensor (R := R) (S := S) E ⋙ fgModuleDerivedQ S)
     (bimoduleTensorDerived (S := S) E hE)
 
-/-- Every original bounded morphism enters the derived tensor through the same original-Q square. -/
+/-- Bounded tensor localization factorization is natural in morphisms.
+
+For a bounded finite-module cochain morphism `f : K ⟶ L`, the localized image of `f` followed
+by the factorization component at `L` equals the component at `K` followed by localization of
+its tensor image. -/
 theorem bimoduleTensorDerivedFactors_hom_naturality
     {K L : Bounded (FGModuleCat.{u} R)} (f : K ⟶ L) :
     (bimoduleTensorDerived (S := S) E hE).map ((fgModuleDerivedQ R).map f) ≫
@@ -117,24 +146,37 @@ variable (R S P Q : Type u) [Ring R] [Ring S]
 
 local notation "eB" => bimoduleTensorMoritaEquivalence R S P Q a ha b hb
 
-/-- Original contractions earn the localizer morphism of the forward bounded Morita tensor. -/
+/-- Forward bounded Morita tensor functor preserves quasi-isomorphisms.
+
+Given bimodule contractions `P ⊗_S Q ≅ R` and `Q ⊗_R P ≅ S`, the forward bounded finite-module
+tensor equivalence, with coefficient `Q`, defines a localizer morphism from the `R` quasi-
+isomorphisms to the `S` quasi-isomorphisms. -/
 abbrev bimoduleTensorMoritaLocalizer :
     LocalizerMorphism (fgModuleQuasiIsomorphisms R) (fgModuleQuasiIsomorphisms S) where
   functor := (eB).functor
   map := bimoduleTensorMoritaEquivalence_map_quasiIsomorphisms R S P Q a ha b hb
 
-/-- The original inverse bounded tensor earns its actual inverse localizer morphism. -/
+/-- Inverse bounded Morita tensor functor preserves quasi-isomorphisms.
+
+The inverse bounded tensor functor, with coefficient `P`, defines the localizer morphism in
+the opposite direction, using the same invertible bimodule contractions. -/
 abbrev bimoduleTensorMoritaInverseLocalizer :
     LocalizerMorphism (fgModuleQuasiIsomorphisms S) (fgModuleQuasiIsomorphisms R) where
   functor := (eB).inverse
   map := bimoduleTensorMoritaEquivalence_inverse_map_quasiIsomorphisms R S P Q a ha b hb
 
-/-- The actual forward tensor functor on the original bounded-derived model. -/
+/-- Forward Morita tensor functor on bounded localizations.
+
+Localize the forward bounded finite-module tensor functor to obtain `FGModuleDerived R ⥤
+FGModuleDerived S`. -/
 abbrev bimoduleTensorMoritaDerivedFunctor : FGModuleDerived R ⥤ FGModuleDerived S :=
   (bimoduleTensorMoritaLocalizer R S P Q a ha b hb).localizedFunctor
     (fgModuleDerivedQ R) (fgModuleDerivedQ S)
 
-/-- The actual inverse tensor functor on that same original bounded-derived model. -/
+/-- Inverse Morita tensor functor on bounded localizations.
+
+Localize the inverse bounded finite-module tensor functor to obtain `FGModuleDerived S ⥤
+FGModuleDerived R`. -/
 abbrev bimoduleTensorMoritaDerivedInverseFunctor : FGModuleDerived S ⥤ FGModuleDerived R :=
   (bimoduleTensorMoritaInverseLocalizer R S P Q a ha b hb).localizedFunctor
     (fgModuleDerivedQ S) (fgModuleDerivedQ R)
@@ -142,7 +184,10 @@ abbrev bimoduleTensorMoritaDerivedInverseFunctor : FGModuleDerived S ⥤ FGModul
 local notation "D" => bimoduleTensorMoritaDerivedFunctor R S P Q a ha b hb
 local notation "D'" => bimoduleTensorMoritaDerivedInverseFunctor R S P Q a ha b hb
 
-/-- The original forward Morita tensor uses the canonical localizer lifting data. -/
+/-- Localization lifting data for forward Morita tensor.
+
+The forward localized Morita tensor functor has the lifting data relating it to the forward
+bounded tensor equivalence followed by localization in `S`. -/
 instance bimoduleTensorMoritaDerivedFunctorLifting :
     Lifting (fgModuleDerivedQ R) (fgModuleQuasiIsomorphisms R)
       ((eB).functor ⋙ fgModuleDerivedQ S) D :=
@@ -150,7 +195,10 @@ instance bimoduleTensorMoritaDerivedFunctorLifting :
     (bimoduleTensorMoritaLocalizer R S P Q a ha b hb)
     (fgModuleDerivedQ R) (fgModuleDerivedQ S)
 
-/-- The original inverse Morita tensor uses the same canonical inverse lifting construction. -/
+/-- Localization lifting data for inverse Morita tensor.
+
+The inverse localized Morita tensor functor has the lifting data relating it to the inverse
+bounded tensor equivalence followed by localization in `R`. -/
 instance bimoduleTensorMoritaDerivedInverseFunctorLifting :
     Lifting (fgModuleDerivedQ S) (fgModuleQuasiIsomorphisms S)
       ((eB).inverse ⋙ fgModuleDerivedQ R) D' :=
@@ -158,13 +206,19 @@ instance bimoduleTensorMoritaDerivedInverseFunctorLifting :
     (bimoduleTensorMoritaInverseLocalizer R S P Q a ha b hb)
     (fgModuleDerivedQ S) (fgModuleDerivedQ R)
 
-/-- The original forward-Q factorization uses the actual bounded Morita tensor. -/
+/-- Forward Morita tensor commutes with bounded localization.
+
+The forward localized functor composed after `Q_R` is naturally isomorphic to the forward
+bounded tensor equivalence composed before `Q_S`. -/
 def bimoduleTensorMoritaDerivedFactors :
     fgModuleDerivedQ R ⋙ D ≅ (eB).functor ⋙ fgModuleDerivedQ S :=
   Lifting.iso (fgModuleDerivedQ R) (fgModuleQuasiIsomorphisms R)
     ((eB).functor ⋙ fgModuleDerivedQ S) D
 
-/-- The original inverse-Q factorization uses the actual bounded inverse tensor. -/
+/-- Inverse Morita tensor commutes with bounded localization.
+
+The inverse localized functor composed after `Q_S` is naturally isomorphic to the inverse
+bounded tensor equivalence composed before `Q_R`. -/
 def bimoduleTensorMoritaDerivedInverseFactors :
     fgModuleDerivedQ S ⋙ D' ≅ (eB).inverse ⋙ fgModuleDerivedQ R :=
   Lifting.iso (fgModuleDerivedQ S) (fgModuleQuasiIsomorphisms S)
@@ -173,7 +227,11 @@ def bimoduleTensorMoritaDerivedInverseFactors :
 local notation "qF" => bimoduleTensorMoritaDerivedFactors R S P Q a ha b hb
 local notation "qG" => bimoduleTensorMoritaDerivedInverseFactors R S P Q a ha b hb
 
-/-- The actual left return before localization is the original bounded Morita unit inverse. -/
+/-- R-return comparison for the localized Morita functors.
+
+The forward bounded tensor functor, followed by localization in `S` and the inverse localized
+functor, is naturally isomorphic to localization in `R`. The comparison combines the inverse-
+functor factorization with the bounded equivalence's return isomorphism. -/
 def bimoduleTensorMoritaDerivedLeftSourceIso :
     ((eB).functor ⋙ fgModuleDerivedQ S) ⋙ D' ≅ fgModuleDerivedQ R :=
   Functor.associator _ _ _ ≪≫ isoWhiskerLeft (eB).functor qG ≪≫
@@ -181,7 +239,10 @@ def bimoduleTensorMoritaDerivedLeftSourceIso :
       isoWhiskerRight (eB).unitIso.symm (fgModuleDerivedQ R) ≪≫
         Functor.leftUnitor _
 
-/-- The actual right return before localization is the original bounded Morita counit. -/
+/-- S-return comparison for the localized Morita functors.
+
+The inverse bounded tensor functor, followed by localization in `R` and the forward localized
+functor, is naturally isomorphic to localization in `S`. -/
 def bimoduleTensorMoritaDerivedRightSourceIso :
     ((eB).inverse ⋙ fgModuleDerivedQ R) ⋙ D ≅ fgModuleDerivedQ S :=
   Functor.associator _ _ _ ≪≫ isoWhiskerLeft (eB).inverse qF ≪≫
@@ -189,7 +250,10 @@ def bimoduleTensorMoritaDerivedRightSourceIso :
       isoWhiskerRight (eB).counitIso (fgModuleDerivedQ S) ≪≫
         Functor.leftUnitor _
 
-/-- The canonical localization descends both original tensors and both original return families. -/
+/-- Morita equivalence of bounded finite-module localizations.
+
+The two invertible bimodule contractions give an equivalence `FGModuleDerived R ≌
+FGModuleDerived S`, with the forward and inverse localized tensor functors. -/
 def bimoduleTensorMoritaDerivedEquivalence : FGModuleDerived R ≌ FGModuleDerived S :=
   Localization.equivalence
     (fgModuleDerivedQ R) (fgModuleQuasiIsomorphisms R)
@@ -199,27 +263,42 @@ def bimoduleTensorMoritaDerivedEquivalence : FGModuleDerived R ≌ FGModuleDeriv
     (bimoduleTensorMoritaDerivedLeftSourceIso R S P Q a ha b hb)
     (bimoduleTensorMoritaDerivedRightSourceIso R S P Q a ha b hb)
 
-/-- Its entire forward functor is the actual localized original bounded Q tensor. -/
+/-- Forward functor of the bounded localized Morita equivalence.
+
+The equivalence's forward functor is `bimoduleTensorMoritaDerivedFunctor R S P Q a ha b hb`. -/
 theorem bimoduleTensorMoritaDerivedEquivalence_functor :
     (bimoduleTensorMoritaDerivedEquivalence R S P Q a ha b hb).functor = D := rfl
 
-/-- Its entire inverse is the actual localized original bounded P tensor. -/
+/-- Inverse functor of the bounded localized Morita equivalence.
+
+The equivalence's inverse functor is `bimoduleTensorMoritaDerivedInverseFunctor R S P Q a ha b
+hb`. -/
 theorem bimoduleTensorMoritaDerivedEquivalence_inverse :
     (bimoduleTensorMoritaDerivedEquivalence R S P Q a ha b hb).inverse = D' := rfl
 
-/-- Original contraction properties identify the whole forward lift with Q's right-flat tensor. -/
+/-- Forward localized Morita functor is exact tensor by Q.
+
+The forward localized Morita functor equals the localized tensor functor of `Q`, with its left
+finiteness and right Tor-one vanishing obtained from the bimodule contractions. -/
 theorem bimoduleTensorMoritaDerivedFunctor_eq :
     D = let H := ModuleCat.bimoduleTensorMorita_properties R S P Q a ha b hb
       letI : Module.Finite S Q := H.2.1
       bimoduleTensorDerived (R := R) (S := S) Q H.2.2.2 := rfl
 
-/-- Original contraction properties identify the whole inverse lift with P's right-flat tensor. -/
+/-- Inverse localized Morita functor is exact tensor by P.
+
+The inverse localized Morita functor equals the localized tensor functor of `P`, using the
+finiteness and Tor-one vanishing supplied by the contractions. -/
 theorem bimoduleTensorMoritaDerivedInverseFunctor_eq :
     D' = let H := ModuleCat.bimoduleTensorMorita_properties R S P Q a ha b hb
       letI : Module.Finite R P := H.1
       bimoduleTensorDerived (R := S) (S := R) P H.2.2.1 := rfl
 
-/-- The chosen unit is the canonical refinement of the two original localized return families. -/
+/-- Unit of the localized Morita equivalence is adjointified.
+
+The unit is the adjointification of the localized inverse `R`-return comparison with the
+localized `S`-return counit. Both return comparisons are lifted from the bounded tensor
+equivalence through localization. -/
 theorem bimoduleTensorMoritaDerivedEquivalence_unitIso :
     (bimoduleTensorMoritaDerivedEquivalence R S P Q a ha b hb).unitIso =
       Equivalence.adjointifyη
@@ -232,7 +311,11 @@ theorem bimoduleTensorMoritaDerivedEquivalence_unitIso :
           (D' ⋙ D) (𝟭 (FGModuleDerived S))
           (bimoduleTensorMoritaDerivedRightSourceIso R S P Q a ha b hb)) := rfl
 
-/-- The original localized counit is evaluated on the original bounded-complex representative. -/
+/-- Localized Morita counit on a bounded cochain image.
+
+At `Q_S K`, the counit is the canonical lifting coordinate for the inverse-then-forward
+composite, followed by the `S`-return source isomorphism at the bounded finite-module cochain
+complex `K`. -/
 theorem bimoduleTensorMoritaDerivedEquivalence_counitIso_app_Q
     (K : Bounded (FGModuleCat.{u} S)) :
     (bimoduleTensorMoritaDerivedEquivalence R S P Q a ha b hb).counitIso.app
@@ -256,7 +339,11 @@ variable {R S : Type u} [Ring R] [Ring S]
 
 include hE
 
-/-- Right flatness earns the canonical derived functor of the original ambient module tensor. -/
+/-- Exact bimodule tensor functor on ambient derived categories.
+
+For an `S`-left, `R`-right bimodule `E` with `Tor¹_R(E,-)=0`, the exact module tensor functor
+induces a functor between the ambient derived categories, assuming both derived categories
+exist in their chosen universes. -/
 abbrev bimoduleTensorDerivedCategory :
     DerivedCategory (ModuleCat.{u} R) ⥤ DerivedCategory (ModuleCat.{u} S) := by
   let F : ModuleCat.{u} R ⥤ ModuleCat.{u} S := BalancedTensor.Left.functor ℤ R S E
@@ -264,7 +351,11 @@ abbrev bimoduleTensorDerivedCategory :
   let : PreservesFiniteColimits F := bimoduleTensor_preservesFiniteColimits E
   exact F.mapDerivedCategory
 
-/-- The standard ambient original-Q square is the canonical exact-functor factorization. -/
+/-- Ambient derived tensor commutes with the derived-category quotient.
+
+The ambient cochain tensor functor followed by the target derived-category quotient is
+naturally isomorphic to the source quotient followed by the induced exact derived tensor
+functor. -/
 def bimoduleTensorDerivedCategoryFactors :
     DerivedCategory.Q ⋙ bimoduleTensorDerivedCategory (R := R) (S := S) E hE ≅
       bimoduleTensorCochain (R := R) (S := S) E ⋙ DerivedCategory.Q := by
@@ -273,7 +364,10 @@ def bimoduleTensorDerivedCategoryFactors :
   let : PreservesFiniteColimits F := bimoduleTensor_preservesFiniteColimits E
   exact F.mapDerivedCategoryFactors
 
-/-- The actual ambient derived tensor is triangulated by the canonical exact-functor theorem. -/
+/-- Exact ambient bimodule tensor gives a triangulated derived functor.
+
+The functor on ambient derived categories induced by the exact bimodule tensor functor is
+triangulated. -/
 theorem bimoduleTensorDerivedCategory_isTriangulated :
     (bimoduleTensorDerivedCategory (R := R) (S := S) E hE).IsTriangulated := by
   let F : ModuleCat.{u} R ⥤ ModuleCat.{u} S := BalancedTensor.Left.functor ℤ R S E
@@ -288,7 +382,10 @@ namespace CochainComplex.Bounded
 
 variable (R : Type u) [Ring R] [HasDerivedCategory.{wR} (ModuleCat.{u} R)]
 
-/-- The original bounded ambient inclusion inverts exactly the weak maps used by this model. -/
+/-- Ambient derived quotient inverts bounded finite-module quasi-isomorphisms.
+
+The inclusion of bounded finite-module cochains in ambient module cochains, followed by the
+derived-category quotient, inverts their ambient quasi-isomorphisms. -/
 theorem fgModuleAmbient_Q_inverts :
     (fgModuleQuasiIsomorphisms R).IsInvertedBy (fgModuleAmbient R ⋙ DerivedCategory.Q) := by
   intro K L f hf
@@ -296,18 +393,28 @@ theorem fgModuleAmbient_Q_inverts :
     (HomologicalComplex.quasiIso (ModuleCat.{u} R) (.up ℤ))
     ((fgModuleAmbient R).map f) hf
 
-/-- Factor the original bounded cochains into the standard ambient derived category. -/
+/-- Functor from bounded finite-module localization to the ambient derived category.
+
+The ambient cochain inclusion followed by the derived quotient descends to a functor
+`FGModuleDerived R ⥤ DerivedCategory (ModuleCat R)`. -/
 abbrev fgModuleDerivedAmbient : FGModuleDerived R ⥤ DerivedCategory (ModuleCat.{u} R) :=
   Localization.lift (fgModuleAmbient R ⋙ DerivedCategory.Q)
     (fgModuleAmbient_Q_inverts R) (fgModuleDerivedQ R)
 
-/-- The entire original bounded-Q ambient square is the canonical localization factorization. -/
+/-- Bounded localization to ambient derived factorization.
+
+The bounded localization functor followed by `fgModuleDerivedAmbient R` is naturally
+isomorphic to the ambient cochain inclusion followed by the derived-category quotient. -/
 def fgModuleDerivedAmbientFactors :
     fgModuleDerivedQ R ⋙ fgModuleDerivedAmbient R ≅ fgModuleAmbient R ⋙ DerivedCategory.Q :=
   Lifting.iso (fgModuleDerivedQ R) (fgModuleQuasiIsomorphisms R)
     (fgModuleAmbient R ⋙ DerivedCategory.Q) (fgModuleDerivedAmbient R)
 
-/-- Every original bounded cochain morphism is retained in the actual ambient derived square. -/
+/-- Bounded-to-ambient derived factorization is natural in cochain maps.
+
+For a bounded finite-module morphism, its localized image followed by the target factorization
+component equals the source component followed by the ambient derived quotient of the
+morphism. -/
 theorem fgModuleDerivedAmbientFactors_hom_naturality
     {K L : Bounded (FGModuleCat.{u} R)} (f : K ⟶ L) :
     (fgModuleDerivedAmbient R).map ((fgModuleDerivedQ R).map f) ≫
@@ -323,7 +430,12 @@ variable {S : Type u} [Ring S] [HasDerivedCategory.{wS} (ModuleCat.{u} S)]
   (hE : ∀ N : ModuleCat.{u} R,
     IsZero (((ModuleCat.BalancedTensor.torFirst R 1).obj (ModuleCat.of Rᵐᵒᵖ E)).obj N))
 
-/-- The actual bounded tensor factorization commutes with the canonical ambient derived tensor. -/
+/-- Bounded localized tensor agrees with ambient derived tensor.
+
+For a coefficient finite over `S` with vanishing right Tor one, localized bounded tensor
+followed by the ambient derived functor in `S` is naturally isomorphic to the ambient derived
+functor in `R` followed by exact ambient tensor. The two ambient derived-category universes
+are independently chosen. -/
 def bimoduleTensorDerivedAmbientIso :
     bimoduleTensorDerived (S := S) E hE ⋙ fgModuleDerivedAmbient S ≅
       fgModuleDerivedAmbient R ⋙ ModuleCat.bimoduleTensorDerivedCategory (S := S) E hE := by

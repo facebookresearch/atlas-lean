@@ -1,5 +1,8 @@
-# Restriction Component Iso
+# Cofiber restriction isomorphism in each degree
 
-The degreewise comparison between restricting a homotopy cofiber and taking the
-homotopy cofiber after restriction. The truncation hypothesis ensures that an outgoing
-edge from a degree in the image stays in the image.
+Let C be preadditive with binary biproducts, let φ:F→G be a c'-complex map, and let e:c→c'
+preserve and reflect relations with image closed under outgoing differentials (IsTruncGE).
+Assume both relations are decidable, and write H(φ) for the homotopy cofiber. At each i there
+is a canonical isomorphism (H(φ).restriction e)_i≅H(restrictionMap φ e)_i. Outgoing closure
+identifies the shifted source coordinate F_\{e(next i)\} and the target coordinate G_\{e(i)\} on
+both sides, including the no-successor case.

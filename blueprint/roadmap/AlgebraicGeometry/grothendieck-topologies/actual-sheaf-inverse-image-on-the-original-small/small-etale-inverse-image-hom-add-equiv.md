@@ -1,3 +1,6 @@
-# Small Etale Inverse Image Hom Add Equiv
+# Additive correspondence for the inverse image adjunction
 
-The natural additive Hom equivalence for every actual common-universe sheaf.
+Additive correspondence for the inverse image adjunction.
+
+There is an additive equivalence between sheaf maps `f^*Q → R` on `X` and sheaf maps `Q →
+f_*R` on `Y`.

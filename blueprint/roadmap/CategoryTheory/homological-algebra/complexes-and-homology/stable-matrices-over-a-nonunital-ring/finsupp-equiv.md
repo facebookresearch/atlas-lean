@@ -1,4 +1,6 @@
-# Finsupp Equiv
+# Stable matrix ring carrier as finitely supported entries
 
-The k-linear equivalence from stable matrices to finitely supported natural-number matrix
-entries.
+Stable matrix ring carrier as finitely supported entries.
+
+The underlying `k`-module of `Matrix.Stable k A` is linearly equivalent to `(ℕ × ℕ) →₀ A`,
+through the stable module equivalence and its entry-coordinate equivalence.

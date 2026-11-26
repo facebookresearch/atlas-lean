@@ -1,3 +1,4 @@
-# Cyclic First Equiv sign
+# Sign of the cyclic first-coordinate decomposition
 
-The decomposition sign is the native tail sign times the same signed rotation.
+For n : ℕ, j ∈ Fin(n+1) and σ ∈ Perm(Fin n), the sign of cyclicFirstEquiv n (j,σ) equals
+sign(σ)·(-1)^{n·j.val} in ℤˣ.

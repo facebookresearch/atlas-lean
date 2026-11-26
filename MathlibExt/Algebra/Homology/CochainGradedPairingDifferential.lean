@@ -13,22 +13,14 @@ public import MathlibExt.Algebra.Homology.CochainGradedPairingHomologyLaws
 public import MathlibExt.Algebra.Homology.HomologyDegreeTransport
 
 /-!
-# Differentials of cochain pairings with a cycle input
+# One cycle input in the cochain pairing differential
 
-The Leibniz law for a cochain graded pairing reduces to one summand when one
-input is a cycle.  A cycle in the left input leaves the right differential
-with the Koszul sign `(-1) ^ p`; a cycle in the right input leaves the left
-differential without a sign.  Both formulas retain the explicit degree
-transport into degree `p + q + 1`.
+The Leibniz identity for a graded cochain pairing has two differential terms. When the left
+input is a cycle of degree `p`, only the right differential remains, with sign `(-1)^p`. When
+the right input is a cycle, only the left differential remains, with coefficient one.
 
-These are neutral cochain-level identities.  This file constructs no
-connector, short exact sequence, group-cohomology cup product, Bockstein,
-Hochschild--Serre map, or comparison theorem.
-
-## Main declarations
-
-* `HomologicalComplex.CochainGradedPairing.pair_d_right_of_cycle`
-* `HomologicalComplex.CochainGradedPairing.pair_d_left_of_cycle`
+The formulas use natural cochain degrees and the explicit object equality maps to total degree
+`p + q + 1`.
 -/
 
 @[expose] public section
@@ -68,8 +60,11 @@ private lemma moduleTensorHom_tmul {A B C D : ModuleCat.{u} R}
     (f ⊗ₘ g).hom (x ⊗ₜ[R] y) = f.hom x ⊗ₜ[R] g.hom y :=
   rfl
 
-/-- The Leibniz rule with a cycle in the left input leaves only the signed
-right differential. -/
+/-- Cycle in the left input leaves the signed right differential.
+
+For a left cycle `x` in degree `p` and a right element `y` in degree `q`, the differential of
+their pairing is `(-1)^p` times the pairing of `x` with `d y`, transported to degree `p + q +
+1`. -/
 theorem pair_d_right_of_cycle
     {K₁ K₂ K₃ : CochainComplex (ModuleCat.{u} R) ℕ}
     (P : CochainGradedPairing K₁ K₂ K₃) (p q : ℕ)
@@ -89,8 +84,10 @@ theorem pair_d_right_of_cycle
   rw [hx] at h
   simpa using h
 
-/-- The Leibniz rule with a cycle in the right input leaves only the left
-differential. -/
+/-- Cycle in the right input leaves the left differential.
+
+For a left element `x` and a right cycle `y`, the differential of their pairing is the pairing
+of `d x` with `y`, transported to degree `p + q + 1`. -/
 theorem pair_d_left_of_cycle
     {K₁ K₂ K₃ : CochainComplex (ModuleCat.{u} R) ℕ}
     (P : CochainGradedPairing K₁ K₂ K₃) (p q : ℕ)

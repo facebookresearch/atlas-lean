@@ -13,11 +13,15 @@ public import Mathlib.AlgebraicTopology.SimplexCategory.Basic
 public import Mathlib.Data.Fin.Tuple.Basic
 
 /-!
-# Unit insertion along ordinal maps
+# Edge coordinates along order-preserving ordinal maps
 
-An increasing edge selects its original target edge; a constant edge inserts
-one. This coordinate operation needs only a type with one. Its degeneracy
-composition law is independent of coefficients, tensor products or rings.
+Let f : X → Y be a morphism of finite nonempty ordinals and let a label the edges of Y by a
+type with a distinguished element 1. On an edge i of X, the coordinate operation reads a at
+the left endpoint f(i) when f(i) < f(i + 1), and assigns 1 when the endpoints have the same
+image.
+
+The identity ordinal map preserves the labels. Precomposing f with the degeneracy that repeats
+vertex i inserts the label 1 in edge coordinate i, preserving the other coordinates.
 -/
 
 @[expose] public section
@@ -29,7 +33,10 @@ namespace SimplexCategory
 
 universe w
 
-/-- Read the target label on increasing edges, inserting one on constant edges. -/
+/-- Let A be a type with an element 1, let f : X ⟶ Y be a simplex-category morphism and let a :
+Fin Y.len → A label the target edges. For i : Fin X.len, pullbackEdges f a i is a(f(i)) if
+f(i) < f(i + 1), and is 1 otherwise. Here i and i + 1 are the endpoints i.castSucc and i.succ,
+and the strict inequality ensures that f(i) is a valid target edge index. -/
 def pullbackEdges {A : Type w} [One A] {X Y : SimplexCategory}
     (f : X ⟶ Y) (a : Fin Y.len → A) : Fin X.len → A := fun i =>
   if h : f.toOrderHom i.castSucc < f.toOrderHom i.succ then
@@ -37,7 +44,9 @@ def pullbackEdges {A : Type w} [One A] {X Y : SimplexCategory}
       lt_of_lt_of_le (Fin.lt_def.mp h) (f.toOrderHom i.succ).is_le⟩
   else 1
 
-/-- Identity ordinal maps retain every edge label. -/
+/-- For a type A with an element 1, a simplex-category object X and edge labels a : Fin X.len → A,
+one has pullbackEdges (𝟙 X) a = a. Every consecutive pair of vertices remains strictly
+increasing under the identity. -/
 @[simp]
 theorem pullbackEdges_id {A : Type w} [One A] (X : SimplexCategory)
     (a : Fin X.len → A) : pullbackEdges (𝟙 X) a = a := by
@@ -56,7 +65,10 @@ private theorem predAbove_edge_right {n : ℕ} (i : Fin (n + 1)) (j : Fin n) :
     exact fun h => Fin.succAbove_ne i j (Fin.succ_injective (n + 1) h)),
     Fin.succ_succAbove_succ]
 
-/-- Precomposing any ordinal map by a degeneracy inserts one in that edge. -/
+/-- For a type A with an element 1, f : X ⟶ Y in the simplex category, i : Fin (X.len + 1) and a :
+Fin Y.len → A, one has pullbackEdges (σ i ≫ f) a = Fin.insertNth i 1 (pullbackEdges f a). Thus
+the repeated-vertex edge has label 1 and every other edge keeps the corresponding coordinate
+for f. -/
 theorem pullbackEdges_σ_comp {A : Type w} [One A] {X Y : SimplexCategory}
     (f : X ⟶ Y) (i : Fin (X.len + 1)) (a : Fin Y.len → A) :
     pullbackEdges (σ i ≫ f) a = Fin.insertNth i 1 (pullbackEdges f a) := by

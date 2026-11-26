@@ -1,4 +1,6 @@
-# Horizontal First Page Adjacent Cokernelπ comp g
+# The factorization of a direct-column projection through the middle quotient
 
-The quotient projection onto the right direct column factors through the
-right map of the adjacent-column short exact sequence.
+The factorization of a direct-column projection through the middle quotient.
+
+The cokernel projection of the composite filtration map followed by the adjacent sequence's
+right map equals the projection onto direct column `p+1`.

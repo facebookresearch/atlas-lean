@@ -13,7 +13,14 @@ public import MathlibExt.CategoryTheory.Abelian.RightDerived.AugmentedResolution
 public import MathlibExt.CategoryTheory.Abelian.RightDerived.Precomposition
 
 /-!
-## Augmentation-computed comparison under an additive exact injective-preserving coefficient functor
+# Augmented comparisons under injective-preserving source change
+
+Let `C,D,A` be abelian, with injective resolutions in `C,D`,
+`J : C → D` additive and preserving injectives and homology, and
+`B : D → A` additive. Mapping a coaugmentation-preserving comparison
+into an injective resolution preserves its augmentation equation.
+For additive `P : C → A` with `P ≅ J ⋙ B`, the cohomology-to-derived
+map then commutes with right-derived precomposition.
 -/
 @[expose] public section
 noncomputable section
@@ -30,10 +37,11 @@ variable (B : D ⥤ A) [B.Additive]
 variable {P : C ⥤ A} [P.Additive]
 
 omit [HasInjectiveResolutions C] [HasInjectiveResolutions D] in
-/--
-Mapping an augmentation-preserving comparison into the SAME mapped injective resolution preserves
-its full original augmentation equation.
--/
+/-- Let `C,D` be abelian and `J : C → D` additive and preserving
+injectives and homology. For `ι : X[0] → I`, an injective resolution
+`R` of `X`, and `a : I → R` satisfying `ι ≫ a = ι_R`, mapping by
+`J` gives a comparison `J(I) → J(R)` preserving the full
+coaugmentation of the mapped injective resolution. -/
 theorem map_augmentedResolutionComparison
     {X : C} (I : CochainComplex C ℕ) (ι : (CochainComplex.single₀ C).obj X ⟶ I)
     (R : InjectiveResolution X) (a : I ⟶ R.cocomplex) (ha : ι ≫ a = R.ι) :
@@ -45,10 +53,12 @@ theorem map_augmentedResolutionComparison
       _ ≫ (J.mapHomologicalComplex (ComplexShape.up ℕ)).map R.ι
   rw [Category.assoc, ← Functor.map_comp, ha]
 
-/--
-The augmentation-computed map commutes with the SAME original right-derived precomposition iso,
-through mapped cocomplex homology.
--/
+/-- Let `C,D,A` be abelian, with injective resolutions in `C,D`,
+`J : C → D` additive and preserving injectives and homology,
+`B : D → A`, `P : C → A` additive, and `α : P ≅ J ⋙ B`. For a coaugmentation quasi-isomorphism `ι : X[0] → I`,
+the map `Hⁿ(P(I)) → R^nP(X)` followed by precomposition equals
+transport along `α_I` to `Hⁿ((J ⋙ B)(I))`, identification with
+`Hⁿ(B(J(I)))`, and the augmented comparison to `R^nB(J(X))`. -/
 theorem augmentedResolutionToRightDerivedHom_precomposition
     (α : P ≅ J ⋙ B) {X : C} (I : CochainComplex C ℕ)
     (ι : (CochainComplex.single₀ C).obj X ⟶ I) [QuasiIso ι] (n : ℕ) :

@@ -1,4 +1,5 @@
-# To Finite Resolving Data
+# Retaining finite resolutions and kernel closure
 
-Forget projectivity while retaining the finite-resolution and represented
-kernel data.
+For additive `i : P → A`, with `P` preadditive and `A` abelian,
+finite projective-resolving data give finite-resolving data: the
+represented kernels and finite resolutions are retained.

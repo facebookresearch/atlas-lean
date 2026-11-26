@@ -1,3 +1,5 @@
-# Original Field Derived Sections Invariants Iso
+# Derived section comparison on lifted coefficient sheaves
 
-Every original coefficient-w sheaf enters the SAME comparison via exactly one L.obj F.
+Derived section comparison on lifted coefficient sheaves.
+
+Evaluate the common-universe comparison at a sheaf lifted from coefficient universe `w`.

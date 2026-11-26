@@ -16,17 +16,16 @@ import all Mathlib.Algebra.Homology.SpectralObject.SpectralSequence
 public import MathlibExt.Algebra.Homology.HomologyMapSquare
 
 /-!
-# Naturality of the actual second page
+# Naturality of successor pages and iterated homology
 
-A bicomplex map acts on the complete filtration spectral object and hence on
-its fixed native pages. The page-one homology map commutes with the native
-successor isomorphism. Combining this square with row restriction and the
-normalized first-page comparison proves naturality of the existing second-page
-isomorphism with vertical-then-horizontal homology, at every bidegree.
+Let C be an abelian category and f : K → L a map of bicomplexes of shape (down ℕ,down ℕ). The
+homology map of the page-r map commutes with the successor isomorphisms H(E^r) ≅ E^{r+1}, for
+every r≥1.
 
-The kernel and cokernel maps used in the successor square are derived from the
-spectral-object morphism. The comparison retains the fixed page map and the
-original sign normalization, including the missing neighbors in degree zero.
+At page two, the comparison E²_{p,q} ≅ H_p(H_q^vertical(K)) is natural for f. It uses the
+first-page row comparison normalized by (−1)^{p(q+1)}, with the fixed row embedded by p ↦
+(p,q). The resulting naturality equation includes the boundary columns and rows of the first
+quadrant.
 -/
 
 @[expose] public section
@@ -195,8 +194,10 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {K L : HomologicalComplex₂ C (ComplexShape.down ℕ) (ComplexShape.down ℕ)}
 
 unseal CategoryTheory.Abelian.SpectralObject.spectralSequence in
-/-- Homology of the actual first-page map commutes with the native successor
-isomorphism from first-page homology to the actual second page. -/
+/-- Let C be an abelian category, f : K → L a bicomplex map of shape (down ℕ,down ℕ), and p,q ∈ ℕ.
+Let a¹ : E¹(K) → E¹(L) be its first-page map, a²_{p,q} its second-page component, and s_K,s_L
+the successor isomorphisms H(E¹)_{p,q} ≅ E²_{p,q}. Then H_{(p,q)}(a¹) ≫ s_L.hom = s_K.hom ≫
+a²_{p,q}. The homology is taken in the full first-page complex of bidegree (−1,0). -/
 @[reassoc]
 theorem horizontalPageMapOfBicomplex_successor_one_two
     (f : K ⟶ L) (p q : ℕ) :
@@ -236,8 +237,11 @@ private theorem horizontalSecondPageMapOfBicomplex_successor_inv
     _ = eK.hom ≫ (eK.inv ≫ HomologicalComplex.homologyMap
         (horizontalPageMapOfBicomplex f 1 (le_refl 1)) (p, q)) := by simp
 
-/-- The fixed second-page comparison with vertical-then-horizontal homology is
-natural for the actual page map induced by a bicomplex morphism. -/
+/-- Let C be an abelian category, f : K → L a bicomplex map of shape (down ℕ,down ℕ), and p,q ∈ ℕ.
+Let e_K : E²_{p,q}(K) ≅ H_p(K.verticalHomologyComplex q) and e_L be the comparisons obtained
+from the first-page normalization (−1)^{a(q+1)} in column a. If a²_{p,q} is the second-page
+map and v_q(f) the horizontal chain map on vertical homology induced by f, then a²_{p,q} ≫
+e_L.hom = e_K.hom ≫ H_p(v_q(f)). -/
 @[reassoc]
 theorem horizontalSecondPageVerticalHorizontalHomologyIso_hom_naturality
     (f : K ⟶ L) (p q : ℕ) :
@@ -259,9 +263,10 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {K L : HomologicalComplex₂ C (ComplexShape.down ℕ) (ComplexShape.down ℕ)}
 
 unseal CategoryTheory.Abelian.SpectralObject.spectralSequence in
-/-- Homology of the actual fixed-page map commutes with every native
-successor-page isomorphism. The proof reuses the existing general spectral-
-object successor square in this same owner, with no comparison witness. -/
+/-- Let C be an abelian category, f : K → L a bicomplex map of shape (down ℕ,down ℕ), and r,r′ ∈ ℤ
+with 1 ≤ r and r+1=r′. For p,q ∈ ℕ, let a^r be the fixed-page map and s_K,s_L : H(E^r)_{p,q} ≅
+E^{r′}_{p,q} the successor isomorphisms. Then H_{(p,q)}(a^r) ≫ s_L.hom = s_K.hom ≫
+a^{r′}_{p,q}. The degree-r page complex has differential bidegree (−r,r−1). -/
 @[reassoc]
 theorem horizontalPageMapOfBicomplex_successor
     (f : K ⟶ L) (r r' : ℤ) (hrr' : r + 1 = r') (hr : 1 ≤ r) (p q : ℕ) :

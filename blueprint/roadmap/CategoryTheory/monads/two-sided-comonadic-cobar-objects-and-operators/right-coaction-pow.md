@@ -1,8 +1,6 @@
-# Right Coaction Pow
+# The iterated right-comodule coaction
 
-Reusable recursive iterated right-comodule coaction:
-`R.functor.obj ((comonadPow G n).obj X) ⟶ R.functor.obj ((comonadPow G (n+1)).obj X)`.
-Degree zero is definitionally `R.coaction.app X`; successor is definitionally
-the preceding iterated coaction evaluated at `G.toFunctor.obj X`. This gives
-transport-free recursive equations for the right endpoint while keeping
-left-associated `comonadPow`.
+The iterated right-comodule coaction.
+
+The coaction gives `R(G^n(X)) → R(G^(n+1)(X))`, starting with the right coaction at `X` and
+defining the next degree by the preceding map at `G(X)`.

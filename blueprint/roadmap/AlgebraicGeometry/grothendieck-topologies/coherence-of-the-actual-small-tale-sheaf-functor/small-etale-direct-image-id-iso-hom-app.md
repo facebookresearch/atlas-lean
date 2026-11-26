@@ -1,3 +1,5 @@
-# Small Etale Direct Image Id Iso hom app hom app
+# Direct image identity comparison acts by inverse base change restriction
 
-The identity comparison has the literal restriction-map component.
+Direct image identity comparison acts by inverse base change restriction.
+
+Its section component is restriction along the inverse base-change identity isomorphism.

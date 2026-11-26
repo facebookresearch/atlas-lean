@@ -1,3 +1,5 @@
-# Homotopy cofiber quasi-isomorphism for short exact chain complexes
+# Canonical cofiber descendant of a short exact cochain sequence is quasi-isomorphic
 
-The same original cofiber descendant is a quasi-isomorphism for a short exact cochain row.
+In an abelian category `C`, let `S : K → L → M` be a short
+exact sequence of integer cochain complexes. The canonical descendant
+`homotopyCofiber(S.f) → M` is a quasi-isomorphism.

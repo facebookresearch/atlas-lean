@@ -12,6 +12,18 @@ public import Mathlib.Algebra.Category.ModuleCat.Abelian
 public import Mathlib.Algebra.Homology.HomologicalComplexAbelian
 public import MathlibExt.Algebra.Homology.LinearHomCochainComplex
 
+/-!
+# Degreewise split short exact sequences of linear Hom cochains
+
+Let R be a ring and C an abelian R-linear category, with independent scalar, object and morphism
+universes. A short complex of nonnegative chain complexes K₁→K₂→K₃ becomes the reversed Hom
+cochain short complex Hom_C(K₃,M)→Hom_C(K₂,M)→Hom_C(K₁,M), by precomposition, for any M∈C.
+
+If the chain-complex sequence is short exact and its first map K₁,n→K₂,n is split monic in every
+degree n, the Hom cochain sequence is short exact. Each degree inherits the splitting of the
+reversed Hom sequence; the termwise retractions need not assemble into a chain retraction.
+-/
+
 @[expose] public section
 
 noncomputable section
@@ -25,15 +37,21 @@ universe w v u
 variable (R : Type w) [Ring R]
 variable {C : Type u} [Category.{v} C] [Abelian C] [Linear R C]
 
-/-- Apply the contravariant linear-Hom cochain functor to a short complex of
-chain complexes. -/
+/-- Let R be a ring in universe w and C an abelian R-linear category with independent object
+universe u and morphism universe v. For a short complex S=(K₁ --a→ K₂ --b→ K₃) of shape down ℕ
+and M∈C, this is the cochain short complex Hom_C(K₃,M) --b*→ Hom_C(K₂,M) --a*→ Hom_C(K₁,M). Its
+degree-n terms are Hom_C(Kᵢ,n,M), with the R-module structures from C's linearity. -/
 noncomputable abbrev linearHomCochainShortComplex
     (S : ShortComplex (ChainComplex C ℕ)) (M : C) :
     ShortComplex (CochainComplex (ModuleCat.{v} R) ℕ) :=
   S.op.map (linearHomCochainComplexFunctor R C M)
 
-/-- Applying `Hom_R(-, M)` to a short exact sequence of chain complexes remains
-short exact when the first map is split mono in every degree. -/
+/-- Let R be a ring in universe w and C an abelian R-linear category with independent object
+universe u and morphism universe v. Let S=(0→K₁ --a→ K₂ --b→ K₃→0) be short exact in nonnegative
+chain complexes, and assume a_n is split monic for every n∈ℕ. For arbitrary M∈C,
+0→Hom_C(K₃,M)→Hom_C(K₂,M)→Hom_C(K₁,M)→0 is short exact as a sequence of R-module-valued cochain
+complexes. The proof uses the degreewise split short exact rows, with no target injectivity
+hypothesis. -/
 theorem linearHomCochainShortComplex_shortExact_of_degreewise_splitMono
     (S : ShortComplex (ChainComplex C ℕ)) (hS : S.ShortExact)
     (hsplit : ∀ n, SplitMono ((S.map

@@ -1,3 +1,6 @@
-# Algebra Positive Homology One Iso Kaehler inv up
+# The inverse lifted H₁ comparison agrees with the coefficient differential equivalence
 
-Its inverse on a lifted original tensor is the original-world inverse equivalence.
+The inverse lifted H₁ comparison agrees with the coefficient differential equivalence.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, the inverse
+on ULift.up(x) is the inverse of algebraPositiveHomologyOneEquivKaehler on x.

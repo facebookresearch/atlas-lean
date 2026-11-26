@@ -1,3 +1,6 @@
-# Field Finite Galois Evaluation map
+# Embedding evaluation is coefficient natural
 
-All module morphisms commute with the SAME original-stage evaluation.
+Embedding evaluation is coefficient natural.
+
+Evaluation commutes with postcomposition on embedding functions and the induced map on fixed
+coefficients.

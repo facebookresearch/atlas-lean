@@ -16,9 +16,12 @@ public import Mathlib.Algebra.Homology.ShortComplex.ExactFunctor
 /-!
 # Exactness detected by the first left-derived functor
 
-The horseshoe exact sequence detects preservation of monomorphisms. The degree-zero comparison
-identifies the right-exact functor, and preservation of homology gives vanishing in positive
-degrees computed from a projective resolution.
+Let `C,D` be abelian, with projective resolutions in `C`, and
+`F : C → D` additive. Homology preservation forces all positive
+left-derived values to vanish. If `F` preserves finite colimits,
+vanishing of `L₁F` on every object is equivalent to preservation
+of finite limits. For one short exact sequence, vanishing of `L₁F`
+on its quotient suffices to make the mapped sequence short exact.
 -/
 
 @[expose] public section
@@ -34,7 +37,9 @@ variable {C : Type u₁} [Category.{v₁} C] [Abelian C] [HasProjectiveResolutio
   {D : Type u₂} [Category.{v₂} D] [Abelian D]
   (F : C ⥤ D) [F.Additive]
 
-/-- A homology-preserving additive functor has no positive left-derived values. -/
+/-- Let `C,D` be abelian, with projective resolutions in `C`,
+and `F : C → D` additive. If `F` preserves homology, `L_(n+1)F(X)` is zero for every
+object `X` and every `n ∈ ℕ`. -/
 theorem isZero_leftDerived_obj_succ_of_preservesHomology [F.PreservesHomology]
     (X : C) (n : ℕ) : IsZero ((F.leftDerived (n + 1)).obj X) := by
   let P := projectiveResolution X
@@ -48,11 +53,10 @@ theorem isZero_leftDerived_obj_succ_of_preservesHomology [F.PreservesHomology]
     P.isoLeftDerivedObj F (n + 1) ≪≫ eH
   exact (F.map_isZero hP).of_iso e
 
-/--
-The derived exact window gives zero at its kernel term when its preceding quotient-derived object
-and middle-derived object are zero. This requires only additivity of the original functor, in
-every degree.
--/
+/-- Let `C,D` be abelian, with projective resolutions in `C`,
+and `F : C → D` additive. For short exact `S : X₁ → X₂ → X₃`, if
+`L_(n+1)F(X₃)=0` and `L_nF(X₂)=0`, then `L_nF(X₁)=0`,
+by the exact window ending in the left object. -/
 theorem isZero_leftDerived_obj_of_shortExact (n : ℕ)
     {S : ShortComplex C} (hS : S.ShortExact)
     (h₃ : IsZero ((F.leftDerived (n + 1)).obj S.X₃))
@@ -68,10 +72,9 @@ theorem isZero_leftDerived_obj_of_shortExact (n : ℕ)
 
 variable [PreservesFiniteColimits F]
 
-/--
-A right-exact additive functor preserves a short exact sequence when its first derived value on
-that sequence's quotient is zero.
--/
+/-- Let `C,D` be abelian, with projective resolutions in `C`,
+and `F : C → D` additive. Suppose `F` preserves finite colimits. For short exact `S : X₁ → X₂ → X₃`, if `L₁F(X₃)=0`,
+the sequence `F(X₁) → F(X₂) → F(X₃)` is short exact. -/
 theorem _root_.CategoryTheory.ShortComplex.ShortExact.map_of_isZero_leftDerived_one
     {S : ShortComplex C} (hS : S.ShortExact)
     (h₁ : IsZero ((F.leftDerived 1).obj S.X₃)) : (S.map F).ShortExact := by
@@ -98,7 +101,9 @@ theorem _root_.CategoryTheory.ShortComplex.ShortExact.map_of_isZero_leftDerived_
     infer_instance
   exact ShortComplex.ShortExact.mk' hRight.1 hMonoF hRight.2
 
-/-- Vanishing of the first derived functor makes a right-exact additive functor left exact. -/
+/-- Let `C,D` be abelian, with projective resolutions in `C`,
+and `F : C → D` additive. Suppose `F` preserves finite colimits. If `L₁F(X)=0` for every object `X`, then `F` preserves
+finite limits and hence is left exact. -/
 theorem preservesFiniteLimits_of_isZero_leftDerived_one
     (h₁ : ∀ X : C, IsZero ((F.leftDerived 1).obj X)) : PreservesFiniteLimits F := by
   apply (Functor.preservesFiniteLimits_iff_forall_exact_map_and_mono F).2
@@ -106,7 +111,9 @@ theorem preservesFiniteLimits_of_isZero_leftDerived_one
   have hMapped := ShortComplex.ShortExact.map_of_isZero_leftDerived_one F hS (h₁ S.X₃)
   exact ⟨hMapped.exact, hMapped.mono_f⟩
 
-/-- A right-exact additive functor is left exact precisely when its first derived values vanish. -/
+/-- Let `C,D` be abelian, with projective resolutions in `C`,
+and `F : C → D` additive. Suppose `F` preserves finite colimits. The functor `F` preserves finite limits if and only if
+`L₁F(X)=0` for every object `X`. -/
 theorem preservesFiniteLimits_iff_isZero_leftDerived_one :
     PreservesFiniteLimits F ↔ ∀ X : C, IsZero ((F.leftDerived 1).obj X) := by
   constructor

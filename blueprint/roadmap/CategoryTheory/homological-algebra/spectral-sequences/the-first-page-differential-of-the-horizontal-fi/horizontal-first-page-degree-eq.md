@@ -1,4 +1,5 @@
-# Horizontal First Page Degree eq
+# The cochain degree of a first-page bidegree
 
-The total-complex degree used at bidegree `(p,q)` is the degree selected
-by the first-quadrant first-page data.
+The cochain degree of a first-page bidegree.
+
+The first-page indexing data selects degree `-p-q` at bidegree `(p,q)`.

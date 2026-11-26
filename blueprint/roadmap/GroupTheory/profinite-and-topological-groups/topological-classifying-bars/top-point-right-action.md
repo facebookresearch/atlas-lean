@@ -1,3 +1,5 @@
-# Top Point Right Action
+# The trivial right point action of a topological monoid
 
-The terminal right action on the point.
+The trivial right point action of a topological monoid.
+
+The action topPoint × G → topPoint is the first projection to the point factor.

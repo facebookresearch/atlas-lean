@@ -1,4 +1,5 @@
-# Eulerian Lambda two norm
+# The cyclic norm identity at two
 
-The actual all-degree convolution operation at two and the actual cyclic norm
-satisfy the original head-fixing identity. The proof uses cyclic descent fibers.
+For every `n : ℕ`, the rational convolution family and signed cyclic norm satisfy `Λ_(n+1)(2)
+* N_n = 2 • (N_n * H_n(Λ_n(2)))`, where `H_n : ℚ[S_n] → ℚ[S_(n+1)]` is the fixed-head
+group-ring map. The identity includes `n=0`.

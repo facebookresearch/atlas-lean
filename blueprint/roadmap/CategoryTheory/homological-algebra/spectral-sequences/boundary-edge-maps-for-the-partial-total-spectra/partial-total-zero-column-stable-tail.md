@@ -1,3 +1,6 @@
-# Partial Total Zero Column Stable Tail
+# The zero-column spectral map into its stable interval
 
-The exact stable tail after the package-owned page-two left coordinate.
+The zero-column spectral map into its stable interval.
+
+Map the framed second-page source to the stable-target presentation and then use its stable-
+interval isomorphism.

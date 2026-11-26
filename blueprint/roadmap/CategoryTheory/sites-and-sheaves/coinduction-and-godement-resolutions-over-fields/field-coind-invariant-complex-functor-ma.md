@@ -1,3 +1,6 @@
-# Field Coind Invariant Complex Functor map f
+# Invariant coinduction coefficient map in each degree
 
-The coefficient map in each actual coinduction invariant degree is its original term map.
+Invariant coinduction coefficient map in each degree.
+
+A coefficient morphism acts by invariants of its monad-coresolution component, followed by
+forgetting to additive groups.

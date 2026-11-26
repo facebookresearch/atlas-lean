@@ -1,3 +1,5 @@
-# Small Etale Direct Image Id Iso naturality
+# Direct image identity comparison is natural in sheaf maps
 
-Identity direct-image comparison preserves every original sheaf morphism.
+Direct image identity comparison is natural in sheaf maps.
+
+The identity direct-image comparison commutes with every sheaf morphism.

@@ -1,3 +1,6 @@
-# Unitization Hochschild Reduced Normalized Iso hom
+# The map of the unitization reduced-normalization comparison
 
-The source comparison really uses the original normalization map on relative homology.
+The map of the unitization reduced-normalization comparison.
+
+The forward isomorphism is the relative homology comparison followed by the homology map of
+the relative normalization chain map.

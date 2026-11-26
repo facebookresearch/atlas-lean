@@ -16,15 +16,17 @@ public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.UniversalEnveloping
 public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.CoefficientFunctor
 
 /-!
-# Lie coefficients and enveloping Tor
+# Lie coefficient recovery and enveloping Tor comparisons
 
-A left Lie module extends to a right universal-enveloping module with negative right-generator
-action. Restricting this action back to left Lie coefficients recovers the original module,
-and the corresponding coefficient complexes are isomorphic.
+Extend a left Lie-module M to a right enveloping representation N with generator action m·ι(x)
+= −[x,m]. Converting N back to left Lie coefficients by [x,m] = −m·ι(x) recovers the given
+action and scalar structure on the same carrier. Applying the coefficient CE functor gives an
+isomorphism of complexes.
 
-When the underlying Lie module is free over the commutative ground ring, coefficient homology
-computes enveloping Tor with the trivial module. Compatible Lie and coefficient maps yield
-natural comparisons, including the degree-zero coinvariant and scalar-unit class.
+Degree-zero homology maps canonically to N balanced-tensored with the trivial module, sending
+the empty-word class of m to [m,1]. When L is free over R, every coefficient homology degree
+computes the left-derived right tensor functor at the lifted trivial module. The comparisons
+commute with compatible Lie and coefficient maps in their common carrier height.
 -/
 
 @[expose] public section
@@ -48,8 +50,12 @@ local instance nativeCoefficientTensor_additive {A : Type v} [Ring A] [Algebra R
     (M : ModuleCat.{z} Aᵐᵒᵖ) : (ModuleCat.BalancedTensor.functor.{u, v, z, z'} R A M).Additive :=
   ModuleCat.BalancedTensor.additive R A M
 
-/-- Lie coefficients are recovered from their right enveloping algebra representation by the
-identity carrier and its ground/action laws. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra, U its enveloping algebra
+and T₀ = envelopingTrivialObject R L the lifted scalar U-module acted on through augmentation.
+Put H = max u v v' w and let M : LieModuleCat.{H} R L. Let N be its right U-representation,
+with op(ι(x)) • m = −⁅x,m⁆. nativeRightCoefficientsIso : M ≅ rightCoefficients R L N uses
+identity carrier maps in both directions. The double negative generator action recovers the
+given Lie action, and the represented ground scalar action equals the R-action of M. -/
 def nativeRightCoefficientsIso (M : LieModuleCat.{max u v v' w} R L) :
     M ≅ rightCoefficients R L (LieModuleCat.RightUniversalEnveloping.representObj R L M) where
   hom :=
@@ -81,7 +87,12 @@ def nativeRightCoefficientsIso (M : LieModuleCat.{max u v v' w} R L) :
   hom_inv_id := by apply LieModuleHom.ext; intro m; rfl
   inv_hom_id := by apply LieModuleHom.ext; intro m; rfl
 
-/-- The CE coefficient functor transports the identity-carrier coefficient isomorphism. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra, U its enveloping algebra
+and T₀ = envelopingTrivialObject R L the lifted scalar U-module acted on through augmentation.
+Put H = max u v v' w and let M : LieModuleCat.{H} R L. Let N be its right U-representation,
+with op(ι(x)) • m = −⁅x,m⁆. Mapping nativeRightCoefficientsIso through
+coefficientComplexFunctor gives coefficientComplex R L M ≅ rightEnvelopingCoefficientComplex R
+L N. -/
 def nativeRightCoefficientComplexIso (M : LieModuleCat.{max u v v' w} R L) :
     coefficientComplex R L M ≅ rightEnvelopingCoefficientComplex R L
       (LieModuleCat.RightUniversalEnveloping.representObj R L M) :=
@@ -99,8 +110,12 @@ theorem nativeRightCoefficientComplexIso_f_tmul (M : LieModuleCat.{max u v v' w}
       (LieModuleCat.RightUniversalEnveloping.representObj R L M) => x ⊗ₜ[R] y) (show
         (nativeRightCoefficientsIso.{u, v, v', w} R L M).hom m = m from rfl))
 
-/-- The Lie coefficient H₀ map to its trivial-module tensor, using the coefficient coinvariants
-and scalar unit. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra, U its enveloping algebra
+and T₀ = envelopingTrivialObject R L the lifted scalar U-module acted on through augmentation.
+Put H = max u v v' w and let M : LieModuleCat.{H} R L. Let N be its right U-representation,
+with op(ι(x)) • m = −⁅x,m⁆. nativeCoefficientHomologyZeroTensorIso identifies H₀(CE(L,M)) with
+ModuleCat.BalancedTensor.functor R U N applied to T₀, using coefficient recovery and the
+coinvariant/unit tensor comparison. -/
 def nativeCoefficientHomologyZeroTensorIso (M : LieModuleCat.{max u v v' w} R L) :
     (coefficientComplex R L M).homology 0 ≅
       (ModuleCat.BalancedTensor.functor R U
@@ -110,8 +125,11 @@ def nativeCoefficientHomologyZeroTensorIso (M : LieModuleCat.{max u v v' w} R L)
       rightCoefficientHomologyZeroTensorIso R L
         (LieModuleCat.RightUniversalEnveloping.representObj R L M)
 
-/-- The canonical empty-word/coinvariant H₀ class keeps its coefficient and scalar unit in the
-balanced tensor. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra, U its enveloping algebra
+and T₀ = envelopingTrivialObject R L the lifted scalar U-module acted on through augmentation.
+Put H = max u v v' w and let M : LieModuleCat.{H} R L. Let N be its right U-representation,
+with op(ι(x)) • m = −⁅x,m⁆. For m : M, the H₀ class of the empty exterior word ⊗ m maps under
+nativeCoefficientHomologyZeroTensorIso to Balanced.mk R U N T₀ m (ULift.up 1). -/
 theorem nativeCoefficientHomologyZeroTensorIso_class (M : LieModuleCat.{max u v v' w} R L)
     (m : M) :
     (nativeCoefficientHomologyZeroTensorIso.{u, v, v', w} R L M).hom
@@ -142,8 +160,13 @@ local notation "N" => LieModuleCat.RightUniversalEnveloping.representObj R L M
 local notation "N'" => LieModuleCat.RightUniversalEnveloping.representObj R L' M'
 local notation "g" => LieModuleCat.RightUniversalEnveloping.representLieMapSemilinear R L f h
 
-/-- The all-degree CE joint coefficient/Lie map in the common carrier category, directly from the
-differential naturality provider. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra, U its enveloping algebra
+and T₀ = envelopingTrivialObject R L the lifted scalar U-module acted on through augmentation.
+Let L' : Type v' be another R-Lie algebra, f : L →ₗ⁅R⁆ L', H = max u v v' w, M and M' Lie
+modules in height H, and h : M →ₗ⁅R,L⁆ f* M'. Let N,N' be their right U- and
+U'-representations and g the induced semilinear right-module map along UEA.map f.
+nativeCoefficientLieComplexMap : CE(L,M) ⟶ CE(L',M') has degree-n component ⋀^n f ⊗ h,
+obtained from homogeneous differential naturality. -/
 def nativeCoefficientLieComplexMap : coefficientComplex R L M ⟶ coefficientComplex R L' M' :=
   ChainComplex.ofHom
     (fun n => ModuleCat.ofHom (coefficientLieDegreeMap R L f M M' h n)) (fun n => by
@@ -155,8 +178,13 @@ theorem nativeCoefficientLieComplexMap_f_tmul (n : ℕ) (x : ⋀[R]^n L) (m : M)
       exteriorPower.map n f.toLinearMap x ⊗ₜ[R] h m :=
   coefficientLieDegreeMap_tmul R L f M M' h n x m
 
-/-- Identity-carrier coefficient recovery commutes with the joint CE variance map and the
-semilinear right-representation map. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra, U its enveloping algebra
+and T₀ = envelopingTrivialObject R L the lifted scalar U-module acted on through augmentation.
+Let L' : Type v' be another R-Lie algebra, f : L →ₗ⁅R⁆ L', H = max u v v' w, M and M' Lie
+modules in height H, and h : M →ₗ⁅R,L⁆ f* M'. Let N,N' be their right U- and
+U'-representations and g the induced semilinear right-module map along UEA.map f. The CE map
+followed by nativeRightCoefficientComplexIso for M' equals the coefficient-recovery
+isomorphism for M followed by rightEnvelopingCoefficientLieComplexMap(f,g). -/
 theorem nativeRightCoefficientComplexIso_lie_naturality :
     nativeCoefficientLieComplexMap R L f M M' h ≫ (nativeRightCoefficientComplexIso.{u, v', v, w} R L' M').hom =
       (nativeRightCoefficientComplexIso.{u, v, v', w} R L M).hom ≫ rightEnvelopingCoefficientLieComplexMap R L f g := by
@@ -173,8 +201,13 @@ theorem nativeRightCoefficientComplexIso_lie_naturality :
     nativeRightCoefficientComplexIso_f_tmul, rightEnvelopingCoefficientLieComplexMap_f_tmul]
   rfl
 
-/-- The canonical Tor map of Lie coefficient data is derived from their right representations and
-scalar-change square. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra, U its enveloping algebra
+and T₀ = envelopingTrivialObject R L the lifted scalar U-module acted on through augmentation.
+Let L' : Type v' be another R-Lie algebra, f : L →ₗ⁅R⁆ L', H = max u v v' w, M and M' Lie
+modules in height H, and h : M →ₗ⁅R,L⁆ f* M'. Let N,N' be their right U- and
+U'-representations and g the induced semilinear right-module map along UEA.map f. For n : ℕ,
+nativeLieCoefficientTorMap is rightEnvelopingTorLieMapAt R L f N N' g n, derived from the
+represented right-module map and the canonical enveloping scalar-change square. -/
 def nativeLieCoefficientTorMap (n : ℕ) :=
   rightEnvelopingTorLieMapAt R L f N N' g n
 
@@ -184,8 +217,12 @@ section ResolutionComparison
 
 variable [Module.Free R L]
 
-/-- The full Lie-coefficient CE homology computes the right-representation Tor, through the
-constructed enveloping algebra resolution. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra, U its enveloping algebra
+and T₀ = envelopingTrivialObject R L the lifted scalar U-module acted on through augmentation.
+Put H = max u v v' w and let M : LieModuleCat.{H} R L. Let N be its right U-representation,
+with op(ι(x)) • m = −⁅x,m⁆. Assume Module.Free R L. For n : ℕ, nativeCoefficientHomologyIsoTor
+identifies H_n(CE(L,M)) with the n-th left-derived functor of X ↦ Balanced(R,U,N,X), evaluated
+at liftedEnvelopingTrivial in height H. -/
 def nativeCoefficientHomologyIsoTor (M : LieModuleCat.{max u v v' w} R L) (n : ℕ) :
     (coefficientComplex R L M).homology n ≅
       (((ModuleCat.BalancedTensor.functor R U
@@ -197,8 +234,12 @@ def nativeCoefficientHomologyIsoTor (M : LieModuleCat.{max u v v' w} R L) (n : �
       rightCoefficientHomologyIsoTorAt.{u, v, v', w} R L
         (LieModuleCat.RightUniversalEnveloping.representObj R L M) n
 
-/-- The CE/Tor comparison agrees with the canonical coefficient/unit H₀ map through the derived
-augmentation and lift cancellation. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra, U its enveloping algebra
+and T₀ = envelopingTrivialObject R L the lifted scalar U-module acted on through augmentation.
+Put H = max u v v' w and let M : LieModuleCat.{H} R L. Let N be its right U-representation,
+with op(ι(x)) • m = −⁅x,m⁆. Assume Module.Free R L. The degree-zero CE/Tor comparison followed
+by fromLeftDerivedZero at the lifted trivial module and rightTrivialTensorLiftEquiv equals
+nativeCoefficientHomologyZeroTensorIso. -/
 theorem nativeCoefficientHomologyIsoTor_zero_canonical (M : LieModuleCat.{max u v v' w} R L) :
     (nativeCoefficientHomologyIsoTor.{u, v, v', w} R L M 0).hom ≫
       (ModuleCat.BalancedTensor.functor R U
@@ -217,8 +258,14 @@ variable {L' : Type v'} [LieRing L'] [LieAlgebra R L'] [Module.Free R L']
   (f : L →ₗ⁅R⁆ L') (M : LieModuleCat.{max u v v' w} R L) (M' : LieModuleCat.{max u v v' w} R L')
   (h : M →ₗ⁅R,L⁆ LieModuleCat.restrictObj f M')
 
-/-- Full joint Lie and coefficient naturality for arbitrary Lie modules, under exactly the
-free-base resolution hypotheses. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra, U its enveloping algebra
+and T₀ = envelopingTrivialObject R L the lifted scalar U-module acted on through augmentation.
+Let L' : Type v' be another R-Lie algebra, f : L →ₗ⁅R⁆ L', H = max u v v' w, M and M' Lie
+modules in height H, and h : M →ₗ⁅R,L⁆ f* M'. Let N,N' be their right U- and
+U'-representations and g the induced semilinear right-module map along UEA.map f. Assume
+Module.Free R L and Module.Free R L'. For n : ℕ, H_n(nativeCoefficientLieComplexMap) followed
+by the target CE/Tor comparison equals the source comparison followed by
+nativeLieCoefficientTorMap n. -/
 theorem nativeCoefficientHomologyIsoTor_lie_naturality (n : ℕ) :
     HomologicalComplex.homologyMap (nativeCoefficientLieComplexMap R L f M M' h) n ≫
       (nativeCoefficientHomologyIsoTor.{u, v', v, w} R L' M' n).hom =

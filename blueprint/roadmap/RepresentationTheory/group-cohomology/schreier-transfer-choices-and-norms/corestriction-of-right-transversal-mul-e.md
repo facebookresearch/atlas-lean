@@ -1,4 +1,6 @@
-# Corestriction Of Right Transversal mul Equiv
+# The arbitrary-degree cohomology square for group transport
 
-Chosen-transversal corestriction commutes with transport by an ambient
-group equivalence in every cohomological degree.
+The arbitrary-degree cohomology square for group transport.
+
+In degree n, pullback along e after transfer from e(H) to G′ equals transfer from H to G after
+pullback along the induced subgroup equivalence.

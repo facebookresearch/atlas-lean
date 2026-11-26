@@ -15,13 +15,16 @@ public import Mathlib.CategoryTheory.Sites.Point.Skyscraper
 public import Mathlib.CategoryTheory.Limits.Shapes.Products
 
 /-!
-# Global sections of the original geometric skyscraper
+# Global sections of a geometric skyscraper
 
-The actual terminal étale object has a unique geometric-fiber point. Global
-sections of its skyscraper therefore evaluate to the original additive
-coefficient. The comparison uses the existing terminal-sections isomorphism
-and the product over that actual singleton fiber, naturally in every
-coefficient morphism.
+Let Ω be a separably closed field, X a scheme in universe u, and x : Spec(Ω) → X. For additive
+groups of universe max(u,w), the global-section functor composed with the geometric skyscraper
+functor is naturally isomorphic to the identity.
+
+The identity étale object over X is terminal and its geometric fiber is a singleton. The
+comparison takes a global section to its terminal-object value and then to the coefficient at
+that fiber point. Its inverse gives the constant coefficient value on the terminal fiber, and
+the comparison is natural in coefficient morphisms.
 -/
 
 @[expose] public section
@@ -41,7 +44,10 @@ private theorem skyscraperCompositionValue.{v}
 
 variable {Ω : Type u} [Field Ω] [IsSepClosed Ω] {X : Scheme.{u}}
 
-/-- Global sections of the prescribed common geometric skyscraper are its actual coefficient. -/
+/-- Let Ω be a separably closed field, X a scheme of universe u, and x : Spec(Ω) → X. For
+coefficients in AddCommGrpCat.{max(u,w)}, there is a natural isomorphism x_* ⋙ Γ(X_et,−) ≅ Id.
+The forward comparison evaluates a skyscraper global section on the terminal identity étale
+object and projects from its singleton geometric fiber to the coefficient group. -/
 def smallEtaleSkyscraperSectionsIso (x : Spec (.of Ω) ⟶ X) :
     (smallEtaleGeometricPointCommon.{u, w} x).skyscraperSheafFunctor
         (A := AddCommGrpCat.{max u w}) ⋙
@@ -78,7 +84,10 @@ def smallEtaleSkyscraperSectionsIso (x : Spec (.of Ω) ⟶ X) :
         ((congrArg (fun h : PM ⟶ N => eM ≫ h) hp).trans
           (Category.assoc eM πM f).symm)))
 
-/-- The comparison is terminal-section evaluation at any point of the actual singleton fiber. -/
+/-- For x : Spec(Ω) → X with Ω separably closed, M ∈ AddCommGrpCat.{max(u,w)}, and any z in the
+geometric fiber over id_X, the forward map Γ(x_*M) → M is the terminal-section isomorphism
+Γ(x_*M) → ∏_{Fiber_x(id_X)}M followed by projection π_z. The terminal fiber is a singleton, so
+the formula is independent of z. -/
 theorem smallEtaleSkyscraperSectionsIso_hom (x : Spec (.of Ω) ⟶ X)
     (M : AddCommGrpCat.{max u w})
     (z : (smallEtaleGeometricPointCommon.{u, w} x).fiber.obj (Scheme.Etale.mk (𝟙 X))) :
@@ -99,7 +108,10 @@ theorem smallEtaleSkyscraperSectionsIso_hom (x : Spec (.of Ω) ⟶ X)
       (p.skyscraperSheafFunctor.obj M) ≫ Pi.π (fun _ : p.fiber.obj T => M) t)
     (Subsingleton.elim default z)
 
-/-- Every global section has the literal original coefficient value at the terminal fiber. -/
+/-- Let Ω be a separably closed field of universe u, X a scheme of that universe, x : Spec(Ω) → X,
+M ∈ AddCommGrpCat.{max(u,w)}, z ∈ Fiber_x(id_X), and s ∈ Γ(x_*M). The forward sections
+comparison sends s to π_z of its value under the global-to-terminal-section isomorphism. Its
+result is the coefficient in M at that terminal-fiber point. -/
 theorem smallEtaleSkyscraperSectionsIso_hom_apply (x : Spec (.of Ω) ⟶ X)
     (M : AddCommGrpCat.{max u w})
     (z : (smallEtaleGeometricPointCommon.{u, w} x).fiber.obj (Scheme.Etale.mk (𝟙 X)))
@@ -112,7 +124,10 @@ theorem smallEtaleSkyscraperSectionsIso_hom_apply (x : Spec (.of Ω) ⟶ X)
           ((smallEtaleGeometricPointCommon.{u, w} x).skyscraperSheafFunctor.obj M) s) := by
   exact skyscraperCompositionValue (smallEtaleSkyscraperSectionsIso_hom.{u, w} x M z) s
 
-/-- The inverse global section has the given coefficient at every terminal-fiber coordinate. -/
+/-- Let Ω be a separably closed field of universe u, X a scheme of that universe, x : Spec(Ω) → X,
+M ∈ AddCommGrpCat.{max(u,w)}, and m∈M. For the global section s given by the inverse
+skyscraper sections comparison, its terminal-object value has coordinate m at every
+z∈Fiber_x(id_X). -/
 theorem smallEtaleSkyscraperSectionsIso_inv_apply (x : Spec (.of Ω) ⟶ X)
     (M : AddCommGrpCat.{max u w})
     (z : (smallEtaleGeometricPointCommon.{u, w} x).fiber.obj (Scheme.Etale.mk (𝟙 X)))
@@ -128,7 +143,9 @@ theorem smallEtaleSkyscraperSectionsIso_inv_apply (x : Spec (.of Ω) ⟶ X)
     ((smallEtaleSkyscraperSectionsIso.{u, w} x).inv.app M m)).symm.trans
       (by simpa only [ConcreteCategory.comp_apply, ConcreteCategory.id_apply] using h)
 
-/-- Every actual coefficient arrow commutes with the same global-section evaluation. -/
+/-- Let Ω be a separably closed field, x : Spec(Ω) → X, f : M → N an additive-group map in
+universe max(u,w), and e_M,e_N the global skyscraper section comparisons. For s ∈ Γ(x_*M),
+e_N(Γ(x_*f)(s))=f(e_M(s)). This is naturality of the terminal-fiber evaluation isomorphism. -/
 theorem smallEtaleSkyscraperSectionsIso_naturality (x : Spec (.of Ω) ⟶ X)
     {M N : AddCommGrpCat.{max u w}} (f : M ⟶ N)
     (s : (Sheaf.Γ X.smallEtaleTopology AddCommGrpCat.{max u w}).obj

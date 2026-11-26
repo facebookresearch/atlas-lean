@@ -18,16 +18,15 @@ public import Mathlib.CategoryTheory.Limits.FunctorCategory.EpiMono
 public import Mathlib.CategoryTheory.Limits.Preserves.Shapes.Products
 
 /-!
-# Exactness and acyclicity of Godement families
+# Exactness of Godement stalk and skyscraper functors
 
-The coefficient category consists of families indexed by scheme points.
-Its discrete-functor equivalence gives the abelian structure, and component
-injective presentations give enough injectives. Exact additive-group
-products imply exactness of the skyscraper product functor.
+Families of additive groups indexed by scheme points form an abelian category with enough
+injectives. The skyscraper-product functor is additive, preserves epimorphisms and homology,
+and preserves injective objects because its stalk-family left adjoint is exact.
 
-The stalk-family adjunction preserves injectives. The global-sections
-comparison, applied to a family injective resolution, gives vanishing of
-positive right-derived global sections.
+Global sections of a skyscraper product are the product of its coefficients. Products of
+additive groups are exact, so every such skyscraper product is acyclic for positive right-
+derived global sections. All families and sheaves use coefficient universe `max u w`.
 -/
 
 @[expose] public section
@@ -39,8 +38,9 @@ open CategoryTheory CategoryTheory.Limits AlgebraicGeometry Opposite
 
 namespace AlgebraicGeometry.Scheme.DerivedSections
 
-/-- Finite products of the original coefficient families come from the literal discrete
-equivalence. -/
+/-- Point indexed coefficient families have finite products.
+
+The category of additive-group families indexed by scheme points has finite products. -/
 instance smallEtaleGodementCoefficientsFiniteProducts (X : Scheme.{u}) :
     HasFiniteProducts (X → AddCommGrpCat.{max u w}) where
   out n := by
@@ -49,7 +49,9 @@ instance smallEtaleGodementCoefficientsFiniteProducts (X : Scheme.{u}) :
     exact Adjunction.hasLimitsOfShape_of_equivalence
       (piEquivalenceFunctorDiscrete X AddCommGrpCat.{max u w}).functor
 
-/-- The same original family category is abelian without changing its objects or arrows. -/
+/-- Point indexed coefficient families have an abelian structure.
+
+The componentwise additive-group structure makes the point-family category abelian. -/
 @[instance_reducible]
 def smallEtaleGodementCoefficientsAbelian (X : Scheme.{u}) :
     Abelian (X → AddCommGrpCat.{max u w}) := by
@@ -86,7 +88,9 @@ private theorem injectiveFamily (X : Scheme.{u}) (J : X → AddCommGrpCat.{max u
     funext x
     exact Injective.comp_factorThru (g x) (f x)
 
-/-- Actual component injective presentations give enough injectives in the original family
+/-- Point indexed coefficient families have enough injectives.
+
+Choose injective presentations componentwise to give enough injectives in the point-family
 category. -/
 instance smallEtaleGodementCoefficientsEnoughInjectives (X : Scheme.{u}) :
     EnoughInjectives (X → AddCommGrpCat.{max u w}) where
@@ -131,7 +135,10 @@ private theorem evaluatedProductMap_epi (X : Scheme.{u})
     infer_instance
   exact (epi_comp_iff_of_isIso a eN.hom).mp ha
 
-/-- Every actual Godement skyscraper-product component map is surjective for a family epi. -/
+/-- Epimorphic families give surjective skyscraper section maps.
+
+For an epimorphism of coefficient families, the induced skyscraper-product sheaf map is
+surjective on sections of each étale object. -/
 theorem smallEtaleGodementSkyscrapersMap_component_surjective (X : Scheme.{u})
     {M N : X → AddCommGrpCat.{max u w}} (f : M ⟶ N) [Epi f] (U : X.Etale) :
     Function.Surjective (((smallEtaleGodementSkyscrapers.{u, w} X).map f).hom.app (op U)) := by
@@ -149,8 +156,10 @@ theorem smallEtaleGodementSkyscrapersMap_component_surjective (X : Scheme.{u})
         (smallEtaleCanonicalGeometricMorphism X x)).skyscraperSheafFunctor.map (f x))
       (op U) hf)
 
-/-- The original product of skyscrapers preserves family epimorphisms by objectwise group
-products. -/
+/-- Skyscraper product functor preserves epimorphisms.
+
+An epimorphism of coefficient families induces an epimorphism of their product-of-skyscrapers
+sheaves. -/
 instance smallEtaleGodementSkyscrapersPreservesEpimorphisms (X : Scheme.{u}) :
     (smallEtaleGodementSkyscrapers.{u, w} X).PreservesEpimorphisms where
   preserves f hf := by
@@ -162,18 +171,23 @@ instance smallEtaleGodementSkyscrapersPreservesEpimorphisms (X : Scheme.{u}) :
     exact (sheafToPresheaf X.smallEtaleTopology AddCommGrpCat.{max u w}).epi_of_epi_map
       (show Epi b.hom from inferInstance)
 
-/-- The same original skyscraper-product right adjoint is additive. -/
+/-- Skyscraper product functor is additive.
+
+The product-of-skyscrapers functor preserves addition of family morphisms. -/
 instance smallEtaleGodementSkyscrapersAdditive (X : Scheme.{u}) :
     (smallEtaleGodementSkyscrapers.{u, w} X).Additive :=
   Functor.additive_of_preserves_binary_products _
 
-/-- Preserved kernels and the proved objectwise epi property make the original family inverse
-exact. -/
+/-- Skyscraper product functor preserves homology.
+
+The functor preserves kernels and epimorphisms and hence preserves homology. -/
 instance smallEtaleGodementSkyscrapersPreservesHomology (X : Scheme.{u}) :
     (smallEtaleGodementSkyscrapers.{u, w} X).PreservesHomology :=
   Functor.preservesHomology_of_preservesEpis_and_kernels _
 
-/-- The original geometric-stalk family preserves finite limits in its lossless family category. -/
+/-- Canonical stalk family functor preserves finite limits.
+
+Finite limits are preserved at each geometric stalk and therefore by the point-family functor. -/
 instance smallEtaleGodementStalksPreservesFiniteLimits (X : Scheme.{u}) :
     PreservesFiniteLimits (smallEtaleGodementStalks.{u, w} X) where
   preservesFiniteLimits J := by
@@ -189,7 +203,9 @@ instance smallEtaleGodementStalksPreservesFiniteLimits (X : Scheme.{u}) :
         infer_instance)
     exact preservesLimitsOfShape_of_reflects_of_preserves L E
 
-/-- The exact original stalk-family left adjoint is additive. -/
+/-- Canonical stalk family functor is additive.
+
+The stalk-family functor preserves sums of sheaf morphisms componentwise. -/
 instance smallEtaleGodementStalksAdditive (X : Scheme.{u}) :
     (smallEtaleGodementStalks.{u, w} X).Additive where
   map_add {P Q} {f g} := by
@@ -204,26 +220,36 @@ instance smallEtaleGodementStalksAdditive (X : Scheme.{u}) :
       infer_instance
     exact (p.sheafFiber (A := AddCommGrpCat.{max u w})).map_add (f := f) (g := g)
 
-/-- The actual stalk family is exact using its proved finite limits and original left adjunction. -/
+/-- Canonical stalk family functor preserves homology.
+
+The exact geometric stalk functors give preservation of homology by the family functor. -/
 instance smallEtaleGodementStalksPreservesHomology (X : Scheme.{u}) :
     (smallEtaleGodementStalks.{u, w} X).PreservesHomology :=
   Functor.preservesHomology_of_preservesEpis_and_kernels _
 
-/-- The same original stalk-family and skyscraper-product adjunction preserves injectives on the
-right. -/
+/-- Skyscraper products of injective families are injective.
+
+The skyscraper-product right adjoint preserves injective objects because its stalk-family left
+adjoint preserves monomorphisms. -/
 instance smallEtaleGodementSkyscrapersPreservesInjectives (X : Scheme.{u}) :
     (smallEtaleGodementSkyscrapers.{u, w} X).PreservesInjectiveObjects :=
   Functor.preservesInjectiveObjects_of_adjunction_of_preservesMonomorphisms
     (smallEtaleGodementAdjunction.{u, w} X)
 
-/-- The actual coefficient product is a right adjoint through the literal discrete equivalence. -/
+/-- Coefficient product functor is a right adjoint.
+
+The product functor on point-indexed additive-group families is right adjoint to the diagonal
+functor. -/
 instance smallEtaleGodementCoefficientProductRightAdjoint (X : Scheme.{u}) :
     (Pi.functor (C := AddCommGrpCat.{max u w}) X).IsRightAdjoint := by
   change ((piEquivalenceFunctorDiscrete X AddCommGrpCat.{max u w}).functor ⋙
     lim (J := Discrete X) (C := AddCommGrpCat.{max u w})).IsRightAdjoint
   infer_instance
 
-/-- Exact additive-group products preserve epis of actual coefficient families. -/
+/-- Coefficient products preserve epimorphisms.
+
+A componentwise epimorphism of additive-group families induces an epimorphism of their
+products. -/
 instance smallEtaleGodementCoefficientProductPreservesEpimorphisms (X : Scheme.{u}) :
     (Pi.functor (C := AddCommGrpCat.{max u w}) X).PreservesEpimorphisms where
   preserves f hf := by
@@ -234,13 +260,17 @@ instance smallEtaleGodementCoefficientProductPreservesEpimorphisms (X : Scheme.{
     change Epi ((lim (J := Discrete X) (C := A)).map t)
     infer_instance
 
-/-- The original coefficient product is additive. -/
+/-- Coefficient product functor is additive.
+
+The point-indexed product functor preserves addition of morphisms. -/
 instance smallEtaleGodementCoefficientProductAdditive (X : Scheme.{u}) :
     (Pi.functor (C := AddCommGrpCat.{max u w}) X).Additive :=
   Functor.additive_of_preserves_binary_products _
 
-/-- The actual coefficient product is exact, without any assertion about arbitrary sheaf
-products. -/
+/-- Coefficient products preserve homology.
+
+Exactness of additive-group products gives preservation of homology by the coefficient product
+functor. -/
 instance smallEtaleGodementCoefficientProductPreservesHomology (X : Scheme.{u}) :
     (Pi.functor (C := AddCommGrpCat.{max u w}) X).PreservesHomology :=
   Functor.preservesHomology_of_preservesEpis_and_kernels _
@@ -256,8 +286,10 @@ private theorem exactDerivedSuccIsZero.{vC, uC, vD, uD}
     (HomologicalComplex.exactAt_iff_isZero_homology _ _).mp (I.cocomplex_exactAt_succ n)
   exact IsZero.of_iso (F.map_isZero hz) ((I.cocomplex.sc (n + 1)).mapHomologyIso F)
 
-/-- Every actual Godement skyscraper family is acyclic for positive right-derived global
-sections. -/
+/-- Skyscraper products have zero positive derived sections.
+
+For any coefficient family `M` and natural `n`, `R^(n+1)Γ` of its product of canonical
+geometric skyscrapers is zero. -/
 theorem smallEtaleGodementDerivedSections_succ_isZero (X : Scheme.{u})
     (M : X → AddCommGrpCat.{max u w}) (n : ℕ) :
     IsZero (((Sheaf.Γ X.smallEtaleTopology AddCommGrpCat.{max u w}).rightDerived

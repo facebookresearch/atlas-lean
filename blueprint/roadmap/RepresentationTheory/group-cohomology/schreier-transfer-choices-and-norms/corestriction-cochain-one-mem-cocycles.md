@@ -1,4 +1,6 @@
-# Corestriction Cochain One mem cocycles₁
+# Degree-one transfer preserves cocycles
 
-The chosen-transversal degree-one cochain transfer sends one-cocycles to
-one-cocycles.
+Degree-one transfer preserves cocycles.
+
+If c is an H-one-cocycle for the restricted representation A|H, its transferred cochain
+satisfies the G-one-cocycle equation.

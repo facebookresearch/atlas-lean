@@ -1,4 +1,6 @@
-# Normalization Homology Zero hom
+# Augmentation homology isomorphism is the degree-zero quotient map
 
-The augmentation homology iso on a projective resolution is the original quotient comparison used
-by the derived-zero map.
+Let `C,D` be abelian, `P` a projective resolution of `X`, and
+`F : C → D` additive and preserving finite colimits. The augmentation
+homology isomorphism `H₀(F(P)) → F(X)` is the map through degree-zero
+opcycles followed by the augmentation descent.

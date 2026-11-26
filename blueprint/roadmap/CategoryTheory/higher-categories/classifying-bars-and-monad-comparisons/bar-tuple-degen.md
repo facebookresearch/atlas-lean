@@ -1,9 +1,6 @@
-# Bar Tuple degen
+# A bar degeneracy inserts the monoid identity
 
-Bar-side degeneracy tuple formula.
+A bar degeneracy inserts the monoid identity.
 
-`barTuple` of a degeneracy inserts `1` head-first: unfold `σ i` to
-`barEtaAtPos` (`barData_σ_app`), read both sides through the generalized
-reader, and apply `genEtaFst`. The public `barEtaAtPos` wrapper counts from
-the right-module end, so `i.rev` restores the head-first tuple position `i`
-(`n - (n - i) = i`). No induction here.
+For i : Fin (n+1), the i-th degeneracy of a degree-n bar element inserts 1 at tuple position
+i.

@@ -1,4 +1,7 @@
-# H1 ZMod Restrict Int Add Hom
+# Additive first-cohomology map to integral coefficients
 
-Additive degree-one comparison from `ZMod n` coefficients to integral
-scalar-restricted coefficients.
+Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+The forward map χ₁:H¹(G,A)→+H¹(G,Res(A)) is additive and
+preserves the corresponding one-cocycle classes.

@@ -1,3 +1,5 @@
-# Top Tensor Monad Hom comp
+# Composition of topological tensor-monad morphisms
 
-Tensor-monad morphisms compose with continuous monoid homomorphisms.
+Composition of topological tensor-monad morphisms.
+
+The tensor-monad morphism of ψ ∘ φ is the composite of the tensor-monad morphisms of φ and ψ.

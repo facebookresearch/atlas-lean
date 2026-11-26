@@ -1,4 +1,6 @@
-# Map
+# The Hochschild chain map of a map over fixed coefficients
 
-The coefficient-first Hochschild map of an original algebra
-morphism over its fixed coefficient algebra.
+The Hochschild chain map of a map over fixed coefficients.
+
+For `f : P → Q` over `B`, apply `f` to each algebra tensor factor and retain the coefficient
+factor in `B`.

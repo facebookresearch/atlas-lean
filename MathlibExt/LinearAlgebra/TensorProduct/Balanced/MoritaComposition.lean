@@ -15,12 +15,20 @@ public import MathlibExt.LinearAlgebra.TensorProduct.Balanced.MoritaFinite
 public import Mathlib.Data.Fintype.BigOperators
 
 /-!
-# The actual two normalized unit frames of the Morita composites
+# Unit frames for composite bimodule contractions
 
-Both frames are computed from the original two invertible contractions.
-Their unit equations use the selected inverse-unit tensors and the earned
-normalization equations. These are the actual ring-valued frame entries of
-φψ and ψφ; no finite frame or normalization law is supplied by the caller.
+Let R and S be rings, P an R–S bimodule and Q an S–R bimodule in
+independent carrier universes, with commuting actions. Let
+u : P ⊗_S Q ≅ R and w : Q ⊗_R P ≅ S be bimodule equivalences,
+and U the normalized R-valued contraction.
+
+Choose finite pure expressions U⁻¹(1) = ∑_j [p_j ⊗ q_j] and
+w⁻¹(1) = ∑_k [q_k ⊗ p_k]. On J × K define
+a^R_(j,k) = U([p_k ⊗ q_j]), b^R_(j,k) = U([p_j ⊗ q_k]),
+a^S_(j,k) = w([q_j ⊗ p_k]), b^S_(j,k) = w([q_k ⊗ p_j]).
+The composite unit frames satisfy ∑ b^R_i a^R_i = 1_R and
+∑ b^S_i a^S_i = 1_S. The product order is right coefficient times
+left coefficient in each ring.
 -/
 
 @[expose] public section
@@ -56,31 +64,74 @@ local notation "J" => unitSupport R S P Q U
 local notation "K" => unitSupport S R Q P w
 
 include u w hw in
-/-- The actual finite index of both composite cycle sums. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with commuting actions on additive commutative groups.
+Let u : P ⊗_S Q ≅ R be right R-linear and w : Q ⊗_R P ≅ S
+be right S-linear and left S-equivariant. Write U for the normalized
+right R-linear contraction. Let J index a finite pure expression for
+U⁻¹(1), with entries (p_j, q_j), and K for w⁻¹(1), with entries (q_k, p_k).
+This is the finite product index J × K for the two composite coefficient
+families. It uses the chosen inverse-unit supports, with no finite index
+supplied separately. -/
 abbrev compositeIndex := J × K
 
 include u w hw in
-/-- The actual left coefficient of the R-composite word map. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with commuting actions on additive commutative groups.
+Let u : P ⊗_S Q ≅ R be right R-linear and w : Q ⊗_R P ≅ S
+be right S-linear and left S-equivariant. Write U for the normalized
+right R-linear contraction. Let J index a finite pure expression for
+U⁻¹(1), with entries (p_j, q_j), and K for w⁻¹(1), with entries (q_k, p_k).
+The left coefficient of the R-valued composite at (j, k) is
+a^R_(j,k) = U([p_k ⊗ q_j]). -/
 def compositeRLeft (i : compositeIndex R S P Q u w hw) : R :=
   U (mk ℤ S P Q i.2.val.2 i.1.val.2)
 
 include u w hw in
-/-- The actual right coefficient of the R-composite word map. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with commuting actions on additive commutative groups.
+Let u : P ⊗_S Q ≅ R be right R-linear and w : Q ⊗_R P ≅ S
+be right S-linear and left S-equivariant. Write U for the normalized
+right R-linear contraction. Let J index a finite pure expression for
+U⁻¹(1), with entries (p_j, q_j), and K for w⁻¹(1), with entries (q_k, p_k).
+The right coefficient of the R-valued composite at (j, k) is
+b^R_(j,k) = U([p_j ⊗ q_k]). -/
 def compositeRRight (i : compositeIndex R S P Q u w hw) : R :=
   U (mk ℤ S P Q i.1.val.1 i.2.val.1)
 
 include u w hw in
-/-- The left S coefficient obtained after the two actual coefficient returns. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with commuting actions on additive commutative groups.
+Let u : P ⊗_S Q ≅ R be right R-linear and w : Q ⊗_R P ≅ S
+be right S-linear and left S-equivariant. Write U for the normalized
+right R-linear contraction. Let J index a finite pure expression for
+U⁻¹(1), with entries (p_j, q_j), and K for w⁻¹(1), with entries (q_k, p_k).
+The left coefficient of the S-valued composite at (j, k) is
+a^S_(j,k) = w([q_j ⊗ p_k]). -/
 def compositeSLeft (i : compositeIndex R S P Q u w hw) : S :=
   w (mk ℤ R Q P i.1.val.2 i.2.val.2)
 
 include u w hw in
-/-- Its original right S coefficient, in the opposite action's product order. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with commuting actions on additive commutative groups.
+Let u : P ⊗_S Q ≅ R be right R-linear and w : Q ⊗_R P ≅ S
+be right S-linear and left S-equivariant. Write U for the normalized
+right R-linear contraction. Let J index a finite pure expression for
+U⁻¹(1), with entries (p_j, q_j), and K for w⁻¹(1), with entries (q_k, p_k).
+The right coefficient of the S-valued composite at (j, k) is
+b^S_(j,k) = w([q_k ⊗ p_j]). -/
 def compositeSRight (i : compositeIndex R S P Q u w hw) : S :=
   w (mk ℤ R Q P i.2.val.1 i.1.val.1)
 
 include u hu w hw in
-/-- The normalized contraction sends the actual balanced product to the R product. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with commuting actions on additive commutative groups.
+Let u : P ⊗_S Q ≅ R and w : Q ⊗_R P ≅ S be bimodule equivalences.
+Write U for the normalized R-valued contraction obtained from u and w.
+For p, p′ ∈ P and q, q′ ∈ Q, the normalized contraction satisfies
+U([p ⊗ q]) U([p′ ⊗ q′]) =
+U([p ⊗ (w([q ⊗ p′]) • q′)]).
+The S-valued contraction acts on q′ on the left inside the final tensor. -/
 theorem normalizedR_pair_mul (p : P) (q : Q) (p' : P) (q' : Q) :
     U (mk ℤ S P Q p q) * U (mk ℤ S P Q p' q') =
       U (mk ℤ S P Q p (w (mk ℤ R Q P q p') • q')) := by
@@ -94,7 +145,14 @@ theorem normalizedR_pair_mul (p : P) (q : Q) (p' : P) (q' : Q) :
       (normalized_q R S P Q u hu w hw p' q q')
 
 include u hu w hw in
-/-- The original S contraction likewise respects the normalized balanced product. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with commuting actions on additive commutative groups.
+Let u : P ⊗_S Q ≅ R and w : Q ⊗_R P ≅ S be bimodule equivalences.
+Write U for the normalized R-valued contraction obtained from u and w.
+For q, q′ ∈ Q and p, p′ ∈ P, the S-valued contraction satisfies
+w([q ⊗ p]) w([q′ ⊗ p′]) =
+w([q ⊗ (U([p ⊗ q′]) • p′)]).
+The R-valued contraction acts on p′ on the left. -/
 theorem normalizedS_pair_mul (q : Q) (p : P) (q' : Q) (p' : P) :
     w (mk ℤ R Q P q p) * w (mk ℤ R Q P q' p') =
       w (mk ℤ R Q P q (U (mk ℤ S P Q p q') • p')) := by
@@ -108,7 +166,14 @@ theorem normalizedS_pair_mul (q : Q) (p : P) (q' : Q) (p' : P) :
       (normalized_p R S P Q u hu w hw p q' p')
 
 include u hu w hw in
-/-- The two actual R-composite entries form a normalized unit frame. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with commuting actions on additive commutative groups.
+Let u : P ⊗_S Q ≅ R and w : Q ⊗_R P ≅ S be bimodule equivalences.
+Write U for the normalized R-valued contraction obtained from u and w.
+Let J consist of pairs (p_j, q_j) whose pure sum is U⁻¹(1), and K of
+pairs (q_k, p_k) whose pure sum is w⁻¹(1). These are finite support types.
+For a^R_(j,k) = U([p_k ⊗ q_j]) and b^R_(j,k) = U([p_j ⊗ q_k]),
+the ordered unit sum is ∑_(j,k)∈J×K b^R_(j,k) a^R_(j,k) = 1_R. -/
 theorem compositeR_unit :
     (∑ i : compositeIndex R S P Q u w hw,
       compositeRRight R S P Q u w hw i * compositeRLeft R S P Q u w hw i) = 1 := by
@@ -135,7 +200,14 @@ theorem compositeR_unit :
     _ = 1 := hJ
 
 include u hu w hw in
-/-- The S-composite entries give the second normalized unit frame, in the same order. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with commuting actions on additive commutative groups.
+Let u : P ⊗_S Q ≅ R and w : Q ⊗_R P ≅ S be bimodule equivalences.
+Write U for the normalized R-valued contraction obtained from u and w.
+Let J consist of pairs (p_j, q_j) whose pure sum is U⁻¹(1), and K of
+pairs (q_k, p_k) whose pure sum is w⁻¹(1). These are finite support types.
+For a^S_(j,k) = w([q_j ⊗ p_k]) and b^S_(j,k) = w([q_k ⊗ p_j]),
+the ordered unit sum is ∑_(j,k)∈J×K b^S_(j,k) a^S_(j,k) = 1_S. -/
 theorem compositeS_unit :
     (∑ i : compositeIndex R S P Q u w hw,
       compositeSRight R S P Q u w hw i * compositeSLeft R S P Q u w hw i) = 1 := by

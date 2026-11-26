@@ -1,6 +1,6 @@
 # Hom–tensor comparison along a surjective scalar map
 
-- [Hom Tensor Finite Factor bijective of surjective scalars](hom-tensor-finite-factor-bijective-of-su.md)
-- [Hom Tensor Finite Factor Equiv Of Surjective Scalars](hom-tensor-finite-factor-equiv-of-surjec.md)
-- [Hom Tensor Finite Factor Equiv Of Surjective Scalars tmul](hom-tensor-finite-factor-equiv-of-surjec-2.md)
-- [Hom Tensor Finite Factor Equiv Of Surjective Scalars to Linear Map](hom-tensor-finite-factor-equiv-of-surjec-3.md)
+- [A surjective scalar map and a finite projective target-ring tensor factor make contraction bijective](hom-tensor-finite-factor-bijective-of-su.md)
+- [Surjective scalar restriction gives the finite tensor-factor contraction equivalence](hom-tensor-finite-factor-equiv-of-surjec.md)
+- [The scalar-surjection contraction equivalence has its pure-tensor evaluation formula](hom-tensor-finite-factor-equiv-of-surjec-2.md)
+- [The scalar-surjection tensor–Hom equivalence retains the canonical R-linear forward map](hom-tensor-finite-factor-equiv-of-surjec-3.md)

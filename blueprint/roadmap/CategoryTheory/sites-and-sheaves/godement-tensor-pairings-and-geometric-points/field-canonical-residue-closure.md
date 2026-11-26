@@ -1,3 +1,5 @@
-# Field Canonical Residue Closure
+# Separable closure of a field spectrum residue field
 
-The exact residue-field separable closure used by the original canonical geometric point.
+Separable closure of a field spectrum residue field.
+
+At a point of `Spec k`, take the separable closure of its residue field.

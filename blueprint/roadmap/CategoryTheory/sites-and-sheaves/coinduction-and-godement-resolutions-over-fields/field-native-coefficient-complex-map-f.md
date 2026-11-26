@@ -1,3 +1,6 @@
-# Field Native Coefficient Complex map f
+# Continuous homogeneous coefficient map in each degree
 
-The SAME original native coefficient complex keeps the stock identity-group resolution map.
+Continuous homogeneous coefficient map in each degree.
+
+The coefficient cochain map is the underlying invariants map of the homogeneous resolution map
+with identity group homomorphism.

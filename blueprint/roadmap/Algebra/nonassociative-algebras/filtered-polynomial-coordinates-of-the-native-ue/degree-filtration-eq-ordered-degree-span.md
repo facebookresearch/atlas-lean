@@ -1,3 +1,6 @@
-# Degree Filtration eq ordered Degree Span
+# The enveloping degree filtration as an ordered PBW span
 
-Actual words and actual ordered PBW words define the same degree filtration.
+The enveloping degree filtration as an ordered PBW span.
+
+For every `q`, the enveloping word-degree filtration equals the span of ordered basis words
+with length at most `q`.

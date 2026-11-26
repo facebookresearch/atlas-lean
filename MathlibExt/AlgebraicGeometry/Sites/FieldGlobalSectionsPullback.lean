@@ -17,7 +17,16 @@ public import MathlibExt.CategoryTheory.NatIso.ComparisonCoherence
 public import Mathlib.CategoryTheory.Limits.Preserves.Shapes.Terminal
 
 /-!
-# Literal original terminal-section pullback and invariant normalization
+# Field pullback on global sections and invariant normalization
+
+Let k,Ω,K,Ψ be fields of universe u with Ω and Ψ prescribed separable closures of k and K. A
+FieldMap e consists of embeddings σ : k → K and τ : Ω → Ψ with τ∘(k→Ω)=(K→Ψ)∘σ. Its spectrum
+map f : Spec(K) → Spec(k) induces inverse image on small-étale sheaves.
+
+The global-section map uses the inverse-image adjunction unit and the comparison between the
+base-changed identity object and id_{Spec(K)}. Under Γ≅Galois invariants it is invariant
+restriction along Gal(Ψ/K) → Gal(Ω/k), followed by the stalk-module comparison. These maps are
+natural in sheaves, and coefficient groups of size w are lifted once to max(u,w).
 -/
 
 @[expose] public section
@@ -38,7 +47,9 @@ variable (k Ω K Ψ : Type u) [Field k] [Field Ω] [Field K] [Field Ψ]
 variable [Algebra k Ω] [Algebra K Ψ] [IsSepClosure k Ω] [IsSepClosure K Ψ]
 attribute [local instance] IsSepClosure.sep_closed
 
-/-- The actual original terminal object remains terminal under actual base change. -/
+/-- Let e be compatible embeddings of field pairs (k,Ω) → (K,Ψ), with spectrum map f : Spec(K) →
+Spec(k). The base change of the identity étale object over Spec(k) is canonically isomorphic
+to the identity étale object over Spec(K). This is fieldBaseChangeTerminalIso(e). -/
 def fieldBaseChangeTerminalIso (e : GaloisUnits.FieldMap k Ω K Ψ) :
     (smallEtaleBaseChange (fieldOriginalPullback k Ω K Ψ e)).obj (fieldIdentityEtale k) ≅
       fieldIdentityEtale K := by
@@ -47,8 +58,10 @@ def fieldBaseChangeTerminalIso (e : GaloisUnits.FieldMap k Ω K Ψ) :
     (smallEtaleBaseChange (fieldOriginalPullback k Ω K Ψ e)) (fieldIdentityEtale k)).uniqueUpToIso
       (identityEtaleIsTerminal (Spec (.of K)))
 
-/-- Original global sections pull back through the actual adjunction unit,
-then restrict along the actual terminal-object comparison. -/
+/-- For compatible field embeddings e and f : Spec(K) → Spec(k), define Γ_k(Q) → Γ_K(f^*Q) on
+small-étale additive-group sheaves of height max(u,w). Normalize a section at id_{Spec(k)},
+apply Q → f_*f^*Q, restrict along the inverse terminal-object base-change comparison, and
+return to global sections over K. -/
 def fieldPullbackGlobalSections (e : GaloisUnits.FieldMap k Ω K Ψ) :
     Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w} ⟶
       smallEtaleInverseImage.{u, w} (fieldOriginalPullback k Ω K Ψ e) ⋙
@@ -100,8 +113,10 @@ theorem fieldPullbackGlobalSections_terminal_section
       ((smallEtaleInverseImage.{u, w} (fieldOriginalPullback k Ω K Ψ e)).obj Q))
 
 
-/-- The inverse terminal comparison carries the SAME original terminal point
-to the actual original base-change point. -/
+/-- Let e : (k,Ω) → (K,Ψ) be compatible embeddings of fields with prescribed separable closures.
+The inverse isomorphism id_{Spec(K)} → f^*(id_{Spec(k)}) sends the terminal geometric point
+from Ψ to fieldChangeOriginalPoint(e,id_k,z_k). Thus the terminal point agrees with the
+specified point change. -/
 theorem fieldBaseChangeTerminalPoint (e : GaloisUnits.FieldMap k Ω K Ψ) :
     (fieldGeometricPoint K Ψ).fiber.map (fieldBaseChangeTerminalIso k Ω K Ψ e).inv
         (fieldTerminalFiberPoint K Ψ) =
@@ -121,7 +136,10 @@ theorem fieldBaseChangeTerminalCommonPoint (e : GaloisUnits.FieldMap k Ω K Ψ) 
 
 set_option backward.isDefEq.respectTransparency false in
 -- V6 recorded a Trans-synthesis failure at the same sheaf/presheaf stalk aliases.
-/-- The actual unit-defined section map has the same original invariant-value normalization. -/
+/-- For compatible field embeddings with prescribed closures, let c∈Γ_k(Q), let a be its value
+under Γ_k(Q)≅Φ_k(Q)^G, and let ξ_e be the underlying stalk comparison. The invariant vector
+associated to the pullback section in Γ_K(f^*Q) has underlying value ξ_e(a). The coefficient
+universe is max(u,w). -/
 theorem fieldPullbackGlobalSections_invariant_val (e : GaloisUnits.FieldMap k Ω K Ψ)
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
     (c : (Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}).obj Q) :
@@ -165,7 +183,10 @@ theorem fieldPullbackGlobalSections_invariant_val (e : GaloisUnits.FieldMap k Ω
     (fun v => (fieldChangeUnderlyingStalkIso.{u, w} k Ω K Ψ e).hom.app Q v) hs.symm
   exact ht.trans (h1.trans (h2.trans (h3.trans (hg.symm.trans h4))))
 
-/-- The SAME Γ0 map is exactly original invariant restriction followed by the actual ξ. -/
+/-- Let e be a compatible map of fields with prescribed closures, χ : Gal(Ψ/K) → Gal(Ω/k) its
+continuous restriction, and ξ_e : Res_χ Φ_k(Q) ≅ Φ_K(f^*Q) the stalk-module comparison. Under
+the two Γ/invariant isomorphisms, a section c pulls back to Inv(ξ_e)(ResInv_χ(e_k(c))). This
+equality is of invariant-subgroup elements. -/
 theorem fieldPullbackGlobalSections_invariants (e : GaloisUnits.FieldMap k Ω K Ψ)
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
     (c : (Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}).obj Q) :
@@ -182,8 +203,10 @@ theorem fieldPullbackGlobalSections_invariants (e : GaloisUnits.FieldMap k Ω K 
   exact fieldPullbackGlobalSections_invariant_val.{u, w} k Ω K Ψ e Q c
 
 
-/-- The whole degree-zero natural transformation is normalized by the
-existing invariant restriction and the SAME module comparison. -/
+/-- For compatible field embeddings with prescribed closures, let γ : Γ_k → f^*⋙Γ_K, e_k,e_K the
+Γ/invariant isomorphisms, χ the Galois restriction, and ξ_e the changed-stalk module
+isomorphism. Then γ followed by e_K equals e_k followed by invariant restriction along χ and
+invariants of ξ_e, as natural transformations on small-étale sheaves. -/
 theorem fieldPullbackGlobalSections_invariants_naturality
     (e : GaloisUnits.FieldMap k Ω K Ψ) :
     fieldPullbackGlobalSections.{u, w} k Ω K Ψ e ≫
@@ -200,7 +223,11 @@ theorem fieldPullbackGlobalSections_invariants_naturality
   ext c
   exact fieldPullbackGlobalSections_invariants.{u, w} k Ω K Ψ e Q c
 
-/-- Every original coefficient section enters the comparison through ONE lift. -/
+/-- Let e be compatible embeddings of prescribed field closures, F a small-étale sheaf of
+coefficient size w, and Q=ULift^u(F). For c∈F(U) and a geometric lift z to U, the underlying
+stalk comparison sends the germ of up(c) at up(z) to the germ of the inverse-image
+adjunction-unit section at the base-changed U and the prescribed changed point. The
+coefficient is lifted only once. -/
 theorem fieldChange_original_coefficient_germ
     (e : GaloisUnits.FieldMap k Ω K Ψ)
     (F : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{w})
@@ -219,7 +246,10 @@ theorem fieldChange_original_coefficient_germ
   fieldChangeUnderlyingStalkIso_original_germ_apply.{u, w} k Ω K Ψ e
     ((liftCoefficients.{u, w} (Spec (.of k))).obj F) U z (ULift.up c)
 
-/-- Every original sheaf morphism is transported with its SAME one-lift components. -/
+/-- For compatible field embeddings with prescribed closures and a sheaf morphism τ : F → F′ of
+coefficient size w, let L be ULift^u. The natural stalk-module comparison ξ_e satisfies
+(Φ_k⋙Res_χ)(Lτ)≫ξ_{LF′}.hom=ξ_{LF}.hom≫(f^*⋙Φ_K)(Lτ). The two sides retain the same lifted
+coefficient morphism. -/
 theorem fieldChange_original_coefficient_naturality
     (e : GaloisUnits.FieldMap k Ω K Ψ)
     {F F' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{w}} (τ : F ⟶ F') :

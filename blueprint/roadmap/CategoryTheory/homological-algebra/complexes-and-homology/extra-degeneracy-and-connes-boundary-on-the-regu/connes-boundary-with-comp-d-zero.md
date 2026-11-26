@@ -1,3 +1,6 @@
-# Connes Boundary With comp d zero
+# The bottom mixed relation for a left unit
 
-The same native homotopy retains the bottom mixed identity at the original X0.
+Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Put C_n = A ⊗[k] A^{⊗n}.
+For a left unit e, the bottom mixed relation is
+b_1 B_{e,0} = 0 as an endomorphism of C_0.

@@ -11,7 +11,13 @@ module
 
 public import MathlibExt.AlgebraicGeometry.Sites.CanonicalPrescribedPointTensorPairing
 
-/-! # Binary pairing preservation by the actual canonical/prescribed monad iso -/
+/-!
+# Pairing comparison for field point monads
+
+The natural isomorphism between the canonical and prescribed point endofunctors respects their
+binary tensor pairing maps. Applying the comparison after the canonical pairing equals
+applying it to both factors before the prescribed pairing.
+-/
 
 @[expose] public section
 noncomputable section
@@ -24,8 +30,10 @@ attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual canonical-to-prescribed point monad comparison preserves its genuine binary tensor
-pairing. -/
+/-- Field point monad comparison preserves the binary pairing.
+
+The canonical pairing followed by the endofunctor comparison at the tensor sheaf equals the
+tensor of its components followed by the prescribed pairing. -/
 theorem fieldCanonicalPrescribedPointMonadIso_tensorPairing
     (F G : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     let e := fieldCanonicalPrescribedPointEndofunctorIso.{u, w} k Ω

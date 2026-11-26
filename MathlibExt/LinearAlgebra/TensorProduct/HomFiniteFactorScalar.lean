@@ -15,13 +15,17 @@ public import MathlibExt.LinearAlgebra.TensorProduct.HomFiniteFactor
 public import MathlibExt.LinearAlgebra.TensorProduct.SurjectiveScalarHom
 
 /-!
-# Hom–tensor comparison along a surjective scalar map
+# Finite-projective tensor–Hom comparison under a scalar surjection
 
-For a surjective algebra map `R → S`, compatible scalar actions identify the
-tensor products over `R` and `S`. Reinterpreting an `R`-linear map into an
-`S`-module as an algebra-map-semilinear map permits the Hom source to remain
-an arbitrary `R`-module. Finite projectivity is required over `S` only on the
-tensor factor, and the resulting forward map is the `R`-linear comparison.
+Let S be a commutative R-algebra whose algebra map is surjective. Let P be an arbitrary
+R-module, and N,U compatible R,S-modules. If U is finitely generated and projective over S, the
+canonical R-linear map χ:Hom_R(P,N)⊗_R U→Hom_R(P,N⊗_R U), χ(f⊗u)(p)=f(p)⊗u, is an isomorphism.
+
+Compatible scalar actions identify R-linear maps into N with algebra-map-semilinear maps,
+without requiring an S-action on P. Surjectivity identifies the R- and S-balanced tensor
+quotients, and finite projectivity of U over S gives the contraction comparison. The returned
+equivalence has χ as its forward map, with independent universes for both rings and all three
+modules.
 -/
 
 @[expose] public section
@@ -42,8 +46,11 @@ variable {R : Type uR} {S : Type uS} [CommRing R] [CommRing S] [Algebra R S]
   [Module S N] [Module S U]
   [IsScalarTower R S N] [IsScalarTower R S U]
 
-/-- Scalar restriction on the codomain identifies linear maps with
-algebra-map-semilinear maps without a target-ring action on the source. -/
+/-- Let S be a commutative R-algebra, P an R-module and N an R,S-module with r•n=algebraMap(r)•n.
+The map space Hom_R(P,N) is canonically R-linearly equivalent to the space of
+algebra-map-semilinear maps P→N. Forward and inverse maps retain the same functions; the
+scalar-tower equation identifies their linearity laws. P requires only its R-action, and the
+ring and carrier universes are independent. -/
 private def homTensorAlgebraMapEquiv :
     (P →ₗ[R] N) ≃ₗ[R] (P →ₛₗ[algebraMap R S] N) where
   toFun f :=
@@ -94,8 +101,12 @@ private def homTensorFiniteFactorScalarOutputEquiv
   exact (homTensorAlgebraMapEquiv (R := R) (S := S) (P := P) (N := N ⊗[S] U)).symm ≪≫ₗ
     (LinearEquiv.refl R P).arrowCongr eTensor
 
-/-- The native `R`-linear Hom–tensor comparison is bijective when its tensor
-factor is finite projective over `S` and the algebra map is surjective. -/
+/-- Let R,S be commutative rings with an R-algebra structure on S. Let P be an R-module and N,U
+modules over R and S with compatible scalar towers r•x=algebraMap(r)•x. All ring and module
+universes are independent. Assume algebraMap:R→S is surjective and U is finitely generated and
+projective as an S-module. Then χ:Hom_R(P,N)⊗_R U→Hom_R(P,N⊗_R U), χ(f⊗u)(p)=f(p)⊗u, is
+bijective. Finite projectivity is required on U over S, with no finiteness or projectivity
+condition on P. -/
 theorem homTensorFiniteFactor_bijective_of_surjective_scalars
     [Module.Finite S U] [Module.Projective S U]
     (h : Function.Surjective (algebraMap R S)) :
@@ -116,9 +127,11 @@ theorem homTensorFiniteFactor_bijective_of_surjective_scalars
   rw [← he]
   exact e.bijective
 
-/-- A finite projective `S`-module tensor factor gives the `R`-linear
-comparison equivalence along a surjective algebra map. The source `P` needs
-only its original `R`-module structure. -/
+/-- Let R,S be commutative rings with an R-algebra structure on S. Let P be an R-module and N,U
+modules over R and S with compatible scalar towers r•x=algebraMap(r)•x. All ring and module
+universes are independent. If algebraMap:R→S is surjective and U is finitely generated
+projective over S, this is the R-linear equivalence Hom_R(P,N)⊗_R U≅Hom_R(P,N⊗_R U). Its forward
+map is the canonical contraction χ(f⊗u)(p)=f(p)⊗u, with P retaining only its R-module structure. -/
 def homTensorFiniteFactorEquivOfSurjectiveScalars
     [Module.Finite S U] [Module.Projective S U]
     (h : Function.Surjective (algebraMap R S)) :
@@ -126,7 +139,11 @@ def homTensorFiniteFactorEquivOfSurjectiveScalars
   LinearEquiv.ofBijective (rTensorHomToHomRTensor (.id R) P N U)
     (homTensorFiniteFactor_bijective_of_surjective_scalars (P := P) (N := N) (U := U) h)
 
-/-- Every original pure tensor retains its actual coefficient evaluation. -/
+/-- Let R,S be commutative rings with an R-algebra structure on S. Let P be an R-module and N,U
+modules over R and S with compatible scalar towers r•x=algebraMap(r)•x. All ring and module
+universes are independent. Assume the algebra map is surjective and U is finitely generated
+projective over S. For f∈Hom_R(P,N), u∈U and p∈P, the comparison sends f⊗u to the map whose
+value at p is f(p)⊗_R u. The result is in N⊗_R U, over the base ring R. -/
 theorem homTensorFiniteFactorEquivOfSurjectiveScalars_tmul
     [Module.Finite S U] [Module.Projective S U]
     (h : Function.Surjective (algebraMap R S)) (f : P →ₗ[R] N) (u : U) (p : P) :
@@ -134,8 +151,11 @@ theorem homTensorFiniteFactorEquivOfSurjectiveScalars_tmul
         (f ⊗ₜ[R] u) p = f p ⊗ₜ[R] u :=
   rTensorHomToHomRTensor_apply f u p
 
-/-- The source map is exactly the original R coefficient comparison, with the
-scalar quotient and its actual inverse completely internal to the construction. -/
+/-- Let R,S be commutative rings with an R-algebra structure on S. Let P be an R-module and N,U
+modules over R and S with compatible scalar towers r•x=algebraMap(r)•x. All ring and module
+universes are independent. Under surjectivity of R→S and finite projectivity of U over S, the
+underlying R-linear map of the contraction equivalence is χ:Hom_R(P,N)⊗_R U→Hom_R(P,N⊗_R U),
+with χ(f⊗u)(p)=f(p)⊗u. The scalar comparisons identify this precise map. -/
 theorem homTensorFiniteFactorEquivOfSurjectiveScalars_toLinearMap
     [Module.Finite S U] [Module.Projective S U]
     (h : Function.Surjective (algebraMap R S)) :

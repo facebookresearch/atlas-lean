@@ -1,3 +1,6 @@
-# Hom Tensor Homotopy Left Functor map original
+# Hom-then-tensor map on a cochain representative
 
-Every original source map retains its exact simultaneous tensor/Hom class.
+Hom-then-tensor map on a cochain representative.
+
+On the quotient of a cochain triple morphism, the left homotopy functor is the quotient class
+of `mapAt R (linearComplexMap R f.1.1.unop f.1.2) f.2`.

@@ -1,4 +1,6 @@
-# Free Lift induced Bar Unit Cochain
+# The free lift of the universal induced-bar cochain
 
-Free extension of the universal induction-unit cochain is the adjunction
-unit itself.
+The free lift of the universal induced-bar cochain.
+
+Extending the universal cochain from H-bar basis vectors by the free-lift construction
+recovers the induction-unit morphism in degree n.

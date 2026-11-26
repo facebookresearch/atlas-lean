@@ -1,6 +1,6 @@
 # The canonical long exact sequence on the original small étale site
 
-- [Small Etale Long Sequence](small-etale-long-sequence.md)
-- [Small Etale Long Sequence exact](small-etale-long-sequence-exact.md)
-- [Small Etale Long Sequence initial injective](small-etale-long-sequence-initial-inject.md)
-- [Original small etale long exact sequence](original-small-etale-long-exact-sequence.md)
+- [Six term small étale cohomology window](small-etale-long-sequence.md)
+- [Small étale cohomology windows are exact](small-etale-long-sequence-exact.md)
+- [Initial degree zero cohomology map is injective](small-etale-long-sequence-initial-inject.md)
+- [Exact cohomology windows with an initial injection](original-small-etale-long-exact-sequence.md)

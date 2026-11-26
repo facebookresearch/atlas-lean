@@ -1,3 +1,5 @@
-# Tensor Coefficient Iso hom mk
+# Tensor coefficient isomorphism on pure classes
 
-The tensor comparison retains the actual original coefficient representative.
+Tensor coefficient isomorphism on pure classes.
+
+At a right `R`-module `A`, the forward coefficient isomorphism sends `[x ⊗ y]` to `[x ⊗ e y]`.

@@ -1,3 +1,5 @@
-# Left Module
+# The left endpoint module of an enveloping-ring module
 
-The native endpoint restriction along the first tensor inclusion.
+For B∈ModuleCat(E_(R,S)), restriction along
+r↦r⊗1 gives its left R-module structure.
+The coefficient carrier world is independent of the two ring worlds.

@@ -17,9 +17,12 @@ public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.Transport
 /-!
 # Homology of bracket-presented Chevalley–Eilenberg models
 
-The homology functor on chain complexes restricts to bracket-presented Chevalley–Eilenberg
-models. Model morphisms induce homology maps, and model isomorphisms induce homology
-isomorphisms in every degree.
+Let `R` be a commutative ring. A bracket-presented CE model has exterior-power chain terms and
+its bracket differential with square zero. Taking homology of the associated chain complex
+gives a functor in each nonnegative degree.
+
+A model morphism induces the homology map of its chain map, and a model isomorphism induces a
+homology isomorphism. The scalar-ring and model-carrier universes are independent.
 -/
 
 @[expose] public section
@@ -39,32 +42,50 @@ namespace Model
 
 variable {R : Type u} [CommRing R]
 
-/-- Degree-`n` homology of a lawful CE model. -/
+/-- The homology module of a bracket-presented CE model.
+
+For a model `X` and degree `n`, take degree-`n` homology of the chain complex defined by its
+bracket data. -/
 abbrev H (X : Model.{u, v} R) (n : ℕ) : ModuleCat.{max u v} R :=
   X.data.toChainData.complex.homology n
 
-/-- Fixed-degree CE homology as a functor on lawful models. -/
+/-- The fixed-degree homology functor on CE models.
+
+Send each model to homology of its chain complex in degree `n` and each model morphism to the
+induced homology map. -/
 abbrev homologyFunctor (R : Type u) [CommRing R] (n : ℕ) :
     Model.{u, v} R ⥤ ModuleCat.{max u v} R :=
   complexFunctor R ⋙
     HomologicalComplex.homologyFunctor
       (ModuleCat.{max u v} R) (ComplexShape.down ℕ) n
 
+/-- The object formula for the CE model homology functor.
+
+At a model `X`, the degree-`n` homology functor has value `X.H n`. -/
 theorem homologyFunctor_obj (X : Model.{u, v} R) (n : ℕ) :
     (homologyFunctor R n).obj X = X.H n :=
   rfl
 
+/-- The morphism formula for the CE model homology functor.
+
+A model morphism maps to the degree-`n` homology map of its associated chain map. -/
 theorem homologyFunctor_map
     {X Y : Model.{u, v} R} (f : X ⟶ Y) (n : ℕ) :
     (homologyFunctor R n).map f =
       HomologicalComplex.homologyMap ((complexFunctor R).map f) n :=
   rfl
 
-/-- A model isomorphism induces an isomorphism on fixed-degree CE homology. -/
+/-- The homology isomorphism induced by a CE model isomorphism.
+
+Applying the degree-`n` homology functor to a model isomorphism gives an isomorphism of the
+corresponding homology modules. -/
 def homologyIso {X Y : Model.{u, v} R} (e : X ≅ Y) (n : ℕ) :
     X.H n ≅ Y.H n :=
   (homologyFunctor R n).mapIso e
 
+/-- The forward map of a CE model homology isomorphism.
+
+The forward homology map is induced by the forward model chain map. -/
 @[simp]
 theorem homologyIso_hom {X Y : Model.{u, v} R}
     (e : X ≅ Y) (n : ℕ) :
@@ -72,6 +93,9 @@ theorem homologyIso_hom {X Y : Model.{u, v} R}
       HomologicalComplex.homologyMap ((complexFunctor R).map e.hom) n :=
   rfl
 
+/-- The inverse map of a CE model homology isomorphism.
+
+The inverse homology map is induced by the inverse model chain map. -/
 @[simp]
 theorem homologyIso_inv {X Y : Model.{u, v} R}
     (e : X ≅ Y) (n : ℕ) :

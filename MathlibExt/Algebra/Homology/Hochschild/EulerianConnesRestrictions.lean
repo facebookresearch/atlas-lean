@@ -13,13 +13,18 @@ module
 public import MathlibExt.Algebra.Homology.Hochschild.EulerianConnesHomology
 
 /-!
-# Restrictions of b and B to Eulerian weights
+# Boundaries restricted to normalized Eulerian weight spaces
 
-Ranges of normalized rational Eulerian projectors give
-the weight spaces. The Hochschild boundary preserves
-weight and regular Connes B raises weight by one.
-Their restrictions satisfy the square-zero and mixed
-identities on these weight columns.
+Let k be a commutative ℚ-algebra and A a commutative unital k-algebra.
+In N_n=A⊗[k](A/span_k{1})^{⊗n}, define
+W_{n,i}=range(e_n^{(i)}) for the normalized Eulerian projector.
+The normalized Hochschild boundary preserves weight and restricts to
+b_{n,i}:W_{n+1,i}→W_{n,i}. Regular Connes boundary raises weight,
+giving B_{n,i}:W_{n,i}→W_{n+1,i+1}.
+
+The restrictions have the same values as b and B in the ambient
+tensor modules. They satisfy b²=0, B²=0 and bB+Bb=0 on the
+corresponding weight spaces, in every degree and weight.
 -/
 
 @[expose] public section
@@ -35,12 +40,22 @@ namespace ModuleCat.Algebra.Hochschild.Symmetric
 variable (k : Type u) [CommRing k] [Algebra ℚ k]
   (A : Type v) [CommRing A] [Algebra k A]
 
-/-- The original regular normalized degree space of Eulerian weight i. -/
+/-- Let k be a commutative ℚ-algebra and A a commutative unital
+k-algebra. Set Ā=A/span_k{1}, N_n=A⊗[k]Ā^{⊗n}, and
+let e_n^{(i)} be the normalized rational Eulerian projectors.
+The degree-n Eulerian weight-i space is the k-submodule
+W_{n,i}=range(e_n^{(i)}) of N_n. -/
 def normalizedEulerianWeightSpace (n i : ℕ) :
     Submodule k (A ⊗[k] TensorPower k n (ModuleCat.Algebra.Hochschild.quotientCarrier k A)) :=
   LinearMap.range (normalizedEulerianOperator k A A n i)
 
-/-- The original complete Hochschild b restricted to its original unchanged weight. -/
+/-- Let k be a commutative ℚ-algebra and A a commutative unital
+k-algebra. Set Ā=A/span_k{1}, N_n=A⊗[k]Ā^{⊗n}, and
+let e_n^{(i)} be the normalized rational Eulerian projectors.
+Write W_{n,i}=range(e_n^{(i)}), b for normalized Hochschild
+boundary and B for the regular normalized Connes boundary.
+The Hochschild boundary restricts to the k-linear map
+b_{n,i}:W_{n+1,i}→W_{n,i}. -/
 def normalizedEulerianWeightBoundary (n i : ℕ) :
     normalizedEulerianWeightSpace k A (n + 1) i →ₗ[k] normalizedEulerianWeightSpace k A n i :=
   (((normalizedChainComplex k A A).d (n + 1) n).hom.comp
@@ -51,7 +66,13 @@ def normalizedEulerianWeightBoundary (n i : ℕ) :
       have h := DFunLike.congr_fun (normalizedEulerianOperator_boundary k A A n i) y
       exact h.symm.trans (congrArg ((normalizedChainComplex k A A).d (n + 1) n).hom hy))
 
-/-- The original regular B restricted to its original next weight. -/
+/-- Let k be a commutative ℚ-algebra and A a commutative unital
+k-algebra. Set Ā=A/span_k{1}, N_n=A⊗[k]Ā^{⊗n}, and
+let e_n^{(i)} be the normalized rational Eulerian projectors.
+Write W_{n,i}=range(e_n^{(i)}), b for normalized Hochschild
+boundary and B for the regular normalized Connes boundary.
+The Connes boundary restricts to the k-linear map
+B_{n,i}:W_{n,i}→W_{n+1,i+1}. -/
 def normalizedEulerianWeightConnes (n i : ℕ) :
     normalizedEulerianWeightSpace k A n i →ₗ[k] normalizedEulerianWeightSpace k A (n + 1) (i + 1) :=
   ((regularNormalizedConnes k A n).hom.comp
@@ -62,18 +83,36 @@ def normalizedEulerianWeightConnes (n i : ℕ) :
       have h := DFunLike.congr_fun (normalizedEulerian_connes_shift k A n i) y
       exact h.symm.trans (congrArg (regularNormalizedConnes k A n).hom hy))
 
-/-- The restricted b retains the literal original complete boundary value. -/
+/-- Let k be a commutative ℚ-algebra and A a commutative unital
+k-algebra. Set Ā=A/span_k{1}, N_n=A⊗[k]Ā^{⊗n}, and
+let e_n^{(i)} be the normalized rational Eulerian projectors.
+Write W_{n,i}=range(e_n^{(i)}), b for normalized Hochschild
+boundary and B for the regular normalized Connes boundary.
+For x∈W_{n+1,i}, the underlying value of b_{n,i}(x)
+is the ambient normalized Hochschild boundary b_{n+1}(x). -/
 theorem normalizedEulerianWeightBoundary_val (n i : ℕ)
     (x : normalizedEulerianWeightSpace k A (n + 1) i) :
     (normalizedEulerianWeightBoundary k A n i x).val =
       ((normalizedChainComplex k A A).d (n + 1) n).hom x.val := rfl
 
-/-- The restricted B retains the literal original descended Connes value. -/
+/-- Let k be a commutative ℚ-algebra and A a commutative unital
+k-algebra. Set Ā=A/span_k{1}, N_n=A⊗[k]Ā^{⊗n}, and
+let e_n^{(i)} be the normalized rational Eulerian projectors.
+Write W_{n,i}=range(e_n^{(i)}), b for normalized Hochschild
+boundary and B for the regular normalized Connes boundary.
+For x∈W_{n,i}, the underlying value of B_{n,i}(x)
+is the ambient regular normalized Connes value B_n(x). -/
 theorem normalizedEulerianWeightConnes_val (n i : ℕ)
     (x : normalizedEulerianWeightSpace k A n i) :
     (normalizedEulerianWeightConnes k A n i x).val = (regularNormalizedConnes k A n).hom x.val := rfl
 
-/-- The original b-square is inherited by its fixed-weight restriction. -/
+/-- Let k be a commutative ℚ-algebra and A a commutative unital
+k-algebra. Set Ā=A/span_k{1}, N_n=A⊗[k]Ā^{⊗n}, and
+let e_n^{(i)} be the normalized rational Eulerian projectors.
+Write W_{n,i}=range(e_n^{(i)}), b for normalized Hochschild
+boundary and B for the regular normalized Connes boundary.
+Two consecutive fixed-weight Hochschild restrictions have
+zero composite: b_{n,i}b_{n+1,i}=0. -/
 theorem normalizedEulerianWeightBoundary_square (n i : ℕ) :
     (normalizedEulerianWeightBoundary k A n i).comp
       (normalizedEulerianWeightBoundary k A (n + 1) i) = 0 := by
@@ -88,7 +127,13 @@ theorem normalizedEulerianWeightBoundary_square (n i : ℕ) :
     A ⊗[k] TensorPower k n (ModuleCat.Algebra.Hochschild.quotientCarrier k A) => f x.val)
       (algebraNormalizedBoundary_comp k A A n)
 
-/-- The original B-square is inherited by its two successive raised weights. -/
+/-- Let k be a commutative ℚ-algebra and A a commutative unital
+k-algebra. Set Ā=A/span_k{1}, N_n=A⊗[k]Ā^{⊗n}, and
+let e_n^{(i)} be the normalized rational Eulerian projectors.
+Write W_{n,i}=range(e_n^{(i)}), b for normalized Hochschild
+boundary and B for the regular normalized Connes boundary.
+Successive raised-weight Connes restrictions satisfy
+B_{n+1,i+1}B_{n,i}=0. -/
 theorem normalizedEulerianWeightConnes_square (n i : ℕ) :
     (normalizedEulerianWeightConnes k A (n + 1) (i + 1)).comp
       (normalizedEulerianWeightConnes k A n i) = 0 := by
@@ -107,7 +152,14 @@ theorem normalizedEulerianWeightConnes_square (n i : ℕ) :
     A ⊗[k] TensorPower k n (ModuleCat.Algebra.Hochschild.quotientCarrier k A) →ₗ[k]
     A ⊗[k] TensorPower k (n + 2) (ModuleCat.Algebra.Hochschild.quotientCarrier k A) => f x.val) h
 
-/-- The bB+Bb equation holds on the literal original Hodge weight-column maps. -/
+/-- Let k be a commutative ℚ-algebra and A a commutative unital
+k-algebra. Set Ā=A/span_k{1}, N_n=A⊗[k]Ā^{⊗n}, and
+let e_n^{(i)} be the normalized rational Eulerian projectors.
+Write W_{n,i}=range(e_n^{(i)}), b for normalized Hochschild
+boundary and B for the regular normalized Connes boundary.
+On W_{n+1,i}, the mixed identity is
+b_{n+1,i+1}B_{n+1,i}+B_{n,i}b_{n,i}=0,
+with target W_{n+1,i+1}. -/
 theorem normalizedEulerianWeight_mixed (n i : ℕ) :
     (normalizedEulerianWeightBoundary k A (n + 1) (i + 1)).comp
         (normalizedEulerianWeightConnes k A (n + 1) i) +

@@ -1,3 +1,6 @@
-# Basis Word
+# The enveloping value of a Lie basis word
 
-An actual word in the selected basis, evaluated in the native quotient.
+The enveloping value of a Lie basis word.
+
+For a basis `b`, map each letter of a finite word to its basis vector and multiply their
+images in `U_R(L)` in list order.

@@ -1,3 +1,4 @@
-# Finite Power Polynomial coeff
+# The finite polynomial recovers each coefficient
 
-Each original finite coefficient is recovered from the actual polynomial.
+For `N : ℕ`, `a : Fin N → ℚ`, and `i : Fin N`, `(finitePowerPolynomial N a).coeff i.val = a
+i`.

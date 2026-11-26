@@ -36,21 +36,21 @@ public import MathlibExt.AlgebraicTopology.SimplicialObject.DataEvaluation
 public import MathlibExt.AlgebraicTopology.SimplicialObject.DataIso
 
 /-!
-# Degreewise classifying-bar and nerve comparison
+# Classifying-bar coordinates and the opposite-monoid nerve
 
-For a monoid `G`, the evaluated cartesian classifying bar has the same
-simplicial data as `nerve (SingleObj Gᵐᵒᵖ)`. The opposite accounts for the
-composition convention `f ≫ g = g * f`, matching the interior bar product
-`m₁ * m₂`.
+For a monoid G, the cartesian tensor monad is T(X) = G × X. Its powers at the point have
+coordinates Gⁿ, ordered with the outermost factor first. The evaluated classifying bar has the
+same coordinates: d₀ removes the first entry, dₙ₊₁ removes the last, dₖ₊₁ multiplies adjacent
+entries gₖgₖ₊₁, and sᵢ inserts 1 at position i.
 
-Tuples are ordered with the outer tensor factor and first nerve arrow at
-coordinate `0`. Reversal of the finite index set describes the face and
-degeneracy coordinates consistently. The degreewise comparison is assembled
-into a simplicial isomorphism in `ClassifyingNerveSimplicial`.
+These maps agree with the nerve of the one-object category of Gᵐᵒᵖ. The opposite monoid makes
+categorical composition f ≫ g = g*f agree with multiplication in the displayed tuple order.
+The tuple comparisons give an isomorphism of simplicial face and degeneracy data for every
+monoid G.
 
-Mathematical source: J. P. May, *The Geometry of Iterated Loop Spaces*,
-Lecture Notes in Mathematics 271, Springer, 1972, Chapter 9,
-Construction 9.6 and Remark 9.12, <https://doi.org/10.1007/BFb0067491>.
+Mathematical source: J. P. May, The Geometry of Iterated Loop Spaces, Lecture Notes in
+Mathematics 271, Springer, 1972, Chapter 9, Construction 9.6 and Remark 9.12,
+https://doi.org/10.1007/BFb0067491.
 -/
 
 @[expose] public section
@@ -64,30 +64,42 @@ variable (G : Type u) [Monoid G]
 
 open MonoidalCategory
 
-/-- Cartesian monoid object from a monoid type, reused from pinned Mathlib's
-`MonTypeEquivalenceMon.inverse.obj (MonCat.of G)`. -/
+/-- The cartesian monoid object associated to a monoid.
+
+For a monoid G, its internal monoid structure in the cartesian category of types has the usual
+unit and multiplication. -/
 @[instance_reducible]
 noncomputable def typeMonObj : MonObj (C := Type u) G :=
   (MonTypeEquivalenceMon.inverse.obj (MonCat.of G)).mon
 
 attribute [local instance] typeMonObj
 
-/-- Point left module over `G` via the cartesian trivial action. -/
+/-- The trivial left action on the point.
+
+The one-point type PUnit is a left module over the cartesian monoid object G, with its unique
+action map. -/
 @[instance_reducible]
 noncomputable def pointModObj : ModObj (M := G) (X := (PUnit : Type u)) :=
   ModObj.trivialAction G PUnit
 
 attribute [local instance] pointModObj
 
-/-- Explicit right point action: the terminal map. -/
+/-- The trivial right action on the point.
+
+The right action PUnit × G → PUnit is the unique map to the point. -/
 def ractPt : PUnit ⊗ G ⟶ (PUnit : Type u) := ↾(fun _ => PUnit.unit)
 
-/-- Right unit law for the point action; both sides land in `PUnit`. -/
+/-- The right unit law of the point action.
+
+Acting on the point by the monoid unit equals the cartesian right unitor. -/
 theorem ractPt_one :
     (PUnit ◁ MonObj.one (X := G)) ≫ ractPt G = (ρ_ (PUnit : Type u)).hom := by
   ext x
 
-/-- Right associativity for the point action; both sides land in `PUnit`. -/
+/-- The associativity law of the point right action.
+
+The two maps from (PUnit × G) × G to PUnit, obtained by multiplying in G or acting twice,
+agree after the cartesian associator. -/
 theorem ractPt_assoc :
     (α_ PUnit G G).hom ≫ (PUnit ◁ MonObj.mul (X := G)) ≫ ractPt G =
       (ractPt G ▷ G) ≫ ractPt G := by
@@ -95,14 +107,10 @@ theorem ractPt_assoc :
 
 open Opposite
 
-/-- X-generalized head-first power reader.
+/-- Tuple coordinates for an iterated cartesian tensor monad.
 
-`((monadPow (tensorMonad G) n).obj X)` is the left-nested product
-`G × (G × ... × X)`; this reads it as `(Fin n → G) × X` with `t 0` the
-outermost factor. Both defining equalities are `rfl`: `monadPow_succ` gives
-`(monadPow (n+1)).obj X = (monadPow n).obj (T.obj X)` and `T.obj X = G × X`
-in `Type`, so the successor step recurses at `T.obj X` and reassociates
-`(init, (last, x))` to `(snoc init last, x)`. -/
+For T(X) = G × X and n ≥ 0, this equivalence identifies Tⁿ(X) with (Fin n → G) × X. Coordinate
+0 is the outermost G-factor, and the second component is the terminal X-coordinate. -/
 noncomputable def powTupleGen (X : Type u) : (n : ℕ) →
     ((monadPow (tensorMonad G) n).obj X) ≃ (Fin n → G) × X
   | 0 =>
@@ -118,24 +126,19 @@ noncomputable def powTupleGen (X : Type u) : (n : ℕ) →
           ((Fin.snocEquiv (fun _ : Fin (n + 1) => G)).prodCongr
             (Equiv.refl X))))
 
-/-- Head-first power equivalence, via the generalized reader at `PUnit`.
+/-- Tuple coordinates for iterated powers at the point.
 
-`(monadPow (tensorMonad G) n).obj PUnit` is the left-nested product
-`G × (G × ... × PUnit)`; `t 0` is the outermost factor. Defining it through
-`powTupleGen` keeps a single recursion principle: every tuple interaction
-(zero/last/middle faces, degeneracies) is proved once for general `X` and
-specialized here by dropping the terminal `PUnit` factor. -/
+The equivalence Tⁿ(PUnit) ≃ (Fin n → G) removes the final point coordinate from the
+generalized power equivalence. The outermost G-factor is coordinate 0. -/
 noncomputable def powTupleEquiv (n : ℕ) :
     ((monadPow (tensorMonad G) n).obj PUnit) ≃ (Fin n → G) :=
   (powTupleGen G (PUnit.{u+1} : Type u) n).trans
     (Equiv.prodPUnit (Fin n → G))
 
-/-- Successor tuple: the generalized reader exposes `Fin.snoc`.
+/-- The tuple component at the successor power.
 
-Stable API for `powTupleGen`: the `n + 1` tuple is the `n` tuple at
-`T.obj X` with the head factor snoc'd on. A later one-file repair in
-`ClassifyingNerveNaturality.lean` consumes this instead of mirroring the
-recursion. -/
+Reading Tⁿ⁺¹(X) first as Tⁿ(TX), the tuple at level n+1 is obtained by appending the
+G-coordinate of the residual pair in TX to the level-n tuple. -/
 theorem powTupleGen_succ_fst (X : Type u) (n : ℕ)
     (y : ((monadPow (tensorMonad G) (n + 1)).obj X)) :
     ((powTupleGen G X (n + 1)) y).1 =
@@ -146,11 +149,10 @@ theorem powTupleGen_succ_fst (X : Type u) (n : ℕ)
   simp only [powTupleGen, Equiv.trans_apply, Equiv.prodCongr_apply]
   rfl
 
-/-- Successor base: the generalized reader preserves the base point.
+/-- The base component at the successor power.
 
-Stable API for `powTupleGen`: the `n + 1` base point is the `T.obj X` base
-point projected through. Consumed by the later `ClassifyingNerveNaturality`
-repair instead of a local mirror. -/
+The X-coordinate of the generalized tuple equivalence at level n+1 is the X-component of the
+residual pair in TX obtained from the level-n equivalence. -/
 theorem powTupleGen_succ_snd (X : Type u) (n : ℕ)
     (y : ((monadPow (tensorMonad G) (n + 1)).obj X)) :
     ((powTupleGen G X (n + 1)) y).2 =
@@ -159,27 +161,30 @@ theorem powTupleGen_succ_snd (X : Type u) (n : ℕ)
   simp only [powTupleGen, Equiv.trans_apply, Equiv.prodCongr_apply]
   rfl
 
-/-- Cast a `PUnit`-extended point into the right-module fiber.
+/-- The product description of the right point-module fiber.
 
-`R.functor.obj Y` is definitionally `PUnit × Y` in `Type`; this records the
-cast once so statements elaborate with syntactic products. -/
+For a type Y, the right-module functor associated to the point action has value PUnit × Y.
+This map identifies that product with the functor value. -/
 noncomputable def rCastIn (Y : Type u) (w : PUnit × Y) :
     (rightModuleOfRightAction PUnit G (ractPt G) (ractPt_one G)
       (ractPt_assoc G)).functor.obj Y :=
   Equiv.cast (by rfl : (PUnit × Y) = ((rightModuleOfRightAction PUnit G
     (ractPt G) (ractPt_one G) (ractPt_assoc G)).functor.obj Y)) w
 
-/-- Project a right-module fiber to its `PUnit`-extended point. -/
+/-- The product projection of the right point-module fiber.
+
+This map identifies the right point-module functor value at Y with PUnit × Y, in the reverse
+direction of rCastIn. -/
 noncomputable def rCastOut (Y : Type u) (w :
     (rightModuleOfRightAction PUnit G (ractPt G) (ractPt_one G)
       (ractPt_assoc G)).functor.obj Y) : PUnit × Y :=
   Equiv.cast (by rfl : ((rightModuleOfRightAction PUnit G (ractPt G)
     (ractPt_one G) (ractPt_assoc G)).functor.obj Y) = (PUnit × Y)) w
 
-/-- Zero-step reader: the generalized reader preserves its argument.
+/-- The base component at power zero.
 
-Stable API for `powTupleGen`: the `0` base point is the argument up to the
-definitional cast. Consumed by the later `ClassifyingNerveNaturality` repair. -/
+For T⁰(X) = X, the generalized tuple equivalence has the empty G-tuple and retains its
+argument as the X-component. -/
 theorem powTupleGen_zero_snd (X : Type u)
     (z : ((monadPow (tensorMonad G) 0).obj X)) :
     ((powTupleGen G X 0) z).2 = Equiv.cast (by rfl) z := by
@@ -227,13 +232,11 @@ private theorem genZeroSnd : ∀ (n : ℕ) (X : Type u)
     have ihS := ih ((tensorMonad G).obj X) (p, z)
     exact congrArg _root_.Prod.snd ihS
 
-/-- Iterated right action drops the generalized head tuple entry.
+/-- Tuple coordinates of the right point action.
 
-By induction on `n` generalizing `X`: the zero case is a subsingleton;
-the successor case exposes `Fin.snoc` on both sides (via
-`powTupleGen_succ_fst`), commutes `Fin.tail` past `Fin.snoc`, and closes
-the init components with the induction hypothesis and the last components
-with `genZeroSnd` at `T.obj X`. -/
+The degree-n iterated right action on PUnit × Tⁿ⁺¹(X) removes the outermost G-coordinate.
+Under the generalized tuple equivalence, its tuple component is the tail of the original
+tuple. -/
 theorem genZeroFst : ∀ (n : ℕ) (X : Type u)
     (y : PUnit × ((monadPow (tensorMonad G) (n + 1)).obj X)),
     (let aR := (ConcreteCategory.hom (rightActionPow (tensorMonad G)
@@ -281,14 +284,10 @@ theorem genZeroFst : ∀ (n : ℕ) (X : Type u)
             w).1))
         (genZeroSnd G n ((tensorMonad G).obj X) (p, z))
 
-/-- Functoriality preserves the generalized base point up to `f`.
+/-- The base coordinate under an iterated monad map.
 
-Stable API for `powTupleGen`: mapping `f` through `monadPow` acts as `f` on
-the base point. By induction on `n` generalizing `X Y`: the zero case is a
-cast roundtrip; the successor case peels `powTupleGen_succ_snd` on both sides
-and applies the hypothesis at `T.obj`, since `(monadPow (n+1)).map f =
-(monadPow n).map (T.map f)` definitionally. Consumed by the later
-`ClassifyingNerveNaturality` repair instead of a local mirror. -/
+For a map f : X → Y, the map Tⁿ(f) sends the base coordinate x of Tⁿ(X) to f(x) under the
+generalized tuple equivalence. -/
 theorem genMapSnd : ∀ (n : ℕ) (X Y : Type u) (f : X ⟶ Y)
     (y : ((monadPow (tensorMonad G) n).obj X)),
     (((powTupleGen G Y n) ((monadPow (tensorMonad G) n).map f y)).2) =
@@ -307,14 +306,10 @@ theorem genMapSnd : ∀ (n : ℕ) (X Y : Type u) (f : X ⟶ Y)
     rw [hM, ihS]
     rfl
 
-/-- Functoriality preserves the generalized tuple entries.
+/-- The group coordinates under an iterated monad map.
 
-Stable API for `powTupleGen`: mapping `f` through `monadPow` preserves every
-tuple entry. By induction on `n` generalizing `X Y`: the zero case is a
-subsingleton; the successor case exposes `Fin.snoc` on both sides, closes the
-init components with the hypothesis at `T.obj`, and the last components with
-`genMapSnd` (the tensor-monad map preserves the head factor). Consumed by the
-later `ClassifyingNerveNaturality` repair instead of a local mirror. -/
+For f : X → Y, applying Tⁿ(f) preserves every G-coordinate of the generalized tuple
+equivalence. -/
 theorem genMapFst : ∀ (n : ℕ) (X Y : Type u) (f : X ⟶ Y)
     (y : ((monadPow (tensorMonad G) n).obj X)),
     (((powTupleGen G Y n) ((monadPow (tensorMonad G) n).map f y)).1) =
@@ -335,11 +330,10 @@ theorem genMapFst : ∀ (n : ℕ) (X Y : Type u) (f : X ⟶ Y)
         ((tensorMonad G).map f) y]
       rfl
 
-/-- Iterated functoriality drops the generalized tail tuple entry.
+/-- The tuple component of a map on the innermost pair.
 
-Stable API for `powTupleGen`: mapping the tail action preserves the `n`-tuple
-(`genMapFst`) while the outermost `snoc` layer becomes the tail: peel one
-`powTupleGen_succ_fst` layer and close the init with `Fin.init_snoc`. -/
+For f : TX → Y, the map Tⁿ(f) on Tⁿ⁺¹(X) removes the last G-coordinate from its tuple
+component. The retained tuple is Fin.init of the source tuple. -/
 theorem genLastFst : ∀ (n : ℕ) (X Y : Type u)
     (f : (tensorMonad G).obj X ⟶ Y)
     (y : PUnit × ((monadPow (tensorMonad G) (n + 1)).obj X)),
@@ -350,11 +344,10 @@ theorem genLastFst : ∀ (n : ℕ) (X Y : Type u)
   rw [powTupleGen_succ_fst, Fin.init_snoc]
   exact genMapFst G n _ _ f z
 
-/-- Multiply-adjacent tuple: collapse entries `m` and `m + 1` of a head-first
-tuple via pinned Mathlib `Fin.contractNth` at `m.castSucc` with `(· * ·)`.
-Below keeps the entry (`Fin.contractNth_apply_of_lt`), at multiplies the pair
-(`Fin.contractNth_apply_of_eq`), above shifts down
-(`Fin.contractNth_apply_of_gt`). -/
+/-- Multiplication of adjacent tuple entries.
+
+For t : Fin (n+1) → G and m : Fin n, contract coordinates m and m+1 by the ordered product
+tₘtₘ₊₁, producing a tuple of length n. -/
 def tupleMulAt (n : ℕ) (t : Fin (n + 1) → G) (m : Fin n) :
     Fin n → G :=
   Fin.contractNth m.castSucc (· * ·) t
@@ -427,10 +420,10 @@ private theorem tupleMulAt_snoc (n : ℕ) (u : Fin (n + 1) → G) (g : G)
       rw [Fin.snoc_castSucc, hL, hR,
         ← Fin.castSucc_succ, Fin.snoc_castSucc]
 
-/-- Insert-`1` tuple: insert `1` at position `m` of a head-first tuple via
-pinned Mathlib `Fin.insertNth` at `m` with value `1`. Below keeps the entry
-(`Fin.insertNth_apply_below`), at is `1` (`Fin.insertNth_apply_same`), above
-shifts up (`Fin.insertNth_apply_above`). -/
+/-- Insertion of a unit into a tuple.
+
+For t : Fin n → G and m : Fin (n+1), insert the identity 1 at position m to obtain a tuple of
+length n+1. -/
 def tupleInsAt (n : ℕ) (t : Fin n → G) (m : Fin (n + 1)) :
     Fin (n + 1) → G :=
   Fin.insertNth m (1 : G) t
@@ -584,15 +577,11 @@ private theorem genMuSnd : ∀ (n : ℕ) (X : Type u) (j : Fin n)
       exact congrArg _root_.Prod.snd
         (ih _ (⟨jv, by omega⟩ : Fin n) y)
 
-/-- `muAtPos` multiplies the generalized adjacent tuple entries.
+/-- Tuple coordinates of an iterated multiplication.
 
-By induction on `n`: the zero case is vacuous; the `⟨0⟩` case multiplies the
-last pair (pointwise in the result index: below via `genMapFst`, at via
-`muApp_head`); the `⟨jv+1⟩` case peels one `powTupleGen_succ_fst` layer on
-each side, rewrites the snoc structure with `tupleMulAt_snoc`, and closes
-the init components with the hypothesis and the last components with
-`genMuSnd`. The `muAtPos` index `j` (from the innermost end) corresponds to
-tuple position `n - 1 - j.val` (from the outermost end). -/
+For j : Fin n, the monad multiplication at position j contracts adjacent tuple coordinates at
+m = n−1−j. This reversal relates the monad-position convention to the outermost-first tuple
+order. -/
 theorem genMuFst : ∀ (n : ℕ) (X : Type u) (j : Fin n)
     (y : ((monadPow (tensorMonad G) (n + 1)).obj X)),
     (((powTupleGen G X n) ((tensorMonad G).muAtPos n j X y)).1) =
@@ -703,16 +692,10 @@ private theorem genEtaSnd : ∀ (n : ℕ) (X : Type u) (j : Fin (n + 1))
       exact congrArg _root_.Prod.snd
         (ih _ (⟨jv, by omega⟩ : Fin (n + 1)) y)
 
-/-- `etaAtPos` inserts `1` into the generalized tuple.
+/-- Tuple coordinates of an iterated unit insertion.
 
-By induction on `n`: the zero case is a single `snoc` with `etaApp_head`;
-the `⟨0⟩` case inserts at the last position (pointwise in the result index:
-below via `genMapFst`, at via `etaApp_head`); the `⟨jv+1⟩` case peels one
-`powTupleGen_succ_fst` layer on each side, rewrites the snoc structure with
-`tupleInsAt_snoc`, and closes the init components with the hypothesis and
-the last components with `genEtaSnd`. The `etaAtPos` index `j` (from the
-innermost end) corresponds to tuple position `n - j.val` (from the
-outermost end). -/
+For j : Fin (n+1), insertion of the monad unit at position j inserts the monoid identity into
+the tuple at m = n−j. -/
 theorem genEtaFst : ∀ (n : ℕ) (X : Type u) (j : Fin (n + 1))
     (y : ((monadPow (tensorMonad G) n).obj X)),
     (((powTupleGen G X (n + 1)) ((tensorMonad G).etaAtPos n j X y)).1) =
@@ -795,22 +778,18 @@ theorem genEtaFst : ∀ (n : ℕ) (X : Type u) (j : Fin (n + 1))
       · exact ih _ (⟨jv, by omega⟩ : Fin (n + 1)) y
       · rw [genEtaSnd G n _ (⟨jv, by omega⟩ : Fin (n + 1)) y]
 
-/-- Degreewise nerve tuple equivalence.
+/-- Tuple coordinates of the opposite-monoid nerve.
 
-Reads consecutive arrows with `unop`; rebuilds with `mkOfObjOfMapSucc` from
-segment data `op (t i)`. `t 0` is the first nerve arrow, matching the
-outermost tensor factor. The reader lives in the lightweight
-`MathlibExt.CategoryTheory.NerveSingleObj` module. -/
+A chain of n composable arrows in the one-object category of Gᵐᵒᵖ is equivalent to a tuple Fin
+n → G in arrow order. -/
 noncomputable abbrev nerveTupleEquiv (n : ℕ) :
     ComposableArrows (SingleObj Gᵐᵒᵖ) n ≃ (Fin n → G) :=
   nerve.singleObjOppEquiv G n
 
-/-- Opposite nerve data.
+/-- The face and degeneracy data of the opposite-monoid nerve.
 
-Objects are `ComposableArrows (SingleObj Gᵐᵒᵖ) n`; faces and degeneracies are
-the pinned nerve maps. Each identity is nerve functoriality (`map_comp`,
-`map_id`) plus the corresponding pinned `SimplexCategory` relation, folded
-across the opposite via `op_comp`; no bare `rfl` is used. -/
+In degree n the object is the set of chains of n arrows in SingleObj Gᵐᵒᵖ. Faces and
+degeneracies are the maps of its nerve, with their simplicial identities. -/
 noncomputable def nerveOppData : SimplicialObject.Data (Type u) where
   obj := fun n => ComposableArrows (SingleObj Gᵐᵒᵖ) n
   δ := fun {n} i => (nerve (SingleObj Gᵐᵒᵖ)).map (SimplexCategory.δ i).op
@@ -858,11 +837,10 @@ noncomputable def nerveOppData : SimplicialObject.Data (Type u) where
     exact ((Functor.map_comp _ _ _).symm.trans (congrArg _ inner)).trans
       (Functor.map_comp _ _ _)
 
-/-- Evaluated classifying-bar data.
+/-- The evaluated cartesian classifying-bar data.
 
-`barData` at the point modules for `G`, evaluated at `a : Discrete PUnit`
-through the accepted `evalFunctor`. Degree `n` is definitionally
-`PUnit × ((monadPow (tensorMonad G) n).obj PUnit)`. -/
+Evaluate the two-sided bar for the tensor monad G × − and the trivial point actions at an
+object a of the discrete one-point index category. The result is simplicial data in types. -/
 noncomputable def barEvalData (a : Discrete PUnit.{1}) :
     SimplicialObject.Data (Type u) :=
   (SimplicialObject.Data.evalFunctor a).obj
@@ -871,15 +849,18 @@ noncomputable def barEvalData (a : Discrete PUnit.{1}) :
         (ractPt_assoc G))
       (leftPointModule G PUnit))
 
-/-- Degreewise bar tuple equivalence.
+/-- Tuple coordinates of the evaluated classifying bar.
 
-Drops the leading `PUnit` factor with `punitProd`, then reads the power with
-`powTupleEquiv` head-first. -/
+In degree n, the evaluated classifying-bar object is equivalent to Fin n → G after removing
+its two point factors. -/
 noncomputable def barTupleEquiv (a : Discrete PUnit.{1}) (n : ℕ) :
     (barEvalData G a).obj n ≃ (Fin n → G) :=
   (Equiv.punitProd _).trans (powTupleEquiv G n)
 
-/-- Combined degreewise equivalence as an isomorphism in `Type`. -/
+/-- The degreewise isomorphism from the bar to the nerve.
+
+Identify the evaluated classifying bar with G-tuples, then identify those tuples with chains
+in SingleObj Gᵐᵒᵖ. This gives an isomorphism in every degree n. -/
 noncomputable def tupleIso (a : Discrete PUnit.{1}) (n : ℕ) :
     (barEvalData G a).obj n ≅ (nerveOppData G).obj n :=
   Equiv.toIso ((barTupleEquiv G a n).trans (nerveTupleEquiv G n).symm)
@@ -923,12 +904,9 @@ private theorem barTupleEquiv_gen_fst (a : Discrete PUnit.{1}) (n : ℕ)
   simp only [barTupleEquiv, powTupleEquiv]
   rfl
 
-/-- Bar-side zero-face tuple formula.
+/-- The zeroth bar face removes the first coordinate.
 
-`barTuple` of the zeroth face drops the head: unfold the face to the
-iterated right action, read both sides through the generalized reader,
-and apply `genZeroFst`. No induction here; the induction lives once in
-`genZeroSnd`/`genZeroFst` for general `X`. -/
+For a degree-(n+1) bar element with tuple t, its zeroth face has tuple Fin.tail t. -/
 theorem barTuple_zero_face (a : Discrete PUnit.{1}) :
     ∀ (n : ℕ) (x : (barEvalData G a).obj (n + 1)),
       (barTupleEquiv G a n) (((barEvalData G a).δ (0 : Fin (n + 2))) x) =
@@ -946,12 +924,10 @@ theorem barTuple_zero_face (a : Discrete PUnit.{1}) :
     ((rCastOut G ((monadPow (tensorMonad G) (n + 1)).obj PUnit))
       (Equiv.cast (by rfl) x))
 
-/-- Bar-side last-face tuple formula.
+/-- The last bar face removes the last coordinate.
 
-`barTuple` of the last face drops the tail: unfold the face to the left
-point action (`barFaceApp_of_val_last`), read both sides through the
-generalized reader, and apply `genLastFst`. No induction here; the induction
-lives once in `genMapSnd`/`genMapFst`. -/
+For a face index i with i = n+1 on a degree-(n+1) bar element, the tuple of its face is
+Fin.init of the original tuple. -/
 theorem barTuple_last_face (a : Discrete PUnit.{1}) (n : ℕ)
     (x : (barEvalData G a).obj (n + 1)) (i : Fin (n + 2))
     (hL : i.val = n + 1) :
@@ -971,13 +947,10 @@ theorem barTuple_last_face (a : Discrete PUnit.{1}) (n : ℕ)
     ((rCastOut G ((monadPow (tensorMonad G) (n + 1)).obj PUnit))
       (Equiv.cast (by rfl) x))
 
-/-- Bar-side middle-face tuple formula.
+/-- An interior bar face multiplies adjacent coordinates.
 
-`barTuple` of an interior face multiplies the two adjacent entries:
-unfold the face to `barMuAtPos` (`barFaceApp_of_middle`), read both sides
-through the generalized reader, and apply `genMuFst`. The public
-`barMuAtPos` wrapper counts from the right-module end, so `k.rev` restores
-the head-first tuple position `k`. No induction here. -/
+For k : Fin n and face index i = k+1, the face of a degree-(n+1) bar element contracts tuple
+entries k and k+1 by their product in that order. -/
 theorem barTuple_middle_face (a : Discrete PUnit.{1}) (n : ℕ)
     (x : (barEvalData G a).obj (n + 1)) (k : Fin n) (i : Fin (n + 2))
     (hk : i.val = k.val + 1) :
@@ -1002,13 +975,10 @@ theorem barTuple_middle_face (a : Discrete PUnit.{1}) (n : ℕ)
   rw [hm] at hGen
   exact hGen
 
-/-- Bar-side degeneracy tuple formula.
+/-- A bar degeneracy inserts the monoid identity.
 
-`barTuple` of a degeneracy inserts `1` head-first: unfold `σ i` to
-`barEtaAtPos` (`barData_σ_app`), read both sides through the generalized
-reader, and apply `genEtaFst`. The public `barEtaAtPos` wrapper counts from
-the right-module end, so `i.rev` restores the head-first tuple position `i`
-(`n - (n - i) = i`). No induction here. -/
+For i : Fin (n+1), the i-th degeneracy of a degree-n bar element inserts 1 at tuple position
+i. -/
 theorem barTuple_degen (a : Discrete PUnit.{1}) (n : ℕ)
     (x : (barEvalData G a).obj n) (i : Fin (n + 1)) :
     (barTupleEquiv G a (n + 1)) (((barEvalData G a).σ i) x) =
@@ -1388,13 +1358,10 @@ private theorem nerveTuple_degen (n : ℕ) (t : Fin n → G) (i : Fin (n + 1)) :
       rw [ComposableArrows.mkOfObjOfMapSucc_map_succ _ _ (j.val - 1) (by omega),
         MulOpposite.unop_op, hInsAbove]
 
-/-- Face compatibility of the degreewise equivalence.
+/-- The bar-to-nerve comparison commutes with every face.
 
-After unfolding both isos to tuple functions, the zeroth face drops the head
-(`Fin.tail`), the last face drops the tail, and interior faces multiply the
-two adjacent entries in order. The `Gᵐᵒᵖ` order makes nerve composition agree
-with bar multiplication via `SingleObj.comp_as_mul`; the bar side uses the
-accepted `barFaceApp_of_val_zero/val_last/middle` with `tensorMonad_mu_app`. -/
+For each i : Fin (n+2), applying the degree-(n+1) comparison then the nerve face equals
+applying the bar face then the degree-n comparison. -/
 theorem tupleIso_face (a : Discrete PUnit.{1}) {n : ℕ} (i : Fin (n + 2)) :
     (tupleIso G a (n + 1)).hom ≫ (nerveOppData G).δ i =
       (barEvalData G a).δ i ≫ (tupleIso G a n).hom := by
@@ -1436,12 +1403,10 @@ theorem tupleIso_face (a : Discrete PUnit.{1}) {n : ℕ} (i : Fin (n + 2)) :
             ((barTupleEquiv G a n) (((barEvalData G a).δ i) x)))
       rw [hLn, hR]
 
-/-- Degeneracy compatibility of the degreewise equivalence.
+/-- The bar-to-nerve comparison commutes with every degeneracy.
 
-Both sides insert `1` head-first; the bar side uses `barEtaAtPos` with
-`tensorMonad_eta_app`, the nerve side uses the pinned nerve degeneracies with
-`SingleObj.id_as_one`. `Fin.rev` is never unfolded beyond the accepted
-`barEtaAtPos_rev` wrapper. -/
+For each i : Fin (n+1), applying the degree-n comparison then the nerve degeneracy equals
+applying the bar degeneracy then the degree-(n+1) comparison. -/
 theorem tupleIso_degeneracy (a : Discrete PUnit.{1}) {n : ℕ}
     (i : Fin (n + 1)) :
     (tupleIso G a n).hom ≫ (nerveOppData G).σ i =
@@ -1462,13 +1427,10 @@ theorem tupleIso_degeneracy (a : Discrete PUnit.{1}) {n : ℕ}
         ((barTupleEquiv G a (n + 1)) (((barEvalData G a).σ i) x)))
   rw [hLn, hR]
 
-/-- Data-level classifying nerve isomorphism.
+/-- An isomorphism of classifying-bar and nerve data.
 
-Assembled from the degreewise `tupleIso` with `Data.isoOfIso`; no `Iso.refl`
-across ambient categories and no whiskered-functor iso is used.
-`ClassifyingNerveSimplicial.lean` promotes this with `toSimplicialFunctor` as
-`barNerveSimplicialIso` and composes with evaluated `classifyingBar` as
-`classifyingNerveSimplicialIso`. -/
+For any monoid G, the evaluated cartesian classifying-bar data is isomorphic to the nerve data
+of SingleObj Gᵐᵒᵖ. The degreewise tuple comparison respects all faces and degeneracies. -/
 noncomputable def classifyingNerveDataIso (a : Discrete PUnit.{1}) :
     barEvalData G a ≅ nerveOppData G :=
   SimplicialObject.Data.isoOfIso (tupleIso G a)

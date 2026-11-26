@@ -1,7 +1,7 @@
 # Cyclic descent counts
 
-- [Cyclic Descent Number](cyclic-descent-number.md)
-- [Cyclic Descent Number rotate values](cyclic-descent-number-rotate-values.md)
-- [Cyclic Descent Number rotate values pow](cyclic-descent-number-rotate-values-pow.md)
-- [Cyclic Descent Number rotate positions pow](cyclic-descent-number-rotate-positions-p.md)
-- [Cyclic Descent Number two sided](cyclic-descent-number-two-sided.md)
+- [The cyclic descent count](cyclic-descent-number.md)
+- [Value rotation preserves cyclic descents](cyclic-descent-number-rotate-values.md)
+- [All value-rotation powers preserve cyclic descents](cyclic-descent-number-rotate-values-pow.md)
+- [Position rotation preserves cyclic descents](cyclic-descent-number-rotate-positions-p.md)
+- [Two-sided rotations preserve cyclic descents](cyclic-descent-number-two-sided.md)

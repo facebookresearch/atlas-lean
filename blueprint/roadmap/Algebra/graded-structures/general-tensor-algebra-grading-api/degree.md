@@ -1,4 +1,5 @@
-# Degree
+# The degree-n submodule of the tensor algebra
 
-Degree-`n` submodule of `TensorAlgebra R M`, defined as the `n`-th power of the
-range of `ι`. This is the family used by `TensorAlgebra.gradedAlgebra`.
+Let R be a commutative semiring and M an R-module with additive commutative monoid carrier.
+Define degree_n(T_R(M))=(range(ι : M →ₗ[R] T_R(M)))^n. This is the homogeneous family of the
+tensor-algebra grading, with n∈ℕ.

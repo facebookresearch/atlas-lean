@@ -17,11 +17,11 @@ public import Mathlib.Algebra.Category.ModuleCat.Monoidal.Basic
 public import Mathlib.CategoryTheory.Monoidal.Tor
 
 /-!
-# Higher Tor over a PID
+# Vanishing of higher Tor over a principal ideal domain
 
-Over a commutative principal ideal domain every module has a projective
-resolution of length at most one.  Consequently `Tor` vanishes in degrees at
-least two.  Mathlib's `Tor` derives its second factor.
+Let `R : Type u` be a commutative principal ideal domain. Modules in `ModuleCat.{u} R` admit
+projective resolutions of length at most one. Hence the tensor-derived functor vanishes in
+every degree `p ≥ 2` for any pair of modules in this category.
 -/
 
 @[expose] public section
@@ -156,8 +156,10 @@ private noncomputable def pidProjectiveResolution
         · exact pidResolutionComplex_exactAt_succ D n
         · exact ChainComplex.exactAt_succ_single_obj D n⟩
 
-/-- Over a commutative PID, Tor vanishes in every degree at least two;
-the second factor is the derived variable. -/
+/-- Tor vanishes in degrees at least two over a PID.
+
+For a commutative domain `R` with every ideal principal, modules `A` and `D` in `ModuleCat.{u}
+R`, and a natural `p` satisfying `2 ≤ p`, the module `Tor_p^R(A, D)` is zero. -/
 theorem isZero_Tor_of_two_le_of_pid
     {R : Type u} [CommRing R] [IsDomain R]
     [IsPrincipalIdealRing R]

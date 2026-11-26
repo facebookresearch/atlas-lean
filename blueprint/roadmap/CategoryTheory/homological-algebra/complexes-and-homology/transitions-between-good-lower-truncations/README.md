@@ -1,8 +1,8 @@
 # Transitions between good lower truncations
 
-- [Trunc GETransition](trunc-getransition.md)
-- [ΠTrunc GE comp trunc GETransition](trunc-ge-comp-trunc-getransition.md)
-- [Trunc GETransition unique](trunc-getransition-unique.md)
-- [Quasi Iso At trunc GETransition](quasi-iso-at-trunc-getransition.md)
-- [Trunc GETransition naturality](trunc-getransition-naturality.md)
-- [Trunc GETransition f comp trunc GEXIso Opcycles hom](trunc-getransition-f-comp-trunc-gexiso-o.md)
+- [Canonical map between ordered good truncations](trunc-getransition.md)
+- [Projection triangle for a truncation transition](trunc-ge-comp-trunc-getransition.md)
+- [Uniqueness of the ordered truncation transition](trunc-getransition-unique.md)
+- [Homology preserved above the higher truncation cutoff](quasi-iso-at-trunc-getransition.md)
+- [Naturality of good truncation transitions](trunc-getransition-naturality.md)
+- [Transition at the higher cutoff is the opcycles projection](trunc-getransition-f-comp-trunc-gexiso-o.md)

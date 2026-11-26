@@ -1,3 +1,6 @@
-# Matrix Cyclic Printed Coefficient Map
+# The coefficient map of positive-bracket matrix CE tails
 
-The positive-convention matrix map induced by the coefficient algebra map.
+The coefficient map of positive-bracket matrix CE tails.
+
+An entry-algebra homomorphism induces the matrix CE map after differential negation and
+positive-index restriction.

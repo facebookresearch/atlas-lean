@@ -1,3 +1,8 @@
-# Field Finite Etale Fiber Equivariant Inv
+# Inverse equivariant finite étale fiber comparison
 
-The inverse of that SAME actual spectrum/algebra comparison is equivariant as well.
+Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For a finite étale k-algebra A, the inverse algebra-embedding
+comparison Hom_(k-alg)(A, Ω) → (Spec A)(Ω) is also G-equivariant.

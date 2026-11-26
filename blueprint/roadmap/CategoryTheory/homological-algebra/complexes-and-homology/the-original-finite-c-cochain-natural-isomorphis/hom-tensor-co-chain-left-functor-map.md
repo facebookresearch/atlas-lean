@@ -1,3 +1,6 @@
-# Hom Tensor Co Chain Left Functor map
+# Map formula for the Hom-then-tensor functor
 
-Source functor maps are the mapAt/linearComplexMap maps.
+Map formula for the Hom-then-tensor functor.
+
+A triple morphism acts by the linear Hom map of its first two components, tensored with its
+third component.

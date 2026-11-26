@@ -18,14 +18,18 @@ public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.PrimitiveFree
 public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.HomologyDiagonal
 
 /-!
-# Chevalley–Eilenberg homology coalgebras
+# Coalgebra and primitive comparisons in CE homology
 
-For a commutative ring and a Lie algebra in a common carrier universe, the chain coproduct
-induces a graded map to homology of the tensor square. Over a field, the Künneth isomorphism
-gives a coaugmented graded cocommutative coalgebra on Chevalley–Eilenberg homology.
+Let `R` be a commutative ring and `L` an `R`-Lie algebra with carriers in a common universe.
+The scalar-unit comparison expresses the CE chain comonoid in the module tensor category. Its
+coproduct gives a natural map from graded CE homology to homology of the tensor square.
 
-The primitive chain complex has a canonical homology comparison to the primitive part of
-homology. With a free Lie carrier, its homology in degree one identifies with that carrier.
+Over a field, the Künneth isomorphism turns this map into a coaugmented graded coalgebra,
+cocommutative with Koszul sign `(-1)^(pq)` on degrees `p,q`. Homology of the primitive chain
+kernel has a canonical map to the primitive kernel in homology. For a free underlying Lie
+module, the primitive chain complex has degree-one homology `L`; over a field every class in
+CE homology degree one is primitive. The comparison sends a Lie element to its degree-one CE
+homology class.
 -/
 
 @[expose] public section
@@ -46,41 +50,58 @@ variable (L : Type u) [LieRing L] [LieAlgebra R L]
 namespace UnitComparison
 
 
-/-- The constructed CE coalgebra with its fixed common-universe lifted scalar-unit structure. -/
+/-- The CE chain coalgebra with a lifted scalar unit.
+
+The canonical CE complex and its comonoid structure define a coalgebra in the common-universe
+chain category with the lifted regular unit. -/
 def sourceCoalgebra : Comon (HomologicalComplex.HomologyCoalgebra.LiftedUnitChain R) :=
   { X := (canonicalChainData R L).complex, comon := nativeComonObj R L }
 
-/-- The CE coalgebra under the common-universe tensor structure. Its carrier is the unchanged
-canonical CE chain complex. -/
+/-- The CE chain coalgebra in the module tensor category.
+
+The scalar-unit comparison carries the lifted-unit coalgebra to the module chain category,
+retaining its canonical CE carrier. -/
 def chainCoalgebra : Comon (ChainComplex (ModuleCat.{u} R) ℕ) :=
   HomologicalComplex.HomologyCoalgebra.LiftedUnitChain.nativeComonFunctor.obj (sourceCoalgebra R L)
 
+/-- The carrier of the scalar-unit-compared CE coalgebra.
+
+Its underlying chain complex is the canonical CE complex. -/
 @[simp]
 theorem chainCoalgebra_carrier : (chainCoalgebra R L).X = ((canonicalChainData R L).complex) := rfl
 
-/-- The converted comultiplication is the exterior chain map followed by the identity-component
-tensor comparison. -/
+/-- The scalar-unit comparison formula for CE comultiplication.
+
+The compared comultiplication is the CE exterior coproduct followed by the inverse tensor
+comparison. -/
 theorem chainComul_eq :
     letI : ComonObj ((canonicalChainData R L).complex) := (chainCoalgebra R L).comon
     Δ[((canonicalChainData R L).complex)] = nativeComplexComul R L ≫
       (HomologicalComplex.HomologyCoalgebra.LiftedUnitChain.tensorIso
         (sourceCoalgebra R L).X (sourceCoalgebra R L).X).inv := rfl
 
-/-- The converted counit uses the down scalar map on the chain unit. -/
+/-- The scalar-unit comparison formula for the CE counit.
+
+The compared counit is the CE counit followed by the inverse chain-unit comparison. -/
 theorem chainCounit_eq :
     letI : ComonObj ((canonicalChainData R L).complex) := (chainCoalgebra R L).comon
     ε[((canonicalChainData R L).complex)] = nativeComplexCounit R L ≫
       (HomologicalComplex.HomologyCoalgebra.LiftedUnitChain.unitIso (R := R)).inv := rfl
 
-/-- The common-universe CE coaugmentation. -/
+/-- The coaugmentation of the common-universe CE chain coalgebra.
+
+The scalar-unit comparison carries the CE coaugmentation to a map from the module chain tensor
+unit. -/
 def chainCoaug : 𝟙_ (ChainComplex (ModuleCat.{u} R) ℕ) ⟶ ((canonicalChainData R L).complex) :=
   HomologicalComplex.HomologyCoalgebra.LiftedUnitChain.nativeCoaug
     (sourceCoalgebra R L).X (nativeComplexCoaug R L)
 
 attribute [local instance] ComonObj.instTensorUnit
 
-/-- Coaugmentation preservation is from the CE law and the proved unit-comparison comonoid
-isomorphism. -/
+/-- Comonoid compatibility of the compared CE coaugmentation.
+
+The coaugmentation preserves counit and comultiplication for the compared chain comonoid
+structure. -/
 theorem chainCoaugIsComonHom :
     letI : ComonObj ((canonicalChainData R L).complex) := (chainCoalgebra R L).comon
     IsComonHom (chainCoaug R L) := by
@@ -96,7 +117,10 @@ theorem chainCoaugIsComonHom :
 
 variable {L' : Type u} [LieRing L'] [LieAlgebra R L']
 
-/-- The Lie map is a morphism of the fixed source CE coalgebras. -/
+/-- The lifted-unit CE coalgebra map of a Lie homomorphism.
+
+A Lie homomorphism induces the canonical CE chain map, which preserves the lifted-unit
+comonoid structure. -/
 def sourceCoalgebraMap (f : L →ₗ⁅R⁆ L') : sourceCoalgebra R L ⟶ sourceCoalgebra R L' := by
   let C : HomologicalComplex.HomologyCoalgebra.LiftedUnitChain R := (sourceCoalgebra R L).X
   let D : HomologicalComplex.HomologyCoalgebra.LiftedUnitChain R := (sourceCoalgebra R L').X
@@ -106,16 +130,24 @@ def sourceCoalgebraMap (f : L →ₗ⁅R⁆ L') : sourceCoalgebra R L ⟶ source
   refine { hom := g, isComonHom_hom := ?_ }
   exact nativeComplexMapIsComonHom R L f
 
-/-- The converted CE coalgebra is natural under the Lie chain map and the identity tensor
-comparison. -/
+/-- The scalar-unit-compared CE coalgebra map of a Lie homomorphism.
+
+Transport the lifted-unit coalgebra morphism through the scalar-unit comparison functor. -/
 def chainCoalgebraMap (f : L →ₗ⁅R⁆ L') : chainCoalgebra R L ⟶ chainCoalgebra R L' :=
   HomologicalComplex.HomologyCoalgebra.LiftedUnitChain.nativeComonFunctor.map
     (sourceCoalgebraMap R L f)
 
+/-- The chain map underlying the compared CE coalgebra morphism.
+
+Its underlying map is the canonical CE chain map induced by the Lie homomorphism. -/
 @[simp]
 theorem chainCoalgebraMap_hom (f : L →ₗ⁅R⁆ L') :
     (chainCoalgebraMap R L f).hom = nativeComplexMap R L f := rfl
 
+/-- Naturality of the compared CE coaugmentation.
+
+The compared coaugmentation followed by the Lie-induced coalgebra map is the target
+coaugmentation. -/
 @[reassoc]
 theorem chainCoaug_naturality (f : L →ₗ⁅R⁆ L') :
     chainCoaug R L ≫ (chainCoalgebraMap R L f).hom = chainCoaug R L' := by
@@ -130,7 +162,9 @@ theorem chainCoaug_naturality (f : L →ₗ⁅R⁆ L') :
     (F.map η) (F.map g)).trans
       (congrArg (fun z => (HomologicalComplex.HomologyCoalgebra.LiftedUnitChain.unitIso (R := R)).hom ≫ z) hMap)
 
-/-- The common-universe structure comparison preserves the Koszul cocommutativity equation. -/
+/-- Koszul cocommutativity after CE scalar-unit comparison.
+
+The compared chain coproduct is unchanged by the tensor braiding with its graded Koszul signs. -/
 theorem chainComul_cocommutative :
     letI : ComonObj ((canonicalChainData R L).complex) := (chainCoalgebra R L).comon
     Δ[((canonicalChainData R L).complex)] ≫ (HomologicalComplex.koszulTensorBraidingIso ((canonicalChainData R
@@ -203,7 +237,10 @@ private theorem leftUnitTerm_compare :
   simp only [Category.assoc, tensorHom_id, MonoidalCategory.comp_whiskerRight,
     Functor.Monoidal.μ_δ_assoc]
 
-/-- The converted primitive equation is the CE primitive equation under the tensor comparison. -/
+/-- The tensor comparison of the CE primitive equation.
+
+The compared primitive map `Δ - (id ⊗ η + η ⊗ id)` is the CE primitive-equation map followed
+by the inverse tensor comparison. -/
 theorem primitiveEquation_compare :
     letI : ComonObj ((canonicalChainData R L).complex) := (chainCoalgebra R L).comon
     HomologicalComplex.HomologyCoalgebra.primitiveEquation ((canonicalChainData R L).complex) (chainCoaug R L) =
@@ -227,14 +264,17 @@ theorem primitiveEquation_compare :
     simp only [Preadditive.sub_comp, Preadditive.add_comp]
   exact h
 
-/-- The converted primitive chain complex is the kernel required by the general homology
-comparison. -/
+/-- The primitive kernel of the compared CE chain coalgebra.
+
+Take the kernel of the primitive-equation chain map for the scalar-unit-compared CE comonoid. -/
 def primitiveChain : (ChainComplex (ModuleCat.{u} R) ℕ) := by
   letI : ComonObj ((canonicalChainData R L).complex) := (chainCoalgebra R L).comon
   exact HomologicalComplex.HomologyCoalgebra.primitiveComplex ((canonicalChainData R L).complex) (chainCoaug R L)
 
-/-- The old and converted primitive kernels are canonically isomorphic by the kernel map for an
-isomorphism of targets. -/
+/-- The comparison of the two CE primitive chain kernels.
+
+The tensor-target isomorphism of the primitive equations gives a chain isomorphism from the
+compared primitive kernel to the CE primitive kernel. -/
 def primitiveChainIso : primitiveChain R L ≅ nativePrimitiveComplex R L := by
   letI : ComonObj ((canonicalChainData R L).complex) := (chainCoalgebra R L).comon
   exact kernel.mapIso (f := HomologicalComplex.HomologyCoalgebra.primitiveEquation
@@ -250,6 +290,10 @@ def primitiveChainIso : primitiveChain R L ≅ nativePrimitiveComplex R L := by
         ((Category.assoc (nativePrimitiveMap R L) e.inv e.hom).trans
           ((congrArg (fun t => nativePrimitiveMap R L ≫ t) e.inv_hom_id).trans (Category.comp_id _))))
 
+/-- The forward inclusion equation of primitive-kernel comparison.
+
+The forward kernel isomorphism followed by the CE primitive inclusion is the primitive
+inclusion of the compared coalgebra. -/
 @[reassoc]
 theorem primitiveChainIso_inclusion :
     (primitiveChainIso R L).hom ≫ nativePrimitiveInclusion R L =
@@ -259,6 +303,10 @@ theorem primitiveChainIso_inclusion :
   dsimp only [primitiveChainIso, kernel.mapIso]
   exact kernel.lift_ι _ _ _
 
+/-- The inverse inclusion equation of primitive-kernel comparison.
+
+The inverse kernel isomorphism followed by the compared primitive inclusion is the CE
+primitive inclusion. -/
 @[reassoc]
 theorem primitiveChainIso_inverse_inclusion :
     (primitiveChainIso R L).inv ≫
@@ -269,15 +317,20 @@ theorem primitiveChainIso_inverse_inclusion :
 
 end UnitComparison
 
-/-- The CE diagonal into homology of its tensor square is canonical over every commutative ring,
-without invoking a Künneth isomorphism. -/
+/-- The CE homology diagonal before Künneth inversion.
+
+Over a commutative ring in a common carrier universe, the chain coproduct induces a graded map
+`H(C) → H(C ⊗ C)`. -/
 def canonicalToTensorHomology : (HomologicalComplex.Kunneth.homologyFunctor (R := R)).obj ((canonicalChainData R
   L).complex) ⟶ (HomologicalComplex.Kunneth.homologyFunctor (R := R)).obj (((canonicalChainData R L).complex) ⊗
     ((canonicalChainData R L).complex)) := by
   letI : ComonObj ((canonicalChainData R L).complex) := (UnitComparison.chainCoalgebra R L).comon
   exact HomologicalComplex.HomologyCoalgebra.canonicalToTensorHomology ((canonicalChainData R L).complex)
 
-/-- The unconditional CE homology diagonal is natural under Lie maps. -/
+/-- Naturality of the common-universe CE homology diagonal.
+
+Lie-induced homology maps commute with the diagonal and with homology of the tensor square of
+the induced chain map. -/
 @[reassoc]
 theorem canonicalToTensorHomology_naturality
     {L' : Type u} [LieRing L'] [LieAlgebra R L'] (f : L →ₗ⁅R⁆ L') :
@@ -296,14 +349,19 @@ theorem canonicalToTensorHomology_naturality
   letI : IsComonHom g := (UnitComparison.chainCoalgebraMap R L f).isComonHom_hom
   exact HomologicalComplex.HomologyCoalgebra.canonicalToTensorHomology_naturality A.X g
 
-/-- The canonical CE homology coaugmentation uses the two unit maps. -/
+/-- The coaugmentation of graded CE homology.
+
+The chain coaugmentation and the homology unit comparison define the map from the graded
+tensor unit into CE homology. -/
 def homologyCoaug : 𝟙_ (GradedObject ℕ (ModuleCat.{u} R)) ⟶ (HomologicalComplex.Kunneth.homologyFunctor (R := R)).obj
   ((canonicalChainData R L).complex) := by
   letI : ComonObj ((canonicalChainData R L).complex) := (UnitComparison.chainCoalgebra R L).comon
   exact HomologicalComplex.HomologyCoalgebra.coaug ((canonicalChainData R L).complex) (UnitComparison.chainCoaug R L)
 
-/-- On a free Lie module, the homology of the primitive complex in degree one is the Lie module.
-The source concentration theorem is basis dependent and characteristic independent. -/
+/-- The degree-one homology of primitive CE chains for a free Lie module.
+
+If `Module.Free R L`, the primitive chain complex has degree-one homology isomorphic to `L`,
+through its concentration in exterior degree one. -/
 def primitiveHomologyOneIso [Module.Free R L] :
     (nativePrimitiveComplex R L).homology 1 ≅ ModuleCat.of R L :=
   HomologicalComplex.homologyMapIso (nativePrimitiveSingleIso R L) 1 ≪≫
@@ -311,8 +369,10 @@ def primitiveHomologyOneIso [Module.Free R L] :
       (ModuleCat.of R (ULift.{u} L)) ≪≫
     (ULift.moduleEquiv : ULift.{u} L ≃ₗ[R] L).toModuleIso
 
-/-- The primitive inclusion in degree one has exactly the exterior degree-one coordinate, without
-any basis hypothesis. -/
+/-- The exterior coordinate of a primitive degree-one chain.
+
+The primitive inclusion sends a degree-one primitive coordinate to its exterior-degree-one
+representative under the inverse exterior equivalence. -/
 theorem primitiveOne_inclusion (a : (nativePrimitiveComplex R L).X 1) :
     (nativePrimitiveInclusion R L).f 1 a =
       (exteriorPower.oneEquiv R L).symm (nativePrimitiveDegreeOneEquiv R L a) := by
@@ -320,8 +380,9 @@ theorem primitiveOne_inclusion (a : (nativePrimitiveComplex R L).X 1) :
   rw [LinearEquiv.apply_symm_apply]
   rfl
 
-/-- Every exterior degree-one element satisfies the CE primitive equation, without a basis or
-characteristic hypothesis. -/
+/-- Vanishing of the CE primitive equation in exterior degree one.
+
+The degree-one component of the CE primitive-equation map is zero for every `R`-Lie algebra. -/
 theorem nativePrimitiveMap_one_zero : (nativePrimitiveMap R L).f 1 = 0 := by
   apply ModuleCat.hom_ext
   apply LinearMap.ext
@@ -333,8 +394,9 @@ theorem nativePrimitiveMap_one_zero : (nativePrimitiveMap R L).f 1 = 0 := by
       (show ⋀[R]^1 L from a) := LinearEquiv.symm_apply_apply _ _
   exact hEq ▸ hp
 
-/-- The common-universe unit conversion retains the zero component of the primitive equation in
-degree one. -/
+/-- Vanishing of the compared primitive equation in degree one.
+
+The scalar-unit-compared primitive-equation map has zero degree-one component. -/
 theorem convertedPrimitiveMap_one_zero :
     letI : ComonObj ((canonicalChainData R L).complex) := (UnitComparison.chainCoalgebra R L).comon
     (HomologicalComplex.HomologyCoalgebra.primitiveEquation ((canonicalChainData R L).complex)
@@ -352,13 +414,19 @@ section Field
 variable {k : Type u} [Field k] (V : Type u) [LieRing V] [LieAlgebra k V]
 
 
-/-- The graded CE homology comonoid over a field. -/
+/-- The graded CE homology comonoid over a field.
+
+For a Lie algebra over a field in the common universe, the Künneth isomorphism transfers the
+chain comultiplication and counit to graded homology. -/
 def homologyComonObj : ComonObj ((HomologicalComplex.Kunneth.homologyFunctor (R := k)).obj ((canonicalChainData k
   V).complex)) := by
   letI : ComonObj ((canonicalChainData k V).complex) := (UnitComparison.chainCoalgebra k V).comon
   exact HomologicalComplex.HomologyCoalgebra.comonObjOfField ((canonicalChainData k V).complex)
 
-/-- Lie maps preserve the constructed field homology comonoids. -/
+/-- Comonoid compatibility of Lie maps on field CE homology.
+
+The homology map induced by a Lie homomorphism preserves the field homology comultiplication
+and counit. -/
 theorem homologyMapIsComonHom {V' : Type u} [LieRing V'] [LieAlgebra k V']
     (f : V →ₗ⁅k⁆ V') :
     letI : ComonObj ((HomologicalComplex.Kunneth.homologyFunctor (R := k)).obj ((canonicalChainData k V).complex)) :=
@@ -382,7 +450,9 @@ theorem homologyMapIsComonHom {V' : Type u} [LieRing V'] [LieAlgebra k V']
     fun A B n => HomologicalComplex.isIso_kunnethHomologyTensorMap_of_field A B n
   exact HomologicalComplex.HomologyCoalgebra.mapIsComonHom C g
 
-/-- The canonical coaugmentation is a homology comonoid map. -/
+/-- Comonoid compatibility of field CE homology coaugmentation.
+
+The graded homology coaugmentation preserves the tensor-unit counit and comultiplication. -/
 theorem homologyCoaugIsComonHom :
     letI : ComonObj ((HomologicalComplex.Kunneth.homologyFunctor (R := k)).obj ((canonicalChainData k V).complex)) :=
       homologyComonObj V
@@ -404,8 +474,10 @@ theorem homologyCoaugIsComonHom :
   exact HomologicalComplex.HomologyCoalgebra.coaugIsComonHom ((canonicalChainData k V).complex)
     (UnitComparison.chainCoaug k V)
 
-/-- The field CE homology coalgebra as a pointed comonoid, using `Under (Comon.trivial _)` rather
-than extra point/coherence inputs. -/
+/-- The coaugmented graded CE homology coalgebra over a field.
+
+The field homology comonoid with its coaugmentation defines an object under the trivial graded
+comonoid. -/
 def homologyPointedComon : Under (Comon.trivial (GradedObject ℕ (ModuleCat.{u} k))) := by
   letI : ComonObj ((canonicalChainData k V).complex) := (UnitComparison.chainCoalgebra k V).comon
   letI : ComonObj (𝟙_ (ChainComplex (ModuleCat.{u} k) ℕ)) := ComonObj.instTensorUnit _
@@ -413,7 +485,10 @@ def homologyPointedComon : Under (Comon.trivial (GradedObject ℕ (ModuleCat.{u}
   exact HomologicalComplex.HomologyCoalgebra.coaugmentedComonOfField ((canonicalChainData k V).complex)
     (UnitComparison.chainCoaug k V)
 
-/-- The CE homology coproduct has the canonical Koszul symmetry. -/
+/-- Koszul cocommutativity of field CE homology.
+
+The graded homology coproduct is unchanged by swapping tensor degrees `p,q` with the sign
+`(-1)^(pq)`. -/
 theorem homology_cocommutative :
     letI : ComonObj ((HomologicalComplex.Kunneth.homologyFunctor (R := k)).obj ((canonicalChainData k V).complex)) :=
       homologyComonObj V
@@ -430,7 +505,9 @@ theorem homology_cocommutative :
   exact HomologicalComplex.HomologyCoalgebra.comul_cocommutative ((canonicalChainData k V).complex)
     (UnitComparison.chainComul_cocommutative k V)
 
-/-- The primitive kernel in the field CE homology coalgebra. -/
+/-- The primitive graded subobject of field CE homology.
+
+Take the kernel of the homology primitive equation `Δ - (id ⊗ η + η ⊗ id)`. -/
 def homologyPrimitiveObject : (GradedObject ℕ (ModuleCat.{u} k)) := by
   letI : ComonObj ((canonicalChainData k V).complex) := (UnitComparison.chainCoalgebra k V).comon
   letI : ∀ n : ℕ, IsIso (HomologicalComplex.kunnethHomologyTensorMap ((canonicalChainData k V).complex)
@@ -440,8 +517,10 @@ def homologyPrimitiveObject : (GradedObject ℕ (ModuleCat.{u} k)) := by
   exact HomologicalComplex.HomologyCoalgebra.homologyPrimitives ((canonicalChainData k V).complex)
     (UnitComparison.chainCoaug k V)
 
-/-- The homology primitive equation is zero in degree one. This comes from its zero chain
-component and the canonical transport law. -/
+/-- Vanishing of the field homology primitive equation in degree one.
+
+The degree-one homology primitive equation is zero, as follows from the zero chain component
+and Künneth transport. -/
 theorem homologyPrimitiveEquation_one_zero :
     letI : ComonObj ((canonicalChainData k V).complex) := (UnitComparison.chainCoalgebra k V).comon
     letI : ∀ n : ℕ, IsIso (HomologicalComplex.kunnethHomologyTensorMap ((canonicalChainData k V).complex)
@@ -478,9 +557,10 @@ theorem homologyPrimitiveEquation_one_zero :
     (inv (HomologicalComplex.Kunneth.tensorator
       ((canonicalChainData k V).complex) ((canonicalChainData k V).complex))) 1) h₀).trans zero_comp))
 
-/-- Every CE homology class of degree one is primitive. The primitive-kernel inclusion in that
-degree is an isomorphism. This does not identify it with homology of the primitive chain
-complex. -/
+/-- The primitive part of field CE homology in degree one.
+
+The primitive-kernel inclusion in degree one is an isomorphism onto the full degree-one CE
+homology module. -/
 def homologyPrimitivesOneIso : homologyPrimitiveObject V 1 ≅ ((canonicalChainData k V).complex).homology 1 := by
   letI : ComonObj ((canonicalChainData k V).complex) := (UnitComparison.chainCoalgebra k V).comon
   letI : ∀ n : ℕ, IsIso (HomologicalComplex.kunnethHomologyTensorMap ((canonicalChainData k V).complex)
@@ -494,6 +574,9 @@ def homologyPrimitivesOneIso : homologyPrimitiveObject V 1 ≅ ((canonicalChainD
   exact @asIso _ _ _ _ ((kernel.ι φ) 1)
     (GradedObject.isIso_kernel_component_of_eq_zero φ 1 (homologyPrimitiveEquation_one_zero V))
 
+/-- The map of the degree-one homology primitive isomorphism.
+
+The forward isomorphism is the degree-one component of the graded primitive-kernel inclusion. -/
 theorem homologyPrimitivesOneIso_hom :
     (homologyPrimitivesOneIso V).hom =
       (letI : ComonObj ((canonicalChainData k V).complex) := (UnitComparison.chainCoalgebra k V).comon
@@ -504,7 +587,10 @@ theorem homologyPrimitivesOneIso_hom :
        kernel.ι (HomologicalComplex.HomologyCoalgebra.homologyPrimitiveEquation
          ((canonicalChainData k V).complex) (UnitComparison.chainCoaug k V))) 1 := rfl
 
-/-- The comparison from homology of the CE primitive kernel to primitives in field CE homology. -/
+/-- The comparison from primitive-chain homology to primitive homology classes.
+
+Over a field, the primitive chain inclusion induces a graded map from homology of the CE
+primitive complex to the primitive subobject of CE homology. -/
 def primitiveHomologyComparison :
     (HomologicalComplex.Kunneth.homologyFunctor (R := k)).obj (nativePrimitiveComplex k V) ⟶ homologyPrimitiveObject V
       := by
@@ -517,8 +603,10 @@ def primitiveHomologyComparison :
     HomologicalComplex.HomologyCoalgebra.primitiveComparison ((canonicalChainData k V).complex)
       (UnitComparison.chainCoaug k V)
 
-/-- The CE primitive comparison followed by the kernel inclusion is precisely homology of the
-primitive inclusion. -/
+/-- The inclusion equation of the primitive homology comparison.
+
+The comparison followed by the primitive-kernel inclusion equals homology of the CE primitive
+chain inclusion. -/
 @[reassoc]
 theorem primitiveHomologyComparison_inclusion :
     primitiveHomologyComparison V ≫
@@ -549,14 +637,18 @@ theorem primitiveHomologyComparison_inclusion :
   have hInc := congrArg H.map (UnitComparison.primitiveChainIso_inverse_inclusion k V)
   exact (Category.assoc g p i).trans ((congrArg (fun z => g ≫ z) hp).trans (hMap.trans hInc))
 
-/-- The degree-one comparison starts from the Lie vector space and takes its CE homology class.
-Field freeness is inferred internally. -/
+/-- The Lie-element map into field CE homology degree one.
+
+Use the primitive-chain degree-one coordinate and its homology comparison to send a Lie
+element to its degree-one CE homology class. -/
 def degreeOneComparison : ModuleCat.of k V ⟶ ((canonicalChainData k V).complex).homology 1 :=
   (primitiveHomologyOneIso k V).inv ≫ primitiveHomologyComparison V 1 ≫
     (homologyPrimitivesOneIso V).hom
 
-/-- The degree-one comparison is exactly homology of the primitive inclusion in the
-original-Lie-module coordinate. -/
+/-- The degree-one comparison as homology of primitive inclusion.
+
+The Lie-element map equals the inverse primitive-chain homology coordinate followed by the
+homology map of the primitive inclusion. -/
 theorem degreeOneComparison_eq : degreeOneComparison V =
     (primitiveHomologyOneIso k V).inv ≫
       HomologicalComplex.homologyMap (nativePrimitiveInclusion k V) 1 := by

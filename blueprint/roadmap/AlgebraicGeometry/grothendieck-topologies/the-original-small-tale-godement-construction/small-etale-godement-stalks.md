@@ -1,3 +1,6 @@
-# Small Etale Godement Stalks
+# Family of canonical geometric stalks
 
-The family of actual common-universe geometric stalks on the original site.
+Family of canonical geometric stalks.
+
+Send an abelian sheaf to its stalk at each canonical residue-field geometric point, giving a
+functor to families of additive groups indexed by `X`.

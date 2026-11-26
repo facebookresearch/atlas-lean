@@ -1,3 +1,5 @@
-# Horizontal Canonical Abutment Lower comp middle
+# The lower and middle cut maps compose to the column map
 
-Composition formula for the lower two filtration maps.
+For p : ℕ, composing horizontalCanonicalAbutmentLowerMap:⊥→p−1 with
+horizontalCanonicalAbutmentMiddleMap:p−1→p gives
+horizontalCanonicalAbutmentLowerCompositeMap:⊥→p.

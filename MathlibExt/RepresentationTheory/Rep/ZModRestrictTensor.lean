@@ -15,10 +15,13 @@ public import MathlibExt.RepresentationTheory.Rep.ZModRestrict
 /-!
 # Tensor compatibility for restriction from `ZMod n` to `ℤ`
 
-For representations whose carriers lie in the scalar universe, the canonical
-comparison `M ⊗[ℤ] N ≃ M ⊗[ZMod n] N` is equivariant.  It therefore
-identifies the tensor product of the scalar-restricted representations with
-the scalar restriction of their tensor product.
+Let `G` be a group in universe `u`, `n` a natural number, and `A`, `B`
+representations of `G` over `ZMod n` whose coefficient carriers lie in universe zero.
+The canonical comparison between their tensor products over `ℤ` and over `ZMod n`
+is equivariant for the diagonal `G`-actions. It is therefore an isomorphism between
+the tensor product of the scalar-restricted representations and the scalar
+restriction of their tensor product. Both directions preserve the corresponding
+pure tensor `x ⊗ y`, and the modulus `n = 0` is included.
 -/
 
 @[expose] public section
@@ -35,8 +38,11 @@ namespace Rep
 
 variable {G : Type u} [Group G]
 
-/-- Equivariant tensor comparison for scalar restriction from `ZMod n` to
-`ℤ`. -/
+/-- For any group `G`, natural number `n`, and representations `A`, `B` over
+`ZMod n` with coefficient carriers in universe zero, the canonical linear equivalence
+from `A ⊗[ℤ] B` to `A ⊗[ZMod n] B` intertwines the diagonal `G`-actions.
+It sends the integral pure tensor `x ⊗ y` to the residue-ring pure tensor of the same
+coefficients. The group universe is independent, and `n = 0` is allowed. -/
 noncomputable def zmodRestrictIntTensorRepresentationEquiv
     (n : ℕ) (A B : Rep.{0} (ZMod n) G) :
     (zmodRestrictInt n A ⊗ zmodRestrictInt n B).ρ.Equiv
@@ -64,14 +70,20 @@ noncomputable def zmodRestrictIntTensorRepresentationEquiv
           simp only [map_add]
           rw [hx, hy])
 
-/-- Tensor product of restricted representations is canonically isomorphic
-to the restriction of the tensor product. -/
+/-- Let `G` be a group, `n : ℕ`, and `A`, `B` representations over `ZMod n`
+with coefficient carriers in universe zero. Their scalar-restricted tensor product
+over `ℤ` is canonically isomorphic, as a `G`-representation, to the scalar restriction
+of `A ⊗[ZMod n] B`. The underlying comparison preserves pure tensors in both
+directions, including for `n = 0`. -/
 noncomputable def zmodRestrictIntTensorIso
     (n : ℕ) (A B : Rep.{0} (ZMod n) G) :
     zmodRestrictInt n A ⊗ zmodRestrictInt n B ≅
       zmodRestrictInt n (A ⊗ B) :=
   Rep.mkIso (zmodRestrictIntTensorRepresentationEquiv n A B)
 
+/-- For representations `A`, `B` of a group `G` over `ZMod n` with coefficient
+carriers in universe zero, the forward tensor comparison sends `x ⊗ₜ[ℤ] y` to
+`x ⊗ₜ[ZMod n] y` for every `x ∈ A`, `y ∈ B`. This holds for every `n : ℕ`. -/
 @[simp]
 theorem zmodRestrictIntTensorIso_hom_tmul
     (n : ℕ) (A B : Rep.{0} (ZMod n) G) (x : A) (y : B) :
@@ -87,6 +99,9 @@ theorem zmodRestrictIntTensorIso_hom_tmul
       x ⊗ₜ[ZMod n] y :=
   rfl
 
+/-- For representations `A`, `B` of a group `G` over `ZMod n` with coefficient
+carriers in universe zero, the inverse tensor comparison sends `x ⊗ₜ[ZMod n] y` to
+`x ⊗ₜ[ℤ] y` for every `x ∈ A`, `y ∈ B`. This holds for every `n : ℕ`. -/
 @[simp]
 theorem zmodRestrictIntTensorIso_inv_tmul
     (n : ℕ) (A B : Rep.{0} (ZMod n) G) (x : A) (y : B) :

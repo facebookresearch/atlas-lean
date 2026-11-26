@@ -1,3 +1,6 @@
-# Unit Field fixing open
+# The fixing subgroup of a unit field is open
 
-The actual finite field's fixing subgroup is open in the prescribed topology.
+The fixing subgroup of a unit field is open.
+
+For a unit x ∈ Lˣ, the fixing subgroup of its finite Galois intermediate field is open in
+Gal(L/K) with the Krull topology.

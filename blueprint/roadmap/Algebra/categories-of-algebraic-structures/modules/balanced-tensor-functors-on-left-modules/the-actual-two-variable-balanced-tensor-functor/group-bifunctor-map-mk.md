@@ -1,3 +1,6 @@
-# Group Bifunctor map mk
+# Right-variable map in the group-valued tensor bifunctor
 
-Forgetting preserves the original first-variable tensor generator value.
+Right-variable map in the group-valued tensor bifunctor.
+
+For a right-module map `f : M ⟶ M'`, the group-valued balanced tensor map at `N` sends `[m ⊗
+n]` to `[f m ⊗ n]`.

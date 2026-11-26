@@ -16,13 +16,16 @@ public import MathlibExt.Algebra.Category.ModuleCat.TensorHomFiniteFactor
 public import MathlibExt.Algebra.Category.ModuleCat.TensorIntegerProductFiniteFactor
 
 /-!
-# Product cochains and finite-projective tensor factors
+# Full cochain products and a finite projective tensor factor
 
-Cochains use `HomComplex.Triplet a`, whose diagonal coordinates are the
-integer product of module Hom spaces. Product and coefficient comparisons
-give the signed tensor-factor comparison with an arbitrary first Hom
-source. At source coordinate s, the sign is (-1)^(s*b), where b is the
-right tensor degree.
+Let R be a commutative ring and P,J integer cochain complexes of R-modules. Degree-a cochains
+identify R-linearly with the full product ∏_s Hom_R(P^s,J^{s+a}), using target-degree
+transports for every presentation of s+a.
+
+If V is a finite projective object of the same module category, tensoring this full cochain
+product on the right by V gives the product of Hom_R(P^s,J^{s+a}⊗V). A chosen right tensor
+degree b introduces the sign (−1)^{sb} at source degree s. Neither P nor J requires support
+bounds, finite generation, or projectivity.
 -/
 
 @[expose] public section
@@ -39,8 +42,10 @@ universe u v
 
 variable (R : Type u) [CommRing R]
 
-/-- Diagonal coordinates of the original native product cochain. The inverse
-uses the native degree Iso to retain every Triplet presentation. -/
+/-- For a commutative ring R, integer R-module cochain complexes P,J in universe v, and a ∈ ℤ,
+there is an R-linear equivalence C^a(P,J) ≃ ∏_{s∈ℤ} Hom_R(P^s,J^{s+a}). It sends f to its
+coordinate f_{s,s+a}. The inverse uses the canonical target-term isomorphism to define every
+coordinate with s+a=t. -/
 def cochainDiagonalLinearEquiv (P J : CochainComplex (ModuleCat.{v} R) ℤ) (a : ℤ) :
     Cochain P J a ≃ₗ[R] ∀ s : ℤ, P.X s →ₗ[R] J.X (s + a) where
   toFun f s := (f.v s (s + a) rfl).hom
@@ -67,13 +72,18 @@ def cochainDiagonalLinearEquiv (P J : CochainComplex (ModuleCat.{v} R) ℤ) (a :
     funext s
     exact ModuleCat.hom_smul _ _
 
-/-- The original cochain evaluation is the forward diagonal coordinate. -/
+/-- Let R be a commutative ring, P,J integer R-module cochain complexes, a ∈ ℤ, and f ∈ C^a(P,J).
+The source-degree-s coordinate of cochainDiagonalLinearEquiv(f) is the underlying R-linear map
+of f_{s,s+a}. -/
 theorem cochainDiagonalLinearEquiv_apply
     (P J : CochainComplex (ModuleCat.{v} R) ℤ) (a : ℤ)
     (f : Cochain P J a) (s : ℤ) :
     cochainDiagonalLinearEquiv R P J a f s = (f.v s (s + a) rfl).hom := rfl
 
-/-- Every original off-diagonal Triplet uses the same native degree transport. -/
+/-- For a commutative ring R, P,J integer R-module cochain complexes, and a family g_s : P^s →ₗ[R]
+J^{s+a}, the reconstructed degree-a cochain has coordinate at s+a=t equal to g_s followed by
+the canonical isomorphism J^{s+a} ≅ J^t. This formula holds for every presentation of the
+target degree. -/
 theorem cochainDiagonalLinearEquiv_symm_apply_v
     (P J : CochainComplex (ModuleCat.{v} R) ℤ) (a : ℤ)
     (g : ∀ s : ℤ, P.X s →ₗ[R] J.X (s + a))
@@ -81,8 +91,9 @@ theorem cochainDiagonalLinearEquiv_symm_apply_v
     ((cochainDiagonalLinearEquiv R P J a).symm g).v s t hst =
       ModuleCat.ofHom (g s) ≫ (HomologicalComplex.XIsoOfEq J hst).hom := rfl
 
-/-- Original source-degree signs on an actual integer product. Applying the
-same signs twice is the identity, including in characteristic two. -/
+/-- Let R be a commutative ring, F : ℤ → ModuleCat.{v} R a family, and b ∈ ℤ. The map on ∏_s F_s
+given by x_s ↦ (−1)^{sb}·x_s is an R-linear equivalence with itself as inverse. The integer
+sign is (s*b).negOnePow, whose square is one in every characteristic. -/
 def integerProductSignsLinearEquiv (F : ℤ → ModuleCat.{v} R) (b : ℤ) :
     (∀ s : ℤ, F s) ≃ₗ[R] ∀ s : ℤ, F s where
   toFun f s := (s * b).negOnePow • f s
@@ -103,9 +114,11 @@ def integerProductSignsLinearEquiv (F : ℤ → ModuleCat.{v} R) (b : ℤ) :
     simpa only [RingHom.id_apply, Pi.smul_apply, Units.smul_def] using
       (smul_comm ((s * b).negOnePow : ℤ) r (f s))
 
-/-- The original full Hom product, tensored on the right by the original
-finite categorical-projective factor, has its actual signed coefficient Iso.
-Neither P nor J has a bound or finiteness hypothesis. -/
+/-- Let R be a commutative ring, P,J integer cochain complexes in ModuleCat.{v} R, and V a finite
+R-module that is projective as an object of ModuleCat.{v} R. For a,b ∈ ℤ there is an R-linear
+equivalence C^a(P,J)⊗_R V ≃ ∏_s Hom_R(P^s,J^{s+a}⊗_R V). It combines the full-product tensor
+comparison, the finite-projective Hom–tensor comparison in each source degree, and the signs
+(−1)^{sb}. The modules in P and J are unrestricted. -/
 def cochainTensorFiniteFactorEquiv
     (P J : CochainComplex (ModuleCat.{v} R) ℤ) (a b : ℤ)
     (V : ModuleCat.{v} R) [CategoryTheory.Projective V] [Module.Finite R V] :
@@ -119,8 +132,10 @@ def cochainTensorFiniteFactorEquiv
         (integerProductSignsLinearEquiv R
           (fun s => ModuleCat.of R (P.X s →ₗ[R] J.X (s + a) ⊗[R] V)) b)))
 
-/-- Its forward map is exactly the original signed coefficient map at every
-original source degree, on the actual unrestricted cochain family. -/
+/-- For a commutative ring R, integer module cochain complexes P,J, a finite
+categorical-projective module V, f ∈ C^a(P,J), u ∈ V, and a,b,s ∈ ℤ, the s-coordinate of
+cochainTensorFiniteFactorEquiv(f⊗u) is the R-linear map x ↦ (−1)^{sb}·(f_{s,s+a}(x)⊗u). The
+projectivity and finiteness assumptions are on V, not on either Hom input. -/
 theorem cochainTensorFiniteFactorEquiv_tmul
     (P J : CochainComplex (ModuleCat.{v} R) ℤ) (a b : ℤ)
     (V : ModuleCat.{v} R) [CategoryTheory.Projective V] [Module.Finite R V]

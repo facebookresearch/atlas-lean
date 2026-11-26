@@ -14,12 +14,17 @@ public import Mathlib.Algebra.Homology.ShortComplex.ConcreteCategory
 public import Mathlib.Algebra.Group.PUnit
 
 /-!
-# Actual short-exact sequences of discrete continuous abelian actions
+# Short exactness detected on the underlying abelian groups
 
-The original additive forgetful functor determines the actual kernel and
-cokernel universal maps. Their additive and equivariant equations follow
-from injectivity and surjectivity in the given sequence. This supplies real
-short-exactness without an assumed abelian structure on topological modules.
+Let G be a group with a topology, with discrete coefficient groups in an independent universe.
+The additive forgetful functor sends action morphisms to their additive maps. The one-element
+group with trivial action is a zero object.
+
+If a short complex A→B→C of discrete continuous actions becomes short exact after forgetting,
+its first arrow is a kernel and its second a cokernel in the action category. The underlying
+universal additive maps are equivariant and continuous because their sources are discrete. These
+kernel and cokernel properties give zero homology data and prove short exactness of the same
+action sequence.
 -/
 
 @[expose] public section
@@ -30,15 +35,23 @@ universe g w
 namespace CategoryTheory.DiscreteAbelianAction
 variable {G : Type g} [Group G] [TopologicalSpace G]
 
-/-- The actual additive forgetful functor preserves Hom addition literally. -/
+/-- Let G be a group with a topology in universe g and discrete continuous abelian actions have
+coefficient universe w, independently. Let U forget the action to abelian groups. For parallel
+action morphisms f,h, U(f+h)=U(f)+U(h), with pointwise addition on the same coefficient groups. -/
 instance forget_additive : (forget.{g, w} G).Additive where
   map_add := by intro X Y f h; rfl
 
-/-- The original trivial zero coefficient is an actual zero object. -/
+/-- Let G be a group with a topology in universe g and discrete continuous abelian actions have
+coefficient universe w, independently. Let U forget the action to abelian groups. The trivial
+G-action on the one-element abelian group in coefficient universe w defines this zero
+coefficient action. -/
 def discreteZero : DiscreteAbelianAction.{g, w} G :=
   trivialObject.{g, w} G (AddCommGrpCat.of PUnit.{w + 1})
 
-/-- Every original arrow to or from the actual zero coefficient is zero. -/
+/-- Let G be a group with a topology in universe g and discrete continuous abelian actions have
+coefficient universe w, independently. Let U forget the action to abelian groups. The trivial
+one-element action is a zero object: for every coefficient action A, its Hom sets to and from
+that action contain only the zero morphism. -/
 theorem discreteZero_isZero : IsZero (discreteZero.{g, w} (G := G)) := by
   let : Subsingleton (underlying (discreteZero.{g, w} (G := G))) :=
     (show Subsingleton PUnit.{w + 1} from inferInstance)
@@ -59,7 +72,11 @@ theorem discreteZero_isZero : IsZero (discreteZero.{g, w} (G := G)) := by
     ext x
     exact Subsingleton.elim _ _
 
-/-- The actual underlying exact sequence gives its kernel universal map. -/
+/-- Let G be a group with a topology in universe g and discrete continuous abelian actions have
+coefficient universe w, independently. Let U forget the action to abelian groups. For a short
+complex S=(A --a→ B --b→ C) whose forgotten group sequence is short exact, a is a kernel of b.
+Every k:D→B with k≫b=0 has a unique lift l:D→A with l≫a=k, and the underlying additive lift is
+equivariant. -/
 def isKernelOfForgetShortExact
     (S : ShortComplex (DiscreteAbelianAction.{g, w} G))
     (hS : (S.map (forget.{g, w} G)).ShortExact) : IsLimit (KernelFork.ofι S.f S.zero) := by
@@ -90,7 +107,10 @@ def isKernelOfForgetShortExact
   ext a
   exact lift_spec a
 
-/-- The actual underlying exact sequence gives its cokernel universal map. -/
+/-- Let G be a group with a topology in universe g and discrete continuous abelian actions have
+coefficient universe w, independently. Let U forget the action to abelian groups. If U(S) is
+short exact for S=(A --a→ B --b→ C), then b is a cokernel of a. Every k:B→D with a≫k=0 descends
+uniquely to l:C→D with b≫l=k. The quotient descent is an equivariant additive action map. -/
 def isCokernelOfForgetShortExact
     (S : ShortComplex (DiscreteAbelianAction.{g, w} G))
     (hS : (S.map (forget.{g, w} G)).ShortExact) : IsColimit (CokernelCofork.ofπ S.g S.zero) := by
@@ -125,7 +145,11 @@ def isCokernelOfForgetShortExact
   ext y
   exact hsame (s (homToAdd S.g y)) y (hs _)
 
-/-- The actual kernel/cokernel pair supplies genuine zero homology data. -/
+/-- Let G be a group with a topology in universe g and discrete continuous abelian actions have
+coefficient universe w, independently. Let U forget the action to abelian groups. For S=(A --a→
+B --b→ C) with U(S) short exact, the kernel a and cokernel b give left and right homology data
+whose common homology object is the trivial one-element action. This is homology data for the
+given short complex. -/
 def homologyDataOfForgetShortExact
     (S : ShortComplex (DiscreteAbelianAction.{g, w} G))
     (hS : (S.map (forget.{g, w} G)).ShortExact) : S.HomologyData := by
@@ -169,7 +193,11 @@ def homologyDataOfForgetShortExact
                  simp only [HasZeroMorphisms.zero_comp]
                  exact S.zero.symm }
 
-/-- An underlying short-exact sequence is genuinely short exact in the original action category. -/
+/-- Let G be a group with a topology in universe g and discrete continuous abelian actions have
+coefficient universe w, independently. Let U forget the action to abelian groups. For a short
+complex S, if U(S) is short exact, then S is short exact in the action category. The first and
+second arrows satisfy the kernel and cokernel universal properties, and their underlying
+injectivity and surjectivity imply monicity and epicity. -/
 theorem shortExact_of_forget_shortExact
     (S : ShortComplex (DiscreteAbelianAction.{g, w} G))
     (hS : (S.map (forget.{g, w} G)).ShortExact) : S.ShortExact := by

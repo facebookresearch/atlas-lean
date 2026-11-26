@@ -1,4 +1,6 @@
-# Field Canonical Residue Closure Algebra
+# Base field action on the residue separable closure
 
-Its actual base-field algebra comes through the inverse of the original residue-field
-isomorphism.
+Base field action on the residue separable closure.
+
+Use the inverse residue-field isomorphism and the closure inclusion to give the canonical
+residue closure a `k`-algebra structure.

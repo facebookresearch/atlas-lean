@@ -1,4 +1,7 @@
-# Lifted Enveloping Lie Complex Map augmentation
+# The augmentation square for lifted enveloping Lie maps
 
-The original jointly varying CE map preserves the original augmentation
-into exact target restriction, proved on the scalar and regular coefficients.
+The augmentation square for lifted enveloping Lie maps.
+
+For a Lie map between free underlying modules, the lifted resolution map followed by the
+restricted target augmentation equals the source augmentation followed by the lifted trivial-
+module map.

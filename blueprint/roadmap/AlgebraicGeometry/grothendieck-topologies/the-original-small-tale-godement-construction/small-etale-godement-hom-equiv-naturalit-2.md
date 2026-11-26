@@ -1,3 +1,6 @@
-# Small Etale Godement Hom Equiv naturality right
+# Stalk skyscraper correspondence is natural in coefficient families
 
-Naturality in each family morphism is the original skyscraper product map.
+Stalk skyscraper correspondence is natural in coefficient families.
+
+Postcomposition by a family map corresponds to postcomposition by its product-of-skyscrapers
+map.

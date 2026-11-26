@@ -1,5 +1,7 @@
-# Original Intrinsic Standard Tor Iso
+# Intrinsic and rearranged standard ambient Tor are canonically isomorphic
 
-The actual intrinsic graph Tor is compared with the actual rearranged
-standard ambient, keeping the original three rings, both graph evaluations,
-and the original common coefficient universe.
+For commutative K-algebras B,V,W and maps a:B→V,b:B→W,
+put G=(V⊗K W)⊗K B and T=V⊗B W.
+The ambient algebra rearrangement gives the B-module
+isomorphism from M_intr,q to the standard ambient Tor with
+A=V,C=W and the multiplication support maps determined by a,b.

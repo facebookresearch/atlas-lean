@@ -14,17 +14,23 @@ public import MathlibExt.LinearAlgebra.ExteriorPower.BalancedBaseChange
 public import MathlibExt.RingTheory.Kaehler.PolynomialExterior
 
 /-!
-# polynomial diagonal coefficients in exterior coordinates
+# Polynomial diagonal coefficients in free exterior coordinates
 
-The original free enveloping coordinate module is the scalar extension of
-the original ground generator module. Exterior base change and balanced cancellation identify every diagonal coefficient degree with
-the original coefficient tensor the ground exterior power.
+Let k be a commutative ring, A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and V = ⊕ᵢ∈σ k·eᵢ. Exterior base change
+and balanced tensor cancellation identify the nth diagonal coefficient term M ⊗_E ∧ⁿ_E(E ⊗_k V)
+with M ⊗_k ∧ⁿₖV for any compatible A-bimodule M. An enveloping scalar on the wedge is absorbed
+by the right E-action on M.
 
-For arbitrary bimodules the differential keeps the original right-minus-left
-variable action. Only the symmetric action makes it zero. The
-resulting symmetric Hochschild homology comparison with polynomial
-differential forms uses the diagonal resolution and arbitrary
-coefficient modules over arbitrary commutative ground rings.
+In these coordinates the differential is the alternating deletion sum with coefficient operators
+m ↦ m·Xᵢ − Xᵢ·m. For symmetric coefficients it vanishes, and the diagonal projective-resolution
+comparison gives HHₙ(A,M) ≅ M ⊗_k ∧ⁿₖV ≅ M ⊗_A ∧ⁿ_AΩ¹_{A/k}. The class maps and their inverse
+coordinate formulas are provided in every degree, with no finite-variable or
+coefficient-flatness hypothesis.
+
+These polynomial differential-form coordinates are the diagonal Koszul description of the
+Hochschild–Kostant–Rosenberg comparison; see Hochschild, Kostant and Rosenberg, “Differential
+forms on regular affine algebras,” Transactions of the American Mathematical Society 102 (1962),
+383–408.
 -/
 
 @[expose] public section
@@ -53,8 +59,10 @@ variable (M : Type w) [AddCommGroup M] [Module k M]
   [SMulCommClass k (MvPolynomial σ k) M] [SMulCommClass k (MvPolynomial σ k)ᵐᵒᵖ M]
   [IsScalarTower k (MvPolynomial σ k) M] [IsScalarTower k (MvPolynomial σ k)ᵐᵒᵖ M]
 
-/-- Actual diagonal coefficient degrees have the original free exterior generator
-coordinates, retaining arbitrary original bimodule coefficients. -/
+/-- Let k be a commutative ring, σ any variable set, A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and V = ⊕ᵢ∈σ k·eᵢ.
+Let M be a compatible A-bimodule with commuting left and right actions. Exterior base change
+along k → E and balanced tensor cancellation give a k-linear equivalence (coefficientComplex k σ
+M).X n ≅ M ⊗[k] ∧ⁿₖV in every n : ℕ. -/
 def coefficientFreeExteriorEquiv (n : ℕ) :
     (coefficientComplex k σ M).X n ≃ₗ[k] M ⊗[k] (⋀[k]^n V) := by
   letI nativeRight : Module Eᵐᵒᵖ M := EnvelopingCoefficient.rightEnvelopingModule k A M
@@ -76,8 +84,10 @@ def coefficientFreeExteriorEquiv (n : ℕ) :
     (fun _ _ => rfl) (fun r z => e.map_smul r z)).trans
       (exteriorPower.balancedBaseChangeEquiv k E M V n)
 
-/-- Each original enveloping exterior scalar is absorbed by the original right
-enveloping action while every original ground variable is preserved. -/
+/-- Let k be a commutative ring, σ any variable set, A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and V = ⊕ᵢ∈σ k·eᵢ.
+Let M be a compatible A-bimodule with commuting left and right actions. For e ∈ E, m ∈ M and f :
+Fin n → σ, the free exterior coordinate equivalence sends m ⊗_E(e·(e_{f(0)}∧…∧e_{f(n−1)})) to
+(m·e) ⊗_k(e_{f(0)}∧…∧e_{f(n−1)}), where m·e is the right enveloping action. -/
 theorem coefficientFreeExteriorEquiv_mk_smul_basis
     (n : ℕ) (m : M) (e : E) (f : Fin n → σ) :
     letI := EnvelopingCoefficient.rightEnvelopingModule k A M
@@ -135,7 +145,10 @@ theorem coefficientFreeExteriorEquiv_mk_smul_basis
       (fun j => Finsupp.single (f j) (1 : k))
   exact hdef.trans ((congrArg T (hB.trans hmk)).trans hT)
 
-/-- Original unscaled variable wedges retain the original coefficient unchanged. -/
+/-- Let k be a commutative ring, σ any variable set, A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and V = ⊕ᵢ∈σ k·eᵢ.
+Let M be a compatible A-bimodule with commuting left and right actions. The free exterior
+coordinate equivalence sends m ⊗_E(e_{f(0)}∧…∧e_{f(n−1)}) to m ⊗_k(e_{f(0)}∧…∧e_{f(n−1)}), for n
+: ℕ, m ∈ M and f : Fin n → σ. -/
 theorem coefficientFreeExteriorEquiv_mk_basis (n : ℕ) (m : M) (f : Fin n → σ) :
     letI := EnvelopingCoefficient.rightEnvelopingModule k A M
     letI : Module k (⋀[E]^n VE) := Module.compHom _ (algebraMap k E)
@@ -146,7 +159,10 @@ theorem coefficientFreeExteriorEquiv_mk_basis (n : ℕ) (m : M) (f : Fin n → �
   simpa only [op_one, one_smul] using
     coefficientFreeExteriorEquiv_mk_smul_basis k σ M n m (1 : E) f
 
-/-- The inverse free coordinate recovers the original balanced variable wedge. -/
+/-- Let k be a commutative ring, σ any variable set, A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and V = ⊕ᵢ∈σ k·eᵢ.
+Let M be a compatible A-bimodule with commuting left and right actions. The inverse free
+exterior coordinate equivalence sends m ⊗_k(e_{f(0)}∧…∧e_{f(n−1)}) to the balanced tensor m
+⊗_E(e_{f(0)}∧…∧e_{f(n−1)}) in the degree-n diagonal coefficient term. -/
 theorem coefficientFreeExteriorEquiv_symm_tmul_basis
     (n : ℕ) (m : M) (f : Fin n → σ) :
     letI := EnvelopingCoefficient.rightEnvelopingModule k A M
@@ -160,7 +176,11 @@ theorem coefficientFreeExteriorEquiv_symm_tmul_basis
   apply (coefficientFreeExteriorEquiv k σ M n).injective
   rw [LinearEquiv.apply_symm_apply, coefficientFreeExteriorEquiv_mk_basis]
 
-/-- The original variable differential in free exterior coordinates has the right-minus-left coefficient actions, with all original deletion signs. -/
+/-- Let k be a commutative ring, σ any variable set, A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and V = ⊕ᵢ∈σ k·eᵢ.
+Let M be a compatible A-bimodule with commuting left and right actions. For m ∈ M and f :
+Fin(n+1) → σ, the differential in free exterior coordinates sends m ⊗(e_{f(0)}∧…∧e_{f(n)}) to ∑ⱼ
+(-1)ʲ·((m·X_{f(j)} − X_{f(j)}·m) ⊗ (e_{f(0)}∧…∧ê_{f(j)}∧…∧e_{f(n)})). Positions j are counted
+from zero. -/
 theorem coefficientFreeExteriorEquiv_boundary_basis
     (n : ℕ) (m : M) (f : Fin (n + 1) → σ) :
     coefficientFreeExteriorEquiv k σ M n
@@ -228,7 +248,10 @@ section Symmetric
 variable (M : Type w) [AddCommGroup M] [Module k M] [Module (MvPolynomial σ k) M]
   [SMulCommClass k (MvPolynomial σ k) M] [IsScalarTower k (MvPolynomial σ k) M]
 
-/-- The symmetric coefficient degree has the canonical original free exterior coordinates. -/
+/-- Let k be a commutative ring, σ any variable set, A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and V = ⊕ᵢ∈σ k·eᵢ.
+Let M be an A-module with compatible k-action, regarded as a symmetric bimodule. For each n : ℕ,
+the degree-n symmetric diagonal coefficient term is k-linearly equivalent to M ⊗[k] ∧ⁿₖV. This
+is the balanced exterior base-change equivalence with the symmetric right action on M. -/
 def symmetricFreeExteriorEquiv (n : ℕ) :
     (symmetricCoefficientComplex k σ M).X n ≃ₗ[k] M ⊗[k] (⋀[k]^n V) := by
   letI := Symmetric.opModule A M
@@ -237,31 +260,40 @@ def symmetricFreeExteriorEquiv (n : ℕ) :
   letI := Symmetric.kOpTower k A M
   exact coefficientFreeExteriorEquiv k σ M n
 
-/-- The polynomial diagonal resolution computes all original symmetric
-coefficient Hochschild homology in the original free exterior model. -/
+/-- Let k be a commutative ring, σ any variable set, A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and V = ⊕ᵢ∈σ k·eᵢ.
+Let M be an A-module with compatible k-action, regarded as a symmetric bimodule. The diagonal
+resolution comparison and its zero coefficient differential give a k-linear equivalence HHₙ(A,M)
+≅ M ⊗[k] ∧ⁿₖV for every n : ℕ. -/
 def symmetricHochschildFreeExteriorEquiv (n : ℕ) :
     (Symmetric.chainComplex k A M).homology n ≃ₗ[k] M ⊗[k] (⋀[k]^n V) :=
   (symmetricCoefficientHomologyIsoDegree k σ M n).toLinearEquiv.trans
     (symmetricFreeExteriorEquiv k σ M n)
 
-/-- Canonical polynomial cotangent coordinates identify the computed homology
-with the original coefficient-first exterior differential-form module. -/
+/-- Let k be a commutative ring, σ any variable set, A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and V = ⊕ᵢ∈σ k·eᵢ.
+Let M be an A-module with compatible k-action, regarded as a symmetric bimodule. Composing the
+free exterior homology coordinates with eᵢ ↦ dXᵢ gives a k-linear equivalence HHₙ(A,M) ≅ M ⊗[A]
+∧ⁿ_AΩ¹_{A/k} in every degree n : ℕ. -/
 def symmetricHochschildDifferentialFormEquiv (n : ℕ) :
     (Symmetric.chainComplex k A M).homology n ≃ₗ[k]
       M ⊗[A] (⋀[A]^n (KaehlerDifferential k A)) :=
   (symmetricHochschildFreeExteriorEquiv k σ M n).trans
     ((KaehlerDifferential.mvPolynomialCoefficientExteriorEquiv k σ M n).restrictScalars k)
 
-/-- The coefficient diagonal class has its independently specified original
-free exterior coordinates. -/
+/-- Let k be a commutative ring, σ any variable set, A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and V = ⊕ᵢ∈σ k·eᵢ.
+Let M be an A-module with compatible k-action, regarded as a symmetric bimodule. For each n : ℕ,
+the map M ⊗[k] ∧ⁿₖV → HHₙ(A,M) first takes inverse free coordinates to the diagonal coefficient
+term, then takes its zero-differential cycle class and applies the inverse resolution homology
+comparison. -/
 def symmetricHochschildFreeExteriorClass (n : ℕ) :
     M ⊗[k] (⋀[k]^n V) →ₗ[k] (Symmetric.chainComplex k A M).homology n :=
   (symmetricHochschildClassFromDiagonal k σ M n).hom.comp
     (symmetricFreeExteriorEquiv k σ M n).symm.toLinearMap
 
 
-/-- The diagonal class is detected by its independently specified
-original free exterior element. -/
+/-- Let k be a commutative ring, σ any variable set, A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and V = ⊕ᵢ∈σ k·eᵢ.
+Let M be an A-module with compatible k-action, regarded as a symmetric bimodule. For x ∈ M ⊗[k]
+∧ⁿₖV, symmetricHochschildFreeExteriorEquiv applied to symmetricHochschildFreeExteriorClass k σ M
+n x returns x. -/
 theorem symmetricHochschildFreeExteriorClass_coordinates (n : ℕ)
     (x : M ⊗[k] (⋀[k]^n V)) :
     symmetricHochschildFreeExteriorEquiv k σ M n
@@ -281,8 +313,10 @@ theorem symmetricHochschildFreeExteriorClass_coordinates (n : ℕ)
   exact he.trans ((congrArg (symmetricFreeExteriorEquiv k σ M n) hc).trans
     ((symmetricFreeExteriorEquiv k σ M n).apply_symm_apply x))
 
-/-- The original variable class gives its coefficient differential word
-under the full polynomial diagonal homology comparison. -/
+/-- Let k be a commutative ring, σ any variable set, A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and V = ⊕ᵢ∈σ k·eᵢ.
+Let M be an A-module with compatible k-action, regarded as a symmetric bimodule. For m ∈ M and f
+: Fin n → σ, the differential-form homology coordinates of the exterior class of m
+⊗(e_{f(0)}∧…∧e_{f(n−1)}) are m ⊗_A(dX_{f(0)}∧…∧dX_{f(n−1)}). -/
 theorem symmetricHochschildFreeExteriorClass_differentialForm_basis
     (n : ℕ) (m : M) (f : Fin n → σ) :
     symmetricHochschildDifferentialFormEquiv k σ M n

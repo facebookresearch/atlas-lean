@@ -1,3 +1,6 @@
-# Hom Coefficient Transformation id
+# Identity coefficient gives the identity Hom transformation
 
-The identity coefficient map induces the actual identity Hom transformation.
+Identity coefficient gives the identity Hom transformation.
+
+The precomposition natural transformation induced by the identity coefficient map is the
+identity of `homFunctor R S B`.

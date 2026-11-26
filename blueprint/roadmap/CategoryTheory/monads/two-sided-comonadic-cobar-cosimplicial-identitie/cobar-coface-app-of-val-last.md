@@ -1,3 +1,6 @@
-# Cobar Coface App of val last
+# The cobar coface component at the final index
 
-Coface with public last index is the left coaction.
+The cobar coface component at the final index.
+
+If the coface index has value `n+1`, its component is the left coaction mapped through `G^n`
+and `R`.

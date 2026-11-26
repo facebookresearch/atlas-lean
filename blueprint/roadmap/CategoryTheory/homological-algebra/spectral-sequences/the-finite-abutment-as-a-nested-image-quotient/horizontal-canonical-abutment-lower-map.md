@@ -1,3 +1,4 @@
-# Horizontal Canonical Abutment Lower Map
+# Filtration map from bottom to the preceding column cut
 
-Map from bottom to the filtration stage preceding column `p`.
+For p : ℕ, horizontalCanonicalAbutmentLowerMap is the unique EInt order morphism ⊥→ℓ, with
+ℓ=(p:ℤ)−1.

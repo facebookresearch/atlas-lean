@@ -13,15 +13,15 @@ public import Mathlib.CategoryTheory.Limits.Shapes.Biproducts
 public import Mathlib.CategoryTheory.Preadditive.AdditiveFunctor
 
 /-!
-# Actual locally finite split-image coproduct inverses
+# A finite-sum inverse for a countable split coproduct
 
-For an original countable family of split images, the actual forward map is
-the native coproduct descent of the image inclusions. When the original
-projections have finite support and their actual projector sum is identity,
-the inverse is the finite native sum of projections followed by coproduct
-inclusions. Cross-image identities and the actual splits prove both inverse
-laws. No coproduct isomorphism certificate, exactness or global AB5
-assumption is supplied.
+Let `C` be preadditive and suppose a family `F : ℕ → C` has a coproduct. Given maps `i_j : F_j
+→ X` and `p_j : X → F_j`, assume `i_j ≫ p_j = id`, distinct cross terms `i_j ≫ p_k` vanish,
+and `p_j = 0` for `j>N` at a fixed cutoff `N`.
+
+If `∑_(j=0)^N p_j ≫ i_j = id_X`, the coproduct descent of the `i_j` is an isomorphism. Its
+inverse is the finite sum `∑_(j=0)^N p_j ≫ ι_j`. The splitting and finite-support hypotheses
+prove the inverse identity on the whole coproduct.
 -/
 
 @[expose] public section
@@ -36,12 +36,18 @@ namespace CategoryTheory.Limits
 
 variable {C : Type u} [Category.{v} C] [Preadditive C]
 
-/-- The actual finite sum of the original projections into the original countable coproduct. -/
+/-- The finite-sum map into a countable coproduct.
+
+For maps `p_j : X → F_j` and cutoff `N`, sum `p_j` followed by the coproduct inclusion over `0
+≤ j ≤ N`. -/
 def finiteSplitCoproductInverse (F : ℕ → C) [HasCoproduct F] {X : C}
     (p : ∀ i : ℕ, X ⟶ F i) (N : ℕ) : X ⟶ ∐ F :=
   ∑ j : Fin (N + 1), p j.val ≫ Sigma.ι F j.val
 
-/-- The actual finite projector sum proves the exact right inverse to the original inclusion descent. -/
+/-- The finite projector-sum identity for coproduct descent.
+
+If `∑_(j=0)^N p_j ≫ i_j = id_X`, the finite-sum map into the coproduct followed by the descent
+of the `i_j` is the identity on `X`. -/
 @[reassoc]
 theorem finiteSplitCoproductInverse_desc (F : ℕ → C) [HasCoproduct F] {X : C}
     (i : ∀ j : ℕ, F j ⟶ X) (p : ∀ j : ℕ, X ⟶ F j) (N : ℕ)
@@ -51,7 +57,11 @@ theorem finiteSplitCoproductInverse_desc (F : ℕ → C) [HasCoproduct F] {X : C
   simp only [Category.assoc, Sigma.ι_desc]
   exact hsum
 
-/-- Actual cross-image and split identities prove the original descent followed by its finite inverse is identity. -/
+/-- The coproduct inverse identity from split orthogonal projections.
+
+If each `i_j` splits `p_j`, cross terms vanish for distinct indices, and all `p_j` above `N`
+are zero, the inclusion descent followed by the finite-sum inverse is the identity on the
+coproduct. -/
 @[reassoc]
 theorem desc_finiteSplitCoproductInverse (F : ℕ → C) [HasCoproduct F] {X : C}
     (i : ∀ j : ℕ, F j ⟶ X) (p : ∀ j : ℕ, X ⟶ F j) (N : ℕ)
@@ -80,7 +90,11 @@ theorem desc_finiteSplitCoproductInverse (F : ℕ → C) [HasCoproduct F] {X : C
     have hjk : j ≠ k.val := by have hkn := k.isLt; omega
     rw [← Category.assoc, hcross j k.val hjk, zero_comp]
 
-/-- The original countable split-image descent has its actual finite-sum inverse. -/
+/-- The isomorphism given by finitely supported split coproduct data.
+
+The split, cross-vanishing, support, and projector-sum equations identify `∐ F` with `X`, with
+forward map the inclusion descent and inverse the finite sum of projections into coproduct
+inclusions. -/
 def finiteSplitCoproductIso (F : ℕ → C) [HasCoproduct F] {X : C}
     (i : ∀ j : ℕ, F j ⟶ X) (p : ∀ j : ℕ, X ⟶ F j) (N : ℕ)
     (hsplit : ∀ j : ℕ, i j ≫ p j = 𝟙 (F j))

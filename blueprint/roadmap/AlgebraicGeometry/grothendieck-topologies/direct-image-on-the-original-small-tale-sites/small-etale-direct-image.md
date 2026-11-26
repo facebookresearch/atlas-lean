@@ -1,4 +1,6 @@
-# Small Etale Direct Image
+# Direct image along a scheme morphism
 
-The actual direct-image functor for an arbitrary scheme morphism and
-arbitrary coefficient universe, obtained from proved original-site continuity.
+Direct image along a scheme morphism.
+
+Precompose an abelian sheaf on `X` with the small étale base-change functor of `f : X → Y` to
+obtain a sheaf on `Y`, with the same coefficient universe.

@@ -1,4 +1,6 @@
-# Small Etale Common epi locally Surjective
+# Epimorphisms of abelian sheaves are locally surjective
 
-An actual common-universe epimorphism has original section lifts on an
-actual cover. Stalk surjectivity comes from the stock stalk left adjoint.
+Epimorphisms of abelian sheaves are locally surjective.
+
+An epimorphism of common-universe small étale abelian sheaves is locally surjective on
+sections.

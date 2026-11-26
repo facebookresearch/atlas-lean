@@ -1,8 +1,6 @@
-# Tuple Iso degeneracy
+# The bar-to-nerve comparison commutes with every degeneracy
 
-Degeneracy compatibility of the degreewise equivalence.
+The bar-to-nerve comparison commutes with every degeneracy.
 
-Both sides insert `1` head-first; the bar side uses `barEtaAtPos` with
-`tensorMonad_eta_app`, the nerve side uses the pinned nerve degeneracies with
-`SingleObj.id_as_one`. `Fin.rev` is never unfolded beyond the accepted
-`barEtaAtPos_rev` wrapper.
+For each i : Fin (n+1), applying the degree-n comparison then the nerve degeneracy equals
+applying the bar degeneracy then the degree-(n+1) comparison.

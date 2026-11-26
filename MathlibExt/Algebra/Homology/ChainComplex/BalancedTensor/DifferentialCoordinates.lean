@@ -14,11 +14,16 @@ module
 public import MathlibExt.Algebra.Homology.ChainComplex.BalancedTensor.InverseLaws
 
 /-!
-# Integer differential coordinates for tensor–Hom currying
+# Differential coordinates for integer tensor–Hom cochains
 
-The formulas evaluate the differentials on tensor generators and
-full-product coordinates in every integer degree, retaining the
-precomposition and postcomposition maps.
+Let `P` and `Q` be integer chain complexes and `I` a cochain complex. For a degree-`n` total-
+Hom cochain `f`, its differential on a tensor generator is the sum of source precomposition in
+`P`, source precomposition in `Q` with sign `(-1)^(-a)`, and target postcomposition with sign
+`(-1)^(n+1)`, when the first chain input is in degree `-a`.
+
+For a nested Hom cochain, the outer source term is unweighted, and the inner differential is
+multiplied by `(-1)^(n+1)`. In inner target degree `b`, its target postcomposition carries the
+additional factor `(-1)^b`. All coordinates are full integer coordinates.
 -/
 
 @[expose] public section
@@ -50,7 +55,12 @@ private theorem d_mk_adjacent (p p' q q' s t : ℤ)
   subst p' q' t
   exact d_mk R P Q p q s h x y
 
-/-- The original tensor-total Hom differential, evaluated on its two original factors. -/
+/-- Three-term differential formula on a tensor Hom generator.
+
+Let `a + c + (n + 1) = d`, `x : P.X (-a)`, and `y : Q.X (-c)`. Evaluate the differential of a
+degree-`n` cochain `f` on `[x ⊗ y]`. The result is `f_(a+c+1,d)([d_P x ⊗ y]) + (-1)^(-a) •
+f_(a+c+1,d)([x ⊗ d_Q y]) + (-1)^(n+1) • d_I(f_(a+c,d-1)([x ⊗ y]))`, with the degree transports
+displayed in the statement. -/
 theorem tensorHom_d_mk (n : ℤ)
     (f : CochainComplex.HomComplex.Cochain
         ((cochainComplexEquivalence AddCommGrpCat.{v}).functor.obj (complex R P Q)) I n)
@@ -123,7 +133,12 @@ theorem tensorHom_d_mk (n : ℤ)
   exact hValue.trans (congrArg
     (fun v : I.X d => v + (n + 1).negOnePow • j.hom (s.hom z)) hFactor)
 
-/-- The original nested full-product Hom differential on every pair of source degrees. -/
+/-- Three-term differential formula in nested Hom coordinates.
+
+Let `a + (n + 1) = b` and `c + b = d`. The nested differential on `x : P.X (-a)` and `y : Q.X
+(-c)` is the outer component `g_(a+1,b)` evaluated on `d_P x` and then `(c, d)`, plus
+`(-1)^(n+1)` times the sum of the inner source term from `g_(a,b-1)` at `(c+1, d)` on `d_Q y`
+and `(-1)^b` times the target differential of its `(c, d-1)` value. -/
 theorem nestedHom_d_v (n : ℤ)
     (g : CochainComplex.HomComplex.Cochain
         ((cochainComplexEquivalence (ModuleCat.{v} Rᵐᵒᵖ)).functor.obj P) HI n)

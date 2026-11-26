@@ -1,3 +1,6 @@
-# Cyclic Two Column Sequence Map id
+# The identity map of the cyclic two-column sequence
 
-The original nonunital identity induces the identity on the entire sequence.
+The identity map of the cyclic two-column sequence.
+
+The identity nonunital algebra homomorphism induces the identity on the full inclusion-and-
+quotient sequence.

@@ -1,4 +1,6 @@
-# Godement tensor pairings and geometric points
+# Field point monad comparison preserves the binary pairing
 
-The actual canonical-to-prescribed point monad comparison preserves its genuine binary tensor
-pairing.
+Field point monad comparison preserves the binary pairing.
+
+The canonical pairing followed by the endofunctor comparison at the tensor sheaf equals the
+tensor of its components followed by the prescribed pairing.

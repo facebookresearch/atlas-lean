@@ -1,4 +1,6 @@
-# Map Mul Equiv Rep
+# Image of a representative in a common universe
 
-The image of a representative from a right transversal under a
-multiplicative equivalence.
+Image of a representative in a common universe.
+
+For a group equivalence e : G ≃* G′ and t in an H-transversal T, this is the ambient element
+e(t) ∈ G′. The two groups here lie in the same stated universe.

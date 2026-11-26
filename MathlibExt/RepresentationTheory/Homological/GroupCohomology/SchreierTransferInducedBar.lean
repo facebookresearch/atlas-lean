@@ -15,18 +15,20 @@ public import Mathlib.RepresentationTheory.FiniteIndex
 public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.SchreierRestrictionCorestrictionArbitrary
 
 /-!
-# The induced bar resolution for finite-index transfer
+# The induced bar resolution and universal transfer
 
-Finite-index induction is both a left and a right adjoint.  It therefore
-preserves the finite limits and colimits needed for homology, is additive,
-and carries projective objects to projective objects.  Consequently it sends
-the subgroup bar resolution to a projective resolution of the induced
-trivial representation.
+For a finite-index subgroup H ≤ G and a commutative ring k, induction sends the H-bar
+resolution to a projective resolution of the induced trivial representation ind_H^G(k). The
+induction unit applied to each H-bar generator defines a universal cochain uₙ(q) = η(barBasis
+n q).
 
-This file also records the normalized bar cochain obtained from the unit of
-the induction--restriction adjunction.  It is the universal coefficient
-cochain used to represent arbitrary Schreier transfer by a chain map into
-the induced bar resolution.
+Transferring uₙ by a right transversal T and extending from G-bar generators produces a chain
+map B_G → ind_H^G(B_H). Its augmentation is the canonical norm map from the trivial
+G-representation to ind_H^G(k), whose value at 1 is ∑ₜ IndV.mk(t,1). Under the induction
+adjunction, composing this universal map with the adjoint free lift of a coefficient cochain
+gives the free lift of its Schreier transfer.
+
+Universal maps obtained from two transversals lift the same norm and are chain homotopic.
 -/
 
 @[expose] public section
@@ -46,14 +48,18 @@ variable (H : Subgroup G) [H.FiniteIndex]
 
 attribute [local instance] Subgroup.fintypeQuotientOfFiniteIndex
 
-/-- Finite-index induction is additive.  The right-adjoint structure gives
-binary-product preservation, and induction preserves zero morphisms. -/
+/-- Additivity of finite-index induction.
+
+For a finite-index subgroup H ≤ G, induction of k-linear representations preserves sums of
+morphisms. -/
 noncomputable instance indFunctorFiniteIndexAdditive :
     (indFunctor.{u} k H.subtype).Additive :=
   Functor.additive_of_preserves_binary_products _
 
-/-- Finite-index induction preserves projective objects because restriction,
-its right adjoint, preserves epimorphisms. -/
+/-- Projective objects under finite-index induction.
+
+For a finite-index subgroup H ≤ G, induction sends projective H-representations to projective
+G-representations. -/
 noncomputable instance indFunctorFiniteIndexPreservesProjectiveObjects :
     (indFunctor.{u} k H.subtype).PreservesProjectiveObjects :=
   Functor.preservesProjectiveObjects_of_adjunction_of_preservesEpimorphisms
@@ -70,21 +76,28 @@ variable (H : Subgroup G) [H.FiniteIndex]
 
 attribute [local instance] Subgroup.fintypeQuotientOfFiniteIndex
 
-/-- A finite-index right transversal has a finite type of representatives. -/
+/-- Finite representatives for the induced-bar construction.
+
+For a finite-index H ≤ G, the representative type of a right transversal T is finitely
+enumerated for the induced-bar sums. -/
 noncomputable local instance inducedBarRightTransversalFintype
     (T : H.RightTransversal) : Fintype (T : Set G) :=
   @Fintype.ofFinite (T : Set G) (T.2.finite_right)
 
-/-- The subgroup bar resolution after finite-index induction, as a
-projective resolution of the induced trivial representation. -/
+/-- The projective resolution induced from the subgroup bar.
+
+Apply induction along H → G to the H-bar resolution of the trivial k-representation. For
+finite-index H, this gives a projective resolution of ind_H^G(k). -/
 noncomputable def inducedBarResolution :
     ProjectiveResolution
       ((Rep.indFunctor.{u} k H.subtype).obj (Rep.trivial k H k)) :=
   (Rep.indFunctor.{u} k H.subtype).mapProjectiveResolution
     (Rep.barResolution k H)
 
-/-- The canonical finite-index norm map from the ambient trivial
-representation to the induced subgroup trivial representation. -/
+/-- The norm map to the induced trivial representation.
+
+For finite-index H, the unit of the restriction-to-induction adjunction gives a G-equivariant
+map from the trivial G-representation k to ind_H^G(k). -/
 noncomputable def inducedTrivialNorm :
     Rep.trivial k G k ⟶
       (Rep.indFunctor.{u} k H.subtype).obj (Rep.trivial k H k) := by
@@ -95,13 +108,19 @@ section
 
 variable (K : Type u) [Group K]
 
-/-- The literal degree-zero bar augmentation. -/
+/-- The degree-zero bar augmentation.
+
+For a group K, the map from its degree-zero bar module to the trivial k-representation is the
+standard bar augmentation transported through the bar-to-standard-complex isomorphism. -/
 noncomputable def barAugmentationZero :
     (Rep.barComplex k K).X 0 ⟶ Rep.trivial k K k :=
   (Rep.barComplex.isoStandardComplex k K).hom.f 0 ≫
     Rep.standardComplex.ε k K
 
-/-- The normalized degree-zero bar basis augments to one. -/
+/-- The augmentation of the empty-tuple bar generator.
+
+The degree-zero bar basis vector indexed by the empty tuple maps to 1 ∈ k under
+barAugmentationZero. -/
 @[simp]
 theorem barAugmentationZero_barBasis :
     (barAugmentationZero (k := k) K).hom
@@ -110,7 +129,10 @@ theorem barAugmentationZero_barBasis :
 
 end
 
-/-- The literal degree-zero augmentation after induction. -/
+/-- The induced degree-zero augmentation.
+
+Apply induction along H → G to the degree-zero H-bar augmentation, giving a map from the
+induced degree-zero bar module to ind_H^G(k). -/
 noncomputable def inducedBarAugmentationZero :
   (Rep.indFunctor.{u} k H.subtype).obj ((Rep.barComplex k H).X 0) ⟶
       (Rep.indFunctor.{u} k H.subtype).obj (Rep.trivial k H k) :=
@@ -119,16 +141,19 @@ noncomputable def inducedBarAugmentationZero :
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
-/-- In degree zero, the induced bar-resolution augmentation is the literal
-induction of the subgroup bar augmentation. -/
+/-- The degree-zero component of the induced resolution map.
+
+The degree-zero augmentation of inducedBarResolution H equals the induced H-bar augmentation. -/
 theorem inducedBarResolution_π_f_zero :
     (inducedBarResolution (k := k) H).π.f 0 =
       inducedBarAugmentationZero (k := k) H := by
   rfl
 
 omit [H.FiniteIndex] in
-/-- Induction of a coefficient morphism acts on canonical induced classes
-by applying that morphism to the coefficient. -/
+/-- Coordinates of an induced representation morphism.
+
+For f : A → B between H-representations, its induced map sends the coinvariant generator
+IndV.mk(g,a) to IndV.mk(g,f(a)). -/
 theorem indFunctor_map_indV_mk
     {A B : Rep k H} (f : A ⟶ B) (g : G) (a : A) :
     ((Rep.indFunctor.{u} k H.subtype).map f).hom
@@ -137,8 +162,10 @@ theorem indFunctor_map_indV_mk
   simp [Rep.indFunctor_map, Rep.indMap, Representation.IndV.mk]
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The inverse finite-index induction/coinduction comparison is a sum over
-any chosen right transversal. -/
+/-- The coinduction-to-induction map as a transversal sum.
+
+For a coinduced coefficient function f and right transversal T, its image in ind_H^G(A) is ∑ₜ
+IndV.mk(t,f(t)). -/
 theorem coindToInd_eq_sum_rightTransversal
     (A : Rep k H) (f : Rep.coind H.subtype A)
     (T : H.RightTransversal) :
@@ -161,8 +188,10 @@ theorem coindToInd_eq_sum_rightTransversal
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
-/-- The canonical norm map sends one to the sum of the induced basis
-vectors indexed by any right transversal. -/
+/-- The norm of one in induced trivial coordinates.
+
+For any right transversal T, the canonical norm map sends 1 ∈ k to ∑ₜ IndV.mk(t,1) in the
+induced trivial representation. -/
 theorem inducedTrivialNorm_one_eq_sum
     (T : H.RightTransversal) :
     (inducedTrivialNorm (k := k) H).hom (1 : k) =
@@ -184,7 +213,9 @@ theorem inducedTrivialNorm_one_eq_sum
   rw [coindToInd_eq_sum_rightTransversal (T := T)]
   simp_rw [hvalue]
 
-/-- The induction-unit morphism on the degree-`n` subgroup bar object. -/
+/-- The induction unit of a subgroup bar degree.
+
+In degree n, the induction-restriction adjunction gives B_H,ₙ → res_H^G(ind_H^G(B_H,ₙ)). -/
 noncomputable def inducedBarUnit (n : ℕ) :
     (Rep.barComplex k H).X n ⟶
       Rep.res H.subtype
@@ -193,8 +224,10 @@ noncomputable def inducedBarUnit (n : ℕ) :
   (Rep.indResAdjunction.{u} k H.subtype).unit.app
     ((Rep.barComplex k H).X n)
 
-/-- The normalized subgroup bar cochain obtained from the unit of the
-induction--restriction adjunction. -/
+/-- The universal cochain of the induced subgroup bar.
+
+For q : Fin n → H, apply the induction unit to the bar basis vector indexed by q. This cochain
+takes values in the induced degree-n H-bar module. -/
 noncomputable def inducedBarUnitCochain (n : ℕ) :
     (Fin n → H) →
       (Rep.indFunctor.{u} k H.subtype).obj
@@ -203,7 +236,9 @@ noncomputable def inducedBarUnitCochain (n : ℕ) :
     (barBasis (k := k) n q)
 
 omit [H.FiniteIndex] in
-/-- The normalized-basis formula for the induction-unit cochain. -/
+/-- Values of the universal induced-bar cochain.
+
+The value at q is the induction-unit image of barBasis n q. -/
 @[simp]
 theorem inducedBarUnitCochain_apply (n : ℕ) (q : Fin n → H) :
     inducedBarUnitCochain (k := k) H n q =
@@ -211,8 +246,9 @@ theorem inducedBarUnitCochain_apply (n : ℕ) (q : Fin n → H) :
   rfl
 
 omit [H.FiniteIndex] in
-/-- The induction-unit cochain is the canonical induced class with ambient
-group coordinate one. -/
+/-- The universal induced-bar cochain in coinvariant coordinates.
+
+At a tuple q, the universal cochain is IndV.mk(1,barBasis n q). -/
 theorem inducedBarUnitCochain_eq_indV_mk
     (n : ℕ) (q : Fin n → H) :
     inducedBarUnitCochain (k := k) H n q =
@@ -221,8 +257,10 @@ theorem inducedBarUnitCochain_eq_indV_mk
   rfl
 
 omit [H.FiniteIndex] in
-/-- Applying an ambient morphism after the induction unit is the morphism
-obtained from the induction--restriction adjunction. -/
+/-- Evaluation through the induction adjunction.
+
+For φ : ind_H^G(B_H,ₙ) → A, applying φ to the universal cochain at q equals applying its
+adjoint H-map to barBasis n q. -/
 theorem hom_inducedBarUnitCochain
     (A : Rep k G) (n : ℕ)
     (phi : (Rep.indFunctor.{u} k H.subtype).obj
@@ -235,8 +273,10 @@ theorem hom_inducedBarUnitCochain
   rfl
 
 omit [H.FiniteIndex] in
-/-- The adjoint of a subgroup free-lift evaluates the universal induction
-unit cochain as the original inhomogeneous cochain. -/
+/-- The adjoint free lift evaluates to the prescribed cochain.
+
+For z : Hⁿ → A, the G-map adjoint to its H-bar free lift sends the universal induced-bar
+cochain at q to z(q). -/
 theorem indResHomEquiv_symm_freeLift_inducedBarUnitCochain
     (A : Rep k G) (n : ℕ) (z : (Fin n → H) → A)
     (q : Fin n → H) :
@@ -254,8 +294,10 @@ theorem indResHomEquiv_symm_freeLift_inducedBarUnitCochain
   exact freeLift_barBasis (Rep.res H.subtype A) n z q
 
 omit [H.FiniteIndex] in
-/-- Free extension of the universal induction-unit cochain is the adjunction
-unit itself. -/
+/-- The free lift of the universal induced-bar cochain.
+
+Extending the universal cochain from H-bar basis vectors by the free-lift construction
+recovers the induction-unit morphism in degree n. -/
 theorem freeLift_inducedBarUnitCochain (n : ℕ) :
     Rep.freeLift k H
         (Rep.res H.subtype
@@ -276,9 +318,11 @@ theorem freeLift_inducedBarUnitCochain (n : ℕ) :
   rfl
 
 omit [H.FiniteIndex] in
-/-- The inhomogeneous differential of the universal induction-unit cochain
-is obtained by applying the induced subgroup bar differential to the next
-unit cochain. -/
+/-- The differential identity of the universal induced-bar cochain.
+
+The inhomogeneous differential of the degree-n universal cochain equals the induced H-bar
+differential applied to the degree-(n+1) universal cochain, with the native bar differential
+signs. -/
 theorem inhomogeneous_d_inducedBarUnitCochain (n : ℕ) :
     (inhomogeneousCochains.d
       (Rep.res H.subtype
@@ -345,8 +389,10 @@ theorem inhomogeneous_d_inducedBarUnitCochain (n : ℕ) :
         exact hq.symm
     _ = _ := rfl
 
-/-- Degree-`n` universal chain component representing chosen-transversal
-Schreier transfer into the induced subgroup bar object. -/
+/-- The universal transfer component into an induced bar degree.
+
+In degree n, transfer the universal induced-bar cochain using T and extend from G-bar basis
+vectors. This gives a G-equivariant map B_G,ₙ → ind_H^G(B_H,ₙ). -/
 noncomputable def schreierTransferInducedBarComponent
     (T : H.RightTransversal) (n : ℕ) :
     (Rep.barComplex k G).X n ⟶
@@ -358,6 +404,10 @@ noncomputable def schreierTransferInducedBarComponent
         ((Rep.barComplex k H).X n)) T n
       (inducedBarUnitCochain (k := k) H n))
 
+/-- The induced-bar transfer on a bar generator.
+
+On barBasis n g, the universal transfer component is the degree-n Schreier transfer of the
+universal induced-bar cochain at g. -/
 theorem schreierTransferInducedBarComponent_barBasis
     (T : H.RightTransversal) (n : ℕ)
     (g : Fin n → G) :
@@ -370,8 +420,10 @@ theorem schreierTransferInducedBarComponent_barBasis
   unfold schreierTransferInducedBarComponent
   exact freeLift_barBasis _ n _ g
 
-/-- Precomposition by the universal induced-bar component is the arbitrary
-chosen-transversal Schreier transfer on every coefficient cochain. -/
+/-- Universal transfer followed by an adjoint coefficient map.
+
+For z : Hⁿ → A, precomposing its adjoint H-bar free lift with the universal transfer component
+gives the G-bar free lift of cor_Tⁿ(z). -/
 theorem schreierTransferInducedBarComponent_comp_adjointFreeLift
     (A : Rep k G) (T : H.RightTransversal)
     (n : ℕ) (z : (Fin n → H) → A) :
@@ -414,8 +466,10 @@ theorem schreierTransferInducedBarComponent_comp_adjointFreeLift
   rw [hunit] at h
   exact h
 
-/-- Consecutive universal induced-bar transfer components commute with the
-bar differentials. -/
+/-- The chain equation of the universal transfer components.
+
+The degree-(n+1) transfer followed by the induced H-bar differential equals the G-bar
+differential followed by the degree-n transfer. -/
 theorem schreierTransferInducedBarComponent_comm
     (T : H.RightTransversal) (n : ℕ) :
     schreierTransferInducedBarComponent (k := k) H T (n + 1) ≫
@@ -480,8 +534,10 @@ theorem schreierTransferInducedBarComponent_comm
         (((Rep.barComplex k G).d (n + 1) n).hom
           (barBasis (k := k) (n + 1) g)) := rfl
 
-/-- The literal chain map from the ambient bar complex to the induced
-subgroup bar complex which represents arbitrary Schreier transfer. -/
+/-- The universal Schreier transfer of bar complexes.
+
+The degreewise universal components assemble into a chain map from the G-bar complex to the
+induced H-bar complex. -/
 noncomputable def schreierTransferInducedBarChain
     (T : H.RightTransversal) :
     Rep.barComplex k G ⟶
@@ -492,6 +548,10 @@ noncomputable def schreierTransferInducedBarChain
     rcases hij with ⟨rfl⟩
     exact schreierTransferInducedBarComponent_comm H T j
 
+/-- Components of the universal bar-complex chain map.
+
+The component in degree n of schreierTransferInducedBarChain H T is
+schreierTransferInducedBarComponent H T n. -/
 @[simp]
 theorem schreierTransferInducedBarChain_f
     (T : H.RightTransversal) (n : ℕ) :
@@ -499,8 +559,10 @@ theorem schreierTransferInducedBarChain_f
       schreierTransferInducedBarComponent (k := k) H T n :=
   rfl
 
-/-- The same transfer chain map, typed between the exact complexes carried
-by the ambient and induced bar projective resolutions. -/
+/-- The universal Schreier map between projective resolutions.
+
+The chosen-transversal bar-complex map gives a chain map from the G-bar resolution to the
+projective resolution induced from the H-bar. -/
 noncomputable def schreierTransferInducedBar
     (T : H.RightTransversal) :
     (Rep.barResolution k G).complex ⟶
@@ -513,8 +575,10 @@ noncomputable def schreierTransferInducedBar
   exact schreierTransferInducedBarChain (k := k) H T
 
 set_option backward.isDefEq.respectTransparency false in
-/-- On the normalized degree-zero basis, the universal transfer followed by
-the induced bar augmentation is the canonical finite-index norm map. -/
+/-- The augmented universal transfer on the degree-zero generator.
+
+The degree-zero universal transfer, followed by induced augmentation, sends the empty-tuple
+G-bar basis vector to the induced trivial norm of 1. -/
 theorem schreierTransferInducedBarComponent_zero_augmentation
     (T : H.RightTransversal) :
     (inducedBarAugmentationZero (k := k) H).hom
@@ -554,8 +618,10 @@ theorem schreierTransferInducedBarComponent_zero_augmentation
   simp_rw [hterm]
   exact (inducedTrivialNorm_one_eq_sum (k := k) H T).symm
 
-/-- Degree-zero augmentation square for the universal induced-bar transfer
-component. -/
+/-- The degree-zero universal transfer lifts the norm map.
+
+The transfer component followed by induced H-bar augmentation equals the G-bar augmentation
+followed by the induced trivial norm. -/
 theorem schreierTransferInducedBarComponent_zero_comp_augmentation
     (T : H.RightTransversal) :
     schreierTransferInducedBarComponent (k := k) H T 0 ≫
@@ -577,8 +643,10 @@ theorem schreierTransferInducedBarComponent_zero_comp_augmentation
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
-/-- Every chosen-transversal induced-bar transfer lifts the same canonical
-finite-index norm map between the resolved trivial representations. -/
+/-- The resolution square for the universal norm lift.
+
+The universal transfer followed by the induced resolution augmentation equals the G-resolution
+augmentation followed by the chain map on single-degree complexes induced by the norm. -/
 theorem schreierTransferInducedBar_comp_π
     (T : H.RightTransversal) :
     schreierTransferInducedBar (k := k) H T ≫
@@ -597,8 +665,10 @@ theorem schreierTransferInducedBar_comp_π
       exact schreierTransferInducedBarComponent_zero_comp_augmentation H T
   | succ n => simp
 
-/-- Universal induced-bar transfers attached to two right transversals are
-chain homotopic, since they lift the same canonical norm map. -/
+/-- A homotopy between universal transfers from different transversals.
+
+For T and U, their universal resolution maps lift the same induced trivial norm. Projective-
+resolution lift uniqueness supplies a chain homotopy between the maps. -/
 noncomputable def schreierTransferInducedBarHomotopy
     (T U : H.RightTransversal) :
     Homotopy

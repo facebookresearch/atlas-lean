@@ -1,3 +1,5 @@
-# Tensor Homotopy First Map eq of homotopy
+# First-variable homotopies give equal tensor natural transformations
 
-Homotopic original first-variable maps have the same original quotient classes.
+For a commutative ring `R`, homotopic first-variable maps
+`f,f′ : P → P′` induce the same natural transformation between
+the fixed-factor tensor functors on the second homotopy category.

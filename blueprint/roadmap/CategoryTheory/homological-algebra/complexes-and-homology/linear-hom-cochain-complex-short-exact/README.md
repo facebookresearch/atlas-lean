@@ -1,4 +1,4 @@
 # Linear Hom Cochain Complex Short Exact
 
-- [Linear Hom Cochain Short Complex](linear-hom-cochain-short-complex.md)
-- [Linear Hom Cochain Short Complex short Exact of degreewise split Mono](linear-hom-cochain-short-complex-short-e.md)
+- [Contravariant linear Hom reverses a short complex of chain complexes](linear-hom-cochain-short-complex.md)
+- [Degreewise splitting of the first chain map makes the reversed Hom cochain sequence short exact](linear-hom-cochain-short-complex-short-e.md)

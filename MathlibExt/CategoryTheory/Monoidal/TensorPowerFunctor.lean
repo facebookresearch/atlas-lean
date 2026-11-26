@@ -14,17 +14,16 @@ public import Mathlib.CategoryTheory.Monoidal.NaturalTransformation
 public import MathlibExt.CategoryTheory.Monoidal.TensorPowers
 
 /-!
-# Tensor powers and strong monoidal functors
+# Finite power coordinates and strong monoidal functors
 
-A strong monoidal functor carries the recursively left-associated finite tensor
-power of an object to the corresponding tensor power of its image.  This file
-packages the canonical comparison isomorphism, its recursive computation rules,
-its naturality in the powered object, and compatibility with splitting a
-weight as a sum.
+Finite tensor powers have canonical one-factor, two-factor, head-tail, and right-associated
+coordinates. A chosen map from the tensor unit can be prepended to a power, naturally under
+maps preserving that chosen element.
 
-The comparison uses only the unit and tensor isomorphisms of a monoidal functor.
-It does not assert preservation of infinite tensor products, coproducts, graded
-objects, algebraic structures, or any derived construction.
+A strong monoidal functor carries each finite power to the corresponding power of its image.
+The comparison is recursive in the unit and tensor isomorphisms and is natural in object maps
+and monoidal natural transformations. It respects block splitting, head-tail coordinates, and
+power-index equalities, with independent source and target category universes.
 -/
 
 @[expose] public section
@@ -40,21 +39,24 @@ namespace CategoryTheory.MonoidalCategory.TensorPower
 variable {C : Type u₁} [Category.{v₁} C] [MonoidalCategory C]
 variable {D : Type u₂} [Category.{v₂} D] [MonoidalCategory D]
 
-/-- The canonical weight-one tensor power isomorphism, given by the left
-unitor after reduction of the recursive tensor-power carrier. -/
+/-- One factor tensor power is the object.
+
+The left unitor identifies power one with `X`. -/
 noncomputable def tensorPowObjOneIso (X : C) :
     tensorPowObj X 1 ≅ X :=
   leftUnitor X
 
-/-- The canonical weight-two tensor power isomorphism, normalized as the
-tensor square of the original object. -/
+/-- Two factor tensor power is the binary tensor.
+
+The block split and one-factor coordinates identify power two with `X ⊗ X`. -/
 noncomputable def tensorPowObjTwoIso (X : C) :
     tensorPowObj X 2 ≅ X ⊗ X :=
   tensorPowObj_add X 1 1 ≪≫
     tensorIso (tensorPowObjOneIso X) (tensorPowObjOneIso X)
 
-/-- The canonical decomposition of a positive tensor power into its first
-factor and the remaining positive tensor power. -/
+/-- Finite tensor power separates its first factor.
+
+Recursively reassociate power `n+2` as `X ⊗ X^(n+1)`. -/
 noncomputable def tensorPowObjHeadTailIso (X : C) :
     ∀ (n : ℕ), tensorPowObj X (n + 2) ≅
       X ⊗ tensorPowObj X (n + 1)
@@ -63,14 +65,19 @@ noncomputable def tensorPowObjHeadTailIso (X : C) :
   | n + 1 => tensorIso (tensorPowObjHeadTailIso X n) (Iso.refl X) ≪≫
       associator X (tensorPowObj X (n + 1)) X
 
-/-- Successor coherence for the head--tail tensor-power decomposition. -/
+/-- Successor head tail map is the preceding map and associator.
+
+The successor forward coordinate is the preceding head-tail coordinate tensored with `𝟙 X`,
+followed by the associator. -/
 theorem tensorPowObjHeadTailIso_succ_hom (X : C) (n : ℕ) :
     (tensorPowObjHeadTailIso X (n + 1)).hom =
       ((tensorPowObjHeadTailIso X n).hom ⊗ₘ 𝟙 X) ≫
         (associator X (tensorPowObj X (n + 1)) X).hom :=
   rfl
 
-/-- Canonical additive-splitting presentation of head--tail decomposition. -/
+/-- Head tail coordinate from the finite block split.
+
+Split the power into blocks of lengths one and `n+1`, then apply the one-factor coordinate. -/
 noncomputable def tensorPowObjHeadTailAddIso (X : C) (n : ℕ) :
     tensorPowObj X (n + 2) ≅ X ⊗ tensorPowObj X (n + 1) :=
   eqToIso (congrArg (tensorPowObj X) (Nat.one_add (n + 1)).symm) ≪≫
@@ -79,8 +86,10 @@ noncomputable def tensorPowObjHeadTailAddIso (X : C) (n : ℕ) :
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
-/-- The recursive and canonical additive presentations of head--tail
-decomposition agree. -/
+/-- Recursive and block split head tail coordinates agree.
+
+The recursive head-tail isomorphism equals the one obtained from the block-splitting
+isomorphism. -/
 theorem tensorPowObjHeadTailIso_eq_addIso (X : C) :
     ∀ n : ℕ,
       tensorPowObjHeadTailIso X n = tensorPowObjHeadTailAddIso X n
@@ -142,7 +151,10 @@ theorem tensorPowObjHeadTailIso_eq_addIso (X : C) :
       rfl
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Naturality of the positive tensor-power head--tail decomposition. -/
+/-- Head tail coordinates are natural under power maps.
+
+The power map in degree `n+2` becomes `f ⊗ tensorPowMap f (n+1)` under the head-tail
+coordinates. -/
 theorem tensorPowMap_comp_tensorPowObjHeadTailIso_hom
     {X Y : C} (f : X ⟶ Y) (n : ℕ) :
     tensorPowMap f (n + 2) ≫
@@ -201,7 +213,10 @@ theorem tensorPowMap_comp_tensorPowObjHeadTailIso_hom
         (f ⊗ₘ tensorPowMap f (n + 1)) := by
           simp only [Category.assoc]
 
-/-- Prepend a selected tensor-unit element to a positive tensor power. -/
+/-- Prepending a chosen unit source morphism to a finite power.
+
+For `u : 𝟙 → X`, use the inverse left unitor, `u` on the first factor, and the inverse head-
+tail coordinate. -/
 noncomputable def tensorPowPrependMap
     {X : C} (u : 𝟙_ C ⟶ X) (n : ℕ) :
     tensorPowObj X (n + 1) ⟶ tensorPowObj X (n + 2) :=
@@ -210,7 +225,9 @@ noncomputable def tensorPowPrependMap
     (tensorPowObjHeadTailIso X n).inv
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Naturality of prepending a selected tensor-unit element. -/
+/-- Power maps commute with compatible prepended elements.
+
+If `u ≫ f = v`, the power map and the prepend maps for `u` and `v` form a commutative square. -/
 theorem tensorPowMap_comp_tensorPowPrependMap
     {X Y : C} (f : X ⟶ Y)
     (u : 𝟙_ C ⟶ X) (v : 𝟙_ C ⟶ Y)
@@ -227,25 +244,36 @@ theorem tensorPowMap_comp_tensorPowPrependMap
   rw [tensorHom_comp_tensorHom, tensorHom_comp_tensorHom]
   simp only [Category.id_comp, Category.comp_id, huv]
 
-/-- The nonempty right-associated tensor power.  The parameter `n`
-represents the positive weight `n + 1`. -/
+/-- Right associated positive tensor powers.
+
+Start at `X` and recursively prepend `X` to obtain the right-associated power with `n+1`
+factors. -/
 def tensorPowObjRightSucc (X : C) : ℕ → C
   | 0 => X
   | n + 1 => X ⊗ tensorPowObjRightSucc X n
 
-/-- Canonical reassociation from the left-associated positive tensor power
-to the nonempty right-associated tensor power. -/
+/-- Left and right associated positive powers are isomorphic.
+
+The recursive head-tail coordinates identify the left-associated power `n+1` with the right-
+associated positive power. -/
 noncomputable def tensorPowObjRightSuccIso (X : C) :
     ∀ n : ℕ, tensorPowObj X (n + 1) ≅ tensorPowObjRightSucc X n
   | 0 => tensorPowObjOneIso X
   | n + 1 => tensorPowObjHeadTailIso X n ≪≫
       tensorIso (Iso.refl X) (tensorPowObjRightSuccIso X n)
 
+/-- Right associated comparison at one factor.
+
+At index zero, the comparison is the one-factor unitor isomorphism. -/
 @[simp]
 theorem tensorPowObjRightSuccIso_zero (X : C) :
     tensorPowObjRightSuccIso X 0 = tensorPowObjOneIso X :=
   rfl
 
+/-- Right associated comparison at a successor.
+
+The successor comparison is the head-tail isomorphism followed by the tensor of the identity
+first factor and the preceding comparison. -/
 @[simp]
 theorem tensorPowObjRightSuccIso_succ (X : C) (n : ℕ) :
     tensorPowObjRightSuccIso X (n + 1) =
@@ -253,8 +281,9 @@ theorem tensorPowObjRightSuccIso_succ (X : C) (n : ℕ) :
         tensorIso (Iso.refl X) (tensorPowObjRightSuccIso X n) :=
   rfl
 
-/-- The forward weight-two normalization applies the weight-one unitor only
-to the accumulated left factor. -/
+/-- Forward two factor coordinate uses the one factor map.
+
+The forward two-factor coordinate is the one-factor map tensored with `𝟙 X`. -/
 theorem tensorPowObjTwoIso_hom (X : C) :
     (tensorPowObjTwoIso X).hom =
       (tensorPowObjOneIso X).hom ⊗ₘ 𝟙 X := by
@@ -263,8 +292,9 @@ theorem tensorPowObjTwoIso_hom (X : C) :
   unfold tensorPowObj_add
   monoidal_coherence
 
-/-- The inverse weight-two normalization inserts the tensor unit only in the
-accumulated left factor. -/
+/-- Inverse two factor coordinate uses the inverse one factor map.
+
+The inverse two-factor coordinate is the inverse one-factor map tensored with `𝟙 X`. -/
 theorem tensorPowObjTwoIso_inv (X : C) :
     (tensorPowObjTwoIso X).inv =
       (tensorPowObjOneIso X).inv ⊗ₘ 𝟙 X := by
@@ -273,15 +303,20 @@ theorem tensorPowObjTwoIso_inv (X : C) :
   unfold tensorPowObj_add
   monoidal_coherence
 
-/-- The canonical comparison from a right-associated tensor cube to the
-left-associated third tensor power. -/
+/-- Right associated triple as the left associated power.
+
+The inverse associator and inverse two-factor coordinate identify `X ⊗ (X ⊗ X)` with power
+three. -/
 noncomputable def tensorPowObjThreeRightIso (X : C) :
     X ⊗ (X ⊗ X) ≅ tensorPowObj X 3 :=
   (associator X X X).symm ≪≫
     tensorIso (tensorPowObjTwoIso X).symm (Iso.refl X)
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Forward morphism of the right-associated tensor-cube comparison. -/
+/-- Forward triple coordinate is the inverse associator and two factor map.
+
+Its forward map is the inverse associator followed by the inverse two-factor coordinate
+tensored with `𝟙 X`. -/
 theorem tensorPowObjThreeRightIso_hom (X : C) :
     (tensorPowObjThreeRightIso X).hom =
       (associator X X X).inv ≫
@@ -289,15 +324,20 @@ theorem tensorPowObjThreeRightIso_hom (X : C) :
   rfl
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Fully normalized forward morphism of the right-associated tensor-cube
-comparison. -/
+/-- Triple coordinate in one factor unitor form.
+
+The forward triple coordinate uses the inverse associator and two successive one-factor
+inverse tensor maps. -/
 theorem tensorPowObjThreeRightIso_hom_normalized (X : C) :
     (tensorPowObjThreeRightIso X).hom =
       (associator X X X).inv ≫
         (((tensorPowObjOneIso X).inv ⊗ₘ 𝟙 X) ⊗ₘ 𝟙 X) := by
   rw [tensorPowObjThreeRightIso_hom, tensorPowObjTwoIso_inv]
 
-/-- Naturality of the canonical weight-one tensor-power isomorphism. -/
+/-- Forward one factor coordinate is natural.
+
+The power-one map followed by the target coordinate equals the source coordinate followed by
+`f`. -/
 theorem tensorPowObjOneIso_hom_naturality
     {X Y : C} (f : X ⟶ Y) :
     tensorPowMap f 1 ≫ (tensorPowObjOneIso Y).hom =
@@ -306,7 +346,10 @@ theorem tensorPowObjOneIso_hom_naturality
     (leftUnitor X).hom ≫ f
   simpa only [id_tensorHom] using leftUnitor_naturality f
 
-/-- Naturality of the inverse weight-one tensor-power isomorphism. -/
+/-- Inverse one factor coordinate is natural.
+
+The morphism `f` followed by the inverse target coordinate equals the inverse source
+coordinate followed by the power-one map. -/
 theorem tensorPowObjOneIso_inv_naturality
     {X Y : C} (f : X ⟶ Y) :
     f ≫ (tensorPowObjOneIso Y).inv =
@@ -316,8 +359,10 @@ theorem tensorPowObjOneIso_inv_naturality
   rw [tensorPowObjOneIso_hom_naturality]
   rw [← Category.assoc, Iso.inv_hom_id, Category.id_comp]
 
-/-- The canonical comparison between the image of a finite tensor power under a
-strong monoidal functor and the finite tensor power of the image. -/
+/-- Strong monoidal functor comparison on finite tensor powers.
+
+The inverse unit and tensor structure isomorphisms recursively compare `G(X^n)` with `(G
+X)^n`. -/
 noncomputable def mapTensorPowObjIso (G : Functor C D) [G.Monoidal] (X : C) :
     ∀ (n : ℕ), G.obj (tensorPowObj X n) ≅ tensorPowObj (G.obj X) n
   | 0 => (Functor.Monoidal.εIso G).symm
@@ -325,14 +370,18 @@ noncomputable def mapTensorPowObjIso (G : Functor C D) [G.Monoidal] (X : C) :
       (Functor.Monoidal.μIso G (tensorPowObj X n) X).symm ≪≫
         tensorIso (mapTensorPowObjIso G X n) (Iso.refl (G.obj X))
 
-/-- At tensor power zero, the comparison is the inverse unit comparison. -/
+/-- Strong monoidal power comparison at zero.
+
+At power zero, the comparison is the inverse monoidal unit isomorphism. -/
 @[simp]
 theorem mapTensorPowObjIso_zero (G : Functor C D) [G.Monoidal] (X : C) :
     mapTensorPowObjIso G X 0 = (Functor.Monoidal.εIso G).symm :=
   rfl
 
-/-- At a successor tensor power, first apply the inverse tensor comparison and
-then the comparison in the preceding tensor power. -/
+/-- Strong monoidal power comparison at a successor.
+
+The successor comparison is the inverse tensor structure map followed by the tensor of the
+preceding comparison and the identity last factor. -/
 @[simp]
 theorem mapTensorPowObjIso_succ (G : Functor C D) [G.Monoidal] (X : C) (n : ℕ) :
     mapTensorPowObjIso G X (n + 1) =
@@ -340,7 +389,10 @@ theorem mapTensorPowObjIso_succ (G : Functor C D) [G.Monoidal] (X : C) (n : ℕ)
         tensorIso (mapTensorPowObjIso G X n) (Iso.refl (G.obj X)) :=
   rfl
 
-/-- The tensor-power comparison is natural in the powered object. -/
+/-- Strong monoidal power comparison is object natural.
+
+The functor image of a power map commutes with the comparison and the power of its image
+morphism. -/
 theorem mapTensorPowObjIso_hom_naturality (G : Functor C D) [G.Monoidal]
     {X Y : C} (f : X ⟶ Y) (n : ℕ) :
     G.map (tensorPowMap f n) ≫ (mapTensorPowObjIso G Y n).hom =
@@ -361,8 +413,10 @@ theorem mapTensorPowObjIso_hom_naturality (G : Functor C D) [G.Monoidal]
     simp only [tensorHom_comp_tensorHom, Category.comp_id, Category.id_comp, ih]
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The strong-monoidal tensor-power comparison commutes with transport of
-the tensor-power index along an equality. -/
+/-- Strong monoidal power comparison respects index equalities.
+
+Mapping a power-index equality and comparing equals comparing first and then transporting the
+image power index. -/
 @[reassoc]
 theorem mapTensorPowObjIso_hom_eqToIso
     (G : Functor C D) [G.Monoidal] (X : C)
@@ -374,8 +428,10 @@ theorem mapTensorPowObjIso_hom_eqToIso
   cases h
   simp
 
-/-- At weight one, the strong-monoidal tensor-power comparison followed by the
-canonical left-unitor is the image of the canonical weight-one isomorphism. -/
+/-- Strong monoidal power comparison agrees with the one factor coordinate.
+
+At power one, comparison followed by the target one-factor coordinate equals the functor image
+of the source one-factor coordinate. -/
 theorem mapTensorPowObjIso_hom_comp_tensorPowObjOneIso
     (G : Functor C D) [G.Monoidal] (X : C) :
     (mapTensorPowObjIso G X 1).hom ≫
@@ -390,8 +446,10 @@ theorem mapTensorPowObjIso_hom_comp_tensorPowObjOneIso
   rw [tensorHom_id]
   exact Category.assoc _ _ _
 
-/-- The tensor-power comparison is compatible with a monoidal natural
-transformation between strong monoidal functors. -/
+/-- Power comparison is natural in monoidal transformations.
+
+A monoidal natural transformation commutes with the finite-power comparisons and its
+component's power map. -/
 theorem mapTensorPowObjIso_hom_naturality_monoidal
     (G H : Functor C D) [G.Monoidal] [H.Monoidal]
     (α : G ⟶ H) [NatTrans.IsMonoidal α] (X : C) (n : ℕ) :
@@ -492,8 +550,10 @@ theorem mapTensorPowObjIso_hom_naturality_monoidal
                 (tensorPowMap (α.app X) n ⊗ₘ α.app X) :=
           (Category.assoc _ _ _).symm
 
-/-- The tensor-power comparison of a strong monoidal functor commutes with
-splitting a weight as a sum. -/
+/-- Strong monoidal power comparison respects block splitting.
+
+The full power comparison followed by image-object block splitting equals the functor image of
+source splitting, inverse tensor structure, and the two block comparisons. -/
 @[reassoc]
 theorem mapTensorPowObjIso_hom_add (G : Functor C D) [G.Monoidal]
     (X : C) (m n : ℕ) :
@@ -685,8 +745,10 @@ theorem mapTensorPowObjIso_hom_add (G : Functor C D) [G.Monoidal]
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
-/-- The strong-monoidal tensor-power comparison commutes with canonical
-head--tail decomposition. -/
+/-- Strong monoidal power comparison respects head tail coordinates.
+
+The comparison for `n+2` commutes with source and target head-tail coordinates, the inverse
+tensor structure map, and the comparison of the tail power. -/
 theorem mapTensorPowObjIso_hom_headTail
     (G : Functor C D) [G.Monoidal] (X : C) (n : ℕ) :
     (mapTensorPowObjIso G X (n + 2)).hom ≫

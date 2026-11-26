@@ -1,4 +1,7 @@
-# H2 ZMod Restrict Int Module
+# Transported scalar action on integral second cohomology
 
-Canonical `ZMod n`-module structure on integral H2, transported from
-the original H2 through the additive comparison.
+Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+The transported target ZMod n-action on integral H² is
+r•y=χ₂(r•χ₂⁻¹(y)).

@@ -13,11 +13,20 @@ public import Mathlib.Algebra.Category.ModuleCat.Monoidal.Closed
 public import Mathlib.Topology.Algebra.Category.ProfiniteGrp.Basic
 public import MathlibExt.RepresentationTheory.Continuous.ContinuousActionBridge
 
-/-! # Actual discrete continuous coefficient tensors
+/-!
+# Discrete tensor coefficients with a continuous group action
 
-The algebraic tensor retains the original stored coefficient modules and the
-original factorwise group action. Its topology is discrete, and its scalar
-ring retains the given topology.
+Let R be a commutative ring with a topology and G a profinite group.
+For discrete topological R-representations A and B, the tensor coefficient
+has carrier A ⊗[R] B with discrete topology and diagonal action
+g • (a ⊗ b)=(g • a) ⊗ (g • b).
+
+The scalar action is continuous; more generally, continuity on the first
+discrete factor suffices for the discrete tensor's scalar action.
+If both original G-actions are jointly continuous, so is the tensor action.
+Two continuous equivariant coefficient maps induce their ordinary tensor
+map, retaining the factor order. The scalar, group and carrier universes
+are independent.
 -/
 @[expose] public section
 noncomputable section
@@ -27,8 +36,11 @@ open scoped TensorProduct
 universe u v w a b c x
 namespace ContinuousCohomology
 
-/-- The algebraic tensor of discrete coefficients has continuous scalar action
-for the same given topology on the coefficient ring. -/
+/-- Let R be a commutative ring with a topology and A,B additive
+commutative groups with R-module structures and discrete topologies.
+If the scalar action R × A → A is continuous, then the induced
+R-action on A ⊗[R] B with discrete topology is continuous.
+No scalar-continuity hypothesis on B is required. -/
 theorem tensorContinuousSMul
     {R : Type u} [CommRing R] [TopologicalSpace R]
     {A : Type a} [AddCommGroup A] [Module R A] [TopologicalSpace A]
@@ -59,7 +71,11 @@ theorem tensorContinuousSMul
 variable {R : Type u} [CommRing R] [TopologicalSpace R]
 variable {G : ProfiniteGrp.{v}}
 
-/-- The actual algebraic tensor coefficient, made discrete, with its original tensor action. -/
+/-- Let R be a commutative ring with a topology, G a profinite
+group, and A,B topological R-representations with discrete coefficient
+topologies. Scalar, group and coefficient universes are independent.
+This tensor coefficient has carrier A ⊗[R] B, discrete topology
+and representation g • (a ⊗ b)=(g • a) ⊗ (g • b). -/
 def discreteTensorCoefficient
     (A B : TopRep.{max v w, u, v} R G)
     [DiscreteTopology A] [DiscreteTopology B] : TopRep.{max v w, u, v} R G := by
@@ -95,7 +111,11 @@ def discreteTensorCoefficient
           | add x y hx hy =>
             simpa only [map_add] using congrArg₂ (· + ·) hx hy } }
 
-/-- The coefficient tensor has exactly the original algebraic tensor carrier. -/
+/-- Let R be a commutative ring with a topology, G a profinite
+group, and A,B topological R-representations with discrete coefficient
+topologies. Scalar, group and coefficient universes are independent.
+The tensor coefficient's underlying module is exactly the algebraic
+tensor product A ⊗[R] B. -/
 theorem discreteTensorCoefficient_carrier
     (A B : TopRep.{max v w, u, v} R G)
     [DiscreteTopology A] [DiscreteTopology B] :
@@ -106,7 +126,11 @@ instance discreteTensorCoefficient_discrete
     [DiscreteTopology A] [DiscreteTopology B] :
     DiscreteTopology (discreteTensorCoefficient A B) := ⟨rfl⟩
 
-/-- Its action on a pure tensor is the original factorwise action. -/
+/-- Let R be a commutative ring with a topology, G a profinite
+group, and A,B topological R-representations with discrete coefficient
+topologies. Scalar, group and coefficient universes are independent.
+On a pure tensor, the group action is
+g • (a ⊗[R] b)=(A.ρ(g)a) ⊗[R] (B.ρ(g)b). -/
 theorem discreteTensorCoefficient_action_tmul
     (A B : TopRep.{max v w, u, v} R G)
     [DiscreteTopology A] [DiscreteTopology B] (g : G) (a : A) (b : B) :
@@ -115,7 +139,11 @@ theorem discreteTensorCoefficient_action_tmul
   change TensorProduct.map (A.ρ g).toLinearMap (B.ρ g).toLinearMap (a ⊗ₜ[R] b) = _
   exact TensorProduct.map_tmul _ _ _ _
 
-/-- The tensor action is jointly continuous whenever both original discrete actions are. -/
+/-- Let R be a commutative ring with a topology, G a profinite
+group, and A,B topological R-representations with discrete coefficient
+topologies. Scalar, group and coefficient universes are independent.
+If the G-actions on A and B are jointly continuous, the diagonal
+action on the discrete tensor coefficient is jointly continuous. -/
 theorem discreteTensorCoefficient_action_isContinuous
     (A B : TopRep.{max v w, u, v} R G)
     [DiscreteTopology A] [DiscreteTopology B]
@@ -146,7 +174,12 @@ theorem discreteTensorCoefficient_action_isContinuous
   change Continuous (fun x : G × T => T.ρ x.1 x.2)
   exact hT
 
-/-- The genuine tensor coefficient morphism induced by two original equivariant continuous maps. -/
+/-- Let R be a commutative ring with a topology, G a profinite
+group, and A,B topological R-representations with discrete coefficient
+topologies. Scalar, group and coefficient universes are independent.
+For continuous equivariant R-linear f : A → A′ and g : B → B′,
+with all four coefficients discrete, the induced coefficient morphism
+is f ⊗[R] g : A ⊗[R] B → A′ ⊗[R] B′. -/
 def discreteTensorCoefficientMap
     {A B A' B' : TopRep.{max v w, u, v} R G}
     [DiscreteTopology A] [DiscreteTopology B] [DiscreteTopology A'] [DiscreteTopology B']
@@ -184,7 +217,12 @@ def discreteTensorCoefficientMap
             (TensorProduct.map f.hom.toLinearMap g.hom.toLinearMap z)
         exact DFunLike.congr_fun ht z }
 
-/-- The tensor coefficient map retains both original factor values on every pure tensor. -/
+/-- Let R be a commutative ring with a topology, G a profinite
+group, and A,B topological R-representations with discrete coefficient
+topologies. Scalar, group and coefficient universes are independent.
+For continuous equivariant maps f : A → A′ and g : B → B′
+between discrete coefficients, the tensor coefficient map has value
+a ⊗ b ↦ f(a) ⊗ g(b). -/
 theorem discreteTensorCoefficientMap_tmul
     {A B A' B' : TopRep.{max v w, u, v} R G}
     [DiscreteTopology A] [DiscreteTopology B] [DiscreteTopology A'] [DiscreteTopology B']

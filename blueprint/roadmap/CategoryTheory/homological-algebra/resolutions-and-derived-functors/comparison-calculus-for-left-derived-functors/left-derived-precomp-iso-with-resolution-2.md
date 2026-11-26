@@ -1,4 +1,6 @@
-# Left Derived Precomp Iso With Resolution naturality
+# Resolution-based precomposition comparison is natural in the object
 
-The same original morphism and its mapped resolution lift give the precomposition naturality
-square. No lift or square is an input.
+For abelian `C`, `D`, `E` with projective resolutions in `C,D`,
+additive homology- and projective-preserving `U : C → D`,
+and additive `L : D → E`, the resolution-based precomposition
+components commute with every original map `f : X → Y`.

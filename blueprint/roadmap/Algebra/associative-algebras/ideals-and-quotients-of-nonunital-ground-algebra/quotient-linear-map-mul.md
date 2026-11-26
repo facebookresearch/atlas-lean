@@ -1,3 +1,5 @@
-# Quotient Linear Map mul
+# Multiplication of quotient residue classes
 
-Original multiplication survives the native quotient map.
+Multiplication of quotient residue classes.
+
+For `a, b ∈ A`, the linear quotient map satisfies `q(a * b) = q(a) * q(b)`.

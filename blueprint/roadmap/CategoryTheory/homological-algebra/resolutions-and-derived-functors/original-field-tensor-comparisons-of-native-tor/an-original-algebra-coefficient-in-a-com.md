@@ -1,4 +1,5 @@
-# An original algebra coefficient in a common module universe...
+# A ring coefficient is restricted and lifted to a common module height
 
-An original algebra coefficient in a common module universe is the
-canonical restriction of its actual ring module and canonical carrier lift.
+For a map f:R→S of commutative rings, the ring coefficient
+is ULift^Γ S regarded as an R-module through f,
+where Γ=max(r,s,m). Its underlying S-action is multiplication.

@@ -1,4 +1,6 @@
-# Cup Cochain One Two corestriction Cochain Two
+# The cup product with a transferred two-cochain
 
-The cup with the transferred degree-two right factor, written as the
-corresponding reindexed transversal sum.
+The cup product with a transferred two-cochain.
+
+At (g,h,i), the cup of x with cor_T²(y) is the sum of x(g) ⊗ ρ_B(g r(t,g)⁻¹)y on the remaining
+two-factor scan.

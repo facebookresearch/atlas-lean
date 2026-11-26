@@ -1,3 +1,6 @@
-# Unitization Even Word
+# The ideal-leading word in normalized unitization chains
 
-The even word is the original ideal word followed by the quotient projection.
+The ideal-leading word in normalized unitization chains.
+
+In degree `n`, include each `A`-entry into `A⁺` and apply normalized projection, retaining the
+ideal coefficient in the leading position.

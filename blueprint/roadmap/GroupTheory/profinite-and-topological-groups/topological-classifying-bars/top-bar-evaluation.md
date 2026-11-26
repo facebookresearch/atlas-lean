@@ -1,3 +1,6 @@
-# Top Bar Evaluation
+# Evaluation of topological point-module diagrams
 
-Evaluation of a point-indexed `TopCat` diagram at its canonical point.
+Evaluation of topological point-module diagrams.
+
+Evaluate a functor from the discrete one-point index category to TopCat at its distinguished
+point.

@@ -1,6 +1,6 @@
 # Naturality of the canonical-abutment cokernel presentation
 
-- [Horizontal Canonical Abutment Biprod Cokernel Map Of Bicomplex](horizontal-canonical-abutment-biprod-cok.md)
-- [Horizontal Canonical Abutment Biprod Cokernel Map Of Bicomplex π](horizontal-canonical-abutment-biprod-cok-2.md)
-- [Horizontal Canonical Abutment Cokernel Iso hom fac](horizontal-canonical-abutment-cokernel-i.md)
-- [Horizontal Canonical Abutment Cokernel Iso naturality](horizontal-canonical-abutment-cokernel-i-2.md)
+- [A bicomplex map induces the canonical abutment biproduct-cokernel map](horizontal-canonical-abutment-biprod-cok.md)
+- [Canonical abutment cokernel maps commute with quotient projection](horizontal-canonical-abutment-biprod-cok-2.md)
+- [The canonical cokernel isomorphism identifies its quotient arrow](horizontal-canonical-abutment-cokernel-i.md)
+- [Canonical abutment cokernel isomorphisms commute with bicomplex maps](horizontal-canonical-abutment-cokernel-i-2.md)

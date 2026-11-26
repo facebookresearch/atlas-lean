@@ -1,3 +1,6 @@
-# BBar Degree Homeomorph d Last remove
+# The terminal classifying-bar face as coordinate removal
 
-Last-face formula expressed with the stable remove-coordinate API.
+The terminal classifying-bar face as coordinate removal.
+
+Under the degree homeomorphisms, the last face removes index Fin.last n from the source tuple
+of length n+1.

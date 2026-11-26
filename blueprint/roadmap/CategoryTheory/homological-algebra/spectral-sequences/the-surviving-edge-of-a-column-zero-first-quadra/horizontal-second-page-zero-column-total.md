@@ -1,5 +1,7 @@
-# Horizontal Second Page Zero Column Total Homology Iso
+# The second-page zero-column edge isomorphism to total homology
 
-If the second page is concentrated in horizontal degree zero, its
-surviving term in bidegree `(0,n)` is canonically isomorphic to degree-`n`
-homology of the total complex.
+For a nonnegative homological bicomplex K in an abelian
+category, if E²_(p,q) is zero for p ≥ 1 and all q ≥ 0, then
+E²_(0,n) ≅ H_n(Tot(K)) for every n ≥ 0.
+The map combines the stable-page comparison, the zeroth graded-piece
+comparison and the exhaustive total-homology filtration inclusion.

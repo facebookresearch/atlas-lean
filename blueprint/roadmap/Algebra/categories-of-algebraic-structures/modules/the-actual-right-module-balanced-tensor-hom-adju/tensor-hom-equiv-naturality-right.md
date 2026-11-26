@@ -1,3 +1,6 @@
-# Tensor Hom Equiv naturality right
+# Currying commutes with postcomposition in the target module
 
-Naturality in the coefficient target; C has no extra R-action.
+Currying commutes with postcomposition in the target module.
+
+For `f : A ⊗_R B ⟶ C` and `g : C ⟶ C'`, currying `f ≫ g` equals the curried map of `f`
+followed by the Hom functor's image of `g`.

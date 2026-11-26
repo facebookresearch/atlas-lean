@@ -16,14 +16,15 @@ public import MathlibExt.RingTheory.MvPolynomial.LeadingProduct
 public import Mathlib.Tactic.Abel
 
 /-!
-# Multiplication in leading PBW coordinates
+# Multiplication of leading PBW polynomial coordinates
 
-For a chosen ordered basis, PBW coordinates of a filtered enveloping product are
-multiplicative in the highest degree. The difference from the product of the coordinate
-polynomials has strictly lower total degree.
+Let R be a commutative ring, L an R-Lie algebra, and b : Basis I R L an ordered basis. Write
+c_b : U_R(L) ≃ₗ[R] MvPolynomial I R for the PBW coordinate map. For u ∈ D_n and v ∈ D_m, the
+defect c_b(uv)−c_b(u)c_b(v) has all monomials in total degree strictly below n+m.
 
-The formula applies to arbitrary filtered elements and finite basis words, including degree
-zero.
+Consequently the degree-(n+m) homogeneous coordinate of uv equals the product of the degree-n
+coordinate of u and degree-m coordinate of v. The statement includes zero degree and right
+multiplication by arbitrary finite basis words, without requiring those words to be sorted.
 -/
 
 @[expose] public section
@@ -41,8 +42,11 @@ variable {R : Type u} [CommRing R]
 local notation "U" => UniversalEnvelopingAlgebra R L
 local notation "P" => MvPolynomial I R
 
-/-- The error in right multiplication by an arbitrary basis word lies strictly below the sum of
-the degree bounds. -/
+/-- Let b : Basis I R L be an ordered basis of an R-Lie algebra over a commutative ring R, xs a
+list of basis indices, and u ∈ D_n(U_R(L)). Let w_b(xs) be the ordered product of the
+generators b(i), and e(xs) the exponent vector counting their occurrences. Then c_b(u·w_b(xs))
+− c_b(u)·monomial(e(xs),1) lies in the polynomial submodule of strict total degree below
+n+length(xs), where c_b is the PBW coordinate map. No ordering condition is imposed on xs. -/
 theorem polynomialCoordinates_mul_basisWord_leading (b : Module.Basis I R L)
     (xs : List I) (n : ℕ) {u : U}
     (hu : u ∈ UniversalEnvelopingAlgebra.degreeFiltration R L n) :
@@ -92,8 +96,11 @@ theorem polynomialCoordinates_mul_basisWord_leading (b : Module.Basis I R L)
       exact (MvPolynomial.restrictStrictTotalDegree I R ((n + 1) + xs.length)).add_mem
         htail hcorrection
 
-/-- Multiplication by a fixed enveloping algebra element compared with multiplication by its
-computed polynomial coordinates. -/
+/-- Let R be a commutative ring, L an R-Lie algebra, and b : Basis I R L with LinearOrder I. For a
+fixed u ∈ U_R(L), define an R-linear map U_R(L) → MvPolynomial I R by v ↦
+c_b(uv)−c_b(u)c_b(v). Here c_b is the R-linear PBW coordinate equivalence. This map measures
+the difference between enveloping multiplication and commutative multiplication of the
+coordinate polynomials. -/
 def multiplicationDefect (b : Module.Basis I R L) (u : U) : U →ₗ[R] P where
   toFun v := polynomialCoordinates b (u * v) -
     polynomialCoordinates b u * polynomialCoordinates b v
@@ -102,8 +109,10 @@ def multiplicationDefect (b : Module.Basis I R L) (u : U) : U →ₗ[R] P where
   map_smul' r v := by
     simp only [mul_smul_comm, map_smul, smul_sub, RingHom.id_apply]
 
-/-- The full enveloping algebra multiplication differs from commutative polynomial multiplication
-only in degrees strictly below the sum degree. -/
+/-- For an ordered basis b : Basis I R L over a commutative ring R, n,m ∈ ℕ, u ∈ D_n, and v ∈ D_m,
+the polynomial c_b(uv)−c_b(u)c_b(v) has every monomial of nonzero coefficient in total degree
+strictly less than n+m. Equivalently, it lies in MvPolynomial.restrictStrictTotalDegree I R
+(n+m). At n+m=0 this submodule is zero. -/
 theorem multiplicationDefect_mem_strict (b : Module.Basis I R L) (n m : ℕ)
     {u v : U}
     (hu : u ∈ UniversalEnvelopingAlgebra.degreeFiltration R L n)
@@ -129,8 +138,11 @@ theorem multiplicationDefect_mem_strict (b : Module.Basis I R L) (n m : ℕ)
       rw [map_smul]
       exact (MvPolynomial.restrictStrictTotalDegree I R (n + m)).smul_mem r ih
 
-/-- The leading coordinates preserve multiplication of the filtered enveloping algebra
-representatives. This includes the scalar degree-zero product. -/
+/-- Let R be a commutative ring, L an R-Lie algebra, b : Basis I R L with LinearOrder I, u ∈ D_n,
+and v ∈ D_m. Then homogeneousComponent_{n+m}(c_b(uv)) =
+homogeneousComponent_n(c_b(u))·homogeneousComponent_m(c_b(v)). The indices n,m are filtration
+bounds, and the formula also holds for n=m=0. It expresses multiplication on the leading
+quotient coordinates. -/
 theorem homogeneous_polynomialCoordinates_mul (b : Module.Basis I R L) (n m : ℕ)
     {u v : U}
     (hu : u ∈ UniversalEnvelopingAlgebra.degreeFiltration R L n)

@@ -1,3 +1,5 @@
-# Tensor Adjoin Right Base Alg Equiv tmul
+# The right algebra-adjoining equivalence multiplies the W coefficient
 
-The right adjoining map retains the original B multiplication.
+For the equivalence (A⊗K B)⊗_B W≃A⊗K W,
+the value of (a⊗b)⊗w is a⊗(b•w).
+The B→W algebra structure is compatible with K.

@@ -13,10 +13,16 @@ public import MathlibExt.AlgebraicGeometry.Sites.CanonicalPointClosureJoin
 public import MathlibExt.AlgebraicGeometry.Sites.SmallEtaleGodementTensorPairing
 
 /-!
-# Actual field Godement product collapse
+# Collapsing the field Godement product to its unique canonical point
 
-The real singleton product projection collapses the Godement family only
-after the canonical geometric point is retained as its original actual term.
+Let k be a field. Its spectrum has one topological point p₀, equipped with the canonical
+geometric point obtained from the residue-field separable closure. For additive-group sheaves
+of height max(u,w), the Godement endofunctor is the product of the point skyscrapers of their
+stalks.
+
+Projection to p₀ is therefore a natural isomorphism from the Godement endofunctor to the
+canonical stalk–skyscraper composition. It preserves the adjunction unit and multiplication,
+giving an isomorphism of the corresponding monads.
 -/
 
 @[expose] public section
@@ -30,13 +36,16 @@ namespace AlgebraicGeometry.Scheme.DerivedSections
 
 variable (k : Type u) [Field k]
 
-/-- The original canonical geometric point at the actual unique point of Spec k. -/
+/-- For a field k, take the canonical geometric morphism over the unique topological point p₀ of
+Spec(k), using its residue-field separable closure. Its common-height small-étale geometric
+point is fieldGodementCanonicalPoint, with additive-group coefficients at max(u,w). -/
 abbrev fieldGodementCanonicalPoint :=
   smallEtaleGeometricPointCommon.{u, w}
     (smallEtaleCanonicalGeometricMorphism (Spec (.of k)) default)
 
-/-- The actual product projection identifies each Godement object with its original canonical-point
-skyscraper term. -/
+/-- Let k be a field and Q a small-étale additive-group sheaf of height max(u,w). Its Godement
+object Π_{y∈Spec(k)} x_{y*}x_y^*Q is isomorphic to x_{p₀*}x_{p₀}^*Q by the product projection
+at the unique topological point p₀. The canonical geometric point at that same p₀ is retained. -/
 def fieldGodementProductCollapseApp
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     (smallEtaleGodement.{u, w} (Spec (.of k))).obj Q ≅
@@ -50,8 +59,9 @@ def fieldGodementProductCollapseApp
         ((smallEtaleGodementStalks.{u, w} (Spec (.of k))).obj Q x))
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Naturality of the actual product collapse is the original skyscraper-product projection
-square. -/
+/-- For a field k and a sheaf map f : Q → Q′, let T_G be Godement and T_p the canonical point
+endofunctor. The product-collapse maps θ satisfy T_G(f)≫θ_Q′=θ_Q≫T_p(f). These are maps of the
+same small-étale sheaves at coefficient height max(u,w). -/
 theorem fieldGodementProductCollapseApp_naturality
     {Q Q' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}} (f : Q ⟶ Q') :
     (smallEtaleGodement.{u, w} (Spec (.of k))).map f ≫
@@ -63,8 +73,9 @@ theorem fieldGodementProductCollapseApp_naturality
   smallEtaleGodementSkyscrapers_map_projection.{u, w} (Spec (.of k))
     ((smallEtaleGodementStalks.{u, w} (Spec (.of k))).map f) default
 
-/-- The actual original Godement endofunctor is naturally the single canonical-point adjunction
-endofunctor. -/
+/-- For a field k, projection from the Godement product to its unique topological-point component
+gives a natural isomorphism T_G ≅ x_{p₀}^*⋙x_{p₀*} on small-étale additive-group sheaves of
+height max(u,w). Its component at Q is fieldGodementProductCollapseApp(Q). -/
 def fieldGodementProductCollapseIso :
     smallEtaleGodement.{u, w} (Spec (.of k)) ≅
       (fieldGodementCanonicalPoint.{u, w} k).sheafFiber ⋙
@@ -73,8 +84,9 @@ def fieldGodementProductCollapseIso :
     (fun f => fieldGodementProductCollapseApp_naturality.{u, w} k f)
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual product collapse carries the original Godement unit to the same canonical point
-unit. -/
+/-- Let k be a field, θ : T_G ≅ T_p the canonical-point product collapse, and Q a small-étale
+additive-group sheaf. Then η_G,Q≫θ_Q=η_p,Q, where η_G is the Godement unit and η_p the
+canonical stalk–skyscraper adjunction unit. -/
 theorem fieldGodementProductCollapseIso_unit
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     (smallEtaleGodementUnit.{u, w} (Spec (.of k))).app Q ≫
@@ -83,8 +95,10 @@ theorem fieldGodementProductCollapseIso_unit
   smallEtaleGodementUnit_projection.{u, w} (Spec (.of k)) Q default
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual family-adjunction counit has the original canonical point counit after the product
-projection. -/
+/-- For a coefficient family M_y indexed by the topological points of Spec(k), let π_M be
+projection of Π_y x_{y*}M_y to the unique component p₀. The family-adjunction counit at p₀
+equals x_{p₀}^*(π_M) followed by the point counit ε_{M_{p₀}}. This identifies the counit
+component used in multiplication. -/
 theorem fieldGodementCounit_default
     (M : Spec (.of k) → AddCommGrpCat.{max u w}) :
     ((smallEtaleGodementAdjunction.{u, w} (Spec (.of k))).counit.app M) default =
@@ -113,7 +127,9 @@ theorem fieldGodementCounit_default
   exact hc.trans (a.homEquiv_counit _ _ π)
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual product collapse preserves the original Godement monad multiplication. -/
+/-- Let T be the field Godement monad, S the canonical point monad, and θ their product-collapse
+endofunctor isomorphism. For every sheaf Q, μ_T,Q≫θ_Q=(T(θ_Q)≫θ_{S(Q)})≫μ_S,Q. This is the
+monad multiplication equation for the same product projection. -/
 theorem fieldGodementProductCollapseIso_mul
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     let T := smallEtaleGodementMonad.{u, w} (Spec (.of k))
@@ -147,7 +163,10 @@ theorem fieldGodementProductCollapseIso_mul
       congrArg (fun f => f ≫ B.map (p.skyscraperSheafAdjunction.counit.app (A.obj Q))) hn.symm
   exact hstart.trans (hsplit.trans hend)
 
-/-- The actual original Godement monad is isomorphic to its canonical one-point adjunction monad. -/
+/-- For a field k, the natural singleton-product collapse, together with its unit and
+multiplication equations, defines an isomorphism from smallEtaleGodementMonad(Spec k) to the
+monad of the canonical geometric-point stalk–skyscraper adjunction. The coefficients have
+height max(u,w). -/
 def fieldGodementCanonicalPointMonadIso :
     smallEtaleGodementMonad.{u, w} (Spec (.of k)) ≅
       (fieldGodementCanonicalPoint.{u, w} k).skyscraperSheafAdjunction.toMonad :=

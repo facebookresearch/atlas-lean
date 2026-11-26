@@ -1,4 +1,6 @@
-# Coefficient ULift Complex Iso joint naturality
+# Naturality of the coefficient-lift comparison in joint CE maps
 
-Joint maps commute with the coefficient-carrier lift comparison. The right map is the degree
-map on the lifted Lie coefficients.
+Naturality of the coefficient-lift comparison in joint CE maps.
+
+The full lifted joint chain map followed by the coefficient-lift comparison equals the source
+comparison followed by the joint map on lifted Lie coefficients.

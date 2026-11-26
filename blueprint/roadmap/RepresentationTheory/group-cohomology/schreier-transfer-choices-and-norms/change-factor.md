@@ -1,4 +1,5 @@
-# Change Factor
+# The subgroup factor comparing two representatives
 
-The subgroup factor comparing a representative in `T` with its matched
-representative in `U`.
+The subgroup factor comparing two representatives.
+
+For t ∈ T and its matching u(t) ∈ U, this is c(t) ∈ H with t = c(t)u(t).

@@ -1,3 +1,6 @@
-# Hom Coefficient Map naturality
+# Coefficient Hom precomposition is natural in the target module
 
-The coefficient map is natural in the actual S-module target, without an R-action there.
+Coefficient Hom precomposition is natural in the target module.
+
+Postcomposition with a right `S`-module map `g : C ⟶ C'` commutes with coefficient
+precomposition by `f`.

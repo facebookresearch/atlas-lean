@@ -1,3 +1,5 @@
-# BBar Degree Homeomorph d0 remove
+# The initial classifying-bar face as coordinate removal
 
-Zeroth-face formula expressed with the stable remove-coordinate API.
+The initial classifying-bar face as coordinate removal.
+
+Under the degree homeomorphisms, d₀ removes tuple coordinate 0.

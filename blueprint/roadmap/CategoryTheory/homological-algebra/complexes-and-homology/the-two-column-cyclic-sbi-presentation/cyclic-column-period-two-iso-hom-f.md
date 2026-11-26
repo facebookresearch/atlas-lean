@@ -1,3 +1,5 @@
-# Cyclic Column Period Two Iso hom f
+# The forward tensor component of cyclic column periodicity
 
-The forward period-two coordinate is the original identity tensor map.
+The forward tensor component of cyclic column periodicity.
+
+The forward period-two column comparison is the identity on each coefficient tensor level.

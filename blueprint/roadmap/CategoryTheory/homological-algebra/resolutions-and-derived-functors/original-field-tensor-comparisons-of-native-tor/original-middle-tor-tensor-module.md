@@ -1,4 +1,7 @@
-# Original Middle Tor Tensor Module
+# The balanced support algebra acts on ordered middle Tor
 
-The real T = V ⊗[R] W acts on the original native middle-ring Tor,
-using the stock balanced product representation of its two derived actions.
+For a commutative ring R and commutative R-algebras V,W,
+let M_q=Tor_q^R(V,W), using both coefficient lifts at
+Γ=max(r,v,w,t).
+The commuting compatible factor actions define a module
+structure of T=V⊗_R W on M_q.

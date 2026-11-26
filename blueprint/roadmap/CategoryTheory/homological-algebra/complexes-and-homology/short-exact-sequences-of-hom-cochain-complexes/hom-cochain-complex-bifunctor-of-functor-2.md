@@ -1,3 +1,6 @@
-# Hom Cochain Complex Bifunctor Of Functor map short Exact of projective
+# Projective family terms give exact coefficient Hom cochains
 
-Fixed-object projective bridge for the family Hom-cochain bifunctor.
+Projective family terms give exact coefficient Hom cochains.
+
+In an abelian category, if every term of the family complex at `x` is projective, its
+coefficient Hom cochain functor sends short exact sequences to short exact cochain sequences.

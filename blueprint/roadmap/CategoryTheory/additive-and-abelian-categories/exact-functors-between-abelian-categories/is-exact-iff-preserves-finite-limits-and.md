@@ -1,4 +1,5 @@
-# Is Exact iff preserves Finite Limits and colimits
+# Quillen exactness is finite-limit and finite-colimit preservation
 
-For canonical exact structures on abelian categories, preserving admissible exact sequences is
-equivalent to preserving finite limits and finite colimits.
+Let C,D be abelian categories with their canonical exact structures and F : C → D an additive
+functor. Then F.IsExact holds if and only if F preserves finite limits and finite colimits.
+The exact structure declares the ordinary short exact sequences admissible.

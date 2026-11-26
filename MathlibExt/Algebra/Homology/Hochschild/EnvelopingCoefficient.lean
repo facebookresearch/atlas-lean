@@ -16,12 +16,21 @@ public import Mathlib.Algebra.Algebra.Opposite
 public import Mathlib.LinearAlgebra.TensorProduct.Opposite
 
 /-!
-# Bimodules as right enveloping modules
+# Bimodules and the right enveloping action
 
-The commuting left and right actions on M give a right action of
-A ⊗[k] Aᵐᵒᵖ. The opposite element op(a ⊗ op(b)) acts by the right
-a-action after the left b-action, matching the Hochschild endpoint
-order. Ground, algebra and coefficient universes are independent.
+Let k be a commutative ring, A an associative unital k-algebra, and
+M a k-module with commuting left and right A-module actions compatible
+with the central k-action. Set E = A ⊗[k] Aᵐᵒᵖ. The right E-action is
+m · (a ⊗ bᵐᵒᵖ) = bma: the first outer factor acts on the right of
+M and the opposite last factor acts on its left.
+
+Equivalently, Eᵐᵒᵖ represents by k-linear endomorphisms of M.
+This representation gives the right module structure, commutes with
+ground scalars, and respects every k-linear map preserving both
+A-actions. The ground, algebra and two coefficient carrier universes
+u,v,w,w′ are independent.
+
+Reference: J.-L. Loday, Cyclic Homology, §1.1.
 -/
 
 @[expose] public section
@@ -40,7 +49,13 @@ variable (k : Type u) [CommRing k] (A : Type v) [Ring A] [Algebra k A]
   [SMulCommClass A Aᵐᵒᵖ M] [SMulCommClass k A M] [SMulCommClass k Aᵐᵒᵖ M]
   [IsScalarTower k A M] [IsScalarTower k Aᵐᵒᵖ M]
 
-/-- Native tensor lifting packages the original two commuting coefficient actions. -/
+/-- Let k be commutative, A an associative unital k-algebra, and M an
+A-bimodule with commuting k-linear left and right actions. Put
+E = A ⊗[k] Aᵐᵒᵖ and F_M(X) = M ⊗_E X, with
+m · (a ⊗ bᵐᵒᵖ) = bma.
+The right E-action is represented by a k-algebra homomorphism
+Eᵐᵒᵖ → End_k(M), with op(a ⊗ bᵐᵒᵖ) acting as
+m ↦ bma. -/
 def rightEnvelopingAction :
     (AdjacentBar.EnvelopingAlgebra k A)ᵐᵒᵖ →ₐ[k] Module.End k M :=
   (Algebra.TensorProduct.lift (Algebra.lsmul (A := Aᵐᵒᵖ) k k M)
@@ -56,7 +71,13 @@ def rightEnvelopingAction :
     (Algebra.TensorProduct.opAlgEquiv k k A Aᵐᵒᵖ).symm.toAlgHom
 
 omit [SMulCommClass k A M] [SMulCommClass k Aᵐᵒᵖ M] in
-/-- The enveloping pure tensor retains the original first-right/last-left endpoint convention. -/
+/-- Let k be commutative, A an associative unital k-algebra, and M an
+A-bimodule with commuting k-linear left and right actions. Put
+E = A ⊗[k] Aᵐᵒᵖ and F_M(X) = M ⊗_E X, with
+m · (a ⊗ bᵐᵒᵖ) = bma.
+On a pure enveloping tensor, the representation satisfies
+ρ(op(a_0 ⊗ a_lastᵐᵒᵖ))(m) = (a_last m) a_0.
+Thus the first outer factor acts on the right and the last on the left. -/
 theorem rightEnvelopingAction_tmul (a0 aLast : A) (m : M) :
     rightEnvelopingAction k A M (op (a0 ⊗ₜ[k] op aLast)) m = op a0 • (aLast • m) := by
   simp only [rightEnvelopingAction, AlgHom.comp_apply]
@@ -73,20 +94,38 @@ theorem rightEnvelopingAction_tmul (a0 aLast : A) (m : M) :
       exact (smul_comm ((AlgEquiv.opOp k A).symm b) a (m : M)).symm)
       (op a0) (op (op aLast)))
 
-/-- The right enveloping module is the native pullback of that original representation. -/
+/-- Let k be commutative, A an associative unital k-algebra, and M an
+A-bimodule with commuting k-linear left and right actions. Put
+E = A ⊗[k] Aᵐᵒᵖ and F_M(X) = M ⊗_E X, with
+m · (a ⊗ bᵐᵒᵖ) = bma.
+The representation Eᵐᵒᵖ → End_k(M) equips M with a left
+Eᵐᵒᵖ-module structure, equivalently a right E-module structure,
+whose action is m · (a ⊗ bᵐᵒᵖ) = bma. -/
 @[instance_reducible]
 def rightEnvelopingModule : Module (AdjacentBar.EnvelopingAlgebra k A)ᵐᵒᵖ M :=
   Module.compHom M (rightEnvelopingAction k A M).toRingHom
 
 omit [SMulCommClass k A M] [SMulCommClass k Aᵐᵒᵖ M] in
-/-- Ground scalars of the original coefficient remain unchanged in the enveloping module. -/
+/-- Let k be commutative, A an associative unital k-algebra, and M an
+A-bimodule with commuting k-linear left and right actions. Put
+E = A ⊗[k] Aᵐᵒᵖ and F_M(X) = M ⊗_E X, with
+m · (a ⊗ bᵐᵒᵖ) = bma.
+For the associated Eᵐᵒᵖ-module structure on M, the scalar actions
+form a tower k → Eᵐᵒᵖ → M. In particular
+(λ • z) • m = λ • (z • m) for λ ∈ k and z ∈ Eᵐᵒᵖ. -/
 theorem rightEnvelopingScalarTower :
     letI := rightEnvelopingModule k A M
     IsScalarTower k (AdjacentBar.EnvelopingAlgebra k A)ᵐᵒᵖ M :=
   AlgHom.moduleEnd_compHom_isScalarTower (rightEnvelopingAction k A M)
 
 omit [SMulCommClass k A M] [SMulCommClass k Aᵐᵒᵖ M] in
-/-- The enveloping operators are linear for the original ground action. -/
+/-- Let k be commutative, A an associative unital k-algebra, and M an
+A-bimodule with commuting k-linear left and right actions. Put
+E = A ⊗[k] Aᵐᵒᵖ and F_M(X) = M ⊗_E X, with
+m · (a ⊗ bᵐᵒᵖ) = bma.
+The ground k-action commutes with the associated Eᵐᵒᵖ-action:
+λ • (z • m) = z • (λ • m) for λ ∈ k, z ∈ Eᵐᵒᵖ and m ∈ M.
+Every enveloping operator is therefore k-linear. -/
 theorem rightEnvelopingScalarComm :
     letI := rightEnvelopingModule k A M
     SMulCommClass k (AdjacentBar.EnvelopingAlgebra k A)ᵐᵒᵖ M := by
@@ -97,7 +136,12 @@ theorem rightEnvelopingScalarComm :
   exact ((rightEnvelopingAction k A M e).map_smul c m).symm
 
 omit [SMulCommClass k A M] [SMulCommClass k Aᵐᵒᵖ M] in
-/-- The original pure action is retained after native pullback to a module. -/
+/-- Let k be commutative, A an associative unital k-algebra, and M an
+A-bimodule with commuting k-linear left and right actions. Put
+E = A ⊗[k] Aᵐᵒᵖ and F_M(X) = M ⊗_E X, with
+m · (a ⊗ bᵐᵒᵖ) = bma.
+In the associated module structure, the pure tensor action has value
+op(a_0 ⊗ a_lastᵐᵒᵖ) • m = (a_last m) a_0. -/
 theorem rightEnvelopingModule_tmul (a0 aLast : A) (m : M) :
     letI := rightEnvelopingModule k A M
     op (a0 ⊗ₜ[k] op aLast) • m = op a0 • (aLast • m) :=
@@ -111,7 +155,15 @@ variable {N : Type w'} [AddCommGroup N] [Module k N] [Module A N] [Module Aᵐ�
 
 omit [SMulCommClass k A M] [SMulCommClass k Aᵐᵒᵖ M]
   [SMulCommClass k A N] [SMulCommClass k Aᵐᵒᵖ N] in
-/-- Preserving the original left and right actions preserves the enveloping action. -/
+/-- Let k be commutative, A an associative unital k-algebra, and M an
+A-bimodule with commuting k-linear left and right actions. Put
+E = A ⊗[k] Aᵐᵒᵖ and F_M(X) = M ⊗_E X, with
+m · (a ⊗ bᵐᵒᵖ) = bma.
+Let N be another compatible A-bimodule, in an independent carrier
+universe, and f : M → N a k-linear map with
+f(am) = a f(m) and f(mb) = f(m)b for all a,b ∈ A and m ∈ M.
+Then f intertwines the right E-representations:
+f(ρ_M(op z)(m)) = ρ_N(op z)(f(m)) for every z ∈ E. -/
 theorem rightEnvelopingAction_naturality (f : M →ₗ[k] N)
     (hLeft : ∀ (a : A) (m : M), f (a • m) = a • f m)
     (hRight : ∀ (b : Aᵐᵒᵖ) (m : M), f (b • m) = b • f m)

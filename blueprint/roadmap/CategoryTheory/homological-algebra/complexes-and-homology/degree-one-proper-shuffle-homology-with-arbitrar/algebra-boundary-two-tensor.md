@@ -1,3 +1,7 @@
-# Algebra Boundary two tensor
+# The coefficient Hochschild degree-two boundary equals the tensor Kähler boundary
 
-The coefficient boundary is the native Kähler b₂ after the original tensor coordinates.
+The coefficient Hochschild degree-two boundary equals the tensor Kähler boundary.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, the one- and
+two-word coordinate equivalences identify b₂ with M ⊗[A]
+KaehlerDifferential.Hochschild.boundaryTwo.

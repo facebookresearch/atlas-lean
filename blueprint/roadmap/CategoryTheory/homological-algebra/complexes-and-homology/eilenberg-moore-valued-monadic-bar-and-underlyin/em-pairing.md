@@ -1,5 +1,5 @@
-# Em Pairing
+# The algebra action pairs the zero-degree free bar with its target
 
-The EM pairing: at every discrete point the algebra morphism with
-underlying map `alg.a`, from the free algebra on `alg.A` to `alg`. The
-compatibility law is `alg.assoc`.
+Let T be a monad on C and alg=(A,a) a T-algebra. At each discrete point, the zero-degree bar
+pairing is the algebra morphism free(A) → alg with underlying map a : T(A) → A. It is a
+morphism of algebras because μ_A ≫ a = T(a) ≫ a.

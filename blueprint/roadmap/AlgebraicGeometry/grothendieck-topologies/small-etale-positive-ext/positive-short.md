@@ -1,3 +1,6 @@
-# Positive Short
+# Three adjacent section terms of an injective resolution
 
-The literal three-term sections complex in each positive degree.
+Three adjacent section terms of an injective resolution.
+
+Take global sections of the chosen injective resolution and form the short complex in degrees
+`n`, `n + 1`, and `n + 2`.

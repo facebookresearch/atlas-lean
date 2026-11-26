@@ -1,4 +1,6 @@
-# Field Godement Coind Coface Iso
+# The Godement/coinduction degree isomorphisms form a coface isomorphism
 
-The actual prescribed-field degree isomorphisms with all original coface
-squares, on the same original Galois module objects.
+For a field k, prescribed separable closure Ω, and sheaf F, the term isomorphisms
+Φ(Core_{T_G}F)_n ≅ Core_S(ΦF)_n for all n form a CofaceIso. Its coface equations are those of
+fieldGodementCoindCoresolutionTermIso_coface; this is the coface-compatible data used for
+alternating differentials.

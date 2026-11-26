@@ -14,12 +14,17 @@ public import Mathlib.LinearAlgebra.Alternating.Uncurry.Fin
 public import MathlibExt.LinearAlgebra.Alternating.HeadAntisymmetrization
 
 /-!
-# The bracket sum in the cyclic exterior comparison
+# Lie brackets from alternating uncurrying of cyclic tail products
 
-Associative multiplication followed by the fixed-first-factor alternating
-map gives the bilinear input. Double uncurrying pairs opposite products into
-Lie brackets, preserving the order of the twice-removed tuple. This yields
-the integral bracket-tail formula for the full exterior boundary.
+Let A be a k-algebra ring over a commutative ring k. Fixing one input of the cyclic tensor
+projection and alternating the last n inputs gives a map T_n(x; a). Applying it to the ordered
+product x*y gives a bilinear family. Twice alternating the uncurry operation pairs x*y with
+y*x, so their difference is the associative Lie bracket [x,y].
+
+On n + 2 inputs a, the resulting alternating map is the sum over i : Fin(n+1) and j ≥ i of
+(−1)^(i+j) times the tail sum with first input [a_i,a_(j+1)]. Its tail deletes position i
+first and then position j in the shortened tuple. Applying the integral full exterior map to
+the negative CE boundary equals (n + 1) times this bracket-tail map.
 -/
 
 @[expose] public section
@@ -39,11 +44,18 @@ variable (k : Type u) [CommRing k] (A : Type v) [Ring A] [Algebra k A]
 
 local notation "Cλ" => ModuleCat.Algebra.Hochschild.NonUnital.connesComplex
 
-/-- The original product of the two singled-out inputs, with the same alternating tail. -/
+/-- Let k be a commutative ring and A a possibly noncommutative ring with a k-algebra structure.
+Let Cλ_n be degree n of its Connes cyclic quotient and q_n : A^⊗(n+1) →ₗ[k] Cλ_n the
+whole-tensor quotient map. For n : ℕ, cyclicTailAlternating n : A →ₗ[k] Alt(Fin n, A; Cλ_n)
+fixes the first input x and alternates the remaining n. Its value on a tail a is cyclicTailSum
+n (Fin.cons x a). -/
 def cyclicTailAlternating (n : ℕ) : A →ₗ[k] A [⋀^Fin n]→ₗ[k] ((Cλ k A).X n) :=
   MultilinearMap.alternatizeTail (cyclicMultilinear k A n).curryLeft
 
-/-- The native alternating tail has exactly the original fixed-first-factor formula. -/
+/-- Let k be a commutative ring and A a possibly noncommutative ring with a k-algebra structure.
+Let Cλ_n be degree n of its Connes cyclic quotient and q_n : A^⊗(n+1) →ₗ[k] Cλ_n the
+whole-tensor quotient map. For x : A and a : Fin n → A, cyclicTailAlternating n x a =
+cyclicTailSum n (Fin.cons x a), with signed permutations of the tail positions only. -/
 theorem cyclicTailAlternating_apply (n : ℕ) (x : A) (a : Fin n → A) :
     cyclicTailAlternating k A n x a = cyclicTailSum k A n (Fin.cons x a) := by
   change ((cyclicMultilinear k A n).curryLeft x).alternatization a =
@@ -62,7 +74,10 @@ theorem cyclicTailAlternating_apply (n : ℕ) (x : A) (a : Fin n → A) :
       ModuleCat.Algebra.Hochschild.Matrix.connesRepresentative k A n y)
     (TensorPower.consEquiv_symm_tprod k A n (Fin.cons x (fun j => a (σ j))))
 
-/-- Original multiplication into the integral fixed-first alternating tail. -/
+/-- Let k be a commutative ring and A a possibly noncommutative ring with a k-algebra structure.
+Let Cλ_n be degree n of its Connes cyclic quotient and q_n : A^⊗(n+1) →ₗ[k] Cλ_n the
+whole-tensor quotient map. For n : ℕ, cyclicTailProductCurry is the k-bilinear map in x, y
+with values in alternating n-tail maps, defined by (x,y;a) ↦ cyclicTailAlternating n (x*y) a. -/
 def cyclicTailProductCurry (n : ℕ) :
     A →ₗ[k] A →ₗ[k] A [⋀^Fin n]→ₗ[k] ((Cλ k A).X n) where
   toFun x := (cyclicTailAlternating k A n).comp (LinearMap.mul k A x)
@@ -76,12 +91,21 @@ def cyclicTailProductCurry (n : ℕ) :
       map_smul, LinearMap.smul_apply]
     rfl
 
-/-- The twice uncurried original product of two inputs into the integral tail sum. -/
+/-- Let k be a commutative ring and A a possibly noncommutative ring with a k-algebra structure.
+Let Cλ_n be degree n of its Connes cyclic quotient and q_n : A^⊗(n+1) →ₗ[k] Cλ_n the
+whole-tensor quotient map. For n : ℕ, applying the alternating uncurry operation twice to
+cyclicTailProductCurry gives cyclicTailProductUncurry : Alt(Fin(n+2), A; Cλ_n). The two orders
+of the singled-out multiplication contribute their commutator. -/
 def cyclicTailProductUncurry (n : ℕ) : A [⋀^Fin (n + 2)]→ₗ[k] ((Cλ k A).X n) :=
   AlternatingMap.alternatizeUncurryFin
     (AlternatingMap.alternatizeUncurryFinLM.comp (cyclicTailProductCurry k A n))
 
-/-- The native double-uncurrying formula supplies the bracket-tail sum integrally. -/
+/-- Let k be a commutative ring and A a possibly noncommutative ring with a k-algebra structure.
+Let Cλ_n be degree n of its Connes cyclic quotient and q_n : A^⊗(n+1) →ₗ[k] Cλ_n the
+whole-tensor quotient map. For a : Fin (n + 2) → A, cyclicTailProductUncurry n a = ∑ i :
+Fin(n+1), ∑ j ≥ i, (−1 : ℤ)^(i.val+j.val) • cyclicTailSum n (Fin.cons
+⁅a_(i.castSucc),a_(j.succ)⁆ (j.removeNth(i.castSucc.removeNth a))). The bracket is a_i*a_(j+1)
+− a_(j+1)*a_i; the two removals occur in the displayed order. -/
 theorem cyclicTailProductUncurry_pure (n : ℕ) (a : Fin (n + 2) → A) :
     cyclicTailProductUncurry k A n a =
       ∑ i : Fin (n + 1), ∑ j ∈ Finset.Ici i,
@@ -105,8 +129,12 @@ theorem cyclicTailProductUncurry_pure (n : ℕ) (a : Fin (n + 2) → A) :
   exact h.symm.trans (by
     rw [← LieRing.of_associative_ring_bracket, cyclicTailAlternating_apply])
 
-/-- The integral full exterior boundary has the exact remaining-input factor times the tail
-bracket sum. -/
+/-- Let k be a commutative ring and A a possibly noncommutative ring with a k-algebra structure.
+Let Cλ_n be degree n of its Connes cyclic quotient and q_n : A^⊗(n+1) →ₗ[k] Cλ_n the
+whole-tensor quotient map. Give A its associative commutator Lie bracket. For n : ℕ and a :
+Fin (n + 2) → A, cyclicFullExterior n (−differential k A (n + 1)(ιMulti a)) = (n + 1) •
+cyclicTailProductUncurry n a. The source boundary lowers exterior degree n + 2 to n + 1, and
+the right side uses the signed bracket-tail sum. -/
 theorem cyclicFullExterior_positive_boundary_factor (n : ℕ) (a : Fin (n + 2) → A) :
     cyclicFullExterior k A n
         (-differential k A (n + 1) (exteriorPower.ιMulti k (n + 2) a)) =

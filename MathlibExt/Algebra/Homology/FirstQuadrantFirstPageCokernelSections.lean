@@ -13,13 +13,17 @@ module
 public import MathlibExt.Algebra.Homology.FirstQuadrantFirstPageHorizontalCycles
 
 /-!
-# Sections and supported-degree cokernel inverses
+# Supported inverse formulas for the first-page cokernel comparison
 
-In every column, the inverse of the canonical cokernel-to-column isomorphism
-is computed in supported degrees by including the top summand into the
-filtration stage and then applying the abstract cokernel projection.  The
-zero column uses its direct complete-stage presentation; positive columns use
-the natural-stage presentation.
+Let K be a nonnegative homological bicomplex in an abelian category C.
+The quotient of consecutive complete filtration stages
+Q_p = coker(F_(p−1) → F_p) is isomorphic to the direct cochain column D_p.
+
+In every supported degree i=−p−q, the inverse D_p^i → Q_p^i is the
+degreewise top-column section D_p^i → F_p^i followed by the cokernel
+projection. At p=0 this uses the direct complete zero-stage section;
+at positive columns it uses the natural finite-stage presentation.
+No chain-map section is required for this supported component formula.
 -/
 
 @[expose] public section
@@ -39,8 +43,12 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
   (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
     (ComplexShape.down ℕ))
 
-/-- In column `p+1`, the inverse cokernel comparison is represented by the
-supported-degree section followed by the cokernel projection. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category and p,q ≥ 0, the inverse comparison
+D_(p+1) → coker(F_p → F_(p+1)) has component in degree
+i=−(p+1)−q equal to π_i ∘ s_(p+1,q).
+Here s is the supported degreewise column section into F_(p+1),
+and π is the consecutive-stage cokernel projection. -/
 theorem horizontalFirstPageCokernelIso_inv_f_succ (p q : ℕ) :
     (horizontalFirstPageCokernelIso K (p + 1)).inv.f
         (-((p + 1 : ℕ) : ℤ) - q) =
@@ -61,8 +69,11 @@ theorem horizontalFirstPageCokernelIso_inv_f_succ (p q : ℕ) :
   rw [cokernel.π_desc]
   exact (horizontalCompleteSuccDirectColumnSection_projection K p q).symm
 
-/-- In column zero, the inverse cokernel comparison is represented by the
-direct complete-stage section followed by the cokernel projection. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category and q ≥ 0, the inverse D_0 → coker(F_(−1) → F_0)
+has component in degree −q equal to the direct zero-stage
+section followed by the cokernel projection.
+The complete lower stage F_(−1) is zero. -/
 theorem horizontalFirstPageCokernelIso_inv_f_zero (q : ℕ) :
     (horizontalFirstPageCokernelIso K 0).inv.f
         (-((0 : ℕ) : ℤ) - q) =

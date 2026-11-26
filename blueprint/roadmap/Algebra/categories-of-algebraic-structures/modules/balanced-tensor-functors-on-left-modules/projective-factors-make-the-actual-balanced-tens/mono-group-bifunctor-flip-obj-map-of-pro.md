@@ -1,4 +1,6 @@
-# Mono group Bifunctor flip obj map of projective
+# Tensoring a monomorphism with a projective left module remains monic
 
-Tensoring with an actual projective left module preserves monomorphisms
-of right modules by the same original character/currying/lifting argument.
+Tensoring a monomorphism with a projective left module remains monic.
+
+Let `P` be categorically projective in `ModuleCat R` and `g : A ⟶ A'` a monomorphism of right
+`R`-modules. The induced additive-group map `g ⊗_R P` is a monomorphism.

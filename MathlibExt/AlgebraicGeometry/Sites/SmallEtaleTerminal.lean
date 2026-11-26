@@ -11,7 +11,13 @@ module
 
 public import Mathlib.AlgebraicGeometry.Morphisms.Etale
 
-/-! # The terminal object of the original small étale category -/
+/-!
+# The terminal object of the small étale category
+
+For a scheme X, the object represented by its identity morphism id_X : X → X is terminal in
+X.Etale. Every étale object Y → X has its structure morphism as the unique arrow to this
+identity object.
+-/
 
 @[expose] public section
 
@@ -27,7 +33,9 @@ namespace AlgebraicGeometry.Scheme.DerivedSections
 
 variable (X : Scheme.{u})
 
-/-- The literal identity morphism is terminal in the original small étale site. -/
+/-- For a scheme X of universe u, Scheme.Etale.mk(id_X) is a terminal object of X.Etale. The
+unique morphism from an étale object Y → X is its structure morphism to X, regarded as a
+morphism over X. -/
 def identityEtaleIsTerminal :
     IsTerminal (Scheme.Etale.mk (𝟙 X)) :=
   by

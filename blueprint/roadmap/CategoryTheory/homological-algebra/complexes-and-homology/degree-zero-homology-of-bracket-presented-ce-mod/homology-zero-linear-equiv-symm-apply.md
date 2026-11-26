@@ -1,4 +1,6 @@
-# Homology Zero Linear Equiv symm apply
+# The exterior representative of a degree-zero scalar homology class
 
-A scalar is represented in degree-zero homology by the canonical exterior degree-zero
-representative of that scalar.
+The exterior representative of a degree-zero scalar homology class.
+
+The inverse scalar equivalence represents `r ∈ R` by its inverse exterior-degree-zero
+coordinate, then takes its degree-zero class.

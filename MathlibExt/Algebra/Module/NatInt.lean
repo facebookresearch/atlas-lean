@@ -14,10 +14,16 @@ module
 public import Mathlib.Algebra.Module.NatInt
 
 /-!
-# Compatibility with integer module structures
+# Integer scalars and arbitrary module actions
 
-The integer tower and commutation laws hold for arbitrary integer module
-structures. The conclusions use the supplied scalar actions.
+Let R be a ring and M an R-module, with their carriers in independent
+universes u and v. For any integer-module structures on the additive groups
+of R and M, the R-action satisfies (z • r) • m = z • (r • m).
+Each integer action is repeated addition with its extension to negative integers.
+
+More generally, if a type S acts distributively on an additive commutative
+group M, that action commutes with any integer-module structure on M:
+s • (z • m) = z • (s • m). No multiplication on S is required.
 -/
 
 @[expose] public section
@@ -26,8 +32,11 @@ namespace Module
 
 universe u v
 
-/-- The original ring action is compatible with any two supplied integer
-module dictionaries on the ring and on its module. -/
+/-- Let R be a ring, M an R-module, and let d_R and d_M be any
+integer-module structures on their additive groups. The R-action and these
+integer actions form a scalar tower: for z ∈ ℤ, r ∈ R and m ∈ M,
+(d_R(z, r)) • m = d_M(z, r • m). The ring and module carriers may lie in
+independent universes. -/
 theorem intModule_isScalarTower {R : Type u} [Ring R] {M : Type v}
     [AddCommGroup M] [dRM : Module R M]
     (dR : Module ℤ R) (dM : Module ℤ M) :
@@ -43,8 +52,11 @@ theorem intModule_isScalarTower {R : Type u} [Ring R] {M : Type v}
     _ = dM.smul z (dRM.smul r m) :=
       (int_smul_eq_zsmul dM z (dRM.smul r m)).symm
 
-/-- A fixed distributive scalar action commutes with the actual supplied
-integer module dictionary. The scalar type needs no multiplication. -/
+/-- Let S be a type acting distributively on an additive commutative
+group M, and give M any integer-module structure. Then the S-action
+commutes with integer multiplication:
+s • (z • m) = z • (s • m) for s ∈ S, z ∈ ℤ and m ∈ M.
+No monoid or ring structure on S is assumed. -/
 theorem intModule_smulCommClass {S : Type u} {M : Type v}
     [AddCommGroup M] [dS : DistribSMul S M] [dM : Module ℤ M] :
     @SMulCommClass S ℤ M dS.toSMul dM.toSMul := by

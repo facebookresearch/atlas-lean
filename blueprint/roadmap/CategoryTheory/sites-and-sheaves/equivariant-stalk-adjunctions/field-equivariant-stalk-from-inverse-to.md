@@ -1,3 +1,6 @@
-# Field Equivariant Stalk From Inverse to Inverse
+# Inverse transpose after forward transpose is the identity
 
-The actual invariant factorization followed by the original transpose is the original arrow.
+Inverse transpose after forward transpose is the identity.
+
+Starting from an equivariant stalk morphism, passing to the inverse sheaf and back returns the
+same morphism.

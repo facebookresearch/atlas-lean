@@ -1,3 +1,6 @@
-# Annihilator Diagram Functor
+# Power-annihilator diagrams vary functorially in modules
 
-Coefficient dependence is a genuine functor to actual categorical diagrams.
+Power-annihilator diagrams vary functorially in modules.
+
+The assignment `M ↦ annihilatorDiagram I M` and the restricted maps of module morphisms define
+a functor to natural-number diagrams in the module category.

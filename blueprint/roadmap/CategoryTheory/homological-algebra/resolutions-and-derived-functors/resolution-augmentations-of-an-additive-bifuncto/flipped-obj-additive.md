@@ -1,4 +1,5 @@
-# Flipped Obj Additive
+# First-variable additivity of each flipped partial functor
 
-A fixed second object gives an additive flipped partial functor by the
-original first-variable additivity.
+Let `C₁,C₂,D` be abelian and `F : C₁ → C₂ → D` additive
+in both variables. For every `Y : C₂`, the flipped partial functor
+`F(-,Y) : C₁ → D` is additive.

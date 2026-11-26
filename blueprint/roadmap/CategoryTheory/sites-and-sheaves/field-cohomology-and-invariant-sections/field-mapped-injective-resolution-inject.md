@@ -1,3 +1,5 @@
-# Field Mapped Injective Resolution injective
+# Mapped resolution terms are injective
 
-Injectivity is proved on each actual mapped term, using the accepted equivalence.
+Mapped resolution terms are injective.
+
+Every term of the mapped geometric-fiber resolution is injective.

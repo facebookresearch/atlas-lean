@@ -14,20 +14,21 @@ public import MathlibExt.RepresentationTheory.Rep.CyclicPermutation
 public import Mathlib.RepresentationTheory.Homological.GroupCohomology.LongExactSequence
 
 /-!
-# The cyclic permutation connector as cup with the quotient character
+# The mod-two cyclic permutation connector is cup with the character
 
-For mod-two coefficients, lift an `A`-valued cochain into the cyclic
-permutation coefficient by placing its value at cyclic index zero and zero
-at index one.  This lift augments back to the original cochain.  Its
-differential differs from the lifted cocycle equation only in the first
-face: translation of the cyclic index by the quotient character.  The
-resulting diagonal defect is
+Let G be a group in universe zero, χ:G→Multiplicative(F₂) a character, and A an F₂-linear
+representation in universe zero. The function representation P_χ(A)=F₂→A has action
+(g•F)(i)=ρ_A(g)F(i+c_χ(g)), where c_χ is the additive character. The diagonal Δ(a)=(a,a) and
+augmentation ε(F)=F(0)+F(1) give a short exact sequence 0→A→P_χ(A)→A→0.
 
-`chi(g₀) • g₀ · z(g₁, ..., gₙ)`,
+The coefficient section s(a)=(a,0) lifts an A-valued cochain pointwise. For an n-cocycle z, its
+lifted differential is Δ applied to T_χ(z)(g₀,…,g_n)=c_χ(g₀)•ρ_A(g₀)z(g₁,…,g_n). This is the
+inhomogeneous cup cocycle of the character with z, after degree reindexing 1+n=n+1 and the
+coefficient unitor I⊗A≅A.
 
-which is the inhomogeneous `(1,n)` cup formula.  The concrete connecting
-morphism formula therefore identifies the cyclic connector with cup by the
-character class in every degree.
+Consequently the connecting map H^n(G,A)→H^{n+1}(G,A) is x↦λ_{A,*}([χ]∪x) for every n≥0. It is
+natural in simultaneous group restriction and equivariant coefficient maps, and respects further
+compatible coefficient squares.
 -/
 
 @[expose] public section
@@ -41,8 +42,10 @@ namespace groupCohomology
 
 variable {G : Type} [Group G]
 
-/-- Degree transport on inhomogeneous cochains is precomposition with the
-corresponding cast of finite tuple indices. -/
+/-- Let G be a group and A an F₂-linear G-representation, both in universe zero. For natural numbers
+p,q with h:p=q, the degree isomorphism C^p(G,A)≅C^q(G,A) sends f:(Fin p→G)→A to the cochain
+whose value at a tuple g:Fin q→G is f(i↦g(cast_h(i))). The finite-index cast preserves the tuple
+order. -/
 theorem inhomogeneousCochains_XIsoOfEq_hom_apply
     (A : Rep.{0} (ZMod 2) G) {p q : ℕ} (h : p = q)
     (f : (Fin p → G) → A) (g : Fin q → G) :
@@ -51,7 +54,8 @@ theorem inhomogeneousCochains_XIsoOfEq_hom_apply
   subst q
   rfl
 
-/-- The additive mod-two value of a multiplicative cyclic character. -/
+/-- Let G be a group in universe zero and χ:G→Multiplicative(F₂) a homomorphism. Its additive
+character value is c_χ(g)=toAdd(χ(g))∈F₂. It satisfies c_χ(gh)=c_χ(g)+c_χ(h). -/
 def cyclicCharacterValue
     (chi : G →* Multiplicative (ZMod 2)) (g : G) : ZMod 2 :=
   Multiplicative.toAdd (chi g)
@@ -65,7 +69,9 @@ theorem cyclicCharacterValue_mul
   rw [map_mul]
   rfl
 
-/-- Low-degree cocycle representing the cyclic character. -/
+/-- Let G be a group in universe zero and χ:G→Multiplicative(F₂) a homomorphism. The function
+c_χ:G→F₂ is an explicit one-cocycle for the trivial F₂-representation:
+c_χ(gh)=c_χ(g)+c_χ(h)=ρ(g)c_χ(h)+c_χ(g). -/
 def cyclicCharacterCocycleOne
     (chi : G →* Multiplicative (ZMod 2)) :
     cocycles₁ (Rep.trivial (ZMod 2) G (ZMod 2)) :=
@@ -76,8 +82,10 @@ def cyclicCharacterCocycleOne
         cyclicCharacterValue chi h + cyclicCharacterValue chi g
       exact add_comm _ _)⟩
 
-/-- Degree-one arbitrary-complex cocycle representing the cyclic
-character. -/
+/-- Let G be a group in universe zero and χ:G→Multiplicative(F₂) a homomorphism. The explicit
+one-cocycle c_χ(g)=toAdd(χ(g)) determines a cycle in degree one of the inhomogeneous complex
+with trivial F₂ coefficients. The cycle-coordinate isomorphism identifies it with the same
+character function. -/
 noncomputable def cyclicCharacterCocycle
     (chi : G →* Multiplicative (ZMod 2)) :
     cocycles (Rep.trivial (ZMod 2) G (ZMod 2)) 1 :=
@@ -93,7 +101,9 @@ theorem cyclicCharacterCocycle_apply
   rw [← cocyclesMk₁_eq, iCocycles_mk]
   rfl
 
-/-- Character evaluation in the tensor-unit coefficient presentation. -/
+/-- Let G be a group in universe zero and χ:G→Multiplicative(F₂) a homomorphism. The tensor unit I
+in F₂-linear G-representations is the trivial coefficient F₂. For a one-entry tuple q, the
+included character cocycle in C¹(G,I) has value c_χ(q(0)). -/
 theorem cyclicCharacterCocycle_tensorUnit_apply
     (chi : G →* Multiplicative (ZMod 2)) (q : Fin 1 → G) :
     (iCocycles (𝟙_ (Rep.{0} (ZMod 2) G)) 1).hom
@@ -101,13 +111,17 @@ theorem cyclicCharacterCocycle_tensorUnit_apply
       cyclicCharacterValue chi (q 0) :=
   cyclicCharacterCocycle_apply chi q
 
-/-- The group-cohomology class of the mod-two cyclic character. -/
+/-- Let G be a group in universe zero and χ:G→Multiplicative(F₂) a homomorphism. Its class
+[χ]∈H¹(G,F₂_triv) is the cohomology projection of the cycle represented by c_χ(g)=toAdd(χ(g)).
+The coefficient is the tensor unit with trivial G-action. -/
 noncomputable def cyclicCharacterClass
     (chi : G →* Multiplicative (ZMod 2)) :
     groupCohomology (Rep.trivial (ZMod 2) G (ZMod 2)) 1 :=
   π _ 1 (cyclicCharacterCocycle chi)
 
-/-- Low-degree presentation of the cyclic-character cohomology class. -/
+/-- Let G be a group in universe zero and χ:G→Multiplicative(F₂) a homomorphism. The class [χ]
+obtained from the degree-one cycle equals the explicit class projection π₁(c_χ), where c_χ:G→F₂
+is regarded as a one-cocycle for the trivial representation. -/
 theorem cyclicCharacterClass_eq_H1π
     (chi : G →* Multiplicative (ZMod 2)) :
     cyclicCharacterClass chi =
@@ -116,7 +130,9 @@ theorem cyclicCharacterClass_eq_H1π
   rfl
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The cyclic-character class is natural under pullback of the group. -/
+/-- Let G,J be groups in universe zero, f:J→G a homomorphism, and χ:G→Multiplicative(F₂) a
+character. The induced cohomology map with identity trivial-coefficient morphism sends
+[χ]∈H¹(G,F₂) to [χ∘f]∈H¹(J,F₂). -/
 theorem cyclicCharacterClass_naturality
     {J : Type} [Group J] (f : J →* G)
     (chi : G →* Multiplicative (ZMod 2)) :
@@ -152,7 +168,9 @@ theorem cyclicCharacterClass_naturality
   unfold cyclicCharacterClass
   rw [hπ, hCycles]
 
-/-- The zero-index linear section of cyclic augmentation. -/
+/-- Let G be a group and A an F₂-linear G-representation, both in universe zero. The section
+s:A→(F₂→A) has values s(a)(0)=a and s(a)(1)=0. Thus it is a linear section on the coefficient
+modules, with its value supported at index zero; no action equivariance is asserted. -/
 def cyclicPermutationZeroSection
     (A : Rep.{0} (ZMod 2) G) (a : A) : ZMod 2 → A :=
   fun i => if i = 0 then a else 0
@@ -169,7 +187,11 @@ theorem cyclicPermutationZeroSection_one
     cyclicPermutationZeroSection A a 1 = 0 := by
   simp [cyclicPermutationZeroSection]
 
-/-- The zero-index section is a right inverse to cyclic augmentation. -/
+/-- Let G be a group and A an F₂-linear G-representation, both in universe zero. Let
+χ:G→Multiplicative(F₂) be a homomorphism and c_χ(g) its additive F₂-value. Put P_χ(A)=(F₂→A),
+with action (g•F)(i)=ρ_A(g)F(i+c_χ(g)); the diagonal is Δ(a)(i)=a and augmentation
+ε(F)=F(0)+F(1). For every a∈A, ε(s(a))=a, where s(a)(0)=a and s(a)(1)=0. This is the
+right-inverse relation on coefficient functions. -/
 theorem cyclicPermutationAugmentation_zeroSection
     (chi : G →* Multiplicative (ZMod 2))
     (A : Rep.{0} (ZMod 2) G) (a : A) :
@@ -178,7 +200,11 @@ theorem cyclicPermutationAugmentation_zeroSection
   rw [Rep.cyclicPermutationAugmentation_apply, Rep.sum_zmodTwo]
   simp
 
-/-- Cochain obtained by applying the zero-index section pointwise. -/
+/-- Let G be a group and A an F₂-linear G-representation, both in universe zero. Let
+χ:G→Multiplicative(F₂) be a homomorphism and c_χ(g) its additive F₂-value. Put P_χ(A)=(F₂→A),
+with action (g•F)(i)=ρ_A(g)F(i+c_χ(g)); the diagonal is Δ(a)(i)=a and augmentation
+ε(F)=F(0)+F(1). For n≥0 and z:(Fin n→G)→A, its lifted P_χ(A)-valued cochain is (s z)(q)(i)=z(q)
+when i=0 and zero when i=1. Pointwise augmentation of this cochain is z. -/
 def cyclicPermutationZeroSectionCochain
     (chi : G →* Multiplicative (ZMod 2))
     (A : Rep.{0} (ZMod 2) G) (n : ℕ)
@@ -186,7 +212,10 @@ def cyclicPermutationZeroSectionCochain
     (Fin n → G) → Rep.cyclicPermutation 2 chi A :=
   fun q => cyclicPermutationZeroSection A (z q)
 
-/-- The explicit character-cup cochain in target-normalized degree. -/
+/-- Let G be a group and A an F₂-linear G-representation, both in universe zero. Let
+χ:G→Multiplicative(F₂) be a homomorphism and c_χ(g) its additive F₂-value. For n≥0 and z:(Fin
+n→G)→A, the cochain T_χ(z) in degree n+1 is T_χ(z)(q)=c_χ(q(0))•ρ_A(q(0))z(i↦q(i+1)). It keeps
+the ordered tail of n group arguments. -/
 def cyclicCharacterCupCochain
     (chi : G →* Multiplicative (ZMod 2))
     (A : Rep.{0} (ZMod 2) G) (n : ℕ)
@@ -203,8 +232,12 @@ private theorem neg_eq_self_zmodTwo_module
     _ = a := one_smul (ZMod 2) a
 
 -- The arbitrary-degree differential expands a finite alternating sum.
-/-- The differential of the zero-index lift of a cocycle is the diagonal
-of the character-cup cochain. -/
+/-- Let G be a group and A an F₂-linear G-representation, both in universe zero. Let
+χ:G→Multiplicative(F₂) be a homomorphism and c_χ(g) its additive F₂-value. Put P_χ(A)=(F₂→A),
+with action (g•F)(i)=ρ_A(g)F(i+c_χ(g)); the diagonal is Δ(a)(i)=a and augmentation
+ε(F)=F(0)+F(1). For an n-cochain z, put T_χ(z)(g₀,…,g_n)=c_χ(g₀)•ρ_A(g₀)z(g₁,…,g_n). For n≥0 and
+δz=0, the differential in P_χ(A)-valued cochains satisfies δ(s z)=Δ(T_χ(z)). The mod-two
+coefficient signs turn the translation defect of the first face into the diagonal function. -/
 theorem cyclicPermutationZeroSectionCochain_d
     (chi : G →* Multiplicative (ZMod 2))
     (A : Rep.{0} (ZMod 2) G) (n : ℕ)
@@ -267,8 +300,10 @@ theorem cyclicPermutationZeroSectionCochain_d
       show (1 : ZMod 2) + 1 = 0 by decide]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The explicit character-cup cochain is a cocycle whenever its right
-input is a cocycle. -/
+/-- Let G be a group and A an F₂-linear G-representation, both in universe zero. Let
+χ:G→Multiplicative(F₂) be a homomorphism and c_χ(g) its additive F₂-value. For an n-cochain z,
+put T_χ(z)(g₀,…,g_n)=c_χ(g₀)•ρ_A(g₀)z(g₁,…,g_n). For every n≥0 and A-valued cochain z with δ_n
+z=0, δ_{n+1}T_χ(z)=0. Thus the first-face formula produces a degree-(n+1) cocycle. -/
 theorem cyclicCharacterCupCochain_cocycle
     (chi : G →* Multiplicative (ZMod 2))
     (A : Rep.{0} (ZMod 2) G) (n : ℕ)
@@ -329,7 +364,11 @@ theorem cyclicCharacterCupCochain_cocycle
       ((inhomogeneousCochains.d P n).hom y) = 0 at hdd
   exact hdd
 
-/-- The explicit arbitrary-degree character-cup cocycle. -/
+/-- Let G be a group and A an F₂-linear G-representation, both in universe zero. Let
+χ:G→Multiplicative(F₂) be a homomorphism and c_χ(g) its additive F₂-value. For an n-cochain z,
+put T_χ(z)(g₀,…,g_n)=c_χ(g₀)•ρ_A(g₀)z(g₁,…,g_n). For n≥0 and an inhomogeneous cycle z∈Z^n(G,A),
+apply T_χ to its included cochain. The resulting cocycle is an element of Z^{n+1}(G,A), with
+that explicit coefficient formula. -/
 noncomputable def cyclicCharacterCupCocycle
     (chi : G →* Multiplicative (ZMod 2))
     (A : Rep.{0} (ZMod 2) G) (n : ℕ)
@@ -357,8 +396,12 @@ theorem cyclicCharacterCupCocycle_apply
   rw [iCocycles_mk]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The ordinary cyclic-permutation connector sends a cocycle class to the
-explicit character-cup cocycle class. -/
+/-- Let G be a group and A an F₂-linear G-representation, both in universe zero. Let
+χ:G→Multiplicative(F₂) be a homomorphism and c_χ(g) its additive F₂-value. Put P_χ(A)=(F₂→A),
+with action (g•F)(i)=ρ_A(g)F(i+c_χ(g)); the diagonal is Δ(a)(i)=a and augmentation
+ε(F)=F(0)+F(1). The short exact sequence 0→A --Δ→ P_χ(A) --ε→ A→0 gives
+δ_n:H^n(G,A)→H^{n+1}(G,A). For n≥0 and z∈Z^n(G,A), δ_n([z])=[T_χ(z)], where
+T_χ(z)(g₀,…,g_n)=c_χ(g₀)•ρ_A(g₀)z(g₁,…,g_n). -/
 theorem cyclicPermutationTwo_delta_π
     (chi : G →* Multiplicative (ZMod 2))
     (A : Rep.{0} (ZMod 2) G) (n : ℕ)
@@ -417,8 +460,11 @@ theorem cyclicPermutationTwo_delta_π
   rw [hzEq, hxEq] at hδ
   exact hδ
 
-/-- Character cup constructed through the arbitrary cup product and the
-left coefficient unitor. -/
+/-- Let G be a group and A an F₂-linear G-representation, both in universe zero. Let
+χ:G→Multiplicative(F₂) be a homomorphism and c_χ(g) its additive F₂-value. For n≥0 and
+z∈Z^n(G,A), cup the character cycle in Z¹(G,I) with z to obtain a cycle in degree 1+n with
+coefficient I⊗A. Reindex this degree as n+1 and map coefficients by λ_A:I⊗A≅A. The result is the
+character-cup cycle in Z^{n+1}(G,A). -/
 noncomputable def cyclicCharacterCupCocycleViaCup
     (chi : G →* Multiplicative (ZMod 2))
     (A : Rep.{0} (ZMod 2) G) (n : ℕ)
@@ -434,8 +480,10 @@ noncomputable def cyclicCharacterCupCocycleViaCup
 
 -- Degree transport and the explicit Alexander--Whitney formula are expanded.
 set_option backward.isDefEq.respectTransparency false in
-/-- The abstract arbitrary cup cocycle is the explicit character-cup
-cocycle used in the connector computation. -/
+/-- Let G be a group and A an F₂-linear G-representation, both in universe zero. Let
+χ:G→Multiplicative(F₂) be a homomorphism and c_χ(g) its additive F₂-value. For n≥0 and
+z∈Z^n(G,A), the character cycle cupped with z, then transported through 1+n=n+1 and λ_A:I⊗A≅A,
+equals the explicit cycle T_χ(z). Its included cochain is c_χ(g₀)•ρ_A(g₀)z(g₁,…,g_n). -/
 theorem cyclicCharacterCupCocycleViaCup_eq
     (chi : G →* Multiplicative (ZMod 2))
     (A : Rep.{0} (ZMod 2) G) (n : ℕ)
@@ -531,8 +579,10 @@ theorem cyclicCharacterCupCocycleViaCup_eq
           apply Fin.ext
           simp
 
-/-- Linear map given by cup product with the cyclic character on the left,
-followed by the coefficient left unitor. -/
+/-- Let G be a group and A an F₂-linear G-representation, both in universe zero. Let
+χ:G→Multiplicative(F₂) be a homomorphism and c_χ(g) its additive F₂-value. For every n≥0, the
+linear map J_{χ,A}^n:H^n(G,A)→H^{n+1}(G,A) is x↦λ_{A,*}([χ]∪x). The character coefficient is
+I=F₂_triv, and the left unitor I⊗A≅A returns the cup coefficient to A. -/
 noncomputable def cyclicCharacterCupMap
     (chi : G →* Multiplicative (ZMod 2))
     (A : Rep.{0} (ZMod 2) G) (n : ℕ) :
@@ -541,8 +591,10 @@ noncomputable def cyclicCharacterCupMap
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
-/-- After mapping the cyclic-character coefficient through `phi`, the
-character cup transported to `B ⊗ A` is cup by the mapped character class. -/
+/-- Let G be a group, χ:G→Multiplicative(F₂) a character, A,B F₂-linear G-representations in
+universe zero, and φ:I→B a coefficient morphism from the tensor unit. Put
+ι_φ=λ_A.inv≫(φ⊗id_A):A→B⊗A. For every n≥0 and x∈H^n(G,A), ι_{φ,*}(J_{χ,A}^n(x))=(φ_*[χ])∪x in
+H^{n+1}(G,B⊗A). -/
 theorem cyclicCharacterCupMap_comp_leftTensorInsertion
     (chi : G →* Multiplicative (ZMod 2))
     (A B : Rep.{0} (ZMod 2) G)
@@ -559,8 +611,10 @@ theorem cyclicCharacterCupMap_comp_leftTensorInsertion
     (cyclicCharacterClass chi) phi n
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Cup with the character sends a represented cocycle to the explicit
-character-cup cocycle class. -/
+/-- Let G be a group and A an F₂-linear G-representation, both in universe zero. Let
+χ:G→Multiplicative(F₂) be a homomorphism and c_χ(g) its additive F₂-value. For n≥0 and
+z∈Z^n(G,A), J_{χ,A}^n([z])=[T_χ(z)] in H^{n+1}(G,A). Here J_{χ,A}^n is left cup with [χ]
+followed by the coefficient unitor, and T_χ(z)(g₀,…,g_n)=c_χ(g₀)•ρ_A(g₀)z(g₁,…,g_n). -/
 theorem cyclicCharacterCupMap_π
     (chi : G →* Multiplicative (ZMod 2))
     (A : Rep.{0} (ZMod 2) G) (n : ℕ)
@@ -609,8 +663,11 @@ theorem cyclicCharacterCupMap_π
           rw [cyclicCharacterCupCocycleViaCup_eq]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The ordinary cyclic-permutation connecting morphism is cup product
-with the cyclic character in every degree. -/
+/-- Let G be a group and A an F₂-linear G-representation, both in universe zero. Let
+χ:G→Multiplicative(F₂) be a homomorphism and c_χ(g) its additive F₂-value. Put P_χ(A)=(F₂→A),
+with action (g•F)(i)=ρ_A(g)F(i+c_χ(g)); the diagonal is Δ(a)(i)=a and augmentation
+ε(F)=F(0)+F(1). For every n≥0, the connecting morphism δ_n of the diagonal–augmentation short
+exact sequence equals J_{χ,A}^n:H^n(G,A)→H^{n+1}(G,A), namely x↦λ_{A,*}([χ]∪x). -/
 theorem cyclicPermutationTwo_delta_eq_cyclicCharacterCupMap
     (chi : G →* Multiplicative (ZMod 2))
     (A : Rep.{0} (ZMod 2) G) (n : ℕ) :
@@ -629,8 +686,10 @@ theorem cyclicPermutationTwo_delta_eq_cyclicCharacterCupMap
 
 -- Naturality is checked on arbitrary cocycle representatives.
 set_option backward.isDefEq.respectTransparency false in
-/-- Cup with the cyclic character is natural simultaneously in the group
-and the coefficient representation. -/
+/-- Let G,J be groups in universe zero, f:J→G a homomorphism, χ:G→Multiplicative(F₂) a character, A
+an F₂-linear G-representation, B an F₂-linear J-representation, and φ:Res_f A→B an F₂-linear
+coefficient map. For n≥0, J_{χ,A}^n≫map_{f,φ}^{n+1}=map_{f,φ}^n≫J_{χ∘f,B}^n as maps
+H^n(G,A)→H^{n+1}(J,B). -/
 theorem cyclicCharacterCupMap_naturality
     {J : Type} [Group J] (f : J →* G)
     (chi : G →* Multiplicative (ZMod 2))
@@ -708,8 +767,11 @@ theorem cyclicCharacterCupMap_naturality
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
-/-- Naturality of cyclic-character cup followed by a compatible square of
-source and target coefficient morphisms. -/
+/-- Let G,J be groups in universe zero, f:J→G a homomorphism, χ:G→Multiplicative(F₂) a character,
+A,A' F₂-linear G-representations, and B,B' F₂-linear J-representations. Let φ:Res_f A→B,
+φ':Res_f A'→B', s:A→A', and t:B→B' satisfy Res_f(s)≫φ'=φ≫t. For n≥0,
+(map_{f,φ}^n≫J_{χ∘f,B}^n)≫t_*^{n+1}=(J_{χ,A}^n≫s_*^{n+1})≫map_{f,φ'}^{n+1}, with coefficient
+maps in the displayed degrees. -/
 theorem cyclicCharacterCupMap_naturality_comp_coefficientSquare
     {J : Type} [Group J] (f : J →* G)
     (chi : G →* Multiplicative (ZMod 2))

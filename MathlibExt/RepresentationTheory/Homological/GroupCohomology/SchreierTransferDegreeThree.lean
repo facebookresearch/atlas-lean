@@ -15,17 +15,15 @@ public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.LowDeg
 public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.SchreierTransferDegreeTwo
 
 /-!
-# Degree-three chosen-transversal group-cohomological transfer
+# Schreier transfer on ternary cochains and degree-three classes
 
-For a finite-index subgroup `H ≤ G` and a chosen right transversal, this
-file defines the standard degree-three inhomogeneous cochain transfer.  It
-proves compatibility with `d₂₃`, preservation of three-cocycles and
-three-coboundaries, and descends the construction to an `H³` map with an
-explicit representative formula.
+Let H ≤ G have finite index, let T be a right transversal and let A be a k-linear
+G-representation over a commutative ring. Starting at t₀ = t, write tᵢgᵢ₊₁ = aᵢtᵢ₊₁ for i =
+0,1,2. The ternary transfer is cor_T³(f)(g₁,g₂,g₃) = ∑ₜ ρ(t⁻¹)f(a₀,a₁,a₂).
 
-The right transversal remains part of the API.  Independence of that choice,
-canonical degree-three corestriction, a restriction/corestriction index
-formula, and any Kummer or Bloch--Kato consequence are not asserted here.
+It commutes with d²b(g₁,g₂,g₃) = ρ(g₁)b(g₂,g₃) − b(g₁g₂,g₃) + b(g₁,g₂g₃) − b(g₁,g₂). The same
+factor identities preserve three-cocycles and three-coboundaries, giving a chosen-transversal
+map H³(H,A|H) → H³(G,A) computed on cocycle representatives.
 -/
 
 @[expose] public section
@@ -43,12 +41,17 @@ universe u
 variable {k G : Type u} [CommRing k] [Group G]
 variable {H : Subgroup G}
 
+/-- Finite representatives for ternary cochain transfer.
+
+The finite-index hypothesis gives a finite enumeration of T for the degree-three sum. -/
 noncomputable local instance corestrictionDegreeThreeRightTransversalFintype
     (T : H.RightTransversal) [H.FiniteIndex] : Fintype (T : Set G) :=
   @Fintype.ofFinite (T : Set G) (T.2.finite_right)
 
-/-- Degree-three cochain transfer associated to a chosen finite right
-transversal. -/
+/-- The degree-three Schreier cochain transfer.
+
+For f : H × H × H → A, sum ρ(t⁻¹)f(a₀,a₁,a₂) over the successive subgroup factors of the scan
+of (g₁,g₂,g₃) starting at t. This is a k-linear map of ternary cochains. -/
 noncomputable def corestrictionCochainThree (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex] :
     (H × H × H → A) →ₗ[k] (G × G × G → A) where
@@ -66,6 +69,10 @@ noncomputable def corestrictionCochainThree (A : Rep k G)
     simp only [Pi.smul_apply, map_smul, RingHom.id_apply]
     rw [Finset.smul_sum]
 
+/-- The ternary representative formula for transfer.
+
+At (g₁,g₂,g₃), the transfer is the sum of f evaluated on the three successive Schreier
+factors, each weighted by the inverse action ρ(t⁻¹). -/
 @[simp]
 theorem corestrictionCochainThree_apply (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex]
@@ -79,8 +86,11 @@ theorem corestrictionCochainThree_apply (A : Rep k G)
               (T.schreierRep (T.schreierRep t g₁) g₂) g₃)) :=
   rfl
 
-/-- A single summand in the compatibility of degree-three transfer with
-`d₂₃`. -/
+/-- An inverse-weighted degree-two differential term.
+
+Evaluating d²b on the three successive Schreier factors and applying ρ(t⁻¹) gives the leading
+translated term and the three remaining terms with signs +,−,+,−. The middle terms correspond
+to the products g₁g₂ and g₂g₃. -/
 theorem corestrictionCochainThree_d₂₃_term (A : Rep k G)
     (T : H.RightTransversal) (b : H × H → A)
     (t : (T : Set G)) (g₁ g₂ g₃ : G) :
@@ -125,8 +135,10 @@ theorem corestrictionCochainThree_d₂₃_term (A : Rep k G)
       T.inv_mul_schreierFactor t g₁]
   rw [hlead]
 
-/-- Degree-two and degree-three chosen-transversal transfers commute with
-the inhomogeneous differential `d₂₃`. -/
+/-- Ternary transfer commutes with the degree-two differential.
+
+For b : H × H → A, cor_T³(d²b) = d²(cor_T²b), with the respective restricted H-action and
+ambient G-action. -/
 theorem corestrictionCochainThree_d₂₃ (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex] (b : H × H → A) :
     corestrictionCochainThree A T
@@ -166,7 +178,10 @@ theorem corestrictionCochainThree_d₂₃ (A : Rep k G)
     Finset.sum_sub_distrib,
     sum_rho_mul_schreierRep_inv_twoFactor]
 
-/-- Reindexing the leading sum in the transferred three-cocycle equation. -/
+/-- Reindexing a transfer sum with three remaining factors.
+
+The sum on the tail (g₂,g₃,g₄) starting at r(t,g₁), with weight ρ(g₁r(t,g₁)⁻¹), equals ρ(g₁)
+times the ordinary ternary transfer sum on that tail. -/
 theorem sum_rho_mul_schreierRep_inv_threeFactor (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex]
     (f : H × H × H → A) (g₁ g₂ g₃ g₄ : G) :
@@ -226,7 +241,11 @@ theorem sum_rho_mul_schreierRep_inv_threeFactor (A : Rep k G)
                 (T.schreierRep (T.schreierRep t g₂) g₃) g₄))) := by
       rw [map_sum]
 
-/-- A single summand of the transferred three-cocycle equation. -/
+/-- The three-cocycle identity on a Schreier scan.
+
+For successive factors a₀,a₁,a₂,a₃, the H-three-cocycle identity rearranges as f(a₀a₁,a₂,a₃) +
+f(a₀,a₁,a₂a₃) = ρ(a₀)f(a₁,a₂,a₃) + f(a₀,a₁a₂,a₃) + f(a₀,a₁,a₂). Weighting by ρ(t⁻¹) gives the
+stated scan formula. -/
 theorem corestrictionCochainThree_cocycle_term (A : Rep k G)
     (T : H.RightTransversal)
     (f : cocycles₃ (Rep.res (Subgroup.subtype H) A))
@@ -300,8 +319,10 @@ theorem corestrictionCochainThree_cocycle_term (A : Rep k G)
   rw [map_add]
   abel
 
-/-- Degree-three chosen-transversal cochain transfer sends three-cocycles to
-three-cocycles. -/
+/-- Ternary transfer preserves three-cocycles.
+
+The chosen-transversal transfer sends every H-three-cocycle for A|H to a G-three-cocycle for
+A. -/
 theorem corestrictionCochainThree_mem_cocycles₃ (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex]
     (f : cocycles₃ (Rep.res (Subgroup.subtype H) A)) :
@@ -398,8 +419,10 @@ theorem corestrictionCochainThree_mem_cocycles₃ (A : Rep k G)
         (S₀ + S₂₃ + S₁) - (S₁₂ + S₃₄) := by abel
     _ = 0 := by rw [← hbalance]; abel
 
-/-- Degree-three chosen-transversal cochain transfer sends
-three-coboundaries to three-coboundaries. -/
+/-- Ternary transfer preserves three-coboundaries.
+
+If a ternary H-cochain is a degree-three coboundary, its transfer is a degree-three
+G-coboundary. -/
 theorem corestrictionCochainThree_mem_coboundaries₃ (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex]
     (f : H × H × H → A)
@@ -409,7 +432,9 @@ theorem corestrictionCochainThree_mem_coboundaries₃ (A : Rep k G)
   refine ⟨corestrictionCochainTwo A T b, ?_⟩
   exact (corestrictionCochainThree_d₂₃ A T b).symm
 
-/-- Degree-three cochain transfer restricted to three-cocycles. -/
+/-- The transfer map on three-cocycles.
+
+Restrict the k-linear ternary transfer to obtain Z³(H,A|H) → Z³(G,A). -/
 noncomputable def corestrictionCocyclesThree (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex] :
     cocycles₃ (Rep.res (Subgroup.subtype H) A) →ₗ[k] cocycles₃ A where
@@ -430,6 +455,10 @@ noncomputable def corestrictionCocyclesThree (A : Rep k G)
     exact map_smul (corestrictionCochainThree A T) r
       (f : H × H × H → A)
 
+/-- The cochain underlying a transferred three-cocycle.
+
+The ternary G-cochain underlying corestrictionCocyclesThree A T f is corestrictionCochainThree
+A T f. -/
 @[simp]
 theorem coe_corestrictionCocyclesThree (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex]
@@ -438,15 +467,18 @@ theorem coe_corestrictionCocyclesThree (A : Rep k G)
       corestrictionCochainThree A T f :=
   rfl
 
-/-- The `H³` class of a transferred three-cocycle before descending through
-the source `H³` quotient. -/
+/-- The class of a transferred three-cocycle.
+
+Transfer an H-three-cocycle and project the resulting G-three-cocycle to H³(G,A). -/
 noncomputable def corestrictionCocycleThreeClass (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex] :
     cocycles₃ (Rep.res (Subgroup.subtype H) A) →ₗ[k] H3 A :=
   (H3π A).hom.comp (corestrictionCocyclesThree A T)
 
-/-- Transferred three-cocycle classes annihilate source
-three-coboundaries. -/
+/-- Three-coboundaries vanish under the transferred class map.
+
+The kernel of Z³(H,A|H) → H³(H,A|H) is contained in the kernel of the transferred class map to
+H³(G,A). -/
 theorem corestrictionCocycleThreeClass_ker (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex] :
     LinearMap.ker
@@ -460,8 +492,10 @@ theorem corestrictionCocycleThreeClass_ker (A : Rep k G)
     (H3π_eq_zero_iff f).1 hf
   exact corestrictionCochainThree_mem_coboundaries₃ A T f hboundary
 
-/-- Degree-three cohomological transfer associated to a chosen finite right
-transversal.  Independence of the transversal is not asserted here. -/
+/-- The degree-three cohomology transfer of a right transversal.
+
+The ternary transfer descends through the source coboundary quotient to a k-linear map
+H³(H,A|H) → H³(G,A). -/
 noncomputable def corestrictionH3OfRightTransversal (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex] :
     H3 (Rep.res (Subgroup.subtype H) A) →ₗ[k] H3 A :=
@@ -476,8 +510,10 @@ noncomputable def corestrictionH3OfRightTransversal (A : Rep k G)
           (H3π (Rep.res (Subgroup.subtype H) A))).1 inferInstance)
   q.comp e.symm.toLinearMap
 
-/-- The chosen-transversal `H³` transfer computes on a presented class by
-transferring its three-cocycle representative. -/
+/-- Degree-three transfer on a ternary cocycle class.
+
+Applying the chosen H³ transfer to the class of an H-three-cocycle gives the class of its
+transferred G-three-cocycle. -/
 @[simp]
 theorem corestrictionH3OfRightTransversal_H3π (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex]

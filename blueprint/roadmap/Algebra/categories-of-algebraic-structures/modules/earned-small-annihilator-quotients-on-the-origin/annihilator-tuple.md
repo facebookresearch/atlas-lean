@@ -1,3 +1,6 @@
-# Annihilator tuple
+# Annihilator of a triple product is the intersection
 
-The actual tuple annihilator is the intersection of the three original annihilators.
+Annihilator of a triple product is the intersection.
+
+For `R`-modules `P`, `J`, and `U`, the annihilator of `P × J × U` is `ann(P) ⊓ ann(J) ⊓
+ann(U)`.

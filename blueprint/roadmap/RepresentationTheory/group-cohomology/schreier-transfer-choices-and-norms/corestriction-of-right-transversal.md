@@ -1,4 +1,5 @@
-# Corestriction Of Right Transversal
+# The cohomological transfer in an arbitrary degree
 
-Arbitrary-degree group-cohomological transfer attached to one right
-transversal.
+The cohomological transfer in an arbitrary degree.
+
+For n ≥ 0, apply homology to the chosen-transversal cochain map to obtain Hⁿ(H,A|H) → Hⁿ(G,A).

@@ -1,3 +1,5 @@
-# Enveloping Ring Hom comp
+# Enveloping maps preserve endpoint composition
 
-The composite tensor ring map changes each noncommutative endpoint in its own order.
+For composable endpoint maps φ,φ′ and ψ,ψ′,
+(φ′⊗ψ′ᵒᵖ)∘(φ⊗ψᵒᵖ) is the enveloping map of
+φ′∘φ and ψ′∘ψ. All ring worlds are independent.

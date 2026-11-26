@@ -1,3 +1,5 @@
-# Small Etale Godement Coefficients Abelian
+# Point indexed coefficient families have an abelian structure
 
-The same original family category is abelian without changing its objects or arrows.
+Point indexed coefficient families have an abelian structure.
+
+The componentwise additive-group structure makes the point-family category abelian.

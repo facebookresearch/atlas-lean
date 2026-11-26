@@ -1,4 +1,5 @@
-# Source Target Compatibility
+# Compatibility isomorphism for changing source and target
 
-The original source/target compatibility, with the original inverse
-first comparison and the original target comparison components.
+Let P, Q, A and B be categories, with functors i : P → A, j : Q → A, k : Q → B, F : P → Q and H
+: A → B. Natural isomorphisms e_F : jF ≅ i and e_H : Hj ≅ k give sourceTargetCompatibility : Hi
+≅ kF. Its forward map applies H to e_F⁻¹ and then uses e_H at F(Y).

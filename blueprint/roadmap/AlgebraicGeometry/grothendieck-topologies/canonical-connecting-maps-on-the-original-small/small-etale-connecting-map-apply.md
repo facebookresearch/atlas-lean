@@ -1,4 +1,7 @@
-# Small Etale Connecting Map apply
+# Yoneda formula for the small étale connecting map
 
-Its value is the Yoneda composition with this same sequence's extension
-class, with the original integral sheaf as the source.
+For a short exact sequence S : 0 → F₁ → F₂ → F₃ → 0 of abelian
+sheaves on the small étale site of a scheme X, with coefficients in
+c = max(u, w), the degree n connecting map has value
+δ_S(x) = [S] ∘ x for x ∈ Hⁿ(X, F₃) = Extⁿ(ℤ_X, F₃).
+The extension class [S] is composed after x, producing Extⁿ⁺¹(ℤ_X, F₁).

@@ -1,3 +1,6 @@
-# Polynomial Resolution Obj Iso hom generator
+# The degreewise comparison on polynomial generators
 
-The degree identification sends the constructed generator to its literal variable.
+The degreewise comparison on polynomial generators.
+
+The degree-`n` polynomial comparison sends the generator indexed by `x ∈ T^n(A)` to the
+variable `X_x`.

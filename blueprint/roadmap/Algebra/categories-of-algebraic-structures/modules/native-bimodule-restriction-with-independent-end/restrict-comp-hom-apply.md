@@ -1,3 +1,5 @@
-# Restrict Comp hom apply
+# The forward restriction-composition comparison fixes each value
 
-The restriction composition comparison is the actual identity on each coefficient.
+For an E_(R″,S″)-module B″, the forward component
+identifying composite endpoint restriction with two successive
+restrictions sends every x∈B″ to itself.

@@ -1,3 +1,5 @@
-# Homogeneous Zero Cocycles projection
+# Kernel inclusion of a homogeneous degree-zero cycle
 
-The actual zeroth-cycle comparison preserves the original kernel inclusion.
+For a ring k with a topology, profinite G and coefficient X,
+the identification Z⁰(G,X)≅ker(d⁰) commutes with inclusion into
+the homogeneous degree-zero cochain term.

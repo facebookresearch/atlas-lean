@@ -1,3 +1,4 @@
-# Map Cochain Complex Bounded map f
+# Mapped bounded cochain components are the functor images
 
-Every mapped component is the literal original functor map.
+For a zero-preserving functor F : C → D, a bounded cochain map f : K → L, and j ∈ ℤ, the jth
+component of the induced bounded map equals F(f^j).

@@ -13,16 +13,28 @@ public import MathlibExt.Algebra.Lie.UniversalEnveloping.PBW.NormalizationContex
 public import Mathlib.Tactic.Abel
 
 /-!
-# Invariance of the actual ordered-word normalizer
+# Normal forms preserve every contextual Lie commutator
 
-The proof uses strong induction on the original word's inversion weight.
-Two reductions of that word either coincide, occur in disjoint pairs, or
-overlap in a triple. Disjoint pairs agree by bilinearity of the actual basis
-coordinate insertions. The triple difference is the inserted Jacobi identity
-after using the induction hypotheses on shorter words.
+Let R be a commutative ring and L an R-Lie algebra with basis b indexed
+by a linearly ordered type I. The ordered-word normal form takes values
+in OrderedWord(I) →₀ R. For a prefix p, suffix s and x ∈ L, insertion
+means the finite basis expansion
+Ins_(p,s)(x) = ∑_i (b.repr(x))_i Norm(p ++ [i] ++ s).
 
-The public theorem assumes only an actual basis and an adjacent inversion.
-No confluence or PBW assertion is supplied as a hypothesis.
+For every adjacent inversion i > j, normalization satisfies
+Norm(p ++ [i,j] ++ s) =
+Norm(p ++ [j,i] ++ s) + Ins_(p,s)([b_i,b_j]).
+The relation holds for any chosen inverted pair. By skew-symmetry
+it gives the commutator identity in all index orientations; bilinear
+basis expansion gives the corresponding identity for arbitrary
+inserted vectors x,y ∈ L.
+
+The weight of a word is a_(length)+its inversion count, with
+a_0 = 0 and a_(n+1) = a_n+n²+1. It decreases under an inverted
+adjacent swap and under replacement of two letters by one bracket
+letter. Disjoint reductions agree, and the difference for overlapping
+reductions is an insertion of the Jacobi identity.
+All coefficient, Lie-carrier and basis-index worlds are independent.
 -/
 
 @[expose] public section
@@ -87,8 +99,14 @@ private theorem pair_commutator_of_basis_identities (b : Module.Basis I R L)
     normalizationPair b p s y x + normalizationInsertion b p s ⁅x, y⁆ at hxy
   exact sub_eq_iff_eq_add.mpr (hxy.trans (add_comm _ _))
 
-/-- Internal use of the strong induction hypothesis on a strictly shorter
-two-vector context. All basis-pair orientations are handled explicitly. -/
+/-- Let R be a commutative ring, L an R-Lie algebra and b an
+ordered R-basis. Fix a word xs and assume the adjacent-inversion
+normalization relation for every word of smaller weight
+a_(length)+inversionCount, where a_0 = 0 and a_(n+1) = a_n+n²+1.
+For prefixes p and suffixes s with |p|+2+|s| < |xs|, and x,y ∈ L,
+the bilinear normal-form pair satisfies
+Pair_(p,s)(x,y)−Pair_(p,s)(y,x) = Ins_(p,s)([x,y]).
+The pair and insertion maps use finite expansion in b. -/
 private theorem pair_commutator_of_smaller_reductions
     (b : Module.Basis I R L) (xs : List I)
     (hsmall : ∀ (p : List I) (i j : I) (s : List I), j < i →
@@ -330,8 +348,12 @@ private theorem normalize_reduction_of_word (b : Module.Basis I R L) (xs : List 
             (reductionValue_same_word_eq b q t p s a c i j
               (hcanonical.symm.trans hword) hca hji hsmall)
 
-/-- The actual recursive normalizer agrees with every inverted adjacent-pair
-reduction, including pairs not selected by its first-inversion search. -/
+/-- For a commutative ring R, an R-Lie algebra L with ordered
+R-basis b, words p,s and indices j < i, the normal form satisfies
+Norm(p ++ [i,j] ++ s) =
+Norm(p ++ [j,i] ++ s) + Ins_(p,s)([b_i,b_j]).
+The insertion is the basis expansion of the bracket in the same
+prefix and suffix; the inverted pair may occur anywhere in the word. -/
 theorem normalize_adjacent_inversion (b : Module.Basis I R L)
     (p : List I) (i j : I) (s : List I) (hji : j < i) :
     normalize b (p ++ i :: j :: s) =
@@ -339,8 +361,11 @@ theorem normalize_adjacent_inversion (b : Module.Basis I R L)
         normalizationInsertion b p s ⁅b i, b j⁆ :=
   normalize_reduction_of_word b (p ++ i :: j :: s) p i j s rfl hji
 
-/-- Normalization respects the actual basis-pair Lie relation in all pair
-orientations, over every commutative coefficient ring. -/
+/-- For a commutative ring R and an R-Lie algebra L with
+ordered R-basis b, every p,s and i,j satisfy
+Norm(p ++ [i,j] ++ s)−Norm(p ++ [j,i] ++ s)
+= Ins_(p,s)([b_i,b_j]).
+This includes i = j and both strict-order orientations. -/
 theorem normalize_basis_relation (b : Module.Basis I R L)
     (p : List I) (i j : I) (s : List I) :
     normalize b (p ++ i :: j :: s) - normalize b (p ++ j :: i :: s) =
@@ -354,8 +379,12 @@ theorem normalize_basis_relation (b : Module.Basis I R L)
       ← lie_skew (b i) (b j), map_neg]
     abel
 
-/-- The actual normalizer respects the Lie commutator on arbitrary inserted
-vectors, by finite basis expansion of both vectors. -/
+/-- For a commutative ring R and an R-Lie algebra L with
+ordered R-basis b, let Pair_(p,s)(x,y) be the bilinear basis
+expansion of normal forms with x,y inserted adjacently.
+For arbitrary x,y ∈ L it satisfies
+Pair_(p,s)(x,y)−Pair_(p,s)(y,x) = Ins_(p,s)([x,y]),
+where the insertion on the right is linear in the bracket vector. -/
 theorem normalizationPair_commutator (b : Module.Basis I R L)
     (p s : List I) (x y : L) :
     normalizationPair b p s x y - normalizationPair b p s y x =

@@ -1,4 +1,6 @@
-# Corestriction H3 Of Right Transversal H3π
+# Degree-three transfer on a ternary cocycle class
 
-The chosen-transversal `H³` transfer computes on a presented class by
-transferring its three-cocycle representative.
+Degree-three transfer on a ternary cocycle class.
+
+Applying the chosen H³ transfer to the class of an H-three-cocycle gives the class of its
+transferred G-three-cocycle.

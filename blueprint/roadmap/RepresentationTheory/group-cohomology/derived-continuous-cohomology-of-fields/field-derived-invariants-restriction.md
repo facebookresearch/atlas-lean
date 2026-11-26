@@ -1,3 +1,5 @@
-# Field Derived Invariants Restriction
+# Derived invariant restriction in a fixed degree
 
-Every degree of the same canonical derived restriction morphism.
+Derived invariant restriction in a fixed degree.
+
+Evaluate the derived-invariant restriction delta morphism in natural degree `n`.

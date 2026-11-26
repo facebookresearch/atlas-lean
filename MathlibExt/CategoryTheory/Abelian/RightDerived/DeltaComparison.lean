@@ -15,7 +15,13 @@ public import MathlibExt.CategoryTheory.Abelian.RightDerived.DeltaPrecomposition
 public import MathlibExt.CategoryTheory.Abelian.DeltaFunctor.Transport
 
 /-!
-# The fixed right-derived precomposition family as a delta isomorphism
+# Isomorphisms of cohomological delta-functors
+
+Natural isomorphisms in each degree that commute with the connecting
+maps define an isomorphism of cohomological delta-functors between
+preadditive categories. In abelian categories, the right-derived
+precomposition comparison for an exact injective-preserving source
+change gives such an isomorphism.
 -/
 
 @[expose] public section
@@ -38,7 +44,10 @@ theorem isoInvSquare {C : Type*} [Category C] {X Y X' Y' : C}
   simp only [Category.assoc, Iso.inv_hom_id, Category.comp_id]
   rw [h, ← Category.assoc, Iso.inv_hom_id, Category.id_comp]
 
-/-- The degree isomorphisms and proved connecting squares form one delta isomorphism. -/
+/-- Let `A,D` be preadditive categories and `S,T` cohomological
+delta-functors from `A` to `D`. Natural degree isomorphisms
+`e_n : S^n ≅ T^n` satisfying `δ_S,n ≫ e_(n+1),X₁ = e_n,X₃ ≫ δ_T,n`
+for every short exact sequence define an isomorphism `S ≅ T`. -/
 def isoOfComponents (S T : CohomologicalDeltaFunctor A D)
     (e : ∀ n, S.T n ≅ T.T n)
     (h : ∀ n (Z : ShortComplex.ShortExactSequences A),
@@ -84,10 +93,12 @@ variable (E : C ⥤ M) [E.Additive] [E.PreservesInjectiveObjects] [E.PreservesHo
 variable [PreservesFiniteLimits E] [PreservesFiniteColimits E]
 variable (B : M ⥤ A) [B.Additive] [PreservesFiniteLimits B]
 
-/--
-Cache the existing precomposition family as a delta isomorphism before specializing field/sheaf
-instance dictionaries.
--/
+/-- Let `C,M,A` be abelian, with injective resolutions in `C,M`,
+`E : C → M` additive and preserving injectives, homology, finite limits,
+and finite colimits, and `B : M → A` additive and preserving finite
+limits. For additive `P : C → A` and `α : P ≅ E ⋙ B`, the
+right-derived comparison gives an isomorphism from the delta-functor
+of `P` to that of `B` precomposed with `E`. -/
 def precompDeltaIsoOfIso {P : C ⥤ A} [P.Additive]
     (α : P ≅ E ⋙ B) : Functor.rightDerivedDeltaFunctor P ≅
       CohomologicalDeltaFunctor.precompose E (precompShortExact E)

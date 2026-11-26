@@ -1,3 +1,6 @@
-# Matrix Cyclic Connes Homology Map naturality
+# Coefficient naturality of matrix CE-to-cyclic quotient homology
 
-The finite matrix homology-to-Connes map is natural under the algebra map.
+Coefficient naturality of matrix CE-to-cyclic quotient homology.
+
+The entrywise matrix CE homology map and cyclic quotient homology map commute with the trace-
+induced map.

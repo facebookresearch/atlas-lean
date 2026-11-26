@@ -1,3 +1,5 @@
-# Ground Module
+# The integer ground module of a bimodule
 
-The original integer action is native restriction of the stored enveloping action.
+For an E_(R,S)-module B, scalar restriction along
+ℤ→E_(R,S) gives its integer module structure on the
+underlying additive commutative group.

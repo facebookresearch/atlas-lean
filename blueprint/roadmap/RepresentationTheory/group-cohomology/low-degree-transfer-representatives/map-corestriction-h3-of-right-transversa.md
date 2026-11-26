@@ -1,4 +1,6 @@
-# Map corestriction H3 Of Right Transversal H3π
+# Coefficient naturality on a represented degree-three class
 
-Naturality on a presented `H3` class: mapping after transfer agrees
-with transferring the mapped cocycle representative.
+Coefficient naturality on a represented degree-three class.
+
+For a three-cocycle z, mapping the class of its transfer by φ gives the class of the transfer
+of the restricted coefficient image of z.

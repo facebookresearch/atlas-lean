@@ -1,7 +1,7 @@
 # The regular Connes weight shift
 
-- [Normalized Eulerian connes cross zero](normalized-eulerian-connes-cross-zero.md)
-- [Normalized Eulerian connes shift](normalized-eulerian-connes-shift.md)
-- [Normalized Eulerian connes zero weight](normalized-eulerian-connes-zero-weight.md)
-- [Normalized Convolution connes Boundary](normalized-convolution-connes-boundary.md)
-- [Normalized True Integer Lambda connes Boundary](normalized-true-integer-lambda-connes-bo.md)
+- [The vanishing off-weight Connes components](normalized-eulerian-connes-cross-zero.md)
+- [The all-degree normalized Connes weight shift](normalized-eulerian-connes-shift.md)
+- [The zero output weight of normalized Connes boundary](normalized-eulerian-connes-zero-weight.md)
+- [The rational-parameter Connes convolution law](normalized-convolution-connes-boundary.md)
+- [The positive-integer lambda Connes law](normalized-true-integer-lambda-connes-bo.md)

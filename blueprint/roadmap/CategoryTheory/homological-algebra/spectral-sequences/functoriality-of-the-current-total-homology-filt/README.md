@@ -1,4 +1,4 @@
 # Functoriality of the current total-homology filtration-stage map
 
-- [Horizontal Positive Current Total Homology Filtration Map Of Bicomplex id](horizontal-positive-current-total-homolo.md)
-- [Horizontal Positive Current Total Homology Filtration Map Of Bicomplex comp](horizontal-positive-current-total-homolo-2.md)
+- [The identity bicomplex map acts identically on current stages](horizontal-positive-current-total-homolo.md)
+- [Current-stage maps preserve composition of bicomplex maps](horizontal-positive-current-total-homolo-2.md)

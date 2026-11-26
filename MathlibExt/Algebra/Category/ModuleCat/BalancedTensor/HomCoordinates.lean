@@ -16,12 +16,17 @@ public import MathlibExt.Algebra.Homology.ChainComplex.ModuleHomCochainComplex
 public meta import Mathlib.Tactic.DSimpPercent
 
 /-!
-# Additive Hom coordinates for the coefficient adjunction
+# Integer-linear and additive Hom coordinates
 
-For the integer opposite acting ring, coefficient Hom uses the
-double-opposite integer action. Its integer-linear coordinates agree with
-the additive Hom group. Both right-R actions use domain precomposition,
-and the linear equivalence preserves these actions.
+For a left `R`-module `N` and an additive commutative group `I`, the Hom object in the
+coefficient tensor adjunction over the opposite integer ring consists of `ℤᵐᵒᵖᵐᵒᵖ`-linear maps
+`N → I`. Use the integer actions of the groups and restriction along the double-opposite
+integer ring equivalence.
+
+These maps are linearly equivalent over `Rᵐᵒᵖ` to the additive Hom group `Hom_ℤ(N, I)`. Both
+actions are domain precomposition, `(h r)(n) = h(r n)`, and the equivalence preserves each
+function value. Precomposition by an `R`-linear map of domains is right-linear in these
+coordinates.
 -/
 
 @[expose] public section
@@ -36,8 +41,11 @@ universe u v
 
 variable (R : Type u) [Ring R]
 
-/-- The coefficient Hom and the native additive Hom have the same integer-linear functions.
-The canonical double-opposite integer action is earned from the original groups. -/
+/-- Coefficient Hom as the additive Hom group with right R action.
+
+Give `N` and `I` their integer actions transported to `ℤᵐᵒᵖᵐᵒᵖ`. The coefficient Hom object is
+`Rᵐᵒᵖ`-linearly equivalent to additive maps `N → I`, where the right `R`-action in both
+objects is precomposition by the left action on `N`. -/
 def homCoordinates (N : ModuleCat.{v} R) (I : AddCommGrpCat.{v}) :
     letI : Module ℤ N := AddCommGroup.toIntModule N
     letI : Module ℤᵐᵒᵖᵐᵒᵖ N :=
@@ -96,7 +104,10 @@ def homCoordinates (N : ModuleCat.{v} R) (I : AddCommGrpCat.{v}) :
   have hRight := ChainComplex.homGroupModule_smul_apply R N I r (e f) (show N from x)
   exact hLeft.trans hRight.symm
 
-/-- The actual coordinate equivalence keeps each original function value. -/
+/-- Forward coefficient Hom coordinate preserves evaluation.
+
+For a coefficient Hom element `f` and `x : N`, the additive map corresponding to `f` under
+`homCoordinates R N I` evaluates at `x` as `f x`. -/
 @[simp]
 theorem homCoordinates_apply (N : ModuleCat.{v} R) (I : AddCommGrpCat.{v})
     (f :
@@ -127,7 +138,10 @@ theorem homCoordinates_apply (N : ModuleCat.{v} R) (I : AddCommGrpCat.{v})
     letI := ChainComplex.homGroupModule R N I
     (@AddCommGrpCat.Hom.hom (AddCommGrpCat.of N) I (homCoordinates R N I f)) x = f x) := rfl
 
-/-- The inverse keeps the original additive function, with its earned double-opposite linearity. -/
+/-- Inverse coefficient Hom coordinate preserves evaluation.
+
+For an additive map `f : N → I`, the inverse coordinate equips the same function with double-
+opposite integer linearity; its value at `x : N` is `f.hom x`. -/
 @[simp]
 theorem homCoordinates_symm_apply (N : ModuleCat.{v} R) (I : AddCommGrpCat.{v})
     (f : (forget₂ (ModuleCat R) AddCommGrpCat).obj N ⟶ I) (x : N) :
@@ -147,7 +161,10 @@ theorem homCoordinates_symm_apply (N : ModuleCat.{v} R) (I : AddCommGrpCat.{v})
     @DFunLike.coe (N →ₗ[ℤᵐᵒᵖᵐᵒᵖ] I) N (fun _ => I) _
       ((homCoordinates R N I).symm f) x = f.hom x) := rfl
 
-/-- Original-domain precomposition is linear for the earned categorical Hom modules. -/
+/-- Right-linear precomposition on additive Hom groups.
+
+For an `R`-linear morphism `f : N' ⟶ N`, precomposition gives an `Rᵐᵒᵖ`-linear map `Hom_ℤ(N,
+I) → Hom_ℤ(N', I)` using their domain-action module structures. -/
 def homGroupPrecomp {N N' : ModuleCat.{v} R} (f : N' ⟶ N) (I : AddCommGrpCat.{v}) :
     letI := ChainComplex.homGroupModule R N I
     letI := ChainComplex.homGroupModule R N' I
@@ -177,6 +194,10 @@ def homGroupPrecomp {N N' : ModuleCat.{v} R} (f : N' ⟶ N) (I : AddCommGrpCat.{
   have hLinear := congrArg g.hom (f.hom.map_smul r.unop (show N' from x)).symm
   exact hLeft.trans (hLinear.trans hRight.symm)
 
+/-- Evaluation formula for additive Hom precomposition.
+
+For `g : N → I` and `x : N'`, the precomposed map satisfies `(homGroupPrecomp R f I g)(x) =
+g(f x)`. -/
 @[simp]
 theorem homGroupPrecomp_apply {N N' : ModuleCat.{v} R} (f : N' ⟶ N)
     (I : AddCommGrpCat.{v}) (g : (forget₂ (ModuleCat R) AddCommGrpCat).obj N ⟶ I) (x : N') :

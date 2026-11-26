@@ -12,12 +12,14 @@ module
 public import MathlibExt.Algebra.Category.ModuleCat.Monoidal.Universe
 
 /-!
-# Inverse unitors for the canonical larger-universe module tensor
+# Inverse tensor unitors with a lifted scalar unit
 
-These are computation laws for the actual UniverseTensor unitors. The
-inverse inserts the lifted unit scalar; the original ring and module
-actions remain unchanged. The dictionaries are fixed canonical data,
-not assumptions supplied by a caller.
+Let `R : Type u` be a commutative ring. In the monoidal category of `R`-modules with carrier
+universe `max u v`, the tensor unit is the lifted regular module `ULift.{v} R`.
+
+For a module `X`, the inverse left unitor sends `x` to `up(1) ⊗ x`, and the inverse right
+unitor sends `x` to `x ⊗ up(1)`. These formulas use the tensor, monoidal, preadditive, and
+linear structures defined by `ModuleCat.UniverseTensor`.
 -/
 
 @[expose] public section
@@ -33,6 +35,10 @@ namespace ModuleCat.UniverseTensor
 
 variable (R : Type u) [CommRing R]
 
+/-- The inverse left unitor with a lifted scalar unit.
+
+For the universe tensor structure on `ModuleCat.{max u v} R`, the inverse left unitor of `X`
+sends `x` to `(ULift.up 1) ⊗ₜ[R] x`. -/
 theorem leftUnitor_inv_apply (X : ModuleCat.{max u v} R) (x : X) :
     letI : MonoidalCategoryStruct (ModuleCat.{max u v} R) := tensorStructure.{u,v} (R := R)
     letI : MonoidalCategory (ModuleCat.{max u v} R) := monoidalCategory.{u,v} (R := R)
@@ -50,6 +56,10 @@ theorem leftUnitor_inv_apply (X : ModuleCat.{max u v} R) (x : X) :
   rw [leftUnitor_tmul, one_smul]
   exact hx
 
+/-- The inverse right unitor with a lifted scalar unit.
+
+For the universe tensor structure on `ModuleCat.{max u v} R`, the inverse right unitor of `X`
+sends `x` to `x ⊗ₜ[R] (ULift.up 1)`. -/
 theorem rightUnitor_inv_apply (X : ModuleCat.{max u v} R) (x : X) :
     letI : MonoidalCategoryStruct (ModuleCat.{max u v} R) := tensorStructure.{u,v} (R := R)
     letI : MonoidalCategory (ModuleCat.{max u v} R) := monoidalCategory.{u,v} (R := R)

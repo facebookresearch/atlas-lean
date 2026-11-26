@@ -1,4 +1,5 @@
-# True Lambda Element
+# The signed positive-integer lambda element
 
-The signed integer operation includes `(-1)^(m - 1)` at positive parameter `m`.
-The convolution operation is defined for every natural parameter.
+Let `R` be a commutative ring and `n,m : ℕ`. Define `C_n(m) = ∑ f : Fin n → Fin m, sign(sort
+f) [sort f]` in `R[S_n]`, with integer signs cast to `R`. For `0<m`, `trueLambdaElement R n m
+hm = (-1:R)^(m-1) • C_n(m)`. The sign depends on the positive parameter `m`.

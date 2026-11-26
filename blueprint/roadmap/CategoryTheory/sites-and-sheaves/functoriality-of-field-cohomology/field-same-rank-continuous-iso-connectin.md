@@ -1,3 +1,6 @@
-# Field Same Rank Continuous Iso connecting
+# Rank comparison commutes with coefficient connecting maps
 
-Actual source and target field connectors commute with the fixed original cochain comparison.
+Rank comparison commutes with coefficient connecting maps.
+
+The two rank coordinates identify the connecting morphisms of every short exact coefficient
+sequence.

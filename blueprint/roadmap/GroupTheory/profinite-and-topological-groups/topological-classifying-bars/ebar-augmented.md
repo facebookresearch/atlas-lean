@@ -1,3 +1,5 @@
-# EBar Augmented
+# The universal bar augmented to the point
 
-The regular augmented universal bar, evaluated at the canonical point.
+The universal bar augmented to the point.
+
+Equip EBar G with its canonical simplicial augmentation to the constant one-point space.

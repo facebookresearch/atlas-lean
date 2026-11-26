@@ -1,3 +1,6 @@
-# Coefficient Diagram Map
+# The restricted coefficient maps form a natural diagram map
 
-The actual restricted coefficient maps commute with all index inclusions.
+For monotone submodule families S_i⊆M,T_i⊆N and
+an R-linear f with f(S_i)⊆T_i, its restrictions S_i→T_i
+commute with every inclusion i≤j.
+They define a natural transformation of the two module diagrams.

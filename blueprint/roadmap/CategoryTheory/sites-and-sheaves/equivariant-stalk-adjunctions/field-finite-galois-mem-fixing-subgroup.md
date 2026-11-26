@@ -1,3 +1,6 @@
-# Field Finite Galois mem fixing Subgroup iff
+# Fixing subgroup stabilizes the finite field inclusion
 
-The actual fixing subgroup is the stabilizer of the original inclusion.
+Fixing subgroup stabilizes the finite field inclusion.
+
+A Galois automorphism belongs to the finite field's fixing subgroup exactly when it fixes the
+canonical inclusion into `Ω`.

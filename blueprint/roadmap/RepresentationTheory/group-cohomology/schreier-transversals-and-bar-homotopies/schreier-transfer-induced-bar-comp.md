@@ -1,4 +1,6 @@
-# Schreier Transfer Induced Bar comp π
+# The resolution square for the universal norm lift
 
-Every chosen-transversal induced-bar transfer lifts the same canonical
-finite-index norm map between the resolved trivial representations.
+The resolution square for the universal norm lift.
+
+The universal transfer followed by the induced resolution augmentation equals the G-resolution
+augmentation followed by the chain map on single-degree complexes induced by the norm.

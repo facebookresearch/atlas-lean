@@ -16,13 +16,19 @@ public import Mathlib.AlgebraicTopology.DoldKan.HomotopyEquivalence
 public import MathlibExt.RepresentationTheory.Homological.NormalizedBar.Basic
 
 /-!
-# The literal normalized group bar complex
+# Normalized group bar complex and its chain section
 
-The native normalized Moore complex of the linearized universal cover is
-identified degreewise with the free representation on nonidentity tuples.
-The differential is transported through these actual inverse degree maps.
-The canonical projection deletes degenerate symbols, while its chain
-section applies the native normalization projector to raw tuple symbols.
+Let k be a commutative ring in universe u and G a group in universe v.
+Dold–Kan normalization of the linearized universal cover EG gives its
+Moore complex M, with maps p:C→M, i:M→C and projector P=i∘p
+on the alternating standard complex C.
+
+Each Moore degree is isomorphic to the free k[G]-module on tuples
+with no identity entries. Transporting the differential gives the
+normalized tuple complex Q. The chain projection C→Q deletes
+degenerate symbols; its section Q→C applies P to the raw tuple inclusion.
+Projection after section is id_Q, while section after projection is P,
+homotopic to id_C. Hence Q and C are homotopy equivalent.
 -/
 
 @[expose] public section
@@ -38,19 +44,39 @@ namespace Rep.NormalizedBar
 
 variable (k : Type u) [CommRing k] (G : Type v) [Group G]
 
-/-- Native Dold–Kan normalization of the actual linearized universal cover. -/
+/-- Let k be a commutative ring in universe u, G a group in universe v,
+C the alternating standard complex on homogeneous vertices G^(n+1),
+and M its normalized Moore complex. Let p:C→M and i:M→C be the
+normalization maps, with P=i∘p.
+M is the normalized Moore complex of the simplicial linearization
+of the diagonal G-action on EG. -/
 abbrev mooreComplex : ChainComplex (Rep.{max u v} k G) ℕ :=
   (AlgebraicTopology.normalizedMooreComplex _).obj (standardSimplicial k G)
 
-/-- The actual native normalization map into the Moore complex. -/
+/-- Let k be a commutative ring in universe u, G a group in universe v,
+C the alternating standard complex on homogeneous vertices G^(n+1),
+and M its normalized Moore complex. Let p:C→M and i:M→C be the
+normalization maps, with P=i∘p.
+The chain normalization map p:C→M satisfies p∘i=id_M.
+It projects the standard complex to its Moore normalization. -/
 abbrev normalize : standardComplex k G ⟶ mooreComplex k G :=
   AlgebraicTopology.DoldKan.PInftyToNormalizedMooreComplex (standardSimplicial k G)
 
-/-- The actual native inclusion of the Moore complex. -/
+/-- Let k be a commutative ring in universe u, G a group in universe v,
+C the alternating standard complex on homogeneous vertices G^(n+1),
+and M its normalized Moore complex. Let p:C→M and i:M→C be the
+normalization maps, with P=i∘p.
+The chain inclusion i:M→C satisfies p∘i=id_M and
+i∘p=P on C. -/
 abbrev includeMoore : mooreComplex k G ⟶ standardComplex k G :=
   AlgebraicTopology.inclusionOfMooreComplexMap (standardSimplicial k G)
 
-/-- The native projector on the alternating-face standard complex. -/
+/-- Let k be a commutative ring in universe u, G a group in universe v,
+C the alternating standard complex on homogeneous vertices G^(n+1),
+and M its normalized Moore complex. Let p:C→M and i:M→C be the
+normalization maps, with P=i∘p.
+The normalization projector P:C→C is idempotent and is
+i∘p for the Moore projection and inclusion. -/
 abbrev projector : standardComplex k G ⟶ standardComplex k G :=
   AlgebraicTopology.DoldKan.PInfty (X := standardSimplicial k G)
 
@@ -85,7 +111,13 @@ theorem includeMoore_f_comp_projector_f (n : ℕ) :
     (includeMoore k G).f n ≫ (projector k G).f n = (includeMoore k G).f n :=
   congrArg (fun f => f.f n) (includeMoore_comp_projector k G)
 
-/-- A homogeneous simplex with repeated adjacent entries has zero tuple projection. -/
+/-- Let k be a commutative ring in universe u, G a group in universe v,
+C the alternating standard complex on homogeneous vertices G^(n+1),
+and M its normalized Moore complex. Let p:C→M and i:M→C be the
+normalization maps, with P=i∘p.
+If homogeneous vertices a have a_i=a_(i+1), the standard
+nonidentity-tuple projection sends the symbol r[a] to zero,
+because its consecutive-quotient tuple contains 1. -/
 theorem standardProjection_single_of_degenerate (n : ℕ) (a : Fin (n + 1) → G)
     (i : Fin n) (ha : a i.castSucc = a i.succ) (r : k) :
     (standardProjection k G n).hom (standardSymbol k G n a r) = 0 := by
@@ -98,7 +130,12 @@ theorem standardProjection_single_of_degenerate (n : ℕ) (a : Fin (n + 1) → G
     exact h i (by simp [ha])
   rw [dite_eq_right hdeg]
 
-/-- A native simplicial degeneracy repeats its indexed entry. -/
+/-- Let k be a commutative ring in universe u, G a group in universe v,
+C the alternating standard complex on homogeneous vertices G^(n+1),
+and M its normalized Moore complex. Let p:C→M and i:M→C be the
+normalization maps, with P=i∘p.
+The simplicial degeneracy σ_i sends r[a] to r[a∘predAbove_i],
+repeating the selected adjacent vertex without a sign. -/
 theorem standard_sigma_single (n : ℕ) (i : Fin (n + 1)) (a : Fin (n + 1) → G) (r : k) :
     ((standardSimplicial k G).σ i).hom (standardSymbol k G n a r) =
       standardSymbol k G (n + 1) (a ∘ i.predAbove) r := by
@@ -111,7 +148,12 @@ theorem standard_sigma_single (n : ℕ) (i : Fin (n + 1)) (a : Fin (n + 1) → G
   exact MonoidAlgebra.mapDomainLinearMap_single (R := k) (S := k)
     (fun b : Fin (n + 1) → G => b ∘ i.predAbove) r a
 
-/-- Tuple projection vanishes on every actual simplicial degeneracy. -/
+/-- Let k be a commutative ring in universe u, G a group in universe v,
+C the alternating standard complex on homogeneous vertices G^(n+1),
+and M its normalized Moore complex. Let p:C→M and i:M→C be the
+normalization maps, with P=i∘p.
+Every simplicial degeneracy into degree n is annihilated by the
+standard nonidentity-tuple projection in that degree. -/
 theorem standardProjection_degeneraciesVanish (n : ℕ) :
     AlgebraicTopology.DoldKan.DegeneraciesVanish
       (X := standardSimplicial k G) (standardProjection k G n) := by
@@ -141,7 +183,12 @@ theorem standardProjection_degeneraciesVanish (n : ℕ) :
           Fin.predAbove_succ_self]) (1 : k)
     exact (congrArg (fun x : k[Fin (n + 2) → G] => πn x) hσ).trans hπ
 
-/-- Native projector normalization leaves the literal tuple projection unchanged. -/
+/-- Let k be a commutative ring in universe u, G a group in universe v,
+C the alternating standard complex on homogeneous vertices G^(n+1),
+and M its normalized Moore complex. Let p:C→M and i:M→C be the
+normalization maps, with P=i∘p.
+The degree projection π_n from standard vertices to nonidentity
+tuples satisfies π_n∘P_n=π_n. -/
 @[reassoc (attr := simp)]
 theorem projector_f_comp_standardProjection (n : ℕ) :
     (projector k G).f n ≫ standardProjection k G n = standardProjection k G n := by
@@ -151,8 +198,12 @@ theorem projector_f_comp_standardProjection (n : ℕ) :
     (AlgebraicTopology.DoldKan.PInfty_f_add_QInfty_f (X := standardSimplicial k G) n)
   simpa only [Preadditive.add_comp, hQ, add_zero, Category.id_comp] using h
 
-/-- Every homogeneous simplex with repeated adjacent entries is killed by
-the actual native normalization projector. -/
+/-- Let k be a commutative ring in universe u, G a group in universe v,
+C the alternating standard complex on homogeneous vertices G^(n+1),
+and M its normalized Moore complex. Let p:C→M and i:M→C be the
+normalization maps, with P=i∘p.
+For a symbol r[a] with adjacent equal vertices a_i=a_(i+1),
+the normalization projector P_n(r[a]) is zero. -/
 theorem projector_single_of_degenerate (n : ℕ) (a : Fin (n + 1) → G)
     (i : Fin n) (ha : a i.castSucc = a i.succ) (r : k) :
     ((projector k G).f n).hom (standardSymbol k G n a r) = 0 := by
@@ -178,8 +229,13 @@ theorem projector_single_of_degenerate (n : ℕ) (a : Fin (n + 1) → G)
     rw [heq]
     exact h
 
-/-- The raw tuple splitting preserves the normalization projector. This
-uses the actual degeneracy of every tuple containing an identity entry. -/
+/-- Let k be a commutative ring in universe u, G a group in universe v,
+C the alternating standard complex on homogeneous vertices G^(n+1),
+and M its normalized Moore complex. Let p:C→M and i:M→C be the
+normalization maps, with P=i∘p.
+For raw tuple section r_n and standard tuple projection π_n,
+P_n∘r_n∘π_n=P_n. Thus the projection and raw section recover
+the same normalized part after applying the projector. -/
 @[reassoc]
 theorem standardProjection_comp_rawInclusion_comp_projector (n : ℕ) :
     standardProjection k G n ≫ standardRawInclusion k G n ≫ (projector k G).f n =
@@ -230,11 +286,21 @@ theorem standardProjection_comp_rawInclusion_comp_projector (n : ℕ) :
       (congrArg (fun x : k[Fin (n + 1) → G] => pn x) hb).trans hdeg
     exact hleft.trans hright.symm
 
-/-- The literal tuple projection restricted to the actual Moore degree. -/
+/-- Let k be a commutative ring in universe u, G a group in universe v,
+C the alternating standard complex on homogeneous vertices G^(n+1),
+and M its normalized Moore complex. Let p:C→M and i:M→C be the
+normalization maps, with P=i∘p.
+The forward degree map M_n→Q_n is inclusion i_n followed by
+the standard nonidentity-tuple projection. -/
 def toTupleDegree (n : ℕ) : (mooreComplex k G).X n ⟶ degree k G n :=
   (includeMoore k G).f n ≫ standardProjection k G n
 
-/-- A raw nonidentity tuple mapped through the actual normalization projection. -/
+/-- Let k be a commutative ring in universe u, G a group in universe v,
+C the alternating standard complex on homogeneous vertices G^(n+1),
+and M its normalized Moore complex. Let p:C→M and i:M→C be the
+normalization maps, with P=i∘p.
+The return degree map Q_n→M_n is the raw homogeneous tuple
+inclusion followed by normalization p_n. -/
 def fromTupleDegree (n : ℕ) : degree k G n ⟶ (mooreComplex k G).X n :=
   standardRawInclusion k G n ≫ (normalize k G).f n
 
@@ -278,33 +344,57 @@ theorem toTupleDegree_comp_fromTupleDegree (n : ℕ) :
         f ≫ (normalize k G).f n) h'
     _ = 𝟙 _ := includeMoore_f_comp_normalize_f k G n
 
-/-- The actual inverse degree maps identify Moore normalization with the
-literal free group-ring module on nonidentity tuples. -/
+/-- Let k be a commutative ring in universe u, G a group in universe v,
+C the alternating standard complex on homogeneous vertices G^(n+1),
+and M its normalized Moore complex. Let p:C→M and i:M→C be the
+normalization maps, with P=i∘p.
+The two degree maps are inverse and give
+M_n≅Q_n, the free representation on nonidentity length n tuples. -/
 def degreeIso (n : ℕ) : (mooreComplex k G).X n ≅ degree k G n where
   hom := toTupleDegree k G n
   inv := fromTupleDegree k G n
   hom_inv_id := toTupleDegree_comp_fromTupleDegree k G n
   inv_hom_id := fromTupleDegree_comp_toTupleDegree k G n
 
-/-- The literal normalized group bar complex. Its actual degree objects
-are free on nonidentity tuples; the differential is transported from
-native normalization through the proved inverse degree maps. -/
+/-- Let k be a commutative ring in universe u, G a group in universe v,
+C the alternating standard complex on homogeneous vertices G^(n+1),
+and M its normalized Moore complex. Let p:C→M and i:M→C be the
+normalization maps, with P=i∘p.
+The normalized tuple complex Q has degree Q_n free over k[G]
+on nonidentity tuples and differential
+d_Q=q_n∘d_M∘q_(n+1)⁻¹ from degree n+1 to n,
+where q_n:M_n≅Q_n is the degree comparison. -/
 def complex : ChainComplex (Rep.{max u v} k G) ℕ :=
   ChainComplex.of (degree k G)
     (fun n => (degreeIso k G (n + 1)).inv ≫ (mooreComplex k G).d (n + 1) n ≫
       (degreeIso k G n).hom) (fun n => by simp [Category.assoc])
 
-/-- The normalization comparison is assembled from the actual degree maps. -/
+/-- Let k be a commutative ring in universe u, G a group in universe v,
+C the alternating standard complex on homogeneous vertices G^(n+1),
+and M its normalized Moore complex. Let p:C→M and i:M→C be the
+normalization maps, with P=i∘p.
+The degree isomorphisms assemble to the chain isomorphism M≅Q,
+transporting the Moore differential to tuple coordinates. -/
 def mooreIso : mooreComplex k G ≅ complex k G :=
   HomologicalComplex.Hom.isoOfComponents (degreeIso k G) (fun i j hij => by
     obtain rfl : i = j + 1 := hij.symm
     simp [complex])
 
-/-- The canonical quotient projection from the standard group complex. -/
+/-- Let k be a commutative ring in universe u, G a group in universe v,
+C the alternating standard complex on homogeneous vertices G^(n+1),
+and M its normalized Moore complex. Let p:C→M and i:M→C be the
+normalization maps, with P=i∘p.
+The normalized chain projection C→Q is p followed by M≅Q.
+Its degree maps are the standard nonidentity-tuple projections. -/
 def projection : standardComplex k G ⟶ complex k G :=
   normalize k G ≫ (mooreIso k G).hom
 
-/-- The canonical chain inclusion, corrected by native normalization. -/
+/-- Let k be a commutative ring in universe u, G a group in universe v,
+C the alternating standard complex on homogeneous vertices G^(n+1),
+and M its normalized Moore complex. Let p:C→M and i:M→C be the
+normalization maps, with P=i∘p.
+The chain section Q→C is Q≅M followed by i.
+In degree n it is P_n composed with the raw tuple inclusion. -/
 def inclusion : complex k G ⟶ standardComplex k G :=
   (mooreIso k G).inv ≫ includeMoore k G
 
@@ -351,8 +441,13 @@ theorem inclusion_f (n : ℕ) :
       congrArg (fun f : (standardComplex k G).X n ⟶ (standardComplex k G).X n =>
         standardRawInclusion k G n ≫ f) (normalize_f_comp_includeMoore_f k G n)
 
-/-- The actual literal normalized complex is homotopy equivalent to the
-standard complex, using the native normalization homotopy equivalence. -/
+/-- Let k be a commutative ring in universe u, G a group in universe v,
+C the alternating standard complex on homogeneous vertices G^(n+1),
+and M its normalized Moore complex. Let p:C→M and i:M→C be the
+normalization maps, with P=i∘p.
+The normalized tuple complex Q and C are homotopy equivalent.
+The section and projection split on Q, and their composite on C
+is the normalization projector homotopic to id_C. -/
 def homotopyEquivStandard : HomotopyEquiv (complex k G) (standardComplex k G) :=
   (HomotopyEquiv.ofIso (mooreIso k G).symm).trans
     AlgebraicTopology.DoldKan.homotopyEquivNormalizedMooreComplexAlternatingFaceMapComplex

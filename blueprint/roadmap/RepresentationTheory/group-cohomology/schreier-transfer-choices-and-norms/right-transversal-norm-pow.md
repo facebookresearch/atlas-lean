@@ -1,3 +1,5 @@
-# Right Transversal Norm pow
+# Natural powers commute with the transversal norm
 
-The right-transversal norm commutes with natural powers.
+Natural powers commute with the transversal norm.
+
+For n ∈ ℕ, the multiplicative norm satisfies N_T(d)ⁿ = N_T(dⁿ).

@@ -1,4 +1,6 @@
-# Stable Matrix Cyclic Weibel Chain Map ι
+# The finite-stage restriction of canonical colimit cyclic trace
 
-The stabilized cyclic trace chain map agrees with each finite matrix trace after the
-finite-stage inclusion.
+The finite-stage restriction of canonical colimit cyclic trace.
+
+The positive-tail finite-stage inclusion followed by the colimit trace is the finite degree-
+signed matrix trace.

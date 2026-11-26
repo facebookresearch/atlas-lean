@@ -15,9 +15,11 @@ public import Mathlib.Algebra.Module.Projective
 /-!
 # Exterior powers of projective modules
 
-The native exterior-power map preserves the actual split embedding of a
-projective module into a free one. Its exterior-power retraction proves
-projectivity in every degree, without finite generation or a chosen basis.
+For a commutative ring `R` and a projective `R`-module `M`, every exterior power `Λ^n_R M` is
+projective. An embedding of `M` as a retract of a free module induces the corresponding
+exterior-power retract.
+
+Reference: Bourbaki, *Algebra*, Chapter III.
 -/
 
 @[expose] public section
@@ -31,7 +33,8 @@ namespace exteriorPower
 variable {R : Type u} [CommRing R]
   {M : Type v} [AddCommGroup M] [Module R M]
 
-/-- Exterior powers preserve actual module projectivity over any commutative ring. -/
+/-- Let `R` be a commutative ring and `M` an `R`-module. If `M` is projective, then for every `n :
+ℕ`, `Module.Projective R (Λ^n_R M)` holds. -/
 instance instProjective [Module.Projective R M] (n : ℕ) :
     Module.Projective R (⋀[R]^n M) := by
   obtain ⟨N, hNadd, hNmodule, hNfree, i, s, hsi⟩ := Module.Projective.iff_split.mp

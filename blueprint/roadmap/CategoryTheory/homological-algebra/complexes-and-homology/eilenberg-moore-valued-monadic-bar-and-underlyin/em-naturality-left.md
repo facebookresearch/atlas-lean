@@ -1,6 +1,6 @@
-# Em Naturality left
+# The regular-right comparison is natural on simplicial maps
 
-The comparison isomorphism is natural in the algebra morphism on
-simplicial components. Consumes `BarResolution.resolutionHom_left`: after rewriting
-both sides to `algebraBarHom` form, the whiskered `twoSidedBarHom`
-composition laws close the square.
+For a monad T on C and algebra morphism φ : alg → alg′, the simplicial comparison
+e=emUnderlyingBarIso satisfies emUnderlyingHom(φ).left ≫ e_alg′.hom = e_alg.hom ≫
+resolutionHom(φ).left. It identifies the forgotten-free-module bar maps with the regular-right
+monadic bar maps.

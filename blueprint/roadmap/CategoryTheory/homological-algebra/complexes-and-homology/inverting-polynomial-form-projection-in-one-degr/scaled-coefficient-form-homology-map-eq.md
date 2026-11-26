@@ -1,4 +1,6 @@
-# Scaled Coefficient Form Homology Map eq inverse
+# The scaled form projection as the polynomial inverse comparison
 
-The rescaled original projection is exactly the original
-polynomial inverse, as an equality of linear maps.
+The scaled form projection as the polynomial inverse comparison.
+
+With `(n! : k)` invertible, the scaled coefficient-form homology map equals the linear map of
+the polynomial differential-form equivalence.

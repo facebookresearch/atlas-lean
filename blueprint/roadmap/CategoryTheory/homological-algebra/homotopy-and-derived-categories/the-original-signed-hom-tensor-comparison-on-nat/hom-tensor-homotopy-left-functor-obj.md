@@ -1,3 +1,6 @@
-# Hom Tensor Homotopy Left Functor obj
+# Object formula for Hom-then-tensor on homotopy triples
 
-The source object is the native quotient of the original tensor/Hom.
+Object formula for Hom-then-tensor on homotopy triples.
+
+At a homotopy triple, the left functor is the quotient of the tensor total of the linear Hom
+of the first two underlying cochain complexes with the third complex.

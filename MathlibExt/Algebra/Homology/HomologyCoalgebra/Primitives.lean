@@ -16,17 +16,24 @@ public import Mathlib.Algebra.Homology.HomologicalComplexLimits
 public import MathlibExt.CategoryTheory.GradedObject.Kernels
 
 /-!
-# The canonical primitive/homology comparison
+# Homology of the chain primitive kernel maps to homology primitives
 
-The chain primitive equation is the actual coproduct minus its two
-coaugmentation terms. Its native kernel is a chain complex. Mapping the
-kernel inclusion to homology and using canonical Künneth unit coherence
-gives a map to the kernel of the graded homology primitive equation.
+Let R be a commutative ring, C a nonnegative R-module chain comonoid,
+and η:𝟙_Ch→C a chosen chain map. Define
+P_C=Δ_C−(id⊗η)ρ_C⁻¹−(η⊗id)λ_C⁻¹.
+Its kernel is the primitive chain complex, with inclusion j into C.
 
-This constructs a map. It does not assert that kernels commute with
-homology, or that this map is injective, surjective, or an isomorphism.
-Only the square Künneth comparison is needed to construct the map; the
-cube comparison is needed separately for a homology comonoid structure.
+If the canonical square Künneth map μ_(C,C) is invertible in every
+degree, define the graded primitive equation P_H using
+Δ_H=μ_(C,C)⁻¹H(Δ_C) and the point η_H=H(η)e.
+The transport identity μ_(C,C)⁻¹H(P_C)=P_H shows that H(j) factors
+through ker(P_H), giving the canonical comparison
+H(ker(P_C))→ker(P_H).
+
+The comparison sends a cycle class to the class of its image under j.
+It is natural for comonoid maps f preserving the chosen unit maps,
+provided both square comparisons are invertible. A cube comparison
+is not required to construct this kernel map.
 -/
 
 @[expose] public section
@@ -53,14 +60,24 @@ private theorem lax_μ (A B : ChainComplex (ModuleCat.{u} R) ℕ) :
 
 variable (C : (ChainComplex (ModuleCat.{u} R) ℕ)) [ComonObj C] (η : 𝟙_ (ChainComplex (ModuleCat.{u} R) ℕ) ⟶ C)
 
-/-- The actual primitive equation in chain complexes. -/
+/-- For a chain comonoid C over a commutative ring R and a
+chain map η:𝟙_Ch→C, the primitive equation is
+P_C=Δ_C−(id⊗η)ρ_C⁻¹−(η⊗id)λ_C⁻¹:C→C⊗C.
+The chosen map η need not be assumed to be a comonoid morphism
+to define this equation. -/
 def primitiveEquation : C ⟶ C ⊗ C :=
   Δ[C] - ((ρ_ C).inv ≫ (𝟙 C ⊗ₘ η) + (λ_ C).inv ≫ (η ⊗ₘ 𝟙 C))
 
-/-- The native kernel of the actual chain primitive equation. -/
+/-- For a chain comonoid C over a commutative ring R and
+η:𝟙_Ch→C, the primitive complex is ker(P_C), where
+P_C is the coproduct minus its two unit-insertion terms.
+The kernel is taken in nonnegative R-module chain complexes. -/
 def primitiveComplex : (ChainComplex (ModuleCat.{u} R) ℕ) := kernel (primitiveEquation C η)
 
-/-- The actual inclusion of the primitive kernel into the original complex. -/
+/-- For a chain comonoid C over a commutative ring R and
+η:𝟙_Ch→C, the primitive inclusion j:ker(P_C)→C is the
+kernel inclusion of the chain primitive equation.
+It satisfies P_C∘j=0. -/
 def primitiveInclusion : primitiveComplex C η ⟶ C := kernel.ι (primitiveEquation C η)
 
 @[reassoc (attr := simp)]
@@ -82,9 +99,9 @@ private theorem graded_map_zero (A B : (ChainComplex (ModuleCat.{u} R) ℕ)) : (
   funext n
   exact homologyMap_zero _ _ n
 
-/-- A zero central component of an actual chain map induces a zero
-homology map in that degree. This uses the original cycle mono and the
-original homology quotient epi. -/
+/-- For nonnegative R-module chain complexes A,B over a
+commutative ring R, if f:A→B has f_n=0, then H_n(f)=0.
+This conclusion depends only on the selected degree-n component. -/
 theorem homologyMap_eq_zero_of_component {A B : (ChainComplex (ModuleCat.{u} R) ℕ)} (f : A ⟶ B) (n : ℕ)
     (h : f.f n = 0) : homologyMap f n = 0 := by
   have hc : cyclesMap f n = 0 := by
@@ -97,15 +114,21 @@ section SquareIsIso
 
 variable [∀ n : ℕ, IsIso (kunnethHomologyTensorMap C C n)]
 
-/-- The actual primitive equation for the transported graded diagonal and
-the canonical homology coaugmentation. -/
+/-- For a chain comonoid C over a commutative ring R with
+invertible square Künneth tensorator, and η:𝟙_Ch→C, the
+graded primitive equation is
+P_H=Δ_H−(id⊗η_H)ρ_H⁻¹−(η_H⊗id)λ_H⁻¹.
+Here Δ_H=μ_(C,C)⁻¹H(Δ_C) and η_H=H(η)e. -/
 def homologyPrimitiveEquation : (Kunneth.homologyFunctor (R := R)).obj C ⟶ (Kunneth.homologyFunctor (R := R)).obj C ⊗
   (Kunneth.homologyFunctor (R := R)).obj C :=
   comul C - ((ρ_ ((Kunneth.homologyFunctor (R := R)).obj C)).inv ≫ (𝟙 ((Kunneth.homologyFunctor (R := R)).obj C) ⊗ₘ
     coaug C η) +
     (λ_ ((Kunneth.homologyFunctor (R := R)).obj C)).inv ≫ (coaug C η ⊗ₘ 𝟙 ((Kunneth.homologyFunctor (R := R)).obj C)))
 
-/-- The native graded primitive kernel. -/
+/-- For a chain comonoid C over a commutative ring R with
+invertible square comparison and chosen map η:𝟙_Ch→C,
+the homology primitive object is ker(P_H) in graded R-modules.
+Its equation uses the canonical transported diagonal and point. -/
 def homologyPrimitives : (GradedObject ℕ (ModuleCat.{u} R)) := kernel (homologyPrimitiveEquation C η)
 
 omit [ComonObj C] in
@@ -150,8 +173,11 @@ private theorem leftUnitTerm_transport :
     simp only [coaug, Functor.map_id, ← tensorHom_comp_tensorHom_assoc,
       Category.id_comp, tensorHom_def', Category.assoc, whiskerLeft_id, comp_whiskerRight]))
 
-/-- The chain primitive equation maps to the literal homology primitive
-equation under the inverse canonical Künneth map. -/
+/-- For a chain comonoid C over a commutative ring R with
+invertible square tensorator, the equations satisfy
+μ_(C,C)⁻¹ ∘ H(P_C)=P_H.
+This uses the canonical unit comparison and holds for any
+chosen chain map η:𝟙_Ch→C. -/
 @[reassoc]
 theorem primitiveEquation_transport :
     (Kunneth.homologyFunctor (R := R)).map (primitiveEquation C η) ≫ inv (Kunneth.tensorator C C) =
@@ -161,15 +187,20 @@ theorem primitiveEquation_transport :
     rightUnitTerm_transport, leftUnitTerm_transport]
   rfl
 
-/-- The actual homology of the chain primitive inclusion satisfies the
-actual graded primitive equation. -/
+/-- For a chain comonoid C over a commutative ring R with
+invertible square comparison, the inclusion j:ker(P_C)→C
+satisfies P_H∘H(j)=0.
+Thus H(j) factors through the graded primitive kernel. -/
 theorem homologyInclusion_primitive :
     (Kunneth.homologyFunctor (R := R)).map (primitiveInclusion C η) ≫ homologyPrimitiveEquation C η = 0 := by
   rw [← primitiveEquation_transport, ← Category.assoc, ← Functor.map_comp,
     primitiveInclusion_equation, graded_map_zero, zero_comp]
 
-/-- The canonical comparison from homology of the actual primitive chain
-kernel to the actual primitive kernel in graded homology. -/
+/-- For a chain comonoid C over a commutative ring R,
+a chosen η:𝟙_Ch→C and invertible square Künneth comparison,
+the homology inclusion H(ker(P_C))→H(C) factors canonically
+through ker(P_H). This defines the primitive comparison map,
+without a homology-preserves-kernels assumption. -/
 def primitiveComparison : (Kunneth.homologyFunctor (R := R)).obj (primitiveComplex C η) ⟶ homologyPrimitives C η :=
   kernel.lift (homologyPrimitiveEquation C η) ((Kunneth.homologyFunctor (R := R)).map (primitiveInclusion C η))
     (homologyInclusion_primitive C η)
@@ -180,8 +211,12 @@ theorem primitiveComparison_ι :
       (Kunneth.homologyFunctor (R := R)).map (primitiveInclusion C η) :=
   kernel.lift_ι _ _ _
 
-/-- On each original cycle object, the comparison followed by inclusion is
-the ordinary homology class of its image in the original complex. -/
+/-- For the primitive comparison γ:H(ker(P_C))→ker(P_H)
+over a commutative ring R with invertible square comparison,
+its degree-n map satisfies
+ι_(ker P_H) ∘ γ_n ∘ π_(ker P_C)=π_C ∘ Z_n(j).
+Here π denotes passage from cycles to homology and j is the
+chain primitive inclusion. -/
 @[reassoc]
 theorem primitiveComparison_on_cycles (n : ℕ) :
     (primitiveComplex C η).homologyπ n ≫ primitiveComparison C η n ≫
@@ -196,8 +231,11 @@ end SquareIsIso
 
 variable {D : (ChainComplex (ModuleCat.{u} R) ℕ)} [ComonObj D] (η' : 𝟙_ (ChainComplex (ModuleCat.{u} R) ℕ) ⟶ D)
 
-/-- A coaugmentation-preserving chain comonoid morphism intertwines the
-two actual chain primitive equations. -/
+/-- For chain comonoids C,D over a commutative ring R,
+unit-to-chain maps η,η′ and a comonoid morphism f:C→D with
+f∘η=η′, the equations satisfy
+P_D∘f=(f⊗f)∘P_C.
+This is the chain-level primitive-equation square. -/
 @[reassoc]
 theorem primitiveEquation_naturality (f : C ⟶ D) [IsComonHom f]
     (hη : η ≫ f = η') :
@@ -230,7 +268,10 @@ theorem primitiveEquation_naturality (f : C ⟶ D) [IsComonHom f]
     exact (Category.assoc _ _ _).symm.trans (h.trans
       ((congrArg (fun x => (λ_ C).inv ≫ x) hTensor).trans hUnit'))
 
-/-- The genuine map on native primitive chain kernels. -/
+/-- For chain comonoids C,D over a commutative ring R and
+f:C→D preserving the chosen unit maps η,η′, the primitive
+equation square induces ker(P_C)→ker(P_D).
+It is the map on primitive chain complexes induced by f. -/
 def primitiveComplexMap (f : C ⟶ D) [IsComonHom f] (hη : η ≫ f = η') :
     primitiveComplex C η ⟶ primitiveComplex D η' :=
   kernel.lift (primitiveEquation D η') (primitiveInclusion C η ≫ f) (by
@@ -248,8 +289,11 @@ section BothSquaresIsIso
 variable [∀ n : ℕ, IsIso (kunnethHomologyTensorMap C C n)]
   [∀ n : ℕ, IsIso (kunnethHomologyTensorMap D D n)]
 
-/-- The actual homology primitive equation is natural under an actual
-coaugmentation-preserving chain comonoid map. -/
+/-- For chain comonoids C,D over a commutative ring R with
+invertible square comparisons, a comonoid map f:C→D satisfying
+f∘η=η′ gives
+P_(H,D)∘H(f)=(H(f)⊗H(f))∘P_(H,C).
+The chosen unit maps are transported by the canonical unit comparison. -/
 @[reassoc]
 theorem homologyPrimitiveEquation_naturality (f : C ⟶ D) [IsComonHom f]
     (hη : η ≫ f = η') :
@@ -266,7 +310,10 @@ theorem homologyPrimitiveEquation_naturality (f : C ⟶ D) [IsComonHom f]
   simp only [Category.assoc, IsIso.inv_hom_id_assoc, IsIso.inv_hom_id, Category.comp_id]
   rw [← Functor.map_comp, ← Functor.map_comp, primitiveEquation_naturality C η η' f hη]
 
-/-- The genuine map on native graded primitive kernels. -/
+/-- For chain comonoids C,D over a commutative ring R with
+invertible square Künneth comparisons, a comonoid map f preserving
+η,η′ induces ker(P_(H,C))→ker(P_(H,D)).
+It is the kernel map of the homology primitive-equation square. -/
 def homologyPrimitivesMap (f : C ⟶ D) [IsComonHom f] (hη : η ≫ f = η') :
     homologyPrimitives C η ⟶ homologyPrimitives D η' :=
   kernel.lift (homologyPrimitiveEquation D η')
@@ -284,7 +331,12 @@ theorem homologyPrimitivesMap_ι (f : C ⟶ D) [IsComonHom f] (hη : η ≫ f = 
       kernel.ι (homologyPrimitiveEquation C η) ≫ (Kunneth.homologyFunctor (R := R)).map f :=
   kernel.lift_ι _ _ _
 
-/-- Naturality of the actual primitive/homology comparison. -/
+/-- For chain comonoids C,D over a commutative ring R with
+invertible square comparisons, and a comonoid map f preserving
+the chosen unit maps, the comparison maps satisfy
+γ_D ∘ H(Prim(f))=Prim_H(H(f)) ∘ γ_C.
+The maps on both sides are the canonical chain and graded
+primitive kernel maps. -/
 @[reassoc]
 theorem primitiveComparison_naturality (f : C ⟶ D) [IsComonHom f]
     (hη : η ≫ f = η') :

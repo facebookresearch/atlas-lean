@@ -1,6 +1,6 @@
-# Pow Tuple Gen zero snd
+# The base component at power zero
 
-Zero-step reader: the generalized reader preserves its argument.
+The base component at power zero.
 
-Stable API for `powTupleGen`: the `0` base point is the argument up to the
-definitional cast. Consumed by the later `ClassifyingNerveNaturality` repair.
+For T⁰(X) = X, the generalized tuple equivalence has the empty G-tuple and retains its
+argument as the X-component.

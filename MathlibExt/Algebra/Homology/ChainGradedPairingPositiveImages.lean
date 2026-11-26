@@ -17,16 +17,17 @@ public import Mathlib.CategoryTheory.Preadditive.AdditiveFunctor
 public import Mathlib.CategoryTheory.Monoidal.Preadditive
 
 /-!
-# The actual positive component images of a chain pairing
+# Positive-degree component images of chain pairings
 
-The degree-n relation submodule is the sum of the images of the original
-pairing components with both degrees positive and an explicit equality
-of their sum with n. The original tensor differential and chain-map law
-prove differential closure when both degree-one boundaries vanish.
+Let R be a ring and use a monoidal structure on its module category which is additive in both
+variables. For a chain pairing P : K₁ ⊗ K₂ → K₃, let S_n be the sum of the images of its
+components P_(p,q,n) with p > 0, q > 0 and p + q = n. The equality of degrees is included in
+each component's target transport.
 
-The tensor structure is the one already used by the given chain pairing.
-No submodule inclusion is assumed to remain injective under tensoring.
-The original maps of pairings also preserve these actual image families.
+The submodules S₀ and S₁ are zero. If the degree-one boundaries of K₁ and K₂ are zero, the
+signed Leibniz law implies d_(n+1,n)(S_(n+1)) ⊆ S_n. Maps of pairings preserve these image
+submodules. The ring may be noncommutative; the tensor product is the supplied monoidal
+product.
 -/
 
 @[expose] public section
@@ -46,20 +47,32 @@ variable {R : Type u} [Ring R]
   {K₁ K₂ K₃ : ChainComplex (ModuleCat.{v} R) ℕ}
   (P : ChainGradedPairing K₁ K₂ K₃)
 
-/-- The original component at an explicitly equal target degree. -/
+/-- Let R be a ring and equip ModuleCat.{v} R with a monoidal structure additive in both
+variables. Let P : K₁ ⊗ K₂ ⟶ K₃ be a chain pairing of ℕ-indexed chain complexes. For p, q, n :
+ℕ and h : p + q = n, define pairAt P p q n h : K₁.X p ⊗ K₂.X q ⟶ K₃.X n as the tensor-complex
+coprojection in total degree n followed by P.f n. -/
 def pairAt (p q n : ℕ) (h : p + q = n) : K₁.X p ⊗ K₂.X q ⟶ K₃.X n :=
   ιTensorObj K₁ K₂ p q n h ≫ P.f n
 
-/-- The component at its original sum degree is the existing public pairing component. -/
+/-- Let R be a ring and equip ModuleCat.{v} R with a monoidal structure additive in both
+variables. Let P : K₁ ⊗ K₂ ⟶ K₃ be a chain pairing of ℕ-indexed chain complexes. For every p,
+q : ℕ, pairAt P p q (p + q) rfl = pair P p q. Thus the explicit target transport is the
+identity at the sum degree. -/
 @[simp]
 theorem pairAt_rfl (p q : ℕ) : pairAt P p q (p + q) rfl = pair P p q := rfl
 
-/-- The exact image sum indexed by two positive degrees and the original degree equality. -/
+/-- Let R be a ring and equip ModuleCat.{v} R with a monoidal structure additive in both
+variables. Let P : K₁ ⊗ K₂ ⟶ K₃ be a chain pairing of ℕ-indexed chain complexes. For n : ℕ,
+positiveImages P n is the supremum of the R-linear ranges of pairAt P p q n h over p > 0, q >
+0 and h : p + q = n. It is a submodule of K₃.X n. -/
 def positiveImages (n : ℕ) : Submodule R (K₃.X n) :=
   ⨆ z : {pq : ℕ × ℕ // 0 < pq.1 ∧ 0 < pq.2 ∧ pq.1 + pq.2 = n},
     LinearMap.range (pairAt P z.1.1 z.1.2 n z.2.2.2).hom
 
-/-- Every original positive component image belongs to the exact relation family. -/
+/-- Let R be a ring and equip ModuleCat.{v} R with a monoidal structure additive in both
+variables. Let P : K₁ ⊗ K₂ ⟶ K₃ be a chain pairing of ℕ-indexed chain complexes. For p, q > 0,
+h : p + q = n and an element x of K₁.X p ⊗ K₂.X q, the value (pairAt P p q n h).hom x belongs
+to positiveImages P n. -/
 theorem pairAt_mem_positiveImages (p q n : ℕ) (h : p + q = n)
     (hp : 0 < p) (hq : 0 < q) (x : ↥(K₁.X p ⊗ K₂.X q)) :
     (pairAt P p q n h).hom x ∈ positiveImages P n := by
@@ -69,7 +82,9 @@ theorem pairAt_mem_positiveImages (p q n : ℕ) (h : p + q = n)
       LinearMap.range (pairAt P z.1.1 z.1.2 n z.2.2.2).hom) z)
   exact ⟨x, rfl⟩
 
-/-- Positive component images vanish in degree zero. -/
+/-- Let R be a ring and equip ModuleCat.{v} R with a monoidal structure additive in both
+variables. Let P : K₁ ⊗ K₂ ⟶ K₃ be a chain pairing of ℕ-indexed chain complexes. The submodule
+positiveImages P 0 is ⊥, since two positive natural-number degrees cannot sum to zero. -/
 @[simp]
 theorem positiveImages_zero : positiveImages P 0 = ⊥ := by
   apply eq_bot_iff.mpr
@@ -78,7 +93,9 @@ theorem positiveImages_zero : positiveImages P 0 = ⊥ := by
   exfalso
   omega
 
-/-- Positive component images vanish in degree one. -/
+/-- Let R be a ring and equip ModuleCat.{v} R with a monoidal structure additive in both
+variables. Let P : K₁ ⊗ K₂ ⟶ K₃ be a chain pairing of ℕ-indexed chain complexes. The submodule
+positiveImages P 1 is ⊥, since p > 0 and q > 0 imply p + q ≥ 2. -/
 @[simp]
 theorem positiveImages_one : positiveImages P 1 = ⊥ := by
   apply eq_bot_iff.mpr
@@ -87,7 +104,12 @@ theorem positiveImages_one : positiveImages P 1 = ⊥ := by
   exfalso
   omega
 
-/-- The actual signed boundary preserves positive images when both endpoint boundaries vanish. -/
+/-- Let R be a ring and equip ModuleCat.{v} R with a monoidal structure additive in both
+variables. Let P : K₁ ⊗ K₂ ⟶ K₃ be a chain pairing of ℕ-indexed chain complexes. If K₁.d 1 0 =
+0 and K₂.d 1 0 = 0, then for every n : ℕ, positiveImages P (n + 1) ≤ (positiveImages P
+n).comap (K₃.d (n + 1) n).hom. The boundary of a (p, q) pairing component is the first-factor
+boundary term plus (−1)^p times the second-factor boundary term; terms which lower p or q from
+1 to 0 vanish by the stated hypotheses. -/
 theorem positiveImages_d (h₁ : K₁.d 1 0 = 0) (h₂ : K₂.d 1 0 = 0) (n : ℕ) :
     positiveImages P (n + 1) ≤ (positiveImages P n).comap (K₃.d (n + 1) n).hom := by
   have hboundary : ∀ (p q : ℕ) (h : p + q = n + 1) (hp : p ≠ 0) (hq : q ≠ 0),
@@ -142,7 +164,10 @@ theorem positiveImages_d (h₁ : K₁.d 1 0 = 0) (h₂ : K₂.d 1 0 = 0) (n : �
   rintro _ ⟨x, rfl⟩
   exact hmem z.1.1 z.1.2 z.2.2.2 z.2.1 z.2.2.1 x
 
-/-- Genuine morphisms of the original pairings preserve their actual positive component images. -/
+/-- Let R be a ring and equip ModuleCat.{v} R with a monoidal structure additive in both
+variables. Let P : K₁ ⊗ K₂ ⟶ K₃ be a chain pairing of ℕ-indexed chain complexes. Let Q : L₁ ⊗
+L₂ ⟶ L₃ be another pairing and f_i : K_i ⟶ L_i chain maps satisfying tensorHom f₁ f₂ ≫ Q = P ≫
+f₃. Then positiveImages P n ≤ (positiveImages Q n).comap (f₃.f n).hom for every n : ℕ. -/
 theorem positiveImages_naturality
     {L₁ L₂ L₃ : ChainComplex (ModuleCat.{v} R) ℕ}
     (Q : ChainGradedPairing L₁ L₂ L₃)

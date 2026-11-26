@@ -1,3 +1,5 @@
-# Left Derived normalization Iso app eq refl
+# Left-derived normalization on a two-torsion object
 
-The original left-derived scalar component is the identity on two-torsion coefficients.
+Let `C`, `D` be abelian, with projective resolutions in `C`,
+and `F : C → D` additive. If `2 • 𝟙 X=0`, the degree-`n`
+normalization automorphism on `L_n F(X)` is the identity.

@@ -1,3 +1,6 @@
-# Small Etale Direct Image Id Iso inv app hom app
+# Inverse direct image identity comparison on sections
 
-The inverse of the same DI identity comparison is the original restriction along BaseId.
+Inverse direct image identity comparison on sections.
+
+The inverse direct-image identity component acts on sections by restriction along the forward
+base-change identity map.

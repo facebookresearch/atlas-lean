@@ -12,7 +12,12 @@ module
 public import MathlibExt.CategoryTheory.Abelian.RightDerived.AugmentedResolutionNaturality
 
 /-!
-## Augmentation-computed comparison under a original complex isomorphism
+# Augmented comparisons under coaugmentation-preserving isomorphisms
+
+Let `C,D` be abelian, with injective resolutions in `C`, and
+`F : C → D` additive. An isomorphism between nonnegative cochain
+complexes resolving `X` that preserves their coaugmentations makes
+their maps `Hⁿ(F(I)) → R^nF(X)` agree after cohomology transport.
 -/
 @[expose] public section
 noncomputable section
@@ -24,10 +29,11 @@ namespace CategoryTheory.Functor
 variable {C : Type u} [Category.{v} C] [Abelian C] [HasInjectiveResolutions C]
 variable {D : Type u'} [Category.{v'} D] [Abelian D]
 
-/--
-An original complex isomorphism preserving the full coaugmentation identifies the SAME
-augmentation-computed maps in every degree.
--/
+/-- Let `C,D` be abelian, with injective resolutions in `C`,
+and `F : C → D` additive. For quasi-isomorphisms `ι : X[0] → I`, `κ : X[0] → J` and
+`e : I ≅ J` satisfying `ι ≫ e = κ`, the cohomology map of `F(e)`
+followed by the augmented comparison for `J` equals the comparison
+for `I`. -/
 theorem augmentedResolutionToRightDerivedHom_iso
     (F : C ⥤ D) [F.Additive] {X : C} {I J : CochainComplex C ℕ}
     (ι : (CochainComplex.single₀ C).obj X ⟶ I)
@@ -49,10 +55,11 @@ namespace CategoryTheory.Functor
 variable {C : Type u} [Category.{v} C] [Abelian C] [HasInjectiveResolutions C]
 variable {D : Type u'} [Category.{v'} D] [Abelian D]
 
-/--
-Full coaugmentation compatibility and the quasi-isomorphism proofs give the original comparison
-square, with no implicit resolution choice.
--/
+/-- Let `C,D` be abelian, with injective resolutions in `C`,
+and `F : C → D` additive. Given quasi-isomorphisms `ι : X[0] → I`, `κ : X[0] → J` and
+an isomorphism `e : I ≅ J` carrying `ι` to `κ`, the equality
+`Hⁿ(F(e)) ≫ comparison_J = comparison_I` holds for their augmented
+cohomology-to-derived maps. -/
 theorem augmentedResolutionToRightDerivedHom_iso_explicit
     (F : C ⥤ D) [F.Additive] {X : C} {I J : CochainComplex C ℕ}
     (ι : (CochainComplex.single₀ C).obj X ⟶ I)
@@ -73,7 +80,10 @@ namespace CategoryTheory.Functor
 variable {C : Type u} [Category.{v} C] [Abelian C] [HasInjectiveResolutions C]
 variable {D : Type u'} [Category.{v'} D] [Abelian D]
 
-/-- The literal computed-comparison equation on the given augmented complex isomorphism. -/
+/-- Let `C,D` be abelian, with injective resolutions in `C`,
+and `F : C → D` additive. For quasi-isomorphisms `ι : X[0] → I`, `κ : X[0] → J`
+and `e : I ≅ J`, the comparison property in degree `n` is the equality
+`Hⁿ(F(e)) ≫ comparison_J = comparison_I` of maps to `R^nF(X)`. -/
 def augmentedResolutionIsoProperty (F : C ⥤ D) [F.Additive] {X : C}
     {I J : CochainComplex C ℕ}
     (ι : (CochainComplex.single₀ C).obj X ⟶ I)
@@ -84,7 +94,10 @@ def augmentedResolutionIsoProperty (F : C ⥤ D) [F.Additive] {X : C}
   HomologicalComplex.homologyMap ((F.mapHomologicalComplex (ComplexShape.up ℕ)).map e.hom) n ≫
     F.augmentedResolutionToRightDerivedHom J κ n = F.augmentedResolutionToRightDerivedHom I ι n
 
-/-- The original coaugmentation equation proves that literal computed-comparison property. -/
+/-- Let `C,D` be abelian, with injective resolutions in `C`,
+and `F : C → D` additive. For coaugmentation quasi-isomorphisms `ι : X[0] → I`,
+`κ : X[0] → J`, an isomorphism `e : I ≅ J` satisfying `ι ≫ e = κ`
+has the degree-`n` augmented cohomology comparison property. -/
 theorem augmentedResolutionIsoProperty_of_augmentation (F : C ⥤ D) [F.Additive] {X : C}
     {I J : CochainComplex C ℕ}
     (ι : (CochainComplex.single₀ C).obj X ⟶ I)

@@ -16,16 +16,16 @@ public import MathlibExt.Algebra.Homology.PartialTotalHorizontal
 public import MathlibExt.Algebra.Homology.PartialTotalSuccessor
 
 /-!
-# The horizontal map between adjacent signed rows
+# Degree-lowering maps between adjacent signed rows
 
-The degree-lowering horizontal map from row `m+1` to row `m` is extracted
-from the successor partial-total splitting: include the new row, apply the
-total differential, retract to the predecessor stage, and project onto its
-last row.
+Let `B` be a first-quadrant bicomplex in a preadditive category with finite coproducts. The
+horizontal component between rows `m + 1` and `m` gives a map from `(B.totalRow (m + 1)).X (n
++ 1)` to `(B.totalRow m).X n`.
 
-This file gives the raw degree components and their supported formula.  It
-does not yet package them as a cocycle or make a homology, spectral-page,
-Tor, abutment, or convergence claim.
+Include the new row in its partial-total stage, apply the total differential, retract to the
+preceding stage, and project onto row `m`. At `n = m + q`, this composite is the horizontal
+bicomplex differential at vertical degree `q`, expressed through the two row-coordinate
+isomorphisms. It vanishes when `n < m`.
 -/
 
 @[expose] public section
@@ -50,8 +50,11 @@ local instance : HasFiniteBiproducts C :=
 variable (B : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ))
 
-/-- In total degree `n+1`, the horizontal map from the new signed row of the
-`(m+1)`st filtration stage to the old signed row in degree `n`. -/
+/-- Horizontal row component from the partial-total splitting.
+
+The map from `(B.totalRow (m + 1)).X (n + 1)` to `(B.totalRow m).X n` is the new-row section
+followed by the differential of `B.partialTotal (m + 1)`, the retraction to `B.partialTotal
+m`, and the row-`m` quotient projection. -/
 noncomputable def partialTotalHorizontalRowF (m n : ℕ) :
     (B.totalRow (m + 1)).X (n + 1) ⟶ (B.totalRow m).X n :=
   B.partialTotalRowQuotientSectionF (m + 1) (n + 1) ≫
@@ -60,9 +63,11 @@ noncomputable def partialTotalHorizontalRowF (m n : ℕ) :
     B.partialTotalRowQuotientF m n
 
 set_option backward.isDefEq.respectTransparency false in
-/-- On a supported row coordinate, the horizontal row map is exactly the
-bicomplex horizontal differential.  The total horizontal sign is
-`ε₁ = 1`. -/
+/-- Horizontal row component in bicomplex coordinates.
+
+At total degree `m + q`, `B.partialTotalHorizontalRowF m (m + q)` is the source row-coordinate
+map, followed by `(B.d (m + 1) m).f q`, followed by the inverse target row-coordinate map. The
+source row has total degree `m + q + 1`, and the target has degree `m + q`. -/
 theorem partialTotalHorizontalRowF_eq (m q : ℕ) :
     B.partialTotalHorizontalRowF m (m + q) =
       (B.totalRowXIso (m + 1) q (m + q + 1) (by omega)).hom ≫
@@ -168,8 +173,11 @@ theorem partialTotalHorizontalRowF_eq (m q : ℕ) :
   rw [h₁, h₂, add_zero]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- On a chosen supported total degree `n=m+q`, the horizontal row map is
-the bicomplex horizontal differential in the canonical row coordinates. -/
+/-- Horizontal row component after specifying the target degree.
+
+For an equality `m + q = n`, the component `B.partialTotalHorizontalRowF m n` is the
+horizontal differential `(B.d (m + 1) m).f q` transported from source row degree `n + 1` to
+target row degree `n` through the corresponding row-coordinate isomorphisms. -/
 theorem partialTotalHorizontalRowF_eqAt
     (m q n : ℕ) (h : m + q = n) :
     B.partialTotalHorizontalRowF m n =
@@ -283,8 +291,10 @@ theorem partialTotalHorizontalRowF_eqAt
   simp only [Category.assoc]
   rw [h₁, h₂, add_zero]
 
-/-- Below the support of the target signed row, the horizontal row map is
-zero. -/
+/-- Horizontal row component vanishes below target-row support.
+
+If `n < m`, then `B.partialTotalHorizontalRowF m n = 0`. The target term `(B.totalRow m).X n`
+is zero because row `m` starts in total degree `m`. -/
 theorem partialTotalHorizontalRowF_eq_zero_of_lt (m n : ℕ) (h : n < m) :
     B.partialTotalHorizontalRowF m n = 0 :=
   (B.totalRow_isZero_X m n h).eq_of_tgt _ _

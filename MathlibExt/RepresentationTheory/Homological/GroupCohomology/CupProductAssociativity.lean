@@ -16,23 +16,19 @@ public import MathlibExt.CategoryTheory.Monoidal.ComonObjIso
 public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.CupProductNaturality
 
 /-!
-# Coassociativity of the group-resolution cup diagonal
+# Coassociative resolution diagonals and associative cup products
 
-The universal cover of the group classifying space has its pointwise
-cartesian comonoid structure.  Oplax linearization and the
-Alexander--Whitney oplax structure transport it to the standard resolution;
-the bar/standard isomorphism transports it once more to the bar resolution.
+For a group `G`, the simplicial universal cover `EG` is a Cartesian comonoid: its diagonal
+sends a simplex to two copies, and its counit sends every simplex to the unique element of the
+tensor unit. Over a commutative ring `k`, linearization and the Alexander–Whitney map give a
+coassociative diagonal on the standard resolution. Transport along the bar/standard comparison
+gives the bar diagonal.
 
-Consequently both `standardComplexDiagonal` and `barComplexDiagonal` are
-coassociative with the canonical chain-complex associator.  These identities
-are the chain-level input for arbitrary-degree associativity of the cup on
-group cohomology.
-
-## Main declarations
-
-* `groupCohomology.standardComplexDiagonal_assoc`
-* `groupCohomology.barComplexDiagonal_assoc`
-* `groupCohomology.cup_assoc`
+For representations `A,B,D` and degrees `p,q,r : ℕ`, the resulting bar-cochain pairing and
+group-cohomology cup satisfy `e(α_*((x ∪ y) ∪ z)) = x ∪ (y ∪ z)`. The coefficient associator
+is `α : (A ⊗ B) ⊗ D → A ⊗ (B ⊗ D)`, and `e` is the canonical degree identification for `(p +
+q) + r = p + (q + r)`. The morphism identities also include the associator on the three input
+cochain or cohomology modules.
 -/
 
 @[expose] public section
@@ -49,8 +45,9 @@ namespace groupCohomology
 
 variable (G : Type u) [Group G]
 
-/-- The pointwise terminal map from the universal cover to the simplicial
-monoidal unit. -/
+/-- For a group `G`, the morphism `EG → 𝟙_` in simplicial `G`-sets sends every homogeneous simplex
+`u : Fin (n + 1) → G` to `PUnit.unit`. The target is the constant simplicial one-point set
+with trivial `G`-action. -/
 def universalCoverCounit :
     classifyingSpaceUniversalCover G ⟶
       𝟙_ (SimplicialObject (Action (Type u) G)) where
@@ -62,7 +59,10 @@ def universalCoverCounit :
     ext x
     rfl
 
-/-- The pointwise cartesian comonoid structure on the universal cover. -/
+/-- For a group `G`, the simplicial universal cover `EG` has comonoid structure with
+comultiplication `universalCoverDiagonal G : EG → EG ⊗ EG` and counit `universalCoverCounit G
+: EG → 𝟙_`. These are the pointwise maps `u ↦ (u,u)` and `u ↦ PUnit.unit`, satisfying both
+counit identities and coassociativity with the Cartesian associator. -/
 @[instance_reducible]
 noncomputable def universalCoverComonObj :
     ComonObj (classifyingSpaceUniversalCover G) where
@@ -98,8 +98,10 @@ noncomputable local instance barComplexComonObjInstance :
     ComonObj (Rep.barComplex k G) :=
   ComonObj.ofIso (Rep.barComplex.isoStandardComplex k G).symm
 
-/-- The Alexander--Whitney diagonal on the standard group resolution is
-coassociative. -/
+/-- Let `G` be a group, `k` a commutative ring, `S = Rep.standardComplex k G`, and `Δ =
+standardComplexDiagonal G k`. Then `Δ ≫ (S ◁ Δ) = Δ ≫ (Δ ▷ S) ≫ (α_ S S S).hom` as chain maps
+`S → S ⊗ (S ⊗ S)`, where tensor products and the associator are those of chain complexes of
+representations. -/
 theorem standardComplexDiagonal_assoc :
     standardComplexDiagonal G k ≫
         (Rep.standardComplex k G ◁ standardComplexDiagonal G k) =
@@ -109,8 +111,9 @@ theorem standardComplexDiagonal_assoc :
           (Rep.standardComplex k G) (Rep.standardComplex k G)).hom :=
   ComonObj.comul_assoc (Rep.standardComplex k G)
 
-/-- The transported Alexander--Whitney diagonal on the bar resolution is
-coassociative. -/
+/-- Let `G` be a group, `k` a commutative ring, `K = Rep.barComplex k G`, and `Δ =
+barComplexDiagonal G k`. Then `Δ ≫ (K ◁ Δ) = Δ ≫ (Δ ▷ K) ≫ (α_ K K K).hom` as chain maps `K →
+K ⊗ (K ⊗ K)`, with the chain-complex tensor product and associator. -/
 theorem barComplexDiagonal_assoc :
     barComplexDiagonal G k ≫
         (Rep.barComplex k G ◁ barComplexDiagonal G k) =
@@ -120,8 +123,11 @@ theorem barComplexDiagonal_assoc :
           (Rep.barComplex k G) (Rep.barComplex k G)).hom :=
   ComonObj.comul_assoc (Rep.barComplex k G)
 
-/-- The arbitrary-degree bar-cochain cup pairing is associative through the
-coefficient associator and the canonical degree transport. -/
+/-- Let `G` be a group, `k` a commutative ring, `A,B,D` representations, and `p,q,r : ℕ`. Put
+`Y(A)_n = Hom_G((Rep.barComplex k G).X n,A)` and write `P` for the bar cup pairings. Then
+`(P_{A,B}(p,q) ⊗ 𝟙) ≫ P_{A⊗B,D}(p+q,r) ≫ α_* ≫ e = α_{Y(A)_p,Y(B)_q,Y(D)_r} ≫ (𝟙 ⊗
+P_{B,D}(q,r)) ≫ P_{A,B⊗D}(p,q+r)`. Here `α_*` postcomposes bar cochains by `(α_ A B D).hom`,
+and `e` identifies `(p + q) + r` with `p + (q + r)`. -/
 theorem barCochainCupPairing_assoc
     (A B D : Rep k G) (p q r : ℕ) :
     ((barCochainCupPairing G k A B).pair p q ⊗ₘ
@@ -147,8 +153,11 @@ theorem barCochainCupPairing_assoc
     exact (barComplexDiagonal_assoc G k).symm
   · simp
 
-/-- Associativity of the arbitrary-degree cup pairing on bar-cochain
-homology. -/
+/-- Let `G` be a group, `k` a commutative ring, `A,B,D` representations, and `p,q,r : ℕ`. For the
+bar-cochain complexes `Y(A)_n = Hom_G((Rep.barComplex k G).X n,A)`, their homology cup maps
+`P^H` satisfy `(P^H_{A,B}(p,q) ⊗ 𝟙) ≫ P^H_{A⊗B,D}(p+q,r) ≫ α_*^h = α_{H^pY(A),H^qY(B),H^rY(D)}
+≫ (𝟙 ⊗ P^H_{B,D}(q,r)) ≫ P^H_{A,B⊗D}(p,q+r)`. The map `α_*^h` is induced by the coefficient
+associator and the degree equality `h : (p + q) + r = p + (q + r)`. -/
 theorem barCochainCupPairing_pairHomology_assoc
     (A B D : Rep k G) (p q r : ℕ) :
     ((barCochainCupPairing G k A B).pairHomology p q ⊗ₘ
@@ -189,15 +198,19 @@ section
 
 set_option backward.isDefEq.respectTransparency false
 
-/-- The comparison from inhomogeneous cohomology to bar-cochain homology. -/
+/-- For a representation `A` of a group `G` over a commutative ring `k` and `n : ℕ`, the
+isomorphism `H^n(G,A) ≅ H^n(Y(A))` is induced by `inhomogeneousCochainsIso A`, where `Y(A)_j =
+Hom_G((Rep.barComplex k G).X j,A)` is the equivariant bar-cochain complex. -/
 noncomputable def inhomogeneousBarHomologyIso
     (A : Rep k G) (n : ℕ) :
     groupCohomology A n ≅
       ((Rep.barComplex k G).linearYonedaObj k A).homology n :=
   HomologicalComplex.homologyMapIso (inhomogeneousCochainsIso A) n
 
-/-- The arbitrary-degree cup is the bar-cochain cup transported through the
-inhomogeneous/bar comparison on homology. -/
+/-- Let `G` be a group, `k` a commutative ring, `A,B` representations, and `p,q : ℕ`. Write
+`I_n(A) = inhomogeneousBarHomologyIso G k A n` and `P^H` for the bar-cochain homology pairing.
+Then `cup G k A B p q = (I_p(A).hom ⊗ I_q(B).hom) ≫ P^H_{A,B}(p,q) ≫ I_{p+q}(A ⊗ B).inv`, as
+maps `H^p(G,A) ⊗ H^q(G,B) → H^{p+q}(G,A ⊗ B)`. -/
 theorem cup_eq_barCochainCupPairing_transport
     (A B : Rep k G) (p q : ℕ) :
     cup G k A B p q =
@@ -209,8 +222,12 @@ theorem cup_eq_barCochainCupPairing_transport
   rw [HomologicalComplex.CochainGradedPairing.pairHomology_whisker]
   rfl
 
-/-- Naturality of the inverse inhomogeneous/bar comparison on homology,
-including transport across an equality of cohomological degrees. -/
+/-- Let `k` be a commutative ring, `G` a group, `f : A → B` a morphism of representations, and `h
+: n = n'` an equality of natural-number degrees. For `I_n(A) : H^n(G,A) ≅ H^n(Y(A))`, the
+bar-homology comparison, `I_n(A).inv ≫ f_*^n ≫ E_B(h) = H(Y(f),h) ≫ I_{n'}(B).inv`. Here
+`Y(f)` postcomposes equivariant bar cochains by `f`, `E_B(h)` identifies the two
+group-cohomology degrees, and `H(Y(f),h)` induces the bar-homology map with target degree
+`n'`. -/
 theorem inhomogeneousBarHomologyIso_inv_naturality
     {A B : Rep k G} (f : A ⟶ B) {n n' : ℕ} (h : n = n') :
     (inhomogeneousBarHomologyIso G k A n).inv ≫
@@ -232,9 +249,10 @@ theorem inhomogeneousBarHomologyIso_inv_naturality
   simpa [inhomogeneousBarHomologyIso, map,
     HomologicalComplex.linearYonedaCochainComparison] using hh
 
-/-- Associativity of the arbitrary-degree cup on group cohomology, through
-the coefficient associator and the canonical equality
-`(p + q) + r = p + (q + r)` of output degrees. -/
+/-- Let `G` be a group, `k` a commutative ring, `A,B,D` representations, and `p,q,r : ℕ`. Write
+`C_{A,B}(p,q) = cup G k A B p q`. Then `(C_{A,B}(p,q) ⊗ 𝟙) ≫ C_{A⊗B,D}(p+q,r) ≫ (α_ A B D)_* ≫
+e = α_{H^p(G,A),H^q(G,B),H^r(G,D)} ≫ (𝟙 ⊗ C_{B,D}(q,r)) ≫ C_{A,B⊗D}(p,q+r)`. The common target
+is `H^{p+(q+r)}(G,A ⊗ (B ⊗ D))`, and `e` is induced by `(p + q) + r = p + (q + r)`. -/
 theorem cup_assoc (A B D : Rep k G) (p q r : ℕ) :
     ((cup G k A B p q ⊗ₘ 𝟙 (groupCohomology D r)) ≫
         cup G k (A ⊗ B) D (p + q) r ≫
@@ -321,8 +339,10 @@ theorem cup_assoc (A B D : Rep k G) (p q r : ℕ) :
   simp only [Category.assoc] at hBarTransported
   convert hBarTransported using 1
 
-/-- Elementwise associativity of arbitrary-degree cups on pure triple
-tensors. -/
+/-- Let `G` be a group, `k` a commutative ring, and `A,B,D` representations. For `p,q,r : ℕ` and
+classes `x ∈ H^p(G,A)`, `y ∈ H^q(G,B)`, `z ∈ H^r(G,D)`, `e((α_ A B D)_*((x ∪ y) ∪ z)) = x ∪ (y
+∪ z)` in `H^{p+(q+r)}(G,A ⊗ (B ⊗ D))`. The map `e` is the canonical homology identification
+for `(p + q) + r = p + (q + r)`. -/
 theorem cup_assoc_tmul
     (A B D : Rep k G) (p q r : ℕ)
     (x : groupCohomology A p) (y : groupCohomology B q)

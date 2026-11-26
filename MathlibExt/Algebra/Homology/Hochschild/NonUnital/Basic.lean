@@ -16,13 +16,27 @@ public import MathlibExt.AlgebraicTopology.SemiSimplicialObject.SimplicialCompar
 public import Mathlib.Algebra.Algebra.Tower
 
 /-!
-# Coefficient Hochschild complexes of nonunital algebras
+# Hochschild chains with nonunital coefficient actions
 
-The terms are M ⊗[k] TensorPower(k, n, A), with commuting
-nonunital coefficient representations. Unitization embeds these
-tensors into an ambient unital bar. Its face maps preserve their
-range, defining a semisimplicial object and its alternating
-differential without a unit or Module A M structure on A.
+Let k be a commutative ring and A a nonunital associative ring with
+k-bilinear multiplication. Let M be a k-module with commuting
+nonunital representations l : A → End_k(M) and
+r : Aᵐᵒᵖ → End_k(M). The coefficient chain term is
+C_n(A,M) = M ⊗[k] A^{⊗n}.
+
+The first face uses r(op a_1)m, the interior faces multiply consecutive
+algebra factors, and the last face uses l(a_{n+1})m. The resulting
+semisimplicial object has alternating boundary
+b_{n+1} = ∑_{i=0}^{n+1} (−1)^i δ_i; in degree one,
+b_1(m ⊗ a) = r(op a)m − l(a)m under C_0 ≃ M.
+
+Unitization extends the two actions to U(A) = k ⊕ A. The inclusion
+of every A-factor into U(A) is split by its k-linear second-coordinate
+projection. The ambient Hochschild faces preserve the included tensor
+submodules, giving the nonunital semisimplicial faces above.
+All coefficient tensor terms lie in ModuleCat over k at max{u,v,w}.
+
+Reference: J.-L. Loday, Cyclic Homology, §1.1.
 -/
 
 @[expose] public section
@@ -41,13 +55,19 @@ variable {k : Type u} [CommRing k]
   [IsScalarTower k A A] [SMulCommClass k A A]
   {M : Type w} [AddCommGroup M] [Module k M]
 
-/-- The `Unitization k A`-module structure on `M` given by restricting scalars along
-`unitizationLeft l`. -/
+/-- Let k be commutative, A a nonunital associative ring with
+k-bilinear multiplication, and M a k-module. Write U(A) = k ⊕ A
+for its unitization.
+A nonunital left representation l : A → End_k(M) gives the
+U(A)-module structure (λ,a)m = λm + l(a)m. -/
 abbrev leftModule (l : A →ₙₐ[k] Module.End k M) : Module (Unitization k A) M :=
   Module.compHom M (unitizationLeft l).toRingHom
 
-/-- The `(Unitization k A)ᵐᵒᵖ`-module structure on `M` given by restricting scalars
-along `unitizationRight r`. -/
+/-- Let k be commutative, A a nonunital associative ring with
+k-bilinear multiplication, and M a k-module. Write U(A) = k ⊕ A
+for its unitization.
+A nonunital right representation r : Aᵐᵒᵖ → End_k(M) gives
+the U(A)ᵐᵒᵖ-module structure op(λ,a) • m = λm + r(op a)m. -/
 abbrev rightModule (r : Aᵐᵒᵖ →ₙₐ[k] Module.End k M) :
     Module (Unitization k A)ᵐᵒᵖ M :=
   Module.compHom M (unitizationRight r).toRingHom
@@ -92,22 +112,38 @@ theorem actionsComm (l : A →ₙₐ[k] Module.End k M)
   let := rightModule r
   exact ⟨unitization_commute l r h⟩
 
-/-- The literal tensor level, with the coefficient universe independent of the algebra. -/
+/-- Let k : Type u be commutative, A : Type v a nonunital associative
+ring with a k-module structure, and M : Type w a k-module.
+The degree-n coefficient tensor object is M ⊗[k] A^{⊗n},
+viewed in ModuleCat over k at universe max{u,v,w}. -/
 abbrev chainLevel (k : Type u) [CommRing k] (A : Type v) [NonUnitalRing A]
     [Module k A] (M : Type w) [AddCommGroup M] [Module k M] (n : ℕ) :
     ModuleCat.{max u v w} k :=
   ModuleCat.of k (M ⊗[k] TensorPower k n A)
 
-/-- The coefficient tensor level over the native unitization, used by inclusion and retraction. -/
+/-- Let k be commutative, A a nonunital associative ring with
+k-bilinear multiplication, and M a k-module. Write U(A) = k ⊕ A
+for its unitization.
+The unitized coefficient tensor object in degree n is
+M ⊗[k] U(A)^{⊗n}, in the common module category over k. -/
 abbrev unitizedLevel (n : ℕ) : ModuleCat.{max u v w} k :=
   ModuleCat.of k (M ⊗[k] TensorPower k n (Unitization k A))
 
-/-- The native split inclusion, applied to every algebra factor. -/
+/-- Let k be commutative, A a nonunital associative ring with
+k-bilinear multiplication, and M a k-module. Write U(A) = k ⊕ A
+for its unitization.
+The inclusion C_n(A,M) → C_n(U(A),M) fixes M and sends each
+algebra factor a to (0,a) ∈ U(A). It is a k-linear map. -/
 def inclusion (n : ℕ) : chainLevel k A M n ⟶ unitizedLevel (k := k) (A := A) (M := M) n :=
   ModuleCat.ofHom (TensorProduct.map LinearMap.id
     (PiTensorProduct.map (fun _ : Fin n => Unitization.inrHom k k A)))
 
-/-- The native coordinate projection; it is a retraction, not an algebra homomorphism. -/
+/-- Let k be commutative, A a nonunital associative ring with
+k-bilinear multiplication, and M a k-module. Write U(A) = k ⊕ A
+for its unitization.
+The k-linear map C_n(U(A),M) → C_n(A,M) fixes M and applies
+p(λ,a) = a to every algebra factor. It is a retraction of the
+factorwise inclusion a ↦ (0,a). -/
 def retraction (n : ℕ) : unitizedLevel (k := k) (A := A) (M := M) n ⟶ chainLevel k A M n :=
   ModuleCat.ofHom (TensorProduct.map LinearMap.id
     (PiTensorProduct.map (fun _ : Fin n => Unitization.sndHom k k A)))
@@ -156,7 +192,15 @@ variable (l : A →ₙₐ[k] Module.End k M)
   (r : Aᵐᵒᵖ →ₙₐ[k] Module.End k M)
   (h : ∀ a b m, l a (r b m) = r b (l a m))
 
-/-- The native unitized coefficient bar in the same tensor coordinates as the nonunital levels. -/
+/-- Let k be commutative, A a nonunital associative ring with
+k-bilinear multiplication, and M a k-module. Write U(A) = k ⊕ A
+for its unitization.
+Let l : A → End_k(M) and r : Aᵐᵒᵖ → End_k(M) be nonunital
+k-algebra representations with commuting values:
+l(a)(r(b)m) = r(b)(l(a)m) for every a ∈ A, b ∈ Aᵐᵒᵖ and m ∈ M.
+The extended U(A)-bimodule M gives the ambient coefficient
+Hochschild semisimplicial object with degree-n term
+M ⊗[k] U(A)^{⊗n}. -/
 @[implicit_reducible]
 def ambient : SemiSimplicialObject (ModuleCat.{max u v w} k) := by
   letI := Module.compHom M (unitizationLeft l).toRingHom
@@ -227,7 +271,16 @@ private theorem ambient_face_last (n : ℕ) (m : M) (a : Fin (n + 1) → Unitiza
     (m ⊗ₜ[k] PiTensorProduct.tprod k a) = _
   exact ModuleCat.Algebra.Hochschild.face_last_tprod k (Unitization k A) M n m a
 
-/-- Compress the ambient face to the literal coefficient tensor level. -/
+/-- Let k be commutative, A a nonunital associative ring with
+k-bilinear multiplication, and M a k-module. Write U(A) = k ⊕ A
+for its unitization.
+Let l : A → End_k(M) and r : Aᵐᵒᵖ → End_k(M) be nonunital
+k-algebra representations with commuting values:
+l(a)(r(b)m) = r(b)(l(a)m) for every a ∈ A, b ∈ Aᵐᵒᵖ and m ∈ M.
+The face δ_i : C_{n+1}(A,M) → C_n(A,M) is the restriction of
+the corresponding unitized face to the included tensor submodule.
+Its first face uses r(op a_1)m, its interior faces merge a_i a_{i+1},
+and its last face uses l(a_{n+1})m. -/
 @[implicit_reducible]
 def face (n : ℕ) (i : Fin (n + 2)) : chainLevel k A M (n + 1) ⟶ chainLevel k A M n :=
   inclusion (n + 1) ≫ (ambient l r h).δ i ≫ retraction n
@@ -335,7 +388,15 @@ private theorem inclusion_map {a b : SemiSimplexCategory} (f : a ⟶ b) :
         simpa only [op_comp, Functor.map_comp, SemiSimplicialObject.δ_def,
           Category.assoc] using congrArg (fun q => q ≫ (ambient l r h).map g.op) hf
 
-/-- The semisimplicial coefficient bar on the literal nonunital tensor levels. -/
+/-- Let k be commutative, A a nonunital associative ring with
+k-bilinear multiplication, and M a k-module. Write U(A) = k ⊕ A
+for its unitization.
+Let l : A → End_k(M) and r : Aᵐᵒᵖ → End_k(M) be nonunital
+k-algebra representations with commuting values:
+l(a)(r(b)m) = r(b)(l(a)m) for every a ∈ A, b ∈ Aᵐᵒᵖ and m ∈ M.
+The coefficient tensor terms C_n(A,M) = M ⊗[k] A^{⊗n},
+with the endpoint action faces and interior multiplication faces,
+form a semisimplicial k-module object. -/
 @[implicit_reducible]
 def bar : SemiSimplicialObject (ModuleCat.{max u v w} k) where
   obj a := chainLevel k A M a.unop.len
@@ -365,13 +426,29 @@ theorem bar_obj (n : ℕ) : (bar l r h) _⦋n⦌ₛ = chainLevel k A M n := rfl
 @[simp]
 theorem bar_δ (n : ℕ) (i : Fin (n + 2)) : (bar l r h).δ i = face l r h n i := rfl
 
-/-- The face identity is inherited from the semisimplicial functor. -/
+/-- Let k be commutative, A a nonunital associative ring with
+k-bilinear multiplication, and M a k-module. Write U(A) = k ⊕ A
+for its unitization.
+Let l : A → End_k(M) and r : Aᵐᵒᵖ → End_k(M) be nonunital
+k-algebra representations with commuting values:
+l(a)(r(b)m) = r(b)(l(a)m) for every a ∈ A, b ∈ Aᵐᵒᵖ and m ∈ M.
+For i ≤ j in Fin(n+2), the coefficient faces satisfy
+δ_i^(n) δ_{j+1}^(n+1) = δ_j^(n) δ_i^(n+1)
+as maps C_{n+2}(A,M) → C_n(A,M). -/
 theorem face_comp_face (n : ℕ) (i j : Fin (n + 2)) (hij : i ≤ j) :
     face l r h (n + 1) j.succ ≫ face l r h n i =
       face l r h (n + 1) i.castSucc ≫ face l r h n j :=
   SemiSimplicialObject.δ_comp_δ (bar l r h) hij
 
-/-- The nonunital Hochschild complex is the alternating-face complex. -/
+/-- Let k be commutative, A a nonunital associative ring with
+k-bilinear multiplication, and M a k-module. Write U(A) = k ⊕ A
+for its unitization.
+Let l : A → End_k(M) and r : Aᵐᵒᵖ → End_k(M) be nonunital
+k-algebra representations with commuting values:
+l(a)(r(b)m) = r(b)(l(a)m) for every a ∈ A, b ∈ Aᵐᵒᵖ and m ∈ M.
+The semisimplicial coefficient bar defines the Hochschild chain
+complex over k with terms C_n(A,M) and differential
+b_{n+1} = ∑_{i=0}^{n+1} (−1)^i δ_i. -/
 @[implicit_reducible]
 def complex : ChainComplex (ModuleCat.{max u v w} k) ℕ :=
   (AlgebraicTopology.semiSimplicialAlternatingFaceMapComplex _).obj (bar l r h)
@@ -379,7 +456,14 @@ def complex : ChainComplex (ModuleCat.{max u v w} k) ℕ :=
 @[simp]
 theorem complex_X (n : ℕ) : (complex l r h).X n = chainLevel k A M n := rfl
 
-/-- Its differential has precisely the native alternating-face signs. -/
+/-- Let k be commutative, A a nonunital associative ring with
+k-bilinear multiplication, and M a k-module. Write U(A) = k ⊕ A
+for its unitization.
+Let l : A → End_k(M) and r : Aᵐᵒᵖ → End_k(M) be nonunital
+k-algebra representations with commuting values:
+l(a)(r(b)m) = r(b)(l(a)m) for every a ∈ A, b ∈ Aᵐᵒᵖ and m ∈ M.
+The degree-(n+1) boundary of the coefficient complex is precisely
+the alternating sum ∑_{i=0}^{n+1} (−1)^i δ_i of its n+2 faces. -/
 theorem complex_d (n : ℕ) :
     (complex l r h).d (n + 1) n =
       ∑ i : Fin (n + 2), (-1 : ℤ) ^ i.val • face l r h n i := by
@@ -387,7 +471,16 @@ theorem complex_d (n : ℕ) :
   rw [AlgebraicTopology.semiSimplicialAlternatingFaceMapComplex_obj_d]
   rfl
 
-/-- The degree-one differential is right action minus left action, with no unit assumption. -/
+/-- Let k be commutative, A a nonunital associative ring with
+k-bilinear multiplication, and M a k-module. Write U(A) = k ⊕ A
+for its unitization.
+Let l : A → End_k(M) and r : Aᵐᵒᵖ → End_k(M) be nonunital
+k-algebra representations with commuting values:
+l(a)(r(b)m) = r(b)(l(a)m) for every a ∈ A, b ∈ Aᵐᵒᵖ and m ∈ M.
+For m ∈ M and a : Fin 1 → A, the first boundary has value
+(r(op a_0)m − l(a_0)m) ⊗ tprod(empty).
+Under the empty-tensor identification C_0(A,M) ≃ M this is
+r(op a_0)m − l(a_0)m. -/
 theorem complex_d_one_tprod (m : M) (a : Fin 1 → A) :
     ((complex l r h).d 1 0).hom (m ⊗ₜ[k] PiTensorProduct.tprod k a) =
       r (MulOpposite.op (a 0)) m ⊗ₜ[k] PiTensorProduct.tprod k (fun _ : Fin 0 => a 0) -
@@ -409,7 +502,11 @@ variable {B : Type v} [Ring B] [Algebra k B]
   [SMulCommClass k B M] [SMulCommClass k Bᵐᵒᵖ M]
   [IsScalarTower k B M] [IsScalarTower k Bᵐᵒᵖ M]
 
-/-- Specialization uses the unital Hochschild faces, with identical values. -/
+/-- Let k be commutative, B an associative unital k-algebra, and M a
+compatible B-bimodule with commuting k-linear left and right actions.
+Choose l(b)m = bm and r(op b)m = mb. Every nonunital coefficient face
+δ_i : M ⊗[k] B^{⊗(n+1)} → M ⊗[k] B^{⊗n}
+is exactly the corresponding unital Hochschild face. -/
 theorem face_eq_unital (n : ℕ) (i : Fin (n + 2)) :
     let l := (Algebra.lsmul k k M (A := B)).toNonUnitalAlgHom
     let r := (Algebra.lsmul k k M (A := Bᵐᵒᵖ)).toNonUnitalAlgHom

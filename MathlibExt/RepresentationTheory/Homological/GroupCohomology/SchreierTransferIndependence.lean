@@ -14,17 +14,15 @@ module
 public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.SchreierTransfer
 
 /-!
-# Independence of degree-one Schreier transfer from the transversal
+# The explicit boundary comparing degree-one transfers
 
-For two finite right transversals of a subgroup, their representatives are
-canonically matched by the right coset they represent.  The corresponding
-Schreier factors differ by an explicit change-of-representative factor in the
-subgroup.  This file uses that factor to construct a degree-zero cochain whose
-boundary is the difference of the two transferred degree-one cocycles.
+Two right transversals T and U match by their right cosets. Write t = c(t)u(t) with c(t) ∈ H
+and u(t) ∈ U. Matching commutes with right multiplication, and the Schreier factors satisfy
+a_T(t,g)c(r_T(t,g)) = c(t)a_U(u(t),g).
 
-Consequently the chosen-transversal maps on `H¹` agree.  No degree-two
-corestriction, projection formula, norm-residue comparison, or
-Kummer--Steinberg vanishing is asserted here.
+For finite-index H and an H-one-cocycle z with coefficients in a G-representation, set B⁰(z) =
+∑ₜ ρ(t⁻¹)z(c(t)). Then cor_T¹(z) − cor_U¹(z) = d⁰(−B⁰(z)). Thus both transferred cocycles have
+the same class in H¹(G,A), and the chosen degree-one cohomology maps agree.
 -/
 
 @[expose] public section
@@ -41,26 +39,32 @@ universe u
 
 variable {G : Type u} [Group G] {H : Subgroup G}
 
-/-- The representative in `U` of the right coset represented by `t` in `T`. -/
+/-- The matching representative in another right transversal.
+
+For t ∈ T, decompose t = c(t)u(t) using the right transversal U. This defines u(t) ∈ U in the
+same right coset of H. -/
 noncomputable def changeRep (T U : H.RightTransversal)
     (t : (T : Set G)) : (U : Set G) :=
   (U.2.equiv (t : G)).2
 
-/-- The subgroup factor comparing a representative in `T` with its matched
-representative in `U`. -/
+/-- The subgroup factor comparing two representatives.
+
+For t ∈ T and its matching u(t) ∈ U, this is c(t) ∈ H with t = c(t)u(t). -/
 noncomputable def changeFactor (T U : H.RightTransversal)
     (t : (T : Set G)) : H :=
   (U.2.equiv (t : G)).1
 
-/-- A representative is the product of its change factor and its matched
-representative. -/
+/-- The change-of-representative decomposition.
+
+The comparison factor and matching representative satisfy c(t)u(t) = t in G. -/
 theorem changeFactor_mul_changeRep (T U : H.RightTransversal)
     (t : (T : Set G)) :
     (changeFactor T U t : G) * (changeRep T U t : G) = (t : G) :=
   U.2.equiv_fst_mul_equiv_snd (t : G)
 
-/-- Moving the change factor across the original representative gives the
-inverse of the matched representative. -/
+/-- The inverse identity for representative change.
+
+From t = c(t)u(t), obtain t⁻¹c(t) = u(t)⁻¹. -/
 theorem inv_mul_changeFactor (T U : H.RightTransversal)
     (t : (T : Set G)) :
     (t : G)⁻¹ * (changeFactor T U t : G) =
@@ -68,8 +72,10 @@ theorem inv_mul_changeFactor (T U : H.RightTransversal)
   rw [← changeFactor_mul_changeRep T U t]
   group
 
-/-- Matching representatives by their right cosets is an equivalence between
-two right transversals. -/
+/-- The right-coset matching equivalence of transversals.
+
+Matching each t ∈ T with the representative of its right coset in U is an equivalence T ≃ U.
+Its inverse matches U-representatives back to T. -/
 noncomputable def changeRepEquiv (T U : H.RightTransversal) :
     (T : Set G) ≃ (U : Set G) where
   toFun := changeRep T U
@@ -91,14 +97,19 @@ noncomputable def changeRepEquiv (T U : H.RightTransversal) :
     rw [U.2.equiv_snd_eq_self_of_mem_of_one_mem H.one_mem u.property] at h
     exact h
 
+/-- Values of the right-coset matching equivalence.
+
+The equivalence from T to U sends t to changeRep T U t. -/
 @[simp]
 theorem changeRepEquiv_apply (T U : H.RightTransversal)
     (t : (T : Set G)) :
     changeRepEquiv T U t = changeRep T U t :=
   rfl
 
-/-- The two Schreier decompositions, after changing representatives, agree
-as pairs of a subgroup factor and a representative. -/
+/-- Compatibility of representative change with a Schreier step.
+
+For tg = a_T(t,g)r_T(t,g) and t = c(t)u(t), the updated representatives satisfy u(r_T(t,g)) =
+r_U(u(t),g), while a_T(t,g)c(r_T(t,g)) = c(t)a_U(u(t),g). -/
 theorem changeDecomposition (T U : H.RightTransversal)
     (t : (T : Set G)) (g : G) :
     (T.schreierFactor t g * changeFactor T U (T.schreierRep t g),
@@ -122,8 +133,10 @@ theorem changeDecomposition (T U : H.RightTransversal)
       rw [U.2.equiv_mul_left]
       rfl
 
-/-- Changing representatives commutes with the right action on a
-transversal. -/
+/-- Representative matching commutes with right multiplication.
+
+Matching the T-representative after multiplying by g gives the U-representative obtained by
+multiplying the matched starting representative by g. -/
 theorem changeRep_schreierRep (T U : H.RightTransversal)
     (t : (T : Set G)) (g : G) :
     changeRep T U (T.schreierRep t g) =
@@ -132,7 +145,10 @@ theorem changeRep_schreierRep (T U : H.RightTransversal)
     (changeDecomposition T U t g)
   exact h
 
-/-- Change factors and Schreier factors satisfy the comparison identity. -/
+/-- The factor identity for changing transversals.
+
+For t ∈ T, the subgroup factors satisfy a_T(t,g)c(r_T(t,g)) = c(t)a_U(u(t),g), in that
+multiplication order. -/
 theorem schreierFactor_mul_changeFactor (T U : H.RightTransversal)
     (t : (T : Set G)) (g : G) :
     T.schreierFactor t g * changeFactor T U (T.schreierRep t g) =
@@ -150,13 +166,18 @@ universe u
 variable {k G : Type u} [CommRing k] [Group G]
 variable {H : Subgroup G}
 
+/-- Finite representatives for the unary change-of-transversal sum.
+
+The finite-index hypothesis supplies a finite enumeration of the right transversal for the
+degree-zero comparison cochain. -/
 noncomputable local instance corestrictionIndependenceRightTransversalFintype
     (T : H.RightTransversal) [H.FiniteIndex] : Fintype (T : Set G) :=
   @Fintype.ofFinite (T : Set G) (T.2.finite_right)
 
-/-- Degree-zero cochain measuring the change from `T` to `U` for a chosen
-degree-one cochain.  This is the explicit degree-one homotopy term used on
-one-cocycles below. -/
+/-- The degree-zero change-of-transversal coefficient.
+
+For c : H → A, define B⁰(c) = ∑ₜ ρ(t⁻¹)c(c_TU(t)), where t = c_TU(t)u(t) compares T with U.
+This is a k-linear map from unary H-cochains to A. -/
 noncomputable def corestrictionChangeZero (A : Rep k G)
     (T U : H.RightTransversal) [H.FiniteIndex] :
     (H → A) →ₗ[k] A where
@@ -168,6 +189,9 @@ noncomputable def corestrictionChangeZero (A : Rep k G)
     simp only [Pi.smul_apply, map_smul, RingHom.id_apply]
     rw [Finset.smul_sum]
 
+/-- The representative formula for the degree-zero comparison.
+
+The comparison coefficient is ∑ₜ ρ(t⁻¹)c(T.changeFactor U t). -/
 @[simp]
 theorem corestrictionChangeZero_apply (A : Rep k G)
     (T U : H.RightTransversal) [H.FiniteIndex]
@@ -177,7 +201,10 @@ theorem corestrictionChangeZero_apply (A : Rep k G)
         A.ρ (t : G)⁻¹ (f (T.changeFactor U t)) :=
   rfl
 
-/-- Termwise change-of-transversal identity for the degree-one transfer. -/
+/-- A one-cocycle transfer term after representative change.
+
+For an H-one-cocycle c, the T-transfer summand equals the matched U-transfer summand plus
+ρ(t⁻¹)c(c_TU(t)) minus ρ(g r_T(t,g)⁻¹)c(c_TU(r_T(t,g))). -/
 theorem corestrictionCochainOne_change_term (A : Rep k G)
     (T U : H.RightTransversal)
     (f : groupCohomology.cocycles₁
@@ -219,8 +246,10 @@ theorem corestrictionCochainOne_change_term (A : Rep k G)
     T.inv_mul_changeFactor U t,
     T.inv_mul_schreierFactor t g]
 
-/-- Reindexing the transferred summands along the equivalence between two
-right transversals. -/
+/-- Reindexing unary transfer by matching right cosets.
+
+The U-transfer sum indexed by the matching representatives u(t), t ∈ T, equals the U-transfer
+sum indexed directly by u ∈ U. -/
 theorem sum_changeRep_corestriction_term (A : Rep k G)
     (T U : H.RightTransversal) [H.FiniteIndex]
     (f : H → A) (g : G) :
@@ -233,8 +262,9 @@ theorem sum_changeRep_corestriction_term (A : Rep k G)
     (fun u : (U : Set G) =>
       A.ρ (u : G)⁻¹ (f (U.schreierFactor u g)))
 
-/-- Reindexing the change-factor term by the Schreier permutation produces
-the group action on the change zero-cochain. -/
+/-- Reindexing the translated change-of-transversal coefficient.
+
+The sum of c(c_TU(r_T(t,g))) weighted by ρ(g r_T(t,g)⁻¹) equals ρ(g)B⁰(c). -/
 theorem sum_schreierRep_changeFactor (A : Rep k G)
     (T U : H.RightTransversal) [H.FiniteIndex]
     (f : H → A) (g : G) :
@@ -263,8 +293,10 @@ theorem sum_schreierRep_changeFactor (A : Rep k G)
           A.ρ (t : G)⁻¹ (f (T.changeFactor U t))) := by
       rw [map_sum]
 
-/-- The difference of chosen-transversal degree-one transfers is the
-explicit coboundary of the negated change zero-cochain. -/
+/-- The degree-one transfer difference is a signed boundary.
+
+For an H-one-cocycle c, cor_T¹(c) − cor_U¹(c) = d⁰(−corestrictionChangeZero A T U c). The
+minus sign fixes the orientation of the comparison. -/
 theorem corestrictionCochainOne_sub_eq_d₀₁_change (A : Rep k G)
     (T U : H.RightTransversal) [H.FiniteIndex]
     (f : groupCohomology.cocycles₁
@@ -293,8 +325,9 @@ theorem corestrictionCochainOne_sub_eq_d₀₁_change (A : Rep k G)
     sum_schreierRep_changeFactor]
   abel
 
-/-- The `H¹` classes of a transferred one-cocycle do not depend on the
-chosen finite right transversal. -/
+/-- Transferred one-cocycles have transversal-independent classes.
+
+For every H-one-cocycle c, its transfers with T and U have the same class in H¹(G,A). -/
 theorem corestrictionCocyclesOne_H1π_independent (A : Rep k G)
     (T U : H.RightTransversal) [H.FiniteIndex]
     (f : groupCohomology.cocycles₁
@@ -309,8 +342,9 @@ theorem corestrictionCocyclesOne_H1π_independent (A : Rep k G)
     corestrictionCochainOne A T f - corestrictionCochainOne A U f
   exact (corestrictionCochainOne_sub_eq_d₀₁_change A T U f).symm
 
-/-- The linear map from one-cocycles to target `H¹` is independent of the
-chosen finite right transversal. -/
+/-- The transferred degree-one class map is independent of the transversal.
+
+The linear maps from H-one-cocycles to H¹(G,A) defined with T and U are equal. -/
 theorem corestrictionCocycleOneClass_independent (A : Rep k G)
     (T U : H.RightTransversal) [H.FiniteIndex] :
     corestrictionCocycleOneClass A T =
@@ -319,8 +353,9 @@ theorem corestrictionCocycleOneClass_independent (A : Rep k G)
   intro f
   exact corestrictionCocyclesOne_H1π_independent A T U f
 
-/-- Chosen-transversal degree-one cohomological transfer is independent of
-the finite right transversal. -/
+/-- The degree-one cohomology transfer is independent of the transversal.
+
+The induced linear maps H¹(H,A|H) → H¹(G,A) obtained from T and U are equal. -/
 theorem corestrictionH1OfRightTransversal_independent (A : Rep k G)
     (T U : H.RightTransversal) [H.FiniteIndex] :
     corestrictionH1OfRightTransversal A T =

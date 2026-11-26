@@ -16,18 +16,15 @@ public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.Schrei
 public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.SchreierCorestrictionH1
 
 /-!
-# Canonical finite-index corestriction in degree two
+# Degree-two corestriction for finite-index subgroups
 
-The degree-two independence theorem for right-transversal Schreier transfer
-allows one right transversal to be chosen internally.  This file packages the
-resulting canonical finite-index map, identifies it with the map attached to
-every supplied right transversal, and records its cocycle representative
-formula.
+Let `G` be a group, `k` a commutative ring, `H ≤ G` a finite-index subgroup, and `A` a `k`-representation of `G`. A right transversal `T` gives decompositions `t g = h_T(t,g) r_T(t,g)`, with `h_T(t,g) ∈ H` and `r_T(t,g) ∈ T`. The cochain transfer is
+`Tr_T z(g₁,g₂) = ∑ t∈T, ρ(t⁻¹) z(h_T(t,g₁), h_T(r_T(t,g₁),g₂))`.
+Its map `H²(H,Res A) → H²(G,A)` is independent of `T`.
 
-Together with canonical degree-one corestriction, the chosen-transversal cup
-projection formula gives the canonical `H¹ × H¹ → H²` projection formula.
-No norm-residue comparison, Kummer--Steinberg vanishing, or higher-degree
-corestriction is asserted.
+For representations `A,B`, classes `x ∈ H¹(G,A)` and `y ∈ H¹(H,Res B)` satisfy `cor(θ_*(res x
+∪ y)) = x ∪ cor(y)`, where `θ : Res A ⊗ Res B → Res(A ⊗ B)` is the restriction/tensor
+comparison.
 -/
 
 @[expose] public section
@@ -45,23 +42,30 @@ universe u
 variable {k G : Type u} [CommRing k] [Group G]
 variable {H : Subgroup G}
 
-/-- Canonical finite-index corestriction on `H²`, obtained by choosing a
-right transversal. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` a finite-index subgroup, and `A : Rep k
+G`. The linear map `corestrictionH2 A : H²(H,Res A) →ₗ[k] H²(G,A)` is induced by
+right-transversal Schreier transfer. For a transversal `T`, this transfer sends `z(g₁,g₂)` to
+`∑ t∈T, ρ(t⁻¹) z(h_T(t,g₁),h_T(r_T(t,g₁),g₂))`, using `t g = h_T(t,g) r_T(t,g)`; the
+cohomology map is independent of `T`. -/
 noncomputable def corestrictionH2 (A : Rep k G) [H.FiniteIndex] :
     groupCohomology.H2 (Rep.res (Subgroup.subtype H) A) →ₗ[k]
       groupCohomology.H2 A :=
   corestrictionH2OfRightTransversal A (default : H.RightTransversal)
 
-/-- Canonical `H²` corestriction agrees with the map from every supplied
-finite right transversal. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` a finite-index subgroup, `A : Rep k G`,
+and `T` any right transversal for `H`. Then `corestrictionH2 A =
+corestrictionH2OfRightTransversal A T` as linear maps `H²(H,Res A) → H²(G,A)`. The right-hand
+map is induced by the finite Schreier cochain sum for `T`. -/
 theorem corestrictionH2_eq_of_rightTransversal (A : Rep k G)
     [H.FiniteIndex] (T : H.RightTransversal) :
     corestrictionH2 A = corestrictionH2OfRightTransversal A T := by
   unfold corestrictionH2
   exact corestrictionH2OfRightTransversal_independent A _ T
 
-/-- Representative formula for canonical `H²` corestriction, computed using
-any supplied finite right transversal. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `A : Rep k G`, and `T` a
+right transversal. For `z ∈ Z²(H,Res A)`, `corestrictionH2 A (H2π (Res A) z) = H2π A
+(corestrictionCocyclesTwo A T z)`. The transferred cocycle has value `∑ t∈T, ρ(t⁻¹)
+z(h_T(t,g₁),h_T(r_T(t,g₁),g₂))`, where `t g = h_T(t,g) r_T(t,g)`. -/
 theorem corestrictionH2_H2π (A : Rep k G)
     [H.FiniteIndex] (T : H.RightTransversal)
     (z : groupCohomology.cocycles₂
@@ -72,9 +76,10 @@ theorem corestrictionH2_H2π (A : Rep k G)
   rw [corestrictionH2_eq_of_rightTransversal,
     corestrictionH2OfRightTransversal_H2π]
 
-/-- Canonical finite-index cup projection formula:
-`cor(res(x) ∪ y) = x ∪ cor(y)`.  The coefficient comparison is the
-identity-on-carriers restriction/tensor isomorphism. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` a finite-index subgroup, and `A,B : Rep k
+G`. For `x ∈ H¹(G,A)` and `y ∈ H¹(H,Res B)`, `cor²_{A⊗B}(θ_*(res¹_A x ∪ y)) = x ∪ cor¹_B(y)`
+in `H²(G,A ⊗ B)`. Here `θ = (Rep.resTensorIso (Subgroup.subtype H) A B).hom : Res A ⊗ Res B →
+Res(A ⊗ B)`, and the degree-one and degree-two cups are `cupOneOne`. -/
 theorem corestrictionH2_cupOneOne
     (A B : Rep k G) (H : Subgroup G) [H.FiniteIndex]
     (x : groupCohomology.H1 A)

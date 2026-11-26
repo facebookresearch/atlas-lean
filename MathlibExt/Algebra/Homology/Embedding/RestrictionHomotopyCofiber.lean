@@ -14,12 +14,16 @@ public import MathlibExt.Algebra.Homology.HomotopyCofiber
 public import MathlibExt.Algebra.Homology.HomotopyCofiberProjection
 
 /-!
-# Restriction preserves homotopy cofibers
+# Homotopy cofibers and restriction
 
-Homotopy-cofiber existence is preserved by restriction along an embedding
-of complex shapes. The required binary biproducts are transported along
-`e.rel`. If the image is closed under outgoing edges, restriction commutes
-naturally with homotopy cofibers, including their maps from short complexes.
+For an outgoing-closed embedding of complex shapes, restricting a homotopy
+cofiber is canonically isomorphic to taking the cofiber of the restricted
+map. Both the shifted source coordinate and target coordinate are retained,
+and source/target inclusions are compatible with the comparison.
+
+When every degree has a predecessor in both shapes, the comparison is a
+natural isomorphism of homotopy-cofiber functors on arrows. It also preserves
+the canonical descent map from a short complex's cofiber to its third term.
 -/
 
 @[expose] public section
@@ -31,7 +35,12 @@ open CategoryTheory
 
 namespace HomologicalComplex.HasHomotopyCofiber
 
-/-- Transports homotopy-cofiber existence along restriction by a complex-shape embedding. -/
+/--
+Let C be a preadditive category, φ:F→G a map of c'-complexes, and e:c→c' a shape embedding
+preserving and reflecting differential relations. If φ has the degreewise biproduct data
+required for its homotopy cofiber, the restricted map F.restriction e→G.restriction e has that
+data too.
+-/
 theorem restrictionMap
     {C : Type u} [Category.{v} C] [Preadditive C]
     {ι ι' : Type*} {c : ComplexShape ι} {c' : ComplexShape ι'}
@@ -47,7 +56,11 @@ end HomologicalComplex.HasHomotopyCofiber
 
 namespace HomologicalComplex
 
-/-- Restriction at the same image degree has the identity component isomorphism. -/
+/--
+Let K be a c'-complex in a preadditive category C and e:c→c' a relation-reflecting embedding.
+At i, the canonical identification (K.restriction e)_i≅K_{e(i)} using the equality e(i)=e(i)
+is the identity isomorphism.
+-/
 @[simp]
 lemma restrictionXIso_rfl
     {C : Type u} [Category.{v} C] [Preadditive C]
@@ -72,7 +85,11 @@ section Object
 variable {F G : HomologicalComplex C c'} (φ : F ⟶ G)
 variable (e : c.Embedding c') [e.IsTruncGE]
 
-/-- Outgoing closure reflects the absence of a successor edge at an image degree. -/
+/--
+Let e:c→c' be a relation-reflecting shape embedding whose image is closed under outgoing
+differentials. If i has no outgoing edge in c, then e(i) has no outgoing edge in c': ¬c.Rel
+i(next i) implies ¬c'.Rel e(i)(next e(i)).
+-/
 lemma not_rel_next_of_not_rel_next (i : ι)
     (hi : ¬ c.Rel i (c.next i)) :
     ¬ c'.Rel (e.f i) (c'.next (e.f i)) := by
@@ -85,9 +102,14 @@ lemma not_rel_next_of_not_rel_next (i : ι)
 
 variable [DecidableRel c.Rel] [DecidableRel c'.Rel]
 
-/-- The degreewise comparison between restricting a homotopy cofiber and taking the
-homotopy cofiber after restriction. The truncation hypothesis ensures that an outgoing
-edge from a degree in the image stays in the image. -/
+/--
+Let C be preadditive with binary biproducts, let φ:F→G be a c'-complex map, and let e:c→c'
+preserve and reflect relations with image closed under outgoing differentials (IsTruncGE).
+Assume both relations are decidable, and write H(φ) for the homotopy cofiber. At each i there
+is a canonical isomorphism (H(φ).restriction e)_i≅H(restrictionMap φ e)_i. Outgoing closure
+identifies the shifted source coordinate F_{e(next i)} and the target coordinate G_{e(i)} on
+both sides, including the no-successor case.
+-/
 noncomputable def restrictionComponentIso (i : ι) :
     ((homotopyCofiber φ).restriction e).X i ≅
       (homotopyCofiber (HomologicalComplex.restrictionMap φ e)).X i := by
@@ -106,8 +128,14 @@ noncomputable def restrictionComponentIso (i : ι) :
         (G.restrictionXIso e rfl).symm ≪≫
         (XIso (HomologicalComplex.restrictionMap φ e) i hi).symm
 
-/-- The restriction comparison carries the first cofiber projection to the restricted first
-projection. -/
+/--
+Let C be preadditive with binary biproducts, let φ:F→G be a c'-complex map, and let e:c→c'
+preserve and reflect relations with image closed under outgoing differentials (IsTruncGE).
+Assume both relations are decidable, and write H(φ) for the homotopy cofiber. For c.Rel i j,
+the component comparison followed by the restricted cofiber's projection to (F.restriction
+e)_j equals the ambient cofiber projection to F_{e(j)}, through the canonical restriction
+coordinate isomorphisms.
+-/
 @[reassoc]
 lemma restrictionComponentIso_hom_fstX (i j : ι) (hij : c.Rel i j) :
     (restrictionComponentIso φ e i).hom ≫
@@ -125,8 +153,14 @@ lemma restrictionComponentIso_hom_fstX (i j : ι) (hij : c.Rel i j) :
   rw [fstX]
   simp only [Iso.symm_hom, Category.assoc]
 
-/-- The restriction comparison carries the second cofiber projection to the restricted second
-projection. -/
+/--
+Let C be preadditive with binary biproducts, let φ:F→G be a c'-complex map, and let e:c→c'
+preserve and reflect relations with image closed under outgoing differentials (IsTruncGE).
+Assume both relations are decidable, and write H(φ) for the homotopy cofiber. At i, the
+component comparison followed by the projection to (G.restriction e)_i equals the ambient
+cofiber's target projection at e(i), transported by the cofiber and G restriction
+identifications.
+-/
 @[reassoc]
 lemma restrictionComponentIso_hom_sndX (i : ι) :
     (restrictionComponentIso φ e i).hom ≫
@@ -149,7 +183,13 @@ lemma restrictionComponentIso_hom_sndX (i : ι) :
     rw [dite_eq_right hi, dite_eq_right (not_rel_next_of_not_rel_next e i hi)]
     simp
 
-/-- Restriction along an outgoing-closed embedding commutes with homotopy cofibers. -/
+/--
+Let C be preadditive with binary biproducts, let φ:F→G be a c'-complex map, and let e:c→c'
+preserve and reflect relations with image closed under outgoing differentials (IsTruncGE).
+Assume both relations are decidable, and write H(φ) for the homotopy cofiber. The component
+comparisons assemble into an isomorphism H(φ).restriction e≅H(restrictionMap φ e), preserving
+both cofiber coordinates at every retained degree.
+-/
 noncomputable def restrictionIso :
     (homotopyCofiber φ).restriction e ≅
       homotopyCofiber (HomologicalComplex.restrictionMap φ e) :=
@@ -204,7 +244,14 @@ noncomputable def restrictionIso :
           all_goals congr 1
         exact (d_sndX φ (e.f i) (e.f j) (e.rel hij)).symm)
 
-/-- The first cofiber inclusion is preserved by the restriction comparison. -/
+/--
+Let C be preadditive with binary biproducts, let φ:F→G be a c'-complex map, and let e:c→c'
+preserve and reflect relations with image closed under outgoing differentials (IsTruncGE).
+Assume both relations are decidable, and write H(φ) for the homotopy cofiber. For c.Rel j i,
+the ambient source inclusion F_{e(i)}→H(φ)_{e(j)}, followed by restriction identification and
+the degree-j comparison, equals the inverse F restriction identification followed by the
+restricted source inclusion.
+-/
 @[reassoc]
 lemma inlX_restrictionIso_hom_f (i j : ι) (hji : c.Rel j i) :
     inlX φ (e.f i) (e.f j) (e.rel hji) ≫
@@ -223,7 +270,14 @@ lemma inlX_restrictionIso_hom_f (i j : ι) (hji : c.Rel j i) :
   rw [biprod.mapIso_hom, biprod.inl_map_assoc]
   simp only [Iso.symm_hom, inl_XIsoBiprod_inv]
 
-/-- The target inclusion is preserved by the restriction comparison. -/
+/--
+Let C be preadditive with binary biproducts, let φ:F→G be a c'-complex map, and let e:c→c'
+preserve and reflect relations with image closed under outgoing differentials (IsTruncGE).
+Assume both relations are decidable, and write H(φ) for the homotopy cofiber. At i, the
+ambient target inclusion G_{e(i)}→H(φ)_{e(i)}, followed by restriction identification and the
+comparison, equals the inverse G restriction identification followed by the target inclusion
+into the restricted cofiber.
+-/
 @[reassoc]
 lemma inrX_restrictionIso_hom_f (i : ι) :
     inrX φ (e.f i) ≫
@@ -259,7 +313,13 @@ variable (e : c.Embedding c') [e.IsTruncGE]
 variable (hc : ∀ j : ι, ∃ i, c.Rel i j)
 variable (hc' : ∀ j : ι', ∃ i, c'.Rel i j)
 
-/-- Naturality of the homotopy-cofiber restriction comparison. -/
+/--
+Let C be preadditive with binary biproducts and let e:c→c' be outgoing-closed and
+relation-reflecting. Assume both relations are decidable and every degree of both shapes has a
+predecessor, so their homotopy-cofiber functors on arrows are defined. For a commutative
+square a:φ→ψ of c'-complex maps, restriction of H(a) followed by θ_ψ equals θ_φ followed by
+the cofiber map of the restricted square, where θ_φ:H(φ)|e≅H(φ|e).
+-/
 @[reassoc]
 theorem restrictionIso_naturality
     {φ ψ : Arrow (HomologicalComplex C c')} (a : φ ⟶ ψ) :
@@ -326,8 +386,13 @@ theorem restrictionIso_naturality
     simp [a', ae, HomologicalComplex.restriction,
       HomologicalComplex.restrictionMap]
 
-/-- Homotopy cofibers commute naturally with restriction along an outgoing-closed
-embedding of complex shapes. -/
+/--
+Let C be preadditive with binary biproducts and let e:c→c' be outgoing-closed and
+relation-reflecting. Assume both relations are decidable and every degree of both shapes has a
+predecessor, so their homotopy-cofiber functors on arrows are defined. The functor taking a
+homotopy cofiber and then restricting along e is naturally isomorphic to restriction on arrows
+followed by the homotopy-cofiber functor.
+-/
 noncomputable def restrictionNatIso :
     homotopyCofiberFunctor hc' ⋙ e.restrictionFunctor C ≅
       (e.restrictionFunctor C).mapArrow ⋙ homotopyCofiberFunctor hc :=
@@ -335,19 +400,34 @@ noncomputable def restrictionNatIso :
     (fun φ ↦ restrictionIso φ.hom e)
     (fun a ↦ restrictionIso_naturality e hc hc' a)
 
-/-- The forward component of `restrictionNatIso`. -/
+/--
+Let C be preadditive with binary biproducts and let e:c→c' be outgoing-closed and
+relation-reflecting. Assume both relations are decidable and every degree of both shapes has a
+predecessor, so their homotopy-cofiber functors on arrows are defined. At an arrow φ, the
+forward component of that natural isomorphism is θ_φ.hom:H(φ)|e→H(φ|e), the canonical
+restriction comparison.
+-/
 @[simp]
 lemma restrictionNatIso_hom_app (φ : Arrow (HomologicalComplex C c')) :
     (restrictionNatIso e hc hc').hom.app φ = (restrictionIso φ.hom e).hom :=
   rfl
 
-/-- The inverse component of `restrictionNatIso`. -/
+/--
+Let C be preadditive with binary biproducts and let e:c→c' be outgoing-closed and
+relation-reflecting. Assume both relations are decidable and every degree of both shapes has a
+predecessor, so their homotopy-cofiber functors on arrows are defined. At an arrow φ, its
+inverse component is θ_φ.inv:H(φ|e)→H(φ)|e.
+-/
 @[simp]
 lemma restrictionNatIso_inv_app (φ : Arrow (HomologicalComplex C c')) :
     (restrictionNatIso e hc hc').inv.app φ = (restrictionIso φ.hom e).inv :=
   rfl
 
-/-- Restriction comparison commutes with the universal map attached to a short complex. -/
+/--
+Let C be preadditive with binary biproducts, e:c→c' outgoing-closed and relation-reflecting,
+and both relations decidable. For a short complex S=(A→B→D) of c'-complexes, the canonical
+cofiber comparison θ:H(S.f)|e≅H((S|e).f) satisfies θ.hom≫desc_{S|e}=restriction(desc_S).
+-/
 @[reassoc]
 theorem restrictionIso_hom_descShortComplex
     (S : ShortComplex (HomologicalComplex C c')) :

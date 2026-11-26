@@ -1,3 +1,4 @@
-# Map Cochain Complex Bounded inv app f
+# Inverse bounded isomorphism components retain the inverse transformation
 
-The actual inverse retains the original inverse component in every integer degree.
+Let F,G : C → D preserve zero morphisms, e : F ≅ G, K ∈ Bounded C, and j ∈ ℤ. The jth inverse
+component of the bounded natural isomorphism equals e.inv_{K^j}.

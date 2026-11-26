@@ -1,3 +1,5 @@
-# Epsilon At Pos zero eq
+# The innermost counit insertion formula
 
-Raw position zero maps `G.ε` under `G^{n+1}`.
+The innermost counit insertion formula.
+
+Counit insertion at position zero from `G^(n+2)(X)` is `G^(n+1).map(ε_X)`.

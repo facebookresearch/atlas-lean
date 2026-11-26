@@ -14,13 +14,18 @@ public import Mathlib.GroupTheory.Perm.Fin
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
 /-!
-# Permutations grouped by their first or last value
+# Permutations decomposed by an endpoint value
 
-The ordered deletion permutation sends the remaining positions through
-`Fin.succAbove`, preserving the original order of the omitted coordinate.
-The constructions include the degree-one case and have the actual signs
-`(-1)^i` and `(-1)^(n+i)`. They support the two endpoint terms of the
-antisymmetric bar differential, without changing the source coordinates.
+For `i : Fin(n+1)` and `π ∈ S_n`, first insertion is the permutation with `0 ↦ i` and `j+1 ↦
+i.succAbove(π j)`. Last insertion has `n ↦ i` and `j.castSucc ↦ i.succAbove(π j)`. Both give
+bijections `Fin(n+1) × S_n ≃ S_(n+1)`.
+
+Their signs are `(-1)^i * sign π` and `(-1)^n * ((-1)^i * sign π)`. Summing over permutations
+can therefore be grouped by either endpoint value. The case `n=0` gives the identity
+permutation of `Fin 1`.
+
+These endpoint signs occur in Hochschild antisymmetrization; see Loday, *Cyclic Homology*,
+Section 1.1.
 -/
 
 @[expose] public section
@@ -30,14 +35,17 @@ open scoped BigOperators
 
 namespace Equiv.Perm
 
-/-- Insert the distinguished value in the first position and permute the
-remaining ordered positions. The native positive-degree construction is reused. -/
+/-- Let `n : ℕ`, `i : Fin(n+1)`, and `π : Equiv.Perm (Fin n)`. Write `ν_i(j) = i.succAbove j` for
+the increasing embedding that omits `i`. `orderedFirst i π` is the permutation of `Fin(n+1)`
+determined by `orderedFirst i π 0 = i` and `orderedFirst i π j.succ = ν_i(π j)` for `j : Fin
+n`. -/
 def orderedFirst {n : ℕ} (i : Fin (n + 1)) (π : Perm (Fin n)) : Perm (Fin (n + 1)) := by
   cases n with
   | zero => exact 1
   | succ n => exact decomposeFin'Symm i π
 
-/-- The first position has exactly the distinguished original value. -/
+/-- Let `n : ℕ`, `i : Fin(n+1)`, and `π : Equiv.Perm (Fin n)`. Write `ν_i(j) = i.succAbove j` for
+the increasing embedding that omits `i`. The first-position value is `orderedFirst i π 0 = i`. -/
 @[simp]
 theorem orderedFirst_zero {n : ℕ} (i : Fin (n + 1)) (π : Perm (Fin n)) :
     orderedFirst i π 0 = i := by
@@ -45,7 +53,9 @@ theorem orderedFirst_zero {n : ℕ} (i : Fin (n + 1)) (π : Perm (Fin n)) :
   | zero => exact (Fin.eq_zero (orderedFirst i π 0)).trans (Fin.eq_zero i).symm
   | succ n => exact decomposeFin'Symm_zero i π
 
-/-- Every remaining position is the original ordered deletion embedding. -/
+/-- Let `n : ℕ`, `i : Fin(n+1)`, and `π : Equiv.Perm (Fin n)`. Write `ν_i(j) = i.succAbove j` for
+the increasing embedding that omits `i`. For `j : Fin n`, `orderedFirst i π j.succ = ν_i(π
+j)`. -/
 @[simp]
 theorem orderedFirst_succ {n : ℕ} (i : Fin (n + 1)) (π : Perm (Fin n)) (j : Fin n) :
     orderedFirst i π j.succ = i.succAbove (π j) := by
@@ -53,7 +63,9 @@ theorem orderedFirst_succ {n : ℕ} (i : Fin (n + 1)) (π : Perm (Fin n)) (j : F
   | zero => exact Fin.elim0 j
   | succ n => exact decomposeFin'Symm_succ i π j
 
-/-- The actual sign of first insertion is the signed deletion coefficient. -/
+/-- Let `n : ℕ`, `i : Fin(n+1)`, and `π : Equiv.Perm (Fin n)`. Write `ν_i(j) = i.succAbove j` for
+the increasing embedding that omits `i`. In `ℤˣ`, `(orderedFirst i π).sign = (-1)^i.val *
+π.sign`. -/
 theorem sign_orderedFirst {n : ℕ} (i : Fin (n + 1)) (π : Perm (Fin n)) :
     (orderedFirst i π).sign = (-1 : ℤˣ) ^ i.val * π.sign := by
   cases n with
@@ -71,7 +83,9 @@ theorem sign_orderedFirst {n : ℕ} (i : Fin (n + 1)) (π : Perm (Fin n)) :
     simp only [Fin.val_zero, pow_zero, one_mul]
   | succ n => exact sign_decomposeFin'Symm i π
 
-/-- The distinguished coordinate and its remaining permutation determine the full permutation. -/
+/-- For every `n : ℕ`, the function `(i,π) ↦ orderedFirst i π` from `Fin(n+1) × Equiv.Perm (Fin
+n)` to `Equiv.Perm (Fin(n+1))` is injective. Equality of the inserted permutations forces
+equality of both the distinguished first value and the remaining permutation. -/
 theorem orderedFirst_uncurry_injective (n : ℕ) :
     Function.Injective (Function.uncurry (orderedFirst (n := n))) := by
   rintro ⟨i, π⟩ ⟨j, τ⟩ h
@@ -88,7 +102,9 @@ theorem orderedFirst_uncurry_injective (n : ℕ) :
   subst τ
   rfl
 
-/-- The first-value decomposition is a bijection in every degree. -/
+/-- For every `n : ℕ`, `orderedFirstEquiv n` is the bijection `Fin(n+1) × S_n ≃ S_(n+1)` sending
+`(i,π)` to `orderedFirst i π`. Its inverse records the first value and the permutation
+obtained by deleting that value and reindexing the remaining values in ascending order. -/
 def orderedFirstEquiv (n : ℕ) : Fin (n + 1) × Perm (Fin n) ≃ Perm (Fin (n + 1)) :=
   Equiv.ofBijective (Function.uncurry (orderedFirst (n := n))) (by
     rw [Nat.bijective_iff_injective_and_card]
@@ -96,11 +112,13 @@ def orderedFirstEquiv (n : ℕ) : Fin (n + 1) × Perm (Fin n) ≃ Perm (Fin (n +
     simp only [Nat.card_eq_fintype_card, Fintype.card_prod, Fintype.card_perm,
       Fintype.card_fin, Nat.factorial_succ])
 
-/-- The inverse decomposition keeps the actual native insertion function. -/
+/-- Let `n : ℕ`, `i : Fin(n+1)`, and `π : Equiv.Perm (Fin n)`. Write `ν_i(j) = i.succAbove j` for
+the increasing embedding that omits `i`. `orderedFirstEquiv n (i,π) = orderedFirst i π`. -/
 theorem orderedFirstEquiv_apply (n : ℕ) (i : Fin (n + 1)) (π : Perm (Fin n)) :
     orderedFirstEquiv n (i, π) = orderedFirst i π := rfl
 
-/-- Group a complete permutation sum by its first original value. -/
+/-- Let `T` be a commutative additive monoid, `n : ℕ`, and `f : S_(n+1) → T`. The complete
+permutation sum is `∑ σ ∈ S_(n+1), f σ = ∑ i : Fin(n+1), ∑ π ∈ S_n, f(orderedFirst i π)`. -/
 theorem sum_orderedFirst {T : Type*} [AddCommMonoid T] (n : ℕ)
     (f : Perm (Fin (n + 1)) → T) :
     ∑ π : Perm (Fin (n + 1)), f π =
@@ -108,17 +126,24 @@ theorem sum_orderedFirst {T : Type*} [AddCommMonoid T] (n : ℕ)
   rw [← (orderedFirstEquiv n).sum_comp f, Fintype.sum_prod_type]
   rfl
 
-/-- Insert the distinguished original value in the final position. -/
+/-- Let `n : ℕ`, `i : Fin(n+1)`, and `π : Equiv.Perm (Fin n)`. Write `ν_i(j) = i.succAbove j` for
+the increasing embedding that omits `i`. `orderedLast i π = orderedFirst i π *
+finRotate(n+1)`. It sends the last position to `i` and each `j.castSucc` to `ν_i(π j)`, with
+permutation multiplication `(p*q)(j) = p(q(j))`. -/
 def orderedLast {n : ℕ} (i : Fin (n + 1)) (π : Perm (Fin n)) : Perm (Fin (n + 1)) :=
   orderedFirst i π * finRotate (n + 1)
 
-/-- The final position has the distinguished original value. -/
+/-- Let `n : ℕ`, `i : Fin(n+1)`, and `π : Equiv.Perm (Fin n)`. Write `ν_i(j) = i.succAbove j` for
+the increasing embedding that omits `i`. The last-position value is `orderedLast i π (Fin.last
+n) = i`. -/
 @[simp]
 theorem orderedLast_last {n : ℕ} (i : Fin (n + 1)) (π : Perm (Fin n)) :
     orderedLast i π (Fin.last n) = i := by
   rw [orderedLast, mul_apply, finRotate_last, orderedFirst_zero]
 
-/-- The unchanged initial positions are the original ordered deletion embedding. -/
+/-- Let `n : ℕ`, `i : Fin(n+1)`, and `π : Equiv.Perm (Fin n)`. Write `ν_i(j) = i.succAbove j` for
+the increasing embedding that omits `i`. For `j : Fin n`, `orderedLast i π j.castSucc = ν_i(π
+j)`. -/
 @[simp]
 theorem orderedLast_castSucc {n : ℕ} (i : Fin (n + 1)) (π : Perm (Fin n)) (j : Fin n) :
     orderedLast i π j.castSucc = i.succAbove (π j) := by
@@ -126,23 +151,28 @@ theorem orderedLast_castSucc {n : ℕ} (i : Fin (n + 1)) (π : Perm (Fin n)) (j 
   have hr : finRotate (n + 1) j.castSucc = j.succ := finRotate_of_lt j.isLt
   rw [hr, orderedFirst_succ]
 
-/-- The final-value decomposition has the original signed rotation factor. -/
+/-- Let `n : ℕ`, `i : Fin(n+1)`, and `π : Equiv.Perm (Fin n)`. Write `ν_i(j) = i.succAbove j` for
+the increasing embedding that omits `i`. In `ℤˣ`, `(orderedLast i π).sign = (-1)^n *
+((-1)^i.val * π.sign)`. -/
 theorem sign_orderedLast {n : ℕ} (i : Fin (n + 1)) (π : Perm (Fin n)) :
     (orderedLast i π).sign = (-1 : ℤˣ) ^ n * ((-1 : ℤˣ) ^ i.val * π.sign) := by
   rw [orderedLast, sign_mul, sign_orderedFirst, sign_finRotate]
   simp only [Nat.add_sub_cancel]
   ac_rfl
 
-/-- The final-value decomposition is the first-value decomposition followed by the
-actual native rotation. -/
+/-- For every `n : ℕ`, `orderedLastEquiv n : Fin(n+1) × S_n ≃ S_(n+1)` sends `(i,π)` to
+`orderedLast i π`. Its inverse records the last value and the permutation of the remaining
+values after ascending reindexing. -/
 def orderedLastEquiv (n : ℕ) : Fin (n + 1) × Perm (Fin n) ≃ Perm (Fin (n + 1)) :=
   (orderedFirstEquiv n).trans (Equiv.mulRight (finRotate (n + 1)))
 
-/-- The equivalence uses exactly the actual ordered last insertion. -/
+/-- Let `n : ℕ`, `i : Fin(n+1)`, and `π : Equiv.Perm (Fin n)`. Write `ν_i(j) = i.succAbove j` for
+the increasing embedding that omits `i`. `orderedLastEquiv n (i,π) = orderedLast i π`. -/
 theorem orderedLastEquiv_apply (n : ℕ) (i : Fin (n + 1)) (π : Perm (Fin n)) :
     orderedLastEquiv n (i, π) = orderedLast i π := rfl
 
-/-- Group a complete permutation sum by its final original value. -/
+/-- Let `T` be a commutative additive monoid, `n : ℕ`, and `f : S_(n+1) → T`. Then `∑ σ ∈ S_(n+1),
+f σ = ∑ i : Fin(n+1), ∑ π ∈ S_n, f(orderedLast i π)`. -/
 theorem sum_orderedLast {T : Type*} [AddCommMonoid T] (n : ℕ)
     (f : Perm (Fin (n + 1)) → T) :
     ∑ π : Perm (Fin (n + 1)), f π =
@@ -150,13 +180,17 @@ theorem sum_orderedLast {T : Type*} [AddCommMonoid T] (n : ℕ)
   rw [← (orderedLastEquiv n).sum_comp f, Fintype.sum_prod_type]
   rfl
 
-/-- Integer signs retain the exact first-deletion coefficient. -/
+/-- Let `n : ℕ`, `i : Fin(n+1)`, and `π : Equiv.Perm (Fin n)`. Write `ν_i(j) = i.succAbove j` for
+the increasing embedding that omits `i`. After coercing signs to `ℤ`, `((orderedFirst i
+π).sign : ℤ) = (-1 : ℤ)^i.val * (π.sign : ℤ)`. -/
 theorem sign_orderedFirst_int {n : ℕ} (i : Fin (n + 1)) (π : Perm (Fin n)) :
     ((orderedFirst i π).sign : ℤ) = (-1 : ℤ) ^ i.val * (π.sign : ℤ) := by
   have h := congrArg (fun u : ℤˣ => (u : ℤ)) (sign_orderedFirst i π)
   simpa only [Units.val_mul, Units.val_pow_eq_pow_val, Units.val_neg, Units.val_one] using h
 
-/-- Integer signs retain both the last-rotation and deletion coefficients. -/
+/-- Let `n : ℕ`, `i : Fin(n+1)`, and `π : Equiv.Perm (Fin n)`. Write `ν_i(j) = i.succAbove j` for
+the increasing embedding that omits `i`. After coercing signs to `ℤ`, `((orderedLast i π).sign
+: ℤ) = (-1 : ℤ)^n * ((-1 : ℤ)^i.val * (π.sign : ℤ))`. -/
 theorem sign_orderedLast_int {n : ℕ} (i : Fin (n + 1)) (π : Perm (Fin n)) :
     ((orderedLast i π).sign : ℤ) = (-1 : ℤ) ^ n * ((-1 : ℤ) ^ i.val * (π.sign : ℤ)) := by
   have h := congrArg (fun u : ℤˣ => (u : ℤ)) (sign_orderedLast i π)

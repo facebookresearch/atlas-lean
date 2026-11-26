@@ -12,17 +12,19 @@ module
 public import MathlibExt.Algebra.Homology.TripleTensor
 
 /-!
-# Graded component formulas for tensor towers
+# Graded coordinates of tensor products and associators
 
-A component of a tensor map on homological complexes depends on the graded
-maps of its factors. Likewise the associator component depends on the three
-graded carriers. The formulas identify these components with the graded
-object tensor and associator constructions.
+Let `C` be a monoidal category and let degrees form an additive monoid `I`. When the graded
+tensor coproducts exist, the tensor object and tensor maps are determined by the graded
+objects and maps of their factors. When the iterated tensor coproduct comparisons exist, the
+associator has the corresponding graded components.
 
-Heterogeneous congruence lemmas compare different carrier presentations
-using equalities of graded objects and heterogeneous equalities of their
-maps. When endpoints agree, these yield ordinary equality of the complex
-components. The component formulas do not depend on the differentials.
+For homological complexes in a preadditive `C` with additive tensor functors, decidable
+equality on `I`, and tensor signs for the complex shape, these graded formulas describe the
+underlying tensor carrier, tensor-map components, and associator components. Equal graded
+carriers and heterogeneously equal graded maps give heterogeneous equality of the
+corresponding components. The formulas retain the given tensor-existence and iterated-
+comparison hypotheses.
 -/
 
 @[expose] public section
@@ -40,8 +42,10 @@ universe v u w
 variable {C : Type u} [Category.{v} C] [MonoidalCategory C]
   {I : Type w} [AddMonoid I]
 
-/-- Congruence for a graded tensor object after substituting both carrier
-equalities, including their dependent tensor-existence instances. -/
+/-- Congruence of graded tensor objects.
+
+For graded objects `X, Y, X', Y'` whose tensor coproducts exist, equalities `X = X'` and `Y =
+Y'` imply equality of their graded tensor objects. -/
 theorem tensorObj_eq
     (X Y X' Y' : GradedObject I C)
     [HasTensor X Y] [HasTensor X' Y']
@@ -50,12 +54,11 @@ theorem tensorObj_eq
   subst hY
   rfl
 
-/-- Heterogeneous congruence for a graded tensor-map component.
+/-- Heterogeneous congruence of a graded tensor-map component.
 
-Rewrite direction: after a complex tensor component has been rewritten to
-`GradedObject.Monoidal.tensorHom`, use this lemma to replace the two input
-graded maps by `HEq`-equal shallow maps without unfolding the tensor object.
-`GradedTensorTowerTests` contains a direct heterogeneous client. -/
+If the four endpoint graded objects of `f` and `g` equal those of `f'` and `g'`, and the
+corresponding factor maps are heterogeneously equal, their tensor maps are heterogeneously
+equal in every degree `j`. The source and target graded tensors are assumed to exist. -/
 theorem tensorHom_apply_heq
     {X₁ X₂ Y₁ Y₂ X₁' X₂' Y₁' Y₂' : GradedObject I C}
     (f : X₁ ⟶ X₂) (g : Y₁ ⟶ Y₂)
@@ -74,11 +77,11 @@ theorem tensorHom_apply_heq
   cases eq_of_heq hg
   rfl
 
-/-- Heterogeneous congruence for the hom of a graded associator at one degree.
+/-- Heterogeneous congruence of a graded associator component.
 
-Rewrite direction: replace the three carrier objects from left to right; the
-result compares the associator components without reducing either nested
-tensor tower.  `GradedTensorTowerTests` exercises all three replacements. -/
+For two triples of equal graded objects, the forward associator components in degree `j` are
+heterogeneously equal. The two sets of graded tensors and iterated tensor coproduct
+comparisons are assumed to exist. -/
 theorem associator_hom_apply_heq
     (X₁ X₂ X₃ X₁' X₂' X₃' : GradedObject I C)
     [HasTensor X₁ X₂] [HasTensor X₂ X₃]
@@ -111,21 +114,19 @@ variable {C : Type u} [Category.{v} C] [MonoidalCategory C] [Preadditive C]
   {I : Type w} [AddMonoid I] [DecidableEq I]
   {c : ComplexShape I} [c.TensorSigns]
 
-/-- The carrier of a complex tensor product is the graded tensor product.
+/-- The graded carrier of a tensor product of complexes.
 
-Rewrite direction: from `(tensorObj K L).X` to
-`GradedObject.Monoidal.tensorObj K.X L.X`.  Applying this once exposes one
-tower layer; the contract test rewrites the carrier equality directly. -/
+For complexes `K` and `L` with the required graded tensor coproducts, the carrier of their
+tensor complex is the graded tensor of `K.X` and `L.X`. -/
 theorem tensorObj_X_eq_graded
     (K L : HomologicalComplex C c) [GradedObject.HasTensor K.X L.X] :
     (tensorObj K L).X = GradedObject.Monoidal.tensorObj K.X L.X := rfl
 
-/-- A complex tensor-map component is the corresponding graded tensor map.
+/-- The graded component formula for a tensor map of complexes.
 
-Rewrite direction: from `(tensorHom f g).f j` to the graded-object
-`tensorHom` at `j`.  This is the one-level peeling rewrite used before
-`GradedObject.Monoidal.tensorHom_apply_heq`; the test module pins that exact
-two-step pattern. -/
+For chain maps `f` and `g`, the degree-`j` component of their tensor map is the graded tensor
+map of their component families `f.f` and `g.f`, assuming the source and target graded tensors
+exist. -/
 theorem tensorHom_f_eq_graded
     {K₁ K₂ L₁ L₂ : HomologicalComplex C c}
     (f : K₁ ⟶ L₁) (g : K₂ ⟶ L₂)
@@ -134,11 +135,11 @@ theorem tensorHom_f_eq_graded
     (tensorHom f g).f j =
       GradedObject.Monoidal.tensorHom f.f g.f j := rfl
 
-/-- A complex associator component is the graded-carrier associator component.
+/-- The graded component formula for a complex associator.
 
-Rewrite direction: from `HomologicalComplex.associator … .hom.f j` to the
-graded-object associator at `j`.  The contract test then changes carriers
-with `GradedObject.Monoidal.associator_hom_apply_heq`. -/
+For three complexes with the stated tensor and iterated-comparison hypotheses, the degree-`j`
+component of the forward complex associator equals the associator component of their graded
+carriers. -/
 theorem associator_hom_f_eq_graded
     (K₁ K₂ K₃ : HomologicalComplex C c)
     [GradedObject.HasTensor K₁.X K₂.X]
@@ -155,14 +156,11 @@ theorem associator_hom_f_eq_graded
     (associator K₁ K₂ K₃).hom.f j =
       (GradedObject.Monoidal.associator K₁.X K₂.X K₃.X).hom j := rfl
 
-/-- Nested tensor-map components are heterogeneously congruent when their two
-leaf graded maps are heterogeneously equal.
+/-- Heterogeneous congruence of complex tensor-map components.
 
-Rewrite direction: this packages `tensorHom_f_eq_graded` on both sides and
-reduces a nested complex-tower comparison to four shallow carrier equalities
-plus the two shallow hypotheses `hf` and `hg`.  Abstract contract tests
-use it under `eq_of_heq`; concrete Bar/Cobar clients additionally need
-propositional leaf equalities. -/
+Equal source and target graded carriers together with heterogeneous equalities of the two
+factor component families imply heterogeneous equality of the degree-`j` tensor-map
+components. Both source and target tensor products are assumed to exist. -/
 theorem tensorHom_f_heq
     {K₁ K₂ L₁ L₂ K₁' K₂' L₁' L₂' : HomologicalComplex C c}
     (f : K₁ ⟶ L₁) (g : K₂ ⟶ L₂)
@@ -179,14 +177,11 @@ theorem tensorHom_f_heq
   exact GradedObject.Monoidal.tensorHom_apply_heq
     f.f g.f f'.f g'.f hK₁ hL₁ hK₂ hL₂ hf hg j
 
-/-- Complex associator components are heterogeneously congruent when the
-three graded carriers are equal.
+/-- Heterogeneous congruence of complex associator components.
 
-Rewrite direction: this packages `associator_hom_f_eq_graded` on both sides
-and leaves only the shallow carrier equalities `h₁`, `h₂`, and `h₃`.
-Abstract contract tests invoke the `HEq` form directly; recovering the
-ordinary Bar/Cobar bridge needs propositional leaf equalities (see the
-test module note). -/
+For triples of complexes with equal graded carriers, the forward associator components in
+every degree `j` are heterogeneously equal, under the stated tensor-existence and iterated-
+comparison hypotheses. -/
 theorem associator_hom_f_heq
     (K₁ K₂ K₃ L₁ L₂ L₃ : HomologicalComplex C c)
     [GradedObject.HasTensor K₁.X K₂.X]

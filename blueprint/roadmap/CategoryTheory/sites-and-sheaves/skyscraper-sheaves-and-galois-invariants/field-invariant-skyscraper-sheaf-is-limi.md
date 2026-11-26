@@ -1,3 +1,11 @@
-# Field Invariant Skyscraper Sheaf Is Limit
+# Sheaf limit property of the invariant skyscraper
 
-The canonical invariant cone is genuinely limiting in the actual common sheaf category.
+Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For M ∈ D, let S_M be the point skyscraper of its underlying group,
+with sections M^(ULift U(Ω)), and Φ̃_M(U) = Map_G(U(Ω), M).
+The sheaf cone with vertex Φ(M) and leg i_M : Φ(M) → S_M
+is limiting. It realizes the G-invariant part of the point skyscraper
+inside the sheaf category.

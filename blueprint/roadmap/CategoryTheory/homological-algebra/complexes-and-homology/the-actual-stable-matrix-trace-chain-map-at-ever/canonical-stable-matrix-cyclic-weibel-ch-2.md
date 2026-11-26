@@ -1,3 +1,7 @@
-# Canonical Stable Matrix Cyclic Weibel Chain Map finite
+# The stable trace restricts to the finite positive-tail trace
 
-The stable cyclic trace chain map restricts to the trace map on each finite matrix stage.
+For a commutative ℚ-algebra k, an associative unital
+k-algebra A and m ≥ 0, the stable chain trace satisfies
+W ∘ positiveTail(C_*(i_m)) = W_m.
+Here W_m is the signed trace on the finite matrix CE positive tail,
+and both sides have target Cλ(A).

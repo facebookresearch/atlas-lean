@@ -1,4 +1,6 @@
-# Is Open fixed By of action is Continuous
+# Open stabilizers of discrete coefficient vectors
 
-Under the standard continuous-action property, the subgroup fixing one
-vector of a discrete topological representation is open.
+Open stabilizers of discrete coefficient vectors.
+
+If X has discrete topology and its associated G-action is continuous, then for each x ∈ X the
+subset of g with ρ(g)x = x is open in G.

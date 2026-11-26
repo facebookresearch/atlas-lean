@@ -1,8 +1,6 @@
-# Pow Tuple Gen succ fst
+# The tuple component at the successor power
 
-Successor tuple: the generalized reader exposes `Fin.snoc`.
+The tuple component at the successor power.
 
-Stable API for `powTupleGen`: the `n + 1` tuple is the `n` tuple at
-`T.obj X` with the head factor snoc'd on. A later one-file repair in
-`ClassifyingNerveNaturality.lean` consumes this instead of mirroring the
-recursion.
+Reading Tⁿ⁺¹(X) first as Tⁿ(TX), the tuple at level n+1 is obtained by appending the
+G-coordinate of the residual pair in TX to the level-n tuple.

@@ -13,18 +13,22 @@ public import MathlibExt.Algebra.Homology.CochainComplex.BimoduleTensor
 public import MathlibExt.Algebra.Homology.CochainComplex.BoundedFunctor
 
 /-!
-# The original bounded finite-module bimodule tensor
+# Bounded finite-module complexes under bimodule tensoring
 
-The objects are the existing finite-support cochains of finite left
-modules. Tensoring uses the existing finite-module functor in each
-original degree. Forgetting finite generation gives the original ambient
-cochain tensor with the same differentials and component maps.
+Let R,S be rings in universe u and E a commuting left-S/right-R bimodule in that universe,
+finite as a left S-module. Tensoring by E gives a functor from bounded cochains of finitely
+generated R-modules to bounded cochains of finitely generated S-modules, preserving each
+term-support window. Forgetting finite generation commutes with this degreewise tensor.
 
-The canonical right-flatness criterion earns preservation of ambient
-quasi-isomorphisms. Original invertible bimodule contractions earn the
-finite coefficients and give the actual bounded Morita equivalence.
-Neither the bounded objects nor their ambient weak equivalences require
-the finite-module categories to be abelian or their rings Noetherian.
+Homology and quasi-isomorphisms are tested in the ambient module cochain categories. The
+Tor₁^R(E,N)=0 criterion gives homology preservation and preservation of these
+quasi-isomorphisms. Coefficient maps, coefficient isomorphisms, the regular coefficient, and
+composite bimodules give the corresponding bounded natural transformations and isomorphisms.
+
+For an (R,S)-bimodule P and an (S,R)-bimodule Q with bimodule equivalences P⊗_S Q≅R and Q⊗_R
+P≅S, the induced Morita equivalence restricts to bounded finite-module cochains. Its forward
+functor is Q⊗_R− and its inverse is P⊗_S−, with degreewise unit and counit and preservation of
+ambient quasi-isomorphisms.
 -/
 
 @[expose] public section
@@ -42,17 +46,25 @@ namespace CochainComplex.Bounded
 
 variable (R : Type u) [Ring R]
 
-/-- The actual bounded finite-module inclusion, read in the original ambient module cochains. -/
+/-- Let R : Type u be a ring. The functor from Bounded(FGModuleCat.{u} R) to
+CochainComplex(ModuleCat.{u} R,ℤ) first includes a bounded finite-module complex into all such
+cochains, then forgets finite generation degreewise. Its objects retain the module terms and
+differentials, and its maps retain their module components. -/
 abbrev fgModuleAmbient :
     Bounded (FGModuleCat.{u} R) ⥤ CochainComplex (ModuleCat.{u} R) ℤ :=
   ι (FGModuleCat.{u} R) ⋙
     (forget₂ (FGModuleCat.{u} R) (ModuleCat.{u} R)).mapHomologicalComplex (.up ℤ)
 
-/-- The original ambient weak equivalences test the actual original bounded cochain map. -/
+/-- For a ring R in universe u, define a morphism of bounded FGModuleCat.{u} R cochains to be an
+ambient quasi-isomorphism when its image under fgModuleAmbient R is a quasi-isomorphism in the
+integer ModuleCat.{u} R cochain category. Homology is computed in all modules, so no abelian
+structure on the finite-module category is assumed. -/
 abbrev fgModuleQuasiIsomorphisms : MorphismProperty (Bounded (FGModuleCat.{u} R)) :=
   (HomologicalComplex.quasiIso (ModuleCat.{u} R) (.up ℤ)).inverseImage (fgModuleAmbient R)
 
-/-- The whole weak-equivalence readout retains the original ambient cochain morphism. -/
+/-- Let R be a ring and f : K → L a map in Bounded(FGModuleCat.{u} R). Membership in
+fgModuleQuasiIsomorphisms R is equivalent to QuasiIso((fgModuleAmbient R).map f). Thus the
+property tests all integer homology maps of the same underlying module cochain morphism. -/
 theorem fgModuleQuasiIsomorphisms_iff {K L : Bounded (FGModuleCat.{u} R)} (f : K ⟶ L) :
     fgModuleQuasiIsomorphisms R f ↔ QuasiIso ((fgModuleAmbient R).map f) := Iff.rfl
 
@@ -61,36 +73,51 @@ variable {S : Type u} [Ring S]
   (E : Type u) [AddCommGroup E] [Module S E] [Module Rᵐᵒᵖ E]
   [SMulCommClass S Rᵐᵒᵖ E] [Module.Finite S E]
 
-/-- Restrict the original finite-module tensor prolongation to its original bounded objects. -/
+/-- Let R,S be rings in universe u and E a commuting left-S/right-R bimodule, finite over S. The
+finite-module tensor functor E⊗_R− restricts degreewise to Bounded(FGModuleCat.{u} R) →
+Bounded(FGModuleCat.{u} S). Its output terms are finitely generated over S, and its support
+window is inherited from the input. -/
 abbrev bimoduleTensor : Bounded (FGModuleCat.{u} R) ⥤ Bounded (FGModuleCat.{u} S) :=
   (FGModuleCat.bimoduleTensor (R := R) (S := S) E).mapCochainComplexBounded
 
-/-- The actual output term is the existing original balanced tensor module. -/
+/-- For rings R,S and a commuting left-S/right-R bimodule E finite over S, let K be a bounded
+finite R-module cochain complex. The underlying module of its jth tensor term is the ambient
+balanced tensor E⊗_R K^j, with the left S-action on E. -/
 theorem bimoduleTensor_obj_X_obj (K : Bounded (FGModuleCat.{u} R)) (j : ℤ) :
     (((bimoduleTensor (S := S) E).obj K).obj.X j).obj =
       (ModuleCat.BalancedTensor.Left.functor ℤ R S E).obj ((K.obj.X j).obj) := rfl
 
-/-- The original bounded differential is the original module tensor of that differential. -/
+/-- Let R,S be rings and E a commuting left-S/right-R bimodule finite over S. For a bounded
+finite-module cochain complex K and i,j ∈ ℤ, forgetting the output differential of E⊗_R K
+gives the ambient balanced tensor map E⊗_R d_K^{i,j}. -/
 theorem bimoduleTensor_obj_d_hom (K : Bounded (FGModuleCat.{u} R)) (i j : ℤ) :
     (((bimoduleTensor (S := S) E).obj K).obj.d i j).hom =
       (ModuleCat.BalancedTensor.Left.functor ℤ R S E).map ((K.obj.d i j).hom) := rfl
 
-/-- The original bounded component map is the original module quotient map. -/
+/-- For a commuting left-S/right-R bimodule E finite over S and a bounded finite R-module cochain
+map f : K → L, the underlying jth component of its tensor image is E⊗_R f^j. The component is
+computed by the ambient balanced tensor functor. -/
 theorem bimoduleTensor_map_f_hom {K L : Bounded (FGModuleCat.{u} R)} (f : K ⟶ L) (j : ℤ) :
     (((bimoduleTensor (S := S) E).map f).hom.f j).hom =
       (ModuleCat.BalancedTensor.Left.functor ℤ R S E).map ((f.hom.f j).hom) := rfl
 
-/-- Every actual bounded output term is finite on the target side. -/
+/-- Let R,S be rings, E a commuting left-S/right-R bimodule finite over S, and K a bounded cochain
+complex of finite R-modules. Every term E⊗_R K^j is finite as an S-module. The input term is
+finite over R and the coefficient is finite over the output ring S. -/
 theorem bimoduleTensor_obj_finite (K : Bounded (FGModuleCat.{u} R)) (j : ℤ) :
     Module.Finite S (((bimoduleTensor (S := S) E).obj K).obj.X j) := inferInstance
 
-/-- The tensor preserves the same specified original support window term by term. -/
+/-- For a commuting left-S/right-R bimodule E finite over S, suppose a bounded finite R-module
+complex K has zero terms outside [a,b]. Then the corresponding bounded finite S-module tensor
+complex has zero terms at every j<a or j>b. The support interval is unchanged. -/
 theorem bimoduleTensor_obj_isZero_outside (K : Bounded (FGModuleCat.{u} R)) (a b : ℤ)
     (hK : ∀ j : ℤ, j < a ∨ b < j → IsZero (K.obj.X j)) (j : ℤ)
     (hj : j < a ∨ b < j) : IsZero (((bimoduleTensor (S := S) E).obj K).obj.X j) :=
   (FGModuleCat.bimoduleTensor (R := R) (S := S) E).map_isZero (hK j hj)
 
-/-- Every actual bounded tensor differential retains the original ordered pure factors. -/
+/-- Let R,S be rings and E a commuting left-S/right-R bimodule finite over S. For K ∈
+Bounded(FGModuleCat R), i,j ∈ ℤ, e ∈ E, and x ∈ K^i, the underlying tensor differential sends
+[e,x] to [e,d_K^{i,j}(x)]. -/
 theorem bimoduleTensor_d_mk (K : Bounded (FGModuleCat.{u} R)) (i j : ℤ)
     (e : E) (x : K.obj.X i) :
     letI : Module ℤ (K.obj.X i) := Module.compHom (K.obj.X i) (algebraMap ℤ R)
@@ -102,7 +129,9 @@ theorem bimoduleTensor_d_mk (K : Bounded (FGModuleCat.{u} R)) (i j : ℤ)
   let : Module ℤ (K.obj.X j) := Module.compHom (K.obj.X j) (algebraMap ℤ R)
   exact FGModuleCat.bimoduleTensor_map_mk (R := R) (S := S) E (K.obj.d i j) e x
 
-/-- An original bounded cochain map applies only its original module component to a pure class. -/
+/-- For a commuting left-S/right-R bimodule E finite over S and a bounded finite R-module cochain
+map f : K → L, its jth tensor component sends [e,x] to [e,f^j(x)]. The coefficient and outer
+S-action remain fixed. -/
 theorem bimoduleTensor_map_mk {K L : Bounded (FGModuleCat.{u} R)}
     (f : K ⟶ L) (j : ℤ) (e : E) (x : K.obj.X j) :
     letI : Module ℤ (K.obj.X j) := Module.compHom (K.obj.X j) (algebraMap ℤ R)
@@ -114,12 +143,17 @@ theorem bimoduleTensor_map_mk {K L : Bounded (FGModuleCat.{u} R)}
   let : Module ℤ (L.obj.X j) := Module.compHom (L.obj.X j) (algebraMap ℤ R)
   exact FGModuleCat.bimoduleTensor_map_mk (R := R) (S := S) E (f.hom.f j) e x
 
-/-- The original ambient square is the finite-tensor forgetting square prolonged degreewise. -/
+/-- Let R,S be rings and E a commuting left-S/right-R bimodule finite over S. There is a natural
+isomorphism between bounded tensoring by E followed by fgModuleAmbient S and fgModuleAmbient R
+followed by the ambient cochain tensor functor. Both routes have the same balanced tensor
+terms and module maps. -/
 def bimoduleTensorAmbientIso :
     bimoduleTensor (R := R) (S := S) E ⋙ fgModuleAmbient S ≅
       fgModuleAmbient R ⋙ ModuleCat.bimoduleTensorCochain (S := S) E := Iso.refl _
 
-/-- The whole ambient comparison keeps the original tensor term identity. -/
+/-- For a commuting left-S/right-R bimodule E finite over S, K ∈ Bounded(FGModuleCat R), and j ∈
+ℤ, the jth component of bimoduleTensorAmbientIso(E).hom is the identity of the ambient module
+E⊗_R K^j. -/
 theorem bimoduleTensorAmbientIso_hom_app_f (K : Bounded (FGModuleCat.{u} R)) (j : ℤ) :
     ((bimoduleTensorAmbientIso (S := S) E).hom.app K).f j =
       𝟙 ((ModuleCat.BalancedTensor.Left.functor ℤ R S E).obj ((K.obj.X j).obj)) := rfl
@@ -131,14 +165,20 @@ variable (hE : ∀ N : ModuleCat.{u} R,
 
 include hE
 
-/-- Homology of the actual bounded output is tensor of the original ambient homology. -/
+/-- Let R,S,E share universe u, with E a commuting left-S/right-R bimodule finite over S. Assume
+Tor₁^R(E,N)=0 for every N ∈ ModuleCat.{u} R. For K ∈ Bounded(FGModuleCat.{u} R) and j ∈ ℤ, the
+ambient tensor complex has an isomorphism H^j(U_S(E⊗K)) ≅ E⊗_R H^j(U_RK), where U_R,U_S forget
+finite generation and boundedness. -/
 def bimoduleTensorAmbientHomologyIso (K : Bounded (FGModuleCat.{u} R)) (j : ℤ) :
     ((fgModuleAmbient S).obj ((bimoduleTensor (S := S) E).obj K)).homology j ≅
       (ModuleCat.BalancedTensor.Left.functor ℤ R S E).obj
         (((fgModuleAmbient R).obj K).homology j) :=
   ModuleCat.bimoduleTensorCochainHomologyIso E hE ((fgModuleAmbient R).obj K) j
 
-/-- The whole original bounded ambient homology square uses the original cochain components. -/
+/-- For rings R,S and a commuting left-S/right-R bimodule E finite over S in universe u, assume
+Tor₁^R(E,N)=0 for every N ∈ ModuleCat.{u} R. For a bounded finite-module cochain map f : K → L
+and j ∈ ℤ, the comparison maps e satisfy H^j(U_S(E⊗f))≫e_L.hom=e_K.hom≫(E⊗H^j(U_Rf)). The
+homology is computed in the ambient module categories. -/
 theorem bimoduleTensorAmbientHomologyIso_hom_naturality
     {K L : Bounded (FGModuleCat.{u} R)} (f : K ⟶ L) (j : ℤ) :
     HomologicalComplex.homologyMap
@@ -150,14 +190,20 @@ theorem bimoduleTensorAmbientHomologyIso_hom_naturality
   ModuleCat.bimoduleTensorCochainHomologyIso_hom_naturality E hE
     ((fgModuleAmbient R).map f) j
 
-/-- Right flatness preserves every original ambient quasi-isomorphism of bounded finite modules. -/
+/-- Let R,S,E share universe u, with E a commuting left-S/right-R bimodule finite over S and
+Tor₁^R(E,N)=0 for every left R-module N of that universe. If f : K → L between bounded finite
+R-module cochains is an ambient quasi-isomorphism, then its tensor image is an ambient
+quasi-isomorphism of S-module cochains. -/
 theorem bimoduleTensor_ambientQuasiIso {K L : Bounded (FGModuleCat.{u} R)} (f : K ⟶ L)
     (hf : QuasiIso ((fgModuleAmbient R).map f)) :
     QuasiIso ((fgModuleAmbient S).map ((bimoduleTensor (S := S) E).map f)) := by
   let : QuasiIso ((fgModuleAmbient R).map f) := hf
   exact ModuleCat.bimoduleTensorCochain_quasiIso E hE ((fgModuleAmbient R).map f)
 
-/-- The actual bounded tensor is a morphism of the original ambient quasi-isomorphism classes. -/
+/-- For a commuting left-S/right-R bimodule E finite over S in universe u and with Tor₁^R(E,N)=0
+for every N ∈ ModuleCat.{u} R, the bounded tensor functor sends every morphism in
+fgModuleQuasiIsomorphisms R into fgModuleQuasiIsomorphisms S. This is the inverse-image
+containment for those two ambient morphism properties. -/
 theorem bimoduleTensor_map_quasiIsomorphisms :
     fgModuleQuasiIsomorphisms R ≤
       (fgModuleQuasiIsomorphisms S).inverseImage (bimoduleTensor (S := S) E) := by
@@ -172,13 +218,16 @@ namespace CochainComplex.Bounded
 
 variable (R : Type u) [Ring R]
 
-/-- The original regular unitor restricts to the actual bounded cochains. -/
+/-- For a ring R in universe u, tensoring by the regular (R,R)-bimodule R on
+Bounded(FGModuleCat.{u} R) is naturally isomorphic to the identity functor. The degreewise
+comparison is the regular balanced tensor unitor R⊗_R K^j ≅ K^j. -/
 def bimoduleTensorRegularIso :
     bimoduleTensor (R := R) (S := R) R ≅ 𝟭 (Bounded (FGModuleCat.{u} R)) :=
   NatIso.mapCochainComplexBounded (FGModuleCat.bimoduleTensorUnitNatIso R) ≪≫
     Functor.mapCochainComplexBoundedIdIso
 
-/-- The bounded regular comparison retains the original regular component. -/
+/-- Let R be a ring, K ∈ Bounded(FGModuleCat.{u} R), and j ∈ ℤ. The jth forward component of the
+regular bounded tensor isomorphism equals the finite-module unitor R⊗_R K^j → K^j. -/
 theorem bimoduleTensorRegularIso_hom_app_f (K : Bounded (FGModuleCat.{u} R)) (j : ℤ) :
     ((bimoduleTensorRegularIso R).hom.app K).hom.f j =
       (FGModuleCat.bimoduleTensorUnitIso R (K.obj.X j)).hom := by
@@ -186,7 +235,9 @@ theorem bimoduleTensorRegularIso_hom_app_f (K : Bounded (FGModuleCat.{u} R)) (j 
     NatIso.mapCochainComplexBounded, NatTrans.mapCochainComplexBounded,
     FGModuleCat.bimoduleTensorUnitNatIso]
 
-/-- The actual bounded regular unitor multiplies the original pure coefficient into the term. -/
+/-- For a ring R, a bounded finite R-module cochain complex K, j ∈ ℤ, r ∈ R, and x ∈ K^j, the
+forward regular coefficient isomorphism sends [r,x] to r·x. The tensor is balanced over the
+possibly noncommutative ring R. -/
 theorem bimoduleTensorRegularIso_mk (K : Bounded (FGModuleCat.{u} R)) (j : ℤ)
     (r : R) (x : K.obj.X j) :
     letI : Module ℤ R := AddCommGroup.toIntModule R
@@ -203,26 +254,37 @@ variable {S : Type u} [Ring S]
   [SMulCommClass S Rᵐᵒᵖ E] [SMulCommClass S Rᵐᵒᵖ E']
   [Module.Finite S E] [Module.Finite S E']
 
-/-- The original coefficient map gives its actual original bounded cochain transformation. -/
+/-- Let R,S be rings and E,E′ commuting left-S/right-R bimodules finite over S. If f : E →ₗ[S] E′
+satisfies f(e·r)=f(e)·r for all r,e, then it induces a natural transformation between the
+bounded finite-module tensor functors for E and E′. Its degree-j component sends [e,x] to
+[f(e),x]. -/
 def bimoduleTensorTransformation (f : E →ₗ[S] E')
     (hR : ∀ (r : R) (e : E), f (MulOpposite.op r • e) = MulOpposite.op r • f e) :
     bimoduleTensor (R := R) (S := S) E ⟶ bimoduleTensor (R := R) (S := S) E' :=
   NatTrans.mapCochainComplexBounded (FGModuleCat.bimoduleTensorTransformation f hR)
 
-/-- Every actual bounded coefficient component is the original quotient coefficient map. -/
+/-- Let R,S be rings, E,E′ commuting left-S/right-R bimodules finite as S-modules, and f : E →ₗ[S]
+E′ respect the right R-action. The jth component of its bounded transformation at K equals the
+finite-module balanced coefficient map for K^j, with value [e,x] ↦ [f(e),x]. -/
 theorem bimoduleTensorTransformation_app_f (f : E →ₗ[S] E')
     (hR : ∀ (r : R) (e : E), f (MulOpposite.op r • e) = MulOpposite.op r • f e)
     (K : Bounded (FGModuleCat.{u} R)) (j : ℤ) :
     ((bimoduleTensorTransformation f hR).app K).hom.f j =
       FGModuleCat.bimoduleTensorCoefficientComponent f hR (K.obj.X j) := rfl
 
-/-- An original coefficient isomorphism restricts with its actual original inverse. -/
+/-- Let R,S be rings and E,E′ commuting left-S/right-R bimodules finite over S. An S-linear
+equivalence e : E ≃ₗ[S] E′ commuting with the right R-action induces a natural isomorphism
+between their bounded finite-module tensor functors. The forward and inverse maps apply e and
+e⁻¹ to the coefficient factor. -/
 def bimoduleTensorCoefficientIso (e : E ≃ₗ[S] E')
     (hR : ∀ (r : R) (x : E), e (MulOpposite.op r • x) = MulOpposite.op r • e x) :
     bimoduleTensor (R := R) (S := S) E ≅ bimoduleTensor (R := R) (S := S) E' :=
   NatIso.mapCochainComplexBounded (FGModuleCat.bimoduleTensorIso e hR)
 
-/-- The original coefficient comparison remains the actual component on every bounded term. -/
+/-- For rings R,S, commuting left-S/right-R bimodules E,E′ finite as S-modules, and an S-linear
+equivalence e respecting the right R-action, the degree-j forward component of the bounded
+coefficient isomorphism at K equals the finite-module coefficient isomorphism at K^j. It sends
+[x,m] to [e(x),m]. -/
 theorem bimoduleTensorCoefficientIso_hom_app_f (e : E ≃ₗ[S] E')
     (hR : ∀ (r : R) (x : E), e (MulOpposite.op r • x) = MulOpposite.op r • e x)
     (K : Bounded (FGModuleCat.{u} R)) (j : ℤ) :
@@ -238,12 +300,18 @@ variable {R S T : Type u} [Ring R] [Ring S] [Ring T]
   [Module S E] [Module Rᵐᵒᵖ E] [SMulCommClass S Rᵐᵒᵖ E] [Module.Finite S E]
   [Module T F] [Module Sᵐᵒᵖ F] [SMulCommClass T Sᵐᵒᵖ F] [Module.Finite T F]
 
-/-- The original composite coefficient is prolonged and restricted to original bounded cochains. -/
+/-- Let R,S,T be rings in universe u, E a commuting left-S/right-R bimodule finite over S, and F a
+commuting left-T/right-S bimodule finite over T. The composite coefficient F⊗_S E is a
+left-T/right-R bimodule finite over T. Tensoring by it gives Bounded(FGModuleCat R) →
+Bounded(FGModuleCat T). -/
 abbrev bimoduleTensorComposite : Bounded (FGModuleCat.{u} R) ⥤ Bounded (FGModuleCat.{u} T) :=
   Functor.mapCochainComplexBounded
     (FGModuleCat.bimoduleTensorCompositeFunctor (R := R) (S := S) (T := T) E F)
 
-/-- The actual bounded associator is the original finite-module tensor associator in each degree. -/
+/-- For rings R,S,T, a left-S/right-R bimodule E finite over S, and a left-T/right-S bimodule F
+finite over T, there is a natural isomorphism from the bounded tensor functor of F⊗_S E to
+tensoring first by E and then by F. Its degreewise map is the associator (F⊗_S E)⊗_R K^j ≅
+F⊗_S(E⊗_R K^j), preserving the order F,E,K. -/
 def bimoduleTensorCompIso :
     bimoduleTensorComposite (R := R) (S := S) (T := T) E F ≅
       bimoduleTensor (R := R) (S := S) E ⋙ bimoduleTensor (R := S) (S := T) F :=
@@ -253,7 +321,10 @@ def bimoduleTensorCompIso :
         (FGModuleCat.bimoduleTensor (R := R) (S := S) E)
         (FGModuleCat.bimoduleTensor (R := S) (S := T) F)).symm
 
-/-- The entire actual bounded associator component is the original finite-module component. -/
+/-- Let R,S,T be rings, E a commuting left-S/right-R bimodule finite over S, and F a commuting
+left-T/right-S bimodule finite over T. For K ∈ Bounded(FGModuleCat R) and j ∈ ℤ, the forward
+component of bimoduleTensorCompIso(E,F) is the finite-module associator (F⊗_S E)⊗_R K^j →
+F⊗_S(E⊗_R K^j). -/
 theorem bimoduleTensorCompIso_hom_app_f (K : Bounded (FGModuleCat.{u} R)) (j : ℤ) :
     ((bimoduleTensorCompIso (R := R) (S := S) (T := T) E F).hom.app K).hom.f j =
       (FGModuleCat.bimoduleTensorCompIso (R := R) (S := S) (T := T) E F (K.obj.X j)).hom := by
@@ -284,38 +355,54 @@ variable (R S P Q : Type u) [Ring R] [Ring S]
 
 local notation "e₀" => ModuleCat.bimoduleTensorMoritaEquivalence R S P Q a ha b hb
 
-/-- Original Morita contractions give the actual bounded finite-module tensor equivalence. -/
+/-- Let R,S be rings in universe u, P a commuting left-R/right-S bimodule, and Q a commuting
+left-S/right-R bimodule. Suppose a : P⊗_S Q ≃ R and b : Q⊗_R P ≃ S are equivalences preserving
+both endpoint actions. Their module Morita equivalence restricts to Bounded(FGModuleCat.{u} R)
+≌ Bounded(FGModuleCat.{u} S). The forward functor is Q⊗_R− and the inverse is P⊗_S−; the
+contractions give the required finite generation. -/
 def bimoduleTensorMoritaEquivalence :
     Bounded (FGModuleCat.{u} R) ≌ Bounded (FGModuleCat.{u} S) :=
   (e₀).fgModuleCatEquivalence.mapCochainComplexBounded
 
-/-- Its forward functor is precisely the original bounded Q tensor with earned finiteness. -/
+/-- For rings R,S and commuting bimodules P_(R,S), Q_(S,R) with bimodule equivalences P⊗_S Q≃R and
+Q⊗_R P≃S, the forward functor of the induced bounded finite-module Morita equivalence equals
+the bounded tensor functor Q⊗_R−. Its left-S finiteness is obtained from the contraction data. -/
 theorem bimoduleTensorMoritaEquivalence_functor :
     (bimoduleTensorMoritaEquivalence R S P Q a ha b hb).functor =
       letI := (ModuleCat.bimoduleTensorMorita_properties R S P Q a ha b hb).2.1
       bimoduleTensor (R := R) (S := S) Q := rfl
 
-/-- Its inverse is precisely the original bounded P tensor with earned finiteness. -/
+/-- Let P_(R,S), Q_(S,R) be commuting bimodules over rings R,S, with bimodule equivalences P⊗_S
+Q≃R and Q⊗_R P≃S. The inverse bounded finite-module Morita functor is P⊗_S−. The required
+left-R finiteness of P is obtained from these contraction data. -/
 theorem bimoduleTensorMoritaEquivalence_inverse :
     (bimoduleTensorMoritaEquivalence R S P Q a ha b hb).inverse =
       letI := (ModuleCat.bimoduleTensorMorita_properties R S P Q a ha b hb).1
       bimoduleTensor (R := S) (S := R) P := rfl
 
-/-- The bounded unit is the original finite Morita unit on each original term. -/
+/-- Let R,S be rings and P_(R,S),Q_(S,R) commuting bimodules with specified bimodule equivalences
+P⊗_S Q≃R and Q⊗_R P≃S. Let e₀ be their induced finite-module tensor equivalence. At K ∈
+Bounded(FGModuleCat R) and j ∈ ℤ, the bounded unit component equals e₀.unit at K^j : K^j →
+P⊗_S(Q⊗_R K^j). -/
 theorem bimoduleTensorMoritaEquivalence_unitIso_hom_app_f
     (K : Bounded (FGModuleCat.{u} R)) (j : ℤ) :
     ((bimoduleTensorMoritaEquivalence R S P Q a ha b hb).unitIso.hom.app K).hom.f j =
       (e₀).fgModuleCatEquivalence.unitIso.hom.app (K.obj.X j) :=
   Equivalence.mapCochainComplexBounded_unitIso_hom_app_f _ K j
 
-/-- The bounded counit is the original finite Morita counit on each original term. -/
+/-- Let P_(R,S), Q_(S,R) be commuting bimodules with bimodule equivalences P⊗_S Q≃R and Q⊗_R P≃S.
+For K ∈ Bounded(FGModuleCat S) and j ∈ ℤ, the bounded Morita counit equals the finite-module
+tensor-equivalence counit at K^j, with source Q⊗_R(P⊗_S K^j) and target K^j. -/
 theorem bimoduleTensorMoritaEquivalence_counitIso_hom_app_f
     (K : Bounded (FGModuleCat.{u} S)) (j : ℤ) :
     ((bimoduleTensorMoritaEquivalence R S P Q a ha b hb).counitIso.hom.app K).hom.f j =
       (e₀).fgModuleCatEquivalence.counitIso.hom.app (K.obj.X j) :=
   Equivalence.mapCochainComplexBounded_counitIso_hom_app_f _ K j
 
-/-- Forgetting both finite and bounded restrictions retains the whole original module unit. -/
+/-- For rings R,S and commuting bimodules P_(R,S),Q_(S,R) with specified bimodule equivalences
+P⊗_S Q≃R and Q⊗_R P≃S, let K ∈ Bounded(FGModuleCat R) and j ∈ ℤ. Forgetting finite generation
+and boundedness from the degree-j unit gives the ambient module-equivalence unit at K^j, with
+target P⊗_S(Q⊗_R K^j). -/
 theorem bimoduleTensorMoritaEquivalence_unitIso_module
     (K : Bounded (FGModuleCat.{u} R)) (j : ℤ) :
     (((bimoduleTensorMoritaEquivalence R S P Q a ha b hb).unitIso.hom.app K).hom.f j).hom =
@@ -323,7 +410,9 @@ theorem bimoduleTensorMoritaEquivalence_unitIso_module
   rw [bimoduleTensorMoritaEquivalence_unitIso_hom_app_f]
   rfl
 
-/-- Forgetting both restrictions retains the whole original module contraction counit. -/
+/-- Let R,S be rings and P_(R,S), Q_(S,R) a commuting bimodule pair with contractions P⊗_S Q≃R and
+Q⊗_R P≃S. For K ∈ Bounded(FGModuleCat S) and j ∈ ℤ, the underlying degree-j bounded counit is
+the ambient module-equivalence counit Q⊗_R(P⊗_S K^j) → K^j. -/
 theorem bimoduleTensorMoritaEquivalence_counitIso_module
     (K : Bounded (FGModuleCat.{u} S)) (j : ℤ) :
     (((bimoduleTensorMoritaEquivalence R S P Q a ha b hb).counitIso.hom.app K).hom.f j).hom =
@@ -331,7 +420,10 @@ theorem bimoduleTensorMoritaEquivalence_counitIso_module
   rw [bimoduleTensorMoritaEquivalence_counitIso_hom_app_f]
   rfl
 
-/-- The actual original forward Morita tensor preserves every ambient weak equivalence. -/
+/-- For rings R,S and commuting bimodules P_(R,S), Q_(S,R) with bimodule equivalences P⊗_S Q≃R and
+Q⊗_R P≃S, the bounded Morita forward functor Q⊗_R− sends fgModuleQuasiIsomorphisms R to
+fgModuleQuasiIsomorphisms S. These properties test homology in the ambient module cochain
+categories, so the statement applies without an abelian finite-module category hypothesis. -/
 theorem bimoduleTensorMoritaEquivalence_map_quasiIsomorphisms :
     fgModuleQuasiIsomorphisms R ≤ (fgModuleQuasiIsomorphisms S).inverseImage
       (bimoduleTensorMoritaEquivalence R S P Q a ha b hb).functor := by
@@ -339,7 +431,10 @@ theorem bimoduleTensorMoritaEquivalence_map_quasiIsomorphisms :
   let : Module.Finite S Q := H.2.1
   exact bimoduleTensor_map_quasiIsomorphisms (R := R) (S := S) Q H.2.2.2
 
-/-- The actual original inverse Morita tensor preserves every ambient weak equivalence. -/
+/-- Let R,S be rings and P_(R,S), Q_(S,R) commuting bimodules with contractions P⊗_S Q≃R and Q⊗_R
+P≃S preserving both endpoint actions. The inverse bounded tensor functor P⊗_S− sends every
+ambient quasi-isomorphism of bounded finite S-module cochains to an ambient quasi-isomorphism
+of bounded finite R-module cochains. -/
 theorem bimoduleTensorMoritaEquivalence_inverse_map_quasiIsomorphisms :
     fgModuleQuasiIsomorphisms S ≤ (fgModuleQuasiIsomorphisms R).inverseImage
       (bimoduleTensorMoritaEquivalence R S P Q a ha b hb).inverse := by

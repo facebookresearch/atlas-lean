@@ -1,3 +1,6 @@
-# Linear Homotopy Functor Factors
+# Fixed-source linear Hom descent has its quotient factorization
 
-Its original complex input factors by the native quotient-lift Iso.
+Fixed-source linear Hom descent has its quotient factorization.
+
+The source homotopy quotient followed by the descended Hom functor is naturally isomorphic to
+the cochain linear Hom functor followed by the module homotopy quotient.

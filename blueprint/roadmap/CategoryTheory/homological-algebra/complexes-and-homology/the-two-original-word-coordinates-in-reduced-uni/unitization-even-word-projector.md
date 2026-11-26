@@ -1,3 +1,6 @@
-# Unitization Even Word projector
+# The ideal-leading word lies in the reduced normalized kernel
 
-The even coordinate lies in the reduced kernel, including degree zero.
+The ideal-leading word lies in the reduced normalized kernel.
+
+The even word followed by the normalized scalar projector is zero in every degree, including
+degree zero.

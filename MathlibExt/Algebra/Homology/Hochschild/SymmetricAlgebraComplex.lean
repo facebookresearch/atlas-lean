@@ -12,12 +12,16 @@ module
 public import MathlibExt.Algebra.Homology.Hochschild.SymmetricPositiveAlgebra
 
 /-!
-# Algebra-linear symmetric Hochschild complexes
+# Algebra-linear Hochschild complexes and proper-shuffle relations
 
-The coefficient-head A-action makes the raw symmetric
-Hochschild boundary A-linear. Proper both-positive shuffle
-relations form a subcomplex, and their quotient projection
-is an A-linear chain map. Tensor tails remain over k.
+Let k be a commutative ring, A a commutative k-algebra and M an A-module with compatible
+k-action. Multiplication on the coefficient makes the Hochschild differential A-linear while
+the tensor tails remain over k. Images of shuffle pairings with both input degrees positive
+form an A-linear subcomplex. The quotient projection is an A-linear chain map, and these
+relation modules vanish in degrees zero and one.
+
+For commutative Hochschild chains and proper Harrison shuffle relations, see J.-L. Loday,
+Cyclic Homology, 2nd ed., §4.5.
 -/
 
 @[expose] public section
@@ -34,7 +38,10 @@ variable (k : Type u) (A : Type v) (M : Type w) [CommRing k] [CommRing A]
   [Algebra k A] [AddCommGroup M] [Module k M] [Module A M]
   [SMulCommClass k A M] [IsScalarTower k A M]
 
-/-- The original proper relation module vanishes in exactly the two original low chain degrees. -/
+/-- The proper-shuffle relation modules vanish in degrees zero and one.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M,
+algebraPositiveRelations(n)=0 when n≤1, since no two positive shuffle degrees sum to n. -/
 theorem algebraPositiveRelations_low (n : ℕ) (hn : n ≤ 1) : algebraPositiveRelations k A M n = ⊥ := by
   letI : MonoidalCategoryStruct (ModuleCat.{max u v w} k) :=
     ModuleCat.UniverseTensor.tensorStructure.{u, max v w} (R := k)
@@ -56,13 +63,19 @@ theorem algebraPositiveRelations_low (n : ℕ) (hn : n ≤ 1) : algebraPositiveR
     rw [HomologicalComplex.ChainGradedPairing.positiveImages_one] at hx
     exact (Submodule.mem_bot (R := k)).mp hx
 
-/-- The original raw boundary as an morphism of algebra modules. -/
+/-- The A-linear Hochschild differential on coefficient tensor chains.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, this is b : M
+⊗[k] A⊗(n+1) → M ⊗[k] A⊗n, viewed as A-linear through multiplication on M. -/
 def algebraRawDifferential (n : ℕ) :
     ModuleCat.of A (M ⊗[k] TensorPower k (n + 1) A) ⟶
       ModuleCat.of A (M ⊗[k] TensorPower k n A) :=
   ModuleCat.ofHom (algebraBoundary k A M n)
 
-/-- The original algebra-linear raw boundary squares to zero by the original k-complex law. -/
+/-- Two successive algebra-linear Hochschild differentials compose to zero.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, bₙ₊₁ ≫ bₙ = 0
+on the A-linear coefficient tensor complex. -/
 theorem algebraRawDifferential_comp (n : ℕ) :
     algebraRawDifferential k A M (n + 1) ≫ algebraRawDifferential k A M n = 0 := by
   apply ModuleCat.hom_ext
@@ -70,12 +83,18 @@ theorem algebraRawDifferential_comp (n : ℕ) :
   intro x
   exact ConcreteCategory.congr_hom ((chainComplex k A M).d_comp_d (n + 2) (n + 1) n) x
 
-/-- The raw symmetric Hochschild complex with its original algebra action. -/
+/-- The algebra-linear symmetric Hochschild chain complex.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, its nth term
+is M ⊗[k] A⊗n with the Hochschild differential and the A-action on the coefficient. -/
 def algebraRawComplex : ChainComplex (ModuleCat.{max u v w} A) ℕ :=
   ChainComplex.of (fun n => ModuleCat.of A (M ⊗[k] TensorPower k n A))
     (algebraRawDifferential k A M) (algebraRawDifferential_comp k A M)
 
-/-- Restriction of the original boundary to the proper relation modules. -/
+/-- The Hochschild differential restricted to proper-shuffle images.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, b restricts
+from the relation module in degree n+1 to the relation module in degree n. -/
 def algebraPositiveRelationDifferential (n : ℕ) :
     ModuleCat.of A (algebraPositiveRelations k A M (n + 1)) ⟶
       ModuleCat.of A (algebraPositiveRelations k A M n) :=
@@ -84,7 +103,10 @@ def algebraPositiveRelationDifferential (n : ℕ) :
       (algebraPositiveRelations k A M n)
       (fun x => algebraPositiveRelations_boundary k A M n x.property))
 
-/-- The restricted relation boundary squares to zero by its original ambient differential. -/
+/-- The restricted proper-shuffle differential squares to zero.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, successive
+restricted relation differentials compose to zero. -/
 theorem algebraPositiveRelationDifferential_comp (n : ℕ) :
     algebraPositiveRelationDifferential k A M (n + 1) ≫
       algebraPositiveRelationDifferential k A M n = 0 := by
@@ -94,12 +116,18 @@ theorem algebraPositiveRelationDifferential_comp (n : ℕ) :
   apply Subtype.ext
   exact ConcreteCategory.congr_hom ((chainComplex k A M).d_comp_d (n + 2) (n + 1) n) x.val
 
-/-- The proper relation subcomplex with its original A-module structure. -/
+/-- The subcomplex of algebra-linear proper-shuffle relations.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, degree n is
+algebraPositiveRelations(n), the A-submodule generated by both-positive shuffle images. -/
 def algebraPositiveRelationComplex : ChainComplex (ModuleCat.{max u v w} A) ℕ :=
   ChainComplex.of (fun n => ModuleCat.of A (algebraPositiveRelations k A M n))
     (algebraPositiveRelationDifferential k A M) (algebraPositiveRelationDifferential_comp k A M)
 
-/-- The algebra-linear proper relation inclusion, with native subtype components. -/
+/-- The inclusion of proper-shuffle relations into Hochschild chains.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, the relation
+subcomplex maps to algebraRawComplex through its degreewise submodule inclusions. -/
 def algebraPositiveRelationInclusion :
     algebraPositiveRelationComplex k A M ⟶ algebraRawComplex k A M :=
   ChainComplex.ofHom
@@ -112,7 +140,10 @@ def algebraPositiveRelationInclusion :
       rw [ChainComplex.of_d, ChainComplex.of_d]
       rfl)
 
-/-- The original algebra-linear raw complex projects through its proper quotient classes. -/
+/-- The A-linear projection to the proper-shuffle quotient complex.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, quotient each
+raw Hochschild term by the both-positive shuffle relation submodule. -/
 def algebraRawPositiveProjection :
     algebraRawComplex k A M ⟶ algebraPositiveQuotientComplex k A M :=
   ChainComplex.ofHom (fun n => ModuleCat.ofHom (algebraPositiveRelations k A M n).mkQ) (by
@@ -124,7 +155,10 @@ def algebraRawPositiveProjection :
       (algebraPositiveRelations k A M n) (algebraBoundary k A M n)
       (h := algebraPositiveRelations_boundary k A M n))
 
-/-- The relation inclusion is killed by the original algebra-linear quotient projection. -/
+/-- The relation inclusion followed by the proper quotient projection is zero.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M,
+algebraPositiveRelationInclusion ≫ algebraRawPositiveProjection = 0 as chain maps. -/
 @[reassoc]
 theorem algebraPositiveRelationInclusion_projection :
     algebraPositiveRelationInclusion k A M ≫ algebraRawPositiveProjection k A M = 0 := by

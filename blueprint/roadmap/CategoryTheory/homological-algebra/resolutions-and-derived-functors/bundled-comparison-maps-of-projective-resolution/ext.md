@@ -1,5 +1,5 @@
-# Ext
+# Uniqueness of projective-resolution morphisms
 
-Two morphisms of projective resolutions over the same morphism of
-resolved objects are equal once their underlying chain maps are equal;
-the remaining field is a proof.
+In a category `C` with a zero object and zero morphisms, two
+projective-resolution morphisms `φ,ψ : P → P′` over the same
+map `f : X → Y` are equal if their underlying chain maps are equal.

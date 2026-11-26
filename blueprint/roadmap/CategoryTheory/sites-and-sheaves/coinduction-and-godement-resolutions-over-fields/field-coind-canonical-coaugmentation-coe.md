@@ -1,3 +1,6 @@
-# Field Coind Canonical Coaugmentation coefficient zero
+# Degree zero coaugmentation is natural in coefficients
 
-The same actual coefficient map preserves the canonical degree-zero augmented unit.
+Degree zero coaugmentation is natural in coefficients.
+
+The source coaugmentation component followed by the degree-zero coinduction map equals the
+coefficient map followed by the target coaugmentation component.

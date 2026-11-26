@@ -1,4 +1,6 @@
-# Partial Total Zero Row To Partial Total comp partial Totalι
+# Row-zero full-total inclusion factors through stage zero
 
-The zero-row partial-total inclusion factors the literal full-total
-zero-row inclusion.
+Row-zero full-total inclusion factors through stage zero.
+
+The row-zero inclusion into `B.partialTotal 0`, followed by `B.partialTotalι 0`, is
+`B.partialTotalZeroRowToTotal`.

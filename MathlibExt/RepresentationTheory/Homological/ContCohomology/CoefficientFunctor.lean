@@ -12,10 +12,18 @@ module
 public import Mathlib.RepresentationTheory.Homological.ContCohomology.Functoriality
 
 /-!
-# Continuous homogeneous cochains as a coefficient functor
+# Continuous homogeneous cochains as an additive coefficient functor
 
-We bundle homogeneous continuous cochains as an additive functor in the
-coefficient representation, for a fixed topological group.
+Let R be a ring with a topology and G a topological group, with scalar
+universe u and group universe v. The coefficient category consists of
+topological R-modules with G-representations by continuous R-linear maps,
+with carriers in max(v,w).
+
+In degree q, homogeneous cochains are invariants of the (q+1)-fold
+iterated compact-open continuous-function carrier. Their differential is
+the alternating homogeneous-resolution differential. Finite-tuple evaluation
+gives its coordinate-deletion values. A coefficient morphism acts by
+postcomposition in every degree, and this cochain functor is additive.
 -/
 
 @[expose] public section
@@ -63,8 +71,14 @@ private theorem resolutionMap_add
       ext F x
       rfl
 
-/-- Homogeneous continuous cochains as a functor in the coefficient
-representation. -/
+/-- Let R be a ring equipped with a topology and G a topological
+group. A coefficient X is a topological R-module with a G-representation
+by continuous R-linear maps. Scalar, group and carrier universes are independent.
+The coefficient functor X ↦ C_hom^•(G,X) takes values in
+nonnegative cochain complexes of topological R-modules.
+A continuous equivariant R-linear f : X → Y acts on cochains by
+postcomposition, commutes with the homogeneous differential, and
+preserves addition and zero morphisms. -/
 noncomputable def homogeneousCochainsFunctor :
     TopRep.{max v w, u, v} k G ⥤
       CochainComplex (TopModuleCat.{max v w} k) ℕ where

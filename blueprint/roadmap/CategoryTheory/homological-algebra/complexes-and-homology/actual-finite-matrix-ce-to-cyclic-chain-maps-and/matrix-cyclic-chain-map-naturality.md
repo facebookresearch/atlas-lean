@@ -1,3 +1,6 @@
-# Matrix Cyclic Chain Map naturality
+# Coefficient naturality of positive-bracket matrix cyclic chain maps
 
-The positive-convention whole matrix chain family is natural in the coefficient map.
+Coefficient naturality of positive-bracket matrix cyclic chain maps.
+
+The positive-bracket matrix coefficient map and the induced cyclic quotient map commute with
+the matrix trace chain map.

@@ -19,11 +19,15 @@ public import Mathlib.Topology.Separation.Regular
 public import Mathlib.Tactic.Group
 
 /-!
-# Extracting inhomogeneous continuous one-cocycles
+# Recovering continuous inhomogeneous one-cocycles
 
-A homogeneous degree-one cycle determines a continuous inhomogeneous
-one-cocycle by evaluation at `(1, g)`.  Surjectivity of the homology
-projection in every positive degree is provided by `ContinuousHomology`.
+A homogeneous degree-one continuous cycle f determines c(g) = f(1,g). Diagonal equivariance
+reconstructs f(x,y) = ρ(x)c(x⁻¹y), and the differential formula d¹f(x,y,z) = f(y,z) − f(x,z) +
+f(x,y) gives c(gh) = ρ(g)c(h) + c(g).
+
+Every continuous H¹ class has a homogeneous cycle representative. When the coefficient module
+is discrete and the group is compact and totally disconnected, a continuous one-cocycle
+vanishes on some open normal subgroup, and that subgroup fixes every value of the cocycle.
 -/
 
 @[expose] public section
@@ -43,23 +47,29 @@ variable {k : Type u} {G : Type v} [Ring k] [TopologicalSpace k]
   [ContinuousAdd k] [ContinuousSMul k k]
 
 omit [ContinuousAdd k] [ContinuousSMul k k] in
-/-- Every continuous degree-one cohomology class has a homogeneous cocycle
-representative. -/
+/-- Homogeneous representatives of continuous degree-one classes.
+
+For a topological representation X over k, every element of continuous H¹(G,X) is the image of
+a homogeneous continuous one-cycle under the homology projection. -/
 theorem degreeOneπ_surjective
     (X : TopRep.{max v u w} k G) :
     Function.Surjective (π.{u, v, max u w} X 1) := by
   exact π_surjective_succ X 0
 
-/-- The inhomogeneous function underlying a homogeneous continuous
-degree-one cocycle, obtained by evaluating at `(1, g)`. -/
+/-- The inhomogeneous function of a homogeneous one-cycle.
+
+Include z into the homogeneous degree-one cochains and evaluate at (1,g). This defines c(g) =
+f(1,g) for the included cochain f. -/
 def inhomogeneousOneCocycle
     (X : TopRep.{max v u w} k G)
     (z : cocycles.{u, v, max u w} X 1) (g : G) : X :=
   ((TopRep.homogeneousCochains.{u, v, max u w} X).iCycles 1 z).val 1 g
 
 omit [ContinuousAdd k] [ContinuousSMul k k] in
-/-- The inhomogeneous function extracted from a continuous cycle is
-continuous. -/
+/-- Continuity of the inhomogeneous evaluation.
+
+For a homogeneous continuous one-cycle z, the function g ↦ f(1,g), with f its included
+cochain, is continuous. -/
 theorem inhomogeneousOneCocycle_continuous
     (X : TopRep.{max v u w} k G)
     (z : cocycles.{u, v, max u w} X 1) :
@@ -67,8 +77,10 @@ theorem inhomogeneousOneCocycle_continuous
   (((TopRep.homogeneousCochains.{u, v, max u w} X).iCycles 1 z).val 1).continuous
 
 omit [ContinuousAdd k] [ContinuousSMul k k] in
-/-- Diagonal invariance reconstructs every homogeneous value from the
-inhomogeneous evaluation at `(1, x⁻¹y)`. -/
+/-- Reconstruction by diagonal equivariance.
+
+For the inhomogeneous function c(g) = f(1,g) extracted from a homogeneous cycle, every value
+of f satisfies f(x,y) = ρ(x)c(x⁻¹y). -/
 theorem inhomogeneousOneCocycle_homogeneous_value
     (X : TopRep.{max v u w} k G)
     (z : cocycles.{u, v, max u w} X 1) (x y : G) :
@@ -82,8 +94,10 @@ theorem inhomogeneousOneCocycle_homogeneous_value
   simpa only [inv_mul_cancel, inhomogeneousOneCocycle, f, K] using hvalue
 
 omit [ContinuousAdd k] [ContinuousSMul k k] in
-/-- Homogenizing the function extracted from a cycle recovers its included
-homogeneous cochain.  Only diagonal invariance is used here. -/
+/-- Homogenization recovers the included cycle cochain.
+
+If the homogenization of the function c extracted from z is jointly continuous, then
+homOneCochain X c equals the homogeneous cochain obtained by including z into C¹. -/
 theorem homOneCochain_inhomogeneousOneCocycle
     (X : TopRep.{max v u w} k G)
     (z : cocycles.{u, v, max u w} X 1)
@@ -101,7 +115,10 @@ theorem homOneCochain_inhomogeneousOneCocycle
   exact inhomogeneousOneCocycle_homogeneous_value X z x y
 
 omit [ContinuousAdd k] [ContinuousSMul k k] in
-/-- Explicit degree-one homogeneous differential on an arbitrary cochain. -/
+/-- The alternating homogeneous degree-one differential.
+
+For an arbitrary homogeneous one-cochain f, its differential has value d¹f(x,y,z) = f(y,z) −
+f(x,z) + f(x,y). -/
 theorem homogeneousOneCochain_d_apply
     (X : TopRep.{max v u w} k G)
     (f : (TopRep.homogeneousCochains.{u, v, max u w} X).X 1)
@@ -147,9 +164,10 @@ private theorem eq_zero_of_eq_add_self {A : Type*} [AddCommGroup A]
   exact (add_right_cancel h').symm
 
 omit [ContinuousAdd k] [ContinuousSMul k k] in
-/-- The function extracted from a homogeneous degree-one cycle satisfies the
-inhomogeneous additive cocycle identity in the orientation used by
-`homOneCochain`. -/
+/-- The cocycle equation of the extracted function.
+
+For a homogeneous continuous one-cycle z, its extracted function c satisfies c(gh) = ρ(g)c(h)
++ c(g) for all g,h ∈ G. -/
 theorem inhomogeneousOneCocycle_cocycle
     (X : TopRep.{max v u w} k G)
     (z : cocycles.{u, v, max u w} X 1) (g h : G) :
@@ -176,8 +194,10 @@ theorem inhomogeneousOneCocycle_cocycle
   rw [hfg] at hdiff
   exact eq_add_of_sub_add_eq_zero hdiff
 
-/-- Inclusion of the distinguished value at scalar `1` of `oneCocycleMor`
-recovers its homogeneous one-cochain. -/
+/-- The included value of the rank-one cycle map at one.
+
+For a cocycle c with jointly continuous homogenization, applying its cycle map to the lifted
+scalar 1 and then including into C¹ gives homOneCochain X c. -/
 theorem oneCocycleMor_apply_one_iCycles
     (X : TopRep.{max v u w} k G) (c : G → X)
     (hcocycle : ∀ g h : G, c (g * h) = X.ρ g (c h) + c g)
@@ -195,8 +215,11 @@ theorem oneCocycleMor_apply_one_iCycles
   change (1 : k) • _ = _
   rw [one_smul]
 
-/-- A cocycle reconstructed pointwise from the inhomogeneous values of a
-continuous cycle packages back to that same cycle at scalar `1`. -/
+/-- Recovery of a cycle from its inhomogeneous values.
+
+Let z be a homogeneous continuous one-cycle. If c(g) equals the inhomogeneous function of z
+for every g, and c has the stated cocycle and joint-continuity properties, then its rank-one
+cycle map sends the lifted scalar 1 to z. -/
 theorem oneCocycleMor_apply_one_eq_of_eq_inhomogeneousOneCocycle
     (X : TopRep.{max v u w} k G)
     (z : cocycles.{u, v, max u w} X 1) (c : G → X)
@@ -223,9 +246,11 @@ theorem oneCocycleMor_apply_one_eq_of_eq_inhomogeneousOneCocycle
   exact inhomogeneousOneCocycle_homogeneous_value X z x y
 
 omit [ContinuousAdd k] [ContinuousSMul k k] in
-/-- A continuous cocycle into a discrete representation has an open normal
-subgroup on which it vanishes; normality and the cocycle law imply that this
-subgroup fixes every value of the cocycle. -/
+/-- A normal subgroup annihilating a continuous discrete cocycle.
+
+For a compact totally disconnected topological group G and a discrete topological
+representation X, every continuous one-cocycle c vanishes on an open normal subgroup H. Every
+h ∈ H also satisfies ρ(h)c(g) = c(g) for all g ∈ G. -/
 theorem exists_openNormalSubgroup_le_cocycle_zero_and_fixed
     (X : TopRep.{max v u w} k G) [DiscreteTopology X]
     [CompactSpace G] [TotallyDisconnectedSpace G]

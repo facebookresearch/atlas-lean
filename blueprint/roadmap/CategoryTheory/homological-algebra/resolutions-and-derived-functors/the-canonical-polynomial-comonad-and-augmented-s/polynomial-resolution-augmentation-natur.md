@@ -1,3 +1,6 @@
-# Polynomial Resolution augmentation naturality
+# Compatibility of polynomial resolution operators with augmentation
 
-All actual simplicial maps commute with the actual augmentation.
+Compatibility of polynomial resolution operators with augmentation.
+
+For any simplicial operator from degree `m` to degree `n`, applying the operator and then
+augmenting to `A` equals augmenting directly from degree `m`.

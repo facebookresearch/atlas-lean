@@ -1,3 +1,5 @@
-# Op Coaugmentation exact succ
+# Exactness of positive opposite cochain rows
 
-Positive exactness passes to the original opposite complex in the same degrees.
+In an abelian category `C`, a quasi-isomorphism `ε : K → X[0]`
+gives exact cochain rows `(K.op)^n → (K.op)^(n+1) →
+(K.op)^(n+2)` in every nonnegative degree.

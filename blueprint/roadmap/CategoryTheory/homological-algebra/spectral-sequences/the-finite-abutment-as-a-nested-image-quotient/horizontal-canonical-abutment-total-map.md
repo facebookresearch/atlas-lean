@@ -1,3 +1,4 @@
-# Horizontal Canonical Abutment Total Map
+# Filtration map from bottom to the upper abutment cut
 
-Composite map from bottom to the finite upper abutment stage.
+For p,q : ℕ, horizontalCanonicalAbutmentTotalMap is the EInt order morphism ⊥→u, with
+u=(p+q+1:ℤ).

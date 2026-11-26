@@ -1,3 +1,5 @@
-# Bounded map Homological Complex obj
+# Zero-preserving functors retain bounded cochain support
 
-The original functor carries original zero terms to zero terms in the same window.
+Let C,D be categories with zero morphisms and F : C → D preserve zero morphisms. If K is a
+bounded integer cochain complex, its degreewise image under F is bounded. A support interval
+for K is also a support interval for F(K), because F carries zero terms to zero objects.

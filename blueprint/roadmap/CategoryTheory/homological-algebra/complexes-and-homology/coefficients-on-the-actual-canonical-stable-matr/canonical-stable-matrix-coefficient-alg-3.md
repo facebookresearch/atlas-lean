@@ -1,3 +1,5 @@
-# Canonical Stable Matrix Coefficient Alg Hom id
+# The identity algebra map induces the identity stable matrix map
 
-Uniqueness of the direct-limit lift retains the identity coefficient map.
+For a commutative ring k and an associative unital
+k-algebra A, the stable nonunital algebra map induced by
+id_A is id_(Mat_∞(A)).

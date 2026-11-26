@@ -1,3 +1,6 @@
-# Epsilon At Pos succ eq
+# The successor-position counit insertion formula
 
-Later raw positions recurse under `G`.
+The successor-position counit insertion formula.
+
+Counit insertion at position `k+1` is the preceding-degree insertion at `k`, evaluated at
+`G(X)`.

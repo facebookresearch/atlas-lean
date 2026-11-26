@@ -1,5 +1,5 @@
 # Actual canonical stable matrix HC maps at every native working height
 
-- [Canonical Stable Matrix Cyclic Homology Map At Height](canonical-stable-matrix-cyclic-homology.md)
-- [Matrix Cyclic Homology Map At Height](matrix-cyclic-homology-map-at-height.md)
-- [Canonical Stable Matrix Cyclic Homology Map At Height finite](canonical-stable-matrix-cyclic-homology-2.md)
+- [The lifted stable matrix Lie-to-cyclic homology map](canonical-stable-matrix-cyclic-homology.md)
+- [The lifted finite matrix Lie-to-cyclic homology map](matrix-cyclic-homology-map-at-height.md)
+- [The chosen-height stable trace retains every finite homology map](canonical-stable-matrix-cyclic-homology-2.md)

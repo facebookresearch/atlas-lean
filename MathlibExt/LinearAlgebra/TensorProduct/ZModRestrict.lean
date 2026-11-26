@@ -13,19 +13,16 @@ public import Mathlib.Algebra.Module.ZMod
 public import Mathlib.LinearAlgebra.TensorProduct.Basic
 
 /-!
-# Tensor products after restricting `ZMod n`-modules to `ℤ`
+# Integer tensor products of residue-ring modules
 
-For `ZMod n`-modules `M` and `N`, the tensor product of their underlying
-abelian groups over `ℤ` is canonically isomorphic to `M ⊗[ZMod n] N` after
-forgetting its scalar structure to `ℤ`.  The construction uses only the
-universal properties and the fact that the integral tensor product is
-`n`-torsion.
+For a ZMod(n)-module M and any additive commutative group N, the integer tensor M⊗_ℤN is
+annihilated by n. If N is also a ZMod(n)-module, the canonical maps M⊗_ℤN→M⊗_{ZMod(n)}N and back
+retain every pure tensor and are inverse ℤ-linear maps.
 
-The canonical equivalence accepts the actual stored integer module
-structures. Their equality with the canonical integer action is the stock
-uniqueness theorem, so this extension retains the same tensor comparison.
-
-The statement includes `n = 0`, where `ZMod 0 = ℤ`.
+The reverse map is also ZMod(n)-linear when the integer tensor carries its canonical
+residue-module action from n-annihilation. The equivalence allows specified integer-module
+structures on M,N: uniqueness of the integer action on an additive group identifies them with
+repeated addition. Carrier universes are independent, and n=0 is included with ZMod(0)=ℤ.
 -/
 
 @[expose] public section
@@ -43,7 +40,9 @@ variable [AddCommGroup M] [AddCommGroup N]
 variable [Module (ZMod n) M] [Module (ZMod n) N]
 
 omit [Module (ZMod n) N] in
-/-- The integral tensor product of two `ZMod n`-modules is `n`-torsion. -/
+/-- Let n∈ℕ, M a ZMod(n)-module and N any additive commutative group, with independent carrier
+universes. For every z∈M⊗_ℤN, n•z=0. Only M needs the residue-module structure; moving repeated
+addition into M proves the tensor vanishing. -/
 theorem intTensor_nsmul_eq_zero (z : TensorProduct ℤ M N) : n • z = 0 := by
   induction z using TensorProduct.inductionOn with
   | tmul x y =>
@@ -53,8 +52,9 @@ theorem intTensor_nsmul_eq_zero (z : TensorProduct ℤ M N) : n • z = 0 := by
   | add x y hx hy =>
       rw [nsmul_add, hx, hy, add_zero]
 
-/-- Canonical integral-linear map from the tensor product over `ℤ` to the
-tensor product over `ZMod n`. -/
+/-- Let n∈ℕ and M,N be ZMod(n)-modules with additive commutative group structures and independent
+carrier universes u,v. This ℤ-linear map M⊗_ℤN→M⊗_{ZMod(n)}N sends m⊗_ℤ x to m⊗_{ZMod(n)}x. It
+is induced by the bilinear residue tensor map on the underlying additive groups. -/
 noncomputable def intToZMod :
     TensorProduct ℤ M N →ₗ[ℤ] TensorProduct (ZMod n) M N := by
   let inner (x : M) : N →+ TensorProduct (ZMod n) M N :=
@@ -73,13 +73,18 @@ noncomputable def intToZMod :
         simp [inner, add_tmul] }
   exact TensorProduct.lift outer.toIntLinearMap
 
+/-- Let n∈ℕ and M,N be ZMod(n)-modules with additive commutative group structures and independent
+carrier universes u,v. For m∈M,x∈N, the forward map satisfies f(m⊗_ℤx)=m⊗_{ZMod(n)}x. The same
+factor elements are used in the two balanced tensor quotients. -/
 @[simp]
 theorem intToZMod_tmul (x : M) (y : N) :
     intToZMod n M N (x ⊗ₜ[ℤ] y) = x ⊗ₜ[ZMod n] y :=
   rfl
 
-/-- Canonical `ZMod n`-linear map back to the integral tensor product,
-equipped with its canonical `n`-torsion module structure. -/
+/-- Let n∈ℕ and M,N be ZMod(n)-modules with additive commutative group structures and independent
+carrier universes u,v. Equip M⊗_ℤN with the canonical ZMod(n)-action provided by n-annihilation.
+This ZMod(n)-linear map M⊗_{ZMod(n)}N→M⊗_ℤN sends each pure tensor to the integer pure tensor
+with the same factors. -/
 noncomputable def zmodToInt :
     TensorProduct (ZMod n) M N →ₗ[ZMod n] TensorProduct ℤ M N := by
   let inner (x : M) : N →+ TensorProduct ℤ M N :=
@@ -98,17 +103,25 @@ noncomputable def zmodToInt :
         simp [inner, add_tmul] }
   exact TensorProduct.lift (outer.toZModLinearMap n)
 
+/-- Let n∈ℕ and M,N be ZMod(n)-modules with additive commutative group structures and independent
+carrier universes u,v. For m∈M,x∈N, the canonical reverse map sends m⊗_{ZMod(n)}x to m⊗_ℤx. Its
+target carries the residue action arising from modulus annihilation. -/
 @[simp]
 theorem zmodToInt_tmul (x : M) (y : N) :
     zmodToInt n M N (x ⊗ₜ[ZMod n] y) = x ⊗ₜ[ℤ] y :=
   by simp [zmodToInt]
 
-/-- The `ℤ`-linear form of `zmodToInt`, forgetting its `ZMod n` scalar
-structure. -/
+/-- Let n∈ℕ and M,N be ZMod(n)-modules with additive commutative group structures and independent
+carrier universes u,v. Forgetting the residue scalar structure on the canonical reverse map
+gives this ℤ-linear map M⊗_{ZMod(n)}N→M⊗_ℤN. It has the same additive map and pure-tensor
+values. -/
 noncomputable def zmodToIntLinear :
     TensorProduct (ZMod n) M N →ₗ[ℤ] TensorProduct ℤ M N :=
   (zmodToInt n M N).toAddMonoidHom.toIntLinearMap
 
+/-- Let n∈ℕ and M,N be ZMod(n)-modules with additive commutative group structures and independent
+carrier universes u,v. For m∈M,x∈N, the integer-linear reverse map satisfies
+g(m⊗_{ZMod(n)}x)=m⊗_ℤx. The formula retains the factors and their carrier universes. -/
 @[simp]
 theorem zmodToIntLinear_tmul (x : M) (y : N) :
     zmodToIntLinear n M N (x ⊗ₜ[ZMod n] y) = x ⊗ₜ[ℤ] y := by
@@ -117,8 +130,10 @@ theorem zmodToIntLinear_tmul (x : M) (y : N) :
 
 variable [iM : Module ℤ M] [iN : Module ℤ N]
 
-/-- Canonical comparison between tensoring two `ZMod n`-modules over `ℤ`
-and tensoring them over `ZMod n`, with the latter restricted to `ℤ`. -/
+/-- Let n∈ℕ and M,N be ZMod(n)-modules with additive commutative group structures and independent
+carrier universes u,v. Allow given integer-module structures on M,N. This ℤ-linear equivalence
+M⊗_ℤN≅M⊗_{ZMod(n)}N uses those structures, identified by uniqueness with the canonical integer
+actions. Its forward and inverse maps preserve pure tensors, and the modulus may be zero. -/
 noncomputable def zmodRestrictIntEquiv :
     TensorProduct ℤ M N ≃ₗ[ℤ] TensorProduct (ZMod n) M N := by
   cases Subsingleton.elim iM (AddCommGroup.toIntModule (M := M))
@@ -149,6 +164,10 @@ noncomputable def zmodRestrictIntEquiv :
           rw [map_add, map_add]
           exact congrArg₂ (fun a b => a + b) hx hy }
 
+/-- Let n∈ℕ and M,N be ZMod(n)-modules with additive commutative group structures and independent
+carrier universes u,v. With any given integer-module structures, the equivalence
+e:M⊗_ℤN≅M⊗_{ZMod(n)}N satisfies e(m⊗_ℤx)=m⊗_{ZMod(n)}x for all m,x. Uniqueness of integer scalar
+action gives the same comparison. -/
 @[simp]
 theorem zmodRestrictIntEquiv_apply_tmul (x : M) (y : N) :
     zmodRestrictIntEquiv n M N (x ⊗ₜ[ℤ] y) =
@@ -158,6 +177,10 @@ theorem zmodRestrictIntEquiv_apply_tmul (x : M) (y : N) :
     cases Subsingleton.elim iN (AddCommGroup.toIntModule (M := N))
     rfl
 
+/-- Let n∈ℕ and M,N be ZMod(n)-modules with additive commutative group structures and independent
+carrier universes u,v. With the given integer-module structures, e^{-1}(m⊗_{ZMod(n)}x)=m⊗_ℤx.
+This is the inverse formula of the canonical residue-restriction tensor equivalence, including
+n=0. -/
 @[simp]
 theorem zmodRestrictIntEquiv_symm_apply_tmul (x : M) (y : N) :
     (zmodRestrictIntEquiv n M N).symm (x ⊗ₜ[ZMod n] y) =

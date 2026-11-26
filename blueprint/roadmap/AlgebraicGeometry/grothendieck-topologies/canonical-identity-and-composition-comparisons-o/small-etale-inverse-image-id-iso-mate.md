@@ -1,3 +1,6 @@
-# Small Etale Inverse Image Id Iso mate
+# Identity inverse image comparison mates to inverse direct image comparison
 
-The identity comparison is the mate of the very same original direct-image identity.
+Identity inverse image comparison mates to inverse direct image comparison.
+
+The forward inverse-image identity comparison corresponds under the adjunction conjugation
+equivalence to the inverse direct-image identity comparison.

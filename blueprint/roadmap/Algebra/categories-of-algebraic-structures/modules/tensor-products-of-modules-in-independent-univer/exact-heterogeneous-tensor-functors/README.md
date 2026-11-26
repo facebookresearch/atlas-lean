@@ -1,4 +1,4 @@
 # Exact heterogeneous tensor functors
 
-- [Tensor Bifunctor At obj preserves Homology](tensor-bifunctor-at-obj-preserves-homolo.md)
-- [Tensor Bifunctor At flip obj preserves Homology](tensor-bifunctor-at-flip-obj-preserves-h.md)
+- [A flat fixed left factor preserves homology through the heterogeneous tensor functor](tensor-bifunctor-at-obj-preserves-homolo.md)
+- [A flat fixed right factor preserves homology across independent tensor universes](tensor-bifunctor-at-flip-obj-preserves-h.md)

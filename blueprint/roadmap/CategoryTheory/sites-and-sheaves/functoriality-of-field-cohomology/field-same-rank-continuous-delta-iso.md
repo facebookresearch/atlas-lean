@@ -1,3 +1,6 @@
-# Field Same Rank Continuous Delta Iso
+# Rank comparison is an isomorphism of delta functors
 
-One genuine delta isomorphism, with the SAME original model and no second coefficient lift.
+Rank comparison is an isomorphism of delta functors.
+
+The degreewise rank comparisons and connecting-map compatibility assemble to an isomorphism of
+the continuous-cohomology delta functors.

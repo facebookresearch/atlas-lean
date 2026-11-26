@@ -14,11 +14,15 @@ module
 public import MathlibExt.Algebra.Homology.CochainComplex.TensorHom.Basic
 
 /-!
-# Cochain tensor cells in independent carrier universes
+# Inclusions and projections of cochain tensor cells
 
-`tensorCellProjection` is defined at arbitrary displayed degrees with
-independent carrier universes. It uses the coproduct descriptor and its
-characteristic maps, without support or boundedness assumptions.
+Let R be a commutative ring and P,Q integer cochain complexes with independent carrier
+universes. The term (P⊗Q)^n is the coproduct of P^p⊗Q^q over p+q=n. Each pair has a canonical
+inclusion at its sum degree.
+
+For arbitrary displayed n,j,b, the tensor-cell projection selects the (j,b) summand and kills
+every other pair. If j+b=n, its composite with that cell inclusion is the identity. No support
+bounds are required.
 -/
 
 @[expose] public section
@@ -35,14 +39,19 @@ variable (R : Type u) [CommRing R]
 
 attribute [local instance] instHasMapBifunctorModuleCatIntTensorBifunctorAtUp
 
-/-- The native inclusion of the original two factor degrees in their actual sum degree. -/
+/-- Let R be a commutative ring, P,Q integer R-module cochain complexes in universes v,w, and p,q
+∈ ℤ. The canonical coproduct inclusion P^p⊗_R Q^q → (P⊗Q)^{p+q} defines componentInclusionAt.
+The tensor term has carrier universe max(v,w), and no boundedness assumption is used. -/
 def componentInclusionAt (P : CochainComplex (ModuleCat.{v} R) ℤ)
     (Q : CochainComplex (ModuleCat.{w} R) ℤ) (p q : ℤ) :
     ModuleCat.tensorObjAt R (P.X p) (Q.X q) ⟶ (complexAt R P Q).X (p + q) :=
   HomologicalComplex.ιMapBifunctor P Q (ModuleCat.tensorBifunctorAt R) (.up ℤ)
     p q (p + q) rfl
 
-/-- The native total desc onto an original tensor cell at an arbitrary displayed degree. -/
+/-- For integer R-module cochain complexes J,U in independent carrier universes and j,b,n ∈ ℤ,
+define (J⊗U)^n → J^j⊗_R U^b by coproduct descent. On a summand indexed by (j′,b′) with j′+b′=n
+it is the identity if j′=j and b′=b, and zero otherwise. In particular, no equality j+b=n is
+required to define the projection. -/
 def tensorCellProjection (J : CochainComplex (ModuleCat.{v} R) ℤ)
     (U : CochainComplex (ModuleCat.{w} R) ℤ)
     (j b n : ℤ) :
@@ -58,7 +67,9 @@ def tensorCellProjection (J : CochainComplex (ModuleCat.{v} R) ℤ)
           · exact 0
         · exact 0)
 
-/-- Projection of the actual supported tensor coprojection is its original identity. -/
+/-- Let R be a commutative ring, J,U integer cochain complexes with independent module carrier
+universes, and j+b=n. The canonical inclusion J^j⊗U^b → (J⊗U)^n followed by the projection
+onto (j,b) is the identity of J^j⊗U^b. -/
 theorem tensorCellProjection_ι (J : CochainComplex (ModuleCat.{v} R) ℤ)
     (U : CochainComplex (ModuleCat.{w} R) ℤ)
     (j b n : ℤ) (hjb : j + b = n) :
@@ -69,7 +80,9 @@ theorem tensorCellProjection_ι (J : CochainComplex (ModuleCat.{v} R) ℤ)
   simp
   rfl
 
-/-- Every different original coefficient cell is killed by that same actual projection. -/
+/-- For integer R-module cochain complexes J,U over a commutative ring R, let j′+b′=n and suppose
+j′≠j or b′≠b. The inclusion of J^{j′}⊗U^{b′} into (J⊗U)^n followed by the projection onto
+(j,b) is zero. The displayed target cell need not itself have sum n. -/
 theorem tensorCellProjection_ι_eq_zero (J : CochainComplex (ModuleCat.{v} R) ℤ)
     (U : CochainComplex (ModuleCat.{w} R) ℤ)
     (j b n j' b' : ℤ) (hjb' : j' + b' = n)

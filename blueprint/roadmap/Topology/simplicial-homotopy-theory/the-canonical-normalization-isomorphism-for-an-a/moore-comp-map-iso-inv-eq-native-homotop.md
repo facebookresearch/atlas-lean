@@ -1,3 +1,6 @@
-# Moore Comp Map Iso inv eq native Homotopy Equiv
+# The inverse Moore comparison through normalization homotopy equivalences
 
-The inverse map also agrees with the original native homotopy construction.
+The inverse Moore comparison through normalization homotopy equivalences.
+
+The inverse isomorphism map equals the inverse map of that composite normalization homotopy
+equivalence.

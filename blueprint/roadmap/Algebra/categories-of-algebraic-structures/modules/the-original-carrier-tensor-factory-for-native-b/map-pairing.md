@@ -1,3 +1,5 @@
-# Map pairing
+# The input tensor map has the first-factor pairing value
 
-Input maps retain the original coefficient and change the original first factor.
+For f:A→A′ right R-linear, the balanced pairing formula
+for the induced map is [x⊗y]↦[f(x)⊗y].
+The bimodule coefficient B is fixed.

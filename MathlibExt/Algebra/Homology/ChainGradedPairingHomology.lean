@@ -17,9 +17,12 @@ public import MathlibExt.Algebra.Homology.TensorHomologyDesc
 /-!
 # Homology pairings induced by chain pairings
 
-This file isolates the three invariant facts needed to descend a chain pairing:
-it sends pairs of cycles to cycles, and a boundary in either variable factors
-through a boundary in the target. The remaining construction is categorical.
+For a pairing of nonnegative chain complexes in a preadditive monoidal category with bilinear
+tensor product, the cycle pairing descends to H_p(K₁) ⊗ H_q(K₂) → H_{p+q}(K₃) when the required
+boundary cokernels are preserved by the specified tensor functors. The descent uses three
+differential facts: pairs of cycles are cycles, and a boundary in either variable maps to a
+boundary in the target. The induced map is characterized by compatibility with the two
+cycle-to-homology projections.
 -/
 
 @[expose] public section
@@ -44,8 +47,12 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
   [∀ Z : C, ((curriedTensor C).obj Z).Additive]
   {K₁ K₂ K₃ : ChainComplex C ℕ} [K₁.HasTensor K₂]
 
-/-- The minimal differential data required to descend a chain pairing to
-homology. No choice of a normalized total-degree expression is exposed. -/
+/-- Let C be a preadditive monoidal category whose tensor product is additive in each variable. Let
+P : K₁ ⊗ K₂ → K₃ pair nonnegative chain complexes with the tensor complex defined.
+HomologyDescentData records three laws in every p,q ∈ ℕ: the composite (i_Z₁,p ⊗ i_Z₂,q) ≫
+P_{p,q} is killed by the outgoing differential of K₃; (d_K₁,p+1,p ⊗ i_Z₂,q) ≫ P_{p,q} factors
+through some d_K₃,i′,p+q; and (i_Z₁,p ⊗ d_K₂,q+1,q) ≫ P_{p,q} likewise factors through an
+incoming differential. Each law requires only the cycle objects appearing in it. -/
 structure HomologyDescentData (P : ChainGradedPairing K₁ K₂ K₃) where
   cycles_d : ∀ p q, [K₁.HasHomology p] → [K₂.HasHomology q] →
     ((K₁.iCycles p ⊗ₘ K₂.iCycles q) ≫ P.pair p q) ≫
@@ -61,7 +68,11 @@ structure HomologyDescentData (P : ChainGradedPairing K₁ K₂ K₃) where
 
 variable (P : ChainGradedPairing K₁ K₂ K₃) (D : HomologyDescentData P)
 
-/-- The pairing restricted to cycles. -/
+/-- Let C be a preadditive monoidal category whose tensor product is additive in each variable. Let
+P : K₁ ⊗ K₂ → K₃ be a chain pairing with the tensor complex defined and D its cycle and boundary
+descent data. For p,q ∈ ℕ, assume homology exists for K₁ in p, K₂ in q and K₃ in p+q. The
+induced map Z_p(K₁) ⊗ Z_q(K₂) → Z_{p+q}(K₃) is uniquely characterized by its composite with the
+target cycle inclusion being (i_Z₁,p ⊗ i_Z₂,q) ≫ P_{p,q}. -/
 noncomputable def pairCycles (p q : ℕ)
     [K₁.HasHomology p] [K₂.HasHomology q] [K₃.HasHomology (p + q)] :
     K₁.cycles p ⊗ K₂.cycles q ⟶ K₃.cycles (p + q) :=
@@ -136,7 +147,13 @@ lemma boundaries_comp_homologyπ (p q : ℕ)
   · rw [Limits.coprod.inr_desc_assoc, comp_zero]
     simpa only [Category.assoc] using right_boundary P D p q
 
-/-- The homology pairing obtained from a chain pairing. -/
+/-- Let C be a preadditive monoidal category whose tensor product is additive in each variable. Let
+P : K₁ ⊗ K₂ → K₃ be a pairing with its tensor complex and descent data D. Fix p,q ∈ ℕ with
+homology in degrees p,q,p+q. Write β₁ : K₁,p+1 → Z_p(K₁) and β₂ : K₂,q+1 → Z_q(K₂) for the
+incoming boundary maps. Assume the coproduct of K₁,p+1 ⊗ Z_q(K₂) and Z_p(K₁) ⊗ K₂,q+1 exists,
+tensoring on the right by Z_q(K₂) and K₂,q+1 preserves the cokernel coequalizer of β₁, and
+tensoring on the left by H_p(K₁) preserves that of β₂. Then pairHomology is the map H_p(K₁) ⊗
+H_q(K₂) → H_{p+q}(K₃) characterized by (π₁ ⊗ π₂) ≫ pairHomology = pairCycles ≫ π₃. -/
 noncomputable def pairHomology (p q : ℕ)
     [K₁.HasHomology p] [K₂.HasHomology q] [K₃.HasHomology (p + q)]
     [HasBinaryCoproduct

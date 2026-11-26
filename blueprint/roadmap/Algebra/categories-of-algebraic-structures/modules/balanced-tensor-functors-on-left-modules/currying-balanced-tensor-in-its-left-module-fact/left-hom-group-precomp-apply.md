@@ -1,3 +1,5 @@
-# Left Hom Group Precomp apply
+# Evaluation of Hom precomposition from a right-module domain
 
-The same precomposition has its original pointwise value.
+Evaluation of Hom precomposition from a right-module domain.
+
+For an additive map `f : A → I` and `a : A'`, the precomposition map evaluates as `f(g a)`.

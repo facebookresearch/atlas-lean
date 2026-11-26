@@ -15,13 +15,19 @@ public import MathlibExt.LinearAlgebra.TensorProduct.Balanced.Associator
 public import MathlibExt.LinearAlgebra.TensorProduct.Balanced.Unitors
 
 /-!
-# The actual left-module Morita return
+# Return from a balanced bimodule pair on left modules
 
-The return from `P ⊗_S (Q ⊗_R M)` is the inverse of the existing
-associator, the original contraction, and the actual left unitor. Its
-outer R action and R-linearity are earned. The given ground modules and
-noncommutative factor order are retained; no normalized contraction,
-finite frame or tensor comparison is caller data.
+Let k be a commutative ring, R and S possibly noncommutative k-algebras,
+P an R–S bimodule, Q an S–R bimodule, and M a left R-module.
+All module actions are compatible with k and the actions on each bimodule
+commute. The scalar and carrier universes are independent.
+
+A right R-linear equivalence u : P ⊗_S Q ≅ R gives a k-linear return
+P ⊗_S (Q ⊗_R M) ≅ M, with pure value
+[p ⊗ (q ⊗ m)] ↦ u([p ⊗ q]) • m.
+Its inverse inserts u⁻¹(1) and then reassociates.
+If u is also left R-equivariant, the return is R-linear for the outer
+R-action on the first factor P.
 -/
 
 @[expose] public section
@@ -47,10 +53,18 @@ variable (k : Type u) [CommRing k]
   (M : Type m) [AddCommGroup M] [Module k M] [Module R M]
   [IsScalarTower k R M]
 
-/-- The original right parentheses, with their already constructed inner action. -/
+/-- Let k be a commutative ring and R, S k-algebras which are rings.
+Let P be an R–S bimodule, Q an S–R bimodule, and M a left R-module,
+all with compatible k-actions; the two actions on each bimodule commute.
+This is the right-parenthesized balanced carrier
+P ⊗_S (Q ⊗_R M), with the inner left S-action induced from Q. -/
 abbrev leftReturnSource := assocTarget k S R P Q M
 
-/-- The original R action on P earns the outer action on the return source. -/
+/-- Let k be a commutative ring and R, S k-algebras which are rings.
+Let P be an R–S bimodule, Q an S–R bimodule, and M a left R-module,
+all with compatible k-actions; the two actions on each bimodule commute.
+The outer left R-module structure on P ⊗_S (Q ⊗_R M) is induced
+from P: r [p ⊗ (q ⊗ m)] = [r p ⊗ (q ⊗ m)]. -/
 abbrev leftReturnModule : Module R (leftReturnSource k R S P Q M) := by
   letI := leftModule k R S Q M
   exact leftModule k S R P (TensorProduct.Balanced k R Q M)
@@ -61,7 +75,13 @@ variable
     TensorProduct.Balanced k S P Q ≃ₗ[Rᵐᵒᵖ] R)
 
 include u in
-/-- Reassociate and contract the original balanced pair, keeping the ground action. -/
+/-- Let k be a commutative ring and R, S k-algebras which are rings.
+Let P be an R–S bimodule, Q an S–R bimodule, and M a left R-module,
+all with compatible k-actions; the two actions on each bimodule commute.
+Suppose u : P ⊗_S Q ≅ R is a right R-linear equivalence.
+This is the k-linear return P ⊗_S (Q ⊗_R M) ≅ M, obtained by
+moving to (P ⊗_S Q) ⊗_R M, applying u to the first factor, and
+using the left tensor unitor of M. -/
 def leftReturnRaw : leftReturnSource k R S P Q M ≃ₗ[k] M := by
   let B := TensorProduct.Balanced k S P Q
   letI := leftModule k S R P Q
@@ -74,7 +94,13 @@ def leftReturnRaw : leftReturnSource k R S P Q M ≃ₗ[k] M := by
         (leftUnitor k R M))
 
 set_option linter.unusedSectionVars false in
-/-- The return contracts any actual P–Q class, without a finite representation. -/
+/-- Let k be a commutative ring and R, S k-algebras which are rings.
+Let P be an R–S bimodule, Q an S–R bimodule, and M a left R-module,
+all with compatible k-actions; the two actions on each bimodule commute.
+Suppose u : P ⊗_S Q ≅ R is a right R-linear equivalence.
+For any balanced class b ∈ P ⊗_S Q and m ∈ M, the return sends
+assoc([b ⊗ m]) to u(b) • m. This formula applies to arbitrary b,
+not only to a pure P–Q tensor. -/
 @[nolint unusedArguments] -- omitting them cascades via `leftReturnRaw_mk` into `leftReturn`
 theorem leftReturnRaw_assoc_mk (b : TensorProduct.Balanced k S P Q) (m : M) :
     letI := rightModule k S R P Q
@@ -102,7 +128,13 @@ theorem leftReturnRaw_assoc_mk (b : TensorProduct.Balanced k S P Q) (m : M) :
   exact (congrArg (fun x : TensorProduct.Balanced k R R M => leftUnitor k R M x) h).trans
     (leftUnitor_mk k R M (e b) ((LinearEquiv.refl k M) m))
 
-/-- The source order is p, q, m, and the contraction acts on the left of m. -/
+/-- Let k be a commutative ring and R, S k-algebras which are rings.
+Let P be an R–S bimodule, Q an S–R bimodule, and M a left R-module,
+all with compatible k-actions; the two actions on each bimodule commute.
+Suppose u : P ⊗_S Q ≅ R is a right R-linear equivalence.
+For p ∈ P, q ∈ Q and m ∈ M, the return has value
+[p ⊗ (q ⊗ m)] ↦ u([p ⊗ q]) • m.
+The contraction acts on the left of the final coefficient m. -/
 @[simp, nolint simpNF] -- stated with Balanced.mk for rw; Balanced.mk_apply simplifies LHS
 theorem leftReturnRaw_mk (p : P) (q : Q) (m : M) :
     letI := leftModule k R S Q M
@@ -115,7 +147,13 @@ theorem leftReturnRaw_mk (p : P) (q : Q) (m : M) :
   rw [assoc_mk_mk] at h
   exact h
 
-/-- The actual inverse inserts u⁻¹(1), then uses the original associator. -/
+/-- Let k be a commutative ring and R, S k-algebras which are rings.
+Let P be an R–S bimodule, Q an S–R bimodule, and M a left R-module,
+all with compatible k-actions; the two actions on each bimodule commute.
+Suppose u : P ⊗_S Q ≅ R is a right R-linear equivalence.
+The inverse return sends m ∈ M to
+assoc([u⁻¹(1) ⊗ m]) ∈ P ⊗_S (Q ⊗_R M),
+where u⁻¹(1) is a balanced class in P ⊗_S Q. -/
 theorem leftReturnRaw_symm (m : M) :
     letI := rightModule k S R P Q
     (leftReturnRaw k R S P Q M u).symm m =
@@ -132,7 +170,13 @@ variable
     ∀ (r : R) (b : TensorProduct.Balanced k S P Q), u (r • b) = r * u b)
 
 include u hu in
-/-- The same raw return is linear for its computed outer R module. -/
+/-- Let k be a commutative ring and R, S k-algebras which are rings.
+Let P be an R–S bimodule, Q an S–R bimodule, and M a left R-module,
+all with compatible k-actions; the two actions on each bimodule commute.
+Suppose u : P ⊗_S Q ≅ R is a right R-linear equivalence.
+If u also satisfies u(r • b) = r u(b) for the outer left R-action,
+the return P ⊗_S (Q ⊗_R M) ≅ M is R-linear, with the source R-action
+induced from the first factor P. -/
 def leftReturn :
     letI := leftReturnModule k R S P Q M
     leftReturnSource k R S P Q M ≃ₗ[R] M := by
@@ -169,12 +213,23 @@ def leftReturn :
     exact DFunLike.congr_fun hc c
   exact DFunLike.congr_fun h x
 
-/-- R-linearity does not change the original ground return value. -/
+/-- Let k be a commutative ring and R, S k-algebras which are rings.
+Let P be an R–S bimodule, Q an S–R bimodule, and M a left R-module,
+all with compatible k-actions; the two actions on each bimodule commute.
+Suppose u : P ⊗_S Q ≅ R is a right R-linear equivalence.
+If u is also left R-equivariant, the R-linear return and the
+k-linear return have the same value on every element of
+P ⊗_S (Q ⊗_R M). -/
 @[simp]
 theorem leftReturn_apply (x : leftReturnSource k R S P Q M) :
     leftReturn k R S P Q M u hu x = leftReturnRaw k R S P Q M u x := rfl
 
-/-- The outer-linear return keeps the original pure contraction formula. -/
+/-- Let k be a commutative ring and R, S k-algebras which are rings.
+Let P be an R–S bimodule, Q an S–R bimodule, and M a left R-module,
+all with compatible k-actions; the two actions on each bimodule commute.
+Suppose u : P ⊗_S Q ≅ R is a right R-linear equivalence.
+If u is also left R-equivariant, the R-linear return has pure value
+[p ⊗ (q ⊗ m)] ↦ u([p ⊗ q]) • m. -/
 @[simp, nolint simpNF] -- stated with Balanced.mk for rw; Balanced.mk_apply simplifies LHS
 theorem leftReturn_mk (p : P) (q : Q) (m : M) :
     letI := leftModule k R S Q M
@@ -183,7 +238,13 @@ theorem leftReturn_mk (p : P) (q : Q) (m : M) :
       u (mk k S P Q p q) • m :=
   leftReturnRaw_mk k R S P Q M u p q m
 
-/-- The R-linear inverse is exactly the constructed raw inverse. -/
+/-- Let k be a commutative ring and R, S k-algebras which are rings.
+Let P be an R–S bimodule, Q an S–R bimodule, and M a left R-module,
+all with compatible k-actions; the two actions on each bimodule commute.
+Suppose u : P ⊗_S Q ≅ R is a right R-linear equivalence.
+If u is also left R-equivariant, the inverse R-linear return sends
+m to assoc([u⁻¹(1) ⊗ m]). It is the same inverse as that of
+the ground-linear return. -/
 theorem leftReturn_symm (m : M) :
     letI := rightModule k S R P Q
     (leftReturn k R S P Q M u hu).symm m =

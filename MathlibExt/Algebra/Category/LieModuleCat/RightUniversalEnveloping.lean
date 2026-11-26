@@ -20,15 +20,23 @@ public import Mathlib.Algebra.Algebra.Opposite
 public import Mathlib.Algebra.Category.ModuleCat.ChangeOfRings
 
 /-!
-# Original native Lie coefficients as right enveloping modules
+# Left Lie coefficients as right enveloping-algebra modules
 
-Negating the original endomorphism representation and taking its opposite
-is an actual Lie homomorphism. Native UEA lift and native opposite Hom
-correspondence therefore give the right UEA representation on the original
-coefficient carrier. Its ground scalar action is the original one, and its
-right generator action is negative the original left Lie action. Native
-UEA induction earns equivariance of every original coefficient morphism.
-There is no CE, PBW, freeness or projectivity dependency.
+Let R be a commutative ring, L an R-Lie algebra and M a left Lie module.
+Its representation ρ(x)(m) = [x,m] gives the Lie map
+x ↦ op(−ρ(x)) into (End_R(M))ᵒᵖ. The enveloping universal property
+then defines an R-algebra representation
+U_R(L)ᵒᵖ → End_R(M), hence a right U_R(L)-module on the carrier M.
+
+The right generator action is m·ι(x) = −[x,m], while restriction
+along R → U_R(L)ᵒᵖ recovers the given R-action on M.
+A Lie-module morphism is equivariant for the right enveloping action,
+so this construction defines a functor preserving coefficient carriers.
+
+More generally, for a Lie map f : L → L′ and an R-linear map
+h : M → M′ satisfying h([x,m]) = [f(x),h(m)], the map h is semilinear
+over the opposite enveloping map U(f)ᵒᵖ. The ring, Lie-carrier and
+coefficient worlds are independent.
 -/
 
 @[expose] public section
@@ -48,7 +56,11 @@ local notation "U" => UniversalEnvelopingAlgebra R L
 
 attribute [local instance] LieRing.ofAssociativeRing
 
-/-- The actual negative opposite of the original native endomorphism Lie representation. -/
+/-- For a commutative ring R, an R-Lie algebra L and a left
+Lie module M with ρ(x)(m) = [x,m], the map
+x ↦ op(−ρ(x)) is an R-Lie homomorphism
+L → (End_R(M))ᵒᵖ, with the commutator Lie bracket on the opposite
+endomorphism algebra. -/
 def negativeOppositeLie (M : LieModuleCat.{w} R L) : L →ₗ⁅R⁆ (Module.End R M)ᵐᵒᵖ where
   toFun x := op (-(LieModule.toEnd R L M x))
   map_add' x y := by rw [map_add, neg_add, MulOpposite.op_add]
@@ -64,8 +76,10 @@ def negativeOppositeLie (M : LieModuleCat.{w} R L) : L →ₗ⁅R⁆ (Module.End
     rw [LieHom.map_lie, LieRing.of_associative_ring_bracket, neg_sub]
     simp only [neg_mul, mul_neg, neg_neg]
 
-/-- The original right UEA endomorphism representation, through native lift
-and the native opposite algebra-Hom equivalence. -/
+/-- For a commutative ring R, an R-Lie algebra L and a left
+Lie module M, the algebra map U_R(L)ᵒᵖ →ₐ[R] End_R(M) extends
+the negative-opposite Lie representation.
+Its generator value is op(ι(x))(m) = −[x,m]. -/
 def representation (M : LieModuleCat.{w} R L) : Uᵐᵒᵖ →ₐ[R] Module.End R M :=
   AlgHom.opComm (UniversalEnvelopingAlgebra.lift R (negativeOppositeLie R L M))
 
@@ -76,18 +90,27 @@ theorem representation_op_ι (M : LieModuleCat.{w} R L) (x : L) (m : M) :
   rw [UniversalEnvelopingAlgebra.lift_ι_apply]
   rfl
 
-/-- The original scalar action is recovered by the actual algebra-map law. -/
+/-- For a commutative ring R, an R-Lie algebra L, a Lie
+module M, r ∈ R and m ∈ M, the represented action of
+algebraMap(r) ∈ U_R(L)ᵒᵖ on m is r • m for the given
+R-module structure of M. -/
 theorem representation_algebraMap (M : LieModuleCat.{w} R L) (r : R) (m : M) :
     representation R L M (algebraMap R Uᵐᵒᵖ r) m = r • m := by
   rw [(representation R L M).commutes]
   rfl
 
-/-- The actual right acting-ring module on the original native Lie carrier. -/
+/-- For a commutative ring R, an R-Lie algebra L and a left
+Lie module M, the representation U_R(L)ᵒᵖ → End_R(M) makes
+M a module over U_R(L)ᵒᵖ. In right-module notation its generator
+action is m·ι(x) = −[x,m]. -/
 @[instance_reducible]
 def representationModule (M : LieModuleCat.{w} R L) : Module Uᵐᵒᵖ M :=
   Module.compHom M (representation R L M).toRingHom
 
-/-- The represented right module retains the original carrier. -/
+/-- For a commutative ring R, an R-Lie algebra L and
+M ∈ LieModuleCat^w(R,L), the represented object in
+ModuleCat^w(U_R(L)ᵒᵖ) has carrier M and action given by the
+right enveloping representation. Its coefficient universe is unchanged. -/
 @[implicit_reducible]
 def representObj (M : LieModuleCat.{w} R L) : ModuleCat.{w} Uᵐᵒᵖ :=
   letI := representationModule R L M
@@ -101,14 +124,20 @@ theorem representObj_op_ι (M : LieModuleCat.{w} R L) (x : L) (m : M) :
     op (UniversalEnvelopingAlgebra.ι R x) • (show representObj R L M from m) = -⁅x, m⁆ :=
   representation_op_ι R L M x m
 
-/-- The native scalar restriction of the represented right module preserves
-the original ground scalar dictionary. -/
+/-- For a commutative ring R, an R-Lie algebra L and a Lie
+module M, restricting its right enveloping module along
+R → U_R(L)ᵒᵖ gives the R-action r • m already carried by M.
+This is an equality of scalar values on the same coefficient carrier. -/
 theorem representObj_ground_smul (M : LieModuleCat.{w} R L) (r : R) (m : M) :
     r • (show (ModuleCat.restrictScalars (algebraMap R Uᵐᵒᵖ)).obj (representObj R L M) from m) =
       r • m :=
   representation_algebraMap R L M r m
 
-/-- Original coefficient maps are equivariant for the actual right UEA actions. -/
+/-- For a commutative ring R, an R-Lie algebra L and a
+Lie-module morphism h : M → M′, the right representations satisfy
+h(Rep_M(a)(m)) = Rep_M′(a)(h(m)) for every a ∈ U_R(L)ᵒᵖ.
+Only the Lie-action equivariance of h is needed to obtain this
+full enveloping-action identity. -/
 theorem representation_map {M M' : LieModuleCat.{w} R L}
     (h : M →ₗ⁅R,L⁆ M') (a : Uᵐᵒᵖ) (m : M) :
     h (representation R L M a m) = representation R L M' a (h m) := by
@@ -138,7 +167,10 @@ theorem representation_map {M M' : LieModuleCat.{w} R L}
         rw [LinearMap.add_apply]
   exact hU a.unop m
 
-/-- The actual right UEA morphism supplied by an original native Lie coefficient map. -/
+/-- For a commutative ring R and an R-Lie algebra L, a
+morphism h : M → M′ in LieModuleCat^w(R,L) gives a morphism
+of the represented U_R(L)ᵒᵖ-modules by the same function h.
+Its acting-ring linearity is the equivariance of the right representations. -/
 def representMap {M M' : LieModuleCat.{w} R L} (h : M ⟶ M') :
     representObj R L M ⟶ representObj R L M' := by
   let H : M →ₗ⁅R,L⁆ M' := h.hom
@@ -152,7 +184,11 @@ def representMap {M M' : LieModuleCat.{w} R L} (h : M ⟶ M') :
         change H (representation R L M a m) = representation R L M' a (H m)
         exact representation_map R L H a m }
 
-/-- The original-carrier representation is a genuine functor on native Lie coefficients. -/
+/-- For a commutative ring R and an R-Lie algebra L, the
+right representation defines a functor
+LieModuleCat^w(R,L) → ModuleCat^w(U_R(L)ᵒᵖ).
+It preserves the coefficient carrier and underlying function of
+every morphism, and satisfies m·ι(x) = −[x,m]. -/
 def representFunctor : LieModuleCat.{w} R L ⥤ ModuleCat.{w} Uᵐᵒᵖ where
   obj := representObj R L
   map := representMap R L
@@ -165,8 +201,12 @@ variable {L' : Type v'} [LieRing L'] [LieAlgebra R L']
   (f : L →ₗ⁅R⁆ L') {M : LieModuleCat.{w} R L} {M' : LieModuleCat.{w'} R L'}
   (h : M →ₗ⁅R,L⁆ LieModuleCat.restrictObj f M')
 
-/-- Every compatible original Lie coefficient map is equivariant for the
-actual UEA map and the two original right representations. -/
+/-- For R-Lie algebras L,L′, a Lie map f : L → L′ and
+an R-linear map h : M → M′ satisfying h([x,m]) = [f(x),h(m)],
+the represented right actions satisfy
+h(Rep_M(op(a))(m)) = Rep_M′(op(U(f)(a)))(h(m))
+for every a ∈ U_R(L). The Lie and coefficient carrier worlds
+of the source and target are independent. -/
 theorem representation_lieMap (a : U) (m : M) :
     h (representation R L M (op a) m) =
       representation R L' M' (op (UniversalEnvelopingAlgebra.map R f a)) (h m) := by
@@ -200,8 +240,12 @@ theorem representation_lieMap (a : U) (m : M) :
         rw [LinearMap.add_apply]
   exact hU m
 
-/-- The actual native Lie coefficient map, as a genuinely semilinear right
-UEA map along the original enveloping map, with independent carrier worlds. -/
+/-- For a Lie map f : L → L′ and an R-linear coefficient
+map h : M → M′ intertwining brackets along f, the same function h
+is a semilinear map between the right enveloping modules along
+the ring homomorphism U(f)ᵒᵖ : U_R(L)ᵒᵖ → U_R(L′)ᵒᵖ.
+The ring R is commutative, and all Lie and coefficient worlds
+may be independent. -/
 def representLieMapSemilinear : representObj R L M →ₛₗ[(UniversalEnvelopingAlgebra.map R f).toRingHom.op]
     representObj R L' M' where
   toFun := h

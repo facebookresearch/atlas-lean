@@ -1,3 +1,6 @@
-# Finite Factor Hom Tensor Co Chain Nat Iso hom
+# Restricted natural isomorphism retains the signed comparison transformation
 
-Its whole hom is exactly the restricted original transformation.
+Restricted natural isomorphism retains the signed comparison transformation.
+
+Its forward natural transformation is the signed comparison whiskered by the full-subcategory
+inclusion.

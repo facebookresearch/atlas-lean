@@ -1,4 +1,6 @@
-# Exterior Projection naturality
+# Naturality of the exterior projection
 
-The original tensor-to-exterior projection is natural for arbitrary original
-linear maps across independent carrier universes.
+Naturality of the exterior projection.
+
+For a commutative ring k and a k-linear map f : V → W, Qₙ,W ∘ f⊗n = ⋀ⁿf ∘ Qₙ,V. Here f⊗n
+applies f to each tensor factor.

@@ -1,9 +1,9 @@
 # Native index transport for the total tensor–Hom inverse laws
 
-- [Unit source v](unit-source-v.md)
-- [Unit inner v](unit-inner-v.md)
-- [Tensor v of eq](tensor-v-of-eq.md)
-- [Uncurry curry](uncurry-curry.md)
-- [Curry uncurry](curry-uncurry.md)
-- [Curry Cochain add](curry-cochain-add.md)
-- [Cochain Equiv](cochain-equiv.md)
+- [Outer Hom evaluation respects the double-negative source unit](unit-source-v.md)
+- [Inner Hom evaluation respects the double-negative domain unit](unit-inner-v.md)
+- [Tensor Hom evaluation respects equal source and summand indices](tensor-v-of-eq.md)
+- [Signed uncurrying after signed currying is the identity](uncurry-curry.md)
+- [Signed currying after signed uncurrying is the identity](curry-uncurry.md)
+- [Signed tensor–Hom currying preserves addition](curry-cochain-add.md)
+- [Additive equivalence of full tensor and nested Hom cochains](cochain-equiv.md)

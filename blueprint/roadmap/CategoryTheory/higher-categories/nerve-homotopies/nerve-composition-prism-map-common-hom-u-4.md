@@ -1,3 +1,6 @@
-# Nerve Composition Prism Map Common Hom Up face one
+# The face of the composition prism determined by the composite transformation
 
-The COMPLETE long face is the SAME original α≫β cylinder.
+The face of the composition prism determined by the composite transformation.
+
+Restricting the triangular composition prism along δ₁ gives the common-morphism-universe
+cylinder map of α ≫ β.

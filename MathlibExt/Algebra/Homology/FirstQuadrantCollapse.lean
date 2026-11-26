@@ -13,19 +13,18 @@ module
 public import MathlibExt.Algebra.Homology.FirstQuadrantConvergence
 
 /-!
-# Columnwise collapse of a first-quadrant spectral sequence
+# Vanishing and filtration collapse for a first-quadrant spectral sequence
 
-Vanishing of a second-page term persists on every later page.  At a stable
-page, bounded convergence therefore transports this vanishing to the
-corresponding associated graded piece of total homology.  Since that graded
-piece is the cokernel of a monic filtration step, the filtration step is an
-isomorphism.
+Let K be a bicomplex of shape (down ℕ,down ℕ) in an abelian category. Write E^r_{p,q} for its
+horizontal spectral sequence, with p,q∈ℕ and r≥1. A zero term E^2_{p,q} remains zero at the same
+bidegree on every page r≥2. The stable index is r_*(p,q)=max(p+1,q+2), and bounded convergence
+identifies E^{r_*}_{p,q} with gr_pH_{p+q}(Tot K).
 
-In particular, if the second page is concentrated in horizontal degree zero,
-all positive steps of the induced total-homology filtration are isomorphisms.
-This file deliberately isolates that filtration-collapse statement from the
-additional edge-map comparison between the surviving second-page column and
-the zeroth filtration stage.
+Consequently, E^2_{p,q}=0 implies that the monic filtration step F_{p-1}H_{p+q}(Tot
+K)→F_pH_{p+q}(Tot K) has zero cokernel and is an isomorphism. Here p−1 is an integer cut, so the
+source is zero when p=0. If the second page is supported in horizontal degree zero, every
+positive horizontal filtration step is therefore an isomorphism. The category's object and
+morphism universes are arbitrary.
 -/
 
 @[expose] public section
@@ -42,8 +41,10 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
   (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
     (ComplexShape.down ℕ))
 
-/-- Vanishing at a fixed bidegree on the second page persists after any
-finite number of successor pages. -/
+/-- Let C be an abelian category and K a bicomplex of shape (down ℕ,down ℕ). For p,q,m∈ℕ, suppose
+E^2_{p,q} is zero in the horizontal first-quadrant spectral sequence of K. Then E^{m+2}_{p,q} is
+zero. Each successor page is the homology of its predecessor, so vanishing at the fixed bidegree
+propagates through every finite number of pages. -/
 theorem isZero_horizontalPage_add_two_of_isZero_secondPage
     (p q m : ℕ)
     (h : IsZero
@@ -62,7 +63,9 @@ theorem isZero_horizontalPage_add_two_of_isZero_secondPage
           ((m : ℤ) + 2) (((m + 1 : ℕ) : ℤ) + 2) (p, q)
           (by push_cast; omega) (by omega)).symm
 
-/-- A second-page zero is still zero on the canonical stable page. -/
+/-- For a first-quadrant bicomplex K in an abelian category and p,q∈ℕ, let r_*(p,q)=max(p+1,q+2). If
+the horizontal second-page term E^2_{p,q} is zero, then E^{r_*}_{p,q} is zero. The stable index
+is at least two, so the result follows from the persistence of vanishing on all later pages. -/
 theorem isZero_horizontalStablePage_of_isZero_secondPage
     (p q : ℕ)
     (h : IsZero
@@ -85,8 +88,10 @@ theorem isZero_horizontalStablePage_of_isZero_secondPage
       (horizontalStablePageIndex p q) ((m : ℤ) + 2) hrm
       (horizontalStablePageIndex_one_le p q))
 
-/-- If a second-page term vanishes, then the corresponding associated graded
-piece of total homology vanishes. -/
+/-- Let K be a bicomplex of shape (down ℕ,down ℕ) in an abelian category and p,q∈ℕ. If its
+horizontal second-page term E^2_{p,q} is zero, then gr_pH_{p+q}(Tot K)=coker(F_{p-1}H_{p+q}(Tot
+K)→F_pH_{p+q}(Tot K)) is zero. The conclusion uses persistence of vanishing to r_*=max(p+1,q+2)
+and the stable-page comparison with this associated-graded piece; p−1 is an integer cut. -/
 theorem isZero_horizontalTotalHomologyGradedPiece_of_secondPage
     (p q : ℕ)
     (h : IsZero
@@ -96,8 +101,11 @@ theorem isZero_horizontalTotalHomologyGradedPiece_of_secondPage
     (isZero_horizontalStablePage_of_isZero_secondPage K p q h)
     (horizontalStablePageGradedIsoAtIndex K p q).symm
 
-/-- If a second-page term vanishes, the corresponding consecutive step of
-the induced total-homology filtration is an isomorphism. -/
+/-- For a first-quadrant bicomplex K in an abelian category and p,q∈ℕ, suppose the horizontal
+second-page term E^2_{p,q} is zero. Then the canonical filtration inclusion F_{p-1}H_{p+q}(Tot
+K)→F_pH_{p+q}(Tot K) is an isomorphism. Its cokernel is the associated-graded piece, which
+vanishes by stable convergence, and the inclusion is monic. The cut p−1 is taken in ℤ, including
+the zero preceding stage at p=0. -/
 theorem horizontalTotalHomologyFiltrationStepMap_isIso_of_secondPage_isZero
     (p q : ℕ)
     (h : IsZero

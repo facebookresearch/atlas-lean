@@ -1,3 +1,7 @@
-# Partial Total First Page Signed Vertical Homology Iso hom f
+# Forward component of the signed first-page row comparison
 
-Forward components of the signed first-page row isomorphism.
+Forward component of the signed first-page row comparison.
+
+The degree-`p` forward component of the signed first-page row isomorphism is
+`(B.partialTotalSpectralSequenceFirstPageRowIso p q).hom` followed by `(B.totalRowHomologyIso
+p q).hom`.

@@ -1,3 +1,5 @@
-# Stable Matrix Printed Positive Tail
+# The negated-differential positive tail of the matrix CE colimit
 
-The positive tail of the finite-matrix colimit complex with its differential negated.
+The negated-differential positive tail of the matrix CE colimit.
+
+Negate the colimit differential and restrict to positive exterior degrees.

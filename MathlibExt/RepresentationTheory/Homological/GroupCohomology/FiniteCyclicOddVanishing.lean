@@ -15,19 +15,14 @@ public import Mathlib.RepresentationTheory.Homological.GroupCohomology.FiniteCyc
 public import Mathlib.Algebra.Ring.Defs
 
 /-!
-# Odd cohomology of a cyclic group with invertible order
+# Odd cyclic cohomology with invertible group order
 
-For any finite group, averaging a one-cocycle by the inverse group order
-expresses it as a coboundary when the group order is a unit in the coefficient
-ring. Thus H1 vanishes without a cyclicity assumption.
+Let R be a commutative ring, G a finite group, and A an R-linear representation in universe u.
+If m=|G| is a unit in R, every one-cocycle x is the coboundary of a=-m⁻¹Σ_{h∈G}x(h): x(g)=g•a-a.
+Hence H¹(G,A) is zero.
 
-For a finite cyclic group, the periodic resolution identifies every positive
-odd cohomological degree with H1. Consequently all positive odd-degree group
-cohomology vanishes when the group order is invertible.
-
-The degree-two and degree-three specializations are intentionally absent: the
-general finite-group averaging theorems provide strictly stronger results in
-those degrees.
+If G is cyclic, its periodic resolution identifies every odd cohomological degree i with H¹. The
+same unit hypothesis therefore makes H^i(G,A) zero for every odd natural number i.
 -/
 
 @[expose] public section
@@ -42,8 +37,11 @@ namespace groupCohomology
 
 universe u
 
-/-- Degree-one cohomology of a finite group vanishes when the group order is
-invertible in the coefficient ring. -/
+/-- Let R be a commutative ring, G a finite group, and A an R-linear G-representation, in the given
+universe u. Assume m=|G| is a unit in R and write m⁻¹ for the coefficient of its inverse unit.
+The module H¹(G,A) is subsingleton, so all of its classes are zero. For a one-cocycle x, the
+coefficient a=-m⁻¹Σ_{h∈G}x(h) satisfies x(g)=ρ(g)a-a for every g, providing its coboundary
+representative. -/
 theorem H1_subsingleton_of_card_isUnit
     {R G : Type u} [CommRing R] [Group G] [Fintype G]
     (A : Rep R G) (hcard : IsUnit (Fintype.card G : R)) :
@@ -91,8 +89,11 @@ theorem H1_subsingleton_of_card_isUnit
           rw [Units.inv_mul, one_smul]
   exact sub_eq_zero.mp (hzero (x - y))
 
-/-- Every odd-degree cohomology module of a finite cyclic group vanishes when
-the group order is invertible. -/
+/-- Let R be a commutative ring, G a finite group, and A an R-linear G-representation, in the given
+universe u. Assume m=|G| is a unit in R and write m⁻¹ for the coefficient of its inverse unit.
+Assume also that G is cyclic. For every natural number i with i odd, H^i(G,A) is subsingleton.
+The periodic cyclic resolution identifies H^i with H¹, whose cocycles are coboundaries by
+averaging. -/
 theorem odd_subsingleton_of_isCyclic_of_card_isUnit
     {R G : Type u} [CommRing R] [Group G] [Fintype G] [IsCyclic G]
     (A : Rep R G) (hcard : IsUnit (Fintype.card G : R))

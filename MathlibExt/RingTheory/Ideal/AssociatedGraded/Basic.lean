@@ -13,24 +13,16 @@ module
 public import MathlibExt.RingTheory.Ideal.AdicAssociatedGraded
 
 /-!
-# Associated-graded pieces of an ideal
+# Associated graded pieces and initial forms
 
-For an ideal `I` in a commutative ring, this file defines the degree-`n`
-piece `I ^ n / I ^ (n + 1)`, the external direct-sum carrier of all pieces,
-and the initial-form quotient map in a fixed degree.
+For an ideal `I` in a commutative ring `R`, the degree-`n` piece is `I^n/I^(n+1)`, represented
+as the quotient of the module `I^n` by `I • ⊤` inside that module. The associated graded ring
+is the direct sum of these pieces over `n : ℕ`.
 
-The piece, direct-sum carrier and symbol interfaces reuse the canonical
-ideal-adic provider, including its existing graded multiplication. This file
-constructs no second multiplication.
+The `R`-linear initial-form map sends `x : I^n` to its quotient class. It is surjective, and
+its value is zero exactly when the underlying element of `R` lies in `I^(n+1)`.
 
-## Main declarations
-
-* `Ideal.AssociatedGradedPiece`
-* `Ideal.AssociatedGraded`
-* `Ideal.initialForm`
-* `Ideal.initialForm_apply`
-* `Ideal.initialForm_surjective`
-* `Ideal.initialForm_eq_zero_iff`
+Reference: Atiyah and Macdonald, *Introduction to Commutative Algebra*, Chapter 10.
 -/
 
 @[expose] public section
@@ -45,18 +37,20 @@ universe u
 
 variable {R : Type u} [CommRing R]
 
-/-- The degree-`n` piece `I ^ n / I ^ (n + 1)` of the associated graded
-ring, presented as a quotient of the ideal `I ^ n` by `I • ⊤`. -/
+/-- For an ideal `I` in a commutative ring `R` and `n : ℕ`, the degree-`n` associated graded piece
+is `I^n/I^(n+1)`. Its quotient presentation is `(I^n : Ideal R) ⧸ (I • ⊤ : Submodule R (I^n :
+Ideal R))`; multiplication by `I` on `I^n` has image `I^(n+1)`. -/
 abbrev AssociatedGradedPiece (I : Ideal R) (n : ℕ) : Type u :=
   I.adicGradedPiece n
 
-/-- The canonical ideal-adic associated-graded carrier, with its existing
-graded-ring structure. -/
+/-- For an ideal `I` in a commutative ring `R`, the associated graded ring `gr_I R` has underlying
+direct sum `⨁ n : ℕ, I^n/I^(n+1)`. A representative `x ∈ I^p` multiplied by `y ∈ I^q`
+represents the degree-`p+q` product `[xy]`. -/
 noncomputable abbrev AssociatedGraded (I : Ideal R) : Type u :=
   I.adicAssociatedGraded
 
-/-- The class of an element of `I ^ n` in the degree-`n` associated-graded
-piece. -/
+/-- For an ideal `I` in a commutative ring `R` and `n : ℕ`, `initialForm I n` is the `R`-linear
+quotient map `I^n → I^n/I^(n+1)`. It sends `x : (I^n : Ideal R)` to `Submodule.Quotient.mk x`. -/
 def initialForm (I : Ideal R) (n : ℕ) :
     (I ^ n : Ideal R) →ₗ[R] AssociatedGradedPiece I n :=
   I.adicSymbol n
@@ -66,13 +60,15 @@ lemma initialForm_apply (I : Ideal R) (n : ℕ) (x : (I ^ n : Ideal R)) :
     initialForm I n x = Submodule.Quotient.mk x :=
   rfl
 
-/-- Every class in a graded piece has a representative in `I ^ n`. -/
+/-- For an ideal `I` in a commutative ring `R` and every `n : ℕ`, the map `initialForm I n : I^n →
+I^n/I^(n+1)` is surjective. Every element of the degree-`n` piece is the quotient class of an
+element of `I^n`. -/
 theorem initialForm_surjective (I : Ideal R) (n : ℕ) :
     Function.Surjective (initialForm I n) :=
   Submodule.mkQ_surjective _
 
-/-- An initial form vanishes exactly when its representative lies in the
-next ideal power. -/
+/-- For an ideal `I` in a commutative ring `R`, `n : ℕ`, and `x : (I^n : Ideal R)`, the equation
+`initialForm I n x = 0` holds if and only if `(x : R) ∈ I^(n+1)`. -/
 theorem initialForm_eq_zero_iff (I : Ideal R) (n : ℕ)
     (x : (I ^ n : Ideal R)) :
     initialForm I n x = 0 ↔ (x : R) ∈ I ^ (n + 1) := by

@@ -1,3 +1,6 @@
-# To Local Cohomology Zero
+# Canonical map from power torsion to zeroth local cohomology
 
-The actual native degree-zero comparison, with no supplied inverse equation.
+Canonical map from power torsion to zeroth local cohomology.
+
+Under the injective-resolution hypothesis, the right-derived degree-zero transformation gives
+`Γ_I ⟶ H_I^0`.

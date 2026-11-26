@@ -1,4 +1,6 @@
-# Down Nat Horizontal Filtered Fiber Equiv
+# The filtered and total fibers agree once k≥n
 
-The horizontal filtration is exhaustive in total degree `n` by stage
-`n` (and hence by every later stage).
+For n,k∈ℕ with n≤k, forgetting the horizontal-bound
+proof gives an equivalence from the filtered fiber
+{(p,q) | p+q=n, p≤k} to the full total fiber.
+Every total-degree coordinate already satisfies p≤n≤k.

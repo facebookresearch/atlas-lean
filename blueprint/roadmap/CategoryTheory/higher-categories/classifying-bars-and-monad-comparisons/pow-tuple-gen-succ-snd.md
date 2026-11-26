@@ -1,7 +1,6 @@
-# Pow Tuple Gen succ snd
+# The base component at the successor power
 
-Successor base: the generalized reader preserves the base point.
+The base component at the successor power.
 
-Stable API for `powTupleGen`: the `n + 1` base point is the `T.obj X` base
-point projected through. Consumed by the later `ClassifyingNerveNaturality`
-repair instead of a local mirror.
+The X-coordinate of the generalized tuple equivalence at level n+1 is the X-component of the
+residual pair in TX obtained from the level-n equivalence.

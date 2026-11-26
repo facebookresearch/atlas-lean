@@ -1,4 +1,4 @@
 # Functoriality of the unified predecessor homology-filtration map
 
-- [Horizontal Prev Total Homology Filtration Map Of Bicomplex id](horizontal-prev-total-homology-filtratio.md)
-- [Horizontal Prev Total Homology Filtration Map Of Bicomplex comp](horizontal-prev-total-homology-filtratio-2.md)
+- [The identity acts identically on every predecessor stage](horizontal-prev-total-homology-filtratio.md)
+- [All-column predecessor maps preserve composition](horizontal-prev-total-homology-filtratio-2.md)

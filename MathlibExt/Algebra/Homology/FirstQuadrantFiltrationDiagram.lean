@@ -14,17 +14,18 @@ public import Mathlib.CategoryTheory.Filtration.Basic
 public import MathlibExt.Algebra.Homology.FirstQuadrantFiltrationMaps
 
 /-!
-# The canonical filtration of a first-quadrant total complex
+# The increasing horizontal filtration of a total chain complex
 
-The horizontal stages of a first-quadrant bicomplex form a filtration of its
-total complex in the sense of `CategoryTheory.Filtration`: each stage is a
-subcomplex, transition maps commute with the inclusions, and the inclusions
-are monomorphisms.  In every total degree `n`, the filtration is already the
-whole total object from stage `n` onward.
+Let C be preadditive with a zero object and finite coproducts, and let K
+be a nonnegative homological bicomplex. The complexes
+F_k T_n = ⨁_(p+q=n, p≤k) K_(p,q) form an increasing filtration
+of T = Tot(K) by subcomplexes.
 
-The associated spectral object is constructed in
-`FirstQuadrantSpectralObject` and completed over `EInt` in
-`FirstQuadrantCompleteFiltration`.
+For k≤l, the stage map F_k T → F_l T includes the same coordinates
+and commutes with the inclusions into T. Each stage-to-total chain
+map is monic. In every degree n, the inclusion F_k T_n → T_n is an
+isomorphism once n≤k, with inverse the coordinate projection.
+This is degreewise finite exhaustiveness of the filtration.
 -/
 
 @[expose] public section
@@ -45,7 +46,11 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
   (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
     (ComplexShape.down ℕ))
 
-/-- Inclusion of a horizontal filtration stage into the total complex. -/
+/-- For a nonnegative homological bicomplex K in a preadditive
+category with a zero object and finite coproducts, the inclusions
+F_k T_n → Tot(K)_n define the chain map i_k : F_k T → Tot(K).
+The stage differential is the restriction of the signed total
+differential, so each degree square commutes. -/
 noncomputable def horizontalFilteredTotalComplexToTotal (k : ℕ) :
     horizontalFilteredTotalComplex K k ⟶
       K.total (ComplexShape.down ℕ) where
@@ -71,8 +76,11 @@ theorem horizontalFilteredTotalComplexMap_toTotal
   ext n
   exact horizontalFilteredTotalMap_toTotal K h n
 
-/-- The horizontal filtration of a first-quadrant total complex, bundled
-using Mathlib's canonical filtration API. -/
+/-- For a nonnegative homological bicomplex K in a preadditive
+category with a zero object and finite coproducts, the complexes
+F_k T with coordinates p≤k form a filtration of Tot(K) indexed
+by ℕ. Its stage maps are coordinate inclusions, and its stage
+inclusions into Tot(K) are monomorphisms of chain complexes. -/
 noncomputable def horizontalTotalFiltration :
     CategoryTheory.Filtration (K.total (ComplexShape.down ℕ)) ℕ where
   toMonoOver :=
@@ -109,8 +117,11 @@ theorem horizontalTotalFiltration_ι_app (k : ℕ) :
       horizontalFilteredTotalComplexToTotal K k :=
   rfl
 
-/-- In total degree `n`, stage `k` of the canonical filtration is the whole
-total degree whenever `n ≤ k`. -/
+/-- For a nonnegative homological bicomplex K in a preadditive
+category with finite coproducts, if n≤k, the stage inclusion gives
+F_k T_n ≅ Tot(K)_n.
+The forward map is the filtered-to-total inclusion and the inverse
+retains every total antidiagonal coordinate, since p≤n≤k. -/
 noncomputable def horizontalTotalFiltrationEvalIsoOfLE
     (k n : ℕ) (h : n ≤ k) :
     ((horizontalTotalFiltration K).obj k).X n ≅

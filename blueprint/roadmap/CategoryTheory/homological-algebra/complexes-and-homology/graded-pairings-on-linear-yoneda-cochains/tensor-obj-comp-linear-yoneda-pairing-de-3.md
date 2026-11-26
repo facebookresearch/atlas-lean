@@ -1,5 +1,7 @@
-# ΙTensor Obj comp linear Yoneda Pairing Desc
+# Yoneda descriptor on its selected summand
 
-The linear-Yoneda pairing descriptor restricts on its selected tensor
-summand to the tensor product of the two cochains followed by the coefficient
-pairing.
+In a preadditive R-linear monoidal category C over a commutative ring
+R, with tensor product additive and R-linear in each variable, let K₁, K₂
+be nonnegative chain complexes with a total tensor product. For
+φ : K₁,p → M, ψ : K₂,q → N, and μ : M ⊗ N → P, restriction of the
+degree p + q descriptor to K₁,p ⊗ K₂,q is exactly μ ∘ (φ ⊗ ψ).

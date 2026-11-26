@@ -1,4 +1,7 @@
-# Cokernel Precomp Short Complex Iso Data
+# Precomposition transport of a cokernel-composition sequence
 
-The native precomposition composite with directly computed endpoint maps
-and an earned equality to the canonical composite.
+Precomposition transport of a cokernel-composition sequence.
+
+Given `f'=e.hom ≫ f` and an isomorphism from the cokernel-composition sequence of `f,g` to a
+short complex `T`, the transported sequence of `f',g` has an isomorphism to `T` together with
+its equality to the canonical composite.

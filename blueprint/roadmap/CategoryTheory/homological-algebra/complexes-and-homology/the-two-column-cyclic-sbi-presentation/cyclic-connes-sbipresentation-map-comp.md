@@ -1,3 +1,6 @@
-# Cyclic Connes SBIPresentation Map comp
+# Composition of two-column SBI presentation morphisms
 
-Composition is the original nonunital-map composition on the entire presentation.
+Composition of two-column SBI presentation morphisms.
+
+The presentation morphism induced by a composite nonunital algebra map is the composite of the
+induced presentation morphisms.

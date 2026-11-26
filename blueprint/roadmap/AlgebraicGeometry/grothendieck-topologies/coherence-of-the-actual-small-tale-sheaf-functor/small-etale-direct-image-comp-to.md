@@ -1,3 +1,5 @@
-# Small Etale Direct Image Comp To
+# Direct image composition for an identified scheme composite
 
-The same actual direct-image comparison with an explicitly named composite.
+Direct image composition for an identified scheme composite.
+
+For `fg = f ≫ g`, the composition comparison gives `f_* ⋙ g_* ≅ fg_*`.

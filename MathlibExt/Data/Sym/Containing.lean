@@ -13,12 +13,17 @@ public import Mathlib.Data.Sym.Card
 public import Mathlib.Data.Multiset.AddSub
 
 /-!
-# Exact symmetric-power cardinality with an original required submultiset
+# Symmetric words containing a fixed multiset
 
-Subtracting the actual required multiset is a bijection, with inverse
-addition of that same multiset. The original cardinality equality gives
-the remaining length. Native stars-and-bars then counts compatible cuts.
-No counting or containment certificate is supplied.
+For a type `α`, a multiset `t`, and `k : ℕ`, removing `t` gives a bijection from
+length-`k+|t|` symmetric words containing `t` to length-`k` symmetric words. The inverse adds
+`t`.
+
+For alphabet `Fin(n+1)` and `|t| ≤ n`, the number of length-`m` symmetric words containing `t`
+is `Nat.choose (n+m-|t|) n`. If `m < |t|`, the containing-word set is empty and this binomial
+value is zero.
+
+Reference: Stanley, *Enumerative Combinatorics*, Volume 1, Chapter 1.
 -/
 
 @[expose] public section
@@ -30,7 +35,9 @@ universe u
 
 variable {α : Type u}
 
-/-- Symmetric words containing the original fixed submultiset are exactly the remaining symmetric words. -/
+/-- For a type `α`, a multiset `t : Multiset α`, and `k : ℕ`, there is an equivalence `{s : Sym α
+(k+t.card) // t ≤ s.val} ≃ Sym α k`. It sends `s` to the multiset difference `s.val - t`, and
+its inverse sends `u` to `u.val + t`. -/
 def containingFixedEquiv (t : Multiset α) (k : ℕ) :
     {s : Sym α (k + t.card) // t ≤ s.val} ≃ Sym α k := by
   classical
@@ -48,7 +55,9 @@ def containingFixedEquiv (t : Multiset α) (k : ℕ) :
         apply Subtype.ext
         exact Multiset.add_sub_cancel_right }
 
-/-- Native stars-and-bars counts the actual compatible cuts, including the empty incompatible case. -/
+/-- Let `n,m : ℕ` and `t : Multiset (Fin(n+1))` satisfy `t.card ≤ n`. Then the set of length-`m`
+symmetric words containing `t` has cardinality `Fintype.card {s : Sym (Fin(n+1)) m // t ≤
+s.val} = Nat.choose (n+m-t.card) n`. This includes the zero count when `m < t.card`. -/
 theorem card_containing_fixed_fin (n m : ℕ) (t : Multiset (Fin (n + 1))) (ht : t.card ≤ n) :
     Fintype.card {s : Sym (Fin (n + 1)) m // t ≤ s.val} = (n + m - t.card).choose n := by
   classical

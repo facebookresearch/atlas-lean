@@ -14,24 +14,19 @@ public import MathlibExt.RingTheory.Ideal.AssociatedGraded.Basic
 public import Mathlib.RingTheory.AdicCompletion.Functoriality
 
 /-!
-# Associated-graded pieces of modules
+# Associated graded module pieces and first-order maps
 
-For an ideal `I` and an `R`-module `M`, this file defines the degree-`n`
-piece `I ^ n M / I ^ (n + 1) M`, its initial-form map, and functoriality in
-`M`. It also exposes the first-order layer `IM / I(IM)` and the raw
-linearization of a map whose range lies in `IN`.
+Let `R` be a commutative ring, `I` an ideal, and `M` an `R`-module. The degree-`n` piece is
+`I^n M/I^(n+1) M`, represented by quotienting `I^n M` by its submodule `I(I^n M)`. The
+initial-form map sends a representative to its class.
 
-No total graded-module structure, Rees module, flatness theorem, or
-first-order tensor comparison is introduced here.
+An `R`-linear map `f : M → N` induces an `R/I`-linear map on each degree, with `[x]_n ↦ [f
+x]_n`. In degree one the layer is `IM/I(IM) = IM/I²M`.
 
-## Main declarations
+If the range of `f : M → N` lies in `IN`, its first-order linearization is the `R/I`-linear
+map `M/IM → IN/I²N` sending `[m]` to `[f m]`.
 
-* `Ideal.AssociatedGradedModulePiece`
-* `Ideal.initialFormModule`
-* `Ideal.associatedGradedModuleMap`
-* `Ideal.FirstOrderModuleLayer`
-* `Ideal.firstOrderLayerMap`
-* `LinearMap.linearizedLayer`
+References: Atiyah and Macdonald, *Introduction to Commutative Algebra*, Chapters 2 and 10.
 -/
 
 @[expose] public section
@@ -50,8 +45,9 @@ namespace Ideal
 
 variable {R : Type u} [CommRing R]
 
-/-- The degree-`n` associated-graded piece `I ^ n M / I ^ (n + 1) M` of an
-`R`-module, presented as the quotient of `I ^ n M` by `I` times that
+/-- Let `R` be a commutative ring, `I : Ideal R`, `M` an `R`-module, and `n : ℕ`. The degree-`n`
+associated graded module piece is `I^n M/I^(n+1) M`. Its quotient presentation is `I^n M ⧸
+I(I^n M)`, where `I^n M = I^n • (⊤ : Submodule R M)` and the denominator is taken inside that
 submodule. -/
 abbrev AssociatedGradedModulePiece
     (I : Ideal R) (M : Type v) [AddCommGroup M] [Module R M]
@@ -59,8 +55,9 @@ abbrev AssociatedGradedModulePiece
   ↥(I ^ n • (⊤ : Submodule R M)) ⧸
     (I • (⊤ : Submodule R ↥(I ^ n • (⊤ : Submodule R M))))
 
-/-- The class of an element of `I ^ n M` in the degree-`n`
-associated-graded module piece. -/
+/-- For a commutative ring `R`, an ideal `I`, an `R`-module `M`, and `n : ℕ`, this is the
+`R`-linear quotient map `I^n M → I^n M/I^(n+1) M`. It sends a representative `x : I^n M` to
+`Submodule.Quotient.mk x`. -/
 def initialFormModule (I : Ideal R) (M : Type v)
     [AddCommGroup M] [Module R M] (n : ℕ) :
     ↥(I ^ n • (⊤ : Submodule R M)) →ₗ[R]
@@ -74,15 +71,17 @@ theorem initialFormModule_apply (I : Ideal R) (M : Type v)
     initialFormModule I M n x = Submodule.Quotient.mk x :=
   rfl
 
-/-- Every associated-graded module class has a representative in
-`I ^ n M`. -/
+/-- For a commutative ring `R`, an ideal `I`, an `R`-module `M`, and every `n : ℕ`,
+`initialFormModule I M n : I^n M → I.AssociatedGradedModulePiece M n` is surjective. Every
+degree-`n` class is represented by an element of `I^n M`. -/
 theorem initialFormModule_surjective (I : Ideal R) (M : Type v)
     [AddCommGroup M] [Module R M] (n : ℕ) :
     Function.Surjective (initialFormModule I M n) :=
   Submodule.mkQ_surjective _
 
-/-- An initial form vanishes exactly when its representative belongs to the
-next ideal-power multiple. -/
+/-- Let `R` be a commutative ring, `I` an ideal, `M` an `R`-module, `n : ℕ`, and `x : I^n M`. Then
+`initialFormModule I M n x = 0` if and only if the underlying element `(x : M)` lies in
+`I^(n+1) M`. -/
 theorem initialFormModule_eq_zero_iff (I : Ideal R) (M : Type v)
     [AddCommGroup M] [Module R M] (n : ℕ)
     (x : ↥(I ^ n • (⊤ : Submodule R M))) :
@@ -102,7 +101,9 @@ private def associatedGradedModuleMapRestricted
     (I ^ n • (⊤ : Submodule R N)) fun x ↦
       (Submodule.smul_top_le_comap_smul_top (I ^ n) f) x.2
 
-/-- A linear map induces a map on every associated-graded module piece. -/
+/-- Let `R` be a commutative ring, `I : Ideal R`, `M,N` be `R`-modules, and `f : M →ₗ[R] N`. For
+`n : ℕ`, this is the induced `R/I`-linear map `I^n M/I^(n+1) M → I^n N/I^(n+1) N`, sending
+`[x]_n` to `[f x]_n`. -/
 def associatedGradedModuleMap (I : Ideal R)
     {M : Type v} [AddCommGroup M] [Module R M]
     {N : Type w} [AddCommGroup N] [Module R N]
@@ -176,8 +177,9 @@ theorem associatedGradedModuleMap_comp (I : Ideal R)
       exact congrArg (associatedGradedModuleMap I g n)
         (associatedGradedModuleMap_initialFormModule I f n x).symm
 
-/-- A surjective linear map induces a surjective map on every
-associated-graded module piece. -/
+/-- Let `R` be a commutative ring, `I` an ideal, `M,N` be `R`-modules, and `f : M →ₗ[R] N` a
+surjective map. For every `n : ℕ`, the induced map `associatedGradedModuleMap I f n : I^n
+M/I^(n+1) M → I^n N/I^(n+1) N` is surjective. -/
 theorem associatedGradedModuleMap_surjective (I : Ideal R)
     {M : Type v} [AddCommGroup M] [Module R M]
     {N : Type w} [AddCommGroup N] [Module R N]
@@ -201,14 +203,17 @@ theorem associatedGradedModuleMap_surjective (I : Ideal R)
   apply congrArg (initialFormModule I N n)
   exact Subtype.ext hxy
 
-/-- The first-order ideal-adic layer `IM / I(IM)`. -/
+/-- For an ideal `I` in a commutative ring `R` and an `R`-module `M`, the first-order layer is
+`IM/I(IM)`, represented as `↥(I • ⊤) ⧸ (I • ⊤)` with the denominator inside `IM`. Under the
+inclusion `IM ⊆ M`, this denominator is `I²M`, so the layer is `IM/I²M`. -/
 abbrev FirstOrderModuleLayer
     (I : Ideal R) (M : Type v) [AddCommGroup M] [Module R M] : Type v :=
   ↥(I • (⊤ : Submodule R M)) ⧸
     (I • (⊤ : Submodule R ↥(I • (⊤ : Submodule R M))))
 
-/-- The direct first-order carrier agrees with the degree-one
-associated-graded module piece. -/
+/-- For an ideal `I` in a commutative ring `R` and an `R`-module `M`, this is the `R/I`-linear
+equivalence `I.FirstOrderModuleLayer M ≃ₗ[R/I] I.AssociatedGradedModulePiece M 1`. Both sides
+are `IM/I²M`, and the equivalence preserves each representative in `IM`. -/
 @[no_expose]
 def firstOrderModuleLayerEquivGradedPiece (I : Ideal R)
     (M : Type v) [AddCommGroup M] [Module R M] :
@@ -234,7 +239,9 @@ private def firstOrderLayerMapRestricted (I : Ideal R)
     (I • (⊤ : Submodule R N)) fun x ↦
       (Submodule.smul_top_le_comap_smul_top I f) x.2
 
-/-- A linear map induces a map on first-order ideal-adic layers. -/
+/-- Let `R` be a commutative ring, `I` an ideal, `M,N` be `R`-modules, and `f : M →ₗ[R] N`. The
+induced `R/I`-linear map `IM/I²M → IN/I²N` sends a class represented by `x ∈ IM` to the class
+represented by `f x ∈ IN`. -/
 def firstOrderLayerMap (I : Ideal R)
     {M : Type v} [AddCommGroup M] [Module R M]
     {N : Type w} [AddCommGroup N] [Module R N]
@@ -310,8 +317,9 @@ namespace LinearMap
 
 variable {R : Type u} [CommRing R]
 
-/-- The first-order layer-valued linearization of a map whose range lies in
-an ideal multiple of the target. -/
+/-- Let `R` be a commutative ring, `I : Ideal R`, and `M,N` be `R`-modules. If `f : M →ₗ[R] N`
+satisfies `LinearMap.range f ≤ IN`, then its layer-valued linearization is an `R/I`-linear map
+`M/IM → IN/I²N`. It sends the quotient class of `m : M` to the first-order class of `f m`. -/
 def linearizedLayer (I : Ideal R)
     {M : Type v} [AddCommGroup M] [Module R M]
     {N : Type w} [AddCommGroup N] [Module R N]

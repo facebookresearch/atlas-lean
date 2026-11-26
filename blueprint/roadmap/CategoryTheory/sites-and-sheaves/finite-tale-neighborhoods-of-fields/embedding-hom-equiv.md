@@ -1,4 +1,6 @@
-# Embedding Hom Equiv
+# Closure embedding gives a bijection of finite étale algebra maps
 
-Every original finite algebra Hom set has the literal postcomposition
-comparison, including noninjective product maps and the vacuous zero algebra.
+Closure embedding gives a bijection of finite étale algebra maps.
+
+Postcomposition by `σ` is a bijection from `k`-algebra maps `A → Ω` to maps `A → Ψ`, with
+inverse the closure lift.

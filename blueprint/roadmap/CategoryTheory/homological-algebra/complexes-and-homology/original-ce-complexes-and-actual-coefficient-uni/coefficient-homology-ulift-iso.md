@@ -1,4 +1,6 @@
-# Coefficient Homology ULift Iso
+# The homology comparison for a whole CE complex lift
 
-Exact whole-complex lift transports the lower-universe homology object, with the homology
-comparison.
+The homology comparison for a whole CE complex lift.
+
+The lifted degree-`n` homology object is isomorphic to degree-`n` homology of the whole lifted
+coefficient complex.

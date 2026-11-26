@@ -16,7 +16,15 @@ public import Mathlib.Algebra.Homology.ShortComplex.ShortExact
 public import Mathlib.Algebra.Homology.Single
 
 /-!
-## Flip a short complex of cochain complexes to a cochain complex of short complexes
+# Transposing short complexes of cochain complexes
+
+In an abelian category, a short complex of nonnegative cochain
+complexes can be transposed into a nonnegative cochain complex of
+short complexes. Its degree-`n` row has the three original degree-`n`
+objects and sequence maps, and its differential has the three
+cochain differentials. Projection recovers each original complex;
+a map between transposed complexes recovers a map of the original
+short complexes with the same degree components.
 -/
 @[expose] public section
 noncomputable section
@@ -27,10 +35,10 @@ open CategoryTheory CategoryTheory.Limits
 namespace CategoryTheory.ShortComplex
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
-/--
-The original three cochain objects and differentials, regarded as a cochain complex of short
-complexes.
--/
+/-- In an abelian category `C`, let `S` be a short complex of
+nonnegative cochain complexes. Transposing gives a cochain complex whose degree-`n` object
+is the short complex `S₁^n → S₂^n → S₃^n` and whose differential
+has components `d_S₁,d_S₂,d_S₃`. -/
 def cochainFlip (S : ShortComplex (CochainComplex C ℕ)) :
     CochainComplex (ShortComplex C) ℕ where
   X n := ShortComplex.mk (S.f.f n) (S.g.f n)
@@ -53,22 +61,31 @@ def cochainFlip (S : ShortComplex (CochainComplex C ℕ)) :
     · exact S.X₂.d_comp_d i j k
     · exact S.X₃.d_comp_d i j k
 
-/-- The first projection of the flipped complex is literally its original first cochain complex. -/
+/-- In an abelian category `C`, let `S` be a short complex of
+nonnegative cochain complexes. Projection to the first object of each transposed row
+recovers the first cochain complex `S₁`. -/
 theorem cochainFlip_π₁ (S : ShortComplex (CochainComplex C ℕ)) :
     ((ShortComplex.π₁ : ShortComplex C ⥤ C).mapHomologicalComplex (ComplexShape.up ℕ)).obj
       S.cochainFlip = S.X₁ := rfl
 
-/-- The middle projection retains the original middle cochain complex. -/
+/-- In an abelian category `C`, let `S` be a short complex of
+nonnegative cochain complexes. Projection to the middle object of each transposed row
+recovers the middle cochain complex `S₂`. -/
 theorem cochainFlip_π₂ (S : ShortComplex (CochainComplex C ℕ)) :
     ((ShortComplex.π₂ : ShortComplex C ⥤ C).mapHomologicalComplex (ComplexShape.up ℕ)).obj
       S.cochainFlip = S.X₂ := rfl
 
-/-- The third projection retains the original third cochain complex. -/
+/-- In an abelian category `C`, let `S` be a short complex of
+nonnegative cochain complexes. Projection to the third object of each transposed row
+recovers the third cochain complex `S₃`. -/
 theorem cochainFlip_π₃ (S : ShortComplex (CochainComplex C ℕ)) :
     ((ShortComplex.π₃ : ShortComplex C ⥤ C).mapHomologicalComplex (ComplexShape.up ℕ)).obj
       S.cochainFlip = S.X₃ := rfl
 
-/-- A map between flipped complexes gives strict original maps of all three cochain complexes. -/
+/-- In an abelian category `C`, let `S,T` be short complexes of
+nonnegative cochain complexes. A cochain map `a : S.flip → T.flip`
+induces a morphism of the original short complexes, using its
+three components in every degree. -/
 def cochainUnflipHom {S T : ShortComplex (CochainComplex C ℕ)}
     (a : S.cochainFlip ⟶ T.cochainFlip) : S ⟶ T where
   τ₁ := ((ShortComplex.π₁ : ShortComplex C ⥤ C).mapHomologicalComplex (ComplexShape.up ℕ)).map a
@@ -83,17 +100,23 @@ def cochainUnflipHom {S T : ShortComplex (CochainComplex C ℕ)}
     funext n
     exact (a.f n).comm₂₃
 
-/-- The map on the first coefficient in every original degree is unchanged. -/
+/-- In an abelian category `C`, for `a : S.flip → T.flip`, the
+first cochain component of the recovered short-complex map in
+degree `n` is the first component of the row map `aⁿ`. -/
 theorem cochainUnflipHom_τ₁_f {S T : ShortComplex (CochainComplex C ℕ)}
     (a : S.cochainFlip ⟶ T.cochainFlip) (n : ℕ) :
     (cochainUnflipHom a).τ₁.f n = (a.f n).τ₁ := rfl
 
-/-- The middle coefficient map is the original component of the strict flipped map. -/
+/-- In an abelian category `C`, for `a : S.flip → T.flip`, the
+middle cochain component of the recovered short-complex map in
+degree `n` is the middle component of the row map `aⁿ`. -/
 theorem cochainUnflipHom_τ₂_f {S T : ShortComplex (CochainComplex C ℕ)}
     (a : S.cochainFlip ⟶ T.cochainFlip) (n : ℕ) :
     (cochainUnflipHom a).τ₂.f n = (a.f n).τ₂ := rfl
 
-/-- The third coefficient map is the original component of the strict flipped map. -/
+/-- In an abelian category `C`, for `a : S.flip → T.flip`, the
+third cochain component of the recovered short-complex map in
+degree `n` is the third component of the row map `aⁿ`. -/
 theorem cochainUnflipHom_τ₃_f {S T : ShortComplex (CochainComplex C ℕ)}
     (a : S.cochainFlip ⟶ T.cochainFlip) (n : ℕ) :
     (cochainUnflipHom a).τ₃.f n = (a.f n).τ₃ := rfl

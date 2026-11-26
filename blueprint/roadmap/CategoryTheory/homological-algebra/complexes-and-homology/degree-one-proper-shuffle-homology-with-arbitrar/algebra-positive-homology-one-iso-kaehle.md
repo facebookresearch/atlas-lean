@@ -1,3 +1,6 @@
-# Algebra Positive Homology One Iso Kaehler
+# Proper-shuffle H₁ is the lifted coefficient Kähler module
 
-The degree-one comparison targets the whole-module lift of the original Kähler tensor.
+Proper-shuffle H₁ is the lifted coefficient Kähler module.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M,
+H₁(algebraPositiveQuotientComplex) ≅ ULift(M ⊗[A] Ω¹(A/k)) in ModuleCat A.

@@ -1,3 +1,6 @@
-# Field Coind Canonical Complex right Derived is Zero
+# Canonical coinduction terms are acyclic for derived invariants
 
-Every literal canonical coinduction term is acyclic for SAME native derived invariants.
+Canonical coinduction terms are acyclic for derived invariants.
+
+Every cochain term of the canonical field coinduction complex has zero right-derived
+invariants in every positive degree.

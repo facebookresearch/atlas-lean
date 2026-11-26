@@ -1,3 +1,6 @@
-# Unitization Hochschild Relative Iso naturality
+# Naturality of the unitization cokernel-to-relative comparison
 
-The source cokernel comparison is natural for the original nonunital algebra map.
+Naturality of the unitization cokernel-to-relative comparison.
+
+The cokernel homology map induced by `f` commutes with the comparison to relative homology and
+the homology map of the relative chain map.

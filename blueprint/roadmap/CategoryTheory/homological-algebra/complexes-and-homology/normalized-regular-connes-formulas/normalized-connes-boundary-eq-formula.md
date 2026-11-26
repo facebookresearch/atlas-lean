@@ -1,3 +1,6 @@
-# Normalized Connes Boundary eq formula
+# The normalized Connes boundary as coefficient projection and cyclic norm
 
-The original normalized Connes map has exactly its literal signed norm formula.
+The normalized Connes boundary as coefficient projection and cyclic norm.
+
+The normalized regular Connes map equals `a₀ ⊗ ā₁ ⊗ ⋯ ⊗ āₙ ↦ 1 ⊗ N_n(ā₀ ⊗ ā₁ ⊗ ⋯ ⊗ āₙ)` over
+an arbitrary commutative ground ring.

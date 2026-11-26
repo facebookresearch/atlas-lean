@@ -1,3 +1,6 @@
-# Field Equivariant Stalk Hom Cone
+# Invariant cone of an equivariant stalk morphism
 
-The SAME original adjoint sections form an actual cone, derived from the module arrow.
+Invariant cone of an equivariant stalk morphism.
+
+The diagonally invariant transpose defines a cone over the skyscraper invariant diagram, with
+vertex the source sheaf.

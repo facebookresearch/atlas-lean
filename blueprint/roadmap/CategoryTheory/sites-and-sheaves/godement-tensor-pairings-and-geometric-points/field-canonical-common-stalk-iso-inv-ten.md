@@ -1,4 +1,6 @@
-# Field Canonical Common Stalk Iso inv tensor
+# Inverse field stalk comparison preserves tensor coordinates
 
-The inverse genuine canonical-to-prescribed stalk comparison preserves the same original binary
-tensor.
+Inverse field stalk comparison preserves tensor coordinates.
+
+The inverse comparison on the tensor sheaf commutes with tensoring the two inverse stalk
+comparisons, using the prescribed and canonical stalk-tensor coordinates.

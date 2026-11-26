@@ -1,3 +1,6 @@
-# Field Equivariant Stalk Counit Iso
+# Field stalk counit is an isomorphism of coefficients
 
-The genuine additive, equivariant, integer-linear and continuous inverse of SAME epsilon.
+Field stalk counit is an isomorphism of coefficients.
+
+The proved counit bijection defines an isomorphism from the geometric Galois stalk of the
+inverse sheaf to its coefficient.

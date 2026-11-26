@@ -1,3 +1,6 @@
-# Coefficient Tensor Cancellation
+# The coefficient scalar-tower cancellation for cotangent modules
 
-The raw tensor cancellation, linear over the original ground ring.
+The coefficient scalar-tower cancellation for cotangent modules.
+
+For `P → B`, the ground-linear equivalence `M ⊗[B] (B ⊗[P] Ω[P/k]) ≃ₗ[k] M ⊗[P] Ω[P/k]`
+multiplies the middle scalar into the coefficient.

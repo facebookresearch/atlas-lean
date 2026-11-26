@@ -1,4 +1,6 @@
-# Horizontal Direct Column Top Inclusion d eq previous
+# The finite top-column boundary in direct-column cycle coordinates
 
-The same finite-stage boundary formula with the source cycle written in
-the direct-column presentation.
+The finite top-column boundary in direct-column cycle coordinates.
+
+Transport direct-column cycles at cochain degree `-(p+1)-q` to the vertical column; the
+filtered boundary is the horizontal map into column `p` followed by its stage-`p+1` inclusion.

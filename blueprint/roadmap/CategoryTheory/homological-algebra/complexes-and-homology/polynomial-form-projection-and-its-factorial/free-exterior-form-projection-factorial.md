@@ -1,4 +1,6 @@
-# Free Exterior Form Projection factorial
+# The integral factorial law for free exterior form projection
 
-The raw form projection composed with signed antisymmetrization has
-the exact factorial factor, for every original coefficient and ground ring.
+The integral factorial law for free exterior form projection.
+
+The projection of signed polynomial antisymmetrization equals `n!` times the coefficient
+exterior-form equivalence, as a ground-linear map.

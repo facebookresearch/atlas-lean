@@ -1,3 +1,6 @@
-# Profinite Group
+# The Krull-topological Galois group as a profinite group
 
-The stock profinite group is the original Krull-topological Galois group.
+The Krull-topological Galois group as a profinite group.
+
+For a Galois extension L/K, this is the profinite group of K-automorphisms of L with the Krull
+topology.

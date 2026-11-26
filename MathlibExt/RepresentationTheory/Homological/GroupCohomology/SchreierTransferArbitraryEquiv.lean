@@ -15,12 +15,16 @@ public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.Schrei
 public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.SchreierTransferArbitraryNaturality
 
 /-!
-# Arbitrary Schreier transfer under group equivalences
+# Schreier transfer under an equivalence of groups
 
-Transporting a right transversal along an equivalence of ambient groups
-commutes with its complete Schreier scan and factor tuple.  Consequently
-the associated Schreier transfer commutes with change of groups on
-cochains and cohomology in every degree.
+For e : G ≃* G′, the image e(T) of a finite right transversal T for H is a right transversal
+for e(H). The representative scan and subgroup factor tuple commute with e, so the degree-n
+transfer for e(T), pulled back to G, is the degree-n transfer for T after pulling H-cochains
+back along H ≃* e(H).
+
+The equality holds on cochains, cochain complexes and cohomology in every degree. It also
+holds with a G-equivariant coefficient morphism from the pulled-back G′-representation to a
+G-representation.
 -/
 
 @[expose] public section
@@ -39,26 +43,36 @@ universe u
 variable {k G G' : Type u} [CommRing k] [Group G] [Group G']
 variable {H : Subgroup G}
 
+/-- Finite index of a subgroup image under a group equivalence.
+
+For e : G ≃* G′ and finite-index H ≤ G, the image subgroup e(H) has finite index in G′. -/
 noncomputable local instance corestrictionArbitraryEquivMapFiniteIndex
     (e : G ≃* G') [H.FiniteIndex] :
     (H.map e.toMonoidHom).FiniteIndex :=
   Subgroup.FiniteIndex.map_of_surjective H e.surjective
 
-/-- A finite-index right transversal has a finite type of representatives. -/
+/-- Finite representatives for group-equivalence transfer sums.
+
+A right transversal for a finite-index subgroup is given a finite enumeration for transfer
+under group equivalences. -/
 noncomputable local instance corestrictionArbitraryEquivFintype
     {M : Type u} [Group M] {J : Subgroup M}
     (T : J.RightTransversal) [J.FiniteIndex] : Fintype (T : Set M) :=
   @Fintype.ofFinite (T : Set M) (T.2.finite_right)
 
-/-- The actual mapped representative type is finite under the original
-subgroup finite-index hypothesis. -/
+/-- Finite representatives of the transported transversal.
+
+For e : G ≃* G′ and finite-index H, the image transversal e(T) is finitely enumerated. -/
 noncomputable local instance corestrictionArbitraryMappedRepresentativeFintype
     (e : G ≃* G') (T : H.RightTransversal) [H.FiniteIndex] :
     Fintype (T.mapMulEquiv e : Set G') :=
   @Fintype.ofFinite _ (T.mapMulEquiv e).2.finite_right
 
-/-- Arbitrary-degree cochain transfer commutes with transport by an
-ambient multiplicative equivalence. -/
+/-- The tuple transfer formula after group transport.
+
+Pulling back the transfer for e(T) along e equals transferring with T after applying H ≃* e(H)
+to each subgroup tuple coordinate. The coefficients are the G′-representation restricted along
+e. -/
 theorem corestrictionCochain_mapMulEquiv
     (e : G ≃* G') (A : Rep k G')
     (T : H.RightTransversal) [H.FiniteIndex] (n : ℕ)
@@ -102,8 +116,10 @@ theorem corestrictionCochain_mapMulEquiv
             (T.schreierFactorTuple t g i))))
         (map_inv e (t : G)).symm
 
-/-- Transport by an ambient group equivalence commutes with arbitrary
-Schreier transfer as a square of inhomogeneous cochain maps. -/
+/-- The cochain-complex square for group transport.
+
+The transfer cochain map for e(T) followed by pullback along e equals pullback along H ≃*
+e(H), with its coefficient comparison, followed by the transfer cochain map for T. -/
 theorem corestrictionCochains_mapMulEquiv
     (e : G ≃* G') (A : Rep k G')
     (T : H.RightTransversal) [H.FiniteIndex] :
@@ -118,8 +134,10 @@ theorem corestrictionCochains_mapMulEquiv
   exact congrFun (corestrictionCochain_mapMulEquiv e A T n f) g
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Chosen-transversal corestriction commutes with transport by an ambient
-group equivalence in every cohomological degree. -/
+/-- The arbitrary-degree cohomology square for group transport.
+
+In degree n, pullback along e after transfer from e(H) to G′ equals transfer from H to G after
+pullback along the induced subgroup equivalence. -/
 theorem corestrictionOfRightTransversal_mulEquiv
     (e : G ≃* G') (A : Rep k G')
     (T : H.RightTransversal) [H.FiniteIndex] (n : ℕ) :
@@ -136,8 +154,10 @@ theorem corestrictionOfRightTransversal_mulEquiv
     congrArg (fun q ↦ HomologicalComplex.homologyMap q n)
       (corestrictionCochains_mapMulEquiv e A T)
 
-/-- Elementwise arbitrary-degree transport of chosen-transversal
-corestriction along an ambient group equivalence. -/
+/-- Elementwise group transport of a transferred class.
+
+For x ∈ Hⁿ(e(H),A|e(H)), pulling its transferred class back to G gives the T-transfer of its
+pullback to H, using the restricted coefficient representation. -/
 theorem corestrictionOfRightTransversal_mulEquiv_apply
     (e : G ≃* G') (A : Rep k G')
     (T : H.RightTransversal) [H.FiniteIndex] (n : ℕ)
@@ -153,8 +173,10 @@ theorem corestrictionOfRightTransversal_mulEquiv_apply
   exact ConcreteCategory.congr_hom
     (corestrictionOfRightTransversal_mulEquiv e A T n) x
 
-/-- Simultaneous ambient-group and coefficient naturality of arbitrary-degree
-chosen-transversal corestriction. -/
+/-- Elementwise simultaneous group and coefficient transport.
+
+For φ : e* A → B, the pullback-and-coefficient image of an e(T)-transferred class equals the
+T-transfer of its subgroup pullback with the restricted coefficient morphism. -/
 theorem corestrictionOfRightTransversal_mulEquiv_hom_apply
     (e : G ≃* G') {A : Rep k G'} {B : Rep k G}
     (phi : Rep.res e.toMonoidHom A ⟶ B)
@@ -217,8 +239,11 @@ theorem corestrictionOfRightTransversal_mulEquiv_hom_apply
       rw [hsubgroup]
       rfl
 
-/-- Morphism-square form of simultaneous ambient-group and coefficient
-naturality for arbitrary chosen-transversal corestriction. -/
+/-- The cohomology square for group and coefficient transport.
+
+For e : G ≃* G′ and φ : e* A → B, transfer along e(H) followed by the group-and-coefficient
+map equals the subgroup group-and-coefficient map followed by transfer along H, in every
+degree. -/
 theorem corestrictionOfRightTransversal_mulEquiv_hom
     (e : G ≃* G') {A : Rep k G'} {B : Rep k G}
     (phi : Rep.res e.toMonoidHom A ⟶ B)

@@ -1,3 +1,5 @@
-# Tensor Coefficient Map mk
+# Bimodule coefficient tensor map on pure classes
 
-The computed coefficient map has the original pure tensor value.
+Bimodule coefficient tensor map on pure classes.
+
+The map induced by the coefficient morphism `f` sends `[a ⊗ b]` to `[a ⊗ f b]`.

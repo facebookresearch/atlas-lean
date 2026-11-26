@@ -1,4 +1,6 @@
-# Antisymmetrization scaled Coefficient Form Homology Map
+# The right inverse law for inverse-factorial form projection
 
-The fixed-degree rescaled projection and antisymmetrization
-also satisfy the right inverse law on the original Hochschild homology.
+The right inverse law for inverse-factorial form projection.
+
+For every degree-`n` polynomial Hochschild homology class, signed antisymmetrization after the
+scaled form projection returns the class.

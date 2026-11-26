@@ -1,3 +1,6 @@
-# Hom Tensor Homotopy Right Functor
+# Tensor followed by Hom as a functor on homotopy triples
 
-The actual target H(P,T(J,U)) on native homotopy-category inputs.
+Tensor followed by Hom as a functor on homotopy triples.
+
+The right functor takes `(P, J, U)` to the homotopy class of `Hom_R(P,J ⊗_R U)` with the same
+input variance.

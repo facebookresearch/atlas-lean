@@ -15,14 +15,17 @@ public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.UniversalEnveloping
 public import MathlibExt.Algebra.Category.ModuleCat.UliftRestriction
 
 /-!
-# Height naturality of Lie-coefficient Tor maps
+# Naturality of Lie-coefficient Tor under universe lifting
 
-Compatible Lie and coefficient maps induce natural balanced-tensor maps and derived Tor maps
-between their enveloping representations. These maps commute with the coefficient, input, and
-output universe-lift comparisons.
+Let R be a commutative ring, f : L →ₗ⁅R⁆ L′ a Lie map, and h : M → f* M′ an equivariant
+coefficient map. The Lie algebras and coefficient modules may occupy independent universes.
+Put H = max(u,v,v′,w,w′,z) and H′ = max(H,t).
 
-The underlying tensor diagrams commute on pure representatives. Exact scalar restriction and
-projective-preserving input lifts give the derived height identities.
+The balanced-tensor maps induced by f and h commute with the coefficient, input, and output
+comparisons between H and H′. Their left-derived maps satisfy the same identity in every
+degree, for arbitrary input morphisms. Evaluating at the augmentation modules gives height
+naturality of the Lie-coefficient Tor maps. No freeness of either Lie algebra is required for
+these Tor identities.
 -/
 
 @[expose] public section
@@ -56,8 +59,15 @@ local instance rawCube_tensor_additive {A : Type a} [Ring A] [Algebra R A]
     (N : ModuleCat.{b} Aᵐᵒᵖ) : (ModuleCat.BalancedTensor.functor.{u, a, b, c} R A N).Additive :=
   ModuleCat.BalancedTensor.additive R A N
 
-/-- The Lie/coefficient tensor square commutes with the sufficient-height maps on the balanced
-quotient. -/
+/-- Let R be a commutative ring, f : L →ₗ⁅R⁆ L′ a Lie map, and h : M → f* M′ an equivariant map of
+coefficient modules in independent universes. Put H = max(u,v,v′,w,w′,z) and H′ = max(H,t),
+and write U = U_R(L), U′ = U_R(L′), σ = U_R(f). Let F_H(X) = N_H ⊗_U X and G_H(Y) = N′_H
+⊗_{U′} Y, where N_H and N′_H are the right enveloping representations of the lifted
+coefficients. Let α_H : F_H(σ*Y) → G_H(Y) be induced by h, ν_M : F_H′(I_U X) ≅ V(F_H X) the
+tensor height comparison, and r_Y : I_U(σ*Y) ≅ σ*(I_U′Y) the lift–restriction comparison. Then
+ν_M.hom at σ*Y followed by V(α_H,Y) equals F_H′(r_Y.hom) followed by α_H′ at I_U′Y and
+ν_M′.hom at Y. Equivalently, the two composed natural transformations in the displayed
+scalar-restriction and tensor-lift square agree. -/
 theorem rawTensorLieHeight_cube :
     Functor.composeLeftDerivedSquare (rawTensorHeightSourceLift.{u, v, v', w, w', z, t} R L)
       (ModuleCat.restrictScalars.{max u v v' w w' z} ((UniversalEnvelopingAlgebra.map R f).toRingHom))
@@ -128,8 +138,15 @@ theorem rawTensorLieHeight_cube :
   cases x
   rfl
 
-/-- The generic canonical exact-square cube computes the left-variable Tor height square, with
-arbitrary input morphism and independent raw coefficients. -/
+/-- Let R be a commutative ring, f : L →ₗ⁅R⁆ L′ a Lie map, and h : M → f* M′ an equivariant
+coefficient map. Put H = max(u,v,v′,w,w′,z), H′ = max(H,t), U = U_R(L), U′ = U_R(L′), and σ =
+U_R(f). For X ∈ ModuleCat_H(U), Y ∈ ModuleCat_H(U′), and a : X → σ*Y, define k_H,n(a) =
+(L_nF_H)(a) followed by the degree-n derived coefficient transformation, where F_H(X) = N_H
+⊗_U X and N_H represents the lifted coefficient M. Let D_M,n : V∘L_nF_H ≅ L_nF_H′∘I_U be the
+derived height comparison, and r_Y : I_U(σ*Y) ≅ σ*(I_U′Y). Then, for every n ∈ ℕ,
+k_H′,n(I_U(a) ≫ r_Y.hom) ≫ D_M′,n.inv at Y = D_M,n.inv at X ≫ V(k_H,n(a)). The coefficient
+modules and Lie algebras have independent carrier universes; no freeness hypothesis is
+imposed. -/
 theorem rawTensorLieHeight_derived_with_input
     {X : ModuleCat.{max u v v' w w' z} U} {Y : ModuleCat.{max u v v' w w' z} U'}
     (a : X ⟶ (ModuleCat.restrictScalars.{max u v v' w w' z} ((UniversalEnvelopingAlgebra.map R f).toRingHom)).obj Y)
@@ -290,8 +307,12 @@ theorem rawTensorLieHeight_derived_with_input
           (congrArg (fun q => eF.inv.app X ≫ q) (K.map_comp ((F₀.leftDerived n).map a) s₀).symm)))
   exact hStart.trans (h'.trans hEnd)
 
-/-- Trivial-module Lie maps commute with the input height flattening, by their unchanged scalar
-representatives. -/
+/-- Let R be a commutative ring and f : L →ₗ⁅R⁆ L′ a Lie map between independently sized R-Lie
+algebras. Put H = max(u,v,v′,w,w′,z), H′ = max(H,t), and σ = U_R(f). Let T_H(L) and T_H(L′) be
+the lifted augmentation modules, c_H : T_H(L) → σ*T_H(L′) their canonical scalar-preserving
+map, and τ_L : I_U(T_H(L)) ≅ T_H′(L) the repeated-input-lift flattening. With r the
+lift–restriction comparison, τ_L.inv ≫ I_U(c_H) ≫ r.hom = c_H′ ≫ σ*(τ_L′.inv). Thus both maps
+preserve the scalar representative in R. -/
 theorem rawEnvelopingTrivialLieMap_height :
     (rawEnvelopingTrivialHeightIso.{u, v, v', w, w', z, t} R L).inv ≫
       (rawTensorHeightSourceLift.{u, v, v', w, w', z, t} R L).map
@@ -307,8 +328,13 @@ theorem rawEnvelopingTrivialLieMap_height :
   cases x
   rfl
 
-/-- The joint Lie-and-coefficient Tor map commutes with universe-lift transport of both
-coefficient modules. -/
+/-- Let R be a commutative ring, f : L →ₗ⁅R⁆ L′ a Lie map, and h : M → f* M′ an equivariant
+coefficient map, with the Lie and coefficient carriers in independent universes. Put H =
+max(u,v,v′,w,w′,z), H′ = max(H,t), and let V be the R-module lift H → H′. For n ∈ ℕ, write
+K_H,n for the Tor map induced by U_R(f), the represented coefficient map, and the
+augmentation-module map. Let J_M,n : V(Tor_H,n(M)) ≅ Tor_H′,n(M) and J_M′,n be the Tor height
+isomorphisms. Then K_H′,n ≫ J_M′,n.inv = J_M,n.inv ≫ V(K_H,n). The map on Tor is defined
+through the derived balanced-tensor square; neither Lie algebra is assumed free. -/
 theorem rawLieCoefficientTorMapAt_height (n : ℕ) :
     rawLieCoefficientTorMapAt.{u, v, v', w, w', max z t} R L f M M' h n ≫
       (rawLieCoefficientTorHeightIsoAt.{u, v', v, w', w, z, t} R L' M' n).inv =

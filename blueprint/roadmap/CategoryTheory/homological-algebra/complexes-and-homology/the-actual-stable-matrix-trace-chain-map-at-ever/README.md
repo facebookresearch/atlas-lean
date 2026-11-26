@@ -1,7 +1,7 @@
 # The actual stable matrix trace chain map at every working height
 
-- [Canonical Stable Matrix Cyclic Weibel Chain Map](canonical-stable-matrix-cyclic-weibel-ch.md)
-- [Canonical Stable Matrix Cyclic Weibel Chain Map finite](canonical-stable-matrix-cyclic-weibel-ch-2.md)
-- [Canonical Stable Matrix Cyclic Weibel Chain Map At Height](canonical-stable-matrix-cyclic-weibel-ch-3.md)
-- [Canonical Stable Matrix Cyclic Weibel Chain Map At Height finite](canonical-stable-matrix-cyclic-weibel-ch-4.md)
-- [Canonical Stable Matrix Cyclic Weibel Chain Map At Height naturality](canonical-stable-matrix-cyclic-weibel-ch-5.md)
+- [The signed cyclic trace chain map on the stable CE positive tail](canonical-stable-matrix-cyclic-weibel-ch.md)
+- [The stable trace restricts to the finite positive-tail trace](canonical-stable-matrix-cyclic-weibel-ch-2.md)
+- [The signed stable positive-tail trace at a chosen height](canonical-stable-matrix-cyclic-weibel-ch-3.md)
+- [The lifted stable trace retains every finite-stage chain map](canonical-stable-matrix-cyclic-weibel-ch-4.md)
+- [The lifted stable trace chain map is algebra-natural](canonical-stable-matrix-cyclic-weibel-ch-5.md)

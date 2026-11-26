@@ -1,4 +1,4 @@
 # Colimits of positive tails and negated differentials
 
-- [Positive Tail Functor](positive-tail-functor.md)
-- [Negated Positive Tail Functor](negated-positive-tail-functor.md)
+- [Positive-tail functor on nonnegative chain complexes](positive-tail-functor.md)
+- [Positive-tail functor with negated differential](negated-positive-tail-functor.md)

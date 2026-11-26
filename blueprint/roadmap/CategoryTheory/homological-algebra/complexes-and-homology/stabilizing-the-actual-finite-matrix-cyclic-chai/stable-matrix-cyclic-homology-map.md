@@ -1,4 +1,5 @@
-# Stable Matrix Cyclic Homology Map
+# The matrix-colimit CE map into cyclic homology
 
-The map from homology of the matrix colimit complex in degree n + 1 to cyclic homology in
-degree n.
+The matrix-colimit CE map into cyclic homology.
+
+Follow the quotient homology map by the inverse rational cyclic-to-quotient comparison.

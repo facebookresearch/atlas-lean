@@ -1,3 +1,5 @@
-# Ulift Functor Self Iso inv app apply
+# Inverse contained-lift comparison lifts a module element
 
-The inverse comparison is the actual native coordinate lifting map.
+Inverse contained-lift comparison lifts a module element.
+
+At a module `M : ModuleCat.{max ℓ v} R`, the inverse comparison sends `x : M` to `ULift.up x`.

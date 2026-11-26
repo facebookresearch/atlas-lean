@@ -1,4 +1,5 @@
-# Degreewise Monomorphisms
+# The componentwise monomorphism property on bounded cochains
 
-The admissible monomorphisms of bounded cochains over an abelian category
-test monomorphisms on the actual original components.
+Let C be a category with zero morphisms. Define degreewiseMonomorphisms on Bounded C by
+requiring Mono(f^j) for every integer j. It is a condition on the components of the underlying
+cochain map and does not assume an abelian structure on C.

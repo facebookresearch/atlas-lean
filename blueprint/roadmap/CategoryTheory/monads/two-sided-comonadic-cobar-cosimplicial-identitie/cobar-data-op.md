@@ -1,3 +1,6 @@
-# Cobar Data Op
+# The opposite simplicial data of a two-sided cobar construction
 
-Cosimplicial data in `(A ⥤ D)ᵒᵖ`; duality confined to this packaging.
+The opposite simplicial data of a two-sided cobar construction.
+
+Take the opposite degree functors `R(G^n(L(-)))`, with the opposites of their cofaces and
+codegeneracies as simplicial operators.

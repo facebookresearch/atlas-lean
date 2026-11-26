@@ -15,13 +15,15 @@ public import MathlibExt.Algebra.Homology.HomologyDegreeTransport
 public import MathlibExt.Algebra.Homology.VerticalHomologyComplex
 
 /-!
-# Positive row homology of a Cartan--Eilenberg resolution
+# Positive row homology of a Cartan–Eilenberg resolution
 
-In positive original degree, the vertical homology of the resolution-degree-first
-Cartan--Eilenberg bicomplex is canonically the stored projective resolution of the corresponding
-homology object.  This file first constructs the component coordinate, proves its
-resolution-direction naturality, and then packages the horizontal row-homology complex as a
-projective resolution.
+Let P be Cartan–Eilenberg data for a nonnegative complex L in an abelian category. In positive
+original degree q+1, the cycles and homology of its fixed-resolution row a identify with
+PC_{q+1,a} and PH_{q+1,a}.
+
+The homology coordinates commute with the resolution differentials. Consequently the
+vertical-homology complex in original degree q+1 is isomorphic to PH_{q+1}.complex and is a
+projective resolution of H_{q+1}(L).
 -/
 
 @[expose] public section
@@ -42,8 +44,11 @@ variable {L : ChainComplex C ℕ} (P : CartanEilenbergResolution L)
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
-/-- Explicit left-homology data for a positive row of the
-Cartan--Eilenberg bicomplex. -/
+/-- Let C be abelian, L a chain complex indexed by ℕ and P a Cartan–Eilenberg resolution of L. Write
+PBⱼ, PCⱼ, PTⱼ and PHⱼ for its boundary, cycles, term and homology projective resolutions. For
+a,q ∈ ℕ, the original-degree short complex in the fixed-resolution row at (q+2,q+1,q) has left
+homology data with cycles term PC_{q+1,a} and homology term PH_{q+1,a}, using the stored
+horseshoe inclusion and projection. -/
 noncomputable def cartanEilenbergRowHomologySuccLeftData (a q : ℕ) :
     ((P.bicomplex.X a).sc' (q + 2) (q + 1) q).LeftHomologyData := by
   let S₀ := (P.bicomplex.X a).sc' (q + 2) (q + 1) q
@@ -112,8 +117,10 @@ noncomputable def cartanEilenbergRowHomologySuccLeftData (a q : ℕ) :
       wπ := wπ
       hπ := hπ }
 
-/-- Cycles in a positive row identify with the stored cycles-resolution
-term. -/
+/-- Let C be abelian, L a chain complex indexed by ℕ and P a Cartan–Eilenberg resolution of L. Write
+PBⱼ, PCⱼ, PTⱼ and PHⱼ for its boundary, cycles, term and homology projective resolutions. For
+every a,q ∈ ℕ, the cycles in original degree q+1 of the row P.bicomplex.Xₐ are canonically
+isomorphic to PC_{q+1,a}. -/
 noncomputable def cartanEilenbergRowCyclesSuccIso (a q : ℕ) :
     (P.bicomplex.X a).cycles (q + 1) ≅
       (P.cyclesResolution (q + 1)).complex.X a :=
@@ -121,8 +128,10 @@ noncomputable def cartanEilenbergRowCyclesSuccIso (a q : ℕ) :
       (by simp) (by simp) ≪≫
     (P.cartanEilenbergRowHomologySuccLeftData a q).cyclesIso
 
-/-- Positive row homology identifies with the corresponding stored
-homology-resolution term. -/
+/-- Let C be abelian, L a chain complex indexed by ℕ and P a Cartan–Eilenberg resolution of L. Write
+PBⱼ, PCⱼ, PTⱼ and PHⱼ for its boundary, cycles, term and homology projective resolutions. For
+every a,q ∈ ℕ, H_{q+1}(P.bicomplex.Xₐ) is canonically isomorphic to PH_{q+1,a}, the
+resolution-degree-a homology-resolution term. -/
 noncomputable def cartanEilenbergRowHomologySuccIso (a q : ℕ) :
     (P.bicomplex.X a).homology (q + 1) ≅
       (P.homologyResolution (q + 1)).complex.X a :=
@@ -132,8 +141,11 @@ noncomputable def cartanEilenbergRowHomologySuccIso (a q : ℕ) :
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
-/-- The positive row-homology coordinate is induced by the stored quotient
-from cycles to the homology-resolution term. -/
+/-- Let C be abelian, L a chain complex indexed by ℕ and P a Cartan–Eilenberg resolution of L. Write
+PBⱼ, PCⱼ, PTⱼ and PHⱼ for its boundary, cycles, term and homology projective resolutions. In
+original degree q+1 and resolution degree a, the homology quotient followed by H_{q+1}(rowₐ) ≅
+PH_{q+1,a} equals the cycle identification with PC_{q+1,a} followed by the cycle-horseshoe
+projection to PH_{q+1,a}. -/
 @[reassoc]
 theorem homologyπ_comp_cartanEilenbergRowHomologySuccIso_hom (a q : ℕ) :
     (P.bicomplex.X a).homologyπ (q + 1) ≫
@@ -149,8 +161,10 @@ theorem homologyπ_comp_cartanEilenbergRowHomologySuccIso_hom (a q : ℕ) :
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
-/-- The positive row-homology coordinate commutes with the
-resolution-direction differential. -/
+/-- Let C be abelian, L a chain complex indexed by ℕ and P a Cartan–Eilenberg resolution of L. Write
+PBⱼ, PCⱼ, PTⱼ and PHⱼ for its boundary, cycles, term and homology projective resolutions. The
+coordinates H_{q+1}(rowₐ) ≅ PH_{q+1,a} commute with the resolution differential a+1 → a: the
+homology map of that bicomplex differential corresponds to the differential of PH_{q+1}. -/
 @[reassoc]
 theorem cartanEilenbergRowHomologySuccIso_naturality (a q : ℕ) :
     HomologicalComplex.homologyMap (P.bicomplex.d (a + 1) a) (q + 1) ≫
@@ -189,8 +203,10 @@ theorem cartanEilenbergRowHomologySuccIso_naturality (a q : ℕ) :
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
-/-- In positive original degree, the horizontal vertical-homology complex is
-isomorphic to the stored homology resolution. -/
+/-- Let C be abelian, L a chain complex indexed by ℕ and P a Cartan–Eilenberg resolution of L. Write
+PBⱼ, PCⱼ, PTⱼ and PHⱼ for its boundary, cycles, term and homology projective resolutions. For q
+∈ ℕ, the resolution-direction vertical-homology complex in original degree q+1 is isomorphic to
+the stored homology resolution PH_{q+1}.complex. -/
 noncomputable def cartanEilenbergVerticalHomologySuccComplexIso (q : ℕ) :
     P.bicomplex.verticalHomologyComplex (q + 1) ≅
       (P.homologyResolution (q + 1)).complex :=
@@ -214,10 +230,10 @@ theorem cartanEilenbergVerticalHomologySuccComplexIso_inv_f (a q : ℕ) :
       (P.cartanEilenbergRowHomologySuccIso a q).inv :=
   rfl
 
-/--
-The positive row-homology complex, equipped as a projective resolution of the corresponding
-homology object.
--/
+/-- Let C be abelian, L a chain complex indexed by ℕ and P a Cartan–Eilenberg resolution of L. Write
+PBⱼ, PCⱼ, PTⱼ and PHⱼ for its boundary, cycles, term and homology projective resolutions. For
+each q ∈ ℕ, the vertical-homology complex in original degree q+1, with augmentation transported
+from PH_{q+1}, is a projective resolution of H_{q+1}(L). -/
 noncomputable def cartanEilenbergVerticalHomologySuccResolution (q : ℕ) :
     ProjectiveResolution (L.homology (q + 1)) where
   complex := P.bicomplex.verticalHomologyComplex (q + 1)

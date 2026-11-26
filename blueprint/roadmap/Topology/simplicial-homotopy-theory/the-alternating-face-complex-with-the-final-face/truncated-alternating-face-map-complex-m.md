@@ -1,3 +1,5 @@
-# Truncated Alternating Face Map Complex map f
+# The truncation functor maps morphisms componentwise
 
-A morphism is mapped using its original component in every degree.
+For a morphism f : X ⟶ Y of semisimplicial objects in a preadditive category C, the degree-n
+component of (truncatedAlternatingFaceMapComplex C).map f equals f.app (op ⦋n⦌ₛ) for every n :
+ℕ.

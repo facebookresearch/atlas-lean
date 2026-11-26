@@ -1,3 +1,6 @@
-# Small Etale Pullback Global Sections
+# Pullback map on global sections
 
-Pull back actual Γ through its actual adjunction unit and original terminal restriction.
+Pullback map on global sections.
+
+The inverse-image adjunction unit and terminal-object comparison define a natural
+transformation `Γ_Y ⟶ f^* ⋙ Γ_X`.

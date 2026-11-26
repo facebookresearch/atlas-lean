@@ -1,3 +1,6 @@
-# Top Monad Pow Tuple Homeomorph eta At Pos
+# Power coordinates of monad unit insertion at a position
 
-`etaAtPos` inserts a unit at the corresponding head-first tuple index.
+Power coordinates of monad unit insertion at a position.
+
+For j : Fin (n+1), insertion at monad position j inserts 1 into the tuple at index n−j and
+retains the base coordinate.

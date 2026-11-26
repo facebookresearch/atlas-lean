@@ -1,5 +1,6 @@
-# Pair chain Boundary eq boundary
+# Pairing a cocycle with a chain boundary gives a signed boundary
 
-Signed chain-boundary identity for the pairing: capping the tensor of a cocycle
-inclusion with a chain boundary equals the signed composite through the pairing
-in degree `q + 1` and the chain differential.
+Let C be preadditive and monoidal with additive tensor functors, P a cochain–chain pairing,
+and p,q ∈ ℕ. Assume K has homology at p. Then (i_ZK⊗d_L)≫P_{p,q} =
+(-1)^p·((i_ZK⊗id)≫P_{p,q+1}≫d_M). The source is Z^p(K)⊗L_{p+(q+1)}, the target is M_q, and d_L
+maps to L_{p+q}.

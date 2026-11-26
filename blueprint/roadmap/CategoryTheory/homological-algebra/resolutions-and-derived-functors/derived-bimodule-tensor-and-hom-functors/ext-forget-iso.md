@@ -1,3 +1,6 @@
-# Ext Forget Iso
+# Forgetting the right outer action commutes with Ext derivation
 
-Exact forgetting preserves the native injective-resolution computation.
+Forgetting the right outer action commutes with Ext derivation.
+
+The degree-`n` Ext functor followed by forgetting right `R`-scalars is naturally isomorphic to
+the right-derived functor of the corresponding additive-group Hom functor.

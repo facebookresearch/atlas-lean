@@ -1,3 +1,5 @@
-# Terminal Algebra
+# The terminal augmented algebra over a coefficient algebra
 
-The terminal original augmentation is the identity on `B`.
+The terminal augmented algebra over a coefficient algebra.
+
+The terminal object of `Over B` is the identity augmentation `B → B`.

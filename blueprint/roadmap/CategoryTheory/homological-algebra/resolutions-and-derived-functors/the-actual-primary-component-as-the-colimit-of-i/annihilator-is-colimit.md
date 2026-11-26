@@ -1,3 +1,6 @@
-# Annihilator Is Colimit
+# Directed power-annihilator cocone is a colimit
 
-Actual native directed-union data earns the module categorical universal property.
+Directed power-annihilator cocone is a colimit.
+
+The canonical cocone from the increasing power-annihilator submodules to `Γ_I(M)` satisfies
+the colimit universal property in the same module category.

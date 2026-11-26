@@ -1,4 +1,7 @@
-# Corestriction Cup One Two term
+# The transferred one-by-two cup summand
 
-A transferred restricted `(1,2)` cup summand split into the projection
-term and the two homotopy terms.
+The transferred one-by-two cup summand.
+
+The cocycle identity for x expands an inverse-weighted restricted cup summand into the target
+cup term plus the comparison term from x(t) minus the translated comparison term from
+x(r(t,g)).

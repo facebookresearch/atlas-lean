@@ -15,14 +15,16 @@ public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.DegreeAdjoint
 public import Mathlib.Algebra.Lie.OfAssociative
 
 /-!
-# Right adjoint actions in exterior coordinates
+# Exterior coordinates for right-adjoint Lie actions
 
-Transport the adjoint action on an exterior power through a linear coordinate equivalence, and
-negate it to obtain the right adjoint action. Its commutator uses reversed endomorphism
-composition, so it is a Lie homomorphism to the opposite endomorphism algebra.
+Let ι : S → L be an R-Lie homomorphism and e : M ≃ₗ[R] ⋀[R]^n L. Conjugating the degree
+adjoint representation along e gives a left S-representation on M. Its negative is the
+right-adjoint action; in exterior coordinates it replaces each entry v_i by [v_i,ι(s)] and
+sums the resulting words.
 
-The ordered pure-wedge formula determines this action. Scalar, Lie, acting-Lie, and coordinate
-carrier universes may be independent.
+The right action satisfies the reversed endomorphism commutator equation and therefore gives a
+Lie homomorphism into the opposite endomorphism ring. Agreement with its formula on every pure
+wedge determines any linear action uniquely. All carrier universes may be separate.
 -/
 
 @[expose] public section
@@ -41,7 +43,9 @@ variable {S : Type v'} [LieRing S] [LieAlgebra R S] (ι : S →ₗ⁅R⁆ L)
 variable (n : ℕ)
 variable {M : Type w} [AddCommGroup M] [Module R M] (e : M ≃ₗ[R] ⋀[R]^n L)
 
-/-- The left adjoint representation transported through the coordinates. -/
+/-- Let R be a commutative ring, L and S R-Lie algebras, ι : S →ₗ⁅R⁆ L, n : ℕ and e : M ≃ₗ[R]
+⋀[R]^n L coordinates on an R-module M. leftAdjointCoordinates(s) = e⁻¹ ∘
+degreeAdjointAction_L(n,ι(s)) ∘ e, a Lie homomorphism S →ₗ⁅R⁆ Module.End R M. -/
 def leftAdjointCoordinates : S →ₗ⁅R⁆ Module.End R M :=
   e.symm.lieConj.toLieHom.comp ((degreeAdjointAction R L n).comp ι)
 
@@ -50,7 +54,9 @@ theorem leftAdjointCoordinates_apply (s : S) (m : M) :
     leftAdjointCoordinates R L ι n e s m =
       e.symm (degreeAdjointAction R L n (ι s) (e m)) := rfl
 
-/-- The right action is the negative of the left representation. -/
+/-- Let R be a commutative ring, L and S R-Lie algebras, ι : S →ₗ⁅R⁆ L, n : ℕ and e : M ≃ₗ[R]
+⋀[R]^n L coordinates on an R-module M. rightAdjointCoordinates : S →ₗ[R] Module.End R M is
+−leftAdjointCoordinates. -/
 def rightAdjointCoordinates : S →ₗ[R] Module.End R M :=
   -(leftAdjointCoordinates R L ι n e).toLinearMap
 
@@ -59,14 +65,19 @@ theorem rightAdjointCoordinates_apply (s : S) (m : M) :
     rightAdjointCoordinates R L ι n e s m =
       -(e.symm (degreeAdjointAction R L n (ι s) (e m))) := rfl
 
-/-- Coordinates intertwine the transported action and the exterior action. -/
+/-- Let R be a commutative ring, L and S R-Lie algebras, ι : S →ₗ⁅R⁆ L, n : ℕ and e : M ≃ₗ[R]
+⋀[R]^n L coordinates on an R-module M. For s : S and m : M, e(rightAdjointCoordinates(s)(m)) =
+rightDegreeAdjointAction_L(n,s)(e(m)). -/
 theorem rightAdjointCoordinates_conjugate (s : S) (m : M) :
     e (rightAdjointCoordinates R L ι n e s m) =
       rightDegreeAdjointAction R L ι n s (e m) := by
   rw [rightAdjointCoordinates_apply, map_neg, LinearEquiv.apply_symm_apply]
   rfl
 
-/-- The right-adjoint sum, with brackets in the wedge positions. -/
+/-- Let R be a commutative ring, L and S R-Lie algebras, ι : S →ₗ⁅R⁆ L, n : ℕ and e : M ≃ₗ[R]
+⋀[R]^n L coordinates on an R-module M. For s : S and v : Fin n → L,
+e(rightAdjointCoordinates(s)(e.symm(ιMulti v))) = ∑ i : Fin n, ιMulti(Function.update v i
+⁅v_i,ι(s)⁆). -/
 theorem rightAdjointCoordinates_pure (s : S) (v : Fin n → L) :
     e (rightAdjointCoordinates R L ι n e s
         (e.symm (exteriorPower.ιMulti R n v))) =
@@ -74,8 +85,9 @@ theorem rightAdjointCoordinates_pure (s : S) (v : Fin n → L) :
   rw [rightAdjointCoordinates_conjugate, LinearEquiv.apply_symm_apply]
   exact rightDegreeAdjointAction_pure R L ι n s v
 
-/-- The right adjoint action sends a Lie bracket to the commutator with reversed endomorphism
-composition. -/
+/-- Let R be a commutative ring, L and S R-Lie algebras, ι : S →ₗ⁅R⁆ L, n : ℕ and e : M ≃ₗ[R]
+⋀[R]^n L coordinates on an R-module M. Writing ρ = rightAdjointCoordinates, ρ(⁅s,t⁆) = ρ(t) ∘
+ρ(s) − ρ(s) ∘ ρ(t) for s,t : S. -/
 theorem rightAdjointCoordinates_antiLie (s t : S) :
     rightAdjointCoordinates R L ι n e ⁅s, t⁆ =
       (rightAdjointCoordinates R L ι n e t).comp
@@ -98,7 +110,10 @@ theorem rightAdjointCoordinates_antiLie (s t : S) :
   rw [h]
   simp only [map_neg, neg_neg, neg_sub]
 
-/-- The right adjoint representation as a Lie homomorphism to the opposite endomorphism algebra. -/
+/-- Let R be a commutative ring, L and S R-Lie algebras, ι : S →ₗ⁅R⁆ L, n : ℕ and e : M ≃ₗ[R]
+⋀[R]^n L coordinates on an R-module M. rightAdjointCoordinatesLieHom : S →ₗ⁅R⁆ (Module.End R
+M)ᵐᵒᵖ sends s to op(rightAdjointCoordinates(s)); the opposite multiplication matches its
+reversed commutator law. -/
 def rightAdjointCoordinatesLieHom : S →ₗ⁅R⁆ (Module.End R M)ᵐᵒᵖ where
   toFun s := MulOpposite.op (rightAdjointCoordinates R L ι n e s)
   map_add' s t := by
@@ -111,13 +126,17 @@ def rightAdjointCoordinatesLieHom : S →ₗ⁅R⁆ (Module.End R M)ᵐᵒᵖ wh
     apply MulOpposite.unop_injective
     exact rightAdjointCoordinates_antiLie R L ι n e s t
 
-/-- The opposite-valued Lie map retains precisely the action. -/
+/-- Let R be a commutative ring, L and S R-Lie algebras, ι : S →ₗ⁅R⁆ L, n : ℕ and e : M ≃ₗ[R]
+⋀[R]^n L coordinates on an R-module M. For s : S, unop(rightAdjointCoordinatesLieHom s) =
+rightAdjointCoordinates s. -/
 @[simp]
 theorem rightAdjointCoordinatesLieHom_unop (s : S) :
     MulOpposite.unop (rightAdjointCoordinatesLieHom R L ι n e s) =
       rightAdjointCoordinates R L ι n e s := rfl
 
-/-- Agreement on all pure wedges uniquely determines a linear action. -/
+/-- Let R be a commutative ring, L and S R-Lie algebras, ι : S →ₗ⁅R⁆ L, n : ℕ and e : M ≃ₗ[R]
+⋀[R]^n L coordinates on an R-module M. If A : S →ₗ[R] Module.End R M has e(A(s)(e.symm(ιMulti
+v))) = ∑ i, ιMulti(update v i ⁅v_i,ι(s)⁆) for every s and v, then A = rightAdjointCoordinates. -/
 theorem rightAdjointCoordinates_eq_of_pure (A : S →ₗ[R] Module.End R M)
     (hA : ∀ (s : S) (v : Fin n → L),
       e (A s (e.symm (exteriorPower.ιMulti R n v))) =

@@ -28,6 +28,7 @@ Categories of modules and finitely generated modules over a ring: abelian and mo
 - [Independent carrier worlds for the actual enriched balanced tensor](independent-carrier-worlds-for-the-actual-enrich/README.md)
 - [Induction along associative ring homomorphisms](induction-along-associative-ring-homomorphisms/README.md)
 - [Induction and restriction of scalars](induction-and-restriction-of-scalars/README.md)
+- [Inverse unitors for the canonical larger-universe module tensor](inverse-unitors-for-the-canonical-larger-univers/README.md)
 - [Lie modules and universal-enveloping-algebra modules](lie-modules-and-universal-enveloping-algebra-mod/README.md)
 - [Module direct limits as categorical colimits](module-direct-limits-as-categorical-colimits/README.md)
 - [Module equivalences from invertible bimodule contractions](module-equivalences-from-invertible-bimodule-con/README.md)

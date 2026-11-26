@@ -2,31 +2,37 @@
 
 ## Given Integer Action
 
-- [Contraction Linear Raw](contraction-linear-raw.md)
-- [Contraction Linear Raw mk](contraction-linear-raw-mk.md)
+- [Right-module contraction with a given integer coefficient action](contraction-linear-raw.md)
+- [Raw right-module contraction on pure classes](contraction-linear-raw-mk.md)
 
 ## Contraction
 
-- [Contraction Linear](contraction-linear.md)
-- [Contraction Iso](contraction-iso.md)
-- [Contraction Nat Iso](contraction-nat-iso.md)
+- [Right-module contraction in the tensor-object coordinates](contraction-linear.md)
+- [Tensor-object right-module contraction on pure classes](contraction-linear-mk.md)
+- [Categorical right-module contraction isomorphism](contraction-iso.md)
+- [Categorical right-module contraction on pure classes](contraction-iso-hom-mk.md)
+- [Regular-equivalent coefficient tensor is naturally the right-module identity](contraction-nat-iso.md)
 
 ## Composite
 
-- [Composite Mk](composite-mk.md)
-- [Assoc Source Obj](assoc-source-obj.md)
-- [Assoc Target Obj](assoc-target-obj.md)
-- [Composite Coordinates](composite-coordinates.md)
-- [Composite Coordinates mk](composite-coordinates-mk.md)
-- [Association Linear](association-linear.md)
-- [Composite Association Iso](composite-association-iso.md)
-- [Composite Contraction Iso](composite-contraction-iso.md)
-- [Composite Contraction Iso mk](composite-contraction-iso-mk.md)
-- [Composite Contraction Nat Iso](composite-contraction-nat-iso.md)
+- [Pure triple in the right-module return composite](composite-mk.md)
+- [Left-associated right-module return tensor object](assoc-source-obj.md)
+- [Right-associated right-module return tensor object](assoc-target-obj.md)
+- [Successive right-module tensor output in associator source coordinates](composite-coordinates.md)
+- [Right-module composite coordinate on pure triples](composite-coordinates-mk.md)
+- [Right-linear balanced associator for the return tensor](association-linear.md)
+- [Right-linear associator on nested pure classes](association-linear-mk-mk.md)
+- [Categorical associator for the right-module return composite](composite-association-iso.md)
+- [Categorical right return associator on pure triples](composite-association-iso-mk.md)
+- [Right-module return isomorphism from a composite coefficient contraction](composite-contraction-iso.md)
+- [Right-module composite return map on pure triples](composite-contraction-iso-mk.md)
+- [Right-module composite contraction is natural](composite-contraction-nat-iso.md)
 
 ## Equivalence
 
-- [Equivalence](equivalence.md)
-- [Equivalence counit Iso](equivalence-counit-iso.md)
-- [Equivalence unit Iso](equivalence-unit-iso.md)
-- [Equivalence counit Iso mk](equivalence-counit-iso-mk.md)
+- [Right-module Morita equivalence from two bimodule contractions](equivalence.md)
+- [Forward right-module Morita functor is tensor by P](equivalence-functor.md)
+- [Inverse right-module Morita functor is tensor by Q](equivalence-inverse.md)
+- [Counit of the right-module Morita equivalence is its S-return contraction](equivalence-counit-iso.md)
+- [Unit of the right-module Morita equivalence is adjointified](equivalence-unit-iso.md)
+- [Right-module Morita counit evaluates the S-contraction](equivalence-counit-iso-mk.md)

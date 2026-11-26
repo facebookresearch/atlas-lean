@@ -1,3 +1,5 @@
-# Tensor Pow Obj succ
+# Successor tensor power appends one factor
 
-Computation rule: `tensorPowObj X (n + 1)` is `tensorPowObj X n ⊗ X`.
+Successor tensor power appends one factor.
+
+The successor power is `tensorPowObj X n ⊗ X`.

@@ -1,3 +1,6 @@
-# Map iso inv point
+# Functor image of an inverse recovers a transported point
 
-A native point over an isomorphism is recovered by the literal inverse map.
+Functor image of an inverse recovers a transported point.
+
+If the functor image of an isomorphism sends `x` to `y`, the image of its inverse sends `y` to
+`x`.

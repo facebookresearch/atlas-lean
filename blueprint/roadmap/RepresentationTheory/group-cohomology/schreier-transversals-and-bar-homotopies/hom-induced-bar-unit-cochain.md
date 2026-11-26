@@ -1,4 +1,6 @@
-# Hom induced Bar Unit Cochain
+# Evaluation through the induction adjunction
 
-Applying an ambient morphism after the induction unit is the morphism
-obtained from the induction--restriction adjunction.
+Evaluation through the induction adjunction.
+
+For φ : ind_H^G(B_H,ₙ) → A, applying φ to the universal cochain at q equals applying its
+adjoint H-map to barBasis n q.

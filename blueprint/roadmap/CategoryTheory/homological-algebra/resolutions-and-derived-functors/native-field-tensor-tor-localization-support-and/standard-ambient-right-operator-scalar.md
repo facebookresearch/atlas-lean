@@ -1,4 +1,5 @@
-# Standard Ambient Right Operator scalar
+# Right support multiplication is the corresponding ambient scalar
 
-First coefficient multiplication by `iW (1 ⊗ c)` is multiplication
-by the actual ambient scalar `1 ⊗ c` on the original native Tor.
+For c∈C, the W-support operator given by i_W(1_B⊗c)
+on standard ambient Tor equals multiplication by
+1_(A⊗B)⊗c in S=(A⊗K B)⊗K C.

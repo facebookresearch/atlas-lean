@@ -1,3 +1,6 @@
-# Composite Coordinates mk
+# Right-module composite coordinate on pure triples
 
-The earned dictionary comparison preserves each literal triple class.
+Right-module composite coordinate on pure triples.
+
+The forward coordinate map sends the composite-functor element represented by `a, p, q` to the
+left-associated class `[[a ⊗ p] ⊗ q]`.

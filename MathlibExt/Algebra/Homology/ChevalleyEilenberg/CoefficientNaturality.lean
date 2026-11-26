@@ -12,12 +12,15 @@ module
 public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.CoefficientBoundary
 
 /-!
-# Coefficient naturality of the Chevalley–Eilenberg boundary
+# Naturality of the coefficient boundary and exterior insertion
 
-A Lie-module homomorphism induces the tensor map that is the identity on the
-exterior factor. It commutes with the diagonal action, exterior insertion,
-and the coefficient boundary. Exterior insertion also commutes with arbitrary
-linear coefficient maps, independently of any Lie actions.
+Let R be commutative, L an R-Lie algebra and f : M → N a coefficient Lie-module morphism. The
+tensor map F = id_(ExteriorAlgebra R L) ⊗ f intertwines the diagonal actions and the CE
+coefficient boundaries. The diagonal action on a ⊗ m is ad_x(a) ⊗ m + a ⊗ ⁅x,m⁆.
+
+Exterior insertion I_x(a ⊗ m) = (ι(x) * a) ⊗ m commutes with every R-linear coefficient map,
+without requiring a Lie action on M or N. Both the operator equalities and their pointwise
+forms are recorded; the coefficient carriers may have different universes.
 -/
 
 @[expose] public section
@@ -42,8 +45,11 @@ section LieCoefficients
 variable [LieRingModule L M] [LieModule R L M]
 variable [LieRingModule L N] [LieModule R L N]
 
-/-- The canonical diagonal actions commute with a morphism of coefficient
-Lie modules. -/
+/-- Let R be a commutative ring, L an R-Lie algebra and M and N R-modules. Put E = ExteriorAlgebra
+R L. Assume M and N are left Lie modules over L and f : M →ₗ⁅R,L⁆ N is a Lie-module morphism.
+Write F = id_E ⊗ f. For x : L, F ∘ coefficientDiagonalAction_M(x) =
+coefficientDiagonalAction_N(x) ∘ F as R-linear maps E ⊗[R] M → E ⊗[R] N. Each diagonal action
+combines the exterior adjoint action with the coefficient Lie action. -/
 theorem coefficientDiagonalAction_naturality
     (f : M →ₗ⁅R,L⁆ N) (x : L) :
     (TensorProduct.map (LinearMap.id : E →ₗ[R] E) f.toLinearMap).comp
@@ -56,7 +62,10 @@ theorem coefficientDiagonalAction_naturality
     TensorProduct.map_tmul, LinearMap.id_apply, LieModuleHom.coe_toLinearMap,
     LieModuleHom.map_lie]
 
-/-- Pointwise coefficient naturality of the canonical diagonal action. -/
+/-- Let R be a commutative ring, L an R-Lie algebra and M and N R-modules. Put E = ExteriorAlgebra
+R L. Assume M and N are left Lie modules over L and f : M →ₗ⁅R,L⁆ N is a Lie-module morphism.
+Write F = id_E ⊗ f. For x : L and p : E ⊗[R] M, F(coefficientDiagonalAction_M(x)(p)) =
+coefficientDiagonalAction_N(x)(F(p)). -/
 theorem coefficientDiagonalAction_naturality_apply
     (f : M →ₗ⁅R,L⁆ N) (x : L) (p : E ⊗[R] M) :
     TensorProduct.map (LinearMap.id : E →ₗ[R] E) f.toLinearMap
@@ -67,7 +76,10 @@ theorem coefficientDiagonalAction_naturality_apply
 
 end LieCoefficients
 
-/-- Exterior insertion commutes with every linear map on the coefficient modules. -/
+/-- Let R be a commutative ring, L an R-Lie algebra and M and N R-modules. Put E = ExteriorAlgebra
+R L. For any f : M →ₗ[R] N and x : L, F = id_E ⊗ f satisfies F ∘ coefficientInsertion_M(x) =
+coefficientInsertion_N(x) ∘ F. Insertion is left multiplication by ι(x) on the exterior
+factor; no Lie action on the coefficient modules is required. -/
 theorem coefficientInsertion_naturality
     (f : M →ₗ[R] N) (x : L) :
     (f.lTensor E).comp (coefficientInsertion R L M x) =
@@ -78,7 +90,9 @@ theorem coefficientInsertion_naturality
   exact (LinearMap.lTensor_comp_rTensor E A f).trans
     (LinearMap.rTensor_comp_lTensor E A f).symm
 
-/-- Pointwise naturality of exterior insertion for arbitrary linear coefficient maps. -/
+/-- Let R be a commutative ring, L an R-Lie algebra and M and N R-modules. Put E = ExteriorAlgebra
+R L. For an R-linear f : M →ₗ[R] N, x : L and p : E ⊗[R] M, (id_E ⊗
+f)(coefficientInsertion_M(x)(p)) = coefficientInsertion_N(x)((id_E ⊗ f)(p)). -/
 theorem coefficientInsertion_naturality_apply
     (f : M →ₗ[R] N) (x : L) (p : E ⊗[R] M) :
     f.lTensor E (coefficientInsertion R L M x p) =
@@ -91,8 +105,10 @@ section LieCoefficients
 variable [LieRingModule L M] [LieModule R L M]
 variable [LieRingModule L N] [LieModule R L N]
 
-/-- The ambient Chevalley--Eilenberg boundary is natural in its native left
-Lie-module coefficients. -/
+/-- Let R be a commutative ring, L an R-Lie algebra and M and N R-modules. Put E = ExteriorAlgebra
+R L. Assume M and N are left Lie modules over L and f : M →ₗ⁅R,L⁆ N is a Lie-module morphism.
+Write F = id_E ⊗ f. The ambient coefficient boundaries satisfy F ∘ coefficientBoundary R L M =
+coefficientBoundary R L N ∘ F on E ⊗[R] M. -/
 theorem coefficientBoundary_naturality (f : M →ₗ⁅R,L⁆ N) :
     (TensorProduct.map (LinearMap.id : E →ₗ[R] E) f.toLinearMap).comp
         (coefficientBoundary R L M) =
@@ -115,7 +131,10 @@ theorem coefficientBoundary_naturality (f : M →ₗ⁅R,L⁆ N) :
         LinearMap.lTensor_tmul,
         coefficientBoundary_ι_mul_tmul]
 
-/-- Pointwise naturality of the ambient boundary in its coefficients. -/
+/-- Let R be a commutative ring, L an R-Lie algebra and M and N R-modules. Put E = ExteriorAlgebra
+R L. Assume M and N are left Lie modules over L and f : M →ₗ⁅R,L⁆ N is a Lie-module morphism.
+Write F = id_E ⊗ f. For every p : E ⊗[R] M, F(coefficientBoundary R L M p) =
+coefficientBoundary R L N (F(p)). -/
 theorem coefficientBoundary_naturality_apply
     (f : M →ₗ⁅R,L⁆ N) (p : E ⊗[R] M) :
     TensorProduct.map (LinearMap.id : E →ₗ[R] E) f.toLinearMap

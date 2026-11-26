@@ -15,15 +15,16 @@ public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.LowDeg
 public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.ZModRestrictLowDegree
 
 /-!
-# Degree-three group cohomology under `ZMod n` scalar restriction
+# Degree-three cohomology under integral scalar restriction
 
-Explicit degree-three cochains, cocycles, and coboundaries are unchanged
-when a `ZMod n` representation is restricted to an integral
-representation.  The resulting H3 comparison is packaged additively and,
-after transporting the module structure, `ZMod n`-linearly.
+Let n∈ℕ and A be a ZMod n-representation of a group G.
+Restriction to ℤ leaves the degree-three cochain values, cocycle
+condition and coboundary subgroup unchanged. It therefore gives
+the additive comparison H³(G,A)≅H³(G,Res(A)).
 
-The construction includes `n = 0`.  No continuous or etale comparison is
-asserted.
+The maps have the same values on chosen cocycle representatives.
+Transporting the ZMod n-module structure through this additive comparison
+makes it a ZMod n-linear equivalence. The case n=0 is included.
 -/
 
 @[expose] public section
@@ -38,7 +39,12 @@ namespace groupCohomology
 
 variable {G : Type} [Group G]
 
-/-- Identity-on-values equivalence of explicit degree-three cochains. -/
+/-- Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+The degree-three cochain comparison is the additive equivalence
+between functions G³→A and G³→Res(A), given pointwise by the
+identity on the underlying coefficient group. -/
 noncomputable abbrev cochains₃ZModRestrictIntEquiv
     (n : ℕ) (A : Rep (ZMod n) G) :
     (G × G × G → A) ≃+ (G × G × G → Rep.zmodRestrictInt n A) where
@@ -59,7 +65,12 @@ theorem cochains₃ZModRestrictIntEquiv_apply
     cochains₃ZModRestrictIntEquiv n A f p = f p :=
   rfl
 
-/-- Explicit degree-three cocycles are unchanged by scalar restriction. -/
+/-- Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+The pointwise coefficient comparison restricts to
+Z³(G,A)≅Z³(G,Res(A)) as an additive equivalence,
+preserving every three-cocycle value. -/
 noncomputable abbrev cocycles₃ZModRestrictIntEquiv
     (n : ℕ) (A : Rep (ZMod n) G) :
     cocycles₃ A ≃+ cocycles₃ (Rep.zmodRestrictInt n A) where
@@ -111,7 +122,12 @@ theorem cocycles₃ZModRestrictIntEquiv_symm_apply
     (cocycles₃ZModRestrictIntEquiv n A).symm z (g, h, i) = z (g, h, i) :=
   zmodRestrictIntCoefficientAddEquiv_symm_apply n A _
 
-/-- Degree-three coboundary membership is unchanged by scalar restriction. -/
+/-- Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+A degree-three cochain is a coboundary over ZMod n exactly when
+its pointwise integral image is a coboundary over ℤ.
+Both coboundary operators use the same G-action and alternating signs. -/
 theorem mem_coboundaries₃_zmodRestrictInt_iff
     (n : ℕ) (A : Rep (ZMod n) G) (f : G × G × G → A) :
     f ∈ coboundaries₃ A ↔
@@ -154,8 +170,11 @@ theorem mem_coboundaries₃_zmodRestrictInt_iff
       ← map_sub, ← map_add, ← map_sub, hxp]
     exact (zmodRestrictIntCoefficientAddEquiv n A).symm_apply_apply (f p)
 
-/-- Explicit degree-three coboundaries are additively equivalent after
-scalar restriction. -/
+/-- Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+The coboundary subgroup comparison is the additive equivalence
+B³(G,A)≅B³(G,Res(A)), with the same coefficient-valued functions. -/
 noncomputable abbrev coboundaries₃ZModRestrictIntEquiv
     (n : ℕ) (A : Rep (ZMod n) G) :
     coboundaries₃ A ≃+ coboundaries₃ (Rep.zmodRestrictInt n A) where
@@ -187,9 +206,17 @@ noncomputable abbrev coboundaries₃ZModRestrictIntEquiv
         (x (g, h, i) + y (g, h, i)) = _
     exact map_add (zmodRestrictIntCoefficientAddEquiv n A) _ _
 
-/-! ## Degree-three cohomology -/
+/-!
+# Third cohomology and cocycle classes
 
-/-- Chosen degree-three cocycle representative. -/
+Third cohomology is the quotient of three-cocycles by three-coboundaries.
+The scalar comparison acts on a class by keeping its representative's
+coefficient values and changing the scalar interpretation.
+-/
+
+/-- For a commutative ring k, a group G, a k-representation A and
+x∈H³(G,A), this is a chosen z∈Z³(G,A) whose cohomology class is x.
+The selector is not required to be linear. -/
 noncomputable def H3Representative {k : Type} [CommRing k]
     (A : Rep k G) (x : H3 A) : cocycles₃ A :=
   Function.surjInv
@@ -202,14 +229,22 @@ theorem H3Representative_spec {k : Type} [CommRing k]
   Function.rightInverse_surjInv
     ((ModuleCat.epi_iff_surjective (H3π A)).mp inferInstance) x
 
-/-- Underlying degree-three scalar-restriction comparison. -/
+/-- Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+The forward function on H³ sends x to the integral class of
+the scalar-restricted cocycle selected to represent x. -/
 noncomputable def H3ZModRestrictIntToFun
     (n : ℕ) (A : Rep (ZMod n) G) :
     H3 A → H3 (Rep.zmodRestrictInt n A) := fun x =>
   H3π (Rep.zmodRestrictInt n A)
     (cocycles₃ZModRestrictIntEquiv n A (H3Representative A x))
 
-/-- Computation of the degree-three comparison on a presented class. -/
+/-- Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+On a projected cocycle z, the forward map satisfies
+χ₃([z])=[χ_Z³(z)], where χ_Z³ is the additive cocycle comparison. -/
 theorem H3ZModRestrictIntToFun_H3π
     (n : ℕ) (A : Rep (ZMod n) G) (z : cocycles₃ A) :
     H3ZModRestrictIntToFun n A (H3π A z) =
@@ -233,7 +268,11 @@ theorem H3ZModRestrictIntToFun_H3π
   rw [heq] at htarget
   exact htarget
 
-/-- Additive degree-three scalar-restriction comparison. -/
+/-- Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+The forward third-cohomology comparison is additive:
+H³(G,A)→+H³(G,Res(A)), with class value [z]↦[χ_Z³(z)]. -/
 noncomputable def H3ZModRestrictIntAddHom
     (n : ℕ) (A : Rep (ZMod n) G) :
     H3 A →+ H3 (Rep.zmodRestrictInt n A) where
@@ -250,14 +289,23 @@ noncomputable def H3ZModRestrictIntAddHom
           map_add, H3ZModRestrictIntToFun_H3π,
           H3ZModRestrictIntToFun_H3π, map_add]
 
-/-- Underlying inverse degree-three comparison. -/
+/-- Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+The return function H³(G,Res(A))→H³(G,A) takes a chosen integral
+three-cocycle representative, returns it through the inverse cocycle
+comparison, and projects its ZMod n-cohomology class. -/
 noncomputable def H3ZModRestrictIntInvToFun
     (n : ℕ) (A : Rep (ZMod n) G) :
     H3 (Rep.zmodRestrictInt n A) → H3 A := fun x =>
   H3π A ((cocycles₃ZModRestrictIntEquiv n A).symm
     (H3Representative (Rep.zmodRestrictInt n A) x))
 
-/-- Computation of the inverse comparison on a presented class. -/
+/-- Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+On an integral cocycle z, the return map has value
+[z]↦[(χ_Z³)⁻¹(z)] in H³(G,A). -/
 theorem H3ZModRestrictIntInvToFun_H3π
     (n : ℕ) (A : Rep (ZMod n) G)
     (z : cocycles₃ (Rep.zmodRestrictInt n A)) :
@@ -302,7 +350,11 @@ theorem H3ZModRestrictIntInvToFun_H3π
   rw [heq]
   exact hsource
 
-/-- Additive inverse degree-three comparison. -/
+/-- Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+The return third-cohomology map is additive and has the
+inverse-cocycle representative formula. -/
 noncomputable def H3ZModRestrictIntInvAddHom
     (n : ℕ) (A : Rep (ZMod n) G) :
     H3 (Rep.zmodRestrictInt n A) →+ H3 A where
@@ -319,7 +371,12 @@ noncomputable def H3ZModRestrictIntInvAddHom
           map_add, H3ZModRestrictIntInvToFun_H3π,
           H3ZModRestrictIntInvToFun_H3π, map_add]
 
-/-- Additive equivalence on degree-three group cohomology. -/
+/-- Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+The forward and return additive maps give the equivalence
+χ₃:H³(G,A)≅+H³(G,Res(A)), preserving the classes of corresponding
+cocycle representatives. -/
 noncomputable def H3ZModRestrictIntAddEquiv
     (n : ℕ) (A : Rep (ZMod n) G) :
     H3 A ≃+ H3 (Rep.zmodRestrictInt n A) where
@@ -352,14 +409,24 @@ theorem H3ZModRestrictIntAddEquiv_H3π
         (cocycles₃ZModRestrictIntEquiv n A z) :=
   H3ZModRestrictIntToFun_H3π n A z
 
-/-- Canonical `ZMod n`-module structure on restricted integral H3. -/
+/-- Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+The integral H³ group acquires the transported ZMod n-action
+r•y=χ₃(r•χ₃⁻¹(y)).
+This uses the ZMod n-action on H³(G,A). -/
 @[instance_reducible]
 noncomputable def H3ZModRestrictIntModule
     (n : ℕ) (A : Rep (ZMod n) G) :
     Module (ZMod n) (H3 (Rep.zmodRestrictInt n A)) :=
   (H3ZModRestrictIntAddEquiv n A).symm.module (ZMod n)
 
-/-- `ZMod n`-linear degree-three scalar-restriction equivalence. -/
+/-- Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+With that transported target action, the additive scalar
+comparison becomes H³(G,A)≅ₗ[ZMod n]H³(G,Res(A)).
+Its underlying map is χ₃. -/
 noncomputable def H3ZModRestrictIntLinearEquiv
     (n : ℕ) (A : Rep (ZMod n) G) :
     let _ : Module (ZMod n) (H3 (Rep.zmodRestrictInt n A)) :=

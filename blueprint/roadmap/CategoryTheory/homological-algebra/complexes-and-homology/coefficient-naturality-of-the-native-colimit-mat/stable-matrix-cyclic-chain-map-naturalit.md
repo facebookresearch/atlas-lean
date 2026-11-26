@@ -1,3 +1,6 @@
-# Stable Matrix Cyclic Chain Map naturality
+# Coefficient naturality of positive-bracket matrix-colimit cyclic trace
 
-Printed-positive colimit theta traces preserve the same coefficient square.
+Coefficient naturality of positive-bracket matrix-colimit cyclic trace.
+
+After differential negation and positive-index restriction, the colimit coefficient map
+commutes with the tail-alternating cyclic trace.

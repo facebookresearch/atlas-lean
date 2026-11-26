@@ -1,3 +1,5 @@
-# Field Equivariant Stalk Underlying Map
+# Underlying additive map of an equivariant stalk morphism
 
-Every actual module arrow has its SAME original additive stalk arrow.
+Underlying additive map of an equivariant stalk morphism.
+
+Forget the Galois action on an equivariant stalk morphism to obtain its additive-group map.

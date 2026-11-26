@@ -1,4 +1,4 @@
 # Compatibility with explicitly supplied integer module dictionaries
 
-- [Int Module is Scalar Tower](int-module-is-scalar-tower.md)
-- [Int Module smul Comm Class](int-module-smul-comm-class.md)
+- [Scalar tower for supplied integer actions](int-module-is-scalar-tower.md)
+- [Distributive actions commute with integer scalars](int-module-smul-comm-class.md)

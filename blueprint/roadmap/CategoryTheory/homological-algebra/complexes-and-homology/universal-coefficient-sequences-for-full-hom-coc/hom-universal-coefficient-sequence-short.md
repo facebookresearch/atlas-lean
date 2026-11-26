@@ -1,36 +1,16 @@
-# Hom Universal Coefficient Sequence short Exact
+# The full-product UCT short exact sequence in standard coordinates
 
-Let `C : Type u` be an abelian category with morphisms in universe `v`.
-Let `P : ChainComplex C ℤ`, let `Q : CochainComplex C ℤ`, and let `n : ℤ` be arbitrary.
-Assume that, **for every integer `p`**, both
-
-- `P.X p` is projective;
-- `Abelian.image (P.d p (p - 1))` is projective.
-
-Write \(K=\texttt{homCochainComplex}\ P\ Q\). This is the full Hom cochain
-complex: its degree-\(m\) group is
-\(\prod_{p\in\mathbb Z}\operatorname{Hom}_C(P_p,Q^{m-p})\).
-Both given differentials are retained. In physical degree coordinates,
-
-\[
-(\delta^m a)_p
-= a_{p-1}\circ d^P_p
-  +(-1)^{m+1}d^Q_{m-p}\circ a_p.
-\]
-
-The short exact sequence is
-
-\[
-0\longrightarrow
-\prod_{p\in\mathbb Z}\operatorname{Ext}^{1}_C(H_p(P),H^{n-1-p}(Q))
-\xrightarrow{\iota} H^n(K)
-\xrightarrow{\rho}
-\prod_{p\in\mathbb Z}\operatorname{Hom}_C(H_p(P),H^{n-p}(Q))
-\longrightarrow 0.
-\]
-
-All products range over the entire set of integer degrees, with no
-finite-support or boundedness condition.
+Let C be an abelian category with object universe u and morphism universe v. Let P be an integer
+chain complex, Q an integer cochain complex, and n an integer. Let I⁰(P) and Z⁰(P) be the
+outgoing-image and cycles complexes with zero differential. Assume all differential images
+im(d_P : Pₚ → Pₚ₋₁) are projective. Assume also every Pₚ is projective. Take the standard Ext
+groups in universe max(u,v). The UCT terms are ∏ₚ Ext¹_C(Hₚ(P),H^{n-1-p}(Q)), Hⁿ Hom(P,Q), and
+∏ₚ Hom_C(Hₚ(P),H^{n-p}(Q)), with their canonical common-universe identifications. The sequence 0
+→ ∏ₚ Ext¹_C(Hₚ(P),H^{n-1-p}(Q)) → Hⁿ Hom(P,Q) → ∏ₚ Hom_C(Hₚ(P),H^{n-p}(Q)) → 0 is short exact.
+The left product uses standard Ext classes, while the middle and full right product are
+canonically lifted to universe max(u,v). The maps are the positive Hom-sequence inclusion and
+canonical cycles restriction, after the Ext and Hom endpoint comparisons. Q has its original
+differential.
 
 ## Canonical maps
 

@@ -1,4 +1,6 @@
-# Horizontal Complete Succ Direct Column Section
+# The degreewise section of a positive-column complete projection
 
-Section of the actual complete-filtration projection onto the positive
-column `p+1`.
+The degreewise section of a positive-column complete projection.
+
+At degree `-(p+1)-q`, include direct column `p+1` into its complete upper stage through the
+extension and natural-stage isomorphisms.

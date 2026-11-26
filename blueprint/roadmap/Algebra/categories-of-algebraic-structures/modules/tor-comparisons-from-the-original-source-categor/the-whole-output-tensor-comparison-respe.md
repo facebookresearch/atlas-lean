@@ -1,3 +1,8 @@
-# The whole-output tensor comparison respects the actual...
+# Lifted tensor comparison is natural in bimodule coefficients
 
-The whole-output tensor comparison respects the actual original coefficient map.
+Lifted tensor comparison is natural in bimodule coefficients.
+
+For an `R`-linear coefficient map `f : B → B'` preserving the right `S`-action, the tensor
+coefficient transformation in the larger universe followed by the target tensor comparison
+equals the source tensor comparison followed by lifting the unlifted coefficient
+transformation.

@@ -1,3 +1,6 @@
-# Field Godement Coind Canonical Complex Iso hom f
+# Godement coinduction comparison has the term comparison components
 
-Every original canonical complex component retains its actual prescribed coinduction term map.
+Godement coinduction comparison has the term comparison components.
+
+In every degree, the forward complex comparison is the corresponding Godement-to-coinduction
+coresolution term map.

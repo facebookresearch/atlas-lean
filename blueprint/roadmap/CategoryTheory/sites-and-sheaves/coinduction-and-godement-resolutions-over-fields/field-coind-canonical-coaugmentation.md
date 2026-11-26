@@ -1,3 +1,6 @@
-# Field Coind Canonical Coaugmentation
+# Coinduction cochain coaugmentation
 
-The literal canonical monad coaugmentation on the same original field coefficient.
+Coinduction cochain coaugmentation.
+
+The augmented cosimplicial unit gives a cochain map from the coefficient module concentrated
+in degree zero to its canonical coinduction complex.

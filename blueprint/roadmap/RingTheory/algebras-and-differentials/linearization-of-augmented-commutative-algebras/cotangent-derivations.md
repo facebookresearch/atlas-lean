@@ -1,5 +1,6 @@
-# Cotangent Derivations
+# Derivations with coefficients along an augmentation
 
-Derivations into an `A`-module with the action of `P` supplied by the
-actual augmentation. This is a native derivation type, rather than supplied
-cotangent or resolution data.
+Derivations with coefficients along an augmentation.
+
+For `P → A` and an `A`-module `M`, this is the type of `k`-derivations `P → M`. The `P`-action
+on `M` is restriction of its `A`-action along the augmentation.

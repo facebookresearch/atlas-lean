@@ -1,3 +1,5 @@
-# Field Equivariant Stalk Counit
+# Counit of the equivariant field stalk adjunction
 
-The counit is the one belonging to those SAME fixed functors.
+Counit of the equivariant field stalk adjunction.
+
+The counit maps the Galois stalk of an invariant inverse sheaf back to its coefficient.

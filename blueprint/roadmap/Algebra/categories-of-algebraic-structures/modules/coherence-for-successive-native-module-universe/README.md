@@ -1,5 +1,5 @@
 # Coherence for successive native module universe lifts
 
-- [Ulift Functor Within Iso](ulift-functor-within-iso.md)
-- [Ulift Functor Within Iso hom up](ulift-functor-within-iso-hom-up.md)
-- [Ulift Functor Within Iso inv](ulift-functor-within-iso-inv.md)
+- [The natural comparison for a module lift within its universe](ulift-functor-within-iso.md)
+- [The forward formula for an in-universe module lift](ulift-functor-within-iso-hom-up.md)
+- [The inverse formula for an in-universe module lift](ulift-functor-within-iso-inv.md)

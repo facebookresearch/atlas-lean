@@ -1,3 +1,5 @@
-# Small Etale Godement Coface Comparison Map f
+# The cochain comparison retains each prescribed degree map
 
-Every component is the given degree morphism on the original sections.
+For a scheme X, sheaf F, and coface comparison a from its Godement sections cosimplicial
+object to A, the nth component of smallEtaleGodementCofaceComparisonMap equals a.app(n). This
+holds for every n∈ℕ.

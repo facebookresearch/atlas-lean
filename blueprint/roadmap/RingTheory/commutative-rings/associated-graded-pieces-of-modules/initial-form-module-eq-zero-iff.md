@@ -1,4 +1,5 @@
-# Initial Form Module eq zero iff
+# Vanishing of a module initial form
 
-An initial form vanishes exactly when its representative belongs to the
-next ideal-power multiple.
+Let `R` be a commutative ring, `I` an ideal, `M` an `R`-module, `n : ℕ`, and `x : I^n M`. Then
+`initialFormModule I M n x = 0` if and only if the underlying element `(x : M)` lies in
+`I^(n+1) M`.

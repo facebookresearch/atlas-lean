@@ -1,3 +1,6 @@
-# Enveloping Ground Lie Term Map d apply
+# Differential compatibility of a ground Lie-induced term map
 
-Ground restriction keeps the original differential compatibility.
+Differential compatibility of a ground Lie-induced term map.
+
+The degreewise map induced by `f : L → L'` commutes with the successor enveloping chain
+differentials after ground-scalar restriction.

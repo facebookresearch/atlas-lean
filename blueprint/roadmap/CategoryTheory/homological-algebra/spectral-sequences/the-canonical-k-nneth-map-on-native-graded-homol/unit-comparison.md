@@ -1,4 +1,6 @@
-# Unit Comparison
+# The degreewise unit comparison of graded homology
 
-The actual unit comparison in each degree, obtained from the one
-canonical graded unit isomorphism.
+The degreewise unit comparison of graded homology.
+
+Evaluate the graded unit isomorphism in degree `n` to compare the unit component with homology
+of the chain unit.

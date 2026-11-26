@@ -1,3 +1,5 @@
-# Chain Counit eq
+# The scalar-unit comparison formula for the CE counit
 
-The converted counit uses the down scalar map on the chain unit.
+The scalar-unit comparison formula for the CE counit.
+
+The compared counit is the CE counit followed by the inverse chain-unit comparison.

@@ -1,6 +1,6 @@
-# Ext Postcomp Mk₀
+# Ext postcomposition by a degree-zero coefficient class
 
-Postcomposition with `Abelian.Ext.mk₀ g` as an additive map on `Ext` groups.
-This is the covariant functoriality in the second argument used in the
-naturality statement below. Alias of
-`(_root_.CategoryTheory.Abelian.Ext.mk₀ g).postcomp X (add_zero n)`.
+Let `C` be abelian with hom-set universe `v`, injective
+resolutions, and Ext in universe `v`. Let `X : C` and `I` be an
+injective resolution of `Y`. For `g : Y → Y′`, Ext postcomposition by its degree-zero
+class is the additive map `Ext^n(X,Y) → Ext^n(X,Y′)`.

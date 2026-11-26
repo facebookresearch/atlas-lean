@@ -1,3 +1,6 @@
-# Small Etale Base Change Point Fiber Iso hom app left
+# Geometric fiber comparison uses the pullback projection
 
-The original base-change fiber comparison is the pullback projection on neighborhoods.
+Geometric fiber comparison uses the pullback projection.
+
+The underlying scheme map of a fiber element after the comparison is its given map followed by
+the first projection `U ×_Y X → U`.

@@ -12,12 +12,16 @@ module
 public import MathlibExt.LinearAlgebra.ExteriorPower.ProductFiltration.BaseMultiplication
 
 /-!
-# The first-weight filtration stage as a projection kernel
+# The relative exterior projection and first positive weight
 
-The kernel of the second-summand exterior projection is the first positive
-weight stage. An off-diagonal linear component therefore changes an exterior
-image by a first-weight-positive element. In degree zero the projection is
-the exterior unit map and its kernel is zero.
+The second projection `M×N → N` on degree `m` is the zero-first-weight coordinate of the
+product decomposition, identified with `Λ^m_R N` by the degree-zero scalar unitor. Its kernel
+is `F_m^1`.
+
+If `h : V → M×N` has second component `b : V → N`, the difference `Λ^m h(y) - Λ^m(inr ∘ b)(y)`
+lies in `F_m^1`. In degree zero the exterior projection is the identity scalar map.
+
+Reference: Bourbaki, *Algebra*, Chapter III.
 -/
 
 @[expose] public section
@@ -34,7 +38,8 @@ variable (R : Type u) [CommRing R]
   (M : Type v) [AddCommGroup M] [Module R M]
   (N : Type w) [AddCommGroup N] [Module R N]
 
-/-- The zero linear map kills positive exterior degrees, without a free-module hypothesis. -/
+/-- For a commutative ring `R`, `R`-modules `M,V`, and `n : ℕ`, `exteriorPower.map (n+1) (0 : M
+→ₗ[R] V)=0`. -/
 theorem map_succ_zero {V : Type z} [AddCommGroup V] [Module R V] (n : ℕ) :
     exteriorPower.map (n + 1) (0 : M →ₗ[R] V) = 0 := by
   apply exteriorPower.linearMap_ext
@@ -50,7 +55,8 @@ theorem map_zero_of_ne_zero {V : Type z} [AddCommGroup V] [Module R V]
   obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hn
   exact map_succ_zero R M k
 
-/-- The original degree-zero element is its actual ground-ring scalar. -/
+/-- For a commutative ring `R`, an `R`-module `M`, and `x ∈ Λ^0_R M`, the underlying exterior
+element is `algebraMap R (ExteriorAlgebra R M) (exteriorPower.zeroEquiv R M x)`. -/
 theorem zeroPower_value (x : ⋀[R]^0 M) :
     (x : ExteriorAlgebra R M) = algebraMap R (ExteriorAlgebra R M) (exteriorPower.zeroEquiv R M x) := by
   have hx : x = (exteriorPower.zeroEquiv R M x) • exteriorPower.ιMulti R 0 (fun i => Fin.elim0 i) := by
@@ -61,7 +67,10 @@ theorem zeroPower_value (x : ⋀[R]^0 M) :
       ExteriorAlgebra.ιMulti R 0 (fun i => Fin.elim0 i) = _
   rw [ExteriorAlgebra.ιMulti_zero_apply, Algebra.algebraMap_eq_smul_one]
 
-/-- The actual zero-first-weight piece has the native regular tensor-unit coordinate. -/
+/-- Let `R` be a commutative ring and `M,N` be `R`-modules. Write `P_m=⊕_(a+b=m) Λ^a_R M ⊗[R]
+Λ^b_R N`, `E_m : Λ^m_R(M×N) ≃ P_m`, and `F_m^q` for the descending stage whose coordinates
+with first degree `a<q` vanish. For `m : ℕ`, the `R`-linear equivalence `Λ^0_R M ⊗[R] Λ^m_R N
+≃ₗ[R] Λ^m_R N` sends `x⊗y` to `zeroEquiv R M x • y`. -/
 def zeroCoordinateEquiv (m : ℕ) :
     Piece R M N m (index m 0 (Nat.zero_le m)) ≃ₗ[R] (⋀[R]^m N) :=
   (TensorProduct.congr (exteriorPower.zeroEquiv R M) (LinearEquiv.refl R (⋀[R]^m N))).trans
@@ -70,7 +79,10 @@ def zeroCoordinateEquiv (m : ℕ) :
 theorem zeroCoordinateEquiv_tmul (m : ℕ) (x : ⋀[R]^0 M) (y : ⋀[R]^m N) :
     zeroCoordinateEquiv R M N m (x ⊗ₜ[R] y) = exteriorPower.zeroEquiv R M x • y := rfl
 
-/-- The actual second projection on an ordered mixed exterior representative. -/
+/-- Let `R` be a commutative ring and `M,N` be `R`-modules. Write `P_m=⊕_(a+b=m) Λ^a_R M ⊗[R]
+Λ^b_R N`, `E_m : Λ^m_R(M×N) ≃ P_m`, and `F_m^q` for the descending stage whose coordinates
+with first degree `a<q` vanish. For `a+b=m`, `x ∈ Λ^a_R M`, and `y ∈ Λ^b_R N`, the underlying
+value of `Λ^m(snd)(injection(x⊗y))` is `ExteriorAlgebra.map (0 : M →ₗ[R] N)(x) * y`. -/
 theorem map_snd_injection_val (m : ℕ) (p : Index m)
     (x : ⋀[R]^p.val.1 M) (y : ⋀[R]^p.val.2 N) :
     (exteriorPower.map m (LinearMap.snd R M N) (injection R M N m p (x ⊗ₜ[R] y)) :
@@ -83,7 +95,10 @@ theorem map_snd_injection_val (m : ℕ) (p : Index m)
     ← AlgHom.comp_apply, ExteriorAlgebra.map_comp_map, hright,
     ExteriorAlgebra.map_id, AlgHom.id_apply]
 
-/-- The actual relative exterior projection is precisely the zero-first-weight coordinate. -/
+/-- Let `R` be a commutative ring and `M,N` be `R`-modules. Write `P_m=⊕_(a+b=m) Λ^a_R M ⊗[R]
+Λ^b_R N`, `E_m : Λ^m_R(M×N) ≃ P_m`, and `F_m^q` for the descending stage whose coordinates
+with first degree `a<q` vanish. For `z ∈ Λ^m_R(M×N)`, `Λ^m(snd)(z)=zeroCoordinateEquiv R M N m
+(coordinate_(0,m)(z))`. -/
 theorem map_snd_coordinate (m : ℕ) (z : ⋀[R]^m (M × N)) :
     exteriorPower.map m (LinearMap.snd R M N) z =
       zeroCoordinateEquiv R M N m (coordinate R M N m (index m 0 (Nat.zero_le m)) z) := by
@@ -141,7 +156,9 @@ theorem map_snd_coordinate (m : ℕ) (z : ⋀[R]^m (M × N)) :
           exact (congrArg (fun t : ExteriorAlgebra R N => t * y.val) hx).trans (zero_mul y.val)
   simpa only [LinearEquiv.symm_apply_apply] using h (exteriorPower.productEquiv R M N m z)
 
-/-- The first actual form-weight stage is the original relative-projection kernel. -/
+/-- Let `R` be a commutative ring and `M,N` be `R`-modules. Write `P_m=⊕_(a+b=m) Λ^a_R M ⊗[R]
+Λ^b_R N`, `E_m : Λ^m_R(M×N) ≃ P_m`, and `F_m^q` for the descending stage whose coordinates
+with first degree `a<q` vanish. For every `m : ℕ`, `ker(Λ^m(snd)) = F_m^1`. -/
 theorem ker_map_snd (m : ℕ) :
     (exteriorPower.map m (LinearMap.snd R M N)).ker = filtration R M N m 1 := by
   ext z
@@ -158,7 +175,10 @@ theorem ker_map_snd (m : ℕ) :
   · intro hz
     exact hz (index m 0 (Nat.zero_le m)) (by dsimp [index]; omega)
 
-/-- Removing an actual off-diagonal first component changes only positive first weights. -/
+/-- Let `R` be a commutative ring and `M,N` be `R`-modules. Write `P_m=⊕_(a+b=m) Λ^a_R M ⊗[R]
+Λ^b_R N`, `E_m : Λ^m_R(M×N) ≃ P_m`, and `F_m^q` for the descending stage whose coordinates
+with first degree `a<q` vanish. Let `V` be an `R`-module, `h : V →ₗ[R] M×N`, and `b : V →ₗ[R]
+N` satisfy `snd ∘ h=b`. For `m : ℕ` and `y ∈ Λ^m_R V`, `Λ^m h(y)-Λ^m(inr ∘ b)(y) ∈ F_m^1`. -/
 theorem map_difference_mem_first
     {V : Type z} [AddCommGroup V] [Module R V]
     (h : V →ₗ[R] M × N) (b : V →ₗ[R] N)

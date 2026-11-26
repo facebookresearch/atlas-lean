@@ -16,22 +16,16 @@ import Mathlib.Algebra.Homology.HomologicalComplexAbelian
 import Mathlib.Algebra.Homology.ShortComplex.ModuleCat
 
 /-!
-# Connecting morphisms and cochain graded pairings
+# Connecting morphisms and graded cochain pairings
 
-For compatible cochain graded pairings on two short exact sequences of
-cochain complexes, this file proves the two one-sided compatibility laws
-between the induced homology pairing and the connecting morphism.  A
-connector in the right input contributes the Koszul sign `(-1) ^ p`, where
-`p` is the degree of the left input; a connector in the left input has no
-sign.
+For a fixed cochain complex and two short exact cochain sequences, suppose three graded
+pairings commute with the first and second sequence arrows. Pairing on homology is then
+compatible with the connecting morphisms.
 
-The short exactness of the source and target sequences is explicit.  In
-particular, no exactness of a tensor product sequence is inferred.
-
-## Main declarations
-
-* `HomologicalComplex.CochainGradedPairing.pairHomology_delta_right`
-* `HomologicalComplex.CochainGradedPairing.pairHomology_delta_left`
+A connecting map in the right input has the Koszul factor `(-1)^p`, where `p` is the left-
+input degree. A connecting map in the left input has coefficient one. Both identities retain
+the homology degree transport to `p + q + 1` and the explicit short exactness of the two
+sequences.
 -/
 
 @[expose] public section
@@ -272,8 +266,11 @@ private theorem pairHomology_delta_right_apply_cycles
   rw [hdeltaT]
   rw [← map_zsmul, ← hc_eq]
 
-/-- Pairing after a connecting morphism in the right input equals the
-connecting morphism after pairing, with Koszul sign `(-1) ^ p`. -/
+/-- Right input connecting map has the left degree Koszul sign.
+
+For compatible pairings `K × S_i → T_i` on short exact sequences `S` and `T`, pairing after
+the right connecting map in degree `q` equals `(-1)^p` times pairing in degrees `(p,q)`
+followed by the target connecting map, after degree transport. -/
 theorem pairHomology_delta_right
     {K : CochainComplex (ModuleCat.{u} R) ℕ}
     {S T : ShortComplex (CochainComplex (ModuleCat.{u} R) ℕ)}
@@ -464,8 +461,11 @@ private theorem pairHomology_delta_left_apply_cycles
   rw [pairHomology_π_apply R P₃ p q z x]
   rw [hdeltaT, hc_eq]
 
-/-- Pairing after a connecting morphism in the left input equals the
-connecting morphism after pairing, without a Koszul sign. -/
+/-- Left input connecting map commutes with homology pairing.
+
+For compatible pairings `S_i × K → T_i` on short exact sequences, applying the left connecting
+map before pairing equals pairing first and applying the target connecting map, with degree
+transport to `p + q + 1` and coefficient one. -/
 theorem pairHomology_delta_left
     {K : CochainComplex (ModuleCat.{u} R) ℕ}
     {S T : ShortComplex (CochainComplex (ModuleCat.{u} R) ℕ)}

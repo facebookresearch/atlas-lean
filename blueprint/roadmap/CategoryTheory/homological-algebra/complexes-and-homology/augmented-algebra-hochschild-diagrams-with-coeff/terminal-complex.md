@@ -1,3 +1,6 @@
-# Terminal Complex
+# The Hochschild coefficient complex at the terminal algebra
 
-The original regular algebra point retains the original arbitrary coefficient M.
+The Hochschild coefficient complex at the terminal algebra.
+
+At the identity augmentation of `B`, the augmented coefficient functor gives the Hochschild
+complex of `B` with the given coefficient module `M`.

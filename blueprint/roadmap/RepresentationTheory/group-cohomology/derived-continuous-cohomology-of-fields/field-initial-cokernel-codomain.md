@@ -1,3 +1,5 @@
-# Field Initial Cokernel Codomain
+# Degree one cohomology of the coefficient
 
-The actual original H1 object of the original module.
+Degree one cohomology of the coefficient.
+
+The initial cokernel boundary target is the degree-one continuous cohomology object of `M`.

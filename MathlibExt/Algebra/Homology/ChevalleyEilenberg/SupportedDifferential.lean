@@ -16,14 +16,17 @@ public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.BracketBoundaryList
 public import Mathlib.LinearAlgebra.ExteriorAlgebra.Grading
 
 /-!
-# Chevalley–Eilenberg differentials supported in one degree
+# Exterior CE differentials supported in one input degree
 
-Projection to exterior degree n + 1 followed by the Chevalley–Eilenberg differential defines
-an endomorphism of the full exterior algebra. It agrees with the boundary on that homogeneous
-component and vanishes on the other components.
+Let ∂ be the exterior CE boundary. For n : ℕ, compose projection onto exterior degree n + 1
+with ∂ to obtain an endomorphism D_n of the full exterior algebra. It equals ∂ on that degree
+and is zero on all other homogeneous degrees. Consecutive supported operators compose to zero,
+and D₀ is zero.
 
-Consecutive supported differentials compose to zero. Ordered-wedge formulas express the
-boundary as a signed sum over pairs of Lie inputs.
+On an ordered list of generators, ∂ is the strict-pair sum with coefficient (−1)^(i+j). The
+bracket [x_i,x_j] is placed first, and the remaining product deletes position j before i so
+the other entries keep their order. The same formula applies to pure exterior words, including
+lengths zero and one.
 -/
 
 @[expose] public section
@@ -39,34 +42,40 @@ namespace ChevalleyEilenberg
 variable (R : Type u) [CommRing R]
 variable (L : Type v) [LieRing L] [LieAlgebra R L]
 
-/-- Extend the differential from exterior degree `n + 1` by zero on every other homogeneous
-degree, using the grading projection. -/
+/-- Let R be a commutative ring, L an R-Lie algebra and E = ExteriorAlgebra R L. Let ∂ be the CE
+boundary with ∂(x∧y) = −[x,y]. For n : ℕ, supportedDifferential R L n = ∂ ∘
+GradedAlgebra.proj_(n+1) : E →ₗ[R] E, using the canonical homogeneous decomposition. -/
 def supportedDifferential (n : ℕ) : Module.End R (ExteriorAlgebra R L) :=
   (boundary R L).comp (_root_.GradedAlgebra.proj (fun i : ℕ => ⋀[R]^i L) (n + 1))
 
-/-- On its input degree, the supported differential is the canonical exterior boundary. -/
+/-- Let R be a commutative ring, L an R-Lie algebra and E = ExteriorAlgebra R L. Let ∂ be the CE
+boundary with ∂(x∧y) = −[x,y]. For a ∈ ⋀[R]^(n+1) L inside E, supportedDifferential n a =
+∂(a). -/
 theorem supportedDifferential_of_mem (n : ℕ) (a : ExteriorAlgebra R L)
     (ha : a ∈ ⋀[R]^(n + 1) L) :
     supportedDifferential R L n a = boundary R L a := by
   simp only [supportedDifferential, LinearMap.comp_apply, GradedAlgebra.proj_apply,
     DirectSum.decompose_of_mem_same (fun i : ℕ => ⋀[R]^i L) ha]
 
-/-- The supported differential vanishes on every other input degree. -/
+/-- Let R be a commutative ring, L an R-Lie algebra and E = ExteriorAlgebra R L. Let ∂ be the CE
+boundary with ∂(x∧y) = −[x,y]. For a ∈ ⋀[R]^m L and m ≠ n + 1, supportedDifferential n a = 0. -/
 theorem supportedDifferential_of_mem_ne (n m : ℕ) (a : ExteriorAlgebra R L)
     (ha : a ∈ ⋀[R]^m L) (hm : m ≠ n + 1) :
     supportedDifferential R L n a = 0 := by
   simp only [supportedDifferential, LinearMap.comp_apply, GradedAlgebra.proj_apply,
     DirectSum.decompose_of_mem_ne (fun i : ℕ => ⋀[R]^i L) ha hm, map_zero]
 
-/-- The supported operator agrees with the degree-restricted differential on the canonical
-exterior-power subtype. -/
+/-- Let R be a commutative ring, L an R-Lie algebra and E = ExteriorAlgebra R L. Let ∂ be the CE
+boundary with ∂(x∧y) = −[x,y]. For a : ⋀[R]^(n+1) L, supportedDifferential n a is the
+inclusion in E of differential R L n a. -/
 @[simp]
 theorem supportedDifferential_apply_exteriorPower (n : ℕ) (a : ⋀[R]^(n + 1) L) :
     supportedDifferential R L n a = (differential R L n a : ExteriorAlgebra R L) := by
   rw [supportedDifferential_of_mem R L n a a.property, differential_coe]
 
-/-- Consecutive supported CE differentials compose to zero on the whole exterior algebra,
-including inputs outside their selected degrees. -/
+/-- Let R be a commutative ring, L an R-Lie algebra and E = ExteriorAlgebra R L. Let ∂ be the CE
+boundary with ∂(x∧y) = −[x,y]. For every n : ℕ, supportedDifferential n ∘
+supportedDifferential (n + 1) = 0 as R-linear endomorphisms of E. -/
 theorem supportedDifferential_comp_supportedDifferential (n : ℕ) :
     (supportedDifferential R L n).comp (supportedDifferential R L (n + 1)) = 0 := by
   apply LinearMap.ext
@@ -82,8 +91,9 @@ theorem supportedDifferential_comp_supportedDifferential (n : ℕ) :
   rw [supportedDifferential_of_mem R L n _ hdegree]
   exact boundary_squared R L _
 
-/-- The supported operator from exterior degree one to degree zero vanishes on the whole exterior
-algebra. -/
+/-- Let R be a commutative ring, L an R-Lie algebra and E = ExteriorAlgebra R L. Let ∂ be the CE
+boundary with ∂(x∧y) = −[x,y]. supportedDifferential R L 0 = 0 on the whole exterior algebra,
+since the CE boundary vanishes on degree one. -/
 @[simp]
 theorem supportedDifferential_zero : supportedDifferential R L 0 = 0 := by
   apply LinearMap.ext
@@ -95,8 +105,10 @@ theorem supportedDifferential_zero : supportedDifferential R L 0 = 0 := by
     congrArg (fun z : ⋀[R]^0 L => (z : ExteriorAlgebra R L))
       (LinearMap.congr_fun hd b)
 
-/-- The global boundary on any pure word is the full strict-pair sum in ordered list notation,
-including scalar and one-vector input. -/
+/-- Let R be a commutative ring, L an R-Lie algebra and E = ExteriorAlgebra R L. Let ∂ be the CE
+boundary with ∂(x∧y) = −[x,y]. For v : Fin n → L, ∂(ιMulti v) is ∑ i,j : Fin n with i<j, (−1 :
+R)^(i+j) • (ι([v_i,v_j]) * product of the remaining ordered generators). The remaining list is
+(List.ofFn v).eraseIdx j then eraseIdx i, so the larger index is removed first. -/
 theorem boundary_ιMulti_eq_sum_pairs (n : ℕ) (v : Fin n → L) :
     boundary R L (ExteriorAlgebra.ιMulti R n v) =
       ∑ i : Fin n, ∑ j : Fin n,
@@ -110,8 +122,10 @@ theorem boundary_ιMulti_eq_sum_pairs (n : ℕ) (v : Fin n → L) :
   | zero => simp only [ExteriorAlgebra.ιMulti_zero_apply, boundary_one, Fin.sum_univ_zero]
   | succ n => rw [boundary_ιMulti, bracketBoundary_coe_eq_sum_pairs]
 
-/-- The canonical CE boundary on a list of generators has the ordered bracket-and-deletion
-formula, with no chosen differential involved. -/
+/-- Let R be a commutative ring, L an R-Lie algebra and E = ExteriorAlgebra R L. Let ∂ be the CE
+boundary with ∂(x∧y) = −[x,y]. For xs : List L, ∂(product(xs.map ι)) is the sum over i<j in
+Fin xs.length of (−1 : R)^(i+j) times ι([xs_i,xs_j]) followed by the product of xs with index
+j then i erased. Empty and one-entry lists have an empty pair sum. -/
 theorem boundary_prod_map_ι (xs : List L) :
     boundary R L (xs.map (ExteriorAlgebra.ι R)).prod =
       ∑ i : Fin xs.length, ∑ j : Fin xs.length,

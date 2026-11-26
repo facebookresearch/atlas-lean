@@ -1,3 +1,6 @@
-# Kernel Split Complement Iso
+# Kernel identifies with the split retract
 
-The chosen kernel is canonically the original retract object.
+In a preadditive category `C`, let `i : Y → X`, `r : X → Y` satisfy
+`i ≫ r = 𝟙 Y`, and let `q = 𝟙 X - r ≫ i`. If a kernel
+of `q` exists, there is a canonical isomorphism `kernel q ≅ Y`
+whose comparison respects the original inclusion.

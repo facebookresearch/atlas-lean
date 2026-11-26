@@ -16,18 +16,16 @@ public import MathlibExt.LinearAlgebra.ExteriorAlgebra.PrimitiveFree
 public import Mathlib.Algebra.Module.Projective
 
 /-!
-# Homogeneous exterior primitives on projective modules
+# Homogeneous exterior primitives over projective modules
 
-The native projective split theorem provides an actual split embedding into
-a free module in a common universe containing the original ring and carrier.
-The actual exterior coalgebra map takes a primitive into the free exterior
-coalgebra. The existing characteristic-free free-module theorem kills every
-homogeneous degree other than one, and native exterior-map split injectivity
-reflects zero back to the original projective module.
+Let R be a commutative ring and M a projective R-module. A split linear embedding into a free
+module carries a homogeneous exterior primitive to a primitive of the same degree in the free
+exterior coalgebra. For every degree n≠1 that image is zero, and the split exterior map
+reflects zero.
 
-The free cover is a module; the argument does not require a Lie structure on
-it. No finite-generation, characteristic-zero, degree-invertibility or
-desired primitive-preservation certificate is an input.
+Thus a projective module has no nonzero homogeneous exterior primitive outside degree one.
+This uses module projectivity over R and holds in every characteristic, without finite
+generation or invertibility of the degree.
 -/
 
 @[expose] public section
@@ -41,8 +39,12 @@ namespace ExteriorAlgebra
 variable (R : Type u) [CommRing R]
 variable (M : Type v) [AddCommGroup M] [Module R M]
 
-/-- Every homogeneous exterior primitive outside degree one vanishes on a projective module,
-over any commutative ring and in every characteristic. -/
+/-- Let R be a commutative ring, M an R-module with Module.Projective R M, and n ∈ ℕ with n≠1. If
+a ∈ Λ^n_R M becomes a (1,1)-skew primitive element of ExteriorAlgebra R M, then a=0. A split
+embedding of M into a free R-module transports primitivity through the exterior coalgebra map
+and preserves degree; split injectivity then reflects the free-module vanishing. The ring and
+module carrier universes are independent, and no finite-generation or characteristic condition
+is required. -/
 theorem primitive_homogeneous_eq_zero_of_projective [Module.Projective R M]
     (n : ℕ) (hn : n ≠ 1) (a : ⋀[R]^n M)
     (ha : Coalgebra.IsSkewPrimitiveElem R (1 : ExteriorAlgebra R M) 1

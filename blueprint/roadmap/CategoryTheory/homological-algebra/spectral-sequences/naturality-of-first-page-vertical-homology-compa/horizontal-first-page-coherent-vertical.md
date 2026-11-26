@@ -1,4 +1,6 @@
-# Horizontal First Page Coherent Vertical Homology Iso hom naturality
+# Naturality of the coherent first-page vertical-homology comparison
 
-The coherent first-page comparison with vertical homology is natural in
-the bicomplex.
+Naturality of the coherent first-page vertical-homology comparison.
+
+For a bicomplex map `f : K → L`, the first-page map at `(p,q)` followed by the target
+comparison equals the source comparison followed by `H_q(f_p)`.

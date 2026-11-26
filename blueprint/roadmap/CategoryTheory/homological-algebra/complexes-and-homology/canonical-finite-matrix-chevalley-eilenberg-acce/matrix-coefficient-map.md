@@ -1,3 +1,6 @@
-# Matrix Coefficient Map
+# The CE chain map of an entrywise algebra homomorphism
 
-A coefficient algebra map gives the canonical CE matrix map.
+The CE chain map of an entrywise algebra homomorphism.
+
+An algebra map `f : A → B` induces a map between fixed-size matrix CE complexes by applying
+`f` to every entry.

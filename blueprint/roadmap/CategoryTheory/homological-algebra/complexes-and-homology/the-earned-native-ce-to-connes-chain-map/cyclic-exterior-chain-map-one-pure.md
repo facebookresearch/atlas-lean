@@ -1,4 +1,5 @@
-# Cyclic Exterior Chain Map one pure
+# The degree-one ordered representative for the positive bracket map
 
-The printed-positive degree-one component sends the two-vector wedge to its ordered tensor
-class.
+The degree-one ordered representative for the positive bracket map.
+
+The wedge `x ∧ y` maps to the cyclic class of the coefficient-first tensor `x ⊗ y`.

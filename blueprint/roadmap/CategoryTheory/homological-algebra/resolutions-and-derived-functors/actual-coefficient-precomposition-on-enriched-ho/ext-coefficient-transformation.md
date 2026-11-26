@@ -1,3 +1,6 @@
-# Ext Coefficient Transformation
+# Coefficient precomposition right derives to an Ext transformation
 
-Native right derivation of actual coefficient precomposition.
+Coefficient precomposition right derives to an Ext transformation.
+
+Assuming injective resolutions for right `S`-modules, right derive the coefficient Hom
+transformation to obtain `extFunctor R S B' n ⟶ extFunctor R S B n`.

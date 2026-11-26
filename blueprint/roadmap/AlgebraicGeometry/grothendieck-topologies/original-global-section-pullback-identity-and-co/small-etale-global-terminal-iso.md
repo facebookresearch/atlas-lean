@@ -1,3 +1,5 @@
-# Small Etale Global Terminal Iso
+# Global sections as evaluation on the identity étale object
 
-Identify global sections with evaluation at the terminal object of the small étale site.
+Global sections as evaluation on the identity étale object.
+
+The global-sections functor is naturally isomorphic to sheaf evaluation at `X → X`.

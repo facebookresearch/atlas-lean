@@ -1,3 +1,6 @@
-# Right Scalar Tower
+# Second-factor scalar tower descends to the balanced quotient
 
-The original second-factor compatibility earns the quotient scalar tower.
+Second-factor scalar tower descends to the balanced quotient.
+
+Assume `S` is a `k`-algebra and `IsScalarTower k Sᵐᵒᵖ N`. The right quotient module structure
+then satisfies `IsScalarTower k Sᵐᵒᵖ (Balanced k R Q N)`.

@@ -1,4 +1,6 @@
-# Stable Interval Cokernelπ comp partial Total Iso hom
+# The projection formula for a stable-image graded comparison
 
-The generic image-cokernel quotient becomes the partial-total graded
-quotient in the selected image coordinates.
+The projection formula for a stable-image graded comparison.
+
+The stable-image cokernel projection followed by the graded isomorphism equals the current-
+image comparison followed by the partial-total graded projection.

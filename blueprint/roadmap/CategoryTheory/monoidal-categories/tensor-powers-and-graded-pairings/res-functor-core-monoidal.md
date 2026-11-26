@@ -1,3 +1,8 @@
-# Res Functor Core Monoidal
+# Unit and tensor structure of the restriction functor
 
-Restriction of representations is canonically strong monoidal.
+Let k be a commutative ring and G,H groups in universe u. Let f:H→G and Res=Res_f.
+For a G-representation A, write L_n(A)=T_(n+1)(A) for the left-associated positive tensor power
+with leading unit k, and R_n(A) for the right-associated power with
+R₀(A)=A and R_(n+1)(A)=A⊗R_n(A).
+The tensor restriction isomorphisms and identity-on-k unit
+isomorphism give the coherent strong monoidal data of Res.

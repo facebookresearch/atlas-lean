@@ -1,4 +1,6 @@
-# Vertical Homology Iso inv f zero
+# Chosen vertical-homology comparison has its component inverse at zero
 
-In horizontal degree zero, the inverse package-bound row comparison is
-the inverse of its exact shared component.
+Chosen vertical-homology comparison has its component inverse at zero.
+
+In horizontal degree zero, the inverse of `χ.verticalHomologyIso q` is `(χ.componentIso q
+0).inv`. The sign-removal factor is `ε(q)^0 = 1`.

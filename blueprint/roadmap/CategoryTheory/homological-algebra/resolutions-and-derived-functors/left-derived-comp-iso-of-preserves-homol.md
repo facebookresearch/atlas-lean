@@ -1,4 +1,6 @@
-# Functor-variable naturality of exact postcomposition
+# Postcomposition comparison is natural in the derived functor
 
-The exact-forgetting derived comparison is natural in the original coefficient transformation,
-with its projective-resolution maps.
+For abelian `C`, `D`, `E`, with projective resolutions in `C`,
+additive `F,G : C → D`, homology-preserving additive
+`U : D → E`, and `α : F → G`, the postcomposition comparisons
+satisfy `(L_nα ⋙ U) ≫ e_G = e_F ≫ L_n(α ⋙ U)`.

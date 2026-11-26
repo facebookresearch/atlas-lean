@@ -16,14 +16,17 @@ public import Mathlib.Algebra.Algebra.TransferInstance
 public import Mathlib.RingTheory.GradedAlgebra.Basic
 
 /-!
-# Polynomial coordinates on the associated graded enveloping algebra
+# Polynomial coordinates on the graded enveloping quotient layers
 
-For a chosen ordered basis of a Lie algebra over a commutative ring, PBW coordinates identify
-a basis-indexed model of the associated graded enveloping algebra with the polynomial algebra
-on the basis variables.
+Let R be a commutative ring, L an R-Lie algebra, and b : Basis I R L a basis indexed by a
+linearly ordered type I. Write D_n for the degree filtration of U_R(L) and G_n=D_n/D_{<n}. The
+direct sum ⊕_n G_n has PBW coordinates in MvPolynomial I R, carrying G_n to homogeneous
+polynomials of degree n.
 
-Symbols multiply as the classes of enveloping products. The polynomial coordinate algebra
-equivalence preserves the homogeneous components, including degree zero.
+The resulting R-algebra structure has product symbol_n(u)·symbol_m(v)=symbol_{n+m}(uv), and
+its scalar map is the degree-zero symbol. The homogeneous components are exactly the images of
+the quotient layers and form a graded algebra with finite-support decomposition. No finiteness
+of the basis index or characteristic condition is required.
 -/
 
 @[expose] public section
@@ -43,13 +46,23 @@ variable {R : Type u} [CommRing R]
 local notation "U" => UniversalEnvelopingAlgebra R L
 local notation "P" => MvPolynomial I R
 
-/-- The carrier is the direct sum with finite support of the enveloping algebra quotient layers.
-The basis parameter records the constructed coordinates. -/
+/-- Let R be a commutative ring, L an R-Lie algebra, and b : Basis I R L an ordered basis, with
+LinearOrder I. Write G_n for the degree-n enveloping quotient D_n/D_{<n}. The associated
+graded carrier attached to b consists of the finite-support direct sum ⊕_n G_n. The basis
+parameter specifies its PBW polynomial coordinates; the quotient layers themselves come from
+the degree filtration. -/
 structure AssociatedGraded (b : Module.Basis I R L) where
-  /-- The finite-support sum of homogeneous quotient coordinates. -/
+  /-- For an ordered basis b : Basis I R L of an R-Lie algebra over a commutative ring R, an element
+of the PBW associated graded carrier has quotient coordinates in GradedModule R L = ⊕_{n∈ℕ}
+D_n/D_{<n}. The field toGradedModule is this finite-support direct-sum element, recording its
+components in every degree. -/
   toGradedModule : GradedModule R L
 
-/-- Forgetting the wrapper retains the exact quotient direct sum. -/
+/-- Let R be a commutative ring, L an R-Lie algebra, and b : Basis I R L with LinearOrder I. There
+is a carrier equivalence between the PBW associated graded object attached to b and
+GradedModule R L, the direct sum of the degree quotient layers. The forward map takes its
+finite-support quotient coordinates, and the inverse forms the associated graded element with
+those coordinates. -/
 def associatedGradedRawEquiv (b : Module.Basis I R L) :
     AssociatedGraded b ≃ GradedModule R L where
   toFun := AssociatedGraded.toGradedModule
@@ -57,7 +70,11 @@ def associatedGradedRawEquiv (b : Module.Basis I R L) :
   left_inv := fun _ => rfl
   right_inv := fun _ => rfl
 
-/-- The computed coordinate bijection, before installing a ring structure. -/
+/-- Let R be a commutative ring, L an R-Lie algebra, and b : Basis I R L with LinearOrder I.
+Combining the equivalence with the quotient-layer direct sum and the complete PBW
+graded-module equivalence gives AssociatedGraded(b) ≃ MvPolynomial I R. Each degree-n quotient
+component is sent to its homogeneous polynomial of degree n, and all degrees are combined
+using finite support. -/
 def associatedGradedCoordinateEquiv (b : Module.Basis I R L) : AssociatedGraded b ≃ P :=
   (associatedGradedRawEquiv b).trans (completeGradedModuleEquiv b).toEquiv
 
@@ -67,7 +84,11 @@ instance associatedGradedCommRing (b : Module.Basis I R L) : CommRing (Associate
 instance associatedGradedAlgebra (b : Module.Basis I R L) : Algebra R (AssociatedGraded b) :=
   (associatedGradedCoordinateEquiv b).algebra R
 
-/-- The full algebra coordinate equivalence of the quotient carrier. -/
+/-- For a commutative ring R, an R-Lie algebra L, and an ordered basis b : Basis I R L, the
+complete PBW coordinate bijection defines an R-algebra equivalence AssociatedGraded(b) ≃ₐ[R]
+MvPolynomial I R. The operations on the associated graded carrier are transported through
+these coordinates. The symbol multiplication theorem identifies this product with the class of
+the enveloping product on homogeneous quotient layers. -/
 def associatedGradedAlgEquiv (b : Module.Basis I R L) : AssociatedGraded b ≃ₐ[R] P :=
   (associatedGradedCoordinateEquiv b).algEquiv R
 
@@ -75,7 +96,10 @@ def associatedGradedAlgEquiv (b : Module.Basis I R L) : AssociatedGraded b ≃�
 theorem associatedGradedAlgEquiv_apply (b : Module.Basis I R L) (x : AssociatedGraded b) :
     associatedGradedAlgEquiv b x = completeGradedModuleEquiv b x.toGradedModule := rfl
 
-/-- Addition agrees with the addition of the quotient direct sum. -/
+/-- Let b : Basis I R L be an ordered basis of an R-Lie algebra over a commutative ring R. For x,y
+in AssociatedGraded(b), the finite-support quotient coordinates of x+y equal the sum of those
+of x and y: (x+y).toGradedModule = x.toGradedModule + y.toGradedModule. Thus transported
+polynomial addition agrees with the additive structure of the quotient-layer direct sum. -/
 @[simp]
 theorem associatedGraded_toGradedModule_add (b : Module.Basis I R L)
     (x y : AssociatedGraded b) : (x + y).toGradedModule = x.toGradedModule + y.toGradedModule := by
@@ -84,7 +108,10 @@ theorem associatedGraded_toGradedModule_add (b : Module.Basis I R L)
   rw [map_add, map_add]
   rfl
 
-/-- Scalar multiplication agrees with the scalar action of the quotient direct sum. -/
+/-- For an ordered basis b : Basis I R L of an R-Lie algebra over a commutative ring R, r ∈ R, and
+x ∈ AssociatedGraded(b), one has (r·x).toGradedModule = r·x.toGradedModule. The scalar action
+transported through the PBW polynomial coordinates therefore agrees with the R-module action
+on the direct sum of enveloping degree quotients. -/
 @[simp]
 theorem associatedGraded_toGradedModule_smul (b : Module.Basis I R L)
     (r : R) (x : AssociatedGraded b) : (r • x).toGradedModule = r • x.toGradedModule := by
@@ -93,7 +120,11 @@ theorem associatedGraded_toGradedModule_smul (b : Module.Basis I R L)
   rw [map_smul, map_smul]
   rfl
 
-/-- Embed a quotient layer into the associated graded carrier. -/
+/-- Let R be a commutative ring, L an R-Lie algebra, b : Basis I R L with LinearOrder I, and n ∈
+ℕ. Define the R-linear map G_n → AssociatedGraded(b) by sending a quotient-layer element to
+its homogeneous polynomial coordinate and then applying the inverse full polynomial coordinate
+equivalence. Here G_n=D_n/D_{<n}; its image is the degree-n component of the associated graded
+carrier. -/
 def ofGradedLayer (b : Module.Basis I R L) (n : ℕ) : GradedLayer R L n →ₗ[R] AssociatedGraded b :=
   (associatedGradedAlgEquiv b).symm.toLinearMap.comp
     ((MvPolynomial.homogeneousSubmodule I R n).subtype.comp
@@ -106,7 +137,10 @@ theorem associatedGradedAlgEquiv_ofGradedLayer (b : Module.Basis I R L) (n : ℕ
     ((associatedGradedAlgEquiv b).symm (completeGradedEquiv b n x).val) = _
   exact (associatedGradedAlgEquiv b).apply_symm_apply _
 
-/-- The layer embedding is the singleton of the quotient direct sum. -/
+/-- Let b : Basis I R L be an ordered basis over a commutative ring R, n ∈ ℕ, and x ∈
+G_n=D_n/D_{<n}. The quotient coordinates of ofGradedLayer(b,n,x) are DirectSum.lof at degree n
+applied to x. Thus this associated graded element has coordinate x in degree n and zero
+coordinates in all other degrees. -/
 @[simp]
 theorem ofGradedLayer_toGradedModule (b : Module.Basis I R L) (n : ℕ)
     (x : GradedLayer R L n) :
@@ -115,7 +149,10 @@ theorem ofGradedLayer_toGradedModule (b : Module.Basis I R L) (n : ℕ)
   change associatedGradedAlgEquiv b (ofGradedLayer b n x) = _
   rw [associatedGradedAlgEquiv_ofGradedLayer, completeGradedModuleEquiv_lof]
 
-/-- The symbol of a filtered enveloping algebra element. -/
+/-- For an ordered basis b : Basis I R L of an R-Lie algebra over a commutative ring R and n ∈ ℕ,
+define symbol_n : D_n → AssociatedGraded(b) by quotienting by the lower stage D_{<n} and
+embedding the resulting degree-n layer. At n=0 the lower stage is zero; for n>0 it is the
+preceding degree stage inside D_n. -/
 def symbol (b : Module.Basis I R L) (n : ℕ) :
     UniversalEnvelopingAlgebra.degreeFiltration R L n →ₗ[R] AssociatedGraded b :=
   (ofGradedLayer b n).comp (gradedLowerStage R L n).mkQ
@@ -128,8 +165,11 @@ theorem associatedGradedAlgEquiv_symbol (b : Module.Basis I R L) (n : ℕ)
     completeGradedEquiv_mk]
   rfl
 
-/-- The associated graded multiplication is the class of the enveloping algebra product, proved
-for all degrees and all filtered representatives. -/
+/-- Let R be a commutative ring, L an R-Lie algebra, and b : Basis I R L with LinearOrder I. For
+n,m ∈ ℕ, u ∈ D_n, and v ∈ D_m, one has symbol_n(u)·symbol_m(v) = symbol_{n+m}(uv). The product
+uv is viewed in D_{n+m} using multiplicativity of the degree filtration. This identifies the
+PBW coordinate product with the quotient symbol of the enveloping product for every pair of
+degrees. -/
 theorem symbol_mul (b : Module.Basis I R L) (n m : ℕ)
     (u : UniversalEnvelopingAlgebra.degreeFiltration R L n)
     (v : UniversalEnvelopingAlgebra.degreeFiltration R L m) :
@@ -148,7 +188,10 @@ private theorem polynomialCoordinates_one (b : Module.Basis I R L) :
   change polynomialCoordinates b (1 : U) = MvPolynomial.monomial (wordExponent []) 1 at h
   simpa only [wordExponent_nil, MvPolynomial.monomial_zero', MvPolynomial.C_1] using h
 
-/-- The scalar map in degree zero is the class of the enveloping algebra scalar map. -/
+/-- For an ordered basis b : Basis I R L over a commutative ring R and r ∈ R, the degree-zero
+symbol of algebraMap_R,U(r) equals algebraMap_R,AssociatedGraded(b)(r). The enveloping scalar
+belongs to D_0, and its symbol is its class in the degree-zero quotient layer. Thus the
+associated graded scalar map is the one induced by the enveloping scalar map. -/
 theorem symbol_algebraMap (b : Module.Basis I R L) (r : R) :
     symbol b 0 ⟨algebraMap R U r,
       UniversalEnvelopingAlgebra.algebraMap_mem_degreeFiltration R L 0 r⟩ =
@@ -162,16 +205,25 @@ theorem symbol_algebraMap (b : Module.Basis I R L) (r : R) :
   simp only [MvPolynomial.homogeneousComponent_zero, MvPolynomial.coeff_one,
     ite_true, MvPolynomial.C_1, Algebra.algebraMap_eq_smul_one]
 
-/-- The unit is the degree-zero symbol of the enveloping algebra unit. -/
+/-- For an ordered basis b : Basis I R L of an R-Lie algebra over a commutative ring R,
+symbol_0(1_U) = 1_AssociatedGraded(b). The unit 1_U belongs to D_0 and is taken modulo the
+zero lower stage before insertion into degree zero. -/
 theorem symbol_one (b : Module.Basis I R L) :
     symbol b 0 ⟨(1 : U), UniversalEnvelopingAlgebra.one_mem_degreeFiltration R L 0⟩ = 1 := by
   simpa only [map_one] using symbol_algebraMap b (1 : R)
 
-/-- The quotient layer component, expressed through the computed polynomial coordinates. -/
+/-- Let b : Basis I R L be an ordered basis of an R-Lie algebra over a commutative ring R, and n ∈
+ℕ. Define the degree-n component of AssociatedGraded(b) as the inverse image of the
+homogeneous degree-n polynomial submodule under the R-linear map of
+associatedGradedAlgEquiv(b). Thus an element lies in this component exactly when its PBW
+polynomial coordinate is homogeneous of degree n. -/
 def associatedGradedComponent (b : Module.Basis I R L) (n : ℕ) : Submodule R (AssociatedGraded b) :=
   (MvPolynomial.homogeneousSubmodule I R n).comap (associatedGradedAlgEquiv b).toLinearMap
 
-/-- Every component is exactly the image of its quotient layer. -/
+/-- For an ordered basis b : Basis I R L over a commutative ring R and n ∈ ℕ, the component
+associatedGradedComponent(b,n) equals the R-linear range of ofGradedLayer(b,n). Equivalently,
+the homogeneous degree-n elements in the full PBW coordinate algebra are exactly those
+obtained by inserting elements of D_n/D_{<n}. -/
 theorem associatedGradedComponent_eq_range (b : Module.Basis I R L) (n : ℕ) :
     associatedGradedComponent b n = LinearMap.range (ofGradedLayer b n) := by
   ext x
@@ -201,7 +253,10 @@ instance associatedGradedComponent_gradedMonoid (b : Module.Basis I R L) :
     rw [map_mul]
     exact SetLike.mul_mem_graded hx hy
 
-/-- The graded component is linearly equivalent to its homogeneous polynomial coordinates. -/
+/-- Let R be a commutative ring, L an R-Lie algebra, b : Basis I R L with LinearOrder I, and n ∈
+ℕ. Restricting the full PBW R-algebra coordinate equivalence gives an R-linear equivalence
+between associatedGradedComponent(b,n) and the homogeneous degree-n submodule of MvPolynomial
+I R. Its inverse restricts the inverse polynomial equivalence to that homogeneous submodule. -/
 def associatedGradedComponentEquiv (b : Module.Basis I R L) (n : ℕ) :
     associatedGradedComponent b n ≃ₗ[R] MvPolynomial.homogeneousSubmodule I R n where
   toFun x := ⟨associatedGradedAlgEquiv b x.val, x.property⟩
@@ -215,14 +270,21 @@ def associatedGradedComponentEquiv (b : Module.Basis I R L) (n : ℕ) :
   map_add' x y := by apply Subtype.ext; exact map_add (associatedGradedAlgEquiv b) x.val y.val
   map_smul' r x := by apply Subtype.ext; exact map_smul (associatedGradedAlgEquiv b) r x.val
 
-/-- The finite-support decomposition into the graded components. -/
+/-- For an ordered basis b : Basis I R L of an R-Lie algebra over a commutative ring R, there is
+an R-linear equivalence AssociatedGraded(b) ≃ₗ[R] ⊕_n associatedGradedComponent(b,n). It
+decomposes the polynomial coordinate into its homogeneous pieces and then returns each piece
+to the corresponding associated graded component. Each element has only finitely many nonzero
+components. -/
 def associatedGradedDecomposeEquiv (b : Module.Basis I R L) :
     AssociatedGraded b ≃ₗ[R] ⨁ n, associatedGradedComponent b n :=
   (associatedGradedAlgEquiv b).toLinearEquiv.trans
     ((DirectSum.decomposeLinearEquiv (MvPolynomial.homogeneousSubmodule I R)).trans
       (DirectSum.congrLinearEquiv (associatedGradedComponentEquiv b)).symm)
 
-/-- Reassembly of the decomposition is the sum of component inclusions. -/
+/-- Let b : Basis I R L be an ordered basis over a commutative ring R. The inverse of the
+homogeneous decomposition equivalence, as an R-linear map, equals DirectSum.coeLinearMap for
+the family associatedGradedComponent(b,n). Hence a finite family of homogeneous components is
+reassembled by summing their inclusions into AssociatedGraded(b). -/
 theorem associatedGradedDecomposeEquiv_symm_eq_coe (b : Module.Basis I R L) :
     (associatedGradedDecomposeEquiv b).symm.toLinearMap =
       DirectSum.coeLinearMap (associatedGradedComponent b) := by
@@ -255,13 +317,20 @@ instance associatedGradedComponentDecomposition (b : Module.Basis I R L) :
       intro x
       exact (associatedGradedDecomposeEquiv b).apply_symm_apply x))
 
-/-- The quotient components form a graded algebra. -/
+/-- Let R be a commutative ring, L an R-Lie algebra, and b : Basis I R L with LinearOrder I. The
+submodules associatedGradedComponent(b,n) form an ℕ-graded algebra structure on
+AssociatedGraded(b). Their products have degree n+m, the unit has degree zero, and the
+homogeneous decomposition is a finite-support direct-sum decomposition. -/
 instance associatedGradedGradedAlgebra (b : Module.Basis I R L) :
     GradedAlgebra (associatedGradedComponent b) :=
   { (inferInstance : SetLike.GradedMonoid (associatedGradedComponent b)),
     (inferInstance : DirectSum.Decomposition (associatedGradedComponent b)) with }
 
-/-- The full algebra coordinate equivalence preserves each degree. -/
+/-- For an ordered basis b : Basis I R L over a commutative ring R, n ∈ ℕ, and x ∈
+AssociatedGraded(b), associatedGradedAlgEquiv(b)(x) belongs to the homogeneous degree-n
+polynomial submodule if and only if x belongs to associatedGradedComponent(b,n). This
+equivalence identifies the grading on the quotient carrier with polynomial total-degree
+grading. -/
 theorem associatedGradedAlgEquiv_mem_component_iff (b : Module.Basis I R L) (n : ℕ)
     (x : AssociatedGraded b) :
     associatedGradedAlgEquiv b x ∈ MvPolynomial.homogeneousSubmodule I R n ↔

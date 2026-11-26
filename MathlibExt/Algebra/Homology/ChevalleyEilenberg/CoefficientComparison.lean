@@ -16,15 +16,20 @@ public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.Exterior
 import Mathlib.Tactic.Abel
 
 /-!
-# Bracket and action formulas for the coefficient boundary
+# Bracket and action terms in the coefficient differential
 
-The homogeneous coefficient differential is the canonical bracket
-differential tensored with `M`, plus signed coefficient deletion. With the
-exterior factor first and a left Lie action on `M`, the action term has
-zero-based sign `(-1)^(i+1)`.
+Let R be commutative, L an R-Lie algebra and M a compatible left Lie
+module. On exterior-first tensors, the homogeneous coefficient
+differential is
+d_n^M=(d_n^trivial⊗id_M)+A_n,
+where
+A_n((x_0∧⋯∧x_n)⊗m)=
+∑_i(−1)^{i+1}(x with entry i deleted)⊗[x_i,m].
 
-Exterior-word recursion and finite deletion identities prove the formula
-for arbitrary Lie algebras and Lie modules over a commutative ring.
+The bracket term puts each [x_i,x_j] first, with coefficient
+(−1)^{i+j} and the other entries in their given order. If the coefficient
+action is trivial, only the bracket differential tensored with M remains.
+The formulas apply to arbitrary Lie algebras and modules over R.
 -/
 
 @[expose] public section
@@ -126,8 +131,11 @@ private theorem coefficientBoundary_ιMulti_eq_boundary_add_action (n : ℕ) :
         coefficientInsertion_tmul]
       abel
 
-/-- The homogeneous coefficient differential is its canonical bracket
-term plus the signed native coefficient action, in every positive exterior degree. -/
+/-- Let R be commutative, L an R-Lie algebra and M a compatible
+left Lie module. The coefficient tensor order is Λ_R^nL⊗M.
+The homogeneous differential is the sum
+ d_n^M=d_n^trivial⊗id_M+A_n,
+where A_n is signed deletion followed by the left coefficient action. -/
 theorem coefficientDifferential_eq_bracket_add_action (n : ℕ) :
     coefficientDifferential R L M n =
       (differential R L n).rTensor M + coefficientActionBoundary R L M n := by
@@ -153,8 +161,11 @@ theorem coefficientDifferential_eq_bracket_add_action (n : ℕ) :
     exact coefficientBoundary_ιMulti_eq_boundary_add_action R L M n v m
   exact LinearMap.congr_fun h a
 
-/-- Decomposable coefficient chains have the canonical bracket term and one
-signed action term for each deleted generator, with the surviving order retained. -/
+/-- Let R be commutative, L an R-Lie algebra and M a compatible
+left Lie module. The coefficient tensor order is Λ_R^nL⊗M.
+For x:Fin(n+1)→L and m∈M,
+d_n^M((x_0∧⋯∧x_n)⊗m)=β_n(x)⊗m
++∑_i(−1)^{i+1}(x with entry i deleted)⊗[x_i,m]. -/
 theorem coefficientDifferential_apply_ιMulti_tmul (n : ℕ)
     (v : Fin (n + 1) → L) (m : M) :
     coefficientDifferential R L M n
@@ -165,8 +176,10 @@ theorem coefficientDifferential_apply_ιMulti_tmul (n : ℕ)
   rw [coefficientDifferential_eq_bracket_add_action, LinearMap.add_apply,
     LinearMap.rTensor_tmul, coefficientActionBoundary_apply_ιMulti_tmul]
 
-/-- Trivial native coefficient actions leave precisely the canonical bracket
-differential tensored with the coefficient module. -/
+/-- Let R be commutative, L an R-Lie algebra and M a compatible
+left Lie module. The coefficient tensor order is Λ_R^nL⊗M.
+If the Lie action on M is trivial, then
+ d_n^M=d_n^trivial⊗id_M in every exterior degree. -/
 theorem coefficientDifferential_eq_bracket_of_isTrivial
     [LieModule.IsTrivial L M] (n : ℕ) :
     coefficientDifferential R L M n = (differential R L n).rTensor M := by

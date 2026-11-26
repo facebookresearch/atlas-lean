@@ -1,3 +1,5 @@
-# Polynomial Connes Pair Output Class coordinates
+# Differential-form coordinate of the polynomial Connes image
 
-The canonical polynomial coordinates of B(X s tensor X t) are d(X s) wedge d(X t).
+Let k be a commutative ring, σ a variable set and A = k[σ]. Put V = ⊕ᵢ∈σ k·eᵢ and q : A →
+A/(k·1). The normalized polynomial differential-form isomorphism sends the degree-two class of
+B₁(Xₛ ⊗ q(Xₜ)) to 1 ⊗_A (dXₛ∧dXₜ) in A ⊗_A ∧²_AΩ¹_\{A/k\}.

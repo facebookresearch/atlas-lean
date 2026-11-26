@@ -13,8 +13,21 @@ public import MathlibExt.CategoryTheory.Monad.TopologicalClassifyingBar
 public import Mathlib.Topology.Algebra.Module.Equiv.Basic
 public import MathlibExt.RepresentationTheory.Homological.ContCohomology.FiniteTupleEvaluation
 
-/-! # Complete continuous finite-tuple comparison
-Canonical compact-open linear equivalence, action and deletion laws in all degrees. -/
+/-!
+# Continuous finite-tuple coordinates for homogeneous resolutions
+
+Let k be a ring with a topology, G a locally compact topological group
+and X a topological k-representation in independent scalar and carrier
+universes. The iterated compact-open coefficient U_n(X) is
+homeomorphic and continuously k-linearly equivalent to C(G^n,X),
+including U₀(X)=X and the empty tuple.
+
+Evaluation preserves the diagonal group action and turns the resolution
+differential into alternating deletion of coordinates.
+Restricting these comparisons to invariant elements identifies homogeneous
+cochains with continuous functions F on G^(q+1) satisfying
+F(g t₀,…,g t_q)=g • F(t₀,…,t_q).
+-/
 @[expose] public section
 noncomputable section
 set_option autoImplicit false
@@ -24,7 +37,16 @@ namespace ContinuousCohomology
 variable {k : Type u} {G : Type v} [Ring k] [TopologicalSpace k]
 variable [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [LocallyCompactSpace G]
 
-/-- Canonical compact-open homeomorphism in every finite-tuple degree. -/
+/-- Let k be a ring with a topology and G a topological group.
+Let X be a topological k-module with a G-representation by continuous
+k-linear maps, with carrier universe max(v,w), independently of the
+scalar universe u and group universe v.
+Write U₀(X)=X and U_(n+1)(X)=C(G,U_n(X)), with compact-open
+topologies and diagonal G-actions.
+Assume G is locally compact.
+For every n ∈ ℕ, repeated compact-open uncurrying gives the
+homeomorphism U_n(X) ≅ C(G^n,X). At n=0 the function domain is
+the one-point empty-tuple space. -/
 def resolutionFinHomeomorph (X : TopRep.{max v w, u, v} k G) :
     (n : ℕ) → TopRep.resolutionX X n ≃ₜ C(Fin n → G, X)
   | 0 => Homeomorph.continuousMapOfUnique
@@ -65,7 +87,15 @@ private theorem uncurry_smul (X : TopRep.{max v w, u, v} k G) :
       change resolutionFinUncurry X n (r • a (t 0)) (Fin.tail t) = _
       exact uncurry_smul X n r (a (t 0)) (Fin.tail t)
 
-/-- Canonical continuous linear equivalence on all finite tuples, including empty tuples. -/
+/-- Let k be a ring with a topology and G a topological group.
+Let X be a topological k-module with a G-representation by continuous
+k-linear maps, with carrier universe max(v,w), independently of the
+scalar universe u and group universe v.
+Write U₀(X)=X and U_(n+1)(X)=C(G,U_n(X)), with compact-open
+topologies and diagonal G-actions.
+Assume G is locally compact.
+For every n ∈ ℕ, the tuple-coordinate homeomorphism is a
+continuous k-linear equivalence U_n(X) ≅L[k] C(G^n,X). -/
 noncomputable def resolutionFinContinuousLinearEquiv
     (X : TopRep.{max v w, u, v} k G) (n : ℕ) :
     TopRep.resolutionX X n ≃L[k] C(Fin n → G, X) where
@@ -88,14 +118,30 @@ noncomputable def resolutionFinContinuousLinearEquiv
   continuous_toFun := (resolutionFinHomeomorph X n).continuous_toFun
   continuous_invFun := (resolutionFinHomeomorph X n).continuous_invFun
 
-/-- The forward comparison is the original literal finite-tuple evaluator. -/
+/-- Let k be a ring with a topology and G a topological group.
+Let X be a topological k-module with a G-representation by continuous
+k-linear maps, with carrier universe max(v,w), independently of the
+scalar universe u and group universe v.
+Write U₀(X)=X and U_(n+1)(X)=C(G,U_n(X)), with compact-open
+topologies and diagonal G-actions.
+Assume G is locally compact.
+The forward equivalence sends c ∈ U_n(X) to its ordered nested
+evaluation E_n(c)(t₀,…,t_(n-1)). -/
 @[simp] theorem resolutionFinContinuousLinearEquiv_apply
     (X : TopRep.{max v w, u, v} k G) (n : ℕ)
     (c : TopRep.resolutionX X n) (t : Fin n → G) :
     resolutionFinContinuousLinearEquiv X n c t = resolutionFinUncurry X n c t :=
   resolutionFinHomeomorph_apply X n c t
 
-/-- Repeated currying recovers every value of every original continuous tuple map. -/
+/-- Let k be a ring with a topology and G a topological group.
+Let X be a topological k-module with a G-representation by continuous
+k-linear maps, with carrier universe max(v,w), independently of the
+scalar universe u and group universe v.
+Write U₀(X)=X and U_(n+1)(X)=C(G,U_n(X)), with compact-open
+topologies and diagonal G-actions.
+Assume G is locally compact.
+For f ∈ C(G^n,X), repeated currying gives the inverse element
+whose nested evaluation on every tuple t equals f(t). -/
 @[simp] theorem resolutionFinContinuousLinearEquiv_symm_apply
     (X : TopRep.{max v w, u, v} k G) (n : ℕ)
     (f : C(Fin n → G, X)) (t : Fin n → G) :
@@ -105,7 +151,15 @@ noncomputable def resolutionFinContinuousLinearEquiv
   exact congrArg (fun z : C(Fin n → G, X) => z t)
     ((resolutionFinContinuousLinearEquiv X n).apply_symm_apply f)
 
-/-- Equivariance for the same coefficient-plus-diagonal group action. -/
+/-- Let k be a ring with a topology and G a topological group.
+Let X be a topological k-module with a G-representation by continuous
+k-linear maps, with carrier universe max(v,w), independently of the
+scalar universe u and group universe v.
+Write U₀(X)=X and U_(n+1)(X)=C(G,U_n(X)), with compact-open
+topologies and diagonal G-actions.
+Assume G is locally compact.
+The finite-tuple equivalence intertwines the diagonal action:
+E_n(g • c)(t)=g • E_n(c)(g⁻¹t₀,…,g⁻¹t_(n-1)). -/
 theorem resolutionFinContinuousLinearEquiv_action
     (X : TopRep.{max v w, u, v} k G) (n : ℕ) (g : G)
     (c : TopRep.resolutionX X n) (t : Fin n → G) :
@@ -114,7 +168,17 @@ theorem resolutionFinContinuousLinearEquiv_action
   rw [resolutionFinContinuousLinearEquiv_apply, resolutionFinContinuousLinearEquiv_apply]
   exact resolutionFinUncurry_action X n g c t
 
-/-- The full recursive differential is the alternating coordinate-deletion operator. -/
+/-- Let k be a ring with a topology and G a topological group.
+Let X be a topological k-module with a G-representation by continuous
+k-linear maps, with carrier universe max(v,w), independently of the
+scalar universe u and group universe v.
+Write U₀(X)=X and U_(n+1)(X)=C(G,U_n(X)), with compact-open
+topologies and diagonal G-actions.
+Assume G is locally compact.
+For c ∈ U_(q+1)(X), the resolution differential satisfies
+E_(q+2)(d c)(t)=∑_(j=0)^(q+1) (-1)^j •
+E_(q+1)(c)(t with coordinate j deleted).
+The signs are scalars in k and preserve the coordinate order. -/
 theorem resolutionFinContinuousLinearEquiv_d
     (X : TopRep.{max v w, u, v} k G) (q : ℕ)
     (c : TopRep.resolution'X X q) (t : Fin (q + 2) → G) :
@@ -134,7 +198,16 @@ theorem resolutionFinContinuousLinearEquiv_d
       intro j _
       rw [resolutionFinContinuousLinearEquiv_apply]
 
-/-- Every original continuous homogeneous cochain has an actual invariant nested lift. -/
+/-- Let k be a ring with a topology and G a topological group.
+Let X be a topological k-module with a G-representation by continuous
+k-linear maps, with carrier universe max(v,w), independently of the
+scalar universe u and group universe v.
+Write U₀(X)=X and U_(n+1)(X)=C(G,U_n(X)), with compact-open
+topologies and diagonal G-actions.
+Assume G is locally compact.
+For a continuous F : G^(q+1) → X satisfying
+F(g t₀,…,g t_q)=g • F(t₀,…,t_q), there is an invariant nested
+degree q homogeneous cochain whose evaluation on every tuple is F. -/
 theorem homogeneousFinContinuousLinearEquiv_lift
     (X : TopRep.{max v w, u, v} k G) (q : ℕ)
     (f : C(Fin (q + 1) → G, X))

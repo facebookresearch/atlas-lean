@@ -1,3 +1,5 @@
-# Presentation Middle Row short Exact
+# Short exactness of the signed split middle row
 
-The middle row is genuinely short exact, with its original stored objects/maps.
+In an abelian category `C`, for any short complex
+`S : A → B → X`, the row `A → A ⊞ B → B` with maps
+`[-id,S.f]`, `[S.f,id]` is short exact.

@@ -1,4 +1,6 @@
-# Small Etale Inverse Image assoc
+# Inverse image composition comparisons satisfy associativity
 
-Inverse-image associativity follows from the proved actual direct-image
-associativity and the same six concrete adjunctions.
+Inverse image composition comparisons satisfy associativity.
+
+The two comparison paths for three inverse-image functors, in reversed scheme order, agree
+after the functor associator.

@@ -1,3 +1,6 @@
-# Scalar Special Linear
+# Scalar special-linear matrices form the trace-zero commutator Lie algebra
 
-The scalar special-linear carrier is the native trace-zero matrix Lie subalgebra.
+Let k be a commutative ring and m∈ℕ. The scalar special-linear Lie algebra sl_m(k) is the
+submodule of m×m matrices over k with trace zero, equipped with the commutator bracket
+[X,Y]=XY−YX. Its carrier is the trace-zero matrix Lie subalgebra, with no field or
+characteristic restriction.

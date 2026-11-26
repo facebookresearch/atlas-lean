@@ -1,3 +1,5 @@
-# Field Equivariant Stalk Counit bijective
+# Field stalk counit is bijective
 
-Bijectivity has no finite-module or uniform finite-quotient premise.
+Field stalk counit is bijective.
+
+The counit is bijective on underlying additive-group carriers.

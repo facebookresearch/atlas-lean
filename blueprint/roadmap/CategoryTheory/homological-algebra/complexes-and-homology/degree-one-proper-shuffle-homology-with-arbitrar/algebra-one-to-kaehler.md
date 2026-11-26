@@ -1,3 +1,6 @@
-# Algebra One To Kaehler
+# The coefficient universal-differential map from degree-one chains
 
-The original representative m⊗a maps to m tensor_A da in the native Kähler module.
+The coefficient universal-differential map from degree-one chains.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, m ⊗ a maps
+A-linearly to m ⊗[A] da.

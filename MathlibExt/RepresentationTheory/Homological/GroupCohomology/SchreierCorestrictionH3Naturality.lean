@@ -15,14 +15,12 @@ public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.Schrei
 public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.SchreierTransferDegreeThreeNaturality
 
 /-!
-# Coefficient naturality of canonical degree-three corestriction
+# Coefficient naturality of degree-three corestriction
 
-For a morphism of `G`-representations, mapping coefficients commutes with
-canonical finite-index corestriction in degree three.  The proof specializes
-the chosen-transversal naturality square to the default transversal used by
-the canonical wrapper.
-
-No field-theoretic, Kummer, norm-residue, or Bloch--Kato claim is made here.
+Let `G` be a group, `k` a commutative ring, `H ≤ G` a finite-index subgroup, and `φ : A → B` a
+morphism of representations. The canonical transfer satisfies `φ_* ∘ cor_A³ = cor_B³ ∘ (Res
+φ)_*` as maps `H³(H,Res A) → H³(G,B)`. The identity is given both on individual classes and as
+an equality of linear maps.
 -/
 
 @[expose] public section
@@ -40,8 +38,10 @@ universe u
 variable {k G : Type u} [CommRing k] [Group G]
 variable {H : Subgroup G}
 
-/-- Elementwise coefficient naturality of canonical degree-three
-corestriction. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` a finite-index subgroup, and `φ : A → B` a
+morphism of `G`-representations. For `x ∈ H³(H,Res A)`, `map (id G) φ 3 (corestrictionH3 A x)
+= corestrictionH3 B (map (id H) (Res φ) 3 x)`, where `Res φ = (Rep.resFunctor
+(Subgroup.subtype H)).map φ`. -/
 theorem corestrictionH3_naturality_apply
     {A B : Rep k G} (φ : A ⟶ B) [H.FiniteIndex]
     (x : H3 (Rep.res (Subgroup.subtype H) A)) :
@@ -53,8 +53,10 @@ theorem corestrictionH3_naturality_apply
   exact corestrictionH3OfRightTransversal_naturality_apply
     φ (default : H.RightTransversal) x
 
-/-- Bundled linear-map square for coefficient naturality of canonical
-degree-three corestriction. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` a finite-index subgroup, and `φ : A → B` a
+morphism of representations. The linear maps from `H³(H,Res A)` to `H³(G,B)` satisfy `(map (id
+G) φ 3).hom ∘ corestrictionH3 A = corestrictionH3 B ∘ (map (id H) (Res φ) 3).hom`, with `Res
+φ` induced by restriction to `H`. -/
 theorem corestrictionH3_naturality
     {A B : Rep k G} (φ : A ⟶ B) [H.FiniteIndex] :
     (map (MonoidHom.id G) φ 3).hom.comp (corestrictionH3 A) =

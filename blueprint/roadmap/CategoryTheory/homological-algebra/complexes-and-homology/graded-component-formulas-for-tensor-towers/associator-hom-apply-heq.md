@@ -1,7 +1,7 @@
-# Associator hom apply heq
+# Heterogeneous congruence of a graded associator component
 
-Heterogeneous congruence for the hom of a graded associator at one degree.
+Heterogeneous congruence of a graded associator component.
 
-Rewrite direction: replace the three carrier objects from left to right; the
-result compares the associator components without reducing either nested
-tensor tower.  `GradedTensorTowerTests` exercises all three replacements.
+For two triples of equal graded objects, the forward associator components in degree `j` are
+heterogeneously equal. The two sets of graded tensors and iterated tensor coproduct
+comparisons are assumed to exist.

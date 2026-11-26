@@ -1,4 +1,6 @@
-# Field Canonical Common Point Iso
+# Canonical and prescribed field geometric points are isomorphic
 
-The actual canonical common point is isomorphic to the prescribed Ω point through the genuine
-closure isomorphism.
+Canonical and prescribed field geometric points are isomorphic.
+
+For a prescribed separable closure in the scheme universe, the canonical common geometric
+point is isomorphic to the prescribed common point.

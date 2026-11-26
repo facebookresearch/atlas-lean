@@ -1,4 +1,6 @@
-# Integer Product Right Tensor Iso
+# Right finite-projective tensor factor gives an integer-product isomorphism
 
-The actual original right-tensor product Iso has the original tensorized
-projections as its hom, even for the full unbounded integer Hom product.
+Right finite-projective tensor factor gives an integer-product isomorphism.
+
+For finite categorically projective `U`, the right-factor product comparison gives an
+isomorphism `(∏ i : ℤ, N i) ⊗_R U ≅ ∏ i : ℤ, N i ⊗_R U` in the chosen module universe.

@@ -1,3 +1,5 @@
-# Negation Iso hom f eq ring
+# Ring-scalar formula for the chain negation isomorphism
 
-In any linear category the same sign is the literal coefficient-ring power `(-1)^n`.
+Let `C` be preadditive and `K` a nonnegative chain complex. For any ring `R` making `C` `R`-linear, the degree-`n`
+forward component of the negation isomorphism is
+`(-1_R)^n • id_(K_n)`.

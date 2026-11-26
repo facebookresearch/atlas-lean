@@ -1,4 +1,5 @@
-# Cutoff Layer
+# The cutoff complex concentrated in one absolute degree
 
-Cutoff-layer complex supported only in absolute degree `r`,
-identified there with `K.X r`.
+For a nonnegative cochain complex K in an abelian category,
+the cutoff layer at r is the complex K_r[r] concentrated in
+absolute degree r, with value K_r there and zero differential.

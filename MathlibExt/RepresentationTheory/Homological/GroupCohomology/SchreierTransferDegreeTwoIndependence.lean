@@ -15,15 +15,15 @@ public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.Schrei
 public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.SchreierTransferIndependence
 
 /-!
-# Independence of degree-two Schreier transfer from the transversal
+# The explicit boundary comparing degree-two transfers
 
-The change factors comparing two finite right transversals determine an
-explicit degree-one cochain.  For a subgroup two-cocycle, its differential is
-the difference of the two chosen-transversal degree-two transfers.  It follows
-that the induced maps on `H²` agree.
+Let T and U be right transversals for a finite-index H ≤ G. Match tᵢ ∈ T with uᵢ ∈ U by tᵢ =
+cᵢuᵢ, cᵢ ∈ H. For a scan t₀g = a₀t₁ and u₀g = b₀u₁, define B¹(z)(g) = ∑ₜ ρ(t⁻¹)(z(a₀,c₁) −
+z(c₀,b₀)).
 
-No projection formula, norm-residue comparison, or Kummer--Steinberg
-vanishing is asserted here.
+For an H-two-cocycle z with coefficients in a G-representation A, the signed differential
+satisfies d¹B¹(z) = cor_T²(z) − cor_U²(z). Hence the two transferred cocycles have the same
+class, and the induced linear maps on H² agree.
 -/
 
 @[expose] public section
@@ -41,11 +41,18 @@ universe u
 variable {k G : Type u} [CommRing k] [Group G]
 variable {H : Subgroup G}
 
+/-- Finite representatives for the binary change-of-transversal sum.
+
+The finite-index hypothesis gives a finite enumeration of T for the degree-one comparison
+cochain. -/
 noncomputable local instance corestrictionDegreeTwoIndependenceTransversalFintype
     (T : H.RightTransversal) [H.FiniteIndex] : Fintype (T : Set G) :=
   @Fintype.ofFinite (T : Set G) (T.2.finite_right)
 
-/-- The unsummed degree-one change term attached to one representative. -/
+/-- The degree-one comparison summand for two transversals.
+
+For z with values in any additive commutative group, set I(t,g) = z(a_T(t,g),c(r_T(t,g))) −
+z(c(t),a_U(u(t),g)), where t = c(t)u(t). -/
 def corestrictionChangeOneInner {A : Type u} [AddCommGroup A]
     (T U : H.RightTransversal)
     (z : H × H → A) (t : (T : Set G)) (g : G) : A :=
@@ -54,8 +61,10 @@ def corestrictionChangeOneInner {A : Type u} [AddCommGroup A]
     z (T.changeFactor U t,
       U.schreierFactor (T.changeRep U t) g)
 
-/-- The explicit degree-one homotopy term comparing the degree-two transfer
-cochains associated to `T` and `U`. -/
+/-- The linear degree-one change-of-transversal cochain.
+
+For a binary H-cochain z with coefficients in A, define B¹(z)(g) by summing ρ(t⁻¹)I(t,g) over
+T. The map z ↦ B¹(z) is k-linear. -/
 noncomputable def corestrictionChangeOne (A : Rep k G)
     (T U : H.RightTransversal) [H.FiniteIndex] :
     (H × H → A) →ₗ[k] (G → A) where
@@ -72,6 +81,9 @@ noncomputable def corestrictionChangeOne (A : Rep k G)
     simp only [map_smul, RingHom.id_apply]
     rw [Finset.smul_sum]
 
+/-- Values of the degree-one comparison cochain.
+
+At g ∈ G, corestrictionChangeOne A T U z is ∑ₜ ρ(t⁻¹)corestrictionChangeOneInner T U z t g. -/
 @[simp]
 theorem corestrictionChangeOne_apply (A : Rep k G)
     (T U : H.RightTransversal) [H.FiniteIndex]
@@ -81,8 +93,10 @@ theorem corestrictionChangeOne_apply (A : Rep k G)
         A.ρ (t : G)⁻¹ (corestrictionChangeOneInner T U z t g) :=
   rfl
 
-/-- The subgroup-level cocycle identity underlying the degree-two
-change-of-transversal homotopy. -/
+/-- The local differential of the binary comparison summand.
+
+For an H-two-cocycle z and the coupled scans tᵢgᵢ₊₁ = aᵢtᵢ₊₁ and uᵢgᵢ₊₁ = bᵢuᵢ₊₁, the signed
+local differential of I equals z(a₀,a₁) − ρ(c₀)z(b₀,b₁), where t₀ = c₀u₀. -/
 theorem corestrictionChangeOneInner_cocycle (A : Rep k G)
     (T U : H.RightTransversal)
     (z : groupCohomology.cocycles₂
@@ -169,7 +183,10 @@ theorem corestrictionChangeOneInner_cocycle (A : Rep k G)
       abel
     _ = 0 := by rw [hzX', hzM', hzU']; abel
 
-/-- Reindexing the leading differential term by the Schreier permutation. -/
+/-- Reindexing the leading binary comparison term.
+
+The sum of I(r_T(t,g₁),g₂) weighted by ρ(g₁r_T(t,g₁)⁻¹) equals ρ(g₁) times the ordinary
+inverse-weighted comparison sum at g₂. -/
 theorem sum_schreierRep_changeOneInner (A : Rep k G)
     (T U : H.RightTransversal) [H.FiniteIndex]
     (z : H × H → A) (g₁ g₂ : G) :
@@ -205,7 +222,10 @@ theorem sum_schreierRep_changeOneInner (A : Rep k G)
             (corestrictionChangeOneInner T U z t g₂)) := by
       rw [map_sum]
 
-/-- The differential comparison for a single representative. -/
+/-- The weighted differential of a binary comparison summand.
+
+The local differential with signs +,−,+, after weighting by ρ(t⁻¹), equals the T-transfer
+summand of z minus the matched U-transfer summand. -/
 theorem corestrictionChangeOne_d₁₂_term (A : Rep k G)
     (T U : H.RightTransversal)
     (z : groupCohomology.cocycles₂
@@ -250,8 +270,10 @@ theorem corestrictionChangeOne_d₁₂_term (A : Rep k G)
     T.inv_mul_changeFactor U t] at h
   exact h
 
-/-- Reindexing the `U`-transfer summands along the equivalence of
-transversals. -/
+/-- Reindexing the binary transfer across matched transversals.
+
+The U-transfer sum indexed by the matching representatives u(t) for t ∈ T equals the sum
+indexed directly by u ∈ U. -/
 theorem sum_changeRep_corestrictionTwo_term (A : Rep k G)
     (T U : H.RightTransversal) [H.FiniteIndex]
     (z : H × H → A) (g₁ g₂ : G) :
@@ -270,8 +292,9 @@ theorem sum_changeRep_corestrictionTwo_term (A : Rep k G)
         (z (U.schreierFactor u g₁,
           U.schreierFactor (U.schreierRep u g₁) g₂)))
 
-/-- The differential of the explicit degree-one change cochain is the
-difference of the two chosen-transversal degree-two transfers. -/
+/-- The degree-two transfer difference is an explicit boundary.
+
+For an H-two-cocycle z, d¹(corestrictionChangeOne A T U z) = cor_T²(z) − cor_U²(z). -/
 theorem corestrictionChangeOne_d₁₂ (A : Rep k G)
     (T U : H.RightTransversal) [H.FiniteIndex]
     (z : groupCohomology.cocycles₂
@@ -333,8 +356,10 @@ theorem corestrictionChangeOne_d₁₂ (A : Rep k G)
               U.schreierFactor (U.schreierRep u g₁) g₂)) := by
       rw [sum_changeRep_corestrictionTwo_term]
 
-/-- The `H²` classes of a transferred two-cocycle do not depend on the
-chosen finite right transversal. -/
+/-- Transferred two-cocycles have transversal-independent classes.
+
+For any H-two-cocycle z, the two G-two-cocycles transferred using T and U have equal images in
+H²(G,A). -/
 theorem corestrictionCocyclesTwo_H2π_independent (A : Rep k G)
     (T U : H.RightTransversal) [H.FiniteIndex]
     (z : groupCohomology.cocycles₂
@@ -349,8 +374,9 @@ theorem corestrictionCocyclesTwo_H2π_independent (A : Rep k G)
     corestrictionCochainTwo A T z - corestrictionCochainTwo A U z
   exact corestrictionChangeOne_d₁₂ A T U z
 
-/-- The linear map from two-cocycles to target `H²` is independent of the
-chosen finite right transversal. -/
+/-- The transferred degree-two class map is independent of the transversal.
+
+The linear maps from H-two-cocycles to H²(G,A) obtained using T and U are equal. -/
 theorem corestrictionCocycleTwoClass_independent (A : Rep k G)
     (T U : H.RightTransversal) [H.FiniteIndex] :
     corestrictionCocycleTwoClass A T =
@@ -359,8 +385,9 @@ theorem corestrictionCocycleTwoClass_independent (A : Rep k G)
   intro z
   exact corestrictionCocyclesTwo_H2π_independent A T U z
 
-/-- Chosen-transversal degree-two cohomological transfer is independent of
-the finite right transversal. -/
+/-- The degree-two cohomology transfer is independent of the transversal.
+
+For right transversals T and U, their induced linear maps H²(H,A|H) → H²(G,A) are equal. -/
 theorem corestrictionH2OfRightTransversal_independent (A : Rep k G)
     (T U : H.RightTransversal) [H.FiniteIndex] :
     corestrictionH2OfRightTransversal A T =

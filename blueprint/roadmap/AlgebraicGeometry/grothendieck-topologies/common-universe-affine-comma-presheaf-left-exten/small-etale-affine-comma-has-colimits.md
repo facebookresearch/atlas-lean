@@ -1,4 +1,6 @@
-# Small Etale Affine Comma Has Colimits
+# Colimits of affine presheaf comma diagrams
 
-Every corresponding colimit exists in the same common-universe group
-category; no actual-comma object smallness is assumed.
+For a scheme morphism f : X → Y with X and Y in universe u,
+V ∈ Etale(X), and any universe w, AddCommGrpCat max(u, w) admits
+all colimits indexed by the affine presheaf comma category at V.
+The indexing category's essential smallness in max(u, w) suffices.

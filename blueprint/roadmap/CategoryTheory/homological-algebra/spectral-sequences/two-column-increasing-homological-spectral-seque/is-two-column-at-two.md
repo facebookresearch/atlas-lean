@@ -1,4 +1,5 @@
-# Is Two Column At Two
+# Two-column support means second-page vanishing in horizontal degrees at least two
 
-An increasing homological spectral sequence is concentrated in columns
-zero and one on page two.  This is a predicate rather than an instance.
+Let C be abelian and E a spectral sequence on ℕ² starting at page one, with page-r differential
+of bidegree (-r,r−1). This condition is E^2_{p,q}=0 for every p,q∈ℕ with p≥2. It permits
+arbitrary second-page objects in columns p=0 and p=1.

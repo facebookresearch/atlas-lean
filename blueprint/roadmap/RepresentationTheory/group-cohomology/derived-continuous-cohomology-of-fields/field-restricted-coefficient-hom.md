@@ -1,3 +1,6 @@
-# Field Restricted Coefficient Hom
+# Equivariant coefficient map factors through action restriction
 
-Every original equivariant coefficient map is an actual arrow after restriction.
+Equivariant coefficient map factors through action restriction.
+
+A map of restricted topological coefficient representations gives a morphism from the
+restricted discrete source module to the target module.

@@ -1,3 +1,6 @@
-# The actual lifted coefficient map keeps the given right...
+# Lifting a coefficient map preserves its right S-equivariance
 
-The actual lifted coefficient map keeps the given right S-action.
+For an R-linear map f:B→B′ satisfying
+f(s•y)=s•f(y) for s∈Sᵒᵖ, its height-Γ_z lift satisfies the
+same Sᵒᵖ-equivariance equation.
+The coefficient carriers are lifted by up and down.

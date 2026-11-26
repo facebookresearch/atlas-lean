@@ -1,4 +1,6 @@
-# Small Etale Inverse Image At Geometric Point preserves Finite Limits
+# Inverse image followed by a geometric stalk preserves finite limits
 
-After every actual geometric point, inverse image preserves finite limits.
-This statement does not assume conservativity in a larger coefficient universe.
+Inverse image followed by a geometric stalk preserves finite limits.
+
+The composite of inverse image along `f` and the geometric stalk at `x` preserves finite
+limits.

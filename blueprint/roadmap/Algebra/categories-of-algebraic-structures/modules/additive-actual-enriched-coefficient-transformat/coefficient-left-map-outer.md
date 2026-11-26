@@ -1,3 +1,6 @@
-# Coefficient Left Map outer
+# Restricted coefficient morphism preserves the right S action
 
-The same native morphism also retains the actual right endpoint action.
+Restricted coefficient morphism preserves the right S action.
+
+For a coefficient-category morphism `f`, its restricted left-linear map satisfies `f (s • x) =
+s • f x` for every `s : Sᵐᵒᵖ`.

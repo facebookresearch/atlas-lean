@@ -16,14 +16,18 @@ public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.ZModRe
 public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.ZModRestrictDegreeThreeFunctoriality
 
 /-!
-# Scalar restriction and the degree-`(1, 2)` cup product
+# Integral scalar restriction and the cup in degrees one and two
 
-Restriction of coefficients from `ZMod n` to `ℤ` preserves the explicit
-degree-`(1, 2)` cup cocycle and its descended H3 class.  The coefficient is
-adjusted by the canonical comparison from the integral tensor product of the
-restricted factors to the restriction of their `ZMod n` tensor product.
+Let n∈ℕ and A,B be ZMod n-representations of a group G.
+The additive scalar-restriction comparisons identify the degree-(1,2)
+cup cocycle and H¹×H²→H³ cup with their integral counterparts,
+using Res(A)⊗[ℤ]Res(B)≅Res(A⊗[ZMod n]B).
 
-The statements include `n = 0`.
+For three degree-one classes in A, the nested product x∪(y∪z)
+uses the right-associated tensor cube. Its integral comparison preserves
+that order through
+Res(A)⊗(Res(A)⊗Res(A))≅Res(A⊗(A⊗A)).
+All assertions include n=0.
 -/
 
 @[expose] public section
@@ -38,8 +42,11 @@ namespace Rep
 
 variable {G : Type} [Group G]
 
-/-- The right-associated tensor cube of a scalar-restricted representation is
-canonically the scalar restriction of its right-associated tensor cube. -/
+/-- For n∈ℕ, a group G and a ZMod n-representation A, the
+right-associated coefficient comparison is
+Res(A)⊗[ℤ](Res(A)⊗[ℤ]Res(A))≅
+Res(A⊗[ZMod n](A⊗[ZMod n]A)).
+It sends a⊗(b⊗c) to the corresponding ordered tensor. -/
 noncomputable def zmodRestrictIntRightTensorCubeIso
     (n : ℕ) (A : Rep (ZMod n) G) :
     zmodRestrictInt n A ⊗
@@ -55,9 +62,13 @@ namespace groupCohomology
 variable {G : Type} [Group G]
 variable (n : ℕ) (A B : Rep (ZMod n) G)
 
-/-- Scalar restriction carries a `ZMod n`-linear degree-`(1, 2)` cup cocycle
-to the cup of the scalar-restricted cocycles, after the canonical tensor
-comparison. -/
+/-- Let n∈ℕ, G be a group and A,B representations over ZMod n.
+Write Res for scalar restriction to ℤ and
+μ:Res(A)⊗[ℤ]Res(B)≅Res(A⊗[ZMod n]B) for the canonical tensor
+comparison. All statements include n=0.
+For x∈Z¹(G,A) and y∈Z²(G,B), the degree-three scalar-restricted
+cup equals the integral (1,2) cup of the restricted cocycles,
+followed by μ on its coefficient. -/
 theorem cocycles₃ZModRestrictIntEquiv_cupCocycleOneTwo
     (x : cocycles₁ A) (y : cocycles₂ B) :
     cocycles₃ZModRestrictIntEquiv n (A ⊗ B)
@@ -73,8 +84,10 @@ theorem cocycles₃ZModRestrictIntEquiv_cupCocycleOneTwo
   intro g h i
   rfl
 
-/-- Scalar restriction of an explicit right-associated triple cup is the
-integral triple cup followed by the canonical tensor-cube comparison. -/
+/-- For n∈ℕ, a group G and a ZMod n-representation A, let x,y,z
+be degree-one cocycles. Scalar restriction of x∪(y∪z) equals the
+nested integral cup of their restrictions, followed by the
+right-associated tensor-cube comparison. -/
 theorem cocycles₃ZModRestrictIntEquiv_nestedCupOneOne
     (x y z : cocycles₁ A) :
     cocycles₃ZModRestrictIntEquiv n (A ⊗ (A ⊗ A))
@@ -112,8 +125,12 @@ theorem cocycles₃ZModRestrictIntEquiv_nestedCupOneOne
   intro g h i
   rfl
 
-/-- The degree-`(1, 2)` cup product commutes with scalar restriction from
-`ZMod n` to `ℤ`, after the canonical tensor comparison. -/
+/-- Let n∈ℕ, G be a group and A,B representations over ZMod n.
+Write Res for scalar restriction to ℤ and
+μ:Res(A)⊗[ℤ]Res(B)≅Res(A⊗[ZMod n]B) for the canonical tensor
+comparison. All statements include n=0.
+For x∈H¹(G,A) and y∈H²(G,B), the additive comparison satisfies
+χ₃(x∪y)=H³(μ)(χ₁(x)∪χ₂(y)). -/
 theorem H3ZModRestrictIntAddEquiv_cupOneTwo
     (x : H1 A) (y : H2 B) :
     H3ZModRestrictIntAddEquiv n (A ⊗ B)
@@ -139,8 +156,10 @@ theorem H3ZModRestrictIntAddEquiv_cupOneTwo
           rw [cocycles₃ZModRestrictIntEquiv_cupCocycleOneTwo]
           rfl
 
-/-- Scalar restriction of a right-associated triple cup is the integral
-triple cup followed by the canonical right-associated tensor comparison. -/
+/-- For n∈ℕ, a group G and a ZMod n-representation A, scalar
+restriction sends x∪(y∪z) for x,y,z∈H¹(G,A) to the nested
+integral cup, with coefficients identified by the right-associated
+tensor-cube comparison. The degree is three. -/
 theorem H3ZModRestrictIntAddEquiv_nestedCupOneOne
     (x y z : H1 A) :
     H3ZModRestrictIntAddEquiv n (A ⊗ (A ⊗ A))

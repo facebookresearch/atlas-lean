@@ -14,16 +14,17 @@ public import MathlibExt.Algebra.Lie.UniversalEnveloping.Filtration
 public import Mathlib.LinearAlgebra.TensorAlgebra.Basis
 
 /-!
-# Constructive ordered-word reduction in the native enveloping algebra
+# Ordered-word normalization for enveloping products
 
-The normalizer searches for the first adjacent inversion and uses the actual
-basis coordinates of the Lie bracket. Its recursion terminates by the weight
-of the original word. Evaluating the result in the native quotient recovers
-the original word, giving the spanning half of ordered-word PBW over every
-commutative ring and an arbitrary basis.
+Let `R` be a commutative ring and let `b : I → L` be a basis of an `R`-Lie algebra, with `I`
+linearly ordered. A basis word evaluates as the product of the corresponding enveloping
+generators.
 
-Confluence, independence and a PBW basis are separate conclusions. This
-module does not assert them.
+At an adjacent inversion `i>j`, normalization exchanges the pair and adds the finite basis
+expansion of `[b_i,b_j]` in the same prefix and suffix. Recursion on the inversion weight
+terminates and returns a finite linear combination of weakly increasing words. Ordered words
+are fixed, evaluation of the normal form recovers the enveloping word, and the ordered word
+values span the enveloping algebra.
 -/
 
 @[expose] public section
@@ -40,45 +41,72 @@ variable {R : Type u} [CommRing R]
 
 local notation "U" => UniversalEnvelopingAlgebra R L
 
-/-- Weakly increasing finite words in an arbitrary ordered alphabet. -/
+/-- The type of weakly increasing finite words.
+
+For a linearly ordered alphabet `I`, an ordered word is a finite list whose entries are
+pairwise weakly increasing. -/
 @[implicit_reducible]
 def OrderedWord (I : Type w) [LinearOrder I] :=
   {xs : List I // xs.Pairwise (· ≤ ·)}
 
-/-- An actual word in the selected basis, evaluated in the native quotient. -/
+/-- The enveloping value of a Lie basis word.
+
+For a basis `b`, map each letter of a finite word to its basis vector and multiply their
+images in `U_R(L)` in list order. -/
 def basisWord (b : Module.Basis I R L) (xs : List I) : U :=
   word R L (xs.map b)
 
 omit [LinearOrder I] in
+/-- The enveloping value of the empty basis word.
+
+The empty word evaluates to the unit of `U_R(L)`. -/
 @[simp]
 theorem basisWord_nil (b : Module.Basis I R L) : basisWord b [] = 1 := rfl
 
 omit [LinearOrder I] in
+/-- The enveloping value after adjoining a first basis letter.
+
+The word `i :: xs` evaluates to `ι(b_i)` times the value of `xs`. -/
 @[simp]
 theorem basisWord_cons (b : Module.Basis I R L) (i : I) (xs : List I) :
     basisWord b (i :: xs) = UniversalEnvelopingAlgebra.ι R (b i) * basisWord b xs := rfl
 
 omit [LinearOrder I] in
+/-- The enveloping value of concatenated basis words.
+
+The value of `xs ++ ys` is the product of their values in that order. -/
 @[simp]
 theorem basisWord_append (b : Module.Basis I R L) (xs ys : List I) :
     basisWord b (xs ++ ys) = basisWord b xs * basisWord b ys := by
   simp only [basisWord, List.map_append, word_append]
 
-/-- Evaluate a weakly increasing word in the original quotient. -/
+/-- Evaluation of an ordered Lie basis word.
+
+An ordered word is sent to the product of its enveloping basis generators. -/
 def orderedWordValue (b : Module.Basis I R L) (xs : OrderedWord I) : U :=
   basisWord b xs.val
 
-/-- Linear evaluation of finite combinations of weakly increasing words. -/
+/-- Linear evaluation of ordered PBW word combinations.
+
+A finitely supported linear combination of ordered words maps to the same linear combination
+of their enveloping values. -/
 def orderedWordLinear (b : Module.Basis I R L) : (OrderedWord I →₀ R) →ₗ[R] U :=
   Finsupp.linearCombination R (orderedWordValue b)
 
+/-- The value of a single ordered PBW term.
+
+The ordered-word term with coefficient `r` evaluates to `r` times that word's enveloping
+value. -/
 @[simp]
 theorem orderedWordLinear_single (b : Module.Basis I R L) (xs : OrderedWord I) (r : R) :
     orderedWordLinear b (Finsupp.single xs r) = r • orderedWordValue b xs := by
   simp only [orderedWordLinear, Finsupp.linearCombination_single]
 
-/-- Terminating reduction to finite combinations of ordered words. All
-coefficients of a contraction are the actual bracket coordinates of `b`. -/
+/-- The terminating ordered-word normalizer of a Lie basis.
+
+At the first adjacent inversion, exchange the two letters and add the bracket-coordinate
+contractions. Recursion on inversion weight yields a finite `R`-linear combination of ordered
+words. -/
 def normalize (b : Module.Basis I R L) (xs : List I) : OrderedWord I →₀ R :=
   match h : List.adjacentInversion xs with
   | none =>
@@ -96,6 +124,10 @@ decreasing_by
   · exact List.inversionWeight_adjacent_swap_lt p i j s hs.2
   · exact List.inversionWeight_contract_lt p i j _ s
 
+/-- The bracket-and-exchange formula at a selected adjacent inversion.
+
+If the first inversion is `p ++ i :: j :: s`, its normal form is that of `p ++ j :: i :: s`
+plus the sum of the contracted words `p ++ k :: s` with coordinates of `[b_i,b_j]`. -/
 theorem normalize_of_adjacentInversion (b : Module.Basis I R L)
     {xs p s : List I} {i j : I}
     (h : List.adjacentInversion xs = some (p, i, j, s)) :
@@ -113,7 +145,9 @@ theorem normalize_of_adjacentInversion (b : Module.Basis I R L)
     cases ht
     rfl
 
-/-- The normalizer fixes every original weakly increasing word. -/
+/-- The normal form of an already ordered basis word.
+
+Normalizing a weakly increasing word gives that single ordered word with coefficient one. -/
 theorem normalize_ordered (b : Module.Basis I R L) (xs : OrderedWord I) :
     normalize b xs.val = Finsupp.single xs 1 := by
   have h := List.adjacentInversion_eq_none_of_pairwise_le xs.val xs.property
@@ -124,8 +158,9 @@ theorem normalize_ordered (b : Module.Basis I R L) (xs : OrderedWord I) :
     rw [h] at hs
     cases hs
 
-/-- Insert a vector between fixed basis words. This map is linear in that
-vector over the original commutative scalar ring. -/
+/-- Linear insertion of a Lie vector into a basis-word context.
+
+For fixed prefix `p` and suffix `s`, send `x ∈ L` to `basisWord(p) * ι(x) * basisWord(s)`. -/
 def insertGenerator (b : Module.Basis I R L) (p s : List I) : L →ₗ[R] U where
   toFun x := basisWord b p * UniversalEnvelopingAlgebra.ι R x * basisWord b s
   map_add' x y := by
@@ -134,18 +169,27 @@ def insertGenerator (b : Module.Basis I R L) (p s : List I) : L →ₗ[R] U wher
     simp only [map_smul, mul_smul_comm, smul_mul_assoc, RingHom.id_apply]
 
 omit [LinearOrder I] in
+/-- The enveloping value of a contextual Lie insertion.
+
+The insertion of `x` between `p` and `s` has value `basisWord(p) * ι(x) * basisWord(s)`. -/
 @[simp]
 theorem insertGenerator_apply (b : Module.Basis I R L) (p s : List I) (x : L) :
     insertGenerator b p s x =
       basisWord b p * UniversalEnvelopingAlgebra.ι R x * basisWord b s := rfl
 
 omit [LinearOrder I] in
+/-- A basis-vector insertion as a concatenated basis word.
+
+Inserting `b_i` between fixed basis words gives the value of `p ++ i :: s`. -/
 theorem insertGenerator_basis (b : Module.Basis I R L) (p s : List I) (i : I) :
     insertGenerator b p s (b i) = basisWord b (p ++ i :: s) := by
   simp only [insertGenerator_apply, basisWord_append, basisWord_cons, mul_assoc]
 
 omit [LinearOrder I] in
-/-- Expanding a bracket uses the basis's finite, literal coordinate sum. -/
+/-- The coordinate expansion of a contextual bracket insertion.
+
+The insertion of `[b_i,b_j]` is the finite sum of inserted basis vectors with coefficients
+from that bracket's basis coordinates. -/
 theorem insertGenerator_bracket (b : Module.Basis I R L)
     (p s : List I) (i j : I) :
     (b.repr ⁅b i, b j⁆).sum
@@ -156,8 +200,10 @@ theorem insertGenerator_bracket (b : Module.Basis I R L)
     insertGenerator_basis] using h
 
 omit [LinearOrder I] in
-/-- The elementary reduction is an equality in the actual native quotient;
-this theorem has no order premise because the quotient relation is universal. -/
+/-- The enveloping relation for an adjacent basis pair.
+
+In every prefix and suffix, exchanging `i,j` changes the basis-word value by insertion of
+`[b_i,b_j]`. The equality holds for any pair of basis indices. -/
 theorem basisWord_adjacent_rule (b : Module.Basis I R L)
     (p s : List I) (i j : I) :
     basisWord b (p ++ i :: j :: s) =
@@ -175,8 +221,10 @@ theorem basisWord_adjacent_rule (b : Module.Basis I R L)
   simpa only [basisWord_append, basisWord_cons, insertGenerator_apply,
     mul_add, add_mul, mul_assoc] using h
 
-/-- Every reduction computes the original word in the native enveloping
-algebra. This proves spanning without assuming confluence or independence. -/
+/-- Evaluation of a normalized basis word.
+
+The enveloping value of the finite ordered normal form equals the enveloping value of the
+input basis word. -/
 theorem orderedWordLinear_normalize (b : Module.Basis I R L) (xs : List I) :
     orderedWordLinear b (normalize b xs) = basisWord b xs := by
   generalize hn : List.inversionWeight xs = n
@@ -216,8 +264,10 @@ theorem orderedWordLinear_normalize (b : Module.Basis I R L) (xs : List I) :
           rw [hsum, hxs]
           exact (basisWord_adjacent_rule b p s i j).symm
 
-/-- All weakly increasing words span the actual native enveloping algebra
-for every selected basis, including infinite bases and positive characteristic. -/
+/-- Spanning of an enveloping algebra by ordered basis words.
+
+For every basis indexed by a linearly ordered alphabet over a commutative ring, the `R`-span
+of the ordered-word values is the whole enveloping algebra. -/
 theorem orderedWord_spanning (b : Module.Basis I R L) :
     Submodule.span R (Set.range (orderedWordValue b)) = ⊤ := by
   let S : Submodule R U := Submodule.span R (Set.range (orderedWordValue b))

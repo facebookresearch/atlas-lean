@@ -1,3 +1,6 @@
-# Field Stalk Skyscraper Hom Equiv invariant iff
+# Invariant skyscraper maps transpose to equivariant stalk maps
 
-Equivariance of the original stalk arrow is exactly actual diagonal invariance.
+Invariant skyscraper maps transpose to equivariant stalk maps.
+
+The ordinary point Hom correspondence identifies diagonal-invariant skyscraper maps with
+equivariant additive stalk maps.

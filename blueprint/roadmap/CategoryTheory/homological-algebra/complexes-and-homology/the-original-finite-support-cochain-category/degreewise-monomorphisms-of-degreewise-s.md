@@ -1,3 +1,4 @@
-# Degreewise Monomorphisms of degreewise Split Monomorphisms
+# A degreewise split monomorphism is degreewise monic
 
-Every actual split component is a monomorphism; the converse is not required.
+Let C have zero morphisms and f : K → L be a bounded cochain map. If each component f^j is
+split monic, then each f^j is monic, so f belongs to degreewiseMonomorphisms.

@@ -1,6 +1,6 @@
-# R Cast In
+# The product description of the right point-module fiber
 
-Cast a `PUnit`-extended point into the right-module fiber.
+The product description of the right point-module fiber.
 
-`R.functor.obj Y` is definitionally `PUnit × Y` in `Type`; this records the
-cast once so statements elaborate with syntactic products.
+For a type Y, the right-module functor associated to the point action has value PUnit × Y.
+This map identifies that product with the functor value.

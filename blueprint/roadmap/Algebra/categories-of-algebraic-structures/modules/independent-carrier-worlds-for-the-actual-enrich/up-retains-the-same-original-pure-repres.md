@@ -1,3 +1,6 @@
-# Up retains the same original pure representative
+# The up tensor map lifts both factors of a pure class
 
-Up retains the same original pure representative.
+For a right R-module X and an (R,S)-bimodule B,
+the inverse carrier lift satisfies
+u([x⊗b])=[up(x)⊗up(b)].
+The target has both carriers at Γ=max(r,a,b,z).

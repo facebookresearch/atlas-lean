@@ -1,5 +1,6 @@
-# Em Eval Forget Iso
+# Evaluation and forgetting commute for one-point algebra diagrams
 
-Evaluation/postcomposition commutation as an explicit isomorphism, so the
-literal comparison chain below is well-typed at every transparency: no tactic
-must unfold semireducible definitions to see two consecutive links agree.
+For a monad T on C, evaluation of a Discrete PUnit-indexed algebra diagram followed by
+T.forget is naturally isomorphic to postcomposing the diagram by T.forget and then evaluating
+at the unique point. Both send a diagram H to its underlying object U(H(*)), and the
+comparison has identity components.

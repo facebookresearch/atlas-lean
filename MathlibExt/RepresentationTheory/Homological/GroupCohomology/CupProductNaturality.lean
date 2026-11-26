@@ -14,22 +14,16 @@ public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.CupPro
 public import MathlibExt.RepresentationTheory.Rep.ResTensor
 
 /-!
-# Coefficient naturality of arbitrary-degree group-cohomology cups
+# Naturality of group-cohomology cup products
 
-The Alexander--Whitney cup pairing is natural in both coefficient
-representations.  This file proves naturality first for the comparison
-between inhomogeneous and bar cochains, then for bar and inhomogeneous cup
-pairings, and finally for the induced cup on group cohomology.
+Let `G` be a group and `k` a commutative ring. The comparison between inhomogeneous cochains
+and equivariant bar cochains commutes with postcomposition by coefficient morphisms. For `f :
+A → A'` and `g : B → B'`, both cochain cup pairings and the cohomology product satisfy `(f ⊗
+g)_*(x ∪ y) = f_*x ∪ g_*y` in all degrees `p,q : ℕ`.
 
-## Main declarations
-
-* `groupCohomology.inhomogeneousCochainsIso_hom_naturality`
-* `groupCohomology.inhomogeneousCochainsIso_inv_naturality`
-* `groupCohomology.barCochainCupPairing_naturality`
-* `groupCohomology.inhomogeneousCupPairing_naturality`
-* `groupCohomology.cup_naturality`
-* `groupCohomology.inhomogeneousCupPairing_naturality_of_hom`
-* `groupCohomology.cup_naturality_of_hom`
+For a group homomorphism `f : G →* H`, coefficient maps `φ : Rep.res f A → A'` and `ψ :
+Rep.res f B → B'` give the same identities after pullback. The output coefficient map is
+`(Rep.resTensorIso f A B).inv ≫ (φ ⊗ ψ)`, from `Rep.res f (A ⊗ B)` to `A' ⊗ B'`.
 -/
 
 @[expose] public section
@@ -59,6 +53,18 @@ private lemma cochainsMap_id_apply
     ((cochainsMap (MonoidHom.id G) f).f n).hom phi x = f.hom (phi x) :=
   rfl
 
+private lemma cochainsMap_restricted_apply
+    {G H : Type u} [Group G] [Group H] {A : Rep k H} {B : Rep k G}
+    (f : G →* H) (phi : Rep.res f A ⟶ B) (n : ℕ)
+    (a : (Fin n → H) → A) (g : Fin n → G) :
+    ((cochainsMap f phi).f n).hom a g = phi.hom (a (fun i => f (g i))) :=
+  rfl
+
+private lemma coefficientTensorMap_tmul {A B C D : ModuleCat k}
+    (f : A ⟶ B) (g : C ⟶ D) (a : A) (b : C) :
+    (f ⊗ₘ g).hom (a ⊗ₜ[k] b) = f.hom a ⊗ₜ[k] g.hom b :=
+  rfl
+
 private lemma coefficientMap_apply_basis
     {A B : Rep k G} (f : A ⟶ B) (n : ℕ)
     (phi : Rep.free k G (Fin n → G) ⟶ A) (x : Fin n → G) :
@@ -68,8 +74,10 @@ private lemma coefficientMap_apply_basis
       f.hom (phi.hom (Finsupp.single x (MonoidAlgebra.single 1 1))) :=
   rfl
 
-/-- The comparison from inhomogeneous cochains to bar linear-Yoneda
-cochains is natural in the coefficient representation. -/
+/-- Let `k` be a commutative ring, `G` a group, and `f : A → B` a morphism of representations.
+Write `I_A : C^*(G,A) ≅ Y(A)` for `inhomogeneousCochainsIso A`, where `Y(A)_n =
+Hom_G((Rep.barComplex k G).X n,A)`, and let `Y(f)` be postcomposition by `f`. Then
+`cochainsMap (id G) f ≫ I_B.hom = I_A.hom ≫ Y(f)` as cochain maps `C^*(G,A) → Y(B)`. -/
 theorem inhomogeneousCochainsIso_hom_naturality
     {A B : Rep k G} (f : A ⟶ B) :
     cochainsMap (MonoidHom.id G) f ≫ (inhomogeneousCochainsIso B).hom =
@@ -99,8 +107,10 @@ theorem inhomogeneousCochainsIso_hom_naturality
   have hCoeff := coefficientMap_apply_basis f n phiBar x
   exact (congrArg f.hom hIso.symm).trans hCoeff.symm
 
-/-- Inverse orientation of coefficient naturality for the inhomogeneous/bar
-comparison. -/
+/-- Let `k` be a commutative ring, `G` a group, and `f : A → B` a morphism of representations. For
+`I_A : C^*(G,A) ≅ Y(A)` and `I_B : C^*(G,B) ≅ Y(B)`, the inhomogeneous/bar comparisons, let
+`Y(f)` postcompose each equivariant bar cochain with `f`. Then `I_A.inv ≫ cochainsMap (id G) f
+= Y(f) ≫ I_B.inv` as maps `Y(A) → C^*(G,B)`. -/
 theorem inhomogeneousCochainsIso_inv_naturality
     {A B : Rep k G} (f : A ⟶ B) :
     (inhomogeneousCochainsIso A).inv ≫
@@ -114,7 +124,10 @@ theorem inhomogeneousCochainsIso_inv_naturality
   rw [inhomogeneousCochainsIso_hom_naturality f]
   simp
 
-/-- Coefficient naturality of the arbitrary-degree bar cup pairing. -/
+/-- Let `k` be a commutative ring, `G` a group, and `f : A → A'`, `g : B → B'` morphisms of
+representations. Write `P_{A,B}` for the graded bar cup pairing and `Y_n(f)` for
+postcomposition by `f` on degree-`n` equivariant bar cochains. For `p,q : ℕ`, `P_{A,B}(p,q) ≫
+Y_{p+q}(f ⊗ g) = (Y_p(f) ⊗ Y_q(g)) ≫ P_{A',B'}(p,q)`. -/
 theorem barCochainCupPairing_naturality
     {A B A' B' : Rep k G} (f : A ⟶ A') (g : B ⟶ B')
     (p q : ℕ) :
@@ -129,8 +142,10 @@ theorem barCochainCupPairing_naturality
   apply linearYonedaCochainGradedPairing_coefficient_naturality
   simp
 
-/-- Coefficient naturality of the arbitrary-degree inhomogeneous cup
-pairing. -/
+/-- Let `k` be a commutative ring, `G` a group, and `f : A → A'`, `g : B → B'` morphisms of
+representations. Write `P_{A,B}` for `inhomogeneousCupPairing G k A B` and `c_n(f) =
+(cochainsMap (id G) f).f n`. For `p,q : ℕ`, `P_{A,B}.pair p q ≫ c_{p+q}(f ⊗ g) = (c_p(f) ⊗
+c_q(g)) ≫ P_{A',B'}.pair p q`. -/
 theorem inhomogeneousCupPairing_naturality
     {A B A' B' : Rep k G} (f : A ⟶ A') (g : B ⟶ B')
     (p q : ℕ) :
@@ -191,8 +206,9 @@ theorem inhomogeneousCupPairing_naturality
     (fun h => h ≫ (barCochainCupPairing G k A' B').pair p q ≫
       (inhomogeneousCochainsIso (A' ⊗ B')).inv.f (p + q)) hTensorNat
 
-/-- Coefficient naturality of the arbitrary-degree cup product on group
-cohomology. -/
+/-- Let `k` be a commutative ring, `G` a group, and `f : A → A'`, `g : B → B'` morphisms of
+representations. For `p,q : ℕ`, `cup G k A B p q ≫ map (id G) (f ⊗ g) (p + q) = (map (id G) f
+p ⊗ map (id G) g q) ≫ cup G k A' B' p q`, as maps into `H^{p+q}(G,A' ⊗ B')`. -/
 theorem cup_naturality
     {A B A' B' : Rep k G} (f : A ⟶ A') (g : B ⟶ B')
     (p q : ℕ) :
@@ -210,7 +226,10 @@ theorem cup_naturality
   intro i j
   exact inhomogeneousCupPairing_naturality f g i j
 
-/-- A monoid homomorphism commutes with every finite partial product. -/
+/-- Let `G,H` be groups, `f : G →* H`, `n : ℕ`, `x : Fin n → G`, and `i : Fin (n + 1)`. Then `f
+(Fin.partialProd x i) = Fin.partialProd (fun j => f (x j)) i`. Thus applying `f` to the
+ordered product of the first `i` entries equals the ordered product of their images, including
+the empty product at `i = 0`. -/
 theorem map_partialProd {G H : Type u} [Group G] [Group H]
     (f : G →* H) {n : ℕ} (x : Fin n → G) (i : Fin (n + 1)) :
     f (Fin.partialProd x i) =
@@ -218,8 +237,10 @@ theorem map_partialProd {G H : Type u} [Group G] [Group H]
   simp [Fin.partialProd, List.ofFn_comp', map_list_prod]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Joint group-and-coefficient naturality of the arbitrary-degree
-inhomogeneous cup pairing. -/
+/-- Let `k` be a commutative ring, `f : G →* H` a group homomorphism, `A,B : Rep k H`, and `A',B'
+: Rep k G`. For `φ : Rep.res f A → A'`, `ψ : Rep.res f B → B'`, put `θ = (Rep.resTensorIso f A
+B).inv ≫ (φ ⊗ ψ)` and `c_n(f,φ) = (cochainsMap f φ).f n`. For `p,q : ℕ`, the cup pairings
+satisfy `P_H(A,B).pair p q ≫ c_{p+q}(f,θ) = (c_p(f,φ) ⊗ c_q(f,ψ)) ≫ P_G(A',B').pair p q`. -/
 theorem inhomogeneousCupPairing_naturality_of_hom
     {G H : Type u} [Group G] [Group H]
     {A B : Rep k H} {A' B' : Rep k G}
@@ -230,6 +251,10 @@ theorem inhomogeneousCupPairing_naturality_of_hom
           ((Rep.resTensorIso f A B).inv ≫ (phi ⊗ₘ psi))).f (p + q) =
       ((cochainsMap f phi).f p ⊗ₘ (cochainsMap f psi).f q) ≫
         (inhomogeneousCupPairing G k A' B').pair p q := by
+  have hcoef (a : A) (b : B) :
+      ((Rep.resTensorIso f A B).inv ≫ (phi ⊗ₘ psi)).hom (a ⊗ₜ[k] b) =
+        phi.hom a ⊗ₜ[k] psi.hom b := by
+    rfl
   apply ModuleCat.hom_ext
   apply LinearMap.ext
   intro z
@@ -237,27 +262,11 @@ theorem inhomogeneousCupPairing_naturality_of_hom
   | tmul x y =>
       apply inhomogeneousCochains.ext
       intro g
-      change (((Rep.resTensorIso f A B).inv ≫ (phi ⊗ₘ psi)).hom
-          ((((inhomogeneousCupPairing H k A B).pair p q).hom
-            (x ⊗ₜ[k] y)) (fun i => f (g i)))) =
-        (((inhomogeneousCupPairing G k A' B').pair p q).hom
-          (((cochainsMap f phi).f p).hom x ⊗ₜ[k]
-            ((cochainsMap f psi).f q).hom y)) g
+      rw [moduleHom_comp_apply, moduleHom_comp_apply,
+        coefficientTensorMap_tmul, cochainsMap_restricted_apply]
       rw [inhomogeneousCupPairing_apply, inhomogeneousCupPairing_apply]
-      change (phi ⊗ₘ psi).hom
-          (x (fun i => f (g (Fin.castAdd q i))) ⊗ₜ[k]
-            B.ρ (Fin.partialProd (fun i => f (g i))
-              (Fin.natAdd p (0 : Fin (q + 1))))
-              (y (fun i => f (g (Fin.natAdd p i))))) = _
-      rw [Rep.hom_tensorHom]
-      erw [Representation.IntertwiningMap.tensor_apply]
-      change phi.hom (x (fun i => f (g (Fin.castAdd q i)))) ⊗ₜ[k]
-          psi.hom (B.ρ (Fin.partialProd (fun i => f (g i))
-            (Fin.natAdd p (0 : Fin (q + 1))))
-            (y (fun i => f (g (Fin.natAdd p i))))) =
-        phi.hom (x (fun i => f (g (Fin.castAdd q i)))) ⊗ₜ[k]
-          B'.ρ (Fin.partialProd g (Fin.natAdd p (0 : Fin (q + 1))))
-            (psi.hom (y (fun i => f (g (Fin.natAdd p i)))))
+      rw [hcoef]
+      simp only [cochainsMap_restricted_apply]
       congr 1
       rw [← map_partialProd]
       simpa using Rep.hom_comm_apply psi
@@ -266,8 +275,10 @@ theorem inhomogeneousCupPairing_naturality_of_hom
   | add x y hx hy =>
       simp only [map_add, hx, hy]
 
-/-- Joint group-and-coefficient naturality of the arbitrary-degree cup on
-group cohomology. -/
+/-- Let `k` be a commutative ring, `f : G →* H` a group homomorphism, `A,B : Rep k H`, and `A',B'
+: Rep k G`. Given `φ : Rep.res f A → A'` and `ψ : Rep.res f B → B'`, set `θ =
+(Rep.resTensorIso f A B).inv ≫ (φ ⊗ ψ)`. For `p,q : ℕ`, `cup H k A B p q ≫ map f θ (p + q) =
+(map f φ p ⊗ map f ψ q) ≫ cup G k A' B' p q`. -/
 theorem cup_naturality_of_hom
     {G H : Type u} [Group G] [Group H]
     {A B : Rep k H} {A' B' : Rep k G}

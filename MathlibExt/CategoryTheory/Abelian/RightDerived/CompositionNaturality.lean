@@ -12,12 +12,16 @@ module
 public import MathlibExt.CategoryTheory.Abelian.RightDerived.ResolutionComparison
 
 /-!
-# Naturality of right derivation under exact target transformations
+# Right derivation and homology-preserving target changes
 
-The existing comparison uses the chosen injective resolution and canonical homology transport. Its
-target-transformation square is obtained from the homology square and the resolution comparison.
-The transformation need not be invertible. Source, intermediate and target object and morphism
-universes remain independent.
+Let `C`, `D`, `E` be abelian categories, with injective resolutions in `C`.
+For additive `F : C → D` and additive homology-preserving `U : D → E`,
+the comparison `U(R^nF(X)) ≅ R^n(F ⋙ U)(X)` is computed through the
+cohomology of an injective resolution of `X`. These comparisons commute
+with every natural transformation between such target functors.
+
+The source, intermediate and target object and morphism universes are
+independent.
 -/
 
 @[expose] public section
@@ -34,7 +38,12 @@ variable {C : Type uSource} [Category.{vSource} C] [Abelian C]
   {E : Type uTarget} [Category.{vTarget} E] [Abelian E]
   [HasInjectiveResolutions C]
 
-/-- The hom component uses the chosen resolution and canonical homology comparison. -/
+/-- Let `C`, `D`, `E` be abelian, with injective resolutions in `C`,
+`F : C → D` additive and `U : D → E` additive and preserving homology.
+For the chosen injective resolution `I` of `X`, the forward comparison
+`U(R^nF(X)) → R^n(F ⋙ U)(X)` is the composite through
+`U(Hⁿ(F(I)))` and `Hⁿ(U(F(I)))` using the two resolution comparisons
+and the homology-preservation isomorphism. -/
 theorem rightDerivedCompIsoOfPreservesHomology_hom_app
     (F : C ⥤ D) [F.Additive] (U : D ⥤ E) [U.Additive] [U.PreservesHomology]
     (n : ℕ) (X : C) :
@@ -46,7 +55,11 @@ theorem rightDerivedCompIsoOfPreservesHomology_hom_app
           (R.isoRightDerivedObj (F ⋙ U) n).inv := by
   rfl
 
-/-- The inverse component reverses the same maps. -/
+/-- Let `C`, `D`, `E` be abelian, with injective resolutions in `C`,
+`F : C → D` additive and `U : D → E` additive and preserving homology.
+For the chosen injective resolution `I` of `X`, the inverse comparison
+`R^n(F ⋙ U)(X) → U(R^nF(X))` passes through
+`Hⁿ(U(F(I)))` and `U(Hⁿ(F(I)))` in that order. -/
 theorem rightDerivedCompIsoOfPreservesHomology_inv_app
     (F : C ⥤ D) [F.Additive] (U : D ⥤ E) [U.Additive] [U.PreservesHomology]
     (n : ℕ) (X : C) :
@@ -64,7 +77,10 @@ theorem rightDerivedCompIsoOfPreservesHomology_inv_app
     J.hom ≫ B.hom ≫ U.map (R.isoRightDerivedObj F n).inv
   exact Category.assoc _ _ _
 
-/-- The canonical comparison is natural in an arbitrary transformation of exact targets. -/
+/-- Let `C`, `D`, `E` be abelian, with injective resolutions in `C`,
+`F : C → D` additive and `U,V : D → E` additive and preserving homology.
+For `τ : U → V`, the forward comparison satisfies
+`τ_(R^nF) ≫ e_V = e_U ≫ R^n(F ⋙ τ)` as natural transformations. -/
 theorem rightDerivedCompIsoOfPreservesHomology_hom_naturality_target
     (F : C ⥤ D) [F.Additive] (U V : D ⥤ E)
     [U.Additive] [V.Additive] [U.PreservesHomology] [V.PreservesHomology]
@@ -119,7 +135,10 @@ theorem rightDerivedCompIsoOfPreservesHomology_hom_naturality_target
     (U.map I.hom ≫ B_U.inv ≫ J_U.inv) ≫ r
   exact (sa.horiz_comp (sb.horiz_comp sc)).w.symm
 
-/-- The inverse comparison is natural for the same noninvertible transformation. -/
+/-- Let `C`, `D`, `E` be abelian, with injective resolutions in `C`,
+`F : C → D` additive and `U,V : D → E` additive and preserving homology.
+For `τ : U → V`, the inverse comparisons satisfy
+`R^n(F ⋙ τ) ≫ e_V⁻¹ = e_U⁻¹ ≫ τ_(R^nF)`. -/
 theorem rightDerivedCompIsoOfPreservesHomology_inv_naturality_target
     (F : C ⥤ D) [F.Additive] (U V : D ⥤ E)
     [U.Additive] [V.Additive] [U.PreservesHomology] [V.PreservesHomology]
@@ -140,7 +159,10 @@ theorem rightDerivedCompIsoOfPreservesHomology_inv_naturality_target
     _ = a := by simp only [Category.assoc, Iso.hom_inv_id, Category.comp_id]
     _ = e_U.hom ≫ (e_U.inv ≫ a) := by simp only [Iso.hom_inv_id_assoc]
 
-/-- The hom square is available on each source object, for evaluation diagrams. -/
+/-- Let `C`, `D`, `E` be abelian, with injective resolutions in `C`,
+`F : C → D` additive and `U,V : D → E` additive and preserving homology.
+At `X`, a transformation `τ : U → V` satisfies
+`τ_(R^nF(X)) ≫ e_V,X = e_U,X ≫ R^n(F ⋙ τ)_X`. -/
 theorem rightDerivedCompIsoOfPreservesHomology_hom_naturality_target_app
     (F : C ⥤ D) [F.Additive] (U V : D ⥤ E)
     [U.Additive] [V.Additive] [U.PreservesHomology] [V.PreservesHomology]
@@ -151,7 +173,10 @@ theorem rightDerivedCompIsoOfPreservesHomology_hom_naturality_target_app
   congrArg (fun f => f.app X)
     (rightDerivedCompIsoOfPreservesHomology_hom_naturality_target F U V τ n)
 
-/-- The inverse square is likewise available on each source object. -/
+/-- Let `C`, `D`, `E` be abelian, with injective resolutions in `C`,
+`F : C → D` additive and `U,V : D → E` additive and preserving homology.
+At `X`, a transformation `τ : U → V` satisfies
+`R^n(F ⋙ τ)_X ≫ e_V,X⁻¹ = e_U,X⁻¹ ≫ τ_(R^nF(X))`. -/
 theorem rightDerivedCompIsoOfPreservesHomology_inv_naturality_target_app
     (F : C ⥤ D) [F.Additive] (U V : D ⥤ E)
     [U.Additive] [V.Additive] [U.PreservesHomology] [V.PreservesHomology]

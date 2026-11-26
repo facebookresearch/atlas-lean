@@ -12,12 +12,13 @@ module
 public import Mathlib.CategoryTheory.Monoidal.Comon_
 
 /-!
-# Descending comonoid laws along epimorphisms
+# Comonoid descent along an epimorphism
 
-An epimorphism compatible with the source counit and coproduct transfers
-the comonoid laws to the target. The target counit and coassociativity
-identities follow from the source identities and the two descent
-equations.
+In a monoidal category, let `X` be a comonoid and let `q : X → Y` be epic. Suppose maps `δ_Y :
+Y → Y ⊗ Y` and `ε_Y : Y → 𝟙` satisfy `q ≫ δ_Y = δ_X ≫ (q ⊗ q)` and `q ≫ ε_Y = ε_X`.
+
+The source comonoid equations imply the counit and coassociativity laws on `Y`, giving a
+comonoid structure with the specified descended maps.
 -/
 
 @[expose] public section
@@ -33,7 +34,10 @@ namespace CategoryTheory.ComonObj
 variable {C : Type u} [Category.{v} C] [MonoidalCategory C]
 variable {X Y : C} [ComonObj X]
 
-/-- An actual descended comultiplication and counit inherit all comonoid laws from an epic source. -/
+/-- The comonoid structure descended along an epimorphism.
+
+For an epic `q : X → Y` from a comonoid, target comultiplication and counit maps commuting
+with `q` inherit both counit laws and coassociativity. -/
 def ofEpi (q : X ⟶ Y) [Epi q] (delta : Y ⟶ Y ⊗ Y) (epsilon : Y ⟶ 𝟙_ C)
     (hδ : q ≫ delta = (ComonObj.comul (X := X)) ≫ (q ⊗ₘ q))
     (hε : q ≫ epsilon = (ComonObj.counit (X := X))) : ComonObj Y where

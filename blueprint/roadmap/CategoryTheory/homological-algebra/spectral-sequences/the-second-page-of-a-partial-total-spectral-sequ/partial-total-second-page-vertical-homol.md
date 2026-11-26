@@ -1,4 +1,7 @@
-# Partial Total Second Page Vertical Homology Iso
+# Second page as horizontal homology of vertical homology
 
-Page two of the partial-total spectral sequence is horizontal homology
-of the vertical-homology complex.
+Second page as horizontal homology of vertical homology.
+
+For natural `p` and `q`, `E²_(p,q)` is isomorphic to `H_p(B.verticalHomologyComplex q)`. The
+isomorphism passes through first-page homology, restricts to fixed vertical degree `q`, and
+applies the complex isomorphism that removes the first-page horizontal sign.

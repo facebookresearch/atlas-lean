@@ -1,4 +1,5 @@
-# Cup Cochain One One corestriction Cochain One
+# The cup product with a transferred one-cochain
 
-The cup with the transferred right factor, written as the corresponding
-reindexed transversal sum.
+The cup product with a transferred one-cochain.
+
+The value of x ∪ cor_T¹(y) at (g₁,g₂) is the sum of x(g₁) ⊗ ρ_B(g₁r(t,g₁)⁻¹)y(a(r(t,g₁),g₂)).

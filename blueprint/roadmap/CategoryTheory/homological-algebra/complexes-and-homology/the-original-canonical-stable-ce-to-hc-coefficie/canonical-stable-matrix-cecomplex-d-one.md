@@ -1,3 +1,6 @@
-# Canonical Stable Matrix CEComplex d one zero
+# The stable matrix CE differential from degree one is zero
 
-The degree-one vanishing is retained by the canonical stable CE model.
+For a commutative ring k and an associative unital
+k-algebra A, the CE differential
+C₁(Mat_∞(A)) → C₀(Mat_∞(A)) is zero.
+There is no bracket pair in a degree-one wedge.

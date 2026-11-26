@@ -14,12 +14,12 @@ public import MathlibExt.CategoryTheory.Abelian.Injective.ResolutionComparison
 public import MathlibExt.CategoryTheory.Abelian.RightDerived.HorseshoeData
 
 /-!
-# Comparison maps of canonical injective horseshoes
+# Comparison maps of injective horseshoe resolutions
 
-An morphism of short exact sequences and supplied endpoint resolution maps admit a comparison of
-the canonical injective horseshoes. The comparison uses the existing projective theorem on
-opposite sequences and retains the endpoint and middle augmentations. Existence does not assert
-strict functoriality of a chosen raw middle map.
+In an abelian category `C`, a morphism `α : S → T` of short exact
+sequences, with supplied maps between their endpoint injective resolutions,
+extends to a comparison between the canonical injective horseshoes. The
+comparison restricts to the prescribed endpoint maps.
 -/
 
 @[expose] public section
@@ -121,10 +121,11 @@ private noncomputable def opRightHom {S T : ShortComplex C}
       (congrArg₂ (fun f g => f ≫ g) (opRightPiZero J) hm).symm
     exact h₁.trans (h₂.trans h₃)
 
-/--
-Canonical injective horseshoes admit a comparison over every map of short exact sequences,
-preserving the supplied endpoint resolution maps.
--/
+/-- In an abelian category `C`, let `S,T` be short exact sequences
+with injective endpoint resolutions `I₁,I₃` and `J₁,J₃`. Given
+`α : S → T` and resolution maps `u : I₁ → J₁`, `w : I₃ → J₃`
+over `α₁`, `α₃`, there exists a horseshoe comparison over `α`
+whose endpoint cochain maps are exactly `u` and `w`. -/
 theorem nonempty_hom_ofEndpoints {S T : ShortComplex C}
     (hS : S.ShortExact) (hT : T.ShortExact)
     (I₁ : InjectiveResolution S.X₁) (I₃ : InjectiveResolution S.X₃)

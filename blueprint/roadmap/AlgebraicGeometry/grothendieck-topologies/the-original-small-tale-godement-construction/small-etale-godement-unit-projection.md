@@ -1,3 +1,6 @@
-# Small Etale Godement Unit projection
+# Godement unit projects to the individual point unit
 
-Each projection of the actual Godement unit is the same original geometric germ unit.
+Godement unit projects to the individual point unit.
+
+At point `x`, the Godement unit followed by the corresponding skyscraper projection equals the
+unit of that point's stalk-skyscraper adjunction.

@@ -1,4 +1,5 @@
-# Cup right degree transport
+# Changing the right degree of a cup product
 
-Transporting the right input degree before cupping is transport of the
-output degree after cupping.
+Let `A,B` be representations of a group `G` over a commutative ring `k`, `p,q,q' : ℕ`, and `h
+: q = q'`. For the canonical homology degree maps `E`, `(𝟙 ⊗ E_B(h)) ≫ cup G k A B p q' = cup
+G k A B p q ≫ E_{A⊗B}(congrArg (fun r => p + r) h)`, as maps into `H^{p+q'}(G,A ⊗ B)`.

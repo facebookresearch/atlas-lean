@@ -15,13 +15,18 @@ public import Mathlib.Algebra.Homology.HomologicalComplexAbelian
 public import MathlibExt.RepresentationTheory.Homological.NormalizedBar.Normalization
 
 /-!
-# The degeneracy subcomplex and literal normalized bar quotient
+# Degeneracy subcomplex and normalized group-bar quotient
 
-Native kernels and cokernels in the abelian category of complexes give the
-actual degeneracy subcomplex and quotient. The tuple projection is a split
-epimorphism, so its coimage is canonically the literal normalized complex.
-The degree kernel is certified by the actual nonidentity tuple projection,
-whose kernel is the group-ring span of identity-containing symbols.
+Let k be a commutative ring in universe u and G a group in universe v.
+The normalized degree is a free k[G]-module on nonidentity tuples,
+hence a projective representation. The split chain projection
+π:C→Q from standard homogeneous chains has degeneracy kernel D.
+
+Its cokernel quotient C/D is canonically Q.
+Degree kernel membership is the group-ring span of identity-containing
+tuple symbols. For a normalized element x in degree n+1, its differential
+can be computed by raw homogeneous inclusion, the standard alternating
+boundary, then the degree n nonidentity projection.
 -/
 
 @[expose] public section
@@ -37,9 +42,12 @@ namespace Rep.NormalizedBar
 
 variable (k : Type u) [CommRing k] (G : Type v) [Group G]
 
-/-- The literal nonidentity tuple degree is projective, using the native
-representation/module equivalence and the actual free group-ring basis.
-Coefficient and group universes remain independent. -/
+/-- Let k be a commutative ring in universe u and G a group in
+universe v. Let C be the standard homogeneous group complex, Q the
+normalized nonidentity-tuple complex, π:C→Q its split projection,
+and I:Q→C its normalization-corrected section.
+Each normalized degree Q_n is a projective representation,
+being free over k[G] on the nonidentity tuple index set. -/
 theorem degree_projective (n : ℕ) : Projective (degree k G n) := by
   apply Rep.equivalenceModuleMonoidAlgebra.toAdjunction.projective_of_map_projective
   exact @ModuleCat.projective_of_free _ _
@@ -53,11 +61,21 @@ instance complex_X_projective (n : ℕ) : Projective ((complex k G).X n) := by
 instance projection_epi : Epi (projection k G) :=
   epi_of_epi_fac (inclusion_comp_projection k G)
 
-/-- The actual degeneracy subcomplex of the standard complex. -/
+/-- Let k be a commutative ring in universe u and G a group in
+universe v. Let C be the standard homogeneous group complex, Q the
+normalized nonidentity-tuple complex, π:C→Q its split projection,
+and I:Q→C its normalization-corrected section.
+The degeneracy complex is D=ker(π:C→Q) in the abelian
+category of nonnegative representation complexes. -/
 abbrev degeneracyComplex : ChainComplex (Rep.{max u v} k G) ℕ :=
   kernel (projection k G)
 
-/-- Its actual chain inclusion. -/
+/-- Let k be a commutative ring in universe u and G a group in
+universe v. Let C be the standard homogeneous group complex, Q the
+normalized nonidentity-tuple complex, π:C→Q its split projection,
+and I:Q→C its normalization-corrected section.
+The degeneracy inclusion D→C is the kernel inclusion
+of the normalization projection. -/
 abbrev degeneracyInclusion : degeneracyComplex k G ⟶ standardComplex k G :=
   kernel.ι (projection k G)
 
@@ -66,16 +84,30 @@ theorem degeneracyInclusion_comp_projection :
     degeneracyInclusion k G ≫ projection k G = 0 :=
   kernel.condition (projection k G)
 
-/-- The actual cokernel quotient by the degeneracy subcomplex. -/
+/-- Let k be a commutative ring in universe u and G a group in
+universe v. Let C be the standard homogeneous group complex, Q the
+normalized nonidentity-tuple complex, π:C→Q its split projection,
+and I:Q→C its normalization-corrected section.
+The quotient complex is Coker(D→C), the chain cokernel by
+the degeneracy subcomplex. -/
 abbrev quotientComplex : ChainComplex (Rep.{max u v} k G) ℕ :=
   cokernel (degeneracyInclusion k G)
 
-/-- The actual quotient map into that cokernel. -/
+/-- Let k be a commutative ring in universe u and G a group in
+universe v. Let C be the standard homogeneous group complex, Q the
+normalized nonidentity-tuple complex, π:C→Q its split projection,
+and I:Q→C its normalization-corrected section.
+The quotient chain map C→Coker(D→C) is the cokernel
+projection of the degeneracy inclusion. -/
 abbrev quotientMap : standardComplex k G ⟶ quotientComplex k G :=
   cokernel.π (degeneracyInclusion k G)
 
-/-- The native coimage isomorphism identifies the actual degeneracy quotient
-with the literal nonidentity tuple complex. No isomorphism is a caller input. -/
+/-- Let k be a commutative ring in universe u and G a group in
+universe v. Let C be the standard homogeneous group complex, Q the
+normalized nonidentity-tuple complex, π:C→Q its split projection,
+and I:Q→C its normalization-corrected section.
+The canonical isomorphism Coker(D→C)≅Q identifies the
+quotient projection with π:C→Q. -/
 def quotientIso : quotientComplex k G ≅ complex k G :=
   asIso (Abelian.factorThruCoimage (projection k G))
 
@@ -84,8 +116,13 @@ theorem quotientMap_comp_quotientIso_hom :
     quotientMap k G ≫ (quotientIso k G).hom = projection k G :=
   Abelian.coimage.fac (projection k G)
 
-/-- The component kernel is exactly the degenerate-symbol span in the
-inhomogeneous tuple presentation, through the actual standard-basis iso. -/
+/-- Let k be a commutative ring in universe u and G a group in
+universe v. Let C be the standard homogeneous group complex, Q the
+normalized nonidentity-tuple complex, π:C→Q its split projection,
+and I:Q→C its normalization-corrected section.
+For a full tuple vector f, converting it to standard homogeneous
+coordinates and projecting by π is zero exactly when f lies in
+the k[G]-span of identity-containing tuples. -/
 theorem projection_f_kernel_iff (n : ℕ) (f : (fullDegree k G n).V) :
     ((projection k G).f n).hom ((basisIso k G n).inv.hom f) = 0 ↔
       f ∈ degenerateDegree k G n := by
@@ -95,8 +132,14 @@ theorem projection_f_kernel_iff (n : ℕ) (f : (fullDegree k G n).V) :
   rw [Rep.hom_inv_apply]
   exact rawProjection_eq_zero_iff k G n f
 
-/-- The differential on a literal normalized symbol is the projection of
-the actual standard differential on its raw homogeneous representative. -/
+/-- Let k be a commutative ring in universe u and G a group in
+universe v. Let C be the standard homogeneous group complex, Q the
+normalized nonidentity-tuple complex, π:C→Q its split projection,
+and I:Q→C its normalization-corrected section.
+For x∈Q_(n+1), the differential has the raw-lift formula
+d_Q(x)=π_n(d_C(r_(n+1)(x))),
+where r is the raw homogeneous tuple inclusion.
+This is a degreewise computation with the standard alternating boundary. -/
 theorem differential_on_raw_lift (n : ℕ) (x : (degree k G (n + 1)).V) :
     ((complex k G).d (n + 1) n).hom x =
       (standardProjection k G n).hom

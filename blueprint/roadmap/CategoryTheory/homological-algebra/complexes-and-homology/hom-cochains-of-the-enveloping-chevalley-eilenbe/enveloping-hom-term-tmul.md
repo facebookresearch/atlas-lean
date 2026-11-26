@@ -1,4 +1,6 @@
-# Enveloping Hom Term tmul
+# Reconstruction of an enveloping cochain from unit coordinates
 
-Every UEA-linear cochain is determined by its value at the regular
-unit, and recovers all regular coefficients by the positive left action.
+Reconstruction of an enveloping cochain from unit coordinates.
+
+Every enveloping-linear cochain satisfies `f(w ⊗ a) = a • c(f)(w)`, where `c(f)(w) = f(w ⊗
+1)`.

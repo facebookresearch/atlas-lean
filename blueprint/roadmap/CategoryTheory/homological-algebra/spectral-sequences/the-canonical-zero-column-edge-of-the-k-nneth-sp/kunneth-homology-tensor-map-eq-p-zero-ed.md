@@ -1,5 +1,7 @@
-# Kunneth Homology Tensor Map eq p zero edge
+# The canonical pairing as the zero-column Künneth edge
 
-If the first complex is termwise flat, the canonical homology tensor map
-is the literal chosen zero-column edge of the Künneth spectral sequence for
-every supplied Cartan--Eilenberg resolution.
+The canonical pairing as the zero-column Künneth edge.
+
+For a Cartan–Eilenberg resolution `P` of `L` and flat terms of `K`, the finite homology tensor
+pairing equals Tor-zero comparison followed by the second-page coordinate, zero-column edge,
+and ordinary tensor abutment isomorphism.

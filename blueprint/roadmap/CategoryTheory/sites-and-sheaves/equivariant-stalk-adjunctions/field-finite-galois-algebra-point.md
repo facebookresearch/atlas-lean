@@ -1,3 +1,6 @@
-# Field Finite Galois Algebra point
+# Finite Galois point corresponds to the fixed embedding
 
-The accepted original fiber comparison sends the actual pointing to the inclusion.
+Finite Galois point corresponds to the fixed embedding.
+
+The finite étale geometric-fiber equivalence sends the specified finite Galois point to the
+canonical field inclusion.

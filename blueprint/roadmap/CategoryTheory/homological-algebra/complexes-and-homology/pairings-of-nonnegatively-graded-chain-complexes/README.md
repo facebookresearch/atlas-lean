@@ -2,9 +2,9 @@
 
 ## Homological Complex
 
-- [Chain Graded Pairing](chain-graded-pairing.md)
+- [Degree-preserving pairing of nonnegative chain complexes](chain-graded-pairing.md)
 
 ## Chain Graded Pairing
 
-- [Pair](pair.md)
-- [Postcomp](postcomp.md)
+- [Bidegree component of a chain pairing](pair.md)
+- [Postcomposition of a chain pairing](postcomp.md)

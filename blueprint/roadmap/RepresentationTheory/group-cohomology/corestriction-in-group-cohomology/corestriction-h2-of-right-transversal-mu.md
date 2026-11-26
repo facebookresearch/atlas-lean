@@ -1,4 +1,9 @@
-# Corestriction H2 Of Right Transversal mul Equiv
+# Chosen-transversal degree-two corestriction commutes with an ambient equivalence
 
-Chosen-transversal degree-two corestriction commutes with transport by
-an ambient multiplicative equivalence.
+Let k be a commutative ring, G,G' groups, and A a k-linear G'-representation, all in the given
+universe u. Let e:G≅G' be a multiplicative equivalence and H≤G. Put H_e=e(H), e_H:H≅H_e, and
+A_e=Res_e A. The coefficient comparison α_H:Res_{e_H}(Res_{H_e}A)≅Res_H A_e is the identity on
+A. Assume H has finite index in G. Write e^* for the cohomology map with identity coefficient on
+A_e, and e_H^* for subgroup pullback with coefficient morphism α_H.hom. For a right transversal
+T, T'=e(T), and x∈H²(H_e,Res_{H_e}A), e^*(cor_{T'}(x))=cor_T(e_H^*x) in H²(G,A_e). The subgroup
+coefficient comparison precedes the source-group corestriction.

@@ -1,4 +1,7 @@
-# Small Etale Pair Coherence
+# Composition comparison naturality and adjunction conditions
 
-The literal pair data, naturality, equality transport, and unit/counit
-equations of the same actual sheaf functors and concrete adjunctions.
+Composition comparison naturality and adjunction conditions.
+
+These conditions state both composition isomorphisms and their naturality, their adjunction-
+mate relationship, unit and counit compatibility, and equality transport for every identified
+composite.

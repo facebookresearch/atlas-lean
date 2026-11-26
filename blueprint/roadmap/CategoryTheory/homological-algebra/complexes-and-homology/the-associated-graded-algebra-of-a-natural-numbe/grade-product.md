@@ -1,3 +1,6 @@
-# Grade Product
+# Multiplication on associated graded quotient layers
 
-The original product descended through both actual quotient maps.
+Multiplication on associated graded quotient layers.
+
+Filtered stage multiplication descends through both preceding-stage quotients, giving `Grade F
+n →ₗ[R] Grade F m →ₗ[R] Grade F (n + m)`.

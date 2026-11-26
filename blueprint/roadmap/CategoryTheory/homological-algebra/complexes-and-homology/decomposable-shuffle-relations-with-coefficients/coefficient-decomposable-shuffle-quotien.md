@@ -1,3 +1,6 @@
-# Coefficient Decomposable Shuffle Quotient Iso
+# The quotient comparison for regular-evaluated shuffle relations
 
-The native quotient equivalence identifies the original coefficient classes.
+The quotient comparison for regular-evaluated shuffle relations.
+
+The equality of relation submodules gives a module isomorphism from the quotient by evaluated
+regular decomposables to the degree-`n` proper shuffle quotient.

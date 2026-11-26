@@ -1,3 +1,5 @@
-# The original public window-map constructor preserves...
+# The identity sequence map gives the identity Tor-window map
 
-The original public window-map constructor preserves identity by the actual sequence functor.
+For an (R,S)-bimodule B and a short exact right R-module
+sequence Q, the window morphism induced by id_Q is the
+identity on its chosen-height degree-n Tor window.

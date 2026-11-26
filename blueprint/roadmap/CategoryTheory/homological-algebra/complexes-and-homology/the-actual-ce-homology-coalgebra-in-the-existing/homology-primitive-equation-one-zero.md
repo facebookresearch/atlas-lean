@@ -1,4 +1,6 @@
-# Homology Primitive Equation one zero
+# Vanishing of the field homology primitive equation in degree one
 
-The homology primitive equation is zero in degree one. This comes from its zero chain
-component and the canonical transport law.
+Vanishing of the field homology primitive equation in degree one.
+
+The degree-one homology primitive equation is zero, as follows from the zero chain component
+and Künneth transport.

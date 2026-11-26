@@ -1,3 +1,6 @@
-# Field Continuous Cohomology Functor
+# Continuous cohomology functor of field coefficients
 
-The original continuous cohomology, with its topology and scalars forgotten.
+Continuous cohomology functor of field coefficients.
+
+For a field with separable closure, take degree-`n` continuous homogeneous cohomology of a
+discrete Galois coefficient, valued in additive groups of universe `max u w`.

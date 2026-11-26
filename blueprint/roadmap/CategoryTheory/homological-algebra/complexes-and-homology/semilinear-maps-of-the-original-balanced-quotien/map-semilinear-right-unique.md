@@ -1,3 +1,6 @@
-# Map Semilinear Right unique
+# Uniqueness of the right-outer semilinear quotient map
 
-Outer semilinearity has the same quotient uniqueness property.
+Uniqueness of the right-outer semilinear quotient map.
+
+A `τ`-semilinear map between the induced right quotient modules whose values on pure classes
+are `[f m ⊗ g n]` equals `mapSemilinearRight φ τ f g hf hg hgS`.

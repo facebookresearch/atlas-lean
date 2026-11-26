@@ -1,3 +1,6 @@
-# Field Continuous Derived Invariants Resolution Iso naturality
+# Resolution comparison is natural for augmented resolution maps
 
-EVERY actual augmented resolution map has its literal mapped homology square.
+Resolution comparison is natural for augmented resolution maps.
+
+A map of injective-resolution cochain complexes agreeing with the coefficient map in degree
+zero commutes with the continuous-to-resolution cohomology coordinates.

@@ -1,3 +1,5 @@
-# Universal Bar d Interior
+# Interior universal bar faces multiply monad factors
 
-Interior faces of the total bar use monad multiplication.
+Interior universal bar faces multiply monad factors.
+
+The interior face is outer tensoring by `M` of the corresponding bar multiplication insertion.

@@ -1,3 +1,6 @@
-# Small Etale Canonical Geometric Points Common
+# Lifted family of residue field geometric points
 
-The same actual geometric morphisms define the common-universe point family.
+Lifted family of residue field geometric points.
+
+Take the common-universe lifts of the canonical residue-field geometric points, indexed by the
+points of `X`.

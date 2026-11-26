@@ -16,17 +16,18 @@ public import Mathlib.CategoryTheory.Abelian.Projective.Basic
 import MathlibExt.Algebra.Homology.LinearHomCochainComplexQuasiIso
 
 /-!
-# Hom-cochain cohomology and homology duals
+# Canonical comparison from Hom cochain cohomology to Hom of chain homology
 
-This file defines the canonical comparison from the cohomology of a linear
-Hom-cochain complex to the linear dual of homology.  The construction is valid
-in an arbitrary abelian `R`-linear category: a cochain cycle restricts to
-cycles of the chain complex and then descends to homology.
+Let R be a ring in universe w and C an abelian R-linear category with independent object
+universe u and morphism universe v. For a nonnegative chain complex K and M∈C, put D=Hom_C(K,M).
+A cocycle f∈Z^nD is a morphism K_n→M killed by the incoming chain boundary. Its restriction to
+Z_nK descends to a morphism H_nK→M. This descent is R-linear and kills cochain boundaries,
+giving the canonical map Φ_n:H^nD→Hom_C(H_nK,M) in R-modules with carriers in v.
 
-When the chain groups and homology objects are projective, the comparison is
-an isomorphism.  That proof internally chooses sections of homology
-projections.  Those choices are noncanonical proof data only: no splitting is
-exposed by, or assumed in, the public comparison or its resulting isomorphism.
+The comparison commutes with coefficient postcomposition and chain precomposition. If every K_i
+and every H_iK is projective in C, then Φ_n is an isomorphism for all n∈ℕ and every M. The
+resulting isomorphism has this same canonical restriction-and-descent map as its forward
+morphism.
 -/
 
 @[expose] public section
@@ -45,7 +46,11 @@ namespace HomologicalComplex
 variable (R : Type w) [Ring R]
 variable {C : Type u} [Category.{v} C] [Abelian C] [Linear R C]
 
-/-- The morphism on chain homology represented by a linear Hom-cochain cycle. -/
+/-- Let R be a ring in universe w and C an abelian R-linear category with independent object
+universe u and morphism universe v. For a chain complex K of shape down ℕ, M∈C, n∈ℕ and f∈Z^nD
+with D=Hom_C(K,M), let f̄:K_n→M be its underlying cochain. Since f̄ kills the incoming boundary,
+restricting to Z_nK gives this morphism d_f:H_nK→M. It is characterized by
+π_{K,n}≫d_f=i_{K,n}≫f̄. -/
 public noncomputable def linearHomCochainCycleDesc
     (K : ChainComplex C ℕ) (M : C) (n : ℕ)
     (f : (((linearHomCochainComplexFunctor R C M).obj
@@ -70,8 +75,10 @@ public noncomputable def linearHomCochainCycleDesc
     exact hdual.symm.trans hf
   exact (K.sc n).descHomology hfac (hfac_eq.trans hsource)
 
-/-- The morphism represented by a cochain cycle restricts to the original
-cochain on chain cycles. -/
+/-- Let R be a ring in universe w and C an abelian R-linear category with independent object
+universe u and morphism universe v. For K, M, n and a Hom cochain cocycle f∈Z^nHom_C(K,M), let
+d_f:H_nK→M be its descended map and f̄:K_n→M the underlying cochain. Then
+π_{K,n}≫d_f=i_{K,n}≫f̄. The equality is on the entire chain-cycles object Z_nK. -/
 @[reassoc]
 public theorem linearHomCochainCycleDesc_fac
     (K : ChainComplex C ℕ) (M : C) (n : ℕ)
@@ -85,7 +92,10 @@ public theorem linearHomCochainCycleDesc_fac
   with_unfolding_all
     apply ShortComplex.π_descHomology
 
-/-- Restriction of cochain cycles followed by descent to chain homology. -/
+/-- Let R be a ring in universe w and C an abelian R-linear category with independent object
+universe u and morphism universe v. For K of shape down ℕ, M∈C and n∈ℕ, this R-linear map
+ρ_n:Z^nHom_C(K,M)→Hom_C(H_nK,M) sends f to its canonical descent d_f. It uses restriction to
+Z_nK and the homology quotient, and both Hom modules have carriers in v. -/
 public noncomputable def linearHomCochainCyclesComparison
     (K : ChainComplex C ℕ) (M : C) (n : ℕ) :
     (((linearHomCochainComplexFunctor R C M).obj
@@ -115,8 +125,10 @@ public noncomputable def linearHomCochainCyclesComparison
             (op K)).iCycles n).hom) r f)).trans
           (by apply Linear.comp_smul) }
 
-/-- The homology morphism represented by a cochain cycle is its image under
-the cycles comparison. -/
+/-- Let R be a ring in universe w and C an abelian R-linear category with independent object
+universe u and morphism universe v. For K,M,n and f∈Z^nHom_C(K,M), the comparison ρ_n sends f to
+d_f:H_nK→M, the morphism characterized by π_{K,n}≫d_f=i_{K,n}≫f̄. The equality identifies its
+underlying R-linear map on every cochain cocycle. -/
 @[simp]
 public theorem linearHomCochainCyclesComparison_hom_apply
     (K : ChainComplex C ℕ) (M : C) (n : ℕ)
@@ -126,7 +138,10 @@ public theorem linearHomCochainCyclesComparison_hom_apply
       (linearHomCochainCyclesComparison R K M n).hom f :=
   rfl
 
-/-- Cochain boundaries induce the zero morphism on chain homology. -/
+/-- Let R be a ring in universe w and C an abelian R-linear category with independent object
+universe u and morphism universe v. For K,M,n, let D=Hom_C(K,M) and ρ_n:Z^nD→Hom_C(H_nK,M) be
+the cycles comparison. The boundary-to-cycles map of D followed by ρ_n is zero. A cochain
+boundary factors through the outgoing chain differential, whose restriction to Z_nK is zero. -/
 public theorem linearHomCochain_toCycles_comp_cyclesComparison
     (K : ChainComplex C ℕ) (M : C) (n : ℕ) :
     (((linearHomCochainComplexFunctor R C M).obj (op K)).sc n).toCycles ≫
@@ -155,8 +170,11 @@ public theorem linearHomCochain_toCycles_comp_cyclesComparison
   simpa only [Limits.zero_comp] using
     K.iCycles_d_assoc n ((ComplexShape.down ℕ).next n) ftail
 
-/-- The canonical comparison from linear Hom-cochain cohomology to the linear
-dual of homology. -/
+/-- Let R be a ring in universe w and C an abelian R-linear category with independent object
+universe u and morphism universe v. For K of shape down ℕ, M∈C and n∈ℕ, this is the canonical
+R-linear map Φ_n:H^nHom_C(K,M)→Hom_C(H_nK,M). It descends the cycles comparison because cochain
+boundaries induce the zero homology morphism. On a class represented by cocycle f, Φ_n([f]) is
+d_f, characterized by π_{K,n}≫d_f=i_{K,n}≫f̄. -/
 public noncomputable def linearHomCochainHomologyComparison
     (K : ChainComplex C ℕ) (M : C) (n : ℕ) :
     ((linearHomCochainComplexFunctor R C M).obj (op K)).homology n ⟶
@@ -165,6 +183,10 @@ public noncomputable def linearHomCochainHomologyComparison
     (linearHomCochainCyclesComparison R K M n)
     (linearHomCochain_toCycles_comp_cyclesComparison R K M n)
 
+/-- Let R be a ring in universe w and C an abelian R-linear category with independent object
+universe u and morphism universe v. For K,M,n and D=Hom_C(K,M), let ρ_n:Z^nD→Hom_C(H_nK,M) be
+restriction and descent from cycles, and Φ_n:H^nD→Hom_C(H_nK,M) the cohomology comparison. Then
+π_D^n≫Φ_n=ρ_n. The equality specifies Φ_n on every cocycle representative. -/
 @[reassoc (attr := simp)]
 public theorem linearHomCochainHomologyπ_comp_comparison
     (K : ChainComplex C ℕ) (M : C) (n : ℕ) :
@@ -173,8 +195,10 @@ public theorem linearHomCochainHomologyπ_comp_comparison
       linearHomCochainCyclesComparison R K M n := by
   apply ShortComplex.π_descHomology
 
-/-- The Hom-cochain-to-homology comparison is covariantly natural in the
-coefficient object. -/
+/-- Let R be a ring in universe w and C an abelian R-linear category with independent object
+universe u and morphism universe v. For K of shape down ℕ, a:M→N and n∈ℕ, the comparison maps
+satisfy H^n(postcompose(a))≫Φ_{K,N,n}=Φ_{K,M,n}≫postcompose(a). The map on the right acts on
+Hom_C(H_nK,M) by d↦d≫a, while the left map acts on Hom cochain cohomology. -/
 @[reassoc]
 public theorem linearHomCochainHomologyComparison_naturality_coefficient
     (K : ChainComplex C ℕ) {M N : C} (a : M ⟶ N) (n : ℕ) :
@@ -225,8 +249,10 @@ public theorem linearHomCochainHomologyComparison_naturality_coefficient
   rw [hf]
   exact (Category.assoc _ _ _).symm
 
-/-- The Hom-cochain-to-homology comparison is contravariantly natural in the
-chain complex. -/
+/-- Let R be a ring in universe w and C an abelian R-linear category with independent object
+universe u and morphism universe v. For a chain map f:K→L of shape down ℕ, coefficient M and
+n∈ℕ, one has H^n(precompose(f))≫Φ_{K,M,n}=Φ_{L,M,n}≫precompose(H_n(f)). Both sides map
+H^nHom_C(L,M) to Hom_C(H_nK,M), retaining the contravariant chain direction. -/
 @[reassoc]
 public theorem linearHomCochainHomologyComparison_naturality_chain
     {K L : ChainComplex C ℕ} (f : K ⟶ L) (M : C) (n : ℕ) :
@@ -270,7 +296,18 @@ public theorem linearHomCochainHomologyComparison_naturality_chain
       (cyclesMap_i f n).symm)).trans
     (Category.assoc _ _ _)
 
-/-! ## The projective-homology isomorphism -/
+/-!
+# Projective terms and projective homology make the canonical comparison invertible
+
+For a nonnegative chain complex K in an abelian R-linear category, assume every term K_i and
+homology object H_iK is projective. The epimorphisms Z_iK→H_iK admit sections, giving a chain
+map from the zero-differential homology complex to K which induces the homology identifications.
+The projective-complex comparison then identifies their Hom cochain cohomology.
+
+Consequently Φ_n:H^nHom_C(K,M)→Hom_C(H_nK,M) is invertible for every coefficient object M and
+every n∈ℕ. The public isomorphism is the one whose forward map is Φ_n, with arbitrary scalar,
+object and morphism universes.
+-/
 
 private noncomputable def homologyComplex (K : ChainComplex C ℕ) :
     ChainComplex C ℕ where
@@ -300,9 +337,11 @@ private theorem homologyCycleSection_comp_homologyπ
     homologyCycleSection K i ≫ K.homologyπ i = 𝟙 _ := by
   apply Projective.factorThru_comp
 
-/-- A noncanonical projective section gives a quasi-isomorphism from the
-zero-differential homology complex.  This is internal proof machinery; the
-chosen section is not exposed by the public comparison or isomorphism. -/
+/-- Let C be an abelian category with arbitrary object and morphism universes, K a nonnegative chain
+complex, and assume every H_iK is projective. Let H(K) be the chain complex with terms H_iK and
+zero differentials. Sections s_i:H_iK→Z_iK of π_i give this chain map H(K)→K with degree-i
+component s_i≫i_i. Under the zero-differential homology identifications it induces the identity
+on H_iK. -/
 private noncomputable def homologyComplexTo
     (K : ChainComplex C ℕ) [hK : ∀ i, Projective (K.homology i)] :
     homologyComplex K ⟶ K where
@@ -464,13 +503,11 @@ private theorem linearHomCochainHomologyComparison_homologyComplex_isIso
   infer_instance
 
 set_option linter.style.haveILetI false in
-/-- If a chain complex and all its homology objects are projective, the
-canonical comparison from linear Hom-cochain cohomology to the linear dual of
-homology is an isomorphism.
-
-The proof internally chooses projective sections in order to compare with the
-zero-differential homology complex.  No chosen section or splitting is part of
-the theorem statement or the resulting public isomorphism. -/
+/-- Let R be a ring in universe w and C an abelian R-linear category with independent object
+universe u and morphism universe v. For K of shape down ℕ, assume K_i and H_iK are projective
+objects of C for every i∈ℕ. For arbitrary M∈C and n∈ℕ, the canonical map
+Φ_n:H^nHom_C(K,M)→Hom_C(H_nK,M) is an isomorphism. Both complete projectivity families are
+hypotheses, and the coefficient M is unrestricted. -/
 public theorem linearHomCochainHomologyComparison_isIso_of_projective_terms_and_homology
     (K : ChainComplex C ℕ) (M : C) (n : ℕ)
     [hK : ∀ i, Projective (K.X i)]
@@ -506,9 +543,10 @@ public theorem linearHomCochainHomologyComparison_isIso_of_projective_terms_and_
   letI : IsIso (cK ≫ pIso.hom) := hright
   exact IsIso.of_isIso_comp_right cK pIso.hom
 
-/-- The universal-coefficient isomorphism for a complex whose terms and homology
-objects are projective, whose forward map is the canonical Hom-cochain
-comparison.  It exposes no chosen splitting. -/
+/-- Let R be a ring in universe w and C an abelian R-linear category with independent object
+universe u and morphism universe v. For a chain complex K with K_i and H_iK projective for every
+i, M∈C and n∈ℕ, this is the canonical isomorphism H^nHom_C(K,M)≅Hom_C(H_nK,M). Its forward map
+is Φ_n, sending a cochain cocycle class to the morphism it induces on chain homology. -/
 public noncomputable def linearHomCochainHomologyIsoOfProjectiveTermsAndHomology
     (K : ChainComplex C ℕ) (M : C) (n : ℕ)
     [∀ i, Projective (K.X i)]
@@ -519,6 +557,11 @@ public noncomputable def linearHomCochainHomologyIsoOfProjectiveTermsAndHomology
     R K M n
   exact asIso (linearHomCochainHomologyComparison R K M n)
 
+/-- Let R be a ring in universe w and C an abelian R-linear category with independent object
+universe u and morphism universe v. For K of shape down ℕ with every K_i and H_iK projective,
+coefficient M and n∈ℕ, the forward morphism of H^nHom_C(K,M)≅Hom_C(H_nK,M) equals Φ_n. The
+equality identifies the isomorphism through the given cochain restriction-and-descent
+comparison. -/
 @[simp]
 public theorem linearHomCochainHomologyIsoOfProjectiveTermsAndHomology_hom
     (K : ChainComplex C ℕ) (M : C) (n : ℕ)

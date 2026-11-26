@@ -1,3 +1,6 @@
-# Field Equivariant Stalk Ab Hom
+# Equivariance condition on an additive field stalk map
 
-The exact ordinary stalk-arrow equivariance condition on the SAME source and target action.
+Equivariance condition on an additive field stalk map.
+
+An additive map is equivariant when the stalk action of every `g` followed by the map equals
+the map followed by the coefficient action of `g`.

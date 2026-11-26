@@ -1,7 +1,7 @@
-# Bar Data Restrict Comp Iso
+# Composite restriction agrees with iterated restriction in bar data
 
-Canonical composition restriction iso for bar data, induced by `barDataIso`
-and the accepted `restrictAlongHomCompIso` components.
-We respect the accepted orientation
-`restrictAlongHomCompIso h k : restrict (h ≫ k) ≅ restrict k ⋙ restrict h`,
-so the iso goes from the composite restriction to the iterated restriction.
+Let h : T → S and k : S → U be monad morphisms on C, and R : C → D and L : A → C be U-modules.
+The T-bar data of the restrictions along h≫k are canonically isomorphic to the T-bar data
+obtained by restricting first along k and then along h. The isomorphism is oriented from
+composite restriction to iterated restriction and uses identity maps on the degree carriers
+R(T^n(L(a))).

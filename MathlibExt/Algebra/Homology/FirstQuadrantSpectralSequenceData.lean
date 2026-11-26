@@ -14,16 +14,14 @@ public import Mathlib.Algebra.Homology.SpectralObject.FirstPage
 public import MathlibExt.Algebra.Homology.FirstQuadrantCompleteFiltration
 
 /-!
-# Homological first-page data for a first-quadrant filtration
+# Page indices for an increasing first-quadrant filtration
 
-This file defines the page-indexing data appropriate for an increasing
-first-quadrant filtration of a chain complex after reindexing it as a
-cochain complex.  It starts at page one, has differential bidegree
-`(-r, r-1)`, and uses cohomological degree `-(p+q)`.
+For a spectral object indexed by EInt = ℤ ∪ {⊥,⊤}, use page indices r≥1, bidegrees (p,q) ∈
+ℕ×ℕ, and differential shape (−r,r−1). The cochain degree of (p,q) is −p−q.
 
-The construction is deliberately separate from Mathlib's
-`coreE₂HomologicalNat`, whose filtration orientation and starting-page
-convention are different.
+The four filtration indices at page r are p−r ≤ p−1 ≤ p ≤ p+r−1, all computed in ℤ and
+embedded as finite EInt indices. At r=1 the outer indices equal their adjacent inner indices,
+so the first-page object is the relative homology of the consecutive stages p−1≤p.
 -/
 
 @[expose] public section
@@ -32,10 +30,11 @@ open CategoryTheory
 
 namespace CategoryTheory.Abelian.SpectralObject
 
-/-- Page data for the homological spectral sequence of an increasing
-first-quadrant filtration.  At page one, the interval is
-`p-1 ≤ p`, so its objects are the relative homology of consecutive
-filtration stages. -/
+/-- Define spectral-sequence data for EInt-indexed spectral objects starting at page r₀=1 and with
+bidegree set ℕ×ℕ. At (p,q), the cochain degree is −p−q, the page-r differential shape is
+(−r,r−1), and the four filtration indices are i₀=p−r, i₁=p−1, i₂=p, and i₃=p+r−1. Each index
+is computed in ℤ and embedded in EInt, with i₀≤i₁≤i₂≤i₃ for r≥1. At page one i₀=i₁ and i₂=i₃,
+yielding the consecutive-stage relative homology at p−1≤p. -/
 @[simps!]
 def coreE₁FirstQuadrantHomological :
     SpectralSequenceDataCore EInt

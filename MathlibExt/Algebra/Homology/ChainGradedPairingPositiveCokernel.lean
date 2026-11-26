@@ -251,67 +251,6 @@ private theorem strictPositiveComponentFactor_comp (n : ℕ) :
 monoidal preadditive structure. Let P be a chain pairing with both
 first differentials zero. Its strict-positive map P₊₊ has bidegrees
 p,q>0, and J_n=∑_(p,q>0,p+q=n)range(P_(p,q)).
-The degree n range of P₊₊ is exactly J_n, the sum of the
-original pairing ranges with both bidegrees positive. -/
-theorem range_strictPositivePairing (n : ℕ) :
-    LinearMap.range ((strictPositivePairing P h₁ h₂).f n).hom =
-      positiveImages P n := by
-  apply le_antisymm
-  · rintro y ⟨x, rfl⟩
-    have hv := ConcreteCategory.congr_hom
-      (strictPositiveComponentFactor_comp P h₁ h₂ n) x
-    have hm := ((strictPositiveComponentFactor P h₁ h₂ n).hom x).property
-    exact hv ▸ hm
-  · change (⨆ z : {pq : ℕ × ℕ // 0 < pq.1 ∧ 0 < pq.2 ∧ pq.1 + pq.2 = n},
-        LinearMap.range (pairAt P z.1.1 z.1.2 n z.2.2.2).hom) ≤ _
-    apply iSup_le
-    rintro ⟨⟨p, q⟩, hp, hq, hn⟩ y ⟨x, rfl⟩
-    let g : (K₁.stupidTrunc e₊).X p ⊗ (K₂.stupidTrunc e₊).X q ⟶
-        K₁.X p ⊗ K₂.X q :=
-      (K₁.positiveStupidTruncInclusion h₁).f p ⊗ₘ
-        (K₂.positiveStupidTruncInclusion h₂).f q
-    let hg : IsIso g := by
-      dsimp only [g]
-      rw [positiveStupidTruncInclusion_f K₁ h₁
-          (i := p - 1) (i' := p) (by omega),
-        positiveStupidTruncInclusion_f K₂ h₂
-          (i := q - 1) (i' := q) (by omega)]
-      infer_instance
-    let e := asIso g
-    have hc : e.inv ≫ pairAt (strictPositivePairing P h₁ h₂) p q n hn =
-        pairAt P p q n hn := by
-      rw [strictPositivePairing_pairAt]
-      change e.inv ≫ e.hom ≫ pairAt P p q n hn = _
-      exact e.inv_hom_id_assoc _
-    refine ⟨(ιTensorObj (K₁.stupidTrunc e₊) (K₂.stupidTrunc e₊)
-      p q n hn).hom (e.inv.hom x), ?_⟩
-    exact ConcreteCategory.congr_hom hc x
-
-/-- Let R be a ring in universe u and ModuleCat_v R have a chosen
-monoidal preadditive structure. Let P be a chain pairing with both
-first differentials zero. Its strict-positive map P₊₊ has bidegrees
-p,q>0, and J_n=∑_(p,q>0,p+q=n)range(P_(p,q)).
-The pointwise image quotient projection π_J:K₃→Q_J
-annihilates P₊₊. -/
-@[reassoc]
-theorem strictPositivePairing_comp_positiveImageProjection :
-    strictPositivePairing P h₁ h₂ ≫ positiveImageProjection P h₁ h₂ = 0 := by
-  apply HomologicalComplex.hom_ext
-  intro n
-  apply ModuleCat.hom_ext
-  ext x
-  have hm : ((strictPositivePairing P h₁ h₂).f n).hom x ∈ positiveImages P n := by
-    rw [← range_strictPositivePairing P h₁ h₂ n]
-    exact ⟨x, rfl⟩
-  have hk : ((strictPositivePairing P h₁ h₂).f n).hom x ∈
-      LinearMap.ker (positiveImages P n).mkQ := by
-    simpa only [Submodule.ker_mkQ] using hm
-  exact hk
-
-/-- Let R be a ring in universe u and ModuleCat_v R have a chosen
-monoidal preadditive structure. Let P be a chain pairing with both
-first differentials zero. Its strict-positive map P₊₊ has bidegrees
-p,q>0, and J_n=∑_(p,q>0,p+q=n)range(P_(p,q)).
 For f:K₃→L with f∘P₊₊=0, the pointwise quotient
 has the induced chain descent desc(f):Q_J→L. -/
 def positiveImageQuotientDesc
@@ -394,23 +333,13 @@ def positiveImageCokernelIsColimit : IsColimit (positiveImageCokernelCofork P h�
 monoidal preadditive structure. Let P be a chain pairing with both
 first differentials zero. Its strict-positive map P₊₊ has bidegrees
 p,q>0, and J_n=∑_(p,q>0,p+q=n)range(P_(p,q)).
-The categorical strict-positive cokernel is isomorphic to
-the pointwise image quotient: α:Coker(P₊₊)≅Q_J. -/
-def strictPositiveCokernelIsoPositiveImageQuotient :
-    strictPositiveCokernel P h₁ h₂ ≅ positiveImageQuotient P h₁ h₂ :=
-  colimit.isoColimitCocone ⟨_, positiveImageCokernelIsColimit P h₁ h₂⟩
-
-/-- Let R be a ring in universe u and ModuleCat_v R have a chosen
-monoidal preadditive structure. Let P be a chain pairing with both
-first differentials zero. Its strict-positive map P₊₊ has bidegrees
-p,q>0, and J_n=∑_(p,q>0,p+q=n)range(P_(p,q)).
 The forward comparison satisfies α∘π_coker=π_J. -/
 @[reassoc]
 theorem strictPositiveProjection_comp_iso_hom :
     strictPositiveProjection P h₁ h₂ ≫
         (strictPositiveCokernelIsoPositiveImageQuotient P h₁ h₂).hom =
-      positiveImageProjection P h₁ h₂ :=
-  colimit.isoColimitCocone_ι_hom _ WalkingParallelPair.one
+      positiveImageProjection P h₁ h₂ := by
+  exact strictPositiveProjection_isoPositiveImage_hom P h₁ h₂
 
 /-- Let R be a ring in universe u and ModuleCat_v R have a chosen
 monoidal preadditive structure. Let P be a chain pairing with both
@@ -421,9 +350,8 @@ The inverse comparison satisfies α⁻¹∘π_J=π_coker. -/
 theorem positiveImageProjection_comp_iso_inv :
     positiveImageProjection P h₁ h₂ ≫
         (strictPositiveCokernelIsoPositiveImageQuotient P h₁ h₂).inv =
-      strictPositiveProjection P h₁ h₂ :=
-  colimit.isoColimitCocone_ι_inv ⟨_, positiveImageCokernelIsColimit P h₁ h₂⟩
-    WalkingParallelPair.one
+      strictPositiveProjection P h₁ h₂ := by
+  exact positiveImageProjection_isoStrictPositive_inv P h₁ h₂
 
 section Naturality
 

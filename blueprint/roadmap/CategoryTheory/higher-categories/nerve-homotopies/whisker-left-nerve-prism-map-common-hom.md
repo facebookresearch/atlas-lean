@@ -1,4 +1,6 @@
-# Whisker Left δ nerve Prism Map Common Hom Up
+# Faces of finite prisms at the common morphism height
 
-Every literal face of the original native upward prism is the
-prism of the SAME original functor restricted by that original face.
+Faces of finite prisms at the common morphism height.
+
+For the stated source and target object heights, restricting the prism of Φ along δᵢ equals
+the prism of Φ precomposed by id_A × δᵢ.

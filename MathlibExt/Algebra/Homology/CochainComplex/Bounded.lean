@@ -15,18 +15,17 @@ public import Mathlib.CategoryTheory.Preadditive.AdditiveFunctor
 public import Mathlib.CategoryTheory.MorphismProperty.Composition
 
 /-!
-# Bounded cochain categories
+# Bounded integer cochain complexes
 
-Bounded cochains form the full subcategory of cochains whose terms vanish
-outside a finite integer interval. Inclusion and evaluation retain their
-objects and maps.
+Let C be a category with zero morphisms. A cochain complex is bounded when its terms are zero
+outside some finite integer interval [a,b]. These complexes form a full subcategory, with the
+ambient cochain maps as morphisms. Evaluation and inclusion retain the terms and maps.
 
-Zero and binary biproducts are bounded, with support given by the union of
-the support bounds. Degreewise split monomorphisms, their identities and
-composites are defined componentwise.
-
-A zero-preserving functor maps bounded cochains through the
-homological-complex functor and full-subcategory lift.
+Degreewise split monomorphisms and degreewise monomorphisms are component conditions. With a
+zero object and binary biproducts, the zero complex and binary biproducts are bounded; support
+intervals combine by [min(a,c),max(b,d)]. A functor preserving zero morphisms maps bounded
+complexes to bounded complexes in the same support window and preserves the degreewise split
+property.
 -/
 
 @[expose] public section
@@ -46,11 +45,15 @@ section ZeroMorphisms
 
 variable [HasZeroMorphisms C]
 
-/-- Original cochain terms have finite integer support. -/
+/-- Let C be a category with zero morphisms. An integer cochain complex K is bounded if there
+exist a,b ∈ ℤ such that K^j is a zero object whenever j<a or b<j. This is a condition on the
+cochain terms, with both endpoint degrees included in the support window. -/
 protected def bounded : ObjectProperty (CochainComplex C ℤ) :=
   fun K => ∃ a b : ℤ, ∀ j : ℤ, j < a ∨ b < j → IsZero (K.X j)
 
-/-- The bounded predicate states exactly the original term support. -/
+/-- For a category C with zero morphisms and an integer cochain complex K, CochainComplex.bounded
+C K is equivalent to existence of integers a,b such that IsZero(K^j) for every j<a or j>b. No
+homology-support condition is substituted for this termwise condition. -/
 theorem bounded_iff (K : CochainComplex C ℤ) :
     CochainComplex.bounded C K ↔ ∃ a b : ℤ, ∀ j : ℤ, j < a ∨ b < j → IsZero (K.X j) :=
   Iff.rfl
@@ -60,10 +63,14 @@ instance : (CochainComplex.bounded C).IsClosedUnderIsomorphisms where
     rintro K L e ⟨a, b, hK⟩
     exact ⟨a, b, fun j hj => (hK j hj).of_iso (HomologicalComplex.Hom.isoApp e j).symm⟩
 
-/-- The native full subcategory on the original finite-support cochains. -/
+/-- Let C be a category with zero morphisms. Define Bounded C as the full subcategory of
+CochainComplex C ℤ consisting of complexes whose terms vanish outside some finite integer
+interval. Morphisms are the ambient cochain maps; a support witness imposes no additional
+morphism condition. -/
 abbrev Bounded := (CochainComplex.bounded C).FullSubcategory
 
-/-- The original zero cochain has literal support in `[0,0]`. -/
+/-- If C has zero morphisms and a zero object, its zero integer cochain complex is bounded. Every
+term is zero, so the interval [0,0] is a support witness. -/
 theorem bounded_zero [HasZeroObject C] :
     CochainComplex.bounded C (0 : CochainComplex C ℤ) := by
   refine ⟨0, 0, ?_⟩
@@ -76,38 +83,53 @@ instance [HasZeroObject C] : (CochainComplex.bounded C).ContainsZero where
 
 namespace Bounded
 
-/-- Reify the same original complex with its proved original support window. -/
+/-- Let C have zero morphisms, K be an integer cochain complex, and a,b ∈ ℤ. If K^j is zero for
+every j<a or j>b, then K with this support witness defines an object of Bounded C. The
+underlying cochain complex remains K. -/
 @[simps! obj]
 def of (K : CochainComplex C ℤ) (a b : ℤ)
     (hK : ∀ j : ℤ, j < a ∨ b < j → IsZero (K.X j)) : Bounded C :=
   ⟨K, ⟨a, b, hK⟩⟩
 
-/-- The canonical inclusion retains the original cochain object and map. -/
+/-- For a category C with zero morphisms, the canonical functor Bounded C → CochainComplex C ℤ
+sends a bounded object to its underlying cochain complex and a morphism to its underlying
+cochain map. -/
 abbrev ι : Bounded C ⥤ CochainComplex C ℤ := ObjectProperty.ι _
 
-/-- The native bounded inclusion is fully faithful. -/
+/-- Let C be a category with zero morphisms. The inclusion Bounded C → CochainComplex C ℤ is fully
+faithful, because Bounded C is a full subcategory. In particular, its maps between any two
+bounded complexes are exactly the ambient cochain maps. -/
 abbrev fullyFaithfulι : (ι C).FullyFaithful := ObjectProperty.fullyFaithfulι _
 
-/-- Evaluation at an original integer degree after the original inclusion. -/
+/-- For C with zero morphisms and j ∈ ℤ, define evaluation Bounded C → C by K ↦ K^j. On a bounded
+cochain morphism f it returns the component f^j of the underlying ambient cochain map. -/
 @[simps! obj map]
 def eval (j : ℤ) : Bounded C ⥤ C := ι C ⋙ HomologicalComplex.eval C (.up ℤ) j
 
-/-- The original bounded morphism property is split mono in each actual component. -/
+/-- Let C have zero morphisms. A morphism f : K → L in Bounded C is degreewise split monic when
+each component f^j : K^j → L^j is split monic for every j ∈ ℤ. The component retractions need
+not assemble into a cochain map; the property is defined separately in each degree. -/
 def degreewiseSplitMonomorphisms : MorphismProperty (Bounded C) :=
   fun _ _ f => ∀ j : ℤ, IsSplitMono (f.hom.f j)
 
-/-- Membership tests the literal original cochain map components. -/
+/-- For a category C with zero morphisms and f : K → L in Bounded C, membership in
+degreewiseSplitMonomorphisms is equivalent to IsSplitMono(f.hom.f j) for every integer j. Thus
+the condition is tested on the underlying cochain-map components. -/
 theorem degreewiseSplitMonomorphisms_iff {K L : Bounded C} (f : K ⟶ L) :
     degreewiseSplitMonomorphisms C f ↔ ∀ j : ℤ, IsSplitMono (f.hom.f j) := Iff.rfl
 
-/-- The actual identity components are split mono. -/
+/-- Let C have zero morphisms and K be a bounded integer cochain complex. The identity morphism of
+K is degreewise split monic: in each integer degree its component and its retraction are the
+identity. -/
 theorem degreewiseSplitMonomorphisms_id (K : Bounded C) :
     degreewiseSplitMonomorphisms C (𝟙 K) := by
   intro j
   change IsSplitMono (𝟙 (K.obj.X j))
   infer_instance
 
-/-- Composition uses the original component maps and their actual split witnesses. -/
+/-- For a category C with zero morphisms and bounded cochain maps f : K → L, g : L → M, if every
+f^j and g^j is split monic then every component of f≫g is split monic. Component retractions
+compose in the reverse order, giving the degreewise split property. -/
 theorem degreewiseSplitMonomorphisms_comp {K L M : Bounded C} (f : K ⟶ L) (g : L ⟶ M)
     (hf : degreewiseSplitMonomorphisms C f) (hg : degreewiseSplitMonomorphisms C g) :
     degreewiseSplitMonomorphisms C (f ≫ g) := by
@@ -121,12 +143,14 @@ instance : (degreewiseSplitMonomorphisms C).IsMultiplicative where
   id_mem := degreewiseSplitMonomorphisms_id C
   comp_mem := degreewiseSplitMonomorphisms_comp C
 
-/-- The admissible monomorphisms of bounded cochains over an abelian category
-test monomorphisms on the actual original components. -/
+/-- Let C be a category with zero morphisms. Define degreewiseMonomorphisms on Bounded C by
+requiring Mono(f^j) for every integer j. It is a condition on the components of the underlying
+cochain map and does not assume an abelian structure on C. -/
 def degreewiseMonomorphisms : MorphismProperty (Bounded C) :=
   fun _ _ f => ∀ j : ℤ, Mono (f.hom.f j)
 
-/-- The component readout retains the original cochain map. -/
+/-- For C with zero morphisms and f : K → L in Bounded C, degreewiseMonomorphisms C f holds if and
+only if Mono(f.hom.f j) for every j ∈ ℤ. -/
 theorem degreewiseMonomorphisms_iff {K L : Bounded C} (f : K ⟶ L) :
     degreewiseMonomorphisms C f ↔ ∀ j : ℤ, Mono (f.hom.f j) := Iff.rfl
 
@@ -142,7 +166,8 @@ instance : (degreewiseMonomorphisms C).IsMultiplicative where
     let _ : Mono (g.hom.f j) := hg j
     infer_instance
 
-/-- Every actual split component is a monomorphism; the converse is not required. -/
+/-- Let C have zero morphisms and f : K → L be a bounded cochain map. If each component f^j is
+split monic, then each f^j is monic, so f belongs to degreewiseMonomorphisms. -/
 theorem degreewiseMonomorphisms_of_degreewiseSplitMonomorphisms
     {K L : Bounded C} (f : K ⟶ L) (hf : degreewiseSplitMonomorphisms C f) :
     degreewiseMonomorphisms C f := by
@@ -158,7 +183,10 @@ section Preadditive
 
 variable [Preadditive C] [HasBinaryBiproducts C]
 
-/-- The original term biproduct charts give the exact union support window. -/
+/-- Let C be preadditive with binary biproducts. Suppose integer cochain complexes K,L vanish
+outside [a,b] and [c,d], respectively. Then (K⊞L)^j is zero whenever j<min(a,c) or max(b,d)<j.
+In such a degree both component terms are zero, and the term of the cochain biproduct is their
+biproduct. -/
 theorem biprod_isZero_outside (K L : CochainComplex C ℤ) (a b c d : ℤ)
     (hK : ∀ j : ℤ, j < a ∨ b < j → IsZero (K.X j))
     (hL : ∀ j : ℤ, j < c ∨ d < j → IsZero (L.X j)) (j : ℤ)
@@ -176,7 +204,9 @@ theorem biprod_isZero_outside (K L : CochainComplex C ℤ) (a b c d : ℤ)
   exact ((biprod_isZero_iff (K.X j) (L.X j)).2 ⟨hKj, hLj⟩).of_iso
     (HomologicalComplex.biprodXIso K L j)
 
-/-- The same original raw biproduct remains in the bounded category. -/
+/-- In a preadditive category C with binary biproducts, if integer cochain complexes K and L are
+bounded, their ambient cochain biproduct K⊞L is bounded. Support windows [a,b] and [c,d] give
+the window [min(a,c),max(b,d)]. -/
 theorem bounded_biprod (K L : CochainComplex C ℤ)
     (hK : CochainComplex.bounded C K) (hL : CochainComplex.bounded C L) :
     CochainComplex.bounded C (K ⊞ L) := by
@@ -186,8 +216,10 @@ theorem bounded_biprod (K L : CochainComplex C ℤ)
 
 namespace Bounded
 
-/-- The bicone has the literal original ambient biproduct as its point
-and the original ambient four legs as its bounded morphisms. -/
+/-- Let C be preadditive with binary biproducts and K,L objects of Bounded C. Define the binary
+bicone with point the bounded object underlying K.obj⊞L.obj and four legs the ambient
+biproduct projections and inclusions. Boundedness of the point follows from the union of
+support windows, and the bicone equations are inherited from the ambient cochain biproduct. -/
 def biprodBicone (K L : Bounded C) : BinaryBicone K L where
   pt := ⟨K.obj ⊞ L.obj, bounded_biprod C K.obj L.obj K.property L.property⟩
   fst := ObjectProperty.homMk (biprod.fst : K.obj ⊞ L.obj ⟶ K.obj)
@@ -222,31 +254,38 @@ variable {C : Type uC} [Category.{vC} C] [HasZeroMorphisms C]
 variable {D : Type uD} [Category.{vD} D] [HasZeroMorphisms D]
 variable (F : C ⥤ D) [F.PreservesZeroMorphisms]
 
-/-- The original functor carries original zero terms to zero terms in the same window. -/
+/-- Let C,D be categories with zero morphisms and F : C → D preserve zero morphisms. If K is a
+bounded integer cochain complex, its degreewise image under F is bounded. A support interval
+for K is also a support interval for F(K), because F carries zero terms to zero objects. -/
 theorem bounded_mapHomologicalComplex_obj (K : CochainComplex C ℤ)
     (hK : CochainComplex.bounded C K) :
     CochainComplex.bounded D ((F.mapHomologicalComplex (.up ℤ)).obj K) := by
   obtain ⟨a, b, hK⟩ := hK
   exact ⟨a, b, fun j hj => F.map_isZero (hK j hj)⟩
 
-/-- The original bounded functor is the native full-subcategory lift of
-the original homological-complex functor. -/
+/-- For categories C,D with zero morphisms and F : C → D preserving them, the degreewise cochain
+functor restricts to Bounded C → Bounded D. It sends K^j to F(K^j), its differentials to
+F(d_K), and its morphism components to their F-images. The category object and morphism
+universes may be independent. -/
 @[implicit_reducible, simps! obj_obj map_hom]
 def mapCochainComplexBounded : CochainComplex.Bounded C ⥤ CochainComplex.Bounded D :=
   ObjectProperty.lift _
     (CochainComplex.Bounded.ι C ⋙ F.mapHomologicalComplex (.up ℤ))
     (fun K => bounded_mapHomologicalComplex_obj F K.obj K.property)
 
-/-- Every mapped bounded term is the literal original functor image. -/
+/-- Let F : C → D preserve zero morphisms between categories with zero morphisms, K ∈ Bounded C,
+and j ∈ ℤ. The jth term of the mapped bounded complex is exactly F(K^j). -/
 theorem mapCochainComplexBounded_obj_X (K : CochainComplex.Bounded C) (j : ℤ) :
     ((F.mapCochainComplexBounded).obj K).obj.X j = F.obj (K.obj.X j) := rfl
 
-/-- Every mapped component is the literal original functor map. -/
+/-- For a zero-preserving functor F : C → D, a bounded cochain map f : K → L, and j ∈ ℤ, the jth
+component of the induced bounded map equals F(f^j). -/
 theorem mapCochainComplexBounded_map_f {K L : CochainComplex.Bounded C} (f : K ⟶ L) (j : ℤ) :
     ((F.mapCochainComplexBounded).map f).hom.f j = F.map (f.hom.f j) := rfl
 
-/-- The original mapped functor carries actual degreewise split witnesses
-to split witnesses of its literal original component maps. -/
+/-- Let C,D have zero morphisms and F : C → D preserve zero morphisms. If f : K → L in Bounded C
+is split monic in every integer degree, then its image in Bounded D is also split monic in
+every degree. Applying F to each component retraction preserves the splitting equation. -/
 theorem mapCochainComplexBounded_degreewiseSplitMonomorphisms
     {K L : CochainComplex.Bounded C} (f : K ⟶ L)
     (hf : CochainComplex.Bounded.degreewiseSplitMonomorphisms C f) :

@@ -1,3 +1,5 @@
-# Universal Bar obj point
+# Degree object of the regular universal bar
 
-Pointwise degree formula for the total bar, inherited.
+Degree object of the regular universal bar.
+
+At degree `n`, the object is `M ⊗ (T_M^n.obj Pt)`.

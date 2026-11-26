@@ -17,11 +17,16 @@ public import MathlibExt.Algebra.Homology.SpectralObject.StableIntervalGraded
 public import MathlibExt.Algebra.Homology.PartialTotalNegativeVanishing
 
 /-!
-# Stable intervals and graded pieces for the partial-total filtration
+# Stable intervals and image-filtration quotients of partial totals
 
-This file transports the generic stable-interval/image-cokernel comparison to
-the increasing partial-total homology filtration.  It makes no spectral-page
-or convergence claim.
+Let `B` be a first-quadrant bicomplex in an abelian category. In total homology degree `n`,
+the image filtration is `I_p = im(H_n(T_p) → H_n(Tot B))`, with preceding index `p-1` in the
+integers and `I_(-1)=0`.
+
+Stable-interval step images identify with these filtration subobjects, compatibly with their
+inclusions. The stable object for the interval from `p-1` to `p` is the cokernel of `I_(p-1) →
+I_p`. Its projection and graded-quotient comparison retain the partial-total homology maps and
+their image factors.
 -/
 
 @[expose] public section
@@ -45,8 +50,10 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable (B : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ))
 
-/-- The canonical stable-interval abutment object is ordinary total homology
-for the partial-total spectral object. -/
+/-- The total-homology coordinate of a stable-interval abutment.
+
+The stable-interval abutment at cochain degree `-n` is isomorphic to degree-`n` homology of
+the full bicomplex total. -/
 noncomputable def partialTotalStableAbutmentHomologyIso (n : ℕ) :
     B.partialTotalSpectralObject.stableIntervalAbutment (-(n : ℤ)) ≅
       (B.total (ComplexShape.down ℕ)).homology n := by
@@ -61,8 +68,10 @@ noncomputable def partialTotalStableAbutmentHomologyIso (n : ℕ) :
       (B.total (ComplexShape.down ℕ)).extendHomologyIso
         ComplexShape.embeddingDownNat rfl
 
-/-- The generic selected spectral image at a finite stage, identified with
-the corresponding partial-total homology filtration step. -/
+/-- The image-filtration coordinate of a nonnegative stable step.
+
+The stable-step image at stage `s` identifies with the partial-total homology filtration
+subobject in degree `n`. -/
 noncomputable def partialTotalStableStepImageFiltrationIso
     (n s : ℕ) :
     B.partialTotalSpectralObject.stableIntervalStepImage
@@ -87,8 +96,10 @@ noncomputable def partialTotalStableStepImageFiltrationIso
     Limits.image.eqToIso hnat ≪≫
     asIso (Limits.image.preComp eS.hom u) ≪≫ eI.symm
 
-/-- The finite selected-image coordinate commutes with inclusion into total
-homology. -/
+/-- The inclusion equation of a stable-step image comparison.
+
+The image comparison followed by filtration inclusion equals stable-step image inclusion
+followed by the total-homology abutment comparison. -/
 @[reassoc]
 theorem partialTotalStableStepImageFiltrationIso_hom_comp_ι
     (n s : ℕ) :
@@ -130,7 +141,9 @@ theorem partialTotalStableStepImageFiltrationIso_hom_comp_ι
   rw [heI, asIso_hom, Limits.image.preComp_ι,
     ← Limits.image.eq_fac hnat, Limits.image.compIso_hom_comp_image_ι]
 
-/-- The spectral step at the predecessor of filtration degree zero is zero. -/
+/-- Vanishing of the preceding stable step at filtration degree zero.
+
+The stable step at integer filtration index `-1` is zero. -/
 theorem isZero_partialTotalStablePreviousStep_zero (n : ℕ) :
     IsZero (B.partialTotalSpectralObject.stableIntervalStep
       (-(n : ℤ)) (((-1 : ℤ) : EInt))) := by
@@ -152,8 +165,9 @@ theorem isZero_partialTotalStablePreviousStep_zero (n : ℕ) :
   exact IsZero.of_iso hConeH
     (B.partialTotalSpectralObjectHObjIso (-(n : ℤ)) hE)
 
-/-- The selected spectral image at the predecessor of filtration degree zero
-is zero. -/
+/-- Vanishing of the preceding stable image at filtration degree zero.
+
+The image of the stable step at integer index `-1` in the abutment is zero. -/
 theorem isZero_partialTotalStablePreviousImage_zero (n : ℕ) :
     IsZero (B.partialTotalSpectralObject.stableIntervalStepImage
       (-(n : ℤ)) (((-1 : ℤ) : EInt))) :=
@@ -163,8 +177,10 @@ theorem isZero_partialTotalStablePreviousImage_zero (n : ℕ) :
         (-(n : ℤ)) (((-1 : ℤ) : EInt))))
     (B.isZero_partialTotalStablePreviousStep_zero n)
 
-/-- The generic previous selected image is the predecessor partial-total
-homology filtration step. -/
+/-- The preceding-image coordinate of the partial-total filtration.
+
+The preceding stable-step image identifies with the preceding filtration object, including the
+zero object at index `-1`. -/
 noncomputable def partialTotalStablePreviousImageFiltrationIso
     (n p : ℕ) :
     B.partialTotalSpectralObject.stableIntervalStepImage
@@ -179,8 +195,10 @@ noncomputable def partialTotalStablePreviousImageFiltrationIso
   · simpa only [partialTotalHomologyPreviousIndex_succ] using
       B.partialTotalStableStepImageFiltrationIso n m
 
-/-- The previous selected-image coordinate commutes with inclusion into total
-homology. -/
+/-- The inclusion equation of a preceding stable-image comparison.
+
+The preceding-image comparison commutes with its image inclusion into the abutment and
+filtration inclusion into total homology. -/
 @[reassoc]
 theorem partialTotalStablePreviousImageFiltrationIso_hom_comp_ι
     (n p : ℕ) :
@@ -198,8 +216,10 @@ theorem partialTotalStablePreviousImageFiltrationIso_hom_comp_ι
     simpa only [partialTotalHomologyPreviousIndex_succ] using
       B.partialTotalStableStepImageFiltrationIso_hom_comp_ι n m
 
-/-- The generic ordered image map is the adjacent partial-total homology
-filtration map in the selected image coordinates. -/
+/-- The adjacent image map in partial-total filtration coordinates.
+
+The stable-image map from the preceding stage to the current stage becomes the adjacent
+filtration inclusion through the image isomorphisms. -/
 @[reassoc]
 theorem partialTotalStableImageMap_comp_currentIso_hom
     (n p : ℕ) :
@@ -219,13 +239,18 @@ theorem partialTotalStableImageMap_comp_currentIso_hom
       B.partialTotalHomologyFiltrationAdjacentHom_comp_ι n (m + 1),
       B.partialTotalStablePreviousImageFiltrationIso_hom_comp_ι n (m + 1)]
 
-/-- The direct stable interval for the partial-total filtration. -/
+/-- The stable interval object of an adjacent partial-total filtration pair.
+
+In degree `n` and stage `p`, take the stable interval object at cochain degree `-n` for the
+preceding-to-current filtration indices. -/
 noncomputable abbrev partialTotalStableObj (n p : ℕ) : C :=
   B.partialTotalSpectralObject.stableIntervalObj
     (-(n : ℤ)) (partialTotalHomologyPreviousIndex_le p)
 
-/-- The bottom-to-stage spectral step mapped onto the finite homology
-filtration step. -/
+/-- The stable-step map to its partial-total image subobject.
+
+Factor the stable step through its image in the abutment and then use the image-filtration
+comparison. -/
 noncomputable def partialTotalSpectralStepToFiltration (n p : ℕ) :
     B.partialTotalSpectralObject.stableIntervalStep
         (-(n : ℤ)) ((p : ℤ) : EInt) ⟶
@@ -234,8 +259,10 @@ noncomputable def partialTotalSpectralStepToFiltration (n p : ℕ) :
       (-(n : ℤ)) ((p : ℤ) : EInt) ≫
     (B.partialTotalStableStepImageFiltrationIso n p).hom
 
-/-- A finite spectral step followed through its selected homology filtration
-is ordinary homology of the partial-total inclusion. -/
+/-- The inclusion formula for a stable-step image factor.
+
+The image factor followed by filtration inclusion is the partial-total step homology
+coordinate followed by homology of the finite-stage inclusion. -/
 theorem partialTotalSpectralStepToFiltration_comp_ι (n s : ℕ) :
     B.partialTotalSpectralStepToFiltration n s ≫
         (B.partialTotalHomologyFiltration n).ι.app ((s : ℤ) : EInt) =
@@ -275,8 +302,9 @@ theorem partialTotalSpectralStepToFiltration_comp_ι (n s : ℕ) :
   rw [Limits.image.fac_assoc]
   exact hCanonical
 
-/-- The finite homology filtration step maps canonically to its stable
-interval. -/
+/-- The filtration projection to an adjacent stable interval object.
+
+Use the inverse current-image comparison and the stable interval quotient of that image. -/
 noncomputable def partialTotalHomologyFiltrationToStable (n p : ℕ) :
     (B.partialTotalHomologyFiltration n).obj ((p : ℤ) : EInt) ⟶
       B.partialTotalStableObj n p :=
@@ -284,6 +312,10 @@ noncomputable def partialTotalHomologyFiltrationToStable (n p : ℕ) :
     B.partialTotalSpectralObject.stableIntervalImageToStable
       (-(n : ℤ)) (partialTotalHomologyPreviousIndex_le p)
 
+/-- The stable-step factorization through its filtration image.
+
+The stable-step-to-filtration map followed by the stable quotient equals the stable-step-to-
+stable-object map. -/
 @[reassoc (attr := simp)]
 theorem partialTotalSpectralStepToFiltration_comp_toStable
     (n p : ℕ) :
@@ -296,6 +328,10 @@ theorem partialTotalSpectralStepToFiltration_comp_toStable
     Iso.hom_inv_id_assoc,
     stableIntervalStepToImage_comp_imageToStable]
 
+/-- The stable quotient in current-image coordinates.
+
+The current image comparison followed by the filtration quotient is the stable image-to-
+interval map. -/
 @[reassoc (attr := simp)]
 theorem partialTotalStableStepImageFiltrationIso_hom_comp_toStable
     (n p : ℕ) :
@@ -306,7 +342,9 @@ theorem partialTotalStableStepImageFiltrationIso_hom_comp_toStable
   simp only [partialTotalHomologyFiltrationToStable,
     Iso.hom_inv_id_assoc]
 
-/-- The adjacent homology filtration map followed by the stable quotient is
+/-- Vanishing of the preceding filtration image in the stable quotient.
+
+The adjacent filtration inclusion followed by the projection to the stable interval object is
 zero. -/
 @[reassoc (attr := simp)]
 theorem partialTotalHomologyFiltrationAdjacentHom_comp_toStable_zero
@@ -321,8 +359,10 @@ theorem partialTotalHomologyFiltrationAdjacentHom_comp_toStable_zero
     B.partialTotalStableStepImageFiltrationIso_hom_comp_toStable n p,
     stableIntervalImageMap_comp_imageToStable_zero, comp_zero]
 
-/-- The partial-total stable quotient is a cokernel of the adjacent homology
-filtration map. -/
+/-- The cokernel property of an adjacent stable filtration quotient.
+
+The filtration projection to the stable interval object is a colimit cofork of the preceding-
+to-current filtration inclusion. -/
 noncomputable def partialTotalHomologyFiltrationToStableIsCokernel
     (n p : ℕ) :
     IsColimit (CokernelCofork.ofπ
@@ -354,8 +394,10 @@ noncomputable def partialTotalHomologyFiltrationToStableIsCokernel
       rw [Category.comp_id]
       exact B.partialTotalStableStepImageFiltrationIso_hom_comp_toStable n p)
 
-/-- The generic selected-image cokernel identifies with the adjacent
-partial-total homology graded piece. -/
+/-- The stable-image cokernel as a partial-total graded quotient.
+
+The current and preceding image comparisons identify the stable-image map's cokernel with the
+adjacent partial-total homology graded piece. -/
 noncomputable def partialTotalStableImageCokernelIsoGraded
     (n p : ℕ) :
     cokernel
@@ -370,8 +412,10 @@ noncomputable def partialTotalStableImageCokernelIsoGraded
     (B.partialTotalStableStepImageFiltrationIso n p)
     (B.partialTotalStableImageMap_comp_currentIso_hom n p)
 
-/-- The generic image-cokernel quotient becomes the partial-total graded
-quotient in the selected image coordinates. -/
+/-- The projection formula for a stable-image graded comparison.
+
+The stable-image cokernel projection followed by the graded isomorphism equals the current-
+image comparison followed by the partial-total graded projection. -/
 @[reassoc]
 theorem stableIntervalCokernelπ_comp_partialTotalIso_hom
     (n p : ℕ) :
@@ -384,8 +428,10 @@ theorem stableIntervalCokernelπ_comp_partialTotalIso_hom
   dsimp only [partialTotalStableImageCokernelIsoGraded]
   apply cokernel.π_desc
 
-/-- The partial-total stable interval is canonically the adjacent homology
-graded piece. -/
+/-- The adjacent stable interval as a homology-filtration graded piece.
+
+The stable interval object is canonically isomorphic to the cokernel of the preceding-to-
+current partial-total homology filtration map. -/
 noncomputable def partialTotalStableGradedIso (n p : ℕ) :
     B.partialTotalStableObj n p ≅
       B.partialTotalHomologyGradedPiece n p :=
@@ -393,8 +439,10 @@ noncomputable def partialTotalStableGradedIso (n p : ℕ) :
       (-(n : ℤ)) (partialTotalHomologyPreviousIndex_le p) ≪≫
     B.partialTotalStableImageCokernelIsoGraded n p
 
-/-- The stable/graded isomorphism identifies the stable quotient with the
-canonical adjacent graded quotient. -/
+/-- The filtration projection under stable-to-graded comparison.
+
+The filtration-to-stable map followed by the graded isomorphism equals the homology-filtration
+graded projection. -/
 @[reassoc]
 theorem partialTotalHomologyFiltrationToStable_comp_stableGradedIso_hom
     (n p : ℕ) :

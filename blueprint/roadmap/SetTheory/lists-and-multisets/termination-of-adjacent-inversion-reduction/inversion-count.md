@@ -1,3 +1,5 @@
-# Inversion Count
+# The inversion count of a finite list
 
-The number of strictly inverted pairs in a word.
+For a finite list over a linearly ordered type, count pairs of positions
+whose earlier entry is strictly larger than the later entry. Equal entries
+contribute no inversion; distinct occurrences are counted separately.

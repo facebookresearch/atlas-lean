@@ -1,3 +1,6 @@
-# Field Continuous Cohomology Restriction
+# Restriction map on continuous field cohomology
 
-The original homogeneous group map is a natural map in every coefficient.
+Restriction map on continuous field cohomology.
+
+Group restriction and the canonical coefficient intertwiner induce a natural map on continuous
+cohomology in every degree.

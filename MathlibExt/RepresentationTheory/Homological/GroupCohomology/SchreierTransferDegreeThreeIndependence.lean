@@ -15,16 +15,15 @@ public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.Schrei
 public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.SchreierTransferDegreeTwoIndependence
 
 /-!
-# Independence of degree-three Schreier transfer from the transversal
+# The explicit boundary comparing degree-three transfers
 
-The change factors comparing two finite right transversals determine an
-explicit degree-two prism cochain.  For a subgroup three-cocycle, its
-differential is the difference of the two chosen-transversal degree-three
-transfers.  It follows that the induced maps on `H³` agree.
+Let T and U be right transversals for a finite-index H ≤ G. In coupled scans write tᵢgᵢ₊₁ =
+aᵢtᵢ₊₁, uᵢgᵢ₊₁ = bᵢuᵢ₊₁ and tᵢ = cᵢuᵢ. For a ternary H-cochain z, define B²(z)(g₁,g₂) = ∑ₜ
+ρ(t⁻¹)(z(a₀,a₁,c₂) − z(a₀,c₁,b₁) + z(c₀,b₀,b₁)).
 
-Canonical packaging and coefficient naturality are provided in downstream
-modules.  No field-theoretic, Kummer, norm-residue, or Bloch--Kato claim is
-made here.
+For an H-three-cocycle with coefficients in a G-representation, its differential has
+orientation d²B²(z) = cor_U³(z) − cor_T³(z). The two transferred classes in H³(G,A) are
+therefore equal, and their induced degree-three cohomology maps agree.
 -/
 
 @[expose] public section
@@ -42,12 +41,18 @@ universe u
 variable {k G : Type u} [CommRing k] [Group G]
 variable {H : Subgroup G}
 
+/-- Finite representatives for the ternary change-of-transversal sum.
+
+The finite-index hypothesis gives a finite enumeration of T for the degree-two comparison
+cochain. -/
 noncomputable local instance corestrictionDegreeThreeIndependenceTransversalFintype
     (T : H.RightTransversal) [H.FiniteIndex] : Fintype (T : Set G) :=
   @Fintype.ofFinite (T : Set G) (T.2.finite_right)
 
-/-- The unsummed positive degree-two prism term comparing two right
-transversals. -/
+/-- The degree-two comparison summand for two transversals.
+
+For a ternary cochain z with values in any additive commutative group, the coupled scans give
+the summand z(a₀,a₁,c₂) − z(a₀,c₁,b₁) + z(c₀,b₀,b₁), with tᵢ = cᵢuᵢ. -/
 def corestrictionChangeTwoInner {A : Type u} [AddCommGroup A]
     (T U : H.RightTransversal)
     (z : H × H × H → A) (t : (T : Set G)) (g₁ g₂ : G) : A :=
@@ -64,8 +69,10 @@ def corestrictionChangeTwoInner {A : Type u} [AddCommGroup A]
       U.schreierFactor
         (U.schreierRep (T.changeRep U t) g₁) g₂)
 
-/-- The explicit degree-two prism cochain comparing degree-three transfer
-cochains associated to `T` and `U`. -/
+/-- The linear degree-two change-of-transversal cochain.
+
+For a ternary H-cochain z with coefficients in A, sum the three-term comparison summand with
+inverse weights ρ(t⁻¹) over T. This defines a k-linear map to binary G-cochains. -/
 noncomputable def corestrictionChangeTwo (A : Rep k G)
     (T U : H.RightTransversal) [H.FiniteIndex] :
     (H × H × H → A) →ₗ[k] (G × G → A) where
@@ -83,6 +90,9 @@ noncomputable def corestrictionChangeTwo (A : Rep k G)
     simp only [RingHom.id_apply]
     rw [Finset.smul_sum]
 
+/-- Values of the degree-two comparison cochain.
+
+At (g₁,g₂), the comparison cochain is ∑ₜ ρ(t⁻¹)corestrictionChangeTwoInner T U z t g₁ g₂. -/
 @[simp]
 theorem corestrictionChangeTwo_apply (A : Rep k G)
     (T U : H.RightTransversal) [H.FiniteIndex]
@@ -93,8 +103,10 @@ theorem corestrictionChangeTwo_apply (A : Rep k G)
           (corestrictionChangeTwoInner T U z t g₁ g₂) :=
   rfl
 
-/-- The subgroup-level cocycle identity underlying the degree-three
-change-of-transversal prism homotopy. -/
+/-- The local differential of the ternary comparison summand.
+
+For an H-three-cocycle z, the local differential of the comparison summand has signs +,−,+,−
+and equals ρ(c₀)z(b₀,b₁,b₂) − z(a₀,a₁,a₂) on the coupled scans. -/
 theorem corestrictionChangeTwoInner_cocycle (A : Rep k G)
     (T U : H.RightTransversal)
     (z : cocycles₃ (Rep.res (Subgroup.subtype H) A))
@@ -187,8 +199,10 @@ theorem corestrictionChangeTwoInner_cocycle (A : Rep k G)
       abel
     _ = 0 := by rw [hzX, hzM₁, hzM₂, hzU]; abel
 
-/-- Reindexing the leading differential term of the degree-two prism by the
-Schreier permutation. -/
+/-- Reindexing the leading ternary comparison term.
+
+The sum of the comparison summand on (g₂,g₃) starting at r_T(t,g₁), weighted by
+ρ(g₁r_T(t,g₁)⁻¹), equals ρ(g₁) times its ordinary inverse-weighted sum. -/
 theorem sum_schreierRep_changeTwoInner (A : Rep k G)
     (T U : H.RightTransversal) [H.FiniteIndex]
     (z : H × H × H → A) (g₁ g₂ g₃ : G) :
@@ -225,7 +239,10 @@ theorem sum_schreierRep_changeTwoInner (A : Rep k G)
             (corestrictionChangeTwoInner T U z t g₂ g₃)) := by
       rw [map_sum]
 
-/-- The differential comparison for one representative in degree three. -/
+/-- The weighted differential of a ternary comparison summand.
+
+Weighting the local +,−,+,− differential by ρ(t⁻¹) gives the matched U-transfer summand of z
+minus the T-transfer summand. -/
 theorem corestrictionChangeTwo_d₂₃_term (A : Rep k G)
     (T U : H.RightTransversal)
     (z : cocycles₃ (Rep.res (Subgroup.subtype H) A))
@@ -283,8 +300,10 @@ theorem corestrictionChangeTwo_d₂₃_term (A : Rep k G)
     T.inv_mul_changeFactor U t] at h
   exact h
 
-/-- Reindexing the `U`-degree-three transfer summands along the equivalence
-of transversals. -/
+/-- Reindexing the ternary transfer across matched transversals.
+
+The U-transfer sum indexed by u(t) for t ∈ T equals the sum indexed directly by the
+representatives of U. -/
 theorem sum_changeRep_corestrictionThree_term (A : Rep k G)
     (T U : H.RightTransversal) [H.FiniteIndex]
     (z : H × H × H → A) (g₁ g₂ g₃ : G) :
@@ -310,8 +329,9 @@ theorem sum_changeRep_corestrictionThree_term (A : Rep k G)
           U.schreierFactor
             (U.schreierRep (U.schreierRep u g₁) g₂) g₃)))
 
-/-- The differential of the explicit degree-two prism cochain is the
-`U`-transfer minus the `T`-transfer. -/
+/-- The reversed degree-three transfer difference is an explicit boundary.
+
+For an H-three-cocycle z, d²(corestrictionChangeTwo A T U z) = cor_U³(z) − cor_T³(z). -/
 theorem corestrictionChangeTwo_d₂₃ (A : Rep k G)
     (T U : H.RightTransversal) [H.FiniteIndex]
     (z : cocycles₃ (Rep.res (Subgroup.subtype H) A)) :
@@ -394,8 +414,10 @@ theorem corestrictionChangeTwo_d₂₃ (A : Rep k G)
                 (T.schreierRep (T.schreierRep t g₁) g₂) g₃))) := by
       rw [sum_changeRep_corestrictionThree_term]
 
-/-- The `H³` classes of a transferred three-cocycle do not depend on the
-chosen finite right transversal. -/
+/-- Transferred three-cocycles have transversal-independent classes.
+
+For any H-three-cocycle z, transferring with T or U gives G-three-cocycles with the same image
+in H³(G,A). -/
 theorem corestrictionCocyclesThree_H3π_independent (A : Rep k G)
     (T U : H.RightTransversal) [H.FiniteIndex]
     (z : cocycles₃ (Rep.res (Subgroup.subtype H) A)) :
@@ -409,8 +431,9 @@ theorem corestrictionCocyclesThree_H3π_independent (A : Rep k G)
   rw [map_neg, corestrictionChangeTwo_d₂₃]
   module
 
-/-- The linear map from three-cocycles to target `H³` is independent of the
-chosen finite right transversal. -/
+/-- The transferred degree-three class map is independent of the transversal.
+
+The linear maps from H-three-cocycles to H³(G,A) defined using T and U are equal. -/
 theorem corestrictionCocycleThreeClass_independent (A : Rep k G)
     (T U : H.RightTransversal) [H.FiniteIndex] :
     corestrictionCocycleThreeClass A T =
@@ -419,8 +442,9 @@ theorem corestrictionCocycleThreeClass_independent (A : Rep k G)
   intro z
   exact corestrictionCocyclesThree_H3π_independent A T U z
 
-/-- Chosen-transversal degree-three cohomological transfer is independent of
-the finite right transversal. -/
+/-- The degree-three cohomology transfer is independent of the transversal.
+
+The chosen maps H³(H,A|H) → H³(G,A) obtained from T and U are equal. -/
 theorem corestrictionH3OfRightTransversal_independent (A : Rep k G)
     (T U : H.RightTransversal) [H.FiniteIndex] :
     corestrictionH3OfRightTransversal A T =

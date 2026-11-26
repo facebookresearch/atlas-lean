@@ -1,3 +1,6 @@
-# Actual Alternating Coefficient Nat Iso
+# Natural commutation of additive functors with alternating cofaces
 
-The exact original coefficient commutation is natural in the actual cosimplicial object.
+Natural commutation of additive functors with alternating cofaces.
+
+The objectwise comparisons assemble to a natural isomorphism between applying `F` before and
+after the alternating coface-complex construction.

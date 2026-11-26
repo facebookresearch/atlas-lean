@@ -12,12 +12,21 @@ module
 public import MathlibExt.Algebra.Homology.Hochschild.NonUnital.Basic
 
 /-!
-# The comparison with the unital Hochschild complex
+# Comparing nonunital and unital coefficient Hochschild chains
 
-The complexes have the same literal tensor objects. Their differentials agree
-because the proved nonunital specialization has exactly the unital
-face values. The native component-iso constructor supplies the chain
-isomorphism; callers supply neither a comparison nor an object equality.
+Let k be a commutative ring, A an associative unital k-algebra,
+and M a compatible A-bimodule with commuting k-linear actions.
+Forget the unit in the two representations l(a)m = am and
+r(op a)m = ma. The resulting nonunital Hochschild complex is
+isomorphic to the unital coefficient Hochschild complex.
+
+In each degree n, both complexes have the k-module
+M ⊗[k] A^{⊗n}. The isomorphism and its inverse are the identity
+on this tensor object; the face maps and alternating boundaries agree.
+The scalar, algebra and coefficient universes remain independent,
+with the chain category in height max{u,v,w}.
+
+Reference: J.-L. Loday, Cyclic Homology, §1.1.
 -/
 
 @[expose] public section
@@ -37,7 +46,11 @@ variable {k : Type u} [CommRing k] {A : Type v} [Ring A] [Algebra k A]
   [SMulCommClass k A M] [SMulCommClass k Aᵐᵒᵖ M]
   [IsScalarTower k A M] [IsScalarTower k Aᵐᵒᵖ M]
 
-/-- Identity tensor components identify the unital and nonunital complexes. -/
+/-- Let k be commutative, A an associative unital k-algebra, and M a
+compatible A-bimodule with commuting k-linear left and right actions.
+The nonunital coefficient complex from l(a)m = am and r(op a)m = ma
+is chain isomorphic to C_*(A,M). Both directions are the identity
+on every M ⊗[k] A^{⊗n} in the common module universe max{u,v,w}. -/
 def complexIsoUnital :
     let l := (Algebra.lsmul k k M (A := A)).toNonUnitalAlgHom
     let r := (Algebra.lsmul k k M (A := Aᵐᵒᵖ)).toNonUnitalAlgHom

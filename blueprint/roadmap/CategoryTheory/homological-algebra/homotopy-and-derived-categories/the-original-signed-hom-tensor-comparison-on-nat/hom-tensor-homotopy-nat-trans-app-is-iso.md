@@ -1,4 +1,6 @@
-# Hom Tensor Homotopy Nat Trans app is Iso
+# Homotopy comparison is invertible on bounded finite-factor triples
 
-The earned original finite-C cochain Iso makes the original homotopy
-comparison component invertible.
+Homotopy comparison is invertible on bounded finite-factor triples.
+
+At a triple with bounded finite projective third factor, the homotopy natural transformation
+has an isomorphism as its component.

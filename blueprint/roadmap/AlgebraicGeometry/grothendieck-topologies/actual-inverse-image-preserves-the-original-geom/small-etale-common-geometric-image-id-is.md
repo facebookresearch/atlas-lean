@@ -1,3 +1,6 @@
-# Small Etale Common Geometric Image Id Iso
+# Lifted identity image is isomorphic to the geometric point
 
-Canonical identity comparison of the original common geometric points.
+Lifted identity image is isomorphic to the geometric point.
+
+The fiber identity comparison gives an isomorphism of common geometric points from the
+identity image back to `x`.

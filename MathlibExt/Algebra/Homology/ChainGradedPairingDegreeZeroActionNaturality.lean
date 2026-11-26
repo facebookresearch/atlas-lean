@@ -11,6 +11,17 @@ module
 
 public import MathlibExt.Algebra.Homology.LinearHomCochainChainPairing
 
+/-!
+# Naturality of a degree-zero graded action
+
+Let R be a commutative ring, A,A′ coefficient modules, and K,K′,L,L′ ℕ-indexed module chain
+complexes. A graded pairing single₀(A)⊗K → L gives an action A⊗K_q → L_q in each degree q.
+
+For maps a : A → A′, f : K → K′, and g : L → L′ compatible with two such pairings, these
+actions satisfy λ_B ≫ g_q = (a⊗f_q) ≫ λ_B′. The equation is induced by the compatible maps on
+tensor totalizations.
+-/
+
 @[expose] public section
 
 open CategoryTheory MonoidalCategory
@@ -21,7 +32,10 @@ universe u
 
 namespace HomologicalComplex
 
-/-- Naturality of the degree-zero graded-pairing action. -/
+/-- Let R be a commutative ring and B : single₀(A)⊗K → L and B′ : single₀(A′)⊗K′ → L′ be chain
+graded pairings in the given R-module category. Let a : A → A′, f : K → K′, and g : L → L′
+satisfy tensorHom(single₀(a),f) ≫ B′ = B ≫ g. For q ∈ ℕ, the induced actions satisfy λ_B,q ≫
+g_q = (a⊗f_q) ≫ λ_B′,q as maps A⊗K_q → L′_q. -/
 @[reassoc]
 public theorem chainGradedPairingDegreeZeroAction_naturality
     (R : Type u) [CommRing R] (A A' : ModuleCat R)

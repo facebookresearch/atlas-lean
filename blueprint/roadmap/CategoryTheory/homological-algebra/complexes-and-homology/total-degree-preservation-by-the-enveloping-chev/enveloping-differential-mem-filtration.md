@@ -1,4 +1,6 @@
-# Enveloping Differential mem filtration
+# The filtered enveloping Chevalley–Eilenberg differential
 
-The coefficient CE differential preserves the total-degree
-filtration on its original enveloping coefficients.
+The filtered enveloping Chevalley–Eilenberg differential.
+
+The coefficient differential sends total filtration stage `p` in degree `n+1` into total
+filtration stage `p` in degree `n`.

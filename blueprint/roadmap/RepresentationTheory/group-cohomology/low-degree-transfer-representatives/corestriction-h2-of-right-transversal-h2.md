@@ -1,4 +1,6 @@
-# Corestriction H2 Of Right Transversal H2π
+# Degree-two transfer on a binary cocycle class
 
-The chosen-transversal H² transfer computes on a presented class by
-transferring its two-cocycle representative.
+Degree-two transfer on a binary cocycle class.
+
+Applying the chosen H² transfer to the class of an H-two-cocycle gives the class of its
+transferred G-two-cocycle.

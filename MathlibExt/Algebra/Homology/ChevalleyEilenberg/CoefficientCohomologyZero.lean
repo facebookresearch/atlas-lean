@@ -14,15 +14,29 @@ public import Mathlib.Algebra.Lie.Abelian
 public import Mathlib.Algebra.Homology.ShortComplex.ModuleCat
 
 /-!
-# Degree-zero Chevalley–Eilenberg cohomology and invariants
+# Degree-zero Lie cohomology and invariant coefficients
 
-Evaluation at the empty exterior word identifies degree-zero cocycles with
-the maximal trivial Lie submodule. The cochain homology-to-cycles isomorphism
-then identifies degree-zero cohomology with invariants.
+Let R be commutative, L an R-Lie algebra and M a left module over
+U_R=UEA_R(L). Restricting through the generators gives [x,m]=ι_R(x)m.
+Evaluation at the empty wedge identifies Hom_R(Λ_R^0L,M) with M.
+The first coboundary evaluated at x is ι_R(x)f(1), so its kernel
+corresponds to the maximal trivial Lie submodule
+M^L={m | ι_R(x)m=0 for all x}.
 
-The linear equivalence keeps the coefficient carrier. The categorical
-comparison lifts it to the cochain universe. The results hold for arbitrary
-Lie modules over a commutative ring.
+There is an R-linear equivalence H^0(L,M)≃M^L, with
+[f]↦f(1) and m↦[r↦rm]. The invariant carrier remains in its
+coefficient universe w; the categorical isomorphism lifts it to
+max{u,v,w}. Arbitrary Lie-module coefficients use their canonical
+UEA representation and the same invariant comparison.
+
+UEA-linear coefficient maps preserve these coordinates. For a ring map
+σ:R→S, an underlying ℤ-Lie map φ:L→J and a UEA ring map τ with
+τ(algMap_R r)=algMap_S(σ r), τ(ι_R x)=ι_S(φ x),
+a τ-linear coefficient map N→M induces restriction
+H^0(J,N)→H^0(L,M). This map sends an invariant value n to g(n);
+all ring, Lie and coefficient carrier universes may be independent.
+
+Reference: C. A. Weibel, An Introduction to Homological Algebra, §7.7.
 -/
 
 @[expose] public section
@@ -45,11 +59,22 @@ variable (R : Type u) [CommRing R]
 local notation "U" => UniversalEnvelopingAlgebra R L
 local notation "empty" => exteriorPower.ιMulti R 0 (Fin.elim0 : Fin 0 → L)
 
-/-- Native invariants of the original left coefficient module, on its original carrier. -/
+/-- Let R:Type u be commutative, L:Type v an R-Lie algebra,
+and M a left U=UEA_R(L)-module with carrier universe w.
+Its restricted L-action is [x,m]=ι_R(x)•m, and M^L is
+{m | ι_R(x)•m=0 for every x∈L}.
+The invariant coefficient module is the maximal trivial Lie
+submodule M^L of the restricted U-module, on its coefficient carrier. -/
 abbrev leftCoefficientInvariants :=
   LieModule.maxTrivSubmodule R L (LieModuleCat.UniversalEnveloping.restrictObj R L M)
 
-/-- Degree-zero exterior cochains have their coefficient coordinate. -/
+/-- Let R:Type u be commutative, L:Type v an R-Lie algebra,
+and M a left U=UEA_R(L)-module with carrier universe w.
+Its restricted L-action is [x,m]=ι_R(x)•m, and M^L is
+{m | ι_R(x)•m=0 for every x∈L}.
+Evaluation at the empty wedge gives the R-linear equivalence
+Hom_R(Λ_R^0L,M)≃M. Its inverse sends m to the cochain
+z↦e_0(z)•m, where e_0:Λ_R^0L≃R. -/
 def leftCochainZeroEquiv : ((⋀[R]^0 L) →ₗ[R] M) ≃ₗ[R] M where
   toFun f := f empty
   invFun m := (exteriorPower.zeroEquiv R L).toLinearMap.smulRight m
@@ -75,7 +100,12 @@ theorem leftCochainZeroEquiv_apply (f : (⋀[R]^0 L) →ₗ[R] M) :
 theorem leftCochainZeroEquiv_symm_apply (m : M) (a : ⋀[R]^0 L) :
     (leftCochainZeroEquiv R L M).symm m a = exteriorPower.zeroEquiv R L a • m := rfl
 
-/-- The first coboundary vanishes exactly when its empty-word value is invariant. -/
+/-- Let R:Type u be commutative, L:Type v an R-Lie algebra,
+and M a left U=UEA_R(L)-module with carrier universe w.
+Its restricted L-action is [x,m]=ι_R(x)•m, and M^L is
+{m | ι_R(x)•m=0 for every x∈L}.
+For a zero-cochain f, d^0f=0 if and only if
+ι_R(x)•f(1)=0 for every x∈L. -/
 theorem leftCochainDifferential_zero_eq_zero_iff (f : (⋀[R]^0 L) →ₗ[R] M) :
     leftCochainDifferential R L M 0 f = 0 ↔
       ∀ x : L, UniversalEnvelopingAlgebra.ι R x • f empty = 0 := by
@@ -97,7 +127,12 @@ theorem leftCochainDifferential_zero_eq_zero_iff (f : (⋀[R]^0 L) →ₗ[R] M) 
     rw [ha]
     exact (leftCochainDifferential_zero_apply R L M f (a 0)).trans (hf (a 0))
 
-/-- Membership in the native degree-zero cycle kernel is the generator-action condition. -/
+/-- Let R:Type u be commutative, L:Type v an R-Lie algebra,
+and M a left U=UEA_R(L)-module with carrier universe w.
+Its restricted L-action is [x,m]=ι_R(x)•m, and M^L is
+{m | ι_R(x)•m=0 for every x∈L}.
+A zero-cochain f belongs to the outgoing differential kernel
+if and only if its empty-wedge value f(1) lies in M^L. -/
 theorem leftCochainZeroKernel_iff (f : (⋀[R]^0 L) →ₗ[R] M) :
     f ∈ ((leftCoefficientCochainComplex R L M).sc 0).g.hom.ker ↔
       ∀ x : L, UniversalEnvelopingAlgebra.ι R x • f empty = 0 := by
@@ -105,7 +140,12 @@ theorem leftCochainZeroKernel_iff (f : (⋀[R]^0 L) →ₗ[R] M) :
   rw [CochainComplex.next, leftCoefficientCochainComplex_d_succ R L M 0]
   exact leftCochainDifferential_zero_eq_zero_iff R L M f
 
-/-- The native outgoing kernel and native invariants have the empty-word coordinates. -/
+/-- Let R:Type u be commutative, L:Type v an R-Lie algebra,
+and M a left U=UEA_R(L)-module with carrier universe w.
+Its restricted L-action is [x,m]=ι_R(x)•m, and M^L is
+{m | ι_R(x)•m=0 for every x∈L}.
+Empty-wedge evaluation gives an R-linear equivalence
+ker(d^0)≃M^L, sending a cocycle f to f(1). -/
 def leftCochainZeroKernelEquiv : ((leftCoefficientCochainComplex R L M).sc 0).g.hom.ker ≃ₗ[R]
   leftCoefficientInvariants R L M where
   toFun f := ⟨leftCochainZeroEquiv R L M (show (⋀[R]^0 L) →ₗ[R] M from f.1), by
@@ -130,25 +170,44 @@ def leftCochainZeroKernelEquiv : ((leftCoefficientCochainComplex R L M).sc 0).g.
 theorem leftCochainZeroKernelEquiv_coe (f : ((leftCoefficientCochainComplex R L M).sc 0).g.hom.ker) :
     (leftCochainZeroKernelEquiv R L M f).1 = (show (⋀[R]^0 L) →ₗ[R] M from f.1) empty := rfl
 
-/-- Native degree-zero homology identifies with the kernel of the outgoing coboundary. -/
+/-- Let R:Type u be commutative, L:Type v an R-Lie algebra,
+and M a left U=UEA_R(L)-module with carrier universe w.
+Its restricted L-action is [x,m]=ι_R(x)•m, and M^L is
+{m | ι_R(x)•m=0 for every x∈L}.
+There is no incoming degree-zero coboundary in the nonnegative
+cochain complex, so H^0(L,M)≃ker(d^0) as R-modules. -/
 def leftCohomologyZeroKernelEquiv :
     (leftCoefficientCochainComplex R L M).homology 0 ≃ₗ[R] ((leftCoefficientCochainComplex R L M).sc 0).g.hom.ker :=
   ((leftCoefficientCochainComplex R L M).isoHomologyπ₀.symm ≪≫
     ((leftCoefficientCochainComplex R L M).sc 0).moduleCatCyclesIso).toLinearEquiv
 
-/-- H⁰ of the all-degree left CE complex is the native invariant submodule.
-The ring, Lie algebra, and original coefficient carrier worlds are independent. -/
+/-- Let R:Type u be commutative, L:Type v an R-Lie algebra,
+and M a left U=UEA_R(L)-module with carrier universe w.
+Its restricted L-action is [x,m]=ι_R(x)•m, and M^L is
+{m | ι_R(x)•m=0 for every x∈L}.
+Combining the kernel and empty-wedge identifications gives
+H^0(L,M)≃M^L, an R-linear equivalence preserving the coefficient carrier. -/
 def leftCoefficientCohomologyZeroLinearEquiv :
     (leftCoefficientCochainComplex R L M).homology 0 ≃ₗ[R] leftCoefficientInvariants R L M :=
   (leftCohomologyZeroKernelEquiv R L M).trans (leftCochainZeroKernelEquiv R L M)
 
-/-- A native invariant gives the canonical degree-zero cocycle class. -/
+/-- Let R:Type u be commutative, L:Type v an R-Lie algebra,
+and M a left U=UEA_R(L)-module with carrier universe w.
+Its restricted L-action is [x,m]=ι_R(x)•m, and M^L is
+{m | ι_R(x)•m=0 for every x∈L}.
+For m∈M^L, the canonical degree-zero cohomology class is
+that of the cocycle z↦e_0(z)•m, where e_0:Λ_R^0L≃R. -/
 def leftCoefficientCohomologyZeroClass (m : leftCoefficientInvariants R L M) :
   (leftCoefficientCochainComplex R L M).homology 0 :=
   (leftCoefficientCochainComplex R L M).homologyπ 0 (((leftCoefficientCochainComplex R L M).sc 0).moduleCatCyclesIso.inv
     ((leftCochainZeroKernelEquiv R L M).symm m))
 
-/-- Canonical native cycles retain their empty-word value in cohomology. -/
+/-- Let R:Type u be commutative, L:Type v an R-Lie algebra,
+and M a left U=UEA_R(L)-module with carrier universe w.
+Its restricted L-action is [x,m]=ι_R(x)•m, and M^L is
+{m | ι_R(x)•m=0 for every x∈L}.
+The H^0-to-invariants equivalence sends the homology class
+of a cocycle f∈ker(d^0) to its invariant empty-wedge value f(1). -/
 theorem leftCoefficientCohomologyZeroLinearEquiv_cycle (f : ((leftCoefficientCochainComplex R L M).sc 0).g.hom.ker) :
     leftCoefficientCohomologyZeroLinearEquiv R L M
         ((leftCoefficientCochainComplex R L M).homologyπ 0
@@ -177,7 +236,13 @@ theorem leftCoefficientCohomologyZeroLinearEquiv_symm (m : leftCoefficientInvari
   apply (leftCoefficientCohomologyZeroLinearEquiv R L M).injective
   rw [LinearEquiv.apply_symm_apply, leftCoefficientCohomologyZeroLinearEquiv_class]
 
-/-- Only the categorical comparison canonically lifts the original invariant carrier. -/
+/-- Let R:Type u be commutative, L:Type v an R-Lie algebra,
+and M a left U=UEA_R(L)-module with carrier universe w.
+Its restricted L-action is [x,m]=ι_R(x)•m, and M^L is
+{m | ι_R(x)•m=0 for every x∈L}.
+The categorical comparison is
+H^0(L,M)≅ModuleCat_R(U^{max{u,v,w}}M^L),
+placing the invariant module in the cochain carrier universe. -/
 def leftCoefficientCohomologyZeroIso :
     (leftCoefficientCochainComplex R L M).homology 0 ≅ ModuleCat.of R
       (ULift.{max u v w, w} (leftCoefficientInvariants R L M)) :=
@@ -194,8 +259,14 @@ section CoefficientMaps
 variable {M} {M' : ModuleCat.{w'} (UniversalEnvelopingAlgebra R L)}
   {M'' : ModuleCat.{w''} (UniversalEnvelopingAlgebra R L)}
 
-/-- An original UEA-linear coefficient map restricts to the native Lie-module map.
-Its source and target carriers need not belong to the same module-category universe. -/
+/-- Let R:Type u be commutative, L:Type v an R-Lie algebra,
+and M a left U=UEA_R(L)-module with carrier universe w.
+Its restricted L-action is [x,m]=ι_R(x)•m, and M^L is
+{m | ι_R(x)•m=0 for every x∈L}.
+Let M′ be another left U-module in an independent carrier universe
+and f:M→M′ a U-linear map.
+Restricting f to R-scalars gives a Lie-module map, since
+f(ι_R(x)m)=ι_R(x)f(m) for every x∈L. -/
 def leftCoefficientLieMap (f : M →ₗ[U] M') :
     LieModuleCat.UniversalEnveloping.restrictObj R L M →ₗ⁅R,L⁆
       LieModuleCat.UniversalEnveloping.restrictObj R L M' where
@@ -206,7 +277,14 @@ def leftCoefficientLieMap (f : M →ₗ[U] M') :
       LieModuleCat.UniversalEnveloping.restrictObj_lie]
     exact f.map_smul (UniversalEnvelopingAlgebra.ι R x) m
 
-/-- The native maximal-trivial-submodule map on original coefficients. -/
+/-- Let R:Type u be commutative, L:Type v an R-Lie algebra,
+and M a left U=UEA_R(L)-module with carrier universe w.
+Its restricted L-action is [x,m]=ι_R(x)•m, and M^L is
+{m | ι_R(x)•m=0 for every x∈L}.
+Let M′ be another left U-module in an independent carrier universe
+and f:M→M′ a U-linear map.
+The map f carries M^L into M′^L, giving the R-linear
+invariant map m↦f(m). -/
 def leftCoefficientInvariantsMap (f : M →ₗ[U] M') :
     leftCoefficientInvariants R L M →ₗ[R] leftCoefficientInvariants R L M' :=
   (LieModule.maxTrivHom (leftCoefficientLieMap R L f)).toLinearMap
@@ -230,7 +308,14 @@ theorem leftCoefficientInvariantsMap_comp (f : M →ₗ[U] M') (g : M' →ₗ[U]
   intro m
   exact Subtype.ext rfl
 
-/-- The degree-zero cochain map is coefficient postcomposition. -/
+/-- Let R:Type u be commutative, L:Type v an R-Lie algebra,
+and M a left U=UEA_R(L)-module with carrier universe w.
+Its restricted L-action is [x,m]=ι_R(x)•m, and M^L is
+{m | ι_R(x)•m=0 for every x∈L}.
+Let M′ be another left U-module in an independent carrier universe
+and f:M→M′ a U-linear map.
+The degree-zero cochain map is postcomposition:
+a:Λ_R^0L→M is sent to f∘a:Λ_R^0L→M′. -/
 def leftCochainZeroCoefficientMap (f : M →ₗ[U] M') :
     ((⋀[R]^0 L) →ₗ[R] M) →ₗ[R] ((⋀[R]^0 L) →ₗ[R] M') where
   toFun a := (f.restrictScalars R).comp a
@@ -248,8 +333,14 @@ theorem leftCochainZeroCoefficientMap_apply (f : M →ₗ[U] M')
     (a : (⋀[R]^0 L) →ₗ[R] M) (z : ⋀[R]^0 L) :
     leftCochainZeroCoefficientMap R L f a z = f (a z) := rfl
 
-/-- UEA coefficient maps descend to the outgoing kernels.
-The kernel condition is proved from the original generator action, not assumed. -/
+/-- Let R:Type u be commutative, L:Type v an R-Lie algebra,
+and M a left U=UEA_R(L)-module with carrier universe w.
+Its restricted L-action is [x,m]=ι_R(x)•m, and M^L is
+{m | ι_R(x)•m=0 for every x∈L}.
+Let M′ be another left U-module in an independent carrier universe
+and f:M→M′ a U-linear map.
+Coefficient postcomposition carries ker(d_M^0) into ker(d_{M′}^0),
+giving an R-linear map between the zero-cocycle kernels. -/
 def leftCochainZeroCoefficientKernelMap (f : M →ₗ[U] M') :
     ((leftCoefficientCochainComplex R L M).sc 0).g.hom.ker →ₗ[R]
       ((leftCoefficientCochainComplex R L M').sc 0).g.hom.ker where
@@ -263,7 +354,14 @@ def leftCochainZeroCoefficientKernelMap (f : M →ₗ[U] M') :
   map_add' a b := Subtype.ext ((leftCochainZeroCoefficientMap R L f).map_add a.1 b.1)
   map_smul' r a := Subtype.ext ((leftCochainZeroCoefficientMap R L f).map_smul r a.1)
 
-/-- Empty-word evaluation intertwines the coefficient kernel and invariant maps. -/
+/-- Let R:Type u be commutative, L:Type v an R-Lie algebra,
+and M a left U=UEA_R(L)-module with carrier universe w.
+Its restricted L-action is [x,m]=ι_R(x)•m, and M^L is
+{m | ι_R(x)•m=0 for every x∈L}.
+Let M′ be another left U-module in an independent carrier universe
+and f:M→M′ a U-linear map.
+Empty-wedge kernel evaluation is natural:
+E_{M′}(K(f)(a))=f^{inv}(E_M(a)) for every a∈ker(d_M^0). -/
 theorem leftCochainZeroKernelEquiv_coefficient (f : M →ₗ[U] M')
     (a : ((leftCoefficientCochainComplex R L M).sc 0).g.hom.ker) :
     leftCochainZeroKernelEquiv R L M' (leftCochainZeroCoefficientKernelMap R L f a) =
@@ -291,8 +389,14 @@ theorem leftCochainZeroCoefficientKernelMap_comp (f : M →ₗ[U] M') (g : M' �
   intro z
   rfl
 
-/-- The coefficient map on H⁰ induced by its native cycle-kernel map.
-Only the canonical native homology/cycles comparisons are used here. -/
+/-- Let R:Type u be commutative, L:Type v an R-Lie algebra,
+and M a left U=UEA_R(L)-module with carrier universe w.
+Its restricted L-action is [x,m]=ι_R(x)•m, and M^L is
+{m | ι_R(x)•m=0 for every x∈L}.
+Let M′ be another left U-module in an independent carrier universe
+and f:M→M′ a U-linear map.
+The induced H^0 coefficient map is obtained from the zero-kernel
+map through H^0≃ker(d^0) on both sides. -/
 def leftCohomologyZeroCoefficientMap (f : M →ₗ[U] M') :
     (leftCoefficientCochainComplex R L M).homology 0 →ₗ[R]
       (leftCoefficientCochainComplex R L M').homology 0 :=
@@ -300,7 +404,14 @@ def leftCohomologyZeroCoefficientMap (f : M →ₗ[U] M') :
     ((leftCochainZeroCoefficientKernelMap R L f).comp
       (leftCohomologyZeroKernelEquiv R L M).toLinearMap)
 
-/-- The canonical H⁰ comparison is natural for independently sized original coefficient maps. -/
+/-- Let R:Type u be commutative, L:Type v an R-Lie algebra,
+and M a left U=UEA_R(L)-module with carrier universe w.
+Its restricted L-action is [x,m]=ι_R(x)•m, and M^L is
+{m | ι_R(x)•m=0 for every x∈L}.
+Let M′ be another left U-module in an independent carrier universe
+and f:M→M′ a U-linear map.
+The invariant equivalences satisfy
+E_{M′} H^0(f)=f^{inv} E_M across the independent coefficient worlds. -/
 theorem leftCoefficientCohomologyZeroLinearEquiv_naturality (f : M →ₗ[U] M')
     (a : (leftCoefficientCochainComplex R L M).homology 0) :
     leftCoefficientCohomologyZeroLinearEquiv R L M'
@@ -352,7 +463,10 @@ theorem leftCohomologyZeroCoefficientMap_class (f : M →ₗ[U] M')
 
 end CoefficientMaps
 
-/-- The represented/restricted Lie-module unit transports the native invariant submodule. -/
+/-- Let R be commutative, L an R-Lie algebra and X a left Lie module.
+Represent X as a UEA_R(L)-module and restrict it back through the
+generators. The representation/restriction unit identifies the resulting
+invariant module with the maximal trivial Lie submodule X^L. -/
 def representedCoefficientInvariantsEquiv (X : LieModuleCat.{w} R L) :
     leftCoefficientInvariants R L (LieModuleCat.UniversalEnveloping.representObj R L X) ≃ₗ[R]
       LieModule.maxTrivSubmodule R L X :=
@@ -362,8 +476,10 @@ def representedCoefficientInvariantsEquiv (X : LieModuleCat.{w} R L) :
     (by apply LinearMap.ext; intro m; apply Subtype.ext; rfl)
     (by apply LinearMap.ext; intro m; apply Subtype.ext; rfl)
 
-/-- Arbitrary native Lie coefficients use their represented UEA module, with the
-original carrier retained by the native representation/restriction unit. -/
+/-- Let R be commutative, L an R-Lie algebra and X any compatible
+left Lie module. With its represented enveloping module Rep(X),
+the R-linear comparison is H^0(L,Rep(X))≃X^L, preserving X's
+coefficient carrier universe. -/
 def coefficientCohomologyZeroLinearEquiv (X : LieModuleCat.{w} R L) :
     (leftCoefficientCochainComplex R L
       (LieModuleCat.UniversalEnveloping.representObj R L X)).homology 0 ≃ₗ[R]
@@ -372,8 +488,9 @@ def coefficientCohomologyZeroLinearEquiv (X : LieModuleCat.{w} R L) :
     (LieModuleCat.UniversalEnveloping.representObj R L X)).trans
       (representedCoefficientInvariantsEquiv R L X)
 
-/-- Native Lie coefficients have the same canonical categorical comparison,
-using only the native lift of their original invariant carrier. -/
+/-- For a compatible left Lie module X over an R-Lie algebra L,
+with R commutative, the categorical comparison is
+H^0(L,Rep(X))≅U^{max{u,v,w}}X^L in the cochain module category. -/
 def coefficientCohomologyZeroIso (X : LieModuleCat.{w} R L) :
     (leftCoefficientCochainComplex R L
       (LieModuleCat.UniversalEnveloping.representObj R L X)).homology 0 ≅
@@ -395,8 +512,12 @@ variable {M} {S : Type u'} [CommRing S]
 
 local notation "emptyJ" => exteriorPower.ιMulti S 0 (Fin.elim0 : Fin 0 → J)
 
-/-- Restriction of the UEA coefficient map to the original ground rings.
-The only compatibility used is the scalar characteristic equation for τ. -/
+/-- Let R,S be commutative rings, L an R-Lie algebra and J an S-Lie
+algebra. Put U_R=UEA_R(L), U_S=UEA_S(J). Let σ:R→S and
+τ:U_R→U_S be ring maps with τ(algMap_R(r))=algMap_S(σ(r)).
+Let M,N be left U_R,U_S-modules and g:Res_τ(N)→M U_R-linear.
+The coefficient function g:N→M is R-linear after restricting
+N along σ. This follows from the scalar equation for τ. -/
 def leftCohomologyRingCoefficientMap :
     letI : Module R N := Module.compHom N σ
     N →ₗ[R] M := by
@@ -414,8 +535,13 @@ def leftCohomologyRingCoefficientMap :
         exact (congrArg (fun a : UniversalEnvelopingAlgebra S J =>
           g (show (ModuleCat.restrictScalars τ).obj N from a • (show N from n))) hScalar).symm.trans h }
 
-/-- The zero-cochain restriction map uses empty-word coordinates and the
-given original coefficient map. No cohomology or invariant comparison is an input. -/
+/-- Let R,S be commutative rings, L an R-Lie algebra and J an S-Lie
+algebra. Put U_R=UEA_R(L), U_S=UEA_S(J). Let σ:R→S and
+τ:U_R→U_S be ring maps with τ(algMap_R(r))=algMap_S(σ(r)).
+Let M,N be left U_R,U_S-modules and g:Res_τ(N)→M U_R-linear.
+Restriction on zero-cochains sends a:Λ_S^0J→N to
+z↦e_R(z)•g(a(1_J)):Λ_R^0L→M, where e_R:Λ_R^0L≃R.
+The source cochains carry their R-action through σ. -/
 def leftCochainZeroRingMap :
     letI : Module R (((⋀[S]^0 J) →ₗ[S] N)) :=
       Module.compHom (((⋀[S]^0 J) →ₗ[S] N)) σ
@@ -443,9 +569,15 @@ def leftCochainZeroRingMap :
     rw [c.map_smul]
     exact smul_comm _ _ _
 
-/-- Original Lie/ring maps with their UEA scalar and generator equations induce
-a map of the zero-cycle kernels. Both rings and all three carrier worlds are independent.
-The direction is restriction: cochains on J with N map to cochains on L with M. -/
+/-- Let R,S be commutative rings, L an R-Lie algebra and J an S-Lie
+algebra. Put U_R=UEA_R(L), U_S=UEA_S(J). Let σ:R→S and
+τ:U_R→U_S be ring maps with τ(algMap_R(r))=algMap_S(σ(r)).
+Let M,N be left U_R,U_S-modules and g:Res_τ(N)→M U_R-linear.
+Let φ:L→J be a homomorphism of the underlying ℤ-Lie algebras,
+with τ(ι_R(x))=ι_S(φ(x)) for every x∈L.
+The zero-cochain restriction map sends ker(d_J^0) to ker(d_L^0).
+The generator equation ensures ι_R(x)g(n)=g(ι_S(φ(x))n),
+so a J-invariant coefficient value remains L-invariant. -/
 def leftCochainZeroRingKernelMap :
     letI : Module R ((leftCoefficientCochainComplex S J N).sc 0).g.hom.ker := Module.compHom
       ((leftCoefficientCochainComplex S J N).sc 0).g.hom.ker σ
@@ -476,7 +608,14 @@ def leftCochainZeroRingKernelMap :
           _ = 0 := (congrArg g ha).trans g.map_zero⟩
       map_add' := fun a b => Subtype.ext (c.map_add a.1 b.1)
       map_smul' := fun r a => Subtype.ext (c.map_smul r a.1) }
-/-- Restriction of original invariant values along the same ring/coefficient maps. -/
+/-- Let R,S be commutative rings, L an R-Lie algebra and J an S-Lie
+algebra. Put U_R=UEA_R(L), U_S=UEA_S(J). Let σ:R→S and
+τ:U_R→U_S be ring maps with τ(algMap_R(r))=algMap_S(σ(r)).
+Let M,N be left U_R,U_S-modules and g:Res_τ(N)→M U_R-linear.
+Let φ:L→J be a homomorphism of the underlying ℤ-Lie algebras,
+with τ(ι_R(x))=ι_S(φ(x)) for every x∈L.
+Restriction gives an R-linear map N^J→M^L, n↦g(n),
+with the R-action on N^J induced by σ. -/
 def leftCoefficientInvariantsRingMap :
     letI : Module R (leftCoefficientInvariants S J N) :=
       Module.compHom (leftCoefficientInvariants S J N) σ
@@ -502,7 +641,14 @@ def leftCoefficientInvariantsRingMap :
           _ = 0 := (congrArg g hm).trans g.map_zero⟩
       map_add' := fun m n => Subtype.ext (c.map_add m.1 n.1)
       map_smul' := fun r m => Subtype.ext (c.map_smul r m.1) }
-/-- The Lie/ring kernel map commutes with native invariant coordinates. -/
+/-- Let R,S be commutative rings, L an R-Lie algebra and J an S-Lie
+algebra. Put U_R=UEA_R(L), U_S=UEA_S(J). Let σ:R→S and
+τ:U_R→U_S be ring maps with τ(algMap_R(r))=algMap_S(σ(r)).
+Let M,N be left U_R,U_S-modules and g:Res_τ(N)→M U_R-linear.
+Let φ:L→J be a homomorphism of the underlying ℤ-Lie algebras,
+with τ(ι_R(x))=ι_S(φ(x)) for every x∈L.
+Empty-wedge kernel evaluation commutes with restriction:
+E_R(K^{res}(a))=I^{res}(E_S(a)) for every zero cocycle a on J. -/
 theorem leftCochainZeroKernelEquiv_ring_naturality (a : ((leftCoefficientCochainComplex S J N).sc 0).g.hom.ker) :
     leftCochainZeroKernelEquiv R L M
         (leftCochainZeroRingKernelMap R L σ φ τ hτR hτL N g a) =
@@ -515,8 +661,15 @@ theorem leftCochainZeroKernelEquiv_ring_naturality (a : ((leftCoefficientCochain
         g ((show (⋀[S]^0 J) →ₗ[S] N from a.1) emptyJ)
   exact (leftCochainZeroEquiv R L M).apply_symm_apply _
 
-/-- The H⁰ ring-restriction map is induced by the native kernel map.
-The source is the original S-cohomology carrier with its R-action along σ. -/
+/-- Let R,S be commutative rings, L an R-Lie algebra and J an S-Lie
+algebra. Put U_R=UEA_R(L), U_S=UEA_S(J). Let σ:R→S and
+τ:U_R→U_S be ring maps with τ(algMap_R(r))=algMap_S(σ(r)).
+Let M,N be left U_R,U_S-modules and g:Res_τ(N)→M U_R-linear.
+Let φ:L→J be a homomorphism of the underlying ℤ-Lie algebras,
+with τ(ι_R(x))=ι_S(φ(x)) for every x∈L.
+The zero-kernel restriction induces the R-linear map
+H^0(J,N)→H^0(L,M), with the source scalar action restricted
+from S through σ. -/
 def leftCohomologyZeroRingMap :
     letI : Module R ((leftCoefficientCochainComplex S J N).homology 0) := Module.compHom
       ((leftCoefficientCochainComplex S J N).homology 0) σ
@@ -536,7 +689,15 @@ def leftCohomologyZeroRingMap :
   exact (leftCohomologyZeroKernelEquiv R L M).symm.toLinearMap.comp
     ((leftCochainZeroRingKernelMap R L σ φ τ hτR hτL N g).comp eS)
 
-/-- The requested raw H⁰ comparison respects independent-ground Lie/ring restriction. -/
+/-- Let R,S be commutative rings, L an R-Lie algebra and J an S-Lie
+algebra. Put U_R=UEA_R(L), U_S=UEA_S(J). Let σ:R→S and
+τ:U_R→U_S be ring maps with τ(algMap_R(r))=algMap_S(σ(r)).
+Let M,N be left U_R,U_S-modules and g:Res_τ(N)→M U_R-linear.
+Let φ:L→J be a homomorphism of the underlying ℤ-Lie algebras,
+with τ(ι_R(x))=ι_S(φ(x)) for every x∈L.
+The H^0-to-invariants equivalences satisfy
+E_R H^{0,res}=I^{res} E_S.
+This is the naturality square for the underlying ring/Lie restriction. -/
 theorem leftCoefficientCohomologyZeroLinearEquiv_ring_naturality
   (a : (leftCoefficientCochainComplex S J N).homology 0) :
     leftCoefficientCohomologyZeroLinearEquiv R L M

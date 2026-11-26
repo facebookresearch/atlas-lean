@@ -16,10 +16,13 @@ public import Mathlib.Order.Monotone.Basic
 /-!
 # Termination of adjacent inversion reduction
 
-A word over an arbitrary linearly ordered type has finitely many inversions.
-The natural-number weight below strictly decreases both on swapping an
-adjacent inverted pair and on replacing that pair by a single letter. No
-well-ordering or finiteness assumption on the alphabet is used.
+For a finite list over a linearly ordered type, an inversion is a pair of
+positions whose earlier letter is strictly larger. Swapping an adjacent
+inverted pair removes exactly one inversion. The weight
+`inversionOffset xs.length + inversionCount xs`, with
+`inversionOffset (n + 1) = inversionOffset n + n*n + 1`, also decreases when
+two adjacent letters are replaced by one arbitrary letter. The order on
+the alphabet need not be a well-order, and the alphabet may be infinite.
 -/
 
 @[expose] public section
@@ -30,13 +33,16 @@ universe v
 
 variable {I : Type v} [LinearOrder I]
 
-/-- The number of strictly inverted pairs in a word. -/
+/-- For a finite list over a linearly ordered type, count pairs of positions
+whose earlier entry is strictly larger than the later entry. Equal entries
+contribute no inversion; distinct occurrences are counted separately. -/
 def inversionCount : List I → ℕ
   | [] => 0
   | i :: xs => xs.countP (fun j => decide (j < i)) + inversionCount xs
 
-/-- Search from the left for an actual adjacent inversion. The returned
-data records its original prefix and suffix. -/
+/-- Search a list from the left for adjacent entries `i, j` with `j < i`.
+Return their prefix, entries and suffix as `some (p,i,j,s)`, or `none` when
+no adjacent pair is strictly decreasing. -/
 def adjacentInversion : List I → Option (List I × I × I × List I)
   | [] => none
   | [_] => none
@@ -45,7 +51,9 @@ def adjacentInversion : List I → Option (List I × I × I × List I)
       else (adjacentInversion (j :: xs)).map
         (fun (p, a, b, s) => (i :: p, a, b, s))
 
-/-- The search returns only genuine decompositions with an inverted pair. -/
+/-- If the adjacent-inversion search returns `(p,i,j,s)`, then the input
+list is `p ++ i :: j :: s` and the adjacent entries satisfy `j < i`.
+The list entries lie in an arbitrary linearly ordered type. -/
 theorem adjacentInversion_spec (xs : List I) (p : List I) (i j : I) (s : List I)
     (h : adjacentInversion xs = some (p, i, j, s)) :
     xs = p ++ i :: j :: s ∧ j < i := by
@@ -73,7 +81,9 @@ theorem adjacentInversion_spec (xs : List I) (p : List I) (i j : I) (s : List I)
                 rw [hxs]
                 rfl
 
-/-- A word with no adjacent inversion is weakly increasing. -/
+/-- If the adjacent-inversion search of a finite list returns `none`, its
+entries are pairwise weakly increasing: every earlier entry is at most
+every later entry. -/
 theorem pairwise_le_of_adjacentInversion_eq_none (xs : List I)
     (h : adjacentInversion xs = none) : xs.Pairwise (· ≤ ·) := by
   induction xs with
@@ -98,7 +108,8 @@ theorem pairwise_le_of_adjacentInversion_eq_none (xs : List I)
             · exact le_of_not_gt hba
             · exact (le_of_not_gt hba).trans ((pairwise_cons.mp htail).1 c hc)
 
-/-- Weakly increasing words are fixed by the adjacent-inversion search. -/
+/-- For a pairwise weakly increasing list over a linearly ordered type,
+the adjacent-inversion search returns `none`. -/
 theorem adjacentInversion_eq_none_of_pairwise_le (xs : List I)
     (h : xs.Pairwise (· ≤ ·)) : adjacentInversion xs = none := by
   cases hr : adjacentInversion xs with
@@ -117,7 +128,9 @@ private theorem countP_adjacent_swap (q : I → Bool)
   simp only [countP_append, countP_cons]
   omega
 
-/-- An adjacent inverted pair contributes exactly the removed inversion. -/
+/-- Swapping adjacent entries `i,j` with `j < i` reduces the inversion count
+by exactly one, regardless of the surrounding prefix and suffix:
+`inversionCount (p ++ j :: i :: s) + 1 = inversionCount (p ++ i :: j :: s)`. -/
 theorem inversionCount_adjacent_swap (p : List I) (i j : I) (s : List I)
     (hji : j < i) :
     inversionCount (p ++ j :: i :: s) + 1 = inversionCount (p ++ i :: j :: s) := by
@@ -129,7 +142,8 @@ theorem inversionCount_adjacent_swap (p : List I) (i j : I) (s : List I)
       simp only [cons_append, inversionCount]
       omega
 
-/-- A uniform finite bound for the inversion count of each word. -/
+/-- The inversion count of a list of length `n` is at most `n*n`.
+This bound holds over every linearly ordered alphabet, including infinite ones. -/
 theorem inversionCount_le_length_sq (xs : List I) :
     inversionCount xs ≤ xs.length * xs.length := by
   induction xs with
@@ -144,12 +158,16 @@ theorem inversionCount_le_length_sq (xs : List I) :
           simp only [Nat.add_mul, Nat.mul_add, Nat.mul_one, Nat.one_mul]
           omega
 
-/-- The start of the block of weights assigned to words of a given length. -/
+/-- The length-dependent offset with `inversionOffset 0 = 0` and
+`inversionOffset (n + 1) = inversionOffset n + n*n + 1`. Its successive
+increments exceed the inversion-count bound for lists of length `n`. -/
 def inversionOffset : ℕ → ℕ
   | 0 => 0
   | n + 1 => inversionOffset n + n * n + 1
 
-/-- A single natural-number termination measure for reduction of words. -/
+/-- The natural-number weight of a finite list is its length offset plus
+its inversion count. It decreases under an adjacent inverted swap and
+under replacement of two adjacent letters by one arbitrary letter. -/
 def inversionWeight (xs : List I) : ℕ :=
   inversionOffset xs.length + inversionCount xs
 
@@ -159,8 +177,9 @@ theorem inversionOffset_mono : Monotone inversionOffset := by
   rw [inversionOffset]
   omega
 
-/-- Every word of shorter length has lower weight, independently of its
-letters. This applies to all terms of an overlapping bracket contraction. -/
+/-- If one finite list is shorter than another, its inversion weight is
+strictly smaller, independently of their entries and their inversion counts.
+Only a linear order on the alphabet is required. -/
 theorem inversionWeight_lt_of_length_lt {xs ys : List I}
     (h : xs.length < ys.length) : inversionWeight xs < inversionWeight ys := by
   have hi := inversionCount_le_length_sq xs
@@ -179,8 +198,9 @@ theorem inversionWeight_adjacent_swap_lt (p : List I) (i j : I) (s : List I)
   rw [hl]
   omega
 
-/-- Replacing two adjacent letters by any single letter decreases the weight,
-regardless of the number of inversions of the resulting word. -/
+/-- Replacing adjacent entries `i,j` by any entry `k` strictly decreases
+inversion weight: `inversionWeight (p ++ k :: s) < inversionWeight (p ++ i :: j :: s)`.
+No comparison among `i,j,k` is required. -/
 theorem inversionWeight_contract_lt (p : List I) (i j k : I) (s : List I) :
     inversionWeight (p ++ k :: s) < inversionWeight (p ++ i :: j :: s) := by
   have hl : (p ++ i :: j :: s).length = (p ++ k :: s).length + 1 := by

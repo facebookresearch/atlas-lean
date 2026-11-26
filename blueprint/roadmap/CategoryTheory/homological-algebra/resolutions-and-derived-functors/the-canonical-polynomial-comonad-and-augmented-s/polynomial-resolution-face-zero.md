@@ -1,3 +1,6 @@
-# Polynomial Resolution face zero
+# Evaluation as the zeroth polynomial resolution face
 
-The zeroth face is evaluation at the actual elements of the preceding degree.
+Evaluation as the zeroth polynomial resolution face.
+
+After identifying degree `n+1` with the polynomial algebra on degree `n`, the zeroth face is
+evaluation of its variables at the corresponding elements of degree `n`.

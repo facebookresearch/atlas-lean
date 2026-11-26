@@ -1,3 +1,6 @@
-# Lax Tensor Power Pairing assoc
+# Lax power pairings satisfy ordered associativity
 
-Ordered associativity of lax-monoidal tensor-power multiplication.
+Lax power pairings satisfy ordered associativity.
+
+The two triple pairing routes agree after the associator and the degree equality `(p+q)+r =
+p+(q+r)`.

@@ -1,5 +1,6 @@
-# Em hq
+# The free-algebra pairing is natural in algebra morphisms
 
-Degree-zero naturality square for the EM map: `barMap` at level `0`
-followed by the target pairing equals the source pairing followed by the
-pointwise algebra morphism. This is the algebra-morphism law `φ.h`.
+Let T be a monad on C and φ : alg → alg′ an algebra morphism. The degree-zero bar map with
+identity on the free right module and algebra left-module map φ, followed by the pairing to
+alg′, equals the pairing to alg followed by the constant target map φ. On carriers the
+equality is T(φ.f) ≫ alg′.a = alg.a ≫ φ.f.

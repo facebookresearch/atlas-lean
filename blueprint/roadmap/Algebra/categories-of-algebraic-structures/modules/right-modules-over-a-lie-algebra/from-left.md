@@ -1,3 +1,6 @@
-# From Left
+# The right Lie module associated to a left representation
 
-Negating a native left representation gives right Lie coefficients.
+The right Lie module associated to a left representation.
+
+For a left Lie module `M`, define the right action by `m · x = -[x,m]` on the same scalar-
+module carrier.

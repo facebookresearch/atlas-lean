@@ -1,4 +1,6 @@
-# Nerve Homotopy
+# The simplicial homotopy induced by a natural transformation
 
-A natural transformation induces a simplicial homotopy between the
-corresponding maps on nerves.
+The simplicial homotopy induced by a natural transformation.
+
+For α : F → G, the cylinder map N(C) × Δ¹ → N(D) restricts to N(F) at endpoint 0 and N(G) at
+endpoint 1, giving a simplicial homotopy between the two nerve maps.

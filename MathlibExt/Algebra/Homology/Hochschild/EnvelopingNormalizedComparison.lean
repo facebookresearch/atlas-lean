@@ -13,13 +13,25 @@ public import MathlibExt.Algebra.Homology.Hochschild.AdjacentBarResolutionCompar
 public import MathlibExt.Algebra.Homology.Hochschild.Normalized
 
 /-!
-# Normalized Hochschild homology and enveloping resolutions
+# Normalized Hochschild chains from enveloping bar tensors
 
-The enveloping bar tensor comparison followed by factorwise
-normalization computes normalized Hochschild homology with
-arbitrary bimodule coefficients over commutative ground rings.
-Ground projectivity is required when using a projective
-enveloping resolution and the derived balanced tensor functor.
+Let k be commutative, A an associative unital k-algebra and M a
+compatible A-bimodule. With E=A⊗[k]Aᵐᵒᵖ acting on the right of M
+by m·(a⊗bᵐᵒᵖ)=bma, tensor the enveloping bar P_n=A⊗[k]A^{⊗(n+1)}.
+Its comparison with Hochschild chains followed by normalization is
+a quasi-isomorphism F_M(P_*)→N_*(A,M).
+
+On a balanced bar representative, the map has value
+[m⊗(a_0⊗a_1⊗⋯⊗a_{n+1})] ↦
+(a_{n+1}ma_0)⊗[a_1]⊗⋯⊗[a_n],
+where the classes belong to the ground module A/span_k{1}.
+
+If A is projective as a k-module, normalized Hochschild homology
+is computed by F_M applied to any projective E-resolution of the
+lifted regular E-module A. This agrees with L_n F_M(A).
+The coefficient bimodule M is arbitrary.
+
+Reference: J.-L. Loday, Cyclic Homology, §1.1.
 -/
 
 @[expose] public section
@@ -38,19 +50,33 @@ variable (k : Type u) [CommRing k] (A : Type v) [Ring A] [Algebra k A]
   [SMulCommClass A Aᵐᵒᵖ M] [SMulCommClass k A M] [SMulCommClass k Aᵐᵒᵖ M]
   [IsScalarTower k A M] [IsScalarTower k Aᵐᵒᵖ M]
 
-/-- The balanced bar tensor projects to the original normalized Hochschild complex. -/
+/-- Let k be commutative, A an associative unital k-algebra and M a
+compatible A-bimodule with commuting k-linear left and right actions.
+Put E=A⊗[k]Aᵐᵒᵖ and F_M(X)=M⊗_E X using m·(a⊗bᵐᵒᵖ)=bma.
+The bar coefficient tensor complex maps to the normalized
+Hochschild complex by balanced endpoint cancellation followed by
+the factorwise ground-unit quotient. -/
 def coefficientTensorNormalizedProjection : coefficientTensorComplex k A M ⟶
     ModuleCat.Algebra.Hochschild.normalizedChainComplex k A M :=
   (coefficientTensorChainIso k A M).hom ≫ ModuleCat.Algebra.Hochschild.normalizationProjection k A M
 
-/-- The constructed normalized projection is a quasi-isomorphism without ground projectivity. -/
+/-- Let k be commutative, A an associative unital k-algebra and M a
+compatible A-bimodule with commuting k-linear left and right actions.
+Put E=A⊗[k]Aᵐᵒᵖ and F_M(X)=M⊗_E X using m·(a⊗bᵐᵒᵖ)=bma.
+The bar-tensor-to-normalized-chain projection is a quasi-isomorphism,
+so it preserves homology in every degree. -/
 instance coefficientTensorNormalizedProjection_quasiIso :
     QuasiIso (coefficientTensorNormalizedProjection k A M) := by
   unfold coefficientTensorNormalizedProjection
   infer_instance
 
-/-- On representatives the original endpoint actions are retained, and every middle
-factor is projected to the original ground-unit quotient. -/
+/-- Let k be commutative, A an associative unital k-algebra and M a
+compatible A-bimodule with commuting k-linear left and right actions.
+Put E=A⊗[k]Aᵐᵒᵖ and F_M(X)=M⊗_E X using m·(a⊗bᵐᵒᵖ)=bma.
+For a balanced representative in degree n, its normalized value is
+[m⊗(a_0⊗⋯⊗a_{n+1})] ↦
+(a_{n+1}ma_0)⊗[a_1]⊗⋯⊗[a_n],
+with the last factor acting on M on the left and the first on the right. -/
 theorem coefficientTensorNormalizedProjection_mk_tprod
     (n : ℕ) (m : M) (a0 : A) (a : Fin (n + 1) → A) :
     letI := EnvelopingCoefficient.rightEnvelopingModule k A M
@@ -85,21 +111,32 @@ theorem coefficientTensorNormalizedProjection_mk_tprod
   exact hstart.trans
     ((congrArg (ModuleCat.Algebra.Hochschild.normalizationLevelMap k A M n).hom he).trans hn)
 
-/-- Homology of the normalized projection identifies the bar tensor with normalized
-Hochschild homology, independently of a resolution hypothesis. -/
+/-- Let k be commutative, A an associative unital k-algebra and M a
+compatible A-bimodule with commuting k-linear left and right actions.
+Put E=A⊗[k]Aᵐᵒᵖ and F_M(X)=M⊗_E X using m·(a⊗bᵐᵒᵖ)=bma.
+The bar tensor projection induces a k-module isomorphism
+H_n(F_M(P_bar))≅H_n(N_*(A,M)) for every n. -/
 def coefficientTensorNormalizedHomologyIso (n : ℕ) :
     (coefficientTensorComplex k A M).homology n ≅
       (ModuleCat.Algebra.Hochschild.normalizedChainComplex k A M).homology n :=
   _root_.isoOfQuasiIsoAt (coefficientTensorNormalizedProjection k A M) n
 
-/-- The forward normalized homology map is the original constructed projection. -/
+/-- Let k be commutative, A an associative unital k-algebra and M a
+compatible A-bimodule with commuting k-linear left and right actions.
+Put E=A⊗[k]Aᵐᵒᵖ and F_M(X)=M⊗_E X using m·(a⊗bᵐᵒᵖ)=bma.
+The forward map of H_n(F_M(P_bar))≅H_n(N_*(A,M)) is
+homology of the constructed bar-tensor normalization projection. -/
 theorem coefficientTensorNormalizedHomologyIso_hom (n : ℕ) :
     (coefficientTensorNormalizedHomologyIso k A M n).hom =
       HomologicalComplex.homologyMap (coefficientTensorNormalizedProjection k A M) n := by
   exact _root_.isoOfQuasiIsoAt_hom (coefficientTensorNormalizedProjection k A M) n
 
-/-- Normalized Hochschild homology is computed by the tensor of an projective
-resolution of the original regular enveloping target. -/
+/-- Let k be commutative, A an associative unital k-algebra and M a
+compatible A-bimodule with commuting k-linear left and right actions.
+Put E=A⊗[k]Aᵐᵒᵖ and F_M(X)=M⊗_E X using m·(a⊗bᵐᵒᵖ)=bma.
+If A is projective as a k-module and P is a projective E-resolution
+of the lifted regular module A, there is a k-module isomorphism
+H_n(N_*(A,M))≅H_n(F_M(P)). -/
 def normalizedHochschildHomologyIsoForResolution [Module.Projective k A]
     (P : ProjectiveResolution (regularEnvelopingTarget k A)) (n : ℕ) :
     (ModuleCat.Algebra.Hochschild.normalizedChainComplex k A M).homology n ≅
@@ -107,15 +144,24 @@ def normalizedHochschildHomologyIsoForResolution [Module.Projective k A]
   (_root_.isoOfQuasiIsoAt (ModuleCat.Algebra.Hochschild.normalizationProjection k A M) n).symm ≪≫
     coefficientHochschildHomologyIsoForResolution k A M P n
 
-/-- The same original normalized complex computes the derived balanced tensor. -/
+/-- Let k be commutative, A an associative unital k-algebra and M a
+compatible A-bimodule with commuting k-linear left and right actions.
+Put E=A⊗[k]Aᵐᵒᵖ and F_M(X)=M⊗_E X using m·(a⊗bᵐᵒᵖ)=bma.
+If A is projective as a k-module, the normalized Hochschild
+homology is isomorphic to L_n F_M(A), with A the lifted regular
+left E-module. -/
 def normalizedHochschildHomologyIsoDerived [Module.Projective k A] (n : ℕ) :
     (ModuleCat.Algebra.Hochschild.normalizedChainComplex k A M).homology n ≅
       ((coefficientTensorFunctor k A M).leftDerived n).obj (regularEnvelopingTarget k A) :=
   (_root_.isoOfQuasiIsoAt (ModuleCat.Algebra.Hochschild.normalizationProjection k A M) n).symm ≪≫
     coefficientHochschildHomologyIsoDerived k A M n
 
-/-- Computing the native derived object with the chosen resolution gives exactly the
-constructed normalized homology comparison. -/
+/-- Let k be commutative, A an associative unital k-algebra and M a
+compatible A-bimodule with commuting k-linear left and right actions.
+Put E=A⊗[k]Aᵐᵒᵖ and F_M(X)=M⊗_E X using m·(a⊗bᵐᵒᵖ)=bma.
+If A is projective over k, computing L_n F_M(A) with a
+projective E-resolution P after the normalized derived-tensor
+isomorphism gives exactly H_n(N_*(A,M))≅H_n(F_M(P)). -/
 theorem normalizedHochschildHomologyIsoForResolution_derived [Module.Projective k A]
     (P : ProjectiveResolution (regularEnvelopingTarget k A)) (n : ℕ) :
     (normalizedHochschildHomologyIsoDerived k A M n).hom ≫

@@ -14,13 +14,10 @@ public import Mathlib.Topology.CompactOpen
 /-!
 # Compact-open maps into a discrete space
 
-The compact-open topology on continuous maps from a compact space to a
-discrete space is discrete.  The result is exposed as a theorem returning the
-typeclass; this file deliberately installs no global instance.
-
-## Main declaration
-
-* `ContinuousMap.discreteTopology_of_compact_domain`
+For topological spaces `X` and `Y` in independent universes, if `X` is compact
+and `Y` is discrete, the space `C(X,Y)` of continuous maps with the compact-open
+topology is discrete. Every continuous map has finite image; the conditions fixing
+its value on each of its finitely many fibers form an open singleton in `C(X,Y)`.
 -/
 
 @[expose] public section
@@ -33,8 +30,9 @@ universe u v
 
 namespace ContinuousMap
 
-/-- The compact-open topology on maps from a compact space to a discrete
-space is discrete. -/
+/-- Let `X` and `Y` be topological spaces in independent universes. If `X` is
+compact and `Y` is discrete, the compact-open topology on the space `C(X,Y)` of
+continuous maps is discrete: every singleton of a continuous map is open. -/
 theorem discreteTopology_of_compact_domain
     {X : Type u} {Y : Type v}
     [TopologicalSpace X] [CompactSpace X]

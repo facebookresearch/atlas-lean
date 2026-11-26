@@ -1,3 +1,6 @@
-# Small Etale Godement Skyscrapers
+# Product of canonical geometric skyscraper sheaves
 
-The actual product of canonical geometric-point skyscrapers on the same site.
+Product of canonical geometric skyscraper sheaves.
+
+Send a coefficient family `M` to the product over all points `x` of the skyscraper sheaf with
+coefficient `M x` at the canonical geometric point.

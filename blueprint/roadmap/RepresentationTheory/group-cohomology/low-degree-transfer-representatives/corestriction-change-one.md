@@ -1,4 +1,6 @@
-# Corestriction Change One
+# The linear degree-one change-of-transversal cochain
 
-The explicit degree-one homotopy term comparing the degree-two transfer
-cochains associated to `T` and `U`.
+The linear degree-one change-of-transversal cochain.
+
+For a binary H-cochain z with coefficients in A, define B¹(z)(g) by summing ρ(t⁻¹)I(t,g) over
+T. The map z ↦ B¹(z) is k-linear.

@@ -18,20 +18,20 @@ public import Mathlib.Algebra.Module.Torsion.PrimaryComponent
 public import MathlibExt.CategoryTheory.Abelian.RightDerived.Linear
 
 /-!
-# Primary-component functors with independent scalar and module universes
+# Power-torsion functors and local cohomology
 
-Objects and maps are `Ideal.primaryComponent` and
-`Ideal.primaryComponent.map`. The scalar ring and module carriers have
-independent universes; Noetherianity and finiteness are not required.
+Let `R : Type u` be a commutative ring and `I` an ideal. For `M : ModuleCat.{v} R`, the power-
+torsion module `Γ_I(M)` consists of elements annihilated by every scalar in `I^n` for some
+natural `n`. Restriction of module maps gives an additive, `R`-linear functor with a natural
+inclusion in the identity functor.
 
-The functor is additive, scalar-linear and preserves finite limits.
-Right derivation uses injective resolutions in the chosen module category.
-Enough injectives is an explicit hypothesis at an arbitrary coefficient
-universe; the category at `max u v` has the Mathlib construction.
+The functor preserves finite limits. Given injective resolutions in the chosen module
+category, its right-derived functors define `H_I^q(-)`. Degree-zero local cohomology is
+naturally `Γ_I`, and the canonical map to the zeroth derived functor is inverse to this
+comparison. Scalar and module-carrier universes are independent.
 
-The finite-limit proof adapts the exact-kernel argument of Weibel §4.6 in
-FormalizedTextbooks.WeibelHomologicalAlgebra.Chapter04.Section06.TorsionFunctor,
-attributed there to @toskua and Avocado.
+The finite-limit argument follows the kernel characterization in Weibel, Homological Algebra,
+§4.6, attributed to @toskua and Avocado.
 -/
 
 @[expose] public section
@@ -46,7 +46,11 @@ namespace ModuleCat.Torsion
 
 variable {R : Type u} [CommRing R]
 
-/-- The actual primary-component endofunctor in the original coefficient world. -/
+/-- Power-torsion module as a functor.
+
+For an ideal `I`, the functor takes `M` to `Ideal.primaryComponent M I` and restricts each
+module map to this submodule. It acts on `ModuleCat.{v} R` with ring universe `u` independent
+of `v`. -/
 def functor (I : Ideal R) : ModuleCat.{v} R ⥤ ModuleCat.{v} R where
   obj M := ModuleCat.of R (Ideal.primaryComponent (M : Type v) I)
   map f := ModuleCat.ofHom (Ideal.primaryComponent.map I f.hom)
@@ -63,12 +67,17 @@ def functor (I : Ideal R) : ModuleCat.{v} R ⥤ ModuleCat.{v} R where
     apply Subtype.ext
     rfl
 
-/-- The native restricted map has exactly the original map on underlying elements. -/
+/-- Power-torsion functor map retains the underlying module map.
+
+For `f : M ⟶ N` and `a : Γ_I(M)`, the underlying element of `Γ_I(f)(a)` is `f(a.val)`. -/
 theorem map_val (I : Ideal R) {M N : ModuleCat.{v} R} (f : M ⟶ N)
     (a : (functor I).obj M) :
     (((functor I).map f).hom a).val = f.hom a.val := rfl
 
-/-- The functor includes naturally into the original coefficient module. -/
+/-- Natural inclusion of power torsion in its module.
+
+The subtype maps `Γ_I(M) ⟶ M` form a natural transformation from the power-torsion functor to
+the identity on the module category. -/
 def inclusion (I : Ideal R) : functor I ⟶ 𝟭 (ModuleCat.{v} R) where
   app M := ModuleCat.ofHom (Ideal.primaryComponent (M : Type v) I).subtype
   naturality {M N} f := by
@@ -76,7 +85,10 @@ def inclusion (I : Ideal R) : functor I ⟶ 𝟭 (ModuleCat.{v} R) where
     ext a
     rfl
 
-/-- Membership is annihilation by every scalar in one power of the ideal. -/
+/-- Power-torsion membership is annihilation by a whole ideal power.
+
+An element `a : M` belongs to `Γ_I(M)` exactly when some natural `n` satisfies `r • a = 0` for
+every `r ∈ I^n`. -/
 theorem mem_obj_iff (I : Ideal R) (M : ModuleCat.{v} R) (a : M) :
     a ∈ Ideal.primaryComponent (M : Type v) I ↔
       ∃ n : ℕ, ∀ r : R, r ∈ I ^ n → r • a = 0 := by
@@ -92,7 +104,10 @@ theorem mem_obj_iff (I : Ideal R) (M : ModuleCat.{v} R) (a : M) :
     rw [Submodule.mem_torsionBySet_iff]
     exact fun r => hn r r.property
 
-/-- Additivity of actual restricted maps, without a new global instance. -/
+/-- Power-torsion functor preserves addition of morphisms.
+
+For an ideal `I`, the restricted power-torsion maps preserve sums of `R`-linear module
+morphisms. -/
 theorem functor_additive (I : Ideal R) :
     (functor I : ModuleCat.{v} R ⥤ ModuleCat.{v} R).Additive where
   map_add := by
@@ -103,7 +118,10 @@ theorem functor_additive (I : Ideal R) :
     apply Subtype.ext
     rfl
 
-/-- The scalar action on morphisms is retained by the native restriction. -/
+/-- Power-torsion functor is linear over the scalar ring.
+
+For an ideal `I`, the power-torsion functor preserves `R`-scalar multiplication of module
+morphisms. -/
 theorem functor_linear (I : Ideal R) :
     (functor I : ModuleCat.{v} R ⥤ ModuleCat.{v} R).Linear R where
   map_smul := by
@@ -114,7 +132,10 @@ theorem functor_linear (I : Ideal R) :
     apply Subtype.ext
     rfl
 
-/-- Primary components preserve finite limits in every coefficient universe. -/
+/-- Power-torsion functor is left exact.
+
+The power-torsion functor preserves finite limits in `ModuleCat.{v} R`, including kernels and
+finite products. -/
 theorem functor_preservesFiniteLimits (I : Ideal R) :
     PreservesFiniteLimits (functor I : ModuleCat.{v} R ⥤ ModuleCat.{v} R) := by
   let : (functor I : ModuleCat.{v} R ⥤ ModuleCat.{v} R).Additive :=
@@ -146,14 +167,20 @@ section RightDerived
 
 variable [HasInjectiveResolutions (ModuleCat.{v} R)]
 
-/-- Actual right-derived torsion, using native injective resolutions and homology. -/
+/-- Local cohomology as the right-derived power-torsion functor.
+
+Assuming injective resolutions in `ModuleCat.{v} R`, the degree-`q` right-derived functor of
+`Γ_I` defines `localCohomologyFunctor I q` on that same module category. -/
 def localCohomologyFunctor (I : Ideal R) (q : ℕ) :
     ModuleCat.{v} R ⥤ ModuleCat.{v} R :=
   letI : (functor I : ModuleCat.{v} R ⥤ ModuleCat.{v} R).Additive :=
     functor_additive I
   (functor I).rightDerived q
 
-/-- Native right derivation retains the earned scalar linearity. -/
+/-- Local cohomology functors are linear over the scalar ring.
+
+Under the injective-resolution hypothesis, each degree-`q` local cohomology functor preserves
+`R`-scalar multiplication of morphisms. -/
 theorem localCohomologyFunctor_linear (I : Ideal R) (q : ℕ) :
     (localCohomologyFunctor I q : ModuleCat.{v} R ⥤ ModuleCat.{v} R).Linear R := by
   let : (functor I : ModuleCat.{v} R ⥤ ModuleCat.{v} R).Additive :=
@@ -163,14 +190,20 @@ theorem localCohomologyFunctor_linear (I : Ideal R) (q : ℕ) :
   change ((functor I).rightDerived q).Linear R
   infer_instance
 
-/-- The actual native degree-zero comparison, with no supplied inverse equation. -/
+/-- Canonical map from power torsion to zeroth local cohomology.
+
+Under the injective-resolution hypothesis, the right-derived degree-zero transformation gives
+`Γ_I ⟶ H_I^0`. -/
 def toLocalCohomologyZero (I : Ideal R) :
     (functor I : ModuleCat.{v} R ⥤ ModuleCat.{v} R) ⟶ localCohomologyFunctor I 0 :=
   letI : (functor I : ModuleCat.{v} R ⥤ ModuleCat.{v} R).Additive :=
     functor_additive I
   (functor I).toRightDerivedZero
 
-/-- Earned left exactness makes the native zero-degree comparison invertible. -/
+/-- Zeroth local cohomology is the power-torsion functor.
+
+Since `Γ_I` is left exact, its degree-zero right-derived functor is naturally isomorphic to
+`Γ_I`, assuming the chosen module category has injective resolutions. -/
 def localCohomologyZeroIso (I : Ideal R) :
     localCohomologyFunctor I 0 ≅ (functor I : ModuleCat.{v} R ⥤ ModuleCat.{v} R) :=
   letI : (functor I : ModuleCat.{v} R ⥤ ModuleCat.{v} R).Additive :=
@@ -179,7 +212,10 @@ def localCohomologyZeroIso (I : Ideal R) :
     functor_preservesFiniteLimits I
   (functor I).rightDerivedZeroIsoSelf
 
-/-- The native zero-degree maps cancel on the actual primary-component functor. -/
+/-- Power-torsion comparison with degree-zero local cohomology is inverse.
+
+The canonical map `Γ_I ⟶ H_I^0` followed by the forward map of `localCohomologyZeroIso I` is
+the identity transformation of `Γ_I`. -/
 theorem toLocalCohomologyZero_comp_zeroIso (I : Ideal R) :
     (toLocalCohomologyZero I :
       (functor I : ModuleCat.{v} R ⥤ ModuleCat.{v} R) ⟶ localCohomologyFunctor I 0) ≫

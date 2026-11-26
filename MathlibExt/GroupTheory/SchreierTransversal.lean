@@ -15,13 +15,16 @@ public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Tactic.Group
 
 /-!
-# Pure Schreier transversal representatives, factors and tuple scans
+# Schreier representatives and subgroup factors
 
-The actual right transversal determines its representatives, subgroup factors,
-right-multiplication action and every finite tuple scan. These constructions
-use only a group and subgroup; no representation or cohomology dependency is
-required. The original API names, universes and right-transversal conventions
-are preserved.
+Let H be a subgroup of G and T a right transversal, so every g ∈ G has a unique decomposition
+g = h·t with h ∈ H and t ∈ T. For t ∈ T, write tg = a(t,g)·r(t,g). The new representatives
+satisfy r(t,g₁g₂) = r(r(t,g₁),g₂), and the factors satisfy a(t,g₁g₂) = a(t,g₁)a(r(t,g₁),g₂).
+
+For a finite tuple (g₀,…,gₙ₋₁), the representative scan starts at t and updates by right
+multiplication. Its subgroup factors multiply to the subgroup component of t times each
+partial product. Contracting adjacent tuple entries or removing the first entry gives the
+corresponding contractions and tails of the factor and representative scans.
 -/
 
 @[expose] public section
@@ -34,27 +37,34 @@ universe u
 
 variable {G : Type u} [Group G] {H : Subgroup G}
 
-/-- The representative in a right transversal obtained after multiplying a
-representative by a group element. -/
+/-- The new representative after right multiplication.
+
+For t ∈ T and g ∈ G, r(t,g) is the unique representative in T for which tg = h·r(t,g) with h ∈
+H. -/
 noncomputable def schreierRep (T : H.RightTransversal)
     (t : (T : Set G)) (g : G) : (T : Set G) :=
   (T.2.equiv ((t : G) * g)).2
 
-/-- The subgroup factor in the right-transversal decomposition of `t * g`. -/
+/-- The subgroup factor after right multiplication.
+
+For t ∈ T and g ∈ G, a(t,g) is the unique element of H satisfying tg = a(t,g)·r(t,g). -/
 noncomputable def schreierFactor (T : H.RightTransversal)
     (t : (T : Set G)) (g : G) : H :=
   (T.2.equiv ((t : G) * g)).1
 
-/-- The Schreier factor and new representative multiply back to `t * g`. -/
+/-- The Schreier decomposition of a product.
+
+The subgroup factor and representative satisfy a(t,g)·r(t,g) = tg in G. -/
 theorem schreierFactor_mul_schreierRep (T : H.RightTransversal)
     (t : (T : Set G)) (g : G) :
     (schreierFactor T t g : G) * (schreierRep T t g : G) =
       (t : G) * g :=
   T.2.equiv_fst_mul_equiv_snd ((t : G) * g)
 
-/-- Rewriting the Schreier factor after multiplying by the inverse of the
-starting representative.  This is the coefficient-action identity used by
-degree-one corestriction. -/
+/-- The inverse representative formula for a subgroup factor.
+
+The decomposition tg = a(t,g)r(t,g) implies t⁻¹a(t,g) = g r(t,g)⁻¹. The multiplication order
+is retained in the ambient group G. -/
 theorem inv_mul_schreierFactor (T : H.RightTransversal)
     (t : (T : Set G)) (g : G) :
     (t : G)⁻¹ * (schreierFactor T t g : G) =
@@ -63,8 +73,9 @@ theorem inv_mul_schreierFactor (T : H.RightTransversal)
     T.2.equiv_fst_eq_mul_inv ((t : G) * g)]
   group
 
-/-- Multiplication on the right gives a genuine right action on transversal
-representatives. -/
+/-- Successive right multiplication of representatives.
+
+For g₁,g₂ ∈ G, the representative obtained from tg₁g₂ is r(t,g₁g₂) = r(r(t,g₁),g₂). -/
 theorem schreierRep_mul (T : H.RightTransversal)
     (t : (T : Set G)) (g₁ g₂ : G) :
     schreierRep T t (g₁ * g₂) =
@@ -93,7 +104,9 @@ theorem schreierRep_mul (T : H.RightTransversal)
             (schreierFactor T t g₁)
             ((schreierRep T t g₁ : G) * g₂))
 
-/-- The subgroup factors satisfy the Schreier cocycle identity. -/
+/-- The multiplicative Schreier factor identity.
+
+For g₁,g₂ ∈ G, the factors in H satisfy a(t,g₁g₂) = a(t,g₁)a(r(t,g₁),g₂). -/
 theorem schreierFactor_mul (T : H.RightTransversal)
     (t : (T : Set G)) (g₁ g₂ : G) :
     schreierFactor T t (g₁ * g₂) =
@@ -125,12 +138,18 @@ theorem schreierFactor_mul (T : H.RightTransversal)
             (schreierFactor T t g₁)
             ((schreierRep T t g₁ : G) * g₂))
 
+/-- The representative after multiplication by one.
+
+For each t ∈ T, the representative r(t,1) equals t. -/
 @[simp]
 theorem schreierRep_one (T : H.RightTransversal)
     (t : (T : Set G)) : schreierRep T t 1 = t := by
   simpa only [schreierRep, mul_one] using
     T.2.equiv_snd_eq_self_of_mem_of_one_mem H.one_mem t.property
 
+/-- The subgroup factor after multiplication by one.
+
+For each t ∈ T, the subgroup factor a(t,1) equals the identity of H. -/
 @[simp]
 theorem schreierFactor_one (T : H.RightTransversal)
     (t : (T : Set G)) : schreierFactor T t 1 = 1 := by
@@ -139,7 +158,10 @@ theorem schreierFactor_one (T : H.RightTransversal)
   simpa only [mul_one] using congrArg Subtype.val
     (T.2.equiv_fst_eq_one_of_mem_of_one_mem H.one_mem t.property)
 
-/-- Right multiplication by a group element permutes a right transversal. -/
+/-- The permutation of representatives defined by a group element.
+
+For fixed g ∈ G, the map t ↦ r(t,g) is an equivalence of T with itself. Its inverse is t ↦
+r(t,g⁻¹). -/
 noncomputable def schreierRepEquiv (T : H.RightTransversal) (g : G) :
     (T : Set G) ≃ (T : Set G) where
   toFun t := schreierRep T t g
@@ -151,6 +173,9 @@ noncomputable def schreierRepEquiv (T : H.RightTransversal) (g : G) :
     change schreierRep T (schreierRep T t g⁻¹) g = t
     rw [← schreierRep_mul, inv_mul_cancel, schreierRep_one]
 
+/-- Values of the representative permutation.
+
+The permutation of T associated to g sends t to the Schreier representative r(t,g). -/
 @[simp]
 theorem schreierRepEquiv_apply (T : H.RightTransversal)
     (g : G) (t : (T : Set G)) :
@@ -165,13 +190,17 @@ universe u
 
 variable {G : Type u} [Group G] {H : Subgroup G}
 
-/-- Successive right-transversal representatives obtained by scanning a
-finite tuple of group elements, including the initial representative. -/
+/-- The representative scan of a finite tuple.
+
+For g : Fin n → G, the scan at i ∈ Fin (n+1) is r(t,Pᵢ), where Pᵢ = g₀⋯gᵢ₋₁ is the ordered
+partial product and P₀ = 1. -/
 noncomputable def schreierRepScan {n : ℕ} (T : H.RightTransversal)
     (t : (T : Set G)) (g : Fin n → G) : Fin (n + 1) → (T : Set G) :=
   fun i ↦ T.schreierRep t (Fin.partialProd g i)
 
-/-- The Schreier scan starts at the supplied transversal representative. -/
+/-- The initial representative in a tuple scan.
+
+The representative scan of g : Fin n → G begins at the supplied t ∈ T. -/
 @[simp]
 theorem schreierRepScan_get_zero {n : ℕ} (T : H.RightTransversal)
     (t : (T : Set G)) (g : Fin n → G) :
@@ -179,7 +208,10 @@ theorem schreierRepScan_get_zero {n : ℕ} (T : H.RightTransversal)
   unfold schreierRepScan
   rw [Fin.partialProd_zero, schreierRep_one]
 
-/-- Successor computation for the Schreier representative scan. -/
+/-- One step of the representative scan.
+
+If rᵢ is the representative before coordinate i, the representative after that coordinate is
+rᵢ₊₁ = r(rᵢ,gᵢ). -/
 @[simp]
 theorem schreierRepScan_get_succ {n : ℕ} (T : H.RightTransversal)
     (t : (T : Set G)) (g : Fin n → G) (i : Fin n) :
@@ -188,8 +220,11 @@ theorem schreierRepScan_get_succ {n : ℕ} (T : H.RightTransversal)
   unfold schreierRepScan
   rw [Fin.partialProd_succ, schreierRep_mul]
 
-/-- The representative scan of a contracted tuple is the corresponding
-subsequence of the original representative scan. -/
+/-- Representative scans under adjacent contraction.
+
+Apply Fin.contractNth j using multiplication to g : Fin (n+1) → G. The scan of the contracted
+tuple at i equals the original scan at j.succ.succAbove i, retaining the exact endpoint and
+index conventions of the contraction. -/
 theorem schreierRepScan_contractNth {n : ℕ} (T : H.RightTransversal)
     (t : (T : Set G)) (g : Fin (n + 1) → G) (j : Fin (n + 1))
     (i : Fin (n + 1)) :
@@ -199,8 +234,9 @@ theorem schreierRepScan_contractNth {n : ℕ} (T : H.RightTransversal)
   have h := Fin.partialProd_contractNth g j
   exact congrArg (fun q ↦ T.schreierRep t (q i)) h
 
-/-- Scanning the tail after the first representative update is the tail of
-the original scan. -/
+/-- The representative scan after the first coordinate.
+
+Scanning the tail of g : Fin (n+1) → G from r(t,g₀) gives, at i, the original scan at i+1. -/
 theorem schreierRepScan_tail {n : ℕ} (T : H.RightTransversal)
     (t : (T : Set G)) (g : Fin (n + 1) → G) (i : Fin (n + 1)) :
     schreierRepScan T (T.schreierRep t (g 0)) (Fin.tail g) i =
@@ -208,13 +244,18 @@ theorem schreierRepScan_tail {n : ℕ} (T : H.RightTransversal)
   unfold schreierRepScan
   rw [← T.schreierRep_mul, ← Fin.partialProd_succ']
 
-/-- Tuple of subgroup factors in the successive Schreier decompositions. -/
+/-- The subgroup factors of a finite tuple scan.
+
+For the representative scan rᵢ of g : Fin n → G, the factor tuple has coordinate a(rᵢ,gᵢ) ∈ H. -/
 noncomputable def schreierFactorTuple {n : ℕ} (T : H.RightTransversal)
     (t : (T : Set G)) (g : Fin n → G) : Fin n → H :=
   fun i ↦ T.schreierFactor
     (schreierRepScan T t g i.castSucc) (g i)
 
-/-- Closed formula for each tuple factor in the ambient group. -/
+/-- The coordinate formula for tuple factors in the ambient group.
+
+If rᵢ and rᵢ₊₁ are consecutive representatives, the i-th subgroup factor has ambient value rᵢ
+gᵢ rᵢ₊₁⁻¹. -/
 theorem schreierFactorTuple_coe {n : ℕ} (T : H.RightTransversal)
     (t : (T : Set G)) (g : Fin n → G) (i : Fin n) :
     (schreierFactorTuple T t g i : G) =
@@ -225,8 +266,11 @@ theorem schreierFactorTuple_coe {n : ℕ} (T : H.RightTransversal)
   congr 2
   exact congrArg Subtype.val (schreierRepScan_get_succ T t g i).symm
 
-/-- Contracting adjacent group entries contracts the corresponding
-Schreier-factor tuple by subgroup multiplication. -/
+/-- Factor tuples under adjacent contraction.
+
+Contracting g by Fin.contractNth j using multiplication gives the same subgroup factor tuple
+as contracting the factor tuple by multiplication in H. The same finite index j is used on
+both sides. -/
 theorem schreierFactorTuple_contractNth {n : ℕ}
     (T : H.RightTransversal) (t : (T : Set G))
     (g : Fin (n + 1) → G) (j : Fin (n + 1)) :
@@ -271,8 +315,10 @@ theorem schreierFactorTuple_contractNth {n : ℕ}
     rw [schreierFactorTuple_coe]
     simp only [Fin.castSucc_succ]
 
-/-- The factor tuple of the tail after the first representative update is
-the tail of the original factor tuple. -/
+/-- The subgroup factor tuple after the first coordinate.
+
+The factor tuple of the tail of g, started at r(t,g₀), is the tail of the factor tuple of g
+started at t. -/
 theorem schreierFactorTuple_tail {n : ℕ} (T : H.RightTransversal)
     (t : (T : Set G)) (g : Fin (n + 1) → G) :
     schreierFactorTuple T (T.schreierRep t (g 0)) (Fin.tail g) =
@@ -285,7 +331,9 @@ theorem schreierFactorTuple_tail {n : ℕ} (T : H.RightTransversal)
     schreierRepScan_tail, schreierRepScan_tail]
   rfl
 
-/-- Zeroth tuple factor is the ordinary first Schreier factor. -/
+/-- The first subgroup factor of a tuple.
+
+For a nonempty tuple g, its zeroth factor is a(t,g₀). -/
 @[simp]
 theorem schreierFactorTuple_zero {n : ℕ} (T : H.RightTransversal)
     (t : (T : Set G)) (g : Fin (n + 1) → G) :
@@ -294,8 +342,9 @@ theorem schreierFactorTuple_zero {n : ℕ} (T : H.RightTransversal)
   rw [show (0 : Fin (n + 1)).castSucc = (0 : Fin (n + 2)) from rfl,
     schreierRepScan_get_zero]
 
-/-- The second tuple factor specializes to the factor at the representative
-obtained after the first coordinate. -/
+/-- The second subgroup factor of a tuple.
+
+For a tuple with at least two entries, its factor at coordinate 1 is a(r(t,g₀),g₁). -/
 @[simp]
 theorem schreierFactorTuple_one {n : ℕ} (T : H.RightTransversal)
     (t : (T : Set G)) (g : Fin (n + 2) → G) :
@@ -307,8 +356,9 @@ theorem schreierFactorTuple_one {n : ℕ} (T : H.RightTransversal)
     show (0 : Fin (n + 2)).castSucc = (0 : Fin (n + 3)) from rfl,
     schreierRepScan_get_zero]
 
-/-- The third tuple factor specializes to the factor after two successive
-representative updates. -/
+/-- The third subgroup factor of a tuple.
+
+For a tuple with at least three entries, its factor at coordinate 2 is a(r(r(t,g₀),g₁),g₂). -/
 @[simp]
 theorem schreierFactorTuple_two {n : ℕ} (T : H.RightTransversal)
     (t : (T : Set G)) (g : Fin (n + 3) → G) :
@@ -323,7 +373,10 @@ theorem schreierFactorTuple_two {n : ℕ} (T : H.RightTransversal)
     show (0 : Fin (n + 3)).castSucc = (0 : Fin (n + 4)) from rfl,
     schreierRepScan_get_zero]
 
-/-- Partial products of the actual Schreier factors are the original complement projection. -/
+/-- Partial products of subgroup factors.
+
+For any i ∈ Fin (n+1), the ordered partial product of the first i subgroup factors equals the
+H-component in the right-transversal decomposition of t·(g₀⋯gᵢ₋₁). -/
 theorem factorTuple_partialProd (T : H.RightTransversal) {n : ℕ} (t : (T : Set G)) (x : Fin n → G)
     (i : Fin (n + 1)) :
     Fin.partialProd (T.schreierFactorTuple t x) i =

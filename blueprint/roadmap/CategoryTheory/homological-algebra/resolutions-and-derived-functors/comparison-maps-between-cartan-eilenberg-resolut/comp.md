@@ -1,10 +1,8 @@
-# Comp
+# Composition of Cartan–Eilenberg comparisons
 
-The composite of two supplied comparisons of Cartan--Eilenberg
-resolutions.  Its four underlying chain maps are the composites of the
-constituents; the endpoint lifts are transported along
-`boundaryFromMap_comp` and `homologyMap_comp`, and the horseshoe
-comparisons are the composites of the constituent horseshoe comparisons
-transported along `boundaryCyclesHomologyMap_comp` and
-`cyclesTermBoundaryMap_comp`.  An arbitrary comparison over `g ≫ h` is
-not asserted to equal this composite.
+Let C be abelian, L,L′ nonnegative chain complexes, P and Q chosen Cartan–Eilenberg resolutions
+of L and L′, and g : L → L′ a chain map. Let F be a comparison of P and Q over g, with boundary,
+homology, cycle and term resolution maps in each original degree. For a third resolution R of L″
+and a comparison G : Q → R over h : L′ → L″, the composite comparison P → R covers h ∘ g. Each
+of its four underlying chain-map families is the composite of the corresponding families of F
+and G.

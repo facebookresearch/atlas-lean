@@ -14,13 +14,17 @@ public import Mathlib.LinearAlgebra.Alternating.DomCoprod
 public import Mathlib.GroupTheory.Perm.Finite
 
 /-!
-# shuffle cosets and ordered shuffles
+# Block-permutation cosets and ordered shuffles
 
-The native cosets modulo permutations within each of two blocks are in
-bijection with the ordered shuffle type. The map records the
-set of left-block positions. Its inverse is the ordered
-shuffle representative, conjugated by `finSumFinEquiv`. Empty blocks are
-included. This is a counting-free identification, with no factorial division.
+For B = Fin p ⊕ Fin q, quotient the permutation group of B by right composition with
+permutations of each block separately. A coset determines the p-element set of images of the
+left block under the standard equivalence B ≃ Fin (p + q). Conversely, each such set
+determines a unique ordered (p, q)-shuffle.
+
+These maps give equivalences from the block-permutation coset space to p-element position sets
+and to ordered shuffles. The inverse assigns the coset of the ordered shuffle transported back
+to B. Both blocks may be empty, and the identification uses position sets without division by
+factorials.
 -/
 
 @[expose] public section
@@ -36,7 +40,10 @@ variable (p q : ℕ)
 local notation "B" => Fin p ⊕ Fin q
 local notation "e" => (finSumFinEquiv : B ≃ Fin (p + q))
 
-/-- The left positions of an arbitrary block permutation. -/
+/-- Let p, q : ℕ, B = Fin p ⊕ Fin q, and e : B ≃ Fin (p + q) be finSumFinEquiv. Let H be the
+subgroup of permutations of B that permute each block separately. For a permutation σ of B,
+blockLeftPositions p q σ is the p-element subset {e(σ(Sum.inl i)) | i : Fin p} of Fin (p + q).
+The embedding of the left block makes this set have cardinality p. -/
 def blockLeftPositions (σ : Equiv.Perm B) : Set.powersetCard (Fin (p + q)) p :=
   Set.powersetCard.ofFinEmb p _
     ⟨fun i => e (σ (Sum.inl i)),
@@ -65,7 +72,11 @@ theorem blockLeftPositions_rel (σ τ : Equiv.Perm B)
   · rintro ⟨i, hi⟩
     exact ⟨sl i, hi⟩
 
-/-- The left-position map on native shuffle cosets. -/
+/-- Let p, q : ℕ, B = Fin p ⊕ Fin q, and e : B ≃ Fin (p + q) be finSumFinEquiv. Let H be the
+subgroup of permutations of B that permute each block separately. The left-position map
+descends to the coset space Equiv.Perm.ModSumCongr (Fin p) (Fin q). A coset represented by σ
+is sent to {e(σ(Sum.inl i)) | i : Fin p}; right composition with an element of H preserves
+this set. -/
 def cosetLeftPositions (c : Equiv.Perm.ModSumCongr (Fin p) (Fin q)) :
     Set.powersetCard (Fin (p + q)) p :=
   Quotient.liftOn' c (blockLeftPositions p q) (blockLeftPositions_rel p q)
@@ -74,7 +85,10 @@ def cosetLeftPositions (c : Equiv.Perm.ModSumCongr (Fin p) (Fin q)) :
 theorem cosetLeftPositions_mk (σ : Equiv.Perm B) :
     cosetLeftPositions p q (Quotient.mk'' σ) = blockLeftPositions p q σ := rfl
 
-/-- The ordered shuffle represented on the native block-sum index. -/
+/-- Let p, q : ℕ, B = Fin p ⊕ Fin q, and e : B ≃ Fin (p + q) be finSumFinEquiv. Let H be the
+subgroup of permutations of B that permute each block separately. An ordered shuffle s with
+permutation σ on Fin (p + q) determines the block-sum permutation e⁻¹ ∘ σ ∘ e. Its transport
+along e is σ, and its coset is the inverse image of s under the coset-to-shuffle equivalence. -/
 def cosetRepresentative (s : Shuffle p q) : Equiv.Perm B :=
   (Equiv.permCongr e).symm s.perm
 
@@ -109,7 +123,11 @@ theorem blockLeftPositions_representative (s : Shuffle p q) :
   intro k
   simp only [mem_blockLeftPositions, cosetRepresentative_front, mem_leftPositions_iff]
 
-/-- Equal left positions imply equal native shuffle cosets. -/
+/-- Let p, q : ℕ, B = Fin p ⊕ Fin q, and e : B ≃ Fin (p + q) be finSumFinEquiv. Let H be the
+subgroup of permutations of B that permute each block separately. The map from
+Equiv.Perm.ModSumCongr (Fin p) (Fin q) to p-element position sets is injective. If two cosets
+have the same images of the left block in Fin (p + q), their representatives differ by right
+composition with a permutation in H. -/
 theorem cosetLeftPositions_injective : Function.Injective (cosetLeftPositions p q) := by
   intro c d hcd
   induction c using Quotient.inductionOn' with
@@ -130,19 +148,31 @@ theorem cosetLeftPositions_injective : Function.Injective (cosetLeftPositions p 
       simp only [Equiv.Perm.coe_mul, Function.comp_apply, Equiv.apply_symm_apply]
       exact hj'.trans (σ.apply_symm_apply (τ (Sum.inl i))).symm
 
-/-- The ordered representative reaches every finite left-position set. -/
+/-- Let p, q : ℕ, B = Fin p ⊕ Fin q, and e : B ≃ Fin (p + q) be finSumFinEquiv. Let H be the
+subgroup of permutations of B that permute each block separately. Every p-element subset L of
+Fin (p + q) is the left-position set of a block-permutation coset. A representative is e⁻¹ ∘
+σ_L ∘ e, where σ_L is the unique shuffle increasing on both blocks and having left positions
+L. -/
 theorem cosetLeftPositions_surjective : Function.Surjective (cosetLeftPositions p q) := by
   intro a
   refine ⟨Quotient.mk'' (cosetRepresentative p q (ofLeftPositions a)), ?_⟩
   rw [cosetLeftPositions_mk, blockLeftPositions_representative, leftPositions_ofLeftPositions]
 
-/-- The canonical ordered-position equivalence of the shuffle coset. -/
+/-- Let p, q : ℕ, B = Fin p ⊕ Fin q, and e : B ≃ Fin (p + q) be finSumFinEquiv. Let H be the
+subgroup of permutations of B that permute each block separately. The left-position map gives
+an equivalence Equiv.Perm.ModSumCongr (Fin p) (Fin q) ≃ Set.powersetCard (Fin (p + q)) p. It
+sends the coset of σ to the image of its left block and inverts this map by choosing the
+ordered representative of each position set. -/
 def cosetPositionsEquiv : Equiv.Perm.ModSumCongr (Fin p) (Fin q) ≃
     Set.powersetCard (Fin (p + q)) p :=
   Equiv.ofBijective (cosetLeftPositions p q)
     ⟨cosetLeftPositions_injective p q, cosetLeftPositions_surjective p q⟩
 
-/-- The native coset index agrees with the ordered-shuffle index. -/
+/-- Let p, q : ℕ, B = Fin p ⊕ Fin q, and e : B ≃ Fin (p + q) be finSumFinEquiv. Let H be the
+subgroup of permutations of B that permute each block separately. The left-position
+equivalence followed by the position-set-to-shuffle equivalence gives Equiv.Perm.ModSumCongr
+(Fin p) (Fin q) ≃ Shuffle p q. Its inverse sends a shuffle with permutation σ to the coset of
+e⁻¹ ∘ σ ∘ e; the equivalence includes p = 0 and q = 0. -/
 def cosetEquiv : Equiv.Perm.ModSumCongr (Fin p) (Fin q) ≃ Shuffle p q :=
   (cosetPositionsEquiv p q).trans equivLeftPositions.symm
 

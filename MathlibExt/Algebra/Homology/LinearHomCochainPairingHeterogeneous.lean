@@ -8,10 +8,25 @@ module
 public import MathlibExt.Algebra.Homology.LinearHomCochainPairingHeterogeneousEngine
 
 /-!
-# Heterogeneous diagram laws for linear-Hom cochain pairings
+# Associativity and units from compatible Hom pairing diagrams
 
-Chain-level associativity and left/right unit laws induced by compatible
-chain coproduct and coefficient-product diagrams.
+Let R be a commutative ring and work with nonnegative chain complexes and
+coefficient modules in ModuleCat R, with carriers in universe u. The Hom
+cochain complex has degree n term Hom_R(K_n, M). Its pairings are induced
+by chain maps into total tensor products and coefficient tensor pairings.
+
+Associativity allows distinct intermediate and output objects. With
+c : Kᵣ → Kₗ and a : Mₗ → Mᵣ, the chain maps satisfy
+α ∘ (Δ₁₂ ⊗ id) ∘ Δₗ ∘ c = (id ⊗ Δ₂₃) ∘ Δᵣ, and the coefficient maps satisfy
+a ∘ μₗ ∘ (μ₁₂ ⊗ id) = μᵣ ∘ (id ⊗ μ₂₃) ∘ α.
+These two equations imply associativity of the Hom cochain pairings after
+precomposition by c, postcomposition by a, and the identification
+(p + q) + r = p + (q + r).
+
+For a chain map ε : Kᵤ → R[0] and a coefficient map e : R → U, the
+degree-zero cochain e ∘ ε₀ is a left or right unit when the corresponding
+chain counit and coefficient unit diagrams commute. The resulting identities
+use the tensor unitors and identify 0 + q = q or p + 0 = p.
 -/
 
 @[expose] public section

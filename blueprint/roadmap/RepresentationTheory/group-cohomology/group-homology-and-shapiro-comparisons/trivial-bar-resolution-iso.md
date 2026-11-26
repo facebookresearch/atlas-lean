@@ -1,5 +1,5 @@
-# Trivial Bar Resolution Iso
+# Trivial-coefficient group homology computed by the bar resolution
 
-Native group homology with trivial coefficients, computed from Mathlib's
-bar resolution. This hides the classical decidable-equality choice required
-by `groupHomologyIso`.
+For a commutative ring k and group G in universe u, the bar
+resolution P of k_triv computes the isomorphism
+H_n(G,k_triv)≅H_n((k_triv⊗P)_G) for every n∈ℕ.

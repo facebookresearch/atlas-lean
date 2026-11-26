@@ -16,14 +16,16 @@ public import Mathlib.Algebra.Category.ModuleCat.Ulift
 public import Mathlib.Algebra.Homology.Additive
 
 /-!
-# Chevalley–Eilenberg coefficient maps in independent universes
+# Joint CE coefficient maps in independent carrier universes
 
-A Lie homomorphism and a compatible coefficient homomorphism induce a chain map between
-Chevalley–Eilenberg complexes after universe lifting. The components apply the exterior-power
-map and coefficient map to each exterior tensor.
+Let `R` be a commutative ring, `f : L → L'` a Lie homomorphism, and `g : M → N` a ground-
+linear coefficient map intertwining the Lie action along `f`. The degree formula `a ⊗ m ↦
+⋀ⁿ(f)(a) ⊗ g(m)` commutes with the coefficient CE differential.
 
-Source and target Lie algebras and coefficient modules may have independent carrier universes.
-All comparisons retain the ground-ring action.
+Lifting the source and target complexes into their joint carrier universe gives a chain map
+with the same formula under `up`. For coefficients restricted along `f`, the coefficient map
+is the identity. The induced restriction homology map retains independent source and target
+Lie carrier universes.
 -/
 
 @[expose] public section
@@ -42,7 +44,10 @@ attribute [local implicit_reducible] coefficientComplex
 variable (R : Type u) [CommRing R]
 variable (L : Type v) [LieRing L] [LieAlgebra R L]
 
-/-- Apply the universe lift to the coefficient complex. -/
+/-- The module-functor lift of a CE coefficient complex.
+
+Apply the coefficient module lift functor degreewise to the full CE chain complex, taking
+values in the joint scalar, Lie, coefficient, and lift universe. -/
 def coefficientComplexULift (M : LieModuleCat.{w} R L) :
     ChainComplex (ModuleCat.{max u v w z} R) ℕ :=
   ((ModuleCat.uliftFunctor.{z, max u v w} R).mapHomologicalComplex
@@ -54,7 +59,10 @@ variable {L' : Type v'} [LieRing L'] [LieAlgebra R L']
 variable (f : L →ₗ⁅R⁆ L')
 variable (M : LieModuleCat.{w} R L) (N : LieModuleCat.{w'} R L')
 
-/-- The CE chain map, placed in the common lifted module universe. -/
+/-- The lifted CE chain map of a compatible Lie and coefficient pair.
+
+A Lie map `f` and an equivariant coefficient map `g` induce a chain map after lifting both
+complexes to the common carrier universe. -/
 def coefficientLieComplexMapULift (g : M →ₗ⁅R,L⁆ LieModuleCat.restrictObj f N) :
     coefficientComplexULift.{u,v,w,max u v v' w w'} R L M ⟶
       coefficientComplexULift.{u,v',w',max u v v' w w'} R L' N where
@@ -87,7 +95,9 @@ def coefficientLieComplexMapULift (g : M →ₗ⁅R,L⁆ LieModuleCat.restrictOb
         ULift.up (coefficientLieDegreeMap R L f M N g j (0 : (⋀[R]^j L) ⊗[R] M))
       rw [map_zero]
 
-/-- The lifted chain map keeps the concrete exterior and coefficient formula. -/
+/-- The tensor component of a lifted joint CE map.
+
+The degree-`n` map sends `up(a ⊗ m)` to `up(⋀ⁿ(f)(a) ⊗ g(m))`. -/
 theorem coefficientLieComplexMapULift_f_tmul
     (g : M →ₗ⁅R,L⁆ LieModuleCat.restrictObj f N) (n : ℕ)
     (a : ⋀[R]^n L) (m : M) :
@@ -103,12 +113,19 @@ section Restriction
 variable {L' : Type v'} [LieRing L'] [LieAlgebra R L']
 variable (f : L →ₗ⁅R⁆ L') (N : LieModuleCat.{w} R L')
 
-/-- The restriction map for independent Lie algebra universes. -/
+/-- The lifted CE coefficient restriction map of a Lie homomorphism.
+
+For an `L'`-coefficient module `N`, use the identity coefficient map from its action
+restricted along `f` to its target action, obtaining a map between lifted CE complexes. -/
 def coefficientRestrictionMapULift :
     coefficientComplexULift.{u,v,w,max u v v' w} R L (LieModuleCat.restrictObj f N) ⟶
       coefficientComplexULift.{u,v',w,max u v v' w} R L' N :=
   coefficientLieComplexMapULift R L f (LieModuleCat.restrictObj f N) N LieModuleHom.id
 
+/-- The tensor formula for lifted CE coefficient restriction.
+
+The restriction map applies the exterior map of `f` and retains the coefficient element under
+the common lift. -/
 @[simp]
 theorem coefficientRestrictionMapULift_f_tmul (n : ℕ) (a : ⋀[R]^n L) (m : N) :
     ((coefficientRestrictionMapULift R L f N).f n).hom (ULift.up (a ⊗ₜ[R] m)) =
@@ -116,7 +133,10 @@ theorem coefficientRestrictionMapULift_f_tmul (n : ℕ) (a : ⋀[R]^n L) (m : N)
   rw [coefficientRestrictionMapULift, coefficientLieComplexMapULift_f_tmul,
     LieModuleHom.id_apply]
 
-/-- Restriction induces the homology map of the lifted CE complexes. -/
+/-- The homology map of lifted CE coefficient restriction.
+
+Take the degree-`n` homology map of the chain map from restricted `L`-coefficients to their
+`L'`-coefficient complex. -/
 def coefficientRestrictionHomologyMapULift (n : ℕ) :
     (coefficientComplexULift.{u,v,w,max u v v' w} R L
       (LieModuleCat.restrictObj f N)).homology n ⟶

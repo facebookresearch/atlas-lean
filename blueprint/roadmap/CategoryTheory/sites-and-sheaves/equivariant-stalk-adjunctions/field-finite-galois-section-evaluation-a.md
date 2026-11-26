@@ -1,3 +1,6 @@
-# Field Finite Galois Section Evaluation Add Equiv
+# Finite Galois inverse sheaf sections are fixing subgroup invariants
 
-The actual R(Spec L) group uses the accepted finite-algebra comparison and SAME evaluation.
+Finite Galois inverse sheaf sections are fixing subgroup invariants.
+
+Sections of the invariant inverse sheaf on the finite Galois étale object are additively
+equivalent to coefficients fixed by the associated fixing subgroup.

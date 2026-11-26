@@ -1,3 +1,6 @@
-# Field Equivariant Stalk To Inverse fac
+# Inverse sheaf map has its ordinary skyscraper transpose
 
-The factorization retains the SAME ordinary point/skyscraper adjoint.
+Inverse sheaf map has its ordinary skyscraper transpose.
+
+Composing the inverse-sheaf map with the invariant cone projection gives the ordinary stalk-
+skyscraper transpose.

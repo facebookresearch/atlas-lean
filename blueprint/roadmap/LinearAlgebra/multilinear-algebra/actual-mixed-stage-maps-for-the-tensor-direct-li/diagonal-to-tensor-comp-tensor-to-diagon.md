@@ -1,4 +1,10 @@
-# Diagonal To Tensor comp tensor To Diagonal
+# Forward tensor comparison after the return map
 
-The inverse candidate followed by the forward map is identity on the
-actual factor-colimit tensor product.
+Let R be a commutative semiring, ι a preorder with decidable
+equality, and M_a, N_a R-modules with additive commutative monoid structures.
+Let f_ab : M_a → M_b and g_ab : N_a → N_b be R-linear transitions
+for a ≤ b. Write D for their simultaneous tensor direct-limit module.
+Assume both transition families satisfy identity and composition.
+Assume also that ι is directed.
+The return map followed by the forward comparison is the identity
+of (lim M) ⊗[R] (lim N).

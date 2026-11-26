@@ -1,4 +1,6 @@
-# Partial Total Zero Column Stable Target Iso
+# The zero-column stable-target interval comparison
 
-The eta-owned terminal right `E` object is the direct zero-column stable
-target.
+The zero-column stable-target interval comparison.
+
+Extending the upper endpoint to the abutment identifies the corresponding spectral `E` object
+with the stage-zero stable interval.

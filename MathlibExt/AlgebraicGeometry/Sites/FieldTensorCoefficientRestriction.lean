@@ -13,7 +13,22 @@ public import MathlibExt.RepresentationTheory.Homological.ContCohomology.Discret
 public import MathlibExt.AlgebraicGeometry.Sites.FieldPointTensorCoefficients
 public import MathlibExt.AlgebraicGeometry.Sites.EtaleGaloisCohomologyComparison
 
-/-! # Genuine restriction of original field coefficient tensors and cups -/
+/-!
+# Restriction of Galois tensor coefficients and tensor sheaves
+
+Let Ω/k and Ψ/K be separable closures in independent universes u and v,
+with coefficient groups in d = max(u, v, r).
+For a continuous homomorphism φ : Gal(Ψ/K) → Gal(Ω/k), restriction
+preserves the diagonal integer tensor coefficient:
+Res_φ(M ⊗[ℤ] N) ≅ Res_φ(M) ⊗[ℤ] Res_φ(N).
+Its underlying map is the identity on the tensor group.
+
+For compatible base and closure embeddings in the same field universe u,
+the stalk change gives f*(F ⊗_sheaf H) ≅ f*F ⊗_sheaf f*H.
+Its square uses the tensor of the two equivariant stalk changes.
+Continuous cohomology restriction preserves the tensor cup product
+in degree p + q, retaining the coefficient order.
+-/
 
 @[expose] public section
 noncomputable section
@@ -32,8 +47,14 @@ attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 variable (K Ψ : Type v) [Field K] [Field Ψ] [Algebra K Ψ] [IsSepClosure K Ψ]
 
-/-- Genuine group restriction preserves the original binary integer tensor, with the
-same stored coefficient modules and independent original field-group universes. -/
+/-- Let Ω/k be a separable closure in universe u and Ψ/K
+a separable closure in universe v. Put G = Gal(Ω/k), H = Gal(Ψ/K),
+and d = max(u, v, r). Let φ : H → G be a continuous group homomorphism.
+Coefficients are discrete continuous modules with abelian-group carriers
+in universe d.
+The coefficient isomorphism
+Res_φ(M ⊗[ℤ] N) ≅ Res_φ(M) ⊗[ℤ] Res_φ(N)
+identifies both diagonal actions on the same tensor group. -/
 def fieldTensorCoefficientModuleRestrictionIso
     (φ : InfiniteGalois.profiniteGalGrp K Ψ →ₜ* InfiniteGalois.profiniteGalGrp k Ω)
     (M N : FieldCohomologyModule.{u, max v r} k Ω) :
@@ -44,7 +65,13 @@ def fieldTensorCoefficientModuleRestrictionIso
         ((fieldModuleRestriction.{u, v, r} k Ω K Ψ φ).obj N) :=
   Iso.refl _
 
-/-- Its underlying coefficient map is the original identity on every original tensor vector. -/
+/-- Let Ω/k be a separable closure in universe u and Ψ/K
+a separable closure in universe v. Put G = Gal(Ω/k), H = Gal(Ψ/K),
+and d = max(u, v, r). Let φ : H → G be a continuous group homomorphism.
+Coefficients are discrete continuous modules with abelian-group carriers
+in universe d.
+The underlying additive map of the tensor coefficient restriction
+isomorphism is x ↦ x on M ⊗[ℤ] N. -/
 theorem fieldTensorCoefficientModuleRestrictionIso_hom_apply
     (φ : InfiniteGalois.profiniteGalGrp K Ψ →ₜ* InfiniteGalois.profiniteGalGrp k Ω)
     (M N : FieldCohomologyModule.{u, max v r} k Ω)
@@ -56,7 +83,10 @@ local instance originalFieldNativeModuleDiscrete (M : FieldCohomologyModule.{u, 
     DiscreteTopology ((ContinuousCohomology.discreteCoefficientTopRepFunctor.{u, r}
       (InfiniteGalois.profiniteGalGrp k Ω)).obj M) := M.property
 
-/-- The actual binary integer tensor arrow of two original Galois coefficient arrows. -/
+/-- Let Ω/k be a separable closure in universe u and c = max(u, r).
+For discrete continuous Galois module maps f : M → M′, g : N → N′,
+the tensor coefficient map M ⊗[ℤ] N → M′ ⊗[ℤ] N′ is the
+diagonal equivariant map induced by f and g. -/
 def fieldTensorCoefficientModuleMap
     {M N M' N' : FieldCohomologyModule.{u, r} k Ω} (f : M ⟶ M') (g : N ⟶ N') :
     fieldTensorCoefficientModule.{u, r} k Ω M N ⟶
@@ -68,7 +98,10 @@ def fieldTensorCoefficientModuleMap
     intro h x
     exact TopRep.hom_comm_apply t h x⟩
 
-/-- The original tensor coefficient arrow retains the SAME computed native tensor map value. -/
+/-- Let Ω/k be a separable closure in universe u and c = max(u, r).
+For equivariant additive f : M → M′ and g : N → N′, the underlying
+tensor coefficient map is TensorProduct.map(f, g), with pure value
+m ⊗ n ↦ f(m) ⊗ g(n). -/
 theorem fieldTensorCoefficientModuleMap_hom_apply
     {M N M' N' : FieldCohomologyModule.{u, r} k Ω} (f : M ⟶ M') (g : N ⟶ N')
     (x : DiscreteAbelianAction.underlying (fieldTensorCoefficientModule.{u, r} k Ω M N)) :
@@ -78,7 +111,10 @@ theorem fieldTensorCoefficientModuleMap_hom_apply
       (ContinuousCohomology.discreteTensorCoefficientMap.{0, u, r} (P.map f) (P.map g)).hom x := by
   rfl
 
-/-- Two original coefficient isomorphisms induce the actual binary tensor isomorphism. -/
+/-- Let Ω/k be a separable closure in universe u and c = max(u, r).
+Isomorphisms e : M ≅ M′ and d : N ≅ N′ of discrete continuous
+Galois modules induce M ⊗[ℤ] N ≅ M′ ⊗[ℤ] N′, with inverse
+the tensor of their two inverses. -/
 def fieldTensorCoefficientModuleIso
     {M N M' N' : FieldCohomologyModule.{u, r} k Ω} (e : M ≅ M') (d : N ≅ N') :
     fieldTensorCoefficientModule.{u, r} k Ω M N ≅
@@ -100,7 +136,10 @@ def fieldTensorCoefficientModuleIso
     (show Function.Bijective (TensorProduct.map (P.map e.hom).hom.toLinearMap
       (P.map d.hom).hom.toLinearMap) from (TensorProduct.congr ef df).bijective)
 
-/-- The tensor isomorphism retains the actual original coefficient tensor map. -/
+/-- Let Ω/k be a separable closure in universe u and c = max(u, r).
+The forward map of the coefficient tensor isomorphism induced by
+e : M ≅ M′ and d : N ≅ N′ is the tensor coefficient map formed from
+their forward morphisms. -/
 theorem fieldTensorCoefficientModuleIso_hom
     {M N M' N' : FieldCohomologyModule.{u, r} k Ω} (e : M ≅ M') (d : N ≅ N') :
     (fieldTensorCoefficientModuleIso.{u, r} k Ω e d).hom =
@@ -109,7 +148,10 @@ theorem fieldTensorCoefficientModuleIso_hom
 variable (K₀ Ψ₀ : Type u) [Field K₀] [Field Ψ₀]
   [Algebra K₀ Ψ₀] [IsSepClosure K₀ Ψ₀]
 
-/-- Binary restriction on the actual original field tensor coefficient rank. -/
+/-- Let Ω/k and Ψ₀/K₀ be separable closures in universe u and
+φ : Gal(Ψ₀/K₀) → Gal(Ω/k) continuous. For coefficients in
+c = max(u, r), the tensor restriction isomorphism is the identity
+on the underlying group of M ⊗[ℤ] N. -/
 def originalFieldTensorRestrictionIso
     (φ : InfiniteGalois.profiniteGalGrp K₀ Ψ₀ →ₜ* InfiniteGalois.profiniteGalGrp k Ω)
     (M N : FieldCohomologyModule.{u, r} k Ω) :
@@ -118,7 +160,11 @@ def originalFieldTensorRestrictionIso
         ((GaloisUnits.restrictModules φ).obj M) ((GaloisUnits.restrictModules φ).obj N) :=
   Iso.refl _
 
-/-- Original tensor germs commute with genuine field module restriction. -/
+/-- Let Ω/k and Ψ₀/K₀ be separable closures in universe u,
+φ : Gal(Ψ₀/K₀) → Gal(Ω/k) continuous, and F, H étale sheaves over k
+with coefficients in c = max(u, r). The source tensor-stalk comparison
+and coefficient restriction give
+Res_φ(E(F ⊗_sheaf H)) ≅ Res_φ(E(F)) ⊗[ℤ] Res_φ(E(H)). -/
 def fieldTensorSheafRestrictedStalkIso
     (φ : InfiniteGalois.profiniteGalGrp K₀ Ψ₀ →ₜ* InfiniteGalois.profiniteGalGrp k Ω)
     (F G : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u r}) :
@@ -133,7 +179,13 @@ def fieldTensorSheafRestrictedStalkIso
   intro R J A B S T α
   exact R.mapIso α ≪≫ originalFieldTensorRestrictionIso.{u, r} k Ω K₀ Ψ₀ φ A B
 
-/-- The actual field change on both original fibers induces its genuine binary tensor iso. -/
+/-- Let Ω/k and Ψ₀/K₀ be separable closures of fields in universe u,
+c = max(u, r), and e a compatible pair of base and closure embeddings.
+Put f = Spec(e.base), L = f*, φ = res_e : Gal(Ψ₀/K₀) → Gal(Ω/k),
+and Res the coefficient restriction along φ. Let E and E′ denote the
+source and target geometric-stalk Galois functors.
+For coefficient sheaves F, H, tensoring the two stalk changes gives
+Res(E(F)) ⊗[ℤ] Res(E(H)) ≅ E′(L(F)) ⊗[ℤ] E′(L(H)). -/
 def fieldTensorSheafPullbackFactorIso (e : GaloisUnits.FieldMap k Ω K₀ Ψ₀)
     (F G : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u r}) :
     let L := smallEtaleInverseImage.{u, r} (fieldOriginalPullback k Ω K₀ Ψ₀ e)
@@ -149,8 +201,15 @@ def fieldTensorSheafPullbackFactorIso (e : GaloisUnits.FieldMap k Ω K₀ Ψ₀)
     ((fieldChangeStalkModuleIso.{u, r} k Ω K₀ Ψ₀ e).app F)
     ((fieldChangeStalkModuleIso.{u, r} k Ω K₀ Ψ₀ e).app G)
 
-/-- The computed original field pullback coefficient tensor isomorphism uses the
-actual closure-change, restriction, and original tensor-of-germs maps. -/
+/-- Let Ω/k and Ψ₀/K₀ be separable closures of fields in universe u,
+c = max(u, r), and e a compatible pair of base and closure embeddings.
+Put f = Spec(e.base), L = f*, φ = res_e : Gal(Ψ₀/K₀) → Gal(Ω/k),
+and Res the coefficient restriction along φ. Let E and E′ denote the
+source and target geometric-stalk Galois functors.
+The isomorphism E′(L(F ⊗_sheaf H)) ≅ E′(L(F) ⊗_sheaf L(H))
+reverses the stalk change on F ⊗ H, uses restricted tensor stalks
+and the two factor stalk changes, then reverses the target tensor-stalk
+comparison. -/
 def fieldTensorSheafPullbackGaloisIso (e : GaloisUnits.FieldMap k Ω K₀ Ψ₀)
     (F G : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u r}) :
     let L := smallEtaleInverseImage.{u, r} (fieldOriginalPullback k Ω K₀ Ψ₀ e)
@@ -167,8 +226,15 @@ def fieldTensorSheafPullbackGaloisIso (e : GaloisUnits.FieldMap k Ω K₀ Ψ₀)
   let d := (fieldPointTensorGaloisIso.{u, r} K₀ Ψ₀ (L.obj F) (L.obj G)).symm
   exact a ≪≫ b ≪≫ c ≪≫ d
 
-/-- The actual field inverse image preserves the original binary integer tensor sheaf,
-through the original geometric fibers, genuine restriction, and actual closure comparison. -/
+/-- Let Ω/k and Ψ₀/K₀ be separable closures of fields in universe u,
+c = max(u, r), and e a compatible pair of base and closure embeddings.
+Put f = Spec(e.base), L = f*, φ = res_e : Gal(Ψ₀/K₀) → Gal(Ω/k),
+and Res the coefficient restriction along φ. Let E and E′ denote the
+source and target geometric-stalk Galois functors.
+The sheaf tensor pullback isomorphism is
+L(F ⊗_sheaf H) ≅ L(F) ⊗_sheaf L(H).
+Under the target Galois equivalence its map is the Galois tensor
+pullback comparison. -/
 def fieldTensorSheafPullbackIso (e : GaloisUnits.FieldMap k Ω K₀ Ψ₀)
     (F G : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u r}) :
     (smallEtaleInverseImage.{u, r} (fieldOriginalPullback k Ω K₀ Ψ₀ e)).obj
@@ -190,7 +256,14 @@ def fieldTensorSheafPullbackIso (e : GaloisUnits.FieldMap k Ω K₀ Ψ₀)
     fieldTensorSheafPullbackGaloisIso.{u, r} k Ω K₀ Ψ₀ e F G
   exact P.preimageIso (X := S) (Y := T) α
 
-/-- The actual target geometric-fiber functor recovers the same constructed field tensor map. -/
+/-- Let Ω/k and Ψ₀/K₀ be separable closures of fields in universe u,
+c = max(u, r), and e a compatible pair of base and closure embeddings.
+Put f = Spec(e.base), L = f*, φ = res_e : Gal(Ψ₀/K₀) → Gal(Ω/k),
+and Res the coefficient restriction along φ. Let E and E′ denote the
+source and target geometric-stalk Galois functors.
+Applying E′ to the forward sheaf tensor pullback isomorphism gives
+the forward map E′L(F ⊗ H) → E′(LF ⊗ LH) of the Galois tensor
+pullback isomorphism. -/
 theorem fieldTensorSheafPullbackIso_map (e : GaloisUnits.FieldMap k Ω K₀ Ψ₀)
     (F G : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u r}) :
     (fieldGeometricStalkGaloisFunctor.{u, r} K₀ Ψ₀).map
@@ -209,7 +282,15 @@ private theorem tensorPullbackIsoSquare.{c₁, c₂}
   simp only [Iso.trans_hom, Iso.symm_hom, Category.assoc, Iso.hom_inv_id_assoc,
     Iso.inv_hom_id, Category.comp_id]
 
-/-- The actual field tensor pullback commutes with the original geometric-fiber coefficient maps. -/
+/-- Let Ω/k and Ψ₀/K₀ be separable closures of fields in universe u,
+c = max(u, r), and e a compatible pair of base and closure embeddings.
+Put f = Spec(e.base), L = f*, φ = res_e : Gal(Ψ₀/K₀) → Gal(Ω/k),
+and Res the coefficient restriction along φ. Let E and E′ denote the
+source and target geometric-stalk Galois functors.
+Let χ be the stalk-change isomorphism, b the restricted source
+tensor-stalk isomorphism, a = χ_F ⊗ χ_H, and τ′ the target
+tensor-stalk comparison. For the sheaf tensor pullback map γ,
+τ′ ∘ E′(γ) ∘ χ_(F⊗H) = a ∘ b. -/
 theorem fieldTensorSheafPullbackIso_tensor_square (e : GaloisUnits.FieldMap k Ω K₀ Ψ₀)
     (F G : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u r}) :
     let L := smallEtaleInverseImage.{u, r} (fieldOriginalPullback k Ω K₀ Ψ₀ e)
@@ -229,8 +310,15 @@ theorem fieldTensorSheafPullbackIso_tensor_square (e : GaloisUnits.FieldMap k Ω
   rw [fieldTensorSheafPullbackIso_map, he]
   exact tensorPullbackIsoSquare χT b c α
 
-/-- Restriction along the actual compatible field map preserves the original native cup,
-using the SAME already-constructed original-rank field cohomology restriction on both factors. -/
+/-- Let Ω/k and Ψ₀/K₀ be separable closures of fields in universe u,
+c = max(u, r), and e a compatible pair of base and closure embeddings.
+Put f = Spec(e.base), L = f*, φ = res_e : Gal(Ψ₀/K₀) → Gal(Ω/k),
+and Res the coefficient restriction along φ. Let E and E′ denote the
+source and target geometric-stalk Galois functors.
+For p, q ∈ ℕ, x ∈ Hᵖ_cts(Gal(Ω/k), M) and
+y ∈ Hᑫ_cts(Gal(Ω/k), N), the constructed field restriction maps obey
+res_(M⊗N)(x ∪ y) = res_M(x) ∪ res_N(y)
+in degree p + q, using the tensor coefficient restriction isomorphism. -/
 theorem fieldOriginalRankRestrictionTensorCup
     (e : GaloisUnits.FieldMap k Ω K₀ Ψ₀) (M N : FieldCohomologyModule.{u, r} k Ω)
     (p q : ℕ) (x : (fieldContinuousCohomologyFunctor.{u, r} k Ω p).obj M)

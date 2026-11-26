@@ -1,4 +1,4 @@
 # Coefficient naturality of the original scalar tensor cancellation
 
-- [Scalar Tensor Cancellation Iso hom naturality coefficient](scalar-tensor-cancellation-iso-hom-natur.md)
-- [Scalar Tensor Cancellation Iso inv naturality coefficient](scalar-tensor-cancellation-iso-inv-natur.md)
+- [The forward scalar cancellation is coefficient-natural in order](scalar-tensor-cancellation-iso-hom-natur.md)
+- [The inverse scalar cancellation preserves the same coefficient map](scalar-tensor-cancellation-iso-inv-natur.md)

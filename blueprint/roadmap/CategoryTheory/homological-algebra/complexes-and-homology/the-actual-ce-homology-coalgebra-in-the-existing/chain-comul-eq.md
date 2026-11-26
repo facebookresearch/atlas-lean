@@ -1,4 +1,6 @@
-# Chain Comul eq
+# The scalar-unit comparison formula for CE comultiplication
 
-The converted comultiplication is the exterior chain map followed by the identity-component
-tensor comparison.
+The scalar-unit comparison formula for CE comultiplication.
+
+The compared comultiplication is the CE exterior coproduct followed by the inverse tensor
+comparison.

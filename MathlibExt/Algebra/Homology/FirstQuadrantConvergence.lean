@@ -13,16 +13,28 @@ module
 public import MathlibExt.Algebra.Homology.FirstQuadrantBottomRelativeHomology
 
 /-!
-# Bounded convergence of a first-quadrant bicomplex spectral sequence
+# Bounded convergence to the filtration on total homology
 
-The finite abutment image quotient is transported, using natural
-bottom-relative/stage-homology isomorphisms, to the filtration induced on
-total homology.  Consequently every page
-`r ≥ max (p+1) (q+2)` is canonically isomorphic to the `p`th associated
-graded piece of `H_{p+q}(Tot K)`.
+Let K be a bicomplex in an abelian category C, with both differentials
+lowering nonnegative degrees. Put T = Tot(K) with total differential
+d_h+(−1)^p d_v on bidegree (p,q), and let F_a be its complete
+horizontal filtration by columns p ≤ a.
 
-This is a filtered abutment theorem; it does not assert a splitting of total
-homology into a direct sum of stable page terms.
+For n = p+q, the finite upper stage a = n+1 has H_n(F_a) ≅ H_n(T).
+The bottom-relative spectral homology groups identify with the stage
+homologies. Transporting their maps to H_n(T) identifies the current
+and preceding images with
+F_p H_n(T) = Im(H_n(F_p) → H_n(T))
+and F_(p−1) H_n(T), respectively.
+
+Their nested-image quotient is therefore
+gr_p H_n(T) = coker(F_(p−1) H_n(T) → F_p H_n(T)).
+For every integer r ≥ 1 with r ≥ p+1 and r ≥ q+2, there is a canonical
+isomorphism E^r_(p,q) ≅ gr_p H_(p+q)(T).
+The least such page is r = max(p+1,q+2). This identifies the associated
+graded of the induced homology filtration; no direct-sum splitting
+is part of the statement. The category object and morphism worlds
+are independent.
 -/
 
 @[expose] public section
@@ -43,7 +55,10 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
   (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
     (ComplexShape.down ℕ))
 
-/-- The finite upper abutment stage is one above total degree `p+q`. -/
+/-- For a nonnegative homological bicomplex and p,q ≥ 0,
+the upper index used in the finite abutment comparison is
+p+q+1, viewed as a finite element of EInt.
+This is one stage above the total degree n = p+q. -/
 theorem horizontalAbutmentUpperIndex_eq_succ (p q : ℕ) :
     horizontalAbutmentUpperIndex p q =
       ((((p + q : ℕ) : ℤ) + 1) : EInt) := by
@@ -51,8 +66,10 @@ theorem horizontalAbutmentUpperIndex_eq_succ (p q : ℕ) :
   push_cast
   omega
 
-/-- Homology of the finite upper abutment stage is total homology in degree
-`p+q`. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category C and p,q ≥ 0, the inclusion F_(p+q+1) → Tot(K)
+induces the isomorphism H_(p+q)(F_(p+q+1)) ≅ H_(p+q)(Tot(K)).
+The filtration contains horizontal columns up to its stage index. -/
 noncomputable def horizontalAbutmentUpperHomologyToTotalIso (p q : ℕ) :
     (horizontalCompleteFilteredTotalComplex K
       (horizontalAbutmentUpperIndex p q)).homology (p + q) ≅
@@ -65,7 +82,12 @@ noncomputable def horizontalAbutmentUpperHomologyToTotalIso (p q : ℕ) :
   exact asIso (horizontalCompleteHomologyToTotal K (p + q)
     (horizontalAbutmentUpperIndex p q))
 
-/-- Bottom-relative homology of the finite upper stage is total homology. -/
+/-- For a bicomplex K in an abelian category with nonnegative
+homological degrees, put n = p+q and u = n+1.
+The bottom-to-u interval group of the complete spectral object in
+cochain degree −n is isomorphic to H_n(Tot(K)).
+It is the bottom-relative stage comparison followed by the
+isomorphism H_n(F_u) ≅ H_n(Tot(K)). -/
 noncomputable def horizontalBottomRelativeHomologyToTotalIso (p q : ℕ) :
     ((horizontalCompleteFiltrationSpectralObject K).H
       (-((p + q : ℕ) : ℤ))).obj
@@ -75,8 +97,11 @@ noncomputable def horizontalBottomRelativeHomologyToTotalIso (p q : ℕ) :
       (horizontalAbutmentUpperIndex p q) (p + q) ≪≫
     horizontalAbutmentUpperHomologyToTotalIso K p q
 
-/-- Naturality of the bottom-relative-to-total comparison for every stage
-below the finite upper stage. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category, put n = p+q and u = n+1. For every i ≤ u in EInt,
+identifying the bottom-relative group B_i with H_n(F_i) and then
+mapping to H_n(Tot(K)) equals mapping B_i → B_u first and then
+using B_u ≅ H_n(Tot(K)). The diagram commutes for all such stages i. -/
 theorem horizontalBottomRelativeHomologyToTotal_naturality
     (p q : ℕ) (i : EInt)
     (h : i ≤ horizontalAbutmentUpperIndex p q) :
@@ -121,8 +146,11 @@ theorem horizontalBottomRelativeHomologyToTotal_naturality
     (horizontalAbutmentUpperIndex p q)]
   rw [reassoc_of% hstage', htotal]
 
-/-- Direct map from the preceding stage's bottom-relative homology to the
-finite upper stage's bottom-relative homology. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category and n = p+q, the preceding-to-upper map is
+B_(p−1) → B_(n+1), where B_a is the bottom-relative interval group
+in cochain degree −n. It is induced by the filtration inclusion
+from the finite stage p−1 to the upper stage n+1. -/
 noncomputable abbrev horizontalCanonicalAbutmentPreviousToUpperHomologyMap
     (p q : ℕ) :=
   ((horizontalCompleteFiltrationSpectralObject K).H
@@ -136,8 +164,11 @@ noncomputable abbrev horizontalCanonicalAbutmentPreviousToUpperHomologyMap
         (horizontalCanonicalAbutmentTotalMap p q)
         (Subsingleton.elim _ _))
 
-/-- The preceding-to-current and current-to-upper homology maps compose to
-the direct preceding-to-upper map. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category and n = p+q, the bottom-relative maps
+B_(p−1) → B_p → B_(n+1) compose to the direct map
+B_(p−1) → B_(n+1). Each map is induced by the corresponding
+complete-filtration inclusion. -/
 theorem horizontalCanonicalAbutmentPrevious_comp_toUpper (p q : ℕ) :
     horizontalCanonicalAbutmentPreviousHomologyMap K p q ≫
         horizontalCanonicalAbutmentToUpperHomologyMap K p q =
@@ -146,8 +177,11 @@ theorem horizontalCanonicalAbutmentPrevious_comp_toUpper (p q : ℕ) :
   apply Functor.congr_map
   apply Subsingleton.elim
 
-/-- Arrow isomorphism from the current-stage relative-homology map to the
-current-stage map into total homology. -/
+/-- For a bicomplex K in an abelian category with nonnegative
+homological degrees, put n = p+q. The arrow B_p → B_(n+1) is
+isomorphic to H_n(F_p) → H_n(Tot(K)).
+The source isomorphism is the bottom-relative stage comparison,
+and the target isomorphism is the upper-stage total comparison. -/
 noncomputable def horizontalCanonicalAbutmentCurrentArrowIso (p q : ℕ) :
     Arrow.mk (horizontalCanonicalAbutmentToUpperHomologyMap K p q) ≅
       Arrow.mk (horizontalCompleteHomologyToTotal K (p + q)
@@ -163,8 +197,11 @@ noncomputable def horizontalCanonicalAbutmentCurrentArrowIso (p q : ℕ) :
       (horizontalFirstPageUpperIndex p)
       (horizontalAbutmentIndices_le p q).2)
 
-/-- Arrow isomorphism from the preceding-stage relative-homology composite
-to the preceding-stage map into total homology. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category and n = p+q, the composite B_(p−1) → B_p → B_(n+1)
+is isomorphic as an arrow to H_n(F_(p−1)) → H_n(Tot(K)).
+Its endpoint maps are the bottom-relative stage and total
+comparisons, with p−1 interpreted as an integer filtration stage. -/
 noncomputable def horizontalCanonicalAbutmentPreviousArrowIso (p q : ℕ) :
     Arrow.mk (horizontalCanonicalAbutmentPreviousHomologyMap K p q ≫
       horizontalCanonicalAbutmentToUpperHomologyMap K p q) ≅
@@ -184,8 +221,10 @@ noncomputable def horizontalCanonicalAbutmentPreviousArrowIso (p q : ℕ) :
         ((horizontalFirstPageIndex_le p).trans
           (horizontalAbutmentIndices_le p q).2))
 
-/-- Transport of the current-stage image to the induced total-homology
-filtration. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category and n = p+q, the image of B_p → B_(n+1) is isomorphic
+to F_p H_n(Tot(K)) = Im(H_n(F_p) → H_n(Tot(K))).
+The isomorphism is induced by the current-stage arrow comparison. -/
 noncomputable def horizontalCanonicalAbutmentCurrentImageIso (p q : ℕ) :
     image (horizontalCanonicalAbutmentToUpperHomologyMap K p q) ≅
       (horizontalTotalHomologyFiltration K (p + q)).obj
@@ -193,8 +232,12 @@ noncomputable def horizontalCanonicalAbutmentCurrentImageIso (p q : ℕ) :
   (Limits.im (C := C)).mapIso
     (horizontalCanonicalAbutmentCurrentArrowIso K p q)
 
-/-- Transport of the preceding-stage image to the induced total-homology
-filtration. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category and n = p+q, the image of
+B_(p−1) → B_p → B_(n+1) is isomorphic to
+F_(p−1) H_n(Tot(K)).
+The source and target homology maps are those of the preceding
+stage inclusion into the upper stage and total complex. -/
 noncomputable def horizontalCanonicalAbutmentPreviousImageIso (p q : ℕ) :
     image (horizontalCanonicalAbutmentPreviousHomologyMap K p q ≫
       horizontalCanonicalAbutmentToUpperHomologyMap K p q) ≅
@@ -203,8 +246,11 @@ noncomputable def horizontalCanonicalAbutmentPreviousImageIso (p q : ℕ) :
   (Limits.im (C := C)).mapIso
     (horizontalCanonicalAbutmentPreviousArrowIso K p q)
 
-/-- The transported endpoint isomorphisms commute with the inclusions of
-nested images. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category, the previous and current abutment image isomorphisms
+commute with their inclusion maps. Thus the square from
+Im(B_(p−1) → B_(n+1)) to Im(B_p → B_(n+1))
+and from F_(p−1)H_n to F_p H_n commutes, where n = p+q. -/
 theorem horizontalCanonicalAbutmentImageSquare (p q : ℕ) :
     CategoryTheory.imageCompMap
         (horizontalCanonicalAbutmentPreviousHomologyMap K p q)
@@ -260,8 +306,12 @@ theorem horizontalCanonicalAbutmentImageSquare (p q : ℕ) :
       (((horizontalCanonicalAbutmentPreviousImageIso K p q).hom ≫=
         hstep).symm).trans (Category.assoc _ _ _).symm
 
-/-- The spectral-object nested-image quotient is the associated graded piece
-of total homology. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category and n = p+q, the cokernel of the inclusion of preceding
+into current bottom-relative images is isomorphic to
+gr_p H_n(Tot(K)) = coker(F_(p−1)H_n → F_p H_n).
+The comparison is induced by the two image isomorphisms and
+their commuting inclusion square. -/
 noncomputable def horizontalCanonicalAbutmentImageQuotientGradedIso
     (p q : ℕ) :
     horizontalCanonicalAbutmentImageQuotient K p q ≅
@@ -275,16 +325,23 @@ noncomputable def horizontalCanonicalAbutmentImageQuotientGradedIso
     (horizontalCanonicalAbutmentCurrentImageIso K p q)
     (horizontalCanonicalAbutmentImageSquare K p q)
 
-/-- The canonical finite abutment term is the associated graded piece of
-total homology. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category and p,q ≥ 0, the canonical finite abutment term is
+isomorphic to gr_p H_(p+q)(Tot(K)).
+Its finite upper stage is p+q+1, and the preceding and current
+stages are p−1 and p. -/
 noncomputable def horizontalCanonicalAbutmentGradedIso (p q : ℕ) :
     horizontalFirstQuadrantCanonicalAbutmentTerm K p q ≅
       horizontalTotalHomologyGradedPiece K p q :=
   horizontalCanonicalAbutmentImageQuotientIso K p q ≪≫
     horizontalCanonicalAbutmentImageQuotientGradedIso K p q
 
-/-- Every sufficiently late page term is the corresponding associated graded
-piece of total homology. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category, p,q ≥ 0 and an integer r with 1 ≤ r,
+p+1 ≤ r and q+2 ≤ r, the horizontal spectral sequence has
+E^r_(p,q) ≅ gr_p H_(p+q)(Tot(K)).
+The target is the quotient of the pth induced homology filtration
+stage by the preceding stage. -/
 noncomputable def horizontalStablePageGradedIso
     (r : ℤ) (hr : 1 ≤ r) (p q : ℕ)
     (hlower : (p : ℤ) + 1 ≤ r) (hupper : (q : ℤ) + 2 ≤ r) :
@@ -293,8 +350,10 @@ noncomputable def horizontalStablePageGradedIso
   horizontalStablePageCanonicalAbutmentIso K r hr p q hlower hupper ≪≫
     horizontalCanonicalAbutmentGradedIso K p q
 
-/-- Stable-page/associated-graded comparison at the first page satisfying
-both bidegree bounds. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category and p,q ≥ 0, the page r = max(p+1,q+2) satisfies
+E^r_(p,q) ≅ gr_p H_(p+q)(Tot(K)).
+This is the least page index meeting both canonical bidegree bounds. -/
 noncomputable def horizontalStablePageGradedIsoAtIndex (p q : ℕ) :
     ((horizontalFirstQuadrantSpectralSequence K).page
       (horizontalStablePageIndex p q)).X (p, q) ≅

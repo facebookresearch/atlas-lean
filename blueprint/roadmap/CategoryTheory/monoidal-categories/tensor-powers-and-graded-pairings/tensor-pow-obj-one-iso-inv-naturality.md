@@ -1,3 +1,6 @@
-# Tensor Pow Obj One Iso inv naturality
+# Inverse one factor coordinate is natural
 
-Naturality of the inverse weight-one tensor-power isomorphism.
+Inverse one factor coordinate is natural.
+
+The morphism `f` followed by the inverse target coordinate equals the inverse source
+coordinate followed by the power-one map.

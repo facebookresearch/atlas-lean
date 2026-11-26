@@ -1,4 +1,5 @@
-# Horizontal Filtered Top Projection
+# The top-summand projection of a finite filtered total
 
-Projection of filtration stage `p` in total degree `p+q` onto its
-top-column summand.
+The top-summand projection of a finite filtered total.
+
+Project stage `p` in total degree `p+q` onto the bidegree `(p,q)` object.

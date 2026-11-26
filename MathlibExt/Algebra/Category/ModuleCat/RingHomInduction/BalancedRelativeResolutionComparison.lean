@@ -16,12 +16,16 @@ public import Mathlib.Algebra.Category.ModuleCat.Abelian
 public import Mathlib.Algebra.Category.ModuleCat.Ulift
 
 /-!
-# Balanced tensor comparisons of relative resolutions
+# Balanced tensor comparisons with an induction bar resolution
 
-For an associative ring homomorphism, the induction–restriction adjunction supplies the free Bar.
-Applying the integer-balanced tensor functor gives augmentation-compatible comparison maps and
-homology isomorphisms with any split termwise relative projective resolution. The coefficient and
-left-module worlds are included through the stated ULift maps.
+For a homomorphism `φ : k → R` of associative rings, the
+induction–restriction adjunction gives the bar chain complex of a
+left `R`-module `N`. Applying `M ⊗[R] -` for a right `R`-module `M`
+gives integer-module-valued comparison maps with any augmented chain
+complex split after restriction to `k`. If that complex also has
+restriction-relative-projective terms, inverse comparisons give a
+homology isomorphism. Coefficient and original left-module worlds
+remain independent, with explicit lifts to the common resolution height.
 -/
 
 @[expose] public section
@@ -34,23 +38,37 @@ namespace ModuleCat.RingHomInduction
 variable {k : Type u} {R : Type v} [Ring k] [Ring R] (φ : k →+* R)
 
 
-/-- The integer-balanced coefficient functor is additive. -/
+/-- For a ring `R`, right `R`-module `M` in universe `m`, and left
+modules in universe `z`, the integer-valued balanced tensor functor
+`M ⊗[R] -` to `ModuleCat_max(m,z)(ℤ)` is additive. -/
 local instance integerBalanced_additive (M : ModuleCat.{m} Rᵐᵒᵖ) :
     (ModuleCat.BalancedTensor.functor.{0, v, m, z} ℤ R M).Additive :=
   ModuleCat.BalancedTensor.additive.{0, v, m, z} ℤ R M
 
-/-- Apply the existing balanced coefficient functor to the original induction Bar chain. -/
+/-- Let `k,R` be rings in universes `u,v`, `φ : k → R` a ring
+homomorphism, and `M` a right `R`-module in universe `m`. Put
+`T=max(u,v,w)` for the left-module resolution carrier world. For `N : ModuleCat_T(R)`, tensoring the induction–restriction
+bar chain complex with `M` gives a nonnegative chain complex
+`M ⊗[R] Bar_φ(N)` in `ModuleCat_max(T,m)(ℤ)`. -/
 abbrev balancedFreeBarChain (M : ModuleCat.{m} Rᵐᵒᵖ) (N : ModuleCat.{max u v w} R) :
     ChainComplex (ModuleCat.{max u v w m} ℤ) ℕ :=
   CategoryTheory.Adjunction.mappedFreeBarResolution (ModuleCat.BalancedTensor.functor.{0, v, m, max u v w} ℤ R M)
     (ModuleCat.induceRestrictScalarsAdj.{u, v, w} φ) N
 
-/-- The original independent left-module universe is included by its ULift. -/
+/-- Let `k,R` be rings in universes `u,v`, `φ : k → R` a ring
+homomorphism, and `M` a right `R`-module in universe `m`. Put
+`T=max(u,v,w)` for the left-module resolution carrier world. For an original `N : ModuleCat_w(R)`, first lifting `N`
+to `T` and then forming its balanced bar chain gives a complex in
+`ModuleCat_max(T,m)(ℤ)`. -/
 abbrev balancedOriginalFreeBarChain (M : ModuleCat.{m} Rᵐᵒᵖ) (N : ModuleCat.{w} R) :
     ChainComplex (ModuleCat.{max u v w m} ℤ) ℕ :=
   balancedFreeBarChain.{u, v, w, m} φ M ((ModuleCat.uliftFunctor.{max u v, w} R).obj N)
 
-/-- The full mapped counit augmentation has its original induced-tensor value. -/
+/-- Let `k,R` be rings in universes `u,v`, `φ : k → R` a ring
+homomorphism, and `M` a right `R`-module in universe `m`. Put
+`T=max(u,v,w)` for the left-module resolution carrier world. For `N : ModuleCat_T(R)`, the degree-zero balanced bar
+augmentation sends `[a ⊗ (r ⊗ n)]` to `[a ⊗ (r • n)]`, using
+the induction counit on the left factor. -/
 theorem balancedFreeBar_augmentation_zero (M : ModuleCat.{m} Rᵐᵒᵖ)
     (N : ModuleCat.{max u v w} R) (a : M) (r : R) (n : N) :
     let : Module ℤ ((CategoryTheory.Adjunction.freeBarResolutionChain (ModuleCat.induceRestrictScalarsAdj.{u, v, w} φ)
@@ -88,7 +106,12 @@ theorem balancedFreeBar_augmentation_zero (M : ModuleCat.{m} Rᵐᵒᵖ)
       TensorProduct.Balanced.mk ℤ R M ((𝟭 (ModuleCat.{max u v w} R)).obj N) a y)
       (ModuleCat.induceRestrictScalarsAdj_counit.{u, v, w} φ N r n)
 
-/-- Every original endpoint map induces an balanced comparison homology map. -/
+/-- Let `k,R` be rings in universes `u,v`, `φ : k → R` a ring
+homomorphism, and `M` a right `R`-module in universe `m`. Put
+`T=max(u,v,w)` for the left-module resolution carrier world. Let `P → Y[0]` be an augmented complex split by a contracting
+family after restriction along `φ`, and let `f : N → Y`.
+The relative comparison gives
+`H_n(M ⊗[R] Bar_φ(N)) → H_n(M ⊗[R] P)`. -/
 def balancedBarComparisonHomologyMap (M : ModuleCat.{m} Rᵐᵒᵖ)
     (N Y : ModuleCat.{max u v w} R) (P : ChainComplex (ModuleCat.{max u v w} R) ℕ)
     (β : P ⟶ (ChainComplex.single₀ (ModuleCat.{max u v w} R)).obj Y)
@@ -98,7 +121,11 @@ def balancedBarComparisonHomologyMap (M : ModuleCat.{m} Rᵐᵒᵖ)
   CategoryTheory.Adjunction.freeBarResolutionComparisonHomologyMap (ModuleCat.BalancedTensor.functor.{0, v, m, max u v
     w} ℤ R M) (ModuleCat.induceRestrictScalarsAdj.{u, v, w} φ) N Y P β σ f n
 
-/-- Balanced comparison homology is independent of every original map over the same augmentation. -/
+/-- Let `k,R` be rings in universes `u,v`, `φ : k → R` a ring
+homomorphism, and `M` a right `R`-module in universe `m`. Put
+`T=max(u,v,w)` for the left-module resolution carrier world. For `P → Y[0]` split after restriction and `f : N → Y`,
+any bar-to-`P` chain map preserving the augmentation over `f` computes
+the canonical balanced comparison map on homology. -/
 theorem balancedBarComparisonHomologyMap_eq_of_augmentation (M : ModuleCat.{m} Rᵐᵒᵖ)
     (N Y : ModuleCat.{max u v w} R) (P : ChainComplex (ModuleCat.{max u v w} R) ℕ)
     (β : P ⟶ (ChainComplex.single₀ (ModuleCat.{max u v w} R)).obj Y)
@@ -114,7 +141,11 @@ theorem balancedBarComparisonHomologyMap_eq_of_augmentation (M : ModuleCat.{m} R
     (ModuleCat.BalancedTensor.functor.{0, v, m, max u v w} ℤ R M) (ModuleCat.induceRestrictScalarsAdj.{u, v, w} φ) N Y
       P β σ f g hg n
 
-/-- The integer-balanced comparison isomorphism is constructed from the two relative comparisons. -/
+/-- Let `k,R` be rings in universes `u,v`, `φ : k → R` a ring
+homomorphism, and `M` a right `R`-module in universe `m`. Put
+`T=max(u,v,w)` for the left-module resolution carrier world. For `P → N[0]` split after restriction along `φ`, with all
+terms relative-projective for that restriction, inverse relative
+comparisons give `H_n(M ⊗[R] Bar_φ(N)) ≅ H_n(M ⊗[R] P)`. -/
 def balancedBarComparisonHomologyIso (M : ModuleCat.{m} Rᵐᵒᵖ)
     (N : ModuleCat.{max u v w} R) (P : ChainComplex (ModuleCat.{max u v w} R) ℕ)
     (β : P ⟶ (ChainComplex.single₀ (ModuleCat.{max u v w} R)).obj N)
@@ -126,7 +157,11 @@ def balancedBarComparisonHomologyIso (M : ModuleCat.{m} Rᵐᵒᵖ)
   CategoryTheory.Adjunction.freeBarResolutionComparisonHomologyIso (ModuleCat.BalancedTensor.functor.{0, v, m, max u v
     w} ℤ R M) (ModuleCat.induceRestrictScalarsAdj.{u, v, w} φ) N P β σ hP n
 
-/-- The constructed isomorphism's hom is precisely the computed balanced original identity comparison. -/
+/-- Let `k,R` be rings in universes `u,v`, `φ : k → R` a ring
+homomorphism, and `M` a right `R`-module in universe `m`. Put
+`T=max(u,v,w)` for the left-module resolution carrier world. For a split termwise restriction-relative-projective
+augmentation `P → N[0]`, the forward balanced bar homology isomorphism
+is the canonical comparison map over `𝟙 N`. -/
 theorem balancedBarComparisonHomologyIso_hom (M : ModuleCat.{m} Rᵐᵒᵖ)
     (N : ModuleCat.{max u v w} R) (P : ChainComplex (ModuleCat.{max u v w} R) ℕ)
     (β : P ⟶ (ChainComplex.single₀ (ModuleCat.{max u v w} R)).obj N)
@@ -138,7 +173,12 @@ theorem balancedBarComparisonHomologyIso_hom (M : ModuleCat.{m} Rᵐᵒᵖ)
   CategoryTheory.Adjunction.freeBarResolutionComparisonHomologyIso_hom (ModuleCat.BalancedTensor.functor.{0, v, m, max
     u v w} ℤ R M) (ModuleCat.induceRestrictScalarsAdj.{u, v, w} φ) N P β σ hP n
 
-/-- The original left carrier gets a relative-resolution comparison through ULift only. -/
+/-- Let `k,R` be rings in universes `u,v`, `φ : k → R` a ring
+homomorphism, and `M` a right `R`-module in universe `m`. Put
+`T=max(u,v,w)` for the left-module resolution carrier world. Let `N : ModuleCat_w(R)` and `P` augment to its lift in
+world `T`, split after restriction along `φ` and with relative-projective
+terms. The lifted-original bar and `P` have canonically isomorphic
+homology after balanced tensoring with `M`. -/
 def balancedOriginalBarComparisonHomologyIso (M : ModuleCat.{m} Rᵐᵒᵖ) (N : ModuleCat.{w} R)
     (P : ChainComplex (ModuleCat.{max u v w} R) ℕ)
     (β : P ⟶ (ChainComplex.single₀ (ModuleCat.{max u v w} R)).obj

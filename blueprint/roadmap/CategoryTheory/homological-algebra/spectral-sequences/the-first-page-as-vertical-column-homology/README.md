@@ -1,10 +1,10 @@
 # The first page as vertical-column homology
 
-- [Horizontal First Page Mapping Cone To Direct Column](horizontal-first-page-mapping-cone-to-di.md)
-- [Horizontal First Page Mapping Cone To Direct Column quasi Iso](horizontal-first-page-mapping-cone-to-di-2.md)
-- [Horizontal First Page Relative Homology Direct Column Iso](horizontal-first-page-relative-homology.md)
-- [Horizontal Direct Column Untwist XIso](horizontal-direct-column-untwist-xiso.md)
-- [Horizontal Direct Column Untwist Iso](horizontal-direct-column-untwist-iso.md)
-- [Horizontal Direct Column Homology Iso](horizontal-direct-column-homology-iso.md)
-- [Horizontal First Page Relative Homology Vertical Iso](horizontal-first-page-relative-homology-2.md)
-- [Horizontal First Page Vertical Homology Iso](horizontal-first-page-vertical-homology.md)
+- [The relative mapping cone projects to the direct column](horizontal-first-page-mapping-cone-to-di.md)
+- [The relative mapping-cone projection is a quasi-isomorphism](horizontal-first-page-mapping-cone-to-di-2.md)
+- [Consecutive relative homology equals direct-column homology](horizontal-first-page-relative-homology.md)
+- [The degreewise sign equivalence of a direct column](horizontal-direct-column-untwist-xiso.md)
+- [A degreewise parity sign removes the constant column differential sign](horizontal-direct-column-untwist-iso.md)
+- [Direct-column homology is ordinary vertical-column homology](horizontal-direct-column-homology-iso.md)
+- [Relative first-page homology equals the new column’s vertical homology](horizontal-first-page-relative-homology-2.md)
+- [Every first-page object is vertical-column homology](horizontal-first-page-vertical-homology.md)

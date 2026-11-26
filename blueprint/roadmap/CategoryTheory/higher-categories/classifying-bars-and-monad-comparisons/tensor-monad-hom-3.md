@@ -1,3 +1,6 @@
-# Tensor Monad Hom μ
+# Tensor monad morphism respects multiplication
 
-Explicit multiplication compatibility of the induced tensor-monad morphism.
+Tensor monad morphism respects multiplication.
+
+The source multiplication followed by the component equals the two component maps followed by
+target multiplication.

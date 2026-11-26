@@ -1,16 +1,16 @@
 # Canonical Tor ring change through actual working-universe comparisons
 
-- [The native coefficient tensor height iso is exactly the...](the-native-coefficient-tensor-height-iso.md)
-- [The native coefficient Tor height iso reuses exact output...](the-native-coefficient-tor-height-iso-re.md)
-- [Its inverse is exactly the canonical derived square of the...](its-inverse-is-exactly-the-canonical-der.md)
-- [The original native coefficient facade has the existing...](the-original-native-coefficient-facade-h.md)
-- [The original coefficient facade performs the existing...](the-original-coefficient-facade-performs.md)
-- [The inverse facade first inserts the actual nested input...](the-inverse-facade-first-inserts-the-act.md)
+- [The enveloping-coefficient tensor comparison between two sufficient heights](the-native-coefficient-tensor-height-iso.md)
+- [The enveloping-coefficient Tor comparison between two sufficient heights](the-native-coefficient-tor-height-iso-re.md)
+- [The inverse derived height map is the map induced by the inverse-direction tensor square](its-inverse-is-exactly-the-canonical-der.md)
+- [The coefficient Tor height comparison retains the independent source world](the-original-native-coefficient-facade-h.md)
+- [The forward Tor height component includes input flattening](the-original-coefficient-facade-performs.md)
+- [The inverse Tor height component includes inverse input flattening](the-inverse-facade-first-inserts-the-act.md)
 
 ## Ring Height
 
-- [Canonical ring change commutes with the genuine native...](canonical-ring-change-commutes-with-the.md)
+- [The sufficient-world ring-change map commutes with inverse height transport](canonical-ring-change-commutes-with-the.md)
 
 ## Original Height
 
-- [The original-carrier canonical Tor ring map commutes with...](the-original-carrier-canonical-tor-ring.md)
+- [The independent-carrier ring-change map commutes with inverse height transport](the-original-carrier-canonical-tor-ring.md)

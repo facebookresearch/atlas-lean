@@ -1,3 +1,6 @@
-# Unitization Reduced Normalized Complex
+# The reduced kernel of normalized unitization chains
 
-The original reduced normalized complex is the normalized scalar-projector kernel.
+The reduced kernel of normalized unitization chains.
+
+This chain complex is the kernel of the scalar projector on the normalized Hochschild complex
+of `A⁺`.

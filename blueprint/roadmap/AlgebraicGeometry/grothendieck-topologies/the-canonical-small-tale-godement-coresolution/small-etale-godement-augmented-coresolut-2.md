@@ -1,3 +1,5 @@
-# Small Etale Godement Augmented Coresolution unit
+# Cosimplicial coaugmentation in degree zero is the unit
 
-The degree-zero coaugmentation is the same original geometric-germ Godement unit.
+Cosimplicial coaugmentation in degree zero is the unit.
+
+The augmentation map at the zero simplex is the Godement unit on `Q`.

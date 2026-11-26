@@ -1,4 +1,6 @@
-# Small Etale Direct Image Affine Restriction Iso
+# Direct image restriction agrees with affine pushforward
 
-Literal direct image followed by genuine affine restriction is the
-pushforward belonging to that same affine-base-change functor.
+Direct image restriction agrees with affine pushforward.
+
+Direct image on the full small étale site followed by affine restriction is naturally
+isomorphic to continuous pushforward along affine base change.

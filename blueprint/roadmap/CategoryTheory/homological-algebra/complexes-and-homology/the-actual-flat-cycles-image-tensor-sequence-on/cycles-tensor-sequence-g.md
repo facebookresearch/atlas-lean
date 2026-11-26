@@ -1,3 +1,6 @@
-# Cycles Tensor Sequence g
+# Second arrow of the cycles tensor sequence is the tensor projection
 
-The second total map is the original quotient onto outgoing images tensored with Q.
+Second arrow of the cycles tensor sequence is the tensor projection.
+
+The second arrow is the tensor-total map of the projection from `P` to its outgoing-image zero
+complex and the identity on `Q`.

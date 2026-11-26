@@ -1,3 +1,5 @@
-# Field Finite Galois Common Neighborhood Functor map
+# Common-height neighborhood maps retain the subfield spectrum restriction
 
-Every common pointed arrow is the same original subfield restriction arrow.
+For finite Galois subfields L≤M inside a prescribed separable closure Ω, the common-height
+functor map has underlying reverse neighborhood arrow Spec(M) → Spec(L), exactly
+fieldFiniteGaloisInclusion(L≤M). Point-index lifting does not modify this arrow.

@@ -1,4 +1,6 @@
-# Horizontal Direct Column Projection Component
+# The complete-stage projection in one direct-column degree
 
-Canonical projection component in bidegree `(p,q)` for the direct column
-presentation.
+The complete-stage projection in one direct-column degree.
+
+At cochain degree `-p-q`, project the complete upper stage through its finite-stage
+presentation to the direct column.

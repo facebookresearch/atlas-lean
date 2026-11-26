@@ -1,4 +1,6 @@
-# Vanishes Below
+# Ext vanishing below a natural-degree bound
 
-The Ext groups from `X` to `Y` vanish in every natural degree strictly
-below `n`.
+Ext vanishing below a natural-degree bound.
+
+For objects `X`, `Y` in an abelian category with `HasExt.{t}`, require `Subsingleton (Ext.{t}
+X Y i)` for every natural `i < n`. Thus every such Ext group is zero.

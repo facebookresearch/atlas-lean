@@ -1,3 +1,6 @@
-# Finite Factor Hom Tensor Co Chain Property
+# Third-factor boundedness and finite projectivity property
 
-Only the original U bounds and finite categorical-projective terms qualify a triple.
+Third-factor boundedness and finite projectivity property.
+
+A triple has this property if there are integer bounds below and above which its third complex
+vanishes, and every term of that complex is finite and categorically projective.

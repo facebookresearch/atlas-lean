@@ -14,13 +14,15 @@ public import MathlibExt.Algebra.Homology.Hochschild.SymmetricEulerianPositiveKe
 public import MathlibExt.LinearAlgebra.TensorPower.EulerianRationalFamilyActions
 
 /-!
-# Algebra-linear Eulerian operators and normalized kernels
+# A-linear Eulerian projectors and proper-shuffle quotient levels
 
-Over a rational ground ring, coefficient-fixed permutation
-operators and Eulerian projectors are A-linear. Normalization
-intertwines these operators, identifying the normalized
-proper relation module with the kernel of the zero-plus-first
-projector. The quotient tails remain ground modules.
+Let k be a commutative ℚ-algebra, A a commutative k-algebra and M a compatible A-module. The
+coefficient-fixed Eulerian projectors eₙ⁽ⁱ⁾ are A-linear on M ⊗[k] A⊗n and on its normalized
+tails. Normalization intertwines their actions. The projector pₙ=eₙ⁽⁰⁾+eₙ⁽¹⁾ has kernel equal
+to the proper both-positive shuffle relation module, giving a quotient-to-image equivalence in
+both raw and normalized coordinates.
+
+See J.-L. Loday, Cyclic Homology, 2nd ed., §4.5, for the rational Eulerian decomposition.
 -/
 
 @[expose] public section
@@ -38,26 +40,38 @@ variable (k : Type u) [CommRing k] [Algebra ℚ k]
   (M : Type w) [AddCommGroup M] [Module k M] [Module A M]
   [SMulCommClass k A M] [IsScalarTower k A M]
 
-/-- The coefficient-fixed raw Eulerian operator with its original A-linearity. -/
+/-- The A-linear Eulerian projector on raw coefficient tensors.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, eₙ⁽ⁱ⁾
+acts by its rational signed permutation weights on the A-tail word and fixes M. -/
 def algebraEulerianOperator (n i : ℕ) : Module.End A (M ⊗[k] TensorPower k n A) :=
   TensorProduct.AlgebraTensorModule.lTensor A M
     (TensorPower.rationalPermutationAction (V := A) n (Equiv.Perm.eulerianElement n i))
 
-/-- The normalized Eulerian operator needs only the original ground-module quotient tails. -/
+/-- The A-linear Eulerian projector on normalized coefficient tensors.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, eₙ⁽ⁱ⁾
+acts on M ⊗[k] (A/(k·1))⊗n by the same coefficient-fixed permutation representation. -/
 def algebraNormalizedEulerianOperator (n i : ℕ) : Module.End A
     (M ⊗[k] TensorPower k n (ModuleCat.Algebra.Hochschild.quotientCarrier k A)) :=
   TensorProduct.AlgebraTensorModule.lTensor A M
     (TensorPower.rationalPermutationAction (V := ModuleCat.Algebra.Hochschild.quotientCarrier k A) n
       (Equiv.Perm.eulerianElement n i))
 
-/-- Restriction of the A-linear raw operator is the original coefficient Eulerian operator. -/
+/-- The ground restriction of a raw algebra-linear Eulerian operator.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M,
+restricting algebraEulerianOperator(n,i) to k gives coefficientEulerianOperator(n,i). -/
 theorem algebraEulerianOperator_restrictScalars (n i : ℕ) :
     (algebraEulerianOperator k A M n i).restrictScalars k = coefficientEulerianOperator k A M n i := by
   rw [coefficientEulerianOperator, TensorPower.coefficientRationalPermutationAction_eq_map]
   rfl
 
-/-- Restriction of the A-linear normalized operator is the original normalized coefficient
-  representation. -/
+/-- The ground restriction of a normalized algebra-linear Eulerian operator.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, its
+k-linear restriction is the rational permutation action of eₙ⁽ⁱ⁾ on the quotient-tail module
+A/(k·1). -/
 theorem algebraNormalizedEulerianOperator_restrictScalars (n i : ℕ) :
     (algebraNormalizedEulerianOperator k A M n i).restrictScalars k =
       TensorPower.coefficientRationalPermutationAction (M := M)
@@ -65,7 +79,10 @@ theorem algebraNormalizedEulerianOperator_restrictScalars (n i : ℕ) :
   rw [TensorPower.coefficientRationalPermutationAction_eq_map]
   rfl
 
-/-- The A-linear original normalization commutes with every coefficient Eulerian operator. -/
+/-- Normalization intertwines each algebra-linear Eulerian projector.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, the
+degree-n normalization map qₙ satisfies qₙeₙ⁽ⁱ⁾ = ēₙ⁽ⁱ⁾qₙ. -/
 theorem algebraNormalizationLevelMap_eulerian (n i : ℕ) :
     (algebraNormalizationLevelMap k A M n).comp (algebraEulerianOperator k A M n i) =
       (algebraNormalizedEulerianOperator k A M n i).comp (algebraNormalizationLevelMap k A M n) := by
@@ -78,22 +95,35 @@ theorem algebraNormalizationLevelMap_eulerian (n i : ℕ) :
     (ModuleCat.Algebra.Hochschild.unitSubmodule k A) n
     (fun σ => algebraMap ℚ k (Equiv.Perm.eulerianCoefficient n i σ))
 
-/-- The full nonnegative first raw projector retains the original degree-zero coefficient. -/
+/-- The raw algebra-linear zero-plus-first Eulerian projector.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M,
+pₙ=eₙ⁽⁰⁾+eₙ⁽¹⁾ projects the raw coefficient tensors onto their lowest Eulerian summands. -/
 def algebraFirstEulerianOperator (n : ℕ) : Module.End A (M ⊗[k] TensorPower k n A) :=
   algebraEulerianOperator k A M n 0 + algebraEulerianOperator k A M n 1
 
-/-- The corresponding zero-plus-first projector on the original normalized ground-module tails. -/
+/-- The normalized algebra-linear zero-plus-first Eulerian projector.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M,
+p̄ₙ=ēₙ⁽⁰⁾+ēₙ⁽¹⁾ acts on M ⊗[k] (A/(k·1))⊗n. -/
 def algebraNormalizedFirstEulerianOperator (n : ℕ) : Module.End A
     (M ⊗[k] TensorPower k n (ModuleCat.Algebra.Hochschild.quotientCarrier k A)) :=
   algebraNormalizedEulerianOperator k A M n 0 + algebraNormalizedEulerianOperator k A M n 1
 
-/-- The original A-linear raw first projector restricts to the original full zero-plus-first ground projector. -/
+/-- Ground restriction of the raw zero-plus-first A-linear projector.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, the
+k-linear restriction of pₙ is firstEulerianOperator(n), with the same zero-plus-first
+convention. -/
 theorem algebraFirstEulerianOperator_restrictScalars (n : ℕ) :
     (algebraFirstEulerianOperator k A M n).restrictScalars k = firstEulerianOperator k A M n := by
   simp only [algebraFirstEulerianOperator, firstEulerianOperator, LinearMap.restrictScalars_add,
     algebraEulerianOperator_restrictScalars]
 
-/-- The raw first A-linear projector is idempotent by the rational group-ring laws. -/
+/-- The raw zero-plus-first A-linear Eulerian operator is idempotent.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, pₙ ∘ pₙ
+= pₙ on M ⊗[k] A⊗n. -/
 theorem algebraFirstEulerianOperator_idempotent (n : ℕ) :
     (algebraFirstEulerianOperator k A M n).comp (algebraFirstEulerianOperator k A M n) =
       algebraFirstEulerianOperator k A M n := by
@@ -104,14 +134,21 @@ theorem algebraFirstEulerianOperator_idempotent (n : ℕ) :
     if_neg (by omega : (0 : ℕ) ≠ 1), if_neg (by omega : (1 : ℕ) ≠ 0), add_zero, zero_add]
   rfl
 
-/-- The raw and normalized first A-linear projectors commute with the original normalization. -/
+/-- Normalization intertwines the two zero-plus-first projectors.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, qₙpₙ =
+p̄ₙqₙ between raw and normalized coefficient tensor levels. -/
 theorem algebraNormalizationLevelMap_firstEulerian (n : ℕ) :
     (algebraNormalizationLevelMap k A M n).comp (algebraFirstEulerianOperator k A M n) =
       (algebraNormalizedFirstEulerianOperator k A M n).comp (algebraNormalizationLevelMap k A M n) := by
   simp only [algebraFirstEulerianOperator, algebraNormalizedFirstEulerianOperator,
     LinearMap.comp_add, LinearMap.add_comp, algebraNormalizationLevelMap_eulerian]
 
-/-- The exact original raw proper relation module is the kernel of the A-linear first projector. -/
+/-- The raw A-linear proper-shuffle relations are the lowest-projector kernel.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M,
+algebraPositiveRelations(n)=ker(pₙ), where pₙ=eₙ⁽⁰⁾+eₙ⁽¹⁾ and the relations use only both-
+positive shuffle degrees. -/
 theorem algebraPositiveRelations_eq_firstEulerianKernel (n : ℕ) :
     algebraPositiveRelations k A M n = LinearMap.ker (algebraFirstEulerianOperator k A M n) := by
   ext x
@@ -120,8 +157,10 @@ theorem algebraPositiveRelations_eq_firstEulerianKernel (n : ℕ) :
   change firstEulerianOperator k A M n x = 0 ↔ algebraFirstEulerianOperator k A M n x = 0
   exact Iff.of_eq (congrArg (fun f => f x = 0) (algebraFirstEulerianOperator_restrictScalars k A M n)).symm
 
-/-- The normalized relation image is exactly the first-projector kernel, from original surjectivity
-  and projector identities. -/
+/-- Normalized proper-shuffle relations are the normalized lowest-projector kernel.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M,
+algebraNormalizedPositiveRelations(n)=ker(p̄ₙ), with p̄ₙ=ēₙ⁽⁰⁾+ēₙ⁽¹⁾. -/
 theorem algebraNormalizedPositiveRelations_eq_firstEulerianKernel (n : ℕ) :
     algebraNormalizedPositiveRelations k A M n =
       LinearMap.ker (algebraNormalizedFirstEulerianOperator k A M n) := by
@@ -154,14 +193,21 @@ theorem algebraNormalizedPositiveRelations_eq_firstEulerianKernel (n : ℕ) :
       change algebraNormalizedFirstEulerianOperator k A M n y = 0 at hy
       rw [hy, sub_zero]
 
-/-- The raw proper quotient level is the A-linear first projector image. -/
+/-- The raw proper-shuffle quotient identifies with the lowest Eulerian image.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, the
+quotient (M ⊗[k] A⊗n)/algebraPositiveRelations(n) is A-linearly equivalent to range(pₙ). -/
 def algebraFirstEulerianQuotientLevelEquiv (n : ℕ) :
     ((M ⊗[k] TensorPower k n A) ⧸ algebraPositiveRelations k A M n) ≃ₗ[A]
       LinearMap.range (algebraFirstEulerianOperator k A M n) :=
   (Submodule.quotEquivOfEq _ _ (algebraPositiveRelations_eq_firstEulerianKernel k A M n)).trans
     (algebraFirstEulerianOperator k A M n).quotKerEquivRange
 
-/-- The normalized proper quotient level is the A-linear normalized first projector image. -/
+/-- The normalized proper-shuffle quotient identifies with the normalized lowest image.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, the
+normalized quotient is A-linearly equivalent to range(p̄ₙ), retaining M and the ground-module
+tails A/(k·1). -/
 def algebraNormalizedFirstEulerianQuotientLevelEquiv (n : ℕ) :
     ((M ⊗[k] TensorPower k n (ModuleCat.Algebra.Hochschild.quotientCarrier k A)) ⧸
       algebraNormalizedPositiveRelations k A M n) ≃ₗ[A]

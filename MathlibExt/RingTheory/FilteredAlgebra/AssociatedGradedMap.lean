@@ -14,12 +14,16 @@ module
 public import MathlibExt.RingTheory.FilteredAlgebra.AssociatedGraded
 
 /-!
-# Actual maps of associated graded algebras
+# Maps of associated graded algebras
 
-A filtered algebra homomorphism induces the original map on every adjacent
-quotient and the native map of their external direct sums. The product and
-unit laws follow from the actual representative formulas, so the result is
-an algebra map before any PBW or projectivity hypothesis is considered.
+Let `F` and `G` be natural-number ring filtrations on `R`-algebras `A` and `B`, with
+independent algebra-carrier universes. An algebra map `φ : A →ₐ[R] B` preserving each
+filtration stage induces a map from the degree-`n` quotient of `F` to that of `G`, with `[a] ↦
+[φ a]`.
+
+The direct sum of these linear maps preserves the unit and multiplication, giving an
+`R`-algebra map of associated graded algebras. Its action on symbols is `symbol_F(a) ↦
+symbol_G(φ a)`. These maps preserve identity algebra maps and composition.
 -/
 
 @[expose] public section
@@ -37,7 +41,10 @@ variable {R : Type u} [CommRing R]
   (F : ℕ → Submodule R A) [IsRingFiltration F (lower F)]
   (G : ℕ → Submodule R B) [IsRingFiltration G (lower G)]
 
-/-- Restrict a filtered algebra map to the original filtration-stage carriers. -/
+/-- Restriction of a filtered algebra map to each stage.
+
+Let `φ : A →ₐ[R] B` satisfy `φ (F n) ⊆ G n` for every natural `n`. Restriction gives an
+`R`-linear map `F n →ₗ[R] G n`, with underlying value `φ a`. -/
 def stageMap (φ : A →ₐ[R] B)
     (hφ : ∀ n (a : A), a ∈ F n → φ a ∈ G n) (n : ℕ) : F n →ₗ[R] G n where
   toFun a := ⟨φ a.val, hφ n a.val a.property⟩
@@ -49,12 +56,19 @@ def stageMap (φ : A →ₐ[R] B)
     exact φ.toLinearMap.map_smul r a.val
 
 omit [IsRingFiltration F (lower F)] [IsRingFiltration G (lower G)] in
+/-- Underlying value of a filtered stage map.
+
+For `a : F n`, the underlying element of `stageMap F G φ hφ n a` is `φ a.val`. -/
 @[simp]
 theorem stageMap_coe (φ : A →ₐ[R] B)
     (hφ : ∀ n (a : A), a ∈ F n → φ a ∈ G n) (n : ℕ) (a : F n) :
     (stageMap F G φ hφ n a).val = φ a.val := rfl
 
 omit [IsRingFiltration F (lower F)] [IsRingFiltration G (lower G)] in
+/-- Filtered algebra maps preserve preceding-stage submodules.
+
+If a representative `a : F n` lies in `lowerInStage F n`, then its image under the restricted
+filtered map lies in `lowerInStage G n`. -/
 theorem stageMap_mem_lower (φ : A →ₐ[R] B)
     (hφ : ∀ n (a : A), a ∈ F n → φ a ∈ G n) (n : ℕ) (a : F n)
     (ha : a ∈ lowerInStage F n) : stageMap F G φ hφ n a ∈ lowerInStage G n := by
@@ -67,31 +81,49 @@ theorem stageMap_mem_lower (φ : A →ₐ[R] B)
       change φ a.val ∈ G n
       exact hφ n a.val ha
 
-/-- The map on original adjacent quotient layers. -/
+/-- Filtered algebra map on an adjacent quotient layer.
+
+A filtration-preserving algebra map `φ` induces an `R`-linear map `Grade F n →ₗ[R] Grade G n`
+by descending its stage-`n` restriction through the preceding-stage submodules. -/
 def gradeMap (φ : A →ₐ[R] B)
     (hφ : ∀ n (a : A), a ∈ F n → φ a ∈ G n) (n : ℕ) : Grade F n →ₗ[R] Grade G n :=
   (lowerInStage F n).mapQ (lowerInStage G n) (stageMap F G φ hφ n)
     (fun a ha => stageMap_mem_lower F G φ hφ n a ha)
 
 omit [IsRingFiltration F (lower F)] [IsRingFiltration G (lower G)] in
+/-- Representative formula for the induced quotient-layer map.
+
+The quotient class of `a : F n` maps to the quotient class of `stageMap F G φ hφ n a` in
+`Grade G n`. -/
 theorem gradeMap_mk (φ : A →ₐ[R] B)
     (hφ : ∀ n (a : A), a ∈ F n → φ a ∈ G n) (n : ℕ) (a : F n) :
     gradeMap F G φ hφ n ((lowerInStage F n).mkQ a) =
       (lowerInStage G n).mkQ (stageMap F G φ hφ n a) := rfl
 
-/-- The actual native direct-sum map of quotient layers. -/
+/-- Direct-sum linear map of associated graded modules.
+
+The induced maps `Grade F n →ₗ[R] Grade G n` assemble degree by degree to an `R`-linear map
+`AssociatedGraded F →ₗ[R] AssociatedGraded G`. -/
 def mapLinear (φ : A →ₐ[R] B)
     (hφ : ∀ n (a : A), a ∈ F n → φ a ∈ G n) :
     AssociatedGraded F →ₗ[R] AssociatedGraded G :=
   DirectSum.lmap (fun n => gradeMap F G φ hφ n)
 
 omit [IsRingFiltration F (lower F)] [IsRingFiltration G (lower G)] in
+/-- Direct-sum map sends symbols to symbols of their images.
+
+The linear associated-graded map sends `symbol F n a` to `symbol G n (stageMap F G φ hφ n a)`
+for every filtered representative `a : F n`. -/
 theorem mapLinear_symbol (φ : A →ₐ[R] B)
     (hφ : ∀ n (a : A), a ∈ F n → φ a ∈ G n) (n : ℕ) (a : F n) :
     mapLinear F G φ hφ (symbol F n a) = symbol G n (stageMap F G φ hφ n a) := by
   rw [symbol_mk, mapLinear, DirectSum.lmap_lof, gradeMap_mk]
   rfl
 
+/-- Associated-graded linear map preserves the unit.
+
+For a filtration-preserving algebra map `φ`, the induced direct-sum linear map sends the unit
+of `AssociatedGraded F` to the unit of `AssociatedGraded G`. -/
 theorem mapLinear_one (φ : A →ₐ[R] B)
     (hφ : ∀ n (a : A), a ∈ F n → φ a ∈ G n) :
     mapLinear F G φ hφ 1 = 1 := by
@@ -100,6 +132,10 @@ theorem mapLinear_one (φ : A →ₐ[R] B)
   apply Subtype.ext
   exact φ.map_one
 
+/-- Associated-graded linear map preserves multiplication.
+
+For all associated-graded elements `x` and `y`, the direct-sum map induced by a filtered
+algebra homomorphism satisfies `mapLinear (x * y) = mapLinear x * mapLinear y`. -/
 theorem mapLinear_mul (φ : A →ₐ[R] B)
     (hφ : ∀ n (a : A), a ∈ F n → φ a ∈ G n)
     (x y : AssociatedGraded F) :
@@ -124,19 +160,30 @@ theorem mapLinear_mul (φ : A →ₐ[R] B)
       rw [add_mul, map_add, hx z, hy z, map_add, add_mul]
   exact h x y
 
-/-- A filtered algebra map induces the actual algebra map of associated gradeds. -/
+/-- Algebra homomorphism induced on associated graded algebras.
+
+A filtration-preserving algebra map `φ : A →ₐ[R] B` induces an `R`-algebra homomorphism
+`AssociatedGraded F →ₐ[R] AssociatedGraded G`. Its underlying linear map is the degreewise
+direct sum of quotient-layer maps. -/
 def map (φ : A →ₐ[R] B)
     (hφ : ∀ n (a : A), a ∈ F n → φ a ∈ G n) :
     AssociatedGraded F →ₐ[R] AssociatedGraded G :=
   AlgHom.ofLinearMap (mapLinear F G φ hφ) (mapLinear_one F G φ hφ)
     (mapLinear_mul F G φ hφ)
 
+/-- Associated-graded algebra map on homogeneous symbols.
+
+The induced algebra map sends the degree-`n` symbol of `a : F n` to the degree-`n` symbol of
+its stage-restricted image under `φ`. -/
 theorem map_symbol (φ : A →ₐ[R] B)
     (hφ : ∀ n (a : A), a ∈ F n → φ a ∈ G n) (n : ℕ) (a : F n) :
     map F G φ hφ (symbol F n a) = symbol G n (stageMap F G φ hφ n a) :=
   mapLinear_symbol F G φ hφ n a
 
-/-- The map on original quotient layers preserves identities. -/
+/-- Identity filtered algebra map induces the identity on associated graded.
+
+For any filtration-preservation witness of the identity map on `A`, the induced algebra map of
+`AssociatedGraded F` is its identity algebra homomorphism. -/
 @[simp]
 theorem map_id
     (h : ∀ n (a : A), a ∈ F n → (AlgHom.id R A) a ∈ F n) :
@@ -155,8 +202,11 @@ theorem map_id
 
 variable (H : ℕ → Submodule R C) [IsRingFiltration H (lower H)]
 
-/-- The actual quotient/direct-sum maps preserve composition across independent
-algebra-carrier universes. -/
+/-- Associated-graded algebra maps preserve filtered composition.
+
+For filtered algebra maps `φ : A →ₐ[R] B` and `ψ : B →ₐ[R] C`, the associated-graded map of
+`ψ.comp φ` equals the composite of their associated-graded maps. The three algebra-carrier
+universes are independent. -/
 theorem map_comp (φ : A →ₐ[R] B) (ψ : B →ₐ[R] C)
     (hφ : ∀ n (a : A), a ∈ F n → φ a ∈ G n)
     (hψ : ∀ n (b : B), b ∈ G n → ψ b ∈ H n) :

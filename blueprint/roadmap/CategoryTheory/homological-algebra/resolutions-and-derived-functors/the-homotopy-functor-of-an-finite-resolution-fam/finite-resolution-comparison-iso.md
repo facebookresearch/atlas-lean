@@ -1,4 +1,5 @@
-# Finite Resolution Comparison Iso
+# The homotopy-category isomorphism of two finite resolutions
 
-Original chosen identity comparisons give an isomorphism between the
-stock quotient images of two original finite resolutions of the same object.
+Let P be preadditive, A abelian and i : P → A additive full faithful, with all i(P₀) projective.
+For finite resolutions R,S of the same X, the chosen comparisons over id_X in both directions
+give [R.complex] ≅ [S.complex] in the homotopy category.

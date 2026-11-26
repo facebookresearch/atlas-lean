@@ -1,4 +1,6 @@
-# Coefficient ULift Complex Iso
+# The chain comparison of full CE lifting and lifted coefficients
 
-Chevalley–Eilenberg whole-complex lift versus CE of lifted coefficients, with the all-degree
-boundary and its naturality.
+The chain comparison of full CE lifting and lifted coefficients.
+
+The degreewise tensor equivalences identify the whole-complex lift with the CE complex of the
+lifted Lie coefficient module.

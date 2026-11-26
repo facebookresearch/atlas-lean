@@ -1,4 +1,5 @@
-# Tensor Pow Obj Two Iso hom
+# Forward two factor coordinate uses the one factor map
 
-The forward weight-two normalization applies the weight-one unitor only
-to the accumulated left factor.
+Forward two factor coordinate uses the one factor map.
+
+The forward two-factor coordinate is the one-factor map tensored with `𝟙 X`.

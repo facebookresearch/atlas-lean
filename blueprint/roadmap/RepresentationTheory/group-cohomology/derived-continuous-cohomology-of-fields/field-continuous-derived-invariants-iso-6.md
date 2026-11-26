@@ -1,4 +1,6 @@
-# Field Continuous Derived Invariants Iso unique
+# Connecting and zero normalization determine the comparison maps
 
-A family is forced in every degree by naturality, original connector compatibility
-and the fixed identity-evaluation normalization at zero. No universality is assumed.
+Connecting and zero normalization determine the comparison maps.
+
+Any family of natural transformations commuting with coefficient connecting maps and having
+the same degree-zero normalization equals the canonical comparison in every degree.

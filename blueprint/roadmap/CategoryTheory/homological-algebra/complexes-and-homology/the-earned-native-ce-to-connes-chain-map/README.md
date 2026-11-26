@@ -1,25 +1,25 @@
 # The earned native CE-to-Connes chain map
 
-- [Cyclic Full Exterior boundary tail](cyclic-full-exterior-boundary-tail.md)
+- [The integral cyclic boundary of full exterior alternation](cyclic-full-exterior-boundary-tail.md)
 
 ## Rational
 
-- [Cyclic Exterior positive boundary](cyclic-exterior-positive-boundary.md)
-- [Cyclic Exterior boundary pure](cyclic-exterior-boundary-pure.md)
-- [Cyclic Exterior boundary](cyclic-exterior-boundary.md)
-- [Cyclic Printed Source](cyclic-printed-source.md)
-- [Cyclic Exterior Chain Map](cyclic-exterior-chain-map.md)
-- [Cyclic Exterior Chain Map f](cyclic-exterior-chain-map-f.md)
-- [Cyclic Exterior Weibel Chain Map](cyclic-exterior-weibel-chain-map.md)
-- [Cyclic Exterior Weibel Chain Map f](cyclic-exterior-weibel-chain-map-f.md)
-- [Cyclic Exterior Weibel Chain Map zero pure](cyclic-exterior-weibel-chain-map-zero-pu.md)
-- [Cyclic Exterior Chain Map one pure](cyclic-exterior-chain-map-one-pure.md)
-- [Cyclic Exterior Chain Map one boundary](cyclic-exterior-chain-map-one-boundary.md)
-- [Cyclic Exterior Weibel Chain Map one pure](cyclic-exterior-weibel-chain-map-one-pur.md)
+- [The positive bracket boundary in cyclic exterior coordinates](cyclic-exterior-positive-boundary.md)
+- [The cyclic boundary law on a pure exterior wedge](cyclic-exterior-boundary-pure.md)
+- [The linear boundary identity of cyclic exterior maps](cyclic-exterior-boundary.md)
+- [The positive CE tail with positive bracket convention](cyclic-printed-source.md)
+- [The tail-alternating chain map with positive bracket differential](cyclic-exterior-chain-map.md)
+- [The components of the positive-bracket cyclic chain map](cyclic-exterior-chain-map-f.md)
+- [The signed cyclic chain map from the canonical positive CE tail](cyclic-exterior-weibel-chain-map.md)
+- [The degree sign of the canonical-tail cyclic chain map](cyclic-exterior-weibel-chain-map-f.md)
+- [The degree-zero one-factor cyclic representative](cyclic-exterior-weibel-chain-map-zero-pu.md)
+- [The degree-one ordered representative for the positive bracket map](cyclic-exterior-chain-map-one-pure.md)
+- [The positive bracket boundary of a degree-one cyclic representative](cyclic-exterior-chain-map-one-boundary.md)
+- [The negative degree-one representative for the canonical-tail map](cyclic-exterior-weibel-chain-map-one-pur.md)
 
 ## Naturality
 
-- [Cyclic Weibel Source Map](cyclic-weibel-source-map.md)
-- [Cyclic Printed Source Map](cyclic-printed-source-map.md)
-- [Cyclic Exterior Chain Map naturality](cyclic-exterior-chain-map-naturality.md)
-- [Cyclic Exterior Weibel Chain Map naturality](cyclic-exterior-weibel-chain-map-natural.md)
+- [The canonical positive-tail map of an algebra homomorphism](cyclic-weibel-source-map.md)
+- [The positive-bracket source map of an algebra homomorphism](cyclic-printed-source-map.md)
+- [Naturality of the positive-bracket cyclic exterior map](cyclic-exterior-chain-map-naturality.md)
+- [Naturality of the canonical-tail signed cyclic exterior map](cyclic-exterior-weibel-chain-map-natural.md)

@@ -1,3 +1,6 @@
-# Matrix Coefficient Nat Trans
+# The coefficient natural transformation of finite matrix CE systems
 
-Coefficient maps give a natural transformation of finite-stage CE functors.
+The coefficient natural transformation of finite matrix CE systems.
+
+The fixed-size coefficient maps assemble into a natural transformation between the size-
+indexed CE functors.

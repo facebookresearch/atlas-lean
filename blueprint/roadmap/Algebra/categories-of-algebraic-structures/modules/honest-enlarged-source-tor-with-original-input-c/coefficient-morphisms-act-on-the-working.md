@@ -1,3 +1,6 @@
-# Coefficient morphisms act on the working tensor functor
+# A coefficient map acts on independently sized source tensors
 
-Coefficient morphisms act on the working tensor functor.
+For rings R,S and a bimodule map f:B→B′, the natural
+coefficient transformation on source world a sends
+ULift^Γ_z X⊗_R ULift^Γ_z B to ULift^Γ_z X⊗_R ULift^Γ_z B′.
+It fixes the source factor and lifts f on the coefficient factor.

@@ -1,4 +1,5 @@
-# Horizontal Column Projection
+# The top-column projection in every cochain degree
 
-Degreewise top-column projection in an arbitrary cochain degree.  It is
-zero above the support of the shifted column.
+The top-column projection in every cochain degree.
+
+Use the supported component projection when `i ≤ -p`, and the zero map when `i>-p`.

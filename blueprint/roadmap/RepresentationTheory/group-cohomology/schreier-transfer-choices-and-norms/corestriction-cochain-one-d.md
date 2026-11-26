@@ -1,4 +1,5 @@
-# Corestriction Cochain One d₀₁
+# Transfer commutes with the first cochain differential
 
-Degree-zero and degree-one transfer commute with the first
-inhomogeneous differential: `cor(d a) = d(N a)`.
+Transfer commutes with the first cochain differential.
+
+For d⁰x(h) = ρ(h)x − x, the chosen degree-one transfer satisfies cor_T(d⁰x) = d⁰(N_T(x)).

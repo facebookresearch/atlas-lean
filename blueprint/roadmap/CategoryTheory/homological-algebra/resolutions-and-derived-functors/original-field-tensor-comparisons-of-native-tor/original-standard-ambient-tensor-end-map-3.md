@@ -1,4 +1,7 @@
-# Original Standard Ambient Tensor End Map smul
+# The standard ambient support representation is its module action
 
-The original balanced endomorphism representation is exactly the
-actual transported T action on standard ambient native Tor.
+For commutative K-algebras A,B,C,V,W and maps
+i_V:A⊗K B→V, i_W:B⊗K C→W, put D=(A⊗K B)⊗K C.
+Assume A,C flat over K.
+For t∈T, the endomorphism representation satisfies
+ρ_std(t)(z)=t•z for the transported balanced T-module structure.

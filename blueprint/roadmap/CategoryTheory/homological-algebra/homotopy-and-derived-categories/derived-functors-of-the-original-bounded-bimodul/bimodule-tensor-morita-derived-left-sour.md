@@ -1,3 +1,7 @@
-# Bimodule Tensor Morita Derived Left Source Iso
+# R-return comparison for the localized Morita functors
 
-The actual left return before localization is the original bounded Morita unit inverse.
+R-return comparison for the localized Morita functors.
+
+The forward bounded tensor functor, followed by localization in `S` and the inverse localized
+functor, is naturally isomorphic to localization in `R`. The comparison combines the inverse-
+functor factorization with the bounded equivalence's return isomorphism.

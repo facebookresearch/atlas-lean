@@ -1,3 +1,6 @@
-# Coefficient Tensor Obj
+# Additive tensor functor of a tensor-product-ring coefficient
 
-The native coefficient object gives an actual additive tensor functor.
+Additive tensor functor of a tensor-product-ring coefficient.
+
+A coefficient object `X`, with its two restricted actions, defines the additive functor `A ↦ A
+⊗_R X` from right `R`-modules to right `S`-modules.

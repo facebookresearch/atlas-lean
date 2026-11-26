@@ -1,3 +1,6 @@
-# Horizontal First Page Zero Short Exact
+# Short exactness of the zero-column complete filtration sequence
 
-The complete-filtration sequence is short exact in column zero.
+Short exactness of the zero-column complete filtration sequence.
+
+The lower stage is zero and the direct-column projection is an isomorphism, giving a short
+exact sequence in column zero.

@@ -1,3 +1,4 @@
-# Field Galois Common Fiber Map
+# The common-height Galois fiber map lifts the geometric lift action
 
-Lift only the original geometric point indices to the common universe.
+For k,Ω with IsSepClosure k Ω, the map fieldGaloisCommonFiberMap(g) is the fiber endomorphism
+z↦Spec(g)≫z whiskered by ULift^w. It acts on the common point fibers of height max(u,w).

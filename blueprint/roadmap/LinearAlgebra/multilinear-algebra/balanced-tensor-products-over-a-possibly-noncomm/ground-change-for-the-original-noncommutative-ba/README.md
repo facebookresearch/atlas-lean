@@ -1,26 +1,26 @@
 # Ground change for the original noncommutative balanced quotient
 
-- [Integral](integral.md)
-- [Integral Mk](integral-mk.md)
-- [Integral Left Module](integral-left-module.md)
-- [Integral Right Module](integral-right-module.md)
-- [Integral Module](integral-module.md)
-- [Integral Module mk](integral-module-mk.md)
-- [Integral Mk smul right](integral-mk-smul-right.md)
-- [Pairing](pairing.md)
-- [To Integral](to-integral.md)
-- [To Integral mk](to-integral-mk.md)
-- [Integer Pairing](integer-pairing.md)
-- [From Integral Raw](from-integral-raw.md)
-- [From Integral](from-integral.md)
-- [Equiv](equiv.md)
+- [Integer-ground balanced tensor carrier](integral.md)
+- [Pure pairing into the integer balanced tensor product](integral-mk.md)
+- [Left outer module on integer balanced tensors](integral-left-module.md)
+- [Right outer module on integer balanced tensors](integral-right-module.md)
+- [Ground-ring action on integer balanced tensors](integral-module.md)
+- [Ground action on a pure integer-balanced class](integral-module-mk.md)
+- [Moving ground scalars across an integer-balanced tensor](integral-mk-smul-right.md)
+- [Ground-bilinear pairing into integer balanced tensors](pairing.md)
+- [Comparison from ground-balanced to integer-balanced tensors](to-integral.md)
+- [Ground comparison on pure balanced classes](to-integral-mk.md)
+- [Integer-bilinear pairing into ground-balanced tensors](integer-pairing.md)
+- [Additive return from integer-balanced tensors](from-integral-raw.md)
+- [Ground-linear return from integer-balanced tensors](from-integral.md)
+- [Ground-ring equivalence of balanced tensor quotients](equiv.md)
 
 ## Outer Left
 
-- [Equiv left smul](equiv-left-smul.md)
-- [Equiv Left](equiv-left.md)
+- [Left outer action preserved by the ground comparison](equiv-left-smul.md)
+- [Left-linear ground equivalence of balanced tensors](equiv-left.md)
 
 ## Outer Right
 
-- [Equiv right smul](equiv-right-smul.md)
-- [Equiv Right](equiv-right.md)
+- [Right outer action preserved by the ground comparison](equiv-right-smul.md)
+- [Right-linear ground equivalence of balanced tensors](equiv-right.md)

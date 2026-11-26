@@ -1,3 +1,4 @@
-# Field Identity Etale
+# The terminal identity étale object over a field
 
-The source's actual original identity étale object.
+For a field k, fieldIdentityEtale(k) is the étale object id_{Spec(k)} : Spec(k) → Spec(k). It
+is the terminal object used for global-section evaluation.

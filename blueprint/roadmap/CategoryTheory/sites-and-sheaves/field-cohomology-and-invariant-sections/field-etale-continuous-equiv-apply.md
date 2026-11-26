@@ -1,3 +1,6 @@
-# Field Etale Continuous Equiv apply
+# Value of the field cohomology comparison
 
-The comparison uses the literal canonical Γ map and the accepted native component.
+Value of the field cohomology comparison.
+
+The equivalence sends a class first through the canonical derived-section coordinate and then
+through the field continuous-cohomology coordinate.

@@ -1,4 +1,6 @@
-# Top Monad Pow Tuple Homeomorph map last fst
+# The tuple remaining after a map on the innermost pair
 
-Mapping a final tensor-monad action preserves the tuple and removes its
-last coordinate from the successor reader.
+The tuple remaining after a map on the innermost pair.
+
+For a continuous map f : TX → Y, the tuple component of Tⁿ(f) on Tⁿ⁺¹(X) is the initial n
+entries of the source tuple.

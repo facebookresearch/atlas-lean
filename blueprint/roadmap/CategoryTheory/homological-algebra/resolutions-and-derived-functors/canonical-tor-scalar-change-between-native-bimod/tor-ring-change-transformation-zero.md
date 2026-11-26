@@ -1,3 +1,6 @@
-# Tor Ring Change Transformation zero
+# Endpoint Tor change agrees with tensor change in degree zero
 
-Canonical Tor scalar change has the original ordered tensor map under both zero isos.
+For endpoint maps φ,ψ and coefficient map f, the
+Tor ring-change transformation in degree zero commutes
+with Tor_0≅tensor on both sides.
+The resulting tensor map is [x⊗y]↦[x⊗f(y)].

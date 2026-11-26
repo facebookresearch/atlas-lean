@@ -1,3 +1,6 @@
-# Tensorator
+# The canonical graded Künneth tensorator
 
-The canonical cycle Künneth tensorator on the native graded tensor.
+The canonical graded Künneth tensorator.
+
+In degree `n`, apply the antidiagonal comparison and then the finite-sum homology tensor
+pairing.

@@ -1,3 +1,5 @@
-# Horizontal Filtered Top Index
+# The top bidegree index of a finite filtered total
 
-The top-column index in filtration stage `p` and total degree `p+q`.
+The top bidegree index of a finite filtered total.
+
+In total degree `p+q` and stage `p`, the top-column summand is indexed by `(p,q)`.

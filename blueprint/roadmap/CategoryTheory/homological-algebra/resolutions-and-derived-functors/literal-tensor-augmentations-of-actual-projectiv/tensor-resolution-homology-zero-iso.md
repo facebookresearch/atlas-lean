@@ -1,4 +1,6 @@
-# Tensor Resolution Homology Zero Iso
+# Zeroth tensor-resolution homology is the tensor of the resolved modules
 
-The canonical degree-zero comparison for the original tensor total has
-the literal tensor product of the original coefficients as its target.
+Zeroth tensor-resolution homology is the tensor of the resolved modules.
+
+Compose the tensor-total homology coordinate in degree zero with the zero-Tor isomorphism to
+obtain `H₀(P ⊗ Q) ≅ M ⊗ N`.

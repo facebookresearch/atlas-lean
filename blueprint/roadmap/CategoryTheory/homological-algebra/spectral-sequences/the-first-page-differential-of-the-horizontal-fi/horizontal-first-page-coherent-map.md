@@ -1,3 +1,6 @@
-# Horizontal First Page Coherent Map
+# The filtration map of a coherent first-page window
 
-The filtration map spanning the coherent window for column `p`.
+The filtration map of a coherent first-page window.
+
+Use the complete filtration diagram map from the coherent lower stage of column `p` to its
+upper stage.

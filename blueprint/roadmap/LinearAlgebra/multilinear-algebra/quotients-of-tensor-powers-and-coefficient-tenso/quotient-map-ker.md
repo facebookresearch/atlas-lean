@@ -1,3 +1,6 @@
-# Quotient Map ker
+# The kernel of a factorwise tensor quotient
 
-Right exactness gives precisely the advertised kernel, in every degree.
+The kernel of a factorwise tensor quotient.
+
+For a commutative ring k, a k-module A and S ≤ A, ker(qₙ) = Rₙ(S), the span of pure tensors
+with at least one entry in S.

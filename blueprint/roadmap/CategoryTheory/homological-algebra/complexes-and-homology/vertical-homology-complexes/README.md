@@ -2,16 +2,16 @@
 
 ## Of Shapes
 
-- [Vertical Homology Complex Of Shapes](vertical-homology-complex-of-shapes.md)
-- [Vertical Homology Complex Of Shapes X](vertical-homology-complex-of-shapes-x.md)
-- [Vertical Homology Complex Of Shapes d](vertical-homology-complex-of-shapes-d.md)
-- [Vertical Homology Complex Map Of Shapes](vertical-homology-complex-map-of-shapes.md)
-- [Vertical Homology Complex Map Of Shapes f](vertical-homology-complex-map-of-shapes-2.md)
+- [Horizontal complex of vertical homology in arbitrary shapes](vertical-homology-complex-of-shapes.md)
+- [Objects of the shape-generic vertical-homology complex](vertical-homology-complex-of-shapes-x.md)
+- [Differentials of the shape-generic vertical-homology complex](vertical-homology-complex-of-shapes-d.md)
+- [Map of shape-generic vertical-homology complexes](vertical-homology-complex-map-of-shapes.md)
+- [Components of a shape-generic vertical-homology map](vertical-homology-complex-map-of-shapes-2.md)
 
 ## First Quadrant
 
-- [Vertical Homology Complex](vertical-homology-complex.md)
-- [Vertical Homology Complex X](vertical-homology-complex-x.md)
-- [Vertical Homology Complex d](vertical-homology-complex-d.md)
-- [Vertical Homology Complex Map](vertical-homology-complex-map.md)
-- [Vertical Homology Complex Map f](vertical-homology-complex-map-f.md)
+- [Vertical-homology chain complex of a first-quadrant bicomplex](vertical-homology-complex.md)
+- [Objects of the first-quadrant vertical-homology chain complex](vertical-homology-complex-x.md)
+- [Differentials of the first-quadrant vertical-homology chain complex](vertical-homology-complex-d.md)
+- [Map of first-quadrant vertical-homology chain complexes](vertical-homology-complex-map.md)
+- [Components of a first-quadrant vertical-homology chain map](vertical-homology-complex-map-f.md)

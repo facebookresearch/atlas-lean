@@ -1,3 +1,6 @@
-# Field Mapped Injective Resolution
+# Geometric fiber of a sheaf injective resolution
 
-The actual mapped injective resolution retains its actual augmentation and quasi-isomorphism.
+Geometric fiber of a sheaf injective resolution.
+
+Apply the geometric-stalk Galois functor to an injective resolution to obtain an injective
+resolution of the geometric fiber.

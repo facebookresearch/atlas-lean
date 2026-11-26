@@ -1,4 +1,6 @@
-# Corestriction Cocycle One Class
+# The class of a transferred one-cocycle
 
-The H¹ class of a transferred one-cocycle before descending through
-the source H¹ quotient.
+The class of a transferred one-cocycle.
+
+Transfer an H-one-cocycle by the chosen Schreier formula and project the resulting G-one-
+cocycle to H¹(G,A).

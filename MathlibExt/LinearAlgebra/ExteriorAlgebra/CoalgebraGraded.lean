@@ -19,14 +19,21 @@ public import Mathlib.Algebra.Category.ModuleCat.Abelian
 public import Mathlib.CategoryTheory.Limits.Preserves.Finite
 
 /-!
-# The actual native graded exterior coalgebra
+# Graded exterior coalgebra, counit and coaugmentation
 
-The genuine finite coproduct, counit and coaugmentation are packaged in the
-native category of graded modules using the canonical UniverseTensor data.
-The ring and module universes remain independent. The native tensor unit
-is the actual module lift of the original ring, with the original scalar
-action. Both counit identities and coassociativity are earned from the
-constructed exterior coalgebra. The Koszul interchange fixes its coproduct.
+Let R be a commutative ring and M an R-module. Put Eₙ=∧ⁿ_RM and give ℕ-graded R-modules the
+convolution tensor product, whose degree n is ⊕_{p+q=n}Eₚ⊗_RE_q. The exterior coproduct
+preserves total degree and gives Δₙ:Eₙ → ⊕_{p+q=n}Eₚ⊗_RE_q. Its degree-zero scalar augmentation
+supplies a counit, and both counit identities and coassociativity hold under the graded unitors
+and associator.
+
+If R,M lie in universes u,v, use the R-module category in max(u,v). The tensor unit is the
+canonical lift of R concentrated in degree zero. Coaugmentation sends its scalar r to r·1, the
+empty exterior word, and preserves both counit and coproduct.
+
+On the homogeneous tensor component Eₚ⊗E_q, Koszul interchange is a⊗b ↦ (-1)^{pq}b⊗a. It is an
+involution and fixes the exterior coproduct, giving graded cocommutativity. These statements
+need no freeness, characteristic or factorial-invertibility hypothesis.
 -/
 
 @[expose] public section
@@ -65,20 +72,29 @@ private theorem composeTensorIsoLeft {C : Type*} [Category C] [MonoidalCategory 
   rw [← id_tensorHom, tensorHom_comp_tensorHom]
   simp only [Category.assoc, Iso.inv_hom_id, Category.comp_id]
 
-/-- The canonical closed module tensor structure at the original carrier height. -/
+/-- For a commutative ring R in universe u, the category of R-modules in max(u,v) is monoidal closed
+for tensor product over R and the internal R-linear Hom. This is the closed structure used for
+the exterior graded module of M in universe v. -/
 local instance gradedExteriorClosed : MonoidalClosed (ModuleCat.{max u v} R) :=
   ModuleCat.UniverseScalarRestriction.monoidalClosed.{u,v} (R := R)
 
-/-- The actual lifted tensor unit concentrated in degree zero. -/
+/-- For a commutative ring R in universe u, gradedUnit is the ℕ-graded R-module with the canonical
+universe lift of R in degree zero and the zero module in every positive degree. Its module
+category has universe max(u,v). -/
 def gradedUnit : GradedObject ℕ (ModuleCat.{max u v} R) :=
   (GradedObject.single₀ ℕ).obj (ModuleCat.of R (ULift.{v} R))
 
 
-/-- The actual degree-zero coordinate of the fixed lifted scalar unit. -/
+/-- For a commutative ring R, the degree-zero component of gradedUnit is canonically isomorphic to
+the lifted scalar R-module. The lift places the ring from universe u into max(u,v). -/
 def gradedUnitZeroIso : (gradedUnit.{u,v} R) 0 ≅ ModuleCat.of R (ULift.{v} R) :=
   GradedObject.singleObjApplyIso 0 (ModuleCat.of R (ULift.{v} R))
 
-/-- Exterior degree zero identifies with the actual native lifted tensor unit. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Write
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q). The equivalence ∧⁰_RM ≃ R, followed by
+the inverse projection from the lifted scalar module, gives an isomorphism E₀ ≅ R_lift in the
+common module universe. If R and M lie in universes u,v, all categorical modules are placed in
+max(u,v); the scalar unit is the canonical lift of R to that universe. -/
 def zeroUnitIso : 𝓔 0 ≅ ModuleCat.of R (ULift.{v} R) :=
   ((exteriorPower.zeroEquiv R M).trans
     (ULift.moduleEquiv : ULift.{v} R ≃ₗ[R] R).symm).toModuleIso
@@ -96,7 +112,10 @@ theorem augmentation_degree_zero (a : ⋀[R]^0 M) :
     exact (exteriorPower.zeroEquiv_ιMulti (R := R) (M := M) w).symm
   exact LinearMap.congr_fun h a
 
-/-- The semantic augmentation name denotes Mathlib's existing canonical scalar retraction. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Write
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q). The augmentation E →ₐ[R] R is
+ExteriorAlgebra.algebraMapInv: it retracts the scalar algebra map R → E and sends each exterior
+generator ι(m) to zero. -/
 theorem augmentation_eq_algebraMapInv : augmentation R M =
     ExteriorAlgebra.algebraMapInv (R := R) (M := M) := rfl
 
@@ -104,7 +123,10 @@ theorem augmentation_ιMulti_positive (n : ℕ) (w : Fin (n + 1) → M) :
     augmentation R M (ιMulti R (n + 1) w) = 0 := by
   rw [ιMulti_succ_apply, map_mul, augmentation_ι, zero_mul]
 
-/-- The actual augmentation is the original degree-zero projection and scalar coordinate. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Write
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q). For every a ∈ E,
+ε(a)=zeroEquiv(π₀(a)), where ε is augmentation, π₀ is the degree-zero exterior projection and
+zeroEquiv identifies E₀ with R. -/
 theorem augmentation_eq_projection (a : E) :
     augmentation R M a = exteriorPower.zeroEquiv R M (π 0 a) := by
   have h : (augmentation R M).toLinearMap =
@@ -130,14 +152,22 @@ theorem augmentation_eq_zero_of_mem_positive (n : ℕ) (hn : n ≠ 0)
   rw [augmentation_eq_projection, exteriorPower.projection_eq_zero_of_mem R M 0 n hn a ha,
     map_zero]
 
-/-- The genuine graded counit, using exactly the original scalar coordinate. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Write
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q). gradedCounit is the degree-preserving
+map E• → R_lift[0]. In degree zero it is E₀ ≅ R_lift ≅ gradedUnit₀; in every positive degree it
+is zero. If R and M lie in universes u,v, all categorical modules are placed in max(u,v); the
+scalar unit is the canonical lift of R to that universe. -/
 def gradedCounit : 𝓔 ⟶ (gradedUnit.{u,v} R) := fun n =>
   if hn : n = 0 then by
     subst n
     exact (zeroUnitIso R M).hom ≫ (gradedUnitZeroIso.{u,v} R).inv
   else 0
 
-/-- The genuine graded coaugmentation inserts the actual empty exterior word. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Write
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q). gradedCoaug is the map R_lift[0] → E•
+taking a scalar r in degree zero to r·1, the scalar multiple of the empty exterior word. Its
+positive-degree components are zero. If R and M lie in universes u,v, all categorical modules
+are placed in max(u,v); the scalar unit is the canonical lift of R to that universe. -/
 def gradedCoaug : (gradedUnit.{u,v} R) ⟶ 𝓔 := fun n =>
   if hn : n = 0 then by
     subst n
@@ -168,7 +198,10 @@ theorem gradedCoaug_zero_value (r : (gradedUnit.{u,v} R) 0) :
   simp only [exteriorPower.zeroEquiv_symm_apply, Submodule.coe_smul,
     exteriorPower.ιMulti_apply_coe, ιMulti_zero_apply]
 
-/-- Evaluate the original counit on the left native tensor factor. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Write
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q). In total degree n,
+gradedLeftCounitEvaluation is (ε⊗id) followed by the graded left unitor Tₙ → Eₙ. It kills every
+(p,q)-summand with p>0; the (0,n)-summand is evaluated by the scalar coordinate E₀ ≅ R. -/
 def gradedLeftCounitEvaluation (n : ℕ) : tensorDegree R M n ⟶ 𝓔 n := by
   letI : MonoidalCategoryStruct (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.tensorStructure.{u,v} (R := R)
   letI : MonoidalCategory (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.monoidalCategory.{u,v} (R := R)
@@ -177,7 +210,10 @@ def gradedLeftCounitEvaluation (n : ℕ) : tensorDegree R M n ⟶ 𝓔 n := by
   exact GradedObject.Monoidal.tensorHom (gradedCounit R M) (𝟙 𝓔) n ≫
     (GradedObject.Monoidal.leftUnitor 𝓔).hom n
 
-/-- Evaluate the original counit on the right native tensor factor. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Write
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q). In total degree n,
+gradedRightCounitEvaluation is (id⊗ε) followed by the graded right unitor Tₙ → Eₙ. It kills
+every (p,q)-summand with q>0; the (n,0)-summand is evaluated by E₀ ≅ R. -/
 def gradedRightCounitEvaluation (n : ℕ) : tensorDegree R M n ⟶ 𝓔 n := by
   letI : MonoidalCategoryStruct (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.tensorStructure.{u,v} (R := R)
   letI : MonoidalCategory (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.monoidalCategory.{u,v} (R := R)
@@ -378,7 +414,12 @@ theorem gradedCoproduct_rightCounit (n : ℕ) :
     rw [augmentation_lTensor_coproduct, TensorProduct.rid_tmul, one_smul]
     exact exteriorPower.projection_subtype_apply R M n (show ⋀[R]^n M from a))
 
-/-- The actual native graded exterior comonoid; no law is supplied by a caller. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Write
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q). The exterior grading E• is a comonoid
+in ℕ-graded R-modules with the convolution tensor product. Its counit is gradedCounit and its
+comultiplication is gradedCoproduct. Both counit identities and coassociativity hold with the
+graded unitors and associator. If R and M lie in universes u,v, all categorical modules are
+placed in max(u,v); the scalar unit is the canonical lift of R to that universe. -/
 def gradedComonObj :
     letI : MonoidalCategoryStruct (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.tensorStructure.{u,v} (R := R)
     letI : MonoidalCategory (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.monoidalCategory.{u,v} (R := R)
@@ -413,7 +454,10 @@ def gradedComonObj :
         intro n
         exact gradedCoproduct_coassoc R M n }
 
-/-- The actual homogeneous Koszul interchange in the native graded tensor degree. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Write
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q). For n : ℕ, gradedKoszulSwap sends the
+(p,q)-summand element a⊗b, p+q=n, to (-1)^{p·q}(b⊗a) in the (q,p)-summand. This defines an
+R-linear endomorphism of Tₙ. -/
 def gradedKoszulSwap (n : ℕ) : tensorDegree R M n ⟶ tensorDegree R M n :=
   tensorDegreeDesc R M n (fun p q h => (-1 : R) ^ (p * q) •
     (ModuleCat.ofHom (TensorProduct.comm R (⋀[R]^p M) (⋀[R]^q M)).toLinearMap ≫
@@ -447,7 +491,10 @@ theorem gradedKoszulSwap_realize (n : ℕ) :
       ((-1 : R) ^ (p * q) • (tensorDegreeι R M q p n (by omega)).hom (b ⊗ₜ[R] a)) = _
   rw [map_smul, hqp, koszulSwap_tmul]
 
-/-- Graded cocommutativity is earned for the actual native coproduct. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Write
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q). In every n : ℕ, Δₙ followed by
+gradedKoszulSwap equals Δₙ. Here Δₙ : Eₙ → Tₙ is the graded exterior coproduct and interchange
+of degrees p,q has sign (-1)^{p·q}. -/
 theorem gradedCoproduct_cocommutative (n : ℕ) :
     gradedCoproduct R M n ≫ gradedKoszulSwap R M n = gradedCoproduct R M n := by
   apply ModuleCat.hom_ext
@@ -468,7 +515,9 @@ theorem gradedCoproduct_cocommutative (n : ℕ) :
   exact hs.trans ((congrArg (koszulSwap R M) hd).trans
     ((koszulSwap_coproduct R M ((show ⋀[R]^n M from a) : E)).trans hd.symm))
 
-/-- The actual graded Koszul interchange is involutive, in every original degree. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Write
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q). For every n : ℕ, gradedKoszulSwap on
+Tₙ composed with itself is the identity. Its two homogeneous signs multiply to (-1)^{p·q+q·p}=1. -/
 theorem gradedKoszulSwap_comp_self (n : ℕ) :
     gradedKoszulSwap R M n ≫ gradedKoszulSwap R M n = 𝟙 (tensorDegree R M n) := by
   apply tensorDegree_hom_ext R M n
@@ -496,7 +545,10 @@ theorem gradedKoszulSwap_comp_self (n : ℕ) :
     simp only [pow_two, neg_mul_neg, mul_one, one_pow]
   rw [hsign, one_smul]
 
-/-- The native graded Koszul interchange as an actual isomorphism. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Write
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q). The degreewise Koszul maps assemble to
+an automorphism of gradedTensorSquare, the grading n ↦ Tₙ. Both its forward and inverse maps are
+gradedKoszulSwap. -/
 def gradedKoszulSwapIso : gradedTensorSquare R M ≅ gradedTensorSquare R M where
   hom := gradedKoszulSwap R M
   inv := gradedKoszulSwap R M
@@ -509,7 +561,10 @@ def gradedKoszulSwapIso : gradedTensorSquare R M ≅ gradedTensorSquare R M wher
     intro n
     exact gradedKoszulSwap_comp_self R M n
 
-/-- The actual coaugmentation has counit one, including all nonzero empty-unit degrees. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Write
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q). gradedCoaug followed by gradedCounit
+is the identity of gradedUnit. In degree zero this is the pair of inverse scalar-coordinate
+isomorphisms; positive-degree unit components are zero modules. -/
 theorem gradedCoaug_counit : gradedCoaug R M ≫ gradedCounit R M = 𝟙 (gradedUnit.{u,v} R) := by
   apply funext
   intro n
@@ -520,7 +575,10 @@ theorem gradedCoaug_counit : gradedCoaug R M ≫ gradedCounit R M = 𝟙 (graded
     simp only [Category.assoc, Iso.inv_hom_id_assoc, Iso.hom_inv_id]
   · exact (GradedObject.isInitialSingleObjApply 0 (ModuleCat.of R (ULift.{v} R)) n hn).hom_ext _ _
 
-/-- The actual coaugmentation preserves the native coproduct of the tensor unit. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Write
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q). If η is gradedCoaug, Δ is
+gradedCoproduct and I=gradedUnit, then η ≫ Δ = λ_I⁻¹ ≫ (η⊗η). The scalar unit's comultiplication
+is its inverse left unitor; η sends the scalar empty word to the exterior empty word. -/
 theorem gradedCoaug_comul :
     letI : MonoidalCategoryStruct (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.tensorStructure.{u,v} (R := R)
     letI : MonoidalCategory (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.monoidalCategory.{u,v} (R := R)
@@ -585,7 +643,10 @@ theorem gradedCoaug_comul :
       TensorProduct.tmul_smul]
   · exact (GradedObject.isInitialSingleObjApply 0 (ModuleCat.of R (ULift.{v} R)) n hn).hom_ext _ _
 
-/-- The canonical coaugmentation is an earned native comonoid morphism. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Write
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q). With the scalar-unit comonoid on
+gradedUnit and the exterior comonoid on E•, gradedCoaug preserves the counit and coproduct. Its
+laws are η ≫ ε = id_I and η ≫ Δ = λ_I⁻¹ ≫ (η⊗η). -/
 def gradedCoaugIsComonHom :
     letI : MonoidalCategoryStruct (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.tensorStructure.{u,v} (R := R)
     letI : MonoidalCategory (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.monoidalCategory.{u,v} (R := R)
@@ -606,7 +667,12 @@ def gradedCoaugIsComonHom :
         exact gradedCoaug_counit R M
       hom_comul := gradedCoaug_comul R M }
 
-/-- The constructed exterior coalgebra bundled as a native graded comonoid. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Write
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q). gradedCoalgebra is the comonoid whose
+underlying ℕ-graded module is n ↦ Eₙ and whose structure is gradedComonObj: the exterior
+coproduct and degree-zero scalar counit with their counit and coassociativity laws. If R and M
+lie in universes u,v, all categorical modules are placed in max(u,v); the scalar unit is the
+canonical lift of R to that universe. -/
 def gradedCoalgebra :
     letI : MonoidalCategoryStruct (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.tensorStructure.{u,v} (R := R)
     letI : MonoidalCategory (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.monoidalCategory.{u,v} (R := R)

@@ -1,5 +1,6 @@
-# Cobar Codegeneracy App deg deg
+# The componentwise cobar codegeneracy identity
 
-Objectwise codegeneracy-codegeneracy identity. Dual of
-`Monad.barDegeneracyApp_sigma_sigma`: the raw `epsilonAtPos_deg_deg` applies
-with the reversed inequality since `Fin.rev` swaps `succ` and `castSucc`.
+The componentwise cobar codegeneracy identity.
+
+For `i ≤ j`, the component composites satisfy `σ_(n+1)^i ≫ σ_n^j = σ_(n+1)^(j+1) ≫ σ_n^i` at
+every object.

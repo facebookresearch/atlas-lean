@@ -1,3 +1,5 @@
-# Cobar Obj zero
+# The degree-zero two-sided cobar functor
 
-Degree zero is the composite of the two underlying functors.
+The degree-zero two-sided cobar functor.
+
+Degree zero is the composite `L ⋙ R` of the two underlying comodule functors.

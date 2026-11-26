@@ -1,4 +1,6 @@
-# Corestriction Of Right Transversal three eq
+# Agreement of general and degree-three cohomology transfers
 
-The former chosen-transversal `H³` transfer is the degree-three
-specialization of the arbitrary-degree cohomology transfer.
+Agreement of general and degree-three cohomology transfers.
+
+The underlying linear map of the general chosen-transversal transfer in degree three is
+corestrictionH3OfRightTransversal A T.

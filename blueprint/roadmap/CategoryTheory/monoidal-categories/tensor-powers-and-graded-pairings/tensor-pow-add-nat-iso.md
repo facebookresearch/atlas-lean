@@ -1,3 +1,5 @@
-# Tensor Pow Add Nat Iso
+# Natural isomorphism for tensor power block splitting
 
-Tensor powers turn addition of exponents into tensor product, naturally in the base object.
+Natural isomorphism for tensor power block splitting.
+
+The block-splitting isomorphisms assemble naturally over all objects.

@@ -12,13 +12,17 @@ module
 public import MathlibExt.Algebra.Category.ModuleCat.FlatScalarExtensionTorCancellationUniverse
 
 /-!
-# Coefficient naturality of the original scalar tensor cancellation
+# Coefficient naturality of scalar tensor cancellation
 
-The existing canonical cancellation commutes with every actual map of
-the extended-ring coefficient module. Both original ring universes and
-the original coefficient carrier are retained. The proof compares the
-actual tensor maps on pure tensors and uses coefficient-map linearity.
-No flatness hypothesis is needed.
+Let f:R→S be a map of commutative rings, X an R-module and N an
+S-module, all at height Γ=max(u,v,w). The cancellation isomorphism
+Res_f(N⊗[S](S⊗[R]X))≅Res_f(N)⊗[R]X
+has value n⊗(s⊗x)↦(s•n)⊗x.
+
+For an S-linear coefficient map g:N₁→N₂, this isomorphism and
+its inverse commute with g on the first tensor factor.
+The ring and coefficient carrier worlds are retained, and
+no flatness assumption is needed.
 -/
 
 @[expose] public section
@@ -35,8 +39,11 @@ universe u v w
 
 variable (R : Type u) (S : Type v) [CommRing R] [CommRing S]
 
-/-- The original scalar cancellation commutes with every actual
-extended-ring coefficient map, in the original base module category. -/
+/-- For f:R→S between commutative rings, an R-module X
+and an S-linear g:N₁→N₂ at common height Γ=max(u,v,w),
+the cancellation maps c_N satisfy
+c_(N₂)∘Res_f(g⊗id_(S⊗X))=(Res_f(g)⊗id_X)∘c_(N₁).
+The coefficient remains the first tensor factor. -/
 theorem scalarTensorCancellationIso_hom_naturality_coefficient
     (f : R →+* S) {N₁ N₂ : ModuleCat.{max u v w} S} (g : N₁ ⟶ N₂)
     (X : ModuleCat.{max u v w} R) :
@@ -91,7 +98,11 @@ theorem scalarTensorCancellationIso_hom_naturality_coefficient
       change (s • g.hom n) ⊗ₜ[R] x = g.hom (s • n) ⊗ₜ[R] x
       rw [g.hom.map_smul]
 
-/-- The actual inverse cancellation preserves the same coefficient map. -/
+/-- For a commutative-ring map f:R→S and an S-linear
+g:N₁→N₂, the inverse cancellation satisfies
+Res_f(g⊗id_(S⊗X))∘c_(N₁)⁻¹=
+c_(N₂)⁻¹∘(Res_f(g)⊗id_X).
+The R-module X and all carrier heights are unchanged. -/
 theorem scalarTensorCancellationIso_inv_naturality_coefficient
     (f : R →+* S) {N₁ N₂ : ModuleCat.{max u v w} S} (g : N₁ ⟶ N₂)
     (X : ModuleCat.{max u v w} R) :

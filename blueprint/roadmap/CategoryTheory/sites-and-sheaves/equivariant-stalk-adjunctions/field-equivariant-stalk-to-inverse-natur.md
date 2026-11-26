@@ -1,3 +1,6 @@
-# Field Equivariant Stalk To Inverse naturality right
+# Forward transpose is natural in the coefficient
 
-The direct Hom map is natural for EVERY original equivariant module arrow.
+Forward transpose is natural in the coefficient.
+
+Postcomposition by a coefficient map corresponds to postcomposition by its invariant inverse-
+sheaf map.

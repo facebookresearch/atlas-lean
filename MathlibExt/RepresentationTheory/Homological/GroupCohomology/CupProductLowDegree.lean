@@ -16,11 +16,13 @@ public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.LowDeg
 public import MathlibExt.Algebra.Homology.CochainGradedPairingHomologyLaws
 
 /-!
-# Low-degree comparisons for the Alexander–Whitney cup
+# Low-degree cohomology formulas for the Alexander–Whitney cup
 
-The arbitrary-degree cup agrees with the existing explicit `(1,1)` and
-`(1,2)` cups. The comparison uses their common inhomogeneous cochain
-formula, the actual cocycle isomorphisms, and the cohomology quotient maps.
+Let `G` be a group, `k` a commutative ring, and `A,B` representations. The general cup
+morphism `H^p(G,A) ⊗ H^q(G,B) → H^{p+q}(G,A ⊗ B)` agrees, in degrees `(1,1)` and `(1,2)`, with
+the tensor linearizations of `cupOneOne` and `cupOneTwo`. These bilinear products are induced
+by the cocycle formulas `x(g) ⊗ g·y(h)` and `x(g) ⊗ g·y(h,j)`, respectively. The equalities
+hold both for arbitrary classes and for classes presented by the cocycle projections.
 -/
 
 @[expose] public section
@@ -90,7 +92,8 @@ private theorem pairCycles_one_two (x : cocycles₁ A) (y : cocycles₂ B) :
   apply (ModuleCat.mono_iff_injective (cochainsIso₃ (A ⊗ B)).hom).1 inferInstance
   simpa using inhomogeneousCupPairing_one_two G k A B x y
 
-/-- The generalized cup computes as the existing `(1,1)` cup on classes. -/
+/-- Let `A,B` be representations of a group `G` over a commutative ring `k`, `x ∈ H¹(G,A)`, and `y
+∈ H¹(G,B)`. Then `(cup G k A B 1 1)(x ⊗ₜ[k] y) = cupOneOne A B x y` in `H²(G,A ⊗ B)`. -/
 theorem cup_one_one_apply (x : H1 A) (y : H1 B) :
     (cup G k A B 1 1).hom (x ⊗ₜ[k] y) = cupOneOne A B x y := by
   induction x using H1_induction_on with
@@ -107,7 +110,8 @@ theorem cup_one_one_apply (x : H1 A) (y : H1 B) :
         (inhomogeneousCupPairing G k A B) 1 1,
         pairCycles_one_one]
 
-/-- The generalized cup computes as the existing `(1,2)` cup on classes. -/
+/-- Let `A,B` be representations of a group `G` over a commutative ring `k`, `x ∈ H¹(G,A)`, and `y
+∈ H²(G,B)`. Then `(cup G k A B 1 2)(x ⊗ₜ[k] y) = cupOneTwo A B x y` in `H³(G,A ⊗ B)`. -/
 theorem cup_one_two_apply (x : H1 A) (y : H2 B) :
     (cup G k A B 1 2).hom (x ⊗ₜ[k] y) = cupOneTwo A B x y := by
   induction x using H1_induction_on with
@@ -124,7 +128,9 @@ theorem cup_one_two_apply (x : H1 A) (y : H2 B) :
         (inhomogeneousCupPairing G k A B) 1 2,
         pairCycles_one_two]
 
-/-- The `(1,1)` specialization is the tensor lift of the existing bilinear cup. -/
+/-- For representations `A,B` of a group `G` over a commutative ring `k`, `cup G k A B 1 1 =
+ModuleCat.ofHom (TensorProduct.lift (cupOneOne A B))` as maps `H¹(G,A) ⊗ₖ H¹(G,B) → H²(G,A ⊗
+B)`. -/
 theorem cup_one_one :
     cup G k A B 1 1 = ModuleCat.ofHom (TensorProduct.lift (cupOneOne A B)) := by
   apply ModuleCat.MonoidalCategory.tensor_ext
@@ -132,7 +138,9 @@ theorem cup_one_one :
   rw [cup_one_one_apply]
   rfl
 
-/-- The `(1,2)` specialization is the tensor lift of the existing bilinear cup. -/
+/-- For representations `A,B` of a group `G` over a commutative ring `k`, `cup G k A B 1 2 =
+ModuleCat.ofHom (TensorProduct.lift (cupOneTwo A B))` as maps `H¹(G,A) ⊗ₖ H²(G,B) → H³(G,A ⊗
+B)`. -/
 theorem cup_one_two :
     cup G k A B 1 2 = ModuleCat.ofHom (TensorProduct.lift (cupOneTwo A B)) := by
   apply ModuleCat.MonoidalCategory.tensor_ext
@@ -140,7 +148,9 @@ theorem cup_one_two :
   rw [cup_one_two_apply]
   rfl
 
-/-- Compatibility name for the class comparison on represented H1 pairs. -/
+/-- Let `A,B` be representations of a group `G` over a commutative ring `k`, and let `x ∈
+Z¹(G,A)`, `y ∈ Z¹(G,B)`. The general cup satisfies `cup G k A B 1 1 (H1π A x ⊗ₜ[k] H1π B y) =
+cupOneOne A B (H1π A x) (H1π B y)` in `H²(G,A ⊗ B)`. -/
 theorem cup_one_one_H1π_H1π
     {k G : Type u} [CommRing k] [Group G] (A B : Rep k G)
     (x : cocycles₁ A) (y : cocycles₁ B) :
@@ -148,13 +158,17 @@ theorem cup_one_one_H1π_H1π
       cupOneOne A B (H1π A x) (H1π B y) :=
   cup_one_one_apply G k A B (H1π A x) (H1π B y)
 
-/-- Compatibility name for the class comparison in degree (1,1). -/
+/-- For representations `A,B` of a group `G` over a commutative ring `k` and classes `x ∈
+H¹(G,A)`, `y ∈ H¹(G,B)`, the Alexander–Whitney morphism and the descended bilinear product
+satisfy `(cup G k A B 1 1)(x ⊗ₜ[k] y) = cupOneOne A B x y`. -/
 theorem cup_one_one_eq_cupOneOne
     {k G : Type u} [CommRing k] [Group G] (A B : Rep k G) (x : H1 A) (y : H1 B) :
     (cup G k A B 1 1).hom (x ⊗ₜ[k] y) = cupOneOne A B x y :=
   cup_one_one_apply G k A B x y
 
-/-- Compatibility name for the class comparison on represented H1/H2 pairs. -/
+/-- Let `A,B` be representations of a group `G` over a commutative ring `k`, with `x ∈ Z¹(G,A)`
+and `y ∈ Z²(G,B)`. Then `cup G k A B 1 2 (H1π A x ⊗ₜ[k] H2π B y) = cupOneTwo A B (H1π A x)
+(H2π B y)` in `H³(G,A ⊗ B)`. -/
 theorem cup_one_two_H1π_H2π
     {k G : Type u} [CommRing k] [Group G] (A B : Rep k G)
     (x : cocycles₁ A) (y : cocycles₂ B) :
@@ -162,7 +176,9 @@ theorem cup_one_two_H1π_H2π
       cupOneTwo A B (H1π A x) (H2π B y) :=
   cup_one_two_apply G k A B (H1π A x) (H2π B y)
 
-/-- Compatibility name for the class comparison in degree (1,2). -/
+/-- For representations `A,B` of a group `G` over a commutative ring `k` and classes `x ∈
+H¹(G,A)`, `y ∈ H²(G,B)`, the Alexander–Whitney morphism and the descended bilinear product
+satisfy `(cup G k A B 1 2)(x ⊗ₜ[k] y) = cupOneTwo A B x y`. -/
 theorem cup_one_two_eq_cupOneTwo
     {k G : Type u} [CommRing k] [Group G] (A B : Rep k G) (x : H1 A) (y : H2 B) :
     (cup G k A B 1 2).hom (x ⊗ₜ[k] y) = cupOneTwo A B x y :=

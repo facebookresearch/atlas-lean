@@ -1,3 +1,5 @@
-# Tensor Pow Map succ
+# Successor power map appends the given morphism
 
-Computation rule: `tensorPowMap f (n + 1)` is `tensorPowMap f n ⊗ₘ f`.
+Successor power map appends the given morphism.
+
+The successor map is `tensorPowMap f n ⊗ₘ f`.

@@ -1,3 +1,6 @@
-# Tor Coefficient Map
+# Bimodule coefficient map on a Tor object
 
-Its actual components are canonical coefficient morphisms of native Tor objects.
+Bimodule coefficient map on a Tor object.
+
+At a right module `A`, evaluate the degree-`n` derived coefficient transformation to obtain
+the right `S`-linear map between the two Tor objects.

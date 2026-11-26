@@ -1,4 +1,8 @@
-# Horizontal Complete Filtration Triangulated Spectral Object Map
+# Interval-cone maps define a triangulated spectral morphism
 
-A bicomplex map induces a morphism between the triangulated spectral
-objects of the complete horizontal filtrations.
+For a bicomplex map f : K → L in a preadditive category
+with a zero object and finite coproducts, the complete filtration
+cone maps define a morphism of triangulated spectral objects in
+HomotopyCategory(C,up ℤ), indexed by EInt.
+They commute with the connecting map for every composable pair
+of filtration inclusions.

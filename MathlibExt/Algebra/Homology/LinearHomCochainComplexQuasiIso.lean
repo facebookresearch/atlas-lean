@@ -12,7 +12,16 @@ public import MathlibExt.Algebra.Homology.HomCochainComplexQuasiIso
 public import MathlibExt.Algebra.Homology.LinearHomCochainHomotopyEquiv
 
 /-!
-# Linear Hom cochain quasi-isomorphism for projective complexes
+# Linear Hom preserves quasi-isomorphisms between projective chain complexes
+
+Let R be a ring and C an abelian R-linear category, with independent scalar, object and morphism
+universes. Let f:K→L be a quasi-isomorphism of nonnegative chain complexes whose terms K_n,L_n
+are projective for every n. Such an f is a homotopy equivalence.
+
+For any G∈C, precomposition gives a quasi-isomorphism Hom_C(L,G)→Hom_C(K,G) of nonnegative
+R-linear cochain complexes. Their degree-n terms are the Hom modules from L_n or K_n to G in the
+morphism universe. The conclusion follows from the induced Hom cochain homotopy equivalence and
+requires no injectivity of G.
 -/
 
 @[expose] public section
@@ -25,6 +34,12 @@ noncomputable section
 
 namespace HomologicalComplex
 
+/-- Let R be a ring in universe w and C an abelian R-linear category with independent object
+universe u and morphism universe v. Let f:K→L be a quasi-isomorphism of chain complexes of shape
+down ℕ, and assume K_n and L_n are projective objects for every n. For any G∈C, the induced
+precomposition map Hom_C(L,G)→Hom_C(K,G) is a quasi-isomorphism of cochain complexes of shape up
+ℕ in R-modules with carriers in v. The projective-complex homotopy equivalence of f supplies the
+result. -/
 theorem linearHomCochainComplexFunctor_map_quasiIso_of_projective
     (R : Type w) [Ring R]
     {C : Type u} [Category.{v} C] [Abelian C] [Linear R C]

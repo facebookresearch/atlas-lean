@@ -13,14 +13,14 @@ module
 public import MathlibExt.Algebra.Homology.FirstQuadrantFirstPageBoundaryCycles
 
 /-!
-# The adjacent connecting map on cycles
+# Cycle representatives of adjacent-column connecting maps
 
-The snake-lemma formula for the adjacent-column short exact sequence is
-evaluated on the canonical middle lift of a source cycle.  Consequently, the
-connecting homomorphism is represented by the boundary cycle constructed in
-the preceding module.  The subsequent horizontal-cycle, boundary-comparison,
-and differential modules complete the untwisting-sign and spectral-object
-comparisons.
+Let `K` be a first-quadrant bicomplex in an abelian category. The adjacent-column connecting
+map starts from direct-column cycles in column `p+1` at cochain degree `-(p+1)-q`.
+
+Lift such a cycle to the middle term of the adjacent short exact sequence and take its
+boundary. The resulting cycle in column `p` at degree `-p-q` represents the connecting
+homology class. The formula retains the specified middle section and boundary-cycle map.
 -/
 
 @[expose] public section
@@ -145,8 +145,11 @@ private theorem
   rw [hlift, Category.id_comp] at hδ
   simpa [S, hS, n, j, x₃, x₂] using hδ
 
-/-- The adjacent-column connecting homomorphism sends a homology class to the
-class represented by its canonical boundary cycle. -/
+/-- The boundary-cycle formula for an adjacent-column connecting map.
+
+The source homology projection followed by the adjacent connecting morphism equals the
+canonical boundary-cycle lift followed by the target homology projection, at cochain degrees
+`-(p+1)-q` and `-p-q`. -/
 theorem horizontalFirstPageAdjacentConnectingMap_eq_boundaryCycles
     (p q : ℕ) :
     (horizontalDirectColumnCochain K (p + 1)).homologyπ

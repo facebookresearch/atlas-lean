@@ -14,17 +14,19 @@ public import MathlibExt.CategoryTheory.Abelian.RightDerived.Precomposition
 public import Mathlib.Algebra.Homology.ShortComplex.ExactFunctor
 
 /-!
-# Directional right-derived comparison for an exact source change
+# Directional right-derived comparison under source change
 
-The image of an injective resolution under a homology-preserving functor is an exact coaugmented
-complex. Its terms are not declared injective. The existing augmentation comparison into a
-injective resolution gives the directional map from derivation after source change to source
-change after derivation. Preservation of injectives is used only to recover the existing
-precomposition isomorphism.
+Let `C`, `D`, `A` be abelian categories, with injective resolutions in
+`C,D`, let `U : C → D` be additive and preserve homology, and let
+`L : D → A` be additive. Mapping a coaugmented injective resolution
+of `X` by `U` gives a coaugmented complex resolving `U(X)`.
+Comparison with an injective resolution of `U(X)` gives the natural map
+`R^n(U ⋙ L)(X) → R^nL(U(X))`.
 
-All category object and morphism universes are independent. Only the source and intermediate
-categories supply injective resolutions. The additive output functor is not assumed left exact and
-its category needs no resolution supply.
+This construction needs no injectivity of the terms of the mapped
+complex and no left exactness of `L`. If `U` preserves injectives, the
+map is the forward morphism of the right-derived precomposition
+isomorphism. All category object and morphism universes are independent.
 -/
 
 @[expose] public section
@@ -41,7 +43,10 @@ variable {C : Type uC} [Category.{vC} C] [Abelian C]
   {D : Type uD} [Category.{vD} D] [Abelian D]
   {A : Type uA} [Category.{vA} A] [Abelian A]
 
-/-- Map the original coaugmentation using the single-object dictionary. -/
+/-- For abelian `C`, `D` and additive `U : C → D`, a coaugmentation
+`ι : X[0] → K` of a nonnegative cochain complex maps to the
+coaugmentation `U(X)[0] → U(K)`, using the identification of `U(X[0])`
+with the complex concentrated at degree zero. -/
 def mapCochainCoaugmentation (U : C ⥤ D) [U.Additive]
     {X : C} {K : CochainComplex C ℕ}
     (ι : (CochainComplex.single₀ C).obj X ⟶ K) :
@@ -50,7 +55,9 @@ def mapCochainCoaugmentation (U : C ⥤ D) [U.Additive]
   (HomologicalComplex.singleMapHomologicalComplex U (ComplexShape.up ℕ) 0).inv.app X ≫
     (U.mapHomologicalComplex (ComplexShape.up ℕ)).map ι
 
-/-- The mapped coaugmentation keeps its original degree-zero coefficient arrow. -/
+/-- For abelian `C`, `D`, additive `U : C → D`, and a coaugmentation
+`ι : X[0] → K`, the degree-zero map of the induced coaugmentation
+`U(X)[0] → U(K)` is `U(ι⁰)`. -/
 theorem mapCochainCoaugmentation_f_zero (U : C ⥤ D) [U.Additive]
     {X : C} {K : CochainComplex C ℕ}
     (ι : (CochainComplex.single₀ C).obj X ⟶ K) :
@@ -64,7 +71,9 @@ theorem mapCochainCoaugmentation_f_zero (U : C ⥤ D) [U.Additive]
   simp only [Category.id_comp]
   rfl
 
-/-- Homology preservation earns the mapped coaugmentation's quasi-isomorphism. -/
+/-- For abelian `C`, `D` and additive homology-preserving `U : C → D`,
+a quasi-isomorphism `ι : X[0] → K` induces a quasi-isomorphism
+`U(X)[0] → U(K)`. -/
 theorem mapCochainCoaugmentation_quasiIso (U : C ⥤ D) [U.Additive]
     [U.PreservesHomology] {X : C} {K : CochainComplex C ℕ}
     (ι : (CochainComplex.single₀ C).obj X ⟶ K) [QuasiIso ι] :
@@ -72,7 +81,10 @@ theorem mapCochainCoaugmentation_quasiIso (U : C ⥤ D) [U.Additive]
   unfold mapCochainCoaugmentation
   infer_instance
 
-/-- The original coaugmentation square survives the source change. -/
+/-- For abelian `C`, `D` and additive `U : C → D`, suppose
+`ι : X[0] → K`, `κ : Y[0] → K′`, `f : X → Y` and `a : K → K′`
+satisfy `ι ≫ a = f[0] ≫ κ`. Their induced coaugmentations satisfy
+`U(ι) ≫ U(a) = U(f)[0] ≫ U(κ)`. -/
 theorem mapCochainCoaugmentation_naturality (U : C ⥤ D) [U.Additive]
     {X Y : C} {K K' : CochainComplex C ℕ}
     (ι : (CochainComplex.single₀ C).obj X ⟶ K)
@@ -99,7 +111,11 @@ variable [HasInjectiveResolutions C] [HasInjectiveResolutions D]
   (U : C ⥤ D) [U.Additive] [U.PreservesHomology]
   (L : D ⥤ A) [L.Additive]
 
-/-- A source resolution computes the directional map through its exact image. -/
+/-- Let `C`, `D`, `A` be abelian, with injective resolutions in `C,D`,
+`U : C → D` additive and preserving homology, and `L : D → A` additive.
+An injective resolution `I` of `X` computes the directional comparison
+`R^n(U ⋙ L)(X) → R^nL(U(X))` through the exact coaugmented complex
+`U(I)`. -/
 def rightDerivedPrecompHomWithResolution (n : ℕ) {X : C} (I : InjectiveResolution X) :
     ((U ⋙ L).rightDerived n).obj X ⟶ (L.rightDerived n).obj (U.obj X) := by
   let : QuasiIso (mapCochainCoaugmentation U I.ι) :=
@@ -112,7 +128,10 @@ def rightDerivedPrecompHomWithResolution (n : ℕ) {X : C} (I : InjectiveResolut
         ((U.mapHomologicalComplex (ComplexShape.up ℕ)).obj I.cocomplex)
         (mapCochainCoaugmentation U I.ι) n
 
-/-- Source arrows earn naturality without an injectivity universal property for image terms. -/
+/-- Let `C`, `D`, `A` be abelian, with injective resolutions in `C,D`,
+`U : C → D` additive and preserving homology, and `L : D → A` additive.
+For `f : X → Y` and injective resolutions of `X,Y`, the computed
+comparisons commute with `R^n(U ⋙ L)(f)` and `R^nL(U(f))`. -/
 theorem rightDerivedPrecompHomWithResolution_naturality (n : ℕ)
     {X Y : C} (f : X ⟶ Y) (I : InjectiveResolution X) (J : InjectiveResolution Y) :
     ((U ⋙ L).rightDerived n).map f ≫ rightDerivedPrecompHomWithResolution U L n J =
@@ -166,7 +185,10 @@ theorem rightDerivedPrecompHomWithResolution_naturality (n : ℕ)
       (L.rightDerived n).map (U.map f)
   exact (s₁.horiz_comp (s₂.horiz_comp s₃)).w.symm
 
-/-- The map is independent of the source resolution used to compute it. -/
+/-- Let `C`, `D`, `A` be abelian, with injective resolutions in `C,D`,
+`U : C → D` additive and preserving homology, and `L : D → A` additive.
+Any two injective resolutions of `X` compute the same map
+`R^n(U ⋙ L)(X) → R^nL(U(X))`. -/
 theorem rightDerivedPrecompHomWithResolution_independent (n : ℕ) {X : C}
     (I J : InjectiveResolution X) :
     rightDerivedPrecompHomWithResolution U L n I =
@@ -174,21 +196,31 @@ theorem rightDerivedPrecompHomWithResolution_independent (n : ℕ) {X : C}
   have h := rightDerivedPrecompHomWithResolution_naturality U L n (𝟙 X) I J
   simpa only [Functor.map_id, Category.id_comp, Category.comp_id] using h.symm
 
-/-- Directional precomposition through a homology-preserving source functor. -/
+/-- Let `C`, `D`, `A` be abelian, with injective resolutions in `C,D`,
+`U : C → D` additive and preserving homology, and `L : D → A` additive.
+The resolution comparisons give a natural transformation
+`R^n(U ⋙ L) → U ⋙ R^nL`. -/
 def rightDerivedPrecompHomOfPreservesHomology (n : ℕ) :
     (U ⋙ L).rightDerived n ⟶ U ⋙ L.rightDerived n where
   app X := rightDerivedPrecompHomWithResolution U L n (injectiveResolution X)
   naturality {X Y} f := rightDerivedPrecompHomWithResolution_naturality U L n f
     (injectiveResolution X) (injectiveResolution Y)
 
-/-- Every supplied source resolution computes the same canonical component. -/
+/-- Let `C`, `D`, `A` be abelian, with injective resolutions in `C,D`,
+`U : C → D` additive and preserving homology, and `L : D → A` additive.
+At `X`, the natural transformation `R^n(U ⋙ L) → U ⋙ R^nL`
+is computed by any injective resolution `I` of `X`. -/
 theorem rightDerivedPrecompHomOfPreservesHomology_app (n : ℕ) {X : C}
     (I : InjectiveResolution X) :
     (rightDerivedPrecompHomOfPreservesHomology U L n).app X =
       rightDerivedPrecompHomWithResolution U L n I :=
   rightDerivedPrecompHomWithResolution_independent U L n (injectiveResolution X) I
 
-/-- Injective preservation recovers the existing precomposition isomorphism. -/
+/-- Let `C`, `D`, `A` be abelian, with injective resolutions in `C,D`,
+`U : C → D` additive and preserving homology and injective objects,
+and `L : D → A` additive. The directional comparison
+`R^n(U ⋙ L) → U ⋙ R^nL` is the forward map of the canonical
+precomposition isomorphism. -/
 theorem rightDerivedPrecompHomOfPreservesHomology_eq_hom
     [U.PreservesInjectiveObjects] (n : ℕ) :
     rightDerivedPrecompHomOfPreservesHomology U L n = (rightDerivedPrecompIso U L n).hom := by
@@ -257,7 +289,10 @@ private theorem augmentedComparison_naturality_functor
 variable [HasInjectiveResolutions D]
   (U : C ⥤ D) [U.Additive] [U.PreservesHomology]
 
-/-- The directional source comparison is natural in an actual, noninvertible output-functor map. -/
+/-- Let `C`, `D`, `A` be abelian, with injective resolutions in `C,D`,
+`U : C → D` additive and preserving homology, and `L,M : D → A` additive.
+For `α : L → M`, the directional comparisons satisfy
+`R^n(U ⋙ α) ≫ η_M = η_L ≫ (U ⋙ R^nα)`. -/
 @[reassoc]
 theorem rightDerivedPrecompHomOfPreservesHomology_naturality_functor
     {L M : D ⥤ A} [L.Additive] [M.Additive] (α : L ⟶ M) (n : ℕ) :
@@ -312,10 +347,12 @@ variable [HasInjectiveResolutions C] [HasInjectiveResolutions D]
   (U : C ⥤ D) [U.Additive] [U.PreservesHomology]
   (L : D ⥤ A) [L.Additive]
 
-/--
-The directional comparison also computes the original homology map from any exact coaugmented
-source, without injectivity of its terms.
--/
+/-- Let `C`, `D`, `A` be abelian, with injective resolutions in `C,D`,
+`U : C → D` additive and preserving homology, and `L : D → A` additive.
+For any coaugmentation quasi-isomorphism `ι : X[0] → K`, composing
+`Hⁿ((U ⋙ L)(K)) → R^n(U ⋙ L)(X)` with the directional comparison
+equals the comparison `Hⁿ(L(U(K))) → R^nL(U(X))`, after the natural
+identification of the two mapped complexes. -/
 theorem augmentedResolutionToRightDerivedHom_precomp
     {X : C} (K : CochainComplex C ℕ)
     (ι : (CochainComplex.single₀ C).obj X ⟶ K) [QuasiIso ι] (n : ℕ) :

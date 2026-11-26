@@ -1,6 +1,6 @@
-# Whisker Left δ nerve Prism Map
+# Faces of nerve prisms by parameter restriction
 
-Faces of nerve prisms: precomposing the prism of `Φ` with
-`nerve C ◁ stdSimplex.δ i` is the prism of `Φ` precomposed with the
-product of the identity functor and the `i`-th face functor
-`Fin (n + 1) ⥤ Fin (n + 2)`.
+Faces of nerve prisms by parameter restriction.
+
+For Φ : C × Fin (n+2) → D, restricting its prism along the face δᵢ equals the prism of Φ
+precomposed by id_C × δᵢ.

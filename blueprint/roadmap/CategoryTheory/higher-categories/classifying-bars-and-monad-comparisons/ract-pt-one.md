@@ -1,3 +1,5 @@
-# Ract Pt one
+# The right unit law of the point action
 
-Right unit law for the point action; both sides land in `PUnit`.
+The right unit law of the point action.
+
+Acting on the point by the monoid unit equals the cartesian right unitor.

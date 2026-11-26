@@ -1,3 +1,6 @@
-# Field Equivariant Stalk left triangle
+# Equivariant field stalk adjunction satisfies the left triangle
 
-The first triangle belongs to the SAME actual T, R and original unit/counit.
+Equivariant field stalk adjunction satisfies the left triangle.
+
+Apply the stalk functor to the unit and then the counit at the stalk coefficient; the
+composite is the identity.

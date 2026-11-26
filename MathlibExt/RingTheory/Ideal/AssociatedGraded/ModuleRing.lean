@@ -16,24 +16,20 @@ public import Mathlib.Algebra.Module.GradedModule
 import Mathlib.LinearAlgebra.Quotient.Bilinear
 
 /-!
-# The total associated-graded module
+# The total associated graded module and its action
 
-For an ideal `I` in a commutative ring and an `R`-module `M`, the homogeneous
-action
+Let `R` be a commutative ring, `I` an ideal, and `M` an `R`-module. The total associated
+graded module is `gr_I M = ⨁ n : ℕ, I^n M/I^(n+1) M`. The homogeneous action `[r]_m • [x]_n =
+[r • x]_(m+n)` makes it a module over `gr_I R`.
 
-`I ^ m / I ^ (m + 1) × I ^ n M / I ^ (n + 1) M →
-  I ^ (m + n) M / I ^ (m + n + 1) M`
+The coefficient action of `R/I` is componentwise and agrees with the degree-zero inclusion
+`R/I → gr_I R`, giving the scalar tower `R/I → gr_I R → gr_I M`.
 
-assembles into a module structure on the external direct sum of the module
-pieces over the total associated-graded ring. The resulting action is
-compatible with the componentwise `R ⧸ I`-action.
+Every `R`-linear map `f : M → N` induces a `gr_I R`-linear map `gr_I M → gr_I N`, acting on
+representatives by `[x]_n ↦ [f x]_n`. These maps preserve identity and composition, and a
+surjective `f` induces a surjective graded map.
 
-## Main declarations
-
-* `Ideal.AssociatedGradedModule`
-* `Ideal.associatedGradedModuleSMul`
-* `Ideal.associatedGradedModuleGmodule`
-* `Ideal.associatedGradedModuleIsScalarTower`
+Reference: Atiyah and Macdonald, *Introduction to Commutative Algebra*, Chapter 10.
 -/
 
 @[expose] public section
@@ -50,7 +46,9 @@ namespace Ideal
 
 variable {R : Type u} [CommRing R]
 
-/-- The total associated-graded module `⨁ n, I ^ n M / I ^ (n + 1) M`. -/
+/-- For an ideal `I` in a commutative ring `R` and an `R`-module `M`, the total associated graded
+module is `I.AssociatedGradedModule M = ⨁ n : ℕ, I^n M/I^(n+1) M`. Its homogeneous degree `n`
+is `I.AssociatedGradedModulePiece M n`. -/
 abbrev AssociatedGradedModule (I : Ideal R) (M : Type v)
     [AddCommGroup M] [Module R M] : Type v :=
   ⨁ n, I.AssociatedGradedModulePiece M n
@@ -148,8 +146,9 @@ private def associatedGradedModuleSMulBilinear (I : Ideal R) (M : Type v)
     (associatedGradedModuleSMulRaw_left_ker I M m n)
     (associatedGradedModuleSMulRaw_right_ker I M m n)
 
-/-- Homogeneous scalar multiplication of an associated-graded ring piece on
-an associated-graded module piece. -/
+/-- Let `R` be a commutative ring, `I` an ideal, `M` an `R`-module, and `m n : ℕ`. The homogeneous
+action is the `R/I`-bilinear map `(I^m/I^(m+1)) × (I^n M/I^(n+1) M) → I^(m+n) M/I^(m+n+1) M`,
+sending `[r]_m,[x]_n` to `[r • x]_(m+n)`. -/
 @[no_expose]
 def associatedGradedModuleSMul (I : Ideal R) (M : Type v)
     [AddCommGroup M] [Module R M] (m n : ℕ) :
@@ -174,8 +173,9 @@ def associatedGradedModuleSMul (I : Ideal R) (M : Type v)
         rw [map_smul, LinearMap.smul_apply] }
   exact b₁.extendScalarsOfSurjective Ideal.Quotient.mk_surjective
 
-/-- Homogeneous scalar multiplication is scalar multiplication of
-representatives. -/
+/-- Let `R` be a commutative ring, `I` an ideal, `M` an `R`-module, `m n : ℕ`, `x : I^m`, and `y :
+I^n M`. Then the homogeneous action satisfies `[x]_m • [y]_n = [(x : R) • (y : M)]_(m+n)`,
+where the ring and module brackets are respectively `initialForm` and `initialFormModule`. -/
 theorem associatedGradedModuleSMul_initialForm
     (I : Ideal R) (M : Type v) [AddCommGroup M] [Module R M]
     (m n : ℕ) (x : (I ^ m : Ideal R))
@@ -300,8 +300,10 @@ private theorem associatedGradedModule_mul_smul
   rw [modulePow_cast_coe I M (add_assoc i j k)]
   exact mul_smul (x : R) (y : R) (z : M)
 
-/-- The associated-graded ring pieces act as a graded module on the
-associated-graded module pieces. -/
+/-- For an ideal `I` in a commutative ring `R` and an `R`-module `M`, the family `n ↦
+I.AssociatedGradedModulePiece M n` is a graded module over `m ↦ I.AssociatedGradedPiece m`.
+The action is `[r]_m • [x]_n = [r • x]_(m+n)`; the degree-zero unit acts as the identity and
+the action satisfies the module addition and associativity laws. -/
 noncomputable instance associatedGradedModuleGmodule
     (I : Ideal R) (M : Type v) [AddCommGroup M] [Module R M] :
     DirectSum.Gmodule I.AssociatedGradedPiece
@@ -330,8 +332,10 @@ private theorem associatedGradedModule_gsmul
       I.associatedGradedModuleSMul M m n x y := by
   rfl
 
-/-- The total action on homogeneous inclusions is the inclusion of the named
-homogeneous action. -/
+/-- Let `R` be a commutative ring, `I` an ideal, `M` an `R`-module, and `m n : ℕ`. For `x ∈ gr_I^m
+R` and `y ∈ gr_I^n M`, the homogeneous inclusions satisfy `j_m(x) • j_n(y) =
+j_(m+n)(I.associatedGradedModuleSMul M m n x y)`. Here `j_k` is `DirectSum.of` into the
+appropriate total associated graded ring or module. -/
 theorem associatedGradedModule_of_smul_of
     (I : Ideal R) (M : Type v) [AddCommGroup M] [Module R M]
     (m n : ℕ) (x : I.AssociatedGradedPiece m)
@@ -378,8 +382,10 @@ private theorem associatedGradedModuleSMul_zero
   apply Subtype.ext
   rw [modulePow_cast_coe I M (zero_add n)]
 
-/-- Scalar insertion from `R ⧸ I` acts componentwise on homogeneous
-inclusions. -/
+/-- Let `R` be a commutative ring, `I` an ideal, `M` an `R`-module, `r : R/I`, `n : ℕ`, and `y ∈
+gr_I^n M`. If `j_n` is the homogeneous inclusion, then `(algebraMap (R/I) (gr_I R) r) • j_n(y)
+= j_n(r • y)`. Thus the scalar inclusion into degree zero agrees with the quotient-ring action
+on each degree. -/
 theorem associatedGradedModule_algebraMap_smul_of
     (I : Ideal R) (M : Type v) [AddCommGroup M] [Module R M]
     (r : R ⧸ I) (n : ℕ) (y : I.AssociatedGradedModulePiece M n) :
@@ -391,8 +397,10 @@ theorem associatedGradedModule_algebraMap_smul_of
   exact DirectSum.of_eq_of_gradedMonoid_eq
     (associatedGradedModuleSMul_zero I M r n y)
 
-/-- The componentwise quotient-scalar action and the total associated-graded
-ring action form a scalar tower. -/
+/-- For an ideal `I` in a commutative ring `R` and an `R`-module `M`, the componentwise
+`R/I`-action and the `gr_I R`-module action on `gr_I M` form the scalar tower `IsScalarTower
+(R/I) (gr_I R) (gr_I M)`. Explicitly, `(a • b) • x = a • (b • x)` for `a : R/I`, `b : gr_I R`,
+and `x : gr_I M`. -/
 noncomputable instance associatedGradedModuleIsScalarTower
     (I : Ideal R) (M : Type v) [AddCommGroup M] [Module R M] :
     IsScalarTower (R ⧸ I) I.AssociatedGraded
@@ -548,8 +556,9 @@ private theorem associatedGradedModuleMapTotal0_comp
   funext n
   exact I.associatedGradedModuleMap_comp f g n
 
-/-- A linear map induces a linear map of total associated-graded modules over
-the total associated-graded ring. -/
+/-- Let `R` be a commutative ring, `I` an ideal, `M,N` be `R`-modules, and `f : M →ₗ[R] N`. This
+is the induced `gr_I R`-linear map `I.AssociatedGradedModule M → I.AssociatedGradedModule N`.
+In degree `n`, it sends an initial form `[x]_n` to `[f x]_n`. -/
 @[no_expose]
 def associatedGradedModuleMapTotal (I : Ideal R)
     {M : Type v} [AddCommGroup M] [Module R M]
@@ -561,8 +570,10 @@ def associatedGradedModuleMapTotal (I : Ideal R)
   map_add' := map_add _
   map_smul' := associatedGradedModuleMapTotal0_smul I f
 
-/-- The total associated-graded map acts componentwise on homogeneous
-inclusions. -/
+/-- Let `R` be a commutative ring, `I` an ideal, `M,N` be `R`-modules, `f : M →ₗ[R] N`, and `n :
+ℕ`. For `x ∈ I.AssociatedGradedModulePiece M n`, the total map satisfies `gr_I(f)(j_n(x)) =
+j_n(I.associatedGradedModuleMap f n x)`, where `j_n` denotes the degree-`n` direct-sum
+inclusion. -/
 @[simp]
 theorem associatedGradedModuleMapTotal_of (I : Ideal R)
     {M : Type v} [AddCommGroup M] [Module R M]
@@ -575,8 +586,9 @@ theorem associatedGradedModuleMapTotal_of (I : Ideal R)
         (I.associatedGradedModuleMap f n x) := by
   exact associatedGradedModuleMapTotal0_of I f n x
 
-/-- The total associated-graded map sends an included initial form to the
-included initial form of its image. -/
+/-- Let `R` be a commutative ring, `I` an ideal, `M,N` be `R`-modules, `f : M →ₗ[R] N`, `n : ℕ`,
+and `x ∈ I^n M`. For the homogeneous inclusions `j_n`, `gr_I(f)(j_n([x]_n)) = j_n([f x]_n)`.
+The brackets are the module initial forms in degrees `n` of `M` and `N`. -/
 theorem associatedGradedModuleMapTotal_initialFormModule
     (I : Ideal R)
     {M : Type v} [AddCommGroup M] [Module R M]
@@ -592,7 +604,9 @@ theorem associatedGradedModuleMapTotal_initialFormModule
   rw [I.associatedGradedModuleMapTotal_of,
     I.initialFormModule_apply, I.associatedGradedModuleMap_initialFormModule]
 
-/-- The total associated-graded map of the identity is the identity. -/
+/-- For an ideal `I` in a commutative ring `R` and an `R`-module `M`, the map induced by `id_M` on
+the total associated graded module is the identity: `I.associatedGradedModuleMapTotal
+(LinearMap.id : M →ₗ[R] M) = LinearMap.id`. -/
 @[simp]
 theorem associatedGradedModuleMapTotal_id (I : Ideal R)
     (M : Type v) [AddCommGroup M] [Module R M] :
@@ -604,7 +618,9 @@ theorem associatedGradedModuleMapTotal_id (I : Ideal R)
   rw [associatedGradedModuleMapTotal0_id]
   rfl
 
-/-- Total associated-graded module maps respect composition. -/
+/-- Let `R` be a commutative ring, `I` an ideal, `M,N,P` be `R`-modules, and `f : M →ₗ[R] N`, `g :
+N →ₗ[R] P`. The induced total maps satisfy `gr_I(g ∘ f) = gr_I(g) ∘ gr_I(f)` as `gr_I
+R`-linear maps `gr_I M → gr_I P`. -/
 theorem associatedGradedModuleMapTotal_comp (I : Ideal R)
     {M : Type v} [AddCommGroup M] [Module R M]
     {N : Type w} [AddCommGroup N] [Module R N]
@@ -620,8 +636,8 @@ theorem associatedGradedModuleMapTotal_comp (I : Ideal R)
       (associatedGradedModuleMapTotal0 I f x)
   exact LinearMap.congr_fun (associatedGradedModuleMapTotal0_comp I f g) x
 
-/-- A surjective linear map induces a surjective map of total
-associated-graded modules. -/
+/-- Let `R` be a commutative ring, `I` an ideal, `M,N` be `R`-modules, and `f : M →ₗ[R] N` a
+surjective map. Then `I.associatedGradedModuleMapTotal f : gr_I M → gr_I N` is surjective. -/
 theorem associatedGradedModuleMapTotal_surjective (I : Ideal R)
     {M : Type v} [AddCommGroup M] [Module R M]
     {N : Type w} [AddCommGroup N] [Module R N]

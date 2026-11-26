@@ -13,14 +13,12 @@ public import MathlibExt.Algebra.Homology.CartanEilenberg.RowHomologyZeroDiffere
 public import Mathlib.Algebra.Homology.HomologicalComplexAbelian
 
 /-!
-# The degree-zero Cartan--Eilenberg row short exact sequence
+# The degree-zero vertical-homology short exact sequence
 
-The lower-triangular degree-zero row differential (in Mathlib's
-`Biprod.ofComponents` convention: vanishing homology-to-boundary component,
-free boundary-to-homology cross component) preserves the stored
-homology-resolution coordinate and has the stored boundary-resolution
-coordinate as quotient.  This file packages those maps as a short exact
-sequence of horizontal chain complexes.
+Let P be a Cartan–Eilenberg resolution in an abelian category. The resolution-direction
+differential preserves the homology coordinate of its zero-row homology and has the boundary
+coordinate as quotient. Consequently the original-degree-zero vertical-homology complex belongs
+to the short exact sequence 0 → PH₀.complex → verticalHomology(P.bicomplex,0) → PB₀.complex → 0.
 -/
 
 @[expose] public section
@@ -41,10 +39,10 @@ variable {L : ChainComplex C ℕ} (P : CartanEilenbergResolution L)
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
-/--
-The homology-resolution complex includes into degree-zero vertical homology through the first
-coordinate.
--/
+/-- Let C be abelian, L a nonnegative chain complex and P a Cartan–Eilenberg resolution of L. In
+original degree zero, the resolution-degree-a row homology has coordinates PH₀,ₐ ⊕ PB₀,ₐ, using
+the stored homology and outgoing-boundary resolutions. The first biproduct coordinate defines a
+chain map PH₀.complex → P.bicomplex.verticalHomologyComplex(0), indexed by resolution degree. -/
 noncomputable def cartanEilenbergVerticalHomologyZeroι :
     (P.homologyResolution 0).complex ⟶
       P.bicomplex.verticalHomologyComplex 0 :=
@@ -81,10 +79,10 @@ theorem cartanEilenbergVerticalHomologyZeroι_f_comp_rowHomologyZeroIso_hom
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
-/--
-Degree-zero vertical homology projects to the boundary-resolution complex through the second
-coordinate.
--/
+/-- Let C be abelian, L a nonnegative chain complex and P a Cartan–Eilenberg resolution of L. In
+original degree zero, the resolution-degree-a row homology has coordinates PH₀,ₐ ⊕ PB₀,ₐ, using
+the stored homology and outgoing-boundary resolutions. The second biproduct coordinate defines a
+chain map P.bicomplex.verticalHomologyComplex(0) → PB₀.complex. -/
 noncomputable def cartanEilenbergVerticalHomologyZeroπ :
     P.bicomplex.verticalHomologyComplex 0 ⟶
       (P.boundaryResolution 0).complex :=
@@ -123,10 +121,11 @@ theorem cartanEilenbergVerticalHomologyZeroι_comp_π :
       (P.cartanEilenbergVerticalHomologyZeroπ).f a = 0
   simp [Category.assoc]
 
-/--
-The canonical degree-zero short complex: homology resolution, vertical homology, and boundary
-resolution.
--/
+/-- Let C be abelian, L a nonnegative chain complex and P a Cartan–Eilenberg resolution of L. In
+original degree zero, the resolution-degree-a row homology has coordinates PH₀,ₐ ⊕ PB₀,ₐ, using
+the stored homology and outgoing-boundary resolutions. The homology-coordinate inclusion and
+boundary-coordinate projection form PH₀.complex → verticalHomology(0) → PB₀.complex, with zero
+composite. -/
 noncomputable def cartanEilenbergVerticalHomologyZeroShortComplex :
     ShortComplex (ChainComplex C ℕ) :=
   ShortComplex.mk
@@ -206,7 +205,11 @@ private noncomputable def
       ((P.boundaryResolution 0).complex.X a))
     (cartanEilenbergVerticalHomologyZeroDegreewiseIso P a)
 
-/-- The canonical degree-zero row-homology sequence is short exact. -/
+/-- Let C be abelian, L a nonnegative chain complex and P a Cartan–Eilenberg resolution of L. In
+original degree zero, the resolution-degree-a row homology has coordinates PH₀,ₐ ⊕ PB₀,ₐ, using
+the stored homology and outgoing-boundary resolutions. The canonical sequence 0 → PH₀.complex →
+P.bicomplex.verticalHomologyComplex(0) → PB₀.complex → 0 is short exact in the category of
+nonnegative chain complexes. -/
 theorem cartanEilenbergVerticalHomologyZeroShortExact :
     (P.cartanEilenbergVerticalHomologyZeroShortComplex).ShortExact :=
   HomologicalComplex.shortExact_of_degreewise_shortExact _

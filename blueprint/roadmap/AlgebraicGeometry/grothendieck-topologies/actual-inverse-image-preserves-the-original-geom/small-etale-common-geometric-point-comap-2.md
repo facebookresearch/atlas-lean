@@ -1,3 +1,5 @@
-# Small Etale Common Geometric Point Comap Iso
+# Lifted geometric point comap is the image point
 
-The common-universe comap is the same prescribed original image geometric point.
+Lifted geometric point comap is the image point.
+
+The common-universe comap point is isomorphic to the lifted geometric point at `x ≫ f`.

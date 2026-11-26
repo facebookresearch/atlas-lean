@@ -1,3 +1,5 @@
-# Native Coefficient Level Iso one D
+# The unit-middle value of the coefficient cotangent comparison
 
-The original tensor cancellation at head one has its literal original differential value.
+The unit-middle value of the coefficient cotangent comparison.
+
+The comparison sends `m ⊗ (1 ⊗ dp)` to `up(m ⊗ dp)`.

@@ -1,3 +1,5 @@
-# Schreier Factor Tuple
+# The subgroup factors of a finite tuple scan
 
-Tuple of subgroup factors in the successive Schreier decompositions.
+The subgroup factors of a finite tuple scan.
+
+For the representative scan rᵢ of g : Fin n → G, the factor tuple has coordinate a(rᵢ,gᵢ) ∈ H.

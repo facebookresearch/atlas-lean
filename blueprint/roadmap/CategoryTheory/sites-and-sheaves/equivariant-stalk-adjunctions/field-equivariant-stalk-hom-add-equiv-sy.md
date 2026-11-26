@@ -1,3 +1,5 @@
-# Field Equivariant Stalk Hom Add Equiv symm naturality left
+# Inverse additive stalk correspondence is sheaf natural
 
-Its inverse has the original sheaf-map naturality on the same actual stalks.
+Inverse additive stalk correspondence is sheaf natural.
+
+The inverse correspondence commutes with sheaf precomposition and the induced stalk map.

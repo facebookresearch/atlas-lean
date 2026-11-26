@@ -10,7 +10,14 @@ LICENSE file in the root directory of this source tree.
 module
 public import MathlibExt.AlgebraicGeometry.Sites.SmallEtalePositiveExt
 
-/-! # Actual maps of small étale sections-resolution classes -/
+/-!
+# Naturality of positive resolution section classes
+
+A sheaf morphism induces a map between the chosen injective resolutions. The global-section
+map in degree `n + 1` sends each closed section to a closed section of the target resolution,
+and its derived cycle class is the image under the degree-`n + 1` right-derived global-
+sections morphism.
+-/
 @[expose] public section
 noncomputable section
 set_option autoImplicit false
@@ -96,8 +103,11 @@ private theorem transported_section_cycle_class (τ : Q ⟶ Q') (n : ℕ)
           (injectiveResolution Q)) Γ (n + 1))
             ((B.app (sectionComplex.{u, w} X Q)).inv c)).symm
 
-/-- Internally chosen resolution descent transports every original cycle
-and its actual class. -/
+/-- Resolution section cycle classes commute with sheaf maps.
+
+For a sheaf map, every positive resolution section cycle has a target cycle whose value is its
+image under the canonical resolution map and whose derived class is the corresponding right-
+derived global-sections image. -/
 theorem sections_resolution_class_map_naturality (τ : Q ⟶ Q') (n : ℕ)
     (z : (positiveShort.{u, w} X Q n).g.hom.ker) :
     let Γ := Sheaf.Γ X.smallEtaleTopology AddCommGrpCat.{max u w}

@@ -1,3 +1,6 @@
-# Mapped formula equalities
+# Isomorphism formulas transfer through stated equalities
 
-Actual wrapper equalities transport the already proved native resolution formula.
+Isomorphism formulas transfer through stated equalities.
+
+Equal comparison isomorphisms and equal factors preserve the displayed forward-map
+factorization.

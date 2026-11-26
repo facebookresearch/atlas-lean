@@ -1,4 +1,6 @@
-# Corestriction Cochains f three comp cochains Iso₃ hom
+# The ternary coordinate square for the general cochain map
 
-Degree-three component square between the arbitrary cochain map and the
-existing low-degree triple model.
+The ternary coordinate square for the general cochain map.
+
+Identifying tuple cochains in degree three with functions G × G × G → A intertwines the
+general Schreier cochain map and the ternary transfer.

@@ -1,3 +1,6 @@
-# Annihilator Cocone
+# Power-annihilator cocone in the power-torsion module
 
-The cocone point is the native supremum in the unchanged original carrier.
+Power-annihilator cocone in the power-torsion module.
+
+The directed power-annihilator diagram has a canonical cocone whose point is their supremum,
+the power-torsion module `Γ_I(M)`.

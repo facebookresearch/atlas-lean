@@ -1,4 +1,5 @@
-# Cotangent Scalar Tower
+# The scalar tower of an augmented algebra
 
-The triangle with the ground ring comes from the augmentation being a
-`k`-algebra homomorphism.
+The scalar tower of an augmented algebra.
+
+For a `k`-algebra augmentation `P → A`, the induced actions form the scalar tower `k → P → A`.

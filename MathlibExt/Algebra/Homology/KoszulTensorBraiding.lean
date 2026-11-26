@@ -12,6 +12,20 @@ module
 public import Mathlib.Algebra.Homology.BifunctorFlip
 public import MathlibExt.Algebra.Homology.BifunctorBraiding
 
+/-!
+# Braiding tensor complexes with their total-complex signs
+
+Let C be preadditive and braided monoidal with tensor product additive in each variable. Let I
+be an additive commutative monoid with decidable equality, and c a complex shape on I with
+tensor signs and a total-complex shape symmetry. When both tensor complexes exist, the signed
+total flip and cellwise braiding give K ⊗ L ≅ L ⊗ K.
+
+On the coprojection from bidegree (p,q) into degree n = p + q, the forward map is the shape
+sign σ(p,q) times the braiding K_p ⊗ L_q → L_q ⊗ K_p followed by the swapped coprojection.
+These maps are natural in K and L. If C is symmetric and the total-complex signs obey their
+symmetry law, swapping twice is the identity.
+-/
+
 @[expose] public section
 
 noncomputable section
@@ -32,6 +46,13 @@ section Braided
 
 variable [BraidedCategory C]
 
+/-- Let C be a preadditive monoidal category with tensor product additive in both variables, and
+assume C is braided. Let I be an additive commutative monoid with decidable equality and c a
+complex shape on I with TensorSigns and TotalComplexShapeSymmetry c c c. Let K,L be
+c-complexes whose tensor complexes exist in both orders. koszulTensorBraidingIso : tensorObj K
+L ≅ tensorObj L K is the inverse total-bifunctor flip followed by totalization of the
+reverse-oriented cellwise braiding. It exchanges bidegrees (p,q) and (q,p) with the sign c.σ c
+c p q. -/
 noncomputable def koszulTensorBraidingIso
     (K L : HomologicalComplex C c) [HasTensor K L] [HasTensor L K] :
     tensorObj K L ≅ tensorObj L K :=
@@ -39,6 +60,13 @@ noncomputable def koszulTensorBraidingIso
     HomologicalComplex₂.total.mapIso
       (mapBifunctorFlipBraidingIso L K) c
 
+/-- Let C be a preadditive monoidal category with tensor product additive in both variables, and
+assume C is braided. Let I be an additive commutative monoid with decidable equality and c a
+complex shape on I with TensorSigns and TotalComplexShapeSymmetry c c c. Let K,L be
+c-complexes whose tensor complexes exist in both orders. For p,q,n : I and h : p + q = n,
+ιTensorObj K L p q n h ≫ (koszulTensorBraidingIso K L).hom.f n = c.σ c c p q • (β_(K.X p,L.X
+q).hom ≫ ιTensorObj L K q p n h'), where h' follows by commutativity of addition. The sign is
+a unit of ℤ acting on the morphism group. -/
 @[reassoc]
 theorem ιTensorObj_koszulTensorBraidingIso_hom
     (K L : HomologicalComplex C c) [HasTensor K L] [HasTensor L K]
@@ -60,6 +88,11 @@ theorem ιTensorObj_koszulTensorBraidingIso_hom
   rw [mapBifunctorFlipBraidingIso_hom_f_f]
   congr
 
+/-- Let C be preadditive braided monoidal with tensor product additive in both variables. Let I be
+an additive commutative monoid with decidable equality and c a complex shape with TensorSigns
+and TotalComplexShapeSymmetry c c c. For c-complex maps f : K ⟶ K' and g : L ⟶ L', assume
+tensor complexes exist for K,L and K',L' in both orders. Then tensorHom f g ≫ B_(K',L').hom =
+B_(K,L).hom ≫ tensorHom g f, where B is koszulTensorBraidingIso. -/
 @[reassoc]
 theorem koszulTensorBraidingIso_hom_naturality
     {K L K' L' : HomologicalComplex C c}
@@ -87,6 +120,11 @@ section Symmetric
 
 variable [SymmetricCategory C]
 
+/-- Let C be preadditive symmetric monoidal with tensor product additive in both variables. Let I
+be an additive commutative monoid with decidable equality and c a shape with TensorSigns,
+TotalComplexShapeSymmetry c c c and TotalComplexShapeSymmetrySymmetry c c c. For c-complexes
+K,L with tensors in both orders, (koszulTensorBraidingIso K L).hom ≫ (koszulTensorBraidingIso
+L K).hom = 𝟙 (tensorObj K L). -/
 @[simp]
 theorem koszulTensorBraidingIso_hom_hom
     (K L : HomologicalComplex C c)

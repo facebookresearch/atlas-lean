@@ -1,3 +1,5 @@
-# Field Etale Cohomology Pullback naturality
+# Field cohomology pullback is natural in sheaf maps
 
-Every coefficient arrow commutes with the original étale field pullback.
+Field cohomology pullback is natural in sheaf maps.
+
+A coefficient sheaf map commutes with field pullback and its inverse-image cohomology map.

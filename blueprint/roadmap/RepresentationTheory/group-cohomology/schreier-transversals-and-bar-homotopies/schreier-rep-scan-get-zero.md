@@ -1,3 +1,5 @@
-# Schreier Rep Scan get zero
+# The initial representative in a tuple scan
 
-The Schreier scan starts at the supplied transversal representative.
+The initial representative in a tuple scan.
+
+The representative scan of g : Fin n → G begins at the supplied t ∈ T.

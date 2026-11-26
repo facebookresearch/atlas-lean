@@ -1,4 +1,6 @@
-# Original zero cycle consumer
+# Invariant coordinate of a continuous zero cocycle
 
-An arbitrary original homogeneous zero-cycle evaluates literally at identity
-under the SAME all-degree comparison.
+Invariant coordinate of a continuous zero cocycle.
+
+The compared degree-zero class has underlying invariant value equal to the homogeneous cocycle
+evaluated at the group identity.

@@ -14,24 +14,17 @@ public import MathlibExt.GroupTheory.SchreierTransversal
 public import Mathlib.RepresentationTheory.Homological.GroupCohomology.LowDegree
 
 /-!
-# Schreier data for low-degree group-cohomological transfer
+# Schreier transfer in degrees zero and one
 
-For a subgroup `H ≤ G` and a chosen right transversal `T`, every product
-`t * g`, with `t ∈ T`, has a unique decomposition
+Let k be a commutative ring, A a k-linear representation of G, H ≤ G a finite-index subgroup
+and T a right transversal. Write tg = a(t,g)r(t,g), with a(t,g) ∈ H and r(t,g) ∈ T. The
+degree-zero norm is N_T(x) = ∑ₜ ρ(t⁻¹)x, and the degree-one transfer of c : H → A is
+cor_T(c)(g) = ∑ₜ ρ(t⁻¹)c(a(t,g)).
 
-`t * g = h(t,g) * overline(t * g)`
-
-with `h(t,g) ∈ H` and `overline(t * g) ∈ T`.  This file packages the
-representative and factor, proves their identity and multiplication laws, and
-records the resulting permutation of the transversal.  It then defines the
-degree-zero norm and the degree-one cochain sum used by cohomological
-corestriction.  The differential identity and one-cocycle calculation give a
-degree-one cohomology map for each chosen transversal.
-
-Independence of that choice is not proved here, so no canonical
-transversal-free corestriction is defined.  No degree-two transfer,
-projection formula, norm-residue comparison, or Kummer-Steinberg vanishing is
-asserted.
+The representative permutation and Schreier factor identity give cor_T(d⁰x) = d⁰(N_T(x)) and
+preserve the one-cocycle equation c(h₁h₂) = ρ(h₁)c(h₂) + c(h₁). Thus the chosen-transversal
+formula induces a linear map H¹(H,A|H) → H¹(G,A), computed by transferring a cocycle
+representative.
 -/
 
 @[expose] public section
@@ -49,16 +42,25 @@ universe u
 variable {k G : Type u} [CommRing k] [Group G]
 variable {H : Subgroup G}
 
-/-- A finite-index right transversal has its actual finite type of representatives. -/
+/-- Finite representatives for low-degree transfer.
+
+For a finite-index subgroup H and right transversal T, the representative subtype T is given
+its finite enumeration for the transfer sums. -/
 noncomputable local instance corestrictionRightTransversalFintype
     (T : H.RightTransversal) [H.FiniteIndex] : Fintype (T : Set G) :=
   @Fintype.ofFinite (T : Set G) (T.2.finite_right)
 
-/-- Degree-zero norm associated to a chosen finite right transversal. -/
+/-- The degree-zero norm of a right transversal.
+
+For x ∈ A, define N_T(x) = ∑ₜ ρ(t⁻¹)x over the finite right transversal. This is a k-linear
+endomorphism of the coefficient module A. -/
 noncomputable def corestrictionZero (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex] : A →ₗ[k] A := by
   exact ∑ t : (T : Set G), A.ρ (t : G)⁻¹
 
+/-- The representative sum for the degree-zero norm.
+
+The value of corestrictionZero A T at x is ∑ₜ ρ(t⁻¹)x. -/
 @[simp]
 theorem corestrictionZero_apply (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex] (a : A) :
@@ -66,9 +68,10 @@ theorem corestrictionZero_apply (A : Rep k G)
       ∑ t : (T : Set G), A.ρ (t : G)⁻¹ a := by
   simp [corestrictionZero]
 
-/-- Degree-one cochain sum associated to a chosen finite right transversal.
-The input is a cochain for the restricted `H`-representation and the output
-is a cochain for `G`. -/
+/-- The degree-one Schreier cochain transfer.
+
+For c : H → A, define cor_T(c)(g) = ∑ₜ ρ(t⁻¹)c(a(t,g)), where tg = a(t,g)r(t,g). This is a
+k-linear map from H-cochains to G-cochains. -/
 noncomputable def corestrictionCochainOne (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex] :
     (H → A) →ₗ[k] (G → A) where
@@ -83,6 +86,9 @@ noncomputable def corestrictionCochainOne (A : Rep k G)
     simp only [Pi.smul_apply, map_smul, RingHom.id_apply]
     rw [Finset.smul_sum]
 
+/-- Values of the degree-one Schreier transfer.
+
+At g ∈ G, the transferred cochain has value ∑ₜ ρ(t⁻¹)c(a(t,g)). -/
 @[simp]
 theorem corestrictionCochainOne_apply (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex]
@@ -92,8 +98,10 @@ theorem corestrictionCochainOne_apply (A : Rep k G)
         A.ρ (t : G)⁻¹ (f (T.schreierFactor t g)) := by
   rfl
 
-/-- A single summand of the transferred coboundary, rewritten using the
-Schreier decomposition. -/
+/-- A transferred degree-zero differential summand.
+
+The Schreier decomposition gives ρ(t⁻¹)(ρ(a(t,g))x − x) = ρ(g r(t,g)⁻¹)x − ρ(t⁻¹)x. This term
+identity uses the restricted H-action on the source. -/
 theorem corestrictionCochainOne_d₀₁_term (A : Rep k G)
     (T : H.RightTransversal) (a : A) (t : (T : Set G)) (g : G) :
     A.ρ (t : G)⁻¹
@@ -107,8 +115,9 @@ theorem corestrictionCochainOne_d₀₁_term (A : Rep k G)
   rw [← Module.End.mul_apply, ← map_mul,
     T.inv_mul_schreierFactor t g]
 
-/-- Reindexing the first half of the transferred coboundary by the
-permutation of the transversal induced by `g`. -/
+/-- Reindexing the leading norm term by a representative permutation.
+
+For fixed g, the sum ∑ₜ ρ(g r(t,g)⁻¹)x equals ∑ₜ ρ(g t⁻¹)x, since t ↦ r(t,g) permutes T. -/
 theorem sum_rho_mul_schreierRep_inv (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex] (a : A) (g : G) :
     ∑ t : (T : Set G), A.ρ (g * (T.schreierRep t g : G)⁻¹) a =
@@ -116,8 +125,9 @@ theorem sum_rho_mul_schreierRep_inv (A : Rep k G)
   (T.schreierRepEquiv g).sum_comp
     (fun t : (T : Set G) => A.ρ (g * (t : G)⁻¹) a)
 
-/-- Degree-zero and degree-one transfer commute with the first
-inhomogeneous differential: `cor(d a) = d(N a)`. -/
+/-- Transfer commutes with the first cochain differential.
+
+For d⁰x(h) = ρ(h)x − x, the chosen degree-one transfer satisfies cor_T(d⁰x) = d⁰(N_T(x)). -/
 theorem corestrictionCochainOne_d₀₁ (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex] (a : A) :
     corestrictionCochainOne A T
@@ -152,8 +162,10 @@ theorem corestrictionCochainOne_d₀₁ (A : Rep k G)
   intro t _
   rw [← Module.End.mul_apply, ← map_mul]
 
-/-- A single summand of the transfer of a one-cocycle, expanded using the
-Schreier factor identity. -/
+/-- A Schreier summand of the one-cocycle equation.
+
+For an H-one-cocycle c, the summand ρ(t⁻¹)c(a(t,g₁g₂)) equals ρ(g₁r(t,g₁)⁻¹)c(a(r(t,g₁),g₂)) +
+ρ(t⁻¹)c(a(t,g₁)). -/
 theorem corestrictionCochainOne_mul_term (A : Rep k G)
     (T : H.RightTransversal)
     (f : groupCohomology.cocycles₁ (Rep.res (Subgroup.subtype H) A))
@@ -174,7 +186,10 @@ theorem corestrictionCochainOne_mul_term (A : Rep k G)
   rw [← Module.End.mul_apply, ← map_mul,
     T.inv_mul_schreierFactor t g₁]
 
-/-- Reindexing the first sum in the transferred one-cocycle equation. -/
+/-- Reindexing the leading one-cocycle sum.
+
+For any c : H → A, summing ρ(g₁r(t,g₁)⁻¹)c(a(r(t,g₁),g₂)) over T gives ρ(g₁) times the
+transfer sum at g₂. -/
 theorem sum_rho_mul_schreierRep_inv_factor (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex]
     (f : H → A) (g₁ g₂ : G) :
@@ -203,8 +218,10 @@ theorem sum_rho_mul_schreierRep_inv_factor (A : Rep k G)
           A.ρ (t : G)⁻¹ (f (T.schreierFactor t g₂))) := by
       rw [map_sum]
 
-/-- The chosen-transversal degree-one cochain transfer sends one-cocycles to
-one-cocycles. -/
+/-- Degree-one transfer preserves cocycles.
+
+If c is an H-one-cocycle for the restricted representation A|H, its transferred cochain
+satisfies the G-one-cocycle equation. -/
 theorem corestrictionCochainOne_mem_cocycles₁ (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex]
     (f : groupCohomology.cocycles₁ (Rep.res (Subgroup.subtype H) A)) :
@@ -226,8 +243,10 @@ theorem corestrictionCochainOne_mem_cocycles₁ (A : Rep k G)
   rw [hterms, Finset.sum_add_distrib,
     sum_rho_mul_schreierRep_inv_factor]
 
-/-- The chosen-transversal degree-one cochain transfer restricted to
-one-cocycles. -/
+/-- The linear transfer map on one-cocycles.
+
+Restrict the chosen-transversal degree-one cochain map to Z¹(H,A|H), obtaining a k-linear map
+to Z¹(G,A). -/
 noncomputable def corestrictionCocyclesOne (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex] :
     groupCohomology.cocycles₁ (Rep.res (Subgroup.subtype H) A) →ₗ[k]
@@ -247,6 +266,10 @@ noncomputable def corestrictionCocyclesOne (A : Rep k G)
           (Rep.res (Subgroup.subtype H) A)) : H → A) = _
     exact map_smul (corestrictionCochainOne A T) r (f : H → A)
 
+/-- The cochain underlying a transferred one-cocycle.
+
+For c ∈ Z¹(H,A|H), the underlying G-cochain of corestrictionCocyclesOne A T c is
+corestrictionCochainOne A T c. -/
 @[simp]
 theorem coe_corestrictionCocyclesOne (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex]
@@ -255,15 +278,20 @@ theorem coe_corestrictionCocyclesOne (A : Rep k G)
       corestrictionCochainOne A T f :=
   rfl
 
-/-- The H¹ class of a transferred one-cocycle before descending through
-the source H¹ quotient. -/
+/-- The class of a transferred one-cocycle.
+
+Transfer an H-one-cocycle by the chosen Schreier formula and project the resulting G-one-
+cocycle to H¹(G,A). -/
 noncomputable def corestrictionCocycleOneClass (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex] :
     groupCohomology.cocycles₁ (Rep.res (Subgroup.subtype H) A) →ₗ[k]
       groupCohomology.H1 A :=
   (groupCohomology.H1π A).hom.comp (corestrictionCocyclesOne A T)
 
-/-- Transferred one-cocycle classes annihilate source coboundaries. -/
+/-- Coboundaries vanish under the transferred class map.
+
+The kernel of the source projection Z¹(H,A|H) → H¹(H,A|H) is contained in the kernel of the
+transferred class map to H¹(G,A). -/
 theorem corestrictionCocycleOneClass_ker (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex] :
     LinearMap.ker
@@ -283,8 +311,10 @@ theorem corestrictionCocycleOneClass_ker (A : Rep k G)
   rw [← corestrictionCochainOne_d₀₁]
   exact congrArg (corestrictionCochainOne A T) ha
 
-/-- Degree-one cohomological transfer associated to a chosen finite right
-transversal.  Independence of the transversal is not asserted here. -/
+/-- The degree-one cohomology map of a right transversal.
+
+The chosen Schreier transfer descends through the quotient by source coboundaries to a
+k-linear map H¹(H,A|H) → H¹(G,A). -/
 noncomputable def corestrictionH1OfRightTransversal (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex] :
     groupCohomology.H1 (Rep.res (Subgroup.subtype H) A) →ₗ[k]
@@ -301,8 +331,10 @@ noncomputable def corestrictionH1OfRightTransversal (A : Rep k G)
             inferInstance)
   q.comp e.symm.toLinearMap
 
-/-- The chosen-transversal H¹ transfer computes on a presented class by
-transferring its one-cocycle representative. -/
+/-- The degree-one transfer on a represented class.
+
+For an H-one-cocycle c, applying the chosen H¹ transfer to its class gives the class of the
+transferred G-one-cocycle. -/
 @[simp]
 theorem corestrictionH1OfRightTransversal_H1π (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex]

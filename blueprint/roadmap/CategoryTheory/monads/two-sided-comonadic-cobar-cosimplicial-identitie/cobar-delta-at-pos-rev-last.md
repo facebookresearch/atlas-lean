@@ -1,3 +1,6 @@
-# Cobar Delta At Pos rev last
+# The reversed insertion position of the last interior cobar coface
 
-`rev` sends public `n` to raw `0` (`δ^n` uses raw-zero).
+The reversed insertion position of the last interior cobar coface.
+
+The right-end insertion at the final position is the left-end comultiplication insertion at
+zero.

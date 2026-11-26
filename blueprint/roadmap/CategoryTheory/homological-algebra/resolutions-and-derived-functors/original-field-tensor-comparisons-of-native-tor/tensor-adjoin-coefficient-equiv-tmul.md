@@ -1,4 +1,6 @@
-# Tensor Adjoin Coefficient Equiv tmul
+# The product-linear coefficient equivalence has the cancellation value
 
-The actual product-linear coefficient isomorphism has the original
-forward pure-tensor formula.
+For commutative K-algebras A,B and a compatible B-module X,
+the product-linear comparison sends
+(a⊗b)⊗x to a⊗(b•x).
+Its values are those of the underlying K-linear cancellation.

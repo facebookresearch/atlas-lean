@@ -1,3 +1,6 @@
-# Finite Factor Hom Tensor Co Chain Nat Iso
+# Natural Hom–tensor isomorphism on bounded finite-factor triples
 
-The natural Iso is the restriction of the original unrestricted signed transformation.
+Natural Hom–tensor isomorphism on bounded finite-factor triples.
+
+The signed comparison restricts to a natural isomorphism between the two Hom–tensor functors
+on triples with bounded finite projective third factor.

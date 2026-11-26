@@ -1,4 +1,6 @@
-# Horizontal Prev Total Homology Filtration Map Of Bicomplex id
+# The identity acts identically on every predecessor stage
 
-The unified predecessor-stage map of an identity bicomplex morphism is
-the identity, including at the genuinely zero predecessor in column zero.
+Let C be an abelian category, K a bicomplex of shape (down ℕ,down ℕ), and p,q ∈ ℕ. The
+all-column predecessor-stage map induced by 𝟙_K is the identity on F_{(p:ℤ)−1}H_{p+q}(Tot(K)).
+For p>0 this is the map transported from the finite stage p−1; for p=0 the stage is the zero
+object F_{−1}, whose zero endomorphism equals its identity.

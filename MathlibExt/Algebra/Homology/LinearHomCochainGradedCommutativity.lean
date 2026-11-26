@@ -9,6 +9,19 @@ public import MathlibExt.Algebra.Homology.CochainGradedPairingHomologyCommutativ
 public import MathlibExt.Algebra.Homology.LinearHomCochainPairingBraiding
 public import MathlibExt.Algebra.Homology.LinearHomCochainPairingHomotopy
 
+/-!
+# Koszul commutativity of Hom cohomology pairings
+
+Let R be commutative and K a nonnegative R-module chain complex, with all carriers in universe
+u. Let A be a commutative monoid object in R-modules, with multiplication μ, and Δ:K→K⊗K a chain
+map. Assume Δ followed by the Koszul chain braiding is homotopic to Δ.
+
+The induced cohomology pairing on D=Hom_R(K,A) then satisfies x∪y=(-1)^{pq}y∪x for
+x∈H^pD,y∈H^qD, with the two degree labels p+q and q+p compared in the graded carrier. The sign
+comes from the chain Koszul interchange, while μ is commutative under ordinary coefficient
+interchange. The statement concerns this specified pairing and homotopy condition.
+-/
+
 @[expose] public section
 
 set_option autoImplicit false
@@ -33,8 +46,11 @@ private lemma moduleHom_zsmul_apply {B C : ModuleCat.{u} R}
     (z : ℤ) (f : B ⟶ C) (b : B) :
     (z • f).hom b = z • f.hom b := rfl
 
-/-- A homotopy-cocommutative chain diagonal and a commutative coefficient
-monoid induce a Koszul graded-commutative product on linear Hom-cohomology. -/
+/-- Let R be commutative in universe u, with all module carriers and nonnegative chain terms in u.
+Let K be a chain complex, A a commutative monoid object with multiplication μ, and Δ:K→K⊗K a
+chain map with Homotopy(Δ≫b_{K,K}.hom,Δ) for the Koszul chain braiding b. Put D=Hom_R(K,A). For
+x∈H^pD and y∈H^qD, the homogeneous classes satisfy ⟨p+q,cup_Δ(x,y)⟩=(-1)^{pq}•⟨q+p,cup_Δ(y,x)⟩
+in the graded carrier, where cup_Δ is induced by Δ and μ. The equality retains both degree tags. -/
 theorem linearHomCochainGradedPairing_comm_mk_of_homotopy
     (K : ChainComplex (ModuleCat.{u} R) ℕ)
     [HasTensor K K]

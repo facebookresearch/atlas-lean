@@ -1,3 +1,5 @@
-# Quotient Iso
+# The tail and cutoff layer agree in degree r
 
-On-degree identification of the tail with the cutoff layer.
+For a nonnegative cochain complex K in an abelian category,
+the tail term (T_r K)_r and cutoff term (K_r[r])_r are
+canonically isomorphic through their common identification with K_r.

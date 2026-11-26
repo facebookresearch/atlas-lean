@@ -14,15 +14,15 @@ public import
   MathlibExt.Algebra.Homology.FirstQuadrantHomologyGradedPrevFunctoriality
 
 /-!
-# Functoriality of the unified predecessor homology-filtration map
+# Functorial predecessor maps in every column
 
-The all-column predecessor map preserves identities and composition.  In a
-positive column this is the transported finite-stage law.  In column zero,
-the complete predecessor has integer index `-1` and is a zero object, so both
-laws follow from uniqueness of maps out of that source.
+Let C be an abelian category and n=p+q. The predecessor map on complete total-homology image
+stages is the transported finite stage-(p−1) map for p>0 and the zero map between F_{−1}
+stages for p=0.
 
-This file does not package the predecessor maps as a functor or construct the
-step natural transformation.
+These all-column maps preserve identity morphisms and composition. At p=0, the integer
+predecessor is −1 and both stages are zero objects; this uses the complete-filtration boundary
+rather than a natural predecessor at zero.
 -/
 
 @[expose] public section
@@ -42,8 +42,10 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {K L M : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ)}
 
-/-- The unified predecessor-stage map of an identity bicomplex morphism is
-the identity, including at the genuinely zero predecessor in column zero. -/
+/-- Let C be an abelian category, K a bicomplex of shape (down ℕ,down ℕ), and p,q ∈ ℕ. The
+all-column predecessor-stage map induced by 𝟙_K is the identity on F_{(p:ℤ)−1}H_{p+q}(Tot(K)).
+For p>0 this is the map transported from the finite stage p−1; for p=0 the stage is the zero
+object F_{−1}, whose zero endomorphism equals its identity. -/
 @[simp 1100]
 theorem horizontalPrevTotalHomologyFiltrationMapOfBicomplex_id
     (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
@@ -64,8 +66,10 @@ theorem horizontalPrevTotalHomologyFiltrationMapOfBicomplex_id
         K (-1) (by omega) q
     exact hLower.eq_of_src _ _
 
-/-- Unified predecessor-stage maps preserve composition, including at the
-genuinely zero predecessor in column zero. -/
+/-- Let C be an abelian category and f : K → L, g : L → M composable bicomplex morphisms of shape
+(down ℕ,down ℕ). For p,q ∈ ℕ, the all-column maps on F_{(p:ℤ)−1}H_{p+q}(Tot) satisfy a(f ≫ g)
+= a(f) ≫ a(g). For p>0 these are transported finite predecessor-stage maps; for p=0 all maps
+have source the zero image stage at the finite integer −1. -/
 @[simp 1100]
 theorem horizontalPrevTotalHomologyFiltrationMapOfBicomplex_comp
     (f : K ⟶ L) (g : L ⟶ M) (p q : ℕ) :

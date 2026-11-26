@@ -1,4 +1,7 @@
-# Corestriction H2 Of Right Transversal cup Cocycle One One
+# The cup projection formula on one-cocycle representatives
 
-Representative-level H² projection formula for a restricted left
-one-cocycle and a subgroup one-cocycle.
+The cup projection formula on one-cocycle representatives.
+
+The transferred degree-two class of the restricted cup of x and y equals the class of the cup
+of x with the transferred one-cocycle y. The source coefficients are identified by the
+canonical restriction–tensor isomorphism.

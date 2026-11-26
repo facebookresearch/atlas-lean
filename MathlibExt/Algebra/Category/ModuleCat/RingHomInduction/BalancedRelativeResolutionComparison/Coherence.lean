@@ -14,11 +14,14 @@ public import MathlibExt.Algebra.Category.ModuleCat.BalancedTensor.Along
 public import Mathlib.Algebra.Homology.Additive
 
 /-!
-# Coefficient naturality of relative tensor comparisons
+# Coefficient naturality of balanced relative comparisons
 
-The scalar-changing balanced transformation for the identity ring map gives the coefficient
-natural transformation. Prolongation to chain complexes and homology yields naturality of
-comparison maps and counit augmentations. Coefficient and resolution universes are independent.
+A map of right modules `g : M → M′` over an associative ring induces
+`M ⊗[R] N → M′ ⊗[R] N`, taking `[a ⊗ x]` to `[g(a) ⊗ x]`.
+These maps prolong to arbitrary chain complexes and commute with
+chain maps and homology. For an induction–restriction bar resolution,
+they also commute with relative comparison maps and the full counit
+augmentation. Coefficient and resolution worlds are independent.
 -/
 
 @[expose] public section
@@ -29,18 +32,25 @@ namespace ModuleCat.RingHomInduction
 
 variable {R : Type v} [Ring R]
 
-/-- The original right-module map has its canonical integer-linearity. -/
+/-- Let `R` be a ring, `M,M′` right `R`-modules with carriers in `m`,
+and `g : M → M′` a right-module map. Restricting its scalar action gives the canonical
+integer-linear map on the underlying additive groups. -/
 abbrev coefficientIntMap {M M' : ModuleCat.{m} Rᵐᵒᵖ} (g : M ⟶ M') : M →ₗ[ℤ] M' :=
   g.hom.toAddMonoidHom.toIntLinearMap
 
-/-- The original right action gives the exact equivariance required by the balanced map. -/
+/-- Let `R` be a ring, `M,M′` right `R`-modules with carriers in `m`,
+and `g : M → M′` a right-module map. Its integer-linear restriction satisfies
+`g((op r) • a) = (op r) • g(a)` for every `r : R`, `a : M`. -/
 theorem coefficientIntMap_equivariant {M M' : ModuleCat.{m} Rᵐᵒᵖ} (g : M ⟶ M')
     (r : R) (a : M) :
     coefficientIntMap g (MulOpposite.op r • a) = MulOpposite.op r • coefficientIntMap g a := by
   change g.hom (MulOpposite.op r • a) = MulOpposite.op r • g.hom a
   exact g.hom.map_smul (MulOpposite.op r) a
 
-/-- The coefficient transformation reuses balancing and the identity restriction iso. -/
+/-- Let `R` be a ring, `M,M′` right `R`-modules with carriers in `m`,
+and `g : M → M′` a right-module map. Balanced tensoring in the coefficient gives a natural
+transformation of integer-module-valued functors
+`M ⊗[R] - → M′ ⊗[R] -` on left `R`-modules. -/
 def balancedCoefficientNatTrans {M M' : ModuleCat.{m} Rᵐᵒᵖ} (g : M ⟶ M') :
     ModuleCat.BalancedTensor.functor.{0, v, m, z} ℤ R M ⟶
       ModuleCat.BalancedTensor.functor.{0, v, m, z} ℤ R M' :=
@@ -50,7 +60,9 @@ def balancedCoefficientNatTrans {M M' : ModuleCat.{m} Rᵐᵒᵖ} (g : M ⟶ M')
     ModuleCat.BalancedTensor.Along.natTrans ℤ (AlgHom.id ℤ R) (coefficientIntMap g)
       (fun r a => coefficientIntMap_equivariant g r a)
 
-/-- The coefficient transformation changes the original right coefficient and leaves the left element. -/
+/-- Let `R` be a ring, `M,M′` right `R`-modules with carriers in `m`,
+and `g : M → M′` a right-module map. For a left module `N` in an independent universe `z`, the
+coefficient transformation sends `[a ⊗ x]` to `[g(a) ⊗ x]`. -/
 theorem balancedCoefficientNatTrans_mk {M M' : ModuleCat.{m} Rᵐᵒᵖ} (g : M ⟶ M')
     (N : ModuleCat.{z} R) (a : M) (x : N) :
     let : Module ℤ N := Module.compHom N (algebraMap ℤ R)
@@ -82,14 +94,19 @@ local instance balanced_additive (M : ModuleCat.{m} Rᵐᵒᵖ) :
     (ModuleCat.BalancedTensor.functor.{0, v, m, z} ℤ R M).Additive :=
   ModuleCat.BalancedTensor.additive.{0, v, m, z} ℤ R M
 
-/-- Prolongation applies the original coefficient transformation to every chain term. -/
+/-- Let `R` be a ring, `M,M′` right `R`-modules with carriers in `m`,
+and `g : M → M′` a right-module map. For any nonnegative chain complex `Q` of left modules in
+universe `z`, applying the coefficient transformation in every degree
+gives `M ⊗[R] Q → M′ ⊗[R] Q`. -/
 abbrev balancedCoefficientChainMap {M M' : ModuleCat.{m} Rᵐᵒᵖ} (g : M ⟶ M')
     (Q : ChainComplex (ModuleCat.{z} R) ℕ) :
     Functor.mappedResolution (ModuleCat.BalancedTensor.functor.{0, v, m, z} ℤ R M) Q ⟶
       Functor.mappedResolution (ModuleCat.BalancedTensor.functor.{0, v, m, z} ℤ R M') Q :=
   (NatTrans.mapHomologicalComplex (balancedCoefficientNatTrans.{v, m, z} g) (.down ℕ)).app Q
 
-/-- Coefficient naturality is a literal chain-map square for every original map. -/
+/-- Let `R` be a ring, `M,M′` right `R`-modules with carriers in `m`,
+and `g : M → M′` a right-module map. For a chain map `f : Q → P`, the coefficient chain maps
+commute with `M ⊗[R] f` and `M′ ⊗[R] f`. -/
 theorem balancedCoefficientChainMap_naturality {M M' : ModuleCat.{m} Rᵐᵒᵖ} (g : M ⟶ M')
     {Q P : ChainComplex (ModuleCat.{z} R) ℕ} (f : Q ⟶ P) :
     ((ModuleCat.BalancedTensor.functor.{0, v, m, z} ℤ R M).mapHomologicalComplex (.down ℕ)).map f ≫
@@ -98,14 +115,19 @@ theorem balancedCoefficientChainMap_naturality {M M' : ModuleCat.{m} Rᵐᵒᵖ}
         ((ModuleCat.BalancedTensor.functor.{0, v, m, z} ℤ R M').mapHomologicalComplex (.down ℕ)).map f :=
   NatTrans.mapHomologicalComplex_naturality (balancedCoefficientNatTrans.{v, m, z} g) f
 
-/-- The original coefficient transformation induces its homology map. -/
+/-- Let `R` be a ring, `M,M′` right `R`-modules with carriers in `m`,
+and `g : M → M′` a right-module map. For any chain complex `Q` and degree `n`, the coefficient
+chain map induces `H_n(M ⊗[R] Q) → H_n(M′ ⊗[R] Q)`. -/
 abbrev balancedCoefficientHomologyMap {M M' : ModuleCat.{m} Rᵐᵒᵖ} (g : M ⟶ M')
     (Q : ChainComplex (ModuleCat.{z} R) ℕ) (n : ℕ) :
     (Functor.mappedResolution (ModuleCat.BalancedTensor.functor.{0, v, m, z} ℤ R M) Q).homology n ⟶
       (Functor.mappedResolution (ModuleCat.BalancedTensor.functor.{0, v, m, z} ℤ R M') Q).homology n :=
   homologyMap (balancedCoefficientChainMap g Q) n
 
-/-- The full original coefficient square commutes after homology, with no exactness premise. -/
+/-- Let `R` be a ring, `M,M′` right `R`-modules with carriers in `m`,
+and `g : M → M′` a right-module map. For any chain map `f : Q → P`, the induced coefficient
+homology maps commute with the tensor images of `f`, in every degree
+and without exactness conditions on the complexes. -/
 theorem balancedCoefficientHomologyMap_naturality {M M' : ModuleCat.{m} Rᵐᵒᵖ} (g : M ⟶ M')
     {Q P : ChainComplex (ModuleCat.{z} R) ℕ} (f : Q ⟶ P) (n : ℕ) :
     homologyMap
@@ -119,7 +141,10 @@ theorem balancedCoefficientHomologyMap_naturality {M M' : ModuleCat.{m} Rᵐᵒ�
 
 variable {k : Type u} [Ring k] (φ : k →+* R)
 
-/-- The existing free Bar functor preserves its full original counit augmentation. -/
+/-- Let `k,R` be rings, `φ : k → R`, and `f : N → N′` a map of
+left `R`-modules at the common ring-containing resolution height.
+The map of induction bar chain complexes induced by `f` satisfies
+`Bar(f) ≫ ε_N′ = ε_N ≫ f[0]` for their counit augmentations. -/
 theorem nativeFreeBarChainMap_augmentation {N N' : ModuleCat.{max u v w} R} (f : N ⟶ N') :
     (alternatingFaceMapComplex (ModuleCat.{max u v w} R)).map
         ((ModuleCat.induceRestrictScalarsAdj.{u, v, w} φ).freeBarFunctor.map f) ≫
@@ -129,7 +154,11 @@ theorem nativeFreeBarChainMap_augmentation {N N' : ModuleCat.{max u v w} R} (f :
   AlternatingFaceMapComplex.ε.naturality
     ((ModuleCat.induceRestrictScalarsAdj.{u, v, w} φ).freeBarAugmentedFunctor.map f)
 
-/-- The computed relative comparison agrees with the free Bar functor on homology. -/
+/-- Let `k,R` be rings in universes `u,v`, `φ : k → R` a ring
+homomorphism, and `M` a right `R`-module in universe `m`. Put
+`T=max(u,v,w)` for the left-module resolution carrier world. For `f : N → N′`, the canonical balanced relative comparison
+from the bar of `N` to the bar of `N′` is the homology map of
+`M ⊗[R] Bar_φ(f)`. -/
 theorem balancedBarComparisonHomologyMap_eq_nativeFreeBarMap (M : ModuleCat.{m} Rᵐᵒᵖ)
     {N N' : ModuleCat.{max u v w} R} (f : N ⟶ N') (n : ℕ) :
     balancedBarComparisonHomologyMap.{u, v, w, m} φ M N N'
@@ -143,7 +172,12 @@ theorem balancedBarComparisonHomologyMap_eq_nativeFreeBarMap (M : ModuleCat.{m} 
   balancedBarComparisonHomologyMap_eq_of_augmentation φ M N N' _ _ _ f _
     (nativeFreeBarChainMap_augmentation φ f) n
 
-/-- The relative comparison is natural in every original right coefficient map. -/
+/-- Let `k,R` be rings in universes `u,v`, `φ : k → R` a ring
+homomorphism, and `M` a right `R`-module in universe `m`. Put
+`T=max(u,v,w)` for the left-module resolution carrier world. For a right-module map `g : M → M′`, a split relative
+augmentation `P → Y[0]` and `f : N → Y`, the balanced comparison
+map commutes with the coefficient homology maps on the bar of `N`
+and on `P`. -/
 theorem balancedBarComparisonHomologyMap_coefficient_naturality
     {M M' : ModuleCat.{m} Rᵐᵒᵖ} (g : M ⟶ M') (N Y : ModuleCat.{max u v w} R)
     (P : ChainComplex (ModuleCat.{max u v w} R) ℕ)
@@ -158,7 +192,11 @@ theorem balancedBarComparisonHomologyMap_coefficient_naturality
   balancedCoefficientHomologyMap_naturality g
     ((ModuleCat.induceRestrictScalarsAdj.{u, v, w} φ).freeBarResolutionComparison N Y P β σ f) n
 
-/-- The same coefficient transformation preserves the original full counit augmentation square. -/
+/-- Let `k,R` be rings in universes `u,v`, `φ : k → R` a ring
+homomorphism, and `M` a right `R`-module in universe `m`. Put
+`T=max(u,v,w)` for the left-module resolution carrier world. For a right-module map `g : M → M′` and left module `N`,
+the coefficient chain maps commute with the balanced tensor images
+of the full bar counit augmentation `Bar_φ(N) → N[0]`. -/
 theorem balancedFreeBar_coefficient_augmentation_naturality
     {M M' : ModuleCat.{m} Rᵐᵒᵖ} (g : M ⟶ M') (N : ModuleCat.{max u v w} R) :
     ((ModuleCat.BalancedTensor.functor.{0, v, m, max u v w} ℤ R M).mapHomologicalComplex (.down ℕ)).map

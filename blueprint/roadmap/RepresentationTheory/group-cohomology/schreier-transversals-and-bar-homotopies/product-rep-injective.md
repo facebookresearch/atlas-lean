@@ -1,4 +1,6 @@
-# Product Rep injective
+# Uniqueness of pairs of product representatives
 
-Products of representatives from two successive right transversals are
-unique.
+Uniqueness of pairs of product representatives.
+
+If st = s′t′ for s,s′ ∈ S and t,t′ ∈ T, then (s,t) = (s′,t′). Thus the representative product
+map S × T → G is injective.

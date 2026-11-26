@@ -1,3 +1,6 @@
-# Quotient Hom Additive Family
+# Ideal-power quotient Hom family as additive functors
 
-The same actual family, with its native additive Hom functors.
+Ideal-power quotient Hom family as additive functors.
+
+Bundle each functor `Hom_R(R / I^n, -)` with its additivity and retain the precomposition
+transition maps to form a natural-number family of additive functors.

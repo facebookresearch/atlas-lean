@@ -1,3 +1,5 @@
-# Right Coefficient Complex Functor Iso
+# The right coefficient functor agrees naturally with converted left coefficients
 
-The right coefficient functor is naturally the tensor-reordered left functor.
+For commutative R and an R-Lie algebra L, the tensor-flip complex isomorphisms form
+rightCoefficientComplexFunctor ≅ RightLieModuleCat.toLeftFunctor ⋙ coefficientComplexFunctor R
+L. Each component swaps M and Λ^nL.

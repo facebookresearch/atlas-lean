@@ -1,3 +1,6 @@
-# Unitization Original Scalar Cokernel Iso
+# The scalar-source comparison of unitization homology cokernels
 
-The literal cokernel of the original scalar HH map agrees with the explicit common-carrier presentation.
+The scalar-source comparison of unitization homology cokernels.
+
+The cokernel of the homology map from the functor-lifted scalar complex is isomorphic to the
+unitization Hochschild model defined using `b(ULift.{v} k)`.

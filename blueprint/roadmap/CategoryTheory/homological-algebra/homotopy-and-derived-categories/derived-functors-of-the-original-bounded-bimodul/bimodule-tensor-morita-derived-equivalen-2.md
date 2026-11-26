@@ -1,3 +1,5 @@
-# Bimodule Tensor Morita Derived Equivalence functor
+# Forward functor of the bounded localized Morita equivalence
 
-Its entire forward functor is the actual localized original bounded Q tensor.
+Forward functor of the bounded localized Morita equivalence.
+
+The equivalence's forward functor is `bimoduleTensorMoritaDerivedFunctor R S P Q a ha b hb`.

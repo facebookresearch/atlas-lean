@@ -1,4 +1,7 @@
-# Algebra Shuffle Cut End restrict Scalars
+# The ground-linear action of an A-balanced shuffle cut
 
-Changing the balancing and returning to the original level gives the
-original coefficient-fixed signed cut, without changing any tail.
+The ground-linear action of an A-balanced shuffle cut.
+
+For a commutative ring k, a commutative k-algebra A and an A-module M with compatible
+k-action, restricting algebraShuffleCutEnd(z) from A to k gives coefficientShuffleCutEnd(z) on
+M ⊗[k] A⊗n.

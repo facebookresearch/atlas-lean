@@ -13,12 +13,13 @@ public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.Schrei
 public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.SchreierRestrictionCorestrictionArbitrary
 
 /-!
-# Arbitrary-degree restriction to Sylow subgroups
+# Restriction to Sylow subgroups in every degree
 
-For a finite group and a Sylow `p`-subgroup, restriction is injective on
-group cohomology in every degree with coefficients over a positive
-prime-power `ZMod`.  This is the arbitrary-degree consequence of the
-restriction--corestriction index formula.
+Let `G : Type` be a finite group, `p` a prime, `d : ℕ` positive, and `P` a Sylow `p`-subgroup.
+For any representation `A` over `ZMod (p^d)` and every `n : ℕ`, restriction along `P → G`
+gives an injection `H^n(G,A) → H^n(P,Res A)`. Consequently, vanishing and equality of classes
+can be detected after restriction in each degree. The index `[G:P]` is invertible in the
+coefficient ring.
 -/
 
 @[expose] public section
@@ -34,8 +35,10 @@ namespace groupCohomology
 variable {G : Type} [Group G] [Finite G]
 variable {p d : ℕ} [hp : Fact p.Prime]
 
-/-- Restriction to a Sylow subgroup is injective in every degree with
-coefficients over a positive prime-power `ZMod`. -/
+/-- Let `G : Type` be a finite group, `p` prime, `d : ℕ` with `0 < d`, `P : Sylow p G`, and `A :
+Rep (ZMod (p ^ d)) G`. For every `n : ℕ`, `res_P^n : H^n(G,A) → H^n(P,Rep.res
+(Subgroup.subtype P) A)` is injective. This is the map induced by the subgroup inclusion with
+the identity coefficient morphism. -/
 theorem restriction_injective_sylow_primePower
     (A : Rep (ZMod (p ^ d)) G) (P : Sylow p G) (hd : 0 < d)
     (n : ℕ) :
@@ -46,8 +49,9 @@ theorem restriction_injective_sylow_primePower
   exact restriction_injective_of_isUnit_index (H := (P : Subgroup G)) A n
     (sylowIndex_isUnit_zmod_primePower P hd)
 
-/-- A class in any degree is zero exactly when its restriction to a Sylow
-subgroup is zero. -/
+/-- Let `G : Type` be a finite group, `p` prime, `d : ℕ` with `0 < d`, `P : Sylow p G`, and `A :
+Rep (ZMod (p ^ d)) G`. For `n : ℕ` and `x ∈ H^n(G,A)`, `res_P^n(x) = 0 ↔ x = 0`, where
+restriction is along `P → G` with unchanged coefficients. -/
 theorem restriction_sylow_eq_zero_iff_primePower
     (A : Rep (ZMod (p ^ d)) G) (P : Sylow p G) (hd : 0 < d)
     (n : ℕ) (x : groupCohomology A n) :
@@ -60,8 +64,9 @@ theorem restriction_sylow_eq_zero_iff_primePower
   · rintro rfl
     exact map_zero _
 
-/-- Two classes in any degree are equal exactly when their restrictions to
-a Sylow subgroup are equal. -/
+/-- Let `G : Type` be a finite group, `p` prime, `d : ℕ` with `0 < d`, `P : Sylow p G`, and `A :
+Rep (ZMod (p ^ d)) G`. For `n : ℕ` and `x,y ∈ H^n(G,A)`, `res_P^n(x) = res_P^n(y) ↔ x = y`,
+where restriction is induced by the subgroup inclusion and the identity coefficient map. -/
 theorem restriction_sylow_eq_iff_primePower
     (A : Rep (ZMod (p ^ d)) G) (P : Sylow p G) (hd : 0 < d)
     (n : ℕ) (x y : groupCohomology A n) :

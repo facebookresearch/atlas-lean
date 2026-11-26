@@ -1,3 +1,5 @@
-# EBar Map comp
+# Composition of topological universal-bar maps
 
-Universal-bar maps compose with continuous monoid homomorphisms.
+Composition of topological universal-bar maps.
+
+For continuous monoid maps φ and ψ, EBarMap φ followed by EBarMap ψ equals EBarMap of ψ ∘ φ.

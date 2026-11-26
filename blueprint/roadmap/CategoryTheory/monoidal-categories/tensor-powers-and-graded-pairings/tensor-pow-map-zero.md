@@ -1,3 +1,5 @@
-# Tensor Pow Map zero
+# Power zero map is the unit identity
 
-Computation rule: `tensorPowMap f 0` is the identity on the unit.
+Power zero map is the unit identity.
+
+Every morphism's power-zero map is the identity of the tensor unit.

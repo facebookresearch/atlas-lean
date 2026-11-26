@@ -11,7 +11,15 @@ module
 public import MathlibExt.AlgebraicGeometry.Sites.SmallEtaleLongExactSequence
 
 /-!
-# Sections in étale long exact sequences
+# Section boundaries in small étale cohomology
+
+Degree-zero cohomology identifies with sections on the identity étale object. For a short
+exact sheaf sequence, use this coordinate to define the section boundary from the last sheaf's
+global sections to degree-one cohomology of the first sheaf.
+
+A section has zero boundary precisely when it is the image of a global section of the middle
+sheaf. The first sheaf's section map is injective, and the degree-zero section coordinate is
+natural in sheaf maps.
 -/
 @[expose] public section
 noncomputable section
@@ -23,18 +31,27 @@ namespace AlgebraicGeometry.Scheme.DerivedSections
 
 variable (X : Scheme.{u})
 
-/-- The actual canonical degree-zero evaluation at the original identity object. -/
+/-- Degree zero cohomology as terminal sections.
+
+The group `H⁰(X,Q)` is additively equivalent to sections of `Q` over the identity étale
+object. -/
 def smallEtaleH0Sections (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :
     Sheaf.H Q 0 ≃+ Q.obj.obj (op (Scheme.Etale.mk (𝟙 X))) :=
   Sheaf.H.equiv₀ Q (identityEtaleIsTerminal X)
 
-/-- This is exactly A's original integral-generator identification. -/
+/-- Degree zero section coordinate is evaluation of the integral sheaf map.
+
+Under the Ext-zero-to-Hom equivalence, the terminal-section coordinate equals evaluation of
+the corresponding integral-sheaf morphism. -/
 theorem smallEtaleH0Sections_eq_integralHomTerminal
     (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (x : Sheaf.H Q 0) :
     smallEtaleH0Sections.{u, w} X Q x =
       integralHomTerminal.{u, w} X Q (Ext.addEquiv₀ x) := rfl
 
-/-- Both original sequence arrows are carried to their literal section components. -/
+/-- Degree zero section coordinate is natural in sheaf maps.
+
+The cohomology map followed by the target terminal-section coordinate equals the source
+coordinate followed by the sheaf map's terminal component. -/
 theorem smallEtaleH0Sections_naturality
     {Q R : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}}
     (τ : Q ⟶ R) (x : Sheaf.H Q 0) :
@@ -47,7 +64,10 @@ variable {X}
 
 
 
-/-- The boundary of an actual original global section, using the same δ of S. -/
+/-- Boundary of a global section in degree one cohomology.
+
+Use the inverse degree-zero section equivalence followed by the connecting map to send
+sections of the quotient sheaf to `H¹` of the kernel sheaf. -/
 def smallEtaleSectionBoundary (hS : S.ShortExact) :
     S.X₃.obj.obj (op (Scheme.Etale.mk (𝟙 X))) →+ Sheaf.H S.X₁ 1 :=
   let C := Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}
@@ -95,7 +115,10 @@ private theorem sectionBoundary_zero_iff_atTerminal
 
 end GenericSections
 
-/-- Zero boundary is equivalent to an actual original global section lift. -/
+/-- A section lifts globally exactly when its boundary vanishes.
+
+In a short exact sheaf sequence, a section of the last sheaf has zero section boundary if and
+only if it is the image of a global section of the middle sheaf. -/
 theorem smallEtaleSectionBoundary_zero_iff (hS : S.ShortExact)
     (c : S.X₃.obj.obj (op (Scheme.Etale.mk (𝟙 X)))) :
     smallEtaleSectionBoundary.{u, w} hS c = 0 ↔
@@ -106,7 +129,10 @@ theorem smallEtaleSectionBoundary_zero_iff (hS : S.ShortExact)
   exact sectionBoundary_zero_iff_atTerminal
     (J := X.smallEtaleTopology) hS (identityEtaleIsTerminal X) c
 
-/-- The actual first original global-section map is injective. -/
+/-- First global section map of a short exact sequence is injective.
+
+For a short exact sheaf sequence, the first morphism is injective on sections over the
+identity étale object. -/
 theorem smallEtaleFirstSectionMap_injective (hS : S.ShortExact) :
     Function.Injective (S.f.hom.app (op (Scheme.Etale.mk (𝟙 X)))) := by
   intro a b hab

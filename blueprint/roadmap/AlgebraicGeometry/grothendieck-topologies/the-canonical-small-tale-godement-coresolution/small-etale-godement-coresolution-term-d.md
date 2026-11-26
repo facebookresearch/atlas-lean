@@ -1,3 +1,5 @@
-# Small Etale Godement Coresolution Term derived Sections succ is Zero
+# Every Godement term is acyclic for positive derived sections
 
-Every positive right-derived global-section object of every actual degree term is zero.
+Every Godement term is acyclic for positive derived sections.
+
+For every cosimplicial degree `n` and natural `i`, `R^(i+1)Γ` of that Godement term is zero.

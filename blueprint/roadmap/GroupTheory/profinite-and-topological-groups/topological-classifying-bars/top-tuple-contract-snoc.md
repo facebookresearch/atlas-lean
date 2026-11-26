@@ -1,3 +1,6 @@
-# Top Tuple Contract snoc
+# Adjacent contraction before an appended coordinate
 
-Contracting below the final coordinate commutes with tuple snoc.
+Adjacent contraction before an appended coordinate.
+
+Contracting at the inherited index i in Fin.snoc t g equals appending g after contracting t at
+i.

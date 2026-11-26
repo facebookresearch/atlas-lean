@@ -15,10 +15,12 @@ module
 public import Mathlib.Algebra.Category.ModuleCat.ChangeOfRings
 
 /-!
-# Additivity of extension of scalars
+# Extension of scalars is additive across independent ring worlds
 
-Extension of scalars along a commutative-ring homomorphism `f : R →+* S`
-is additive.
+Let R,S be commutative rings in independent worlds u_R,u_S and
+f:R→S a ring homomorphism. Extension of scalars sends an R-module
+X in carrier world v to S⊗[R,f]X in world max(u_S,v).
+On maps it sends g to id_S⊗g, so it preserves addition of morphisms.
 -/
 
 @[expose] public section
@@ -31,7 +33,11 @@ universe v uR uS
 
 variable {R : Type uR} {S : Type uS} [CommRing R] [CommRing S] (f : R →+* S)
 
-/-- Extension of scalars along a commutative-ring homomorphism is additive. -/
+/-- For a homomorphism f:R→S of commutative rings,
+the extension-of-scalars functor
+ModuleCat^v(R)→ModuleCat^max(u_S,v)(S) is additive.
+It sends g+h to id_S⊗g+id_S⊗h, with independent ring
+and module-carrier worlds. -/
 instance extendScalars_additive :
     (ModuleCat.extendScalars f :
       ModuleCat.{v} R ⥤ ModuleCat.{max uS v} S).Additive where

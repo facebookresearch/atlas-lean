@@ -1,3 +1,6 @@
-# Unitization Quotient mk Q eq inr
+# Removal of the scalar coordinate in the unitization quotient
 
-The scalar coordinate vanishes in exactly the source's reduced ground quotient.
+Removal of the scalar coordinate in the unitization quotient.
+
+The classes of `x ∈ A⁺` and `Unitization.inr x.snd` are equal in the ground-module quotient by
+`k·1`.

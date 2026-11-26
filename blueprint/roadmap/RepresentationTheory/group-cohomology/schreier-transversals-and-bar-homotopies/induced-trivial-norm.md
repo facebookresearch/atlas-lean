@@ -1,4 +1,6 @@
-# Induced Trivial Norm
+# The norm map to the induced trivial representation
 
-The canonical finite-index norm map from the ambient trivial
-representation to the induced subgroup trivial representation.
+The norm map to the induced trivial representation.
+
+For finite-index H, the unit of the restriction-to-induction adjunction gives a G-equivariant
+map from the trivial G-representation k to ind_H^G(k).

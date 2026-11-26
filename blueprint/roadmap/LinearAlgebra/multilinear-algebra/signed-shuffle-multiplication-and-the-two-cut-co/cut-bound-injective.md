@@ -1,3 +1,4 @@
-# Cut Bound injective
+# Weak degree cuts are determined by their bounded coordinates
 
-The bounded pair retains both original block lengths.
+For each `n ∈ ℕ`, the map from weak cuts `p+q=n` to their
+bounded pairs in `Fin(n+1) × Fin(n+1)` is injective.

@@ -1,4 +1,6 @@
-# Is Zero succ of coinduced retract
+# Positive acyclicity of a split coinduced coefficient
 
-Positive continuous cohomology vanishes when the coefficient is a
-retract of its compact-open coinduction through the constant inclusion.
+Let R be a ring with a topology, H a locally compact topological
+group and Y a topological R-representation of H.
+If a continuous equivariant R-linear s : C(H,Y) → Y satisfies
+s ∘ const = id_Y, then Hⁿ⁺¹_cts(H,Y) is a zero object for every n ∈ ℕ.

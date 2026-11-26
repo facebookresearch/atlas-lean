@@ -1,8 +1,8 @@
 # Original sections in the canonical étale long exact sequence
 
-- [Small Etale H0 Sections](small-etale-h0-sections.md)
-- [Small Etale H0 Sections eq integral Hom Terminal](small-etale-h0-sections-eq-integral-hom.md)
-- [Small Etale H0 Sections naturality](small-etale-h0-sections-naturality.md)
-- [Small Etale Section Boundary](small-etale-section-boundary.md)
-- [Small Etale Section Boundary zero iff](small-etale-section-boundary-zero-iff.md)
-- [Small Etale First Section Map injective](small-etale-first-section-map-injective.md)
+- [Degree zero cohomology as terminal sections](small-etale-h0-sections.md)
+- [Degree zero section coordinate is evaluation of the integral sheaf map](small-etale-h0-sections-eq-integral-hom.md)
+- [Degree zero section coordinate is natural in sheaf maps](small-etale-h0-sections-naturality.md)
+- [Boundary of a global section in degree one cohomology](small-etale-section-boundary.md)
+- [A section lifts globally exactly when its boundary vanishes](small-etale-section-boundary-zero-iff.md)
+- [First global section map of a short exact sequence is injective](small-etale-first-section-map-injective.md)

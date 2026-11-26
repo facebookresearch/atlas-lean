@@ -15,9 +15,10 @@ public import Mathlib.CategoryTheory.Limits.Shapes.Kernels
 /-!
 # Cokernels of split complementary projectors
 
-For a split inclusion and retraction, the retraction is a cokernel of the complementary projector.
-Its universal property uses preadditivity and the split identity. When the relevant cokernel
-exists, it identifies that cokernel with the retract.
+In a preadditive category, a split pair `i : Y → X`, `r : X → Y`
+with `i ≫ r = 𝟙 Y` makes `r` a cokernel of
+`q = 𝟙 X - r ≫ i`. An existing cokernel is canonically isomorphic
+to `Y`, naturally under maps respecting the complements and retractions.
 -/
 
 @[expose] public section
@@ -35,16 +36,18 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
   (hi : i ≫ r = 𝟙 Y) (hq : q = 𝟙 X - r ≫ i)
 
 include hi hq in
-/-- The original retraction kills the complementary projector. -/
+/-- In a preadditive category `C`, let `i : Y → X`, `r : X → Y` satisfy
+`i ≫ r = 𝟙 Y`, and let `q = 𝟙 X - r ≫ i`. The retraction
+annihilates the complement: `q ≫ r = 0`. -/
 @[reassoc]
 theorem splitComplement_comp_retraction : q ≫ r = 0 := by
   rw [hq, Preadditive.sub_comp, Category.id_comp, Category.assoc, hi,
     Category.comp_id, sub_self]
 
-/--
-The original retraction is the cokernel cofork, by the universal API. The universal property does
-not require a chosen cokernel object.
--/
+/-- In a preadditive category `C`, let `i : Y → X`, `r : X → Y` satisfy
+`i ≫ r = 𝟙 Y`, and let `q = 𝟙 X - r ≫ i`. The map
+`r : X → Y` is a cokernel of `q`, with its factorization and
+uniqueness property, independently of a chosen cokernel object. -/
 def splitComplementIsCokernel :
     IsColimit (CokernelCofork.ofπ r (splitComplement_comp_retraction q i r hi hq)) :=
   CokernelCofork.IsColimit.ofπ r (splitComplement_comp_retraction q i r hi hq)
@@ -61,18 +64,27 @@ def splitComplementIsCokernel :
 
 variable [HasCokernel q]
 
-/-- The chosen cokernel is canonically the original retract object. -/
+/-- In a preadditive category `C`, let `i : Y → X`, `r : X → Y` satisfy
+`i ≫ r = 𝟙 Y`, and let `q = 𝟙 X - r ≫ i`. If a cokernel
+of `q` exists, it is canonically isomorphic to the retract object
+`Y`, through the quotient map induced by `r`. -/
 def cokernelSplitComplementIso : cokernel q ≅ Y :=
   (cokernelIsCokernel q).coconePointUniqueUpToIso (splitComplementIsCokernel q i r hi hq)
 
-/-- The quotient projection is sent to the original retraction. -/
+/-- In a preadditive category `C`, let `i : Y → X`, `r : X → Y` satisfy
+`i ≫ r = 𝟙 Y`, and let `q = 𝟙 X - r ≫ i`. If a cokernel
+of `q` exists, its forward comparison `e : cokernel q ≅ Y`
+satisfies `cokernel.π q ≫ e.hom = r`. -/
 @[reassoc]
 theorem cokernelSplitComplementIso_π_hom :
     cokernel.π q ≫ (cokernelSplitComplementIso q i r hi hq).hom = r :=
   IsColimit.comp_coconePointUniqueUpToIso_hom (cokernelIsCokernel q)
     (splitComplementIsCokernel q i r hi hq) WalkingParallelPair.one
 
-/-- The inverse is the original inclusion followed by the quotient projection. -/
+/-- In a preadditive category `C`, let `i : Y → X`, `r : X → Y` satisfy
+`i ≫ r = 𝟙 Y`, and let `q = 𝟙 X - r ≫ i`. If a cokernel
+of `q` exists, the inverse comparison is the original inclusion
+followed by the cokernel projection: `e.inv = i ≫ cokernel.π q`. -/
 theorem cokernelSplitComplementIso_inv :
     (cokernelSplitComplementIso q i r hi hq).inv = i ≫ cokernel.π q := by
   apply (cancel_mono (cokernelSplitComplementIso q i r hi hq).hom).1
@@ -81,7 +93,10 @@ theorem cokernelSplitComplementIso_inv :
 variable {X' Y' : C} (q' : X' ⟶ X') (i' : Y' ⟶ X') (r' : X' ⟶ Y')
   (hi' : i' ≫ r' = 𝟙 Y') (hq' : q' = 𝟙 X' - r' ≫ i') [HasCokernel q']
 
-/-- Endomorphism and retraction squares earn naturality of the cokernel comparison. -/
+/-- In a preadditive category `C`, let two split pairs have complements
+`q`, `q′` and existing cokernels. If `f : X → X′`, `g : Y → Y′`
+satisfy `q ≫ f = f ≫ q′` and `f ≫ r′ = r ≫ g`, the induced
+cokernel map commutes with the forward comparisons to the retracts. -/
 @[reassoc]
 theorem cokernelSplitComplementIso_naturality
     (f : X ⟶ X') (g : Y ⟶ Y') (w : q ≫ f = f ≫ q')
@@ -98,7 +113,10 @@ theorem cokernelSplitComplementIso_naturality
     _ = r ≫ g := hr
     _ = _ := by simp only [cokernelSplitComplementIso_π_hom_assoc]
 
-/-- The same constructed comparison gives inverse naturality without a supplied iso square. -/
+/-- In a preadditive category `C`, let two split pairs have complements
+`q`, `q′` and existing cokernels. For maps commuting with the
+complements and retractions, the inverse comparisons satisfy
+`g ≫ e′.inv = e.inv ≫ cokernel.map(q,q′,f,f)`. -/
 @[reassoc]
 theorem cokernelSplitComplementIso_inv_naturality
     (f : X ⟶ X') (g : Y ⟶ Y') (w : q ≫ f = f ≫ q')
@@ -128,7 +146,10 @@ universe u v
 variable {C : Type u} [Category.{v} C] [Preadditive C]
   {X Y X' Y' : C} {i : Y ⟶ X} {r : X ⟶ Y} {i' : Y' ⟶ X'} {r' : X' ⟶ Y'}
 
-/-- Compatible maps of the original split data commute with their complements. -/
+/-- In a preadditive category `C`, let `i : Y → X`, `r : X → Y`
+and `i′ : Y′ → X′`, `r′ : X′ → Y′` be maps. If
+`i ≫ f = g ≫ i′` and `f ≫ r′ = r ≫ g`, then `f` commutes
+with the corresponding complements: `f ≫ (1-r′i′) = (1-ri) ≫ f`. -/
 theorem splitComplement_naturality (f : X ⟶ X') (g : Y ⟶ Y')
     (hι : i ≫ f = g ≫ i') (hr : f ≫ r' = r ≫ g) :
     f ≫ (𝟙 X' - r' ≫ i') = (𝟙 X - r ≫ i) ≫ f := by

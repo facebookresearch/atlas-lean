@@ -1,3 +1,6 @@
-# Small Etale Godement Unit stalk mono
+# Godement unit is monic at every canonical stalk
 
-On every original canonical stalk, the actual Godement unit is a split monomorphism.
+Godement unit is monic at every canonical stalk.
+
+Each canonical stalk map of the Godement unit is a monomorphism, since it has the displayed
+retraction.

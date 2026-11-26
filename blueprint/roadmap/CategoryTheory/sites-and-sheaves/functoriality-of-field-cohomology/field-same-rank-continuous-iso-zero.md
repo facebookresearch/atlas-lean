@@ -1,3 +1,6 @@
-# Field Same Rank Continuous Iso zero
+# Rank comparison preserves the invariant coordinate in degree zero
 
-The SAME old identity evaluation normalizes the original-rank comparison.
+Rank comparison preserves the invariant coordinate in degree zero.
+
+The rank comparison followed by the enlarged-parameter zero-degree coordinate equals the
+stated-rank zero-degree coordinate.

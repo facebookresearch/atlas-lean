@@ -1,3 +1,6 @@
-# Nerve Composition Prism Map Common Hom Up face zero
+# The face of the composition prism determined by the second transformation
 
-The COMPLETE second short face is the SAME original β cylinder.
+The face of the composition prism determined by the second transformation.
+
+Restricting the triangular composition prism along δ₀ gives the common-morphism-universe
+cylinder map of β.

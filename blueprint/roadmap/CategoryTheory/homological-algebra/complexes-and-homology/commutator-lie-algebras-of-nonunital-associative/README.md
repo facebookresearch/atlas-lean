@@ -2,17 +2,17 @@
 
 ## Lie Ring
 
-- [Of Non Unital Associative Ring](of-non-unital-associative-ring.md)
-- [Of nonunital associative ring bracket](of-nonunital-associative-ring-bracket.md)
+- [A nonunital associative ring has the multiplication-commutator Lie bracket](of-non-unital-associative-ring.md)
+- [The nonunital associative Lie bracket is exactly the multiplication commutator](of-nonunital-associative-ring-bracket.md)
 
 ## Lie Algebra
 
-- [Of Non Unital Associative Algebra](of-non-unital-associative-algebra.md)
+- [A central scalar action makes the nonunital commutator bracket bilinear](of-non-unital-associative-algebra.md)
 
 ## Non Unital Alg Hom
 
-- [To Lie Hom](to-lie-hom.md)
-- [To Lie Hom apply](to-lie-hom-apply.md)
-- [To Lie Hom to Linear Map](to-lie-hom-to-linear-map.md)
-- [To Lie Hom id](to-lie-hom-id.md)
-- [To Lie Hom comp](to-lie-hom-comp.md)
+- [Nonunital algebra morphisms preserve the commutator Lie bracket](to-lie-hom.md)
+- [The induced commutator Lie morphism evaluates as the algebra morphism](to-lie-hom-apply.md)
+- [Commutator Lie conversion preserves the underlying linear map](to-lie-hom-to-linear-map.md)
+- [The nonunital algebra identity induces the commutator Lie identity](to-lie-hom-id.md)
+- [Commutator Lie conversion preserves composition of nonunital algebra morphisms](to-lie-hom-comp.md)

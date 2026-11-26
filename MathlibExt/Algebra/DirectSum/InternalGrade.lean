@@ -15,31 +15,19 @@ public import Mathlib.Algebra.Module.GradedModule
 public import Mathlib.RingTheory.Finiteness.Basic
 
 /-!
-# The canonical internal grading of an external direct sum
+# Coordinate ranges in external direct sums
 
-The range of each homogeneous inclusion into an external direct sum is a
-submodule of the total direct sum.  These coordinate ranges form an internal
-direct-sum decomposition whose coordinates agree with the original external
-coordinates.
+For a family of semimodules M i over a semiring A, the range of the inclusion M i → ⨁ j, M j
+is an internal homogeneous component. Each summand is linearly equivalent to its range, and
+these ranges decompose the total direct sum: the i-th decomposition coordinate of x, viewed in
+the total module, is the element supported at i with value x i.
 
-This file is additive and module-theoretic.  It also records the canonical
-graded action between two coordinate-range families.  It constructs no graded
-ring, graded algebra, associated-graded presentation, degree-shifting kernel
-or range, or Hilbert--Serre theorem.
+Finite generation of a summand transfers to its coordinate range. The same constructions are
+specialized to modules over a ring. For a graded semiring A indexed by an additive monoid I
+and a graded module M indexed by an I-set J, the coordinate ranges carry the graded action:
+degree i acting on degree j has degree i +ᵥ j.
 
-## Main declarations
-
-* `DirectSum.internalGrade`
-* `DirectSum.mem_internalGrade_iff`
-* `DirectSum.internalGradeEquiv`
-* `DirectSum.internalGradeDecomposition`
-* `DirectSum.coe_decompose_internalGrade`
-* `DirectSum.internalGrade_finite`
-* `DirectSum.moduleInternalGrade`
-* `DirectSum.moduleInternalGradeEquiv`
-* `DirectSum.moduleInternalGradeDecomposition`
-* `DirectSum.moduleInternalGrade_finite`
-* `DirectSum.internalGradeGradedSMul`
+See Bourbaki, *Algebra*, Chapter II, for direct sums and their internal decompositions.
 -/
 
 @[expose] public section
@@ -59,12 +47,15 @@ variable (ι : Type uι) [DecidableEq ι]
 variable (M : ι → Type uM)
   [∀ i, AddCommMonoid (M i)] [∀ i, Module A (M i)]
 
-/-- The degree-`i` internal component of an external direct sum. -/
+/-- For a semiring A, an index type ι with decidable equality and A-semimodules M i, define the
+degree-i submodule of ⨁ j, M j as the range of DirectSum.lof A ι M i : M i →ₗ[A] ⨁ j, M j.
+Thus it consists of elements supported in the coordinate i. -/
 def internalGrade (i : ι) : Submodule A (⨁ i, M i) :=
   LinearMap.range (DirectSum.lof A ι M i)
 
-/-- Membership in an internal coordinate is witnessed by an element of the
-corresponding external summand. -/
+/-- For a semiring A, an index type ι with decidable equality and A-semimodules M i, an element x
+of ⨁ j, M j belongs to internalGrade A ι M i if and only if there is y : M i with DirectSum.of
+M i y = x. -/
 @[simp]
 theorem mem_internalGrade_iff (x : ⨁ i, M i) (i : ι) :
     x ∈ internalGrade A ι M i ↔
@@ -83,14 +74,17 @@ private noncomputable def lofEquivInternalGrade (i : ι) :
   LinearEquiv.ofInjective (DirectSum.lof A ι M i)
     (lof_injective A ι M i)
 
-/-- A summand is canonically linearly equivalent to its coordinate range in
-the external direct sum. -/
+/-- For a semiring A, an index type ι with decidable equality and A-semimodules M i, the inclusion
+at i induces the A-linear equivalence M i ≃ₗ[A] internalGrade A ι M i. It sends y to the
+element DirectSum.of M i y equipped with its range-membership proof. -/
 @[no_expose]
 noncomputable def internalGradeEquiv (i : ι) :
     M i ≃ₗ[A] internalGrade A ι M i := by
   exact lofEquivInternalGrade A ι M i
 
-/-- The internal-grade equivalence includes a summand by `DirectSum.of`. -/
+/-- For a semiring A, an index type ι with decidable equality and A-semimodules M i, coercing
+internalGradeEquiv A ι M i y back to ⨁ j, M j gives DirectSum.of M i y, for every i : ι and y
+: M i. -/
 @[simp]
 theorem coe_internalGradeEquiv_apply (i : ι) (x : M i) :
     ((internalGradeEquiv A ι M i x : internalGrade A ι M i) :
@@ -135,8 +129,10 @@ private theorem internalGradeDecompose_right :
     DirectSum.lmap_lof]
   rfl
 
-/-- The coordinate ranges give the canonical internal decomposition of an
-external direct sum. -/
+/-- For a semiring A, an index type ι with decidable equality and A-semimodules M i, the
+submodules internalGrade A ι M i form an internal direct-sum decomposition of ⨁ i, M i. The
+map which sums their inclusions is inverse to the coordinate map obtained from the
+summand-to-range equivalences. -/
 @[no_expose]
 noncomputable instance internalGradeDecomposition :
     DirectSum.Decomposition (internalGrade A ι M) := by
@@ -146,8 +142,9 @@ noncomputable instance internalGradeDecomposition :
     (internalGradeDecompose_left A ι M)
     (internalGradeDecompose_right A ι M)
 
-/-- The internal decomposition coordinate, coerced back to the external
-direct sum, is the corresponding external coordinate. -/
+/-- For a semiring A, an index type ι with decidable equality and A-semimodules M i, the i-th
+component of DirectSum.decompose (internalGrade A ι M) x, coerced into ⨁ j, M j, equals
+DirectSum.of M i (x i). This holds for every x and every index i. -/
 @[simp]
 theorem coe_decompose_internalGrade (x : ⨁ i, M i) (i : ι) :
     ((DirectSum.decompose (internalGrade A ι M) x i :
@@ -157,7 +154,9 @@ theorem coe_decompose_internalGrade (x : ⨁ i, M i) (i : ι) :
     internalGrade A ι M i) : ⨁ i, M i) = _
   rfl
 
-/-- A finite homogeneous summand has a finite internal coordinate range. -/
+/-- For a semiring A, an index type ι with decidable equality and A-semimodules M i, if M i is
+finitely generated over A, then the submodule internalGrade A ι M i is finitely generated over
+A. The hypothesis concerns the chosen summand i. -/
 theorem internalGrade_finite (i : ι) [Module.Finite A (M i)] :
     Module.Finite A (internalGrade A ι M i) :=
   Module.Finite.of_surjective
@@ -175,39 +174,51 @@ variable (ι : Type uι) [DecidableEq ι]
 variable (M : ι → Type uM)
   [∀ i, AddCommGroup (M i)] [∀ i, Module A (M i)]
 
-/-- The canonical coordinate range specialized to external direct sums of modules. -/
+/-- For a ring A, an index type ι with decidable equality and A-modules M i, moduleInternalGrade A
+ι M i is the submodule of ⨁ j, M j equal to the range of the A-linear inclusion of M i. It
+specializes the semimodule coordinate-range construction. -/
 abbrev moduleInternalGrade (i : ι) : Submodule A (⨁ i, M i) :=
   internalGrade A ι M i
 
-/-- Module coordinate membership uses the canonical external summand representative. -/
+/-- For a ring A, an index type ι with decidable equality and A-modules M i, x ∈
+moduleInternalGrade A ι M i if and only if there exists y : M i such that DirectSum.of M i y =
+x. -/
 theorem mem_moduleInternalGrade_iff (x : ⨁ i, M i) (i : ι) :
     x ∈ moduleInternalGrade A ι M i ↔
       ∃ y : M i, DirectSum.of M i y = x :=
   mem_internalGrade_iff A ι M x i
 
-/-- The module coordinate equivalence is the canonical summand-to-range equivalence. -/
+/-- For a ring A, an index type ι with decidable equality and A-modules M i, the A-linear
+equivalence M i ≃ₗ[A] moduleInternalGrade A ι M i sends y to its inclusion in the total direct
+sum, viewed as an element of the coordinate submodule. -/
 noncomputable abbrev moduleInternalGradeEquiv (i : ι) :
     M i ≃ₗ[A] moduleInternalGrade A ι M i :=
   internalGradeEquiv A ι M i
 
-/-- Coercing the module coordinate equivalence gives the external inclusion. -/
+/-- For a ring A, an index type ι with decidable equality and A-modules M i, coercing
+moduleInternalGradeEquiv A ι M i y into ⨁ j, M j yields DirectSum.of M i y for every y : M i. -/
 theorem coe_moduleInternalGradeEquiv_apply (i : ι) (x : M i) :
     ((moduleInternalGradeEquiv A ι M i x :
       moduleInternalGrade A ι M i) : ⨁ i, M i) = DirectSum.of M i x :=
   coe_internalGradeEquiv_apply A ι M i x
 
-/-- External module coordinates use the canonical internal decomposition. -/
+/-- For a ring A, an index type ι with decidable equality and A-modules M i, the family
+moduleInternalGrade A ι M is an internal direct-sum decomposition of ⨁ i, M i. Its summation
+and decomposition maps are those induced by the coordinate inclusions. -/
 noncomputable abbrev moduleInternalGradeDecomposition :
     DirectSum.Decomposition (moduleInternalGrade A ι M) :=
   internalGradeDecomposition A ι M
 
-/-- The module decomposition has the original external coordinates. -/
+/-- For a ring A, an index type ι with decidable equality and A-modules M i, the i-th component of
+the decomposition of x into moduleInternalGrade A ι M, viewed in the total module, is
+DirectSum.of M i (x i). -/
 theorem coe_decompose_moduleInternalGrade (x : ⨁ i, M i) (i : ι) :
     ((DirectSum.decompose (moduleInternalGrade A ι M) x i :
       moduleInternalGrade A ι M i) : ⨁ i, M i) = DirectSum.of M i (x i) :=
   coe_decompose_internalGrade A ι M x i
 
-/-- Finite module summands give finite canonical coordinate ranges. -/
+/-- For a ring A, an index type ι with decidable equality and A-modules M i, a finitely generated
+summand M i gives a finitely generated A-module moduleInternalGrade A ι M i. -/
 theorem moduleInternalGrade_finite (i : ι) [Module.Finite A (M i)] :
     Module.Finite A (moduleInternalGrade A ι M i) :=
   internalGrade_finite A ι M i
@@ -218,8 +229,11 @@ section GradedSMul
 
 universe uR uI uA uJ uM
 
-/-- The internal coordinate ranges of a graded semiring and one of its graded
-modules inherit the canonical graded scalar action. -/
+/-- Let R be a semiring, I an additive monoid and J an I-set, both with decidable equality. Let A
+i and M j be R-semimodules, with A a graded semiring and M a graded A-module. If x belongs to
+internalGrade R I A i and y belongs to internalGrade R J M j, then x • y belongs to
+internalGrade R J M (i +ᵥ j). For included homogeneous elements a and m, this action is the
+inclusion of their graded scalar product. -/
 instance internalGradeGradedSMul
     (R : Type uR) [Semiring R]
     {I : Type uI} {J : Type uJ}

@@ -13,13 +13,22 @@ module
 public import MathlibExt.Algebra.Homology.FirstQuadrantFirstPageMiddleSection
 
 /-!
-# Boundary cycles for the adjacent-column connecting map
+# Boundary representatives from the adjacent direct-column sequence
 
-A cycle in column `p+1` lifts degreewise to the middle adjacent quotient.
-Its differential lies in the image of column `p`; exactness therefore gives
-a canonical lift to column `p`.  This file constructs that boundary lift and
-proves both its factorization equation and its cycle equation.  Identifying
-the resulting homology class with the connecting homomorphism is separate.
+Let K be a nonnegative homological bicomplex in an abelian category C.
+For each p, write its adjacent direct-column short exact sequence as
+0 → D_p → M_p → D_(p+1) → 0, where
+M_p = coker(F_(p−1) → F_(p+1)).
+
+Set n=−(p+1)−q, so n+1=−p−q. The supported degreewise section
+D_(p+1)^n → M_p^n lifts the cycle inclusion from Z^n(D_(p+1)).
+Its differential lands in the image of D_p^(n+1), and exactness
+gives a representative b : Z^n(D_(p+1)) → D_p^(n+1) satisfying
+a ∘ b = d_M ∘ s ∘ i_Z.
+
+This representative is a target cycle: d_(D_p) ∘ b = 0.
+The construction supplies the boundary map and its factorization
+equation for arbitrary p,q ≥ 0.
 -/
 
 @[expose] public section
@@ -39,9 +48,12 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
   (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
     (ComplexShape.down ℕ))
 
-/-- The boundary in column `p` of a cycle lifted from column `p+1`, together
-with its defining factorization through the left map of the adjacent short
-exact sequence. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category, let 0 → D_p → M_p → D_(p+1) → 0 be its adjacent sequence,
+n=−(p+1)−q and s : D_(p+1)^n → M_p^n the supported section.
+The boundary lift consists of a map b : Z^n(D_(p+1)) → D_p^(n+1)
+with a^(n+1) ∘ b = d_M^(n,n+1) ∘ s ∘ i_Z.
+Exactness of the constructed sequence gives this lift. -/
 noncomputable def horizontalFirstPageAdjacentBoundaryLift (p q : ℕ) :
     { x₁ : (horizontalDirectColumnCochain K (p + 1)).cycles
           (-((p + 1 : ℕ) : ℤ) - q) ⟶
@@ -83,15 +95,22 @@ noncomputable def horizontalFirstPageAdjacentBoundaryLift (p q : ℕ) :
   simpa [S, F, Sj, x₂, n, j] using
     hSj.exact.lift_f (x₂ ≫ S.X₂.d n j) hx₂d
 
-/-- Underlying boundary-cycle morphism. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category and p,q ≥ 0, the boundary representative is
+b : Z^(−(p+1)−q)(D_(p+1)) → D_p^(−p−q).
+It is the morphism whose composite with the left adjacent-sequence
+map is the differential of the supported middle lift of source cycles. -/
 noncomputable def horizontalFirstPageAdjacentBoundaryCycles (p q : ℕ) :
     (horizontalDirectColumnCochain K (p + 1)).cycles
         (-((p + 1 : ℕ) : ℤ) - q) ⟶
       (horizontalDirectColumnCochain K p).X (-(p : ℤ) - q) :=
   (horizontalFirstPageAdjacentBoundaryLift K p q).1
 
-/-- The boundary-cycle morphism maps through the left term to the
-differential of the chosen middle lift. -/
+/-- For the adjacent sequence 0 → D_p → M_p → D_(p+1) → 0
+of a nonnegative homological bicomplex in an abelian category,
+the boundary representative satisfies
+a ∘ b = d_M ∘ s ∘ i_Z in degrees n=−(p+1)−q and n+1=−p−q.
+Here s is the supported degreewise middle section. -/
 theorem horizontalFirstPageAdjacentBoundaryCycles_f (p q : ℕ) :
     horizontalFirstPageAdjacentBoundaryCycles K p q ≫
         (horizontalFirstPageAdjacentDirectShortComplex K p).f.f
@@ -103,7 +122,11 @@ theorem horizontalFirstPageAdjacentBoundaryCycles_f (p q : ℕ) :
           (-((p + 1 : ℕ) : ℤ) - q) (-(p : ℤ) - q) :=
   (horizontalFirstPageAdjacentBoundaryLift K p q).2
 
-/-- The lifted boundary is a cycle in column `p`. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category, the boundary representative
+b : Z^(−(p+1)−q)(D_(p+1)) → D_p^(−p−q)
+satisfies d_(D_p) ∘ b = 0.
+It therefore factors through the target cycles in cochain degree −p−q. -/
 theorem horizontalFirstPageAdjacentBoundaryCycles_d (p q : ℕ) :
     horizontalFirstPageAdjacentBoundaryCycles K p q ≫
       (horizontalDirectColumnCochain K p).d

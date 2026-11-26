@@ -1,4 +1,6 @@
-# Nerve Homotopy Map Common Hom Up precomp
+# Precomposition of the larger-target cylinder
 
-The WHOLE original upward cylinder commutes with the actual original
-source functor on EVERY source simplex and parameter simplex.
+Precomposition of the larger-target cylinder.
+
+For K : X → A, the common-morphism-universe cylinder of Kα equals N(K) × id followed by the
+cylinder of α, at the stated source and target object heights.

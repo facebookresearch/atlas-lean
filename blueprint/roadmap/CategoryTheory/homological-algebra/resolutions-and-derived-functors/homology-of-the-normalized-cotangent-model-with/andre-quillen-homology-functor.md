@@ -1,5 +1,6 @@
-# Andre Quillen Homology Functor
+# The André–Quillen homology functor in a fixed degree
 
-Degreewise canonical André–Quillen homology of the actual standard
-polynomial cotangent model. Its coefficient maps are the genuine induced
-homology maps, rather than fields of a supplied data structure.
+The André–Quillen homology functor in a fixed degree.
+
+For `n ∈ ℕ`, this sends an `A`-module `M` to `H_n(M ⊗[A] L_{A/k})`, where `L_{A/k}` is the
+normalized polynomial cotangent model.

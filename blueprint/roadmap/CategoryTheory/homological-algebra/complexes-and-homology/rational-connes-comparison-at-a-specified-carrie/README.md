@@ -1,4 +1,4 @@
 # Rational Connes comparison at a specified carrier height
 
-- [Cyclic To Connes Homology Iso At Height](cyclic-to-connes-homology-iso-at-height.md)
-- [Cyclic To Connes Homology Iso At Height hom](cyclic-to-connes-homology-iso-at-height-2.md)
+- [The rational homology comparison at a chosen carrier height](cyclic-to-connes-homology-iso-at-height.md)
+- [The forward lifted comparison through homology and cokernel transport](cyclic-to-connes-homology-iso-at-height-2.md)

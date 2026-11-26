@@ -1,4 +1,6 @@
-# Field Spec Residue Iso inv map
+# Inverse residue isomorphism gives the residue point morphism
 
-The actual inverse residue-field isomorphism induces the original residue-field point over Spec
-k.
+Inverse residue isomorphism gives the residue point morphism.
+
+Taking spectra of the inverse field-spectrum residue isomorphism gives the canonical map from
+the residue-field spectrum to `Spec k`.

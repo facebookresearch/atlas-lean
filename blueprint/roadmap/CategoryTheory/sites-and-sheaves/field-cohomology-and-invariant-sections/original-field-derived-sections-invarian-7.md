@@ -1,4 +1,6 @@
-# Original field derived sections invariants
+# Derived field sections satisfy their full invariant comparison laws
 
-The fixed equivalence identifies actual derived Gamma and derived invariants in EVERY
-source degree, with every actual resolution and the SAME original section/germ law.
+Derived field sections satisfy their full invariant comparison laws.
+
+The comparison satisfies all naturality, inverse, mapped-resolution, coaugmentation,
+resolution-choice, and terminal-section normalization laws.

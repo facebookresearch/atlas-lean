@@ -1,5 +1,5 @@
 # Componentwise kernels of abelian sheaves
 
-- [Sheaf Kernel Of Components](sheaf-kernel-of-components.md)
-- [Sheaf components of kernel](sheaf-components-of-kernel.md)
-- [Sheaf exact mono iff components](sheaf-exact-mono-iff-components.md)
+- [Componentwise injectivity and exactness construct a sheaf kernel](sheaf-kernel-of-components.md)
+- [A sheaf kernel has injective and exact section maps](sheaf-components-of-kernel.md)
+- [Left exactness of sheaves is equivalent to the component kernel conditions](sheaf-exact-mono-iff-components.md)

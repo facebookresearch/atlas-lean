@@ -19,19 +19,21 @@ public import Mathlib.Algebra.Homology.Embedding.Restriction
 public import Mathlib.Algebra.Homology.Embedding.Extend
 
 /-!
-# The two-column cyclic SBI presentation
+# The SBI sequence of the two-column cyclic presentation
 
-The Hochschild term in this presentation is
-the total of the first two cyclic bicomplex
-columns, CC(A){2}. Its inclusion, cokernel
-and period-two tail comparison give an
-SBI presentation for nonunital algebra maps.
-Comparison with the b complex requires a
-left unit. The relative-unitization cokernel
-Hochschild model is a separate definition.
+Let `k` be a commutative ring and `A` a nonunital ring with a compatible `k`-module structure.
+The cyclic bicomplex alternates its `b` and `b′` columns and its horizontal maps `1-t` and
+`N`. Let `CC(A)` be its total and `CC^{(2)}(A)` the total of columns zero and one.
 
-Reference: Loday, Cyclic Homology, §§1.4.1,
-1.4.5 and Theorem 2.2.1.
+The short exact sequence `0 → CC^{(2)}(A) → CC(A) → Q(A) → 0`, together with the period-two
+comparison of `Q(A)` with the degree-two extension of `CC(A)`, gives an exact SBI diagram. Its
+ordinary term is `H_n(CC^{(2)}(A))`; the maps are `I_n : H_n(CC^{(2)}) → HC_n`, `S_n :
+HC_(n+2) → HC_n`, and `B_n : HC_n → H_(n+1)(CC^{(2)})`. All maps are natural for nonunital
+algebra homomorphisms. The tail vanishes below degree two, giving an isomorphism for `I_0` and
+an epimorphism for `I_1`.
+
+References: Loday, *Cyclic Homology*, Sections 1.4.1 and 1.4.5, Theorem 2.2.1, and Corollary
+2.2.3.
 -/
 
 @[expose] public section
@@ -45,6 +47,9 @@ universe u v
 
 namespace ModuleCat.Algebra.Hochschild
 
+/-- Parity after translation by two columns.
+
+For `p ∈ ℕ`, the column indices `p+2` and `p` have the same parity. -/
 theorem cyclicColumn_two_parity (p : ℕ) : Even (p + 2) ↔ Even p := by
   rw [show p + 2 = (p + 1) + 1 by omega, Nat.even_add_one, Nat.even_add_one,
     not_not]
@@ -52,41 +57,68 @@ theorem cyclicColumn_two_parity (p : ℕ) : Even (p + 2) ↔ Even p := by
 variable (k : Type u) [CommRing k] (A : Type v) [NonUnitalRing A] [Module k A]
   [IsScalarTower k A A] [SMulCommClass k A A]
 
-/-- The literal native total of the first two raw cyclic columns. -/
+/-- The total of the first two cyclic bicomplex columns.
+
+For a nonunital ground algebra `A`, this chain complex retains outer columns zero and one of
+the cyclic bicomplex, including both the `b` and `b′` columns. -/
 abbrev cyclicFirstTwoColumns : ChainComplex (ModuleCat.{max u v} k) ℕ :=
   (cyclicBicomplex k A).partialTotal 1
 
-/-- The raw cyclic-total quotient by the first two columns. -/
+/-- The cyclic-total quotient by its first two columns.
+
+This is the cokernel of the chain inclusion of the first-two-column total into the full cyclic
+total. -/
 abbrev cyclicTwoColumnTail : ChainComplex (ModuleCat.{max u v} k) ℕ :=
   cokernel ((cyclicBicomplex k A).partialTotalι 1)
 
-/-- The chain-level inclusion/cokernel sequence whose homology gives raw SBI. -/
+/-- The inclusion-and-quotient sequence for two cyclic columns.
+
+The short complex has first term the first-two-column total, middle term the full cyclic
+total, and third term the cokernel of their inclusion. -/
 abbrev cyclicTwoColumnSequence : ShortComplex (ChainComplex (ModuleCat.{max u v} k) ℕ) :=
   (cyclicBicomplex k A).partialTotalCokernelShortComplex 1
 
-/-- Its middle complex is the original cyclic total. -/
+/-- The cyclic total as the middle term of the two-column sequence.
+
+The middle chain complex of the inclusion-and-quotient sequence is the full cyclic total
+`CC(A)`. -/
 lemma cyclicTwoColumnSequence_X₂ :
     (cyclicTwoColumnSequence k A).X₂ = cyclicTotal k A := rfl
 
-/-- Its first term retains both raw columns. -/
+/-- The retained-column term of the cyclic short complex.
+
+The first term of the inclusion-and-quotient sequence is the total `CC^{(2)}(A)` of outer
+columns zero and one. -/
 lemma cyclicTwoColumnSequence_X₁ :
     (cyclicTwoColumnSequence k A).X₁ = cyclicFirstTwoColumns k A := rfl
 
-/-- The third term is the quotient, rather than a chosen comparison object. -/
+/-- The cokernel term of the cyclic short complex.
+
+The third term of the two-column sequence is the quotient of `CC(A)` by the retained first-
+two-column total. -/
 lemma cyclicTwoColumnSequence_X₃ :
     (cyclicTwoColumnSequence k A).X₃ = cyclicTwoColumnTail k A := rfl
 
-/-- Short exactness is the native partial-total inclusion/cokernel theorem. -/
+/-- Short exactness of the cyclic two-column sequence.
+
+The inclusion of `CC^{(2)}(A)` into `CC(A)` and its cokernel form a short exact sequence of
+chain complexes. -/
 theorem cyclicTwoColumnSequence_shortExact :
     (cyclicTwoColumnSequence k A).ShortExact :=
   (cyclicBicomplex k A).partialTotalCokernelShortExact 1
 
-/-- Canonical coordinate of either retained raw column, including the odd column. -/
+/-- A cell inclusion in the first-two-column cyclic total.
+
+For `p : Fin 2` and `p+q=n`, this includes the coefficient tensor cell in bidegree `(p,q)`
+into degree `n` of `CC^{(2)}(A)`. -/
 def cyclicFirstTwoColumnCell (p : Fin 2) (q n : ℕ) (h : p.val + q = n) :
     ModuleCat.Algebra.Hochschild.NonUnital.chainLevel k A A q ⟶ (cyclicFirstTwoColumns k A).X n :=
   (cyclicBicomplex k A).partialTotalComponent 1 p q n h
 
-/-- The retained cell includes as its full-total coprojection. -/
+/-- The full-total image of a retained cyclic cell.
+
+A cell inclusion into `CC^{(2)}(A)` followed by its inclusion into `CC(A)` is the full-total
+coprojection of that same bidegree. -/
 @[reassoc]
 theorem cyclicFirstTwoColumnCell_inclusion (p : Fin 2) (q n : ℕ)
     (h : p.val + q = n) :
@@ -95,7 +127,9 @@ theorem cyclicFirstTwoColumnCell_inclusion (p : Fin 2) (q n : ℕ)
       (cyclicBicomplex k A).ιTotal (ComplexShape.down ℕ) p.val q n h :=
   (cyclicBicomplex k A).partialTotalComponent_comp_partialTotalι 1 p q n h
 
-/-- Both retained columns vanish under the quotient projection. -/
+/-- The vanishing of retained cells in the cyclic tail quotient.
+
+The quotient projection from `CC(A)` kills every cell in outer column zero or one. -/
 @[reassoc]
 theorem cyclicTwoColumnProjection_retained (p : Fin 2) (q n : ℕ)
     (h : p.val + q = n) :
@@ -104,7 +138,10 @@ theorem cyclicTwoColumnProjection_retained (p : Fin 2) (q n : ℕ)
   (cyclicBicomplex k A).ιTotal_cokernel_partialTotalι_π_eq_zero
     1 p.val q n p.isLt h
 
-/-- The period-two column comparison has identity maps on original tensor levels. -/
+/-- The period-two isomorphism of cyclic columns.
+
+Columns `p+2` and `p` have the same parity and differential, so identity maps on their tensor
+levels give a chain isomorphism. -/
 def cyclicColumnPeriodTwoIso (p : ℕ) : cyclicColumn k A (p + 2) ≅ cyclicColumn k A p :=
   HomologicalComplex.Hom.isoOfComponents (fun q => Iso.refl (ModuleCat.Algebra.Hochschild.NonUnital.chainLevel k A A q))
     (fun i j _ => by
@@ -114,15 +151,22 @@ def cyclicColumnPeriodTwoIso (p : ℕ) : cyclicColumn k A (p + 2) ≅ cyclicColu
           (𝟙 _)
       simp only [Category.id_comp, Category.comp_id, cyclicColumn_two_parity])
 
-/-- The forward period-two coordinate is the original identity tensor map. -/
+/-- The forward tensor component of cyclic column periodicity.
+
+The forward period-two column comparison is the identity on each coefficient tensor level. -/
 lemma cyclicColumnPeriodTwoIso_hom_f (p q : ℕ) :
     (cyclicColumnPeriodTwoIso k A p).hom.f q = 𝟙 (ModuleCat.Algebra.Hochschild.NonUnital.chainLevel k A A q) := rfl
 
-/-- The inverse period-two coordinate is the same original identity tensor map. -/
+/-- The inverse tensor component of cyclic column periodicity.
+
+The inverse period-two column comparison is the identity on each coefficient tensor level. -/
 lemma cyclicColumnPeriodTwoIso_inv_f (p q : ℕ) :
     (cyclicColumnPeriodTwoIso k A p).inv.f q = 𝟙 (ModuleCat.Algebra.Hochschild.NonUnital.chainLevel k A A q) := rfl
 
-/-- Native restriction drops two outer columns without introducing a parallel bicomplex. -/
+/-- The cyclic bicomplex after removing two outer columns.
+
+Restricting the outer index to columns `p+2` is isomorphic to the cyclic bicomplex, through
+the period-two column isomorphisms and the alternating horizontal maps. -/
 def cyclicOuterTailTwoIso :
     (cyclicBicomplex k A).restriction (_root_.partialTotalOuterEmbedding 2) ≅
       cyclicBicomplex k A :=
@@ -155,11 +199,15 @@ def cyclicOuterTailTwoIso :
           ((Category.comp_id d').symm.trans
             (congrArg (fun f : X ⟶ X => d' ≫ f) hc.symm)))))
 
-/-- The period-two bicomplex map preserves every literal tensor cell. -/
+/-- The forward cell formula for cyclic outer-tail periodicity.
+
+The outer-tail comparison is the identity on every bidegree tensor cell. -/
 lemma cyclicOuterTailTwoIso_hom_f_f (p q : ℕ) :
     ((cyclicOuterTailTwoIso k A).hom.f p).f q = 𝟙 (ModuleCat.Algebra.Hochschild.NonUnital.chainLevel k A A q) := rfl
 
-/-- Its inverse preserves those same literal tensor cells. -/
+/-- The inverse cell formula for cyclic outer-tail periodicity.
+
+The inverse outer-tail comparison is the identity on every bidegree tensor cell. -/
 lemma cyclicOuterTailTwoIso_inv_f_f (p q : ℕ) :
     ((cyclicOuterTailTwoIso k A).inv.f p).f q = 𝟙 (ModuleCat.Algebra.Hochschild.NonUnital.chainLevel k A A q) := rfl
 
@@ -168,27 +216,42 @@ section Maps
 variable {k A} {B : Type v} [NonUnitalRing B] [Module k B]
   [IsScalarTower k B B] [SMulCommClass k B B]
 
-/-- The original nonunital map acts on all three chain-level terms. -/
+/-- The cyclic two-column sequence map of a nonunital homomorphism.
+
+A nonunital ground-algebra map `f : A → B` acts on each tensor factor and induces maps on the
+retained-column total, full cyclic total, and cokernel tail. -/
 def cyclicTwoColumnSequenceMap (f : A →ₙₐ[k] B) :
     cyclicTwoColumnSequence k A ⟶ cyclicTwoColumnSequence k B :=
   partialTotalCokernelShortComplexMap (cyclicBicomplexHom f) 1
 
-/-- The first component is the native partial-total map, retaining both columns. -/
+/-- The retained-column component of a cyclic sequence map.
+
+The first component of the sequence map induced by `f` is its partial-total map on columns
+zero and one. -/
 lemma cyclicTwoColumnSequenceMap_τ₁ (f : A →ₙₐ[k] B) :
     (cyclicTwoColumnSequenceMap f).τ₁ =
       (cyclicBicomplex k A).partialTotalHom (cyclicBicomplexHom f) 1 := rfl
 
-/-- The middle component is the original cyclic-total map. -/
+/-- The full-total component of a cyclic sequence map.
+
+The middle component of the sequence map induced by `f` is the total map of the cyclic
+bicomplex homomorphism. -/
 lemma cyclicTwoColumnSequenceMap_τ₂ (f : A →ₙₐ[k] B) :
     (cyclicTwoColumnSequenceMap f).τ₂ =
       HomologicalComplex₂.total.map (cyclicBicomplexHom f) (ComplexShape.down ℕ) := rfl
 
-/-- The third component is the cokernel map. -/
+/-- The cokernel component of a cyclic sequence map.
+
+The third component is the cokernel map induced by `f` on the quotient by columns zero and
+one. -/
 lemma cyclicTwoColumnSequenceMap_τ₃ (f : A →ₙₐ[k] B) :
     (cyclicTwoColumnSequenceMap f).τ₃ =
       partialTotalCokernelMap (cyclicBicomplexHom f) 1 := rfl
 
-/-- The two-column map acts by the original tensor map on each retained cell. -/
+/-- Naturality of retained cyclic cell inclusions.
+
+For `f : A → B`, mapping a retained bidegree cell into `CC^{(2)}(A)` and then applying the
+partial-total map equals applying `f` to every tensor entry and including the target cell. -/
 @[reassoc]
 theorem cyclicFirstTwoColumnCell_naturality (f : A →ₙₐ[k] B)
     (p : Fin 2) (q n : ℕ) (h : p.val + q = n) :
@@ -202,21 +265,28 @@ theorem cyclicFirstTwoColumnCell_naturality (f : A →ₙₐ[k] B)
       (congrArg (fun m => m ≫ cyclicFirstTwoColumnCell k B p q n h)
         (cyclicBicomplexHom_f_f f p.val q))
 
-/-- Naturality of the raw inclusion. -/
+/-- Naturality of the two-column cyclic inclusion.
+
+The retained-column map induced by `f` commutes with inclusion into the full cyclic total. -/
 @[reassoc]
 theorem cyclicTwoColumnInclusion_naturality (f : A →ₙₐ[k] B) :
     (cyclicTwoColumnSequenceMap f).τ₁ ≫ (cyclicTwoColumnSequence k B).f =
       (cyclicTwoColumnSequence k A).f ≫ (cyclicTwoColumnSequenceMap f).τ₂ :=
   (cyclicTwoColumnSequenceMap f).comm₁₂
 
-/-- Naturality of the raw quotient projection. -/
+/-- Naturality of the two-column cyclic quotient projection.
+
+The full cyclic-total map induced by `f` commutes with projection to the cokernel tail. -/
 @[reassoc]
 theorem cyclicTwoColumnProjection_naturality (f : A →ₙₐ[k] B) :
     (cyclicTwoColumnSequenceMap f).τ₂ ≫ (cyclicTwoColumnSequence k B).g =
       (cyclicTwoColumnSequence k A).g ≫ (cyclicTwoColumnSequenceMap f).τ₃ :=
   (cyclicTwoColumnSequenceMap f).comm₂₃
 
-/-- The original nonunital identity induces the identity on the entire sequence. -/
+/-- The identity map of the cyclic two-column sequence.
+
+The identity nonunital algebra homomorphism induces the identity on the full inclusion-and-
+quotient sequence. -/
 lemma cyclicTwoColumnSequenceMap_id :
     cyclicTwoColumnSequenceMap (NonUnitalAlgHom.id k A) =
       𝟙 (cyclicTwoColumnSequence k A) := by
@@ -226,7 +296,10 @@ lemma cyclicTwoColumnSequenceMap_id :
 variable {D : Type v} [NonUnitalRing D] [Module k D]
   [IsScalarTower k D D] [SMulCommClass k D D]
 
-/-- The whole chain-level sequence map composes in the original nonunital-map order. -/
+/-- Composition of cyclic two-column sequence maps.
+
+For composable nonunital algebra maps, the sequence map of their composite is the composite of
+their sequence maps. -/
 lemma cyclicTwoColumnSequenceMap_comp (f : A →ₙₐ[k] B) (g : B →ₙₐ[k] D) :
     cyclicTwoColumnSequenceMap (g.comp f) =
       cyclicTwoColumnSequenceMap f ≫ cyclicTwoColumnSequenceMap g := by
@@ -234,7 +307,10 @@ lemma cyclicTwoColumnSequenceMap_comp (f : A →ₙₐ[k] B) (g : B →ₙₐ[k]
   exact partialTotalCokernelShortComplexMap_comp (cyclicBicomplexHom f)
     (cyclicBicomplexHom g) 1
 
-/-- The canonical outer period-two comparison commutes with the nonunital map. -/
+/-- Naturality of cyclic bicomplex period-two restriction.
+
+The outer-tail comparison commutes with the bicomplex maps induced by nonunital algebra
+homomorphisms. -/
 @[reassoc]
 theorem cyclicOuterTailTwoIso_naturality (f : A →ₙₐ[k] B) :
     HomologicalComplex.restrictionMap (cyclicBicomplexHom f)
@@ -270,8 +346,10 @@ namespace ModuleCat.Algebra.Hochschild
 variable (k : Type u) [CommRing k] (A : Type v) [NonUnitalRing A] [Module k A]
   [IsScalarTower k A A] [SMulCommClass k A A]
 
-/-- The quotient by two raw columns is the original cyclic total zero-extended
-by two Nat degrees. Its maps retain the native total sign and the original period map. -/
+/-- The connective period-two description of the cyclic tail.
+
+The quotient of the cyclic total by its first two columns is isomorphic to the cyclic total
+extended along `n ↦ n+2`, with zero terms below degree two. -/
 def cyclicTwoColumnTailNatIso :
     cyclicTwoColumnTail k A ≅
       (cyclicTotal k A).extend (_root_.partialTotalOuterEmbedding 2) :=
@@ -281,7 +359,9 @@ def cyclicTwoColumnTailNatIso :
         ((totalFunctor (ModuleCat.{max u v} k) (ComplexShape.down ℕ)
           (ComplexShape.down ℕ) (ComplexShape.down ℕ)).mapIso (cyclicOuterTailTwoIso k A))
 
-/-- The tail complex has no terms before the two-column offset. -/
+/-- Vanishing of cyclic tail terms below degree two.
+
+The two-column cokernel tail has a zero object in each degree `n<2`. -/
 theorem isZero_cyclicTwoColumnTail_X (n : ℕ) (hn : n < 2) :
     IsZero ((cyclicTwoColumnTail k A).X n) := by
   let e := _root_.partialTotalOuterEmbedding 2
@@ -294,7 +374,10 @@ theorem isZero_cyclicTwoColumnTail_X (n : ℕ) (hn : n < 2) :
     ((HomologicalComplex.eval (ModuleCat.{max u v} k) (ComplexShape.down ℕ) n).mapIso
       (cyclicTwoColumnTailNatIso k A))
 
-/-- The computed tail comparison in the integer degrees used by the native SBI engine. -/
+/-- The integer-graded period-two cyclic tail comparison.
+
+After extension from `ℕ` to `ℤ`, the two-column tail is isomorphic to the full cyclic total
+extended by the degree-two embedding. -/
 def cyclicTwoColumnTailIso :
     (cyclicTwoColumnTail k A).extend (ComplexShape.embeddingDownNatToIntShift 0) ≅
       (cyclicTotal k A).extend (ComplexShape.embeddingDownNatToIntShift 2) :=
@@ -302,8 +385,10 @@ def cyclicTwoColumnTailIso :
       (ModuleCat.{max u v} k)).mapIso (cyclicTwoColumnTailNatIso k A) ≪≫
     HomologicalComplex.extendNatAddIntIso (cyclicTotal k A) 2
 
-/-- The raw cyclic bicomplex supplies the chain-level SBI presentation.
-The ordinary term is the total of the first two columns, with no unitality premise. -/
+/-- The SBI presentation from two cyclic bicomplex columns.
+
+The short exact sequence `0 → CC^{(2)}(A) → CC(A) → Q(A) → 0` and the period-two tail
+comparison define a Connes SBI presentation with ordinary complex `CC^{(2)}(A)`. -/
 def cyclicConnesSBIPresentation :
     CategoryTheory.ConnesSBIPresentation (A := ModuleCat.{max u v} k) where
   ordinary := cyclicFirstTwoColumns k A
@@ -313,25 +398,38 @@ def cyclicConnesSBIPresentation :
   ordinaryComparisonQuasiIso := inferInstance
   tailIso := cyclicTwoColumnTailIso k A
 
-/-- The homology of the first two raw columns, the `CC(A){2}` HH
-presentation specified in Loday 2.2.1 (printed p. 61 / PDF page 76). -/
+/-- The homology of the two-column cyclic presentation.
+
+In degree `n`, this is `H_n(CC^{(2)}(A))`, where `CC^{(2)}(A)` is the total of cyclic columns
+zero and one. This is the ordinary homology term of the two-column SBI presentation. -/
 abbrev cyclicRawHochschildHomology (n : ℕ) : ModuleCat.{max u v} k :=
   (cyclicFirstTwoColumns k A).homology n
 
-/-- The inclusion of the raw Hochschild term into cyclic homology. -/
+/-- The two-column SBI inclusion on homology.
+
+The retained-column inclusion induces `I_n : H_n(CC^{(2)}(A)) → HC_n(A)`. -/
 abbrev cyclicSBIInclusion (n : ℕ) :
     cyclicRawHochschildHomology k A n ⟶ cyclicHomology k A n :=
   (cyclicConnesSBIPresentation k A).I n
 
-/-- Periodicity is the original quotient map followed by the computed two-column translation. -/
+/-- The two-column cyclic periodicity map.
+
+The cokernel projection and period-two tail comparison induce `S_n : HC_(n+2)(A) → HC_n(A)`. -/
 abbrev cyclicSBIPeriodicity (n : ℕ) : cyclicHomology k A (n + 2) ⟶ cyclicHomology k A n :=
   (cyclicConnesSBIPresentation k A).S n
 
-/-- The LES connecting morphism of the raw two-column sequence. -/
+/-- The two-column SBI connecting map.
+
+The connecting morphism of the short exact sequence, with the period-two tail coordinate,
+gives `B_n : HC_n(A) → H_(n+1)(CC^{(2)}(A))`. -/
 abbrev cyclicSBIConnecting (n : ℕ) :
     cyclicHomology k A n ⟶ cyclicRawHochschildHomology k A (n + 1) :=
   (cyclicConnesSBIPresentation k A).B n
 
+/-- The forward ordinary homology coordinate in two-column SBI.
+
+The ordinary comparison is the identity on `CC^{(2)}(A)`, so its induced forward homology
+isomorphism is the identity in every degree. -/
 theorem cyclicConnes_hIso_hom (n : ℕ) :
     ((cyclicConnesSBIPresentation k A).hIso n).hom =
       𝟙 (cyclicRawHochschildHomology k A n) := by
@@ -339,6 +437,10 @@ theorem cyclicConnes_hIso_hom (n : ℕ) :
       HomologicalComplex.homologyMap (𝟙 (cyclicFirstTwoColumns k A)) n := rfl
   exact hDef.trans (HomologicalComplex.homologyMap_id (cyclicFirstTwoColumns k A) n)
 
+/-- The inverse ordinary homology coordinate in two-column SBI.
+
+The inverse homology isomorphism of the identity ordinary comparison is the identity on
+`H_n(CC^{(2)}(A))`. -/
 theorem cyclicConnes_hIso_inv (n : ℕ) :
     ((cyclicConnesSBIPresentation k A).hIso n).inv =
       𝟙 (cyclicRawHochschildHomology k A n) := by
@@ -348,7 +450,9 @@ theorem cyclicConnes_hIso_inv (n : ℕ) :
   apply (cancel_mono E.hom).1
   exact E.inv_hom_id.trans ((Category.id_comp E.hom).trans hE).symm
 
-/-- The raw SBI inclusion is the homology map of the original two-column inclusion. -/
+/-- The two-column inclusion as a chain-induced homology map.
+
+The SBI map `I_n` equals the homology map of the inclusion `CC^{(2)}(A) → CC(A)`. -/
 theorem cyclicSBIInclusion_eq_homologyMap (n : ℕ) :
     cyclicSBIInclusion k A n =
       HomologicalComplex.homologyMap (cyclicTwoColumnSequence k A).f n := by
@@ -359,7 +463,10 @@ theorem cyclicSBIInclusion_eq_homologyMap (n : ℕ) :
   change E.hom ≫ f = f
   exact (congrArg (fun e : X ⟶ X => e ≫ f) hE).trans (Category.id_comp f)
 
-/-- The raw connecting map retains the LES boundary and translated inverse. -/
+/-- The translated long-exact boundary in two-column SBI.
+
+The map `B_n` is the inverse tail-homology coordinate followed by the short-exact-sequence
+boundary from degree `n+2` of the tail to degree `n+1` of the retained-column total. -/
 theorem cyclicSBIConnecting_eq_δ (n : ℕ) :
     cyclicSBIConnecting k A n =
       ((cyclicConnesSBIPresentation k A).tailHomologyIso n).inv ≫
@@ -373,23 +480,36 @@ theorem cyclicSBIConnecting_eq_δ (n : ℕ) :
   change f ≫ E.inv = f
   exact (congrArg (fun e : X ⟶ X => f ≫ e) hE).trans (Category.comp_id f)
 
-/-- The SBI diagram computed from the raw cyclic bicomplex. -/
+/-- The connective homology diagram of two-column SBI.
+
+The maps `I`, `S`, and `B` of the two-column presentation give the SBI diagram in all
+nonnegative degrees. -/
 abbrev cyclicSBIDiagram : CategoryTheory.NatSBIDiagram (A := ModuleCat.{max u v} k) :=
   (cyclicConnesSBIPresentation k A).sbiDiagram
 
-/-- Exactness of every term follows from the native LES of the short exact sequence. -/
+/-- Exactness of the two-column SBI diagram.
+
+The two-column homology and cyclic homology maps are exact at every term of the connective SBI
+diagram, by the long exact sequence of the cyclic short complex. -/
 theorem cyclicSBIDiagram_exact : (cyclicSBIDiagram k A).Exact :=
   (cyclicConnesSBIPresentation k A).sbiDiagram_exact
 
-/-- The low-degree boundary conditions use the vanishing of the quotient tail. -/
+/-- The low-degree conditions of two-column SBI.
+
+The vanishing of the cokernel tail below degree two gives the connective boundary conditions
+of the SBI diagram. -/
 theorem cyclicSBIDiagram_connectiveBoundary : (cyclicSBIDiagram k A).ConnectiveBoundary :=
   (cyclicConnesSBIPresentation k A).sbiDiagram_connectiveBoundary
 
-/-- The degree-zero raw Hochschild inclusion is an isomorphism. -/
+/-- The degree-zero isomorphism of two-column SBI.
+
+The inclusion `H_0(CC^{(2)}(A)) → HC_0(A)` is an isomorphism. -/
 theorem cyclicSBIInclusion_isIso_zero : IsIso (cyclicSBIInclusion k A 0) :=
   (cyclicConnesSBIPresentation k A).isIso_I_zero
 
-/-- The degree-one raw Hochschild inclusion is epic, without a unitality premise. -/
+/-- The degree-one epimorphism of two-column SBI.
+
+The inclusion `H_1(CC^{(2)}(A)) → HC_1(A)` is epic. -/
 theorem cyclicSBIInclusion_epi_one : Epi (cyclicSBIInclusion k A 1) :=
   (cyclicConnesSBIPresentation k A).epi_I_one
 
@@ -398,7 +518,10 @@ section PresentationMaps
 variable {k A} {B : Type v} [NonUnitalRing B] [Module k B]
   [IsScalarTower k B B] [SMulCommClass k B B]
 
-/-- The Nat-tail quotient comparison commutes with original nonunital algebra maps. -/
+/-- Naturality of the connective cyclic-tail comparison.
+
+The cokernel-tail map induced by `f : A → B` commutes with the degree-two extension of the
+full cyclic-total map. -/
 @[reassoc]
 theorem cyclicTwoColumnTailNatIso_hom_naturality (f : A →ₙₐ[k] B) :
     partialTotalCokernelMap (cyclicBicomplexHom f) 1 ≫ (cyclicTwoColumnTailNatIso k B).hom =
@@ -449,7 +572,10 @@ theorem cyclicTwoColumnTailNatIso_hom_naturality (f : A →ₙₐ[k] B) :
   exact hFirst.trans (hSecond.trans
     (Category.assoc aA.hom bA.hom (HomologicalComplex.extendMap (F.map ψ) e)).symm)
 
-/-- The computed integer tail comparison retains original algebra-map naturality. -/
+/-- Naturality of the integer-graded cyclic-tail comparison.
+
+The integer extensions of the cokernel-tail map and full cyclic-total map commute with the
+period-two tail isomorphism. -/
 @[reassoc]
 theorem cyclicTwoColumnTailIso_hom_naturality (f : A →ₙₐ[k] B) :
     HomologicalComplex.extendMap (partialTotalCokernelMap (cyclicBicomplexHom f) 1)
@@ -496,7 +622,10 @@ theorem cyclicTwoColumnTailIso_hom_naturality (f : A →ₙₐ[k] B) :
     _ = (aA.hom ≫ bA.hom) ≫ HomologicalComplex.extendMap ψ e₂ :=
       (Category.assoc _ _ _).symm
 
-/-- Original nonunital algebra maps induce morphisms of the computed SBI presentations. -/
+/-- The two-column SBI presentation map of a nonunital homomorphism.
+
+A nonunital ground-algebra map induces a morphism of the two-column SBI presentations, using
+its retained-column map, cyclic sequence map, and natural tail comparison. -/
 def cyclicConnesSBIPresentationMap (f : A →ₙₐ[k] B) :
     cyclicConnesSBIPresentation k A ⟶ cyclicConnesSBIPresentation k B where
   ordinaryMap := (cyclicTwoColumnSequenceMap f).τ₁
@@ -512,15 +641,22 @@ def cyclicConnesSBIPresentationMap (f : A →ₙₐ[k] B) :
         (ComplexShape.embeddingDownNatToIntShift 2)
     exact cyclicTwoColumnTailIso_hom_naturality f
 
-/-- The underlying short-complex map is the original two-column/cokernel map. -/
+/-- The short-complex component of a two-column presentation map.
+
+The short-complex component is the inclusion-and-cokernel sequence map induced by the
+nonunital algebra homomorphism. -/
 lemma cyclicConnesSBIPresentationMap_shortMap (f : A →ₙₐ[k] B) :
     (cyclicConnesSBIPresentationMap f).shortMap = cyclicTwoColumnSequenceMap f := rfl
 
-/-- The ordinary map retains both original raw columns. -/
+/-- The ordinary component of a two-column presentation map.
+
+The ordinary chain map acts on the total of the retained two columns. -/
 lemma cyclicConnesSBIPresentationMap_ordinaryMap (f : A →ₙₐ[k] B) :
     (cyclicConnesSBIPresentationMap f).ordinaryMap = (cyclicTwoColumnSequenceMap f).τ₁ := rfl
 
-/-- The computed presentation map preserves the original identity. -/
+/-- The identity morphism of a two-column SBI presentation.
+
+The identity nonunital algebra homomorphism induces the identity presentation morphism. -/
 lemma cyclicConnesSBIPresentationMap_id :
     cyclicConnesSBIPresentationMap (NonUnitalAlgHom.id k A) =
       𝟙 (cyclicConnesSBIPresentation k A) := by
@@ -532,7 +668,10 @@ lemma cyclicConnesSBIPresentationMap_id :
 variable {D : Type v} [NonUnitalRing D] [Module k D]
   [IsScalarTower k D D] [SMulCommClass k D D]
 
-/-- Composition is the original nonunital-map composition on the entire presentation. -/
+/-- Composition of two-column SBI presentation morphisms.
+
+The presentation morphism induced by a composite nonunital algebra map is the composite of the
+induced presentation morphisms. -/
 lemma cyclicConnesSBIPresentationMap_comp (f : A →ₙₐ[k] B) (g : B →ₙₐ[k] D) :
     cyclicConnesSBIPresentationMap (g.comp f) =
       cyclicConnesSBIPresentationMap f ≫ cyclicConnesSBIPresentationMap g := by
@@ -542,55 +681,80 @@ lemma cyclicConnesSBIPresentationMap_comp (f : A →ₙₐ[k] B) (g : B →ₙ�
     rw [cyclicTwoColumnSequenceMap_comp, ShortComplex.comp_τ₁]
   · exact cyclicTwoColumnSequenceMap_comp f g
 
-/-- The source map induces the native morphism of exact SBI diagrams. -/
+/-- The two-column SBI homology map of an algebra homomorphism.
+
+A nonunital ground-algebra map induces a morphism of connective SBI diagrams through its two-
+column presentation map. -/
 def cyclicSBIDiagramMap (f : A →ₙₐ[k] B) : cyclicSBIDiagram k A ⟶ cyclicSBIDiagram k B :=
   (cyclicConnesSBIPresentationMap f).toSBIHom
 
-/-- The ordinary homology action is that of the original retained two-column map. -/
+/-- The ordinary homology component of a two-column SBI map.
+
+In degree `n`, the ordinary component is the homology map of the retained-column chain map. -/
 lemma cyclicSBIDiagramMap_hMap (f : A →ₙₐ[k] B) (n : ℕ) :
     (cyclicSBIDiagramMap f).hMap n =
       HomologicalComplex.homologyMap (cyclicTwoColumnSequenceMap f).τ₁ n := rfl
 
-/-- The cyclic homology action is the total map of the original cyclic bicomplex. -/
+/-- The cyclic homology component of a two-column SBI map.
+
+In degree `n`, the cyclic component is the cyclic-homology map induced by the algebra
+homomorphism. -/
 lemma cyclicSBIDiagramMap_hcMap (f : A →ₙₐ[k] B) (n : ℕ) :
     (cyclicSBIDiagramMap f).hcMap n = cyclicHomologyMap f n := rfl
 
-/-- The SBI-diagram map preserves the original identity algebra map. -/
+/-- The identity map of a two-column SBI homology diagram.
+
+The identity algebra homomorphism induces the identity on the ordinary and cyclic homology
+terms and their SBI diagram. -/
 lemma cyclicSBIDiagramMap_id :
     cyclicSBIDiagramMap (NonUnitalAlgHom.id k A) = 𝟙 (cyclicSBIDiagram k A) := by
   rw [cyclicSBIDiagramMap, cyclicConnesSBIPresentationMap_id]
   exact CategoryTheory.ConnesSBIPresentation.Hom.toSBIHom_id (cyclicConnesSBIPresentation k A)
 
-/-- Actual diagram maps compose in the same order as the original nonunital maps. -/
+/-- Composition of two-column SBI homology diagram maps.
+
+The SBI diagram map of a composite algebra homomorphism equals the composite of the two
+diagram maps. -/
 lemma cyclicSBIDiagramMap_comp (f : A →ₙₐ[k] B) (g : B →ₙₐ[k] D) :
     cyclicSBIDiagramMap (g.comp f) = cyclicSBIDiagramMap f ≫ cyclicSBIDiagramMap g := by
   rw [cyclicSBIDiagramMap, cyclicConnesSBIPresentationMap_comp]
   exact CategoryTheory.ConnesSBIPresentation.Hom.toSBIHom_comp
     (cyclicConnesSBIPresentationMap f) (cyclicConnesSBIPresentationMap g)
 
-/-- Inclusion is natural in the original algebra map. -/
+/-- Naturality of the two-column SBI homology inclusion.
+
+For a nonunital algebra map, the ordinary and cyclic homology maps commute with `I_n :
+H_n(CC^{(2)}) → HC_n`. -/
 @[reassoc]
 theorem cyclicSBIInclusion_naturality (f : A →ₙₐ[k] B) (n : ℕ) :
     (cyclicSBIDiagramMap f).hMap n ≫ cyclicSBIInclusion k B n =
       cyclicSBIInclusion k A n ≫ cyclicHomologyMap f n :=
   (cyclicSBIDiagramMap f).I_naturality n |>.symm
 
-/-- Periodicity is natural in the original algebra map. -/
+/-- Naturality of two-column cyclic periodicity.
+
+For a nonunital algebra map, its cyclic-homology maps in degrees `n+2` and `n` commute with
+`S_n`. -/
 @[reassoc]
 theorem cyclicSBIPeriodicity_naturality (f : A →ₙₐ[k] B) (n : ℕ) :
     cyclicHomologyMap f (n + 2) ≫ cyclicSBIPeriodicity k B n =
       cyclicSBIPeriodicity k A n ≫ cyclicHomologyMap f n :=
   (cyclicSBIDiagramMap f).S_naturality n |>.symm
 
-/-- The native LES connecting morphism is natural in the original algebra map. -/
+/-- Naturality of the two-column SBI boundary.
+
+For a nonunital algebra map, its cyclic homology map in degree `n` and two-column homology map
+in degree `n+1` commute with `B_n`. -/
 @[reassoc]
 theorem cyclicSBIConnecting_naturality (f : A →ₙₐ[k] B) (n : ℕ) :
     cyclicHomologyMap f n ≫ cyclicSBIConnecting k B n =
       cyclicSBIConnecting k A n ≫ (cyclicSBIDiagramMap f).hMap (n + 1) :=
   (cyclicSBIDiagramMap f).B_naturality n |>.symm
 
-/-- A quasi-isomorphism of the first-two-column complexes induces a quasi-isomorphism
-of the original cyclic totals, by the native SBI comparison theorem. -/
+/-- A cyclic-total quasi-isomorphism from a two-column comparison.
+
+If a nonunital algebra map induces a quasi-isomorphism on the first-two-column totals, it
+induces a quasi-isomorphism on the full cyclic totals. -/
 theorem cyclicTotalHom_quasiIso_of_firstTwo (f : A →ₙₐ[k] B)
     [QuasiIso (cyclicTwoColumnSequenceMap f).τ₁] : QuasiIso (cyclicTotalHom f) := by
   let F := cyclicConnesSBIPresentationMap f
@@ -614,8 +778,10 @@ variable {k : Type u} [CommRing k] {A B : Type v}
   [IsScalarTower k A A] [SMulCommClass k A A]
   [IsScalarTower k B B] [SMulCommClass k B B]
 
-/-- The cyclic-total quasi-isomorphism detects the HH map in the source's
-`CC(A){2}` presentation, for the original nonunital algebra map. -/
+/-- A two-column quasi-isomorphism from a cyclic-total comparison.
+
+If a nonunital algebra map induces a quasi-isomorphism on the full cyclic totals, it induces a
+quasi-isomorphism on the first-two-column totals. -/
 theorem cyclicFirstTwoMap_quasiIso_of_cyclicTotalHom (f : A →ₙₐ[k] B)
     [QuasiIso (cyclicTotalHom f)] : QuasiIso (cyclicTwoColumnSequenceMap f).τ₁ := by
   let F := cyclicConnesSBIPresentationMap f
@@ -625,21 +791,20 @@ theorem cyclicFirstTwoMap_quasiIso_of_cyclicTotalHom (f : A →ₙₐ[k] B)
   change QuasiIso F.ordinaryMap
   exact F.quasiIso_ordinaryMap
 
-/-- Chain-level reformulation of Loday, Corollary 2.2.3 using the source's
-`CC(A){2}` HH presentation from 2.2.1 (printed p. 61 / PDF page 76).
-The first-two-column and cyclic-total maps have equivalent
-quasi-isomorphism tests; the printed homology criterion includes
-"and conversely" (printed p. 62 / PDF page 77). -/
+/-- The equivalence of two-column and cyclic-total quasi-isomorphisms.
+
+For a nonunital ground-algebra homomorphism, its map on the retained two-column total is a
+quasi-isomorphism if and only if its full cyclic-total map is a quasi-isomorphism. -/
 theorem cyclicFirstTwoMap_quasiIso_iff_cyclicTotalHom (f : A →ₙₐ[k] B) :
     QuasiIso (cyclicTwoColumnSequenceMap f).τ₁ ↔ QuasiIso (cyclicTotalHom f) := by
   change QuasiIso (cyclicConnesSBIPresentationMap f).ordinaryMap ↔
     QuasiIso (cyclicConnesSBIPresentationMap f).shortMap.τ₂
   exact (cyclicConnesSBIPresentationMap f).quasiIso_ordinaryMap_iff_shortMap_τ₂
 
-/-- Loday, Corollary 2.2.3 on the source's `CC(A){2}` HH presentation
-(2.2.1, printed p. 61 / PDF page 76) and the original cyclic-total homology.
-The algebra map is general: the print says "which need not preserve the
-unit if any" and includes "and conversely" (printed p. 62 / PDF page 77). -/
+/-- The equivalence of two-column and cyclic homology isomorphisms.
+
+For a nonunital ground-algebra map, the induced maps on `H_n(CC^{(2)})` are isomorphisms for
+all `n` if and only if the maps on `HC_n` are isomorphisms for all `n`. -/
 theorem cyclicRawHochschildMap_isIso_iff_cyclicHomologyMap (f : A →ₙₐ[k] B) :
     (∀ n : ℕ, IsIso (HomologicalComplex.homologyMap (cyclicTwoColumnSequenceMap f).τ₁ n)) ↔
       ∀ n : ℕ, IsIso (cyclicHomologyMap f n) := by

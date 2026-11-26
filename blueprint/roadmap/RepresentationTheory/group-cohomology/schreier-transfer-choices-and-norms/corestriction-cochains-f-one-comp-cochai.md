@@ -1,4 +1,6 @@
-# Corestriction Cochains f one comp cochains Iso₁ hom
+# The unary coordinate square for the general cochain map
 
-Degree-one component square between the arbitrary cochain map and the
-existing low-degree function model.
+The unary coordinate square for the general cochain map.
+
+Identifying tuple cochains in degree one with functions G → A intertwines the general Schreier
+cochain map and the unary transfer.

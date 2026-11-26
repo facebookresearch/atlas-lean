@@ -15,12 +15,25 @@ public import MathlibExt.LinearAlgebra.TensorPower.Snoc
 public import MathlibExt.GroupTheory.Perm.OrderedDeletion
 
 /-!
-# The bar boundary on antisymmetric words
+# Antisymmetric middle words and the bar differential
 
-Place a signed antisymmetric middle word between two outer units.
-Over a commutative algebra its interior adjacent products cancel.
-The surviving endpoint terms give the enveloping generator difference
-with the alternating deletion signs.
+Let k be a commutative ring and A a commutative unital k-algebra.
+Write P_n = A ⊗[k] A^{⊗(n+1)} for the enveloping bar term and
+u_n(a) = 1 ⊗ a_0 ⊗ ⋯ ⊗ a_{n-1} ⊗ 1. Its antisymmetric word is
+Alt_n(a) = ∑_{π ∈ S_n} sign(π) u_n(a ∘ π).
+
+The interior adjacent faces cancel in this signed sum. The two endpoint
+faces give
+d_{n+1} Alt_{n+1}(a) =
+∑_{i=0}^{n} (−1)^i Δ(a_i) • Alt_n(a with entry i deleted),
+where Δ(x) = x ⊗ 1ᵐᵒᵖ − 1 ⊗ xᵐᵒᵖ in E = A ⊗[k] Aᵐᵒᵖ.
+Deletion retains the order of the remaining entries. All permutation
+signs and deletion signs are integer coefficients.
+
+The exterior antisymmetrization followed by inserting two unit endpoints
+has exactly this full signed-permutation value.
+
+Reference: J.-L. Loday, Cyclic Homology, §§1.1 and 3.2.
 -/
 
 @[expose] public section
@@ -36,17 +49,31 @@ namespace ModuleCat.Algebra.Hochschild.AdjacentBar
 
 variable (k : Type u) [CommRing k] (A : Type v) [CommRing A] [Algebra k A]
 
-/-- The original middle word between the original two outer units. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write E = A ⊗[k] Aᵐᵒᵖ and P_n = A ⊗[k] A^{⊗(n+1)}
+with the outer left E-action.
+For a : Fin n → A, the unit-outer bar word is
+u_n(a) = 1 ⊗ a_0 ⊗ ⋯ ⊗ a_{n-1} ⊗ 1 ∈ P_n. -/
 def unitOuterWord (n : ℕ) (a : Fin n → A) : envelopingBarDegree k A n :=
   (1 : A) ⊗ₜ[k] PiTensorProduct.tprod k (Fin.snoc a 1)
 
-/-- The ground-linear insertion of the two original outer units. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write E = A ⊗[k] Aᵐᵒᵖ and P_n = A ⊗[k] A^{⊗(n+1)}
+with the outer left E-action.
+Inserting the unit at both ends defines a k-linear map
+U_n : A^{⊗n} → P_n, with
+U_n(a_0 ⊗ ⋯ ⊗ a_{n-1}) = 1 ⊗ a_0 ⊗ ⋯ ⊗ a_{n-1} ⊗ 1. -/
 def unitOuterLinear (n : ℕ) : TensorPower k n A →ₗ[k] A ⊗[k] TensorPower k (n + 1) A :=
   (TensorProduct.mk k A (TensorPower k (n + 1) A) 1).comp
     ((TensorPower.snocEquiv k A n).toLinearMap.comp
       ((TensorProduct.mk k (TensorPower k n A) A).flip 1))
 
-/-- The insertion map preserves the literal original middle order. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write E = A ⊗[k] Aᵐᵒᵖ and P_n = A ⊗[k] A^{⊗(n+1)}
+with the outer left E-action.
+For an elementary middle word tprod(a), insertion of the two outer
+units has value U_n(tprod(a)) = u_n(a), with all middle entries
+in their given order. -/
 theorem unitOuterLinear_tprod (n : ℕ) (a : Fin n → A) :
     unitOuterLinear k A n (PiTensorProduct.tprod k a) = unitOuterWord k A n a := by
   change (1 : A) ⊗ₜ[k]
@@ -54,11 +81,21 @@ theorem unitOuterLinear_tprod (n : ℕ) (a : Fin n → A) :
   rw [TensorPower.snocEquiv_tmul]
   rfl
 
-/-- The original signed sum of every permutation of the middle factors. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write E = A ⊗[k] Aᵐᵒᵖ and P_n = A ⊗[k] A^{⊗(n+1)}
+with the outer left E-action.
+The antisymmetric bar word on a : Fin n → A is
+Alt_n(a) = ∑_{π ∈ S_n} sign(π) u_n(a ∘ π).
+Each permutation appears with its integer sign. -/
 def antisymmetricBarWord (n : ℕ) (a : Fin n → A) : envelopingBarDegree k A n :=
   ∑ π : Equiv.Perm (Fin n), (Equiv.Perm.sign π : ℤ) • unitOuterWord k A n (a ∘ π)
 
-/-- Native exterior antisymmetrization followed by outer-unit insertion is the complete permutation sum, with no inverse factorial. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write E = A ⊗[k] Aᵐᵒᵖ and P_n = A ⊗[k] A^{⊗(n+1)}
+with the outer left E-action.
+For a : Fin n → A, apply exterior antisymmetrization to
+ a_0 ∧ ⋯ ∧ a_{n-1} and then insert two outer units. The result is
+Alt_n(a) = ∑_{π ∈ S_n} sign(π) u_n(a ∘ π). -/
 theorem unitOuterLinear_exteriorAntisymmetrization (n : ℕ) (a : Fin n → A) :
     unitOuterLinear k A n
       (TensorPower.exteriorAntisymmetrization k A n (exteriorPower.ιMulti k n a)) =
@@ -70,11 +107,21 @@ theorem unitOuterLinear_exteriorAntisymmetrization (n : ℕ) (a : Fin n → A) :
   rw [map_zsmul, unitOuterLinear_tprod]
   rfl
 
-/-- The difference of the original outer scalar operators. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write E = A ⊗[k] Aᵐᵒᵖ and P_n = A ⊗[k] A^{⊗(n+1)}
+with the outer left E-action.
+The outer-difference element attached to a ∈ A is
+Δ(a) = a ⊗ 1ᵐᵒᵖ − 1 ⊗ aᵐᵒᵖ ∈ E.
+Its action is left multiplication by a on the first bar factor minus
+right multiplication by a on the last factor. -/
 def outerDifference (a : A) : EnvelopingAlgebra k A :=
   a ⊗ₜ[k] op (1 : A) - (1 : A) ⊗ₜ[k] op a
 
-/-- The original left outer action multiplies only the original first factor. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write E = A ⊗[k] Aᵐᵒᵖ and P_n = A ⊗[k] A^{⊗(n+1)}
+with the outer left E-action.
+The left outer operator acts on a unit-outer word by
+(l ⊗ 1ᵐᵒᵖ) • u_n(a) = l ⊗ a_0 ⊗ ⋯ ⊗ a_{n-1} ⊗ 1. -/
 theorem unitOuterWord_left (n : ℕ) (l : A) (a : Fin n → A) :
     (l ⊗ₜ[k] op (1 : A)) • unitOuterWord k A n a =
       l ⊗ₜ[k] PiTensorProduct.tprod k (Fin.snoc a 1) := by
@@ -89,7 +136,11 @@ theorem unitOuterWord_left (n : ℕ) (l : A) (a : Fin n → A) :
   exact hact.symm.trans (by
     simpa only [mul_one, one_mul, Fin.init_snoc, Fin.snoc_last] using ht)
 
-/-- The original right outer action multiplies only the original final factor. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write E = A ⊗[k] Aᵐᵒᵖ and P_n = A ⊗[k] A^{⊗(n+1)}
+with the outer left E-action.
+The right outer operator acts on a unit-outer word by
+(1 ⊗ rᵐᵒᵖ) • u_n(a) = 1 ⊗ a_0 ⊗ ⋯ ⊗ a_{n-1} ⊗ r. -/
 theorem unitOuterWord_right (n : ℕ) (r : A) (a : Fin n → A) :
     ((1 : A) ⊗ₜ[k] op r) • unitOuterWord k A n a =
       (1 : A) ⊗ₜ[k] PiTensorProduct.tprod k (Fin.snoc a r) := by
@@ -142,7 +193,12 @@ private theorem mulAdjacent_snoc_last (n : ℕ) (a : Fin (n + 1) → A) :
 
 variable (A)
 
-/-- The first adjacent face is the original first outer scalar. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write E = A ⊗[k] Aᵐᵒᵖ and P_n = A ⊗[k] A^{⊗(n+1)}
+with the outer left E-action.
+For a : Fin(n+1) → A, the first adjacent face of the unit-outer
+word satisfies δ_0 u_{n+1}(a) = (a_0 ⊗ 1ᵐᵒᵖ) • u_n(tail(a)).
+It multiplies the initial unit by the first middle entry. -/
 theorem unitOuterWord_first_face (n : ℕ) (a : Fin (n + 1) → A) :
     (NonUnital.regularFace k A (n + 1) 0).hom (unitOuterWord k A (n + 1) a) =
       (a 0 ⊗ₜ[k] op (1 : A)) • unitOuterWord k A n (Fin.tail a) := by
@@ -152,7 +208,12 @@ theorem unitOuterWord_first_face (n : ℕ) (a : Fin (n + 1) → A) :
       rfl
     _ = _ := (unitOuterWord_left k A n (a 0) (Fin.tail a)).symm
 
-/-- The final non-wrapping adjacent face is the original final outer scalar. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write E = A ⊗[k] Aᵐᵒᵖ and P_n = A ⊗[k] A^{⊗(n+1)}
+with the outer left E-action.
+For a : Fin(n+1) → A, the last adjacent face satisfies
+δ_{n+1} u_{n+1}(a) = (1 ⊗ a_nᵐᵒᵖ) • u_n(init(a)).
+It multiplies the last middle entry by the terminal unit. -/
 theorem unitOuterWord_last_face (n : ℕ) (a : Fin (n + 1) → A) :
     (NonUnital.regularFace k A (n + 1) (Fin.last n).castSucc.succ).hom
       (unitOuterWord k A (n + 1) a) =
@@ -163,7 +224,13 @@ theorem unitOuterWord_last_face (n : ℕ) (a : Fin (n + 1) → A) :
     _ = _ := by
       rw [unitOuterWord_right, Fin.snoc_init_self]
 
-/-- An interior original adjacent face is the literal ordered middle multiplication. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write E = A ⊗[k] Aᵐᵒᵖ and P_n = A ⊗[k] A^{⊗(n+1)}
+with the outer left E-action.
+For a : Fin(n+1) → A and 0 ≤ i < n, the interior face
+δ_{i+1} of u_{n+1}(a) multiplies a_i and a_{i+1} in the middle
+word, retaining the initial and terminal units and the order of every
+other entry. -/
 theorem unitOuterWord_inner_face (n : ℕ) (i : Fin n) (a : Fin (n + 1) → A) :
     (NonUnital.regularFace k A (n + 1) i.castSucc.castSucc.succ).hom
       (unitOuterWord k A (n + 1) a) =
@@ -210,8 +277,13 @@ private theorem adjacent_swap_snoc (n : ℕ) (i : Fin n) (a : Fin (n + 1) → A)
 
 variable (A)
 
-/-- Every full signed permutation sum of an interior original face cancels by its
-adjacent transposition. Commutativity is used only for the merged product. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write E = A ⊗[k] Aᵐᵒᵖ and P_n = A ⊗[k] A^{⊗(n+1)}
+with the outer left E-action.
+For a : Fin(n+1) → A and 0 ≤ i < n,
+∑_{π ∈ S_{n+1}} sign(π) δ_{i+1} u_{n+1}(a ∘ π) = 0.
+Pairing permutations by the adjacent transposition cancels the terms
+because A is commutative. -/
 theorem antisymmetricBarWord_inner_faces (n : ℕ) (i : Fin n) (a : Fin (n + 1) → A) :
     ∑ π : Equiv.Perm (Fin (n + 1)), (π.sign : ℤ) •
       (NonUnital.regularFace k A (n + 1) i.castSucc.castSucc.succ).hom
@@ -270,7 +342,13 @@ private theorem orderedLast_init (n : ℕ) (a : Fin (n + 1) → A)
 
 variable (A)
 
-/-- The first original face sum has the exact ordered Koszul deletion signs. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write E = A ⊗[k] Aᵐᵒᵖ and P_n = A ⊗[k] A^{⊗(n+1)}
+with the outer left E-action.
+The signed sum of the first faces is
+∑_{π ∈ S_{n+1}} sign(π) δ_0 u_{n+1}(a ∘ π) =
+∑_{i=0}^{n} (−1)^i (a_i ⊗ 1ᵐᵒᵖ) • Alt_n(a with entry i deleted).
+The remaining entries stay in their given order. -/
 theorem antisymmetricBarWord_first_faces (n : ℕ) (a : Fin (n + 1) → A) :
     ∑ π : Equiv.Perm (Fin (n + 1)), (π.sign : ℤ) •
       (NonUnital.regularFace k A (n + 1) 0).hom
@@ -293,8 +371,13 @@ theorem antisymmetricBarWord_first_faces (n : ℕ) (a : Fin (n + 1) → A) :
         (smul_comm (π.sign : ℤ) (a i ⊗ₜ[k] op (1 : A))
           (unitOuterWord k A n ((a ∘ i.succAbove) ∘ π))))
 
-/-- The final original face sum retains both the deletion sign and the original
-rotation sign; it acts on the original last outer factor. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write E = A ⊗[k] Aᵐᵒᵖ and P_n = A ⊗[k] A^{⊗(n+1)}
+with the outer left E-action.
+The signed sum of the last adjacent faces, before the boundary sign
+of that face is applied, is
+∑_{π ∈ S_{n+1}} sign(π) δ_{n+1} u_{n+1}(a ∘ π) =
+(−1)^n ∑_{i=0}^{n} (−1)^i (1 ⊗ a_iᵐᵒᵖ) • Alt_n(a with entry i deleted). -/
 theorem antisymmetricBarWord_last_faces (n : ℕ) (a : Fin (n + 1) → A) :
     ∑ π : Equiv.Perm (Fin (n + 1)), (π.sign : ℤ) •
       (NonUnital.regularFace k A (n + 1) (Fin.last n).castSucc.succ).hom
@@ -327,8 +410,14 @@ private theorem negOnePow_double (n : ℕ) : (-1 : ℤ) ^ n * (-1 : ℤ) ^ n = 1
       _ = (-1 : ℤ) ^ n * (-1 : ℤ) ^ n := by ring
       _ = 1 := hn
 
-/-- The complete native bar boundary of the signed permutation word is the
-native signed exterior deletion with the original outer difference. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Write E = A ⊗[k] Aᵐᵒᵖ and P_n = A ⊗[k] A^{⊗(n+1)}
+with the outer left E-action.
+Put Δ(x) = x ⊗ 1ᵐᵒᵖ − 1 ⊗ xᵐᵒᵖ. The full bar boundary
+on an antisymmetric word is
+ d_{n+1} Alt_{n+1}(a) =
+∑_{i=0}^{n} (−1)^i Δ(a_i) • Alt_n(a with entry i deleted).
+Each deletion preserves the order of the remaining middle entries. -/
 theorem antisymmetricBarWord_boundary (n : ℕ) (a : Fin (n + 1) → A) :
     ((envelopingBar k A).d (n + 1) n).hom (antisymmetricBarWord k A (n + 1) a) =
       ∑ i : Fin (n + 1), (-1 : ℤ) ^ i.val •

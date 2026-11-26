@@ -1,8 +1,8 @@
 # Homology of the chain-to-cochain reindexing
 
-- [Chain To Cochain Homology Iso](chain-to-cochain-homology-iso.md)
-- [Chain To Cochain Opcycles Iso](chain-to-cochain-opcycles-iso.md)
-- [Chain To Cochain Cycles Iso](chain-to-cochain-cycles-iso.md)
-- [Chain To Cochain Homology Functor Iso](chain-to-cochain-homology-functor-iso.md)
-- [Chain To Cochain Homology Iso naturality](chain-to-cochain-homology-iso-naturality.md)
-- [Quasi Iso cochain Complex Equivalence map iff](quasi-iso-cochain-complex-equivalence-ma.md)
+- [Homology comparison under integer chain-to-cochain reindexing](chain-to-cochain-homology-iso.md)
+- [Opcycles comparison under integer chain-to-cochain reindexing](chain-to-cochain-opcycles-iso.md)
+- [Cycles comparison under integer chain-to-cochain reindexing](chain-to-cochain-cycles-iso.md)
+- [Functorial homology comparison for integer chain-to-cochain reindexing](chain-to-cochain-homology-functor-iso.md)
+- [Naturality of integer chain-to-cochain homology comparisons](chain-to-cochain-homology-iso-naturality.md)
+- [Chain-to-cochain equivalence preserves and reflects quasi-isomorphisms](quasi-iso-cochain-complex-equivalence-ma.md)

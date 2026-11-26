@@ -1,5 +1,5 @@
-# Comp
+# Composition of projective horseshoe comparisons
 
-The composition of two horseshoe comparisons, over the composition
-of the maps of short complexes and the compositions of the endpoint
-resolution morphisms.
+In an abelian category `C`, strict comparisons between three
+horseshoes compose by composing their middle chain maps,
+sequence maps, and supplied endpoint projective-resolution maps.

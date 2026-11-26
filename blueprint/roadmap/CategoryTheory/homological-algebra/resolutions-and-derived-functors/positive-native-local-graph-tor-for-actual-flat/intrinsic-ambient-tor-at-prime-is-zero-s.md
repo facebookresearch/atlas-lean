@@ -1,4 +1,7 @@
-# Intrinsic Ambient Tor At Prime is Zero succ of flat left
+# Flatness of V over B kills positive intrinsic local ambient Tor
 
-The actual native intrinsic local Tor vanishes in every positive degree
-when its original left middle coefficient is flat.
+For a field K, commutative K-algebras B,V,W and
+K-algebra maps a:B→V,b:B→W, assume V flat as a B-module via a.
+For every p∈Spec(V⊗[B]W) and q≥0, the intrinsic local
+ambient Tor in degree q+1 is a zero object.
+Its local ring is D_(σ⁻¹p), D=(V⊗[K]W)⊗[K]B.

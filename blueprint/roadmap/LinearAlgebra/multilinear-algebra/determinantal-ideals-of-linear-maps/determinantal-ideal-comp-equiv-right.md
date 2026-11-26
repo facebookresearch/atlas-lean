@@ -1,4 +1,4 @@
-# Determinantal Ideal comp equiv right
+# Source isomorphisms preserve determinantal ideals
 
-Precomposition by a linear equivalence preserves every determinantal
-ideal.
+Let `R` be a commutative ring, `M,N,P` be `R`-modules, `e : M ≃ₗ[R] N`, `g : N →ₗ[R] P`, and
+`r : ℕ`. Then `I_r(g ∘ e)=I_r(g)`.

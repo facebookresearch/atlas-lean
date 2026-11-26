@@ -1,5 +1,7 @@
-# Exists open Normal Subgroup le cocycle zero and fixed
+# A normal subgroup annihilating a continuous discrete cocycle
 
-A continuous cocycle into a discrete representation has an open normal
-subgroup on which it vanishes; normality and the cocycle law imply that this
-subgroup fixes every value of the cocycle.
+A normal subgroup annihilating a continuous discrete cocycle.
+
+For a compact totally disconnected topological group G and a discrete topological
+representation X, every continuous one-cocycle c vanishes on an open normal subgroup H. Every
+h ∈ H also satisfies ρ(h)c(g) = c(g) for all g ∈ G.

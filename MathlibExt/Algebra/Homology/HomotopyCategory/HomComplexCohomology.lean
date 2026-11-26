@@ -11,10 +11,15 @@ import Mathlib.Algebra.Homology.HomotopyCategory.HomComplexCohomology
 import MathlibExt.Algebra.Homology.HomotopyCategory.HomComplexCocycle
 
 /-!
-# Hom-complex cohomology base actions
+# Base actions on Hom-complex cohomology
 
-Base pre- and post-composition actions on `CohomologyClass` via the homotopy
-category quotient.
+Let C be preadditive and n an integer. A degree-n Hom-complex cohomology class between integer
+cochain complexes can be precomposed with a source complex map and postcomposed with a target
+complex map. The actions are defined through the homotopy-category quotient, so they depend only
+on the homotopy classes of the degree-zero maps.
+
+These actions satisfy the identity and composition laws, and independent source and target
+actions commute.
 -/
 
 @[expose] public section

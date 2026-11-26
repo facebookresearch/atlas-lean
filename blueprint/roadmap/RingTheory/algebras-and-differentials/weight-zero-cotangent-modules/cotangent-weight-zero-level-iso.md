@@ -1,3 +1,5 @@
-# Cotangent Weight Zero Level Iso
+# The regular tensor unitor for cotangent weight zero
 
-The native regular tensor unitor gives the actual level comparison.
+The regular tensor unitor for cotangent weight zero.
+
+For `P → A`, this `A`-module isomorphism identifies `A ⊗[P] P` with `A`.

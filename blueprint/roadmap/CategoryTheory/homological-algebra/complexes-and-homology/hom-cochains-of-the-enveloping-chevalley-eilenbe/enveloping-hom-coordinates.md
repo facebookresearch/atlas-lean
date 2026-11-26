@@ -1,4 +1,6 @@
-# Enveloping Hom Coordinates
+# The exterior coordinates of enveloping-linear cochains
 
-Native U-linear coordinates and native noncommutative algebra tensor Hom
-cancellation give the ground-linear exterior cochain coordinates.
+The exterior coordinates of enveloping-linear cochains.
+
+The `R`-linear equivalence `Hom_U(C_n,M) ≃ₗ[R] Hom_R(⋀ⁿ L,M)` evaluates on the regular
+coefficient unit; its inverse extends by the left `U`-action on `M`.

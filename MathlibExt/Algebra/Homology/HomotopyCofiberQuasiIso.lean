@@ -17,10 +17,13 @@ public import MathlibExt.Algebra.Homology.ChainToCochainHomology
 import MathlibExt.Algebra.Homology.ShortComplex.MiddleQuasiIso
 
 /-!
-# Homotopy cofiber quasi-isomorphism for short exact chain complexes
+# Homotopy cofibers of short exact sequences of complexes
 
-This file proves that the canonical map from the homotopy cofiber of the first
-arrow of a short exact chain complex to its third object is a quasi-isomorphism.
+In an abelian category, the canonical descendant from the homotopy
+cofiber of the first map of a short exact sequence of integer complexes
+to its third complex is a quasi-isomorphism. The integer cochain case
+is compared with the mapping-cone sequence, and degree-negation
+reindexing gives the integer chain case.
 -/
 
 @[expose] public section
@@ -157,7 +160,9 @@ namespace HomologicalComplex.homotopyCofiber
 
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
-/-- The same original cofiber descendant is a quasi-isomorphism for a short exact cochain row. -/
+/-- In an abelian category `C`, let `S : K → L → M` be a short
+exact sequence of integer cochain complexes. The canonical descendant
+`homotopyCofiber(S.f) → M` is a quasi-isomorphism. -/
 theorem quasiIso_descShortComplex_up
     (S : ShortComplex (CochainComplex C ℤ)) (hS : S.ShortExact) :
     QuasiIso (HomologicalComplex.homotopyCofiber.descShortComplex S) := by

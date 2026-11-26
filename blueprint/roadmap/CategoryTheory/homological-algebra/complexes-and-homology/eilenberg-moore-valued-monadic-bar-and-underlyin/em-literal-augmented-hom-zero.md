@@ -1,4 +1,5 @@
-# Em Literal Augmented hom zero
+# The evaluated-and-forgotten free augmentation is the algebra action
 
-The degree-zero augmentation component of the literal image is the algebra
-structure map.
+Let T be a monad on C and alg=(A,a) a T-algebra. The zero-degree augmentation of
+emLiteralAugmented(alg) equals a : T(A) → A, obtained by evaluating the free-algebra action
+pairing and forgetting.

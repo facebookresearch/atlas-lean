@@ -1,3 +1,6 @@
-# Regular Enveloping Target
+# The lifted regular augmentation module
 
-The original augmentation target, canonically lifted to the complex universe.
+For a commutative ring k and an associative unital k-algebra A,
+put E = A ⊗[k] Aᵐᵒᵖ.
+The augmentation target is the regular left E-module A lifted to
+universe max{u,v}, with (a ⊗ bᵐᵒᵖ) • ULift(x) = ULift(axb).

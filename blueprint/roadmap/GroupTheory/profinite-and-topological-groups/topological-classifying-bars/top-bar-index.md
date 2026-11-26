@@ -1,3 +1,6 @@
-# Top Bar Index
+# The one-point bar evaluation index
 
-The canonical point of the discrete indexing category.
+The one-point bar evaluation index.
+
+This is the distinguished object of the discrete one-point category used to evaluate the
+point-module bar.

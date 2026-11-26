@@ -12,15 +12,16 @@ public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.CyclicAlternatizati
 public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.MatrixPositiveTail
 
 /-!
-# Finite matrix exterior-to-Connes degree maps
+# Closed matrix cycles in exterior-to-cyclic degree maps
 
-For a unital algebra over a commutative rational algebra, the degree-n map from exterior
-degree n + 1 of a finite matrix algebra to the Connes quotient is normalized tail
-antisymmetrization followed by generalized trace.
+Let `k` be a commutative `ℚ`-algebra and `A` a unital `k`-algebra. In degree `n`, tail
+alternation on `n+1` matrix inputs followed by generalized trace gives a map `⋀^(n+1)[k]
+gl_r(A) → Cλ_n(A)`.
 
-Its pure-wedge formula sums over signed tail permutations and cycles of matrix indices. The
-degree-sign variant multiplies this map by `(-1)^n`; zero extension and algebra homomorphisms
-preserve both formulas.
+Its pure-wedge formula sums over signed permutations of the last `n` matrix factors and closed
+index cycles `i₀,…,iₙ,i₀`. Each cycle contributes the coefficient-first tensor of the
+successive matrix entries, in that order. The canonical CE convention multiplies this map by
+`(-1)^n`. Zero extension and entry-algebra homomorphisms preserve these degree maps.
 -/
 
 @[expose] public section
@@ -41,19 +42,26 @@ variable (k : Type u) [CommRing k] [Algebra ℚ k]
 
 local notation "Cλ" => ModuleCat.Algebra.Hochschild.NonUnital.connesComplex
 
-/-- The exterior-to-Connes map on finite matrices, obtained by normalized tail antisymmetrization
-followed by generalized trace. -/
+/-- The finite matrix exterior-to-cyclic quotient degree map.
+
+Apply the rational tail-alternating exterior map and then the generalized matrix trace in
+degree `n`. -/
 def matrixCyclicDegreeMap (r n : ℕ) :
     (⋀[k]^(n + 1) (Matrix (Fin r) (Fin r) A)) →ₗ[k] ((Cλ k A).X n) :=
   ((ModuleCat.Algebra.Hochschild.Matrix.connesTrace k A r).f n).hom.comp
     (cyclicExterior k (Matrix (Fin r) (Fin r) A) n)
 
-/-- The exterior-to-Connes map on finite matrices multiplied in degree n by `(-1)^n`. -/
+/-- The degree-signed matrix exterior-to-cyclic quotient map.
+
+Multiply the tail-alternating trace map in degree `n` by `(-1)^n`. -/
 def matrixCyclicWeibelDegreeMap (r n : ℕ) :
     (⋀[k]^(n + 1) (Matrix (Fin r) (Fin r) A)) →ₗ[k] ((Cλ k A).X n) :=
   (-1 : k) ^ n • matrixCyclicDegreeMap k A r n
 
-/-- The complete closed-index-cycle trace of the tail antisymmetrization. -/
+/-- The signed tail-permutation and closed-index-cycle formula.
+
+The map of a pure wedge is the sum over tail permutations and closed matrix-index cycles of
+their coefficient-first cyclic tensor representatives, weighted by the permutation sign. -/
 theorem matrixCyclicDegreeMap_pure (r n : ℕ)
     (a : Fin (n + 1) → Matrix (Fin r) (Fin r) A) :
     matrixCyclicDegreeMap k A r n (exteriorPower.ιMulti k (n + 1) a) =
@@ -71,13 +79,18 @@ theorem matrixCyclicDegreeMap_pure (r n : ℕ)
       (ModuleCat.Algebra.Hochschild.Matrix.connesTraceComponent_tprod k A r n
         (a 0) (fun j => a (σ j).succ)))
 
-/-- The pure-wedge formula is `(-1)^n` times the normalized tail trace formula. -/
+/-- The degree-sign formula on a pure matrix wedge.
+
+The canonical-convention degree map is `(-1)^n` times the closed-cycle tail-alternation map. -/
 theorem matrixCyclicWeibelDegreeMap_pure (r n : ℕ)
     (a : Fin (n + 1) → Matrix (Fin r) (Fin r) A) :
     matrixCyclicWeibelDegreeMap k A r n (exteriorPower.ιMulti k (n + 1) a) =
       (-1 : k) ^ n • matrixCyclicDegreeMap k A r n (exteriorPower.ιMulti k (n + 1) a) := rfl
 
-/-- Finite zero corners leave the complete exterior-to-cyclic trace component unchanged. -/
+/-- Stability of the finite matrix cyclic degree map under zero extension.
+
+Extending all matrix factors by zeros and applying the larger-size degree map gives the
+smaller-size map. -/
 theorem matrixCyclicDegreeMap_zeroCorner {r s : ℕ} (h : r ≤ s) (n : ℕ) :
     (matrixCyclicDegreeMap k A s n).comp
       (exteriorPower.map (n + 1) (Matrix.zeroExtendLinear (k := k) (A := A) h)) =
@@ -98,7 +111,9 @@ theorem matrixCyclicDegreeMap_zeroCorner {r s : ℕ} (h : r ≤ s) (n : ℕ) :
     Function.comp_apply, Matrix.zeroExtendLinear_apply] using
     congrArg (fun x => σ.sign • ModuleCat.Algebra.Hochschild.Matrix.connesRepresentative k A n x) ht
 
-/-- Top-left zero extension commutes with the signed exterior trace degree maps. -/
+/-- Stability of the degree-signed cyclic trace under zero extension.
+
+The exterior zero-extension map commutes with the degree-signed matrix trace map. -/
 theorem matrixCyclicWeibelDegreeMap_zeroCorner {r s : ℕ} (h : r ≤ s) (n : ℕ) :
     (matrixCyclicWeibelDegreeMap k A s n).comp
       (exteriorPower.map (n + 1) (Matrix.zeroExtendLinear (k := k) (A := A) h)) =
@@ -110,7 +125,10 @@ section Coefficients
 
 variable {B : Type v} [Ring B] [Algebra k B]
 
-/-- Coefficient naturality of the finite matrix exterior trace component. -/
+/-- Coefficient naturality of the finite matrix cyclic degree map.
+
+An entry-algebra homomorphism commutes with the exterior matrix coefficient map, generalized
+trace, and induced cyclic quotient map. -/
 theorem matrixCyclicDegreeMap_natural (f : A →ₐ[k] B) (r n : ℕ) :
     (((ModuleCat.Algebra.Hochschild.NonUnital.connesComplexHom f.toNonUnitalAlgHom).f n).hom).comp
         (matrixCyclicDegreeMap k A r n) =

@@ -12,18 +12,11 @@ module
 public import Mathlib.Algebra.Category.ModuleCat.Topology.Basic
 
 /-!
-# Zero topological modules
+# Zero objects among topological modules
 
-A topological module with subsingleton carrier is a zero object.  The
-result needs only a ring with an arbitrary topology: all continuity data is
-already carried by the objects and the zero continuous linear maps.
-
-This file introduces no instance and has no continuous-cohomology
-dependency.
-
-## Main declaration
-
-* `TopModuleCat.isZero_of_subsingleton`
+For a ring with any topology, a topological module with a subsingleton carrier is a zero
+object. Its unique morphisms to and from every other object are the zero continuous linear
+maps. The ring and carrier universes are independent.
 -/
 
 @[expose] public section
@@ -38,7 +31,10 @@ universe u v
 
 variable {R : Type u} [Ring R] [TopologicalSpace R]
 
-/-- A topological module with subsingleton carrier is a zero object. -/
+/-- Subsingleton topological module is a zero object.
+
+A topological `R`-module with subsingleton carrier satisfies the categorical zero-object
+property. -/
 theorem isZero_of_subsingleton (M : TopModuleCat.{v} R) [Subsingleton M] :
     Limits.IsZero M where
   unique_to X := ⟨⟨⟨TopModuleCat.ofHom (0 : M →L[R] X)⟩, fun f => by

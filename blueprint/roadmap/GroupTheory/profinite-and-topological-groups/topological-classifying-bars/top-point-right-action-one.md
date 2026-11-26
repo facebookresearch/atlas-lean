@@ -1,3 +1,5 @@
-# Top Point Right Action one
+# The unit law of the right topological point action
 
-Unit law for the terminal right action.
+The unit law of the right topological point action.
+
+Insertion of the monoid unit followed by the point action equals the right unitor of topPoint.

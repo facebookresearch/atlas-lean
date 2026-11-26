@@ -25,16 +25,24 @@ public import Mathlib.RepresentationTheory.Basic
 public import MathlibExt.LinearAlgebra.TensorPower.Cons
 
 /-!
-# Signed cyclic rotations of tensor powers
+# Cyclic rotations, representations and norms of tensor powers
 
-Reindexing a tensor power moves its last factor to the first. Over a commutative
-ring, multiplying this rotation by the canonical unit `(-1)^n` gives a linear
-automorphism of period `n + 1`. Its integer powers descend through `ZMod.lift`
-to an actual cyclic representation. The associated norm satisfies both finite
-geometric-sum identities and is natural under arbitrary linear maps.
+For a commutative semiring and a semimodule, the permutation rotating
+the last factor of `M^⊗(n+1)` to the first gives a linear equivalence
+`ρ_n` with `ρ_n^(n+1)=id`. Over a commutative ring, the signed rotation
+`t_n=(-1)^nρ_n` also satisfies `t_n^(n+1)=id` and defines an action
+of the cyclic group `ℤ/(n+1)`. Its norm is the finite sum
+`N_n=∑_(j=0)^n t_n^j`, satisfying `(1−t_n)N_n=N_n(1−t_n)=0`.
 
-The constructions allow the zero ring and arbitrary modules. No inverse of the
-number of factors is used.
+Applying the same linear map to all factors intertwines the rotations,
+cyclic actions and norms. The separate-first-factor presentation
+`M ⊗[k] M^⊗n` has the same operators through its canonical tensor-word
+identification. Pure-tensor formulas specify the inverse permutation
+for rotation and the forward permutation for inverse action.
+
+## References
+
+* J.-L. Loday, *Cyclic Homology*, §2.1, for the cyclic operator and norm identities.
 -/
 
 @[expose] public section
@@ -47,7 +55,8 @@ universe u v w
 
 namespace TensorPower
 
-/-- The index rotation has period equal to the number of tensor factors. -/
+/-- For `n ∈ ℕ`, the cyclic permutation of `Fin(n+1)` satisfies
+`finRotate(n+1)^(n+1)=id`. -/
 theorem rotationIndex_period (n : ℕ) : finRotate (n + 1) ^ (n + 1) = 1 :=
   finRotate_pow_succ n
 
@@ -55,18 +64,24 @@ section Unsigned
 
 variable (k : Type u) (M : Type v) [CommSemiring k] [AddCommMonoid M] [Module k M]
 
-/-- Move the final factor of a tensor power to its first position. -/
+/-- Let `k` be a commutative semiring and `M` a `k`-semimodule
+with an additive commutative monoid structure. The last-to-first reindexing of `M^⊗(n+1)` is a linear
+equivalence `ρ_n`. -/
 def rotation (n : ℕ) : TensorPower k (n + 1) M ≃ₗ[k] TensorPower k (n + 1) M :=
   PiTensorProduct.reindex k (fun _ : Fin (n + 1) => M) (finRotate (n + 1))
 
-/-- The native reindexing formula fixes the last-to-first direction of rotation. -/
+/-- Let `k` be a commutative semiring and `M` a `k`-semimodule
+with an additive commutative monoid structure. For `a : Fin(n+1) → M`, last-to-first rotation sends
+`tprod(a)` to `tprod(i ↦ a(finRotate(n+1)⁻¹(i)))`. -/
 @[simp]
 theorem rotation_tprod (n : ℕ) (a : Fin (n + 1) → M) :
     rotation k M n (PiTensorProduct.tprod k a) =
       PiTensorProduct.tprod k (fun i => a ((finRotate (n + 1)).symm i)) :=
   PiTensorProduct.reindex_tprod _ _
 
-/-- Powers of rotation are the corresponding powers of the index permutation. -/
+/-- Let `k` be a commutative semiring and `M` a `k`-semimodule
+with an additive commutative monoid structure. The `j`-th power of the tensor rotation is reindexing
+by `finRotate(n+1)^j`. -/
 theorem rotation_pow (n j : ℕ) :
     rotation k M n ^ j =
       PiTensorProduct.reindex k (fun _ : Fin (n + 1) => M) (finRotate (n + 1) ^ j) := by
@@ -91,7 +106,9 @@ theorem rotation_pow (n j : ℕ) :
           (finRotate (n + 1) ^ (j + 1)) := by
         rw [pow_succ', Equiv.Perm.mul_def]
 
-/-- The unsigned rotation returns to the original tensor after `n + 1` steps. -/
+/-- Let `k` be a commutative semiring and `M` a `k`-semimodule
+with an additive commutative monoid structure. On `M^⊗(n+1)`, the unsigned rotation satisfies
+`ρ_n^(n+1)=id`. -/
 theorem rotation_period (n : ℕ) : rotation k M n ^ (n + 1) = 1 := by
   rw [rotation_pow, rotationIndex_period]
   change PiTensorProduct.reindex k (fun _ : Fin (n + 1) => M) (Equiv.refl _) =
@@ -100,7 +117,9 @@ theorem rotation_period (n : ℕ) : rotation k M n ^ (n + 1) = 1 := by
 
 variable {k M} {N : Type w} [AddCommMonoid N] [Module k N]
 
-/-- Applying the same linear map to all factors commutes with rotation. -/
+/-- Let `k` be a commutative semiring and `M` a `k`-semimodule
+with an additive commutative monoid structure. For a linear map `f : M → M′`, its map on all factors
+commutes with last-to-first rotation in every degree `n`. -/
 theorem rotation_natural (f : M →ₗ[k] N) (n : ℕ) (x : TensorPower k (n + 1) M) :
     PiTensorProduct.map (fun _ : Fin (n + 1) => f) (rotation k M n x) =
       rotation k N n (PiTensorProduct.map (fun _ : Fin (n + 1) => f) x) :=
@@ -112,17 +131,26 @@ section Signed
 
 variable (k : Type u) (M : Type v) [CommRing k] [AddCommGroup M] [Module k M]
 
-/-- Signed last-to-first rotation, using the canonical unit even for the zero ring. -/
+/-- Let `k` be a commutative ring and `M` a `k`-module.
+On `T_n=M^⊗(n+1)`, let `ρ_n` rotate the final factor to the first
+and set `t_n=(-1)^nρ_n`. The signed last-to-first operator is a linear equivalence
+of `T_n`. -/
 def cyclicEquiv (n : ℕ) : TensorPower k (n + 1) M ≃ₗ[k] TensorPower k (n + 1) M :=
   LinearEquiv.smulOfUnit ((-1 : kˣ) ^ n) * rotation k M n
 
-/-- The signed automorphism is scalar multiplication by `(-1)^n` after rotation. -/
+/-- Let `k` be a commutative ring and `M` a `k`-module.
+On `T_n=M^⊗(n+1)`, let `ρ_n` rotate the final factor to the first
+and set `t_n=(-1)^nρ_n`. The signed linear equivalence has value
+`t_n(x)=(-1)^n • ρ_n(x)` for every `x : T_n`. -/
 theorem cyclicEquiv_apply (n : ℕ) (x : TensorPower k (n + 1) M) :
     cyclicEquiv k M n x = (-1 : k) ^ n • rotation k M n x := by
   change ((↑((-1 : kˣ) ^ n) : k) • rotation k M n x) = _
   simp only [Units.val_pow_eq_pow_val, Units.coe_neg_one]
 
-/-- The signed pure-tensor formula. -/
+/-- Let `k` be a commutative ring and `M` a `k`-module.
+On `T_n=M^⊗(n+1)`, let `ρ_n` rotate the final factor to the first
+and set `t_n=(-1)^nρ_n`. On a pure word, `t_n(tprod(a))` is
+`(-1)^n • tprod(i ↦ a(finRotate(n+1)⁻¹(i)))`. -/
 @[simp]
 theorem cyclicEquiv_tprod (n : ℕ) (a : Fin (n + 1) → M) :
     cyclicEquiv k M n (PiTensorProduct.tprod k a) =
@@ -130,7 +158,10 @@ theorem cyclicEquiv_tprod (n : ℕ) (a : Fin (n + 1) → M) :
         PiTensorProduct.tprod k (fun i => a ((finRotate (n + 1)).symm i)) := by
   rw [cyclicEquiv_apply, rotation_tprod]
 
-/-- The sign contributes an even exponent over one complete rotation. -/
+/-- Let `k` be a commutative ring and `M` a `k`-module.
+On `T_n=M^⊗(n+1)`, let `ρ_n` rotate the final factor to the first
+and set `t_n=(-1)^nρ_n`. The signed equivalence satisfies `t_n^(n+1)=id`, since
+the accumulated sign has even exponent `n(n+1)`. -/
 theorem cyclicEquiv_period (n : ℕ) : cyclicEquiv k M n ^ (n + 1) = 1 := by
   let s : TensorPower k (n + 1) M ≃ₗ[k] TensorPower k (n + 1) M :=
     LinearEquiv.smulOfUnit ((-1 : kˣ) ^ n)
@@ -157,16 +188,25 @@ theorem cyclicEquiv_period (n : ℕ) : cyclicEquiv k M n ^ (n + 1) = 1 := by
     rotation_period k M n
   exact hOne.trans hPeriod
 
-/-- Degree zero has no sign and only one tensor factor. -/
+/-- Let `k` be a commutative ring and `M` a `k`-module.
+On `T_n=M^⊗(n+1)`, let `ρ_n` rotate the final factor to the first
+and set `t_n=(-1)^nρ_n`. In degree zero the signed equivalence on the one-factor
+tensor power is identity. -/
 @[simp]
 theorem cyclicEquiv_zero : cyclicEquiv k M 0 = 1 := by
   simpa only [Nat.zero_add, pow_one] using cyclicEquiv_period k M 0
 
-/-- The signed rotation as an endomorphism, used in the norm and its identities. -/
+/-- Let `k` be a commutative ring and `M` a `k`-module.
+On `T_n=M^⊗(n+1)`, let `ρ_n` rotate the final factor to the first
+and set `t_n=(-1)^nρ_n`. The underlying linear endomorphism of the signed cyclic
+equivalence is the cyclic operator on `T_n`. -/
 def cyclicOperator (n : ℕ) : Module.End k (TensorPower k (n + 1) M) :=
   (cyclicEquiv k M n).toLinearMap
 
-/-- The actual endomorphism has the signed last-to-first pure-tensor value. -/
+/-- Let `k` be a commutative ring and `M` a `k`-module.
+On `T_n=M^⊗(n+1)`, let `ρ_n` rotate the final factor to the first
+and set `t_n=(-1)^nρ_n`. The cyclic endomorphism sends `tprod(a)` to
+`(-1)^n • tprod(i ↦ a(finRotate(n+1)⁻¹(i)))`. -/
 @[simp]
 theorem cyclicOperator_tprod (n : ℕ) (a : Fin (n + 1) → M) :
     cyclicOperator k M n (PiTensorProduct.tprod k a) =
@@ -174,20 +214,28 @@ theorem cyclicOperator_tprod (n : ℕ) (a : Fin (n + 1) → M) :
         PiTensorProduct.tprod k (fun i => a ((finRotate (n + 1)).symm i)) :=
   cyclicEquiv_tprod k M n a
 
-/-- The endomorphism period is inherited from the actual linear automorphism. -/
+/-- Let `k` be a commutative ring and `M` a `k`-module.
+On `T_n=M^⊗(n+1)`, let `ρ_n` rotate the final factor to the first
+and set `t_n=(-1)^nρ_n`. The cyclic endomorphism satisfies `t_n^(n+1)=id`. -/
 theorem cyclicOperator_period (n : ℕ) : cyclicOperator k M n ^ (n + 1) = 1 := by
   change (LinearEquiv.automorphismGroup.toLinearMapMonoidHom
     (cyclicEquiv k M n)) ^ (n + 1) = 1
   rw [← map_pow, cyclicEquiv_period, map_one]
 
-/-- The degree-zero endomorphism is the identity. -/
+/-- Let `k` be a commutative ring and `M` a `k`-module.
+On `T_n=M^⊗(n+1)`, let `ρ_n` rotate the final factor to the first
+and set `t_n=(-1)^nρ_n`. The cyclic endomorphism in degree zero is identity on the
+one-factor tensor power. -/
 @[simp]
 theorem cyclicOperator_zero : cyclicOperator k M 0 = 1 := by
   change (cyclicEquiv k M 0).toLinearMap = _
   rw [cyclicEquiv_zero]
   rfl
 
-/-- Integer powers descend through the earned period to actual cyclic automorphisms. -/
+/-- Let `k` be a commutative ring and `M` a `k`-module.
+On `T_n=M^⊗(n+1)`, let `ρ_n` rotate the final factor to the first
+and set `t_n=(-1)^nρ_n`. Write `C_(n+1)=ℤ/(n+1)` for the additive cyclic group. Integer powers of the signed equivalence give a group
+homomorphism from `C_(n+1)` to linear automorphisms of `T_n`. -/
 def cyclicAutomorphism (n : ℕ) :
     Multiplicative (ZMod (n + 1)) →*
       (TensorPower k (n + 1) M ≃ₗ[k] TensorPower k (n + 1) M) :=
@@ -204,7 +252,10 @@ def cyclicAutomorphism (n : ℕ) :
       change cyclicEquiv k M n ^ ((n + 1 : ℕ) : ℤ) = 1
       simpa only [zpow_natCast] using cyclicEquiv_period k M n⟩
 
-/-- The cyclic action retains the original integer-power formula. -/
+/-- Let `k` be a commutative ring and `M` a `k`-module.
+On `T_n=M^⊗(n+1)`, let `ρ_n` rotate the final factor to the first
+and set `t_n=(-1)^nρ_n`. Write `C_(n+1)=ℤ/(n+1)` for the additive cyclic group. For `j ∈ ℤ`, the automorphism associated to its residue
+class `[j]` is the signed equivalence raised to `j`. -/
 @[simp]
 theorem cyclicAutomorphism_intCast (n : ℕ) (j : ℤ) :
     cyclicAutomorphism k M n (Multiplicative.ofAdd (j : ZMod (n + 1))) =
@@ -216,19 +267,28 @@ theorem cyclicAutomorphism_intCast (n : ℕ) (j : ℤ) :
   rw [ZMod.lift_coe]
   rfl
 
-/-- The residue class of one acts by the signed rotation. -/
+/-- Let `k` be a commutative ring and `M` a `k`-module.
+On `T_n=M^⊗(n+1)`, let `ρ_n` rotate the final factor to the first
+and set `t_n=(-1)^nρ_n`. Write `C_(n+1)=ℤ/(n+1)` for the additive cyclic group. The residue class `[1]` acts by the signed linear
+equivalence `t_n`. -/
 @[simp]
 theorem cyclicAutomorphism_generator (n : ℕ) :
     cyclicAutomorphism k M n (Multiplicative.ofAdd (1 : ZMod (n + 1))) =
       cyclicEquiv k M n := by
   simpa only [Int.cast_one, zpow_one] using cyclicAutomorphism_intCast k M n 1
 
-/-- The actual linear representation of the cyclic group on a tensor power. -/
+/-- Let `k` be a commutative ring and `M` a `k`-module.
+On `T_n=M^⊗(n+1)`, let `ρ_n` rotate the final factor to the first
+and set `t_n=(-1)^nρ_n`. Write `C_(n+1)=ℤ/(n+1)` for the additive cyclic group. The signed action defines a linear representation of
+`C_(n+1)` on the tensor power `T_n`. -/
 def cyclicRepresentation (n : ℕ) :
     Representation k (Multiplicative (ZMod (n + 1))) (TensorPower k (n + 1) M) :=
   LinearEquiv.automorphismGroup.toLinearMapMonoidHom.comp (cyclicAutomorphism k M n)
 
-/-- Nonnegative residue classes act by powers of the signed endomorphism. -/
+/-- Let `k` be a commutative ring and `M` a `k`-module.
+On `T_n=M^⊗(n+1)`, let `ρ_n` rotate the final factor to the first
+and set `t_n=(-1)^nρ_n`. Write `C_(n+1)=ℤ/(n+1)` for the additive cyclic group. For `j ∈ ℕ`, the representation value at `[j]` is the
+endomorphism power `t_n^j`. -/
 @[simp]
 theorem cyclicRepresentation_natCast (n j : ℕ) :
     cyclicRepresentation k M n (Multiplicative.ofAdd (j : ZMod (n + 1))) =
@@ -240,18 +300,27 @@ theorem cyclicRepresentation_natCast (n j : ℕ) :
   rw [h, map_pow]
   rfl
 
-/-- The generator of the representation is the original signed endomorphism. -/
+/-- Let `k` be a commutative ring and `M` a `k`-module.
+On `T_n=M^⊗(n+1)`, let `ρ_n` rotate the final factor to the first
+and set `t_n=(-1)^nρ_n`. Write `C_(n+1)=ℤ/(n+1)` for the additive cyclic group. The cyclic representation takes its generator `[1]`
+to the cyclic endomorphism `t_n`. -/
 @[simp]
 theorem cyclicRepresentation_generator (n : ℕ) :
     cyclicRepresentation k M n (Multiplicative.ofAdd (1 : ZMod (n + 1))) =
       cyclicOperator k M n := by
   simpa only [Nat.cast_one, pow_one] using cyclicRepresentation_natCast k M n 1
 
-/-- The cyclic norm is the finite sum of powers of the actual signed operator. -/
+/-- Let `k` be a commutative ring and `M` a `k`-module.
+On `T_n=M^⊗(n+1)`, let `ρ_n` rotate the final factor to the first
+and set `t_n=(-1)^nρ_n`. Define `N_n=∑_(j=0)^n t_n^j`. The finite sum `N_n` is the cyclic norm endomorphism
+of `T_n`. -/
 def norm (n : ℕ) : Module.End k (TensorPower k (n + 1) M) :=
   ∑ j ∈ Finset.range (n + 1), cyclicOperator k M n ^ j
 
-/-- The geometric sum is the native finite-group norm of the actual representation. -/
+/-- Let `k` be a commutative ring and `M` a `k`-module.
+On `T_n=M^⊗(n+1)`, let `ρ_n` rotate the final factor to the first
+and set `t_n=(-1)^nρ_n`. Write `C_(n+1)=ℤ/(n+1)` for the additive cyclic group. The geometric sum `∑_(j=0)^n t_n^j` equals the finite-group
+norm of the cyclic representation. -/
 theorem norm_eq_representation_norm (n : ℕ) :
     norm k M n = (cyclicRepresentation k M n).norm := by
   classical
@@ -271,25 +340,37 @@ theorem norm_eq_representation_norm (n : ℕ) :
         (cyclicRepresentation k M n) fun i => by rw [he, cyclicRepresentation_natCast]
     _ = (cyclicRepresentation k M n).norm := rfl
 
-/-- Evaluating the norm gives the same finite sum of rotated values. -/
+/-- Let `k` be a commutative ring and `M` a `k`-module.
+On `T_n=M^⊗(n+1)`, let `ρ_n` rotate the final factor to the first
+and set `t_n=(-1)^nρ_n`. Define `N_n=∑_(j=0)^n t_n^j`. For `x : T_n`, the norm evaluates as
+`N_n(x)=∑_(j=0)^n t_n^j(x)`. -/
 theorem norm_apply (n : ℕ) (x : TensorPower k (n + 1) M) :
     norm k M n x = ∑ j ∈ Finset.range (n + 1), (cyclicOperator k M n ^ j) x := by
   change (LinearMap.applyₗ (R := k) x)
       (∑ j ∈ Finset.range (n + 1), cyclicOperator k M n ^ j) = _
   exact map_sum (LinearMap.applyₗ (R := k) x) _ _
 
-/-- The norm on a one-factor tensor power is the identity. -/
+/-- Let `k` be a commutative ring and `M` a `k`-module.
+On `T_n=M^⊗(n+1)`, let `ρ_n` rotate the final factor to the first
+and set `t_n=(-1)^nρ_n`. Define `N_n=∑_(j=0)^n t_n^j`. In degree zero the one-term norm is identity on the
+one-factor tensor power. -/
 @[simp]
 theorem norm_zero : norm k M 0 = 1 := by
   simp [norm]
 
-/-- The left telescoping identity follows from the earned cyclic period. -/
+/-- Let `k` be a commutative ring and `M` a `k`-module.
+On `T_n=M^⊗(n+1)`, let `ρ_n` rotate the final factor to the first
+and set `t_n=(-1)^nρ_n`. Define `N_n=∑_(j=0)^n t_n^j`. The cyclic period gives `(1-t_n)N_n=0` as an endomorphism
+of `T_n`. -/
 theorem one_sub_cyclicOperator_mul_norm (n : ℕ) :
     (1 - cyclicOperator k M n) * norm k M n = 0 := by
   simpa only [norm, cyclicOperator_period, sub_self] using
     mul_neg_geom_sum (cyclicOperator k M n) (n + 1)
 
-/-- The right telescoping identity follows from the same finite geometric sum. -/
+/-- Let `k` be a commutative ring and `M` a `k`-module.
+On `T_n=M^⊗(n+1)`, let `ρ_n` rotate the final factor to the first
+and set `t_n=(-1)^nρ_n`. Define `N_n=∑_(j=0)^n t_n^j`. The finite geometric sum gives `N_n(1-t_n)=0` as an
+endomorphism of `T_n`. -/
 theorem norm_mul_one_sub_cyclicOperator (n : ℕ) :
     norm k M n * (1 - cyclicOperator k M n) = 0 := by
   simpa only [norm, cyclicOperator_period, sub_self] using
@@ -297,7 +378,8 @@ theorem norm_mul_one_sub_cyclicOperator (n : ℕ) :
 
 variable {k M} {N : Type w} [AddCommGroup N] [Module k N]
 
-/-- Applying an arbitrary linear map to every factor intertwines the signed operators. -/
+/-- Let `k` be a commutative ring, `f : M →ₗ[k] M′` a linear map of
+modules, and `F_n(f)` its map on all `n+1` tensor factors. For the signed operators, `F_n(f) ∘ t_n^M = t_n^M′ ∘ F_n(f)`. -/
 theorem cyclicOperator_natural (f : M →ₗ[k] N) (n : ℕ) :
     (PiTensorProduct.map (fun _ : Fin (n + 1) => f)).comp (cyclicOperator k M n) =
       (cyclicOperator k N n).comp (PiTensorProduct.map (fun _ : Fin (n + 1) => f)) := by
@@ -307,7 +389,8 @@ theorem cyclicOperator_natural (f : M →ₗ[k] N) (n : ℕ) :
     cyclicEquiv k N n (PiTensorProduct.map (fun _ : Fin (n + 1) => f) x)
   rw [cyclicEquiv_apply, cyclicEquiv_apply, map_smul, rotation_natural]
 
-/-- The native composition-power lemma propagates naturality to all nonnegative powers. -/
+/-- Let `k` be a commutative ring, `f : M →ₗ[k] M′` a linear map of
+modules, and `F_n(f)` its map on all `n+1` tensor factors. For every `j ∈ ℕ`, `F_n(f)(t_n^j(x))=t_n^j(F_n(f)(x))`. -/
 theorem cyclicOperator_pow_natural (f : M →ₗ[k] N) (n j : ℕ)
     (x : TensorPower k (n + 1) M) :
     PiTensorProduct.map (fun _ : Fin (n + 1) => f) ((cyclicOperator k M n ^ j) x) =
@@ -315,7 +398,9 @@ theorem cyclicOperator_pow_natural (f : M →ₗ[k] N) (n j : ℕ)
   have h := Module.End.commute_pow_left_of_commute (cyclicOperator_natural f n).symm j
   exact (DFunLike.congr_fun h x).symm
 
-/-- Every cyclic group element is natural under the same arbitrary linear map. -/
+/-- Let `k` be a commutative ring, `f : M →ₗ[k] M′` a linear map of
+modules, and `F_n(f)` its map on all `n+1` tensor factors. For any element `a ∈ ℤ/(n+1)`, the cyclic actions satisfy
+`F_n(f)(a·x)=a·F_n(f)(x)`. -/
 theorem cyclicRepresentation_natural (f : M →ₗ[k] N) (n : ℕ)
     (a : Multiplicative (ZMod (n + 1))) (x : TensorPower k (n + 1) M) :
     PiTensorProduct.map (fun _ : Fin (n + 1) => f) (cyclicRepresentation k M n a x) =
@@ -325,7 +410,9 @@ theorem cyclicRepresentation_natural (f : M →ₗ[k] N) (n : ℕ)
   rw [← ha, cyclicRepresentation_natCast, cyclicRepresentation_natCast]
   exact cyclicOperator_pow_natural f n a.toAdd.val x
 
-/-- The actual norm, including all its summands, is natural under linear maps. -/
+/-- Let `k` be a commutative ring, `f : M →ₗ[k] M′` a linear map of
+modules, and `F_n(f)` its map on all `n+1` tensor factors. The full cyclic norms satisfy
+`F_n(f)(N_n^M(x))=N_n^M′(F_n(f)(x))`. -/
 theorem norm_natural (f : M →ₗ[k] N) (n : ℕ) (x : TensorPower k (n + 1) M) :
     PiTensorProduct.map (fun _ : Fin (n + 1) => f) (norm k M n x) =
       norm k N n (PiTensorProduct.map (fun _ : Fin (n + 1) => f) x) := by
@@ -336,7 +423,10 @@ theorem norm_natural (f : M →ₗ[k] N) (n : ℕ) (x : TensorPower k (n + 1) M)
 
 variable (k M)
 
-/-- Every signed power has its actual scalar and inverse-permutation pure-tensor value. -/
+/-- Let `k` be a commutative ring and `M` a `k`-module.
+On `T_n=M^⊗(n+1)`, let `ρ_n` rotate the final factor to the first
+and set `t_n=(-1)^nρ_n`. For `j ∈ ℕ`, the power on a pure word is
+`t_n^j(tprod(a))=(-1)^(nj) • tprod(i ↦ a((finRotate(n+1)^j)⁻¹(i)))`. -/
 theorem cyclicOperator_pow_tprod (n j : ℕ) (a : Fin (n + 1) → M) :
     (cyclicOperator k M n ^ j) (PiTensorProduct.tprod k a) =
       (-1 : k) ^ (n * j) • PiTensorProduct.tprod k
@@ -359,7 +449,10 @@ theorem cyclicOperator_pow_tprod (n j : ℕ) (a : Fin (n + 1) → M) :
       funext i
       exact (congrArg (fun e : Equiv.Perm (Fin (n + 1)) => a (e.symm i)) he).symm
 
-/-- The inverse natural residue gives the forward-permutation tuple with the original sign. -/
+/-- Let `k` be a commutative ring and `M` a `k`-module.
+On `T_n=M^⊗(n+1)`, let `ρ_n` rotate the final factor to the first
+and set `t_n=(-1)^nρ_n`. Write `C_(n+1)=ℤ/(n+1)` for the additive cyclic group. For `j ∈ ℕ`, the inverse residue `[-j]` acts on `tprod(a)`
+as `(-1)^(nj) • tprod(i ↦ a(finRotate(n+1)^j(i)))`. -/
 theorem cyclicRepresentation_inverse_natCast_tprod (n j : ℕ) (a : Fin (n + 1) → M) :
     cyclicRepresentation k M n
         (Multiplicative.ofAdd ((-(j : ℤ)) : ZMod (n + 1))) (PiTensorProduct.tprod k a) =
@@ -407,21 +500,37 @@ section ConsSigned
 
 variable (k : Type u) (M : Type v) [CommRing k] [AddCommGroup M] [Module k M]
 
-/-- Signed rotation on the tensor product with a separate first factor. -/
+/-- Let `k` be a commutative ring and `M` a `k`-module.
+The canonical word identification `c_n : M ⊗[k] M^⊗n ≅ M^⊗(n+1)`
+transports the signed rotation `t_n=(-1)^nρ_n`, its cyclic action,
+and its norm `N_n=∑_(j=0)^n t_n^j` to the separate-first-factor coordinates. The transported signed operator is an endomorphism of
+`M ⊗[k] M^⊗n`. -/
 def consCyclicOperator (n : ℕ) : Module.End k (M ⊗[k] TensorPower k n M) :=
   (TensorPower.consEquiv k M n).conjRingEquiv.symm (TensorPower.cyclicOperator k M n)
 
-/-- The actual cyclic representation in the separate first-factor tensor coordinates. -/
+/-- Let `k` be a commutative ring and `M` a `k`-module.
+The canonical word identification `c_n : M ⊗[k] M^⊗n ≅ M^⊗(n+1)`
+transports the signed rotation `t_n=(-1)^nρ_n`, its cyclic action,
+and its norm `N_n=∑_(j=0)^n t_n^j` to the separate-first-factor coordinates. The transported action is a representation of
+`ℤ/(n+1)` on `M ⊗[k] M^⊗n`. -/
 def consCyclicRepresentation (n : ℕ) :
     Representation k (Multiplicative (ZMod (n + 1))) (M ⊗[k] TensorPower k n M) :=
   (TensorPower.consEquiv k M n).conjRingEquiv.symm.toMonoidHom.comp
     (TensorPower.cyclicRepresentation k M n)
 
-/-- The consNorm transported along the same computed tensor coordinates. -/
+/-- Let `k` be a commutative ring and `M` a `k`-module.
+The canonical word identification `c_n : M ⊗[k] M^⊗n ≅ M^⊗(n+1)`
+transports the signed rotation `t_n=(-1)^nρ_n`, its cyclic action,
+and its norm `N_n=∑_(j=0)^n t_n^j` to the separate-first-factor coordinates. The transported finite sum is the norm endomorphism
+on `M ⊗[k] M^⊗n`. -/
 def consNorm (n : ℕ) : Module.End k (M ⊗[k] TensorPower k n M) :=
   (TensorPower.consEquiv k M n).conjRingEquiv.symm (TensorPower.norm k M n)
 
-/-- The cons coordinates intertwine the actual Book operator and the shared rotation. -/
+/-- Let `k` be a commutative ring and `M` a `k`-module.
+The canonical word identification `c_n : M ⊗[k] M^⊗n ≅ M^⊗(n+1)`
+transports the signed rotation `t_n=(-1)^nρ_n`, its cyclic action,
+and its norm `N_n=∑_(j=0)^n t_n^j` to the separate-first-factor coordinates. For every `x`, the coordinate comparison satisfies
+`c_n(tilde(t)_n(x))=t_n(c_n(x))`. -/
 theorem consCyclicOperator_coordinates (n : ℕ) (x : M ⊗[k] TensorPower k n M) :
     consEquiv k M n (consCyclicOperator k M n x) =
       TensorPower.cyclicOperator k M n (consEquiv k M n x) := by
@@ -430,7 +539,11 @@ theorem consCyclicOperator_coordinates (n : ℕ) (x : M ⊗[k] TensorPower k n M
       (TensorPower.cyclicOperator k M n (TensorPower.consEquiv k M n x))) = _
   exact (TensorPower.consEquiv k M n).apply_symm_apply _
 
-/-- Every element of the cyclic group uses the same original tensor coordinates. -/
+/-- Let `k` be a commutative ring and `M` a `k`-module.
+The canonical word identification `c_n : M ⊗[k] M^⊗n ≅ M^⊗(n+1)`
+transports the signed rotation `t_n=(-1)^nρ_n`, its cyclic action,
+and its norm `N_n=∑_(j=0)^n t_n^j` to the separate-first-factor coordinates. For every cyclic-group element `a` and tensor `x`,
+`c_n(a·x)=a·c_n(x)`. -/
 theorem consCyclicRepresentation_coordinates (n : ℕ)
     (a : Multiplicative (ZMod (n + 1))) (x : M ⊗[k] TensorPower k n M) :
     consEquiv k M n (consCyclicRepresentation k M n a x) =
@@ -440,7 +553,10 @@ theorem consCyclicRepresentation_coordinates (n : ℕ)
       (TensorPower.cyclicRepresentation k M n a (TensorPower.consEquiv k M n x))) = _
   exact (TensorPower.consEquiv k M n).apply_symm_apply _
 
-/-- The consNorm retains its full tensor-power value. -/
+/-- Let `k` be a commutative ring and `M` a `k`-module.
+The canonical word identification `c_n : M ⊗[k] M^⊗n ≅ M^⊗(n+1)`
+transports the signed rotation `t_n=(-1)^nρ_n`, its cyclic action,
+and its norm `N_n=∑_(j=0)^n t_n^j` to the separate-first-factor coordinates. The norm satisfies `c_n(tilde(N)_n(x))=N_n(c_n(x))`. -/
 theorem consNorm_coordinates (n : ℕ) (x : M ⊗[k] TensorPower k n M) :
     consEquiv k M n (consNorm k M n x) =
       TensorPower.norm k M n (consEquiv k M n x) := by
@@ -449,7 +565,12 @@ theorem consNorm_coordinates (n : ℕ) (x : M ⊗[k] TensorPower k n M) :
       (TensorPower.norm k M n (TensorPower.consEquiv k M n x))) = _
   exact (TensorPower.consEquiv k M n).apply_symm_apply _
 
-/-- The printed last-to-first formula on the original pure tensor. -/
+/-- Let `k` be a commutative ring and `M` a `k`-module.
+The canonical word identification `c_n : M ⊗[k] M^⊗n ≅ M^⊗(n+1)`
+transports the signed rotation `t_n=(-1)^nρ_n`, its cyclic action,
+and its norm `N_n=∑_(j=0)^n t_n^j` to the separate-first-factor coordinates. For `a : Fin(n+1) → M`, the operator sends
+`a₀ ⊗ tprod(a₁,…,a_n)` to
+`(-1)^n • (a_n ⊗ tprod(a₀,…,a_(n-1)))`. -/
 @[simp]
 theorem consCyclicOperator_tmul (n : ℕ) (a : Fin (n + 1) → M) :
     consCyclicOperator k M n (a 0 ⊗ₜ[k] PiTensorProduct.tprod k (Fin.tail a)) =
@@ -473,18 +594,29 @@ theorem consCyclicOperator_tmul (n : ℕ) (a : Fin (n + 1) → M) :
   rw [consCyclicOperator_coordinates, consEquiv_tmul, Fin.cons_self_tail,
     TensorPower.cyclicOperator_tprod, map_smul, consEquiv_tmul, hrot]
 
-/-- The actual cons-level operator has period `n + 1`. -/
+/-- Let `k` be a commutative ring and `M` a `k`-module.
+The canonical word identification `c_n : M ⊗[k] M^⊗n ≅ M^⊗(n+1)`
+transports the signed rotation `t_n=(-1)^nρ_n`, its cyclic action,
+and its norm `N_n=∑_(j=0)^n t_n^j` to the separate-first-factor coordinates. The transported cyclic operator satisfies
+`tilde(t)_n^(n+1)=id`. -/
 theorem consCyclicOperator_period (n : ℕ) : consCyclicOperator k M n ^ (n + 1) = 1 := by
   have h := congrArg (TensorPower.consEquiv k M n).conjRingEquiv.symm
     (TensorPower.cyclicOperator_period k M n)
   simpa only [map_pow, map_one, consCyclicOperator] using h
 
-/-- The original degree-zero tensor level has identity cyclic operator. -/
+/-- Let `k` be a commutative ring and `M` a `k`-module.
+The canonical word identification `c_n : M ⊗[k] M^⊗n ≅ M^⊗(n+1)`
+transports the signed rotation `t_n=(-1)^nρ_n`, its cyclic action,
+and its norm `N_n=∑_(j=0)^n t_n^j` to the separate-first-factor coordinates. In degree zero the transported cyclic operator is identity. -/
 @[simp]
 theorem consCyclicOperator_zero : consCyclicOperator k M 0 = 1 := by
   simp only [consCyclicOperator, TensorPower.cyclicOperator_zero, map_one]
 
-/-- Nonnegative residues act by the corresponding powers in cons coordinates. -/
+/-- Let `k` be a commutative ring and `M` a `k`-module.
+The canonical word identification `c_n : M ⊗[k] M^⊗n ≅ M^⊗(n+1)`
+transports the signed rotation `t_n=(-1)^nρ_n`, its cyclic action,
+and its norm `N_n=∑_(j=0)^n t_n^j` to the separate-first-factor coordinates. For `j ∈ ℕ`, the cyclic representation at `[j]` equals
+`tilde(t)_n^j`. -/
 @[simp]
 theorem consCyclicRepresentation_natCast (n j : ℕ) :
     consCyclicRepresentation k M n (Multiplicative.ofAdd (j : ZMod (n + 1))) =
@@ -494,7 +626,10 @@ theorem consCyclicRepresentation_natCast (n j : ℕ) :
   rw [cyclicRepresentation_natCast, map_pow]
   rfl
 
-/-- The generator acts by the cons-level signed operator, not a substitute map. -/
+/-- Let `k` be a commutative ring and `M` a `k`-module.
+The canonical word identification `c_n : M ⊗[k] M^⊗n ≅ M^⊗(n+1)`
+transports the signed rotation `t_n=(-1)^nρ_n`, its cyclic action,
+and its norm `N_n=∑_(j=0)^n t_n^j` to the separate-first-factor coordinates. The residue generator `[1]` acts by `tilde(t)_n`. -/
 @[simp]
 theorem consCyclicRepresentation_generator (n : ℕ) :
     consCyclicRepresentation k M n (Multiplicative.ofAdd (1 : ZMod (n + 1))) =
@@ -504,7 +639,11 @@ theorem consCyclicRepresentation_generator (n : ℕ) :
   rw [TensorPower.cyclicRepresentation_generator]
   rfl
 
-/-- The Book consNorm is the geometric sum of powers of its actual operator. -/
+/-- Let `k` be a commutative ring and `M` a `k`-module.
+The canonical word identification `c_n : M ⊗[k] M^⊗n ≅ M^⊗(n+1)`
+transports the signed rotation `t_n=(-1)^nρ_n`, its cyclic action,
+and its norm `N_n=∑_(j=0)^n t_n^j` to the separate-first-factor coordinates. The norm is the geometric sum
+`tilde(N)_n=∑_(j=0)^n tilde(t)_n^j`. -/
 theorem consNorm_eq_sum (n : ℕ) :
     consNorm k M n = ∑ j ∈ Finset.range (n + 1), consCyclicOperator k M n ^ j := by
   change (TensorPower.consEquiv k M n).conjRingEquiv.symm
@@ -514,7 +653,11 @@ theorem consNorm_eq_sum (n : ℕ) :
   intro j _
   exact map_pow (TensorPower.consEquiv k M n).conjRingEquiv.symm _ j
 
-/-- The geometric sum is also the native finite-group representation consNorm. -/
+/-- Let `k` be a commutative ring and `M` a `k`-module.
+The canonical word identification `c_n : M ⊗[k] M^⊗n ≅ M^⊗(n+1)`
+transports the signed rotation `t_n=(-1)^nρ_n`, its cyclic action,
+and its norm `N_n=∑_(j=0)^n t_n^j` to the separate-first-factor coordinates. The geometric sum equals the finite-group norm of its
+transported cyclic representation. -/
 theorem consNorm_eq_representation_norm (n : ℕ) :
     consNorm k M n = (consCyclicRepresentation k M n).norm := by
   change (TensorPower.consEquiv k M n).conjRingEquiv.symm (TensorPower.norm k M n) =
@@ -523,19 +666,30 @@ theorem consNorm_eq_representation_norm (n : ℕ) :
   rw [TensorPower.norm_eq_representation_norm, Representation.norm]
   exact map_sum (TensorPower.consEquiv k M n).conjRingEquiv.symm _ _
 
-/-- The one-factor consNorm is the identity on the tensor product with a separate first factor. -/
+/-- Let `k` be a commutative ring and `M` a `k`-module.
+The canonical word identification `c_n : M ⊗[k] M^⊗n ≅ M^⊗(n+1)`
+transports the signed rotation `t_n=(-1)^nρ_n`, its cyclic action,
+and its norm `N_n=∑_(j=0)^n t_n^j` to the separate-first-factor coordinates. The degree-zero transported norm is identity. -/
 @[simp]
 theorem consNorm_zero : consNorm k M 0 = 1 := by
   simp only [consNorm, TensorPower.norm_zero, map_one]
 
-/-- The first printed telescoping identity on the tensor product with a separate first factor. -/
+/-- Let `k` be a commutative ring and `M` a `k`-module.
+The canonical word identification `c_n : M ⊗[k] M^⊗n ≅ M^⊗(n+1)`
+transports the signed rotation `t_n=(-1)^nρ_n`, its cyclic action,
+and its norm `N_n=∑_(j=0)^n t_n^j` to the separate-first-factor coordinates. The left telescoping identity is
+`(1-tilde(t)_n)tilde(N)_n=0`. -/
 theorem consOne_sub_cyclicOperator_mul_norm (n : ℕ) :
     (1 - consCyclicOperator k M n) * consNorm k M n = 0 := by
   have h := congrArg (TensorPower.consEquiv k M n).conjRingEquiv.symm
     (TensorPower.one_sub_cyclicOperator_mul_norm k M n)
   simpa only [map_mul, map_sub, map_one, map_zero, consCyclicOperator, consNorm] using h
 
-/-- The second printed telescoping identity on the tensor product with a separate first factor. -/
+/-- Let `k` be a commutative ring and `M` a `k`-module.
+The canonical word identification `c_n : M ⊗[k] M^⊗n ≅ M^⊗(n+1)`
+transports the signed rotation `t_n=(-1)^nρ_n`, its cyclic action,
+and its norm `N_n=∑_(j=0)^n t_n^j` to the separate-first-factor coordinates. The right telescoping identity is
+`tilde(N)_n(1-tilde(t)_n)=0`. -/
 theorem consNorm_mul_one_sub_cyclicOperator (n : ℕ) :
     consNorm k M n * (1 - consCyclicOperator k M n) = 0 := by
   have h := congrArg (TensorPower.consEquiv k M n).conjRingEquiv.symm
@@ -544,24 +698,32 @@ theorem consNorm_mul_one_sub_cyclicOperator (n : ℕ) :
 
 variable {k M} {N : Type w} [AddCommGroup N] [Module k N]
 
-/-- Apply a given linear map to the regular coefficient and every algebra factor. -/
+/-- For a commutative ring `k`, modules `M,M′`, and linear
+`f : M → M′`, the separate-factor level map is `f` on the
+first factor and the tensor-power map of `f` on the `n` tail factors. -/
 def consLevelMap (f : M →ₗ[k] N) (n : ℕ) :
     M ⊗[k] TensorPower k n M →ₗ[k] N ⊗[k] TensorPower k n N :=
   TensorProduct.map f (PiTensorProduct.map (fun _ : Fin n => f))
 
-/-- Applying the identity to the coefficient and every tail factor is the actual identity. -/
+/-- For a commutative ring `k` and module `M`, applying its
+identity map to the first factor and all `n` tail factors gives
+identity on `M ⊗[k] M^⊗n`. -/
 @[simp]
 theorem consLevelMap_id (n : ℕ) :
     consLevelMap (LinearMap.id : M →ₗ[k] M) n = LinearMap.id := by
   simp only [consLevelMap, PiTensorProduct.map_id, TensorProduct.map_id]
 
-/-- Native tensor map composition preserves the ordered coefficient and tail maps. -/
+/-- For a commutative ring `k` and linear maps `f : M → M′`,
+`g : M′ → P`, the level maps satisfy
+`level(g) ∘ level(f)=level(g ∘ f)` in every degree `n`. -/
 theorem consLevelMap_comp {P : Type*} [AddCommGroup P] [Module k P]
     (f : M →ₗ[k] N) (g : N →ₗ[k] P) (n : ℕ) :
     (consLevelMap g n).comp (consLevelMap f n) = consLevelMap (g.comp f) n := by
   simp only [consLevelMap, ← TensorProduct.map_comp, ← PiTensorProduct.map_comp]
 
-/-- The original tensor map is the native full tensor-power map in cons coordinates. -/
+/-- For a commutative ring `k` and linear `f : M → M′`, the
+word identifications intertwine the level map with the map of
+`f` on all `n+1` tensor factors. -/
 theorem consLevelMap_coordinates (f : M →ₗ[k] N) (n : ℕ)
     (x : M ⊗[k] TensorPower k n M) :
     consEquiv k N n (consLevelMap f n x) =
@@ -571,7 +733,8 @@ theorem consLevelMap_coordinates (f : M →ₗ[k] N) (n : ℕ)
     PiTensorProduct.map (fun _ : Fin (n + 1) => f) (TensorPower.consEquiv k M n x)
   exact DFunLike.congr_fun (TensorPower.consEquiv_naturality f n) x
 
-/-- The actual signed operators are natural under arbitrary linear maps. -/
+/-- For a commutative ring `k` and linear `f : M → M′`, the
+separate-factor level map intertwines the two signed cyclic operators. -/
 theorem consCyclicOperator_natural (f : M →ₗ[k] N) (n : ℕ) :
     (consLevelMap f n).comp (consCyclicOperator k M n) =
       (consCyclicOperator k N n).comp (consLevelMap f n) := by
@@ -585,7 +748,9 @@ theorem consCyclicOperator_natural (f : M →ₗ[k] N) (n : ℕ) :
   exact DFunLike.congr_fun (TensorPower.cyclicOperator_natural f n)
     (consEquiv k M n x)
 
-/-- Every cyclic group element is natural in the separate first-factor coordinates. -/
+/-- For a commutative ring `k`, linear `f : M → M′`, and
+`a ∈ ℤ/(n+1)`, the separate-factor level map commutes with
+the action of `a`. -/
 theorem consCyclicRepresentation_natural (f : M →ₗ[k] N) (n : ℕ)
     (a : Multiplicative (ZMod (n + 1))) (x : M ⊗[k] TensorPower k n M) :
     consLevelMap f n (consCyclicRepresentation k M n a x) =
@@ -595,7 +760,8 @@ theorem consCyclicRepresentation_natural (f : M →ₗ[k] N) (n : ℕ)
     consCyclicRepresentation_coordinates, consLevelMap_coordinates]
   exact TensorPower.cyclicRepresentation_natural f n a (consEquiv k M n x)
 
-/-- The full cons-level norm is natural under arbitrary linear maps. -/
+/-- For a commutative ring `k` and linear `f : M → M′`, the
+separate-factor level map commutes with the full cyclic norm. -/
 theorem consNorm_natural (f : M →ₗ[k] N) (n : ℕ) (x : M ⊗[k] TensorPower k n M) :
     consLevelMap f n (consNorm k M n x) = consNorm k N n (consLevelMap f n x) := by
   apply (consEquiv k N n).injective

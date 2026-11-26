@@ -1,4 +1,6 @@
-# Horizontal First Page d coherent Vertical Homology eq horizontal
+# The sign of the first-page differential in coherent vertical coordinates
 
-After the coherent vertical-homology transport, the actual first-page
-differential is `(-1)^(q+1)` times the horizontal homology map.
+The sign of the first-page differential in coherent vertical coordinates.
+
+For every `p,q ≥ 0`, the differential from `(p+1,q)` to `(p,q)` is `(-1)^(q+1)` times the
+vertical-homology map of the horizontal bicomplex differential.

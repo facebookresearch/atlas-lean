@@ -1,3 +1,6 @@
-# Coefficient Actions Commute
+# Tensor-product coefficient actions commute
 
-The actual two restricted endpoint actions commute in their original order.
+Tensor-product coefficient actions commute.
+
+The restricted left `R`-action and right `S`-action on a coefficient object commute, since the
+images of the two tensor-factor inclusions commute.

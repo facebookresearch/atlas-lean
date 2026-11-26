@@ -14,11 +14,20 @@ module
 public import MathlibExt.LinearAlgebra.TensorProduct.Balanced.Actions
 
 /-!
-# Right outer actions on the existing balanced quotient
+# Right actions on balanced tensor quotients
 
-The given right action on the second factor is a left action of the opposite
-semiring. It descends through the actual ground-balanced quotient. The new
-module dictionaries are named values; no global action is installed.
+Let `k` be a commutative ring, `R` and `S` semirings, and `Q` and `N` be `k`-modules with a
+right `R`-action on `Q` and a left `R`-action on `N`. Their balanced tensor quotient is
+obtained from `Q ⊗[k] N` by imposing `(op r • q) ⊗ n = q ⊗ (r • n)`.
+
+A right `S`-action on `N` that commutes with the `k`-action and the left `R`-action induces a
+right `S`-action on this quotient, with `t • [q ⊗ n] = [q ⊗ (t • n)]`. Factor maps preserving
+the balancing actions and this right action induce right-linear maps of quotients. A
+compatible algebra scalar tower on `N` descends to the quotient.
+
+Left and right outer actions on separate factors commute when each commutes with the ground
+and balancing actions on its own factor. Scalar, balancing, outer-action, and coefficient
+universes remain independent.
 -/
 
 @[expose] public section
@@ -39,7 +48,11 @@ variable (k : Type u) (R : Type v) (S : Type s) (Q : Type w) (N : Type z)
   [Module k Q] [Module k N] [Module Rᵐᵒᵖ Q] [Module R N]
   [Module Sᵐᵒᵖ N] [SMulCommClass Sᵐᵒᵖ k N] [SMulCommClass R Sᵐᵒᵖ N]
 
-/-- The native right operator preserves the original balancing action. -/
+/-- Right outer operator commutes with the balancing action.
+
+For `t : Sᵐᵒᵖ`, the `k`-linear endomorphism `n ↦ t • n` satisfies `t • (r • n) = r • (t • n)`
+for every `r : R` and `n : N`. This is the compatibility needed to descend it to the balanced
+quotient. -/
 theorem rightOperator_equivariant (t : Sᵐᵒᵖ) :
     ∀ (r : R) (n : N),
       (Module.toModuleEnd k N t) (r • n) =
@@ -48,7 +61,10 @@ theorem rightOperator_equivariant (t : Sᵐᵒᵖ) :
   rw [leftOperator_apply, leftOperator_apply]
   exact (smul_comm r t n).symm
 
-/-- Literal pure-generator value of the native right operator's balanced map. -/
+/-- Right outer operator on a pure balanced class.
+
+The quotient map induced by the identity on `Q` and the endomorphism `n ↦ t • n` on `N` sends
+`[q ⊗ n]` to `[q ⊗ (t • n)]`. -/
 theorem rightOperator_map_mk (t : Sᵐᵒᵖ) (q : Q) (n : N) :
     map (LinearMap.id : Q →ₗ[k] Q) (Module.toModuleEnd k N t)
         (fun r q => leftIdentity_equivariant k Rᵐᵒᵖ Q (op r) q)
@@ -59,7 +75,11 @@ theorem rightOperator_map_mk (t : Sᵐᵒᵖ) (q : Q) (n : N) :
     (rightOperator_equivariant k R S N t) q n
   exact h.trans (by rw [LinearMap.id_apply, leftOperator_apply])
 
-/-- The opposite-semiring action descends through the same actual quotient. -/
+/-- Right outer action as linear endomorphisms of the quotient.
+
+The right `S`-action on `N`, commuting with `k` and `R`, gives a semiring homomorphism `Sᵐᵒᵖ
+→+* Module.End k (Balanced k R Q N)`. Its value at `t` acts on the second factor of a balanced
+class. -/
 def rightAction : Sᵐᵒᵖ →+* Module.End k (Balanced k R Q N) where
   toFun t := map (LinearMap.id : Q →ₗ[k] Q) (Module.toModuleEnd k N t)
     (fun r q => leftIdentity_equivariant k Rᵐᵒᵖ Q (op r) q)
@@ -90,15 +110,25 @@ def rightAction : Sᵐᵒᵖ →+* Module.End k (Balanced k R Q N) where
       mk k R Q N q (t • n) + mk k R Q N q (t' • n)
     rw [add_smul, map_add]
 
+/-- Pure-class formula for the right outer action.
+
+For `t : Sᵐᵒᵖ`, applying `rightAction k R S Q N t` to `[q ⊗ n]` gives `[q ⊗ (t • n)]`. -/
 @[simp, nolint simpNF] -- stated with Balanced.mk for rw; Balanced.mk_apply simplifies LHS
 theorem rightAction_mk (t : Sᵐᵒᵖ) (q : Q) (n : N) :
     rightAction k R S Q N t (mk k R Q N q n) = mk k R Q N q (t • n) := by
   exact rightOperator_map_mk k R S Q N t q n
 
-/-- The computed right module retains the quotient's original ground module. -/
+/-- Right semimodule structure on the balanced quotient.
+
+The endomorphism-valued right action defines a `Module Sᵐᵒᵖ (Balanced k R Q N)` structure by
+composition with its semiring homomorphism. -/
 abbrev rightModule : Module Sᵐᵒᵖ (Balanced k R Q N) :=
   Module.compHom (Balanced k R Q N) (rightAction k R S Q N)
 
+/-- Right quotient scalar multiplication on pure classes.
+
+With the `Sᵐᵒᵖ`-module structure given by `rightModule`, the equality `t • [q ⊗ n] = [q ⊗ (t •
+n)]` holds for all pure balanced classes. -/
 theorem rightModule_smul_mk (t : Sᵐᵒᵖ) (q : Q) (n : N) :
     letI := rightModule k R S Q N
     t • mk k R Q N q n = mk k R Q N q (t • n) := by
@@ -106,7 +136,10 @@ theorem rightModule_smul_mk (t : Sᵐᵒᵖ) (q : Q) (n : N) :
   change rightAction k R S Q N t (mk k R Q N q n) = _
   exact rightAction_mk k R S Q N t q n
 
-/-- Every computed right scalar is linear for the original ground action. -/
+/-- Right quotient action commutes with ground scalars.
+
+The `Sᵐᵒᵖ`-action given by `rightModule` commutes with the `k`-action on `Balanced k R Q N`,
+because each right-action operator is `k`-linear. -/
 theorem rightSMulCommClass :
     letI := rightModule k R S Q N
     SMulCommClass Sᵐᵒᵖ k (Balanced k R Q N) := by
@@ -119,7 +152,11 @@ theorem rightSMulCommClass :
 variable [Algebra k S] [hSN : IsScalarTower k Sᵐᵒᵖ N]
 
 include hSN in
-/-- Ground scalars in the opposite algebra act through the original ground action. -/
+/-- Ground scalars in the opposite algebra act as ground multiplication.
+
+Assume `S` is a `k`-algebra and the actions on `N` form a scalar tower `k → Sᵐᵒᵖ → N`. Then
+the quotient operator for `algebraMap k Sᵐᵒᵖ c` is `c` times the identity `k`-linear
+endomorphism. -/
 theorem rightAction_algebraMap (c : k) :
     rightAction k R S Q N (algebraMap k Sᵐᵒᵖ c) =
       c • (1 : Module.End k (Balanced k R Q N)) := by
@@ -131,7 +168,10 @@ theorem rightAction_algebraMap (c : k) :
   exact (mk k R Q N q).map_smul c n
 
 include hSN in
-/-- The original second-factor compatibility earns the quotient scalar tower. -/
+/-- Second-factor scalar tower descends to the balanced quotient.
+
+Assume `S` is a `k`-algebra and `IsScalarTower k Sᵐᵒᵖ N`. The right quotient module structure
+then satisfies `IsScalarTower k Sᵐᵒᵖ (Balanced k R Q N)`. -/
 theorem rightScalarTower :
     letI := rightModule k R S Q N
     IsScalarTower k Sᵐᵒᵖ (Balanced k R Q N) := by
@@ -156,7 +196,11 @@ variable {k : Type u} {R : Type v} {S : Type s}
   [SMulCommClass Sᵐᵒᵖ k N] [SMulCommClass R Sᵐᵒᵖ N]
   [SMulCommClass Sᵐᵒᵖ k N'] [SMulCommClass R Sᵐᵒᵖ N']
 
-/-- The old ground-linear quotient map intertwines the two computed right actions. -/
+/-- Balanced factor map intertwines right outer operators.
+
+Let `f : Q →ₗ[k] Q'` preserve the right `R`-action and `g : N →ₗ[k] N'` preserve the left
+`R`-action and the right `S`-action. The induced balanced map composed after a source right
+operator equals the corresponding target right operator composed after the balanced map. -/
 theorem map_rightAction (f : Q →ₗ[k] Q') (g : N →ₗ[k] N')
     (hf : ∀ (r : R) (q : Q), f (op r • q) = op r • f q)
     (hg : ∀ (r : R) (n : N), g (r • n) = r • g n)
@@ -168,7 +212,11 @@ theorem map_rightAction (f : Q →ₗ[k] Q') (g : N →ₗ[k] N')
   simp only [LinearMap.comp_apply, rightAction_mk, map_mk]
   rw [hgS]
 
-/-- The same actual quotient map with its earned opposite-semiring linearity. -/
+/-- Right-linear balanced map induced by compatible factor maps.
+
+Ground-linear factor maps `f` and `g` preserving the balancing actions, with `g` also
+preserving the right `S`-action, induce an `Sᵐᵒᵖ`-linear map between the balanced quotients
+equipped with `rightModule`. -/
 def mapRight (f : Q →ₗ[k] Q') (g : N →ₗ[k] N')
     (hf : ∀ (r : R) (q : Q), f (op r • q) = op r • f q)
     (hg : ∀ (r : R) (n : N), g (r • n) = r • g n)
@@ -185,6 +233,10 @@ def mapRight (f : Q →ₗ[k] Q') (g : N →ₗ[k] N')
   exact congrArg (fun a : Balanced k R Q N →ₗ[k] Balanced k R Q' N' => a x)
     (map_rightAction f g hf hg hgS t)
 
+/-- Pure-class formula for a right-linear balanced map.
+
+The right-linear map induced by compatible factor maps `f` and `g` sends `[q ⊗ n]` to `[f q ⊗
+g n]`. -/
 @[simp, nolint simpNF] -- stated with Balanced.mk for rw; Balanced.mk_apply simplifies LHS
 theorem mapRight_mk (f : Q →ₗ[k] Q') (g : N →ₗ[k] N')
     (hf : ∀ (r : R) (q : Q), f (op r • q) = op r • f q)
@@ -212,8 +264,11 @@ variable (k : Type u) (R : Type v) (L : Type vL) (T : Type vT)
   [Module L M] [SMulCommClass L k M] [SMulCommClass L Rᵐᵒᵖ M]
   [Module Tᵐᵒᵖ N] [SMulCommClass Tᵐᵒᵖ k N] [SMulCommClass R Tᵐᵒᵖ N]
 
-/-- Computed actions on separate factors commute without a ground-linearity
-assumption on either balancing action. -/
+/-- Outer actions on separate balanced factors commute.
+
+Let a left `L`-action on `M` commute with its `k`-action and right `R`-action, and a right
+`T`-action on `N` commute with its `k`-action and left `R`-action. The induced left `L`-action
+and right `T`-action commute on `Balanced k R M N`. -/
 theorem leftRightSMulCommClass_of_factor_actions :
     letI := leftModule k R L M N
     letI := rightModule k R T M N

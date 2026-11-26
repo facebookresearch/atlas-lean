@@ -12,7 +12,7 @@ module
 public import MathlibExt.CategoryTheory.Abelian.Projective.Horseshoe
 public import MathlibExt.CategoryTheory.Abelian.Projective.ResolutionComparison
 
-/-!
+/- Proof implementation note.
 # Comparison maps between categorical horseshoe resolutions
 
 Compatible maps on a short exact sequence and on its endpoint projective
@@ -25,6 +25,17 @@ nevertheless have strict identity, composition, and transport
 operations, with the associated unit, associativity, and transport
 coherence laws stated after transport along the corresponding
 equalities of maps of short complexes.
+-/
+
+/-!
+# Comparison morphisms of projective horseshoes
+
+In an abelian category `C`, a map of short exact sequences and maps
+between the chosen endpoint projective resolutions extend to a strictly
+compatible comparison of horseshoe middle resolutions. In chosen
+endpoint biproduct coordinates, its diagonal entries are the endpoint
+maps, its `P₁ → P₃′` corner is zero, and its `P₃ → P₁′` corner
+is the remaining comparison component.
 -/
 
 @[expose] public section
@@ -52,24 +63,48 @@ variable (w : ProjectiveResolution.Hom P₃ P₃' φ.τ₃)
 
 namespace HorseshoeData
 
-/-- A strict comparison of horseshoe resolutions over a map of short exact
-sequences and specified endpoint-resolution maps. -/
+/-- In an abelian category `C`, take short exact sequences `S,S′`,
+projective endpoint resolutions `P₁,P₃` and `P₁′,P₃′`, and
+horseshoe resolutions `H,H′`. A strict comparison over
+`φ : S → S′` and endpoint resolution maps `u,w` consists of
+a middle chain map commuting with both endpoint maps and the
+middle augmentations. -/
 structure Hom where
-  /-- The middle chain map. -/
+  /-- In an abelian category `C`, take short exact sequences `S,S′`,
+projective endpoint resolutions `P₁,P₃` and `P₁′,P₃′`, and
+horseshoe resolutions `H,H′`. The middle component
+is a chain map `H.middle.complex → H′.middle.complex`, extending
+the prescribed endpoint comparisons over `φ`. -/
   hom : H.middle.complex ⟶ H'.middle.complex
-  /-- Strict compatibility with the left endpoint maps. -/
+  /-- In an abelian category `C`, take short exact sequences `S,S′`,
+projective endpoint resolutions `P₁,P₃` and `P₁′,P₃′`, and
+horseshoe resolutions `H,H′`. For a comparison `F`
+over `φ` with left endpoint map `u`, strict compatibility means
+`H.i ≫ F.hom = u.hom ≫ H′.i`. -/
   comm_i : H.i ≫ hom = u.hom ≫ H'.i
-  /-- Strict compatibility with the right endpoint maps. -/
+  /-- In an abelian category `C`, take short exact sequences `S,S′`,
+projective endpoint resolutions `P₁,P₃` and `P₁′,P₃′`, and
+horseshoe resolutions `H,H′`. For a comparison `F`
+over `φ` with right endpoint map `w`, strict compatibility means
+`F.hom ≫ H′.p = H.p ≫ w.hom`. -/
   comm_p : hom ≫ H'.p = H.p ≫ w.hom
-  /-- Strict compatibility with the middle augmentations. -/
+  /-- In an abelian category `C`, take short exact sequences `S,S′`,
+projective endpoint resolutions `P₁,P₃` and `P₁′,P₃′`, and
+horseshoe resolutions `H,H′`. The middle comparison
+over `φ` respects augmentations: its composite with the target
+augmentation equals the source augmentation followed by the
+degree-zero map induced by `φ₂`. -/
   augmentation :
     hom ≫ H'.middle.π =
       H.middle.π ≫ (ChainComplex.single₀ C).map φ.τ₂
 
 namespace Hom
 
-/-- A horseshoe comparison is an augmentation-compatible morphism between
-the middle projective resolutions. -/
+/-- In an abelian category `C`, take short exact sequences `S,S′`,
+projective endpoint resolutions `P₁,P₃` and `P₁′,P₃′`, and
+horseshoe resolutions `H,H′`. A strict horseshoe
+comparison over `φ` defines a projective-resolution morphism
+between the middle objects, over `φ₂ : S.X₂ → S′.X₂`. -/
 def toProjectiveResolutionHom (F : HorseshoeData.Hom
     (H := H) (H' := H') (φ := φ) (u := u) (w := w)) :
     ProjectiveResolution.Hom H.middle H'.middle φ.τ₂ where
@@ -84,9 +119,11 @@ theorem toProjectiveResolutionHom_hom (F : HorseshoeData.Hom
     F.toProjectiveResolutionHom.hom = F.hom :=
   rfl
 
-/-- Two strict horseshoe comparisons over the same endpoint data are
-equal once their middle chain maps are equal; the remaining fields
-are proofs. -/
+/-- In an abelian category `C`, take short exact sequences `S,S′`,
+projective endpoint resolutions `P₁,P₃` and `P₁′,P₃′`, and
+horseshoe resolutions `H,H′`. Two comparisons over
+the same sequence map and endpoint maps are equal if their
+middle chain maps are equal. -/
 @[ext]
 theorem ext {F G : HorseshoeData.Hom
     (H := H) (H' := H') (φ := φ) (u := u) (w := w)}
@@ -96,8 +133,9 @@ theorem ext {F G : HorseshoeData.Hom
   cases h
   rfl
 
-/-- The identity horseshoe comparison, over the identity map of short
-complexes and the identity morphisms of the endpoint resolutions. -/
+/-- For horseshoe data `H` over a short exact sequence `S` in an
+abelian category `C`, the identity of its middle resolution gives
+a strict comparison over `𝟙 S` and the identity endpoint resolution maps. -/
 def id {S : ShortComplex C} {hS : S.ShortExact}
     {P₁ : ProjectiveResolution S.X₁} {P₃ : ProjectiveResolution S.X₃}
     (H : HorseshoeData hS P₁ P₃) :
@@ -116,9 +154,9 @@ theorem id_hom {S : ShortComplex C} {hS : S.ShortExact}
     (Hom.id H).hom = 𝟙 H.middle.complex :=
   rfl
 
-/-- The composition of two horseshoe comparisons, over the composition
-of the maps of short complexes and the compositions of the endpoint
-resolution morphisms. -/
+/-- In an abelian category `C`, strict comparisons between three
+horseshoes compose by composing their middle chain maps,
+sequence maps, and supplied endpoint projective-resolution maps. -/
 def comp {S S' S'' : ShortComplex C} {hS : S.ShortExact}
     {hS' : S'.ShortExact} {hS'' : S''.ShortExact}
     {P₁ : ProjectiveResolution S.X₁} {P₃ : ProjectiveResolution S.X₃}
@@ -167,12 +205,11 @@ theorem comp_hom {S S' S'' : ShortComplex C} {hS : S.ShortExact}
     (F.comp G).hom = F.hom ≫ G.hom :=
   rfl
 
-/-- Transport a horseshoe comparison along an equality of the underlying
-maps of short complexes, where the endpoint resolution morphisms are
-transported correspondingly by `ProjectiveResolution.Hom.cast`.  The
-middle chain map is unchanged.  The endpoint transports are stated as
-equalities, as the target endpoint morphisms are often themselves given
-as casts along component equalities. -/
+/-- In an abelian category `C`, take short exact sequences `S,S′`,
+projective endpoint resolutions `P₁,P₃` and `P₁′,P₃′`, and
+horseshoe resolutions `H,H′`. Identifying equal
+sequence maps `φ=φ′` and the corresponding endpoint resolution
+maps transports a horseshoe comparison without changing its middle chain map. -/
 def cast {S S' : ShortComplex C} {hS : S.ShortExact}
     {hS' : S'.ShortExact}
     {P₁ : ProjectiveResolution S.X₁} {P₃ : ProjectiveResolution S.X₃}
@@ -219,8 +256,9 @@ theorem cast_hom {S S' : ShortComplex C} {hS : S.ShortExact}
     (F.cast hφ hu hw).hom = F.hom :=
   rfl
 
-/-- The identity horseshoe comparison is the identity morphism of the
-middle resolution. -/
+/-- For horseshoe data in an abelian category `C`, the middle
+projective-resolution morphism induced by the identity horseshoe
+comparison is the identity of the middle resolution. -/
 @[simp]
 theorem toProjectiveResolutionHom_id {S : ShortComplex C}
     {hS : S.ShortExact}
@@ -230,8 +268,9 @@ theorem toProjectiveResolutionHom_id {S : ShortComplex C}
       ProjectiveResolution.Hom.id H.middle :=
   ProjectiveResolution.Hom.ext rfl
 
-/-- The middle resolution morphism of a composite horseshoe comparison
-is the composite of the middle resolution morphisms. -/
+/-- For composable horseshoe comparisons in an abelian category `C`,
+the projective-resolution morphism induced on the middle objects
+is the composite of the two induced middle resolution morphisms. -/
 @[simp]
 theorem toProjectiveResolutionHom_comp {S S' S'' : ShortComplex C}
     {hS : S.ShortExact} {hS' : S'.ShortExact} {hS'' : S''.ShortExact}
@@ -252,9 +291,11 @@ theorem toProjectiveResolutionHom_comp {S S' S'' : ShortComplex C}
       F.toProjectiveResolutionHom.comp G.toProjectiveResolutionHom :=
   ProjectiveResolution.Hom.ext rfl
 
-/-- Transporting a horseshoe comparison transports its middle resolution
-morphism by the corresponding transport along the middle component
-equality. -/
+/-- In an abelian category `C`, take short exact sequences `S,S′`,
+projective endpoint resolutions `P₁,P₃` and `P₁′,P₃′`, and
+horseshoe resolutions `H,H′`. Transport of the
+sequence and endpoint maps transports the induced middle
+projective-resolution morphism along the equality of the middle sequence component. -/
 @[simp]
 theorem toProjectiveResolutionHom_cast {S S' : ShortComplex C}
     {hS : S.ShortExact} {hS' : S'.ShortExact}
@@ -288,9 +329,11 @@ theorem cast_rfl {S S' : ShortComplex C} {hS : S.ShortExact}
     F.cast rfl rfl rfl = F :=
   HorseshoeData.Hom.ext (h := by simp only [cast_hom])
 
-/-- Successive transports of a horseshoe comparison compose: transporting
-twice is transporting along the composite equality, for every choice of
-the endpoint transport equalities. -/
+/-- In an abelian category `C`, take short exact sequences `S,S′`,
+projective endpoint resolutions `P₁,P₃` and `P₁′,P₃′`, and
+horseshoe resolutions `H,H′`. Two successive
+identifications of the sequence map and endpoint maps give the
+same transported comparison as their composite identifications. -/
 theorem cast_cast {S S' : ShortComplex C} {hS : S.ShortExact}
     {hS' : S'.ShortExact}
     {P₁ : ProjectiveResolution S.X₁} {P₃ : ProjectiveResolution S.X₃}
@@ -316,10 +359,11 @@ theorem cast_cast {S S' : ShortComplex C} {hS : S.ShortExact}
     (F.cast h hu hw).cast h' hu' hw' = F.cast (h.trans h') hu'' hw'' :=
   HorseshoeData.Hom.ext (h := by simp only [cast_hom])
 
-/-- Left unit law for horseshoe comparisons: composing the identity
-comparison with a comparison, transported along `Category.id_comp` of
-the underlying maps of short complexes, is the comparison itself, for
-every choice of the endpoint transport equalities. -/
+/-- In an abelian category `C`, take short exact sequences `S,S′`,
+projective endpoint resolutions `P₁,P₃` and `P₁′,P₃′`, and
+horseshoe resolutions `H,H′`. Composing the source
+identity comparison with a comparison `F` gives `F` after the
+canonical identifications of the resolved sequence and endpoint maps. -/
 theorem id_comp {S S' : ShortComplex C} {hS : S.ShortExact}
     {hS' : S'.ShortExact}
     {P₁ : ProjectiveResolution S.X₁} {P₃ : ProjectiveResolution S.X₃}
@@ -336,10 +380,11 @@ theorem id_comp {S S' : ShortComplex C} {hS : S.ShortExact}
     ((Hom.id H).comp F).cast (Category.id_comp φ) hu hw = F :=
   HorseshoeData.Hom.ext (h := Category.id_comp F.hom)
 
-/-- Right unit law for horseshoe comparisons: composing a comparison
-with the identity comparison, transported along `Category.comp_id` of
-the underlying maps of short complexes, is the comparison itself, for
-every choice of the endpoint transport equalities. -/
+/-- In an abelian category `C`, take short exact sequences `S,S′`,
+projective endpoint resolutions `P₁,P₃` and `P₁′,P₃′`, and
+horseshoe resolutions `H,H′`. Composing a comparison
+`F` with the target identity comparison gives `F` after the
+canonical identifications of the resolved sequence and endpoint maps. -/
 theorem comp_id {S S' : ShortComplex C} {hS : S.ShortExact}
     {hS' : S'.ShortExact}
     {P₁ : ProjectiveResolution S.X₁} {P₃ : ProjectiveResolution S.X₃}
@@ -356,9 +401,15 @@ theorem comp_id {S S' : ShortComplex C} {hS : S.ShortExact}
     (F.comp (Hom.id H')).cast (Category.comp_id φ) hu hw = F :=
   HorseshoeData.Hom.ext (h := Category.comp_id F.hom)
 
-/-- Associativity for horseshoe comparisons, transported along
+/- Proof implementation note.
+Associativity for horseshoe comparisons, transported along
 `Category.assoc` of the underlying maps of short complexes, for every
-choice of the endpoint transport equalities. -/
+choice of the endpoint transport equalities.
+-/
+
+/-- In an abelian category `C`, composition of three strict horseshoe
+comparisons is associative after the canonical identification of
+the sequence-map composites and supplied endpoint-resolution composites. -/
 theorem assoc {S S' S'' S''' : ShortComplex C} {hS : S.ShortExact}
     {hS' : S'.ShortExact} {hS'' : S''.ShortExact}
     {hS''' : S'''.ShortExact}
@@ -391,14 +442,26 @@ theorem assoc {S S' S'' S''' : ShortComplex C} {hS : S.ShortExact}
       F.comp (G.comp K) :=
   HorseshoeData.Hom.ext (h := Category.assoc F.hom G.hom K.hom)
 
-/-- Coordinate specification for a horseshoe comparison, lower triangular
+/- Proof implementation note.
+Coordinate specification for a horseshoe comparison, lower triangular
 in Mathlib's `Biprod.ofComponents` convention: the `P₁`-to-`P₃'` component
-vanishes and the `P₃`-to-`P₁'` cross component is free. -/
+vanishes and the `P₃`-to-`P₁'` cross component is free.
+-/
+
+/-- In an abelian category `C`, take short exact sequences `S,S′`,
+projective endpoint resolutions `P₁,P₃` and `P₁′,P₃′`, and
+horseshoe resolutions `H,H′`. For chosen degreewise
+biproduct specifications `sH,sH′`, a comparison coordinate
+specification has diagonal entries `u_n,w_n`, zero corner
+`P₁^n → P₃′^n`, and free corner `P₃^n → P₁′^n`. -/
 structure Spec (F : HorseshoeData.Hom
     (H := H) (H' := H') (φ := φ) (u := u) (w := w)) where
-  /-- In the chosen horseshoe coordinates the middle comparison has the
-  endpoint maps on its diagonal, vanishing `P₁`-to-`P₃'` component and free
-  `P₃`-to-`P₁'` cross component. -/
+  /-- In an abelian category `C`, take short exact sequences `S,S′`,
+projective endpoint resolutions `P₁,P₃` and `P₁′,P₃′`, and
+horseshoe resolutions `H,H′`. In the specified
+biproduct coordinates, the degree-`n` middle comparison has
+diagonal maps `u_n,w_n`, vanishing `P₁^n → P₃′^n` component,
+and the remaining `P₃^n → P₁′^n` component. -/
   middle_f (n : ℕ) :
     (sH.middleXIso n).inv ≫ F.hom.f n ≫ (sH'.middleXIso n).hom =
       Biprod.ofComponents (u.hom.f n) 0
@@ -407,9 +470,11 @@ structure Spec (F : HorseshoeData.Hom
             (sH'.middleXIso n).hom) ≫ biprod.fst)
         (w.hom.f n)
 
-/-- The coordinate specification of a horseshoe comparison is a
-property: any two specifications of the same comparison, in the same
-endpoint coordinates, are equal. -/
+/-- In an abelian category `C`, take short exact sequences `S,S′`,
+projective endpoint resolutions `P₁,P₃` and `P₁′,P₃′`, and
+horseshoe resolutions `H,H′`. For fixed middle
+comparison `F` and fixed endpoint coordinates, any two coordinate
+specifications of `F` are equal. -/
 @[ext]
 theorem Spec.ext {F : HorseshoeData.Hom
     (H := H) (H' := H') (φ := φ) (u := u) (w := w)}
@@ -450,10 +515,19 @@ private theorem coordinate_column
     _ = (sH.middleXIso n).inv ≫ H.p.f n ≫ w.hom.f n := by rw [hp]
     _ = _ := by rw [← Category.assoc, sH.p_f]
 
-/-- Every strict horseshoe comparison has the lower-triangular coordinate
+/- Proof implementation note.
+Every strict horseshoe comparison has the lower-triangular coordinate
 formula (in Mathlib's `Biprod.ofComponents` convention: vanishing
 `P₁`-to-`P₃'` component, free `P₃`-to-`P₁'` cross component) forced by its
-endpoint squares. -/
+endpoint squares.
+-/
+
+/-- In an abelian category `C`, take short exact sequences `S,S′`,
+projective endpoint resolutions `P₁,P₃` and `P₁′,P₃′`, and
+horseshoe resolutions `H,H′`. Every strict
+comparison with supplied endpoint maps satisfies the coordinate
+formula with diagonal `u_n,w_n`, zero `P₁^n → P₃′^n` corner,
+and the remaining `P₃^n → P₁′^n` corner. -/
 theorem spec
     (F : HorseshoeData.Hom
       (H := H) (H' := H') (φ := φ) (u := u) (w := w)) :
@@ -1426,9 +1500,12 @@ private theorem horseshoeComparisonHom_spec :
   unfold horseshoeComparisonMiddleMatrix
   simp
 
-/-- A horseshoe comparison with the specified endpoint maps and its
-lower-triangular coordinate formula (vanishing `P₁`-to-`P₃'` component,
-free `P₃`-to-`P₁'` cross component) exists. -/
+/-- In an abelian category `C`, take short exact sequences `S,S′`,
+projective endpoint resolutions `P₁,P₃` and `P₁′,P₃′`, and
+horseshoe resolutions `H,H′`. Given a sequence
+map `φ`, endpoint maps `u,w`, and coordinate specifications
+for `H,H′`, there exists a strict comparison with these endpoint
+maps and the stated coordinate formula. -/
 theorem HorseshoeData.nonempty_hom_spec :
     Nonempty { F : HorseshoeData.Hom
       (H := H) (H' := H') (φ := φ) (u := u) (w := w) //
@@ -1439,7 +1516,11 @@ theorem HorseshoeData.nonempty_hom_spec :
       hS hS' P₁ P₃ P₁' P₃' H H' sH sH' φ u w⟩⟩
 
 include sH sH' in
-/-- A horseshoe comparison with the specified endpoint resolution maps exists. -/
+/-- In an abelian category `C`, take short exact sequences `S,S′`,
+projective endpoint resolutions `P₁,P₃` and `P₁′,P₃′`, and
+horseshoe resolutions `H,H′`. Every map of the
+short exact sequences and supplied endpoint projective-resolution
+maps admit a strict comparison of `H` with `H′`. -/
 theorem HorseshoeData.nonempty_hom :
     Nonempty (HorseshoeData.Hom
       (H := H) (H' := H') (φ := φ) (u := u) (w := w)) :=

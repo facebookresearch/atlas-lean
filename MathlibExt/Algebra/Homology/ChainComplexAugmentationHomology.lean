@@ -14,14 +14,16 @@ public import Mathlib.CategoryTheory.Limits.Preserves.Shapes.Kernels
 public import Mathlib.Algebra.Homology.ShortComplex.HomologicalComplex
 
 /-!
-# Homology of a mapped augmented complex in degrees zero and one
+# Mapped augmentation homology in degrees zero and one
 
-An additive functor preserving the augmentation cokernel identifies degree-zero homology of the
-mapped complex with the image of the augmented object. If it preserves the next cokernel,
-degree-one homology identifies with the kernel of the image of the augmentation-kernel inclusion.
-
-The preservation assumptions concern individual cokernels; preservation of finite colimits
-suffices. These are structural homology identifications for the complex and its augmentation maps.
+Let `C,D` be abelian, `F : C → D` additive, and `π : Q → M[0]`
+a chain augmentation. If `π` is a quasi-isomorphism in degree zero
+and `F` preserves the cokernel of `Q₁ → Q₀`, then `H₀(F(Q)) ≅ F(M)`.
+If `π` is a quasi-isomorphism in degrees zero and one and `F`
+preserves the cokernel of `Q₂ → Q₁`, then
+`H₁(F(Q)) ≅ ker(F(ker(π₀) → Q₀))`. Each preservation condition
+concerns the displayed individual cokernel. Augmentation squares
+induce the corresponding kernel maps.
 -/
 
 @[expose] public section
@@ -36,10 +38,11 @@ variable {C : Type u₁} [Category.{v₁} C] [Abelian C]
 variable {D : Type u₂} [Category.{v₂} D] [Abelian D]
 variable {Q : ChainComplex C ℕ} {M : C}
 
-/--
-Degree-zero homology after applying a functor that preserves the augmentation cokernel. A
-quasi-isomorphism in degree zero suffices.
--/
+/-- Let `C,D` be abelian, `F : C → D` additive, and
+`π : Q → M[0]` a nonnegative chain augmentation that is a
+quasi-isomorphism in degree zero. Suppose `F` preserves the
+cokernel of `d_Q : Q₁ → Q₀`. The preserved augmentation gives the canonical isomorphism
+`H₀(F(Q)) ≅ F(M)`. -/
 noncomputable def homologyZeroIsoOfPreservedAugmentation
     (F : C ⥤ D) [F.Additive] (π : Q ⟶ (single₀ C).obj M) [QuasiIsoAt π 0]
     [PreservesColimit (parallelPair (Q.d 1 0) 0) F] :
@@ -54,10 +57,12 @@ noncomputable def homologyZeroIsoOfPreservedAugmentation
     ((K.sc' 1 0 0).isoOpcyclesOfIsColimit
       (CokernelCofork.mapIsColimit c hc F)).symm
 
-/--
-The degree-zero identification carries the quotient projection to the image of the given
-augmentation map.
--/
+/-- Let `C,D` be abelian, `F : C → D` additive, and
+`π : Q → M[0]` a nonnegative chain augmentation that is a
+quasi-isomorphism in degree zero. Suppose `F` preserves the
+cokernel of `d_Q : Q₁ → Q₀`. The quotient `F(Q₀) → opcycles₀(F(Q))`, followed by its
+identification with `H₀(F(Q))` and the augmentation isomorphism,
+is the mapped augmentation `F(π₀)`. -/
 @[reassoc]
 lemma pOpcycles_homologyZeroIsoOfPreservedAugmentation_hom
     (F : C ⥤ D) [F.Additive] (π : Q ⟶ (single₀ C).obj M) [QuasiIsoAt π 0]
@@ -84,7 +89,10 @@ lemma pOpcycles_homologyZeroIsoOfPreservedAugmentation_hom
 
 variable {R : ChainComplex C ℕ} {N : C}
 
-/-- The augmentation-kernel map induced by the degree-zero square. -/
+/-- In an abelian category `C`, let `π : Q → M[0]`, `ρ : R → N[0]`
+be nonnegative chain augmentations and `a : Q → R`, `f : M → N`
+satisfy `a₀ ≫ ρ₀ = π₀ ≫ f`. The degree-zero square induces a map
+`ker(π₀) → ker(ρ₀)`. -/
 noncomputable def augmentationKernelMap
     (π : Q ⟶ (single₀ C).obj M) (ρ : R ⟶ (single₀ C).obj N)
     (a : Q ⟶ R) (f : M ⟶ N)
@@ -92,7 +100,10 @@ noncomputable def augmentationKernelMap
     kernel (π.f 0) ⟶ kernel (ρ.f 0) :=
   kernel.map (π.f 0) (ρ.f 0) (a.f 0) f h₀.symm
 
-/-- The kernel map commutes with the two kernel inclusions. -/
+/-- In an abelian category `C`, let `π : Q → M[0]`, `ρ : R → N[0]`
+be nonnegative chain augmentations and `a : Q → R`, `f : M → N`
+satisfy `a₀ ≫ ρ₀ = π₀ ≫ f`. The induced kernel map followed by `ker(ρ₀) → R₀`
+equals `ker(π₀) → Q₀` followed by `a₀`. -/
 @[reassoc]
 lemma augmentationKernelMap_ι
     (π : Q ⟶ (single₀ C).obj M) (ρ : R ⟶ (single₀ C).obj N)
@@ -102,7 +113,11 @@ lemma augmentationKernelMap_ι
       kernel.ι (π.f 0) ≫ a.f 0 :=
   kernel.lift_ι _ _ _
 
-/-- The first differential lifts naturally to the augmentation kernels. -/
+/-- In an abelian category `C`, let `π : Q → M[0]`, `ρ : R → N[0]`
+be nonnegative chain augmentations and `a : Q → R`, `f : M → N`
+satisfy `a₀ ≫ ρ₀ = π₀ ≫ f`. Lifting the first differential `Q₁ → Q₀` through
+`ker(π₀)` and then mapping kernels equals `a₁` followed by the
+kernel lift of `R₁ → R₀`. -/
 lemma kernelLift_augmentationKernelMap
     (π : Q ⟶ (single₀ C).obj M) (ρ : R ⟶ (single₀ C).obj N)
     (a : Q ⟶ R) (f : M ⟶ N)
@@ -117,10 +132,13 @@ lemma kernelLift_augmentationKernelMap
     Category.assoc, kernel.lift_ι]
   exact (a.comm 1 0).symm
 
-/--
-The preserved augmentation cokernel and its mapped kernel describe the degree-one right homology
-of the original complex.
--/
+/-- Let `C,D` be abelian, `F : C → D` additive, and
+`π : Q → M[0]` a nonnegative chain augmentation that is a
+quasi-isomorphism in degrees zero and one. Suppose `F` preserves
+the cokernel of `d_Q : Q₂ → Q₁`. Put `K=ker(π₀)` and write
+`κ : K → Q₀` for its inclusion. Right-homology data for `F(Q₂) → F(Q₁) → F(Q₀)` identifies
+the quotient of `F(Q₁)` by incoming boundaries with `F(K)`, with
+outgoing map `F(κ)`. -/
 noncomputable def augmentationRightHomologyData
     (F : C ⥤ D) [F.Additive] (π : Q ⟶ (single₀ C).obj M)
     [QuasiIsoAt π 0] [QuasiIsoAt π 1]
@@ -159,8 +177,12 @@ noncomputable def augmentationRightHomologyData
         ⟨kernel.lift (F.map k) g (by simpa only [← hd] using hg),
           kernel.lift_ι _ _ _⟩) }
 
-/-- The induced outgoing arrow of the chosen right homology data is the image
-of the original augmentation-kernel inclusion. -/
+/-- Let `C,D` be abelian, `F : C → D` additive, and
+`π : Q → M[0]` a nonnegative chain augmentation that is a
+quasi-isomorphism in degrees zero and one. Suppose `F` preserves
+the cokernel of `d_Q : Q₂ → Q₁`. Put `K=ker(π₀)` and write
+`κ : K → Q₀` for its inclusion. The outgoing map from the quotient object `F(K)` in the
+augmentation right-homology presentation is precisely `F(κ)`. -/
 lemma augmentationRightHomologyData_g'
     (F : C ⥤ D) [F.Additive] (π : Q ⟶ (single₀ C).obj M)
     [QuasiIsoAt π 0] [QuasiIsoAt π 1]
@@ -173,8 +195,12 @@ lemma augmentationRightHomologyData_g'
   rw [← F.map_comp, kernel.lift_ι]
 
 
-/-- Degree-one homology is the kernel of the image of the augmentation-kernel
-inclusion if the functor preserves the cokernel of the next differential. -/
+/-- Let `C,D` be abelian, `F : C → D` additive, and
+`π : Q → M[0]` a nonnegative chain augmentation that is a
+quasi-isomorphism in degrees zero and one. Suppose `F` preserves
+the cokernel of `d_Q : Q₂ → Q₁`. Put `K=ker(π₀)` and write
+`κ : K → Q₀` for its inclusion. The quotient and its outgoing map give the canonical
+isomorphism `H₁(F(Q)) ≅ ker(F(κ))`. -/
 noncomputable def homologyOneIsoOfPreservedKernelTail
     (F : C ⥤ D) [F.Additive] (π : Q ⟶ (single₀ C).obj M)
     [QuasiIsoAt π 0] [QuasiIsoAt π 1]
@@ -184,7 +210,13 @@ noncomputable def homologyOneIsoOfPreservedKernelTail
   ((F.mapHomologicalComplex (ComplexShape.down ℕ)).obj Q).homologyIsoSc'
     2 1 0 (by simp) (by simp) ≪≫ (augmentationRightHomologyData F π).homologyIso
 
-/-- The degree-one comparison is constructed from the canonical augmentation homology data. -/
+/-- Let `C,D` be abelian, `F : C → D` additive, and
+`π : Q → M[0]` a nonnegative chain augmentation that is a
+quasi-isomorphism in degrees zero and one. Suppose `F` preserves
+the cokernel of `d_Q : Q₂ → Q₁`. Put `K=ker(π₀)` and write
+`κ : K → Q₀` for its inclusion. The degree-one kernel isomorphism is the identification
+with homology of the short complex in degrees `2 → 1 → 0`,
+followed by its augmentation right-homology isomorphism. -/
 lemma homologyOneIsoOfPreservedKernelTail_eq
     (F : C ⥤ D) [F.Additive] (π : Q ⟶ (single₀ C).obj M)
     [QuasiIsoAt π 0] [QuasiIsoAt π 1]

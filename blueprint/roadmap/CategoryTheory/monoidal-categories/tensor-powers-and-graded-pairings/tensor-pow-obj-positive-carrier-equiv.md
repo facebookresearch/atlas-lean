@@ -1,4 +1,6 @@
-# Tensor Pow Obj Positive Carrier Equiv
+# Carrier of representation powers and positive module tensor powers
 
-The carrier of the representation-theoretic `(n + 1)`-fold tensor
-power is the corresponding positive left-associated module tensor power.
+For a commutative ring k and a G-representation A, the carrier
+of L_n(A)=T_(n+1)(A) is k-linearly equivalent to the positive module
+power P₀(A)=k⊗A, P_(n+1)(A)=P_n(A)⊗A.
+The equivalence keeps the left-associated factors.

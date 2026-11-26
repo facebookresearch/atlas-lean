@@ -1,3 +1,5 @@
-# Horizontal Stable Page Abutment Iso At Index
+# The first stable page is the fixed finite abutment term
 
-Stabilization isomorphism on the first page satisfying both bounds.
+For a nonnegative homological bicomplex K in an abelian
+category and p,q∈ℕ, the page r₀=max(p+1,q+2) satisfies
+E^(r₀)_(p,q) ≅ A_(p,q), the fixed finite four-stage abutment term.

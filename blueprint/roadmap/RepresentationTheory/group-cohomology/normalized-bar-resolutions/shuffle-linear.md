@@ -1,8 +1,10 @@
-# Shuffle Linear
+# Integral shuffle operator on full group-bar tuple modules
 
-6.5.11: the shuffle product as a `ℤ`-linear map out of the module
-tensor product: on basis tensors
-`single a (single ha ca) ⊗ single b (single hb cb)` it is
-`ca · cb · ∑_{σ shuffle} (sign σ) • single (shuffle-tuple) (single (ha·hb) 1)`,
-extended bilinearly (quadruple `Finsupp.lsum`); the shuffle tuple is
-`Fin.addCases a b ∘ σ⁻¹`.
+Let G be a group in universe v and p,q∈ℕ.
+Let B_n=(G^n→₀ℤ[G]) and Q_n=(N_n→₀ℤ[G]), with N_n the
+nonidentity tuples. For a permutation σ of p+q positions,
+I_σ(a,b) is concatenation evaluated at σ⁻¹.
+The ℤ-linear shuffle B_p⊗[ℤ]B_q→B_(p+q) takes a pair of
+basis symbols with ordered group-ring coefficients u,v to
+∑_(σ∈Sh(p,q)) sgn(σ) [I_σ(a,b)]_(uv).
+The map is on underlying modules.

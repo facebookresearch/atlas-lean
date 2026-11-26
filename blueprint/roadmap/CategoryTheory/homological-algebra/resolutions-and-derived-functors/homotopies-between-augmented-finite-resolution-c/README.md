@@ -1,23 +1,23 @@
 # Homotopies between augmented finite-resolution comparisons
 
-- [Comparison Homotopy Of Projective Terms](comparison-homotopy-of-projective-terms.md)
-- [Comparison Homotopy](comparison-homotopy.md)
-- [Comparison Homotopy Id](comparison-homotopy-id.md)
-- [Comparison Homotopy Comp](comparison-homotopy-comp.md)
-- [Comparison Hom quotient id](comparison-hom-quotient-id.md)
-- [Comparison Hom quotient comp](comparison-hom-quotient-comp.md)
+- [Homotopy uniqueness from termwise projectivity of finite-resolution images](comparison-homotopy-of-projective-terms.md)
+- [Homotopy uniqueness of augmented finite-resolution comparisons](comparison-homotopy.md)
+- [The chosen finite-resolution identity comparison is homotopic to identity](comparison-homotopy-id.md)
+- [The chosen finite-resolution comparisons compose up to homotopy](comparison-homotopy-comp.md)
+- [Identity of chosen finite-resolution comparisons in the homotopy category](comparison-hom-quotient-id.md)
+- [Composition of chosen finite-resolution comparisons in the homotopy category](comparison-hom-quotient-comp.md)
 
 ## Source Change
 
-- [Map Source Homotopy](map-source-homotopy.md)
-- [Map Source Homotopy hom](map-source-homotopy-hom.md)
-- [Map Source projective term](map-source-projective-term.md)
-- [Source Comparison Homotopy](source-comparison-homotopy.md)
-- [Comparison Homotopy Source Change](comparison-homotopy-source-change.md)
+- [Source transport of a finite-resolution comparison homotopy](map-source-homotopy.md)
+- [Components of a source-transported comparison homotopy](map-source-homotopy-hom.md)
+- [Projectivity of a source-changed finite-resolution image term](map-source-projective-term.md)
+- [Comparison homotopy after changing the resolving source category](source-comparison-homotopy.md)
+- [Naturality up to homotopy of chosen comparisons under source change](comparison-homotopy-source-change.md)
 
 ## Target Change
 
-- [Map Target Homotopy](map-target-homotopy.md)
-- [Map Target Homotopy hom](map-target-homotopy-hom.md)
-- [Target Comparison Homotopy](target-comparison-homotopy.md)
-- [Comparison Homotopy Target Change](comparison-homotopy-target-change.md)
+- [Target transport of a finite-resolution comparison homotopy](map-target-homotopy.md)
+- [Components are unchanged by target transport of a comparison homotopy](map-target-homotopy-hom.md)
+- [Comparison homotopy after changing the target abelian category](target-comparison-homotopy.md)
+- [Naturality up to homotopy of chosen comparisons under target change](comparison-homotopy-target-change.md)

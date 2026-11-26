@@ -2,10 +2,10 @@
 
 ## Cochain Chain Graded Pairing
 
-- [Pair Homology π apply](pair-homology-apply.md)
-- [Pair Homology associativity](pair-homology-associativity.md)
-- [Pair Homology associativity of pair](pair-homology-associativity-of-pair.md)
+- [Mixed homology pairings evaluate cycle representatives through their cycle pairing](pair-homology-apply.md)
+- [A compatible mixed cup–cap cycle identity descends to homology](pair-homology-associativity.md)
+- [A termwise mixed cup–cap identity descends through input and output cycle comparisons](pair-homology-associativity-of-pair.md)
 
 ## Homological Complex
 
-- [Linear Hom Cochain Chain Pair associativity of diagrams](linear-hom-cochain-chain-pair-associativ.md)
+- [A four-diagonal descriptor identity gives linear Hom mixed cup–cap associativity](linear-hom-cochain-chain-pair-associativ.md)

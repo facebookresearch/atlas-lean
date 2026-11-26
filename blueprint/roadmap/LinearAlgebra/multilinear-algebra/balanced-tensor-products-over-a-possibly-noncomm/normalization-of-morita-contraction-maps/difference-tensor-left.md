@@ -1,3 +1,12 @@
-# Difference Tensor left
+# Left action preserved by the tensor discrepancy
 
-It preserves the original left R action through the earned R-linearity of the difference.
+Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with additive commutative group structures and commuting left/right actions.
+All scalar and carrier universes are independent.
+Let u : P ⊗_S Q ≅ R and w : Q ⊗_R P ≅ S be bimodule equivalences.
+The maps λ, ρ : P ⊗_S (Q ⊗_R P) ≅ P have values
+λ([p ⊗ (q ⊗ p′)]) = u([p ⊗ q]) p′ and
+ρ([p ⊗ (q ⊗ p′)]) = p w([q ⊗ p′]); put D = ρ ∘ λ⁻¹.
+The automorphism D ⊗ id_Q of P ⊗_S Q commutes with the left
+R-action induced from P:
+(D ⊗ id_Q)(r x) = r (D ⊗ id_Q)(x).

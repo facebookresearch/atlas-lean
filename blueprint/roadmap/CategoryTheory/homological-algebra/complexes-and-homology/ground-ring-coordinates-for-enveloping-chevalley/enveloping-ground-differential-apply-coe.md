@@ -1,3 +1,6 @@
-# Enveloping Ground Differential apply coefficient
+# The coefficient boundary formula for the ground differential
 
-The native successor map has the original coefficient boundary value.
+The coefficient boundary formula for the ground differential.
+
+The restricted successor differential equals the Chevalley–Eilenberg coefficient differential
+for the regular coefficients `[x,a] = -aι(x)`.

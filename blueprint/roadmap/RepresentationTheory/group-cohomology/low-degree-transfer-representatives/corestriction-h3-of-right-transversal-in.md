@@ -1,4 +1,5 @@
-# Corestriction H3 Of Right Transversal independent
+# The degree-three cohomology transfer is independent of the transversal
 
-Chosen-transversal degree-three cohomological transfer is independent of
-the finite right transversal.
+The degree-three cohomology transfer is independent of the transversal.
+
+The chosen maps H³(H,A|H) → H³(G,A) obtained from T and U are equal.

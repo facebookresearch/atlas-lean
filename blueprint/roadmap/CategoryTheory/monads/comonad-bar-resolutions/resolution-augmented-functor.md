@@ -1,3 +1,6 @@
-# Resolution Augmented Functor
+# Augmented simplicial bar functor of a comonad
 
-The genuine augmented comonad resolution functor.
+For a comonad `G` on a category `C`, the bar construction gives
+a functor `C → SimplicialObject.Augmented C`, taking `A` to its
+bar object augmented by the counit and maps to their iterated-power
+simplicial maps.

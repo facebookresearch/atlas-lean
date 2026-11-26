@@ -1,3 +1,6 @@
-# Small Etale Inverse Image Common Geometric Stalk Right Iso
+# Right adjoint comparison for common universe stalk preservation
 
-The right-adjoint comparison belonging to the same actual common-point stalk isomorphism.
+Right adjoint comparison for common universe stalk preservation.
+
+The adjunction mate identifies the skyscraper functor at `x ≫ f` with the skyscraper functor
+at `x` followed by direct image along `f`.

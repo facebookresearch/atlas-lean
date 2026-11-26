@@ -1,4 +1,6 @@
-# Inhomogeneous One Cocycle homogeneous value
+# Reconstruction by diagonal equivariance
 
-Diagonal invariance reconstructs every homogeneous value from the
-inhomogeneous evaluation at `(1, x⁻¹y)`.
+Reconstruction by diagonal equivariance.
+
+For the inhomogeneous function c(g) = f(1,g) extracted from a homogeneous cycle, every value
+of f satisfies f(x,y) = ρ(x)c(x⁻¹y).

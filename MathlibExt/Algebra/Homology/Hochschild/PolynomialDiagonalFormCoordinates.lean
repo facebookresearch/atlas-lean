@@ -14,13 +14,17 @@ public import MathlibExt.RingTheory.MvPolynomial.EnvelopingDiagonalCotangentLift
 public import MathlibExt.LinearAlgebra.ExteriorPower.Semilinear
 
 /-!
-# form coordinates of arbitrary diagonal Koszul wedges
+# Cotangent coordinates of polynomial diagonal Koszul wedges
 
-The diagonal free module maps semilinearly to the original cotangent module
-by multiplying its original enveloping coefficients. The coefficient form
-coordinate equivalence sends every diagonal wedge to the wedge of these
-cotangent images. The proof uses the native arbitrary-index exterior
-basis and needs no finite variable set or coefficient flatness.
+For a commutative ring k and A = k[σ], multiplication μ : A ⊗[k] Aᵐᵒᵖ → A gives a semilinear map
+from the diagonal free module to Ω¹_{A/k}, sending eᵢ to dXᵢ and a finitely supported family x
+to ∑ᵢ μ(xᵢ)·dXᵢ. Its exterior powers give the form coordinates of arbitrary diagonal exterior
+elements.
+
+For a compatible symmetric coefficient module M, the degree-n coefficient-form equivalence sends
+m ⊗_E x to m ⊗_A ∧ⁿC(x). In particular, a scalar e on a variable wedge becomes the coefficient
+μ(e)·m, and a wedge of arbitrary diagonal vectors becomes the wedge of their cotangent images.
+These formulas hold for arbitrary variable sets and do not require coefficient flatness.
 -/
 
 @[expose] public section
@@ -35,7 +39,8 @@ namespace ModuleCat.Algebra.Hochschild.PolynomialDiagonal
 
 variable (k : Type u) [CommRing k] (σ : Type v)
 
-/-- The semilinear cotangent image of one diagonal free coordinate. -/
+/-- Let k be a commutative ring, σ any variable set, A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and μ : E → A the
+multiplication map. For i ∈ σ, the map E → Ω¹_{A/k} given by e ↦ μ(e)·dXᵢ is semilinear along μ. -/
 def diagonalCotangentSemilinearSingle (i : σ) :
     MvPolynomial.PolynomialEnveloping k σ →ₛₗ[(MvPolynomial.diagonalMultiplication k σ).toRingHom]
       KaehlerDifferential k (MvPolynomial σ k) where
@@ -46,15 +51,17 @@ def diagonalCotangentSemilinearSingle (i : σ) :
     simp only [smul_eq_mul, map_mul, mul_smul,
       AlgHom.toRingHom_eq_coe, AlgHom.coe_toRingHom]
 
-/-- Multiply the original enveloping coordinates and keep the original
-universal variable differentials. -/
+/-- Let k be a commutative ring, σ any variable set, A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and μ : E → A the
+multiplication map. The semilinear map C : ⊕ᵢ∈σ E·eᵢ → Ω¹_{A/k} sends a finitely supported
+family x to ∑ᵢ μ(xᵢ)·dXᵢ. Its scalar map is μ : E → A. -/
 def diagonalCotangentSemilinearMap :
     (σ →₀ MvPolynomial.PolynomialEnveloping k σ) →ₛₗ[(MvPolynomial.diagonalMultiplication k σ).toRingHom]
       KaehlerDifferential k (MvPolynomial σ k) :=
   Finsupp.lsum ℕ (diagonalCotangentSemilinearSingle k σ)
 
-/-- The semilinear map is the same coordinate function as the
-ground-linear conormal map. -/
+/-- Let k be a commutative ring, σ any variable set, A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and μ : E → A the
+multiplication map. For every x ∈ ⊕ᵢ∈σ E·eᵢ, diagonalCotangentSemilinearMap k σ x equals
+MvPolynomial.diagonalCotangentCoordinates k σ x. Both expressions give ∑ᵢ μ(xᵢ)·dXᵢ. -/
 theorem diagonalCotangentSemilinearMap_coordinates
     (x : σ →₀ MvPolynomial.PolynomialEnveloping k σ) :
     diagonalCotangentSemilinearMap k σ x = MvPolynomial.diagonalCotangentCoordinates k σ x := by
@@ -68,7 +75,9 @@ theorem diagonalCotangentSemilinearMap_coordinates
         KaehlerDifferential.D k (MvPolynomial σ k) (MvPolynomial.X i) = _
       rfl
 
-/-- The original unit variable maps to the differential `dX`. -/
+/-- Let k be a commutative ring, σ any variable set, A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and μ : E → A the
+multiplication map. For i ∈ σ, the diagonal cotangent map sends the standard vector
+Finsupp.single i 1 to dXᵢ. -/
 theorem diagonalCotangentSemilinearMap_single (i : σ) :
     diagonalCotangentSemilinearMap k σ
         (Finsupp.single i (1 : MvPolynomial.PolynomialEnveloping k σ)) =
@@ -78,8 +87,9 @@ theorem diagonalCotangentSemilinearMap_single (i : σ) :
     KaehlerDifferential.D k (MvPolynomial σ k) (MvPolynomial.X i) = _
   rw [map_one, one_smul]
 
-/-- The exterior cotangent map in the native ground-restricted
-diagonal degree and the original form degree. -/
+/-- Let k be a commutative ring, σ any variable set, A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and μ : E → A the
+multiplication map. For n : ℕ, the nth exterior power of the μ-semilinear cotangent map gives a
+k-linear map ∧ⁿ_E(⊕ᵢE·eᵢ) → ∧ⁿ_AΩ¹_{A/k} after restriction of the source scalars to k. -/
 def diagonalCotangentExteriorGround (n : ℕ) :
     letI : Module k
         (⋀[MvPolynomial.PolynomialEnveloping k σ]^n (σ →₀ MvPolynomial.PolynomialEnveloping k σ)) :=
@@ -103,7 +113,9 @@ def diagonalCotangentExteriorGround (n : ℕ) :
         rw [(MvPolynomial.diagonalMultiplication k σ).commutes,
           IsScalarTower.algebraMap_smul (MvPolynomial σ k)] }
 
-/-- Native exterior point values on the original scaled variable wedges. -/
+/-- Let k be a commutative ring, σ any variable set, A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and μ : E → A the
+multiplication map. For e ∈ E and a : Fin n → σ, the ground-linear exterior cotangent map sends
+e·(e_{a(0)}∧…∧e_{a(n−1)}) to μ(e)·(dX_{a(0)}∧…∧dX_{a(n−1)}). -/
 private theorem diagonalCotangentExteriorGround_smul_basis
     (n : ℕ) (e : MvPolynomial.PolynomialEnveloping k σ) (a : Fin n → σ) :
     letI : Module k
@@ -165,8 +177,10 @@ section Coefficients
 variable (M : Type w) [AddCommGroup M] [Module k M] [Module (MvPolynomial σ k) M]
   [SMulCommClass k (MvPolynomial σ k) M] [IsScalarTower k (MvPolynomial σ k) M]
 
-/-- Original scaled variable wedges have their multiplied
-enveloping coefficient and original differential-variable tail. -/
+/-- Let k be a commutative ring, σ any variable set, A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and μ : E → A the
+multiplication map. Let M be an A-module with compatible k-action, regarded as a symmetric
+A-bimodule. The degree-n coefficient-form equivalence sends m ⊗_E(e·(e_{a(0)}∧…∧e_{a(n−1)})) to
+(μ(e)·m) ⊗_A(dX_{a(0)}∧…∧dX_{a(n−1)}), for m ∈ M, e ∈ E and a : Fin n → σ. -/
 theorem symmetricCoefficientFormDegreeEquiv_mk_smul_basis
     (n : ℕ) (m : M) (e : MvPolynomial.PolynomialEnveloping k σ) (a : Fin n → σ) :
     letI := Symmetric.opModule (MvPolynomial σ k) M
@@ -201,7 +215,10 @@ theorem symmetricCoefficientFormDegreeEquiv_mk_smul_basis
     symmetricRightEnvelopingAction_multiplication k σ M e m
   rw [he]
 
-/-- Original unscaled variable wedges have the original coefficient head. -/
+/-- Let k be a commutative ring, σ any variable set, A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and μ : E → A the
+multiplication map. Let M be an A-module with compatible k-action, regarded as a symmetric
+A-bimodule. For m ∈ M and a : Fin n → σ, the degree-n coefficient-form equivalence sends m
+⊗_E(e_{a(0)}∧…∧e_{a(n−1)}) to m ⊗_A(dX_{a(0)}∧…∧dX_{a(n−1)}). -/
 theorem symmetricCoefficientFormDegreeEquiv_mk_basis
     (n : ℕ) (m : M) (a : Fin n → σ) :
     letI := Symmetric.opModule (MvPolynomial σ k) M
@@ -223,8 +240,10 @@ theorem symmetricCoefficientFormDegreeEquiv_mk_basis
     symmetricCoefficientFormDegreeEquiv_mk_smul_basis k σ M n m
       (1 : MvPolynomial.PolynomialEnveloping k σ) a
 
-/-- Every original diagonal exterior element has its multiplied
-cotangent coordinates, including sums and arbitrary enveloping coefficients. -/
+/-- Let k be a commutative ring, σ any variable set, A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and μ : E → A the
+multiplication map. Let M be an A-module with compatible k-action, regarded as a symmetric
+A-bimodule. For x ∈ ∧ⁿ_E(⊕ᵢE·eᵢ) and m ∈ M, symmetricCoefficientFormDegreeEquiv sends m ⊗_E x to
+m ⊗_A ∧ⁿC(x), where C is the μ-semilinear cotangent coordinate map. -/
 theorem symmetricCoefficientFormDegreeEquiv_mk
     (n : ℕ) (m : M)
     (x : ⋀[MvPolynomial.PolynomialEnveloping k σ]^n (σ →₀ MvPolynomial.PolynomialEnveloping k σ)) :
@@ -349,7 +368,10 @@ theorem symmetricCoefficientFormDegreeEquiv_mk
           (fun z : ⋀[MvPolynomial σ k]^n (KaehlerDifferential k (MvPolynomial σ k)) =>
             m ⊗ₜ[MvPolynomial σ k] z) (hGroundValue x))))
 
-/-- An arbitrary original diagonal wedge becomes the wedge of its cotangent images. -/
+/-- Let k be a commutative ring, σ any variable set, A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and μ : E → A the
+multiplication map. Let M be an A-module with compatible k-action, regarded as a symmetric
+A-bimodule. For a : Fin n → (⊕ᵢE·eᵢ) and m ∈ M, the coefficient-form equivalence sends m
+⊗_E(a₀∧…∧aₙ₋₁) to m ⊗_A(C(a₀)∧…∧C(aₙ₋₁)), where C(x) = ∑ᵢ μ(xᵢ)·dXᵢ. -/
 theorem symmetricCoefficientFormDegreeEquiv_mk_ιMulti
     (n : ℕ) (m : M) (a : Fin n → (σ →₀ MvPolynomial.PolynomialEnveloping k σ)) :
     letI := Symmetric.opModule (MvPolynomial σ k) M

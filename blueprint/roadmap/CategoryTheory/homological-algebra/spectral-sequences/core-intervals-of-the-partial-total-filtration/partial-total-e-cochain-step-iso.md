@@ -1,4 +1,6 @@
-# Partial Total E₁Cochain Step Iso
+# The cochain extension of a first-page core-interval comparison
 
-Uniform cochain-level comparison between the interval selected by the
-increasing core and the cochain extension of the `p`th filtration step.
+The cochain extension of a first-page core-interval comparison.
+
+In an abelian category, extending the chain interval comparison identifies the increasing core
+cochain map with the cochain partial-total step.

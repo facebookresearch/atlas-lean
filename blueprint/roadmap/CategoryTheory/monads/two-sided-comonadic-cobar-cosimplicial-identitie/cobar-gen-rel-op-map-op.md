@@ -1,3 +1,5 @@
-# Cobar Gen Rel Op map δ op
+# The generated opposite cobar map of a coface generator
 
-Generator cofaces are `op` of the public cofaces.
+The generated opposite cobar map of a coface generator.
+
+The opposite coface generator maps to the opposite of the corresponding cobar coface.

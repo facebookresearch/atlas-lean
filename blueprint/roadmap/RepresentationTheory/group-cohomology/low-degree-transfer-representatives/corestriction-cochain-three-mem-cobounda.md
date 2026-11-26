@@ -1,4 +1,6 @@
-# Corestriction Cochain Three mem coboundaries₃
+# Ternary transfer preserves three-coboundaries
 
-Degree-three chosen-transversal cochain transfer sends
-three-coboundaries to three-coboundaries.
+Ternary transfer preserves three-coboundaries.
+
+If a ternary H-cochain is a degree-three coboundary, its transfer is a degree-three
+G-coboundary.

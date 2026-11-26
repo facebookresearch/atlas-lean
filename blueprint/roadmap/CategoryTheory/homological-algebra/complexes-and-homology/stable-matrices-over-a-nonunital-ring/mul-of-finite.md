@@ -1,3 +1,6 @@
-# Mul of Finite
+# Stable multiplication in a common finite matrix stage
 
-The product of two matrices in one finite stage is their matrix product in that stage.
+Stable multiplication in a common finite matrix stage.
+
+For `n × n` matrices `B` and `C`, the product of their stable classes is the stable class of
+their matrix product `B * C` in the same stage.

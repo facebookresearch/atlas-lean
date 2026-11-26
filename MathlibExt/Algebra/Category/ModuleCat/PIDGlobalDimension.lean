@@ -18,11 +18,16 @@ public import Mathlib.Algebra.Category.ModuleCat.ProjectiveDimension
 import Mathlib.Algebra.Category.Grp.Zero
 
 /-!
-# Projective dimension of modules over a PID
+# Projective dimension and higher Ext over a principal ideal domain
 
-Every module over a commutative principal ideal domain has projective
-dimension at most one. Consequently, its higher Ext groups vanish from
-degree two onward. No finite-generation or finite-rank hypothesis is used.
+Let R be a commutative principal ideal domain in universe u, and assume its underlying set has a
+representative in the module universe v. Every R-module M in v has projective dimension at most
+one: the kernel of a free cover is a submodule of a free module and is free over R. This applies
+to arbitrary modules without a finite-generation or finite-rank restriction.
+
+When Ext groups of this module category are defined in universe w, Ext^p_R(M,A)=0 for all p≥2
+and all modules M,A in v. The statements give vanishing as a subsingleton group, as a zero
+additive-group object, and as equality of every Ext class to zero.
 -/
 
 @[expose] public section
@@ -41,8 +46,10 @@ namespace ModuleCat
 variable {R : Type u} [CommRing R] [IsDomain R]
   [IsPrincipalIdealRing R] [Small.{v} R]
 
-/-- Every module over a commutative principal ideal domain has projective
-dimension at most one. -/
+/-- Let R be a commutative principal ideal domain in universe u, whose underlying set can be
+represented in the module universe v. For every R-module M in v, pd(M)≤1. A projective cover
+comes from a free module, and its kernel is free because R is a principal ideal domain. Neither
+finite generation of M nor finite rank of the cover is assumed. -/
 theorem hasProjectiveDimensionLE_one_of_isPrincipalIdealRing
     (M : ModuleCat.{v} R) : HasProjectiveDimensionLE M 1 := by
   let S := M.projectiveShortComplex
@@ -56,8 +63,10 @@ theorem hasProjectiveDimensionLE_one_of_isPrincipalIdealRing
   change HasProjectiveDimensionLT S.X₃ 2
   exact (hS.hasProjectiveDimensionLT_X₃_iff 0 inferInstance).2 inferInstance
 
-/-- Ext groups out of a module over a PID are subsingleton in every degree
-at least two. -/
+/-- Let R be a commutative principal ideal domain in universe u, whose underlying set can be
+represented in the module universe v. Assume Ext groups of R-Mod_v are defined in universe w.
+For M,A in that category and p∈ℕ with p≥2, Ext^p_R(M,A) is subsingleton. The
+projective-dimension bound pd(M)≤1 excludes every higher extension class. -/
 theorem subsingleton_ext_of_two_le_of_isPrincipalIdealRing
     [HasExt.{w} (ModuleCat.{v} R)]
     (M A : ModuleCat.{v} R) (p : ℕ) (hp : 2 ≤ p) :
@@ -66,8 +75,10 @@ theorem subsingleton_ext_of_two_le_of_isPrincipalIdealRing
     hasProjectiveDimensionLE_one_of_isPrincipalIdealRing M
   exact HasProjectiveDimensionLT.subsingleton M 2 p hp A
 
-/-- The Ext-group object out of a module over a PID is zero in every degree
-at least two. -/
+/-- Let R be a commutative principal ideal domain in universe u, whose underlying set can be
+represented in the module universe v. Assume Ext groups of R-Mod_v are defined in universe w.
+For R-modules M,A in v and p≥2, the additive-group object associated to Ext^p_R(M,A) is zero.
+This is categorical vanishing of the same subsingleton higher Ext group. -/
 theorem isZero_ext_of_two_le_of_isPrincipalIdealRing
     [HasExt.{w} (ModuleCat.{v} R)]
     (M A : ModuleCat.{v} R) (p : ℕ) (hp : 2 ≤ p) :
@@ -76,8 +87,10 @@ theorem isZero_ext_of_two_le_of_isPrincipalIdealRing
     subsingleton_ext_of_two_le_of_isPrincipalIdealRing M A p hp
   exact AddCommGrpCat.isZero_of_subsingleton _
 
-/-- Every element of an Ext group out of a module over a PID is zero in
-degree at least two. -/
+/-- Let R be a commutative principal ideal domain in universe u, whose underlying set can be
+represented in the module universe v. Assume Ext groups of R-Mod_v are defined in universe w.
+For M,A in v, p≥2 and x∈Ext^p_R(M,A), one has x=0. The assertion uses the arbitrary-module
+projective bound and applies to every class in the stated degree. -/
 theorem ext_eq_zero_of_two_le_of_isPrincipalIdealRing
     [HasExt.{w} (ModuleCat.{v} R)]
     (M A : ModuleCat.{v} R) (p : ℕ) (hp : 2 ≤ p)

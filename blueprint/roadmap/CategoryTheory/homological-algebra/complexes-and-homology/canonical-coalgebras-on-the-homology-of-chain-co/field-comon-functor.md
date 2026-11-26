@@ -1,4 +1,6 @@
-# Field Comon Functor
+# The field homology functor transports chain comonoids
 
-The existing native comonoid transport, applied to the earned field
-homology monoidal functor.
+For a field k, the strong monoidal graded homology functor
+induces Comon(ChainComplex(ModuleCat^u(k),ℕ))→
+Comon(GradedObject(ℕ,ModuleCat^u(k))).
+It sends a chain comonoid to its canonical graded homology comonoid.

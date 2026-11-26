@@ -1,3 +1,8 @@
-# Positive ext cycle comparison
+# Positive Ext comparison preserves section cycle representatives
 
-The complete cycle-map and comparison families, with every representative identified.
+Positive Ext comparison preserves section cycle representatives.
+
+There exist simultaneous cycle-presentation and cohomology-to-derived equivalence families for
+all sheaves and positive degrees. Each presentation is surjective with kernel the boundaries;
+the equivalence sends its values to derived cycle classes and agrees with every closed
+integral-sheaf Ext representative.

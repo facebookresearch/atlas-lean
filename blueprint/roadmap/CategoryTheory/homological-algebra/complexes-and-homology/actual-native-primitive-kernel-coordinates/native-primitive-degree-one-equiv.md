@@ -1,3 +1,6 @@
-# Native Primitive Degree One Equiv
+# The Lie-module coordinate of primitive CE degree one
 
-Exactly degree-one primitive chains identify with the Lie module.
+The Lie-module coordinate of primitive CE degree one.
+
+The degree-one primitive chain term is linearly equivalent to `L` through homogeneous
+primitive and exterior-degree-one coordinates.

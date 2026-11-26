@@ -1,4 +1,6 @@
-# Primitive Chain Iso
+# The comparison of the two CE primitive chain kernels
 
-The old and converted primitive kernels are canonically isomorphic by the kernel map for an
-isomorphism of targets.
+The comparison of the two CE primitive chain kernels.
+
+The tensor-target isomorphism of the primitive equations gives a chain isomorphism from the
+compared primitive kernel to the CE primitive kernel.

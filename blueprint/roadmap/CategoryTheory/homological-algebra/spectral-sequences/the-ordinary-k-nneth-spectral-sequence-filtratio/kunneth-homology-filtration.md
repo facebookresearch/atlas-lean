@@ -1,4 +1,6 @@
-# Kunneth Homology Filtration
+# The transported Künneth filtration of ordinary tensor homology
 
-The partial-total image filtration transported to ordinary tensor-product
-homology through the canonical Cartan--Eilenberg abutment isomorphism.
+The transported Künneth filtration of ordinary tensor homology.
+
+For a supplied Cartan–Eilenberg resolution and termwise-flat first complex, postcompose
+partial-total homology filtration inclusions with the tensor abutment isomorphism.

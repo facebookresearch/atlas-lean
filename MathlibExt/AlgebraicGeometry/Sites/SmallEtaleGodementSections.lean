@@ -14,11 +14,14 @@ public import MathlibExt.AlgebraicGeometry.Sites.SmallEtaleSkyscraperSections
 public import Mathlib.CategoryTheory.Limits.Preserves.Shapes.Products
 
 /-!
-# Global sections of the original Godement skyscraper product
+# Global sections of Godement skyscraper products
 
-Global sections preserve the actual product of canonical geometric-point
-skyscrapers. The original terminal-section comparison at every point then
-identifies these sections with the product of the given additive coefficients.
+Global sections preserve the product of the canonical geometric skyscrapers. Sections of each
+skyscraper over the identity étale object identify with its coefficient group, so the sections
+of a skyscraper product are the product of the coefficient family.
+
+The comparison is natural in family maps. At point `x`, it is global sections of the
+skyscraper projection followed by the individual skyscraper-section isomorphism.
 -/
 
 @[expose] public section
@@ -31,7 +34,10 @@ open CategoryTheory CategoryTheory.Limits
 
 namespace AlgebraicGeometry.Scheme.DerivedSections
 
-/-- The original skyscraper-product sections are the actual coefficient product. -/
+/-- Sections of a skyscraper product as the coefficient product.
+
+Global sections of the canonical skyscraper product of `M` are isomorphic to the product of
+the groups `M x`. -/
 def smallEtaleGodementSectionsComponent (X : Scheme.{u})
     (M : X → AddCommGrpCat.{max u w}) :
     (Sheaf.Γ X.smallEtaleTopology AddCommGrpCat.{max u w}).obj
@@ -45,7 +51,10 @@ def smallEtaleGodementSectionsComponent (X : Scheme.{u})
         (smallEtaleCanonicalGeometricMorphism X x)).app (M x))
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Every coordinate is the same actual skyscraper global-section evaluation. -/
+/-- Section comparison at a coefficient coordinate.
+
+The comparison followed by projection at `x` equals global sections of the skyscraper
+projection followed by its individual section isomorphism. -/
 theorem smallEtaleGodementSectionsComponent_projection (X : Scheme.{u})
     (M : X → AddCommGrpCat.{max u w}) (x : X) :
     (smallEtaleGodementSectionsComponent.{u, w} X M).hom ≫ Pi.π M x =
@@ -66,7 +75,10 @@ theorem smallEtaleGodementSectionsComponent_projection (X : Scheme.{u})
   rfl
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The original coefficient-product comparison is natural in every family morphism. -/
+/-- Skyscraper product section comparison is natural in families.
+
+The section map of a skyscraper-family morphism commutes with the coefficient-product
+comparisons and the product of its family components. -/
 theorem smallEtaleGodementSectionsComponent_naturality (X : Scheme.{u})
     {M N : X → AddCommGrpCat.{max u w}} (f : M ⟶ N) :
     (Sheaf.Γ X.smallEtaleTopology AddCommGrpCat.{max u w}).map
@@ -116,7 +128,10 @@ theorem smallEtaleGodementSectionsComponent_naturality (X : Scheme.{u})
           ((Category.assoc _ _ _).symm.trans (congrArg (fun g => g ≫ f x) hM)))
   exact hl.trans hr.symm
 
-/-- Actual global sections after the original skyscraper product form the coefficient product. -/
+/-- Skyscraper product sections are naturally the coefficient product.
+
+The objectwise section comparisons give a natural isomorphism from the skyscraper-product
+functor followed by global sections to the coefficient product functor. -/
 def smallEtaleGodementSectionsIso (X : Scheme.{u}) :
     smallEtaleGodementSkyscrapers.{u, w} X ⋙
         Sheaf.Γ X.smallEtaleTopology AddCommGrpCat.{max u w} ≅

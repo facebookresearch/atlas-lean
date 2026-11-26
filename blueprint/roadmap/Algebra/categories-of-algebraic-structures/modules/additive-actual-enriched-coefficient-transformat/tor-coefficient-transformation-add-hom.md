@@ -1,3 +1,6 @@
-# Tor Coefficient Transformation Add Hom
+# Additive map from bimodule morphisms to Tor transformations
 
-Native derivation is additive on the same original coefficient-map group.
+Additive map from bimodule morphisms to Tor transformations.
+
+In each natural degree `n`, compatible coefficient maps form an additive group mapping to the
+additive group of natural transformations between their Tor functors.

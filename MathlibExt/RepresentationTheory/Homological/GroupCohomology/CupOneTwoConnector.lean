@@ -14,26 +14,17 @@ public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.CupPro
 public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.CupProductConnector
 
 /-!
-# Low-degree cup/connector compatibility
+# Right connecting homomorphisms and low-degree cups
 
-The arbitrary-degree Alexander--Whitney cup satisfies the right connector
-law with Koszul sign `(-1)^p`.  Specializing to `p = q = 1` and using the
-comparison with the descended low-degree cups gives
-
-`a ∪ δ(b) = -δ(a ∪ b)`.
-
-Thus the low-degree API is a direct corollary of the arbitrary-degree
-connector theorem rather than a separate cocycle calculation.
+Let `k` be a commutative ring, `G` a group, `A` a representation, and `0 → S₁ → S₂ → S₃ → 0` a
+short exact sequence of representations. Assume its tensor product on the left with `A` is
+also short exact. For `a ∈ H¹(G,A)` and `b ∈ H¹(G,S₃)`, the connecting maps satisfy `a ∪
+δ_S(b) = -δ_{A⊗S}(a ∪ b)` in `H³(G,A ⊗ S₁)`.
 
 ## References
 
-* J. Neukirch, A. Schmidt, K. Wingberg, *Cohomology of Number Fields*,
-  Chapter I, §4, Proposition 1.4.3 and Exercise 3.
-* P. Gille, T. Szamuely, *Central Simple Algebras and Galois Cohomology*,
-  Proposition 3.4.8.
-
-No continuous cup, Hochschild--Serre edge map, residue, VM2, or norm-residue
-statement is asserted.
+* J. Neukirch, A. Schmidt, K. Wingberg, *Cohomology of Number Fields*, Chapter I, §4, Proposition 1.4.3 and Exercise 3.
+* P. Gille, T. Szamuely, *Central Simple Algebras and Galois Cohomology*, Proposition 3.4.8.
 -/
 
 @[expose] public section
@@ -52,8 +43,11 @@ variable {k G : Type u} [CommRing k] [Group G]
 
 set_option backward.isDefEq.respectTransparency false
 
-/-- A degree-one class cups with the right coefficient connector according
-to the Koszul sign: `a ∪ δ(b) = -δ(a ∪ b)`. -/
+/-- Let `k` be a commutative ring, `G` a group, `A : Rep k G`, and `S` a short exact sequence `0 →
+S₁ → S₂ → S₃ → 0`. Assume `A ⊗ S` is also short exact. For `a ∈ H¹(G,A)` and `b ∈ H¹(G,S₃)`,
+`cupOneTwo A S₁ a (δ_S^1 b) = -δ_{A⊗S}^2 (cupOneOne A S₃ a b)` in `H³(G,A ⊗ S₁)`. Here `δ_S^1
+: H¹(G,S₃) → H²(G,S₁)` and `δ_{A⊗S}^2 : H²(G,A ⊗ S₃) → H³(G,A ⊗ S₁)` are the coefficient
+connecting maps. -/
 theorem cupOneTwo_δ_right
     (A : Rep k G) (S : ShortComplex (Rep k G)) (hS : S.ShortExact)
     (hAS : (S.map (tensorLeft A)).ShortExact)

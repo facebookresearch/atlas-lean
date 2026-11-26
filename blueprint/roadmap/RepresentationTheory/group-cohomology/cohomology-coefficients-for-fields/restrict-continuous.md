@@ -1,3 +1,6 @@
-# Restrict Continuous
+# The continuous Galois restriction homomorphism
 
-The actual continuous restriction, with no surjectivity requirement.
+The continuous Galois restriction homomorphism.
+
+For a map between Galois extensions, bundle restriction Gal(L′/K′) → Gal(L/K) with its Krull
+continuity.

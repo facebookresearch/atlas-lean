@@ -1,4 +1,4 @@
 # The augmentation-derived precomposition arrows keep their inferred endpoints
 
-- [Augmented Complex Comparison Arrows](augmented-complex-comparison-arrows.md)
-- [Augmented Complex Comparison Arrows eq](augmented-complex-comparison-arrows-eq.md)
+- [Two routes from augmented cohomology to a derived coefficient](augmented-complex-comparison-arrows.md)
+- [Coaugmentation compatibility identifies the two derived comparison routes](augmented-complex-comparison-arrows-eq.md)

@@ -1,3 +1,6 @@
-# Bimodule Tensor Unit Iso
+# Regular bimodule tensor is the finite-module identity object
 
-The actual regular-factor unitor on the original finite-module tensor object.
+Regular bimodule tensor is the finite-module identity object.
+
+The regular coefficient gives an isomorphism from `(FGModuleCat.bimoduleTensor R).obj M` to
+the finite left module `M`.

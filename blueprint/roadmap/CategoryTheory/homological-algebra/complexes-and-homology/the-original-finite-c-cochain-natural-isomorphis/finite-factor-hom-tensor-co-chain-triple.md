@@ -1,3 +1,6 @@
-# Finite Factor Hom Tensor Co Chain Triples
+# Full subcategory of triples with a bounded finite projective third factor
 
-The native full subcategory retains all original maps between finite-C triples.
+Full subcategory of triples with a bounded finite projective third factor.
+
+Restrict the category of cochain triples by `finiteFactorHomTensorCoChainProperty`, leaving
+the first and second complexes unrestricted.

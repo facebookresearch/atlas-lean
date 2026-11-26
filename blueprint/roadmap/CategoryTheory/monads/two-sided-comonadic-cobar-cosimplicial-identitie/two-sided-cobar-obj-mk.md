@@ -1,4 +1,5 @@
-# Two Sided Cobar obj mk
+# The degree formula for the two-sided cobar cosimplicial object
 
-Objects on simplex objects are the cobar functors, via the explicit
-`rightOp ⋙ unopUnop` transport.
+The degree formula for the two-sided cobar cosimplicial object.
+
+At the simplex of degree `n`, the object is the degree-`n` cobar functor.

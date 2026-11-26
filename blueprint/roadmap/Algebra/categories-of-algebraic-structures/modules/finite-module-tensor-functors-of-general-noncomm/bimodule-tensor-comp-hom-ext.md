@@ -1,3 +1,6 @@
-# Bimodule Tensor Comp Hom ext
+# Pure triples determine additive maps from a composite tensor
 
-Ordered triple pure classes determine a map from the actual composite tensor object.
+Pure triples determine additive maps from a composite tensor.
+
+Two additive maps from `(F ⊗_S E) ⊗_R M` to an additive commutative monoid are equal if they
+agree on every pure triple `[[f ⊗ e] ⊗ m]`.

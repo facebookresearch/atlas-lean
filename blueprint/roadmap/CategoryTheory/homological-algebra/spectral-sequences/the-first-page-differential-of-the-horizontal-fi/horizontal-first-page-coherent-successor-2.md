@@ -1,4 +1,5 @@
-# Horizontal First Page Coherent Successor Map eq map succ
+# The successor upper-stage map as the next coherent window
 
-The coherent successor map is the coherent filtration map for the next
-column.
+The successor upper-stage map as the next coherent window.
+
+The upper-stage successor map is the coherent filtration map for column `p+1`.

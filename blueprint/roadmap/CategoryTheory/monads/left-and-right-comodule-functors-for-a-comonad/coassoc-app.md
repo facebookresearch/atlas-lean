@@ -1,3 +1,6 @@
-# Coassoc app
+# The component coassociativity law of a right comodule
 
-Coassociativity law of a right comodule, in components.
+The component coassociativity law of a right comodule.
+
+The coaction at `X` followed by `R.map(δ_X)` equals the coaction at `X` followed by the
+coaction at `G(X)`.

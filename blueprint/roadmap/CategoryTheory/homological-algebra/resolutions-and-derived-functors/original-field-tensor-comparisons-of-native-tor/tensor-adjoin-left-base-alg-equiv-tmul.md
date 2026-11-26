@@ -1,3 +1,5 @@
-# Tensor Adjoin Left Base Alg Equiv tmul
+# The left algebra-adjoining equivalence multiplies the V coefficient
 
-The actual left adjoining coefficient map keeps the original B map.
+For the adjoining equivalence (B⊗K C)⊗_B V≃V⊗K C,
+the value of (b⊗c)⊗v is (b•v)⊗c.
+The B→V algebra structure is compatible with K.

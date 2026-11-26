@@ -1,7 +1,7 @@
 # Horizontal maps on direct-column cycles
 
-- [Horizontal Direct Column Horizontal Cycles Map](horizontal-direct-column-horizontal-cycl.md)
-- [Horizontal Direct Column Horizontal Cycles Map homologyπ](horizontal-direct-column-horizontal-cycl-2.md)
-- [Horizontal Direct Column Horizontal Cycles Map i Cycles](horizontal-direct-column-horizontal-cycl-3.md)
-- [Horizontal Direct Column Vertical Cycles Iso](horizontal-direct-column-vertical-cycles.md)
-- [Horizontal Direct Column Vertical Cycles Iso hom i Cycles](horizontal-direct-column-vertical-cycles-2.md)
+- [The horizontal map between direct-column cycle objects](horizontal-direct-column-horizontal-cycl.md)
+- [The homology projection of a direct-column horizontal cycle map](horizontal-direct-column-horizontal-cycl-2.md)
+- [The representative sign of a direct-column horizontal cycle map](horizontal-direct-column-horizontal-cycl-3.md)
+- [The sign-normalized comparison of direct and vertical column cycles](horizontal-direct-column-vertical-cycles.md)
+- [The inclusion formula for normalized direct-column cycle comparison](horizontal-direct-column-vertical-cycles-2.md)

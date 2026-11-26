@@ -1,4 +1,6 @@
-# Polynomial Cotangent Simplicial Functor
+# The polynomial cotangent simplicial functor
 
-The genuine polynomial cotangent simplicial module, functorial in
-the source algebra over the fixed coefficient target.
+The polynomial cotangent simplicial functor.
+
+For `P → A`, apply the cotangent functor degreewise to the polynomial resolution of `P`
+augmented to `A`.

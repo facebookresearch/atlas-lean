@@ -15,12 +15,16 @@ public import Mathlib.Data.List.OfFn
 public import Mathlib.Data.List.Sort
 
 /-!
-# Original symmetric powers as actual monotone tuples
+# Symmetric powers as nondecreasing finite tuples
 
-Native multiset sorting and the original `List.ofFn` give inverse maps
-between symmetric powers and monotone finite tuples. Native stars and bars
-therefore counts the actual monotone tuples, without supplying a counting
-or sorting certificate.
+For a linearly ordered type `α`, sorting a multiset of cardinality `n` gives a nondecreasing
+function `Fin n → α`. Its inverse takes the multiset of entries of the tuple. This identifies
+`Sym α n` with monotone finite tuples.
+
+For a finite alphabet `Fin m`, the number of nondecreasing tuples of length `n` is `Nat.choose
+(m+n-1) n`, using natural-number subtraction.
+
+Reference: Stanley, *Enumerative Combinatorics*, Volume 1, Chapter 1.
 -/
 
 @[expose] public section
@@ -30,7 +34,9 @@ namespace Sym
 
 variable {α : Type*} [LinearOrder α]
 
-/-- Native sorting is the equivalence from the original symmetric power to monotone tuples. -/
+/-- For a linearly ordered type `α` and `n : ℕ`, `sortedTupleEquiv n : Sym α n ≃ {f : Fin n → α //
+Monotone f}` sends a multiset to its ascending sorted entries. Its inverse sends a monotone
+tuple `f` to the multiset of `List.ofFn f`. -/
 def sortedTupleEquiv (n : ℕ) : Sym α n ≃ {f : Fin n → α // Monotone f} where
   toFun s := by
     let l := s.val.sort (· ≤ ·)
@@ -60,7 +66,9 @@ def sortedTupleEquiv (n : ℕ) : Sym α n ≃ {f : Fin n → α // Monotone f} w
     rw [← List.ofFn_congr hl l.get, List.ofFn_get]
     exact hsort
 
-/-- The actual monotone finite tuples have the native stars-and-bars cardinality. -/
+/-- For all `n,m : ℕ`, `Fintype.card {f : Fin n → Fin m // Monotone f} = Nat.choose (m+n-1) n`,
+with subtraction in `ℕ`. The empty tuple is included; when `m=0` and `n>0`, no such tuple
+exists. -/
 theorem card_monotone_fin (n m : ℕ) :
     Fintype.card {f : Fin n → Fin m // Monotone f} = (m + n - 1).choose n := by
   rw [← Fintype.card_congr (sortedTupleEquiv (α := Fin m) n), card_sym_eq_choose,

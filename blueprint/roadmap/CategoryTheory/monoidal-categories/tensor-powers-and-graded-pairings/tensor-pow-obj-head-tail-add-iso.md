@@ -1,3 +1,5 @@
-# Tensor Pow Obj Head Tail Add Iso
+# Head tail coordinate from the finite block split
 
-Canonical additive-splitting presentation of head--tail decomposition.
+Head tail coordinate from the finite block split.
+
+Split the power into blocks of lengths one and `n+1`, then apply the one-factor coordinate.

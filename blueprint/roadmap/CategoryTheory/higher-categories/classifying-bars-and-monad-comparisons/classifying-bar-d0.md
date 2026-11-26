@@ -1,3 +1,6 @@
-# Classifying Bar d0
+# First boundary face of the classifying bar
 
-Zeroth face of the classifying bar is the outer iterated action.
+First boundary face of the classifying bar.
+
+Its first face component is the two-sided bar boundary map at index zero for the specified
+right and left point modules.

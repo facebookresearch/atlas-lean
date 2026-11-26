@@ -1,3 +1,5 @@
-# Field Equivariant Stalk Counit inverse continuous
+# Inverse field counit is continuous
 
-The constructed inverse is continuous on the actual discrete source carrier.
+Inverse field counit is continuous.
+
+The inverse counit is continuous from the discrete coefficient topology.

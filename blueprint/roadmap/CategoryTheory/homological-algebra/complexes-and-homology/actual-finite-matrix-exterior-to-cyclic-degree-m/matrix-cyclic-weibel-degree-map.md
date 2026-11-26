@@ -1,3 +1,5 @@
-# Matrix Cyclic Weibel Degree Map
+# The degree-signed matrix exterior-to-cyclic quotient map
 
-The exterior-to-Connes map on finite matrices multiplied in degree n by `(-1)^n`.
+The degree-signed matrix exterior-to-cyclic quotient map.
+
+Multiply the tail-alternating trace map in degree `n` by `(-1)^n`.

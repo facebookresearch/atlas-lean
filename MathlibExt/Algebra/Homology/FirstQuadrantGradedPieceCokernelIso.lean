@@ -13,12 +13,17 @@ module
 public import MathlibExt.Algebra.Homology.FirstQuadrantGradedPieceSplitting
 
 /-!
-# The horizontal graded-piece cokernel
+# Cokernels of consecutive horizontal filtration stages
 
-The degreewise splitting of consecutive horizontal filtration stages is
-transported through the chain-to-cochain extension.  This identifies the
-categorical cokernel of a consecutive-stage map with the direct shifted-column
-presentation used to compute the first filtration page.
+Let `K` be a first-quadrant bicomplex in a preadditive category with a zero object and finite
+coproducts. Consecutive natural filtration stages have degreewise split sequences with new
+column `p+1` as quotient. Their chain-to-cochain extensions are split in every integer degree;
+above support `-(p+1)`, the inclusion map is an isomorphism.
+
+In an abelian category, the corresponding complete-filtration sequences are short exact,
+including column zero with zero lower stage. The direct-column projection is a cokernel of the
+consecutive-stage map. The canonical cokernel isomorphism has forward map the specified factor
+from the categorical cokernel to the direct shifted column.
 -/
 
 @[expose] public section
@@ -36,8 +41,10 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
   (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
     (ComplexShape.down ℕ))
 
-/-- The natural consecutive-stage cochain sequence whose last term is the
-new horizontal column. -/
+/-- The natural consecutive-stage cochain short complex.
+
+Extend `F_p → F_(p+1)` to cochain degrees and follow it by projection onto direct column
+`p+1`. -/
 noncomputable def horizontalNaturalSuccCochainShortComplex (p : ℕ) :
     ShortComplex (CochainComplex C ℤ) :=
   ShortComplex.mk
@@ -46,8 +53,10 @@ noncomputable def horizontalNaturalSuccCochainShortComplex (p : ℕ) :
     (horizontalNaturalDirectColumnProjectionMap K (p + 1))
     (horizontalNaturalDirectColumnProjectionMap_stageMap_zero K p)
 
-/-- In every supported degree, the natural consecutive-stage cochain
-sequence is the previously constructed split degreewise sequence. -/
+/-- The finite splitting coordinates of a supported cochain degree.
+
+Evaluation of the natural cochain sequence at degree `-(p+1)-q` is isomorphic to the finite
+total-degree sequence at `p+1+q`. -/
 noncomputable def horizontalNaturalSuccCochainEvalIso (p q : ℕ) :
     horizontalFilteredSuccShortComplex K p q ≅
       (horizontalNaturalSuccCochainShortComplex K p).map
@@ -86,8 +95,10 @@ noncomputable def horizontalNaturalSuccCochainEvalIso (p q : ℕ) :
       (e₁.hom_inv_id_assoc (S.g ≫ e₂.hom))
 
 omit [HasZeroObject C] in
-/-- Before the new horizontal column appears, consecutive filtration stages
-are already equal to the full total object. -/
+/-- The finite-stage inclusion after all degree summands are present.
+
+For `k ≤ l` and total degree `n ≤ k`, the map from filtration stage `k` to stage `l` is an
+isomorphism in degree `n`. -/
 theorem horizontalFilteredTotalMap_isIso_of_le
     {k l n : ℕ} (h : k ≤ l) (hn : n ≤ k) :
     IsIso (horizontalFilteredTotalMap K h n) := by
@@ -104,8 +115,10 @@ theorem horizontalFilteredTotalMap_isIso_of_le
     (horizontalFilteredTotalMap K h n)
     (horizontalFilteredTotalToTotal K l n) hl hcomp
 
-/-- Above the support of the new column, the consecutive-stage cochain map
-is an isomorphism. -/
+/-- The consecutive-stage map above new-column support.
+
+In cochain degree `i>-(p+1)`, the map between extended natural stages `p` and `p+1` is an
+isomorphism. -/
 theorem horizontalNaturalSuccCochainMap_f_isIso_of_lt
     (p : ℕ) (i : ℤ) (hi : -((p + 1 : ℕ) : ℤ) < i) :
     IsIso ((horizontalNaturalSuccCochainShortComplex K p).f.f i) := by
@@ -159,7 +172,11 @@ theorem horizontalNaturalSuccCochainMap_f_isIso_of_lt
           lia)
     exact hsource.isIso htarget _
 
-/-- Every degree of the natural consecutive-stage sequence is split. -/
+/-- The splitting of each natural-stage cochain degree sequence.
+
+For every integer cochain degree, the consecutive-stage short complex is split; supported
+degrees use the finite summand splitting and unsupported degrees use the inclusion
+isomorphism. -/
 noncomputable def horizontalNaturalSuccCochainEvalSplitting
     (p : ℕ) (i : ℤ) :
     ((horizontalNaturalSuccCochainShortComplex K p).map
@@ -178,8 +195,10 @@ noncomputable def horizontalNaturalSuccCochainEvalSplitting
       (horizontalNaturalSuccCochainMap_f_isIso_of_lt K p i (by lia))
       (horizontalDirectColumnCochain_isZero_X_of_lt K (p + 1) i (by lia))
 
-/-- The complete-filtration short complex whose cokernel is the direct
-horizontal column. -/
+/-- The complete-filtration short complex with direct-column quotient.
+
+The consecutive first-page filtration map followed by the complete direct-column projection
+defines the column short complex. -/
 noncomputable def horizontalFirstPageDirectColumnShortComplex (p : ℕ) :
     ShortComplex (CochainComplex C ℤ) :=
   ShortComplex.mk
@@ -187,8 +206,10 @@ noncomputable def horizontalFirstPageDirectColumnShortComplex (p : ℕ) :
     (horizontalCompleteDirectColumnProjectionMap K p)
     (horizontalFirstPageFiltrationMap_projection_zero K p)
 
-/-- For a positive column, the complete-filtration short complex is the
-natural consecutive-stage short complex. -/
+/-- The natural-stage comparison of a positive complete column sequence.
+
+For column `p+1`, the complete-filtration short complex is isomorphic to the natural
+consecutive-stage cochain sequence. -/
 noncomputable def horizontalFirstPageSuccShortComplexIso (p : ℕ) :
     horizontalFirstPageDirectColumnShortComplex K (p + 1) ≅
       horizontalNaturalSuccCochainShortComplex K p := by
@@ -235,14 +256,18 @@ noncomputable def horizontalFirstPageSuccShortComplexIso (p : ℕ) :
     dsimp only [eU, sU]
     exact Category.assoc _ _ _
 
-/-- Inclusion of the top-column summand into its horizontal filtration
-stage. -/
+/-- The inclusion of a finite filtration stage's top column.
+
+Include bidegree `(p,q)` into stage `p` at total degree `p+q`. -/
 noncomputable def horizontalFilteredTopInclusion (p q : ℕ) :
     (K.X p).X q ⟶ horizontalFilteredTotalObj K p (p + q) :=
   horizontalFilteredTotalι K p (p + q)
     (horizontalFilteredTopIndex p q)
 
-/-- Filtration stage zero has only its top-column summand. -/
+/-- The unique-column projection at filtration stage zero.
+
+Stage zero contains only bidegree `(0,q)` in total degree `q`, so top projection and inclusion
+are inverse isomorphisms. -/
 noncomputable def horizontalFilteredTopProjectionZeroIso (q : ℕ) :
     horizontalFilteredTotalObj K 0 (0 + q) ≅ (K.X 0).X q where
   hom := horizontalFilteredTopProjection K 0 q
@@ -273,8 +298,10 @@ noncomputable def horizontalFilteredTopProjectionZeroIso (q : ℕ) :
     simpa [horizontalFilteredTopInclusion, horizontalFilteredTopIndex] using
       horizontalFilteredTopι_topProjection K 0 q
 
-/-- The zeroth-stage projection is an isomorphism in every supported
-cochain degree. -/
+/-- The zero-column projection isomorphism in a supported degree.
+
+At cochain degree `-q`, the complete zero-stage projection onto direct column zero is an
+isomorphism. -/
 theorem horizontalCompleteDirectColumnProjectionMap_zero_f_isIso_of_degree
     (q : ℕ) :
     IsIso ((horizontalCompleteDirectColumnProjectionMap K 0).f
@@ -311,8 +338,10 @@ theorem horizontalCompleteDirectColumnProjectionMap_zero_f_isIso_of_degree
   letI : IsIso (horizontalDirectColumnProjectionComponent K 0 q') := hcomponent
   infer_instance
 
-/-- The zeroth complete filtration stage projects isomorphically onto the
-zeroth direct column. -/
+/-- The zero-column projection isomorphism in every cochain degree.
+
+All components of the complete projection onto direct column zero are isomorphisms, including
+the zero objects above degree zero. -/
 theorem horizontalCompleteDirectColumnProjectionMap_zero_f_isIso (i : ℤ) :
     IsIso ((horizontalCompleteDirectColumnProjectionMap K 0).f i) := by
   by_cases hi : i ≤ 0
@@ -346,22 +375,30 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
   (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
     (ComplexShape.down ℕ))
 
-/-- The natural consecutive-stage cochain sequence is short exact. -/
+/-- Short exactness of natural consecutive-stage cochain sequences.
+
+In an abelian category, the degreewise split natural filtration sequence is short exact as a
+cochain-complex sequence. -/
 theorem horizontalNaturalSuccCochainShortExact (p : ℕ) :
     (horizontalNaturalSuccCochainShortComplex K p).ShortExact := by
   apply HomologicalComplex.shortExact_of_degreewise_shortExact
   intro i
   exact (horizontalNaturalSuccCochainEvalSplitting K p i).shortExact
 
-/-- The complete-filtration sequence is short exact in every positive
-horizontal column. -/
+/-- Short exactness of positive-column complete filtration sequences.
+
+The complete-filtration sequence for column `p+1` is short exact through its natural-stage
+comparison. -/
 theorem horizontalFirstPageSuccShortExact (p : ℕ) :
     (horizontalFirstPageDirectColumnShortComplex K (p + 1)).ShortExact :=
   ShortComplex.shortExact_of_iso
     (horizontalFirstPageSuccShortComplexIso K p).symm
     (horizontalNaturalSuccCochainShortExact K p)
 
-/-- The complete-filtration sequence is short exact in column zero. -/
+/-- Short exactness of the zero-column complete filtration sequence.
+
+The lower stage is zero and the direct-column projection is an isomorphism, giving a short
+exact sequence in column zero. -/
 theorem horizontalFirstPageZeroShortExact :
     (horizontalFirstPageDirectColumnShortComplex K 0).ShortExact := by
   have hsource : IsZero
@@ -379,16 +416,20 @@ theorem horizontalFirstPageZeroShortExact :
     exact HomologicalComplex.Hom.isIso_of_components _
   exact (ShortComplex.Splitting.ofIsZeroOfIsIso _ hsource hprojection).shortExact
 
-/-- Every horizontal filtration quotient is the corresponding direct
-shifted column. -/
+/-- Short exactness of all complete filtration column sequences.
+
+For every `p ≥ 0`, the consecutive-stage map and direct-column projection form a short exact
+sequence. -/
 theorem horizontalFirstPageDirectColumnShortExact (p : ℕ) :
     (horizontalFirstPageDirectColumnShortComplex K p).ShortExact := by
   cases p with
   | zero => exact horizontalFirstPageZeroShortExact K
   | succ p => exact horizontalFirstPageSuccShortExact K p
 
-/-- The direct-column projection exhibits the direct shifted column as the
-cokernel of consecutive complete filtration stages. -/
+/-- The cokernel property of a complete direct-column projection.
+
+The direct-column projection is a colimit cofork for the consecutive complete-filtration stage
+map. -/
 noncomputable def horizontalCompleteDirectColumnProjectionMapIsCokernel
     (p : ℕ) :
     IsColimit (CokernelCofork.ofπ
@@ -396,8 +437,10 @@ noncomputable def horizontalCompleteDirectColumnProjectionMapIsCokernel
       (horizontalFirstPageFiltrationMap_projection_zero K p)) :=
   (horizontalFirstPageDirectColumnShortExact K p).gIsCokernel
 
-/-- The abstract categorical cokernel of consecutive filtration stages is
-canonically isomorphic to the direct shifted column. -/
+/-- The universal cokernel comparison with a direct shifted column.
+
+The categorical cokernel and the direct-column cokernel cofork are canonically isomorphic by
+their colimit universal properties. -/
 noncomputable def horizontalFirstPageCokernelUniqueIso (p : ℕ) :
     cokernel (horizontalFirstPageFiltrationMap K p) ≅
       horizontalDirectColumnCochain K p :=
@@ -410,6 +453,10 @@ noncomputable def horizontalFirstPageCokernelUniqueIso (p : ℕ) :
   let hCanonical : IsColimit canonical := horizontalCompleteDirectColumnProjectionMapIsCokernel K p
   IsColimit.coconePointUniqueUpToIso hStandard hCanonical
 
+/-- The forward factor of the universal graded-piece cokernel comparison.
+
+The forward map of the universal cokernel isomorphism is the specified cokernel factor to the
+direct column. -/
 theorem horizontalFirstPageCokernelUniqueIso_hom (p : ℕ) :
     (horizontalFirstPageCokernelUniqueIso K p).hom =
       horizontalFirstPageCokernelToDirectColumn K p := by
@@ -428,8 +475,10 @@ theorem horizontalFirstPageCokernelUniqueIso_hom (p : ℕ) :
     horizontalCompleteDirectColumnProjectionMap K p at hleg
   exact hleg.trans (cokernel.π_desc _ _ _).symm
 
-/-- Canonical graded-piece isomorphism, normalized so that its forward map
-is the previously defined cokernel factor. -/
+/-- The canonical direct-column cokernel isomorphism.
+
+The cokernel of the first-page filtration map is isomorphic to the direct column, with forward
+map the canonical projection factor and inverse from the universal cokernel comparison. -/
 noncomputable def horizontalFirstPageCokernelIso (p : ℕ) :
     cokernel (horizontalFirstPageFiltrationMap K p) ≅
       horizontalDirectColumnCochain K p where
@@ -442,6 +491,10 @@ noncomputable def horizontalFirstPageCokernelIso (p : ℕ) :
     rw [← horizontalFirstPageCokernelUniqueIso_hom]
     exact (horizontalFirstPageCokernelUniqueIso K p).inv_hom_id
 
+/-- The isomorphism property of the direct-column cokernel factor.
+
+The specified factor from the consecutive-stage cokernel to the direct column is an
+isomorphism. -/
 noncomputable instance horizontalFirstPageCokernelToDirectColumn_isIso
     (p : ℕ) : IsIso (horizontalFirstPageCokernelToDirectColumn K p) :=
   (horizontalFirstPageCokernelIso K p).isIso_hom

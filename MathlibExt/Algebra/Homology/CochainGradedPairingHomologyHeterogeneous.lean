@@ -11,11 +11,16 @@ module
 public import MathlibExt.Algebra.Homology.CochainGradedPairingHomologyLaws
 
 /-!
-# Heterogeneous laws for cochain pairings on homology
+# Heterogeneous associativity and unit identities on homology
 
-Associativity and unit identities are descended from cycle-level identities.
-The intermediate and output cochain complexes need not coincide, and all
-comparison morphisms and monoidal coherence maps remain explicit.
+For natural-index module cochain complexes over a commutative ring, graded pairings may have
+different intermediate and output complexes. A cycle-level associativity square with a
+specified map between the two output homology objects descends to the corresponding square on
+homology, retaining the tensor associator and all degree parentheses.
+
+Likewise, a cycle-valued unit morphism from the tensor unit and a specified output comparison
+map give left or right unit identities on homology when their cycle-level identities hold. The
+comparison maps are arbitrary morphisms satisfying these identities.
 -/
 
 @[expose] public section
@@ -32,8 +37,12 @@ namespace HomologicalComplex.CochainGradedPairing
 
 variable (R : Type u) [CommRing R]
 
-/-- A heterogeneous associativity identity on cycle pairings descends to the
-corresponding identity on homology pairings. -/
+/-- Cycle associativity with distinct outputs descends to homology.
+
+For pairings through `K₁₂` and `K₂₃` with outputs `L` and `R'`, fix a map `L.homology
+((p+q)+r) ⟶ R'.homology (p+(q+r))`. If the two iterated cycle pairings agree after homology
+projection and this map, with the tensor associator, then the two iterated homology pairings
+satisfy the same associativity square. -/
 theorem pairHomology_associativity
     {K₁ K₂ K₃ K₁₂ K₂₃ L R' : CochainComplex (ModuleCat.{u} R) ℕ}
     (P₁₂ : CochainGradedPairing K₁ K₂ K₁₂)
@@ -76,7 +85,12 @@ theorem pairHomology_associativity
   have h := ConcreteCategory.congr_hom hcycles ((x₀ ⊗ₜ[R] y₀) ⊗ₜ[R] z₀)
   exact h
 
-/-- A heterogeneous left-unit identity on cycles descends to homology. -/
+/-- Heterogeneous left cycle unit descends to a homology unit.
+
+For a pairing `U × K → L`, a map from the tensor unit to `U.cycles 0`, and a comparison
+`L.homology (0+q) → K.homology q`, suppose the cycle-level composite equals the left unitor
+followed by homology projection. Then the induced homology unit class satisfies the
+corresponding left-unit identity. -/
 theorem pairHomology_left_unit
     {U K L : CochainComplex (ModuleCat.{u} R) ℕ}
     (P : CochainGradedPairing U K L) (q : ℕ)
@@ -107,7 +121,11 @@ theorem pairHomology_left_unit
     (K.homologyπ q).hom (a • y₀) at h
   simpa using h
 
-/-- A heterogeneous right-unit identity on cycles descends to homology. -/
+/-- Heterogeneous right cycle unit descends to a homology unit.
+
+For a pairing `K × U → L`, a map from the tensor unit to `U.cycles 0`, and a comparison
+`L.homology (p+0) → K.homology p`, a cycle-level right-unit identity descends to the right
+unitor identity on homology. -/
 theorem pairHomology_right_unit
     {K U L : CochainComplex (ModuleCat.{u} R) ℕ}
     (P : CochainGradedPairing K U L) (p : ℕ)

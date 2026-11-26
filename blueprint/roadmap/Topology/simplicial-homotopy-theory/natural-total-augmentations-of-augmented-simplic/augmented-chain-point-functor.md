@@ -1,3 +1,5 @@
-# Augmented Chain Point Functor
+# The augmentation-point functor of simplicial chain diagrams
 
-The actual original augmentation point of the augmented chain diagram.
+The augmentation-point functor of simplicial chain diagrams.
+
+An augmented simplicial chain diagram is sent to its augmentation target chain complex.

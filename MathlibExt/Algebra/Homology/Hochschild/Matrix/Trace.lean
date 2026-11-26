@@ -18,15 +18,27 @@ public import Mathlib.Data.Matrix.Basis
 public import Mathlib.Data.List.OfFn
 
 /-!
-# Generalized trace faces and coefficient chain maps
+# Generalized matrix trace on coefficient Hochschild complexes
 
-Finite closed-cycle expansion and the matrix
-coefficient action laws make generalized trace
-commute with the Hochschild faces and boundary.
-The corresponding corner maps use the same
-coefficient bimodule.
+Let k be a commutative ring, A an associative unital k-algebra, M an
+A-bimodule with commuting k-linear actions, and ι a finite matrix index
+type. Write C_n(A,M) = M ⊗[k] A^⊗n. The generalized trace
+T_n : C_n(Mat_ι(A),Mat_ι(M)) → C_n(A,M) sums the entries of all closed
+index cycles:
+T_n(X ⊗ a₁ ⊗ ⋯ ⊗ aₙ) =
+∑_(i₀,…,iₙ) X_(i₀,i₁) ⊗ (a₁)_(i₁,i₂) ⊗ ⋯ ⊗ (aₙ)_(iₙ,i₀).
+In degree zero this is the additive trace of X.
 
-Reference: Loday, Cyclic Homology, §1.2.2.
+The maps T_n commute with every Hochschild face. The first face uses
+the right coefficient action, the interior faces multiply adjacent
+algebra factors in their given order, and the last face uses the left
+coefficient action. Consequently they commute with b = ∑ᵢ(−1)^i δᵢ.
+
+Lifting the coefficient modules to H = max(u,v,w,z), for the independent
+worlds of k, A, M and ι, gives the trace chain map. For b ∈ ι, the
+diagonal corner chain map K_b satisfies T ∘ K_b = id.
+
+Reference: Loday, *Cyclic Homology*, §1.2.2.
 -/
 
 @[expose] public section
@@ -51,8 +63,11 @@ variable (A : Type v) [AddCommGroup A] [Module k A]
   (ι : Type z) [Fintype ι] [DecidableEq ι]
 
 omit [Fintype ι] [DecidableEq ι] in
-/-- Existing matrix and multilinear product extensionality suffice for the
-scalar-matrix representatives used by the source's proof. -/
+/-- Let k be a commutative ring, A, M and N be k-modules, ι a
+finite index type and n ≥ 0. Two k-linear maps from
+Mat_ι(M) ⊗[k] Mat_ι(A)^⊗n to N are equal if they agree on every tensor
+(U₀·m) ⊗ (U₁·a₁) ⊗ ⋯ ⊗ (Uₙ·aₙ), where Uⱼ ∈ Mat_ι(k) and
+(U·x)ᵢⱼ = Uᵢⱼ • x. The carrier worlds of A, M, N and ι are independent. -/
 theorem matrix_tensor_ext [Finite ι] {N : Type*} [AddCommGroup N] [Module k N]
     {n : ℕ}
     {f g : Matrix ι ι M ⊗[k] TensorPower k n (Matrix ι ι A) →ₗ[k] N}
@@ -107,12 +122,15 @@ variable (A : Type v) [Ring A] [Algebra k A]
   [IsScalarTower k A M] [IsScalarTower k Aᵐᵒᵖ M]
   (ι : Type z) [Fintype ι] [DecidableEq ι]
 
-/-- The original pointwise ground module, captured before the matrix algebra actions. -/
+/-- Coefficient matrices over a k-module M carry the pointwise
+ground action (λ • X)ᵢⱼ = λ • Xᵢⱼ. -/
 local instance traceGroundMatrixModule : Module k (Matrix ι ι M) := inferInstance
-/-- The native left matrix-algebra action on the original coefficient matrix. -/
+/-- For a left A-module M and finite ι, the left matrix-algebra
+action on Mat_ι(M) is (B • X)ᵢⱼ = ∑ₚ Bᵢₚ • Xₚⱼ. -/
 local instance traceActorLeftModule : Module (Matrix ι ι A) (Matrix ι ι M) :=
   Coefficients.leftModule A M ι
-/-- The native right matrix-algebra action, with the original coefficient carrier. -/
+/-- For a right A-module M and finite ι, the opposite matrix-algebra
+action on Mat_ι(M) is (op B • X)ᵢⱼ = ∑ₚ op(Bₚⱼ) • Xᵢₚ. -/
 local instance traceActorRightModule : Module (Matrix ι ι A)ᵐᵒᵖ (Matrix ι ι M) :=
   Coefficients.rightModule A M ι
 local instance : SMulCommClass (Matrix ι ι A) (Matrix ι ι A)ᵐᵒᵖ (Matrix ι ι M) :=
@@ -152,7 +170,10 @@ private theorem scaled_right (U V : Matrix ι ι k) (a : A) (m : M) :
   have hop (c : k) : MulOpposite.op (c • a) = c • MulOpposite.op a := rfl
   rw [hop, smul_assoc, smul_comm (MulOpposite.op a), smul_smul, mul_comm]
 
-/-- Ordered multiplication is unchanged by contracting adjacent tuple entries. -/
+/-- For any monoid D, a tuple a₀,…,aₙ in D and i ∈ {0,…,n−1},
+replace the adjacent entries aᵢ,a_(i+1) by their ordered product
+aᵢ a_(i+1). The product of the resulting length-n tuple equals
+a₀ ⋯ aₙ. No commutativity of D is assumed. -/
 theorem product_mulAdjacent {D : Type*} [Monoid D] :
     ∀ (n : ℕ) (i : Fin n) (a : Fin (n + 1) → D),
       (List.ofFn (ModuleCat.Algebra.Hochschild.hochschildMulAdjacent i a)).prod =
@@ -197,7 +218,10 @@ theorem product_mulAdjacent {D : Type*} [Monoid D] :
         simpa only [List.prod_cons] using
           (congrArg (List.prod : List D → D) (List.ofFn_succ (f := a))).symm
 
-/-- The first trace face uses the right coefficient action. -/
+/-- For an A-bimodule M with commuting k-linear actions, the
+degree traces satisfy T_n ∘ δ₀^Mat = δ₀^A ∘ T_(n+1).
+The first face sends m ⊗ a₁ ⊗ ⋯ ⊗ a_(n+1) to
+(m·a₁) ⊗ a₂ ⊗ ⋯ ⊗ a_(n+1), where m·a = op(a) • m. -/
 theorem trace_face_first (n : ℕ) :
     (generalizedTrace k ι n).comp (Coefficients.face A M ι k n 0).hom =
       (ModuleCat.Algebra.Hochschild.face k A M n 0).hom.comp
@@ -233,7 +257,11 @@ theorem trace_face_first (n : ℕ) :
         ModuleCat.Algebra.Hochschild.face_first_tprod]
       rfl
 
-/-- Interior trace faces preserve the original adjacent products. -/
+/-- For an A-bimodule M with commuting k-linear actions and
+i ∈ {0,…,n−1}, the interior face that replaces the algebra entries
+a_(i+1),a_(i+2) by a_(i+1)a_(i+2) satisfies
+T_n ∘ δ_(i+1)^Mat = δ_(i+1)^A ∘ T_(n+1).
+The order of multiplication is retained for a noncommutative A. -/
 theorem trace_face_inner (n : ℕ) (i : Fin n) :
     (generalizedTrace k ι n).comp
         (Coefficients.face A M ι k n i.castSucc.succ).hom =
@@ -263,7 +291,11 @@ theorem trace_face_inner (n : ℕ) (i : Fin n) :
     ModuleCat.Algebra.Hochschild.face_inner_tprod]
   rw [product_mulAdjacent]
 
-/-- The cyclic last trace face uses the left action and native scalar trace cyclicity. -/
+/-- For an A-bimodule M with commuting k-linear actions, the last
+face sends m ⊗ a₁ ⊗ ⋯ ⊗ a_(n+1) to
+(a_(n+1) • m) ⊗ a₁ ⊗ ⋯ ⊗ aₙ. It satisfies
+T_n ∘ δ_(n+1)^Mat = δ_(n+1)^A ∘ T_(n+1), with the left matrix action
+on the source coefficient and the left A-action on the target. -/
 theorem trace_face_last (n : ℕ) :
     (generalizedTrace k ι n).comp
         (Coefficients.face A M ι k n (Fin.last (n + 1))).hom =
@@ -306,7 +338,11 @@ theorem trace_face_last (n : ℕ) :
         ModuleCat.Algebra.Hochschild.face_last_tprod]
       rfl
 
-/-- Every face square for the coefficient trace, with exact native endpoints. -/
+/-- Let k be a commutative ring, A a k-algebra and M an
+A-bimodule whose commuting actions are k-linear. For every n ≥ 0 and
+i ∈ {0,…,n+1}, the trace maps satisfy
+T_n ∘ δᵢ^Mat = δᵢ^A ∘ T_(n+1) from
+C_(n+1)(Mat_ι(A),Mat_ι(M)) to C_n(A,M). -/
 theorem trace_face_comm (n : ℕ) (i : Fin (n + 2)) :
     (generalizedTrace k ι n).comp (Coefficients.face A M ι k n i).hom =
       (ModuleCat.Algebra.Hochschild.face k A M n i).hom.comp
@@ -316,7 +352,11 @@ theorem trace_face_comm (n : ℕ) (i : Fin (n + 2)) :
   · simpa only [Fin.succ_last] using trace_face_last k A M ι n
   · exact trace_face_inner k A M ι n l
 
-/-- The signed native boundaries commute with the trace degree maps. -/
+/-- For a k-algebra A, a compatible A-bimodule M and finite
+matrix index type ι, the trace maps satisfy
+T_n ∘ b_n^Mat = b_n^A ∘ T_(n+1) for every n ≥ 0, where
+b_n : C_(n+1) → C_n is ∑_(i=0)^(n+1) (−1)^i δᵢ.
+The cyclic last face is included in this sum. -/
 theorem trace_boundary_comm (n : ℕ) :
     (generalizedTrace k ι n).comp
         (ModuleCat.Algebra.Hochschild.boundary k (Matrix ι ι A) (Matrix ι ι M) n).hom =
@@ -333,8 +373,11 @@ theorem trace_boundary_comm (n : ℕ) :
   exact congrArg (fun y => (-1 : ℤ) ^ i.val • y)
     (LinearMap.congr_fun (trace_face_comm k A M ι n i) x)
 
-/-- Lift the trace to the native common coefficient universe.
-Both factors are the canonical coefficient lift/down equivalences. -/
+/-- For independent carrier worlds u, v, w and z of k, A, M
+and finite ι, put H = max(u,v,w,z). The lifted degree trace is
+ULift^H Mat_ι(M) ⊗[k] Mat_ι(A)^⊗n →
+ULift^H M ⊗[k] A^⊗n. It removes the source coefficient lift, applies
+the closed-cycle trace T_n, and lifts the target coefficient. -/
 def traceLinearLift (n : ℕ) :
     ULift.{max u v w z} (Matrix ι ι M) ⊗[k] TensorPower k n (Matrix ι ι A) →ₗ[k]
       ULift.{max u v w z} M ⊗[k] TensorPower k n A := by
@@ -349,7 +392,11 @@ def traceLinearLift (n : ℕ) :
 
 omit [Module A M] [Module Aᵐᵒᵖ M] [SMulCommClass A Aᵐᵒᵖ M] [IsScalarTower k A M]
   [IsScalarTower k Aᵐᵒᵖ M] in
-/-- Unlifting the target gives exactly the original trace of the unlifted source. -/
+/-- For k-modules M and A with A a k-algebra, and finite ι, let
+d_S and d_T remove the coefficient lifts at H = max(u,v,w,z).
+The lifted degree trace T_n^H satisfies d_T(T_n^H(x)) = T_n(d_S(x))
+for every source tensor x. No left or right A-action on M is needed
+for this value equality. -/
 theorem traceLinearLift_down (n : ℕ)
     (x : ULift.{max u v w z} (Matrix ι ι M) ⊗[k]
       TensorPower k n (Matrix ι ι A)) :
@@ -366,7 +413,11 @@ theorem traceLinearLift_down (n : ℕ)
   simp only [traceLinearLift, LinearMap.comp_apply, LinearEquiv.coe_coe,
     LinearEquiv.apply_symm_apply]
 
-/-- The native common-universe trace respects the signed boundary. -/
+/-- For an A-bimodule M with commuting k-linear actions and
+H = max(u,v,w,z), the lifted traces satisfy
+b_n^A ∘ T_(n+1)^H = T_n^H ∘ b_n^Mat from the degree n+1 matrix
+Hochschild term with coefficient ULift^H Mat_ι(M) to the degree n
+A-term with coefficient ULift^H M. -/
 theorem traceLinearLift_boundary_comm (n : ℕ) :
     (ModuleCat.Algebra.Hochschild.boundary k A (ULift.{max u v w z} M) n).hom.comp
         (traceLinearLift k A M ι (n + 1)) =
@@ -420,7 +471,11 @@ theorem traceLinearLift_boundary_comm (n : ℕ) :
       congrArg (generalizedTrace k ι n) (LinearMap.congr_fun hS x)
     _ = _ := (traceLinearLift_down k A M ι n _).symm
 
-/-- Loday 1.2.3's trace chain map on the native common-universe complexes. -/
+/-- For a k-algebra A, an A-bimodule M with commuting k-linear
+actions, and a finite matrix index type ι, the generalized trace
+defines C_*(Mat_ι(A),ULift^H Mat_ι(M)) → C_*(A,ULift^H M),
+where H = max(u,v,w,z) retains the independent worlds of k, A, M and ι.
+Its differential is the full alternating Hochschild boundary. -/
 def traceChainMap :
     ModuleCat.Algebra.Hochschild.chainComplex k (Matrix ι ι A)
         (ULift.{max u v w z} (Matrix ι ι M)) ⟶
@@ -431,11 +486,18 @@ def traceChainMap :
       ModuleCat.Algebra.Hochschild.chainComplex_d]
     exact ModuleCat.hom_ext (traceLinearLift_boundary_comm k A M ι n))
 
-/-- The chain component is exactly the constructed lifted degree trace. -/
+/-- For the generalized trace chain map between the coefficient
+Hochschild complexes, the underlying k-linear degree-n component is
+the lifted degree trace T_n^H, with H = max(u,v,w,z). -/
 theorem traceChainMap_f (n : ℕ) :
     ((traceChainMap k A M ι).f n).hom = traceLinearLift k A M ι n := rfl
 
-/-- The common-universe component keeps the complete printed sum after target down. -/
+/-- Let M be an A-bimodule with commuting k-linear actions. For
+X ∈ Mat_ι(M) and aⱼ ∈ Mat_ι(A), removing the target coefficient lift
+from the degree-n trace of up(X) ⊗ a₁ ⊗ ⋯ ⊗ aₙ gives
+∑_(i₀,…,iₙ) X_(i₀,i₁) ⊗ (a₁)_(i₁,i₂) ⊗ ⋯ ⊗ (aₙ)_(iₙ,i₀).
+The sum ranges over all ι-valued closed cycles, with indices modulo n+1;
+in degree zero it is the additive matrix trace. -/
 theorem traceChainMap_f_tprod (n : ℕ) (X : Matrix ι ι M)
     (a : Fin n → Matrix ι ι A) :
     (show ULift.{max u v w z} M ⊗[k] TensorPower k n A ≃ₗ[k]
@@ -464,8 +526,10 @@ theorem traceChainMap_f_tprod (n : ℕ) (X : Matrix ι ι M)
           (ULift.up X : ULift.{max u v w z} (Matrix ι ι M)) a)
     _ = _ := generalizedTrace_tmul_tprod k ι n X a
 
-/-- The corner followed by trace is the identity chain map.
-The other composite requires the printed Morita homotopy and is not asserted here. -/
+/-- For a k-algebra A, an A-bimodule M with commuting k-linear
+actions, finite ι and b ∈ ι, the diagonal-corner chain map followed
+by the generalized trace is the identity on C_*(A,ULift^H M),
+where H = max(u,v,w,z). Thus T ∘ K_b = id as chain maps. -/
 theorem cornerChainMap_comp_trace (b : ι) :
     cornerChainMap k A M ι b ≫ traceChainMap k A M ι =
       𝟙 (ModuleCat.Algebra.Hochschild.chainComplex k A (ULift.{max u v w z} M)) := by

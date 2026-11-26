@@ -17,17 +17,28 @@ public import MathlibExt.Combinatorics.Perm.EulerianRationalFamily
 public import MathlibExt.LinearAlgebra.TensorPower.IntegralEulerianComparison
 
 /-!
-# Rational Eulerian chain maps and decomposition
+# Rational Eulerian operations and the coefficient Hodge decomposition
 
-Coefficient-fixed rational permutation
-operators give finite complete orthogonal
-Eulerian chain projectors. Their locally
-finite images decompose the complex
-and homology without coefficient flatness
-or projectivity. The rational parameter
-family is convolution bar-lambda; the
-integer lambda convention retains its
-separate integer sign.
+Let k be a commutative ℚ-algebra, A a commutative k-algebra and M an
+A-module with a compatible k-module structure. The symmetric coefficient
+Hochschild complex has terms C_n(A,M) = M ⊗[k] A^⊗n and the full
+alternating Hochschild boundary. Rational Eulerian operators act on its
+algebra factors and fix the coefficient. Their projectors e_n^(i) are
+orthogonal, vanish for i > n and sum to the identity for 0 ≤ i ≤ n.
+
+The rational convolution family is
+Λ_n(a) = ∑_(i=0)^n a^i e_n^(i), a ∈ ℚ.
+It satisfies Λ_n(a)Λ_n(b) = Λ_n(ab) and commutes with the boundary.
+For a positive integer m, the signed integer convention is
+λ_n^m = (−1)^(m−1)Λ_n(m); its composition law has the extra factor
+(−1)^((l−1)(m−1)).
+
+Writing C^(i) for the image complex of the ith Eulerian chain projector,
+the image inclusions give ⨁_(i∈ℕ) C^(i) ≅ C and
+⨁_(i∈ℕ) H_n(C^(i)) ≅ H_n(C). The sum is locally finite in each
+degree. All maps here are k-linear, in ModuleCat^max(u,v,w)(k), with
+independent worlds of k, A and M. No coefficient flatness or
+projectivity is required.
 -/
 
 @[expose] public section
@@ -45,19 +56,29 @@ variable (k : Type u) [CommRing k] [Algebra ℚ k]
   (M : Type w) [AddCommGroup M] [Module k M] [Module A M]
   [SMulCommClass k A M] [IsScalarTower k A M]
 
-/-- The coefficient-fixed rational convolution operation. -/
+/-- For a commutative ℚ-algebra k, a commutative k-algebra A,
+a k-module M, n ≥ 0 and a ∈ ℚ, Λ_n(a) is the k-linear permutation
+operator on M ⊗[k] A^⊗n associated with the rational Eulerian
+polynomial Λ_n(a). It fixes M and permutes only the n algebra factors. -/
 def rationalConvolutionOperator (n : ℕ) (a : ℚ) : Module.End k (M ⊗[k] TensorPower k n A) :=
   TensorPower.coefficientRationalPermutationAction (M := M) (V := A) n
     (Equiv.Perm.eulerianLambda n a)
 
-/-- Its finite expansion has the original Eulerian coefficients. -/
+/-- For k a commutative ℚ-algebra, A a commutative k-algebra and
+M a k-module, the coefficient-fixed convolution operator satisfies
+Λ_n(a) = ∑_(i=0)^n algebraMap(a^i) e_n^(i) for every a ∈ ℚ.
+The coefficients act by the ground k-module structure on
+M ⊗[k] A^⊗n. -/
 theorem rationalConvolutionOperator_eq_sum (n : ℕ) (a : ℚ) :
     rationalConvolutionOperator k A M n a =
       ∑ i : Fin (n + 1), algebraMap ℚ k (a ^ i.val) • coefficientEulerianOperator k A M n i.val := by
   rw [rationalConvolutionOperator, Equiv.Perm.eulerianLambda_eq_sum, map_sum]
   simp only [TensorPower.coefficientRationalPermutationAction_smul, coefficientEulerianOperator]
 
-/-- The stable-sort convolution polynomial family composes by multiplying its rational parameters. -/
+/-- For a commutative ℚ-algebra k, a commutative k-algebra A and
+a k-module M, the degree-n coefficient-fixed operators satisfy
+Λ_n(a) ∘ Λ_n(b) = Λ_n(ab) for all a,b ∈ ℚ.
+This equality of k-linear maps does not require an A-action on M. -/
 theorem rationalConvolutionOperator_comp (n : ℕ) (a b : ℚ) :
     (rationalConvolutionOperator k A M n a).comp (rationalConvolutionOperator k A M n b) =
       rationalConvolutionOperator k A M n (a * b) := by
@@ -68,7 +89,11 @@ theorem rationalConvolutionOperator_comp (n : ℕ) (a b : ℚ) :
   rw [← map_mul, Equiv.Perm.eulerianLambda_mul]
   rfl
 
-/-- Every rational convolution value commutes with the complete original boundary. -/
+/-- For a commutative ℚ-algebra k, a commutative k-algebra A and
+an A-module M with compatible ground action, the boundary
+b_n : C_(n+1)(A,M) → C_n(A,M) satisfies
+b_n ∘ Λ_(n+1)(a) = Λ_n(a) ∘ b_n for every n ≥ 0 and a ∈ ℚ.
+The first and last coefficient faces are included. -/
 theorem rationalConvolutionOperator_boundary (n : ℕ) (a : ℚ) :
     ((chainComplex k A M).d (n + 1) n).hom.comp
         (rationalConvolutionOperator k A M (n + 1) a) =
@@ -92,22 +117,35 @@ theorem rationalConvolutionOperator_boundary (n : ℕ) (a : ℚ) :
     coefficientEulerian_outside k A M n (n + 1) (by omega),
     LinearMap.zero_apply, smul_zero, add_zero]
 
-/-- The convolution parameter family is a native chain endomorphism. -/
+/-- For k a commutative ℚ-algebra, A a commutative k-algebra and
+M an A-module with compatible k-action, the operators Λ_n(a), n ≥ 0,
+define a chain endomorphism of C_*(A,M) for every a ∈ ℚ.
+Each component fixes the coefficient and acts on the algebra factors. -/
 def rationalConvolutionChainMap (a : ℚ) : chainComplex k A M ⟶ chainComplex k A M :=
   ChainComplex.ofHom (fun n => ModuleCat.ofHom (rationalConvolutionOperator k A M n a)) (by
     intro n
     apply ModuleCat.hom_ext
     exact rationalConvolutionOperator_boundary k A M n a)
 
-/-- The parameter chain map retains the original coefficient-fixed degree operator. -/
+/-- For a commutative ℚ-algebra k, a commutative k-algebra A and
+a compatible A-module M, the degree-n component of the rational
+convolution chain map with parameter a ∈ ℚ is the k-linear operator
+Λ_n(a) on M ⊗[k] A^⊗n. -/
 theorem rationalConvolutionChainMap_f (n : ℕ) (a : ℚ) :
     ((rationalConvolutionChainMap k A M a).f n).hom = rationalConvolutionOperator k A M n a := rfl
 
-/-- Loday's original true integer lambda, as a native map of the Hochschild complex. -/
+/-- For a commutative ℚ-algebra k, a commutative k-algebra A,
+a compatible A-module M and m > 0, the integer lambda chain map on
+C_*(A,M) is (−1)^(m−1)Λ(m). The sign depends on the positive
+integer parameter m, while Λ(m) is the rational convolution map. -/
 def trueIntegerLambdaChainMap (m : ℕ) (_hm : 0 < m) : chainComplex k A M ⟶ chainComplex k A M :=
   (-1 : k) ^ (m - 1) • rationalConvolutionChainMap k A M (m : ℚ)
 
-/-- Its component is the neutral integral true-lambda action on the original words. -/
+/-- For k a commutative ℚ-algebra, A a commutative k-algebra,
+M a compatible A-module and m > 0, the degree-n component of the
+signed integer lambda chain map equals the integral coefficient-fixed
+operator λ_n^m on M ⊗[k] A^⊗n.
+Its convention is λ_n^m = (−1)^(m−1)Λ_n(m). -/
 theorem trueIntegerLambdaChainMap_f (n m : ℕ) (hm : 0 < m) :
     ((trueIntegerLambdaChainMap k A M m hm).f n).hom =
       TensorPower.coefficientTrueIntegerLambdaOperator (M := M) (V := A) n m hm := by
@@ -115,7 +153,11 @@ theorem trueIntegerLambdaChainMap_f (n m : ℕ) (hm : 0 < m) :
     TensorPower.coefficientTrueIntegerLambdaOperator_eq_eulerian]
   rfl
 
-/-- The true integer maps retain the positive-parameter parity in native chain composition. -/
+/-- For a commutative ℚ-algebra k, a commutative k-algebra A,
+a compatible A-module M and l,m > 0, applying λ^l and then λ^m
+on the coefficient Hochschild complex gives
+λ^m ∘ λ^l = (−1)^((l−1)(m−1)) λ^(lm).
+The scalar sign is part of the signed integer convention. -/
 theorem trueIntegerLambdaChainMap_comp (l m : ℕ) (hl : 0 < l) (hm : 0 < m) :
     trueIntegerLambdaChainMap k A M l hl ≫ trueIntegerLambdaChainMap k A M m hm =
       (-1 : k) ^ ((l - 1) * (m - 1)) •
@@ -132,7 +174,10 @@ theorem trueIntegerLambdaChainMap_comp (l m : ℕ) (hl : 0 < l) (hm : 0 < m) :
   simpa only [Nat.mul_comm m l, Nat.mul_comm (m - 1) (l - 1)] using
     TensorPower.coefficientTrueIntegerLambdaOperator_comp (k := k) (M := M) (V := A) n m l hm hl
 
-/-- Native chain composition retains the convolution parameter multiplication law. -/
+/-- For a commutative ℚ-algebra k, a commutative k-algebra A,
+a compatible A-module M and a,b ∈ ℚ, applying the chain maps Λ(a)
+and then Λ(b) gives Λ(ab). Thus Λ(b) ∘ Λ(a) = Λ(ab) as
+endomorphisms of C_*(A,M). -/
 theorem rationalConvolutionChainMap_comp (a b : ℚ) :
     rationalConvolutionChainMap k A M a ≫ rationalConvolutionChainMap k A M b =
       rationalConvolutionChainMap k A M (a * b) := by
@@ -144,37 +189,60 @@ theorem rationalConvolutionChainMap_comp (a b : ℚ) :
     rationalConvolutionOperator k A M n (a * b)
   simpa only [mul_comm] using rationalConvolutionOperator_comp k A M n b a
 
-/-- The Eulerian summand is the native image of the original chain projector. -/
+/-- For k a commutative ℚ-algebra, A a commutative k-algebra and
+M a compatible A-module, C^(i) is the categorical image of the
+ith Eulerian chain projector on C_*(A,M).
+It is an ℕ-indexed chain complex in ModuleCat^max(u,v,w)(k). -/
 def eulerianImageComplex (i : ℕ) : ChainComplex (ModuleCat.{max u v w} k) ℕ :=
   image (eulerianChainMap k A M i)
 
-/-- The original sum of image inclusions is a native all-degree Hodge isomorphism. -/
+/-- For a commutative ℚ-algebra k, a commutative k-algebra A and
+a compatible A-module M, the sum of Eulerian image inclusions gives
+the k-linear chain isomorphism ⨁_(i∈ℕ) C^(i) ≅ C_*(A,M).
+The degree-n projectors vanish for i > n and sum to the identity
+over 0 ≤ i ≤ n. -/
 def hodgeComplexIso : (∐ (fun i : ℕ => eulerianImageComplex k A M i)) ≅ chainComplex k A M :=
   HomologicalComplex.locallyFiniteIdempotentImageComplexIso
     (chainComplex k A M) (eulerianChainMap k A M) (eulerianChainMap_comp k A M) id
     (eulerianChainMap_support k A M) (eulerianChainMap_sum k A M)
 
-/-- The forward isomorphism is exactly the native sum of the original image inclusions. -/
+/-- For k a commutative ℚ-algebra, A a commutative k-algebra and
+M a compatible A-module, the forward map of
+⨁_i C^(i) ≅ C_*(A,M) is the coproduct map whose ith restriction
+is the image inclusion C^(i) → C_*(A,M). -/
 theorem hodgeComplexIso_hom :
     (hodgeComplexIso k A M).hom = Sigma.desc (fun i => image.ι (eulerianChainMap k A M i)) := rfl
 
-/-- The image homologies have the original finite-projection coproduct decomposition. -/
+/-- For a commutative ℚ-algebra k, a commutative k-algebra A,
+a compatible A-module M and n ≥ 0, there is a k-module isomorphism
+⨁_(i∈ℕ) H_n(C^(i)) ≅ H_n(C_*(A,M)).
+It is induced by the locally finite complete family of orthogonal
+Eulerian chain projectors. -/
 def hodgeHomologyIso (n : ℕ) :
     (∐ (fun i : ℕ => (eulerianImageComplex k A M i).homology n)) ≅ (chainComplex k A M).homology n :=
   HomologicalComplex.locallyFiniteIdempotentImageHomologyIso
     (chainComplex k A M) (eulerianChainMap k A M) (eulerianChainMap_comp k A M) id
     (eulerianChainMap_support k A M) (eulerianChainMap_sum k A M) n
 
-/-- The original image inclusion homology maps form the Hodge decomposition map. -/
+/-- For k a commutative ℚ-algebra, A a commutative k-algebra and
+M a compatible A-module, the forward Eulerian decomposition in degree
+n is the coproduct map with ith restriction
+H_n(C^(i) → C_*(A,M)), the homology map of the image inclusion. -/
 theorem hodgeHomologyIso_hom (n : ℕ) :
     (hodgeHomologyIso k A M n).hom = Sigma.desc
       (fun i => HomologicalComplex.homologyMap (image.ι (eulerianChainMap k A M i)) n) := rfl
 
-/-- Actual coefficient-fixed Hodge projection on the original Hochschild homology. -/
+/-- For a commutative ℚ-algebra k, a commutative k-algebra A,
+a compatible A-module M and n,i ≥ 0, the ith Eulerian homology
+projector is H_n(e^(i)), the endomorphism of H_n(C_*(A,M)) induced
+by the coefficient-fixed Eulerian chain projector. -/
 def eulerianHomologyProjector (n i : ℕ) : (chainComplex k A M).homology n ⟶ (chainComplex k A M).homology n :=
   HomologicalComplex.homologyMap (eulerianChainMap k A M i) n
 
-/-- The original Hodge homology projections satisfy the orthogonal projector law. -/
+/-- For a commutative ℚ-algebra k, a commutative k-algebra A and
+a compatible A-module M, the homology projectors satisfy
+E_j ∘ E_i = E_i when i = j and zero when i ≠ j, in every degree n.
+Here E_i = H_n(e^(i)) on H_n(C_*(A,M)). -/
 theorem eulerianHomologyProjector_comp (n i j : ℕ) :
     eulerianHomologyProjector k A M n i ≫ eulerianHomologyProjector k A M n j =
       if i = j then eulerianHomologyProjector k A M n i else 0 := by
@@ -185,12 +253,17 @@ theorem eulerianHomologyProjector_comp (n i j : ℕ) :
   · exact HomologicalComplex.homologyMap_zero
       (K := chainComplex k A M) (L := chainComplex k A M) (i := n)
 
-/-- The original rational convolution family on the Hochschild homology. -/
+/-- For k a commutative ℚ-algebra, A a commutative k-algebra and
+M a compatible A-module, H_n(Λ(a)) is the endomorphism of coefficient
+Hochschild homology induced by the rational convolution chain map,
+for every n ≥ 0 and a ∈ ℚ. -/
 def rationalConvolutionHomologyMap (n : ℕ) (a : ℚ) :
     (chainComplex k A M).homology n ⟶ (chainComplex k A M).homology n :=
   HomologicalComplex.homologyMap (rationalConvolutionChainMap k A M a) n
 
-/-- Native homology composition retains the proved original convolution parameter multiplication. -/
+/-- For a commutative ℚ-algebra k, a commutative k-algebra A,
+a compatible A-module M and a,b ∈ ℚ, the induced homology maps
+satisfy H_n(Λ(b)) ∘ H_n(Λ(a)) = H_n(Λ(ab)) in every n ≥ 0. -/
 theorem rationalConvolutionHomologyMap_comp (n : ℕ) (a b : ℚ) :
     rationalConvolutionHomologyMap k A M n a ≫ rationalConvolutionHomologyMap k A M n b =
       rationalConvolutionHomologyMap k A M n (a * b) := by

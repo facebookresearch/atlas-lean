@@ -1,4 +1,6 @@
-# Right Tensor Enveloping Complex d mk
+# The differential on a balanced enveloping tensor class
 
-The mapped differential is the balanced quotient map of the
-original differential.
+The differential on a balanced enveloping tensor class.
+
+The mapped differential sends the class of `m ⊗ z` to the class of `m ⊗ d(z)`, with the
+ground-restricted enveloping differential acting on the left module term.

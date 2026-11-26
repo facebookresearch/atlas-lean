@@ -1,3 +1,6 @@
-# Hom Cochain Complex Single Supported Iso
+# Supported coordinate matches the single cochain Hom construction
 
-`Hom(single_j R, -)` at degree `j` corresponds to `single_j (R ⟶ -)` at `j`.
+Supported coordinate matches the single cochain Hom construction.
+
+The degree-`j` evaluation of Hom cochains from `A[j]` is naturally isomorphic to `Hom_C(A,-)`
+followed by the degree-`j` single cochain functor and evaluation at `j`.

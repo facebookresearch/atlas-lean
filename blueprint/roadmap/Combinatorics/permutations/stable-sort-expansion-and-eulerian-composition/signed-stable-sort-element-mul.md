@@ -1,3 +1,4 @@
-# Signed Stable Sort Element mul
+# Sorting sums multiply alphabet sizes
 
-Multiplying the actual native signed sorting sums multiplies the original alphabet sizes.
+For `n,a,b : ℕ`, `signedStableSortElement n a * signedStableSortElement n b =
+signedStableSortElement n (b*a)` in `ℚ[S_n]`.

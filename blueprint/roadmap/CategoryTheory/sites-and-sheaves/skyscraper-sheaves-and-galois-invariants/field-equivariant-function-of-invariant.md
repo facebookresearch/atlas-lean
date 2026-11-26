@@ -1,3 +1,11 @@
-# Field Equivariant Function Of Invariant Section
+# Equivariant function recovered from an invariant section
 
-A fixed section of the SAME common skyscraper yields its literal ORIGINAL-index function.
+Let Ω/k be a separable closure of fields in universe u,
+G = Gal(Ω/k), and c = max(u, w). Let D be the category of discrete
+continuous G-modules with abelian-group carriers in universe c.
+For an étale k-scheme U, write U(Ω) for its geometric lifts.
+For M ∈ D, let S_M be the point skyscraper of its underlying group,
+with sections M^(ULift U(Ω)), and Φ̃_M(U) = Map_G(U(Ω), M).
+For a section s ∈ S_M(U) satisfying D_g(s) = s for every g,
+the function z ↦ s(ULift.up(z)) lies in Map_G(U(Ω), M).
+Its equivariance follows from the diagonal fixed-section condition.

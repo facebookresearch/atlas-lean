@@ -14,15 +14,18 @@ public import
   MathlibExt.Algebra.Homology.FirstQuadrantCanonicalAbutmentCurrentImageNaturality
 
 /-!
-# Naturality of the canonical-abutment previous image
+# Naturality of the preceding abutment image
 
-The generic complete-stage homology image map at the preceding filtration
-index is the unified predecessor map, including in column zero.  The
-canonical previous relative-homology image comparison is consequently
-natural under bicomplex morphisms.
+Let K be a first-quadrant bicomplex in an abelian category and p,q∈ℕ. Put m=p+q, ℓ=(p:ℤ)−1 and
+u=m+1. If a_K:H^{-m}_K(⊥,ℓ)→H^{-m}_K(⊥,p) and b_K:H^{-m}_K(⊥,p)→H^{-m}_K(⊥,u) are the
+complete-filtration relative homology maps, the preceding abutment image is image(a_K≫b_K). Its
+bottom-relative comparison identifies it with F_ℓH_m(Tot K), the horizontal homology filtration
+subobject at the integer cut ℓ.
 
-This file does not assemble the final canonical-abutment associated-graded
-square.
+A bicomplex morphism gives a commutative square between a_K≫b_K and a_L≫b_L, hence a map of
+these images. The image comparison is natural under that map and the preceding filtration map.
+At p=0 the cut is ℓ=-1 and both preceding subobjects are zero; the formulas include this case
+without a separate choice.
 -/
 
 @[expose] public section
@@ -42,8 +45,10 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {K L : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ)}
 
-/-- At the first-page lower index, the generic complete-stage image map is
-the unified predecessor total-homology filtration map. -/
+/-- For a morphism f:K→L of first-quadrant bicomplexes in an abelian category and p,q∈ℕ, set m=p+q
+and ℓ=(p:ℤ)−1. The image map induced by H_m(G_ℓ(K))→H_m(Tot K) equals the preceding horizontal
+filtration map F_ℓH_m(Tot K)→F_ℓH_m(Tot L). When p=0, ℓ=-1, the complete filtered stages and
+these image subobjects are zero; the same equality applies. -/
 @[simp]
 theorem horizontalCompleteHomologyImageMapOfBicomplex_eq_previous
     (f : K ⟶ L) (p q : ℕ) :
@@ -109,8 +114,11 @@ theorem horizontalCompleteHomologyImageMapOfBicomplex_eq_previous
         totalMap := by
       rw [hstepK]
 
-/-- The relative-homology square for the previous canonical-abutment image
-induced by a bicomplex morphism. -/
+/-- Let C be abelian, f:K→L a morphism of bicomplexes of shape (down ℕ,down ℕ), and p,q∈ℕ. Set
+m=p+q, ℓ=(p:ℤ)−1 and u=m+1. For the complete-filtration relative homology maps
+a_K:H^{-m}_K(⊥,ℓ)→H^{-m}_K(⊥,p) and b_K:H^{-m}_K(⊥,p)→H^{-m}_K(⊥,u), this is the arrow-category
+morphism (a_K≫b_K)→(a_L≫b_L). Its edges are the degree -m spectral components α at ⊥→ℓ and τ at
+⊥→u, and its square satisfies α≫(a_L≫b_L)=(a_K≫b_K)≫τ. -/
 noncomputable def horizontalCanonicalAbutmentPreviousHomologySquareOfBicomplex
     (f : K ⟶ L) (p q : ℕ) :
     Arrow.mk (horizontalCanonicalAbutmentPreviousHomologyMap K p q ≫
@@ -132,8 +140,11 @@ noncomputable def horizontalCanonicalAbutmentPreviousHomologySquareOfBicomplex
     horizontalCanonicalAbutmentPrevious_comp_toUpper L p q]
   exact ((φ.hom n).naturality d).symm
 
-/-- The map between previous canonical-abutment images induced by a
-bicomplex morphism. -/
+/-- For f:K→L between first-quadrant bicomplexes in an abelian category and p,q∈ℕ, put m=p+q,
+ℓ=(p:ℤ)−1 and u=m+1. Let a:H^{-m}(⊥,ℓ)→H^{-m}(⊥,p) and b:H^{-m}(⊥,p)→H^{-m}(⊥,u) be the
+complete-filtration relative cochain homology maps. The spectral morphism of f induces this
+image morphism image(a_K≫b_K)→image(a_L≫b_L), with its ambient target map the relative homology
+component in degree -m at ⊥→u. -/
 noncomputable def horizontalCanonicalAbutmentPreviousImageMapOfBicomplex
     (f : K ⟶ L) (p q : ℕ) :
     image (horizontalCanonicalAbutmentPreviousHomologyMap K p q ≫
@@ -143,8 +154,10 @@ noncomputable def horizontalCanonicalAbutmentPreviousImageMapOfBicomplex
   image.map
     (horizontalCanonicalAbutmentPreviousHomologySquareOfBicomplex f p q)
 
-/-- The previous canonical-abutment image map commutes with the canonical
-inclusions. -/
+/-- Let f:K→L be a first-quadrant bicomplex morphism in an abelian category and p,q∈ℕ. Set m=p+q,
+ℓ=(p:ℤ)−1 and u=m+1. For a:H^{-m}(⊥,ℓ)→H^{-m}(⊥,p) and b:H^{-m}(⊥,p)→H^{-m}(⊥,u), let
+J_f:image(a_K≫b_K)→image(a_L≫b_L) be the preceding image map and τ:H^{-m}_K(⊥,u)→H^{-m}_L(⊥,u)
+the spectral component of f in degree -m. Then J_f≫image.ι(a_L≫b_L)=image.ι(a_K≫b_K)≫τ. -/
 @[reassoc (attr := simp)]
 theorem horizontalCanonicalAbutmentPreviousImageMapOfBicomplex_ι
     (f : K ⟶ L) (p q : ℕ) :
@@ -159,8 +172,11 @@ theorem horizontalCanonicalAbutmentPreviousImageMapOfBicomplex_ι
   image.map_ι
     (horizontalCanonicalAbutmentPreviousHomologySquareOfBicomplex f p q)
 
-/-- The comparison from the previous canonical-abutment image to the
-previous total-homology filtration stage is natural in the bicomplex. -/
+/-- For a morphism f:K→L of first-quadrant bicomplexes in an abelian category and p,q∈ℕ, put m=p+q,
+ℓ=(p:ℤ)−1 and u=m+1. Let a:H^{-m}(⊥,ℓ)→H^{-m}(⊥,p), b:H^{-m}(⊥,p)→H^{-m}(⊥,u), and
+e_K:image(a_K≫b_K)≅F_ℓH_m(Tot K) be the bottom-relative image comparison. With J_f the preceding
+relative image map and F_ℓH_m(Tot f) the preceding filtration map,
+J_f≫e_L.hom=e_K.hom≫F_ℓH_m(Tot f). The integer cut ℓ=-1 at p=0 is included. -/
 theorem horizontalCanonicalAbutmentPreviousImageIso_naturality_of_bicomplex
     (f : K ⟶ L) (p q : ℕ) :
     horizontalCanonicalAbutmentPreviousImageMapOfBicomplex f p q ≫

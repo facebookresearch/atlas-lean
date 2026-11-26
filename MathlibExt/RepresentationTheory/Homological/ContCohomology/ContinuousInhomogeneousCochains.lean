@@ -13,7 +13,22 @@ public import Mathlib.Topology.Algebra.Category.ProfiniteGrp.Basic
 public import Mathlib.CategoryTheory.Action.Continuous
 public import MathlibExt.RepresentationTheory.Homological.ContCohomology.InvariantHomogeneousComplex
 
-/-! # The original continuous homogeneous and inhomogeneous complexes -/
+/-!
+# Continuous homogeneous and inhomogeneous cochain spaces
+
+Let k be a ring with a topology, G a profinite group and X a discrete
+topological k-module with jointly continuous G-action.
+A homogeneous q-cochain is a continuous equivariant function
+F : G^(q+1) → X. Its inhomogeneous coordinates are continuous functions
+h : G^q → X.
+
+For g=(g₀,…,g_(q-1)), define prefix vertices
+v₀=1 and v_(i+1)=v_i g_i. Inhomogenization is F ↦ (g ↦ F(v(g))).
+For t=(t₀,…,t_q), put d_i(t)=t_i⁻¹t_(i+1).
+The inverse sends h to t ↦ t₀ • h(d(t)).
+These are continuous k-linear equivalences in each nonnegative degree.
+At q=0 the cochain space is X, by evaluation at the identity vertex.
+-/
 @[expose] public section
 noncomputable section
 set_option autoImplicit false
@@ -33,17 +48,25 @@ private theorem partialProd_continuous (q : ℕ) (i : Fin (q + 1)) :
       change Continuous (fun g : Fin q → G => Fin.partialProd g i.castSucc * g i) at h
       simpa only [Fin.partialProd_succ] using h
 
-/-- Actual ordered prefix-product vertices in every degree. -/
+/-- For a profinite group G and q ∈ ℕ, the continuous prefix-vertex
+map G^q → G^(q+1) sends g to v₀=1,
+v_(i+1)=v_i g_i. Products retain the order of the group coordinates. -/
 def inhomogeneousVerticesCM (q : ℕ) : C(Fin q → G, Fin (q + 1) → G) :=
   ⟨Fin.partialProd, continuous_pi fun i => by exact partialProd_continuous G q i⟩
 
-/-- Actual consecutive quotients of homogeneous vertices. -/
+/-- For a profinite group G and q ∈ ℕ, the continuous difference
+map G^(q+1) → G^q sends t to
+d_i(t)=t_i⁻¹t_(i+1). The inverse is on the earlier coordinate. -/
 def homogeneousDifferencesCM (q : ℕ) : C(Fin (q + 1) → G, Fin q → G) :=
   ⟨fun t i => (t i.castSucc)⁻¹ * t i.succ,
     continuous_pi fun i => (continuous_apply i.castSucc).inv.mul (continuous_apply i.succ)⟩
 
 variable (A : DiscreteContAction (TopModuleCat.{max v w} k) G)
-/-- The same original coefficient carrier and action, merely bundled as TopRep. -/
+/-- Let k be a ring with a topology, G a profinite group and A a
+discrete topological k-module with jointly continuous G-action.
+Write X for this coefficient as a topological k-representation.
+This is X with its given coefficient carrier, scalar topology
+and G-action, viewed in the topological representation category. -/
 abbrev inhomogeneousOriginalTopRep : TopRep.{max v w, u, v} k G :=
   (TopRep.fromActionTopModFunc (k := k) (G := G)).obj A.obj.obj
 local notation "X" => inhomogeneousOriginalTopRep G A
@@ -54,7 +77,12 @@ private theorem original_action_continuous :
   change Continuous (fun p : G × X => (inhomogeneousOriginalTopRep G A).ρ p.1 p.2) at h
   exact h
 
-/-- Continuous linear inhomogenization by literal prefix vertices. -/
+/-- Let k be a ring with a topology, G a profinite group and A a
+discrete topological k-module with jointly continuous G-action.
+Write X for this coefficient as a topological k-representation.
+For q ∈ ℕ, the continuous k-linear map from homogeneous to
+inhomogeneous cochains sends F to g ↦ F(v(g)), where
+v₀=1 and v_(i+1)=v_i g_i. -/
 def inhomogeneousPhi (q : ℕ) :
     flatHomogeneousCochains X q →L[k] C(Fin q → G, X) where
   toFun f := f.val.comp (inhomogeneousVerticesCM G q)
@@ -63,7 +91,12 @@ def inhomogeneousPhi (q : ℕ) :
   cont := (ContinuousMap.continuous_precomp (inhomogeneousVerticesCM G q)).comp
     continuous_subtype_val
 
-/-- Continuous linear homogenization using the original joint action. -/
+/-- Let k be a ring with a topology, G a profinite group and A a
+discrete topological k-module with jointly continuous G-action.
+Write X for this coefficient as a topological k-representation.
+For q ∈ ℕ, the continuous k-linear homogenization map sends
+h : G^q → X to F(t)=t₀ • h(t₀⁻¹t₁,…,t_(q-1)⁻¹t_q).
+The resulting function is homogeneous-equivariant. -/
 def inhomogeneousPsi (q : ℕ) :
     C(Fin q → G, X) →L[k] flatHomogeneousCochains X q where
   toFun h := ⟨⟨fun t => (inhomogeneousOriginalTopRep G A).ρ (t 0)
@@ -97,7 +130,12 @@ def inhomogeneousPsi (q : ℕ) :
       (((continuous_apply 0).comp continuous_snd).prodMk
         (continuous_fst.eval ((homogeneousDifferencesCM G q).continuous.comp continuous_snd)))
 
-/-- Canonical continuous linear equivalence on all original continuous cochains. -/
+/-- Let k be a ring with a topology, G a profinite group and A a
+discrete topological k-module with jointly continuous G-action.
+Write X for this coefficient as a topological k-representation.
+The maps F ↦ F(v(g)) and h ↦ (t ↦ t₀ • h(d(t))) are inverse
+continuous k-linear equivalences between homogeneous and inhomogeneous
+degree q cochains, for all q ∈ ℕ. -/
 def inhomogeneousContinuousEquiv (q : ℕ) :
     flatHomogeneousCochains X q ≃L[k] C(Fin q → G, X) :=
   ContinuousLinearEquiv.equivOfInverse (inhomogeneousPhi G A q) (inhomogeneousPsi G A q)
@@ -123,23 +161,40 @@ def inhomogeneousContinuousEquiv (q : ℕ) :
       rw [Fin.partialProd_zero, hd]
       simp)
 
-/-- Full original forward value formula. -/
+/-- Let k be a ring with a topology, G a profinite group and A a
+discrete topological k-module with jointly continuous G-action.
+Write X for this coefficient as a topological k-representation.
+The forward degree q equivalence has value Φ(F)(g)=F(v(g)),
+with the ordered prefix vertices v₀=1, v_(i+1)=v_i g_i. -/
 theorem inhomogeneousContinuousEquiv_apply (q : ℕ)
     (f : flatHomogeneousCochains X q) (g : Fin q → G) :
     inhomogeneousContinuousEquiv G A q f g = f.val (Fin.partialProd g) := rfl
 
-/-- Full original inverse value formula. -/
+/-- Let k be a ring with a topology, G a profinite group and A a
+discrete topological k-module with jointly continuous G-action.
+Write X for this coefficient as a topological k-representation.
+The inverse degree q equivalence has value
+Ψ(h)(t)=t₀ • h(d(t)), with d_i(t)=t_i⁻¹t_(i+1). -/
 theorem inhomogeneousContinuousEquiv_symm_apply (q : ℕ)
     (h : C(Fin q → G, X)) (t : Fin (q + 1) → G) :
     ((inhomogeneousContinuousEquiv G A q).symm h).val t =
       (inhomogeneousOriginalTopRep G A).ρ (t 0) (h (homogeneousDifferencesCM G q t)) := rfl
 
-/-- The empty-tuple function space is canonically the original coefficient. -/
+/-- Let k be a ring with a topology, G a profinite group and A a
+discrete topological k-module with jointly continuous G-action.
+Write X for this coefficient as a topological k-representation.
+The degree-zero homogeneous cochain space is continuously
+k-linearly equivalent to X. The equivalence evaluates the single
+homogeneous group coordinate at 1. -/
 def inhomogeneousZeroEquiv : flatHomogeneousCochains X 0 ≃L[k] X :=
   (inhomogeneousContinuousEquiv G A 0).trans
     (resolutionFinContinuousLinearEquiv X 0).symm
 
-/-- Degree-zero inhomogenization evaluates at the original identity vertex. -/
+/-- Let k be a ring with a topology, G a profinite group and A a
+discrete topological k-module with jointly continuous G-action.
+Write X for this coefficient as a topological k-representation.
+For the unique empty tuple g ∈ G^0, degree-zero
+inhomogenization satisfies Φ(F)(g)=F(1). -/
 theorem inhomogeneousContinuousEquiv_zero (f : flatHomogeneousCochains X 0)
     (g : Fin 0 → G) :
     inhomogeneousContinuousEquiv G A 0 f g = f.val (fun _ => 1) := by

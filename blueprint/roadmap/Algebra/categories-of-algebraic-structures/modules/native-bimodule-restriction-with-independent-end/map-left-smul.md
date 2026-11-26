@@ -1,3 +1,5 @@
-# Map left smul
+# Enveloping semilinearity implies the left endpoint equation
 
-Its left scalar equation refers to the original endpoint module data.
+For an enveloping-semilinear map f:B→B′ along
+φ⊗ψᵒᵖ, the left actions satisfy
+f(r•x)=φ(r)•f(x) for every r∈R and x∈B.

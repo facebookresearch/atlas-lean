@@ -1,3 +1,7 @@
-# Homology Iso Native Bar
+# Homology comparison with the inhomogeneous bar complex
 
-The actual normalization homotopy equivalence induces the homology comparison.
+Let k and G have universe u, with k a commutative ring and G a group.
+Let B be the inhomogeneous bar complex, C the homogeneous standard
+complex and Q the normalized nonidentity-tuple complex.
+For every n∈ℕ, the normalization homotopy equivalence gives
+H_n(Q)≅H_n(B).

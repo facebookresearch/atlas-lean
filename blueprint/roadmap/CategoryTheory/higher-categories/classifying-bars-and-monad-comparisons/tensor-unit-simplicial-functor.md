@@ -1,3 +1,6 @@
-# Tensor Unit Simplicial Functor
+# The constant simplicial tensor unit defines a constant monoid functor
 
-The constant internal-monoid functor at the simplicial tensor unit.
+Let C be a cartesian monoidal category with independent object and morphism universes u,v, and I
+its tensor unit. The functor K:Mon(C)→SimplicialObject(C) sends every internal monoid to the
+constant simplicial object const(I), with value I in every degree, and every monoid morphism to
+its identity simplicial map.

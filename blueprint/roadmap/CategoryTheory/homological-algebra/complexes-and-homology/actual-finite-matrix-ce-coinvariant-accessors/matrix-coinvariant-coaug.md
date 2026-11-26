@@ -1,3 +1,5 @@
-# Matrix Coinvariant Coaug
+# The coaugmentation of matrix adjoint coinvariants
 
-The canonical coaugmentation of the finite-matrix coinvariant complex.
+The coaugmentation of matrix adjoint coinvariants.
+
+The CE coaugmentation descends through the matrix coinvariant projection.

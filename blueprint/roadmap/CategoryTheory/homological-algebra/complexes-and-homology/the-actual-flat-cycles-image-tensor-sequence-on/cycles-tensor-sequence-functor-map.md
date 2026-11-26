@@ -1,3 +1,6 @@
-# Cycles Tensor Sequence Functor map τ₂
+# Middle map of a cycles tensor sequence morphism
 
-The natural sequence map keeps the genuine original tensor-complex map in the middle.
+Middle map of a cycles tensor sequence morphism.
+
+For a chain map `f : P ⟶ P'`, the middle component of the induced short-complex morphism is
+`map R f (𝟙 Q)`.

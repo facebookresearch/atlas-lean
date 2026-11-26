@@ -1,4 +1,6 @@
-# Schreier Transfer Induced Bar Cochains
+# The Hom-cochain map induced by the universal bar transfer
 
-The ambient linear-Hom cochain map induced contravariantly by the
-universal chosen-transversal transfer into the induced bar resolution.
+The Hom-cochain map induced by the universal bar transfer.
+
+Precomposition with the chosen-transversal chain map B_G → ind B_H gives a cochain map
+Hom_G(ind B_H,A) → Hom_G(B_G,A).

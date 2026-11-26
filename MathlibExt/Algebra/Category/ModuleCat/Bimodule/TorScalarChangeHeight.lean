@@ -14,14 +14,21 @@ public import MathlibExt.CategoryTheory.Functor.ComparisonTransport
 public import MathlibExt.CategoryTheory.Abelian.LeftDerived.TransportComparison
 
 /-!
-# Canonical Tor ring change through actual working-universe comparisons
+# Height transport of canonical bimodule Tor ring-change maps
 
-The actual native coefficient height isomorphisms are the existing tensor/Tor
-bank comparisons. Source lifts preserve projectives because Gamma contains the
-acting ring. Output lifts require only homology preservation; their scalar
-ring worlds are not included in Gamma. Ring restriction commutes with the
-native up/down lifts on the original actions and values. The generic
-restriction/lift comparison is imported from its native-only ModuleCat owner.
+Let R,S be rings and B an (R,S)-bimodule, represented as an enveloping
+ring module. Put Γ=max(r,a,b,z), Γ′=max(r,a,b,z,t).
+Tensoring at Γ′ after lifting the source is naturally isomorphic
+to lifting the tensor output from Γ. Deriving gives the corresponding
+Tor height isomorphism; the source lift preserves projectives because
+Γ contains R, and the output lift is exact.
+
+For endpoint maps R→R′, S→S′ and compatible source/coefficient maps,
+the Tor ring-change square commutes with these height comparisons.
+Restriction of the outer action commutes with lifting its carrier,
+so the inverse comparisons also preserve the ring-change map.
+The ring and carrier worlds remain independent, and neither outer
+ring world is bounded by the sufficient source height.
 -/
 
 @[expose] public section
@@ -39,7 +46,10 @@ namespace ModuleCat.Bimodule.Tensor
 
 variable (R : Type rGlobal) (S : Type sGlobal) [Ring R] [Ring S]
 
-/-- The native coefficient tensor height iso is exactly the existing ordered tensor bank iso. -/
+/-- For an (R,S)-bimodule B, source lift Γ→Γ′ followed
+by tensoring with the coefficient lifted to Γ′ is naturally
+isomorphic to tensoring with its Γ-lift and then lifting
+the output. Here Γ=max(r,a,b,z), Γ′=max(r,a,b,z,t). -/
 def coefficientLargeTensorHeightIsoAt.{t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : coefficientCategory.{r, s, b} R S) :
     ModuleCat.uliftFunctor.{max r a b z t, max r a b z} Rᵐᵒᵖ ⋙
@@ -53,8 +63,10 @@ def coefficientLargeTensorHeightIsoAt.{t, z, r, s, a, b} (R : Type r) (S : Type 
   letI := coefficientActionsCommute R S B
   exact tensorHeightIsoAt.{t, z, r, s, a, b} R S B
 
-/-- The native coefficient Tor height iso reuses exact output transport and actual
-projective-preserving source lifting from the existing Tor bank. -/
+/-- For an (R,S)-bimodule B and n≥0, the output lift of
+its height-Γ derived tensor functor is naturally isomorphic
+to height-Γ′ derived tensor after source lifting.
+Both source heights contain R, and the outer ring S is independent. -/
 def coefficientLargeTorHeightIsoAt.{t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : coefficientCategory.{r, s, b} R S) (n : ℕ) :
     (coefficientTorFunctor.{r, s, max r a b z} R S n).obj
@@ -68,8 +80,12 @@ def coefficientLargeTorHeightIsoAt.{t, z, r, s, a, b} (R : Type r) (S : Type s) 
   letI := coefficientActionsCommute R S B
   exact largeTorHeightIsoAt.{t, z, r, s, a, b} R S B n
 
-/-- Its inverse is exactly the canonical derived square of the original tensor height map.
-Only the source-R lift receives projective preservation. -/
+/-- For an (R,S)-bimodule B and heights Γ≤Γ′, the inverse
+of the canonical Tor height isomorphism equals the derived
+map determined by the tensor comparison
+F_Γ′∘U_R→U_S∘F_Γ.
+Source lifting preserves projective resolutions and output
+lifting preserves homology. -/
 theorem coefficientLargeTorHeightIsoAt_inv_square.{t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : coefficientCategory.{r, s, b} R S) (n : ℕ) :
     let U := ModuleCat.uliftFunctor.{max r a b z t, max r a b z} Rᵐᵒᵖ
@@ -102,7 +118,11 @@ theorem coefficientLargeTorHeightIsoAt_inv_square.{t, z, r, s, a, b} (R : Type r
   exact Functor.leftDerivedTransportIso_inv U V F G e n
 
 
-/-- The original native coefficient facade has the existing working-universe Tor comparison. -/
+/-- For an (R,S)-bimodule B and n≥0, lifting the output
+of its independently sourced Tor functor at Γ gives an
+isomorphism with the functor at Γ′.
+The source remains ModuleCat^a(Rᵒᵖ), with Γ=max(r,a,b,z)
+and Γ′=max(r,a,b,z,t). -/
 def coefficientTorHeightIsoAt.{t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : coefficientCategory.{r, s, b} R S) (n : ℕ) :
     (torCoefficientFunctorAt.{z, r, s, a, b} R S n).obj B ⋙
@@ -113,8 +133,11 @@ def coefficientTorHeightIsoAt.{t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring
   letI := coefficientActionsCommute R S B
   exact torHeightIsoAt.{t, z, r, s, a, b} R S B n
 
-/-- The original coefficient facade performs the existing actual input flattening
-only after the native working-height comparison. -/
+/-- For an original right R-module A, the coefficient Tor
+height map first applies the sufficient-world comparison
+at ULift^Γ A, then applies the higher derived functor to
+ULift^Γ′(ULift^Γ A)→ULift^Γ′A.
+This is its canonical source-flattening factorization. -/
 theorem coefficientTorHeightIsoAt_hom_app.{t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : coefficientCategory.{r, s, b} R S) (A : ModuleCat.{a} Rᵐᵒᵖ) (n : ℕ) :
     (coefficientTorHeightIsoAt.{t, z, r, s, a, b} R S B n).hom.app A =
@@ -128,8 +151,10 @@ theorem coefficientTorHeightIsoAt_hom_app.{t, z, r, s, a, b} (R : Type r) (S : T
   letI := coefficientActionsCommute R S B
   exact torHeightIsoAt_hom_app.{t, z, r, s, a, b} R S B n A
 
-/-- The inverse facade first inserts the actual nested input lift and then uses
-the inverse native working-height comparison. -/
+/-- For an original right R-module A, the inverse coefficient
+Tor height map first applies the higher derived functor
+to ULift^Γ′A→ULift^Γ′(ULift^Γ A), then uses the inverse
+sufficient-world comparison at ULift^Γ A. -/
 theorem coefficientTorHeightIsoAt_inv_app.{t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : coefficientCategory.{r, s, b} R S) (A : ModuleCat.{a} Rᵐᵒᵖ) (n : ℕ) :
     (coefficientTorHeightIsoAt.{t, z, r, s, a, b} R S B n).inv.app A =
@@ -157,8 +182,12 @@ section RingHeight
 
 variable {R' : Type rGlobal'} {S' : Type sGlobal'} [Ring R'] [Ring S']
 
-/-- Canonical ring change commutes with the genuine native height isomorphisms in the
-two sufficient working categories. The proof derives an actual commuting tensor cube. -/
+/-- For endpoint maps φ:R→R′, ψ:S→S′ and compatible
+coefficient/source maps at Γ=max(r,r′,a,a′,b,b′,z),
+the higher Tor ring-change map commutes with the inverse
+source and target height isomorphisms Γ′→Γ.
+The outer target comparison includes the canonical interchange
+of scalar restriction with carrier lifting. -/
 theorem torRingChangeLargeHeight_inverse.{t, z, r, r', s, s', a, a', b, b'} (R : Type r) (S : Type s) [Ring R]
   [Ring S] {R' : Type r'} {S' : Type s'} [Ring R'] [Ring S']
     (φ : R →+* R') (ψ : S →+* S')
@@ -270,8 +299,11 @@ section OriginalHeight
 
 variable {R' : Type rGlobal'} {S' : Type sGlobal'} [Ring R'] [Ring S']
 
-/-- The original-carrier canonical Tor ring map commutes with the actual source and target
-height comparisons. Input flattening is performed only after derivation, with its native maps. -/
+/-- For endpoint maps φ,ψ and independently sized semilinear
+coefficient/input maps f,g, the Tor change at Γ′ followed by
+the inverse target height and restriction/lift comparisons
+equals the inverse source height map followed by the lifted
+Tor change at Γ, where Γ′=max(Γ,t). -/
 theorem torRingChangeMapAt_height_inverse.{t, z, r, r', s, s', a, a', b, b'} (R : Type r) (S : Type s) [Ring R]
   [Ring S] {R' : Type r'} {S' : Type s'} [Ring R'] [Ring S']
     (φ : R →+* R') (ψ : S →+* S')

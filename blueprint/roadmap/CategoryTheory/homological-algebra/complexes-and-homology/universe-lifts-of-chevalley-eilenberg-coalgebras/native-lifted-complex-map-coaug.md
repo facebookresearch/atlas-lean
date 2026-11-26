@@ -1,3 +1,5 @@
-# Native Lifted Complex Map coaug
+# The common-height coaugmentation square
 
-The original common-height Lie-variable map also preserves the coaugmentation.
+For an R-Lie homomorphism f:L→L′ at H=max{u,v,w}, the
+common-height chain map F preserves the transported coaugmentations:
+Fu_L^H=u_{L′}^H.

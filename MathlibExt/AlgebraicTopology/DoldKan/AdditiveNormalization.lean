@@ -15,16 +15,16 @@ public import Mathlib.Algebra.Homology.Additive
 public import Mathlib.CategoryTheory.Whiskering
 
 /-!
-# The canonical normalization isomorphism for an arbitrary additive functor
+# Normalized Moore chains under additive functors
 
-The existing quotient--Moore API supplies the canonical natural
-isomorphism. Its split-projector preservation and native alternating
-transport retain the actual Moore inclusion and retraction. This module
-derives the component formulas and their homotopy comparison from that API.
+Let `F : C ⥤ D` be an additive functor between abelian categories, and let `X` be a simplicial
+object of `C`. The normalized Moore comparison is a natural isomorphism `F(NX) ≅ N(X ⋙ F)`.
 
-The functor needs only additivity. It need not preserve arbitrary kernels,
-exact sequences or homology. Both canonical maps agree with the maps in
-the existing three-native-homotopy-equivalence construction.
+Its forward map is the mapped Moore inclusion, the alternating-complex comparison, and the
+target Moore projection. Its inverse is the target Moore inclusion, inverse alternating
+comparison, and mapped source Moore projection. The two maps agree with the corresponding
+composition of Dold–Kan normalization homotopy equivalences. In each degree the alternating
+comparison is the identity on the component carrier.
 -/
 
 @[expose] public section
@@ -43,7 +43,10 @@ variable {C : Type uC} [Category.{vC} C] [Abelian C]
   {D : Type uD} [Category.{vD} D] [Abelian D]
   (F : C ⥤ D) [F.Additive]
 
-/-- The canonical inverse retains the original mapped normalized inclusion square. -/
+/-- The inverse Moore comparison and mapped normalized inclusion.
+
+The inverse comparison followed by `F` of the source Moore inclusion equals the target Moore
+inclusion followed by the inverse alternating-complex comparison. -/
 @[reassoc]
 theorem mooreCompMapIso_inv_inclusion (X : SimplicialObject C) :
     (((mooreCompMapIso F).app X)).inv ≫
@@ -68,8 +71,10 @@ theorem mooreCompMapIso_inv_inclusion (X : SimplicialObject C) :
     _ = (inclusionOfMooreComplexMap (X ⋙ F) ≫ a.inv) ≫ a.hom := by
       rw [Category.assoc, Iso.inv_hom_id, Category.comp_id]
 
-/-- The actual forward component is the original mapped inclusion, native
-alternating transport and original target normalization projection. -/
+/-- The forward map of additive normalized Moore comparison.
+
+The forward map `F(NX) → N(FX)` is `F` of the Moore inclusion, followed by alternating-complex
+transport and the target Moore projection. -/
 theorem mooreCompMapIso_hom (X : SimplicialObject C) :
     (((mooreCompMapIso F).app X)).hom =
       (F.mapHomologicalComplex (ComplexShape.down ℕ)).map (inclusionOfMooreComplexMap X) ≫
@@ -85,8 +90,10 @@ theorem mooreCompMapIso_hom (X : SimplicialObject C) :
         ((congrArg (fun q => q ≫ p) (mooreCompMapIso_hom_inclusion F X)).trans
           (Category.assoc _ _ _))))
 
-/-- The actual inverse is the target inclusion, inverse alternating transport
-and the original normalization projection mapped by the additive functor. -/
+/-- The inverse map of additive normalized Moore comparison.
+
+The inverse map `N(FX) → F(NX)` is the target Moore inclusion, inverse alternating-complex
+transport, and `F` of the source Moore projection. -/
 theorem mooreCompMapIso_inv (X : SimplicialObject C) :
     (((mooreCompMapIso F).app X)).inv =
       inclusionOfMooreComplexMap (X ⋙ F) ≫
@@ -115,9 +122,11 @@ theorem mooreCompMapIso_inv (X : SimplicialObject C) :
       congrArg (fun q => q ≫ (F.mapHomologicalComplex (ComplexShape.down ℕ)).map p) (mooreCompMapIso_inv_inclusion F X)
     _ = _ := Category.assoc _ _ _
 
-/-- The forward map is exactly the existing composition of the three native
-homotopy-equivalence maps. Its isomorphism property comes from the existing
-quotient--Moore comparison. -/
+/-- The forward Moore comparison through normalization homotopy equivalences.
+
+The forward isomorphism map equals the composite of the mapped source Dold–Kan homotopy
+equivalence, the alternating-complex isomorphism, and the inverse target Dold–Kan homotopy
+equivalence. -/
 theorem mooreCompMapIso_hom_eq_nativeHomotopyEquiv (X : SimplicialObject C) :
     (((mooreCompMapIso F).app X)).hom =
       ((F.mapHomotopyEquiv
@@ -128,7 +137,10 @@ theorem mooreCompMapIso_hom_eq_nativeHomotopyEquiv (X : SimplicialObject C) :
   rw [mooreCompMapIso_hom]
   rfl
 
-/-- The inverse map also agrees with the original native homotopy construction. -/
+/-- The inverse Moore comparison through normalization homotopy equivalences.
+
+The inverse isomorphism map equals the inverse map of that composite normalization homotopy
+equivalence. -/
 theorem mooreCompMapIso_inv_eq_nativeHomotopyEquiv (X : SimplicialObject C) :
     (((mooreCompMapIso F).app X)).inv =
       ((F.mapHomotopyEquiv
@@ -139,8 +151,10 @@ theorem mooreCompMapIso_inv_eq_nativeHomotopyEquiv (X : SimplicialObject C) :
   rw [mooreCompMapIso_inv]
   exact (Category.assoc _ _ _).symm
 
-/-- Every degree of the canonical forward map uses the original mapped
-Moore inclusion and original target Moore projection. -/
+/-- The degreewise formula for forward additive Moore comparison.
+
+In degree `n`, the comparison is `F` of the source normalized inclusion followed by the target
+Moore projection. -/
 theorem mooreCompMapIso_hom_f (X : SimplicialObject C) (n : ℕ) :
     (((mooreCompMapIso F).app X)).hom.f n =
       F.map ((inclusionOfMooreComplexMap X).f n) ≫
@@ -150,8 +164,10 @@ theorem mooreCompMapIso_hom_f (X : SimplicialObject C) (n : ℕ) :
     (PInftyToNormalizedMooreComplex (X ⋙ F)).f n = _
   rw [Category.id_comp]
 
-/-- Every degree of the canonical inverse uses the original target
-inclusion and the original Moore projection mapped by the additive functor. -/
+/-- The degreewise formula for inverse additive Moore comparison.
+
+In degree `n`, the inverse comparison is the target normalized inclusion followed by `F` of
+the source Moore projection. -/
 theorem mooreCompMapIso_inv_f (X : SimplicialObject C) (n : ℕ) :
     (((mooreCompMapIso F).app X)).inv.f n =
       (inclusionOfMooreComplexMap (X ⋙ F)).f n ≫

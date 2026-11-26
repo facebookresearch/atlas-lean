@@ -1,3 +1,5 @@
-# Comonad Pow succ obj eq
+# The object formula for a successor comonad power
 
-Successor power applied to an object.
+The object formula for a successor comonad power.
+
+The object `G^(n+1)(X)` is `G(G^n(X))`.

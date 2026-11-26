@@ -1,3 +1,5 @@
-# Power Annihilator monotone
+# Power-annihilator submodules increase with the exponent
 
-The native ideal-power law makes the actual annihilator family increasing.
+Power-annihilator submodules increase with the exponent.
+
+If `i ≤ j`, then `Ann_M(I^i) ≤ Ann_M(I^j)`, because `I^j ≤ I^i`.

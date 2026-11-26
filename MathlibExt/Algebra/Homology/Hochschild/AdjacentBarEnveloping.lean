@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 
-/- UNEXECUTED guarded source proposal from the adjacent bar provider; original maps retained. -/
+
 -- Author: @toskua
 module
 
@@ -18,11 +18,22 @@ public import MathlibExt.Algebra.Module.TensorPowerOuterAction
 public import Mathlib.Algebra.Module.ULift
 
 /-!
-# The adjacent-product bar over the enveloping algebra
+# The bar complex as an enveloping-module complex
 
-The outer factors give the adjacent-product bar its enveloping-algebra
-module structure. Its terms are A ⊗[k] TensorPower(k, n + 1, A), its
-differential is b′ and its augmentation is multiplication into A.
+Let k be a commutative ring and A an associative unital k-algebra.
+The enveloping algebra E = A ⊗[k] Aᵐᵒᵖ acts on the bar term
+P_n = A ⊗[k] A^{⊗(n+1)} by multiplying the first factor on the left
+and the last factor on the right:
+(u ⊗ vᵐᵒᵖ) • (a_0 ⊗ ⋯ ⊗ a_{n+1}) =
+u a_0 ⊗ a_1 ⊗ ⋯ ⊗ a_{n+1} v.
+
+Every adjacent face is E-linear, so the alternating adjacent-product
+differential defines a chain complex of left E-modules. Multiplication
+P_0 → A is E-linear for the regular action (u ⊗ vᵐᵒᵖ) • a = uav
+and annihilates d_1. For k : Type u and A : Type v, the complex
+and its lifted regular augmentation target lie in universe max{u,v}.
+
+Reference: J.-L. Loday, Cyclic Homology, §1.1.
 -/
 @[expose] public section
 noncomputable section
@@ -36,10 +47,17 @@ namespace ModuleCat.Algebra.Hochschild.AdjacentBar
 
 variable (k : Type u) [CommRing k] (A : Type v) [Ring A] [Algebra k A]
 
-/-- The original enveloping algebra, retaining its opposite right coordinate. -/
+/-- For a commutative ring k and an associative unital k-algebra A,
+put E = A ⊗[k] Aᵐᵒᵖ.
+The enveloping algebra is the tensor product with the opposite right
+factor. Its multiplication on elementary tensors is
+(a ⊗ bᵐᵒᵖ)(c ⊗ dᵐᵒᵖ) = ac ⊗ (db)ᵐᵒᵖ. -/
 abbrev EnvelopingAlgebra := A ⊗[k] Aᵐᵒᵖ
 
-/-- The native regular enveloping representation on the original algebra carrier. -/
+/-- For a commutative ring k and an associative unital k-algebra A,
+put E = A ⊗[k] Aᵐᵒᵖ.
+The regular representation E → End_k(A) sends a ⊗ bᵐᵒᵖ to
+the operator x ↦ axb. -/
 abbrev regularEnvelopingAction : EnvelopingAlgebra k A →ₐ[k] Module.End k A :=
   AlgHom.mulLeftRight k A
 
@@ -87,7 +105,11 @@ private theorem adjacentFace_pure_intertwines (n : ℕ) (i : Fin (n + 2)) (l r :
       congrArg (TensorPower.outerRepresentation k A n (l ⊗ₜ[k] MulOpposite.op r))
         (adjacentFace_barPure k A n i a).symm
 
-/-- Each non-wrapping adjacent face intertwines the canonical outer representation. -/
+/-- For a commutative ring k and an associative unital k-algebra A,
+put E = A ⊗[k] Aᵐᵒᵖ.
+On P_n = A ⊗[k] A^{⊗(n+1)}, E acts on the two outer
+factors. Each adjacent face δ_i : P_{n+1} → P_n satisfies
+δ_i(z • x) = z • δ_i(x), for z ∈ E and 0 ≤ i ≤ n+1. -/
 theorem barAdjacentFace_intertwines (n : ℕ) (i : Fin (n + 2)) (z : EnvelopingAlgebra k A) :
     (NonUnital.regularFace k A (n + 1) i.castSucc).hom.comp
         (TensorPower.outerRepresentation k A (n + 1) z) =
@@ -111,7 +133,11 @@ theorem barAdjacentFace_intertwines (n : ℕ) (i : Fin (n + 2)) (z : EnvelopingA
       simpa only [map_add, LinearMap.add_apply, LinearMap.comp_apply] using
         congrArg₂ (· + ·) (DFunLike.congr_fun hz x) (DFunLike.congr_fun hw x)
 
-/-- The original signed adjacent-product boundary is enveloping-linear. -/
+/-- For a commutative ring k and an associative unital k-algebra A,
+put E = A ⊗[k] Aᵐᵒᵖ.
+The adjacent-product bar boundary d_{n+1} : P_{n+1} → P_n
+commutes with the outer E-action: d_{n+1}(z • x) = z • d_{n+1}(x).
+Its signs are (−1)^i on the i-th adjacent multiplication. -/
 theorem underlyingBarBoundary_intertwines (n : ℕ) (z : EnvelopingAlgebra k A) :
     ((underlyingBar k A).d (n + 1) n).hom.comp
         (TensorPower.outerRepresentation k A (n + 1) z) =
@@ -147,7 +173,12 @@ theorem underlyingBarBoundary_intertwines (n : ℕ) (z : EnvelopingAlgebra k A) 
   exact congrArg (fun y => ((-1 : ℤ) ^ i.val) • y)
     (DFunLike.congr_fun (barAdjacentFace_intertwines k A n i z) x)
 
-/-- Add only enveloping-linearity to the exact boundary function. -/
+/-- For a commutative ring k and an associative unital k-algebra A,
+put E = A ⊗[k] Aᵐᵒᵖ.
+The bar differential is an E-linear map from
+A ⊗[k] A^{⊗(n+2)} to A ⊗[k] A^{⊗(n+1)}, where E
+acts on the two outer factors of each term. Its value is the alternating
+sum ∑_{i=0}^{n+1} (−1)^i δ_i of adjacent multiplications. -/
 def envelopingBoundaryLinear (n : ℕ) :
     letI := TensorPower.outerModule k A (n + 1)
     letI := TensorPower.outerModule k A n
@@ -165,12 +196,21 @@ def envelopingBoundaryLinear (n : ℕ) :
             (((underlyingBar k A).d (n + 1) n).hom x)
       exact DFunLike.congr_fun (underlyingBarBoundary_intertwines k A n z) x }
 
-/-- The original degree-n carrier with its left enveloping module. -/
+/-- For a commutative ring k and an associative unital k-algebra A,
+put E = A ⊗[k] Aᵐᵒᵖ.
+The degree-n left E-module of the bar complex is
+A ⊗[k] A^{⊗(n+1)}, with (u ⊗ vᵐᵒᵖ) acting by left
+multiplication by u on the first factor and right multiplication by v on
+the last factor. It lies in ModuleCat at universe max{u,v}. -/
 def envelopingBarDegree (n : ℕ) : ModuleCat.{max u v} (EnvelopingAlgebra k A) := by
   let := TensorPower.outerModule k A n
   exact ModuleCat.of (EnvelopingAlgebra k A) (A ⊗[k] TensorPower k (n + 1) A)
 
-/-- The categorical differential has precisely the original boundary function. -/
+/-- For a commutative ring k and an associative unital k-algebra A,
+put E = A ⊗[k] Aᵐᵒᵖ.
+Between the left E-modules P_{n+1} and P_n, the bar differential
+is the E-linear morphism whose value is
+∑_{i=0}^{n+1} (−1)^i δ_i. -/
 def envelopingBarBoundary (n : ℕ) : envelopingBarDegree k A (n + 1) ⟶ envelopingBarDegree k A n := by
   let : Module (EnvelopingAlgebra k A) (A ⊗[k] TensorPower k (n + 2) A) :=
     TensorPower.outerModule k A (n + 1)
@@ -178,7 +218,12 @@ def envelopingBarBoundary (n : ℕ) : envelopingBarDegree k A (n + 1) ⟶ envelo
     TensorPower.outerModule k A n
   exact ModuleCat.ofHom (envelopingBoundaryLinear k A n)
 
-/-- Its square is zero by the already underlying-bar square, not a replacement formula. -/
+/-- For a commutative ring k and an associative unital k-algebra A,
+put E = A ⊗[k] Aᵐᵒᵖ.
+The adjacent-product bar differential satisfies
+P_{n+2} → P_{n+1} → P_n = 0 as a composite of E-linear maps.
+Thus two consecutive alternating adjacent-multiplication boundaries
+have zero composite. -/
 theorem envelopingBarBoundary_square (n : ℕ) :
     envelopingBarBoundary k A (n + 1) ≫ envelopingBarBoundary k A n = 0 := by
   apply ModuleCat.hom_ext
@@ -193,23 +238,40 @@ theorem envelopingBarBoundary_square (n : ℕ) :
     (((underlyingBar k A).d (n + 2) (n + 1)).hom x) = 0 at h
   exact h
 
-/-- The left-enveloping bar, using native ChainComplex.of and the same stored maps. -/
+/-- For a commutative ring k and an associative unital k-algebra A,
+put E = A ⊗[k] Aᵐᵒᵖ.
+The terms P_n = A ⊗[k] A^{⊗(n+1)}, with their outer
+E-actions and alternating adjacent-multiplication differentials, form
+a chain complex of left E-modules indexed by ℕ. Its module universe is
+max{u,v}. -/
 def envelopingBar : ChainComplex (ModuleCat.{max u v} (EnvelopingAlgebra k A)) ℕ :=
   ChainComplex.of (envelopingBarDegree k A) (envelopingBarBoundary k A)
     (envelopingBarBoundary_square k A)
 
-/-- The enriched differential evaluates to the exact original differential. -/
+/-- For a commutative ring k and an associative unital k-algebra A,
+put E = A ⊗[k] Aᵐᵒᵖ.
+The differential of the E-module bar complex has the same value as
+the k-linear adjacent-product bar differential on every
+x ∈ P_{n+1}: d^E_{n+1}(x) = d^k_{n+1}(x). -/
 theorem envelopingBar_d_apply (n : ℕ) (x : envelopingBarDegree k A (n + 1)) :
     ((envelopingBar k A).d (n + 1) n).hom x = ((underlyingBar k A).d (n + 1) n).hom x :=
   congrArg (fun f : envelopingBarDegree k A (n + 1) ⟶ envelopingBarDegree k A n => f.hom x)
     (ChainComplex.of_d (envelopingBarDegree k A) (envelopingBarBoundary k A) n)
 
-/-- The native regular enveloping representation supplies the target module on A. -/
+/-- For a commutative ring k and an associative unital k-algebra A,
+put E = A ⊗[k] Aᵐᵒᵖ.
+The algebra A is a left E-module through the regular representation:
+(a ⊗ bᵐᵒᵖ) • x = axb. -/
 @[instance_reducible]
 def regularEnvelopingModule : Module (EnvelopingAlgebra k A) A :=
   Module.compHom A (regularEnvelopingAction (k := k) (A := A)).toRingHom
 
-/-- The multiplication augmentation intertwines the native regular action on A. -/
+/-- For a commutative ring k and an associative unital k-algebra A,
+put E = A ⊗[k] Aᵐᵒᵖ.
+Multiplication ε : P_0 = A ⊗[k] A → A is equivariant for
+the outer action on P_0 and the regular action on A:
+ε(z • x) = z • ε(x). On elementary tensors this is
+ε((u ⊗ vᵐᵒᵖ) • (a ⊗ b)) = u(ab)v. -/
 theorem underlyingBarAugmentation_intertwines (z : EnvelopingAlgebra k A) :
     (underlyingBarAugmentationLinear k A).comp (TensorPower.outerRepresentation k A 0 z) =
       (regularEnvelopingAction (k := k) (A := A) z).comp
@@ -252,7 +314,11 @@ theorem underlyingBarAugmentation_intertwines (z : EnvelopingAlgebra k A) :
       exact (f.map_add _ _).trans
         (congrArg₂ (· + ·) (DFunLike.congr_fun hz x) (DFunLike.congr_fun hw x))
 
-/-- Multiplication itself as an enveloping-linear map, retaining the original A carrier. -/
+/-- For a commutative ring k and an associative unital k-algebra A,
+put E = A ⊗[k] Aᵐᵒᵖ.
+Multiplication ε(a ⊗ b) = ab defines an E-linear map
+A ⊗[k] A → A, with the outer E-action on the domain and
+the regular E-action on the codomain. -/
 def envelopingAugmentationLinear :
     letI := TensorPower.outerModule k A 0
     letI := regularEnvelopingModule k A
@@ -267,12 +333,18 @@ def envelopingAugmentationLinear :
         regularEnvelopingAction (k := k) (A := A) z (underlyingBarAugmentationLinear k A x)
       exact DFunLike.congr_fun (underlyingBarAugmentation_intertwines k A z) x }
 
-/-- The original augmentation target, canonically lifted to the complex universe. -/
+/-- For a commutative ring k and an associative unital k-algebra A,
+put E = A ⊗[k] Aᵐᵒᵖ.
+The augmentation target is the regular left E-module A lifted to
+universe max{u,v}, with (a ⊗ bᵐᵒᵖ) • ULift(x) = ULift(axb). -/
 def regularEnvelopingTarget : ModuleCat.{max u v} (EnvelopingAlgebra k A) := by
   let := regularEnvelopingModule k A
   exact ModuleCat.of (EnvelopingAlgebra k A) (ULift.{max u v} A)
 
-/-- The same multiplication augmentation into the regular enveloping target. -/
+/-- For a commutative ring k and an associative unital k-algebra A,
+put E = A ⊗[k] Aᵐᵒᵖ.
+Multiplication defines the E-linear augmentation from bar degree zero
+to the lifted regular module A. It sends a ⊗ b to ULift(ab). -/
 def envelopingBarAugmentation : (envelopingBar k A).X 0 ⟶ regularEnvelopingTarget k A := by
   let : Module (EnvelopingAlgebra k A) (A ⊗[k] TensorPower k 1 A) :=
     TensorPower.outerModule k A 0
@@ -281,13 +353,21 @@ def envelopingBarAugmentation : (envelopingBar k A).X 0 ⟶ regularEnvelopingTar
     ((ULift.moduleEquiv.symm.toLinearMap : A →ₗ[EnvelopingAlgebra k A] ULift.{max u v} A).comp
       (envelopingAugmentationLinear k A))
 
-/-- The canonical lift preserves the original augmentation value. -/
+/-- For a commutative ring k and an associative unital k-algebra A,
+put E = A ⊗[k] Aᵐᵒᵖ.
+For x in bar degree zero, the augmentation to the lifted regular
+E-module A has value ULift(ε(x)), where ε : A ⊗[k] A → A
+is multiplication. -/
 theorem envelopingBarAugmentation_apply (x : (envelopingBar k A).X 0) :
     (envelopingBarAugmentation k A).hom x = ULift.up (underlyingBarAugmentationLinear k A x) := by
   simp only [envelopingBarAugmentation]
   rfl
 
-/-- The augmentation data law is inherited from the exact augmentation square. -/
+/-- For a commutative ring k and an associative unital k-algebra A,
+put E = A ⊗[k] Aᵐᵒᵖ.
+The augmentation to the lifted regular E-module A satisfies
+ε d_1 = 0. On a three-factor tensor, associativity gives
+(ab)c − a(bc) = 0. -/
 theorem envelopingBar_d_augmentation :
     (envelopingBar k A).d 1 0 ≫ envelopingBarAugmentation k A = 0 := by
   apply ModuleCat.hom_ext

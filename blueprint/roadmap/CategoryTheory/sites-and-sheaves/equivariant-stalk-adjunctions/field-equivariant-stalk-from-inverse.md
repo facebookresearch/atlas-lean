@@ -1,4 +1,5 @@
-# Field Equivariant Stalk From Inverse
+# Inverse sheaf map gives an equivariant stalk morphism
 
-Package the same original equivariant additive stalk arrow
-with its stored integer structures.
+Inverse sheaf map gives an equivariant stalk morphism.
+
+Bundle the underlying equivariant transpose as a morphism of discrete Galois coefficients.

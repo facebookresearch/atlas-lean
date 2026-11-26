@@ -1,8 +1,7 @@
-# Hom One Cochain
+# Homogenization of a continuous two-variable function
 
-Homogeneous degree-one cochain from an inhomogeneous cocycle.
+Homogenization of a continuous two-variable function.
 
-Given `c` with `c (g * h) = X.ρ g (c h) + c g` and continuity of the uncurried
-`Ψ`, this packages `Ψ x y = X.ρ x (c (x⁻¹ * y))` as an invariant element of
-`TopRep.homogeneousCochains`. Reuses `TopRep.homogeneousCochains` and
-`ContRepresentation.coind₁_apply_apply` for the invariance computation.
+For c : G → X with jointly continuous Ψ(x,y) = ρ(x)c(x⁻¹y), this is the invariant homogeneous
+degree-one cochain Ψ. Diagonal equivariance follows from the group action; the cocycle
+equation for c is required separately to make Ψ a cycle.

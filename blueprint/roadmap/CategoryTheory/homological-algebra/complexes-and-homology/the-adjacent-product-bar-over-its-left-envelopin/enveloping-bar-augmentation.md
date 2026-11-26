@@ -1,3 +1,6 @@
-# Enveloping Bar Augmentation
+# The enveloping bar augmentation
 
-The same multiplication augmentation into the regular enveloping target.
+For a commutative ring k and an associative unital k-algebra A,
+put E = A ⊗[k] Aᵐᵒᵖ.
+Multiplication defines the E-linear augmentation from bar degree zero
+to the lifted regular module A. It sends a ⊗ b to ULift(ab).

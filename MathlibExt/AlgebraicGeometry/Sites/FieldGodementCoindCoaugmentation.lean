@@ -11,7 +11,15 @@ module
 
 public import MathlibExt.AlgebraicGeometry.Sites.FieldGodementCoindCochainComparison
 
-/-! # The same actual original Godement/coinduction comparison preserves coaugmentation -/
+/-!
+# Coaugmentation in the Godement/coinduction comparison
+
+Let k have prescribed separable closure Ω and Φ its Galois stalk functor. The degree-zero
+Godement-to-coinduction coresolution comparison takes the Godement unit coaugmentation to the
+diagonal coinduction unit on Φ(F).
+
+Thus the corresponding stalk vector is sent to the constant coinduced function.
+-/
 
 @[expose] public section
 noncomputable section
@@ -36,8 +44,11 @@ attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The same actual original Godement/coinduction degree comparison sends
-the original geometric unit coaugmentation to the canonical coinduction unit. -/
+/-- Let k have prescribed separable closure Ω, T the field Godement monad, S the diagonal
+continuous coinduction monad, Φ the Galois stalk, and F a sheaf. The degree-zero term
+comparison e₀ satisfies
+Φ(coresolutionAugmented(T,F).hom₀)≫e₀.hom=coresolutionAugmented(S,ΦF).hom₀. The target
+coaugmentation is the constant-function coinduction unit. -/
 theorem fieldGodementCoindCoresolutionTermIso_coaugmentation
     (F : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     let T := smallEtaleGodementMonad.{u, w} (Spec (.of k))

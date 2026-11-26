@@ -1,3 +1,6 @@
-# Local Cohomology Functor
+# Local cohomology as the right-derived power-torsion functor
 
-Actual right-derived torsion, using native injective resolutions and homology.
+Local cohomology as the right-derived power-torsion functor.
+
+Assuming injective resolutions in `ModuleCat.{v} R`, the degree-`q` right-derived functor of
+`Γ_I` defines `localCohomologyFunctor I q` on that same module category.

@@ -18,11 +18,19 @@ public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.Schrei
 public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.SchreierTransferCupProjection
 
 /-!
-# The arbitrary `(1,q)` Schreier cup projection formula
+# Cup projection with a degree-one factor in every degree
 
-This file constructs the uniform degree-`q` cochain homotopy comparing the
-transfer of `res(x) cup y` with `x cup transfer(y)`.  It generalizes the
-existing hand-expanded `(1,1)` and `(1,2)` homotopies.
+Let A and B be k-linear G-representations, let H ≤ G have finite index and let T be a right
+transversal. For x : G → A and y : Hᵠ → B, set Kᵠ(g) = ∑ₜ ρ_A(t⁻¹)x(t) ⊗
+ρ_B(t⁻¹)y(T.schreierFactorTuple t g). The first coefficient is in A and the second in B.
+
+If x is a one-cocycle and y is a q-cocycle, including q = 0, the uniform identity is
+cor_Tᵠ⁺¹(x|H ∪ y) = x ∪ cor_Tᵠ(y) − dᵠKᵠ. It retains the inhomogeneous signs (−1)ʲ⁺¹ on the
+contracted tuple terms and the identification 1+q = q+1.
+
+Passing to cohomology gives cor_T(res(x) ∪ y) = x ∪ cor_T(y) in Hᵠ⁺¹(G,A ⊗ B), after the
+canonical restriction–tensor coefficient comparison. The same identity holds for canonical
+transversal-independent corestriction.
 -/
 
 @[expose] public section
@@ -41,13 +49,18 @@ universe u
 variable {k G : Type u} [CommRing k] [Group G]
 variable {H : Subgroup G}
 
-/-- A finite-index right transversal has a finite type of representatives. -/
+/-- Finite representatives for the uniform cup projection formula.
+
+The finite-index hypothesis gives a finite enumeration of T for the degree-q tensor-valued
+comparison sum. -/
 noncomputable local instance cupOneAnyProjectionTransversalFintype
     (T : H.RightTransversal) [H.FiniteIndex] : Fintype (T : Set G) :=
   @Fintype.ofFinite (T : Set G) (T.2.finite_right)
 
-/-- Two generic cocycles represent the same class when their included
-cochains differ by one explicit predecessor-degree boundary. -/
+/-- Equal positive-degree classes from a subtracted boundary.
+
+If two included degree-(q+1) cycle cochains satisfy z₁ = z₂ − dᵠb, then their images under the
+group-cohomology projection are equal. -/
 theorem π_eq_of_iCocycles_eq_sub_boundary_succ
     (A : Rep k G) (q : ℕ) (z₁ z₂ : cocycles A (q + 1))
     (b : (inhomogeneousCochains A).X q)
@@ -85,13 +98,18 @@ private theorem cyclesCast_eq_cyclesIsoOfEq
   subst h
   rfl
 
-/-- Explicit inhomogeneous `(1,q)` cup cochain. -/
+/-- The cup cochain with a degree-one first factor.
+
+For arbitrary x : G → A and y : Gᵠ → B, define (x ∪ y)(g₀,…,gᵠ) = x(g₀) ⊗ ρ_B(g₀)y(g₁,…,gᵠ). -/
 noncomputable def cupCochainOneAny
     (A B : Rep k G) (q : ℕ) (x : G → A)
     (y : (Fin q → G) → B) :
     (Fin (q + 1) → G) → (A ⊗ B : Rep k G) :=
   fun g ↦ x (g 0) ⊗ₜ[k] B.ρ (g 0) (y (Fin.tail g))
 
+/-- Values of the one-by-q cup cochain.
+
+The cup cochain on a tuple g is x(g₀) ⊗ ρ_B(g₀)y(Fin.tail g). -/
 @[simp]
 theorem cupCochainOneAny_apply
     (A B : Rep k G) (q : ℕ) (x : G → A)
@@ -101,8 +119,11 @@ theorem cupCochainOneAny_apply
   rfl
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The explicit `(1,q)` cochain is the corresponding arbitrary
-Alexander--Whitney cup on a pure tensor of cochains. -/
+/-- The graded cup pairing in one-by-q coordinates.
+
+The degree-(1,q) component of the inhomogeneous cup pairing, applied to the tensor of the
+unary cochain x and q-cochain y, gives cupCochainOneAny after reindexing the target tuple by
+1+q = q+1. -/
 theorem inhomogeneousCupPairing_one_any_apply
     (A B : Rep k G) (q : ℕ) (x : G → A)
     (y : (Fin q → G) → B) (g : Fin (q + 1) → G) :
@@ -131,8 +152,10 @@ private theorem inhomogeneousCochains_XIsoOfEq_apply
   rfl
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Degree transport from `1 + q` to `q + 1` turns the arbitrary cup
-pairing into the explicit `(1,q)` cochain on the literal target tuple. -/
+/-- The one-by-q cup pairing after degree transport.
+
+Transporting the graded pairing result from degree 1+q to q+1 by the canonical complex
+component isomorphism gives the cochain g ↦ x(g₀) ⊗ ρ_B(g₀)y(Fin.tail g). -/
 theorem inhomogeneousCupPairing_one_any_cast_apply
     (A B : Rep k G) (q : ℕ) (x : G → A)
     (y : (Fin q → G) → B) (g : Fin (q + 1) → G) :
@@ -144,7 +167,10 @@ theorem inhomogeneousCupPairing_one_any_cast_apply
   rw [inhomogeneousCochains_XIsoOfEq_apply]
   exact inhomogeneousCupPairing_one_any_apply A B q x y g
 
-/-- One transversal summand of the uniform `(1,q)` projection homotopy. -/
+/-- A summand of the uniform projection comparison cochain.
+
+For a representative t and a q-tuple g, the summand is ρ_A(t⁻¹)x(t) ⊗
+ρ_B(t⁻¹)y(T.schreierFactorTuple t g). -/
 noncomputable def cupProjectionHomotopyOneAnyTerm
     (A B : Rep k G) (T : H.RightTransversal)
     (q : ℕ) (x : G → A) (y : (Fin q → H) → B)
@@ -152,8 +178,10 @@ noncomputable def cupProjectionHomotopyOneAnyTerm
   A.ρ (t : G)⁻¹ (x (t : G)) ⊗ₜ[k]
     B.ρ (t : G)⁻¹ (y (T.schreierFactorTuple t g))
 
-/-- The uniform degree-`q` homotopy comparing transfer of a restricted
-`(1,q)` cup with the cup against the transferred right factor. -/
+/-- The degree-q projection comparison cochain.
+
+Sum the inverse-weighted tensor summands over t ∈ T to define Kᵠ : Gᵠ → A ⊗ B for arbitrary
+cochains x and y. -/
 noncomputable def cupProjectionHomotopyOneAny
     (A B : Rep k G) (T : H.RightTransversal) [H.FiniteIndex]
     (q : ℕ) (x : G → A) (y : (Fin q → H) → B) :
@@ -161,6 +189,9 @@ noncomputable def cupProjectionHomotopyOneAny
   fun g ↦ ∑ t : (T : Set G),
     cupProjectionHomotopyOneAnyTerm A B T q x y t g
 
+/-- Values of the uniform projection comparison sum.
+
+For g : Fin q → G, Kᵠ(g) is the sum over T of cupProjectionHomotopyOneAnyTerm A B T q x y t g. -/
 @[simp]
 theorem cupProjectionHomotopyOneAny_apply
     (A B : Rep k G) (T : H.RightTransversal) [H.FiniteIndex]
@@ -178,8 +209,10 @@ private theorem tensor_rho_tmul_one_any
   change TensorProduct.map (A.ρ g) (B.ρ g) (a ⊗ₜ[k] b) = _
   rw [TensorProduct.map_tmul]
 
-/-- Acting on the uniform projection homotopy reindexes the transversal by
-the first group coordinate. -/
+/-- The tensor action on the uniform projection cochain.
+
+Applying g₀ to Kᵠ(g) and reindexing by u = r(t,g₀) gives terms ρ_A(g₀u⁻¹)x(u) ⊗
+ρ_B(g₀u⁻¹)y(T.schreierFactorTuple u g). -/
 theorem rho_cupProjectionHomotopyOneAny
     (A B : Rep k G) (T : H.RightTransversal) [H.FiniteIndex]
     (q : ℕ) (x : G → A) (y : (Fin q → H) → B)
@@ -212,8 +245,10 @@ theorem rho_cupProjectionHomotopyOneAny
             B.ρ (g₀ * (t : G)⁻¹)
               (y (T.schreierFactorTuple t g))) |>.symm
 
-/-- The explicit `(1,q)` cup with a transferred right cochain, reindexed by
-the first group coordinate. -/
+/-- The one-by-q cup with a transferred cochain.
+
+The cup x ∪ cor_Tᵠ(y) on g is the sum of x(g₀) ⊗ ρ_B(g₀r(t,g₀)⁻¹)y on the factor tuple of the
+tail starting at r(t,g₀). -/
 theorem cupCochainOneAny_corestrictionCochain
     (A B : Rep k G) (T : H.RightTransversal) [H.FiniteIndex]
     (q : ℕ) (x : G → A) (y : (Fin q → H) → B)
@@ -242,8 +277,10 @@ theorem cupCochainOneAny_corestrictionCochain
             B.ρ (g 0 * (t : G)⁻¹)
               (y (T.schreierFactorTuple t (Fin.tail g)))) |>.symm
 
-/-- The internal alternating faces of a transported subgroup cocycle are
-the negative transported leading face, at one transversal representative. -/
+/-- The signed contraction sum of a subgroup cocycle.
+
+If dᵠy = 0, summing the inverse-weighted y-values on contracted factor tuples with
+coefficients (−1)ʲ⁺¹ equals the negative leading term ρ_B(g₀r(t,g₀)⁻¹)y on the tail scan. -/
 theorem sum_smul_rho_inv_factorTuple_contract_of_cocycle
     (B : Rep k G) (T : H.RightTransversal)
     (q : ℕ) (y : (Fin q → H) → B)
@@ -306,8 +343,10 @@ theorem sum_smul_rho_inv_factorTuple_contract_of_cocycle
       congr 2
       exact (T.schreierFactorTuple_tail t g).symm
 
-/-- The full internal alternating-face contribution to the projection
-homotopy is the negative of the updated-representative sum. -/
+/-- The signed contraction sum of the projection cochain.
+
+For an H-q-cocycle y, ∑ⱼ(−1)ʲ⁺¹Kᵠ(contractⱼ g) is minus the sum of ρ_A(t⁻¹)x(t) ⊗
+ρ_B(g₀r(t,g₀)⁻¹)y on the tail scan. -/
 theorem sum_smul_cupProjectionHomotopyOneAny_contract_of_cocycle
     (A B : Rep k G) (T : H.RightTransversal) [H.FiniteIndex]
     (q : ℕ) (x : G → A) (y : (Fin q → H) → B)
@@ -360,8 +399,12 @@ theorem sum_smul_cupProjectionHomotopyOneAny_contract_of_cocycle
         intro t _
         rw [TensorProduct.tmul_neg]
 
-/-- One transferred restricted `(1,q)` cup summand splits into the
-projection term and the two homotopy terms. -/
+/-- The transferred one-by-q cup summand.
+
+For a G-one-cocycle x, the inverse-weighted restricted cup term expands as the target x(g₀)
+term plus the comparison term from ρ_A(t⁻¹)x(t) minus the translated comparison term from
+ρ_A(g₀r(t,g₀)⁻¹)x(r(t,g₀)). The B-factor is the same translated tail-scan value in all three
+terms. -/
 theorem corestrictionCupOneAny_term
     (A B : Rep k G) (T : H.RightTransversal)
     (q : ℕ) (x : cocycles₁ A) (y : (Fin q → H) → B)
@@ -406,9 +449,10 @@ theorem corestrictionCupOneAny_term
   rw [hB, rho_inv_schreierFactor_cocycle A T x t (g 0),
     TensorProduct.sub_tmul, TensorProduct.add_tmul]
 
-/-- Cochain-level arbitrary `(1,q)` projection formula.  Transfer of the
-restricted cup is the cup with the transferred right factor minus the
-boundary of the uniform projection homotopy. -/
+/-- The uniform cochain cup projection identity with its boundary.
+
+For a G-one-cocycle x and an H-q-cocycle y, cor_Tᵠ⁺¹(x|H ∪ y) = x ∪ cor_Tᵠ(y) −
+dᵠ(cupProjectionHomotopyOneAny A B T q x y), for every q ≥ 0. -/
 theorem corestrictionCochain_cup_one_any
     (A B : Rep k G) (T : H.RightTransversal) [H.FiniteIndex]
     (q : ℕ) (x : cocycles₁ A) (y : (Fin q → H) → B)
@@ -604,7 +648,11 @@ private theorem corestriction_cupCycles_one_any
         simpa [ConcreteCategory.comp_apply,
           inhomogeneousCochains.d_def] using hd)) g
 
-/-- Chosen-transversal arbitrary `(1,q)` cup projection formula. -/
+/-- The one-by-q projection formula for chosen-transversal classes.
+
+For x ∈ H¹(G,A) and y ∈ Hᵠ(H,B|H), transfer of res(x) ∪ y equals x cupped with transfer of y
+in Hᵠ⁺¹(G,A ⊗ B). The source uses the canonical restriction–tensor isomorphism and the target
+degree identification. -/
 theorem corestrictionOfRightTransversal_cup_one_any
     (A B : Rep k G) (T : H.RightTransversal) [H.FiniteIndex]
     (q : ℕ) (x : H1 A)
@@ -656,7 +704,10 @@ theorem corestrictionOfRightTransversal_cup_one_any
             cyclesCast_eq_cyclesIsoOfEq] using
             (corestriction_cupCycles_one_any A B T q x y)
 
-/-- Canonical arbitrary `(1,q)` cup projection formula. -/
+/-- The one-by-q projection formula for canonical corestriction.
+
+Canonical corestriction satisfies cor_H^G(res(x) ∪ y) = x ∪ cor_H^G(y) for x ∈ H¹(G,A), y ∈
+Hᵠ(H,B|H) and every q ≥ 0, with the stated tensor coefficient comparison. -/
 theorem schreierCorestriction_cup_one_any
     (A B : Rep k G) [H.FiniteIndex] (q : ℕ) (x : H1 A)
     (y : groupCohomology (Rep.res H.subtype B) q) :

@@ -1,3 +1,5 @@
-# Partial Total First Page Choice
+# Canonical lower-bound data for page one
 
-The canonical page-one bound witness.
+Canonical lower-bound data for page one.
+
+Every first-quadrant bicomplex has a first-page choice, since `(1 : ℤ) ≤ 1`.

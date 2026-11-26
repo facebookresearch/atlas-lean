@@ -1,3 +1,6 @@
-# Primitive Equation compare
+# The tensor comparison of the CE primitive equation
 
-The converted primitive equation is the CE primitive equation under the tensor comparison.
+The tensor comparison of the CE primitive equation.
+
+The compared primitive map `Δ - (id ⊗ η + η ⊗ id)` is the CE primitive-equation map followed
+by the inverse tensor comparison.

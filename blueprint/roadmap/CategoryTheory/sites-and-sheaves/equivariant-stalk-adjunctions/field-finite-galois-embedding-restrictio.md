@@ -1,3 +1,6 @@
-# Field Finite Galois Embedding Restriction
+# Restriction of embeddings along a finite field inclusion
 
-Every actual field inclusion restricts original embeddings by that SAME algebra map.
+Restriction of embeddings along a finite field inclusion.
+
+For `L ≤ L'`, restrict an embedding of `L'` by precomposition with the inclusion of `L`,
+equivariantly for the Galois action.

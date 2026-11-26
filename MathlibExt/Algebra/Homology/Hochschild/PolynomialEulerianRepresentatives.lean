@@ -16,10 +16,13 @@ public import MathlibExt.LinearAlgebra.TensorPower.EulerianAntisymmetrization
 /-!
 # Eulerian weights of polynomial antisymmetric representatives
 
-In the rational Eulerian setting, signed polynomial
-antisymmetric representatives in degree n lie in weight n.
-The action follows from their signed permutation formulas
-and the polynomial exterior homology comparison.
+Let k be a commutative ℚ-algebra, A = k[σ] and M a compatible A-module, regarded as a symmetric
+bimodule. The signed polynomial representative of x ∈ M ⊗[k] ∧ⁿₖ(⊕ᵢk·eᵢ) is fixed by the
+degree-n Eulerian projector and annihilated by every other Eulerian projector. Its coefficient
+remains first in each signed permutation word.
+
+For the Eulerian decomposition of Hochschild chains, see J.-L. Loday, Cyclic Homology, second
+edition, §4.5.
 -/
 
 @[expose] public section
@@ -43,7 +46,10 @@ local notation "V" => σ →₀ k
 attribute [local instance] Symmetric.opModule Symmetric.actionsComm
   Symmetric.kOpComm Symmetric.kOpTower
 
-/-- Every original signed polynomial degree-n tensor has exactly its top Eulerian weight. -/
+/-- Let k be a commutative ℚ-algebra, A = k[σ] and M a compatible A-module with its symmetric right
+action. For n,i : ℕ and x ∈ M ⊗[k] ∧ⁿₖ(⊕ᵢ∈σ k·eᵢ), write sₙ(x) for
+polynomialSignedRepresentative. Then coefficientEulerianOperator(n,i)(sₙ(x)) = sₙ(x) if i=n, and
+is zero otherwise. -/
 theorem polynomialSignedRepresentative_eulerian (n i : ℕ) (x : M ⊗[k] (⋀[k]^n V)) :
     Symmetric.coefficientEulerianOperator k A M n i (polynomialSignedRepresentative k σ M n x) =
       if i = n then polynomialSignedRepresentative k σ M n x else 0 := by

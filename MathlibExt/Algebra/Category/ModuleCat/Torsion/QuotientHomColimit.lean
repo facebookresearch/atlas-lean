@@ -20,12 +20,19 @@ public import Mathlib.CategoryTheory.Functor.Currying
 public import Mathlib.CategoryTheory.Preadditive.AdditiveFunctor
 
 /-!
-# Quotient-Hom diagrams and primary-component cocones
+# Power torsion as a colimit of quotient Hom modules
 
-The quotient objects use the same module-category universe as R; the
-evaluation equivalence has independent scalar and coefficient universes.
-Ideal powers, linear Coyoneda and the annihilator colimit give the diagram
-and its primary-component cocone.
+Let `R : Type u` be a commutative ring and `I` an ideal. For `M : ModuleCat.{u} R`, evaluation
+at the class of one identifies `Hom_R(R / I^n, M)` with the submodule annihilated by every
+element of `I^n`.
+
+If `n ≤ m`, the quotient map `R / I^m → R / I^n` induces the transition map by precomposition.
+Under evaluation, this is the inclusion of the power annihilators. The resulting natural-
+number diagram has colimit the power-torsion module `Γ_I(M)`, consisting of elements
+annihilated by some ideal power.
+
+The evaluation cocone and its colimit isomorphism are natural in module maps. The quotient-Hom
+diagrams here use the ring's carrier universe `u`.
 -/
 
 @[expose] public section
@@ -37,12 +44,18 @@ namespace ModuleCat.Torsion
 
 variable {R : Type u} [CommRing R]
 
-/-- The actual native R/I^n object, in its valid common module world. -/
+/-- Quotient module by an ideal power.
+
+For natural `n`, `quotientPowerModule I n` is the `R`-module `R / I^n`, bundled in
+`ModuleCat.{u} R`. -/
 @[implicit_reducible]
 def quotientPowerModule (I : Ideal R) (n : ℕ) : ModuleCat.{u} R :=
   (localCohomology.ringModIdeals (localCohomology.idealPowersDiagram I)).obj (op n)
 
-/-- Native quotient contravariance followed by native linear Coyoneda. -/
+/-- Increasing family of Hom functors from ideal-power quotients.
+
+The natural-number family has degree-`n` functor `Hom_R(R / I^n, -)`. For `n ≤ m`, its natural
+transformation is precomposition with the quotient map `R / I^m → R / I^n`. -/
 @[implicit_reducible]
 def quotientHomFamily (I : Ideal R) : ℕ ⥤ (ModuleCat.{u} R ⥤ ModuleCat.{u} R) :=
   opOp ℕ ⋙
@@ -53,7 +66,10 @@ local instance (I : Ideal R) (n : ℕ) : ((quotientHomFamily I).obj n).Additive 
   change ((linearCoyoneda R (ModuleCat.{u} R)).obj (op (quotientPowerModule I n))).Additive
   infer_instance
 
-/-- The same actual family, with its native additive Hom functors. -/
+/-- Ideal-power quotient Hom family as additive functors.
+
+Bundle each functor `Hom_R(R / I^n, -)` with its additivity and retain the precomposition
+transition maps to form a natural-number family of additive functors. -/
 def quotientHomAdditiveFamily (I : Ideal R) :
     ℕ ⥤ (ModuleCat.{u} R ⥤+ ModuleCat.{u} R) where
   obj n := AdditiveFunctor.of ((quotientHomFamily I).obj n)
@@ -65,18 +81,28 @@ def quotientHomAdditiveFamily (I : Ideal R) :
     apply ObjectProperty.hom_ext
     exact (quotientHomFamily I).map_comp f g
 
-/-- Coefficients vary through the native flipped functor family. -/
+/-- Module functor to ideal-power quotient Hom diagrams.
+
+For an `R`-module `M`, take the diagram `n ↦ Hom_R(R / I^n, M)`. Module maps act on the
+diagram by postcomposition. -/
 @[implicit_reducible]
 def quotientHomDiagramFunctor (I : Ideal R) :
     ModuleCat.{u} R ⥤ (ℕ ⥤ ModuleCat.{u} R) :=
   (quotientHomFamily I).flip
 
-/-- The actual degreewise Hom diagram at a given coefficient. -/
+/-- Quotient Hom diagram of a fixed module.
+
+The diagram for `I` and `M` has objects `Hom_R(R / I^n, M)` and transition maps induced by the
+quotient projections between ideal-power quotients. -/
 @[implicit_reducible]
 def quotientHomDiagram (I : Ideal R) (M : ModuleCat.{u} R) : ℕ ⥤ ModuleCat.{u} R :=
   (quotientHomDiagramFunctor I).obj M
 
-/-- Native categorical Hom is classified by the actual ideal-power annihilator. -/
+/-- Evaluation identifies quotient Hom with the power-annihilator diagram.
+
+Evaluation at the quotient class of one gives a natural isomorphism from `quotientHomDiagram I
+M` to the diagram of submodules annihilated by `I^n`. It turns quotient precomposition into
+the annihilator inclusions. -/
 def quotientHomDiagramIsoAnnihilator (I : Ideal R) (M : ModuleCat.{u} R) :
     quotientHomDiagram I M ≅ annihilatorDiagram I M :=
   NatIso.ofComponents
@@ -91,7 +117,10 @@ def quotientHomDiagramIsoAnnihilator (I : Ideal R) (M : ModuleCat.{u} R) :
       apply Subtype.ext
       rfl)
 
-/-- The whole diagram comparison respects actual coefficient maps. -/
+/-- Quotient Hom and annihilator diagram comparison is natural in modules.
+
+The evaluation isomorphisms assemble to a natural isomorphism between the module-valued
+quotient-Hom diagram functor and the power-annihilator diagram functor. -/
 def quotientHomDiagramFunctorIsoAnnihilator (I : Ideal R) :
     quotientHomDiagramFunctor I ≅ annihilatorDiagramFunctor I :=
   NatIso.ofComponents (quotientHomDiagramIsoAnnihilator I) (by
@@ -104,25 +133,35 @@ def quotientHomDiagramFunctorIsoAnnihilator (I : Ideal R) :
     apply Subtype.ext
     rfl)
 
-/-- Precompose the earned annihilator cocone with its actual Hom comparison. -/
+/-- Evaluation cocone from quotient Hom to power torsion.
+
+The cocone on `n ↦ Hom_R(R / I^n, M)` has point `Γ_I(M)` and sends a quotient-module map to
+its value on the class of one, included as a power-torsion element. -/
 def quotientHomCocone (I : Ideal R) (M : ModuleCat.{u} R) :
     Cocone (quotientHomDiagram I M) :=
   (Cocone.precompose (quotientHomDiagramIsoAnnihilator I M).hom).obj
     (annihilatorCocone I M)
 
-/-- The cocone leg is evaluation at the original quotient one. -/
+/-- Underlying value of a quotient Hom cocone map.
+
+For `φ : R / I^n ⟶ M`, the degree-`n` cocone map has underlying value `φ(1 mod I^n)`. -/
 lemma quotientHomCocone_val (I : Ideal R) (M : ModuleCat.{u} R) (n : ℕ)
     (φ : quotientPowerModule I n ⟶ M) :
     (((quotientHomCocone I M).ι.app n).hom φ).val =
       φ.hom (Ideal.quotientOne (I ^ n)) := rfl
 
-/-- Native change-of-diagram transports G5's earned universal property. -/
+/-- Power torsion is the colimit of ideal-power quotient Hom.
+
+The evaluation cocone with point `Γ_I(M)` is a colimit cocone of `quotientHomDiagram I M`. -/
 def quotientHomIsColimit (I : Ideal R) (M : ModuleCat.{u} R) :
     IsColimit (quotientHomCocone I M) :=
   (IsColimit.precomposeHomEquiv (quotientHomDiagramIsoAnnihilator I M)
     (annihilatorCocone I M)).symm (annihilatorIsColimit I M)
 
-/-- The cocone intertwines the original coefficient maps and primary-component map. -/
+/-- Evaluation cocone commutes with module coefficient maps.
+
+For `f : M ⟶ N`, evaluation into `Γ_I(M)` followed by the power-torsion map of `f` equals
+postcomposition by `f` in the quotient Hom diagram followed by evaluation into `Γ_I(N)`. -/
 lemma quotientHom_coefficient_naturality (I : Ideal R) {M N : ModuleCat.{u} R}
     (f : M ⟶ N) (n : ℕ) :
     (quotientHomCocone I M).ι.app n ≫ (functor I).map f =
@@ -133,27 +172,38 @@ lemma quotientHom_coefficient_naturality (I : Ideal R) {M N : ModuleCat.{u} R}
   apply Subtype.ext
   rfl
 
-/-- The canonical cocone-point comparison, with its actual universal property. -/
+/-- Power-torsion module as the quotient Hom colimit object.
+
+The evaluation colimit gives an isomorphism `Γ_I(M) ≅ colimit (quotientHomDiagram I M)`. -/
 def gammaIsoQuotientHomColimitObj (I : Ideal R) (M : ModuleCat.{u} R) :
     (functor I).obj M ≅ colimit (quotientHomDiagram I M) :=
   (quotientHomIsColimit I M).coconePointUniqueUpToIso
     (colimit.isColimit (quotientHomDiagram I M))
 
-/-- Its forward map takes each evaluation leg to the native colimit inclusion. -/
+/-- Power-torsion colimit isomorphism sends evaluation to the colimit injection.
+
+The degree-`n` evaluation cocone map followed by the forward power-torsion colimit isomorphism
+equals the colimit injection at `n`. -/
 lemma quotientHomCocone_comp_gammaIso_hom (I : Ideal R) (M : ModuleCat.{u} R) (n : ℕ) :
     (quotientHomCocone I M).ι.app n ≫ (gammaIsoQuotientHomColimitObj I M).hom =
       colimit.ι (quotientHomDiagram I M) n :=
   IsColimit.comp_coconePointUniqueUpToIso_hom
     (quotientHomIsColimit I M) (colimit.isColimit (quotientHomDiagram I M)) n
 
-/-- Its inverse is the same actual evaluation-at-one cocone. -/
+/-- Inverse power-torsion colimit isomorphism recovers evaluation.
+
+The colimit injection at `n` followed by the inverse power-torsion colimit isomorphism equals
+the quotient Hom evaluation cocone map. -/
 lemma colimit_iota_comp_gammaIso_inv (I : Ideal R) (M : ModuleCat.{u} R) (n : ℕ) :
     colimit.ι (quotientHomDiagram I M) n ≫ (gammaIsoQuotientHomColimitObj I M).inv =
       (quotientHomCocone I M).ι.app n :=
   IsColimit.comp_coconePointUniqueUpToIso_inv
     (quotientHomIsColimit I M) (colimit.isColimit (quotientHomDiagram I M)) n
 
-/-- The canonical primary-component comparison is natural in the actual coefficient. -/
+/-- Power torsion is naturally the colimit of its quotient Hom diagram.
+
+The objectwise evaluation colimit isomorphisms give a natural isomorphism from the power-
+torsion functor to the quotient-Hom diagram functor followed by colimit. -/
 def gammaIsoQuotientHomColimit (I : Ideal R) :
     (functor I : ModuleCat.{u} R ⥤ ModuleCat.{u} R) ≅ quotientHomDiagramFunctor I ⋙ colim :=
   NatIso.ofComponents (gammaIsoQuotientHomColimitObj I) (by

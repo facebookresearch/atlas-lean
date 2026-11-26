@@ -1,4 +1,5 @@
-# Linearized Universal Cover front Face apply single
+# Front face of a linearized basis simplex
 
-A front-face map on the linearized universal cover restricts a basis
-simplex along the front subinterval inclusion.
+Let `G` be a group and `k` a commutative ring. For `p + q = n`, `u : Fin (n + 1) → G`, and `r
+: k`, the Alexander–Whitney front-face map sends `single u r` to `single (u ∘ frontInclusion p
+q n h) r`. Thus it retains the first `p + 1` vertices and preserves the coefficient `r`.

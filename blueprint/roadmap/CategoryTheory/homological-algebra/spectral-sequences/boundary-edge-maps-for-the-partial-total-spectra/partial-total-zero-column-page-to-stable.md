@@ -1,4 +1,5 @@
-# Partial Total Zero Column Page To Stable
+# The zero-column map from the chosen second page to its stable interval
 
-The package-chosen page-two zero column maps canonically to its stable
-interval through the one named left coordinate and stable tail.
+The zero-column map from the chosen second page to its stable interval.
+
+Compose the page-two coordinate, inverse framed-source coordinate, and stable-tail map.

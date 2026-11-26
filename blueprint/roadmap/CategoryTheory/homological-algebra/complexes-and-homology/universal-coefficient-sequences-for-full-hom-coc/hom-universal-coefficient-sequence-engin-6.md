@@ -1,36 +1,16 @@
-# Hom Universal Coefficient Sequence Engine short Exact
+# The full-product universal coefficient short exact sequence
 
-Let `C : Type u` be an abelian category with morphisms in universe `v`.
-Let `P : ChainComplex C ℤ`, let `Q : CochainComplex C ℤ`, and let `n : ℤ` be arbitrary.
-Assume that, **for every integer `p`**, both
-
-- `P.X p` is projective;
-- `Abelian.image (P.d p (p - 1))` is projective.
-
-Write \(K=\texttt{homCochainComplex}\ P\ Q\). This is the full Hom cochain
-complex: its degree-\(m\) group is
-\(\prod_{p\in\mathbb Z}\operatorname{Hom}_C(P_p,Q^{m-p})\).
-Both given differentials are retained. In physical degree coordinates,
-
-\[
-(\delta^m a)_p
-= a_{p-1}\circ d^P_p
-  +(-1)^{m+1}d^Q_{m-p}\circ a_p.
-\]
-
-The short exact sequence is
-
-\[
-0\longrightarrow
-\prod_{p\in\mathbb Z}\operatorname{Ext}^{1}_C(H_p(P),H^{n-1-p}(Q))
-\xrightarrow{\iota} H^n(K)
-\xrightarrow{\rho}
-\prod_{p\in\mathbb Z}\operatorname{Hom}_C(H_p(P),H^{n-p}(Q))
-\longrightarrow 0.
-\]
-
-All products range over the entire set of integer degrees, with no
-finite-support or boundedness condition.
+Let C be an abelian category with object universe u and morphism universe v. Let P be an integer
+chain complex, Q an integer cochain complex, and n an integer. Let I⁰(P) and Z⁰(P) be the
+outgoing-image and cycles complexes with zero differential. Assume all differential images
+im(d_P : Pₚ → Pₚ₋₁) are projective. Assume also that every Pₚ is projective, and that Ext_C is
+available in universe w. The three UCT groups are ∏ₚ Ext¹_C(Hₚ(P),H^{n-1-p}(Q)), Hⁿ Hom(P,Q),
+and ∏ₚ Hom_C(Hₚ(P),H^{n-p}(Q)); all products range over ℤ and Q retains its differential. There
+is a short exact sequence 0 → ∏ₚ Ext¹_C(Hₚ(P),H^{n-1-p}(Q)) → Hⁿ Hom(P,Q) → ∏ₚ
+Hom_C(Hₚ(P),H^{n-p}(Q)) → 0 in the common group universe max(v,w). The left map is the positive
+Yoneda-extension comparison followed by the Hom long-exact-sequence inclusion; the right map is
+cycles restriction followed by the homology-Hom comparison. Both projectivity families are used
+to obtain projective cycles; Q is arbitrary.
 
 ## Canonical maps
 

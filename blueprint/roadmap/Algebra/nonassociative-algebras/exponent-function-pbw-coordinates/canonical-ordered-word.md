@@ -1,3 +1,6 @@
-# Canonical Ordered Word
+# The ordered word with prescribed word multiplicities
 
-The canonical ordered word with the original finite multiplicities.
+The ordered word with prescribed word multiplicities.
+
+Sort the letters of a word through the ordered-word exponent equivalence, retaining their
+multiplicities.

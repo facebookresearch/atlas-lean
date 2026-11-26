@@ -15,18 +15,22 @@ public import Mathlib.CategoryTheory.Abelian.Exact
 public import MathlibExt.Algebra.Homology.FirstQuadrantSpectralSequenceData
 
 /-!
-# Support and existence of the first-quadrant spectral sequence
+# Boundary support for the horizontal first-quadrant spectral sequence
 
-This file verifies the two boundary-support conditions required by the
-homological first-page data.  At the lower filtration boundary, both stages
-are zero.  At the upper bidegree boundary, the relevant filtration map is
-degreewise an isomorphism; the mapping cone is compared with its cokernel to
-deduce vanishing in homology.
+Let K be a nonnegative homological bicomplex in an abelian category C.
+Its complete horizontal filtration F_a is zero for finite a<0 and
+contains all total-degree t terms once 0≤a and t≤a.toNat.
+After reindexing total chain degree t as cochain degree −t, the
+interval maps F_i → F_j are monic. If such a map is epic in degree n,
+its relative cochain homology H^n(Cone(F_i → F_j)) is zero.
 
-Consequently the complete horizontal filtration has a genuine spectral
-sequence starting at its relative-homology page.  Its first two pages are
-computed in the subsequent first/second-page modules, and bounded convergence
-is proved in `FirstQuadrantConvergence`.
+For page r≥1 the differential has bidegree (−r,r−1). Absence of an
+outgoing bidegree implies p<r, so both stages p−r−1 and p−r are zero.
+Absence of an incoming bidegree implies q<r−1, so the upper interval
+map from p+r−1 to p+r is invertible in total degree p+q+1.
+These are the two boundary-support vanishings required for the
+spectral sequence starting at the relative-homology first page.
+The category object and morphism worlds are independent.
 -/
 
 @[expose] public section
@@ -51,8 +55,10 @@ noncomputable instance horizontalCompleteFilteredTotalMap_mono
     Mono (horizontalCompleteFilteredTotalMap K h) :=
   mono_of_mono_fac (horizontalCompleteFilteredTotalMap_toTotal K h)
 
-/-- At a nonnegative finite filtration stage, the inclusion into the total is
-an isomorphism in every degree not exceeding the stage. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category, a∈ℤ with a≥0 and t∈ℕ with t≤a.toNat, the stage inclusion
+F_a → Tot(K) is an isomorphism in degree t.
+Every total bidegree in that degree has horizontal coordinate at most a. -/
 theorem horizontalCompleteFilteredTotalToTotal_f_isIso_of_nonneg
     (a : ℤ) (ha : 0 ≤ a) (t : ℕ) (ht : t ≤ a.toNat) :
     IsIso ((horizontalCompleteFilteredTotalToTotal K (a : EInt)).f t) := by
@@ -63,8 +69,11 @@ theorem horizontalCompleteFilteredTotalToTotal_f_isIso_of_nonneg
   change IsIso ((horizontalFilteredTotalComplexToTotal K a.toNat).f t)
   exact (horizontalFilteredTotalIsoOfLE K a.toNat t ht).isIso_hom
 
-/-- A map of complete filtration stages is an isomorphism in a degree where
-both stage inclusions into the total are isomorphisms. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category, i≤j in EInt and t∈ℕ, if both degree-t inclusions
+F_i → Tot(K) and F_j → Tot(K) are isomorphisms, then the
+degree-t transition F_i → F_j is an isomorphism.
+The transition commutes with the two total inclusions. -/
 theorem horizontalCompleteFilteredTotalMap_f_isIso_of_toTotal
     {i j : EInt} (h : i ≤ j) (t : ℕ)
     [hi : IsIso ((horizontalCompleteFilteredTotalToTotal K i).f t)]
@@ -79,8 +88,10 @@ theorem horizontalCompleteFilteredTotalMap_f_isIso_of_toTotal
     ((horizontalCompleteFilteredTotalMap K h).f t)
     ((horizontalCompleteFilteredTotalToTotal K j).f t) hj hcomp
 
-/-- Integer cochain reindexing preserves a degreewise isomorphism in the
-corresponding negative degree. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category, if the degree-t component of F_i → F_j is an
+isomorphism, then its extended cochain component in degree −t
+is an isomorphism. Here i≤j in EInt and t∈ℕ. -/
 theorem horizontalCompleteFiltrationCochainDiagram_map_f_isIso
     {i j : EInt} (h : i ≤ j) (t : ℕ)
     [hmap : IsIso ((horizontalCompleteFilteredTotalMap K h).f t)] :
@@ -148,8 +159,11 @@ private theorem mappingCone_homology_isZero_of_epi_f
   exact IsZero.of_iso hcokH
     (@asIso _ _ _ _ (HomologicalComplex.homologyMap g n) hgIso)
 
-/-- If a complete-filtration cochain map is epic in degree `n`, then the
-corresponding mapping-cone homology object is zero. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category and i≤j in EInt, if the extended cochain map F_i → F_j
+is epic in degree n∈ℤ, then
+H^n(Cone(F_i → F_j)) is a zero object.
+The complete-filtration map is monic as a cochain map. -/
 theorem horizontalCompleteFiltrationSpectralObject_H_isZero_of_epi_f
     {i j : EInt} (h : i ≤ j) (n : ℤ)
     [hfEpi : Epi (((horizontalCompleteFiltrationCochainDiagram K).map
@@ -175,8 +189,10 @@ theorem horizontalCompleteFiltrationCochainDiagram_obj_isZero_of_neg
   exact (ComplexShape.embeddingDownNat.extendFunctor C).map_isZero
     HomologicalComplex.isZero_zero
 
-/-- A mapping-cone homology object is zero when both endpoint complexes are
-zero. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category and i≤j in EInt, if both extended filtration stages
+F_i and F_j are zero complexes, then
+H^n(Cone(F_i → F_j)) is zero for every n∈ℤ. -/
 theorem horizontalCompleteFiltrationSpectralObject_H_isZero_of_obj_isZero
     {i j : EInt} (h : i ≤ j)
     (hi : IsZero ((horizontalCompleteFiltrationCochainDiagram K).obj i))
@@ -198,7 +214,11 @@ theorem horizontalCompleteFiltrationSpectralObject_H_isZero_of_obj_isZero
   exact ((HomotopyCategory.homologyFunctorFactors C
     (ComplexShape.up ℤ) n).app M).isZero_iff.mpr hMH
 
-/-- The lower-boundary support condition for the page data. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category, let r≥1, r′=r+1 and (p,q)∈ℕ² have no outgoing
+bidegree of shape (−r,r−1). Then p<r, and the interval
+F_(p−r′) → F_(p−r) has zero relative homology in degree
+−p−q+1. Both endpoint stages are negative finite stages. -/
 theorem horizontalCompleteFiltrationSpectralObject_isZero_i₀_le
     (r r' : ℤ) (pq : ℕ × ℕ)
     (hpq : ∀ pq' : ℕ × ℕ,
@@ -226,7 +246,11 @@ theorem horizontalCompleteFiltrationSpectralObject_isZero_i₀_le
   · exact horizontalCompleteFiltrationCochainDiagram_obj_isZero_of_neg K
       ((pq.1 : ℤ) - r) (by lia)
 
-/-- The upper-bidegree support condition for the page data. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category, let r≥1, r′=r+1 and (p,q)∈ℕ² have no incoming
+bidegree of shape (−r,r−1). Then q<r−1, and the interval
+F_(p+r−1) → F_(p+r′−1) has zero relative cochain homology
+in degree −p−q−1. Its component in total degree p+q+1 is invertible. -/
 theorem horizontalCompleteFiltrationSpectralObject_isZero_i₃_le
     (r r' : ℤ) (pq : ℕ × ℕ)
     (hpq : ∀ pq' : ℕ × ℕ,
@@ -305,8 +329,12 @@ noncomputable instance horizontalCompleteFiltrationSpectralObject_hasSpectralSeq
   isZero_H_obj_mk₁_i₃_le :=
     horizontalCompleteFiltrationSpectralObject_isZero_i₃_le K
 
-/-- The first-quadrant homological spectral sequence of the horizontal
-filtration, starting with its relative-homology page. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category C, the complete horizontal filtration defines a
+spectral sequence starting at page 1, with page-r differential
+shape (p,q) ↦ (p−r,q+r−1) on ℕ².
+The first page is the relative homology of consecutive
+horizontal filtration stages. -/
 noncomputable def horizontalFirstQuadrantSpectralSequence :
     SpectralSequence C
       (fun r => ComplexShape.spectralSequenceNat ⟨-r, r - 1⟩) 1 :=

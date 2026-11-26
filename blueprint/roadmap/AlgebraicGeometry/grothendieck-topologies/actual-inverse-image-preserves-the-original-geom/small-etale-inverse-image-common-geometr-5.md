@@ -1,4 +1,6 @@
-# Small Etale Inverse Image Common Geometric Stalk Iso id
+# Inverse image stalk comparisons respect identity
 
-The same κ agrees with the accepted actual inverse-image identity
-comparison and canonical original image-point identity transport.
+Inverse image stalk comparisons respect identity.
+
+The identity inverse-image stalk comparison followed by the point-identity stalk coordinate
+equals the inverse-image identity comparison whiskered with the stalk functor and its unitor.

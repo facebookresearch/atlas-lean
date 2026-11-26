@@ -1,3 +1,5 @@
-# Field Equivariant Stalk Hom Add Equiv to Equiv
+# Additive stalk correspondence has the same underlying bijection
 
-The additive upgrade retains the SAME actual forward and inverse Hom maps.
+Additive stalk correspondence has the same underlying bijection.
+
+Its underlying equivalence is the invariant-cone transpose correspondence.

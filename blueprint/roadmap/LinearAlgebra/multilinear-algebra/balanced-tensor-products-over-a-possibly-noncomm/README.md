@@ -33,4 +33,4 @@
 - [Finite dual frames from invertible bimodule contractions](finite-dual-frames-from-invertible-bimodule-cont/README.md)
 - [The actual left-module Morita return](the-actual-left-module-morita-return/README.md)
 - [Normalization of Morita contraction maps](normalization-of-morita-contraction-maps/README.md)
-- [Finiteness](exists-finset.md)
+- [Finite pure-tensor expressions for balanced classes](exists-finset.md)

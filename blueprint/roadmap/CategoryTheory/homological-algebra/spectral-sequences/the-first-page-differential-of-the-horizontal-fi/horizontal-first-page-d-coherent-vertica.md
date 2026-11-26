@@ -1,4 +1,6 @@
-# Horizontal First Page d coherent Vertical Homology eq adjacent
+# The adjacent connecting formula in vertical-homology coordinates
 
-After transport to ordinary vertical homology, the actual first-page
-differential is the adjacent-column connecting map.
+The adjacent connecting formula in vertical-homology coordinates.
+
+The coherent vertical-homology comparison identifies the first-page differential with the
+adjacent vertical connecting map.

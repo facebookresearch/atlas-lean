@@ -24,39 +24,54 @@ namespace CategoryTheory.Functor.RightDerived
 variable {C : Type u} [Category.{v} C] [Abelian C] [HasInjectiveResolutions C]
 variable {S : ShortComplex C} {hS : S.ShortExact}
 
-/-- The original left horseshoe lift, with its augmentation equation. -/
+/-- In an abelian category `C`, let `H` be compatible injective
+horseshoe data for short exact `S : X₁ → X₂ → X₃`. The left cochain lift, together with its coaugmentation
+square, is a map of injective resolutions of `S.f : X₁ → X₂`. -/
 def HorseshoeData.leftResolutionHom (H : HorseshoeData S hS) :
     InjectiveResolution.Hom H.res₁ H.res₂ S.f :=
   InjectiveResolution.Hom.mk H.φf
     (H.lift_f.trans (congrArg (· ≫ H.res₂.ι.f 0)
       (CochainComplex.single₀_map_f_zero S.f).symm))
 
-/-- The original right horseshoe lift, with its augmentation equation. -/
+/-- In an abelian category `C`, let `H` be compatible injective
+horseshoe data for short exact `S : X₁ → X₂ → X₃`. The right cochain lift, together with its coaugmentation
+square, is a map of injective resolutions of `S.g : X₂ → X₃`. -/
 def HorseshoeData.rightResolutionHom (H : HorseshoeData S hS) :
     InjectiveResolution.Hom H.res₂ H.res₃ S.g :=
   InjectiveResolution.Hom.mk H.φg
     (H.lift_g.trans (congrArg (· ≫ H.res₃.ι.f 0)
       (CochainComplex.single₀_map_f_zero S.g).symm))
 
-/-- The SAME three chosen resolutions extended by zero to integer degrees. -/
+/-- In an abelian category `C`, let `H` be compatible injective
+horseshoe data for short exact `S : X₁ → X₂ → X₃`. Extending all three nonnegative cochain resolutions and their
+maps by zero in negative degrees gives a short complex of integer
+cochain complexes. -/
 def HorseshoeData.extendedDiagram (H : HorseshoeData S hS) :
     ShortComplex (CochainComplex C ℤ) :=
   H.diagram.map (ComplexShape.embeddingUpNat.extendFunctor C)
 
-/-- Every splitting is extended; negative degrees use the zero objects. -/
+/-- In an abelian category `C`, let `H` be compatible injective
+horseshoe data for short exact `S : X₁ → X₂ → X₃`. In every integer degree `q`, the extended resolution row is
+split: for `q≥0` use the original row splitting, and for `q<0` use
+the row of zero objects. -/
 def HorseshoeData.extendedSplitting (H : HorseshoeData S hS) (q : ℤ) :
     (H.extendedDiagram.map (HomologicalComplex.eval C (.up ℤ) q)).Splitting :=
   HomologicalComplex.extendDiagramSplitting H.diagram H.split ComplexShape.embeddingUpNat q
 
 omit [HasInjectiveResolutions C] in
-/-- The extended diagram is short exact by its constructed degreewise splittings. -/
+/-- In an abelian category `C`, let `H` be compatible injective
+horseshoe data for short exact `S : X₁ → X₂ → X₃`. The zero-extended diagram is a short exact sequence of integer
+cochain complexes, by its splitting in every degree. -/
 theorem HorseshoeData.extended_shortExact (H : HorseshoeData S hS) :
     H.extendedDiagram.ShortExact := by
   apply HomologicalComplex.shortExact_of_degreewise_shortExact
   exact fun q => (H.extendedSplitting q).shortExact
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The original three augmentations form a morphism of short complexes. -/
+/-- In an abelian category `C`, let `H` be compatible injective
+horseshoe data for short exact `S : X₁ → X₂ → X₃`. The three zero-extended coaugmentations give a morphism from
+`S` concentrated at cochain degree zero to the extended horseshoe
+diagram. -/
 def HorseshoeData.extendedAugmentation (H : HorseshoeData S hS) :
     S.map (CochainComplex.singleFunctor C 0) ⟶ H.extendedDiagram where
   τ₁ := H.res₁.ι'
@@ -67,10 +82,10 @@ def HorseshoeData.extendedAugmentation (H : HorseshoeData S hS) :
 
 set_option backward.isDefEq.respectTransparency false in
 omit [HasInjectiveResolutions C] in
-/--
-The original single-object boundary commutes with the original augmentations and the SAME
-chosen-resolution boundary in the derived category.
--/
+/-- In an abelian category `C`, let `H` be compatible injective
+horseshoe data for short exact `S : X₁ → X₂ → X₃`. Suppose `C` has a derived category and write `ε_k` for the
+image of the `k`-th coaugmentation there. The triangle boundary of
+`S[0]` satisfies `δ_(S[0]) ≫ ε₁[1] = ε₃ ≫ δ_(H_extended)`. -/
 theorem HorseshoeData.original_single_boundary [HasDerivedCategory C]
     (H : HorseshoeData S hS) :
     DerivedCategory.triangleOfSESδ (hS.map_of_exact (HomologicalComplex.single C (.up ℤ) 0)) ≫
@@ -93,8 +108,11 @@ variable [HasExt.{v} C] [HasDerivedCategory C]
 variable {S : ShortComplex C} {hS : S.ShortExact}
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The original covariant Yoneda class is the SAME chosen-resolution
-boundary through the original augmentations, at the original Hom universe. -/
+/-- In an abelian category `C`, let `H` be compatible injective
+horseshoe data for short exact `S : X₁ → X₂ → X₃`. Suppose `C` has a derived category and Ext at its hom-set
+universe. Writing `ξ` for the derived morphism of the Yoneda extension
+class of `S` and `ε_k` for the coaugmentations, one has
+`ξ ≫ ε₁[1] = ε₃ ≫ δ_(H_extended)`. -/
 theorem HorseshoeData.original_extClass_boundary (H : HorseshoeData S hS) :
     hS.extClass.hom ≫ (DerivedCategory.Q.map H.res₁.ι')⟦(1 : ℤ)⟧' =
       DerivedCategory.Q.map H.res₃.ι' ≫
@@ -103,10 +121,11 @@ theorem HorseshoeData.original_extClass_boundary (H : HorseshoeData S hS) :
   exact H.original_single_boundary
 
 set_option backward.isDefEq.respectTransparency false in
-/--
-Cancel the quasi-isomorphism of the right augmentation. No comparison or boundary universal
-property is introduced.
--/
+/-- In an abelian category `C`, let `H` be compatible injective
+horseshoe data for short exact `S : X₁ → X₂ → X₃`. Suppose `C` has a derived category and Ext at its hom-set
+universe. For the derived extension morphism `ξ` and coaugmentation
+isomorphisms `ε_k`, the extended horseshoe boundary is
+`ε₃⁻¹ ≫ ξ ≫ ε₁[1]`. -/
 theorem HorseshoeData.original_extClass_normalized (H : HorseshoeData S hS) :
     CategoryTheory.inv (DerivedCategory.Q.map H.res₃.ι') ≫ hS.extClass.hom ≫
       (DerivedCategory.Q.map H.res₁.ι')⟦(1 : ℤ)⟧' =

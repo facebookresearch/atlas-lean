@@ -1,3 +1,6 @@
-# Cotangent Simplicial Map comp
+# Composition of cotangent simplicial maps
 
-The induced cotangent maps compose.
+Composition of cotangent simplicial maps.
+
+The cotangent simplicial map induced by a composite of augmented algebra maps equals the
+composite of the induced cotangent simplicial maps.

@@ -1,3 +1,7 @@
-# Bimodule Tensor Derived Category
+# Exact bimodule tensor functor on ambient derived categories
 
-Right flatness earns the canonical derived functor of the original ambient module tensor.
+Exact bimodule tensor functor on ambient derived categories.
+
+For an `S`-left, `R`-right bimodule `E` with `Tor¹_R(E,-)=0`, the exact module tensor functor
+induces a functor between the ambient derived categories, assuming both derived categories
+exist in their chosen universes.

@@ -1,4 +1,6 @@
-# To Single Row Up Nat
+# Projection from the total of an outer-degree-zero bicomplex
 
-Projection `total (singleRowUpNat A) → A`: at degree `n`, use `totalDesc`, picking the
-`(0, n)` summand through `singleObjXSelf` and sending all other summands to zero.
+Let C be preadditive with a zero object and finite coproducts. For a nonnegative cochain complex
+A, let B = singleRowUpNat A. The cochain map Tot(B) → A restricts on bidegree (0,n) to the
+canonical identification B_{0,n} → A_n and sends all summands with positive outer degree to
+zero.

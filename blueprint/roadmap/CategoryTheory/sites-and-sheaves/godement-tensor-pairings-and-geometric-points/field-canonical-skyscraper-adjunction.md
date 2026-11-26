@@ -1,4 +1,6 @@
-# Field Canonical Skyscraper Adjunction
+# Prescribed field stalk is left adjoint to the canonical skyscraper
 
-The actual common stalk isomorphism transports the canonical skyscraper adjunction to prescribed
-Ω stalks.
+Prescribed field stalk is left adjoint to the canonical skyscraper.
+
+Transport the canonical point adjunction through the stalk comparison to obtain this
+adjunction.

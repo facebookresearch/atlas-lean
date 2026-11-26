@@ -1,3 +1,5 @@
-# Ulift Functor Self Iso zero
+# Contained-lift comparison at zero agrees with the zero-lift isomorphism
 
-The contained-level construction retains the existing native zero-lift unit.
+Contained-lift comparison at zero agrees with the zero-lift isomorphism.
+
+For lift level zero, `uliftFunctorSelfIso.{0,v} R` equals `uliftFunctorZeroIso.{v} R`.

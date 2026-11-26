@@ -1,3 +1,6 @@
-# Cyclic Exterior positive boundary
+# The positive bracket boundary in cyclic exterior coordinates
 
-The positive CE boundary followed by the exterior map is the bracket-tail sum.
+The positive bracket boundary in cyclic exterior coordinates.
+
+Over rational scalars, the tail-alternating map applied to the negative canonical CE
+differential equals the alternating bracket-tail product sum.

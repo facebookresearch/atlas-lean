@@ -13,13 +13,15 @@ public import MathlibExt.LinearAlgebra.TensorPower.PermutationOperators
 public import Mathlib.Algebra.MonoidAlgebra.Basic
 
 /-!
-# The actual group-algebra representation on coefficient tensor words
+# Permutation representations on coefficient tensors
 
-A permutation sends the old entry at j to sigma(j); the new word uses
-sigma inverse. The coefficient is fixed. The monoid representation and its
-native group-algebra lift prove that the finite operator is multiplicative
-and unital. Rational coefficients are mapped through the original ground
-algebra. No projector laws or representation certificate is an input.
+Let k be a commutative ring and M,V k-modules. A permutation σ ∈ Sₙ acts on V⊗n by tprod(a) ↦
+tprod(a ∘ σ⁻¹). Tensoring this representation with id_M fixes the coefficient in M. Its
+k[Sₙ]-linear extension is an algebra homomorphism to End_k(M ⊗ V⊗n), so multiplication is
+composition and the group-algebra unit acts as the identity. If k is a ℚ-algebra, rational
+coefficients act through ℚ → k.
+
+For tensor permutation representations, see N. Bourbaki, Algebra I, Chapter III.
 -/
 
 @[expose] public section
@@ -35,7 +37,11 @@ variable {k : Type u} [CommRing k]
   {V : Type v} [AddCommGroup V] [Module k V]
   {M : Type w} [AddCommGroup M] [Module k M]
 
-/-- The actual inverse-word place-permutation monoid representation. -/
+/-- The place-permutation representation of a tensor power.
+
+For a commutative ring k and a k-module V, ρₙ : Sₙ → End_k(V⊗n) sends σ to the reindexing
+map a ↦ a ∘ σ⁻¹ on pure tensor words. It preserves the identity and permutation
+multiplication. -/
 def permutationRepresentation (n : ℕ) :
     Equiv.Perm (Fin n) →* Module.End k (TensorPower k n V) where
   toFun σ := (PiTensorProduct.reindex k (fun _ : Fin n => V) σ).toLinearMap
@@ -54,14 +60,20 @@ def permutationRepresentation (n : ℕ) :
     simp only [PiTensorProduct.reindex_tprod]
     rfl
 
-/-- The native tail permutation representation retains its actual inverse-place tensor-word value. -/
+/-- The tensor-word formula for a place permutation.
+
+For a commutative ring k, a k-module V, σ ∈ Sₙ and a : Fin n → V, ρₙ(σ)(tprod(a)) = tprod(a
+∘ σ⁻¹). -/
 theorem permutationRepresentation_tprod (n : ℕ) (σ : Equiv.Perm (Fin n)) (a : Fin n → V) :
     permutationRepresentation (k := k) (V := V) n σ (PiTensorProduct.tprod k a) =
       PiTensorProduct.tprod k (fun i => a (σ.symm i)) := by
   change PiTensorProduct.reindex k (fun _ : Fin n => V) σ (PiTensorProduct.tprod k a) = _
   simp only [PiTensorProduct.reindex_tprod]
 
-/-- The coefficient-fixed actual permutation representation. -/
+/-- The permutation representation with a fixed coefficient factor.
+
+For a commutative ring k and k-modules M,V, ρₙ,M : Sₙ → End_k(M ⊗ V⊗n) is σ ↦ id_M ⊗ ρₙ(σ).
+It is a monoid homomorphism and fixes the coefficient in M. -/
 def coefficientPermutationRepresentation (n : ℕ) :
     Equiv.Perm (Fin n) →* Module.End k (M ⊗[k] TensorPower k n V) where
   toFun σ := TensorProduct.map LinearMap.id (permutationRepresentation (V := V) n σ)
@@ -76,7 +88,10 @@ def coefficientPermutationRepresentation (n : ℕ) :
     rw [map_mul, ← TensorProduct.map_comp]
     rfl
 
-/-- The coefficient remains fixed while the tail uses the original inverse-permutation word. -/
+/-- The coefficient tensor formula for a permutation.
+
+For a commutative ring k, k-modules M,V, σ ∈ Sₙ, m ∈ M and a : Fin n → V, ρₙ,M(σ)(m ⊗
+tprod(a)) = m ⊗ tprod(a ∘ σ⁻¹). -/
 theorem coefficientPermutationRepresentation_tprod (n : ℕ) (σ : Equiv.Perm (Fin n))
     (m : M) (a : Fin n → V) :
     coefficientPermutationRepresentation (M := M) (V := V) n σ
@@ -88,13 +103,20 @@ theorem coefficientPermutationRepresentation_tprod (n : ℕ) (σ : Equiv.Perm (F
   simp only [TensorProduct.map_tmul, LinearMap.id_apply, LinearEquiv.coe_toLinearMap,
     PiTensorProduct.reindex_tprod]
 
-/-- Native monoid-algebra lifting gives the actual coefficient-word algebra representation. -/
+/-- The group-algebra representation on coefficient tensors.
+
+For a commutative ring k and k-modules M,V, this k-algebra homomorphism k[Sₙ] → End_k(M ⊗
+V⊗n) sends c[σ] to c · (id_M ⊗ ρₙ(σ)). Thus the coefficient-weighted permutation action
+preserves products and units. -/
 def coefficientPermutationGroupAlgebraAction (n : ℕ) :
     MonoidAlgebra k (Equiv.Perm (Fin n)) →ₐ[k] Module.End k (M ⊗[k] TensorPower k n V) :=
   MonoidAlgebra.lift k (Module.End k (M ⊗[k] TensorPower k n V)) (Equiv.Perm (Fin n))
     (coefficientPermutationRepresentation (M := M) (V := V) n)
 
-/-- A group-algebra generator acts by its scalar and original coefficient-fixed permutation. -/
+/-- The action of a group-algebra monomial.
+
+For a commutative ring k, k-modules M,V, c ∈ k and σ ∈ Sₙ, the action of c[σ] on M ⊗ V⊗n is
+c · ρₙ,M(σ), where ρₙ,M fixes M. -/
 theorem coefficientPermutationGroupAlgebraAction_single (n : ℕ)
     (σ : Equiv.Perm (Fin n)) (c : k) :
     coefficientPermutationGroupAlgebraAction (M := M) (V := V) n
@@ -102,7 +124,10 @@ theorem coefficientPermutationGroupAlgebraAction_single (n : ℕ)
       c • coefficientPermutationRepresentation (M := M) (V := V) n σ :=
   MonoidAlgebra.lift_single _ _ _
 
-/-- The native group-algebra representation is exactly the actual finite permutation operator. -/
+/-- A finite group-algebra sum acts as its weighted permutation operator.
+
+For a commutative ring k, k-modules M,V and c : Sₙ → k, the action of ∑σ c(σ)[σ] is ∑σ
+c(σ)ρₙ,M(σ), namely coefficientPermutationOperator. -/
 theorem coefficientPermutationGroupAlgebraAction_sum (n : ℕ)
     (c : Equiv.Perm (Fin n) → k) :
     coefficientPermutationGroupAlgebraAction (M := M) (V := V) n
@@ -128,13 +153,20 @@ theorem coefficientPermutationGroupAlgebraAction_sum (n : ℕ)
 
 variable [Algebra ℚ k]
 
-/-- The original rational group-ring coefficients act through the actual ground algebra map. -/
+/-- The rational group-ring action on coefficient tensors.
+
+For a commutative ℚ-algebra k and k-modules M,V, this ring homomorphism ℚ[Sₙ] → End_k(M ⊗
+V⊗n) first maps each rational coefficient along ℚ → k, then applies the coefficient
+permutation representation. -/
 def coefficientRationalPermutationAction (n : ℕ) :
     MonoidAlgebra ℚ (Equiv.Perm (Fin n)) →+* Module.End k (M ⊗[k] TensorPower k n V) :=
   (coefficientPermutationGroupAlgebraAction (M := M) (V := V) n).toRingHom.comp
     (MonoidAlgebra.mapRingHom (Equiv.Perm (Fin n)) (algebraMap ℚ k))
 
-/-- Rational scalar multiplication acts through the actual ground-algebra scalar image. -/
+/-- Rational scalar compatibility of the coefficient action.
+
+For a commutative ℚ-algebra k, k-modules M,V, c ∈ ℚ and x ∈ ℚ[Sₙ], the action satisfies
+ρₙ,M(c x) = algebraMap(c) · ρₙ,M(x). -/
 theorem coefficientRationalPermutationAction_smul (n : ℕ) (c : ℚ)
     (x : MonoidAlgebra ℚ (Equiv.Perm (Fin n))) :
     coefficientRationalPermutationAction (k := k) (M := M) (V := V) n (c • x) =
@@ -152,7 +184,10 @@ theorem coefficientRationalPermutationAction_smul (n : ℕ) (c : ℚ)
     rw [MonoidAlgebra.mapRingHom_single, coefficientPermutationGroupAlgebraAction_single, map_one]
   rw [hscalar, smul_mul_assoc, _root_.one_mul]
 
-/-- The actual rational finite sum is the coefficient operator with the original scalar images. -/
+/-- The weighted tensor operator of a rational group-ring sum.
+
+For a commutative ℚ-algebra k, k-modules M,V and c : Sₙ → ℚ, the action of ∑σ c(σ)[σ] equals
+coefficientPermutationOperator with weights σ ↦ algebraMap(c(σ)). -/
 theorem coefficientRationalPermutationAction_sum (n : ℕ)
     (c : Equiv.Perm (Fin n) → ℚ) :
     coefficientRationalPermutationAction (k := k) (M := M) (V := V) n

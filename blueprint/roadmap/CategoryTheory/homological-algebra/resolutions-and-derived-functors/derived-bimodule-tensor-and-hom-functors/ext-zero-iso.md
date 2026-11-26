@@ -1,3 +1,6 @@
-# Ext Zero Iso
+# Degree-zero right-module Ext is the Hom functor
 
-The actual right adjoint earns the native R-linear degree-zero Hom identification.
+Degree-zero right-module Ext is the Hom functor.
+
+The degree-zero right-derived coefficient Hom functor is naturally isomorphic to `homFunctor R
+S B`.

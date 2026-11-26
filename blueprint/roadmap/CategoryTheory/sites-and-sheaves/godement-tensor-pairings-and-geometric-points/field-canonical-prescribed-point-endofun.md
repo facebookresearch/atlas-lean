@@ -1,4 +1,6 @@
-# Field Canonical Prescribed Point Endofunctor Iso
+# Canonical and prescribed point endofunctors are naturally isomorphic
 
-The genuine point stalk/skyscraper comparisons give the actual canonical-to-prescribed
-endofunctor iso.
+For a field k and prescribed separable closure Ω, the canonical-to-prescribed stalk and
+skyscraper comparisons give an isomorphism of their stalk–skyscraper endofunctors on
+small-étale additive-group sheaves. This is the adjunction endofunctor comparison
+fieldCanonicalPrescribedPointEndofunctorIso.

@@ -1,3 +1,5 @@
-# Lift Semilinear mk
+# Semilinear pairing descent on pure balanced classes
 
-The descended map has the supplied pairing on every pure class.
+Semilinear pairing descent on pure balanced classes.
+
+The descended map of a balanced semilinear pairing `f` sends `[m ⊗ n]` to `f m n`.

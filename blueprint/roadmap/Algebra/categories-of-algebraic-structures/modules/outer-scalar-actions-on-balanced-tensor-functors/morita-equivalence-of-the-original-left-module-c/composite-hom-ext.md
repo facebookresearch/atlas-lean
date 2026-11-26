@@ -1,3 +1,6 @@
-# Composite Hom ext
+# Pure triples determine additive maps from the left return composite
 
-Pure ordered factors determine an additive map on the actual composite.
+Pure triples determine additive maps from the left return composite.
+
+Two additive maps from the successive left-module tensor object are equal if they agree on `[p
+⊗ [q ⊗ x]]` for every triple `p, q, x`.

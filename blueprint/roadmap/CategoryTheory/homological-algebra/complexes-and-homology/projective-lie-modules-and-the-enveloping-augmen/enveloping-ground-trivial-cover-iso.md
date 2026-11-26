@@ -1,4 +1,6 @@
-# Enveloping Ground Trivial Cover Iso
+# The trivial-coefficient comparison for a projective Lie free cover
 
-Both trivial objects have the same original lifted scalar carrier;
-their ground linear identity is a native isomorphism.
+The trivial-coefficient comparison for a projective Lie free cover.
+
+The ground trivial modules of `L` and its free cover `F` are isomorphic through their common
+lifted regular scalar module.

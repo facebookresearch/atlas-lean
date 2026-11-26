@@ -1,4 +1,6 @@
-# Composite Mk
+# Pure triple in the right-module return composite
 
-The pure triple class in the actual composite tensor functor. The
-integer action on its bundled inner factor is the native canonical action.
+Pure triple in the right-module return composite.
+
+For `a : A`, `p : P`, and `q : Q`, this element is `[[a ⊗ p] ⊗ q]` in the composite that
+tensors first by `P` and then by `Q`.

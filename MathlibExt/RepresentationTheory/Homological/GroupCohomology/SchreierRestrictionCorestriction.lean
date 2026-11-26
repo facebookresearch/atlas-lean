@@ -15,17 +15,15 @@ public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.LowDeg
 public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.SchreierCorestrictionH2
 
 /-!
-# Restriction followed by Schreier corestriction
+# Restriction and corestriction in degrees one and two
 
-For a finite-index subgroup `H ≤ G`, this file proves in degrees one and two
-that corestriction after restriction is multiplication by `[G : H]`.  The
-proof is explicit on inhomogeneous cocycles.  In degree one the comparison is
-a degree-zero coboundary.  In degree two it is the boundary of the standard
-Schreier change-of-section one-cochain.
+Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, and `A` a representation. For a right transversal `T`, transfer of a restricted one-cocycle differs from `[G:H]` times that cocycle by the coboundary of `-∑ t∈T, ρ(t⁻¹)z(t)`. For a two-cocycle, the difference is the coboundary of the one-cochain
+`g ↦ -∑ t∈T, ρ(t⁻¹)(z(t,g)-z(h_T(t,g),r_T(t,g)))`,
+where `t g=h_T(t,g)r_T(t,g)`.
 
-Consequently restriction is injective in both degrees whenever the image of
-the subgroup index is a unit in the coefficient ring.  No degree-three
-corestriction, Mackey formula, or claim for a noninvertible index is made.
+Consequently, canonical corestriction after restriction multiplies by `[G:H]` on `H¹(G,A)` and
+`H²(G,A)`. The identities are also given as linear-map equations. If the image of the index is
+a unit in `k`, restriction is injective in both degrees.
 -/
 
 @[expose] public section
@@ -48,15 +46,19 @@ noncomputable local instance restrictionCorestrictionTransversalFintype
     (T : H.RightTransversal) [H.FiniteIndex] : Fintype (T : Set G) :=
   @Fintype.ofFinite (T : Set G) (T.2.finite_right)
 
-/-- The degree-zero homotopy comparing restriction-corestriction with index
-multiplication on degree-one cocycles. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `A : Rep k G`, `T` a right
+transversal, and `z ∈ Z¹(G,A)`. The zero-cochain comparing transfer of `res z` with index
+multiplication is `restrictionCorestrictionHomotopyZero A T z = -∑ t∈T, A.ρ(t⁻¹)(z(t))` in
+`A`. -/
 noncomputable def restrictionCorestrictionHomotopyZero
     (A : Rep k G) (T : H.RightTransversal) [H.FiniteIndex]
     (z : cocycles₁ A) : A :=
   -∑ t : (T : Set G), A.ρ (t : G)⁻¹ (z (t : G))
 
-/-- The single-transversal-term identity behind the degree-one
-restriction-corestriction homotopy. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G`, `A : Rep k G`, `T` a right transversal,
+`z ∈ Z¹(G,A)`, `t ∈ T`, and `g : G`. For `t g=h_T(t,g)r_T(t,g)`, `ρ(t⁻¹)z(h_T(t,g)) =
+z(g)+ρ(t⁻¹)z(t)-ρ(g)(ρ(r_T(t,g)⁻¹)z(r_T(t,g)))`. The subgroup factor is viewed in `G` when
+evaluating `z`. -/
 theorem restrictionCorestrictionOne_term
     (A : Rep k G) (T : H.RightTransversal)
     (z : cocycles₁ A) (t : (T : Set G)) (g : G) :
@@ -104,9 +106,10 @@ theorem restrictionCorestrictionOne_term
       Module.End.mul_apply]
   rw [hcancel, hlast]
 
-/-- Chosen-transversal corestriction after restriction on a degree-one
-cocycle differs from index multiplication by the displayed zero-cochain
-boundary. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `A : Rep k G`, `T` a right
+transversal, and `z ∈ Z¹(G,A)`. Then `corestrictionCochainOne A T (res z) = (H.index : k) • z
++ d⁰(K₀ z)`, where `K₀ z=-∑ t∈T, ρ(t⁻¹)z(t)` and `d⁰a(g)=ρ(g)a-a`. Restriction uses the
+subgroup inclusion and the identity coefficient map. -/
 theorem corestrictionCochainOne_restriction
     (A : Rep k G) (T : H.RightTransversal) [H.FiniteIndex]
     (z : cocycles₁ A) :
@@ -151,8 +154,10 @@ theorem corestrictionCochainOne_restriction
   rw [hcard, ← Nat.cast_smul_eq_nsmul k]
   module
 
-/-- One summand of the degree-one homotopy comparing degree-two
-restriction-corestriction with index multiplication. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G`, `A : Rep k G`, `T` a right transversal,
+and `z ∈ Z²(G,A)`. For `t∈T` and `g∈G`, `restrictionCorestrictionHomotopyOneTerm A T z t g =
+ρ(t⁻¹)(z(t,g)-z(h_T(t,g),r_T(t,g)))`, using `t g=h_T(t,g)r_T(t,g)` and viewing both factors in
+`G`. -/
 noncomputable def restrictionCorestrictionHomotopyOneTerm
     (A : Rep k G) (T : H.RightTransversal) (z : cocycles₂ A)
     (t : (T : Set G)) (g : G) : A :=
@@ -160,15 +165,18 @@ noncomputable def restrictionCorestrictionHomotopyOneTerm
     (z ((t : G), g) -
       z ((T.schreierFactor t g : G), (T.schreierRep t g : G)))
 
-/-- The degree-one homotopy comparing restriction-corestriction with index
-multiplication on degree-two cocycles. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `A : Rep k G`, `T` a right
+transversal, and `z ∈ Z²(G,A)`. The one-cochain `restrictionCorestrictionHomotopyOne A T z`
+has value `g ↦ -∑ t∈T, ρ(t⁻¹)(z(t,g)-z(h_T(t,g),r_T(t,g)))`, with `t g=h_T(t,g)r_T(t,g)`. -/
 noncomputable def restrictionCorestrictionHomotopyOne
     (A : Rep k G) (T : H.RightTransversal) [H.FiniteIndex]
     (z : cocycles₂ A) : G → A := fun g =>
   -∑ t : (T : Set G), restrictionCorestrictionHomotopyOneTerm A T z t g
 
-/-- The single-transversal-term identity behind the degree-two
-restriction-corestriction homotopy. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G`, `A : Rep k G`, `T` a right transversal,
+`z ∈ Z²(G,A)`, `t∈T`, and `g,h∈G`. Put `Q_t(a)=ρ(t⁻¹)(z(t,a)-z(h_T(t,a),r_T(t,a)))`, where `t
+a=h_T(t,a)r_T(t,a)`. Then `ρ(t⁻¹)z(h_T(t,g),h_T(r_T(t,g),h)) =
+z(g,h)+Q_t(gh)-Q_t(g)-ρ(g)Q_{r_T(t,g)}(h)`. -/
 theorem restrictionCorestrictionTwo_term
     (A : Rep k G) (T : H.RightTransversal) (z : cocycles₂ A)
     (t : (T : Set G)) (g h : G) :
@@ -296,9 +304,10 @@ theorem restrictionCorestrictionTwo_term
     Module.End.one_apply]
   rw [htransport, htransport]
 
-/-- Chosen-transversal corestriction after restriction on a degree-two
-cocycle differs from index multiplication by the displayed one-cochain
-boundary. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `A : Rep k G`, `T` a right
+transversal, and `z ∈ Z²(G,A)`. Then `corestrictionCochainTwo A T (res z) = (H.index : k) • z
++ d¹(K₁ z)`. Here `K₁ z(g)=-∑ t∈T, ρ(t⁻¹)(z(t,g)-z(h_T(t,g),r_T(t,g)))`, `t
+g=h_T(t,g)r_T(t,g)`, and `d¹c(g,h)=ρ(g)c(h)-c(gh)+c(g)`. -/
 theorem corestrictionCochainTwo_restriction
     (A : Rep k G) (T : H.RightTransversal) [H.FiniteIndex]
     (z : cocycles₂ A) :
@@ -353,7 +362,9 @@ theorem corestrictionCochainTwo_restriction
   rw [hcard, ← Nat.cast_smul_eq_nsmul k]
   module
 
-/-- Representative form of `cor ∘ res = [G : H]` on `H¹`. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `A : Rep k G`, `T` any right
+transversal, and `z ∈ Z¹(G,A)`. Then `corestrictionH1 A (map H.subtype (𝟙 _) 1 (H1π A z)) =
+(H.index : k) • H1π A z` in `H¹(G,A)`. -/
 theorem corestrictionH1_restriction_H1π
     (A : Rep k G) (T : H.RightTransversal) [H.FiniteIndex]
     (z : cocycles₁ A) :
@@ -378,7 +389,9 @@ theorem corestrictionH1_restriction_H1π
         module
     _ = (H.index : k) • H1π A z := (H1π A).hom.map_smul _ _
 
-/-- Representative form of `cor ∘ res = [G : H]` on `H²`. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `A : Rep k G`, `T` any right
+transversal, and `z ∈ Z²(G,A)`. Then `corestrictionH2 A (map H.subtype (𝟙 _) 2 (H2π A z)) =
+(H.index : k) • H2π A z` in `H²(G,A)`. -/
 theorem corestrictionH2_restriction_H2π
     (A : Rep k G) (T : H.RightTransversal) [H.FiniteIndex]
     (z : cocycles₂ A) :
@@ -403,8 +416,9 @@ theorem corestrictionH2_restriction_H2π
         module
     _ = (H.index : k) • H2π A z := (H2π A).hom.map_smul _ _
 
-/-- Canonical degree-one corestriction after restriction is multiplication by
-the subgroup index. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, and `A : Rep k G`. For `x ∈
+H¹(G,A)`, `corestrictionH1 A (map H.subtype (𝟙 _) 1 x) = (H.index : k) • x`. Thus restriction
+to `H` followed by canonical degree-one corestriction multiplies the class by `[G:H]`. -/
 theorem corestrictionH1_restriction
     (A : Rep k G) [H.FiniteIndex] (x : H1 A) :
     corestrictionH1 A (map (Subgroup.subtype H) (𝟙 _) 1 x) =
@@ -414,8 +428,9 @@ theorem corestrictionH1_restriction
       exact corestrictionH1_restriction_H1π (H := H) A
         (default : H.RightTransversal) z
 
-/-- Canonical degree-two corestriction after restriction is multiplication by
-the subgroup index. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, and `A : Rep k G`. For `x ∈
+H²(G,A)`, `corestrictionH2 A (map H.subtype (𝟙 _) 2 x) = (H.index : k) • x`. Thus restriction
+to `H` followed by canonical degree-two corestriction multiplies the class by `[G:H]`. -/
 theorem corestrictionH2_restriction
     (A : Rep k G) [H.FiniteIndex] (x : H2 A) :
     corestrictionH2 A (map (Subgroup.subtype H) (𝟙 _) 2 x) =
@@ -425,8 +440,9 @@ theorem corestrictionH2_restriction
       exact corestrictionH2_restriction_H2π (H := H) A
         (default : H.RightTransversal) z
 
-/-- Linear-map form of the degree-one restriction/corestriction composite
-formula. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, and `A : Rep k G`. The
+linear endomorphisms of `H¹(G,A)` satisfy `corestrictionH1 A ∘ (map H.subtype (𝟙 _) 1).hom =
+(H.index : k) • LinearMap.id`. -/
 theorem corestrictionH1_comp_restriction
     (A : Rep k G) [H.FiniteIndex] :
     (corestrictionH1 A).comp
@@ -436,8 +452,9 @@ theorem corestrictionH1_comp_restriction
   ext x
   exact corestrictionH1_restriction A x
 
-/-- Linear-map form of the degree-two restriction/corestriction composite
-formula. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, and `A : Rep k G`. The
+linear endomorphisms of `H²(G,A)` satisfy `corestrictionH2 A ∘ (map H.subtype (𝟙 _) 2).hom =
+(H.index : k) • LinearMap.id`. -/
 theorem corestrictionH2_comp_restriction
     (A : Rep k G) [H.FiniteIndex] :
     (corestrictionH2 A).comp
@@ -447,8 +464,9 @@ theorem corestrictionH2_comp_restriction
   ext x
   exact corestrictionH2_restriction A x
 
-/-- Degree-one restriction to a finite-index subgroup is injective when the
-subgroup index is a unit in the coefficient ring. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, and `A : Rep k G`. If
+`IsUnit (H.index : k)`, then restriction `map H.subtype (𝟙 _) 1 : H¹(G,A) → H¹(H,Rep.res
+H.subtype A)` is injective. -/
 theorem restrictionH1_injective_of_isUnit_index
     (A : Rep k G) [H.FiniteIndex]
     (hindex : IsUnit (H.index : k)) :
@@ -460,8 +478,9 @@ theorem restrictionH1_injective_of_isUnit_index
   rw [← corestrictionH1_restriction A x,
     ← corestrictionH1_restriction A y, hxy]
 
-/-- Degree-two restriction to a finite-index subgroup is injective when the
-subgroup index is a unit in the coefficient ring. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, and `A : Rep k G`. If
+`IsUnit (H.index : k)`, then restriction `map H.subtype (𝟙 _) 2 : H²(G,A) → H²(H,Rep.res
+H.subtype A)` is injective. -/
 theorem restrictionH2_injective_of_isUnit_index
     (A : Rep k G) [H.FiniteIndex]
     (hindex : IsUnit (H.index : k)) :

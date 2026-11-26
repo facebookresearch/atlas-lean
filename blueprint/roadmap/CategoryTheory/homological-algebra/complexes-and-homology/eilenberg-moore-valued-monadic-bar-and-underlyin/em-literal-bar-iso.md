@@ -1,7 +1,6 @@
-# Em Literal Bar Iso
+# Forgetting the evaluated free bar agrees with forgetting its right module
 
-The honest simplicial comparison: the literal whiskered bar is isomorphic
-to the postcomposed-module bar, via the functor associators, the explicit
-evaluation/postcomposition commutation iso, and the whiskered genuine
-`twoSidedBarPostcompWhiskerIso`. Every link is stated with explicit
-`twoSidedBar` functors so consecutive links agree syntactically.
+Let T be a monad on C and alg a T-algebra. The simplicial object underlying
+emLiteralAugmented(alg) is isomorphic to emUnderlyingBar(alg). The comparison commutes
+evaluation with forgetting and then uses the two-sided bar isomorphism for postcomposition of
+the free right module by T.forget.

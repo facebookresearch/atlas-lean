@@ -14,12 +14,14 @@ module
 public import Mathlib.CategoryTheory.Whiskering
 
 /-!
-# Transport of functor comparisons through source refinements
+# Functor comparisons after a source refinement
 
-Associators and whiskering assemble a comparison after a source functor.
-The source refinement and intermediate comparison are natural
-isomorphisms. Component and natural-transformation laws preserve their
-maps, without resolution or smallness hypotheses on the input category.
+Let W : B → C, W′ : B → D, U : C → D, V : E → E′, F : C → E, and G : D → E′. Given natural
+isomorphisms a : F⋙V≅U⋙G and s : W⋙U≅W′, associativity and whiskering give (W⋙F)⋙V≅W′⋙G.
+
+At X its forward map is a_{W(X)} followed by G(s_X); the inverse reverses these two steps.
+Compatible natural-transformation squares for a remain compatible after this source
+refinement. The categories and their object and morphism universes are arbitrary.
 -/
 
 @[expose] public section
@@ -37,26 +39,34 @@ variable {B : Type uB} [Category.{vB} B]
   (F : C ⥤ E) (G : D ⥤ E')
   (a : F ⋙ V ≅ U ⋙ G) (s : W ⋙ U ≅ W')
 
-/-- Compare the actual source-precomposed functors using native association and refinement. -/
+/-- Let W : B → C, W′ : B → D, U : C → D, V : E → E′, F : C → E, and G : D → E′ be functors.
+Natural isomorphisms a : F⋙V≅U⋙G and s : W⋙U≅W′ give a natural isomorphism (W⋙F)⋙V≅W′⋙G by
+associators and whiskering. No size or additive assumptions on the categories are needed. -/
 def precompositionComparisonIso : (W ⋙ F) ⋙ V ≅ W' ⋙ G :=
   Functor.associator W F V ≪≫ isoWhiskerLeft W a ≪≫
     (Functor.associator W U G).symm ≪≫ isoWhiskerRight s G
 
-/-- The hom first applies the original comparison, then the actual source refinement. -/
+/-- Let W : B → C, W′ : B → D, U : C → D, V : E → E′, F : C → E, and G : D → E′ be functors, with
+a : F⋙V≅U⋙G and s : W⋙U≅W′. The forward component at X∈B of the transported comparison is
+a.hom at W(X) followed by G(s.hom at X). Its source is V(F(W(X))) and its target is G(W′(X)). -/
 theorem precompositionComparisonIso_hom_app (X : B) :
     (precompositionComparisonIso W W' U V F G a s).hom.app X =
       a.hom.app (W.obj X) ≫ G.map (s.hom.app X) := by
   change (𝟙 _) ≫ a.hom.app (W.obj X) ≫ (𝟙 _) ≫ G.map (s.hom.app X) = _
   simp only [Category.id_comp, Category.comp_id]
 
-/-- The inverse inserts the actual source refinement inverse before the comparison inverse. -/
+/-- Let W : B → C, W′ : B → D, U : C → D, V : E → E′, F : C → E, and G : D → E′, with a : F⋙V≅U⋙G
+and s : W⋙U≅W′. The inverse component at X of (W⋙F)⋙V≅W′⋙G is G(s.inv at X) followed by a.inv
+at W(X), from G(W′X) to V(F(WX)). -/
 theorem precompositionComparisonIso_inv_app (X : B) :
     (precompositionComparisonIso W W' U V F G a s).inv.app X =
       G.map (s.inv.app X) ≫ a.inv.app (W.obj X) := by
   change ((G.map (s.inv.app X) ≫ (𝟙 _)) ≫ a.inv.app (W.obj X)) ≫ (𝟙 _) = _
   simp only [Category.id_comp, Category.comp_id]
 
-/-- Actual intermediate natural-transformation squares survive source refinement. -/
+/-- Let W : B → C, W′ : B → D, U : C → D, V : E → E′, F,F′ : C → E, and G,G′ : D → E′. Given a :
+F⋙V≅U⋙G, a′ : F′⋙V≅U⋙G′, s : W⋙U≅W′, α : F → F′, and β : G → G′, assume
+(α▷V)≫a′.hom=a.hom≫(U◁β). For the transported comparisons e,e′, ((W◁α)▷V)≫e′.hom=e.hom≫(W′◁β). -/
 theorem precompositionComparisonIso_naturality
     {F' : C ⥤ E} {G' : D ⥤ E'} (α : F ⟶ F') (β : G ⟶ G')
     (a' : F' ⋙ V ≅ U ⋙ G')

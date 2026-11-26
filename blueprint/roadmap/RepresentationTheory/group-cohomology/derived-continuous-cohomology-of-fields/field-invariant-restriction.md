@@ -1,3 +1,6 @@
-# Field Invariant Restriction
+# Galois invariant elements restrict naturally
 
-Invariant vectors restrict by their literal original value.
+Galois invariant elements restrict naturally.
+
+An element invariant under the source group is invariant under the target group acting through
+the continuous group homomorphism.

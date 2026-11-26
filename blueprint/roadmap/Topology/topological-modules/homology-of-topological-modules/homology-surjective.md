@@ -1,4 +1,6 @@
-# Homologyπ surjective
+# Topological homology projection is surjective on carriers
 
-The homology projection of a `TopModuleCat`-valued homological complex is
-surjective on underlying carriers when `i` is the predecessor of `j`.
+Topological homology projection is surjective on carriers.
+
+For indices with `c.prev j = i`, the map `K.homologyπ j` from cycles to homology is surjective
+as a function.

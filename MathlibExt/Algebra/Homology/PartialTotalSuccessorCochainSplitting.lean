@@ -15,11 +15,19 @@ public import MathlibExt.Algebra.Homology.PartialTotalConnectingDifferential
 public import Mathlib.Algebra.Homology.Embedding.Splitting
 
 /-!
-# Degreewise splitting of an extended successor partial-total step
+# Termwise splitting of an extended successor partial-total step
 
-The raw successor filtration is degreewise split.  This file transports that
-splitting through the standard chain-to-cochain embedding and exposes its
-supported section and retraction coordinates.
+Let B be a first-quadrant bicomplex in an abelian category. For m∈ℕ, its successor partial-total
+step is P_m→P_{m+1}→R_{m+1}, where P_m retains horizontal columns through m and R_{m+1} is the
+signed next row in total degrees. Extend all three chain complexes by placing degree k in
+cochain degree -k. At every cochain degree i, the resulting short exact sequence has the
+canonical splitting into the retained columns and the new row.
+
+At supported degree i=-k, its section is the row-quotient section transported through the
+extension term isomorphisms, and its retraction is the projection onto the previous partial
+total transported through the same isomorphisms. These are termwise splittings; their formulas
+do not assert that the section and retraction commute with differentials. The category universes
+are arbitrary.
 -/
 
 @[expose] public section
@@ -40,8 +48,11 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable (B : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ))
 
-/-- The canonical degreewise splitting of the extended successor filtration
-step. -/
+/-- Let B be a bicomplex of shape (down ℕ,down ℕ) in an abelian category, m∈ℕ and i∈ℤ. Extend
+P_m→P_{m+1}→R_{m+1} by chain degree k↦cochain degree -k. This is the splitting of its evaluation
+at i, with section s:(E R_{m+1})^i→(E P_{m+1})^i and retraction r:(E P_{m+1})^i→(E P_m)^i. For
+the evaluated arrows a,b, the splitting equations are a≫r=id, s≫b=id and r≫a+b≫s=id. The maps
+are induced by the finite partial-total summand decomposition. -/
 noncomputable def partialTotalSuccessorCochainSplitting
     (m : ℕ) (i : ℤ) :
     ((B.partialTotalStepCochainShortComplex (m + 1)).map
@@ -51,7 +62,11 @@ noncomputable def partialTotalSuccessorCochainSplitting
     (fun k => B.partialTotalSuccDegreeSplitting m k) i
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Supported section component of the successor cochain splitting. -/
+/-- For a first-quadrant bicomplex B in an abelian category and m,k∈ℕ, put p=m+1 and i=-k. Let
+e_R:(E R_p)^i≅(R_p)_k and e_P:(E P_p)^i≅(P_p)_k be the canonical extension term isomorphisms.
+The section of the successor splitting at i agrees, through these object identifications, with
+e_R.hom≫s_{p,k}≫e_P.inv, where s_{p,k}:(R_p)_k→(P_p)_k is the partial-total row-quotient
+section. -/
 theorem partialTotalSuccessorCochainSplitting_s (m k : ℕ) :
     HEq
       (B.partialTotalSuccessorCochainSplitting m
@@ -119,7 +134,10 @@ theorem partialTotalSuccessorCochainSplitting_s (m k : ℕ) :
   exact hWrapper.trans hWhole'
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Supported retraction component of the successor cochain splitting. -/
+/-- Let B be a first-quadrant bicomplex in an abelian category, m,k∈ℕ and i∈ℤ with i=-k. Write
+e_+:(E P_{m+1})^i≅(P_{m+1})_k and e_0:(E P_m)^i≅(P_m)_k for the extension term isomorphisms. The
+retraction of the successor splitting at i agrees through these object identifications with
+e_+.hom≫r_{m,k}≫e_0.inv, where r_{m,k}:(P_{m+1})_k→(P_m)_k projects away the new horizontal row. -/
 theorem partialTotalSuccessorCochainSplitting_r
     (m k : ℕ) {i : ℤ}
     (h : ComplexShape.embeddingDownNat.f k = i) :

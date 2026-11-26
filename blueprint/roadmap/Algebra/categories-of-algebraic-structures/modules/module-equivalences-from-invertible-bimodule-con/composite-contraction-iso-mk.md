@@ -1,3 +1,6 @@
-# Composite Contraction Iso mk
+# Right-module composite return map on pure triples
 
-The return map has the literal pairing value on the original ordered factors.
+Right-module composite return map on pure triples.
+
+The return map defined by `u` sends `[[a ⊗ p] ⊗ q]` to `op (u([p ⊗ q])) • a`, retaining the
+right-action order.

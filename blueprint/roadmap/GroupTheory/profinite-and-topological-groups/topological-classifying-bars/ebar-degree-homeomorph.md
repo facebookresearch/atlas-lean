@@ -1,3 +1,6 @@
-# EBar Degree Homeomorph
+# The universal-bar degree homeomorphism
 
-Degree-`n` topological universal bar as the space of `n+1` head-first tuples.
+The universal-bar degree homeomorphism.
+
+The degree-n space EBar G is homeomorphic to Gⁿ⁺¹. The regular outer G-factor is coordinate 0,
+followed by the n tensor-monad coordinates.

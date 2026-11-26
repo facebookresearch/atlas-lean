@@ -1,3 +1,5 @@
-# Relative inr square
+# The relative component is the second projection of the image
 
-The original relative map is exactly the second projection of the actual relative image.
+Let `R` be a commutative ring and `M,N,M',N'` be `R`-modules. A `FirstSummandMap f` consists
+of an `R`-linear `f.map : M×N → M'×N'` and `f.first : M → M'` with `f.map ∘ inl = inl' ∘
+f.first`. The maps satisfy `snd' ∘ f.map ∘ inr = f.relative : N →ₗ[R] N'`.

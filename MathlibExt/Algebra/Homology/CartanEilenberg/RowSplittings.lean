@@ -14,11 +14,14 @@ public import MathlibExt.Algebra.Homology.CartanEilenberg.Basic
 public import Mathlib.Algebra.Homology.ShortComplex.Exact
 
 /-!
-# Degreewise splittings of Cartan--Eilenberg rows
+# Degreewise splittings of Cartan–Eilenberg horseshoes
 
-The coordinate specifications stored in a Cartan--Eilenberg resolution identify each evaluated
-horseshoe row with the canonical biproduct short complex.  This file transports its standard
-splitting back to the row.
+Let P be Cartan–Eilenberg resolution data in an abelian category. At resolution degree a and
+original degree j, the chosen coordinates give PBⱼ₊₁,ₐ → PCⱼ,ₐ → PHⱼ,ₐ as the standard split
+biproduct sequence, and PCⱼ,ₐ → PTⱼ,ₐ → PBⱼ,ₐ as the second standard split biproduct sequence.
+
+Transporting the biproduct retractions and sections gives explicit splittings of both evaluated
+horseshoe rows.
 -/
 
 @[expose] public section
@@ -37,14 +40,19 @@ namespace HomologicalComplex.CartanEilenbergResolution
 variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {L : ChainComplex C ℕ} (P : CartanEilenbergResolution L)
 
-/-- The boundary--cycle--homology row evaluated in one resolution degree. -/
+/-- Let C be abelian, L a nonnegative complex and P a Cartan–Eilenberg resolution, with resolutions
+PBⱼ of outgoing boundaries, PCⱼ of cycles, PTⱼ of terms and PHⱼ of homology. Fix resolution
+degree a and original degree j. The evaluated cycle horseshoe is the short complex PBⱼ₊₁,ₐ →
+PCⱼ,ₐ → PHⱼ,ₐ. -/
 noncomputable abbrev cyclesComponentShortComplex (a j : ℕ) :
     ShortComplex C :=
   (P.cyclesShortComplex j).map
     (HomologicalComplex.eval C (ComplexShape.down ℕ) a)
 
-/-- The canonical biproduct model of the evaluated boundary--cycle--homology
-row. -/
+/-- Let C be abelian, L a nonnegative complex and P a Cartan–Eilenberg resolution, with resolutions
+PBⱼ of outgoing boundaries, PCⱼ of cycles, PTⱼ of terms and PHⱼ of homology. Fix resolution
+degree a and original degree j. The cycle row has the standard biproduct model PBⱼ₊₁,ₐ → PBⱼ₊₁,ₐ
+⊕ PHⱼ,ₐ → PHⱼ,ₐ, with first inclusion and second projection. -/
 noncomputable abbrev cyclesComponentBiprodShortComplex (a j : ℕ) :
     ShortComplex C :=
   ShortComplex.mk
@@ -59,8 +67,10 @@ noncomputable abbrev cyclesComponentBiprodShortComplex (a j : ℕ) :
     (by simp)
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The evaluated boundary--cycle--homology row in the stored horseshoe
-coordinates. -/
+/-- Let C be abelian, L a nonnegative complex and P a Cartan–Eilenberg resolution, with resolutions
+PBⱼ of outgoing boundaries, PCⱼ of cycles, PTⱼ of terms and PHⱼ of homology. Fix resolution
+degree a and original degree j. The stored cycle coordinates give an isomorphism from PBⱼ₊₁,ₐ →
+PCⱼ,ₐ → PHⱼ,ₐ to its standard biproduct short complex, preserving the endpoint maps. -/
 noncomputable def cyclesComponentShortComplexIso (a j : ℕ) :
     P.cyclesComponentShortComplex a j ≅
       P.cyclesComponentBiprodShortComplex a j :=
@@ -84,7 +94,10 @@ noncomputable def cyclesComponentShortComplexIso (a j : ℕ) :
         ShortComplex.map_g, HomologicalComplex.eval_map,
         Iso.refl_hom, Category.comp_id] using hp)
 
-/-- The explicit splitting of the evaluated boundary--cycle--homology row. -/
+/-- Let C be abelian, L a nonnegative complex and P a Cartan–Eilenberg resolution, with resolutions
+PBⱼ of outgoing boundaries, PCⱼ of cycles, PTⱼ of terms and PHⱼ of homology. Fix resolution
+degree a and original degree j. The retraction and section from the standard biproduct
+coordinates give a splitting of PBⱼ₊₁,ₐ → PCⱼ,ₐ → PHⱼ,ₐ. -/
 noncomputable def cyclesComponentSplitting (a j : ℕ) :
     (P.cyclesComponentShortComplex a j).Splitting :=
   ShortComplex.Splitting.ofIso
@@ -111,14 +124,19 @@ theorem cyclesComponentSplitting_s (a j : ℕ) :
     cyclesComponentShortComplexIso]
   simp
 
-/-- The cycle--term--boundary row evaluated in one resolution degree. -/
+/-- Let C be abelian, L a nonnegative complex and P a Cartan–Eilenberg resolution, with resolutions
+PBⱼ of outgoing boundaries, PCⱼ of cycles, PTⱼ of terms and PHⱼ of homology. Fix resolution
+degree a and original degree j. The evaluated term horseshoe is the short complex PCⱼ,ₐ → PTⱼ,ₐ
+→ PBⱼ,ₐ. -/
 noncomputable abbrev termComponentShortComplex (a j : ℕ) :
     ShortComplex C :=
   (P.termShortComplex j).map
     (HomologicalComplex.eval C (ComplexShape.down ℕ) a)
 
-/-- The canonical biproduct model of the evaluated cycle--term--boundary
-row. -/
+/-- Let C be abelian, L a nonnegative complex and P a Cartan–Eilenberg resolution, with resolutions
+PBⱼ of outgoing boundaries, PCⱼ of cycles, PTⱼ of terms and PHⱼ of homology. Fix resolution
+degree a and original degree j. The term row has the standard biproduct model PCⱼ,ₐ → PCⱼ,ₐ ⊕
+PBⱼ,ₐ → PBⱼ,ₐ, with the first inclusion and second projection. -/
 noncomputable abbrev termComponentBiprodShortComplex (a j : ℕ) :
     ShortComplex C :=
   ShortComplex.mk
@@ -133,8 +151,10 @@ noncomputable abbrev termComponentBiprodShortComplex (a j : ℕ) :
     (by simp)
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The evaluated cycle--term--boundary row in the stored horseshoe
-coordinates. -/
+/-- Let C be abelian, L a nonnegative complex and P a Cartan–Eilenberg resolution, with resolutions
+PBⱼ of outgoing boundaries, PCⱼ of cycles, PTⱼ of terms and PHⱼ of homology. Fix resolution
+degree a and original degree j. The stored term coordinates give an isomorphism from PCⱼ,ₐ →
+PTⱼ,ₐ → PBⱼ,ₐ to its standard biproduct short complex, preserving both endpoint arrows. -/
 noncomputable def termComponentShortComplexIso (a j : ℕ) :
     P.termComponentShortComplex a j ≅
       P.termComponentBiprodShortComplex a j :=
@@ -158,7 +178,10 @@ noncomputable def termComponentShortComplexIso (a j : ℕ) :
         ShortComplex.map_g, HomologicalComplex.eval_map,
         Iso.refl_hom, Category.comp_id] using hp)
 
-/-- The explicit splitting of the evaluated cycle--term--boundary row. -/
+/-- Let C be abelian, L a nonnegative complex and P a Cartan–Eilenberg resolution, with resolutions
+PBⱼ of outgoing boundaries, PCⱼ of cycles, PTⱼ of terms and PHⱼ of homology. Fix resolution
+degree a and original degree j. The standard biproduct retraction and section, transported
+through the term coordinates, split PCⱼ,ₐ → PTⱼ,ₐ → PBⱼ,ₐ. -/
 noncomputable def termComponentSplitting (a j : ℕ) :
     (P.termComponentShortComplex a j).Splitting :=
   ShortComplex.Splitting.ofIso

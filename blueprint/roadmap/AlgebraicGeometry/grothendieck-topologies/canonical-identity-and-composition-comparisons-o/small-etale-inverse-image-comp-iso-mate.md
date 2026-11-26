@@ -1,4 +1,6 @@
-# Small Etale Inverse Image Comp Iso mate
+# Inverse composition comparison mates to forward direct image comparison
 
-The composition comparison intertwines the fixed actual adjunctions:
-its inverse has the prescribed original direct-image composition as mate.
+Inverse composition comparison mates to forward direct image comparison.
+
+The inverse of the inverse-image composition isomorphism corresponds under the two adjunctions
+to the forward direct-image composition isomorphism.

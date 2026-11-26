@@ -14,16 +14,23 @@ public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.Exterior
 import Mathlib.Tactic.Abel
 
 /-!
-# The Chevalley–Eilenberg boundary and exterior coalgebra
+# Exterior coderivation and primitive Chevalley–Eilenberg chains
 
-The canonical boundary is a coderivation for the exterior coproduct. The
-grade involution gives the Koszul sign in the tensor differential, which
-squares to zero.
+Let R be a commutative ring and L an R-Lie algebra. The exterior
+coproduct has Δ(x)=1⊗x+x⊗1 on generators. If γ is the grade
+involution, the tensor boundary is
+D(a⊗b)=∂a⊗b+γ(a)⊗∂b; for homogeneous a of degree p,
+γ(a)=(−1)^p a. The exterior boundary is odd, D²=0 and Δ∂=DΔ.
 
-The boundary preserves primitive elements. Their homogeneous parts form a
-subcomplex of the canonical Chevalley–Eilenberg complex. Degree-one primitives
-identify with `L` over every commutative ring; this identification concerns
-exterior degree one.
+The augmentation annihilates ∂. Hence ∂ preserves primitive elements
+with Δ(a)=1⊗a+a⊗1. Their degree-n submodules form a subcomplex
+of the canonical exterior chain complex. In degree one every element
+is primitive and the primitive module is R-linearly equivalent to L;
+the boundary from primitive degree one to zero is zero.
+These statements hold over arbitrary commutative R.
+
+Reference: C. Chevalley and S. Eilenberg, Cohomology theory of Lie groups
+and Lie algebras (1948).
 -/
 
 @[expose] public section
@@ -45,7 +52,11 @@ local notation "γ" => (CliffordAlgebra.involute : E →ₐ[R] E)
 local notation "Δ" => ExteriorAlgebra.coproduct R L
 local notation "C" => ExteriorAlgebra.signedInsertion R L
 
-/-- The adjoint exterior action preserves the grade involution. -/
+/-- Let R be a commutative ring and L an R-Lie algebra.
+Put E=ExteriorAlgebra_R(L), let ∂ be its Chevalley–Eilenberg
+boundary, Δ its primitive coproduct and γ its grade involution.
+The adjoint exterior derivation has even degree:
+ad_x(γ(a))=γ(ad_x(a)) for every x∈L and a∈E. -/
 theorem adjointAction_involute (x : L) (a : E) :
     adjointAction R L x (γ a) = γ (adjointAction R L x a) := by
   induction a using CliffordAlgebra.left_induction with
@@ -56,7 +67,11 @@ theorem adjointAction_involute (x : L) (a : E) :
       simp only [map_mul, CliffordAlgebra.involute_ι, neg_mul, map_neg,
         adjointAction_ι_mul, ha, map_add, neg_add]
 
-/-- The CE boundary has odd degree for the native grade involution. -/
+/-- Let R be a commutative ring and L an R-Lie algebra.
+Put E=ExteriorAlgebra_R(L), let ∂ be its Chevalley–Eilenberg
+boundary, Δ its primitive coproduct and γ its grade involution.
+The exterior boundary has odd degree:
+∂(γ(a))=−γ(∂a) for every a∈E. -/
 theorem boundary_involute (a : E) : boundary R L (γ a) = -γ (boundary R L a) := by
   induction a using CliffordAlgebra.left_induction with
   | algebraMap r =>
@@ -67,7 +82,12 @@ theorem boundary_involute (a : E) : boundary R L (γ a) = -γ (boundary R L a) :
         boundary_ι_mul, adjointAction_involute, ha, map_sub,
         mul_neg, neg_neg]
 
-/-- The tensor boundary `d(a) ⊗ b + (-1)^|a| a ⊗ d(b)`. -/
+/-- Let R be a commutative ring and L an R-Lie algebra.
+Put E=ExteriorAlgebra_R(L), let ∂ be its Chevalley–Eilenberg
+boundary, Δ its primitive coproduct and γ its grade involution.
+The R-linear tensor boundary on E⊗_R E is
+D(a⊗b)=∂a⊗b+γ(a)⊗∂b. On a homogeneous first factor
+of degree p its second term has coefficient (−1)^p. -/
 def tensorBoundary : Module.End R (E ⊗[R] E) :=
   (boundary R L).rTensor E + TensorProduct.map
     (CliffordAlgebra.involute : ExteriorAlgebra R L →ₐ[R] ExteriorAlgebra R L).toLinearMap (boundary R L)
@@ -79,7 +99,11 @@ theorem tensorBoundary_tmul (a b : E) :
   simp only [tensorBoundary, LinearMap.add_apply, LinearMap.rTensor_tmul,
     TensorProduct.map_tmul, AlgHom.toLinearMap_apply]
 
-/-- The tensor boundary also squares to zero, using the oddness equation. -/
+/-- Let R be a commutative ring and L an R-Lie algebra.
+Put E=ExteriorAlgebra_R(L), let ∂ be its Chevalley–Eilenberg
+boundary, Δ its primitive coproduct and γ its grade involution.
+The signed tensor boundary D=∂⊗id+γ⊗∂ satisfies D²=0
+as an R-linear endomorphism of E⊗_R E. -/
 theorem tensorBoundary_comp_self :
     (tensorBoundary R L).comp (tensorBoundary R L) = 0 := by
   apply TensorProduct.ext'
@@ -89,7 +113,11 @@ theorem tensorBoundary_comp_self :
     TensorProduct.tmul_zero, TensorProduct.neg_tmul, LinearMap.zero_apply]
   abel
 
-/-- The even diagonal adjoint action on the two exterior factors. -/
+/-- Let R be a commutative ring and L an R-Lie algebra.
+Put E=ExteriorAlgebra_R(L), let ∂ be its Chevalley–Eilenberg
+boundary, Δ its primitive coproduct and γ its grade involution.
+For x∈L, the diagonal adjoint action on E⊗_R E is
+ad_x⊗id+id⊗ad_x, with no parity sign because it has degree zero. -/
 def tensorAdjointAction (x : L) : Module.End R (E ⊗[R] E) :=
   (adjointAction R L x).rTensor E + (adjointAction R L x).lTensor E
 
@@ -113,7 +141,11 @@ private theorem tensorAdjointAction_insertion (x y : L) (p : E ⊗[R] E) :
       simp only [map_add, hp, hq]
       abel
 
-/-- The coproduct intertwines the adjoint exterior actions. -/
+/-- Let R be a commutative ring and L an R-Lie algebra.
+Put E=ExteriorAlgebra_R(L), let ∂ be its Chevalley–Eilenberg
+boundary, Δ its primitive coproduct and γ its grade involution.
+The primitive coproduct intertwines adjoint derivations:
+Δ(ad_x a)=(ad_x⊗id+id⊗ad_x)(Δa). -/
 theorem coproduct_adjointAction (x : L) (a : E) :
     Δ (adjointAction R L x a) = tensorAdjointAction R L x (Δ a) := by
   have hOne : adjointAction R L x (1 : E) = 0 := by
@@ -145,7 +177,11 @@ private theorem tensorBoundary_insertion (x : L) (p : E ⊗[R] E) :
       simp only [map_add, hp, hq, neg_add]
       abel
 
-/-- Coderivation compatibility is for the CE boundary and coproduct. -/
+/-- Let R be a commutative ring and L an R-Lie algebra.
+Put E=ExteriorAlgebra_R(L), let ∂ be its Chevalley–Eilenberg
+boundary, Δ its primitive coproduct and γ its grade involution.
+The boundary is a graded coderivation:
+Δ(∂a)=D(Δa), where D=∂⊗id+γ⊗∂. -/
 theorem coproduct_boundary (a : E) :
     Δ (boundary R L a) = tensorBoundary R L (Δ a) := by
   induction a using CliffordAlgebra.left_induction with
@@ -159,7 +195,11 @@ theorem coproduct_boundary (a : E) :
         ExteriorAlgebra.coproduct_ι_mul, ha, ExteriorAlgebra.coproduct_ι_mul,
         tensorBoundary_insertion]
 
-/-- Linear-map form of the CE coderivation equation. -/
+/-- Let R be a commutative ring and L an R-Lie algebra.
+Put E=ExteriorAlgebra_R(L), let ∂ be its Chevalley–Eilenberg
+boundary, Δ its primitive coproduct and γ its grade involution.
+As R-linear maps, the coderivation square is
+Δ∘∂=(∂⊗id+γ⊗∂)∘Δ. -/
 theorem coproduct_comp_boundary :
     (ExteriorAlgebra.coproduct R L).comp (boundary R L) = (tensorBoundary R L).comp Δ :=
   LinearMap.ext (coproduct_boundary R L)
@@ -173,7 +213,11 @@ theorem augmentation_adjointAction (x : L) (a : E) :
       simp only [adjointAction_ι_mul, map_add, map_mul, ExteriorAlgebra.augmentation_ι,
         zero_mul, zero_add]
 
-/-- The CE boundary has zero augmentation. -/
+/-- Let R be a commutative ring and L an R-Lie algebra.
+Put E=ExteriorAlgebra_R(L), let ∂ be its Chevalley–Eilenberg
+boundary, Δ its primitive coproduct and γ its grade involution.
+The exterior augmentation ε:E→R annihilates the boundary:
+ε(∂a)=0 for every a∈E. -/
 theorem augmentation_boundary (a : E) :
     ExteriorAlgebra.augmentation R L (boundary R L a) = 0 := by
   induction a using CliffordAlgebra.left_induction with
@@ -183,7 +227,11 @@ theorem augmentation_boundary (a : E) :
       simp only [boundary_ι_mul, map_sub, map_neg, augmentation_adjointAction,
         map_mul, ExteriorAlgebra.augmentation_ι, zero_mul, neg_zero, sub_zero]
 
-/-- The boundary sends primitive elements to primitive elements. -/
+/-- Let R be a commutative ring and L an R-Lie algebra.
+Put E=ExteriorAlgebra_R(L), let ∂ be its Chevalley–Eilenberg
+boundary, Δ its primitive coproduct and γ its grade involution.
+If a∈E is primitive, Δa=1⊗a+a⊗1, then ∂a is
+primitive as well: Δ(∂a)=1⊗∂a+∂a⊗1. -/
 theorem boundary_isPrimitive (a : E)
     (ha : Coalgebra.IsSkewPrimitiveElem R (1 : E) (1 : E) a) :
     Coalgebra.IsSkewPrimitiveElem R (1 : E) (1 : E) (boundary R L a) where
@@ -197,7 +245,12 @@ theorem boundary_isPrimitive (a : E)
     simp only [map_add, tensorBoundary_tmul, boundary_one, map_one,
       TensorProduct.zero_tmul, TensorProduct.tmul_zero, zero_add, add_zero]
 
-/-- Primitives in exterior degree `n`, as an submodule of that degree. -/
+/-- Let R be a commutative ring and L an R-Lie algebra.
+Put E=ExteriorAlgebra_R(L), let ∂ be its Chevalley–Eilenberg
+boundary, Δ its primitive coproduct and γ its grade involution.
+The primitive degree-n module is
+P_n={a∈Λ_R^nL | Δa=1⊗a+a⊗1}, with the coproduct
+computed after inclusion into E. -/
 def primitiveDegree (n : ℕ) : Submodule R (⋀[R]^n L) :=
   (Coalgebra.skewPrimitive R (1 : E) (1 : E)).comap (⋀[R]^n L).subtype
 
@@ -213,7 +266,11 @@ theorem differential_mem_primitiveDegree (n : ℕ) (a : ⋀[R]^(n + 1) L)
   rw [differential_coe]
   exact boundary_isPrimitive R L a ha
 
-/-- The primitive differential is the restriction of the CE differential. -/
+/-- Let R be a commutative ring and L an R-Lie algebra.
+Put E=ExteriorAlgebra_R(L), let ∂ be its Chevalley–Eilenberg
+boundary, Δ its primitive coproduct and γ its grade involution.
+The restricted boundary d_n maps P_{n+1} to P_n,
+giving the R-linear primitive differential. -/
 def primitiveDifferential (n : ℕ) :
     primitiveDegree R L (n + 1) →ₗ[R] primitiveDegree R L n :=
   (differential R L n).restrict
@@ -228,7 +285,11 @@ theorem primitiveDifferential_comp_differential (n : ℕ) :
       (a : ⋀[R]^((n + 1) + 1) L)) = 0
   exact LinearMap.congr_fun (differential_comp_differential R L n) a
 
-/-- The degreewise primitive subcomplex of the canonical CE complex. -/
+/-- Let R be a commutative ring and L an R-Lie algebra.
+Put E=ExteriorAlgebra_R(L), let ∂ be its Chevalley–Eilenberg
+boundary, Δ its primitive coproduct and γ its grade involution.
+The modules P_n of homogeneous primitive elements and their
+restricted boundary form a nonnegative R-module chain complex. -/
 def primitiveComplex : ChainComplex (ModuleCat.{max u v} R) ℕ :=
   ChainComplex.of (fun n => ModuleCat.of R (primitiveDegree R L n))
     (fun n => ModuleCat.ofHom (primitiveDifferential R L n))
@@ -236,7 +297,11 @@ def primitiveComplex : ChainComplex (ModuleCat.{max u v} R) ℕ :=
       rw [← ModuleCat.ofHom_comp, primitiveDifferential_comp_differential,
         ModuleCat.ofHom_zero])
 
-/-- The primitive complex includes into the canonical CE chain complex. -/
+/-- Let R be a commutative ring and L an R-Lie algebra.
+Put E=ExteriorAlgebra_R(L), let ∂ be its Chevalley–Eilenberg
+boundary, Δ its primitive coproduct and γ its grade involution.
+The subtype maps P_n↪Λ_R^nL form a chain inclusion
+from the primitive subcomplex to the canonical CE complex. -/
 def primitiveComplexInclusion : primitiveComplex R L ⟶ (canonicalChainData R L).complex :=
   ChainComplex.ofHom (fun n => ModuleCat.ofHom (primitiveDegree R L n).subtype)
     (fun n => by
@@ -251,7 +316,11 @@ def primitiveComplexInclusion : primitiveComplex R L ⟶ (canonicalChainData R L
 theorem primitiveComplexInclusion_f (n : ℕ) :
     (primitiveComplexInclusion R L).f n = ModuleCat.ofHom (primitiveDegree R L n).subtype := rfl
 
-/-- Every degree-one exterior generator is primitive. -/
+/-- Let R be a commutative ring and L an R-Lie algebra.
+Put E=ExteriorAlgebra_R(L), let ∂ be its Chevalley–Eilenberg
+boundary, Δ its primitive coproduct and γ its grade involution.
+Every generator x∈L is primitive in exterior degree one.
+The map x↦ι(x) defines L→P_1. -/
 def primitiveGenerator : L →ₗ[R] primitiveDegree R L 1 :=
   (exteriorPower.oneEquiv R L).symm.toLinearMap.codRestrict (primitiveDegree R L 1)
     (fun x => by
@@ -260,8 +329,11 @@ def primitiveGenerator : L →ₗ[R] primitiveDegree R L 1 :=
       simpa only [ExteriorAlgebra.ιMulti_succ_apply, ExteriorAlgebra.ιMulti_zero_apply,
         mul_one] using ExteriorAlgebra.ι_isPrimitive R L x)
 
-/-- Degree-one primitives identify with the original Lie module, over every
-commutative ring. This statement concerns exactly exterior degree one. -/
+/-- Let R be a commutative ring and L an R-Lie algebra.
+Put E=ExteriorAlgebra_R(L), let ∂ be its Chevalley–Eilenberg
+boundary, Δ its primitive coproduct and γ its grade involution.
+The primitive module P_1 is R-linearly equivalent to L;
+the inverse sends x to its degree-one exterior generator. -/
 def primitiveDegreeOneEquiv : primitiveDegree R L 1 ≃ₗ[R] L where
   toLinearMap := (exteriorPower.oneEquiv R L).toLinearMap.comp (primitiveDegree R L 1).subtype
   invFun := primitiveGenerator R L
@@ -274,7 +346,11 @@ def primitiveDegreeOneEquiv : primitiveDegree R L 1 ≃ₗ[R] L where
     change exteriorPower.oneEquiv R L ((exteriorPower.oneEquiv R L).symm x) = x
     exact (exteriorPower.oneEquiv R L).apply_symm_apply x
 
-/-- The differential from primitive degree one to degree zero vanishes. -/
+/-- Let R be a commutative ring and L an R-Lie algebra.
+Put E=ExteriorAlgebra_R(L), let ∂ be its Chevalley–Eilenberg
+boundary, Δ its primitive coproduct and γ its grade involution.
+The primitive differential P_1→P_0 is zero, as the
+canonical CE boundary from degree one to zero vanishes. -/
 theorem primitiveDifferential_zero : primitiveDifferential R L 0 = 0 := by
   apply LinearMap.ext
   intro a

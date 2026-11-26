@@ -1,5 +1,5 @@
 # The positive total-homology filtration square
 
-- [Horizontal Positive Prev Total Homology Filtration Map Of Bicomplex](horizontal-positive-prev-total-homology.md)
-- [Horizontal Positive Current Total Homology Filtration Map Of Bicomplex](horizontal-positive-current-total-homolo.md)
-- [Horizontal Total Homology Filtration Step Map naturality of pos](horizontal-total-homology-filtration-ste.md)
+- [Transporting the finite predecessor-stage map](horizontal-positive-prev-total-homology.md)
+- [Transporting the finite current-stage map](horizontal-positive-current-total-homolo.md)
+- [Positive predecessor and current maps form a filtration square](horizontal-total-homology-filtration-ste.md)

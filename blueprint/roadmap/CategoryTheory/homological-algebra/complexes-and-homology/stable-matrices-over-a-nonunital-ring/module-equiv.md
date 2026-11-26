@@ -1,3 +1,6 @@
-# Module Equiv
+# Stable matrix ring carrier and stable matrix module are equivalent
 
-The k-linear equivalence between the stable matrix ring carrier and the stable matrix module.
+Stable matrix ring carrier and stable matrix module are equivalent.
+
+The identity maps on finite stages induce mutually inverse `k`-linear maps between
+`Matrix.Stable k A` and `Matrix.StableModule k A`.

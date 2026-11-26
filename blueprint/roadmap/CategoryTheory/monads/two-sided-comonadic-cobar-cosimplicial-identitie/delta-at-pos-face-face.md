@@ -1,5 +1,5 @@
-# Delta At Pos face face
+# The ordered comultiplication insertion identity
 
-Unified coface law for `deltaAtPos`: for `i ≤ j`, the two orders of
-successive insertions agree up to the `succ`/`castSucc` shift. Dual of
-`Monad.muAtPos_face_face`.
+The ordered comultiplication insertion identity.
+
+For `i ≤ j`, `δ_n[i] ≫ δ_(n+1)[j+1] = δ_n[j] ≫ δ_(n+1)[i]` in left-end insertion coordinates.

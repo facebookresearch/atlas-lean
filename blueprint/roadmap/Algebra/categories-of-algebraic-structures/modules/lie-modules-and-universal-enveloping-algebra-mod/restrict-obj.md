@@ -1,3 +1,6 @@
-# Restrict Obj
+# A Lie module obtained from an enveloping-algebra module
 
-Native restriction retains the U-module carrier and its original scalar image.
+A Lie module obtained from an enveloping-algebra module.
+
+For a left `U_R(L)`-module `M`, restrict scalars along `R → U_R(L)` and define `[x,m] = ι(x) •
+m`. The coefficient carrier is `M`.

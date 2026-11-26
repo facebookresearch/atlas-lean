@@ -12,25 +12,18 @@ module
 public import Mathlib.RepresentationTheory.Homological.ContCohomology.Functoriality
 
 /-!
-# Finite-tuple evaluation of continuous homogeneous resolutions
+# Finite-tuple evaluation of iterated continuous coefficients
 
-The continuous homogeneous resolution represents an `n`-variable cochain by
-an iterated compact-open continuous-map carrier.  This file evaluates that
-nested carrier on a tuple indexed by `Fin n`.  Evaluation is injective,
-respects subtraction and the diagonal action, and turns the recursively
-defined differential into the usual alternating coordinate-deletion sum.
+Let k be a ring with a topology, G a topological group and X a
+topological k-representation. Put U₀(X)=X and U_(n+1)(X)=C(G,U_n(X)).
+Evaluation recursively takes the first group coordinate, then the remaining
+tuple. It is injective, respects subtraction and the diagonal action,
+and gives the alternating deletion formula for the homogeneous differential.
 
-Joint continuity of evaluation uses local compactness of the group.  The
-algebraic formulas do not.
-
-## Main declarations
-
-* `ContinuousCohomology.resolutionFinUncurry`
-* `ContinuousCohomology.resolutionFinUncurry_resolutionMap`
-* `ContinuousCohomology.continuous_resolutionFinUncurry`
-* `ContinuousCohomology.resolutionFinUncurry_injective`
-* `ContinuousCohomology.resolutionFinUncurry_action`
-* `ContinuousCohomology.resolutionFinUncurry_d`
+These algebraic value formulas do not require local compactness.
+When G is locally compact, evaluation is jointly continuous in the
+nested coefficient and finite tuple. Scalar, group and carrier universes
+are independent.
 -/
 
 @[expose] public section
@@ -49,20 +42,39 @@ variable {k : Type u} {G : Type v}
 variable [Ring k] [TopologicalSpace k]
 variable [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
 
-/-- Evaluate the nested compact-open carrier of the continuous homogeneous
-resolution on one finite tuple. -/
+/-- Let k be a ring with a topology and G a topological group.
+Let X be a topological k-module with a G-representation by continuous
+k-linear maps, with carrier universe max(v,w), independently of the
+scalar universe u and group universe v.
+Write U₀(X)=X and U_(n+1)(X)=C(G,U_n(X)), with compact-open
+topologies and diagonal G-actions.
+The finite-tuple evaluator E_n : U_n(X) → (G^n → X) is
+E₀(a)=a and E_(n+1)(F)(t)=E_n(F(t₀))(tail(t)). -/
 def resolutionFinUncurry (X : TopRep.{max v w, u, v} k G) :
     (n : ℕ) → TopRep.resolutionX X n → (Fin n → G) → X
   | 0, a, _ => a
   | n + 1, f, x => resolutionFinUncurry X n (f (x 0)) (Fin.tail x)
 
-/-- Evaluation on the empty tuple returns the coefficient. -/
+/-- Let k be a ring with a topology and G a topological group.
+Let X be a topological k-module with a G-representation by continuous
+k-linear maps, with carrier universe max(v,w), independently of the
+scalar universe u and group universe v.
+Write U₀(X)=X and U_(n+1)(X)=C(G,U_n(X)), with compact-open
+topologies and diagonal G-actions.
+For a ∈ X and the unique empty tuple t, E₀(a)(t)=a. -/
 @[simp]
 theorem resolutionFinUncurry_zero (X : TopRep.{max v w, u, v} k G)
     (a : X) (x : Fin 0 → G) :
     resolutionFinUncurry X 0 a x = a := rfl
 
-/-- Evaluation on a nonempty tuple first evaluates at its head. -/
+/-- Let k be a ring with a topology and G a topological group.
+Let X be a topological k-module with a G-representation by continuous
+k-linear maps, with carrier universe max(v,w), independently of the
+scalar universe u and group universe v.
+Write U₀(X)=X and U_(n+1)(X)=C(G,U_n(X)), with compact-open
+topologies and diagonal G-actions.
+For F ∈ U_(n+1)(X), evaluation on a nonempty tuple is
+E_(n+1)(F)(t)=E_n(F(t₀))(tail(t)). -/
 @[simp]
 theorem resolutionFinUncurry_succ (X : TopRep.{max v w, u, v} k G)
     (n : ℕ) (f : TopRep.resolutionX X (n + 1))
@@ -70,8 +82,16 @@ theorem resolutionFinUncurry_succ (X : TopRep.{max v w, u, v} k G)
     resolutionFinUncurry X (n + 1) f x =
       resolutionFinUncurry X n (f (x 0)) (Fin.tail x) := rfl
 
-/-- Finite-tuple evaluation is natural under the resolution map induced by
-a continuous group homomorphism and an equivariant coefficient map. -/
+/-- Let k be a ring with a topology and G a topological group.
+Let X be a topological k-module with a G-representation by continuous
+k-linear maps, with carrier universe max(v,w), independently of the
+scalar universe u and group universe v.
+Write U₀(X)=X and U_(n+1)(X)=C(G,U_n(X)), with compact-open
+topologies and diagonal G-actions.
+Let H be a topological group in the same group universe,
+φ : H → G continuous, and f : Res_φ(X) → Y a continuous equivariant
+k-linear map. The induced resolution map satisfies
+E_n^Y(resolutionMap(c))(t)=f(E_n^X(c)(φ(t₀),…,φ(t_(n-1)))). -/
 theorem resolutionFinUncurry_resolutionMap
     {H : Type v}
     [Group H] [TopologicalSpace H] [IsTopologicalGroup H]
@@ -88,7 +108,15 @@ theorem resolutionFinUncurry_resolutionMap
       rw [resolutionFinUncurry_resolutionMap]
       rfl
 
-/-- Joint continuity of finite-tuple evaluation. -/
+/-- Let k be a ring with a topology and G a topological group.
+Let X be a topological k-module with a G-representation by continuous
+k-linear maps, with carrier universe max(v,w), independently of the
+scalar universe u and group universe v.
+Write U₀(X)=X and U_(n+1)(X)=C(G,U_n(X)), with compact-open
+topologies and diagonal G-actions.
+Assume G is locally compact.
+For every n ∈ ℕ, (c,t) ↦ E_n(c)(t) is jointly continuous
+on U_n(X) × G^n. -/
 theorem continuous_resolutionFinUncurry [LocallyCompactSpace G]
     (X : TopRep.{max v w, u, v} k G) :
     ∀ n : ℕ, Continuous (fun p : TopRep.resolutionX X n × (Fin n → G) =>
@@ -102,8 +130,15 @@ theorem continuous_resolutionFinUncurry [LocallyCompactSpace G]
         ((continuous_fst.eval ((continuous_apply 0).comp continuous_snd)).prodMk
           continuous_snd.finTail)
 
-/-- A fixed nested resolution element evaluates continuously on finite
-tuples. -/
+/-- Let k be a ring with a topology and G a topological group.
+Let X be a topological k-module with a G-representation by continuous
+k-linear maps, with carrier universe max(v,w), independently of the
+scalar universe u and group universe v.
+Write U₀(X)=X and U_(n+1)(X)=C(G,U_n(X)), with compact-open
+topologies and diagonal G-actions.
+Assume G is locally compact.
+For fixed c ∈ U_n(X), the function t ↦ E_n(c)(t) on G^n
+is continuous. -/
 theorem continuous_resolutionFinUncurry_left
     (X : TopRep.{max v w, u, v} k G) [LocallyCompactSpace G]
     (n : ℕ) (f : TopRep.resolutionX X n) :
@@ -111,7 +146,14 @@ theorem continuous_resolutionFinUncurry_left
   (continuous_resolutionFinUncurry X n).comp
     (continuous_const.prodMk continuous_id)
 
-/-- Evaluation on all finite tuples determines a nested resolution element. -/
+/-- Let k be a ring with a topology and G a topological group.
+Let X be a topological k-module with a G-representation by continuous
+k-linear maps, with carrier universe max(v,w), independently of the
+scalar universe u and group universe v.
+Write U₀(X)=X and U_(n+1)(X)=C(G,U_n(X)), with compact-open
+topologies and diagonal G-actions.
+The map c ↦ E_n(c) is injective for every n ∈ ℕ:
+equality on all finite tuples implies equality in U_n(X). -/
 theorem resolutionFinUncurry_injective
     (X : TopRep.{max v w, u, v} k G) :
     ∀ n : ℕ, Function.Injective (resolutionFinUncurry X n)
@@ -123,7 +165,14 @@ theorem resolutionFinUncurry_injective
       funext y
       exact congrFun h (Fin.cons x y)
 
-/-- Finite-tuple evaluation respects subtraction. -/
+/-- Let k be a ring with a topology and G a topological group.
+Let X be a topological k-module with a G-representation by continuous
+k-linear maps, with carrier universe max(v,w), independently of the
+scalar universe u and group universe v.
+Write U₀(X)=X and U_(n+1)(X)=C(G,U_n(X)), with compact-open
+topologies and diagonal G-actions.
+Finite-tuple evaluation respects subtraction:
+E_n(c-c′)=E_n(c)-E_n(c′) pointwise. -/
 @[simp]
 theorem resolutionFinUncurry_sub (X : TopRep.{max v w, u, v} k G) :
     ∀ (n : ℕ) (f g : TopRep.resolutionX X n),
@@ -136,7 +185,14 @@ theorem resolutionFinUncurry_sub (X : TopRep.{max v w, u, v} k G) :
       rw [resolutionFinUncurry_sub]
       rfl
 
-/-- Evaluation of the diagonal action on an iterated continuous function. -/
+/-- Let k be a ring with a topology and G a topological group.
+Let X be a topological k-module with a G-representation by continuous
+k-linear maps, with carrier universe max(v,w), independently of the
+scalar universe u and group universe v.
+Write U₀(X)=X and U_(n+1)(X)=C(G,U_n(X)), with compact-open
+topologies and diagonal G-actions.
+The diagonal G-action has evaluation formula
+E_n(g • c)(t)=g • E_n(c)(g⁻¹t₀,…,g⁻¹t_(n-1)). -/
 theorem resolutionFinUncurry_action (X : TopRep.{max v w, u, v} k G) :
     ∀ (n : ℕ) (g : G) (f : TopRep.resolutionX X n) (x : Fin n → G),
       resolutionFinUncurry X n ((TopRep.resolutionX X n).ρ g f) x =
@@ -148,8 +204,15 @@ theorem resolutionFinUncurry_action (X : TopRep.{max v w, u, v} k G) :
       rw [resolutionFinUncurry_action]
       rfl
 
-/-- Evaluation of the homogeneous differential is the alternating sum over
-coordinate deletions, with the `j`-th term obtained using `j.succAbove`. -/
+/-- Let k be a ring with a topology and G a topological group.
+Let X be a topological k-module with a G-representation by continuous
+k-linear maps, with carrier universe max(v,w), independently of the
+scalar universe u and group universe v.
+Write U₀(X)=X and U_(n+1)(X)=C(G,U_n(X)), with compact-open
+topologies and diagonal G-actions.
+For c ∈ U_(n+1)(X), the homogeneous resolution differential gives
+E_(n+2)(d c)(t)=∑_(j=0)^(n+1) (-1)^j •
+E_(n+1)(c)(t with coordinate j deleted). -/
 theorem resolutionFinUncurry_d (X : TopRep.{max v w, u, v} k G) :
     ∀ (n : ℕ) (f : TopRep.resolution'X X n) (x : Fin (n + 2) → G),
       resolutionFinUncurry X (n + 2) ((TopRep.d X (n + 1)).hom f) x =

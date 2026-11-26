@@ -1,4 +1,6 @@
-# Field Etale Cohomology Pullback connecting
+# Field cohomology pullback commutes with connecting morphisms
 
-The actual field pullback preserves the original Yoneda connectors,
-using the actual inverse-image short exact sequence.
+Field cohomology pullback commutes with connecting morphisms.
+
+Pullback of a connecting class equals the connecting class of the pulled-back short exact
+sheaf sequence.

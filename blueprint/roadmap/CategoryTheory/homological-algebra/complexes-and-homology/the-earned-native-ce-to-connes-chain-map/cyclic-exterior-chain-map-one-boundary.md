@@ -1,3 +1,6 @@
-# Cyclic Exterior Chain Map one boundary
+# The positive bracket boundary of a degree-one cyclic representative
 
-The positive degree-two bracket boundary is carried to the one-factor bracket class.
+The positive bracket boundary of a degree-one cyclic representative.
+
+The cyclic boundary of the positive-bracket image of `x ∧ y` is the degree-zero representative
+of `[x,y]`.

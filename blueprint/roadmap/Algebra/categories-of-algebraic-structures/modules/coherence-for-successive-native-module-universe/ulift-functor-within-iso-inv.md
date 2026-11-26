@@ -1,3 +1,5 @@
-# Ulift Functor Within Iso inv
+# The inverse formula for an in-universe module lift
 
-The native inverse carries the original value into its prescribed wrapper.
+The inverse formula for an in-universe module lift.
+
+The inverse component of the lift comparison sends `x` to `ULift.up x`.

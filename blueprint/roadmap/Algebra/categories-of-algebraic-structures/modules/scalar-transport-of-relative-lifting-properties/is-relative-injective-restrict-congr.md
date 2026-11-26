@@ -1,3 +1,5 @@
-# Is Relative Injective restrict congr
+# Equal scalar maps give the same relative injectivity property
 
-The extension property uses the same congruence of restriction maps.
+Let `k,R` be rings, `φ,φ′ : k → R` equal ring homomorphisms,
+and `P` an `R`-module. Relative injectivity of `P` for restriction
+along `φ` is equivalent to that for `φ′`.

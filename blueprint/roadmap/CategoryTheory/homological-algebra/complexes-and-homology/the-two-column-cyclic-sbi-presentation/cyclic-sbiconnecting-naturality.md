@@ -1,3 +1,6 @@
-# Cyclic SBIConnecting naturality
+# Naturality of the two-column SBI boundary
 
-The native LES connecting morphism is natural in the original algebra map.
+Naturality of the two-column SBI boundary.
+
+For a nonunital algebra map, its cyclic homology map in degree `n` and two-column homology map
+in degree `n+1` commute with `B_n`.

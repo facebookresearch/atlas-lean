@@ -1,4 +1,5 @@
-# Change Factor mul change Rep
+# The change-of-representative decomposition
 
-A representative is the product of its change factor and its matched
-representative.
+The change-of-representative decomposition.
+
+The comparison factor and matching representative satisfy c(t)u(t) = t in G.

@@ -8,10 +8,22 @@ module
 public import MathlibExt.Algebra.Homology.LinearHomCochainPairingHeterogeneousBasic
 
 /-!
-# Elementwise engine for heterogeneous linear-Hom pairing laws
+# Tensor descriptors and values of Hom cochain pairings
 
-Reusable descriptor, associativity, and unit computations underlying the
-public diagram laws.
+Let R be a commutative ring and work with nonnegative chain complexes and
+coefficient modules of carrier universe u. For φ : K₁,p → M₁,
+ψ : K₂,q → M₂, μ : M₁ ⊗[R] M₂ → M₃, and p + q = n, the tensor descriptor
+from (K₁ ⊗ K₂)_n to M₃ is μ ∘ (φ ⊗ ψ) on the (p, q) summand and zero
+elsewhere. It is natural under chain maps into K₁ and K₂ and under
+identifications of the total degree.
+
+A comparison from Hom_R(L; M) to Hom_R(K; N), determined by
+f : K → L and a : M → N, sends φ to a ∘ φ ∘ f. Compatible coefficient
+associativity diagrams identify the two ternary descriptors after the
+tensor associator. A chain map ε : Kᵤ → R[0] and a coefficient map R → U
+give a degree-zero cocycle; compatible counit and coefficient unit diagrams
+make its left and right pairings equal to the input cochain after the
+specified source and coefficient comparisons.
 -/
 
 @[expose] public section

@@ -1,3 +1,6 @@
-# Group Right Tensor Hom Equiv
+# Hom-set equivalence for tensor in the right-module variable
 
-The proved original group currying supplies the actual first-variable hom-set equivalence.
+Hom-set equivalence for tensor in the right-module variable.
+
+Additive maps `A ⊗_R B → I` are in bijection with right-module morphisms `A ⟶
+(rightHomGroupFunctor R B).obj I`.

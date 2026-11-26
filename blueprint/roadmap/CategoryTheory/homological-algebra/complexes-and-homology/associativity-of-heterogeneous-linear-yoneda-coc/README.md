@@ -1,5 +1,5 @@
 # Associativity of heterogeneous linear-Yoneda cochain pairings
 
-- [Linear Yoneda Pairing Desc assoc](linear-yoneda-pairing-desc-assoc.md)
-- [Linear Yoneda Cochain Comparison](linear-yoneda-cochain-comparison.md)
-- [Linear Yoneda Cochain Pair associativity of diagrams](linear-yoneda-cochain-pair-associativity.md)
+- [Associativity of ternary Yoneda tensor descriptors](linear-yoneda-pairing-desc-assoc.md)
+- [Source and coefficient comparison of Yoneda cochains](linear-yoneda-cochain-comparison.md)
+- [Associativity from compatible chain and coefficient diagrams](linear-yoneda-cochain-pair-associativity.md)

@@ -1,4 +1,7 @@
-# Tor Ring Change Map
+# A source map to a restricted target gives the Tor ring-change map
 
-An original right-module morphism into restriction of the target input gives the
-canonical Tor map; the two native source categories are kept distinct.
+For g:A→Res_(φᵒᵖ)(A′) and an endpoint coefficient
+map f:B→B′, the canonical map is
+Tor_n^R(A,B)→Res_(ψᵒᵖ)(Tor_n^(R′)(A′,B′)).
+The common carrier-world source categories are assumed to
+have projective resolutions.

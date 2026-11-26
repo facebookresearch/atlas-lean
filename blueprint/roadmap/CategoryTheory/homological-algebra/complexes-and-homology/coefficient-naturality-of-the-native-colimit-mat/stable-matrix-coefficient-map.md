@@ -1,3 +1,6 @@
-# Stable Matrix Coefficient Map
+# The coefficient map of directed matrix CE colimits
 
-The coefficient map on the colimit of finite matrix CE complexes.
+The coefficient map of directed matrix CE colimits.
+
+Take the colimit map of the natural entrywise coefficient maps on the finite matrix size
+diagrams.

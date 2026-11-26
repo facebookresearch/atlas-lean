@@ -1,3 +1,6 @@
-# Original field equivariant stalk counit isomorphism
+# Field stalk counit satisfies all isomorphism laws
 
-The complete EVERY-module counit-isomorphism source unit, with EVERY finite stage.
+Field stalk counit satisfies all isomorphism laws.
+
+The finite Galois evaluation and equivariant field counit constructions satisfy their complete
+value, naturality, inverse, and finite-stage normalization laws.

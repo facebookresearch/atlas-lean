@@ -1,3 +1,10 @@
-# Left Coefficient Invariants Map
+# The induced map of invariant coefficient modules
 
-The native maximal-trivial-submodule map on original coefficients.
+Let R:Type u be commutative, L:Type v an R-Lie algebra,
+and M a left U=UEA_R(L)-module with carrier universe w.
+Its restricted L-action is [x,m]=ι_R(x)•m, and M^L is
+{m | ι_R(x)•m=0 for every x∈L}.
+Let M′ be another left U-module in an independent carrier universe
+and f:M→M′ a U-linear map.
+The map f carries M^L into M′^L, giving the R-linear
+invariant map m↦f(m).

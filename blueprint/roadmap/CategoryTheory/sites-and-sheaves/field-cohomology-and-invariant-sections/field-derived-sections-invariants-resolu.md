@@ -1,3 +1,6 @@
-# Field Derived Sections Invariants Resolution Iso
+# Section and invariant resolution cohomology comparison
 
-Actual Gamma-resolution homology is identified with the SAME mapped-invariant homology.
+Section and invariant resolution cohomology comparison.
+
+For any sheaf injective resolution, compare cohomology of its sections with invariant
+cohomology of the mapped geometric-fiber resolution.

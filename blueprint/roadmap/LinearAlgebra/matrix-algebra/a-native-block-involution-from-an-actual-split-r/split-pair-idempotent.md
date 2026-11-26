@@ -1,3 +1,4 @@
-# Split Pair idempotent
+# A rectangular right inverse gives an idempotent product
 
-The complementary block comes from an actual idempotent.
+Let A be an arbitrary ring, M,N finite index sets, U an N×M matrix and V an M×N matrix over A.
+If UV=I_N, then (VU)²=VU as an M×M matrix, so VU is idempotent.

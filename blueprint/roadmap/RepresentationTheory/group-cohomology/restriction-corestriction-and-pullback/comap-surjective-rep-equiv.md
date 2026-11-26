@@ -1,4 +1,5 @@
-# Comap Surjective Rep Equiv
+# The equivalence between lifted and target representatives
 
-The pulled-back and target transversal representative types are
-canonically equivalent by the surjective homomorphism.
+The equivalence between lifted and target representatives.
+
+The map s ↦ π(s) identifies the pulled-back right transversal for π⁻¹H with T.

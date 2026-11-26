@@ -1,8 +1,6 @@
-# Of short Exact X₁
+# Kernel Ext vanishing from adjacent bounds in a short exact sequence
 
-The kernel direction of the depth lemma, expressed as bounded Ext
-vanishing.
+Kernel Ext vanishing from adjacent bounds in a short exact sequence.
 
-For a short exact sequence `0 ⟶ X₁ ⟶ X₂ ⟶ X₃ ⟶ 0`, vanishing of
-`Ext A X₂` below `n + 1` and of `Ext A X₃` below `n` implies vanishing of
-`Ext A X₁` below `n + 1`.
+For a short exact sequence and fixed probe `A`, if `Ext(A,S.X₂)` vanishes below `n + 1` and
+`Ext(A,S.X₃)` below `n`, then `Ext(A,S.X₁)` vanishes below `n + 1`.

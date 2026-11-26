@@ -1,3 +1,5 @@
-# Chain One Equiv symm tmul
+# Inserting the singleton tensor
 
-The inverse inserts the singleton tensor, without a chosen coordinate map.
+Let k be a commutative semiring and A a k-semimodule.
+The inverse singleton coordinate isomorphism sends a ⊗ b to
+a ⊗ tprod(j ↦ b), for the one-entry family on Fin 1.

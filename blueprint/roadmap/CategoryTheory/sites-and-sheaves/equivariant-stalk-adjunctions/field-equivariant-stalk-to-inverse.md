@@ -1,3 +1,6 @@
-# Field Equivariant Stalk To Inverse
+# Equivariant stalk map gives an inverse sheaf map
 
-The actual invariant limit gives the original sheaf arrow into the SAME literal R(M).
+Equivariant stalk map gives an inverse sheaf map.
+
+Lift the invariant transpose cone through the skyscraper invariant limit to define a map to
+the invariant inverse sheaf.

@@ -1,4 +1,5 @@
-# Inversion Weight lt of length lt
+# Shorter lists have smaller inversion weight
 
-Every word of shorter length has lower weight, independently of its
-letters. This applies to all terms of an overlapping bracket contraction.
+If one finite list is shorter than another, its inversion weight is
+strictly smaller, independently of their entries and their inversion counts.
+Only a linear order on the alphabet is required.

@@ -1,3 +1,5 @@
-# Matrix Coinvariant Homology
+# The homology of a matrix scalar-adjoint coinvariant complex
 
-The quotient homology module, with no stored homology data.
+The homology of a matrix scalar-adjoint coinvariant complex.
+
+Take degree-`d` homology of the matrix coinvariant complex at size `m`.

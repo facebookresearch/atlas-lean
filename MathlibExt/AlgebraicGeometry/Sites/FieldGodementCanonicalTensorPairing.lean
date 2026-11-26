@@ -11,7 +11,16 @@ module
 
 public import MathlibExt.AlgebraicGeometry.Sites.FieldGodementTensorProjectionComparison
 
-/-! # The original Godement binary pairing under the canonical point collapse -/
+/-!
+# The Godement binary pairing under canonical point collapse
+
+For a field k, let L and R be the canonical geometric-point stalk and skyscraper functors. The
+point monad has a binary map RLF⊗RLG → RL(F⊗G), obtained from the skyscraper tensor pairing
+and the inverse tensor-of-stalks comparison.
+
+The singleton Godement product collapse carries the Godement binary pairing to this canonical
+point pairing.
+-/
 
 @[expose] public section
 noncomputable section
@@ -22,7 +31,9 @@ open scoped TensorProduct
 namespace AlgebraicGeometry.Scheme.DerivedSections
 variable (k : Type u) [Field k]
 
-/-- The genuine canonical point adjunction monad has the binary tensor-counit pairing. -/
+/-- Let k be a field, F,G small-étale additive-group sheaves of height max(u,w), and L,R the
+canonical point stalk and skyscraper. Define RLF⊗RLG → RL(F⊗G) by the skyscraper pairing into
+R(LF⊗_ℤ LG), then R applied to the inverse stalk tensor isomorphism LF⊗LG ≅ L(F⊗G). -/
 def fieldCanonicalPointTensorPairing
     (F G : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     let p := fieldGodementCanonicalPoint.{u, w} k
@@ -37,7 +48,9 @@ def fieldCanonicalPointTensorPairing
     R.map (smallEtalePointTensorSheafStalkIso.{u, w} (Spec (.of k)) p F G).inv
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual Godement-to-canonical point monad collapse preserves its binary pairing. -/
+/-- For a field k, let θ : T_G ≅ T_can be the Godement product collapse, λ_G the Godement tensor
+pairing, and λ_can the canonical point pairing. For sheaves F,G,
+λ_G(F,G)≫θ_{F⊗G}=(θ_F⊗θ_G)≫λ_can(F,G), with sheafified integer tensor products. -/
 theorem fieldGodementCanonicalTensorPairing_comm
     (F G : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     smallEtaleGodementTensorPairing.{u, w} (Spec (.of k)) F G ≫

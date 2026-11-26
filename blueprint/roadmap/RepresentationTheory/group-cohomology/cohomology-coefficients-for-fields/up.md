@@ -1,3 +1,5 @@
-# Up
+# A unit in the lifted additive carrier
 
-A unit of `L`, as an element of the lifted additive copy `Carrier K L`.
+A unit in the lifted additive carrier.
+
+Send a unit a ∈ Lˣ to ULift.up (Additive.ofMul a) in Carrier K L.

@@ -13,13 +13,20 @@ public import Mathlib.Algebra.Homology.ShortComplex.ModuleCat
 public import Mathlib.Algebra.Homology.ShortComplex.ConcreteCategory
 
 /-!
-# Exactness of actual continuous coinduction on discrete coefficients
+# Coinduction exactness on underlying discrete coefficient sequences
 
-A set-theoretic section into a discrete coefficient is continuous on its
-discrete source. Composing this section with an actual continuous function
-gives the required continuous lift. The same construction lifts kernel
-functions. The resulting sequence is genuinely short exact after forgetting
-coefficient topology; no abelian structure on topological modules is assumed.
+Let R be a ring with a topology and G a topological group.
+A continuous equivariant R-linear surjection X → Y induces a surjection
+C(G,X) → C(G,Y) whenever Y is discrete: continuous functions lift
+through a section on the discrete target. Injectivity is preserved
+pointwise without a discreteness hypothesis.
+
+For a coefficient pair X → Y → Z, discreteness of Y lets every
+coinduced kernel function lift when every element of ker(Y → Z)
+already lifts through X → Y.
+Hence a coefficient sequence short exact after forgetting topology
+remains short exact after coinduction and forgetting topology,
+provided its middle and last coefficients are discrete.
 -/
 
 @[expose] public section
@@ -33,8 +40,13 @@ namespace ContinuousCohomology
 variable {R : Type r} [Ring R] [TopologicalSpace R]
 variable {G : Type g} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
 
-/-- Every surjective coefficient arrow lifts actual continuous functions through its discrete
-target. -/
+/-- Let k be a ring with a topology and G a topological group.
+Let X be a topological k-module with a G-representation by continuous
+k-linear maps, with carrier universe max(v,w), independently of the
+scalar universe u and group universe v.
+For a continuous equivariant R-linear surjection f : X → Y
+with discrete target Y, postcomposition
+C(G,X) → C(G,Y), F ↦ f ∘ F, is surjective. -/
 theorem coindOneMap_surjective {X Y : TopRep.{max g w, r, g} R G}
     [DiscreteTopology Y] (f : X ⟶ Y) (hf : Function.Surjective f.hom) :
     Function.Surjective ((TopRep.coind₁Functor R G).map f).hom := by
@@ -48,7 +60,12 @@ theorem coindOneMap_surjective {X Y : TopRep.{max g w, r, g} R G}
   intro t
   exact Classical.choose_spec (hf (c t))
 
-/-- The actual continuous-function map retains injectivity of its original coefficient arrow. -/
+/-- Let k be a ring with a topology and G a topological group.
+Let X be a topological k-module with a G-representation by continuous
+k-linear maps, with carrier universe max(v,w), independently of the
+scalar universe u and group universe v.
+For an injective continuous equivariant R-linear f : X → Y,
+postcomposition C(G,X) → C(G,Y) is injective. -/
 theorem coindOneMap_injective {X Y : TopRep.{max g w, r, g} R G}
     (f : X ⟶ Y) (hf : Function.Injective f.hom) :
     Function.Injective ((TopRep.coind₁Functor R G).map f).hom := by
@@ -58,7 +75,14 @@ theorem coindOneMap_injective {X Y : TopRep.{max g w, r, g} R G}
   apply hf
   exact congrArg (fun q : C(G, Y) => q t) h
 
-/-- Every actual coinduced kernel function lifts continuously through an exact coefficient pair. -/
+/-- Let k be a ring with a topology and G a topological group.
+Let X be a topological k-module with a G-representation by continuous
+k-linear maps, with carrier universe max(v,w), independently of the
+scalar universe u and group universe v.
+Let f : X → Y and q : Y → Z be coefficient morphisms, with
+Y discrete and every y ∈ ker(q) admitting x with f(x)=y.
+For F ∈ C(G,Y) satisfying q ∘ F=0, there exists B ∈ C(G,X)
+with f ∘ B=F. -/
 theorem coindOneMap_lift_kernel {X Y Z : TopRep.{max g w, r, g} R G}
     [DiscreteTopology Y] (f : X ⟶ Y) (q : Y ⟶ Z)
     (hex : ∀ y : Y, q.hom y = 0 → ∃ x : X, f.hom x = y)
@@ -77,7 +101,14 @@ theorem coindOneMap_lift_kernel {X Y Z : TopRep.{max g w, r, g} R G}
   apply hs
   exact congrArg (fun d : C(G, Z) => d t) hc
 
-/-- Actual coinduction preserves real short-exact discrete coefficient sequences. -/
+/-- Let k be a ring with a topology and G a topological group.
+Let X be a topological k-module with a G-representation by continuous
+k-linear maps, with carrier universe max(v,w), independently of the
+scalar universe u and group universe v.
+For a short complex X₁ → X₂ → X₃ with X₂ and X₃ discrete,
+assume the underlying algebraic representation sequence is short exact.
+Its coinduced sequence remains short exact after forgetting topology
+to algebraic representations. -/
 theorem coindOne_forget_shortExact
     (S : ShortComplex (TopRep.{max g w, r, g} R G))
     [DiscreteTopology S.X₂] [DiscreteTopology S.X₃]

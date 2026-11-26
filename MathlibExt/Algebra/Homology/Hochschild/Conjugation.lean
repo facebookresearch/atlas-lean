@@ -20,11 +20,19 @@ public import Mathlib.Algebra.Group.Units.Defs
 public import Mathlib.Algebra.Ring.Action.ConjAct
 
 /-!
-# Unit conjugation and tensor insertion
+# Unit conjugation is homotopic to the Hochschild identity
 
-A unit gives inverse algebra and coefficient conjugation
-maps. Their tensor insertion family has the coefficient-first
-prefix, inserted unit and tail formula.
+Let `k` be a commutative ring, `A` a unital `k`-algebra, and `M` a bimodule with commuting
+left and right actions compatible with `k`. For a unit `c ∈ Aˣ`, put `α(a) = c⁻¹ac` and `γ(m)
+= c⁻¹ • (m • c)`. Acting by `γ` on the coefficient and `α` on each tail factor defines a
+Hochschild chain map.
+
+For `0 ≤ i ≤ n`, the insertion map `h_i` sends a coefficient-first word to the word with
+coefficient `m • c`, conjugated first `i` tail factors, inserted element `c⁻¹`, and unchanged
+remaining tail. The face identities give a semisimplicial homotopy from conjugation to the
+identity and a chain homotopy with degree-`n` component `-∑ᵢ (-1)^i h_i`. Thus conjugation
+induces the identity in every degree where homology is defined. The scalar, algebra, and
+coefficient universes are independent.
 -/
 
 @[expose] public section
@@ -42,10 +50,15 @@ universe u v w
 variable (k : Type u) [CommRing k]
   {A : Type v} [Ring A] [Algebra k A]
 
-/-- The inverse-unit conjugation map from the native units action. -/
+/-- The inverse-unit conjugation algebra homomorphism.
+
+For `c ∈ Aˣ`, the `k`-algebra map sends `a` to `c⁻¹ac`. -/
 def algebraMap (c : Aˣ) : A →ₐ[k] A :=
   MulSemiringAction.toAlgHom k A (ConjAct.toConjAct (c⁻¹))
 
+/-- The value of inverse-unit algebra conjugation.
+
+For `a ∈ A`, conjugation has value `c.inv * a * c.val`, with this multiplication order. -/
 @[simp]
 theorem algebraMap_apply (c : Aˣ) (a : A) :
     algebraMap k c a = c.inv * a * c.val := rfl
@@ -54,23 +67,38 @@ variable {M : Type w} [AddCommGroup M] [Module k M]
   [Module A M] [Module Aᵐᵒᵖ M] [SMulCommClass A Aᵐᵒᵖ M]
   [IsScalarTower k A M] [IsScalarTower k Aᵐᵒᵖ M]
 
-/-- The original right action by the unit, as a native ground-linear map. -/
+/-- The coefficient map given by right multiplication by a unit.
+
+For a bimodule coefficient `m`, this ground-linear map has value `op(c.val) • m`, representing
+`m • c`. -/
 def rightCoefficient (c : Aˣ) : M →ₗ[k] M :=
   Algebra.lsmul k k M (A := Aᵐᵒᵖ) (MulOpposite.op c.val)
 
-/-- The coefficient conjugation map, with both original actions. -/
+/-- The bimodule coefficient conjugation map.
+
+For `c ∈ Aˣ`, first act on the right by `c`, then on the left by `c⁻¹`, giving `m ↦ c⁻¹ •
+(op(c) • m)`. -/
 def coefficientMap (c : Aˣ) : M →ₗ[k] M :=
   (Algebra.lsmul k k M (A := A) c.inv).comp (rightCoefficient k c)
 omit [SMulCommClass A Aᵐᵒᵖ M] [IsScalarTower k A M] [Module A M] in
+/-- The right-unit coefficient value.
+
+Right coefficient multiplication sends `m` to `op(c.val) • m`. -/
 @[simp]
 theorem rightCoefficient_apply (c : Aˣ) (m : M) :
     rightCoefficient k c m = MulOpposite.op c.val • m := rfl
 omit [SMulCommClass A Aᵐᵒᵖ M] in
+/-- The value of bimodule coefficient conjugation.
+
+The coefficient conjugation map sends `m` to `c.inv • (op(c.val) • m)`. -/
 @[simp]
 theorem coefficientMap_apply (c : Aˣ) (m : M) :
     coefficientMap k c m = c.inv • (MulOpposite.op c.val • m) := rfl
 
-/-- Conjugating coefficients intertwines the left action. -/
+/-- Compatibility of coefficient conjugation with the left action.
+
+For `a ∈ A`, one has `γ(a • m) = α(a) • γ(m)`, where `α(a) = c⁻¹ac` and `γ(m) = c⁻¹ • (m •
+c)`. -/
 theorem coefficientMap_left (c : Aˣ) (a : A) (m : M) :
     coefficientMap k c (a • m) = algebraMap k c a • coefficientMap k c m := by
   change c.inv • (MulOpposite.op c.val • (a • m)) =
@@ -83,7 +111,10 @@ theorem coefficientMap_left (c : Aˣ) (a : A) (m : M) :
       rw [mul_assoc, mul_assoc, c.val_inv, mul_one]
     _ = _ := mul_smul _ _ _
 
-/-- The opposite scalar order gives the corresponding right-action square. -/
+/-- Compatibility of coefficient conjugation with the right action.
+
+For `a ∈ A`, one has `γ(op(a) • m) = op(α(a)) • γ(m)`, with the opposite-ring action encoding
+right multiplication. -/
 theorem coefficientMap_right (c : Aˣ) (a : A) (m : M) :
     coefficientMap k c (MulOpposite.op a • m) =
       MulOpposite.op (algebraMap k c a) • coefficientMap k c m := by
@@ -105,12 +136,18 @@ theorem coefficientMap_right (c : Aˣ) (a : A) (m : M) :
       congrArg (fun x : M => c.inv • x) (mul_smul _ _ _)
     _ = _ := smul_comm c.inv (MulOpposite.op (c.inv * a * c.val)) _
 
-/-- The degree conjugation map is the native Hochschild tensor map. -/
+/-- The degreewise Hochschild conjugation map.
+
+In degree `n`, act on the coefficient by `γ` and on each algebra tensor factor by `α(a) =
+c⁻¹ac`. -/
 def degreeMap (c : Aˣ) (n : ℕ) :
     M ⊗[k] TensorPower k n A →ₗ[k] M ⊗[k] TensorPower k n A :=
   ModuleCat.Algebra.Hochschild.linearMap
     (algebraMap k c).toNonUnitalAlgHom (coefficientMap k c) n
 omit [SMulCommClass A Aᵐᵒᵖ M] in
+/-- The tensor formula for Hochschild conjugation.
+
+The degree-`n` map sends `m ⊗ ⊗ᵢ aᵢ` to `γ(m) ⊗ ⊗ᵢ α(aᵢ)`. -/
 @[simp]
 theorem degreeMap_tprod (c : Aˣ) (n : ℕ) (m : M) (a : Fin n → A) :
     degreeMap k c n (m ⊗ₜ[k] PiTensorProduct.tprod k a) =
@@ -119,22 +156,35 @@ theorem degreeMap_tprod (c : Aˣ) (n : ℕ) (m : M) (a : Fin n → A) :
   rw [degreeMap, ModuleCat.Algebra.Hochschild.linearMap_tprod]
   rfl
 
-/-- Transform the prefix before the insertion cut and retain its tail. -/
+/-- The conjugation map before an insertion cut.
+
+For a cut `i` and tail index `j`, use the algebra conjugation map if `j < i` and the identity
+linear map otherwise. -/
 def prefixMap (c : Aˣ) {n : ℕ} (i : Fin (n + 1)) (j : Fin n) : A →ₗ[k] A :=
   if j.val < i.val then (algebraMap k c).toLinearMap else LinearMap.id
 
-/-- The literal output word of the insertion family. -/
+/-- The algebra word of a conjugation insertion.
+
+Insert `c⁻¹` at position `i`, conjugate the preceding `i` tail factors, and retain the
+remaining tail factors in their order. -/
 def word (c : Aˣ) {n : ℕ} (i : Fin (n + 1)) (a : Fin n → A) :
     Fin (n + 1) → A :=
   Fin.insertNth i c.inv (fun j => prefixMap k c i j (a j))
 
-/-- The coefficient-first insertion map h_i. -/
+/-- The coefficient-first insertion in the conjugation homotopy.
+
+In degree `n` and at cut `i`, multiply the coefficient on the right by `c`, conjugate the
+first `i` tail factors, insert `c⁻¹`, and retain the remaining tail. -/
 def hi (c : Aˣ) (n : ℕ) (i : Fin (n + 1)) :
     M ⊗[k] TensorPower k n A →ₗ[k] M ⊗[k] TensorPower k (n + 1) A :=
   TensorProduct.map (rightCoefficient k c)
     ((TensorPower.insert k i c.inv).comp
       (PiTensorProduct.map fun j => prefixMap k c i j))
 omit [SMulCommClass A Aᵐᵒᵖ M] [IsScalarTower k A M] [Module A M] in
+/-- The tensor formula for a conjugation insertion.
+
+The insertion sends `m ⊗ ⊗ⱼ aⱼ` to `(op(c.val) • m) ⊗` the word obtained by conjugating the
+prefix, inserting `c⁻¹`, and retaining the tail. -/
 @[simp]
 theorem hi_tprod (c : Aˣ) (n : ℕ) (i : Fin (n + 1)) (m : M) (a : Fin n → A) :
     hi k c n i (m ⊗ₜ[k] PiTensorProduct.tprod k a) =
@@ -142,11 +192,18 @@ theorem hi_tprod (c : Aˣ) (n : ℕ) (i : Fin (n + 1)) (m : M) (a : Fin n → A)
   simp only [hi, TensorProduct.map_tmul, LinearMap.comp_apply,
     PiTensorProduct.map_tprod, TensorPower.insert_tprod, word]
 
+/-- The inserted value in a conjugation word.
+
+At the insertion position `i`, the word has value `c⁻¹`. -/
 @[simp]
 theorem word_insert (c : Aˣ) {n : ℕ} (i : Fin (n + 1)) (a : Fin n → A) :
     word k c i a i = c.inv :=
   Fin.insertNth_apply_same _ _ _
 
+/-- The surviving values in a conjugation word.
+
+At the position corresponding to a surviving input index `j`, the word has value `c⁻¹aⱼc` when
+`j<i`, and `aⱼ` otherwise. -/
 theorem word_succAbove (c : Aˣ) {n : ℕ} (i : Fin (n + 1))
     (a : Fin n → A) (j : Fin n) :
     word k c i a (i.succAbove j) =
@@ -156,6 +213,9 @@ theorem word_succAbove (c : Aˣ) {n : ℕ} (i : Fin (n + 1))
   split <;> rfl
 
 
+/-- The conjugation word at the first insertion cut.
+
+At cut zero, the output word is `c⁻¹` followed by the unchanged input tail. -/
 @[simp]
 theorem word_zero (c : Aˣ) (n : ℕ) (a : Fin n → A) :
     word k c (0 : Fin (n + 1)) a = Fin.cons c.inv a := by
@@ -165,6 +225,9 @@ theorem word_zero (c : Aˣ) (n : ℕ) (a : Fin n → A) :
     simp only [prefixMap, Fin.val_zero, Nat.not_lt_zero, ite_false, LinearMap.id_apply]
   rw [hp, Fin.insertNth_zero']
 
+/-- The conjugation word at the last insertion cut.
+
+At the final cut, the output word is the fully conjugated input tail followed by `c⁻¹`. -/
 @[simp]
 theorem word_last (c : Aˣ) (n : ℕ) (a : Fin n → A) :
     word k c (Fin.last n) a = Fin.snoc (fun j => algebraMap k c (a j)) c.inv := by
@@ -176,7 +239,10 @@ theorem word_last (c : Aˣ) (n : ℕ) (a : Fin n → A) :
     rfl
   rw [hp, Fin.insertNth_last']
 
-/-- The conjugation map on the original Hochschild complex. -/
+/-- The Hochschild chain map of unit conjugation.
+
+Conjugating the coefficient by `γ` and every tail factor by `α` gives an endomorphism of the
+Hochschild chain complex. -/
 def chainMap (c : Aˣ) :
     ModuleCat.Algebra.Hochschild.chainComplex k A M ⟶
       ModuleCat.Algebra.Hochschild.chainComplex k A M :=
@@ -192,11 +258,18 @@ def chainMap (c : Aˣ) :
       (algebraMap k c).toNonUnitalAlgHom (coefficientMap k c)
       (coefficientMap_left k c) (coefficientMap_right k c) n)
 
+/-- The components of the Hochschild conjugation chain map.
+
+The degree-`n` component is the module map induced by the tensor conjugation map in that
+degree. -/
 @[simp]
 theorem chainMap_f (c : Aˣ) (n : ℕ) :
     ((chainMap (M := M) k c).f n).hom = degreeMap (M := M) k c n := rfl
 
-/-- The first insertion endpoint is exactly the original identity map. -/
+/-- The identity endpoint of conjugation insertion.
+
+In degree `n`, the first face after the first insertion satisfies `d₀ h₀ = id` on coefficient-
+first Hochschild tensors. -/
 theorem hi_zero_face (c : Aˣ) (n : ℕ) :
     (ModuleCat.Algebra.Hochschild.face k A M n 0).hom.comp (hi k c n 0) =
       (LinearMap.id : M ⊗[k] TensorPower k n A →ₗ[k] M ⊗[k] TensorPower k n A) := by
@@ -213,7 +286,10 @@ theorem hi_zero_face (c : Aˣ) (n : ℕ) :
   rw [hm]
   congr 1
 
-/-- The last insertion endpoint is the algebra/coefficient conjugation. -/
+/-- The conjugation endpoint of the last insertion.
+
+In degree `n`, the last face after the last insertion satisfies `d_(n+1) h_n = γ_n`, where
+`γ_n` is the degreewise coefficient-and-algebra conjugation map. -/
 theorem hi_last_face (c : Aˣ) (n : ℕ) :
     (ModuleCat.Algebra.Hochschild.face k A M n (Fin.last (n + 1))).hom.comp
         (hi k c n (Fin.last n)) = degreeMap k c n := by
@@ -521,7 +597,10 @@ private theorem rightCoefficient_face (c : Aˣ) (a : A) (m : M) :
     _ = MulOpposite.op (a * c.val) • m := by rw [← MulOpposite.op_mul, hc]
     _ = _ := by rw [MulOpposite.op_mul, mul_smul]
 
-/-- Faces before the insertion agree with the original source face. -/
+/-- The face identity before a conjugation insertion.
+
+For `i ≤ j`, the insertion family satisfies `d_i h_(j+1) = h_j d_i`, with the degree-dependent
+face and insertion indices as stated. -/
 theorem hi_face_before (c : Aˣ) {n : ℕ}
     (i : Fin (n + 2)) (j : Fin (n + 1)) (hij : i ≤ j.castSucc) :
     (ModuleCat.Algebra.Hochschild.face k A M (n + 1) i.castSucc).hom.comp
@@ -555,7 +634,9 @@ theorem hi_face_before (c : Aˣ) {n : ℕ}
       hs, ModuleCat.Algebra.Hochschild.face_inner_tprod, hi_tprod,
       word_mul_before k c p j hqv]
 
-/-- The two insertion cuts at the middle face give the same word. -/
+/-- The matching faces at adjacent conjugation insertion cuts.
+
+The insertion family satisfies `d_(j+1) h_(j+1) = d_(j+1) h_j`. -/
 theorem hi_face_middle (c : Aˣ) {n : ℕ} (j : Fin (n + 1)) :
     (ModuleCat.Algebra.Hochschild.face k A M (n + 1) j.castSucc.succ).hom.comp
         (hi k c (n + 1) j.succ) =
@@ -567,7 +648,10 @@ theorem hi_face_middle (c : Aˣ) {n : ℕ} (j : Fin (n + 1)) :
   rw [hi_tprod, hi_tprod, ModuleCat.Algebra.Hochschild.face_inner_tprod,
     ModuleCat.Algebra.Hochschild.face_inner_tprod, word_mul_middle]
 
-/-- Faces after the insertion retain the untouched tail, including the cyclic last face. -/
+/-- The face identity after a conjugation insertion.
+
+For `j<i`, the insertion family satisfies `d_(i+1) h_j = h_j d_i`, including the cyclic final
+face. -/
 theorem hi_face_after (c : Aˣ) {n : ℕ}
     (i : Fin (n + 2)) (j : Fin (n + 1)) (hji : j.castSucc < i) :
     (ModuleCat.Algebra.Hochschild.face k A M (n + 1) i.succ).hom.comp
@@ -600,7 +684,10 @@ theorem hi_face_after (c : Aˣ) {n : ℕ}
 
 
 
-/-- The conjugation components form a morphism of the coefficient bar. -/
+/-- The conjugation map of the coefficient semisimplicial bar.
+
+The degreewise coefficient-and-algebra conjugation maps commute with every bar face and define
+a semisimplicial endomorphism. -/
 def barMap (c : Aˣ) :
     let l := (Algebra.lsmul k k M (A := A)).toNonUnitalAlgHom
     let r := (Algebra.lsmul k k M (A := Aᵐᵒᵖ)).toNonUnitalAlgHom
@@ -626,12 +713,19 @@ def barMap (c : Aˣ) :
           (algebraMap k c).toNonUnitalAlgHom (coefficientMap k c)
           (coefficientMap_left k c) (coefficientMap_right k c) n i).symm)
 
+/-- The components of coefficient-bar conjugation.
+
+In semisimplicial degree `n`, the conjugation map is the categorical module map associated to
+degree-`n` Hochschild tensor conjugation. -/
 @[simp]
 theorem barMap_app (c : Aˣ) (n : ℕ) :
     (barMap (M := M) k c).app (Opposite.op ⦋n⦌ₛ) =
       ModuleCat.ofHom (degreeMap (M := M) k c n) := rfl
 
-/-- The original insertion formula supplies all five semisimplicial homotopy fields. -/
+/-- The semisimplicial homotopy from conjugation to the identity.
+
+The insertion maps `h_i` satisfy the two endpoint and three face identities, giving a
+semisimplicial homotopy between coefficient-bar conjugation and its identity. -/
 def faceHomotopy (c : Aˣ) :
     SemiSimplicialObject.Homotopy (barMap (M := M) k c) (𝟙 _) := by
   let l := (Algebra.lsmul k k M (A := A)).toNonUnitalAlgHom
@@ -687,7 +781,10 @@ def faceHomotopy (c : Aˣ) :
     simpa only [ModuleCat.hom_comp, ModuleCat.hom_ofHom] using
       hi_face_after k c i j hji
 
-/-- The homotopy from conjugation to identity on the canonical complex. -/
+/-- The chain homotopy from Hochschild conjugation to the identity.
+
+The coefficient-bar insertion homotopy gives a homotopy of the corresponding Hochschild chain
+maps, retaining the coefficient-first tensor presentation. -/
 def chainHomotopy (c : Aˣ) :
     _root_.Homotopy (chainMap k c) (𝟙 (ModuleCat.Algebra.Hochschild.chainComplex k A M)) := by
   let l : A →ₙₐ[k] Module.End k M :=
@@ -748,7 +845,10 @@ def chainHomotopy (c : Aˣ) :
   exact (_root_.Homotopy.ofEq hf.symm).trans
     (H.trans (_root_.Homotopy.ofEq hg))
 
-/-- The component of the native conjugation homotopy has the original negative sum sign. -/
+/-- The signed component formula for the conjugation chain homotopy.
+
+In degree `n`, the homotopy component to degree `n+1` is the negative alternating sum
+`-∑_(i=0)^n (-1)^i h_i`, with signs acting by integer scalar multiplication. -/
 theorem chainHomotopy_hom (c : Aˣ) (n : ℕ) :
     ((chainHomotopy (M := M) k c).hom n (n + 1)).hom =
       -∑ i : Fin (n + 1), (-1 : ℤ) ^ i.val • hi (M := M) k c n i := by
@@ -769,7 +869,10 @@ theorem chainHomotopy_hom (c : Aˣ) (n : ℕ) :
     ModuleCat.hom_neg, ModuleCat.hom_sum, ModuleCat.hom_zsmul, ModuleCat.hom_ofHom]
   rfl
 
-/-- Conjugation acts as the identity on each native homology object. -/
+/-- The identity action of unit conjugation on Hochschild homology.
+
+For every degree `n` in which the Hochschild complex has homology, the map induced by
+simultaneous algebra and bimodule coefficient conjugation is the identity. -/
 theorem homologyMap_eq_id (c : Aˣ) (n : ℕ)
     [(ModuleCat.Algebra.Hochschild.chainComplex k A M).HasHomology n] :
     HomologicalComplex.homologyMap (chainMap (M := M) k c) n = 𝟙 _ := by

@@ -1,3 +1,5 @@
-# Field Finite Galois Section Evaluation inverse map
+# Inverse finite Galois section evaluation is coefficient natural
 
-The actual inverse R-stage section is natural in EVERY original module morphism.
+Inverse finite Galois section evaluation is coefficient natural.
+
+The inverse evaluation commutes with coefficient maps and their inverse-sheaf section maps.

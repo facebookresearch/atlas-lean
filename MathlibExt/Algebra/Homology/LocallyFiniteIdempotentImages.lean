@@ -14,15 +14,25 @@ public import MathlibExt.Algebra.Homology.LocallyFiniteSplitComplex
 public import MathlibExt.Algebra.Homology.LocallyFiniteSplitHomology
 
 /-!
-# Actual locally finite chain-idempotent image decompositions
+# Locally finite decompositions by chain-idempotent images
 
-The image object, inclusion and factor are the original native image
-factorization of each original chain endomorphism. Actual orthogonality
-splits those images and kills cross-image factors. Original finite support
-and finite completeness in each chain degree give the actual complex and
-homology coproduct inverses via native split-complex lemmas. No desired
-complex/Hodge isomorphism, homology preservation, or global AB5 certificate
-is supplied.
+Let C be an abelian category, K a complex of arbitrary shape c on ι,
+and e_j : K → K, j ∈ ℕ, an orthogonal family of idempotents:
+e_k ∘ e_j = e_j for j = k and zero for j ≠ k.
+Write I_j = Im(e_j), with image inclusion i_j and factor p_j.
+Then p_j ∘ i_j = id_(I_j), while p_k ∘ i_j = 0 for j ≠ k.
+
+Suppose N : ι → ℕ bounds the degreewise support:
+(e_j)_n = 0 for j > N(n), and ∑_(j=0)^(N(n)) (e_j)_n = id_(K_n).
+If C has countable coproducts, the image inclusions give
+⨁_j I_j ≅ K as complexes. In degree n the inverse is the finite sum
+∑_(j=0)^(N(n)) ι_(j,n) ∘ (p_j)_n.
+
+The induced homology maps similarly give
+⨁_j H_n(I_j) ≅ H_n(K), with inverse
+∑_(j=0)^(N(n)) ι_j ∘ H_n(p_j).
+Only degreewise finite support is used; the object, morphism and index
+universes of C and ι are independent.
 -/
 
 @[expose] public section
@@ -46,21 +56,33 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 
 include he in
 omit [HasColimitsOfShape (Discrete ℕ) C] in
-/-- The native image factor and inclusion split each actual idempotent. -/
+/-- In an abelian category C, let e_j be an orthogonal
+idempotent family on a complex K of any shape. For every j, the
+image inclusion i_j : Im(e_j) → K and factor p_j : K → Im(e_j)
+satisfy p_j ∘ i_j = id_(Im(e_j)).
+This identity does not require coproducts in C. -/
 theorem idempotentImage_split (j : ℕ) :
     image.ι (e j) ≫ factorThruImage (e j) = 𝟙 (image (e j)) :=
   image_ι_factorThruImage_of_idempotent (e j) ((he j j).trans (ite_eq_left (rfl : j = j)))
 
 include he in
 omit [HasColimitsOfShape (Discrete ℕ) C] in
-/-- Orthogonality annihilates the factor between two distinct native idempotent images. -/
+/-- In an abelian category C, let e_j be an orthogonal
+idempotent family on a complex K of any shape. For j ≠ k, the map
+Im(e_j) → K → Im(e_k), given by image inclusion and factor,
+is zero. No coproduct assumption is needed. -/
 theorem idempotentImage_cross (j k : ℕ) (hjk : j ≠ k) :
     image.ι (e j) ≫ factorThruImage (e k) = 0 :=
   image_ι_factorThruImage_of_comp_zero (e j) (e k) ((he j k).trans (ite_eq_right hjk))
 
 include hsupport in
 omit [HasColimitsOfShape (Discrete ℕ) C] in
-/-- A zero idempotent component makes the native image-factor component zero. -/
+/-- Let K be a complex of any shape in an abelian category C,
+let e_j : K → K be chain endomorphisms and N : ι → ℕ a bound.
+If (e_j)_n = 0 for j > N(n), then the degree-n component of
+K → Im(e_j) is zero for those j.
+This conclusion uses the support condition, without an
+orthogonality or coproduct assumption. -/
 theorem idempotentImage_factor_support (n : ι) (j : ℕ) (hj : N n < j) :
     (factorThruImage (e j)).f n = 0 := by
   apply (cancel_mono ((image.ι (e j)).f n)).mp
@@ -69,7 +91,12 @@ theorem idempotentImage_factor_support (n : ι) (j : ℕ) (hj : N n < j) :
 
 include hsum in
 omit [HasColimitsOfShape (Discrete ℕ) C] in
-/-- The original finite projector sum is retained by the native image factorization. -/
+/-- For a complex K in an abelian category C and chain
+endomorphisms e_j, suppose
+∑_(j=0)^(N(n)) (e_j)_n = id_(K_n) in every degree n.
+Writing i_j,p_j for the image inclusion and factor gives
+∑_(j=0)^(N(n)) (i_j)_n ∘ (p_j)_n = id_(K_n).
+No orthogonality premise is required for this factorization equality. -/
 theorem idempotentImage_projector_sum (n : ι) :
     (∑ j : Fin (N n + 1), (factorThruImage (e j.val)).f n ≫ (image.ι (e j.val)).f n) =
       𝟙 (K.X n) := by
@@ -77,7 +104,12 @@ theorem idempotentImage_projector_sum (n : ι) :
   exact hsum n
 
 include he hsupport hsum in
-/-- The original native idempotent image complexes have their actual locally finite coproduct isomorphism. -/
+/-- Let C be an abelian category with countable coproducts and
+K a complex of arbitrary shape. Suppose orthogonal idempotents e_j
+vanish in degree n for j > N(n), and their components up to N(n)
+sum to id_(K_n). The image inclusions induce the complex isomorphism
+⨁_(j∈ℕ) Im(e_j) ≅ K. Its degreewise inverse is the finite sum of
+the image factors followed by coproduct inclusions. -/
 def locallyFiniteIdempotentImageComplexIso : (∐ (fun j : ℕ => image (e j))) ≅ K :=
   locallyFiniteSplitComplexCoproductIso K (fun j : ℕ => image (e j))
     (fun j => image.ι (e j)) (fun j => factorThruImage (e j))
@@ -86,7 +118,12 @@ def locallyFiniteIdempotentImageComplexIso : (∐ (fun j : ℕ => image (e j))) 
     (idempotentImage_projector_sum K e N hsum)
 
 include he hsupport hsum in
-/-- The original image homologies have their actual finite-projection coproduct inverse in every degree. -/
+/-- Let C be an abelian category with countable coproducts and
+K a complex of arbitrary shape with orthogonal idempotents e_j.
+Assume (e_j)_n = 0 for j > N(n) and
+∑_(j=0)^(N(n)) (e_j)_n = id_(K_n) in every degree.
+Then ⨁_j H_n(Im(e_j)) ≅ H_n(K), with forward map induced by image
+inclusions and inverse ∑_(j=0)^(N(n)) ι_j ∘ H_n(p_j). -/
 def locallyFiniteIdempotentImageHomologyIso (n : ι) :
     (∐ (fun j : ℕ => (image (e j)).homology n)) ≅ K.homology n :=
   finiteSplitHomologyCoproductIso K (fun j : ℕ => image (e j))

@@ -1,4 +1,6 @@
-# Enveloping Projective Resolution Of Projective
+# A projective Lie module gives a projective resolution of the trivial enveloping module
 
-The Chevalley–Eilenberg projective resolution of the trivial enveloping module when `L` is
-projective over `R`.
+Let R : Type u be a commutative ring, L : Type v an R-Lie algebra, U its enveloping algebra
+and T₀ = envelopingTrivialObject R L the lifted scalar U-module acted on through augmentation.
+Assume Module.Projective R L. envelopingProjectiveResolutionOfProjective resolves T₀ with
+complex envelopingComplex R L, its augmentation and projective terms.

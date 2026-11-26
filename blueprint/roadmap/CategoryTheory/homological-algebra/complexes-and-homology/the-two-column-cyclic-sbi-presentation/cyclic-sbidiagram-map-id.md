@@ -1,3 +1,6 @@
-# Cyclic SBIDiagram Map id
+# The identity map of a two-column SBI homology diagram
 
-The SBI-diagram map preserves the original identity algebra map.
+The identity map of a two-column SBI homology diagram.
+
+The identity algebra homomorphism induces the identity on the ordinary and cyclic homology
+terms and their SBI diagram.

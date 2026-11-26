@@ -22,12 +22,20 @@ universe u w
 namespace AlgebraicGeometry.Scheme.DerivedSections.OriginalGammaBridge
 variable (X : Scheme.{u})
 
-/-- The genuine large Ext instance for the common sheaf category. -/
+/-- For a scheme X in universe u and c = max(u, w), Ext groups
+in the category C of AddCommGrpCat c-valued sheaves on its small étale site
+also admit carriers in e = max(u + 1, w). This is the larger Ext
+universe used to compare Hom from the integral sheaf with global sections. -/
 theorem largeExt : HasExt.{max (u + 1) w}
     (Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :=
   hasExt_of_enoughInjectives _
 
-/-- Change only the Ext carrier universe through the same derived-category morphism. -/
+/-- Let X be a scheme in universe u, c = max(u, w), e = max(u + 1, w),
+and Q an AddCommGrpCat c-valued sheaf on its small étale site. For q ∈ ℕ,
+this is the additive equivalence
+Hᑫ(X, Q) = Extᑫ_c(ℤ_X, Q) ≃ Extᑫ_e(ℤ_X, Q).
+It changes the Ext carrier universe while preserving the sheaves and
+the derived-category morphism representing each extension class. -/
 def extSizeEquiv (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (q : ℕ) :
     letI : HasExt.{max (u + 1) w}
       (Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) := largeExt.{u, w} X
@@ -39,7 +47,11 @@ def extSizeEquiv (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (q : �
   exact Abelian.Ext.sizeEquiv.{(max u w) + 1, max u w, max (u + 1) w,
     max (u + 1) w, (max u w) + 1} (integralSheaf.{u, w} X) Q q
 
-/-- The size comparison leaves the actual original derived morphism unchanged. -/
+/-- For a scheme X in universe u, c = max(u, w), e = max(u + 1, w),
+a coefficient sheaf Q on its small étale site, and x ∈ Hᑫ(X, Q),
+the Ext size equivalence from universe c to e leaves the representing
+morphism in the derived category of AddCommGrpCat c-valued sheaves unchanged.
+The derived-category universe is c + 1 on both sides. -/
 theorem extSizeEquiv_hom (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (q : ℕ)
     (x : Sheaf.H.{max u w, max u w, u, u + 1} Q q) :
     letI : HasExt.{max (u + 1) w}
@@ -56,7 +68,12 @@ theorem extSizeEquiv_hom (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}
   exact Abelian.Ext.sizeEquiv_hom.{(max u w) + 1, max u w, max (u + 1) w,
     max (u + 1) w, (max u w) + 1} x
 
-/-- The original covariant extension-class boundary is preserved by size transport. -/
+/-- Let X be a scheme in universe u, c = max(u, w), e = max(u + 1, w),
+S : 0 → F₁ → F₂ → F₃ → 0 a short exact sequence of abelian sheaves
+on its small étale site with coefficients in c, and x ∈ Hᑫ(X, F₃).
+The Ext size equivalence satisfies
+size(δ_S(x)) = [S] ∘ size(x) in Extᑫ⁺¹_e(ℤ_X, F₁).
+Thus it preserves the connecting map and the order of Yoneda composition. -/
 theorem extSizeEquiv_connecting
     (S : ShortComplex (Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}))
     (hS : S.ShortExact) (q : ℕ)
@@ -82,12 +99,22 @@ universe u w
 namespace AlgebraicGeometry.Scheme.DerivedSections.OriginalGammaBridge
 variable (X : Scheme.{u})
 
-/-- Global sections of abelian sheaves on the small étale site of X in the common universe. -/
+/-- For a scheme X in universe u and c = max(u, w), Γ_X is the
+global-section functor from AddCommGrpCat c-valued sheaves on its small
+étale site to AddCommGrpCat c. It is the right adjoint of the
+constant-sheaf functor. -/
 abbrev Γ := Sheaf.Γ X.smallEtaleTopology AddCommGrpCat.{max u w}
-/-- The additive functor of morphisms from the integral sheaf on the small étale site of X. -/
+/-- For a scheme X in universe u, c = max(u, w), and e = max(u + 1, w),
+P_X is the additive covariant Hom functor Q ↦ Hom(ℤ_X, Q) from
+AddCommGrpCat c-valued sheaves on the small étale site to AddCommGrpCat e.
+The source ℤ_X is the constant integral sheaf. -/
 abbrev P := preadditiveCoyoneda.obj (op (integralSheaf.{u, w} X))
 
-/-- Identify morphisms from the integral sheaf with global sections after lifting the universe. -/
+/-- Let X be a scheme in universe u, c = max(u, w), and e = max(u + 1, w).
+The additive functor P_X(Q) = Hom(ℤ_X, Q) is naturally isomorphic to the
+global-section functor Γ_X followed by the coefficient lift of height u + 1.
+On f : ℤ_X → Q, the isomorphism gives ULift.up of the global section
+whose value at the terminal étale object is f(1). -/
 def homLiftIso : P.{u, w} X ≅ Γ.{u, w} X ⋙ AddCommGrpCat.uliftFunctor.{u + 1, max u w} :=
   NatIso.ofComponents
     (fun Q => ((integralHomSections.{u, w} X Q).trans AddEquiv.ulift.symm).toAddCommGrpIso)
@@ -98,8 +125,11 @@ def homLiftIso : P.{u, w} X ≅ Γ.{u, w} X ⋙ AddCommGrpCat.uliftFunctor.{u + 
         ULift.up ((Γ.{u, w} X).map f (integralHomSections.{u, w} X Q g))
       exact congrArg ULift.up (integralHomSections_naturality.{u, w} X g f))
 
-/-- The isomorphism on right derived functors in degree q induced by the
-Hom–sections identification. -/
+/-- For a scheme X in universe u, c = max(u, w), e = max(u + 1, w),
+and q ∈ ℕ, the natural isomorphism
+P_X ≅ Lift_(u+1) ∘ Γ_X induces an isomorphism of right derived functors
+RᑫP_X ≅ Rᑫ(Lift_(u+1) ∘ Γ_X), with values in AddCommGrpCat e.
+Here P_X(Q) = Hom(ℤ_X, Q) on AddCommGrpCat c-valued étale sheaves. -/
 def derivedHomLiftIso (q : ℕ) :
     (P.{u, w} X).rightDerived q ≅
       (Γ.{u, w} X ⋙ AddCommGrpCat.uliftFunctor.{u + 1, max u w}).rightDerived q where
@@ -110,8 +140,12 @@ def derivedHomLiftIso (q : ℕ) :
   inv_hom_id := by
     rw [← NatTrans.rightDerived_comp, Iso.inv_hom_id, NatTrans.rightDerived_id]
 
-/-- Compare Ext from the integral sheaf in degree q with derived global sections
-after a universe lift. -/
+/-- For a scheme X in universe u, c = max(u, w), e = max(u + 1, w),
+and q ∈ ℕ, this is the natural isomorphism of functors on abelian sheaves
+with coefficients in c,
+Extᑫ_e(ℤ_X, -) ≅ Lift_(u+1) ∘ RᑫΓ_X.
+It uses the integral Hom–section equivalence and the exactness of the
+coefficient lift, retaining Γ_X's cohomology groups in universe c. -/
 def largeComparisonIso (q : ℕ) :
     letI : HasExt.{max (u + 1) w}
       (Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) := largeExt.{u, w} X
@@ -124,8 +158,12 @@ def largeComparisonIso (q : ℕ) :
       ((Γ.{u, w} X).rightDerivedCompIsoOfPreservesHomology
         (AddCommGrpCat.uliftFunctor.{u + 1, max u w}) q).symm
 
-/-- Compare the original small étale cohomology with derived global sections by changing
-the Ext carrier universe and removing the lift in the large comparison. -/
+/-- Let X be a scheme in universe u, c = max(u, w), Q an
+AddCommGrpCat c-valued sheaf on its small étale site, and q ∈ ℕ.
+This is the additive equivalence Hᑫ(X, Q) ≃ (RᑫΓ_X)(Q).
+The left side is Extᑫ(ℤ_X, Q) with carrier in c; the intermediate Ext
+carrier is e = max(u + 1, w), and the final coefficient lift is removed,
+so the right side is again an abelian group in universe c. -/
 def originalComparison
     (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (q : ℕ) :
     Sheaf.H.{max u w, max u w, u, u + 1} Q q ≃+ ((Γ.{u, w} X).rightDerived q).obj Q :=
@@ -178,7 +216,12 @@ universe u w
 namespace AlgebraicGeometry.Scheme.DerivedSections.OriginalGammaBridge
 variable (X : Scheme.{u})
 
-/-- Every actual resolution representative is unchanged under the Ext size comparison. -/
+/-- Let X be a scheme in universe u, c = max(u, w), e = max(u + 1, w),
+Q an AddCommGrpCat c-valued étale sheaf, R an injective resolution of Q,
+and f : ℤ_X → Rᑫ a cocycle with d_R ∘ f = 0. The Ext size equivalence
+from carrier c to carrier e sends the extension class represented by f
+to the extension class represented by the same f in the same resolution.
+This holds for every q ∈ ℕ and every chosen injective resolution. -/
 theorem extSizeEquiv_extMk_resolution
     (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w})
     (R : InjectiveResolution Q) (q : ℕ)
@@ -196,8 +239,15 @@ theorem extSizeEquiv_extMk_resolution
     max (u + 1) w, (max u w) + 1} f (q + 1) rfl hf
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The SAME original étale connecting map is computed by the actual chosen
-horseshoe section, differential and retraction on every original representative. -/
+/-- Let X be a scheme in universe u, c = max(u, w), and
+S : 0 → F₁ → F₂ → F₃ → 0 a short exact sequence of abelian sheaves
+with coefficients in c on its small étale site. Choose injective horseshoe
+resolutions I₁, I₂, I₃ with degreewise section s_q : I₃,q → I₂,q and
+retraction r_(q+1) : I₂,q+1 → I₁,q+1. For a cocycle f : ℤ_X → I₃,q,
+the connecting map sends its extension class to the class represented by
+r_(q+1) ∘ d_I₂ ∘ s_q ∘ f : ℤ_X → I₁,q+1.
+The representative has the indicated order and no additional sign;
+it is the same connecting map defined by Yoneda composition with [S]. -/
 theorem original_extMk_connecting
     (S : ShortComplex (Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}))
     (hS : S.ShortExact) (H : Functor.RightDerived.HorseshoeData S hS) (q : ℕ)

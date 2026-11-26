@@ -1,4 +1,6 @@
-# H3 ZMod Restrict Int Add Equiv nested Cup One One
+# Integral comparison of a nested triple first-cohomology cup
 
-Scalar restriction of a right-associated triple cup is the integral
-triple cup followed by the canonical right-associated tensor comparison.
+For n∈ℕ, a group G and a ZMod n-representation A, scalar
+restriction sends x∪(y∪z) for x,y,z∈H¹(G,A) to the nested
+integral cup, with coefficients identified by the right-associated
+tensor-cube comparison. The degree is three.

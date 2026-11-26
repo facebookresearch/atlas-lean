@@ -1,4 +1,6 @@
-# Cotangent Simplicial map tensor
+# The differential formula for a simplicial cotangent operator
 
-Every simplicial operator is the actual linearization of its given
-algebra map, with the augmentation triangle supplied by naturality.
+The differential formula for a simplicial cotangent operator.
+
+For an operator `θ : i → j`, the induced module map sends `a ⊗ dp` in degree `i` to `a ⊗
+d(P(θ)(p))` in degree `j`.

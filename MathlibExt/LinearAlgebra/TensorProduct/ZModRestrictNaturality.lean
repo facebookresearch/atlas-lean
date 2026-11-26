@@ -15,14 +15,14 @@ public import MathlibExt.LinearAlgebra.TensorProduct.ZModRestrict
 public import Mathlib.LinearAlgebra.TensorProduct.Map
 
 /-!
-# Naturality of the `ℤ`/`ZMod n` tensor comparison
+# Naturality of integer and residue tensor comparison
 
-The canonical equivalence from tensoring two `ZMod n` modules over `ℤ`
-to tensoring them over `ZMod n` is natural in a pair of `ZMod n`-linear
-maps.  The statement is made over `ℤ` after forgetting the scalar
-structure on the target tensor product.
+Let M,N,M′,N′ be ZMod(n)-modules in independent carrier universes, with n∈ℕ. For residue-linear
+maps f:M→M′ and g:N→N′, the canonical equivalence from integer tensoring to residue tensoring
+commutes with f⊗g.
 
-The result includes `n = 0`.
+The equation is ℤ-linear after restricting the residue tensor maps to their additive integer
+actions. It holds for n=0 as well as positive moduli.
 -/
 
 @[expose] public section
@@ -42,8 +42,10 @@ variable [AddCommGroup M'] [AddCommGroup N']
 variable [Module (ZMod n) M] [Module (ZMod n) N]
 variable [Module (ZMod n) M'] [Module (ZMod n) N']
 
-/-- Naturality of `zmodRestrictIntEquiv` under a pair of `ZMod n`-linear
-maps. -/
+/-- For n∈ℕ and ZMod(n)-linear f:M→M′, g:N→N′ in independent carrier universes, let
+e_{M,N}:M⊗_ℤN≅M⊗_{ZMod(n)}N be the canonical comparison. Then
+(f⊗_{ZMod(n)}g)|_ℤ∘e_{M,N}=e_{M′,N′}∘(f|_ℤ⊗_ℤg|_ℤ). This is equality of ℤ-linear maps and
+includes n=0. -/
 theorem zmodRestrictIntEquiv_naturality
     (f : M →ₗ[ZMod n] M') (g : N →ₗ[ZMod n] N') :
     (TensorProduct.map f g).toAddMonoidHom.toIntLinearMap.comp

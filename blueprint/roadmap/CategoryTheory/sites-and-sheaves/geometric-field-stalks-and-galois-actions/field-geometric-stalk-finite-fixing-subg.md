@@ -1,3 +1,5 @@
-# Field Geometric Stalk finite fixing Subgroup
+# A finite Galois fixing subgroup lies in each vector's stabilizer
 
-Each germ's own actual finite Galois fixing subgroup is contained in its stabilizer.
+For a field k, prescribed separable closure Ω, sheaf Q, and stalk vector m, there exists a
+finite Galois subfield L⊆Ω with L.fixingSubgroup ≤ Stab_G(m). A representative of m at L is
+fixed by every automorphism fixing L.

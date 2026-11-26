@@ -1,3 +1,5 @@
-# Matrix Homology Coaug
+# The graded coaugmentation of finite matrix CE homology
 
-The matrix homology coaugmentation is the canonical homology/unit map.
+The graded coaugmentation of finite matrix CE homology.
+
+Apply the homology unit comparison and homology of the compared chain coaugmentation.

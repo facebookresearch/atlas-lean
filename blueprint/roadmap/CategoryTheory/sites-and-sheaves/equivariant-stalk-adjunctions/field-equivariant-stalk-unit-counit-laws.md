@@ -1,3 +1,6 @@
-# Field Equivariant Stalk Unit Counit Laws
+# Full field stalk unit and counit laws
 
-The SAME actual unit and counit retain every original coordinate, naturality and triangle.
+Full field stalk unit and counit laws.
+
+The unit and counit are the adjunction maps, satisfy naturality and both triangles, and have
+the invariant projection, germ, evaluation, and lifted-section formulas.

@@ -15,13 +15,18 @@ public import MathlibExt.Algebra.Homology.Hochschild.EulerianConnesWeights
 public import MathlibExt.Algebra.Homology.Hochschild.NormalizedEulerianHodge
 
 /-!
-# Eulerian weights of the Connes homology map
+# Eulerian weights of normalized Connes homology
 
-Regular normalized Connes B induces a degree-one homology
-map. Its Eulerian intertwining relation sends weight i
-to weight i + 1 on the Hodge homology objects. The
-projectors require a rational ground algebra; no
-algebra or coefficient flatness is required.
+Let k be a commutative ℚ-algebra and A a commutative unital k-algebra.
+Normalized Connes boundary gives B_*:H_n(N(A))→H_{n+1}(N(A)).
+For the rational Eulerian projectors e_n^{(i)} on normalized homology,
+B_* e_n^{(i)}=e_{n+1}^{(i+1)} B_*.
+
+Thus the Connes map sends weight i into weight i+1, and its output
+weight-zero projection is zero in every degree. These statements concern
+regular coefficients A and do not require algebra flatness.
+
+References: J.-L. Loday, Cyclic Homology, §§2.1 and 4.5.
 -/
 
 @[expose] public section
@@ -37,7 +42,11 @@ namespace ModuleCat.Algebra.Hochschild.Symmetric
 variable (k : Type u) [CommRing k] [Algebra ℚ k]
   (A : Type v) [CommRing A] [Algebra k A]
 
-/-- The Eulerian component identity gives the all-degree B shift on original Hodge homology. -/
+/-- Let k be a commutative ℚ-algebra and A a commutative unital
+k-algebra. Set Ā=A/span_k{1} and N_n(A)=A⊗[k]Ā^{⊗n}.
+For the induced map B_*:H_n(N(A))→H_{n+1}(N(A)),
+the normalized Eulerian homology projectors satisfy
+B_* e_n^{(i)}=e_{n+1}^{(i+1)}B_* for every n,i≥0. -/
 @[reassoc]
 theorem normalizedEulerianHomology_connes_shift (n i : ℕ) :
     normalizedEulerianHomologyProjector k A A n i ≫ regularNormalizedConnesHomology k A n =
@@ -60,7 +69,10 @@ theorem normalizedEulerianHomology_connes_shift (n i : ℕ) :
     (by rfl : (ComplexShape.down ℕ).Rel (n + 1) n) H
       (normalizedEulerianChainMap k A A i) (normalizedEulerianChainMap k A A (i + 1)) hComponent
 
-/-- The output weight zero annihilates native regular Connes homology in every original degree. -/
+/-- Let k be a commutative ℚ-algebra and A a commutative unital
+k-algebra. Set Ā=A/span_k{1} and N_n(A)=A⊗[k]Ā^{⊗n}.
+The zero-weight projector on the output annihilates Connes
+homology: e_{n+1}^{(0)}B_*=0 for every n≥0. -/
 theorem normalizedEulerianHomology_connes_zero_weight (n : ℕ) :
     regularNormalizedConnesHomology k A n ≫ normalizedEulerianHomologyProjector k A A (n + 1) 0 = 0 := by
   let H := regularNormalizedBoundaryHomotopy k A

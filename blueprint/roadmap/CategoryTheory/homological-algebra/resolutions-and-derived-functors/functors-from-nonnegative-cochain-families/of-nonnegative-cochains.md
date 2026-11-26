@@ -1,3 +1,6 @@
-# Of Nonnegative Cochains
+# Delta functor of a nonnegative cochain family
 
-The homology δ-functor of a nonnegative additive cochain family.
+For a preadditive category `A`, an abelian category `B`, and an
+additive functor `F : A → CochainComplex B ℕ` preserving short
+exact sequences, the nonnegative cohomology functors of `F` form
+a cohomological δ-functor `A → B`.

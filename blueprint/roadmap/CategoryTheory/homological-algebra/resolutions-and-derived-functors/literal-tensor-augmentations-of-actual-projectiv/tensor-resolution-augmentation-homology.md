@@ -1,4 +1,6 @@
-# Tensor Resolution Augmentation homology zero
+# Tensor-resolution augmentation induces its canonical homology-zero coordinate
 
-The actual homology map of the tensor augmentation is the canonical
-native H0 tensor comparison, with the target's standard single homology iso.
+Tensor-resolution augmentation induces its canonical homology-zero coordinate.
+
+The degree-zero homology map of the tensor augmentation, followed by the homology coordinate
+of the target single complex, equals the forward homology-zero tensor comparison.

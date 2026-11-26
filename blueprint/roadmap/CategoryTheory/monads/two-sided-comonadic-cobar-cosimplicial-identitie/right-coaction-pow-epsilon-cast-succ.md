@@ -1,3 +1,6 @@
-# Right Coaction Pow epsilon cast Succ
+# Interchange of right coaction and an interior counit contraction
 
-Right-endpoint counit interchange (dual of `rightActionPow_eta_castSucc`).
+Interchange of right coaction and an interior counit contraction.
+
+The next-degree right coaction followed by a surviving counit contraction equals that
+contraction one degree lower followed by the preceding right coaction.

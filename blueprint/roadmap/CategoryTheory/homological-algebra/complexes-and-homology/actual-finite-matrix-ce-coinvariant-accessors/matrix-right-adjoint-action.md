@@ -1,3 +1,6 @@
-# Matrix Right Adjoint Action
+# The endomorphism-valued scalar right-adjoint action on matrix wedges
 
-The right-adjoint endomorphism-valued action, with its linear type.
+The endomorphism-valued scalar right-adjoint action on matrix wedges.
+
+A scalar special-linear matrix acts in degree `n` by replacing each wedge factor `X_i` with
+`[X_i,s]` and summing.

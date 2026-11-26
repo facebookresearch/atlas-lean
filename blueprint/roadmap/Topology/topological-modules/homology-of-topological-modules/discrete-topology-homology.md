@@ -1,4 +1,6 @@
-# Discrete Topology homology
+# Discrete middle term gives discrete topological homology
 
-If the middle term of a `TopModuleCat`-valued homological complex is
-discrete, then its categorically selected homology object is discrete.
+Discrete middle term gives discrete topological homology.
+
+If `K.X i` has discrete topology, then the selected homology object `K.homology i` is
+discrete.

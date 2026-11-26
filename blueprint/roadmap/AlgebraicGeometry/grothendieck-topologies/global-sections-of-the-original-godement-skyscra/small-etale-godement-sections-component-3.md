@@ -1,3 +1,6 @@
-# Small Etale Godement Sections Component naturality
+# Skyscraper product section comparison is natural in families
 
-The original coefficient-product comparison is natural in every family morphism.
+Skyscraper product section comparison is natural in families.
+
+The section map of a skyscraper-family morphism commutes with the coefficient-product
+comparisons and the product of its family components.

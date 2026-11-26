@@ -1,3 +1,6 @@
-# Tensor Projective Resolution π
+# Augmentation of the tensor-product projective resolution
 
-The constructed resolution retains the tensor of both actual augmentations.
+Augmentation of the tensor-product projective resolution.
+
+The projection of `tensorProjectiveResolution R P Q hTor` is `tensorResolutionAugmentation R P
+Q`.

@@ -1,3 +1,6 @@
-# Coefficient Lie Complex Map ULift
+# The lifted CE chain map of a compatible Lie and coefficient pair
 
-The CE chain map, placed in the common lifted module universe.
+The lifted CE chain map of a compatible Lie and coefficient pair.
+
+A Lie map `f` and an equivariant coefficient map `g` induce a chain map after lifting both
+complexes to the common carrier universe.

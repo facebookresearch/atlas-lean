@@ -1,3 +1,7 @@
-# Bimodule Tensor Morita Derived Equivalence counit Iso app Q
+# Localized Morita counit on a bounded cochain image
 
-The original localized counit is evaluated on the original bounded-complex representative.
+Localized Morita counit on a bounded cochain image.
+
+At `Q_S K`, the counit is the canonical lifting coordinate for the inverse-then-forward
+composite, followed by the `S`-return source isomorphism at the bounded finite-module cochain
+complex `K`.

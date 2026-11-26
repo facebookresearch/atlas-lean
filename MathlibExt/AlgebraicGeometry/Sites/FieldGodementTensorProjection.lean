@@ -13,10 +13,21 @@ public import MathlibExt.AlgebraicGeometry.Sites.FieldGodementProductCollapse
 public import MathlibExt.CategoryTheory.Adjunction.ComparisonMonadIso
 
 /-!
-# Actual tensor pairing under the field Godement product projection
+# Tensor pairings under the canonical field Godement projection
 
-The original family-adjunction counit characterizes its binary pairing. Its
-singleton projection is the same canonical point tensor-counit pairing.
+Let k be a field in universe u, X = Spec k and c = max(u, w).
+The canonical geometric point p over the unique point of X has stalk
+functor L and skyscraper right adjoint S. For coefficient groups M, N
+in AddCommGrpCat c, the skyscraper pairing
+μ_p : S(M) ⊗_sheaf S(N) → S(M ⊗[ℤ] N)
+is the adjoint transpose of the stalk tensor comparison followed by
+ε_M ⊗ ε_N, where ε is the point-adjunction counit.
+
+The Godement right adjoint is the product of skyscrapers over points of X.
+Projecting its tensor pairing to the unique point has the same counit
+characteristic as μ_p. The tensor of the two product-projected point
+counits is the tensor of the two Godement-family counits at that point.
+The coefficient universe w is independent of u.
 -/
 
 @[expose] public section
@@ -30,8 +41,15 @@ namespace AlgebraicGeometry.Scheme.DerivedSections
 
 variable (k : Type u) [Field k]
 
-/-- The actual canonical-point skyscraper pairing is the transpose of its original tensor
-counits. -/
+/-- Let k be a field in universe u, X = Spec k, c = max(u, w),
+and p the canonical geometric point over X's unique point. Write L for
+its stalk functor, S for its skyscraper right adjoint, and ε for the
+counit of L ⊣ S.
+For M, N ∈ AddCommGrpCat c, this is the sheaf morphism
+μ_p : S(M) ⊗_sheaf S(N) → S(M ⊗[ℤ] N).
+It is adjoint to (ε_M ⊗ ε_N) ∘ τ, where
+τ : L(S(M) ⊗_sheaf S(N)) ≅ L(S(M)) ⊗[ℤ] L(S(N))
+is the stalk tensor comparison. -/
 def fieldCanonicalPointSkyscraperTensorPairing (M N : AddCommGrpCat.{max u w}) :
     let p := fieldGodementCanonicalPoint.{u, w} k
     let R := p.skyscraperSheafFunctor (A := AddCommGrpCat.{max u w})
@@ -46,7 +64,14 @@ def fieldCanonicalPointSkyscraperTensorPairing (M N : AddCommGrpCat.{max u w}) :
         (a.counit.app M).hom.toIntLinearMap (a.counit.app N).hom.toIntLinearMap).toAddMonoidHom)
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual canonical-point pairing has its literal tensor-of-counits characteristic. -/
+/-- Let k be a field in universe u, X = Spec k, c = max(u, w),
+and p the canonical geometric point over X's unique point. Write L for
+its stalk functor, S for its skyscraper right adjoint, and ε for the
+counit of L ⊣ S.
+For coefficient groups M, N, the pairing μ_p satisfies
+ε_(M⊗N) ∘ L(μ_p) = (ε_M ⊗ ε_N) ∘ τ,
+where τ : L(S(M) ⊗_sheaf S(N)) ≅ L(S(M)) ⊗[ℤ] L(S(N)).
+This identifies its adjoint transpose as the tensor of the point counits. -/
 theorem fieldCanonicalPointSkyscraperTensorPairing_counit (M N : AddCommGrpCat.{max u w}) :
     let p := fieldGodementCanonicalPoint.{u, w} k
     let L := p.sheafFiber (A := AddCommGrpCat.{max u w})
@@ -66,8 +91,16 @@ theorem fieldCanonicalPointSkyscraperTensorPairing_counit (M N : AddCommGrpCat.{
     ((a.homEquiv _ _).symm_apply_apply b)
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual Godement family pairing has its original canonical point counit characteristic after
-projection. -/
+/-- Let k be a field in universe u, X = Spec k, c = max(u, w),
+and p the canonical geometric point over X's unique point. Write L for
+its stalk functor, S for its skyscraper right adjoint, and ε for the
+counit of L ⊣ S.
+Let M_y, N_y be families of coefficient groups over y ∈ X, and write
+R_G for the product-skyscraper Godement right adjoint and μ_G for its
+pairing. Projection π to S(M_* ⊗[ℤ] N_*) at the unique point * satisfies
+ε_(M_*⊗N_*) ∘ L(π ∘ μ_G) =
+(ε^G_M(*) ⊗ ε^G_N(*)) ∘ τ_(R_G M,R_G N),
+where ε^G is the family-adjunction counit and τ is the stalk tensor comparison. -/
 theorem fieldGodementSkyscraperPairing_projection_counit
     (M N : Spec (.of k) → AddCommGrpCat.{max u w}) :
     let X := Spec (.of k)
@@ -96,8 +129,16 @@ theorem fieldGodementSkyscraperPairing_projection_counit
     ((Category.assoc _ _ _).trans (h'.trans h))
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Tensoring the two actual product-projected point counits gives the same original family counit
-tensor component. -/
+/-- Let k be a field in universe u, X = Spec k, c = max(u, w),
+and p the canonical geometric point over X's unique point. Write L for
+its stalk functor, S for its skyscraper right adjoint, and ε for the
+counit of L ⊣ S.
+For coefficient families M, N, let π_M : R_G(M) → S(M_*) and
+π_N : R_G(N) → S(N_*) be the Godement product projections at the
+unique point. Then
+(ε_(M_*) ⊗ ε_(N_*)) ∘ (L(π_M) ⊗ L(π_N)) =
+ε^G_M(*) ⊗ ε^G_N(*).
+The equality is between maps of tensor products of the corresponding stalk groups. -/
 theorem fieldGodementProjectedCounitTensor
     (M N : Spec (.of k) → AddCommGrpCat.{max u w}) :
     let X := Spec (.of k)

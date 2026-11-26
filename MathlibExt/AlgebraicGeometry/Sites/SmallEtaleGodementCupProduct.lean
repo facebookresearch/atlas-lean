@@ -16,10 +16,22 @@ public import MathlibExt.Algebra.Category.Grp.MonoidalPreadditive
 public import MathlibExt.Algebra.Homology.GradedPairingHomology
 
 /-!
-# The actual cup on original Godement cochains
+# Cup products on Godement section cochains
 
-The original front and back simplex maps and the actual Godement tensor
-pairing construct the Alexander–Whitney cochain cup.
+Let X be a scheme in universe u and c = max(u, w). For an abelian étale
+sheaf F with coefficients in c, let C_F^n = Γ_X(T^(n+1)F), where T is
+the Godement monad. Its differential is the alternating sum
+∑_(i=0)^(n+1) (-1)^i Γ_X(δ^i).
+
+For degrees p, q, the cup uses the front inclusion [p] → [p+q],
+i ↦ i, and back inclusion [q] → [p+q], j ↦ p+j.
+Apply these to the two cochains, use the global-section tensor map,
+then the degree p+q Godement tensor pairing.
+The result lies in C_(F⊗H)^(p+q) and satisfies
+d(a ∪ b) = da ∪ b + (-1)^p a ∪ db.
+It descends to Godement cohomology and, through the étale comparison,
+to Hᵖ(X,F) ⊗[ℤ] Hᑫ(X,H) → Hᵖ⁺ᑫ(X,F ⊗_sheaf H).
+The cup is additive in each variable and natural in both coefficient sheaves.
 -/
 
 @[expose] public section
@@ -31,8 +43,15 @@ open scoped BigOperators TensorProduct
 
 namespace AlgebraicGeometry.Scheme.DerivedSections
 
-/-- The actual Godement cochain cup uses the original front/back simplex inclusions and tensor
-pairing. -/
+/-- Let X be a scheme in universe u and c = max(u, w).
+Work with AddCommGrpCat c-valued sheaves on its small étale site.
+Let T be the Godement monad and ⊗_sheaf the sheafified integer tensor.
+For coefficient sheaves F and H, write C_F^n = Γ_X(T^(n+1)F) and
+C_H^n = Γ_X(T^(n+1)H) for their Godement section cochains, with
+alternating coface differentials.
+For p, q ∈ ℕ, this map C_F^p ⊗[ℤ] C_H^q → C_(F⊗H)^(p+q)
+applies the front simplex inclusion to F and the back inclusion to H,
+then the global-section tensor map and Godement tensor pairing. -/
 def smallEtaleGodementCochainCup (X : Scheme.{u})
     (F G : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (p q : ℕ) :
     AddCommGrpCat.of
@@ -291,14 +310,27 @@ private theorem awPair_leibniz (p q : ℕ) :
 
 end CosimplicialCup
 
-/-- Original global sections applied degreewise to the genuine Godement cosimplicial object. -/
+/-- Let X be a scheme in universe u and c = max(u, w).
+Work with AddCommGrpCat c-valued sheaves on its small étale site.
+Let T be the Godement monad and ⊗_sheaf the sheafified integer tensor.
+Taking global sections degreewise gives the cosimplicial abelian group
+S_F^n = Γ_X(T^(n+1)F), with cofaces and codegeneracies induced from
+the Godement monad coresolution. -/
 def smallEtaleGodementSectionsCosimplicial (X : Scheme.{u})
     (F : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :
     CosimplicialObject AddCommGrpCat.{max u w} :=
   smallEtaleGodementCoresolution.{u, w} X F ⋙
     Sheaf.Γ X.smallEtaleTopology AddCommGrpCat.{max u w}
 
-/-- The actual binary tensor map on the same global-section cosimplicial objects. -/
+/-- Let X be a scheme in universe u and c = max(u, w).
+Work with AddCommGrpCat c-valued sheaves on its small étale site.
+Let T be the Godement monad and ⊗_sheaf the sheafified integer tensor.
+For coefficient sheaves F and H, write C_F^n = Γ_X(T^(n+1)F) and
+C_H^n = Γ_X(T^(n+1)H) for their Godement section cochains, with
+alternating coface differentials.
+The same-degree section pairing C_F^n ⊗[ℤ] C_H^n → C_(F⊗H)^n
+is the global-section tensor map followed by Γ_X of the degree n
+Godement coresolution tensor pairing. -/
 def smallEtaleGodementSectionsDegreePairing (X : Scheme.{u})
     (F G : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (n : ℕ) :
     AddCommGrpCat.of
@@ -313,7 +345,14 @@ def smallEtaleGodementSectionsDegreePairing (X : Scheme.{u})
       (smallEtaleGodementCoresolutionTensorPairing.{u, w} X F G n)
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual global-section degree pairing commutes with every original Godement coface. -/
+/-- Let X be a scheme in universe u and c = max(u, w).
+Work with AddCommGrpCat c-valued sheaves on its small étale site.
+Let T be the Godement monad and ⊗_sheaf the sheafified integer tensor.
+For coefficient sheaves F and H, write C_F^n = Γ_X(T^(n+1)F) and
+C_H^n = Γ_X(T^(n+1)H) for their Godement section cochains, with
+alternating coface differentials.
+For i ∈ Fin(n + 2), the same-degree pairings m_n satisfy
+m_(n+1) ∘ (δ_F^i ⊗ δ_H^i) = δ_(F⊗H)^i ∘ m_n. -/
 theorem smallEtaleGodementSectionsDegreePairing_coface (X : Scheme.{u})
     (F G : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (n : ℕ) (i : Fin (n + 2)) :
     AddCommGrpCat.ofHom (TensorProduct.map
@@ -382,7 +421,15 @@ theorem additiveAlternatingCofaceComm.{vC, uC, vD, uD}
   rw [CochainComplex.of_d, CochainComplex.of_d, Category.id_comp, Category.comp_id]
   exact additiveAlternatingCofaceDifferential F A i
 
-/-- The actual alternating global-section complex is the original Godement sections complex. -/
+/-- Let X be a scheme in universe u and c = max(u, w).
+Work with AddCommGrpCat c-valued sheaves on its small étale site.
+Let T be the Godement monad and ⊗_sheaf the sheafified integer tensor.
+For coefficient sheaves F and H, write C_F^n = Γ_X(T^(n+1)F) and
+C_H^n = Γ_X(T^(n+1)H) for their Godement section cochains, with
+alternating coface differentials.
+The alternating-coface complex of the cosimplicial section object
+is canonically isomorphic to C_F. It identifies the degree terms
+Γ_X(T^(n+1)F) and their alternating coface differentials. -/
 def smallEtaleGodementAlternatingSectionsIso (X : Scheme.{u})
     (F : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :
     AlternatingCofaceMapComplex.obj (smallEtaleGodementSectionsCosimplicial.{u, w} X F) ≅
@@ -395,8 +442,15 @@ def smallEtaleGodementAlternatingSectionsIso (X : Scheme.{u})
 open MonoidalCategory
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual global-section cosimplicial pairing induces the original alternating cochain
-pairing. -/
+/-- Let X be a scheme in universe u and c = max(u, w).
+Work with AddCommGrpCat c-valued sheaves on its small étale site.
+Let T be the Godement monad and ⊗_sheaf the sheafified integer tensor.
+For coefficient sheaves F and H, write C_F^n = Γ_X(T^(n+1)F) and
+C_H^n = Γ_X(T^(n+1)H) for their Godement section cochains, with
+alternating coface differentials.
+The Alexander–Whitney pairing on the alternating-coface complexes
+has degree (p, q) map formed from the front and back simplex inclusions.
+It obeys d(a ∪ b) = da ∪ b + (-1)^p a ∪ db. -/
 def smallEtaleGodementAlternatingGradedPairing (X : Scheme.{u})
     (F G : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :
     HomologicalComplex.CochainGradedPairing
@@ -452,7 +506,15 @@ def smallEtaleGodementAlternatingGradedPairing (X : Scheme.{u})
     exact h.trans (congrArg₂ (· + ·) hh hk).symm
 
 
-/-- The actual cup pairing on the original Godement sections complexes. -/
+/-- Let X be a scheme in universe u and c = max(u, w).
+Work with AddCommGrpCat c-valued sheaves on its small étale site.
+Let T be the Godement monad and ⊗_sheaf the sheafified integer tensor.
+For coefficient sheaves F and H, write C_F^n = Γ_X(T^(n+1)F) and
+C_H^n = Γ_X(T^(n+1)H) for their Godement section cochains, with
+alternating coface differentials.
+Transporting the Alexander–Whitney pairing to C_F, C_H and C_(F⊗H)
+gives a cochain graded pairing. Its degree (p, q) maps are the Godement
+cochain cups, with the Leibniz sign (-1)^p. -/
 def smallEtaleGodementGradedPairing (X : Scheme.{u})
     (F G : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :
     HomologicalComplex.CochainGradedPairing
@@ -465,7 +527,14 @@ def smallEtaleGodementGradedPairing (X : Scheme.{u})
     (smallEtaleGodementAlternatingSectionsIso.{u, w} X (smallEtaleTensorSheaf.{u, w} X F G)).hom
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The constructed graded pairing has the same literal original cochain cup component. -/
+/-- Let X be a scheme in universe u and c = max(u, w).
+Work with AddCommGrpCat c-valued sheaves on its small étale site.
+Let T be the Godement monad and ⊗_sheaf the sheafified integer tensor.
+For coefficient sheaves F and H, write C_F^n = Γ_X(T^(n+1)F) and
+C_H^n = Γ_X(T^(n+1)H) for their Godement section cochains, with
+alternating coface differentials.
+The (p, q) component of the graded pairing equals the Godement
+cochain cup C_F^p ⊗[ℤ] C_H^q → C_(F⊗H)^(p+q). -/
 theorem smallEtaleGodementGradedPairing_pair (X : Scheme.{u})
     (F G : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (p q : ℕ) :
     (smallEtaleGodementGradedPairing.{u, w} X F G).pair p q =
@@ -480,7 +549,15 @@ theorem smallEtaleGodementGradedPairing_pair (X : Scheme.{u})
       (𝟙 _) = smallEtaleGodementCochainCup.{u, w} X F G p q
   exact (Category.comp_id _).trans (Category.assoc _ _ _).symm
 
-/-- The actual Godement cup descends to the same original resolution homology objects. -/
+/-- Let X be a scheme in universe u and c = max(u, w).
+Work with AddCommGrpCat c-valued sheaves on its small étale site.
+Let T be the Godement monad and ⊗_sheaf the sheafified integer tensor.
+For coefficient sheaves F and H, write C_F^n = Γ_X(T^(n+1)F) and
+C_H^n = Γ_X(T^(n+1)H) for their Godement section cochains, with
+alternating coface differentials.
+The induced cohomology map is
+Hᵖ(C_F) ⊗[ℤ] Hᑫ(C_H) → Hᵖ⁺ᑫ(C_(F⊗H)).
+For cycles a and b, it sends [a] ⊗ [b] to [a ∪ b]. -/
 def smallEtaleGodementHomologyCup (X : Scheme.{u})
     (F G : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (p q : ℕ) :
     (smallEtaleGodementSectionsComplex.{u, w} X F).homology p ⊗
@@ -489,7 +566,16 @@ def smallEtaleGodementHomologyCup (X : Scheme.{u})
           (smallEtaleTensorSheaf.{u, w} X F G)).homology (p + q) :=
   (smallEtaleGodementGradedPairing.{u, w} X F G).pairHomology p q
 
-/-- The original étale cup map uses the actual tensor coefficient and original Sheaf.H groups. -/
+/-- Let X be a scheme in universe u and c = max(u, w).
+Work with AddCommGrpCat c-valued sheaves on its small étale site.
+Let T be the Godement monad and ⊗_sheaf the sheafified integer tensor.
+For coefficient sheaves F and H, write C_F^n = Γ_X(T^(n+1)F) and
+C_H^n = Γ_X(T^(n+1)H) for their Godement section cochains, with
+alternating coface differentials.
+The étale/Godement cohomology comparisons transport the cochain
+cup to the additive tensor map
+Hᵖ(X,F) ⊗[ℤ] Hᑫ(X,H) → Hᵖ⁺ᑫ(X,F ⊗_sheaf H).
+Both coefficient sheaves and all nonnegative degrees are arbitrary. -/
 def originalSmallEtaleCupTensorMap (X : Scheme.{u})
     (F G : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (p q : ℕ) :
     AddCommGrpCat.of (Sheaf.H.{max u w, max u w, u, u + 1} F p ⊗[ℤ]
@@ -504,7 +590,15 @@ def originalSmallEtaleCupTensorMap (X : Scheme.{u})
       AddCommGrpCat.ofHom (smallEtaleGodementCohomologyAddEquiv.{u, w} X
         (smallEtaleTensorSheaf.{u, w} X F G) (p + q)).symm.toAddMonoidHom
 
-/-- The original étale cohomology cup evaluated on two original classes. -/
+/-- Let X be a scheme in universe u and c = max(u, w).
+Work with AddCommGrpCat c-valued sheaves on its small étale site.
+Let T be the Godement monad and ⊗_sheaf the sheafified integer tensor.
+For coefficient sheaves F and H, write C_F^n = Γ_X(T^(n+1)F) and
+C_H^n = Γ_X(T^(n+1)H) for their Godement section cochains, with
+alternating coface differentials.
+For a ∈ Hᵖ(X,F) and b ∈ Hᑫ(X,H), their étale cup a ∪ b is
+the value of the transported tensor map on a ⊗[ℤ] b, in degree p + q
+with coefficient sheaf F ⊗_sheaf H. -/
 abbrev originalSmallEtaleCup (X : Scheme.{u})
     (F G : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (p q : ℕ)
     (a : Sheaf.H.{max u w, max u w, u, u + 1} F p)
@@ -513,8 +607,16 @@ abbrev originalSmallEtaleCup (X : Scheme.{u})
   (originalSmallEtaleCupTensorMap.{u, w} X F G p q).hom (a ⊗ₜ[ℤ] b)
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual cup of original Godement cycle classes is the class of the constructed paired
-cycle. -/
+/-- Let X be a scheme in universe u and c = max(u, w).
+Work with AddCommGrpCat c-valued sheaves on its small étale site.
+Let T be the Godement monad and ⊗_sheaf the sheafified integer tensor.
+For coefficient sheaves F and H, write C_F^n = Γ_X(T^(n+1)F) and
+C_H^n = Γ_X(T^(n+1)H) for their Godement section cochains, with
+alternating coface differentials.
+Let π_F, π_H and π_(F⊗H) be the cycle-to-cohomology projections.
+The Godement cohomology cup satisfies
+cup_H ∘ (π_F ⊗ π_H) = π_(F⊗H) ∘ cup_cycles.
+Thus it has the cochain cup value on cycle representatives. -/
 theorem smallEtaleGodementHomologyCup_pi (X : Scheme.{u})
     (F G : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (p q : ℕ) :
     let A := smallEtaleGodementSectionsComplex.{u, w} X F
@@ -538,7 +640,14 @@ private theorem tensorAddMapRight.{a, b, c}
   (congrArg f (TensorProduct.tmul_add x y z)).trans (f.map_add _ _)
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The original étale cup preserves addition in its left class argument. -/
+/-- Let X be a scheme in universe u and c = max(u, w).
+Work with AddCommGrpCat c-valued sheaves on its small étale site.
+Let T be the Godement monad and ⊗_sheaf the sheafified integer tensor.
+For coefficient sheaves F and H, write C_F^n = Γ_X(T^(n+1)F) and
+C_H^n = Γ_X(T^(n+1)H) for their Godement section cochains, with
+alternating coface differentials.
+For a, a′ ∈ Hᵖ(X,F) and b ∈ Hᑫ(X,H),
+(a + a′) ∪ b = a ∪ b + a′ ∪ b in Hᵖ⁺ᑫ(X,F ⊗_sheaf H). -/
 theorem originalSmallEtaleCup_add_left (X : Scheme.{u})
     (F G : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (p q : ℕ)
     (a a' : Sheaf.H.{max u w, max u w, u, u + 1} F p)
@@ -550,7 +659,14 @@ theorem originalSmallEtaleCup_add_left (X : Scheme.{u})
     (f.map_add (a ⊗ₜ[ℤ] b) (a' ⊗ₜ[ℤ] b))
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The original étale cup preserves addition in its right class argument. -/
+/-- Let X be a scheme in universe u and c = max(u, w).
+Work with AddCommGrpCat c-valued sheaves on its small étale site.
+Let T be the Godement monad and ⊗_sheaf the sheafified integer tensor.
+For coefficient sheaves F and H, write C_F^n = Γ_X(T^(n+1)F) and
+C_H^n = Γ_X(T^(n+1)H) for their Godement section cochains, with
+alternating coface differentials.
+For a ∈ Hᵖ(X,F) and b, b′ ∈ Hᑫ(X,H),
+a ∪ (b + b′) = a ∪ b + a ∪ b′ in Hᵖ⁺ᑫ(X,F ⊗_sheaf H). -/
 theorem originalSmallEtaleCup_add_right (X : Scheme.{u})
     (F G : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (p q : ℕ)
     (a : Sheaf.H.{max u w, max u w, u, u + 1} F p)
@@ -561,7 +677,15 @@ theorem originalSmallEtaleCup_add_right (X : Scheme.{u})
   exact (congrArg (fun t => f t) (TensorProduct.tmul_add a b b')).trans
     (f.map_add (a ⊗ₜ[ℤ] b) (a ⊗ₜ[ℤ] b'))
 
-/-- Every original coefficient map induces the actual map of Godement sections complexes. -/
+/-- Let X be a scheme in universe u and c = max(u, w).
+Work with AddCommGrpCat c-valued sheaves on its small étale site.
+Let T be the Godement monad and ⊗_sheaf the sheafified integer tensor.
+For coefficient sheaves F and H, write C_F^n = Γ_X(T^(n+1)F) and
+C_H^n = Γ_X(T^(n+1)H) for their Godement section cochains, with
+alternating coface differentials.
+For a coefficient sheaf map f : F → H, this is the cochain map
+C_F → C_H obtained by applying global sections to the morphism of
+Godement coresolutions. -/
 def smallEtaleGodementSectionsMap (X : Scheme.{u})
     {F G : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}} (f : F ⟶ G) :
     smallEtaleGodementSectionsComplex.{u, w} X F ⟶ smallEtaleGodementSectionsComplex.{u, w} X G :=
@@ -570,7 +694,15 @@ def smallEtaleGodementSectionsMap (X : Scheme.{u})
     ((alternatingCofaceMapComplex _).map
       ((Monad.coresolutionFunctor (smallEtaleGodementMonad.{u, w} X)).map f))
 
-/-- The same original coefficient map acts through literal monad powers in every Godement degree. -/
+/-- Let X be a scheme in universe u and c = max(u, w).
+Work with AddCommGrpCat c-valued sheaves on its small étale site.
+Let T be the Godement monad and ⊗_sheaf the sheafified integer tensor.
+For coefficient sheaves F and H, write C_F^n = Γ_X(T^(n+1)F) and
+C_H^n = Γ_X(T^(n+1)H) for their Godement section cochains, with
+alternating coface differentials.
+For f : F → H and n ∈ ℕ, the degree n cochain map is
+Γ_X(Cores(f)_n), equivalently Γ_X(T^(n+1)(f)) under the coresolution
+degree identification. -/
 theorem smallEtaleGodementSectionsMap_degree (X : Scheme.{u})
     {F G : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}} (f : F ⟶ G) (n : ℕ) :
     (smallEtaleGodementSectionsMap.{u, w} X f).f n =
@@ -579,7 +711,14 @@ theorem smallEtaleGodementSectionsMap_degree (X : Scheme.{u})
           (SimplexCategory.mk n)) := rfl
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual global-section degree pairing is natural in every original coefficient map. -/
+/-- Let X be a scheme in universe u and c = max(u, w).
+Work with AddCommGrpCat c-valued sheaves on its small étale site.
+Let T be the Godement monad and ⊗_sheaf the sheafified integer tensor.
+For coefficient sheaves F and H, write C_F^n = Γ_X(T^(n+1)F) and
+C_H^n = Γ_X(T^(n+1)H) for their Godement section cochains, with
+alternating coface differentials.
+For f : F → F′ and g : H → H′, the degree n pairings satisfy
+m_n′ ∘ (C(f)_n ⊗ C(g)_n) = C(f ⊗_sheaf g)_n ∘ m_n. -/
 theorem smallEtaleGodementSectionsDegreePairing_naturality (X : Scheme.{u})
     {F F' G G' : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}}
     (f : F ⟶ F') (g : G ⟶ G') (n : ℕ) :
@@ -646,7 +785,11 @@ private theorem awPair_naturality
 
 end CosimplicialCup
 
-/-- The actual original coefficient morphism on global-section Godement cosimplicial objects. -/
+/-- Let X be a scheme in universe u and c = max(u, w).
+Work with AddCommGrpCat c-valued sheaves on its small étale site.
+Let T be the Godement monad and ⊗_sheaf the sheafified integer tensor.
+A sheaf map f : F → H induces the cosimplicial section map
+Γ_X(Cores(F)) → Γ_X(Cores(H)), degreewise Γ_X(Cores(f)_n). -/
 def smallEtaleGodementSectionsCosimplicialMap (X : Scheme.{u})
     {F G : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}} (f : F ⟶ G) :
     smallEtaleGodementSectionsCosimplicial.{u, w} X F ⟶
@@ -655,7 +798,15 @@ def smallEtaleGodementSectionsCosimplicialMap (X : Scheme.{u})
     (Sheaf.Γ X.smallEtaleTopology AddCommGrpCat.{max u w})
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual original cochain cup commutes with every original pair of coefficient maps. -/
+/-- Let X be a scheme in universe u and c = max(u, w).
+Work with AddCommGrpCat c-valued sheaves on its small étale site.
+Let T be the Godement monad and ⊗_sheaf the sheafified integer tensor.
+For coefficient sheaves F and H, write C_F^n = Γ_X(T^(n+1)F) and
+C_H^n = Γ_X(T^(n+1)H) for their Godement section cochains, with
+alternating coface differentials.
+For f : F → F′, g : H → H′ and p, q ∈ ℕ, the cup maps obey
+cup′_(p,q) ∘ (C(f)_p ⊗ C(g)_q) =
+C(f ⊗_sheaf g)_(p+q) ∘ cup_(p,q). -/
 theorem smallEtaleGodementCochainCup_naturality (X : Scheme.{u})
     {F F' G G' : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}}
     (f : F ⟶ F') (g : G ⟶ G') (p q : ℕ) :
@@ -685,7 +836,15 @@ theorem smallEtaleGodementCochainCup_naturality (X : Scheme.{u})
   exact h
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual native Godement cup is natural on the same original resolution homology objects. -/
+/-- Let X be a scheme in universe u and c = max(u, w).
+Work with AddCommGrpCat c-valued sheaves on its small étale site.
+Let T be the Godement monad and ⊗_sheaf the sheafified integer tensor.
+For coefficient sheaves F and H, write C_F^n = Γ_X(T^(n+1)F) and
+C_H^n = Γ_X(T^(n+1)H) for their Godement section cochains, with
+alternating coface differentials.
+For f : F → F′ and g : H → H′, the cohomology cups obey
+cup′ ∘ (Hᵖ(C(f)) ⊗ Hᑫ(C(g))) =
+Hᵖ⁺ᑫ(C(f ⊗_sheaf g)) ∘ cup. -/
 theorem smallEtaleGodementHomologyCup_naturality (X : Scheme.{u})
     {F F' G G' : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}}
     (f : F ⟶ F') (g : G ⟶ G') (p q : ℕ) :

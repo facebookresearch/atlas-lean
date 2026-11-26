@@ -1,3 +1,7 @@
-# Complex Lift Comparison Iso
+# Comparing a lifted Lie carrier with lifted chains
 
-The native chain comparison, using the CE differential in all degrees.
+Let R:Type u be commutative, L:Type v an R-Lie algebra,
+and z an independent lift height. Write C(L) for its canonical
+exterior chain complex and U^z for carrier lifting.
+The exterior-degree equivalences give a chain isomorphism
+C(U^zL)≅U^zC(L), compatible with the CE boundary in every degree.

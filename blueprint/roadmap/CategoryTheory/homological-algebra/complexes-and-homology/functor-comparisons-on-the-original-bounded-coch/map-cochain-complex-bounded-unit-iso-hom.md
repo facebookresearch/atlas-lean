@@ -1,3 +1,5 @@
-# Map Cochain Complex Bounded unit Iso hom app f
+# The bounded equivalence unit is the category unit in each degree
 
-The original unit remains the actual unit component in every original degree.
+Let C,D have zero morphisms and e : C ≌ D have zero-preserving forward functor. For K ∈
+Bounded C and j ∈ ℤ, the jth forward component of the bounded unit equals e.unitIso.hom at K^j
+: K^j → e.inverse(e.functor(K^j)).

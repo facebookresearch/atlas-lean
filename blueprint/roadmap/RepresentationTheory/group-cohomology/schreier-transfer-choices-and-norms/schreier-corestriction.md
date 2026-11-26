@@ -1,3 +1,6 @@
-# Schreier Corestriction
+# Canonical arbitrary-degree corestriction
 
-Canonical explicit Schreier corestriction in arbitrary degree.
+Canonical arbitrary-degree corestriction.
+
+The common map induced by a right-transversal Schreier transfer defines Hⁿ(H,A|H) → Hⁿ(G,A)
+for every n ≥ 0.

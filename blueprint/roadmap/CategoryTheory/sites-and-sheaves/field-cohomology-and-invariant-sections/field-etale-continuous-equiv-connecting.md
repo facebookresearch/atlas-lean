@@ -1,4 +1,7 @@
-# Field Etale Continuous Equiv connecting
+# Field cohomology comparison commutes with connecting morphisms
 
-The original Yoneda connector is sent to the original native coefficient
-connector of the same geometric-fiber short exact sequence in every degree.
+Field cohomology comparison commutes with connecting morphisms.
+
+For a short exact sheaf sequence, the étale connecting class followed by comparison equals the
+continuous-coefficient connecting class of the compared geometric fiber, in degrees `q` and
+`q+1`.

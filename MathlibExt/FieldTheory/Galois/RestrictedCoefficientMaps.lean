@@ -12,8 +12,16 @@ public import MathlibExt.RepresentationTheory.Homological.ContCohomology.Discret
 public import MathlibExt.FieldTheory.Galois.UnitsContinuousModule
 
 /-!
-Original Profinite group/coefficient maps through the existing discrete restriction provider,
-with one actual coefficient arrow for every degree.
+# Coefficient maps after profinite restriction
+
+For a continuous homomorphism φ : H → G of profinite groups, restriction sends a discrete
+abelian G-module A to the same coefficient group with H-action h·a = φ(h)·a. An H-equivariant
+coefficient map from this restricted module to B induces the composite Hⁿ(G,A) → Hⁿ(H,φ* A) →
+Hⁿ(H,B).
+
+The coefficient and group universe levels are independent. The factorization holds for every
+natural-number degree and for every continuous intertwiner between the corresponding
+topological representations.
 -/
 
 @[expose] public section
@@ -27,7 +35,11 @@ universe a b r
 
 variable {G : ProfiniteGrp.{a}} {H : ProfiniteGrp.{b}}
 
-/-- The genuine restriction representation has literal identity coefficient map. -/
+/-- The coefficient identification for restricted representations.
+
+For φ : H → G and a discrete abelian G-module A, the restricted topological representation and
+the representation of φ* A have the same coefficient group and H-action. This morphism is the
+identity on coefficient elements. -/
 def restrictionTopRepHom (φ : H →ₜ* G)
     (A : DiscreteAbelianAction.{a, max a (max b r)} G) :
     TopRep.res (φ : H →* G) (inhomogeneousOriginalTopRep.{0, a, max b r} G A) ⟶
@@ -37,8 +49,12 @@ def restrictionTopRepHom (φ : H →ₜ* G)
 
 
 -- The exact generic statement reached 200000 in retained v1.
-/-- The original coefficient arrow after actual restriction acts through the
-same original group/cochain map and the literal stored coefficient map. -/
+/-- Restriction followed by a coefficient map on cohomology.
+
+Let φ : H → G be continuous and let f : φ* A → B be a morphism of discrete abelian H-modules.
+In every degree n, the map induced jointly by φ and f equals restriction with unchanged
+coefficients followed by Hⁿ(H,f). The equality is in the common coefficient category at the
+stated independent universe levels. -/
 theorem mappedGroupCoefficient_factorization (n : ℕ) (φ : H →ₜ* G)
     (A : DiscreteAbelianAction.{a, max a (max b r)} G)
     (B : DiscreteAbelianAction.{b, max b (max a r)} H)
@@ -80,8 +96,12 @@ open CategoryTheory CategoryTheory.Limits
 universe a b r
 variable {G : ProfiniteGrp.{a}} {H : ProfiniteGrp.{b}}
 
-/-- Every original intertwiner is represented by the actual full discrete-module
-functor after restriction, with no linear or equivariant section premise. -/
+/-- All restricted intertwiners factor through discrete coefficient morphisms.
+
+Every continuous intertwiner f from the restriction of A to B is the image of a morphism g :
+φ* A → B of discrete abelian H-modules. This same g gives, in every degree n, the
+factorization of the joint group-and-coefficient cohomology map as restriction followed by
+Hⁿ(H,g). -/
 theorem originalCoefficient_factorization_all (φ : H →ₜ* G)
     (A : DiscreteAbelianAction.{a, max a (max b r)} G)
     (B : DiscreteAbelianAction.{b, max b (max a r)} H)

@@ -16,12 +16,18 @@ public import Mathlib.RepresentationTheory.Homological.GroupHomology.Functoriali
 import Lean.Elab.Tactic.Omega
 
 /-!
-# Native group homology and the one-object nerve
+# Group homology and the one-object nerve with trivial coefficients
 
-The comparison uses the actual inhomogeneous group chains and the existing
-native nerve. Opposite one-object arrows retain the ordinary bar multiplication
-order. Inversion then gives the direct nerve and its original inverse-arrow
-generator convention. No homology or differential comparison is an input.
+Let k be a commutative ring and G a group in universe u.
+The inhomogeneous chains with trivial coefficients k are canonically
+isomorphic to the k-chain complex of B(Gᵐᵒᵖ), using the ordered-tuple
+coordinate equivalence on one-object nerve simplices.
+
+Inversion Gᵐᵒᵖ→G gives the direct-nerve comparison with BG.
+Its generator convention sends (g₀,…,g_(n-1)) to the nerve simplex
+with coordinates (g₀⁻¹,…,g_(n-1)⁻¹).
+The comparisons preserve the chain differential and give
+H_n(G,k_triv)≅H_n(BG;k), naturally under group homomorphisms.
 -/
 
 @[expose] public section
@@ -106,8 +112,12 @@ section Chains
 
 variable (k G : Type u) [CommRing k] [Group G]
 
-/-- The original degreewise basis comparison from native group chains to
-opposite one-object nerve chains, preserving every coefficient. -/
+/-- Let k be a commutative ring and G a group in universe u. Coefficients are k_triv. Let e_n^op and e_n be the
+coordinate equivalences from n-simplices of the one-object nerves
+B(Gᵐᵒᵖ) and BG to ordered G^n tuples.
+The degree n isomorphism from inhomogeneous trivial-coefficient
+chains to k-chains on B(Gᵐᵒᵖ) identifies a basis tuple g with the
+simplex (e_n^op)⁻¹(g). -/
 def trivialOppositeNerveChainObjIso (n : ℕ) :
     (inhomogeneousChains (Rep.trivial k G k)).X n ≅
       ((CategoryTheory.nerve (SingleObj Gᵐᵒᵖ)).chainComplex
@@ -116,8 +126,11 @@ def trivialOppositeNerveChainObjIso (n : ℕ) :
     ((Fin n → G) →₀ k) ≃ₗ[k] ((CategoryTheory.nerve (SingleObj Gᵐᵒᵖ)) _⦋n⦌ →₀ k)).toModuleIso ≪≫
     (SSet.chainComplexFreeIso (CategoryTheory.nerve (SingleObj Gᵐᵒᵖ)) k n).symm
 
-/-- The opposite-nerve degree comparison preserves each original bar generator
-and its coefficient. -/
+/-- Let k be a commutative ring and G a group in universe u. Coefficients are k_triv. Let e_n^op and e_n be the
+coordinate equivalences from n-simplices of the one-object nerves
+B(Gᵐᵒᵖ) and BG to ordered G^n tuples.
+The basis inclusion at g∈G^n followed by the opposite-nerve
+comparison is the simplex-chain inclusion at (e_n^op)⁻¹(g). -/
 theorem trivialOppositeNerveChainObjIso_generator (n : ℕ) (g : Fin n → G) :
     ModuleCat.ofHom (Finsupp.lsingle g (R := k) (M := k)) ≫
         (trivialOppositeNerveChainObjIso k G n).hom =
@@ -147,8 +160,11 @@ theorem trivialOppositeNerveChainObjIso_generator (n : ℕ) (g : Fin n → G) :
     Iso.inv_hom_id, Category.comp_id]
   exact he.trans hF.symm
 
-/-- The inverse degree comparison recovers the original bar generator from
-its opposite-nerve simplex, preserving the coefficient. -/
+/-- Let k be a commutative ring and G a group in universe u. Coefficients are k_triv. Let e_n^op and e_n be the
+coordinate equivalences from n-simplices of the one-object nerves
+B(Gᵐᵒᵖ) and BG to ordered G^n tuples.
+The simplex inclusion at (e_n^op)⁻¹(g) followed by the inverse
+degree comparison is the inhomogeneous basis inclusion at g. -/
 theorem trivialOppositeNerveChainObjIso_inv_generator (n : ℕ) (g : Fin n → G) :
     (CategoryTheory.nerve (SingleObj Gᵐᵒᵖ)).ιChainComplex
         (R := (ModuleCat.of k k : ModuleCat.{u} k))
@@ -216,8 +232,11 @@ private theorem trivialOppositeNerveChainObjIso_d (n : ℕ) :
           (trivialOppositeNerveChainObjIso k G n).hom) := by
       rw [← Category.assoc, trivialBarGenerator_d]
 
-/-- The actual native group-chain complex identifies canonically with the
-opposite one-object nerve chain complex in its original bar order. -/
+/-- Let k be a commutative ring and G a group in universe u. Coefficients are k_triv. Let e_n^op and e_n be the
+coordinate equivalences from n-simplices of the one-object nerves
+B(Gᵐᵒᵖ) and BG to ordered G^n tuples.
+The degreewise coordinate comparisons form the chain isomorphism
+C_*(G,k_triv)≅C_*(B(Gᵐᵒᵖ);k), preserving all boundary maps. -/
 def trivialOppositeNerveChainIso :
     inhomogeneousChains (Rep.trivial k G k) ≅
       (CategoryTheory.nerve (SingleObj Gᵐᵒᵖ)).chainComplex (ModuleCat.of k k : ModuleCat.{u} k) :=
@@ -225,21 +244,31 @@ def trivialOppositeNerveChainIso :
     rintro i j rfl
     exact trivialOppositeNerveChainObjIso_d k G j)
 
-/-- The forward chain comparison has the original degreewise component. -/
+/-- Let k be a commutative ring and G a group in universe u. Coefficients are k_triv. Let e_n^op and e_n be the
+coordinate equivalences from n-simplices of the one-object nerves
+B(Gᵐᵒᵖ) and BG to ordered G^n tuples.
+The forward chain map in degree n is the corresponding
+opposite-nerve coordinate isomorphism. -/
 @[simp]
 theorem trivialOppositeNerveChainIso_hom_f (n : ℕ) :
     (trivialOppositeNerveChainIso k G).hom.f n =
       (trivialOppositeNerveChainObjIso k G n).hom := rfl
 
-/-- The inverse chain comparison has the inverse original degreewise component. -/
+/-- Let k be a commutative ring and G a group in universe u. Coefficients are k_triv. Let e_n^op and e_n be the
+coordinate equivalences from n-simplices of the one-object nerves
+B(Gᵐᵒᵖ) and BG to ordered G^n tuples.
+The inverse chain map in degree n is the inverse
+opposite-nerve coordinate isomorphism. -/
 @[simp]
 theorem trivialOppositeNerveChainIso_inv_f (n : ℕ) :
     (trivialOppositeNerveChainIso k G).inv.f n =
       (trivialOppositeNerveChainObjIso k G n).inv := rfl
 
-/-- The actual native group-chain complex with trivial coefficients is
-canonically isomorphic to the chain complex of the direct one-object nerve.
-Its generator convention uses inverse successive arrows. -/
+/-- Let k be a commutative ring and G a group in universe u. Coefficients are k_triv. Let e_n^op and e_n be the
+coordinate equivalences from n-simplices of the one-object nerves
+B(Gᵐᵒᵖ) and BG to ordered G^n tuples.
+The chain isomorphism C_*(G,k_triv)≅C_*(BG;k) is the
+opposite-nerve comparison followed by the nerve map induced by inversion. -/
 def trivialNerveChainIso :
     inhomogeneousChains (Rep.trivial k G k) ≅
       (CategoryTheory.nerve (SingleObj G)).chainComplex
@@ -248,16 +277,23 @@ def trivialNerveChainIso :
     ((SSet.chainComplexFunctor (ModuleCat.{u} k)).obj
       (ModuleCat.of k k : ModuleCat.{u} k)).mapIso (CategoryTheory.nerve.inversionIso G)
 
-/-- The canonical comparison from genuine native group homology to the
-homology of the direct one-object nerve, in every degree. -/
+/-- Let k be a commutative ring and G a group in universe u. Coefficients are k_triv. Let e_n^op and e_n be the
+coordinate equivalences from n-simplices of the one-object nerves
+B(Gᵐᵒᵖ) and BG to ordered G^n tuples.
+Taking degree n homology gives H_n(G,k_triv)≅H_n(BG;k)
+through the direct-nerve chain isomorphism. -/
 def trivialNerveHomologyIso (n : ℕ) :
     groupHomology (Rep.trivial k G k) n ≅
       (CategoryTheory.nerve (SingleObj G)).homology
         (ModuleCat.of k k : ModuleCat.{u} k) n :=
   HomologicalComplex.homologyMapIso (trivialNerveChainIso k G) n
 
-/-- Each original native bar generator becomes the direct nerve simplex with
-its inverse successive arrows, preserving its coefficient. -/
+/-- Let k be a commutative ring and G a group in universe u. Coefficients are k_triv. Let e_n^op and e_n be the
+coordinate equivalences from n-simplices of the one-object nerves
+B(Gᵐᵒᵖ) and BG to ordered G^n tuples.
+The direct-nerve comparison sends the tuple basis g to the
+simplex inclusion at e_n⁻¹(i↦g_i⁻¹).
+The tuple order is retained and every group entry is inverted. -/
 theorem trivialNerveChainIso_generator (n : ℕ) (g : Fin n → G) :
     ModuleCat.ofHom (Finsupp.lsingle g (R := k) (M := k)) ≫
         (trivialNerveChainIso k G).hom.f n =
@@ -293,8 +329,12 @@ private theorem directNerveMap_simplex {H : Type u} [Group H]
       i.val (i.val + 1)) = f (g i)
   rw [CategoryTheory.nerve.singleObjEquiv_symm_map_succ]
 
-/-- The original native group-chain map and the original one-object nerve map
-commute with the canonical comparison for every group homomorphism. -/
+/-- Let k be a commutative ring and G a group in universe u. Coefficients are k_triv. Let e_n^op and e_n be the
+coordinate equivalences from n-simplices of the one-object nerves
+B(Gᵐᵒᵖ) and BG to ordered G^n tuples.
+For a group homomorphism f:G→H with H in universe u,
+the chain comparison obeys
+nerveChains(f)∘comparison_G=comparison_H∘groupChains(f). -/
 theorem trivialNerveChainIso_hom_naturality {H : Type u} [Group H] (f : G →* H) :
     chainsMap f (𝟙 (Rep.trivial k G k) : Rep.trivial k G k ⟶ Rep.res f (Rep.trivial k H k)) ≫
         (trivialNerveChainIso k H).hom =
@@ -342,8 +382,11 @@ theorem trivialNerveChainIso_hom_naturality {H : Type u} [Group H] (f : G →* H
         ((trivialNerveChainIso k G).hom.f n ≫ (SSet.chainComplexMap F R).f n) := by
       rw [← Category.assoc, trivialNerveChainIso_generator]
 
-/-- The genuine native group-homology map agrees with the original nerve
-homology map under the canonical comparison in every degree. -/
+/-- Let k be a commutative ring and G a group in universe u. Coefficients are k_triv. Let e_n^op and e_n be the
+coordinate equivalences from n-simplices of the one-object nerves
+B(Gᵐᵒᵖ) and BG to ordered G^n tuples.
+For f:G→H and n∈ℕ, the homology comparisons satisfy
+nerveH_n(f)∘comparison_G=comparison_H∘groupH_n(f). -/
 theorem trivialNerveHomologyIso_hom_naturality {H : Type u} [Group H]
     (f : G →* H) (n : ℕ) :
     groupHomology.map f

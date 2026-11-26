@@ -13,10 +13,12 @@ public import Mathlib.Algebra.Homology.HomotopyCategory.HomComplex
 public import Mathlib.Algebra.Homology.HomologicalComplexLimits
 
 /-!
-# Cochains out of coproducts
+# Homogeneous cochains out of coproducts
 
-Arbitrary cochains out of a coproduct of integer-indexed cochain complexes are determined by
-precomposition with its coproduct injections. The cochains need not commute with differentials.
+Let D be preadditive and admit coproducts indexed by an arbitrary type J. Homogeneous cochains
+of any integer degree from a coproduct of integer cochain complexes to T are determined by their
+restrictions along the coproduct injections. The cochains need not be closed or commute with
+differentials.
 -/
 
 @[expose] public section
@@ -35,8 +37,11 @@ universe w v u
 variable {D : Type u} [Category.{v} D] [Preadditive D]
 variable {J : Type w} [HasColimitsOfShape (Discrete J) D]
 
-/-- Cochains of any degree out of a coproduct are determined by precomposition
-with the degree-zero cochains of its chosen coproduct injections. -/
+/-- Let D be preadditive with J-indexed coproducts, K : J → CochainComplex D ℤ a family, T an
+integer cochain complex, and d ∈ ℤ. If homogeneous cochains x,y : ⨁_{j∈J} K_j → T of degree d
+satisfy x ∘ ι_j = y ∘ ι_j for every coproduct injection ι_j, then x = y. The restrictions use
+the degree-zero cochains associated to the injections; neither x nor y is required to be a
+cocycle. -/
 theorem ext_of_precomp_sigma_ι
     {K : J → CochainComplex D ℤ} {T : CochainComplex D ℤ} {d : ℤ}
     (x y : Cochain (∐ K) T d)

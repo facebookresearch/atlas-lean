@@ -1,4 +1,5 @@
-# Converted Primitive Map one zero
+# Vanishing of the compared primitive equation in degree one
 
-The common-universe unit conversion retains the zero component of the primitive equation in
-degree one.
+Vanishing of the compared primitive equation in degree one.
+
+The scalar-unit-compared primitive-equation map has zero degree-one component.

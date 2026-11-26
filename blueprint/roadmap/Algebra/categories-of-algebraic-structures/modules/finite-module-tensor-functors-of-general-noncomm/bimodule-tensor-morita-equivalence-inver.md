@@ -1,3 +1,6 @@
-# Bimodule Tensor Morita Equivalence inverse
+# Inverse functor of the contraction-based Morita equivalence
 
-Its original inverse is precisely the existing P⊗S− functor.
+Inverse functor of the contraction-based Morita equivalence.
+
+The inverse functor of the bimodule contraction Morita equivalence is tensoring left
+`S`-modules by the `R`-left, `S`-right coefficient `P`.

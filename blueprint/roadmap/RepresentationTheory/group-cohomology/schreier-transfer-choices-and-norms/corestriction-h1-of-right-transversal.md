@@ -1,4 +1,6 @@
-# Corestriction H1 Of Right Transversal
+# The degree-one cohomology map of a right transversal
 
-Degree-one cohomological transfer associated to a chosen finite right
-transversal.  Independence of the transversal is not asserted here.
+The degree-one cohomology map of a right transversal.
+
+The chosen Schreier transfer descends through the quotient by source coboundaries to a
+k-linear map H¹(H,A|H) → H¹(G,A).

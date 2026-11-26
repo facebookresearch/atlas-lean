@@ -1,3 +1,5 @@
-# Tensor Pow Map id
+# Finite tensor powers preserve identity morphisms
 
-Identity law: mapping the identity yields the identity on each tensor power.
+Finite tensor powers preserve identity morphisms.
+
+The power of an identity morphism is the identity of that power object.

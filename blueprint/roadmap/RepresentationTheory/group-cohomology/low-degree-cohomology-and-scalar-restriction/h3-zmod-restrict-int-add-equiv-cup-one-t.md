@@ -1,4 +1,8 @@
-# H3 ZMod Restrict Int Add Equiv cup One Two
+# Integral comparison of the degree-one and degree-two cohomology cup
 
-The degree-`(1, 2)` cup product commutes with scalar restriction from
-`ZMod n` to `ℤ`, after the canonical tensor comparison.
+Let n∈ℕ, G be a group and A,B representations over ZMod n.
+Write Res for scalar restriction to ℤ and
+μ:Res(A)⊗[ℤ]Res(B)≅Res(A⊗[ZMod n]B) for the canonical tensor
+comparison. All statements include n=0.
+For x∈H¹(G,A) and y∈H²(G,B), the additive comparison satisfies
+χ₃(x∪y)=H³(μ)(χ₁(x)∪χ₂(y)).

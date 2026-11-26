@@ -1,4 +1,6 @@
-# Hom Tensor Finite Factor Inverse Degree right Inverse
+# Bounded-factor inverse sum is a right inverse
 
-The finite original U sum recovers the entire original full-product Hom
-cochain. No bound or projectivity of its first source is used.
+Bounded-factor inverse sum is a right inverse.
+
+If `U` is zero below `L` and above `N`, the degree-`n` comparison applied after the finite
+inverse sum is the identity on `Hom_R(P, J ⊗ U)^n`.

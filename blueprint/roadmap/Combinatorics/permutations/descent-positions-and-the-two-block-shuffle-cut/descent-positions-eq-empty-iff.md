@@ -1,3 +1,3 @@
-# Descent Positions eq empty iff
+# No descents characterize the identity
 
-A permutation has no actual adjacent descents precisely when it is the identity.
+Let `n : ℕ` and `σ : Equiv.Perm (Fin n)`. `descentPositions σ = ∅` if and only if `σ = 1`.

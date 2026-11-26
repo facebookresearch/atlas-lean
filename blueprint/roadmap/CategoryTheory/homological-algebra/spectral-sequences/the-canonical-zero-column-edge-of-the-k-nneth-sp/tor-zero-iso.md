@@ -1,4 +1,6 @@
-# Tor Zero Iso
+# The degree-zero Tor comparison with ordinary tensor
 
-The canonical identification of Tor zero with the underived tensor
-product, with Tor derived in the second factor.
+The degree-zero Tor comparison with ordinary tensor.
+
+For modules `A,D`, the zeroth left-derived tensor functor in its second factor is canonically
+isomorphic to `A ⊗ D`.

@@ -1,4 +1,5 @@
-# Small Etale Inverse Image Comp Iso
+# Successive inverse images equal the composite inverse image naturally
 
-The actual composite inverse image is canonically the inverse image of
-the original composite, through its concrete direct-image adjunction mate.
+Successive inverse images equal the composite inverse image naturally.
+
+For composable scheme maps, the adjunction mate gives `g^* ⋙ f^* ≅ (f ≫ g)^*`.

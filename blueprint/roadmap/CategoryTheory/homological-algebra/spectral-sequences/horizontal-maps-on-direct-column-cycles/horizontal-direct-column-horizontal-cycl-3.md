@@ -1,4 +1,6 @@
-# Horizontal Direct Column Horizontal Cycles Map i Cycles
+# The representative sign of a direct-column horizontal cycle map
 
-On underlying cycle representatives, the transported horizontal map is
-the raw horizontal component multiplied by `(-1)^(q+1)`.
+The representative sign of a direct-column horizontal cycle map.
+
+After target cycle inclusion, the transported map is `(-1)^(q+1)` times the horizontal
+bicomplex map through the direct-column degree identifications.

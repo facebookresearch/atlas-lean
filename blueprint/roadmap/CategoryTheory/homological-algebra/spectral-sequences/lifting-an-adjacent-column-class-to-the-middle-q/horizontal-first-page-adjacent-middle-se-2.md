@@ -1,4 +1,6 @@
-# Horizontal First Page Adjacent Middle Section g
+# The section identity of the adjacent-column middle lift
 
-The middle lift is a section of the adjacent sequence's right map in the
-supported degree.
+The section identity of the adjacent-column middle lift.
+
+The middle section followed by the right quotient map is the identity on the direct-column
+term in degree `-(p+1)-q`.

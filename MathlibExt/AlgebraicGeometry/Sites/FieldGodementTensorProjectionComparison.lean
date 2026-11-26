@@ -12,7 +12,21 @@ module
 public import MathlibExt.AlgebraicGeometry.Sites.FieldGodementProjectionCharacteristics
 public import MathlibExt.CategoryTheory.Adjunction.ComparisonMonadIso
 
-/-! # The original binary pairing under its actual product projections -/
+/-!
+# Godement and point pairings over a field
+
+Let k be a field in universe u, X = Spec k and c = max(u, w).
+For families M, N of abelian coefficient groups over X, the Godement
+right adjoint R_G is the product of their point skyscrapers.
+Write π_M and π_N for projection to the canonical geometric point p
+over X's unique point, and π_(M⊗N) for the corresponding target projection.
+
+The Godement tensor pairing agrees with the point tensor pairing after
+these projections:
+π_(M⊗N) ∘ μ_G = μ_p ∘ (π_M ⊗_sheaf π_N).
+The equality concerns the sheafified tensor product over ℤ and follows
+from their point-adjunction counit formulas.
+-/
 
 @[expose] public section
 noncomputable section
@@ -23,8 +37,13 @@ namespace AlgebraicGeometry.Scheme.DerivedSections
 variable (k : Type u) [Field k]
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The original Godement family pairing equals the actual point pairing after the two genuine
-product projections. -/
+/-- Let k be a field in universe u, X = Spec k and c = max(u, w),
+and let M_y, N_y be families of abelian groups in universe c over X.
+Let μ_G be the product-skyscraper Godement tensor pairing and μ_p the
+canonical point skyscraper pairing at the unique point *.
+With product projections π_M, π_N and π_(M⊗N), the square commutes:
+π_(M⊗N) ∘ μ_G = μ_p ∘ (π_M ⊗_sheaf π_N).
+The tensor sheaves and coefficient tensors are over ℤ. -/
 theorem fieldGodementSkyscraperPairing_projection
     (M N : Spec (.of k) → AddCommGrpCat.{max u w}) :
     fieldGodementFamilyProjectedPairing.{u, w} k M N =

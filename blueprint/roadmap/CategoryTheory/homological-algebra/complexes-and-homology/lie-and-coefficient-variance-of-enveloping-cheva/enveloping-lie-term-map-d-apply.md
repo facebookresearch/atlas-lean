@@ -1,4 +1,6 @@
-# Enveloping Lie Term Map d apply
+# Differential compatibility of semilinear enveloping Lie maps
 
-differential compatibility comes from the original all-degree
-coefficient/Lie differential naturality, on the original native UEA complex.
+Differential compatibility of semilinear enveloping Lie maps.
+
+The degree maps induced by a Lie homomorphism commute with the enveloping Chevalley–Eilenberg
+successor differentials.
