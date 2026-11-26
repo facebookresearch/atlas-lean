@@ -11,6 +11,7 @@ public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicFrameModels
 public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicCoefficientSheafCondition
 public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicBarMultiplication
+public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicCotangentSheafCondition
 public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHarmonicHolomorphicKernelSheafCondition
 
 /-!
@@ -22,6 +23,8 @@ The holomorphic coefficient sheaf condition
 `MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicCoefficientSheafCondition`,
 `holomorphic_bar_multiplication` is proved in
 `MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicBarMultiplication`,
+`holomorphic_cotangent_sheaf_condition` is proved in
+`MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicCotangentSheafCondition`,
 and `harmonic_holomorphic_kernel_sheaf_condition` is proved in
 `MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHarmonicHolomorphicKernelSheafCondition`.
 Integrability produces new holomorphic frames and the actual O-linear
@@ -46,10 +49,6 @@ variable {n : ℕ} {M : Type} [TopologicalSpace M] [ChartedSpace (Coordinates n)
 /-- Actual holomorphic tangent covectors satisfy ordinary local multiplication and restriction calculus. -/
 theorem_wanted holomorphic_cotangent_section_calculus [IsManifold 𝓘(ℂ, Coordinates n) ∞ M] :
   CotangentSectionCalculus (n := n) (M := M)
-
-/-- The same actual cotangent-form presheaves satisfy the ordinary gluing condition. -/
-theorem_wanted holomorphic_cotangent_sheaf_condition [IsManifold 𝓘(ℂ, Coordinates n) ∞ M]
-    [CotangentSectionCalculus (n := n) (M := M)] : CotangentSheafCondition (n := n) (M := M)
 
 /-- The actual integrable bar connection admits new local holomorphic frames. -/
 def_wanted pluriharmonic_local_holomorphic_frame [T2Space M] [SecondCountableTopology M]
