@@ -10,8 +10,10 @@ module
 
 public import MathlibExt.NumberTheory.LurothConvergent
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
+public import Mathlib.Probability.ProductMeasure
 import Mathlib.MeasureTheory.Function.Floor
 import Mathlib.Probability.BorelCantelli
+import Mathlib.Probability.Independence.InfinitePi
 import Mathlib.Tactic.FunProp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Positivity
@@ -223,6 +225,56 @@ private theorem tail_bounds (y : ℝ) (hy : 0 < y) :
 end volume_lurothDigit_ge_zero_one
 
 open volume_lurothDigit_ge_zero_one
+
+namespace volume_lurothConsecutiveDigits_zero_one_integral
+
+private theorem indepFun : iIndepFun (fun i x => lurothDigitSeq x i) μ := by
+  apply iIndepFun_iff_measure_inter_preimage_eq_mul.2
+  intro s D _
+  simpa only [marginal D] using finite_law D s
+
+private theorem first_digit_mass (d : ℕ) :
+    μ (lurothDigit ⁻¹' {d}) =
+      if 2 ≤ d then ENNReal.ofReal (1 / ((d : ℝ) * ((d : ℝ) - 1))) else 0 := by
+  have h := branch_sum {d} univ MeasurableSet.univ
+  simp only [preimage_univ, inter_univ, prob_univ, mul_one] at h
+  rw [h]
+  by_cases hd : 2 ≤ d
+  · obtain ⟨n, rfl⟩ : ∃ n, d = n + 2 := ⟨d - 2, by omega⟩
+    let ins : Unique {j : ℕ // j + 2 ∈ ({n + 2} : Set ℕ)} :=
+      ⟨⟨⟨n, rfl⟩⟩, fun j => Subtype.ext (Nat.add_right_cancel j.property)⟩
+    have hdefault : (default : {j : ℕ // j + 2 ∈ ({n + 2} : Set ℕ)}).val = n := rfl
+    have hs : (↑n + 2 : ℝ) - 1 = ↑n + 1 := by ring
+    simp [hdefault, slope, hs, one_div]
+  · have : IsEmpty {j : ℕ // j + 2 ∈ ({d} : Set ℕ)} :=
+      ⟨fun j => hd (show 2 ≤ d from j.property ▸ Nat.le_add_left 2 j.val)⟩
+    simp [hd]
+
+/-- **Joint distribution of Lüroth digits.** Under Lebesgue measure on $(0,1]$, the digit
+sequence is distributed as a product of identical discrete measures, each giving mass
+$1/(d(d-1))$ to digit $d \ge 2$ and zero mass to digits $0$ and $1$.
+
+Source: ATLAS, *Measure of Lüroth cylinders*. The finite cylinder probabilities determine the
+joint distribution. -/
+public theorem measurePreserving_digitSeq :
+    ∃ ν : Measure ℕ, IsProbabilityMeasure ν ∧
+      (∀ d : ℕ, ν {d} = if 2 ≤ d then ENNReal.ofReal (1 / ((d : ℝ) * ((d : ℝ) - 1))) else 0) ∧
+      MeasurePreserving lurothDigitSeq (volume.restrict (Ioc (0 : ℝ) 1))
+        (Measure.infinitePi fun _ : ℕ => ν) := by
+  have : IsProbabilityMeasure μ := ⟨prob_univ⟩
+  refine ⟨μ.map lurothDigit,
+    (Measure.isProbabilityMeasure_map_iff measurable_digit.aemeasurable).2 ‹_›,
+    fun d => ?_, measurable_pi_iff.2 measurable_seq, ?_⟩
+  · rw [Measure.map_apply measurable_digit (measurableSet_singleton d), first_digit_mass]
+  · rw [show lurothDigitSeq = (fun x i => lurothDigitSeq x i) from rfl,
+      indepFun.map_fun_eq_infinitePi_map measurable_seq]
+    congr 1
+    funext i
+    ext s hs
+    rw [Measure.map_apply (measurable_seq i) hs, Measure.map_apply measurable_digit hs,
+      marginal (fun _ => s)]
+
+end volume_lurothConsecutiveDigits_zero_one_integral
 
 /-- **Borel–Bernstein theorem for Lüroth digits.** Let $(\Psi(n))_{n \ge 0}$ be a sequence of
 positive reals, write $d_k(x)$ for the $k$-th Lüroth digit of $x$, and let $E$ be the set of

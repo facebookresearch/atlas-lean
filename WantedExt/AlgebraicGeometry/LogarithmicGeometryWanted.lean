@@ -10,6 +10,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.LogStructures
+public import MathlibExt.AlgebraicGeometry.LogarithmicGeometryAssociatedLogUnitCondition
 
 /-!
 # Shared log-association and characteristic contracts
@@ -17,8 +18,10 @@ public import MathlibExt.AlgebraicGeometry.LogStructures
 These requests concern arbitrary actual ringed Grothendieck sites. Their
 sheaves, unit pullbacks, characteristic pushouts, site points and chart
 covering families are the native constructions in the completed core.
-The associated prelog is a fixed sheaf pushout; no new log carrier is
-chosen by its proof request. The characteristic comparison is fixed on
+The associated prelog is a fixed sheaf pushout; its log unit condition
+`associated_log_unit_condition`, which chooses no new log carrier, is now
+proved in `MathlibExt.AlgebraicGeometry.LogarithmicGeometryAssociatedLogUnitCondition`.
+The characteristic comparison is fixed on
 the actual quotient map, and fine/fs conclusions use genuine local charts.
 
 Sources: Kato, *Logarithmic structures of Fontaine--Illusie*, §1;
@@ -44,12 +47,6 @@ open _root_.CategoryTheory
 open MathlibExt.AlgebraicGeometry.LogStructures
 
 universe u v
-
-/-- The fixed pushout logification satisfies the genuine unit condition. -/
-public theorem_wanted associated_log_unit_condition
-    {C : Type u} [Category.{v} C] (J : GrothendieckTopology C)
-    (O : RingSheaf J) (P : Prelog J O) :
-    isLog J O (associatedPrelog J P)
 
 /-- Fibers of the actual characteristic sheaf agree with the actual
 unit quotient of the log-monoid fiber through its normalized quotient map. -/
