@@ -25,9 +25,7 @@ import Mathlib.RingTheory.PowerSeries.Order
 
 Statements from Eduardo H. M. Brietzke, *Recurrence Relations for Sums of Binomial
 Coefficients and Some Generalizations*, Journal of Integer Sequences 27 (2024),
-Article 24.3.4. Corollary 3 is already proved as
-`Polynomial.exists_polynomial_multiple_supported_on_multiples`
-(`MathlibExt/Algebra/Polynomial/SupportedMultiple.lean`).
+Article 24.3.4.
 
 The Riordan-array step sums are coefficients of a geometric series. For a rational Riordan
 array, the step sums of all residues modulo the step therefore satisfy one common linear
