@@ -1,10 +1,11 @@
-# Szemerédi–Trotter bound on line-compatible sequences
+# Szemerédi–Trotter bound for complete line-size profiles
 
-There is a real constant $C$ such that
-for every natural number $n$, the number of line-compatible sequences for $n$, that is, of
-distinct multisets of the numbers $|\ell \cap P|$ over the distinct lines $\ell$ through two
-distinct points of an $n$-point set $P \subseteq \mathbb{R}^2$, each line counted once, is at
-most $e^{C \sqrt{n}}$. This answers Erdős Problem 733.
+There is a real constant $C$ such
+that for every natural number $n$, at most $e^{C \sqrt{n}}$ distinct complete line-size profiles
+occur among $n$-point sets $P \subseteq \mathbb{R}^2$. Each profile is the multiset of
+$|\ell \cap P|$ over all lines $\ell$ through two distinct points of $P$, each line counted once.
+This is the case of Erdős Problem 733 in which all determined lines are used. The general problem
+allows a selected family of distinct lines.
 
 ## Sources
 
