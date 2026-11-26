@@ -17,7 +17,7 @@ import Mathlib.Tactic.Ring
 /-!
 # Infinitely many acceptable Lucas–Lehmer seeds
 
-Euler's Pell orbit preserves the two square factors of the seed minus and plus two.
+Euler's Pell orbit preserves the odd squarefree parts of `S − 2` and `S + 2`.
 Taking powers in the kernel of reduction modulo the Mersenne number also preserves acceptability.
 -/
 
