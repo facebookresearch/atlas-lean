@@ -232,6 +232,23 @@ private theorem not_two_middle_types {S : Finset ℚ} (hn : S.card = 4) {a b c d
   rw [hsum] at hrel
   exact no_rat_root hc (by nlinarith only [hrel])
 
+/-- **Possible types of a symmetric set.** Let $S$ be a finite set of rational numbers with
+$n \ge 4$ elements. If $S$ is symmetric of type $(i, j)$, with positions counted from $0$, then
+$(i, j)$ is $(0, n - 1)$, $(1, n - 1)$ or $(0, n - 2)$. In the paper's one-based numbering these
+are the types $(1, n)$, $(2, n)$ and $(1, n - 1)$.
+
+Source: Alpert, Barham, Freidin, Tan, and Weiner, *Fast Winning Strategies in a
+Generalized van der Waerden Game*, INTEGERS 26 (2026), Article A40, Lemma 2
+(`integers-2026-A40-lem-2`). -/
+public theorem isSymmetricOfType_cases (S : Finset ℚ) (hS : 4 ≤ S.card)
+    (i j : Fin S.card) (h : IsSymmetricOfType S i j) :
+    (i.val = 0 ∧ j.val = S.card - 1) ∨ (i.val = 1 ∧ j.val = S.card - 1) ∨
+      (i.val = 0 ∧ j.val = S.card - 2) := by
+  obtain ⟨hij, a, b, ha, himage⟩ := h
+  have hj_lt := j.isLt
+  obtain ⟨hi, hj, hend⟩ := (rankMatch_of_image ha himage).endpoints hS hij hj_lt
+  omega
+
 /-- **Uniqueness of the symmetry type.** A finite set $S$ of rational numbers with at least
 four elements is symmetric of at most one type: if $S$ is symmetric of types $(i, j)$ and
 $(i', j')$, then $i = i'$ and $j = j'$.
