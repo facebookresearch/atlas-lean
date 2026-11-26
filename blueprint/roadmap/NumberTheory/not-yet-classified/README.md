@@ -2,6 +2,7 @@
 
 Topics added since this subject's fields were last revised.
 
+- [Adelic Lift](adelic-lift/README.md)
 - [Finite Ramification Conductors](finite-ramification-conductors/README.md)
 - [Formal Hecke Reduction](formal-hecke-reduction/README.md)
 - [Hecke Algebra](hecke-algebra/README.md)
