@@ -16,6 +16,28 @@ open MetaMathlibExt
 example : bishopsSquare 0 0 = 1 := by decide
 example : bishopsWhite 1 1 = 1 ∧ bishopsBlack 1 1 = 0 := by decide
 
+-- The new diagonal has different parity contributions on the odd and even boards.
+example : (bishopsWhite 3 2 : ℤ) = 4 :=
+  (bishopsWhite_recurrence (m := 2) (k := 1)).1.trans (by decide)
+
+example : (bishopsWhite 4 2 : ℤ) = 14 :=
+  (bishopsWhite_recurrence (m := 3) (k := 1)).1.trans (by decide)
+
+example : bishopsWhite 3 2 = 4 ∧ bishopsWhite 4 2 = 14 := by decide
+
+example : bishopsWhite 0 0 = 1 ∧ bishopsWhite 0 1 = 0 :=
+  (bishopsWhite_recurrence (m := 0) (k := 0)).2
+
+example : bishopsWhite 4 0 = 1 := (bishopsWhite_recurrence (m := 4) (k := 0)).2.1
+
+-- With one column already occupied, the new even-board row adds no placements.
+example : (bishopsWhite 2 2 : ℤ) = 0 :=
+  (bishopsWhite_recurrence (m := 1) (k := 1)).1.trans (by decide)
+
+-- The predecessor count vanishes even though the coefficient is negative.
+example : (bishopsWhite 3 5 : ℤ) = 0 :=
+  (bishopsWhite_recurrence (m := 2) (k := 4)).1.trans (by decide)
+
 -- Direct enumeration: the four legal pairs occupy a common row or a common column.
 example : bishopsSquare 2 2 = 4 := by decide
 

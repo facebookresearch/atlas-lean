@@ -892,6 +892,54 @@ public theorem bishopsBlack_recurrence (m k : ℕ) :
     simp [rooks, rows, powersetCard_eq_empty.mpr
       (show (∅ : Finset (ℕ × ℤ)).card < k + 1 by simp)]
 
+/-- **Recurrence for bishops on white squares.** Write $R_W(m, k)$ for the number of placements of
+$k$ nonattacking bishops on the white squares (those $(i, j)$ with $i + j$ even) of the
+$m \times m$ board $[1, m]^2$, and $\pi(n) \in \lbrace 0, 1 \rbrace$ for the remainder of $n$
+modulo $2$. For all natural numbers $m$ and $k$,
+
+$$
+R_W(m + 1, k + 1) = R_W(m, k + 1) + \bigl(m - k + \pi(m + 1)\bigr) R_W(m, k),
+$$
+
+$R_W(m, 0) = 1$ and $R_W(0, k + 1) = 0$.
+
+Source: Eder G. Santos, *Counting Nonattacking Chess Piece Placements: Bishops and Anassas*,
+Journal of Integer Sequences 28 (2025), Article 25.8.6, Theorem 4 (`jis-2025-25.8.6-thm-4`). -/
+public theorem bishopsWhite_recurrence (m k : ℕ) :
+    (bishopsWhite (m + 1) (k + 1) : ℤ) =
+        bishopsWhite m (k + 1) + ((m : ℤ) - k + ((m + 1) % 2 : ℕ)) * bishopsWhite m k ∧
+      bishopsWhite m 0 = 1 ∧ bishopsWhite 0 (k + 1) = 0 := by
+  have hwhite (n j : ℕ) : bishopsWhite n j = (rooks 0 n j).card := by
+    have hboard : whiteSquares n = board 0 n := by
+      ext p
+      simp [whiteSquares, board, color, falling, Int.even_iff]
+    rw [bishopsWhite, hboard]
+    exact color_count (by decide) n j
+  refine ⟨?_, card_nonattackingPlacements_zero .., ?_⟩
+  · rw [hwhite, hwhite, hwhite, rooks_step, Nat.cast_add, Nat.cast_mul]
+    by_cases hk : k ≤ (columns 0 m).card
+    · have hcoeff : ((columns 0 m).card : ℤ) - k =
+          (m : ℤ) - k + ((m + 1) % 2 : ℕ) := by
+        simp only [columns, Int.card_Ico, Nat.cast_zero]
+        omega
+      rw [Nat.cast_sub hk, hcoeff]
+    · -- Every rook uses a distinct column of the new row's column set.
+      have hz : (rooks 0 m k).card = 0 := by
+        by_contra h
+        obtain ⟨s, hs⟩ := card_pos.mp (Nat.pos_of_ne_zero h)
+        obtain ⟨hsub, hcard, _, hinj⟩ := mem_rooks.mp hs
+        apply hk
+        rw [← hcard, ← card_image_of_injOn hinj]
+        apply card_le_card
+        intro t ht
+        obtain ⟨p, hp, rfl⟩ := mem_image.mp ht
+        obtain ⟨hr, hc⟩ := mem_rows.mp (hsub hp)
+        exact columns_mono 0 hr.le hc
+      simp [hz]
+  · rw [hwhite]
+    simp [rooks, rows, powersetCard_eq_empty.mpr
+      (show (∅ : Finset (ℕ × ℤ)).card < k + 1 by simp)]
+
 namespace AnassaRooks
 
 open scoped Classical

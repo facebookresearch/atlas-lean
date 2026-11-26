@@ -72,24 +72,6 @@ public theorem_wanted bishopsSquare_eq_arshon (m k : ℕ) :
           ∑ l ∈ range (m / 2 + 1),
             (m / 2).choose l * extStirlingSecond (l + (m + 1) / 2 : ℕ) ((m : ℤ) - k + j)
 
-/-- **Recurrence for bishops on white squares.** Write $R_W(m, k)$ for the number of placements of
-$k$ nonattacking bishops on the white squares (those $(i, j)$ with $i + j$ even) of the
-$m \times m$ board $[1, m]^2$, and $\pi(n) \in \lbrace 0, 1 \rbrace$ for the remainder of $n$
-modulo $2$. For all natural numbers $m$ and $k$,
-
-$$
-R_W(m + 1, k + 1) = R_W(m, k + 1) + \bigl(m - k + \pi(m + 1)\bigr) R_W(m, k),
-$$
-
-$R_W(m, 0) = 1$ and $R_W(0, k + 1) = 0$.
-
-Source: Eder G. Santos, *Counting Nonattacking Chess Piece Placements: Bishops and Anassas*,
-Journal of Integer Sequences 28 (2025), Article 25.8.6, Theorem 4 (`jis-2025-25.8.6-thm-4`). -/
-public theorem_wanted bishopsWhite_recurrence (m k : ℕ) :
-    (bishopsWhite (m + 1) (k + 1) : ℤ) =
-        bishopsWhite m (k + 1) + ((m : ℤ) - k + ((m + 1) % 2 : ℕ)) * bishopsWhite m k ∧
-      bishopsWhite m 0 = 1 ∧ bishopsWhite 0 (k + 1) = 0
-
 /-- **Extended Stirling formula for bishops on white squares.** For all natural numbers $m$ and
 $k$, the number $R_W(m, k)$ of placements of $k$ nonattacking bishops on the white squares (those
 $(i, j)$ with $i + j$ even) of the $m \times m$ board $[1, m]^2$ satisfies
