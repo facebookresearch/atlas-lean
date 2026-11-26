@@ -199,7 +199,7 @@ private theorem prefix_eq_image (n : ℕ) :
   induction n with
   | zero => decide
   | succ n ih =>
-    show insert (sidonGreedySeq (n + 1)) (sidonGreedyPrefix n) = _
+    change insert (sidonGreedySeq (n + 1)) (sidonGreedyPrefix n) = _
     rw [ih, ← Finset.image_insert, ← Finset.range_add_one]
 
 private theorem seq_strictMono : StrictMono sidonGreedySeq :=
@@ -236,13 +236,13 @@ private theorem seq_le (n : ℕ) : sidonGreedySeq n ≤ (n + 1) ^ 4 := by
     have h2 : (0 : ℕ) ≤ (n + 1) ^ 2 := Nat.zero_le _
     have h3 : (0 : ℕ) ≤ (n + 1) ^ 3 := Nat.zero_le _
     have h1 : (0 : ℕ) ≤ n + 1 := Nat.zero_le _
-    show sidonGreedyNext (sidonGreedyPrefix n) ≤ _
+    change sidonGreedyNext (sidonGreedyPrefix n) ≤ _
     omega
 
 private theorem prefix_sidon (n : ℕ) : (↑(sidonGreedyPrefix n) : Set ℕ).IsSidon := by
   induction n with
   | zero =>
-    show (↑({0} : Finset ℕ) : Set ℕ).IsSidon
+    change (↑({0} : Finset ℕ) : Set ℕ).IsSidon
     intro a ha b hb c hc d hd _
     simp only [Finset.mem_coe, Finset.mem_singleton] at ha hb hc hd
     subst ha
@@ -251,7 +251,7 @@ private theorem prefix_sidon (n : ℕ) : (↑(sidonGreedyPrefix n) : Set ℕ).Is
     subst hd
     exact Or.inl ⟨rfl, rfl⟩
   | succ n ih =>
-    show (↑(insert (sidonGreedyNext (sidonGreedyPrefix n)) (sidonGreedyPrefix n)) :
+    change (↑(insert (sidonGreedyNext (sidonGreedyPrefix n)) (sidonGreedyPrefix n)) :
       Set ℕ).IsSidon
     exact isSidon_insert_of_forbidden ih
       (not_mem_forbidden_sidonGreedyNext (sidonGreedyPrefix n))
@@ -468,15 +468,7 @@ private theorem not_mem_generatedIdeal :
     rw [hXdef, ← pow_mul]
     exact Nat.log_eq_of_pow_le_of_lt_pow le_rfl
       (pow_lt_pow_right₀ (by norm_num) (by omega))
-  have hun : (⋃ j, S j) ∩ Set.Icc 0 X = ⋃ j, (S j ∩ Set.Icc 0 X) := by
-    apply Set.ext
-    intro x
-    simp only [Set.mem_inter_iff, Set.mem_iUnion]
-    constructor
-    · rintro ⟨⟨j, hj⟩, hx⟩
-      exact ⟨j, hj, hx⟩
-    · rintro ⟨j, hj, hx⟩
-      exact ⟨⟨j, hj⟩, hx⟩
+  have hun : (⋃ j, S j) ∩ Set.Icc 0 X = ⋃ j, (S j ∩ Set.Icc 0 X) := Set.iUnion_inter _ _
   have hfinT : ((⋃ j, S j) ∩ Set.Icc 0 X).Finite :=
     (Set.finite_Icc 0 X).subset Set.inter_subset_right
   have hcard : ((⋃ j, S j) ∩ Set.Icc 0 X).ncard
