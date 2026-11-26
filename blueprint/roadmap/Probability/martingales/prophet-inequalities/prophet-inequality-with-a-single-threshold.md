@@ -1,6 +1,8 @@
 # Prophet inequality with a single threshold
 
-Let $n \ge 1$ and let $v_1, \dots, v_n$ be independent, nonnegative, integrable random variables observed in this order, let $V^* = \max_i v_i$ and $p = \frac12\mathbb{E}[V^*]$. The rule that stops at the first $i$ with $v_i \ge p$ and receives $v_i$ (and $0$ if there is no such $i$) has expected reward at least $\frac12\mathbb{E}[V^*]$, and so does the rule that requires $v_i > p$. The factor $\frac12$ cannot be improved: with $v_1 = 1$ and $v_2 = 1/\varepsilon$ with probability $\varepsilon \in (0, 1]$ and $0$ otherwise, no stopping rule earns more than $1$ while $\mathbb{E}[V^*] = 2 - \varepsilon$.
+Let $n \ge 1$ and let $v_1, \dots, v_n$ be independent, nonnegative almost surely, integrable random variables observed in this order. Let $V^* = \max_i v_i$ and $p = \frac12\mathbb{E}[V^*]$. For any measurable acceptance set $A$ with $(p,\infty)\subseteq A\subseteq [p,\infty)$, the [payoff from the first accepted observation](single-threshold-reward.md) has expectation at least $p$. In particular, the bound holds whether the rule accepts or rejects an observation equal to $p$.
+
+The [two-prize example](single-threshold-prophet-two-prize-sharp.md) shows that the factor $1/2$ cannot be improved.
 
 ## Background
 
