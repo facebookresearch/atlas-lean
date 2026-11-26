@@ -11546,6 +11546,7 @@
   "MathlibExt/Combinatorics/SimpleGraph/GraphLimits/GraphonCounting": {"to": "GraphTheory/random-graphs", "title": "Graph limits"},
   "MathlibExt/Combinatorics/SimpleGraph/GraphLimits/GraphonSampling": {"to": "GraphTheory/random-graphs", "title": "Graph limits"},
   "MathlibExt/Combinatorics/SimpleGraph/GraphLimits/HomDensity": {"to": "GraphTheory/random-graphs", "title": "Graph limits"},
+  "MathlibExt/Combinatorics/SimpleGraph/GraphLimits/LimitTheorem": {"to": "GraphTheory/random-graphs", "title": "Graph limits"},
   "MathlibExt/Combinatorics/SimpleGraph/GraphLimits/SidorenkoFourCycle": {"to": "GraphTheory/extremal-graph-theory", "title": "Sidorenko's conjecture"},
   "MathlibExt/Combinatorics/SimpleGraph/GraphLimits/WeakRegularity": {"to": "GraphTheory/random-graphs", "title": "Graph limits"},
   "MathlibExt/Combinatorics/SimpleGraph/GraphProducts/LexProduct": {"to": "GraphTheory/graph-families-and-operations", "title": "Lexicographic product of graphs"},
