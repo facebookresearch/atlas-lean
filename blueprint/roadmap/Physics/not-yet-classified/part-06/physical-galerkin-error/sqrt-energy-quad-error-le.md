@@ -1,5 +1,0 @@
-# Composed energy-norm error bound with midpoint quadrature
-
-Consider a bar on $[0, L]$ with axial stiffness $EA$, discretized by the two-cell mesh with nodes $0, L/2, L$. Let $\varphi$ be the hat function of the interior node of the mesh $0 < \tfrac12 < 1$ of $[0, 1]$ (piecewise linear, $\varphi(0) = \varphi(1) = 0$, $\varphi(\tfrac12) = 1$). For the quadratic load $q(x) = Q\,(x/L)^2$ let $\beta = QL^2/EA$ and $K = 4EA/L$. The exact-load coefficient is $c_{\mathrm{ex}} = F/K$ with $F = \int_0^L Q\,(x/L)^2\,\varphi(x/L)\,dx$, and the midpoint coefficient is $c_{\mathrm{mid}} = F_{\mathrm{mid}}/K$ with $F_{\mathrm{mid}} = \tfrac{L}{2}\big(q(L/4)\,\varphi(1/4) + q(3L/4)\,\varphi(3/4)\big)$. Let $u(x) = \beta\,\hat u(x/L)$ with $\hat u(\xi) = (\xi - \xi^4)/12$, and for $c \in \mathbb{R}$ let $r = F_{\mathrm{mid}} - K c$. If $EA > 0$ and $L > 0$, then
-
-$$\sqrt{\int_0^L EA\,\big((u - c\,\varphi(\cdot/L))'\big)^2} \le \sqrt{\int_0^L EA\,\big((u - c_{\mathrm{ex}}\,\varphi(\cdot/L))'\big)^2} + \sqrt{K}\,\frac{|\beta|}{384} + \sqrt{K}\,\frac{L\,|r|}{4\,EA}.$$
