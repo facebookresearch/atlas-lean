@@ -14,6 +14,7 @@ public import Mathlib.SetTheory.Cardinal.Finite
 public import MathlibExt.Combinatorics.Enumerative.Partition.DistinctOddPartsTriangularParity
 public import MathlibExt.Combinatorics.Enumerative.Partition.OverpartitionOddSquareRecurrence
 public import MathlibExt.Combinatorics.Enumerative.Partition.OddDistinctsPentagonalRecurrence
+public import MathlibExt.Combinatorics.Enumerative.Partition.PartsNotTwoModFourTriangularSumEven
 public import MathlibExt.Combinatorics.Enumerative.Partition.PentagonalRecurrenceParity
 
 /-!
@@ -31,7 +32,9 @@ Theorems 1-2, 6, 8-14 and Corollaries 1, 3-5 were checked against the arXiv vers
 Theorem 5 is proved in
 `MathlibExt.Combinatorics.Enumerative.Partition.OverpartitionOddSquareRecurrence`, and
 Corollary 4 is proved in
-`MathlibExt.Combinatorics.Enumerative.Partition.OddDistinctsPentagonalRecurrence`.
+`MathlibExt.Combinatorics.Enumerative.Partition.OddDistinctsPentagonalRecurrence`. Corollary 3
+is proved in
+`MathlibExt.Combinatorics.Enumerative.Partition.PartsNotTwoModFourTriangularSumEven`.
 -/
 
 namespace MetaMathlibExt
@@ -91,16 +94,6 @@ Parts*, INTEGERS 26 (2026), Article A60, Section 1 (definition of `ped(n)` befor
 public def distinctEvenPartsCount (n : ℕ) : ℕ :=
   ((Finset.univ : Finset n.Partition).filter
     fun p => ∀ i ∈ p.parts, Even i → p.parts.count i = 1).card
-
-/-- **Partitions with no part congruent to 2 modulo 4.** For a natural number $n$, $P_2(n)$ is
-the number of partitions of $n$ none of whose parts is congruent to $2$ modulo $4$.
-
-Its generating function is $\sum_{n \ge 0} P_2(n) q^n = (q^2; q^4)_\infty / (q; q)_\infty$.
-
-Source: Deepthi G. and S. Chandankumar, *Linear Relations for Overpartitions into Odd
-Parts*, INTEGERS 26 (2026), Article A60, Section 3 (definition of `P_2(n)` before Theorem 11). -/
-public def partsNotTwoModFourCount (n : ℕ) : ℕ :=
-  (Nat.Partition.restricted n fun i => i % 4 ≠ 2).card
 
 /-- **Bipartitions into distinct parts.** Let $\operatorname{pd}(m)$ be the number of partitions
 of $m$ into distinct parts. For a natural number $n$, $q(n)$ is the number of ordered pairs of
@@ -233,16 +226,6 @@ public theorem_wanted overpartitionOdd_eq_sum_partsNotTwoModFour_triangular (n :
     overpartitionOddPartsCount n =
       ∑ k ∈ (Finset.range (n + 1)).filter (fun k => k * (k + 1) / 2 ≤ n),
         partsNotTwoModFourCount (n - k * (k + 1) / 2)
-
-/-- **Parity of a triangular sum of partitions with no part congruent to 2 modulo 4.** Write
-$P_2(m)$ for the number of partitions of $m$ with no part congruent to $2$ modulo $4$. For every
-positive integer $n$, the sum $\sum_{k \ge 0,\ k(k+1)/2 \le n} P_2(n - k(k+1)/2)$ is even.
-
-Source: Deepthi G. and S. Chandankumar, *Linear Relations for Overpartitions into Odd
-Parts*, INTEGERS 26 (2026), Article A60, Corollary 3 (`integers-2026-A60-cor-3`). -/
-public theorem_wanted partsNotTwoModFour_triangular_sum_even (n : ℕ) (hn : 0 < n) :
-    Even (∑ k ∈ (Finset.range (n + 1)).filter (fun k => k * (k + 1) / 2 ≤ n),
-      partsNotTwoModFourCount (n - k * (k + 1) / 2))
 
 /-- **Bipartitions into distinct parts from the partition function.** Let $q(n)$ be the number of
 ordered pairs of partitions into distinct parts whose sizes add up to $n$, and let $p(m)$ be the
