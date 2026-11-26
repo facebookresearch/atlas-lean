@@ -9,6 +9,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicFrameModels
+public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesPluriharmonicHiggsIntegrable
 
 /-!
 # Wanted native holomorphic-kernel, cotangent and Higgs constructions
@@ -16,6 +17,8 @@ public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicFrameModels
 All ordinary support requests concern the fixed public section formulas.
 Integrability produces new holomorphic frames and the actual O-linear
 Higgs map; it does not declare the original smooth frames holomorphic.
+The integrability theorem `pluriharmonic_higgs_integrable` is proved in
+`MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesPluriharmonicHiggsIntegrable`.
 Polystability, Chern vanishing and the full correspondence are separate
 theorems. Simpson, alg-geom/9604005v1, section 2, printed pages 9--11.
 -/
@@ -93,7 +96,3 @@ def_wanted pluriharmonic_holomorphic_higgs_model [T2Space M] [SecondCountableTop
 
 /-- Construct the actual exterior-square map of this same normalized Higgs field. -/
 def_wanted harmonic_higgs_exterior_square (H : HarmonicHiggsModel B h A) : HiggsExteriorSquare B h A H
-
-/-- The third pluriharmonic equation makes that actual O-linear exterior square zero. -/
-theorem_wanted pluriharmonic_higgs_integrable (hh : IsPluriharmonic B h A)
-    (H : HarmonicHiggsModel B h A) (S : HiggsExteriorSquare B h A H) : IsIntegrable B h A S
