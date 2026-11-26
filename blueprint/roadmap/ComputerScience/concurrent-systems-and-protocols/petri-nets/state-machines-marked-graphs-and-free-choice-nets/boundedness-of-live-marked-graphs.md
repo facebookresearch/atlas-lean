@@ -1,6 +1,6 @@
 # Bounded places of live marked graphs
 
-Let $(N, M_0)$ be a [live](../liveness-and-deadlock-freedom.md) [marked graph](../subclasses-of-petri-nets.md). A place of $N$ is bounded, that is, has a bound on its number of tokens over all reachable markings, if and only if it lies on some directed circuit; and $(N, M_0)$ is [bounded](../boundedness-and-safeness.md) if and only if $N$ is strongly connected.
+Let $(N, M_0)$ be a [live](../liveness-and-deadlock-freedom.md) [marked graph](../subclasses-of-petri-nets.md) whose net is connected and has at least one place and one transition. A place of $N$ is bounded, that is, has a bound on its number of tokens over all reachable markings, if and only if it lies on some directed circuit; and $(N, M_0)$ is [bounded](../boundedness-and-safeness.md) if and only if $N$ is strongly connected.
 
 ## Depends on
 
@@ -15,4 +15,4 @@ Let $(N, M_0)$ be a [live](../liveness-and-deadlock-freedom.md) [marked graph](.
 
 ## Sources
 
-- J. Esparza, *Petri Nets*, lecture notes, Technical University of Munich, version of 18 June 2019, <https://archive.model.in.tum.de/um/courses/petri/SS2019/PNSkript.pdf>, Theorem 5.2.4 ("Boundedness Theorem") and Corollary 5.2.5, items 1 and 3, p. 99.
+- J. Esparza, *Petri Nets*, lecture notes, Technical University of Munich, version of 18 June 2019, <https://archive.model.in.tum.de/um/courses/petri/SS2019/PNSkript.pdf>, Definition 1.3.8 (p. 16), Theorem 5.2.4 ("Boundedness Theorem") and Corollary 5.2.5, items 1 and 3, p. 99.

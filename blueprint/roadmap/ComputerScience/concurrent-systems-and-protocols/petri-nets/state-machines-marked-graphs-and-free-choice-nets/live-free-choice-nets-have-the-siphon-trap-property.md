@@ -1,6 +1,6 @@
 # Live free-choice nets have the siphon–trap property
 
-Let $(N, M_0)$ be a connected net that is [extended free-choice](extended-free-choice-nets.md). If $(N, M_0)$ is [live](../liveness-and-deadlock-freedom.md), then every [siphon](../siphons-and-traps.md) of $N$ contains a trap marked at $M_0$.
+Let $(N, M_0)$ be a net that is [extended free-choice](extended-free-choice-nets.md), whose net is connected and has at least one transition. If $(N, M_0)$ is [live](../liveness-and-deadlock-freedom.md), then every [siphon](../siphons-and-traps.md) of $N$ contains a trap marked at $M_0$.
 
 ## Depends on
 
@@ -17,4 +17,4 @@ Let $(N, M_0)$ be a connected net that is [extended free-choice](extended-free-c
 
 ## Sources
 
-- J. Esparza, *Petri Nets*, lecture notes, Technical University of Munich, version of 18 June 2019, <https://archive.model.in.tum.de/um/courses/petri/SS2019/PNSkript.pdf>, Theorem 5.3.9 ("Second half of Commoner's Liveness Theorem") with its proof, pp. 110–111.
+- J. Esparza, *Petri Nets*, lecture notes, Technical University of Munich, version of 18 June 2019, <https://archive.model.in.tum.de/um/courses/petri/SS2019/PNSkript.pdf>, Definition 1.3.8 (p. 16) and Theorem 5.3.9 ("Second half of Commoner's Liveness Theorem") with its proof, pp. 110–111.
