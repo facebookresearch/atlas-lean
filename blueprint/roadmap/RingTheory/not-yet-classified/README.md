@@ -46,5 +46,7 @@ Topics added since this subject's fields were last revised.
 - [Semiperfect Crystalline Residues](semiperfect-crystalline-residues/README.md)
 - [Semiperfect Witt PDEnvelopes](semiperfect-witt-pdenvelopes/README.md)
 - [Subst Basis](subst-basis/README.md)
+- [Tate Determinant](tate-determinant/README.md)
 - [Is Base Change Span](span-range-eq-top.md)
 - [Jacobian Square Presentation](associated-discr-norm-jacobian-det-of-sq.md)
+- [Wiebe's colon-ideal lemma](colon-span-eq-sup-span-det-of-is-weakly.md)
