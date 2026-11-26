@@ -223,4 +223,35 @@ example (c : ℤ → Fin 3)
     (fun x y z h => hrf x y z (h.trans (pow_zero z))) 6 5 2
     (by decide) (by decide) (by decide) (by decide)
 
+-- The orbits of 3 and 5 meet the orbit of 2 at different points, 2 and 4 respectively.
+example : c₇ 3 = c₇ 5 := by
+  let f (x : ZMod 7) := x ^ 2
+  have hf : ∀ x : ZMod 7, x ^ 2 = 0 ↔ x = 0 := by decide
+  have hzero (i : ℕ) (x : ZMod 7) : f^[i] x = 0 ↔ x = 0 := by
+    induction i with
+    | zero => rfl
+    | succ i ih =>
+      rw [Function.iterate_succ_apply']
+      exact (hf _).trans ih
+  have h0 (x : ZMod 7) (hx : ∃ i j : ℕ, f^[i] x = f^[j] 2) : c₇ x ≠ c₇ 0 := by
+    obtain ⟨i, j, hij⟩ := hx
+    have hx0 : x ≠ 0 := by
+      intro h
+      have ht := (hzero i x).mpr h
+      rw [hij] at ht
+      exact (by decide : (2 : ZMod 7) ≠ 0) ((hzero j 2).mp ht)
+    exact (by decide : ∀ y : ZMod 7, y ≠ 0 → c₇ y ≠ c₇ 0) x hx0
+  exact component_monochromatic_of_rainbowFree 7 3 f c₇ c₇_surjective c₇_rainbowFree 2 h0 3 5
+    ⟨1, 0, by change (3 : ZMod 7) ^ 2 = 2; decide⟩
+    ⟨1, 1, by change (5 : ZMod 7) ^ 2 = (2 : ZMod 7) ^ 2; decide⟩
+
+-- For the constant zero map, all edges lead to zero. The coloring is still rainbow-free,
+-- but the component containing zero need not be monochromatic.
+example : ∃ f : ZMod 7 → ZMod 7,
+    (∀ x y z : ZMod 7, x - y = f z → ¬ (c₇ x ≠ c₇ y ∧ c₇ y ≠ c₇ z ∧ c₇ x ≠ c₇ z)) ∧
+    (∃ i j : ℕ, f^[i] 0 = f^[j] 1) ∧ c₇ 0 ≠ c₇ 1 := by
+  refine ⟨fun _ => 0, ?_, ⟨1, 1, rfl⟩, by decide⟩
+  intro x y _ h hcolors
+  exact hcolors.1 (congrArg c₇ (sub_eq_zero.mp h))
+
 end MathlibExtTest.RainbowPowerDifference
