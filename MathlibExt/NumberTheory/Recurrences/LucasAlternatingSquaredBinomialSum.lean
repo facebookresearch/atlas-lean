@@ -13,6 +13,7 @@ public import MathlibExt.NumberTheory.LucasSequence
 import Mathlib.Algebra.BigOperators.NatAntidiagonal
 import Mathlib.Algebra.Polynomial.Coeff
 import Mathlib.Algebra.Polynomial.Expand
+import Mathlib.Data.Nat.Choose.Vandermonde
 import Mathlib.Tactic.LinearCombination
 import MathlibExt.NumberTheory.Recurrences.LucasSequenceAddition
 
@@ -24,7 +25,10 @@ This module proves `MetaMathlibExt.lucasU_lucasV_sum_choose_sq_alternating`: for
 `∑_{k=0}^{2n} (-1)^k C(2n, k)^2 U_{2n-k} V_k = (-1)^n C(2n, n) U_{2n}`,
 where `U` and `V` are the Lucas sequences `U(p, -1)` and `V(p, -1)`.
 
-The statement is from John M. Campbell and Emrah Kılıç, *Binomial Sums Involving Second-Order
+By the same reflection argument, the unsigned weights `C(n, k)^2` reduce
+`MetaMathlibExt.lucasU_lucasV_sum_choose_sq` to Vandermonde's identity.
+
+The statements are from John M. Campbell and Emrah Kılıç, *Binomial Sums Involving Second-Order
 Linearly Recurrent Sequences*, The Fibonacci Quarterly 62 (2024), no. 1, 57–64. The paper's
 sequences `U_0 = 0`, `U_1 = 1`, `V_0 = 2`, `V_1 = p`, `X_n = p X_{n-1} + X_{n-2}` are the Lucas
 sequences `U(p, -1)` and `V(p, -1)`, written `lucasU ⟨p, -1, _⟩` and `lucasV ⟨p, -1, _⟩`. The
@@ -129,5 +133,25 @@ public theorem lucasU_lucasV_sum_choose_sq_alternating (p : ℤ) (n : ℕ) :
       (fun k => ((2 * n).choose k : ℤ) ^ 2 * (-1) ^ k) ?_, sum_choose_sq_mul_neg_one_pow]
   intro k hk
   simp only [Nat.choose_symm hk, neg_one_pow_two_mul_sub hk]
+
+set_option backward.proofsInPublic true in
+open lucasU_lucasV_sum_choose_sq_alternating in
+/-- **Squared-binomial convolution of the Lucas sequences U and V.** Let $p$ be an integer and let
+$U$ and $V$ be the Lucas sequences $U(p, -1)$ and $V(p, -1)$, so that $U_0 = 0$, $U_1 = 1$,
+$V_0 = 2$, $V_1 = p$, and both satisfy $X_{j+2} = p X_{j+1} + X_j$. Then for every natural
+number $n$
+$$\sum_{k=0}^{n} \binom{n}{k}^2 U_{n-k} V_k = \binom{2n}{n} U_n.$$
+
+Source: John M. Campbell and Emrah Kılıç, *Binomial Sums Involving Second-Order Linearly Recurrent
+Sequences*, The Fibonacci Quarterly 62 (2024), Article 62-1/campbell10202023, Proposition 2.3. -/
+public theorem lucasU_lucasV_sum_choose_sq (p : ℤ) (n : ℕ) :
+    ∑ k ∈ Finset.range (n + 1),
+        (n.choose k : ℤ) ^ 2 * lucasU ⟨p, -1, by decide⟩ (n - k) * lucasV ⟨p, -1, by decide⟩ k =
+      ((2 * n).choose n : ℤ) * lucasU ⟨p, -1, by decide⟩ n := by
+  have hchoose : ∑ k ∈ Finset.range (n + 1), (n.choose k : ℤ) ^ 2 = ((2 * n).choose n : ℤ) := by
+    exact_mod_cast Nat.sum_range_choose_sq n
+  rw [sum_mul_lucasU_mul_lucasV_of_symm _ n (fun k => (n.choose k : ℤ) ^ 2) ?_, hchoose]
+  intro k hk
+  rw [Nat.choose_symm hk]
 
 end MetaMathlibExt
