@@ -1041,6 +1041,29 @@ at all: superseded routes, conditional "close" files, and obstruction notes.
     `PhyslibExt.StatisticalMechanics.RandomCluster.EdgePartitionFunction`;
   - `Code/Ising/EvenSubgraphDecomp.lean` and `Code/Ising/KWClosedWalkParity.lean` →
     `PhyslibExt.CondensedMatter.IsingModel.KWClosedWalkParity`.
-- Declarations deleted inside surviving modules (duplicates of Mathlib or of earlier ports, and
-  declarations whose hypotheses were proved unsatisfiable) are listed in the pull-request
-  descriptions, not here.
+- Declarations deleted inside surviving modules during the port (duplicates of Mathlib or of
+  earlier ports, and declarations whose hypotheses were proved unsatisfiable) are listed in the
+  pull-request descriptions, not here. Duplicates retired after the port are listed under
+  [Declarations retired after the port](#declarations-retired-after-the-port).
+
+## Declarations retired after the port
+
+These declarations of second-round modules restated declarations already in the root libraries and
+were removed after the port. Their modules stay, and the rows and counts above are unchanged. Use
+the declaration in the last column instead; except where noted, it has the same statement.
+
+| Retired declaration | Module | Use instead |
+| --- | --- | --- |
+| `StatMech.Lattice.icc_offComplGraph` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.OffWalkInducedGraph` | `StatMech.Lattice.fcb_offComplGraph`, definitionally the same graph |
+| `StatMech.Lattice.icc_offComplGraph_eq_fcb_offComplGraph` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.OffWalkInducedGraph` | nothing: it stated `icc_offComplGraph Vc = fcb_offComplGraph Vc`, by `rfl` |
+| `StatMech.Lattice.icc_offComplGraph_adj` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.OffWalkInducedGraph` | `StatMech.Lattice.fcb_offComplGraph_adj` (`@[simp]`); with `offSupport Vc` on the right-hand side, `Iff.rfl` |
+| `StatMech.Probability.mfp2_master_half_via_perCoord` | `CSLibExt.Complexity.BooleanFunctions.KKL.MasterFamilyHighNoise` | `StatMech.Probability.hcq_smallDelta_p_half` |
+| `StatMech.Universality.fci_face_adj_left` | `MathlibExt.Probability.Percolation.Universality.FrameChangeIso` | `StatMech.Lattice.latAdj_left` |
+| `StatMech.Universality.fci_face_adj_right` | `MathlibExt.Probability.Percolation.Universality.FrameChangeIso` | `StatMech.Lattice.latAdj_right` |
+| `StatMech.Probability.mil_indicator_sq` | `CSLibExt.Complexity.BooleanFunctions.KKL.BKKKLMeanInfl` | `StatMech.Probability.klo_indicator_sq` |
+| `StatMech.Lattice.exc_farLeft_mem_exterior` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.ExteriorConnected` | `StatMech.Lattice.axisFarLeft_mem_exterior` |
+| `StatMech.Lattice.unitWt_negx` | `MathlibExt.Combinatorics.SimpleGraph.Lattice.ExtremeCell` | `StatMech.Lattice.unitWt_mx` |
+
+`StatMech.Lattice.icc_induce_reachable_iff`, `StatMech.Lattice.icc_mem_offSupportComponent_iff` and
+`StatMech.Lattice.icc_components_distinct` keep their names; they are now stated with
+`fcb_offComplGraph`.
