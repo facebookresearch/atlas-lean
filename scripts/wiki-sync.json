@@ -31049,6 +31049,7 @@
 "Domains.Biology.StatisticalGenetics.FisherMultilocus.totalValue_eq": "de3b9b32eb88a7ff",
 "Domains.Chemistry.MineralProcessing.BondEnergy.bond_energy_identities": "6a324fe10f41f784",
 "Domains.Chemistry.MineralProcessing.TwoProductFormula.two_product_formula": "c003b7f41d1d6115",
+"Domains.Chemistry.Separations.CrosscurrentExtraction.crosscurrent_amounts": "fd0644f7c68d36e5",
 "Domains.Chemistry.ThermalBalances.FreezingTime.freezing_time_lower_bound": "64dcbcd3f8f6c1b5",
 "DoubleCentralizer.StrictCauchy": "d1b09a65fd54e313",
 "DoubleCentralizer.StrictCauchySeq": "83c74997dd05bd43",

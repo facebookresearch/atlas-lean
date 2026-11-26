@@ -10412,6 +10412,7 @@
   "Domains/Chemistry/ParticleBalances/AggregationBreakage": {"to": "Chemistry/chemical-kinetics", "title": "Particle population balances"},
   "Domains/Chemistry/ParticleBalances/SizeIndependentGrowth": {"to": "Chemistry/chemical-kinetics", "title": "Particle population balances"},
   "Domains/Chemistry/ProcessBalances/ProductionSequence": {"to": "Chemistry/amounts-and-stoichiometry", "title": "Process material balances"},
+  "Domains/Chemistry/Separations/CrosscurrentExtraction": {"to": "Chemistry/chemical-thermodynamics", "title": "Equilibrium-stage separations"},
   "Domains/Chemistry/Spectrometry/IsotopePatterns": {"to": "Chemistry/analytical-chemistry", "title": "Mass spectrometry and isotope patterns"},
   "Domains/Chemistry/ThermalBalances/FreezingTime": {"to": "Chemistry/chemical-kinetics", "title": "Thermal inactivation kinetics"},
   "Domains/Chemistry/Transport/SerialTankResponse": {"to": "Chemistry/chemical-kinetics", "title": "Residence-time distributions"},
