@@ -12,6 +12,7 @@ public import Domains.Economics.Preference.UtilityRepresentation
 public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Finset.Sort
+import Domains.Economics.Preference.OrdinalInvariance
 
 @[expose] public section
 
@@ -50,6 +51,46 @@ theorem tiePref_not_represents_const : ¬ tiePref.Represents (fun _ => 0) := by
   have hne : ¬ ((![1, 1, 0] : Fin 3 → ℕ) 0 ≤ (![1, 1, 0] : Fin 3 → ℕ) 2) := by
     decide
   exact hne hR
+
+private theorem tiePref_counts : tiePref.lowerContourCount = ![3, 3, 1] := by
+  let : DecidableRel tiePref.R := fun _ _ => Nat.decLe _ _
+  have h : ∀ x : Fin 3, (Finset.univ.filter (tiePref.R x)).card =
+      (![3, 3, 1] : Fin 3 → ℕ) x := by decide
+  funext x
+  rw [Preference.lowerContourCount, Set.Finite.toFinset_ofPred]
+  exact h x
+
+example :
+    tiePref.Indiff 0 1 ∧ tiePref.lowerContourCount 0 = tiePref.lowerContourCount 1 ∧
+      tiePref.StrictPref 0 2 ∧ tiePref.lowerContourCount 2 < tiePref.lowerContourCount 0 := by
+  have hcmp (x y : Fin 3) :
+      tiePref.R x y ↔ tiePref.lowerContourCount y ≤ tiePref.lowerContourCount x :=
+    (tiePref.represents_lowerContourCount x y).trans Nat.cast_le
+  rw [tiePref_counts] at hcmp ⊢
+  exact ⟨⟨(hcmp 0 1).2 (by decide), (hcmp 1 0).2 (by decide)⟩, by decide,
+    ⟨(hcmp 0 2).2 (by decide), fun h => (by decide : ¬ (3 : ℕ) ≤ 1) ((hcmp 2 0).1 h)⟩,
+    by decide⟩
+
+example :
+    let A : Set (Fin 3) := {0, 2}
+    tiePref.choice A = {0} ∧
+      (utilityChoice (fun x => (tiePref.lowerContourCount x : ℝ)) A).Nonempty := by
+  let A : Set (Fin 3) := {0, 2}
+  have hchoice := tiePref.represents_lowerContourCount.choice_eq_utilityChoice A
+  refine ⟨hchoice.trans ?_, hchoice ▸ tiePref.choice_nonempty (Set.toFinite A) ⟨0, Or.inl rfl⟩⟩
+  ext x
+  simp only [utilityChoice, A, Set.mem_ofPred_eq, Set.mem_insert_iff, Set.mem_singleton_iff,
+    tiePref_counts, Nat.cast_le]
+  revert x
+  decide
+
+example : tiePref.choice ({0, 1} : Set (Fin 3)) = {0, 1} := by
+  rw [tiePref.represents_lowerContourCount.choice_eq_utilityChoice]
+  ext x
+  simp only [utilityChoice, Set.mem_ofPred_eq, Set.mem_insert_iff, Set.mem_singleton_iff,
+    tiePref_counts, Nat.cast_le]
+  revert x
+  decide
 
 end PreferenceExamples
 

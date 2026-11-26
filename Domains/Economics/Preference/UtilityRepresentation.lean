@@ -21,6 +21,9 @@ Source: J. Levin and P. Milgrom, *Introduction to Choice Theory*, Stanford Econ 
 §4 (Utility): Definition 5 (`u` represents `≿` iff `x ≿ y ↔ u(x) ≥ u(y)`) and Proposition 3
 (if `X` is finite, every complete and transitive preference relation on `X` is represented by
 some `u : X → ℝ`).
+
+On a finite set of alternatives, the cardinalities of weak lower contours give a direct
+non-inductive construction of an ordinal utility representation with natural-number values.
 -/
 
 namespace MathlibExt.Economics
@@ -52,6 +55,33 @@ theorem exists_represents {α : Type*} [Finite α] (P : Preference α) :
     Nat.cast_le.trans (Fin.le_iff_val_le_val.symm.trans
       (e.le_iff_le.trans toAntisymmetrization_le_toAntisymmetrization_iff))
   exact h.symm
+
+/-- For a preference `P` on a finite set of alternatives, the weak lower-contour count at `x`
+is the number of alternatives `y` such that `P.R x y`. It includes `x` itself and every
+alternative indifferent to `x`. -/
+noncomputable def lowerContourCount {α : Type*} [Finite α] (P : Preference α) (x : α) : ℕ :=
+  (Set.toFinite {y | P.R x y}).toFinset.card
+
+/-- The weak lower-contour count, cast from `ℕ` to `ℝ`, represents a finite preference:
+`P.R x y` if and only if the count at `y` is at most the count at `x`.
+In particular, indifferent alternatives have equal counts.
+
+This is a direct, non-inductive construction of the finite representation result of
+Levin–Milgrom, *Introduction to Choice Theory* (2004), Proposition 3. -/
+theorem represents_lowerContourCount {α : Type*} [Finite α] (P : Preference α) :
+    P.Represents (fun x => (P.lowerContourCount x : ℝ)) := by
+  intro x y
+  refine Iff.trans ?_ (Nat.cast_le (α := ℝ)).symm
+  let lower (x : α) : Set α := {y | P.R x y}
+  have lower_mono {x y : α} (h : P.R x y) : lower y ⊆ lower x := fun _ hz => P.trans h hz
+  refine ⟨fun h => Finset.card_le_card (Set.Finite.toFinset_mono (lower_mono h)), ?_⟩
+  intro hcard
+  by_contra hxy
+  have hyx := (P.complete x y).resolve_left hxy
+  have hy : y ∈ lower y := (P.complete y y).elim id id
+  have hproper : lower x ⊂ lower y :=
+    lt_of_le_not_ge (lower_mono hyx) (fun hsub => hxy (hsub hy))
+  exact (Finset.card_lt_card (Set.Finite.toFinset_strictMono hproper)).not_ge hcard
 
 end Preference
 
