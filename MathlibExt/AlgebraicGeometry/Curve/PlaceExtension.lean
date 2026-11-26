@@ -506,4 +506,3 @@ theorem AlgebraicCurve.Place.pairwiseDisjoint_fiber {K F F' : Type*} [Field K] [
   intro v₁ _ v₂ _ hne
   refine Finset.disjoint_left.mpr fun w hw₁ hw₂ => ?_
   exact hne (((mem_fiberOver v₁).mp hw₁).symm.trans ((mem_fiberOver v₂).mp hw₂))
-
