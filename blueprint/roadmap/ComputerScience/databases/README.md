@@ -9,6 +9,7 @@ Relational algebra, functional dependencies, normal forms and lossless decomposi
 - [Two-phase locking](two-phase-locking/README.md)
 
 - [Join processing](join-processing/README.md)
+- [Parallel query communication](parallel-query-communication/README.md)
 - [Bags and nulls](bags-and-nulls/README.md)
 - [Relational calculus](relational-calculus/README.md)
 - [Datalog](datalog/README.md)

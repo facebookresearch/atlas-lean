@@ -19,13 +19,20 @@ A sound expansion has separate pages for:
    MPC($\varepsilon$) algorithm computing $q$ has space exponent $\varepsilon \ge 1 - 1/\tau^*(q)$, even on
    matching databases (Theorem 1.1), with the source's load and failure-probability conventions.
 3. **Matching upper bound** on matching databases by the HyperCube algorithm with share exponents
-   proportional to an optimal fractional vertex cover (Proposition 3.2), as a separate page.
+   proportional to an optimal fractional vertex cover (Proposition 3.2), as a separate page. Its
+   stated failure bound depends on the matching size $n$ and server count $p$; taking one small
+   constant tolerance requires a parameter regime on which that bound suffices. Failure on a
+   fixed tiny input with unbounded $p$ is not the fractional-cover lower bound.
 
 ## Depends on
 
-- [MPC(eps) model](mpc-model.md)
+- [MPC(ε) communication for database queries](mpc-model.md)
 - [Matching databases](matching-databases.md)
 - [Query hypergraph and fractional vertex covering number](query-hypergraph-and-fractional-vertex-covering-number.md)
+
+## Proof depends on
+
+- [Simulating the first round with relation input servers](input-server-simulation.md) — the lower bound is derived using separate relation inputs; its application to distributed inputs requires the placement and cost-preserving simulation for the source's parameter regime.
 
 ## Sources
 
