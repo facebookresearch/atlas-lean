@@ -13,11 +13,14 @@ Under first-come first-served service, the customers a departing customer leaves
 - [Poisson process](../../point-processes/poisson-processes/is-poisson-process.md)
 - [Pollaczek–Khinchine formula for the queue length](pollaczek-khinchine-formula-for-the-queue-length.md)
 
+## Proof depends on
+
+- [Poisson arrivals during an independent service time](poisson-arrivals-during-an-independent-service-time.md): applied to the sojourn time $S$.
+
 ## Expansion
 
 This page becomes ready once these prerequisites are stated:
 
-- the number of Poisson arrivals during an independent random time $S$ has generating function $\tilde S(\lambda - \lambda z)$;
 - the identity between a transform given on $s \in (0, \lambda]$ by the substitution and its analytic continuation to all $s > 0$.
 
 ## Sources

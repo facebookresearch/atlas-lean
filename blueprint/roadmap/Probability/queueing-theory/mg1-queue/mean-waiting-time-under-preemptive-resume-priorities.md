@@ -14,11 +14,14 @@ Lower classes are invisible to a class-$i$ customer, and the work in the system 
 - [Poisson process](../../point-processes/poisson-processes/is-poisson-process.md)
 - [Cobham's formula for non-preemptive priorities](cobham-s-formula-for-non-preemptive-priorities.md)
 
+## Proof depends on
+
+- [The workload does not depend on the service order](the-workload-does-not-depend-on-the-service-order.md)
+
 ## Expansion
 
 This page becomes ready once these prerequisites are stated:
 
-- the work in a work-conserving single-server queue does not depend on the service order (proof step);
 - the mean length of a service time extended by all higher-priority work arriving during it, a busy period started by that service.
 
 ## Sources

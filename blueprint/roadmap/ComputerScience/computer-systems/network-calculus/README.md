@@ -11,6 +11,7 @@ Deterministic bounds on backlog and delay for flows constrained by arrival curve
 - [Service curves](service-curves.md)
 - [Guaranteed-delay nodes offer burst-delay service curves](guaranteed-delay-nodes-offer-burst-delay-service-curves.md)
 - [Generalized processor sharing offers a constant-rate service curve](generalized-processor-sharing-offers-a-constant-rate-service-curve.md)
+- [Node service guarantees](node-service-guarantees/README.md)
 - [The backlog bound](the-backlog-bound.md)
 - [The delay bound](the-delay-bound.md)
 - [The output arrival curve](the-output-arrival-curve.md)
@@ -22,3 +23,5 @@ Deterministic bounds on backlog and delay for flows constrained by arrival curve
 - [Input-output characterization of greedy shapers](input-output-characterization-of-greedy-shapers.md)
 - [Re-shaping does not increase backlog or delay bounds](re-shaping-does-not-increase-backlog-or-delay-bounds.md)
 - [Shaping conserves arrival constraints](shaping-conserves-arrival-constraints.md)
+- [Packetizers](packetizers/README.md)
+- [Traffic regulators](traffic-regulators/README.md)

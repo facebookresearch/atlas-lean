@@ -12,12 +12,15 @@ In the renewal argument, a cycle consists of a busy period followed by an idle p
 
 - [Poisson process](../../point-processes/poisson-processes/is-poisson-process.md)
 
+## Proof depends on
+
+- [Renewal-reward theorem](../../point-processes/renewal-processes/renewal-reward-theorem.md): the long-run fraction of busy time is $E[BP]/(E[BP] + 1/\lambda)$.
+
 ## Expansion
 
 This page becomes ready once these prerequisites are stated:
 
 - the busy cycles of the M/G/1 queue form a renewal process, with i.i.d. busy and idle periods;
-- the renewal-reward theorem, which identifies the long-run fraction of busy time $\rho$ with $E[BP]/(E[BP] + 1/\lambda)$.
 
 ## Sources
 
