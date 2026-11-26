@@ -11,6 +11,7 @@ module
 public import Batteries.Util.ProofWanted
 public import MathlibExt.Topology.TDA.PersistenceModule
 public import MathlibExt.Topology.TDA.PersistenceConverseStability
+public import MathlibExt.Topology.TDA.PersistenceBarcodeUnique
 public import Mathlib.Algebra.Category.ModuleCat.Colimits
 public import Mathlib.CategoryTheory.Limits.FunctorCategory.Basic
 public import Mathlib.CategoryTheory.Limits.Shapes.Products
@@ -25,8 +26,6 @@ The central theorems of the algebraic theory of persistence, stated with the def
 * Interval decomposition of pointwise finite-dimensional modules over `ℝ`
   (Crawley-Boevey 2015, Thm. 1.1) and of tame modules over `ℕ` into finitely many bars
   (Carlsson, *Topology and data*, Prop. 2.12; Zomorodian–Carlsson 2005).
-* Uniqueness of the barcode (Krull–Remak–Schmidt–Azumaya, as in Chazal–de Silva–Glisse–Oudot,
-  Thm. 1.3).
 * Algebraic stability (`d_b ≤ d_i`, Chazal–de Silva–Glisse–Oudot, Thm. 4.11).
 -/
 
@@ -64,18 +63,6 @@ theorem_wanted exists_iso_sigma_intervalModule_nat_of_tame (V : ℕ ⥤ ModuleCa
     ∃ (ι : Type u) (_ : Finite ι) (I : ι → Set ℕ)
       (hI : ∀ i, (I i).Nonempty ∧ (I i).OrdConnected),
       Nonempty (V ≅ ∐ fun i => intervalModule k (I i) (hI i).2)
-
-/-- **The barcode is unique (Krull–Remak–Schmidt–Azumaya).** If a persistence module over `ℝ`
-is a direct sum of interval modules in two ways, `⊕_{i ∈ ι} k_{I i} ≅ ⊕_{j ∈ κ} k_{J j}`, then
-there is a bijection `σ : ι ≃ κ` with `J (σ i) = I i` for all `i`: the multiset of intervals is
-an isomorphism invariant (Chazal, de Silva, Glisse and Oudot, *The structure and stability of
-persistence modules*, arXiv:1207.3674, Thm. 1.3, from Azumaya's theorem). -/
-theorem_wanted intervalModule_decomposition_unique {ι κ : Type u} (I : ι → Set ℝ)
-    (J : κ → Set ℝ) (hI : ∀ i, (I i).Nonempty ∧ (I i).OrdConnected)
-    (hJ : ∀ j, (J j).Nonempty ∧ (J j).OrdConnected)
-    (e : (∐ fun i => intervalModule k (I i) (hI i).2) ≅
-      ∐ fun j => intervalModule k (J j) (hJ j).2) :
-    ∃ σ : ι ≃ κ, ∀ i, J (σ i) = I i
 
 /-- **Algebraic stability theorem.** Let `U, V : ℝ ⥤ ModuleCat k` be pointwise
 finite-dimensional, with barcodes `I` and `J` (interval decompositions `U ≅ ⊕ k_{I i}` and
