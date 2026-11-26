@@ -441,3 +441,80 @@ example : ¬ ∃ M : Matching (scalarHecke squareData) twistedHecke, M.bad = ∅
   have h := congrFun (M.away_intertwine prime2 (by simp [hM]) fun _ => 1) 0
   revert h
   simp [twistedHecke, scalarHecke, onesSq, Matrix.mulVec, dotProduct]
+
+/-! ### Matchings compare edge Hecke matrices only -/
+
+/-- One edge whose two ends are the vertex `0` of two vertices. -/
+private def edgeData : DegeneracyData (Fin 1) (Fin 2) where
+  a := fun _ => 0
+  b := fun _ => 0
+  w := fun _ => 1
+
+/-- Both pushforwards of `edgeData` put the edge value at the vertex `0`. -/
+private theorem jointDelta_edgeData (i : Fin 2) (x : Fin 1 → ℤ) :
+    jointDelta edgeData i x = ![x 0, 0] := by
+  funext v
+  fin_cases i <;> fin_cases v <;> simp [jointDelta, pushforward_apply, edgeData]
+
+/-- A package on `edgeData` with identity edge matrices and a vertex matrix `Tv` that fixes the
+functions supported at the vertex `0`. -/
+private def edgeHecke (Tv : Matrix (Fin 2) (Fin 2) ℤ)
+    (hTv : ∀ c : ℤ, Tv.mulVecLin ![c, 0] = ![c, 0]) : HeckeData edgeData where
+  T _ := 1
+  Tv _ := Tv
+  comm _ _ := Commute.refl _
+  commv _ _ := Commute.refl _
+  S := ∅
+  good_equivariant _ _ i x := by
+    rw [Matrix.mulVecLin_one, LinearMap.id_apply, jointDelta_edgeData, hTv]
+  kernel_stable _ x hx i := by
+    rw [Matrix.mulVecLin_one, LinearMap.id_apply]
+    exact hx i
+
+/-- The package on `edgeData` with the identity vertex matrix. -/
+private def edgeHeckeOne : HeckeData edgeData :=
+  edgeHecke 1 fun c => by rw [Matrix.mulVecLin_one, LinearMap.id_apply]
+
+/-- The package on `edgeData` with the vertex matrix `diag(1, 2)`. -/
+private def edgeHeckeDiag : HeckeData edgeData :=
+  edgeHecke !![1, 0; 0, 2] fun c => by
+    funext v
+    fin_cases v <;> simp [Matrix.mulVec, dotProduct, Fin.sum_univ_two]
+
+/-- The identity relabelling, as a matching of the packages on `edgeData` with vertex matrices
+`1` and `diag(1, 2)`. -/
+private def edgeMatching : Matching edgeHeckeOne edgeHeckeDiag where
+  eE := Equiv.refl _
+  eV := Equiv.refl _
+  map_a _ := rfl
+  map_b _ := rfl
+  map_w _ := rfl
+  bad := ∅
+  away_intertwine _ _ _ := rfl
+  bad_kernel_intertwine _ h := absurd h (Finset.notMem_empty _)
+
+/-- A matching compares the edge Hecke matrices only: the packages with vertex matrices `1` and
+`diag(1, 2)` match, although their vertex matrices differ. -/
+example : ∃ _ : Matching edgeHeckeOne edgeHeckeDiag,
+    edgeHeckeOne.Tv prime2 ≠ edgeHeckeDiag.Tv prime2 := by
+  refine ⟨edgeMatching, fun h => ?_⟩
+  have h11 := congrFun (congrFun h 1) 1
+  simp [edgeHeckeOne, edgeHeckeDiag, edgeHecke] at h11
+
+/-- The identity relabelling, as a matching of the scalar package on the square datum with
+itself, with the bad set `{5}`. -/
+private def squareMatchingBad5 : Matching (scalarHecke squareData) (scalarHecke squareData) where
+  eE := Equiv.refl _
+  eV := Equiv.refl _
+  map_a _ := rfl
+  map_b _ := rfl
+  map_w _ := rfl
+  bad := {prime5}
+  away_intertwine _ _ _ := rfl
+  bad_kernel_intertwine _ _ _ _ := rfl
+
+/-- The bad set of a matching is independent of the bad sets of the two packages: the scalar
+package has no bad prime, and it matches itself with the bad set `{5}`. -/
+example : ∃ M : Matching (scalarHecke squareData) (scalarHecke squareData),
+    M.bad = {prime5} ∧ (scalarHecke squareData).S = ∅ :=
+  ⟨squareMatchingBad5, rfl, rfl⟩

@@ -122,3 +122,19 @@ example (a : characterLattice (Fin 2)) :
     (CharacterLattice.permMap (Equiv.swap (0 : Fin 2) 1) a : Fin 2 → ℤ) 0 =
       (a : Fin 2 → ℤ) 1 := by
   simp
+
+/-! ### Correspondences -/
+
+/-- Without a common row sum, `corrMapFun` leaves the character lattice: `diag(1, 0)` sends
+`(1, -1)` to `(1, 0)`, of degree `1`. -/
+example : CharacterLattice.corrMapFun (fun s s' : Fin 2 => ![![1, 0], ![0, 0]] s s') ![1, -1] =
+      ![1, 0] ∧ (![1, 0] : Fin 2 → ℤ) ∉ characterLattice (Fin 2) := by
+  refine ⟨?_, by simp [mem_characterLattice_fin2]⟩
+  funext s'
+  fin_cases s' <;> simp [Fin.sum_univ_two]
+
+/-- With the common row sum `2`, `corrMap` sends `(1, -1)` to `(-1, 1)`. -/
+example : (CharacterLattice.corrMap (fun s s' : Fin 2 => ![![0, 2], ![1, 1]] s s') 2
+      (fun s => by fin_cases s <;> simp [Fin.sum_univ_two]) genFin2 : Fin 2 → ℤ) = ![-1, 1] := by
+  funext s'
+  fin_cases s' <;> simp [genFin2, Fin.sum_univ_two]
