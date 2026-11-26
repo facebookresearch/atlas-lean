@@ -95,16 +95,9 @@ Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 1
 theorem sylvester_modEq_forty_three_mod_1764
     (n : ℕ) (hn : 3 ≤ n) :
     sylvesterNumber n % 1764 = 43 := by
-  change sylvesterNumber n ≡ 43 [MOD 1764]
-  induction n, hn using Nat.le_induction with
-  | base => decide
-  | succ n _ ih =>
-    calc
-      sylvesterNumber (n + 1) = sylvesterNumber n ^ 2 - sylvesterNumber n + 1 :=
-        Nat.generalizedSylvester_succ 1 n
-      _ ≡ 43 ^ 2 - 43 + 1 [MOD 1764] :=
-        (Nat.ModEq.sub (Nat.le_self_pow two_ne_zero _) (by decide)
-          (ih.pow 2) ih).add_right 1
-      _ ≡ 43 [MOD 1764] := by decide
+  have hmod : (43 : ℤ) ≡ (sylvesterNumber n : ℤ) [ZMOD 1764] :=
+    Int.modEq_iff_dvd.mpr (sylvester_sub_dvd 3 3 n (by decide) (by decide) hn)
+  have hnat : 43 ≡ sylvesterNumber n [MOD 1764] := Int.natCast_modEq_iff.mp hmod
+  exact hnat.symm
 
 end MathlibExt.NumberTheory.Recurrences.SylvesterSequenceWanted
