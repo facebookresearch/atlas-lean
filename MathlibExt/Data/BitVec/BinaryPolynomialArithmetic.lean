@@ -11,6 +11,7 @@ execute multiplication and powering of fixed-width binary polynomial residues.
 module
 
 public import MathlibExt.RingTheory.AdjoinRoot.BitVec
+import Mathlib.Data.List.GetD
 
 /-! # Executable binary polynomial modular arithmetic
 
@@ -43,7 +44,9 @@ def mulMod {s t : Nat} (g x : BitVec s) (y : BitVec t) : BitVec s :=
 def powMod {s t : Nat} (g : BitVec s) (u : BitVec t) (e : Nat) : BitVec s :=
   Nat.foldTR e (fun _ _ c => g.mulMod c u) (1#s)
 
-private theorem toPolynomial_shiftLeft_add_high {s : Nat} (w : BitVec s) :
+/-- Shifting a word left by one multiplies its polynomial by `X`, up to the top coefficient
+`X ^ s` that the shift drops. -/
+theorem toPolynomial_shiftLeft_add_high {s : Nat} (w : BitVec s) :
     (w.shiftLeft 1).toPolynomial +
         (if w.getMsbD 0 then Polynomial.X ^ s else 0) =
       Polynomial.X * w.toPolynomial := by

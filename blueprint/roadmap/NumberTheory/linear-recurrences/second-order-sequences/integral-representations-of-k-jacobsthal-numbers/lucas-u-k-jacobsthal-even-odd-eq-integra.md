@@ -12,7 +12,6 @@ $$J_{k,2n+1} = \frac{1}{2^{n+1}} \int_{-1}^{1} (nk^2 + k^2 + 4 + k(n+1) \Delta_k
 (k^2 + 4 + k \Delta_k x)^{n-1} \, dx.$$
 
 Here $n - 1$ is an integer exponent, so for $n = 0$ the power is a reciprocal.
-The identities also hold at $k=0$, extending the source's case $k \ne 0$.
 
 ## Sources
 

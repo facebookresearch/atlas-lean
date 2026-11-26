@@ -26,7 +26,7 @@ import MathlibExt.NumberTheory.Recurrences.LucasBinetFormula
 
 We prove the integral representations of the even- and odd-indexed $k$-Jacobsthal numbers
 over $[-1, 1]$, evaluating the integrals with the Binet formula for the Lucas sequences with
-parameters $(k, -2)$.
+parameters $(k, -2)$. The identities also hold at $k=0$, extending the source's case $k \ne 0$.
 -/
 
 namespace MetaMathlibExt
@@ -93,7 +93,6 @@ and
 $$J_{k,2n+1} = \frac{1}{2^{n+1}} \int_{-1}^{1} (nk^2 + k^2 + 4 + k(n+1) \Delta_k x)
 (k^2 + 4 + k \Delta_k x)^{n-1} \, dx.$$
 Here $n - 1$ is an integer exponent, so for $n = 0$ the power is a reciprocal.
-The identities also hold at $k=0$, extending the source's case $k \ne 0$.
 
 Source: Weerayuth Nilsrakoo and Achariya Nilsrakoo, *An Integral Representation of k-Jacobsthal and
 k-Jacobsthal-Lucas Numbers*, INTEGERS 25 (2025), Article A74,
