@@ -3,7 +3,10 @@
 Topics added since this subject's fields were last revised.
 
 - [Adelic Lift](adelic-lift/README.md)
+- [Eisenstein Congruence](eisenstein-congruence/README.md)
+- [Eisenstein Two Gamma0](eisenstein-two-gamma0/README.md)
 - [Finite Ramification Conductors](finite-ramification-conductors/README.md)
+- [Fricke Gamma0](fricke-gamma0/README.md)
 - [Hecke Operator](hecke-operator/README.md)
 - [Hecke UGamma H](hecke-ugamma-h/README.md)
 - [Level NStructure](level-nstructure/README.md)
@@ -13,3 +16,4 @@ Topics added since this subject's fields were last revised.
 - [Gross–Zagier–Kolyvagin, rank-one implication](rank-eq-one-of-simple-zero-l-series.md)
 - [Absolute Jacquet integral on the principal series of `GL₂(ℚ_p)`](absolute-jacquet-integral-lt-top-and-uni.md)
 - [Higher Units](higher-units-at.md)
+- [Level One Trace](exists-level-one-coe-eq-zpow-smul-add-he.md)
