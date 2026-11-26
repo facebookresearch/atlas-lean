@@ -1,11 +1,11 @@
 # Lucas-balancing numbers (shifted indexing)
 
-The sequence of integers $(C_n)_{n \ge 0}$
-defined by $C_0 = 3$, $C_1 = 1$ and $C_{n+2} = 6 C_{n+1} - C_n$ for all $n \ge 0$.
+The shifted sequence $(L_n)_{n \ge 0}$ has
+$L_0 = 3$, $L_1 = 1$ and $L_{n+2} = 6L_{n+1} - L_n$.
 
-This is the indexing of Mohapatra, Bhoi and Panda, forced by the values $C_2 = 3$ and
-$C_3 = 17$ displayed in their Theorem 3: for $n \ge 1$, $C_n$ is the usual Lucas-balancing
-number $c_{n-1}$, where $c_0 = 1$, $c_1 = 3$ and $c_{n+2} = 6 c_{n+1} - c_n$.
+Section 1 of Mohapatra, Bhoi and Panda defines the standard sequence by $C_0 = 1$, $C_1 = 3$
+and the same recurrence. Thus `lucasBalancingNum (n + 1)` equals $C_n$ for every $n \ge 0$.
+Their Theorem 3 lists the shifted values $L_2 = 3$ and $L_3 = 17$.
 
 ## Sources
 

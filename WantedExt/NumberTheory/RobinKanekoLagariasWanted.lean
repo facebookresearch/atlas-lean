@@ -20,6 +20,7 @@ public import Mathlib.NumberTheory.Harmonic.Defs
 public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 public import Mathlib.NumberTheory.Primorial
 public import WantedExt.NumberTheory.PrimeCounting.DusartMertensReciprocalSumWanted
+public import MathlibExt.NumberTheory.RobinKanekoLagariasExpFiveDivLogBoundLt
 
 namespace MetaMathlibExt
 
@@ -364,16 +365,6 @@ public theorem_wanted exists_bound_mul_prod_sq_lt_exp_eulerMascheroni_mul_log_lo
             (Nat.nth Nat.Prime (ℓ - 1) : ℝ) ^ 2 / ((Nat.nth Nat.Prime (ℓ - 1) : ℝ) ^ 2 - 1) <
         exp eulerMascheroniConstant *
           log (log ((primorial (Nat.nth Nat.Prime k) : ℝ) / Nat.nth Nat.Prime (j - 1)))
-
-/-- **The factor $\hat C(k)$ is below $1.525$.** Let $\log$ be the natural logarithm. For every
-natural number $k \ge 13042$, with $L^-(k) = (k+1)(\log(k+1) + \log\log(k+1) - 1)$,
-$$\hat C(k) = \exp\Bigl(\frac{5}{\log L^-(k)}\Bigr) < 1.525.$$
-
-Source: Idris Assani, Aiden Chester, and Alex Paschal, *On Robin's Inequality and the
-Kaneko-Lagarias Inequality*, INTEGERS 26 (2026), Article A86, Lemma 5
-(`integers-2026-A86-lem-5`). -/
-public theorem_wanted exp_five_div_log_bound_lt (k : ℕ) (hk : 13042 ≤ k) :
-    exp (5 / log ((k + 1 : ℝ) * (log (k + 1) + log (log (k + 1)) - 1))) < 1.525
 
 
 /-- **Bounds for $\sigma(n)/n$ over primes avoiding $p_j$.** For $\ell \ge 1$ let $p_\ell$ be the
