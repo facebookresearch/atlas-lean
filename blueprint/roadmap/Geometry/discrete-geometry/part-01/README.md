@@ -1,4 +1,4 @@
-# Part 1 of 2
+# Part 1 of 4
 
 - [Blumenthal's minimax angle problem](blumenthal-s-minimax-angle-problem/README.md)
 - [Continuous Turán numbers of planar patterns](continuous-tur-n-numbers-of-planar-patterns/README.md)

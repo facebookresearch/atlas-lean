@@ -7,6 +7,11 @@ The grammar $g$ is LR(1) when, for every $\pi$ and $\ell$:
 1. (no reduce/reduce conflict) if there are reduce actions at $\pi$ with lookahead $\ell$ by handles $(\alpha_1, A_1, \beta_1)$ and $(\alpha_2, A_2, \beta_2)$, with any right contexts, then $\alpha_1 = \alpha_2$, $A_1 = A_2$ and $\beta_1 = \beta_2$;
 2. (no shift/reduce conflict) if there is a reduce action at $\pi$ with lookahead $\ell$, then there is no shift action at $\pi$ with lookahead $\ell$.
 
+## Depends on
+
+- [Reduce actions of an LR(1) parser](is-reduce-action.md)
+- [Shift actions of an LR(1) parser](is-shift-action.md)
+
 ## Sources
 
 - A. V. Aho, M. S. Lam, R. Sethi, and J. D. Ullman, *Compilers: Principles, Techniques, and Tools*, 2nd ed., Chapter 4.

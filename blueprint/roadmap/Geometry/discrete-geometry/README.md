@@ -2,7 +2,7 @@
 
 Finite point configurations and their distances, polytopes and polyhedra, dissections and tilings, lattice points and extremal shape problems.
 
-## [Part 1 of 2](part-01/README.md)
+## [Part 1 of 4](part-01/README.md)
 
 - [Blumenthal's minimax angle problem](part-01/blumenthal-s-minimax-angle-problem/README.md)
 - [Continuous Turán numbers of planar patterns](part-01/continuous-tur-n-numbers-of-planar-patterns/README.md)
@@ -25,7 +25,7 @@ Finite point configurations and their distances, polytopes and polyhedra, dissec
 - [Euler's polyhedron formula](part-01/euler-polyhedron-formula.md)
 - [Monsky's theorem](part-01/monsky-theorem.md)
 
-## [Part 2 of 2](part-02/README.md)
+## [Part 2 of 4](part-02/README.md)
 
 - [Bravais lattices and lattice relabeling](part-02/bravais-lattices-and-lattice-relabeling/README.md)
 - [Metric tensors, Miller indices and interplanar spacing](part-02/metric-tensors-miller-indices-and-interplanar-sp/README.md)
