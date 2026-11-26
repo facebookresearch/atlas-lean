@@ -16332,7 +16332,7 @@
   "WantedExt/GroupTheory/ElementOrderSetRealizationsKourovka12Problem84Wanted": {"to": "GroupTheory/orders-and-spectra", "title": "Number of groups with a given spectrum"},
   "WantedExt/GroupTheory/ElementOrderSpectrumCountKourovka13Problem63Wanted": {"to": "GroupTheory/orders-and-spectra", "title": "Number of groups with a given spectrum"},
   "WantedExt/GroupTheory/ElementOrdersOneToSevenAlternatingKourovka19Problem80Wanted": {"to": "GroupTheory/orders-and-spectra", "title": "Recognition of alternating groups by spectrum"},
-  "WantedExt/GroupTheory/ElementaryAbelianTransitiveFieldActionKourovka18Problem60Wanted": {"to": "GroupTheory/permutation-groups/infinite-permutation-groups", "title": "Transitive automorphism groups of elementary abelian groups"},
+  "MathlibExt/GroupTheory/ElementaryAbelianTransitiveFieldActionKourovka18Problem60": {"to": "GroupTheory/permutation-groups/infinite-permutation-groups", "title": "Transitive automorphism groups of elementary abelian groups"},
   "WantedExt/GroupTheory/ElementaryAmenableVirtuallySolvableKourovka16Problem52Wanted": {"to": "GroupTheory/geometric-group-theory", "title": "Elementary amenable groups"},
   "WantedExt/GroupTheory/EndomorphismFixedSubgroupInertKourovka19Problem105Wanted": {"to": "GroupTheory/free-groups/subgroups-of-free-groups", "title": "Inert and compressed subgroups of free groups"},
   "WantedExt/GroupTheory/EndomorphismPartialIsomorphismCountKourovka19Problem20Wanted": {"to": "GroupTheory/automorphisms/automorphism-groups", "title": "Endomorphisms and partial isomorphisms"},
