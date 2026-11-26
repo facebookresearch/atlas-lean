@@ -45,7 +45,7 @@ import Mathlib.Topology.LocallyConstant.Basic
 import MathlibExt.AlgebraicGeometry.Curve.IsCurveOver
 
 /-!
-# Complex line integrals and Abel-Jacobi vectors on an algebraic curve
+# Complex line integrals and Abel-Jacobi vectors
 
 Places, their residue fields, evaluation at rational places, divisors and the curve hypothesis
 `IsCurveOver` come from the curve layer in `MathlibExt/AlgebraicGeometry/Curve/`. This file adds a
@@ -121,8 +121,10 @@ variable {K F}
 
 variable (v : Place K F)
 
-/-- A uniformizer at `v`: an irreducible element of the valuation ring of `v`, chosen once and for
-all and viewed in `F`. It has order one at `v`. -/
+/-! ### Uniformizers and differentials -/
+
+/-- **Uniformizer at a place.** An irreducible element of the valuation ring of `v`, chosen once
+and for all and viewed in `F`. It has order one at `v`. -/
 def uniformizer : F :=
   ((IsDiscreteValuationRing.exists_irreducible v.toValuationSubring).choose : F)
 
@@ -134,11 +136,11 @@ theorem uniformizer_ne_zero : v.uniformizer ≠ 0 := by
   intro h
   simpa [h, v.ord_zero] using v.ord_uniformizer
 
-/-- The coordinate differential at `v`: the Kähler differential of the uniformizer at `v`. -/
+/-- **Coordinate differential.** The Kähler differential of the uniformizer at `v`. -/
 def dCoord : Ω[F⁄K] := KaehlerDifferential.D K F v.uniformizer
 
-/-- The coordinate differential at `v` spans the Kähler differentials of `F` over `K`, so every
-differential is a multiple of it. -/
+/-- **The coordinate differential spans.** The coordinate differential at `v` spans the Kähler
+differentials of `F` over `K`, so every differential is a multiple of it. -/
 class DCoordGenerates : Prop where
   span_eq_top : Submodule.span F {v.dCoord} = ⊤
 
@@ -156,10 +158,9 @@ theorem exists_eq_smul_dCoord [v.DCoordGenerates] (ω : Ω[F⁄K]) :
   rw [← DCoordGenerates.span_eq_top (v := v), Submodule.mem_span_singleton] at hω
   exact hω.imp fun _ hf => hf.symm
 
-/-- The coefficient of a differential `ω` with respect to the coordinate differential at `v`: an
-element `f` of `F` with `ω = f • v.dCoord`. It is defined only when `v.dCoord` spans the
-differentials, so that such an element exists, and it is unique when the differentials are
-nontrivial. -/
+/-- **Coefficient of a differential.** An element `f` of `F` with `ω = f • v.dCoord`. It is
+defined only when `v.dCoord` spans the differentials, so that such an element exists, and it is
+unique when the differentials are nontrivial. -/
 def differentialCoeff [v.DCoordGenerates] (ω : Ω[F⁄K]) : F :=
   (v.exists_eq_smul_dCoord ω).choose
 
@@ -191,8 +192,8 @@ theorem differentialCoeff_smul [v.DCoordGenerates] [Nontrivial Ω[F⁄K]]
   v.differentialCoeff_unique
     (by rw [mul_smul, v.differentialCoeff_smul_dCoord])
 
-/-- The order of a differential `ω` at `v`: the order at `v` of its coefficient with respect to the
-coordinate differential at `v`. -/
+/-- **Order of a differential at a place.** The order at `v` of the coefficient of `ω` with
+respect to the coordinate differential at `v`. -/
 def ordDifferential [v.DCoordGenerates] (ω : Ω[F⁄K]) : ℤ := v.ord (v.differentialCoeff ω)
 
 theorem ordDifferential_dCoord [v.DCoordGenerates] [Nontrivial Ω[F⁄K]] :
@@ -204,7 +205,9 @@ theorem ordDifferential_smul [v.DCoordGenerates] [Nontrivial Ω[F⁄K]]
     v.ordDifferential (c • ω) = v.ord c + v.ordDifferential ω := by
   rw [ordDifferential, ordDifferential, v.differentialCoeff_smul, v.ord_mul hc hω]
 
-/-- Every place of a curve over an algebraically closed field is rational. -/
+/-! ### Evaluation at rational places -/
+
+/-- **Rational places.** Every place of a curve over an algebraically closed field is rational. -/
 theorem isRational_of_isCurveOver [IsAlgClosed K] [IsCurveOver K F] : v.IsRational :=
   have := IsCurveOver.finiteResidueField v
   v.surjective_algebraMap_residueField_of_isAlgClosed
@@ -219,13 +222,14 @@ theorem hasValueAt_evalAt (hv : v.IsRational) {f : F} (hf : f ∈ v.toValuationS
     v.HasValueAt f (v.evalAt hv f) :=
   (v.hasValueAt_iff_residue hf _).mpr (v.algebraMap_evalAt hv hf).symm
 
+/-! ### Readings in charts -/
+
 variable {F : Type*} [Field F] [Algebra ℂ F]
 variable [TopologicalSpace (Place ℂ F)] [ChartedSpace ℂ (Place ℂ F)] [IsCurveOver ℂ F]
 
-/-- The reading of a function `f` in the chart at `v`: at a point `z` of the target of the chart,
-the value of `f` at the place with coordinate `z`. Every place of a complex curve is rational, so
-this is the complex number with the same residue as `f` at that place, and `0` at a pole of
-`f`. -/
+/-- **Reading of a function in a chart.** At a point `z` of the target of the chart at `v`, the
+value of `f` at the place with coordinate `z`. Every place of a complex curve is rational, so this
+is the complex number with the same residue as `f` at that place, and `0` at a pole of `f`. -/
 def chartRead (v : Place ℂ F) (f : F) : ℂ → ℂ :=
   fun z => ((extChartAt 𝓘(ℂ, ℂ) v).symm z).evalAt (isRational_of_isCurveOver _) f
 
@@ -244,10 +248,10 @@ variable {F : Type*} [Field F] [Algebra ℂ F]
 variable [TopologicalSpace (Place ℂ F)] [ChartedSpace ℂ (Place ℂ F)] [IsCurveOver ℂ F]
 
 variable (F) in
-/-- The topology and the atlas on the places of `F` are the analytic structure of the curve. In
-the chart at each place `v`, every function regular at `v` reads as a function that is complex
-differentiable near the centre of the chart, and the uniformizer at `v` reads with nonzero
-derivative at the centre, so it is a holomorphic local coordinate at `v`. -/
+/-- **Holomorphic atlas.** The topology and the atlas on the places of `F` are the analytic
+structure of the curve: in the chart at each place `v`, every function regular at `v` reads as a
+function that is complex differentiable near the centre of the chart, and the uniformizer at `v`
+reads with nonzero derivative at the centre, so it is a holomorphic local coordinate at `v`. -/
 class IsHolomorphicAtlas : Prop where
   eventually_differentiableAt_chartRead (v : Place ℂ F) {f : F}
     (hf : f ∈ v.toValuationSubring) :
@@ -257,17 +261,17 @@ class IsHolomorphicAtlas : Prop where
 
 namespace Place
 
-/-- In a holomorphic atlas, the reading of a function regular at `v` in the chart at `v` is
-analytic at the centre of the chart. -/
+/-- **Readings of regular functions are analytic.** In a holomorphic atlas, the reading of a
+function regular at `v` in the chart at `v` is analytic at the centre of the chart. -/
 theorem analyticAt_chartRead [IsHolomorphicAtlas F] (v : Place ℂ F) {f : F}
     (hf : f ∈ v.toValuationSubring) :
     AnalyticAt ℂ (v.chartRead f) (extChartAt 𝓘(ℂ, ℂ) v v) :=
   Complex.analyticAt_iff_eventually_differentiableAt.mpr
     (IsHolomorphicAtlas.eventually_differentiableAt_chartRead v hf)
 
-/-- The reading of a differential `ω` in the chart at `v`, as a multiple of `dz`: the reading of
-the coefficient of `ω` with respect to `v.dCoord`, times the derivative of the reading of the
-uniformizer at `v`. -/
+/-- **Reading of a differential in a chart.** The reading of `ω` in the chart at `v`, as a
+multiple of `dz`: the reading of the coefficient of `ω` with respect to `v.dCoord`, times the
+derivative of the reading of the uniformizer at `v`. -/
 @[nolint unusedArguments] -- The atlas hypothesis makes `deriv` the derivative of holomorphic maps.
 def readDifferential [IsHolomorphicAtlas F] (v : Place ℂ F) [v.DCoordGenerates]
     (ω : Ω[F⁄ℂ]) : ℂ → ℂ :=
@@ -278,7 +282,8 @@ theorem readDifferential_apply [IsHolomorphicAtlas F] (v : Place ℂ F) [v.DCoor
     v.readDifferential ω z =
       v.chartRead (v.differentialCoeff ω) z * deriv (v.chartRead v.uniformizer) z := rfl
 
-/-- The differential `f • v.dCoord` is read through its coefficient `f`. -/
+/-- **Reading of a multiple of the coordinate differential.** The differential `f • v.dCoord`
+is read through its coefficient `f`. -/
 theorem readDifferential_smul_dCoord [IsHolomorphicAtlas F] (v : Place ℂ F) [v.DCoordGenerates]
     (f : F) :
     v.readDifferential (f • v.dCoord) =
@@ -298,9 +303,11 @@ section Integral
 
 variable [IsHolomorphicAtlas F] [∀ v : Place ℂ F, v.DCoordGenerates]
 
-/-- `g` is a primitive of `ω` along the path `γ`: near each time `t₀`, `g` agrees with the
-composite of `γ`, the chart at `γ t₀` and a local primitive, in that chart, of the reading of `ω`
-at `γ t₀`. -/
+/-! ### Primitives and line integrals -/
+
+/-- **Primitive along a path.** `g` is a primitive of `ω` along the path `γ`: near each time `t₀`,
+`g` agrees with the composite of `γ`, the chart at `γ t₀` and a local primitive, in that chart, of
+the reading of `ω` at `γ t₀`. -/
 def IsPrimitiveAlong (ω : Ω[F⁄ℂ]) {P Q : Place ℂ F} (γ : Path P Q) (g : unitInterval → ℂ) :
     Prop :=
   ∀ t₀ : unitInterval, ∃ Φ : ℂ → ℂ,
@@ -330,7 +337,8 @@ private theorem eventually_hasDerivAt_of_eq {ω : Ω[F⁄ℂ]} {Φ : ℂ → ℂ
   subst hvw
   exact h
 
-/-- The zero function is a primitive of the zero differential along every path. -/
+/-- **Primitive of the zero differential.** The zero function is a primitive of the zero
+differential along every path. -/
 theorem isPrimitiveAlong_zero {P Q : Place ℂ F} (γ : Path P Q) :
     IsPrimitiveAlong (0 : Ω[F⁄ℂ]) γ 0 := fun _ =>
   ⟨0, Filter.Eventually.of_forall fun z => by simp,
@@ -351,7 +359,8 @@ private theorem eventually_sub_eq (h₁ : IsPrimitiveAlong ω γ g₁) (h₂ : I
   rw [ht₁, ht₂, hg₁.self_of_nhds, hg₂.self_of_nhds]
   exact ht
 
-/-- Two primitives of a differential along the same path have the same increment. -/
+/-- **Primitives have the same increment.** Two primitives of a differential along the same path
+have the same increment. -/
 theorem sub_eq_sub (h₁ : IsPrimitiveAlong ω γ g₁) (h₂ : IsPrimitiveAlong ω γ g₂) :
     g₁ 1 - g₁ 0 = g₂ 1 - g₂ 0 := by
   have h : g₁ 1 - g₂ 1 = g₁ 0 - g₂ 0 :=
@@ -359,15 +368,15 @@ theorem sub_eq_sub (h₁ : IsPrimitiveAlong ω γ g₁) (h₂ : IsPrimitiveAlong
       (h₁.eventually_sub_eq h₂)).apply_eq_of_preconnectedSpace 1 0
   linear_combination h
 
-/-- A primitive along `γ`, composed with the reversal of the unit interval, is a primitive along
-the reversed path. -/
+/-- **Primitive along the reversed path.** A primitive along `γ`, composed with the reversal of the
+unit interval, is a primitive along the reversed path. -/
 theorem symm (hg : IsPrimitiveAlong ω γ g) :
     IsPrimitiveAlong ω γ.symm (g ∘ unitInterval.symm) := fun t₀ => by
   obtain ⟨Φ, hΦ, hgΦ⟩ := hg (unitInterval.symm t₀)
   exact ⟨Φ, hΦ, (unitInterval.continuous_symm.tendsto t₀).eventually hgΦ⟩
 
-/-- Primitives along two composable paths glue to a primitive along their concatenation, whose
-increment is the sum of their increments. -/
+/-- **Primitive along a concatenation.** Primitives along two composable paths glue to a primitive
+along their concatenation, whose increment is the sum of their increments. -/
 theorem exists_trans {γ' : Path Q R} {g' : unitInterval → ℂ} (hg : IsPrimitiveAlong ω γ g)
     (hg' : IsPrimitiveAlong ω γ' g') :
     ∃ k, IsPrimitiveAlong ω (γ.trans γ') k ∧ k 1 - k 0 = (g 1 - g 0) + (g' 1 - g' 0) := by
@@ -455,27 +464,29 @@ theorem exists_trans {γ' : Path Q R} {g' : unitInterval → ℂ} (hg : IsPrimit
 
 end IsPrimitiveAlong
 
-/-- A differential with a primitive along `γ` has one along the reversed path. -/
+/-- **Primitives exist along the reversed path.** A differential with a primitive along `γ` has
+one along the reversed path. -/
 theorem exists_isPrimitiveAlong_symm {ω : Ω[F⁄ℂ]} {P Q : Place ℂ F} {γ : Path P Q}
     (h : ∃ g, IsPrimitiveAlong ω γ g) : ∃ g, IsPrimitiveAlong ω γ.symm g :=
   ⟨_, h.choose_spec.symm⟩
 
-/-- A differential with primitives along two composable paths has one along their
-concatenation. -/
+/-- **Primitives exist along a concatenation.** A differential with primitives along two composable
+paths has one along their concatenation. -/
 theorem exists_isPrimitiveAlong_trans {ω : Ω[F⁄ℂ]} {P Q R : Place ℂ F} {γ : Path P Q}
     {γ' : Path Q R} (h : ∃ g, IsPrimitiveAlong ω γ g) (h' : ∃ g, IsPrimitiveAlong ω γ' g) :
     ∃ g, IsPrimitiveAlong ω (γ.trans γ') g :=
   let ⟨k, hk, _⟩ := h.choose_spec.exists_trans h'.choose_spec
   ⟨k, hk⟩
 
-/-- The line integral of `ω` along the path `γ`, for a differential with a primitive along `γ`:
-the increment `g 1 - g 0` of a primitive `g`. It does not depend on the primitive, and in a
-holomorphic atlas it is the complex line integral of `ω` over `γ`. -/
+/-- **Line integral along a path.** For a differential `ω` with a primitive along the path `γ`, the
+increment `g 1 - g 0` of a primitive `g`. It does not depend on the primitive, and it is the
+complex line integral of `ω` over `γ`. -/
 def pathIntegral (ω : Ω[F⁄ℂ]) {P Q : Place ℂ F} (γ : Path P Q)
     (h : ∃ g, IsPrimitiveAlong ω γ g) : ℂ :=
   h.choose 1 - h.choose 0
 
-/-- The line integral along a path is the increment of every primitive along it. -/
+/-- **Line integral as an increment.** The line integral along a path is the increment of every
+primitive along it. -/
 theorem IsPrimitiveAlong.pathIntegral_eq {ω : Ω[F⁄ℂ]} {P Q : Place ℂ F} {γ : Path P Q}
     {g : unitInterval → ℂ} (hg : IsPrimitiveAlong ω γ g) (h : ∃ g, IsPrimitiveAlong ω γ g) :
     pathIntegral ω γ h = g 1 - g 0 :=
@@ -494,14 +505,16 @@ theorem pathIntegral_refl (ω : Ω[F⁄ℂ]) (P : Place ℂ F)
   filter_upwards [hgΦ] with t ht
   rw [ht, hgΦ.self_of_nhds, Path.refl_apply, Path.refl_apply]
 
-/-- Reversing a path changes the sign of the line integral. -/
+/-- **Line integral along the reversed path.** Reversing a path changes the sign of the line
+integral. -/
 theorem pathIntegral_symm {ω : Ω[F⁄ℂ]} {P Q : Place ℂ F} {γ : Path P Q}
     (h : ∃ g, IsPrimitiveAlong ω γ g) (h' : ∃ g, IsPrimitiveAlong ω γ.symm g) :
     pathIntegral ω γ.symm h' = -pathIntegral ω γ h := by
   rw [h.choose_spec.symm.pathIntegral_eq h', h.choose_spec.pathIntegral_eq h, Function.comp_apply,
     Function.comp_apply, unitInterval.symm_one, unitInterval.symm_zero, neg_sub]
 
-/-- The line integral along the concatenation of two paths is the sum of the line integrals. -/
+/-- **Line integral along a concatenation.** The line integral along the concatenation of two
+paths is the sum of the line integrals. -/
 theorem pathIntegral_trans {ω : Ω[F⁄ℂ]} {P Q R : Place ℂ F} {γ : Path P Q} {γ' : Path Q R}
     (h : ∃ g, IsPrimitiveAlong ω γ g) (h' : ∃ g, IsPrimitiveAlong ω γ' g)
     (h'' : ∃ g, IsPrimitiveAlong ω (γ.trans γ') g) :
@@ -510,8 +523,10 @@ theorem pathIntegral_trans {ω : Ω[F⁄ℂ]} {P Q R : Place ℂ F} {γ : Path P
   rw [hk.pathIntegral_eq h'', h.choose_spec.pathIntegral_eq h,
     h'.choose_spec.pathIntegral_eq h', hinc]
 
-/-- The Abel-Jacobi vector of the family `b` along a path `γ` from `P₀` to `P`, for a family whose
-members have primitives along `γ`: the vector of their line integrals along `γ`. Modulo the period
+/-! ### Abel-Jacobi vectors and periods -/
+
+/-- **Abel-Jacobi vector along a path.** For a family `b` of differentials with primitives along a
+path `γ` from `P₀` to `P`, the vector of their line integrals along `γ`. Modulo the period
 subgroup of `b` it depends only on `P₀` and `P`, and for a basis of the regular differentials of a
 compact curve it lifts the Abel-Jacobi image of `P` with base place `P₀`. -/
 def abelJacobiVec {n : ℕ} (b : Fin n → Ω[F⁄ℂ]) {P₀ P : Place ℂ F} (γ : Path P₀ P)
@@ -528,9 +543,9 @@ theorem abelJacobiVec_zero {n : ℕ} {P₀ P : Place ℂ F} (γ : Path P₀ P)
     abelJacobiVec (0 : Fin n → Ω[F⁄ℂ]) γ h = 0 :=
   funext fun i => pathIntegral_zero γ (h i)
 
-/-- The period subgroup of the family `b`: the subgroup of `ℂⁿ` generated by the Abel-Jacobi
-vectors of `b` along the loops on which every member of `b` has a primitive. For a basis of the
-regular differentials of a compact curve it is the period lattice. -/
+/-- **Period subgroup.** The subgroup of `ℂⁿ` generated by the Abel-Jacobi vectors of the family
+`b` along the loops on which every member of `b` has a primitive. For a basis of the regular
+differentials of a compact curve it is the period lattice. -/
 def periodSubgroup {n : ℕ} (b : Fin n → Ω[F⁄ℂ]) : AddSubgroup (Fin n → ℂ) :=
   AddSubgroup.closure {u | ∃ (P : Place ℂ F) (γ : Path P P)
     (h : ∀ i, ∃ g, IsPrimitiveAlong (b i) γ g), u = abelJacobiVec b γ h}
@@ -540,8 +555,8 @@ theorem abelJacobiVec_mem_periodSubgroup {n : ℕ} (b : Fin n → Ω[F⁄ℂ]) {
     abelJacobiVec b γ h ∈ periodSubgroup b :=
   AddSubgroup.subset_closure ⟨P, γ, h, rfl⟩
 
-/-- Modulo the period subgroup, the Abel-Jacobi vector along a path depends only on the endpoints
-of the path. -/
+/-- **Abel-Jacobi vectors modulo periods.** Modulo the period subgroup, the Abel-Jacobi vector
+along a path depends only on the endpoints of the path. -/
 theorem abelJacobiVec_sub_mem_periodSubgroup {n : ℕ} (b : Fin n → Ω[F⁄ℂ]) {P₀ P : Place ℂ F}
     (γ γ' : Path P₀ P) (h : ∀ i, ∃ g, IsPrimitiveAlong (b i) γ g)
     (h' : ∀ i, ∃ g, IsPrimitiveAlong (b i) γ' g) :
@@ -555,8 +570,8 @@ theorem abelJacobiVec_sub_mem_periodSubgroup {n : ℕ} (b : Fin n → Ω[F⁄ℂ
   rw [Pi.sub_apply, abelJacobiVec_apply, abelJacobiVec_apply, abelJacobiVec_apply,
     pathIntegral_trans (h i) (hs i), pathIntegral_symm (h' i), sub_eq_add_neg]
 
-/-- The Abel-Jacobi map on divisors, for a choice of a path `γ P` from the base place `P₀` to each
-place `P` along which every member of `b` has a primitive: the divisor `∑ m_P • P` goes to
+/-- **Abel-Jacobi map on divisors.** For a choice of a path `γ P` from the base place `P₀` to each
+place `P` along which every member of `b` has a primitive, the divisor `∑ m_P • P` goes to
 `∑ m_P • abelJacobiVec b (γ P)`. Modulo the period subgroup of `b` it does not depend on the
 paths. -/
 def abelJacobiDiv {n : ℕ} (b : Fin n → Ω[F⁄ℂ]) {P₀ : Place ℂ F} (γ : ∀ P, Path P₀ P)
@@ -575,8 +590,8 @@ theorem abelJacobiDiv_apply {n : ℕ} (b : Fin n → Ω[F⁄ℂ]) {P₀ : Place 
   simp only [abelJacobiDiv, Finsupp.liftAddHom_apply]
   rfl
 
-/-- Modulo the period subgroup, the Abel-Jacobi map on divisors does not depend on the chosen
-paths. -/
+/-- **Abel-Jacobi map modulo periods.** Modulo the period subgroup, the Abel-Jacobi map on
+divisors does not depend on the chosen paths. -/
 theorem abelJacobiDiv_sub_mem_periodSubgroup {n : ℕ} (b : Fin n → Ω[F⁄ℂ]) {P₀ : Place ℂ F}
     (γ γ' : ∀ P, Path P₀ P) (h : ∀ P i, ∃ g, IsPrimitiveAlong (b i) (γ P) g)
     (h' : ∀ P i, ∃ g, IsPrimitiveAlong (b i) (γ' P) g) (D : Divisor ℂ F) :
