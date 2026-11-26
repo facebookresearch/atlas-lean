@@ -56,8 +56,8 @@ $\theta \colon W(\mathcal{O}_{\mathbb{C}_p}^\flat)[1/p] \to \mathcal{O}_{\mathbb
 itself, so it extends by continuity to the $(\ker\theta)$-adic completion $B_{\mathrm{dR}}^+$.
 
 J.-M. Fontaine and Y. Ouyang, *Theory of p-adic Galois Representations*, book draft (PDF of
-2022-05-26), Lemma 6.9, p. 139 ($\theta$ commutes with the Galois action) and §6.2.2, p. 140 (its
-extension to $W(R)[1/p]$ is equivariant), archived at
+2022-05-26), Lemma 6.9, p. 139 ($\theta$ commutes with the Galois action) and §6.2.2,
+pp. 140–141 (its extension to $W(R)[1/p]$ is equivariant), archived at
 <http://web.archive.org/web/20261014003209/http://staff.ustc.edu.cn/~yiouyang/galoisrep.pdf>. -/
 public theorem_wanted thetaKer_le_comap_preDeRhamGalois (σ : Galois p) :
     thetaKer p ≤ (thetaKer p).comap (preDeRhamGalois p σ)
