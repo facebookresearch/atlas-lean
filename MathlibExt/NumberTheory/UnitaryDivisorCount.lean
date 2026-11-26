@@ -8,8 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import Mathlib.Data.Finset.Powerset
-import Mathlib.Data.Nat.Factorization.Basic
+public import Mathlib.Data.Finset.Powerset
+public import Mathlib.Data.Nat.Factorization.Basic
 public import MathlibExt.NumberTheory.UnitaryDivisor
 
 /-!
@@ -22,13 +22,16 @@ namespace MetaMathlibExt
 
 open Finset
 
-/-- **Number of unitary divisors.** A positive integer $n$ with $m$ distinct prime factors has
-exactly $2^m$ unitary divisors.
-
-Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
-Numbers*, INTEGERS 24 (2024), Article A95, Lemma 2 (quoting Bege). -/
-public theorem card_unitaryDivisors (n : ℕ) (hn : n ≠ 0) :
-    (Nat.unitaryDivisors n).card = 2 ^ n.primeFactors.card := by
+/-- **Unitary divisors as sets of prime factors.** Let $n$ be a positive integer and, for each
+prime $p$, let $k_p$ be the exponent of $p$ in $n$. Sending a set $s$ of prime factors of $n$ to
+$\prod_{p \in s} p^{k_p}$ is a bijection onto the unitary divisors of $n$. Hence, for every
+function $f : \mathbb N \to M$ into an additive commutative monoid $M$,
+$\sum_d f(d) = \sum_s f\left(\prod_{p \in s} p^{k_p}\right)$, where $d$ runs over the unitary
+divisors of $n$ and $s$ over the sets of prime factors of $n$. -/
+public theorem sum_unitaryDivisors_eq_sum_powerset {M : Type*} [AddCommMonoid M] (n : ℕ)
+    (hn : n ≠ 0) (f : ℕ → M) :
+    ∑ d ∈ Nat.unitaryDivisors n, f d =
+      ∑ s ∈ n.primeFactors.powerset, f (∏ p ∈ s, p ^ n.factorization p) := by
   let exponents (s : Finset ℕ) := n.factorization.filter (· ∈ s)
   let fromSubset (s : Finset ℕ) := (exponents s).prod (· ^ ·)
   have hle (s : Finset ℕ) : exponents s ≤ n.factorization := by
@@ -40,9 +43,21 @@ public theorem card_unitaryDivisors (n : ℕ) (hn : n ≠ 0) :
   have hprimes (s : Finset ℕ) : (fromSubset s).primeFactors = n.primeFactors.filter (· ∈ s) := by
     rw [← Nat.support_factorization, hfac]
     simp [exponents]
-  rw [← card_powerset]
+  have hprod (s : Finset ℕ) : fromSubset s = ∏ p ∈ s, p ^ n.factorization p := by
+    have hsupp : (exponents s).support ⊆ s := by
+      intro p hp
+      simp only [exponents, Finsupp.support_filter, mem_filter] at hp
+      exact hp.2
+    have h := Finsupp.prod_of_support_subset (exponents s) hsupp (fun p k => p ^ k)
+      (fun p _ => pow_zero p)
+    simp only [fromSubset] at h ⊢
+    rw [h]
+    refine prod_congr rfl fun p hp => ?_
+    congr 1
+    simp only [exponents]
+    exact Finsupp.filter_apply_pos _ _ hp
   symm
-  refine card_bij' (fun s _ => fromSubset s) (fun d _ => d.primeFactors) ?_ ?_ ?_ ?_
+  refine sum_bij' (fun s _ => fromSubset s) (fun d _ => d.primeFactors) ?_ ?_ ?_ ?_ ?_
   · -- Any selected prime occurs to its full exponent, so it cannot divide the quotient.
     intro s _
     have hdvd : fromSubset s ∣ n := Nat.prod_pow_dvd_of_le_factorization (hle s)
@@ -77,5 +92,17 @@ public theorem card_unitaryDivisors (n : ℕ) (hn : n ≠ 0) :
         Nat.factorization_eq_of_coprime_right hcop.symm
           (Nat.mem_primeFactors_iff_mem_primeFactorsList.mp hp)]
     · rw [Finsupp.filter_apply_neg _ _ hp, Finsupp.notMem_support_iff.mp hp]
+  · intro s _
+    rw [hprod s]
+
+/-- **Number of unitary divisors.** A positive integer $n$ with $m$ distinct prime factors has
+exactly $2^m$ unitary divisors.
+
+Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
+Numbers*, INTEGERS 24 (2024), Article A95, Lemma 2 (quoting Bege). -/
+public theorem card_unitaryDivisors (n : ℕ) (hn : n ≠ 0) :
+    (Nat.unitaryDivisors n).card = 2 ^ n.primeFactors.card := by
+  rw [card_eq_sum_ones, sum_unitaryDivisors_eq_sum_powerset n hn (fun _ => 1), ← card_eq_sum_ones,
+    card_powerset]
 
 end MetaMathlibExt
