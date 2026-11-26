@@ -16,4 +16,4 @@ So $\nabla$ is a widening on octagons. Strongly closing the left argument as wel
 
 ## Sources
 
-- A. Miné, "The octagon abstract domain", arXiv:cs/0703084v2, 2007, <https://arxiv.org/abs/cs/0703084>, Section VI.D, the widening operator, Theorem 8, and Figure 10 (an infinite strictly increasing sequence when the left argument is strongly closed).
+- A. Miné, "The octagon abstract domain", *Proceedings of the Eighth Working Conference on Reverse Engineering (WCRE 2001)*, IEEE, 2001, pp. 310–319, doi:10.1109/WCRE.2001.957836, author copy <https://arxiv.org/abs/cs/0703084>, Section VI.D, the widening operator, Theorem 8, and Figure 10 (an infinite strictly increasing sequence when the left argument is strongly closed).

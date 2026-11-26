@@ -14,6 +14,7 @@ So the meet-over-all-valid-paths solution is found by solving a realizable-path 
 
 - [IFDS problems and the meet-over-all-valid-paths solution](ifds-problems-and-the-meet-over-all-valid-paths.md)
 - [Representation relations of distributive functions](representation-relations-of-distributive-function.md)
+- [Supergraphs and valid paths](supergraphs-and-valid-paths.md)
 
 ## Sources
 

@@ -20,4 +20,4 @@ Over $\mathbb{Z}$ the strong closure is not the least representation: from $2x \
 
 ## Sources
 
-- A. Miné, "The octagon abstract domain", arXiv:cs/0703084v2, 2007, <https://arxiv.org/abs/cs/0703084>: Section V.C (Definition 1 of strongly closed DBMs, the strong closure algorithm of Figure 8 and its $O(N^3)$ cost, and Theorem 4 for $\mathbb{I} \ne \mathbb{Z}$), Section V.D (the failure over $\mathbb{Z}$) and Section VI.A (Theorem 5, equality and inclusion testing).
+- A. Miné, "The octagon abstract domain", *Proceedings of the Eighth Working Conference on Reverse Engineering (WCRE 2001)*, IEEE, 2001, pp. 310–319, doi:10.1109/WCRE.2001.957836, author copy <https://arxiv.org/abs/cs/0703084>: Section V.C (Definition 1 of strongly closed DBMs, the strong closure algorithm of Figure 8 and its $O(N^3)$ cost, and Theorem 4 for $\mathbb{I} \ne \mathbb{Z}$), Section V.D (the failure over $\mathbb{Z}$) and Section VI.A (Theorem 5, equality and inclusion testing).

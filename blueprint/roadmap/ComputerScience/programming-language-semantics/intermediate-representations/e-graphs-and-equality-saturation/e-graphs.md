@@ -13,4 +13,4 @@ An e-class id $a$ is *canonical* if $\mathrm{find}(a) = a$, and an e-node is can
 
 ## Sources
 
-- M. Willsey, C. Nandi, Y. R. Wang, O. Flatt, Z. Tatlock and P. Panchekha, "egg: Fast and extensible equality saturation", arXiv:2004.03082, <https://arxiv.org/abs/2004.03082> (also *Proceedings of the ACM on Programming Languages* 5(POPL):23, 2021), Section 2.1.1: Figure 1 and Definitions 2.1 (e-graph), 2.2 (canonicalization) and 2.3 (representation of terms), and Figure 2.
+- M. Willsey, C. Nandi, Y. R. Wang, O. Flatt, Z. Tatlock and P. Panchekha, "egg: Fast and extensible equality saturation", *Proceedings of the ACM on Programming Languages* 5(POPL), Article 23, 2021, doi:10.1145/3434304, author copy arXiv:2004.03082v3 <https://arxiv.org/abs/2004.03082>, Section 2.1.1: Figure 1 and Definitions 2.1 (e-graph), 2.2 (canonicalization) and 2.3 (representation of terms), and Figure 2.
