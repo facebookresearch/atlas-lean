@@ -7,7 +7,7 @@ measurable sets $S$,
 $$\Pr(F(D) \in S) \le e^{\epsilon} \Pr(F(D') \in S).$$
 
 The Laplace mechanism releases $f(D) + \mathrm{Lap}_k(\Delta f/\epsilon)$, where
-$\Delta f = \max_{D, D'} \lVert f(D) - f(D') \rVert_1$ is the $\ell_1$ sensitivity and $\mathrm{Lap}_k(\lambda)$
+$\Delta f = \max_{D, D' \text{ neighbors}} \lVert f(D) - f(D') \rVert_1$ is the $\ell_1$ sensitivity and $\mathrm{Lap}_k(\lambda)$
 has density proportional to $e^{-\lVert x \rVert_1/\lambda}$; it is $\epsilon$-differentially private.
 
 **Allelic test statistic.** For one SNP in a case–control study, let $r_0, r_1, r_2$ (summing to $R$)
