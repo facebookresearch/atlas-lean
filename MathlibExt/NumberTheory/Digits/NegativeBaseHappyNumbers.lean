@@ -92,7 +92,7 @@ private theorem digitSum_lt_of_nonneg_small {B a : ℤ} (hB : 7 ≤ B) (ha0 : 0 
   have hS2 : negBaseSqDigitSum (-B) q2 = r2 ^ 2 + negBaseSqDigitSum (-B) q3 := by
     rw [e2]
     exact digitSum_cons (by omega) hr2.1 hr2.2
-  have hSq3 : negBaseSqDigitSum (-B) q3 = 0 := by rw [hq3]; exact digitSum_zero B
+  have hSq3 : negBaseSqDigitSum (-B) q3 = 0 := by rw [hq3]; exact negBaseSqDigitSum_zero (-B)
   have hr2eq : r2 = q2 := by simpa [hq3] using he2
   have hr0sq : r0 ^ 2 ≤ (B - 1) ^ 2 := sq_le_sq_of_bounds (by omega) hr0.1 hr0.2
   have hr1sq : r1 ^ 2 ≤ (B - 1) ^ 2 := sq_le_sq_of_bounds (by omega) hr1.1 hr1.2
@@ -144,7 +144,7 @@ private theorem digitSum_le_of_bounded {B a : ℤ} (hB : 7 ≤ B)
   have hS3 : negBaseSqDigitSum (-B) q3 = r3 ^ 2 + negBaseSqDigitSum (-B) q4 := by
     rw [e3]
     exact digitSum_cons (by omega) hr3.1 hr3.2
-  have hSq4 : negBaseSqDigitSum (-B) q4 = 0 := by rw [hq4]; exact digitSum_zero B
+  have hSq4 : negBaseSqDigitSum (-B) q4 = 0 := by rw [hq4]; exact negBaseSqDigitSum_zero (-B)
   have hr0sq : r0 ^ 2 ≤ (B - 1) ^ 2 := sq_le_sq_of_bounds (by omega) hr0.1 hr0.2
   have hr1sq : r1 ^ 2 ≤ (B - 1) ^ 2 := sq_le_sq_of_bounds (by omega) hr1.1 hr1.2
   have hr2sq : r2 ^ 2 ≤ (B - 1) ^ 2 := sq_le_sq_of_bounds (by omega) hr2.1 hr2.2

@@ -460,10 +460,13 @@ public theorem exists_negBaseSqDigitSum_congr (b : ℤ) (hb : b ≤ -12) (heven 
     rw [hvqr]
     ring
 
-/-- **The negative-base digit-square sum of zero.** For every integer $B$, the sum of the squares
-of the base-$(-B)$ digits of $0$ is $0$. -/
-public theorem digitSum_zero (B : ℤ) : negBaseSqDigitSum (-B) 0 = 0 := by
-  exact digitSumAux_zero B _
+/-- **The digit-square sum of zero.** For every integer $b$, the base-$b$ digit-square sum $S_{2,b}$
+satisfies $S_{2,b}(0) = 0$.
+
+Source: Helen G. Grundman, *Closing an Open Problem on Negative Base Happy Numbers*, The Fibonacci
+Quarterly 62 (2024), Article 62-2/grundman11162023, Section 2. -/
+public theorem negBaseSqDigitSum_zero (b : ℤ) : negBaseSqDigitSum b 0 = 0 := by
+  simp [negBaseSqDigitSum, negBaseSqDigitSumAux]
 
 private theorem digitSum_pos {B : ℤ} (hB : 2 ≤ B) (a : ℤ) (ha : a ≠ 0) :
     0 < negBaseSqDigitSum (-B) a := by
@@ -478,7 +481,7 @@ private theorem digitSum_pos {B : ℤ} (hB : 2 ≤ B) (a : ℤ) (ha : a ≠ 0) :
       (congrArg (negBaseSqDigitSum (-B)) he.symm).trans (digitSum_cons hB hd₀ hdB)
     rw [hs]
     by_cases hq : a / (-B) = 0
-    · rw [hq, digitSum_zero, add_zero]
+    · rw [hq, negBaseSqDigitSum_zero, add_zero]
       apply sq_pos_of_ne_zero
       intro hd
       simp [hq, hd] at he
@@ -498,7 +501,7 @@ private theorem digitSum_append {B : ℤ} (hB : 2 ≤ B) (m : ℕ) (a x : ℤ)
       have := Int.natAbs_eq_zero (a := a)
       unfold digitRank at ha
       omega
-    simp [haz, digitSum_zero]
+    simp [haz, negBaseSqDigitSum_zero]
   | succ m ih =>
     let q := a / (-B)
     let d := a % (-B)
@@ -522,7 +525,7 @@ private theorem digitSum_append {B : ℤ} (hB : 2 ≤ B) (m : ℕ) (a x : ℤ)
 private theorem exists_digitSum_eq_nat {B : ℤ} (hB : 2 ≤ B) (n : ℕ) :
     ∃ x : ℤ, 0 ≤ x ∧ negBaseSqDigitSum (-B) x = n := by
   induction n with
-  | zero => exact ⟨0, le_rfl, digitSum_zero B⟩
+  | zero => exact ⟨0, le_rfl, negBaseSqDigitSum_zero (-B)⟩
   | succ n ih =>
     obtain ⟨x, hx, hs⟩ := ih
     refine ⟨(-B) ^ 2 * x + 1, add_nonneg (mul_nonneg (sq_nonneg _) hx) zero_le_one, ?_⟩
@@ -540,7 +543,7 @@ private theorem isNegBaseGood_of_image_digitSum {B : ℤ} (hB : 2 ≤ B) (T : Fi
   rw [Int.toNat_of_nonneg hn.le] at hs
   have hxpos : 0 < x := by
     by_contra! hx'
-    rw [show x = 0 by omega, digitSum_zero] at hs
+    rw [show x = 0 by omega, negBaseSqDigitSum_zero] at hs
     omega
   -- Take an even number of low digits so that the common shift is positive.
   have hpow : 0 < (-B) ^ (2 * m) := by
