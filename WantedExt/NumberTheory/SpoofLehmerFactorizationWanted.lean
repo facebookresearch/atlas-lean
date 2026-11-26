@@ -18,6 +18,7 @@ public import MathlibExt.NumberTheory.LehmerBoundsMonotonicity
 public import MathlibExt.NumberTheory.SpoofLehmerFactorization
 public import MathlibExt.NumberTheory.SpoofLehmerResidues
 public import MathlibExt.NumberTheory.SpoofLehmerFactorizationSpoofLehmerBaseNotModEqOnePrime
+public import MathlibExt.NumberTheory.SpoofLehmerFactorizationLehmerEquationSolutionsFinite
 public import MathlibExt.NumberTheory.SpoofLehmerFactorizationSpoofLehmerLowerLeLeUpper
 
 /-!
@@ -54,20 +55,6 @@ public theorem_wanted spoofLehmer_base_not_modEq_one_base (x : Multiset ℕ) (k 
     (hL : IsSpoofLehmer k (spoofOfBases x))
     (hnt : ¬ IsTrivialSpoof (spoofOfBases x)) :
     ∀ a ∈ x, ∀ b ∈ x, ¬ a ≡ 1 [MOD b]
-
-/-- **Finitely many solutions of the Lehmer equation in $r$ variables.** For every natural
-number $r \ge 2$, there are only finitely many pairs $(k, x)$ of an integer $k > 0$ and a tuple
-$x = (x_1, \dots, x_r)$ of natural numbers with $x_i \ge 2$ for every $i$ such that
-$k (x_1 - 1) \cdots (x_r - 1) = x_1 \cdots x_r - 1$.
-
-The source also claims that the solutions can be computed explicitly; that claim is not part of
-this statement.
-
-Source: Grant Molnar and Guntas Singh, *Spoof Lehmer Factorizations*, INTEGERS 26 (2026),
-Article A33, Theorem 1 (`integers-2026-A33-thm-1`). -/
-public theorem_wanted lehmerEquation_solutions_finite (r : ℕ) (hr : 2 ≤ r) :
-    {p : ℤ × (Fin r → ℕ) | 0 < p.1 ∧ (∀ i, 2 ≤ p.2 i) ∧
-      p.1 * ∏ i, ((p.2 i : ℤ) - 1) = ∏ i, (p.2 i : ℤ) - 1}.Finite
 
 /-- **Solutions of the Lehmer equation with at most six variables.** Call a finite multiset
 $\{x_1, \dots, x_r\}$ of natural numbers a solution of the Lehmer equation if $x_i \ge 2$ for
