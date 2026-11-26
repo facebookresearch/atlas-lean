@@ -20,10 +20,10 @@ With `σₖ(n) = ∑_{d ∣ n} d^k`, the paper calls `n`
 some proper divisor `d` of `n`, and `[k,ℓ]`-near-perfect if
 `σₖ(n) - n^k - d^k = ℓn`; deficient/near `F_k`-perfect is
 the case `ℓ = 3` (with `k > 1`), and `F`-perfect variants
-are `k = 2`, `ℓ = 3`. Below these are
-`IsKLDeficientPerfect`/`IsKLNearPerfect` and the `With`
-variants fixing the divisor `d` (written additively to stay
-in `ℕ`). The paper's `ℓ` is a positive natural (its
+are `k = 2`, `ℓ = 3`. The imported `MathlibExt` modules
+define these as `IsKLDeficientPerfect`/`IsKLNearPerfect` and
+the `With` variants fixing the divisor `d` (written
+additively to stay in `ℕ`). The paper's `ℓ` is a positive natural (its
 Proposition 2 proof needs `ℓ ≥ 1`: at `ℓ = 0` every prime
 would be `[k,0]`-near-perfect with `d = 1`), so
 `[k,ℓ]`-statements carry `1 ≤ l` where the printed form

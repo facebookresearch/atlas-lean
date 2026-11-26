@@ -26,9 +26,9 @@ Results from Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta, and Manjil P. Saik
   `a ≥ 1`. This is the `k = 1` part of Theorem 5.
 * `not_isNearFkPerfect_pow_mul_pow`: for distinct odd primes `p₁`, `p₂` and exponents
   `a, b ≥ 1` with `a + b` odd or both odd, `p₁ ^ a * p₂ ^ b` is not near `F_k`-perfect for
-  `k > 1`: multiplicativity of the divisor sum `σₖ` factors it into two geometric sums with an
-  even number of odd terms in total, while the near-perfect equation would force it to be odd
-  (Theorem 20).
+  `k > 1`: multiplicativity of the divisor sum `σₖ` factors it into geometric sums of `a + 1`
+  and `b + 1` odd terms; as `a` or `b` is odd, one of these counts is even, so `σₖ` is even,
+  while the near-perfect equation would force it to be odd (Theorem 20).
 
 It also defines `IsKLNearPerfect` and `IsNearFkPerfect`.
 -/
@@ -185,6 +185,7 @@ theorem not_isNearFkPerfect_pow_mul_pow
     (hne : p₁ ≠ p₂) (ha : 1 ≤ a) (hb : 1 ≤ b)
     (hpar : Odd (a + b) ∨ (Odd a ∧ Odd b)) :
     ¬ IsNearFkPerfect k (p₁ ^ a * p₂ ^ b) := by
+  -- The parity argument does not use `hk`, `ha` or `hb`; this keeps them referenced.
   have _nontrivial : k ≠ 0 ∧ a ≠ 0 ∧ b ≠ 0 := by omega
   rintro ⟨d, hdvd, _, hsum⟩
   have hnodd : Odd (p₁ ^ a * p₂ ^ b) := ho₁.pow.mul ho₂.pow
