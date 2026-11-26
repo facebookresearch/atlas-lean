@@ -95399,6 +95399,7 @@
 "MetaMathlibExt.sq_dvd_pow_two_pow_add_one_iff_wieferich": "e492664dad209eca",
 "MetaMathlibExt.sq_sub_one_div_eight_eq_triangular": "4ff70647d92ad284",
 "MetaMathlibExt.sqrt5_ne": "f43b22effd767adf",
+"MetaMathlibExt.sqrt_abs_discriminant_le_of_gaussClassNumber_le": "eaff1279e06d2e6f",
 "MetaMathlibExt.sqrt_div_two_le_totient": "ba3e9358f7725572",
 "MetaMathlibExt.sqrt_hasPeriodicCF_exists_iff_of_even": "0e6e249442d5cff7",
 "MetaMathlibExt.sqrt_hasPeriodicCF_exists_iff_of_odd": "62dfde4e9eabce70",
