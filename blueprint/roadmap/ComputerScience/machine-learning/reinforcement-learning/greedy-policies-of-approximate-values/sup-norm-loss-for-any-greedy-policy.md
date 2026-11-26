@@ -17,22 +17,6 @@ $$
 
 The greedy condition permits every maximizing action, including all ties.
 
-## Depends on
-
-- [Markov decision process](../../../heuristic-search-and-planning/value-iteration/mdp.md)
-- [Stochastic Markov decision process](../../../heuristic-search-and-planning/value-iteration/stochastic.md)
-- [Bellman optimality operator](../../../heuristic-search-and-planning/value-iteration/bellman.md)
-- [Bellman operator of a policy](../../../heuristic-search-and-planning/value-iteration/policy-bellman.md)
-- [Optimal value of a discounted Markov decision process](../../../heuristic-search-and-planning/value-iteration/optimal-value.md)
-- [Value of a policy](../../../heuristic-search-and-planning/value-iteration/policy-value.md)
-
-## Proof depends on
-
-- [Bellman's operator is a contraction](../../../heuristic-search-and-planning/value-iteration/bellman-contracting.md)
-- [A policy's Bellman operator is a contraction](../../../heuristic-search-and-planning/value-iteration/policy-bellman-contracting.md)
-- [The optimal value solves the Bellman optimality equation](../../../heuristic-search-and-planning/value-iteration/bellman-optimal-value.md)
-- [A policy's value satisfies its Bellman equation](../../../heuristic-search-and-planning/value-iteration/policy-bellman-policy-value.md)
-
 ## Proof
 
 Write $d=\|V^*-W\|_\infty$ and $L=\|V^*-V^\pi\|_\infty$. By the two
