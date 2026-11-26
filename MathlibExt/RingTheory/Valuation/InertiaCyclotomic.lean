@@ -746,6 +746,21 @@ private theorem map_restrictNormalHom_inertiaSubgroupIn_eq_inertia (hp : p.Prime
 
 variable [FiniteDimensional ℚ L]
 
+/-- Let `A` be a valuation subring of `ℚ̄` lying over a prime `p`, and let `L` be a finite Galois
+subextension of `ℚ̄ / ℚ`. Then `𝓞 L` lies in `A`, its center `{x ∈ 𝓞 L | A.valuation x < 1}` is
+a maximal ideal containing `p`, and the inertia group of the center is the image of the inertia
+subgroup of `A` under restriction to `L`. -/
+public theorem exists_isMaximal_inertia_eq_map_restrictNormalHom (hp : p.Prime)
+    (hA : A.LiesOverPrime p) :
+    ∃ Q : Ideal (𝓞 L), Q.IsMaximal ∧ (p : 𝓞 L) ∈ Q ∧
+      (∀ x : 𝓞 L, A.valuation (algebraMap L (AlgebraicClosure ℚ) (x : L)) ≤ 1) ∧
+      (∀ x : 𝓞 L, x ∈ Q ↔ A.valuation (algebraMap L (AlgebraicClosure ℚ) (x : L)) < 1) ∧
+      (A.inertiaSubgroupIn ℚ).map (AlgEquiv.restrictNormalHom L) =
+        Q.inertia (L ≃ₐ[ℚ] L) :=
+  ⟨primeBelow A L, isMaximal_primeBelow A L hp hA, natCast_mem_primeBelow A L hA,
+    valuation_algebraMap_ringOfIntegers_le_one A L, fun _ => mem_primeBelow_iff A L,
+    map_restrictNormalHom_inertiaSubgroupIn_eq_inertia A L hp hA⟩
+
 attribute [local instance] Ideal.Quotient.field in
 
 private theorem card_inertia_primeBelow_eq_ramificationIdx (hp : p.Prime) (hA : A.LiesOverPrime p) :
