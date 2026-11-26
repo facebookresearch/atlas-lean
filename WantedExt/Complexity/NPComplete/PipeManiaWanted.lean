@@ -131,7 +131,8 @@ def Route (i : PipeManiaInstance) (w : List (ℕ × ℕ)) : Prop :=
   (∀ k < target i - 1, tile i w k ≠ tile i w (k + 2)) ∧
   -- every tile is traversed at most twice
   (∀ x ∈ w, w.count x ≤ 2) ∧
-  -- a tile traversed twice holds a cross: both passes straight, in perpendicular directions
+  -- a tile traversed twice holds a cross: perpendicular passes, the first straight, and the second
+  -- straight unless it is the last traversal `k = N`, whose exit is not checked
   (∀ k ≤ target i, ∀ j < k, 1 ≤ j → tile i w j = tile i w k →
     Straight (tile i w (j - 1)) (tile i w j) (tile i w (j + 1)) ∧
     ((tile i w (j - 1)).1 = (tile i w j).1 ↔ (tile i w (k - 1)).1 ≠ (tile i w k).1) ∧

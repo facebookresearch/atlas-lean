@@ -68,7 +68,8 @@ abbrev NumericalTaxonomyInstance := List (List (ℕ × ℕ)) × (ℕ × ℕ)
 noncomputable def ratValue (p : ℕ × ℕ) : ℝ :=
   (p.1 : ℝ) / p.2
 
-/-- The pair `(numerator, denominator)` of the entry `D[a, b]`. -/
+/-- The pair `(numerator, denominator)` of the entry `D[a, b]`, or `(0, 1)` when row `a` or its
+entry `b` is missing. -/
 def cell (i : NumericalTaxonomyInstance) (a b : ℕ) : ℕ × ℕ :=
   (i.1.getD a []).getD b (0, 1)
 
