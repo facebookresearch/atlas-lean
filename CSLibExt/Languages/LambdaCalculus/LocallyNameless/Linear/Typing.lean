@@ -56,11 +56,17 @@ used exactly once"; the notes give the rules and Property 1 but do not state the
 
 ## Fresh names
 
-`Typing.wf`, `Typing.fv_subset_dom`, `Typing.dom_subset_fv`, `Typing.occ_eq_one` and the
-statements built on them assume `[HasFresh Var]`. Over a finite type of names a cofinite
-premise can quantify over no name at all, so `abs` types every abstraction in every context;
-these statements are then false, and a well-formedness premise on `abs` would repair only
-`Typing.wf`.
+The statements that need fresh names assume `[HasFresh Var]`: every finite set of names misses
+some name. On terms these are `Term.open_lc`, `Term.subst_open`, `Term.subst_open_var`,
+`Term.subst_lc`, `Term.beta_lc`, `Term.casePair_lc_open₂`, `Term.casePlus_lc_open_left` and
+`Term.casePlus_lc_open_right`. On typing they are `Typing.wf`, `Typing.fv_subset_dom`,
+`Typing.dom_subset_fv`, `Typing.occ_eq_one`, `Typing.occ_eq_zero`, `Typing.app_fv_disjoint`,
+`Typing.pair_fv_disjoint`, `Typing.casePair_fv_disjoint`, `Typing.caseUnit_fv_disjoint`,
+`Typing.casePlus_fv_disjoint`, `Typing.lpair_fv_eq`, `Typing.casePlus_fv_eq`, `Typing.subst`,
+`Typing.open_subst` and `Typing.open₂_subst`. Over a finite type of names a cofinite premise can
+quantify over no name at all, so every abstraction is locally closed and `abs` types every
+abstraction in every context; these statements are then false, and a well-formedness premise on
+`abs` would repair only `Typing.wf`.
 
 ## References
 
@@ -180,11 +186,12 @@ inductive Ty (Base : Type v)
 
 /-! ### Terms -/
 
-/-- Locally nameless terms over free names `Var`. In the notes' syntax: `abs` is `λx. e`,
-`pair` is the tensor pair `⟨e₁, e₂⟩`, `casePair t u` is `case t (⟨x, y⟩ ⇒ u)`, `unit` is `⟨⟩`,
-`caseUnit t u` is `case t (⟨⟩ ⇒ u)`, `lpair` is `⟨|e₁, e₂|⟩`, `proj₁` and `proj₂` are the
-projections, `inl` and `inr` are `l · e` and `r · e`, `casePlus t u v` is
-`case t (l · x ⇒ u | r · y ⇒ v)`, `lunit` is `⟨| |⟩` and `caseZero t` is `case t ( )`. -/
+/-- Locally nameless terms over free names `Var`. In the syntax of Pfenning's lecture notes on
+linear functional programming (15-814, Lecture 19): `abs` is `λx. e`, `pair` is the tensor pair
+`⟨e₁, e₂⟩`, `casePair t u` is `case t (⟨x, y⟩ ⇒ u)`, `unit` is `⟨⟩`, `caseUnit t u` is
+`case t (⟨⟩ ⇒ u)`, `lpair` is `⟨|e₁, e₂|⟩`, `proj₁` and `proj₂` are the projections, `inl` and `inr`
+are `l · e` and `r · e`, `casePlus t u v` is `case t (l · x ⇒ u | r · y ⇒ v)`, `lunit` is `⟨| |⟩`
+and `caseZero t` is `case t ( )`. -/
 inductive Term (Var : Type u)
   /-- A bound variable, as a de Bruijn index. -/
   | bvar : ℕ → Term Var
@@ -505,7 +512,8 @@ theorem subst_intro (h : x ∉ t.fv) : t ^ s = (t ^ fvar x)[x := s] := subst_int
 variable [HasFresh Var]
 
 omit [DecidableEq Var] in
-/-- Opening a locally closed term leaves it unchanged. -/
+/-- When every finite set of names misses some name (`[HasFresh Var]`), opening a locally closed
+term leaves it unchanged. -/
 theorem open_lc (k : ℕ) (s : Term Var) (h : t.LC) : t⟦k ↝ s⟧ = t := by
   classical
   induction h generalizing k with
@@ -593,10 +601,12 @@ private theorem subset_fv_of_open₂ {L D : Finset Var}
   have h2 : z ∈ (t⟦1 ↝ fvar x⟧).fv := by simpa [fv, hzy] using h1
   simpa [fv, hzx] using fv_openRec_subset 1 h2
 
-/-- Substitution of a locally closed term commutes with opening. -/
+/-- When every finite set of names misses some name (`[HasFresh Var]`), substitution of a locally
+closed term commutes with opening. -/
 theorem subst_open (hs : s.LC) : (t ^ u)[x := s] = t[x := s] ^ u[x := s] := subst_openRec hs 0
 
-/-- Substitution of a locally closed term commutes with opening by another name. -/
+/-- When every finite set of names misses some name (`[HasFresh Var]`), substitution of a locally
+closed term commutes with opening by another name. -/
 theorem subst_open_var (hxy : y ≠ x) (hs : s.LC) : (t ^ fvar y)[x := s] = t[x := s] ^ fvar y :=
   by
     rw [subst_open hs]
@@ -609,7 +619,8 @@ private theorem subst_open₂_var {z w : Var} (hz : z ≠ x) (hw : w ≠ x) (hs 
   rw [subst_openRec hs, subst_openRec hs]
   simp [subst_eq, subst, Ne.symm hz, Ne.symm hw]
 
-/-- Substitution preserves local closure. -/
+/-- When every finite set of names misses some name (`[HasFresh Var]`), substitution of a locally
+closed term preserves local closure. -/
 theorem subst_lc (ht : t.LC) (hs : s.LC) : (t[x := s]).LC := by
   induction ht with
   | fvar y =>
@@ -652,7 +663,8 @@ theorem subst_lc (ht : t.LC) (hs : s.LC) : (t[x := s]).LC := by
   | caseZero _ ih => exact LC.caseZero ih
 
 omit [DecidableEq Var] in
-/-- Opening the body of a locally closed abstraction by a locally closed term. -/
+/-- When every finite set of names misses some name (`[HasFresh Var]`), opening the body of a
+locally closed abstraction by a locally closed term gives a locally closed term. -/
 theorem beta_lc (h : (abs t).LC) (hs : s.LC) : (t ^ s).LC := by
   classical
   cases h with
@@ -684,7 +696,8 @@ private theorem open₂_eq_subst_rev (hx : x ∉ u.fv) (hy : y ∉ u.fv) (hxy : 
   · exact hxy (by simpa [fv] using h)
 
 omit [DecidableEq Var] in
-/-- Opening the body of a locally closed tensor elimination by locally closed terms. -/
+/-- When every finite set of names misses some name (`[HasFresh Var]`), opening the body of a
+locally closed tensor elimination by locally closed terms gives a locally closed term. -/
 theorem casePair_lc_open₂ (h : (casePair t u).LC) (hs₁ : s₁.LC) (hs₂ : s₂.LC) :
     (u.open₂ s₁ s₂).LC := by
   classical
@@ -697,7 +710,8 @@ theorem casePair_lc_open₂ (h : (casePair t u).LC) (hs₁ : s₁.LC) (hs₂ : s
     exact subst_lc (subst_lc (hu x hx.1 y hy.2.1.1 (Ne.symm hy.1)) hs₁) hs₂
 
 omit [DecidableEq Var] in
-/-- Opening the left branch of a locally closed sum elimination by a locally closed term. -/
+/-- When every finite set of names misses some name (`[HasFresh Var]`), opening the left branch of a
+locally closed sum elimination by a locally closed term gives a locally closed term. -/
 theorem casePlus_lc_open_left (h : (casePlus t u v).LC) (hs : s.LC) : (u ^ s).LC := by
   classical
   cases h with
@@ -707,7 +721,8 @@ theorem casePlus_lc_open_left (h : (casePlus t u v).LC) (hs : s.LC) : (u ^ s).LC
     exact subst_lc (hu x fun hm => hx (Finset.mem_union_left _ hm)) hs
 
 omit [DecidableEq Var] in
-/-- Opening the right branch of a locally closed sum elimination by a locally closed term. -/
+/-- When every finite set of names misses some name (`[HasFresh Var]`), opening the right branch of
+a locally closed sum elimination by a locally closed term gives a locally closed term. -/
 theorem casePlus_lc_open_right (h : (casePlus t u v).LC) (hs : s.LC) : (v ^ s).LC := by
   classical
   cases h with
@@ -724,8 +739,9 @@ variable {Var : Type u} {Base : Type v}
 
 open Term Ty
 
-/-- The linear typing judgment of section 2 of the notes. The conclusion context of a rule
-with two context-disjoint premises is any `Γ` with `Γ.Split Γ₁ Γ₂`. -/
+/-- The linear typing judgment of section 2 of Pfenning's lecture notes on linear functional
+programming (15-814, Lecture 19). The conclusion context of a rule with two context-disjoint
+premises is any `Γ` with `Γ.Split Γ₁ Γ₂`. -/
 inductive Typing : Context Var (Ty Base) → Term Var → Ty Base → Prop
   /-- Variable: the variable is the only hypothesis. -/
   | var {x : Var} {A : Ty Base} : Typing [⟨x, A⟩] (fvar x) A
@@ -934,7 +950,8 @@ theorem caseZero_iff : Γ ⊢ .caseZero t ∶ C ↔ ∃ Γ₁ Δ, Γ.Split Γ₁
 
 variable [HasFresh Var]
 
-/-- Typing contexts are well formed. -/
+/-- When every finite set of names misses some name (`[HasFresh Var]`), the context of a typed term
+is well formed. -/
 theorem wf (h : Γ ⊢ t ∶ A) : Γ✓ := by
   induction h with
   | var => exact List.nodupKeys_singleton _
@@ -970,7 +987,8 @@ private theorem casePair_body_fv {L : Finset Var}
   Term.fv_subset_of_open₂ fun x hx y hy hxy => by
     simpa [dom_cons] using ih x hx y hy hxy
 
-/-- Every free variable of a typed term is a hypothesis. -/
+/-- When every finite set of names misses some name (`[HasFresh Var]`), every free variable of a
+typed term is a hypothesis. -/
 theorem fv_subset_dom (h : Γ ⊢ t ∶ A) : t.fv ⊆ Γ.dom := by
   induction h with
   | var => simp [fv, Context.dom]
@@ -997,7 +1015,8 @@ theorem fv_subset_dom (h : Γ ⊢ t ∶ A) : t.fv ⊆ Γ.dom := by
   | lunit _ => simp [fv]
   | caseZero hs _ ih => rw [hs.dom_eq]; exact ih.trans Finset.subset_union_left
 
-/-- Every hypothesis is used by a typed term that discards nothing. -/
+/-- When every finite set of names misses some name (`[HasFresh Var]`), every hypothesis is used by
+a typed term that discards nothing. -/
 theorem dom_subset_fv (h : Γ ⊢ t ∶ A) (ht : t.NoDiscard) : Γ.dom ⊆ t.fv := by
   revert ht
   induction h with
@@ -1038,28 +1057,33 @@ theorem dom_subset_fv (h : Γ ⊢ t ∶ A) (ht : t.NoDiscard) : Γ.dom ⊆ t.fv 
   | lunit _ => intro ht; exact ht.elim
   | caseZero _ _ _ => intro ht; exact ht.elim
 
-/-- The function and the argument of an application have disjoint free variables. -/
+/-- When every finite set of names misses some name (`[HasFresh Var]`), the function and the
+argument of a typed application have disjoint free variables. -/
 theorem app_fv_disjoint (h : Γ ⊢ .app t s ∶ B) : Disjoint t.fv s.fv := by
   obtain ⟨A, Γ₁, Γ₂, hs, h₁, h₂⟩ := app_iff.1 h
   exact Disjoint.mono h₁.fv_subset_dom h₂.fv_subset_dom hs.disjoint
 
-/-- The components of a tensor pair have disjoint free variables. -/
+/-- When every finite set of names misses some name (`[HasFresh Var]`), the components of a typed
+tensor pair have disjoint free variables. -/
 theorem pair_fv_disjoint (h : Γ ⊢ .pair t s ∶ C) : Disjoint t.fv s.fv := by
   obtain ⟨A, B, Γ₁, Γ₂, -, hs, h₁, h₂⟩ := pair_iff.1 h
   exact Disjoint.mono h₁.fv_subset_dom h₂.fv_subset_dom hs.disjoint
 
-/-- The discriminant and the body of a tensor elimination have disjoint free variables. -/
+/-- When every finite set of names misses some name (`[HasFresh Var]`), the discriminant and the
+body of a typed tensor elimination have disjoint free variables. -/
 theorem casePair_fv_disjoint (h : Γ ⊢ .casePair t u ∶ C) : Disjoint t.fv u.fv := by
   obtain ⟨A, B, Γ₁, Δ, hs, ht, L, hu⟩ := casePair_iff.1 h
   exact Disjoint.mono ht.fv_subset_dom
     (casePair_body_fv fun x hx y hy hxy => (hu x hx y hy hxy).fv_subset_dom) hs.disjoint
 
-/-- The discriminant and the body of a unit elimination have disjoint free variables. -/
+/-- When every finite set of names misses some name (`[HasFresh Var]`), the discriminant and the
+body of a typed unit elimination have disjoint free variables. -/
 theorem caseUnit_fv_disjoint (h : Γ ⊢ .caseUnit t u ∶ C) : Disjoint t.fv u.fv := by
   obtain ⟨Γ₁, Δ, hs, ht, hu⟩ := caseUnit_iff.1 h
   exact Disjoint.mono ht.fv_subset_dom hu.fv_subset_dom hs.disjoint
 
-/-- The discriminant of a sum elimination shares no free variable with the branches. -/
+/-- When every finite set of names misses some name (`[HasFresh Var]`), the discriminant of a typed
+sum elimination shares no free variable with the branches. -/
 theorem casePlus_fv_disjoint (h : Γ ⊢ .casePlus t u v ∶ C) : Disjoint t.fv (u.fv ∪ v.fv) :=
   by
     obtain ⟨A, B, Γ₁, Δ, hs, ht, L, hu, hv⟩ := casePlus_iff.1 h
@@ -1067,14 +1091,16 @@ theorem casePlus_fv_disjoint (h : Γ ⊢ .casePlus t u v ∶ C) : Disjoint t.fv 
     · exact Term.fv_subset_of_open fun x hx => by simpa [dom_cons] using (hu x hx).fv_subset_dom
     · exact Term.fv_subset_of_open fun x hx => by simpa [dom_cons] using (hv x hx).fv_subset_dom
 
-/-- The components of an additive pair that discard nothing have the same free variables. -/
+/-- When every finite set of names misses some name (`[HasFresh Var]`), the components of a typed
+additive pair that discard nothing have the same free variables. -/
 theorem lpair_fv_eq (h : Γ ⊢ .lpair t s ∶ C) (ht : t.NoDiscard) (hs : s.NoDiscard) :
     t.fv = s.fv := by
   obtain ⟨A', B', -, h₁, h₂⟩ := lpair_iff.1 h
   exact (Finset.Subset.antisymm h₁.fv_subset_dom (h₁.dom_subset_fv ht)).trans
     (Finset.Subset.antisymm h₂.fv_subset_dom (h₂.dom_subset_fv hs)).symm
 
-/-- The branches of a sum elimination that discard nothing have the same free variables. -/
+/-- When every finite set of names misses some name (`[HasFresh Var]`), the branches of a typed sum
+elimination that discard nothing have the same free variables. -/
 theorem casePlus_fv_eq (h : Γ ⊢ .casePlus t u v ∶ C) (hu : u.NoDiscard) (hv : v.NoDiscard) :
     u.fv = v.fv := by
   obtain ⟨A, B, Γ₁, Δ, hs, ht, L, hu', hv'⟩ := casePlus_iff.1 h
@@ -1090,7 +1116,8 @@ theorem casePlus_fv_eq (h : Γ ⊢ .casePlus t u v ∶ C) (hu : u.NoDiscard) (hv
 
 /-! #### Exactly once -/
 
-/-- A typed term of the multiplicative fragment uses each hypothesis exactly once. -/
+/-- When every finite set of names misses some name (`[HasFresh Var]`), a typed term of the
+multiplicative fragment uses each hypothesis exactly once. -/
 theorem occ_eq_one (h : Γ ⊢ t ∶ A) (ht : t.Multiplicative) (hx : x ∈ Γ.dom) : t.occ x = 1 :=
   by
     revert ht hx
@@ -1155,7 +1182,8 @@ theorem occ_eq_one (h : Γ ⊢ t ∶ A) (ht : t.Multiplicative) (hx : x ∈ Γ.d
     | lunit => intro ht; exact ht.elim
     | caseZero => intro ht; exact ht.elim
 
-/-- A typed term does not mention names outside its context. -/
+/-- When every finite set of names misses some name (`[HasFresh Var]`), a typed term does not
+mention names outside its context. -/
 theorem occ_eq_zero (h : Γ ⊢ t ∶ A) (hx : x ∉ Γ.dom) : t.occ x = 0 :=
   occ_eq_zero_iff.2 fun hm => hx (h.fv_subset_dom hm)
 
@@ -1340,13 +1368,17 @@ private theorem subst_aux (hs : Γ ⊢ s ∶ A) {Θ : Context Var (Ty Base)} {B'
       rw [subst_eq] at e; rw [e]
       exact Typing.caseZero hs' h₁
 
-/-- **Linear substitution** (Property 1 of the notes): if `Γ ⊢ s ∶ A` and `Δ, x : A ⊢ t ∶ B`
-with `Γ` and `Δ` disjoint, then `Γ, Δ ⊢ t[x := s] ∶ B`. -/
+/-- **Linear substitution** (Property 1 of Pfenning's lecture notes on linear functional
+programming, 15-814, Lecture 19): when every finite set of names misses some name
+(`[HasFresh Var]`), if `Γ ⊢ s ∶ A` and `Δ, x : A ⊢ t ∶ B` with `Γ` and `Δ` disjoint, then
+`Γ, Δ ⊢ t[x := s] ∶ B`. -/
 theorem subst (hs : Γ ⊢ s ∶ A) (ht : ⟨x, A⟩ :: Δ ⊢ t ∶ B) (hwf : (Γ ++ Δ)✓) :
     Γ ++ Δ ⊢ t[x := s] ∶ B := subst_aux hs ht (List.Perm.refl _) hwf
 
 omit [DecidableEq Var] in
-/-- Linear substitution into a body opened by one fresh name, as in a β-step. -/
+/-- Linear substitution into a body opened by one fresh name, as in a β-step. When every finite set
+of names misses some name (`[HasFresh Var]`): if `Δ, x : A ⊢ t ^ fvar x ∶ B` for every name `x`
+outside a finite set, `Γ ⊢ s ∶ A`, and `Γ` and `Δ` are disjoint, then `Γ, Δ ⊢ t ^ s ∶ B`. -/
 theorem open_subst {L : Finset Var} (ht : ∀ x ∉ L, ⟨x, A⟩ :: Δ ⊢ t ^ fvar x ∶ B)
     (hs : Γ ⊢ s ∶ A) (hwf : (Γ ++ Δ)✓) : Γ ++ Δ ⊢ t ^ s ∶ B := by
   classical
@@ -1356,7 +1388,10 @@ theorem open_subst {L : Finset Var} (ht : ∀ x ∉ L, ⟨x, A⟩ :: Δ ⊢ t ^ 
   exact Typing.subst hs (ht x hx.1) hwf
 
 omit [DecidableEq Var] in
-/-- Linear substitution of two terms into the body of a tensor elimination. -/
+/-- Linear substitution of two terms into the body of a tensor elimination. When every finite set of
+names misses some name (`[HasFresh Var]`): if `Δ, x : A, y : B ⊢ u.open₂ (fvar x) (fvar y) ∶ C` for
+all distinct names `x` and `y` outside a finite set, `Γ₁ ⊢ s₁ ∶ A`, `Γ₂ ⊢ s₂ ∶ B`, and `Γ₁`, `Γ₂`
+and `Δ` are pairwise disjoint, then `Γ₁, Γ₂, Δ ⊢ u.open₂ s₁ s₂ ∶ C`. -/
 theorem open₂_subst {Γ₂ : Context Var (Ty Base)} {L : Finset Var}
     (hu : ∀ x ∉ L, ∀ y ∉ L, x ≠ y → ⟨y, B⟩ :: ⟨x, A⟩ :: Δ ⊢ u.open₂ (fvar x) (fvar y) ∶ C)
     (hs₁ : Γ₁ ⊢ s₁ ∶ A) (hs₂ : Γ₂ ⊢ s₂ ∶ B) (hwf : (Γ₁ ++ Γ₂ ++ Δ)✓) :
