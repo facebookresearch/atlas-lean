@@ -39,6 +39,7 @@ Topics added since this subject's fields were last revised.
 - [Inertia Cyclotomic](inertia-cyclotomic/README.md)
 - [Inertia Fixed Field](inertia-fixed-field/README.md)
 - [Infinite Sum](infinite-sum/README.md)
+- [Integrally Closed](integrally-closed/README.md)
 - [Invariant Localization](invariant-localization/README.md)
 - [Invariant Point Maps](invariant-point-maps/README.md)
 - [Map](map/README.md)
