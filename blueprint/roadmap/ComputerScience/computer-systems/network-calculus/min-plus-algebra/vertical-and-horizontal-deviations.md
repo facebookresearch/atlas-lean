@@ -1,6 +1,6 @@
 # Vertical and horizontal deviations
 
-For $f, g$ in the set $\mathcal F$ of [min-plus convolution](min-plus-convolution-and-deconvolution.md) with $f$ finite (that is, $f(t) < \infty$ for every $t$), the *vertical deviation* and the *horizontal deviation* are
+For $f, g$ in the set $\mathcal F$ of [min-plus convolution](min-plus-convolution-and-deconvolution.md), the *vertical deviation*, defined when $f$ is finite (that is, $f(t) < \infty$ for every $t$), and the *horizontal deviation*, defined for all $f$ and $g$, are
 
 $$
 v(f, g) = \sup_{t \ge 0} \{ f(t) - g(t) \}, \qquad h(f, g) = \sup_{t \ge 0} \inf \{ d \ge 0 : f(t) \le g(t + d) \} .
