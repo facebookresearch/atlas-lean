@@ -13,6 +13,7 @@ public import Mathlib.Data.Finset.Range
 import Mathlib.Data.Nat.Find
 public import Mathlib.Logic.Function.Iterate
 import Mathlib.Order.Iterate
+import Mathlib.Order.WellFounded
 
 /-!
 # Prefix counts of generalized Hofstadter words
@@ -773,6 +774,65 @@ private theorem count_partition (k n : ℕ) :
     by_cases h : hofWord k n = 1 <;> simp [hofCount, prefix_succ, h] at ih ⊢ <;> omega
 
 end hofCount_one_succ_le
+
+open hofCount_one_succ_le in
+/-- **Bracketing by the iterates of $L_k$.** For $k \ge 1$, let $\tau_k$ be the substitution
+sending the letter $k$ to $k\,1$ and every other letter $i$ to $i + 1$, let $x_k$ be its fixed
+point starting with $k$, and let $L_k(n)$ be the length of the image under $\tau_k$ of the first
+$n$ letters of $x_k$; write $L_k^j$ for the $j$-fold iterate of $L_k$. For all $j \ge 0$ and
+$m \ge 1$ there is a unique $n \ge 1$ with $L_k^j(n - 1) < m \le L_k^j(n)$.
+
+Source: Pierre Letouzey, Shuo Li, and Wolfgang Steiner, *Pointwise Order of Generalized
+Hofstadter Functions G, H, and Beyond*, Journal of Integer Sequences 29 (2026), Article 26.3.3,
+Proposition 2.4 (`jis-2026-26.3.3-prop-5`). -/
+theorem existsUnique_hofL_iterate_bracket {k m : ℕ} (hk : 1 ≤ k) (hm : 1 ≤ m)
+    (j : ℕ) :
+    ∃! n, 1 ≤ n ∧ (hofL k)^[j] (n - 1) < m ∧ m ≤ (hofL k)^[j] n := by
+  let f := (hofL k)^[j]
+  have hL : StrictMono (hofL k) := image_strictMono (j := 1) hk hk
+  have hmono : StrictMono f := hL.iterate j
+  have hzero : f 0 = 0 := Function.iterate_fixed (show hofL k 0 = 0 from image_zero k 1) j
+  have hex : ∃ n, m ≤ f n := ⟨m, hmono.le_apply⟩
+  let n := Nat.find hex
+  have hn : m ≤ f n := Nat.find_spec hex
+  have hnpos : 1 ≤ n := by
+    by_contra! h
+    rw [show n = 0 by omega, hzero] at hn
+    omega
+  have hlo : f (n - 1) < m := lt_of_not_ge (Nat.find_min hex (by omega : n - 1 < n))
+  refine ⟨n, ⟨hnpos, hlo, hn⟩, ?_⟩
+  intro a ha
+  have hna : n ≤ a := Nat.find_min' hex ha.2.2
+  refine le_antisymm ?_ hna
+  by_contra! h
+  exact (not_lt_of_ge (hn.trans (hmono.monotone (by omega : n ≤ a - 1)))) ha.2.1
+
+open hofCount_one_succ_le in
+/-- **Iterates of the Hofstadter substitution on the letter $k$.** Let $k \ge 1$, let $\tau_k$ be
+the morphism of finite words over $\mathbb{N}$ that replaces the letter $k$ by the word $k\,1$ and
+every other letter $i$ by $i + 1$, and write $\tau_k^j(k)$ for the word obtained by applying
+$\tau_k$ $j$ times to the one-letter word $k$. For every natural number $j$: if $j \le k$, then
+$\tau_k^j(k) = k\,1\,2 \cdots j$, the letter $k$ followed by $1, 2, \dots, j$; and if $j \ge k$,
+then $\tau_k^j(k)$ is the concatenation $\tau_k^{j-1}(k)\,\tau_k^{j-k}(k)$.
+
+Source: Pierre Letouzey, Shuo Li, and Wolfgang Steiner, *Pointwise Order of Generalized
+Hofstadter Functions G, H, and Beyond*, Journal of Integer Sequences 29 (2026), Article 26.3.3,
+Proposition 2.2 (`jis-2026-26.3.3-prop-3`). -/
+theorem hofTauList_iterate_self {k : ℕ} (hk : 1 ≤ k) (j : ℕ) :
+    (j ≤ k → (hofTauList k)^[j] [k] = k :: List.range' 1 j) ∧
+      (k ≤ j → (hofTauList k)^[j] [k] =
+        (hofTauList k)^[j - 1] [k] ++ (hofTauList k)^[j - k] [k]) := by
+  refine ⟨iterate_top j, fun hj => ?_⟩
+  have h₁ : 1 + (k - 1) = k := by omega
+  calc
+    _ = (hofTauList k)^[j - 1] (hofTauList k [k]) := by
+      rw [← Function.iterate_succ_apply, show (j - 1).succ = j by omega]
+    _ = (hofTauList k)^[j - 1] [k] ++ (hofTauList k)^[j - 1] [1] := by
+      rw [show hofTauList k [k] = [k] ++ [1] by simp [hofTauList, hofTau], iterate_append]
+    _ = _ := by
+      congr 1
+      rw [show j - 1 = (j - k) + (k - 1) by omega, Function.iterate_add_apply,
+        iterate_before_top _ h₁.le, h₁]
 
 open hofCount_one_succ_le in
 /-- **Prefixes of $x_{k+1}$ contain no more letters $1$ than those of $x_k$.** Let $x_k$ be the
