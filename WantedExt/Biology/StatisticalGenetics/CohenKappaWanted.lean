@@ -18,11 +18,11 @@ and, for fixed margins, `κ ≤ κ_max = (∑ᵢ min(pᵢ., p.ᵢ) - p_e) / (1 -
 `pᵢᵢ ≤ min(pᵢ., p.ᵢ)`, with equality for a table with these margins whose diagonal is
 `min(pᵢ., p.ᵢ)` (Cohen's `κ_M`, the maximum permitted by the margins).
 
-Recorded here: `κ_max` (`kappaMax`), perfect agreement, and the maximum kappa for fixed margins,
-with its attainment. The other definitions and the independent-raters property
-(`kappa_eq_zero_of_independent`) are in `Domains.Biology.StatisticalGenetics.CohenKappa`, which
-this module re-exports. The primary is paywalled and was not read; the definitions follow Cohen
-(1960) as restated in secondary sources, and the three properties are derived.
+Recorded here: perfect agreement. The definitions, the independent-raters property
+(`kappa_eq_zero_of_independent`) and the maximum kappa for fixed margins, with its attainment
+(`kappa_le_kappaMax`), are in `Domains.Biology.StatisticalGenetics.CohenKappa`, which this module
+re-exports. The primary is paywalled and was not read; the definitions follow Cohen (1960) as
+restated in secondary sources, and the three properties are derived.
 
 Sources: J. Cohen, "A coefficient of agreement for nominal scales", Educ. Psychol. Meas. 20
 (1960) 37–46, doi:10.1177/001316446002000104.
@@ -38,11 +38,6 @@ public import Domains.Biology.StatisticalGenetics.CohenKappa
 
 namespace WantedExt.Biology.StatisticalGenetics.CohenKappaWanted
 
-/-- The **maximum kappa for the margins of `P`**:
-`κ_max = (∑ᵢ min(pᵢ., p.ᵢ) - p_e) / (1 - p_e)`. -/
-noncomputable def kappaMax {k : ℕ} (P : Fin k → Fin k → ℝ) : ℝ :=
-  (∑ i, min (rowMargin P i) (colMargin P i) - chance P) / (1 - chance P)
-
 /-- **Perfect agreement** (Cohen 1960; derived): let `P` be a joint probability table with chance
 agreement `p_e < 1`. Then `κ = 1` if and only if the observed agreement is `p_o = 1`.
 
@@ -50,20 +45,5 @@ Source: Cohen (1960). -/
 public theorem_wanted kappa_eq_one_iff {k : ℕ} (P : Fin k → Fin k → ℝ) (hP : IsTable P)
     (he : chance P < 1) :
     kappa P = 1 ↔ observed P = 1
-
-/-- **The maximum kappa for fixed margins** (Cohen 1960; derived): let `P` be a joint probability
-table with chance agreement `p_e < 1`. Then (1) `κ(P) ≤ κ_max(P)`; (2) every joint probability
-table `Q` with the same row and column margins as `P` has `κ(Q) ≤ κ_max(P)`; and (3) the bound is
-attained: some joint probability table `Q` with the same row and column margins as `P` has
-`κ(Q) = κ_max(P)`. So `κ_max(P)` is the maximum of `κ` over the tables with the margins of `P`.
-
-Source: Cohen (1960). -/
-public theorem_wanted kappa_le_kappaMax {k : ℕ} (P : Fin k → Fin k → ℝ) (hP : IsTable P)
-    (he : chance P < 1) :
-    kappa P ≤ kappaMax P ∧
-      (∀ Q : Fin k → Fin k → ℝ, IsTable Q → (∀ i, rowMargin Q i = rowMargin P i) →
-        (∀ j, colMargin Q j = colMargin P j) → kappa Q ≤ kappaMax P) ∧
-      ∃ Q : Fin k → Fin k → ℝ, IsTable Q ∧ (∀ i, rowMargin Q i = rowMargin P i) ∧
-        (∀ j, colMargin Q j = colMargin P j) ∧ kappa Q = kappaMax P
 
 end WantedExt.Biology.StatisticalGenetics.CohenKappaWanted
