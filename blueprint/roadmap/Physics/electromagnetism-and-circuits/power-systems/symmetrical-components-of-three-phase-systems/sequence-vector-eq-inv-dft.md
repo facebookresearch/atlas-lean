@@ -8,3 +8,5 @@ on the integers modulo 3 ([phase array](phase-vector.md)): `V_s = (1/3) Σ_j e^(
 Equivalently, `V_s` is the normalized DFT of the phase array read at the negated frequency `-s`:
 with the DFT `F(k) = Σ_j e^(-2πi jk/3) f(j)`, which has a negative exponent, `V_s = F(-s) / 3`, so
 the sequence components are the normalized DFT at frequencies `0`, `2`, `1`.
+
+The other form has its own page: [Symmetrical components as a normalized DFT](sequence-vector-eq-normalized-dft-neg.md).

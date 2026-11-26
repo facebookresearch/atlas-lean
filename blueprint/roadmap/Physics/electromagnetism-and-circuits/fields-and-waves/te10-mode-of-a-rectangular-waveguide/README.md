@@ -7,6 +7,7 @@
 - [Vanishing normal magnetic field on an x-wall](normal-magnetic-on-xwall.md)
 - [Vanishing normal magnetic field on a y-wall](normal-magnetic-on-ywall.md)
 - [PEC trace conditions on the four side walls of a rectangular guide](rectangular-guide-pectraces.md)
+- [PEC wall conditions in components](rectangular-guide-peccomponent-condition.md)
 - [On the wall x = 0 the traces are three component equations](x-zero-wall-traces-iff-components.md)
 - [On the wall x = a the traces are three component equations](x-top-wall-traces-iff-components.md)
 - [On the wall y = 0 the traces are three component equations](y-zero-wall-traces-iff-components.md)

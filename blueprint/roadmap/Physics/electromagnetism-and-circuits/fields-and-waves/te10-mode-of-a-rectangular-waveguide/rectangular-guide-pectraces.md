@@ -14,3 +14,5 @@ Written face by face as component equations, the conditions are `a > 0`, `b > 0`
 `y = 0` and `y = b`, over the same ranges ([equivalence](traces-iff-component-conditions.md)). The
 corner lines belong to both adjacent walls. For a nonpositive width the conditions fail for every
 field.
+
+The other form has its own page: [PEC wall conditions in components](rectangular-guide-peccomponent-condition.md).

@@ -8,3 +8,5 @@ Let `E > 0`, `V > 0` and `X_s > 0`, and let `δ` be real. With `I` the
 These are the power–angle relations of the synchronous generator: with the current directed out
 toward the bus and RMS phasors, `Re S` is the terminal real power and `Im S` the terminal reactive
 power.
+
+The other form has its own page: [Power-angle formulas of a synchronous generator](synchronous-generator-power-angle.md).

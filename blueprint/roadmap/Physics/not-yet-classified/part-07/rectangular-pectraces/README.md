@@ -1,12 +1,3 @@
 # Rectangular PECTraces
 
-- [PEC trace condition on a rectangular guide](rectangular-guide-pectraces.md)
-- [PEC wall conditions in components](rectangular-guide-peccomponent-condition.md)
-
-## C. Headline equivalence
-
-- [PEC traces in component form](traces-iff-component-conditions.md)
-
-## E. Validation boundaries
-
-- [A constant tangential field violates the PEC wall conditions](constant-tangential-field-not-rectangula.md)
+The pages of this module are now under [TE10 mode of a rectangular waveguide](../../../electromagnetism-and-circuits/fields-and-waves/te10-mode-of-a-rectangular-waveguide/README.md).
