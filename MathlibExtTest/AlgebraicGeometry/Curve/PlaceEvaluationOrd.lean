@@ -32,7 +32,7 @@ section General
 
 variable {K F : Type*} [Field K] [Field F] [Algebra K F] (v : Place K F)
 
--- Constants evaluate to themselves, and so do sums of constants.
+-- Constants evaluate to themselves.
 example (hv : v.IsRational) (a : K) : v.evalAt hv (algebraMap K F a) = a :=
   v.evalAt_algebraMap hv a
 

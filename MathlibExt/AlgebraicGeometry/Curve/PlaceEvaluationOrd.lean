@@ -10,9 +10,11 @@ LICENSE file in the root directory of this source tree.
 Portions of this file are adapted from:
 
 `Definitions/Def_AlgebraicCurve_PlaceEvaluation.lean`,
-`Theorems/Thm_AlgebraicCurve_Place_ord_algebraMap.lean`
-and
+`Theorems/Thm_AlgebraicCurve_Place_ord_algebraMap.lean`,
 `P2M/Sol/S_AlgebraicCurve_Place_ord_algebraMap.lean`
+and
+`P2M/Sol/S_AlgebraicCurve_Annulus_ord_residue_add_nonneg_and_abv_le_one_of_
+isAttached_both_ends.lean`
 (https://github.com/anthropics/fermats-last-theorem):
 Compared with the source files at commit
 `6e837e75355538c7f80bab5b956861e86c4eacc2`.
