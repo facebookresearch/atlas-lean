@@ -6,7 +6,7 @@ With the notation of [difference-bound matrices and octagons](difference-bound-m
 2. **Saturation.** For all $i, j$ with $m^*_{ij} \ne +\infty$ there is $s \in D(m)$ with $s_j - s_i = m^*_{ij}$.
 3. **Normal form.** $m^*$ is the least DBM, for the pointwise order, among those with the same domain as $m$.
 
-The closure is computed by the Floyd–Warshall iteration $m_{k+1} = C_k(m_k)$, where $[C_k(n)]_{ii} = 0$ and $[C_k(n)]_{ij} = \min(n_{ij}, n_{ik} + n_{kj})$ for $i \ne j$. For integer bounds, the [Floyd–Warshall theorem](../../../graph-algorithms/shortest-paths/floyd-warshall-algorithm/floyd-warshall-distance-spec.md) gives the least path weights and the iteration [takes $N^2 + N^3$ steps](../../../graph-algorithms/shortest-paths/floyd-warshall-algorithm/floyd-warshall-time.md).
+For integer bounds, the closure is computed by the Floyd–Warshall iteration $m_{k+1} = C_k(m_k)$, where $[C_k(n)]_{ii} = 0$ and $[C_k(n)]_{ij} = \min(n_{ij}, n_{ik} + n_{kj})$ for $i \ne j$: the [Floyd–Warshall theorem](../../../graph-algorithms/shortest-paths/floyd-warshall-algorithm/floyd-warshall-distance-spec.md) gives the least path weights and the iteration [takes $N^2 + N^3$ steps](../../../graph-algorithms/shortest-paths/floyd-warshall-algorithm/floyd-warshall-time.md). Rational bounds reduce to this case: multiplying all finite entries by a common positive denominator multiplies every path weight by the same positive factor. The real case is not claimed here.
 
 ## Depends on
 

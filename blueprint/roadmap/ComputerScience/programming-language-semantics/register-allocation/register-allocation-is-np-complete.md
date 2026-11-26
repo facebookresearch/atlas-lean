@@ -2,7 +2,7 @@
 
 **Theorem (Chaitin et al.).** The [core register allocation problem](interference-graphs.md), with the number $K$ of registers part of the input, is NP-complete.
 
-It is in NP because a register assignment is a certificate whose validity is checked against the interference graph in polynomial time. Hardness is by reduction from [graph coloring](../../../TheoryOfComputation/np-completeness/graph-coloring-and-partitioning/graph-coloring/graph-coloring-np-complete.md): from a finite undirected graph one builds, in polynomial time, a program whose interference graph is colorable with a number of colors determined by the graph's own number exactly when the graph is. The constructions in the literature add auxiliary temporaries, so the interference graph is not literally the input graph.
+It is in NP because a register assignment is a certificate whose validity is checked against the interference graph in polynomial time. Hardness is by reduction from [graph coloring](../../../TheoryOfComputation/np-completeness/graph-coloring-and-partitioning/graph-coloring/graph-coloring-np-complete.md): from a finite undirected graph $G$ and a number $k$ one builds, in polynomial time, a program $P$ and a register count $K$ such that $P$ can be allocated to $K$ registers exactly when $G$ is $k$-colorable. The constructions in the literature add auxiliary temporaries, so the interference graph is not literally the input graph.
 
 ## Depends on
 

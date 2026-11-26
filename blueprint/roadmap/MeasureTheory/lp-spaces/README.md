@@ -16,4 +16,5 @@ The spaces Lp of p-th power integrable functions: membership criteria, inclusion
 - [Inclusions between Lp spaces](inclusions-between-lp-spaces/README.md)
 - [Large level sets under a reverse Hölder bound](reverse-h-lder-inequality/README.md)
 - [Weak convergence in Lp spaces](weak-convergence-in-lp-spaces/README.md)
+- [Finite dimension of L2 subspaces with a uniform pointwise bound](finite-dimensional-and-finrank-le-of-for.md)
 - [Integral inequality for p-th powers with 0 < p < 1](lp-spaces-with-exponent-below-one/README.md)
