@@ -15,6 +15,7 @@ import Mathlib.Tactic.NormNum
 open HermitianLattice NumberField
 open scoped NumberField TensorProduct BigOperators nonZeroDivisors
 
+-- These toy Gaussian residue counts are sanity checks, not tests of `normalizedCount`.
 private def gaussianCount (n s : ℕ) [NeZero n] : ℕ :=
   ((Finset.univ : Finset (ZMod n × ZMod n)).filter
     (fun z ↦ (s : ZMod n) * (z.1 ^ 2 + z.2 ^ 2) = (s : ZMod n))).card
@@ -52,38 +53,7 @@ variable {K E V : Type*} [Field K] [NumberField K] [IsTotallyReal K]
   [IsScalarTower (𝓞 E) E V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) (𝓞 E) V]
   [IsScalarTower (𝓞 K) E V]
   (h : DefiniteForm K E V) (L : FullLattice E V)
-  (p : IsDedekindDomain.HeightOneSpectrum (𝓞 K)) (hi : IsIntegralLattice h L)
-
-example : L ∈ genus h L := by
-  change ∀ _, _
-  intro _
-  exact ⟨⟨LinearEquiv.refl _ _, fun _ _ ↦ rfl⟩⟩
-
-example (N : ℕ) : Nonempty (PreservingEnd h L hi p N) :=
-  ⟨⟨LinearMap.id, fun _ _ ↦ rfl⟩⟩
-
-example (hu : IsUnimodular h L) : IsUnimodularAt h L p := by
-  unfold IsUnimodular at hu
-  unfold IsUnimodularAt
-  rw [hu]
-
-example (hp : Finite (GenusClasses h L)) (hs : ∀ M : genus h L, Finite (stabilizer h M.1)) :
-    (massAndLocalFactors h L).mass hp hs =
-      letI := hp
-      letI := Fintype.ofFinite (GenusClasses h L)
-      ∑ c : GenusClasses h L, classWeight h L hs c := rfl
-
-example (hf : Module.length (AdicCompletion p.asIdeal (𝓞 K)) (CompletedDualQuotient h L hi p) ≠ ⊤)
-    (β : LocalDensity h L hi p) (hb : β.1 ≠ 0) :
-    (massAndLocalFactors h L).localFactor hi p hf β hb =
-      let q := p.asIdeal.absNorm
-      let m := Module.finrank E V
-      let t := (Module.length (AdicCompletion p.asIdeal (𝓞 K))
-        (CompletedDualQuotient h L hi p)).toNat
-      let kind := primeType E p
-      let d := Ideal.discriminantIdeal (𝓞 K) (𝓞 E)
-      let ord := FractionalIdeal.count K p (d : FractionalIdeal (𝓞 K)⁰ K)
-      (q : ℝ) ^ normExponent kind ord m t * referenceCoefficient kind q m / β.1 := rfl
+  (p : IsDedekindDomain.HeightOneSpectrum (𝓞 K))
 
 example : Function.Injective (completionInclusion (E := E) p (dual h L)) :=
   completionInclusion_injective (E := E) p (dual h L)

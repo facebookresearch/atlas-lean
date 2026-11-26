@@ -15,10 +15,11 @@ public import Mathlib.LinearAlgebra.TensorProduct.Quotient
 public import Mathlib.NumberTheory.NumberField.CMField
 public import Mathlib.NumberTheory.RamificationInertia.Galois
 public import Mathlib.RingTheory.AdicCompletion.AsTensorProduct
+public import Mathlib.RingTheory.DedekindDomain.Factorization
 public import Mathlib.RingTheory.Ideal.Norm.AbsNorm
 public import Mathlib.RingTheory.Length
+public import MathlibExt.RingTheory.DedekindDomain.DiscriminantTower
 import Mathlib.LinearAlgebra.BilinearForm.TensorProduct
-import MathlibExt.RingTheory.DedekindDomain.DiscriminantTower
 
 /-!
 # Mass and local factors of definite Hermitian lattices
@@ -34,10 +35,9 @@ RWTH Aachen University, 2016, Definitions 2.1.1, 2.1.2, 2.2.2, 2.3.3,
 
 The completion at a nonzero base prime `p` is scalar extension from the ring of integers
 of `K` to `AdicCompletion p.asIdeal (𝓞 K)`. In particular, the completed dual is
-obtained by applying this construction to the *global* integral dual. The comparison
-with completion of the global quotient is the usual tensor–quotient isomorphism;
-no decomposition into primes of `E` or identification with an independently defined
-local polar lattice is used.
+obtained by applying this construction to the *global* integral dual. The completed dual
+quotient is taken after this base change. No decomposition into primes of `E` or
+identification with an independently defined local polar lattice is used.
 -/
 
 public section
@@ -65,14 +65,6 @@ private theorem conjugation_algebraMap (x : K) :
   simpa only [CMExtension.equivMaximalRealSubfield_apply]
     using IsCMField.complexConj_apply_eq_self E (CMExtension.equivMaximalRealSubfield K E x)
 
-variable (K E) in
-/-- CM conjugation restricted to the ring of integers, as an algebra map over the base integers. -/
-private def integersConjugation : (𝓞 E) ≃ₐ[𝓞 K] (𝓞 E) := by
-  letI := IsCMField.ofCMExtension K E
-  exact
-    { (IsCMField.ringOfIntegersComplexConj E).toRingEquiv with
-      commutes' := fun x ↦ RingOfIntegers.ext (conjugation_algebraMap (E := E) (x : K)) }
-
 variable (K E V) in
 /-- A Hermitian form of positive rank, positive at every real embedding of the base field. -/
 structure DefiniteForm [AddCommGroup V] [Module E V] [Module.Finite E V] where
@@ -96,7 +88,7 @@ abbrev FullLattice := { L : Submodule (𝓞 E) V // L.IsFullLattice E }
 variable (h : DefiniteForm K E V)
 
 /-- The unitary group of the ambient Hermitian form. -/
-def unitaryGroup : Subgroup (V ≃ₗ[E] V) where
+@[expose] def unitaryGroup : Subgroup (V ≃ₗ[E] V) where
   carrier := { g | ∀ x y, h.pairing (g x) (g y) = h.pairing x y }
   one_mem' := fun _ _ ↦ rfl
   mul_mem' := fun hg hk x y ↦ (hg _ _).trans (hk _ _)
@@ -119,7 +111,7 @@ instance : MulAction (unitaryGroup h) (Submodule (𝓞 E) V) where
 /-- The integral dual $L^\#$ consists of the vectors whose pairing with every vector of
 $L$ lies in the ring of integers of $E$. It is a submodule over the ring of integers;
 no choice of an integral basis is used. -/
-def dual (L : FullLattice E V) : Submodule (𝓞 E) V where
+@[expose] def dual (L : FullLattice E V) : Submodule (𝓞 E) V where
   carrier := { x | ∀ y : L.1, IsIntegral ℤ (h.pairing x y) }
   zero_mem' := fun y ↦ by
     change IsIntegral ℤ (h.pairing 0 y)
@@ -137,7 +129,7 @@ def dual (L : FullLattice E V) : Submodule (𝓞 E) V where
 abbrev IsIntegralLattice (L : FullLattice E V) : Prop := L.1 ≤ dual h L
 
 /-- A lattice is unimodular if it equals its integral dual. -/
-def IsUnimodular (L : FullLattice E V) : Prop := L.1 = dual h L
+@[expose] def IsUnimodular (L : FullLattice E V) : Prop := L.1 = dual h L
 
 local notation "𝒜[" p ", " K "]" =>
   AdicCompletion (IsDedekindDomain.HeightOneSpectrum.asIdeal p) (𝓞 K)
@@ -166,15 +158,20 @@ def IsUnimodularAt (L : FullLattice E V) (p : IsDedekindDomain.HeightOneSpectrum
   LinearMap.range (completionInclusion (E := E) p L.1) =
     LinearMap.range (completionInclusion (E := E) p (dual h L))
 
-variable (K E) in
-/-- Conjugation on extended scalars fixes the left tensor factor. -/
-private def localConjugation (A : Type*) [CommRing A] [Algebra (𝓞 K) A] :
-    (A ⊗[𝓞 K] 𝓞 E) ≃ₐ[A] (A ⊗[𝓞 K] 𝓞 E) :=
-  Algebra.TensorProduct.congr (AlgEquiv.refl : A ≃ₐ[A] A) (integersConjugation K E)
+omit [NumberField K] [IsScalarTower (𝓞 K) E V] in
+/-- Local unimodularity is equality of the ranges of the two scalar-extended inclusions into
+the completed ambient space, for the lattice and its integral dual respectively. -/
+theorem isUnimodularAt_iff (L : FullLattice E V)
+    (p : IsDedekindDomain.HeightOneSpectrum (𝓞 K)) :
+    IsUnimodularAt h L p ↔
+      LinearMap.range (TensorProduct.AlgebraTensorModule.lTensor 𝒜[p, K] 𝒜[p, K]
+        (L.1.subtype.restrictScalars (𝓞 K))) =
+      LinearMap.range (TensorProduct.AlgebraTensorModule.lTensor 𝒜[p, K] 𝒜[p, K]
+        ((dual h L).subtype.restrictScalars (𝓞 K))) := Iff.rfl
 
 /-- The scalar action on the base change of an integer lattice. The action of a pure scalar
 `a ⊗ z` multiplies the first tensor factor by `a` and acts by `z` on the second. -/
-private instance instModuleLocalScalars (A : Type*) [CommRing A] [Algebra (𝓞 K) A]
+instance (A : Type*) [CommRing A] [Algebra (𝓞 K) A]
     (L : Submodule (𝓞 E) V) : Module ((A ⊗[𝓞 K] 𝓞 E)) (A ⊗[𝓞 K] L) :=
   Module.compHom _ ((LinearMap.tensorProductEnd (𝓞 K) A L).comp
     (Algebra.TensorProduct.map (.id A A) (Algebra.lsmul (𝓞 K) (𝓞 K) L))).toRingHom
@@ -215,22 +212,42 @@ private def restrictedIntegralPairing (L : FullLattice E V) (hi : IsIntegralLatt
       exact (((restrictedPairing h L) x).map_smul a y).trans
         (integers_smul_coe a ⟨h.pairing x y, hi x.2 y⟩).symm)
 
-/-- The Hermitian pairing on a completed lattice, with values in the completed ambient algebra.
-On simple tensors its value is `(a * b) ⊗ h(x,y)`. This does not require integrality. -/
-private def localPairing (A : Type*) [CommRing A] [Algebra (𝓞 K) A] (L : FullLattice E V) :
+/-- The Hermitian pairing on a lattice after extension of scalars from the base ring of integers
+to a commutative algebra `A`, with values in `A ⊗ E` over the base integers. On simple
+tensors its value is `(a * b) ⊗ h(x,y)`. This does not require integrality. -/
+def localPairing (A : Type*) [CommRing A] [Algebra (𝓞 K) A] (L : FullLattice E V) :
     LinearMap.BilinMap A (A ⊗[𝓞 K] L.1) (A ⊗[𝓞 K] E) :=
   (restrictedPairing h L).baseChange A
 
 /-- For an integral lattice the base-changed pairing takes values in the base-changed ring of
 integers. The same construction works over the completion and over its finite quotients. -/
-private def localIntegralPairing (A : Type*) [CommRing A] [Algebra (𝓞 K) A]
+def localIntegralPairing (A : Type*) [CommRing A] [Algebra (𝓞 K) A]
     (L : FullLattice E V) (hi : IsIntegralLattice h L) :
     LinearMap.BilinMap A (A ⊗[𝓞 K] L.1) ((A ⊗[𝓞 K] 𝓞 E)) :=
   (restrictedIntegralPairing h L hi).baseChange A
 
+omit [NumberField K] in
+/-- On simple tensors, the base-changed pairing is the product of the new scalar coefficients
+tensored with the original Hermitian pairing. -/
+theorem localPairing_tmul (A : Type*) [CommRing A] [Algebra (𝓞 K) A] (L : FullLattice E V)
+    (a b : A) (x y : L.1) :
+    localPairing h A L (a ⊗ₜ[𝓞 K] x) (b ⊗ₜ[𝓞 K] y) =
+      (a * b) ⊗ₜ[𝓞 K] h.pairing x y := by
+  simp [localPairing, restrictedPairing, LinearMap.BilinMap.baseChange_tmul]
+
+omit [NumberField K] in
+/-- On simple tensors, the base-changed integral pairing takes the same product of scalar
+coefficients and tensors it with the original pairing viewed in the ring of integers. -/
+theorem localIntegralPairing_tmul (A : Type*) [CommRing A] [Algebra (𝓞 K) A]
+    (L : FullLattice E V) (hi : IsIntegralLattice h L) (a b : A) (x y : L.1) :
+    localIntegralPairing h A L hi (a ⊗ₜ[𝓞 K] x) (b ⊗ₜ[𝓞 K] y) =
+      TensorProduct.tmul (𝓞 K) (N := 𝓞 E) (a * b) ⟨h.pairing x y, hi x.2 y⟩ := by
+  rw [localIntegralPairing, LinearMap.BilinMap.baseChange_tmul]
+  rfl
+
 /-- The genus consists of all full lattices in the fixed space that are isometric over the
 completed scalar ring at every nonzero prime of the base. -/
-def genus (L : FullLattice E V) : Set (FullLattice E V) :=
+@[expose] def genus (L : FullLattice E V) : Set (FullLattice E V) :=
   { M | ∀ p : IsDedekindDomain.HeightOneSpectrum (𝓞 K),
     Nonempty { f : (𝒜[p, K] ⊗[𝓞 K] L.1) ≃ₗ[(𝒜[p, K] ⊗[𝓞 K] 𝓞 E)]
         (𝒜[p, K] ⊗[𝓞 K] M.1) //
@@ -238,18 +255,18 @@ def genus (L : FullLattice E V) : Set (FullLattice E V) :=
         localPairing h 𝒜[p, K] L x y } }
 
 /-- The global isometry classes represented in the genus: the quotient by unitary orbits. -/
-def GenusClasses (L : FullLattice E V) :=
+@[expose] def GenusClasses (L : FullLattice E V) :=
   Quotient ((MulAction.orbitRel (unitaryGroup h) (Submodule (𝓞 E) V)).comap
     (fun M : genus h L ↦ M.1.1))
 
 /-- The group of global isometries that carry a lattice onto itself. -/
-def stabilizer (L : FullLattice E V) : Subgroup (unitaryGroup h) :=
+@[expose] def stabilizer (L : FullLattice E V) : Subgroup (unitaryGroup h) :=
   MulAction.stabilizer _ L.1
 
 /-- The weight of a genus class is the reciprocal order of the finite unitary stabilizer
 of any representative. Transport in a unitary orbit conjugates the stabilizers, so the
 weight is defined on the quotient, independently of representatives. -/
-def classWeight (L : FullLattice E V)
+@[expose] def classWeight (L : FullLattice E V)
     (finiteStabilizers : ∀ M : genus h L, Finite (stabilizer h M.1)) (c : GenusClasses h L) : ℚ :=
   Quotient.lift (fun M : genus h L ↦
     letI := finiteStabilizers M
@@ -272,50 +289,16 @@ private def massValue (L : FullLattice E V) (finiteClasses : Finite (GenusClasse
   letI := Fintype.ofFinite (GenusClasses h L)
   exact ∑ c : GenusClasses h L, classWeight h L finiteStabilizers c
 
-/-- Reduction of the completed lattice, induced by evaluation on its scalar factor. -/
-private def reduceLattice (p : IsDedekindDomain.HeightOneSpectrum (𝓞 K))
-    (N : ℕ) (L : FullLattice E V) :
-    (𝒜[p, K] ⊗[𝓞 K] L.1) →ₗ[𝓞 K] (𝒬[p, K, N] ⊗[𝓞 K] L.1) :=
-  TensorProduct.map (AdicCompletion.evalₐ p.asIdeal N).toLinearMap LinearMap.id
-
-/-- Reduction on the completed integer algebra; it commutes with conjugation on the other
-factor. -/
-private def reduceScalars (p : IsDedekindDomain.HeightOneSpectrum (𝓞 K)) (N : ℕ) :
-    (𝒜[p, K] ⊗[𝓞 K] 𝓞 E) →ₐ[𝓞 K] (𝒬[p, K, N] ⊗[𝓞 K] 𝓞 E) :=
-  Algebra.TensorProduct.map (AdicCompletion.evalₐ p.asIdeal N) (AlgHom.id (𝓞 K) (𝓞 E))
-
-omit [NumberField K] in
-private theorem reduceScalars_conjugation (p : IsDedekindDomain.HeightOneSpectrum (𝓞 K)) (N : ℕ)
-    (z : (𝒜[p, K] ⊗[𝓞 K] 𝓞 E)) :
-    reduceScalars (E := E) p N (localConjugation K E 𝒜[p, K] z) =
-      localConjugation K E 𝒬[p, K, N] (reduceScalars (E := E) p N z) := by
-  induction z using TensorProduct.inductionOn with
-  | tmul a z => simp [reduceScalars, localConjugation]
-  | add x y hx hy => simp only [map_add, hx, hy]
-
-omit [NumberField K] in
-private theorem reduceLattice_pairing (p : IsDedekindDomain.HeightOneSpectrum (𝓞 K)) (N : ℕ)
-    (L : FullLattice E V) (hi : IsIntegralLattice h L) (x y : 𝒜[p, K] ⊗[𝓞 K] L.1) :
-    reduceScalars (E := E) p N (localIntegralPairing h 𝒜[p, K] L hi x y) =
-      localIntegralPairing h 𝒬[p, K, N] L hi
-        (reduceLattice p N L x) (reduceLattice p N L y) := by
-  induction x using TensorProduct.inductionOn with
-  | add x₁ x₂ hx₁ hx₂ => simp only [map_add, LinearMap.add_apply, hx₁, hx₂]
-  | tmul a x =>
-    induction y using TensorProduct.inductionOn with
-    | tmul b y =>
-      simp [localIntegralPairing, reduceScalars, reduceLattice, LinearMap.BilinMap.baseChange_tmul]
-    | add y₁ y₂ hy₁ hy₂ => simp only [map_add, hy₁, hy₂]
-
 /-- At precision `N`, all algebra-linear pairing-preserving endomorphisms are counted. In
 particular there is no invertibility condition, even when the reduced form is degenerate. -/
-private def PreservingEnd (L : FullLattice E V) (hi : IsIntegralLattice h L)
+@[expose] def PreservingEnd (L : FullLattice E V) (hi : IsIntegralLattice h L)
     (p : IsDedekindDomain.HeightOneSpectrum (𝓞 K)) (N : ℕ) :=
   { f : Module.End ((𝒬[p, K, N] ⊗[𝓞 K] 𝓞 E)) (𝒬[p, K, N] ⊗[𝓞 K] L.1) //
     ∀ x y, localIntegralPairing h 𝒬[p, K, N] L hi (f x) (f y) =
       localIntegralPairing h 𝒬[p, K, N] L hi x y }
 
-private instance finitePreservingEnd (L : FullLattice E V) (hi : IsIntegralLattice h L)
+/-- At each finite precision there are finitely many pairing-preserving endomorphisms. -/
+instance (L : FullLattice E V) (hi : IsIntegralLattice h L)
     (p : IsDedekindDomain.HeightOneSpectrum (𝓞 K)) (N : ℕ) : Finite (PreservingEnd h L hi p N) := by
   let : Module.Finite (𝓞 K) (𝓞 E) := Module.Finite.of_restrictScalars_finite ℤ (𝓞 K) (𝓞 E)
   let : Module.Finite (𝓞 E) L.1 := Module.Finite.of_fg L.2.fg
@@ -327,7 +310,7 @@ private instance finitePreservingEnd (L : FullLattice E V) (hi : IsIntegralLatti
 
 /-- The number of preserving endomorphisms, divided by the absolute prime norm to the power
 `N * m * m`, where `m` is the rank of the Hermitian space over `E`. -/
-def normalizedCount (L : FullLattice E V) (hi : IsIntegralLattice h L)
+@[expose] def normalizedCount (L : FullLattice E V) (hi : IsIntegralLattice h L)
     (p : IsDedekindDomain.HeightOneSpectrum (𝓞 K)) (N : ℕ) : ℝ :=
   let m := Module.finrank E V
   letI := Fintype.ofFinite (PreservingEnd h L hi p N)
@@ -352,12 +335,6 @@ abbrev CompletedDualQuotient (L : FullLattice E V) (_hi : IsIntegralLattice h L)
   (𝒜[p, K] ⊗[𝓞 K] dual h L) ⧸ LinearMap.range
     (TensorProduct.AlgebraTensorModule.lTensor 𝒜[p, K] 𝒜[p, K]
       ((latticeInDual[h, L]).subtype.restrictScalars (𝓞 K)))
-
--- This is the canonical right-exact base change of the global dual quotient.
-private def completedDualQuotientEquiv (L : FullLattice E V) (hi : IsIntegralLattice h L)
-    (p : IsDedekindDomain.HeightOneSpectrum (𝓞 K)) :
-    (𝒜[p, K] ⊗[𝓞 K] (dual h L ⧸ latticeInDual[h, L])) ≃ₗ[𝒜[p, K]] CompletedDualQuotient h L hi p :=
-  TensorProduct.AlgebraTensorModule.tensorQuotientEquiv _ _ _ _
 
 end Local
 
@@ -443,6 +420,49 @@ def massAndLocalFactors (L : FullLattice E V) : MassAndLocalFactors h L where
     let d := Ideal.discriminantIdeal (𝓞 K) (𝓞 E)
     let dOrder := FractionalIdeal.count K p (d : FractionalIdeal (𝓞 K)⁰ K)
     (q : ℝ) ^ normExponent kind dOrder m t * referenceCoefficient kind q m / β.1
+
+/-- Given finite genus classes and finite unitary stabilizers for every lattice in the genus,
+the mass evaluation sums the class weights over those classes. -/
+theorem massAndLocalFactors_mass (L : FullLattice E V)
+    (finiteClasses : Finite (GenusClasses h L))
+    (finiteStabilizers : ∀ M : genus h L, Finite (stabilizer h M.1)) :
+    (massAndLocalFactors h L).mass finiteClasses finiteStabilizers =
+      letI := finiteClasses
+      letI := Fintype.ofFinite (GenusClasses h L)
+      ∑ c : GenusClasses h L, classWeight h L finiteStabilizers c := by
+  rfl
+
+/-- For an integral lattice at a nonzero prime, given finite length of the completed dual
+quotient and a supplied nonzero density, the local factor is the prime norm to the corrected
+exponent, times the reference product for the splitting behavior, divided by the density.
+The exponent starts at half the product of quotient length and Hermitian rank. In the
+ramified even-rank case it adds half the product of rank and relative discriminant order.
+The reference product runs from index one through the rank, with the negative norm as
+base in the inert case; in the ramified case it uses only the even indices up to the rank. -/
+theorem massAndLocalFactors_localFactor (L : FullLattice E V) (hi : IsIntegralLattice h L)
+    (p : IsDedekindDomain.HeightOneSpectrum (𝓞 K))
+    (finiteLength : Module.length 𝒜[p, K] (CompletedDualQuotient h L hi p) ≠ ⊤)
+    (β : LocalDensity h L hi p) (nonzero : β.1 ≠ 0) :
+    (massAndLocalFactors h L).localFactor hi p finiteLength β nonzero =
+      let q := p.asIdeal.absNorm
+      let m := Module.finrank E V
+      let t := (Module.length 𝒜[p, K] (CompletedDualQuotient h L hi p)).toNat
+      let d := Ideal.discriminantIdeal (𝓞 K) (𝓞 E)
+      let ord := FractionalIdeal.count K p (d : FractionalIdeal (𝓞 K)⁰ K)
+      let correction : ℝ := if p.asIdeal.ramificationIdxIn (𝓞 E) = 2 ∧ Even m
+        then (ord : ℝ) * (m : ℝ) / 2 else 0
+      let coeff : ℝ := if p.asIdeal.ramificationIdxIn (𝓞 E) = 2
+        then ∏ j ∈ Finset.range (m / 2), (1 - ((q : ℝ) ^ (2 * (j + 1)))⁻¹)
+        else if p.asIdeal.inertiaDegIn (𝓞 E) = 2
+          then ∏ j ∈ Finset.range m, (1 - ((-(q : ℝ)) ^ (j + 1))⁻¹)
+          else ∏ j ∈ Finset.range m, (1 - ((q : ℝ) ^ (j + 1))⁻¹)
+      (q : ℝ) ^ ((t : ℝ) * (m : ℝ) / 2 + correction) * coeff / β.1 := by
+  by_cases hr : p.asIdeal.ramificationIdxIn (𝓞 E) = 2
+  · simp [massAndLocalFactors, primeType, normExponent, discriminantCorrection,
+      referenceCoefficient, hr]
+  · by_cases hi' : p.asIdeal.inertiaDegIn (𝓞 E) = 2 <;>
+      simp [massAndLocalFactors, primeType, normExponent, discriminantCorrection,
+        referenceCoefficient, hr, hi']
 
 end LocalFactor
 

@@ -28,8 +28,8 @@ $\varphi$ of $L_{\mathfrak{p}} \otimes R$ with $\Phi(\varphi x, \varphi y) = \Ph
 $$\beta(L_{\mathfrak{p}}) = \lim_{N \to \infty} \frac{\# H(\mathfrak{o}/\mathfrak{p}^N)}{q^{N m^2}}.$$
 
 The limit is used when it exists; the endomorphisms counted above need not be
-invertible. Reduction of the integral pairing and of conjugation is along the evaluation
-map from the completed base ring to $\mathfrak{o}/\mathfrak{p}^N$.
+invertible. At precision $N$, the integral pairing is base changed directly from
+$\mathfrak{o}$ to $\mathfrak{o}/\mathfrak{p}^N$.
 
 **Local factors.** The reference coefficient at $\mathfrak{p}$ is
 
