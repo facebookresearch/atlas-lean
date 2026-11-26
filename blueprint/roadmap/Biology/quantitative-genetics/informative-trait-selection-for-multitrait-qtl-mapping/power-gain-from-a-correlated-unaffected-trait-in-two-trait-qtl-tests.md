@@ -14,6 +14,10 @@ $$\lambda_2=\frac{n_1n_2}{n}\,\delta^{\top}\Sigma^{-1}\delta=\frac{n_1n_2}{n}\cd
 
 where $\lambda_1=\frac{n_1n_2}{n}\delta_1^2/\sigma_1^2$ is the noncentrality of the single-trait test on $y_1$. Since $\lambda_2\to\infty$ as $|\rho|\to1$ with fixed degrees of freedom, the power tends to one.
 
+## Depends on
+
+- [Snedecor's F distribution](../../../Probability/linear-models-multivariate/student-s-t-and-snedecor-s-f-distributions/snedecor-fmeasure.md)
+
 ## Expansion
 
 The unaffected trait $y_2$ carries no signal itself but measures the residual noise of $y_1$: regressing out $y_2$ leaves $y_1\mid y_2$ with the same mean difference $\delta_1$ and residual variance $\sigma_1^2(1-\rho^2)$. Inverting the $2\times2$ covariance gives $(\Sigma^{-1})_{11}=1/(\sigma_1^2(1-\rho^2))$, which yields the noncentrality formula. The conditional $F$ statistic compares $T^2$ with and without the added trait, so traits that do not raise $T^2$ enough are redundant; when traits are chosen by maximizing their contribution, that $F$ reference distribution no longer holds and significance is assessed by permuting genotypes. Conversely, adding a trait that is uncorrelated with the others and unaffected by the QTL costs a degree of freedom without increasing $\lambda$, lowering power, which motivates selecting informative traits rather than analyzing all of them.

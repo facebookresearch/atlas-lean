@@ -16,6 +16,15 @@ $$F_p = \frac{I_{13} + I_{23}}{\Omega}, \qquad F_e = \frac{\Delta_3}{\Omega} = 1
 
 quantify the pairwise (additive) and the three-way (epistatic) parts of the dependence. XOR-type genotype–phenotype maps have $I_{13} = I_{23} = 0$ and hence $F_e = 1$: they are invisible to every pairwise test.
 
+## Depends on
+
+- [Mutual information of a finite joint law](../../../InformationTheory/entropy-and-mutual-information/conditional-mutual-information/finite-mutual-information.md)
+- [Conditional mutual information of a finite joint law](../../../InformationTheory/entropy-and-mutual-information/conditional-mutual-information/finite-conditional-mutual-information.md)
+
+## Proof depends on
+
+- [Conditional mutual information in terms of entropies](../../../InformationTheory/entropy-and-mutual-information/conditional-mutual-information/finite-conditional-mutual-information-eq.md)
+
 ## Expansion
 
 Expanding in entropies, $\Omega - I_{13} - I_{23} = H_{13} + H_{23} - H_3 - H_{123}$, which is the definition of $I(X_1; X_2 \mid X_3)$; the other two identities follow by permuting indices. Since conditional mutual information is nonnegative, $\Delta_k \ge 0$, so $\Omega \ge I_{ij} + I_{ik} \ge I_{ij}$. Under $I_{12}=0$ every term in the decomposition is nonnegative, so $F_p, F_e \in [0,1]$.

@@ -46,3 +46,7 @@
 
 - [Quasi-linkage equilibrium dynamics of allele frequencies under weak selection](quasi-linkage-equilibrium-under-weak-selection.md)
 - [Two-locus quasi-linkage equilibrium approximation](two-locus-quasi-linkage-equilibrium-approximatio.md)
+
+## Further topics
+
+- [Fisher-information form of the fundamental theorem](fisher-information-form-of-the-fundamental-theorem/README.md)

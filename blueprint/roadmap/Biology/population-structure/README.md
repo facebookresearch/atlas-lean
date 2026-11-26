@@ -29,5 +29,3 @@ f-statistics, admixture graphs, ancestry models and linkage-disequilibrium metho
 ## Related topics
 
 - [Chi-square law of Gaussian projection residuals](../../Probability/linear-models-multivariate/chi-square-law-of-gaussian-projection-residuals/README.md): the chi-square law of whitened projection residuals, which motivates qpAdm-style tests of admixture models.
-- [Spectral theory of Wright's $F_{ST}$](spectral-theory-of-wright-s-fst/README.md)
-- [Tree-structured F_ST and coancestry](tree-structured-fst-and-coancestry/README.md)

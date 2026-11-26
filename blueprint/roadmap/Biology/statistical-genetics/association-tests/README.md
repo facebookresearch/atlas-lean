@@ -8,7 +8,28 @@ test and SKAT-O, multiple testing across genes, and genomic control with an esti
 factor are under [Hypothesis testing](../../../Probability/hypothesis-testing/README.md) in
 Probability.
 
+The later folders collect genome-wide methods built on such tests: rare-variant and interaction
+(epistasis and gene–environment) tests, screens and their pruning, permutation, local-index,
+e-value and knockoff procedures for multiple testing and replicability, haplotype and
+linkage-disequilibrium tests, two-stage designs and differentially private release.
+
 - [Cochran–Armitage trend test](cochran-armitage-trend-test/README.md)
 - [Genomic control](genomic-control/README.md)
 - [SKAT variance-component test](skat-variance-component-test/README.md)
 - [Testing Hardy–Weinberg equilibrium](testing-hardy-weinberg-equilibrium/README.md)
+- [Bayesian rare-variant detection](bayesian-rare-variant-detection/README.md)
+- [Convex bounding for two-locus epistasis screens](convex-bounding-for-two-locus-epistasis-screens/README.md)
+- [Covariate-assisted composite null testing](covariate-assisted-composite-null-testing/README.md)
+- [Differential transcription-factor binding of variants](differential-transcription-factor-binding-of-variants/README.md)
+- [Differentially private GWAS statistics](differentially-private-gwas-statistics/README.md)
+- [Forward–backward Markov blanket search](forward-backward-markov-blanket-search/README.md)
+- [Haplotype frequencies from pooled genotypes](haplotype-frequencies-from-pooled-genotypes/README.md)
+- [Hidden Markov local index of significance](hidden-markov-local-index-of-significance/README.md)
+- [Hierarchical linkage disequilibrium](hierarchical-linkage-disequilibrium/README.md)
+- [LD contrast tests for SNP interaction](ld-contrast-tests-for-interaction/README.md)
+- [Population-aware permutation thresholds](population-aware-permutation-thresholds/README.md)
+- [Resolution-adaptive FDR with e-values](resolution-adaptive-fdr-with-e-values/README.md)
+- [Scale dependence of gene–environment interactions](scale-dependence-of-gene-environment-interactions/README.md)
+- [Stability selection for SNP-SNP interactions](stability-selection-for-snp-snp-interactions/README.md)
+- [Transfer learning for knockoff GWAS](transfer-learning-for-knockoff-gwas/README.md)
+- [Two-stage genome-wide association designs](two-stage-genome-wide-association-designs/README.md)

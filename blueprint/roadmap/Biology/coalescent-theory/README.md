@@ -27,5 +27,3 @@ Backward-in-time models of the genealogy of a sample of genes, from Kingman's co
 - [Site frequency spectrum under exponential growth](site-frequency-spectrum-under-exponential-growth/README.md)
 
 - [Recoverable demographic history from finite genomic samples](recoverable-demographic-history-from-finite-genomic-samples.md)
-- [Limits of inference on population-size histories](limits-of-inference-on-population-size-histories/README.md)
-- [Multiple-merger coalescent inference of effective population size](multiple-merger-coalescent-inference-of-effective-population-size/README.md)

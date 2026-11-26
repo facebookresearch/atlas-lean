@@ -21,6 +21,7 @@ which differ by $O(1/n)$ when $\Omega$ is bounded and piecewise continuous; for 
 ## Depends on
 
 - [Tajima's D](../tajima-s-d/tajima-d.md)
+- [Expected site frequency spectrum](../../coalescent-theory/expected-site-frequency-spectrum/integral-sfs.md)
 
 ## Expansion
 

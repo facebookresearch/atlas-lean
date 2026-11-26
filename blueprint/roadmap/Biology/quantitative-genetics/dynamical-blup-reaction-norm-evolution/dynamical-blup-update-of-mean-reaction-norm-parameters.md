@@ -27,6 +27,12 @@ Robertson's secondary theorem says the response of a mean breeding value equals 
 - [Breeder's equation](../breeder-s-equation/README.md)
 - [Lande's selection gradient](../lande-s-selection-gradient/README.md)
 - [Linear mixed models and BLUP](../linear-mixed-models-and-blup/README.md)
+- [Solution of Henderson's mixed-model equations](../../../Probability/linear-models-multivariate/generalized-least-squares/is-mmesolution.md)
+- [Breeder's equation](../breeder-s-equation/response-eq.md)
+
+## Proof depends on
+
+- [Price equation](../../population-genetics/natural-selection-fisher-s-theorem-and-the-price/price.md)
 
 ## Sources
 

@@ -21,6 +21,10 @@ with equality throughout when $G$ is an AVG (then $s_l = s_u$ and $r_l = r_u$).
 
 **Theorems 2–4 (finite search space).** An element of an extension $G'$ of $G$ is *$G$-reducible* if some reduction sequence from $G'$ back to $G$ deletes (or, for a branch, contracts) it, and the *$G$-unbridged graph* of $G'$ deletes all $G$-reducible bridge adjacencies. Call $G'$ *$G$-bounded* if it contains no $G$-reducible non-minimal element and its $G$-unbridged graph contains no $G$-reducible ping adjacency (one of a pair of adjacencies with hanging sides that point back to each other through their nearest attached ancestors). The $G$-bounded AVGs contain all $G$-optimal AVGs for every cost function. If $G$ has $n$ adjacencies and $m$ labelled vertices, a $G$-bounded history graph has at most $\max(0, 10n-8)$ $G$-reducible adjacencies and at most $\max(0, 2m-2, 20n-16, 20n+2m-18)$ additional vertices, and these bounds are tight. Consequently the $G$-bounded poset under reduction is finite, has $G$ as its unique least element, its maximal elements are AVGs, and its covering relation is a single bounded reduction operation, so the space of most-parsimonious interpretations can be explored by local moves.
 
+## Depends on
+
+- [Double-cut-and-join distance formula](../../bioinformatics/genome-rearrangements/double-cut-and-join-distance-formula.md)
+
 ## Expansion
 
 In an AVG every vertex has at most one non-trivial lifted label and every side at most one non-trivial lifted adjacency, so each substitution or DCJ event is forced and the lower and upper counts coincide; Lemmas 17 and 21 of the source show that every history graph has an AVG extension and that every AVG has a realisation achieving its bounds, which yields Theorem 1. Within a module of $|V_M|$ sides that must be re-paired, each DCJ can resolve at most two sides, giving the $\lceil |V_M|/2 \rceil - 1$ count, analogous to the cycle-counting formula for DCJ distance. Theorem 3 follows by charging every reducible adjacency or label to incidences projected from the $n$ adjacencies and $m$ labels of $G$, which caps the size of any bounded extension linearly.

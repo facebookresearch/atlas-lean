@@ -16,6 +16,10 @@ $$P\bigl(X\ge O^t_{11}\mid f_{11}=0\bigr)\le 1-F_{\mathrm{Bin}(N,p)}\bigl(O^t_{1
 
 The loci are declared linked (the double mutant is viable, i.e. the pair is not under negative epistasis) when this upper bound is at most $\rho/L^2$: a Bonferroni-corrected level $\rho$ over the $L^2$ tested pairs. The resulting graph on single-amino-acid variants is the coordinated substitution network $G_t$.
 
+## Depends on
+
+- [Bonferroni rejection set](../../../Probability/hypothesis-testing/bonferroni-correction/bonferroni-rejections.md)
+
 ## Expansion
 
 Expand $E^t_{00}E^t_{11}$ and $E^t_{01}E^t_{10}$ as quadratic forms in $(f_{00}E^{t-1}_{00},f_{10}E^{t-1}_{10},f_{01}E^{t-1}_{01})$, which is possible because the $f_{11}$ terms vanish. All coefficients agree except those of the cross term $f_{01}f_{10}E^{t-1}_{01}E^{t-1}_{10}$. Their difference factors as

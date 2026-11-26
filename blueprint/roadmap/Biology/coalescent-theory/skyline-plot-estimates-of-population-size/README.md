@@ -20,3 +20,7 @@
 
 - [Canonical probability space for the skyline model](skyline-pi-measure.md)
 - [Coordinate projections form a skyline model](of-pi.md)
+
+## Further topics
+
+- [Limits of inference on population-size histories](limits-of-inference-on-population-size-histories/README.md)

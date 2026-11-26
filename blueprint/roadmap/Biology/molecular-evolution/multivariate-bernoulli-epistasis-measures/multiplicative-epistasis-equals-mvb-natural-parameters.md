@@ -18,6 +18,10 @@ $$\log p_x = \sum_{S \subseteq \mathrm{supp}(x)} \beta_S .$$
 
 - [Haploid selection and the crossproduct ratio: epistasis generates linkage disequilibrium](../../population-genetics/haploid-selection-and-multiplicative-fitnesses/epistasis-generates-linkage-disequilibrium.md)
 
+## Proof depends on
+
+- [Möbius inversion formula](../../../Order/ordered-sets/incidence-algebras-and-the-m-bius-function/moebius-inversion-iff.md)
+
 ## Expansion
 
 The log-linear representation is a Möbius transform over the Boolean lattice of subsets: $\log p_{1_T} = \sum_{S \subseteq T}\beta_S$, where $1_T$ is the indicator genotype of $T$. Möbius inversion gives $\beta_S = \sum_{T \subseteq S}(-1)^{|S|-|T|}\log p_{1_T}$. Replacing $\log p_{1_T}$ by $\log f_T - \log c$ changes nothing for $|S| \ge 1$, because $\sum_{T \subseteq S}(-1)^{|S|-|T|} = 0$; this is exactly the multiplicative measure. Consequently $\beta_S$, the interaction term for $S$ in a log-linear (Poisson or logistic) regression, is the same object as multiplicative epistasis, and $\beta_{ij} = 0$ for all pairs in a set of loci characterises conditional-independence structure of the MVB. In case–control GWAS, the SNP×SNP interaction term of a logistic regression of disease status on two loci equals a three-way natural parameter $\beta_{ijk}$ of the MVB on $(X_i, X_j, \text{disease})$.

@@ -28,13 +28,3 @@ Mathematical models of allele frequencies in populations under random mating, se
 - [Effective population size](effective-population-size/README.md)
 
 - [Bernstein's law for the ABO blood groups](bernstein-s-law-for-the-abo-blood-groups/README.md)
-- [Best-fit population simulation](best-fit-population-simulation/README.md)
-- [Coupled Wright–Fisher diffusion duality](coupled-wright-fisher-diffusion-duality/README.md)
-- [Equivalence testing of Hardy-Weinberg equilibrium](equivalence-testing-of-hardy-weinberg-equilibrium/README.md)
-- [Fisher-information form of the fundamental theorem](fisher-information-form-of-the-fundamental-theorem/README.md)
-- [Inbreeding and mean-fitness dynamics](inbreeding-and-mean-fitness-dynamics/README.md)
-- [Prestige-biased cultural transmission](prestige-biased-cultural-transmission/README.md)
-- [Punctuated evolution in the weak-mutation limit](punctuated-evolution-in-the-weak-mutation-limit/README.md)
-- [Recombination and peak jumping](recombination-and-peak-jumping/README.md)
-- [Two-locus migration–selection on a quantitative trait](two-locus-migration-selection-on-a-quantitative-trait/README.md)
-- [Two-locus migration–selection with dominance](two-locus-migration-selection-with-dominance/README.md)

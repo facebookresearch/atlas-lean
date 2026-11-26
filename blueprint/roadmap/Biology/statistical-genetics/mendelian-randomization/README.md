@@ -43,3 +43,14 @@
 ## Potential outcomes and the local average treatment effect
 
 See [potential outcomes and the local average treatment effect](../../../Probability/nonparametric-survival/potential-outcomes-and-causal-identification/README.md#potential-outcomes-and-the-local-average-treatment-effect) in Probability.
+
+## Further topics
+
+- [Causal network pruning by MR-separation](causal-network-pruning-by-mr-separation/README.md)
+- [Focused instrument selection in Mendelian randomization](focused-instrument-selection-in-mendelian-randomization/README.md)
+- [Mendelian randomization causal networks](mendelian-randomization-causal-networks/README.md)
+- [Nonparametric bounds in two-sample Mendelian randomization](nonparametric-bounds-in-two-sample-mendelian-randomization/README.md)
+- [Reverse two-stage least squares](reverse-two-stage-least-squares/README.md)
+- [Selection bias in two-sample Mendelian randomization](selection-bias-in-two-sample-mendelian-randomization/README.md)
+- [Time-varying Mendelian randomization](time-varying-mendelian-randomization/README.md)
+- [Winner's-curse-free Mendelian randomization](winner-s-curse-free-mendelian-randomization/README.md)

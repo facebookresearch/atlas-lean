@@ -19,6 +19,7 @@ the sum running over set partitions $\pi$ of $\{i_1,\dots,i_K\}$; for $K = 2, 3$
 ## Depends on
 
 - [Multiplicative epistasis equals the natural parameters of a multivariate Bernoulli distribution](multiplicative-epistasis-equals-mvb-natural-parameters.md)
+- [Joint-cumulant reparametrization of haplotype frequencies](../../statistical-genetics/association-tests/hierarchical-linkage-disequilibrium/joint-cumulant-reparametrization-of-haplotype-frequencies.md)
 
 ## Expansion
 

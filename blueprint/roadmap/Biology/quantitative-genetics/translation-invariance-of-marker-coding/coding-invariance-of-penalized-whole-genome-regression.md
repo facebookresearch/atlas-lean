@@ -23,6 +23,8 @@ By the top-degree invariance proposition, every candidate $f$ on the original co
 ## Depends on
 
 - [Top-degree coefficients are invariant under a translation of the marker coding](top-degree-coefficients-invariant-under-marker-recoding.md)
+- [Closed form of ridge regression](../../../ComputerScience/machine-learning/supervised-learning/least-squares-ridge-and-lasso-regression/ridge-le-ridge-estimate.md)
+- [Lasso objective](../../../ComputerScience/machine-learning/supervised-learning/least-squares-ridge-and-lasso-regression/lasso.md)
 
 ## Sources
 
