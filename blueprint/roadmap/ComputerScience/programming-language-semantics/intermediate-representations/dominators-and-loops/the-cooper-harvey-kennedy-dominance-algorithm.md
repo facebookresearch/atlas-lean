@@ -23,7 +23,5 @@ Here $\mathrm{intersect}(b_1, b_2)$ moves two fingers up the array, repeatedly r
 
 ## Sources
 
-- K. D. Cooper, T. J. Harvey and K. Kennedy, *A Simple, Fast Dominance Algorithm*, Rice University Computer Science Technical Report TR-06-33870:
-    - section "Engineering the Data Structures": $\mathrm{Dom}(b) = \{b\} \cup \mathrm{IDom}(b) \cup \mathrm{IDom}(\mathrm{IDom}(b)) \cdots \{n_0\}$, the path in the dominator tree; the $\mathrm{doms}$ array; and the two-finger intersection on postorder numbers;
-    - Figure 3 (the engineered algorithm) and Figure 4 (an example);
-    - section "Complexity Analysis": the cost $O(N + E \cdot D)$ per iteration.
+- L. Georgiadis, R. E. Tarjan and R. F. Werneck, "Finding dominators in practice", *Journal of Graph Algorithms and Applications* 10(1):69–94, 2006, doi:10.7155/jgaa.00119, Section 2.1, pp. 72–74: the data-flow equations and their iterative solution; the tree-based iteration attributed to Cooper, Harvey and Kennedy, which represents every set $\mathrm{Dom}'(v)$ as the ancestors of $v$ in one tree rooted at $r$, replaces the parent of $v$ by the nearest common ancestor of its processed predecessors, and stops with the dominator tree; processing in reverse postorder of a depth-first search starting from the tree $\{r\}$ (their implementation IDFS); and the cost of computing nearest common ancestors by ascending the tree paths until they meet, $O(mn)$ per iteration. The finger rule on postorder numbers and the refinement of the per-pass bound to $O(N + E \cdot D)$, with $D$ the longest chain traversed, are written out here.
+- K. D. Cooper, T. J. Harvey and K. Kennedy, *A Simple, Fast Dominance Algorithm*, Rice University Computer Science Technical Report TR-06-33870: section "Engineering the Data Structures" (the $\mathrm{doms}$ array and the two-finger intersection on postorder numbers), Figure 3, and section "Complexity Analysis".

@@ -12,12 +12,24 @@ public import MathlibExt.NumberTheory.Digits.IrwinSeriesMeasures
 import Mathlib.Tactic
 
 /-!
-# Local structure of the Irwin measures on open intervals
+# Local structure of the Irwin measures on open intervals and cylinders
 
 This module proves that, on an open interval just to the right of a point of
 base-$b$ depth $l$, an Irwin measure of index below the digit count of the
 endpoint's prefix vanishes, and an Irwin measure of index at least that count
-scales to the Irwin measure of the affinely rescaled set.
+scales to the Irwin measure of the affinely rescaled set. It then proves the
+same for the half-open cylinder above such a point, which also contains the
+point itself.
+
+Both results share one argument: once every digit string contributing to a set
+begins with the prefix, dropping the prefix reindexes the contributing strings
+and rescales their weights. The half-open theorem adapts the proof of
+`irwinMeasure_open_local_mass` in this module, adding a minimal-depth argument
+showing that the strings representing the left endpoint also begin with the
+prefix.
+
+Source: Jean-François Burnol, *Measures for the Summation of Irwin Series*,
+INTEGERS 26 (2026), Article A11, Lemma 2 and Proposition 8.
 -/
 
 namespace MetaMathlibExt
@@ -222,6 +234,116 @@ private theorem take_eq_of_mem_Ioo (b : ℕ) (hb : 1 < b) (x : ℝ) (l' : ℕ)
     omega
   exact ⟨hlen, eq_of_stringValue_eq b hb _ _ (by rw [htake_len, hAlen]) hp⟩
 
+/-- A digit string whose normalized value lies in the half-open cylinder above
+`x` is at least as long as the depth, and begins with the prefix representing
+`x`. Shorter strings would contradict the minimality of the depth. -/
+private theorem take_eq_of_mem_Ico (b : ℕ) (hb : 1 < b) (x : ℝ) (l : ℕ)
+    (hdepth : HasBaseDepth b x l)
+    (X : List (Fin b)) (hXlen : X.length = l)
+    (hXval : normalizedStringValue b X = x)
+    (Y : List (Fin b))
+    (hY : normalizedStringValue b Y ∈ Set.Ico x (x + (b : ℝ) ^ (-(l : ℤ)))) :
+    l ≤ Y.length ∧ Y.take l = X := by
+  obtain ⟨hxy, hyx⟩ := hY
+  have hbR : (0 : ℝ) < b := by exact_mod_cast Nat.zero_lt_of_lt hb
+  have hBpos : (0 : ℝ) < (b : ℝ) ^ l := pow_pos hbR _
+  have hBne : (b : ℝ) ^ l ≠ 0 := pow_ne_zero _ (ne_of_gt hbR)
+  have hBx : (b : ℝ) ^ l * x = (stringValue b X : ℝ) := by
+    rw [← hXval, normalizedStringValue, hXlen]
+    field_simp
+  have hz : (b : ℝ) ^ l * (b : ℝ) ^ (-(l : ℤ)) = 1 := by
+    rw [← zpow_natCast, ← zpow_add₀ (ne_of_gt hbR)]
+    simp
+  have hlo : (stringValue b X : ℝ) ≤ (b : ℝ) ^ l * normalizedStringValue b Y := by
+    rw [← hBx]
+    exact mul_le_mul_of_nonneg_left hxy hBpos.le
+  have hhi : (b : ℝ) ^ l * normalizedStringValue b Y < (stringValue b X : ℝ) + 1 := by
+    have h := mul_lt_mul_of_pos_left hyx hBpos
+    rw [mul_add, hz, hBx] at h
+    exact h
+  have hlen : l ≤ Y.length := by
+    by_contra hle
+    have hlt : Y.length < l := by omega
+    have hpow : (b : ℝ) ^ l = (b : ℝ) ^ Y.length * (b : ℝ) ^ (l - Y.length) := by
+      rw [← pow_add, Nat.add_sub_cancel' (le_of_lt hlt)]
+    have hBm : (b : ℝ) ^ Y.length ≠ 0 := pow_ne_zero _ (ne_of_gt hbR)
+    have hBy : (b : ℝ) ^ l * normalizedStringValue b Y =
+        ((stringValue b Y * b ^ (l - Y.length) : ℕ) : ℝ) := by
+      unfold normalizedStringValue
+      rw [hpow]
+      field_simp
+      push_cast
+      ring
+    have hN : stringValue b Y * b ^ (l - Y.length) = stringValue b X := by
+      have e1 : (stringValue b X : ℝ) ≤ ((stringValue b Y * b ^ (l - Y.length) : ℕ) : ℝ) := by
+        rw [← hBy]
+        exact hlo
+      have e2 : ((stringValue b Y * b ^ (l - Y.length) : ℕ) : ℝ) < (stringValue b X : ℝ) + 1 := by
+        rw [← hBy]
+        exact hhi
+      have g1 : stringValue b X ≤ stringValue b Y * b ^ (l - Y.length) := by
+        exact_mod_cast e1
+      have g2 : stringValue b Y * b ^ (l - Y.length) < stringValue b X + 1 := by
+        exact_mod_cast e2
+      omega
+    have hYx : normalizedStringValue b Y = x := by
+      have e : (b : ℝ) ^ l * normalizedStringValue b Y = (b : ℝ) ^ l * x := by
+        rw [hBy, hBx]
+        exact_mod_cast hN
+      exact mul_left_cancel₀ hBne e
+    obtain ⟨-, hdepth2⟩ := hdepth
+    apply hdepth2 Y.length hlt
+    refine ⟨(stringValue b Y : ℤ), ?_⟩
+    rw [← hYx]
+    unfold normalizedStringValue
+    push_cast
+    ring
+  have htake_len : (Y.take l).length = l := by
+    rw [List.length_take]
+    omega
+  have hYeq : Y.take l ++ Y.drop l = Y := List.take_append_drop _ _
+  have hvalY : stringValue b Y =
+      stringValue b (Y.take l) * b ^ (Y.drop l).length + stringValue b (Y.drop l) := by
+    conv_lhs => rw [← hYeq]
+    exact stringValue_append b _ _
+  have hylen : Y.length = l + (Y.drop l).length := by
+    have h := congrArg List.length hYeq
+    simp only [List.length_append, htake_len] at h
+    omega
+  have hBs : (b : ℝ) ^ (Y.drop l).length ≠ 0 := pow_ne_zero _ (ne_of_gt hbR)
+  have hBpY : (b : ℝ) ^ l * normalizedStringValue b Y =
+      (stringValue b (Y.take l) : ℝ) +
+        (stringValue b (Y.drop l) : ℝ) / (b : ℝ) ^ (Y.drop l).length := by
+    unfold normalizedStringValue
+    rw [hylen, hvalY, pow_add]
+    push_cast
+    field_simp
+  have hltZ : stringValue b (Y.drop l) < b ^ (Y.drop l).length :=
+    stringValue_lt b _
+  have hr0 : (0 : ℝ) ≤ (stringValue b (Y.drop l) : ℝ) / (b : ℝ) ^ (Y.drop l).length :=
+    div_nonneg (by positivity) (by positivity)
+  have hr1 : (stringValue b (Y.drop l) : ℝ) / (b : ℝ) ^ (Y.drop l).length < 1 := by
+    rw [div_lt_one (pow_pos hbR _)]
+    exact_mod_cast hltZ
+  have h1 : (stringValue b X : ℝ) ≤
+      (stringValue b (Y.take l) : ℝ) +
+        (stringValue b (Y.drop l) : ℝ) / (b : ℝ) ^ (Y.drop l).length := by
+    rw [← hBx, ← hBpY]
+    exact mul_le_mul_of_nonneg_left hxy hBpos.le
+  have h2 : (stringValue b (Y.take l) : ℝ) +
+        (stringValue b (Y.drop l) : ℝ) / (b : ℝ) ^ (Y.drop l).length <
+      (stringValue b X : ℝ) + 1 := by
+    have h := mul_lt_mul_of_pos_left hyx hBpos
+    rw [mul_add, hz, hBx, hBpY] at h
+    exact h
+  have hp : stringValue b (Y.take l) = stringValue b X := by
+    have hp1 : (stringValue b (Y.take l) : ℝ) < (stringValue b X : ℝ) + 1 := by linarith
+    have hp2 : (stringValue b X : ℝ) < (stringValue b (Y.take l) : ℝ) + 1 := by linarith
+    have h1n : stringValue b (Y.take l) < stringValue b X + 1 := by exact_mod_cast hp1
+    have h2n : stringValue b X < stringValue b (Y.take l) + 1 := by exact_mod_cast hp2
+    omega
+  exact ⟨hlen, eq_of_stringValue_eq b hb _ _ (by rw [htake_len, hXlen]) hp⟩
+
 /-- Rescaling a digit string obtained by prepending the endpoint prefix. -/
 private theorem affine_eq_of_append (b : ℕ) (hb : 1 < b) (x : ℝ) (l' : ℕ)
     (A : List (Fin b)) (hAlen : A.length = l') (hAval : normalizedStringValue b A = x)
@@ -255,14 +377,16 @@ private theorem stringWeight_append (b : ℕ) (hb : 1 < b) (l' : ℕ) (A : List 
   rw [hcast, zpow_add₀ hbRne]
   rw [ENNReal.ofReal_mul (zpow_nonneg (Nat.cast_nonneg b) _)]
 
-/-- The Irwin measure of a set inside the open interval, at index at least the
-prefix count, is the prefix weight times the Irwin measure of the rescaled
+/-- Let `A` be a digit string of length `l'` representing `x`, and let `U` be a
+set such that every digit string whose normalized value lies in `U` begins with
+`A`. Then, at index at least the number of occurrences of `d` in `A`, the Irwin
+measure of `U` is the prefix weight times the Irwin measure of the rescaled
 set. -/
-private theorem irwinMeasure_eq_smul_of_le (b d : ℕ) (hb : 1 < b) (hd : d < b) (x : ℝ)
+private theorem irwinMeasure_eq_smul_of_prefix (b d : ℕ) (hb : 1 < b) (hd : d < b) (x : ℝ)
     (l' : ℕ) (A : List (Fin b)) (hAlen : A.length = l')
     (hAval : normalizedStringValue b A = x) (j' : ℕ) (hj' : A.count ⟨d, hd⟩ = j')
     (k : ℕ) (hj'k : j' ≤ k) (U : Set ℝ)
-    (hU : U ⊆ Set.Ioo x (x + (b : ℝ) ^ (-(l' : ℤ)))) :
+    (hpre : ∀ Y : List (Fin b), normalizedStringValue b Y ∈ U → Y.take l' = A) :
     irwinMeasure b d k hd U =
       ENNReal.ofReal ((b : ℝ) ^ (-(l' : ℤ))) *
         irwinMeasure b d (k - j') hd (affineScaleSet b l' x U) := by
@@ -278,13 +402,10 @@ private theorem irwinMeasure_eq_smul_of_le (b d : ℕ) (hb : 1 < b) (hd : d < b)
   set S : Type := {Y : List (Fin b) // Y.count ⟨d, hd⟩ = k} with hS
   set T : Type := {Z : List (Fin b) // Z.count ⟨d, hd⟩ = k - j'} with hT
   set V : Set ℝ := affineScaleSet b l' x U with hV
-  have hchar : ∀ Y : S, normalizedStringValue b Y.1 ∈ U →
-      l' < Y.1.length ∧ Y.1.take l' = A := fun Y hY =>
-    take_eq_of_mem_Ioo b hb x l' A hAlen hAval Y.1 (hU hY)
   have hYeq : ∀ Y : S, normalizedStringValue b Y.1 ∈ U →
       Y.1 = A ++ Y.1.drop l' := by
     intro Y hY
-    obtain ⟨-, htake⟩ := hchar Y hY
+    have htake := hpre Y.1 hY
     calc Y.1 = Y.1.take l' ++ Y.1.drop l' := (List.take_append_drop _ _).symm
       _ = A ++ Y.1.drop l' := by rw [htake]
   have haffine : ∀ (Z : List (Fin b)),
@@ -299,7 +420,7 @@ private theorem irwinMeasure_eq_smul_of_le (b d : ℕ) (hb : 1 < b) (hd : d < b)
               (Y.1.1.take l').count ⟨d, hd⟩ + (Y.1.1.drop l').count ⟨d, hd⟩ := by
             conv_lhs => rw [← List.take_append_drop l' Y.1.1]
             rw [List.count_append]
-          obtain ⟨-, htake⟩ := hchar Y.1 Y.2
+          have htake := hpre Y.1.1 Y.2
           rw [htake, hj'] at h1
           have hk : Y.1.1.count ⟨d, hd⟩ = k := Y.1.2
           omega⟩,
@@ -368,13 +489,14 @@ private theorem irwinMeasure_eq_smul_of_le (b d : ℕ) (hb : 1 < b) (hd : d < b)
     exact h
   rw [hL, hR, hmain, ENNReal.tsum_mul_left]
 
-/-- The Irwin measure of a set inside the open interval vanishes at index
-below the prefix count. -/
-private theorem irwinMeasure_eq_zero_of_lt (b d : ℕ) (hb : 1 < b) (hd : d < b) (x : ℝ)
-    (l' : ℕ) (A : List (Fin b)) (hAlen : A.length = l')
-    (hAval : normalizedStringValue b A = x) (j' : ℕ) (hj' : A.count ⟨d, hd⟩ = j')
+/-- Let `A` be a digit string of length `l'`, and let `U` be a set such that
+every digit string whose normalized value lies in `U` begins with `A`. Then, at
+index below the number of occurrences of `d` in `A`, the Irwin measure of `U`
+vanishes. -/
+private theorem irwinMeasure_eq_zero_of_prefix (b d : ℕ) (hd : d < b) (l' : ℕ)
+    (A : List (Fin b)) (j' : ℕ) (hj' : A.count ⟨d, hd⟩ = j')
     (k : ℕ) (hk : k < j') (U : Set ℝ)
-    (hU : U ⊆ Set.Ioo x (x + (b : ℝ) ^ (-(l' : ℤ)))) :
+    (hpre : ∀ Y : List (Fin b), normalizedStringValue b Y ∈ U → Y.take l' = A) :
     irwinMeasure b d k hd U = 0 := by
   classical
   have hatom : ∀ (Y : List (Fin b)) (W : Set ℝ),
@@ -389,8 +511,7 @@ private theorem irwinMeasure_eq_zero_of_lt (b d : ℕ) (hb : 1 < b) (hd : d < b)
   rw [hatom]
   apply Set.indicator_of_notMem
   intro hmem
-  obtain ⟨-, htake⟩ :=
-    take_eq_of_mem_Ioo b hb x l' A hAlen hAval Y.1 (hU hmem)
+  have htake := hpre Y.1 hmem
   have hcount : Y.1.count ⟨d, hd⟩ =
       (Y.1.take l').count ⟨d, hd⟩ + (Y.1.drop l').count ⟨d, hd⟩ := by
     conv_lhs => rw [← List.take_append_drop l' Y.1]
@@ -471,11 +592,59 @@ public theorem irwinMeasure_open_local_mass
       have h0 : (List.replicate (l' - l) (⟨0, hb0⟩ : Fin b)).count ⟨0, hd⟩ = l' - l := by
         simp
       rw [h0]; omega
+  have hpre : ∀ Y : List (Fin b), normalizedStringValue b Y ∈ U → Y.take l' = A :=
+    fun Y hY =>
+      (irwinMeasure_open_local_mass.take_eq_of_mem_Ioo b hb x l' A hAlen hAval Y (hU hY)).2
   refine ⟨fun hk => ?_, fun hk => ?_⟩
-  · exact irwinMeasure_open_local_mass.irwinMeasure_eq_zero_of_lt b d hb hd x l' A hAlen
-      hAval _ hj' k hk U hU
-  · rw [irwinMeasure_open_local_mass.irwinMeasure_eq_smul_of_le b d hb hd x l' A hAlen
-      hAval _ hj' k hk U hU, ENNReal.toReal_mul,
+  · exact irwinMeasure_open_local_mass.irwinMeasure_eq_zero_of_prefix b d hd l' A _ hj' k hk
+      U hpre
+  · rw [irwinMeasure_open_local_mass.irwinMeasure_eq_smul_of_prefix b d hb hd x l' A hAlen
+      hAval _ hj' k hk U hpre, ENNReal.toReal_mul,
+      ENNReal.toReal_ofReal (zpow_nonneg (Nat.cast_nonneg b) _)]
+
+set_option linter.unusedVariables false in
+/-- **Local structure of the Irwin measures on cylinders.** Let $b > 1$ and $d < b$ be natural
+numbers, and for each natural number $k$ let $\mu_k$ be the Irwin measure of base $b$ and digit
+$d$ with index $k$. Let $x \in [0, 1)$ have base-$b$ depth $l$, that is, $l$ is the least natural
+number such that $b^l x$ is an integer; let $X$ be a string of $l$ base-$b$ digits, read most
+significant digit first, whose value $n(X)$ satisfies $n(X)/b^l = x$; and let $j$ be the number
+of occurrences of $d$ in $X$. Then for every $k < j$ the restriction of $\mu_k$ to
+$[x, x + b^{-l})$ is the zero measure, and for every $k \ge j$ and every subset
+$U \subseteq [x, x + b^{-l})$, as real numbers $\mu_k(U) = b^{-l} \mu_{k-j}(b^l U - b^l x)$,
+where $b^l U - b^l x$ is the image of $U$ under $y \mapsto b^l y - b^l x$.
+
+Source: Jean-François Burnol, *Measures for the
+Summation of Irwin Series*, INTEGERS 26 (2026), Article A11, Proposition 8. -/
+public theorem irwinMeasure_halfOpen_local_mass
+    (b d : ℕ) (hb : 1 < b) (hd : d < b) (x : ℝ) (l : ℕ)
+    (hx : x ∈ Set.Ico (0 : ℝ) 1) (hdepth : HasBaseDepth b x l)
+    (X : List (Fin b)) (hXlen : X.length = l)
+    (hXval : normalizedStringValue b X = x) (j : ℕ)
+    (hj : j = X.count ⟨d, hd⟩) :
+    (∀ k, k < j →
+      (irwinMeasure b d k hd).restrict
+        (Set.Ico x (x + (b : ℝ) ^ (-(l : ℤ)))) = 0) ∧
+    (∀ k, j ≤ k → ∀ U : Set ℝ,
+      U ⊆ Set.Ico x (x + (b : ℝ) ^ (-(l : ℤ))) →
+      (irwinMeasure b d k hd U).toReal =
+        (b : ℝ) ^ (-(l : ℤ)) *
+          (irwinMeasure b d (k - j) hd
+            (affineScaleSet b l x U)).toReal) := by
+  have hpre : ∀ Y : List (Fin b),
+      normalizedStringValue b Y ∈ Set.Ico x (x + (b : ℝ) ^ (-(l : ℤ))) → Y.take l = X :=
+    fun Y hY =>
+      (irwinMeasure_open_local_mass.take_eq_of_mem_Ico b hb x l hdepth X hXlen hXval Y hY).2
+  refine ⟨?_, ?_⟩
+  · intro k hk
+    apply Measure.ext
+    intro S hS
+    rw [Measure.restrict_apply hS,
+      irwinMeasure_open_local_mass.irwinMeasure_eq_zero_of_prefix b d hd l X j hj.symm k hk _
+        fun Y hY => hpre Y (Set.inter_subset_right hY)]
+    simp
+  · intro k hk U hU
+    rw [irwinMeasure_open_local_mass.irwinMeasure_eq_smul_of_prefix b d hb hd x l X hXlen
+      hXval j hj.symm k hk U fun Y hY => hpre Y (hU hY), ENNReal.toReal_mul,
       ENNReal.toReal_ofReal (zpow_nonneg (Nat.cast_nonneg b) _)]
 
 end MetaMathlibExt

@@ -8,7 +8,7 @@ Number the instructions of a program and, from [live-variables analysis](../stat
 **Theorem.**
 1. If $n > R$ live intervals overlap at some point, then in any assignment in which no two overlapping intervals share a register, at least $n - R$ of them reside in memory.
 2. If at most $R$ live intervals overlap at every point, linear scan assigns a register to every interval, and no two overlapping intervals get the same register.
-3. Linear scan takes time $O(V \log R)$ for $V$ intervals sorted by start point, when the active list is kept as a balanced search tree.
+3. With $R \ge 1$ registers, linear scan takes time $O(V \log (R + 1))$ for $V$ intervals sorted by start point, when the active list is kept as a balanced search tree.
 
 **Proof of part 2.** When an interval starting at $i$ is processed, the active intervals that have not been freed all contain $i$, as does the new interval; so at most $R - 1$ of them are active and a register is free.
 

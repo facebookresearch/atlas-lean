@@ -7,7 +7,6 @@
 - [Local test for dominance frontiers](local-test-for-dominance-frontiers.md)
 - [Upward test for dominance frontiers](upward-test-for-dominance-frontiers.md)
 - [Computing dominance frontiers bottom up](computing-dominance-frontiers-bottom-up.md)
-- [Dominance frontiers by walking up the dominator tree](dominance-frontiers-by-walking-up-the-dominator-tree.md)
 - [Converging paths and join sets](converging-paths-and-join-sets.md)
 - [Paths meet the iterated dominance frontier](paths-meet-the-iterated-dominance-frontier.md)
 - [Converging paths meet in an iterated dominance frontier](converging-paths-meet-in-an-iterated-dominance.md)

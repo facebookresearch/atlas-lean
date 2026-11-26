@@ -10,7 +10,7 @@ and let the collector repeat:
 
 **Theorem.** For this coarse-grained algorithm the correctness criteria CC1 and CC2 hold. During each marking phase P1 is invariant, so at its end, when no gray node remains, every reachable node is black and every white node is garbage.
 
-The mutator must shade the target of the new edge, not the old one. Splitting M1 into two atomic steps in the order shade, then redirect, while keeping P1, is incorrect: the shading can be undone by an appending phase before the edge is placed. A second coarse-grained mutator, which atomically shades the target of the previously redirected edge and redirects an outgoing edge of a reachable node towards a reachable node, is correct with the same collector, with P2 and P3 in place of P1.
+To maintain P1, the mutator must shade the target of the new edge, not the old one. Splitting M1 into two atomic steps in the order shade, then redirect, while keeping P1, is incorrect: the shading can be undone by an appending phase before the edge is placed. A second coarse-grained mutator, which atomically shades the target of the previously redirected edge and redirects an outgoing edge of a reachable node towards a reachable node, is correct with the same collector, with P2 and P3 in place of P1.
 
 ## Depends on
 
