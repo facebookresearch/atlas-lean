@@ -22,7 +22,7 @@ public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessWanted
+public import CSLibExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessDefs
 
 @[expose] public section
 
@@ -49,7 +49,7 @@ Start times are natural numbers: with integer delays and unit operations, shifti
 operation of a feasible schedule as early as its machine order allows gives an integral schedule
 whose completion times are no later, so this does not change the answer. Each machine runs a
 one-processor schedule of its unit-time operations (the repository's `IsOneProcessorSchedule`
-from `SequencingToMinimizeWeightedTardinessWanted`, with every length `1`). The jobs are
+from `SequencingToMinimizeWeightedTardinessDefs`, with every length `1`). The jobs are
 `Fin n`, one per listed delay. Binary encoding of all numbers (the problem is NP-complete in
 the strong sense).
 
