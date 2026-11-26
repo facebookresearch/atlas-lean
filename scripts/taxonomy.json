@@ -13806,6 +13806,7 @@
   "MathlibExt/NumberTheory/SquareSplittingConvolutionSquareSplitMoebiusFormula": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Square-splitting convolution"},
   "MathlibExt/NumberTheory/SquarefreeOneModEight": {"to": "NumberTheory/diophantine-equations/higher-degree-equations", "title": "Generalized fruit equation"},
   "MathlibExt/NumberTheory/SquaresModTwoPow": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "Partitions with initial repetitions"},
+  "MathlibExt/NumberTheory/SternBrocotPathSquares": {"to": "NumberTheory/quadratic-forms-sums-of-squares/sums-of-squares", "title": "Sums of two squares via the Stern–Brocot tree"},
   "MathlibExt/NumberTheory/SternBrocotSumTwoSquares": {"to": "NumberTheory/quadratic-forms-sums-of-squares/sums-of-squares", "title": "Sums of two squares via the Stern–Brocot tree"},
   "MathlibExt/NumberTheory/SternSequence": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Stern's diatomic sequence"},
   "MathlibExt/NumberTheory/SteuerwaldThreePerfect": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Multiperfect numbers"},
