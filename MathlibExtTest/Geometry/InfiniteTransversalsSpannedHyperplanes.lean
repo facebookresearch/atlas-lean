@@ -57,3 +57,39 @@ example : Infinite {H : ITSP.SpannedHyperplaneSet 2 Set.univ // (0 : Plane) ∈ 
   have hs : (![1, s] : Plane) ∈ slopeLine s := (on_slopeLine _ _).mpr (by simp)
   have h : s = t * 1 := (on_slopeLine t _).mp (heq ▸ hs)
   simpa only [mul_one] using h
+
+/-- The x-axis of the plane together with the point `(0, 1)`. -/
+private def nearPencil : Set Plane := insert ![0, 1] {x | x 1 = 0}
+
+-- The set is infinite.
+example : nearPencil.Infinite :=
+  Set.infinite_of_injective_forall_mem (f := fun t : ℝ ↦ (![t, 0] : Plane))
+    (fun s t h ↦ by simpa using congrFun h 0) fun t ↦ Or.inr (by simp)
+
+private theorem nearPencil_spans : affineSpan ℝ nearPencil = ⊤ := by
+  have h0 : (0 : Plane) ∈ nearPencil := Or.inr (by simp)
+  rw [AffineSubspace.affineSpan_eq_top_iff_vectorSpan_eq_top_of_nonempty ℝ Plane Plane ⟨0, h0⟩,
+    Submodule.eq_top_iff']
+  intro x
+  have he₀ : (![1, 0] : Plane) ∈ vectorSpan ℝ nearPencil := by
+    simpa using vsub_mem_vectorSpan ℝ (show (![1, 0] : Plane) ∈ nearPencil from
+      Or.inr (by simp)) h0
+  have he₁ : (![0, 1] : Plane) ∈ vectorSpan ℝ nearPencil := by
+    simpa using vsub_mem_vectorSpan ℝ (show (![0, 1] : Plane) ∈ nearPencil from
+      Set.mem_insert _ _) h0
+  have hx : x = x 0 • (![1, 0] : Plane) + x 1 • ![0, 1] := by
+    ext i
+    fin_cases i <;> simp
+  rw [hx]
+  exact add_mem (Submodule.smul_mem _ _ he₀) (Submodule.smul_mem _ _ he₁)
+
+-- In the plane, the matching of this infinite spanning set sends at most one point to the
+-- x-axis (injectivity), and never `(0, 1)`, which lies off the axis (incidence).
+example : ∃ f : nearPencil → ITSP.SpannedHyperplaneSet 2 nearPencil,
+    (∀ p q, (f p).val = slopeLine 0 → (f q).val = slopeLine 0 → p = q) ∧
+      ∀ p, (f p).val = slopeLine 0 → p.val ≠ ![0, 1] := by
+  obtain ⟨f, hf, hmem⟩ := OWR1183Question_holds 2 (by norm_num) nearPencil nearPencil_spans
+  refine ⟨f, fun p q hp hq ↦ hf (Subtype.ext (hp.trans hq.symm)), fun p hp he ↦ ?_⟩
+  have h := hmem p
+  rw [hp, on_slopeLine, he] at h
+  simp at h
