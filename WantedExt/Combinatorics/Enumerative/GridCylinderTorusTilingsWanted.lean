@@ -19,6 +19,7 @@ public import Mathlib.SetTheory.Cardinal.Finite
 public import MathlibExt.Combinatorics.Enumerative.GridReflectionTilings
 public import MathlibExt.Combinatorics.Enumerative.SquareGridR2Odd
 public import MathlibExt.Combinatorics.Enumerative.GridSecondReflectionTilings
+public import MathlibExt.Combinatorics.Enumerative.SquareGridSecondReflectionEven
 
 namespace MetaMathlibExt
 
@@ -245,18 +246,6 @@ public theorem_wanted squareGrid_f_odd {T : Type*} [Fintype T] [DecidableEq T]
     (n : ℕ) [NeZero n] (σ : Equiv.Perm T) (hσ : σ ^ 2 = 1) (hodd : Odd n) :
     fixedTilingCount (cellF n n) σ =
       Fintype.card T ^ ((n ^ 2 - n) / 2) * tileFixedCount σ 1 ^ n
-
-/-- **Square-grid tilings fixed by the reflection $r^2 f$ for even $n$.** Let $n$ be an even
-positive integer, let $T$ be a finite set and let $\sigma$ be a permutation of $T$ with
-$\sigma^2 = 1$. Let $r^2 f$ be the reflection of the grid $(\mathbb{Z}/n\mathbb{Z})^2$ given by
-$(r^2 f)(x, y) = (x, -1 - y)$. Then the number of maps $F : (\mathbb{Z}/n\mathbb{Z})^2 \to T$
-with $F((r^2 f)(c)) = \sigma(F(c))$ for every cell $c$ is $|T|^{n^2/2}$.
-
-Source: Peter Kagey, William Keehn, *Counting Tilings of the n × m Grid, Cylinder, and Torus*,
-        Journal of Integer Sequences 27 (2024), Article 24.6.1, Theorem 24. -/
-public theorem_wanted squareGrid_r2f_even {T : Type*} [Fintype T] [DecidableEq T]
-    (n : ℕ) [NeZero n] (σ : Equiv.Perm T) (hσ : σ ^ 2 = 1) (heven : Even n) :
-    fixedTilingCount (cellR2F n n) σ = Fintype.card T ^ (n ^ 2 / 2)
 
 /-- **Square-grid tilings fixed by the reflection $r^2f$, odd $n$.** Let $n$ be an odd positive
 integer, let $T$ be a finite set of tile designs, and let $\sigma$ be a permutation of $T$ with
