@@ -1,4 +1,7 @@
-# Of Epi
+# Colimiting cofork from factorization through an epic leg
 
-The `uniq` condition in `Cofork.IsColimit.mk` can be replaced by `Cofork.π` being an
-epimorphism.
+Colimiting cofork from factorization through an epic leg.
+
+For parallel arrows f,g : X → Y, let t be a cofork with epic leg t.π. Suppose every cofork s
+has a map desc(s) : t.pt → s.pt satisfying t.π ≫ desc(s) = s.π. Cancellation of t.π gives
+uniqueness of each descendant, and these data make t a colimit cofork.

@@ -1,3 +1,6 @@
-# Tensor Component Projection map
+# Naturality of the tensor component projection
 
-The canonical tensor-total projection is natural under both original chain maps.
+Naturality of the tensor component projection.
+
+The total tensor map of f,g followed by the target projection equals the source projection
+followed by f_p ⊗ g_q.

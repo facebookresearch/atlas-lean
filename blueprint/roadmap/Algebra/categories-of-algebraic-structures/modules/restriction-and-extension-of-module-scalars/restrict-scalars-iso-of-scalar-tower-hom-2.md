@@ -1,4 +1,6 @@
-# Restrict Scalars Iso Of Scalar Tower hom naturality
+# Naturality of the forward scalar-tower comparison
 
-Existing scalar-algebra linear maps commute with the literal tower
-comparison and their canonical restriction to the original base-ring actions.
+Naturality of the forward scalar-tower comparison.
+
+For an S-linear map f : M → N between compatible scalar towers, the forward comparisons
+commute with f restricted to R and with the categorical restriction-of-scalars map.

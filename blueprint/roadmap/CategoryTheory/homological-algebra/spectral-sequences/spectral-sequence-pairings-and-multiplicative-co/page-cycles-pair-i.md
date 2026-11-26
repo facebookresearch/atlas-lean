@@ -1,3 +1,6 @@
-# Page Cycles Pair i
+# The page cycle product preserves inclusion
 
-The interval-cycle product is the actual product on cycles of the native page.
+The page cycle product preserves inclusion.
+
+Its inclusion into the output page equals the tensor of input cycle inclusions followed by
+pagePair.

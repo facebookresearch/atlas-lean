@@ -1,4 +1,6 @@
-# Family Tensor Coefficient Quotient length ne top
+# The support quotient remains finite after removing the last generator
 
-The original full-family finite quotient earns the smaller-family
-finite quotient after reducing the actual coefficient module by its last scalar.
+The support quotient remains finite after removing the last generator.
+
+Finite length of R divided by the family ideal plus Ann(M) gives the analogous finite quotient
+length for the initial family and M/a_nM.

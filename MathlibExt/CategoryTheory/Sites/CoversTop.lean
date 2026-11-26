@@ -15,39 +15,29 @@ module
 public import Mathlib.CategoryTheory.Limits.Shapes.BinaryProducts.ProdComparison
 public import Mathlib.CategoryTheory.Sites.CoversTop.Over
 
-/-!
-# Product and comma covers for `GrothendieckTopology.CoversTop`
-
-Two pure site-combinatorics cover refinements shared by the locally-free
-sheaf APIs:
-
-* `CategoryTheory.GrothendieckTopology.CoversTop.prod`: the product family
-  of two covers covers the top (common refinement of the covers witnessing
-  local freeness of two modules).
-* `CategoryTheory.GrothendieckTopology.CoversTop.overComma`: a global cover
-  induces a cover of every slice via comma objects (no pullbacks needed).
-* `CategoryTheory.GrothendieckTopology.CoversTop.iteratedSliceEquiv_inverse`:
-  transport of a cover along the inverse of `Over.iteratedSliceEquiv`
-  between the two slice topologies (shared by the coherent finiteness
-  proofs in `Sheaf/Coherent.lean`).
-
-Two pure sieve-combinatorics lemmas used for the finite-intersection
-covers in coherent finiteness proofs:
-
-* `CategoryTheory.GrothendieckTopology.finsetInf_mem`: finite
-  intersections of covering sieves cover.
-* `CategoryTheory.Sieve.finsetInf_arrows`: membership in a finite
-  sieve intersection implies membership in each factor.
-
-Both carry minimal hypotheses (only the site, its topology, and
-`HasBinaryProducts` for `prod`).
-
+/-
 Provenance: factored out of
 `MathlibExt.Algebra.Category.ModuleCat.Sheaf.LocallyFreeRank` (2026
 development by @junekim623 with Muse), consolidating the copies previously in
 `Sheaf/LocallyFree.lean` (`coversTop_prod`, `coversTopProd`) and
 `Sheaf/LocallyFreeRank.lean` (`CoversTop.prod`), which now retarget here.
 No other copies remain in this layer.
+-/
+
+/-!
+# Product covers, slice covers and finite sieve intersections
+
+Let J be a Grothendieck topology on C. An object family X_i covers the top
+when, for every Z, the arrows T → Z whose domains admit a map T → X_i
+for some i form a J-covering sieve.
+
+If C has binary products, two such families X_i,Y_j give the covering
+family X_i×Y_j. A top-covering family also gives a cover of each slice
+over X₀ by all objects Z → X₀ equipped with a map Z → X_i.
+The canonical iterated-slice equivalence transports top covers between
+the corresponding slice topologies. Finite intersections of covering
+sieves are covering, and membership in such an intersection implies
+membership in every factor.
 -/
 
 @[expose] public section
@@ -60,8 +50,9 @@ variable {C : Type u} [Category.{v} C] {J : GrothendieckTopology C}
 
 namespace CategoryTheory.GrothendieckTopology.CoversTop
 
-/-- The product family of two covers is a cover: given `T` mapping to
-some `X i`, the pullback sieve contains the `Y`-cover via `prod.lift`. -/
+/-- For a Grothendieck topology J on a category C with binary products,
+if the object families X_i and Y_j each cover the top, then the family
+of all products X_i×Y_j, indexed by I×J′, covers the top as well. -/
 theorem prod {I I' : Type*} {X : I → C} {Y : I' → C} [HasBinaryProducts C]
     (hX : J.CoversTop X) (hY : J.CoversTop Y) :
     J.CoversTop (fun p : I × I' ↦ X p.1 ⨯ Y p.2) := by
@@ -77,10 +68,9 @@ theorem prod {I I' : Type*} {X : I → C} {Y : I' → C} [HasBinaryProducts C]
   rw [_root_.CategoryTheory.Sieve.mem_ofObjects_iff]
   exact ⟨(i, j), ⟨prod.lift (b ≫ a₀) k⟩⟩
 
-/-- A global cover induces a cover of every slice via comma objects:
-over `X₀`, take all spans `Z → X i` equipped with a structure map
-`Z → X₀`. No pullbacks are needed since `Sieve.ofObjects` only sees
-domains. -/
+/-- Let J be a Grothendieck topology on C and X_i a top-covering object
+family. For every X₀ in C, the slice topology J/X₀ has a top cover
+consisting of all objects Z → X₀ equipped with some map Z → X_i. -/
 theorem overComma {I : Type*} {X : I → C}
     (hX : J.CoversTop X) (X₀ : C) :
     (J.over X₀).CoversTop
@@ -95,11 +85,10 @@ theorem overComma {I : Type*} {X : I → C}
   obtain ⟨i, ⟨a⟩⟩ := hf
   exact ⟨⟨i, Z, a, f ≫ W.hom⟩, ⟨𝟙 _⟩⟩
 
-/-- Transport a `CoversTop` cover along the inverse of the iterated-slice
-equivalence: a cover of `Over U.left` for `J.over U.left` maps to a cover
-of `Over U` for `(J.over X).over U` under
-`(Over.iteratedSliceEquiv U).inverse`, using that this inverse is a dense
-subsite for the two slice topologies. -/
+/-- Let J be a Grothendieck topology on C, X an object and U an object
+of C/X. A top cover Y_i of C/U.left for J/U.left is sent by the
+inverse canonical equivalence C/U.left ≃ (C/X)/U to a top cover
+for the iterated slice topology (J/X)/U. -/
 theorem iteratedSliceEquiv_inverse {X : C} (U : Over X) {I : Type*}
     {Y : I → Over U.left} (hY : (J.over U.left).CoversTop Y) :
     ((J.over X).over U).CoversTop
@@ -137,7 +126,8 @@ end CategoryTheory.GrothendieckTopology.CoversTop
 
 namespace CategoryTheory.GrothendieckTopology
 
-/-- Finite intersections of covering sieves are covering. -/
+/-- For a Grothendieck topology K on D and a finite-indexed family T_i
+of K-covering sieves on Z, the intersection ⋂ᵢT_i is K-covering. -/
 theorem finsetInf_mem {D : Type u} [Category.{v} D]
     {K : GrothendieckTopology D} {Z : D} {ι : Type*} [Fintype ι]
     (T : ι → Sieve Z) (h : ∀ k, T k ∈ K Z) :
@@ -149,7 +139,9 @@ end CategoryTheory.GrothendieckTopology
 
 namespace CategoryTheory.Sieve
 
-/-- Membership in a finite intersection of sieves implies membership in each. -/
+/-- In a category D, for a finite-indexed family T_i of sieves on Z,
+an arrow h:V → Z belonging to ⋂ᵢT_i belongs to T_k for every
+index k. -/
 theorem finsetInf_arrows {D : Type u} [Category.{v} D]
     {Z V : D} {ι : Type*} [Fintype ι] (T : ι → Sieve Z)
     (h : V ⟶ Z)

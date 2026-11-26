@@ -1,4 +1,6 @@
-# ΙTensor Obj comp tensor Obj Single Zero Iso hom
+# The degree-zero tensor comparison on its surviving summand
 
-The degree-`(n,0)` tensor summand followed by the single-zero comparison
-is the tensor of the identity with the canonical degree-zero coordinate.
+The degree-zero tensor comparison on its surviving summand.
+
+The (n,0) coprojection followed by the comparison is id_{K_n} tensored with the single-complex
+chart to A.

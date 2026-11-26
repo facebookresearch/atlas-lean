@@ -1,4 +1,6 @@
-# Num Den Same Deg Module At Prime
+# Homogeneous module fractions of degree zero
 
-Fractions `m / s` with `m ∈ M_d`, `s ∈ 𝒜_d` and `s ∈ S` of a common degree `d`: the raw data
-of the degree-zero localization of `M` at `S`.
+Homogeneous module fractions of degree zero.
+
+For a submonoid S ⊆ R, a representative consists of m ∈ M_n and s ∈ 𝒜_n ∩ S for a common n ∈
+ℕ, representing the degree-zero fraction m/s.

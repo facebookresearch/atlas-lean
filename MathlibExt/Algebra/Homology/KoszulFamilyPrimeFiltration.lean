@@ -23,18 +23,17 @@ public import Mathlib.RingTheory.KrullDimension.Module
 public import MathlibExt.RingTheory.Length.AnnihilatorQuotient
 
 /-!
-# Prime-filtration decomposition of actual finite-family Koszul Euler characteristics
+# Prime-factor decomposition of coefficient Koszul Euler invariants
 
-The finite quotient by the coefficient ideal plus the module annihilator passes
-along both maps of an actual short exact sequence. Noetherian prime-filtration
-induction therefore expresses the original coefficient tensor Euler invariant as
-an actual finite sum of prime-quotient invariants. The decomposition also records
-all localized module lengths, with repetitions retaining their multiplicities.
+For a finite family a and finite coefficient M over a noetherian ring, finite length of
+R/(ideal(a)+Ann M) gives finite Koszul homology lengths. Prime-filtration induction expresses
+its alternating homology-length sum as a finite list of coefficient Euler invariants on prime
+quotients.
 
-The localized-length arguments follow the one-element decomposition in
-`MathlibExt/Algebra/Homology/ElementEulerPrimeFiltration.lean` at revision
-`c4e2bd199fcf972fd1c53cc07188316ab36f0189`. The coefficient family and its
-Euler characteristic here are the existing genuine Koszul tensor objects.
+The decomposition records all localized module lengths, retaining repeated factors as
+multiplicities. Coefficient equivalences, including independent carrier-universe lifts,
+preserve the homology lengths and Euler invariant. Under the stated minimal-support condition
+for nonzero factors, grouping the list gives the localized-length weighted sum.
 -/
 
 @[expose] public section
@@ -51,7 +50,10 @@ namespace KoszulComplex
 
 variable (R : Type u) [CommRing R] {n : ℕ}
 
-/-- Finite length of a quotient passes to the quotient by a larger ideal. -/
+/-- Post-quotient finiteness passes to a larger annihilator.
+
+For Ann M ⊆ Ann N, finite length of R/(ideal(a)+Ann M) gives finite length of R/(ideal(a)+Ann
+N). -/
 theorem familyQuotient_length_ne_top_of_annihilator_le
     (a : Fin n → R) {M : Type v} [AddCommGroup M] [Module R M]
     {N : Type w} [AddCommGroup N] [Module R N]
@@ -65,8 +67,10 @@ theorem familyQuotient_length_ne_top_of_annihilator_le
     (Ideal.span (Set.range a) ⊔ Module.annihilator R M)
     (by rw [Ideal.annihilator_quotient]; exact sup_le_sup_left hAnn _) hquot
 
-/-- An actual coefficient isomorphism induces an isomorphism of the original
-full-family tensor complexes. -/
+/-- The coefficient-complex isomorphism of a coefficient isomorphism.
+
+A module isomorphism M ≅ N gives an isomorphism K(a;M) ≅ K(a;N), with the coefficient in the
+first tensor factor. -/
 def familyTensorCoefficientIso (a : Fin n → R) {M N : ModuleCat.{v} R}
     (e : M ≅ N) :
     familyTensorCoefficientComplex R a M ≅ familyTensorCoefficientComplex R a N :=
@@ -74,16 +78,19 @@ def familyTensorCoefficientIso (a : Fin n → R) {M N : ModuleCat.{v} R}
     ((coefficientTensoringLeft R).mapIso e)
       (ComplexShape.down ℕ)).app (familyComplex R a)
 
-/-- The canonical mixed-universe tensor equivalence when the original
-coefficient module is lifted. -/
+/-- The term equivalence for a lifted Koszul coefficient.
+
+Identify (ULift M) ⊗ K(a)_j with ULift(M ⊗ K(a)_j) by the canonical coefficient-down and
+output-up maps. -/
 def familyTensorCoefficientUliftTermEquiv (a : Fin n → R) (M : ModuleCat.{v} R) (j : ℕ) :
     (ULift.{w} M ⊗[R] ((familyComplex R a).X j)) ≃ₗ[R]
       ULift.{w} (M ⊗[R] ((familyComplex R a).X j)) :=
   TensorProduct.congr (ULift.moduleEquiv : ULift.{w} M ≃ₗ[R] M)
     (LinearEquiv.refl R ((familyComplex R a).X j)) ≪≫ₗ ULift.moduleEquiv.symm
 
-/-- The original coefficient tensor complex commutes with the canonical
-module universe lift, retaining its actual terms and differential maps. -/
+/-- The complex comparison for a lifted Koszul coefficient.
+
+The term equivalences give K(a;ULift M) ≅ ULift K(a;M). -/
 def familyTensorCoefficientUliftComplexIso (a : Fin n → R) (M : ModuleCat.{v} R) :
     familyTensorCoefficientComplex R a ((ModuleCat.uliftFunctor.{w, v} R).obj M) ≅
       ((ModuleCat.uliftFunctor.{w, max u v} R).mapHomologicalComplex
@@ -100,8 +107,10 @@ def familyTensorCoefficientUliftComplexIso (a : Fin n → R) (M : ModuleCat.{v} 
       intro x
       rfl)
 
-/-- Actual native homology commutes with the earned coefficient lift,
-through the exact canonical module lift functor. -/
+/-- The homology comparison for a lifted Koszul coefficient.
+
+In every degree, the coefficient-lift complex has homology isomorphic to the lift of the
+original coefficient homology. -/
 def familyTensorCoefficientUliftHomologyIso (a : Fin n → R) (M : ModuleCat.{v} R) (j : ℕ) :
     (familyTensorCoefficientComplex R a ((ModuleCat.uliftFunctor.{w, v} R).obj M)).homology j ≅
       (ModuleCat.uliftFunctor.{w, max u v} R).obj ((familyTensorCoefficientComplex R a M).homology j) :=
@@ -109,8 +118,10 @@ def familyTensorCoefficientUliftHomologyIso (a : Fin n → R) (M : ModuleCat.{v}
     (HomologicalComplex.mapHomologyFunctorIso (c := ComplexShape.down ℕ) j
       (ModuleCat.uliftFunctor.{w, max u v} R)).app (familyTensorCoefficientComplex R a M)
 
-/-- A coefficient linear equivalence in independent universes preserves
-every actual full-family tensor homology length. -/
+/-- Coefficient equivalences preserve all Koszul homology lengths.
+
+An R-linear equivalence between independently sized coefficient carriers gives equal lengths
+in every homology degree. -/
 theorem familyTensorCoefficient_homology_length_eq_of_equiv
     (a : Fin n → R) {M : Type v} [AddCommGroup M] [Module R M]
     {N : Type w} [AddCommGroup N] [Module R N] (e : M ≃ₗ[R] N) (j : ℕ) :
@@ -131,8 +142,10 @@ theorem familyTensorCoefficient_homology_length_eq_of_equiv
     (familyTensorCoefficientIso R a eLift.toModuleIso) j).toLinearEquiv.length_eq
   exact hMu.symm.trans (hM.symm.trans (hE.trans (hN.trans hNu)))
 
-/-- The actual full-family Euler invariant is preserved by a coefficient
-linear equivalence in independent module universes. -/
+/-- Coefficient equivalences preserve the Koszul Euler invariant.
+
+For finite coefficients with the stated post-quotient lengths, a linear equivalence preserves
+the full coefficient Euler value. -/
 theorem familyTensorCoefficientEuler_equiv [IsNoetherianRing R]
     (a : Fin n → R) {M : Type v} [AddCommGroup M] [Module R M]
     {N : Type w} [AddCommGroup N] [Module R N]
@@ -148,8 +161,10 @@ theorem familyTensorCoefficientEuler_equiv [IsNoetherianRing R]
   intro j _
   rw [familyTensorCoefficient_homology_length_eq_of_equiv R a e j]
 
-/-- Actual coefficient additivity under the original annihilator-quotient
-finiteness premise, without finite length of any coefficient module. -/
+/-- Additivity of the coefficient Koszul Euler invariant.
+
+For a short exact sequence of finite coefficients with the three post-quotient finiteness
+hypotheses, the middle Euler value is the sum of the outer values. -/
 theorem familyTensorCoefficientEuler_additive [IsNoetherianRing R]
     (a : Fin n → R) {M₁ M₂ M₃ : Type v}
     [AddCommGroup M₁] [Module R M₁] [Module.Finite R M₁]
@@ -184,16 +199,24 @@ namespace Module
 
 variable (R : Type u) [CommRing R] [IsNoetherianRing R] {n : ℕ}
 
-/-- A prime quotient with the finite quotient needed for the actual
-full-family Koszul Euler invariant. -/
+/-- A prime quotient with finite Koszul post-quotient.
+
+Record a prime p and finite length of R/(ideal(a)+p), supplying the coefficient-family Euler
+value on R/p. -/
 structure KoszulFamilyEulerPrimeFactor (a : Fin n → R) where
-  /-- The prime ideal indexing the genuine coefficient factor. -/
+  /-- The prime indexing a Koszul Euler factor.
+
+This p defines the coefficient module R/p. -/
   prime : PrimeSpectrum R
-  /-- Finite quotient by the original family together with this prime. -/
+  /-- Finite length of the prime factor post-quotient.
+
+The quotient R/(ideal(a)+p) has finite length. -/
   quotient_length_ne_top :
     Module.length R (R ⧸ (Ideal.span (Set.range a) ⊔ prime.asIdeal)) ≠ ⊤
 
-/-- The genuine Koszul tensor Euler contribution of a prime factor. -/
+/-- The coefficient-family Euler value of a prime factor.
+
+Take the Koszul Euler invariant with coefficient R/p using its finite post-quotient. -/
 def KoszulFamilyEulerPrimeFactor.value {a : Fin n → R}
     (f : KoszulFamilyEulerPrimeFactor R a) : ℤ :=
   KoszulComplex.familyTensorCoefficientEuler R a (ModuleCat.of R (R ⧸ f.prime.asIdeal))
@@ -203,34 +226,50 @@ def KoszulFamilyEulerPrimeFactor.value {a : Fin n → R}
       rw [Ideal.annihilator_quotient]
       exact f.quotient_length_ne_top)
 
-/-- Actual localized length of a prime-quotient factor at another prime. -/
+/-- The localized module length of a Koszul prime factor.
+
+At q, take ℓ_{R_q}((R/p)_q). -/
 def KoszulFamilyEulerPrimeFactor.localLengthAt {a : Fin n → R}
     (f : KoszulFamilyEulerPrimeFactor R a) (q : PrimeSpectrum R) : ENat :=
   Module.length (Localization.AtPrime q.asIdeal)
     (LocalizedModule q.asIdeal.primeCompl (R ⧸ f.prime.asIdeal))
 
-/-- A prime-filtration expression for the original full-family Koszul tensor
-Euler characteristic. Its localized-length equation retains every multiplicity. -/
+/-- A prime-factor coefficient Euler decomposition.
+
+Record finite homology data for K(a;M), a factor list in Supp M, localized length sums and the
+equality of the total Euler invariant with the list-value sum. -/
 structure KoszulFamilyEulerPrimeDecomposition
     (a : Fin n → R) (M : Type v) [AddCommGroup M] [Module R M] where
-  /-- Earned finite-length data for the original coefficient tensor complex. -/
+  /-- Finite homology data of the decomposed coefficient complex.
+
+The complex K(a;M) has finite-length homology data. -/
   finiteLength : HomologicalComplex.FiniteLengthHomologyData R
     (KoszulComplex.familyTensorCoefficientComplex R a (ModuleCat.of R M))
-  /-- The actual finite factor list, with repetitions. -/
+  /-- The list of coefficient prime factors with multiplicities.
+
+Repeated entries retain the multiplicities of the prime-filtration contributions. -/
   factors : List (KoszulFamilyEulerPrimeFactor R a)
-  /-- Every factor lies in the support of the original module. -/
+  /-- The coefficient factor primes lie in support.
+
+Every listed prime is in Supp_R(M). -/
   factor_mem_support : ∀ f ∈ factors, f.prime ∈ Module.support R M
-  /-- Every original localized length is the sum of the localized factor lengths. -/
+  /-- Localized coefficient length equals the factor length sum.
+
+At each q, ℓ_{R_q}(M_q) equals the list sum of localized factor lengths. -/
   localized_length_eq : ∀ q : PrimeSpectrum R,
     Module.length (Localization.AtPrime q.asIdeal)
         (LocalizedModule q.asIdeal.primeCompl M) =
       (factors.map fun f => f.localLengthAt R q).sum
-  /-- The actual alternating homology sum equals its prime-filtration sum. -/
+  /-- The coefficient Euler value equals the prime-factor sum.
+
+The finite homology Euler invariant equals the sum of the factor values in the list. -/
   eq_sum : HomologicalComplex.finiteLengthEulerCharacteristic R finiteLength =
     (factors.map (KoszulFamilyEulerPrimeFactor.value R)).sum
 
-/-- The earned decomposition computes the canonical actual coefficient Euler
-invariant, independently of the finite-length data used by the decomposition. -/
+/-- The factor list computes the canonical coefficient-family Euler value.
+
+For finite M and its post-quotient hypothesis, the canonical Euler invariant agrees with the
+decomposition's factor-value sum. -/
 theorem KoszulFamilyEulerPrimeDecomposition.eq_sum_familyTensorCoefficientEuler
     {a : Fin n → R} {M : Type v} [AddCommGroup M] [Module R M] [Module.Finite R M]
     (d : KoszulFamilyEulerPrimeDecomposition R a M)
@@ -242,8 +281,10 @@ theorem KoszulFamilyEulerPrimeDecomposition.eq_sum_familyTensorCoefficientEuler
     (KoszulComplex.familyTensorCoefficientFiniteLength R a (ModuleCat.of R M) hquot)
       d.finiteLength).trans d.eq_sum
 
-/-- Every actual finite module with finite original coefficient/annihilator
-quotient admits a genuine full-family prime-filtration Euler decomposition. -/
+/-- Existence of a coefficient-family prime Euler decomposition.
+
+For finite M and finite post-quotient over a noetherian ring, construct the prime-factor list
+and its homology-length and Euler identities. -/
 theorem exists_koszulFamilyEulerPrimeDecomposition
     (a : Fin n → R) (M : Type v) [AddCommGroup M] [Module R M] [Module.Finite R M]
     (hquot : Module.length R
@@ -363,8 +404,10 @@ theorem exists_koszulFamilyEulerPrimeDecomposition
         _ = ((d₁.factors ++ d₃.factors).map (KoszulFamilyEulerPrimeFactor.value R)).sum := by simp
 
 omit [IsNoetherianRing R] in
-/-- Two bundled prime factors are equal exactly when their primes are equal;
-the finite-length field is proof-irrelevant. -/
+/-- Koszul Euler factors are determined by their primes.
+
+Two bundled factors for the same family are equal exactly when their prime components are
+equal. -/
 theorem KoszulFamilyEulerPrimeFactor.eq_iff_prime_eq
     {a : Fin n → R} {f g : KoszulFamilyEulerPrimeFactor R a} :
     f = g ↔ f.prime = g.prime := by
@@ -381,8 +424,9 @@ theorem KoszulFamilyEulerPrimeFactor.eq_iff_prime_eq
 
 omit [IsNoetherianRing R] in
 open Classical in
-/-- Counting a bundled factor is the same as counting factors with its
-prime. -/
+/-- Factor counts agree with prime occurrence counts.
+
+The list count of a bundled factor equals the number of entries with its prime. -/
 theorem KoszulFamilyEulerPrimeFactor.count_eq_countP_prime
     {a : Fin n → R} (l : List (KoszulFamilyEulerPrimeFactor R a))
     (f : KoszulFamilyEulerPrimeFactor R a) :
@@ -400,7 +444,9 @@ theorem KoszulFamilyEulerPrimeFactor.count_eq_countP_prime
         simp [h, hgf, ih]
 
 omit [IsNoetherianRing R] in
-/-- A prime factor has local length one at its own prime. -/
+/-- A Koszul prime factor has localized length one at itself.
+
+The factor R/p has length one after localization at p. -/
 theorem KoszulFamilyEulerPrimeFactor.localLengthAt_eq_one
     {a : Fin n → R} (f : KoszulFamilyEulerPrimeFactor R a) :
     f.localLengthAt R f.prime = 1 := by
@@ -428,7 +474,9 @@ theorem KoszulFamilyEulerPrimeFactor.localLengthAt_eq_one
   exact e.length_eq.trans (Module.length_eq_one Q _)
 
 omit [IsNoetherianRing R] in
-/-- A prime factor localizes to zero at a prime not containing it. -/
+/-- A Koszul prime factor vanishes outside containing primes.
+
+If p is not contained in q, its localized factor length at q is zero. -/
 theorem KoszulFamilyEulerPrimeFactor.localLengthAt_eq_zero_of_not_le
     {a : Fin n → R} (f : KoszulFamilyEulerPrimeFactor R a) (q : PrimeSpectrum R)
     (h : ¬ f.prime.asIdeal ≤ q.asIdeal) :
@@ -447,8 +495,10 @@ theorem KoszulFamilyEulerPrimeFactor.localLengthAt_eq_zero_of_not_le
     Ideal.Quotient.eq_zero_iff_mem.mpr ha, zero_mul]
 
 open Classical in
-/-- At a prime minimal in the module support, the localized length is the
-number of occurrences of that prime in the decomposition's factor list. -/
+/-- Localized coefficient length under the minimal-support condition.
+
+If every support prime contained in q equals q, the localized length of M at q is the
+factor-list occurrence count of q. -/
 theorem KoszulFamilyEulerPrimeDecomposition.localized_length_eq_countP_of_minimal
     {M : Type v} [AddCommGroup M] [Module R M] {a : Fin n → R}
     (d : KoszulFamilyEulerPrimeDecomposition R a M) (q : PrimeSpectrum R)
@@ -478,8 +528,10 @@ theorem KoszulFamilyEulerPrimeDecomposition.localized_length_eq_countP_of_minima
         simp [h, ih, add_comm]
 
 open Classical in
-/-- Repetitions of every nonzero-contributing prime factor are the original
-localized module lengths once that prime is minimal in the module support. -/
+/-- The coefficient Euler formula grouped by generic multiplicity.
+
+When every nonzero factor satisfies the stated minimal-support condition, the distinct-factor
+sum weights each value by ℓ_{R_p}(M_p). -/
 theorem KoszulFamilyEulerPrimeDecomposition.eq_sum_localizedLength_mul
     {a : Fin n → R} {M : Type v} [AddCommGroup M] [Module R M] [Module.Finite R M]
     (d : KoszulFamilyEulerPrimeDecomposition R a M)

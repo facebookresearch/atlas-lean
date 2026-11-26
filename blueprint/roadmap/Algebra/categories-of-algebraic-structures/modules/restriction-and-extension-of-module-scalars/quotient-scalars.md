@@ -1,4 +1,5 @@
-# Quotient Scalars
+# The descended quotient-ring module structure
 
-The quotient module structure induced by the original action.
-This is a reducible non-instance, so a caller chooses which quotient acts.
+The descended quotient-ring module structure.
+
+Give M its R/I-action through quotientAction.

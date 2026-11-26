@@ -1,3 +1,5 @@
-# Local Length At
+# The localized module length of a Koszul prime factor
 
-Actual localized length of a prime-quotient factor at another prime.
+The localized module length of a Koszul prime factor.
+
+At q, take ℓ_{R_q}((R/p)_q).

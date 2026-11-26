@@ -1,3 +1,8 @@
-# Strict Positive Projection quasi Iso At
+# Low-degree quasi-isomorphism of the strict-positive projection
 
-The native projection is a quasi-isomorphism at every degree below two.
+Let C be an abelian monoidal category with additive tensoring.
+Let P:K₁⊗K₂→K₃ be a graded pairing of nonnegative chain complexes
+with K₁.d(1,0)=K₂.d(1,0)=0.
+Write P₊₊:K₁,≥1⊗K₂,≥1→K₃ for the strict-positive map.
+For n<2, the cokernel projection K₃→Coker(P₊₊) is
+a quasi-isomorphism in degree n.

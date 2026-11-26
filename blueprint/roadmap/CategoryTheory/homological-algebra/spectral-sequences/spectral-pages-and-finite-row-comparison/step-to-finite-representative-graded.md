@@ -1,3 +1,6 @@
-# Step To Finite Representative graded
+# The finite step representative in a kernel-graded coordinate
 
-The actual finite-window grade comparison preserves the original full relative representatives.
+The finite step representative in a kernel-graded coordinate.
+
+Under endpoint vanishing, the finite-window graded comparison gives the same image and graded
+quotient representative as the stable step.

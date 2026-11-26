@@ -1,4 +1,7 @@
-# Sequential Limit To Product comp difference
+# Vanishing of the sequential difference on an inverse limit
 
-The canonical map from a chosen limit lands in the kernel of the standard
-sequential difference.
+Vanishing of the sequential difference on an inverse limit.
+
+For an inverse tower A with chosen limit in a preadditive category with countable products,
+L_A ≫ d_A = 0. Each coordinate vanishes by compatibility of the limit legs with the successor
+transition.

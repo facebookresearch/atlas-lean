@@ -1,4 +1,6 @@
-# Page Pair leibniz
+# The spectral page product satisfies the signed Leibniz rule
 
-The signed Leibniz identity for the original native `d_r`, of bidegree
-`(r, 1-r)`. Both bidegree coordinates and the sign degree range over all integers.
+The spectral page product satisfies the signed Leibniz rule.
+
+For first bidegree (p,q), d_r(xy)=d_r(x)y+(−1)^{p+q}x d_r(y), with the specified output
+bidegree transports.

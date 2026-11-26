@@ -18,24 +18,18 @@ public import Mathlib.LinearAlgebra.Quotient.Basic
 public import Mathlib.Algebra.Exact.Basic
 
 /-!
-# Fixed-degree pieces of a quotient by a homogeneous submodule
+# Degree pieces of a homogeneous submodule quotient
 
-For a graded algebra `S`, a graded `S`-module `M`, and a homogeneous
-submodule `N`, this file defines the inherited degree pieces on `N` and the
-image degree pieces on the canonical quotient `M ⧸ N.toSubmodule`.  It
-also records the component inclusion, quotient map, short exactness, and
-graded scalar-action laws.
+Let S be a graded commutative algebra over a commutative ring A, M an S-module with compatible
+A-action, and M = ⨁ₙM_n an internal decomposition compatible with the graded S-action. For a
+homogeneous S-submodule H, its inherited grade H_n consists of the elements of H whose
+underlying value belongs to M_n. In the quotient Q = M/H, define Q_n as the image of M_n under
+q : M → Q.
 
-The constructions here are fixed-degree: they do not choose direct-sum
-decompositions of the submodule or quotient.
-
-## Main declarations
-
-* `HomogeneousSubmodule.grade`
-* `HomogeneousSubmodule.quotientGrade`
-* `HomogeneousSubmodule.gradeInclusion`
-* `HomogeneousSubmodule.gradeQuotient`
-* `HomogeneousSubmodule.grade_exact`
+The inclusion H_n → M_n and projection M_n → Q_n are A-linear, injective and surjective
+respectively, and form an exact sequence 0 → H_n → M_n → Q_n → 0. Both inherited and quotient
+families satisfy S_i • H_j ⊆ H_{i+j} and S_i • Q_j ⊆ Q_{i+j}. The coefficient, algebra and
+module universes are independent.
 -/
 
 @[expose] public section
@@ -58,24 +52,33 @@ variable (Mgrade : ℕ → Submodule A M)
 
 variable (N : HomogeneousSubmodule Sgrade Mgrade)
 
-/-- The degree-`n` piece inherited by a homogeneous submodule. -/
+/-- Inherited degree piece of a homogeneous submodule.
+
+For a homogeneous submodule H of a graded S-module M over A, define H_n as the preimage of M_n
+under the A-linear inclusion H → M. It is an A-submodule of H. -/
 def grade (n : ℕ) : Submodule A N.toSubmodule :=
   (Mgrade n).comap ((N.toSubmodule.subtype).restrictScalars A)
 
-/-- Membership in the inherited degree piece is membership of the ambient
-carrier in the corresponding degree piece of `M`. -/
+/-- Membership in an inherited homogeneous degree piece.
+
+For x ∈ H, membership x ∈ H_n is equivalent to its underlying value in M belonging to M_n.
+Here H is a homogeneous S-submodule and all pieces are A-submodules. -/
 @[simp]
 theorem mem_grade_iff (n : ℕ) (x : N.toSubmodule) :
     x ∈ N.grade Sgrade Mgrade n ↔ (x : M) ∈ Mgrade n :=
   Iff.rfl
 
-/-- The degree-`n` piece of the quotient is the image of the ambient
-degree-`n` piece under the canonical quotient map. -/
+/-- Image degree piece on a homogeneous module quotient.
+
+For Q = M/H with H homogeneous, define Q_n = q(M_n) under the A-linear canonical quotient q :
+M → M/H. This is an A-submodule of the quotient. -/
 def quotientGrade (n : ℕ) : Submodule A (M ⧸ N.toSubmodule) :=
   (Mgrade n).map ((N.toSubmodule.mkQ).restrictScalars A)
 
-/-- A quotient class lies in degree `n` exactly when it has a representative
-in the ambient degree-`n` piece. -/
+/-- Homogeneous representative criterion for a quotient grade.
+
+A class y ∈ M/H belongs to Q_n exactly when there exists x ∈ M_n with q(x) = y. Thus the
+quotient grade is described by homogeneous representatives of degree n. -/
 @[simp]
 theorem mem_quotientGrade_iff (n : ℕ) (q : M ⧸ N.toSubmodule) :
     q ∈ N.quotientGrade Sgrade Mgrade n ↔
@@ -86,21 +89,28 @@ theorem mem_quotientGrade_iff (n : ℕ) (q : M ⧸ N.toSubmodule) :
   · rintro ⟨x, rfl⟩
     exact ⟨x, x.2, rfl⟩
 
-/-- The inclusion of the inherited degree-`n` piece into the ambient
-degree-`n` piece. -/
+/-- Inclusion of an inherited submodule grade into the ambient grade.
+
+For a homogeneous H ⊆ M, restrict its inclusion to obtain the A-linear map H_n → M_n. It sends
+an element to the same underlying value in M. -/
 def gradeInclusion (n : ℕ) :
     N.grade Sgrade Mgrade n →ₗ[A] Mgrade n :=
   (((N.toSubmodule.subtype).restrictScalars A).domRestrict
     (N.grade Sgrade Mgrade n)).codRestrict (Mgrade n) (fun x ↦ x.2)
 
-/-- The component inclusion agrees with the underlying subtype inclusion. -/
+/-- Value of the inherited grade inclusion.
+
+For x ∈ H_n, gradeInclusion maps x to its underlying element of M, equipped with its
+membership in M_n. Both nested subtype values retain the given inclusion H → M. -/
 @[simp]
 theorem gradeInclusion_apply (n : ℕ)
     (x : N.grade Sgrade Mgrade n) :
     N.gradeInclusion Sgrade Mgrade n x = ⟨(x : N.toSubmodule), x.2⟩ :=
   rfl
 
-/-- The component inclusion is injective. -/
+/-- Injectivity of the inherited grade inclusion.
+
+For every n, the A-linear map H_n → M_n induced by the inclusion H → M is injective. -/
 theorem gradeInclusion_injective (n : ℕ) :
     Function.Injective (N.gradeInclusion Sgrade Mgrade n) := by
   intro x y h
@@ -108,28 +118,37 @@ theorem gradeInclusion_injective (n : ℕ) :
   apply Subtype.ext
   exact congrArg (fun z : Mgrade n ↦ (z : M)) h
 
-/-- The canonical projection from the ambient degree-`n` piece onto the
-degree-`n` quotient piece. -/
+/-- Projection from an ambient grade to its quotient grade.
+
+For homogeneous H ⊆ M and Q = M/H, restrict the canonical quotient q to M_n and its image Q_n.
+This defines the A-linear map M_n → Q_n. -/
 def gradeQuotient (n : ℕ) :
     Mgrade n →ₗ[A] N.quotientGrade Sgrade Mgrade n :=
   (((N.toSubmodule.mkQ).restrictScalars A).domRestrict (Mgrade n)).codRestrict
     (N.quotientGrade Sgrade Mgrade n) (fun x ↦ ⟨x, x.2, rfl⟩)
 
-/-- The component quotient map agrees with the canonical quotient map. -/
+/-- Value of the degreewise quotient projection.
+
+For x ∈ M_n, the value of gradeQuotient, viewed in M/H, is the canonical quotient class q(x). -/
 @[simp]
 theorem gradeQuotient_apply (n : ℕ) (x : Mgrade n) :
     (N.gradeQuotient Sgrade Mgrade n x : M ⧸ N.toSubmodule) =
       N.toSubmodule.mkQ (x : M) :=
   rfl
 
-/-- The component quotient map is surjective onto its image piece. -/
+/-- Surjectivity onto the image quotient grade.
+
+For each n, the degreewise quotient M_n → Q_n is surjective, since Q_n is defined as the image
+of M_n under the canonical quotient. -/
 theorem gradeQuotient_surjective (n : ℕ) :
     Function.Surjective (N.gradeQuotient Sgrade Mgrade n) := by
   rintro ⟨q, x, hx, rfl⟩
   exact ⟨⟨x, hx⟩, rfl⟩
 
-/-- In each degree, the inherited submodule piece, ambient piece, and
-quotient piece form an exact sequence. -/
+/-- Exactness of inherited and quotient degree maps.
+
+For homogeneous H ⊆ M, the A-linear pair H_n → M_n → Q_n is exact at M_n. A degree-n element
+has zero quotient class exactly when it lies in H_n. -/
 theorem grade_exact (n : ℕ) :
     Function.Exact (N.gradeInclusion Sgrade Mgrade n)
       (N.gradeQuotient Sgrade Mgrade n) := by
@@ -152,7 +171,11 @@ theorem grade_exact (n : ℕ) :
     apply Subtype.ext
     exact (Submodule.Quotient.mk_eq_zero N.toSubmodule).mpr y.1.2
 
-/-- The inherited degree pieces are stable under the graded scalar action. -/
+/-- Graded scalar action on inherited submodule pieces.
+
+For the graded S-module M and homogeneous S-submodule H, multiplication by s ∈ S_i sends H_j
+into H_{i+j}. Membership in H follows from its S-submodule structure, and degree membership
+follows from the graded action on M. -/
 instance gradeGradedSMul :
     SetLike.GradedSMul Sgrade (N.grade Sgrade Mgrade) where
   smul_mem := by
@@ -160,8 +183,10 @@ instance gradeGradedSMul :
     change (s • (x : M)) ∈ Mgrade (i + j)
     exact SetLike.GradedSMul.smul_mem (A := Sgrade) (B := Mgrade) hs hx
 
-/-- The image degree pieces on the quotient are stable under the graded
-scalar action. -/
+/-- Graded scalar action on quotient image pieces.
+
+For Q = M/H and Q_j = q(M_j), multiplication by s ∈ S_i sends Q_j into Q_{i+j}. Choose a
+degree-j representative and multiply it in M, then use the quotient's S-linear action. -/
 instance quotientGradeGradedSMul :
     SetLike.GradedSMul Sgrade (N.quotientGrade Sgrade Mgrade) where
   smul_mem := by

@@ -1,4 +1,5 @@
-# Surjective Scalar Base Change Iso hom tmul image
+# The quotient base-change comparison on a scalar image
 
-On scalar images, the genuine base-change comparison has its
-literal target scalar value.
+The quotient base-change comparison on a scalar image.
+
+For s ∈ S and r ∈ R, the comparison sends s ⊗ φ(r) to ψ(γ(r)s).

@@ -24,16 +24,14 @@ public import Mathlib.RingTheory.Noetherian.Basic
 /-!
 # Faithfully flat descent of projective-dimension bounds
 
-For a finite module over a Noetherian ring, a projective-dimension bound can
-be checked after faithfully flat base change.  The proof inducts on the bound
-using finite free covers and the short-exact projective-dimension API.
+Let R be a commutative Noetherian ring, S a faithfully flat commutative R-algebra and M a
+finite R-module. For a natural number n, a projective-dimension bound pd_S(S ⊗[R] M) ≤ n
+implies pd_R(M) ≤ n.
 
-The `Small` hypothesis is the standard universe boundary required to form a
-finite free cover in the same module-category universe as the source module.
-
-## Main declaration
-
-* `ModuleCat.hasProjectiveDimensionLE_of_tensorProduct_of_faithfullyFlat`
+The scalar types R,S and the module type M have universes u,v,w. The statement retains
+Small.{w} R, meaning that R admits a representative in the carrier universe of M. Finite free
+presentations and their kernels give the induction on n, while flatness preserves the short
+exact sequence after tensoring.
 -/
 
 @[expose] public section
@@ -49,8 +47,12 @@ universe u v w
 
 namespace ModuleCat
 
-/-- A projective-dimension bound for a finite module over a Noetherian ring
-descends from any faithfully flat base change. -/
+/-- Projective-dimension bound descended from faithful flat scalar extension.
+
+Let R : Type u be commutative Noetherian, S : Type v a faithfully flat commutative R-algebra
+and M : Type w a finite R-module, with Small.{w} R. For every n : ℕ, if ModuleCat.of S (S ⊗[R]
+M) has projective dimension at most n, then ModuleCat.of R M has projective dimension at most
+n. -/
 theorem hasProjectiveDimensionLE_of_tensorProduct_of_faithfullyFlat
     {R : Type u} {S : Type v}
     [CommRing R] [CommRing S] [Algebra R S]

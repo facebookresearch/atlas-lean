@@ -1,7 +1,7 @@
-# Of free isos
+# Local freeness from free sheaves on a covering family
 
-A sheaf of modules presented by free sheaves over a cover is locally
-free. Each chart contributes the tautological generators transported along
-its iso via Mathlib's `GeneratingSections.equivOfIso`; the resulting
-local generator data is shrunk into the site universe by
-`LocalGeneratorsData.isLocallyFree`.
+Let `C : Type u₁` have morphism universe `v₁`, `J` a Grothendieck topology, and `R : Sheaf J
+RingCat.{u}`. Assume weak additive sheafification and `WEqualsLocallyBijective` on every
+`J.over X`. For `M : SheafOfModules.{u} R`, a covering family `X : I → C` with `I : Type w`,
+sets `Ix i : Type u`, and isomorphisms `free_{R.over(X i)}(Ix i) ≅ M.over (X i)`, the sheaf
+`M` is locally free.

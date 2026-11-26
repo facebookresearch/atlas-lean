@@ -1,4 +1,5 @@
-# Surjective Scalar Base Change Iso hom tmul
+# The quotient base-change comparison on every pure tensor
 
-A commuting scalar square identifies the actual pure tensor with
-the original coefficient-map value multiplied by the target scalar.
+The quotient base-change comparison on every pure tensor.
+
+If δφ = ψγ, the comparison sends s ⊗ a to ψ(s)δ(a).

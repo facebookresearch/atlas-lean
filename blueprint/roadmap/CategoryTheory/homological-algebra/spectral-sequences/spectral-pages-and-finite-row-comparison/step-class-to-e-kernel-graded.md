@@ -1,3 +1,6 @@
-# Step Class To E kernel Graded
+# The step-class map in a kernel-filtration graded quotient
 
-Under endpoint vanishing, the class map agrees with the image-to-kernel graded projection.
+The step-class map in a kernel-filtration graded quotient.
+
+Under the endpoint vanishing hypotheses, the finite-window comparison gives the step-to-image
+map followed by the kernel-image identification and the graded quotient projection.

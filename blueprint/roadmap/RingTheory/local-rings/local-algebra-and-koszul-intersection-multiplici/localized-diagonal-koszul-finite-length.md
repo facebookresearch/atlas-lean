@@ -1,4 +1,6 @@
-# Localized Diagonal Koszul Finite Length
+# Finite homology data of the localized family Koszul complex
 
-The genuine local diagonal complex has finite-length homology in
-every degree, with the original finite-family cutoff.
+Finite homology data of the localized family Koszul complex.
+
+For finite I at the stated minimal prime, use quotient finiteness and the family-size bound to
+construct finite-length homology data.

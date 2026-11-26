@@ -34,38 +34,22 @@ public import Mathlib.CategoryTheory.Sites.Over
 public import MathlibExt.Algebra.Category.ModuleCat.Sheaf.ToSheafColimits
 
 /-!
-# Restriction and local-surjectivity toolkit for sheaves of modules
+# Slice restriction and local surjectivity of module sheaves
 
-General-site helpers shared by the finite-type, coherence, and finite-presentation
-developments. Every declaration is stated over an independent site
-(`{D : Type w} [Category.{v₂} D]`, coefficients in `AddCommGrpCat.{u}`) so it also
-applies on slice categories and iterated slices without extra hypotheses.
+Let `(D,K)` be a site and `S : Sheaf K RingCat.{u}`. A morphism of module sheaves is locally
+surjective when every target section lifts on a covering sieve. Local surjectivity implies
+epimorphy; the converse holds with additive sheafification and the locally-bijective
+comparison on `K`.
 
-Contents:
+Restriction to a slice and restriction along a base arrow preserve local surjectivity. These
+functors are additive and preserve kernels; with additive sheafification and the
+locally-bijective comparison on the base and slice sites, they preserve epimorphisms and
+cokernel projections. Direct and iterated slice module categories have a canonical
+equivalence.
 
-* `locallySurjective_of_epi` / `epi_of_locallySurjective`: an epi of sheaves of
-  modules is locally surjective on underlying presheaves, and conversely.
-* `locallySurjective_over` / `epi_over_of_epi`: both directions are preserved by
-  restriction to a slice (`overFunctor`), with no binary-product hypothesis.
-* `locallySurjective_overMap` / `epi_overMap_of_epi`: the same along an arrow of
-  the base site (`overMap`), without pullbacks.
-* `overOverEquivalence`: the iterated-slice equivalence
-  `SheafOfModules (S.over Y.left) ≌ SheafOfModules ((S.over X).over Y)`.
-* `preservesKernel_overFunctor`: restriction to a slice preserves
-  kernels (commutation iso is Mathlib's `PreservesKernel.iso`).
-* `mapCokernelPiOverIsColimit`: restriction to a slice sends a cokernel
-  projection to a cokernel projection.
-* `mapCokernelPiOverMapIsColimit` /
-  `preservesColimit_parallelPair_overMap`: restriction along a base arrow
-  sends cokernel projections to cokernel projections (hence preserves the
-  colimit of a `parallelPair` cokernel diagram), without pullbacks.
-* `Presentation.mapOfPreserves` / `Presentation.mapOfPreserves_isFinite`: transport a
-  presentation along a colimit-preserving functor; a transported finite
-  presentation is finite.
-* `LocalGeneratorsData.IsFiniteType.shrink`: finiteness descends through
-  `LocalGeneratorsData.shrink`.
-* `transported_section_eval`: sections of transported generators evaluate as
-  restrictions of the original sections.
+A module-sheaf presentation can be transported by an additive functor preserving its two
+generator coproducts, its relation cokernel diagram, and the unit sheaf. Finite presentations
+remain finite. The site and module-carrier universes are independent.
 -/
 
 @[expose] public section
@@ -76,10 +60,11 @@ open _root_.CategoryTheory CategoryTheory Limits
 
 namespace SheafOfModules
 
-/-- An epi of sheaves of modules is locally surjective on underlying
-presheaves. The forgetful functor `toSheaf` preserves colimits
-(`preservesColimitsOfShape_toSheaf`), hence epis, and for abelian sheaves
-epi is local surjectivity (`Sheaf.isLocallySurjective_iff_epi'`). -/
+/-- Let `D : Type w` have morphism universe `v₂`, `K` a Grothendieck topology, and `S : Sheaf K
+RingCat.{u}`. Assume additive sheafification of `AddCommGrpCat.{u}`-valued presheaves and
+`K.WEqualsLocallyBijective AddCommGrpCat.{u}`. For `f : M → N` between module sheaves of
+carrier universe `u`, epimorphy of `f` implies local surjectivity of its underlying additive
+presheaf morphism on `K`. -/
 lemma locallySurjective_of_epi {D : Type w} [Category.{v₂} D]
     {K : GrothendieckTopology D} {S : Sheaf K RingCat.{u}}
     [HasSheafify K AddCommGrpCat.{u}]
@@ -96,8 +81,10 @@ lemma locallySurjective_of_epi {D : Type w} [Category.{v₂} D]
   exact (Sheaf.isLocallySurjective_iff_epi' AddCommGrpCat.{u}
     ((SheafOfModules.toSheaf S).map f)).mpr hepi
 
-/-- A locally surjective morphism of sheaves of modules is an epimorphism,
-without using sheafification. -/
+/-- Let `(D,K)` be a site and `S : Sheaf K RingCat.{u}`. For `g : A → B` between module sheaves of
+carrier universe `u`, if every target section locally lifts through the underlying additive
+presheaf morphism, then `g` is an epimorphism. The local-lifting hypothesis is
+`Presheaf.IsLocallySurjective K ((PresheafOfModules.toPresheaf S.obj).map g.val)`. -/
 lemma epi_of_locallySurjective {D : Type w} [Category.{v₂} D]
     {K : GrothendieckTopology D} {S : Sheaf K RingCat.{u}}
     {A B : SheafOfModules.{u} S} (g : A ⟶ B)
@@ -107,9 +94,9 @@ lemma epi_of_locallySurjective {D : Type w} [Category.{v₂} D]
   have hg : Epi ((SheafOfModules.toSheaf S).map g) := inferInstance
   exact (SheafOfModules.toSheaf S).epi_of_epi_map hg
 
-/-- Local surjectivity is preserved by restriction to a slice.
-Given a cover trivializing a section over the base, the same data works over
-the slice, using that covers of the slice are detected on the base. -/
+/-- On a ringed site `(D,K,R)`, let `f : M → N` be a module-sheaf morphism whose underlying
+additive presheaf map is locally surjective. For `X∈D`, the map `(SheafOfModules.overFunctor R
+X).map f : M.over X → N.over X` is locally surjective on `K.over X`. -/
 lemma locallySurjective_over {D : Type w} [Category.{v₂} D]
     {K : GrothendieckTopology D} {R : Sheaf K RingCat.{u}}
     {M N : SheafOfModules.{u} R} (f : M ⟶ N)
@@ -123,9 +110,10 @@ lemma locallySurjective_over {D : Type w} [Category.{v₂} D]
   exact Presheaf.isLocallySurjective_whisker (K.over X) K (Over.forget X)
     ((PresheafOfModules.toPresheaf R.obj).map f.val)
 
-/-- Restriction to a slice preserves epis, with no binary-product hypothesis:
-combine the two directions above. The site and module universes are independent
-so this helper also applies on iterated slices. -/
+/-- Let `(D,K)` be a site and `S : Sheaf K RingCat.{u}`. Assume additive sheafification and the
+locally-bijective comparison on `K`. For an epimorphism `f : M → N` of module sheaves of
+carrier universe `u` and `X∈D`, `(SheafOfModules.overFunctor S X).map f` is an epimorphism
+over `S.over X`. -/
 lemma epi_over_of_epi {D : Type w} [Category.{v₂} D]
     {K : GrothendieckTopology D} {S : Sheaf K RingCat.{u}}
     [HasSheafify K AddCommGrpCat.{u}]
@@ -136,11 +124,9 @@ lemma epi_over_of_epi {D : Type w} [Category.{v₂} D]
   apply locallySurjective_over
   exact locallySurjective_of_epi f
 
-/-- Local surjectivity is preserved by `overMap` along an arrow of the base
-site. This mirrors `locallySurjective_over` (which handles `overFunctor`,
-i.e. pushforward along `Over.forget`); here we push forward along `Over.map g`.
-Both are `Presheaf.isLocallySurjective_whisker` for the cocontinuous
-`Over.forget` / `Over.map` functors. -/
+/-- Let `(D,K)` be a site, `S` a ring sheaf, `g : X → Y`, and `f : M → N` a module-sheaf morphism
+over `S.over Y`. If its underlying additive presheaf map is locally surjective on `K.over Y`,
+then `(SheafOfModules.overMap S g).map f` is locally surjective on `K.over X`. -/
 lemma locallySurjective_overMap {D : Type w} [Category.{v₂} D]
     {K : GrothendieckTopology D} {S : Sheaf K RingCat.{u}}
     {Y : D} {M N : SheafOfModules.{u} (S.over Y)} (f : M ⟶ N)
@@ -154,7 +140,10 @@ lemma locallySurjective_overMap {D : Type w} [Category.{v₂} D]
   exact Presheaf.isLocallySurjective_whisker (K.over X) (K.over Y) (Over.map g)
     ((PresheafOfModules.toPresheaf (S.over Y).obj).map f.val)
 
-/-- Restriction along a base arrow preserves epis without pullbacks. -/
+/-- Let `(D,K)` be a site and `S : Sheaf K RingCat.{u}`. Assume additive sheafification and the
+locally-bijective comparison on every `K.over X`. For `g : X → Y` and an epimorphism `f : M →
+N` between module sheaves over `S.over Y`, the restricted morphism `(SheafOfModules.overMap S
+g).map f` is an epimorphism over `S.over X`. -/
 lemma epi_overMap_of_epi {D : Type w} [Category.{v₂} D]
     {K : GrothendieckTopology D} {S : Sheaf K RingCat.{u}}
     [∀ X : D, HasSheafify (K.over X) AddCommGrpCat.{u}]
@@ -166,10 +155,10 @@ lemma epi_overMap_of_epi {D : Type w} [Category.{v₂} D]
   apply locallySurjective_overMap
   exact locallySurjective_of_epi f
 
-/-- Restriction to a slice is additive; zero preservation follows from
-Mathlib's `Functor.preservesZeroMorphisms_of_additive`. This shared instance
-supplies the `Additive` (hence `PreservesZeroMorphisms`) facts at the
-`overFunctor` use sites, which are `inferInstance` calls. -/
+/-- For a site `(D,K)`, a ring sheaf `S : Sheaf K RingCat.{u}`, and `X∈D`, the functor
+`SheafOfModules.overFunctor S X` is additive: for module-sheaf morphisms `f,g` with the same
+source and target, it sends `f+g` to the sum of their restrictions. In particular, it
+preserves the zero morphism. -/
 instance overFunctor_additive {D : Type w} [Category.{v₂} D]
     {K : GrothendieckTopology D} (S : Sheaf K RingCat.{u}) (X : D) :
     (_root_.SheafOfModules.overFunctor S X).Additive where
@@ -178,12 +167,9 @@ instance overFunctor_additive {D : Type w} [Category.{v₂} D]
     ext Y y
     rfl
 
-/-- Restriction along a base arrow is additive; zero preservation follows from
-Mathlib's `Functor.preservesZeroMorphisms_of_additive`. This shared instance
-supplies the `Additive` facts at the `overMap` use sites, which are
-`inferInstance` calls (two use sites keep a `.{u}` ascription, with an
-`inferInstance` proof, for universe pinning: `Coherent.lean` and the
-`MathlibExtTest` transport client). -/
+/-- For a site `(D,K)`, a ring sheaf `S : Sheaf K RingCat.{u}`, and `f : X → Y`, the functor
+`SheafOfModules.overMap S f` from module sheaves over `S.over Y` to those over `S.over X` is
+additive. It preserves sums of morphisms and the zero morphism. -/
 instance overMap_additive {D : Type w} [Category.{v₂} D]
     {K : GrothendieckTopology D} (S : Sheaf K RingCat.{u}) {X Y : D} (f : X ⟶ Y) :
     (_root_.SheafOfModules.overMap S f).Additive where
@@ -192,7 +178,9 @@ instance overMap_additive {D : Type w} [Category.{v₂} D]
     ext U x
     rfl
 
-/-- Restriction to a slice preserves the kernel of a specified map. -/
+/-- On a site `(D,K)` with `S : Sheaf K RingCat.{u}`, let `φ : M → N` be a morphism of module
+sheaves of carrier universe `u`. For `X∈D`, the functor `SheafOfModules.overFunctor S X`
+preserves the limit of `parallelPair φ 0`, hence preserves the kernel of `φ`. -/
 instance preservesKernel_overFunctor {D : Type w} [Category.{v₂} D]
     {K : GrothendieckTopology D} {S : Sheaf K RingCat.{u}}
     {M N : SheafOfModules.{u} S} (φ : M ⟶ N) (X : D) :
@@ -215,8 +203,10 @@ instance preservesKernel_overFunctor {D : Type w} [Category.{v₂} D]
   exact preservesLimit_of_reflects_of_preserves (_root_.SheafOfModules.overFunctor S X)
     (SheafOfModules.forget (S.over X))
 
-/-- Doubly restricted sheaves `(M.over X).over Y` identify with
-`M.over Y.left` through `Over.iteratedSliceEquiv` and the identity ring maps. -/
+/-- Let `D : Type w` have morphism universe `v₂`, `K` a Grothendieck topology, `S : Sheaf K
+RingCat.{u}`, `X∈D`, and `Y∈Over X`. The canonical slice equivalence induces
+`SheafOfModules.{u}(S.over Y.left) ≌ SheafOfModules.{u}((S.over X).over Y)`, using the
+identity coefficient-ring maps on the identified base objects. -/
 noncomputable abbrev overOverEquivalence {D : Type w} [Category.{v₂} D]
     {K : GrothendieckTopology D} {S : Sheaf K RingCat.{u}}
     {X : D} (Y : Over X) :
@@ -227,10 +217,11 @@ noncomputable abbrev overOverEquivalence {D : Type w} [Category.{v₂} D]
     (S := (S.over X).over Y) (R := S.over Y.left)
     (𝟙 _) (𝟙 _) (by ext : 2; exact S.1.map_id _) (by ext : 2; exact S.1.map_id _)
 
-/-- Shared cokernel step for `mapCokernelPiOverIsColimit` and
-`mapCokernelPiOverMapIsColimit`: an epi- and kernel-preserving additive
-functor sends a cokernel projection to a cokernel projection, via exactness
-of the mapped kernel/cokernel sequences. -/
+/-- Let `(D₁,K₁,S₁)` and `(D₂,K₂,S₂)` be ringed sites, with rings and module carriers in universe
+`u`, and additive sheafification with the locally-bijective comparison on both sites. Suppose
+an additive functor `F : SheafOfModules S₁ → SheafOfModules S₂` preserves epimorphisms and the
+limits of every `parallelPair f 0`. For any `φ : M → N`, the cofork with point `F(coker φ)`
+and projection `F(cokernel.π φ)` is a colimit cofork of `F(φ)` and zero. -/
 noncomputable def isColimitMapCokernelPiOfEpiOfKernel
     {D₁ : Type w} [Category.{v₂} D₁]
     {K₁ : GrothendieckTopology D₁} {S₁ : Sheaf K₁ RingCat.{u}}
@@ -259,13 +250,20 @@ noncomputable def isColimitMapCokernelPiOfEpiOfKernel
   exact isColimitOfHasCokernelOfPreservesColimit F φ
 
 
-/-- Deprecated alias for `isColimitMapCokernelPiOfEpiOfKernel`. -/
+/-- Let two ringed sites have additive sheafification and the locally-bijective comparison at a
+common module universe `u`. For an additive functor `F` between their module-sheaf categories,
+assume preservation of epimorphisms and every kernel limit `parallelPair f 0`. Then for each
+morphism `φ`, the image `F(cokernel.π φ)` exhibits `F(coker φ)` as a cokernel of `F(φ)`, with
+relation `F(φ) ≫ F(cokernel.π φ)=0`. -/
 @[deprecated isColimitMapCokernelPiOfEpiOfKernel (since := "2026-10-29"),
   nolint defsWithUnderscore]
 alias isColimit_mapCokernelPi_of_epi_of_kernel := isColimitMapCokernelPiOfEpiOfKernel
 
 
-/-- Restricting a cokernel projection to a slice remains a cokernel projection. -/
+/-- Let `(D,K)` be a site and `S : Sheaf K RingCat.{u}`. Assume additive sheafification and the
+locally-bijective comparison on `K` and all `K.over X`. For `φ : M → N` between module sheaves
+of carrier universe `u` and `X∈D`, set `F=SheafOfModules.overFunctor S X`. The cofork with
+point `F(coker φ)` and projection `F(cokernel.π φ)` is a colimit cofork of `F(φ)` and zero. -/
 noncomputable def mapCokernelPiOverIsColimit
     {D : Type w} [Category.{v₂} D]
     {K : GrothendieckTopology D} {S : Sheaf K RingCat.{u}}
@@ -288,9 +286,10 @@ noncomputable def mapCokernelPiOverIsColimit
       exact epi_over_of_epi f X⟩
     (fun f => preservesKernel_overFunctor f X) φ
 
-/-- Finiteness descends through `LocalGeneratorsData.shrink`: since the shrunk
-generators are a subfamily of the original ones, finiteness is inherited
-pointwise. -/
+/-- Let `(D,K)` be a site, `S : Sheaf K RingCat.{u}`, and assume weak additive sheafification and
+the locally-bijective comparison on every slice `K.over X`. For a module sheaf `M` and local
+generator data `q`, if every chart's generating family is finite (`q.IsFiniteType`), then
+`q.shrink.IsFiniteType`. Each shrunk chart uses a selected generating family from `q`. -/
 theorem LocalGeneratorsData.IsFiniteType.shrink {D : Type w} [Category.{v₂} D]
     {K : GrothendieckTopology D} {S : Sheaf K RingCat.{u}}
     [∀ X : D, HasWeakSheafify (K.over X) AddCommGrpCat.{u}]
@@ -300,8 +299,12 @@ theorem LocalGeneratorsData.IsFiniteType.shrink {D : Type w} [Category.{v₂} D]
     q.shrink.IsFiniteType where
   isFiniteType i := hq.isFiniteType (i.2.choose)
 
-/-- Sections of transported generators evaluate as restrictions of the original
-sections. -/
+/-- Let `(D,K)` be a site with pullbacks, `S : Sheaf K RingCat.{u}`, and additive sheafification
+with the locally-bijective comparison on all slices. For a module sheaf `M`, a generating
+family `G` of `M.over Y`, and `q : V → Y`, transport `G` along `overMap S q` and the canonical
+comparison to `M.over V`. For `k∈G.I` and `U'∈(Over V)ᵒᵖ`, its generator value equals `(G.s
+k).eval (op (Over.mk (U'.unop.hom ≫ q)))`: the source section evaluated on the composite arrow
+to `Y`. -/
 lemma transported_section_eval {D : Type w} [Category.{v₂} D]
     {K : GrothendieckTopology D} {S : Sheaf K RingCat.{u}}
     [∀ X : D, HasSheafify (K.over X) AddCommGrpCat.{u}]
@@ -375,8 +378,10 @@ lemma transported_section_eval {D : Type w} [Category.{v₂} D]
   rw [hss] at hco
   exact hco.symm
 
-/-- Restricting a cokernel projection along a base arrow remains a cokernel
-projection. -/
+/-- Let `(D,K)` be a site and `S : Sheaf K RingCat.{u}`, with additive sheafification and the
+locally-bijective comparison on every slice. For `g : X → Y` and `φ : M → N` over `S.over Y`,
+put `F=SheafOfModules.overMap S g`. The image `F(cokernel.π φ)` is a colimit cofork projection
+for `F(φ)` and zero, with point `F(coker φ)`. -/
 noncomputable def mapCokernelPiOverMapIsColimit
     {D : Type w} [Category.{v₂} D]
     {K : GrothendieckTopology D} {S : Sheaf K RingCat.{u}}
@@ -418,8 +423,10 @@ noncomputable def mapCokernelPiOverMapIsColimit
         (_root_.SheafOfModules.overMap S g)
         (SheafOfModules.forget (S.over X))) φ
 
-/-- Restriction along a base arrow preserves the colimit of a `parallelPair`
-cokernel diagram. -/
+/-- Let `(D,K)` be a site and `S : Sheaf K RingCat.{u}`. Assume additive sheafification and the
+locally-bijective comparison on every slice `K.over X`. For `g : X → Y` and `φ : M → N`
+between module sheaves over `S.over Y`, the functor `SheafOfModules.overMap S g` preserves the
+colimit of `parallelPair φ 0`, hence the cokernel of `φ`. -/
 lemma preservesColimit_parallelPair_overMap
     {D : Type w} [Category.{v₂} D]
     {K : GrothendieckTopology D} {S : Sheaf K RingCat.{u}}
@@ -443,12 +450,14 @@ lemma preservesColimit_parallelPair_overMap
     (CokernelCofork.isColimitMapCoconeEquiv _ _).symm hmap
   exact preservesColimit_of_preserves_colimit_cocone hcolim hmapCocone
 
-/-- Transport a presentation along a colimit-preserving functor: the image of
-the generator epi, with relations transported through the free comparison
-isos. Needs only shape-colimit preservation for the two discrete index types
-plus preservation of the single relation colimit. This cannot use Mathlib's
-`Presentation.map`, which needs `PreservesColimitsOfSize.{u, u}` (whose
-derivation needs `HasPullbacks`, absent at the call site). -/
+/-- Let `(D₁,K₁,S₁)` and `(D₂,K₂,S₂)` be ringed sites with rings/modules in universe `u`, and
+additive sheafification with the locally-bijective comparison on both sites. Let `P` present a
+module sheaf `M`, with generator set `I_G`, relation set `I_R`, and relation map `r :
+free(I_R) → free(I_G)` equal to the relation-generating map followed by `kernel.ι
+P.generators.π`. For an additive functor `F`, assume preservation of `Discrete I_G`- and
+`Discrete I_R`-colimits and of `parallelPair r 0`, and give `η : unit S₂ ≅ F(unit S₁)`. Then
+`P.mapOfPreserves F η hF` is a presentation of `F(M)` with the transported generator and
+relation families. -/
 noncomputable def Presentation.mapOfPreserves
     {D₁ : Type w} [Category.{v₂} D₁]
     {K₁ : GrothendieckTopology D₁} {S₁ : Sheaf K₁ RingCat.{u}}
@@ -492,7 +501,12 @@ noncomputable def Presentation.mapOfPreserves
   exact (Cocone.ext (Iso.refl _) <| by rintro (_ | _)
     <;> simp [d, g, ← Functor.map_comp])
 
-/-- A transported finite presentation is finite. -/
+/-- Let two ringed sites have additive sheafification and the locally-bijective comparison at
+module universe `u`. Suppose `P` is a presentation of `M` whose generator and relation index
+sets are finite. Let `F` be additive, preserve the coproducts indexed by both sets and the
+cokernel diagram of the relation map `r : free(I_R) → free(I_G)`, and let `η : unit S₂ ≅
+F(unit S₁)`. Then `(P.mapOfPreserves F η hF).IsFinite`: the presentation of `F(M)` has finite
+generator and relation families. -/
 instance Presentation.mapOfPreserves_isFinite
     {D₁ : Type w} [Category.{v₂} D₁]
     {K₁ : GrothendieckTopology D₁} {S₁ : Sheaf K₁ RingCat.{u}}

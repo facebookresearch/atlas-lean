@@ -10,6 +10,14 @@ module
 
 public import MathlibExt.Algebra.Homology.TensorHomotopy
 
+/-!
+# Naturality of a tensor homotopy
+
+For homotopies from projectors p_K,p_L to identities and corresponding target homotopies,
+assume componentwise naturality with maps a,b and the second-projector square p_L b = b p_L′.
+The combined tensor homotopy commutes in every component with a⊗b.
+-/
+
 @[expose] public section
 
 set_option autoImplicit false
@@ -27,8 +35,10 @@ variable {C : Type u} [Category.{v} C] [Preadditive C] [MonoidalCategory C]
   [(curriedTensor C).Additive]
   [∀ Z : C, ((curriedTensor C).obj Z).Additive]
 
-/-- The tensor homotopy is natural with respect to maps intertwining its
-component homotopies and the projector on the second tensor factor. -/
+/-- The tensor homotopy components commute with compatible maps.
+
+Under the supplied component homotopy squares and second-projector compatibility,
+h_tensor(i,j) followed by (a⊗b)_j equals (a⊗b)_i followed by the target tensor homotopy. -/
 theorem tensorHomotopy_hom_naturality
     {K K' L L' : ChainComplex C ℕ}
     {pK : K ⟶ K} {pK' : K' ⟶ K'}

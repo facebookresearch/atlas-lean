@@ -1,3 +1,6 @@
-# Mixed Page Associativity
+# The mixed associativity law at a fixed page
 
-Mixed associativity is the equality of the original four native page products and original output map.
+The mixed associativity law at a fixed page.
+
+Record the triple-product equality for the four pairings and γ, including the monoidal
+associator and additive bidegree transport.

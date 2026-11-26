@@ -31,30 +31,25 @@ public import MathlibExt.Algebra.Category.ModuleCat.Sheaf.OverLocalSurjective
 public import MathlibExt.CategoryTheory.Sites.CoversTop
 
 /-!
-# Coherence for sheaves of modules — general ringed site
+# Coherent module sheaves on a ringed site
 
-General-site coherence (Stacks 01BV):
+Let `C : Type u` have morphism universe `v₁`, `J` be a Grothendieck topology, and `R : Sheaf J
+RingCat.{u}`. Assume additive sheafification and the locally-bijective comparison on `J` and
+its first slice sites, together with weak additive sheafification and the same comparison on
+second and third iterated slices.
 
-A sheaf of modules `M` over `R : Sheaf J RingCat` is coherent if
-- it is finite type
-- for every `U : C` and every `n` and every map `φ : (O_U)^n ⟶ M|_U`, `ker φ` is finite type
+A module sheaf `M` is coherent when it is finite type and, for every `X∈C`, every `n : ℕ`, and
+every morphism `R_X^{⊕n} → M.over X`, the kernel is finite type. The ring sheaf is coherent
+when the corresponding kernel test holds for morphisms `R_X^{⊕n} → R_X`. These tests quantify
+over all restrictions.
 
-The local quantification over every `U` is essential: a sheaf may have very few
-global sections, so testing only `φ : O^n ⟶ M` on the whole space is strictly weaker
-than Stacks 01BV and would not imply `IsFinitePresentation`.
+Coherent module sheaves are closed under cokernels. Over a coherent ring sheaf, coherence is
+equivalent to local finite presentation. Local generators, finite free epimorphisms, and
+comparisons between direct and iterated slices give these statements.
 
-Over a coherent base ring sheaf `R`, this is equivalent to `IsFinitePresentation`
-(Stacks 01BZ, 01BY). The further equivalence `IsCoherent ↔ IsQuasicoherent ∧ IsFiniteType`
-is **false** over a merely coherent ring: e.g. `R = k[x₁,x₂,…]` is coherent,
-`M = R/(x₁,x₂,…)` is cyclic hence FT and QC but not FP, hence not coherent.
-`QC ∧ FT ↔ Coherent` needs locally Noetherian (Stacks 01XZ): in this
-repository it appears only as a comparison theorem under `[IsLocallyNoetherian X]`
-at the scheme layer.
+## References
 
-When `R` is a coherent ring sheaf, TFAE for `M`:
-(i) locally finitely presented (IsFinitePresentation)
-(ii) coherent (IsCoherent)
-`QC ∧ FT` is a comparison theorem only under `[IsLocallyNoetherian]` (scheme layer).
+* Stacks Project, Tags 01BV, 01BY, and 01BZ.
 -/
 
 @[expose] public section
@@ -80,7 +75,10 @@ variable {C : Type u} [Category.{v₁} C] {J : GrothendieckTopology C}
 
 namespace SheafOfModules
 
-/-- Sheafification transports from an ordinary slice to the corresponding iterated slice. -/
+/-- Let `D : Type w` have morphism universe `v₂`, `K` a Grothendieck topology, `X∈D`, and `Y∈Over
+X`. If additive sheafification exists on the direct slice `K.over Y.left` at carrier universe
+`u`, then it exists on the iterated slice `(K.over X).over Y`. The two sites are related by
+the canonical equivalence between the direct and iterated slice categories. -/
 private theorem hasSheafifyIteratedSlice
     {D : Type w} [Category.{v₂} D]
     (K : GrothendieckTopology D) (X : D) (Y : Over X)
@@ -93,8 +91,12 @@ private theorem hasSheafifyIteratedSlice
   exact Functor.IsDenseSubsite.hasSheafify_of_isEquivalence
     (K.over Y.left) ((K.over X).over Y) (Over.iteratedSliceEquiv Y).inverse
 
-/-- Compare free sheaves through a functor preserving the indexing coproduct,
-using only weak sheafification on the target. -/
+/-- Let `(D,K)` and `(D',K')` be sites of object universe `w` and morphism universe `v₂`, with
+ring sheaves `S,S'` and module carriers in universe `u`. Assume weak additive sheafification
+and the locally-bijective comparison on both sites. For `F : SheafOfModules S → SheafOfModules
+S'`, `I : Type u`, preservation of `Discrete I`-colimits, and an isomorphism `η : unit S' ≅
+F(unit S)`, there is an isomorphism `free_{S'} I ≅ F(free_S I)` induced by the two coproduct
+cocones and `η`. -/
 private noncomputable def weakMapFreeIso
     {D D' : Type w} [Category.{v₂} D] [Category.{v₂} D']
     {K : GrothendieckTopology D} {K' : GrothendieckTopology D'}
@@ -193,10 +195,13 @@ private lemma ιFree_finiteFreeOverIso_hom
     (Discrete.natTrans (fun _ ↦ (Iso.refl (_root_.SheafOfModules.unit (S.over X))).hom))
     (Discrete.mk i)
 
-/-- An equivalence transports generating sections under weak sheafification.
-Unlike `GeneratingSections.map`, this needs no strong sheafification instance
-on the target: the free comparison is built directly from its coproduct
-universal property. -/
+/-- Let `(D,K,S)` and `(D',K',S')` be ringed sites with object universe `w`, morphism universe
+`v₂`, and module/ring carrier universe `u`. Assume weak additive sheafification and the
+locally-bijective comparison on both sites. For `M : SheafOfModules S`, a generating family
+`G`, an equivalence `E : SheafOfModules S ≌ SheafOfModules S'`, and `η : unit S' ≅
+E.functor(unit S)`, the image `E.functor(M)` has a generating family with index set `G.I` and
+presentation map `free_{S'}(G.I) ≅ E.functor(free_S(G.I)) → E.functor(M)` obtained from
+`E.functor(G.π)`. -/
 private noncomputable def _root_.SheafOfModules.GeneratingSections.mapEquivalenceWeak
     {D D' : Type w} [Category.{v₂} D] [Category.{v₂} D']
     {K : GrothendieckTopology D} {K' : GrothendieckTopology D'}
@@ -231,9 +236,11 @@ private instance _root_.SheafOfModules.GeneratingSections.mapEquivalenceWeak_isF
     (G.mapEquivalenceWeak E η).IsFiniteType where
   finite := inferInstanceAs (Finite G.I)
 
-/-- A quotient of a finite-type sheaf is finite type, with no binary-product
-hypothesis (using `epi_over_of_epi`). The statement quantifies an
-independent site universe so it applies after passing to a slice category. -/
+/-- Let `D : Type w` have morphism universe `v₂`, `K` a Grothendieck topology, and `S : Sheaf K
+RingCat.{u}`. Assume additive sheafification and the locally-bijective comparison on `K`, and
+weak additive sheafification with the same comparison on every `K.over X`. If `f : M → N` is
+an epimorphism of module sheaves of carrier universe `u` and `M` is finite type, then `N` is
+finite type. -/
 theorem isFiniteType_of_epi' {D : Type w} [Category.{v₂} D]
     {K : GrothendieckTopology D} {S : Sheaf K RingCat.{u}}
     [HasSheafify K AddCommGrpCat.{u}]
@@ -251,7 +258,10 @@ theorem isFiniteType_of_epi' {D : Type w} [Category.{v₂} D]
     have := hσ.isFiniteType i
     infer_instance
 
-/-- Restriction to a slice preserves the specified cokernel. -/
+/-- Let `(D,K)` be a site and `S : Sheaf K RingCat.{u}`. Assume additive sheafification and the
+locally-bijective comparison on `K` and every `K.over X`. For `φ : M → N` between module
+sheaves of carrier universe `u` and `X∈D`, `SheafOfModules.overFunctor S X` preserves the
+colimit of `parallelPair φ 0`, hence preserves the specified cokernel of `φ`. -/
 private theorem preservesCokernel_overFunctor
     {D : Type w} [Category.{v₂} D]
     {K : GrothendieckTopology D} {S : Sheaf K RingCat.{u}}
@@ -266,27 +276,33 @@ private theorem preservesCokernel_overFunctor
   apply (CokernelCofork.isColimitMapCoconeEquiv _ (_root_.SheafOfModules.overFunctor S X)).2
   exact mapCokernelPiOverIsColimit φ X
 
-/-- A sheaf of rings `R` is coherent if for every `X : C` the kernel of every
-map `free (Fin n) ⟶ unit` over `R.over X` is finite type. This is the local
-version of the condition `O^n → O`. -/
+/-- Let `C : Type u` have morphism universe `v₁`, `J` be a Grothendieck topology, and `R : Sheaf J
+RingCat.{u}`. Assume additive sheafification of `AddCommGrpCat.{u}`-valued presheaves and
+`WEqualsLocallyBijective` on every `J.over X`. The property `IsCoherentRing R` requires that,
+for every `X∈C`, `n : ℕ`, and morphism `φ : free_{R.over X}(ULift (Fin n)) → unit_{R.over X}`,
+the kernel is finite type over `R.over X`. Its field is `kernel_finiteType`. -/
 class IsCoherentRing (R : Sheaf J RingCat.{u}) : Prop where
   kernel_finiteType : ∀ (X : C) {n : ℕ}
     (φ : _root_.SheafOfModules.free (R := R.over X) (ULift.{u} (Fin n)) ⟶
       (_root_.SheafOfModules.unit (R := R.over X) : SheafOfModules.{u} (R.over X))),
     _root_.SheafOfModules.IsFiniteType (R := R.over X) (Limits.kernel φ)
 
-/-- A sheaf of modules `M` over `R` is coherent if it is finite type and
-for every `X : C` the kernel of every map `free (Fin n) ⟶ M.over X` over
-`R.over X` is finite type. This quantifies over every restriction `M|_U`
-as in Stacks 01BV; testing only global `O^n → M` would be strictly
-weaker. -/
+/-- Let `C : Type u` have morphism universe `v₁`, `J` be a Grothendieck topology, and `R : Sheaf J
+RingCat.{u}`, with additive sheafification and `WEqualsLocallyBijective` on every slice
+`J.over X`. A module sheaf `M : SheafOfModules.{u} R` is coherent if `M` is finite type and
+every kernel of `φ : free_{R.over X}(ULift (Fin n)) → M.over X` is finite type, for all `X∈C`
+and `n : ℕ`. The two fields are `finiteType` and `kernel_finiteType`. -/
 class IsCoherent (M : SheafOfModules.{u} R) : Prop where
   finiteType : _root_.SheafOfModules.IsFiniteType (R := R) M
   kernel_finiteType : ∀ (X : C) {n : ℕ}
     (φ : _root_.SheafOfModules.free (R := R.over X) (ULift.{u} (Fin n)) ⟶ M.over X),
     _root_.SheafOfModules.IsFiniteType (R := R.over X) (Limits.kernel φ)
 
-/-- `IsCoherent` as an `ObjectProperty`, mirroring `isQuasicoherent`. -/
+/-- Let `C : Type u` have morphism universe `v₁`, `J` be a Grothendieck topology, and `R : Sheaf J
+RingCat.{u}`, with additive sheafification and the locally-bijective comparison on every
+slice. The object property `isCoherent` on `SheafOfModules.{u} R` assigns `IsCoherent M` to
+`M`: finite type of `M` together with finite type of every kernel of a finite-free morphism to
+every restriction `M.over X`. -/
 abbrev isCoherent : ObjectProperty (SheafOfModules.{u} R) :=
   IsCoherent
 
@@ -304,7 +320,10 @@ omit [HasSheafify J AddCommGrpCat.{u}]
     HasWeakSheafify (((J.over X).over Y).over Z) AddCommGrpCat.{u}]
   [∀ (X : C) (Y : Over X) (Z : Over Y),
     (((J.over X).over Y).over Z).WEqualsLocallyBijective AddCommGrpCat.{u}] in
-/-- Finite generating sections yield an epi from a finite free module. -/
+/-- Let `C : Type u` be a site with ring sheaf `R`, and assume additive sheafification and the
+locally-bijective comparison on every slice. For `X∈C`, `N : SheafOfModules.{u} (R.over X)`,
+and a generating family `G` whose index set is finite, there exist `n : ℕ` and an epimorphism
+`π : free_{R.over X}(ULift.{u}(Fin n)) → N`. -/
 private theorem epiFreeFin_of_finiteGenerators {X : C}
     {N : SheafOfModules.{u} (R.over X)} (G : N.GeneratingSections) [G.IsFiniteType] :
     ∃ (n : ℕ) (π : _root_.SheafOfModules.free (R := R.over X) (ULift.{u} (Fin n)) ⟶ N), Epi π := by
@@ -344,8 +363,11 @@ omit [HasSheafify J AddCommGrpCat.{u}]
     HasWeakSheafify (((J.over X).over Y).over Z) AddCommGrpCat.{u}]
   [∀ (X : C) (Y : Over X) (Z : Over Y),
     (((J.over X).over Y).over Z).WEqualsLocallyBijective AddCommGrpCat.{u}] in
-/-- A module with an epi from a finite free whose kernel is finite type is
-finitely presented: restrict the presentation to a finite-type cover of the kernel. -/
+/-- Let `(C,J,R)` be a ringed site with object/ring/module universe `u`. Assume additive
+sheafification and the locally-bijective comparison on all first slices, and weak additive
+sheafification with that comparison on all second iterated slices. For `X∈C` and an
+epimorphism `π : free_{R.over X}(ULift.{u}(Fin n)) → N`, if `ker π` is finite type over
+`R.over X`, then `N` is locally finitely presented over `R.over X`. -/
 private theorem isFinitePresentation_of_epi_kernel_finiteType {X : C}
     {N : SheafOfModules.{u} (R.over X)}
     {n : ℕ} (π : _root_.SheafOfModules.free (R := R.over X) (ULift.{u} (Fin n)) ⟶ N) [Epi π]
@@ -489,7 +511,9 @@ instance isCoherent_unit_of_isCoherentRing [IsCoherentRing (R := R)] :
     intro X n φ
     exact IsCoherentRing.kernel_finiteType X φ
 
-/-- The equivalence between sheaves on an iterated slice and on the direct slice. -/
+/-- Let `D : Type w` have morphism universe `v₂`, `K` a Grothendieck topology, `S : Sheaf K
+RingCat.{u}`, `X∈D`, and `Y∈Over X`. The canonical slice equivalence induces
+`SheafOfModules.{u}(S.over Y.left) ≌ SheafOfModules.{u}((S.over X).over Y)`. -/
 private noncomputable abbrev kernelIteratedSliceEquivGeneral
     {D : Type w} [Category.{v₂} D]
     {K : GrothendieckTopology D} {S : Sheaf K RingCat.{u}}
@@ -498,14 +522,21 @@ private noncomputable abbrev kernelIteratedSliceEquivGeneral
       SheafOfModules.{u} ((S.over X).over Y) :=
   _root_.SheafOfModules.overOverEquivalence (S := S) Y
 
-/-- The iterated-slice equivalence for module sheaves over `R`. -/
+/-- Let `C : Type u` have morphism universe `v₁`, `J` a Grothendieck topology, `R : Sheaf J
+RingCat.{u}`, `X∈C`, and `Y∈Over X`. The equivalence `kernelIteratedSliceEquiv X Y` identifies
+module sheaves over `R.over Y.left` with module sheaves over `(R.over X).over Y`, along the
+canonical equivalence of the two slice sites. -/
 private noncomputable abbrev kernelIteratedSliceEquiv (X : C) (Y : Over X) :
     SheafOfModules.{u} (R.over Y.left) ≌
       SheafOfModules.{u} ((R.over X).over Y) :=
   kernelIteratedSliceEquivGeneral (S := R) X Y
 
-/-- Finite generating sections descend through an epimorphism after restriction
-to an iterated slice. -/
+/-- Let `D : Type w` have morphism universe `v₂`, `Ktop` a topology, and `S : Sheaf Ktop
+RingCat.{u}`. Assume strong and weak additive sheafification and the locally-bijective
+comparison on every first slice, and weak sheafification with that comparison on every second
+slice. For a sheaf `Kmod`, `X∈D`, `Y∈Over X`, an epimorphism `α : A → Kmod.over X`, and a
+finite generating family of `A.over Y`, there is a finite generating family of `Kmod.over
+Y.left`. The comparison uses the direct/iterated slice equivalence. -/
 private theorem kernelPieceGenerators
     {D : Type w} [Category.{v₂} D]
     {Ktop : GrothendieckTopology D} {S : Sheaf Ktop RingCat.{u}}
@@ -547,13 +578,11 @@ private theorem kernelPieceGenerators
       (kernelIteratedSliceEquivGeneral (S := S) X Y).symm (Iso.refl _)).ofEpi hiso.hom),
     ⟨(inferInstance : G.IsFiniteType).finite⟩⟩
 
-/-- Per-piece finite generators over a general slice, for nested covers.
-
-This is the site-universe-independent copy of `kernelPieceGenerators` used in
-`finiteType_kernel_to_coherent_over`, where the base is already a slice
-(`D = Over X`) and `kernelIteratedSliceEquiv` (tied to `C`) does not apply.
-The construction is identical, with an explicit generic
-`pushforwardPushforwardEquivalence` for the iterated slice. -/
+/-- Let `D : Type w` have morphism universe `v₂`, `K` a topology, and `S : Sheaf K RingCat.{u}`.
+Assume strong and weak additive sheafification and the locally-bijective comparison on every
+first slice, and weak sheafification with that comparison on every second slice. For `Kmod :
+SheafOfModules.{u} S`, `X∈D`, `Y∈Over X`, and an epimorphism `α : A → Kmod.over X`, a finite
+generating family of `A.over Y` yields a finite generating family of `Kmod.over Y.left`. -/
 private theorem kernelPieceGeneratorsOver
     {D : Type w} [Category.{v₂} D]
     {K : GrothendieckTopology D} {S : Sheaf K RingCat.{u}}
@@ -601,12 +630,11 @@ omit [HasSheafify J AddCommGrpCat.{u}]
     HasWeakSheafify (((J.over X).over Y).over Z) AddCommGrpCat.{u}]
   [∀ (X : C) (Y : Over X) (Z : Over Y),
     (((J.over X).over Y).over Z).WEqualsLocallyBijective AddCommGrpCat.{u}] in
-/-- Transport generating sections along `overMap`, using only weak
-sheafification on the target: the free comparison is built directly from its
-coproduct universal property (`weakMapFreeIso`). Unlike Mathlib's
-`GeneratingSections.map`, this needs no strong sheafification instance on the
-target and no colimit-preservation hypothesis on the functor beyond the
-supplied local-surjectivity proof. -/
+/-- Let `(C,J)` be a site with `C : Type u` and `R : Sheaf J RingCat.{u}`. For `Y,V∈C`, `M :
+SheafOfModules.{u}(R.over Y)`, a generating family `G` with finite index set, and `q : V → Y`,
+assume the underlying additive map of `G.π` is locally surjective on `J.over Y`. Then
+`(overMap R q).obj M` has a generating family indexed by `G.I`. Its presentation morphism is
+the finite-free comparison followed by `(overMap R q).map G.π`. -/
 private noncomputable def _root_.SheafOfModules.GeneratingSections.mapFinite {Y V : C}
     {M : SheafOfModules.{u} (R.over Y)} (G : M.GeneratingSections)
     (q : V ⟶ Y) [Finite G.I]
@@ -853,7 +881,11 @@ theorem isCoherent_kernel {M N : SheafOfModules.{u} R}
     choose gen hgen using piece
     exact ⟨⟨δ.I, δ.X, δ.coversTop, gen⟩, ⟨fun i ↦ hgen i⟩⟩
 
-/-- Cokernels of morphisms between coherent module sheaves are coherent. -/
+/-- Let `C : Type u` have morphism universe `v₁`, `J` a Grothendieck topology, and `R : Sheaf J
+RingCat.{u}`. Assume additive sheafification on `J` and first slices, weak additive
+sheafification on second and third iterated slices, and the locally-bijective comparison on
+all these sites. For coherent module sheaves `M,N` and any morphism `φ : M → N`,
+`Limits.cokernel φ` is a coherent `R`-module sheaf. -/
 theorem isCoherent_cokernel {M N : SheafOfModules.{u} R}
     [IsCoherent (R := R) M] [IsCoherent (R := R) N]
     (_φ : M ⟶ N) :

@@ -1,3 +1,6 @@
-# Step To Finite Representative middle Iso
+# Step representatives respect equal middle cuts
 
-Equality transport of a middle index retains the original full relative representatives.
+Step representatives respect equal middle cuts.
+
+The equality comparison of the middle index carries the step representative to its equal-index
+presentation.

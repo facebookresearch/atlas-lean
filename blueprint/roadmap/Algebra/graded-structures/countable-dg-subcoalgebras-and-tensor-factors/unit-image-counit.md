@@ -1,3 +1,7 @@
-# Unit Image Counit
+# Comonoid counit of the image of the monoidal unit
 
-The existing canonical counit from the native image of the trivial comonoid.
+Comonoid counit of the image of the monoidal unit.
+
+For an oplax monoidal functor F : C ⥤ D, the comonoid F.mapComon(Comon.trivial C) has a
+canonical comonoid morphism to Comon.trivial D. Its underlying arrow is the counit of the
+image comonoid.

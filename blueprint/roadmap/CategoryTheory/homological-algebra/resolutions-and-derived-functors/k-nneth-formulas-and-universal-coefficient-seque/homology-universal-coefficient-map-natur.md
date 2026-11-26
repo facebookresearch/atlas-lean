@@ -1,4 +1,6 @@
-# Homology Universal Coefficient Map naturality
+# Naturality of the canonical coefficient map in both inputs
 
-The canonical homological universal-coefficient map is natural in the
-chain complex and coefficient module.
+Naturality of the canonical coefficient map in both inputs.
+
+The tensor of H_n(f) with a followed by the target coefficient map equals the source
+coefficient map followed by homology of f ⊗ a[0].

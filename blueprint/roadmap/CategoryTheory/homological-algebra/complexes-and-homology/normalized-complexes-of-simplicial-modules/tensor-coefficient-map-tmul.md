@@ -1,3 +1,6 @@
-# Tensor Coefficient Map tmul
+# The lifted tensor coefficient map on generators
 
-The tensor map in the common native world returns the original tensor of the original coefficient map.
+The lifted tensor coefficient map on generators.
+
+Apply the lifted coefficient map to up(m) ⊗ x and then the target tensor comparison. The
+result is up(a(m) ⊗ x).

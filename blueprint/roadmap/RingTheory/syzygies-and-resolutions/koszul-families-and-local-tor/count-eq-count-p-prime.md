@@ -1,4 +1,5 @@
-# Count eq count P prime
+# Factor counts agree with prime occurrence counts
 
-Counting a bundled factor is the same as counting factors with its
-prime.
+Factor counts agree with prime occurrence counts.
+
+The list count of a bundled factor equals the number of entries with its prime.

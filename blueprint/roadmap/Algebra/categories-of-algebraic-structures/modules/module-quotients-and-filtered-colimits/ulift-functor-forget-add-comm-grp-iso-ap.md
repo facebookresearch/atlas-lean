@@ -1,3 +1,5 @@
-# Ulift Functor Forget₂Add Comm Grp Iso apply
+# Elements under the module-to-additive-group lift comparison
 
-Both underlying coefficient comparisons are the identity on the actual lifted carrier.
+Elements under the module-to-additive-group lift comparison.
+
+Both the forward and inverse components of the comparison send each lifted element to itself.

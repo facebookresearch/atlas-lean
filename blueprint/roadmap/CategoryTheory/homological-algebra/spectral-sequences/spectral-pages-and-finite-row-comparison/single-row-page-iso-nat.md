@@ -1,3 +1,5 @@
-# Single Row Page Iso Nat
+# The finite successor composite from the second page
 
-A finite composite of the actual canonical ordinary successor comparisons.
+The finite successor composite from the second page.
+
+Compose the canonical collapsed-page comparisons to obtain E₂ ≅ E_{k+2} for every k∈ℕ.

@@ -1,3 +1,6 @@
-# Grade Quotient surjective
+# Surjectivity onto the image quotient grade
 
-The component quotient map is surjective onto its image piece.
+Surjectivity onto the image quotient grade.
+
+For each n, the degreewise quotient M_n → Q_n is surjective, since Q_n is defined as the image
+of M_n under the canonical quotient.

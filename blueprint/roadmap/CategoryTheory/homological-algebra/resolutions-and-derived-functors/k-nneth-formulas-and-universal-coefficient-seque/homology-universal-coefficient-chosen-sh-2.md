@@ -1,4 +1,5 @@
-# Homology Universal Coefficient Chosen Short Complex f
+# The left map of the chosen coefficient short complex
 
-The left arrow in the chosen homological UCT short complex is the
-canonical coefficient map.
+The left map of the chosen coefficient short complex.
+
+Its first arrow is the canonical homologyUniversalCoefficientMap.

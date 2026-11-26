@@ -1,3 +1,7 @@
-# Map Pointed Comon map hom
+# Underlying map of an oplax-transported pointed morphism
 
-The whole pointed morphism is exactly the native functor image of the original morphism.
+Underlying map of an oplax-transported pointed morphism.
+
+For a morphism f between coaugmented comonoids and an oplax monoidal F with invertible unit
+comparison, the underlying comonoid map of mapPointedComon F applied to f is F applied to f's
+underlying comonoid map.

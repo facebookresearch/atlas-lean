@@ -1,3 +1,5 @@
-# Mixed Page Cycles Pair associativity
+# Mixed page associativity passes to cycles
 
-Native cycle inclusions preserve mixed associativity and the original induced output cycle map.
+Mixed page associativity passes to cycles.
+
+The triple cycle products agree with the induced cycles map of γ.

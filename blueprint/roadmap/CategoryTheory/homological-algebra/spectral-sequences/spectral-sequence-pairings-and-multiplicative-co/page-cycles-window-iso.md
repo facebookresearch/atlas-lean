@@ -1,3 +1,5 @@
-# Page Cycles Window Iso
+# The cycle object of a page as an expanded window
 
-Actual page cycles identify with the native asymmetric `E` window.
+The cycle object of a page as an expanded window.
+
+Page-r cycles identify with the window of widths (r+1,r) at total degree p+q and cut −p.

@@ -1,3 +1,6 @@
-# Acyclic Objects iso iff
+# Isomorphism invariance of the acyclic object class
 
-The same original acyclic object property is invariant under isomorphism.
+Let C have a zero object and Waldhausen cofibration, weak-equivalence
+and cofibration-pushout data.
+
+For an isomorphism Q ≅ Q′, Q is acyclic if and only if Q′ is acyclic.

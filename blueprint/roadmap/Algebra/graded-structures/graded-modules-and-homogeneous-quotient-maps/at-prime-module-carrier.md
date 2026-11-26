@@ -1,4 +1,6 @@
-# At Prime Module Carrier
+# The quotient of degree-zero homogeneous module fractions
 
-The degree-zero part of the localization of `M` at `S`: fractions of equal degree modulo
-`NumDenSameDegModuleAtPrime.setoid`.
+The quotient of degree-zero homogeneous module fractions.
+
+For any submonoid S, quotient the same-degree numerator–denominator representatives by
+localization equivalence.

@@ -21,13 +21,17 @@ public import Mathlib.RingTheory.Ideal.AssociatedPrime.Basic
 public import Mathlib.RingTheory.QuotSMulTop
 
 /-!
-# Euler characteristic of multiplication by one element
+# Euler characteristic of multiplication by a ring element
 
-For an element `r : R` acting on an `R`-module `M`, the two-term Euler
-characteristic is the length of the cokernel of multiplication by `r` minus
-the length of its kernel.  The module snake lemma and the six-term
-finite-length telescope show that this invariant is additive in short exact
-sequences carrying the compatible scalar action.
+For r in a commutative ring R and an R-module M, let μ_r be multiplication by r. When ker(μ_r)
+and coker(μ_r) have finite length, define χ_r(M) = ℓ_R(coker μ_r) − ℓ_R(ker μ_r). The cokernel
+is canonically M/rM.
+
+The invariant is preserved by module equivalences and by the stated surjective scalar changes
+or ring equivalences. It is additive in short exact module sequences with finite
+multiplication kernel and cokernel lengths. On a prime quotient R/p it is zero when r ∈ p, and
+otherwise is the length of the principal quotient. The ring and module universe levels are
+independent.
 -/
 
 @[expose] public section
@@ -44,22 +48,32 @@ open scoped Pointwise
 variable (R : Type u) [CommRing R]
 variable (M : Type v) [AddCommGroup M] [Module R M]
 
-/-- Explicit finite-length data for the kernel and cokernel of
-multiplication by one element. -/
+/-- Finite kernel and cokernel lengths for multiplication.
+
+This condition records finite R-length of ker(μ_r) and of M/rM. -/
 structure ElementEulerFiniteLength (r : R) : Prop where
+/-- Finite length of the multiplication kernel.
+
+The R-length of ker(μ_r : M → M) is not infinite. -/
   kernel_ne_top : Module.length R (LinearMap.lsmul R M r).ker ≠ ⊤
+/-- Finite length of the multiplication cokernel.
+
+The R-length of M modulo the range of μ_r is not infinite. -/
   cokernel_ne_top : Module.length R
     (M ⧸ (LinearMap.lsmul R M r).range) ≠ ⊤
 
-/-- Cokernel-minus-kernel Euler characteristic of multiplication by one
-element. -/
+/-- The cokernel-minus-kernel Euler characteristic of one element.
+
+Using finite multiplication lengths, define χ_r(M) as the integer length of M/rM minus that of
+ker μ_r. -/
 noncomputable def elementEulerCharacteristic
     (r : R) (_h : ElementEulerFiniteLength R M r) : ℤ :=
   (Module.length R (M ⧸ (LinearMap.lsmul R M r).range)).toNat -
     (Module.length R (LinearMap.lsmul R M r).ker).toNat
 
-/-- The Euler characteristic is insensitive to replacing the acting element
-and its finiteness witness along an equality. -/
+/-- The one-element Euler characteristic respects equality of scalars.
+
+Equal elements r=s give the same Euler characteristic, with either finite-length witness. -/
 theorem elementEulerCharacteristic_congr
     {r s : R} (hrs : r = s)
     (hr : ElementEulerFiniteLength R M r)
@@ -69,8 +83,9 @@ theorem elementEulerCharacteristic_congr
   subst s
   rfl
 
-/-- The range of multiplication by one element is its pointwise multiple of
-the top submodule. -/
+/-- The range of multiplication is the scalar multiple submodule.
+
+The range of μ_r on M is r times the full submodule. -/
 theorem range_lsmul_eq_smul_top (r : R) :
     (LinearMap.lsmul R M r).range = r • (⊤ : Submodule R M) := by
   rw [LinearMap.range_eq_map, Submodule.pointwise_smul_def]
@@ -81,16 +96,20 @@ section ChangeRing
 variable (S : Type u) [CommRing S]
 variable (A : Type v) [CommRing A] [Algebra S A]
 
-/-- Multiplication by a scalar from the source ring is the restriction of
-multiplication by its image in the target ring. -/
+/-- Scalar multiplication agrees with restriction of algebra multiplication.
+
+For an algebra S → A, multiplication by s on the S-module A equals the restriction of
+multiplication by its image in A. -/
 theorem lsmul_eq_restrictScalars_algebraMap (s : S) :
     LinearMap.lsmul S A s =
       (LinearMap.lsmul A A (algebraMap S A s)).restrictScalars S := by
   ext x
   simp [Algebra.smul_def]
 
-/-- The multiplication kernels before and after changing from a source ring
-to an algebra are linearly equivalent over the source ring. -/
+/-- The kernel comparison for restricted scalar multiplication.
+
+The S-linear multiplication kernel on A is canonically equivalent to the kernel of
+multiplication by the image of s as an A-linear map, restricted to S. -/
 noncomputable def lsmulKernelRestrictScalarsEquiv (s : S) :
     (LinearMap.lsmul S A s).ker ≃ₗ[S]
       (LinearMap.lsmul A A (algebraMap S A s)).ker :=
@@ -103,8 +122,10 @@ noncomputable def lsmulKernelRestrictScalarsEquiv (s : S) :
     (((LinearMap.lsmul A A
       (algebraMap S A s)).ker.restrictScalarsEquiv S).restrictScalars S)
 
-/-- The multiplication cokernels before and after changing from a source
-ring to an algebra are linearly equivalent over the source ring. -/
+/-- The cokernel comparison for restricted scalar multiplication.
+
+The S-module quotient by multiplication by s agrees with the quotient by multiplication by its
+image in A, with scalars restricted. -/
 noncomputable def lsmulCokernelRestrictScalarsEquiv (s : S) :
     (A ⧸ (LinearMap.lsmul S A s).range) ≃ₗ[S]
       A ⧸ (LinearMap.lsmul A A (algebraMap S A s)).range :=
@@ -114,8 +135,9 @@ noncomputable def lsmulCokernelRestrictScalarsEquiv (s : S) :
     Submodule.Quotient.restrictScalarsEquiv S
       (LinearMap.lsmul A A (algebraMap S A s)).range
 
-/-- Under a surjective algebra map, the multiplication-kernel length is
-unchanged by passing from the source ring to the target ring. -/
+/-- Multiplication kernel lengths agree under a surjective algebra map.
+
+For surjective S → A, the length over S of the scalar kernel on A equals its length over A. -/
 theorem length_lsmul_kernel_eq_of_surjective
     (s : S) (h : Function.Surjective (algebraMap S A)) :
     Module.length S (LinearMap.lsmul S A s).ker =
@@ -124,8 +146,9 @@ theorem length_lsmul_kernel_eq_of_surjective
   rw [(lsmulKernelRestrictScalarsEquiv S A s).length_eq,
     Module.length_eq_of_surjective h]
 
-/-- Under a surjective algebra map, the multiplication-cokernel length is
-unchanged by passing from the source ring to the target ring. -/
+/-- Multiplication cokernel lengths agree under a surjective algebra map.
+
+For surjective S → A, the scalar cokernel on A has the same length over S and A. -/
 theorem length_lsmul_cokernel_eq_of_surjective
     (s : S) (h : Function.Surjective (algebraMap S A)) :
     Module.length S (A ⧸ (LinearMap.lsmul S A s).range) =
@@ -134,8 +157,10 @@ theorem length_lsmul_cokernel_eq_of_surjective
   rw [(lsmulCokernelRestrictScalarsEquiv S A s).length_eq,
     Module.length_eq_of_surjective h]
 
-/-- Transport one-element Euler finiteness data through a surjective change
-from the source ring to the target ring. -/
+/-- Finite multiplication lengths pass through a surjective scalar change.
+
+For surjective S → A, finite kernel and cokernel lengths of s on A as an S-module give the
+corresponding finite A-lengths for its image. -/
 theorem ElementEulerFiniteLength.changeRingOfSurjective
     (s : S) (hmap : Function.Surjective (algebraMap S A))
     (h : ElementEulerFiniteLength S A s) :
@@ -147,8 +172,9 @@ theorem ElementEulerFiniteLength.changeRingOfSurjective
     rw [← length_lsmul_cokernel_eq_of_surjective S A s hmap]
     exact h.cokernel_ne_top
 
-/-- The one-element Euler characteristic is invariant under a surjective
-change from the source ring to the target ring. -/
+/-- The element Euler characteristic under surjective scalar change.
+
+For surjective S → A, χ_s(A) over S equals χ_{image(s)}(A) over A. -/
 theorem elementEulerCharacteristic_changeRingOfSurjective
     (s : S) (hmap : Function.Surjective (algebraMap S A))
     (h : ElementEulerFiniteLength S A s) :
@@ -161,7 +187,9 @@ theorem elementEulerCharacteristic_changeRingOfSurjective
 
 end ChangeRing
 
-/-- Multiplication by an element of an ideal is zero on its quotient. -/
+/-- An ideal element acts by zero on its quotient.
+
+If r ∈ p, multiplication by r on R/p is the zero map. -/
 theorem quotient_lsmul_eq_zero_of_mem
     (p : Ideal R) {r : R} (hr : r ∈ p) :
     LinearMap.lsmul R (R ⧸ p) r = 0 := by
@@ -170,8 +198,9 @@ theorem quotient_lsmul_eq_zero_of_mem
   change Ideal.Quotient.mk p r * x = 0
   rw [Ideal.Quotient.eq_zero_iff_mem.mpr hr, zero_mul]
 
-/-- On a prime quotient, multiplication by an element outside the prime is
-injective. -/
+/-- An element outside a prime acts injectively on the prime quotient.
+
+For prime p and r ∉ p, multiplication by r on R/p is injective. -/
 theorem quotient_lsmul_injective_of_not_mem
     (p : Ideal R) [p.IsPrime] {r : R} (hr : r ∉ p) :
     Function.Injective (LinearMap.lsmul R (R ⧸ p) r) := by
@@ -185,14 +214,16 @@ theorem quotient_lsmul_injective_of_not_mem
   apply hQ
   exact hxy
 
-/-- The cokernel model used by `elementEulerCharacteristic` agrees with the
-standard `QuotSMulTop` reduction. -/
+/-- The multiplication cokernel is the scalar quotient.
+
+Identify M modulo the range of μ_r with QuotSMulTop r M, the quotient by rM. -/
 noncomputable def elementCokernelEquivQuotSMulTop (r : R) :
     (M ⧸ (LinearMap.lsmul R M r).range) ≃ₗ[R] QuotSMulTop r M :=
   Submodule.quotEquivOfEq _ _ (range_lsmul_eq_smul_top R M r)
 
-/-- Finite length of the ambient module supplies finite-length kernel and
-cokernel data for multiplication by every element. -/
+/-- A finite-length module has finite multiplication lengths.
+
+If M has finite R-length, both the kernel and cokernel of μ_r have finite length for every r. -/
 theorem ElementEulerFiniteLength.of_module_length
     (r : R) (hM : Module.length R M ≠ ⊤) :
     ElementEulerFiniteLength R M r where
@@ -207,8 +238,10 @@ theorem ElementEulerFiniteLength.of_module_length
         (LinearMap.lsmul R M r).range.mkQ
         (Submodule.mkQ_surjective _))
 
-/-- An injective multiplication map and a finite-length quotient supply the
-one-element Euler finiteness data. -/
+/-- Finite multiplication lengths from injectivity and a finite quotient.
+
+If μ_r is injective and M/rM has finite length, its kernel and cokernel satisfy
+ElementEulerFiniteLength. -/
 theorem ElementEulerFiniteLength.of_injective
     (r : R) (hr : Function.Injective (LinearMap.lsmul R M r))
     (hquot : Module.length R
@@ -219,8 +252,9 @@ theorem ElementEulerFiniteLength.of_injective
     exact ENat.zero_ne_top
   cokernel_ne_top := hquot
 
-/-- When multiplication is injective, the one-element Euler characteristic
-is the quotient length. -/
+/-- The Euler characteristic of injective multiplication.
+
+If μ_r is injective, χ_r(M) is the natural-number length of M/rM. -/
 theorem elementEulerCharacteristic_eq_quotient_of_injective
     (r : R) (hr : Function.Injective (LinearMap.lsmul R M r))
     (h : ElementEulerFiniteLength R M r) :
@@ -231,8 +265,10 @@ theorem elementEulerCharacteristic_eq_quotient_of_injective
   rw [LinearMap.ker_eq_bot.mpr hr, Module.length_bot]
   simp
 
-/-- If multiplication by the element is zero, its kernel and cokernel have
-equal length and its Euler characteristic vanishes. -/
+/-- Zero multiplication has zero Euler characteristic.
+
+If μ_r is zero and its kernel and cokernel have finite length, their lengths coincide and
+χ_r(M)=0. -/
 theorem elementEulerCharacteristic_eq_zero_of_lsmul_eq_zero
     (r : R) (hr : LinearMap.lsmul R M r = 0)
     (h : ElementEulerFiniteLength R M r) :
@@ -248,8 +284,9 @@ theorem elementEulerCharacteristic_eq_zero_of_lsmul_eq_zero
   unfold elementEulerCharacteristic
   rw [eker.length_eq, ecoker.length_eq, sub_self]
 
-/-- An ideal quotient containing the element contributes zero to its Euler
-characteristic, including the prime-filtration special case. -/
+/-- The Euler contribution of an ideal quotient containing the element.
+
+If r ∈ p and the quotient multiplication lengths are finite, χ_r(R/p)=0. -/
 theorem elementEulerCharacteristic_quotient_prime_eq_zero_of_mem
     (p : Ideal R) (r : R) (hr : r ∈ p)
     (h : ElementEulerFiniteLength R (R ⧸ p) r) :
@@ -257,8 +294,10 @@ theorem elementEulerCharacteristic_quotient_prime_eq_zero_of_mem
   elementEulerCharacteristic_eq_zero_of_lsmul_eq_zero R (R ⧸ p) r
     (quotient_lsmul_eq_zero_of_mem R p hr) h
 
-/-- A prime-quotient factor on which the element is nonzero contributes its
-principal quotient length to the one-element Euler characteristic. -/
+/-- The Euler contribution of a prime quotient excluding the element.
+
+For prime p with r ∉ p, χ_r(R/p) is the length of (R/p)/r(R/p), under the stated finiteness
+condition. -/
 theorem elementEulerCharacteristic_quotient_prime_eq_length_of_not_mem
     (p : Ideal R) [p.IsPrime] (r : R) (hr : r ∉ p)
     (h : ElementEulerFiniteLength R (R ⧸ p) r) :
@@ -268,8 +307,10 @@ theorem elementEulerCharacteristic_quotient_prime_eq_length_of_not_mem
   elementEulerCharacteristic_eq_quotient_of_injective R (R ⧸ p) r
     (quotient_lsmul_injective_of_not_mem R p hr) h
 
-/-- An associated prime containing the acting element is maximal whenever
-the multiplication cokernel has finite length. -/
+/-- An associated prime containing the element is maximal.
+
+For a finitely generated M, if p is associated to M, contains r and M/rM has finite length,
+then p is maximal. -/
 theorem isMaximal_of_isAssociatedPrime_of_cokernel_length_ne_top
     [Module.Finite R M] (r : R) (p : PrimeSpectrum R)
     (hp : IsAssociatedPrime p.asIdeal M) (hr : r ∈ p.asIdeal)
@@ -293,8 +334,10 @@ theorem isMaximal_of_isAssociatedPrime_of_cokernel_length_ne_top
   exact Module.isMaximal_of_mem_support_of_length_ne_top R
     (M ⧸ (LinearMap.lsmul R M r).range) hcoker p hpCoker
 
-/-- A prime factor arising from an associated prime has finite one-element
-Euler data whenever the ambient multiplication cokernel has finite length. -/
+/-- Finite multiplication lengths on an associated prime quotient.
+
+Over a noetherian ring and for finitely generated M, finite length of M/rM gives finite kernel
+and cokernel lengths for multiplication by r on R/p for every associated prime p. -/
 theorem ElementEulerFiniteLength.quotient_prime_of_isAssociatedPrime
     [IsNoetherianRing R] [Module.Finite R M]
     (r : R) (p : PrimeSpectrum R)
@@ -355,8 +398,9 @@ private theorem lsmul_naturality
   ext x
   simp
 
-/-- A ring equivalence preserves the length of a principal multiplication
-cokernel. -/
+/-- Regular multiplication cokernel lengths under a ring equivalence.
+
+A ring equivalence R ≃ S identifies the length of R/rR with the length of S/e(r)S. -/
 theorem length_lsmul_cokernel_ringEquiv
     {S : Type w} [CommRing S] (e : R ≃+* S) (r : R) :
     Module.length R
@@ -388,8 +432,10 @@ theorem length_lsmul_cokernel_ringEquiv
       cases hr
       rfl
 
-/-- Transport one-element Euler finiteness data through a linear
-equivalence. -/
+/-- Finite multiplication lengths under a module equivalence.
+
+An R-linear equivalence M ≃ N carries finite kernel and cokernel length data for μ_r from M to
+N. -/
 theorem ElementEulerFiniteLength.equiv
     {N : Type w} [AddCommGroup N] [Module R N]
     (r : R) (e : M ≃ₗ[R] N) (h : ElementEulerFiniteLength R M r) :
@@ -405,8 +451,9 @@ theorem ElementEulerFiniteLength.equiv
         (lsmul_naturality R M r e.toLinearMap)).length_eq]
     exact h.cokernel_ne_top
 
-/-- The one-element Euler characteristic is invariant under linear
-equivalence. -/
+/-- The Euler characteristic is invariant under module equivalence.
+
+For an R-linear equivalence M ≃ N, χ_r(M)=χ_r(N). -/
 theorem elementEulerCharacteristic_equiv
     {N : Type w} [AddCommGroup N] [Module R N]
     (r : R) (e : M ≃ₗ[R] N) (h : ElementEulerFiniteLength R M r) :
@@ -420,7 +467,10 @@ theorem elementEulerCharacteristic_equiv
       (LinearMap.lsmul R M r) (LinearMap.lsmul R N r) e
         (lsmul_naturality R M r e.toLinearMap)).length_eq]
 
-/-- Transport one-element Euler finiteness data across a ring equivalence. -/
+/-- Finite regular multiplication lengths under a ring equivalence.
+
+A ring equivalence sends finite multiplication data for s on its regular source module to the
+corresponding data for e(s) on the regular target module. -/
 theorem ElementEulerFiniteLength.ringEquiv
     {S : Type u} {A : Type v} [CommRing S] [CommRing A]
     (e : S ≃+* A) (s : S) (h : ElementEulerFiniteLength S S s) :
@@ -435,8 +485,9 @@ theorem ElementEulerFiniteLength.ringEquiv
   rw [← hs]
   exact hSA.changeRingOfSurjective S A s e.surjective
 
-/-- The one-element Euler characteristic is invariant under ring
-equivalence. -/
+/-- The regular one-element Euler characteristic under a ring equivalence.
+
+For e : S ≃ A, χ_s(S)=χ_{e(s)}(A) with the transported finite-length data. -/
 theorem elementEulerCharacteristic_ringEquiv
     {S : Type u} {A : Type v} [CommRing S] [CommRing A]
     (e : S ≃+* A) (s : S) (h : ElementEulerFiniteLength S S s) :
@@ -468,7 +519,10 @@ variable [AddCommGroup M₁] [Module R M₁]
 variable [AddCommGroup M₂] [Module R M₂]
 variable [AddCommGroup M₃] [Module R M₃]
 
-/-- Finite one-element Euler data is closed under extensions. -/
+/-- Finite multiplication lengths in a short exact sequence.
+
+For an injective–exact–surjective sequence M₁ → M₂ → M₃, finite kernel and cokernel lengths on
+M₁ and M₃ imply them on M₂. -/
 theorem ElementEulerFiniteLength.of_shortExact
     (r : R) (i : M₁ →ₗ[R] M₂) (p : M₂ →ₗ[R] M₃)
     (hi : Function.Injective i) (hp : Function.Surjective p)
@@ -497,8 +551,9 @@ theorem ElementEulerFiniteLength.of_shortExact
           hcomm₁₂ hcomm₂₃)
         h₁.cokernel_ne_top h₃.cokernel_ne_top }
 
-/-- A surjection transports finite length of the multiplication cokernel to
-the target module. -/
+/-- A finite multiplication cokernel descends to a quotient module.
+
+For a surjective module map M₂ → M₃, finite length of M₂/rM₂ implies finite length of M₃/rM₃. -/
 theorem elementCokernel_length_ne_top_of_surjective
     (r : R) (p : M₂ →ₗ[R] M₃) (hp : Function.Surjective p)
     (h₂ : Module.length R
@@ -512,8 +567,10 @@ theorem elementCokernel_length_ne_top_of_surjective
   exact ne_top_of_le_ne_top h₂
     (Module.length_le_of_surjective _ hsurj)
 
-/-- In a short exact sequence, finite length of the middle cokernel and the
-right kernel implies finite length of the left cokernel. -/
+/-- Finite length of the left multiplication cokernel.
+
+In a short exact sequence, finite length of the middle cokernel and the right kernel of
+multiplication by r implies finite length of the left cokernel. -/
 theorem elementLeftCokernel_length_ne_top_of_shortExact
     (r : R) (i : M₁ →ₗ[R] M₂) (p : M₂ →ₗ[R] M₃)
     (hi : Function.Injective i) (hp : Function.Surjective p)
@@ -550,8 +607,10 @@ theorem elementLeftCokernel_length_ne_top_of_shortExact
   exact Module.length_ne_top_of_exact R delta c₁₂ hdeltac_exact
     h₃kernel h₂coker
 
-/-- The one-element Euler characteristic is additive in a short exact
-sequence of modules. -/
+/-- Additivity of the one-element Euler characteristic.
+
+For a short exact sequence and finite multiplication lengths on all three terms,
+χ_r(M₂)=χ_r(M₁)+χ_r(M₃). -/
 theorem elementEulerCharacteristic_additive
     (r : R) (i : M₁ →ₗ[R] M₂) (p : M₂ →ₗ[R] M₃)
     (hi : Function.Injective i) (hp : Function.Surjective p)

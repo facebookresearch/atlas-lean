@@ -1,4 +1,5 @@
-# Support Dim quotient lt of lt of mem support
+# A strict inclusion of support primes lowers quotient dimension
 
-A prime with a strict predecessor in the original finite module support
-has support dimension strictly below an ambient finite support dimension bound.
+A strict inclusion of support primes lowers quotient dimension.
+
+For support primes q<p and dim Supp(M)≤n, the quotient R/p has support dimension below n.

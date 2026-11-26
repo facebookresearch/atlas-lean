@@ -1,4 +1,6 @@
-# Family Lift To Projective Resolution commutes
+# The projective-resolution lift commutes with the full augmentation
 
-The Koszul-family comparison commutes with the quotient and target
-augmentations.
+The projective-resolution lift commutes with the full augmentation.
+
+The chain comparison followed by the target resolution map equals the Koszul augmentation
+followed by the single-degree map of q.

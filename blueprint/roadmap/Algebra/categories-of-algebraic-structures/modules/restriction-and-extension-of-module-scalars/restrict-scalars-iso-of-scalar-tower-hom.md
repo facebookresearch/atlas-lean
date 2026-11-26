@@ -1,3 +1,5 @@
-# Restrict Scalars Iso Of Scalar Tower hom apply
+# Elements under the forward scalar-tower comparison
 
-The tower comparison leaves every original element unchanged.
+Elements under the forward scalar-tower comparison.
+
+The forward restriction comparison sends x ∈ M to the same element x.

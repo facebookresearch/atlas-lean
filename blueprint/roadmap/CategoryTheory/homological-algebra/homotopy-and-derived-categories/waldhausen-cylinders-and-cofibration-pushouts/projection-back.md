@@ -1,3 +1,6 @@
-# Projection back
+# Projection followed by inclusion at a zero-source cylinder
 
-At a zero arrow, projection followed by back inclusion is the identity.
+For a category C with a zero object and normalized data
+T:Arrow(C) → C, back:Right → T and projection:T → Right,
+the composite T(0 → A) —projection→ A —back→ T(0 → A)
+is the identity for every A.

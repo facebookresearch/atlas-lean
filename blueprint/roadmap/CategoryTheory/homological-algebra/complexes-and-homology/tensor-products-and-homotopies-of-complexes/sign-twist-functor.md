@@ -1,4 +1,6 @@
-# Sign Twist Functor
+# The functor from anticommuting to commuting bicomplexes
 
-The sign-twist functor from raw anticommuting bicomplexes to Mathlib's
-commuting `HomologicalComplex₂`.
+The functor from anticommuting to commuting bicomplexes.
+
+For a fixed integer-unit sign function changing across c₁, twist the second differential of
+each object and retain each morphism's bidegree components.

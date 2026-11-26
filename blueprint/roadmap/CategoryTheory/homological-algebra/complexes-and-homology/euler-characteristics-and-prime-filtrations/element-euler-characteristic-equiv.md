@@ -1,4 +1,5 @@
-# Element Euler Characteristic equiv
+# The Euler characteristic is invariant under module equivalence
 
-The one-element Euler characteristic is invariant under linear
-equivalence.
+The Euler characteristic is invariant under module equivalence.
+
+For an R-linear equivalence M ≃ N, χ_r(M)=χ_r(N).

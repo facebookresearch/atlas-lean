@@ -1,3 +1,5 @@
-# Graded Ring Object Grade
+# Extension of a natural ring grading to integer degrees
 
-The `ℤ`-grading of `R` itself: `𝒜_z` in nonnegative degrees and `0` in negative degrees.
+Extension of a natural ring grading to integer degrees.
+
+The integer component at z is 𝒜_{z.toNat} when z ≥ 0 and the zero subgroup when z < 0.

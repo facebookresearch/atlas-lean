@@ -1,4 +1,6 @@
-# Mapped Cone is KProjective
+# K-projectivity of a finitely supported image cone
 
-Finite support and the original projective image terms earn
-K-projectivity of the actual mapped stock cone.
+K-projectivity of a finitely supported image cone.
+
+Under the finite support windows and projectivity of all image terms of F and G, the mapped
+cone is K-projective.

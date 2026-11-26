@@ -1,7 +1,5 @@
-# Bind Equiv
+# Equivalence between direct and iterated slice module categories
 
-The comparison equivalence identifying doubly restricted module
-sheaves `(M.over X).over Y` with singly restricted ones
-`M.over Y.left`, via the iterated slice equivalence. Stated over an
-arbitrary site since restriction-stability arguments apply it at
-every slice.
+Let `C' : Type u₂` have morphism universe `v₂`, `J'` be a topology, and `S : Sheaf J'
+RingCat.{u}`. For `X∈C'` and `Y∈Over X`, `LocalGeneratorsData.bindEquiv Y` is the canonical
+equivalence `SheafOfModules(S.over Y.left) ≌ SheafOfModules((S.over X).over Y)`.

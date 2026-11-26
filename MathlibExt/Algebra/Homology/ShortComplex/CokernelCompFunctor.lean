@@ -13,6 +13,16 @@ public import Mathlib.CategoryTheory.ComposableArrows.One
 public import Mathlib.CategoryTheory.Limits.Shapes.Kernels
 public import MathlibExt.CategoryTheory.ComposableArrows.Arrow
 
+/-! # The cokernel complex of composable morphisms
+
+In a category `C` with zero morphisms and cokernels, a pair `X₀ → X₁ → X₂`
+with arrows `f`, `g` determines the short complex
+`coker(f) → coker(f ≫ g) → coker(g)`. Its first morphism is induced by `g`,
+and its second by the identity of `X₂`; their composite is zero. This construction
+is functorial in commuting diagrams of composable pairs. The displayed laws
+specify its three objects and its maps on cokernel representatives.
+-/
+
 @[expose] public section
 
 namespace CategoryTheory
@@ -26,6 +36,10 @@ variable {C : Type u} [Category.{v} C] [HasZeroMorphisms C] [HasCokernels C]
 
 namespace ShortComplex
 
+/-- For a category `C` with zero morphisms and cokernels, sending a composable
+pair `X₀ → X₁ → X₂` to `coker(f) → coker(f ≫ g) → coker(g)` defines a functor
+from pairs of composable arrows to short complexes in `C`. The first map is induced
+by `g`, the second by the identity of `X₂`, and their composite is zero. -/
 noncomputable def cokernelCompFunctor : ComposableArrows C 2 ⥤ ShortComplex C :=
   let coker01Functor : ComposableArrows C 2 ⥤ C :=
     ComposableArrows.functorArrows C 0 1 2 ⋙ ComposableArrows.arrowFunctor ⋙ coker C
@@ -109,20 +123,30 @@ noncomputable def cokernelCompFunctor : ComposableArrows C 2 ⥤ ShortComplex C 
         exact (cancel_epi (cokernel.π f01)).1 h_eq }
   (ShortComplex.functorEquivalence (ComposableArrows C 2) C).functor.obj cokerCompAsFunctorCategory
 
+/-- For a composable pair `S` in a category with zero morphisms and cokernels,
+the first object of its cokernel short complex is the cokernel of `S₀ → S₁`. -/
 @[simp]
 lemma cokernelCompFunctor_obj_X₁ (S : ComposableArrows C 2) :
     (cokernelCompFunctor (C := C).obj S).X₁ = cokernel (S.map' 0 1) := rfl
 
+/-- For a composable pair `S` in a category with zero morphisms and cokernels,
+the middle object of its cokernel short complex is the cokernel of the composite
+`S₀ → S₂`. -/
 @[simp]
 lemma cokernelCompFunctor_obj_X₂ (S : ComposableArrows C 2) :
     (cokernelCompFunctor (C := C).obj S).X₂ = cokernel (S.map' 0 2) := rfl
 
+/-- For a composable pair `S` in a category with zero morphisms and cokernels,
+the final object of its cokernel short complex is the cokernel of `S₁ → S₂`. -/
 @[simp]
 lemma cokernelCompFunctor_obj_X₃ (S : ComposableArrows C 2) :
     (cokernelCompFunctor (C := C).obj S).X₃ = cokernel (S.map' 1 2) := rfl
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.defeqAttrib.useBackward true in
+/-- Let `φ : S → T` be a commuting diagram of composable pairs in a category
+with zero morphisms and cokernels. The first component of the induced cokernel-complex
+map satisfies `π(S₀ → S₁) ≫ τ₁ = φ₁ ≫ π(T₀ → T₁)`. -/
 @[reassoc]
 lemma cokernelCompFunctor_map_τ₁
     {S T : ComposableArrows C 2} (φ : S ⟶ T) :
@@ -137,6 +161,9 @@ lemma cokernelCompFunctor_map_τ₁
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.defeqAttrib.useBackward true in
+/-- Let `φ : S → T` be a commuting diagram of composable pairs in a category
+with zero morphisms and cokernels. The third component of the induced cokernel-complex
+map satisfies `π(S₁ → S₂) ≫ τ₃ = φ₂ ≫ π(T₁ → T₂)`. -/
 @[reassoc]
 lemma cokernelCompFunctor_map_τ₃
     {S T : ComposableArrows C 2} (φ : S ⟶ T) :
@@ -149,6 +176,9 @@ lemma cokernelCompFunctor_map_τ₃
         (ComposableArrows.naturality' φ 1 2) = _
   rw [cokernel.π_desc]
 
+/-- For a composable pair `S₀ → S₁ → S₂` with arrows `f`, `g` in a category
+with zero morphisms and cokernels, the first arrow `a` of its cokernel short complex
+is characterized on cokernel representatives by `π(f) ≫ a = g ≫ π(f ≫ g)`. -/
 lemma cokernelCompFunctor_obj_f (S : ComposableArrows C 2) :
     cokernel.π (S.map' 0 1) ≫ (cokernelCompFunctor (C := C).obj S).f =
       S.map' 1 2 ≫ cokernel.π (S.map' 0 2) := by
@@ -169,6 +199,9 @@ lemma cokernelCompFunctor_obj_f (S : ComposableArrows C 2) :
     cokernel.π_desc _ _ _
   exact this
 
+/-- For a composable pair `S₀ → S₁ → S₂` with arrows `f`, `g` in a category
+with zero morphisms and cokernels, the second arrow `b` of its cokernel short complex
+satisfies `π(f ≫ g) ≫ b = π(g)`. -/
 lemma cokernelCompFunctor_obj_g (S : ComposableArrows C 2) :
     cokernel.π (S.map' 0 2) ≫ (cokernelCompFunctor (C := C).obj S).g =
       cokernel.π (S.map' 1 2) := by

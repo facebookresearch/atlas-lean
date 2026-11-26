@@ -1,5 +1,7 @@
-# Cylinder Normalization
+# Natural normalization at zero-source arrows
 
-Natural normalization of a cylinder functor on arrows over maps from
-zero.  Projection and back inclusion are the two directions of the
-normalization isomorphism.
+Let C have a zero object, T:Arrow(C) → C be a functor, and
+back:Right → T, projection:T → Right natural transformations.
+Cylinder normalization is a natural isomorphism T(0 → A) ≅ A
+whose forward component is projection at 0 → A and whose inverse
+is back at that arrow.

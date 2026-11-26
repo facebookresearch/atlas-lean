@@ -1,3 +1,6 @@
-# Primitive Lie Subalgebra to Submodule
+# Underlying submodule of the primitive Lie algebra
 
-The underlying submodule is the native submodule of `(1, 1)`-skew-primitives.
+Underlying submodule of the primitive Lie algebra.
+
+For a bialgebra H over a commutative ring R, the submodule underlying primitiveLieSubalgebra R
+H is Coalgebra.skewPrimitive R 1 1, the submodule of primitive elements.

@@ -1,3 +1,5 @@
-# Pointed Chain Map Is Comon Hom
+# The stored chain point preserves comultiplication and counit
 
-The original pointed chain map has its stored native tensor-unit comonoid laws.
+The stored chain point preserves comultiplication and counit.
+
+The point map of an under-object is a comonoid morphism from the tensor unit.

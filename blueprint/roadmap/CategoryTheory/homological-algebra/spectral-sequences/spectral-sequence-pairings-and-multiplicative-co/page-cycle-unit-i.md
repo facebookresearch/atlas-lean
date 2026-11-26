@@ -1,3 +1,5 @@
-# Page Cycle Unit i
+# The cycle-unit lift recovers the page unit
 
-The original native cycle inclusion retains the actual coefficient unit.
+The cycle-unit lift recovers the page unit.
+
+The lift followed by cycle inclusion equals u.

@@ -1,3 +1,5 @@
-# Page Pair To
+# The page product with a specified sum bidegree
 
-The constructed page product with an explicitly equal sum position.
+The page product with a specified sum bidegree.
+
+For pq+pq′=t, transport pagePair to the output bidegree t.

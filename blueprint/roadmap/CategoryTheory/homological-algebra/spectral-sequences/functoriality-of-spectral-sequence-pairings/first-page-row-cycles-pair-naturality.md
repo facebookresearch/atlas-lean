@@ -1,4 +1,6 @@
-# First Page Row Cycles Pair naturality
+# The signed row comparison preserves cycle products
 
-A proved signed first-page component square induces the same square
-on the actual row cycle kernels.
+The signed row comparison preserves cycle products.
+
+Under the given cochain row isomorphisms and product square, cycle products transform with
+sign (−1)^{q p′}.

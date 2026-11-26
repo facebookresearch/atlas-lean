@@ -1,3 +1,8 @@
-# Is Iso sequential Milnor Edge of is Zero
+# Milnor edge isomorphism from vanishing lim one
 
-Vanishing of the preceding concrete lim-one makes the actual Milnor edge iso.
+Let C be abelian with exact countable products and sequential inverse
+limits, c any complex shape and K an inverse tower of complexes.
+Assume Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, c.Rel(i,j), and
+lim¹(H_iK)=Coker(Δ_{H_iK}) is a zero object.
+
+The canonical edge H_j(lim K) → lim(H_jK) is an isomorphism.

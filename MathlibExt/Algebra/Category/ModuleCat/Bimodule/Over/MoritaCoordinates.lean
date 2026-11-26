@@ -14,11 +14,20 @@ module
 public import MathlibExt.Algebra.Category.ModuleCat.Bimodule.Over.MoritaReturn
 
 /-!
-# Coordinates of composite bimodule tensor functors
+# Relative tensor return coordinates and morphism values
 
-The left, right and ground scalar actions are recovered from the
-enveloping-algebra action and the supplied ground map. These identifications
-compare the balanced tensor objects with independent carrier universes.
+Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with carriers p,q. Choose W=max(p,q,v) for enveloping-module objects. The tensor
+functors F(X)=(Q⊗_R X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q preserve this common height.
+
+An outer return class is (p₀⊗_S c)⊗_S q₁ with c∈F(X). Composite morphisms act as
+(p₀⊗c)⊗q₁↦(p₀⊗F(f)(c))⊗q₁. The same formula holds for G applied to a morphism of S-enveloping
+modules with an arbitrary carrier universe a.
+
+The composite object G(FX) is isomorphic to its raw return coefficient object with the same
+ordered tensors. Ground k-action and both endpoint actions are recovered from the relative
+enveloping action; these identifications give the coordinate isomorphism and its outer-class
+formula. Agreement on all five-factor classes determines any additive map from the composite.
 -/
 
 @[expose] public section
@@ -41,13 +50,21 @@ variable (k : Type u) [CommRing k]
   [Module S Q] [Module Rᵐᵒᵖ Q] [SMulCommClass S Rᵐᵒᵖ Q]
   [IsScalarTower k S Q] [IsScalarTower k Rᵐᵒᵖ Q]
 
-/-- The actual outer pure tensor class in the composite native functor. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with independent carriers p,q. Put W=max(p,q,v), E_R^k=R⊗_kRᵒᵖ, E_S^k=S⊗_kSᵒᵖ. At
+height W let F(X)=(Q⊗_R X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. For X∈ModuleCat_W(E_R^k),
+p₀∈P,c∈F(X),q₁∈Q, the outer class is (p₀⊗_S c)⊗_S q₁ in G(FX). Its middle coefficient c may be
+any element of F(X). -/
 def returnOuterMk (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)) (p₀ : P)
     (c : tensorObj k R S P Q X) (q₁ : Q) :
     ((tensorFunctor k R S P Q) ⋙ (tensorFunctor k S R Q P)).obj X :=
   tensorMk k S R Q P (tensorObj k R S P Q X) p₀ c q₁
 
-/-- The original ordered pure coefficients determine an additive map on the native composite. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with independent carriers p,q. Put W=max(p,q,v), E_R^k=R⊗_kRᵒᵖ, E_S^k=S⊗_kSᵒᵖ. At
+height W let F(X)=(Q⊗_R X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. For X∈ModuleCat_W(E_R^k) and an additive
+commutative monoid C' in any universe, additive maps h₁,h₂:G(FX)→C' are equal if they agree on
+every (p₀⊗_S((q₀⊗_R x)⊗_R p₁))⊗_S q₁. The hypothesis ranges over all P,Q,X,P,Q coefficients. -/
 theorem returnHom_ext (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ))
     {C' : Type*} [AddCommMonoid C']
     {f g : ((tensorFunctor k R S P Q) ⋙ (tensorFunctor k S R Q P)).obj X →+ C'}
@@ -98,7 +115,10 @@ theorem returnHom_ext (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ))
     exact DFunLike.congr_fun ha a
   exact DFunLike.congr_fun hb b
 
-/-- Values of the second tensor map on arbitrary native coefficient objects. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with independent carriers p,q. For A,B∈ModuleCat_a(E_S^k), E_S^k=S⊗_kSᵒᵖ, and g:A→B,
+put G(Z)=(P⊗_S Z)⊗_S Q. The three-argument function is (p₀,c,q₁)↦G(g)((p₀⊗_S c)⊗_S q₁). Its
+target G(B) has carrier height max(p,q,a). -/
 def outerTensorMapValue {A B : ModuleCat.{a} (S ⊗[k] Sᵐᵒᵖ)} (g : A ⟶ B) :
     P → A → Q → tensorObj k S R Q P B := by
   let A' := tensorObj k S R Q P A
@@ -107,30 +127,48 @@ def outerTensorMapValue {A B : ModuleCat.{a} (S ⊗[k] Sᵐᵒᵖ)} (g : A ⟶ B
     @ModuleCat.Hom.hom (R ⊗[k] Rᵐᵒᵖ) _ A' B' (tensorMap k S R Q P g)
   exact fun p₀ c q₁ => L (tensorMk k S R Q P A p₀ c q₁)
 
-/-- The original middle-map formula on arbitrary native coefficient objects. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with independent carriers p,q. For A,B∈ModuleCat_a(S⊗_kSᵒᵖ) and g:A→B, the function
+(p₀,c,q₁)↦(p₀⊗_S g(c))⊗_S q₁ takes values in G(B)=(P⊗_S B)⊗_S Q. The outer P and Q factors are
+retained. -/
 def outerTensorMappedValue {A B : ModuleCat.{a} (S ⊗[k] Sᵐᵒᵖ)} (g : A ⟶ B) :
     P → A → Q → tensorObj k S R Q P B := by
   let L : A →ₗ[S ⊗[k] Sᵐᵒᵖ] B :=
     @ModuleCat.Hom.hom (S ⊗[k] Sᵐᵒᵖ) _ A B g
   exact fun p₀ c q₁ => tensorMk k S R Q P B p₀ (L c) q₁
 
-/-- The tensor-map characteristic as a generic three-argument function equality. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with independent carriers p,q. For g:A→B in ModuleCat_a(S⊗_kSᵒᵖ), write G(Z)=(P⊗_S
+Z)⊗_S Q. The functions P→A→Q→G(B) satisfy G(g)((p₀⊗c)⊗q₁)=(p₀⊗g(c))⊗q₁ for every p₀,c,q₁.
+Equality holds for the complete three-argument functions. -/
 theorem outerTensorMapValue_eq {A B : ModuleCat.{a} (S ⊗[k] Sᵐᵒᵖ)} (g : A ⟶ B) :
     outerTensorMapValue k R S P Q g = outerTensorMappedValue k R S P Q g := by
   funext p₀ c q₁
   exact tensorMap_mk k S R Q P (X := A) (Y := B) g p₀ c q₁
 
-/-- The original intermediate native carrier, named independently of its module fields. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with independent carriers p,q. Put W=max(p,q,v), E_R^k=R⊗_kRᵒᵖ, E_S^k=S⊗_kSᵒᵖ. At
+height W let F(X)=(Q⊗_R X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. For X∈ModuleCat_W(E_R^k), the
+intermediate carrier is the underlying type of F(X). It lies in W and consists of balanced
+tensor coefficients (Q⊗_R X)⊗_R P. -/
 def returnIntermediateCarrier (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)) :
     Type (max p q v) :=
   (tensorObj k R S P Q X).carrier
 
-/-- The original composite native carrier, with the same stored actions. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with independent carriers p,q. Put W=max(p,q,v), E_R^k=R⊗_kRᵒᵖ, E_S^k=S⊗_kSᵒᵖ. At
+height W let F(X)=(Q⊗_R X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. For X∈ModuleCat_W(E_R^k), the composite
+carrier is the underlying type of G(FX) in W. It consists of the nested balanced coefficients
+(P⊗_S((Q⊗_R X)⊗_R P))⊗_S Q. -/
 def returnCompositeCarrier (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)) :
     Type (max p q v) :=
   (((tensorFunctor k R S P Q) ⋙ (tensorFunctor k S R Q P)).obj X).carrier
 
-/-- Values of the actual composite map on the original outer pure points. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with independent carriers p,q. Put W=max(p,q,v), E_R^k=R⊗_kRᵒᵖ, E_S^k=S⊗_kSᵒᵖ. At
+height W let F(X)=(Q⊗_R X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. For f:X→Y in ModuleCat_W(E_R^k), the
+value function P→F(X)→Q→G(FY) is (p₀,c,q₁)↦(GF)(f)((p₀⊗_S c)⊗_S q₁). It is the outer tensor-map
+function applied to g=F(f). -/
 def returnOuterMapValue {X Y : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)} (f : X ⟶ Y) :
     P → returnIntermediateCarrier k R S P Q X → Q →
       returnCompositeCarrier k R S P Q Y := by
@@ -141,7 +179,11 @@ def returnOuterMapValue {X Y : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)} (f :
   let g : A ⟶ B := F.map f
   exact outerTensorMapValue k R S P Q (A := A) (B := B) g
 
-/-- The same outer factors with the original first tensor map applied to the middle point. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with independent carriers p,q. Put W=max(p,q,v), E_R^k=R⊗_kRᵒᵖ, E_S^k=S⊗_kSᵒᵖ. At
+height W let F(X)=(Q⊗_R X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. For f:X→Y, the function P→F(X)→Q→G(FY)
+is (p₀,c,q₁)↦(p₀⊗_S F(f)(c))⊗_S q₁. It retains the outer factors and maps the full intermediate
+coefficient. -/
 def returnOuterMappedValue {X Y : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)} (f : X ⟶ Y) :
     P → returnIntermediateCarrier k R S P Q X → Q →
       returnCompositeCarrier k R S P Q Y := by
@@ -152,7 +194,11 @@ def returnOuterMappedValue {X Y : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)} (
   let g : A ⟶ B := F.map f
   exact outerTensorMappedValue k R S P Q (A := A) (B := B) g
 
-/-- The actual composite morphism is the second native map of the actual first map. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with independent carriers p,q. Put W=max(p,q,v), E_R^k=R⊗_kRᵒᵖ, E_S^k=S⊗_kSᵒᵖ. At
+height W let F(X)=(Q⊗_R X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. For f:X→Y in ModuleCat_W(E_R^k),
+(GF)(f)=G(F(f)). The right side is the tensor map with coefficient order P–F(X)–Q applied to
+F(f):F(X)→F(Y), and both sides are E_R^k-linear maps G(FX)→G(FY). -/
 theorem returnComposite_map
     {X Y : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)} (f : X ⟶ Y) :
     let F : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ) ⥤
@@ -166,7 +212,11 @@ theorem returnComposite_map
       ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ) := tensorFunctor k S R Q P
   exact Functor.comp_map F G f
 
-/-- The original composite map and the middle-map formula agree as typed value functions. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with independent carriers p,q. Put W=max(p,q,v), E_R^k=R⊗_kRᵒᵖ, E_S^k=S⊗_kSᵒᵖ. At
+height W let F(X)=(Q⊗_R X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. For f:X→Y, the two functions
+P→F(X)→Q→G(FY) satisfy (GF)(f)((p₀⊗c)⊗q₁)=(p₀⊗F(f)(c))⊗q₁ for every outer triple. This is
+equality of the full value functions at the fixed common height W. -/
 theorem returnOuterMapValue_eq
     {X Y : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)} (f : X ⟶ Y) :
     returnOuterMapValue k R S P Q f = returnOuterMappedValue k R S P Q f := by
@@ -177,7 +227,11 @@ theorem returnOuterMapValue_eq
   let g : A ⟶ B := F.map f
   exact outerTensorMapValue_eq k R S P Q (A := A) (B := B) g
 
-/-- The actual composite map preserves its outer factors and applies the first tensor map inside. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with independent carriers p,q. Put W=max(p,q,v), E_R^k=R⊗_kRᵒᵖ, E_S^k=S⊗_kSᵒᵖ. At
+height W let F(X)=(Q⊗_R X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. For f:X→Y, p₀∈P,c∈F(X),q₁∈Q, the
+composite map satisfies (GF)(f)((p₀⊗_S c)⊗_S q₁)=(p₀⊗_S F(f)(c))⊗_S q₁. The identity is in the
+carrier of G(FY). -/
 @[simp]
 theorem returnOuterMap_mk {X Y : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)} (f : X ⟶ Y)
     (p₀ : P) (c : returnIntermediateCarrier k R S P Q X) (q₁ : Q) :
@@ -186,7 +240,12 @@ theorem returnOuterMap_mk {X Y : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)} (f
   congrFun (congrFun (congrFun (returnOuterMapValue_eq k R S P Q f) p₀) c) q₁
 
 include P Q in
-/-- The earned identity-coordinate comparison together with its original pure getter. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with independent carriers p,q. Put W=max(p,q,v), E_R^k=R⊗_kRᵒᵖ, E_S^k=S⊗_kSᵒᵖ. At
+height W let F(X)=(Q⊗_R X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. For X∈ModuleCat_W(E_R^k), let T(X) be
+the raw return object with the ground and endpoint actions extracted from X. There is an
+isomorphism e_X:G(FX)≅T(X), together with e_X((p₀⊗c)⊗q₁)=(p₀⊗c)⊗q₁ in raw coefficient
+coordinates for every p₀,c,q₁. -/
 def returnCoordinateData (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)) :
     letI := ModuleCat.Bimodule.Over.groundModule k R X
     letI := ModuleCat.Bimodule.Over.leftModule k R X
@@ -415,7 +474,11 @@ def returnCoordinateData (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)) :
   exact hF p₀ x q₁
 
 include P Q in
-/-- The actual comparison of the complete native composite and original raw tensors. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with independent carriers p,q. Put W=max(p,q,v), E_R^k=R⊗_kRᵒᵖ, E_S^k=S⊗_kSᵒᵖ. At
+height W let F(X)=(Q⊗_R X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. For X∈ModuleCat_W(E_R^k), the
+isomorphism G(FX)≅T(X), where T(X)=(P⊗_S((Q⊗_R X)⊗_R P))⊗_S Q, preserves the ground k-action and
+both outer R-actions. Its forward map retains every ordered outer class with arbitrary c∈F(X). -/
 def returnCoordinates (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)) :
     letI := ModuleCat.Bimodule.Over.groundModule k R X
     letI := ModuleCat.Bimodule.Over.leftModule k R X

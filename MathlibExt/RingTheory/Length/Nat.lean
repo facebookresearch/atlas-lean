@@ -43,14 +43,18 @@ namespace HilbertSamuel
 
 universe u v w z
 
-/-- The natural value of the extended module length. Finite length is
-required by the cast-back theorem below. -/
+/-- For a commutative ring `A` and an `A`-module `M` in an independent
+universe, define its natural-number length as the natural value of its extended
+composition length. Finite extended lengths retain their value; infinite length
+has natural value zero. -/
 def moduleLengthNat
     (A : Type u) [CommRing A]
     (M : Type v) [AddCommGroup M] [Module A M] : ℕ :=
   (Module.length A M).toNat
 
-/-- Casting `moduleLengthNat` back to `ENat` recovers module length. -/
+/-- For an Artinian commutative ring `A` and a finitely generated `A`-module
+`M` in an independent universe, casting its natural-number length to extended
+naturals gives exactly its composition length. -/
 theorem moduleLengthNat_cast
     (A : Type u) [CommRing A] [IsArtinianRing A]
     (M : Type v) [AddCommGroup M] [Module A M] [Module.Finite A M] :
@@ -60,8 +64,11 @@ theorem moduleLengthNat_cast
   have hfin : Module.Finite A M := inferInstance
   exact ((IsArtinianRing.tfae A M).out 1 4).mp hfin
 
-/-- Natural-valued length is additive on an exact sequence over an Artinian
-ring when its two end modules are finite. -/
+/-- Let `A` be an Artinian commutative ring, and let `M₁ → M₂ → M₃` be
+`A`-linear maps whose first map is injective, second map is surjective, and
+image equals kernel at `M₂`. If `M₁` and `M₃` are finitely generated,
+`lengthNat_A(M₂) = lengthNat_A(M₁) + lengthNat_A(M₃)`. The three module
+universes are independent. -/
 theorem moduleLengthNat_eq_add_of_exact
     (A : Type u) [CommRing A] [IsArtinianRing A]
     {M₁ : Type v} [AddCommGroup M₁] [Module A M₁] [Module.Finite A M₁]
@@ -84,8 +91,10 @@ theorem moduleLengthNat_eq_add_of_exact
   rw [Module.length_eq_add_of_exact f g hf hg hfg,
     ENat.toNat_add h₁ h₃]
 
-/-- The natural value of an extended graded-piece length. The cast-back
-theorem retains actual Artinian and finite-piece hypotheses. -/
+/-- For a commutative ring `A`, an `A`-module `M`, and any natural-number
+indexed family of submodules `Mgrade`, the degree-`n` natural length is the
+natural value of the composition length of `Mgrade(n)`. No grading or
+finite-length assumption is required by this definition. -/
 def gradedPieceLength
     (A : Type u) [CommRing A]
     {M : Type v} [AddCommGroup M] [Module A M]
@@ -93,8 +102,10 @@ def gradedPieceLength
     (n : ℕ) : ℕ :=
   moduleLengthNat A (Mgrade n)
 
-/-- Casting a natural graded-piece length back to `ENat` recovers module
-length. -/
+/-- For an Artinian commutative ring `A` and an `A`-module `M` with a
+natural-number indexed family of finitely generated submodules `Mgrade`,
+casting the natural length of `Mgrade(n)` to extended naturals gives its
+composition length for every `n`. -/
 theorem gradedPieceLength_cast
     (A : Type u) [CommRing A] [IsArtinianRing A]
     {M : Type v} [AddCommGroup M] [Module A M]

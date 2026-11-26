@@ -1,3 +1,5 @@
-# Restrict Commute
+# The commuting scalar actions on the coefficient module
 
-Restricted R-scalars commute with the original S-scalars on the same coefficient.
+The commuting scalar actions on the coefficient module.
+
+The restricted R-action and the S-action on M commute because S is commutative.

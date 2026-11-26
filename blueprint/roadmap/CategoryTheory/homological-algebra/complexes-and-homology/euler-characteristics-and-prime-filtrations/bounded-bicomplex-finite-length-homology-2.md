@@ -1,3 +1,7 @@
-# Bounded Bicomplex Finite Length Homology Data Horizontal First
+# Finite-length total homology data with horizontal homology first
 
-Horizontal-first iterated homology earns actual total finiteness through canonical symmetry.
+Finite-length total homology data with horizontal homology first.
+
+If the horizontal-then-vertical iterated homologies have finite length in the support
+rectangle, use the flipped bicomplex and canonical total-flip isomorphism to obtain finite-
+length total homology data.

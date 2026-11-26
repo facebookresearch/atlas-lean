@@ -13,15 +13,16 @@ public import MathlibExt.AlgebraicTopology.DoldKan.AdditiveNormalization
 public import Mathlib.Algebra.Category.ModuleCat.Ulift
 
 /-!
-# Returning native lifted coefficients to the original normalized tensor model
+# Lifting coefficients and normalized tensor complexes
 
-The original coefficient carrier and original diagram carrier have
-independent worlds. The native tensor congruence with coefficient down,
-followed by native output up, compares the lifted-coefficient tensor with
-the lifted original tensor. Its generator formula retains the original
-linear-map values. Native additive normalization then compares the same
-normalized models; no Small/Flat premise or new coefficient category is
-needed.
+For a commutative ring R and modules M and X at independent carrier heights, the tensor (ULift
+M) ⊗_R X is canonically isomorphic to ULift(M ⊗_R X). The forward map sends m ⊗ x to the lift
+of m.down ⊗ x.
+
+For a simplicial diagram X, these isomorphisms are natural and give N((ULift M) ⊗_R X) ≅ ULift
+N(M ⊗_R X). A linear coefficient map between independently sized modules is represented at a
+common lift height by up(m) ↦ up(a(m)); the tensor and normalization comparisons retain this
+coefficient map.
 -/
 
 @[expose] public section
@@ -36,7 +37,10 @@ namespace ModuleCat.SimplicialCoefficientLift
 
 variable (R : Type u) [CommRing R]
 
-/-- The actual tensor of native lifted coefficients returns to the native lift of the original tensor. -/
+/-- The tensor isomorphism for a lifted coefficient.
+
+The canonical R-linear isomorphism identifies (ULift M) ⊗_R X with ULift(M ⊗_R X), with
+separate coefficient, diagram and lift heights. -/
 def tensorIso (M : ModuleCat.{s} R) (X : ModuleCat.{v} R) :
     tensorObjAt R ((uliftFunctor.{h, s} R).obj M) X ≅
       (uliftFunctor.{h, max v s} R).obj (tensorObjAt R M X) :=
@@ -44,7 +48,9 @@ def tensorIso (M : ModuleCat.{s} R) (X : ModuleCat.{v} R) :
       (LinearEquiv.refl R X)).trans
     (ULift.moduleEquiv : ULift.{h} (M ⊗[R] X) ≃ₗ[R] M ⊗[R] X).symm).toModuleIso
 
-/-- The coefficient lift comparison keeps the original coefficient and differential tensor values. -/
+/-- The lifted coefficient tensor map on pure tensors.
+
+For m ∈ ULift M and x ∈ X, the forward comparison sends m ⊗ x to ULift.up(m.down ⊗ x). -/
 theorem tensorIso_hom_tmul (M : ModuleCat.{s} R) (X : ModuleCat.{v} R)
     (m : ULift.{h} M) (x : X) :
     (tensorIso.{u, v, s, h} R M X).hom.hom (m ⊗ₜ[R] x) = ULift.up (m.down ⊗ₜ[R] x) := by
@@ -54,7 +60,10 @@ theorem tensorIso_hom_tmul (M : ModuleCat.{s} R) (X : ModuleCat.{v} R)
   rw [TensorProduct.congr_tmul]
   rfl
 
-/-- The same native tensor comparison is natural in every original diagram map. -/
+/-- Naturality of the lifted coefficient tensor isomorphism.
+
+For fixed M, the tensor comparisons give a natural isomorphism between (ULift M) ⊗_R − and M
+⊗_R − followed by module lifting. -/
 def tensorFunctorIso (M : ModuleCat.{s} R) :
     (tensorBifunctorAt.{u, max s h, v} R).obj ((uliftFunctor.{h, s} R).obj M) ≅
       (tensorBifunctorAt.{u, s, v} R).obj M ⋙ uliftFunctor.{h, max v s} R :=
@@ -66,8 +75,10 @@ def tensorFunctorIso (M : ModuleCat.{s} R) :
     simp only [ModuleCat.hom_comp]
     rfl)
 
-/-- Native tensoring and native additive normalization identify the lifted coefficient
-with the original model's native lift. -/
+/-- The normalized Moore comparison for lifted coefficients.
+
+For a simplicial X, normalization of (ULift M) ⊗_R X is isomorphic to the module lift of N(M
+⊗_R X), using the tensor comparison and the normalization–lift isomorphism. -/
 def normalizedIso (M : ModuleCat.{s} R) (X : SimplicialObject (ModuleCat.{v} R)) :
     ((SimplicialCoefficientFamilies.normalized.{u, v, max s h} R).obj X).obj
         ((uliftFunctor.{h, s} R).obj M) ≅
@@ -78,7 +89,10 @@ def normalizedIso (M : ModuleCat.{s} R) (X : SimplicialObject (ModuleCat.{v} R))
     (((NormalizedQuotient.mooreCompMapIso (uliftFunctor.{h, max v s} R)).app
       (X ⋙ (tensorBifunctorAt.{u, s, v} R).obj M))).symm
 
-/-- The return to the original normalized model preserves every original fixed simplicial diagram map. -/
+/-- Diagram naturality of the normalized coefficient-lift comparison.
+
+For f : X → Y, the normalized map with lifted coefficient M followed by the comparison for Y
+equals the comparison for X followed by the lift of the normalized map with coefficient M. -/
 @[reassoc]
 theorem normalizedIso_naturality (M : ModuleCat.{s} R)
     {X Y : SimplicialObject (ModuleCat.{v} R)} (f : X ⟶ Y) :
@@ -123,18 +137,26 @@ theorem normalizedIso_naturality (M : ModuleCat.{s} R)
     _ = N'.map sX ≫ (eX.inv ≫ d) := congrArg (fun z => N'.map sX ≫ z) huInv
     _ = _ := (Category.assoc _ _ _).symm
 
-/-- Represent independently sized original coefficient maps by the existing native module lifts. -/
+/-- A coefficient linear map represented at a common lift height.
+
+For a : M →ₗ[R] N with independent source and target carrier heights, lift both modules to the
+stated common height and send up(m) to up(a(m)). -/
 def coefficientMap {M : ModuleCat.{s} R} {N : ModuleCat.{t} R} (a : M →ₗ[R] N) :
     (uliftFunctor.{max s t h, s} R).obj M ⟶ (uliftFunctor.{max s t h, t} R).obj N :=
   ModuleCat.ofHom
     ((ULift.moduleEquiv : ULift.{max s t h} N ≃ₗ[R] N).symm.toLinearMap.comp
       (a.comp (ULift.moduleEquiv : ULift.{max s t h} M ≃ₗ[R] M).toLinearMap))
 
-/-- The lifted coefficient map has exactly the original linear-map value. -/
+/-- Coordinates of the lifted coefficient morphism.
+
+The common-height coefficient map sends ULift.up m to ULift.up(a m). -/
 theorem coefficientMap_up {M : ModuleCat.{s} R} {N : ModuleCat.{t} R} (a : M →ₗ[R] N) (m : M) :
     (coefficientMap.{u, s, t, h} R a).hom (ULift.up m) = ULift.up (a m) := rfl
 
-/-- The tensor map in the common native world returns the original tensor of the original coefficient map. -/
+/-- The lifted tensor coefficient map on generators.
+
+Apply the lifted coefficient map to up(m) ⊗ x and then the target tensor comparison. The
+result is up(a(m) ⊗ x). -/
 theorem tensorCoefficientMap_tmul {M : ModuleCat.{s} R} {N : ModuleCat.{t} R}
     (a : M →ₗ[R] N) (X : ModuleCat.{v} R) (m : M) (x : X) :
     ((tensorIso.{u, v, t, max s t h} R N X).hom).hom
@@ -151,8 +173,10 @@ theorem tensorCoefficientMap_tmul {M : ModuleCat.{s} R} {N : ModuleCat.{t} R}
   exact (congrArg (tensorIso.{u, v, t, max s t h} R N X).hom.hom hmap).trans
     (tensorIso_hom_tmul.{u, v, t, max s t h} R N X (ULift.up (a m)) x)
 
-/-- Native coefficient lifting and the original tensor coefficient map commute
-for independently sized original coefficients and the original diagram carrier. -/
+/-- The tensor comparison square for a heterogeneous coefficient map.
+
+Tensoring the common-height lift of a with id_X then applying the target comparison equals
+applying the source comparison then lifting TensorProduct.map a id_X. -/
 @[reassoc]
 theorem tensorIso_coefficientMap_naturality
     {M : ModuleCat.{s} R} {N : ModuleCat.{t} R} (a : M →ₗ[R] N) (X : ModuleCat.{v} R) :

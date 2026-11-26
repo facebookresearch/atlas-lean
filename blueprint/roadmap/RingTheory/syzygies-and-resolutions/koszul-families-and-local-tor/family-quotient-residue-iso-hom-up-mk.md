@@ -1,4 +1,5 @@
-# Family Quotient Residue Iso hom up mk
+# The lifted residue comparison on an inserted class
 
-The lifted quotient/residue isomorphism sends a lifted quotient
-representative to the lifted residue class.
+The lifted residue comparison on an inserted class.
+
+The forward comparison sends up(r mod the family ideal) to up(residue r).

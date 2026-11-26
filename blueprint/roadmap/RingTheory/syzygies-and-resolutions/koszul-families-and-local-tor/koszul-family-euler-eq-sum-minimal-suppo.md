@@ -1,3 +1,7 @@
-# Koszul Family Euler eq sum minimal Support
+# The full reference-minimal-support Euler formula
 
-The full minimum-support Euler sum, with actual localized lengths and all contributing primes.
+The full reference-minimal-support Euler formula.
+
+Under the stated local, annihilator, quotient and dimension hypotheses, all M_p lengths on the
+minimal support of N are finite and their weighted prime values sum to the Euler invariant of
+M.

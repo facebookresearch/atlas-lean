@@ -1,3 +1,5 @@
-# Skeletal Step Class To Row Cycles i
+# The row-cycle step-class map recovers the first-page map
 
-Including the row cycle recovers the first-page class map.
+The row-cycle step-class map recovers the first-page map.
+
+Including the row cycles gives the skeletal page-1 class map.

@@ -1,3 +1,5 @@
-# Countable Span Basis Set countable
+# Countable generators give a countable selected basis set
 
-Countability of the actual chosen basis index follows from the generator set alone.
+Countable generators give a countable selected basis set.
+
+If g is countable, the chosen linearly independent subset of g is countable.

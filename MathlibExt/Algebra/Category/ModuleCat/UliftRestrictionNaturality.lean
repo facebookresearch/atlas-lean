@@ -13,13 +13,14 @@ public import Mathlib.Algebra.Category.ModuleCat.ChangeOfRings
 public import Mathlib.Algebra.Category.ModuleCat.Ulift
 
 /-!
-# Native scalar restriction and module lift commute naturally
+# Scalar restriction commutes with module carrier lifting
 
-Both orders retain the same original lifted carrier and use the original
-ring-map action on its down value. Their actual module objects and maps are
-compared through identity components. This bridge returns the coefficient
-and output lift comparisons through the original-ring scalar restrictions;
-no scalar action or coefficient carrier is replaced.
+For a homomorphism f : S → R of rings, restricting an R-module to S and then lifting its
+carrier agrees naturally with lifting the R-module first and restricting afterward. Both
+orders use the same lifted carrier and the S-action through f.
+
+The comparison and its inverse preserve every lifted element. The two ring universes, the
+module carrier universe and the lift height are independent.
 -/
 
 @[expose] public section
@@ -33,8 +34,10 @@ namespace ModuleCat
 
 variable {R : Type u} {S : Type v} [Ring R] [Ring S]
 
-/-- The native module lift commutes with the same actual scalar restriction,
-for independently sized rings and original coefficient carriers. -/
+/-- The natural isomorphism between restriction and module lifting.
+
+For f : S → R, restriction along f followed by lifting is naturally isomorphic to lifting
+followed by restriction along f, through identity maps on the carriers. -/
 def restrictScalarsUliftIso (f : S →+* R) :
     (restrictScalars f : ModuleCat.{s} R ⥤ ModuleCat.{s} S) ⋙ uliftFunctor.{h, s} S ≅
       uliftFunctor.{h, s} R ⋙
@@ -46,12 +49,16 @@ def restrictScalarsUliftIso (f : S →+* R) :
     intro x
     rfl)
 
-/-- The comparison retains every original native lifted module element. -/
+/-- Elements under the forward restriction–lift comparison.
+
+The forward component sends each m ∈ ULift M to the same lifted element m. -/
 theorem restrictScalarsUliftIso_hom_apply (f : S →+* R) (M : ModuleCat.{s} R)
     (m : ULift.{h} M) :
     ((restrictScalarsUliftIso.{u, v, s, h} f).hom.app M).hom m = m := rfl
 
-/-- The inverse comparison retains that same original lifted carrier value. -/
+/-- Elements under the inverse restriction–lift comparison.
+
+The inverse component sends each m ∈ ULift M to the same lifted element m. -/
 theorem restrictScalarsUliftIso_inv_apply (f : S →+* R) (M : ModuleCat.{s} R)
     (m : ULift.{h} M) :
     ((restrictScalarsUliftIso.{u, v, s, h} f).inv.app M).hom m = m := rfl

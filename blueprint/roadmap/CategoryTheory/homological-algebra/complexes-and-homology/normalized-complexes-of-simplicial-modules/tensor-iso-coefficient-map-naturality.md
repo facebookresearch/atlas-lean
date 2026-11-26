@@ -1,4 +1,6 @@
-# Tensor Iso coefficient Map naturality
+# The tensor comparison square for a heterogeneous coefficient map
 
-Native coefficient lifting and the original tensor coefficient map commute
-for independently sized original coefficients and the original diagram carrier.
+The tensor comparison square for a heterogeneous coefficient map.
+
+Tensoring the common-height lift of a with id_X then applying the target comparison equals
+applying the source comparison then lifting TensorProduct.map a id_X.

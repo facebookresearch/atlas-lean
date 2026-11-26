@@ -1,4 +1,5 @@
-# Homology UCTSwapped Tensor Source Iso
+# Compression of the swapped coefficient tensor source
 
-The Künneth tensor source with a degree-zero coefficient complex in the
-first factor reduces to `A ⊗ H_n(K)`.
+Compression of the swapped coefficient tensor source.
+
+The Künneth tensor-source sum for A[0] and K identifies with A ⊗ H_n(K).

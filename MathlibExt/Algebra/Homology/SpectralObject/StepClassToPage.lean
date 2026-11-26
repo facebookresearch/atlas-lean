@@ -19,20 +19,17 @@ public import Mathlib.CategoryTheory.Limits.HasLimits
 import all Mathlib.Algebra.Homology.Embedding.RestrictionHomology
 public import MathlibExt.Algebra.Homology.SpectralSequence.SingleRow
 /-!
-# Maps from interval classes to spectral-sequence pages
+# Interval step classes on spectral pages
 
-A spectral object in an abelian category indexed by a bounded preorder
-maps bottom-to-cut interval classes to cycles and four-cut `E` objects.
-These maps commute with changes of the outer cuts. Under the stated
-endpoint vanishing hypotheses, they also commute with padding to stable
-intervals and kernel-graded quotients.
+For a spectral object over a bounded preorder, bottom-to-cut classes H_n(⊥,c) map to interval
+cycles and their four-cut E quotients. These maps commute with outer-cut changes. Under
+H_{n+1}(⊥,a)=0 and H_{n−1}(d,⊤)=0, padding identifies their finite representatives with stable
+classes and kernel-filtration graded quotients.
 
-For `EInt` indices, the constructions give compatible class maps on skeletal
-spectral-sequence pages and lifts to their cycles. First-page row
-identifications send these lifts to second-page homology classes. If the
-first page is supported in row zero, the class maps are preserved by the
-single-row successor and later-page isomorphisms. The zero-row versions
-make the total-degree transport explicit.
+For EInt indices, the page map at (p,q) uses total degree p+q and cut −p, with page-r window
+cuts −p−r,−p−1,−p,−p+r−1. It lifts to page cycles and is compatible with successor homology,
+first-page row homology, and the later single-row collapse comparisons. All integer degrees
+and index universe roles are retained.
 -/
 
 @[expose] public section
@@ -54,7 +51,9 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {ι : Type w} [Preorder ι] [OrderBot ι] [OrderTop ι]
 variable (Y : SpectralObject C ι)
 
-/-- Bottom-to-cut interval classes map to cycles in a three-cut window. -/
+/-- The map from a bottom-to-cut class to interval cycles.
+
+For a≤b≤c, map H_n(⊥,c) to the cycles associated to a→b→c through interval restriction. -/
 def stepClassToCycles (n : ℤ) {a b c : ι} (hab : a ≤ b) (hbc : b ≤ c) :
     Y.stableIntervalStep n c ⟶
       Y.cycles (homOfLE hab) (homOfLE hbc) n :=
@@ -65,8 +64,12 @@ def stepClassToCycles (n : ℤ) {a b c : ι} (hab : a ≤ b) (hbc : b ≤ c) :
       (homMk₂ (homOfLE (bot_le : (⊥ : ι) ≤ a)) (𝟙 b) (𝟙 c)
         (by subsingleton) (by subsingleton)) n
 
-/-- Including the cycles recovers restriction to the middle interval. -/
+
 -- Keep the original hypothesis parameters and their order in this compatibility declaration.
+/-- The step-class lift preserves its interval component.
+
+The cycle lift followed by cycle inclusion equals the H_n map from the bottom-to-cut interval
+to b→c. -/
 @[reassoc, nolint unusedArguments]
 theorem stepClassToCycles_i (n : ℤ) {a b c : ι} (hab : a ≤ b) (hbc : b ≤ c) :
     Y.stepClassToCycles n hab hbc ≫
@@ -78,7 +81,9 @@ theorem stepClassToCycles_i (n : ℤ) {a b c : ι} (hab : a ≤ b) (hbc : b ≤ 
   simp only [Functor.map_id, Category.comp_id]
   exact Y.toCycles_i _ _ _ _ n
 
-/-- Bottom-to-cut interval classes map to the four-cut `E` object via the cycle quotient. -/
+/-- The map from step classes to a four-cut quotient.
+
+For a≤b≤c≤d, lift the class to cycles and project to E(a,b,c,d;n). -/
 def stepClassToE (n : ℤ) {a b c d : ι}
     (hab : a ≤ b) (hbc : b ≤ c) (hcd : c ≤ d) :
     Y.stableIntervalStep n c ⟶
@@ -88,7 +93,9 @@ def stepClassToE (n : ℤ) {a b c d : ι}
     Y.πE (homOfLE hab) (homOfLE hbc) (homOfLE hcd)
       (n - 1) n (n + 1) (by omega) (by omega)
 
-/-- Increasing the left cut preserves the restricted cycle under the window map. -/
+/-- The step-class cycle lift commutes with the left-cut map.
+
+Moving a smaller left cut a′ to a carries its cycle lift to the lift at a. -/
 @[reassoc]
 theorem stepClassToCycles_left (n : ℤ) {a' a b c : ι}
     (haa : a' ≤ a) (hab : a ≤ b) (hbc : b ≤ c) :
@@ -101,7 +108,9 @@ theorem stepClassToCycles_left (n : ℤ) {a' a b c : ι}
   erw [Category.assoc, Y.cyclesMap_i _ _ _ _ _ (𝟙 _) n (by ext <;> subsingleton),
     Functor.map_id, Category.comp_id, stepClassToCycles_i, stepClassToCycles_i]
 
-/-- The left-window map preserves the interval class in `E`. -/
+/-- The step-class quotient map commutes with the left-cut map.
+
+The four-cut map from a′ to a carries the step-class representative to that with left cut a. -/
 @[reassoc]
 theorem stepClassToE_left (n : ℤ) {a' a b c d : ι}
     (haa : a' ≤ a) (hab : a ≤ b) (hbc : b ≤ c) (hcd : c ≤ d) :
@@ -121,8 +130,11 @@ theorem stepClassToE_left (n : ℤ) {a' a b c d : ι}
   erw [Category.assoc, hπ, ← Category.assoc, stepClassToCycles_left]
   rfl
 
-/-- The right-window map preserves the interval class in `E`. -/
+
 -- Keep the original hypothesis parameters and their order in this compatibility declaration.
+/-- The step-class quotient map commutes with enlarging the right cut.
+
+Moving d to d′ carries the class map to the representative for the enlarged interval. -/
 @[reassoc, nolint unusedArguments]
 theorem stepClassToE_right (n : ℤ) {a b c d d' : ι}
     (hab : a ≤ b) (hbc : b ≤ c) (hcd : c ≤ d) (hdd : d ≤ d') :
@@ -139,7 +151,9 @@ theorem stepClassToE_right (n : ℤ) {a b c d d' : ι}
   erw [Category.assoc, hπ, Y.cyclesMap_id, Category.id_comp]
   rfl
 
-/-- With bottom and top outer cuts, the class map is the stable-interval quotient map. -/
+/-- The step-class quotient map with extreme outer cuts.
+
+At outer cuts ⊥ and ⊤, the map is the stable interval step-to-stable map. -/
 theorem stepClassToE_stable (n : ℤ) {b c : ι} (hbc : b ≤ c) :
     Y.stepClassToE n (bot_le : (⊥ : ι) ≤ b) hbc (le_top : c ≤ (⊤ : ι)) =
       Y.stableIntervalStepToStable n hbc := by
@@ -154,7 +168,10 @@ theorem stepClassToE_stable (n : ℤ) {b c : ι} (hbc : b ≤ c) :
   erw [hId, Y.cyclesMap_id, Category.comp_id]
   rfl
 
-/-- Under endpoint vanishing, padding carries an interval class to its stable quotient. -/
+/-- The step-class map under endpoint padding.
+
+If H_{n+1}(⊥,a)=0 and H_{n−1}(d,⊤)=0, padding the finite window to the stable interval
+preserves the step-class map. -/
 @[reassoc]
 theorem stepClassToE_padding (n : ℤ) {a b c d : ι}
     (hab : a ≤ b) (hbc : b ≤ c) (hcd : c ≤ d)
@@ -186,7 +203,10 @@ theorem stepClassToE_padding (n : ℤ) {a b c d : ι}
   erw [← Category.assoc, hLinv, hR]
   exact Y.stepClassToE_stable n hbc
 
-/-- Under endpoint vanishing, the class map agrees with the image-to-kernel graded projection. -/
+/-- The step-class map in a kernel-filtration graded quotient.
+
+Under the endpoint vanishing hypotheses, the finite-window comparison gives the step-to-image
+map followed by the kernel-image identification and the graded quotient projection. -/
 @[reassoc]
 theorem stepClassToE_kernelGraded (n : ℤ) {a b c d : ι}
     (hab : a ≤ b) (hbc : b ≤ c) (hcd : c ≤ d)
@@ -204,7 +224,10 @@ theorem stepClassToE_kernelGraded (n : ℤ) {a b c d : ι}
   rw [Y.stableIntervalImageToStable_comp_iso_hom_assoc,
     Y.stableIntervalImageKernelGradedIso_π]
 
-/-- For identity outer intervals, `E ≅ H` sends the class map to interval restriction. -/
+/-- The step-class map when both outer arrows are identities.
+
+The E-to-H comparison identifies the map with the corresponding bottom-to-cut H_n interval
+map. -/
 @[reassoc]
 theorem stepClassToE_identity_hom (n : ℤ) {b c : ι} (hbc : b ≤ c) :
     Y.stepClassToE n (le_refl b) hbc (le_refl c) ≫
@@ -234,7 +257,9 @@ namespace CategoryTheory.Abelian.SpectralObject
 variable {C : Type u} [Category.{v} C] [Abelian C]
 variable (Y : SpectralObject C EInt)
 
-/-- The bottom-to-cut interval class maps to a skeletal spectral-sequence page. -/
+/-- The step-class map to a skeletal spectral page.
+
+At (p,q), map H_{p+q}(⊥,−p) through the cuts −p−r,−p−1,−p,−p+r−1 to E_r^{p,q}. -/
 def skeletalStepClassToPage (r : ℤ) (hr : 1 ≤ r) (p q : ℤ) :
     Y.stableIntervalStep (p + q) ((-p : ℤ) : EInt) ⟶
       ((Y.skeletalSpectralSequence).page r hr).X (p, q) :=
@@ -244,7 +269,10 @@ def skeletalStepClassToPage (r : ℤ) (hr : 1 ≤ r) (p q : ℤ) :
       (show ((-p : ℤ) : EInt) ≤ ((-p + r - 1 : ℤ) : EInt) by simp; omega) ≫
     (Y.skeletalPageWindowIso r hr p q).inv
 
-/-- The intermediate-window class includes as the current skeletal page class. -/
+/-- The step-class map through the successor cycle inclusion.
+
+The expanded lower-window representative followed by the successor cycle inclusion is the
+page-r class map. -/
 @[reassoc]
 theorem skeletalStepClassToPage_successor_i (r : ℤ) (hr : 1 ≤ r) (p q : ℤ) :
     Y.stepClassToE (p + q)
@@ -257,7 +285,10 @@ theorem skeletalStepClassToPage_successor_i (r : ℤ) (hr : 1 ≤ r) (p q : ℤ)
   erw [← Category.assoc, stepClassToE_left]
   rfl
 
-/-- The successor homology quotient sends the intermediate-window class to the next page. -/
+/-- The step-class map through the successor homology projection.
+
+The expanded representative projected to successor homology and then to page r+1 is the
+page-(r+1) class map. -/
 @[reassoc]
 theorem skeletalStepClassToPage_successor_π (r : ℤ) (hr : 1 ≤ r) (p q : ℤ) :
     Y.stepClassToE (p + q)
@@ -271,7 +302,9 @@ theorem skeletalStepClassToPage_successor_π (r : ℤ) (hr : 1 ≤ r) (p q : ℤ
   erw [← Category.assoc, stepClassToE_right]
   rfl
 
-/-- The interval class map is annihilated by every skeletal page differential. -/
+/-- Step classes are cycles on the skeletal page.
+
+The step-class map to E_r^{p,q} is killed by the outgoing page differential. -/
 @[reassoc]
 theorem skeletalStepClassToPage_g (r : ℤ) (hr : 1 ≤ r) (p q : ℤ) :
     Y.skeletalStepClassToPage r hr p q ≫
@@ -279,7 +312,9 @@ theorem skeletalStepClassToPage_g (r : ℤ) (hr : 1 ≤ r) (p q : ℤ) :
   rw [← Y.skeletalStepClassToPage_successor_i r hr p q, Category.assoc,
     (Y.skeletalSuccessorHomologyData r hr p q).left.wi, comp_zero]
 
-/-- Equal page indices give compatible transports of the interval class map. -/
+/-- The step-class page map respects equality of page indices.
+
+Transport along r=r′ carries the page-r map to the page-r′ map. -/
 @[reassoc]
 theorem skeletalStepClassToPage_cast (r r' : ℤ) (h : r = r') (hr : 1 ≤ r) (p q : ℤ) :
     Y.skeletalStepClassToPage r hr p q ≫
@@ -289,7 +324,10 @@ theorem skeletalStepClassToPage_cast (r r' : ℤ) (h : r = r') (hr : 1 ≤ r) (p
   simp only [CategoryTheory.SpectralSequence.pageXIsoOfEq, eqToIso_refl,
     Iso.refl_hom, Category.comp_id]
 
-/-- With first-page support in row zero, the single-row successor preserves the interval class map. -/
+/-- Step-class maps commute with a single-row successor isomorphism.
+
+Under first-page row-zero support and r≥2, the canonical page successor carries the step-class
+map to that at r+1. -/
 @[reassoc]
 theorem skeletalStepClassToPage_singleRowSuccessor
     (hrow : ∀ p q : ℤ, q ≠ 0 → IsZero (((Y.skeletalSpectralSequence).page 1).X (p, q)))
@@ -315,7 +353,10 @@ theorem skeletalStepClassToPage_singleRowSuccessor
   simp only [Category.assoc, Iso.inv_hom_id, Category.comp_id]
   rfl
 
-/-- The interval class map lifts to the cycles of a skeletal page. -/
+/-- The step-class lift into skeletal page cycles.
+
+Use the expanded lower window and successor cycle comparison to lift H_{p+q}(⊥,−p) into page-r
+cycles. -/
 def skeletalStepClassToPageCycles (r : ℤ) (hr : 1 ≤ r) (p q : ℤ) :
     Y.stableIntervalStep (p + q) ((-p : ℤ) : EInt) ⟶
       ((Y.skeletalSpectralSequence).page r hr).cycles (p, q) :=
@@ -325,7 +366,9 @@ def skeletalStepClassToPageCycles (r : ℤ) (hr : 1 ≤ r) (p q : ℤ) :
       (show ((-p : ℤ) : EInt) ≤ ((-p + r - 1 : ℤ) : EInt) by simp; omega) ≫
     (Y.skeletalSuccessorHomologyData r hr p q).left.cyclesIso.inv
 
-/-- Including the cycle lift recovers the skeletal page class map. -/
+/-- The step-class cycle lift recovers the page class map.
+
+Cycle inclusion composed after the lift equals skeletalStepClassToPage. -/
 @[reassoc]
 theorem skeletalStepClassToPageCycles_i (r : ℤ) (hr : 1 ≤ r) (p q : ℤ) :
     Y.skeletalStepClassToPageCycles r hr p q ≫
@@ -336,7 +379,10 @@ theorem skeletalStepClassToPageCycles_i (r : ℤ) (hr : 1 ≤ r) (p q : ℤ) :
     (Y.skeletalSuccessorHomologyData r hr p q).left.cyclesIso_inv_comp_iCycles]
   exact Y.skeletalStepClassToPage_successor_i r hr p q
 
-/-- The cycle quotient followed by the successor isomorphism recovers the next-page class map. -/
+/-- The step-class cycle lift gives the next-page class.
+
+The cycle lift followed by homology projection and the successor isomorphism equals the
+page-(r+1) class map. -/
 @[reassoc]
 theorem skeletalStepClassToPageCycles_homology (r : ℤ) (hr : 1 ≤ r) (p q : ℤ) :
     Y.skeletalStepClassToPageCycles r hr p q ≫
@@ -350,7 +396,9 @@ theorem skeletalStepClassToPageCycles_homology (r : ℤ) (hr : 1 ≤ r) (p q : �
   simp only [Iso.inv_hom_id_assoc]
   exact Y.skeletalStepClassToPage_successor_π r hr p q
 
-/-- Iterating single-row successors preserves the class map when the first page is supported in row zero. -/
+/-- Step-class maps commute with finite single-row successor composites.
+
+The E₂ class map transported to page k+2 equals the class map defined on that page. -/
 @[reassoc]
 theorem skeletalStepClassToPage_singleRowNat
     (hrow : ∀ p q : ℤ, q ≠ 0 → IsZero (((Y.skeletalSpectralSequence).page 1).X (p, q)))
@@ -369,7 +417,9 @@ theorem skeletalStepClassToPage_singleRowNat
     exact Y.skeletalStepClassToPage_cast (((k : ℤ) + 2) + 1)
       (((k + 1 : ℕ) : ℤ) + 2) (by omega) (by omega) p q
 
-/-- The single-row comparison from page two preserves the class map under first-page support in row zero. -/
+/-- Step-class maps commute with every later single-row comparison.
+
+Under row-zero support, the E₂-to-E_r isomorphism preserves the class map for r≥2. -/
 @[reassoc]
 theorem skeletalStepClassToPage_singleRowPage
     (hrow : ∀ p q : ℤ, q ≠ 0 → IsZero (((Y.skeletalSpectralSequence).page 1).X (p, q)))
@@ -388,7 +438,10 @@ namespace CategoryTheory.SpectralSequence
 variable {C : Type u} [Category.{v} C] [Abelian C]
 variable (S : CohomologicalSpectralSequence C 1)
 
-/-- A first-page row short complex identifies with the corresponding short complex of the page. -/
+/-- The three-term comparison of a first-page row.
+
+The row complex at p−1,p,p+1 is identified by identity components with the page complex at
+(p−1,q),(p,q),(p+1,q). -/
 def firstPageRowShortComplexIso (p q : ℤ) :
     (S.firstPageRow q).sc' (p - 1) p (p + 1) ≅
       (S.page 1).sc' (p - 1, q) (p, q) (p + 1, q) :=
@@ -396,7 +449,10 @@ def firstPageRowShortComplexIso (p q : ℤ) :
     (by simp only [Iso.refl_hom, Category.id_comp, Category.comp_id]; rfl)
     (by simp only [Iso.refl_hom, Category.id_comp, Category.comp_id]; rfl)
 
-/-- First-page row cycles identify with cycles at the corresponding page position. -/
+/-- The cycles comparison of a first-page row.
+
+Identify degree-p row cycles with first-page cycles at (p,q) through the three-term
+comparison. -/
 def firstPageRowCyclesIso (p q : ℤ) :
     (S.firstPageRow q).cycles p ≅ (S.page 1).cycles (p, q) := by
   have hpRow : (ComplexShape.up ℤ).prev p = p - 1 :=
@@ -415,7 +471,10 @@ def firstPageRowCyclesIso (p q : ℤ) :
     (ShortComplex.cyclesFunctor C).mapIso (S.firstPageRowShortComplexIso p q) ≪≫
       ((S.page 1).cyclesIsoSc' (p - 1, q) (p, q) (p + 1, q) hpPage hnPage).symm
 
-/-- The row cycle comparison preserves the inclusion into the first page. -/
+/-- The row-cycle comparison preserves inclusion.
+
+The forward row-cycle comparison followed by page cycle inclusion equals the row cycle
+inclusion. -/
 @[reassoc]
 theorem firstPageRowCyclesIso_hom_i (p q : ℤ) :
     (S.firstPageRowCyclesIso p q).hom ≫ (S.page 1).iCycles (p, q) =
@@ -427,7 +486,10 @@ theorem firstPageRowCyclesIso_hom_i (p q : ℤ) :
     ShortComplex.isoMk_hom_τ₂, Iso.refl_hom, Category.comp_id,
     HomologicalComplex.cyclesIsoSc'_hom_iCycles]
 
-/-- The row homology comparison preserves the cycle quotient. -/
+/-- The row-cycle comparison preserves homology projection.
+
+Row homology projection followed by its comparison equals the row-cycle comparison followed by
+page homology projection. -/
 @[reassoc]
 theorem firstPageRowCyclesIso_homologyπ (p q : ℤ) :
     (S.firstPageRow q).homologyπ p ≫ (S.firstPageRowHomologyIso p q).hom =
@@ -450,14 +512,19 @@ namespace CategoryTheory.Abelian.SpectralObject
 variable {C : Type u} [Category.{v} C] [Abelian C]
 variable (Y : SpectralObject C EInt)
 
-/-- The interval class maps to cycles of its first-page row. -/
+/-- The step-class map to a first-page row's cycles.
+
+Lift the skeletal first-page class at (p,q) and use the row-cycle comparison to obtain
+degree-p row cycles. -/
 def skeletalStepClassToRowCycles (p q : ℤ) :
     Y.stableIntervalStep (p + q) ((-p : ℤ) : EInt) ⟶
       ((Y.skeletalSpectralSequence).firstPageRow q).cycles p :=
   Y.skeletalStepClassToPageCycles 1 le_rfl p q ≫
     ((Y.skeletalSpectralSequence).firstPageRowCyclesIso p q).inv
 
-/-- Including the row cycle recovers the first-page class map. -/
+/-- The row-cycle step-class map recovers the first-page map.
+
+Including the row cycles gives the skeletal page-1 class map. -/
 @[reassoc]
 theorem skeletalStepClassToRowCycles_i (p q : ℤ) :
     Y.skeletalStepClassToRowCycles p q ≫
@@ -471,7 +538,10 @@ theorem skeletalStepClassToRowCycles_i (p q : ℤ) :
   dsimp only [skeletalStepClassToRowCycles]
   erw [Category.assoc, hi, skeletalStepClassToPageCycles_i]
 
-/-- The row homology comparison sends the cycle lift to the second-page class map. -/
+/-- The row-cycle step-class map gives its second-page class.
+
+The row homology projection and row-to-E₂ comparison carry the lift to the skeletal page-2
+class map. -/
 @[reassoc]
 theorem skeletalStepClassToRowCycles_homology (p q : ℤ) :
     Y.skeletalStepClassToRowCycles p q ≫
@@ -486,7 +556,9 @@ theorem skeletalStepClassToRowCycles_homology (p q : ℤ) :
   exact Y.skeletalStepClassToPageCycles_homology 1 le_rfl p q
 
 unseal spectralSequence in
-/-- The first-page interval coordinate sends the class map to restriction to the middle interval. -/
+/-- The first-page class map in its short-interval coordinate.
+
+The first-page chart identifies the class map with H_{p+q}(⊥,−p) → H_{p+q}(−p−1,−p). -/
 @[reassoc]
 theorem skeletalStepClassToPage_firstPage_hom (p q : ℤ) :
     Y.skeletalStepClassToPage 1 le_rfl p q ≫ (Y.skeletalFirstPageXIso (p, q)).hom =
@@ -554,7 +626,9 @@ namespace CategoryTheory.Abelian.SpectralObject
 variable {C : Type u} [Category.{v} C] [Abelian C]
 variable (Y : SpectralObject C EInt)
 
-/-- The class map to cycles in row zero, with total degree transported along `n + 0 = n`. -/
+/-- The zero-row step-class lift with explicit total degree.
+
+For n∈ℤ, transport n+0 to n and lift H_n(⊥,−n) into degree-n cycles of row zero. -/
 def skeletalStepClassToZeroRowCycles (n : ℤ) :
     Y.stableIntervalStep n ((-n : ℤ) : EInt) ⟶
       ((Y.skeletalSpectralSequence).firstPageRow 0).cycles n :=
@@ -562,7 +636,9 @@ def skeletalStepClassToZeroRowCycles (n : ℤ) :
     (mk₁ (homOfLE (bot_le : (⊥ : EInt) ≤ ((-n : ℤ) : EInt))))) (add_zero n))).inv ≫
     Y.skeletalStepClassToRowCycles n 0
 
-/-- The interval coordinate for row zero, with total degree transported along `n + 0 = n`. -/
+/-- The zero-row first-page object as a short interval.
+
+Identify its degree-n object with H_n(−n−1,−n), retaining the n+0=n transport. -/
 def skeletalFirstPageZeroRowCutIso (n : ℤ) :
     ((Y.skeletalSpectralSequence).firstPageRow 0).X n ≅
       (Y.H n).obj (mk₁
@@ -579,7 +655,9 @@ private theorem cohomologyDegreeTransportMap (k n : ℤ) (h : k = n)
   subst n
   simp only [eqToIso_refl, Iso.refl_inv, Iso.refl_hom, Category.id_comp, Category.comp_id]
 
-/-- The row-zero class map followed by the interval coordinate equals restriction to the middle interval. -/
+/-- The zero-row cycle lift in the short-cut coordinate.
+
+Cycle inclusion followed by the cut isomorphism equals the bottom-to-cut interval map. -/
 @[reassoc]
 theorem skeletalStepClassToZeroRowCycles_i_cut (n : ℤ) :
     Y.skeletalStepClassToZeroRowCycles n ≫
@@ -595,7 +673,10 @@ theorem skeletalStepClassToZeroRowCycles_i_cut (n : ℤ) :
   dsimp only [stableIntervalStep, stableIntervalLeftMiddle]
   exact cohomologyDegreeTransportMap Y (n + 0) n (add_zero n) _ _ _
 
-/-- The row-zero cycle inclusion equals interval restriction followed by the inverse coordinate map. -/
+/-- The zero-row cycle lift recovers the cut class representative.
+
+The interval map followed by the inverse cut chart equals the cycle lift followed by
+inclusion. -/
 @[reassoc]
 theorem skeletalStepClassToZeroRowCycles_i (n : ℤ) :
     Y.skeletalStepClassToZeroRowCycles n ≫ ((Y.skeletalSpectralSequence).firstPageRow 0).iCycles n =

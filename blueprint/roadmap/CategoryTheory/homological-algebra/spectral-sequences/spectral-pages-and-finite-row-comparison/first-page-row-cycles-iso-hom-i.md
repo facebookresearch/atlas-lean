@@ -1,3 +1,6 @@
-# First Page Row Cycles Iso hom i
+# The row-cycle comparison preserves inclusion
 
-The row cycle comparison preserves the inclusion into the first page.
+The row-cycle comparison preserves inclusion.
+
+The forward row-cycle comparison followed by page cycle inclusion equals the row cycle
+inclusion.

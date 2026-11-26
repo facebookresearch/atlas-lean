@@ -1,4 +1,5 @@
-# Localized Diagonal Koszul homology length ne top
+# Every localized family Koszul homology has finite length
 
-Every degree of the actual local diagonal Koszul homology has finite
-length, retaining all higher terms.
+Every localized family Koszul homology has finite length.
+
+Under the noetherian minimal-prime hypotheses, each degree has finite local length.

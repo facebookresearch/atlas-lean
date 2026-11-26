@@ -1,5 +1,6 @@
-# Of iso
+# Isomorphisms preserve local freeness
 
-Unranked local freeness is preserved under isomorphism: transport the
-local generator data along the restriction of the iso to each cover
-member.
+Let `(C,J)` be a site with `R : Sheaf J RingCat.{u}`, and assume weak additive sheafification
+with the locally-bijective comparison on every slice. For module sheaves `M,N` of carrier
+universe `u` and an isomorphism `e : M ≅ N`, local freeness of `M` implies local freeness of
+`N`. The local generator index sets may be arbitrary.

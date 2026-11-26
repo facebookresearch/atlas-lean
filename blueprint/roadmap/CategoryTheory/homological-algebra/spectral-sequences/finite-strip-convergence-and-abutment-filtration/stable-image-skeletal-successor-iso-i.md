@@ -1,4 +1,7 @@
-# Stable Image Skeletal Successor Iso i
+# Zero-differential successor preserves the datum projection
 
-The actual native successor preserves the cycles inclusion and quotient
-of the original skeletal homology datum.
+Let S be an EInt-indexed abelian-group spectral object, r≥1 and
+(p,q) a position whose incoming and outgoing page-r differentials
+are zero. For the cycle inclusion i_h and homology projection π_h
+of its successor datum, the successor followed by the new-page
+window comparison sends i_h to π_h.

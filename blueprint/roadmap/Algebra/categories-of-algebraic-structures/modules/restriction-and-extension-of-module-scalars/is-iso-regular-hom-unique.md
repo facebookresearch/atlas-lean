@@ -1,3 +1,6 @@
-# Is Iso regular hom unique
+# Uniqueness of isomorphisms from the regular module
 
-Actual isomorphism generators of any module agree when the coefficient unit group is trivial.
+Uniqueness of isomorphisms from the regular module.
+
+For a ring R with a subsingleton unit group, any two morphisms f,g : R → M that are
+isomorphisms are equal.

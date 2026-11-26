@@ -1,4 +1,6 @@
-# Family Tensor Coefficient homology length eq of equiv
+# Coefficient equivalences preserve all Koszul homology lengths
 
-A coefficient linear equivalence in independent universes preserves
-every actual full-family tensor homology length.
+Coefficient equivalences preserve all Koszul homology lengths.
+
+An R-linear equivalence between independently sized coefficient carriers gives equal lengths
+in every homology degree.

@@ -1,3 +1,6 @@
-# Cycles is Killed By
+# Annihilation passes from a complex term to its cycles
 
-The actual cycle object is a subobject of the corresponding actual term.
+Annihilation passes from a complex term to its cycles.
+
+If K_i is killed by m and degree-i homology exists, then the cycle object Z_i(K) is killed by
+m.

@@ -11,16 +11,14 @@ module
 public import MathlibExt.Algebra.Category.ModuleCat.TensorRestriction
 
 /-!
-# Coefficient naturality of native tensor cancellation
+# Coefficient naturality of base-change tensor cancellation
 
-For a commutative algebra R → S, the existing native cancellation identifies
-M ⊗[S] (S ⊗[R] L) with M ⊗[R] L. This comparison is natural in both actual
-module inputs. The original S-coefficient and both carrier universes are
-retained; no flatness or projectivity is required.
+For a commutative algebra R → S, the comparison M ⊗_S (S ⊗_R L) ≅ M ⊗_R L is natural in both
+the S-coefficient M and the R-input L. At input carrier height max(w,v), these comparisons
+form an isomorphism of coefficient-to-input functors with output height max(w,t,v).
 
-The curried comparison below assembles the existing cancellation isomorphisms.
-It introduces no tensor construction or new scalar action. Diagram clients
-obtain their comparison by whiskering this single coefficient-natural API.
+Precomposing the input with any R-module diagram X gives a coefficient-natural diagram
+isomorphism. Its component at a diagram object is the same base-change cancellation map.
 -/
 
 @[expose] public section
@@ -36,14 +34,20 @@ namespace ModuleCat.TensorRestriction
 
 variable (R : Type u) (S : Type w) [CommRing R] [CommRing S] [Algebra R S]
 
-/-- Native scalar extension followed by tensoring with the actual coefficient. -/
+/-- The tensor bifunctor with an extended R-input.
+
+Send an S-module M and R-module L to M ⊗_S (S ⊗_R L), at the stated common input and output
+heights. -/
 abbrev extendedFactory : ModuleCat.{t} S ⥤
     (ModuleCat.{max w v} R ⥤ ModuleCat.{max w t v} S) :=
   ModuleCat.tensorBifunctorAt.{w, t, max w v} S ⋙
     (whiskeringLeft (ModuleCat.{max w v} R) (ModuleCat.{max w v} S)
       (ModuleCat.{max w t v} S)).obj (ModuleCat.extendScalars (algebraMap R S))
 
-/-- The inverse cancellation square on an original coefficient map. -/
+/-- Coefficient naturality of inverse tensor cancellation.
+
+For g : M → N, first applying inverse cancellation and then the coefficient map on the
+extended tensor equals applying g on the direct tensor and then inverse cancellation for N. -/
 @[reassoc]
 theorem cancellationNatIso_inv_coefficient {M N : ModuleCat.{t} S} (g : M ⟶ N)
     (L : ModuleCat.{max w v} R) :
@@ -77,7 +81,10 @@ theorem cancellationNatIso_inv_coefficient {M N : ModuleCat.{t} S} (g : M ⟶ N)
   exact (congrArg (((extendedFactory R S).map g).app L).hom hm).trans
     (ht.trans ((congrArg ((cancellationNatIso R S N).inv.app L).hom hg).trans hn).symm)
 
-/-- The original cancellation is natural in every actual S-linear coefficient map. -/
+/-- Coefficient naturality of forward tensor cancellation.
+
+For g : M → N, the coefficient map on M ⊗_S (S ⊗_R L) followed by cancellation for N equals
+cancellation for M followed by g ⊗ id_L. -/
 @[reassoc]
 theorem cancellationNatIso_hom_coefficient {M N : ModuleCat.{t} S} (g : M ⟶ N)
     (L : ModuleCat.{max w v} R) :
@@ -97,7 +104,10 @@ theorem cancellationNatIso_hom_coefficient {M N : ModuleCat.{t} S} (g : M ⟶ N)
         ((congrArg (fun x => b ≫ x) cN.inv_hom_id).trans
           ((Category.comp_id b).trans (cM.inv_hom_id_assoc b).symm))))
 
-/-- Native cancellation assembled naturally in both original module arguments. -/
+/-- The coefficient-natural cancellation isomorphism of bifunctors.
+
+The extended-input tensor bifunctor is naturally isomorphic to (M,L) ↦ M ⊗_R L through base-
+change cancellation. -/
 def cancellationFactoryIso : extendedFactory R S ≅
     (factory R S : ModuleCat.{t} S ⥤ ModuleCat.{max w v} R ⥤ ModuleCat.{max w t v} S) :=
   NatIso.ofComponents (fun M => cancellationNatIso R S M) (by
@@ -106,7 +116,11 @@ def cancellationFactoryIso : extendedFactory R S ≅
     funext L
     exact cancellationNatIso_hom_coefficient R S g L)
 
-/-- Whiskering gives the same natural cancellation on every original R-module diagram. -/
+/-- The cancellation isomorphism for an R-module diagram.
+
+For X : J → ModuleCat R at the stated input height, precompose the input variable of the
+coefficient-natural cancellation to obtain an isomorphism of coefficient families of
+J-diagrams. -/
 def cancellationDiagramIso {J : Type*} [Category J] (X : J ⥤ ModuleCat.{max w v} R) :
     extendedFactory R S ⋙
         (whiskeringLeft J (ModuleCat.{max w v} R) (ModuleCat.{max w t v} S)).obj X ≅
@@ -115,7 +129,10 @@ def cancellationDiagramIso {J : Type*} [Category J] (X : J ⥤ ModuleCat.{max w 
   isoWhiskerRight (cancellationFactoryIso R S)
     ((whiskeringLeft J (ModuleCat.{max w v} R) (ModuleCat.{max w t v} S)).obj X)
 
-/-- Diagram evaluation retains the original native tensor cancellation component. -/
+/-- Components of diagramwise tensor cancellation.
+
+At coefficient M and diagram object j, the forward diagram comparison is cancellationNatIso R
+S M at X_j. -/
 theorem cancellationDiagramIso_hom_app {J : Type*} [Category J]
     (X : J ⥤ ModuleCat.{max w v} R) (M : ModuleCat.{t} S) (j : J) :
     ((cancellationDiagramIso R S X).hom.app M).app j =

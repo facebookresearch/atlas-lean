@@ -1,3 +1,5 @@
-# Value
+# The Euler value of a prime factor
 
-Euler contribution of one prime-filtration factor.
+The Euler value of a prime factor.
+
+The factor value is χ_r(R/p), computed using its finite multiplication lengths.

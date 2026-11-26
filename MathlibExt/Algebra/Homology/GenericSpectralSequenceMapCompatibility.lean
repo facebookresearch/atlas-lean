@@ -17,14 +17,24 @@ public import MathlibExt.Algebra.Homology.SpectralObjectMapNaturality
 import all Mathlib.Algebra.Homology.SpectralObject.SpectralSequence
 
 /-!
-# Successor compatibility of spectral-object page maps
+# Spectral-object maps and successor-page homology
 
-The native page maps induced by a morphism of abelian spectral objects
-commute with the canonical isomorphisms from page homology to the next page.
-The proof uses the actual kernel and cokernel factorization in the native
-spectral-sequence construction. Its maps on cycles and computed homology
-are the original `EMap`s, and both defining squares follow from naturality
-in the indexing three-arrow.
+Let C be an abelian category, ι a preorder, and data a spectral-sequence page
+prescription with shape c_r on an independently sized set κ and initial page
+r₀. At position pq the page object is
+E^{d}(i₀(r,pq)≤i₁(pq)≤i₂(pq)≤i₃(r,pq)), with d=data.deg(pq).
+
+For each spectral object, require the prescribed boundary vanishings:
+H^{d+1}(i₀(r+1,pq)≤i₀(r,pq))=0 when pq has no outgoing c_r differential,
+and H^{d−1}(i₃(r,pq)≤i₃(r+1,pq))=0 when pq has no incoming c_r
+differential. These conditions give the successor-page identification
+H_pq(E_r) ≅ E_{r+1,pq} for r≥r₀.
+
+A morphism of spectral objects induces maps on these pages that commute with
+the successor-page identifications. They form a spectral-sequence morphism,
+respecting identities and composition. If the boundary conditions hold for
+every spectral object, this construction is a functor from spectral objects
+to spectral sequences.
 -/
 
 @[expose] public section
@@ -186,9 +196,17 @@ private theorem pageMap_homologyIso (φ : X ⟶ Y)
   rw [← Category.assoc, hHomology, Category.assoc, hPage, ← Category.assoc]
 
 unseal SpectralObject.spectralSequence in
-/-- The actual native page maps commute with the canonical identification of
-page homology with the next page. The maps and the isomorphisms are those
-constructed from the original spectral objects. -/
+/-- Let C be abelian, ι a preorder, and data a common page prescription
+with shapes c_r on κ and first page r₀. Let X and Y be spectral objects
+indexed by ι. For both objects assume the prescribed boundary vanishings:
+H^{d+1}(i₀(r+1,pq)≤i₀(r,pq)) is zero when pq has no outgoing c_r
+differential, and H^{d−1}(i₃(r,pq)≤i₃(r+1,pq)) is zero when pq has no
+incoming c_r differential, for r≥r₀ and d=data.deg(pq).
+
+For φ:X → Y, r≥r₀, r′=r+1 and pq∈κ, let φ_r be the induced page map and
+α_X:H_pq(E_r(X)) ≅ E_{r′,pq}(X), α_Y the successor-page isomorphisms.
+Their compatibility square is
+α_Y ∘ H_pq(φ_r) = (φ_{r′})_pq ∘ α_X. -/
 @[reassoc]
 theorem spectralSequencePageMap_comm (φ : X ⟶ Y)
     (data : SpectralSequenceDataCore ι c r₀)
@@ -201,8 +219,17 @@ theorem spectralSequencePageMap_comm (φ : X ⟶ Y)
   subst r'
   exact pageMap_homologyIso φ data r hr pq
 
-/-- The canonical morphism of native spectral sequences induced by a
-morphism of spectral objects. -/
+/-- Let C be abelian, ι a preorder, and data a common page prescription
+with shapes c_r on κ and first page r₀. Let X and Y be spectral objects
+indexed by ι. For both objects assume the prescribed boundary vanishings:
+H^{d+1}(i₀(r+1,pq)≤i₀(r,pq)) is zero when pq has no outgoing c_r
+differential, and H^{d−1}(i₃(r,pq)≤i₃(r+1,pq)) is zero when pq has no
+incoming c_r differential, for r≥r₀ and d=data.deg(pq).
+
+For a spectral-object morphism φ:X → Y, the spectral-sequence morphism
+whose map on each page r≥r₀ is the map induced by φ on the prescribed
+E-objects. It commutes with the isomorphisms from page homology to the
+successor page. -/
 def spectralSequenceMap (φ : X ⟶ Y)
     (data : SpectralSequenceDataCore ι c r₀)
     [X.HasSpectralSequence data] [Y.HasSpectralSequence data] :
@@ -219,8 +246,15 @@ theorem spectralSequenceMap_hom (φ : X ⟶ Y)
   rfl
 
 unseal SpectralObject.spectralSequence in
-/-- The canonical spectral-sequence map of an identity spectral-object map
-is the identity on the native spectral sequence. -/
+/-- Let C be abelian, ι a preorder, and data a page prescription with shapes
+c_r on κ and first page r₀. Let X be a spectral object indexed by ι,
+satisfying the boundary vanishings
+H^{d+1}(i₀(r+1,pq)≤i₀(r,pq))=0 at positions without an outgoing c_r
+differential and H^{d−1}(i₃(r,pq)≤i₃(r+1,pq))=0 at positions without an
+incoming c_r differential, for r≥r₀ and d=data.deg(pq).
+
+The spectral-sequence morphism induced by the identity of X is the identity
+of the spectral sequence prescribed by data. -/
 @[simp]
 theorem spectralSequenceMap_id (X : SpectralObject C ι)
     (data : SpectralSequenceDataCore ι c r₀) [X.HasSpectralSequence data] :
@@ -230,8 +264,14 @@ theorem spectralSequenceMap_id (X : SpectralObject C ι)
   exact pageMap_id X data r hr
 
 unseal SpectralObject.spectralSequence in
-/-- Composition of the original spectral-object maps gives composition of
-their canonical native spectral-sequence maps. -/
+/-- Let C be abelian, ι a preorder, and data a common page prescription with
+shapes c_r on κ and first page r₀. Suppose spectral objects X, Y and Z
+satisfy its boundary vanishings: the degree-(d+1) cohomology on
+i₀(r+1,pq)≤i₀(r,pq) vanishes at positions without an outgoing c_r
+differential, and the degree-(d−1) cohomology on
+i₃(r,pq)≤i₃(r+1,pq) vanishes at positions without an incoming one.
+For φ:X → Y and ψ:Y → Z, the spectral-sequence map induced by ψ∘φ
+equals the composite of the maps induced by φ and ψ. -/
 @[reassoc, simp]
 theorem spectralSequenceMap_comp (φ : X ⟶ Y) (ψ : Y ⟶ Z)
     (data : SpectralSequenceDataCore ι c r₀)
@@ -244,9 +284,14 @@ theorem spectralSequenceMap_comp (φ : X ⟶ Y) (ψ : Y ⟶ Z)
 
 end Hom
 
-/-- When a page recipe satisfies the native boundary-support condition for
-every spectral object, the native spectral-sequence construction is functorial.
-The map of every page is the original `EMap` construction. -/
+/-- Let C be abelian, ι a preorder, and data a page prescription with shapes
+c_r on κ beginning at r₀. Assume every spectral object W indexed by ι
+satisfies its boundary vanishings: H_W^{d+1}(i₀(r+1,pq)≤i₀(r,pq))=0
+where no outgoing c_r differential exists, and
+H_W^{d−1}(i₃(r,pq)≤i₃(r+1,pq))=0 where no incoming c_r differential
+exists, for r≥r₀ and d=data.deg(pq). The functor from spectral objects
+to these spectral sequences sends W to its prescribed pages and a
+morphism to the corresponding page maps. -/
 def spectralObjectSpectralSequenceFunctor
     (data : SpectralSequenceDataCore ι c r₀)
     [∀ X : SpectralObject C ι, X.HasSpectralSequence data] :

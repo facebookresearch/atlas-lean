@@ -1,3 +1,6 @@
-# Window Pair map
+# Window products commute with nested-width maps
 
-Products commute with native quotient maps under both outer-cut changes.
+Window products commute with nested-width maps.
+
+For the stated inequalities on both widths, the tensor of window maps commutes with the output
+window map.

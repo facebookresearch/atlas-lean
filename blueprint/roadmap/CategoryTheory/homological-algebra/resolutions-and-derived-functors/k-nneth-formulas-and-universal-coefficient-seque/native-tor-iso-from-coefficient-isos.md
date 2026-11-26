@@ -1,3 +1,6 @@
-# Native Tor Iso From Coefficient Isos
+# The Tor comparison of transported coefficient isomorphisms
 
-Actual native Tor transports given genuine coefficient maps and a genuine scalar ring equivalence.
+The Tor comparison of transported coefficient isomorphisms.
+
+For MR≅res NR and ML≅res NL, identify Tor_R(MR,ML) with res Tor_S(NR,NL), retaining
+coefficient order.

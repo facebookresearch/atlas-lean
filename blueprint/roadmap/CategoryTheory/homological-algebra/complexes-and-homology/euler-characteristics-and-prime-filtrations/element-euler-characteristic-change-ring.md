@@ -1,4 +1,5 @@
-# Element Euler Characteristic change Ring Of Surjective
+# The element Euler characteristic under surjective scalar change
 
-The one-element Euler characteristic is invariant under a surjective
-change from the source ring to the target ring.
+The element Euler characteristic under surjective scalar change.
+
+For surjective S → A, χ_s(A) over S equals χ_{image(s)}(A) over A.

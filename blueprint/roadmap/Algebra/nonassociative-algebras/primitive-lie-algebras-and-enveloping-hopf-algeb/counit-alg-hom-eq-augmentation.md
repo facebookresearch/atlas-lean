@@ -1,3 +1,5 @@
-# Counit Alg Hom eq augmentation
+# The enveloping bialgebra counit is the augmentation
 
-The native bialgebra counit is the canonical scalar augmentation.
+The enveloping bialgebra counit is the augmentation.
+
+The counit algebra homomorphism equals augmentation R L.

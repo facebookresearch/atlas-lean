@@ -28,7 +28,10 @@ open scoped nonZeroDivisors
 universe uR uM
 namespace Module
 
-/-- A regular annihilating element gives finite length in dimension at most one. -/
+/-- Let `R` be a Noetherian commutative ring of Krull dimension at most one,
+and `M` a finitely generated `R`-module in an independent universe. If a
+non-zero-divisor `a ∈ R` annihilates every element of `M`, then `M` has finite
+composition length over `R`. -/
 theorem length_ne_top_of_isTorsionBy_nonZeroDivisor
     (R : Type uR) [CommRing R] [IsNoetherianRing R] [Ring.KrullDimLE 1 R]
     (M : Type uM) [AddCommGroup M] [Module R M] [Module.Finite R M]

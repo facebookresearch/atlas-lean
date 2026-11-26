@@ -1,3 +1,5 @@
-# Coalgebra Closure Inclusion
+# The inclusion of the coalgebra closure complex
 
-The actual original subtype chain map.
+The inclusion of the coalgebra closure complex.
+
+The degreewise submodule inclusions form the cochain map j : D → C.

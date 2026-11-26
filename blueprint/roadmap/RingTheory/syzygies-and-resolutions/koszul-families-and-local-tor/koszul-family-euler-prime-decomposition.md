@@ -1,4 +1,6 @@
-# Koszul Family Euler Prime Decomposition
+# A prime-factor coefficient Euler decomposition
 
-A prime-filtration expression for the original full-family Koszul tensor
-Euler characteristic. Its localized-length equation retains every multiplicity.
+A prime-factor coefficient Euler decomposition.
+
+Record finite homology data for K(a;M), a factor list in Supp M, localized length sums and the
+equality of the total Euler invariant with the list-value sum.

@@ -1,3 +1,6 @@
-# Homogeneous Tensor Terms span
+# Homogeneous pure tensors span the total tensor degree
 
-The original sum tensor degree is spanned by actual homogeneous pure tensors.
+Homogeneous pure tensors span the total tensor degree.
+
+For every n ∈ ℤ, the R-span of the values of all homogeneous tensor terms is the full degree-n
+tensor module.

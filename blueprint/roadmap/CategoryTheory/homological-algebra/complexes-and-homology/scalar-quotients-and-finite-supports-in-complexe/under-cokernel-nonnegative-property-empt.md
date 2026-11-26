@@ -1,3 +1,5 @@
-# Under Cokernel Nonnegative Property empty colimit
+# The empty under-category colimit has zero negative cokernel terms
 
-The actual empty under colimit has supported cokernel, without any support hypothesis on `I`.
+The empty under-category colimit has zero negative cokernel terms.
+
+The initial under-object's cokernel satisfies the nonnegative support property.

@@ -1,3 +1,5 @@
-# Functor For Map
+# The tensor functor for a specified scalar map and coefficient
 
-Fix the original coefficient in the actual ring-map tensor family.
+The tensor functor for a specified scalar map and coefficient.
+
+For f : R → S and M an S-module, this functor sends L to M ⊗_R L, with M restricted along f.

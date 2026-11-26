@@ -1,4 +1,11 @@
-# Stable Image Page Comparison is Iso
+# Stable-to-finite window isomorphism from an attained kernel image
 
-Actual total-limit lifting and attained kernel images earn an
-isomorphism on the original stable-cut to finite-window map.
+Let ι be a preorder with endpoints and S an abelian-group spectral
+object indexed by ι. In degree n∈ℤ put B_i=H_Sⁿ(i,⊤),
+A=H_Sⁿ(⊥,⊤) and F_i=Ker(A → B_i). Let a:ℕ → ι be antitone and a₀≤c.
+Set G_k=B_{a_k}, γ_k:G_k → B_c, K_k=Ker(γ_k), and let the full-endpoint
+cone have point A and coordinates A → G_k. Assume this full-endpoint cone is limiting and K is
+Mittag–Leffler. Fix R∈ℕ at which the image of K_R → K₀ equals the
+eventual image in K₀.
+
+The canonical stable-to-finite window map E_Sⁿ(⊥,a₀,c,⊤) → E_Sⁿ(a_R,a₀,c,⊤) is an isomorphism.

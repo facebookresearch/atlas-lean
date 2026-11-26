@@ -1,4 +1,6 @@
-# Cotangent Family Residue Iso
+# The cotangent-family augmentation target is the residue field
 
-The generic universe-lifted quotient/residue isomorphism specialized to
-the chosen family and the literal residue-field object.
+For a Noetherian commutative local ring `R`, the augmentation target
+of the Koszul complex of its chosen cotangent family is isomorphic, as an
+`R`-module, to the residue field itself. The isomorphism identifies the
+quotient by the family ideal with `R/m`.

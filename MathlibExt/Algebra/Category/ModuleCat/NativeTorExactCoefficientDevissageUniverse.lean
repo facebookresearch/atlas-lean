@@ -16,13 +16,17 @@ public import MathlibExt.Algebra.Category.ModuleCat.NativeTorFiniteLengthDevissa
 public import MathlibExt.Algebra.Category.ModuleCat.FlatHomology
 
 /-!
-# Native Euler devissage for actual extended and restricted coefficients
+# Tor dévissage for extended and restricted coefficients
 
-Flat scalar extension to Q followed by restriction along the actual map S→Q
-preserves the original short exact coefficient rows. Only the map into Q from
-the original local ring is required to be flat. The native long exact sequence
-then earns finite lengths, the residue cutoff, and the actual Euler multiplier.
-The generic exact additive functor engine uses actual composition-series rows.
+For a commutative local ring R, commutative S and an additive homology-preserving F : Mod_R →
+Mod_S, finite Tor length and vanishing bounds for the residue coefficient Fκ propagate to
+every finite-length R-module N. The same result holds with FN in either Tor variable, with
+alternating sum multiplied by ℓ_R(N).
+
+For maps f : R → Q and g : S → Q, if f is flat, the functor F(N) = Q⊗_R N restricted along g
+preserves the coefficient short exact sequences. Thus the residue bounds and Euler multiplier
+apply to these extended and restricted coefficients. The R, S, Q and coefficient carrier
+universe levels remain independent.
 -/
 
 @[expose] public section
@@ -40,7 +44,11 @@ namespace UniverseTensor
 
 variable (R : Type u) (S : Type v) [CommRing R] [CommRing S] [IsLocalRing R]
 
-/-- The exact coefficient devissage theorem for literal native Tor in the first variable. -/
+/-- Tor Euler dévissage in the first coefficient variable.
+
+For additive homology-preserving F, finite lengths below cutoff d and vanishing above it for
+Tor_q^S(Fκ,M) imply the same bounds for Tor_q^S(FN,M), for finite-length N. The alternating
+sum is ℓ_R(N) times the residue sum. -/
 theorem nativeTorFiniteLength_devissage_first_of_preservesHomology
     (F : ModuleCat.{max u v w} R ⥤ ModuleCat.{max u v w} S)
     [F.Additive] [F.PreservesHomology] (M : ModuleCat.{max u v w} S)
@@ -80,7 +88,11 @@ theorem nativeTorFiniteLength_devissage_first_of_preservesHomology
       rawNativeTorEulerSum_symm.{v, max u w} S (F.obj k) M cutoff]
     exact h.2.2
 
-/-- Actual extended and restricted coefficients inherit the residue cutoff and native Euler sum. -/
+/-- Tor dévissage after flat extension and scalar restriction.
+
+For f : R → Q flat and g : S → Q, put F(N) = Q⊗_R N restricted to S. Residue-coefficient
+length and vanishing bounds for Tor^S(M,Fκ) pass to Tor^S(M,FN), with alternating sum
+multiplied by ℓ_R(N). -/
 theorem nativeTorFiniteLength_extendRestrict_devissage
     (Q : Type w) [CommRing Q] (f : R →+* Q) (g : S →+* Q) (hf : f.Flat)
     (M : ModuleCat.{max u v w x} S) (N : Type (max u v w x))
@@ -114,7 +126,11 @@ theorem nativeTorFiniteLength_extendRestrict_devissage
   exact nativeTorFiniteLength_devissage_of_preservesHomology.{u, v, max w x}
     R S F M N hN cutoff hκ hzκ
 
-/-- Actual extended and restricted coefficients satisfy devissage in the first native variable. -/
+/-- First-variable Tor dévissage after extension and restriction.
+
+For the same flat extension–restriction functor F, residue bounds for Tor^S(Fκ,M) pass to
+Tor^S(FN,M), and the alternating sum is multiplied by ℓ_R(N) for every finite-length R-module
+N. -/
 theorem nativeTorFiniteLength_extendRestrict_devissage_first
     (Q : Type w) [CommRing Q] (f : R →+* Q) (g : S →+* Q) (hf : f.Flat)
     (M : ModuleCat.{max u v w x} S) (N : Type (max u v w x))

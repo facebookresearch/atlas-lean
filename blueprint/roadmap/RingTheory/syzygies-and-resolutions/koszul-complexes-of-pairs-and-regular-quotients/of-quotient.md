@@ -1,4 +1,5 @@
-# Of quotient
+# Pair homology length data from the quotient and higher degrees
 
-Build the finite-length package from finite length of the two-generator
-quotient and of the two positive-degree homology modules.
+Pair homology length data from the quotient and higher degrees.
+
+Finite length of R/(f,g), H₁ and H₂ supplies the three-degree finiteness record.

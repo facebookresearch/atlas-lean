@@ -1,3 +1,6 @@
-# Pow
+# Degree of a power of a homogeneous endomorphism
 
-The `q`-th power of a degree-`d` endomorphism has degree `q * d`.
+Degree of a power of a homogeneous endomorphism.
+
+If the S-linear endomorphism f of M has degree d relative to M_n, then f^q has degree q·d for
+every natural q, including the identity at q = 0.

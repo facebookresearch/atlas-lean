@@ -1,4 +1,5 @@
-# Local Regular Family is Weakly Regular
+# Weak regularity survives source localization
 
-Flat localization of the actual source ring preserves its proved
-regular coefficient sequence.
+Weak regularity survives source localization.
+
+A weakly regular family in R remains weakly regular after localization at q.

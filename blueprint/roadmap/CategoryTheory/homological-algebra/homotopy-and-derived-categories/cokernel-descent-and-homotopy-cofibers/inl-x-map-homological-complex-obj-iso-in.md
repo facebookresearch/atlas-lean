@@ -1,3 +1,8 @@
-# Inl X map Homological Complex Obj Iso inv comp
+# Shifted-source component under an additive functor
 
-The native transported cofiber map retains its actual shifted-source component.
+Let H:C → D be additive, where C and D are preadditive with binary
+biproducts, and let c have decidable differential relation.
+For φ:F → G and q:Cofib(φ) → K, write
+ε:H(Cofib(φ)) ≅ Cofib(H(φ)) and q′=H(q)∘ε⁻¹.
+If c.Rel(j,i), the shifted-source inclusions satisfy
+q′ⱼ ∘ inl_{Hφ}(i,j) = H(qⱼ ∘ inl_φ(i,j)).

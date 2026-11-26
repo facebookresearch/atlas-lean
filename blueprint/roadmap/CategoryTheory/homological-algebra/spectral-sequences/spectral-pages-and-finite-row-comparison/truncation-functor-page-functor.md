@@ -1,3 +1,5 @@
-# Truncation Functor page Functor
+# Page evaluation commutes with truncation
 
-Restriction commutes strictly with evaluating any retained actual page.
+Page evaluation commutes with truncation.
+
+For retained r, truncation followed by page evaluation equals the original page functor.

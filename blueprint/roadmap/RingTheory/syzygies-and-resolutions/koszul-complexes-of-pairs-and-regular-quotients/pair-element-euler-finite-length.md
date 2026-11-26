@@ -1,4 +1,6 @@
-# Pair Element Euler Finite Length
+# Finite one-element Euler data on the first quotient
 
-Finite-length data for multiplication by `g` on `R/(f)`, obtained from
-the two-generator quotient and regularity of `f`.
+Finite one-element Euler data on the first quotient.
+
+For noetherian R, regular f and finite-length R/(f,g), multiplication by g on R/(f) has finite
+kernel and cokernel lengths over R.

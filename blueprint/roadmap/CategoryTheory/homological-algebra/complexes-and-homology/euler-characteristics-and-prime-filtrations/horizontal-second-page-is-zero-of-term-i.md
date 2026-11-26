@@ -1,3 +1,5 @@
-# Horizontal Second Page is Zero of term is Zero
+# A zero bicomplex term gives a zero second-page component
 
-A zero original term gives a zero actual second-page object at the same bidegree.
+A zero bicomplex term gives a zero second-page component.
+
+If K_{p,q} is zero, the second-page object at (p,q) is zero.

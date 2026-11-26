@@ -1,4 +1,5 @@
-# Localized Intersection Quotient length ne top
+# Finite localized quotient length at a minimal prime
 
-The local quotient at any actual generic intersection support is
-finite length. No finite-length input is supplied.
+Finite localized quotient length at a minimal prime.
+
+For noetherian R and p minimal over I, the module R_p/I R_p has finite length.

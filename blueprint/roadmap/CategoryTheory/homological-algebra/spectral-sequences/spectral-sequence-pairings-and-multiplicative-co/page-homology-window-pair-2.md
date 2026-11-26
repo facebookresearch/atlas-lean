@@ -1,4 +1,6 @@
-# Page Homology Window Pair π
+# The window homology product preserves cycle projection
 
-The actual homology projections carry the cycle product to the enlarged
-interval product. This is the required tensor-to-homology quotient formula.
+The window homology product preserves cycle projection.
+
+The tensor of page homology projections followed by the window product equals the page cycle
+product followed by output projection.

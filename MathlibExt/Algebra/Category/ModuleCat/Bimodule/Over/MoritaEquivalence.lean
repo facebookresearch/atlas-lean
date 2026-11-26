@@ -15,16 +15,24 @@ public import MathlibExt.Algebra.Category.ModuleCat.Bimodule.Over.MoritaCoordina
 public import Mathlib.CategoryTheory.Equivalence
 
 /-!
-# Morita equivalence of bimodule categories
+# Relative Morita equivalence and its complete return maps
 
-The two tensor functors use coefficient orders `Q–M–P` and `P–N–Q`.
-Their return isomorphisms contract the outer tensor pairs and respect the
-supplied bimodule actions. The resulting equivalence retains this counit
-and adjusts the unit to satisfy the triangle identity.
+Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with independent carriers p,q. At W=max(p,q,v), the tensor functors F(X)=(Q⊗_R X)⊗_R P
+and G(Y)=(P⊗_S Y)⊗_S Q act between the relative enveloping-module categories.
 
-The maps preserve the supplied ground scalar actions. Tensor carrier
-universes are independent, and the category equivalence uses a common
-ambient universe.
+A right R-linear contraction α:P⊗_S Q≃R preserving the left action gives the return G(FX)≅X. Its
+forward map first takes the raw coefficient coordinates, then contracts both P⊗_S Q pairs, then
+uses the identity-coefficient comparison from the reconstructed module to X. Its value is
+(α(p₀⊗q₀)⊗op(α(p₁⊗q₁)))•x, and the inverse reverses these three maps.
+
+These returns are natural on the transported object presentations and on the full composite
+functor. With a symmetric S-bimodule contraction β:Q⊗_R P≃S, they give an equivalence of the two
+categories at W. The β-return is the retained counit ε. Starting from the inverse α-return η⁰,
+the chosen unit is η_X=η⁰_X≫G(ε_{FX}⁻¹)≫GF((η⁰_X)⁻¹).
+
+A general component construction states the naturality condition for changing a functor's object
+representatives along isomorphisms. It applies to arbitrary categories and functors.
 -/
 
 @[expose] public section
@@ -53,12 +61,19 @@ variable (k : Type u) [CommRing k]
     letI := TensorProduct.Balanced.rightModule k S R P Q
     ∀ (r : R) (b : TensorProduct.Balanced k S P Q), u (r • b) = r * u b)
 
-/-- The original native composite object, with its stored module fields. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with carriers p,q. Put W=max(p,q,v) and E_R^k=R⊗_kRᵒᵖ. At height W, write F(X)=(Q⊗_R
+X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. For X∈ModuleCat_W(E_R^k), the object D_X=G(FX) is an
+E_R^k-module in W. Its coefficient carrier is the nested tensor (P⊗_S((Q⊗_R X)⊗_R P))⊗_S Q. -/
 def returnCompositeObject (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)) :
     ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ) :=
   ((tensorFunctor k R S P Q) ⋙ (tensorFunctor k S R Q P)).obj X
 
-/-- The original raw coefficient object under the extracted X actions. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with carriers p,q. Put W=max(p,q,v) and E_R^k=R⊗_kRᵒᵖ. At height W, write F(X)=(Q⊗_R
+X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. For X∈ModuleCat_W(E_R^k), the raw coefficient object A_X=T(X)
+uses X's extracted ground k-action and endpoint R-actions. It has the ordered P–Q–X–P–Q tensor
+carrier in W and computed outer R-actions. -/
 def returnCoefficientObject (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)) :
     ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ) := by
   letI := ModuleCat.Bimodule.Over.groundModule k R X
@@ -69,7 +84,12 @@ def returnCoefficientObject (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)) :
   letI := ModuleCat.Bimodule.Over.commute k R X
   exact rawReturnObject k R S P Q X
 
-/-- The same earned coordinate iso with its native objects fixed once. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with carriers p,q. Put W=max(p,q,v) and E_R^k=R⊗_kRᵒᵖ. At height W, write F(X)=(Q⊗_R
+X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. For X∈ModuleCat_W(E_R^k), put D_X=G(FX), A_X=T(X) for the raw
+return coefficient object, and e_X:D_X≅A_X for the coordinate comparison. The isomorphism e_X
+preserves the ground k-action and both R-actions, and takes each composite outer class to the
+same raw ordered tensor class. -/
 def returnCoordinateIso (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)) :
     returnCompositeObject k R S P Q X ≅ returnCoefficientObject k R S P Q X := by
   letI := ModuleCat.Bimodule.Over.groundModule k R X
@@ -80,7 +100,12 @@ def returnCoordinateIso (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)) :
   letI := ModuleCat.Bimodule.Over.commute k R X
   exact returnCoordinates k R S P Q X
 
-/-- The actual coordinate hom, bundled from its typed native linear map. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with carriers p,q. Put W=max(p,q,v) and E_R^k=R⊗_kRᵒᵖ. At height W, write F(X)=(Q⊗_R
+X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. For X∈ModuleCat_W(E_R^k), put D_X=G(FX), A_X=T(X) for the raw
+return coefficient object, and e_X:D_X≅A_X for the coordinate comparison. The forward map
+e_X.hom:D_X→A_X is E_R^k-linear. On each outer class (p₀⊗c)⊗q₁ it retains p₀,c,q₁ in raw
+coefficient coordinates. -/
 def returnCoordinateHom (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)) :
     returnCompositeObject k R S P Q X ⟶ returnCoefficientObject k R S P Q X := by
   let D := returnCompositeObject k R S P Q X
@@ -91,7 +116,12 @@ def returnCoordinateHom (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)) :
   exact @ModuleCat.ofHom (R ⊗[k] Rᵐᵒᵖ) _ D.carrier A.carrier
     D.isAddCommGroup D.isModule A.isAddCommGroup A.isModule L
 
-/-- The original inverse coordinate hom, with the same native fields. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with carriers p,q. Put W=max(p,q,v) and E_R^k=R⊗_kRᵒᵖ. At height W, write F(X)=(Q⊗_R
+X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. For X∈ModuleCat_W(E_R^k), put D_X=G(FX), A_X=T(X) for the raw
+return coefficient object, and e_X:D_X≅A_X for the coordinate comparison. The inverse map
+e_X.inv:A_X→D_X restores the composite presentation of the same ordered tensor coefficient. It
+is E_R^k-linear at carrier height W. -/
 def returnCoordinateInv (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)) :
     returnCoefficientObject k R S P Q X ⟶ returnCompositeObject k R S P Q X := by
   let D := returnCompositeObject k R S P Q X
@@ -112,7 +142,12 @@ private theorem returnCoordinateInv_eq (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐ
   change ModuleCat.ofHom ((returnCoordinateIso k R S P Q X).inv.hom) = _
   exact ModuleCat.ofHom_hom (returnCoordinateIso k R S P Q X).inv
 
-/-- The coordinate component retains its actual source inverse law. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with carriers p,q. Put W=max(p,q,v) and E_R^k=R⊗_kRᵒᵖ. At height W, write F(X)=(Q⊗_R
+X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. For X∈ModuleCat_W(E_R^k), put D_X=G(FX), A_X=T(X) for the raw
+return coefficient object, and e_X:D_X≅A_X for the coordinate comparison. The equation
+e_X.hom≫e_X.inv=id_{D_X} holds in ModuleCat_W(E_R^k). Thus coordinate transport to A_X and back
+fixes every composite coefficient. -/
 theorem returnCoordinateHom_inv (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)) :
     returnCoordinateHom k R S P Q X ≫ returnCoordinateInv k R S P Q X =
       𝟙 (returnCompositeObject k R S P Q X) := by
@@ -122,7 +157,12 @@ theorem returnCoordinateHom_inv (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)
     (returnCoordinateHom_eq k R S P Q X) (returnCoordinateInv_eq k R S P Q X)).trans
       (returnCoordinateIso k R S P Q X).hom_inv_id
 
-/-- The coordinate component retains its actual target inverse law. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with carriers p,q. Put W=max(p,q,v) and E_R^k=R⊗_kRᵒᵖ. At height W, write F(X)=(Q⊗_R
+X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. For X∈ModuleCat_W(E_R^k), put D_X=G(FX), A_X=T(X) for the raw
+return coefficient object, and e_X:D_X≅A_X for the coordinate comparison. The equation
+e_X.inv≫e_X.hom=id_{A_X} holds. Restoring the composite presentation and then taking raw
+coordinates leaves the coefficient object unchanged. -/
 theorem returnCoordinateInv_hom (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)) :
     returnCoordinateInv k R S P Q X ≫ returnCoordinateHom k R S P Q X =
       𝟙 (returnCoefficientObject k R S P Q X) := by
@@ -133,7 +173,14 @@ theorem returnCoordinateInv_hom (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)
       (returnCoordinateIso k R S P Q X).inv_hom_id
 
 include u hu in
-/-- The original native contraction hom, using the already-proved linear map. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with carriers p,q. Put W=max(p,q,v) and E_R^k=R⊗_kRᵒᵖ. At height W, write F(X)=(Q⊗_R
+X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. For X∈ModuleCat_W(E_R^k), put D_X=G(FX), A_X=T(X) for the raw
+return coefficient object, and e_X:D_X≅A_X for the coordinate comparison. Let α:P⊗_S Q≃R be
+right R-linear and satisfy α(r•b)=rα(b). Let B_X=X_rec be the module reconstructed from the
+ground and endpoint actions of X, with identity-coefficient isomorphism j_X:B_X≅X. Let
+c_X:A_X≅B_X be the α-return contraction. The morphism c_X.hom:A_X→B_X is E_R^k-linear. Its
+five-factor value is α(p₀⊗q₀)•(op(α(p₁⊗q₁))•x) using the endpoint actions of B_X. -/
 def returnContractionHom (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)) :
     returnCoefficientObject k R S P Q X ⟶ ModuleCat.Bimodule.Over.reconstructedObject k R X := by
   letI := ModuleCat.Bimodule.Over.groundModule k R X
@@ -149,7 +196,14 @@ def returnContractionHom (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)) :
     A.isAddCommGroup A.isModule B.isAddCommGroup B.isModule L
 
 include u hu in
-/-- The original native contraction inverse, using its proved linear map. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with carriers p,q. Put W=max(p,q,v) and E_R^k=R⊗_kRᵒᵖ. At height W, write F(X)=(Q⊗_R
+X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. For X∈ModuleCat_W(E_R^k), put D_X=G(FX), A_X=T(X) for the raw
+return coefficient object, and e_X:D_X≅A_X for the coordinate comparison. Let α:P⊗_S Q≃R be
+right R-linear and satisfy α(r•b)=rα(b). Let B_X=X_rec be the module reconstructed from the
+ground and endpoint actions of X, with identity-coefficient isomorphism j_X:B_X≅X. Let
+c_X:A_X≅B_X be the α-return contraction. The E_R^k-linear inverse c_X.inv:B_X→A_X inserts α⁻¹(1)
+into both paired tensor positions and reverses the return reassociation. -/
 def returnContractionInv (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)) :
     ModuleCat.Bimodule.Over.reconstructedObject k R X ⟶ returnCoefficientObject k R S P Q X := by
   letI := ModuleCat.Bimodule.Over.groundModule k R X
@@ -165,7 +219,14 @@ def returnContractionInv (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)) :
     B.isAddCommGroup B.isModule A.isAddCommGroup A.isModule L
 
 include u hu in
-/-- The passed native contraction iso with its actual objects fixed. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with carriers p,q. Put W=max(p,q,v) and E_R^k=R⊗_kRᵒᵖ. At height W, write F(X)=(Q⊗_R
+X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. For X∈ModuleCat_W(E_R^k), put D_X=G(FX), A_X=T(X) for the raw
+return coefficient object, and e_X:D_X≅A_X for the coordinate comparison. Let α:P⊗_S Q≃R be
+right R-linear and satisfy α(r•b)=rα(b). Let B_X=X_rec be the module reconstructed from the
+ground and endpoint actions of X, with identity-coefficient isomorphism j_X:B_X≅X. Let
+c_X:A_X≅B_X be the α-return contraction. The contraction and its inverse form the isomorphism
+c_X:A_X≅B_X. It retains the ground k-action and both endpoint R-actions at the common height W. -/
 def returnContractionIso (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)) :
     returnCoefficientObject k R S P Q X ≅ ModuleCat.Bimodule.Over.reconstructedObject k R X := by
   letI := ModuleCat.Bimodule.Over.groundModule k R X
@@ -207,7 +268,14 @@ private theorem returnContractionInv_eq (X : ModuleCat.{max p q v} (R ⊗[k] R�
   exact (ModuleCat.hom_ofHom L).trans (ModuleCat.hom_ofHom L).symm
 
 include u hu in
-/-- The contraction maps retain their passed native source inverse law. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with carriers p,q. Put W=max(p,q,v) and E_R^k=R⊗_kRᵒᵖ. At height W, write F(X)=(Q⊗_R
+X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. For X∈ModuleCat_W(E_R^k), put D_X=G(FX), A_X=T(X) for the raw
+return coefficient object, and e_X:D_X≅A_X for the coordinate comparison. Let α:P⊗_S Q≃R be
+right R-linear and satisfy α(r•b)=rα(b). Let B_X=X_rec be the module reconstructed from the
+ground and endpoint actions of X, with identity-coefficient isomorphism j_X:B_X≅X. Let
+c_X:A_X≅B_X be the α-return contraction. The equality c_X.hom≫c_X.inv=id_{A_X} holds. The paired
+α-contractions and their inverses recover every raw return coefficient. -/
 theorem returnContractionHom_inv (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)) :
     returnContractionHom k R S P Q u hu X ≫ returnContractionInv k R S P Q u hu X =
       𝟙 (returnCoefficientObject k R S P Q X) := by
@@ -219,7 +287,14 @@ theorem returnContractionHom_inv (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ
       (returnContractionIso k R S P Q u hu X).hom_inv_id
 
 include u hu in
-/-- The contraction maps retain their passed native target inverse law. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with carriers p,q. Put W=max(p,q,v) and E_R^k=R⊗_kRᵒᵖ. At height W, write F(X)=(Q⊗_R
+X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. For X∈ModuleCat_W(E_R^k), put D_X=G(FX), A_X=T(X) for the raw
+return coefficient object, and e_X:D_X≅A_X for the coordinate comparison. Let α:P⊗_S Q≃R be
+right R-linear and satisfy α(r•b)=rα(b). Let B_X=X_rec be the module reconstructed from the
+ground and endpoint actions of X, with identity-coefficient isomorphism j_X:B_X≅X. Let
+c_X:A_X≅B_X be the α-return contraction. The equality c_X.inv≫c_X.hom=id_{B_X} holds, giving the
+identity on the reconstructed ground and endpoint module. -/
 theorem returnContractionInv_hom (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)) :
     returnContractionInv k R S P Q u hu X ≫ returnContractionHom k R S P Q u hu X =
       𝟙 (ModuleCat.Bimodule.Over.reconstructedObject k R X) := by
@@ -244,7 +319,14 @@ private theorem threeHom_inverse {𝒞 : Type*} [Category 𝒞] {A B C D : 𝒞}
     _ = 𝟙 A := hc
 
 include u hu in
-/-- The actual composite hom, stored independently of its inverse and laws. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with carriers p,q. Put W=max(p,q,v) and E_R^k=R⊗_kRᵒᵖ. At height W, write F(X)=(Q⊗_R
+X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. For X∈ModuleCat_W(E_R^k), put D_X=G(FX), A_X=T(X) for the raw
+return coefficient object, and e_X:D_X≅A_X for the coordinate comparison. Let α:P⊗_S Q≃R be
+right R-linear and satisfy α(r•b)=rα(b). Let B_X=X_rec be the module reconstructed from the
+ground and endpoint actions of X, with identity-coefficient isomorphism j_X:B_X≅X. Let
+c_X:A_X≅B_X be the α-return contraction. The forward return r_X:D_X→X is
+e_X.hom≫(c_X.hom≫j_X.hom). Its three maps preserve the given ground and endpoint actions. -/
 def returnHom (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)) :
     returnCompositeObject k R S P Q X ⟶ X :=
   returnCoordinateHom k R S P Q X ≫
@@ -252,21 +334,44 @@ def returnHom (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)) :
       (ModuleCat.Bimodule.Over.reconstructedIso k R X).hom)
 
 include u hu in
-/-- The stored hom is exactly the original three native homs. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with carriers p,q. Put W=max(p,q,v) and E_R^k=R⊗_kRᵒᵖ. At height W, write F(X)=(Q⊗_R
+X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. For X∈ModuleCat_W(E_R^k), put D_X=G(FX), A_X=T(X) for the raw
+return coefficient object, and e_X:D_X≅A_X for the coordinate comparison. Let α:P⊗_S Q≃R be
+right R-linear and satisfy α(r•b)=rα(b). Let B_X=X_rec be the module reconstructed from the
+ground and endpoint actions of X, with identity-coefficient isomorphism j_X:B_X≅X. Let
+c_X:A_X≅B_X be the α-return contraction. The return morphism satisfies
+r_X=e_X.hom≫(c_X.hom≫j_X.hom):D_X→X. The order is raw coordinate comparison, α-contraction to
+B_X, then the identity-coefficient reconstruction comparison. -/
 theorem returnHom_parts (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)) :
     returnHom k R S P Q u hu X = returnCoordinateHom k R S P Q X ≫
       (returnContractionHom k R S P Q u hu X ≫
         (ModuleCat.Bimodule.Over.reconstructedIso k R X).hom) := rfl
 
 include u hu in
-/-- The original inverse grouping of the same three native maps. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with carriers p,q. Put W=max(p,q,v) and E_R^k=R⊗_kRᵒᵖ. At height W, write F(X)=(Q⊗_R
+X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. For X∈ModuleCat_W(E_R^k), put D_X=G(FX), A_X=T(X) for the raw
+return coefficient object, and e_X:D_X≅A_X for the coordinate comparison. Let α:P⊗_S Q≃R be
+right R-linear and satisfy α(r•b)=rα(b). Let B_X=X_rec be the module reconstructed from the
+ground and endpoint actions of X, with identity-coefficient isomorphism j_X:B_X≅X. Let
+c_X:A_X≅B_X be the α-return contraction. The inverse s_X:X→D_X is (j_X.inv≫c_X.inv)≫e_X.inv. It
+passes first to the reconstructed module, then to raw return coefficients, then to the composite
+presentation. -/
 def returnInverse (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)) :
     X ⟶ returnCompositeObject k R S P Q X :=
   ((ModuleCat.Bimodule.Over.reconstructedIso k R X).inv ≫
     returnContractionInv k R S P Q u hu X) ≫ returnCoordinateInv k R S P Q X
 
 include u hu in
-/-- The whole source inverse law follows from the three earned component laws. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with carriers p,q. Put W=max(p,q,v) and E_R^k=R⊗_kRᵒᵖ. At height W, write F(X)=(Q⊗_R
+X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. For X∈ModuleCat_W(E_R^k), put D_X=G(FX), A_X=T(X) for the raw
+return coefficient object, and e_X:D_X≅A_X for the coordinate comparison. Let α:P⊗_S Q≃R be
+right R-linear and satisfy α(r•b)=rα(b). Let B_X=X_rec be the module reconstructed from the
+ground and endpoint actions of X, with identity-coefficient isomorphism j_X:B_X≅X. Let
+c_X:A_X≅B_X be the α-return contraction. For r_X=e_X.hom≫c_X.hom≫j_X.hom and
+s_X=j_X.inv≫c_X.inv≫e_X.inv, one has r_X≫s_X=id_{D_X}. -/
 theorem returnHom_inverse (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)) :
     returnHom k R S P Q u hu X ≫ returnInverse k R S P Q u hu X =
       𝟙 (returnCompositeObject k R S P Q X) := by
@@ -279,7 +384,14 @@ theorem returnHom_inverse (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)) :
     (ModuleCat.Bimodule.Over.reconstructedIso k R X).hom_inv_id
 
 include u hu in
-/-- The whole target inverse law uses the original reverse component laws. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with carriers p,q. Put W=max(p,q,v) and E_R^k=R⊗_kRᵒᵖ. At height W, write F(X)=(Q⊗_R
+X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. For X∈ModuleCat_W(E_R^k), put D_X=G(FX), A_X=T(X) for the raw
+return coefficient object, and e_X:D_X≅A_X for the coordinate comparison. Let α:P⊗_S Q≃R be
+right R-linear and satisfy α(r•b)=rα(b). Let B_X=X_rec be the module reconstructed from the
+ground and endpoint actions of X, with identity-coefficient isomorphism j_X:B_X≅X. Let
+c_X:A_X≅B_X be the α-return contraction. The maps s_X:X→D_X and r_X:D_X→X satisfy s_X≫r_X=id_X.
+Both composites use the same coordinate, contraction, and reconstruction isomorphisms. -/
 theorem returnInverse_hom (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)) :
     returnInverse k R S P Q u hu X ≫ returnHom k R S P Q u hu X = 𝟙 X := by
   have h := threeHom_inverse (ModuleCat.Bimodule.Over.reconstructedIso k R X).inv
@@ -291,7 +403,14 @@ theorem returnInverse_hom (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)) :
   simpa only [returnHom, returnInverse, Category.assoc] using h
 
 include u hu in
-/-- The complete return on the same stored native source. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with carriers p,q. Put W=max(p,q,v) and E_R^k=R⊗_kRᵒᵖ. At height W, write F(X)=(Q⊗_R
+X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. For X∈ModuleCat_W(E_R^k), put D_X=G(FX), A_X=T(X) for the raw
+return coefficient object, and e_X:D_X≅A_X for the coordinate comparison. Let α:P⊗_S Q≃R be
+right R-linear and satisfy α(r•b)=rα(b). Let B_X=X_rec be the module reconstructed from the
+ground and endpoint actions of X, with identity-coefficient isomorphism j_X:B_X≅X. Let
+c_X:A_X≅B_X be the α-return contraction. The isomorphism D_X≅X has forward map
+r_X=e_X.hom≫c_X.hom≫j_X.hom and inverse s_X=j_X.inv≫c_X.inv≫e_X.inv. -/
 def returnObjectIso (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)) :
     returnCompositeObject k R S P Q X ≅ X where
   hom := returnHom k R S P Q u hu X
@@ -299,30 +418,54 @@ def returnObjectIso (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)) :
   hom_inv_id := returnHom_inverse k R S P Q u hu X
   inv_hom_id := returnInverse_hom k R S P Q u hu X
 
-/-- The identity view between the definitionally identical native objects. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with carriers p,q. Put W=max(p,q,v) and E_R^k=R⊗_kRᵒᵖ. At height W, write F(X)=(Q⊗_R
+X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. For X∈ModuleCat_W(E_R^k), the comparison G(FX)≅D_X is the
+identity isomorphism of the same composite module object. Both coefficient maps send every
+tensor class to itself. -/
 def returnObjectViewIso (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)) :
     ((tensorFunctor k R S P Q) ⋙ (tensorFunctor k S R Q P)).obj X ≅
       returnCompositeObject k R S P Q X :=
   Iso.refl (returnCompositeObject k R S P Q X)
 
 include u hu in
-/-- The earned complete return to the original native enveloping-module object. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with carriers p,q. Put W=max(p,q,v) and E_R^k=R⊗_kRᵒᵖ. At height W, write F(X)=(Q⊗_R
+X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. For X∈ModuleCat_W(E_R^k), put D_X=G(FX), A_X=T(X) for the raw
+return coefficient object, and e_X:D_X≅A_X for the coordinate comparison. Let α:P⊗_S Q≃R be
+right R-linear and satisfy α(r•b)=rα(b). Let B_X=X_rec be the module reconstructed from the
+ground and endpoint actions of X, with identity-coefficient isomorphism j_X:B_X≅X. Let
+c_X:A_X≅B_X be the α-return contraction. The isomorphism κ_{α,X}:G(FX)≅X is the composite-object
+identity comparison followed by D_X≅X. Its forward map is the coordinate comparison followed by
+contraction and the reconstruction comparison. -/
 def returnIso (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)) :
     ((tensorFunctor k R S P Q) ⋙ (tensorFunctor k S R Q P)).obj X ≅ X :=
   (returnObjectViewIso k R S P Q X).trans (returnObjectIso k R S P Q u hu X)
 
-/-- The original composite functor through its identical native object view. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with carriers p,q. Put W=max(p,q,v) and E_R^k=R⊗_kRᵒᵖ. At height W, write F(X)=(Q⊗_R
+X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. Let H=GF, D_X=H(X), and t_X:H(X)≅D_X be the identity object
+comparison. The transported functor H_D has object D_X and map t_X.inv≫H(f)≫t_Y.hom. It is an
+endofunctor of ModuleCat_W(E_R^k). -/
 def returnCompositeViewFunctor :
     ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ) ⥤ ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ) :=
   ((tensorFunctor k R S P Q) ⋙ (tensorFunctor k S R Q P)).copyObj
     (returnCompositeObject k R S P Q) (returnObjectViewIso k R S P Q)
 
-/-- The original native composite map on the same stored source and target objects. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with carriers p,q. Put W=max(p,q,v) and E_R^k=R⊗_kRᵒᵖ. At height W, write F(X)=(Q⊗_R
+X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. For f:X→Y in ModuleCat_W(E_R^k), put D_X=G(FX) and D_Y=G(FY).
+The map D_X→D_Y is (GF)(f). It is the composite tensor map acting on the middle X-coefficient
+while retaining the four outer P,Q factors. -/
 def returnCompositeMap {X Y : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)} (f : X ⟶ Y) :
     returnCompositeObject k R S P Q X ⟶ returnCompositeObject k R S P Q Y :=
   ((tensorFunctor k R S P Q) ⋙ (tensorFunctor k S R Q P)).map f
 
-/-- The direct map retains its original native composite-map expression. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with carriers p,q. Put W=max(p,q,v) and E_R^k=R⊗_kRᵒᵖ. At height W, write F(X)=(Q⊗_R
+X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. For f:X→Y in ModuleCat_W(E_R^k), put D_X=G(FX), D_Y=G(FY). The
+return-composite morphism D_X→D_Y equals (GF)(f) with the same source and target object
+presentations. It has the same underlying E_R^k-linear map. -/
 theorem returnCompositeMap_eq {X Y : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)} (f : X ⟶ Y) :
     returnCompositeMap k R S P Q f =
       (show returnCompositeObject k R S P Q X ⟶ returnCompositeObject k R S P Q Y from
@@ -497,7 +640,12 @@ private def returnOrderedValue (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ))
       op (contractionScalar k R S P Q u p₁ q₁)) x
 
 include u hu in
-/-- The actual return hom evaluated on its original five factors. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with carriers p,q. Put W=max(p,q,v) and E_R^k=R⊗_kRᵒᵖ. At height W, write F(X)=(Q⊗_R
+X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. Let α:P⊗_S Q≃R be right R-linear and satisfy α(r•b)=rα(b). For
+X∈ModuleCat_W(E_R^k), define V_X:P→Q→X→P→Q→X by evaluating r_X on (p₀⊗((q₀⊗x)⊗p₁))⊗q₁. Here r_X
+is the complete return morphism G(FX)→X. Its coefficient value is (α(p₀⊗q₀)⊗_k op(α(p₁⊗q₁)))•_X
+x. -/
 private def returnIsoValue (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)) :
     P → Q → X → P → Q → X := by
   let T := returnCompositeObject k R S P Q X
@@ -507,7 +655,11 @@ private def returnIsoValue (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)) :
     L (returnOuterMk k R S P Q X p₀ (tensorMk k R S P Q X q₀ x p₁) q₁)
 
 include u hu in
-/-- The original three constituent homs give the existing ordered return value. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with carriers p,q. Put W=max(p,q,v) and E_R^k=R⊗_kRᵒᵖ. At height W, write F(X)=(Q⊗_R
+X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. Let α:P⊗_S Q≃R be right R-linear and satisfy α(r•b)=rα(b). For
+X∈ModuleCat_W(E_R^k), the full function V_X equals (p₀,q₀,x,p₁,q₁)↦(α(p₀⊗q₀)⊗_k op(α(p₁⊗q₁)))•_X
+x. The scalar acts through the given enveloping-module structure of X. -/
 private theorem returnIsoValue_eq (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)) :
     returnIsoValue k R S P Q u hu X = returnOrderedValue (k := k) (R := R) (S := S) (P := P)
         (Q := Q) (u := u) X := by
@@ -560,9 +712,13 @@ private theorem returnIsoValue_eq (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒ�
             (contractionScalar k R S P Q u p₀ q₀)
             (op (contractionScalar k R S P Q u p₁ q₁)) x)))))
 
-/-- The actual return contracts the two outer pairs and uses the original stored R-bimodule
-action. -/
 -- keeps the actual composite-object getter for rw; Functor.comp_obj simplifies its source
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with carriers p,q. Put W=max(p,q,v) and E_R^k=R⊗_kRᵒᵖ. At height W, write F(X)=(Q⊗_R
+X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. Let α:P⊗_S Q≃R be right R-linear and satisfy α(r•b)=rα(b). For
+X∈ModuleCat_W(E_R^k), the return κ_{α,X} sends (p₀⊗((q₀⊗x)⊗p₁))⊗q₁ to (α(p₀⊗q₀)⊗_k
+op(α(p₁⊗q₁)))•_X x. The order of all five coefficients is retained. -/
+
 @[simp, nolint simpNF]
 theorem returnIso_mk (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ))
     (p₀ : P) (q₀ : Q) (x : X) (p₁ : P) (q₁ : Q) :
@@ -722,7 +878,12 @@ private theorem abstractCompositionAdditive_apply {T : Type*} [Ring T]
   congrArg (fun L : A →ₗ[T] C => L.toAddMonoidHom x) (ModuleCat.hom_comp f g)
 
 include u hu in
-/-- Naturality of the actual return hom, proved independently of packaging. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with carriers p,q. Put W=max(p,q,v) and E_R^k=R⊗_kRᵒᵖ. At height W, write F(X)=(Q⊗_R
+X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. Let α:P⊗_S Q≃R be right R-linear and satisfy α(r•b)=rα(b). Let
+r_Z:G(FZ)→Z be the two-contraction return for each Z. For f:X→Y in ModuleCat_W(E_R^k),
+(GF)(f)≫r_Y=r_X≫f as maps G(FX)→Y. The return morphisms r_X,r_Y use the same α-contractions and
+the given enveloping scalar actions. -/
 private theorem returnIso_naturality
     {X Y : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)} (f : X ⟶ Y) :
     returnNaturalityHomLeft.{u, r, s, p, q, v} k R S P Q u hu (X := X) (Y := Y) f =
@@ -772,7 +933,10 @@ private theorem returnIso_naturality
     exact hLeft.trans (hPoint.trans hRight.symm)
   exact ModuleCat.hom_ext (LinearMap.toAddMonoidHom_injective hAdd)
 
-/-- Construct the natural isomorphism on copied objects from its actual transported maps. -/
+/-- Let 𝒞,𝒟 be arbitrary categories with independent object and morphism universes, F,G:𝒞→𝒟
+functors, O:𝒞→Ob(𝒟) an object assignment, e_Z:F(Z)≅O(Z), and a_Z:O(Z)≅G(Z). Assume for every
+f:X→Y that (e_X.inv≫F(f)≫e_Y.hom)≫a_Y.hom=a_X.hom≫G(f). The transported functor F_O, with these
+objects and transported maps, is naturally isomorphic to G with components a_Z. -/
 def abstractViewComponents {𝒞 𝒟 : Type*} [Category 𝒞] [Category 𝒟]
     (F G : 𝒞 ⥤ 𝒟) (obj : 𝒞 → 𝒟) (e : ∀ Z, F.obj Z ≅ obj Z)
     (app : ∀ Z, obj Z ≅ G.obj Z)
@@ -793,7 +957,12 @@ private theorem returnObjectIso_hom (X : ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒ
       returnHom.{u, r, s, p, q, v} k R S P Q u hu X := rfl
 
 include u hu in
-/-- The same actual naturality on the stored native object view. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with carriers p,q. Put W=max(p,q,v) and E_R^k=R⊗_kRᵒᵖ. At height W, write F(X)=(Q⊗_R
+X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. Let α:P⊗_S Q≃R be right R-linear and satisfy α(r•b)=rα(b). Put
+D_X=G(FX) and let H_D be GF transported to these object presentations. The isomorphisms D_X≅X
+with forward maps r_X given by coordinate comparison, α-contraction, and reconstruction form a
+natural isomorphism H_D≅Id on ModuleCat_W(E_R^k). Its naturality is H_D(f)≫r_Y=r_X≫f. -/
 def returnTypedNatIso :
     returnCompositeViewFunctor k R S P Q ≅
       𝟭 (ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)) := by
@@ -828,7 +997,12 @@ def returnTypedNatIso :
           (returnObjectIso_hom.{u, r, s, p, q, v} k R S P Q u hu X).symm)
 
 include u hu in
-/-- The actual composite contraction is natural in the original native bimodule morphism. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with carriers p,q. Put W=max(p,q,v) and E_R^k=R⊗_kRᵒᵖ. At height W, write F(X)=(Q⊗_R
+X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. Let α:P⊗_S Q≃R be right R-linear and satisfy α(r•b)=rα(b). The
+object comparisons κ_{α,X}:G(FX)≅X define a natural isomorphism GF≅Id on ModuleCat_W(E_R^k). It
+is obtained by transporting the natural return on D_X back along the composite-object identity
+comparison. -/
 def returnNatIso :
     (tensorFunctor k R S P Q) ⋙ (tensorFunctor k S R Q P) ≅
       𝟭 (ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ)) :=
@@ -845,7 +1019,12 @@ variable
     ∀ (s : S) (b : TensorProduct.Balanced k R Q P), w (s • b) = s * w b)
 
 include u hu w hw in
-/-- The actual bimodule-category equivalence from the two invertible contractions. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with carriers p,q. Put W=max(p,q,v) and E_R^k=R⊗_kRᵒᵖ. At height W, write F(X)=(Q⊗_R
+X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. Let α:P⊗_S Q≃R be right R-linear and satisfy α(r•b)=rα(b). Let
+β:Q⊗_R P≃S be right S-linear with β(s•b)=sβ(b). The categories ModuleCat_W(R⊗_kRᵒᵖ) and
+ModuleCat_W(S⊗_kSᵒᵖ) are equivalent with functor F and inverse G. The counit is the β-return
+FG≅Id; the unit is adjusted from the inverse α-return using this counit. -/
 def equivalence :
     ModuleCat.{max p q v} (R ⊗[k] Rᵐᵒᵖ) ≌ ModuleCat.{max p q v} (S ⊗[k] Sᵐᵒᵖ) :=
   CategoryTheory.Equivalence.mk (tensorFunctor k R S P Q) (tensorFunctor k S R Q P)
@@ -859,19 +1038,36 @@ theorem equivalence_functor : (equivalence k R S P Q u hu w hw).functor =
 theorem equivalence_inverse : (equivalence k R S P Q u hu w hw).inverse =
     tensorFunctor k S R Q P := rfl
 
-/-- Native adjointification keeps the actual symmetric return counit. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with carriers p,q. Put W=max(p,q,v) and E_R^k=R⊗_kRᵒᵖ. At height W, write F(X)=(Q⊗_R
+X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. Let α:P⊗_S Q≃R be right R-linear and satisfy α(r•b)=rα(b). Let
+β:Q⊗_R P≃S be right S-linear with β(s•b)=sβ(b). The equivalence counit FG≅Id on
+ModuleCat_W(S⊗_kSᵒᵖ) equals κ_β. Its component at Y contracts the two Q⊗_R P pairs and applies
+their S-enveloping scalar to the given coefficient y. -/
 theorem equivalence_counitIso : (equivalence k R S P Q u hu w hw).counitIso =
     returnNatIso k S R Q P w hw := rfl
 
-/-- The actual chosen unit is the native adjointified unit, not an assumed normalized
-contraction. -/
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with carriers p,q. Put W=max(p,q,v) and E_R^k=R⊗_kRᵒᵖ. At height W, write F(X)=(Q⊗_R
+X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. Let α:P⊗_S Q≃R be right R-linear and satisfy α(r•b)=rα(b). Let
+β:Q⊗_R P≃S be right S-linear with β(s•b)=sβ(b). Let κ_α,κ_β be the two tensor-return
+contractions. Put η⁰_X=κ_{α,X}⁻¹ and ε_Y=κ_{β,Y}. The chosen unit component is
+η_X=η⁰_X≫G(ε_{FX}⁻¹)≫GF((η⁰_X)⁻¹):X→G(FX). This is the unit determined by adjointifying those
+two natural return isomorphisms. -/
 theorem equivalence_unitIso : (equivalence k R S P Q u hu w hw).unitIso =
     Equivalence.adjointifyη (returnNatIso k R S P Q u hu).symm
       (returnNatIso k S R Q P w hw) := rfl
 
-/-- The retained counit has the original two-contraction coefficient value. -/
 -- keeps the actual equivalence counit formula for rw; functor-object and quotient getters
 -- simplify its input
+/-- Let k be a commutative ring in u, R,S k-algebra rings in r,s, and P:(R,S), Q:(S,R) k-compatible
+bimodules with carriers p,q. Put W=max(p,q,v) and E_R^k=R⊗_kRᵒᵖ. At height W, write F(X)=(Q⊗_R
+X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q. Let α:P⊗_S Q≃R be right R-linear and satisfy α(r•b)=rα(b). Let
+β:Q⊗_R P≃S be right S-linear with β(s•b)=sβ(b). For Y∈ModuleCat_W(S⊗_kSᵒᵖ), the counit sends
+(q₀⊗((p₀⊗y)⊗q₁))⊗p₁ to (β(q₀⊗p₀)⊗_k op(β(q₁⊗p₁)))•_Y y. The value uses the given S-enveloping
+action and all four ordered outer coefficients. -/
+
+
 @[simp, nolint simpNF]
 theorem equivalence_counitIso_mk (Y : ModuleCat.{max p q v} (S ⊗[k] Sᵐᵒᵖ))
     (q₀ : Q) (p₀ : P) (y : Y) (q₁ : Q) (p₁ : P) :

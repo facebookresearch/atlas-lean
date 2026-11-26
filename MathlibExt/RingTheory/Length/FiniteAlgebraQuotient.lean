@@ -35,9 +35,10 @@ universe u v
 
 namespace Module
 
-/-- A genuine finite algebra quotient has finite scalar length whenever
-the original base quotient has finite scalar length and its ideal maps
-into the original algebra ideal. All nilpotent factors are retained. -/
+/-- Let `R`, `A` be commutative rings in independent universes, with `A` a finite
+`R`-algebra. Let `I ⊆ R`, `J ⊆ A` be ideals such that `I` maps into `J` under the
+algebra map. If the `R`-module `R/I` has finite composition length, then so does
+`A/J` as an `R`-module. The quotient rings retain their given ideal structures. -/
 theorem length_algebraQuotient_ne_top_of_base_quotient
     (R : Type u) (A : Type v) [CommRing R] [CommRing A] [Algebra R A]
     [Module.Finite R A] (I : Ideal R) (J : Ideal A)

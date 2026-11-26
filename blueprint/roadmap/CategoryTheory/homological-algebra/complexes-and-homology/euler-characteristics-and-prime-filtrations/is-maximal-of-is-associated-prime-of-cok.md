@@ -1,4 +1,6 @@
-# Is Maximal of is Associated Prime of cokernel length ne top
+# An associated prime containing the element is maximal
 
-An associated prime containing the acting element is maximal whenever
-the multiplication cokernel has finite length.
+An associated prime containing the element is maximal.
+
+For a finitely generated M, if p is associated to M, contains r and M/rM has finite length,
+then p is maximal.

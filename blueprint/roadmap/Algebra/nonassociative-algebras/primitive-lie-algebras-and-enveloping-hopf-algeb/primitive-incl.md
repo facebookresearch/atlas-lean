@@ -1,3 +1,5 @@
-# ΙPrimitive incl
+# Primitive inclusion recovers the enveloping Lie map
 
-Including the primitive-valued generators recovers the original generator Lie morphism.
+Primitive inclusion recovers the enveloping Lie map.
+
+The primitive generator map followed by inclusion equals ι.

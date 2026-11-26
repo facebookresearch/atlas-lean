@@ -1,4 +1,5 @@
-# First Page Row Native Homology Pair
+# The row homology product transported from page homology
 
-The native page-homology product expressed in the actual row homology
-objects. Its quotient formula will identify it with row cokernel descent.
+The row homology product transported from page homology.
+
+Use row homology comparisons to transport the page-1 homology product back to row homology.

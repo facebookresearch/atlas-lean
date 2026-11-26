@@ -1,4 +1,5 @@
-# Element Euler Characteristic eq zero of module length
+# The one-element Euler characteristic of a finite-length module is zero
 
-Every endomorphism given by multiplication on a finite-length module has
-zero cokernel-minus-kernel Euler characteristic.
+The one-element Euler characteristic of a finite-length module is zero.
+
+For finite-length M, χ_r(M)=0 for every r.

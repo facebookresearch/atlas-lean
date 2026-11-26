@@ -1,4 +1,5 @@
-# Localized Diagonal Koszul Homology Zero Equiv
+# The localized family degree-zero homology quotient
 
-Degree zero is the actual local intersection quotient. This computes
-one term without replacing the full alternating sum by that term.
+The localized family degree-zero homology quotient.
+
+Identify H₀ of the localized family complex with R_p modulo its generated ideal.

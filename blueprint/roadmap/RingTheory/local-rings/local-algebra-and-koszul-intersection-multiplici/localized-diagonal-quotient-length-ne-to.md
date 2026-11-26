@@ -1,5 +1,6 @@
-# Localized Diagonal Quotient length ne top
+# The localized family quotient has finite length at a minimal prime
 
-At an actual minimal prime of the original diagonal ideal, its local
-quotient has finite length. The minimal-prime condition replaces a
-supplied finite-length input.
+The localized family quotient has finite length at a minimal prime.
+
+For noetherian R and p minimal over the family ideal, the quotient of R_p by the image ideal
+has finite length.

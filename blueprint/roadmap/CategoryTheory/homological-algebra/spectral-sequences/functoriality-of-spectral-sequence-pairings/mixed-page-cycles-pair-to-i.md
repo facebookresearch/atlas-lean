@@ -1,3 +1,6 @@
-# Mixed Page Cycles Pair To i
+# The mixed cycle product preserves inclusion
 
-The mixed cycle product is computed by the original native kernel inclusions.
+The mixed cycle product preserves inclusion.
+
+Its output cycle inclusion equals the tensor of input inclusions followed by the specified
+page product.

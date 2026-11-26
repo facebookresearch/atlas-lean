@@ -1,3 +1,5 @@
-# Cohomology Presentation Iso trans
+# Composition of coaugmented cohomology-family comparisons
 
-The cohomology comparison retains composition of the original presentation isomorphisms.
+Composition of coaugmented cohomology-family comparisons.
+
+Composing presentation isomorphisms composes the resulting cohomology-family comparisons.

@@ -1,4 +1,6 @@
-# Quotient Grade
+# Image degree piece on a homogeneous module quotient
 
-The degree-`n` piece of the quotient is the image of the ambient
-degree-`n` piece under the canonical quotient map.
+Image degree piece on a homogeneous module quotient.
+
+For Q = M/H with H homogeneous, define Q_n = q(M_n) under the A-linear canonical quotient q :
+M → M/H. This is an A-submodule of the quotient.

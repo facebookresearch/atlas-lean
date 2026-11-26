@@ -1,4 +1,5 @@
-# Functor Cycles Comparison Iso
+# The cycles comparison in a chosen complex degree
 
-The canonical source-to-target cycle comparison in the actual complex
-cycle objects at the chosen degree.
+The cycles comparison in a chosen complex degree.
+
+A mapped-source to target short-complex isomorphism at j gives F(K.cycles j) ≅ L.cycles j.

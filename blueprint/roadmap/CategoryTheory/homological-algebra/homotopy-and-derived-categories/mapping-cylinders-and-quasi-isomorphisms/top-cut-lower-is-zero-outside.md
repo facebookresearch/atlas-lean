@@ -1,3 +1,5 @@
-# Top Cut Lower is Zero outside
+# Support of a lower truncation with a lower bound
 
-The original lower support is retained by the stock brutal truncation.
+Support of a lower truncation with a lower bound.
+
+If K is zero below a, its truncation below b is zero whenever j < a or j > b−1.

@@ -1,3 +1,5 @@
-# Page Cycle Unit
+# The lift of a page unit to cycles
 
-Both original unit laws and Leibniz construct the actual native cycle unit.
+The lift of a page unit to cycles.
+
+Lift the two-sided unit into the page cycle object at bidegree zero.

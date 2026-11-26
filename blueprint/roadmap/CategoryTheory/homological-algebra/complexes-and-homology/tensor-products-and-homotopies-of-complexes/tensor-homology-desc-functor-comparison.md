@@ -1,5 +1,6 @@
-# Tensor Homology Desc functor Comparison
+# A cycle-product comparison descends to homology under the functor
 
-A proved cross-category square on actual cycles descends through the
-original homology cokernels. The target tensor descent is its independent
-original construction, and `F.μ` is the original strong monoidal comparison.
+A cycle-product comparison descends to homology under the functor.
+
+For boundary-killing source and target products and the stated cycle square, the tensor
+homology comparisons commute with the descended products, using μ_F.

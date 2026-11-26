@@ -15,16 +15,21 @@ public import Mathlib.Algebra.Homology.QuasiIso
 public import Mathlib.Algebra.Homology.HomologicalComplexAbelian
 
 /-!
-# Finite cotruncations of nonnegative cochain complexes
+# Finite initial cotruncations of nonnegative cochain complexes
 
-Cotruncation at `q` retains degrees `0` through `q`. The restriction and
-extension adjunction gives the projection. Restricting a larger
-cotruncation to a smaller interval gives transitions forming a natural
-inverse system.
+Let C be a category with zero morphisms and a zero object. Cotruncation at
+q of a nonnegative cochain complex K retains its terms and differentials
+in degrees 0 through q and extends by zero above q. The retained top term
+is Kᑫ. There is a natural projection π_q:K → Cot_q(K).
 
-Below the cutoff, the projection retains all three terms of the homology
-row and induces a cohomology isomorphism. The top degree is excluded from
-this comparison.
+For p≤q, the transition Cot_q(K) → Cot_p(K) is the identity in retained
+coordinates and satisfies π_p=t_qp ∘ π_q. These transitions are natural
+in K, compose for p≤q≤r, and give an inverse system indexed by ℕᵒᵖ.
+Restriction to [0,q] and extension by zero give the corresponding Hom-set
+equivalence for targets supported in this initial interval.
+
+If C is abelian, π_q induces a cohomology isomorphism in every degree n<q,
+natural in cochain maps. This comparison is strictly below the cutoff.
 -/
 
 @[expose] public section
@@ -42,16 +47,22 @@ section Maps
 
 variable [HasZeroMorphisms C] [HasZeroObject C]
 
-/-- Finite cotruncation retaining the initial cochain degrees. -/
+/-- For a category C with zero morphisms and a zero object, a nonnegative
+cochain complex K and q∈ℕ, the complex Cot_q(K) obtained by restricting
+K to the initial degrees [0,q] and extending by zero above q. Its top
+retained term is Kᑫ and its differential out of that term is zero. -/
 abbrev finiteCotruncation (K : CochainComplex C ℕ) (q : ℕ) : CochainComplex C ℕ :=
   K.stupidTrunc (upEmbedding q)
 
-/-- Coordinate chart in a retained degree. -/
+/-- Let C have zero morphisms and a zero object. For a nonnegative cochain
+complex K and n≤q, the canonical term isomorphism
+eₙ:Cot_q(K)ⁿ ≅ Kⁿ in the retained interval [0,q]. -/
 def finiteCotruncationXIso (K : CochainComplex C ℕ) (q n : ℕ) (hn : n ≤ q) :
     (K.finiteCotruncation q).X n ≅ K.X n :=
   K.stupidTruncXIso (upEmbedding q) (i := ⟨n, by omega⟩) rfl
 
-/-- Finite cotruncation vanishes outside its interval. -/
+/-- For a nonnegative cochain complex K in a category C with zero morphisms
+and a zero object, the n-th term of Cot_q(K) is a zero object whenever q<n. -/
 theorem finiteCotruncation_isZero (K : CochainComplex C ℕ) (q n : ℕ) (hn : q < n) :
     IsZero ((K.finiteCotruncation q).X n) :=
   K.isZero_stupidTrunc_X (upEmbedding q) n (by
@@ -60,7 +71,10 @@ theorem finiteCotruncation_isZero (K : CochainComplex C ℕ) (q n : ℕ) (hn : q
     have := (upEmbedding_range q n).1 hmem
     omega)
 
-/-- Retained differentials expressed through coordinate charts. -/
+/-- Let C have zero morphisms and a zero object, and let K be a nonnegative
+cochain complex. For i,j≤q, write eᵢ:Cot_q(K)ⁱ ≅ Kⁱ and
+eⱼ:Cot_q(K)ʲ ≅ Kʲ for the retained-term isomorphisms. The differential
+of Cot_q(K) from i to j is eⱼ⁻¹ ∘ d_K(i,j) ∘ eᵢ. -/
 theorem finiteCotruncation_d (K : CochainComplex C ℕ) (q i j : ℕ)
     (hi : i ≤ q) (hj : j ≤ q) :
     (K.finiteCotruncation q).d i j =
@@ -68,16 +82,23 @@ theorem finiteCotruncation_d (K : CochainComplex C ℕ) (q i j : ℕ)
         (K.finiteCotruncationXIso q j hj).inv :=
   K.stupidTrunc_d_eq (upEmbedding q) (i := ⟨i, by omega⟩) (j := ⟨j, by omega⟩) rfl rfl
 
-/-- Map of finite cotruncations induced by a cochain map. -/
+/-- For a category C with zero morphisms and a zero object, a cochain map
+f:K → L and q∈ℕ, the induced map Cot_q(f):Cot_q(K) → Cot_q(L),
+obtained by restricting f to [0,q] and extending by zero. -/
 abbrev finiteCotruncationMap {K L : CochainComplex C ℕ} (f : K ⟶ L) (q : ℕ) :
     K.finiteCotruncation q ⟶ L.finiteCotruncation q :=
   HomologicalComplex.stupidTruncMap f (upEmbedding q)
 
-/-- Finite-cotruncation functor. -/
+/-- In a category C with zero morphisms and a zero object, cotruncation at
+q is the endofunctor of nonnegative cochain complexes that retains
+degrees [0,q], extends by zero, and applies the same restriction and
+extension to cochain maps. -/
 def finiteCotruncationFunctor (q : ℕ) : CochainComplex C ℕ ⥤ CochainComplex C ℕ :=
   (upEmbedding q).stupidTruncFunctor C
 
-/-- Projection given by the restriction and extension adjunction unit. -/
+/-- Let C have zero morphisms and a zero object. For a nonnegative cochain
+complex K and q∈ℕ, the canonical projection π_q:K → Cot_q(K) from
+restriction to the initial interval [0,q] followed by extension by zero. -/
 abbrev πFiniteCotruncation (K : CochainComplex C ℕ) (q : ℕ) :
     K ⟶ K.finiteCotruncation q := K.πStupidTrunc (upEmbedding q)
 
@@ -89,14 +110,19 @@ theorem πFiniteCotruncation_f_zero (K : CochainComplex C ℕ) (q n : ℕ) (hn :
     (K.πFiniteCotruncation q).f n = 0 :=
   (K.finiteCotruncation_isZero q n hn).eq_of_tgt _ _
 
-/-- Naturality of the finite-cotruncation projection. -/
+/-- For a cochain map f:K → L in a category C with zero morphisms and a
+zero object, the projections to the finite cotruncations satisfy
+π_q(L) ∘ f = Cot_q(f) ∘ π_q(K). -/
 @[reassoc]
 theorem πFiniteCotruncation_naturality {K L : CochainComplex C ℕ} (f : K ⟶ L) (q : ℕ) :
     f ≫ L.πFiniteCotruncation q =
       K.πFiniteCotruncation q ≫ finiteCotruncationMap f q :=
   (HomologicalComplex.πStupidTrunc_naturality f (upEmbedding q)).symm
 
-/-- Identification of a larger cotruncation on a smaller interval with the restricted complex. -/
+/-- Let C have zero morphisms and a zero object, K a nonnegative cochain
+complex, and p≤q. Restricting Cot_q(K) to the smaller initial interval
+[0,p] gives a complex canonically isomorphic to the restriction of K
+to [0,p]. -/
 def finiteCotruncationRestrictionIso (K : CochainComplex C ℕ) {p q : ℕ} (hpq : p ≤ q) :
     (K.finiteCotruncation q).restriction (upEmbedding p) ≅
       K.restriction (upEmbedding p) :=
@@ -120,13 +146,19 @@ def finiteCotruncationRestrictionIso (K : CochainComplex C ℕ) {p q : ℕ} (hpq
           ((congrArg (fun z => a ≫ d ≫ z) e.inv_hom_id).trans
             (congrArg (fun z => a ≫ z) (Category.comp_id d))))).symm)
 
-/-- Transition map from a larger cotruncation to a smaller one. -/
+/-- For a nonnegative cochain complex K in a category C with zero morphisms
+and a zero object and p≤q, the transition t_qp:Cot_q(K) → Cot_p(K),
+obtained from the identification of their restrictions to [0,p] and
+extension by zero. -/
 def finiteCotruncationTransition (K : CochainComplex C ℕ) {p q : ℕ} (hpq : p ≤ q) :
     K.finiteCotruncation q ⟶ K.finiteCotruncation p :=
   (upEmbedding p).liftExtend (K.finiteCotruncationRestrictionIso hpq).hom
     ((upEmbedding p).hasLift_of_isTruncLE _)
 
-/-- Transitions preserve coordinates in the smaller interval. -/
+/-- Let C have zero morphisms and a zero object, K a nonnegative cochain
+complex, p≤q and n≤p. If e_qn:Cot_q(K)ⁿ ≅ Kⁿ and
+e_pn:Cot_p(K)ⁿ ≅ Kⁿ are the canonical term isomorphisms, then the
+degree-n transition component is e_pn⁻¹ ∘ e_qn. -/
 theorem finiteCotruncationTransition_f (K : CochainComplex C ℕ) {p q : ℕ}
     (hpq : p ≤ q) (n : ℕ) (hn : n ≤ p) :
     (K.finiteCotruncationTransition hpq).f n =
@@ -159,7 +191,9 @@ theorem finiteCotruncationTransition_f_zero (K : CochainComplex C ℕ) {p q : �
     (K.finiteCotruncationTransition hpq).f n = 0 :=
   (K.finiteCotruncation_isZero p n hn).eq_of_tgt _ _
 
-/-- A transition factors the cotruncation projections. -/
+/-- For a nonnegative cochain complex K in a category C with zero morphisms
+and a zero object, and p≤q, the projections factor through the transition:
+t_qp ∘ π_q = π_p as maps K → Cot_p(K). -/
 @[reassoc]
 theorem πFiniteCotruncation_transition (K : CochainComplex C ℕ)
     {p q : ℕ} (hpq : p ≤ q) :
@@ -173,7 +207,9 @@ theorem πFiniteCotruncation_transition (K : CochainComplex C ℕ)
     simp only [Category.assoc, Iso.inv_hom_id_assoc]
   · exact (K.finiteCotruncation_isZero p n (by omega)).eq_of_tgt _ _
 
-/-- Projection factorization determines the transition uniquely. -/
+/-- Let C have zero morphisms and a zero object, K a nonnegative cochain
+complex, and p≤q. If f:Cot_q(K) → Cot_p(K) satisfies f ∘ π_q=π_p,
+then f equals the canonical transition t_qp. -/
 theorem finiteCotruncationTransition_unique (K : CochainComplex C ℕ)
     {p q : ℕ} (hpq : p ≤ q)
     (f : K.finiteCotruncation q ⟶ K.finiteCotruncation p)
@@ -188,7 +224,9 @@ theorem finiteCotruncationTransition_refl (K : CochainComplex C ℕ) (p : ℕ) :
   apply (cancel_epi (K.πFiniteCotruncation p)).1
   rw [πFiniteCotruncation_transition, Category.comp_id]
 
-/-- Transitions compose in inverse-system order. -/
+/-- In a category C with zero morphisms and a zero object, for a nonnegative
+cochain complex K and p≤q≤r, the transition maps satisfy
+t_qp ∘ t_rq = t_rp. -/
 @[reassoc]
 theorem finiteCotruncationTransition_comp (K : CochainComplex C ℕ)
     {p q r : ℕ} (hpq : p ≤ q) (hqr : q ≤ r) :
@@ -197,7 +235,9 @@ theorem finiteCotruncationTransition_comp (K : CochainComplex C ℕ)
   apply (cancel_epi (K.πFiniteCotruncation r)).1
   simp only [← Category.assoc, πFiniteCotruncation_transition]
 
-/-- Naturality of finite-cotruncation transitions. -/
+/-- For a cochain map f:K → L in a category C with zero morphisms and a
+zero object and p≤q, the transition maps commute with induced cotruncation
+maps: t_qp(L) ∘ Cot_q(f) = Cot_p(f) ∘ t_qp(K). -/
 @[reassoc]
 theorem finiteCotruncationTransition_naturality {K L : CochainComplex C ℕ}
     (f : K ⟶ L) {p q : ℕ} (hpq : p ≤ q) :
@@ -208,7 +248,9 @@ theorem finiteCotruncationTransition_naturality {K L : CochainComplex C ℕ}
     πFiniteCotruncation_transition, ← Category.assoc,
     πFiniteCotruncation_transition, ← πFiniteCotruncation_naturality]
 
-/-- Finite cotruncations as an inverse system. -/
+/-- For a nonnegative cochain complex K in a category C with zero morphisms
+and a zero object, the inverse system ℕᵒᵖ → CochainComplex(C,ℕ)
+with value Cot_q(K) at q and transition t_qp for p≤q. -/
 def finiteCotruncationSystem (K : CochainComplex C ℕ) :
     ℕᵒᵖ ⥤ CochainComplex C ℕ where
   obj q := K.finiteCotruncation q.unop
@@ -217,7 +259,10 @@ def finiteCotruncationSystem (K : CochainComplex C ℕ) :
   map_comp f g := (finiteCotruncationTransition_comp K
     (leOfHom g.unop) (leOfHom f.unop)).symm
 
-/-- Natural projection from the whole complex to the finite-cotruncation system. -/
+/-- Let C have zero morphisms and a zero object and K be a nonnegative
+cochain complex. The projections π_q:K → Cot_q(K) form a natural
+transformation from the constant inverse system on K to its system of
+finite cotruncations. -/
 def πFiniteCotruncationSystem (K : CochainComplex C ℕ) :
     (Functor.const ℕᵒᵖ).obj K ⟶ finiteCotruncationSystem K where
   app q := K.πFiniteCotruncation q.unop
@@ -228,7 +273,13 @@ def πFiniteCotruncationSystem (K : CochainComplex C ℕ) :
     exact (Category.id_comp _).trans
       (K.πFiniteCotruncation_transition (leOfHom f.unop)).symm
 
-/-- Universal map into a target extended from a finite interval. -/
+/-- For a category C with zero morphisms and a zero object, a nonnegative
+cochain complex K and a complex L on the initial interval [0,q], the
+Hom-set equivalence
+Hom(K|[0,q],L) ≃ Hom(K,extend₀(L)),
+where extend₀ places zero objects outside the interval. This is the
+restriction and extension-by-zero adjunction for the initial cochain
+embedding. -/
 def finiteRestrictionExtendHomEquiv (q : ℕ) (K : CochainComplex C ℕ)
     (L : HomologicalComplex C (upShape q)) :
     (K.restriction (upEmbedding q) ⟶ L) ≃ (K ⟶ L.extend (upEmbedding q)) :=
@@ -240,7 +291,9 @@ section Homology
 
 variable [Abelian C]
 
-/-- Below the cutoff, the projection is invertible on the three homology-row terms. -/
+/-- For a nonnegative cochain complex K in an abelian category C and
+n<q, the projection π_q:K → Cot_q(K) is a quasi-isomorphism in degree n:
+its induced map Hⁿ(K) → Hⁿ(Cot_q(K)) is an isomorphism. -/
 theorem πFiniteCotruncation_quasiIsoAt (K : CochainComplex C ℕ)
     (q n : ℕ) (hn : n < q) : QuasiIsoAt (K.πFiniteCotruncation q) n := by
   have hnq : n ≤ q := Nat.le_of_lt hn
@@ -271,7 +324,9 @@ theorem πFiniteCotruncation_quasiIsoAt (K : CochainComplex C ℕ)
   letI : Mono φ.τ₃ := inferInstanceAs (Mono (f.f ((ComplexShape.up ℕ).next n)))
   exact ShortComplex.quasiIso_of_epi_of_isIso_of_mono φ
 
-/-- The projection induces cohomology isomorphisms below the cutoff. -/
+/-- For a nonnegative cochain complex K in an abelian category C and
+n<q, the canonical isomorphism Hⁿ(K) ≅ Hⁿ(Cot_q(K)) whose forward map
+is induced by the projection π_q. -/
 def finiteCotruncationHomologyIso (K : CochainComplex C ℕ) (q n : ℕ) (hn : n < q) :
     K.homology n ≅ (K.finiteCotruncation q).homology n := by
   letI : QuasiIsoAt (K.πFiniteCotruncation q) n := K.πFiniteCotruncation_quasiIsoAt q n hn
@@ -283,7 +338,10 @@ theorem finiteCotruncationHomologyIso_hom (K : CochainComplex C ℕ)
     (K.finiteCotruncationHomologyIso q n hn).hom =
       HomologicalComplex.homologyMap (K.πFiniteCotruncation q) n := rfl
 
-/-- Naturality of the cotruncation homology comparison. -/
+/-- Let C be abelian, f:K → L a map of nonnegative cochain complexes and
+n<q. If α_K:Hⁿ(K) ≅ Hⁿ(Cot_q(K)) and α_L are the isomorphisms induced
+by the projections, their naturality square is
+α_L ∘ Hⁿ(f) = Hⁿ(Cot_q(f)) ∘ α_K. -/
 @[reassoc]
 theorem finiteCotruncationHomologyIso_naturality {K L : CochainComplex C ℕ}
     (f : K ⟶ L) (q n : ℕ) (hn : n < q) :

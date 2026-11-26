@@ -1,12 +1,6 @@
-# Waldhausen Category
+# Standard Waldhausen data of an exact category
 
-Standard Waldhausen structure on a Quillen exact category.
+Let C be a preadditive Quillen exact category with a zero object
+and binary biproducts.
 
-Cofibrations are the admissible monomorphisms and weak equivalences are the
-isomorphisms. This is the canonical bridge from exact categories to Waldhausen
-categories used in H0.
-
-Use locally as `letI := ExactCategory.waldhausenCategory C`; no global
-`WaldhausenCategoryWithoutGluing C` instance is installed so that other Waldhausen
-structures on the same underlying category (e.g. chain complexes) remain
-available.
+The standard Waldhausen cofibration, weak-equivalence and pushout data with admissible monomorphisms as cofibrations and isomorphisms as weak equivalences.

@@ -1,3 +1,5 @@
-# First Page Row d
+# The differential of an integer first-page row
 
-Row differentials are the original native first-page differentials.
+The differential of an integer first-page row.
+
+Its differential is the existing page differential between (p,q) and (p′,q).

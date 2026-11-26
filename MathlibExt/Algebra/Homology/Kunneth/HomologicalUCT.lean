@@ -18,20 +18,17 @@ public import MathlibExt.Algebra.Homology.Kunneth.Naturality
 public import MathlibExt.Algebra.Homology.Kunneth.PIDChosen
 
 /-!
-# The homological universal coefficient theorem
+# Homological universal coefficients and the chosen PID sequence
 
-This file specializes the tensor Künneth theorem to a coefficient module
-placed in chain degree zero.  It exposes the canonical coefficient map and,
-over a commutative PID, the objectwise short exact sequence
+For a nonnegative chain complex K and coefficient A over a commutative ring, the canonical map
+H_n(K) ⊗ A → H_n(K ⊗ A[0]) comes from the homology tensor pairing and is natural in both
+inputs.
 
-```text
-0 → H_n(K) ⊗ A → H_n(K ⊗ A[0])
-  → Tor₁(H_(n-1)(K), A) → 0.
-```
-
-The left map is canonical and does not depend on a resolution.  The right
-map is inherited from the chosen-resolution Künneth sequence, so this file
-does not claim naturality, resolution independence, or a splitting.
+Over a commutative PID with flat terms of K, the chosen Künneth sequence gives a short exact
+sequence with this left map and right term T_n, where T_0=0 and T_{q+1}=Tor₁(H_q(K),A). The
+right map retains the chosen resolution. Over a field the canonical left map is an
+isomorphism; over a PID it is also an isomorphism when the stated flat-term and torsion-free
+homology hypotheses hold.
 -/
 
 @[expose] public section
@@ -56,8 +53,9 @@ local instance {R : Type u} [CommRing R] :
     HasFiniteBiproducts (ChainComplex (ModuleCat.{u} R) ℕ) :=
   CategoryTheory.Abelian.hasFiniteBiproducts
 
-/-- The Künneth tensor source for coefficients concentrated in degree zero
-canonically reduces to `H_n(K) ⊗ A`. -/
+/-- Compression of the coefficient tensor source in degree n.
+
+The Künneth tensor-source sum with A in degree zero is canonically isomorphic to H_n(K) ⊗ A. -/
 noncomputable def homologyUCTTensorSourceIso
     {R : Type u} [CommRing R]
     (K : ChainComplex (ModuleCat.{u} R) ℕ) (A : ModuleCat.{u} R) (n : ℕ) :
@@ -100,8 +98,10 @@ noncomputable def homologyUCTTensorSourceIso
     tensorIso (Iso.refl _) (singleObjHomologySelfIso
       (ComplexShape.down ℕ) 0 A)
 
-/-- The inverse single-coefficient tensor-source coordinate is natural in
-the chain complex and coefficient module. -/
+/-- Naturality of the inverse coefficient tensor-source comparison.
+
+Maps f : K → K′ and a : A → A′ commute with the inverse source comparison and the Künneth
+tensor-source map. -/
 @[reassoc]
 theorem homologyUCTTensorSourceIso_inv_naturality
     {R : Type u} [CommRing R]
@@ -146,8 +146,10 @@ theorem homologyUCTTensorSourceIso_inv_naturality
       (tensorLeft (K'.homology ij.val.1)).map_isZero hzero
     exact htensor.eq_of_tgt _ _
 
-/-- The canonical homology map induced by tensoring a chain complex with a
-coefficient module in degree zero. -/
+/-- The canonical homological coefficient map.
+
+Use the inverse tensor-source comparison and the Künneth homology pairing to map H_n(K) ⊗ A to
+H_n(K ⊗ A[0]). -/
 noncomputable def homologyUniversalCoefficientMap
     {R : Type u} [CommRing R]
     (K : ChainComplex (ModuleCat.{u} R) ℕ) (A : ModuleCat.{u} R) (n : ℕ) :
@@ -158,8 +160,10 @@ noncomputable def homologyUniversalCoefficientMap
     kunnethHomologyTensorMap K
       ((ChainComplex.single₀ (ModuleCat.{u} R)).obj A) n
 
-/-- The canonical homological universal-coefficient map is the selected
-degree-`(n,0)` homology pairing. -/
+/-- The coefficient map is the degree-(n,0) homology pairing.
+
+Identify the degree-zero homology of A[0] with A, apply the homology pairing and transport n+0
+to n. -/
 theorem homologyUniversalCoefficientMap_eq_pairing
     {R : Type u} [CommRing R]
     (K : ChainComplex (ModuleCat.{u} R) ℕ) (A : ModuleCat.{u} R) (n : ℕ) :
@@ -178,8 +182,10 @@ theorem homologyUniversalCoefficientMap_eq_pairing
     id_tensorHom, Category.assoc]
   rw [kunnethHomologyTensorMap_ι]
 
-/-- The canonical homological universal-coefficient map is natural in the
-chain complex and coefficient module. -/
+/-- Naturality of the canonical coefficient map in both inputs.
+
+The tensor of H_n(f) with a followed by the target coefficient map equals the source
+coefficient map followed by homology of f ⊗ a[0]. -/
 @[reassoc]
 theorem homologyUniversalCoefficientMap_naturality
     {R : Type u} [CommRing R]
@@ -198,8 +204,10 @@ theorem homologyUniversalCoefficientMap_naturality
     rw [← kunnethHomologyTensorMap_naturality]
   simp only [Category.assoc]
 
-/-- Over a field, the canonical homological universal-coefficient map is an
-isomorphism. -/
+/-- The canonical coefficient map is an isomorphism over a field.
+
+For a field k, every chain complex K and coefficient A have an isomorphism H_n(K) ⊗ A → H_n(K
+⊗ A[0]). -/
 theorem isIso_homologyUniversalCoefficientMap_of_field
     {k : Type u} [Field k]
     (K : ChainComplex (ModuleCat.{u} k) ℕ) (A : ModuleCat.{u} k) (n : ℕ) :
@@ -212,8 +220,10 @@ theorem isIso_homologyUniversalCoefficientMap_of_field
       ((ChainComplex.single₀ (ModuleCat.{u} k)).obj A) n
   infer_instance
 
-/-- Over a commutative PID, termwise flatness and torsion-free homology make
-the canonical homological universal-coefficient map an isomorphism. -/
+/-- The coefficient map is an isomorphism for torsion-free PID homology.
+
+Over a PID, flat terms of K and torsion-free homology in every degree make the canonical map
+an isomorphism. -/
 theorem isIso_homologyUniversalCoefficientMap_of_pid_of_torsionFree_homology
     {R : Type u} [CommRing R] [IsDomain R] [IsPrincipalIdealRing R]
     (K : ChainComplex (ModuleCat.{u} R) ℕ) (A : ModuleCat.{u} R)
@@ -228,7 +238,9 @@ theorem isIso_homologyUniversalCoefficientMap_of_pid_of_torsionFree_homology
       ((ChainComplex.single₀ (ModuleCat.{u} R)).obj A) hK hTF n
   infer_instance
 
-/-- The Tor endpoint in the homological universal coefficient sequence. -/
+/-- The shifted degree-one Tor term of the coefficient sequence.
+
+Define T_0=0 and T_{q+1}=Tor₁(H_q(K),A). -/
 def homologyUniversalCoefficientTor
     {R : Type u} [CommRing R]
     (K : ChainComplex (ModuleCat.{u} R) ℕ) (A : ModuleCat.{u} R) :
@@ -237,8 +249,10 @@ def homologyUniversalCoefficientTor
   | q + 1 => ((CategoryTheory.Tor (ModuleCat.{u} R) 1).obj
       (K.homology q)).obj A
 
-/-- The Künneth Tor-one source for coefficients concentrated in degree zero
-canonically reduces to `Tor₁(H_(n-1)(K), A)`, and is zero in degree zero. -/
+/-- Compression of the Künneth Tor source for a degree-zero coefficient.
+
+The Künneth Tor-source sum for K and A[0] is isomorphic to T_n, including its zero degree-zero
+case. -/
 noncomputable def homologyUCTTorIso
     {R : Type u} [CommRing R]
     (K : ChainComplex (ModuleCat.{u} R) ℕ) (A : ModuleCat.{u} R) (n : ℕ) :
@@ -311,10 +325,10 @@ noncomputable def homologyUCTTorIso
         (K.homology q)).mapIso
           (singleObjHomologySelfIso (ComplexShape.down ℕ) 0 A)
 
-/-- The chosen objectwise PID homological universal-coefficient short complex.
+/-- The chosen homological universal-coefficient short complex.
 
-Its left arrow is canonical. Its right arrow uses the repository's chosen
-Cartan--Eilenberg resolution of the degree-zero coefficient complex. -/
+For PID coefficients and flat K-terms, transport the chosen Künneth complex to H_n(K) ⊗ A →
+H_n(K ⊗ A[0]) → T_n. -/
 noncomputable abbrev homologyUniversalCoefficientChosenShortComplex
     {R : Type u} [CommRing R] [IsDomain R]
     [IsPrincipalIdealRing R]
@@ -335,8 +349,9 @@ noncomputable abbrev homologyUniversalCoefficientChosenShortComplex
         rw [Category.assoc, ← Category.assoc S.f, S.zero, zero_comp,
           comp_zero] }
 
-/-- The left arrow in the chosen homological UCT short complex is the
-canonical coefficient map. -/
+/-- The left map of the chosen coefficient short complex.
+
+Its first arrow is the canonical homologyUniversalCoefficientMap. -/
 theorem homologyUniversalCoefficientChosenShortComplex_f
     {R : Type u} [CommRing R] [IsDomain R]
     [IsPrincipalIdealRing R]
@@ -346,8 +361,10 @@ theorem homologyUniversalCoefficientChosenShortComplex_f
       homologyUniversalCoefficientMap K A n := by
   rfl
 
-/-- The chosen Künneth short complex is isomorphic to the chosen homological
-UCT short complex with its textbook endpoints. -/
+/-- The comparison from the chosen Künneth sequence to the coefficient sequence.
+
+The tensor-source and Tor-source isomorphisms give an isomorphism of the two chosen short
+complexes. -/
 noncomputable def kunnethChosenShortComplexIsoHomologyUCT
     {R : Type u} [CommRing R] [IsDomain R]
     [IsPrincipalIdealRing R]
@@ -365,8 +382,9 @@ noncomputable def kunnethChosenShortComplexIsoHomologyUCT
   · simp [homologyUniversalCoefficientChosenShortComplex]
   · simp [homologyUniversalCoefficientChosenShortComplex]
 
-/-- The chosen objectwise homological universal-coefficient short complex
-over a commutative PID is exact. -/
+/-- Short exactness of the chosen PID coefficient sequence.
+
+For flat terms of K over a PID, H_n(K) ⊗ A → H_n(K ⊗ A[0]) → T_n is short exact. -/
 theorem homologyUniversalCoefficientChosenShortComplex_shortExact
     {R : Type u} [CommRing R] [IsDomain R]
     [IsPrincipalIdealRing R]
@@ -378,8 +396,9 @@ theorem homologyUniversalCoefficientChosenShortComplex_shortExact
     (kunnethChosenShortComplex_shortExact K
       ((ChainComplex.single₀ (ModuleCat.{u} R)).obj A) hK n)
 
-/-- In degree zero, the canonical homological universal-coefficient map over
-a commutative PID is an isomorphism. -/
+/-- The degree-zero coefficient map is an isomorphism in the PID setting.
+
+For flat K-terms over a PID, the canonical degree-zero map is an isomorphism because T_0=0. -/
 theorem isIso_homologyUniversalCoefficientMap_zero
     {R : Type u} [CommRing R] [IsDomain R]
     [IsPrincipalIdealRing R]

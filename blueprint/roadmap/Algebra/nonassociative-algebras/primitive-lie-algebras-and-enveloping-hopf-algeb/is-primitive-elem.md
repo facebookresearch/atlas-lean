@@ -1,3 +1,5 @@
-# Is Primitive Elem ι
+# Lie generators are primitive in the enveloping bialgebra
 
-The canonical Lie generators are native primitive elements of the enveloping bialgebra.
+Lie generators are primitive in the enveloping bialgebra.
+
+Each ιx has zero counit and coproduct 1⊗ιx + ιx⊗1.

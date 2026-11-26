@@ -1,3 +1,6 @@
-# Top Cut Lower
+# Brutal truncation below a chosen top degree
 
-The actual stock brutal truncation that removes the top degree `b`.
+Brutal truncation below a chosen top degree.
+
+For K and b ∈ ℤ, retain the degrees j < b using stupid truncation along the embedding up to
+b−1.

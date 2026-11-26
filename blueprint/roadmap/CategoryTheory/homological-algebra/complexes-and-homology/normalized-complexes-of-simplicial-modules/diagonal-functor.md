@@ -1,3 +1,6 @@
-# Normalized complexes of simplicial modules
+# The diagonal functor on bisimplicial objects
 
-The existing native diagonal and uncurrying functors retain both actual operators.
+The diagonal functor on bisimplicial objects.
+
+Send X to the simplicial object n ↦ X_{n,n}, with each simplex operator applied in both
+variables, by uncurrying and diagonal precomposition.

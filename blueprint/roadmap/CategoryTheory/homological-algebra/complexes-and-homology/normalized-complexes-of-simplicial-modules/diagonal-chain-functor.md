@@ -1,3 +1,5 @@
-# Diagonal Chain Functor
+# The normalized chain complex of a bisimplicial diagonal
 
-Normalize the actual diagonal separately from the filtered-total construction.
+The normalized chain complex of a bisimplicial diagonal.
+
+Take the simplicial diagonal n ↦ X_{n,n} and then its normalized Moore complex.

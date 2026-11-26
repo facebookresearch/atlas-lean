@@ -1,4 +1,6 @@
-# Mem grade iff
+# Membership in an inherited homogeneous degree piece
 
-Membership in the inherited degree piece is membership of the ambient
-carrier in the corresponding degree piece of `M`.
+Membership in an inherited homogeneous degree piece.
+
+For x ∈ H, membership x ∈ H_n is equivalent to its underlying value in M belonging to M_n.
+Here H is a homogeneous S-submodule and all pieces are A-submodules.

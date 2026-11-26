@@ -15,17 +15,17 @@ module
 public import MathlibExt.CategoryTheory.Waldhausen.ExactFunctor
 
 /-!
-# The literal Waldhausen approximation property
+# Waldhausen approximation factorization
 
-This file packages Weibel's displayed approximation property `(App)`: a map
-out of an object in the image factors through another image object followed
-by a weak equivalence.  Crucially, the source map is arbitrary.  A
-cofibration replacement requires separate mapping-cylinder hypotheses and is
-not part of this carrier.
+For a functor F:C → D into a category with Waldhausen weak-equivalence
+data, the approximation factorization condition (App) says that every
+g:F(X) → Y factors as F(X) —F(a)→ F(X′) —p→ Y, where p is a weak
+equivalence and a:X → X′ is an arbitrary source map.
 
-Reflection of weak equivalences is a separate proposition, as is explicit
-Waldhausen exactness.  No typeclass, global instance, cylinder, Stage map,
-comma contraction, realization result, or K-theory theorem is introduced.
+The identity satisfies this condition. Two such factorizations compose when
+the second functor is Waldhausen exact. Reflection of weak equivalences is
+the condition F(f) weak implies f weak, considered independently of the
+factorization condition.
 -/
 
 @[expose] public section
@@ -45,19 +45,25 @@ variable [WaldhausenCategoryWithoutGluing C] [WaldhausenCategoryWithoutGluing D]
   [WaldhausenCategoryWithoutGluing E]
 variable {F : C ⥤ D} {G : D ⥤ E}
 
-/-- The literal Waldhausen approximation property `(App)`.
-
-The source map `a` is deliberately not required to be a cofibration. -/
+/-- Let C be a category and D a category with a zero object and Waldhausen
+cofibration, weak-equivalence and pushout axioms.
+For F:C → D, the approximation factorization property requires every
+g:F(X) → Y to factor as p∘F(a), with a:X → X′ an arbitrary map
+and p:F(X′) → Y a weak equivalence. -/
 structure WaldhausenApproximationProperty (F : C ⥤ D) : Prop where
-  /-- Factor a map out of an image through an arbitrary source map followed
-  by a weak equivalence. -/
+  /-- For a functor F:C → D satisfying the Waldhausen approximation
+factorization property, every g:F(X) → Y admits X′, a:X → X′
+and a weak equivalence p:F(X′) → Y such that p∘F(a)=g. -/
   factorization : ∀ (X : C) (Y : D) (g : F.obj X ⟶ Y),
     ∃ (Xnext : C) (a : X ⟶ Xnext) (p : F.obj Xnext ⟶ Y),
       IsWeakEquivalence p ∧ F.map a ≫ p = g
 
 namespace WaldhausenApproximationProperty
 
-/-- The identity functor satisfies the literal approximation property. -/
+/-- Let C be a category with a zero object and Waldhausen cofibration,
+weak-equivalence and cofibration-pushout axioms.
+
+The identity functor of C satisfies the approximation factorization property. -/
 protected theorem id :
     (Functor.id C).WaldhausenApproximationProperty where
   factorization X Y g :=
@@ -65,8 +71,10 @@ protected theorem id :
       (WaldhausenCategoryWithoutGluing.weakEquivalences (C := C)).id_mem Y, by simp⟩
 
 omit [HasZeroObject C] [WaldhausenCategoryWithoutGluing C] in
-/-- Literal approximation properties compose when the second functor
-explicitly preserves weak equivalences. -/
+/-- Let C be a category, D,E have zero objects and Waldhausen
+cofibration/weak-equivalence data, and F:C → D, G:D → E satisfy
+the approximation factorization property. If G is Waldhausen exact,
+then G∘F also satisfies the approximation factorization property. -/
 theorem comp (hF : F.WaldhausenApproximationProperty)
     (hG : G.WaldhausenApproximationProperty)
     (hGExact : G.IsWaldhausenExact) :
@@ -86,10 +94,10 @@ theorem comp (hF : F.WaldhausenApproximationProperty)
 
 end WaldhausenApproximationProperty
 
-/-- A functor reflects Waldhausen weak equivalences.
-
-This proposition is intentionally separate from
-`WaldhausenApproximationProperty` and is not a typeclass. -/
+/-- Let C,D have zero objects and Waldhausen cofibration/weak-equivalence
+data, and F:C → D be a functor. Reflection of weak equivalences is
+the property that, for every f:X → Y, weak equivalence of F(f)
+implies weak equivalence of f. -/
 def ReflectsWaldhausenWeakEquivalences (F : C ⥤ D) : Prop :=
   ∀ ⦃X Y : C⦄ (f : X ⟶ Y),
     IsWeakEquivalence (F.map f) → IsWeakEquivalence f

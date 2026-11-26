@@ -1,5 +1,5 @@
-# Glued App smul
+# Glued values preserve scalar multiplication
 
-The glued value preserves scalar multiplication, by locality plus
-linearity of the local maps and semilinearity of restriction
-(`PresheafOfModules.map_smul`).
+Let `F,G` be module sheaves over a ring sheaf `R` on `X`, `U` an open cover, and `D :
+CoverHomData F G U`. For `V∈Opens X`, `r∈R(V)`, and `s∈F(V)`, `gluedApp D hU V (r • s) = r •
+gluedApp D hU V s`, using the left module structures over `R(V)`.

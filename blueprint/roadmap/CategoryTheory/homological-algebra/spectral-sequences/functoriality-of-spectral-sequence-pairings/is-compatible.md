@@ -1,3 +1,6 @@
-# Is Compatible
+# Compatibility of interval products with spectral-object maps
 
-Compatibility concerns only the original interval products and original spectral-object components.
+Compatibility of interval products with spectral-object maps.
+
+For α,β,γ, the tensor of the two input interval components followed by the target product
+equals the source product followed by γ's output component.

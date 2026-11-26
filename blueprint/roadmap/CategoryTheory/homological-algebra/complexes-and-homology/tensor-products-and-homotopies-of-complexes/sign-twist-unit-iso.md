@@ -1,3 +1,6 @@
-# Sign Twist Unit Iso
+# The unit of the bicomplex sign equivalence
 
-Unit natural isomorphism of the sign-twist equivalence.
+The unit of the bicomplex sign equivalence.
+
+The identity functor on anticommuting bicomplexes is naturally isomorphic to sign twisting
+followed by inverse conversion, through identity bidegree maps.

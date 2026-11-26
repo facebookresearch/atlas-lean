@@ -17,13 +17,15 @@ public import Mathlib.LinearAlgebra.Dimension.Localization
 public import Mathlib.RingTheory.Localization.Finiteness
 
 /-!
-# Full local-domain one-parameter Euler projection
+# A one-element Euler formula over a local domain
 
-The actual prime filtration gives the original cokernel-minus-kernel Euler
-characteristic as the true generic multiplicity times the original parameter
-quotient length. The stock localization rank theorem also computes that
-multiplicity as the original module rank. All ring and module universes remain
-independent, and torsion factors retain their actual kernel corrections.
+Let R be a noetherian local domain of Krull dimension at most one, M finitely generated, and r
+a nonzero element of the maximal ideal. With finite multiplication kernel and cokernel
+lengths, χ_r(M) equals the generic localized length of M times ℓ_R(R/rR). The generic length
+is also Module.finrank R M.
+
+If multiplication by r is injective on M, this becomes the corresponding formula for
+ℓ_R(M/rM). The ring and module universes remain independent.
 -/
 
 @[expose] public section
@@ -97,9 +99,10 @@ private theorem genericLength_toNat_eq_finrank
   exact (IsLocalization.finrank_eq K S hs.le).trans
     (IsLocalizedModule.finrank_eq S (LocalizedModule.mkLinearMap S M) hs.le)
 
-/-- The original full one-element Euler characteristic is the genuine
-generic multiplicity times the original parameter quotient length.
-The coefficient module may live in a different universe from the ring. -/
+/-- The local-domain Euler formula with generic multiplicity.
+
+Under the stated local-domain, dimension, parameter and finiteness hypotheses,
+χ_r(M)=ℓ_{R_(0)}(M_(0))·ℓ_R(R/rR). -/
 theorem elementEulerCharacteristic_eq_genericLength_mul_of_localDomain
     (M : Type v) [AddCommGroup M] [Module R M] [Module.Finite R M]
     (r : R) (hr : r ∈ IsLocalRing.maximalIdeal R) (hr0 : r ≠ 0)
@@ -130,8 +133,9 @@ theorem elementEulerCharacteristic_eq_genericLength_mul_of_localDomain
       rw [hlocal, ENat.toNat_natCast]
       exact hsum
 
-/-- The complete one-element Euler projection can use the original
-module rank directly, by the stock localization rank theorem. -/
+/-- The local-domain Euler formula with module rank.
+
+Under the same hypotheses, χ_r(M)=Module.finrank R M times ℓ_R(R/rR), interpreted as integers. -/
 theorem elementEulerCharacteristic_eq_finrank_mul_of_localDomain
     (M : Type v) [AddCommGroup M] [Module R M] [Module.Finite R M]
     (r : R) (hr : r ∈ IsLocalRing.maximalIdeal R) (hr0 : r ≠ 0)
@@ -142,9 +146,10 @@ theorem elementEulerCharacteristic_eq_finrank_mul_of_localDomain
   rw [elementEulerCharacteristic_eq_genericLength_mul_of_localDomain R M r hr hr0 hdim h,
     genericLength_toNat_eq_finrank R M]
 
-/-- Genuine regular multiplication reduces the full Euler projection to
-the actual principal quotient length. No regularity of other parameters
-or of the original local domain is assumed. -/
+/-- The local-domain quotient length formula for injective multiplication.
+
+If μ_r is injective and M/rM has finite length, its length equals the generic localized length
+of M times ℓ_R(R/rR), under the stated local-domain parameter hypotheses. -/
 theorem length_lsmul_cokernel_toNat_eq_genericLength_mul_of_localDomain
     (M : Type v) [AddCommGroup M] [Module R M] [Module.Finite R M]
     (r : R) (hr : r ∈ IsLocalRing.maximalIdeal R) (hr0 : r ≠ 0)

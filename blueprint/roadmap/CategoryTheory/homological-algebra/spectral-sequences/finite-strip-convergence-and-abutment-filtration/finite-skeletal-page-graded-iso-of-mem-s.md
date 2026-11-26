@@ -1,4 +1,8 @@
-# Finite Skeletal Page Graded Iso Of Mem Strip
+# Page-to-graded comparison inside the finite strip
 
-In the finite strip, actual endpoint vanishing derives stabilization at
-the uniform page bound `N + 1`. No cohomological degree enters the bound.
+Let D be abelian and Y a spectral object indexed by EInt.
+Set A_n=H_Yⁿ(−∞,+∞), FᵖA_n=Ker(A_n → H_Yⁿ(−p,+∞))
+and GrᵖA_n=FᵖA_n/Fᵖ⁺¹A_n. Fix N∈ℕ and assume, for every integer m,
+H_Yᵐ(−∞,i)=0 for i≤−N−1 and H_Yᵐ(i,+∞)=0 for i≥0.
+
+For r≥N+1, 0≤p≤N and any q∈ℤ, the canonical comparison E_r^{p,q} ≅ GrᵖA_{p+q}.

@@ -11,14 +11,17 @@ module
 public import MathlibExt.Algebra.Homology.HomotopyCofiber
 
 /-!
-# Naturality of the native additive-functor homotopy-cofiber isomorphism
+# Naturality of the additive-functor cofiber comparison
 
-The existing native isomorphism commuting an additive functor with the
-same native cofiber is natural in strict arrow squares. Its native
-shifted-source and target inclusion equations give the proof. This is the
-shared bridge needed to return the actual canonical coefficient cone
-family through original-ring scalar restriction. No alternative cone or
-assumed naturality is introduced.
+Let H:C → D be additive between preadditive categories with binary
+biproducts. Let c have decidable differential relation and suppose every
+degree has a predecessor. The inverse comparison
+ε_φ⁻¹:Cofib(H(φ)) → H(Cofib(φ)) is natural in commuting squares
+between complex morphisms φ and ψ.
+
+The cofiber map of the square after applying H, followed by ε_ψ⁻¹,
+equals ε_φ⁻¹ followed by H applied to the cofiber map of the original
+square. The category and index universes are independent.
 -/
 
 @[expose] public section
@@ -35,7 +38,12 @@ variable {C : Type uC} [Category.{vC} C] [Preadditive C] [HasBinaryBiproducts C]
   {ι : Type w} {c : ComplexShape ι} [DecidableRel c.Rel]
   (H : C ⥤ D) [H.Additive] (hc : ∀ j, ∃ i, c.Rel i j)
 
-/-- The inverse native additive-functor/cofiber comparison respects the same actual strict arrow square. -/
+/-- Let H:C → D be additive between preadditive categories with binary
+biproducts, and let c have decidable differential relation and a
+predecessor in every degree. For a commuting square a from
+φ:F → G to ψ:F′ → G′, write M(a) for its induced cofiber map
+and ε_φ:H(Cofib(φ)) ≅ Cofib(H(φ)) for the canonical comparison.
+Then ε_ψ⁻¹ ∘ M(H(a)) = H(M(a)) ∘ ε_φ⁻¹. -/
 @[reassoc]
 theorem mapHomologicalComplexObjIso_inv_naturality
     {F G F' G' : HomologicalComplex C c} {φ : F ⟶ G} {ψ : F' ⟶ G'}

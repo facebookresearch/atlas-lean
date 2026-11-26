@@ -15,12 +15,15 @@ module
 public import MathlibExt.Algebra.Category.ModuleCat.ExtendedRestrictedQuotient
 
 /-!
-# Base change of surjective scalar presentations
+# Base change of quotient-ring module presentations
 
-When a surjective scalar presentation has its kernel extended to the
-target ring, the actual tensor extension is its new surjective
-presentation. Characteristic equations retain every original scalar
-and coefficient value.
+Let φ : R → A and ψ : S → B be surjective maps of commutative rings, and let γ : R → S send
+ker(φ) onto ker(ψ) as an extended ideal. Then S ⊗_R A is canonically isomorphic to B as an
+S-module through its quotient presentation.
+
+If δ : A → B satisfies δφ = ψγ, the comparison sends s ⊗ a to ψ(s)δ(a). The induced R-linear
+restriction map sends a to δ(a). These comparisons compose through a second base-change
+square, with the canonical scalar-extension associativity isomorphism included.
 -/
 
 public section
@@ -39,8 +42,10 @@ variable (φ : R →+* A) (ψ : S →+* B) (γ : R →+* S)
 variable (hφ : Function.Surjective φ) (hψ : Function.Surjective ψ)
 variable (hk : (RingHom.ker φ).map γ = RingHom.ker ψ)
 
-/-- Tensor extension of a genuine surjective scalar presentation is
-the target presentation when its actual kernel is extended. -/
+/-- The base-change isomorphism of surjective scalar presentations.
+
+For surjective φ and ψ with γ(ker φ) generating ker ψ, identify the scalar extension S ⊗_R A
+with B restricted along ψ, through the quotient-module presentations. -/
 def surjectiveScalarBaseChangeIso :
     (extendScalars γ).obj ((restrictScalars φ).obj (ModuleCat.of A A)) ≅
       (restrictScalars ψ).obj (ModuleCat.of B B) := by
@@ -54,8 +59,9 @@ def surjectiveScalarBaseChangeIso :
   let e₃ := (Ideal.quotientEquivAlgOfEq S hk).toLinearEquiv.toModuleIso
   exact e₁ ≪≫ e₂ ≪≫ e₃ ≪≫ eB
 
-/-- On scalar images, the genuine base-change comparison has its
-literal target scalar value. -/
+/-- The quotient base-change comparison on a scalar image.
+
+For s ∈ S and r ∈ R, the comparison sends s ⊗ φ(r) to ψ(γ(r)s). -/
 theorem surjectiveScalarBaseChangeIso_hom_tmul_image (s : S) (r : R) :
     (surjectiveScalarBaseChangeIso R S A B φ ψ γ hφ hψ hk).hom (s ⊗ₜ[R, γ] φ r) =
       ψ (γ r * s) := by
@@ -81,8 +87,9 @@ theorem surjectiveScalarBaseChangeIso_hom_tmul_image (s : S) (r : R) :
       ((congrArg (fun x => eB.hom x) he).trans
         (surjectiveQuotientModuleIso_hom_mk S B ψ hψ (γ r * s))))
 
-/-- A commuting scalar square identifies the actual pure tensor with
-the original coefficient-map value multiplied by the target scalar. -/
+/-- The quotient base-change comparison on every pure tensor.
+
+If δφ = ψγ, the comparison sends s ⊗ a to ψ(s)δ(a). -/
 theorem surjectiveScalarBaseChangeIso_hom_tmul
     (δ : A →+* B) (hδ : δ.comp φ = ψ.comp γ) (s : S) (a : A) :
     (surjectiveScalarBaseChangeIso R S A B φ ψ γ hφ hψ hk).hom (s ⊗ₜ[R, γ] a) =
@@ -91,15 +98,19 @@ theorem surjectiveScalarBaseChangeIso_hom_tmul
   rw [surjectiveScalarBaseChangeIso_hom_tmul_image, map_mul, mul_comm]
   exact congrArg (fun b => ψ s * b) (congrArg (fun f : R →+* B => f r) hδ).symm
 
-/-- The extension/restriction adjunction turns the actual base-change
-comparison into the original scalar-linear coefficient restriction. -/
+/-- The induced restriction map between quotient coefficients.
+
+Compose the scalar-extension unit A → res_γ(S ⊗_R A) with the restricted base-change
+comparison to obtain the R-linear map from A to B with the specified scalar actions. -/
 def surjectiveScalarRestrictionMap :
     (restrictScalars φ).obj (ModuleCat.of A A) ⟶
       (restrictScalars γ).obj ((restrictScalars ψ).obj (ModuleCat.of B B)) :=
   (extendRestrictScalarsAdj γ).unit.app _ ≫
     (restrictScalars γ).map (surjectiveScalarBaseChangeIso R S A B φ ψ γ hφ hψ hk).hom
 
-/-- The restriction map is the original coefficient map on all elements. -/
+/-- Values of the quotient-coefficient restriction map.
+
+For a compatible ring map δ : A → B, the induced restriction map sends a to δ(a). -/
 theorem surjectiveScalarRestrictionMap_apply
     (δ : A →+* B) (hδ : δ.comp φ = ψ.comp γ) (a : A) :
     surjectiveScalarRestrictionMap R S A B φ ψ γ hφ hψ hk a = δ a := by
@@ -114,8 +125,11 @@ namespace ModuleCat
 
 universe u
 
-/-- Tensor base change of the actual surjective presentations agrees
-with two successive base changes along the original scalar maps. -/
+/-- Composition of quotient base-change comparisons.
+
+For two consecutive scalar maps and compatible surjective presentations, extending the first
+comparison and then applying the second equals the comparison for the composite, after the
+canonical scalar-extension comparison. -/
 theorem surjectiveScalarBaseChangeIso_hom_trans
     (R S T A B C : Type u) [CommRing R] [CommRing S] [CommRing T]
     [CommRing A] [CommRing B] [CommRing C]
@@ -189,8 +203,10 @@ namespace ModuleCat
 
 universe u
 
-/-- Actual coefficient restrictions compose along a chain of surjective
-scalar presentations, retaining the original coefficient maps. -/
+/-- Composition of induced quotient-coefficient restriction maps.
+
+For two compatible base-change squares, applying the two induced restriction maps successively
+equals the restriction map of the composite square on every a ∈ A. -/
 theorem surjectiveScalarRestrictionMap_trans
     (R S T A B C : Type u) [CommRing R] [CommRing S] [CommRing T]
     [CommRing A] [CommRing B] [CommRing C]

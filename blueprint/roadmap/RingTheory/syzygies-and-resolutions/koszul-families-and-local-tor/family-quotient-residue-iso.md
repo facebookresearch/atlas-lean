@@ -1,4 +1,6 @@
-# Family Quotient Residue Iso
+# The lifted module isomorphism of the family quotient target
 
-The exact universe-lifted quotient target of the Koszul augmentation is
-isomorphic to the lifted residue-field object.
+The lifted module isomorphism of the family quotient target.
+
+The Koszul augmentation target is isomorphic to the displayed universe lift of the
+residue-field module.

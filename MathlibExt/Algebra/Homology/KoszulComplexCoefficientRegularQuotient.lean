@@ -23,11 +23,16 @@ public import MathlibExt.Algebra.Homology.KoszulComplexCoefficientSnoc
 public import Mathlib.RingTheory.QuotSMulTop
 
 /-!
-# Native cofiber comparison for an actual coefficient quotient
+# Removing a last Koszul generator regular on the coefficient
 
-The existing generic homotopy-cofiber projection and its down-Nat
-quasi-isomorphism theorem supply the actual coefficient-quotient map.
-The original Koszul regular-coefficient projection retains its tensor values.
+For a finite family a : Fin(n+1) → R and coefficient module M, the snoc-cone presentation
+gives a projection from K(a) ⊗ M to the initial-family Koszul complex with coefficient M/a_nM.
+If the last element acts injectively on M, this projection is a quasi-isomorphism and gives
+all-degree homology isomorphisms.
+
+The support quotient length hypothesis passes to the new coefficient. For noetherian R and
+finite M, the corresponding coefficient Koszul Euler invariants agree, with ring and
+coefficient carrier universes independent.
 -/
 
 @[expose] public section
@@ -46,8 +51,9 @@ open scoped Pointwise
 
 variable (R : Type u) [CommRing R] {n : ℕ}
 
-/-- The original scalar map and the original quotient by its image form
-an actual coefficient short complex. -/
+/-- The scalar multiplication and coefficient quotient short complex.
+
+Form M → M → M/rM using r times the identity and the canonical quotient map. -/
 def scalarCoefficientQuotientShortComplex (r : R) (M : ModuleCat.{v} R) :
     ShortComplex (ModuleCat.{v} R) :=
   ShortComplex.mk (r • 𝟙 M) (ModuleCat.ofHom (r • (⊤ : Submodule R M)).mkQ) (by
@@ -58,8 +64,9 @@ def scalarCoefficientQuotientShortComplex (r : R) (M : ModuleCat.{v} R) :
     exact (Submodule.Quotient.mk_eq_zero (r • (⊤ : Submodule R M))).mpr
       (Submodule.smul_mem_pointwise_smul m r ⊤ trivial))
 
-/-- Regularity of the actual scalar action earns short exactness of the
-original coefficient quotient sequence. -/
+/-- A regular coefficient scalar gives a short exact quotient sequence.
+
+If r acts injectively on M, the scalar coefficient short complex is short exact. -/
 theorem scalarCoefficientQuotientShortComplex_shortExact
     (r : R) (M : ModuleCat.{v} R) (hr : IsSMulRegular M r) :
     (scalarCoefficientQuotientShortComplex R r M).ShortExact := by
@@ -74,8 +81,10 @@ theorem scalarCoefficientQuotientShortComplex_shortExact
   · exact (ModuleCat.mono_iff_injective _).mpr hr
   · exact (ModuleCat.epi_iff_surjective _).mpr (Submodule.mkQ_surjective _)
 
-/-- The native projection removes an actual last scalar coefficient and
-uses the actual quotient module as the remaining coefficient. -/
+/-- The Koszul projection to the last coefficient quotient.
+
+Use the snoc-cone comparison and coefficient quotient projection to map the full family
+complex to the initial-family complex with coefficient M/a_nM. -/
 def familyTensorCoefficientRegularQuotientProjection
     (a : Fin (n + 1) → R) (M : ModuleCat.{v} R) :
     familyTensorCoefficientComplex R a M ⟶
@@ -86,8 +95,10 @@ def familyTensorCoefficientRegularQuotientProjection
       (familyTensorCoefficientShortComplex R (fun i : Fin n => a i.castSucc)
         (scalarCoefficientQuotientShortComplex R (a (Fin.last n)) M))
 
-/-- An actual regular last coefficient gives the native quotient
-quasi-isomorphism, without any finiteness premise on intermediate homology. -/
+/-- The last-quotient Koszul projection is a quasi-isomorphism under regularity.
+
+If the last family element is regular on M, the coefficient quotient projection is a
+quasi-isomorphism. -/
 theorem familyTensorCoefficientRegularQuotientProjection_quasiIso
     (a : Fin (n + 1) → R) (M : ModuleCat.{v} R) (hr : IsSMulRegular M (a (Fin.last n))) :
     QuasiIso (familyTensorCoefficientRegularQuotientProjection R a M) := by
@@ -102,8 +113,9 @@ theorem familyTensorCoefficientRegularQuotientProjection_quasiIso
   change QuasiIso (e.hom ≫ HomologicalComplex.homotopyCofiber.descShortComplex S)
   exact quasiIso_comp e.hom (HomologicalComplex.homotopyCofiber.descShortComplex S)
 
-/-- Every original homology degree is identified with the actual smaller
-family homology on the actual regular scalar quotient. -/
+/-- Homology comparison after a regular last coefficient scalar.
+
+For every j ≥ 0, the regular last-quotient projection induces a homology isomorphism. -/
 def familyTensorCoefficientRegularQuotientHomologyIso
     (a : Fin (n + 1) → R) (M : ModuleCat.{v} R) (hr : IsSMulRegular M (a (Fin.last n))) (j : ℕ) :
     (familyTensorCoefficientComplex R a M).homology j ≅
@@ -113,8 +125,10 @@ def familyTensorCoefficientRegularQuotientHomologyIso
     familyTensorCoefficientRegularQuotientProjection_quasiIso R a M hr
   exact asIso (HomologicalComplex.homologyMap (familyTensorCoefficientRegularQuotientProjection R a M) j)
 
-/-- The original full-family finite quotient earns the smaller-family
-finite quotient after reducing the actual coefficient module by its last scalar. -/
+/-- The support quotient remains finite after removing the last generator.
+
+Finite length of R divided by the family ideal plus Ann(M) gives the analogous finite quotient
+length for the initial family and M/a_nM. -/
 theorem familyTensorCoefficientQuotient_length_ne_top
     (a : Fin (n + 1) → R) (M : ModuleCat.{v} R)
     (hquot : Module.length R
@@ -136,8 +150,11 @@ theorem familyTensorCoefficientQuotient_length_ne_top
     (Ideal.span (Set.range a) ⊔ Module.annihilator R M)
     (by rw [Ideal.annihilator_quotient]; exact sup_le hI (hAnn.trans le_sup_right)) hquot
 
-/-- Removing an actual regular last coefficient preserves the actual
-full-family Euler invariant and its original alternating sign convention. -/
+/-- Euler invariance under a regular last coefficient quotient.
+
+For noetherian R, finite M, last-element regularity and the stated quotient length, the full
+coefficient-family Euler invariant equals the initial-family invariant with coefficient
+M/a_nM. -/
 theorem familyTensorCoefficientEuler_eq_of_last_regular
     [IsNoetherianRing R] (a : Fin (n + 1) → R) (M : ModuleCat.{v} R) [Module.Finite R M]
     (hr : IsSMulRegular M (a (Fin.last n)))

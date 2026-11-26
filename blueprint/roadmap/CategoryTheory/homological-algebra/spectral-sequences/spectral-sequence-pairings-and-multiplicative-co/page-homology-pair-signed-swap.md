@@ -1,3 +1,5 @@
-# Page Homology Pair signed Swap
+# Signed page symmetry passes to homology
 
-The actual native homology projections descend the original total-degree signed swap.
+Signed page symmetry passes to homology.
+
+The homology products obey the same total-degree sign under braiding.

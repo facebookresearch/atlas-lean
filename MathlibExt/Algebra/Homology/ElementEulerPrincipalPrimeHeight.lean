@@ -16,12 +16,11 @@ public import MathlibExt.Algebra.Homology.ElementEulerPrimeFiltration
 public import Mathlib.RingTheory.Ideal.KrullsHeightTheorem
 
 /-!
-# Heights of contributing principal-quotient Euler primes
+# Height of prime factors of a principal quotient
 
-A nonzero-contributing prime factor of a principal quotient is minimal
-over its original principal ideal under the existing one-dimensional local
-support hypotheses. A regular generator and the principal ideal theorem
-then identify its height as one.
+Let R be noetherian and local, let a be a non-zero-divisor, and let b lie in the maximal
+ideal. For a prime decomposition of the Euler invariant on R/(a), with support dimension at
+most one, every factor prime excluding b has height one.
 -/
 
 @[expose] public section
@@ -34,8 +33,10 @@ namespace Module
 
 variable (R : Type u) [CommRing R] [IsNoetherianRing R] [IsLocalRing R]
 
-/-- Each nonzero-contributing Euler factor of an original regular
-principal quotient has an original prime of height one. -/
+/-- A contributing factor of a regular principal quotient has height one.
+
+For a ∈ nonZeroDivisors R, b in the maximal ideal and the stated support-dimension bound, a
+prime factor of the decomposition of R/(a) that excludes b has ideal height 1. -/
 theorem ElementEulerPrimeDecomposition.factor_prime_height_eq_one_of_principal
     {a b : R} (d : ElementEulerPrimeDecomposition R (R ⧸ Ideal.span {a}) b)
     (ha : a ∈ nonZeroDivisors R) (hb : b ∈ IsLocalRing.maximalIdeal R)

@@ -1,3 +1,6 @@
-# Map app
+# The normalized map of a simplicial diagram morphism
 
-Diagram arrows are exactly the original coefficient-first normalized arrows.
+The normalized map of a simplicial diagram morphism.
+
+For f : X → Y and fixed M, the family map is normalization of the simplicial map obtained by
+tensoring f on the left with M.

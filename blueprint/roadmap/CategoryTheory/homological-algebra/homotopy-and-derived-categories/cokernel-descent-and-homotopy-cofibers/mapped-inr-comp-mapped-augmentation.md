@@ -1,4 +1,5 @@
-# Mapped inr comp mapped Augmentation
+# The image-cone augmentation restricts to the supplied target map
 
-The mapped original right inclusion followed by the actual
-augmentation is the original target map.
+The image-cone augmentation restricts to the supplied target map.
+
+The mapped inclusion i(G) → i(Cone φ) followed by the augmentation equals β.

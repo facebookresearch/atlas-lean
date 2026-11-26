@@ -1,3 +1,5 @@
-# Restrict Scalars Ulift Iso hom apply
+# Elements under the forward restriction–lift comparison
 
-The comparison retains every original native lifted module element.
+Elements under the forward restriction–lift comparison.
+
+The forward component sends each m ∈ ULift M to the same lifted element m.

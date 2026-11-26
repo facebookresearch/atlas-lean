@@ -1,3 +1,5 @@
-# Coalgebra Closure Comon Inclusion
+# The bundled morphism from the closure comonoid to the ambient comonoid
 
-Its honest bundled original comonoid monomorphism.
+The bundled morphism from the closure comonoid to the ambient comonoid.
+
+The inclusion j defines a comonoid morphism from the bundled closure to the bundled C.

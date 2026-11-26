@@ -15,12 +15,19 @@ public import Mathlib.Algebra.Homology.Embedding.CochainComplex
 public import Mathlib.Algebra.Homology.SingleHomology
 
 /-!
-# Good-truncation roof for cochain complexes concentrated in degree zero
+# Degree-zero cohomology and the good-truncation roof
 
-Double good truncation identifies with the single complex on degree-zero
-homology. The resulting roof is natural for every cochain complex, and its
-degree-zero homology coordinate is the identity in the canonical charts.
-Vanishing of off-zero homology makes both roof arrows quasi-isomorphisms.
+Let A be an abelian category and K an arbitrary integer-indexed cochain
+complex. Put T=τ≤0K and Q=τ≥0T, using good truncations. The complex Q is
+canonically isomorphic to the single complex S₀(H⁰(K)). This gives a natural
+roof K ← T → S₀(H⁰(K)), with left map the good-truncation inclusion i:T → K
+and right map r the good-truncation projection T → Q followed by the
+single-complex isomorphism.
+
+Under the canonical single-complex cohomology identification, H⁰(r)=H⁰(i).
+Since H⁰(i) is invertible, the normalized degree-zero map of the roof is
+the identity on H⁰(K). If Hᑫ(K) is zero for every q≠0, both arrows of
+the roof are quasi-isomorphisms.
 -/
 
 @[expose] public section
@@ -132,7 +139,11 @@ private theorem doubleTruncationComponentIso_naturality
         congrArg (fun g => (zeroDegreeHomologyIso ((K.truncLE 0).truncGE 0)).hom ≫
           pK.inv ≫ g) hi
 
-/-- Canonical identification of double good truncation with the single complex on degree-zero homology. -/
+/-- Let A be an abelian category and K an integer-indexed cochain complex.
+The canonical isomorphism α:(τ≤0K).τ≥0 ≅ S₀(H⁰(K)), where S₀ places
+H⁰(K) in degree zero and zero objects elsewhere. The double good truncation
+has only its degree-zero term, identified through cycles and homology
+with H⁰(K). -/
 def homologyZeroDoubleTruncationIso (K : CochainComplex A ℤ) :
     (K.truncLE 0).truncGE 0 ≅
       (single A (ComplexShape.up ℤ) 0).obj (K.homology 0) := by
@@ -188,7 +199,10 @@ private theorem homologyZeroDoubleTruncationIso_hom_f_zero
     change i + 1 = 0 at hi
     omega)).eq_of_src _ _
 
-/-- Naturality of the double-truncation-to-single identification. -/
+/-- For a cochain map f:K → L in an abelian category, put
+Q(K)=τ≥0(τ≤0K) and let α_K:Q(K) ≅ S₀(H⁰(K)) be the canonical
+isomorphism. The naturality square is
+α_L ∘ Q(f) = S₀(H⁰(f)) ∘ α_K. -/
 theorem homologyZeroDoubleTruncationIso_naturality
     {K L : CochainComplex A ℤ} (f : K ⟶ L) :
     truncGEMap (truncLEMap f 0) 0 ≫ (homologyZeroDoubleTruncationIso L).hom =
@@ -232,7 +246,11 @@ private theorem singleHomologyCoordinate_of_strictSupport
         congrArg (fun g => g ≫ f.f 0 ≫ (singleObjXSelf (ComplexShape.up ℤ) 0 B).hom)
           (homologyπ_zeroDegreeHomologyIso_inv J).symm
 
-/-- The single-complex homology coordinate is the inverse of the canonical truncation map. -/
+/-- Let K be an integer-indexed cochain complex in an abelian category.
+Put T=τ≤0K, Q=τ≥0T, let p:T → Q be the good-truncation projection,
+and i:T → K the inclusion. If α:Q ≅ S₀(H⁰(K)) and
+ε:H⁰(S₀(H⁰(K))) ≅ H⁰(K) are the canonical isomorphisms, then
+ε ∘ H⁰(α) = H⁰(i) ∘ H⁰(p)⁻¹. -/
 theorem homologyZeroDoubleTruncationIso_homology_zero (K : CochainComplex A ℤ) :
     homologyMap (homologyZeroDoubleTruncationIso K).hom 0 ≫
         (singleObjHomologySelfIso (ComplexShape.up ℤ) 0 (K.homology 0)).hom =
@@ -245,12 +263,19 @@ theorem homologyZeroDoubleTruncationIso_homology_zero (K : CochainComplex A ℤ)
   rw [Iso.inv_hom_id, Category.comp_id]
   rfl
 
-/-- The right roof arrow is the second good-truncation projection followed by the single-complex identification. -/
+/-- For an integer-indexed cochain complex K in an abelian category, the
+right map r:τ≤0K → S₀(H⁰(K)) of the good-truncation roof. It is the
+projection τ≤0K → τ≥0(τ≤0K) followed by the canonical isomorphism of
+the double truncation with the single complex on H⁰(K). -/
 def homologyZeroRoofHom (K : CochainComplex A ℤ) :
     K.truncLE 0 ⟶ (single A (ComplexShape.up ℤ) 0).obj (K.homology 0) :=
   (K.truncLE 0).πTruncGE 0 ≫ (homologyZeroDoubleTruncationIso K).hom
 
-/-- The left and right roof arrows give the same degree-zero homology coordinate. -/
+/-- Let K be an integer-indexed cochain complex in an abelian category,
+i:τ≤0K → K its good-truncation inclusion, and
+r:τ≤0K → S₀(H⁰(K)) the right roof arrow. Under the canonical
+identification ε:H⁰(S₀(H⁰(K))) ≅ H⁰(K), the two cohomology maps
+agree: ε ∘ H⁰(r) = H⁰(i). -/
 @[reassoc]
 theorem homologyZeroRoofHom_homology_zero (K : CochainComplex A ℤ) :
     homologyMap (homologyZeroRoofHom K) 0 ≫
@@ -260,7 +285,11 @@ theorem homologyZeroRoofHom_homology_zero (K : CochainComplex A ℤ) :
     homologyZeroDoubleTruncationIso_homology_zero]
   exact (isoOfQuasiIsoAt ((K.truncLE 0).πTruncGE 0) 0).hom_inv_id_assoc _
 
-/-- The degree-zero homology map is the identity under the canonical identifications. -/
+/-- Let K be an integer-indexed cochain complex in an abelian category.
+For the good-truncation inclusion i:τ≤0K → K and right roof arrow
+r:τ≤0K → S₀(H⁰(K)), with the canonical single-complex cohomology
+identification ε, the normalized map
+ε ∘ H⁰(r) ∘ H⁰(i)⁻¹ is the identity of H⁰(K). -/
 theorem homologyZeroRoofHom_homology_identity (K : CochainComplex A ℤ) :
     (isoOfQuasiIsoAt (K.ιTruncLE 0) 0).inv ≫
         homologyMap (homologyZeroRoofHom K) 0 ≫
@@ -269,7 +298,10 @@ theorem homologyZeroRoofHom_homology_identity (K : CochainComplex A ℤ) :
   rw [homologyZeroRoofHom_homology_zero]
   exact (isoOfQuasiIsoAt (K.ιTruncLE 0) 0).inv_hom_id
 
-/-- The roof is natural in every cochain map. -/
+/-- For a cochain map f:K → L in an abelian category, the right arrows
+r_K:τ≤0K → S₀(H⁰(K)) and r_L satisfy
+r_L ∘ τ≤0(f) = S₀(H⁰(f)) ∘ r_K. Thus the degree-zero cohomology
+roof is natural for every integer-indexed cochain map. -/
 @[reassoc]
 theorem homologyZeroRoofHom_naturality {K L : CochainComplex A ℤ} (f : K ⟶ L) :
     truncLEMap f 0 ≫ homologyZeroRoofHom L =
@@ -278,7 +310,10 @@ theorem homologyZeroRoofHom_naturality {K L : CochainComplex A ℤ} (f : K ⟶ L
     ← πTruncGE_naturality, Category.assoc,
     homologyZeroDoubleTruncationIso_naturality, ← Category.assoc]
 
-/-- If homology vanishes away from degree zero, both roof arrows are quasi-isomorphisms. -/
+/-- Let K be an integer-indexed cochain complex in an abelian category.
+If Hᑫ(K) is a zero object for every integer q≠0, then both maps
+τ≤0K → K and τ≤0K → S₀(H⁰(K)) in its good-truncation roof are
+quasi-isomorphisms. -/
 theorem homologyZeroRoof_quasiIso (K : CochainComplex A ℤ)
     (hK : ∀ q : ℤ, q ≠ 0 → IsZero (K.homology q)) :
     QuasiIso (K.ιTruncLE 0) ∧ QuasiIso (homologyZeroRoofHom K) := by

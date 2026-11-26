@@ -13,22 +13,18 @@ public import Mathlib.CategoryTheory.Linear.Basic
 public import Mathlib.CategoryTheory.Preadditive.AdditiveFunctor
 
 /-!
-# Scalar detection on an actual finite split family
+# Scalar detection in finite split decompositions
 
-A recombination operator that acts by prescribed scalars on actual split
-images also acts by those scalars after each actual projection. The finite
-projector sum and the cross-image equations prove this second equation;
-commutation with the projections is not an additional input.
+Let C be preadditive and linear over a semiring R. Suppose maps i_j : F_j → X and p_j : X →
+F_j satisfy i_j ≫ p_j = id_{F_j}, i_j ≫ p_k = 0 for j ≠ k, p_j = 0 for j > N and Σ_{j≤N} p_j ≫
+i_j = id_X. For d : X → Y, m : Y → X and scalars a_j, assume i_j ≫ d ≫ m = a_j • i_j for j ≤
+N.
 
-If the scalar on an image is monic, every map annihilated by the original
-map has zero projection to that image. When exactly one image is allowed
-to survive, the actual kernel inclusion is fixed by its projector. If that
-image is itself annihilated, its actual inclusion and projection construct
-an isomorphism with the actual kernel.
-
-The category is preadditive and linear over an arbitrary semiring. A kernel
-is required only for the kernel isomorphism. No countable coproduct or
-exactness hypothesis is needed.
+The finite decomposition implies d ≫ m ≫ p_j = a_j • p_j for every j. If multiplication by a_j
+on F_j is monic, every map f with f ≫ d = 0 has f ≫ p_j = 0. If all other supported scalar
+maps are monic, such f satisfies f ≫ p_j ≫ i_j = f. When also i_j ≫ d = 0, the maps i_j and
+p_j identify F_j with Ker(d), provided that kernel exists. Scalar, object and morphism
+universes are independent.
 -/
 
 @[expose] public section
@@ -54,8 +50,11 @@ variable {R : Type r} [Semiring R]
     (hweight : ∀ j, j ≤ N → i j ≫ d ≫ m = a j • i j)
 
 include hsplit hcross hsupport hsum hweight in
-/-- Scalar action on the actual image inclusions implies the corresponding
-post-projection equation, by the actual finite split decomposition. -/
+/-- Scalar action on projections of a finite split decomposition.
+
+Let C be R-linear and preadditive, and let (i_j,p_j) be an orthogonal split decomposition of X
+with p_j = 0 for j > N and Σ_{j≤N} p_j ≫ i_j = id_X. If i_j ≫ d ≫ m = a_j • i_j on every
+supported summand, then d ≫ m ≫ p_j = a_j • p_j for all j : ℕ. Here R is any semiring. -/
 theorem finiteSplit_operator_projection (j : ℕ) :
     d ≫ m ≫ p j = a j • p j := by
   classical
@@ -85,8 +84,12 @@ theorem finiteSplit_operator_projection (j : ℕ) :
         simp only [comp_zero, smul_zero, Finset.sum_const_zero]
 
 include hsplit hcross hsupport hsum hweight in
-/-- Monic scalar action on an actual image detects the corresponding
-projection of every map annihilated by the original map. -/
+/-- Vanishing of a projection detected by a monic scalar action.
+
+For a finite orthogonal split decomposition of X in an R-linear preadditive category, suppose
+d ≫ m acts on each inclusion by its scalar a_j. If f : Z → X satisfies f ≫ d = 0 and a_j •
+id_{F_j} is monic, then f ≫ p_j = 0. The projection equation and cancellation of the scalar
+endomorphism give the conclusion. -/
 theorem finiteSplit_projection_zero_of_annihilated_map {Z : C}
     (f : Z ⟶ X) (hf : f ≫ d = 0) (j : ℕ)
     [Mono (a j • 𝟙 (F j))] : f ≫ p j = 0 := by
@@ -101,8 +104,11 @@ theorem finiteSplit_projection_zero_of_annihilated_map {Z : C}
       rw [← Category.assoc f d (m ≫ p j), hf, zero_comp]
 
 include hsplit hcross hsupport hsum hweight in
-/-- If all other scalar actions are monic, every annihilated map is fixed
-by the actual distinguished image projector. -/
+/-- Distinguished projector fixes maps annihilated by the given morphism.
+
+For a finite orthogonal split decomposition indexed through N and scalar action i_k ≫ d ≫ m =
+a_k • i_k, fix j. If a_k • id_{F_k} is monic for all k ≤ N with k ≠ j, every f satisfying f ≫
+d = 0 obeys f ≫ p_j ≫ i_j = f. All other components vanish by scalar cancellation. -/
 theorem finiteSplit_single_projector_of_annihilated_map {Z : C}
     (f : Z ⟶ X) (hf : f ≫ d = 0) (j : ℕ)
     (hregular : ∀ k, k ≤ N → k ≠ j → Mono (a k • 𝟙 (F k))) :
@@ -138,9 +144,12 @@ theorem finiteSplit_single_projector_of_annihilated_map {Z : C}
     simp only [hfzero, zero_comp]
 
 include hsplit hcross hsupport hsum hweight in
-/-- The actual distinguished inclusion and projection give an actual
-kernel isomorphism when that image is annihilated and the other image
-scalars are monic. This concerns the kernel of the supplied map. -/
+/-- Kernel isomorphism from a distinguished split summand.
+
+In an R-linear preadditive category, suppose X has the finite orthogonal split decomposition
+and scalar action i_k ≫ d ≫ m = a_k • i_k. Fix j such that all other supported scalar maps are
+monic and i_j ≫ d = 0. If Ker(d) exists, define F_j ≅ Ker(d) with hom kernel.lift d i_j and
+inverse kernel.ι d ≫ p_j. -/
 def finiteSplitScalarKernelIso [HasKernel d] (j : ℕ)
     (hregular : ∀ k, k ≤ N → k ≠ j → Mono (a k • 𝟙 (F k)))
     (hzero : i j ≫ d = 0) : F j ≅ kernel d where
@@ -156,6 +165,11 @@ def finiteSplitScalarKernelIso [HasKernel d] (j : ℕ)
       (kernel.ι d) (kernel.condition d) j hregular
 
 include hsplit hcross hsupport hsum hweight in
+/-- Inclusion equation for the scalar-detected kernel isomorphism.
+
+Under the finite split-decomposition and scalar-action hypotheses, with all other supported
+scalar maps monic and i_j ≫ d = 0, the comparison e_j : F_j ≅ Ker(d) satisfies e_j.hom ≫
+kernel.ι d = i_j. Thus its forward map retains the given distinguished inclusion. -/
 @[reassoc]
 theorem finiteSplitScalarKernelIso_hom_ι [HasKernel d] (j : ℕ)
     (hregular : ∀ k, k ≤ N → k ≠ j → Mono (a k • 𝟙 (F k)))

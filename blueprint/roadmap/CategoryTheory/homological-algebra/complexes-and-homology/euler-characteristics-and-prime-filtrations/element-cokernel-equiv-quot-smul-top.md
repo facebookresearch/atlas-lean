@@ -1,4 +1,5 @@
-# Element Cokernel Equiv Quot SMul Top
+# The multiplication cokernel is the scalar quotient
 
-The cokernel model used by `elementEulerCharacteristic` agrees with the
-standard `QuotSMulTop` reduction.
+The multiplication cokernel is the scalar quotient.
+
+Identify M modulo the range of μ_r with QuotSMulTop r M, the quotient by rM.

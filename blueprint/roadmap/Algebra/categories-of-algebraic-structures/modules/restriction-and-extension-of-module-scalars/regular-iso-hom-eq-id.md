@@ -1,3 +1,6 @@
-# Regular Iso hom eq id
+# Regular-module automorphisms are trivial when the unit group is trivial
 
-A trivial coefficient unit group makes every regular-module automorphism the identity.
+Regular-module automorphisms are trivial when the unit group is trivial.
+
+For a ring R with Subsingleton Rˣ, every isomorphism R ≅ R in ModuleCat R has identity forward
+morphism.

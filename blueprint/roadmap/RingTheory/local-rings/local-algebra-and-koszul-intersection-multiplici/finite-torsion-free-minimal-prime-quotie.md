@@ -1,3 +1,7 @@
-# Finite torsion Free minimal Prime quotient dimension
+# Krull dimension of a finite torsion-free minimal-prime quotient
 
-Every original minimal-prime quotient of a finite torsion-free algebra has the original base dimension.
+Krull dimension of a finite torsion-free minimal-prime quotient.
+
+Let B be a commutative algebra finite and torsion-free over a commutative domain S. For every
+minimal prime p of B, ringKrullDim(B/p) = ringKrullDim(S). The scalar map to the quotient is
+injective, and finite generation makes the extension integral.

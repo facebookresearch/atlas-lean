@@ -1,3 +1,5 @@
-# Truncate refl
+# Truncation at the starting page gives the same sequence
 
-Restricting to the original starting page retains the complete original sequence.
+Truncation at the starting page gives the same sequence.
+
+Retaining pages from r₀ leaves a sequence starting at r₀ unchanged.

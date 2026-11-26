@@ -1,5 +1,6 @@
-# Family Tensor Coefficient Euler eq zero of support Dim lt
+# The Koszul Euler invariant vanishes below the family-size dimension
 
-Over a Noetherian local ring, the actual full-family Koszul coefficient
-Euler invariant vanishes below the family size. Ring and module universes are
-independent, and only the original finite coefficient/annihilator quotient is used.
+The Koszul Euler invariant vanishes below the family-size dimension.
+
+For the stated local family, finite post-quotient and finite M, support dimension below n
+gives Euler value zero.

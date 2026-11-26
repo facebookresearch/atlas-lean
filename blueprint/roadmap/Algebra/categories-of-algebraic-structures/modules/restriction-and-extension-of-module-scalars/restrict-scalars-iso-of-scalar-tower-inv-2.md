@@ -1,3 +1,6 @@
-# Restrict Scalars Iso Of Scalar Tower inv naturality
+# Naturality of the inverse scalar-tower comparison
 
-The inverse comparisons commute with the same genuine restricted maps.
+Naturality of the inverse scalar-tower comparison.
+
+The inverse comparisons commute with the same S-linear morphism restricted to the given
+R-module structures.

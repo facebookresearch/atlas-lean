@@ -1,4 +1,6 @@
-# Pair Coordinate Homology Equiv Quotient Kernel
+# The coordinate homology equivalence after a regular first element
 
-Coordinate degree-one homology is linearly equivalent to the quotient
-multiplication kernel.
+The coordinate homology equivalence after a regular first element.
+
+For injective multiplication by f, identify coordinate H₁ with the quotient kernel as
+R-modules.

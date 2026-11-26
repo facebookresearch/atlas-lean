@@ -18,15 +18,16 @@ public import MathlibExt.CategoryTheory.Pi.Limits
 public import Mathlib.Tactic.Choose
 
 /-!
-# Pointwise Waldhausen structures on indexed families
+# Pointwise cofibrations and weak equivalences for indexed families
 
-The category of indexed families has a zero object and a named pointwise
-Waldhausen structure when each component does. Pushouts along cofibrations
-are assembled from the actual component universal properties. Evaluation
-and common-source assembly of exact functors are Waldhausen exact.
+Let C_i be categories with zero objects and WaldhausenCategoryWithoutGluing structures. On the
+category ΠᵢC_i define cofibrations and weak equivalences componentwise. Zero objects and
+pushouts along cofibrations are obtained componentwise, giving a named
+WaldhausenCategoryWithoutGluing structure on the family category.
 
-The index, object and morphism universes are independent. The construction
-requires no finite or nonempty index, additivity, gluing or cylinder data.
+Coordinate evaluations are exact for these structures. A family of exact functors F_i from a
+common source assembles into an exact functor X ↦ (F_i(X))_i. The index type is arbitrary, and
+the source, target and indexing universes remain independent.
 -/
 
 @[expose] public section
@@ -57,7 +58,12 @@ end Pi
 
 variable [∀ i, HasZeroObject (C i)] [∀ i, WaldhausenCategoryWithoutGluing (C i)]
 
-/-- The pointwise Waldhausen structure on the original Pi category, as a named value. -/
+/-- Pointwise structure on a category of families.
+
+For categories C_i with zero objects and WaldhausenCategoryWithoutGluing structures, define
+the same structure on ΠᵢC_i by componentwise cofibrations and weak equivalences. Pushouts
+along a cofibration use the component pushout objects and legs, and their universal properties
+assemble in the family category. -/
 @[instance_reducible]
 def piWaldhausen : WaldhausenCategoryWithoutGluing (∀ i, C i) where
   cofibrations :=
@@ -90,19 +96,29 @@ def piWaldhausen : WaldhausenCategoryWithoutGluing (∀ i, C i) where
       WaldhausenCategoryWithoutGluing.cofibration_pushout (C := C j) (i j) (hi j) (X' j) (f j)
     exact ⟨P, inl, inr, Pi.isPushout_of_components C hP, hcof⟩
 
-/-- Pi cofibrations are exactly the original component cofibrations. -/
+/-- Component criterion for a family cofibration.
+
+With the pointwise piWaldhausen structure, a family map f : X → Y is a cofibration if and only
+if every f_i : X_i → Y_i is a cofibration in C_i. -/
 @[simp]
 theorem isCofibration_pi_iff {X Y : ∀ i, C i} (f : X ⟶ Y) :
     @IsCofibration (∀ i, C i) _ _ (piWaldhausen C) X Y f ↔
       ∀ i, IsCofibration (f i) := Iff.rfl
 
-/-- Pi weak equivalences are exactly the original component weak equivalences. -/
+/-- Component criterion for a family weak equivalence.
+
+With the pointwise piWaldhausen structure, a family map f : X → Y is a weak equivalence if and
+only if every component f_i is a weak equivalence in C_i. -/
 @[simp]
 theorem isWeakEquivalence_pi_iff {X Y : ∀ i, C i} (f : X ⟶ Y) :
     @IsWeakEquivalence (∀ i, C i) _ _ (piWaldhausen C) X Y f ↔
       ∀ i, IsWeakEquivalence (f i) := Iff.rfl
 
-/-- Original coordinate evaluation is exact, with its actual mapped pushout faces. -/
+/-- Exactness of coordinate evaluation for a pointwise structure.
+
+For the pointwise WaldhausenCategoryWithoutGluing structure on ΠᵢC_i, evaluation at j is
+exact: it preserves zero objects, cofibrations, weak equivalences and pushouts along
+cofibrations. Its image of a chosen family pushout has the corresponding component legs. -/
 theorem Pi.eval_isWaldhausenExact (j : I) :
     letI : WaldhausenCategoryWithoutGluing (∀ i, C i) := piWaldhausen C
     (Pi.eval C j).IsWaldhausenExact := by
@@ -132,7 +148,12 @@ theorem Pi.eval_isWaldhausenExact (j : I) :
       rw [Category.id_comp]
       exact congrArg (fun q : Y ⟶ P => q j) (hwhole.inr_isoIsPushout_hom Z Y hP)
 
-/-- Assemble exact functors with a common original source into the actual Pi target. -/
+/-- Assembly of exact functors into a family category.
+
+Let A have a zero object and WaldhausenCategoryWithoutGluing structure, and let F_i : A ⥤ C_i
+be exact for the respective structures. The assembled functor A ⥤ ΠᵢC_i is exact for
+piWaldhausen: its zero, cofibration, weak-equivalence and pushout conditions hold
+componentwise. -/
 theorem Functor.IsWaldhausenExact.pi'
     {A : Type uA} [Category.{vA} A] [HasZeroObject A] [WaldhausenCategoryWithoutGluing A]
     (F : ∀ i, A ⥤ C i) (hF : ∀ i, (F i).IsWaldhausenExact) :

@@ -1,5 +1,5 @@
-# Quasi Iso iff acyclic kernel
+# Quasi-isomorphism criterion for an epimorphism
 
-Horizontal criterion for an epimorphism of homological complexes: `g` is a
-quasi-isomorphism iff its kernel is acyclic. Derived from
-`ShortExact.quasiIso_g_iff` applied to `ShortComplex.kernelSequence`.
+For an epimorphism g:K → L of complexes of any shape c in an abelian
+category, g is a quasi-isomorphism if and only if the kernel complex
+Ker(g) is acyclic in every degree.

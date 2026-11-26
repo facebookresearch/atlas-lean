@@ -1,3 +1,5 @@
-# Map Bialg Equiv symm apply
+# The inverse enveloping bialgebra equivalence map
 
-The inverse bialgebra equivalence applies the enveloping map of the inverse Lie equivalence.
+The inverse enveloping bialgebra equivalence map.
+
+Its value is map R applied to the inverse Lie morphism.

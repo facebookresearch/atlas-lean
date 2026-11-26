@@ -1,3 +1,7 @@
-# Binary Coproduct Map inr
+# Second injection equation for the coproduct map
 
-The map sends the second injection through the original second map.
+Let C be a category with a zero object and Waldhausen cofibration,
+weak-equivalence and cofibration-pushout axioms. Write X⊔Y for the chosen coproduct supplied by the pushout of
+0 → X and 0 → Y, with injections ι_X,ι_Y.
+
+For f:X → X′ and g:Y → Y′, the second injection equation is (f⊔g)∘ι_Y=ι_Y′∘g.

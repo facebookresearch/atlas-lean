@@ -1,4 +1,8 @@
-# Sequential Difference Kernel Iso
+# Kernel isomorphism induced by preservation of a tower product
 
-Product preservation compares the kernel of the mapped difference with
-that of the mapped tower. No kernel preservation by the functor is needed.
+Kernel isomorphism induced by preservation of a tower product.
+
+Let F be additive between preadditive categories with countable products and preserve P_A. If
+the kernels of F(d_A) and d_{A⋙F} exist, the square with invertible sides κ_A induces an
+isomorphism Ker(F(d_A)) ≅ Ker(d_{A⋙F}). Preservation of Ker(d_A) by F is not an assumption of
+this comparison.

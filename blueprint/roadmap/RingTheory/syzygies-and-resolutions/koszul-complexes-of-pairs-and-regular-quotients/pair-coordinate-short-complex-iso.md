@@ -1,4 +1,6 @@
-# Pair Coordinate Short Complex Iso
+# The coordinate comparison for degree-one pair homology
 
-The degree-one short complex of the abstract two-generator Koszul
-complex is isomorphic to its explicit coordinate short complex.
+The coordinate comparison for degree-one pair homology.
+
+The degree-one homology short complex of K(f,g) is isomorphic to the coordinate complex
+through the ordered exterior identifications.

@@ -1,3 +1,5 @@
-# Homology is Killed By
+# Annihilation passes from a complex term to its homology
 
-The actual homology object is a quotient of the actual cycle object.
+Annihilation passes from a complex term to its homology.
+
+If K_i is killed by m and degree-i homology exists, then H_i(K) is killed by m.

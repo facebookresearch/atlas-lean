@@ -1,4 +1,6 @@
-# Coimage Target homology exact kernel
+# Exactness at kernel homology after target transport
 
-If coimage-to-target is a quasi-isomorphism, the
-target-to-kernel-to-source homology segment is exact at kernel homology.
+Exactness at kernel homology after target transport.
+
+Under the coimage-to-target quasi-isomorphism, H_i(L) → H_j(ker f) → H_j(K) is exact for c.Rel
+i j.

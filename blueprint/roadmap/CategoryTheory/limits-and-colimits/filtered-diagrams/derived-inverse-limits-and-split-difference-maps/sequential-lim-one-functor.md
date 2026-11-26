@@ -1,3 +1,6 @@
-# Sequential Lim One Functor
+# Functor of sequential difference cokernels
 
-Concrete sequential `lim¹` as a covariant functor of towers.
+Functor of sequential difference cokernels.
+
+In a preadditive category with countable products and cokernels, the assignment A ↦ Coker(d_A)
+and α ↦ lim¹(α) defines a covariant functor from inverse towers to C.

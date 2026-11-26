@@ -1,4 +1,7 @@
-# Surjective Scalar Base Change Iso hom trans
+# Composition of quotient base-change comparisons
 
-Tensor base change of the actual surjective presentations agrees
-with two successive base changes along the original scalar maps.
+Composition of quotient base-change comparisons.
+
+For two consecutive scalar maps and compatible surjective presentations, extending the first
+comparison and then applying the second equals the comparison for the composite, after the
+canonical scalar-extension comparison.

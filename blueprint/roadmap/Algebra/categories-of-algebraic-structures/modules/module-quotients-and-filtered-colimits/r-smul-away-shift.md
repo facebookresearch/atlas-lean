@@ -1,3 +1,5 @@
-# R smul away Shift
+# Multiplication after stage increase is the identity
 
-Multiplication by `r` after shifting is the identity.
+Multiplication after stage increase is the identity.
+
+For every direct-limit element z, r·awayShift(z)=z.

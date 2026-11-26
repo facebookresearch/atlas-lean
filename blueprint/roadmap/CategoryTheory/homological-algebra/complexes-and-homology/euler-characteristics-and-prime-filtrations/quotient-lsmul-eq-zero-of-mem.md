@@ -1,3 +1,5 @@
-# Quotient lsmul eq zero of mem
+# An ideal element acts by zero on its quotient
 
-Multiplication by an element of an ideal is zero on its quotient.
+An ideal element acts by zero on its quotient.
+
+If r ∈ p, multiplication by r on R/p is the zero map.

@@ -1,3 +1,5 @@
-# Top Cut Lower is Zero above
+# The lower truncation vanishes at and above the cut
 
-The lower brutal truncation is zero in and above the removed degree.
+The lower truncation vanishes at and above the cut.
+
+For b ≤ j, the degree-j object of topCutLower K b is zero.

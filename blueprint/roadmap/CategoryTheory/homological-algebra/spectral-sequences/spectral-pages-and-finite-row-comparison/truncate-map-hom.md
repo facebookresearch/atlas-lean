@@ -1,3 +1,5 @@
-# Truncate Map hom
+# The retained page map is unchanged
 
-The restricted native morphism has the original complex map at every retained page.
+The retained page map is unchanged.
+
+The map at r of truncateMap is the original page map at r.

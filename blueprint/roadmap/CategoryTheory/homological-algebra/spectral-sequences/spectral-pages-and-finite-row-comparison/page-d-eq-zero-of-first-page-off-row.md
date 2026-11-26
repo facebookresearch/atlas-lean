@@ -1,3 +1,5 @@
-# Page d eq zero of first Page off row
+# All differentials from the second page vanish under row-zero support
 
-The ordinary coefficient row forces every actual differential from page two onward to vanish.
+All differentials from the second page vanish under row-zero support.
+
+For r≥2, every differential of E_r is zero.

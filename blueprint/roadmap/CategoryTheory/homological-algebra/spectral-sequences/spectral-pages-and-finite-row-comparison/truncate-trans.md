@@ -1,3 +1,5 @@
-# Truncate trans
+# Successive truncations equal direct truncation
 
-Successive restrictions retain the same original pages and successor isomorphisms.
+Successive truncations equal direct truncation.
+
+For r₀≤r₁≤r₂, truncate first at r₁ then r₂ to obtain the direct truncation at r₂.

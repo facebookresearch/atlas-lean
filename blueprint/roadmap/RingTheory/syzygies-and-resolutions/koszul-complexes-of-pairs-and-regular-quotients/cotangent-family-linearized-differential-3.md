@@ -1,4 +1,5 @@
-# Cotangent Family Linearized Differential injective
+# Injectivity of the first-order cotangent-family differential
 
-Every first-order differential of the chosen cotangent-family Koszul
-complex is injective.
+Injectivity of the first-order cotangent-family differential.
+
+The linearized Koszul differential is injective for every n ≥ 0.

@@ -1,3 +1,5 @@
-# Restrict Scalars Tensor Is Iso Of Ring Equiv
+# Restriction along a ring equivalence has invertible tensor maps
 
-Genuine balanced tensor transport proves invertibility of the original lax tensor map.
+Let `R,S : Type s` be commutative rings, `e : R ≃+* S`, and `M,N : ModuleCat.{s} S`. The
+lax-monoidal comparison `Functor.LaxMonoidal.μ (ModuleCat.restrictScalars e.toRingHom) M N :
+F(M) ⊗_R F(N) → F(M ⊗_S N)` is an isomorphism.

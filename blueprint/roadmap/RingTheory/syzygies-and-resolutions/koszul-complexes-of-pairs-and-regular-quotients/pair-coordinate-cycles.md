@@ -1,3 +1,5 @@
-# Pair Coordinate Cycles
+# The coordinate cycle module of a Koszul pair
 
-Cycles in the coordinate degree-one two-generator Koszul complex.
+The coordinate cycle module of a Koszul pair.
+
+Take the kernel of x ↦ fx₀+gx₁ on R².

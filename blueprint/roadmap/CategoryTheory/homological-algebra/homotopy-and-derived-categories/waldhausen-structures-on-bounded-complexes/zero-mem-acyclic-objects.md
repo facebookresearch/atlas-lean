@@ -1,3 +1,6 @@
-# Zero mem acyclic Objects
+# Acyclicity of the selected zero object
 
-The original selected zero lies in the original acyclic object property.
+Let C have a zero object and Waldhausen cofibration, weak-equivalence
+and cofibration-pushout data.
+
+The selected zero object of C belongs to the acyclic object class.

@@ -6,7 +6,7 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
--- Source-only light data owner. Native validation is UNEXECUTED.
+-- The diagonal uses the same simplex operator in both variables.
 module
 
 public import Mathlib.AlgebraicTopology.SimplicialObject.Basic
@@ -15,12 +15,12 @@ public import Mathlib.CategoryTheory.Whiskering
 public import Mathlib.CategoryTheory.Products.Basic
 
 /-!
-# The original bisimplicial diagonal as a light data functor
+# The diagonal of a bisimplicial object
 
-This owner contains the unchanged original BisimplicialModule.diagonalFunctor.
-The normalization/filtered-total proof owner imports this module. The actual
-polynomial tower can use its same original data without importing filtered
-totals. No second diagonal, resolution model or operator is introduced.
+For any category C and a bisimplicial object X with values in C, the diagonal has degree-n
+object X_{n,n}. A simplex operator acts simultaneously in both variables. Uncurrying X and
+precomposing with the diagonal of the simplex category defines this functor, with the object
+and morphism universes of C as stated.
 -/
 
 @[expose] public section
@@ -35,7 +35,10 @@ namespace BisimplicialModule
 
 variable (C : Type u) [Category.{v} C]
 
-/-- The existing native diagonal and uncurrying functors retain both actual operators. -/
+/-- The diagonal functor on bisimplicial objects.
+
+Send X to the simplicial object n ↦ X_{n,n}, with each simplex operator applied in both
+variables, by uncurrying and diagonal precomposition. -/
 def diagonalFunctor : SimplicialObject (SimplicialObject C) ⥤ SimplicialObject C :=
   Functor.uncurry ⋙
     (Functor.whiskeringLeft SimplexCategoryᵒᵖ

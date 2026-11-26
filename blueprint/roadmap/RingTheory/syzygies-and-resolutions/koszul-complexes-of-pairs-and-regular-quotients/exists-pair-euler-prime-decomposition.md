@@ -1,4 +1,7 @@
-# Exists pair Euler Prime Decomposition
+# A prime-factor Euler formula for a regular pair
 
-The regular two-generator Koszul Euler characteristic admits the explicit
-one-dimensional local prime-filtration formula.
+A prime-factor Euler formula for a regular pair.
+
+Under regularity of f, locality, g in the maximal ideal, finite pair quotient length and
+support dimension at most one for R/(f), a prime decomposition gives the pair Euler value as
+its generic-multiplicity sum.

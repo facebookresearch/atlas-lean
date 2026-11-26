@@ -1,3 +1,6 @@
-# Family Lift To Finite Resolution
+# The comparison map to a finite resolution with projective images
 
-Finite-resolution target form of the Koszul-family comparison map.
+The comparison map to a finite resolution with projective images.
+
+For additive i and projectivity of every i(P₀), lift q from the Koszul quotient target to the
+mapped complex of the finite resolution.

@@ -1,3 +1,6 @@
-# Eventual Ranges Functor
+# Functoriality of the eventual image construction
 
-Eventual ranges are functorial in the module diagram.
+Functoriality of the eventual image construction.
+
+Taking eventual range modules and restricting natural transformations defines an endofunctor
+on module diagrams over a cofiltered-or-empty category J.

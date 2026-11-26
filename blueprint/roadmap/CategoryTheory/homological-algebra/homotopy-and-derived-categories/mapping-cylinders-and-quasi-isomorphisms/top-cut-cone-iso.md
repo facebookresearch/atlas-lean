@@ -1,4 +1,6 @@
-# Top Cut Cone Iso
+# Recovery of the cochain complex from the shifted connecting cone
 
-The actual stock cone of the original connecting map, shifted by
-`-1`, is canonically isomorphic to the whole original complex.
+Recovery of the cochain complex from the shifted connecting cone.
+
+For K zero above b, the mapping cone of topCutConnecting K b, shifted by −1, is canonically
+isomorphic to K.

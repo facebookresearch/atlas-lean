@@ -1,4 +1,5 @@
-# Family Augmentation Target
+# The lifted quotient target of a finite-family Koszul augmentation
 
-The object concentrated in degree zero in the Koszul-family
-augmentation.
+The lifted quotient target of a finite-family Koszul augmentation.
+
+Use the coefficient module ULift(R modulo the family ideal) at height max(u,v).

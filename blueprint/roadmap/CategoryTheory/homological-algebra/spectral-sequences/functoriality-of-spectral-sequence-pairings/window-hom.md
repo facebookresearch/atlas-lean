@@ -1,3 +1,5 @@
-# Window Hom
+# The quotient-window component of a spectral morphism
 
-The map on the original finite quotient window is its original `EMap`.
+The quotient-window component of a spectral morphism.
+
+Use its EMap on the specified four-cut window.

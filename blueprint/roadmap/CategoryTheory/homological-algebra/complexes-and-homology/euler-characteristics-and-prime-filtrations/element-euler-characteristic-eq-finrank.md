@@ -1,4 +1,5 @@
-# Element Euler Characteristic eq finrank mul of local Domain
+# The local-domain Euler formula with module rank
 
-The complete one-element Euler projection can use the original
-module rank directly, by the stock localization rank theorem.
+The local-domain Euler formula with module rank.
+
+Under the same hypotheses, χ_r(M)=Module.finrank R M times ℓ_R(R/rR), interpreted as integers.

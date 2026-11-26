@@ -1,4 +1,6 @@
-# Top Cut Short Complex eq
+# The maps defining the top-degree short complex
 
-The whole original short-complex readout retains its literal stock
-single, original complex, lower truncation, inclusion, and projection.
+The maps defining the top-degree short complex.
+
+The short complex consists of topTermInclusion and πTopCutLower with their zero-composite
+relation.

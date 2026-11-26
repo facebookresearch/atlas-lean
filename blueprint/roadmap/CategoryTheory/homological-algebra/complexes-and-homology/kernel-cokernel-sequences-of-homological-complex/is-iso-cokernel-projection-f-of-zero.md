@@ -1,3 +1,6 @@
-# Is Iso cokernel Projection f of zero
+# Cokernel projection is invertible at a zero defining component
 
-A zero defining component makes the actual projection component an isomorphism.
+Let C have zero morphisms and finite colimits, c be any complex shape,
+and f:K → L a map of complexes of shape c. If its component fᵢ
+is zero, then the degree-i component of the cokernel projection
+π:L → Coker(f) is an isomorphism.

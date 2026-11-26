@@ -1,3 +1,7 @@
-# Sequential Lim One Map comp
+# Composition law for sequential lim-one maps
 
-The induced map on concrete sequential `lim¹` preserves composition.
+Composition law for sequential lim-one maps.
+
+For tower maps α : A → B and β : B → D in a preadditive category with countable products and
+cokernels, lim¹(α ≫ β) = lim¹(α) ≫ lim¹(β). The equation follows after precomposing with the
+epic quotient q_A.

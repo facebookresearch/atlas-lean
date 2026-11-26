@@ -16,11 +16,15 @@ public import MathlibExt.Algebra.Homology.SpectralSequencePairing
 public import MathlibExt.Algebra.Homology.SpectralObjectPageMapNaturality
 
 /-!
-# Native pairings and morphisms of spectral objects
+# Naturality of interval and spectral-page products
 
-Original interval components of a spectral-object morphism give maps on the
-actual cycle kernels and page quotients. Compatibility on the original
-interval products descends through these kernels and cokernels.
+A morphism of spectral objects gives maps on interval H objects, cycle kernels and E
+quotients. These maps preserve cycle inclusions, representatives and quotient projections, and
+commute with skeletal page-window charts.
+
+If three spectral-object morphisms are compatible with two interval pairings, their cycle,
+window and page products satisfy the same tensor square. Quotient descent uses the stated left
+and right tensor preservation of coequalizers.
 -/
 
 @[expose] public section
@@ -41,20 +45,29 @@ namespace Hom
 
 variable {ι : Type w} [Category.{z} ι] {X Y : SpectralObject C ι}
 
-/-- The map on the original cycle kernel induced by a spectral-object morphism. -/
+/-- The cycle map of a spectral-object morphism.
+
+A spectral morphism carries interval cycles to target cycles through its H component and
+boundary compatibility. -/
 def cyclesComponent (φ : X ⟶ Y) {i j k : ι} (f : i ⟶ j) (g : j ⟶ k) (n : ℤ) :
     X.cycles f g n ⟶ Y.cycles f g n :=
   Y.liftCycles f g n (n + 1) rfl (X.iCycles f g n ≫ (φ.hom n).app (mk₁ g)) (by
     rw [Category.assoc, ← φ.comm n (n + 1) rfl f g,
       ← Category.assoc, X.iCycles_δ f g n (n + 1) rfl, zero_comp])
 
+/-- The spectral cycle component preserves inclusion.
+
+Its output inclusion equals the source inclusion followed by the interval component. -/
 @[reassoc (attr := simp)]
 lemma cyclesComponent_i (φ : X ⟶ Y) {i j k : ι} (f : i ⟶ j) (g : j ⟶ k) (n : ℤ) :
     cyclesComponent φ f g n ≫ Y.iCycles f g n =
       X.iCycles f g n ≫ (φ.hom n).app (mk₁ g) :=
   Y.liftCycles_i ..
 
-/-- The original long-interval representatives commute with the induced cycle map. -/
+/-- The spectral cycle component preserves long representatives.
+
+The long-interval map followed by the cycle component equals the H component followed by the
+target map to cycles. -/
 @[reassoc]
 lemma toCycles_cyclesComponent (φ : X ⟶ Y) {i j k : ι}
     (f : i ⟶ j) (g : j ⟶ k) (fg : i ⟶ k) (hfg : f ≫ g = fg) (n : ℤ) :
@@ -75,7 +88,10 @@ private lemma cyclesIso_inv_cyclesComponent (φ : X ⟶ Y) {i j k l : ι}
   simp
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The genuine cycle quotient projection commutes with the original induced `EMap`. -/
+/-- The spectral E-map preserves the cycles-to-quotient projection.
+
+The source projection followed by EMap equals the cycle component followed by target
+projection. -/
 @[reassoc]
 lemma πE_EMap_component (φ : X ⟶ Y) {i j k l : ι}
     (f₁ : i ⟶ j) (f₂ : j ⟶ k) (f₃ : k ⟶ l)
@@ -92,19 +108,25 @@ namespace Hom
 
 variable {X Y : SpectralObject C EInt}
 
-/-- The original component on a finite integer interval. -/
+/-- The interval component of a spectral-object morphism.
+
+Evaluate its H_n natural transformation on the integer interval a→b. -/
 abbrev intervalComponent (φ : X ⟶ Y) (n a b : ℤ) (hab : a ≤ b) :
     X.intervalH n a b hab ⟶ Y.intervalH n a b hab :=
   (φ.hom n).app (mk₁ (homOfLE (show (a : EInt) ≤ (b : EInt) by simpa using hab)))
 
-/-- The original morphism acts on the actual cycles in a finite window. -/
+/-- The cycle-window component of a spectral morphism.
+
+Use the interval cycle component on the lower-width window. -/
 abbrev windowCyclesHom (φ : X ⟶ Y) (n a ℓ : ℤ) (hℓ : 1 ≤ ℓ) :
     X.windowCycles n a ℓ hℓ ⟶ Y.windowCycles n a ℓ hℓ :=
   cyclesComponent φ
     (homOfLE (show ((a - ℓ : ℤ) : EInt) ≤ ((a - 1 : ℤ) : EInt) by simp; omega))
     (homOfLE (show ((a - 1 : ℤ) : EInt) ≤ (a : EInt) by simp)) n
 
-/-- The map on the original finite quotient window is its original `EMap`. -/
+/-- The quotient-window component of a spectral morphism.
+
+Use its EMap on the specified four-cut window. -/
 abbrev windowHom (φ : X ⟶ Y) (n a ℓ u : ℤ) (hℓ : 1 ≤ ℓ) (hu : 1 ≤ u) :
     X.windowE n a ℓ u hℓ hu ⟶ Y.windowE n a ℓ u hℓ hu :=
   EMap φ
@@ -115,18 +137,28 @@ abbrev windowHom (φ : X ⟶ Y) (n a ℓ u : ℤ) (hℓ : 1 ≤ ℓ) (hu : 1 ≤
 
 /- The original cyclesComponent equations already simplify these window aliases.
 Keep both named equations available for explicit rewriting and reassociation. -/
+/-- The window cycle map preserves its short-interval inclusion.
+
+The cycle map followed by target inclusion equals source inclusion followed by the short
+interval component. -/
 @[reassoc]
 lemma windowCyclesHom_i (φ : X ⟶ Y) (n a ℓ : ℤ) (hℓ : 1 ≤ ℓ) :
     windowCyclesHom φ n a ℓ hℓ ≫ Y.windowICycles n a ℓ hℓ =
       X.windowICycles n a ℓ hℓ ≫ intervalComponent φ n (a - 1) a (by omega) :=
   cyclesComponent_i φ _ _ n
 
+/-- The window cycle map preserves long-interval representatives.
+
+The map to cycles commutes with the long interval component. -/
 @[reassoc]
 lemma windowToCycles_windowCyclesHom (φ : X ⟶ Y) (n a ℓ : ℤ) (hℓ : 1 ≤ ℓ) :
     X.windowToCycles n a ℓ hℓ ≫ windowCyclesHom φ n a ℓ hℓ =
       intervalComponent φ n (a - ℓ) a (by omega) ≫ Y.windowToCycles n a ℓ hℓ :=
   toCycles_cyclesComponent φ _ _ _ (by cat_disch) n
 
+/-- The quotient-window map preserves projection.
+
+The cycles-to-window projections commute with the window cycle and quotient maps. -/
 @[reassoc]
 lemma windowπ_windowHom (φ : X ⟶ Y) (n a ℓ u : ℤ) (hℓ : 1 ≤ ℓ) (hu : 1 ≤ u) :
     X.windowπ n a ℓ u hℓ hu ≫ windowHom φ n a ℓ u hℓ hu =
@@ -135,7 +167,9 @@ lemma windowπ_windowHom (φ : X ⟶ Y) (n a ℓ u : ℤ) (hℓ : 1 ≤ ℓ) (hu
 
 unseal SpectralObject.spectralSequence in
 set_option backward.isDefEq.respectTransparency false in
-/-- The genuine native page map is the original window map under the canonical page iso. -/
+/-- The skeletal page map in interval-window coordinates.
+
+The page map commutes with the page-window charts and its window component. -/
 @[reassoc]
 lemma pageMap_pageWindowIso (φ : X ⟶ Y) (r : ℤ) (hr : 1 ≤ r) (pq : ℤ × ℤ) :
     (φ.spectralSequencePageMap skeletalPageCore r hr).f pq ≫ (Y.pageWindowIso r hr pq).hom =
@@ -147,7 +181,10 @@ lemma pageMap_pageWindowIso (φ : X ⟶ Y) (r : ℤ) (hr : 1 ≤ r) (pq : ℤ ×
       ((-pq.1 : ℤ) : EInt) ((-pq.1 + r - 1 : ℤ) : EInt)
       rfl rfl rfl rfl (pq.1 + pq.2 - 1) (pq.1 + pq.2) (pq.1 + pq.2 + 1) rfl (by omega) rfl
 
-/-- The inverse page iso commutes with the original native page map. -/
+/-- The inverse-chart square of a spectral window map.
+
+The window component followed by the inverse target chart equals the inverse source chart
+followed by the page map. -/
 @[reassoc]
 lemma windowHom_pageWindowIso_inv (φ : X ⟶ Y) (r : ℤ) (hr : 1 ≤ r) (pq : ℤ × ℤ) :
     windowHom φ (pq.1 + pq.2) (-pq.1) r r hr hr ≫ (Y.pageWindowIso r hr pq).inv =
@@ -165,7 +202,10 @@ variable [MonoidalCategory C] [MonoidalPreadditive C]
   (P : IntervalPairing X Y Z) (P' : IntervalPairing X' Y' Z')
   (α : X ⟶ X') (β : Y ⟶ Y') (γ : Z ⟶ Z')
 
-/-- Compatibility concerns only the original interval products and original spectral-object components. -/
+/-- Compatibility of interval products with spectral-object maps.
+
+For α,β,γ, the tensor of the two input interval components followed by the target product
+equals the source product followed by γ's output component. -/
 def IsCompatible : Prop :=
   ∀ (n m k A a B b s t : ℤ) (hnm : n + m = k)
     (hAa : A ≤ a) (hBb : B ≤ b) (hst : s ≤ t)
@@ -178,7 +218,9 @@ def IsCompatible : Prop :=
 variable {P P' α β γ}
 
 omit [MonoidalPreadditive C] in
-/-- Original compatible interval products preserve the actual short-interval product. -/
+/-- Compatible interval products have compatible short products.
+
+Specialize the compatibility square to unit-width intervals. -/
 lemma IsCompatible.shortPair (hP : P.IsCompatible P' α β γ)
     (n m k : ℤ) (hnm : n + m = k) (a b : ℤ) :
     (Hom.intervalComponent α n (a - 1) a (by omega) ⊗ₘ
@@ -190,7 +232,9 @@ lemma IsCompatible.shortPair (hP : P.IsCompatible P' α β γ)
 variable [∀ A : C, PreservesColimitsOfShape WalkingParallelPair (tensorLeft A)]
   [∀ A : C, PreservesColimitsOfShape WalkingParallelPair (tensorRight A)]
 
-/-- Kernel inclusion descends original interval compatibility to the actual native cycle product. -/
+/-- Compatible products induce compatible cycle products.
+
+The tensor of cycle-window maps commutes with the induced cycle product and output cycle map. -/
 lemma IsCompatible.cyclesPair (hP : P.IsCompatible P' α β γ)
     (n m k : ℤ) (hnm : n + m = k) (a b ℓ : ℤ) (hℓ : 1 ≤ ℓ) :
     (Hom.windowCyclesHom α n a ℓ hℓ ⊗ₘ Hom.windowCyclesHom β m b ℓ hℓ) ≫
@@ -209,7 +253,9 @@ private lemma tensor_epimorphism {A B D F : C} (f : A ⟶ B) (g : D ⟶ F)
   exact CokernelCofork.epi_tensor_π c₁ (Abelian.epiIsCokernelOfKernel _ (limit.isLimit _))
     c₂ (Abelian.epiIsCokernelOfKernel _ (limit.isLimit _))
 
-/-- The original cycle quotient maps descend interval compatibility to the actual native window product. -/
+/-- Compatible products induce compatible quotient-window products.
+
+The tensor of window maps commutes with the descended window product. -/
 lemma IsCompatible.windowPair (hP : P.IsCompatible P' α β γ)
     (n m k : ℤ) (hnm : n + m = k) (a b ℓ u : ℤ)
     (hℓ : 1 ≤ ℓ) (hu : 1 ≤ u) (huℓ : u ≤ ℓ) :
@@ -223,7 +269,9 @@ lemma IsCompatible.windowPair (hP : P.IsCompatible P' α β γ)
   rw [IntervalPairing.quotient_windowPair_assoc, Hom.windowπ_windowHom]
   rw [← Category.assoc, hP.cyclesPair n m k hnm a b ℓ hℓ, Category.assoc]
 
-/-- The same descended compatibility with an explicitly equal output cut. -/
+/-- Compatibility of specified-output window products.
+
+The same quotient-product square holds with a specified sum output cut. -/
 lemma IsCompatible.windowPairTo (hP : P.IsCompatible P' α β γ)
     (n m k : ℤ) (hnm : n + m = k) (a b s : ℤ) (hs : a + b = s) (ℓ u : ℤ)
     (hℓ : 1 ≤ ℓ) (hu : 1 ≤ u) (huℓ : u ≤ ℓ) :
@@ -248,7 +296,9 @@ private lemma page_pairing_transport {A B A' B' L R L' R' U U' P P' : C}
   simp only [Category.assoc]
   rw [ho]
 
-/-- Original interval compatibility preserves the actual native product on every integer page. -/
+/-- Compatible interval products induce compatible page products.
+
+The tensor of input skeletal page components commutes with the output page product map. -/
 lemma IsCompatible.pagePair (hP : P.IsCompatible P' α β γ)
     (r : ℤ) (hr : 1 ≤ r) (pq pq' : ℤ × ℤ) :
     ((α.spectralSequencePageMap skeletalPageCore r hr).f pq ⊗ₘ
@@ -261,7 +311,9 @@ lemma IsCompatible.pagePair (hP : P.IsCompatible P' α β γ)
   have ho := Hom.windowHom_pageWindowIso_inv γ r hr (pq + pq')
   exact page_pairing_transport _ _ _ _ _ _ _ _ _ _ _ _ _ _ hl hb hc ho
 
-/-- Original interval compatibility preserves the native cup at any equal output bidegree. -/
+/-- Compatibility of page products at a specified sum bidegree.
+
+The page product square holds after the output bidegree equality transport. -/
 lemma IsCompatible.pagePairTo (hP : P.IsCompatible P' α β γ)
     (r : ℤ) (hr : 1 ≤ r) (pq pq' t : ℤ × ℤ) (ht : pq + pq' = t) :
     ((α.spectralSequencePageMap skeletalPageCore r hr).f pq ⊗ₘ

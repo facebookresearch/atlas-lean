@@ -1,3 +1,5 @@
-# Cycles Pair
+# Compatible products induce compatible cycle products
 
-Kernel inclusion descends original interval compatibility to the actual native cycle product.
+Compatible products induce compatible cycle products.
+
+The tensor of cycle-window maps commutes with the induced cycle product and output cycle map.

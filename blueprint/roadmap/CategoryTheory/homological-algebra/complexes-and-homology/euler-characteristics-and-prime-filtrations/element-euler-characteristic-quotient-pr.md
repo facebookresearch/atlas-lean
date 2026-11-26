@@ -1,4 +1,5 @@
-# Element Euler Characteristic quotient prime eq zero of mem
+# The Euler contribution of an ideal quotient containing the element
 
-An ideal quotient containing the element contributes zero to its Euler
-characteristic, including the prime-filtration special case.
+The Euler contribution of an ideal quotient containing the element.
+
+If r ∈ p and the quotient multiplication lengths are finite, χ_r(R/p)=0.

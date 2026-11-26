@@ -1,3 +1,6 @@
-# Finite Coefficient eventually is Iso transition
+# Finite inverse sequences with monic transitions become stationary
 
-An inverse sequence of finite groups with mono successor maps has eventually invertible successor maps.
+Finite inverse sequences with monic transitions become stationary.
+
+If every stage is finite and every successor map is monic, there exists N after which every
+successor map is an isomorphism.

@@ -1,5 +1,6 @@
-# Pair Euler Characteristic Of Quotient eq ring Equiv Element Euler
+# The pair Euler invariant after identifying the first quotient ring
 
-With a regular first generator, the pair Euler characteristic becomes
-the intrinsic one-element Euler characteristic after any identification of
-the first principal quotient with another ring.
+The pair Euler invariant after identifying the first quotient ring.
+
+For e : R/(f) ≃ B, the pair Euler invariant equals the regular-module Euler invariant of e(g
+mod f) over B.

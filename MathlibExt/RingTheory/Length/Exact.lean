@@ -15,11 +15,17 @@ module
 public import Mathlib.RingTheory.Length
 
 /-!
-# Length identities for exact linear maps
+# Module length identities from exact linear maps
 
-An exact pair `L → M → N` presents `M` as an extension of the ranges of
-the two maps.  This file records the resulting length identity, including a
-natural-number form under explicit finiteness hypotheses.
+Let R be commutative and L →ᶠ M →ᵍ N an exact pair of R-linear maps, meaning Im(f) = Ker(g).
+The middle module is an extension of Im(g) by Im(f), so ℓ_R(M) = ℓ_R(Im f) + ℓ_R(Im g) in ℕ∞.
+If ℓ_R(M) is finite, taking natural values preserves this sum. Finite lengths of L and N also
+imply finite length of M through its two ranges.
+
+For a six-term sequence 0 → M₀ → M₁ → M₂ → M₃ → M₄ → M₅ → 0, assume exactness at the four
+interior terms, injectivity of the first map, surjectivity of the last, and finite lengths of
+M₁ through M₄. Then ℓ(M₀)−ℓ(M₁)+ℓ(M₂)−ℓ(M₃)+ℓ(M₄)−ℓ(M₅) = 0 in ℤ, using natural values of the
+lengths. The exact-pair statements allow independent scalar and module carrier universes.
 -/
 
 @[expose] public section
@@ -37,7 +43,11 @@ variable [AddCommGroup L] [Module R L]
 variable [AddCommGroup M] [Module R M]
 variable [AddCommGroup N] [Module R N]
 
-/-- A ring equivalence preserves the length of the regular module. -/
+/-- Length of regular modules under a ring equivalence.
+
+For a ring equivalence e : R ≃+* S between commutative rings, the regular-module lengths
+satisfy ℓ_R(R) = ℓ_S(S). The equivalence transports the module structure and the scalar
+action. -/
 theorem length_self_eq_of_ringEquiv
     {S : Type v} [CommRing S] (e : R ≃+* S) :
     Module.length R R = Module.length S S := by
@@ -47,8 +57,11 @@ theorem length_self_eq_of_ringEquiv
   exact eAlg.toLinearEquiv.length_eq.trans
     (Module.length_eq_of_surjective e.surjective)
 
-/-- The length of the middle module of an exact pair is the sum of the
-lengths of the two consecutive ranges. -/
+/-- Range-sum formula for the middle length of an exact pair.
+
+For R-linear maps f : L → M and g : M → N with Im(f) = Ker(g), ℓ_R(M) = ℓ_R(Im f) + ℓ_R(Im g)
+in ℕ∞. The injective inclusion of Im(f) and surjective range restriction of g present the
+corresponding short exact sequence. -/
 theorem length_eq_range_add_range_of_exact
     (f : L →ₗ[R] M) (g : M →ₗ[R] N)
     (h : Function.Exact f g) :
@@ -59,8 +72,11 @@ theorem length_eq_range_add_range_of_exact
       (Submodule.injective_subtype f.range) g.surjective_rangeRestrict
   exact h.rangeFactorization ⟨0, g.map_zero⟩
 
-/-- Natural-number form of the exact-pair range identity when the middle
-module has finite length. -/
+/-- Natural-value range-sum formula for a finite middle length.
+
+For an exact pair L →ᶠ M →ᵍ N with ℓ_R(M) ≠ ∞, ℓ_R(M).toNat = ℓ_R(Im f).toNat + ℓ_R(Im
+g).toNat. Both range lengths are finite because one is a submodule length and the other a
+quotient length of M. -/
 theorem length_toNat_eq_range_add_range_of_exact
     (f : L →ₗ[R] M) (g : M →ₗ[R] N)
     (h : Function.Exact f g)
@@ -79,8 +95,10 @@ theorem length_toNat_eq_range_add_range_of_exact
   rw [length_eq_range_add_range_of_exact R f g h,
     ENat.toNat_add hf hg]
 
-/-- The middle module of an exact pair has finite length when the source of
-the first map and target of the second map have finite length. -/
+/-- Finite middle length from finite ends of an exact pair.
+
+For an exact R-linear pair L → M → N, if ℓ_R(L) and ℓ_R(N) are finite, then ℓ_R(M) is finite.
+The two ranges have lengths bounded by those of L and N, and their sum is the middle length. -/
 theorem length_ne_top_of_exact
     (f : L →ₗ[R] M) (g : M →ₗ[R] N)
     (h : Function.Exact f g)
@@ -108,9 +126,12 @@ variable [AddCommGroup M₃] [Module R M₃]
 variable [AddCommGroup M₄] [Module R M₄]
 variable [AddCommGroup M₅] [Module R M₅]
 
-/-- Alternating finite-length identity for a six-term exact sequence.  The
-first map is required to be injective and the last map surjective, so the
-sequence is exact at both endpoints as well as at its four interior terms. -/
+/-- Alternating length identity for a six-term exact sequence.
+
+For R-linear maps M₀ → M₁ → M₂ → M₃ → M₄ → M₅, assume the first map injective, the last
+surjective and all four interior pairs exact. If M₁,M₂,M₃,M₄ have finite length, the natural
+values satisfy ℓ(M₀)−ℓ(M₁)+ℓ(M₂)−ℓ(M₃)+ℓ(M₄)−ℓ(M₅) = 0 in ℤ. The endpoint lengths are
+controlled by the injective and surjective endpoint maps. -/
 theorem alternating_length_six_of_exact
     (f₀ : M₀ →ₗ[R] M₁) (f₁ : M₁ →ₗ[R] M₂)
     (f₂ : M₂ →ₗ[R] M₃) (f₃ : M₃ →ₗ[R] M₄)

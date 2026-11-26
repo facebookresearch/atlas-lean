@@ -1,4 +1,5 @@
-# Length lsmul cokernel eq of surjective
+# Multiplication cokernel lengths agree under a surjective algebra map
 
-Under a surjective algebra map, the multiplication-cokernel length is
-unchanged by passing from the source ring to the target ring.
+Multiplication cokernel lengths agree under a surjective algebra map.
+
+For surjective S → A, the scalar cokernel on A has the same length over S and A.

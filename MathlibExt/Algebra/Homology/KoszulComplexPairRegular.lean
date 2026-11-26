@@ -19,12 +19,15 @@ public import MathlibExt.Algebra.Homology.ElementEulerPrimeFiltration
 import Mathlib.Tactic.Ring
 
 /-!
-# Two-generator Koszul homology after a regular first element
+# Pair Koszul homology after a regular first element
 
-When multiplication by `f` is injective, degree-one homology of the Koszul
-complex on `(f,g)` identifies with the kernel of multiplication by `g` on
-`R/(f)`.  The construction is first carried out on the explicit coordinate
-short complex.
+The coordinate cycles of K(f,g) satisfy fx₀+gx₁=0, with boundaries c(−g,f). Sending a cycle to
+x₁ modulo f gives a map H₁(K(f,g)) → ker(g : R/(f) → R/(f)). If multiplication by f is
+injective, this map is an isomorphism; H₂ is zero and H₀ ≅ R/(f,g).
+
+Under the stated noetherian and quotient-length hypotheses, the pair Euler invariant is the
+one-element Euler invariant of g on R/(f). Ring equivalences transport this invariant, and the
+local support-dimension hypotheses give its prime-factor multiplicity formula.
 -/
 
 @[expose] public section
@@ -40,11 +43,15 @@ universe u
 
 variable (R : Type u) [CommRing R]
 
-/-- Cycles in the coordinate degree-one two-generator Koszul complex. -/
+/-- The coordinate cycle module of a Koszul pair.
+
+Take the kernel of x ↦ fx₀+gx₁ on R². -/
 abbrev pairCoordinateCycles (f g : R) :=
   LinearMap.ker (familyFunctional R (pairFamily R f g))
 
-/-- Coordinate top boundary, with codomain restricted to degree-one cycles. -/
+/-- The top boundary map into pair cycles.
+
+Send c ∈ R to c(−g,f), which lies in the coordinate cycle module. -/
 noncomputable def pairCoordinateToCycles (f g : R) :
     R →ₗ[R] pairCoordinateCycles R f g :=
   (LinearMap.toSpanSingleton R (Fin 2 → R)
@@ -54,22 +61,32 @@ noncomputable def pairCoordinateToCycles (f g : R) :
         Fin.sum_univ_two]
       ring
 
+/-- Coordinates of a pair boundary.
+
+At j ∈ Fin 2, the boundary of c is c times the j-th entry of (−g,f). -/
 @[simp]
 theorem pairCoordinateToCycles_apply (f g c : R) (j : Fin 2) :
     ((pairCoordinateToCycles R f g c : pairCoordinateCycles R f g) :
       Fin 2 → R) j = c * pairTopBoundaryVector R f g j :=
   rfl
 
-/-- Degree-one coordinate homology as cycles modulo top boundaries. -/
+/-- The coordinate homology quotient of a Koszul pair.
+
+Quotient the coordinate cycles by the range of the top boundary map. -/
 abbrev pairCoordinateHomology (f g : R) :=
   pairCoordinateCycles R f g ⧸
     LinearMap.range (pairCoordinateToCycles R f g)
 
-/-- Kernel of multiplication by `g` on `R/(f)`. -/
+/-- The kernel of the second element on the first quotient.
+
+Take ker(g : R/(f) → R/(f)). -/
 abbrev pairQuotientKernel (f g : R) :=
   LinearMap.ker (LinearMap.lsmul R (R ⧸ Ideal.span {f}) g)
 
-/-- A degree-one cycle maps to its second coordinate modulo `f`. -/
+/-- The second-coordinate map from pair cycles to the quotient kernel.
+
+A cycle x maps to its second coordinate modulo f; the cycle equation makes that class killed
+by g. -/
 noncomputable def pairCycleToQuotientKernel (f g : R) :
     pairCoordinateCycles R f g →ₗ[R] pairQuotientKernel R f g := by
   let I := Ideal.span ({f} : Set R)
@@ -88,6 +105,9 @@ noncomputable def pairCycleToQuotientKernel (f g : R) :
   refine ⟨-x.1 0, ?_⟩
   linear_combination hx
 
+/-- The quotient class of a pair cycle under the coordinate map.
+
+The image of x is the class of x₁ in R/(f). -/
 @[simp]
 theorem pairCycleToQuotientKernel_apply (f g : R)
     (x : pairCoordinateCycles R f g) :
@@ -99,7 +119,9 @@ theorem pairCycleToQuotientKernel_apply (f g : R)
       (x.1 1) = _
     rfl
 
-/-- Top boundaries map to zero in the quotient kernel. -/
+/-- Pair boundaries vanish under the second-coordinate quotient map.
+
+The top boundary c(−g,f) maps to zero modulo f. -/
 theorem pairCycleToQuotientKernel_comp_toCycles (f g : R) :
     (pairCycleToQuotientKernel R f g).comp
       (pairCoordinateToCycles R f g) = 0 := by
@@ -113,7 +135,9 @@ theorem pairCycleToQuotientKernel_comp_toCycles (f g : R) :
   rw [Ideal.Quotient.eq_zero_iff_mem, Ideal.mem_span_singleton]
   exact ⟨c, by ring⟩
 
-/-- The cycle map descends to coordinate degree-one homology. -/
+/-- The induced map from pair coordinate homology.
+
+Descend the second-coordinate quotient map through the coordinate boundary quotient. -/
 noncomputable def pairCoordinateHomologyToQuotientKernel (f g : R) :
     pairCoordinateHomology R f g →ₗ[R] pairQuotientKernel R f g :=
   (LinearMap.range (pairCoordinateToCycles R f g)).liftQ
@@ -121,6 +145,9 @@ noncomputable def pairCoordinateHomologyToQuotientKernel (f g : R) :
     (LinearMap.range_le_ker_iff.mpr
       (pairCycleToQuotientKernel_comp_toCycles R f g))
 
+/-- The quotient-kernel map on a represented pair class.
+
+The image of a cycle class is its second-coordinate image in ker(g on R/(f)). -/
 @[simp]
 theorem pairCoordinateHomologyToQuotientKernel_mk (f g : R)
     (x : pairCoordinateCycles R f g) :
@@ -129,8 +156,10 @@ theorem pairCoordinateHomologyToQuotientKernel_mk (f g : R)
       pairCycleToQuotientKernel R f g x :=
   rfl
 
-/-- The coordinate degree-one homology map is bijective when `f` acts
-injectively. -/
+/-- The pair quotient-kernel map is bijective for a regular first element.
+
+If multiplication by f is injective, the induced map from coordinate H₁ to ker(g on R/(f)) is
+bijective. -/
 theorem pairCoordinateHomologyToQuotientKernel_bijective
     (f g : R) (hf : Function.Injective (LinearMap.lsmul R R f)) :
     Function.Bijective (pairCoordinateHomologyToQuotientKernel R f g) := by
@@ -183,8 +212,10 @@ theorem pairCoordinateHomologyToQuotientKernel_bijective
       pairCycleToQuotientKernel_apply]
     exact hb
 
-/-- Coordinate degree-one homology is linearly equivalent to the quotient
-multiplication kernel. -/
+/-- The coordinate homology equivalence after a regular first element.
+
+For injective multiplication by f, identify coordinate H₁ with the quotient kernel as
+R-modules. -/
 noncomputable def pairCoordinateHomologyEquivQuotientKernel
     (f g : R) (hf : Function.Injective (LinearMap.lsmul R R f)) :
     pairCoordinateHomology R f g ≃ₗ[R] pairQuotientKernel R f g :=
@@ -192,8 +223,9 @@ noncomputable def pairCoordinateHomologyEquivQuotientKernel
     (pairCoordinateHomologyToQuotientKernel R f g)
     (pairCoordinateHomologyToQuotientKernel_bijective R f g hf)
 
-/-- The cokernel of multiplication by `g` on `R/(f)` is the quotient
-`R/(f,g)`. -/
+/-- The iterated scalar cokernel is the pair-ideal quotient.
+
+The cokernel of g on R/(f) is R-linearly equivalent to R/(f,g). -/
 noncomputable def pairQuotientCokernelEquiv (f g : R) :
     ((R ⧸ Ideal.span ({f} : Set R)) ⧸
         (LinearMap.lsmul R (R ⧸ Ideal.span ({f} : Set R)) g).range) ≃ₗ[R]
@@ -226,15 +258,18 @@ noncomputable def pairQuotientCokernelEquiv (f g : R) :
         (DoubleQuot.quotQuotEquivQuotSupₐ R I J).toLinearEquiv ≪≫ₗ
           (Ideal.quotientEquivAlgOfEq R hsup).toLinearEquiv
 
-/-- The abstract homology of the coordinate short complex is its explicit
-cycle quotient. -/
+/-- The short-complex homology as its coordinate quotient.
+
+Identify the homology of the coordinate short complex with its cycles modulo top boundaries. -/
 noncomputable def pairCoordinateHomologyIso (f g : R) :
     (pairCoordinateShortComplex R f g).homology ≅
       ModuleCat.of R (pairCoordinateHomology R f g) :=
   (pairCoordinateShortComplex R f g).moduleCatHomologyIso
 
-/-- Abstract degree-one two-generator Koszul homology identifies with the
-kernel of multiplication by `g` on `R/(f)` when `f` acts injectively. -/
+/-- The degree-one pair homology isomorphism after regularity.
+
+For injective multiplication by f, H₁(K(f,g)) is isomorphic to ker(g on R/(f)), using the
+coordinate comparison. -/
 noncomputable def pairHomologyOneIsoQuotientKernel
     (f g : R) (hf : Function.Injective (LinearMap.lsmul R R f)) :
     (familyComplex R (pairFamily R f g)).homology 1 ≅
@@ -243,8 +278,9 @@ noncomputable def pairHomologyOneIsoQuotientKernel
     pairCoordinateHomologyIso R f g ≪≫
       (pairCoordinateHomologyEquivQuotientKernel R f g hf).toModuleIso
 
-/-- Length form of the regular-first-generator degree-one homology
-identification. -/
+/-- The length of pair degree-one homology after regularity.
+
+For injective multiplication by f, its length equals the length of ker(g on R/(f)). -/
 theorem pair_homology_one_length_eq_quotientKernel
     (f g : R) (hf : Function.Injective (LinearMap.lsmul R R f)) :
     Module.length R
@@ -252,8 +288,10 @@ theorem pair_homology_one_length_eq_quotientKernel
       Module.length R (pairQuotientKernel R f g) :=
   (pairHomologyOneIsoQuotientKernel R f g hf).toLinearEquiv.length_eq
 
-/-- Finite-length data for multiplication by `g` on `R/(f)`, obtained from
-the two-generator quotient and regularity of `f`. -/
+/-- Finite one-element Euler data on the first quotient.
+
+For noetherian R, regular f and finite-length R/(f,g), multiplication by g on R/(f) has finite
+kernel and cokernel lengths over R. -/
 theorem pairElementEulerFiniteLength
     [IsNoetherianRing R] (f g : R)
     (hf : Function.Injective (LinearMap.lsmul R R f))
@@ -266,8 +304,10 @@ theorem pairElementEulerFiniteLength
     rw [(pairQuotientCokernelEquiv R f g).length_eq]
     exact hquot
 
-/-- Intrinsic one-element Euler finiteness data on the first principal
-quotient. -/
+/-- Finite Euler data over the first quotient ring.
+
+The same multiplication by the image of g on R/(f) has finite kernel and cokernel lengths over
+that quotient ring. -/
 theorem pairQuotientElementEulerFiniteLength
     [IsNoetherianRing R] (f g : R)
     (hf : Function.Injective (LinearMap.lsmul R R f))
@@ -279,7 +319,10 @@ theorem pairQuotientElementEulerFiniteLength
   (pairElementEulerFiniteLength R f g hf hquot).changeRingOfSurjective
     R (R ⧸ Ideal.span ({f} : Set R)) g Ideal.Quotient.mk_surjective
 
-/-- Transport the intrinsic quotient Euler data across a ring equivalence. -/
+/-- Finite Euler data through an equivalence of the first quotient ring.
+
+An equivalence R/(f) ≃ B transports the multiplication data for the image of g to the regular
+B-module. -/
 theorem pairRingEquivElementEulerFiniteLength
     [IsNoetherianRing R] (f g : R)
     (hf : Function.Injective (LinearMap.lsmul R R f))
@@ -290,9 +333,10 @@ theorem pairRingEquivElementEulerFiniteLength
       (e (algebraMap R (R ⧸ Ideal.span ({f} : Set R)) g)) :=
   (pairQuotientElementEulerFiniteLength R f g hf hquot).ringEquiv e _
 
-/-- With a regular first generator, the two-generator Koszul Euler
-characteristic is the one-element Euler characteristic on the first
-quotient. -/
+/-- The pair Euler invariant equals the scalar Euler invariant on the first quotient.
+
+For regular f and the stated noetherian quotient finiteness, the pair Euler value is
+χ_g(R/(f)) over R. -/
 theorem pairEulerCharacteristicOfQuotient_eq_elementEuler
     [IsNoetherianRing R] (f g : R)
     (hf : Function.Injective (LinearMap.lsmul R R f))
@@ -312,9 +356,10 @@ theorem pairEulerCharacteristicOfQuotient_eq_elementEuler
   rw [(pairQuotientCokernelEquiv R f g).length_eq]
   simp
 
-/-- With a regular first generator, the pair Euler characteristic becomes
-the intrinsic one-element Euler characteristic after any identification of
-the first principal quotient with another ring. -/
+/-- The pair Euler invariant after identifying the first quotient ring.
+
+For e : R/(f) ≃ B, the pair Euler invariant equals the regular-module Euler invariant of e(g
+mod f) over B. -/
 theorem pairEulerCharacteristicOfQuotient_eq_ringEquivElementEuler
     [IsNoetherianRing R] (f g : R)
     (hf : Function.Injective (LinearMap.lsmul R R f))
@@ -345,8 +390,11 @@ theorem pairEulerCharacteristicOfQuotient_eq_ringEquivElementEuler
       Module.elementEulerCharacteristic_ringEquiv e _ hQ
 
 open Classical in
-/-- The regular two-generator Koszul Euler characteristic admits the explicit
-one-dimensional local prime-filtration formula. -/
+/-- A prime-factor Euler formula for a regular pair.
+
+Under regularity of f, locality, g in the maximal ideal, finite pair quotient length and
+support dimension at most one for R/(f), a prime decomposition gives the pair Euler value as
+its generic-multiplicity sum. -/
 theorem exists_pairEulerPrimeDecomposition
     [IsNoetherianRing R] [IsLocalRing R] (f g : R)
     (hf : Function.Injective (LinearMap.lsmul R R f))

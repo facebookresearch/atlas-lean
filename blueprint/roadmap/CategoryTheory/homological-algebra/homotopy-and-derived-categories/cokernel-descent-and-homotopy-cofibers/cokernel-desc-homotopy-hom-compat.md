@@ -1,3 +1,6 @@
-# Cokernel Desc Homotopy Hom compat
+# The descended component commutes with the cokernel projection
 
-The descended maps lie over the absolute homotopy maps.
+The descended component commutes with the cokernel projection.
+
+The projection in degree n followed by the descended component equals H(n,m) followed by the
+projection in degree m.

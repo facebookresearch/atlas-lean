@@ -1,4 +1,5 @@
-# Pair Homology Finite Length
+# Finite lengths of the three pair homology degrees
 
-Explicit finite-length hypotheses in the only three possible homology
-degrees of a two-generator Koszul complex.
+Finite lengths of the three pair homology degrees.
+
+Record finite R-length for H₀,H₁,H₂ of K(f,g).

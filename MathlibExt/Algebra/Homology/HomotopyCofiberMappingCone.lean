@@ -12,14 +12,14 @@ public import MathlibExt.Algebra.Homology.HomotopyCofiber
 public import Mathlib.Algebra.Homology.HomotopyCategory.Pretriangulated
 
 /-!
-# The native arrow-category cofiber map is the native cochain mapping-cone map
+# The mapping-cone map of a strict arrow square
 
-Both existing constructions have the same shifted-source and target
-inclusion components. Their native extensionality proves the equality.
-This exposes the map identification needed to reuse the native mapping-cone
-triangle morphism for arbitrary coefficient families. Only preadditivity
-and binary biproducts are needed; no abelian, exactness or flatness premise
-is imposed here, and no new cone construction is introduced.
+For integer cochain complexes in a preadditive category with binary biproducts, a strictly
+commuting square of arrows induces a map on their cofibers. This arrow-category map equals the
+mapping-cone map defined by the square's source and target maps, with the same shifted-source
+and target summand components.
+
+The equality retains the stated predecessor witness for the integer cochain shape.
 -/
 
 @[expose] public section
@@ -33,7 +33,10 @@ namespace HomologicalComplex.homotopyCofiber
 
 variable {C : Type u} [Category.{v} C] [Preadditive C] [HasBinaryBiproducts C]
 
-/-- The two native strict-square maps of the same native cochain cone coincide. -/
+/-- The arrow cofiber map equals the strict-square mapping-cone map.
+
+For an arrow morphism between φ and ψ and the stated predecessor witness, mapArrowHom agrees
+with mappingCone.map on its source and target maps. -/
 theorem mapArrowHom_eq_mappingCone_map
     {F G F' G' : CochainComplex C ℤ} {φ : F ⟶ G} {ψ : F' ⟶ G'}
     (hc : ∀ j : ℤ, ∃ i, (ComplexShape.up ℤ).Rel i j)

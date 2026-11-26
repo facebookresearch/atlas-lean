@@ -1,3 +1,5 @@
-# Page Unit Data
+# Two-sided unit data for a fixed page
 
-An actual native page coefficient unit with its original two unit laws.
+Two-sided unit data for a fixed page.
+
+Record the bidegree-zero unit map and both unitor product laws.

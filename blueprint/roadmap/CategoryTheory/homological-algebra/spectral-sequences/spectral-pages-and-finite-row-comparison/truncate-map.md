@@ -1,3 +1,5 @@
-# Truncate Map
+# The restriction of a spectral-sequence morphism
 
-Restrict an actual native morphism to the retained pages and successor squares.
+The restriction of a spectral-sequence morphism.
+
+Keep its maps and successor compatibility at every retained page.

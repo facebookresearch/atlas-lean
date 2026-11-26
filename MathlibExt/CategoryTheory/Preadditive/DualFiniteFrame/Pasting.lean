@@ -15,11 +15,18 @@ public import Mathlib.CategoryTheory.Preadditive.Opposite
 public import Mathlib.Tactic.CategoryTheory.Reassoc
 
 /-!
-# Pasting of normalized local dual comparisons
+# Normalization and pasting of local dual comparisons
 
-The restriction duality and pullback/restriction comparisons are genuine
-natural isomorphisms. Their actual pasting laws identify the two normalized
-local comparisons; the middle comparison is the earned finite-frame one.
+For a functor square ρ:S∘P ≅ Q∘R, duality comparisons for R and S
+turn a local comparison c:Q(J(R(M))) ≅ K(Q(R(M))) into
+S(P(G(M))) ≅ S(H(P(M))).
+The normalized map is the composite
+η_S,PM⁻¹∘K(ρ_Mᵒᵖ)∘c∘Q(η_R,M)∘ρ_GM.
+
+For two composable functor squares, compatible square comparisons,
+restriction-duality comparisons and local comparisons identify successive
+normalization with normalization around the outer square.
+All six categories have independent object and morphism universes.
 -/
 
 @[expose] public section
@@ -35,8 +42,12 @@ variable {C : Type u₁} [Category.{v₁} C] {D : Type u₂} [Category.{v₂} D]
   {A : Type u₃} [Category.{v₃} A] {B : Type u₄} [Category.{v₄} B]
   {A' : Type u₅} [Category.{v₅} A'] {B' : Type u₆} [Category.{v₆} B']
 
-/-- Normalize an earned local dual comparison by the actual restriction and
-commuting-square natural isomorphisms. -/
+/-- Let P:C → D, R:C → A, S:D → B, Q:A → B and ρ:S∘P ≅ Q∘R.
+For contravariant functors G,H,J,K on C,D,A,B, take
+η_R:R∘G ≅ J∘Rᵒᵖ, η_S:S∘H ≅ K∘Sᵒᵖ and
+c:Q(J(R(M))) ≅ K(Q(R(M))).
+The normalized isomorphism S(P(G(M))) ≅ S(H(P(M))) has forward
+composite η_S,PM⁻¹∘K(ρ_Mᵒᵖ)∘c∘Q(η_R,M)∘ρ_GM. -/
 def normalizedDualComparison (P : C ⥤ D) (R : C ⥤ A) (S : D ⥤ B) (Q : A ⥤ B)
     (ρ : P ⋙ S ≅ R ⋙ Q)
     (G : Cᵒᵖ ⥤ C) (H : Dᵒᵖ ⥤ D) (J : Aᵒᵖ ⥤ A) (K : Bᵒᵖ ⥤ B)
@@ -46,8 +57,28 @@ def normalizedDualComparison (P : C ⥤ D) (R : C ⥤ A) (S : D ⥤ B) (Q : A �
   ρ.app (G.obj (op M)) ≪≫ Q.mapIso (ηR.app (op M)) ≪≫ c ≪≫
     K.mapIso (ρ.app M).op ≪≫ (ηS.app (op (P.obj M))).symm
 
-/-- Actual restriction and square pasting laws transport the earned local
-comparison to the outer square, retaining its genuine contravariant maps. -/
+/-- Consider categories C,D,A,B,A′,B′ and functors
+P:C → D, R:C → A, S:D → B, Q:A → B,
+R′:A → A′, S′:B → B′, Q′:A′ → B′, R₁:C → A′, S₁:D → B′.
+Take squares ρ:S∘P ≅ Q∘R, ρ′:S′∘Q ≅ Q′∘R′,
+ρ₁:S₁∘P ≅ Q′∘R₁ and δ_R:R′∘R ≅ R₁, δ_S:S′∘S ≅ S₁.
+Let G,H,J,K,J′,K′ be the six contravariant functors and η_X the natural
+comparison X∘dual_source ≅ dual_target∘Xᵒᵖ for
+X=R,S,R′,S′,R₁,S₁. At M choose c:Q(J(R(M))) ≅ K(Q(R(M))),
+c′:Q′(J′(R′(R(M)))) ≅ K′(Q′(R′(R(M)))), and
+c₁:Q′(J′(R₁(M))) ≅ K′(Q′(R₁(M))).
+
+Assume the following compatibility equations, using forward maps:
+
+ρ₁,N=Q′(δ_R,N)∘ρ′,RN∘S′(ρ_N)∘δ_S,PN⁻¹ for every N;
+η_R′,RM∘R′(η_R,M)=J′(δ_R,Mᵒᵖ)∘η_R₁,M∘δ_R,GM;
+η_S′,SPM∘S′(η_S,PM)=K′(δ_S,PMᵒᵖ)∘η_S₁,PM∘δ_S,HPM;
+η_S′,QRM∘S′(c)=K′(ρ′,RMᵒᵖ)∘c′∘Q′(η_R′,RM)∘ρ′,JRM;
+c′∘Q′(J′(δ_R,Mᵒᵖ))=K′((Q′(δ_R,M))ᵒᵖ)∘c₁.
+
+Then normalization around the outer square equals
+δ_S,HPM∘S′(E_M)∘δ_S,PGM⁻¹, where E_M is the normalized comparison
+for the first square and c. -/
 theorem normalizedDualComparison_pasting
     (P : C ⥤ D) (R : C ⥤ A) (S : D ⥤ B) (Q : A ⥤ B)
     (R' : A ⥤ A') (S' : B ⥤ B') (Q' : A' ⥤ B') (R₁ : C ⥤ A') (S₁ : D ⥤ B')

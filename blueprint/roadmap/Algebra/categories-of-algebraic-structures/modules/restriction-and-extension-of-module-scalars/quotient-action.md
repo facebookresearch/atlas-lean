@@ -1,3 +1,5 @@
-# Quotient Action
+# The action homomorphism factored through the quotient ring
 
-Factor the original action through a two-sided ideal that annihilates the module.
+The action homomorphism factored through the quotient ring.
+
+An annihilating two-sided ideal lets the scalar action factor as R/I → End_add(M).

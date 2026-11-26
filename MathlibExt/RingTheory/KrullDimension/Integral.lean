@@ -23,36 +23,15 @@ Original 2026 development credited to @junekim623 and Muse.
 -/
 
 /-!
-# Krull dimension is preserved under integral extensions
+# Krull dimension of faithful integral extensions
 
-For an integral `R`-algebra `S`, `ringKrullDim S = ringKrullDim R`
-(assuming `FaithfulSMul R S` for the `≤` direction from `R` to `S`).
-Both directions go through prime-ideal chains: the inequality
-`dim S ≤ dim R` is `ringKrullDim_le_of_integral`
-(`MathlibExt/RingTheory/Ideal/IntegralKrullDim.lean`), from
-incomparability making `PrimeSpectrum.comap` strictly monotone;
-going-up
-(`Ideal.exists_ltSeries_of_hasGoingUp`, available through the
-`Algebra.HasGoingUp.of_isIntegral` instance) lifts every chain in `R`
-to a chain of the same length in `S`, giving `dim R ≤ dim S`.
+Let S be a commutative integral R-algebra with faithful scalar action, equivalently an
+injective scalar homomorphism R → S. Going-up lifts every finite chain of prime ideals of R to
+one of the same length in S, giving ringKrullDim R ≤ ringKrullDim S.
 
-The faithful hypothesis is essential for the second direction: without
-it, primes of `R` need not lift at all (e.g. `k[x] → k` sends a
-one-dimensional ring to a zero-dimensional one).
-
-This is the integral-transfer step toward the maximal-height fact for
-finitely generated domains over a field (Hartshorne III.9
-Corollary 9.6): combined with Noether normalization
-(`exists_integral_inj_algHom_of_fg`) it gives `ringKrullDim A = s`
-for a domain `A` finite over `k[X₁, ..., Xₛ]`. Per-prime height
-equality needs further catenary input and is not attempted here.
-
-## Main results
-
-* `Algebra.IsIntegral.le_ringKrullDim_of_isIntegral`: `dim R ≤ dim S`
-  under `FaithfulSMul`.
-* `Algebra.IsIntegral.ringKrullDim_eq_of_isIntegral`: the equality.
-
+Incomparability for integral extensions gives the reverse inequality, so ringKrullDim S =
+ringKrullDim R. These statements use neither a Noetherian nor a finite-generation hypothesis;
+the dimensions are those of the full prime spectra.
 -/
 
 @[expose] public section
@@ -60,9 +39,11 @@ equality needs further catenary input and is not attempted here.
 variable {R S : Type*} [CommRing R] [CommRing S] [Algebra R S]
   [Algebra.IsIntegral R S]
 
-/-- An integral extension with faithful scalars does not decrease Krull
-dimension: every chain in `R` lifts to a chain of the same length in
-`S` by going-up. -/
+/-- Krull dimension inequality from a faithful integral extension.
+
+For commutative rings R,S with S integral over R and FaithfulSMul R S, ringKrullDim R ≤
+ringKrullDim S. A prime above the first prime in each chain exists, and going-up lifts the
+chain without changing its length. -/
 theorem Algebra.IsIntegral.le_ringKrullDim_of_isIntegral [FaithfulSMul R S] :
     ringKrullDim R ≤ ringKrullDim S := by
   unfold ringKrullDim Order.krullDim
@@ -73,8 +54,11 @@ theorem Algebra.IsIntegral.le_ringKrullDim_of_isIntegral [FaithfulSMul R S] :
   calc (l.length : WithBot ℕ∞) = (L.length : WithBot ℕ∞) := by rw [hlen]
     _ ≤ Order.krullDim (PrimeSpectrum S) := Order.LTSeries.length_le_krullDim L
 
-/-- Krull dimension is preserved under integral extensions with faithful
-scalars. -/
+/-- Krull dimension equality for faithful integral scalars.
+
+If S is a commutative integral R-algebra and the scalar action is faithful, then ringKrullDim
+S = ringKrullDim R. Going-up gives the inequality from R to S, and integral incomparability
+gives the inequality from S to R. -/
 theorem Algebra.IsIntegral.ringKrullDim_eq_of_isIntegral [FaithfulSMul R S] :
     ringKrullDim S = ringKrullDim R :=
   le_antisymm ringKrullDim_le_of_integral

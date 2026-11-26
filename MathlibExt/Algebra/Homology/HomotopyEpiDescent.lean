@@ -15,10 +15,14 @@ module
 public import Mathlib.Algebra.Homology.Homotopy
 
 /-!
-# Descent of chain homotopies through componentwise epimorphisms
+# Homotopy descent through a componentwise epimorphism
 
-A homotopy whose components factor through a componentwise-epimorphic chain
-map descends to the corresponding quotient endomorphisms.
+Let π : K → L be a morphism of complexes of arbitrary shape in a preadditive category, with
+each component epic. Suppose endomorphisms f,g on K and f′,g′ on L commute with π. If a
+homotopy H : f ≃ g has supplied factorizations π_i h̄(i,j) = H(i,j)π_j, then the components h̄
+form a homotopy f′ ≃ g′.
+
+The source and target category and degree-index universe levels are as stated.
 -/
 
 @[expose] public section
@@ -35,8 +39,10 @@ namespace Homotopy
 variable {C : Type u} [Category.{v} C] [Preadditive C]
 variable {I : Type w} {c : ComplexShape I}
 
-/-- A chain homotopy descends through a componentwise epimorphism when its
-components admit compatible factorizations. -/
+/-- A homotopy descends along epic components with supplied factorizations.
+
+For the endpoint squares and component factorizations through π, the given h̄ components
+satisfy the homotopy equations on L. -/
 def descOfComponentwiseEpi
     {K L : HomologicalComplex C c}
     (pi : K ⟶ L) [∀ i, Epi (pi.f i)]

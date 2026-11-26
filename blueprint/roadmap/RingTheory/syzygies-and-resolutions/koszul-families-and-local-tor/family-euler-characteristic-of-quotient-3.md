@@ -1,4 +1,6 @@
-# Family Euler Characteristic Of Quotient reindex
+# Reindexing preserves the finite-family Euler invariant
 
-The canonical finite-family Koszul Euler characteristic is invariant
-under reindexing the coefficient family by an equivalence.
+Reindexing preserves the finite-family Euler invariant.
+
+For an equivalence of finite index types, the reindexed family has the same quotient ideal and
+Euler characteristic.

@@ -15,14 +15,18 @@ public import MathlibExt.Algebra.Homology.ShortComplex.CokernelCompFunctor
 public import MathlibExt.Algebra.Homology.HomologySequenceFunctor
 
 /-!
-# Functorial cokernel-comp homology boundary
+# Connecting maps for composite-cokernel sequences
 
-This module builds the generic homological connecting morphism for the
-functorial cokernel triple of a composable pair whose second map is monic.
-It mirrors the construction in `CokernelSequence.lean` but for
-`ComposableArrows (HomologicalComplex C c) 2`.
+Let C be abelian, c any complex shape, and X —f→ Y —g→ Z a composable
+pair of complexes with g monic. Its cokernel triple
+Coker(f) → Coker(g∘f) → Coker(g) is short exact and functorial in maps
+of such pairs.
 
-No topology, coefficients, or cells are involved.
+For c.Rel(i,j), the homology connecting map is
+H_i(Coker(g)) → H_j(Coker(f)).
+These maps form a natural transformation on the category of composable
+complex maps whose second map is monic. The category and complex-index
+universes are independent.
 -/
 
 @[expose] public section
@@ -37,13 +41,15 @@ namespace ShortComplex
 
 variable {C : Type u} [Category.{v} C] [Abelian C] {ι : Type w} {c : ComplexShape ι}
 
-/-- The object property on `ComposableArrows (HomologicalComplex C c) 2`
-asserting that the second map `S.map' 1 2` is a monomorphism. -/
+/-- For complexes of any shape c in an abelian category C, the property on
+a composable pair X —f→ Y —g→ Z that its second map g is a monomorphism. -/
 def secondMapMonomorphisms :
     ObjectProperty (ComposableArrows (HomologicalComplex C c) 2) :=
   fun S => Mono (S.map' 1 2)
 
-/-- Inclusion followed by `cokernelCompFunctor`. -/
+/-- For complexes of shape c in an abelian category, the functor from
+composable pairs X —f→ Y —g→ Z with g monic to short complexes,
+sending the pair to Coker(f) → Coker(g∘f) → Coker(g). -/
 noncomputable def cokernelCompMonoFunctor :
     (secondMapMonomorphisms (C := C) (c := c)).FullSubcategory ⥤
       ShortComplex (HomologicalComplex C c) :=
@@ -216,9 +222,9 @@ private noncomputable def cokernelCompMonoFunctorIso
     (by
       exact ((comm23 S).trans (Category.comp_id _).symm))
 
-/-- Pointwise short exactness of the mono-filtered cokernel-comp triple.
-Reuses `cokernelCompSequence_shortExact` after installing the object's
-`Mono (S.map' 1 2)` instance. -/
+/-- Let C be abelian and X —f→ Y —g→ Z a composable pair of complexes of
+shape c with g monic. Its functorial cokernel triple
+Coker(f) → Coker(g∘f) → Coker(g) is short exact. -/
 lemma cokernelCompMonoFunctor_shortExact
     (S : (secondMapMonomorphisms (C := C) (c := c)).FullSubcategory) :
     (cokernelCompMonoFunctor (C := C) (c := c) |>.obj S).ShortExact := by
@@ -238,10 +244,9 @@ open CategoryTheory CategoryTheory.ShortComplex
 
 variable {C : Type u} [Category.{v} C] [Abelian C] {ι : Type w} {c : ComplexShape ι}
 
-/-- The pointwise connecting homomorphism for the cokernel-comp short exact
-sequence of a composable pair of homological complexes whose second map is
-monic. Definitionally `ShortExact.δ` of the functorial cokernel-comp
-sequence. -/
+/-- For a composable pair X —f→ Y —g→ Z of complexes in an abelian category,
+with g monic and c.Rel(i,j), the connecting map
+H_i(Coker(g)) → H_j(Coker(f)) of the short exact cokernel triple. -/
 noncomputable def cokernelCompδ
     (S : (CategoryTheory.ShortComplex.secondMapMonomorphisms
       (C := C) (c := c)).FullSubcategory)
@@ -253,9 +258,9 @@ noncomputable def cokernelCompδ
   (CategoryTheory.ShortComplex.cokernelCompMonoFunctor_shortExact
     (C := C) (c := c) S).δ i j hij
 
-/-- The connecting natural transformation for the cokernel-comp sequence,
-with component definitionally equal to `cokernelCompδ`. Naturality follows
-from `δ_naturality` for short exact sequences. -/
+/-- In an abelian category C, fix a complex shape c and c.Rel(i,j).
+The connecting maps H_i(Coker(g)) → H_j(Coker(f)) form a natural
+transformation on composable complex pairs X —f→ Y —g→ Z with g monic. -/
 noncomputable def cokernelCompδNatTrans
     (i j : ι) (hij : c.Rel i j) :
     (CategoryTheory.ShortComplex.cokernelCompMonoFunctor (C := C) (c := c) ⋙

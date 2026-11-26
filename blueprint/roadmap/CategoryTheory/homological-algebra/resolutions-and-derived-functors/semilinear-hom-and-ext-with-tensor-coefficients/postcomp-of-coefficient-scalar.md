@@ -1,3 +1,6 @@
-# Postcomp Of Coefficient Scalar
+# Linear postcomposition along an intertwining coefficient map
 
-An equivariant coefficient morphism induces a scalar-linear Ext map.
+Linear postcomposition along an intertwining coefficient map.
+
+If f : Y → Z intertwines the two S-endomorphism actions, postcomposition with mk₀(f) gives an
+S-linear map Extⁿ(X,Y) → Extⁿ(X,Z).

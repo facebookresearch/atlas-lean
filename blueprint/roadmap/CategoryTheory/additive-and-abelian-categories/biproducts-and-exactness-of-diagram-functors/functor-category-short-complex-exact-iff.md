@@ -1,4 +1,6 @@
-# Functor Category short Complex exact iff
+# Exactness of functor-category short complexes is pointwise
 
-A short complex of functors is exact if and only if it is exact at every
-object of the source category.
+Exactness of functor-category short complexes is pointwise.
+
+A short complex in J → C, for abelian C, is exact exactly when its evaluation at every j is
+exact.

@@ -14,11 +14,17 @@ module
 public import MathlibExt.CategoryTheory.Preadditive.DualFiniteFrame.Naturality
 
 /-!
-# Composition of canonical actual finite-frame dual comparison
+# Composition of finite-frame contravariant comparisons
 
-The original evaluation values determine comparison under successive additive
-unit-preserving functors. This is the coherence used on overlaps of scheme
-restriction and pullback charts.
+Let C,D,E be preadditive, F : C ⥤ D and T : D ⥤ E additive, and G,H,K additive contravariant
+endofunctors of the respective categories. Fix coefficient objects U,V,W, isomorphisms u :
+F(U) ≅ V and t : T(V) ≅ W, and evaluations G(U) ≅ U, H(V) ≅ V and K(W) ≅ W.
+
+For a finite bilimit frame b of copies of U, the comparison for F ⋙ T uses the coefficient
+identification T(u) ≪≫ t. Its hom equals T applied to the comparison for F, followed by the
+comparison for T on the image frame F(b). The equality is determined by evaluation on each
+injection of the finite frame. The three category worlds and the indexing universe remain
+independent.
 -/
 
 @[expose] public section
@@ -34,8 +40,13 @@ variable {C : Type u₁} [Category.{v₁} C] [Preadditive C]
   {D : Type u₂} [Category.{v₂} D] [Preadditive D]
   {E : Type u₃} [Category.{v₃} E] [Preadditive E]
 
-/-- Canonical finite-frame dual comparison agrees with successive comparison
-through the actual intermediate image frame. -/
+/-- Composition law for finite-frame contravariant comparisons.
+
+For successive additive functors F : C ⥤ D and T : D ⥤ E, additive contravariant functors
+G,H,K and compatible coefficient identifications, let b be a finite bilimit frame of U. The
+direct comparison χ_{F⋙T} using T(u) ≪≫ t satisfies χ_{F⋙T}.hom = T(χ_F.hom) ≫ χ_T.hom, where
+χ_T is computed on the image bicone of b under F. The finite coefficient biproducts and the
+evaluations G(U) ≅ U, H(V) ≅ V, K(W) ≅ W are part of the data. -/
 theorem finiteFrameDualComparisonIso_comp (F : C ⥤ D) [F.Additive]
     (T : D ⥤ E) [T.Additive]
     (G : Cᵒᵖ ⥤ C) [G.Additive] (H : Dᵒᵖ ⥤ D) [H.Additive]

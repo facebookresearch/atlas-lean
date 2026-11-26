@@ -1,3 +1,5 @@
-# Away Direct Limit is Unit algebra Map
+# The scalar r acts invertibly on the direct limit
 
-The element `r` acts invertibly on the sequential direct limit.
+The scalar r acts invertibly on the direct limit.
+
+Its module endomorphism is a unit, with inverse awayShift.

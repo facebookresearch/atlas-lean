@@ -1,3 +1,6 @@
-# Is Artinian homology of is Artinian middle
+# Homology of a short complex with Artinian middle module
 
-The homology of a module short complex is Artinian when its middle module is.
+Homology of a short complex with Artinian middle module.
+
+For a short complex with Artinian middle R-module, its homology module is Artinian as a
+quotient of the Artinian cycles.

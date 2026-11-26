@@ -1,4 +1,6 @@
-# Map homologyπ eq comparison
+# Factorization of the mapped homology projection through comparisons
 
-The original mapped homology projection factors through the actual
-mapped-short-complex projection and its canonical comparison isomorphisms.
+Factorization of the mapped homology projection through comparisons.
+
+The mapped cycle projection factors through the inverse cycles comparison, the mapped
+short-complex projection and the homology comparison.

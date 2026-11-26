@@ -1,3 +1,5 @@
-# Antipode To Opposite ι
+# The opposite-valued antipode on a Lie generator
 
-The opposite-algebra map sends each Lie generator to its negative.
+The opposite-valued antipode on a Lie generator.
+
+The map sends ιx to −op(ιx).

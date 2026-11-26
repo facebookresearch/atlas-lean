@@ -44,9 +44,20 @@ public import Mathlib.CategoryTheory.Preadditive.AdditiveFunctor
 public import Mathlib.CategoryTheory.Abelian.Basic
 public import Mathlib.Algebra.DirectSum.Decomposition
 /-!
-# Graded module categories and their homogeneous localization
+# Integer-graded modules and degree-zero homogeneous fractions
 
-Extracted from the Hartshorne graded-module construction, preserving its source definitions.
+Let R be a commutative ring with a natural-number grading R = ⊕ₙ𝒜_n. A graded module has an
+integer-indexed decomposition M = ⊕ᵢM_i satisfying 𝒜_n·M_i ⊆ M_{i+n}. Degree-preserving
+R-linear maps form a preadditive category, with a functor to the underlying module category.
+
+For a submonoid S ⊆ R, the degree-zero homogeneous fraction module uses representatives m/s
+with m ∈ M_n and s ∈ 𝒜_n ∩ S for n ∈ ℕ. Two representatives are equal when a multiplier from S
+annihilates their cross-difference. The quotient is a module over the degree-zero homogeneous
+localization ring, with the usual common-denominator addition and scalar multiplication.
+
+The integer shift is M(n)_i = M_{i+n}. Extending the natural ring grading by zero in negative
+degrees gives the graded regular module R, and multiplication by a homogeneous element of
+degree m maps R(n) to R(n+m).
 
 Historical formalization credit from the prior source: @junekim623, Muse.
 -/
@@ -54,7 +65,9 @@ Historical formalization credit from the prior source: @junekim623, Muse.
 @[expose] public section
 universe u
 open CategoryTheory DirectSum
-/-- The translation action of `ℕ` on `ℤ`, for graded-algebra indexing. -/
+/-- Translation action of natural numbers on integer degrees.
+
+The additive action is n +ᵥ z = z+n for n ∈ ℕ and z ∈ ℤ. -/
 @[instance_reducible]
 def addActionNatInt : AddAction Nat Int where
   vadd n z := z + (n : Int)
@@ -67,35 +80,59 @@ def addActionNatInt : AddAction Nat Int where
       _ = z + ((n : Int) + (m : Int)) := by rw [add_comm (m : Int) n]
       _ = (z + (n : Int)) + (m : Int) := by rw [add_assoc]
 
-/-- The translation action of `ℕ` on `ℤ`, used to shift grades. -/
+/-- Natural translation for integer-indexed module components.
+
+The natural-number action on integer degrees uses n +ᵥ z = z+n. -/
 local instance instAddActionNatInt : AddAction Nat Int := addActionNatInt
 
-/-- A `ℤ`-graded module over the graded ring `𝒜`: the grading is a direct-sum decomposition of
-the carrier compatible with the action of `𝒜`. -/
+/-- Graded modules over a naturally graded commutative ring.
+
+For a commutative ring R with ℕ-grading 𝒜, an object is an R-module M with an integer-indexed
+direct-sum decomposition and scalar compatibility 𝒜_n·M_i ⊆ M_{i+n}. -/
 structure GradedModuleCat {R : Type u} [CommRing R] {σS : Type*} [SetLike σS R]
     [AddSubgroupClass σS R] (𝒜 : ℕ → σS) [GradedRing 𝒜] where
-  /-- The underlying type. -/
+  /-- The underlying carrier of a graded module.
+
+This is the module carrier in the stated universe of the coefficient ring R. -/
   carrier : Type u
+/-- The additive group structure of a graded module.
+
+The carrier of the graded module is an additive commutative group. -/
   addCommGroup : AddCommGroup carrier
+/-- The scalar module structure of a graded module.
+
+The carrier is an R-module, compatible with its additive group structure. -/
   module : Module R carrier
-  /-- The graded pieces, indexed by `ℤ`. -/
+  /-- The integer-indexed homogeneous components.
+
+For i ∈ ℤ, grade i is the additive subgroup M_i of elements homogeneous of degree i. -/
   grade : ℤ → AddSubgroup carrier
-  /-- The direct-sum decomposition of the carrier into the graded pieces. -/
+  /-- The direct-sum decomposition by homogeneous components.
+
+Every element of M decomposes uniquely as a finite sum of components in the M_i, giving M ≅
+⊕_{i∈ℤ} M_i as additive groups. -/
   decomposition : DirectSum.Decomposition grade
+/-- Compatibility of scalar multiplication with the gradings.
+
+A homogeneous scalar in 𝒜_n sends M_i into M_{i+n}, with n ∈ ℕ and i ∈ ℤ. -/
   gradedSMul : SetLike.GradedSMul 𝒜 grade
 
 attribute [instance] GradedModuleCat.addCommGroup GradedModuleCat.module
 
 namespace GradedModuleCat
 
-/-- Scoped copy of the `ℕ`-on-`ℤ` translation action, for files that
-`open scoped GradedModuleCat`. -/
+/-- Integer degree translation in the graded module category.
+
+Natural degrees act on integer module degrees by n +ᵥ i = i+n. -/
 scoped instance instAddActionNatIntScoped : AddAction Nat Int := addActionNatInt
 
 variable {R : Type u} [CommRing R] {σS : Type*} [SetLike σS R] [AddSubgroupClass σS R]
   {𝒜 : ℕ → σS} [GradedRing 𝒜]
 
-/-- Subgroup of degree-preserving linear maps. -/
+/-- The additive subgroup of degree-preserving linear maps.
+
+Inside Hom_R(M,N), take the maps f with f(M_i) ⊆ N_i for every i ∈ ℤ. They are closed under
+zero, addition and negation. -/
 def homSubgroup (M N : GradedModuleCat (𝒜 := 𝒜)) :
     AddSubgroup (M.carrier →ₗ[R] N.carrier) where
   carrier := { f | ∀ (i : ℤ) (x : M.carrier), x ∈ M.grade i → f x ∈ N.grade i }
@@ -109,20 +146,31 @@ def homSubgroup (M N : GradedModuleCat (𝒜 := 𝒜)) :
     intro f hf i x hx
     exact (N.grade i).neg_mem (hf i x hx)
 
-/-- Hom as subtype of degree-preserving maps. Anonymous constructor ⟨f, proof⟩ works. -/
+/-- The morphism type of graded modules.
+
+A morphism is an R-linear map preserving every integer homogeneous component, regarded as an
+element of homSubgroup M N. -/
 abbrev HomStruct (M N : GradedModuleCat (𝒜 := 𝒜)) := ↥(homSubgroup (𝒜 := 𝒜) M N)
 
 namespace HomStruct
 
 variable {M N : GradedModuleCat (𝒜 := 𝒜)}
 
-/-- The underlying linear map of a degree-preserving morphism. -/
+/-- The linear map underlying a graded morphism.
+
+Forget the degree-preservation proof of f to obtain its R-linear map M → N. -/
 def toLinearMap (f : HomStruct (𝒜 := 𝒜) M N) : M.carrier →ₗ[R] N.carrier := f.val
 
+/-- A graded morphism preserves each homogeneous degree.
+
+If x ∈ M_i, then the underlying linear map of f sends x into N_i. -/
 theorem preserves (f : HomStruct (𝒜 := 𝒜) M N) (i : ℤ) (x : M.carrier)
     (hx : x ∈ M.grade i) : f.val x ∈ N.grade i :=
   f.property i x hx
 
+/-- Extensionality of graded morphisms.
+
+Two graded morphisms are equal when their underlying R-linear maps are equal. -/
 @[ext]
 theorem ext {f g : HomStruct (𝒜 := 𝒜) M N} (h : f.val = g.val) : f = g :=
   Subtype.ext h
@@ -147,10 +195,18 @@ instance : CategoryTheory.Category (GradedModuleCat (𝒜 := 𝒜)) where
     apply HomStruct.ext
     rfl
 
+/-- The additive group of graded morphisms.
+
+The degree-preserving morphisms M → N form an additive commutative group by their subgroup
+structure inside the linear maps. -/
 noncomputable instance instAddCommGroupHomStruct {M N : GradedModuleCat (𝒜 := 𝒜)} :
     AddCommGroup (HomStruct (𝒜 := 𝒜) M N) :=
   inferInstance
 
+/-- The preadditive structure of the graded module category.
+
+Composition of degree-preserving R-linear maps is additive in each variable, so the graded
+module category is preadditive. -/
 noncomputable instance instPreadditive : CategoryTheory.Preadditive (GradedModuleCat (𝒜 := 𝒜)) where
   homGroup M N := inferInstanceAs (AddCommGroup (HomStruct M N))
   add_comp := by
@@ -166,7 +222,10 @@ noncomputable instance instPreadditive : CategoryTheory.Preadditive (GradedModul
     ext x
     simp only [LinearMap.add_apply, LinearMap.comp_apply]
 
-/-- The forgetful functor to `R`-modules. -/
+/-- The functor forgetting the module grading.
+
+Send a graded module to its underlying R-module and a graded morphism to its underlying
+R-linear map. -/
 noncomputable def forget : GradedModuleCat (𝒜 := 𝒜) ⥤ ModuleCat R where
   obj M :=
     letI := M.addCommGroup
@@ -180,28 +239,51 @@ noncomputable def forget : GradedModuleCat (𝒜 := 𝒜) ⥤ ModuleCat R where
     ext
     rfl
 
-/-! ### Localization at a submonoid (degree-zero fractions)
+/-!
+# Degree-zero localization at a multiplicative submonoid
 
-`m / s` with `m ∈ M_deg`, `s ∈ 𝒜 deg ∩ S`. The single-fraction
-representation; `M_(f)` is the special case `S = powers f`. -/
+Represent a fraction by m ∈ M_n and s ∈ 𝒜_n ∩ S at a common nonnegative degree. The equality
+relation is ∃t ∈ S, t·(s′·m − s·m′) = 0. Addition and the action of the homogeneous scalar
+localization descend to these classes.
+-/
 
-/-- Fractions `m / s` with `m ∈ M_d`, `s ∈ 𝒜_d` and `s ∈ S` of a common degree `d`: the raw data
-of the degree-zero localization of `M` at `S`. -/
+/-- Homogeneous module fractions of degree zero.
+
+For a submonoid S ⊆ R, a representative consists of m ∈ M_n and s ∈ 𝒜_n ∩ S for a common n ∈
+ℕ, representing the degree-zero fraction m/s. -/
 structure NumDenSameDegModuleAtPrime {R : Type u} [CommRing R]
     {σS : Type*} [SetLike σS R] [AddSubgroupClass σS R]
     {𝒜 : ℕ → σS} [GradedRing 𝒜]
     (M : GradedModuleCat (𝒜 := 𝒜)) (S : Submonoid R) where
-  /-- The common degree of numerator and denominator. -/
+  /-- The common nonnegative degree of a fraction representative.
+
+This n ∈ ℕ is the homogeneous degree of both the module numerator and ring denominator. -/
   deg : ℕ
-  /-- The numerator. -/
+  /-- The module numerator of a homogeneous fraction.
+
+The numerator is an element m of the underlying module carrier. -/
   m : M.carrier
+/-- The homogeneous-degree condition on the fraction numerator.
+
+The numerator m belongs to M_n, with n coerced from ℕ to the integer module grading. -/
   m_mem : m ∈ M.grade deg
-  /-- The denominator. -/
+  /-- The ring denominator of a homogeneous module fraction.
+
+The denominator is the ring element s used in the representative m/s. -/
   s : R
+/-- The homogeneous-degree condition on the fraction denominator.
+
+The denominator s belongs to the ring component 𝒜_n at the common fraction degree. -/
   s_mem : s ∈ 𝒜 deg
+/-- The localization condition on a fraction denominator.
+
+The denominator s lies in the specified multiplicative submonoid S. -/
   s_in_S : s ∈ S
 
-/-- Equality of fractions: `m / s ~ m' / s'` when some `t ∈ S` kills `s' • m - s • m'`. -/
+/-- The localization equivalence of homogeneous module fractions.
+
+Representatives m/s and m′/s′ are equivalent when some t ∈ S satisfies t·(s′·m − s·m′) = 0.
+This retains the annihilating multiplier needed for general modules. -/
 def NumDenSameDegModuleAtPrime.setoid {R : Type u} [CommRing R]
     {σS : Type*} [SetLike σS R] [AddSubgroupClass σS R]
     {𝒜 : ℕ → σS} [GradedRing 𝒜]
@@ -246,8 +328,10 @@ def NumDenSameDegModuleAtPrime.setoid {R : Type u} [CommRing R]
         _ = 0 := by rw [h1, h2, smul_zero, smul_zero, add_zero]
   }
 
-/-- The degree-zero part of the localization of `M` at `S`: fractions of equal degree modulo
-`NumDenSameDegModuleAtPrime.setoid`. -/
+/-- The quotient of degree-zero homogeneous module fractions.
+
+For any submonoid S, quotient the same-degree numerator–denominator representatives by
+localization equivalence. -/
 def AtPrimeModuleCarrier {R : Type u} [CommRing R]
     {σS : Type*} [SetLike σS R] [AddSubgroupClass σS R]
     {𝒜 : ℕ → σS} [GradedRing 𝒜]
@@ -259,16 +343,23 @@ namespace AtPrimeModuleCarrier
 variable {R : Type u} [CommRing R] {σS : Type*} [SetLike σS R] [AddSubgroupClass σS R]
   {𝒜 : ℕ → σS} [GradedRing 𝒜] {M : GradedModuleCat (𝒜 := 𝒜)} {S : Submonoid R}
 
-/-- The class of a fraction. -/
+/-- The class of a homogeneous module fraction representative.
+
+Send the data m ∈ M_n and s ∈ 𝒜_n ∩ S to its quotient class m/s. -/
 noncomputable def mk (c : NumDenSameDegModuleAtPrime (𝒜 := 𝒜) M S) :
     AtPrimeModuleCarrier (𝒜 := 𝒜) M S := Quotient.mk _ c
 
-/-- The zero fraction `0 / 1`. -/
+/-- The zero homogeneous fraction.
+
+Represent zero by 0/1 with common homogeneous degree zero. -/
 noncomputable def zero : AtPrimeModuleCarrier (𝒜 := 𝒜) M S :=
   mk (M := M) (S := S) ⟨0, 0, (M.grade 0).zero_mem, 1, SetLike.one_mem_graded _,
     Submonoid.one_mem S⟩
 
-/-- Addition of fractions: `m / s + m' / s' = (s' • m + s • m') / (s s')`. -/
+/-- Addition of degree-zero homogeneous module fractions.
+
+For representatives m/s and m′/s′, their sum is (s′·m + s·m′)/(ss′), with common degree equal
+to the sum of the two original degrees. -/
 noncomputable def add (x y : AtPrimeModuleCarrier (𝒜 := 𝒜) M S) :
     AtPrimeModuleCarrier (𝒜 := 𝒜) M S :=
   Quotient.liftOn₂ x y
@@ -310,7 +401,9 @@ noncomputable def add (x y : AtPrimeModuleCarrier (𝒜 := 𝒜) M S) :
         rw [hj, e₂, smul_zero, smul_zero]
       rw [key, smul_add, z1, z2, add_zero])
 
-/-- Negation of fractions: `-(m / s) = (-m) / s`. -/
+/-- Negation of a homogeneous module fraction.
+
+The negative of m/s is represented by (−m)/s at the same homogeneous degree. -/
 noncomputable def neg (x : AtPrimeModuleCarrier (𝒜 := 𝒜) M S) :
     AtPrimeModuleCarrier (𝒜 := 𝒜) M S :=
   Quotient.liftOn x
@@ -326,18 +419,35 @@ noncomputable def neg (x : AtPrimeModuleCarrier (𝒜 := 𝒜) M S) :
           = -((b.s • a.m - a.s • b.m) : M.carrier) := by module
       rw [key, smul_neg, e, neg_zero])
 
+/-- The zero structure on homogeneous fraction classes.
+
+The quotient carrier has zero given by the class 0/1. -/
 noncomputable instance instZero : Zero (AtPrimeModuleCarrier (𝒜 := 𝒜) M S) where
   zero := zero (S := S)
 
+/-- The addition structure on homogeneous fraction classes.
+
+The quotient carrier uses the common-denominator addition formula for degree-zero module
+fractions. -/
 noncomputable instance instAdd : Add (AtPrimeModuleCarrier (𝒜 := 𝒜) M S) where
   add := add
 
+/-- The negation structure on homogeneous fraction classes.
+
+The additive inverse is induced by negating the numerator. -/
 noncomputable instance instNeg : Neg (AtPrimeModuleCarrier (𝒜 := 𝒜) M S) where
   neg := neg
 
+/-- Subtraction of homogeneous fraction classes.
+
+Subtraction is addition with the negative numerator representative. -/
 noncomputable instance instSub : Sub (AtPrimeModuleCarrier (𝒜 := 𝒜) M S) where
   sub x y := x + -y
 
+/-- The additive group of degree-zero homogeneous fractions.
+
+The common-denominator operations make the homogeneous fraction quotient an additive
+commutative group. -/
 noncomputable instance instAddCommGroup : AddCommGroup (AtPrimeModuleCarrier (𝒜 := 𝒜) M S) where
   add := add
   zero := zero (S := S)
@@ -391,8 +501,10 @@ noncomputable instance instAddCommGroup : AddCommGroup (AtPrimeModuleCarrier (�
   zsmul_succ' := by intro n a; rfl
   zsmul_neg' := by intro n a; rfl
 
-/-- Scalar action by `HomogeneousLocalization 𝒜 S` on `AtPrimeModuleCarrier M S`
-`a/s_r • m/s_m = (a•m)/(s_r * s_m)` with degree sum. -/
+/-- Scalar multiplication on homogeneous fraction representatives.
+
+For a homogeneous scalar fraction a/b and module fraction m/s, form (a·m)/(bs). Their common
+degree is the sum of the scalar and module representative degrees. -/
 noncomputable def smulDef (r : HomogeneousLocalization.NumDenSameDeg 𝒜 S)
     (m : NumDenSameDegModuleAtPrime (𝒜 := 𝒜) M S) :
     NumDenSameDegModuleAtPrime (𝒜 := 𝒜) M S :=
@@ -408,7 +520,10 @@ noncomputable def smulDef (r : HomogeneousLocalization.NumDenSameDeg 𝒜 S)
      exact SetLike.GradedMul.mul_mem r.den.2 m.s_mem,
    Submonoid.mul_mem _ r.den_mem m.s_in_S⟩
 
-/-- The action of the degree-zero homogeneous localization of `𝒜` at `S` on fractions. -/
+/-- The action of the homogeneous localization ring on module fractions.
+
+The representative rule (a/b)·(m/s) = (a·m)/(bs) descends to the homogeneous localization ring
+and the module fraction quotient. -/
 noncomputable def smul (r : HomogeneousLocalization 𝒜 S)
     (x : AtPrimeModuleCarrier (𝒜 := 𝒜) M S) :
     AtPrimeModuleCarrier (𝒜 := 𝒜) M S :=
@@ -449,10 +564,18 @@ noncomputable def smul (r : HomogeneousLocalization 𝒜 S)
         rw [hj, hcz, zero_smul, smul_zero]
       rw [key, smul_add, z1, z2, add_zero])
 
+/-- The scalar action structure on homogeneous fraction classes.
+
+The ring HomogeneousLocalization 𝒜 S acts by multiplying numerators and denominators of
+representatives. -/
 noncomputable instance instSMul : SMul (HomogeneousLocalization 𝒜 S)
     (AtPrimeModuleCarrier (𝒜 := 𝒜) M S) where
   smul := smul
 
+/-- The module over the homogeneous localization ring.
+
+The additive homogeneous fraction quotient is a module over HomogeneousLocalization 𝒜 S, with
+scalar action induced by (a/b)·(m/s) = (a·m)/(bs). -/
 noncomputable instance instModule : Module (HomogeneousLocalization 𝒜 S)
     (AtPrimeModuleCarrier (𝒜 := 𝒜) M S) where
   smul := smul
@@ -513,7 +636,10 @@ noncomputable instance instModule : Module (HomogeneousLocalization 𝒜 S)
       HomogeneousLocalization.NumDenSameDeg.den_zero]
     module
 
-/-- Map induced by graded module hom on AtPrime carrier -/
+/-- The map on homogeneous fractions induced by a graded morphism.
+
+For a degree-preserving linear map f : M → N, the induced function on fraction classes sends
+m/s to f(m)/s. -/
 noncomputable def map {M N : GradedModuleCat (𝒜 := 𝒜)} (f : HomStruct M N)
     (S : Submonoid R) :
     AtPrimeModuleCarrier (𝒜 := 𝒜) M S → AtPrimeModuleCarrier (𝒜 := 𝒜) N S :=
@@ -531,9 +657,19 @@ noncomputable def map {M N : GradedModuleCat (𝒜 := 𝒜)} (f : HomStruct M N)
 
 end AtPrimeModuleCarrier
 
-/-! ### Shift -/
+/-!
+# Integer shifts and the graded regular module
 
-/-- The decomposition of `M` into the shifted pieces `M_{i + n}`. -/
+The shift M(n) retains its carrier and scalar action while reindexing its components as M(n)_i
+= M_{i+n}. Translating the direct-sum decomposition gives the shifted decomposition. The ring
+itself has its natural components in nonnegative integer degrees and zero components in
+negative degrees.
+-/
+
+/-- The reindexed homogeneous decomposition of a shifted module.
+
+For n ∈ ℤ, decompose x into the direct sum with i-th component M_{i+n}. The component at i is
+the original homogeneous component at i+n. -/
 noncomputable def shiftDecomposeAddHom (M : GradedModuleCat (𝒜 := 𝒜)) (n : ℤ) :
     M.carrier →+ (⨁ i, M.grade (i + n)) :=
   let e : ℤ → ℤ := fun j => j + n
@@ -549,7 +685,10 @@ noncomputable def shiftDecomposeAddHom (M : GradedModuleCat (𝒜 := 𝒜)) (n :
       map_add' := fun f g => DFinsupp.comapDomain_add e he f g }
   comap.comp decomp
 
-/-- The grading of `M` shifted by `n`: the `i`-th piece is `M_{i + n}`. -/
+/-- The direct-sum decomposition of shifted homogeneous components.
+
+The family i ↦ M_{i+n} has the direct-sum decomposition obtained by translating integer
+indices in the decomposition of M. -/
 @[instance_reducible]
 noncomputable def shiftDecomposition (M : GradedModuleCat (𝒜 := 𝒜)) (n : ℤ) :
     DirectSum.Decomposition (fun i => M.grade (i + n)) where
@@ -613,7 +752,10 @@ noncomputable def shiftDecomposition (M : GradedModuleCat (𝒜 := 𝒜)) (n : �
     · intro a b ha hb
       simp [map_add, ha, hb]
 
-/-- The shift functor `M ↦ M(n)`, with `M(n)_i = M_{i + n}`. -/
+/-- The integer shift functor on graded modules.
+
+For n ∈ ℤ, the shifted module M(n) has M(n)_i = M_{i+n}, with the same carrier and R-action. A
+graded morphism retains its underlying map and preserves the shifted components. -/
 noncomputable def shift (n : ℤ) : GradedModuleCat (𝒜 := 𝒜) ⥤ GradedModuleCat (𝒜 := 𝒜) where
   obj M :=
     { carrier := M.carrier
@@ -639,15 +781,22 @@ noncomputable def shift (n : ℤ) : GradedModuleCat (𝒜 := 𝒜) ⥤ GradedMod
     apply HomStruct.ext
     rfl
 
-/-- The additive subgroup underlying the homogeneous component `𝒜 n`. -/
+/-- A ring homogeneous component as an additive subgroup.
+
+For n ∈ ℕ, regard the SetLike component 𝒜_n as an additive subgroup of R. -/
 abbrev toAddSubgroup (𝒜 : ℕ → σS) (n : ℕ) : AddSubgroup R :=
   AddSubgroup.ofClass (𝒜 n)
 
-/-- The `ℤ`-grading of `R` itself: `𝒜_z` in nonnegative degrees and `0` in negative degrees. -/
+/-- Extension of a natural ring grading to integer degrees.
+
+The integer component at z is 𝒜_{z.toNat} when z ≥ 0 and the zero subgroup when z < 0. -/
 def gradedRingObjectGrade (𝒜 : ℕ → σS) : ℤ → AddSubgroup R :=
   fun z => if 0 ≤ z then AddSubgroup.ofClass (𝒜 z.toNat) else ⊥
 
-/-- Inclusion of the `n`-th piece into the grade: now definitional, no closure. -/
+/-- Embedding a natural ring component into its integer degree.
+
+The map from 𝒜_n to the extended ring component at the integer n preserves the underlying
+element and is additive. -/
 noncomputable def toGradeHom (𝒜 : ℕ → σS) (n : ℕ) :
     ↥(𝒜 n) →+ ↥(gradedRingObjectGrade (𝒜 := 𝒜) (Int.ofNat n)) where
   toFun x := ⟨x.1, by
@@ -660,12 +809,18 @@ noncomputable def toGradeHom (𝒜 : ℕ → σS) (n : ℕ) :
   map_add' := by intro a b; apply Subtype.ext; rfl
 
 omit [GradedRing 𝒜] in
+/-- The extended ring grading in a natural-number degree.
+
+At Int.ofNat n, the extended component equals 𝒜_n as an additive subgroup. -/
 theorem gradedRingObjectGrade_intOfNat (n : ℕ) :
     gradedRingObjectGrade (𝒜 := 𝒜) (Int.ofNat n) = toAddSubgroup 𝒜 n := by
   unfold gradedRingObjectGrade
   simp
 
-/-- AddMonoidHom version of the graded ring decomposition -/
+/-- The ring decomposition indexed by integer degrees.
+
+Decompose R by its natural grading and insert each component 𝒜_n into the direct-sum component
+at the integer n. -/
 noncomputable def gradedRingObjectDecomposeAddHom :
     R →+ (⨁ z, ↥(gradedRingObjectGrade (𝒜 := 𝒜) z)) :=
   let decN : R →+ (⨁ n, ↥(𝒜 n)) := (decomposeAddEquiv 𝒜).toAddMonoidHom
@@ -677,7 +832,10 @@ noncomputable def gradedRingObjectDecomposeAddHom :
         (toGradeHom (𝒜 := 𝒜) n))
   emb.comp decN
 
-/-- The ring `R` as a graded module over itself. -/
+/-- The regular ring as an integer-graded module.
+
+Use R as its regular module, with the given grading in nonnegative integer degrees and zero
+components in negative degrees. -/
 noncomputable def gradedRingObject : GradedModuleCat (𝒜 := 𝒜) where
   carrier := R
   addCommGroup := inferInstance
@@ -799,12 +957,18 @@ noncomputable def gradedRingObject : GradedModuleCat (𝒜 := 𝒜) where
       exact (gradedRingObjectGrade (𝒜 := 𝒜) (i +ᵥ j)).zero_mem
 
 omit [GradedRing 𝒜] in
+/-- Nonnegative components of the graded regular ring.
+
+For n ≥ 0 in ℤ, the homogeneous component of the extended ring grading is 𝒜_{n.toNat}. -/
 theorem gradedRingObject_grade_of_nonneg (n : ℤ) (h : 0 ≤ n) :
     gradedRingObjectGrade (𝒜 := 𝒜) n = toAddSubgroup 𝒜 n.toNat := by
   unfold gradedRingObjectGrade
   simp [ite_eq_left h]
 
 omit [GradedRing 𝒜] in
+/-- Negative components of the graded regular ring.
+
+For n < 0, the extended ring grading has zero homogeneous component. -/
 theorem gradedRingObject_grade_of_neg (n : ℤ) (h : n < 0) :
     gradedRingObjectGrade (𝒜 := 𝒜) n = ⊥ := by
   have h' : ¬ (0 ≤ n) := by omega
@@ -825,8 +989,10 @@ open scoped GradedModuleCat
 variable {R : Type u} [CommRing R] {σS : Type v} [SetLike σS R]
   [AddSubgroupClass σS R] {𝒜 : ℕ → σS} [GradedRing 𝒜]
 
-/-- Multiplication by a homogeneous element as a degree-preserving map between shifted
-graded ring modules, for every integer shift. -/
+/-- Homogeneous multiplication between shifts of the graded ring.
+
+For a ∈ 𝒜_m and n ∈ ℤ, multiplication x ↦ a·x defines a graded R-linear morphism R(n) →
+R(n+m). A source element of degree i+n is sent to degree i+n+m. -/
 noncomputable def shiftRingSmulHom (n : ℤ) (m : ℕ) (a : ↥(𝒜 m)) :
     GradedModuleCat.HomStruct
       ((GradedModuleCat.shift n).obj (GradedModuleCat.gradedRingObject (𝒜 := 𝒜)))

@@ -1,5 +1,6 @@
-# Eq sum localized Length mul of support Dim le one
+# The generic-multiplicity Euler sum in support dimension at most one
 
-Over a local ring, a module of support dimension at most one satisfies
-the minimal-support hypothesis for every nonzero prime-factor contribution,
-provided the acting element lies in the maximal ideal.
+The generic-multiplicity Euler sum in support dimension at most one.
+
+For finite M, the local and support-dimension hypotheses give χ_r(M) as the distinct-factor
+sum of localized multiplicity times factor value.

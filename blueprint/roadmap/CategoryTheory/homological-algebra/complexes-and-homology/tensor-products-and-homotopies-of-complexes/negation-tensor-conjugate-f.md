@@ -1,4 +1,7 @@
-# Negation tensor conjugate f
+# Diagonal components unchanged by differential-sign conjugation
 
-Transport of any native map to a tensor square leaves every degree component unchanged.
-The source-degree sign and the earned total tensor-degree sign multiply to one.
+In a preadditive monoidal category with zero object and additive
+tensoring, let K⊗K and (-dK)⊗(-dK) exist.
+For a chain map f:K→K⊗K, transport by s_K⁻¹ on the source and
+s_K⊗s_K on the target has degree n component f_n.
+The two degree-n signs cancel.

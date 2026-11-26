@@ -1,4 +1,5 @@
-# Eq iff prime eq
+# Prime Euler factors are determined by their primes
 
-Two bundled prime factors are equal exactly when their primes are equal;
-the finite-length field is proof-irrelevant.
+Prime Euler factors are determined by their primes.
+
+Two bundled factors for the same r are equal exactly when their prime components are equal.

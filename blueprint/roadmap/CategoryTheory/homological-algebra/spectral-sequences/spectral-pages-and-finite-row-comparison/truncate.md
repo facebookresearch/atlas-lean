@@ -1,3 +1,5 @@
-# Truncate
+# The spectral sequence beginning at a retained later page
 
-Restrict the actual native sequence to an original later starting page.
+The spectral sequence beginning at a retained later page.
+
+For r₀≤r₁, keep the original page complexes and successor comparisons for r≥r₁.

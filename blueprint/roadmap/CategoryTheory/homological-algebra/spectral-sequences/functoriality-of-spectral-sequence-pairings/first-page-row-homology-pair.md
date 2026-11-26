@@ -1,4 +1,5 @@
-# First Page Row Homology Pair
+# The row homology product obtained by cokernel descent
 
-The product descended through the original row cycle and boundary
-cokernels, with no tensor-homology isomorphism assumed.
+The row homology product obtained by cokernel descent.
+
+Descend the row cycle product through its two boundary cokernels.

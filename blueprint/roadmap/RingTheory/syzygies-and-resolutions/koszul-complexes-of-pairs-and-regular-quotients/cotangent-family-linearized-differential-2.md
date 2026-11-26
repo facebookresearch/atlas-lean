@@ -1,4 +1,6 @@
-# Cotangent Family Linearized Differential eq linearization At Ideal
+# Agreement with linearization using the differential image containment
 
-The opaque cotangent-family map is the first-order linearization of the
-Koszul differential for any supplied proof of the range condition.
+Agreement with linearization using the differential image containment.
+
+The cotangent-family map equals the ideal linearization of the differential using any stated
+containment of its range in mK_n.

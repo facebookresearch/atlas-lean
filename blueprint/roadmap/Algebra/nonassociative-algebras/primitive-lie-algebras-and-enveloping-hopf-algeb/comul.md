@@ -1,3 +1,5 @@
-# Comul ι
+# The coproduct of a Lie generator
 
-Every Lie generator has coproduct `1 ⊗ ι x + ι x ⊗ 1`.
+The coproduct of a Lie generator.
+
+The coproduct of ιx is 1⊗ιx + ιx⊗1 in that tensor order.

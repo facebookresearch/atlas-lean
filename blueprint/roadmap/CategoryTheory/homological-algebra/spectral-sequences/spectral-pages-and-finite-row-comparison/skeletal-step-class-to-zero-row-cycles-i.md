@@ -1,3 +1,5 @@
-# Skeletal Step Class To Zero Row Cycles i cut
+# The zero-row cycle lift in the short-cut coordinate
 
-The row-zero class map followed by the interval coordinate equals restriction to the middle interval.
+The zero-row cycle lift in the short-cut coordinate.
+
+Cycle inclusion followed by the cut isomorphism equals the bottom-to-cut interval map.

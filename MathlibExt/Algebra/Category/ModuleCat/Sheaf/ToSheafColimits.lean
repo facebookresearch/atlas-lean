@@ -38,11 +38,16 @@ public import Mathlib.Algebra.Category.ModuleCat.Sheaf.Abelian
 public import Mathlib.Topology.Sheaves.Abelian
 
 /-!
-# The forgetful functor to abelian sheaves preserves colimits
+# Colimits under the forgetful functor to abelian sheaves
 
-The forgetful functor `SheafOfModules.toSheaf` from sheaves of modules to
-abelian sheaves preserves colimits of any shape; over a topological space
-this gives preservation of cokernels, hence of all finite colimits.
+Let `(C,J)` be a site and `R : Sheaf J RingCat.{u}`. For module-carrier universe `v`, assume
+weak sheafification of `AddCommGrpCat.{v}`-valued presheaves and the characterization of its
+equivalences as locally bijective maps. For a diagram shape `K`, assume colimits of that shape
+exist in module presheaves over `R.obj` and in `AddCommGrpCat.{v}`. Then forgetting the module
+structure to an abelian sheaf preserves `K`-colimits.
+
+Over the open-set site of any topological space, this functor preserves cokernels and all
+finite colimits.
 -/
 
 @[expose] public section
@@ -61,18 +66,11 @@ variable {C : Type u₁} [Category.{v₁} C] {J : GrothendieckTopology C}
 
 namespace SheafOfModules
 
-/-- The forgetful functor from sheaves of modules to abelian sheaves preserves
-colimits of shape `K`.
-
-Given `F : K ⥤ SheafOfModules R`, write `F₀ := F ⋙ forget` for the underlying
-presheaf-module diagram and `c₀` for its colimit cocone. Module sheafification
-`S` (a left adjoint) sends `c₀` to a colimit cocone, which the counit
-isomorphism `e : F ≅ F₀ ⋙ S` transports to a colimit cocone on `F`. On the
-abelian side, `T := toPresheaf` and `P := presheafToSheaf` (both
-colimit-preserving) send `c₀` to a colimit cocone, transported along the
-diagram iso `n` (built from `e` and `sheafificationCompToSheaf`) to a colimit
-cocone on `F ⋙ toSheaf`. The two cocones on `F ⋙ toSheaf` agree by naturality
-of `sheafificationCompToSheaf`, so the image cocone is a colimit. -/
+/-- Let `C : Type u₁` have morphism universe `v₁`, `J` a Grothendieck topology, `R : Sheaf J
+RingCat.{u}`, and `K : Type w` a category with morphism universe `w'`. Assume weak additive
+sheafification at carrier universe `v`, `J.WEqualsLocallyBijective AddCommGrpCat.{v}`, and
+colimits of shape `K` in both `PresheafOfModules.{v} R.obj` and `AddCommGrpCat.{v}`. Then
+`SheafOfModules.toSheaf.{v} R` preserves colimits of shape `K`. -/
 theorem preservesColimitsOfShape_toSheaf :
     PreservesColimitsOfShape K (SheafOfModules.toSheaf.{v} R) where
   preservesColimit {F} := by
@@ -153,9 +151,10 @@ section Topological
 variable {X : TopCat.{u}} {R : Sheaf (Opens.grothendieckTopology X) RingCat.{u}}
   {M N : SheafOfModules.{u} R}
 
-/-- Over a topological space, `toSheaf` preserves cokernels. The required
-colimit hypotheses discharge against the abelian structures on presheaves and
-sheaves of modules. -/
+/-- Let `X : TopCat.{u}`, `R` be a sheaf of rings on its open-set site, and `f : M → N` a morphism
+of `R`-module sheaves with carrier universe `u`. The functor `SheafOfModules.toSheaf.{u} R`
+preserves the colimit of `parallelPair f 0`; equivalently, it sends the cokernel of `f` to the
+cokernel of the underlying abelian-sheaf morphism. -/
 instance preservesColimit_toSheaf_parallelPair (f : M ⟶ N) :
     PreservesColimit (parallelPair f 0) (SheafOfModules.toSheaf.{u} R) := by
   have : HasWeakSheafify (Opens.grothendieckTopology X) AddCommGrpCat.{u} :=
@@ -168,7 +167,9 @@ instance preservesColimit_toSheaf_parallelPair (f : M ⟶ N) :
     inferInstance
   exact preservesColimitsOfShape_toSheaf.preservesColimit
 
-/-- Over a topological space, `toSheaf` preserves all finite colimits. -/
+/-- For a topological space `X : TopCat.{u}` and `R : Sheaf (Opens.grothendieckTopology X)
+RingCat.{u}`, the functor `SheafOfModules.toSheaf.{u} R` from `R`-module sheaves to abelian
+sheaves preserves all finite colimits. -/
 instance preservesFiniteColimits_toSheaf :
     PreservesFiniteColimits (SheafOfModules.toSheaf.{u} R) := by
   have : HasSheafify (Opens.grothendieckTopology X) AddCommGrpCat.{u} :=

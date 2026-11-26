@@ -1,4 +1,5 @@
-# Pair Euler Characteristic eq
+# The three-term pair Euler formula
 
-Explicit three-term formula for the two-generator Koszul Euler
-characteristic.
+The three-term pair Euler formula.
+
+The value is ℓ(H₀)−ℓ(H₁)+ℓ(H₂), with finite lengths interpreted as integers.

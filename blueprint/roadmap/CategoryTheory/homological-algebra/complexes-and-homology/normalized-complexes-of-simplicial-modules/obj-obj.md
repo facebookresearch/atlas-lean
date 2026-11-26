@@ -1,3 +1,5 @@
-# Obj obj
+# The normalized family at a coefficient module
 
-Every family object is the same original coefficient tensor before native normalization.
+The normalized family at a coefficient module.
+
+The value at X and M is the normalized Moore complex of X followed by the functor M ⊗_R −.

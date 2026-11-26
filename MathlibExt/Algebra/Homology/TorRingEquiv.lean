@@ -22,13 +22,15 @@ public import Mathlib.CategoryTheory.Preadditive.Projective.Resolution
 public import Mathlib.RingTheory.Length
 
 /-!
-# Native Tor and module-length transport along actual ring equivalences
+# Tor and module lengths under a ring equivalence
 
-The lightweight `RingEquivTensor` module supplies the original balanced
-tensor transport and strong monoidal scalar restriction. Genuine coefficient
-isomorphisms then transport every native Tor degree and its literal
-extended-natural module length.
-No tensor, Tor, length, or resolution-comparison certificate is supplied.
+A commutative ring equivalence R≃S gives an exact monoidal restriction functor and transports
+every Tor degree. Actual coefficient isomorphisms identify the ordered Tor coefficients
+through that restriction.
+
+The corresponding module lengths agree, including infinite lengths. The restriction-length
+identity also holds for general ring equivalences, with the coefficient carrier universe
+independent.
 -/
 
 @[expose] public section
@@ -45,7 +47,9 @@ universe u v
 
 variable {R S : Type u} [CommRing R] [CommRing S]
 
-/-- Original native Tor is transported in every degree using the actual scalar equivalence. -/
+/-- The Tor isomorphism of restriction along a ring equivalence.
+
+Restriction of Tor_j^S(M,N) is isomorphic to Tor_j^R(res M,res N). -/
 def restrictScalarsTorIsoOfRingEquiv
     (e : R ≃+* S) (M N : ModuleCat.{u} S) (j : ℕ) :
     (restrictScalars e.toRingHom).obj (((Tor (ModuleCat.{u} S) j).obj M).obj N) ≅
@@ -69,7 +73,10 @@ def restrictScalarsTorIsoOfRingEquiv
     (HomologicalComplex.homologyFunctor (ModuleCat.{u} R) (ComplexShape.down ℕ) j).mapIso c.symm ≪≫
     (Q.isoLeftDerivedObj T' j).symm
 
-/-- Actual native Tor transports given genuine coefficient maps and a genuine scalar ring equivalence. -/
+/-- The Tor comparison of transported coefficient isomorphisms.
+
+For MR≅res NR and ML≅res NL, identify Tor_R(MR,ML) with res Tor_S(NR,NL), retaining
+coefficient order. -/
 def nativeTorIsoFromCoefficientIsos
     {R₁ S₁ : Type u} [CommRing R₁] [CommRing S₁]
     (eR : R₁ ≃+* S₁) (MR ML : ModuleCat.{u} R₁) (NR NL : ModuleCat.{u} S₁)
@@ -87,14 +94,19 @@ def nativeTorIsoFromCoefficientIsos
     ((Tor (ModuleCat.{u} R₁) j).obj (F.obj NR)).mapIso eLeft
   exact first ≪≫ second ≪≫ (ModuleCat.restrictScalarsTorIsoOfRingEquiv eR NR NL j).symm
 
-/-- Compatibility specialization of the canonical surjective scalar-length API. -/
+/-- Module length agrees under equivalence restriction of scalars.
+
+For a ring equivalence, the restricted module has the same extended-natural length as the
+original module. -/
 theorem restrictScalars_length_eq_of_ringEquiv
     {R₁ S₁ : Type u} [Ring R₁] [Ring S₁]
     (eR : R₁ ≃+* S₁) (N : ModuleCat.{v} S₁) :
     Module.length R₁ ((ModuleCat.restrictScalars eR.toRingHom).obj N) = Module.length S₁ N :=
   restrictScalars_length_eq eR.toRingHom eR.surjective N
 
-/-- Genuine coefficient isomorphisms preserve every literal extended-natural native Tor length. -/
+/-- Tor lengths agree through ring and coefficient equivalences.
+
+The transported ordered Tor coefficients give equal module lengths over the two rings. -/
 theorem nativeTorLength_eq_fromCoefficientIsos
     {R₁ S₁ : Type u} [CommRing R₁] [CommRing S₁]
     (eR : R₁ ≃+* S₁) (MR ML : ModuleCat.{u} R₁) (NR NL : ModuleCat.{u} S₁)
@@ -105,7 +117,9 @@ theorem nativeTorLength_eq_fromCoefficientIsos
   length_eq_of_restrictScalarsIso eR _ _
     (nativeTorIsoFromCoefficientIsos eR MR ML NR NL eRight eLeft j)
 
-/-- The length of the actual native Tor object of the two specified original modules. -/
+/-- The extended-natural length of an ordered Tor module.
+
+Take the module length of Tor_j(MR,ML), without a finiteness assumption. -/
 def nativeTorModuleLength (R₁ : Type u) [CommRing R₁]
     (MR ML : ModuleCat.{u} R₁) (j : ℕ) : ℕ∞ :=
   Module.length R₁ (((Tor (ModuleCat.{u} R₁) j).obj MR).obj ML)

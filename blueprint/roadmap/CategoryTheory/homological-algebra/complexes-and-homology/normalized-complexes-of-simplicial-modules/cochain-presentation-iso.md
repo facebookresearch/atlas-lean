@@ -1,3 +1,6 @@
-# Cochain Presentation Iso
+# The cochain comparison of coaugmented presentation families
 
-The actual coaugmented-presentation isomorphism induces the native cochain family comparison.
+The cochain comparison of coaugmented presentation families.
+
+For a natural isomorphism e : P ≅ Q, postcomposition with cochainCoaugmentationFunctor gives
+an isomorphism of their cochain presentations.

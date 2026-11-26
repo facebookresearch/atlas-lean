@@ -1,3 +1,6 @@
-# Signed Regrading Map
+# The signed regrading of a chain morphism
 
-An actual chain map has its original reindexed components in the signed complex.
+The signed regrading of a chain morphism.
+
+For f : C → C′, the induced cochain map has component f_{d−k} in degree k and commutes with
+the signed differentials.

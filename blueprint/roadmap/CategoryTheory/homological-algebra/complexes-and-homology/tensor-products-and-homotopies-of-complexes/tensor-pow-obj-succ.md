@@ -1,3 +1,6 @@
-# Tensor Pow Obj succ
+# Successor cochain tensor power
 
-`tensorPowObj` at `n+1` is `tensorObj (pow n) X`; left-associated step computation (`rfl`).
+Successor cochain tensor power.
+
+For every n : ℕ, Pₙ₊₁(X) is the binary cochain tensor product Pₙ(X) ⊗ X, with the graded
+tensor coproduct structures assumed in the construction.

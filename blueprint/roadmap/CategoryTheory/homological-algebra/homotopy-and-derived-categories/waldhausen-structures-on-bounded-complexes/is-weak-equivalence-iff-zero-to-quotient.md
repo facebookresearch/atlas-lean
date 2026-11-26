@@ -1,4 +1,7 @@
-# Is Weak Equivalence iff zero to quotient
+# Weak cofibration criterion through a zero-to-cofiber map
 
-A weak cofibration is exactly one whose original chosen quotient
-receives a weak map from the original zero object.
+Let C have a zero object and Waldhausen cofibration, weak-equivalence
+and cofibration-pushout data.
+Assume gluing and extension. For a cofiber sequence A —i→ B —q→ Q
+and any z:0 → Q, i is a weak equivalence if and only if z is a
+weak equivalence.

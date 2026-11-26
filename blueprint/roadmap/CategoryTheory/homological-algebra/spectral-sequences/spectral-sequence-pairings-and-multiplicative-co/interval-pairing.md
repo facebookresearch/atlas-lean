@@ -1,7 +1,7 @@
-# Interval Pairing
+# Interval products with spectral boundary rules
 
-A boundary-compatible pairing of the original finite `H` intervals.
+Interval products with spectral boundary rules.
 
-The three target inequalities express the usual product interval
-`(max (a+d) (b+c), b+d)` followed by an actual interval map. The only
-derivation rule here is a rule for original triple boundaries.
+For spectral objects X,Y,Z in a monoidal abelian category, record natural interval products
+with the filtration endpoint bounds and the first, signed second and aligned boundary
+identities.

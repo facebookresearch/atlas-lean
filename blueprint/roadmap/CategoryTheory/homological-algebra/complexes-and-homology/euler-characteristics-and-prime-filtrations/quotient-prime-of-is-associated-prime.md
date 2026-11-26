@@ -1,4 +1,6 @@
-# Quotient prime of is Associated Prime
+# Finite multiplication lengths on an associated prime quotient
 
-A prime factor arising from an associated prime has finite one-element
-Euler data whenever the ambient multiplication cokernel has finite length.
+Finite multiplication lengths on an associated prime quotient.
+
+Over a noetherian ring and for finitely generated M, finite length of M/rM gives finite kernel
+and cokernel lengths for multiplication by r on R/p for every associated prime p.

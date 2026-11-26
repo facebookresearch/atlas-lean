@@ -1,3 +1,5 @@
-# Antipode antipode
+# The double antipode formula
 
-Applying the native antipode twice recovers every enveloping-algebra element.
+The double antipode formula.
+
+For every a, S(S(a))=a.

@@ -1,4 +1,5 @@
-# Pair Euler Characteristic eq quotient
+# The pair Euler formula with the quotient in degree zero
 
-Three-term formula with degree-zero homology replaced by the quotient by
-the two coefficients.  The higher Koszul homology terms are retained.
+The pair Euler formula with the quotient in degree zero.
+
+The value is ℓ(R/(f,g))−ℓ(H₁)+ℓ(H₂).

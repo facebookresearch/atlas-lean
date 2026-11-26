@@ -1,3 +1,6 @@
-# Mapping Cylinder Zero Source Iso
+# Bounded cylinder comparison for a zero source
 
-Zero-source cylinder isomorphism in the bounded category.
+Let C be preadditive with binary biproducts and f:F → G a bounded
+integer-indexed cochain map. If F is a zero object in the bounded category,
+the canonical bounded isomorphism Cyl(f) ≅ G, with projection as forward
+map and target endpoint inclusion as inverse.

@@ -1,3 +1,6 @@
-# Differential
+# Restricted differential of the homogeneous subcomplex
 
-Restriction of the original differential to the actual degreewise submodules.
+Let R be commutative and S a homogeneous subcomplex of an
+integer-indexed R-module cochain complex C. The differential Sₙ → Sₙ₊₁
+is the restriction of d_Cⁿ, taking x to d_Cⁿ(x); differential stability
+ensures that its value belongs to Sₙ₊₁.

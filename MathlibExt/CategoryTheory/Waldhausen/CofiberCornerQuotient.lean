@@ -16,16 +16,16 @@ public import MathlibExt.CategoryTheory.Waldhausen.CofibrationArrow
 public import Mathlib.CategoryTheory.Limits.Shapes.Pullback.IsPullback.Basic
 
 /-!
-# Quotient pushouts from actual cofiber corners
+# Quotients of cofiber pushout corners
 
-For a map between two cofiber sequences, the pushout corner of the first
-arrows has the original source quotient as its quotient by the new source.
-The induced map between the two quotients is a cobase change of the corner
-map. A cofibration corner therefore gives a cofibration quotient map.
+Let C have a zero object and Waldhausen cofibration, weak-equivalence
+and cofibration-pushout axioms. For two cofiber sequences A → B → Q and
+A′ → B′ → Q′, form the pushout corner P=B⊔_A A′ and its map d:P → B′.
+The source quotient Q is also the cofiber of A′ → P.
 
-The quotient square is derived from the two actual cofiber rows and their
-corner presentation. The argument uses the Waldhausen pushout axioms and
-zero-object uniqueness, with no additive or exact-category structure.
+The square P → B′, P → Q, B′ → Q′, Q → Q′ is a pushout.
+Hence a cofibration corner map d gives a cofibration between the quotient
+objects. This applies to relative cofibrations of cofibration arrows.
 -/
 
 public section
@@ -38,9 +38,14 @@ namespace CategoryTheory.Waldhausen
 
 variable (C : Type u) [Category.{v} C] [HasZeroObject C] [WaldhausenCategoryWithoutGluing C]
 
-/-- The original source quotient is the quotient of the actual corner by
-the new source, and its map to the target quotient is a cobase change of
-the corner map. -/
+/-- Let C be a category with a zero object and Waldhausen cofibration,
+weak-equivalence and cofibration-pushout axioms.
+Take cofiber sequences A —i→ B —q→ Q and A′ —i′→ B′ —q′→ Q′.
+Let P=B⊔_A A′ have pushout legs inB,inA, and let d:P → B′ satisfy
+d∘inB=b and d∘inA=i′ for maps a:A → A′ and b:B → B′.
+Let c:Q → Q′ satisfy c∘q=q′∘b.
+
+There is e:P → Q with e∘inB=q, such that A′ —inA→ P —e→ Q is a cofiber sequence and the square with maps d,e,q′,c is a pushout. -/
 theorem cofiberCorner_quotient_pushout
     {A B Q A' B' Q' P : C}
     {i : A ⟶ B} {q : B ⟶ Q} {i' : A' ⟶ B'} {q' : B' ⟶ Q'}
@@ -92,8 +97,14 @@ theorem cofiberCorner_quotient_pushout
   have hQuotient : IsPushout d e q' c := hOuter'.of_left hcomm hE
   exact ⟨e, hinBe, ⟨hinA, zT, uS, hE.flip⟩, hQuotient⟩
 
-/-- A cofibration corner gives a cofibration quotient map by the derived
-quotient pushout square. -/
+/-- Let C be a category with a zero object and Waldhausen cofibration,
+weak-equivalence and cofibration-pushout axioms.
+Take cofiber sequences A —i→ B —q→ Q and A′ —i′→ B′ —q′→ Q′.
+Let P=B⊔_A A′ have pushout legs inB,inA, and let d:P → B′ satisfy
+d∘inB=b and d∘inA=i′ for maps a:A → A′ and b:B → B′.
+Let c:Q → Q′ satisfy c∘q=q′∘b.
+
+If the corner map d:P → B′ is a cofibration, then the induced quotient map c:Q → Q′ is a cofibration. -/
 theorem cofiberCorner_quotient_isCofibration
     {A B Q A' B' Q' P : C}
     {i : A ⟶ B} {q : B ⟶ Q} {i' : A' ⟶ B'} {q' : B' ⟶ Q'}
@@ -108,8 +119,12 @@ theorem cofiberCorner_quotient_isCofibration
     cofiberCorner_quotient_pushout C hSeq hSeq' a b c hP hinBd hinAd hqc
   exact MorphismProperty.IsStableUnderCobaseChange.of_isPushout hQuotient.flip hd
 
-/-- The quotient map of a relative cofibration of actual cofibration
-arrows is a cofibration whenever the quotient rows and map commute. -/
+/-- Let C have a zero object and Waldhausen cofibration, weak-equivalence
+and cofibration-pushout axioms. For a relative cofibration square
+(a:X₀ → Y₀,b:X₁ → Y₁) between cofibration arrows
+i:X₀ → X₁ and j:Y₀ → Y₁, choose cofiber sequences
+X₀ —i→ X₁ —q→ Q and Y₀ —j→ Y₁ —q′→ Q′.
+If c:Q → Q′ satisfies c∘q=q′∘b, then c is a cofibration. -/
 theorem IsRelativeCofibration.quotient
     {X Y : CofibrationArrow C} {α : X ⟶ Y}
     {Q Q' : C} {q : X.right ⟶ Q} {q' : Y.right ⟶ Q'}

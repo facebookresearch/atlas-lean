@@ -1,3 +1,6 @@
-# Eventual Ranges Map
+# The natural transformation restricted to eventual images
 
-A map of diagrams restricts to the corresponding eventual-range modules.
+The natural transformation restricted to eventual images.
+
+Restrict the components of a diagram map α : A → B to obtain eventualRanges A → eventualRanges
+B.

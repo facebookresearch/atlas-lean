@@ -12,13 +12,17 @@ public import Mathlib.CategoryTheory.Monoidal.Comon_
 public import Mathlib.CategoryTheory.Comma.Over.Basic
 
 /-!
-# Pointed comonoid transport by an oplax monoidal functor
+# Oplax monoidal transport of coaugmented comonoids
 
-The native oplax monoidal functor already maps comonoids. Its unit-image
-counit is the canonical morphism to the trivial comonoid. When the original
-oplax unit comparison is invertible, its native comonoid isomorphism supplies
-the point map. Native `Under.post` and `Under.map` assemble the resulting
-functor. Tensor comparisons need not be invertible.
+Let F : C ⥤ D be an oplax monoidal functor between monoidal categories with independent object
+and morphism universes. Its comonoid functor sends the trivial comonoid on 𝟙_C to a comonoid
+on F(𝟙_C). The canonical map from this object to the trivial comonoid on 𝟙_D has underlying
+map η_F : F(𝟙_C) → 𝟙_D, the oplax unit comparison.
+
+When η_F is invertible, it defines a comonoid isomorphism and hence a functor from comonoids
+coaugmented by 𝟙_C to those coaugmented by 𝟙_D. A point e : 𝟙_C → A is sent to η_F⁻¹ ≫ F(e),
+and a pointed morphism is sent to its F-image. Only the unit comparison is required to be
+invertible; the oplax tensor comparisons retain their given direction.
 -/
 
 @[expose] public section
@@ -35,10 +39,17 @@ namespace CategoryTheory.Functor
 variable {C : Type u₁} {D : Type u₂} [Category.{v₁} C] [Category.{v₂} D]
   [MonoidalCategory C] [MonoidalCategory D] (F : C ⥤ D) [F.OplaxMonoidal]
 
-/-- The existing canonical counit from the native image of the trivial comonoid. -/
+/-- Comonoid counit of the image of the monoidal unit.
+
+For an oplax monoidal functor F : C ⥤ D, the comonoid F.mapComon(Comon.trivial C) has a
+canonical comonoid morphism to Comon.trivial D. Its underlying arrow is the counit of the
+image comonoid. -/
 def unitImageCounit : F.mapComon.obj (Comon.trivial C) ⟶ Comon.trivial D := default
 
-/-- The underlying map is exactly the original oplax unit comparison. -/
+/-- Underlying map of the image-unit comonoid counit.
+
+For an oplax monoidal functor F, the underlying arrow F(𝟙_C) → 𝟙_D of unitImageCounit F is
+precisely the oplax unit comparison η_F. -/
 theorem unitImageCounit_hom :
     (unitImageCounit F).hom = OplaxMonoidal.η F := by
   change F.map (𝟙 (𝟙_ C)) ≫ OplaxMonoidal.η F = OplaxMonoidal.η F
@@ -46,7 +57,11 @@ theorem unitImageCounit_hom :
 
 variable [IsIso (OplaxMonoidal.η F)]
 
-/-- The original invertible unit comparison is a native comonoid isomorphism by its counit law. -/
+/-- Comonoid isomorphism from an invertible oplax unit comparison.
+
+If F is oplax monoidal and η_F : F(𝟙_C) → 𝟙_D is invertible, the image of the trivial comonoid
+is isomorphic to the trivial comonoid of D. The forward comonoid map is the canonical
+image-unit counit. -/
 def unitImageComonIso : F.mapComon.obj (Comon.trivial C) ≅ Comon.trivial D := by
   let f := unitImageCounit F
   have hη : IsIso (OplaxMonoidal.η F) := inferInstance
@@ -55,11 +70,17 @@ def unitImageComonIso : F.mapComon.obj (Comon.trivial C) ≅ Comon.trivial D := 
   let e : (F.mapComon.obj (Comon.trivial C)).X ≅ (Comon.trivial D).X := asIso f.hom
   exact Comon.mkIso e f.isComonHom_hom.hom_counit f.isComonHom_hom.hom_comul
 
-/-- The native comonoid comparison has the original oplax unit map as its forward map. -/
+/-- Forward arrow of the image-unit comonoid isomorphism.
+
+For an oplax monoidal F with invertible unit comparison η_F, the underlying hom of
+unitImageComonIso F is η_F : F(𝟙_C) → 𝟙_D. -/
 theorem unitImageComonIso_hom_hom :
     (unitImageComonIso F).hom.hom = OplaxMonoidal.η F := unitImageCounit_hom F
 
-/-- The actual inverse point map is the inverse of the original oplax unit comparison. -/
+/-- Inverse arrow of the image-unit comonoid isomorphism.
+
+For an oplax monoidal F with invertible unit comparison η_F, the underlying inverse of
+unitImageComonIso F is η_F⁻¹ : 𝟙_D → F(𝟙_C). -/
 theorem unitImageComonIso_inv_hom :
     (unitImageComonIso F).inv.hom = CategoryTheory.inv (OplaxMonoidal.η F) := by
   let g : 𝟙_ D ⟶ F.obj (𝟙_ C) := (unitImageComonIso F).inv.hom
@@ -72,11 +93,18 @@ theorem unitImageComonIso_inv_hom :
   exact (cancel_mono (OplaxMonoidal.η F)).1
     (h.trans (CategoryTheory.IsIso.inv_hom_id (OplaxMonoidal.η F)).symm)
 
-/-- Native Under transport maps actual coaugmented comonoids with independent ambient universes. -/
+/-- Functor transporting coaugmented comonoids by an oplax monoidal functor.
+
+Let F : C ⥤ D be oplax monoidal with invertible unit comparison. Apply its comonoid functor to
+an object of Under(Comon.trivial C), then precompose its point with the inverse image-unit
+comonoid isomorphism. This gives a functor to Under(Comon.trivial D). -/
 def mapPointedComon : Under (Comon.trivial C) ⥤ Under (Comon.trivial D) :=
   Under.post F.mapComon ⋙ Under.map (unitImageComonIso F).inv
 
-/-- The transported point is the original point image preceded by the inverse unit comparison. -/
+/-- Point of an oplax-transported comonoid.
+
+For a coaugmented comonoid A with point e : 𝟙_C → A and an oplax monoidal F with invertible
+unit comparison, the transported point is η_F⁻¹ ≫ F(e) : 𝟙_D → F(A). -/
 theorem mapPointedComon_obj_point (A : Under (Comon.trivial C)) :
     (F.mapPointedComon.obj A).hom.hom = CategoryTheory.inv (OplaxMonoidal.η F) ≫
       F.map A.hom.hom := by
@@ -84,7 +112,11 @@ theorem mapPointedComon_obj_point (A : Under (Comon.trivial C)) :
   rw [unitImageComonIso_inv_hom]
   rfl
 
-/-- The whole pointed morphism is exactly the native functor image of the original morphism. -/
+/-- Underlying map of an oplax-transported pointed morphism.
+
+For a morphism f between coaugmented comonoids and an oplax monoidal F with invertible unit
+comparison, the underlying comonoid map of mapPointedComon F applied to f is F applied to f's
+underlying comonoid map. -/
 theorem mapPointedComon_map_hom {A B : Under (Comon.trivial C)} (f : A ⟶ B) :
     (F.mapPointedComon.map f).right.hom = F.map f.right.hom := rfl
 

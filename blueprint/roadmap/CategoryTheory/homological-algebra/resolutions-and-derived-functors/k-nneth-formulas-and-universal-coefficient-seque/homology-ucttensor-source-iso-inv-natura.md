@@ -1,4 +1,6 @@
-# Homology UCTTensor Source Iso inv naturality
+# Naturality of the inverse coefficient tensor-source comparison
 
-The inverse single-coefficient tensor-source coordinate is natural in
-the chain complex and coefficient module.
+Naturality of the inverse coefficient tensor-source comparison.
+
+Maps f : K → K′ and a : A → A′ commute with the inverse source comparison and the Künneth
+tensor-source map.

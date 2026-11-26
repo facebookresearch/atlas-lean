@@ -1,4 +1,5 @@
-# Pair Euler Characteristic Of Quotient eq
+# The quotient-defined pair Euler formula
 
-Explicit quotient-and-higher-homology formula for the canonical
-two-generator Euler characteristic.
+The quotient-defined pair Euler formula.
+
+The quotient-defined value is ℓ(R/(f,g))−ℓ(H₁)+ℓ(H₂).

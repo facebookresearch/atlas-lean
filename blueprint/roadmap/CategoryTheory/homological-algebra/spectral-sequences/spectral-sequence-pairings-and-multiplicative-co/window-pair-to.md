@@ -1,3 +1,5 @@
-# Window Pair To
+# The window product with a specified additive output cut
 
-Arithmetic transport of the product to an explicitly chosen sum cut.
+The window product with a specified additive output cut.
+
+For a+b=s, transport the standard product to the output cut s.

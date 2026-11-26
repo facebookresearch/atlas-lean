@@ -1,4 +1,6 @@
-# Family Tensor Coefficient Regular Quotient Projection
+# The Koszul projection to the last coefficient quotient
 
-The native projection removes an actual last scalar coefficient and
-uses the actual quotient module as the remaining coefficient.
+The Koszul projection to the last coefficient quotient.
+
+Use the snoc-cone comparison and coefficient quotient projection to map the full family
+complex to the initial-family complex with coefficient M/a_nM.

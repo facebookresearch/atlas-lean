@@ -11,6 +11,17 @@ module
 public import Mathlib.Algebra.Homology.BifunctorHomotopy
 public import Mathlib.Algebra.Homology.Monoidal
 
+/-!
+# Tensor products of homotopies
+
+In a preadditive monoidal category with tensoring additive in both variables, homotopies f≃f′
+and g≃g′ induce a homotopy f⊗g ≃ f′⊗g′. The construction first changes the first factor while
+keeping g fixed, then changes the second while keeping f′ fixed.
+
+The index additive monoid, tensor signs and source/target tensor existence assumptions are
+retained.
+-/
+
 @[expose] public section
 
 set_option autoImplicit false
@@ -32,7 +43,10 @@ variable {K₁ K₂ L₁ L₂ : HomologicalComplex C c}
   [HasTensor K₁ K₂] [HasTensor L₁ L₂]
 variable {f f' : K₁ ⟶ L₁} {g g' : K₂ ⟶ L₂}
 
-/-- Tensoring two homotopies gives a homotopy between the tensor product maps. -/
+/-- The homotopy between tensor product morphisms.
+
+Compose the first-variable tensor homotopy of f≃f′ with the second-variable tensor homotopy of
+g≃g′ to obtain f⊗g ≃ f′⊗g′. -/
 noncomputable def tensorHomotopy (hf : Homotopy f f') (hg : Homotopy g g') :
     Homotopy (tensorHom f g) (tensorHom f' g') :=
   (mapBifunctorMapHomotopy₁ hf g (curriedTensor C) c).trans

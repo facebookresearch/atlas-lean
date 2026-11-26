@@ -1,3 +1,6 @@
-# Degreewise Admissible Monomorphisms
+# Degreewise admissible monomorphisms
 
-Admissibility of a bounded cochain map is tested degreewise.
+In a preadditive exact category E with a zero object and binary biproducts,
+the morphism property on bounded integer-indexed cochain complexes that holds
+for i:A → B exactly when every component iⱼ:Aʲ → Bʲ is an admissible
+monomorphism in E.

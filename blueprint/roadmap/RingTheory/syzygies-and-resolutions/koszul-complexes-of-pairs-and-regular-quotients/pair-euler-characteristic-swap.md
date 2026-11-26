@@ -1,5 +1,6 @@
-# Pair Euler Characteristic swap
+# The pair Euler value under transported swap data
 
-The guarded two-generator Euler characteristic is invariant under the
-generator swap, stated using transported finite-length data so no duplicate
-finiteness proof is required.
+The pair Euler value under transported swap data.
+
+The Euler invariant equals that of the swapped complex with the transported finite-length
+data.

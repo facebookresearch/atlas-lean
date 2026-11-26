@@ -1,4 +1,7 @@
-# Transported Finite Frame Dual Evaluation Iso inv injection
+# Injection formula for the inverse transported-frame evaluation
 
-The transported-frame inverse is direct precomposition by the actual
-transported original projection.
+Injection formula for the inverse transported-frame evaluation.
+
+For the evaluation E : F(A) ≅ ⨁g of a finite presentation frame : ⨁f ≅ A, biproduct.ι g i ≫
+E.inv = e_i.inv ≫ F((frame.inv ≫ biproduct.π f i).op). Thus its inverse is defined by the
+transported projection maps under the additive contravariant functor F.

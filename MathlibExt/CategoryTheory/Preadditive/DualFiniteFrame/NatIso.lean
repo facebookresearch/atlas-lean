@@ -14,11 +14,16 @@ module
 public import MathlibExt.CategoryTheory.Preadditive.DualFiniteFrame.Naturality
 
 /-!
-# Actual natural comparisons and finite-frame evaluation
+# Natural dual comparisons and finite-frame evaluation
 
-An already earned natural dual comparison with the original unit-evaluation
-value agrees with canonical finite-frame comparison. This applies to genuine
-open restriction without assuming an arbitrary pullback comparison.
+For functors F:C → D, G:Cᵒᵖ → C and H:Dᵒᵖ → D, a natural isomorphism
+η:F∘G ≅ H∘Fᵒᵖ compatible with chosen evaluations at distinguished
+objects U and V determines its evaluation on every map U → A.
+
+In preadditive categories, when these functors are additive and a finite
+biproduct frame of copies of U is given, this normalized natural comparison
+equals the canonical finite-frame comparison. The category object and
+morphism universes and finite-index universe are independent.
 -/
 
 @[expose] public section
@@ -34,8 +39,12 @@ variable {C : Type u₁} [Category.{v₁} C] [Preadditive C]
   {D : Type u₂} [Category.{v₂} D] [Preadditive D]
 
 omit [Preadditive C] [Preadditive D] in
-/-- Naturality and the earned unit evaluation give the actual value on every
-pulled original unit-source morphism. -/
+/-- Let F:C → D, G:Cᵒᵖ → C and H:Dᵒᵖ → D be functors, η:F∘G ≅ H∘Fᵒᵖ,
+and u:F(U) ≅ V, e_G:G(U) ≅ U, e_H:H(V) ≅ V.
+Assume u∘F(e_G)=e_H∘H((u⁻¹)ᵒᵖ)∘η_U.
+For every v:U → A, evaluation after η_A satisfies
+e_H∘H((F(v)∘u⁻¹)ᵒᵖ)∘η_A
+=u∘F(e_G∘G(vᵒᵖ)). -/
 theorem naturalDualComparison_unitHom (F : C ⥤ D)
     (G : Cᵒᵖ ⥤ C) (H : Dᵒᵖ ⥤ D)
     (η : G ⋙ F ≅ F.op ⋙ H) (U : C) (V : D)
@@ -61,8 +70,14 @@ theorem naturalDualComparison_unitHom (F : C ⥤ D)
     _ = _ := by rw [F.map_comp, Category.assoc]
 
 
-/-- The actual natural comparison with the original unit value equals the
-canonical direct comparison on every earned finite frame. -/
+/-- Let C,D be preadditive categories, F:C → D additive, and
+G:Cᵒᵖ → C, H:Dᵒᵖ → D additive. Fix objects U,V and isomorphisms
+u:F(U) ≅ V, e_G:G(U) ≅ U and e_H:H(V) ≅ V.
+Let η:F∘G ≅ H∘Fᵒᵖ satisfy
+u∘F(e_G)=e_H∘H((u⁻¹)ᵒᵖ)∘η_U.
+For finite I, choose I-fold biproducts of U and V, and a bilimit bicone
+b of copies of U. Its canonical finite-frame comparison
+F(G(b.pt)) ≅ H(F(b.pt)) has forward map η_{b.pt}. -/
 theorem finiteFrameDualComparisonIso_eq_natIso (F : C ⥤ D) [F.Additive]
     (G : Cᵒᵖ ⥤ C) [G.Additive] (H : Dᵒᵖ ⥤ D) [H.Additive]
     (η : G ⋙ F ≅ F.op ⋙ H) (I : Type w) [Fintype I]

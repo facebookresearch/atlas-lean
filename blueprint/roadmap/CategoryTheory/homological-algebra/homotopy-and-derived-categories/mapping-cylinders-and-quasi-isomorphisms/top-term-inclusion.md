@@ -1,4 +1,6 @@
-# Top Term Inclusion
+# The inclusion of the top single term
 
-The top-term inclusion is defined by the identity on the literal
-original top term, using the original upper-support hypothesis.
+The inclusion of the top single term.
+
+If K is zero above b, the identity on K_b extends to a cochain map from the single complex on
+K_b in degree b to K.

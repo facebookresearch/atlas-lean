@@ -1,3 +1,5 @@
-# Dg Coalgebra Degree Generators
+# The closure generators in a fixed integer degree
 
-Actual closure generators in one original integer degree.
+The closure generators in a fixed integer degree.
+
+In degree n, take the elements x for which (n,x) lies in the homogeneous closure.

@@ -15,10 +15,15 @@ public import Mathlib.Algebra.Homology.ShortComplex.ModuleCat
 public import Mathlib.Algebra.Homology.ShortComplex.QuasiIso
 
 /-!
-# Elementwise cycle classes for module short complexes
+# Quasi-isomorphisms from cycle classes of module short complexes
 
-Cycle lifting and boundary detection prove that the canonical homology map
-is bijective. The coefficient ring and module universe remain independent.
+Let R be an arbitrary ring and φ:S → T a morphism of short complexes of
+R-modules. If every cycle y of T has a cycle x of S with
+[φ₂(x)]=[y] in T₂/Im(T.f), the induced homology map is surjective.
+If a cycle x of S whose image class vanishes also has [x]=0 in
+S₂/Im(S.f), that homology map is injective.
+Together these conditions make φ a quasi-isomorphism. The ring and
+module-carrier universes are independent.
 -/
 
 @[expose] public section
@@ -57,8 +62,12 @@ private theorem mapped_class {S T : ShortComplex (ModuleCat.{v} R)} (φ : S ⟶ 
     (congrArg (fun f : S.cycles ⟶ T.opcycles => f.hom x)
       (ShortComplex.π_homologyMap_ι φ))
 
-/-- Lifting every cycle class and detecting zero classes gives a quasi-isomorphism
-of module short complexes. -/
+/-- Let R be an arbitrary ring and φ:S → T a morphism of short complexes
+of independently sized R-modules. Assume every y∈T₂ with T.g(y)=0
+admits x∈S₂ with S.g(x)=0 and [φ₂(x)]=[y] in T₂/Im(T.f).
+Assume also that S.g(x)=0 and [φ₂(x)]=0 imply [x]=0 in S₂/Im(S.f).
+Then the canonical homology map of φ is an isomorphism, so φ is a
+quasi-isomorphism of short complexes. -/
 theorem moduleCat_quasiIso_of_cycle_classes {S T : ShortComplex (ModuleCat.{v} R)} (φ : S ⟶ T)
     (hLift : ∀ y : T.X₂, T.g.hom y = 0 →
       ∃ (x : S.X₂) (_hx : S.g.hom x = 0),

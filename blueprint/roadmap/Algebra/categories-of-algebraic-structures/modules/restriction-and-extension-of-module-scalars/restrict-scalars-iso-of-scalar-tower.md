@@ -1,4 +1,6 @@
-# Restrict Scalars Iso Of Scalar Tower
+# The restriction isomorphism of an existing scalar tower
 
-An actual scalar tower identifies the original base-ring module
-with restriction of the same carrier and its existing scalar-algebra action.
+The restriction isomorphism of an existing scalar tower.
+
+For M with compatible R- and S-module structures, the identity on its carrier gives an
+R-linear isomorphism from M to the restriction of ModuleCat.of S M along algebraMap R S.

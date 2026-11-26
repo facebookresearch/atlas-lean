@@ -1,4 +1,6 @@
-# First Page Row Homology Iso naturality
+# Naturality of the first-page row homology isomorphism
 
-The canonical actual row homology comparison is natural for each
-original first-page map.
+Naturality of the first-page row homology isomorphism.
+
+For a first-page morphism φ, its row homology map followed by the target comparison equals the
+source comparison followed by H(φ) at (p,q).

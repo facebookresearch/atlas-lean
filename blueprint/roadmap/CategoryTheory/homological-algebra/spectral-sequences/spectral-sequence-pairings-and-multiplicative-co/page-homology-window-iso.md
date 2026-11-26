@@ -1,3 +1,5 @@
-# Page Homology Window Iso
+# The homology of a page as its successor window
 
-Actual page homology identifies with the next symmetric `E` window.
+The homology of a page as its successor window.
+
+Page-r homology identifies with the window of widths (r+1,r+1).

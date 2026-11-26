@@ -1,3 +1,6 @@
-# ΠE EMap component
+# The spectral E-map preserves the cycles-to-quotient projection
 
-The genuine cycle quotient projection commutes with the original induced `EMap`.
+The spectral E-map preserves the cycles-to-quotient projection.
+
+The source projection followed by EMap equals the cycle component followed by target
+projection.

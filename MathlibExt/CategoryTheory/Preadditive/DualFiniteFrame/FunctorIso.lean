@@ -14,10 +14,16 @@ module
 public import MathlibExt.CategoryTheory.Preadditive.DualFiniteFrame.Naturality
 
 /-!
-# Canonical finite-frame dual comparison under actual functor isomorphisms
+# Finite-frame comparisons under natural isomorphisms of functors
 
-The original unit component determines compatibility with an earned natural
-isomorphism of additive functors. The comparison retains direct generator values.
+Let C,D be preadditive, F,F' : C ⥤ D additive and η : F ≅ F' a natural isomorphism. Fix
+additive contravariant endofunctors G,H and coefficient objects U,V with u : F(U) ≅ V, u' :
+F'(U) ≅ V and evaluations G(U) ≅ U, H(V) ≅ V. Assume η.hom_U ≫ u'.hom = u.hom.
+
+For every finite bilimit frame b of copies of U, the canonical comparisons satisfy
+η.hom_{G(b.pt)} ≫ χ_{F'}.hom = χ_F.hom ≫ H((η.inv_{b.pt}).op). The inverse component inside H
+has the direction required by contravariance. The category worlds and indexing universe remain
+independent.
 -/
 
 @[expose] public section
@@ -32,8 +38,13 @@ namespace CategoryTheory.DualFiniteFrame
 variable {C : Type u₁} [Category.{v₁} C] [Preadditive C]
   {D : Type u₂} [Category.{v₂} D] [Preadditive D]
 
-/-- The canonical finite-frame dual comparison respects every earned functor
-isomorphism whose original unit component is compatible. -/
+/-- Naturality of finite-frame comparisons under a functor isomorphism.
+
+Let η : F ≅ F' be a natural isomorphism of additive functors between preadditive categories
+and let G,H be additive contravariant endofunctors. For a finite coefficient frame b, suppose
+η.hom_U ≫ u'.hom = u.hom for the chosen coefficient identifications and retain the evaluations
+G(U) ≅ U, H(V) ≅ V. Then η.hom_{G(b.pt)} ≫ χ_{F'}.hom = χ_F.hom ≫ H((η.inv_{b.pt}).op), where
+χ_F and χ_{F'} are the corresponding finite-frame comparisons. -/
 theorem finiteFrameDualComparisonIso_functorIso (F F' : C ⥤ D) [F.Additive] [F'.Additive]
     (η : F ≅ F') (G : Cᵒᵖ ⥤ C) [G.Additive] (H : Dᵒᵖ ⥤ D) [H.Additive]
     (I : Type w) [Fintype I]

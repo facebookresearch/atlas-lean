@@ -14,11 +14,15 @@ module
 public import Mathlib.Algebra.Homology.Functor
 
 /-!
-# Functors into complexes as complexes of functors
+# A functor to complexes as a complex of functors
 
-This file supplies the reverse direction to
-`HomologicalComplex.complexOfFunctorsToFunctorToComplex`: a functor into
-complexes is equivalently a complex in the corresponding functor category.
+For a category T and a category V with zero morphisms, a functor F : T → HomologicalComplex V
+c defines a complex of T-functors. Its degree-i object is t ↦ F(t)_i, and its differential has
+component F(t).d i j.
+
+Natural transformations are sent to their degreewise components. This construction preserves
+zero morphisms and retains the independent category object, morphism and degree-index
+universes.
 -/
 
 @[expose] public section
@@ -36,8 +40,11 @@ variable {T : Type uT} [Category.{vT} T]
 variable {V : Type uV} [Category.{vV} V] [HasZeroMorphisms V]
 variable {ι : Type w} (c : ComplexShape ι)
 
-/-- A functor to complexes gives a complex in the functor category. This is
-the reverse direction to `complexOfFunctorsToFunctorToComplex`. -/
+/-- The functor from complex-valued diagrams to complexes of functors.
+
+Send F to the complex with objects F followed by degree evaluation and differentials given by
+its differential natural transformations. Send a diagram map to its degreewise natural
+transformations. -/
 @[simps]
 def functorToComplexToComplexOfFunctors :
     (T ⥤ HomologicalComplex V c) ⥤ HomologicalComplex (T ⥤ V) c where

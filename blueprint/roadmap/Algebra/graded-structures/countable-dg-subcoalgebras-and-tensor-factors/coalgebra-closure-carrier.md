@@ -1,3 +1,5 @@
-# Coalgebra Closure Carrier
+# The cochain complex underlying the coalgebra closure
 
-Its original integer-graded carrier.
+The cochain complex underlying the coalgebra closure.
+
+This is the complex of the homogeneous closure subcomplex.

@@ -1,3 +1,5 @@
-# Page Successor Unit
+# The unit induced on the successor page
 
-The original successor isomorphism carries the genuine homology unit to the next native page.
+The unit induced on the successor page.
+
+Transport the page unit's homology class through the spectral successor isomorphism.

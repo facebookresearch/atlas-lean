@@ -1,3 +1,6 @@
-# Page Window Iso At output
+# The specified page chart agrees with output normalization
 
-The original page iso commutes with canonical endpoint and degree transport.
+The specified page chart agrees with output normalization.
+
+Normalizing the neighboring degrees and upper cut in the page E presentation gives
+pageWindowIsoAt.

@@ -1,3 +1,5 @@
-# Later
+# Page-unit data on any later page
 
-The unit identities are preserved from an initial page to every later integer page.
+Page-unit data on any later page.
+
+For R≤r, iterate succession and equality transport to obtain the unit at r.

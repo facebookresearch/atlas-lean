@@ -18,19 +18,16 @@ public import MathlibExt.RingTheory.Ideal.AssociatedGraded.ModuleFirstOrder
 public import MathlibExt.RingTheory.LocalRing.CotangentBasisFamily
 
 /-!
-# The first-order differential of a cotangent-family Koszul complex
+# First-order Koszul differentials for cotangent-basis lifts
 
-For the chosen lifts of a cotangent-space basis of a Noetherian local ring,
-the first-order Koszul differential becomes exterior-power deletion after
-residue reduction. In particular, every such linearized differential is
-injective.
+For a noetherian local ring R with residue field κ and cotangent space V=m/m², choose the
+finite family lifting a κ-basis of V. The Koszul differential has image in m times the next
+term. Its first-order linearization maps the residue of Λ^{n+1}(R^e) to the residue of
+Λ^n(R^e) tensored over κ with V.
 
-## Main declarations
-
-* `KoszulComplex.cotangentFamilyLinearizedDifferential`
-* `KoszulComplex.cotangentFamilyLinearizedDifferential_eq_linearizationAtIdeal`
-* `KoszulComplex.cotangentFamily_linearization`
-* `KoszulComplex.cotangentFamilyLinearizedDifferential_injective`
+Under the residue exterior-power identifications, this map is exterior deletion followed by
+the cotangent-basis equivalence on the second factor. It is injective in every degree, with
+the ordered deletion signs retained.
 -/
 
 @[expose] public section
@@ -71,22 +68,35 @@ local notation:max "Kₖ[" n "]" => (⋀[k]^n Mₖ)
 
 -- Reconcile the residue-field spelling with the raw quotient spelling only
 -- inside this module. These instances must not be exported.
-/-- Residue scalars on their quotient-ring presentation. -/
+/-- The residue scalar structure on the quotient presentation.
+
+Regard R/m as a module over the residue field κ through its quotient-ring presentation. -/
 local instance e1ResidueQuotientModule : Module k (R ⧸ m) :=
   inferInstanceAs (Module (R ⧸ m) (R ⧸ m))
 
+/-- The scalar tower on the residue quotient presentation.
+
+The R- and κ-actions on R/m form the canonical scalar tower. -/
 local instance e1ResidueQuotientTower : IsScalarTower R k (R ⧸ m) :=
   inferInstanceAs (IsScalarTower R (R ⧸ m) (R ⧸ m))
 
+/-- The commuting scalar actions on the residue quotient.
+
+The R-action and residue-field action on R/m commute. -/
 local instance e1ResidueQuotientSmulComm : SMulCommClass R k (R ⧸ m) :=
   inferInstanceAs (SMulCommClass R (R ⧸ m) (R ⧸ m))
 
-/-- Residue scalars on the quotient of a Koszul term. -/
+/-- The residue-field module of a Koszul term quotient.
+
+The quotient of K_n by mK_n carries its canonical κ-module structure. -/
 local instance e1TermQuotientModule (n : ℕ) :
     Module k (K[n] ⧸ (m • (⊤ : Submodule R K[n]))) :=
   inferInstanceAs
     (Module (R ⧸ m) (K[n] ⧸ (m • (⊤ : Submodule R K[n]))))
 
+/-- The scalar tower on a reduced Koszul term.
+
+The R- and κ-actions on K_n/mK_n form the canonical scalar tower. -/
 local instance e1TermQuotientTower (n : ℕ) :
     IsScalarTower R k
       (K[n] ⧸ (m • (⊤ : Submodule R K[n]))) :=
@@ -103,8 +113,9 @@ private theorem cotangentFamilyDifferential_range (n : ℕ) :
     (familyIdeal_eq_maximalIdeal R (cotangentFamily R)
       (cotangentFamily_span R)).le n
 
-/-- The tensor-valued first-order differential of the Koszul complex of the
-chosen cotangent-basis family. -/
+/-- The tensor-valued first-order cotangent-family differential.
+
+Linearize d : K_{n+1} → K_n at m to obtain K_{n+1}/mK_{n+1} → (K_n/mK_n) ⊗_κ V. -/
 @[no_expose]
 noncomputable def cotangentFamilyLinearizedDifferential (n : ℕ) :
     (K[n + 1] ⧸ (m • (⊤ : Submodule R K[n + 1]))) →ₗ[k]
@@ -113,8 +124,10 @@ noncomputable def cotangentFamilyLinearizedDifferential (n : ℕ) :
     (familyFunctional R (cotangentFamily R)) n).linearizationAtIdeal
       m (cotangentFamilyDifferential_range R n)
 
-/-- The opaque cotangent-family map is the first-order linearization of the
-Koszul differential for any supplied proof of the range condition. -/
+/-- Agreement with linearization using the differential image containment.
+
+The cotangent-family map equals the ideal linearization of the differential using any stated
+containment of its range in mK_n. -/
 theorem cotangentFamilyLinearizedDifferential_eq_linearizationAtIdeal
     (n : ℕ)
     (h : LinearMap.range
@@ -292,9 +305,10 @@ private theorem cotangentFamilyLinearizedDifferential_mk_ιMulti
         congr 1
       exact fintype_sum_congr _ _ hterm
 
-/-- After reducing every Koszul term modulo the maximal ideal, the
-first-order differential is exterior-power deletion followed by the chosen
-cotangent-basis equivalence on the removed right tensor factor. -/
+/-- The exterior-deletion coordinate formula for the linearized differential.
+
+After the residue exterior identifications, the first-order map is deletion Λ^{n+1}(κ^e) →
+Λ^n(κ^e) ⊗ κ^e followed by the cotangent-basis equivalence on its second factor. -/
 theorem cotangentFamily_linearization (n : ℕ) :
     (TensorProduct.map
       (familyResidueComponentEquiv R n).toLinearMap
@@ -452,8 +466,9 @@ theorem cotangentFamily_linearization (n : ℕ) :
             exact hA.trans (hCoefficient.trans (hDeletion.trans hSource))
   exact LinearMap.congr_fun hLD z
 
-/-- Every first-order differential of the chosen cotangent-family Koszul
-complex is injective. -/
+/-- Injectivity of the first-order cotangent-family differential.
+
+The linearized Koszul differential is injective for every n ≥ 0. -/
 theorem cotangentFamilyLinearizedDifferential_injective (n : ℕ) :
     Function.Injective (cotangentFamilyLinearizedDifferential R n) := by
   let E := familyResidueComponentEquiv R (J := Fin e)

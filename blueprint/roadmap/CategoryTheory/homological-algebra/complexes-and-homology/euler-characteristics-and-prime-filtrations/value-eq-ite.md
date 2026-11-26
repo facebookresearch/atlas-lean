@@ -1,4 +1,5 @@
-# Value eq ite
+# The prime factor contribution by membership of the element
 
-A prime factor contributes zero when it contains the element, and its
-principal quotient length otherwise.
+The prime factor contribution by membership of the element.
+
+The contribution is zero if r ∈ p, and otherwise equals the length of (R/p)/r(R/p).

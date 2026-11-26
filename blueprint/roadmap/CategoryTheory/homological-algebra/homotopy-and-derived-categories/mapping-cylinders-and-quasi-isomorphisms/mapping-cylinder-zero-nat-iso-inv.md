@@ -1,3 +1,5 @@
-# Mapping Cylinder Zero Nat Iso inv
+# Target inclusion in the zero-source natural normalization
 
-The inverse natural transformation is the whiskered target inclusion.
+In a preadditive category C with a zero object and binary biproducts,
+the inverse natural transformation of Cyl(0 → K) ≅ K is the target
+endpoint inclusion, restricted along the functor sending K to 0 → K.

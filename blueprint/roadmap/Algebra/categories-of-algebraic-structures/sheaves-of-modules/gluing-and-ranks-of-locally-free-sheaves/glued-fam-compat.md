@@ -1,6 +1,6 @@
-# Glued Fam compat
+# Compatibility of the local images on trace opens
 
-The candidate family is compatible, by local naturality (push the
-outer restriction inside the local map on each side), restriction merging
-(`map_comp_apply` + `Subsingleton.elim` on opens maps), and local
-agreement.
+Let `F,G` be module sheaves on `(X,R)` and `D : CoverHomData F G U`. For every open `V` and
+section `s∈F(V)`, the family `i ↦ gluedFam D V s i` is compatible on the opens `V ∩ U_i`: its
+two restrictions to any pairwise intersection agree. Compatibility follows from restriction
+naturality and agreement of the local maps on common subopens.

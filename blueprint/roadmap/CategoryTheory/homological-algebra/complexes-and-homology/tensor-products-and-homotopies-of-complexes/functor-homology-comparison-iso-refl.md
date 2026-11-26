@@ -1,3 +1,6 @@
-# Functor Homology Comparison Iso refl
+# The homology comparison for the identity mapped presentation
 
-An unchanged mapped short complex retains its original homology comparison.
+The homology comparison for the identity mapped presentation.
+
+For e equal to the identity of F(S), the comparison is the inverse native mapped-homology
+isomorphism.

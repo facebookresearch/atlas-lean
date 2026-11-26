@@ -15,7 +15,17 @@ public import Mathlib.Algebra.Homology.Additive
 public import Mathlib.Algebra.Homology.ShortComplex.HomologicalComplex
 
 /-!
-# Actual complex-homology edges and their native short-complex normalization
+# Homology comparison for a left-exact functor
+
+Let C,D be categories with zero morphisms and homology, F:C→D preserve zero morphisms and finite
+limits, and c be any complex shape. There is a canonical forward edge H_q(FK)→F(H_qK),
+constructed from the cycle comparison and descent through the homology projection of the
+degree-q short complex.
+
+The edge is natural in a complex morphism and in a natural transformation between such functors.
+Replacing the predecessor and successor by equal indices gives the same edge through the
+corresponding short-complex homology isomorphisms. If F also preserves homology, the edge is the
+forward map of the canonical homology comparison isomorphism.
 -/
 
 @[expose] public section
@@ -34,12 +44,21 @@ variable {ι : Type uι} (c : ComplexShape ι)
 variable (F : C ⥤ D) [F.PreservesZeroMorphisms] [PreservesFiniteLimits F]
 variable (K : HomologicalComplex C c) (q : ι)
 
-/-- The native kernel/cokernel descent on the actual degree-q short complex. -/
+/-- Let C,D be categories with zero morphisms and homology, in independent object/morphism universes
+(u₁,v₁),(u₂,v₂). Let c be a complex shape on I in uI, F:C→D preserve zero morphisms and finite
+limits, and K a c-shaped complex. For q∈I, the edge α_{F,K,q}:H_q(FK)→F(H_qK) is the homology
+descent of the map Z_q(FK)→F(H_qK) obtained from the finite-limit cycle comparison
+Z_q(FK)≅F(Z_qK) and F applied to the class projection. -/
 def leftExactHomologyEdge :
     ((F.mapHomologicalComplex c).obj K).homology q ⟶ F.obj (K.homology q) := by
   with_unfolding_all exact CategoryTheory.ShortComplex.leftExactHomologyEdge F (K.sc q)
 
-/-- The original chosen predecessor/successor construction gives the same actual edge. -/
+/-- Let C,D be categories with zero morphisms and homology, in independent object/morphism universes
+(u₁,v₁),(u₂,v₂). Let c be a complex shape on I in uI, F:C→D preserve zero morphisms and finite
+limits, and K a c-shaped complex. For q∈I, i=c.prev(q), k=c.next(q), let
+e_K:H_qK≅H(K.sc'(i,q,k)) and e_T:H_q(FK)≅H((FK).sc'(i,q,k)). Then
+α_{F,K,q}=e_T.hom≫α_{F,K.sc'}≫F(e_K.inv). The middle edge is the corresponding short-complex
+descent. -/
 theorem leftExactHomologyEdge_sc' (i k : ι) (hi : c.prev q = i) (hk : c.next q = k) :
     leftExactHomologyEdge c F K q =
       (((F.mapHomologicalComplex c).obj K).homologyIsoSc' i q k hi hk).hom ≫
@@ -67,7 +86,10 @@ theorem leftExactHomologyEdge_sc' (i k : ι) (hi : c.prev q = i) (hk : c.next q 
   have h := (hMapped.trans hCancel).symm
   with_unfolding_all exact h
 
-/-- The genuine complex edge is natural in a map between actual left-exact functors. -/
+/-- Let C,D be categories with zero morphisms and homology, in independent object/morphism universes
+(u₁,v₁),(u₂,v₂). Let c be a complex shape on I in uI, F:C→D preserve zero morphisms and finite
+limits, and K a c-shaped complex. Let G:C→D also preserve zero morphisms and finite limits, and
+τ:F⇒G. For q∈I, H_q(τ_K)≫α_{G,K,q}=α_{F,K,q}≫τ_{H_qK} as maps H_q(FK)→G(H_qK). -/
 theorem leftExactHomologyEdge_naturality
     (G : C ⥤ D) [G.PreservesZeroMorphisms] [PreservesFiniteLimits G] (τ : F ⟶ G) :
     homologyMap ((τ.mapHomologicalComplex c).app K) q ≫ leftExactHomologyEdge c G K q =
@@ -75,8 +97,10 @@ theorem leftExactHomologyEdge_naturality
   with_unfolding_all exact
     (CategoryTheory.ShortComplex.leftExactHomologyEdge_naturality F (K.sc q) G τ)
 
-/-- The generic forward homology edge is natural in morphisms of complexes
-of any shape, without any exact-functor assumption. -/
+/-- Let C,D be categories with zero morphisms and homology, in independent object/morphism universes
+(u₁,v₁),(u₂,v₂). Let c be a complex shape on I in uI, F:C→D preserve zero morphisms and finite
+limits, and K a c-shaped complex. For a c-shaped complex L and φ:K→L, one has
+H_q(Fφ)≫α_{F,L,q}=α_{F,K,q}≫F(H_qφ). Both sides map H_q(FK) to F(H_qL). -/
 theorem leftExactHomologyEdge_map_naturality
     (L : HomologicalComplex C c) (φ : K ⟶ L) :
     homologyMap ((F.mapHomologicalComplex c).map φ) q ≫ leftExactHomologyEdge c F L q =
@@ -89,7 +113,11 @@ section ExactFunctor
 
 variable [F.PreservesHomology]
 
-/-- At an actually exact functor, the edge retains its native comparison homomorphism. -/
+/-- Let C,D be categories with zero morphisms and homology, in independent object/morphism universes
+(u₁,v₁),(u₂,v₂). Let c be a complex shape on I in uI, F:C→D preserve zero morphisms and finite
+limits, and K a c-shaped complex. Assume additionally that F preserves homology. For q∈I,
+α_{F,K,q} equals the forward component at K of the natural isomorphism H_q(F(-))≅F(H_q(-)). The
+edge itself therefore uses the canonical homology-comparison morphism. -/
 theorem leftExactHomologyEdge_eq_exactFunctorHomologyIso_hom :
     leftExactHomologyEdge c F K q = ((mapHomologyFunctorIso (c := c) q F).app K).hom := by
   with_unfolding_all exact

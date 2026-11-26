@@ -17,11 +17,16 @@ public import MathlibExt.CategoryTheory.Monoidal.PairingDescentCoherence
 public import Mathlib.CategoryTheory.Monoidal.CoherenceLemmas
 
 /-!
-# Coherence through actual native page homology
+# Associativity, signed symmetry and units on spectral pages
 
-The original cycle inclusions and homology quotient projections carry the
-actual native page products to their actual cycle and homology products.
-Coherence passes through these maps and the original successor isomorphism.
+For an internal interval pairing, associativity of a page product passes to its cycle and
+homology products and hence to every later page. In a braided category, signed symmetry passes
+in the same way with sign (−1)^{|a||b|} from the total cohomological degrees.
+
+A two-sided unit in bidegree zero is killed by the page differential. Its cycle lift and
+homology class give the successor unit, preserving both unitor laws. Unit data can be iterated
+to every later page. The stated abelian, braided and tensor-coequalizer preservation
+hypotheses are retained.
 -/
 
 @[expose] public section
@@ -43,21 +48,27 @@ variable {C : Type u} [Category.{v} C] [Abelian C] [MonoidalCategory C] [Monoida
   [∀ A : C, PreservesColimitsOfShape WalkingParallelPair (tensorRight A)]
   {X : SpectralObject C EInt} (P : IntervalPairing X X X)
 
-/-- The original cycle product at an explicitly equal output bidegree. -/
+/-- The cycle product with a specified sum bidegree.
+
+For a+b=t, transport the page cycle product to t. -/
 def pageCyclesPairTo (r : ℤ) (hr : 1 ≤ r) (a b t : ℤ × ℤ) (ht : a + b = t) :
     ((X.skeletalSpectralSequence).page r).cycles a ⊗ ((X.skeletalSpectralSequence).page r).cycles b ⟶
       ((X.skeletalSpectralSequence).page r).cycles t := by
   subst t
   exact P.pageCyclesPair r hr a b
 
-/-- The original homology product at an explicitly equal output bidegree. -/
+/-- The homology product with a specified sum bidegree.
+
+For a+b=t, transport the page homology product to t. -/
 def pageHomologyPairTo (r : ℤ) (hr : 1 ≤ r) (a b t : ℤ × ℤ) (ht : a + b = t) :
     ((X.skeletalSpectralSequence).page r).homology a ⊗ ((X.skeletalSpectralSequence).page r).homology b ⟶
       ((X.skeletalSpectralSequence).page r).homology t := by
   subst t
   exact P.pageHomologyPair r hr a b
 
-/-- The original native cycle inclusion computes the equal-position cycle product. -/
+/-- The specified-output cycle product preserves inclusion.
+
+Its cycle inclusion equals the tensor of input inclusions followed by the page product. -/
 lemma pageCyclesPairTo_i (r : ℤ) (hr : 1 ≤ r) (a b t : ℤ × ℤ) (ht : a + b = t) :
     P.pageCyclesPairTo r hr a b t ht ≫ ((X.skeletalSpectralSequence).page r).iCycles t =
       (((X.skeletalSpectralSequence).page r).iCycles a ⊗ₘ
@@ -65,7 +76,10 @@ lemma pageCyclesPairTo_i (r : ℤ) (hr : 1 ≤ r) (a b t : ℤ × ℤ) (ht : a +
   subst t
   exact P.pageCyclesPair_i r hr a b
 
-/-- The original native homology projection computes the equal-position homology product. -/
+/-- The specified-output homology product preserves projection.
+
+The tensor of input projections followed by this product equals the cycle product followed by
+output projection. -/
 lemma pageHomologyPairTo_π (r : ℤ) (hr : 1 ≤ r) (a b t : ℤ × ℤ) (ht : a + b = t) :
     (((X.skeletalSpectralSequence).page r).homologyπ a ⊗ₘ
       ((X.skeletalSpectralSequence).page r).homologyπ b) ≫ P.pageHomologyPairTo r hr a b t ht =
@@ -73,7 +87,9 @@ lemma pageHomologyPairTo_π (r : ℤ) (hr : 1 ≤ r) (a b t : ℤ × ℤ) (ht : 
   subst t
   exact P.pageHomologyPair_π r hr a b
 
-/-- The original successor isomorphism preserves the equal-position actual homology product. -/
+/-- The specified-output homology product agrees with the next page.
+
+The successor isomorphisms carry the homology product to the next-page product. -/
 lemma pageHomologyPairTo_successor (r : ℤ) (hr : 1 ≤ r) (a b t : ℤ × ℤ) (ht : a + b = t) :
     P.pageHomologyPairTo r hr a b t ht ≫ (X.skeletalSpectralSequence.iso r (r + 1) t rfl hr).hom =
       ((X.skeletalSpectralSequence.iso r (r + 1) a rfl hr).hom ⊗ₘ
@@ -82,7 +98,10 @@ lemma pageHomologyPairTo_successor (r : ℤ) (hr : 1 ≤ r) (a b t : ℤ × ℤ)
   subst t
   exact P.pagePair_successor r hr a b
 
-/-- Associativity is an equality of the original native page cups at all bidegrees. -/
+/-- Associativity of a fixed-page internal product.
+
+The two triple products agree after the monoidal associator and additive output-bidegree
+transport. -/
 def pageAssociativity (r : ℤ) (hr : 1 ≤ r) : Prop :=
   ∀ a b c : ℤ × ℤ,
     (P.pagePair r hr a b ⊗ₘ 𝟙 (((X.skeletalSpectralSequence).page r).X c)) ≫
@@ -91,7 +110,9 @@ def pageAssociativity (r : ℤ) (hr : 1 ≤ r) : Prop :=
         (((X.skeletalSpectralSequence).page r).X c)).hom ≫
         (𝟙 _ ⊗ₘ P.pagePair r hr b c) ≫ P.pagePair r hr a (b + c)
 
-/-- Actual cycle kernel inclusions retain the associativity of the original native page product. -/
+/-- Page associativity passes to the cycle products.
+
+An associative page product induces the corresponding associative triple cycle product. -/
 lemma pageCyclesPair_associativity (r : ℤ) (hr : 1 ≤ r) (hP : P.pageAssociativity r hr) (a b c : ℤ × ℤ) :
     (P.pageCyclesPair r hr a b ⊗ₘ 𝟙 (((X.skeletalSpectralSequence).page r).cycles c)) ≫
         P.pageCyclesPairTo r hr (a + b) c (a + (b + c)) (add_assoc a b c) =
@@ -110,7 +131,9 @@ lemma pageCyclesPair_associativity (r : ℤ) (hr : 1 ≤ r) (hP : P.pageAssociat
     (P.pageCyclesPair_i r hr a b) (P.pageCyclesPairTo_i r hr (a + b) c (a + (b + c)) (add_assoc a b c))
     (P.pageCyclesPair_i r hr b c) (P.pageCyclesPair_i r hr a (b + c)) hc (by simpa using hP a b c)
 
-/-- Actual homology quotient projections descend associativity of the original native page products. -/
+/-- Page associativity passes to homology products.
+
+An associative page product induces the associative homology product with the same associator. -/
 lemma pageHomologyPair_associativity (r : ℤ) (hr : 1 ≤ r) (hP : P.pageAssociativity r hr) (a b c : ℤ × ℤ) :
     (P.pageHomologyPair r hr a b ⊗ₘ 𝟙 (((X.skeletalSpectralSequence).page r).homology c)) ≫
         P.pageHomologyPairTo r hr (a + b) c (a + (b + c)) (add_assoc a b c) =
@@ -145,14 +168,19 @@ private lemma inverse_pairing_square {A B D A' B' D' : C}
   rw [hp, tensorHom_comp_tensorHom_assoc]
   simp only [Iso.inv_hom_id, tensorHom_id, id_whiskerRight, Category.id_comp]
 
-/-- The inverse original successor comparison computes the actual homology product at equal positions. -/
+/-- The inverse successor square for a specified page product.
+
+Returning a next-page product through the output inverse successor equals returning both
+inputs and applying the homology product. -/
 lemma pagePairTo_successor_inv (r : ℤ) (hr : 1 ≤ r) (a b t : ℤ × ℤ) (ht : a + b = t) :
     P.pagePairTo (r + 1) (by omega) a b t ht ≫ (X.skeletalSpectralSequence.iso r (r + 1) t rfl hr).inv =
       ((X.skeletalSpectralSequence.iso r (r + 1) a rfl hr).inv ⊗ₘ
         (X.skeletalSpectralSequence.iso r (r + 1) b rfl hr).inv) ≫ P.pageHomologyPairTo r hr a b t ht :=
   inverse_pairing_square _ _ _ _ _ (P.pageHomologyPairTo_successor r hr a b t ht)
 
-/-- The successor homology comparison preserves associativity. -/
+/-- Associativity passes to the successor page.
+
+Page-r associativity gives page-(r+1) associativity through cycle and homology products. -/
 theorem pageAssociativity_successor (r : ℤ) (hr : 1 ≤ r) (hP : P.pageAssociativity r hr) :
     P.pageAssociativity (r + 1) (by omega) := by
   intro a b c
@@ -177,7 +205,9 @@ theorem pageAssociativity_successor (r : ℤ) (hr : 1 ≤ r) (hP : P.pageAssocia
     (P.pagePairTo_successor_inv r hr a (b + c) (a + (b + c)) rfl) hc
     (by simpa using P.pageHomologyPair_associativity r hr hP a b c)
 
-/-- Associativity at an initial page is preserved at every later integer page. -/
+/-- Associativity persists on all later pages.
+
+Associativity at R≥1 propagates to every r≥R. -/
 theorem pageAssociativity_later (R : ℤ) (hR : 1 ≤ R) (hP : P.pageAssociativity R hR)
     (r : ℤ) (hRr : R ≤ r) : P.pageAssociativity r (by omega) := by
   let Q : ℤ → Prop := fun r => ∀ hr : 1 ≤ r, P.pageAssociativity r hr
@@ -197,14 +227,18 @@ section SignedSymmetry
 
 variable [BraidedCategory C]
 
-/-- The signed swap concerns the actual native cup and its original total cohomological degrees. -/
+/-- The signed symmetry law of a page product.
+
+Under braiding, swapping input bidegrees a,b has sign (−1)^{|a||b|}, where |a|=a₁+a₂. -/
 def pageSignedSymmetry (r : ℤ) (hr : 1 ≤ r) : Prop :=
   ∀ a b : ℤ × ℤ,
     (β_ (((X.skeletalSpectralSequence).page r).X a) (((X.skeletalSpectralSequence).page r).X b)).hom ≫
       P.pagePair r hr b a = (((a.1 + a.2) * (b.1 + b.2)).negOnePow : ℤ) •
         P.pagePairTo r hr a b (b + a) (add_comm a b)
 
-/-- Actual native cycle inclusion retains the original signed swap law. -/
+/-- Signed page symmetry passes to cycles.
+
+The cycle products obey the same total-degree sign under braiding. -/
 lemma pageCyclesPair_signedSwap (r : ℤ) (hr : 1 ≤ r) (hP : P.pageSignedSymmetry r hr) (a b : ℤ × ℤ) :
     (β_ (((X.skeletalSpectralSequence).page r).cycles a) (((X.skeletalSpectralSequence).page r).cycles b)).hom ≫
       P.pageCyclesPair r hr b a = (((a.1 + a.2) * (b.1 + b.2)).negOnePow : ℤ) •
@@ -219,7 +253,9 @@ lemma pageCyclesPair_signedSwap (r : ℤ) (hr : 1 ≤ r) (hP : P.pageSignedSymme
     (P.pageCyclesPairTo_i r hr a b (b + a) (add_comm a b)) (P.pageCyclesPair_i r hr b a) hc
     (by simpa using hP a b)
 
-/-- The actual native homology projections descend the original total-degree signed swap. -/
+/-- Signed page symmetry passes to homology.
+
+The homology products obey the same total-degree sign under braiding. -/
 lemma pageHomologyPair_signedSwap (r : ℤ) (hr : 1 ≤ r) (hP : P.pageSignedSymmetry r hr) (a b : ℤ × ℤ) :
     (β_ (((X.skeletalSpectralSequence).page r).homology a) (((X.skeletalSpectralSequence).page r).homology b)).hom ≫
       P.pageHomologyPair r hr b a = (((a.1 + a.2) * (b.1 + b.2)).negOnePow : ℤ) •
@@ -235,7 +271,9 @@ lemma pageHomologyPair_signedSwap (r : ℤ) (hr : 1 ≤ r) (hP : P.pageSignedSym
     (P.pageHomologyPairTo_π r hr a b (b + a) (add_comm a b)).symm
     (P.pageHomologyPair_π r hr b a).symm hc (by simpa using P.pageCyclesPair_signedSwap r hr hP a b)
 
-/-- The successor homology comparison preserves the signed swap law. -/
+/-- Signed symmetry passes to the successor page.
+
+The page-r graded symmetry law gives the same law at r+1. -/
 theorem pageSignedSymmetry_successor (r : ℤ) (hr : 1 ≤ r) (hP : P.pageSignedSymmetry r hr) :
     P.pageSignedSymmetry (r + 1) (by omega) := by
   intro a b
@@ -253,7 +291,9 @@ theorem pageSignedSymmetry_successor (r : ℤ) (hr : 1 ≤ r) (hP : P.pageSigned
     (P.pagePairTo_successor_inv r hr b a (b + a) rfl) hc
     (by simpa using P.pageHomologyPair_signedSwap r hr hP a b)
 
-/-- The signed swap law is preserved from its initial page to every later integer page. -/
+/-- Signed symmetry persists on later pages.
+
+A signed symmetry law at R≥1 propagates to every later page. -/
 theorem pageSignedSymmetry_later (R : ℤ) (hR : 1 ≤ R) (hP : P.pageSignedSymmetry R hR)
     (r : ℤ) (hRr : R ≤ r) : P.pageSignedSymmetry r (by omega) := by
   let Q : ℤ → Prop := fun r => ∀ hr : 1 ≤ r, P.pageSignedSymmetry r hr
@@ -273,11 +313,16 @@ end SignedSymmetry
 
 section Units
 
-/-- The original native left unit law at all page bidegrees. -/
+/-- The left unit law at a fixed page.
+
+A map u : 𝟙_C → E_r^{0,0} is a left unit when its product with every page object is the left
+unitor. -/
 def pageLeftUnit (r : ℤ) (hr : 1 ≤ r) (u : 𝟙_ C ⟶ ((X.skeletalSpectralSequence).page r).X 0) : Prop :=
   ∀ a : ℤ × ℤ, (u ⊗ₘ 𝟙 _) ≫ P.pagePairTo r hr 0 a a (zero_add a) = (λ_ _).hom
 
-/-- The original native right unit law at all page bidegrees. -/
+/-- The right unit law at a fixed page.
+
+The analogous product with u on the right equals the right unitor. -/
 def pageRightUnit (r : ℤ) (hr : 1 ≤ r) (u : 𝟙_ C ⟶ ((X.skeletalSpectralSequence).page r).X 0) : Prop :=
   ∀ a : ℤ × ℤ, (𝟙 _ ⊗ₘ u) ≫ P.pagePairTo r hr a 0 a (add_zero a) = (ρ_ _).hom
 
@@ -327,7 +372,9 @@ private lemma unit_leibniz_zero {A B : C} (u : 𝟙_ C ⟶ A) (d : A ⟶ B)
   apply (cancel_epi (λ_ (𝟙_ C)).hom).mp
   simpa only [Category.assoc, comp_zero] using hz
 
-/-- The original native Leibniz rule and both actual unit laws force the unit differential to vanish. -/
+/-- A two-sided page unit is a cycle.
+
+The left and right unit laws imply u followed by the outgoing page differential is zero. -/
 lemma pageUnit_d_zero (r : ℤ) (hr : 1 ≤ r) (u : 𝟙_ C ⟶ ((X.skeletalSpectralSequence).page r).X 0)
     (hl : P.pageLeftUnit r hr u) (hu : P.pageRightUnit r hr u) :
     u ≫ ((X.skeletalSpectralSequence).page r).d 0 (r, 1 - r) = 0 := by
@@ -346,27 +393,35 @@ lemma pageUnit_d_zero (r : ℤ) (hr : 1 ≤ r) (u : 𝟙_ C ⟶ ((X.skeletalSpec
     (by simpa only [pagePairTo] using hl 0) (hl j) (hu j) hd
   exact (congrArg (fun q : ℤ × ℤ => u ≫ K.d 0 q = 0) (zero_add (r, 1 - r))).mp hz
 
-/-- Both original unit laws and Leibniz construct the actual native cycle unit. -/
+/-- The lift of a page unit to cycles.
+
+Lift the two-sided unit into the page cycle object at bidegree zero. -/
 def pageCycleUnit (r : ℤ) (hr : 1 ≤ r) (u : 𝟙_ C ⟶ ((X.skeletalSpectralSequence).page r).X 0)
     (hl : P.pageLeftUnit r hr u) (hu : P.pageRightUnit r hr u) :
     𝟙_ C ⟶ ((X.skeletalSpectralSequence).page r).cycles 0 :=
   ((X.skeletalSpectralSequence).page r).liftCycles' u (r, 1 - r)
     (ComplexShape.up'_mk (r, 1 - r) 0 (r, 1 - r) (zero_add _)) (P.pageUnit_d_zero r hr u hl hu)
 
-/-- The original native cycle inclusion retains the actual coefficient unit. -/
+/-- The cycle-unit lift recovers the page unit.
+
+The lift followed by cycle inclusion equals u. -/
 lemma pageCycleUnit_i (r : ℤ) (hr : 1 ≤ r) (u : 𝟙_ C ⟶ ((X.skeletalSpectralSequence).page r).X 0)
     (hl : P.pageLeftUnit r hr u) (hu : P.pageRightUnit r hr u) :
     P.pageCycleUnit r hr u hl hu ≫ ((X.skeletalSpectralSequence).page r).iCycles 0 = u := by
   dsimp only [pageCycleUnit, HomologicalComplex.liftCycles']
   exact HomologicalComplex.liftCycles_i _ _ _ _ _
 
-/-- The original coefficient unit descends through the actual homology quotient. -/
+/-- The homology class of a page unit.
+
+Project the cycle-unit lift to page homology in bidegree zero. -/
 def pageHomologyUnit (r : ℤ) (hr : 1 ≤ r) (u : 𝟙_ C ⟶ ((X.skeletalSpectralSequence).page r).X 0)
     (hl : P.pageLeftUnit r hr u) (hu : P.pageRightUnit r hr u) :
     𝟙_ C ⟶ ((X.skeletalSpectralSequence).page r).homology 0 :=
   P.pageCycleUnit r hr u hl hu ≫ ((X.skeletalSpectralSequence).page r).homologyπ 0
 
-/-- The actual native cycle product retains the original left unit law. -/
+/-- The lifted cycle unit is a left unit.
+
+Its product with every cycle object equals the left unitor. -/
 lemma pageCycleUnit_left_unital (r : ℤ) (hr : 1 ≤ r)
     (u : 𝟙_ C ⟶ ((X.skeletalSpectralSequence).page r).X 0)
     (hl : P.pageLeftUnit r hr u) (hu : P.pageRightUnit r hr u) (a : ℤ × ℤ) :
@@ -379,7 +434,9 @@ lemma pageCycleUnit_left_unital (r : ℤ) (hr : 1 ≤ r)
     (P.pageCycleUnit_i r hr u hl hu) (P.pageCyclesPairTo_i r hr 0 a a (zero_add a)) hc
     (by simpa using hl a)
 
-/-- The actual native cycle product retains the original right unit law. -/
+/-- The lifted cycle unit is a right unit.
+
+Its product with every cycle object equals the right unitor. -/
 lemma pageCycleUnit_right_unital (r : ℤ) (hr : 1 ≤ r)
     (u : 𝟙_ C ⟶ ((X.skeletalSpectralSequence).page r).X 0)
     (hl : P.pageLeftUnit r hr u) (hu : P.pageRightUnit r hr u) (a : ℤ × ℤ) :
@@ -392,7 +449,9 @@ lemma pageCycleUnit_right_unital (r : ℤ) (hr : 1 ≤ r)
     (P.pageCycleUnit_i r hr u hl hu) (P.pageCyclesPairTo_i r hr a 0 a (add_zero a)) hc
     (by simpa using hu a)
 
-/-- The actual homology quotient product retains the original left unit law. -/
+/-- The unit homology class is a left unit.
+
+Its product with every homology object equals the left unitor. -/
 lemma pageHomologyUnit_left_unital (r : ℤ) (hr : 1 ≤ r)
     (u : 𝟙_ C ⟶ ((X.skeletalSpectralSequence).page r).X 0)
     (hl : P.pageLeftUnit r hr u) (hu : P.pageRightUnit r hr u) (a : ℤ × ℤ) :
@@ -407,7 +466,9 @@ lemma pageHomologyUnit_left_unital (r : ℤ) (hr : 1 ≤ r)
     rfl (P.pageHomologyPairTo_π r hr 0 a a (zero_add a)).symm hc
     (by simpa using P.pageCycleUnit_left_unital r hr u hl hu a)
 
-/-- The actual homology quotient product retains the original right unit law. -/
+/-- The unit homology class is a right unit.
+
+Its product with every homology object equals the right unitor. -/
 lemma pageHomologyUnit_right_unital (r : ℤ) (hr : 1 ≤ r)
     (u : 𝟙_ C ⟶ ((X.skeletalSpectralSequence).page r).X 0)
     (hl : P.pageLeftUnit r hr u) (hu : P.pageRightUnit r hr u) (a : ℤ × ℤ) :
@@ -422,14 +483,19 @@ lemma pageHomologyUnit_right_unital (r : ℤ) (hr : 1 ≤ r)
     rfl (P.pageHomologyPairTo_π r hr a 0 a (add_zero a)).symm hc
     (by simpa using P.pageCycleUnit_right_unital r hr u hl hu a)
 
-/-- The original successor isomorphism carries the genuine homology unit to the next native page. -/
+/-- The unit induced on the successor page.
+
+Transport the page unit's homology class through the spectral successor isomorphism. -/
 def pageSuccessorUnit (r : ℤ) (hr : 1 ≤ r)
     (u : 𝟙_ C ⟶ ((X.skeletalSpectralSequence).page r).X 0)
     (hl : P.pageLeftUnit r hr u) (hu : P.pageRightUnit r hr u) :
     𝟙_ C ⟶ ((X.skeletalSpectralSequence).page (r + 1)).X 0 :=
   P.pageHomologyUnit r hr u hl hu ≫ (X.skeletalSpectralSequence.iso r (r + 1) 0 rfl hr).hom
 
-/-- The actual successor comparison retains the original homology unit. -/
+/-- The successor unit returns to the unit homology class.
+
+The next-page unit followed by the inverse successor equals the original unit's homology
+class. -/
 lemma pageSuccessorUnit_inv (r : ℤ) (hr : 1 ≤ r)
     (u : 𝟙_ C ⟶ ((X.skeletalSpectralSequence).page r).X 0)
     (hl : P.pageLeftUnit r hr u) (hu : P.pageRightUnit r hr u) :
@@ -438,7 +504,9 @@ lemma pageSuccessorUnit_inv (r : ℤ) (hr : 1 ≤ r)
   dsimp only [pageSuccessorUnit]
   simp only [Category.assoc, Iso.hom_inv_id, Category.comp_id]
 
-/-- The original successor comparison preserves the actual left unit law on every bidegree. -/
+/-- The successor unit satisfies the left unit law.
+
+The induced next-page unit has the left unitor product. -/
 theorem pageSuccessorUnit_left_unital (r : ℤ) (hr : 1 ≤ r)
     (u : 𝟙_ C ⟶ ((X.skeletalSpectralSequence).page r).X 0)
     (hl : P.pageLeftUnit r hr u) (hu : P.pageRightUnit r hr u) :
@@ -455,7 +523,9 @@ theorem pageSuccessorUnit_left_unital (r : ℤ) (hr : 1 ≤ r)
     (P.pagePairTo_successor_inv r hr 0 a a (zero_add a)) hc
     (by simpa using P.pageHomologyUnit_left_unital r hr u hl hu a)
 
-/-- The original successor comparison preserves the actual right unit law on every bidegree. -/
+/-- The successor unit satisfies the right unit law.
+
+The induced next-page unit has the right unitor product. -/
 theorem pageSuccessorUnit_right_unital (r : ℤ) (hr : 1 ≤ r)
     (u : 𝟙_ C ⟶ ((X.skeletalSpectralSequence).page r).X 0)
     (hl : P.pageLeftUnit r hr u) (hu : P.pageRightUnit r hr u) :
@@ -472,27 +542,43 @@ theorem pageSuccessorUnit_right_unital (r : ℤ) (hr : 1 ≤ r)
     (P.pagePairTo_successor_inv r hr a 0 a (add_zero a)) hc
     (by simpa using P.pageHomologyUnit_right_unital r hr u hl hu a)
 
-/-- An actual native page coefficient unit with its original two unit laws. -/
+/-- Two-sided unit data for a fixed page.
+
+Record the bidegree-zero unit map and both unitor product laws. -/
 structure PageUnitData (r : ℤ) (hr : 1 ≤ r) where
-  /-- The original native page unit at the zero bidegree. -/
+  /-- The unit map in the page-unit data.
+
+The map is 𝟙_C → E_r^{0,0}. -/
   unit : 𝟙_ C ⟶ ((X.skeletalSpectralSequence).page r).X 0
+/-- The left unit law in the page-unit data.
+
+The recorded unit satisfies pageLeftUnit. -/
   left : P.pageLeftUnit r hr unit
+/-- The right unit law in the page-unit data.
+
+The recorded unit satisfies pageRightUnit. -/
   right : P.pageRightUnit r hr unit
 
-/-- The original homology quotient and successor comparison construct the actual next-page unit data. -/
+/-- The successor of a two-sided page unit.
+
+The homology and successor construction gives unit data at r+1. -/
 def PageUnitData.successor (r : ℤ) (hr : 1 ≤ r) (D : P.PageUnitData r hr) :
     P.PageUnitData (r + 1) (by omega) where
   unit := P.pageSuccessorUnit r hr D.unit D.left D.right
   left := P.pageSuccessorUnit_left_unital r hr D.unit D.left D.right
   right := P.pageSuccessorUnit_right_unital r hr D.unit D.left D.right
 
-/-- Equal integer notation transports only the page index of the same original unit data. -/
+/-- Equality transport of page-unit data.
+
+Transport unit data along an equality r=r′. -/
 def PageUnitData.transport (r r' : ℤ) (hr : 1 ≤ r) (hr' : 1 ≤ r') (h : r = r')
     (D : P.PageUnitData r hr) : P.PageUnitData r' hr' := by
   cases h
   exact D
 
-/-- Iterating the actual native successor constructs its coefficient unit after any number of pages. -/
+/-- Iteration of page-unit succession.
+
+For n∈ℕ, iterate succession to obtain unit data at R+n. -/
 def PageUnitData.addNat (R : ℤ) (hR : 1 ≤ R) (D : P.PageUnitData R hR) (n : ℕ) :
     P.PageUnitData (R + (n : ℤ)) (by omega) := by
   induction n with
@@ -502,7 +588,9 @@ def PageUnitData.addNat (R : ℤ) (hR : 1 ≤ R) (D : P.PageUnitData R hR) (n : 
       (by omega) (by omega) (by omega)
       (PageUnitData.successor P (R + (n : ℤ)) (by omega) ih)
 
-/-- The unit identities are preserved from an initial page to every later integer page. -/
+/-- Page-unit data on any later page.
+
+For R≤r, iterate succession and equality transport to obtain the unit at r. -/
 def PageUnitData.later (R : ℤ) (hR : 1 ≤ R) (D : P.PageUnitData R hR) (r : ℤ) (hRr : R ≤ r) :
     P.PageUnitData r (by omega) :=
   PageUnitData.transport P (R + ((r - R).toNat : ℤ)) r (by omega) (by omega) (by omega)

@@ -1,3 +1,5 @@
-# Pair Top Equiv
+# The top exterior-power coordinate equivalence
 
-The top-wedge coefficient is a linear equivalence in rank two.
+The top exterior-power coordinate equivalence.
+
+The ordered wedge identifies Λ²(R²) with R by its coefficient.

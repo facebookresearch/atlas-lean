@@ -1,3 +1,6 @@
-# Obj map
+# The normalized map of a coefficient morphism
 
-Coefficient arrows are exactly the original tensor natural-transformation components.
+The normalized map of a coefficient morphism.
+
+For a : M → N and fixed X, the coefficient-family map is normalization of the simplicial map a
+⊗ id_X.

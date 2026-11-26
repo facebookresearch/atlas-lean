@@ -16,12 +16,19 @@ public import MathlibExt.Algebra.Homology.HomotopyCofiber
 public import Mathlib.CategoryTheory.Limits.Shapes.BinaryBiproducts
 
 /-!
-# Original homotopy-cofiber maps in their actual term coordinates
+# Term coordinates of cofiber maps from commuting squares
 
-The strict-square map is the biproduct of the original shifted source
-component and the original target component under the native term
-isomorphisms. These readouts give monomorphisms and split monomorphisms
-of the original map, without replacing its complex or its term objects.
+Let C be preadditive with binary biproducts, and let c have decidable
+differential relation and a predecessor in every degree. A commuting square
+with source map a:F → F′ and target map b:G → G′ from φ:F → G to
+ψ:F′ → G′ induces M:Cofib(φ) → Cofib(ψ).
+
+For c.Rel(j,i), the canonical degree-j charts identify Mⱼ with
+aᵢ ⊞ bⱼ:Fᵢ ⊞ Gⱼ → F′ᵢ ⊞ G′ⱼ. Thus Mⱼ is monic when aᵢ and bⱼ
+are monic. Reverse component maps r and s define a reverse term map
+in the same charts; if they retract aᵢ and bⱼ, this term map retracts
+Mⱼ. Split monomorphisms of the two components therefore give a split
+monomorphism of the cofiber component.
 -/
 
 @[expose] public section
@@ -39,7 +46,12 @@ variable {ι : Type w} {c : ComplexShape ι} [DecidableRel c.Rel]
 variable {F G F' G' : HomologicalComplex C c} {φ : F ⟶ G} {ψ : F' ⟶ G'}
 variable (h : ∀ j, ∃ i, c.Rel i j) (a : Arrow.mk φ ⟶ Arrow.mk ψ)
 
-/-- The native term charts retain both entire components of the original strict-square map. -/
+/-- Let C be preadditive with binary biproducts and let c have decidable
+differential relation and a predecessor in every degree. For a
+commuting square (a,b) from φ:F → G to ψ:F′ → G′ and c.Rel(j,i),
+write β_φ:Cofib(φ)ⱼ ≅ Fᵢ ⊞ Gⱼ and
+β_ψ:Cofib(ψ)ⱼ ≅ F′ᵢ ⊞ G′ⱼ. Its induced cofiber map M satisfies
+β_ψ ∘ Mⱼ ∘ β_φ⁻¹ = aᵢ ⊞ bⱼ. -/
 theorem XIsoBiprod_inv_mapArrowHom_hom (i j : ι) (hji : c.Rel j i)
  :
     (XIsoBiprod φ j i hji).inv ≫ (mapArrowHom φ ψ h a).f j ≫
@@ -52,7 +64,11 @@ theorem XIsoBiprod_inv_mapArrowHom_hom (i j : ι) (hji : c.Rel j i)
       inrX_XIsoBiprod_hom, biprod.inr_map]
     rfl
 
-/-- The original strict-square map is monomorphic at this term when its two components are. -/
+/-- Let C be preadditive with binary biproducts, c have decidable
+differential relation and predecessors in every degree, and let
+(a,b) be a commuting square from φ:F → G to ψ:F′ → G′.
+If c.Rel(j,i) and aᵢ,bⱼ are monomorphisms, then the degree-j
+component of the induced cofiber map is a monomorphism. -/
 theorem mono_mapArrowHom_f (i j : ι) (hji : c.Rel j i)
     [Mono (a.left.f i)] [Mono (a.right.f j)] : Mono ((mapArrowHom φ ψ h a).f j) := by
   have hf : (mapArrowHom φ ψ h a).f j =
@@ -70,14 +86,22 @@ theorem mono_mapArrowHom_f (i j : ι) (hji : c.Rel j i)
   rw [hf]
   infer_instance
 
-/-- The original component retraction uses the actual two term charts
-and supplied component retractions. -/
+/-- Let C be preadditive with binary biproducts, c have decidable
+differential relation, φ:F → G and ψ:F′ → G′ be complex maps,
+and c.Rel(j,i). Reverse maps r:F′ᵢ → Fᵢ and s:G′ⱼ → Gⱼ define
+the term map Cofib(ψ)ⱼ → Cofib(φ)ⱼ given by
+β_φ⁻¹ ∘ (r ⊞ s) ∘ β_ψ, using the canonical biproduct charts. -/
 def mapArrowHomTermRetraction (i j : ι) (hji : c.Rel j i)
     (r : F'.X i ⟶ F.X i) (s : G'.X j ⟶ G.X j) :
     (homotopyCofiber ψ).X j ⟶ (homotopyCofiber φ).X j :=
   (XIsoBiprod ψ j i hji).hom ≫ biprod.map r s ≫ (XIsoBiprod φ j i hji).inv
 
-/-- The original strict-square component followed by that retraction is the original identity. -/
+/-- Let C be preadditive with binary biproducts and c have decidable
+differential relation and predecessors in every degree. For a commuting
+square (a,b) from φ to ψ and c.Rel(j,i), suppose r:F′ᵢ → Fᵢ
+and s:G′ⱼ → Gⱼ satisfy r∘aᵢ=1 and s∘bⱼ=1.
+Then the reverse term map Rⱼ=β_φ⁻¹ ∘ (r ⊞ s) ∘ β_ψ retracts
+the induced cofiber component Mⱼ: Rⱼ ∘ Mⱼ=1. -/
 theorem mapArrowHom_f_retraction (i j : ι) (hji : c.Rel j i)
     (r : F'.X i ⟶ F.X i) (s : G'.X j ⟶ G.X j)
     (hr : a.left.f i ≫ r = 𝟙 (F.X i)) (hs : a.right.f j ≫ s = 𝟙 (G.X j)) :
@@ -114,7 +138,11 @@ theorem mapArrowHom_f_retraction (i j : ι) (hji : c.Rel j i)
       exact Category.id_comp _
     _ = _ := (Category.comp_id _).symm
 
-/-- The original strict-square term map is split mono when its two original components are. -/
+/-- Let C be preadditive with binary biproducts, c have decidable
+differential relation and predecessors in every degree, and let
+(a,b) be a commuting square from φ:F → G to ψ:F′ → G′.
+If c.Rel(j,i) and aᵢ,bⱼ are split monomorphisms, then the degree-j
+component of the induced cofiber map is split monic. -/
 theorem isSplitMono_mapArrowHom_f (i j : ι) (hji : c.Rel j i)
     [IsSplitMono (a.left.f i)] [IsSplitMono (a.right.f j)] :
     IsSplitMono ((mapArrowHom φ ψ h a).f j) := by

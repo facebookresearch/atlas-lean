@@ -1,3 +1,7 @@
-# Kernel Lift Of Epi zero
+# Vanishing of the lifted inclusion followed by the epimorphism
 
-The original lifted inclusion is killed by the same original morphism.
+Vanishing of the lifted inclusion followed by the epimorphism.
+
+For the kernel lift i : K → P of f : P → Q through a fully faithful additive functor F, the
+composite i ≫ f is zero. Its image under F vanishes by the ambient kernel equation, and
+faithfulness reflects this equality.

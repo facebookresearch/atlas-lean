@@ -1,4 +1,6 @@
-# Eventual Ranges Limit Iso hom π
+# Coordinates of the eventual-image limit isomorphism
 
-Each coordinate of the comparison is the restricted projection followed by
-the canonical stage inclusion.
+Coordinates of the eventual-image limit isomorphism.
+
+The forward comparison followed by the j-th projection of A equals the j-th projection of
+eventualRanges A followed by its stage inclusion.

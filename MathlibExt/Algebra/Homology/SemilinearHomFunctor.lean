@@ -17,18 +17,22 @@ public import Mathlib.Algebra.Homology.Opposite
 public import Mathlib.Algebra.Category.ModuleCat.Ulift
 
 /-!
-# Semilinear Hom functors on arbitrary homological-complex shapes
+# Semilinear Hom on complexes and finite projective tensor factors
 
-Applying semilinear Hom in the coefficient keeps the complex shape. Applying
-it contravariantly in the source reverses the shape. Both constructions are
-the native `mapHomologicalComplex` constructions, with `opFunctor` in the
-source variable.
+Let σ:R→S be a homomorphism from a semiring to a commutative semiring. The S-semimodule H_σ(M,N)
+consists of additive maps f:M→N with f(a•x)=σ(a)•f(x). Applying it covariantly to a coefficient
+complex keeps the shape c and postcomposes its differentials. Applying it contravariantly to a
+source complex reverses the shape to c.symm and precomposes by d_K(b,a).
 
-For a fixed finite projective `S`-module tensor factor, the native semilinear
-Hom comparison lifts to a natural isomorphism of these complex functors.
-There is no boundedness condition on the source or coefficient complex.
-Ring, module-carrier and index universes remain independent. The output
-comparisons can also be carried to any common lift height.
+When both semirings are commutative and U is a finitely generated projective S-semimodule, the
+comparison H_σ(M,N)⊗_S U≅H_σ(M,N⊗_S U) extends naturally to either complex variable. Its pure
+evaluation formula is f⊗u↦(x↦f(x)⊗u). The ring/module versions have the same formulas, with R
+arbitrary for the basic Hom functors and commutative for the finite-factor comparison.
+
+Scalar rings, source, coefficient, tensor-factor, and index universes remain independent.
+Outputs use max(vM,vN,vU), and the source comparison may be transported to any further output
+height h. All complex shapes and degrees are retained with the indicated reversal; no support
+bound is required.
 -/
 
 @[expose] public section
@@ -48,13 +52,21 @@ section Hom
 variable {R : Type r} {S : Type s} [Semiring R] [CommSemiring S] (σ : R →+* S)
   {ι : Type i}
 
-/-- Semilinear Hom applied to an arbitrary coefficient-complex shape. -/
+/-- Let R be a semiring in r, S a commutative semiring in s, and σ:R→S a scalar homomorphism. Let c
+be a complex shape on I in i. H_σ(M,N) denotes additive maps f with f(a•x)=σ(a)•f(x), as an
+S-semimodule. For a fixed R-semimodule M in vM, coefficient Hom sends a c-shaped S-semimodule
+complex K in vN to the c-shaped complex with term H_σ(M,K_a) and carrier max(vM,vN). Its
+differential is postcomposition h↦d_K(a,b)∘h. -/
 def semilinearHomCoeffComplexFunctor (M : SemimoduleCat.{vM} R) (c : ComplexShape ι) :
     HomologicalComplex (SemimoduleCat.{vN} S) c ⥤
       HomologicalComplex (SemimoduleCat.{max vM vN} S) c :=
   (semilinearHomCoeffFunctor σ M).mapHomologicalComplex c
 
-/-- Semilinear Hom applied to the source complex, with its actual reversed shape. -/
+/-- Let R be a semiring in r, S a commutative semiring in s, and σ:R→S a scalar homomorphism. Let c
+be a complex shape on I in i. H_σ(M,N) denotes additive maps f with f(a•x)=σ(a)•f(x), as an
+S-semimodule. For fixed N an S-semimodule in vN, source Hom is a functor from the opposite
+category of c-shaped R-semimodule complexes K in vM to shape c.symm over S. Its term is
+H_σ(K_a,N), with carrier max(vM,vN), and differential h↦h∘d_K(b,a). -/
 def semilinearHomSourceComplexFunctor (N : SemimoduleCat.{vN} S) (c : ComplexShape ι) :
     (HomologicalComplex (SemimoduleCat.{vM} R) c)ᵒᵖ ⥤
       HomologicalComplex (SemimoduleCat.{max vM vN} S) c.symm :=
@@ -82,7 +94,12 @@ section FiniteFactor
 variable {R : Type r} {S : Type s} [CommSemiring R] [CommSemiring S] (σ : R →+* S)
   {ι : Type i}
 
-/-- Coefficient-complex naturality is the native lift of the finite-factor Hom isomorphism. -/
+/-- Let R,S be commutative semirings in independent universes r,s, σ:R→S a homomorphism, and c a
+complex shape on I in i. Let U be a finitely generated projective S-semimodule in vU. The
+R-source carrier vM, S-coefficient carrier vN, factor carrier vU, and index universe i are
+independent. For any R-semimodule M in vM, there is a natural complex isomorphism H_σ(M,K)⊗_S
+U≅H_σ(M,K⊗_S U), in shape c and output carrier max(vM,vN,vU). Tensoring here is termwise by the
+fixed coefficient U. At a, f⊗u maps to x↦f(x)⊗u. -/
 def semilinearHomCoeffComplexTensorIso (M : SemimoduleCat.{vM} R)
     (U : SemimoduleCat.{vU} S) [Module.Finite S U] [Module.Projective S U]
     (c : ComplexShape ι) :
@@ -93,7 +110,12 @@ def semilinearHomCoeffComplexTensorIso (M : SemimoduleCat.{vM} R)
         semilinearHomCoeffComplexFunctor σ M c :=
   Functor.mapHomologicalComplexCompIso (semilinearHomCoeffTensorIso σ M U) c
 
-/-- Source-complex naturality uses the native opposite-complex functor and reversed shape. -/
+/-- Let R,S be commutative semirings in independent universes r,s, σ:R→S a homomorphism, and c a
+complex shape on I in i. Let U be a finitely generated projective S-semimodule in vU. The
+R-source carrier vM, S-coefficient carrier vN, factor carrier vU, and index universe i are
+independent. For an S-semimodule N in vN, there is a natural isomorphism H_σ(K,N)⊗_S
+U≅H_σ(K,N⊗_S U) on the opposite source-complex category. Its shape is c.symm and output carrier
+max(vM,vN,vU); at a the forward map is f⊗u↦(x↦f(x)⊗u). -/
 def semilinearHomSourceComplexTensorIso (N : SemimoduleCat.{vN} S)
     (U : SemimoduleCat.{vU} S) [Module.Finite S U] [Module.Projective S U]
     (c : ComplexShape ι) :
@@ -121,7 +143,12 @@ theorem semilinearHomCoeffComplexTensorIso_hom_f_apply (M : SemimoduleCat.{vM} R
     ((((semilinearHomCoeffComplexTensorIso σ M U c).hom.app K).f a).hom
       (f ⊗ₜ[S] u)) x = f x ⊗ₜ[S] u := rfl
 
-/-- The source differential remains precomposition by the original reversed differential. -/
+/-- Let R,S be commutative semirings in independent universes r,s, σ:R→S a homomorphism, and c a
+complex shape on I in i. Let U be a finitely generated projective S-semimodule in vU. The
+R-source carrier vM, S-coefficient carrier vN, factor carrier vU, and index universe i are
+independent. For a source complex K in R-semimodules, N in S-semimodules, a,b∈I, f:K_a→_σN, u∈U,
+and x∈K_b, the component Φ_b satisfies Φ_b(d_{H⊗U}(a,b)(f⊗u))(x)=f(d_K(b,a)(x))⊗u. The
+comparison uses shape c.symm and adds no degree sign. -/
 @[simp]
 theorem semilinearHomSourceComplexTensorIso_d_hom_apply (N : SemimoduleCat.{vN} S)
     (U : SemimoduleCat.{vU} S) [Module.Finite S U] [Module.Projective S U]
@@ -132,7 +159,12 @@ theorem semilinearHomSourceComplexTensorIso_d_hom_apply (N : SemimoduleCat.{vN} 
     ((((semilinearHomSourceComplexTensorIso σ N U c).hom.app (op K)).f b).hom
       ((L.d a b).hom (f ⊗ₜ[S] u))) x = f ((K.d b a).hom x) ⊗ₜ[S] u := rfl
 
-/-- The coefficient differential remains postcomposition by the original differential. -/
+/-- Let R,S be commutative semirings in independent universes r,s, σ:R→S a homomorphism, and c a
+complex shape on I in i. Let U be a finitely generated projective S-semimodule in vU. The
+R-source carrier vM, S-coefficient carrier vN, factor carrier vU, and index universe i are
+independent. For M an R-semimodule, K a coefficient complex of S-semimodules, a,b∈I, f:M→_σK_a,
+u∈U, and x∈M, Φ_b(d_{H⊗U}(a,b)(f⊗u))(x)=d_K(a,b)(f(x))⊗u. The comparison retains shape c and the
+same differential values. -/
 @[simp]
 theorem semilinearHomCoeffComplexTensorIso_d_hom_apply (M : SemimoduleCat.{vM} R)
     (U : SemimoduleCat.{vU} S) [Module.Finite S U] [Module.Projective S U]
@@ -143,7 +175,12 @@ theorem semilinearHomCoeffComplexTensorIso_d_hom_apply (M : SemimoduleCat.{vM} R
     ((((semilinearHomCoeffComplexTensorIso σ M U c).hom.app K).f b).hom
       ((L.d a b).hom (f ⊗ₜ[S] u))) x = (K.d a b).hom (f x) ⊗ₜ[S] u := rfl
 
-/-- The source-complex comparison transported to any common output lift height. -/
+/-- Let R,S be commutative semirings in independent universes r,s, σ:R→S a homomorphism, and c a
+complex shape on I in i. Let U be a finitely generated projective S-semimodule in vU. The
+R-source carrier vM, S-coefficient carrier vN, factor carrier vU, and index universe i are
+independent. For N in vN and any lift height h, lift both output complexes of H_σ(K,N)⊗_S
+U≅H_σ(K,N⊗_S U) to max(h,vM,vN,vU). This gives the same natural isomorphism in shape c.symm.
+After identifying the lifted coefficient copies, its value is f⊗u↦(x↦f(x)⊗u). -/
 def semilinearHomSourceComplexTensorIsoAt.{h, r, s, vM, vN, vU, i}
     {R : Type r} {S : Type s} [CommSemiring R] [CommSemiring S] (σ : R →+* S)
     {ι : Type i} (N : SemimoduleCat.{vN} S) (U : SemimoduleCat.{vU} S)
@@ -181,13 +218,21 @@ section Hom
 variable {R : Type r} {S : Type s} [Ring R] [CommRing S] (σ : R →+* S)
   {ι : Type i}
 
-/-- The coefficient-complex lift of semilinear Hom, with independent module worlds. -/
+/-- Let R be a ring in r, S a commutative ring in s, and σ:R→S a scalar homomorphism. Let c be a
+complex shape on I in i. H_σ(M,N) denotes additive maps f with f(a•x)=σ(a)•f(x), as an S-module.
+For a fixed R-module M in vM, coefficient Hom sends a c-shaped S-module complex K in vN to the
+c-shaped complex with term H_σ(M,K_a) and carrier max(vM,vN). Its differential is
+postcomposition h↦d_K(a,b)∘h. -/
 def semilinearHomCoeffComplexFunctor (M : ModuleCat.{vM} R) (c : ComplexShape ι) :
     HomologicalComplex (ModuleCat.{vN} S) c ⥤
       HomologicalComplex (ModuleCat.{max vM vN} S) c :=
   (semilinearHomCoeffFunctor σ M).mapHomologicalComplex c
 
-/-- The source-complex lift of semilinear Hom, retaining the actual shape reversal. -/
+/-- Let R be a ring in r, S a commutative ring in s, and σ:R→S a scalar homomorphism. Let c be a
+complex shape on I in i. H_σ(M,N) denotes additive maps f with f(a•x)=σ(a)•f(x), as an S-module.
+For fixed N an S-module in vN, source Hom is a functor from the opposite category of c-shaped
+R-module complexes K in vM to shape c.symm over S. Its term is H_σ(K_a,N), with carrier
+max(vM,vN), and differential h↦h∘d_K(b,a). -/
 def semilinearHomSourceComplexFunctor (N : ModuleCat.{vN} S) (c : ComplexShape ι) :
     (HomologicalComplex (ModuleCat.{vM} R) c)ᵒᵖ ⥤
       HomologicalComplex (ModuleCat.{max vM vN} S) c.symm :=
@@ -215,7 +260,12 @@ section FiniteFactor
 variable {R : Type r} {S : Type s} [CommRing R] [CommRing S] (σ : R →+* S)
   {ι : Type i}
 
-/-- The native finite-factor coefficient comparison lifted through an arbitrary shape. -/
+/-- Let R,S be commutative rings in independent universes r,s, σ:R→S a homomorphism, and c a complex
+shape on I in i. Let U be a finitely generated projective S-module in vU. The R-source carrier
+vM, S-coefficient carrier vN, factor carrier vU, and index universe i are independent. For any
+R-module M in vM, there is a natural complex isomorphism H_σ(M,K)⊗_S U≅H_σ(M,K⊗_S U), in shape c
+and output carrier max(vM,vN,vU). Tensoring here is termwise by the fixed coefficient U. At a,
+f⊗u maps to x↦f(x)⊗u. -/
 def semilinearHomCoeffComplexTensorIso (M : ModuleCat.{vM} R) (U : ModuleCat.{vU} S)
     [Module.Finite S U] [Module.Projective S U] (c : ComplexShape ι) :
     semilinearHomCoeffComplexFunctor σ M c ⋙
@@ -224,7 +274,12 @@ def semilinearHomCoeffComplexTensorIso (M : ModuleCat.{vM} R) (U : ModuleCat.{vU
         semilinearHomCoeffComplexFunctor σ M c :=
   Functor.mapHomologicalComplexCompIso (semilinearHomCoeffTensorIso σ M U) c
 
-/-- The native finite-factor source comparison lifted through the opposite-complex functor. -/
+/-- Let R,S be commutative rings in independent universes r,s, σ:R→S a homomorphism, and c a complex
+shape on I in i. Let U be a finitely generated projective S-module in vU. The R-source carrier
+vM, S-coefficient carrier vN, factor carrier vU, and index universe i are independent. For an
+S-module N in vN, there is a natural isomorphism H_σ(K,N)⊗_S U≅H_σ(K,N⊗_S U) on the opposite
+source-complex category. Its shape is c.symm and output carrier max(vM,vN,vU); at a the forward
+map is f⊗u↦(x↦f(x)⊗u). -/
 def semilinearHomSourceComplexTensorIso (N : ModuleCat.{vN} S) (U : ModuleCat.{vU} S)
     [Module.Finite S U] [Module.Projective S U] (c : ComplexShape ι) :
     semilinearHomSourceComplexFunctor σ N c ⋙
@@ -251,7 +306,12 @@ theorem semilinearHomCoeffComplexTensorIso_hom_f_apply (M : ModuleCat.{vM} R)
     ((((semilinearHomCoeffComplexTensorIso σ M U c).hom.app K).f a).hom
       (f ⊗ₜ[S] u)) x = f x ⊗ₜ[S] u := rfl
 
-/-- The source differential retains precomposition and its shape reversal. -/
+/-- Let R,S be commutative rings in independent universes r,s, σ:R→S a homomorphism, and c a complex
+shape on I in i. Let U be a finitely generated projective S-module in vU. The R-source carrier
+vM, S-coefficient carrier vN, factor carrier vU, and index universe i are independent. For a
+source complex K in R-modules, N in S-modules, a,b∈I, f:K_a→_σN, u∈U, and x∈K_b, the component
+Φ_b satisfies Φ_b(d_{H⊗U}(a,b)(f⊗u))(x)=f(d_K(b,a)(x))⊗u. The comparison uses shape c.symm and
+adds no degree sign. -/
 @[simp]
 theorem semilinearHomSourceComplexTensorIso_d_hom_apply (N : ModuleCat.{vN} S)
     (U : ModuleCat.{vU} S) [Module.Finite S U] [Module.Projective S U]
@@ -263,7 +323,12 @@ theorem semilinearHomSourceComplexTensorIso_d_hom_apply (N : ModuleCat.{vN} S)
     ((((semilinearHomSourceComplexTensorIso σ N U c).hom.app (op K)).f b).hom
       ((L.d a b).hom (f ⊗ₜ[S] u))) x = f ((K.d b a).hom x) ⊗ₜ[S] u := rfl
 
-/-- The coefficient differential retains its original postcomposition. -/
+/-- Let R,S be commutative rings in independent universes r,s, σ:R→S a homomorphism, and c a complex
+shape on I in i. Let U be a finitely generated projective S-module in vU. The R-source carrier
+vM, S-coefficient carrier vN, factor carrier vU, and index universe i are independent. For M an
+R-module, K a coefficient complex of S-modules, a,b∈I, f:M→_σK_a, u∈U, and x∈M,
+Φ_b(d_{H⊗U}(a,b)(f⊗u))(x)=d_K(a,b)(f(x))⊗u. The comparison retains shape c and the same
+differential values. -/
 @[simp]
 theorem semilinearHomCoeffComplexTensorIso_d_hom_apply (M : ModuleCat.{vM} R)
     (U : ModuleCat.{vU} S) [Module.Finite S U] [Module.Projective S U]
@@ -274,7 +339,12 @@ theorem semilinearHomCoeffComplexTensorIso_d_hom_apply (M : ModuleCat.{vM} R)
     ((((semilinearHomCoeffComplexTensorIso σ M U c).hom.app K).f b).hom
       ((L.d a b).hom (f ⊗ₜ[S] u))) x = (K.d a b).hom (f x) ⊗ₜ[S] u := rfl
 
-/-- The source-complex comparison at any common output lift height. -/
+/-- Let R,S be commutative rings in independent universes r,s, σ:R→S a homomorphism, and c a complex
+shape on I in i. Let U be a finitely generated projective S-module in vU. The R-source carrier
+vM, S-coefficient carrier vN, factor carrier vU, and index universe i are independent. For N in
+vN and any lift height h, lift both output complexes of H_σ(K,N)⊗_S U≅H_σ(K,N⊗_S U) to
+max(h,vM,vN,vU). This gives the same natural isomorphism in shape c.symm. After identifying the
+lifted coefficient copies, its value is f⊗u↦(x↦f(x)⊗u). -/
 def semilinearHomSourceComplexTensorIsoAt.{h, r, s, vM, vN, vU, i}
     {R : Type r} {S : Type s} [CommRing R] [CommRing S] (σ : R →+* S)
     {ι : Type i} (N : ModuleCat.{vN} S) (U : ModuleCat.{vU} S)

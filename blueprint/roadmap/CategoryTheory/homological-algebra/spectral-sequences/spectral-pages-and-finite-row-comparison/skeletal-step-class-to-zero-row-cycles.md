@@ -1,3 +1,5 @@
-# Skeletal Step Class To Zero Row Cycles
+# The zero-row step-class lift with explicit total degree
 
-The class map to cycles in row zero, with total degree transported along `n + 0 = n`.
+The zero-row step-class lift with explicit total degree.
+
+For n∈ℤ, transport n+0 to n and lift H_n(⊥,−n) into degree-n cycles of row zero.

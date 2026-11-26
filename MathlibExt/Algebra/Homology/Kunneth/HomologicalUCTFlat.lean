@@ -18,19 +18,15 @@ import MathlibExt.Algebra.Homology.ChainGradedPairingHomologyBraiding
 import MathlibExt.Algebra.Homology.ChainGradedPairingKoszul
 
 /-!
-# Homological universal coefficients with flat coefficients
+# Homological universal coefficients with a flat coefficient
 
-The canonical homological universal-coefficient map is an isomorphism when
-the coefficient module is flat, without a flatness assumption on the chain
-complex. The proof swaps the tensor factors through the Koszul braiding and
-applies the existing one-sided Künneth collapse theorem.
+Over any commutative ring, if A is flat, the canonical map H_n(K) ⊗ A → H_n(K ⊗ A[0]) is an
+isomorphism for every nonnegative chain complex K. The Koszul tensor braiding exchanges the
+factors and reduces this to the one-sided tensor homology comparison.
 
-May, *A Concise Course in Algebraic Topology*, Chapter 17 §1 supplies the
-canonical coefficient map and the flatness/exactness context. By tensor
-symmetry, a flat coefficient module makes that map an isomorphism over any
-commutative ring. This is a formal exact-functor corollary, not May's PID-only
-universal-coefficient exact sequence. No naturality of a chosen right edge or
-splitting is claimed.
+The swapped source comparison and coefficient map are natural in K and A. Mathematical source:
+May, A Concise Course in Algebraic Topology, Chapter 17 §1, for the canonical coefficient map
+and universal-coefficient context.
 -/
 
 public section
@@ -55,8 +51,9 @@ local instance {R : Type u} [CommRing R] :
     HasFiniteBiproducts (ChainComplex (ModuleCat.{u} R) ℕ) :=
   CategoryTheory.Abelian.hasFiniteBiproducts
 
-/-- The Künneth tensor source with a degree-zero coefficient complex in the
-first factor reduces to `A ⊗ H_n(K)`. -/
+/-- Compression of the swapped coefficient tensor source.
+
+The Künneth tensor-source sum for A[0] and K identifies with A ⊗ H_n(K). -/
 noncomputable def homologyUCTSwappedTensorSourceIso
     {R : Type u} [CommRing R]
     (K : ChainComplex (ModuleCat.{u} R) ℕ) (A : ModuleCat.{u} R) (n : ℕ) :
@@ -100,8 +97,10 @@ noncomputable def homologyUCTSwappedTensorSourceIso
     tensorIso (singleObjHomologySelfIso
       (ComplexShape.down ℕ) 0 A) (Iso.refl _)
 
-/-- The reversed-factor Künneth map selects the unique degree-`(0,n)`
-summand of the degree-zero coefficient complex. -/
+/-- The swapped coefficient comparison as a degree-(0,n) pairing.
+
+The inverse source comparison followed by the Künneth map is the homology pairing of A[0] with
+K, with degree 0+n transported to n. -/
 @[reassoc]
 theorem homologyUCTSwappedTensorSourceIso_inv_comp_kunnethHomologyTensorMap
     {R : Type u} [CommRing R]
@@ -122,8 +121,10 @@ theorem homologyUCTSwappedTensorSourceIso_inv_comp_kunnethHomologyTensorMap
     tensorHom_id, Category.assoc]
   rw [kunnethHomologyTensorMap_ι]
 
-/-- The inverse swapped single-coefficient tensor-source coordinate is
-natural in the chain complex and coefficient module. -/
+/-- Naturality of the inverse swapped tensor-source comparison.
+
+Coefficient and chain maps commute with the inverse swapped comparison and its Künneth
+tensor-source map. -/
 @[reassoc]
 theorem homologyUCTSwappedTensorSourceIso_inv_naturality
     {R : Type u} [CommRing R]
@@ -170,8 +171,10 @@ theorem homologyUCTSwappedTensorSourceIso_inv_naturality
       (tensorRight (K'.homology ij.val.2)).map_isZero hzero
     exact htensor.eq_of_tgt _ _
 
-/-- The canonical coefficient map commutes with swapping the chain-complex
-and degree-zero coefficient factors through the Koszul braiding. -/
+/-- The coefficient map commutes with Koszul tensor braiding.
+
+The canonical coefficient map followed by the chain tensor braiding on homology equals the
+module tensor braid followed by the swapped Künneth coefficient map. -/
 @[reassoc]
 theorem homologyUniversalCoefficientMap_koszul_braiding
     {R : Type u} [CommRing R]
@@ -222,8 +225,9 @@ theorem homologyUniversalCoefficientMap_koszul_braiding
   rw [htransport]
   rw [← homologyUCTSwappedTensorSourceIso_inv_comp_kunnethHomologyTensorMap]
 
-/-- If the coefficient module is flat, the canonical homological
-universal-coefficient map is an isomorphism over any commutative ring. -/
+/-- A flat coefficient makes the canonical homological coefficient map an isomorphism.
+
+For any commutative R and chain complex K, flatness of A implies H_n(K) ⊗ A ≅ H_n(K ⊗ A[0]). -/
 theorem isIso_homologyUniversalCoefficientMap_of_flat
     {R : Type u} [CommRing R]
     (K : ChainComplex (ModuleCat.{u} R) ℕ)

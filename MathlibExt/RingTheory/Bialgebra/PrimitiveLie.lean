@@ -19,12 +19,16 @@ public import Mathlib.Algebra.Lie.Subalgebra
 public import MathlibExt.Algebra.Lie.UniversalEnveloping.Augmentation
 
 /-!
-# Primitive Lie algebras of bialgebras
+# Lie algebras of primitive elements
 
-The primitive elements of a bialgebra over a commutative ring form a Lie
-subalgebra under the ring commutator. Bialgebra morphisms induce Lie
-morphisms on primitives. These maps preserve identities and composition,
-and their enveloping maps commute with the primitive inclusions.
+Let H be a bialgebra over a commutative ring R, with H an associative ring. Its primitive
+elements satisfy Δ(x) = 1 ⊗ x + x ⊗ 1. They form an R-Lie subalgebra of H under the commutator
+[x,y] = xy−yx, using the submodule of (1,1)-skew-primitive elements.
+
+A bialgebra homomorphism f : H → K restricts to a Lie homomorphism on primitives. These maps
+respect identities and composition, commute with the inclusions into H and K, and induce the
+naturality square for the universal enveloping algebra maps to the original bialgebras. The
+scalar and bialgebra universes are independent.
 -/
 
 @[expose] public section
@@ -37,20 +41,30 @@ namespace Bialgebra
 
 variable (R : Type u) [CommRing R] (H : Type v) [Ring H] [Bialgebra R H]
 
-/-- The primitive elements, with the Lie bracket inherited from the ring commutator. -/
+/-- Primitive elements as a Lie subalgebra.
+
+For an R-bialgebra H with R commutative and H a ring, the elements with Δ(x) = 1 ⊗ x + x ⊗ 1
+form a Lie subalgebra under [x,y] = xy−yx. Its underlying submodule is the
+(1,1)-skew-primitive submodule. -/
 def primitiveLieSubalgebra : LieSubalgebra R H where
   __ := Coalgebra.skewPrimitive R (1 : H) 1
   lie_mem' := by
     intro x y hx hy
     exact IsPrimitiveElem.commutator hx hy
 
-/-- The underlying submodule is the native submodule of `(1, 1)`-skew-primitives. -/
+/-- Underlying submodule of the primitive Lie algebra.
+
+For a bialgebra H over a commutative ring R, the submodule underlying primitiveLieSubalgebra R
+H is Coalgebra.skewPrimitive R 1 1, the submodule of primitive elements. -/
 @[simp]
 theorem primitiveLieSubalgebra_toSubmodule :
     (primitiveLieSubalgebra R H).toSubmodule = Coalgebra.skewPrimitive R (1 : H) 1 :=
   rfl
 
-/-- Membership in the primitive Lie subalgebra is native bialgebra primitivity. -/
+/-- Membership criterion for the primitive Lie subalgebra.
+
+For x in a bialgebra H over a commutative ring R, x belongs to primitiveLieSubalgebra R H
+exactly when IsPrimitiveElem R x holds. -/
 @[simp]
 theorem mem_primitiveLieSubalgebra {x : H} :
     x ∈ primitiveLieSubalgebra R H ↔ IsPrimitiveElem R x :=
@@ -65,7 +79,11 @@ variable {R : Type u} [CommRing R]
   {K : Type w} [Ring K] [Bialgebra R K]
   {L : Type z} [Ring L] [Bialgebra R L]
 
-/-- A bialgebra morphism restricts to a Lie morphism of primitive elements. -/
+/-- Lie map on primitives induced by a bialgebra homomorphism.
+
+For f : H →ₐc[R] K between bialgebras over a commutative ring, restrict f to the primitive Lie
+subalgebras. Preservation of comultiplication and unit sends primitives to primitives, while
+the algebra-map commutator law gives preservation of the Lie bracket. -/
 def primitiveLieMap (f : H →ₐc[R] K) :
     Bialgebra.primitiveLieSubalgebra R H →ₗ⁅R⁆ Bialgebra.primitiveLieSubalgebra R K where
   __ := (f.toLinearMap.comp
@@ -79,14 +97,20 @@ def primitiveLieMap (f : H →ₐc[R] K) :
     apply Subtype.ext
     exact f.toAlgHom.toLieHom.map_lie (x : H) (y : H)
 
-/-- The induced primitive morphism has the original bialgebra morphism as its underlying map. -/
+/-- Underlying value of a map on primitive Lie algebras.
+
+For a primitive x in H and bialgebra homomorphism f : H → K, the image f.primitiveLieMap(x),
+viewed in K, is f(x). -/
 @[simp]
 theorem primitiveLieMap_apply (f : H →ₐc[R] K)
     (x : Bialgebra.primitiveLieSubalgebra R H) :
     (f.primitiveLieMap x : K) = f (x : H) :=
   rfl
 
-/-- Primitive inclusions commute with the induced Lie morphism. -/
+/-- Inclusion square for primitive Lie maps.
+
+For f : H →ₐc[R] K, inclusion of the primitive Lie subalgebra into K after f.primitiveLieMap
+equals f viewed as a Lie map after inclusion of the primitives into H. -/
 theorem primitiveLieMap_incl (f : H →ₐc[R] K) :
     (Bialgebra.primitiveLieSubalgebra R K).incl.comp f.primitiveLieMap =
       f.toAlgHom.toLieHom.comp (Bialgebra.primitiveLieSubalgebra R H).incl := by
@@ -94,7 +118,10 @@ theorem primitiveLieMap_incl (f : H →ₐc[R] K) :
   intro x
   rfl
 
-/-- The identity bialgebra morphism induces the identity on primitives. -/
+/-- Identity law for induced primitive Lie maps.
+
+The identity bialgebra homomorphism of H induces the identity Lie homomorphism of
+primitiveLieSubalgebra R H. -/
 @[simp]
 theorem primitiveLieMap_id :
     (BialgHom.id R H).primitiveLieMap =
@@ -105,7 +132,10 @@ theorem primitiveLieMap_id :
   apply Subtype.ext
   rfl
 
-/-- Composition of bialgebra morphisms induces composition of primitive Lie morphisms. -/
+/-- Composition law for induced primitive Lie maps.
+
+For bialgebra maps f : H → K and g : K → L over R, (g ∘ f).primitiveLieMap = g.primitiveLieMap
+∘ f.primitiveLieMap. -/
 @[simp]
 theorem primitiveLieMap_comp (f : H →ₐc[R] K) (g : K →ₐc[R] L) :
     (g.comp f).primitiveLieMap = g.primitiveLieMap.comp f.primitiveLieMap := by
@@ -114,7 +144,11 @@ theorem primitiveLieMap_comp (f : H →ₐc[R] K) (g : K →ₐc[R] L) :
   apply Subtype.ext
   rfl
 
-/-- The canonical enveloping maps of primitive Lie algebras commute with bialgebra morphisms. -/
+/-- Naturality of enveloping maps from primitive Lie algebras.
+
+For a bialgebra homomorphism f : H → K, let ev_H : U(P(H)) → H and ev_K : U(P(K)) → K be the
+algebra maps extending the primitive inclusions. Then f ∘ ev_H = ev_K ∘ U(f.primitiveLieMap),
+as R-algebra maps. -/
 theorem primitive_enveloping_naturality (f : H →ₐc[R] K) :
     f.toAlgHom.comp
         (UniversalEnvelopingAlgebra.lift R (Bialgebra.primitiveLieSubalgebra R H).incl) =

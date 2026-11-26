@@ -1,3 +1,5 @@
-# Antipode To Opposite
+# The algebra map defining the enveloping antipode
 
-The signed Lie generators extend to an algebra map into the opposite algebra.
+The algebra map defining the enveloping antipode.
+
+Extend ιx ↦ −op(ιx) to an R-algebra homomorphism into the opposite enveloping algebra.

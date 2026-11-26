@@ -1,4 +1,6 @@
-# Family Finite Length Homology Data Of Quotient
+# Finite-length homology data from a finite family quotient
 
-Canonical finite-length homology data for a finite-family Koszul complex
-whose coefficient quotient has finite length.
+Finite-length homology data from a finite family quotient.
+
+For finite-length R/(a), use the finite Koszul homology lengths and vanishing above |I| to
+obtain cutoff |I|+1.

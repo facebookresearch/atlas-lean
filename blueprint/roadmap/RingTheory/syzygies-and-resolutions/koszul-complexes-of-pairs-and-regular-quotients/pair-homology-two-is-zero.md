@@ -1,4 +1,5 @@
-# Pair homology two is Zero
+# The pair complex has zero top homology for a regular first element
 
-Degree-two homology of a two-generator Koszul complex vanishes when the
-first coefficient acts injectively.
+The pair complex has zero top homology for a regular first element.
+
+If multiplication by f is injective, H₂(K(f,g)) is zero.

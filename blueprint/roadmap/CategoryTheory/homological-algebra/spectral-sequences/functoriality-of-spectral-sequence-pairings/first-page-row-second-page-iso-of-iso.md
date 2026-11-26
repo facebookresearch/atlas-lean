@@ -1,4 +1,5 @@
-# First Page Row Second Page Iso Of Iso
+# The second-page comparison of two isomorphic row complexes
 
-The native second-page comparison induced by a genuine cochain row
-isomorphism. The row isomorphism includes its actual differential compatibility.
+The second-page comparison of two isomorphic row complexes.
+
+A cochain isomorphism between row q of S and row r of T induces E₂^{p,q}(S) ≅ E₂^{p,r}(T).

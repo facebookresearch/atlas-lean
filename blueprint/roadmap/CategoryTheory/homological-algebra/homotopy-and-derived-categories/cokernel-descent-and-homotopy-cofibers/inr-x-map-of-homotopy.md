@@ -1,3 +1,9 @@
-# Inr X map Of Homotopy
+# Target component of the homotopy-square cofiber map
 
-The original target component is retained in each native cone degree.
+Let C be preadditive with binary biproducts, and let c be a complex shape
+with decidable differential relation and a predecessor in every degree.
+For maps φ:F → G and ψ:F′ → G′, take a:F → F′, b:G → G′
+and a homotopy H:b∘φ ∼ ψ∘a.
+
+In every degree j the target component of the induced map M satisfies
+Mⱼ ∘ inr_φ(j) = inr_ψ(j) ∘ bⱼ.

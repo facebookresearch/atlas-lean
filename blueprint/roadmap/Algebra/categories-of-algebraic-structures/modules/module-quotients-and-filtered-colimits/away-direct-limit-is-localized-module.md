@@ -1,4 +1,5 @@
-# Away Direct Limit is Localized Module
+# The stage-zero map has the away-localization universal property
 
-The stage-zero map exhibits the sequential direct limit as localization
-away from `r`.
+The stage-zero map has the away-localization universal property.
+
+The sequential direct limit is a localized module at the powers of r.

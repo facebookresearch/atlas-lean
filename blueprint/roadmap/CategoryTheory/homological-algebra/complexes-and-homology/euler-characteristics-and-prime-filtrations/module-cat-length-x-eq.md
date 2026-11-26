@@ -1,3 +1,5 @@
-# Module Cat length X₂ eq
+# The middle length decomposes into homology and range lengths
 
-Actual homology and differential ranges decompose the middle module's extended length.
+The middle length decomposes into homology and range lengths.
+
+For a module short complex S, ℓ(S₂)=ℓ(H(S))+ℓ(range f)+ℓ(range g) in extended natural numbers.

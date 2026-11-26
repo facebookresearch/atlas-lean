@@ -1,4 +1,6 @@
-# Family Lift To Finite Resolution f zero comp
+# The finite-resolution lift commutes with degree-zero augmentation
 
-The degree-zero component of the finite-resolution comparison has the
-expected augmentation factorization.
+The finite-resolution lift commutes with degree-zero augmentation.
+
+The degree-zero comparison followed by the finite-resolution augmentation equals the Koszul
+augmentation followed by q.

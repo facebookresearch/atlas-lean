@@ -1,3 +1,6 @@
-# Mixed Page Pair To successor inv
+# The inverse successor square for the mixed product
 
-The inverse successor comparisons retain the original mixed homology product.
+The inverse successor square for the mixed product.
+
+Returning the output product from r+1 equals returning the inputs and applying the page-r
+homology product.

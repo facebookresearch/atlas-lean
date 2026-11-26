@@ -1,4 +1,7 @@
-# Biprod XIso inv map hom
+# Biproduct cochain map in term coordinates
 
-The original biproduct-complex map has the two original component maps
-under the actual original evaluation isomorphisms.
+Let C be preadditive with binary biproducts, f:K → K′ and g:L → L′
+integer-indexed cochain maps, and j an integer. For the evaluation
+isomorphisms β:(K ⊞ L)ʲ ≅ Kʲ ⊞ Lʲ and
+β′:(K′ ⊞ L′)ʲ ≅ K′ʲ ⊞ L′ʲ, the component formula is
+β′ ∘ (f ⊞ g)ⱼ ∘ β⁻¹ = fⱼ ⊞ gⱼ.

@@ -1,3 +1,6 @@
-# Spectral Map successor inv
+# The spectral comparison map commutes with inverse succession
 
-The inverse native successor maps commute with the original output spectral-sequence map.
+The spectral comparison map commutes with inverse succession.
+
+The next-page component of γ followed by inverse succession equals inverse succession followed
+by its homology map at r.

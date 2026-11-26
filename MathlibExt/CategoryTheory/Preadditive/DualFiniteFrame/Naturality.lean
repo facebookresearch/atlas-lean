@@ -14,11 +14,19 @@ module
 public import MathlibExt.CategoryTheory.Preadditive.DualFiniteFrame.Comparison
 
 /-!
-# Naturality and independence of actual finite-frame dual comparison
+# Naturality and frame independence of dual comparisons
 
-The coefficient transpose identity extends characteristic generator values to
-every actual unit-source morphism. Those values determine the comparison and
-prove naturality for arbitrary morphisms and independence of the finite frame.
+In a preadditive category, a finite biproduct frame with inclusions ι_i and
+projections π_i decomposes a map v:U → A as ∑ᵢι_i∘π_i∘v.
+For an additive contravariant functor G with e:G(U) ≅ U satisfying
+e∘G(qᵒᵖ)=q∘e on endomorphisms of U, this also decomposes dual evaluation.
+
+For additive F:C → D and additive dual functors G,H with compatible
+distinguished objects and their transpose laws, the finite-frame comparison
+F(G(A)) ≅ H(F(A)) has the corresponding evaluation on every map U → A.
+Dual generator evaluations detect equality, the comparison is natural in
+arbitrary maps between framed objects, and it agrees for two finite frames
+whose points are identified with the same object.
 -/
 
 @[expose] public section
@@ -33,7 +41,9 @@ namespace CategoryTheory.DualFiniteFrame
 variable {C : Type u₁} [Category.{v₁} C] [Preadditive C]
   {D : Type u₂} [Category.{v₂} D] [Preadditive D]
 
-/-- The original finite unit frame expands every actual unit-source morphism. -/
+/-- In a preadditive category C, let b be a finite biproduct bicone of
+copies of U, with inclusions ι_i and projections π_i. Every map
+v:U → b.pt satisfies v=∑ᵢι_i∘π_i∘v. -/
 theorem biconeUnitHom_decompose (I : Type w) [Fintype I] (U : C)
     (b : Bicone (fun _ : I => U)) (hb : b.IsBilimit) (v : U ⟶ b.pt) :
     (∑ i, (v ≫ b.π i) ≫ b.ι i) = v := by
@@ -42,8 +52,10 @@ theorem biconeUnitHom_decompose (I : Type w) [Fintype I] (U : C)
       simp only [Preadditive.comp_sum, Category.assoc]
     _ = v := by rw [IsBilimit.total hb, Category.comp_id]
 
-/-- The genuine unit transpose law expands dual evaluation on every original
-unit-source morphism through the actual finite frame. -/
+/-- Let C be preadditive, G:Cᵒᵖ → C additive, and e:G(U) ≅ U satisfy
+e∘G(qᵒᵖ)=q∘e for every endomorphism q of U.
+For a finite bilimit bicone b of copies of U and v:U → b.pt,
+e∘G(vᵒᵖ)=∑ᵢ(π_i∘v)∘e∘G(ι_iᵒᵖ). -/
 theorem dualBiconeUnitHom_decompose (G : Cᵒᵖ ⥤ C) [G.Additive]
     (I : Type w) [Fintype I] (U : C) (e : G.obj (op U) ≅ U)
     (he : ∀ q : U ⟶ U, G.map q.op ≫ e.hom = e.hom ≫ q)
@@ -64,8 +76,14 @@ theorem dualBiconeUnitHom_decompose (G : Cᵒᵖ ⥤ C) [G.Additive]
       rw [op_sum]
     _ = _ := by rw [biconeUnitHom_decompose I U b hb v]
 
-/-- Characteristic values extend to every actual pulled unit-source morphism,
-using the genuine coefficient transpose laws on both original units. -/
+/-- Let C,D be preadditive categories, F:C → D additive, and
+G:Cᵒᵖ → C, H:Dᵒᵖ → D additive. Fix objects U,V and isomorphisms
+u:F(U) ≅ V, e_G:G(U) ≅ U and e_H:H(V) ≅ V. Assume e_G∘G(qᵒᵖ)=q∘e_G for every endomorphism q of U,
+and e_H∘H(tᵒᵖ)=t∘e_H for every endomorphism t of V.
+For finite I, choose I-fold biproducts of U,V and a bilimit bicone b of
+copies of U. If E_b:F(G(b.pt)) ≅ H(F(b.pt)) is the finite-frame comparison,
+then every v:U → b.pt satisfies
+e_H∘H((F(v)∘u⁻¹)ᵒᵖ)∘E_b=u∘F(e_G∘G(vᵒᵖ)). -/
 theorem finiteFrameDualComparisonIso_unitHom (F : C ⥤ D) [F.Additive]
     (G : Cᵒᵖ ⥤ C) [G.Additive] (H : Dᵒᵖ ⥤ D) [H.Additive]
     (I : Type w) [Fintype I]
@@ -103,8 +121,12 @@ theorem finiteFrameDualComparisonIso_unitHom (F : C ⥤ D) [F.Additive]
       congrArg (fun z => F.map z ≫ u.hom)
         (dualBiconeUnitHom_decompose G I U eG hG b hb v).symm
 
-/-- Actual pulled generator evaluations detect equality of maps into the
-genuine dual of the actual image frame. -/
+/-- Let C,D be preadditive, F:C → D and H:Dᵒᵖ → D additive, with
+u:F(U) ≅ V and e_H:H(V) ≅ V. For finite I, choose an I-fold biproduct
+of V and a bilimit bicone b of copies of U.
+Two maps m,n:W → H(F(b.pt)) are equal if all evaluations
+e_H∘H((F(ι_i)∘u⁻¹)ᵒᵖ)∘m and
+e_H∘H((F(ι_i)∘u⁻¹)ᵒᵖ)∘n are equal. -/
 theorem finiteFrameDualComparison_hom_ext (F : C ⥤ D) [F.Additive]
     (H : Dᵒᵖ ⥤ D) [H.Additive] (I : Type w) [Fintype I]
     (U : C) (V : D) [HasBiproduct (fun _ : I => V)]
@@ -125,8 +147,14 @@ theorem finiteFrameDualComparison_hom_ext (F : C ⥤ D) [F.Additive]
     ((h i).trans ((congrArg (fun z => n ≫ z) hp).symm.trans
       (Category.assoc n T.hom _).symm))
 
-/-- The direct finite-frame dual comparison is natural for every original
-morphism, with no invertibility condition on that morphism. -/
+/-- Let C,D be preadditive categories, F:C → D additive, and
+G:Cᵒᵖ → C, H:Dᵒᵖ → D additive. Fix objects U,V and isomorphisms
+u:F(U) ≅ V, e_G:G(U) ≅ U and e_H:H(V) ≅ V. Assume e_G∘G(qᵒᵖ)=q∘e_G for every endomorphism q of U,
+and e_H∘H(tᵒᵖ)=t∘e_H for every endomorphism t of V.
+For finite index sets I,J, choose the corresponding biproducts of U and
+V, and bilimit frames a,b of copies of U. For every map φ:a.pt → b.pt,
+the comparisons E_a,E_b satisfy
+E_a∘F(G(φᵒᵖ))=H(F(φ)ᵒᵖ)∘E_b. -/
 theorem finiteFrameDualComparisonIso_naturality (F : C ⥤ D) [F.Additive]
     (G : Cᵒᵖ ⥤ C) [G.Additive] (H : Dᵒᵖ ⥤ D) [H.Additive]
     (I J : Type w) [Fintype I] [Fintype J]
@@ -159,8 +187,14 @@ theorem finiteFrameDualComparisonIso_naturality (F : C ⥤ D) [F.Additive]
     exact finiteFrameDualComparisonIso_unitHom F G H J U V u eG eH hG hH b hb (a.ι i ≫ φ)
   exact hleft.trans hright.symm
 
-/-- Any two actual finite frames on the same object define the same canonical
-dual comparison; the chart index and rank may change. -/
+/-- Let C,D be preadditive categories, F:C → D additive, and
+G:Cᵒᵖ → C, H:Dᵒᵖ → D additive. Fix objects U,V and isomorphisms
+u:F(U) ≅ V, e_G:G(U) ≅ U and e_H:H(V) ≅ V. Assume e_G∘G(qᵒᵖ)=q∘e_G for every endomorphism q of U,
+and e_H∘H(tᵒᵖ)=t∘e_H for every endomorphism t of V.
+For finite I,J and the corresponding biproducts of U,V, let a and b be
+bilimit frames with points identified by equalities a.pt=A and b.pt=A.
+Their finite-frame comparisons agree through the canonical source and
+target identifications induced by these equalities. -/
 theorem finiteFrameDualComparisonIso_frame_independent (F : C ⥤ D) [F.Additive]
     (G : Cᵒᵖ ⥤ C) [G.Additive] (H : Dᵒᵖ ⥤ D) [H.Additive]
     (I J : Type w) [Fintype I] [Fintype J]

@@ -20,13 +20,18 @@ public import Mathlib.RingTheory.Ideal.AssociatedPrime.Finiteness
 public import Mathlib.RingTheory.KrullDimension.Module
 
 /-!
-# Prime-filtration decomposition of the one-element Euler characteristic
+# Prime-factor decomposition of a one-element Euler invariant
 
-For a finite module over a Noetherian ring, finite length of the cokernel of
-multiplication by `r` is enough to build finite kernel/cokernel data.  The
-Noetherian prime-filtration induction and additivity of the one-element Euler
-characteristic then express its value as a finite sum of prime-quotient
-contributions, with repetitions retained as multiplicities.
+For a finitely generated module over a noetherian ring, finite length of M/rM gives finite
+multiplication kernel and cokernel data and a finite list of prime-quotient factors. The list
+records multiplicities, its primes lie in the support of M, and its localized length sums and
+Euler sum recover those of M.
+
+A factor R/p contributes zero when r ∈ p and otherwise contributes ℓ_R((R/p)/r(R/p)). At a
+prime satisfying the stated minimal-support condition, the localized length of M equals its
+occurrence count. Over a local ring with support dimension at most one and r in the maximal
+ideal, factors whose primes exclude r have that minimality, giving the generic-multiplicity
+formula.
 -/
 
 @[expose] public section
@@ -40,22 +45,31 @@ universe u v
 
 variable (R : Type u) [CommRing R] [IsNoetherianRing R]
 
-/-- A prime quotient together with the finite-length data needed for its
-one-element Euler characteristic. -/
+/-- A prime quotient with finite multiplication lengths.
+
+Record a prime p and finite kernel/cokernel length data for multiplication by r on R/p. -/
 structure ElementEulerPrimeFactor (r : R) where
-  /-- The prime ideal indexing this Euler factor. -/
+  /-- The prime of an Euler factor.
+
+This prime p determines the factor module R/p. -/
   prime : PrimeSpectrum R
+/-- Finite multiplication data of a prime Euler factor.
+
+The multiplication kernel and cokernel of r on R/p have finite R-length. -/
   finiteLength : ElementEulerFiniteLength R (R ⧸ prime.asIdeal) r
 
-/-- Euler contribution of one prime-filtration factor. -/
+/-- The Euler value of a prime factor.
+
+The factor value is χ_r(R/p), computed using its finite multiplication lengths. -/
 noncomputable def ElementEulerPrimeFactor.value
     {r : R} (f : ElementEulerPrimeFactor R r) : ℤ :=
   elementEulerCharacteristic R (R ⧸ f.prime.asIdeal) r f.finiteLength
 
 omit [IsNoetherianRing R] in
 open Classical in
-/-- A prime factor contributes zero when it contains the element, and its
-principal quotient length otherwise. -/
+/-- The prime factor contribution by membership of the element.
+
+The contribution is zero if r ∈ p, and otherwise equals the length of (R/p)/r(R/p). -/
 theorem ElementEulerPrimeFactor.value_eq_ite
     {r : R} (f : ElementEulerPrimeFactor R r) :
     f.value = if r ∈ f.prime.asIdeal then 0 else
@@ -70,15 +84,18 @@ theorem ElementEulerPrimeFactor.value_eq_ite
     exact elementEulerCharacteristic_quotient_prime_eq_length_of_not_mem
       R f.prime.asIdeal r hr f.finiteLength
 
-/-- Local length of a prime factor at another prime. -/
+/-- The localized length of a prime factor.
+
+At q, take the length over R_q of the localization of R/p. -/
 noncomputable def ElementEulerPrimeFactor.localLengthAt
     {r : R} (f : ElementEulerPrimeFactor R r) (q : PrimeSpectrum R) : ENat :=
   Module.length (Localization.AtPrime q.asIdeal)
     (LocalizedModule q.asIdeal.primeCompl (R ⧸ f.prime.asIdeal))
 
 omit [IsNoetherianRing R] in
-/-- Two bundled prime factors are equal exactly when their primes are equal;
-the finite-length field is proof-irrelevant. -/
+/-- Prime Euler factors are determined by their primes.
+
+Two bundled factors for the same r are equal exactly when their prime components are equal. -/
 theorem ElementEulerPrimeFactor.eq_iff_prime_eq
     {r : R} {f g : ElementEulerPrimeFactor R r} :
     f = g ↔ f.prime = g.prime := by
@@ -95,8 +112,9 @@ theorem ElementEulerPrimeFactor.eq_iff_prime_eq
 
 omit [IsNoetherianRing R] in
 open Classical in
-/-- Counting a bundled factor is the same as counting factors with its
-prime. -/
+/-- Factor multiplicity equals its prime occurrence count.
+
+Counting a bundled factor in a list equals counting list entries with its prime. -/
 theorem ElementEulerPrimeFactor.count_eq_countP_prime
     {r : R} (l : List (ElementEulerPrimeFactor R r))
     (f : ElementEulerPrimeFactor R r) :
@@ -114,7 +132,9 @@ theorem ElementEulerPrimeFactor.count_eq_countP_prime
         simp [h, hgf, ih]
 
 omit [IsNoetherianRing R] in
-/-- A prime factor has local length one at its own prime. -/
+/-- A prime factor has length one at its own prime.
+
+The localization of R/p at p has length one over R_p. -/
 theorem ElementEulerPrimeFactor.localLengthAt_eq_one
     {r : R} (f : ElementEulerPrimeFactor R r) :
     f.localLengthAt R f.prime = 1 := by
@@ -142,7 +162,9 @@ theorem ElementEulerPrimeFactor.localLengthAt_eq_one
   exact e.length_eq.trans (Module.length_eq_one Q _)
 
 omit [IsNoetherianRing R] in
-/-- A prime factor localizes to zero at a prime not containing it. -/
+/-- A factor vanishes at a prime not containing its prime.
+
+If p is not contained in q, the localization of R/p at q has length zero. -/
 theorem ElementEulerPrimeFactor.localLengthAt_eq_zero_of_not_le
     {r : R} (f : ElementEulerPrimeFactor R r) (q : PrimeSpectrum R)
     (h : ¬ f.prime.asIdeal ≤ q.asIdeal) :
@@ -160,25 +182,45 @@ theorem ElementEulerPrimeFactor.localLengthAt_eq_zero_of_not_le
   rw [show (a : R) • x = Ideal.Quotient.mk f.prime.asIdeal a * x by rfl,
     Ideal.Quotient.eq_zero_iff_mem.mpr ha, zero_mul]
 
-/-- A prime-filtration expression for the one-element Euler characteristic
-of a module.  The factor list is allowed to repeat primes. -/
+/-- A finite prime-factor length and Euler decomposition.
+
+Record finite multiplication data for M, a list of prime factors in its support, and
+equalities expressing every localized length and χ_r(M) as the corresponding factor sums. -/
 structure ElementEulerPrimeDecomposition
     (M : Type v) [AddCommGroup M] [Module R M] (r : R) where
+/-- Finite multiplication lengths of the decomposed module.
+
+The module M has finite multiplication kernel and cokernel lengths for r. -/
   finiteLength : ElementEulerFiniteLength R M r
-  /-- Prime-filtration factors realizing the Euler decomposition. -/
+  /-- The prime-factor list with multiplicities.
+
+The list retains repeated prime factors, so occurrence counts encode multiplicities. -/
   factors : List (ElementEulerPrimeFactor R r)
+/-- The factor primes belong to the module support.
+
+Every prime appearing in the factor list lies in Supp_R(M). -/
   factor_mem_support : ∀ f ∈ factors, f.prime ∈ Module.support R M
+/-- The localized module length is the sum of factor lengths.
+
+For every prime q, ℓ_{R_q}(M_q) equals the sum of the localized lengths of all entries in the
+factor list. -/
   localized_length_eq : ∀ q : PrimeSpectrum R,
     Module.length (Localization.AtPrime q.asIdeal)
         (LocalizedModule q.asIdeal.primeCompl M) =
       (factors.map fun f => f.localLengthAt R q).sum
+/-- The one-element Euler invariant is the factor-value sum.
+
+The integer χ_r(M) equals the sum of the Euler values of the factor list, with repetitions
+retained. -/
   eq_sum : elementEulerCharacteristic R M r finiteLength =
     (factors.map (ElementEulerPrimeFactor.value R)).sum
 
 omit [IsNoetherianRing R] in
 open Classical in
-/-- At a prime minimal in the module support, the localized length is the
-number of occurrences of that prime in the decomposition's factor list. -/
+/-- Localized length under the minimal-support condition.
+
+If every support prime contained in q equals q, then ℓ_{R_q}(M_q) equals the number of
+factor-list occurrences of q. -/
 theorem ElementEulerPrimeDecomposition.localized_length_eq_countP_of_minimal
     {M : Type v} [AddCommGroup M] [Module R M] {r : R}
     (d : ElementEulerPrimeDecomposition R M r) (q : PrimeSpectrum R)
@@ -209,8 +251,9 @@ theorem ElementEulerPrimeDecomposition.localized_length_eq_countP_of_minimal
 
 omit [IsNoetherianRing R] in
 open Classical in
-/-- Every minimal prime of the coefficient ring occurs among the bundled
-factors of a prime decomposition of the regular module. -/
+/-- Every minimal ring prime occurs in the regular-module decomposition.
+
+For a decomposition of R and a minimal prime q, some factor-list entry has prime q. -/
 theorem ElementEulerPrimeDecomposition.exists_factor_prime_eq_of_isMin
     {r : R} (d : ElementEulerPrimeDecomposition R R r)
     (q : PrimeSpectrum R) (hmin : IsMin q) :
@@ -244,10 +287,10 @@ theorem ElementEulerPrimeDecomposition.exists_factor_prime_eq_of_isMin
 
 omit [IsNoetherianRing R] in
 open Classical in
-/-- Group the prime-factor sum by prime.  For every factor which contributes
-nontrivially, it suffices to know that its prime is minimal in the module
-support; its repetition count is then the corresponding localized module
-length. -/
+/-- Euler factors weighted by their generic multiplicities.
+
+If every factor excluding r satisfies the stated minimal-support condition, χ_r(M) is the sum
+over distinct factors of ℓ_{R_p}(M_p) times the factor Euler value. -/
 theorem ElementEulerPrimeDecomposition.eq_sum_localizedLength_mul
     {M : Type v} [AddCommGroup M] [Module R M] {r : R}
     (d : ElementEulerPrimeDecomposition R M r)
@@ -281,8 +324,10 @@ theorem ElementEulerPrimeDecomposition.eq_sum_localizedLength_mul
 
 omit [IsNoetherianRing R] in
 open Classical in
-/-- Over a local ring, every nonzero-contributing factor is minimal in the
-module support when that support has dimension at most one. -/
+/-- An Euler factor excluding a local parameter is minimal in support.
+
+For finite M over the stated local noetherian ring, r in the maximal ideal and support
+dimension at most one, a factor prime excluding r has no smaller support prime. -/
 theorem ElementEulerPrimeDecomposition.factor_minimal_support_of_not_mem_of_supportDim_le_one
     [IsLocalRing R] {M : Type v} [AddCommGroup M] [Module R M]
     [Module.Finite R M] {r : R}
@@ -316,8 +361,10 @@ theorem ElementEulerPrimeDecomposition.factor_minimal_support_of_not_mem_of_supp
 
 omit [IsNoetherianRing R] in
 open Classical in
-/-- For the regular module, every nonzero-contributing factor is an ambient
-minimal prime under the one-dimensional local hypotheses. -/
+/-- A regular-module factor excluding the parameter is a minimal ring prime.
+
+For the regular module in the stated local support-dimension setting, each factor prime
+excluding r is minimal. -/
 theorem ElementEulerPrimeDecomposition.factor_prime_isMin_of_not_mem_of_supportDim_le_one
     [IsLocalRing R] {r : R}
     (d : ElementEulerPrimeDecomposition R R r)
@@ -341,9 +388,10 @@ theorem ElementEulerPrimeDecomposition.factor_prime_isMin_of_not_mem_of_supportD
 
 omit [IsNoetherianRing R] in
 open Classical in
-/-- Over a local ring, a module of support dimension at most one satisfies
-the minimal-support hypothesis for every nonzero prime-factor contribution,
-provided the acting element lies in the maximal ideal. -/
+/-- The generic-multiplicity Euler sum in support dimension at most one.
+
+For finite M, the local and support-dimension hypotheses give χ_r(M) as the distinct-factor
+sum of localized multiplicity times factor value. -/
 theorem ElementEulerPrimeDecomposition.eq_sum_localizedLength_mul_of_supportDim_le_one
     [IsLocalRing R] {M : Type v} [AddCommGroup M] [Module R M]
     [Module.Finite R M] {r : R}
@@ -361,8 +409,10 @@ theorem ElementEulerPrimeDecomposition.eq_sum_localizedLength_mul_of_supportDim_
 
 omit [IsNoetherianRing R] in
 open Classical in
-/-- Explicit prime-quotient length form of the one-dimensional local
-prime-filtration formula. -/
+/-- The generic-multiplicity sum with explicit principal quotient contributions.
+
+Under the same hypotheses, each weighted factor contributes zero when it contains r and
+otherwise the length of its principal quotient by r. -/
 theorem ElementEulerPrimeDecomposition.eq_sum_localizedLength_mul_ite_of_supportDim_le_one
     [IsLocalRing R] {M : Type v} [AddCommGroup M] [Module R M]
     [Module.Finite R M] {r : R}
@@ -383,8 +433,10 @@ theorem ElementEulerPrimeDecomposition.eq_sum_localizedLength_mul_ite_of_support
   intro f _
   rw [f.value_eq_ite R]
 
-/-- A finite module with finite multiplication cokernel admits a finite
-prime-filtration decomposition of its one-element Euler characteristic. -/
+/-- Existence of a finite prime Euler decomposition.
+
+For finite M over a noetherian ring, finite length of M/rM suffices to construct the finite
+multiplication data, prime-factor list and its localized-length and Euler identities. -/
 theorem exists_elementEulerPrimeDecomposition
     (M : Type v) [AddCommGroup M] [Module R M] [Module.Finite R M]
     (r : R)

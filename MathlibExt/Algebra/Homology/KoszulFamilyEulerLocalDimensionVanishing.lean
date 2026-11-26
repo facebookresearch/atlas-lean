@@ -17,18 +17,16 @@ public import Mathlib.RingTheory.KrullDimension.Regular
 public import MathlibExt.Algebra.Homology.KoszulComplexCoefficientRegularQuotient
 
 /-!
-# Full-family local Koszul Euler vanishing and prime multiplicities
+# Local dimension vanishing and Koszul Euler multiplicities
 
-For a finite module over a Noetherian local ring, the actual coefficient tensor
-Euler invariant vanishes when the support dimension is below the family size,
-provided every coefficient is in the maximal ideal and the original quotient
-by the family ideal plus the module annihilator has finite length.
+Let R be noetherian and local, a a family of n elements in its maximal ideal and M finitely
+generated. Assume R/(ideal(a)+Ann M) has finite length. If the support dimension of M is below
+n, the coefficient Koszul Euler invariant is zero.
 
-The genuine prime filtration earns the finite factor list and all original
-localized module lengths. Under the family-size dimension bound, every nonzero
-prime contribution is minimal in the original support, giving the original
-localized-length multiplier formula. Ring and module universes are independent.
-No regularity or finite intermediate homology is assumed for the whole family.
+With support dimension at most n, each prime-filtration factor of nonzero Euler value is
+minimal in the module support. Its occurrence count is the localized length of M, giving the
+distinct-factor sum of generic multiplicities times factor Euler values. The coefficient
+module universe remains independent of the ring universe.
 -/
 
 @[expose] public section
@@ -44,8 +42,9 @@ namespace Module
 
 variable (R : Type u) [CommRing R]
 
-/-- The prime quotient indexed by a point of the original finite module
-support has no larger support dimension. -/
+/-- A support prime quotient has no larger support dimension.
+
+For finite M and p in its support, dim Supp(R/p) ≤ dim Supp(M). -/
 theorem supportDim_quotient_le_of_mem_support
     (M : Type v) [AddCommGroup M] [Module R M] [Module.Finite R M]
     (p : PrimeSpectrum R) (hp : p ∈ Module.support R M) :
@@ -59,8 +58,9 @@ theorem supportDim_quotient_le_of_mem_support
       exact hq))⟩
   exact Order.krullDim_le_of_strictMono f (fun _ _ h => h)
 
-/-- A prime with a strict predecessor in the original finite module support
-has support dimension strictly below an ambient finite support dimension bound. -/
+/-- A strict inclusion of support primes lowers quotient dimension.
+
+For support primes q<p and dim Supp(M)≤n, the quotient R/p has support dimension below n. -/
 theorem supportDim_quotient_lt_of_lt_of_mem_support
     (M : Type v) [AddCommGroup M] [Module R M] [Module.Finite R M]
     (p q : PrimeSpectrum R) (hp : p ∈ Module.support R M)
@@ -174,9 +174,10 @@ private theorem familyTensorCoefficientEuler_eq_zero_of_supportDim_lt_sameUniver
       rw [List.map_congr_left hfactor]
       simp
 
-/-- Over a Noetherian local ring, the actual full-family Koszul coefficient
-Euler invariant vanishes below the family size. Ring and module universes are
-independent, and only the original finite coefficient/annihilator quotient is used. -/
+/-- The Koszul Euler invariant vanishes below the family-size dimension.
+
+For the stated local family, finite post-quotient and finite M, support dimension below n
+gives Euler value zero. -/
 theorem familyTensorCoefficientEuler_eq_zero_of_supportDim_lt
     (a : Fin n → R) (M : Type v) [AddCommGroup M] [Module R M] [Module.Finite R M]
     (hquot : Module.length R
@@ -206,8 +207,10 @@ namespace Module
 
 variable (R : Type u) [CommRing R] [IsNoetherianRing R] [IsLocalRing R] {n : ℕ}
 
-/-- Under the full-family local dimension bound, every nonzero actual prime
-Euler contribution is minimal in the original coefficient module support. -/
+/-- Nonzero Koszul Euler factors are minimal in support.
+
+With all coefficients in the maximal ideal and support dimension at most n, each listed factor
+of nonzero value satisfies the minimal-support condition. -/
 theorem KoszulFamilyEulerPrimeDecomposition.factor_minimal_support_of_value_ne_zero_of_supportDim_le
     {a : Fin n → R} {M : Type v} [AddCommGroup M] [Module R M] [Module.Finite R M]
     (d : KoszulFamilyEulerPrimeDecomposition R a M)
@@ -231,8 +234,10 @@ theorem KoszulFamilyEulerPrimeDecomposition.factor_minimal_support_of_value_ne_z
     R a (R ⧸ f.prime.asIdeal) hquotf ha hdimf
 
 open Classical in
-/-- The actual full-family Euler characteristic has its original localized
-module multiplicities under the local family-size support dimension bound. -/
+/-- The local Koszul Euler sum weighted by localized lengths.
+
+Under the family-size support-dimension bound, the coefficient Euler invariant is the
+distinct-factor sum of localized module lengths times prime-factor values. -/
 theorem KoszulFamilyEulerPrimeDecomposition.eq_sum_localizedLength_mul_of_supportDim_le
     {a : Fin n → R} {M : Type v} [AddCommGroup M] [Module R M] [Module.Finite R M]
     (d : KoszulFamilyEulerPrimeDecomposition R a M)
@@ -247,9 +252,10 @@ theorem KoszulFamilyEulerPrimeDecomposition.eq_sum_localizedLength_mul_of_suppor
   exact d.factor_minimal_support_of_value_ne_zero_of_supportDim_le R ha hdim
 
 open Classical in
-/-- The original finite coefficient module earns a genuine prime factor
-list and its full-family localized-length multiplier formula. No prime
-filtration, Euler comparison, or multiplicity certificate is an input. -/
+/-- Existence of the local generic-multiplicity Koszul Euler formula.
+
+For the stated finite coefficient and local dimension hypotheses, a prime decomposition
+supplies the localized-length weighted sum. -/
 theorem exists_koszulFamilyEulerPrimeDecomposition_localizedLength_mul
     (a : Fin n → R) (M : Type v) [AddCommGroup M] [Module R M] [Module.Finite R M]
     (hquot : Module.length R

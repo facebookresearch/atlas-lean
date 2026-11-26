@@ -1,3 +1,6 @@
-# Cohomology Presentation Iso symm
+# Inverses of coaugmented cohomology-family comparisons
 
-Inverse coaugmented presentation isomorphisms retain their computed inverse comparisons.
+Inverses of coaugmented cohomology-family comparisons.
+
+The inverse induced cohomology comparison is the comparison induced by the inverse
+presentation isomorphism.

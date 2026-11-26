@@ -1,3 +1,6 @@
-# Mapping Cylinder endpoints split
+# Degreewise splitting of both cylinder endpoints
 
-Both endpoint inclusions are split monomorphisms in each degree.
+In a preadditive category C with binary biproducts, both endpoint maps
+K → Cyl(f) and L → Cyl(f) of a bounded cochain map f:K → L are split
+monomorphisms in each integer degree, with retractions given by the
+corresponding endpoint-coordinate projections.

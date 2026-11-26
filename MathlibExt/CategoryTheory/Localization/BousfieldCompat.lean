@@ -13,12 +13,16 @@ module
 public import Mathlib.CategoryTheory.Localization.Bousfield
 
 /-!
-# Bousfield localization: locality from colimits (backport)
+# Local morphisms induced on colimits
 
-Backports `ObjectProperty.isLocal_of_isColimit` from upstream PR #42860
-(head `4d9c97ac1bb4deb8ce8e6005aca99087372c2d77`,
-path `Mathlib/CategoryTheory/Localization/Bousfield.lean`,
-blob `b32fa01cee9e849f3f39eb93e08aa4b338a34892`).
+Let P be a property of objects of C. A morphism u : A → B is P-local when precomposition with
+u gives a bijection Hom(B,X) → Hom(A,X) for every X satisfying P. Consider diagrams F,G : D ⥤
+C with chosen colimit cocones, a natural transformation φ : F → G and a map ψ between their
+colimit vertices that commutes with every cocone leg.
+
+If each component φ_d is P-local, then ψ is P-local. Uniqueness follows by testing on all
+colimit legs, and componentwise factorization assembles into a cocone that gives the required
+factorization through the target colimit.
 -/
 
 @[expose] public section
@@ -34,6 +38,12 @@ variable (P : ObjectProperty C)
 open Limits in
 open Category in
 -- Note: for lcF, only lcF.hom_ext is used
+/-- Locality of a map between colimit vertices.
+
+Let P be an object property of C, φ : F → G a natural transformation and ψ : colim F → colim G
+a map commuting with the legs of specified colimit cocones. If precomposition by every φ_d is
+bijective on maps to each P-object X, then precomposition by ψ is bijective on maps to X. Thus
+ψ is P-local. -/
 theorem isLocal_of_isColimit {F G : D ⥤ C} {cF : Cocone F} {cG : Cocone G}
     (lcF : IsColimit cF) (lcG : IsColimit cG) (φ : F ⟶ G) (ψ : cF.pt ⟶ cG.pt)
     (comm : φ ≫ cG.ι = cF.ι ≫ (Functor.const D).map ψ) (loc : ∀ d, P.isLocal (φ.app d)) :

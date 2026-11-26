@@ -11,12 +11,18 @@ public import Mathlib.Algebra.Category.ModuleCat.Limits
 public import Mathlib.CategoryTheory.CofilteredSystem
 
 /-!
-# Eventual ranges of module diagrams
+# Eventual image submodules and their limits
 
-The native eventual ranges of a cofiltered Type-valued diagram are submodules
-when its transition maps are linear. They form a module diagram, naturally in
-the original diagram, with its canonical inclusion. Under the Mittag--Leffler
-condition the restricted transitions are epimorphisms.
+For an R-module diagram A on a category J, the eventual range at j is the intersection of the
+images of every incoming transition A_i → A_j. These subsets are R-submodules. For cofiltered-
+or-empty J, the transitions restrict to a diagram of eventual range modules, naturally
+included in A and functorial in maps of diagrams.
+
+If the underlying-set diagram is Mittag–Leffler, the restricted transitions are epimorphisms.
+Whenever A has a limit, its projections land in the eventual ranges, and the same limit object
+gives a limit of the restricted diagram. The canonical isomorphism lim(eventualRanges A) ≅ lim
+A is induced by the inclusion and is natural in A. The ring, index-object, index-morphism and
+module universes are independent.
 -/
 
 @[expose] public section
@@ -34,7 +40,10 @@ namespace ModuleCat
 variable {R : Type u} [Ring R]
 variable {J : Type v} [Category.{t} J]
 
-/-- The native eventual range at one object, with its inherited module structure. -/
+/-- The eventual image submodule at a diagram object.
+
+For A : J → ModuleCat R, the eventual range at j consists of elements of A_j lying in the
+image of A(f) for every arrow f : i → j. Linearity makes this intersection a submodule. -/
 def eventualRange (A : J ⥤ ModuleCat.{w} R) (j : J) : Submodule R (A.obj j) where
   carrier := (A ⋙ forget (ModuleCat.{w} R)).eventualRange j
   zero_mem' := by
@@ -62,7 +71,10 @@ def eventualRange (A : J ⥤ ModuleCat.{w} R) (j : J) : Submodule R (A.obj j) wh
     change (A.map f).hom (r • x') = r • x
     rw [map_smul, hx']
 
-/-- Membership is the existing native eventual-range membership condition. -/
+/-- Membership agrees with the underlying-set eventual range.
+
+An element belongs to the module eventual range at j exactly when it belongs to the eventual
+range of the diagram obtained by forgetting module structure. -/
 theorem mem_eventualRange_iff (A : J ⥤ ModuleCat.{w} R) (j : J) (x : A.obj j) :
     x ∈ eventualRange A j ↔
       x ∈ (A ⋙ forget (ModuleCat.{w} R)).eventualRange j :=
@@ -70,7 +82,10 @@ theorem mem_eventualRange_iff (A : J ⥤ ModuleCat.{w} R) (j : J) (x : A.obj j) 
 
 variable [IsCofilteredOrEmpty J]
 
-/-- Restrict a module diagram to its native eventual ranges. -/
+/-- The diagram restricted to its eventual image submodules.
+
+For cofiltered-or-empty J, take the eventual range module at each j and restrict each
+transition map to these submodules. -/
 def eventualRanges (A : J ⥤ ModuleCat.{w} R) : J ⥤ ModuleCat.{w} R where
   obj j := ModuleCat.of R (eventualRange A j)
   map f := ModuleCat.ofHom ((A.map f).hom.restrict
@@ -91,7 +106,10 @@ def eventualRanges (A : J ⥤ ModuleCat.{w} R) : J ⥤ ModuleCat.{w} R where
       (A.map g).hom ((A.map f).hom (x : A.obj _))
     rw [A.map_comp, ModuleCat.hom_comp, LinearMap.comp_apply]
 
-/-- The restricted map has the same underlying value as the original transition. -/
+/-- Values of the restricted eventual-image transition.
+
+The transition between eventual range modules sends x to the same underlying element A(f)(x)
+as the transition of A. -/
 @[simp]
 theorem eventualRanges_map_val (A : J ⥤ ModuleCat.{w} R)
     {i j : J} (f : i ⟶ j) (x : eventualRange A i) :
@@ -99,7 +117,10 @@ theorem eventualRanges_map_val (A : J ⥤ ModuleCat.{w} R)
       A.map f (x : A.obj i) :=
   rfl
 
-/-- Forgetting the module lift gives the existing native Type-valued diagram. -/
+/-- The underlying-set diagram of eventual image modules.
+
+Forgetting the R-module structures of eventualRanges A gives a diagram naturally isomorphic to
+the underlying-set eventual range diagram, with identity components. -/
 def eventualRangesForgetIso (A : J ⥤ ModuleCat.{w} R) :
     eventualRanges A ⋙ forget (ModuleCat.{w} R) ≅
       (A ⋙ forget (ModuleCat.{w} R)).toEventualRanges :=
@@ -110,7 +131,10 @@ def eventualRangesForgetIso (A : J ⥤ ModuleCat.{w} R) :
     rfl)
 
 omit [IsCofilteredOrEmpty J] in
-/-- Every map of module diagrams preserves the native eventual ranges. -/
+/-- Natural transformations preserve eventual images.
+
+For a natural transformation α : A → B of module diagrams, α_j sends every element of the
+eventual range of A at j into that of B at j. -/
 theorem map_mem_eventualRange
     {A B : J ⥤ ModuleCat.{w} R} (α : A ⟶ B)
     {j : J} {x : A.obj j} (hx : x ∈ eventualRange A j) :
@@ -125,7 +149,10 @@ theorem map_mem_eventualRange
     (B.map f).hom ((α.app i).hom y) at h
   exact h.symm.trans (congrArg (α.app j).hom hy)
 
-/-- A map of diagrams restricts to the corresponding eventual-range modules. -/
+/-- The natural transformation restricted to eventual images.
+
+Restrict the components of a diagram map α : A → B to obtain eventualRanges A → eventualRanges
+B. -/
 def eventualRangesMap {A B : J ⥤ ModuleCat.{w} R} (α : A ⟶ B) :
     eventualRanges A ⟶ eventualRanges B where
   app j := ModuleCat.ofHom ((α.app j).hom.restrict
@@ -138,7 +165,10 @@ def eventualRangesMap {A B : J ⥤ ModuleCat.{w} R} (α : A ⟶ B) :
     exact ConcreteCategory.congr_hom (α.naturality f)
       ((show eventualRange A i from x) : A.obj i)
 
-/-- Restricting a diagram map preserves its underlying component value. -/
+/-- Values of a restricted eventual-image diagram map.
+
+The j-component of eventualRangesMap α sends an eventual-range element x to the underlying
+element α_j(x). -/
 @[simp]
 theorem eventualRangesMap_app_val {A B : J ⥤ ModuleCat.{w} R}
     (α : A ⟶ B) (j : J) (x : eventualRange A j) :
@@ -146,7 +176,10 @@ theorem eventualRangesMap_app_val {A B : J ⥤ ModuleCat.{w} R}
       α.app j (x : A.obj j) :=
   rfl
 
-/-- Eventual ranges are functorial in the module diagram. -/
+/-- Functoriality of the eventual image construction.
+
+Taking eventual range modules and restricting natural transformations defines an endofunctor
+on module diagrams over a cofiltered-or-empty category J. -/
 def eventualRangesFunctor : (J ⥤ ModuleCat.{w} R) ⥤ (J ⥤ ModuleCat.{w} R) where
   obj := eventualRanges
   map := fun α => eventualRangesMap α
@@ -167,7 +200,10 @@ def eventualRangesFunctor : (J ⥤ ModuleCat.{w} R) ⥤ (J ⥤ ModuleCat.{w} R) 
     apply Subtype.ext
     rfl
 
-/-- The canonical inclusion from eventual ranges into the original diagram. -/
+/-- The inclusion of the eventual image subdiagram.
+
+At j, the inclusion eventualRanges A → A is the subtype inclusion of the eventual range
+submodule into A_j. -/
 def eventualRangesInclusion (A : J ⥤ ModuleCat.{w} R) : eventualRanges A ⟶ A where
   app j := ModuleCat.ofHom (eventualRange A j).subtype
   naturality i j f := by
@@ -176,12 +212,18 @@ def eventualRangesInclusion (A : J ⥤ ModuleCat.{w} R) : eventualRanges A ⟶ A
     intro x
     rfl
 
-/-- Every component of the canonical inclusion is a monomorphism. -/
+/-- The eventual image inclusion is componentwise monic.
+
+Each component of eventualRangesInclusion A is a monomorphism, since it is an injective
+submodule inclusion. -/
 instance mono_eventualRangesInclusion_app (A : J ⥤ ModuleCat.{w} R) (j : J) :
     Mono ((eventualRangesInclusion A).app j) :=
   (ModuleCat.mono_iff_injective _).mpr Subtype.val_injective
 
-/-- The canonical inclusion commutes with every map of module diagrams. -/
+/-- The inclusion square for maps of module diagrams.
+
+For α : A → B, the restricted map followed by inclusion into B equals inclusion into A
+followed by α. -/
 theorem eventualRangesInclusion_naturality
     {A B : J ⥤ ModuleCat.{w} R} (α : A ⟶ B) :
     eventualRangesMap α ≫ eventualRangesInclusion B =
@@ -193,12 +235,18 @@ theorem eventualRangesInclusion_naturality
   intro x
   rfl
 
-/-- The eventual-range inclusion is natural as the diagram varies. -/
+/-- The natural inclusion of the eventual image endofunctor.
+
+The inclusions of eventual ranges form a natural transformation from eventualRangesFunctor to
+the identity on module diagrams. -/
 def eventualRangesι : eventualRangesFunctor (R := R) (J := J) ⟶ 𝟭 _ where
   app := eventualRangesInclusion
   naturality _ _ α := eventualRangesInclusion_naturality α
 
-/-- Under native Mittag--Leffler, the restricted transitions are epimorphisms. -/
+/-- Mittag–Leffler eventual-image transitions are epimorphisms.
+
+If the underlying-set diagram of A is Mittag–Leffler, every transition in eventualRanges A is
+surjective and hence an epimorphism of R-modules. -/
 theorem epi_eventualRanges_map (A : J ⥤ ModuleCat.{w} R)
     (hA : (A ⋙ forget (ModuleCat.{w} R)).IsMittagLeffler)
     {i j : J} (f : i ⟶ j) : Epi ((eventualRanges A).map f) :=
@@ -210,7 +258,10 @@ section Limit
 variable (A : J ⥤ ModuleCat.{w} R) [HasLimit A]
 
 omit [IsCofilteredOrEmpty J] in
-/-- Every actual limit projection lands in the native eventual range. -/
+/-- Limit projections land in the eventual image submodules.
+
+For any module diagram with a limit, each coordinate of a limit element belongs to the
+eventual range at that coordinate. -/
 theorem limit_π_mem_eventualRange (j : J) (x : ↑(limit A)) :
     (limit.π A j).hom x ∈ eventualRange A j := by
   apply (Functor.mem_eventualRange_iff (A ⋙ forget (ModuleCat.{w} R))).mpr
@@ -218,7 +269,10 @@ theorem limit_π_mem_eventualRange (j : J) (x : ↑(limit A)) :
   refine ⟨(limit.π A i).hom x, ?_⟩
   exact ConcreteCategory.congr_hom (limit.w A f) x
 
-/-- Restrict the actual chosen limit cone to its eventual-range modules. -/
+/-- The limit cone restricted to eventual images.
+
+Use lim A as cone point and restrict each chosen limit projection to the eventual range
+submodule of its target. -/
 abbrev eventualRangesLimitCone : Cone (eventualRanges A) where
   pt := limit A
   π :=
@@ -231,7 +285,10 @@ abbrev eventualRangesLimitCone : Cone (eventualRanges A) where
         apply Subtype.ext
         exact (ConcreteCategory.congr_hom (limit.w A f) x).symm }
 
-/-- Including a restricted cone projection gives the original limit projection. -/
+/-- The restricted limit coordinates recover the full coordinates.
+
+Each projection of eventualRangesLimitCone A followed by the eventual-range inclusion equals
+the chosen projection lim A → A_j. -/
 theorem eventualRangesLimitCone_π_inclusion (j : J) :
     (eventualRangesLimitCone A).π.app j ≫ (eventualRangesInclusion A).app j =
       limit.π A j := by
@@ -240,7 +297,10 @@ theorem eventualRangesLimitCone_π_inclusion (j : J) :
   intro x
   rfl
 
-/-- The cone with the original chosen limit as point is limiting after restriction. -/
+/-- The restricted cone retains the limit universal property.
+
+For a cofiltered-or-empty module diagram A with a limit, the cone with point lim A and
+eventual-range-valued projections is a limit cone of eventualRanges A. -/
 def eventualRangesLimitConeIsLimit : IsLimit (eventualRangesLimitCone A) where
   lift S := limit.lift A ((Cone.postcompose (eventualRangesInclusion A)).obj S)
   fac S j := by
@@ -259,12 +319,17 @@ def eventualRangesLimitConeIsLimit : IsLimit (eventualRangesLimitCone A) where
 instance (priority := low) hasLimit_eventualRanges : HasLimit (eventualRanges A) :=
   HasLimit.mk ⟨eventualRangesLimitCone A, eventualRangesLimitConeIsLimit A⟩
 
-/-- The chosen eventual-range limit is canonically the original chosen limit. -/
+/-- The limit comparison for eventual image modules.
+
+The chosen limit of eventualRanges A is canonically isomorphic to lim A through the limiting
+restricted cone. -/
 def eventualRangesLimitIso : limit (eventualRanges A) ≅ limit A :=
   limit.isoLimitCone ⟨eventualRangesLimitCone A, eventualRangesLimitConeIsLimit A⟩
 
-/-- Each coordinate of the comparison is the restricted projection followed by
-the canonical stage inclusion. -/
+/-- Coordinates of the eventual-image limit isomorphism.
+
+The forward comparison followed by the j-th projection of A equals the j-th projection of
+eventualRanges A followed by its stage inclusion. -/
 @[reassoc]
 theorem eventualRangesLimitIso_hom_π (j : J) :
     (eventualRangesLimitIso A).hom ≫ limit.π A j =
@@ -282,7 +347,9 @@ theorem eventualRangesLimitIso_hom_π (j : J) :
       exact limit.isoLimitCone_hom_π
         ⟨eventualRangesLimitCone A, eventualRangesLimitConeIsLimit A⟩ j
 
-/-- The forward comparison map is the actual limit map of the canonical inclusion. -/
+/-- The forward comparison is the limit map of the inclusion.
+
+The forward morphism lim(eventualRanges A) → lim A equals limMap(eventualRangesInclusion A). -/
 theorem eventualRangesLimitIso_hom :
     (eventualRangesLimitIso A).hom = limMap (eventualRangesInclusion A) := by
   apply limit.hom_ext
@@ -291,7 +358,10 @@ theorem eventualRangesLimitIso_hom :
 
 end Limit
 
-/-- The actual limit-inclusion isomorphisms are natural in the original diagram. -/
+/-- Naturality of eventual-image limit comparison.
+
+For α : A → B, the limit of its restricted eventual-range map followed by the comparison for B
+equals the comparison for A followed by limMap α. -/
 @[reassoc]
 theorem eventualRangesLimitIso_naturality
     {A B : J ⥤ ModuleCat.{w} R} [HasLimit A] [HasLimit B] (α : A ⟶ B) :

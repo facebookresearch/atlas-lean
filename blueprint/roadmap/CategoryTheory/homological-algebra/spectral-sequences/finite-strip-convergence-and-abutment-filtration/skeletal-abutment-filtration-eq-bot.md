@@ -1,3 +1,7 @@
-# Skeletal Abutment Filtration eq bot
+# Zero filtration steps above the finite bound
 
-Every level beyond the dimension is zero.
+Let D be abelian and Y a spectral object indexed by EInt.
+Set A_n=H_Yⁿ(−∞,+∞), FᵖA_n=Ker(A_n → H_Yⁿ(−p,+∞))
+and GrᵖA_n=FᵖA_n/Fᵖ⁺¹A_n.
+
+Fix N∈ℕ and assume H_Yᵐ(−∞,i)=0 for all integers m and i≤−N−1. If p>N, the filtration step FᵖA_n is zero.

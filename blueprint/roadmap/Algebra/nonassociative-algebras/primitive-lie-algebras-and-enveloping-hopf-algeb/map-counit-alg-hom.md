@@ -1,3 +1,5 @@
-# Map counit Alg Hom
+# Enveloping maps preserve the bialgebra counit
 
-Canonical enveloping maps preserve the native bialgebra counits.
+Enveloping maps preserve the bialgebra counit.
+
+The target counit after the map of a Lie morphism equals the source counit.

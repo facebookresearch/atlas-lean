@@ -1,6 +1,6 @@
-# Homology Universal Coefficient Chosen Short Complex
+# The chosen homological universal-coefficient short complex
 
-The chosen objectwise PID homological universal-coefficient short complex.
+The chosen homological universal-coefficient short complex.
 
-Its left arrow is canonical. Its right arrow uses the repository's chosen
-Cartan--Eilenberg resolution of the degree-zero coefficient complex.
+For PID coefficients and flat K-terms, transport the chosen Künneth complex to H_n(K) ⊗ A →
+H_n(K ⊗ A[0]) → T_n.

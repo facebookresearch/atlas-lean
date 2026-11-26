@@ -1,3 +1,5 @@
-# Pair Coordinate Homology
+# The coordinate homology quotient of a Koszul pair
 
-Degree-one coordinate homology as cycles modulo top boundaries.
+The coordinate homology quotient of a Koszul pair.
+
+Quotient the coordinate cycles by the range of the top boundary map.

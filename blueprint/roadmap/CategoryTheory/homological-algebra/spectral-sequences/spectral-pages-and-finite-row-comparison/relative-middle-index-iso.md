@@ -1,3 +1,6 @@
-# Relative Middle Index Iso
+# Equality transport of a relative middle cut
 
-Equal middle indices identify the original window objects by equality transport.
+Equality transport of a relative middle cut.
+
+An equality i₁=i₁′ gives the canonical isomorphism between the two presentations of the
+relative E object.

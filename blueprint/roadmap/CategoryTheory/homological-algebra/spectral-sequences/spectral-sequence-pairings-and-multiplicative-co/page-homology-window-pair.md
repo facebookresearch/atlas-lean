@@ -1,4 +1,5 @@
-# Page Homology Window Pair
+# The window construction of a page homology product
 
-The candidate homology product, independently constructed from the enlarged
-symmetric interval window. Its quotient formula is proved below.
+The window construction of a page homology product.
+
+Pair the (r+1,r+1)-window descriptions of the page homologies.

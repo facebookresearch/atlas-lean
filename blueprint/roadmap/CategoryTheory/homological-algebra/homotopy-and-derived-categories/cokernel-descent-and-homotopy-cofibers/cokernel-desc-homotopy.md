@@ -1,4 +1,6 @@
-# Cokernel Desc Homotopy
+# The homotopy on supplied descended endomorphisms
 
-Compatible absolute homotopies descend through a cokernel to a homotopy
-of the descended maps.
+The homotopy on supplied descended endomorphisms.
+
+For F,G on coker(a) obeying the endpoint projection squares and compatible H,H′, the
+components descended through the cokernel form a homotopy from F to G.

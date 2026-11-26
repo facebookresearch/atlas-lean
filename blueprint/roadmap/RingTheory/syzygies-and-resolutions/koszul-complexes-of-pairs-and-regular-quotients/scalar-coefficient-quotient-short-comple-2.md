@@ -1,4 +1,5 @@
-# Scalar Coefficient Quotient Short Complex short Exact
+# A regular coefficient scalar gives a short exact quotient sequence
 
-Regularity of the actual scalar action earns short exactness of the
-original coefficient quotient sequence.
+A regular coefficient scalar gives a short exact quotient sequence.
+
+If r acts injectively on M, the scalar coefficient short complex is short exact.

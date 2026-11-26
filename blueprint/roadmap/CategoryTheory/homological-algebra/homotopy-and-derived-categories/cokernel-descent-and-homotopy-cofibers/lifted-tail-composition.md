@@ -1,3 +1,5 @@
-# Cokernel descent and homotopy cofibers
+# A cochain-map comparison determines the composite with its homology tail
 
-A true homology-tail formula and a true cochain-map comparison determine their actual composite in all degrees.
+Let C be an abelian category in object and morphism universes u,v, and A,B,D nonnegative cochain
+complexes. For e:A→B, f:B→D, t:A→D, and n≥0, suppose e≫f=t and τ:H^n(B)→H^n(D) equals H^n(f).
+Then H^n(e)≫τ=H^n(t), provided as lifted proof data.

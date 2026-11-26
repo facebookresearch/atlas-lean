@@ -1,3 +1,5 @@
-# Relative Representative
+# The relative interval representative of a four-cut quotient
 
-The original long relative interval projects to the actual cycle/boundary window.
+The relative interval representative of a four-cut quotient.
+
+Map H_n(i₀,i₂) to cycles for i₀→i₁→i₂ and then project to E(i₀,i₁,i₂,i₃;n).

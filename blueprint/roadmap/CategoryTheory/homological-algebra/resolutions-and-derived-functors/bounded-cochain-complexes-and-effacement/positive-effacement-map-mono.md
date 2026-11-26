@@ -1,3 +1,5 @@
-# Positive Effacement Map mono
+# Monomorphism into the identity cofiber
 
-Degreewise retractions of the cofiber inclusion.
+In a preadditive category C, for a nonnegative cochain complex K whose
+identity has a homotopy cofiber, the canonical inclusion
+K → Eff(K)=Cofib(1_K) is a monomorphism of cochain complexes.

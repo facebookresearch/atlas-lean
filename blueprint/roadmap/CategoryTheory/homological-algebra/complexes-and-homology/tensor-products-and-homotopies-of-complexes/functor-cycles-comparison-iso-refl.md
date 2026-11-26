@@ -1,3 +1,6 @@
-# Functor Cycles Comparison Iso refl
+# The cycles comparison for the identity mapped presentation
 
-An unchanged mapped short complex retains its original cycle comparison.
+The cycles comparison for the identity mapped presentation.
+
+For e equal to the identity of F(S), the comparison is the inverse native mapped-cycles
+isomorphism.

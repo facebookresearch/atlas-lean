@@ -1,4 +1,5 @@
-# Exact Sequence Four Short Complex π f
+# The extracted cokernel map recovers the second arrow
 
-The first extracted map is induced by the second arrow of the original
-sequence.
+The extracted cokernel map recovers the second arrow.
+
+The quotient A₁ → coker(A₀ → A₁) followed by the extracted map equals A₁ → A₂.

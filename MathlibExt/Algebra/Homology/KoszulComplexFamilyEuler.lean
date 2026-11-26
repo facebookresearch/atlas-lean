@@ -16,15 +16,14 @@ public import MathlibExt.Algebra.Homology.KoszulComplexAnnihilation
 public import MathlibExt.Algebra.Homology.KoszulComplexFamilyReindex
 
 /-!
-# Finite-family Koszul Euler characteristics
+# Euler characteristics of finite-family Koszul complexes
 
-For a finite coefficient family over a Noetherian ring, finite length of the
-quotient by the generated ideal supplies finite length of every Koszul
-homology module.  Since the complex vanishes above the cardinality of the
-family, this gives canonical finite-length homology data and an Euler
-characteristic in arbitrary family size.
+For a finite family a : I → R over a noetherian commutative ring, finite length of R/(a) gives
+finite length of every Koszul homology module. The complex vanishes above |I|, so its
+finite-length homology cutoff is |I|+1.
 
-No regular-sequence or positive-degree exactness hypothesis is used.
+Its Euler characteristic is ∑_{j=0}^{|I|}(−1)^jℓ_R(H_j(K(a))). Reindexing the family by an
+equivalence preserves this value, with the ring and index universe levels separate.
 -/
 
 @[expose] public section
@@ -41,8 +40,10 @@ universe u v
 variable (R : Type u) [CommRing R] [IsNoetherianRing R]
 variable {I : Type v} [Fintype I]
 
-/-- Canonical finite-length homology data for a finite-family Koszul complex
-whose coefficient quotient has finite length. -/
+/-- Finite-length homology data from a finite family quotient.
+
+For finite-length R/(a), use the finite Koszul homology lengths and vanishing above |I| to
+obtain cutoff |I|+1. -/
 noncomputable def familyFiniteLengthHomologyDataOfQuotient
     (a : I → R)
     (hquot : Module.length R (R ⧸ Ideal.span (Set.range a)) ≠ ⊤) :
@@ -56,16 +57,20 @@ noncomputable def familyFiniteLengthHomologyDataOfQuotient
       familyComplex_isZero_above R a j (by omega)
     exact (HomologicalComplex.ExactAt.of_isZero hX).isZero_homology
 
-/-- The finite-family Koszul Euler characteristic, requiring only finite
-length of the generated-ideal quotient. -/
+/-- The Euler invariant of a finite family with finite quotient.
+
+Take the finite-length Euler characteristic of the family complex using the quotient-derived
+homology data. -/
 noncomputable def familyEulerCharacteristicOfQuotient
     (a : I → R)
     (hquot : Module.length R (R ⧸ Ideal.span (Set.range a)) ≠ ⊤) : ℤ :=
   HomologicalComplex.finiteLengthEulerCharacteristic R
     (familyFiniteLengthHomologyDataOfQuotient R a hquot)
 
-/-- Explicit bounded alternating-sum formula for the finite-family Koszul
-Euler characteristic. -/
+/-- The finite-family alternating homology sum.
+
+The quotient-defined Euler invariant is the sum of (−1)^j times the finite homology lengths
+for 0≤j≤|I|. -/
 theorem familyEulerCharacteristicOfQuotient_eq
     (a : I → R)
     (hquot : Module.length R (R ⧸ Ideal.span (Set.range a)) ≠ ⊤) :
@@ -75,8 +80,10 @@ theorem familyEulerCharacteristicOfQuotient_eq
           (Module.length R ((familyComplex R a).homology j)).toNat :=
   rfl
 
-/-- The canonical finite-family Koszul Euler characteristic is invariant
-under reindexing the coefficient family by an equivalence. -/
+/-- Reindexing preserves the finite-family Euler invariant.
+
+For an equivalence of finite index types, the reindexed family has the same quotient ideal and
+Euler characteristic. -/
 theorem familyEulerCharacteristicOfQuotient_reindex
     {J : Type v} [Fintype J] (a : I → R) (e : I ≃ J)
     (hquot : Module.length R (R ⧸ Ideal.span (Set.range a)) ≠ ⊤) :

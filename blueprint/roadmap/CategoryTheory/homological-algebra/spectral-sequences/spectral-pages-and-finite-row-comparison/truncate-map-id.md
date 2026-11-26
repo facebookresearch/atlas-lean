@@ -1,3 +1,5 @@
-# Truncate Map id
+# Truncation preserves identity morphisms
 
-Restriction preserves native identities.
+Truncation preserves identity morphisms.
+
+The restricted identity is the identity of the truncated sequence.

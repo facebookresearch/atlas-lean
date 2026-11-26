@@ -1,3 +1,6 @@
-# Window Pair To associativity
+# Mixed long-interval associativity descends to window quotients
 
-An equality of the original three long-interval products descends to the genuine quotient windows.
+Mixed long-interval associativity descends to window quotients.
+
+For the four pairings and comparison γ, equality of the two long triple products gives the
+corresponding window triple-product equality at 1≤u≤ℓ.

@@ -1,6 +1,7 @@
-# Locally Surjective of epi
+# Epimorphisms of module sheaves are locally surjective
 
-An epi of sheaves of modules is locally surjective on underlying
-presheaves. The forgetful functor `toSheaf` preserves colimits
-(`preservesColimitsOfShape_toSheaf`), hence epis, and for abelian sheaves
-epi is local surjectivity (`Sheaf.isLocallySurjective_iff_epi'`).
+Let `D : Type w` have morphism universe `v₂`, `K` a Grothendieck topology, and `S : Sheaf K
+RingCat.{u}`. Assume additive sheafification of `AddCommGrpCat.{u}`-valued presheaves and
+`K.WEqualsLocallyBijective AddCommGrpCat.{u}`. For `f : M → N` between module sheaves of
+carrier universe `u`, epimorphy of `f` implies local surjectivity of its underlying additive
+presheaf morphism on `K`.

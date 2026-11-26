@@ -1,3 +1,6 @@
-# Under Cokernel Nonnegative Property of is Colimit
+# Colimit cocones preserve nonnegative cokernel support
 
-Every actual colimiting under cocone retains the negative support of its actual cokernels.
+Colimit cocones preserve nonnegative cokernel support.
+
+If every object in an under-category diagram has this cokernel support, so does the point of
+an actual colimit cocone.

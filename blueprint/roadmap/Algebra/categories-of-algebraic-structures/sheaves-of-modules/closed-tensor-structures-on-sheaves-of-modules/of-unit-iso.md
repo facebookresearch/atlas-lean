@@ -1,7 +1,6 @@
-# Of Unit Iso
+# Unit comparison for sheaf restriction
 
-Unit comparison for restriction, from the lifted monoidal structure:
-`restrictSheaf.obj 𝟙 ≅ 𝟙`. This is the canonical unit comparison (the symmetry
-of `Functor.Monoidal.εIso` for the `ofMonoidal` instance). Together with
-`ofTensorIso` this is the interface later dual arguments need (e.g. pushing an
-evaluation `L ⊗ dual L ⟶ 𝟙` through restriction).
+Let `(C,J,R)` be a commutative ringed site at universe `u`, with weak additive sheafification,
+monoidal `W`, and locally-bijective and underlying-ring comparisons on the base and slice over
+`X`. For `F=restrictSheaf R X`, `ofUnitIso R X : F(𝟙_Base) ≅ 𝟙_Slice` is the inverse of the
+structural monoidal unit isomorphism `εIso F`.

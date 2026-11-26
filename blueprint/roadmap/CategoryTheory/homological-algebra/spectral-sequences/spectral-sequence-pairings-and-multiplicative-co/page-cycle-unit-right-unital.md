@@ -1,3 +1,5 @@
-# Page Cycle Unit right unital
+# The lifted cycle unit is a right unit
 
-The actual native cycle product retains the original right unit law.
+The lifted cycle unit is a right unit.
+
+Its product with every cycle object equals the right unitor.

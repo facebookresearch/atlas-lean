@@ -1,3 +1,6 @@
-# Coe range Grade Equiv apply
+# Underlying value of the shifted range-grade equivalence
 
-The range-grade equivalence is induced by the original linear map.
+Underlying value of the shifted range-grade equivalence.
+
+For an injective degree-d map f and x ∈ M_n, its rangeGradeEquiv image, viewed in N, is f(x).
+The equivalence lands in the inherited range grade of degree d+n.

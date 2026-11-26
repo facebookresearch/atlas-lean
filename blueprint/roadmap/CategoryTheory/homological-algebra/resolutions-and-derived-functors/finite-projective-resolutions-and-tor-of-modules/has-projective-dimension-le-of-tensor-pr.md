@@ -1,4 +1,8 @@
-# Finite projective resolutions and Tor of modules
+# Projective-dimension bound descended from faithful flat scalar extension
 
-A projective-dimension bound for a finite module over a Noetherian ring
-descends from any faithfully flat base change.
+Projective-dimension bound descended from faithful flat scalar extension.
+
+Let R : Type u be commutative Noetherian, S : Type v a faithfully flat commutative R-algebra
+and M : Type w a finite R-module, with Small.{w} R. For every n : ℕ, if ModuleCat.of S (S ⊗[R]
+M) has projective dimension at most n, then ModuleCat.of R M has projective dimension at most
+n.

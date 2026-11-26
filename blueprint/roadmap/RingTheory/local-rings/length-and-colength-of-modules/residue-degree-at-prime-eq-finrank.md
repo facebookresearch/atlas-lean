@@ -1,3 +1,6 @@
-# Residue Degree At Prime eq finrank
+# Finrank formula for the prime residue degree
 
-The prime residue degree is computed in the actual canonical residue-field scalar structure.
+Finrank formula for the prime residue degree.
+
+The degree residueDegreeAtPrime R A p is Module.finrank over κ(R) of κ(A_p), with its induced
+residue-field algebra structure.

@@ -21,22 +21,14 @@ public import Mathlib.Algebra.Category.ModuleCat.Stalk
 public import Mathlib.Topology.Sheaves.Stalks
 
 /-!
-# Ring/commutative-ring stalk bridge for module presheaves
+# Stalk rings before and after forgetting commutativity
 
-For a presheaf of commutative rings `R`, the `RingCat` stalk of
-`R ⋙ forget₂ CommRingCat RingCat` is identified with the image of the
-`CommRingCat` stalk, since `forget₂` preserves filtered colimits. The
-identification sends germs to germs, and the two resulting module structures
-on a module-presheaf stalk agree: acting by `r` through the commutative stalk
-is the same as acting by its image through the ring stalk.
+For a commutative ring presheaf R on a topological space X, forgetting commutativity preserves
+the filtered colimit defining the stalk. Thus the underlying ring of R_x is canonically
+isomorphic to the RingCat stalk of the underlying ring presheaf.
 
-## Main declarations
-
-* `PresheafOfModules.stalkRingCatIso` — the `RingCat` stalk iso.
-* `PresheafOfModules.stalkRingEquiv` — the iso as a `RingEquiv`.
-* `PresheafOfModules.stalkRingEquiv_germ` — the equiv sends germs to germs.
-* `PresheafOfModules.stalkModule_smul_stalkRingEquiv` — the two stalk module
-  structures agree through the equiv.
+The resulting ring equivalence sends germs to germs. On the stalk of an R-module presheaf,
+scalar action through this equivalence agrees with the action of the commutative stalk ring.
 -/
 
 @[expose] public section
@@ -49,21 +41,28 @@ namespace PresheafOfModules
 
 variable {X : TopCat.{u}} (R : X.Presheaf CommRingCat.{u})
 
-/-- The `RingCat` stalk of `R ⋙ forget₂` is the image of the `CommRingCat`
-stalk, since `forget₂ CommRingCat RingCat` preserves filtered colimits. -/
+/-- The stalk isomorphism for forgetting ring commutativity.
+
+The ring underlying the CommRingCat stalk R_x is isomorphic to the RingCat stalk of R with
+commutativity forgotten. -/
 noncomputable def stalkRingCatIso (x : X) :
     (forget₂ CommRingCat RingCat.{u}).obj (R.stalk x) ≅
       TopCat.Presheaf.stalk (R ⋙ forget₂ CommRingCat RingCat.{u}) x :=
   preservesColimitIso (forget₂ CommRingCat RingCat.{u})
     ((OpenNhds.inclusion x).op ⋙ R)
 
-/-- The stalk bridge as a `RingEquiv` on carriers. -/
+/-- The ring equivalence between the two stalk constructions.
+
+The stalk comparison gives a ring equivalence R_x ≃ ((forget commutativity) R)_x. -/
 noncomputable def stalkRingEquiv (x : X) :
     ↥(R.stalk x) ≃+*
       ↥(TopCat.Presheaf.stalk (R ⋙ forget₂ CommRingCat RingCat.{u}) x) :=
   (stalkRingCatIso R x).ringCatIsoToRingEquiv
 
-/-- The stalk bridge sends commutative germs to ring germs. -/
+/-- The stalk ring equivalence preserves germ coordinates.
+
+For r ∈ R(U) and x ∈ U, the equivalence sends the CommRingCat germ of r to the RingCat germ of
+the same section. -/
 theorem stalkRingEquiv_germ (x : X) (U : Opens X) (hx : x ∈ U)
     (r : ↥(R.obj (Opposite.op U))) :
     stalkRingEquiv R x (R.germ U x hx r) =
@@ -72,8 +71,10 @@ theorem stalkRingEquiv_germ (x : X) (U : Opens X) (hx : x ∈ U)
     ((OpenNhds.inclusion x).op ⋙ R) (Opposite.op ⟨U, hx⟩)
   exact ConcreteCategory.congr_hom h r
 
-/-- The `CommRingCat`-stalk and `RingCat`-stalk module structures on a
-module-presheaf stalk agree through the stalk bridge. -/
+/-- Compatibility of the two stalk scalar actions.
+
+For r ∈ R_x and m in a module-presheaf stalk, acting by the image of r under the stalk ring
+equivalence equals acting by r through the commutative stalk ring. -/
 theorem stalkModule_smul_stalkRingEquiv (x : X)
     (M : PresheafOfModules.{u} (R ⋙ forget₂ CommRingCat RingCat.{u}))
     (r : ↥(R.stalk x)) (m : ↥(TopCat.Presheaf.stalk M.presheaf x)) :

@@ -1,3 +1,5 @@
-# Positive Effacement
+# Identity-cofiber effacement complex
 
-Cofiber of the identity cochain map.
+For a nonnegative cochain complex K in a preadditive category C, assuming
+the homotopy cofiber of its identity exists, the effacement complex
+Eff(K)=Cofib(1_K).

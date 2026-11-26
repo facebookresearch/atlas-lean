@@ -1,4 +1,5 @@
-# Scalar Coefficient Quotient Short Complex
+# The scalar multiplication and coefficient quotient short complex
 
-The original scalar map and the original quotient by its image form
-an actual coefficient short complex.
+The scalar multiplication and coefficient quotient short complex.
+
+Form M → M → M/rM using r times the identity and the canonical quotient map.

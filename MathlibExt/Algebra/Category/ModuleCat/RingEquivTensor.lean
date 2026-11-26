@@ -21,12 +21,16 @@ AlgebraicGeometry/Sites/RootScalarFlattenMonoidal.lean.
 -/
 
 /-!
-# Tensor and strong monoidal scalar restriction along a ring equivalence
+# Monoidal restriction of scalars along a ring equivalence
 
-The original balanced tensor transport identifies the actual restriction-of-scalars
-lax tensor and unit maps as isomorphisms. The tensor comparison is natural in
-its original coefficient module.
+Let `R,S` be commutative rings and `e : R ≃+* S`. For the restriction-of-scalars functor `F :
+ModuleCat S → ModuleCat R`, the balanced tensor comparison is an isomorphism `F(M) ⊗_R F(N) ≅
+F(M ⊗_S N)`. It sends `m ⊗_R n` to `m ⊗_S n`, and its inverse sends the same pure tensor back.
 
+This comparison is the lax-monoidal tensor map of `F`. The unit map is also invertible, giving
+a monoidal structure on `F`. For a fixed left factor `M`, these isomorphisms form a natural
+comparison between restriction followed by tensoring with `F(M)` and tensoring with `M`
+followed by restriction.
 -/
 
 @[expose] public section
@@ -44,7 +48,10 @@ section TensorTransport
 
 variable {R S : Type s} [CommRing R] [CommRing S] (e : R ≃+* S)
 
-/-- Ring-equivalence tensor transport uses the same two original carriers and balanced relations. -/
+/-- Let `R,S : Type s` be commutative rings, `e : R ≃+* S`, and `M,N : ModuleCat.{s} S`. For
+`F=ModuleCat.restrictScalars e.toRingHom`, the isomorphism `F(M) ⊗_R F(N) ≅ F(M ⊗_S N)`
+identifies the two balanced tensor products using the ring equivalence. Its forward and
+inverse maps preserve the two entries of a pure tensor. -/
 def restrictScalarsTensorIsoOfRingEquiv (M N : ModuleCat.{s} S) :
     (ModuleCat.restrictScalars e.toRingHom).obj M ⊗
         (ModuleCat.restrictScalars e.toRingHom).obj N ≅
@@ -94,20 +101,26 @@ def restrictScalarsTensorIsoOfRingEquiv (M N : ModuleCat.{s} S) :
         intro x
         exact l.apply_symm_apply x }
 
-/-- The genuine tensor transport has the literal forward pure-tensor value. -/
+/-- Let `R,S : Type s` be commutative rings, `e : R ≃+* S`, `M,N : ModuleCat.{s} S`, `m∈M`, and
+`n∈N`. The forward map of `restrictScalarsTensorIsoOfRingEquiv e M N` sends `m ⊗ₜ[R] n` in the
+restricted modules to `m ⊗ₜ[S] n` in the restricted `S`-tensor product. -/
 theorem restrictScalarsTensorIsoOfRingEquiv_hom_tmul (M N : ModuleCat.{s} S) (m : M) (n : N) :
     (restrictScalarsTensorIsoOfRingEquiv e M N).hom
       ((show (ModuleCat.restrictScalars e.toRingHom).obj M from m) ⊗ₜ[R]
         (show (ModuleCat.restrictScalars e.toRingHom).obj N from n)) =
       m ⊗ₜ[S] n := rfl
 
-/-- The inverse tensor transport also preserves the two original factor values. -/
+/-- Let `R,S : Type s` be commutative rings, `e : R ≃+* S`, `M,N : ModuleCat.{s} S`, `m∈M`, and
+`n∈N`. The inverse map of `restrictScalarsTensorIsoOfRingEquiv e M N` sends `m ⊗ₜ[S] n` to `m
+⊗ₜ[R] n` in `F(M) ⊗_R F(N)`, where `F` restricts scalars along `e`. -/
 theorem restrictScalarsTensorIsoOfRingEquiv_inv_tmul (M N : ModuleCat.{s} S) (m : M) (n : N) :
     (restrictScalarsTensorIsoOfRingEquiv e M N).inv (m ⊗ₜ[S] n) =
       (show (ModuleCat.restrictScalars e.toRingHom).obj M from m) ⊗ₜ[R]
         (show (ModuleCat.restrictScalars e.toRingHom).obj N from n) := rfl
 
-/-- The constructed transport is exactly the stock adjunction's lax tensor map. -/
+/-- Let `R,S : Type s` be commutative rings, `e : R ≃+* S`, and `M,N : ModuleCat.{s} S`. For
+`F=ModuleCat.restrictScalars e.toRingHom`, `(restrictScalarsTensorIsoOfRingEquiv e M N).hom =
+Functor.LaxMonoidal.μ F M N` as maps `F(M) ⊗_R F(N) → F(M ⊗_S N)`. -/
 theorem restrictScalarsTensorIsoOfRingEquiv_hom_eq_μ (M N : ModuleCat.{s} S) :
     (restrictScalarsTensorIsoOfRingEquiv e M N).hom =
       Functor.LaxMonoidal.μ (ModuleCat.restrictScalars e.toRingHom) M N := by
@@ -117,7 +130,9 @@ theorem restrictScalarsTensorIsoOfRingEquiv_hom_eq_μ (M N : ModuleCat.{s} S) :
   exact (restrictScalarsTensorIsoOfRingEquiv_hom_tmul e M N m n).trans
     (ModuleCat.restrictScalars_μ_tmul e.toRingHom M N m n).symm
 
-/-- The actual lax unit is invertible because the given scalar map is a ring equivalence. -/
+/-- Let `R,S : Type s` be commutative rings and `e : R ≃+* S`. The lax-monoidal unit morphism
+`Functor.LaxMonoidal.ε (ModuleCat.restrictScalars e.toRingHom) : R → F(S)` is an isomorphism,
+where `R,S` denote the tensor-unit modules and `F` restricts scalars along `e`. -/
 theorem restrictScalarsUnitIsIsoOfRingEquiv :
     IsIso (Functor.LaxMonoidal.ε (ModuleCat.restrictScalars e.toRingHom)) := by
   have h : Functor.LaxMonoidal.ε (ModuleCat.restrictScalars e.toRingHom) =
@@ -130,13 +145,18 @@ theorem restrictScalarsUnitIsIsoOfRingEquiv :
   rw [h]
   infer_instance
 
-/-- Genuine balanced tensor transport proves invertibility of the original lax tensor map. -/
+/-- Let `R,S : Type s` be commutative rings, `e : R ≃+* S`, and `M,N : ModuleCat.{s} S`. The
+lax-monoidal comparison `Functor.LaxMonoidal.μ (ModuleCat.restrictScalars e.toRingHom) M N :
+F(M) ⊗_R F(N) → F(M ⊗_S N)` is an isomorphism. -/
 theorem restrictScalarsTensorIsIsoOfRingEquiv (M N : ModuleCat.{s} S) :
     IsIso (Functor.LaxMonoidal.μ (ModuleCat.restrictScalars e.toRingHom) M N) := by
   rw [← restrictScalarsTensorIsoOfRingEquiv_hom_eq_μ e M N]
   infer_instance
 
-/-- Strong scalar transport is constructed from the stock lax maps and the proved isomorphisms. -/
+/-- For commutative rings `R,S : Type s` and a ring equivalence `e : R ≃+* S`, the
+restriction-of-scalars functor `F=ModuleCat.restrictScalars e.toRingHom` is monoidal. The
+structure uses its lax unit and tensor maps, with inverses supplied by the ring-equivalence
+unit and balanced tensor comparisons. -/
 @[instance_reducible]
 def restrictScalarsMonoidalOfRingEquiv : (ModuleCat.restrictScalars e.toRingHom).Monoidal := by
   let : IsIso (Functor.LaxMonoidal.ε (ModuleCat.restrictScalars e.toRingHom)) :=
@@ -150,7 +170,10 @@ end TensorTransport
 
 variable {R S : Type u} [CommRing R] [CommRing S]
 
-/-- The actual tensor comparison is natural in the original derived coefficient. -/
+/-- Let `R,S : Type u` be commutative rings, `e : R ≃+* S`, `M : ModuleCat.{u} S`, and
+`F=restrictScalars e.toRingHom`. There is a natural isomorphism `F ⋙ tensorLeft_R(F(M)) ≅
+tensorLeft_S(M) ⋙ F`. At `N`, its component is the ring-equivalence tensor comparison `F(M)
+⊗_R F(N) ≅ F(M ⊗_S N)`. -/
 def restrictScalarsTensoringLeftIsoOfRingEquiv
     (e : R ≃+* S) (M : ModuleCat.{u} S) :
     restrictScalars e.toRingHom ⋙

@@ -1,3 +1,6 @@
-# Under Cokernel Nonnegative Property iff is Strictly GE
+# The under-cokernel support condition is strict lower support at zero
 
-For original integer cochain complexes this is exactly native strict support at zero.
+The under-cokernel support condition is strict lower support at zero.
+
+For integer cochain complexes, the property is equivalent to IsStrictlyGE 0 of the cokernel
+complex.

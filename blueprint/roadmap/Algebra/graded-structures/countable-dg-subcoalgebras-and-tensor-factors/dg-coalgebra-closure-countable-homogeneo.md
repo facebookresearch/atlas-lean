@@ -1,4 +1,6 @@
-# Dg Coalgebra Closure Countable Homogeneous Basis
+# A countable homogeneous basis of the closure subcomplex over a field
 
-The countable original homogeneous closure has a countable TOTAL basis, even over an
-uncountable field.
+A countable homogeneous basis of the closure subcomplex over a field.
+
+For a countable seed s, choose bases from the closure generator sets in each degree. The
+resulting basis indices over all integer degrees form a countable set.

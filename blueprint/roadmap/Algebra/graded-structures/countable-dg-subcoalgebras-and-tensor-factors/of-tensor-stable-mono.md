@@ -1,3 +1,7 @@
-# Of Tensor Stable Mono
+# Comonoid structure induced by tensor compatibility and cancellation
 
-Restrict an actual comonoid to a subobject stable under its original comultiplication.
+Comonoid structure induced by tensor compatibility and cancellation.
+
+Let X be a comonoid in a monoidal category, m : K → X and δ : K → K ⊗ K with δ ≫ (m ⊗ m) = m ≫
+Δ_X. Assuming id_𝟙 ⊗ m, m ⊗ id_𝟙 and m ⊗ (m ⊗ m) are monic, set Δ_K = δ and ε_K = m ≫ ε_X.
+Cancellation of these tensor maps proves the counit and coassociativity laws.

@@ -1,4 +1,5 @@
-# Homotopy Cofiber acyclic
+# Acyclicity of the cofiber of a homotopy equivalence
 
-The homotopy cofiber of the forward map of a homotopy equivalence of
-down-Nat chain complexes is acyclic.
+In an abelian category C, if e is a homotopy equivalence between
+nonnegative chain complexes K and L, the homotopy cofiber of its
+forward map e:K → L is acyclic in every nonnegative degree.

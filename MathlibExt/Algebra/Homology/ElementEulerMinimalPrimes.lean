@@ -17,11 +17,15 @@ public import Mathlib.Algebra.BigOperators.Finprod
 public import Mathlib.Algebra.Group.Action.Basic
 
 /-!
-# Complete minimal-prime Euler formulas for arbitrary original elements
+# Minimal-prime formulas for a local one-element Euler characteristic
 
-The original Euler operator and its finite multiplication data give a full
-sum over every actual minimal prime, with the actual localized lengths.
-Unit and nonunit cases are included for both original signed terms.
+For a noetherian local ring with support dimension at most one, the regular-module invariant
+χ_r(R) is the finite-support sum over minimal primes p of ℓ_{R_p}(R_p) times the principal
+quotient length on R/p when r ∉ p, and zero when r ∈ p.
+
+The formula includes every r with finite multiplication kernel and cokernel lengths, including
+units. Subtracting two such invariants gives the same minimal-prime sum with the corresponding
+difference of principal quotient contributions.
 -/
 
 @[expose] public section
@@ -135,8 +139,11 @@ private theorem unitEuler_eq_zero
   simp
 
 open Classical in
-/-- The original Euler operator has its full minimal-prime quotient-length
-sum for every element, including all original unit cases. -/
+/-- The complete minimal-prime sum for a one-element Euler characteristic.
+
+For the stated local noetherian ring and support-dimension bound, χ_r(R) is the sum over
+minimal primes of their generic localized lengths times the principal quotient contribution,
+zero for primes containing r. -/
 theorem elementEulerCharacteristic_eq_finsum_minimal_full
     (R : Type u) [CommRing R] [IsNoetherianRing R] [IsLocalRing R]
     (r : R) (hdim : Module.supportDim R R ≤ 1)
@@ -169,8 +176,10 @@ theorem elementEulerCharacteristic_eq_finsum_minimal_full
     exact elementEulerCharacteristic_eq_finsum_minimal_maximal R r hr hdim h
 
 open Classical in
-/-- Both original numerator and denominator Euler values share the complete
-minimal-prime index, with every original sign and generic multiplicity. -/
+/-- The difference of two one-element Euler invariants on a common prime index.
+
+For a,b with finite multiplication lengths, χ_a(R)−χ_b(R) is the minimal-prime sum of generic
+multiplicities times the difference of their principal quotient contributions. -/
 theorem elementEulerDifference_eq_finsum_minimal_full
     (R : Type u) [CommRing R] [IsNoetherianRing R] [IsLocalRing R]
     (a b : R)

@@ -1,3 +1,5 @@
-# Skeletal Step Class To Page single Row Nat
+# Step-class maps commute with finite single-row successor composites
 
-Iterating single-row successors preserves the class map when the first page is supported in row zero.
+Step-class maps commute with finite single-row successor composites.
+
+The E₂ class map transported to page k+2 equals the class map defined on that page.

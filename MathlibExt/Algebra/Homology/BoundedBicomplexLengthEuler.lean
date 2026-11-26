@@ -26,12 +26,18 @@ public import MathlibExt.Algebra.Homology.FirstQuadrantCollapse
 public import MathlibExt.Algebra.Homology.FiniteLengthEuler
 
 /-!
-# Bounded bicomplex homology length Euler identities
+# Lengths and Euler characteristics of bounded bicomplex homology
 
-The actual finite filtration on total homology counts its genuine graded
-lengths. Finite second-page lengths earn finite total homology lengths through
-the constructed spectral sequence, with no finite-length assumption on the
-original complex terms.
+For a first-quadrant bicomplex K of R-modules, total homology in degree j has a finite
+horizontal filtration. Its length equals the sum of the lengths on the antidiagonal of page r
+whenever r ≥ j+2; the equality is in extended natural numbers. Finite lengths in every second-
+page bidegree imply finite total-homology length in each degree.
+
+If K_{p,q} is zero outside 0≤p≤m and 0≤q≤n, and H_p(H^v_qK) has finite length in that
+rectangle, total homology has finite length and vanishes in degrees at least m+n+1. Its Euler
+characteristic is ∑_{p≤m,q≤n}(−1)^{p+q}ℓ_R(H_p(H^v_qK)). Taking horizontal homology first
+gives the corresponding iterated formula through the canonical total-flip isomorphism. The
+ring and module carrier universe levels are independent.
 -/
 
 @[expose] public section
@@ -165,7 +171,10 @@ private theorem moduleCatFiltrationGraded_length (n p : ℕ) (hp : p ≤ n) :
     (horizontalStablePageGradedIso K ((n : ℤ) + 2) (by omega)
       p (n - p) (by omega) (by omega)).toLinearEquiv.length_eq.symm)
 
-/-- The actual finite filtration decomposes total homology length, including infinite lengths. -/
+/-- The total homology length on its stable antidiagonal.
+
+For n ≥ 0, ℓ_R(H_n(Tot K)) equals ∑_{p=0}^n ℓ_R(E_{n+2}^{p,n−p}). This is an extended-natural
+length identity and requires no finiteness hypothesis. -/
 theorem horizontalTotalHomology_length_eq_stablePage (n : ℕ) :
     Module.length R ((K.total (ComplexShape.down ℕ)).homology n) =
       ∑ p ∈ Finset.range (n + 1), Module.length R
@@ -177,7 +186,10 @@ theorem horizontalTotalHomology_length_eq_stablePage (n : ℕ) :
   exact h.trans (Finset.sum_congr rfl (fun p hp =>
     moduleCatFiltrationGraded_length K n p (Nat.le_of_lt_succ (Finset.mem_range.mp hp))))
 
-/-- Finite actual E2 lengths earn finite total homology and its genuine finite filtration length. -/
+/-- Finite second-page lengths imply finite total-homology length.
+
+If every E₂^{p,q} has finite R-length, each H_n(Tot K) has finite length, equals the stable-
+antidiagonal length sum, and has the corresponding equality of natural-number lengths. -/
 theorem horizontalTotalHomology_length_of_secondPage
     (hE₂ : ∀ p q : ℕ, Module.length R
       (((horizontalFirstQuadrantSpectralSequence K).page 2).X (p, q)) ≠ ⊤) (n : ℕ) :
@@ -199,7 +211,9 @@ theorem horizontalTotalHomology_length_of_secondPage
     exact ENat.sum_ne_top.mpr hfin
   · rw [hEq, ENat.toNat_sum hfin]
 
-/-- A zero original term gives a zero actual second-page object at the same bidegree. -/
+/-- A zero bicomplex term gives a zero second-page component.
+
+If K_{p,q} is zero, the second-page object at (p,q) is zero. -/
 theorem horizontalSecondPage_isZero_of_term_isZero (p q : ℕ)
     (h : IsZero ((K.X p).X q)) :
     IsZero (((horizontalFirstQuadrantSpectralSequence K).page 2).X (p, q)) := by
@@ -210,7 +224,9 @@ theorem horizontalSecondPage_isZero_of_term_isZero (p q : ℕ)
     ShortComplex.isZero_homology_of_isZero_X₂ ((K.verticalHomologyComplex q).sc p) hx
   exact hh.of_iso (horizontalSecondPageVerticalHorizontalHomologyIso K p q)
 
-/-- Real term bounds earn zero total homology beyond the sum of the two degree bounds. -/
+/-- Vanishing above the total degree of a bounded rectangle.
+
+If K_{p,q} is zero whenever p>m or q>n, then H_j(Tot K) is zero for j>m+n. -/
 theorem horizontalTotalHomology_isZero_of_bounded (m n : ℕ)
     (hbound : ∀ p q : ℕ, m < p ∨ n < q → IsZero ((K.X p).X q))
     (j : ℕ) (hj : m + n < j) : IsZero ((K.total (ComplexShape.down ℕ)).homology j) := by
@@ -238,7 +254,10 @@ private theorem bounded_secondPage_length_ne_top (m n : ℕ)
     rw [Module.length_eq_zero_iff.mpr (ModuleCat.isZero_iff_subsingleton.mp hz)]
     exact ENat.zero_ne_top
 
-/-- Actual bounded terms and finite iterated homology earn finite total-homology data. -/
+/-- Finite-length homology data from bounded iterated homology.
+
+For support in the rectangle p≤m,q≤n and finite lengths of H_p(H^v_qK) there, the total
+complex has finite-length homology data with cutoff m+n+1. -/
 def boundedBicomplexFiniteLengthHomologyData (m n : ℕ)
     (hbound : ∀ p q : ℕ, m < p ∨ n < q → IsZero ((K.X p).X q))
     (hlen : ∀ p ≤ m, ∀ q ≤ n, Module.length R ((K.verticalHomologyComplex q).homology p) ≠ ⊤) :
@@ -249,7 +268,10 @@ def boundedBicomplexFiniteLengthHomologyData (m n : ℕ)
       (bounded_secondPage_length_ne_top K m n hbound hlen) j).1
   vanishes j hj := horizontalTotalHomology_isZero_of_bounded K m n hbound j (by omega)
 
-/-- Every sufficiently late actual page gives the finite-filtration length in a fixed degree. -/
+/-- The total homology length on any sufficiently late page.
+
+For r ≥ j+2, ℓ_R(H_j(Tot K)) equals ∑_{p=0}^j ℓ_R(E_r^{p,j−p}), without a finiteness
+assumption. -/
 theorem horizontalTotalHomology_length_eq_latePage (j : ℕ) (r : ℤ)
     (hr : (j : ℤ) + 2 ≤ r) :
     Module.length R ((K.total (ComplexShape.down ℕ)).homology j) =
@@ -297,7 +319,11 @@ private theorem sum_diagonals_eq_rectangle (m n : ℕ) (f : ℕ × ℕ → ℤ)
     _ = ∑ pq ∈ rectangle, f pq := hsmall.symm
     _ = _ := Finset.sum_product _ _ _
 
-/-- Actual bounded total homology has the same Euler sum as the genuine finite E2 page. -/
+/-- The bounded total Euler characteristic equals the second-page Euler sum.
+
+Under the rectangular support and finite iterated-homology length hypotheses, the finite-
+length Euler characteristic of Tot K equals the spectral sequence's page-2 length Euler sum
+over the rectangle. -/
 theorem boundedBicomplex_euler_eq_secondPage (m n : ℕ)
     (hbound : ∀ p q : ℕ, m < p ∨ n < q → IsZero ((K.X p).X q))
     (hlen : ∀ p ≤ m, ∀ q ≤ n, Module.length R ((K.verticalHomologyComplex q).homology p) ≠ ⊤) :
@@ -345,7 +371,11 @@ theorem boundedBicomplex_euler_eq_secondPage (m n : ℕ)
   exact (Finset.sum_congr rfl hStep).trans
     ((sum_diagonals_eq_rectangle m n f hfzero).trans hPages.2.2)
 
-/-- The total homology Euler sum equals literal iterated vertical then horizontal homology. -/
+/-- The total Euler characteristic from vertical-then-horizontal homology.
+
+For the stated bounded support and finite lengths, χ_R(Tot K) =
+∑_{p≤m,q≤n}(−1)^{p+q}ℓ_R(H_p(H^v_qK)). The finite lengths are read as natural numbers in the
+integer sum. -/
 theorem boundedBicomplex_euler_eq_iterated (m n : ℕ)
     (hbound : ∀ p q : ℕ, m < p ∨ n < q → IsZero ((K.X p).X q))
     (hlen : ∀ p ≤ m, ∀ q ≤ n, Module.length R ((K.verticalHomologyComplex q).homology p) ≠ ⊤) :
@@ -361,7 +391,11 @@ theorem boundedBicomplex_euler_eq_iterated (m n : ℕ)
   intro q _
   rw [(horizontalSecondPageVerticalHorizontalHomologyIso K p q).toLinearEquiv.length_eq]
 
-/-- Horizontal-first iterated homology earns actual total finiteness through canonical symmetry. -/
+/-- Finite-length total homology data with horizontal homology first.
+
+If the horizontal-then-vertical iterated homologies have finite length in the support
+rectangle, use the flipped bicomplex and canonical total-flip isomorphism to obtain finite-
+length total homology data. -/
 def boundedBicomplexFiniteLengthHomologyDataHorizontalFirst (m n : ℕ)
     (hbound : ∀ p q : ℕ, m < p ∨ n < q → IsZero ((K.X p).X q))
     (hlen : ∀ p ≤ m, ∀ q ≤ n,
@@ -371,7 +405,10 @@ def boundedBicomplexFiniteLengthHomologyDataHorizontalFirst (m n : ℕ)
     (fun q p h => by simpa only [flip_X_X] using hbound p q (Or.comm.mp h))
     (fun q hq p hp => hlen p hp q hq)).mapIso R (K.totalFlipIso (ComplexShape.down ℕ))
 
-/-- Canonical total symmetry gives Euler equality for horizontal then vertical homology. -/
+/-- The total Euler characteristic from horizontal-then-vertical homology.
+
+For the stated support and finite lengths, χ_R(Tot K) equals the signed rectangle sum of
+ℓ_R(H_q(K.flip.verticalHomologyComplex p)), with sign (−1)^{p+q}. -/
 theorem boundedBicomplex_euler_eq_horizontalFirst (m n : ℕ)
     (hbound : ∀ p q : ℕ, m < p ∨ n < q → IsZero ((K.X p).X q))
     (hlen : ∀ p ≤ m, ∀ q ≤ n,

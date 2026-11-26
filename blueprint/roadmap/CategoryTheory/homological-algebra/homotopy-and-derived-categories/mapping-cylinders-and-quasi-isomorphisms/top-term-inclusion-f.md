@@ -1,3 +1,6 @@
-# Top Term Inclusion f
+# The top-degree component of the single-term inclusion
 
-At the actual top degree, the inclusion is the stock original single chart.
+The top-degree component of the single-term inclusion.
+
+In degree b, the inclusion is the canonical chart from the single complex's degree-b object to
+K_b.

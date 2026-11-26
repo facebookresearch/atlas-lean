@@ -1,3 +1,5 @@
-# Successor
+# The successor of a two-sided page unit
 
-The original homology quotient and successor comparison construct the actual next-page unit data.
+The successor of a two-sided page unit.
+
+The homology and successor construction gives unit data at r+1.

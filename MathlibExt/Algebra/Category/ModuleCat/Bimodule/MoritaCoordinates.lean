@@ -17,9 +17,16 @@ public import MathlibExt.Algebra.Module.NatInt
 /-!
 # Coordinates of composite bimodule tensor functors
 
-The left and right actions are recovered from the enveloping-algebra action,
-together with the integer scalar action. These identifications give the
-coefficient objects of the composite bimodule tensor functor.
+Let R,S be rings in universes r,s, with bimodules P:(R,S), Q:(S,R) and coefficient carriers in
+v. The tensor functors F(X)=(Q⊗_R X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q have composite object G(FX).
+
+The outer coefficient class is (p₀⊗_S c)⊗_S q₁ for c∈F(X). The identity-coordinate comparison
+identifies the composite object with its raw balanced-tensor model T(X)=(P⊗_S((Q⊗_R X)⊗_R P))⊗_S
+Q, carrying the same outer R-actions.
+
+For a morphism f:X→Y, the composite map fixes p₀,q₁ and applies F(f) to c. Additive maps out of
+the composite are determined by the classes with all five factors p₀,q₀,x,p₁,q₁. The coordinate
+comparison is packaged together with its formula for every outer class.
 -/
 
 @[expose] public section
@@ -38,7 +45,10 @@ variable (R : Type r) (S : Type s) [Ring R] [Ring S]
   [Module R P] [Module Sᵐᵒᵖ P] [SMulCommClass R Sᵐᵒᵖ P]
   [Module S Q] [Module Rᵐᵒᵖ Q] [SMulCommClass S Rᵐᵒᵖ Q]
 
-/-- The actual outer pure tensor class in the composite native functor. -/
+/-- Let R,S be rings in independent universes r,s, P an (R,S)-bimodule and Q an (S,R)-bimodule with
+carriers in v. Write F(X)=(Q⊗_R X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q for the enveloping-module tensor
+functors. For X∈ModuleCat_v(R⊗_ℤRᵒᵖ), p₀∈P,c∈F(X),q₁∈Q, the outer class is (p₀⊗_S c)⊗_S q₁ in
+G(FX). The S-actions on c are the endpoint restrictions of its S-enveloping module. -/
 def returnOuterMk (X : ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ)) (p₀ : P)
     (c : tensorObj R S P Q X) (q₁ : Q) :
     ((tensorFunctor R S P Q) ⋙ (tensorFunctor S R Q P)).obj X := by
@@ -50,7 +60,11 @@ def returnOuterMk (X : ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ)) (p₀ : P)
   letI := TensorProduct.Balanced.rightModule ℤ S S P A
   exact mk ℤ S (TensorProduct.Balanced ℤ S P A) Q (mk ℤ S P A p₀ c) q₁
 
-/-- The original ordered pure coefficients determine an additive map on the native composite. -/
+/-- Let R,S be rings in independent universes r,s, P an (R,S)-bimodule and Q an (S,R)-bimodule with
+carriers in v. Write F(X)=(Q⊗_R X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q for the enveloping-module tensor
+functors. For X in the R-enveloping module category and an additive commutative monoid C' in any
+universe, additive maps f,g:G(FX)→C' are equal if they agree on every class (p₀⊗((q₀⊗x)⊗p₁))⊗q₁.
+The variables range over P,Q,X,P,Q respectively. -/
 theorem returnHom_ext (X : ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ))
     {C' : Type*} [AddCommMonoid C']
     {f g : ((tensorFunctor R S P Q) ⋙ (tensorFunctor S R Q P)).obj X →+ C'}
@@ -91,8 +105,12 @@ theorem returnHom_ext (X : ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ))
     exact DFunLike.congr_fun ha a
   exact DFunLike.congr_fun hb b
 
-/-- The actual composite map preserves its outer factors and applies the first tensor map inside. -/
-@[simp, nolint simpNF] -- composite-functor form for rw; Functor.comp_map simplifies LHS
+-- composite-functor form for rw; Functor.comp_map simplifies LHS
+/-- Let R,S be rings in independent universes r,s, P an (R,S)-bimodule and Q an (S,R)-bimodule with
+carriers in v. Write F(X)=(Q⊗_R X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q for the enveloping-module tensor
+functors. For an R-enveloping module morphism f:X→Y and p₀∈P,c∈F(X),q₁∈Q,
+(GF)(f)((p₀⊗c)⊗q₁)=(p₀⊗F(f)(c))⊗q₁. Both tensors are balanced over S in the outer two steps. -/
+@[simp, nolint simpNF]
 theorem returnOuterMap_mk {X Y : ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ)} (f : X ⟶ Y)
     (p₀ : P) (c : tensorObj R S P Q X) (q₁ : Q) :
     (((tensorFunctor R S P Q) ⋙ (tensorFunctor S R Q P)).map f).hom
@@ -113,7 +131,11 @@ theorem returnOuterMap_mk {X Y : ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ)} (f : X �
   exact tensorMap_mk S R Q P (tensorMap R S P Q f) p₀ c q₁
 
 include P Q in
-/-- The earned identity-coordinate comparison together with its original pure getter. -/
+/-- Let R,S be rings in independent universes r,s, P an (R,S)-bimodule and Q an (S,R)-bimodule with
+carriers in v. Write F(X)=(Q⊗_R X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q for the enveloping-module tensor
+functors. For X in the R-enveloping module category, let T(X) be the raw balanced tensor (P⊗_S
+F(X))⊗_S Q with its computed R-actions. There is an isomorphism e_X:G(FX)≅T(X), together with
+the equality e_X((p₀⊗c)⊗q₁)=(p₀⊗c)⊗q₁ in raw coordinates for every p₀,c,q₁. -/
 def returnCoordinateData (X : ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ)) :
     letI := ModuleCat.Bimodule.leftModule R X
     letI := ModuleCat.Bimodule.rightModule R X
@@ -230,7 +252,11 @@ def returnCoordinateData (X : ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ)) :
   exact compare z₀ z₁ hz l₀ l₁ hl r₀ r₁ hr c₀ c₁ t₀ t₁ u₀ u₁
 
 include P Q in
-/-- The actual comparison of the complete native composite and original raw tensors. -/
+/-- Let R,S be rings in independent universes r,s, P an (R,S)-bimodule and Q an (S,R)-bimodule with
+carriers in v. Write F(X)=(Q⊗_R X)⊗_R P and G(Y)=(P⊗_S Y)⊗_S Q for the enveloping-module tensor
+functors. For X∈ModuleCat_v(R⊗_ℤRᵒᵖ), the coordinate comparison is an R-enveloping module
+isomorphism G(FX)≅T(X), where T(X)=(P⊗_S((Q⊗_R X)⊗_R P))⊗_S Q. Its forward map preserves each
+ordered outer tensor class and the inner coefficient c∈F(X). -/
 def returnCoordinates (X : ModuleCat.{v} (R ⊗[ℤ] Rᵐᵒᵖ)) :
     letI := ModuleCat.Bimodule.leftModule R X
     letI := ModuleCat.Bimodule.rightModule R X

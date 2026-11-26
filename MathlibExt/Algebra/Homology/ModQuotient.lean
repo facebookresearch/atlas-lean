@@ -18,11 +18,14 @@ public import Mathlib.Algebra.Homology.ShortComplex.HomologicalComplex
 public import Mathlib.Algebra.Homology.ShortComplex.PreservesHomology
 
 /-!
-# Homology and quotient coefficients at a terminal degree
+# Homology and quotient coefficients when the next object is zero
 
-The quotient-by-`ell` functor preserves cokernels.  At any degree where the
-outgoing object of a homological complex is zero, homology is a cokernel.
-Consequently coefficient reduction commutes with homology at that degree.
+Let K be a complex of abelian groups of any shape and ℓ∈ℕ. Applying Q_ℓ(A)=A/ℓA to each term
+gives a complex of ZMod(ℓ)-modules.
+
+If K at the next object after index i is zero, its outgoing differential is zero and homology at
+i is a cokernel of the incoming map. Since Q_ℓ preserves cokernels, H_i(Q_ℓK)≅Q_ℓ(H_iK). The
+scalar reduction includes ℓ=0.
 -/
 
 @[expose] public section
@@ -39,8 +42,10 @@ universe u
 
 variable {I : Type*} {c : ComplexShape I}
 
-/-- If the object after degree `i` is zero, homology after quotienting every
-chain group by `ell` is the quotient by `ell` of integral homology. -/
+/-- Let ℓ∈ℕ, c be a complex shape on an arbitrary index type I, and K a c-shaped complex of abelian
+groups in universe u. If K_{c.next(i)} is a zero object, there is a ZMod(ℓ)-module isomorphism
+H_i(Q_ℓK)≅H_i(K)/ℓH_i(K). Here Q_ℓ is termwise quotient by ℓ-multiples, and the comparison
+follows from its cokernel preservation. -/
 noncomputable def modQuotientHomologyIsoOfNextIsZero
     (ell : ℕ) (K : HomologicalComplex AddCommGrpCat.{u} c) (i : I)
     (hnext : IsZero (K.X (c.next i))) :

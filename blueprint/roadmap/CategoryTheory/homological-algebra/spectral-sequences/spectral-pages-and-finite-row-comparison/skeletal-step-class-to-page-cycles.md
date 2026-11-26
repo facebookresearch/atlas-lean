@@ -1,3 +1,6 @@
-# Skeletal Step Class To Page Cycles
+# The step-class lift into skeletal page cycles
 
-The interval class map lifts to the cycles of a skeletal page.
+The step-class lift into skeletal page cycles.
+
+Use the expanded lower window and successor cycle comparison to lift H_{p+q}(⊥,−p) into page-r
+cycles.

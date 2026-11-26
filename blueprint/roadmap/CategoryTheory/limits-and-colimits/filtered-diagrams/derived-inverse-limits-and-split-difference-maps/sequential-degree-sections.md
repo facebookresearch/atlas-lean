@@ -1,3 +1,6 @@
-# Sequential Degree Sections
+# Families of reverse transition maps
 
-Actual sections in each degree suffice; they need not be maps of complexes.
+For an inverse tower K of complexes of any shape in an abelian category
+with countable products, the family of reverse component maps
+sₙᵃ:Kₙᵃ → Kₙ₊₁ᵃ. These maps can serve as degreewise sections when
+tₙᵃ∘sₙᵃ=1; the family itself consists only of maps between terms.

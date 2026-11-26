@@ -16,20 +16,19 @@ public import MathlibExt.Algebra.Homology.ChainGradedPairingStrictPositive
 public import Mathlib.Algebra.Category.ModuleCat.Kernels
 
 /-!
-# Positive pairing images and the native complex cokernel
+# Both-positive images and the cokernel of a chain pairing
 
-The strict-positive pairing has exactly the sum of the original component
-ranges with both bidegrees positive. The proof uses the actual tensor-total
-coproduct, zero off the positive range, and the canonical coordinate
-isomorphisms on that range. It requires no flatness or tensor-monomorphism
-hypothesis.
+In an abelian monoidal category with additive tensoring, a chain pairing
+whose two degree-one-to-zero differentials vanish restricts to
+K₁,≥1⊗K₂,≥1→K₃. Its strict-positive cokernel is functorial in maps
+of the original pairing diagrams.
 
-The componentwise quotient is proved to be a cokernel in the category of
-complexes. Its descents use native Submodule.liftQ maps and the original
-chain-map squares. The comparison with the native cokernel is then earned
-from that universal property, with its original projection and naturality.
-This positive-factor quotient is not identified with the full printed
-Harrison quotient, whose degree-zero factors are a separate source issue.
+In a module category with chosen monoidal preadditive tensor, the
+component range is J_n=∑_(p,q>0,p+q=n)range(P_(p,q)).
+The pointwise quotient K₃,n/J_n has the chain-cokernel universal property,
+with descents annihilating the strict-positive pairing.
+Its comparison with the categorical cokernel preserves projections
+and pairing-square maps. Both source bidegrees are positive.
 -/
 
 @[expose] public section
@@ -64,7 +63,15 @@ variable {L₁ L₂ L₃ : ChainComplex C ℕ}
 
 include hf
 
-/-- Genuine pairing maps commute with the two direct positive inclusions. -/
+/-- Let C be an abelian monoidal category with additive tensoring.
+Let P:K₁⊗K₂→K₃ be a graded pairing of nonnegative chain complexes
+with K₁.d(1,0)=K₂.d(1,0)=0.
+Write P₊₊:K₁,≥1⊗K₂,≥1→K₃ for the strict-positive map.
+Let Q be a second pairing with both first differentials zero and
+f_i:K_i→L_i chain maps satisfying f₃∘P=Q∘(f₁⊗f₂).
+The positive truncation maps of f₁,f₂ make the restricted
+pairing square commute:
+f₃∘P₊₊=Q₊₊∘(f₁,≥1⊗f₂,≥1). -/
 @[reassoc]
 theorem strictPositivePairing_naturality :
     tensorHom (stupidTruncMap f₁ e₊) (stupidTruncMap f₂ e₊) ≫
@@ -80,14 +87,28 @@ theorem strictPositivePairing_naturality :
           (K₂.positiveStupidTruncInclusion h₂) ≫ (P ≫ f₃) := by rw [hf]
     _ = _ := by simp only [strictPositivePairing, Category.assoc]
 
-/-- Actual compatible pairing maps induce the native strict-positive cokernel map. -/
+/-- Let C be an abelian monoidal category with additive tensoring.
+Let P:K₁⊗K₂→K₃ be a graded pairing of nonnegative chain complexes
+with K₁.d(1,0)=K₂.d(1,0)=0.
+Write P₊₊:K₁,≥1⊗K₂,≥1→K₃ for the strict-positive map.
+Let Q be a second pairing with both first differentials zero and
+f_i:K_i→L_i chain maps satisfying f₃∘P=Q∘(f₁⊗f₂).
+The original pairing square induces the cokernel map
+Coker(P₊₊)→Coker(Q₊₊). -/
 def strictPositiveCokernelMap :
     strictPositiveCokernel P h₁ h₂ ⟶ strictPositiveCokernel Q g₁ g₂ :=
   cokernel.map (strictPositivePairing P h₁ h₂) (strictPositivePairing Q g₁ g₂)
     (tensorHom (stupidTruncMap f₁ e₊) (stupidTruncMap f₂ e₊)) f₃
     (strictPositivePairing_naturality P h₁ h₂ Q g₁ g₂ f₁ f₂ f₃ hf).symm
 
-/-- The native induced map has the original target-map projection square. -/
+/-- Let C be an abelian monoidal category with additive tensoring.
+Let P:K₁⊗K₂→K₃ be a graded pairing of nonnegative chain complexes
+with K₁.d(1,0)=K₂.d(1,0)=0.
+Write P₊₊:K₁,≥1⊗K₂,≥1→K₃ for the strict-positive map.
+Let Q be a second pairing with both first differentials zero and
+f_i:K_i→L_i chain maps satisfying f₃∘P=Q∘(f₁⊗f₂).
+The strict-positive projections satisfy
+cokerMap∘π_P=π_Q∘f₃. -/
 @[reassoc]
 theorem strictPositiveProjection_map :
     strictPositiveProjection P h₁ h₂ ≫
@@ -99,7 +120,12 @@ end Naturality
 
 include h₁ h₂
 
-/-- Identity pairing morphisms induce identity native cokernel maps. -/
+/-- Let C be an abelian monoidal category with additive tensoring.
+Let P:K₁⊗K₂→K₃ be a graded pairing of nonnegative chain complexes
+with K₁.d(1,0)=K₂.d(1,0)=0.
+Write P₊₊:K₁,≥1⊗K₂,≥1→K₃ for the strict-positive map.
+The cokernel map induced by the identity pairing diagram
+is the identity of Coker(P₊₊). -/
 @[simp]
 theorem strictPositiveCokernelMap_id :
     strictPositiveCokernelMap P h₁ h₂ P h₁ h₂ (𝟙 K₁) (𝟙 K₂) (𝟙 K₃)
@@ -110,7 +136,13 @@ theorem strictPositiveCokernelMap_id :
   apply (cancel_epi (strictPositiveProjection P h₁ h₂)).1
   rw [strictPositiveProjection_map, Category.id_comp, Category.comp_id]
 
-/-- Composition of genuine pairing morphisms is retained by native cokernel maps. -/
+/-- Let C be an abelian monoidal category with additive tensoring.
+Let P:K₁⊗K₂→K₃ be a graded pairing of nonnegative chain complexes
+with K₁.d(1,0)=K₂.d(1,0)=0.
+Write P₊₊:K₁,≥1⊗K₂,≥1→K₃ for the strict-positive map.
+For two composable original pairing diagrams, each with the
+two first differentials zero, the induced strict-positive cokernel
+maps compose to the cokernel map of the composite diagram. -/
 @[reassoc]
 theorem strictPositiveCokernelMap_comp
     {L₁ L₂ L₃ M₁ M₂ M₃ : ChainComplex C ℕ}
@@ -144,7 +176,12 @@ variable {R : Type u} [Ring R]
 
 local notation "e₊" => ComplexShape.positiveNatEmbedding
 
-/-- The strict component uses the actual two positive-coordinate inclusions. -/
+/-- Let R be a ring in universe u and ModuleCat_v R have a chosen
+monoidal preadditive structure. Let P be a chain pairing with both
+first differentials zero. Its strict-positive map P₊₊ has bidegrees
+p,q>0, and J_n=∑_(p,q>0,p+q=n)range(P_(p,q)).
+In any p,q with p+q=n, the strict-positive component equals
+P_(p,q) after the two positive-truncation inclusions in those degrees. -/
 @[reassoc]
 theorem strictPositivePairing_pairAt (p q n : ℕ) (h : p + q = n) :
     pairAt (strictPositivePairing P h₁ h₂) p q n h =
@@ -210,7 +247,12 @@ private theorem strictPositiveComponentFactor_comp (n : ℕ) :
             ModuleCat.ofHom (positiveImages P n).subtype := by rw [Category.assoc]
     _ = _ := congrArg (fun f => f ≫ ModuleCat.ofHom (positiveImages P n).subtype) hι
 
-/-- The entire strict pairing image is precisely the sum of positive bidegree ranges. -/
+/-- Let R be a ring in universe u and ModuleCat_v R have a chosen
+monoidal preadditive structure. Let P be a chain pairing with both
+first differentials zero. Its strict-positive map P₊₊ has bidegrees
+p,q>0, and J_n=∑_(p,q>0,p+q=n)range(P_(p,q)).
+The degree n range of P₊₊ is exactly J_n, the sum of the
+original pairing ranges with both bidegrees positive. -/
 theorem range_strictPositivePairing (n : ℕ) :
     LinearMap.range ((strictPositivePairing P h₁ h₂).f n).hom =
       positiveImages P n := by
@@ -245,7 +287,12 @@ theorem range_strictPositivePairing (n : ℕ) :
       p q n hn).hom (e.inv.hom x), ?_⟩
     exact ConcreteCategory.congr_hom hc x
 
-/-- The pointwise quotient projection kills the actual strict-positive pairing. -/
+/-- Let R be a ring in universe u and ModuleCat_v R have a chosen
+monoidal preadditive structure. Let P be a chain pairing with both
+first differentials zero. Its strict-positive map P₊₊ has bidegrees
+p,q>0, and J_n=∑_(p,q>0,p+q=n)range(P_(p,q)).
+The pointwise image quotient projection π_J:K₃→Q_J
+annihilates P₊₊. -/
 @[reassoc]
 theorem strictPositivePairing_comp_positiveImageProjection :
     strictPositivePairing P h₁ h₂ ≫ positiveImageProjection P h₁ h₂ = 0 := by
@@ -261,7 +308,12 @@ theorem strictPositivePairing_comp_positiveImageProjection :
     simpa only [Submodule.ker_mkQ] using hm
   exact hk
 
-/-- Descend an actual chain map annihilating the strict pairing through the quotient. -/
+/-- Let R be a ring in universe u and ModuleCat_v R have a chosen
+monoidal preadditive structure. Let P be a chain pairing with both
+first differentials zero. Its strict-positive map P₊₊ has bidegrees
+p,q>0, and J_n=∑_(p,q>0,p+q=n)range(P_(p,q)).
+For f:K₃→L with f∘P₊₊=0, the pointwise quotient
+has the induced chain descent desc(f):Q_J→L. -/
 def positiveImageQuotientDesc
     {L : ChainComplex (ModuleCat.{v} R) ℕ} (f : K₃ ⟶ L)
     (hf : strictPositivePairing P h₁ h₂ ≫ f = 0) :
@@ -283,7 +335,12 @@ def positiveImageQuotientDesc
       (f.f n).hom ((K₃.d (n + 1) n).hom x)
     exact ConcreteCategory.congr_hom (f.comm (n + 1) n) x)
 
-/-- The descended map retains the original projection square. -/
+/-- Let R be a ring in universe u and ModuleCat_v R have a chosen
+monoidal preadditive structure. Let P be a chain pairing with both
+first differentials zero. Its strict-positive map P₊₊ has bidegrees
+p,q>0, and J_n=∑_(p,q>0,p+q=n)range(P_(p,q)).
+The induced descent satisfies desc(f)∘π_J=f for
+a chain map f annihilating P₊₊. -/
 @[reassoc]
 theorem positiveImageProjection_desc
     {L : ChainComplex (ModuleCat.{v} R) ℕ} (f : K₃ ⟶ L)
@@ -292,7 +349,12 @@ theorem positiveImageProjection_desc
   ext n x
   rfl
 
-/-- A descent is determined by the actual quotient projection. -/
+/-- Let R be a ring in universe u and ModuleCat_v R have a chosen
+monoidal preadditive structure. Let P be a chain pairing with both
+first differentials zero. Its strict-positive map P₊₊ has bidegrees
+p,q>0, and J_n=∑_(p,q>0,p+q=n)range(P_(p,q)).
+Any chain map m:Q_J→L with m∘π_J=f equals desc(f),
+when f∘P₊₊=0. -/
 theorem positiveImageQuotientDesc_unique
     {L : ChainComplex (ModuleCat.{v} R) ℕ} (f : K₃ ⟶ L)
     (hf : strictPositivePairing P h₁ h₂ ≫ f = 0)
@@ -305,12 +367,22 @@ theorem positiveImageQuotientDesc_unique
   change (m.f n).hom ((positiveImages P n).mkQ x) = (f.f n).hom x
   exact congrArg (fun k : K₃ ⟶ L => (k.f n).hom x) hm
 
-/-- The concrete positive-image quotient with its genuine strict-pairing cofork. -/
+/-- Let R be a ring in universe u and ModuleCat_v R have a chosen
+monoidal preadditive structure. Let P be a chain pairing with both
+first differentials zero. Its strict-positive map P₊₊ has bidegrees
+p,q>0, and J_n=∑_(p,q>0,p+q=n)range(P_(p,q)).
+The quotient Q_J with π_J is a cokernel cofork of
+P₊₊:K₁,≥1⊗K₂,≥1→K₃. -/
 def positiveImageCokernelCofork : CokernelCofork (strictPositivePairing P h₁ h₂) :=
   CokernelCofork.ofπ (positiveImageProjection P h₁ h₂)
     (strictPositivePairing_comp_positiveImageProjection P h₁ h₂)
 
-/-- The pointwise quotient is a cokernel in the category of chain complexes. -/
+/-- Let R be a ring in universe u and ModuleCat_v R have a chosen
+monoidal preadditive structure. Let P be a chain pairing with both
+first differentials zero. Its strict-positive map P₊₊ has bidegrees
+p,q>0, and J_n=∑_(p,q>0,p+q=n)range(P_(p,q)).
+The positive image quotient cofork is limiting as a colimit
+cofork: every map annihilating P₊₊ factors uniquely through π_J. -/
 def positiveImageCokernelIsColimit : IsColimit (positiveImageCokernelCofork P h₁ h₂) :=
   CokernelCofork.IsColimit.ofπ (positiveImageProjection P h₁ h₂)
     (strictPositivePairing_comp_positiveImageProjection P h₁ h₂)
@@ -318,12 +390,21 @@ def positiveImageCokernelIsColimit : IsColimit (positiveImageCokernelCofork P h�
     (fun {_} f hf => positiveImageProjection_desc P h₁ h₂ f hf)
     (fun {_} f hf m hm => positiveImageQuotientDesc_unique P h₁ h₂ f hf m hm)
 
-/-- The native strict-positive cokernel is canonically the actual component quotient. -/
+/-- Let R be a ring in universe u and ModuleCat_v R have a chosen
+monoidal preadditive structure. Let P be a chain pairing with both
+first differentials zero. Its strict-positive map P₊₊ has bidegrees
+p,q>0, and J_n=∑_(p,q>0,p+q=n)range(P_(p,q)).
+The categorical strict-positive cokernel is isomorphic to
+the pointwise image quotient: α:Coker(P₊₊)≅Q_J. -/
 def strictPositiveCokernelIsoPositiveImageQuotient :
     strictPositiveCokernel P h₁ h₂ ≅ positiveImageQuotient P h₁ h₂ :=
   colimit.isoColimitCocone ⟨_, positiveImageCokernelIsColimit P h₁ h₂⟩
 
-/-- The native cokernel comparison retains the original projection. -/
+/-- Let R be a ring in universe u and ModuleCat_v R have a chosen
+monoidal preadditive structure. Let P be a chain pairing with both
+first differentials zero. Its strict-positive map P₊₊ has bidegrees
+p,q>0, and J_n=∑_(p,q>0,p+q=n)range(P_(p,q)).
+The forward comparison satisfies α∘π_coker=π_J. -/
 @[reassoc]
 theorem strictPositiveProjection_comp_iso_hom :
     strictPositiveProjection P h₁ h₂ ≫
@@ -331,7 +412,11 @@ theorem strictPositiveProjection_comp_iso_hom :
       positiveImageProjection P h₁ h₂ :=
   colimit.isoColimitCocone_ι_hom _ WalkingParallelPair.one
 
-/-- The inverse comparison retains the same original projection. -/
+/-- Let R be a ring in universe u and ModuleCat_v R have a chosen
+monoidal preadditive structure. Let P be a chain pairing with both
+first differentials zero. Its strict-positive map P₊₊ has bidegrees
+p,q>0, and J_n=∑_(p,q>0,p+q=n)range(P_(p,q)).
+The inverse comparison satisfies α⁻¹∘π_J=π_coker. -/
 @[reassoc]
 theorem positiveImageProjection_comp_iso_inv :
     positiveImageProjection P h₁ h₂ ≫
@@ -350,7 +435,13 @@ variable {L₁ L₂ L₃ : ChainComplex (ModuleCat.{v} R) ℕ}
 
 include hf
 
-/-- The native/pointwise quotient comparison is natural in genuine pairing morphisms. -/
+/-- Let R be a ring in universe u and ModuleCat_v R have a chosen
+monoidal preadditive structure. Let P be a chain pairing with both
+first differentials zero. Its strict-positive map P₊₊ has bidegrees
+p,q>0, and J_n=∑_(p,q>0,p+q=n)range(P_(p,q)).
+For a second pairing Q with both first differentials zero and
+an original pairing square (f₁,f₂,f₃), the categorical/image
+cokernel comparisons commute with their induced quotient maps. -/
 @[reassoc]
 theorem strictPositiveCokernelIso_naturality :
     strictPositiveCokernelMap P h₁ h₂ Q g₁ g₂ f₁ f₂ f₃ hf ≫

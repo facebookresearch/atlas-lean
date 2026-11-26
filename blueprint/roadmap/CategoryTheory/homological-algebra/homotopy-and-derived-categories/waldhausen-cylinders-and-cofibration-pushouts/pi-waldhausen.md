@@ -1,3 +1,8 @@
-# Pi Waldhausen
+# Pointwise structure on a category of families
 
-The pointwise Waldhausen structure on the original Pi category, as a named value.
+Pointwise structure on a category of families.
+
+For categories C_i with zero objects and WaldhausenCategoryWithoutGluing structures, define
+the same structure on ΠᵢC_i by componentwise cofibrations and weak equivalences. Pushouts
+along a cofibration use the component pushout objects and legs, and their universal properties
+assemble in the family category.

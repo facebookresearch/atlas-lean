@@ -1,3 +1,5 @@
-# Antipode Alg Hom Op eq
+# The Hopf antipode algebra map equals the generator construction
 
-The native antipode as an opposite-algebra map is the signed universal lift.
+The Hopf antipode algebra map equals the generator construction.
+
+The native opposite-valued antipode is antipodeToOpposite.

@@ -1,3 +1,6 @@
-# Neg One Pow rel
+# The integer homological sign changes across adjacent degrees
 
-`(-1)^p` changes sign along `down ℤ`.
+The integer homological sign changes across adjacent degrees.
+
+For p,p′ ∈ ℤ with p′+1=p, the unit signs satisfy (−1)^{p′} = −(−1)^p. This supplies the sign-
+change condition for the homological integer shape.

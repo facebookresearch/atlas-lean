@@ -1,4 +1,6 @@
-# First Page Row Cycles Pair
+# The first-page row product on cycle objects
 
-The actual product on row cycle kernels induced by the original
-native first-page cycle product.
+The first-page row product on cycle objects.
+
+Use the row-to-page cycle comparisons, the page cycle product and the output inverse row
+comparison.

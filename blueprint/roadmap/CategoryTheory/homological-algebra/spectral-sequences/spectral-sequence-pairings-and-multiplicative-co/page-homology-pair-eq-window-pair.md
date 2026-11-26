@@ -1,4 +1,5 @@
-# Page Homology Pair eq window Pair
+# The descended page homology product equals its window construction
 
-Native quotient descent agrees with the independently constructed enlarged
-interval product; this is an equality of maps, not a tensor-homology isomorphism.
+The descended page homology product equals its window construction.
+
+The cokernel-descended product is pageHomologyWindowPair.

@@ -1,4 +1,6 @@
-# Functor Homology Comparison Iso projection
+# The degreewise functor comparison preserves the homology quotient
 
-The actual complex cycle and homology comparisons retain both native
-homology projections.
+The degreewise functor comparison preserves the homology quotient.
+
+The mapped source projection followed by the homology comparison equals the cycles comparison
+followed by the target projection.

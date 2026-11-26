@@ -1,3 +1,5 @@
-# Map Bialg Hom id
+# The enveloping bialgebra map of the identity Lie morphism
 
-Identity Lie morphisms induce identity bialgebra morphisms.
+The enveloping bialgebra map of the identity Lie morphism.
+
+It is the identity bialgebra homomorphism.

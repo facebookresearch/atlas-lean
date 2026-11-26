@@ -1,4 +1,7 @@
-# Nonempty sections of is Mittag Leffler
+# Compatible section of a nonempty Mittag–Leffler tower
 
-A levelwise-nonempty Mittag--Leffler inverse sequence of types has a
-compatible section.
+Compatible section of a nonempty Mittag–Leffler tower.
+
+Let F be a Mittag–Leffler inverse tower of types whose every level is nonempty. Then there
+exists a family x_n ∈ F_n satisfying F_{n+1} → F_n on x_{n+1} equals x_n, and hence a section
+of the full tower. Recursion in the nonempty stabilized ranges provides the family.

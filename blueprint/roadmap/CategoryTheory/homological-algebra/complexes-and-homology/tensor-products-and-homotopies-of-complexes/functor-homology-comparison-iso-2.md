@@ -1,4 +1,5 @@
-# Functor Homology Comparison Iso
+# The homology comparison in a chosen complex degree
 
-The canonical source-to-target homology comparison in the original
-complex homology objects, using the native short-complex homology functor.
+The homology comparison in a chosen complex degree.
+
+The same short-complex isomorphism gives F(K.homology j) ≅ L.homology j.

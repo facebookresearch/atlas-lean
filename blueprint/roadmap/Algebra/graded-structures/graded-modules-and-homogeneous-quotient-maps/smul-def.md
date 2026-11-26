@@ -1,4 +1,6 @@
-# Smul Def
+# Scalar multiplication on homogeneous fraction representatives
 
-Scalar action by `HomogeneousLocalization 𝒜 S` on `AtPrimeModuleCarrier M S`
-`a/s_r • m/s_m = (a•m)/(s_r * s_m)` with degree sum.
+Scalar multiplication on homogeneous fraction representatives.
+
+For a homogeneous scalar fraction a/b and module fraction m/s, form (a·m)/(bs). Their common
+degree is the sum of the scalar and module representative degrees.

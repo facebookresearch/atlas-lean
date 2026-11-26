@@ -1,3 +1,6 @@
-# Ext Tensor Comparison tmul
+# The Ext tensor comparison on a pure tensor
 
-A pure tensor is native Ext postcomposition along the coefficient inclusion.
+The Ext tensor comparison on a pure tensor.
+
+The image of x ⊗ u is x composed with the degree-zero class of the restricted coefficient map
+n ↦ n ⊗ u.

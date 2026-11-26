@@ -13,16 +13,19 @@ public import Mathlib.Algebra.Homology.HomologicalComplexAbelian
 public import Mathlib.Algebra.Homology.QuasiIso
 
 /-!
-# Local homology of actual image and coimage quotient presentations
+# Homology of image and coimage quotient presentations
 
-For every complex shape, the native quotient by the image of a morphism
-represents its original cokernel. The comparison retains the actual cokernel
-projection. Applying the native homology map at one chosen degree gives a
-canonical comparison; no global homology functor or desired homology iso is
-an input. Original squares retain that comparison by native homology
-naturality.
+Let C be an abelian category and f:K → L a morphism of complexes of any
+shape c. Write j:Im(f) → L for the image inclusion and
+b:Coim(f) → L for the factor map through the coimage. The canonical
+isomorphisms Coker(j) ≅ Coker(f) and Coker(b) ≅ Coker(f) preserve the
+projections from L.
 
-Candidate source; Native and adoption gates remain pending.
+At a degree i with the chosen homology objects, these isomorphisms induce
+the corresponding homology comparisons. Their forward maps preserve the
+homology maps of the quotient projections and are natural in commuting
+squares between defining complex morphisms. The category and index type
+have independent universes.
 -/
 
 @[expose] public section
@@ -39,19 +42,30 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
   {ι : Type w} {c : ComplexShape ι} {K L : HomologicalComplex C c}
   (f : K ⟶ L)
 
-/-- At a chosen degree, the image quotient has the homology of the original cokernel. -/
+/-- Let C be abelian, c any complex shape and f:K → L a morphism of
+complexes. For a degree i with chosen homology objects of Coker(j)
+and Coker(f), where j:Im(f) → L is the image inclusion, the canonical
+isomorphism Hᵢ(Coker(j)) ≅ Hᵢ(Coker(f)) induced by the image-quotient
+isomorphism. -/
 def imageCokernelHomologyIso (i : ι)
     [(cokernel (Abelian.image.ι f)).HasHomology i] [(cokernel f).HasHomology i] :
     (cokernel (Abelian.image.ι f)).homology i ≅ (cokernel f).homology i :=
   isoOfQuasiIsoAt (Abelian.imageCokernelIso f).hom i
 
-/-- The comparison's forward map is the native homology map of the earned quotient iso. -/
+/-- In an abelian category C, let f:K → L be a complex morphism of any
+shape and j:Im(f) → L its image inclusion. With the chosen homology
+objects of Coker(j) and Coker(f) at i, the forward homology comparison
+is the homology map of the canonical isomorphism Coker(j) ≅ Coker(f). -/
 theorem imageCokernelHomologyIso_hom (i : ι)
     [(cokernel (Abelian.image.ι f)).HasHomology i] [(cokernel f).HasHomology i] :
     (imageCokernelHomologyIso f i).hom = homologyMap (Abelian.imageCokernelIso f).hom i :=
   rfl
 
-/-- The local comparison retains the actual original quotient projection. -/
+/-- Let f:K → L be a complex morphism of any shape in an abelian category,
+j:Im(f) → L its image inclusion, and π_j:L → Coker(j),
+π_f:L → Coker(f) the projections. With chosen homology objects of
+L and the two quotients at i, the comparison αᵢ satisfies
+αᵢ ∘ Hᵢ(π_j) = Hᵢ(π_f). -/
 @[reassoc]
 theorem imageCokernelHomologyIso_projection (i : ι)
     [L.HasHomology i] [(cokernel (Abelian.image.ι f)).HasHomology i]
@@ -61,7 +75,12 @@ theorem imageCokernelHomologyIso_projection (i : ι)
   rw [imageCokernelHomologyIso_hom, ← homologyMap_comp,
     Abelian.imageCokernelIso_projection]
 
-/-- Actual original squares preserve the chosen-degree image/cokernel comparison. -/
+/-- Let f:K → L and g:K′ → L′ be complex morphisms of one shape in an
+abelian category C, and let a:K → K′, b:L → L′ satisfy b∘f=g∘a.
+At i choose the homology objects of both image quotients and both
+cokernels. If Q_I is the induced map of image quotients and Q the
+induced cokernel map, their comparisons satisfy
+α_g ∘ Hᵢ(Q_I) = Hᵢ(Q) ∘ α_f. -/
 @[reassoc]
 theorem imageCokernelHomologyIso_naturality {K' L' : HomologicalComplex C c}
     {g : K' ⟶ L'} (a : Arrow.mk f ⟶ Arrow.mk g) (i : ι)
@@ -73,13 +92,21 @@ theorem imageCokernelHomologyIso_naturality {K' L' : HomologicalComplex C c}
   rw [imageCokernelHomologyIso_hom, imageCokernelHomologyIso_hom,
     ← homologyMap_comp, ← homologyMap_comp, Abelian.imageCokernelIso_naturality]
 
-/-- The native coimage presentation gives the same local homology object. -/
+/-- Let C be abelian, c any complex shape and f:K → L a morphism of
+complexes. Write b:Coim(f) → L for the factor map through the coimage.
+At a degree i with chosen homology objects of Coker(b) and Coker(f),
+the canonical isomorphism Hᵢ(Coker(b)) ≅ Hᵢ(Coker(f)) induced by
+the coimage-quotient isomorphism. -/
 def coimageCokernelHomologyIso (i : ι)
     [(cokernel (Abelian.factorThruCoimage f)).HasHomology i] [(cokernel f).HasHomology i] :
     (cokernel (Abelian.factorThruCoimage f)).homology i ≅ (cokernel f).homology i :=
   isoOfQuasiIsoAt (Abelian.coimageCokernelIso f).hom i
 
-/-- The coimage comparison also retains the actual original projection on local homology. -/
+/-- Let f:K → L be a complex morphism of any shape in an abelian category,
+b:Coim(f) → L its coimage factor map, and π_b:L → Coker(b),
+π_f:L → Coker(f) the projections. With chosen homology objects of
+L and the two quotients at i, the coimage-quotient comparison βᵢ
+satisfies βᵢ ∘ Hᵢ(π_b) = Hᵢ(π_f). -/
 @[reassoc]
 theorem coimageCokernelHomologyIso_projection (i : ι)
     [L.HasHomology i] [(cokernel (Abelian.factorThruCoimage f)).HasHomology i]
@@ -90,7 +117,12 @@ theorem coimageCokernelHomologyIso_projection (i : ι)
     homologyMap (Abelian.coimageCokernelIso f).hom i = _
   rw [← homologyMap_comp, Abelian.coimageCokernelIso_projection]
 
-/-- Actual coimage quotient maps preserve the selected-degree homology comparison. -/
+/-- Let f:K → L and g:K′ → L′ be complex morphisms of one shape in an
+abelian category, and let a:K → K′, b:L → L′ form a commuting square.
+Choose the homology objects of the two coimage quotients and the two
+cokernels at i. If Q_C is the induced coimage-quotient map and Q the
+cokernel map, the comparisons satisfy
+β_g ∘ Hᵢ(Q_C) = Hᵢ(Q) ∘ β_f. -/
 @[reassoc]
 theorem coimageCokernelHomologyIso_naturality {K' L' : HomologicalComplex C c}
     {g : K' ⟶ L'} (a : Arrow.mk f ⟶ Arrow.mk g) (i : ι)

@@ -1,3 +1,6 @@
-# Tensor Pow Map succ
+# Map on a successor tensor power
 
-Functorial map at `n+1` is `tensorHom` of the `n`-th map and `f` (`rfl`).
+Map on a successor tensor power.
+
+For f : X → Y and n : ℕ, the recursive power map is Pₙ₊₁(f) = Pₙ(f) ⊗ f from Pₙ(X) ⊗ X to
+Pₙ(Y) ⊗ Y.

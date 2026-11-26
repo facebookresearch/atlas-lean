@@ -17,12 +17,13 @@ public import MathlibExt.RingTheory.Bialgebra.PrimitiveLie
 public import Mathlib.RingTheory.Bialgebra.Equiv
 
 /-!
-# Cocommutativity and primitive generators of enveloping bialgebras
+# Cocommutativity and primitive Lie generator naturality
 
-The enveloping coproduct is cocommutative. The Lie generators define a
-natural Lie morphism into the primitive Lie algebra, whose inclusion is
-the original generator morphism. Lie algebra equivalences induce
-bialgebra equivalences through the canonical enveloping maps.
+The universal enveloping coproduct is cocommutative. Its primitive Lie subalgebra receives the
+generator morphism L → Prim(U_R(L)), whose inclusion recovers ι.
+
+This morphism is natural in Lie algebra maps. Lie algebra equivalences induce bialgebra
+equivalences, with forward and inverse algebra maps given by the canonical enveloping maps.
 -/
 
 @[expose] public section
@@ -46,7 +47,10 @@ variable (L : Type v) [LieRing L] [LieAlgebra R L]
 local notation "U" => UniversalEnvelopingAlgebra R L
 local notation "P" => Bialgebra.primitiveLieSubalgebra R U
 
-/-- Swapping the two tensor factors fixes the enveloping coproduct algebra map. -/
+/-- The enveloping coproduct is invariant under tensor exchange.
+
+Composing the coproduct algebra map with the tensor commutation equivalence leaves it
+unchanged. -/
 theorem comulAlgHom_comm :
     (Algebra.TensorProduct.comm R U U).toAlgHom.comp (Bialgebra.comulAlgHom R U) =
       Bialgebra.comulAlgHom R U := by
@@ -58,12 +62,16 @@ theorem comulAlgHom_comm :
   simp only [comul_ι, map_add, Algebra.TensorProduct.comm_tmul]
   exact add_comm _ _
 
-/-- The universal enveloping bialgebra is cocommutative. -/
+/-- Cocommutativity of the enveloping coalgebra.
+
+The coproduct satisfies the tensor exchange equation. -/
 instance instIsCocomm : Coalgebra.IsCocomm R U where
   comm_comp_comul :=
     congrArg (fun f : U →ₐ[R] U ⊗[R] U => f.toLinearMap) (comulAlgHom_comm R L)
 
-/-- The Lie generators as a Lie morphism into the primitive Lie algebra. -/
+/-- The Lie generator map into primitive elements.
+
+Send x to the primitive element ιx in the enveloping bialgebra's primitive Lie subalgebra. -/
 def ιPrimitive : L →ₗ⁅R⁆ P where
   __ := (ι R).toLinearMap.codRestrict (Bialgebra.primitiveLieSubalgebra R U).toSubmodule
     (fun x => (Bialgebra.mem_primitiveLieSubalgebra R U).mpr (isPrimitiveElem_ι R L x))
@@ -72,12 +80,16 @@ def ιPrimitive : L →ₗ⁅R⁆ P where
     apply Subtype.ext
     exact (ι R).map_lie x y
 
-/-- The primitive-valued generator morphism has the original generators as its underlying map. -/
+/-- The underlying element of the primitive generator map.
+
+The included primitive image of x is ιx. -/
 @[simp]
 theorem coe_ιPrimitive (x : L) : (ιPrimitive R L x : U) = ι R x :=
   rfl
 
-/-- Including the primitive-valued generators recovers the original generator Lie morphism. -/
+/-- Primitive inclusion recovers the enveloping Lie map.
+
+The primitive generator map followed by inclusion equals ι. -/
 theorem ιPrimitive_incl : (Bialgebra.primitiveLieSubalgebra R U).incl.comp (ιPrimitive R L) = ι R := by
   apply LieHom.ext
   intro x
@@ -90,7 +102,10 @@ section Naturality
 variable {L : Type v} [LieRing L] [LieAlgebra R L]
   {L' : Type w} [LieRing L'] [LieAlgebra R L']
 
-/-- Primitive-valued generators are natural in Lie morphisms through the canonical bialgebra map. -/
+/-- Naturality of the primitive generator Lie map.
+
+The primitive Lie map induced by an enveloping bialgebra map commutes with the Lie generator
+maps. -/
 theorem ιPrimitive_naturality (f : L →ₗ⁅R⁆ L') :
     (mapBialgHom R f).primitiveLieMap.comp (ιPrimitive R L) =
       (ιPrimitive R L').comp f := by
@@ -100,7 +115,9 @@ theorem ιPrimitive_naturality (f : L →ₗ⁅R⁆ L') :
   simp only [LieHom.coe_comp, Function.comp_apply, BialgHom.primitiveLieMap_apply,
     coe_ιPrimitive, mapBialgHom_apply, map_ι]
 
-/-- A Lie equivalence induces a bialgebra equivalence by the canonical enveloping maps. -/
+/-- The bialgebra equivalence induced by a Lie equivalence.
+
+Use the enveloping maps of the Lie equivalence and its inverse. -/
 def mapBialgEquiv (e : L ≃ₗ⁅R⁆ L') :
     UniversalEnvelopingAlgebra R L ≃ₐc[R] UniversalEnvelopingAlgebra R L' :=
   BialgEquiv.ofBialgHom (mapBialgHom R e.toLieHom) (mapBialgHom R e.symm.toLieHom)
@@ -119,13 +136,17 @@ def mapBialgEquiv (e : L ≃ₗ⁅R⁆ L') :
         exact e.left_inv x
       rw [h, mapBialgHom_id])
 
-/-- The induced bialgebra equivalence applies the canonical enveloping algebra map. -/
+/-- The forward enveloping bialgebra equivalence map.
+
+Its value is map R applied to the forward Lie morphism. -/
 @[simp]
 theorem mapBialgEquiv_apply (e : L ≃ₗ⁅R⁆ L') (a : UniversalEnvelopingAlgebra R L) :
     mapBialgEquiv R e a = map R e.toLieHom a :=
   rfl
 
-/-- The inverse bialgebra equivalence applies the enveloping map of the inverse Lie equivalence. -/
+/-- The inverse enveloping bialgebra equivalence map.
+
+Its value is map R applied to the inverse Lie morphism. -/
 @[simp]
 theorem mapBialgEquiv_symm_apply (e : L ≃ₗ⁅R⁆ L') (a : UniversalEnvelopingAlgebra R L') :
     (mapBialgEquiv R e).symm a = map R e.symm.toLieHom a :=

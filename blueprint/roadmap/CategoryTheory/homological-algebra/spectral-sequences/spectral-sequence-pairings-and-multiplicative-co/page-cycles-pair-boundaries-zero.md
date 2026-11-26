@@ -1,4 +1,6 @@
-# Page Cycles Pair boundaries zero
+# Page boundary products vanish after homology projection
 
-Both actual native page boundary relations vanish after the constructed
-cycle product and homology projection.
+Page boundary products vanish after homology projection.
+
+The two incoming boundary sources paired with cycles are killed by the output homology
+projection.

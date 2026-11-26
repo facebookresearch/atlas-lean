@@ -14,7 +14,17 @@ module
 
 public import MathlibExt.Algebra.Homology.GradedPairingTuple
 
-/-! # Original tuple pairing compatibility through actual complex isomorphisms -/
+/-!
+# Tuple pairing formulas under cochain isomorphisms
+
+Let P:K₁⊗K₂ → K₃ be a graded pairing of nonnegative cochain complexes
+of abelian groups, and let a:K₁ ≅ L₁, b:K₂ ≅ L₂, c:K₃ ≅ L₃.
+Choose tuple evaluations on the L-complexes, front and back tuple maps,
+and a pairing of their value types. If evaluation of c(P(x⊗y)) agrees
+with the value pairing of the evaluations of a(x) and b(y), then
+Q=c ∘ P ∘ (a⁻¹⊗b⁻¹) satisfies the tuple evaluation formula on L₁,L₂,L₃.
+All tuple and value types may have independent universes.
+-/
 
 @[expose] public section
 noncomputable section
@@ -26,8 +36,16 @@ open scoped TensorProduct
 namespace CategoryTheory
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Genuine tuple compatibility of the original pairing and three actual
-complex maps determines the tuple law of the actual whiskered pairing. -/
+/-- Let P:K₁⊗K₂ → K₃ be a graded pairing of nonnegative cochain complexes
+of abelian groups and a:K₁ ≅ L₁, b:K₂ ≅ L₂, c:K₃ ≅ L₃ cochain
+isomorphisms. Choose evaluations left_p:L₁ᵖ → T_p → X,
+right_q:L₂ᑫ → U_q → Y, target_n:L₃ⁿ → V_n → Z, front and back
+maps V_{p+q} → T_p,U_q, and pair:X → Y → Z.
+Assume, for every p,q,x,y,v, that
+target_{p+q}(c(P_{p,q}(x⊗₍ℤ₎y)))(v)
+=pair(left_p(a(x))(front(v)),right_q(b(y))(back(v))).
+Then the transported pairing Q=c ∘ P ∘ (a⁻¹⊗b⁻¹) satisfies the
+tuple pairing formula for these evaluations. -/
 theorem nativeGradedPairingTupleProperty_whisker
     {K₁ K₂ K₃ L₁ L₂ L₃ : CochainComplex AddCommGrpCat.{s} ℕ}
     (P : HomologicalComplex.CochainGradedPairing K₁ K₂ K₃)

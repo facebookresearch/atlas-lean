@@ -1,3 +1,5 @@
-# Page Homology Unit
+# The homology class of a page unit
 
-The original coefficient unit descends through the actual homology quotient.
+The homology class of a page unit.
+
+Project the cycle-unit lift to page homology in bidegree zero.

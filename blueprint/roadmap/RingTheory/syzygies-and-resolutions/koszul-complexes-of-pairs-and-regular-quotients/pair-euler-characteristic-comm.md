@@ -1,5 +1,5 @@
-# Pair Euler Characteristic comm
+# Symmetry of the pair Euler characteristic
 
-Clean symmetric form: after transporting the finite-length hypotheses,
-the canonical two-generator Euler characteristic is unchanged by swapping
-the generators.
+Symmetry of the pair Euler characteristic.
+
+The Euler value for (f,g) equals that for (g,f) with swapped finiteness data.

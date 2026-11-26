@@ -16,19 +16,19 @@ public import Mathlib.Algebra.Homology.HomologicalComplexAbelian
 public import Mathlib.CategoryTheory.Limits.Preserves.Shapes.Kernels
 
 /-!
-# Original module coordinates of arbitrary-shape native cokernels
+# Range-quotient coordinates of module-complex cokernels
 
-Evaluation preserves the actual native cokernel. Native module cokernel
-coordinates therefore identify every degree with the original range quotient.
-Its map and differential equations are earned from the original morphism and
-native quotient maps. No additional complex, image backend, closure certificate,
-or desired isomorphism is introduced.
+Let R be an arbitrary ring and f:K → L a morphism of R-module complexes
+of any shape c. Evaluation in degree i identifies the cokernel term with
+Lᵢ/im(fᵢ), preserving the quotient projection x ↦ [x].
 
-The ring, coefficient carriers, and complex-index universes are independent.
-These coordinates also identify quotient by the native image subcomplex with
-the same original range quotient.
-
-Candidate source; Native and adoption gates remain pending.
+A commuting square with target map b:L → L′ induces the quotient map
+[x] ↦ [bᵢ(x)] in each degree. The differential on the cokernel, in these
+coordinates, sends [x] to [d_L(i,j)(x)]. These maps are well-defined because
+the square and the cochain-map relations preserve the relevant ranges.
+Quotienting L by the image subcomplex gives the same range-quotient
+coordinates and projections. The ring, module-carrier and complex-index
+universes are independent.
 -/
 
 @[expose] public section
@@ -44,13 +44,19 @@ namespace HomologicalComplex
 variable {R : Type u} [Ring R] {ι : Type w} {c : ComplexShape ι}
   {K L : HomologicalComplex (ModuleCat.{v} R) c} (f : K ⟶ L)
 
-/-- Every native cokernel degree is the original quotient by the defining component range. -/
+/-- For an arbitrary ring R, a complex shape c and a morphism f:K → L
+of R-module complexes, the canonical degree-i isomorphism
+θ_f,i:Coker(f)ᵢ ≅ Lᵢ/im(fᵢ), obtained from evaluation of the cokernel
+and the module range quotient. -/
 def moduleCokernelDegreeIso (i : ι) :
     (cokernel f).X i ≅ ModuleCat.of R ((L.X i) ⧸ LinearMap.range (f.f i).hom) :=
   PreservesCokernel.iso (eval (ModuleCat.{v} R) c i) f ≪≫
     ModuleCat.cokernelIsoRangeQuotient (f.f i)
 
-/-- These coordinates retain the actual original component projection. -/
+/-- Let R be an arbitrary ring and f:K → L a morphism of R-module
+complexes of any shape. Under θ_f,i:Coker(f)ᵢ ≅ Lᵢ/im(fᵢ), the
+degree-i cokernel projection is the quotient map:
+θ_f,i ∘ π_f,i sends x to [x]. -/
 @[reassoc]
 theorem moduleCokernelDegreeIso_projection (i : ι) :
     (cokernel.π f).f i ≫ (moduleCokernelDegreeIso f i).hom =
@@ -69,7 +75,10 @@ section Maps
 variable {K' L' : HomologicalComplex (ModuleCat.{v} R) c} {g : K' ⟶ L'}
   (a : Arrow.mk f ⟶ Arrow.mk g)
 
-/-- The original target side of a square preserves the actual defining component range. -/
+/-- Let R be an arbitrary ring and let a:K → K′, b:L → L′ form a
+commuting square from f:K → L to g:K′ → L′ between module complexes
+of one shape. In each degree i, bᵢ sends im(fᵢ) into im(gᵢ);
+equivalently im(fᵢ)⊆bᵢ⁻¹(im(gᵢ)). -/
 theorem moduleRange_map (i : ι) :
     LinearMap.range (f.f i).hom ≤
       (LinearMap.range (g.f i).hom).comap (a.right.f i).hom := by
@@ -77,14 +86,20 @@ theorem moduleRange_map (i : ι) :
   refine ⟨(a.left.f i).hom z, ?_⟩
   exact ConcreteCategory.congr_hom (congrArg (fun h => h.f i) a.w) z
 
-/-- Native quotient map of the original target component, with its preservation earned above. -/
+/-- For an arbitrary ring R and a commuting square (a,b) from f:K → L
+to g:K′ → L′ between module complexes of one shape, the induced
+degree-i map Lᵢ/im(fᵢ) → L′ᵢ/im(gᵢ) sends [x] to [bᵢ(x)]. -/
 def moduleRangeQuotientMap (i : ι) :
     ModuleCat.of R ((L.X i) ⧸ LinearMap.range (f.f i).hom) ⟶
       ModuleCat.of R ((L'.X i) ⧸ LinearMap.range (g.f i).hom) :=
   ModuleCat.ofHom ((LinearMap.range (f.f i).hom).mapQ (LinearMap.range (g.f i).hom)
     (a.right.f i).hom (moduleRange_map f a i))
 
-/-- The actual quotient map retains the original target map on every class. -/
+/-- Let R be an arbitrary ring and (a,b) a commuting square between
+module-complex morphisms f:K → L and g:K′ → L′ of one shape.
+For the degree-i quotient map Qᵢ:Lᵢ/im(fᵢ) → L′ᵢ/im(gᵢ), its
+composite with the quotient projection π_f,i satisfies
+Qᵢ ∘ π_f,i = π_g,i ∘ bᵢ. -/
 @[reassoc]
 theorem moduleRangeQuotientMap_projection (i : ι) :
     ModuleCat.ofHom (LinearMap.range (f.f i).hom).mkQ ≫ moduleRangeQuotientMap f a i =
@@ -93,7 +108,11 @@ theorem moduleRangeQuotientMap_projection (i : ι) :
   ext x
   rfl
 
-/-- Native cokernel component coordinates are natural in every original square. -/
+/-- Let R be an arbitrary ring and (a,b) a commuting square from
+f:K → L to g:K′ → L′ between module complexes of one shape.
+If C_i is the component of the induced cokernel map and Qᵢ is
+[x]↦[bᵢ(x)], the range-quotient isomorphisms satisfy
+θ_g,i ∘ C_i = Qᵢ ∘ θ_f,i. -/
 @[reassoc]
 theorem moduleCokernelDegreeIso_naturality (i : ι) :
     (cokernel.map f g a.left a.right a.w.symm).f i ≫ (moduleCokernelDegreeIso g i).hom =
@@ -118,7 +137,10 @@ theorem moduleCokernelDegreeIso_naturality (i : ι) :
 
 end Maps
 
-/-- The original target differential preserves the actual defining range family. -/
+/-- Let R be an arbitrary ring and f:K → L a morphism of module complexes
+of any shape c. For any indices i,j, the differential d_L(i,j) sends
+im(fᵢ) into im(fⱼ); equivalently
+im(fᵢ)⊆d_L(i,j)⁻¹(im(fⱼ)). -/
 theorem moduleRange_d (i j : ι) :
     LinearMap.range (f.f i).hom ≤
       (LinearMap.range (f.f j).hom).comap (L.d i j).hom := by
@@ -126,14 +148,20 @@ theorem moduleRange_d (i j : ι) :
   refine ⟨(K.d i j).hom z, ?_⟩
   exact (ConcreteCategory.congr_hom (f.comm i j) z).symm
 
-/-- Native quotient of the original differential; no new complex is defined. -/
+/-- For an arbitrary ring R and a morphism f:K → L of module complexes
+of any shape, the quotient map
+Lᵢ/im(fᵢ) → Lⱼ/im(fⱼ) induced by the differential d_L(i,j).
+It sends the class [x] to [d_L(i,j)(x)]. -/
 def moduleRangeQuotientD (i j : ι) :
     ModuleCat.of R ((L.X i) ⧸ LinearMap.range (f.f i).hom) ⟶
       ModuleCat.of R ((L.X j) ⧸ LinearMap.range (f.f j).hom) :=
   ModuleCat.ofHom ((LinearMap.range (f.f i).hom).mapQ (LinearMap.range (f.f j).hom)
     (L.d i j).hom (moduleRange_d f i j))
 
-/-- The range-quotient differential retains the original differential on every class. -/
+/-- Let R be an arbitrary ring and f:K → L a morphism of module complexes
+of any shape. Write π_i:Lᵢ → Lᵢ/im(fᵢ) and π_j for the quotient
+projections, and d_Q(i,j) for the induced quotient differential.
+They satisfy d_Q(i,j) ∘ π_i = π_j ∘ d_L(i,j). -/
 @[reassoc]
 theorem moduleRangeQuotientD_projection (i j : ι) :
     ModuleCat.ofHom (LinearMap.range (f.f i).hom).mkQ ≫ moduleRangeQuotientD f i j =
@@ -142,7 +170,11 @@ theorem moduleRangeQuotientD_projection (i j : ι) :
   ext x
   rfl
 
-/-- The actual native cokernel differential is the quotient of the original differential. -/
+/-- Let R be an arbitrary ring and f:K → L a morphism of module complexes
+of any shape. In the isomorphisms θ_f,i:Coker(f)ᵢ ≅ Lᵢ/im(fᵢ),
+the cokernel differential satisfies
+θ_f,j ∘ d_Coker(f)(i,j) = d_Q(i,j) ∘ θ_f,i,
+where d_Q sends [x] to [d_L(i,j)(x)]. -/
 @[reassoc]
 theorem moduleCokernelDegreeIso_d (i j : ι) :
     (cokernel f).d i j ≫ (moduleCokernelDegreeIso f j).hom =
@@ -153,13 +185,20 @@ theorem moduleCokernelDegreeIso_d (i j : ι) :
     moduleCokernelDegreeIso_projection, ← Category.assoc,
     moduleCokernelDegreeIso_projection, moduleRangeQuotientD_projection]
 
-/-- Quotient by the actual image subcomplex has those same original component coordinates. -/
+/-- For an arbitrary ring R and a morphism f:K → L of module complexes
+of any shape, let j:Im(f) → L be its image-subcomplex inclusion.
+The canonical isomorphism from the degree-i term of Coker(j) to
+Lᵢ/im(fᵢ), through the image-quotient comparison and the cokernel
+range-quotient coordinates. -/
 def moduleImageCokernelDegreeIso (i : ι) :
     (cokernel (Abelian.image.ι f)).X i ≅
       ModuleCat.of R ((L.X i) ⧸ LinearMap.range (f.f i).hom) :=
   Hom.isoApp (Abelian.imageCokernelIso f) i ≪≫ moduleCokernelDegreeIso f i
 
-/-- The image-quotient coordinates retain the original range quotient projection. -/
+/-- Let R be an arbitrary ring, f:K → L a module-complex morphism of any
+shape, and j:Im(f) → L its image inclusion. Under the canonical
+isomorphism Coker(j)ᵢ ≅ Lᵢ/im(fᵢ), the degree-i projection from L
+is the quotient map x↦[x]. -/
 @[reassoc]
 theorem moduleImageCokernelDegreeIso_projection (i : ι) :
     (cokernel.π (Abelian.image.ι f)).f i ≫ (moduleImageCokernelDegreeIso f i).hom =

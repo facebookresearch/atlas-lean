@@ -1,4 +1,5 @@
-# Away Shift
+# The stage-increase operator on the away direct limit
 
-Increasing the stage by one defines the inverse shift on the direct
-limit.
+The stage-increase operator on the away direct limit.
+
+Send the class of x at stage n to its class at stage n+1.

@@ -16,12 +16,17 @@ public import Mathlib.CategoryTheory.Abelian.Basic
 public import Mathlib.CategoryTheory.Subobject.Lattice
 
 /-!
-# Finite filtrations concentrated in one graded piece
+# A finite filtration with one possible graded degree
 
-For a finite decreasing subobject filtration in an abelian category, if all
-graded pieces except one vanish, the surviving quotient is canonically the
-ambient object. The comparison retains the original quotient projection and
-subobject inclusion and is natural for morphisms of filtrations.
+Let F be a decreasing integer-indexed subobject filtration of an object B
+in an abelian category, with F⁰=B and F^{N+1}=0 for N∈ℕ.
+If every graded quotient Fᵖ/Fᵖ⁺¹ for p≠n is zero, then Fⁿ=B and
+Fⁿ⁺¹=0, so the n-th graded quotient is canonically B.
+
+The comparison sends the quotient projection Fⁿ → GrⁿF to the inclusion
+Fⁿ↪B. It is natural for a commuting square of the two filtration steps
+at n+1 and n whose degree-n map is compatible with the ambient object map.
+The integer n is arbitrary.
 -/
 
 @[expose] public section
@@ -46,7 +51,11 @@ private theorem eq_of_isZero_cokernel_ofLE
   letI : IsIso (Subobject.ofLE P Q h) := isIso_of_mono_of_epi _
   exact Subobject.eq_of_comm (asIso (Subobject.ofLE P Q h)) (Subobject.ofLE_arrow h)
 
-/-- If a finite decreasing filtration has only one nonzero quotient, that quotient has full endpoints. -/
+/-- Let C be abelian, B an object and F:ℤ → Subobject(B) decreasing.
+For N∈ℕ assume F⁰=B and F^{N+1}=0, and fix n∈ℤ.
+Assume GrᵖF=Coker(Fᵖ⁺¹↪Fᵖ) is zero for every integer p≠n.
+
+The two endpoints of the possibly surviving graded degree are Fⁿ=B and Fⁿ⁺¹=0. -/
 theorem finiteFiltration_singleGrade_endpoints
     (F : ℤ → Subobject B) (hF : Antitone F) (N : ℕ)
     (h₀ : F 0 = ⊤) (hN : F ((N : ℤ) + 1) = ⊥)
@@ -95,7 +104,11 @@ theorem finiteFiltration_singleGrade_endpoints
       have heq : (N : ℤ) + 1 - (((N : ℤ) - n).toNat : ℤ) = n + 1 := by omega
       simpa only [heq] using h ((N : ℤ) - n).toNat (by omega)
 
-/-- The only surviving graded piece of a finite filtration is canonically its ambient object. -/
+/-- Let C be abelian, B an object and F:ℤ → Subobject(B) decreasing.
+For N∈ℕ assume F⁰=B and F^{N+1}=0, and fix n∈ℤ.
+Assume GrᵖF=Coker(Fᵖ⁺¹↪Fᵖ) is zero for every integer p≠n.
+
+The canonical isomorphism GrⁿF ≅ B, formed from the quotient of the zero subobject in Fⁿ and the full-subobject inclusion into B. -/
 def finiteFiltrationSingleGradeIso
     (F : ℤ → Subobject B) (hF : Antitone F) (N : ℕ)
     (h₀ : F 0 = ⊤) (hN : F ((N : ℤ) + 1) = ⊥)
@@ -113,7 +126,11 @@ def finiteFiltrationSingleGradeIso
   exact (asIso (cokernel.π (Subobject.ofLE (F (n + 1)) (F n) (hF (by omega))))).symm ≪≫
     asIso (F n).arrow
 
-/-- The canonical concentration comparison sends the actual graded projection to the actual inclusion. -/
+/-- Let C be abelian, B an object and F:ℤ → Subobject(B) decreasing.
+For N∈ℕ assume F⁰=B and F^{N+1}=0, and fix n∈ℤ.
+Assume GrᵖF=Coker(Fᵖ⁺¹↪Fᵖ) is zero for every integer p≠n.
+
+If q:Fⁿ → GrⁿF is the quotient map and ε:GrⁿF ≅ B the canonical comparison, then ε∘q is the subobject inclusion Fⁿ↪B. -/
 @[reassoc (attr := simp)]
 theorem finiteFiltrationSingleGradeIso_π
     (F : ℤ → Subobject B) (hF : Antitone F) (N : ℕ)
@@ -126,7 +143,13 @@ theorem finiteFiltrationSingleGradeIso_π
   dsimp only [finiteFiltrationSingleGradeIso, Iso.trans_hom, Iso.symm_hom, asIso_hom, asIso_inv]
   simp only [IsIso.hom_inv_id_assoc]
 
-/-- Concentration is natural for the actual cokernel map of a filtration square. -/
+/-- Let C be abelian and F,G decreasing filtrations of B,B′, with common
+N∈ℕ, F⁰=B,G⁰=B′, F^{N+1}=G^{N+1}=0, and all graded pieces
+outside n∈ℤ zero. Suppose f:B → B′ and
+a₀:Fⁿ⁺¹ → Gⁿ⁺¹, a₁:Fⁿ → Gⁿ form a commuting square of the
+filtration inclusions, with a₁ compatible with f on the ambient
+subobject inclusions. The induced quotient map Q satisfies
+ε_G∘Q=f∘ε_F for the canonical comparisons GrⁿF ≅ B and GrⁿG ≅ B′. -/
 @[reassoc]
 theorem finiteFiltrationSingleGradeIso_naturality
     {B' : C} (F : ℤ → Subobject B) (G : ℤ → Subobject B')

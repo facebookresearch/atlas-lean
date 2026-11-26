@@ -1,4 +1,8 @@
-# Sequential Lim One Functor Iso
+# Transported sequential lim-one isomorphism
 
-The image of concrete lim-one agrees with the lim-one of the mapped
-tower when the particular product and cokernel are preserved.
+Transported sequential lim-one isomorphism.
+
+For an additive functor F between preadditive categories with countable products and
+cokernels, preservation of the particular product P_A and cokernel of d_A gives F(lim¹ A) ≅
+lim¹(A⋙F). Both lim¹ objects are defined as cokernels of their standard sequential
+differences.

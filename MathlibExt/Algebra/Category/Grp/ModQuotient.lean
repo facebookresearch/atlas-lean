@@ -19,16 +19,17 @@ public import Mathlib.Algebra.Exact.Basic
 public import Mathlib.GroupTheory.QuotientGroup.Basic
 
 /-!
-# Additive groups modulo natural-number multiples
+# Abelian groups modulo natural-number multiples
 
-For a natural number `ell`, quotient an additive commutative group by the
-subgroup of `ell`-multiples and give the quotient its canonical
-`ZMod ell`-module structure.  Additive homomorphisms preserve multiples, so
-this construction is an additive functor from additive commutative groups to
-`ZMod ell`-modules.
+For a natural number ℓ and an abelian group A, the subgroup ℓA is the image of multiplication by
+ℓ. The quotient A/ℓA has its canonical ZMod(ℓ)-module structure, and its projection q_A is
+surjective with kernel ℓA. Thus A --ℓ→ A --q_A→ A/ℓA→0 is exact at the second A and at the
+quotient.
 
-The construction treats `ell = 0` honestly: the quotient is by zero
-multiples and `ZMod 0 = ℤ`.
+An additive map f:A→B sends ℓA into ℓB and induces the linear quotient map [a]↦[f(a)]. These
+maps define an additive functor to ZMod(ℓ)-modules, and multiplication by ℓ and quotient
+projection are natural. The construction includes ℓ=0, when ℓA=0 and the scalar ring ZMod(0) is
+the integers.
 -/
 
 @[expose] public section
@@ -41,15 +42,23 @@ open CategoryTheory
 
 namespace AddCommGrpCat
 
-/-- Subgroup of `ell`-multiples in an additive commutative group. -/
+/-- Let A be an abelian group in its coefficient universe and ℓ a natural number. Put ℓA={ℓa | a∈A}.
+The subgroup ℓA is the range of the additive endomorphism a↦(ℓ:ℤ)•a. It includes precisely the
+elements that are ℓ times another coefficient. -/
 def multiples (A : AddCommGrpCat) (ell : ℕ) : AddSubgroup A :=
   (zsmulAddGroupHom (α := A) (ell : ℤ)).range
 
-/-- The underlying quotient group modulo `ell`-multiples. -/
+/-- Let A be an abelian group in its coefficient universe and ℓ a natural number. Put ℓA={ℓa | a∈A}.
+The carrier of the mod-ℓ quotient is the additive quotient group A/ℓA. It retains the
+coefficient universe of A and identifies two representatives exactly when their difference
+belongs to ℓA. -/
 abbrev ModQuotientCarrier (A : AddCommGrpCat) (ell : ℕ) :=
   A ⧸ multiples A ell
 
-/-- The quotient by `ell`-multiples as a `ZMod ell`-module object. -/
+/-- Let A be an abelian group in its coefficient universe and ℓ a natural number. Put ℓA={ℓa | a∈A}.
+The object A/ℓA has a canonical ZMod(ℓ)-module structure because ℓ[a]=0 for every quotient
+class. It is a module object in the same carrier universe as A, including ℓ=0 with integer
+coefficients. -/
 noncomputable def modQuotientObj (A : AddCommGrpCat) (ell : ℕ) :
     ModuleCat (ZMod ell) := by
   letI : Module (ZMod ell) (ModQuotientCarrier A ell) :=
@@ -58,16 +67,22 @@ noncomputable def modQuotientObj (A : AddCommGrpCat) (ell : ℕ) :
       exact AddMonoidHom.mem_range.mpr ⟨x, natCast_zsmul x ell⟩)
   exact ModuleCat.of (ZMod ell) (ModQuotientCarrier A ell)
 
-/-- Quotient projection onto the mod-`ell` object. -/
+/-- Let A be an abelian group in its coefficient universe and ℓ a natural number. Put ℓA={ℓa | a∈A}.
+The additive quotient projection q_A:A→A/ℓA is a↦[a]. Its target is the underlying abelian group
+of the canonical ZMod(ℓ)-module object. -/
 noncomputable def modQuotientMk (A : AddCommGrpCat) (ell : ℕ) :
     A →+ modQuotientObj A ell :=
   QuotientAddGroup.mk' (multiples A ell)
 
-/-- Multiplication by `ell` as an additive endomorphism. -/
+/-- Let A be an abelian group in its coefficient universe and ℓ a natural number. Put ℓA={ℓa | a∈A}.
+The endomorphism m_ℓ:A→A sends a to ℓa, equivalently (ℓ:ℤ)•a. Its range is the subgroup ℓA and
+it is zero when ℓ=0. -/
 def multipleHom (A : AddCommGrpCat) (ell : ℕ) : A →+ A :=
   zsmulAddGroupHom (α := A) (ell : ℤ)
 
-/-- Multiplication by `ell` followed by the quotient projection is exact. -/
+/-- Let A be an abelian group in its coefficient universe and ℓ a natural number. Put ℓA={ℓa | a∈A}.
+For m_ℓ(a)=ℓa and q_A(a)=[a], im(m_ℓ)=ker(q_A). Equivalently q_A(b)=0 if and only if b=ℓa for
+some a∈A. This is exactness of A --m_ℓ→ A --q_A→ A/ℓA at the middle A. -/
 theorem multipleHom_modQuotientMk_exact (A : AddCommGrpCat) (ell : ℕ) :
     Function.Exact (multipleHom A ell) (modQuotientMk A ell) := by
   unfold multipleHom modQuotientMk modQuotientObj
@@ -78,12 +93,15 @@ theorem multipleHom_modQuotientMk_exact (A : AddCommGrpCat) (ell : ℕ) :
   · intro hy
     exact (QuotientAddGroup.eq_zero_iff (x := y)).mpr hy
 
-/-- The quotient projection modulo `ell` is surjective. -/
+/-- Let A be an abelian group in its coefficient universe and ℓ a natural number. Put ℓA={ℓa | a∈A}.
+The projection q_A:A→A/ℓA is surjective: for every quotient coefficient x there exists a∈A with
+q_A(a)=x. -/
 theorem modQuotientMk_surjective (A : AddCommGrpCat) (ell : ℕ) :
     Function.Surjective (modQuotientMk A ell) :=
   QuotientAddGroup.mk'_surjective _
 
-/-- Additive homomorphisms preserve subgroups of `ell`-multiples. -/
+/-- For abelian groups A,B, an additive morphism f:A→B, and ℓ∈ℕ, one has ℓA⊆f⁻¹(ℓB). Indeed
+f(ℓa)=ℓf(a), so every ℓ-multiple has an ℓ-multiple image. -/
 theorem multiples_map_le {A B : AddCommGrpCat} (f : A ⟶ B) (ell : ℕ) :
     multiples A ell ≤ AddSubgroup.comap f.hom (multiples B ell) := by
   intro x hx
@@ -94,7 +112,8 @@ theorem multiples_map_le {A B : AddCommGrpCat} (f : A ⟶ B) (ell : ℕ) :
   refine ⟨f y, ?_⟩
   exact (map_zsmul f.hom (ell : ℤ) y).symm
 
-/-- Map on mod-`ell` quotient objects induced by an additive homomorphism. -/
+/-- For abelian groups A,B, an additive morphism f:A→B, and ℓ∈ℕ, the induced map Q_ℓ(f):A/ℓA→B/ℓB is
+ZMod(ℓ)-linear. It is obtained by quotient descent using f(ℓA)⊆ℓB. -/
 noncomputable def modQuotientMap {A B : AddCommGrpCat}
     (f : A ⟶ B) (ell : ℕ) : modQuotientObj A ell ⟶ modQuotientObj B ell := by
   letI : Module (ZMod ell) (ModQuotientCarrier A ell) :=
@@ -109,7 +128,8 @@ noncomputable def modQuotientMap {A B : AddCommGrpCat}
     ((QuotientAddGroup.map (multiples A ell) (multiples B ell)
       f.hom (multiples_map_le f ell)).toZModLinearMap ell)
 
-/-- The induced quotient map computes on representatives. -/
+/-- For f:A→B additive, ℓ∈ℕ, and a∈A, the induced quotient map satisfies Q_ℓ(f)(q_A(a))=q_B(f(a)).
+Thus [a] is sent to [f(a)] in B/ℓB. -/
 @[simp]
 theorem modQuotientMap_mk {A B : AddCommGrpCat}
     (f : A ⟶ B) (ell : ℕ) (x : A) :
@@ -119,7 +139,9 @@ theorem modQuotientMap_mk {A B : AddCommGrpCat}
     unfold modQuotientMap modQuotientMk
     rfl
 
-/-- Quotient by `ell`-multiples as a functor into `ZMod ell`-modules. -/
+/-- For ℓ∈ℕ, the functor Q_ℓ sends an abelian group A to its canonical ZMod(ℓ)-module A/ℓA and an
+additive morphism f to [a]↦[f(a)]. These quotient maps preserve identities and composition, with
+the coefficient carrier universe retained. -/
 noncomputable def modQuotientFunctor (ell : ℕ) :
     AddCommGrpCat ⥤ ModuleCat (ZMod ell) where
   obj A := modQuotientObj A ell
@@ -146,7 +168,8 @@ noncomputable def modQuotientFunctor (ell : ℕ) :
         rw [modQuotientMap_mk, modQuotientMap_mk, modQuotientMap_mk]
         rfl
 
-/-- The mod-`ell` quotient functor preserves addition of morphisms. -/
+/-- For ℓ∈ℕ and parallel additive maps f,g:A→B, Q_ℓ(f+g)=Q_ℓ(f)+Q_ℓ(g) as ZMod(ℓ)-linear quotient
+maps. On a class [a], both sides are [f(a)+g(a)]. -/
 noncomputable instance modQuotientFunctor_additive (ell : ℕ) :
     (modQuotientFunctor ell).Additive where
   map_add := by
@@ -162,8 +185,8 @@ noncomputable instance modQuotientFunctor_additive (ell : ℕ) :
         rw [modQuotientMap_mk, modQuotientMap_mk, modQuotientMap_mk]
         rfl
 
-/-- Natural multiplication-by-`ell` endomorphism of additive commutative
-groups. -/
+/-- For ℓ∈ℕ, the maps m_ℓ^A:A→A form a natural endomorphism of the identity functor on abelian
+groups. For every additive f:A→B, m_ℓ^A≫f=f≫m_ℓ^B, since f(ℓa)=ℓf(a). -/
 def multipleNatTrans (ell : ℕ) :
     𝟭 AddCommGrpCat ⟶ 𝟭 AddCommGrpCat where
   app A := AddCommGrpCat.ofHom (multipleHom A ell)
@@ -172,8 +195,9 @@ def multipleNatTrans (ell : ℕ) :
     ext x
     exact (map_zsmul f.hom (ell : ℤ) x).symm
 
-/-- Natural quotient map from an additive commutative group to its
-underlying mod-`ell` quotient group. -/
+/-- For ℓ∈ℕ, let Q_ℓ:A↦A/ℓA and U forget ZMod(ℓ)-scalar multiplication. The additive projections
+q_A:A→U(Q_ℓA) form a natural transformation Id→U∘Q_ℓ. Its square is f≫q_B=q_A≫U(Q_ℓf) for every
+additive f:A→B. -/
 noncomputable def modQuotientNatTrans (ell : ℕ) :
     𝟭 AddCommGrpCat ⟶
       modQuotientFunctor ell ⋙

@@ -1,3 +1,5 @@
-# Window Pair
+# Compatible products induce compatible quotient-window products
 
-The original cycle quotient maps descend interval compatibility to the actual native window product.
+Compatible products induce compatible quotient-window products.
+
+The tensor of window maps commutes with the descended window product.

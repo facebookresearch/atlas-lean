@@ -15,14 +15,20 @@ public import MathlibExt.Algebra.Homology.SpectralObject.StableImageNaturality
 public import MathlibExt.Algebra.Homology.SpectralObject.FiniteStripSuccessor
 
 /-!
-# Native skeletal successors and stable-image graded comparisons
+# Skeletal successors and stable-image convergence
 
-For abelian-group spectral objects indexed by `EInt`, the canonical
-stable-image graded comparisons commute with the actual native skeletal
-successors when the original incoming and outgoing differentials vanish.
-The actual total cone, Mittag--Leffler kernel tower, attained consecutive
-images, and vanishing right intervals supply the comparison. No vanishing
-of a left interval is required.
+For an EInt-indexed abelian-group spectral object S, vanishing of the
+incoming and outgoing differentials at a position (p,q) on page r gives
+the canonical zero-differential successor E_r^{p,q} ≅ E_{r+1}^{p,q}.
+It preserves the cycle inclusion and homology projection of the page's
+successor datum.
+
+Fix the skeletal left cuts a_k=−p−1−k. If the full-endpoint cone is
+limiting, the restriction-kernel tower is Mittag–Leffler, and its eventual
+image is attained at R and R+1, the stable-image comparisons at the two
+consecutive pages commute with this successor. The hypotheses also include
+the two stated right-interval vanishings and the incoming/outgoing
+differential vanishings at the old page position.
 -/
 
 @[expose] public section
@@ -42,8 +48,11 @@ namespace CategoryTheory.Abelian.SpectralObject
 
 variable (S : SpectralObject AddCommGrpCat.{u} EInt)
 
-/-- The actual zero-differential homology identification followed by the
-original native spectral-sequence successor. -/
+/-- Let S be an EInt-indexed abelian-group spectral object and r≥1.
+If the incoming and outgoing differentials of the page-r short complex
+at (p,q) are zero, the canonical isomorphism E_r^{p,q} ≅ E_{r+1}^{p,q}
+is the zero-differential homology identification followed by the
+spectral-sequence successor. -/
 def stableImageSkeletalSuccessorIso (r : ℤ) (hr : 1 ≤ r) (p q : ℤ)
     (hf : ((S.skeletalSpectralSequence.page r hr).sc (p, q)).f = 0)
     (hg : ((S.skeletalSpectralSequence.page r hr).sc (p, q)).g = 0) :
@@ -53,8 +62,11 @@ def stableImageSkeletalSuccessorIso (r : ℤ) (hr : 1 ≤ r) (p q : ℤ)
     ((S.skeletalSpectralSequence.page r hr).sc (p, q)) hf hg).left.homologyIso.symm ≪≫
       S.skeletalSpectralSequence.iso r (r + 1) (p, q) rfl hr
 
-/-- The actual native successor preserves the cycles inclusion and quotient
-of the original skeletal homology datum. -/
+/-- Let S be an EInt-indexed abelian-group spectral object, r≥1 and
+(p,q) a position whose incoming and outgoing page-r differentials
+are zero. For the cycle inclusion i_h and homology projection π_h
+of its successor datum, the successor followed by the new-page
+window comparison sends i_h to π_h. -/
 theorem stableImageSkeletalSuccessorIso_i (r : ℤ) (hr : 1 ≤ r) (p q : ℤ)
     (hf : ((S.skeletalSpectralSequence.page r hr).sc (p, q)).f = 0)
     (hg : ((S.skeletalSpectralSequence.page r hr).sc (p, q)).g = 0) :
@@ -69,8 +81,13 @@ theorem stableImageSkeletalSuccessorIso_i (r : ℤ) (hr : 1 ≤ r) (p q : ℤ)
   exact ShortComplex.LeftHomologyData.i_comp_zeroHomologyIso _
     (S.skeletalSuccessorHomologyData r hr p q).left hf hg
 
-/-- Equality of literal window cuts transports the actual indexing identity.
-This handles the arithmetic presentations of the consecutive skeletal windows. -/
+/-- Let S be an EInt-indexed abelian-group spectral object. Fix n, antitone
+left cuts a_k and a₀≤c, with limiting full-endpoint cone and
+Mittag–Leffler restriction-kernel tower. Suppose R≤M attain the
+eventual image, c≤d≤d′, and H_S^{n−1}(d,+∞)=H_S^{n−1}(d′,+∞)=0.
+Identifying six alternative cuts with a_M,a_R,a₀,c,d,d′ preserves
+the equality of the left-growth and right-growth window maps followed
+by their comparisons with F_c/F_{a₀}. -/
 private theorem stableImageFiniteWindowKernelGradedIso_indexing_of_eq
     (n : ℤ) (a : ℕ → EInt) (ha : Antitone a) (c : EInt) (hc : a 0 ≤ c)
     (hTotal : IsLimit (stableImageTotalCone S n a ha))
@@ -107,9 +124,15 @@ private theorem stableImageFiniteWindowKernelGradedIso_indexing_of_eq
   exact stableImageFiniteWindowKernelGradedIso_indexing S n a ha c hc hTotal hML R M hRM
     hR hM hcd hdd zR zM
 
-/-- Consecutive canonical stable-image graded comparisons commute with the
-actual zero-differential native successor, using only the original attained
-kernel images and right-endpoint zeros. -/
+/-- Let S be an EInt-indexed abelian-group spectral object, p,q∈ℤ,
+n=p+q and a_k=−p−1−k. Assume the full-endpoint cone over
+H_Sⁿ(a_k,+∞) is limiting and the kernels of restriction to
+H_Sⁿ(−p,+∞) form a Mittag–Leffler tower.
+Suppose R and R+1 attain its eventual image, the right intervals
+H_S^{n−1}(−p+R,+∞) and H_S^{n−1}(−p+R+1,+∞) vanish, and both
+adjacent differentials at (p,q) on page R+1 are zero.
+Then the page-(R+2) graded comparison composed with the successor
+from page R+1 equals the page-(R+1) graded comparison. -/
 theorem stableImageSkeletalSuccessorIso_comp_graded (p q : ℤ)
     (hTotal : IsLimit (stableImageTotalCone S (p + q) (stableImageSkeletalLeftCuts p)
       (stableImageSkeletalLeftCuts_antitone p)))

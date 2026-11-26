@@ -1,3 +1,5 @@
-# Page Homology Unit left unital
+# The unit homology class is a left unit
 
-The actual homology quotient product retains the original left unit law.
+The unit homology class is a left unit.
+
+Its product with every homology object equals the left unitor.

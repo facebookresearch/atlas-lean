@@ -15,12 +15,20 @@ module
 public import MathlibExt.Algebra.Category.ModuleCat.Sheaf.Monoidal
 
 /-!
-# Monoidal restriction along arrows of an arbitrary ringed site
+# Monoidal restriction along arrows between slice sites
 
-The actual over-map is equipped with its monoidal structure by the genuine
-presheaf precomposition and sheafification adjunction. Unit, tensor,
-successive restriction, and naturality laws use those original maps.
-Only the site and sheafification conditions are required.
+Let `C : Type u` have morphism universe `u`, `J` be a Grothendieck topology, and `ℛ : Sheaf J
+CommRingCat.{u}`. Write `ℛ_ring` for the underlying ring sheaf of `ℛ`. For `h : V → U`, presheaf restriction precomposes with `Over.map h : Over V
+→ Over U`. With weak additive sheafification and the locally-bijective and underlying-ring
+comparisons on the relevant slices, it commutes naturally with module sheafification.
+
+Assume also monoidality of `W` on the base and slice sites. The sheaf functor
+`F_h=SheafOfModules.overMap ℛ_ring h` is monoidal. Its unit map agrees with the
+structure-module comparison, and its tensor isomorphism has direction `F_h(M ⊗ N) ≅ F_h(M) ⊗
+F_h(N)`. The comparison between successive and direct restriction preserves units and tensors.
+
+Generic category lemmas express descent of monoidality along an essentially surjective
+monoidal functor, composition of adjunction-unit mates, and compatibility of module-unit maps.
 -/
 
 @[expose] public section
@@ -43,7 +51,10 @@ variable {C : Type u} [Category.{u} C] {J : GrothendieckTopology C}
     [J.WEqualsLocallyBijective Ab.{u}] [HasWeakSheafify J Ab.{u}]
     [J.HasSheafCompose (forget₂ CommRingCat RingCat)]
 
-/-- The actual sheafification counit is an isomorphism for every module sheaf. -/
+/-- Let `(C,J)` be a site at common universe `u`, `R : Sheaf J CommRingCat.{u}`, and assume weak
+additive sheafification, the locally-bijective comparison, and the underlying-ring sheaf
+comparison. For `M : SheafOfModules(sheafComposeRing R)`, the counit isomorphism has direction
+`sheafificationBase R (forgetRestrictBase R M) ≅ M`. -/
 private def counitIso (M : SheafOfModules (sheafComposeRing R)) :
     (sheafificationBase R).obj ((forgetRestrictBase R).obj M) ≅ M :=
   asIso ((sheafificationAdjBase R).counit.app M)
@@ -70,13 +81,19 @@ variable {C : Type u} [Category.{u} C] {J : GrothendieckTopology C}
     [(J.over V).HasSheafCompose (forget₂ CommRingCat RingCat)]
     (h : V ⟶ U)
 
-/-- The genuine presheaf precomposition along a map of open charts. -/
+/-- Let `(C,J)` be a site at common universe `u`, `ℛ` a commutative ring sheaf, and `h : V → U`.
+The functor `overMapPresheaf ℛ h` sends module presheaves over `(ℛ.over U).obj` to those over
+`(ℛ.over V).obj`, using the underlying ring presheaves. It precomposes with `(Over.map h).op`,
+so an object `Y→V` is evaluated at the composite `Y→V→U`. -/
 private def overMapPresheaf :
     PresheafOfModulesOfCommRing (ℛ.over U).obj ⥤
       PresheafOfModulesOfCommRing (ℛ.over V).obj :=
   PresheafOfModules.pushforward₀OfCommRingCat (Over.map h) (ℛ.over U).obj
 
-/-- Forgetting an actual over-map gives the genuine presheaf precomposition. -/
+/-- Let `(C,J)` be a site at common universe `u`, `ℛ` a commutative ring sheaf, and `h : V → U`,
+with underlying-ring sheaf comparisons on the base and both slices. Put `P_h=overMapPresheaf`,
+`F_h=overMap ℛ_ring h`, and `U_U,U_V` for the forgetful module-presheaf functors. For a module
+sheaf `M` over `U`, `forgetOverMapIso ℛ h M` identifies `P_h(U_U M)` with `U_V(F_h M)`. -/
 private def forgetOverMapIso (M : SheafOfModules ((sheafComposeRing ℛ).over U)) :
     (overMapPresheaf ℛ h).obj ((forgetRestrictBase (ℛ.over U)).obj M) ≅
       (forgetRestrictBase (ℛ.over V)).obj
@@ -89,7 +106,11 @@ omit [(J.W (A := Ab.{u})).IsMonoidal]
   [((J.over V).W (A := Ab.{u})).IsMonoidal]
   [HasWeakSheafify (J.over V) Ab.{u}]
   [(J.over V).HasSheafCompose (forget₂ CommRingCat RingCat)] in
-/-- The precomposition of the actual sheafification unit is locally bijective. -/
+/-- Let `(C,J)` be a site at universe `u`, `ℛ` a commutative ring sheaf, and `h : V → U`. Assume
+weak additive sheafification on `J.over U`, locally-bijective characterizations of `W` on both
+slices, and underlying-ring comparisons on the base and source slice. For a module presheaf
+`A` over `U`, the underlying additive map of `overMapPresheaf ℛ h (η_U,A)` belongs to `(J.over
+V).W`, where `η_U` is the source sheafification unit. -/
 private theorem overMapPresheaf_unit_memW
     (A : PresheafOfModulesOfCommRing (ℛ.over U).obj) :
     (J.over V).W.inverseImage
@@ -114,7 +135,11 @@ omit [J.HasSheafCompose (forget₂ CommRingCat RingCat)] in
 omit [(J.W (A := Ab.{u})).IsMonoidal] [J.WEqualsLocallyBijective Ab.{u}]
   [HasWeakSheafify J Ab.{u}] [((J.over U).W (A := Ab.{u})).IsMonoidal]
   [((J.over V).W (A := Ab.{u})).IsMonoidal] in
-/-- Target sheafification inverts the precomposed unit. -/
+/-- Let `(C,J)` be a site at universe `u`, `ℛ` a commutative ring sheaf, and `h : V → U`, with
+weak additive sheafification, the locally-bijective comparison, and underlying-ring
+comparisons on both slices. For a module presheaf `A` over `U`, the map `L_V(P_h(η_U,A))` is
+an isomorphism, where `P_h=overMapPresheaf ℛ h`, `L_V=sheafificationBase (ℛ.over V)`, and
+`η_U` is the source sheafification unit. -/
 private theorem isIso_overMapPresheaf_sheafify_unit
     (A : PresheafOfModulesOfCommRing (ℛ.over U).obj) :
     IsIso ((sheafificationBase (ℛ.over V)).map
@@ -132,7 +157,11 @@ private theorem isIso_overMapPresheaf_sheafify_unit
       (PresheafOfModules.toPresheaf ((ℛ.over V).obj ⋙ forget₂ CommRingCat RingCat))) _
     (overMapPresheaf_unit_memW ℛ h A)
 
-/-- The unit map defining the over-map and sheafification comparison. -/
+/-- Let `(C,J)` be a site at universe `u`, `ℛ` a commutative ring sheaf, and `h : V → U`, with
+weak additive sheafification and the locally-bijective and underlying-ring comparisons on both
+slices. Write `P_h` for presheaf restriction, `F_h` for sheaf restriction, and `L_U,U_V` for
+source sheafification and target forgetting. For a module presheaf `A`, the map `α_h(A) : P_h
+A → U_V(F_h(L_U A))` is `P_h(η_U,A)` followed by `forgetOverMapIso` at `L_U A`. -/
 private def overMapSheafificationAdjoint
     (A : PresheafOfModulesOfCommRing (ℛ.over U).obj) :
     (overMapPresheaf ℛ h).obj A ⟶
@@ -142,7 +171,11 @@ private def overMapSheafificationAdjoint
   (overMapPresheaf ℛ h).map ((sheafificationAdjBase (ℛ.over U)).unit.app A) ≫
     (forgetOverMapIso ℛ h ((sheafificationBase (ℛ.over U)).obj A)).hom
 
-/-- The actual adjunction mate for commuting over-map and sheafification. -/
+/-- Let `(C,J)` be a site at universe `u`, `ℛ` a commutative ring sheaf, and `h : V → U`, with
+weak additive sheafification and the locally-bijective and underlying-ring comparisons on both
+slices and the base ring comparison. For `P_h=overMapPresheaf`, `F_h=overMap`, and `L_U,L_V`
+the two sheafifiers, `overMapSheafificationHom ℛ h A : L_V(P_h A) → F_h(L_U A)` is the mate of
+`overMapSheafificationAdjoint ℛ h A` under `L_V ⊣ U_V`. -/
 private def overMapSheafificationHom
     (A : PresheafOfModulesOfCommRing (ℛ.over U).obj) :
     (sheafificationBase (ℛ.over V)).obj ((overMapPresheaf ℛ h).obj A) ⟶
@@ -154,7 +187,11 @@ private def overMapSheafificationHom
 omit [(J.W (A := Ab.{u})).IsMonoidal] [J.WEqualsLocallyBijective Ab.{u}]
   [HasWeakSheafify J Ab.{u}] [((J.over U).W (A := Ab.{u})).IsMonoidal]
   [((J.over V).W (A := Ab.{u})).IsMonoidal] in
-/-- The actual comparison mate is an isomorphism. -/
+/-- Let `(C,J)` be a site at universe `u`, `ℛ` a commutative ring sheaf, and `h : V → U`. Assume
+weak additive sheafification, locally-bijective comparisons, and underlying-ring sheaf
+comparisons on both slices, together with the base ring comparison. For every module presheaf
+`A` over `U`, the comparison `L_V(P_h A) → F_h(L_U A)` given by `overMapSheafificationHom ℛ h
+A` is an isomorphism. -/
 private theorem isIso_overMapSheafificationHom
     (A : PresheafOfModulesOfCommRing (ℛ.over U).obj) :
     IsIso (overMapSheafificationHom ℛ h A) := by
@@ -184,7 +221,11 @@ omit [(J.W (A := Ab.{u})).IsMonoidal]
   [((J.over V).W (A := Ab.{u})).IsMonoidal]
   [(J.over V).WEqualsLocallyBijective Ab.{u}]
   [HasWeakSheafify (J.over V) Ab.{u}] in
-/-- Unit naturality for the actual over-map and sheafification adjoint. -/
+/-- Let `(C,J,ℛ)` be a commutative ringed site at universe `u`, `h : V → U`, and assume weak
+additive sheafification, locally-bijective comparisons, and underlying-ring sheaf comparisons
+on both slices and the base ring comparison. For `P_h` the presheaf restriction, `F_h` the
+sheaf restriction, `L_U` source sheafification, `U_V` target forgetting, and `a : A → B`, the
+adjoints `α` satisfy `P_h(a) ≫ α_h(B) = α_h(A) ≫ U_V(F_h(L_U(a)))`. -/
 private theorem overMapSheafificationAdjoint_naturality
     {A B : PresheafOfModulesOfCommRing (ℛ.over U).obj} (a : A ⟶ B) :
     (overMapPresheaf ℛ h).map a ≫ overMapSheafificationAdjoint ℛ h B =
@@ -206,7 +247,11 @@ private theorem overMapSheafificationAdjoint_naturality
 omit [(J.W (A := Ab.{u})).IsMonoidal] [J.WEqualsLocallyBijective Ab.{u}]
   [HasWeakSheafify J Ab.{u}] [((J.over U).W (A := Ab.{u})).IsMonoidal]
   [((J.over V).W (A := Ab.{u})).IsMonoidal] in
-/-- Naturality of the actual over-map and sheafification mate. -/
+/-- Let `(C,J,ℛ)` be a commutative ringed site at universe `u`, `h : V → U`, with weak additive
+sheafification, locally-bijective comparisons, and underlying-ring comparisons on both slices
+and the base ring comparison. For a presheaf-module map `a : A → B`, `L_V(P_h(a)) ≫ σ_h(B) =
+σ_h(A) ≫ F_h(L_U(a))`, where `σ_h=overMapSheafificationHom ℛ h`, `P_h` is presheaf
+restriction, and `F_h` is sheaf restriction. -/
 private theorem overMapSheafificationHom_naturality
     {A B : PresheafOfModulesOfCommRing (ℛ.over U).obj} (a : A ⟶ B) :
     (sheafificationBase (ℛ.over V)).map ((overMapPresheaf ℛ h).map a) ≫
@@ -238,7 +283,11 @@ private theorem overMapSheafificationHom_naturality
     _ = _ := (congrArg (fun t => t ≫ F.map (S.map (LU.map a))) hA.symm).trans
       (adj.homEquiv_naturality_right αA (S.map (LU.map a))).symm
 
-/-- A genuine natural isomorphism commuting over-map with module sheafification. -/
+/-- Let `(C,J,ℛ)` be a commutative ringed site at universe `u`, `h : V → U`, with weak additive
+sheafification, locally-bijective comparisons, and underlying-ring comparisons on both slices
+and the base ring comparison. There is a natural isomorphism `P_h ⋙ L_V ≅ L_U ⋙ F_h`, where
+`P_h=overMapPresheaf ℛ h`, `F_h=overMap ℛ_ring h`, and `L_U,L_V` are the slice module
+sheafifiers. Its forward component is `overMapSheafificationHom ℛ h A`. -/
 private def overMapSheafificationIso :
     overMapPresheaf ℛ h ⋙ sheafificationBase (ℛ.over V) ≅
       sheafificationBase (ℛ.over U) ⋙ SheafOfModules.overMap (sheafComposeRing ℛ) h :=
@@ -271,7 +320,9 @@ variable {C : Type u} [Category.{u} C] {J : GrothendieckTopology C}
     [(J.over V).HasSheafCompose (forget₂ CommRingCat RingCat)]
     (h : V ⟶ U)
 
-/-- The actual over-site presheaf functor has the stock precomposition monoidal structure. -/
+/-- For a site `(C,J)` at universe `u`, a commutative ring sheaf `ℛ`, and `h : V → U`,
+`overMapPresheaf ℛ h` is monoidal by precomposition with `(Over.map h).op`. Tensor products
+and structure-module presheaves are preserved through their pointwise comparison maps. -/
 private instance overMapPresheafMonoidal : (overMapPresheaf ℛ h).Monoidal :=
   inferInstanceAs ((PresheafOfModules.pushforward₀OfCommRingCat
     (Over.map h) (ℛ.over U).obj).Monoidal)
@@ -279,7 +330,12 @@ private instance overMapPresheafMonoidal : (overMapPresheaf ℛ h).Monoidal :=
 attribute [-instance] overMapPresheafMonoidal
 attribute [local instance] overMapPresheafMonoidal
 
-/-- Monoidality of the actual over-map through the genuine sheafification lifting. -/
+/-- Let `(C,J,ℛ)` be a commutative ringed site at universe `u`, `h : V → U`, and assume the base
+underlying-ring comparison. On both slice sites assume weak additive sheafification,
+locally-bijective comparison, monoidal `W`, and underlying-ring comparison. The functor
+`F_h=SheafOfModules.overMap ℛ_ring h : SheafOfModules(ℛ_ring.over U) →
+SheafOfModules(ℛ_ring.over V)` is monoidal, by the presheaf restriction/sheafification natural
+comparison. -/
 private instance overMapMonoidal :
     letI : MonoidalCategory (SheafOfModules ((sheafComposeRing ℛ).over U)) :=
       SheafOfModules.monoidalCategory (ℛ.over U)
@@ -348,8 +404,10 @@ section
 open _root_.CategoryTheory _root_.CategoryTheory.MonoidalCategory
 open _root_.CategoryTheory.Functor.LaxMonoidal
 
-/-- A monoidal naturality square can be checked after an essentially surjective
-monoidal functor. -/
+/-- Let `C,D,E` be monoidal categories with independently quantified object and morphism
+universes. Let `L : C → D` be monoidal and essentially surjective, `F,G : D → E` lax monoidal,
+and `τ : F → G` a natural transformation. If its precomposition `Functor.whiskerLeft L τ` is
+monoidal, then `τ` is monoidal. -/
 private theorem isMonoidal_of_whiskerLeft
     {C : Type u₁} {D : Type u₂} {E : Type u₃}
     [Category.{v₁} C] [Category.{v₂} D] [Category.{v₃} E]
@@ -386,8 +444,10 @@ section
 
 open _root_.CategoryTheory _root_.CategoryTheory.MonoidalCategory
 
-/-- Two successive adjunction mates of unit maps compose to the direct mate
-when the underlying forgetful comparisons compose. -/
+/-- Let `C_i,D_i` for `i=0,1,2` be categories of common object universe `u` and morphism universe `v`, with adjunctions `L_i ⊣ G_i` and units `ι_i`. For `ij=01,12,02`, give functors `P_ij : C_i → C_j`, `R_ij : D_i → D_j`, and isomorphisms `α_ij : G_i⋙P_ij ≅ R_ij⋙G_j`, `c_ij : P_ij⋙L_j ≅ L_i⋙R_ij`. Give `η : P_01⋙P_12 ≅ P_02` and `γ : R_01⋙R_12 ≅ R_02`. Assume each `c_ij(A)` is the mate of `P_ij(ι_i,A) ≫ α_ij(L_i A)` and, for every `Y∈D_0`,
+`α_12(R_01 Y) ≫ G_2(γ_Y) = P_12(α_01(Y)⁻¹) ≫ η_{G_0Y} ≫ α_02(Y)`.
+Then for every `A∈C_0`,
+`c_12(P_01 A) ≫ R_12(c_01(A)) ≫ γ_{L_0A} = L_2(η_A) ≫ c_02(A)`. -/
 private theorem unitMates_comp
     {C₀ C₁ C₂ D₀ D₁ D₂ : Type u}
     [Category.{v} C₀] [Category.{v} C₁] [Category.{v} C₂]
@@ -460,24 +520,37 @@ variable {C : Type u} [Category.{u} C] {J : GrothendieckTopology C}
     [(J.over V).HasSheafCompose (forget₂ CommRingCat RingCat)]
     (h : V ⟶ U)
 
-/-- The actual composition of presheaf over-site restrictions. -/
+/-- Let `(C,J)` be a site at universe `u`, `ℛ` a commutative ring sheaf, and `h : V → U`. Write
+`q_U,q_V` for base-to-slice module-presheaf restriction and `P_h=overMapPresheaf ℛ h`. The
+natural isomorphism `q_U ⋙ P_h ≅ q_V` identifies both functors on an object `Y→V` with
+evaluation at `Y`; its components preserve the section values and ring actions. -/
 private def presheafOverFunctorMap :
     restrictPresheaf ℛ U ⋙ overMapPresheaf ℛ h ≅ restrictPresheaf ℛ V :=
   NatIso.ofComponents (fun _ => Iso.refl _) (fun a => by ext K : 1; rfl)
 
-/-- Forgetting an over-functor is precisely the actual presheaf over-site restriction. -/
+/-- Let `(C,J,ℛ)` be a commutative ringed site at universe `u`, with underlying-ring comparisons
+on the base and slice over `W`. Write `U_0,U_W` for the module-presheaf forgetful functors,
+`q_W` for presheaf restriction, and `F_W` for sheaf restriction. The natural isomorphism `U_0
+⋙ q_W ≅ F_W ⋙ U_W` has component `forgetRestrictIso ℛ W A` at each module sheaf `A`. -/
 private def forgetOverFunctorNatIso (W : C) :
     forgetRestrictBase ℛ ⋙ restrictPresheaf ℛ W ≅
       restrictSheaf ℛ W ⋙ forgetRestrictBase (ℛ.over W) :=
   NatIso.ofComponents (fun A => forgetRestrictIso ℛ W A) (fun _ => rfl)
 
-/-- Forgetting an over-map is precisely the actual presheaf over-map. -/
+/-- Let `(C,J,ℛ)` be a commutative ringed site at universe `u`, `h : V → U`, with underlying-ring
+comparisons on the base and both slices. For `P_h=overMapPresheaf`, `F_h=overMap`, and
+`U_U,U_V` the two forgetful functors, there is a natural isomorphism `U_U ⋙ P_h ≅ F_h ⋙ U_V`,
+whose component is `forgetOverMapIso ℛ h A`. -/
 private def forgetOverMapNatIso :
     forgetRestrictBase (ℛ.over U) ⋙ overMapPresheaf ℛ h ≅
       SheafOfModules.overMap (sheafComposeRing ℛ) h ⋙ forgetRestrictBase (ℛ.over V) :=
   NatIso.ofComponents (fun A => forgetOverMapIso ℛ h A) (fun _ => rfl)
 
-/-- The explicit sheafification comparison for successive over-site restriction. -/
+/-- Let `(C,J,ℛ)` be a commutative ringed site at universe `u`, `h : V → U`, with weak additive
+sheafification, locally-bijective comparisons, and underlying-ring comparisons on the base and
+both slices. For `L=sheafificationBase ℛ`, `F_U,F_V` the base-to-slice restrictions, and
+`F_h=overMap ℛ_ring h`, the natural isomorphism `(L ⋙ F_U) ⋙ F_h ≅ L ⋙ F_V` is obtained from
+the sheafification comparisons and the identity of the two presheaf restriction composites. -/
 private def sheafificationOverFunctorMapIso :
     (sheafificationBase ℛ ⋙ restrictSheaf ℛ U) ⋙
         SheafOfModules.overMap (sheafComposeRing ℛ) h ≅
@@ -495,7 +568,11 @@ private def sheafificationOverFunctorMapIso :
 
 omit [(J.W (A := Ab.{u})).IsMonoidal]
   [((J.over U).W (A := Ab.{u})).IsMonoidal] [((J.over V).W (A := Ab.{u})).IsMonoidal] in
-/-- The actual two-stage sheafification comparison is the stock over-functor comparison. -/
+/-- Let `(C,J,ℛ)` be a commutative ringed site at universe `u`, `h : V → U`, with weak additive
+sheafification, locally-bijective comparisons, and underlying-ring comparisons on the base and
+slices. Put `L=sheafificationBase ℛ` and `γ_h=SheafOfModules.overFunctorMap ℛ_ring h : F_U ⋙
+F_h ≅ F_V`. Then `(sheafificationOverFunctorMapIso ℛ h).hom = (Functor.associator L F_U
+F_h).hom ≫ Functor.whiskerLeft L γ_h.hom`. -/
 private theorem sheafificationOverFunctorMapIso_hom :
     (sheafificationOverFunctorMapIso ℛ h).hom =
       (Functor.associator (sheafificationBase ℛ) (restrictSheaf ℛ U)
@@ -588,7 +665,9 @@ variable {C : Type u} [Category.{u} C] {J : GrothendieckTopology C}
     [(J.over V).HasSheafCompose (forget₂ CommRingCat RingCat)]
     (h : V ⟶ U)
 
-/-- The actual two-stage presheaf over-site restriction is monoidal. -/
+/-- For a site `(C,J)` at universe `u`, a commutative ring sheaf `ℛ`, and `h : V → U`, the
+composite `restrictPresheaf ℛ U ⋙ overMapPresheaf ℛ h` is monoidal. It uses the composite of
+the pointwise monoidal structures of the two presheaf-precomposition functors. -/
 private instance presheafOverFunctorMapCompMonoidal :
     (restrictPresheaf ℛ U ⋙ overMapPresheaf ℛ h).Monoidal :=
   @Functor.Monoidal.instComp
@@ -616,7 +695,10 @@ omit [(J.W (A := Ab.{u})).IsMonoidal]
   [(J.over V).WEqualsLocallyBijective Ab.{u}]
   [HasWeakSheafify (J.over V) Ab.{u}]
   [(J.over V).HasSheafCompose (forget₂ CommRingCat RingCat)] in
-/-- The actual presheaf over-site composition comparison is monoidal. -/
+/-- For a site `(C,J)` at universe `u`, a commutative ring sheaf `ℛ`, and `h : V → U`, the natural
+comparison `restrictPresheaf ℛ U ⋙ overMapPresheaf ℛ h ≅ restrictPresheaf ℛ V` is monoidal.
+Its forward natural transformation preserves the tensor and unit comparison maps of the two
+restriction functors. -/
 private theorem presheafOverFunctorMap_isMonoidal :
     letI : (overMapPresheaf ℛ h).Monoidal := overMapPresheafMonoidal ℛ h
     letI : (restrictPresheaf ℛ U ⋙ overMapPresheaf ℛ h).Monoidal :=
@@ -652,7 +734,11 @@ variable {C : Type u} [Category.{u} C] {J : GrothendieckTopology C}
     [HasWeakSheafify (J.over Z) Ab.{u}]
     [(J.over Z).HasSheafCompose (forget₂ CommRingCat RingCat)]
 
-/-- The canonical restriction and sheafification comparison is monoidal. -/
+/-- Let `(C,J,R)` be a commutative ringed site at universe `u`, with weak additive sheafification,
+monoidal `W`, and locally-bijective and underlying-ring comparisons on the base and slice over
+`Z`. The natural isomorphism `commIso R Z : restrictPresheaf R Z ⋙ sheafificationOver R Z ≅
+sheafificationBase R ⋙ restrictSheaf R Z` has a monoidal forward transformation, preserving
+tensor and unit comparison maps. -/
 private theorem canonicalRestrictionCommIso_isMonoidal : (commIso R Z).hom.IsMonoidal := by
   let L := sheafificationBase R
   let G := restrictPresheaf R Z ⋙ sheafificationOver R Z
@@ -682,7 +768,11 @@ variable {C : Type u} [Category.{u} C] {J : GrothendieckTopology C}
     [(J.W (A := Ab.{u})).IsMonoidal] [J.WEqualsLocallyBijective Ab.{u}]
     [HasWeakSheafify J Ab.{u}] [J.HasSheafCompose (forget₂ CommRingCat RingCat)]
 
-/-- Canonical monoidal structure used on each over-site. -/
+/-- Let `(C,J,ℛ)` be a commutative ringed site at universe `u`, with the base underlying-ring
+comparison. For `W∈C`, assume weak additive sheafification, monoidal `W`-equivalences,
+locally-bijective comparison, and the underlying-ring comparison on `J.over W`. The category
+`SheafOfModules((sheafComposeRing ℛ).over W)` has the monoidal structure obtained by
+sheafifying the pointwise module-presheaf tensor product on that slice. -/
 private instance overModuleMonoidal (W : C)
     [((J.over W).W (A := Ab.{u})).IsMonoidal] [(J.over W).WEqualsLocallyBijective Ab.{u}]
     [HasWeakSheafify (J.over W) Ab.{u}]
@@ -693,7 +783,11 @@ private instance overModuleMonoidal (W : C)
 attribute [-instance] overModuleMonoidal
 attribute [local instance] overModuleMonoidal
 
-/-- Canonical monoidality of each actual over-site sheafification. -/
+/-- Let `(C,J,ℛ)` be a commutative ringed site at universe `u` and `W∈C`. Assume weak additive
+sheafification, monoidality of `(J.over W).W`, and the locally-bijective and underlying-ring
+comparisons on that slice. Then `sheafificationBase (ℛ.over W)` is monoidal, from module
+presheaves over the restricted commutative ring presheaf to module sheaves over its underlying
+ring sheaf. -/
 private instance overSheafificationMonoidal (W : C)
     [((J.over W).W (A := Ab.{u})).IsMonoidal] [(J.over W).WEqualsLocallyBijective Ab.{u}]
     [HasWeakSheafify (J.over W) Ab.{u}]
@@ -715,7 +809,10 @@ variable {U V : C}
     [(J.over V).HasSheafCompose (forget₂ CommRingCat RingCat)]
     (h : V ⟶ U)
 
-/-- Canonical monoidality of sheafification followed by the actual over-map. -/
+/-- Let `(C,J,ℛ)` be a commutative ringed site at universe `u`, `h : V → U`, and assume the base
+underlying-ring comparison. On both slices assume weak additive sheafification, monoidal `W`,
+and locally-bijective and underlying-ring comparisons. The composite `L_U ⋙ F_h` is monoidal,
+where `L_U=sheafificationBase (ℛ.over U)` and `F_h=overMap ℛ_ring h`. -/
 private instance overMapAfterSheafificationMonoidal :
     (sheafificationBase (ℛ.over U) ⋙ SheafOfModules.overMap (sheafComposeRing ℛ) h).Monoidal :=
   @Functor.Monoidal.instComp
@@ -729,7 +826,10 @@ private instance overMapAfterSheafificationMonoidal :
 attribute [-instance] overMapAfterSheafificationMonoidal
 attribute [local instance] overMapAfterSheafificationMonoidal
 
-/-- Canonical monoidality of the actual presheaf over-map followed by sheafification. -/
+/-- Let `(C,J,ℛ)` be a commutative ringed site at universe `u` and `h : V → U`. With weak additive
+sheafification, monoidal `W`, and locally-bijective and underlying-ring comparisons on the
+target slice, `overMapPresheaf ℛ h ⋙ sheafificationBase (ℛ.over V)` is monoidal. Its structure
+is the composite of pointwise presheaf restriction and target monoidal sheafification. -/
 private instance sheafificationAfterOverMapMonoidal :
     (overMapPresheaf ℛ h ⋙ sheafificationBase (ℛ.over V)).Monoidal :=
   @Functor.Monoidal.instComp
@@ -746,7 +846,11 @@ attribute [local instance] sheafificationAfterOverMapMonoidal
 
 omit [(J.W (A := Ab.{u})).IsMonoidal] [J.WEqualsLocallyBijective Ab.{u}]
   [HasWeakSheafify J Ab.{u}] in
-/-- The actual over-map sheafification lifting respects tensor products and units. -/
+/-- Let `(C,J,ℛ)` be a commutative ringed site at universe `u`, `h : V → U`, and assume the base
+ring comparison and weak additive sheafification, monoidal `W`, and locally-bijective and
+underlying-ring comparisons on both slices. The forward transformation of
+`overMapSheafificationIso ℛ h : P_h ⋙ L_V ≅ L_U ⋙ F_h` is monoidal, respecting unit and tensor
+comparisons of the two composite functors. -/
 private theorem overMapSheafificationIso_isMonoidal :
     @NatTrans.IsMonoidal (PresheafOfModulesOfCommRing (ℛ.over U).obj) _
       (PresheafOfModulesOfCommRing.monoidalCategory (R := (ℛ.over U).obj))
@@ -808,7 +912,9 @@ section
 
 open _root_.CategoryTheory _root_.CategoryTheory.MonoidalCategory
 
-/-- Monoidal restriction comparison follows from the monoidal sheafification comparisons. -/
+/-- Let `C,C₁,C₂,D,D₁,D₂` be monoidal categories of common object universe `u` and morphism universe `v`. Give monoidal functors `L,L₁,L₂`, `P,Q,P'`, `O,S,O'` with types `L:C→D`, `L_i:C_i→D_i`, `P:C→C₁`, `Q:C₁→C₂`, `P':C→C₂`, `O:D→D₁`, `S:D₁→D₂`, `O':D→D₂`, and assume `L` essentially surjective. Give monoidal natural isomorphisms `c:P⋙L₁≅L⋙O`, `d:Q⋙L₂≅L₁⋙S`, `e:P'⋙L₂≅L⋙O'`, `η:P⋙Q≅P'`, and an isomorphism `γ:O⋙S≅O'`. Form
+`Φ = isoWhiskerRight c.symm S ≪≫ assoc(P,L₁,S) ≪≫ isoWhiskerLeft P d.symm ≪≫ assoc(P,Q,L₂).symm ≪≫ isoWhiskerRight η L₂ ≪≫ e`.
+If `Φ.hom = assoc(L,O,S).hom ≫ Functor.whiskerLeft L γ.hom`, then `γ.hom` is monoidal. -/
 private theorem restrictionComparison_isMonoidal
     {C C₁ C₂ D D₁ D₂ : Type u}
     [Category.{v} C] [Category.{v} C₁] [Category.{v} C₂]
@@ -855,7 +961,10 @@ variable {C : Type u} [Category.{u} C] {J : GrothendieckTopology C}
     [(J.W (A := Ab.{u})).IsMonoidal] [J.WEqualsLocallyBijective Ab.{u}]
     [HasWeakSheafify J Ab.{u}] [J.HasSheafCompose (forget₂ CommRingCat RingCat)]
 
-/-- The canonical monoidal structure on actual modules of the ambient scheme. -/
+/-- Let `(C,J)` be a site at universe `u` and `ℛ : Sheaf J CommRingCat.{u}`. Assume weak additive
+sheafification, monoidal `J.W`, and the locally-bijective and underlying-ring sheaf
+comparisons. Then `SheafOfModules(sheafComposeRing ℛ)` has the monoidal structure induced by
+localization of module presheaves. -/
 private instance baseModuleMonoidal : MonoidalCategory (SheafOfModules (sheafComposeRing ℛ)) :=
   SheafOfModules.monoidalCategory ℛ
 
@@ -866,7 +975,11 @@ attribute [local instance] overModuleMonoidal overMapMonoidal overMapPresheafMon
 attribute [local instance] overSheafificationMonoidal overMapAfterSheafificationMonoidal
 attribute [local instance] sheafificationAfterOverMapMonoidal presheafOverFunctorMapCompMonoidal
 
-/-- The canonical monoidality of actual module restriction to an over-site. -/
+/-- Let `(C,J,ℛ)` be a commutative ringed site at universe `u`, and assume weak additive
+sheafification, monoidal `W`, and locally-bijective and underlying-ring comparisons on the
+base and slice over `W`. The functor `SheafOfModules.overFunctor ℛ_ring W` is monoidal,
+identifying restriction of a tensor product with the tensor product of restrictions and
+preserving the tensor unit. -/
 private instance actualOverFunctorMonoidal (W : C)
     [((J.over W).W (A := Ab.{u})).IsMonoidal] [(J.over W).WEqualsLocallyBijective Ab.{u}]
     [HasWeakSheafify (J.over W) Ab.{u}]
@@ -885,7 +998,10 @@ variable {U V : C}
     [(J.over V).HasSheafCompose (forget₂ CommRingCat RingCat)]
     (h : V ⟶ U)
 
-/-- Canonical monoidality of a two-stage actual over-site restriction. -/
+/-- Let `(C,J,ℛ)` be a commutative ringed site at universe `u`, `h : V → U`, with weak additive
+sheafification, monoidal `W`, and locally-bijective and underlying-ring comparisons on the
+base and both slices. The composite `overFunctor ℛ_ring U ⋙ overMap ℛ_ring h` is monoidal,
+using the monoidal structures of the base-to-slice and slice-to-slice restrictions. -/
 private instance actualOverFunctorMapCompMonoidal :
     (SheafOfModules.overFunctor (sheafComposeRing ℛ) U ⋙ SheafOfModules.overMap (sheafComposeRing ℛ) h).Monoidal :=
   @Functor.Monoidal.instComp (SheafOfModules (sheafComposeRing ℛ)) _ (SheafOfModules.monoidalCategory ℛ)
@@ -897,7 +1013,10 @@ private instance actualOverFunctorMapCompMonoidal :
 attribute [-instance] actualOverFunctorMapCompMonoidal
 attribute [local instance] actualOverFunctorMapCompMonoidal
 
-/-- Stock over-functor composition respects the actual tensor and unit comparisons. -/
+/-- Let `(C,J,ℛ)` be a commutative ringed site at universe `u`, `h : V → U`, with weak additive
+sheafification, monoidal `W`, and locally-bijective and underlying-ring comparisons on the
+base and both slices. The forward transformation of `overFunctorMap ℛ_ring h : F_U ⋙ F_h ≅
+F_V` is monoidal for the restriction structures constructed from sheafification. -/
 private theorem actualOverFunctorMap_isMonoidal :
     @NatTrans.IsMonoidal (SheafOfModules (sheafComposeRing ℛ)) _ (SheafOfModules.monoidalCategory ℛ)
       (SheafOfModules ((sheafComposeRing ℛ).over V)) _ (SheafOfModules.monoidalCategory (ℛ.over V))
@@ -978,7 +1097,12 @@ variable {C : Type u} [Category.{u} C] {J : GrothendieckTopology C}
     [(J.over Z).HasSheafCompose (forget₂ CommRingCat RingCat)]
 
 omit [(J.W (A := Ab.{u})).IsMonoidal] [((J.over Z).W (A := Ab.{u})).IsMonoidal] in
-/-- The actual restriction and sheafification comparison preserves the sheafification counit. -/
+/-- Let `(C,J,R)` be a commutative ringed site at universe `u`, with weak additive sheafification,
+locally-bijective comparisons, and underlying-ring comparisons on the base and slice over `Z`.
+Write `L_R,L_Z` for sheafification, `U_R,U_Z` for forgetting, `q_Z,F_Z` for presheaf/sheaf
+restriction, `e` for `commIso`, and `i_A : q_Z(U_R A) ≅ U_Z(F_Z A)` for `forgetRestrictIso`.
+For each module sheaf `A`, `e_{U_R A}.hom ≫ F_Z(c_A) = L_Z(i_A.hom) ≫ c^Z_{F_Z A}`, where
+`c,c^Z` are the two counits. -/
 private theorem restriction_commIso_counit (A : SheafOfModules (sheafComposeRing R)) :
     (commIso R Z).hom.app ((forgetRestrictBase R).obj A) ≫
         (restrictSheaf R Z).map ((sheafificationAdjBase R).counit.app A) =
@@ -1019,11 +1143,17 @@ private theorem restriction_commIso_counit (A : SheafOfModules (sheafComposeRing
     _ = ρ.hom := by rw [P.map_id, Category.id_comp]
     _ = _ := hb.symm
 
-/-- Sheafification has the literal unit object in the localized monoidal structure. -/
+/-- Let `(C,J,R)` be a commutative ringed site at universe `u`, with weak additive sheafification,
+monoidal `J.W`, and the locally-bijective and underlying-ring comparisons. For the localized
+monoidal structure on `L_R=sheafificationBase R`, the lax unit map `ε L_R : 𝟙_Sheaf →
+L_R(𝟙_Presheaf)` is the identity, because the tensor unit is chosen as that sheafified unit. -/
 private theorem sheafificationBase_ε_eq_id :
     Functor.LaxMonoidal.ε (sheafificationBase R) = 𝟙 _ := rfl
 
-/-- The inverse sheafification unit map is also literal. -/
+/-- Let `(C,J,R)` be a commutative ringed site at universe `u`, with weak additive sheafification,
+monoidal `J.W`, and the locally-bijective and underlying-ring comparisons. For the localized
+monoidal structure on `L_R=sheafificationBase R`, the oplax unit map `η L_R : L_R(𝟙_Presheaf)
+→ 𝟙_Sheaf` is the identity on the chosen tensor unit. -/
 private theorem sheafificationBase_η_eq_id :
     Functor.OplaxMonoidal.η (sheafificationBase R) = 𝟙 _ := rfl
 
@@ -1032,11 +1162,16 @@ omit [(J.W (A := Ab.{u})).IsMonoidal] [J.WEqualsLocallyBijective Ab.{u}]
   [((J.over Z).W (A := Ab.{u})).IsMonoidal] [(J.over Z).WEqualsLocallyBijective Ab.{u}]
   [HasWeakSheafify (J.over Z) Ab.{u}]
   [(J.over Z).HasSheafCompose (forget₂ CommRingCat RingCat)] in
-/-- Presheaf chart restriction has the literal tensor-unit map. -/
+/-- For a site `(C,J)` at universe `u`, a commutative ring sheaf `R`, and `Z∈C`, the lax-monoidal
+unit map of `q_Z=restrictPresheaf R Z` is the identity. The slice's structure-module presheaf
+is the precomposition of the base structure-module presheaf. -/
 private theorem restrictPresheaf_ε_eq_id :
     Functor.LaxMonoidal.ε (restrictPresheaf R Z) = 𝟙 _ := rfl
 
-/-- The actual unit map on over-functor restriction is its unit sheafification mate. -/
+/-- Let `(C,J,R)` be a commutative ringed site at universe `u`, with weak additive sheafification,
+monoidal `W`, and locally-bijective and underlying-ring comparisons on the base and slice over
+`Z`. The lax unit map of `F_Z=restrictSheaf R Z` equals `(commIso R Z).hom.app 𝟙_Presheaf`,
+from the slice tensor unit to the restriction of the base tensor unit. -/
 private theorem restrictSheaf_ε_eq_commIso :
     Functor.LaxMonoidal.ε (restrictSheaf R Z) =
       (commIso R Z).hom.app (𝟙_ (PresheafOfModulesOfCommRing R.obj)) := by
@@ -1070,7 +1205,10 @@ private theorem restrictSheaf_ε_eq_commIso :
     rw [hG, hmap]
     exact (Category.id_comp (c ≫ 𝟙 (F.obj T₀))).trans (Category.comp_id c))
 
-/-- Canonical over-functor monoidality preserves the actual module-unit identification. -/
+/-- Let `(C,J,R)` be a commutative ringed site at universe `u`, with weak additive sheafification,
+monoidal `W`, and locally-bijective and underlying-ring comparisons on the base and slice over
+`Z`. For `F_Z=restrictSheaf R Z`, the tensor-unit/structure-module isomorphisms satisfy `ε F_Z
+≫ F_Z((tensorUnitIso R).hom) = (tensorUnitIso (R.over Z)).hom`. -/
 private theorem restrictSheaf_moduleUnit_ε :
     Functor.LaxMonoidal.ε (restrictSheaf R Z) ≫
         (restrictSheaf R Z).map (SheafOfModules.tensorUnitIso R).hom =
@@ -1096,7 +1234,10 @@ section
 
 open _root_.CategoryTheory _root_.CategoryTheory.MonoidalCategory
 
-/-- Module-unit identifications compose through a monoidal natural isomorphism. -/
+/-- Let `C,D,E` be monoidal categories of common object universe `u` and morphism universe `v`,
+with monoidal functors `O:C→D`, `S:D→E`, `O':C→E`, and a monoidal natural isomorphism
+`γ:O⋙S≅O'`. For `A∈C`, give morphisms `e_b:𝟙_C→A`, `e_u:𝟙_D→O(A)`, `e_v:𝟙_E→O'(A)` satisfying
+`ε O ≫ O(e_b)=e_u` and `ε O' ≫ O'(e_b)=e_v`. Then `ε S ≫ S(e_u) ≫ γ_A.hom = e_v`. -/
 private theorem monoidalUnitComparison_comp
     {C D E : Type u} [Category.{v} C] [Category.{v} D] [Category.{v} E]
     [MonoidalCategory C] [MonoidalCategory D] [MonoidalCategory E]
@@ -1137,7 +1278,11 @@ variable {C : Type u} [Category.{u} C] {J : GrothendieckTopology C}
     [(J.over V).HasSheafCompose (forget₂ CommRingCat RingCat)]
     (h : V ⟶ U)
 
-/-- The actual over-map tensor-unit comparison agrees with its literal module-unit map. -/
+/-- Let `(C,J,ℛ)` be a commutative ringed site at universe `u`, `h : V → U`, with weak additive
+sheafification, monoidal `W`, and locally-bijective and underlying-ring comparisons on the
+base and both slices. Put `F_h=overMap ℛ_ring h`, `t_U=tensorUnitIso (ℛ.over U)`,
+`t_V=tensorUnitIso (ℛ.over V)`, and `u_h=overMapUnitIso h`. Then `ε F_h ≫ F_h(t_U.hom) ≫
+u_h.hom = t_V.hom`, as maps from the slice tensor unit to its structure module. -/
 private theorem actualOverMap_moduleUnit_ε :
     letI : MonoidalCategory (SheafOfModules ((sheafComposeRing ℛ).over U)) :=
       SheafOfModules.monoidalCategory (ℛ.over U)
@@ -1185,7 +1330,10 @@ end
 
 open Functor.LaxMonoidal Functor.OplaxMonoidal
 
-/-- Monoidal natural isomorphisms also respect the inverse tensor comparisons. -/
+/-- Let `C,D` be monoidal categories of common object universe `u` and morphism universe `v`, `F,G
+: C → D` monoidal functors, and `e : F ≅ G` with monoidal forward transformation. For `A,B∈C`,
+the inverse tensor comparisons satisfy `δ_F(A,B) ≫ (e_A.hom ⊗ e_B.hom) = e_{A⊗B}.hom ≫
+δ_G(A,B)`, where `δ` is the oplax map inverse to the monoidal tensor isomorphism. -/
 private theorem monoidalNatIso_δ
     {C D : Type u} [Category.{v} C] [Category.{v} D] [MonoidalCategory C] [MonoidalCategory D]
     {F G : C ⥤ D} [F.Monoidal] [G.Monoidal] (e : F ≅ G) [e.hom.IsMonoidal] (A B : C) :
@@ -1214,7 +1362,11 @@ variable {C : Type u} [Category.{u} C] {J : GrothendieckTopology C}
     [(J.over V).HasSheafCompose (forget₂ CommRingCat RingCat)]
     (h : V ⟶ U)
 
-/-- The monoidal structure on restriction along an arrow between slice sites. -/
+/-- Let `(C,J,ℛ)` be a commutative ringed site at universe `u`, `h : V → U`, and assume the base
+underlying-ring comparison. On both slices assume weak additive sheafification, monoidal `W`,
+and locally-bijective and underlying-ring comparisons. Then `overMapMonoidalStructure ℛ h`
+equips `F_h=overMap ℛ_ring h` with a monoidal structure between the standard monoidal
+module-sheaf categories on `U` and `V`. -/
 @[no_expose, instance_reducible] def overMapMonoidalStructure :
     letI : MonoidalCategory (SheafOfModules ((sheafComposeRing ℛ).over U)) :=
       SheafOfModules.monoidalCategory (ℛ.over U)
@@ -1227,7 +1379,11 @@ variable {C : Type u} [Category.{u} C] {J : GrothendieckTopology C}
     SheafOfModules.monoidalCategory (ℛ.over V)
   exact overMapMonoidal ℛ h
 
-/-- The standard structure preserves the original successive-restriction comparison. -/
+/-- Let `(C,J,ℛ)` be a commutative ringed site at universe `u`, `h : V → U`, with weak additive
+sheafification, monoidal `W`, and locally-bijective and underlying-ring comparisons on the
+base and both slices. With `F_h` equipped by `overMapMonoidalStructure ℛ h`, the forward
+transformation of `overFunctorMap ℛ_ring h : F_U ⋙ F_h ≅ F_V` is monoidal, preserving the
+tensor and unit comparisons of direct and successive restriction. -/
 theorem overMapMonoidalStructure_restriction :
     letI : MonoidalCategory (SheafOfModules (sheafComposeRing ℛ)) := SheafOfModules.monoidalCategory ℛ
     letI : MonoidalCategory (SheafOfModules (sheafComposeRing ℛ)) :=
@@ -1250,7 +1406,11 @@ theorem overMapMonoidalStructure_restriction :
     (SheafOfModules.overFunctorMap (sheafComposeRing ℛ) h).hom.IsMonoidal :=
   actualOverFunctorMap_isMonoidal ℛ h
 
-/-- The standard monoidal unit map is the original module-unit restriction. -/
+/-- Let `(C,J,ℛ)` be a commutative ringed site at universe `u`, `h : V → U`, with weak additive
+sheafification, monoidal `W`, and locally-bijective and underlying-ring comparisons on the
+base and both slices. For `F_h` with `overMapMonoidalStructure ℛ h`, let `t_U,t_V` be the
+tensor-unit/structure-module isomorphisms and `u_h=overMapUnitIso h`. Then `ε F_h ≫
+F_h(t_U.hom) ≫ u_h.hom = t_V.hom`. -/
 theorem overMapMonoidalStructure_moduleUnit :
     letI : MonoidalCategory (SheafOfModules ((sheafComposeRing ℛ).over U)) :=
       SheafOfModules.monoidalCategory (ℛ.over U)
@@ -1263,8 +1423,11 @@ theorem overMapMonoidalStructure_moduleUnit :
       (SheafOfModules.tensorUnitIso (ℛ.over V)).hom :=
   actualOverMap_moduleUnit_ε ℛ h
 
-/-- The actual arrow-over restriction preserves the canonical tensor product
-of module sheaves, using its original monoidal sheafification lifting. -/
+/-- Let `(C,J,ℛ)` be a commutative ringed site at universe `u`, `h : V → U`, and assume the base
+ring comparison and weak additive sheafification, monoidal `W`, and locally-bijective and
+underlying-ring comparisons on both slices. For `M,N` over `ℛ_ring.over U`, `overMapTensorIso
+ℛ h M N : F_h(M ⊗ N) ≅ F_h(M) ⊗ F_h(N)` is the inverse structural tensor isomorphism of
+`F_h=overMap ℛ_ring h`. -/
 def overMapTensorIso (M N : SheafOfModules ((sheafComposeRing ℛ).over U)) :
     letI : MonoidalCategory (SheafOfModules ((sheafComposeRing ℛ).over U)) :=
       SheafOfModules.monoidalCategory (ℛ.over U)
@@ -1280,8 +1443,12 @@ def overMapTensorIso (M N : SheafOfModules ((sheafComposeRing ℛ).over U)) :
   letI : (SheafOfModules.overMap (sheafComposeRing ℛ) h).Monoidal := overMapMonoidalStructure ℛ h
   exact (Functor.Monoidal.μIso (SheafOfModules.overMap (sheafComposeRing ℛ) h) M N).symm
 
-/-- The original comparison between successive and direct restriction
-preserves the actual tensor comparison, for every pair of ambient module sheaves. -/
+/-- Let `(C,J,ℛ)` be a commutative ringed site at universe `u`, `h : V → U`, with weak additive
+sheafification, monoidal `W`, and locally-bijective and underlying-ring comparisons on the
+base and both slices. For ambient module sheaves `M,N`, write `F_U,F_V` for base restrictions,
+`F_h` for restriction along `h`, `γ_A : F_h(F_U A) ≅ F_V A` for `overFunctorMap`, and
+`δ_U,δ_V,δ_h` for the tensor comparisons. Then `γ_{M⊗N}.hom ≫ δ_V(M,N).hom = F_h(δ_U(M,N).hom)
+≫ δ_h(F_U M,F_U N).hom ≫ (γ_M.hom ⊗ γ_N.hom)`. -/
 theorem overMapTensorIso_restriction (M N : (SheafOfModules (sheafComposeRing ℛ))) :
     let : MonoidalCategory (SheafOfModules (sheafComposeRing ℛ)) := SheafOfModules.monoidalCategory ℛ
   let : MonoidalCategory (SheafOfModules (sheafComposeRing ℛ)) :=
@@ -1333,8 +1500,11 @@ theorem overMapTensorIso_restriction (M N : (SheafOfModules (sheafComposeRing �
 
 omit [(J.W (A := Ab.{u})).IsMonoidal] [J.WEqualsLocallyBijective Ab.{u}]
   [HasWeakSheafify J Ab.{u}] in
-/-- The standard arrow-over tensor comparison preserves every pair of
-actual module-sheaf morphisms, for all objects of the original over-site. -/
+/-- Let `(C,J,ℛ)` be a commutative ringed site at universe `u`, `h : V → U`, with the base
+underlying-ring comparison and weak additive sheafification, monoidal `W`, and
+locally-bijective and underlying-ring comparisons on both slices. For module sheaves
+`M,N,M',N'` over `U`, maps `a : M → M'`, `b : N → N'`, and `F_h=overMap ℛ_ring h`, `F_h(a ⊗ b)
+≫ δ_h(M',N').hom = δ_h(M,N).hom ≫ (F_h(a) ⊗ F_h(b))`, where `δ_h=overMapTensorIso ℛ h`. -/
 theorem overMapTensorIso_naturality
     (M N M' N' : SheafOfModules ((sheafComposeRing ℛ).over U)) (a : M ⟶ M') (b : N ⟶ N') :
     letI : MonoidalCategory (SheafOfModules ((sheafComposeRing ℛ).over U)) :=

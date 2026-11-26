@@ -1,3 +1,5 @@
-# Quotient Scalars Tower
+# The scalar tower of original and quotient actions
 
-The quotient scalar action and the original action form the expected scalar tower.
+The scalar tower of original and quotient actions.
+
+The two actions satisfy IsScalarTower R (R/I) M.

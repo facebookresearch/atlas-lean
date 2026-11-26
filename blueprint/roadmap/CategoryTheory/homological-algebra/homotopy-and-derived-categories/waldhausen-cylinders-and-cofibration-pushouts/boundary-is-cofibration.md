@@ -1,3 +1,7 @@
-# Boundary is Cofibration
+# Boundary cofibration supplied by a full cylinder
 
-The original front and back maps jointly form the same boundary cofibration.
+Boundary cofibration supplied by a full cylinder.
+
+For a full cylinder T, the combined map desc(j_f,k_f) : f.left ⨿ f.right → T(f) is a
+cofibration for every f, using the binary coproducts derived from the category's cofibration
+pushouts.

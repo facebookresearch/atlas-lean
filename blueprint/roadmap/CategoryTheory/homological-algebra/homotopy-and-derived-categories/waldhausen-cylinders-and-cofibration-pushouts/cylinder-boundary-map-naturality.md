@@ -1,3 +1,7 @@
-# Cylinder Boundary Map naturality
+# Naturality of the joint cylinder boundary
 
-The original combined inclusion is natural in every commutative arrow square.
+Naturality of the joint cylinder boundary.
+
+For any commuting arrow square α : f → g and natural front and back maps of T, b_f ≫ T(α) =
+coprod.map(α.left,α.right) ≫ b_g. Here b is the descendant of the two boundary maps and the
+category has binary coproducts.

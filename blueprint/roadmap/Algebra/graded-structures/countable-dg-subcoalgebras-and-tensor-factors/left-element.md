@@ -1,3 +1,5 @@
-# Left Element
+# The left factor as a homogeneous element
 
-The left factor with its actual original degree.
+The left factor as a homogeneous element.
+
+Retain the left factor together with its integer degree p.

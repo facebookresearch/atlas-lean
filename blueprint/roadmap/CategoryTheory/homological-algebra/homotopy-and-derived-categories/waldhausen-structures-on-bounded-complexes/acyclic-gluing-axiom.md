@@ -1,4 +1,9 @@
-# Acyclic Gluing Axiom
+# Gluing for the inherited acyclic structure
 
-The constructed acyclic category inherits the genuine smaller-class
-gluing axiom from the original smaller weak structure, on the same maps.
+Let C have a zero object and V,W Waldhausen cofibration,
+weak-equivalence and pushout data with the same cofibration class.
+Assume W satisfies gluing. Let C^W be the full subcategory of
+W-acyclic objects, with cofibrations and weak equivalences inherited
+from V, and inclusion ι:C^W → C.
+
+If V also satisfies the gluing axiom, then the inherited V structure on C^W satisfies gluing.

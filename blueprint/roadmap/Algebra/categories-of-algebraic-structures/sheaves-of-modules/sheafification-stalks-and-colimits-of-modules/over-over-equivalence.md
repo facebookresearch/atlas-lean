@@ -1,4 +1,6 @@
-# Over Over Equivalence
+# Module sheaves on a direct and an iterated slice
 
-Doubly restricted sheaves `(M.over X).over Y` identify with
-`M.over Y.left` through `Over.iteratedSliceEquiv` and the identity ring maps.
+Let `D : Type w` have morphism universe `v₂`, `K` a Grothendieck topology, `S : Sheaf K
+RingCat.{u}`, `X∈D`, and `Y∈Over X`. The canonical slice equivalence induces
+`SheafOfModules.{u}(S.over Y.left) ≌ SheafOfModules.{u}((S.over X).over Y)`, using the
+identity coefficient-ring maps on the identified base objects.

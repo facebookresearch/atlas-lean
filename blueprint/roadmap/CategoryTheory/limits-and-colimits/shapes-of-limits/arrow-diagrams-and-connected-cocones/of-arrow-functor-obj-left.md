@@ -1,3 +1,5 @@
-# Of Arrow Functor obj left
+# Source vertex of the diagram associated to an arrow
 
-The two-object diagram retains the original source object.
+Source vertex of the diagram associated to an arrow.
+
+For an arrow A in a category C, the left vertex of ofArrowFunctor(A) is A.left.

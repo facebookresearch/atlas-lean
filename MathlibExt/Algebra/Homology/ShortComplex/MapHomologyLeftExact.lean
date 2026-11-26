@@ -13,7 +13,22 @@ public import Mathlib.Algebra.Homology.ShortComplex.PreservesHomology
 public import MathlibExt.Algebra.Homology.Functor
 
 /-!
-# The canonical forward homology edge of a left-exact functor
+# Homology edge for a left-exact functor
+
+Let C and D be categories with zero morphisms, F:C → D preserve zero
+morphisms and finite limits, and S be a short complex whose homology,
+and the homology of its termwise F-image, are chosen.
+Preservation of the cycles kernel gives the canonical isomorphism
+γ:Z(F(S)) ≅ F(Z(S)).
+
+The composite F(q_S)∘γ, where q_S is the cycles-to-homology projection,
+annihilates boundaries and induces the edge
+ε:H(F(S)) → F(H(S)).
+Its defining equation is ε∘q_{F(S)}=F(q_S)∘γ.
+The comparison and edge are natural in short-complex morphisms and in
+natural transformations between such functors. If F preserves homology,
+the edge equals the forward map of the canonical homology isomorphism.
+The two categories have independent object and morphism universes.
 -/
 
 @[expose] public section
@@ -31,8 +46,11 @@ variable {D : Type u₂} [Category.{v₂} D] [HasZeroMorphisms D]
 variable (F : C ⥤ D) [F.PreservesZeroMorphisms] [PreservesFiniteLimits F]
 variable (S : ShortComplex C) [S.HasHomology] [(S.map F).HasHomology]
 
-/-- Actual cycles map to images of original cycles through the preserved
-native kernel, without any cokernel-preservation assumption. -/
+/-- Let C and D have zero morphisms, and let F:C → D preserve zero
+morphisms and finite limits. Let S be a short complex with chosen
+homology, and assume S mapped by F also has its chosen homology.
+
+The canonical cycles comparison γ:Z(F(S)) → F(Z(S)), induced by the preserved kernel of the second differential of S. -/
 def leftExactCyclesComparison : (S.map F).cycles ⟶ F.obj S.cycles := by
   let c := KernelFork.ofι S.iCycles S.iCycles_g
   let h : IsLimit (c.map F) := KernelFork.mapIsLimit c S.cyclesIsKernel F
@@ -45,7 +63,11 @@ theorem leftExactCyclesComparison_i :
   exact Fork.IsLimit.lift_ι
     (t := KernelFork.ofι (S.map F).iCycles (S.map F).iCycles_g) h
 
-/-- Preservation of the genuine cycles kernel makes its comparison an isomorphism. -/
+/-- Let C and D have zero morphisms, and let F:C → D preserve zero
+morphisms and finite limits. Let S be a short complex with chosen
+homology, and assume S mapped by F also has its chosen homology.
+
+The canonical comparison γ:Z(F(S)) → F(Z(S)) is an isomorphism, since F preserves the cycles kernel. -/
 instance isIso_leftExactCyclesComparison : IsIso (leftExactCyclesComparison F S) := by
   let c := KernelFork.ofι S.iCycles S.iCycles_g
   let h : IsLimit (c.map F) := KernelFork.mapIsLimit c S.cyclesIsKernel F
@@ -57,11 +79,19 @@ instance isIso_leftExactCyclesComparison : IsIso (leftExactCyclesComparison F S)
   rw [hComparison]
   infer_instance
 
-/-- The cycles comparison isomorphism of a left-exact, zero-preserving functor. -/
+/-- Let C and D have zero morphisms, and let F:C → D preserve zero
+morphisms and finite limits. Let S be a short complex with chosen
+homology, and assume S mapped by F also has its chosen homology.
+
+The canonical cycles isomorphism Z(F(S)) ≅ F(Z(S)) whose forward map is the preserved-kernel comparison. -/
 def leftExactCyclesComparisonIso : (S.map F).cycles ≅ F.obj S.cycles :=
   asIso (leftExactCyclesComparison F S)
 
-/-- The isomorphism retains the canonical comparison morphism. -/
+/-- Let C and D have zero morphisms, and let F:C → D preserve zero
+morphisms and finite limits. Let S be a short complex with chosen
+homology, and assume S mapped by F also has its chosen homology.
+
+The forward map of Z(F(S)) ≅ F(Z(S)) is exactly the canonical cycles comparison γ. -/
 theorem leftExactCyclesComparisonIso_hom :
     (leftExactCyclesComparisonIso F S).hom = leftExactCyclesComparison F S := rfl
 
@@ -80,13 +110,20 @@ theorem leftExactHomologyEdge_kills_boundaries :
   rw [← Category.assoc, leftExactCyclesComparison_toCycles, ← F.map_comp,
     S.toCycles_comp_homologyπ, F.map_zero]
 
-/-- The literal forward homology map induced by a genuinely left-exact
-functor; no homology-preservation or comparison Iso is assumed. -/
+/-- Let C and D have zero morphisms, and let F:C → D preserve zero
+morphisms and finite limits. Let S be a short complex with chosen
+homology, and assume S mapped by F also has its chosen homology.
+
+The homology edge ε:H(F(S)) → F(H(S)) induced by F(q_S)∘γ on cycles, where q_S:Z(S) → H(S) is the homology projection. -/
 def leftExactHomologyEdge : (S.map F).homology ⟶ F.obj S.homology :=
   (S.map F).descHomology (leftExactCyclesComparison F S ≫ F.map S.homologyπ)
     (leftExactHomologyEdge_kills_boundaries F S)
 
-/-- Its original cycles/homology projection characteristic. -/
+/-- Let C and D have zero morphisms, and let F:C → D preserve zero
+morphisms and finite limits. Let S be a short complex with chosen
+homology, and assume S mapped by F also has its chosen homology.
+
+For γ:Z(F(S)) → F(Z(S)), q_S and q_{F(S)} the homology projections, the edge satisfies ε∘q_{F(S)}=F(q_S)∘γ. -/
 theorem leftExactHomologyEdge_characteristic :
     (S.map F).homologyπ ≫ leftExactHomologyEdge F S =
       leftExactCyclesComparison F S ≫ F.map S.homologyπ :=
@@ -96,7 +133,10 @@ section ComplexMorphism
 
 variable (T : ShortComplex C) [T.HasHomology] [(T.map F).HasHomology] (φ : S ⟶ T)
 
-/-- The preserved-kernel cycles comparison is natural in short-complex morphisms. -/
+/-- Let C,D have zero morphisms and F:C → D preserve zero morphisms and
+finite limits. For a short-complex morphism φ:S → T, choose homology
+of S,T and both F-images. The cycles comparisons satisfy
+γ_T∘Z(F(φ))=F(Z(φ))∘γ_S. -/
 theorem leftExactCyclesComparison_map_naturality :
     ShortComplex.cyclesMap (S₁ := S.map F) (S₂ := T.map F)
       (F.mapShortComplex.map φ) ≫ leftExactCyclesComparison F T =
@@ -122,8 +162,10 @@ theorem leftExactCyclesComparison_map_naturality :
       congrArg (leftExactCyclesComparison F S ≫ ·) (F.map_comp _ _)
     _ = _ := (Category.assoc _ _ _).symm
 
-/-- The forward homology edge is natural in short-complex morphisms without
-assuming preservation of homology or cokernels. -/
+/-- Let C,D have zero morphisms and F:C → D preserve zero morphisms and
+finite limits. For a short-complex morphism φ:S → T, choose homology
+of S,T and their F-images. The homology edges satisfy
+ε_T∘H(F(φ))=F(H(φ))∘ε_S. -/
 theorem leftExactHomologyEdge_map_naturality :
     ShortComplex.homologyMap (S₁ := S.map F) (S₂ := T.map F)
       (F.mapShortComplex.map φ) ≫ leftExactHomologyEdge F T =
@@ -164,7 +206,10 @@ section Naturality
 variable (G : C ⥤ D) [G.PreservesZeroMorphisms] [PreservesFiniteLimits G]
 variable [(S.map G).HasHomology] (τ : F ⟶ G)
 
-/-- Actual cycles comparison is natural between genuinely left-exact functors. -/
+/-- Let C,D have zero morphisms, let F,G:C → D preserve zero morphisms
+and finite limits, and τ:F → G be natural. For a short complex S with
+chosen homology of S,F(S),G(S), the cycles comparisons satisfy
+γ_G∘Z(τ_S)=τ_{Z(S)}∘γ_F. -/
 theorem leftExactCyclesComparison_naturality :
     ShortComplex.cyclesMap (S.mapNatTrans τ) ≫ leftExactCyclesComparison G S =
       leftExactCyclesComparison F S ≫ τ.app S.cycles := by
@@ -187,8 +232,10 @@ theorem leftExactCyclesComparison_naturality :
       congrArg (fun a => leftExactCyclesComparison F S ≫ a) (τ.naturality S.iCycles)
     _ = _ := (Category.assoc _ _ _).symm
 
-/-- The genuine forward homology edge is natural; no homology preservation
-of the compact section functor is used. -/
+/-- Let C,D have zero morphisms, let F,G:C → D preserve zero morphisms
+and finite limits, and τ:F → G be natural. For a short complex S with
+chosen homology of S,F(S),G(S), the edges satisfy
+ε_G∘H(τ_S)=τ_{H(S)}∘ε_F. -/
 theorem leftExactHomologyEdge_naturality :
     ShortComplex.homologyMap (S.mapNatTrans τ) ≫ leftExactHomologyEdge G S =
       leftExactHomologyEdge F S ≫ τ.app S.homology := by
@@ -229,7 +276,11 @@ section ExactFunctor
 
 variable [F.PreservesHomology]
 
-/-- With actual homology preservation, the forward edge is the native comparison homomorphism. -/
+/-- Let C and D have zero morphisms, and let F:C → D preserve zero
+morphisms and finite limits. Let S be a short complex with chosen
+homology, and assume S mapped by F also has its chosen homology.
+
+If F also preserves homology, its edge H(F(S)) → F(H(S)) equals the forward map of the canonical homology comparison isomorphism. -/
 theorem leftExactHomologyEdge_eq_mapHomologyIso_hom :
     leftExactHomologyEdge F S = (S.mapHomologyIso F).hom := by
   let c := KernelFork.ofι S.iCycles S.iCycles_g

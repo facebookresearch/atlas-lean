@@ -1,4 +1,6 @@
-# Of Sign Twist d₂
+# The anticommuting second differential after a round trip
 
-Twisting and untwisting twice is literally the identity on each vertical
-differential, because every integer unit squares to one.
+The anticommuting second differential after a round trip.
+
+Twisting and converting back multiplies d₂ by ε(i₁)² = 1, so the original second differential
+is recovered.

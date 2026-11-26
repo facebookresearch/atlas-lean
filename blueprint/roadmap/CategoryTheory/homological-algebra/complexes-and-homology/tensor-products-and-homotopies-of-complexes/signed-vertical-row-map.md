@@ -1,4 +1,6 @@
-# Signed Vertical Row Map
+# The signed second differential as a map between rows
 
-The signed vertical differential as a chain map between horizontal rows.
-Its component is exactly `ε i₁ • dᵛ`, the source-level sign trick.
+The signed second differential as a map between rows.
+
+For second degrees i₂,i₂′, the maps ε(i₁)·d₂(i₁,i₂,i₂′) form a morphism between the first-
+direction row complexes.

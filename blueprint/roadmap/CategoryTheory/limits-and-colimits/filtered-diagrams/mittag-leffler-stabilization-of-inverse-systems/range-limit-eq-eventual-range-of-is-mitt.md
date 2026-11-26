@@ -1,4 +1,7 @@
-# Range limit π eq eventual Range of is Mittag Leffler
+# Range of a Type-valued Mittag–Leffler limit projection
 
-Every projection of the actual chosen limit of a Mittag--Leffler inverse
-sequence has exactly its native eventual range as image.
+Range of a Type-valued Mittag–Leffler limit projection.
+
+For a Mittag–Leffler inverse tower F of types with a chosen limit, Im(limit.π F (op n)) =
+F.eventualRange(op n) for every n : ℕ. A section gives an element of the limit, and every
+eventual-range element extends to such a section.

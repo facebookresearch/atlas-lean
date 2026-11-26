@@ -1,3 +1,5 @@
-# Homogeneous Subcomplex
+# Differential-stable homogeneous subcomplex
 
-Degreewise original submodules preserved by the original differential.
+For a commutative ring R and an integer-indexed cochain complex C of
+R-modules, a homogeneous subcomplex is a family of submodules Sₙ⊆Cⁿ
+satisfying d_Cⁿ(x)∈Sₙ₊₁ for every x∈Sₙ and integer n.

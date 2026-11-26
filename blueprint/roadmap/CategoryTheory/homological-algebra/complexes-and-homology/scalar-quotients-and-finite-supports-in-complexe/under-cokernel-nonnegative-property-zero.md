@@ -1,3 +1,5 @@
-# Under Cokernel Nonnegative Property zero Under iff
+# The cokernel support condition for a zero under-map
 
-For a zero under arrow, the support condition is the original target's negative support.
+The cokernel support condition for a zero under-map.
+
+For the zero map I → X, the condition is exactly that X has zero negative-degree terms.

@@ -1,3 +1,7 @@
-# Native Tor Finite Length devissage
+# Tor Euler dévissage after flat scalar extension
 
-Actual finite-length coefficients inherit the residue native cutoff and Euler multiplier.
+Tor Euler dévissage after flat scalar extension.
+
+For a flat R-algebra S and finite-length R-module N, finite-length and vanishing bounds for
+Tor^S(M,S⊗_R κ) pass to Tor^S(M,S⊗_R N). Its alternating sum below the common cutoff is ℓ_R(N)
+times the residue-coefficient sum.

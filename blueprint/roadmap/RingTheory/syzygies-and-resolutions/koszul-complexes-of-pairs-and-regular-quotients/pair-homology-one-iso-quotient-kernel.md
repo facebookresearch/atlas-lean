@@ -1,4 +1,6 @@
-# Pair Homology One Iso Quotient Kernel
+# The degree-one pair homology isomorphism after regularity
 
-Abstract degree-one two-generator Koszul homology identifies with the
-kernel of multiplication by `g` on `R/(f)` when `f` acts injectively.
+The degree-one pair homology isomorphism after regularity.
+
+For injective multiplication by f, H₁(K(f,g)) is isomorphic to ker(g on R/(f)), using the
+coordinate comparison.

@@ -1,4 +1,5 @@
-# Exact Sequence Four Short Complex g ι
+# The extracted kernel map recovers the third arrow
 
-The last extracted map factors the third arrow of the original sequence
-through the kernel of the fourth.
+The extracted kernel map recovers the third arrow.
+
+The extracted map A₂ → ker(A₃ → A₄) followed by the kernel inclusion equals A₂ → A₃.

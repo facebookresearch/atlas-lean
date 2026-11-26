@@ -1,3 +1,5 @@
-# Map Bialg Equiv
+# The bialgebra equivalence induced by a Lie equivalence
 
-A Lie equivalence induces a bialgebra equivalence by the canonical enveloping maps.
+The bialgebra equivalence induced by a Lie equivalence.
+
+Use the enveloping maps of the Lie equivalence and its inverse.

@@ -1,4 +1,6 @@
-# Eq sum localized Length mul of support Dim le
+# The local Koszul Euler sum weighted by localized lengths
 
-The actual full-family Euler characteristic has its original localized
-module multiplicities under the local family-size support dimension bound.
+The local Koszul Euler sum weighted by localized lengths.
+
+Under the family-size support-dimension bound, the coefficient Euler invariant is the
+distinct-factor sum of localized module lengths times prime-factor values.

@@ -1,3 +1,8 @@
-# Length and colength of modules
+# Prime-localization sum for scalar length of an Artinian algebra
 
-The actual prime-localization product decomposes scalar length over every commutative base ring.
+Prime-localization sum for scalar length of an Artinian algebra.
+
+For a commutative Artinian R-algebra A, with R any commutative ring, ℓ_R(A) = Σ_{p∈Spec A}
+ℓ_R(A_p). The finite sum is taken over the prime spectrum, and the equality is in ℕ∞. It
+follows from the canonical prime-localization product equivalence, restricted to the R-module
+structure.

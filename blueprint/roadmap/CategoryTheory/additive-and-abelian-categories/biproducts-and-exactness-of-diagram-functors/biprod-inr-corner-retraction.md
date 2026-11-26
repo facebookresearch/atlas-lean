@@ -1,3 +1,6 @@
-# Biprod Inr Corner Retraction
+# Retraction map for a biproduct pushout corner
 
-The actual corner retraction uses the original left retraction and the same pushout chart.
+Retraction map for a biproduct pushout corner.
+
+For a pushout comparison e : P ≅ X ⊞ B' and any r : X' → X, define the map X' ⊞ B' → P as (r ⊞
+id_B') ≫ e.inv. It is a retraction of the corner induced by x whenever x ≫ r = id_X.

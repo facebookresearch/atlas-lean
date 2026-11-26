@@ -1,3 +1,6 @@
-# Normalized Presentation Iso
+# The normalized comparison of augmented presentation families
 
-Original augmented-presentation isomorphisms induce the native normalized family comparison.
+The normalized comparison of augmented presentation families.
+
+For e : P ≅ Q between families of augmented simplicial objects, postcomposition with
+normalizedAugmentationFunctor gives their normalized family isomorphism.

@@ -1,4 +1,6 @@
-# Ext Tensor Finite Factor Equiv
+# The Ext equivalence for a finite projective tensor factor
 
-Native Ext with an arbitrary `R`-module source commutes with a finite
-projective coefficient tensor factor over `S`.
+The Ext equivalence for a finite projective tensor factor.
+
+For finite projective U, the coefficient tensor comparison gives an S-linear equivalence
+Ext_Rⁿ(P,res N) ⊗_S U ≃ Ext_Rⁿ(P,res(N ⊗_S U)).

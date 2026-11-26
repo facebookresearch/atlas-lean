@@ -1,4 +1,7 @@
-# Localization Scalar Square Iso
+# The module comparison in a commuting localization square
 
-The two actual scalar-extension modules in a localization square
-are isomorphic over the original localized base ring.
+The module comparison in a commuting localization square.
+
+If γ and δ are the localizations at T and φ(T), respectively, scalar extension along γ after
+restriction along φ is naturally identified with scalar extension along δ followed by
+restriction along ψ.

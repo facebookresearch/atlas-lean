@@ -1,3 +1,5 @@
-# First Page Row Homology Pair eq native
+# The two row homology product constructions agree
 
-Row cokernel descent agrees with the actual native homology product.
+The two row homology product constructions agree.
+
+Cokernel descent gives the same product as transport from native page homology.

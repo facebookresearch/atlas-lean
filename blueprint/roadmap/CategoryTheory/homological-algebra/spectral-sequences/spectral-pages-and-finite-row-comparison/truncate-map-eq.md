@@ -1,3 +1,5 @@
-# Truncate Map eq
+# Equality on retained pages gives equality of truncated morphisms
 
-Two restricted maps agree when their original native maps agree at every retained page.
+Equality on retained pages gives equality of truncated morphisms.
+
+If α and β agree at every r≥r₁, their truncations at r₁ are equal.

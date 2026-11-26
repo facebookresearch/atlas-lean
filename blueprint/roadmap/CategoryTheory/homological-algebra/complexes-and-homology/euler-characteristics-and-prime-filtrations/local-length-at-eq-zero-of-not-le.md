@@ -1,3 +1,5 @@
-# Local Length At eq zero of not le
+# A factor vanishes at a prime not containing its prime
 
-A prime factor localizes to zero at a prime not containing it.
+A factor vanishes at a prime not containing its prime.
+
+If p is not contained in q, the localization of R/p at q has length zero.

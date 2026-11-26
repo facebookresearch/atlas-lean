@@ -1,3 +1,5 @@
-# Truncation Functor map hom
+# Page maps of the truncation functor
 
-The functor's retained page map is the original native morphism.
+Page maps of the truncation functor.
+
+On a morphism, its page-r map is the original page-r map.

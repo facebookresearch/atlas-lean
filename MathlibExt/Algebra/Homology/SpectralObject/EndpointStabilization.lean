@@ -18,17 +18,18 @@ public import MathlibExt.Algebra.Homology.SpectralObject.StableIntervalNaturalit
 public import Mathlib.Algebra.Homology.SpectralObject.EpiMono
 
 /-!
-# Endpoint stabilization for the skeletal spectral object
+# Endpoint stabilization of spectral-object windows
 
-An actual spectral-object window identifies with its endpoint interval when
-the two omitted outer intervals vanish. The comparison uses the canonical
-indexing maps on `E`, followed by the existing image-cokernel comparison.
-There is no bound on the cohomological degree and no convergence datum is
-supplied.
+Let Y be a spectral object in an abelian category, indexed by a preorder
+with least and greatest elements. For a window i₀≤i₁≤i₂≤i₃, vanishing
+H_Y^{n+1}(⊥,i₀)=0 and H_Y^{n−1}(i₃,⊤)=0 makes extension of the
+outer cuts a canonical isomorphism
+E_Yⁿ(i₀≤i₁≤i₂≤i₃) ≅ E_Yⁿ(⊥≤i₁≤i₂≤⊤).
 
-The intended skeletal application has extended integer indices: the bottom
-space is the full CW complex and the top space is empty. Its filtration
-levels are indexed by all integers.
+The endpoint window is the quotient of the images of
+H_Yⁿ(⊥,i₁) and H_Yⁿ(⊥,i₂) in H_Yⁿ(⊥,⊤).
+Both comparisons are natural in spectral-object morphisms satisfying the
+same interval vanishings. The integer n is arbitrary.
 -/
 
 @[expose] public section
@@ -49,9 +50,11 @@ variable {D : Type u} [Category.{v} D] [Abelian D]
 variable {ι : Type w} [Preorder ι] [OrderBot ι] [OrderTop ι]
 variable (Y : SpectralObject D ι)
 
-/-- Padding an actual window to the endpoints is an isomorphism when the
-omitted left interval in degree `n + 1` and right interval in degree `n - 1`
-are zero. Both comparisons are the native spectral-object indexing maps. -/
+/-- Let D be abelian, ι a preorder with least and greatest elements,
+Y a spectral object, and i₀≤i₁≤i₂≤i₃ cuts.
+Assume H_Y^{n+1}(⊥,i₀)=0 and H_Y^{n−1}(i₃,⊤)=0.
+
+The canonical endpoint-padding isomorphism E_Yⁿ(i₀≤i₁≤i₂≤i₃) ≅ E_Yⁿ(⊥≤i₁≤i₂≤⊤), induced by extending the outer cuts to the endpoints. -/
 def finiteIntervalPaddingIso
     (n : ℤ) {i₀ i₁ i₂ i₃ : ι}
     (h₀₁ : i₀ ≤ i₁) (h₁₂ : i₁ ≤ i₂) (h₂₃ : i₂ ≤ i₃)
@@ -65,8 +68,11 @@ def finiteIntervalPaddingIso
   Y.isoMapFourδ₄Toδ₃' (⊥ : ι) i₁ i₂ i₃ (⊤ : ι)
     bot_le h₁₂ h₂₃ le_top (n - 1) n (n + 1) hright (by omega) (by omega)
 
-/-- An endpoint-stable actual window is the quotient of its two actual
-images in the full endpoint object. -/
+/-- Let D be abelian, ι a preorder with least and greatest elements,
+Y a spectral object, and i₀≤i₁≤i₂≤i₃ cuts.
+Assume H_Y^{n+1}(⊥,i₀)=0 and H_Y^{n−1}(i₃,⊤)=0.
+
+For I_i=Im(H_Yⁿ(⊥,i) → H_Yⁿ(⊥,⊤)), the canonical comparison E_Yⁿ(i₀≤i₁≤i₂≤i₃) ≅ Coker(I_{i₁} → I_{i₂}). -/
 def finiteIntervalImageCokernelIso
     (n : ℤ) {i₀ i₁ i₂ i₃ : ι}
     (h₀₁ : i₀ ≤ i₁) (h₁₂ : i₁ ≤ i₂) (h₂₃ : i₂ ≤ i₃)
@@ -80,7 +86,11 @@ def finiteIntervalImageCokernelIso
 
 variable {Y Z : SpectralObject D ι}
 
-/-- Endpoint padding is natural for the native maps on actual `E` windows. -/
+/-- Let D be abelian, ι a preorder with endpoints, and φ:Y → Z a
+spectral-object map. For i₀≤i₁≤i₂≤i₃, suppose
+H_W^{n+1}(⊥,i₀)=0 and H_W^{n−1}(i₃,⊤)=0 for W=Y,Z.
+The endpoint-padding isomorphisms commute with φ on the four-cut
+windows and on the full endpoint windows. -/
 @[reassoc]
 theorem Hom.finiteIntervalPaddingIso_naturality
     (φ : Y ⟶ Z) (n : ℤ) {i₀ i₁ i₂ i₃ : ι}
@@ -128,8 +138,12 @@ theorem Hom.finiteIntervalPaddingIso_naturality
     (LY.inv ≫ RY.hom) ≫ φ.stableIntervalMap n h₁₂
   rw [← Category.assoc, hLinv, Category.assoc, ← hR, ← Category.assoc]
 
-/-- The finite-window comparison is natural on the actual associated image
-quotients, with no quotient map supplied as an input. -/
+/-- Let D be abelian, ι a preorder with endpoints, and φ:Y → Z a
+spectral-object map. For i₀≤i₁≤i₂≤i₃, suppose
+H_W^{n+1}(⊥,i₀)=0 and H_W^{n−1}(i₃,⊤)=0 for W=Y,Z.
+The four-cut comparisons with Coker(I_{i₁}(W) → I_{i₂}(W)) commute
+with φ on E-windows and on the image quotients, where
+I_i(W)=Im(H_Wⁿ(⊥,i) → H_Wⁿ(⊥,⊤)). -/
 @[reassoc]
 theorem Hom.finiteIntervalImageCokernelIso_naturality
     (φ : Y ⟶ Z) (n : ℤ) {i₀ i₁ i₂ i₃ : ι}

@@ -16,14 +16,14 @@ public import Mathlib.Algebra.Ring.Hom.Defs
 public import Mathlib.Data.Set.Lattice.Indexed
 
 /-!
-# The vector range of a possibly nonunital operator representation
+# The vector range of a nonunital operator homomorphism
 
-For a multiplicative operator representation of a unital semiring, every
-represented vector lies in the range of the image of the source unit.
-Conversely that unit range is already one of the represented vector ranges.
-Thus their union is the actual linear range of that single endomorphism.
+For a nonunital ring homomorphism ρ from a unital semiring A to R-linear endomorphisms of a
+semimodule H, multiplication gives ρ(1)ρ(a)=ρ(a). Every represented vector therefore lies in
+the range of ρ(1), and that range is itself a represented range.
 
-No unit-preservation, topology, norm, star or nontriviality is assumed.
+Consequently the union of all operator ranges equals range(ρ(1)), with the scalar, operator
+and carrier universes independent.
 -/
 
 public section
@@ -36,8 +36,9 @@ variable {R : Type uR} [Semiring R]
 variable {A : Type uA} [Semiring A]
 variable {H : Type uH} [AddCommMonoid H] [Module R H]
 
-/-- The represented vector ranges of a possibly nonunital operator homomorphism
-have union equal to the actual range of the image of the source unit. -/
+/-- The union of represented vector ranges is the unit-image range.
+
+For a possibly nonunital operator homomorphism, ⋃_a range(ρ(a))=range(ρ(1)). -/
 theorem iUnion_range_apply_eq_range_one (ρ : A →ₙ+* Module.End R H) :
     (⋃ a : A, Set.range (ρ a : H → H)) = Set.range (ρ 1 : H → H) := by
   ext y

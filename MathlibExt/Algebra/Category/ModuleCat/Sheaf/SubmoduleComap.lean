@@ -15,13 +15,15 @@ module
 public import Mathlib.Algebra.Category.ModuleCat.Sheaf.Submodule
 
 /-!
-# Preimages of submodules of sheaves of modules
+# Preimages of submodules of module presheaves and sheaves
 
-Pulling back a submodule along a morphism uses the stock pointwise
-`Submodule.comap`. Naturality preserves restriction stability, and its
-membership sieve is the membership sieve of the actual image section.
-Consequently a sheaf submodule has a sheaf submodule as its preimage.
-The induced map to the original submodule has the literal inclusion triangle.
+Let `R` be a presheaf of rings, `f : M → P` a morphism of module presheaves, and `N` a
+submodule of `P`. The preimage has component `f_X⁻¹(N_X)` at each object. Naturality of `f`
+makes it stable under restriction, and the membership sieve of a section `x` equals the
+membership sieve of its image `f_X(x)` in `N`.
+
+If `R,M,P,N` are sheaves on a site, the preimage is a sheaf submodule of `M`. The restricted
+morphism `f⁻¹N → N` commutes with both inclusions: `f|_{f⁻¹N} ≫ ι_N = ι_{f⁻¹N} ≫ f`.
 -/
 
 @[expose] public section
@@ -36,8 +38,11 @@ namespace PresheafOfModules.Submodule
 variable {C : Type u₁} [Category.{v₁} C] {R : Cᵒᵖ ⥤ RingCat.{u}}
   {M P : PresheafOfModules.{v} R}
 
-/-- The pointwise preimage of a presheaf submodule, with restriction
-stability earned from the actual morphism's naturality. -/
+/-- Let `C : Type u₁` have morphism universe `v₁`, `R : Cᵒᵖ ⥤ RingCat.{u}`, and `M,P` be module
+presheaves of carrier universe `v`. For a submodule presheaf `N≤P` and a morphism `f : M → P`,
+`N.comap f` is the submodule presheaf of `M` with component `Submodule.comap (f.app X).hom
+(N.obj X)` at `X : Cᵒᵖ`. Equivalently, its sections are those whose images under `f` lie in
+`N`. -/
 def comap (N : P.Submodule) (f : M ⟶ P) : M.Submodule where
   obj X := (N.obj X).comap (f.app X).hom
   map {X Y} g := by
@@ -46,12 +51,16 @@ def comap (N : P.Submodule) (f : M ⟶ P) : M.Submodule where
     rw [PresheafOfModules.naturality_apply]
     exact N.map_mem g hx
 
-/-- The preimage has exactly the stock pointwise linear-map preimage. -/
+/-- Let `R` be a presheaf of rings on a category `C`, `f : M → P` a morphism of `R`-module
+presheaves, and `N≤P` a submodule presheaf. For `X : Cᵒᵖ`, `(N.comap f).obj X = (N.obj
+X).comap (f.app X).hom`, the linear-map preimage of the submodule `N(X)`. -/
 theorem comap_obj (N : P.Submodule) (f : M ⟶ P) (X : Cᵒᵖ) :
     (N.comap f).obj X = (N.obj X).comap (f.app X).hom := rfl
 
-/-- Local preimage membership is exactly local membership of the actual
-image section, through the original morphism and restriction maps. -/
+/-- Let `R` be a presheaf of rings on `C`, `f : M → P` a module-presheaf morphism, `N≤P` a
+submodule presheaf, `X : Cᵒᵖ`, and `x∈M(X)`. The sieve of arrows along which `x` restricts
+into `N.comap f` equals the sieve along which `(f.app X)(x)` restricts into `N`: `(N.comap
+f).toSubfunctor.sieveOfSection x = N.toSubfunctor.sieveOfSection ((f.app X) x)`. -/
 theorem comap_sieveOfSection (N : P.Submodule) (f : M ⟶ P) {X : Cᵒᵖ} (x : M.obj X) :
     (N.comap f).toSubfunctor.sieveOfSection x =
       N.toSubfunctor.sieveOfSection ((f.app X) x) := by
@@ -62,7 +71,9 @@ theorem comap_sieveOfSection (N : P.Submodule) (f : M ⟶ P) {X : Cᵒᵖ} (x : 
   simp only [Opposite.op_unop]
   rfl
 
-/-- Restrict the actual morphism to its submodule preimage. -/
+/-- Let `R` be a presheaf of rings, `f : M → P` a morphism of module presheaves, and `N≤P` a
+submodule presheaf. The morphism `N.comapLift f : (N.comap f).toPresheafOfModules →
+N.toPresheafOfModules` restricts each component `f_X` to the preimage submodule `f_X⁻¹(N_X)`. -/
 def comapLift (N : P.Submodule) (f : M ⟶ P) :
     (N.comap f).toPresheafOfModules ⟶ N.toPresheafOfModules where
   app X := ModuleCat.ofHom
@@ -72,7 +83,9 @@ def comapLift (N : P.Submodule) (f : M ⟶ P) :
     apply Subtype.ext
     exact PresheafOfModules.naturality_apply f g x.val
 
-/-- The restriction to the actual preimage commutes with both inclusions. -/
+/-- Let `R` be a presheaf of rings, `f : M → P` a morphism of module presheaves, and `N≤P` a
+submodule presheaf. The restricted map satisfies `N.comapLift f ≫ N.ι = (N.comap f).ι ≫ f`, as
+morphisms from the preimage submodule presheaf to `P`. -/
 @[reassoc] theorem comapLift_ι (N : P.Submodule) (f : M ⟶ P) :
     N.comapLift f ≫ N.ι = (N.comap f).ι ≫ f := by
   ext X x
@@ -85,8 +98,10 @@ namespace SheafOfModules.Submodule
 variable {C : Type u₁} [Category.{v₁} C] {J : GrothendieckTopology C}
   {R : Sheaf J RingCat.{u}} {M P : SheafOfModules.{v} R}
 
-/-- The full preimage of a sheaf submodule; sheaf locality is earned from
-the same actual image section and its membership sieve. -/
+/-- Let `C : Type u₁` have morphism universe `v₁`, `J` a Grothendieck topology, `R : Sheaf J
+RingCat.{u}`, and `M,P : SheafOfModules.{v} R`. For a sheaf submodule `N≤P` and `f : M → P`,
+`N.comap f` is the sheaf submodule of `M` whose component is the preimage `f_X⁻¹(N_X)` at each
+object. Its underlying presheaf submodule is `N.toSubmodule.comap f.val`. -/
 def comap (N : P.Submodule) (f : M ⟶ P) : M.Submodule where
   toSubmodule := N.toSubmodule.comap f.val
   isSheaf := by
@@ -95,16 +110,22 @@ def comap (N : P.Submodule) (f : M ⟶ P) : M.Submodule where
     rw [← PresheafOfModules.Submodule.comap_sieveOfSection N.toSubmodule f.val x]
     exact hx
 
-/-- The sheaf preimage uses the same underlying presheaf submodule preimage. -/
+/-- On a site `(C,J)` with a sheaf of rings `R`, let `f : M → P` be a morphism of module sheaves
+and `N≤P` a sheaf submodule. Then `(N.comap f).toSubmodule = N.toSubmodule.comap f.val`:
+taking the underlying presheaf submodule commutes with preimage under `f`. -/
 theorem comap_toSubmodule (N : P.Submodule) (f : M ⟶ P) :
     (N.comap f).toSubmodule = N.toSubmodule.comap f.val := rfl
 
-/-- The actual map from the full preimage sheaf to the original submodule. -/
+/-- On a ringed site `(C,J,R)`, let `f : M → P` be a morphism of module sheaves and `N≤P` a sheaf
+submodule. The morphism `N.comapLift f : (N.comap f).toSheafOfModules → N.toSheafOfModules`
+restricts `f` to the preimage of `N`, with component the linear map `f_X : f_X⁻¹(N_X) → N_X`. -/
 def comapLift (N : P.Submodule) (f : M ⟶ P) :
     (N.comap f).toSheafOfModules ⟶ N.toSheafOfModules where
   val := N.toSubmodule.comapLift f.val
 
-/-- Both original sheaf inclusions commute with the map from the full preimage. -/
+/-- On a ringed site `(C,J,R)`, let `f : M → P` be a morphism of module sheaves and `N≤P` a sheaf
+submodule. The preimage restriction and inclusions satisfy `N.comapLift f ≫ N.ι = (N.comap
+f).ι ≫ f`, as morphisms from the preimage sheaf to `P`. -/
 @[reassoc] theorem comapLift_ι (N : P.Submodule) (f : M ⟶ P) :
     N.comapLift f ≫ N.ι = (N.comap f).ι ≫ f := by
   apply (SheafOfModules.forget R).map_injective

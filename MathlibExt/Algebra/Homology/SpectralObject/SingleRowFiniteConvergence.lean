@@ -18,13 +18,19 @@ public import MathlibExt.Algebra.Homology.SpectralObject.FiniteStripSuccessor
 public import MathlibExt.Algebra.Homology.GenericSpectralSequenceMapCompatibility
 
 /-!
-# Finite convergence for single-row spectral objects
+# Finite convergence of a first page supported in one row
 
-For a spectral object with vanishing endpoint intervals and a first page
-supported in row zero, the second page is canonically its full endpoint
-object. The comparison uses the original page successors and subobject
-filtration, is independent of the finite bound, and is natural for
-morphisms of spectral objects.
+Let Y be an EInt-indexed spectral object in an abelian category. For N∈ℕ,
+suppose H_Yᵐ(−∞,i)=0 for i≤−N−1 and H_Yᵐ(i,+∞)=0 for i≥0
+in every integer degree m, and suppose E₁^{p,q}=0 for q≠0.
+Then the associated graded of A_n=H_Yⁿ(−∞,+∞) is zero except at
+filtration degree p=n.
+
+The second page is canonically E₂^{p,q} ≅ GrᵖA_{p+q}, through any late
+page K+2 with K≥N. These comparisons agree for all such K and for any
+two valid finite bounds. In row zero this gives E₂^{n,0} ≅ A_n for every
+integer n, natural in spectral-object morphisms satisfying the same
+endpoint and row-support conditions.
 -/
 
 @[expose] public section
@@ -42,7 +48,13 @@ namespace CategoryTheory.Abelian.SpectralObject
 variable {C : Type u} [Category.{v} C] [Abelian C]
 variable (Y : SpectralObject C EInt)
 
-/-- Actual finite convergence transports the ordinary row support to the endpoint restriction graded. -/
+/-- Let C be abelian and Y an EInt-indexed spectral object.
+Set A_n=H_Yⁿ(−∞,+∞), FᵖA_n=Ker(A_n → H_Yⁿ(−p,+∞)),
+and GrᵖA_n=FᵖA_n/Fᵖ⁺¹A_n. Fix N∈ℕ. For all integers m assume
+H_Yᵐ(−∞,i)=0 for i≤−N−1 and H_Yᵐ(i,+∞)=0 for i≥0.
+Assume the first page E₁^{p,q} is zero whenever q≠0.
+
+If p≠n, the associated-graded object GrᵖA_n is zero. -/
 theorem isZero_skeletalAbutmentGraded_of_singleRow
     (N : ℕ)
     (hfull : ∀ n i : ℤ, i ≤ -(N : ℤ) - 1 →
@@ -58,7 +70,13 @@ theorem isZero_skeletalAbutmentGraded_of_singleRow
   exact ((Y.skeletalSpectralSequence).isZero_page_of_firstPage_off_row
     hrow ((N : ℤ) + 2) (by omega) p (n - p) (by omega)).of_iso e.symm
 
-/-- The actual ordinary second page compared to the endpoint graded at an arbitrary later native page. -/
+/-- Let C be abelian and Y an EInt-indexed spectral object.
+Set A_n=H_Yⁿ(−∞,+∞), FᵖA_n=Ker(A_n → H_Yⁿ(−p,+∞)),
+and GrᵖA_n=FᵖA_n/Fᵖ⁺¹A_n. Fix N∈ℕ. For all integers m assume
+H_Yᵐ(−∞,i)=0 for i≤−N−1 and H_Yᵐ(i,+∞)=0 for i≥0.
+Assume the first page E₁^{p,q} is zero whenever q≠0.
+
+For any K∈ℕ with N≤K and p,q∈ℤ, the canonical comparison E₂^{p,q} ≅ GrᵖA_{p+q} obtained by passing through page K+2. -/
 def singleRowFiniteSecondPageGradedIsoAtNatPage
     (N : ℕ)
     (hfull : ∀ n i : ℤ, i ≤ -(N : ℤ) - 1 →
@@ -110,7 +128,13 @@ private theorem singleRowFiniteSecondPageGradedIsoAtNatPage_hom_succ
       (((K : ℤ) + 2) + 1) (((K + 1 : ℕ) : ℤ) + 2) (by omega) (by omega) p q,
     hs, Y.finiteSkeletalSuccessorIso_comp_graded N hfull hempty ((K : ℤ) + 2) (by omega) p q]
 
-/-- The ordinary graded comparison is unchanged when the actual late native page is increased. -/
+/-- Let C be abelian and Y an EInt-indexed spectral object.
+Set A_n=H_Yⁿ(−∞,+∞), FᵖA_n=Ker(A_n → H_Yⁿ(−p,+∞)),
+and GrᵖA_n=FᵖA_n/Fᵖ⁺¹A_n. Fix N∈ℕ. For all integers m assume
+H_Yᵐ(−∞,i)=0 for i≤−N−1 and H_Yᵐ(i,+∞)=0 for i≥0.
+Assume the first page E₁^{p,q} is zero whenever q≠0.
+
+For every K≥N, the forward second-page-to-graded comparison through page K+2 equals the comparison through page N+2. -/
 theorem singleRowFiniteSecondPageGradedIsoAtNatPage_hom_eq_of_le
     (N : ℕ)
     (hfull : ∀ n i : ℤ, i ≤ -(N : ℤ) - 1 →
@@ -130,7 +154,11 @@ theorem singleRowFiniteSecondPageGradedIsoAtNatPage_hom_eq_of_le
       N hfull hempty hrow (N + d) (by omega) p q
     simpa only [Nat.add_assoc] using hs.symm.trans (ih (by omega))
 
-/-- The ordinary second-page graded comparison is independent of the genuine finite dimension bound. -/
+/-- Let Y be an EInt-indexed spectral object in an abelian category and
+N,M∈ℕ. In every degree a assume H_Yᵃ(−∞,i)=0 for i≤−N−1
+and for i≤−M−1, and H_Yᵃ(i,+∞)=0 for i≥0.
+Assume E₁^{p,q}=0 for q≠0. The second-page graded comparisons
+through N+2 and M+2 are equal for all p,q∈ℤ. -/
 theorem singleRowFiniteSecondPageGradedIsoAtNatPage_hom_eq_of_bounds
     (N M : ℕ)
     (hfullN : ∀ n i : ℤ, i ≤ -(N : ℤ) - 1 →
@@ -154,7 +182,13 @@ theorem singleRowFiniteSecondPageGradedIsoAtNatPage_hom_eq_of_bounds
     _ = _ := Y.singleRowFiniteSecondPageGradedIsoAtNatPage_hom_eq_of_le
       M hfullM hempty hrow (N + M) (by omega) p q
 
-/-- At a specified finite skeletal bound, the ordinary second page is the actual full endpoint object. -/
+/-- Let C be abelian and Y an EInt-indexed spectral object.
+Set A_n=H_Yⁿ(−∞,+∞), FᵖA_n=Ker(A_n → H_Yⁿ(−p,+∞)),
+and GrᵖA_n=FᵖA_n/Fᵖ⁺¹A_n. Fix N∈ℕ. For all integers m assume
+H_Yᵐ(−∞,i)=0 for i≤−N−1 and H_Yᵐ(i,+∞)=0 for i≥0.
+Assume the first page E₁^{p,q} is zero whenever q≠0.
+
+For every n∈ℤ, the canonical isomorphism E₂^{n,0} ≅ A_n=H_Yⁿ(−∞,+∞), obtained from the single nonzero associated-graded degree. -/
 def singleRowFiniteSecondPageAbutmentIso
     (N : ℕ)
     (hfull : ∀ n i : ℤ, i ≤ -(N : ℤ) - 1 →
@@ -172,7 +206,12 @@ def singleRowFiniteSecondPageAbutmentIso
       Subobject.finiteFiltrationSingleGradeIso (Y.skeletalAbutmentFiltration n)
         (Y.skeletalAbutmentFiltration_antitone n) N h₀ hN n hz
 
-/-- The actual ordinary second-page comparison with the full endpoint is independent of its finite bound. -/
+/-- Let Y be an EInt-indexed spectral object in an abelian category.
+For N,M∈ℕ assume both lower-end vanishings H_Yᵃ(−∞,i)=0
+for i≤−N−1 and i≤−M−1, the upper-end vanishing H_Yᵃ(i,+∞)=0
+for i≥0, and E₁^{p,q}=0 for q≠0.
+The forward comparisons E₂^{n,0} → H_Yⁿ(−∞,+∞) formed from N and
+M agree for every integer n. -/
 theorem singleRowFiniteSecondPageAbutmentIso_hom_eq_of_bounds
     (N M : ℕ)
     (hfullN : ∀ n i : ℤ, i ≤ -(N : ℤ) - 1 →
@@ -205,7 +244,11 @@ private theorem skeletalAbutmentGradedMap_degreeCast (φ : Y ⟶ Z)
   subst n'
   simp only [eqToIso_refl, Iso.refl_hom, Category.comp_id, Category.id_comp]
 
-/-- The actual ordinary second-page graded comparison is natural for native spectral-object maps. -/
+/-- Let φ:Y → Z be a map of EInt-indexed spectral objects in an abelian
+category. For a common N∈ℕ, both objects satisfy all-degree endpoint
+vanishings below −N−1 and above 0, and their first pages vanish off row
+zero. For K≥N, their comparisons E₂^{p,q} ≅ GrᵖA_{p+q} through
+page K+2 commute with the second-page and associated-graded maps of φ. -/
 @[reassoc]
 theorem singleRowFiniteSecondPageGradedIsoAtNatPage_naturality
     (φ : Y ⟶ Z) (N : ℕ)
@@ -234,7 +277,12 @@ theorem singleRowFiniteSecondPageGradedIsoAtNatPage_naturality
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The ordinary second-page comparison is natural for the actual map of full endpoint intervals. -/
+/-- Let φ:Y → Z be a map of EInt-indexed spectral objects in an abelian
+category. For a common N∈ℕ and every degree a, both objects satisfy
+Hᵃ(−∞,i)=0 for i≤−N−1 and Hᵃ(i,+∞)=0 for i≥0,
+and both first pages vanish when q≠0.
+The comparisons E₂^{n,0} ≅ Hⁿ(−∞,+∞) commute with the second-page
+map at (n,0) and the full-endpoint interval map induced by φ. -/
 @[reassoc]
 theorem singleRowFiniteSecondPageAbutmentIso_naturality
     (φ : Y ⟶ Z) (N : ℕ)

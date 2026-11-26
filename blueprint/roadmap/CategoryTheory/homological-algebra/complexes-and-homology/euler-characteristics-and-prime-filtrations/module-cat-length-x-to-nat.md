@@ -1,3 +1,6 @@
-# Module Cat length X₂ to Nat
+# The natural-number length decomposition of a finite middle term
 
-The actual middle length is the sum of finite homology and the two finite ranges.
+The natural-number length decomposition of a finite middle term.
+
+For finite-length S₂, its natural-number length equals those of homology and the two
+differential ranges added together.

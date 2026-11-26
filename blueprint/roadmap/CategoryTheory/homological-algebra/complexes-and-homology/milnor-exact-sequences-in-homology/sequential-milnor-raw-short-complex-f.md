@@ -1,4 +1,9 @@
-# Sequential Milnor Raw Short Complex π f
+# Boundary factorization through the homology-difference cokernel
 
-The quotient map into the raw short complex is the actual connecting map
-in Mathlib's long homology sequence.
+Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has countable products and sequential inverse limits,
+Δ_K:P(K) → P(K), with coordinates xₙ−tₙ(xₙ₊₁), is epic, and c.Rel(i,j).
+Let δ:H_i(P(K)) → H_j(lim K) and ρ:H_j(lim K) → H_j(P(K)) be the
+boundary and inclusion maps for 0 → lim K → P(K) —Δ_K→ P(K) → 0.
+
+For the quotient q:H_i(P(K)) → Coker(H_i(Δ_K)) and the left map f of the extracted sequence, f∘q=δ.

@@ -1,4 +1,6 @@
-# Stalk Ring Cat Iso
+# The stalk isomorphism for forgetting ring commutativity
 
-The `RingCat` stalk of `R ⋙ forget₂` is the image of the `CommRingCat`
-stalk, since `forget₂ CommRingCat RingCat` preserves filtered colimits.
+The stalk isomorphism for forgetting ring commutativity.
+
+The ring underlying the CommRingCat stalk R_x is isomorphic to the RingCat stalk of R with
+commutativity forgotten.

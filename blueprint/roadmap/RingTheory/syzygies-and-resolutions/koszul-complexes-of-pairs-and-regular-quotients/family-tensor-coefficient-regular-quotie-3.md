@@ -1,4 +1,5 @@
-# Family Tensor Coefficient Regular Quotient Homology Iso
+# Homology comparison after a regular last coefficient scalar
 
-Every original homology degree is identified with the actual smaller
-family homology on the actual regular scalar quotient.
+Homology comparison after a regular last coefficient scalar.
+
+For every j ≥ 0, the regular last-quotient projection induces a homology isomorphism.

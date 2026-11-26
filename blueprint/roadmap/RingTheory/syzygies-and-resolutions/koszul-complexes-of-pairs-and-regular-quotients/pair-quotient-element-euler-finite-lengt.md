@@ -1,4 +1,6 @@
-# Pair Quotient Element Euler Finite Length
+# Finite Euler data over the first quotient ring
 
-Intrinsic one-element Euler finiteness data on the first principal
-quotient.
+Finite Euler data over the first quotient ring.
+
+The same multiplication by the image of g on R/(f) has finite kernel and cokernel lengths over
+that quotient ring.

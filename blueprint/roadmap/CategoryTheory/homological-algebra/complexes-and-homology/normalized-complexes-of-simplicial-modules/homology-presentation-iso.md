@@ -1,3 +1,6 @@
-# Homology Presentation Iso
+# The homology comparison of augmented presentation families
 
-The original augmented-presentation isomorphism gives its computed homology family comparison.
+The homology comparison of augmented presentation families.
+
+For e : P ≅ Q and degree n, postcomposition with homologyAugmentationFunctor n gives the
+family comparison on the homology of both sides of the augmentation.

@@ -1,4 +1,6 @@
-# Comm Ring Cat Forget₂Id
+# The identity comparison of underlying ring presheaves
 
-The α argument for `PresheafOfModules.sheafification` when the presheaf of rings is
-a sheaf of commutative rings.
+The identity comparison of underlying ring presheaves.
+
+For a commutative ring sheaf R, its underlying ring presheaf is identified with the presheaf
+underlying its ring-valued sheaf composition. The comparison morphism is the identity.

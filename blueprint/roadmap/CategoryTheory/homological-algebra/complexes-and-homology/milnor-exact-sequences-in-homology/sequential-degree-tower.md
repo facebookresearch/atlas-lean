@@ -1,4 +1,6 @@
-# Sequential Degree Tower
+# Inverse tower in a fixed complex degree
 
-The inverse tower obtained by evaluating a tower of complexes in one
-degree.
+Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c.
+
+Evaluation at degree i gives the inverse tower with objects Kₙᵢ and transitions the degree-i components of the tower maps.

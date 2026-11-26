@@ -1,3 +1,5 @@
-# Family Ideal eq maximal Ideal
+# The ideal of a maximal-ideal generating family
 
-A finite family spanning the maximal ideal has maximal family ideal.
+The ideal of a maximal-ideal generating family.
+
+If the family spans the maximal ideal, its Koszul family ideal equals that maximal ideal.

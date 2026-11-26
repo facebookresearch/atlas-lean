@@ -1,3 +1,5 @@
-# Step Class To E
+# The map from step classes to a four-cut quotient
 
-Bottom-to-cut interval classes map to the four-cut `E` object via the cycle quotient.
+The map from step classes to a four-cut quotient.
+
+For a≤b≤c≤d, lift the class to cycles and project to E(a,b,c,d;n).

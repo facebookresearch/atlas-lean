@@ -7,6 +7,17 @@ module
 
 public import Mathlib.Algebra.Homology.Homotopy
 
+/-!
+# Inverse naturality of homotopy equivalences
+
+For homotopy equivalences e : K ≃ L and e′ : K′ ≃ L′, let a : K → K′ and b : L → L′ make the
+forward square commute strictly. The inverse square then commutes up to a constructed
+homotopy: e⁻¹ followed by a is homotopic to b followed by e′⁻¹.
+
+The complexes have an arbitrary common shape in a preadditive category, with independent
+object, morphism and index universes.
+-/
+
 @[expose] public section
 
 set_option autoImplicit false
@@ -23,8 +34,9 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
 variable {ι : Type w} {c : ComplexShape ι}
 variable {K L K' L' : HomologicalComplex C c}
 
-/-- A strictly commuting square of forward maps of homotopy equivalences
-induces a commuting square of inverse maps up to homotopy. -/
+/-- The inverse square of a homotopy-equivalence square commutes up to homotopy.
+
+From e.hom ≫ b = a ≫ e′.hom, construct a homotopy between e.inv ≫ a and b ≫ e′.inv. -/
 def invNaturality
     (e : HomotopyEquiv K L) (e' : HomotopyEquiv K' L')
     (a : K ⟶ K') (b : L ⟶ L')

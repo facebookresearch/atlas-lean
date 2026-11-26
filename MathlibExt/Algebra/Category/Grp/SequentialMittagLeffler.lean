@@ -19,17 +19,19 @@ public import Mathlib.Algebra.Category.Grp.EpiMono
 public import Mathlib.CategoryTheory.Limits.Shapes.ConcreteCategory
 
 /-!
-# Mittag--Leffler vanishing of sequential lim-one in abelian groups
+# Mittag–Leffler vanishing of sequential lim-one
 
-For an inverse sequence of abelian groups satisfying Mittag--Leffler, every
-tuple is a standard `1 - shift` difference.  The proof forms the affine tower
-`x ↦ bₙ + tₙ x`, transfers range stabilization from the original linear
-tower, and uses the existing nonempty-section theorem.  Surjectivity makes the
-accepted sequential difference epi, so the existing generic cokernel theorem
-gives zero concrete sequential `lim¹`.
+Let A:ℕᵒᵖ→Ab_u be an inverse sequence, with transition maps t_n:A_{n+1}→A_n. Its difference map
+on the full product is D(a)_n=a_n-t_n(a_{n+1}), and sequential lim-one is coker(D).
 
-The tuple-preimage theorem is stated literally on dependent functions so the
-same proof can be reused after forgetting a module tower to abelian groups.
+If the images of A_m→A_n stabilize for each n as m increases, then every product tuple b has a
+preimage under D. The affine transition x↦b_n+t_n(x) has the same image-stabilization property
+and a compatible section, which solves a_n-t_n(a_{n+1})=b_n for all n. Thus D is epi and its
+cokernel is zero.
+
+Surjectivity of all sufficiently late successor transitions implies the Mittag–Leffler
+condition. In particular, both an eventually epi tower and an everywhere epi tower have zero
+sequential lim-one.
 -/
 
 @[expose] public section
@@ -120,9 +122,11 @@ private theorem affineTower_map_eq
           rw [heq, A.map_comp]
           rfl
 
-/-- Every tuple in a Mittag--Leffler inverse sequence of abelian groups is a
-literal `1 - shift` difference.  This dependent-function form is the shared
-low-level bridge for module towers. -/
+/-- Let A:ℕᵒᵖ→AddCommGrpCat_u be an inverse sequence, A_n=A(n), and t_n:A_{n+1}→A_n its successor
+transition. Assume the sequence is Mittag–Leffler: for each n, the images of A_m→A_n stabilize
+for all sufficiently large m≥n. For every b∈∏_n A_n there exists a∈∏_n A_n with
+a_n-t_n(a_{n+1})=b_n for every n≥0. The construction uses the entire dependent tuple of group
+coefficients. -/
 theorem exists_oneSubShift_preimage_of_isMittagLeffler
     (A : ℕᵒᵖ ⥤ AddCommGrpCat.{u})
     (hA : A.IsSequentialMittagLeffler)
@@ -199,8 +203,11 @@ theorem exists_oneSubShift_preimage_of_isMittagLeffler
       A.map (homOfLE (Nat.le_succ n)).op (a (n + 1)) = b n
   exact add_sub_cancel_right _ _
 
-/-- The standard sequential difference of a Mittag--Leffler inverse sequence
-of abelian groups is an epimorphism. -/
+/-- Let A:ℕᵒᵖ→AddCommGrpCat_u be an inverse sequence, A_n=A(n), and t_n:A_{n+1}→A_n its successor
+transition. Assume the sequence is Mittag–Leffler: for each n, the images of A_m→A_n stabilize
+for all sufficiently large m≥n. The difference map D:∏_n A_n→∏_n A_n is D(a)_n=a_n-t_n(a_{n+1}),
+and its cokernel is the sequential lim-one object. The map D is an epimorphism of abelian
+groups, equivalently every tuple b has a tuple a with D(a)=b. -/
 theorem epi_sequentialDifference_of_isMittagLeffler
     (A : ℕᵒᵖ ⥤ AddCommGrpCat.{u})
     (hA : A.IsSequentialMittagLeffler) :
@@ -229,8 +236,11 @@ theorem epi_sequentialDifference_of_isMittagLeffler
       Limits.Concrete.productEquiv_symm_apply_π] using h
   rw [hcoord, ha n]
 
-/-- A Mittag--Leffler inverse sequence of abelian groups has zero concrete
-sequential `lim¹`. -/
+/-- Let A:ℕᵒᵖ→AddCommGrpCat_u be an inverse sequence, A_n=A(n), and t_n:A_{n+1}→A_n its successor
+transition. Assume the sequence is Mittag–Leffler: for each n, the images of A_m→A_n stabilize
+for all sufficiently large m≥n. The difference map D:∏_n A_n→∏_n A_n is D(a)_n=a_n-t_n(a_{n+1}),
+and its cokernel is the sequential lim-one object. The sequential lim-one object coker(D) is a
+zero abelian group because D is epi. -/
 theorem isZero_sequentialLimOne_of_isMittagLeffler
     (A : ℕᵒᵖ ⥤ AddCommGrpCat.{u})
     (hA : A.IsSequentialMittagLeffler) :
@@ -239,8 +249,10 @@ theorem isZero_sequentialLimOne_of_isMittagLeffler
     AddCommGrpCat.{u} _ _ _ _ A
       (epi_sequentialDifference_of_isMittagLeffler A hA)
 
-/-- Eventually epimorphic successor transitions imply the
-Mittag--Leffler condition for an inverse sequence of abelian groups. -/
+/-- Let A:ℕᵒᵖ→AddCommGrpCat_u be an inverse sequence, A_n=A(n), and t_n:A_{n+1}→A_n its successor
+transition. If there exists N∈ℕ such that t_n is epi for every n≥N, the sequence is
+Mittag–Leffler. For each fixed target A_r, the images of A_m→A_r stabilize once the surjective
+tail begins. -/
 theorem isMittagLeffler_of_eventually_transition_epi
     (A : ℕᵒᵖ ⥤ AddCommGrpCat.{u})
     (h : ∃ N : ℕ, ∀ n : ℕ, N ≤ n →
@@ -252,8 +264,9 @@ theorem isMittagLeffler_of_eventually_transition_epi
   let _ : Epi (A.map (homOfLE (Nat.le_succ n)).op) := hN n hn
   exact (AddCommGrpCat.epi_iff_surjective _).1 inferInstance
 
-/-- Epimorphic successor transitions imply the Mittag--Leffler condition for
-an inverse sequence of abelian groups. -/
+/-- Let A:ℕᵒᵖ→AddCommGrpCat_u be an inverse sequence, A_n=A(n), and t_n:A_{n+1}→A_n its successor
+transition. If every successor map t_n is epi, then the sequence is Mittag–Leffler. Every
+composite A_m→A_n for m≥n is surjective, so its image is all of A_n. -/
 theorem isMittagLeffler_of_transition_epi
     (A : ℕᵒᵖ ⥤ AddCommGrpCat.{u})
     [∀ n : ℕ, Epi (A.map (homOfLE (Nat.le_succ n)).op)] :
@@ -261,8 +274,11 @@ theorem isMittagLeffler_of_transition_epi
   isMittagLeffler_of_eventually_transition_epi A
     ⟨0, fun _ _ => inferInstance⟩
 
-/-- Eventually epimorphic successor transitions give zero concrete
-sequential `lim¹` for an inverse sequence of abelian groups. -/
+/-- Let A:ℕᵒᵖ→AddCommGrpCat_u be an inverse sequence, A_n=A(n), and t_n:A_{n+1}→A_n its successor
+transition. The difference map D:∏_n A_n→∏_n A_n is D(a)_n=a_n-t_n(a_{n+1}), and its cokernel is
+the sequential lim-one object. If some N satisfies that t_n is epi for every n≥N, then coker(D)
+is a zero object of abelian groups. Eventual surjectivity gives image stabilization and
+surjectivity of the full difference map. -/
 theorem isZero_sequentialLimOne_of_eventually_transition_epi
     (A : ℕᵒᵖ ⥤ AddCommGrpCat.{u})
     (h : ∃ N : ℕ, ∀ n : ℕ, N ≤ n →
@@ -271,8 +287,11 @@ theorem isZero_sequentialLimOne_of_eventually_transition_epi
   isZero_sequentialLimOne_of_isMittagLeffler A
     (isMittagLeffler_of_eventually_transition_epi A h)
 
-/-- Epimorphic successor transitions give zero concrete sequential `lim¹`
-for an inverse sequence of abelian groups. -/
+/-- Let A:ℕᵒᵖ→AddCommGrpCat_u be an inverse sequence, A_n=A(n), and t_n:A_{n+1}→A_n its successor
+transition. The difference map D:∏_n A_n→∏_n A_n is D(a)_n=a_n-t_n(a_{n+1}), and its cokernel is
+the sequential lim-one object. If t_n is epi for all n≥0, the sequential lim-one object coker(D)
+is zero. Each product tuple b is of the form a_n-t_n(a_{n+1}) for a compatible difference
+preimage a. -/
 theorem isZero_sequentialLimOne_of_transition_epi
     (A : ℕᵒᵖ ⥤ AddCommGrpCat.{u})
     [∀ n : ℕ, Epi (A.map (homOfLE (Nat.le_succ n)).op)] :

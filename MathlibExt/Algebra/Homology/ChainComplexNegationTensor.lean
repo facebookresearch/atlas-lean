@@ -12,12 +12,16 @@ public import MathlibExt.Algebra.Homology.HomologicalComplexRescaling
 public import Mathlib.Algebra.Homology.Monoidal
 
 /-!
-# Tensor coherence of the actual differential-sign isomorphism
+# Tensor coherence of differential negation
 
-Native complex tensor products are the existing total complexes. Their
-summand inclusions detect every map. Additivity of the two native tensor
-variables makes the degree-p and degree-q signs multiply to the degree-(p+q)
-sign, including both zero-degree boundaries.
+Let C be a preadditive monoidal category with a zero object and tensor
+additive in both variables. Negating a chain differential gives the
+isomorphism s_K:K≅(-dK) with degree n map (-1)^n id.
+
+For existing tensor products, s_K⊗s_L has degree n value (-1)^n id,
+since each tensor summand p+q=n contributes (-1)^p(-1)^q.
+Conjugating a diagonal K→K⊗K through these sign maps leaves every
+degree component unchanged. Object and morphism universes are independent.
 -/
 
 @[expose] public section
@@ -39,7 +43,13 @@ variable (K L : ChainComplex C ℕ)
     (HomologicalComplex.negateDifferentials L)]
 
 omit [HasZeroObject C] in
-/-- The tensor of the two original degree-sign maps has the exact total-degree sign. -/
+/-- Let C be a preadditive monoidal category with a zero object,
+and assume tensoring is additive in both variables.
+Let K,L be nonnegative chain complexes for which K⊗L and
+(-dK)⊗(-dL) exist. Differential negation has
+s_K:K≅(-dK), with degree n map (-1)^n id.
+The degree n component of s_K⊗s_L is (-1)^n times the
+identity under the common tensor-degree identification. -/
 theorem negation_tensor_f (n : ℕ) :
     (HomologicalComplex.tensorHom (negationIso K).hom (negationIso L).hom).f n =
       degreeSign n • 𝟙 ((HomologicalComplex.tensorObj K L).X n) := by
@@ -78,7 +88,13 @@ theorem negation_tensor_f (n : ℕ) :
       (congrArg (fun r : ℤ => r • t) hs'))
 
 omit [HasZeroObject C] in
-/-- The actual `(p,q)` tensor summand retains its coefficient `(-1)^(p+q)`. -/
+/-- Let C be a preadditive monoidal category with a zero object,
+and assume tensoring is additive in both variables.
+Let K,L be nonnegative chain complexes for which K⊗L and
+(-dK)⊗(-dL) exist. Differential negation has
+s_K:K≅(-dK), with degree n map (-1)^n id.
+On the summand K_p⊗L_q with p+q=n, the tensor sign map
+satisfies (s_K⊗s_L)∘ι_(p,q)=(-1)^(p+q)ι_(p,q). -/
 theorem ι_negation_tensor (p q n : ℕ) (hpq : p + q = n) :
     HomologicalComplex.ιTensorObj K L p q n hpq ≫
         (HomologicalComplex.tensorHom (negationIso K).hom (negationIso L).hom).f n =
@@ -102,8 +118,11 @@ variable {C : Type u} [Category.{v} C] [Preadditive C] [HasZeroObject C] [Monoid
   [(curriedTensor C).Additive] [∀ X : C, ((curriedTensor C).obj X).Additive]
 
 omit [HasZeroObject C] in
-/-- Transport of any native map to a tensor square leaves every degree component unchanged.
-The source-degree sign and the earned total tensor-degree sign multiply to one. -/
+/-- In a preadditive monoidal category with zero object and additive
+tensoring, let K⊗K and (-dK)⊗(-dK) exist.
+For a chain map f:K→K⊗K, transport by s_K⁻¹ on the source and
+s_K⊗s_K on the target has degree n component f_n.
+The two degree-n signs cancel. -/
 theorem negation_tensor_conjugate_f (K : ChainComplex C ℕ)
     [HomologicalComplex.HasTensor K K]
     [HomologicalComplex.HasTensor (HomologicalComplex.negateDifferentials K)

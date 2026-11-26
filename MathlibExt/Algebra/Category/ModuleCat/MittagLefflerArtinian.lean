@@ -12,15 +12,16 @@ public import Mathlib.LinearAlgebra.FiniteDimensional.Defs
 public import Mathlib.RingTheory.Artinian.Module
 
 /-!
-# Mittag--Leffler diagrams from Artinian linear images
+# Artinian images and Mittag–Leffler module diagrams
 
-A cofiltered module diagram is Mittag--Leffler if every object receives a
-morphism with Artinian image. The minimum of the further linear images gives
-the stable range. In particular, diagrams of Artinian modules and diagrams of
-finite-dimensional vector spaces satisfy the native Mittag--Leffler predicate.
+For a cofiltered-or-empty diagram of R-modules, suppose each object receives a transition map
+with Artinian image. Descending submodules inside that image then stabilize, giving the
+Mittag–Leffler condition for the underlying diagram of sets.
 
-The hypothesis is local at each object. No uniform bound on dimensions or
-epimorphy of the original transition maps is required.
+In particular, diagrams of Artinian modules, finitely generated modules over an Artinian ring,
+and finite-dimensional vector spaces over a division ring satisfy this condition. Finiteness
+is imposed separately at each object; the category, morphism, ring and coefficient universes
+remain as stated.
 -/
 
 @[expose] public section
@@ -38,8 +39,10 @@ namespace ModuleCat
 variable {J : Type v} [Category.{t} J] [IsCofilteredOrEmpty J]
 variable {R : Type u} [Ring R]
 
-/-- Artinian images of incoming linear maps suffice for a cofiltered module
-diagram to satisfy Mathlib's Mittag--Leffler condition. -/
+/-- Artinian incoming images imply the Mittag–Leffler condition.
+
+For each j, assume some map i → j has Artinian linear range in A_j. Then the underlying-set
+diagram of the cofiltered module diagram A is Mittag–Leffler. -/
 theorem isMittagLeffler_of_exists_artinian_range
     (A : J ⥤ ModuleCat.{w} R)
     (hA : ∀ j : J, ∃ (i : J) (f : i ⟶ j),
@@ -86,7 +89,10 @@ theorem isMittagLeffler_of_exists_artinian_range
   change (A.map (h ≫ (g ≫ f))).hom x' = (A.map (g ≫ f)).hom x
   simpa only [A.map_comp, ModuleCat.hom_comp, LinearMap.comp_apply] using hval
 
-/-- A cofiltered diagram of Artinian modules is Mittag--Leffler. -/
+/-- A cofiltered diagram of Artinian modules is Mittag–Leffler.
+
+If every module A_j is Artinian, the underlying-set diagram satisfies eventual stabilization
+of the incoming images. -/
 theorem isMittagLeffler_of_isArtinian
     (A : J ⥤ ModuleCat.{w} R) (hA : ∀ j : J, IsArtinian R (A.obj j)) :
     (A ⋙ forget (ModuleCat.{w} R)).IsMittagLeffler := by
@@ -95,8 +101,10 @@ theorem isMittagLeffler_of_isArtinian
   have : IsArtinian R (A.obj j) := hA j
   exact ⟨j, 𝟙 j, inferInstance⟩
 
-/-- Finite modules over an Artinian ring form Mittag--Leffler cofiltered
-diagrams, with finiteness required separately at each object. -/
+/-- Finite modules over an Artinian ring form a Mittag–Leffler diagram.
+
+For an Artinian ring R, if each coefficient module A_j is finitely generated, the cofiltered
+underlying-set diagram is Mittag–Leffler. -/
 theorem isMittagLeffler_of_moduleFinite [IsArtinianRing R]
     (A : J ⥤ ModuleCat.{w} R) (hA : ∀ j : J, Module.Finite R (A.obj j)) :
     (A ⋙ forget (ModuleCat.{w} R)).IsMittagLeffler := by
@@ -109,8 +117,10 @@ section DivisionRing
 
 variable {K : Type u} [DivisionRing K]
 
-/-- A cofiltered diagram of finite-dimensional vector spaces is
-Mittag--Leffler. Dimensions may vary without a uniform bound. -/
+/-- Finite-dimensional vector-space diagrams are Mittag–Leffler.
+
+For a division ring K and a cofiltered-or-empty diagram of finite-dimensional K-modules, the
+underlying-set diagram is Mittag–Leffler. -/
 theorem isMittagLeffler_of_finiteDimensional
     (A : J ⥤ ModuleCat.{w} K) (hA : ∀ j : J, FiniteDimensional K (A.obj j)) :
     (A ⋙ forget (ModuleCat.{w} K)).IsMittagLeffler :=

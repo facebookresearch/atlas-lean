@@ -1,3 +1,5 @@
-# Stalk Ring Equiv
+# The ring equivalence between the two stalk constructions
 
-The stalk bridge as a `RingEquiv` on carriers.
+The ring equivalence between the two stalk constructions.
+
+The stalk comparison gives a ring equivalence R_x ≃ ((forget commutativity) R)_x.

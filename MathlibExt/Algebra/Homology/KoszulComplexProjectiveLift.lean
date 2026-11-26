@@ -16,21 +16,16 @@ public import MathlibExt.Algebra.Homology.FiniteResolutionProjectiveComplexLift
 public import MathlibExt.Algebra.Homology.KoszulComplexFamily
 
 /-!
-# Lifting finite-family Koszul complexes to projective resolutions
+# Lifting a finite-family Koszul augmentation to resolutions
 
-The Koszul complex of a finite family is termwise projective, so its quotient
-augmentation admits a comparison map to any supplied projective resolution,
-or to a finite resolution whose resolving objects map to projectives.
+For a finite family a : I → R, the Koszul complex has projective terms and a quotient
+augmentation with target the displayed universe lift of R/(a). A map from this augmentation
+target to Z lifts to a chain map into any projective resolution of Z.
 
-These maps require only a morphism from the universe-lifted family quotient
-to the object resolved by the target. No regularity, positive-degree
-exactness, base change, minimality, or residue-field injectivity is asserted.
-
-## Main declarations
-
-* `KoszulComplex.familyAugmentationTarget`
-* `KoszulComplex.familyLiftToProjectiveResolution`
-* `KoszulComplex.familyLiftToFiniteResolution`
+The same construction applies to a finite resolution through an additive functor whose images
+are projective. The lift commutes with the augmentations in degree zero and as a map to the
+single-degree complex. The family index, coefficient ring and resolving-category universe
+levels remain as stated.
 -/
 
 @[expose] public section
@@ -48,17 +43,19 @@ namespace KoszulComplex
 variable (R : Type u) [CommRing R]
 variable {I : Type v} [Fintype I]
 
-/-- The object concentrated in degree zero in the Koszul-family
-augmentation. -/
+/-- The lifted quotient target of a finite-family Koszul augmentation.
+
+Use the coefficient module ULift(R modulo the family ideal) at height max(u,v). -/
 abbrev familyAugmentationTarget (a : I → R) :
     ModuleCat.{max u v} R :=
   ModuleCat.of R
     (ULift.{max u v, u}
       (R ⧸ ideal R (I → R) (familyFunctional R a)))
 
-/-- Lift the augmentation of a finite-family Koszul complex to a supplied
-projective resolution after choosing a map from the quotient target to the
-resolved object. -/
+/-- The comparison map from a Koszul family to a projective resolution.
+
+For a map q from the quotient augmentation target to Z, projectivity of the Koszul terms gives
+a chain map to the supplied projective resolution of Z. -/
 @[no_expose]
 def familyLiftToProjectiveResolution
     (a : I → R)
@@ -71,8 +68,10 @@ def familyLiftToProjectiveResolution
     (augmentation R (I → R) (familyFunctional R a)) Q
     (familyComplex_projective R a)
 
-/-- The degree-zero component of the Koszul-family comparison has the
-expected augmentation factorization. -/
+/-- The projective-resolution lift commutes with degree-zero augmentation.
+
+Its degree-zero map followed by the target augmentation equals the Koszul augmentation
+followed by q. -/
 @[reassoc (attr := simp)]
 theorem familyLiftToProjectiveResolution_f_zero_comp
     (a : I → R)
@@ -86,8 +85,10 @@ theorem familyLiftToProjectiveResolution_f_zero_comp
     (augmentation R (I → R) (familyFunctional R a)) Q
     (familyComplex_projective R a)
 
-/-- The Koszul-family comparison commutes with the quotient and target
-augmentations. -/
+/-- The projective-resolution lift commutes with the full augmentation.
+
+The chain comparison followed by the target resolution map equals the Koszul augmentation
+followed by the single-degree map of q. -/
 @[reassoc (attr := simp)]
 theorem familyLiftToProjectiveResolution_commutes
     (a : I → R)
@@ -102,7 +103,10 @@ theorem familyLiftToProjectiveResolution_commutes
     (augmentation R (I → R) (familyFunctional R a)) Q
     (familyComplex_projective R a)
 
-/-- Finite-resolution target form of the Koszul-family comparison map. -/
+/-- The comparison map to a finite resolution with projective images.
+
+For additive i and projectivity of every i(P₀), lift q from the Koszul quotient target to the
+mapped complex of the finite resolution. -/
 @[no_expose]
 def familyLiftToFiniteResolution
     {P : Type uP} [Category.{vP} P] [Preadditive P]
@@ -118,8 +122,10 @@ def familyLiftToFiniteResolution
     (augmentation R (I → R) (familyFunctional R a))
     (familyComplex_projective R a) q hproj
 
-/-- The degree-zero component of the finite-resolution comparison has the
-expected augmentation factorization. -/
+/-- The finite-resolution lift commutes with degree-zero augmentation.
+
+The degree-zero comparison followed by the finite-resolution augmentation equals the Koszul
+augmentation followed by q. -/
 @[reassoc (attr := simp)]
 theorem familyLiftToFiniteResolution_f_zero_comp
     {P : Type uP} [Category.{vP} P] [Preadditive P]
@@ -137,8 +143,10 @@ theorem familyLiftToFiniteResolution_f_zero_comp
     (augmentation R (I → R) (familyFunctional R a))
     (familyComplex_projective R a) q hproj
 
-/-- The finite-resolution comparison commutes with the quotient and target
-augmentations. -/
+/-- The finite-resolution lift commutes with the full augmentation.
+
+The comparison into the mapped finite resolution satisfies the augmentation square with the
+single-degree map induced by q. -/
 @[reassoc (attr := simp)]
 theorem familyLiftToFiniteResolution_commutes
     {P : Type uP} [Category.{vP} P] [Preadditive P]

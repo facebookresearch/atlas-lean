@@ -1,3 +1,5 @@
-# Truncate Map trans
+# Successive restrictions of morphisms equal direct restriction
 
-Successively restricted maps retain exactly the original native morphism.
+Successive restrictions of morphisms equal direct restriction.
+
+The two-step truncated morphism equals the restriction to r₂.

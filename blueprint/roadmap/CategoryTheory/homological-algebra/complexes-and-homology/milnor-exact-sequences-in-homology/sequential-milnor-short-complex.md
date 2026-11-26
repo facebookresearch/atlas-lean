@@ -1,4 +1,9 @@
-# Sequential Milnor Short Complex
+# Canonical sequential Milnor short complex
 
-The canonical sequential Milnor short complex in its source-facing
-endpoint coordinates.
+Let C be abelian, c an arbitrary complex shape and K a sequential
+inverse tower of complexes of shape c. Assume C has exact countable products and sequential inverse limits,
+Δ_K(x)ₙ=xₙ−tₙ(xₙ₊₁) is epic, and c.Rel(i,j).
+Write H_aK=(H_a(Kₙ))ₙ, β_a:H_a(P(K)) ≅ P(H_aK),
+and lim¹(H_iK)=Coker(Δ_{H_iK}).
+
+The canonical short complex is lim¹(H_iK) —I→ H_j(lim K) —E→ lim(H_jK), with the boundary-induced injection and the stage-projection edge.

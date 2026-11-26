@@ -1,3 +1,5 @@
-# Page Cycle Unit left unital
+# The lifted cycle unit is a left unit
 
-The actual native cycle product retains the original left unit law.
+The lifted cycle unit is a left unit.
+
+Its product with every cycle object equals the left unitor.

@@ -1,4 +1,5 @@
-# Pair homology one length eq quotient Kernel
+# The length of pair degree-one homology after regularity
 
-Length form of the regular-first-generator degree-one homology
-identification.
+The length of pair degree-one homology after regularity.
+
+For injective multiplication by f, its length equals the length of ker(g on R/(f)).

@@ -16,13 +16,17 @@ public import Mathlib.Algebra.Homology.QuasiIso
 public import Mathlib.CategoryTheory.Limits.Preserves.Shapes.Kernels
 
 /-!
-# Homology of a cokernel projection at vanishing components
+# Cokernel projections at vanishing components
 
-The actual cokernel projection is componentwise epi. Its component is an
-isomorphism wherever the defining map's component is zero. Vanishing at
-one degree and its outgoing neighbour therefore gives a canonical homology
-comparison through the native epi/isomorphism/mono short-complex criterion.
-Only finite colimits and the two individual homologies are required.
+Let C be a category with zero morphisms and finite colimits, c an arbitrary
+complex shape on an independently sized index type, and f:K → L a map of
+complexes of shape c. The cokernel projection π:L → Coker(f) is
+componentwise epic, and πᵢ is an isomorphism whenever fᵢ=0.
+
+Assume L and Coker(f) have the chosen homology objects at i.
+If fᵢ=0 and f_{c.next(i)}=0, then π induces a homology isomorphism
+Hᵢ(L) ≅ Hᵢ(Coker(f)). For nonnegative chain complexes, degree zero
+needs only f₀=0, and degree one needs f₁=f₀=0.
 -/
 
 @[expose] public section
@@ -41,7 +45,10 @@ section ArbitraryShape
 variable {ι : Type w} {c : ComplexShape ι}
   {K L : HomologicalComplex C c} (f : K ⟶ L)
 
-/-- A zero defining component makes the actual projection component an isomorphism. -/
+/-- Let C have zero morphisms and finite colimits, c be any complex shape,
+and f:K → L a map of complexes of shape c. If its component fᵢ
+is zero, then the degree-i component of the cokernel projection
+π:L → Coker(f) is an isomorphism. -/
 theorem isIso_cokernelProjection_f_of_zero (i : ι) (hf : f.f i = 0) :
     IsIso ((cokernel.π f).f i) := by
   let F : HomologicalComplex C c ⥤ C := eval C c i
@@ -56,7 +63,10 @@ theorem isIso_cokernelProjection_f_of_zero (i : ι) (hf : f.f i = 0) :
   rw [← π_comp_cokernelComparison f F]
   infer_instance
 
-/-- Vanishing at the middle and outgoing degrees earns the homology comparison. -/
+/-- Let C have zero morphisms and finite colimits, c be any complex shape,
+and f:K → L a map of complexes. Assume L and Coker(f) have the
+chosen homology objects at i. If fᵢ=0 and f_{c.next(i)}=0, the
+cokernel projection L → Coker(f) is a quasi-isomorphism at i. -/
 theorem quasiIsoAt_cokernelProjection_of_zero_components (i : ι)
     [L.HasHomology i] [(cokernel f).HasHomology i]
     (hi : f.f i = 0) (hnext : f.f (c.next i) = 0) :
@@ -77,7 +87,10 @@ theorem quasiIsoAt_cokernelProjection_of_zero_components (i : ι)
   exact ShortComplex.quasiIso_of_epi_of_isIso_of_mono
     ((shortComplexFunctor C c i).map (cokernel.π f))
 
-/-- The canonical isomorphism is induced by the original cokernel projection itself. -/
+/-- Let C have zero morphisms and finite colimits, c be any complex shape,
+and f:K → L a map of complexes. With chosen homology objects of
+L and Coker(f) at i and fᵢ=f_{c.next(i)}=0, the canonical
+isomorphism Hᵢ(L) ≅ Hᵢ(Coker(f)) induced by the cokernel projection. -/
 def cokernelHomologyIsoOfZeroComponents (i : ι)
     [L.HasHomology i] [(cokernel f).HasHomology i]
     (hi : f.f i = 0) (hnext : f.f (c.next i) = 0) :
@@ -85,7 +98,11 @@ def cokernelHomologyIsoOfZeroComponents (i : ι)
   letI := quasiIsoAt_cokernelProjection_of_zero_components f i hi hnext
   exact isoOfQuasiIsoAt (cokernel.π f) i
 
-/-- The canonical comparison retains the actual induced homology map. -/
+/-- Let C have zero morphisms and finite colimits, c be any complex shape,
+and f:K → L a map of complexes with fᵢ=f_{c.next(i)}=0.
+For the chosen homology objects at i, the forward map of
+Hᵢ(L) ≅ Hᵢ(Coker(f)) is exactly the homology map of the
+cokernel projection L → Coker(f). -/
 theorem cokernelHomologyIsoOfZeroComponents_hom (i : ι)
     [L.HasHomology i] [(cokernel f).HasHomology i]
     (hi : f.f i = 0) (hnext : f.f (c.next i) = 0) :
@@ -98,14 +115,20 @@ section Nonnegative
 
 variable {K L : ChainComplex C ℕ} (f : K ⟶ L)
 
-/-- At the nonnegative terminal degree only the degree-zero defining component must vanish. -/
+/-- Let C have zero morphisms and finite colimits, and f:K → L be a map
+of nonnegative chain complexes. If f₀=0 and L and Coker(f) have
+the chosen degree-zero homology objects, their cokernel projection
+induces the canonical isomorphism H₀(L) ≅ H₀(Coker(f)). -/
 def cokernelHomologyZeroIso [L.HasHomology 0] [(cokernel f).HasHomology 0]
     (hf : f.f 0 = 0) : L.homology 0 ≅ (cokernel f).homology 0 :=
   cokernelHomologyIsoOfZeroComponents f 0 hf (by
     erw [ChainComplex.next_nat_zero]
     exact hf)
 
-/-- Degree one needs vanishing at degrees one and zero, with the incoming projection epi. -/
+/-- Let C have zero morphisms and finite colimits, and f:K → L be a map
+of nonnegative chain complexes. If f₁=f₀=0 and L and Coker(f)
+have the chosen degree-one homology objects, their cokernel projection
+induces the canonical isomorphism H₁(L) ≅ H₁(Coker(f)). -/
 def cokernelHomologyOneIso [L.HasHomology 1] [(cokernel f).HasHomology 1]
     (h1 : f.f 1 = 0) (h0 : f.f 0 = 0) : L.homology 1 ≅ (cokernel f).homology 1 :=
   cokernelHomologyIsoOfZeroComponents f 1 h1 (by

@@ -1,14 +1,7 @@
-# Sheafification, stalks, and colimits of modules
+# Forgetting module structure preserves sheaf colimits
 
-The forgetful functor from sheaves of modules to abelian sheaves preserves
-colimits of shape `K`.
-
-Given `F : K ⥤ SheafOfModules R`, write `F₀ := F ⋙ forget` for the underlying
-presheaf-module diagram and `c₀` for its colimit cocone. Module sheafification
-`S` (a left adjoint) sends `c₀` to a colimit cocone, which the counit
-isomorphism `e : F ≅ F₀ ⋙ S` transports to a colimit cocone on `F`. On the
-abelian side, `T := toPresheaf` and `P := presheafToSheaf` (both
-colimit-preserving) send `c₀` to a colimit cocone, transported along the
-diagram iso `n` (built from `e` and `sheafificationCompToSheaf`) to a colimit
-cocone on `F ⋙ toSheaf`. The two cocones on `F ⋙ toSheaf` agree by naturality
-of `sheafificationCompToSheaf`, so the image cocone is a colimit.
+Let `C : Type u₁` have morphism universe `v₁`, `J` a Grothendieck topology, `R : Sheaf J
+RingCat.{u}`, and `K : Type w` a category with morphism universe `w'`. Assume weak additive
+sheafification at carrier universe `v`, `J.WEqualsLocallyBijective AddCommGrpCat.{v}`, and
+colimits of shape `K` in both `PresheafOfModules.{v} R.obj` and `AddCommGrpCat.{v}`. Then
+`SheafOfModules.toSheaf.{v} R` preserves colimits of shape `K`.

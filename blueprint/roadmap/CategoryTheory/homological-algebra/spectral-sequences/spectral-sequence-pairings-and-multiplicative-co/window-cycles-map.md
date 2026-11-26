@@ -1,3 +1,5 @@
-# Window Cycles Map
+# The cycle map for a smaller lower width
 
-The native cycle map when the lower window is shortened.
+The cycle map for a smaller lower width.
+
+For ℓ′≤ℓ, map cycles from width ℓ to width ℓ′ with the same short interval.

@@ -1,4 +1,5 @@
-# Coalgebra Closure Comul mem tensor Range
+# Comultiplication of the closure lies in its tensor square image
 
-The whole span maps under the ORIGINAL comultiplication into the ORIGINAL tensor-square
-image.
+Comultiplication of the closure lies in its tensor square image.
+
+For every x ∈ D_n, Δ_C(j(x)) belongs to the image of the degree-n tensor-square inclusion.

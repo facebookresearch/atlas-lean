@@ -1,4 +1,6 @@
-# Total Map ι
+# The normalized total map on an antidiagonal coprojection
 
-The total map on every original antidiagonal coprojection is the same
-actual double-normalized component map.
+The normalized total map on an antidiagonal coprojection.
+
+For p+q=n, the coprojection into the source total followed by the degree-n total map equals
+the bidegree-(p,q) normalized map followed by the target coprojection.

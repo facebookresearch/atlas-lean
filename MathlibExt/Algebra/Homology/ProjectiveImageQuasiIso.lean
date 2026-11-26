@@ -20,14 +20,16 @@ public import Mathlib.CategoryTheory.Functor.ReflectsIso.Basic
 /-!
 # Quasi-isomorphisms in a fully faithful projective image
 
-The actual bounded-above image complexes are K-projective when their image
-terms are projective. A quasi-isomorphism between these image complexes is
-therefore a homotopy equivalence. Full faithfulness of the original resolving
-functor reflects the quotient isomorphism to the original complexes.
+Let P be preadditive, A abelian, and i:P→A additive and fully faithful, with independent
+category universes. A bounded-above cochain complex whose image terms i(K_n) are projective has
+K-projective image in A.
 
-The constructed source homotopy equivalence retains the specified original
-map as its literal forward map. Source and target upper support cutoffs are
-independent, and every projectivity hypothesis concerns an actual image term.
+For two such complexes K,L with independent upper bounds, a map f:K→L has quasi-isomorphic image
+if and only if f is a homotopy equivalence in P. Full faithfulness reflects the isomorphism in
+the homotopy category from the projective image.
+
+From an ambient quasi-isomorphism one obtains an inverse g:L→K with f≫g homotopic to id_K and
+g≫f homotopic to id_L. The constructed equivalence has forward map equal to the specified f.
 -/
 
 @[expose] public section
@@ -44,8 +46,10 @@ variable {P : Type uP} [Category.{vP} P] [Preadditive P]
 variable {A : Type uA} [Category.{vA} A] [Abelian A]
 variable (i : P ⥤ A) [i.Additive] [i.Faithful]
 
-/-- The original image of a bounded-above complex is K-projective when
-every actual image term is projective. -/
+/-- Let P be preadditive and A abelian in independent category universes, and i:P→A additive and
+faithful. For K a cochain complex indexed by ℤ, assume K_n is zero for n>d and every i(K_n) is
+projective. The mapped complex i(K) is K-projective: every map from it to an acyclic cochain
+complex in A is null-homotopic. -/
 theorem isKProjective_mapHomologicalComplex_of_projective
     (K : CochainComplex P ℤ) (d : ℤ) [K.IsStrictlyLE d]
     (hproj : ∀ n : ℤ, Projective (i.obj (K.X n))) :
@@ -61,8 +65,11 @@ theorem isKProjective_mapHomologicalComplex_of_projective
 
 variable [i.Full]
 
-/-- Ambient quasi-isomorphisms between the actual bounded-above projective
-image complexes are exactly homotopy equivalences of the original map. -/
+/-- Let P be preadditive and A abelian, in independent object/morphism universes (uP,vP),(uA,vA),
+and i:P→A an additive fully faithful functor. Let K,L be ℤ-indexed cochain complexes in P, zero
+above independent bounds dK,dL, and suppose i(K_n),i(L_n) are projective in A for every n∈ℤ. For
+f:K→L, the map i(f) is a quasi-isomorphism in A if and only if f is a homotopy equivalence in P.
+Projectivity concerns the image terms, and no homology assumption on P is needed. -/
 theorem quasiIso_mapHomologicalComplex_iff_of_projective
     (K L : CochainComplex P ℤ) (dK dL : ℤ) [K.IsStrictlyLE dK] [L.IsStrictlyLE dL]
     (hprojK : ∀ n : ℤ, Projective (i.obj (K.X n)))
@@ -91,8 +98,11 @@ theorem quasiIso_mapHomologicalComplex_iff_of_projective
       ((i.mapHomologicalComplex (.up ℤ)).map f)
       (i.homotopyEquivalences_mapHomologicalComplex_map f hf)
 
-/-- Construct an actual source homotopy equivalence from the original
-ambient quasi-isomorphism. Its forward map is literally the specified map. -/
+/-- Let P be preadditive and A abelian, in independent object/morphism universes (uP,vP),(uA,vA),
+and i:P→A an additive fully faithful functor. Let K,L be ℤ-indexed cochain complexes in P, zero
+above independent bounds dK,dL, and suppose i(K_n),i(L_n) are projective in A for every n∈ℤ. If
+i(f) is a quasi-isomorphism for f:K→L, construct a homotopy equivalence K≃L whose forward map is
+f. It has an inverse g:L→K and homotopies f≫g∼id_K, g≫f∼id_L. -/
 def projectiveImageHomotopyEquiv
     (K L : CochainComplex P ℤ) (dK dL : ℤ) [K.IsStrictlyLE dK] [L.IsStrictlyLE dL]
     (hprojK : ∀ n : ℤ, Projective (i.obj (K.X n)))
@@ -103,7 +113,11 @@ def projectiveImageHomotopyEquiv
   let e : HomotopyEquiv K L := Classical.choose h
   e.copy (Homotopy.ofEq (Classical.choose_spec h))
 
-/-- The actual source equivalence retains the original forward chain map. -/
+/-- Let P be preadditive and A abelian, in independent object/morphism universes (uP,vP),(uA,vA),
+and i:P→A an additive fully faithful functor. Let K,L be ℤ-indexed cochain complexes in P, zero
+above independent bounds dK,dL, and suppose i(K_n),i(L_n) are projective in A for every n∈ℤ. For
+f:K→L with i(f) quasi-isomorphic, the forward morphism of the constructed source homotopy
+equivalence equals f itself. -/
 theorem projectiveImageHomotopyEquiv_hom
     (K L : CochainComplex P ℤ) (dK dL : ℤ) [K.IsStrictlyLE dK] [L.IsStrictlyLE dL]
     (hprojK : ∀ n : ℤ, Projective (i.obj (K.X n)))
@@ -112,8 +126,11 @@ theorem projectiveImageHomotopyEquiv_hom
     (projectiveImageHomotopyEquiv i K L dK dL hprojK hprojL f hf).hom = f :=
   rfl
 
-/-- The actual inverse comes with a homotopy from original forward map
-followed by inverse to the identity of the unchanged source complex. -/
+/-- Let P be preadditive and A abelian, in independent object/morphism universes (uP,vP),(uA,vA),
+and i:P→A an additive fully faithful functor. Let K,L be ℤ-indexed cochain complexes in P, zero
+above independent bounds dK,dL, and suppose i(K_n),i(L_n) are projective in A for every n∈ℤ. For
+f:K→L with i(f) a quasi-isomorphism, let g be the inverse of its constructed source homotopy
+equivalence. There is a homotopy from f≫g:K→K to id_K. -/
 def projectiveImageHomInvHomotopy
     (K L : CochainComplex P ℤ) (dK dL : ℤ) [K.IsStrictlyLE dK] [L.IsStrictlyLE dL]
     (hprojK : ∀ n : ℤ, Projective (i.obj (K.X n)))
@@ -123,8 +140,11 @@ def projectiveImageHomInvHomotopy
       (𝟙 K) :=
   (projectiveImageHomotopyEquiv i K L dK dL hprojK hprojL f hf).homotopyHomInvId
 
-/-- The actual inverse comes with a homotopy from inverse followed by the
-original forward map to the identity of the unchanged target complex. -/
+/-- Let P be preadditive and A abelian, in independent object/morphism universes (uP,vP),(uA,vA),
+and i:P→A an additive fully faithful functor. Let K,L be ℤ-indexed cochain complexes in P, zero
+above independent bounds dK,dL, and suppose i(K_n),i(L_n) are projective in A for every n∈ℤ. For
+f:K→L with i(f) quasi-isomorphic and g the constructed inverse, there is a homotopy from g≫f:L→L
+to id_L. -/
 def projectiveImageInvHomHomotopy
     (K L : CochainComplex P ℤ) (dK dL : ℤ) [K.IsStrictlyLE dK] [L.IsStrictlyLE dL]
     (hprojK : ∀ n : ℤ, Projective (i.obj (K.X n)))

@@ -1,3 +1,5 @@
-# Map Bialg Equiv apply
+# The forward enveloping bialgebra equivalence map
 
-The induced bialgebra equivalence applies the canonical enveloping algebra map.
+The forward enveloping bialgebra equivalence map.
+
+Its value is map R applied to the forward Lie morphism.

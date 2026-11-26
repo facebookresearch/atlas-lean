@@ -1,4 +1,5 @@
-# Functor Homology Comparison Iso
+# The homology comparison of a mapped short-complex isomorphism
 
-The canonical comparison of original source homology with actual target
-homology through the original homology functor.
+The homology comparison of a mapped short-complex isomorphism.
+
+For e : F(S) ≅ T, obtain F(H(S)) ≅ H(T).

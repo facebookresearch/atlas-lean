@@ -1,5 +1,7 @@
-# Tensor Pow Obj whisker right
+# Tensor transport of an equality with a fixed right factor
 
-Right whiskering commutes with `eqToIso` transport, generalized over a
-free equation so `cases` applies. Shared by the insertion-lane bridge
-arguments (carrier Leibniz and insertion naturality).
+Tensor transport of an equality with a fixed right factor.
+
+For an equality e : A = B of cochain complexes and fixed X, the canonical map induced by A ⊗ X
+= B ⊗ X equals (eqToIso e).hom ⊗ id_X. This uses the binary graded tensor structures and
+requires no associator comparison.

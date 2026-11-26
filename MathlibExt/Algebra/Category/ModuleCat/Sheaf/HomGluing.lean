@@ -18,13 +18,19 @@ public import Mathlib.Topology.Sheaves.Module
 public import Mathlib.Topology.Sheaves.SheafCondition.UniqueGluing
 
 /-!
-# Morphism gluing for sheaves of modules on topological spaces
+# Gluing morphisms of module sheaves over open covers
 
-Compatible over-site morphisms glue to a module-sheaf morphism, and an open
-cover detects equality. Space, coefficient ring, module, and cover-index
-universes are independent. The additive gluing step uses Mathlib's sheaf
-of morphisms; linearity is checked by the target sheaf's separatedness.
+Let `S : Type u` be a topological space, `R` a sheaf of rings with carrier universe `v`, and
+`M,N` module sheaves with carrier universe `w`. Morphisms `M.over U_i → N.over U_i` on an open
+cover glue to a global module-sheaf morphism when their restrictions agree on every pairwise
+intersection `U_i ∩ U_j`.
 
+A cover also detects equality of global morphisms. The restriction maps use the canonical
+comparisons between an over-site restriction and the corresponding slice morphism. The space,
+ring, module, and cover-index universes are independent.
+-/
+
+/-
 The open-cover proof is extracted from
 `MathlibExt.AlgebraicGeometry.Modules.InvertibleTensorPullback` at the
 qualified source revision `d72659cad892b9a78aa0edcf0dddc1aeafc9a4a4`.
@@ -71,7 +77,11 @@ theorem exists_gluedAbHom {S : Type u} [TopologicalSpace S]
       (Subsingleton.elim (g (U i)) (homOfLE (le_iSup U i)))).trans (hs i)
 
 
-/-- Restrict an original over-site module morphism along the actual open inclusion. -/
+/-- Let `S : Type u` be a topological space, `R` a ring sheaf of carrier universe `v`, and `M,N`
+module sheaves with a common carrier universe `w`. For an inclusion `i : U → V` and `h :
+M.over V → N.over V`, `overHomRestrict i h : M.over U → N.over U` is `((overFunctorMap R
+i).app M).inv ≫ (overMap R i).map h ≫ ((overFunctorMap R i).app N).hom`, using the canonical
+over-site comparisons. The universes `u,v,w` are independent. -/
 def overHomRestrict {S : Type u} [TopologicalSpace S]
     {R : Sheaf (_root_.Opens.grothendieckTopology S) RingCat.{v}}
     {M N : SheafOfModules.{w} R} {U V : _root_.TopologicalSpace.Opens S} (i : U ⟶ V)
@@ -80,7 +90,11 @@ def overHomRestrict {S : Type u} [TopologicalSpace S]
     (SheafOfModules.overMap R i).map h ≫
     ((SheafOfModules.overFunctorMap R i).app N).hom
 
-/-- The original additive presheaf-Hom section underlying an over-site module morphism. -/
+/-- Let `S : Type u` be a topological space, `R` a ring sheaf of carrier universe `v`, and `M,N`
+module sheaves of common carrier universe `w`. For an open set `U` and `h : M.over U → N.over
+U`, `overAbHom U h` is the section over `U` of `presheafHom M.val.presheaf N.val.presheaf`
+obtained by forgetting the module action in `h`. It is a natural transformation of underlying
+additive presheaves on the over-site; `u,v,w` are independent. -/
 def overAbHom {S : Type u} [TopologicalSpace S]
     {R : Sheaf (_root_.Opens.grothendieckTopology S) RingCat.{v}}
     {M N : SheafOfModules.{w} R} (U : _root_.TopologicalSpace.Opens S) (h : M.over U ⟶ N.over U) :
@@ -162,7 +176,10 @@ theorem exists_gluedModuleHom {S : Type u} [TopologicalSpace S]
   ext V m
   exact CategoryTheory.congr_fun (NatTrans.congr_app (hα i) V) m
 
-/-- Equality of module-sheaf morphisms is detected on an actual covering family. -/
+/-- Let `S : Type u` be a topological space, `R` a ring sheaf of carrier universe `v`, `M,N`
+module sheaves of carrier universe `w`, and `a,b : M → N`. For `I : Type z` and `U : I → Opens
+S` satisfying `CoversTop U`, if `a.over (U i)=b.over (U i)` for every `i`, then `a=b`. All
+four universes are independent. -/
 theorem hom_ext_of_over_cover {S : Type u} [TopologicalSpace S]
     {R : Sheaf (_root_.Opens.grothendieckTopology S) RingCat.{v}}
     {M N : SheafOfModules.{w} R} (a b : M ⟶ N)

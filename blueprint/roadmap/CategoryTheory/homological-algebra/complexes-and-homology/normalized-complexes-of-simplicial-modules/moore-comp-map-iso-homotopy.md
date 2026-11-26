@@ -1,4 +1,9 @@
-# Moore Comp Map Iso homotopy
+# Additive transport of normalized homotopy components
 
-The original normalized prism homotopy is transported through the canonical
-normalization isomorphisms, including every nonzero shifted component.
+Additive transport of normalized homotopy components.
+
+For an additive functor F between abelian categories and a simplicial homotopy H from f to g,
+the canonical Moore comparisons e_X and e_Y satisfy F(h_Hᴺ(n,m)) ≫ e_Y,m = e_X,n ≫
+h_{H⋙F}ᴺ(n,m) for all natural degrees n,m. The normalized component h_Hᴺ is the composite of
+the Moore inclusion, the signed alternating homotopy component and the normalization
+projection.

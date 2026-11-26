@@ -1,4 +1,6 @@
-# Family Tensor Coefficient Ulift Homology Iso
+# The homology comparison for a lifted Koszul coefficient
 
-Actual native homology commutes with the earned coefficient lift,
-through the exact canonical module lift functor.
+The homology comparison for a lifted Koszul coefficient.
+
+In every degree, the coefficient-lift complex has homology isomorphic to the lift of the
+original coefficient homology.

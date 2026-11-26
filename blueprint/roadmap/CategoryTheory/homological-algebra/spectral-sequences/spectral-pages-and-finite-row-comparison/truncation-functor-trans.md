@@ -1,3 +1,5 @@
-# Truncation Functor trans
+# Composition of truncation functors
 
-Successive restriction functors compose to the actual direct restriction.
+Composition of truncation functors.
+
+The functors for r₀→r₁ and r₁→r₂ compose to the functor for r₀→r₂.

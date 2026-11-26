@@ -1,3 +1,5 @@
-# Pair Homology Finite Length Swap
+# Finite-length homology data transported to the swapped pair
 
-Swapping the generators transports the canonical cutoff-three data.
+Finite-length homology data transported to the swapped pair.
+
+Transport the pair data through the canonical complex swap isomorphism.

@@ -1,3 +1,5 @@
-# Coalgebra Closure Tensor Inclusion
+# The tensor square of the closure inclusion
 
-The original inclusion on the original full tensor square.
+The tensor square of the closure inclusion.
+
+Apply the tensor bifunctor to j in both factors to obtain D ⊗ D → C ⊗ C.

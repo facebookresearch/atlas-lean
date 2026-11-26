@@ -1,4 +1,6 @@
-# Top Cut Connecting
+# The connecting map determined by the degreewise splitting
 
-The actual stock connecting morphism is constructed from the
-original successor sequence and its earned degreewise splitting.
+The connecting map determined by the degreewise splitting.
+
+The degreewise split top-term sequence gives a cochain map from the lower truncation L to the
+shifted single-term complex A[1].

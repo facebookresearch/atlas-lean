@@ -19,12 +19,17 @@ public import MathlibExt.Algebra.Homology.HomotopyCategory.MappingConeQuasiIso
 /-!
 # Gluing quasi-isomorphisms along cochain pushouts
 
-A pushout square gives the biproduct short complex with first map `(i,-f)`
-and last map defined by the apex legs. A monic distinguished leg makes
-this sequence short exact.
+Let V be an abelian category and consider arbitrary integer-indexed cochain
+complexes in V. A pushout square with maps i:A → B, f:A → Z and legs
+inB:B → P, inZ:Z → P gives the short complex
+A —(i,−f)→ B ⊞ Z —[inB,inZ]→ P.
+The second map is the cokernel of the first. If i is monic, this sequence
+is short exact.
 
-A commutative map of such pushout squares whose three vertex maps are
-quasi-isomorphisms induces a quasi-isomorphism of the pushout apices.
+For a commuting map between two such pushout squares with monic
+distinguished maps i and i′, quasi-isomorphisms on A, B and Z imply a
+quasi-isomorphism on the apices P. The map of short complexes has components
+x, y ⊞ z and p, preserving the signed first map and both pushout legs.
 -/
 
 @[expose] public section
@@ -42,14 +47,21 @@ variable {A B Z P A' B' Z' P' : CochainComplex V ℤ}
 variable {i : A ⟶ B} {f : A ⟶ Z} {inB : B ⟶ P} {inZ : Z ⟶ P}
 variable {i' : A' ⟶ B'} {f' : A' ⟶ Z'} {inB' : B' ⟶ P'} {inZ' : Z' ⟶ P'}
 
-/-- Biproduct short complex associated with a pushout square. -/
+/-- Let V be abelian and let a pushout square of integer-indexed cochain
+complexes have maps i:A → B, f:A → Z and legs inB:B → P, inZ:Z → P.
+The associated short complex is
+A —(i,−f)→ B ⊞ Z —[inB,inZ]→ P.
+The composite is zero by the commuting-square identity. -/
 @[simps! X₁ X₂ X₃ f g]
 def pushoutShortComplex (hP : IsPushout i f inB inZ) :
     ShortComplex (CochainComplex V ℤ) :=
   ShortComplex.mk (biprod.lift i (-f)) (biprod.desc inB inZ) (by
     rw [biprod.lift_desc, Preadditive.neg_comp, hP.w, add_neg_cancel])
 
-/-- The apex-leg descendant is the cokernel of the biproduct map. -/
+/-- For a pushout square of integer-indexed cochain complexes in an abelian
+category V, with maps i:A → B, f:A → Z and legs inB:B → P, inZ:Z → P,
+the map [inB,inZ]:B ⊞ Z → P is the cokernel of
+(i,−f):A → B ⊞ Z. The corresponding cokernel cofork is a colimit. -/
 def pushoutShortComplexIsColimit (hP : IsPushout i f inB inZ) :
     IsColimit (CokernelCofork.ofπ (pushoutShortComplex hP).g (pushoutShortComplex hP).zero) := by
   let S := pushoutShortComplex hP
@@ -90,7 +102,11 @@ def pushoutShortComplexIsColimit (hP : IsPushout i f inB inZ) :
       exact (congrArg (fun t => t ≫ m) (biprod.inr_desc inB inZ)).symm.trans
         ((Category.assoc biprod.inr (biprod.desc inB inZ) m).trans h₂)
 
-/-- A monic distinguished leg makes the pushout biproduct sequence short exact. -/
+/-- For a pushout square of integer-indexed cochain complexes in an abelian
+category V, if its distinguished map i:A → B is monic, the signed
+biproduct sequence
+0 → A —(i,−f)→ B ⊞ Z —[inB,inZ]→ P → 0
+is short exact. -/
 theorem pushoutShortComplex_shortExact (hP : IsPushout i f inB inZ) [Mono i] :
     (pushoutShortComplex hP).ShortExact := by
   let S := pushoutShortComplex hP
@@ -162,8 +178,13 @@ private theorem quasiIso_biprod_map {K L K' L' : CochainComplex V ℤ}
   rw [heq]
   infer_instance
 
-/-- A commutative map of pushout squares induces a map of their biproduct short complexes
-whose apex component is `p`. -/
+/-- Let V be abelian, and consider two pushout squares of integer-indexed
+cochain complexes with maps i,f,inB,inZ and i′,f′,inB′,inZ′.
+Suppose x:A → A′, y:B → B′, z:Z → Z′ and p:P → P′ satisfy
+y ∘ i=i′ ∘ x, z ∘ f=f′ ∘ x,
+p ∘ inB=inB′ ∘ y and p ∘ inZ=inZ′ ∘ z.
+They induce a map of the signed pushout short complexes with three
+components x, y ⊞ z and p. -/
 @[simps! τ₁ τ₂ τ₃]
 def pushoutShortComplexMap (hP : IsPushout i f inB inZ) (hP' : IsPushout i' f' inB' inZ')
     (x : A ⟶ A') (y : B ⟶ B') (z : Z ⟶ Z') (p : P ⟶ P')
@@ -187,8 +208,12 @@ def pushoutShortComplexMap (hP : IsPushout i f inB inZ) (hP' : IsPushout i' f' i
     · simpa only [pushoutShortComplex, Category.assoc, biprod.inr_map_assoc,
         biprod.inr_desc, biprod.inr_desc_assoc] using wZ.symm
 
-/-- Three vertex quasi-isomorphisms between pushout squares with monic distinguished legs
-induce a quasi-isomorphism of the apices. -/
+/-- Let V be an abelian category. For a commuting map between two pushout
+squares of integer-indexed cochain complexes, with monic distinguished
+maps i:A → B and i′:A′ → B′, let the four vertex maps be
+x:A → A′, y:B → B′, z:Z → Z′ and p:P → P′, commuting with the two
+span maps and the two pushout legs. If x, y and z are quasi-isomorphisms,
+then p is a quasi-isomorphism. -/
 theorem quasiIso_of_pushout (hP : IsPushout i f inB inZ) (hP' : IsPushout i' f' inB' inZ')
     [Mono i] [Mono i'] (x : A ⟶ A') (y : B ⟶ B') (z : Z ⟶ Z') (p : P ⟶ P')
     (wi : i ≫ y = x ≫ i') (wf : f ≫ z = x ≫ f')

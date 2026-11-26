@@ -1,3 +1,6 @@
-# Sequential Product Map id
+# Identity law for tower product maps
 
-The map of sequential products preserves identities.
+Identity law for tower product maps.
+
+For an inverse tower A in a category with countable products, the product map of the identity
+tower morphism is the identity of P_A.

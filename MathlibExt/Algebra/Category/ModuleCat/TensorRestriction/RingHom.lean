@@ -11,15 +11,15 @@ module
 public import MathlibExt.Algebra.Category.ModuleCat.TensorRestriction
 
 /-!
-# Original coefficient tensor along a ring homomorphism
+# The restricted-coefficient tensor bifunctor for a specified ring map
 
-This is the ring-map adapter to the existing native tensor factory. The
-original coefficient keeps its carrier and S-action; its R-action is the
-actual map f. Both ring worlds and both module worlds are independent.
+For a homomorphism f : R → S of commutative rings, use f to restrict the action on an S-module
+M. The bifunctor sends (M,L) to M ⊗_R L as an S-module, with f determining the balancing
+action.
 
-The existing factory owns all tensor objects, maps and coefficient
-naturality. This file introduces no tensor quotient, scalar-extension
-engine, flatness assumption or comparison certificate.
+Input maps act on the second factor and coefficient maps on the first. At f = algebraMap R S,
+this is the tensor bifunctor for the given algebra structure, with all ring and carrier
+universe levels as stated.
 -/
 
 @[expose] public section
@@ -35,31 +35,43 @@ namespace ModuleCat.TensorRestriction
 
 variable {R : Type u} {S : Type w} [CommRing R] [CommRing S] (f : R →+* S)
 
-/-- The original ring map supplies the sole native coefficient tensor factory. -/
+/-- The tensor bifunctor determined by a ring homomorphism.
+
+For f : R → S, use its algebra structure to send an S-module M to the R-input tensor functor M
+⊗_R −. -/
 abbrev factoryForMap :
     ModuleCat.{t} S ⥤ (ModuleCat.{v} R ⥤ ModuleCat.{max t v} S) := by
   letI : Algebra R S := f.toAlgebra
   exact factory.{u, w, t, v} R S
 
-/-- Fix the original coefficient in the actual ring-map tensor family. -/
+/-- The tensor functor for a specified scalar map and coefficient.
+
+For f : R → S and M an S-module, this functor sends L to M ⊗_R L, with M restricted along f. -/
 abbrev functorForMap (M : ModuleCat.{t} S) :
     ModuleCat.{v} R ⥤ ModuleCat.{max t v} S :=
   (factoryForMap.{u, w, t, v} f).obj M
 
-/-- The original tensor functor is additive for arbitrary original coefficients. -/
+/-- Additivity of tensoring through a specified ring map.
+
+The functor L ↦ M ⊗_R L defined using f preserves sums of input morphisms. -/
 instance functorForMap_additive (M : ModuleCat.{t} S) :
     (functorForMap.{u, w, t, v} f M).Additive := by
   letI : Algebra R S := f.toAlgebra
   change (functorAt R S M : ModuleCat.{v} R ⥤ ModuleCat.{max t v} S).Additive
   infer_instance
 
-/-- An actual structural algebra and its structural map give the same tensor family. -/
+/-- Agreement with tensoring through the algebra map.
+
+For an existing algebra structure R → S, factoryForMap at algebraMap R S equals the
+coefficient tensor bifunctor of that structure. -/
 theorem factoryForMap_algebraMap [Algebra R S] :
     factoryForMap.{u, w, t, v} (algebraMap R S) = factory.{u, w, t, v} R S := by
   unfold factoryForMap
   rw [toAlgebra_algebraMap]
 
-/-- The actual input map acts on the second tensor factor. -/
+/-- Input-map coordinates for the specified scalar tensor functor.
+
+The map of g : L → L′ sends m ⊗ l to m ⊗ g(l), with the R-action on M restricted through f. -/
 theorem functorForMap_map_tmul (M : ModuleCat.{t} S)
     {L L' : ModuleCat.{v} R} (g : L ⟶ L') (m : M) (l : L) :
     letI : Module R M := Module.compHom M f
@@ -68,7 +80,9 @@ theorem functorForMap_map_tmul (M : ModuleCat.{t} S)
   letI : Algebra R S := f.toAlgebra
   exact functorAt_map_tmul R S M g m l
 
-/-- The actual coefficient map acts on the first tensor factor. -/
+/-- Coefficient-map coordinates for the specified scalar tensor bifunctor.
+
+For an S-linear map g : M → N, the component at L sends m ⊗ l to g(m) ⊗ l. -/
 theorem factoryForMap_map_tmul {M N : ModuleCat.{t} S} (g : M ⟶ N)
     (L : ModuleCat.{v} R) (m : M) (l : L) :
     letI : Module R M := Module.compHom M f

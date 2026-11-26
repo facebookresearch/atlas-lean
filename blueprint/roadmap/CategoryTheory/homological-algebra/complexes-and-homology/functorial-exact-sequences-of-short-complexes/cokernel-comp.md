@@ -1,6 +1,5 @@
-# Cokernel Compδ
+# Connecting homology map of the composite-cokernel sequence
 
-The pointwise connecting homomorphism for the cokernel-comp short exact
-sequence of a composable pair of homological complexes whose second map is
-monic. Definitionally `ShortExact.δ` of the functorial cokernel-comp
-sequence.
+For a composable pair X —f→ Y —g→ Z of complexes in an abelian category,
+with g monic and c.Rel(i,j), the connecting map
+H_i(Coker(g)) → H_j(Coker(f)) of the short exact cokernel triple.

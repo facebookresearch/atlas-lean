@@ -1,4 +1,6 @@
-# Output Tensor Map app
+# The component formula for the lifted tensor-diagram map
 
-The map is exactly the native lift of the original tensor coefficient map,
-with the same original diagram and original coefficient-map values.
+The component formula for the lifted tensor-diagram map.
+
+At i, outputTensorMap is the common-height lift of TensorProduct.map a id_{X_i}, acting on the
+first tensor coefficient.

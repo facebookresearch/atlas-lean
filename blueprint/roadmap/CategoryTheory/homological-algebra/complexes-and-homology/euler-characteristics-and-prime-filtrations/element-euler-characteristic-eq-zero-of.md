@@ -1,4 +1,6 @@
-# Element Euler Characteristic eq zero of lsmul eq zero
+# Zero multiplication has zero Euler characteristic
 
-If multiplication by the element is zero, its kernel and cokernel have
-equal length and its Euler characteristic vanishes.
+Zero multiplication has zero Euler characteristic.
+
+If μ_r is zero and its kernel and cokernel have finite length, their lengths coincide and
+χ_r(M)=0.

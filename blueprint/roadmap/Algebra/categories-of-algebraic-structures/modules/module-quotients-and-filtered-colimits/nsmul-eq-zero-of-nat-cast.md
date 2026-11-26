@@ -1,3 +1,5 @@
-# Nsmul eq zero of nat Cast
+# A vanishing natural scalar annihilates module elements
 
-The actual scalar-ring equation kills every element of an actual module over that ring.
+A vanishing natural scalar annihilates module elements.
+
+If the natural-number cast of m in R is zero, then m·x = 0 for every x in an R-module A.

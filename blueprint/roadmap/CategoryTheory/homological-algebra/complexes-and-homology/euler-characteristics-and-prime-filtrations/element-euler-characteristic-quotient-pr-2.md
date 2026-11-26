@@ -1,4 +1,6 @@
-# Element Euler Characteristic quotient prime eq length of not mem
+# The Euler contribution of a prime quotient excluding the element
 
-A prime-quotient factor on which the element is nonzero contributes its
-principal quotient length to the one-element Euler characteristic.
+The Euler contribution of a prime quotient excluding the element.
+
+For prime p with r ∉ p, χ_r(R/p) is the length of (R/p)/r(R/p), under the stated finiteness
+condition.

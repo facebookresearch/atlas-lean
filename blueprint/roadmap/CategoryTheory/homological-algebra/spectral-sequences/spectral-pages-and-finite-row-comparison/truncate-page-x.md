@@ -1,3 +1,5 @@
-# Truncate page X
+# The retained page object is unchanged
 
-Every retained page object is the original degree object.
+The retained page object is unchanged.
+
+At every index, truncation keeps the original page object.

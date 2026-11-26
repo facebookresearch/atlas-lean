@@ -1,4 +1,6 @@
-# Factor prime is Min of not mem of support Dim le one
+# A regular-module factor excluding the parameter is a minimal ring prime
 
-For the regular module, every nonzero-contributing factor is an ambient
-minimal prime under the one-dimensional local hypotheses.
+A regular-module factor excluding the parameter is a minimal ring prime.
+
+For the regular module in the stated local support-dimension setting, each factor prime
+excluding r is minimal.

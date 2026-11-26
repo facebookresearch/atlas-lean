@@ -1,5 +1,6 @@
-# Family Lift To Projective Resolution
+# The comparison map from a Koszul family to a projective resolution
 
-Lift the augmentation of a finite-family Koszul complex to a supplied
-projective resolution after choosing a map from the quotient target to the
-resolved object.
+The comparison map from a Koszul family to a projective resolution.
+
+For a map q from the quotient augmentation target to Z, projectivity of the Koszul terms gives
+a chain map to the supplied projective resolution of Z.

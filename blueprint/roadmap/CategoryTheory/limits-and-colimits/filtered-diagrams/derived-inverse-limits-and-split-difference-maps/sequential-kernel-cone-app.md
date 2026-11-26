@@ -1,4 +1,6 @@
-# Sequential Kernel Cone π app
+# Legs of the sequential difference kernel cone
 
-The legs of the sequential kernel cone are the kernel inclusion followed
-by the product projections.
+Legs of the sequential difference kernel cone.
+
+For a tower A in a preadditive category with countable products and kernels, the cone leg at
+level n is kernel.ι(d_A) ≫ π_A,n : Ker(d_A) → A_n.

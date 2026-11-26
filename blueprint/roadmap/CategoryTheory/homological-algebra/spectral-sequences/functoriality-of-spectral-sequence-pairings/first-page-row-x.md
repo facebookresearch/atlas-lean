@@ -1,3 +1,5 @@
-# First Page Row X
+# The object in an integer first-page row
 
-Row objects are the original objects at their native bidegrees.
+The object in an integer first-page row.
+
+Its degree-p object is E₁^{p,q}.

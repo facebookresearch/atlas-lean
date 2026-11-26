@@ -1,4 +1,5 @@
-# First Page Row Cycles Pair boundaries zero
+# Row boundary products vanish after homology projection
 
-Both actual row boundaries vanish after the row cycle product and its
-actual homology projection.
+Row boundary products vanish after homology projection.
+
+Both incoming row-boundary sources paired with cycles are killed by the output projection.

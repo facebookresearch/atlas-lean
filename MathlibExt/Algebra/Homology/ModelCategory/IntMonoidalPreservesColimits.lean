@@ -19,12 +19,20 @@ public import Mathlib.Algebra.Category.ModuleCat.Colimits
 public import MathlibExt.CategoryTheory.Monoidal.PreservesColimits
 
 /-!
-# Actual colimit preservation for the full integer cochain tensor
+# Colimits of the full integer cochain tensor
 
-Every tensor degree is its original ordinary coproduct of coefficient tensor
-pieces. Coefficient tensoring and the coproduct functor preserve colimits, and
-native cochain evaluation creates colimits. No support bound, field, flatness,
-or tensor-colimit output premise is used.
+Let R be a commutative ring in universe u. The ordinary convolution tensor of ℤ-indexed cochain
+complexes has degree-n term ⊕_{p+q=n}K^p⊗_R L^q, over every integer pair. Its monoidal structure
+uses the graded tensor coproducts, zero-object preservation in both coefficient variables, the
+two triple-coproduct compatibility conditions, and fourfold tensor extensionality.
+
+For fixed K, evaluation of K⊗(-) at n identifies with the coproduct of the degree-piece diagram
+L↦(K^p⊗L^q)_{p+q=n}; the right tensor has pieces L^p⊗K^q. Evaluation and coefficient tensoring
+preserve colimits, and the diagram coproduct functor does as well.
+
+Consequently both full cochain tensor functors preserve colimits of any category J for which the
+coefficient module category has J-colimits. The object and morphism universes of J are
+independent of u.
 -/
 
 @[expose] public section
@@ -50,11 +58,14 @@ variable [∀ X Y Z : GradedObject ℤ (ModuleCat.{u} R),
   GradedObject.HasGoodTensor₁₂Tensor X Y Z]
 variable [∀ X Y Z : GradedObject ℤ (ModuleCat.{u} R),
   GradedObject.HasGoodTensorTensor₂₃ X Y Z]
-/-- The original full integer total-degree fiber. -/
+/-- For n∈ℤ, the total-degree fibre of the two integer cochain shapes is the set I_n={(p,q)∈ℤ² |
+p+q=n}. It indexes the full convolution coproduct in degree n, including negative p and q. -/
 abbrev intTensorTotalFiber (n : ℤ) :=
   (ComplexShape.π (ComplexShape.up ℤ) (ComplexShape.up ℤ) (ComplexShape.up ℤ)) ⁻¹' {n}
 
-/-- The actual original left tensor pieces in one integer degree. -/
+/-- Let R be a commutative ring in universe u and use R-module carriers in u. For a fixed ℤ-indexed
+cochain complex K and n∈ℤ, the functor P^L_{K,n} sends L to the discrete diagram (p,q)↦K^p⊗_R
+L^q for p+q=n. A cochain map f:L→M acts at that pair by id_{K^p}⊗f^q. -/
 def tensorLeftIntDegreePieces (K : CochainComplex (ModuleCat.{u} R) ℤ) (n : ℤ) :
     CochainComplex (ModuleCat.{u} R) ℤ ⥤ Discrete (intTensorTotalFiber n) ⥤ ModuleCat.{u} R where
   obj L :=
@@ -69,7 +80,12 @@ def tensorLeftIntDegreePieces (K : CochainComplex (ModuleCat.{u} R) ℤ) (n : �
         simp }
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Actual degree evaluation of the full cochain tensor is the original degree-piece coproduct. -/
+/-- Let R be a commutative ring in universe u and use R-module carriers in u. Use the ℤ-indexed
+cochain convolution tensor: all antidiagonal coproducts exist, coefficient tensoring preserves
+zero objects in both variables and commutes with the coproducts in both triple
+parenthesizations, and fourfold tensor inclusions determine maps. For K and n∈ℤ, there is a
+natural isomorphism ev_n(K⊗(-))≅colim∘P^L_{K,n}. At L it identifies (K⊗L)^n with
+⊕_{p+q=n}K^p⊗L^q, preserving each fibre coefficient. -/
 def tensorLeftIntEvalIso (K : CochainComplex (ModuleCat.{u} R) ℤ) (n : ℤ) :
     tensorLeft K ⋙ HomologicalComplex.eval (ModuleCat.{u} R) (.up ℤ) n ≅
       tensorLeftIntDegreePieces K n ⋙ colim :=
@@ -84,7 +100,9 @@ def tensorLeftIntEvalIso (K : CochainComplex (ModuleCat.{u} R) ℤ) (n : ℤ) :
     simp only [MonoidalCategory.id_whiskerRight, Category.id_comp]
     rfl)
 
-/-- The actual original right tensor pieces in one integer degree. -/
+/-- Let R be a commutative ring in universe u and use R-module carriers in u. For K a ℤ-indexed
+cochain complex and n∈ℤ, P^R_{K,n} sends L to (p,q)↦L^p⊗_R K^q on the discrete fibre p+q=n. A
+map f:L→M acts by f^p⊗id_{K^q}. -/
 def tensorRightIntDegreePieces (K : CochainComplex (ModuleCat.{u} R) ℤ) (n : ℤ) :
     CochainComplex (ModuleCat.{u} R) ℤ ⥤ Discrete (intTensorTotalFiber n) ⥤ ModuleCat.{u} R where
   obj L :=
@@ -99,8 +117,12 @@ def tensorRightIntDegreePieces (K : CochainComplex (ModuleCat.{u} R) ℤ) (n : �
         simp }
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Actual degree evaluation of the full right cochain tensor is its original degree-piece
-coproduct. -/
+/-- Let R be a commutative ring in universe u and use R-module carriers in u. Use the ℤ-indexed
+cochain convolution tensor: all antidiagonal coproducts exist, coefficient tensoring preserves
+zero objects in both variables and commutes with the coproducts in both triple
+parenthesizations, and fourfold tensor inclusions determine maps. For K and n∈ℤ,
+ev_n((-)⊗K)≅colim∘P^R_{K,n} naturally. Its component at L identifies (L⊗K)^n with
+⊕_{p+q=n}L^p⊗K^q in the given coefficient order. -/
 def tensorRightIntEvalIso (K : CochainComplex (ModuleCat.{u} R) ℤ) (n : ℤ) :
     tensorRight K ⋙ HomologicalComplex.eval (ModuleCat.{u} R) (.up ℤ) n ≅
       tensorRightIntDegreePieces K n ⋙ colim :=
@@ -118,8 +140,11 @@ def tensorRightIntEvalIso (K : CochainComplex (ModuleCat.{u} R) ℤ) (n : ℤ) :
 
 variable (J : Type w) [Category.{v} J] [HasColimitsOfShape J (ModuleCat.{u} R)]
 
-/-- Each actual integer coefficient piece preserves colimits through native evaluation and
-module tensoring. -/
+/-- Let R be a commutative ring in universe u and use R-module carriers in u. Let J be a category
+with independent object/morphism universes w,v and suppose ModuleCat_u(R) has colimits of shape
+J. For fixed K and n∈ℤ, the functor L↦(K^p⊗L^q)_{p+q=n} preserves J-colimits in the
+fibre-diagram category. Its component functors are degree-q evaluation followed by tensoring
+with K^p. -/
 instance tensorLeftIntDegreePieces_preservesColimits
     (K : CochainComplex (ModuleCat.{u} R) ℤ) (n : ℤ) :
     PreservesColimitsOfShape J (tensorLeftIntDegreePieces K n) :=
@@ -128,7 +153,13 @@ instance tensorLeftIntDegreePieces_preservesColimits
       (HomologicalComplex.eval (ModuleCat.{u} R) (.up ℤ) i.as.val.2 ⋙ tensorLeft (K.X i.as.val.1))
     infer_instance)
 
-/-- The actual full integer left tensor functor preserves every supported colimit shape. -/
+/-- Let R be a commutative ring in universe u and use R-module carriers in u. Use the ℤ-indexed
+cochain convolution tensor: all antidiagonal coproducts exist, coefficient tensoring preserves
+zero objects in both variables and commutes with the coproducts in both triple
+parenthesizations, and fourfold tensor inclusions determine maps. Let J be a category with
+independent object/morphism universes w,v and suppose ModuleCat_u(R) has colimits of shape J.
+For every ℤ-indexed K, the functor K⊗(-) preserves J-colimits of cochain complexes. Each degree
+is the full antidiagonal coproduct of coefficient tensor pieces. -/
 instance tensorLeftInt_preservesColimits
     (K : CochainComplex (ModuleCat.{u} R) ℤ) :
     PreservesColimitsOfShape J (tensorLeft K) := by
@@ -136,8 +167,10 @@ instance tensorLeftInt_preservesColimits
   intro n
   apply preservesColimitsOfShape_of_natIso (tensorLeftIntEvalIso K n).symm
 
-/-- Each actual integer right coefficient piece preserves colimits through native evaluation and
-module tensoring. -/
+/-- Let R be a commutative ring in universe u and use R-module carriers in u. Let J be a category
+with independent object/morphism universes w,v and suppose ModuleCat_u(R) has colimits of shape
+J. For fixed K and n∈ℤ, the functor L↦(L^p⊗K^q)_{p+q=n} preserves J-colimits. Its component
+functors are degree-p evaluation followed by tensoring on the right with K^q. -/
 instance tensorRightIntDegreePieces_preservesColimits
     (K : CochainComplex (ModuleCat.{u} R) ℤ) (n : ℤ) :
     PreservesColimitsOfShape J (tensorRightIntDegreePieces K n) :=
@@ -146,7 +179,13 @@ instance tensorRightIntDegreePieces_preservesColimits
       (HomologicalComplex.eval (ModuleCat.{u} R) (.up ℤ) i.as.val.1 ⋙ tensorRight (K.X i.as.val.2))
     infer_instance)
 
-/-- The actual full integer right tensor functor preserves every supported colimit shape. -/
+/-- Let R be a commutative ring in universe u and use R-module carriers in u. Use the ℤ-indexed
+cochain convolution tensor: all antidiagonal coproducts exist, coefficient tensoring preserves
+zero objects in both variables and commutes with the coproducts in both triple
+parenthesizations, and fourfold tensor inclusions determine maps. Let J be a category with
+independent object/morphism universes w,v and suppose ModuleCat_u(R) has colimits of shape J.
+For every ℤ-indexed K, (-)⊗K preserves J-colimits of cochain complexes, using all pieces L^p⊗K^q
+with p+q=n in each degree. -/
 instance tensorRightInt_preservesColimits
     (K : CochainComplex (ModuleCat.{u} R) ℤ) :
     PreservesColimitsOfShape J (tensorRight K) := by

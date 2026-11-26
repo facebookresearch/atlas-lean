@@ -1,5 +1,5 @@
-# Locally eq
+# Trace restrictions determine a section
 
-Locality for the target: two sections agreeing on every trace open
-are equal (`eq_of_locally_eq'`). All Hom-level facts below (restriction,
-additivity, linearity, naturality, uniqueness) go through this.
+Let `G` be a module sheaf on a ringed space `(X,R)`, `U` an open cover, and `V∈Opens X`. If
+`a,b∈G(V)` have the same restriction to every trace open `V ∩ U_i`, then `a=b`. The equality
+condition uses the canonical inclusions `traceIncl U V i`.

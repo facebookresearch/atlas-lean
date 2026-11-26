@@ -1,6 +1,5 @@
-# Cover Hom ext
+# An open cover detects equality of module-sheaf morphisms
 
-Uniqueness: two sheaf morphisms agreeing on a cover are equal. By
-`SheafOfModules.hom_ext` + `PresheafOfModules.hom_ext` it suffices to check
-per-open, per-section, where both sides restrict (by naturality) to the
-agreed values on the trace cover — closed by `locally_eq`.
+Let `F,G` be module sheaves over `(X,R)` and `U` an open cover. If `ψ₁,ψ₂ : F → G` have equal
+component maps `F(V) → G(V)` for every chart `i` and every open `V ≤ U_i`, then `ψ₁=ψ₂` as
+module-sheaf morphisms.

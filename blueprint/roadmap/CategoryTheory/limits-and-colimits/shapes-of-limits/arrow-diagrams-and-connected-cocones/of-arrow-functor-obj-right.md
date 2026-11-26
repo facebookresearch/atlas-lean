@@ -1,3 +1,5 @@
-# Of Arrow Functor obj right
+# Target vertex of the diagram associated to an arrow
 
-The two-object diagram retains the original target object.
+Target vertex of the diagram associated to an arrow.
+
+For an arrow A in a category C, the right vertex of ofArrowFunctor(A) is A.right.

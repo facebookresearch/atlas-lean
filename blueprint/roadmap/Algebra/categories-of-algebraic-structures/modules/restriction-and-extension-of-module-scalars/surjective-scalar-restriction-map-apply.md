@@ -1,3 +1,5 @@
-# Surjective Scalar Restriction Map apply
+# Values of the quotient-coefficient restriction map
 
-The restriction map is the original coefficient map on all elements.
+Values of the quotient-coefficient restriction map.
+
+For a compatible ring map δ : A → B, the induced restriction map sends a to δ(a).

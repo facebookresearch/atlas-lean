@@ -19,94 +19,22 @@ public import MathlibExt.CategoryTheory.Monoidal.TensorPowers
 /-!
 # Finite tensor powers of cochain complexes
 
-For `X : CochainComplex (ModuleCat R) ℤ` define the left-associated finite
-power `tensorPowObj X n` (`0 ↦ unit`, `n+1 ↦ pow n ⊗ X`), functorial
-`tensorPowMap`, and the finite add/coherence isomorphism
-`pow (m + n) ≅ pow m ⊗ pow n`.
+Let R be a commutative ring and X a cochain complex of R-modules indexed by ℤ. Using the given
+graded tensor coproducts, define P₀(X) = 𝟙 and Pₙ₊₁(X) = Pₙ(X) ⊗ X. A cochain map f induces
+P₀(f) = id and Pₙ₊₁(f) = Pₙ(f) ⊗ f. These maps preserve identities and composition. The binary
+tensor product has the cohomological differential d(x ⊗ y) = d(x) ⊗ y + (−1)^i x ⊗ d(y) for
+homogeneous x of degree i.
 
-This is the finite prerequisite for coradical/augmentation-ideal filtrations.
-It uses only binary `tensorObj`/`tensorHom`/`associator` plus the existing
-`TensorHomFunctoriality` composition/identity/zero laws (binary `associator` only).
-No infinite direct sum `⨁ₙ X^⊗n`, no tensor-coalgebra
-carrier, no `ComonObj` deconcatenation, no cofree/free object or universal
-property, no `IsConilpotent`/`IsComplete` predicate, no convolution
-summability, no twisting bijection/adjunction, no totalization/EZ-AW, and no
-derived/Koszul/operadic/model-category claim is provided here.
+The unit and associativity comparisons additionally use preservation of empty colimits by both
+module tensor functors, the four-factor graded tensor-object extensionality structure and the
+two graded iterated-tensor coproduct structures. They give block-splitting isomorphisms
+a_{m,n} : P_{m+n}(X) ≅ P_m(X) ⊗ P_n(X), natural in X and coherent under triple splitting,
+including zero-sized blocks.
 
-## Declaration inventory
-
-* `tensorPowObj`: left-associated `n`-fold power.
-* `tensorPowObj_zero` / `tensorPowObj_succ`: computation rules.
-* `tensorPowMap`: functorial map by recursion via `tensorHom`.
-* `tensorPowMap_zero` / `tensorPowMap_succ`: computation rules.
-* `tensorPowMap_id` / `tensorPowMap_comp`: functoriality laws.
-* `tensorPowFunctor`: the bundled weak-assumption DG power functor for each `n`.
-* `tensorHom_zero` / `zero_tensorHom`: `CochainComplex` compatibility names
-  delegating to the generic homological-complex tensor-zero laws.
-* `tensorIsoRight`: lift an iso through `tensorObj - C` (helper, not a global
-  instance).
-* `tensorPowObj_add`: finite add/coherence iso by induction on `n`
-  (base via `rightUnitor`, step via `tensorIsoRight` + `associator`).
-* `tensorPowObj_add_zero_right` / `tensorPowObj_add_zero_left`: unit coherence
-  (`rightUnitor` definitionally; `leftUnitor` by induction).
-* `tensorPowObj_add_naturality`: the add iso commutes with `tensorPowMap`.
-* `tensorPowObj_add_assoc`: the two `(m+n)+k` reassociation routes agree
-  (by induction on `k` via `pentagon` + associator naturality).
-* `tensorPowObj_eq_tensorPower`: under `AddCoherence`, the DG carrier agrees
-  with generic `TensorPower.tensorPowObj` (by induction from the two recursion
-  equations).
-* `tensorPowObj_whisker_right` / `tensorPowObj_bridge_succ`: right-whiskered
-  `eqToIso` transport and the `n + 1` bridge factorization.
-* `tensorPowObj_add_bridge_hom` / `tensorPowObj_add_bridge_inv`: native and generic
-  add isomorphisms commute with the original finite-power comparisons.
-* `tensorPowObj_powMap_bridge` / `tensorPowObj_powMap_bridge_inv`: generic and
-  DG power maps agree across the bridges (both orientations).
-
-## Finite-support note
-
-For fixed `n`, `tensorPowObj X n` is an `n`-fold binary iteration. The only
-colimits are the binary `tensorObj` degree coproducts already assumed. This
-is explicitly *not* `⨁ₙ X^⊗n`.
-
-## Nonclaims
-
-* No `down ℤ` API; everything is cohomological (`up ℤ` via `CochainComplex`).
-* No new global instances are declared; every `HasTensor`/`HasGoodTensor`
-  need is discharged by the six hypothesis families below.
-* No infinite sums, (co)free objects, filtrations, completeness, or
-  adjunction data.
-
-## Specialization note
-
-This file parallels the generic
-`CategoryTheory.MonoidalCategory.TensorPower` API with the same left-associated
-recursion convention and matching declaration names. The carrier/map layer
-(`tensorPowObj`, `tensorPowMap`) and `tensorIsoRight` keep small direct
-recursions using only the top-level binary `HasTensor` family; the generic
-foundation instead needs the full `MonoidalCategory` instance, so heterogeneous
-transport would add lines without removing duplication. The compatibility names
-`tensorHom_zero` and `zero_tensorHom` delegate to the generic
-`HomologicalComplex` laws. The add/naturality/associativity proofs likewise
-retain their direct form for stable `rfl` computation behavior. Under the full
-`AddCoherence` hypotheses, `tensorPowObj_eq_tensorPower` identifies the DG
-carrier with the generic power by induction from the two public recursion
-equations.
-
-## Import justification
-
-`Monoidal`/`Bifunctor`/`BifunctorAssociator`/`Preadditive` supply
-`tensorUnit`/`tensorObj`/`tensorHom`/`associator`/`leftUnitor`/`rightUnitor`
-and the graded hypotheses. `CoherenceLemmas` supplies `unitors_equal` for
-the `0+n` base case, `leftUnitor_tensor_hom` for its step, and
-`rightUnitor_tensor_inv` for the associativity base case.
-`TensorHomFunctoriality` supplies `tensorHom_comp_tensorHom`,
-`tensorHom_id_id`, and the generic `tensorHom_zero`/`zero_tensorHom` laws used
-by the compatibility wrappers. `tensorPowObj_add` uses only the binary
-`HomologicalComplex.associator`; `TripleTensor` tridegree lemmas are not
-referenced here.
-`ModuleCat.Basic` supplies `ModuleCat`/`CommRing`.
-`TensorPowers` (generic) supplies `TensorPower.tensorPowObj` and its recursion
-equations for the `tensorPowObj_eq_tensorPower` bridge.
+Under these monoidal hypotheses, the recursive power objects equal the general monoidal
+tensor-power objects. The induced object comparisons commute with power maps and with both
+orientations of the block-splitting isomorphisms. Every power is a finite binary iteration
+with the displayed left association.
 -/
 
 @[expose] public section
@@ -123,39 +51,57 @@ variable {R : Type*} [CommRing R]
 
 variable [∀ (X₁ X₂ : GradedObject ℤ (ModuleCat R)), GradedObject.HasTensor X₁ X₂]
 
-/-- Left-associated finite tensor power: `0 ↦ unit`, `n+1 ↦ pow n ⊗ X`.
-Matches the left-accumulating orientation of `reducedConvPow`. -/
+/-- Left-associated finite tensor power of a cochain complex.
+
+For a cochain complex X over a commutative ring R, with the graded tensor coproducts defined,
+set P₀(X) to the cochain tensor unit and Pₙ₊₁(X) = Pₙ(X) ⊗ X. The recursion retains the left
+association and the initial unit factor. -/
 noncomputable def tensorPowObj (X : CochainComplex (ModuleCat R) ℤ) :
     ℕ → CochainComplex (ModuleCat R) ℤ
   | 0 => HomologicalComplex.tensorUnit _ _
   | n + 1 => HomologicalComplex.tensorObj (tensorPowObj X n) X
 
-/-- `tensorPowObj` at `0` is the tensor unit; left-associated base computation (`rfl`). -/
+/-- Zeroth cochain tensor power.
+
+For a cochain complex X over R, its zeroth recursive tensor power is the cochain tensor unit,
+concentrated in degree zero at the scalar module R. -/
 @[simp]
 theorem tensorPowObj_zero (X : CochainComplex (ModuleCat R) ℤ) :
     tensorPowObj X 0 = HomologicalComplex.tensorUnit _ _ :=
   rfl
 
-/-- `tensorPowObj` at `n+1` is `tensorObj (pow n) X`; left-associated step computation (`rfl`). -/
+/-- Successor cochain tensor power.
+
+For every n : ℕ, Pₙ₊₁(X) is the binary cochain tensor product Pₙ(X) ⊗ X, with the graded
+tensor coproduct structures assumed in the construction. -/
 @[simp]
 theorem tensorPowObj_succ (X : CochainComplex (ModuleCat R) ℤ) (n : ℕ) :
     tensorPowObj X (n + 1) =
       HomologicalComplex.tensorObj (tensorPowObj X n) X :=
   rfl
 
-/-- Functorial map on finite powers by recursion via `tensorHom`. -/
+/-- Map on recursive cochain tensor powers.
+
+For a cochain map f : X → Y, define P₀(f) = id on the tensor unit and Pₙ₊₁(f) = Pₙ(f) ⊗ f. The
+binary tensor maps use the given graded tensor coproducts. -/
 noncomputable def tensorPowMap {X Y : CochainComplex (ModuleCat R) ℤ}
     (f : X ⟶ Y) : ∀ (n : ℕ), tensorPowObj X n ⟶ tensorPowObj Y n
   | 0 => 𝟙 _
   | n + 1 => HomologicalComplex.tensorHom (tensorPowMap f n) f
 
-/-- Functorial map at `0` is the identity on the tensor unit (`rfl`). -/
+/-- Map on the zeroth tensor power.
+
+For every cochain map f : X → Y over R, P₀(f) is the identity of the cochain tensor unit,
+independently of f. -/
 @[simp]
 theorem tensorPowMap_zero {X Y : CochainComplex (ModuleCat R) ℤ}
     (f : X ⟶ Y) : tensorPowMap f 0 = 𝟙 _ :=
   rfl
 
-/-- Functorial map at `n+1` is `tensorHom` of the `n`-th map and `f` (`rfl`). -/
+/-- Map on a successor tensor power.
+
+For f : X → Y and n : ℕ, the recursive power map is Pₙ₊₁(f) = Pₙ(f) ⊗ f from Pₙ(X) ⊗ X to
+Pₙ(Y) ⊗ Y. -/
 @[simp]
 theorem tensorPowMap_succ {X Y : CochainComplex (ModuleCat R) ℤ}
     (f : X ⟶ Y) (n : ℕ) :
@@ -163,7 +109,10 @@ theorem tensorPowMap_succ {X Y : CochainComplex (ModuleCat R) ℤ}
       HomologicalComplex.tensorHom (tensorPowMap f n) f :=
   rfl
 
-/-- Identity law for the functorial power map, by induction using `tensorHom_id_id`. -/
+/-- Identity law for cochain tensor powers.
+
+For a cochain complex X over R and any natural n, the power map Pₙ(id_X) is id_{Pₙ(X)}. The
+binary tensor identity law is applied through the left-associated recursion. -/
 @[simp]
 theorem tensorPowMap_id (X : CochainComplex (ModuleCat R) ℤ) (n : ℕ) :
     tensorPowMap (𝟙 X) n = 𝟙 _ := by
@@ -174,7 +123,10 @@ theorem tensorPowMap_id (X : CochainComplex (ModuleCat R) ℤ) (n : ℕ) :
     rw [ih]
     exact HomologicalComplex.tensorHom_id_id _ _
 
-/-- Composition law for the functorial power map, by induction using `tensorHom_comp_tensorHom`. -/
+/-- Composition law for cochain tensor powers.
+
+For cochain maps f : X → Y and g : Y → Z, Pₙ(f ≫ g) = Pₙ(f) ≫ Pₙ(g) for every n : ℕ. This
+retains the same binary tensor-map order at each successor step. -/
 theorem tensorPowMap_comp {X Y Z : CochainComplex (ModuleCat R) ℤ}
     (f : X ⟶ Y) (g : Y ⟶ Z) (n : ℕ) :
     tensorPowMap (f ≫ g) n = tensorPowMap f n ≫ tensorPowMap g n := by
@@ -187,7 +139,10 @@ theorem tensorPowMap_comp {X Y Z : CochainComplex (ModuleCat R) ℤ}
     rw [ih]
     exact (HomologicalComplex.tensorHom_comp_tensorHom _ _ _ _).symm
 
-/-- The `n`-fold DG tensor power as a functor of its base complex. -/
+/-- Finite tensor-power functor on cochain complexes.
+
+For a fixed n : ℕ, the assignment X ↦ Pₙ(X), f ↦ Pₙ(f) defines a functor on
+CochainComplex(ModuleCat R,ℤ), using the specified graded binary tensor coproducts. -/
 noncomputable def tensorPowFunctor (n : ℕ) :
     CochainComplex (ModuleCat R) ℤ ⥤ CochainComplex (ModuleCat R) ℤ where
   obj X := tensorPowObj X n
@@ -195,18 +150,28 @@ noncomputable def tensorPowFunctor (n : ℕ) :
   map_id X := tensorPowMap_id X n
   map_comp f g := tensorPowMap_comp f g n
 
+/-- Object value of the cochain tensor-power functor.
+
+For a cochain complex X and fixed n, tensorPowFunctor n takes X to tensorPowObj X n, the
+recursive left-associated power starting from the tensor unit. -/
 @[simp]
 theorem tensorPowFunctor_obj (n : ℕ) (X : CochainComplex (ModuleCat R) ℤ) :
     (tensorPowFunctor n).obj X = tensorPowObj X n :=
   rfl
 
+/-- Morphism value of the cochain tensor-power functor.
+
+For f : X → Y and fixed n, tensorPowFunctor n takes f to tensorPowMap f n, with zeroth map
+identity and successor map Pₙ(f) ⊗ f. -/
 @[simp]
 theorem tensorPowFunctor_map (n : ℕ) {X Y : CochainComplex (ModuleCat R) ℤ}
     (f : X ⟶ Y) : (tensorPowFunctor n).map f = tensorPowMap f n :=
   rfl
 
-/-- Lift an iso through `tensorObj - C` on the right. Helper only; not a
-global instance. -/
+/-- Tensoring a cochain isomorphism with a fixed right factor.
+
+For a cochain isomorphism e : A ≅ B and fixed cochain complex C, the binary tensor structures
+give A ⊗ C ≅ B ⊗ C. Its hom is e.hom ⊗ id_C and its inverse is e.inv ⊗ id_C. -/
 noncomputable def tensorIsoRight
     {A B C : CochainComplex (ModuleCat R) ℤ} (e : A ≅ B) :
     HomologicalComplex.tensorObj A C ≅ HomologicalComplex.tensorObj B C where
@@ -221,15 +186,19 @@ noncomputable def tensorIsoRight
     simp only [CategoryTheory.Iso.inv_hom_id,
       CategoryTheory.Category.id_comp, HomologicalComplex.tensorHom_id_id]
 
-/-- `tensorHom` with zero on the right vanishes, specialized from the generic
-homological-complex tensor-zero law. -/
+/-- Vanishing of a cochain tensor map with zero right factor.
+
+For a cochain map f : K₁ → L₁, the binary tensor map f ⊗ 0 : K₁ ⊗ K₂ → L₁ ⊗ L₂ is zero, with
+the graded tensor coproducts defined. -/
 theorem tensorHom_zero {K₁ L₁ K₂ L₂ : CochainComplex (ModuleCat R) ℤ}
     (f : K₁ ⟶ L₁) :
     HomologicalComplex.tensorHom f (0 : K₂ ⟶ L₂) = 0 := by
   exact HomologicalComplex.tensorHom_zero f
 
-/-- `tensorHom` with zero on the left vanishes, specialized from the generic
-homological-complex tensor-zero law. -/
+/-- Vanishing of a cochain tensor map with zero left factor.
+
+For a cochain map g : K₂ → L₂, the binary tensor map 0 ⊗ g : K₁ ⊗ K₂ → L₁ ⊗ L₂ is zero, with
+the graded tensor coproducts defined. -/
 theorem zero_tensorHom {K₁ L₁ K₂ L₂ : CochainComplex (ModuleCat R) ℤ}
     (g : K₂ ⟶ L₂) :
     HomologicalComplex.tensorHom (0 : K₁ ⟶ L₁) g = 0 := by
@@ -248,8 +217,12 @@ variable [∀ (X₁ X₂ X₃ : GradedObject ℤ (ModuleCat R)),
 variable [∀ (X₁ X₂ X₃ : GradedObject ℤ (ModuleCat R)),
   GradedObject.HasGoodTensorTensor₂₃ X₁ X₂ X₃]
 
-/-- Finite add/coherence iso: `pow (m + n) ≅ pow m ⊗ pow n` by induction on
-`n` (base via `rightUnitor`, step via `tensorIsoRight` + `associator`). -/
+/-- Splitting a finite cochain tensor power into two blocks.
+
+With the given graded coproduct hypotheses defining cochain unitors and associators, construct
+a_{m,n} : P_{m+n}(X) ≅ P_m(X) ⊗ P_n(X). At n = 0 this is the inverse right unitor after the
+index equality m+0 = m. At a successor it tensors a_{m,n} with id_X on the right and then
+applies the associator. -/
 @[nolint defsWithUnderscore]
 noncomputable def tensorPowObj_add (X : CochainComplex (ModuleCat R) ℤ)
     (m : ℕ) : ∀ (n : ℕ),
@@ -266,8 +239,11 @@ noncomputable def tensorPowObj_add (X : CochainComplex (ModuleCat R) ℤ)
 omit [∀ (X : ModuleCat R), PreservesColimit (Functor.empty.{0} (ModuleCat R))
   ((curriedTensor (ModuleCat R)).flip.obj X)] [∀ (X₁ X₂ X₃ X₄ : GradedObject ℤ (ModuleCat R)),
   GradedObject.HasTensor₄ObjExt X₁ X₂ X₃ X₄] in
-/-- Right-unit coherence for the add iso at `n = 0`: the hom is `eqToIso`
-then `rightUnitor.symm` (`rfl`). -/
+/-- Right-unit formula for a tensor-power block split.
+
+For the splitting a_{m,0}, its hom is the map induced by P_{m+0}(X) = P_m(X), followed by the
+inverse cochain right unitor P_m(X) → P_m(X) ⊗ 𝟙. The stated graded coproduct and right-unit
+hypotheses define these maps. -/
 theorem tensorPowObj_add_zero_right
     (X : CochainComplex (ModuleCat R) ℤ) (m : ℕ) :
     (tensorPowObj_add X m 0).hom =
@@ -275,8 +251,11 @@ theorem tensorPowObj_add_zero_right
         (HomologicalComplex.rightUnitor _).symm.hom :=
   rfl
 
-/-- Left-unit coherence for the add iso at `m = 0`, by induction using `unitors_equal`
-and `leftUnitor_tensor_hom`. -/
+/-- Left-unit formula for a tensor-power block split.
+
+With cochain tensor unitors and associators defined by the graded coproduct hypotheses,
+a_{0,n}.hom followed by the left unitor of P_n(X) is the map induced by P_{0+n}(X) = P_n(X).
+This retains the canonical index-identification map at n = 0 as well. -/
 theorem tensorPowObj_add_zero_left
     (X : CochainComplex (ModuleCat R) ℤ) (n : ℕ) :
     (tensorPowObj_add X 0 n).hom ≫
@@ -368,8 +347,11 @@ theorem tensorPowObj_add_zero_left
     rw [hD] at ⊢
     rfl
 
-/-- Naturality of the add iso in the base map, by induction using `rightUnitor_naturality`
-and `associator_naturality`. -/
+/-- Naturality of the cochain tensor-power block split.
+
+For f : X → Y and m,n : ℕ, the splitting maps satisfy P_{m+n}(f) ≫ a_{m,n}(Y).hom =
+a_{m,n}(X).hom ≫ (P_m(f) ⊗ P_n(f)). The unit and associativity comparisons use the stated
+graded tensor coproduct hypotheses. -/
 theorem tensorPowObj_add_naturality
     {X Y : CochainComplex (ModuleCat R) ℤ} (f : X ⟶ Y) (m n : ℕ) :
     tensorPowMap f (m + n) ≫ (tensorPowObj_add Y m n).hom =
@@ -446,8 +428,12 @@ theorem tensorPowObj_add_naturality
       CategoryTheory.Category.assoc, hNat',
       ← CategoryTheory.Category.assoc] at ⊢
 
-/-- Associativity coherence of the add iso, by induction on `k` via `pentagon`,
-associator naturality, and `rightUnitor_tensor_inv`. -/
+/-- Associativity of successive tensor-power block splits.
+
+With cochain unitors and associators defined, the two maps from P_{(m+n)+k}(X) to P_m(X) ⊗
+(P_n(X) ⊗ P_k(X)) agree. The first transports along (m+n)+k = m+(n+k), then applies a_{m,n+k}
+and id ⊗ a_{n,k}. The second applies a_{m+n,k}, then a_{m,n} ⊗ id, then the associator. This
+holds for all m,n,k : ℕ. -/
 theorem tensorPowObj_add_assoc
     (X : CochainComplex (ModuleCat R) ℤ) (m n k : ℕ) :
     (eqToIso (congrArg (tensorPowObj X) (Nat.add_assoc m n k))).hom ≫
@@ -748,14 +734,16 @@ theorem tensorPowObj_add_assoc
       (HomologicalComplex.tensorHom (tensorPowObj_add X m n).hom
         (𝟙 (HomologicalComplex.tensorObj (tensorPowObj X k) X)))] at ⊢
 
--- Instance propagation: each recursion step finds its binary/ternary needs
--- from the six hypothesis families above. A missing pinned instance surfaces
--- here as a named blocker rather than a synthesized substitute.
+-- Iterated tensor comparisons use the binary and iterated coproduct structures.
+-- Unit comparisons use preservation of empty colimits by both tensor functors.
+-- Associativity retains the left-associated finite tensor recursion.
 
-/-- Under the full coherence hypotheses, the DG carrier agrees with the generic
-`TensorPower` power, by induction from the two public recursion equations.
-This is the DG-to-generic orientation: the weak direct carrier/map layer above
-is retained, and only the carrier identification is transported. -/
+/-- Equality of recursive and monoidal cochain tensor-power objects.
+
+Under the graded coproduct, empty-colimit preservation and iterated tensor coherence
+hypotheses giving the cochain monoidal structure, the recursive object P_n(X) equals the
+general monoidal TensorPower.tensorPowObj X n. Both start at the same tensor unit and use Pₙ₊₁
+= Pₙ ⊗ X. -/
 theorem tensorPowObj_eq_tensorPower (X : CochainComplex (ModuleCat R) ℤ)
     (n : ℕ) :
     tensorPowObj X n =
@@ -777,9 +765,11 @@ omit [∀ (X : ModuleCat R), PreservesColimit (Functor.empty.{0} (ModuleCat R))
     GradedObject.HasGoodTensor₁₂Tensor X₁ X₂ X₃]
   [∀ (X₁ X₂ X₃ : GradedObject ℤ (ModuleCat R)),
     GradedObject.HasGoodTensorTensor₂₃ X₁ X₂ X₃] in
-/-- Right whiskering commutes with `eqToIso` transport, generalized over a
-free equation so `cases` applies. Shared by the insertion-lane bridge
-arguments (carrier Leibniz and insertion naturality). -/
+/-- Tensor transport of an equality with a fixed right factor.
+
+For an equality e : A = B of cochain complexes and fixed X, the canonical map induced by A ⊗ X
+= B ⊗ X equals (eqToIso e).hom ⊗ id_X. This uses the binary graded tensor structures and
+requires no associator comparison. -/
 theorem tensorPowObj_whisker_right
     {X : CochainComplex (ModuleCat R) ℤ}
     {A B : CochainComplex (ModuleCat R) ℤ} (e : A = B) :
@@ -788,9 +778,11 @@ theorem tensorPowObj_whisker_right
   cases e
   simp [HomologicalComplex.tensorHom_id_id]
 
-/-- The DG-to-generic power bridge at `n + 1` is the bridge at `n`
-right-whiskered. The two index equations agree by proof irrelevance
-(definitionally equal ends). -/
+/-- Successor formula for the tensor-power object comparison.
+
+Let B_n : P_n(X) ≅ Q_n(X) be the canonical isomorphism from equality of the recursive and
+general monoidal power objects, under the cochain monoidal hypotheses. Its successor hom is
+Bₙ₊₁.hom = Bₙ.hom ⊗ id_X. -/
 theorem tensorPowObj_bridge_succ
     (X : CochainComplex (ModuleCat R) ℤ) (n : ℕ) :
     (eqToIso (tensorPowObj_eq_tensorPower X (n + 1))).hom =
@@ -802,8 +794,11 @@ theorem tensorPowObj_bridge_succ
   rw [hEq]
   exact tensorPowObj_whisker_right (tensorPowObj_eq_tensorPower X n)
 
-/-- Generic and DG power maps agree across the bridges: bridge, then generic
-map, equals DG map, then bridge. By induction from the whiskered bridge. -/
+/-- Map equation for recursive and monoidal tensor powers.
+
+Under the cochain monoidal hypotheses, let B_X,n : P_n(X) ≅ Q_n(X) be the canonical object
+comparison. For g : X → Y, B_X,n.hom ≫ Q_n(g) = P_n(g) ≫ B_Y,n.hom. Both power maps follow the
+same left-associated recursion. -/
 theorem tensorPowObj_powMap_bridge
     {X Y : CochainComplex (ModuleCat R) ℤ} (g : X ⟶ Y) (n : ℕ) :
     (eqToIso (tensorPowObj_eq_tensorPower X n)).hom ≫
@@ -903,7 +898,10 @@ theorem tensorPowObj_powMap_bridge
         exact e0.trans (e1.trans (e2.symm.trans e3.symm))
       exact cL.trans (cM.trans cR)
 
-/-- Inverse form of the bridge/map agreement, by iso cancellation. -/
+/-- Inverse comparison equation for tensor-power maps.
+
+For g : X → Y and the canonical comparisons B_X,n : P_n(X) ≅ Q_n(X), the power maps satisfy
+Q_n(g) ≫ B_Y,n.inv = B_X,n.inv ≫ P_n(g), under the cochain monoidal hypotheses. -/
 theorem tensorPowObj_powMap_bridge_inv
     {X Y : CochainComplex (ModuleCat R) ℤ} (g : X ⟶ Y) (n : ℕ) :
     CategoryTheory.MonoidalCategory.TensorPower.tensorPowMap g n ≫
@@ -964,7 +962,11 @@ variable [∀ X Y Z : GradedObject ℤ (ModuleCat.{u} R),
 variable [∀ X Y Z : GradedObject ℤ (ModuleCat.{u} R),
   GradedObject.HasGoodTensorTensor₂₃ X Y Z]
 
-/-- Splitting a native word commutes with its original generic tensor-power comparisons. -/
+/-- Compatibility of recursive and monoidal block-splitting maps.
+
+Let R : Type u and X be a cochain complex in ModuleCat.{u} R, with the stated cochain monoidal
+hypotheses. Write B_n : P_n(X) ≅ Q_n(X) for the canonical object comparisons. Then
+a^P_{m,n}.hom ≫ (B_m.hom ⊗ B_n.hom) = B_{m+n}.hom ≫ a^Q_{m,n}.hom for all m,n : ℕ. -/
 theorem tensorPowObj_add_bridge_hom
     (X : CochainComplex (ModuleCat.{u} R) ℤ) (m n : ℕ) :
     (tensorPowObj_add X m n).hom ≫
@@ -1035,7 +1037,11 @@ theorem tensorPowObj_add_bridge_hom
       _ = HomologicalComplex.tensorHom Bsum.hom (𝟙 X) ≫
           (HomologicalComplex.tensorHom A.hom (𝟙 X) ≫ αA.hom) := Category.assoc _ _ _
 
-/-- Concatenating native powers commutes with the original generic tensor-power comparisons. -/
+/-- Compatibility of recursive and monoidal block-concatenation maps.
+
+For R : Type u and X in CochainComplex(ModuleCat.{u} R,ℤ), with the stated monoidal hypotheses
+and object comparisons B_n, (B_m.hom ⊗ B_n.hom) ≫ a^Q_{m,n}.inv = a^P_{m,n}.inv ≫ B_{m+n}.hom.
+The equality compares the inverse block-splitting maps without changing tensor order. -/
 theorem tensorPowObj_add_bridge_inv
     (X : CochainComplex (ModuleCat.{u} R) ℤ) (m n : ℕ) :
     HomologicalComplex.tensorHom

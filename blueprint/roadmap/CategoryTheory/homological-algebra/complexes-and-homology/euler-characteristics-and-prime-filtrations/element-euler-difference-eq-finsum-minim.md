@@ -1,4 +1,6 @@
-# Element Euler Difference eq finsum minimal full
+# The difference of two one-element Euler invariants on a common prime index
 
-Both original numerator and denominator Euler values share the complete
-minimal-prime index, with every original sign and generic multiplicity.
+The difference of two one-element Euler invariants on a common prime index.
+
+For a,b with finite multiplication lengths, χ_a(R)−χ_b(R) is the minimal-prime sum of generic
+multiplicities times the difference of their principal quotient contributions.

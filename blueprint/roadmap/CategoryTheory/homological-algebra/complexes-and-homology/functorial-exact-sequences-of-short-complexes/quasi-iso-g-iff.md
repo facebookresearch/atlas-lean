@@ -1,6 +1,5 @@
-# Quasi Iso g iff
+# Quasi-isomorphism criterion in a short exact sequence
 
-Horizontal criterion for a short exact sequence of homological complexes:
-`S.g` is a quasi-isomorphism iff `S.X₁` is acyclic. Uses `homology_exact₂`
-directly for monomorphy and `homology_exact₃` directly for epimorphy, with a
-split on existence of a successor.
+Let C be abelian and 0 → A → B —g→ D → 0 a short exact sequence
+of complexes of any shape c. The map g is a quasi-isomorphism if
+and only if A is acyclic in every degree.

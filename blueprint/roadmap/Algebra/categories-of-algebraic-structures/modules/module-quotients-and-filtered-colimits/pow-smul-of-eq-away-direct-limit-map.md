@@ -1,4 +1,5 @@
-# Pow smul of eq away Direct Limit Map
+# A power clears the stage of a direct-limit representative
 
-A stage-`n` class becomes a stage-zero class after multiplication by
-`r^n`.
+A power clears the stage of a direct-limit representative.
+
+Multiplying the stage-n class of x by r^n gives its stage-zero class.

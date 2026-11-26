@@ -16,16 +16,17 @@ public import MathlibExt.Algebra.Homology.Embedding.ExtendHomotopyCofiber
 public import MathlibExt.Algebra.Homology.HomotopyCofiberQuasiIso
 
 /-!
-# Homotopy-cofiber quasi-isomorphisms for down-Nat complexes
+# Quasi-isomorphisms of cofibers of nonnegative chain complexes
 
-The generic comparison between extension by zero and homotopy cofibers lets the
-integer-indexed quasi-isomorphism theorems descend to nonnegative chain complexes.
+In an abelian category C, a commuting square between maps of nonnegative
+chain complexes whose two vertical maps are quasi-isomorphisms induces a
+quasi-isomorphism of their homotopy cofibers. The cofiber map uses the
+predecessor n+1 of each degree n for the descending chain shape.
 
-## Main declarations
-
-* HomologicalComplex.homotopyCofiber.quasiIso_mapArrowHom_downNat
-* HomologicalComplex.homotopyCofiber.quasiIso_descShortComplex_downNat
-* HomotopyEquiv.homotopyCofiber_acyclic
+For a short exact sequence K → L → M of nonnegative chain complexes,
+the canonical map from the cofiber of K → L to M is a quasi-isomorphism.
+The cofiber of the forward map of a homotopy equivalence is therefore
+acyclic in all nonnegative degrees.
 -/
 
 @[expose] public section
@@ -52,8 +53,11 @@ private theorem downIntHasPrev :
     ∀ j : ℤ, ∃ i, (ComplexShape.down ℤ).Rel i j :=
   fun j ↦ ⟨j + 1, by simp⟩
 
-/-- A commutative square of down-Nat chain maps that is a quasi-isomorphism
-on both vertical sides induces a quasi-isomorphism on homotopy cofibers. -/
+/-- Let C be abelian and let a:K → K′, b:L → L′ form a commuting square
+between nonnegative chain maps f:K → L and g:K′ → L′.
+If a and b are quasi-isomorphisms, the induced map
+Cofib(f) → Cofib(g), using the chain-shape predecessors n+1,
+is a quasi-isomorphism. -/
 theorem quasiIso_mapArrowHom_downNat
     {K L K' L' : ChainComplex C ℕ} {f : K ⟶ L} {g : K' ⟶ L'}
     (a : Arrow.mk f ⟶ Arrow.mk g)
@@ -95,8 +99,9 @@ theorem quasiIso_mapArrowHom_downNat
     exact htransport
   exact (quasiIso_extendDownNatToInt_iff _).1 hext
 
-/-- The canonical map from the homotopy cofiber of the first arrow in a
-short-exact sequence of down-Nat complexes to its third term is a
+/-- In an abelian category C, for a short exact sequence
+K —f→ L —g→ M of nonnegative chain complexes, the canonical
+cofiber map Cofib(f) → M induced by g and g∘f=0 is a
 quasi-isomorphism. -/
 theorem quasiIso_descShortComplex_downNat
     (S : ShortComplex (ChainComplex C ℕ)) (hS : S.ShortExact) :
@@ -129,8 +134,9 @@ namespace HomotopyEquiv
 
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
-/-- The homotopy cofiber of the forward map of a homotopy equivalence of
-down-Nat chain complexes is acyclic. -/
+/-- In an abelian category C, if e is a homotopy equivalence between
+nonnegative chain complexes K and L, the homotopy cofiber of its
+forward map e:K → L is acyclic in every nonnegative degree. -/
 theorem homotopyCofiber_acyclic
     {K L : ChainComplex C ℕ} (e : HomotopyEquiv K L) :
     (HomologicalComplex.homotopyCofiber e.hom).Acyclic := by

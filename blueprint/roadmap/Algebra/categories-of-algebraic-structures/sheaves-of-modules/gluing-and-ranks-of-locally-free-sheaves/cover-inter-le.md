@@ -1,5 +1,5 @@
-# Cover Inter le
+# Trace of an open cover covers each open
 
-The trace of a cover on an open covers that open: `V ≤ ⨆ i, V ⊓ U i`.
-Via carriers (`Opens.coe_iSup`, `Opens.mem_inf`) and
-`IsOpenCover.exists_mem`, so no frame distributive law is needed.
+Let `X` be a topological space, `U : ι → Opens X` an open cover, and `V : Opens X`. Then `V ≤
+⨆ i, V ⊓ U i`: every point of `V` lies in one of the trace opens `V ∩ U_i`. The index type `ι`
+may have a universe independent of `X`.

@@ -6,19 +6,21 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
--- SOURCE-ONLY the original fixed coefficient prism under native output lift; Native has not been run.
+-- Coefficient lifting and normalization preserve the fixed simplicial homotopy.
 module
 
 public import MathlibExt.Algebra.Category.ModuleCat.SimplicialCoefficientLift
 public import MathlibExt.AlgebraicTopology.DoldKan.AdditiveNormalizationHomotopy
 
 /-!
-# Native coefficient lift preserves the actual fixed normalized prism
+# Homotopy compatibility of normalized coefficient lifting
 
-The same original simplicial homotopy is acted on by both native tensor
-functors. The actual tensor functor isomorphism and canonical additive
-normalization homotopy comparison return its components to output lift
-of the original coefficient homotopy. No desired compatibility is input.
+Let H be a simplicial homotopy between maps X → Y of R-module diagrams. Tensoring with M or
+with ULift M gives normalized chain homotopies. The comparison N((ULift M) ⊗_R X) ≅ ULift N(M
+⊗_R X) carries each homotopy component to the lifted component for M.
+
+The identity holds for every pair of chain degrees and retains the independent ring, diagram,
+coefficient and lift universe levels.
 -/
 
 @[expose] public section
@@ -32,8 +34,11 @@ namespace ModuleCat.SimplicialCoefficientLift
 
 variable (R : Type u) [CommRing R]
 
-/-- Native tensoring before normalization retains the same fixed original
-prism under coefficient and output lifts, in every shifted degree. -/
+/-- The normalized lift comparison commutes with homotopy components.
+
+For a simplicial homotopy H and degrees n,m, its normalized component with coefficient ULift M
+followed by the comparison at Y_m equals the comparison at X_n followed by the lifted
+normalized component with coefficient M. -/
 @[reassoc]
 theorem normalizedIso_homotopy (M : ModuleCat.{s} R)
     {X Y : SimplicialObject (ModuleCat.{v} R)} {f g : X ⟶ Y}

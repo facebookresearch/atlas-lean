@@ -1,4 +1,6 @@
-# Pair Homology length ne top of quotient
+# A finite pair quotient gives finite Koszul homology over a noetherian ring
 
-Over a Noetherian ring, finite length of `R/(f,g)` implies finite length
-of every two-generator Koszul homology module.
+A finite pair quotient gives finite Koszul homology over a noetherian ring.
+
+If R is noetherian and R/(f,g) has finite length, every homology degree of K(f,g) has finite
+length.

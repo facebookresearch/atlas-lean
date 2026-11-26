@@ -1,3 +1,5 @@
-# Mixed Page Homology Pair associativity
+# Mixed page associativity passes to homology
 
-Native homology quotients descend mixed associativity with the actual output homology map.
+Mixed page associativity passes to homology.
+
+The triple homology products agree with the induced homology map of γ.

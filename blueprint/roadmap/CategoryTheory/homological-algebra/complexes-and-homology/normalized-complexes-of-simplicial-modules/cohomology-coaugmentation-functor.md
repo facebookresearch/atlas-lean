@@ -1,3 +1,6 @@
-# Cohomology Coaugmentation Functor
+# Degreewise cohomology of a coaugmented presentation
 
-Fixed-degree cohomology retains both sides of the original coaugmentation.
+Degreewise cohomology of a coaugmented presentation.
+
+Apply degree-n cohomology to both sides of the alternating-coface complex map determined by
+the coaugmentation.

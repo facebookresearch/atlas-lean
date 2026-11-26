@@ -1,4 +1,5 @@
-# Element Euler Finite Length
+# Finite kernel and cokernel lengths for multiplication
 
-Explicit finite-length data for the kernel and cokernel of
-multiplication by one element.
+Finite kernel and cokernel lengths for multiplication.
+
+This condition records finite R-length of ker(μ_r) and of M/rM.

@@ -17,11 +17,18 @@ public import MathlibExt.Algebra.Homology.SpectralObject.FiniteStripConvergence
 import all Mathlib.Algebra.Homology.SpectralObject.SpectralSequence
 
 /-!
-# Compatibility of finite convergence with native successors
+# Successor compatibility of finite-strip convergence
 
-The endpoint comparison commutes with the genuine interval indexing maps.
-Together with the original page homology data, this makes the finite
-associated-graded comparison compatible with native successor isomorphisms.
+For a zero-differential short complex in an abelian category, the canonical
+identification of its homology with its middle object preserves the cycle
+inclusion and homology projection of any left homology datum.
+
+For an EInt-indexed spectral object with the finite-end interval vanishings,
+the page-to-graded comparisons at r≥N+1 commute with the canonical
+successor E_r^{p,q} ≅ E_{r+1}^{p,q}. The formulas use the left and right
+window-indexing maps of the page homology data. Endpoint padding is compatible
+with these maps, and the page-to-graded comparison agrees for any two valid
+finite bounds at a common late page.
 -/
 
 @[expose] public section
@@ -41,8 +48,11 @@ namespace CategoryTheory.ShortComplex
 
 variable {D : Type u} [Category.{v} D] [Abelian D]
 
-/-- For a short complex with zero differentials, the canonical identification
-with zero-differential homology retains every actual homology datum's `i` and `π`. -/
+/-- Let D be abelian, S a short complex with both differentials zero,
+and h any left homology datum for S, with cycle inclusion i_h and
+projection π_h. If ζ:H(S) ≅ S₂ is the zero-differential identification
+and η_h:H(S) ≅ h.H its datum comparison, then
+η_h∘ζ⁻¹∘i_h=π_h. -/
 theorem LeftHomologyData.i_comp_zeroHomologyIso
     (S : ShortComplex D) (h : S.LeftHomologyData) (hf : S.f = 0) (hg : S.g = 0) :
     h.i ≫ (HomologyData.ofZeros S hf hg).left.homologyIso.inv ≫ h.homologyIso.hom = h.π := by
@@ -71,8 +81,13 @@ section Padding
 variable {ι : Type w} [Preorder ι] [OrderBot ι] [OrderTop ι]
 variable (Y : SpectralObject D ι)
 
-/-- The two actual indexing maps around a growing window give the same
-endpoint comparison. All isomorphisms are the native indexing isomorphisms. -/
+/-- Let Y be a spectral object in an abelian category indexed by a
+preorder with endpoints, and a′≤a≤b≤c≤d≤d′.
+Assume H_Y^{n+1}(⊥,a), H_Y^{n+1}(⊥,a′),
+H_Y^{n−1}(d,⊤), H_Y^{n−1}(d′,⊤) are zero.
+The left-index map E_Yⁿ(a′,b,c,d) → E_Yⁿ(a,b,c,d) followed by
+endpoint padding equals the right-index map to E_Yⁿ(a′,b,c,d′)
+followed by endpoint padding; both target E_Yⁿ(⊥,b,c,⊤). -/
 theorem finiteIntervalPaddingIso_indexing
     (n : ℤ) {a' a b c d d' : ι}
     (haa : a' ≤ a) (hab : a ≤ b) (hbc : b ≤ c) (hcd : c ≤ d) (hdd : d ≤ d')
@@ -124,8 +139,11 @@ section NativeSuccessor
 
 variable (Y : SpectralObject D EInt)
 
-/-- The original native homology data at the three canonical neighboring
-positions, presented at the integer skeletal window cuts. -/
+/-- Let D be abelian and Y a spectral object indexed by EInt.
+Set A_n=H_Yⁿ(−∞,+∞), FᵖA_n=Ker(A_n → H_Yⁿ(−p,+∞))
+and GrᵖA_n=FᵖA_n/Fᵖ⁺¹A_n.
+
+For r≥1 and p,q∈ℤ, the homology data of the page differential row at (p,q), with cycles presented by E_Y^{p+q}(−p−r−1,−p−1,−p,−p+r−1) and homology by the window with final cut −p+r. -/
 def skeletalSuccessorHomologyData (r : ℤ) (hr : 1 ≤ r) (p q : ℤ) :
     (((Y.skeletalSpectralSequence).page r hr).sc (p, q)).HomologyData :=
   Y.spectralSequenceHomologyData skeletalPageCore r (r + 1) rfl hr
@@ -137,8 +155,11 @@ def skeletalSuccessorHomologyData (r : ℤ) (hr : 1 ≤ r) (p q : ℤ) :
     rfl rfl (by simp [skeletalPageCore, sub_eq_add_neg, add_comm]) rfl rfl rfl
     (p + q - 1) (p + q) (p + q + 1) rfl (by omega) (by omega)
 
-/-- The cycles inclusion of the original native datum is the original left
-window indexing map transported to the old page. -/
+/-- Let D be abelian and Y a spectral object indexed by EInt.
+Set A_n=H_Yⁿ(−∞,+∞), FᵖA_n=Ker(A_n → H_Yⁿ(−p,+∞))
+and GrᵖA_n=FᵖA_n/Fᵖ⁺¹A_n.
+
+For r≥1, the cycle inclusion of the successor datum is the left-indexing map from E_Y^{p+q}(−p−r−1,−p−1,−p,−p+r−1) to the old page window, followed by the inverse old-page window comparison. -/
 theorem skeletalSuccessorHomologyData_i (r : ℤ) (hr : 1 ≤ r) (p q : ℤ) :
     (Y.skeletalSuccessorHomologyData r hr p q).left.i =
       Y.mapFourδ₁Toδ₀'
@@ -157,8 +178,11 @@ theorem skeletalSuccessorHomologyData_i (r : ℤ) (hr : 1 ≤ r) (p q : ℤ) :
     (p + q - 1) (p + q) (p + q + 1) rfl (by omega) (by omega)
   simpa only [skeletalSuccessorHomologyData, skeletalPageWindowIso] using h
 
-/-- The quotient of the original native datum is the original right window
-indexing map, before transport to the new page. -/
+/-- Let D be abelian and Y a spectral object indexed by EInt.
+Set A_n=H_Yⁿ(−∞,+∞), FᵖA_n=Ker(A_n → H_Yⁿ(−p,+∞))
+and GrᵖA_n=FᵖA_n/Fᵖ⁺¹A_n.
+
+For r≥1, the projection of the successor datum is the right-indexing map from E_Y^{p+q}(−p−r−1,−p−1,−p,−p+r−1) to E_Y^{p+q}(−p−r−1,−p−1,−p,−p+r). -/
 theorem skeletalSuccessorHomologyData_π (r : ℤ) (hr : 1 ≤ r) (p q : ℤ) :
     (Y.skeletalSuccessorHomologyData r hr p q).left.π =
       Y.mapFourδ₄Toδ₃'
@@ -167,8 +191,11 @@ theorem skeletalSuccessorHomologyData_π (r : ℤ) (hr : 1 ≤ r) (p q : ℤ) :
         (by simp; omega) (by simp) (by simp; omega) (by simp)
         (p + q - 1) (p + q) (p + q + 1) := rfl
 
-/-- The native sequence successor is the homology isomorphism of its
-original datum, followed by transport from the actual new window. -/
+/-- Let D be abelian and Y a spectral object indexed by EInt.
+Set A_n=H_Yⁿ(−∞,+∞), FᵖA_n=Ker(A_n → H_Yⁿ(−p,+∞))
+and GrᵖA_n=FᵖA_n/Fᵖ⁺¹A_n.
+
+For r≥1, the spectral-sequence isomorphism H_{(p,q)}(E_r) ≅ E_{r+1}^{p,q} equals the datum's homology isomorphism followed by the inverse comparison from the new window to the new page. -/
 theorem skeletalSequence_iso_eq_successorHomologyData
     (r : ℤ) (hr : 1 ≤ r) (p q : ℤ) :
     (Y.skeletalSpectralSequence).iso r (r + 1) (p, q) rfl hr =
@@ -193,8 +220,12 @@ variable
     IsZero ((Y.H n).obj (mk₁ (homOfLE (le_top : (i : EInt) ≤ (⊤ : EInt))))))
 
 include hfull hempty in
-/-- The actual native stabilized successor carries the original cycles
-inclusion to the original quotient, at the actual new-page presentation. -/
+/-- Let D be abelian and Y a spectral object indexed by EInt.
+Set A_n=H_Yⁿ(−∞,+∞), FᵖA_n=Ker(A_n → H_Yⁿ(−p,+∞))
+and GrᵖA_n=FᵖA_n/Fᵖ⁺¹A_n. Fix N∈ℕ and assume, for every integer m,
+H_Yᵐ(−∞,i)=0 for i≤−N−1 and H_Yᵐ(i,+∞)=0 for i≥0.
+
+For r≥N+1, the cycle inclusion of the successor datum followed by the stabilized successor map and the new-page window comparison equals the datum's homology projection. -/
 theorem finiteSkeletalSuccessorIso_i
     (r : ℤ) (hr : (N : ℤ) + 1 ≤ r) (p q : ℤ) :
     (Y.skeletalSuccessorHomologyData r (by omega) p q).left.i ≫
@@ -209,8 +240,12 @@ theorem finiteSkeletalSuccessorIso_i
     (Y.skeletalSuccessorHomologyData r (by omega) p q).left _ _
 
 include hfull hempty in
-/-- Inside the finite strip, the associated-graded comparison commutes with
-the actual native successor isomorphism. -/
+/-- Let D be abelian and Y a spectral object indexed by EInt.
+Set A_n=H_Yⁿ(−∞,+∞), FᵖA_n=Ker(A_n → H_Yⁿ(−p,+∞))
+and GrᵖA_n=FᵖA_n/Fᵖ⁺¹A_n. Fix N∈ℕ and assume, for every integer m,
+H_Yᵐ(−∞,i)=0 for i≤−N−1 and H_Yᵐ(i,+∞)=0 for i≥0.
+
+For r≥N+1, 0≤p≤N and q∈ℤ, the page-to-graded comparison at r+1 composed with the stabilized successor equals the page-to-graded comparison at r. -/
 theorem finiteSkeletalSuccessorIso_comp_gradedOfMemStrip
     (r : ℤ) (hr : (N : ℤ) + 1 ≤ r) (p q : ℤ) (hp₀ : 0 ≤ p) (hpN : p ≤ (N : ℤ)) :
     (Y.finiteSkeletalSuccessorIso N hfull hempty r hr (p, q)).hom ≫
@@ -242,8 +277,12 @@ theorem finiteSkeletalSuccessorIso_comp_gradedOfMemStrip
   slice_lhs 1 2 => rw [← hpad]
 
 include hfull hempty in
-/-- At every integer position, the finite associated-graded comparison is
-compatible with the native successor, including the zero objects outside the strip. -/
+/-- Let D be abelian and Y a spectral object indexed by EInt.
+Set A_n=H_Yⁿ(−∞,+∞), FᵖA_n=Ker(A_n → H_Yⁿ(−p,+∞))
+and GrᵖA_n=FᵖA_n/Fᵖ⁺¹A_n. Fix N∈ℕ and assume, for every integer m,
+H_Yᵐ(−∞,i)=0 for i≤−N−1 and H_Yᵐ(i,+∞)=0 for i≥0.
+
+For r≥N+1 and all p,q∈ℤ, the page-to-graded comparison at r+1 composed with the stabilized successor equals the comparison at r. -/
 theorem finiteSkeletalSuccessorIso_comp_graded
     (r : ℤ) (hr : (N : ℤ) + 1 ≤ r) (p q : ℤ) :
     (Y.finiteSkeletalSuccessorIso N hfull hempty r hr (p, q)).hom ≫
@@ -256,9 +295,12 @@ theorem finiteSkeletalSuccessorIso_comp_graded
 
 end NativeSuccessor
 
-/-- At a common late native page, enlarging the finite strip bound does not
-change the associated-graded comparison. The zero branches are forced by
-actual interval exactness, and the nonzero branch uses the same indexing maps. -/
+/-- Let Y be an EInt-indexed spectral object in an abelian category.
+For N,N′∈ℕ assume, in every degree m,
+H_Yᵐ(−∞,i)=0 for i≤−N−1 and for i≤−N′−1,
+and H_Yᵐ(i,+∞)=0 for i≥0.
+At any r≥N+1 and r≥N′+1, the forward page-to-graded comparisons
+E_r^{p,q} → GrᵖA_{p+q} formed from the two bounds are equal. -/
 theorem finiteSkeletalPageGradedIso_eq_of_bounds
     (Y : SpectralObject D EInt) (N N' : ℕ)
     (hfull : ∀ (n i : ℤ), i ≤ -(N : ℤ) - 1 →

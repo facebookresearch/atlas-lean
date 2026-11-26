@@ -1,3 +1,8 @@
-# Cylinder Corner has Pushout
+# Existence of the relative cylinder-boundary pushout
 
-The source's relative cylinder corner exists from its original boundary cofibration.
+Existence of the relative cylinder-boundary pushout.
+
+Let C have a zero object, binary coproducts and a WaldhausenCategoryWithoutGluing structure.
+If every joint boundary b_f of T is a cofibration, its pushout along
+coprod.map(α.left,α.right) exists for any arrow square α : f → g. This uses the pushout axiom
+for cofibrations.

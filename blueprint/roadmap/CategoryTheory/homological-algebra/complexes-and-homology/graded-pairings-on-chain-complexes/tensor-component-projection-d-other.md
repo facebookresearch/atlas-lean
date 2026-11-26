@@ -1,3 +1,5 @@
-# Tensor Component Projection d₁ other
+# Other horizontal differential terms have zero selected projection
 
-The first differential into any other tensor component has zero selected projection.
+Other horizontal differential terms have zero selected projection.
+
+A horizontal term whose target bidegree differs from (p,q) projects to zero.

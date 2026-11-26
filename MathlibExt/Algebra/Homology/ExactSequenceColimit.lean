@@ -18,11 +18,15 @@ public import Mathlib.CategoryTheory.Abelian.GrothendieckAxioms.Colim
 public import Mathlib.CategoryTheory.Functor.ReflectsIso.Exact
 
 /-!
-# Colimits of exact five-object sequences
+# Pointwise colimits of exact five-object sequences
 
-This file constructs the pointwise colimit of a diagram of exact composable
-sequences with five objects. When colimits of the indexing shape are exact,
-the resulting five-object sequence is exact.
+For a diagram of sequences A₀ → A₁ → A₂ → A₃ → A₄, take the colimit of each term and the
+induced maps of its four arrows. The colimit coprojections commute with each arrow.
+
+In an abelian category, exactness of a short complex of functors is pointwise. Thus when
+colimits of the indexing shape are exact, a diagram of exact five-object sequences has an
+exact pointwise colimit. The indexing category and coefficient category object and morphism
+universes are independent.
 -/
 
 @[expose] public section
@@ -38,8 +42,10 @@ namespace CategoryTheory.ComposableArrows
 
 universe vJ uJ v u
 
-/-- A short complex of functors is exact if and only if it is exact at every
-object of the source category. -/
+/-- Exactness of functor-category short complexes is pointwise.
+
+A short complex in J → C, for abelian C, is exact exactly when its evaluation at every j is
+exact. -/
 theorem functorCategory_shortComplex_exact_iff
     {J : Type uJ} [Category.{vJ} J]
     {C : Type u} [Category.{v} C] [Abelian C]
@@ -52,16 +58,20 @@ theorem functorCategory_shortComplex_exact_iff
         apply NatIso.isIso_of_isIso_app }
   exact h.exact_iff S
 
-/-- The underlying diagram of five-object sequences, with the proofs of
-exactness forgotten. -/
+/-- The underlying diagram of exact five-object sequences.
+
+Forget the exactness property of each object in the diagram F : J → ExactSequences C 4 to
+obtain its composable four-arrow sequence. -/
 abbrev exactSequenceFourDiagram
     {J : Type uJ} [Category.{vJ} J]
     {C : Type u} [Category.{v} C] [HasZeroMorphisms C]
     (F : J ⥤ ExactSequences C 4) : J ⥤ ComposableArrows C 4 :=
   F ⋙ ObjectProperty.ι (exactSequences C 4)
 
-/-- The five-object sequence obtained by taking the colimit at each position
-of a diagram of exact five-object sequences. -/
+/-- The pointwise colimit of a diagram of five-object sequences.
+
+Take the colimit of each of the five terms and use the colimit maps of the four arrow
+transformations. -/
 noncomputable def exactSequenceFourColimit
     {J : Type uJ} [Category.{vJ} J]
     {C : Type u} [Category.{v} C] [HasZeroMorphisms C]
@@ -78,6 +88,9 @@ noncomputable def exactSequenceFourColimit
     (colim.map ((exactSequenceFourDiagram F).flip.map
       (homOfLE (show (3 : Fin 5) ≤ 4 from by simp))))
 
+/-- The terms of the pointwise sequence colimit.
+
+The i-th object is the colimit of the diagram of i-th terms. -/
 @[simp]
 theorem exactSequenceFourColimit_obj
     {J : Type uJ} [Category.{vJ} J]
@@ -88,6 +101,9 @@ theorem exactSequenceFourColimit_obj
       colimit ((exactSequenceFourDiagram F).flip.obj i) := by
   fin_cases i <;> rfl
 
+/-- The first arrow of the sequence colimit.
+
+The arrow from term 0 to term 1 is the colimit map of the first arrow transformation. -/
 @[simp]
 theorem exactSequenceFourColimit_map_zero_one
     {J : Type uJ} [Category.{vJ} J]
@@ -99,6 +115,9 @@ theorem exactSequenceFourColimit_map_zero_one
         (homOfLE (show (0 : Fin 5) ≤ 1 from by simp))) :=
   rfl
 
+/-- The second arrow of the sequence colimit.
+
+The arrow from term 1 to term 2 is the colimit map of the second arrow transformation. -/
 @[simp]
 theorem exactSequenceFourColimit_map_one_two
     {J : Type uJ} [Category.{vJ} J]
@@ -110,6 +129,9 @@ theorem exactSequenceFourColimit_map_one_two
         (homOfLE (show (1 : Fin 5) ≤ 2 from by simp))) :=
   rfl
 
+/-- The third arrow of the sequence colimit.
+
+The arrow from term 2 to term 3 is the colimit map of the third arrow transformation. -/
 @[simp]
 theorem exactSequenceFourColimit_map_two_three
     {J : Type uJ} [Category.{vJ} J]
@@ -121,6 +143,9 @@ theorem exactSequenceFourColimit_map_two_three
         (homOfLE (show (2 : Fin 5) ≤ 3 from by simp))) :=
   rfl
 
+/-- The fourth arrow of the sequence colimit.
+
+The arrow from term 3 to term 4 is the colimit map of the fourth arrow transformation. -/
 @[simp]
 theorem exactSequenceFourColimit_map_three_four
     {J : Type uJ} [Category.{vJ} J]
@@ -132,6 +157,10 @@ theorem exactSequenceFourColimit_map_three_four
         (homOfLE (show (3 : Fin 5) ≤ 4 from by simp))) :=
   rfl
 
+/-- The first arrow commutes with the colimit coprojections.
+
+The term-0 coprojection followed by the colimit first arrow equals the stage first arrow
+followed by the term-1 coprojection. -/
 @[reassoc]
 theorem exactSequenceFourColimit_ι_map_zero_one
     {J : Type uJ} [Category.{vJ} J]
@@ -145,6 +174,10 @@ theorem exactSequenceFourColimit_ι_map_zero_one
   rw [exactSequenceFourColimit_map_zero_one]
   apply colimit.ι_map
 
+/-- The second arrow commutes with the colimit coprojections.
+
+The term-1 coprojection followed by the colimit second arrow equals the stage second arrow
+followed by the term-2 coprojection. -/
 @[reassoc]
 theorem exactSequenceFourColimit_ι_map_one_two
     {J : Type uJ} [Category.{vJ} J]
@@ -158,6 +191,10 @@ theorem exactSequenceFourColimit_ι_map_one_two
   rw [exactSequenceFourColimit_map_one_two]
   apply colimit.ι_map
 
+/-- The third arrow commutes with the colimit coprojections.
+
+The term-2 coprojection followed by the colimit third arrow equals the stage third arrow
+followed by the term-3 coprojection. -/
 @[reassoc]
 theorem exactSequenceFourColimit_ι_map_two_three
     {J : Type uJ} [Category.{vJ} J]
@@ -171,6 +208,10 @@ theorem exactSequenceFourColimit_ι_map_two_three
   rw [exactSequenceFourColimit_map_two_three]
   apply colimit.ι_map
 
+/-- The fourth arrow commutes with the colimit coprojections.
+
+The term-3 coprojection followed by the colimit fourth arrow equals the stage fourth arrow
+followed by the term-4 coprojection. -/
 @[reassoc]
 theorem exactSequenceFourColimit_ι_map_three_four
     {J : Type uJ} [Category.{vJ} J]
@@ -210,9 +251,10 @@ private theorem exactSequenceFourShortComplexDiagram_exact
   change ((F.obj j).obj.sc (F.obj j).property.toIsComplex i hi).Exact
   exact (F.obj j).property.exact i hi
 
-/-- Exact colimits preserve exactness of five-object composable sequences.
-Filtered applications obtain `HasExactColimitsOfShape` from their AB5
-instances. -/
+/-- Exact colimits preserve an exact five-object sequence.
+
+If C is abelian and colimits of shape J are exact, the pointwise colimit of F : J →
+ExactSequences C 4 is exact. -/
 theorem exactSequenceFourColimit_exact
     {J : Type uJ} [Category.{vJ} J]
     {C : Type u} [Category.{v} C] [Abelian C]

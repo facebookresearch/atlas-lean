@@ -1,3 +1,5 @@
-# Homology Universal Coefficient Tor
+# The shifted degree-one Tor term of the coefficient sequence
 
-The Tor endpoint in the homological universal coefficient sequence.
+The shifted degree-one Tor term of the coefficient sequence.
+
+Define T_0=0 and T_{q+1}=Tor₁(H_q(K),A).

@@ -1,4 +1,6 @@
-# Lsmul Kernel Restrict Scalars Equiv
+# The kernel comparison for restricted scalar multiplication
 
-The multiplication kernels before and after changing from a source ring
-to an algebra are linearly equivalent over the source ring.
+The kernel comparison for restricted scalar multiplication.
+
+The S-linear multiplication kernel on A is canonically equivalent to the kernel of
+multiplication by the image of s as an A-linear map, restricted to S.

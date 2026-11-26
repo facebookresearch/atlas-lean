@@ -1,4 +1,5 @@
-# Is Iso homology Universal Coefficient Map of flat
+# A flat coefficient makes the canonical homological coefficient map an isomorphism
 
-If the coefficient module is flat, the canonical homological
-universal-coefficient map is an isomorphism over any commutative ring.
+A flat coefficient makes the canonical homological coefficient map an isomorphism.
+
+For any commutative R and chain complex K, flatness of A implies H_n(K) ⊗ A ≅ H_n(K ⊗ A[0]).

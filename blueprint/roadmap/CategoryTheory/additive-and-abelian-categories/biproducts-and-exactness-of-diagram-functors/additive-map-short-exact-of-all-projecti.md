@@ -1,3 +1,5 @@
-# Additive map short Exact of all Projective
+# Additive functors preserve all-projective short exact sequences
 
-Every original short exact sequence retains a mapped native splitting.
+Let C,D be abelian, suppose every object of C is projective, and let
+F:C → D be additive. For each short exact sequence S in C, its
+termwise image under F is short exact.

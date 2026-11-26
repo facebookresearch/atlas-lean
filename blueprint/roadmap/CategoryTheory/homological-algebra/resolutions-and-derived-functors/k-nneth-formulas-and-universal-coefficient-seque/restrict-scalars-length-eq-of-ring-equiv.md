@@ -1,3 +1,6 @@
-# Restrict Scalars length eq of ring Equiv
+# Module length agrees under equivalence restriction of scalars
 
-Compatibility specialization of the canonical surjective scalar-length API.
+Module length agrees under equivalence restriction of scalars.
+
+For a ring equivalence, the restricted module has the same extended-natural length as the
+original module.

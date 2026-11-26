@@ -13,4 +13,14 @@ module
 
 public import MathlibExt.Algebra.Homology.KoszulComplex.Polynomial.Homogeneous
 
-/-! Compatibility import of the canonical general polynomial Koszul owner. -/
+/-!
+# Homogeneous coefficients in the polynomial Koszul complex
+
+For a commutative ring R and a linearly ordered variable type I, use the exterior basis of the
+finitely supported polynomial module to project every coefficient to a fixed polynomial
+degree. These projections are additive, and the Koszul differential raises polynomial
+coefficient degree by one.
+
+The imported general API gives the homogeneous cycle and boundary coordinate laws, including
+the degree-zero coefficient case in positive exterior degree.
+-/

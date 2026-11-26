@@ -15,12 +15,19 @@ public import MathlibExt.Algebra.Homology.GradedTensorTower
 public import Mathlib.Algebra.Category.ModuleCat.Monoidal.Basic
 
 /-!
-# Generic graded and tensor component transports
+# Equality of graded tensor maps and their descents
 
-Componentwise heterogeneous equalities of graded maps assemble into
-whole graded-map equality. Native module composition and graded tensor
-descent transport those equalities through unchanged carrier equalities.
-The complex tensor descent agrees with its original graded construction.
+Let R be a commutative ring and work with integer-graded R-modules.
+Equality of the source and target graded families allows degreewise
+heterogeneous equalities of maps to assemble into equality of graded maps.
+
+Assume tensor products of all integer-graded objects exist, with degree-i
+term the coproduct of Xᵃ⊗Yᵇ over a+b=i. Equality of the graded families
+of two pairs of cochain complexes identifies their tensor terms, and a
+family of maps on these antidiagonal summands has the same descent whether
+formed from the tensor complex or from its graded tensor object.
+The descents respect equality of the factor families, target module and
+summand maps.
 -/
 
 @[expose] public section
@@ -35,7 +42,10 @@ namespace CochainComplex
 universe u
 variable {R : Type u} [CommRing R]
 
-/-- Componentwise graded-map transport along the original carrier equalities. -/
+/-- Let R be a commutative ring and X,Y,X′,Y′ integer-graded R-modules.
+Given equalities X=X′ and Y=Y′, if graded maps f:X → Y and g:X′ → Y′
+have heterogeneously equal components in every integer degree, then the
+graded maps themselves are heterogeneously equal. -/
 theorem gradedMap_heq
     {X Y X' Y' : GradedObject ℤ (ModuleCat.{u} R)}
     (hX : X = X') (hY : Y = Y') {f : X ⟶ Y} {g : X' ⟶ Y'}
@@ -48,7 +58,11 @@ theorem gradedMap_heq
 
 variable [∀ X Y : GradedObject ℤ (ModuleCat.{u} R), GradedObject.HasTensor X Y]
 
-/-- Tensor complex carriers transport through their original graded tensor objects. -/
+/-- Let R be a commutative ring and assume tensor products of all
+integer-graded R-modules exist. If integer-indexed cochain complexes
+C,C′ have equal graded term families and D,D′ have equal graded term
+families, then the tensor cochain complexes C⊗D and C′⊗D′ have equal
+graded term families. -/
 theorem tensorObj_X_congr
     {C D C' D' : CochainComplex (ModuleCat.{u} R) ℤ}
     (hC : C.X = C'.X) (hD : D.X = D'.X) :
@@ -56,7 +70,12 @@ theorem tensorObj_X_congr
   rw [HomologicalComplex.tensorObj_X_eq_graded, HomologicalComplex.tensorObj_X_eq_graded]
   exact GradedObject.Monoidal.tensorObj_eq C.X D.X C'.X D'.X hC hD
 
-/-- A complex tensor component descends through its original graded tensor object. -/
+/-- Let R be a commutative ring and assume tensor products of all
+integer-graded R-modules exist. For integer-indexed cochain complexes
+K,L, an R-module M and degree i, give maps
+f_{a,b}:Kᵃ⊗Lᵇ → M for every a+b=i.
+Their descent from the degree-i tensor-complex term equals their descent
+from the graded tensor coproduct over the same antidiagonal. -/
 theorem tensorDesc_eq_graded
     (K L : CochainComplex (ModuleCat.{u} R) ℤ) (M : ModuleCat.{u} R) (i : ℤ)
     (f : ∀ (a b : ℤ) (_ : a + b = i), K.X a ⊗ L.X b ⟶ M) :
@@ -73,7 +92,12 @@ theorem tensorDesc_eq_graded
   rw [hι]
   exact (GradedObject.Monoidal.ι_tensorObjDesc f a b hab).symm
 
-/-- Graded tensor descent transports along the original carriers and component maps. -/
+/-- Let R be a commutative ring and assume tensor products of all
+integer-graded R-modules exist. Given equal graded families X=X′, Y=Y′
+and equal target modules M=M′, suppose two families of maps
+Xᵃ⊗Yᵇ → M and X′ᵃ⊗Y′ᵇ → M′ are heterogeneously equal on every
+summand a+b=i. Their degree-i graded tensor descents are heterogeneously
+equal. -/
 theorem gradedDesc_heq
     {X Y X' Y' : GradedObject ℤ (ModuleCat.{u} R)} {M M' : ModuleCat.{u} R} {i : ℤ}
     (hX : X = X') (hY : Y = Y') (hM : M = M')

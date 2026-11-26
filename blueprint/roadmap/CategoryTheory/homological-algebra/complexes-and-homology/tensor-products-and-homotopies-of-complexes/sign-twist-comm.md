@@ -1,4 +1,5 @@
-# Sign Twist comm
+# The commuting square after vertical sign multiplication
 
-The anticommuting raw square becomes the commuting square of the signed
-Mathlib bicomplex.
+The commuting square after vertical sign multiplication.
+
+For the sign function changing across c₁, d₁ ≫ (ε(i₁′)·d₂) = (ε(i₁)·d₂) ≫ d₁.

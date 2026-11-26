@@ -1,3 +1,5 @@
-# Coalgebra Closure Comon
+# The bundled homogeneous closure comonoid
 
-The bundled DG subcomonoid closure of the given homogeneous seed set.
+The bundled homogeneous closure comonoid.
+
+Bundle D with the comultiplication and counit restricted from C.

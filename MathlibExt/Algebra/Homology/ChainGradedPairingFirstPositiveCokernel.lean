@@ -14,21 +14,19 @@ public import MathlibExt.Algebra.Homology.HomologicalComplexImageCokernel
 public import MathlibExt.Algebra.Homology.HomologicalComplexModuleCokernel
 
 /-!
-# The actual first-positive image quotient and its universal maps
+# First-positive image quotient of a chain pairing
 
-The first factor is positive and the second factor is unrestricted. The
-quotient is the native cokernel of the actual image inclusion of the accepted
-first-positive pairing. Its universal comparison with the original pairing
-cokernel uses the general image/coimage API, and its degree coordinates reuse
-the accepted exact first-positive range theorem and cokernel degree iso.
+Let R be a ring and choose a monoidal preadditive structure on its module
+category. For P:K₁⊗K₂→K₃ with K₁.d(1,0)=0, the first-positive map
+P₊ uses K₁ in degrees ≥1 and every degree of K₂.
+Its degree n image is I_n=∑_(p>0,q≥0,p+q=n)range(P_(p,q)).
 
-Every original pairing square induces the actual quotient map. The coordinate
-map is the native Submodule.mapQ of the original target component; its
-preservation proof is earned from that square. In degree zero the defining
-range vanishes, so the actual quotient projection earns the native H0 iso.
-No degree-one vanishing or higher Harrison/AQ identification is asserted.
-
-Candidate source; Native and adoption gates remain pending.
+The cokernel of the image inclusion is naturally the cokernel of P₊,
+with degree coordinates K₃,n/I_n. Maps of the original pairings induce
+the quotient maps, acting by f₃ on representative classes.
+I₀=0, so the degree-zero projection and its induced H₀ map are
+isomorphisms for the specified homology objects.
+The ring and module carrier universes are independent.
 -/
 
 @[expose] public section
@@ -47,40 +45,81 @@ variable {R : Type u} [Ring R]
   {K₁ K₂ K₃ : ChainComplex (ModuleCat.{v} R) ℕ}
   (P : ChainGradedPairing K₁ K₂ K₃) (h₁ : K₁.d 1 0 = 0)
 
-/-- Quotient the original target by the actual native image subcomplex. -/
+/-- Let R be a ring in universe u and choose a monoidal preadditive
+structure on ModuleCat_v R. Let P:K₁⊗K₂→K₃ be a chain graded
+pairing of nonnegative complexes, with K₁.d(1,0)=0.
+Write P₊ for its first-positive map K₁,≥1⊗K₂→K₃ and
+I_n=∑_(p>0,q≥0,p+q=n)range(P_(p,q)).
+The first-positive image quotient is the chain cokernel of
+image(P₊)→K₃. -/
 def firstPositiveImageQuotient : ChainComplex (ModuleCat.{v} R) ℕ :=
   cokernel (Abelian.image.ι (firstPositivePairing P h₁))
 
-/-- The actual quotient projection from the original target. -/
+/-- Let R be a ring in universe u and choose a monoidal preadditive
+structure on ModuleCat_v R. Let P:K₁⊗K₂→K₃ be a chain graded
+pairing of nonnegative complexes, with K₁.d(1,0)=0.
+Write P₊ for its first-positive map K₁,≥1⊗K₂→K₃ and
+I_n=∑_(p>0,q≥0,p+q=n)range(P_(p,q)).
+The image quotient projection K₃→Q_I is the cokernel
+projection of image(P₊)→K₃. -/
 def firstPositiveImageProjection : K₃ ⟶ firstPositiveImageQuotient P h₁ :=
   cokernel.π (Abelian.image.ι (firstPositivePairing P h₁))
 
-/-- The actual image quotient represents the original first-positive action cokernel. -/
+/-- Let R be a ring in universe u and choose a monoidal preadditive
+structure on ModuleCat_v R. Let P:K₁⊗K₂→K₃ be a chain graded
+pairing of nonnegative complexes, with K₁.d(1,0)=0.
+Write P₊ for its first-positive map K₁,≥1⊗K₂→K₃ and
+I_n=∑_(p>0,q≥0,p+q=n)range(P_(p,q)).
+The canonical image/coimage comparison gives
+Q_I≅Coker(P₊), with the same quotient representatives. -/
 def firstPositiveImageQuotientIsoCokernel :
     firstPositiveImageQuotient P h₁ ≅ firstPositiveCokernel P h₁ :=
   Abelian.imageCokernelIso (firstPositivePairing P h₁)
 
-/-- The comparison preserves the original target projection. -/
+/-- Let R be a ring in universe u and choose a monoidal preadditive
+structure on ModuleCat_v R. Let P:K₁⊗K₂→K₃ be a chain graded
+pairing of nonnegative complexes, with K₁.d(1,0)=0.
+Write P₊ for its first-positive map K₁,≥1⊗K₂→K₃ and
+I_n=∑_(p>0,q≥0,p+q=n)range(P_(p,q)).
+For α:Q_I≅Coker(P₊), the projections satisfy
+α∘π_I=π_coker. -/
 @[reassoc (attr := simp)]
 theorem firstPositiveImageProjection_comp_iso :
     firstPositiveImageProjection P h₁ ≫ (firstPositiveImageQuotientIsoCokernel P h₁).hom =
       firstPositiveProjection P h₁ :=
   Abelian.imageCokernelIso_projection (firstPositivePairing P h₁)
 
-/-- The inverse comparison preserves that same projection. -/
+/-- Let R be a ring in universe u and choose a monoidal preadditive
+structure on ModuleCat_v R. Let P:K₁⊗K₂→K₃ be a chain graded
+pairing of nonnegative complexes, with K₁.d(1,0)=0.
+Write P₊ for its first-positive map K₁,≥1⊗K₂→K₃ and
+I_n=∑_(p>0,q≥0,p+q=n)range(P_(p,q)).
+The inverse comparison obeys α⁻¹∘π_coker=π_I. -/
 @[reassoc (attr := simp)]
 theorem firstPositiveProjection_comp_imageIso_inv :
     firstPositiveProjection P h₁ ≫ (firstPositiveImageQuotientIsoCokernel P h₁).inv =
       firstPositiveImageProjection P h₁ :=
   Abelian.imageCokernelIso_projection_inv (firstPositivePairing P h₁)
 
-/-- The native image quotient has exactly the accepted original first-positive quotient levels. -/
+/-- Let R be a ring in universe u and choose a monoidal preadditive
+structure on ModuleCat_v R. Let P:K₁⊗K₂→K₃ be a chain graded
+pairing of nonnegative complexes, with K₁.d(1,0)=0.
+Write P₊ for its first-positive map K₁,≥1⊗K₂→K₃ and
+I_n=∑_(p>0,q≥0,p+q=n)range(P_(p,q)).
+The degree n image-quotient term is isomorphic to K₃,n/I_n,
+using evaluation of the chain cokernel and the component image range. -/
 def firstPositiveImageQuotientDegreeIso (n : ℕ) :
     (firstPositiveImageQuotient P h₁).X n ≅ firstPositiveDegreeQuotient P n :=
   moduleImageCokernelDegreeIso (firstPositivePairing P h₁) n ≪≫
     (Submodule.quotEquivOfEq _ _ (range_firstPositivePairing P h₁ n)).toModuleIso
 
-/-- Degree coordinates are characterized by the original module quotient map. -/
+/-- Let R be a ring in universe u and choose a monoidal preadditive
+structure on ModuleCat_v R. Let P:K₁⊗K₂→K₃ be a chain graded
+pairing of nonnegative complexes, with K₁.d(1,0)=0.
+Write P₊ for its first-positive map K₁,≥1⊗K₂→K₃ and
+I_n=∑_(p>0,q≥0,p+q=n)range(P_(p,q)).
+The degree n quotient projection, followed by its degree
+coordinate isomorphism, is x↦[x] in K₃,n/I_n. -/
 @[reassoc]
 theorem firstPositiveImageProjection_degreeIso (n : ℕ) :
     (firstPositiveImageProjection P h₁).f n ≫
@@ -98,7 +137,13 @@ theorem firstPositiveImageProjection_degreeIso (n : ℕ) :
   ext x
   exact Submodule.quotEquivOfEq_mk _ _ (range_firstPositivePairing P h₁ n) x
 
-/-- Annihilating the native pairing is exactly annihilating its original range family. -/
+/-- Let R be a ring in universe u and choose a monoidal preadditive
+structure on ModuleCat_v R. Let P:K₁⊗K₂→K₃ be a chain graded
+pairing of nonnegative complexes, with K₁.d(1,0)=0.
+Write P₊ for its first-positive map K₁,≥1⊗K₂→K₃ and
+I_n=∑_(p>0,q≥0,p+q=n)range(P_(p,q)).
+For a chain map f:K₃→L, f∘P₊=0 exactly when f_n annihilates
+I_n for every n and every element of that submodule. -/
 theorem firstPositivePairing_comp_eq_zero_iff {L : ChainComplex (ModuleCat.{v} R) ℕ}
     (f : K₃ ⟶ L) :
     firstPositivePairing P h₁ ≫ f = 0 ↔
@@ -121,20 +166,38 @@ theorem firstPositivePairing_comp_eq_zero_iff {L : ChainComplex (ModuleCat.{v} R
       exact LinearMap.mem_range_self _ x
     exact hf n _ hx
 
-/-- Universal descent uses the original pairing-zero equation and the native image cokernel. -/
+/-- Let R be a ring in universe u and choose a monoidal preadditive
+structure on ModuleCat_v R. Let P:K₁⊗K₂→K₃ be a chain graded
+pairing of nonnegative complexes, with K₁.d(1,0)=0.
+Write P₊ for its first-positive map K₁,≥1⊗K₂→K₃ and
+I_n=∑_(p>0,q≥0,p+q=n)range(P_(p,q)).
+A chain map f:K₃→L satisfying f∘P₊=0 factors through
+the unique chain map Q_I→L induced by the image cokernel. -/
 def firstPositiveImageQuotientDesc {L : ChainComplex (ModuleCat.{v} R) ℕ}
     (f : K₃ ⟶ L) (hf : firstPositivePairing P h₁ ≫ f = 0) :
     firstPositiveImageQuotient P h₁ ⟶ L :=
   Abelian.imageCokernelDesc (firstPositivePairing P h₁) f hf
 
-/-- The universal descent retains the original projection square. -/
+/-- Let R be a ring in universe u and choose a monoidal preadditive
+structure on ModuleCat_v R. Let P:K₁⊗K₂→K₃ be a chain graded
+pairing of nonnegative complexes, with K₁.d(1,0)=0.
+Write P₊ for its first-positive map K₁,≥1⊗K₂→K₃ and
+I_n=∑_(p>0,q≥0,p+q=n)range(P_(p,q)).
+The image-quotient descent desc(f) satisfies
+desc(f)∘π_I=f for a chain map annihilating P₊. -/
 @[reassoc (attr := simp)]
 theorem firstPositiveImageProjection_desc {L : ChainComplex (ModuleCat.{v} R) ℕ}
     (f : K₃ ⟶ L) (hf : firstPositivePairing P h₁ ≫ f = 0) :
     firstPositiveImageProjection P h₁ ≫ firstPositiveImageQuotientDesc P h₁ f hf = f :=
   Abelian.imageCokernelDesc_projection (firstPositivePairing P h₁) f hf
 
-/-- Original quotient values determine a universal descent. -/
+/-- Let R be a ring in universe u and choose a monoidal preadditive
+structure on ModuleCat_v R. Let P:K₁⊗K₂→K₃ be a chain graded
+pairing of nonnegative complexes, with K₁.d(1,0)=0.
+Write P₊ for its first-positive map K₁,≥1⊗K₂→K₃ and
+I_n=∑_(p>0,q≥0,p+q=n)range(P_(p,q)).
+For f annihilating P₊, any l:Q_I→L with l∘π_I=f
+equals the image-cokernel descent of f. -/
 theorem firstPositiveImageQuotientDesc_unique {L : ChainComplex (ModuleCat.{v} R) ℕ}
     (f : K₃ ⟶ L) (hf : firstPositivePairing P h₁ ≫ f = 0)
     (l : firstPositiveImageQuotient P h₁ ⟶ L)
@@ -150,7 +213,9 @@ variable {L₁ L₂ L₃ : ChainComplex (ModuleCat.{v} R) ℕ}
   (hf : tensorHom f₁ f₂ ≫ Q = P ≫ f₃)
 
 include h₁ g₁ f₁ f₂ hf in
-/-- The original pairing square preserves every actual first-positive image. -/
+/-- For R a ring with a chosen monoidal preadditive module category,
+let P,Q be chain pairings and f_i satisfy f₃∘P=Q∘(f₁⊗f₂).
+Then f₃,n carries I_n(P), the sum of p>0,q≥0 ranges, into I_n(Q). -/
 theorem firstPositiveImages_map (n : ℕ) :
     firstPositiveImages P n ≤ (firstPositiveImages Q n).comap (f₃.f n).hom := by
   intro x hx
@@ -163,13 +228,29 @@ theorem firstPositiveImages_map (n : ℕ) :
   refine ⟨((tensorHom (stupidTruncMap f₁ ComplexShape.positiveNatEmbedding) f₂).f n).hom z, ?_⟩
   exact ConcreteCategory.congr_hom hc z
 
-/-- The degree quotient map is the native quotient of the original target component. -/
+/-- Let R be a ring in universe u and choose a monoidal preadditive
+structure on ModuleCat_v R. Let P:K₁⊗K₂→K₃ be a chain graded
+pairing of nonnegative complexes, with K₁.d(1,0)=0.
+Write P₊ for its first-positive map K₁,≥1⊗K₂→K₃ and
+I_n=∑_(p>0,q≥0,p+q=n)range(P_(p,q)).
+Let Q:L₁⊗L₂→L₃ have L₁.d(1,0)=0 and chain maps f_i:K_i→L_i
+satisfy f₃∘P=Q∘(f₁⊗f₂).
+The degree quotient map K₃,n/I_n(P)→L₃,n/I_n(Q) sends
+[x] to [f₃,n(x)]. -/
 def firstPositiveDegreeQuotientMap (n : ℕ) :
     firstPositiveDegreeQuotient P n ⟶ firstPositiveDegreeQuotient Q n :=
   ModuleCat.ofHom ((firstPositiveImages P n).mapQ (firstPositiveImages Q n)
     (f₃.f n).hom (firstPositiveImages_map P h₁ Q g₁ f₁ f₂ f₃ hf n))
 
-/-- The concrete degree map retains the actual target component on quotient classes. -/
+/-- Let R be a ring in universe u and choose a monoidal preadditive
+structure on ModuleCat_v R. Let P:K₁⊗K₂→K₃ be a chain graded
+pairing of nonnegative complexes, with K₁.d(1,0)=0.
+Write P₊ for its first-positive map K₁,≥1⊗K₂→K₃ and
+I_n=∑_(p>0,q≥0,p+q=n)range(P_(p,q)).
+Let Q:L₁⊗L₂→L₃ have L₁.d(1,0)=0 and chain maps f_i:K_i→L_i
+satisfy f₃∘P=Q∘(f₁⊗f₂).
+The representative quotient maps obey
+q_Q∘f₃,n=quotMap_n∘q_P. -/
 @[reassoc]
 theorem firstPositiveDegreeQuotientMap_projection (n : ℕ) :
     ModuleCat.ofHom (firstPositiveImages P n).mkQ ≫
@@ -179,7 +260,15 @@ theorem firstPositiveDegreeQuotientMap_projection (n : ℕ) :
   ext x
   rfl
 
-/-- The accepted native degree isomorphisms are natural in the original pairing maps. -/
+/-- Let R be a ring in universe u and choose a monoidal preadditive
+structure on ModuleCat_v R. Let P:K₁⊗K₂→K₃ be a chain graded
+pairing of nonnegative complexes, with K₁.d(1,0)=0.
+Write P₊ for its first-positive map K₁,≥1⊗K₂→K₃ and
+I_n=∑_(p>0,q≥0,p+q=n)range(P_(p,q)).
+Let Q:L₁⊗L₂→L₃ have L₁.d(1,0)=0 and chain maps f_i:K_i→L_i
+satisfy f₃∘P=Q∘(f₁⊗f₂).
+The first-positive cokernel map and its degree-coordinate
+isomorphisms commute with the representative map [x]↦[f₃,n(x)]. -/
 @[reassoc]
 theorem firstPositiveCokernelDegreeIso_naturality (n : ℕ) :
     (firstPositiveCokernelMap P h₁ Q g₁ f₁ f₂ f₃ hf).f n ≫
@@ -200,14 +289,30 @@ theorem firstPositiveCokernelDegreeIso_naturality (n : ℕ) :
     ← Category.assoc, firstPositiveProjection_degreeIso]
   exact (firstPositiveDegreeQuotientMap_projection P h₁ Q g₁ f₁ f₂ f₃ hf n).symm
 
-/-- The actual image quotient map is induced by the original first-positive pairing square. -/
+/-- Let R be a ring in universe u and choose a monoidal preadditive
+structure on ModuleCat_v R. Let P:K₁⊗K₂→K₃ be a chain graded
+pairing of nonnegative complexes, with K₁.d(1,0)=0.
+Write P₊ for its first-positive map K₁,≥1⊗K₂→K₃ and
+I_n=∑_(p>0,q≥0,p+q=n)range(P_(p,q)).
+Let Q:L₁⊗L₂→L₃ have L₁.d(1,0)=0 and chain maps f_i:K_i→L_i
+satisfy f₃∘P=Q∘(f₁⊗f₂).
+The pairing square induces the chain map Q_I(P)→Q_I(Q)
+on first-positive image quotients. -/
 def firstPositiveImageQuotientMap :
     firstPositiveImageQuotient P h₁ ⟶ firstPositiveImageQuotient Q g₁ :=
   Abelian.imageCokernelMap (firstPositivePairing P h₁)
     (Arrow.homMk (tensorHom (stupidTruncMap f₁ ComplexShape.positiveNatEmbedding) f₂) f₃
       (firstPositivePairing_naturality P h₁ Q g₁ f₁ f₂ f₃ hf))
 
-/-- The image quotient map retains the original target chain map. -/
+/-- Let R be a ring in universe u and choose a monoidal preadditive
+structure on ModuleCat_v R. Let P:K₁⊗K₂→K₃ be a chain graded
+pairing of nonnegative complexes, with K₁.d(1,0)=0.
+Write P₊ for its first-positive map K₁,≥1⊗K₂→K₃ and
+I_n=∑_(p>0,q≥0,p+q=n)range(P_(p,q)).
+Let Q:L₁⊗L₂→L₃ have L₁.d(1,0)=0 and chain maps f_i:K_i→L_i
+satisfy f₃∘P=Q∘(f₁⊗f₂).
+The induced image quotient map satisfies
+quotMap∘π_I,P=π_I,Q∘f₃. -/
 @[reassoc (attr := simp)]
 theorem firstPositiveImageProjection_map :
     firstPositiveImageProjection P h₁ ≫
@@ -217,7 +322,15 @@ theorem firstPositiveImageProjection_map :
     (Arrow.homMk (tensorHom (stupidTruncMap f₁ ComplexShape.positiveNatEmbedding) f₂) f₃
       (firstPositivePairing_naturality P h₁ Q g₁ f₁ f₂ f₃ hf))
 
-/-- The native image/cokernel comparison preserves original pairing-map naturality. -/
+/-- Let R be a ring in universe u and choose a monoidal preadditive
+structure on ModuleCat_v R. Let P:K₁⊗K₂→K₃ be a chain graded
+pairing of nonnegative complexes, with K₁.d(1,0)=0.
+Write P₊ for its first-positive map K₁,≥1⊗K₂→K₃ and
+I_n=∑_(p>0,q≥0,p+q=n)range(P_(p,q)).
+Let Q:L₁⊗L₂→L₃ have L₁.d(1,0)=0 and chain maps f_i:K_i→L_i
+satisfy f₃∘P=Q∘(f₁⊗f₂).
+The image/cokernel isomorphisms commute with the induced
+chain quotient maps of P and Q. -/
 @[reassoc]
 theorem firstPositiveImageQuotientIsoCokernel_naturality :
     firstPositiveImageQuotientMap P h₁ Q g₁ f₁ f₂ f₃ hf ≫
@@ -228,7 +341,15 @@ theorem firstPositiveImageQuotientIsoCokernel_naturality :
     (Arrow.homMk (tensorHom (stupidTruncMap f₁ ComplexShape.positiveNatEmbedding) f₂) f₃
       (firstPositivePairing_naturality P h₁ Q g₁ f₁ f₂ f₃ hf))
 
-/-- The image quotient's exact original range coordinates preserve the concrete degree map. -/
+/-- Let R be a ring in universe u and choose a monoidal preadditive
+structure on ModuleCat_v R. Let P:K₁⊗K₂→K₃ be a chain graded
+pairing of nonnegative complexes, with K₁.d(1,0)=0.
+Write P₊ for its first-positive map K₁,≥1⊗K₂→K₃ and
+I_n=∑_(p>0,q≥0,p+q=n)range(P_(p,q)).
+Let Q:L₁⊗L₂→L₃ have L₁.d(1,0)=0 and chain maps f_i:K_i→L_i
+satisfy f₃∘P=Q∘(f₁⊗f₂).
+The degree coordinate isomorphisms commute with the induced
+image-quotient chain map and degree quotient representative maps. -/
 @[reassoc]
 theorem firstPositiveImageQuotientDegreeIso_naturality (n : ℕ) :
     (firstPositiveImageQuotientMap P h₁ Q g₁ f₁ f₂ f₃ hf).f n ≫
@@ -251,7 +372,13 @@ theorem firstPositiveImageQuotientDegreeIso_naturality (n : ℕ) :
 
 end Maps
 
-/-- The defining first-positive action has no degree-zero image. -/
+/-- Let R be a ring in universe u and choose a monoidal preadditive
+structure on ModuleCat_v R. Let P:K₁⊗K₂→K₃ be a chain graded
+pairing of nonnegative complexes, with K₁.d(1,0)=0.
+Write P₊ for its first-positive map K₁,≥1⊗K₂→K₃ and
+I_n=∑_(p>0,q≥0,p+q=n)range(P_(p,q)).
+The first-positive map has degree-zero component zero,
+since no p>0,q≥0 satisfy p+q=0. -/
 theorem firstPositivePairing_f_zero : (firstPositivePairing P h₁).f 0 = 0 := by
   apply ModuleCat.hom_ext
   ext x
@@ -260,7 +387,13 @@ theorem firstPositivePairing_f_zero : (firstPositivePairing P h₁).f 0 = 0 := b
     exact LinearMap.mem_range_self _ x
   simpa only [firstPositiveImages_zero, Submodule.mem_bot, ModuleCat.hom_zero, LinearMap.zero_apply] using hx
 
-/-- The actual first-image projection retains every original degree-zero coefficient. -/
+/-- Let R be a ring in universe u and choose a monoidal preadditive
+structure on ModuleCat_v R. Let P:K₁⊗K₂→K₃ be a chain graded
+pairing of nonnegative complexes, with K₁.d(1,0)=0.
+Write P₊ for its first-positive map K₁,≥1⊗K₂→K₃ and
+I_n=∑_(p>0,q≥0,p+q=n)range(P_(p,q)).
+The degree-zero image quotient projection is an isomorphism
+because I₀=0. -/
 theorem firstPositiveImageProjection_f_zero_isIso :
     IsIso ((firstPositiveImageProjection P h₁).f 0) := by
   letI : IsIso ((firstPositiveProjection P h₁).f 0) :=
@@ -272,14 +405,26 @@ theorem firstPositiveImageProjection_f_zero_isIso :
     (firstPositiveImageQuotientIsoCokernel P h₁).inv.f 0)
   infer_instance
 
-/-- Only the earned degree-zero vanishing is used to compare actual target and quotient H0. -/
+/-- Let R be a ring in universe u and choose a monoidal preadditive
+structure on ModuleCat_v R. Let P:K₁⊗K₂→K₃ be a chain graded
+pairing of nonnegative complexes, with K₁.d(1,0)=0.
+Write P₊ for its first-positive map K₁,≥1⊗K₂→K₃ and
+I_n=∑_(p>0,q≥0,p+q=n)range(P_(p,q)).
+For the chosen degree-zero homology objects of K₃ and Q_I,
+the image projection gives H₀(K₃)≅H₀(Q_I). -/
 def firstPositiveImageHomologyZeroIso [K₃.HasHomology 0]
     [(firstPositiveImageQuotient P h₁).HasHomology 0] :
     K₃.homology 0 ≅ (firstPositiveImageQuotient P h₁).homology 0 :=
   cokernelHomologyZeroIso (firstPositivePairing P h₁) (firstPositivePairing_f_zero P h₁) ≪≫
     (imageCokernelHomologyIso (firstPositivePairing P h₁) 0).symm
 
-/-- The H0 isomorphism's actual forward map is induced by the original image projection. -/
+/-- Let R be a ring in universe u and choose a monoidal preadditive
+structure on ModuleCat_v R. Let P:K₁⊗K₂→K₃ be a chain graded
+pairing of nonnegative complexes, with K₁.d(1,0)=0.
+Write P₊ for its first-positive map K₁,≥1⊗K₂→K₃ and
+I_n=∑_(p>0,q≥0,p+q=n)range(P_(p,q)).
+The forward H₀ comparison for the chosen homology objects
+is H₀(π_I), the homology map of the image quotient projection. -/
 theorem firstPositiveImageHomologyZeroIso_hom [K₃.HasHomology 0]
     [(firstPositiveImageQuotient P h₁).HasHomology 0] :
     (firstPositiveImageHomologyZeroIso P h₁).hom =

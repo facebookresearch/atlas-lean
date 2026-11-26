@@ -16,44 +16,17 @@ public import MathlibExt.CategoryTheory.ExactCategory.Basic
 public import MathlibExt.CategoryTheory.Waldhausen.Basic
 
 /-!
-# Standard Waldhausen structure on a Quillen exact category
+# Waldhausen data of a Quillen exact category
 
-For a Quillen exact category `C`, the admissible monomorphisms as cofibrations
-and the isomorphisms as weak equivalences form a Waldhausen category. This file
-provides the named construction `ExactCategory.waldhausenCategory C`.
+Let C be a preadditive Quillen exact category with a zero object and binary
+biproducts. Its standard Waldhausen cofibration and weak-equivalence data
+take admissible monomorphisms as cofibrations and isomorphisms as weak
+equivalences. Pushouts along admissible monomorphisms supply the
+cofibration-pushout axiom.
 
-Cofibrations are `admissibleMonosOf C IsAdmissibleExact`; weak equivalences are
-`MorphismProperty.isomorphisms C`. Multiplicativity and `RespectsIso` are filled
-from the exact-category instances for admissible monos and the standard
-`isomorphisms` instances. `zero_isCofibration` is `IsAdmissibleMono.fromZero`
-and the pushout axiom reuses `ExactCategory.admissibleMono_pushout` directly.
-
-This is a `def`, not a global `WaldhausenCategoryWithoutGluing C` instance, because an
-additive category may carry multiple Waldhausen structures (e.g. chain-complex
-categories). Use locally as `letI := ExactCategory.waldhausenCategory C`.
-
-## Bridge: admissible exact = cofibration sequence
-
-For the standard structure `waldhausenCategory C`, a short complex `S`
-is admissible exact iff `S.f`, `S.g` is a Waldhausen cofibration sequence:
-
-* `IsAdmissibleExact S ↔ IsCofibrationSequence (C := C) S.f S.g`
-  (with `WaldhausenCategoryWithoutGluing C` taken as `waldhausenCategory C`).
-
-The forward direction turns the cokernel universal property
-`isColimit_cokernelCofork_of_isAdmissibleExact S` into the pushout
-along `S.X₁ ⟶ 0` via `PushoutCocone.IsColimit.mk`; the reverse direction
-constructs the cokernel colimit from the pushout and delegates the
-remaining admissibility argument to
-`ExactCategory.isAdmissibleExact_of_isAdmissibleMono_isColimit`. The square is
-`IsPushout (S.X₁ ⟶ 0) S.f (0 ⟶ S.X₃) S.g` respecting `S.zero`
-orientation exactly. The statement holds for arbitrary exact categories
-without `[Balanced C]`; the kernel accessor
-`isLimit_kernelFork_of_isAdmissibleExact` is available for the dual
-kernel view.
-
-No K0 comparison, Waldhausen functor, gluing, S-dot, or Q-construction
-is claimed here.
+For a short complex A —i→ B —q→ Q, admissible exactness is equivalent
+to being a cofibration sequence in this structure: i is an admissible
+monomorphism and q presents the pushout of i along A → 0.
 -/
 
 @[expose] public section
@@ -67,16 +40,10 @@ namespace CategoryTheory.ExactCategory
 variable (C : Type u) [Category.{v} C] [Preadditive C] [HasZeroObject C]
   [HasBinaryBiproducts C] [ExactCategory C]
 
-/-- Standard Waldhausen structure on a Quillen exact category.
+/-- Let C be a preadditive Quillen exact category with a zero object
+and binary biproducts.
 
-Cofibrations are the admissible monomorphisms and weak equivalences are the
-isomorphisms. This is the canonical bridge from exact categories to Waldhausen
-categories used in H0.
-
-Use locally as `letI := ExactCategory.waldhausenCategory C`; no global
-`WaldhausenCategoryWithoutGluing C` instance is installed so that other Waldhausen
-structures on the same underlying category (e.g. chain complexes) remain
-available. -/
+The standard Waldhausen cofibration, weak-equivalence and pushout data with admissible monomorphisms as cofibrations and isomorphisms as weak equivalences. -/
 @[instance_reducible]
 def waldhausenCategory : WaldhausenCategoryWithoutGluing C where
   cofibrations := admissibleMonosOf C IsAdmissibleExact
@@ -88,13 +55,19 @@ def waldhausenCategory : WaldhausenCategoryWithoutGluing C where
   zero_isCofibration _ f := IsAdmissibleMono.fromZero f
   cofibration_pushout {X Y} i hi X' f := admissibleMono_pushout X Y i hi X' f
 
-/-- Cofibrations of the standard structure are the admissible monomorphisms. -/
+/-- Let C be a preadditive Quillen exact category with a zero object
+and binary biproducts.
+
+The cofibrations in the standard Waldhausen data are exactly the admissible monomorphisms of the given exact structure. -/
 @[simp]
 lemma waldhausenCategory_cofibrations :
     (waldhausenCategory C).cofibrations = admissibleMonosOf C IsAdmissibleExact :=
   rfl
 
-/-- Weak equivalences of the standard structure are the isomorphisms. -/
+/-- Let C be a preadditive Quillen exact category with a zero object
+and binary biproducts.
+
+The weak equivalences in the standard Waldhausen data are exactly the isomorphisms in C. -/
 @[simp]
 lemma waldhausenCategory_weakEquivalences :
     (waldhausenCategory C).weakEquivalences = MorphismProperty.isomorphisms C :=
@@ -181,7 +154,10 @@ private def isColimitCokernelOfIsPushout {X Y Z : C} (f : X ⟶ Y) (g : Y ⟶ Z)
         _ = q ≫ hPush.desc (0 : (0 : C) ⟶ W) g' hw := h_desc_inl.symm
     exact hPush.hom_ext hm_inl_eq hm_inr_eq
 
-/-- Admissible exact implies cofibration sequence in `waldhausenCategory C`. -/
+/-- Let C be a preadditive Quillen exact category with a zero object
+and binary biproducts.
+
+If a short complex A —i→ B —q→ Q is admissible exact, then it is a cofibration sequence in the standard Waldhausen structure, with q the pushout quotient along A → 0. -/
 theorem isCofibrationSequence_of_isAdmissibleExact {S : ShortComplex C}
     (hS : IsAdmissibleExact S) :
     @IsCofibrationSequence C _ _ (waldhausenCategory C) S.X₁ S.X₂ S.X₃ S.f S.g := by
@@ -191,7 +167,10 @@ theorem isCofibrationSequence_of_isAdmissibleExact {S : ShortComplex C}
     IsPushout.of_isColimit hp
   exact ⟨isAdmissibleMono_f hS, (0 : S.X₁ ⟶ (0 : C)), (0 : (0 : C) ⟶ S.X₃), hPush⟩
 
-/-- Cofibration sequence in `waldhausenCategory C` implies admissible exact. -/
+/-- Let C be a preadditive Quillen exact category with a zero object
+and binary biproducts.
+
+If a short complex A —i→ B —q→ Q is a cofibration sequence in the standard Waldhausen structure, then it is admissible exact in C. -/
 theorem isAdmissibleExact_of_isCofibrationSequence {S : ShortComplex C}
     (hSeq : @IsCofibrationSequence C _ _ (waldhausenCategory C) S.X₁ S.X₂ S.X₃ S.f S.g) :
     IsAdmissibleExact S := by
@@ -200,7 +179,10 @@ theorem isAdmissibleExact_of_isCofibrationSequence {S : ShortComplex C}
     isColimitCokernelOfIsPushout S.f S.g h q hPush S.zero
   exact isAdmissibleExact_of_isAdmissibleMono_isColimit hf hcS
 
-/-- Admissible exact iff cofibration sequence in `waldhausenCategory C`. -/
+/-- Let C be a preadditive Quillen exact category with a zero object
+and binary biproducts.
+
+For a short complex A —i→ B —q→ Q, admissible exactness is equivalent to being a cofibration sequence in the standard Waldhausen structure. -/
 theorem isAdmissibleExact_iff_isCofibrationSequence {S : ShortComplex C} :
     IsAdmissibleExact S ↔
       @IsCofibrationSequence C _ _ (waldhausenCategory C) S.X₁ S.X₂ S.X₃ S.f S.g :=

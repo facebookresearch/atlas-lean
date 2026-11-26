@@ -1,3 +1,5 @@
-# Coefficient Map up
+# Coordinates of the lifted coefficient morphism
 
-The lifted coefficient map has exactly the original linear-map value.
+Coordinates of the lifted coefficient morphism.
+
+The common-height coefficient map sends ULift.up m to ULift.up(a m).

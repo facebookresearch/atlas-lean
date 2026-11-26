@@ -1,3 +1,5 @@
-# Mixed Page Associativity later
+# Mixed associativity persists on all later pages
 
-Mixed associativity proved on an initial native page holds on every later integer page.
+Mixed associativity persists on all later pages.
+
+A mixed associativity law at r₀≥1 propagates to every r≥r₀.

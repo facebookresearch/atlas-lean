@@ -11,12 +11,17 @@ module
 public import MathlibExt.Algebra.Homology.ChainGradedPairingFirstPositiveImages
 
 /-!
-# Degree-zero right factors in the actual first-positive image family
+# Right degree-zero components in first-positive pairing images
 
-The existing first-positive family includes (n,0) whenever n is positive.
-Consequently, a surjective actual right-degree-zero component makes that
-entire degree's image family top. This is a fact about the existing native
-image definition; it makes no identification with a book's ideal convention.
+Let R be a ring and choose a monoidal preadditive structure on its
+module category. For a chain graded pairing P, the first-positive
+degree n image sums p>0 and q≥0 with p+q=n.
+It therefore includes the (n,0) component whenever n>0.
+
+If that component is surjective, the entire image is K₃,n.
+With d₁:K₁,1→K₁,0 equal to zero so the first-positive chain pairing
+is defined, its degree n cokernel is then a zero object.
+The scalar and module carrier universes are independent.
 -/
 
 @[expose] public section
@@ -34,13 +39,22 @@ variable {R : Type u} [Ring R]
   {K₁ K₂ K₃ : ChainComplex (ModuleCat.{v} R) ℕ}
   (P : ChainGradedPairing K₁ K₂ K₃)
 
-/-- The actual (n,0) image is included when n is positive. -/
+/-- Let R be a ring in universe u and ModuleCat_v R have a chosen
+monoidal preadditive structure. Let P be a chain graded pairing
+K₁⊗K₂→K₃ of nonnegative module complexes.
+Write I_n for the sum of ranges with p>0,q≥0,p+q=n.
+For n>0, range(P_(n,0))≤I_n. The right bidegree is zero,
+and this component is part of the first-positive family. -/
 theorem range_pair_right_zero_le_firstPositiveImages (n : ℕ) (hn : 0 < n) :
     LinearMap.range (pairAt P n 0 n (Nat.add_zero n)).hom ≤ firstPositiveImages P n := by
   rintro y ⟨x, rfl⟩
   exact pairAt_mem_firstPositiveImages P n 0 n (Nat.add_zero n) hn x
 
-/-- Surjectivity of an actual (n,0) component fills the original first-positive image degree. -/
+/-- Let R be a ring in universe u and ModuleCat_v R have a chosen
+monoidal preadditive structure. Let P be a chain graded pairing
+K₁⊗K₂→K₃ of nonnegative module complexes.
+Write I_n for the sum of ranges with p>0,q≥0,p+q=n.
+For n>0, if P_(n,0) is surjective then I_n=K₃,n. -/
 theorem firstPositiveImages_eq_top_of_right_zero_surjective (n : ℕ) (hn : 0 < n)
     (h : Function.Surjective (pairAt P n 0 n (Nat.add_zero n)).hom) : firstPositiveImages P n = ⊤ := by
   apply top_unique
@@ -48,7 +62,12 @@ theorem firstPositiveImages_eq_top_of_right_zero_surjective (n : ℕ) (hn : 0 < 
   obtain ⟨x, rfl⟩ := h y
   exact range_pair_right_zero_le_firstPositiveImages P n hn ⟨x, rfl⟩
 
-/-- The actual first-positive cokernel component is zero when the original (n,0) component is surjective. -/
+/-- Let R be a ring in universe u and ModuleCat_v R have a chosen
+monoidal preadditive structure. Let P be a chain graded pairing
+K₁⊗K₂→K₃ of nonnegative module complexes.
+Write I_n for the sum of ranges with p>0,q≥0,p+q=n.
+If K₁.d(1,0)=0, n>0 and P_(n,0) is surjective, then the
+degree n term of the first-positive pairing cokernel is a zero object. -/
 theorem firstPositiveCokernel_X_isZero_of_right_zero_surjective
     (h₁ : K₁.d 1 0 = 0) (n : ℕ) (hn : 0 < n)
     (h : Function.Surjective (pairAt P n 0 n (Nat.add_zero n)).hom) : IsZero ((firstPositiveCokernel P h₁).X n) := by

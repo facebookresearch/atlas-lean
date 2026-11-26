@@ -1,3 +1,5 @@
-# Window Cofork
+# The cokernel cofork defining a window quotient
 
-The native cycle quotient, as its actual colimit cofork.
+The cokernel cofork defining a window quotient.
+
+The cycle projection and its boundary-zero relation form the cofork of the incoming boundary.

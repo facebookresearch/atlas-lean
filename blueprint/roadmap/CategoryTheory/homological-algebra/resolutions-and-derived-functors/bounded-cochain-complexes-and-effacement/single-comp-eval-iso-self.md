@@ -1,3 +1,6 @@
-# Single Comp Eval Iso Self
+# Single functor followed by evaluation
 
-Natural evaluation isomorphism for the bounded single-complex functor.
+For a category E with zero morphisms and a zero object, evaluating
+the bounded single functor in its support degree j gives a functor naturally
+isomorphic to the identity of E. The component at X is the canonical
+isomorphism Sⱼ(X)ʲ ≅ X.

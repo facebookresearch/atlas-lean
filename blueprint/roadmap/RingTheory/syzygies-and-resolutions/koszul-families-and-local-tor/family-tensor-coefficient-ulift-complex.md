@@ -1,4 +1,5 @@
-# Family Tensor Coefficient Ulift Complex Iso
+# The complex comparison for a lifted Koszul coefficient
 
-The original coefficient tensor complex commutes with the canonical
-module universe lift, retaining its actual terms and differential maps.
+The complex comparison for a lifted Koszul coefficient.
+
+The term equivalences give K(a;ULift M) ≅ ULift K(a;M).

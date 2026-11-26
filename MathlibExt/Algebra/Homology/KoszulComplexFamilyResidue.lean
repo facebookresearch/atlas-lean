@@ -16,15 +16,14 @@ public import MathlibExt.Algebra.Homology.KoszulComplexProjectiveLift
 public import Mathlib.RingTheory.LocalRing.ResidueField.Basic
 
 /-!
-# Residue targets for finite-family Koszul complexes
+# The residue-field target of a finite-family Koszul augmentation
 
-When a finite family spans the maximal ideal of a local ring, its Koszul
-augmentation quotient is canonically the residue field. This file gives both
-the algebra equivalence and the exact universe-lifted `ModuleCat` isomorphism
-used by projective-resolution comparison maps.
+For a local ring R and a finite family spanning its maximal ideal, the family quotient R/(a)
+is canonically the residue field. The algebra comparison sends the class of r to its residue.
 
-No regularity, positive-degree Koszul exactness, minimality, or projective-
-dimension statement is asserted.
+Lifting this comparison gives the exact module isomorphism from the Koszul augmentation target
+to the displayed lifted residue coefficient, with the ring and index universe heights
+retained.
 -/
 
 @[expose] public section
@@ -42,7 +41,9 @@ namespace KoszulComplex
 variable (R : Type u) [CommRing R] [IsLocalRing R]
 variable {I : Type v} [Fintype I]
 
-/-- A finite family spanning the maximal ideal has maximal family ideal. -/
+/-- The ideal of a maximal-ideal generating family.
+
+If the family spans the maximal ideal, its Koszul family ideal equals that maximal ideal. -/
 theorem familyIdeal_eq_maximalIdeal (a : I → R)
     (hspan : Ideal.span (Set.range a) = IsLocalRing.maximalIdeal R) :
     ideal R (I → R) (familyFunctional R a) =
@@ -60,8 +61,10 @@ private theorem familyIdeal_eq_ker_residue (a : I → R)
   rw [IsLocalRing.ResidueField.algebraMap_eq,
     IsLocalRing.ker_residue]
 
-/-- The quotient by a finite family spanning the maximal ideal is the
-residue field, as an `R`-algebra. -/
+/-- The family quotient algebra identified with the residue field.
+
+For a maximal-ideal spanning family, R modulo its Koszul ideal is R-algebra equivalent to the
+residue field. -/
 @[no_expose]
 def familyQuotientResidueAlgEquiv (a : I → R)
     (hspan : Ideal.span (Set.range a) = IsLocalRing.maximalIdeal R) :
@@ -77,7 +80,9 @@ def familyQuotientResidueAlgEquiv (a : I → R)
           rw [IsLocalRing.ResidueField.algebraMap_eq]
           exact IsLocalRing.residue_surjective (R := R)))
 
-/-- On representatives, the family quotient equivalence is the residue map. -/
+/-- The residue algebra comparison on a quotient class.
+
+The class of r is sent to residue R r. -/
 @[simp]
 theorem familyQuotientResidueAlgEquiv_mk (a : I → R)
     (hspan : Ideal.span (Set.range a) = IsLocalRing.maximalIdeal R)
@@ -88,8 +93,10 @@ theorem familyQuotientResidueAlgEquiv_mk (a : I → R)
       IsLocalRing.residue R r := by
   rfl
 
-/-- The exact universe-lifted quotient target of the Koszul augmentation is
-isomorphic to the lifted residue-field object. -/
+/-- The lifted module isomorphism of the family quotient target.
+
+The Koszul augmentation target is isomorphic to the displayed universe lift of the
+residue-field module. -/
 @[no_expose]
 def familyQuotientResidueIso (a : I → R)
     (hspan : Ideal.span (Set.range a) = IsLocalRing.maximalIdeal R) :
@@ -99,8 +106,9 @@ def familyQuotientResidueIso (a : I → R)
   (ModuleCat.uliftFunctor.{max u v, u} R).mapIso
     (familyQuotientResidueAlgEquiv R a hspan).toLinearEquiv.toModuleIso
 
-/-- The lifted quotient/residue isomorphism sends a lifted quotient
-representative to the lifted residue class. -/
+/-- The lifted residue comparison on an inserted class.
+
+The forward comparison sends up(r mod the family ideal) to up(residue r). -/
 @[simp]
 theorem familyQuotientResidueIso_hom_up_mk (a : I → R)
     (hspan : Ideal.span (Set.range a) = IsLocalRing.maximalIdeal R)

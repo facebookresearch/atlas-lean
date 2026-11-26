@@ -1,4 +1,6 @@
-# Factor minimal support of not mem of support Dim le one
+# An Euler factor excluding a local parameter is minimal in support
 
-Over a local ring, every nonzero-contributing factor is minimal in the
-module support when that support has dimension at most one.
+An Euler factor excluding a local parameter is minimal in support.
+
+For finite M over the stated local noetherian ring, r in the maximal ideal and support
+dimension at most one, a factor prime excluding r has no smaller support prime.

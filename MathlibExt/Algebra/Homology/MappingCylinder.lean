@@ -17,20 +17,20 @@ public import Mathlib.Algebra.Homology.HomotopyCategory
 public import MathlibExt.Algebra.Homology.HomotopyCofiberSplitting
 
 /-!
-# Mapping cylinders of morphisms of homological complexes
+# Mapping cylinders of complex morphisms
 
-For a morphism `f : F ⟶ G`, its mapping cylinder is the homotopy cofiber
-of `(1, -f) : F ⟶ F ⊞ G`.  It comes with maps from `F` and `G`, a
-projection to `G`, the expected universal morphisms, and a deformation
-retraction onto `G`.
+Let C be preadditive with binary biproducts, and c a complex shape with decidable relation. For
+f:F→G, the mapping cylinder is Cyl(f)=Cof(a_f), where a_f=(id_F,-f):F→F⊕G. The endpoint
+inclusions s:F→Cyl(f), t:G→Cyl(f) and projection π:Cyl(f)→G satisfy s≫π=f and t≫π=id_G.
 
-Mathlib's `HomologicalComplex.cylinder F` is the special case `f = 1`; the
-construction here is functorial in an arbitrary arrow.
+A map from Cyl(f) to K is specified by maps e:F→K,g:G→K and a homotopy e∼f≫g, using the cofiber
+descent with null homotopy of e-f≫g. Strict commutative squares induce cylinder maps.
+Functoriality and the source-endpoint homotopy use the condition that every index has an
+incoming differential relation.
 
-The functorial action and deformation retraction require
-`H : ∀ j, ∃ i, c.Rel i j`, so every degree has a predecessor. This
-hypothesis is essential for shapes with a boundary: for `ComplexShape.up ℕ`,
-degree zero has no predecessor.
+Under that predecessor condition, π≫t is homotopic to the cylinder identity, so G and Cyl(f) are
+homotopy equivalent. In the homotopy category the cylinder functor is naturally isomorphic to
+target evaluation, with projection as its forward component.
 -/
 
 @[expose] public section
@@ -51,11 +51,17 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
 variable {ι : Type w} {c : ComplexShape ι} [DecidableRel c.Rel]
 variable {F G K : HomologicalComplex C c}
 
-/-- The existence condition for the mapping cylinder of `f`. -/
+/-- Let C be preadditive with binary biproducts in object/morphism universes u,v, and c a complex
+shape on I in w. Assume c.Rel is decidable. Let f:F→G be a morphism of c-shaped complexes and
+a_f=(id_F,-f):F→F⊕G. The existence condition means that the homotopy cofiber of a_f is
+available. It is the construction used to define Cyl(f). -/
 abbrev HasMappingCylinder (f : F ⟶ G) : Prop :=
   HasHomotopyCofiber (biprod.lift (𝟙 F) (-f))
 
-/-- The mapping cylinder of `f : F ⟶ G`. -/
+/-- Let C be preadditive with binary biproducts in object/morphism universes u,v, and c a complex
+shape on I in w. Assume c.Rel is decidable. Let f:F→G be a morphism of c-shaped complexes and
+a_f=(id_F,-f):F→F⊕G. When that cofiber exists, Cyl(f)=Cof(id_F,-f) is a c-shaped complex. The
+negative sign belongs to the G-coordinate of the defining map F→F⊕G. -/
 noncomputable abbrev mappingCylinder (f : F ⟶ G)
     [HasMappingCylinder f] : HomologicalComplex C c :=
   homotopyCofiber (biprod.lift (𝟙 F) (-f))
@@ -64,30 +70,47 @@ namespace mappingCylinder
 
 variable (f : F ⟶ G)
 
-/-- The arrow whose homotopy cofiber is the mapping cylinder. -/
+/-- Let C be preadditive with binary biproducts in object/morphism universes u,v, and c a complex
+shape on I in w. Let f:F→G be a morphism of c-shaped complexes and a_f=(id_F,-f):F→F⊕G. The map
+a_f sends the F-coordinate by id_F into F⊕G and the G-coordinate by -f. Its two biproduct
+components are id_F and -f. -/
 noncomputable abbrev arrow : F ⟶ F ⊞ G :=
   biprod.lift (𝟙 F) (-f)
 
 variable [HasMappingCylinder f]
 
-/-- The source endpoint `F ⟶ mappingCylinder f`. -/
+/-- Let C be preadditive with binary biproducts in object/morphism universes u,v, and c a complex
+shape on I in w. Assume c.Rel is decidable. Let f:F→G be a morphism of c-shaped complexes and
+a_f=(id_F,-f):F→F⊕G. Assume Cyl(f)=Cof(a_f) exists. Write r:F⊕G→Cyl(f) for the cofiber
+inclusion, s=i_F≫r and t=i_G≫r for its endpoints, and π:Cyl(f)→G for the projection induced by
+(f,id_G). The source endpoint is s:F→Cyl(f), the first biproduct injection F→F⊕G followed by r. -/
 noncomputable def source : F ⟶ mappingCylinder f :=
   biprod.inl ≫ homotopyCofiber.inr (arrow f)
 
-/-- The target endpoint `G ⟶ mappingCylinder f`. -/
+/-- Let C be preadditive with binary biproducts in object/morphism universes u,v, and c a complex
+shape on I in w. Assume c.Rel is decidable. Let f:F→G be a morphism of c-shaped complexes and
+a_f=(id_F,-f):F→F⊕G. Assume Cyl(f)=Cof(a_f) exists. Write r:F⊕G→Cyl(f) for the cofiber
+inclusion, s=i_F≫r and t=i_G≫r for its endpoints, and π:Cyl(f)→G for the projection induced by
+(f,id_G). The target endpoint is t:G→Cyl(f), the second biproduct injection G→F⊕G followed by r. -/
 noncomputable def target : G ⟶ mappingCylinder f :=
   biprod.inr ≫ homotopyCofiber.inr (arrow f)
 
 omit [DecidableRel c.Rel] [HasMappingCylinder f] in
-/-- The defining arrow is the difference of the two endpoint coordinates. -/
+/-- Let C be preadditive with binary biproducts in object/morphism universes u,v, and c a complex
+shape on I in w. Let f:F→G be a morphism of c-shaped complexes and a_f=(id_F,-f):F→F⊕G. As maps
+F→F⊕G, a_f=i_F-f≫i_G. This identity uses only biproduct maps and the additive complex morphisms. -/
 theorem arrow_eq :
     arrow f = biprod.inl - f ≫ biprod.inr := by
   apply biprod.hom_ext
   · simp [arrow]
   · simp [arrow]
 
-/-- The defining cofiber relation is the difference between the source
-endpoint and the source map followed by the target endpoint. -/
+/-- Let C be preadditive with binary biproducts in object/morphism universes u,v, and c a complex
+shape on I in w. Assume c.Rel is decidable. Let f:F→G be a morphism of c-shaped complexes and
+a_f=(id_F,-f):F→F⊕G. Assume Cyl(f)=Cof(a_f) exists. Write r:F⊕G→Cyl(f) for the cofiber
+inclusion, s=i_F≫r and t=i_G≫r for its endpoints, and π:Cyl(f)→G for the projection induced by
+(f,id_G). The equality a_f≫r=s-f≫t holds as a morphism F→Cyl(f), retaining the negative
+f-coordinate of a_f. -/
 theorem arrow_comp_inr :
     arrow f ≫ homotopyCofiber.inr (arrow f) =
       source f - f ≫ target f := by
@@ -101,8 +124,12 @@ theorem arrow_comp_inr :
     _ = source f - f ≫ target f := by
       simp only [sub_comp, source, target, Category.assoc]
 
-/-- The canonical homotopy from the source endpoint to the source map
-followed by the target endpoint. -/
+/-- Let C be preadditive with binary biproducts in object/morphism universes u,v, and c a complex
+shape on I in w. Assume c.Rel is decidable. Let f:F→G be a morphism of c-shaped complexes and
+a_f=(id_F,-f):F→F⊕G. Assume Cyl(f)=Cof(a_f) exists. Write r:F⊕G→Cyl(f) for the cofiber
+inclusion, s=i_F≫r and t=i_G≫r for its endpoints, and π:Cyl(f)→G for the projection induced by
+(f,id_G). Assume every j∈I admits i with c.Rel(i,j). There is a canonical homotopy s∼f≫t
+obtained from the cofiber null homotopy of a_f≫r=s-f≫t. -/
 noncomputable def sourceTargetHomotopy
     (H : ∀ j, ∃ i, c.Rel i j) :
     _root_.Homotopy (source f) (f ≫ target f) :=
@@ -110,23 +137,40 @@ noncomputable def sourceTargetHomotopy
     ((_root_.Homotopy.ofEq (arrow_comp_inr f).symm).trans
       (homotopyCofiber.inrCompHomotopy (arrow f) H))
 
-/-- The null homotopy defining the projection to the target. -/
+/-- Let C be preadditive with binary biproducts in object/morphism universes u,v, and c a complex
+shape on I in w. Let f:F→G be a morphism of c-shaped complexes and a_f=(id_F,-f):F→F⊕G. The
+composite a_f≫(f,id_G):F→G is zero, since its two contributions are f and -f. Its strict zero
+equation gives the null homotopy used for the cylinder projection. -/
 noncomputable def projectionHomotopy :
     _root_.Homotopy
       (arrow f ≫ biprod.desc f (𝟙 G)) 0 :=
   _root_.Homotopy.ofEq (by simp [arrow])
 
-/-- Projection from the mapping cylinder to its target. -/
+/-- Let C be preadditive with binary biproducts in object/morphism universes u,v, and c a complex
+shape on I in w. Assume c.Rel is decidable. Let f:F→G be a morphism of c-shaped complexes and
+a_f=(id_F,-f):F→F⊕G. Assume Cyl(f)=Cof(a_f) exists. Write r:F⊕G→Cyl(f) for the cofiber
+inclusion, s=i_F≫r and t=i_G≫r for its endpoints, and π:Cyl(f)→G for the projection induced by
+(f,id_G). The projection π is cofiber descent of (f,id_G):F⊕G→G along its zero composite with
+a_f. It is zero on shifted-source generators and has endpoint-coordinate map (f,id_G). -/
 noncomputable def projection : mappingCylinder f ⟶ G :=
   homotopyCofiber.desc (arrow f) (biprod.desc f (𝟙 G))
     (projectionHomotopy f)
 
-/-- The source endpoint followed by the projection is `f`. -/
+/-- Let C be preadditive with binary biproducts in object/morphism universes u,v, and c a complex
+shape on I in w. Assume c.Rel is decidable. Let f:F→G be a morphism of c-shaped complexes and
+a_f=(id_F,-f):F→F⊕G. Assume Cyl(f)=Cof(a_f) exists. Write r:F⊕G→Cyl(f) for the cofiber
+inclusion, s=i_F≫r and t=i_G≫r for its endpoints, and π:Cyl(f)→G for the projection induced by
+(f,id_G). The strict equation s≫π=f holds as a morphism F→G. -/
 @[reassoc (attr := simp)]
 theorem source_projection : source f ≫ projection f = f := by
   simp [source, projection]
 
-/-- The target endpoint is a section of the projection. -/
+/-- Let C be preadditive with binary biproducts in object/morphism universes u,v, and c a complex
+shape on I in w. Assume c.Rel is decidable. Let f:F→G be a morphism of c-shaped complexes and
+a_f=(id_F,-f):F→F⊕G. Assume Cyl(f)=Cof(a_f) exists. Write r:F⊕G→Cyl(f) for the cofiber
+inclusion, s=i_F≫r and t=i_G≫r for its endpoints, and π:Cyl(f)→G for the projection induced by
+(f,id_G). The equation t≫π=id_G holds. Thus the target endpoint is a section in the complex
+category. -/
 @[reassoc (attr := simp)]
 theorem target_projection : target f ≫ projection f = 𝟙 G := by
   simp [target, projection]
@@ -136,7 +180,11 @@ section Desc
 variable (e : F ⟶ K) (g : G ⟶ K)
   (h : _root_.Homotopy e (f ≫ g))
 
-/-- The null homotopy used to define a morphism from a mapping cylinder. -/
+/-- Let C be preadditive with binary biproducts in object/morphism universes u,v, and c a complex
+shape on I in w. Let f:F→G be a morphism of c-shaped complexes and a_f=(id_F,-f):F→F⊕G. For
+e:F→K,g:G→K and a homotopy h:e∼f≫g, let h₀ be the induced null homotopy of a_f≫(e,g)=e-f≫g. The
+homotopy h₀:a_f≫(e,g)∼0 follows from the equality a_f≫(e,g)=e-f≫g and the endpoint compatibility
+homotopy h. -/
 noncomputable def descHomotopy :
     _root_.Homotopy (arrow f ≫ biprod.desc e g) 0 :=
   (_root_.Homotopy.ofEq (by
@@ -144,8 +192,13 @@ noncomputable def descHomotopy :
         Category.assoc, biprod.inr_desc])).trans
     (_root_.Homotopy.equivSubZero h)
 
-/-- A morphism from a mapping cylinder, specified on both endpoints and by
-a homotopy between the required source maps. -/
+/-- Let C be preadditive with binary biproducts in object/morphism universes u,v, and c a complex
+shape on I in w. Assume c.Rel is decidable. Let f:F→G be a morphism of c-shaped complexes and
+a_f=(id_F,-f):F→F⊕G. Assume Cyl(f)=Cof(a_f) exists. Write r:F⊕G→Cyl(f) for the cofiber
+inclusion, s=i_F≫r and t=i_G≫r for its endpoints, and π:Cyl(f)→G for the projection induced by
+(f,id_G). For e:F→K,g:G→K and a homotopy h:e∼f≫g, let h₀ be the induced null homotopy of
+a_f≫(e,g)=e-f≫g. The map d:Cyl(f)→K is cofiber descent of (e,g) with h₀. It satisfies s≫d=e and
+t≫d=g, and its shifted-source values are those of h₀. -/
 noncomputable def desc : mappingCylinder f ⟶ K :=
   homotopyCofiber.desc (arrow f) (biprod.desc e g)
     (descHomotopy f e g h)
@@ -158,7 +211,13 @@ theorem source_desc : source f ≫ desc f e g h = e := by
 theorem target_desc : target f ≫ desc f e g h = g := by
   simp [target, desc]
 
-/-- Characteristic formula for `desc` on the shifted-source generator. -/
+/-- Let C be preadditive with binary biproducts in object/morphism universes u,v, and c a complex
+shape on I in w. Assume c.Rel is decidable. Let f:F→G be a morphism of c-shaped complexes and
+a_f=(id_F,-f):F→F⊕G. Assume Cyl(f)=Cof(a_f) exists. Write r:F⊕G→Cyl(f) for the cofiber
+inclusion, s=i_F≫r and t=i_G≫r for its endpoints, and π:Cyl(f)→G for the projection induced by
+(f,id_G). For e:F→K,g:G→K and a homotopy h:e∼f≫g, let h₀ be the induced null homotopy of
+a_f≫(e,g)=e-f≫g. For i,j∈I with c.Rel(j,i), the inclusion ℓ_{i,j}:F_i→Cyl(f)_j satisfies
+ℓ_{i,j}≫d_j=(h₀)_{i,j}, where d is the cylinder descent to K. -/
 @[reassoc (attr := simp)]
 theorem inlX_desc (i j : ι) (hji : c.Rel j i) :
     homotopyCofiber.inlX (arrow f) i j hji ≫
@@ -167,7 +226,13 @@ theorem inlX_desc (i j : ι) (hji : c.Rel j i) :
   homotopyCofiber.inlX_desc_f (arrow f)
     (biprod.desc e g) (descHomotopy f e g h) i j hji
 
-/-- Characteristic formula for `desc` on the endpoint-biproduct generator. -/
+/-- Let C be preadditive with binary biproducts in object/morphism universes u,v, and c a complex
+shape on I in w. Assume c.Rel is decidable. Let f:F→G be a morphism of c-shaped complexes and
+a_f=(id_F,-f):F→F⊕G. Assume Cyl(f)=Cof(a_f) exists. Write r:F⊕G→Cyl(f) for the cofiber
+inclusion, s=i_F≫r and t=i_G≫r for its endpoints, and π:Cyl(f)→G for the projection induced by
+(f,id_G). For e:F→K,g:G→K and a homotopy h:e∼f≫g, let h₀ be the induced null homotopy of
+a_f≫(e,g)=e-f≫g. For i∈I, the endpoint inclusion r_i:(F⊕G)_i→Cyl(f)_i satisfies r_i≫d_i=(e,g)_i.
+This is the full endpoint-biproduct component of the descent. -/
 @[reassoc (attr := simp)]
 theorem inrX_desc (i : ι) :
     homotopyCofiber.inrX (arrow f) i ≫
@@ -178,12 +243,22 @@ theorem inrX_desc (i : ι) :
 
 end Desc
 
-/-- The shifted-source inclusion into the homotopy cofiber model. -/
+/-- Let C be preadditive with binary biproducts in object/morphism universes u,v, and c a complex
+shape on I in w. Assume c.Rel is decidable. Let f:F→G be a morphism of c-shaped complexes and
+a_f=(id_F,-f):F→F⊕G. Assume Cyl(f)=Cof(a_f) exists. Write r:F⊕G→Cyl(f) for the cofiber
+inclusion, s=i_F≫r and t=i_G≫r for its endpoints, and π:Cyl(f)→G for the projection induced by
+(f,id_G). For i,j∈I with c.Rel(j,i), the shifted-source inclusion is ℓ_{i,j}:F_i→Cyl(f)_j. The
+relation is reversed relative to the source differential, as required by the cofiber shift. -/
 noncomputable abbrev inlX (i j : ι) (hij : c.Rel j i) :
     F.X i ⟶ (mappingCylinder f).X j :=
   homotopyCofiber.inlX (arrow f) i j hij
 
-/-- The endpoint-biproduct inclusion into the homotopy cofiber model. -/
+/-- Let C be preadditive with binary biproducts in object/morphism universes u,v, and c a complex
+shape on I in w. Assume c.Rel is decidable. Let f:F→G be a morphism of c-shaped complexes and
+a_f=(id_F,-f):F→F⊕G. Assume Cyl(f)=Cof(a_f) exists. Write r:F⊕G→Cyl(f) for the cofiber
+inclusion, s=i_F≫r and t=i_G≫r for its endpoints, and π:Cyl(f)→G for the projection induced by
+(f,id_G). For every i∈I, the endpoint inclusion r_i:(F⊕G)_i→Cyl(f)_i is the degree-i cofiber
+target-coordinate inclusion. -/
 noncomputable abbrev inrX (i : ι) :
     (F ⊞ G).X i ⟶ (mappingCylinder f).X i :=
   homotopyCofiber.inrX (arrow f) i
@@ -205,8 +280,10 @@ section Functoriality
 variable {F' G' : HomologicalComplex C c} {f' : F' ⟶ G'}
   [HasMappingCylinder f']
 
-/-- A strict square induces a strict square between the arrows defining the
-two mapping cylinders. -/
+/-- Let C be preadditive with binary biproducts in object/morphism universes u,v, and c a complex
+shape on I in w. Let f:F→G be a morphism of c-shaped complexes and a_f=(id_F,-f):F→F⊕G. For a
+strict square from f:F→G to f':F'→G' with maps a_L:F→F',a_R:G→G' and f≫a_R=a_L≫f', the induced
+square a_f→a_{f'} has source map a_L and target map a_L⊕a_R. -/
 noncomputable def arrowMap
     (f' : F' ⟶ G')
     (a : Arrow.mk f ⟶ Arrow.mk f') :
@@ -259,7 +336,14 @@ theorem arrowMap_comp
   · rfl
   · apply biprod.hom_ext <;> simp [Category.assoc]
 
-/-- The induced map of mapping cylinders. -/
+/-- Let C be preadditive with binary biproducts in object/morphism universes u,v, and c a complex
+shape on I in w. Assume c.Rel is decidable. Let f:F→G be a morphism of c-shaped complexes and
+a_f=(id_F,-f):F→F⊕G. Assume Cyl(f)=Cof(a_f) exists. Write r:F⊕G→Cyl(f) for the cofiber
+inclusion, s=i_F≫r and t=i_G≫r for its endpoints, and π:Cyl(f)→G for the projection induced by
+(f,id_G). Let f':F'→G' have a cylinder, and a=(a_L,a_R) be a strict square with f≫a_R=a_L≫f'.
+Assume every j∈I admits i with c.Rel(i,j). The induced map Cyl(a):Cyl(f)→Cyl(f') is the cofiber
+map of the square a_f→a_{f'}. It maps endpoint coordinates by a_L⊕a_R and shifted source
+coordinates by a_L. -/
 noncomputable def map (f' : F' ⟶ G')
     (H : ∀ j, ∃ i, c.Rel i j)
     (a : Arrow.mk f ⟶ Arrow.mk f') :
@@ -306,7 +390,13 @@ theorem target_map (f' : F' ⟶ G')
   simp [target, map, Category.assoc,
     homotopyCofiber.inr_mapArrowHom]
 
-/-- Naturality of the mapping-cylinder projection. -/
+/-- Let C be preadditive with binary biproducts in object/morphism universes u,v, and c a complex
+shape on I in w. Assume c.Rel is decidable. Let f:F→G be a morphism of c-shaped complexes and
+a_f=(id_F,-f):F→F⊕G. Assume Cyl(f)=Cof(a_f) exists. Write r:F⊕G→Cyl(f) for the cofiber
+inclusion, s=i_F≫r and t=i_G≫r for its endpoints, and π:Cyl(f)→G for the projection induced by
+(f,id_G). Let f':F'→G' have a cylinder, and a=(a_L,a_R) be a strict square with f≫a_R=a_L≫f'.
+Assume every j∈I admits i with c.Rel(i,j). The projection square is Cyl(a)≫π_{f'}=π_f≫a_R as
+maps Cyl(f)→G'. -/
 @[reassoc]
 theorem map_projection (f' : F' ⟶ G')
     (H : ∀ j, ∃ i, c.Rel i j)
@@ -328,7 +418,9 @@ end Functoriality
 
 variable (C c)
 
-/-- The functor on arrows sending `f` to `(1, -f)`. -/
+/-- Let C be preadditive with binary biproducts in object/morphism universes u,v, and c a complex
+shape on I in w. The arrow functor sends f:F→G to a_f=(id_F,-f):F→F⊕G. A strict square (a_L,a_R)
+is sent to the square (a_L,a_L⊕a_R). These assignments preserve identities and composition. -/
 noncomputable def arrowFunctor :
     Arrow (HomologicalComplex C c) ⥤
       Arrow (HomologicalComplex C c) where
@@ -340,7 +432,10 @@ noncomputable def arrowFunctor :
 
 variable {C c}
 
-/-- The mapping cylinder, functorial in strict commutative squares. -/
+/-- Let C be preadditive with binary biproducts in object/morphism universes u,v, and c a complex
+shape on I in w. Assume c.Rel is decidable. Assume every j∈I admits i with c.Rel(i,j). The
+functor Arrow(HomologicalComplex(C,c))→HomologicalComplex(C,c) sends f to Cyl(f)=Cof(id_F,-f)
+and a strict square to its cofiber-induced cylinder map. -/
 noncomputable def functor (H : ∀ j, ∃ i, c.Rel i j) :
     Arrow (HomologicalComplex C c) ⥤ HomologicalComplex C c :=
   arrowFunctor C c ⋙ HomologicalComplex.homotopyCofiberFunctor H
@@ -357,21 +452,30 @@ theorem functor_map (H : ∀ j, ∃ i, c.Rel i j)
     (functor H).map a = map f.hom f'.hom H a :=
   rfl
 
-/-- The source endpoints form a natural transformation. -/
+/-- Let C be preadditive with binary biproducts in object/morphism universes u,v, and c a complex
+shape on I in w. Assume c.Rel is decidable. Assume every j∈I admits i with c.Rel(i,j). The
+endpoints s_f:F→Cyl(f) define a natural transformation from source evaluation to the cylinder
+functor. For a strict square a:f→f', a_L≫s_{f'}=s_f≫Cyl(a). -/
 noncomputable def sourceNatTrans (H : ∀ j, ∃ i, c.Rel i j) :
     (Arrow.leftFunc : Arrow (HomologicalComplex C c) ⥤ _) ⟶
       functor H where
   app f := source f.hom
   naturality {f f'} a := (source_map f.hom f'.hom H a).symm
 
-/-- The target endpoints form a natural transformation. -/
+/-- Let C be preadditive with binary biproducts in object/morphism universes u,v, and c a complex
+shape on I in w. Assume c.Rel is decidable. Assume every j∈I admits i with c.Rel(i,j). The maps
+t_f:G→Cyl(f) define a natural transformation from target evaluation to the cylinder functor. Its
+square is a_R≫t_{f'}=t_f≫Cyl(a). -/
 noncomputable def targetNatTrans (H : ∀ j, ∃ i, c.Rel i j) :
     (Arrow.rightFunc : Arrow (HomologicalComplex C c) ⥤ _) ⟶
       functor H where
   app f := target f.hom
   naturality {f f'} a := (target_map f.hom f'.hom H a).symm
 
-/-- The projections form a natural transformation. -/
+/-- Let C be preadditive with binary biproducts in object/morphism universes u,v, and c a complex
+shape on I in w. Assume c.Rel is decidable. Assume every j∈I admits i with c.Rel(i,j). The maps
+π_f:Cyl(f)→G define a natural transformation from the cylinder functor to target evaluation. For
+a strict square a, Cyl(a)≫π_{f'}=π_f≫a_R. -/
 noncomputable def projectionNatTrans
     (H : ∀ j, ∃ i, c.Rel i j) :
     functor H ⟶
@@ -389,23 +493,15 @@ theorem targetNatTrans_comp_projectionNatTrans
   simp [targetNatTrans, projectionNatTrans]
 
 /-!
-## Deformation retraction
+## The signed deformation retraction
 
-The proof follows six explicit steps before assembling the homotopy
-equivalence:
+Let q_i:Cyl(f)_i→(F⊕G)_i be the endpoint-coordinate projection and ℓ_{i,j}:F_i→Cyl(f)_j the
+shifted-source inclusion for c.Rel(j,i). The degreewise homotopy map is
+h_{i,j}=q_i≫pr_F,i≫ℓ_{i,j}. Its boundary defines a null-homotopic endomorphism N.
 
-1. project a cylinder element to its `F ⊞ G` endpoint coordinates;
-2. retain the `F` coordinate and insert it in the shifted cofiber summand;
-3. form the null-homotopic endomorphism determined by those degreewise maps;
-4. verify on the shifted-source generator `inlX` that it agrees with
-   `1 - projection ≫ target`;
-5. verify the same identity on `inrX`, separately on the `F` and `G`
-   biproduct coordinates, using `arrow_eq`;
-6. apply the homotopy-cofiber extensionality lemmas and convert the resulting
-   null homotopy into a homotopy from `projection ≫ target` to the identity.
-
-Thus the retraction and its homotopy are constructed from the cofiber
-generators; neither is stored as an assumption.
+When every index has a predecessor, the generator formulas identify N=id_Cyl-π≫t. Negating the
+resulting null homotopy gives the deformation homotopy π≫t∼id_Cyl. Together with the strict
+equation t≫π=id_G, these maps form the homotopy equivalence.
 -/
 
 section Retraction
@@ -414,8 +510,13 @@ variable (H : ∀ j, ∃ i, c.Rel i j)
 
 namespace projectionCompTargetHomotopy
 
-/-- A null-homotopic endomorphism which will be identified with
-`1 - projection f ≫ target f`. -/
+/-- Let C be preadditive with binary biproducts in object/morphism universes u,v, and c a complex
+shape on I in w. Assume c.Rel is decidable. Let f:F→G be a morphism of c-shaped complexes and
+a_f=(id_F,-f):F→F⊕G. Assume Cyl(f)=Cof(a_f) exists. Write r:F⊕G→Cyl(f) for the cofiber
+inclusion, s=i_F≫r and t=i_G≫r for its endpoints, and π:Cyl(f)→G for the projection induced by
+(f,id_G). For c.Rel(j,i), put h_{i,j}=q_i≫pr_F,i≫ℓ_{i,j}, where q_i projects to the endpoint
+biproduct. The boundary of these homotopy maps defines N:Cyl(f)→Cyl(f), canonically
+null-homotopic. If every j admits i with c.Rel(i,j), then N=id_Cyl-π≫t. -/
 noncomputable def nullHomotopicMap :
     mappingCylinder f ⟶ mappingCylinder f :=
   _root_.Homotopy.nullHomotopicMap'
@@ -424,7 +525,13 @@ noncomputable def nullHomotopicMap :
         (biprod.fst : F ⊞ G ⟶ F).f i ≫
           inlX f i j hij)
 
-/-- The tautological null homotopy of `nullHomotopicMap`. -/
+/-- Let C be preadditive with binary biproducts in object/morphism universes u,v, and c a complex
+shape on I in w. Assume c.Rel is decidable. Let f:F→G be a morphism of c-shaped complexes and
+a_f=(id_F,-f):F→F⊕G. Assume Cyl(f)=Cof(a_f) exists. Write r:F⊕G→Cyl(f) for the cofiber
+inclusion, s=i_F≫r and t=i_G≫r for its endpoints, and π:Cyl(f)→G for the projection induced by
+(f,id_G). For the degreewise maps h_{i,j}=q_i≫pr_F,i≫ℓ_{i,j}, the associated boundary
+endomorphism N has a homotopy N∼0 with these components. Here q_i is endpoint-coordinate
+projection and c.Rel(j,i). -/
 noncomputable def nullHomotopy :
     _root_.Homotopy (nullHomotopicMap f) 0 :=
   _root_.Homotopy.nullHomotopy' _
@@ -507,8 +614,13 @@ theorem nullHomotopicMap_eq :
 
 end projectionCompTargetHomotopy
 
-/-- The deformation homotopy from the projection followed by the target
-endpoint to the identity of the mapping cylinder. -/
+/-- Let C be preadditive with binary biproducts in object/morphism universes u,v, and c a complex
+shape on I in w. Assume c.Rel is decidable. Let f:F→G be a morphism of c-shaped complexes and
+a_f=(id_F,-f):F→F⊕G. Assume Cyl(f)=Cof(a_f) exists. Write r:F⊕G→Cyl(f) for the cofiber
+inclusion, s=i_F≫r and t=i_G≫r for its endpoints, and π:Cyl(f)→G for the projection induced by
+(f,id_G). Assume every j∈I admits i with c.Rel(i,j). The deformation homotopy is π≫t∼id_Cyl. It
+is obtained by identifying the null-homotopic endomorphism N with id_Cyl-π≫t and negating that
+null homotopy. -/
 noncomputable def projectionCompTargetHomotopy :
     _root_.Homotopy (projection f ≫ target f)
       (𝟙 (mappingCylinder f)) :=
@@ -517,7 +629,13 @@ noncomputable def projectionCompTargetHomotopy :
       (projectionCompTargetHomotopy.nullHomotopicMap_eq f H).symm).trans
         (projectionCompTargetHomotopy.nullHomotopy f))).symm
 
-/-- The target endpoint is a homotopy equivalence. -/
+/-- Let C be preadditive with binary biproducts in object/morphism universes u,v, and c a complex
+shape on I in w. Assume c.Rel is decidable. Let f:F→G be a morphism of c-shaped complexes and
+a_f=(id_F,-f):F→F⊕G. Assume Cyl(f)=Cof(a_f) exists. Write r:F⊕G→Cyl(f) for the cofiber
+inclusion, s=i_F≫r and t=i_G≫r for its endpoints, and π:Cyl(f)→G for the projection induced by
+(f,id_G). Assume every j∈I admits i with c.Rel(i,j). The homotopy equivalence G≃Cyl(f) has
+forward map t and inverse π. Its first composite is t≫π=id_G, and its second has the deformation
+homotopy π≫t∼id_Cyl. -/
 @[simps]
 noncomputable def homotopyEquiv :
     _root_.HomotopyEquiv G (mappingCylinder f) where
@@ -532,8 +650,10 @@ section HomotopyCategory
 
 variable (C c)
 
-/-- In the homotopy category, the mapping-cylinder functor is naturally
-isomorphic to evaluation at the target of an arrow. -/
+/-- Let C be preadditive with binary biproducts in object/morphism universes u,v, and c a complex
+shape on I in w. Assume c.Rel is decidable. Assume every j∈I admits i with c.Rel(i,j). For the
+quotient Q:HomologicalComplex(C,c)→HomotopyCategory(C,c), there is a natural isomorphism
+Q∘Cyl≅Q∘targetEval on the arrow category. At f its forward map is Q(π_f) and inverse is Q(t_f). -/
 noncomputable def homotopyCategoryNatIso
     (H : ∀ j, ∃ i, c.Rel i j) :
     functor H ⋙ HomotopyCategory.quotient C c ≅
@@ -569,8 +689,10 @@ theorem homotopyCategoryNatIso_inv_app
       (HomotopyCategory.quotient C c).map (target f.hom) :=
   rfl
 
-/-- The target endpoint identifies with the inverse of the homotopy-category
-comparison. -/
+/-- Let C be preadditive with binary biproducts in object/morphism universes u,v, and c a complex
+shape on I in w. Assume c.Rel is decidable. Assume every j∈I admits i with c.Rel(i,j). Let Q be
+the homotopy-category quotient functor. For f:F→G and comparison Γ_f:Q(Cyl(f))≅Q(G), one has
+Q(t_f)≫Γ_f.hom=id_{Q(G)}. The comparison's forward component is Q(π_f). -/
 @[reassoc]
 theorem quotient_target_comp_homotopyCategoryNatIso_hom_app
     (H : ∀ j, ∃ i, c.Rel i j)
@@ -582,8 +704,10 @@ theorem quotient_target_comp_homotopyCategoryNatIso_hom_app
     ← CategoryTheory.Functor.map_comp, target_projection,
     CategoryTheory.Functor.map_id]
 
-/-- The source endpoint followed by the homotopy-category comparison is the
-original arrow. -/
+/-- Let C be preadditive with binary biproducts in object/morphism universes u,v, and c a complex
+shape on I in w. Assume c.Rel is decidable. Assume every j∈I admits i with c.Rel(i,j). Let Q be
+the homotopy-category quotient functor. For f:F→G and Γ_f:Q(Cyl(f))≅Q(G), Q(s_f)≫Γ_f.hom=Q(f).
+Thus the source endpoint projects to the given arrow in the homotopy category. -/
 @[reassoc]
 theorem quotient_source_comp_homotopyCategoryNatIso_hom_app
     (H : ∀ j, ∃ i, c.Rel i j)

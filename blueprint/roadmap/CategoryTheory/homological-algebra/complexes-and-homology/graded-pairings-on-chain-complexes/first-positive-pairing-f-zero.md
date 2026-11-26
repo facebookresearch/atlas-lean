@@ -1,3 +1,9 @@
-# First Positive Pairing f zero
+# First-positive pairing vanishes in degree zero
 
-The defining first-positive action has no degree-zero image.
+Let R be a ring in universe u and choose a monoidal preadditive
+structure on ModuleCat_v R. Let P:K₁⊗K₂→K₃ be a chain graded
+pairing of nonnegative complexes, with K₁.d(1,0)=0.
+Write P₊ for its first-positive map K₁,≥1⊗K₂→K₃ and
+I_n=∑_(p>0,q≥0,p+q=n)range(P_(p,q)).
+The first-positive map has degree-zero component zero,
+since no p>0,q≥0 satisfy p+q=0.

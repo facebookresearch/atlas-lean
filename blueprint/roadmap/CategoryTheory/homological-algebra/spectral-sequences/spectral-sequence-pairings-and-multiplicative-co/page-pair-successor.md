@@ -1,4 +1,6 @@
-# Page Pair successor
+# Page products commute with spectral successor isomorphisms
 
-The product induced on actual page homology is carried by the native
-successor isomorphisms to the constructed product on the next page.
+Page products commute with spectral successor isomorphisms.
+
+The page homology product transported to E_{r+1} equals the product of the transported input
+homologies.

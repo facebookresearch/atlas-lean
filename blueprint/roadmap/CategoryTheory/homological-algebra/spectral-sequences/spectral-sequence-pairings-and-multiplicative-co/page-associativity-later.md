@@ -1,3 +1,5 @@
-# Page Associativity later
+# Associativity persists on all later pages
 
-Associativity at an initial page is preserved at every later integer page.
+Associativity persists on all later pages.
+
+Associativity at R≥1 propagates to every r≥R.

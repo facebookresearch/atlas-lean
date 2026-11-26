@@ -15,18 +15,17 @@ module
 public import MathlibExt.RingTheory.GradedAlgebra.Homogeneous.ModuleQuotient
 
 /-!
-# Decompositions of homogeneous submodules and quotients
+# Internal decompositions of homogeneous submodules and quotients
 
-For a graded module with an internal direct-sum decomposition, the inherited
-degree pieces of a homogeneous submodule and the image degree pieces on its
-canonical quotient again form internal direct-sum decompositions.
+Let S be a graded commutative A-algebra and M = ⨁ₙM_n an internally decomposed graded
+S-module, with compatible A-action. For a homogeneous S-submodule H, the inherited pieces H_n
+form an internal direct-sum decomposition of H. The n-th component of x ∈ H, viewed in M, is
+its ambient component x_n.
 
-## Main declarations
-
-* `HomogeneousSubmodule.gradeDecomposition`
-* `HomogeneousSubmodule.coe_decompose_grade`
-* `HomogeneousSubmodule.quotientGradeDecomposition`
-* `HomogeneousSubmodule.decompose_quotient_mk`
+The image pieces Q_n = q(M_n) form an internal direct-sum decomposition of Q = M/H.
+Decomposition of a quotient class satisfies q(x)_n = q(x_n), independently of the
+representative because H is homogeneous. Each decomposition has finite support. The
+coefficient, algebra and module universes are independent.
 -/
 
 @[expose] public section
@@ -117,16 +116,21 @@ private theorem grade_isInternal
     dsimp only [d]
     exact DirectSum.sum_support_decompose Mgrade (x : M)
 
-/-- The degree pieces inherited by a homogeneous submodule form an internal
-direct-sum decomposition. -/
+/-- Internal decomposition of a homogeneous submodule.
+
+For a homogeneous H in an internally decomposed graded S-module M, the inherited grades H_n
+form an internal direct sum. Its components are the ambient components of elements of H, which
+remain in H by homogeneity. -/
 @[no_expose]
 noncomputable instance gradeDecomposition
     (N : HomogeneousSubmodule Sgrade Mgrade) :
     DirectSum.Decomposition (N.grade Sgrade Mgrade) := by
   exact (grade_isInternal Sgrade Mgrade N).chooseDecomposition
 
-/-- Decomposing inside a homogeneous submodule and then coercing to the
-ambient module gives the ambient homogeneous component. -/
+/-- Ambient value of a homogeneous submodule component.
+
+For x ∈ H and any n, decompose x using the inherited grades H_n and then include its n-th
+component in M. The result is the n-th ambient component of x under M = ⨁ₙM_n. -/
 @[simp]
 theorem coe_decompose_grade
     (N : HomogeneousSubmodule Sgrade Mgrade)
@@ -269,8 +273,11 @@ private theorem quotientDecompose_right_inv
     DirectSum.lmap_of]
   rfl
 
-/-- The image degree pieces on the canonical quotient form an internal
-direct-sum decomposition. -/
+/-- Internal decomposition of a homogeneous quotient.
+
+For homogeneous H ⊆ M with M internally decomposed, the image grades Q_n = q(M_n) give an
+internal direct-sum decomposition of M/H. Its decomposition map sends q(x) to the finite
+family of classes q(x_n), which is well defined by homogeneity of H. -/
 @[no_expose]
 noncomputable instance quotientGradeDecomposition
     (N : HomogeneousSubmodule Sgrade Mgrade) :
@@ -281,8 +288,10 @@ noncomputable instance quotientGradeDecomposition
     (quotientDecompose_left_inv Sgrade Mgrade N)
     (quotientDecompose_right_inv Sgrade Mgrade N)
 
-/-- The quotient decomposition of a canonical representative is the class
-of each ambient homogeneous component. -/
+/-- Component formula for a canonical quotient representative.
+
+For x ∈ M and n : ℕ, the n-th component of q(x) in the image-grade decomposition of M/H,
+viewed as a quotient class, equals q(x_n), where x_n is the ambient degree-n component of x. -/
 theorem decompose_quotient_mk
     (N : HomogeneousSubmodule Sgrade Mgrade) (x : M) (n : ℕ) :
     ((DirectSum.decompose (N.quotientGrade Sgrade Mgrade)

@@ -11,15 +11,17 @@ public import Mathlib.CategoryTheory.Limits.ConcreteCategory.Basic
 public import Mathlib.CategoryTheory.Limits.Preserves.Limits
 
 /-!
-# Images of sequential limit projections
+# Projection ranges of Mittag–Leffler inverse limits
 
-For a Mittag--Leffler inverse sequence, the image of every actual chosen-limit
-projection is the native eventual range. The result applies to Type-valued
-sequences and to concrete categories whose forgetful functor preserves the
-given limit. No nonemptiness condition is added: membership of one eventual
-range supplies the nonempty fibers needed to extend that element to a section.
+Let F : ℕᵒᵖ ⥤ Type w satisfy the Mittag–Leffler condition. An element x in the eventual range
+at level n extends to a compatible section whose n-th value is exactly x. Consequently, the
+range of the n-th projection from any chosen inverse limit is the eventual range at that
+level.
 
-These projection-image statements concern sequences indexed by `ℕᵒᵖ`.
+For a concrete category C, the same statement holds for underlying projection maps when the
+forgetful functor preserves the particular limit of F. If every successor transition is
+surjective, every chosen-limit projection is surjective. The object, morphism and
+concrete-carrier universes are independent.
 -/
 
 @[expose] public section
@@ -34,8 +36,12 @@ universe u v w
 
 namespace CategoryTheory.Functor
 
-/-- A value in the eventual range of a Mittag--Leffler inverse sequence
-extends to a compatible section with that exact coordinate. -/
+/-- Section extending an element of a stabilized tower range.
+
+For a Mittag–Leffler inverse tower F of types and x ∈ F_n belonging to its eventual range at
+level n, there exists a compatible section s with s_n = x. Membership of x supplies nonempty
+compatible preimage sets at all levels, so the statement does not assume that all levels of F
+are nonempty. -/
 theorem exists_section_of_mem_eventualRange
     (F : ℕᵒᵖ ⥤ Type w) (hF : F.IsMittagLeffler)
     {n : ℕ} {x : F.obj (op n)} (hx : x ∈ F.eventualRange (op n)) :
@@ -69,8 +75,11 @@ end CategoryTheory.Functor
 
 namespace CategoryTheory.Limits.Types
 
-/-- Every projection of the actual chosen limit of a Mittag--Leffler inverse
-sequence has exactly its native eventual range as image. -/
+/-- Range of a Type-valued Mittag–Leffler limit projection.
+
+For a Mittag–Leffler inverse tower F of types with a chosen limit, Im(limit.π F (op n)) =
+F.eventualRange(op n) for every n : ℕ. A section gives an element of the limit, and every
+eventual-range element extends to such a section. -/
 theorem range_limit_π_eq_eventualRange_of_isMittagLeffler
     (F : ℕᵒᵖ ⥤ Type w) [HasLimit F] (hF : F.IsMittagLeffler) (n : ℕ) :
     range (limit.π F (op n)) = F.eventualRange (op n) := by
@@ -92,8 +101,11 @@ variable {C : Type u} [Category.{v} C]
   {FC : C → C → Type*} {CC : C → Type w}
   [∀ X Y, FunLike (FC X Y) (CC X) (CC Y)] [ConcreteCategory.{w} C FC]
 
-/-- In a concrete category preserving the given sequential limit, each actual
-chosen-limit projection has the native eventual range as its underlying image. -/
+/-- Range of a concrete Mittag–Leffler limit projection.
+
+Let F be a sequentially Mittag–Leffler inverse tower in a concrete category C, with a chosen
+limit preserved by forget C. The range of the underlying n-th limit projection is the eventual
+range of F ⋙ forget C at level n. -/
 theorem range_limit_π_eq_eventualRange_of_isMittagLeffler
     (F : ℕᵒᵖ ⥤ C) [HasLimit F] [PreservesLimit F (forget C)]
     (hF : F.IsSequentialMittagLeffler) (n : ℕ) :
@@ -118,8 +130,12 @@ theorem range_limit_π_eq_eventualRange_of_isMittagLeffler
       (preservesLimitIso_inv_π (forget C) F (op n)) y
     exact he.trans hy
 
-/-- Surjective successor transitions make every actual chosen-limit
-projection surjective, provided forgetting preserves this sequential limit. -/
+/-- Surjective limit projections for a concrete surjective tower.
+
+Let F be an inverse tower in a concrete category, with chosen limit preserved by the forgetful
+functor. If every successor transition F_{n+1} → F_n is surjective on underlying types, each
+limit projection limit F → F_n is surjective. The eventual range at every level is then the
+whole carrier. -/
 theorem surjective_limit_π_of_surjective_transition
     (F : ℕᵒᵖ ⥤ C) [HasLimit F] [PreservesLimit F (forget C)]
     (hF : ∀ n : ℕ, Function.Surjective

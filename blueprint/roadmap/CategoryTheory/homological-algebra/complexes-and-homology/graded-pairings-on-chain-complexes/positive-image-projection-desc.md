@@ -1,3 +1,8 @@
-# Positive Image Projection desc
+# Projection equation for both-positive image descent
 
-The descended map retains the original projection square.
+Let R be a ring in universe u and ModuleCat_v R have a chosen
+monoidal preadditive structure. Let P be a chain pairing with both
+first differentials zero. Its strict-positive map P₊₊ has bidegrees
+p,q>0, and J_n=∑_(p,q>0,p+q=n)range(P_(p,q)).
+The induced descent satisfies desc(f)∘π_J=f for
+a chain map f annihilating P₊₊.

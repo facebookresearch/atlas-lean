@@ -17,18 +17,22 @@ public import Mathlib.Algebra.Regular.SMul
 public import Mathlib.Data.Nat.Basic
 
 /-!
-# Scalar detection on native idempotent-image homology
+# Scalar detection on locally finite idempotent-image homology
 
-Actual native chain-idempotent images, their split/cross maps and finite
-homology projector sums give scalar detection in semiring-linear abelian
-categories. The module API requires regularity on actual image homology;
-the actual annihilation equation is required for the kernel isomorphism.
-No countable coproduct or AB5 certificate is an input. Rational-ring dyadic
-units and original carrier universes are retained.
+Let C be an abelian R-linear category for a semiring R. A complex K has orthogonal idempotents
+e_j and degreewise bounds N(n) with (e_j)_n=0 for j>N(n) and Σ_{j≤N(n)}(e_j)_n=id. Their chain
+images E_j have split homology inclusions I_j and projections P_j, with a finite identity sum in
+each degree.
 
-The field homology primitive specialization is provided separately by
-`UniverseKunneth.PrimitiveScalarDetection`. Its outputs and assumptions
-remain in the library; this general owner does not need field Künneth.
+Suppose d:K→D,m:D→K satisfy e_j≫d≫m=a_j•e_j. On homology, H_n(d)≫H_n(m)≫P_j=a_j•P_j. A map
+annihilated by H_n(d) has zero j-projection when a_j•id_{H_n(E_j)} is mono. If all other active
+image scalars are monic, that map is fixed by H_n(e_j).
+
+If e_j≫d=0 as a chain map, these conditions give H_n(E_j)≅ker(H_n(d)). This is homology of the
+idempotent-image complex compared with the kernel of the homology map. For module categories
+scalar injectivity on the image homologies supplies monicity. Over a rational algebra, the
+weights 2^j-2 are units outside j=1, so the same chain-annihilation condition identifies the
+weight-one image homology with that kernel.
 -/
 
 @[expose] public section
@@ -53,8 +57,11 @@ variable {R : Type t} [Semiring R]
 
 include hsum in
 omit [Linear R C] in
-/-- The actual finite sum of the original chain idempotents induces the
-actual identity sum on native homology, without coproduct exactness. -/
+/-- Let C be abelian in object/morphism universes u,v, c a complex shape on I in w, K a c-shaped
+complex, and e_j:K→K a family indexed by j∈ℕ. Write E_j=image(e_j), i_j:E_j→K, and p_j:K→E_j for
+its image factorization. Let N:I→ℕ and assume Σ_{j≤N(n)}(e_j)_n=id_{K_n} for every n. Then
+Σ_{j≤N(n)}H_n(e_j)=id_{H_nK}. This sum identity uses the degree components and does not require
+scalar linearity. -/
 theorem idempotentHomology_sum (n : ι) :
     (∑ j : Fin (N n + 1), homologyMap (e j.val) n) = 𝟙 (K.homology n) := by
   classical
@@ -68,8 +75,11 @@ theorem idempotentHomology_sum (n : ι) :
 
 include he in
 omit [Linear R C] in
-/-- The native inclusion and projection of an actual idempotent image
-remain split after homology. -/
+/-- Let C be abelian in object/morphism universes u,v, c a complex shape on I in w, K a c-shaped
+complex, and e_j:K→K a family indexed by j∈ℕ. Write E_j=image(e_j), i_j:E_j→K, and p_j:K→E_j for
+its image factorization. Assume e_j≫e_k=e_j when j=k and zero otherwise. For every n,j,
+H_n(i_j)≫H_n(p_j)=id_{H_n(E_j)}. The chain image of the idempotent is split by its factorization
+map. -/
 theorem imageHomology_split (n : ι) (j : ℕ) :
     homologyMap (image.ι (e j)) n ≫ homologyMap (factorThruImage (e j)) n =
       𝟙 ((image (e j)).homology n) := by
@@ -77,16 +87,21 @@ theorem imageHomology_split (n : ι) (j : ℕ) :
 
 include he in
 omit [Linear R C] in
-/-- Orthogonal chain idempotents give zero cross maps between their
-actual image homologies. -/
+/-- Let C be abelian in object/morphism universes u,v, c a complex shape on I in w, K a c-shaped
+complex, and e_j:K→K a family indexed by j∈ℕ. Write E_j=image(e_j), i_j:E_j→K, and p_j:K→E_j for
+its image factorization. Assume e_j≫e_k=e_j when j=k and zero otherwise. For n∈I and j≠k,
+H_n(i_j)≫H_n(p_k)=0. Thus the inclusion from one chain-image homology followed by another image
+projection vanishes. -/
 theorem imageHomology_cross (n : ι) (j k : ℕ) (hjk : j ≠ k) :
     homologyMap (image.ι (e j)) n ≫ homologyMap (factorThruImage (e k)) n = 0 := by
   rw [← homologyMap_comp, idempotentImage_cross K e he j k hjk, homologyMap_zero]
 
 include hsupport in
 omit [Linear R C] in
-/-- A chain projector vanishing in a degree induces zero projection to
-its actual image homology in that degree. -/
+/-- Let C be abelian in object/morphism universes u,v, c a complex shape on I in w, K a c-shaped
+complex, and e_j:K→K a family indexed by j∈ℕ. Write E_j=image(e_j), i_j:E_j→K, and p_j:K→E_j for
+its image factorization. Let N:I→ℕ and assume (e_j)_n=0 whenever j>N(n). For such j at n,
+H_n(p_j):H_nK→H_n(E_j) is zero. -/
 theorem imageHomology_support (n : ι) (j : ℕ) (hj : N n < j) :
     homologyMap (factorThruImage (e j)) n = 0 :=
   homologyMap_eq_zero_of_component n (factorThruImage (e j))
@@ -94,8 +109,10 @@ theorem imageHomology_support (n : ι) (j : ℕ) (hj : N n < j) :
 
 include hsum in
 omit [Linear R C] in
-/-- The original finite projector sum induces the identity sum of actual
-image-homology projections followed by inclusions. -/
+/-- Let C be abelian in object/morphism universes u,v, c a complex shape on I in w, K a c-shaped
+complex, and e_j:K→K a family indexed by j∈ℕ. Write E_j=image(e_j), i_j:E_j→K, and p_j:K→E_j for
+its image factorization. If Σ_{j≤N(n)}(e_j)_n=id_{K_n} for every n, then
+Σ_{j≤N(n)}H_n(p_j)≫H_n(i_j)=id_{H_nK}. Each product is H_n(e_j) by the image factorization. -/
 theorem imageHomology_sum (n : ι) :
     (∑ j : Fin (N n + 1), homologyMap (factorThruImage (e j.val)) n ≫
       homologyMap (image.ι (e j.val)) n) = 𝟙 (K.homology n) := by
@@ -113,8 +130,12 @@ private theorem idempotentImage_inclusion_weight (j : ℕ) :
   simpa only [Category.assoc, image.fac_assoc, image.fac, Linear.comp_smul] using hweight j
 
 include hweight in
-/-- The original chain operator law induces its scalar weight on the
-actual image-homology inclusion. -/
+/-- Let C be abelian in object/morphism universes u,v, c a complex shape on I in w, K a c-shaped
+complex, and e_j:K→K a family indexed by j∈ℕ. Write E_j=image(e_j), i_j:E_j→K, and p_j:K→E_j for
+its image factorization. Let R be a semiring in universe t and C be R-linear. Let d:K→D, m:D→K,
+and a_j∈R satisfy e_j≫d≫m=a_j•e_j for every j. At degree n put A_j=H_n(E_j), I_j=H_n(i_j),
+P_j=H_n(p_j), and δ=H_n(d), μ=H_n(m). For every n,j, I_j≫δ≫μ=a_j•I_j. This follows from the
+chain weight equation and the image inclusion. -/
 theorem imageHomology_weight (n : ι) (j : ℕ) :
     homologyMap (image.ι (e j)) n ≫ homologyMap d n ≫ homologyMap m n =
       a j • homologyMap (image.ι (e j)) n := by
@@ -124,8 +145,14 @@ theorem imageHomology_weight (n : ι) (j : ℕ) :
   exact congrArg H.map (idempotentImage_inclusion_weight K e d m a hweight j)
 
 include he hsupport hsum hweight in
-/-- The actual chain scalar equation and actual image splitting imply
-the post-projection scalar equation on original native homology. -/
+/-- Let C be abelian in object/morphism universes u,v, c a complex shape on I in w, K a c-shaped
+complex, and e_j:K→K a family indexed by j∈ℕ. Write E_j=image(e_j), i_j:E_j→K, and p_j:K→E_j for
+its image factorization. Let R be a semiring in universe t and C be R-linear. Assume e_j≫e_k=e_j
+when j=k and zero otherwise. Let N:I→ℕ satisfy (e_j)_n=0 for j>N(n) and
+Σ_{j≤N(n)}(e_j)_n=id_{K_n} for every n. Let d:K→D, m:D→K, and a_j∈R satisfy e_j≫d≫m=a_j•e_j for
+every j. At degree n put A_j=H_n(E_j), I_j=H_n(i_j), P_j=H_n(p_j), and δ=H_n(d), μ=H_n(m). For
+every j, δ≫μ≫P_j=a_j•P_j as maps H_nK→A_j. The locally finite split decomposition converts the
+inclusion-weight law into this post-projection equation. -/
 theorem idempotentHomology_operator_projection (n : ι) (j : ℕ) :
     homologyMap d n ≫ homologyMap m n ≫ homologyMap (factorThruImage (e j)) n =
       a j • homologyMap (factorThruImage (e j)) n :=
@@ -139,8 +166,14 @@ theorem idempotentHomology_operator_projection (n : ι) (j : ℕ) :
     (fun j _ => imageHomology_weight K e d m a hweight n j) j
 
 include he hsupport hsum hweight in
-/-- Regular scalar action on an actual image homology kills its projection
-of every actual map annihilated by the original homology map. -/
+/-- Let C be abelian in object/morphism universes u,v, c a complex shape on I in w, K a c-shaped
+complex, and e_j:K→K a family indexed by j∈ℕ. Write E_j=image(e_j), i_j:E_j→K, and p_j:K→E_j for
+its image factorization. Let R be a semiring in universe t and C be R-linear. Assume e_j≫e_k=e_j
+when j=k and zero otherwise. Let N:I→ℕ satisfy (e_j)_n=0 for j>N(n) and
+Σ_{j≤N(n)}(e_j)_n=id_{K_n} for every n. Let d:K→D, m:D→K, and a_j∈R satisfy e_j≫d≫m=a_j•e_j for
+every j. At degree n put A_j=H_n(E_j), I_j=H_n(i_j), P_j=H_n(p_j), and δ=H_n(d), μ=H_n(m). For
+f:Z→H_nK with f≫δ=0 and any j, assume a_j•id_{A_j} is mono. Then f≫P_j=0. Monicity is required
+on the image homology A_j. -/
 theorem idempotentHomology_projection_zero_of_annihilated_map (n : ι) {Z : C}
     (f : Z ⟶ K.homology n) (hf : f ≫ homologyMap d n = 0) (j : ℕ)
     [Mono (a j • 𝟙 ((image (e j)).homology n))] :
@@ -156,9 +189,14 @@ theorem idempotentHomology_projection_zero_of_annihilated_map (n : ι) {Z : C}
     f hf j
 
 include he hsupport hsum hweight in
-/-- Every map annihilated by the original homology map is fixed by the
-distinguished actual chain-idempotent homology projector if the other
-actual image-homology scalar actions are monic. -/
+/-- Let C be abelian in object/morphism universes u,v, c a complex shape on I in w, K a c-shaped
+complex, and e_j:K→K a family indexed by j∈ℕ. Write E_j=image(e_j), i_j:E_j→K, and p_j:K→E_j for
+its image factorization. Let R be a semiring in universe t and C be R-linear. Assume e_j≫e_k=e_j
+when j=k and zero otherwise. Let N:I→ℕ satisfy (e_j)_n=0 for j>N(n) and
+Σ_{j≤N(n)}(e_j)_n=id_{K_n} for every n. Let d:K→D, m:D→K, and a_j∈R satisfy e_j≫d≫m=a_j•e_j for
+every j. At degree n put A_j=H_n(E_j), I_j=H_n(i_j), P_j=H_n(p_j), and δ=H_n(d), μ=H_n(m). For
+f:Z→H_nK with f≫δ=0, fix j. If a_k•id_{A_k} is mono for every k≤N(n),k≠j, then f≫H_n(e_j)=f. The
+distinguished index need not be within the active bound. -/
 theorem idempotentHomology_projector_of_annihilated_map (n : ι) {Z : C}
     (f : Z ⟶ K.homology n) (hf : f ≫ homologyMap d n = 0) (j : ℕ)
     (hregular : ∀ k, k ≤ N n → k ≠ j → Mono (a k • 𝟙 ((image (e k)).homology n))) :
@@ -175,10 +213,15 @@ theorem idempotentHomology_projector_of_annihilated_map (n : ι) {Z : C}
   simpa only [← homologyMap_comp, image.fac] using h
 
 include he hsupport hsum hweight in
-/-- The actual distinguished idempotent-image homology is the kernel of
-the original homology map when that image is annihilated and all other
-image-homology scalar actions are monic. This is a kernel in homology;
-homology of the chain kernel is not used. -/
+/-- Let C be abelian in object/morphism universes u,v, c a complex shape on I in w, K a c-shaped
+complex, and e_j:K→K a family indexed by j∈ℕ. Write E_j=image(e_j), i_j:E_j→K, and p_j:K→E_j for
+its image factorization. Let R be a semiring in universe t and C be R-linear. Assume e_j≫e_k=e_j
+when j=k and zero otherwise. Let N:I→ℕ satisfy (e_j)_n=0 for j>N(n) and
+Σ_{j≤N(n)}(e_j)_n=id_{K_n} for every n. Let d:K→D, m:D→K, and a_j∈R satisfy e_j≫d≫m=a_j•e_j for
+every j. At degree n put A_j=H_n(E_j), I_j=H_n(i_j), P_j=H_n(p_j), and δ=H_n(d), μ=H_n(m). Fix j
+and assume a_k•id_{A_k} is mono for all k≤N(n),k≠j, and e_j≫d=0 as a chain map. Then A_j≅ker(δ).
+Its forward map factors I_j through the kernel, and its inverse is kernel inclusion followed by
+P_j. -/
 def idempotentHomologyScalarKernelIso (n : ι) (j : ℕ)
     (hregular : ∀ k, k ≤ N n → k ≠ j → Mono (a k • 𝟙 ((image (e k)).homology n)))
     (hzero : e j ≫ d = 0) : (image (e j)).homology n ≅ kernel (homologyMap d n) := by
@@ -203,8 +246,9 @@ namespace ModuleCat
 
 variable {R : Type u} [CommRing R]
 
-/-- Native module scalar monicity is earned from actual module scalar
-regularity. The carrier and the coefficient ring have independent worlds. -/
+/-- Let R be a commutative ring in u, M∈ModuleCat_v(R), and a∈R. If multiplication m↦a•m is
+injective on M, then a•id_M is mono in the module category. The ring and carrier universes are
+independent. -/
 theorem mono_smul_id_of_isSMulRegular (M : ModuleCat.{v} R) (a : R)
     (ha : IsSMulRegular M a) : Mono (a • 𝟙 M) := by
   apply (ModuleCat.mono_iff_injective _).mpr
@@ -227,9 +271,12 @@ variable {R : Type u} [CommRing R]
     (hweight : ∀ j, e j ≫ d ≫ m = a j • e j)
 
 include he hsupport hsum hweight in
-/-- The arbitrary-ring module specialization requires scalar regularity
-on the actual image homologies. Ground-ring regularity alone is not an
-input to this theorem. -/
+/-- Let R be a commutative ring in u, c a complex shape on I in w, and K,D complexes of R-modules
+with carriers in v. Let e_j be orthogonal chain idempotents, with bounds N(n) satisfying
+(e_j)_n=0 for j>N(n) and Σ_{j≤N(n)}(e_j)_n=id. Let d:K→D,m:D→K obey e_j≫d≫m=a_j•e_j. For
+n∈I,j∈ℕ, assume e_j≫d=0 and each scalar a_k acts injectively on H_n(image(e_k)) for k≤N(n),k≠j.
+Then H_n(image(e_j))≅ker(H_n(d)) as R-modules. The regularity hypotheses concern these image
+homologies. -/
 def moduleCatIdempotentHomologyScalarKernelIso (n : ι) (j : ℕ)
     (hregular : ∀ k, k ≤ N n → k ≠ j → IsSMulRegular ((image (e k)).homology n) (a k))
     (hzero : e j ≫ d = 0) : (image (e j)).homology n ≅ kernel (homologyMap d n) :=
@@ -238,8 +285,8 @@ def moduleCatIdempotentHomologyScalarKernelIso (n : ι) (j : ℕ)
 
 end HomologicalComplex
 
-/-- The original dyadic detection scalar is nonzero in every
-characteristic-zero ring outside weight one, including weight zero. -/
+/-- Let R be a ring in universe u with characteristic zero. For every natural j≠1, (2:R)^j-2≠0. This
+includes j=0, when the scalar is -1. -/
 theorem two_pow_sub_two_ne_zero (R : Type u) [Ring R] [CharZero R]
     (j : ℕ) (hj : j ≠ 1) : (2 : R) ^ j - 2 ≠ 0 := by
   intro h
@@ -249,8 +296,8 @@ theorem two_pow_sub_two_ne_zero (R : Type u) [Ring R] [CharZero R]
   have hpow : (2 : ℕ) ^ j = (2 : ℕ) ^ 1 := by simpa only [pow_one] using hnat
   exact hj (Nat.pow_right_injective (by decide : 2 ≤ (2 : ℕ)) hpow)
 
-/-- Every dyadic detection scalar outside weight one is an actual unit
-over an arbitrary rational algebra, without a nontriviality assumption. -/
+/-- Let R be a commutative ℚ-algebra in universe u. For every j∈ℕ with j≠1, (2:R)^j-2 is a unit. It
+is the image of the corresponding nonzero rational unit under the algebra map ℚ→R. -/
 theorem two_pow_sub_two_isUnit (R : Type u) [CommRing R] [Algebra ℚ R]
     (j : ℕ) (hj : j ≠ 1) : IsUnit ((2 : R) ^ j - 2) := by
   have hq : IsUnit ((2 : ℚ) ^ j - 2) :=
@@ -273,9 +320,11 @@ variable {R : Type u} [CommRing R] [Algebra ℚ R]
     (hweight : ∀ j, e j ≫ d ≫ m = ((2 : R) ^ j - 2) • e j)
 
 include he hsupport hsum hweight in
-/-- Over any rational ground algebra, actual dyadic scalar units give
-the kernel of the original homology map from the actual weight-one image
-homology. The original chain annihilation equation is still required. -/
+/-- Let R be a commutative ℚ-algebra in u and K,D c-shaped complexes of R-modules with carriers v,
+for an index type I in w. Suppose e_j are orthogonal idempotents with degree bounds N(n), zero
+components above the bounds and finite identity sums. If e_j≫d≫m=(2^j-2)•e_j for all j and
+e₁≫d=0, then H_n(image(e₁))≅ker(H_n(d)) for every n∈I. All other active scalars are units on
+their image homologies. -/
 def moduleCatIdempotentHomologyDyadicKernelIso (n : ι) (hzero : e 1 ≫ d = 0) :
     (image (e 1)).homology n ≅ kernel (homologyMap d n) :=
   moduleCatIdempotentHomologyScalarKernelIso K e he N hsupport hsum d m

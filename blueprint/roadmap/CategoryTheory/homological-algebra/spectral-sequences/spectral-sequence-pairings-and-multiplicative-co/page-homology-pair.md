@@ -1,4 +1,6 @@
-# Page Homology Pair
+# The homology product descended from page cycles
 
-The tensor-to-homology product descended through the actual native cycle
-and boundary cokernel presentations.
+The homology product descended from page cycles.
+
+Descend the page cycle product through the two homology cokernels under tensor coequalizer
+preservation.

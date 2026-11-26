@@ -1,4 +1,6 @@
-# Tensor Iso Right
+# Tensoring a cochain isomorphism with a fixed right factor
 
-Lift an iso through `tensorObj - C` on the right. Helper only; not a
-global instance.
+Tensoring a cochain isomorphism with a fixed right factor.
+
+For a cochain isomorphism e : A ≅ B and fixed cochain complex C, the binary tensor structures
+give A ⊗ C ≅ B ⊗ C. Its hom is e.hom ⊗ id_C and its inverse is e.inv ⊗ id_C.

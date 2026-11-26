@@ -1,3 +1,5 @@
-# Ext Coefficient algebra Map smul
+# The coefficient S-action restricts to the native R-action
 
-Restricted coefficient scalars agree with the native ground-ring action.
+The coefficient S-action restricts to the native R-action.
+
+For r ∈ R, the scalar action of σ(r) on Ext_Rⁿ(P,res N) equals the R-scalar action of r.

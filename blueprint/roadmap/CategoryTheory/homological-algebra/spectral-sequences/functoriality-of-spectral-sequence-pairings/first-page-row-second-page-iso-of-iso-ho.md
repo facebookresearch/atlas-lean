@@ -1,4 +1,5 @@
-# First Page Row Second Page Iso Of Iso homology
+# The row-isomorphism E₂ comparison is its homology map
 
-The comparison uses the original row-to-second-page maps and the actual
-homology map of the row isomorphism.
+The row-isomorphism E₂ comparison is its homology map.
+
+The row-to-E₂ charts commute with homology of the supplied cochain isomorphism.

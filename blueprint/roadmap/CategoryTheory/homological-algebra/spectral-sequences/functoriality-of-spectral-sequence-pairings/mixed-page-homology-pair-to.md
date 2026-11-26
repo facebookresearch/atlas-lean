@@ -1,3 +1,5 @@
-# Mixed Page Homology Pair To
+# The mixed homology product at a specified sum bidegree
 
-The original mixed homology product with an explicitly equal output bidegree.
+The mixed homology product at a specified sum bidegree.
+
+Descend the mixed cycle product through the page homology projections.

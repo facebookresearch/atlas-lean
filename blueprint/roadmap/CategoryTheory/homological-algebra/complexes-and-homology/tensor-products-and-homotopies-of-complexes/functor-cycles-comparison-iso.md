@@ -1,4 +1,5 @@
-# Functor Cycles Comparison Iso
+# The cycles comparison of a mapped short-complex isomorphism
 
-The canonical comparison of original source cycles with actual target
-cycles through a genuine mapped-source short-complex isomorphism.
+The cycles comparison of a mapped short-complex isomorphism.
+
+For e : F(S) ≅ T, combine the mapped cycles comparison and e to obtain F(Z(S)) ≅ Z(T).

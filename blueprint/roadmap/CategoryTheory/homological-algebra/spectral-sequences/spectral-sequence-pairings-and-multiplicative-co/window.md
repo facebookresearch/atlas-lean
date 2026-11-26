@@ -1,3 +1,5 @@
-# Windowπ
+# The window cycles-to-boundary-quotient projection
 
-The original cycle quotient projection of a finite window.
+The window cycles-to-boundary-quotient projection.
+
+Project the lower-width cycle object to the window E object with upper width u.

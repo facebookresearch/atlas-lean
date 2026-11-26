@@ -1,3 +1,5 @@
-# Under Cokernel Nonnegative Property iff
+# The cokernel support property as degreewise vanishing
 
-The property concerns the literal existing cokernel of the original under arrow.
+The cokernel support property as degreewise vanishing.
+
+The property is equivalent to zero objects (coker η)_i for all i<0.

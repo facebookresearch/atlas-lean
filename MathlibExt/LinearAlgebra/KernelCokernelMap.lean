@@ -16,15 +16,17 @@ public import Mathlib.Algebra.Exact.Basic
 import Mathlib.Tactic.Abel
 
 /-!
-# Maps on kernels and cokernels of linear endomorphisms
+# Kernels and cokernels of compatible endomorphisms
 
-A commuting square of linear endomorphisms induces maps on their kernels and
-cokernels.  For a short exact sequence carrying compatible endomorphisms, the
-induced kernel pair is exact at the middle kernel and the induced cokernel
-pair is exact at the middle cokernel.
+Let R be commutative and d_M,d_N endomorphisms of R-modules. A linear map f : M → N with d_N ∘
+f = f ∘ d_M restricts to Ker(d_M) → Ker(d_N) and descends to M/Im(d_M) → N/Im(d_N). The
+induced maps send x to f(x) and the class of x to the class of f(x). An injective f gives an
+injective kernel map, a surjective f gives a surjective cokernel map, and a compatible linear
+equivalence gives equivalences of both.
 
-These are the elementary linear-map boundaries used with the module snake
-lemma and finite-length Euler characteristics.
+For an exact pair M → N → P with compatible endomorphisms, injectivity of its first map makes
+the induced kernel pair exact at Ker(d_N). Surjectivity of its second map makes the induced
+cokernel pair exact at N/Im(d_N). The scalar and three module universes are independent.
 -/
 
 @[expose] public section
@@ -41,7 +43,10 @@ variable [AddCommGroup M] [Module R M]
 variable [AddCommGroup N] [Module R N]
 variable [AddCommGroup P] [Module R P]
 
-/-- A commuting square of endomorphisms induces a map on kernels. -/
+/-- Kernel map induced by commuting endomorphisms.
+
+Over a commutative ring R, suppose d_N ∘ f = f ∘ d_M for f : M →ₗ[R] N. Restricting f to
+Ker(d_M) gives a linear map to Ker(d_N), since d_N(f(x)) = f(d_M(x)) = 0. -/
 def mapKer (dM : M →ₗ[R] M) (dN : N →ₗ[R] N)
     (f : M →ₗ[R] N) (h : dN.comp f = f.comp dM) :
     dM.ker →ₗ[R] dN.ker :=
@@ -52,6 +57,10 @@ def mapKer (dM : M →ₗ[R] M) (dN : N →ₗ[R] N)
         congrArg (fun k : M →ₗ[R] N => k x) h
     exact hx.trans <| (congrArg f (mem_ker.mp x.property)).trans f.map_zero
 
+/-- Underlying value of an induced kernel map.
+
+For a commuting square d_N ∘ f = f ∘ d_M and x ∈ Ker(d_M), the value of mapKer d_M d_N f,
+viewed in N, is f(x). -/
 @[simp]
 theorem mapKer_apply_coe
     (dM : M →ₗ[R] M) (dN : N →ₗ[R] N)
@@ -60,8 +69,10 @@ theorem mapKer_apply_coe
     (mapKer dM dN f h x : N) = f x :=
   rfl
 
-/-- A commuting square of endomorphisms induces a map on cokernels, modeled
-as quotients by their ranges. -/
+/-- Cokernel map induced by commuting endomorphisms.
+
+For d_N ∘ f = f ∘ d_M over a commutative ring R, f maps Im(d_M) into Im(d_N). It therefore
+induces a linear map M/Im(d_M) → N/Im(d_N) on the range-quotient cokernels. -/
 def mapCoker (dM : M →ₗ[R] M) (dN : N →ₗ[R] N)
     (f : M →ₗ[R] N) (h : dN.comp f = f.comp dM) :
     (M ⧸ dM.range) →ₗ[R] (N ⧸ dN.range) :=
@@ -69,6 +80,10 @@ def mapCoker (dM : M →ₗ[R] M) (dN : N →ₗ[R] N)
     rintro _ ⟨x, rfl⟩
     exact ⟨f x, congrArg (fun k : M →ₗ[R] N => k x) h⟩)
 
+/-- Representative formula for an induced cokernel map.
+
+For compatible d_M,d_N and f : M →ₗ[R] N, the induced cokernel map sends the class of x in
+M/Im(d_M) to the class of f(x) in N/Im(d_N). -/
 @[simp]
 theorem mapCoker_mk
     (dM : M →ₗ[R] M) (dN : N →ₗ[R] N)
@@ -77,7 +92,10 @@ theorem mapCoker_mk
       Submodule.Quotient.mk (f x) :=
   rfl
 
-/-- An injective middle map induces an injective map on kernels. -/
+/-- Injectivity of a kernel map induced by an injective map.
+
+If f : M →ₗ[R] N is injective and satisfies d_N ∘ f = f ∘ d_M, its restriction Ker(d_M) →
+Ker(d_N) is injective. -/
 theorem mapKer_injective
     (dM : M →ₗ[R] M) (dN : N →ₗ[R] N)
     (f : M →ₗ[R] N) (h : dN.comp f = f.comp dM)
@@ -88,7 +106,10 @@ theorem mapKer_injective
   apply hf
   simpa only [mapKer_apply_coe] using congrArg Subtype.val hxy
 
-/-- A surjective middle map induces a surjective map on cokernels. -/
+/-- Surjectivity of a cokernel map induced by a surjective map.
+
+If f : M →ₗ[R] N is surjective and satisfies d_N ∘ f = f ∘ d_M, the induced map M/Im(d_M) →
+N/Im(d_N) is surjective. -/
 theorem mapCoker_surjective
     (dM : M →ₗ[R] M) (dN : N →ₗ[R] N)
     (f : M →ₗ[R] N) (h : dN.comp f = f.comp dM)
@@ -99,6 +120,10 @@ theorem mapCoker_surjective
   obtain ⟨x, rfl⟩ := hf y
   exact ⟨Submodule.Quotient.mk x, mapCoker_mk dM dN f h x⟩
 
+/-- Commuting square for the inverse of a linear equivalence.
+
+If a linear equivalence e : M ≃ₗ[R] N satisfies d_N ∘ e = e ∘ d_M, then d_M ∘ e⁻¹ = e⁻¹ ∘ d_N.
+Thus the inverse also intertwines the given endomorphisms. -/
 theorem equiv_symm_comm
     (dM : M →ₗ[R] M) (dN : N →ₗ[R] N)
     (e : M ≃ₗ[R] N) (h : dN.comp e.toLinearMap = e.toLinearMap.comp dM) :
@@ -113,7 +138,10 @@ theorem equiv_symm_comm
     _ = dN y := congrArg dN (e.apply_symm_apply y)
     _ = e (e.symm (dN y)) := (e.apply_symm_apply (dN y)).symm
 
-/-- A commuting linear equivalence induces an equivalence of kernels. -/
+/-- Kernel equivalence induced by a compatible linear equivalence.
+
+For e : M ≃ₗ[R] N satisfying d_N ∘ e = e ∘ d_M, the restrictions of e and e⁻¹ give inverse
+linear maps between Ker(d_M) and Ker(d_N). -/
 noncomputable def kerEquiv
     (dM : M →ₗ[R] M) (dN : N →ₗ[R] N)
     (e : M ≃ₗ[R] N) (h : dN.comp e.toLinearMap = e.toLinearMap.comp dM) :
@@ -132,7 +160,10 @@ noncomputable def kerEquiv
       apply Subtype.ext
       exact e.symm_apply_apply x)
 
-/-- A commuting linear equivalence induces an equivalence of cokernels. -/
+/-- Cokernel equivalence induced by a compatible linear equivalence.
+
+For a linear equivalence e intertwining d_M and d_N, the quotient maps induced by e and e⁻¹
+are inverse. They define M/Im(d_M) ≃ₗ[R] N/Im(d_N). -/
 noncomputable def cokerEquiv
     (dM : M →ₗ[R] M) (dN : N →ₗ[R] N)
     (e : M ≃ₗ[R] N) (h : dN.comp e.toLinearMap = e.toLinearMap.comp dM) :
@@ -153,8 +184,11 @@ noncomputable def cokerEquiv
       change dM.range.mkQ (e.symm (e x)) = dM.range.mkQ x
       rw [e.symm_apply_apply])
 
-/-- In a short exact sequence with compatible endomorphisms, the induced
-kernel maps are exact at the middle kernel. -/
+/-- Exactness of induced kernels for an injective exact pair.
+
+Let f : M → N and g : N → P be R-linear, with Im(f) = Ker(g), f injective and both maps
+commuting with endomorphisms d_M,d_N,d_P. The induced pair Ker(d_M) → Ker(d_N) → Ker(d_P) is
+exact at the middle kernel. Surjectivity of g is not part of this statement. -/
 theorem exact_mapKer
     (dM : M →ₗ[R] M) (dN : N →ₗ[R] N) (dP : P →ₗ[R] P)
     (f : M →ₗ[R] N) (g : N →ₗ[R] P)
@@ -183,8 +217,11 @@ theorem exact_mapKer
     simpa only [mapKer_apply_coe, Submodule.coe_zero] using
       hfg.apply_apply_eq_zero x
 
-/-- In a short exact sequence with compatible endomorphisms, the induced
-cokernel maps are exact at the middle cokernel. -/
+/-- Exactness of induced cokernels for a surjective exact pair.
+
+Let f : M → N and g : N → P be R-linear, with Im(f) = Ker(g), g surjective and both maps
+commuting with d_M,d_N,d_P. The induced pair M/Im(d_M) → N/Im(d_N) → P/Im(d_P) is exact at its
+middle cokernel. The conclusion uses surjectivity of g to lift a range element of d_P. -/
 theorem exact_mapCoker
     (dM : M →ₗ[R] M) (dN : N →ₗ[R] N) (dP : P →ₗ[R] P)
     (f : M →ₗ[R] N) (g : N →ₗ[R] P)

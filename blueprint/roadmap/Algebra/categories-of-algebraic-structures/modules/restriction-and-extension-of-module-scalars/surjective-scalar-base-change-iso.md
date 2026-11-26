@@ -1,4 +1,6 @@
-# Surjective Scalar Base Change Iso
+# The base-change isomorphism of surjective scalar presentations
 
-Tensor extension of a genuine surjective scalar presentation is
-the target presentation when its actual kernel is extended.
+The base-change isomorphism of surjective scalar presentations.
+
+For surjective φ and ψ with γ(ker φ) generating ker ψ, identify the scalar extension S ⊗_R A
+with B restricted along ψ, through the quotient-module presentations.

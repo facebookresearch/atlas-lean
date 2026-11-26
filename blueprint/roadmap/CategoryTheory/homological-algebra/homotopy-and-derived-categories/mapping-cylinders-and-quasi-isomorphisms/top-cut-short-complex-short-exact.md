@@ -1,3 +1,6 @@
-# Top Cut Short Complex short Exact
+# Exactness of the top-degree short complex
 
-The concrete original successor sequence is degreewise split exact.
+Exactness of the top-degree short complex.
+
+For K zero above b, the sequence single(K_b,b) → K → topCutLower K b is short exact in the
+category of cochain complexes.

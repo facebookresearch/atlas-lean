@@ -1,7 +1,6 @@
-# Is Noetherian Object iff is Noetherian
+# Categorical and algebraic noetherianity of a module agree
 
-A module object in `ModuleCat R` is categorically noetherian iff it is algebraically
-noetherian as an `R`-module. The bridge uses `ModuleCat.subobjectModule`, the order
-isomorphism `Subobject M ≃o Submodule R M`, and the characterisations
-`IsNoetherian R M ↔ WellFoundedGT (Submodule R M)` and
-`IsNoetherianObject M ↔ WellFoundedGT (Subobject M)` via strict order well-foundedness.
+Categorical and algebraic noetherianity of a module agree.
+
+For any ring R and R-module M, IsNoetherianObject M holds exactly when IsNoetherian R M holds,
+through the subobject–submodule order isomorphism.

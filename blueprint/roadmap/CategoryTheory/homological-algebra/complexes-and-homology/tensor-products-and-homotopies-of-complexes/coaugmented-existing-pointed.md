@@ -1,3 +1,6 @@
-# Coaugmented Existing Pointed
+# The direct pointed homology construction
 
-The existing original-field producer applied to the actual point, with its native laws.
+The direct pointed homology construction.
+
+Apply the homology coaugmentation construction to the chain comonoid and its supplied point
+map.

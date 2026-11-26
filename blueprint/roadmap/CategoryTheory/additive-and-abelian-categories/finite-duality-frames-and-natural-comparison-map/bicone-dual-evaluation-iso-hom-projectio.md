@@ -1,3 +1,6 @@
-# Bicone Dual Evaluation Iso hom projection
+# Projection formula for contravariant bicone evaluation
 
-Evaluation on a bicone keeps each actual injection as its projection value.
+Projection formula for contravariant bicone evaluation.
+
+For additive G, a finite bilimit bicone b of copies of U and e : G(U) ≅ U, the evaluation
+isomorphism E : G(b.pt) ≅ ⨁ᵢU satisfies E.hom ≫ biproduct.π_i = G((b.ι_i).op) ≫ e.hom.
