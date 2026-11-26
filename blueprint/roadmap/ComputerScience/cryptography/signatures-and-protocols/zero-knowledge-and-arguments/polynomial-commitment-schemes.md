@@ -21,14 +21,14 @@ The report uses adversaries that are probabilistic polynomial-time (PPT) in $\ka
 
 For hiding, draw $f$ uniformly from the $p^{t+1}$ bounded formal polynomials and commit honestly. The adversary sees $k,c$ and legitimately disclosed triples $(i,f(i),w_i)$ accepted by **VerifyEval**. The source describes a collection indexed up to $\deg f$, not up to the setup bound regardless of $f$. Interpret zero as having zero disclosure budget, as for constants. The number of disclosed points, their indices, values and witnesses are visible. The prediction index must be **unqueried**.
 
-- **Computational hiding:** every PPT algorithm has negligible absolute probability of correctly predicting such a value. This is not a negligible *excess* over blind guessing. Even with no disclosures, a uniform independent field guess succeeds with probability $1/p$. Hence the setup average of $1/p$ must be negligible when blind guessing is available; for example $p\ge 2^\kappa$ suffices for this baseline, but a fixed prime does not.
-- **Unconditional hiding:** even an unbounded observer obtains no information about the fresh value beyond the legitimately public evaluation data. This is an information statement, not zero probability of a lucky guess. The proper comparison must retain the visible indices, values and count, which may themselves give information about the degree.
+- **Computational hiding:** every PPT algorithm has negligible absolute probability of correctly predicting such a value. This is not a negligible *excess* over blind guessing. Even with no disclosures, an [independent uniform field guess](polynomial-commitment-blind-guess.md) succeeds with probability $1/p$. Hence the setup average of $1/p$ must be negligible when blind guessing is available; for example $p\ge 2^\kappa$ suffices for this baseline, but a fixed prime does not.
+- **Unconditional hiding:** even an unbounded observer obtains no information about the fresh value beyond the legitimately public evaluation data. This is an information statement, not zero probability of a lucky guess. The comparison must retain the visible indices, values and count, which may themselves give information about the degree. In the [fixed pre-commitment batch formulation](polynomial-commitment-unconditional-hidi.md), adding the commitment and witnesses to that disclosed list leaves the conditional distribution of the fresh value unchanged.
 
 ## Request timing and computational scope
 
-Definition 3.1 specifies what openings are given, not a protocol for choosing their indices. A precise experiment must specify who requests them and when. A batch selected from the public key before commitment, a batch selected **after seeing the commitment** but before any replies, and sequential requests depending on earlier replies give the requester different information. In all cases the request policy must not read the polynomial or decommitment directly. The two batch experiments below illustrate the distinction; neither asserts equivalence to an adaptive protocol. Thaler describes opening at a verifier-chosen point, not such an equivalence.
+Definition 3.1 specifies what openings are given, not a protocol for choosing their indices. A precise experiment must specify who requests them and when. A batch selected from the public key before commitment, a batch selected **after seeing the commitment** but before any replies, and sequential requests depending on earlier replies give the requester different information. In all cases the request policy must not read the polynomial or decommitment directly. The [pre-commitment batch](polynomial-commitment-observation.md) and [post-commitment request law](polynomial-commitment-requested-trace.md) illustrate the distinction; neither asserts equivalence to an adaptive protocol. Thaler describes opening at a verifier-chosen point, not such an equivalence.
 
-A computational instantiation must account for the uniform algorithms, encodings of parameters and messages, randomness, running times, and treatment of malformed reports. A predicate on arbitrary probability laws, even one quantified over a nonempty chosen class, need not quantify over all PPT algorithms. The class-relative pre-commitment batch condition below is a separate mathematical specification, not a substitute for the general definition.
+A computational instantiation must account for the uniform algorithms, encodings of parameters and messages, randomness, running times, and treatment of malformed reports. A predicate on arbitrary probability laws, even one quantified over a nonempty chosen class, need not quantify over all PPT algorithms. The [class-relative pre-commitment batch condition](polynomial-commitment-relative-batch.md) is a separate mathematical specification, not a substitute for the general definition.
 
 ## Depends on
 
@@ -36,10 +36,6 @@ A computational instantiation must account for the uniform algorithms, encodings
 - [Honest full and evaluation correctness](polynomial-commitment-honest.md)
 - [Polynomial binding conflict](polynomial-binding-conflict.md)
 - [Evaluation binding conflict](evaluation-binding-conflict.md)
-- [Class-relative pre-commitment batch condition](polynomial-commitment-relative-batch.md)
-- [One batch requested after commitment](polynomial-commitment-requested-trace.md)
-- [Unconditional hiding given the disclosed evaluations](polynomial-commitment-unconditional-hidi.md)
-- [Independent field-guess probability](polynomial-commitment-blind-guess.md)
 - [Polynomial-time computable functions on encoded data](../../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/is-poly-time.md)
 
 ## Sources
