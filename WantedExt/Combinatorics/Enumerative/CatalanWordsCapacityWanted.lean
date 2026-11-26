@@ -592,15 +592,6 @@ to Capacity*, INTEGERS 25 (2025), Article A5, Theorem 5 (`integers-2025-A5-thm-5
 public theorem_wanted smoothWords_capacity_natDegree (m p : ℕ) (hm : 1 ≤ m) (hp : p ≤ 3) :
     (capacityDist (smoothWords (4 * m + p))).natDegree = m * (2 * m + p - 1)
 
-/-- **Zero-capacity smooth words with a given last letter.** For $2 \le i \le n$, the number of
-smooth words of length $n$ ending in $i$ with capacity $0$, that is, the value at $q = 0$ of their
-capacity distribution $r(n, i; q)$, equals $\sum_{j=i-2}^{n-2} \binom{n-2}{j}$.
-
-Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
-to Capacity*, INTEGERS 25 (2025), Article A5, Theorem 6 (`integers-2025-A5-thm-6`). -/
-public theorem_wanted smoothCapacityDist_eval_zero (n i : ℕ) (hi : 2 ≤ i) (hin : i ≤ n) :
-    (smoothCapacityDist n i).eval 0 = ∑ j ∈ Finset.Icc (i - 2) (n - 2), ((n - 2).choose j : ℤ)
-
 /-- **Number of smooth words of capacity zero.** Let $r(n, i; q)$ be the capacity distribution of
 the smooth words of length $n$ ending in $i$ and $r(n; q)$ that of all smooth words of length $n$,
 so that $r(n, i; 0)$ and $r(n; 0)$ count the smooth words of capacity $0$. Then $r(1, 1; 0) = 1$

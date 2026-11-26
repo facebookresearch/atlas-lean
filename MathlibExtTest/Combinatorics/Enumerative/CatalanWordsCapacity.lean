@@ -76,3 +76,19 @@ example : (catalanCapacityDist 5 3).eval 0 = 7 := by
 example (n : ℕ) (hn : 2 ≤ n) : (catalanCapacityDist n n).eval 0 = 1 := by
   rw [catalanCapacityDist_eval_zero n n hn le_rfl]
   simp
+
+example : smoothWords 3 = {![1, 1, 1], ![1, 1, 2], ![1, 2, 1], ![1, 2, 2], ![1, 2, 3]} := by
+  decide
+
+-- The descending word 1232 counts, but the later ascent in 1212 creates a valley.
+example : ((wordsEndingIn (smoothWords 4) 2).filter fun w => wordCapacity w = 0) =
+    {![1, 1, 1, 2], ![1, 1, 2, 2], ![1, 2, 2, 2], ![1, 2, 3, 2]} := by
+  decide
+
+example : (smoothCapacityDist 5 2).eval 0 = 8 := by
+  rw [smoothCapacityDist_eval_zero 5 2 (by decide) (by decide)]
+  decide
+
+example (n : ℕ) (hn : 2 ≤ n) : (smoothCapacityDist n n).eval 0 = 1 := by
+  rw [smoothCapacityDist_eval_zero n n hn le_rfl]
+  simp
