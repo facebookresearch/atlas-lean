@@ -10,7 +10,7 @@ which matches $(\varepsilon^2/2)$-zero-concentrated differential privacy on all 
 
 ## Proof sketch
 
-Symmetry gives the two-sided likelihood-ratio bound $e^{\pm\varepsilon}$. By the moment bound, $D_\alpha \le \varepsilon\tanh(\varepsilon/2) + (\alpha-1)\varepsilon^2/2 \le \varepsilon^2/2 + (\alpha-1)\varepsilon^2/2 = \alpha\varepsilon^2/2$, using $\tanh(x) \le x$.
+Symmetry gives the two-sided likelihood-ratio bound $e^{\pm\varepsilon}$ for every pair of adjacent datasets, and the moment bound then gives $D_\alpha(M(x) \Vert M(y)) \le \alpha\varepsilon^2/2$ for every finite $\alpha > 1$. The case $\varepsilon = 0$ is trivial.
 
 ## Depends on
 
@@ -24,4 +24,4 @@ Symmetry gives the two-sided likelihood-ratio bound $e^{\pm\varepsilon}$. By the
 
 ## Sources
 
-- Mark Bun and Thomas Steinke, "Concentrated Differential Privacy: Simplifications, Extensions, and Lower Bounds", Theory of Cryptography (TCC 2016-B, Part I), 2016.
+- Mark Bun and Thomas Steinke, "Concentrated Differential Privacy: Simplifications, Extensions, and Lower Bounds", Theory of Cryptography (TCC 2016-B, Part I), 2016; arXiv:1605.02065v2, Proposition 3.3.

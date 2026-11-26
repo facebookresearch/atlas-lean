@@ -9,11 +9,11 @@ The answer polynomial is the composition of a degree-$d$ multilinear form with d
 ## Depends on
 
 - [Private information retrieval schemes](pir-schemes.md)
-- [Shamir threshold secret sharing](../secret-sharing-schemes/shamir-secret-sharing.md)
+- [Shamir threshold secret sharing](../secure-multiparty-computation/secret-sharing-schemes/shamir-secret-sharing.md)
 
 ## Proof depends on
 
-- [Linearity, multiplicativity and privacy of Shamir sharing](../secret-sharing-schemes/shamir-sharing-properties.md)
+- [Linearity, multiplicativity and privacy of Shamir sharing](../secure-multiparty-computation/secret-sharing-schemes/shamir-sharing-properties.md)
 
 ## Sources
 

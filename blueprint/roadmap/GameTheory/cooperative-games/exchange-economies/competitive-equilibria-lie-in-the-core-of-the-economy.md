@@ -14,7 +14,7 @@ Apply the first welfare argument to the coalition: a blocking redistribution wou
 ## Proof depends on
 
 - [Walras's law](walrass-law.md)
-- [First welfare theorem for exchange and Fisher markets](first-welfare-theorem-for-exchange-and-fisher-markets.md)
+- [Walrasian equilibrium allocations are Pareto efficient](../../../Economics/general-equilibrium/first-welfare-theorem/is-pareto-efficient-of-is-walrasian-equi.md)
 
 ## Sources
 

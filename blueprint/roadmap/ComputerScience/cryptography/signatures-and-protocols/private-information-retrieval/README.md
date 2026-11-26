@@ -1,4 +1,4 @@
-# Information-Theoretic Private Information Retrieval
+# Private Information Retrieval
 
 - [Private information retrieval schemes](pir-schemes.md)
 - [PIR from smooth codes and smooth codes from PIR](pir-and-smooth-codes.md)
@@ -10,3 +10,4 @@
 - [Interaction does not help single-server PIR](interactive-pir-lower-bound.md)
 - [Covering-code PIR schemes](covering-code-pir.md)
 - [Polynomial-interpolation $t$-private PIR](shamir-t-private-pir.md)
+- [Single-Server PIR with Client Preprocessing](preprocessing-pir/README.md)

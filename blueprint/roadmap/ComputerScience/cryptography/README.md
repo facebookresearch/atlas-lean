@@ -8,6 +8,9 @@ Cryptographic schemes and their correctness and security reductions: the game-ba
 - [Public-key cryptography](public-key/README.md)
 - [Signatures, identification and zero knowledge](signatures-and-protocols/README.md)
 - [Differential privacy](differential-privacy/README.md)
+- [Rényi Differential Privacy and Privacy Loss](renyi-differential-privacy/README.md)
+- [Discrete Differentially Private Mechanisms](discrete-privacy-mechanisms/README.md)
+- [Lower Bounds and Reconstruction Attacks for Differential Privacy](differential-privacy-lower-bounds/README.md)
 - [Laplace and exponential mechanisms](laplace-and-exponential-mechanisms/README.md)
 
 ## Related topics
@@ -23,9 +26,3 @@ Cryptographic schemes and their correctness and security reductions: the game-ba
 
 - [Entropy and randomness extraction](randomness-extraction/README.md)
 - [Program obfuscation](program-obfuscation/README.md)
-
-- [Discrete Differentially Private Mechanisms](discrete-privacy-mechanisms/README.md)
-
-- [Lower Bounds and Reconstruction Attacks for Differential Privacy](differential-privacy-lower-bounds/README.md)
-
-- [Rényi Differential Privacy and Privacy Loss](renyi-differential-privacy/README.md)

@@ -14,7 +14,7 @@ Hybrid over the bit positions: in hybrid $j$ the exponent $a_0\prod_{i\le j, x_i
 
 ## Proof depends on
 
-- [Multi-DDH from DDH](../../public-key/random-self-reducibility-of-diffie-hellman-problems/multi-ddh-from-ddh.md)
+- [Multi-DDH from DDH](../../public-key/discrete-logarithm-and-diffie-hellman-problems/random-self-reducibility-of-diffie-hellman-problems/multi-ddh-from-ddh.md)
 - [Lazy random function](../../security-games/lazy-sampling-and-the-prp-prf-switching-lemma/lazy-rf.md)
 
 ## Sources

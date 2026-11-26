@@ -10,7 +10,7 @@ Since $\tanh(\varepsilon/2) \le e^\varepsilon - 1$, this implies the standard bo
 
 ## Proof sketch
 
-Reduce $(\varepsilon, \delta)$ rounds to $(\varepsilon, 0)$ rounds at the cost of $\delta$ each, bound the moment generating function of the total privacy loss by the product of the per-round Rényi-moment bounds, and apply Markov's inequality at the optimal order.
+Reduce $(\varepsilon, \delta)$ rounds to $(\varepsilon, 0)$ rounds at the cost of $\delta$ each. In an $(\varepsilon, 0)$ round the privacy loss $L = \log(P/Q)$ lies in $[-\varepsilon, \varepsilon]$, and the moment bound shows that its moment generating function under $P$ is at most that of the two-point loss of randomized response, which takes the values $\pm\varepsilon$ and has mean $\varepsilon\tanh(\varepsilon/2)$. By Hoeffding's lemma, $\mathbb{E}_P[e^{sL}] \le \exp(s\varepsilon\tanh(\varepsilon/2) + s^2\varepsilon^2/2)$ for $s \ge 0$. Multiply over the rounds and apply Markov's inequality at the optimal $s$. Kairouz, Oh and Viswanath obtain the same bound from their exact composition theorem, with the slightly smaller $\delta$ part $1 - (1 - \delta)^k(1 - \delta')$, which is at most $k\delta + \delta'$.
 
 ## Depends on
 
@@ -23,4 +23,5 @@ Reduce $(\varepsilon, \delta)$ rounds to $(\varepsilon, 0)$ rounds at the cost o
 
 ## Sources
 
-- Cynthia Dwork and Aaron Roth, "The Algorithmic Foundations of Differential Privacy", Foundations and Trends in Theoretical Computer Science, 2014.
+- Cynthia Dwork and Aaron Roth, "The Algorithmic Foundations of Differential Privacy", Foundations and Trends in Theoretical Computer Science, 2014, Theorem 3.20 (the bound with $k\varepsilon(e^\varepsilon - 1)$).
+- Peter Kairouz, Sewoong Oh and Pramod Viswanath, "The Composition Theorem for Differential Privacy", Proceedings of the 32nd International Conference on Machine Learning (ICML 2015); arXiv:1311.0776v4, Theorem 3.4 (the bound with $(e^\varepsilon - 1)\varepsilon k/(e^\varepsilon + 1) = k\varepsilon\tanh(\varepsilon/2)$).

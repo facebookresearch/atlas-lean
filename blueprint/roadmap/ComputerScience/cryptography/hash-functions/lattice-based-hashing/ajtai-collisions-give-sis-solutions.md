@@ -9,7 +9,7 @@ $h_A$ is $\mathbb{Z}$-linear, so $A(x - y) \equiv 0$; the difference is nonzero 
 ## Depends on
 
 - [Ajtai's hash function](ajtai-hash-function.md)
-- [The short integer solution problem (SIS)](../../public-key/lattice-problems/short-integer-solution-problem.md)
+- [The short integer solution problem (SIS)](../../public-key/lattice-and-code-based-cryptography/lattice-problems/short-integer-solution-problem.md)
 
 ## Sources
 

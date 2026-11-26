@@ -29,7 +29,3 @@ Probabilistic classes (RP, BPP), Arthur–Merlin and interactive proofs (AM, MA,
 - [QMA error reduction by parallel repetition](qma-error-reduction-by-parallel-repetition.md)
 - [BQP is contained in QIP](bqp-is-contained-in-qip.md)
 - [Optimal provers exist in finite dimension](existence-of-optimal-provers-in-finite-dimension.md)
-- [Anchored Parallel Repetition for Nonlocal Games](anchored-parallel-repetition-steps/README.md)
-- [Closure of IP under Polynomial-Time Reductions](closure-of-ip-under-reductions/README.md)
-- [Entangled Strategies and Nonlocal Games](entangled-nonlocal-games/README.md)
-- [Quantum Soundness of the Low Individual Degree Test](quantum-low-individual-degree-test/README.md)

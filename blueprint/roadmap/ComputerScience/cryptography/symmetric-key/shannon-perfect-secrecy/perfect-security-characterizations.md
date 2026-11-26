@@ -6,10 +6,6 @@ Let $(E, D)$ be a Shannon cipher over finite key, message and ciphertext spaces 
 
 Under a uniform key, $\Pr[E(k, m) = c]$ is the number of such keys divided by $|K|$, giving (i)$\Leftrightarrow$(ii). (iii) is (i) applied to events, and (iv) follows by conditioning on $\mathbf{m}$; conversely, independence with a message law of full support gives equal conditional ciphertext laws.
 
-## Depends on
-
-- [The group one-time pad is perfectly secret](../one-time-pad-over-a-finite-group/group-otp-perfectly-secret.md)
-
 ## Sources
 
 - Dan Boneh and Victor Shoup, "A Graduate Course in Applied Cryptography", Version 0.6, 2023.

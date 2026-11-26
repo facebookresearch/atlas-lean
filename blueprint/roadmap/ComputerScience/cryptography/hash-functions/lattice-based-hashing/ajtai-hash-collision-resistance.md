@@ -9,7 +9,7 @@ Given a collision finder $F$, the reduction runs $F$ on the SIS matrix and outpu
 ## Depends on
 
 - [Ajtai's hash function](ajtai-hash-function.md)
-- [The short integer solution problem (SIS)](../../public-key/lattice-problems/short-integer-solution-problem.md)
+- [The short integer solution problem (SIS)](../../public-key/lattice-and-code-based-cryptography/lattice-problems/short-integer-solution-problem.md)
 - [The collision experiment](../birthday-bound/collision-game.md)
 - [Negligible advantage](../../security-games/asymptotic-security/negligible-adv.md)
 

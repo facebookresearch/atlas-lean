@@ -13,8 +13,8 @@ A collision gives $(a/a')^e = y^{b' - b}$ with $0 < |b' - b| < e$ coprime to $e$
 
 ## Proof depends on
 
-- [Shamir's trick: a common root from coprime exponents](../../public-key/rsa-attacks-and-reductions/shamir-trick-common-root.md)
-- [The RSA assumption with a uniform unit preimage](../../public-key/rsa-attacks-and-reductions/rsa-unit-preimage-variant.md)
+- [Shamir's trick: a common root from coprime exponents](../../public-key/rsa-cryptosystem/rsa-attacks-and-reductions/shamir-trick-common-root.md)
+- [The RSA assumption with a uniform unit preimage](../../public-key/rsa-cryptosystem/rsa-attacks-and-reductions/rsa-unit-preimage-variant.md)
 
 ## Sources
 

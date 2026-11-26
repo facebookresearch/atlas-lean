@@ -6,3 +6,4 @@
 - [Linial's lower bound for coloring a ring](linial-s-lower-bound-for-coloring-a-ring.md)
 - [Self-stabilization of Dijkstra's token ring](self-stabilization-of-dijkstra-s-k-state-token.md)
 - [Luby's maximal independent set algorithm](luby-s-maximal-independent-set-algorithm.md)
+- [The LOCAL Model: Symmetry Breaking and LCL Problems](local-model-symmetry-and-lcl/README.md)

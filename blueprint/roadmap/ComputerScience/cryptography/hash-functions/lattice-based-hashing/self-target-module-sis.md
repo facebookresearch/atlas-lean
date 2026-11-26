@@ -10,7 +10,7 @@ i.e. the last coordinate of $\mathbf{y}$ equals the hash of the message and the 
 
 ## Depends on
 
-- [Module-SIS and Ring-SIS](../../public-key/lattice-problems/module-sis.md)
+- [Module-SIS and Ring-SIS](../../public-key/lattice-and-code-based-cryptography/lattice-problems/module-sis.md)
 - [The random oracle model](../../public-key/random-oracle-constructions/the-random-oracle-model.md)
 
 ## Sources

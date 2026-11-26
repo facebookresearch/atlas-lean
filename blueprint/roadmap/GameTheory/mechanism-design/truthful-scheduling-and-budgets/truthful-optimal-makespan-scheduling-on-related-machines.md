@@ -9,7 +9,7 @@ If a machine slows down, the lexicographic tie-breaking among optimal schedules 
 ## Depends on
 
 - [One-parameter cost mechanism (reverse auction)](one-parameter-cost-mechanism-reverse-auction.md)
-- [Load balancing on uniformly related and unrelated machines](../../noncooperative-games/load-balancing-pure-equilibria/load-balancing-on-uniformly-related-and-unrelated-machines.md)
+- [Load balancing on uniformly related and unrelated machines](../../noncooperative-games/selfish-load-balancing/load-balancing-pure-equilibria/load-balancing-on-uniformly-related-and-unrelated-machines.md)
 
 ## Proof depends on
 

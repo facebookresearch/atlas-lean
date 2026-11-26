@@ -10,7 +10,7 @@ The hash family $\{h_A\}$ is keyed by a uniformly random $A$. When $m > n \log_2
 
 ## Depends on
 
-- [The short integer solution problem (SIS)](../../public-key/lattice-problems/short-integer-solution-problem.md)
+- [The short integer solution problem (SIS)](../../public-key/lattice-and-code-based-cryptography/lattice-problems/short-integer-solution-problem.md)
 
 ## Sources
 

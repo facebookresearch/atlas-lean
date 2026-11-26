@@ -15,12 +15,12 @@ Both runs produce the same module product at the forked query, so their differen
 ## Depends on
 
 - [The SelfTargetMSIS problem](self-target-module-sis.md)
-- [Module-SIS and Ring-SIS](../../public-key/lattice-problems/module-sis.md)
+- [Module-SIS and Ring-SIS](../../public-key/lattice-and-code-based-cryptography/lattice-problems/module-sis.md)
 
 ## Proof depends on
 
 - [The rewinding lemma](../../signatures-and-protocols/zero-knowledge-and-arguments/the-rewinding-lemma.md)
-- [Module-SIS solutions are SIS solutions of the expanded matrix](../../public-key/lattice-problems/module-sis-as-structured-sis.md)
+- [Module-SIS solutions are SIS solutions of the expanded matrix](../../public-key/lattice-and-code-based-cryptography/lattice-problems/module-sis-as-structured-sis.md)
 
 ## Sources
 

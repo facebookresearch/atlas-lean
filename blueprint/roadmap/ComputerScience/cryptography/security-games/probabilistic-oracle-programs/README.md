@@ -13,5 +13,4 @@
 - [Forking an oracle program at a named query](forking-algorithm.md)
 - [Ideal cipher model](ideal-cipher-model.md)
 - [Oracle substitution: running a program against a simulated interface](oracle-substitution-semantics.md)
-- [General forking lemma](general-forking-lemma.md)
 - [Domain separation lemma for the ideal cipher](ideal-cipher-domain-separation-lemma.md)
