@@ -45,8 +45,9 @@ table of the one-element group). -/
 def IsIntegrableGroupTable (t : List (List ℕ)) : Prop :=
   ∃ inst : Group (Fin t.length),
     (∀ i j : Fin t.length, ((inst.mul i j : Fin t.length) : ℕ) = (t.getD i []).getD j 0) ∧
-    letI := inst
-    ∃ (H : Type) (_ : Group H) (_ : Finite H), Nonempty (commutator H ≃* Fin t.length)
+    -- The isomorphism is for `inst`: `Fin t.length` also has its own `Mul` (modulo the length).
+    ∃ (H : Type) (_ : Group H) (_ : Finite H),
+      Nonempty (@MulEquiv (commutator H) (Fin t.length) _ inst.toMul)
 
 /-- **Kourovka Problem 21.32 (decidability of integrability).** The statement that integrable group
 tables form a decidable set: some computable function decides, for every finite list
