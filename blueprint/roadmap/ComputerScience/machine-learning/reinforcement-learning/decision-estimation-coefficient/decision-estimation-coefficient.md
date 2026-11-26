@@ -15,5 +15,5 @@ where $D_H^2$ is the squared Hellinger distance, and $\mathrm{dec}_\gamma(\mathc
 
 ## Sources
 
-- D. J. Foster, A. Rakhlin, "Foundations of Reinforcement Learning and Interactive Decision Making", lecture notes (2023), arXiv:2312.16730, Section 7.3, Eqs. (7.10)–(7.11).
+- D. J. Foster, A. Rakhlin, "Foundations of Reinforcement Learning and Interactive Decision Making", lecture notes, revised edition (September 2026), arXiv:2312.16730v2, Section 7.3, Eqs. (7.10)–(7.11).
 - D. J. Foster, N. Golowich, Y. Han, "Tight Guarantees for Interactive Decision Making with the Decision-Estimation Coefficient", COLT (2023), PMLR 195, Section 1.2, Eq. (4).

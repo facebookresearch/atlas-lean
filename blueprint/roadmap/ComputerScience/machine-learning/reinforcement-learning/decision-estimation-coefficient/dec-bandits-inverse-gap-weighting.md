@@ -18,5 +18,5 @@ For mean rewards alone, inverse gap weighting certifies that the squared-error c
 
 ## Sources
 
-- D. J. Foster, A. Rakhlin, "Foundations of Reinforcement Learning and Interactive Decision Making", lecture notes (2023), arXiv:2312.16730, Proposition 4.3, Proposition 5.2, Proposition 5.5, Example 7.4 (Section 7.3 and its continuation after Theorem 7.1) and Remark 8.2.
+- D. J. Foster, A. Rakhlin, "Foundations of Reinforcement Learning and Interactive Decision Making", lecture notes, revised edition (September 2026), arXiv:2312.16730v2, Proposition 4.3, Proposition 5.2, Proposition 5.5, Example 7.4 (Section 7.3 and its continuation after Theorem 7.1) and Remark 8.2.
 - D. J. Foster, A. Rakhlin, "Beyond UCB: Optimal and Efficient Contextual Bandits with Regression Oracles", ICML (2020), arXiv:2002.04926.

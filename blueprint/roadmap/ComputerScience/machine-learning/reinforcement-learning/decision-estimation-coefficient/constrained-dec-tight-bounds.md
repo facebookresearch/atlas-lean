@@ -2,7 +2,7 @@
 
 Let $\mathrm{dec}^c_\varepsilon(\mathcal{M}, \bar M)$ be the constrained DEC and $\mathrm{dec}^c_\varepsilon(\mathcal{M}) = \sup_{\bar M \in \mathrm{co}(\mathcal{M})} \mathrm{dec}^c_\varepsilon(\mathcal{M} \cup \{\bar M\}, \bar M)$, for a model class $\mathcal{M}$ with rewards in $[0,1]$ that contains the true model. Let $V(\mathcal{M}) \ge e$ bound the density ratios $M'(E \mid \pi)/M(E \mid \pi)$ over $M, M' \in \mathcal{M}$, decisions $\pi$ and events $E$, and let $\mathcal{M}^+ \supseteq \mathrm{co}(\mathcal{M})$ be the set of all models with rewards in $[0,1]$ whose density ratios relative to every $M \in \mathcal{M}$ are bounded by $V(\mathcal{M})$.
 
-**Lower bound.** There are absolute constants $c, c', C, C' > 0$ such that, with $\varepsilon(T) = c/\big(\sqrt{T}\,\log(T \wedge V(\mathcal{M}))\big)$, for every $T$ satisfying the regime condition $\mathrm{dec}^c_{\varepsilon(T)}(\mathcal{M}) \ge C\,\varepsilon(T)$, every algorithm has, under some model in $\mathcal{M}$,
+**Lower bound.** There are absolute constants $c, c', C, C' > 0$ such that, with $C(T) = \log(T \wedge V(\mathcal{M}))$ and $\varepsilon(T) = c/\sqrt{T\,C(T)}$, for every $T$ satisfying the regime condition $\mathrm{dec}^c_{\varepsilon(T)}(\mathcal{M}) \ge C\,\varepsilon(T)$, every algorithm has, under some model in $\mathcal{M}$,
 
 $$
 \mathbb{E}[\mathrm{Reg}_T] \ge c'\,\frac{T}{\log T}\,\sup_{\bar M \in \mathcal{M}^+} \mathrm{dec}^c_{\varepsilon(T)}\big(\mathcal{M} \cup \{\bar M\}, \bar M\big) - C'\,\frac{\sqrt{T}}{\log T} \ge c'\,\frac{T}{\log T}\,\mathrm{dec}^c_{\varepsilon(T)}(\mathcal{M}) - C'\,\frac{\sqrt{T}}{\log T}.
@@ -26,13 +26,13 @@ The lower bound first proves the analogous bound with proper reference models $\
 
 - [Decision making with structured observations](decision-making-structured-observations.md)
 - [Hellinger distance](../../../../Probability/convergence-of-measures/hellinger-distance/hellinger-dist.md)
+- [The constrained DEC lower bounds the regret of every algorithm](dec-regret-lower-bound.md)
 
 ## Proof depends on
 
-- [The constrained DEC lower bounds the regret of every algorithm](dec-regret-lower-bound.md)
 - [Estimation-to-decisions regret is bounded by the DEC plus the estimation error](e2d-regret-upper-bound.md)
 
 ## Sources
 
 - D. J. Foster, N. Golowich, Y. Han, "Tight Guarantees for Interactive Decision Making with the Decision-Estimation Coefficient", COLT (2023), PMLR 195, Eqs. (7)–(9), Appendix C.1 (Theorem C.1, Eqs. (15)–(16)) and Appendix C.2 (Theorem C.2, Assumptions C.1 and C.2).
-- D. J. Foster, A. Rakhlin, "Foundations of Reinforcement Learning and Interactive Decision Making", lecture notes (2023), arXiv:2312.16730, Section 7.5 (Proposition 7.2).
+- D. J. Foster, A. Rakhlin, "Foundations of Reinforcement Learning and Interactive Decision Making", lecture notes, revised edition (September 2026), arXiv:2312.16730v2, Section 7.5 (Proposition 7.2).

@@ -16,4 +16,4 @@ More generally, for a terminal set $R \subseteq V$, a *Steiner cactus* represent
 ## Sources
 
 - Efim A. Dinits, Alexander V. Karzanov, Michael V. Lomonosov, "On the Structure of a System of Minimum Edge Cuts of a Graph", Studies in Discrete Optimization (1976).
-- Zhongtian He, Shang-En Huang, Thatchaphol Saranurak, "Cactus Representations in Polylogarithmic Max-flow via Maximal Isolating Mincuts", arXiv preprint (2023), arXiv:2311.10706.
+- Zhongtian He, Shang-En Huang, Thatchaphol Saranurak, "Cactus Representations in Polylogarithmic Max-flow via Maximal Isolating Mincuts", SODA (2024), doi:10.1137/1.9781611977912.60, arXiv:2311.10706.

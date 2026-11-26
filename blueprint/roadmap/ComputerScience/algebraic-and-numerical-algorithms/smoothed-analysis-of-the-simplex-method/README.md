@@ -7,7 +7,7 @@
 - [Dadush-Huiberts shadow bound for smoothed unit linear programs](dadush-huiberts-shadow-bound.md)
 - [Kelner-Spielman randomized polynomial-time simplex algorithm](kelner-spielman-polynomial-simplex.md)
 - [Spielman-Teng polynomial smoothed complexity of a shadow vertex simplex method](spielman-teng-smoothed-simplex.md)
-- [Huiberts-Lee-Zhang smoothed complexity O(sigma^{-3/2} d^{13/4} log^{7/4} n)](huiberts-lee-zhang-upper-bound.md)
+- [Huiberts-Lee-Zhang smoothed shadow bound O(sigma^{-3/2} d^{13/4} log^{5/4} n)](huiberts-lee-zhang-upper-bound.md)
 - [Vershynin's smoothed simplex walks of length polylogarithmic in the number of constraints](vershynin-polylogarithmic-smoothed-walks.md)
 - [Smoothed lower bound for the shadow vertex simplex method](shadow-vertex-smoothed-lower-bound.md)
 - [Bach-Huiberts optimal noise dependence for the smoothed simplex method](bach-huiberts-optimal-smoothed-simplex.md)

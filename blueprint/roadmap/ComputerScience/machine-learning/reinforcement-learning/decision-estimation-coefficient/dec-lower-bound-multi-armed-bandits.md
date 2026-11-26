@@ -10,11 +10,8 @@ Take the reference model $\bar M \in \mathcal{M}$ with all means equal to $\tfra
 
 - [Decision-estimation coefficient](decision-estimation-coefficient.md)
 - [Stochastic k-armed bandits: canonical history law and regret](../multi-armed-bandits/stochastic-k-armed-bandits-canonical-history-law-and-regret.md)
-
-## Proof depends on
-
 - [The constrained DEC lower bounds the regret of every algorithm](dec-regret-lower-bound.md)
 
 ## Sources
 
-- D. J. Foster, A. Rakhlin, "Foundations of Reinforcement Learning and Interactive Decision Making", lecture notes (2023), arXiv:2312.16730, Proposition 8.1, Remark 8.2 and Section 8.5 (Example 7.4, continued).
+- D. J. Foster, A. Rakhlin, "Foundations of Reinforcement Learning and Interactive Decision Making", lecture notes, revised edition (September 2026), arXiv:2312.16730v2, Proposition 8.1, Remark 8.2 and Section 8.5 (Example 7.4, continued).

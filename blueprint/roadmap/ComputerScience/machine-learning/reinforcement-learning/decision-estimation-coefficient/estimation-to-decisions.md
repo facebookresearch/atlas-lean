@@ -14,4 +14,4 @@ samples $\pi_t \sim p_t$, observes $(r_t, o_t)$ and updates the oracle.
 
 ## Sources
 
-- D. J. Foster, A. Rakhlin, "Foundations of Reinforcement Learning and Interactive Decision Making", lecture notes (2023), arXiv:2312.16730, Section 7.4 (Definition 7.1 and Algorithm 7.1).
+- D. J. Foster, A. Rakhlin, "Foundations of Reinforcement Learning and Interactive Decision Making", lecture notes, revised edition (September 2026), arXiv:2312.16730v2, Section 7.4 (Definition 7.1 and Algorithm 7.1).

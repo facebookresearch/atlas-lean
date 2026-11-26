@@ -21,12 +21,9 @@ Fix $\bar M \in \mathrm{co}(\mathcal{M})$ and run the algorithm under $\bar M$, 
 ## Depends on
 
 - [Decision-estimation coefficient](decision-estimation-coefficient.md)
-
-## Proof depends on
-
 - [Hellinger distance](../../../../Probability/convergence-of-measures/hellinger-distance/hellinger-dist.md)
 
 ## Sources
 
-- D. J. Foster, A. Rakhlin, "Foundations of Reinforcement Learning and Interactive Decision Making", lecture notes (2023), arXiv:2312.16730, Section 7.5.1 (Eqs. (7.30)–(7.31)) and Section 8.4 (Theorem 8.1).
+- D. J. Foster, A. Rakhlin, "Foundations of Reinforcement Learning and Interactive Decision Making", lecture notes, revised edition (September 2026), arXiv:2312.16730v2, Section 7.5.1 (Eqs. (7.30)–(7.31)) and Section 8.4 (Theorem 8.1).
 - D. J. Foster, N. Golowich, Y. Han, "Tight Guarantees for Interactive Decision Making with the Decision-Estimation Coefficient", COLT (2023), PMLR 195, Section 1.3, Eqs. (7)–(9).

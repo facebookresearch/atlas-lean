@@ -19,4 +19,4 @@ The log-loss regret of the Bayesian mixture is at most $-\log w_1(M^\star) = \lo
 
 ## Sources
 
-- D. J. Foster, A. Rakhlin, "Foundations of Reinforcement Learning and Interactive Decision Making", lecture notes (2023), arXiv:2312.16730, Section 7.4.1 (Lemma 7.3 and the averaged exponential weights example following it).
+- D. J. Foster, A. Rakhlin, "Foundations of Reinforcement Learning and Interactive Decision Making", lecture notes, revised edition (September 2026), arXiv:2312.16730v2, Section 7.4.1 (Lemma 7.3 and the averaged exponential weights example following it).

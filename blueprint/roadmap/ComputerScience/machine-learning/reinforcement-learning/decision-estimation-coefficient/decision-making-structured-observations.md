@@ -9,5 +9,5 @@ In the **decision making with structured observations** framework, a model class
 
 ## Sources
 
-- D. J. Foster, A. Rakhlin, "Foundations of Reinforcement Learning and Interactive Decision Making", lecture notes (2023), arXiv:2312.16730, Section 7.1 (Assumptions 7.1 and 7.2, Eq. (7.3), Examples 7.1–7.3).
+- D. J. Foster, A. Rakhlin, "Foundations of Reinforcement Learning and Interactive Decision Making", lecture notes, revised edition (September 2026), arXiv:2312.16730v2, Section 7.1 (Assumptions 7.1 and 7.2, Eq. (7.3), Examples 7.1–7.3).
 - D. J. Foster, N. Golowich, Y. Han, "Tight Guarantees for Interactive Decision Making with the Decision-Estimation Coefficient", COLT (2023), PMLR 195, Section 1.1, Eq. (1).

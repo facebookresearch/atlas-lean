@@ -17,4 +17,4 @@ For $R = \{s, t\}$ this is the minimum $s$-$t$ cut value $\lambda_G(s,t)$, and f
 ## Sources
 
 - Jason Li, Debmalya Panigrahi, "Deterministic Min-cut in Poly-logarithmic Max-flows", FOCS (2020), arXiv:2111.02008.
-- Matthew Ding, Jason Li, "Deterministic Minimum Steiner Cut in Maximum Flow Time", arXiv preprint (2023), arXiv:2312.16415.
+- Matthew Ding, Jason Li, "Deterministic Minimum Steiner Cut in Maximum Flow Time", ESA (2024), LIPIcs, doi:10.4230/LIPIcs.ESA.2024.46, arXiv:2312.16415.

@@ -22,6 +22,6 @@ Every minimum cut $2$-respects some tree of a small tree family (Karger's skelet
 
 ## Sources
 
-- Zhongtian He, Shang-En Huang, Thatchaphol Saranurak, "Cactus Representation of Minimum Cuts: Derandomize and Speed up", arXiv preprint (2024), arXiv:2401.10856.
+- Zhongtian He, Shang-En Huang, Thatchaphol Saranurak, "Cactus Representation of Minimum Cuts: Derandomize and Speed up", SODA (2024), doi:10.1137/1.9781611977912.61, arXiv:2401.10856.
 - David R. Karger, Debmalya Panigrahi, "A Near-Linear Time Algorithm for Constructing a Cactus Representation of Minimum Cuts", SODA (2009).
 - Jason Li, "Deterministic Mincut in Almost-Linear Time", STOC (2021), arXiv:2106.05513.

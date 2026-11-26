@@ -18,4 +18,4 @@ The random terminal sampling of the Monte Carlo algorithm is replaced by a deter
 ## Sources
 
 - Jason Li, Debmalya Panigrahi, "Deterministic Min-cut in Poly-logarithmic Max-flows", FOCS (2020), arXiv:2111.02008.
-- Matthew Ding, Jason Li, "Deterministic Minimum Steiner Cut in Maximum Flow Time", arXiv preprint (2023), arXiv:2312.16415.
+- Matthew Ding, Jason Li, "Deterministic Minimum Steiner Cut in Maximum Flow Time", ESA (2024), LIPIcs, doi:10.4230/LIPIcs.ESA.2024.46, arXiv:2312.16415.

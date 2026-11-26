@@ -29,4 +29,4 @@ At round $t$, by the choice of $p_t$ and since $M^\star \in \mathcal{M}$, the in
 
 ## Sources
 
-- D. J. Foster, A. Rakhlin, "Foundations of Reinforcement Learning and Interactive Decision Making", lecture notes (2023), arXiv:2312.16730, Section 7.4 (Theorem 7.1 and Eq. (7.23)).
+- D. J. Foster, A. Rakhlin, "Foundations of Reinforcement Learning and Interactive Decision Making", lecture notes, revised edition (September 2026), arXiv:2312.16730v2, Section 7.4 (Theorem 7.1 and Eq. (7.23)).

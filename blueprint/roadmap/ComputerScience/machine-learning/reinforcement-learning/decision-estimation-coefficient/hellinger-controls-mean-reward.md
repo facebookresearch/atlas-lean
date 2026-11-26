@@ -20,5 +20,5 @@ The first inequality holds because $r$ takes values in $[0,1]$. For the second, 
 
 ## Sources
 
-- D. J. Foster, A. Rakhlin, "Foundations of Reinforcement Learning and Interactive Decision Making", lecture notes (2023), arXiv:2312.16730, Section 7.2 (Lemma 7.1 and Eq. (7.9)).
+- D. J. Foster, A. Rakhlin, "Foundations of Reinforcement Learning and Interactive Decision Making", lecture notes, revised edition (September 2026), arXiv:2312.16730v2, Section 7.2 (Lemma 7.1 and Eq. (7.9)).
 - A. B. Tsybakov, *Introduction to Nonparametric Estimation*, Springer (2009), Section 2.4.
