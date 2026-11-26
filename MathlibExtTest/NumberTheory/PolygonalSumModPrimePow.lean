@@ -15,6 +15,12 @@ import MathlibExt.NumberTheory.PolygonalNumber
 
 open MetaMathlibExt
 
+-- Even the zero residue modulo 25 has positive representatives with the second a unit modulo 5.
+example : ∃ x y : ℕ, 0 < x ∧ 0 < y ∧ x ^ 2 + y ^ 2 ≡ 0 [MOD 25] ∧ ¬ 5 ∣ y := by
+  obtain ⟨x, y, hx, hy, hxy, h5⟩ :=
+    exists_sq_add_sq_modEq_prime_pow 5 25 2 (by decide) (by decide) (by decide) (by decide)
+  exact ⟨x, y, hx, hy, hxy.trans (by decide), h5⟩
+
 -- For square numbers, the prime supplied by the theorem represents every
 -- positive integer as a sum of two positive squares modulo prime powers.
 example : ∃ p : ℕ, p.Prime ∧ p % 4 = 1 ∧ ¬ p ∣ 2 ∧
