@@ -1,3 +1,3 @@
-# Well-formed instances of CLIQUE in ray intersection graphs
+# Well-formed CLIQUE of linear size instances
 
-Well-formedness of an instance of CLIQUE in ray intersection graphs: every direction is nonzero, the rays are pairwise distinct as point sets (a set of rays), and `0 < K ≤` the number of rays.
+An instance $(n, E)$ of CLIQUE of linear size is well-formed when the edge list has no repeated edge, every edge joins two distinct vertices below $n$, and no edge appears in both orientations.

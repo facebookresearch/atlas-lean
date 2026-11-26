@@ -1,3 +1,3 @@
-# Graph of an instance of CLIQUE in ray intersection graphs
+# Graph of a CLIQUE of linear size instance
 
-In CLIQUE in ray intersection graphs: the intersection graph of the rays: one vertex per list entry, two distinct entries adjacent when their rays share a point.
+The graph of a CLIQUE of linear size instance $(n, E)$ is the simple graph on the vertices $0, \dots, n-1$ in which two distinct vertices are adjacent when the edge list contains a pair joining them in either orientation.

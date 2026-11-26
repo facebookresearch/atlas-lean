@@ -1,3 +1,3 @@
-# Well-formed instances of PATH CONSTRAINED NETWORK FLOW without an integrality gap
+# Well-formed DIRECTED MAXIMUM LENGTH-BOUNDED DISJOINT PATHS instances
 
-Well-formedness of an instance of PATH CONSTRAINED NETWORK FLOW without an integrality gap: the PATH CONSTRAINED NETWORK FLOW instance with the same network and paths and requirement `R = 1` is well formed.
+An instance $(n, A, s, t, J, K)$ is well-formed when the arcs are distinct, loopless and between vertices below $n$; $s$ and $t$ are distinct vertices below $n$; $0 < J \le n$; and $0 < K \le n$.

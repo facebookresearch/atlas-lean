@@ -7,3 +7,5 @@ Relational database design and querying (keys, prime attributes, normal forms, c
 - [Non-liveness of free-choice Petri nets](non-liveness-of-free-choice-petri-nets/README.md)
 - [Optimal cover of functional dependencies](optimal-cover-of-functional-dependencies/README.md)
 - [Serializability of database histories](serializability-of-database-histories/README.md)
+- [Deadlock exposure in packet switching networks](deadlock-exposure-in-packet-switching-networks/README.md)
+- [Deadlock potential](deadlock-potential/README.md)

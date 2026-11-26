@@ -1,3 +1,3 @@
-# Well-formed instances of ODD HOLE THROUGH A GIVEN VERTEX
+# Well-formed CONNECTED OUTERPLANAR SUBGRAPH instances
 
-Well-formedness of an instance of ODD HOLE THROUGH A GIVEN VERTEX: the edge list describes a simple graph on `Fin n` (no duplicate edges in either orientation, no self-loops, endpoints in range), and `v < n`.
+An instance $(n, E, K)$ of CONNECTED OUTERPLANAR SUBGRAPH is well-formed when the edge list has no repeated edge, every edge joins two distinct vertices below $n$, and no edge appears in both orientations, and $0 < K \le |E|$, the length of the edge list.
