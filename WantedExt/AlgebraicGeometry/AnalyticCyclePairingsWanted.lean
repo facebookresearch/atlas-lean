@@ -9,6 +9,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.AnalyticCyclePairings
+public import MathlibExt.AlgebraicGeometry.AnalyticCyclePairingsPullbackTheory
 
 /-!
 # The Demailly--Paun connected-component comparison
@@ -18,7 +19,7 @@ connected component of the positivity set on all positive-dimensional
 irreducible analytic cycles. Positivity only on curves or equality with
 the whole positivity set would be stronger and is not asserted. The
 smoothness of pulled-back forms, a hypothesis class in `MathlibExt`, is
-requested here too.
+proved in `MathlibExt.AlgebraicGeometry.AnalyticCyclePairingsPullbackTheory`.
 -/
 
 @[expose] public noncomputable section
@@ -28,14 +29,6 @@ namespace WantedExt.AlgebraicGeometry.AnalyticCyclePairingsWanted
 open MathlibExt.AlgebraicGeometry
 open KahlerClassGeometry ManifoldDifferentialForms AnalyticCyclePairings
 open scoped Manifold ContDiff
-
-/-- The pullback of a smooth form along a smooth map is smooth. -/
-public theorem_wanted pullbackTheory (n : ℕ) (M : Type) [TopologicalSpace M]
-    [ChartedSpace (Coordinates n) M] [IsManifold 𝓘(ℝ, Coordinates n) ∞ M]
-    (d : ℕ) (Y : Type) [TopologicalSpace Y] [ChartedSpace (Coordinates d) Y]
-    [IsManifold 𝓘(ℝ, Coordinates d) ∞ Y] (f : Y → M)
-    (hf : ContMDiff 𝓘(ℝ, Coordinates d) 𝓘(ℝ, Coordinates n) ∞ f) :
-    PullbackTheory n M d Y f
 
 /-- Demailly–Păun, Main Theorem 0.1: let $M$ be a compact, Hausdorff, connected,
 second-countable complex manifold modelled on $\mathbb{C}^n$ (smooth as a real manifold), on which
