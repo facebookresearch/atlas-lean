@@ -8,9 +8,9 @@ where $B_r(y)$ is the open ball of radius $r$ about $y$, and $\Delta(d)$ is the 
 
 The statement (a question of S. Miller and H. Cohn, phrased as a claim about the optimal densities) is
 
-$$\Delta(8) = \frac{\pi^4}{384} \quad\text{and}\quad \Delta(24) = \frac{\pi^{12}}{12!},$$
+$$\Delta(8) = \frac{\pi^4}{384} \quad\text{and}\quad \Delta(24) = \frac{\pi^{12}}{12!}.$$
 
-the densities of the $E_8$ lattice packing and of the Leech lattice packing, respectively. It holds; the resolution is [Sphere packing in dimensions 8 and 24: optimal densities hold](sphere-packing-density-eight-twenty-four-2.md).
+The proposition consists of these two equalities and names no lattice. As context from the cited papers, $\pi^4/384$ and $\pi^{12}/12!$ are the densities of the $E_8$ lattice packing and of the Leech lattice packing, so these lattices attain the two values. It holds; the resolution is [Sphere packing in dimensions 8 and 24: optimal densities hold](sphere-packing-density-eight-twenty-four-2.md).
 
 ## Sources
 

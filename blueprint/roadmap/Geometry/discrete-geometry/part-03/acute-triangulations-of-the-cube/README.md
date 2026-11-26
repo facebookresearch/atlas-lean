@@ -1,6 +1,7 @@
 # Acute triangulations of the cube
 
-- [Euclidean space $\mathbb{R}^3$](point3.md)
+Points lie in [Euclidean 3-space $\mathbb{R}^3$](../../part-04/lines-in-three-dimensional-euclidean-space/e3.md).
+
 - [The unit cube $[0,1]^3$](std-cube.md)
 - [Component of a vector orthogonal to another](vec-orth.md)
 - [Closed tetrahedron spanned by four points](tetra-hull.md)

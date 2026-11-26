@@ -2,9 +2,9 @@
 
 This result proves the proposition stated as [Optimal sphere packing densities in dimensions 8 and 24](sphere-packing-density-eight-twenty-four.md). Let $\Delta(d)$ be the supremum of the densities of all unit sphere packings in $\mathbb{R}^d$ (sets of centres whose open unit balls are pairwise disjoint, with density the limit superior as $R \to \infty$ of the fraction of the open ball $B_R(0)$ covered by the unit balls). Then
 
-$$\Delta(8) = \frac{\pi^4}{384} \quad\text{and}\quad \Delta(24) = \frac{\pi^{12}}{12!},$$
+$$\Delta(8) = \frac{\pi^4}{384} \quad\text{and}\quad \Delta(24) = \frac{\pi^{12}}{12!}.$$
 
-so no packing of unit balls in $\mathbb{R}^8$ is denser than the $E_8$ lattice packing, and none in $\mathbb{R}^{24}$ is denser than the Leech lattice packing.
+The result consists of these two equalities. As context from the cited papers, the $E_8$ lattice packing and the Leech lattice packing have densities $\pi^4/384$ and $\pi^{12}/12!$ (Viazovska, Theorem 1; Cohn, Kumar, Miller, Radchenko and Viazovska, Theorem 1.1), so they attain the optimal densities.
 
 ## Sources
 

@@ -6,4 +6,4 @@ Here $m$ segments in $\mathbb{R}^2$ are given by endpoints $e_0, \dots, e_{2m-1}
 
 ## Sources
 
-- S. K. Ghosh and P. P. Goswami, Unsolved problems in visibility graphs of points, segments and polygons, ACM Comput. Surv. 46 (2013), arXiv:1012.5187, Conjecture 14 (A. Mirzaian)
+- S. K. Ghosh and P. P. Goswami, Unsolved problems in visibility graphs of points, segments and polygons, arXiv:1012.5187v4, Conjecture 7 (A. Mirzaian), https://arxiv.org/abs/1012.5187v4
